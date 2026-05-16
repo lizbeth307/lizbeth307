@@ -6,9 +6,7 @@
 
 <br>
 
-<div align="center">
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=lizbeth307&layout=compact&theme=transparent&hide_border=true&hide_title=true&text_color=666666" alt="Metrics" />
-</div>
+
 
 <br>
 
