@@ -182,6 +182,7 @@ class Signal:
         # High-entropy layers: peel handshake / decrypt / HTTP/2 before wall
         if self.entropy == "high" and self.depth > 0:
             peeled = False
+            from .body_peel import body_deep, looks_like_app_body
             from .http2 import (
                 http1_deep,
                 http2_data_deep,
@@ -190,16 +191,30 @@ class Signal:
                 split_http2_frames,
             )
 
+            # Already enriched http2_data leaf (bodies) — keep meta, add content class
+            if self.deep and self.deep.get("kind") == "http2_data":
+                self.deep["content"] = body_deep(self.messages)
+                self.entropy = "structured"
+                return self
+
             h2 = split_http2_frames(self.messages)
             if h2:
-                name, frames = h2
+                name, inner = h2
                 self.splitter = name
-                self.deep = http2_data_deep(frames) if name == "http2_data" else http2_deep(frames)
+                if name == "http2_data":
+                    self.deep = http2_data_deep(inner, source_frames=self.messages)
+                else:
+                    self.deep = http2_deep(inner)
                 self.entropy = "structured"
-                child = self._spawn(name, frames)
-                child.deep = self.deep
+                child = self._spawn(name, inner)
+                child.deep = dict(self.deep) if self.deep else None
                 child.propagate(max_depth=max_depth)
                 self.children.append(child)
+                return self
+            if looks_like_app_body(self.messages):
+                self.splitter = "app_body"
+                self.deep = body_deep(self.messages)
+                self.entropy = "structured"
                 return self
             if looks_like_http1(self.messages):
                 self.splitter = "http1"
@@ -389,6 +404,14 @@ class Signal:
                     )
                 for prev in (self.deep.get("preview") or [])[:2]:
                     notes.append(f"  body: {prev[:100]}")
+            if kind == "body" or self.deep.get("content"):
+                content = self.deep if kind == "body" else (self.deep.get("content") or {})
+                if content:
+                    notes.append(f"  content: types={content.get('types', {})}")
+                    for t in (content.get("titles") or [])[:2]:
+                        notes.append(f"  title: {t}")
+                    if content.get("json_keys"):
+                        notes.append(f"  json_keys: {', '.join(content['json_keys'][:10])}")
             if kind == "http1":
                 notes.append(f"  HTTP/1: {self.deep.get('methods', {})}")
                 if self.deep.get("hosts"):

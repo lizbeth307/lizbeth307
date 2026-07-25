@@ -14,7 +14,7 @@ mv "$HOME/analyze_pcap.py.new" "$HOME/analyze_pcap.py"
 chmod +x "$HOME/analyze_pcap.py"
 
 mkdir -p "$HOME/protocol_ast"
-for f in __init__.py aes_gcm.py tls_keylog.py pcapng_secrets.py find_keylog.py http2.py hpack_decode.py signal.py; do
+for f in __init__.py aes_gcm.py tls_keylog.py pcapng_secrets.py find_keylog.py http2.py hpack_decode.py signal.py body_peel.py; do
   curl -fL --retry 3 -o "$HOME/protocol_ast/$f" "${BASE}/protocol_ast/$f?t=${TS}"
 done
 

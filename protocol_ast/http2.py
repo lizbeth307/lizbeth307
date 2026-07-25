@@ -285,21 +285,47 @@ def http2_deep(frames: list[bytes]) -> dict:
     }
 
 
-def http2_data_deep(payloads: list[bytes]) -> dict:
-    # If payloads are still frames, enrich; else treat as bodies
-    if payloads and all_single_http2_frames(payloads):
-        analysis = analyze_http2_streams(payloads)
-        bodies = analysis["bodies"] or payloads
+def http2_data_deep(
+    payloads: list[bytes],
+    *,
+    source_frames: list[bytes] | None = None,
+) -> dict:
+    """
+    Enrich DATA payloads.
+
+    Pass source_frames=original HTTP/2 frames when payloads are already
+    decompressed bodies — preserves stream id / content-encoding / br→plain.
+    """
+    headers: list[dict] = []
+    meta: list[dict] = []
+    bodies: list[bytes]
+
+    frames_for_analysis = None
+    if source_frames and any(is_single_http2_frame(f) for f in source_frames):
+        frames_for_analysis = source_frames
+    elif payloads and all_single_http2_frames(payloads):
+        frames_for_analysis = payloads
+
+    if frames_for_analysis is not None:
+        analysis = analyze_http2_streams(frames_for_analysis)
+        bodies = analysis["bodies"] or list(payloads)
         meta = analysis["body_meta"]
         headers = analysis["headers"]
     else:
         bodies = []
-        meta = []
-        headers = []
         for p in payloads:
             plain, method = decompress_http_body(p)
             bodies.append(plain)
-            meta.append({"decompress": method, "raw_len": len(p), "plain_len": len(plain)})
+            kind = "html" if b"<html" in plain[:400].lower() or b"<!doctype" in plain[:400].lower() else (
+                "json" if plain.lstrip()[:1] in (b"{", b"[") else "bin"
+            )
+            meta.append({
+                "stream": None,
+                "decompress": method if method != "identity" else "predecoded",
+                "raw_len": len(p),
+                "plain_len": len(plain),
+                "content": kind,
+            })
 
     previews = [_text_preview(p, 120) for p in bodies[:5]]
     html = sum(1 for p in bodies if b"<html" in p[:400].lower() or b"<!doctype" in p[:400].lower())

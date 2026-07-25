@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.7.0-full"
+VERSION = "3.7.1-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -1082,11 +1082,18 @@ def _embedded_split_http2(messages: list[bytes]) -> tuple[str, list[bytes]] | No
     return None
 
 
-def _http2_deep(frames: list[bytes], splitter: str = "http2_frames") -> dict:
+def _http2_deep(
+    frames: list[bytes],
+    splitter: str = "http2_frames",
+    *,
+    source_frames: list[bytes] | None = None,
+) -> dict:
     try:
         from protocol_ast.http2 import http2_data_deep, http2_deep
 
-        return http2_data_deep(frames) if splitter == "http2_data" else http2_deep(frames)
+        if splitter == "http2_data":
+            return http2_data_deep(frames, source_frames=source_frames)
+        return http2_deep(frames)
     except Exception:
         if splitter == "http2_data":
             previews = []
@@ -1218,19 +1225,51 @@ def recursive_nested_analyze(
 
     # High entropy: HTTP/2 / handshake / keylog before opaque wall
     if layer["entropy"] == "high" and depth > 0:
+        # Preserve already-enriched http2_data leaf
+        if layer.get("deep") and layer["deep"].get("kind") == "http2_data":
+            try:
+                from protocol_ast.body_peel import body_deep
+
+                layer["deep"]["content"] = body_deep(messages)
+            except Exception:
+                pass
+            layer["entropy"] = "structured"
+            return layer
         h2 = _split_http2_frames(messages)
         if h2:
             name, frames = h2
             layer["splitter"] = name
-            layer["deep"] = _http2_deep(frames, name)
-            layer["entropy"] = "structured"
-            layer["children"].append(
-                recursive_nested_analyze(
-                    flow, frames, depth=depth + 1, max_depth=max_depth,
-                    label=f"{label}/{name}", keylog=None,
-                )
+            layer["deep"] = _http2_deep(
+                frames, name, source_frames=messages if name == "http2_data" else None
             )
+            layer["entropy"] = "structured"
+            child = recursive_nested_analyze(
+                flow, frames, depth=depth + 1, max_depth=max_depth,
+                label=f"{label}/{name}", keylog=None,
+            )
+            # Restore enrichment (child recurse may have lost stream/encoding meta)
+            if name == "http2_data" and layer["deep"]:
+                child["deep"] = dict(layer["deep"])
+                child["entropy"] = "structured"
+                child["opaque"] = False
+                try:
+                    from protocol_ast.body_peel import body_deep
+
+                    child["deep"]["content"] = body_deep(frames)
+                except Exception:
+                    pass
+            layer["children"].append(child)
             return layer
+        try:
+            from protocol_ast.body_peel import body_deep, looks_like_app_body
+
+            if looks_like_app_body(messages):
+                layer["splitter"] = "app_body"
+                layer["deep"] = body_deep(messages)
+                layer["entropy"] = "structured"
+                return layer
+        except Exception:
+            pass
         bodies = _peel_tls_handshake_bodies(messages)
         if len(bodies) >= 1:
             layer["splitter"] = "tls_handshake"
@@ -1270,7 +1309,9 @@ def recursive_nested_analyze(
     splitter_name, inner = split
     layer["splitter"] = splitter_name
     if splitter_name in ("http2_frames", "http2_data"):
-        layer["deep"] = _http2_deep(inner, splitter_name)
+        layer["deep"] = _http2_deep(
+            inner, splitter_name, source_frames=messages if splitter_name == "http2_data" else None
+        )
         layer["entropy"] = "structured"
     if len(inner) < 2:
         return layer
@@ -1557,6 +1598,19 @@ def format_nested_notes(layer: dict) -> list[str]:
             )
         for prev in (deep.get("preview") or [])[:2]:
             notes.append(f"  body: {prev[:100]}")
+        content = deep.get("content") or {}
+        if content.get("types"):
+            notes.append(f"  content: types={content.get('types')}")
+            for t in (content.get("titles") or [])[:2]:
+                notes.append(f"  title: {t}")
+            if content.get("json_keys"):
+                notes.append(f"  json_keys: {', '.join(content['json_keys'][:10])}")
+    if deep.get("kind") == "body":
+        notes.append(f"  content: types={deep.get('types', {})}")
+        for t in (deep.get("titles") or [])[:2]:
+            notes.append(f"  title: {t}")
+        if deep.get("json_keys"):
+            notes.append(f"  json_keys: {', '.join(deep['json_keys'][:10])}")
     if deep.get("kind") == "tls":
         if deep.get("sni_hosts"):
             notes.append(f"  SNI: {', '.join(deep['sni_hosts'][:6])}")
