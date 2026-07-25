@@ -2,7 +2,7 @@
 # Termux: один файл analyze_pcap.py (v3.0.1 — все вбудовано)
 set -euo pipefail
 
-BRANCH="cursor/full-pack-p0-a4e6"
+BRANCH="cursor/p1-kaitai-handshake-a4e6"
 URL="https://raw.githubusercontent.com/lizbeth307/lizbeth307/${BRANCH}/analyze_pcap.py?t=$(date +%s)"
 
 echo "=== Termux analyze_pcap update ==="

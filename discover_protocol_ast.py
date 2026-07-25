@@ -496,6 +496,18 @@ def cmd_blind(args: argparse.Namespace) -> int:
         out = pcap.parent / "blind_nested_report.json"
         out.write_text(json.dumps({"file": str(pcap), "flows": reports}, indent=2), encoding="utf-8")
         print(f"JSON: {out}")
+    if getattr(args, "export_kaitai", None):
+        from protocol_ast.kaitai_export import export_flow_kaitai
+
+        kdir = Path(args.export_kaitai).expanduser()
+        kdir.mkdir(parents=True, exist_ok=True)
+        for layer in reports:
+            label = layer["label"].replace(":", "_")
+            (kdir / f"{label}.ksy").write_text(
+                export_flow_kaitai(layer["label"], layer.get("format", {})),
+                encoding="utf-8",
+            )
+        print(f"Kaitai: {kdir}/")
     return 0
 
 
@@ -630,6 +642,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_blind.add_argument("--max-depth", type=int, default=3, help="рекурсія вкладених кадрів")
     p_blind.add_argument("--tcp-reassemble", action="store_true", help="TCP stream reassembly + TLS split")
     p_blind.add_argument("--json", action="store_true", help="зберегти blind_nested_report.json")
+    p_blind.add_argument("--export-kaitai", metavar="DIR", help="експорт .ksy на потік")
     p_blind.set_defaults(func=cmd_blind)
 
     return parser
