@@ -125,18 +125,23 @@ def resolve_keylog(
 
     # auto mode
     if pcap and pcap.exists():
-        extracted = _wk()(pcap)
-        if extracted:
-            return extracted, f"keylog витягнуто з pcapng DSB → {extracted}"
-        for sib in (
-            pcap.with_suffix(".keylog"),
-            pcap.with_name(pcap.stem + ".keylog"),
-            pcap.parent / "sslkeys.log",
-        ):
-            if sib.exists() and _looks_like_keylog(sib):
-                return sib, f"keylog поруч із capture: {sib}"
+        if pcap.is_file():
+            extracted = _wk()(pcap)
+            if extracted:
+                return extracted, f"keylog витягнуто з pcapng DSB → {extracted}"
+            for sib in (
+                pcap.with_suffix(".keylog"),
+                pcap.with_name(pcap.stem + ".keylog"),
+                pcap.parent / "sslkeys.log",
+                pcap.parent / "sslkeylogfile.txt",
+            ):
+                if sib.exists() and _looks_like_keylog(sib):
+                    return sib, f"keylog поруч із capture: {sib}"
+            search_dirs = [pcap.parent]
+        else:
+            search_dirs = [pcap]
 
-        found = find_keylog_files([pcap.parent])
+        found = find_keylog_files(search_dirs)
         if found:
             return found[0], f"keylog знайдено: {found[0]}"
 

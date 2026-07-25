@@ -70,6 +70,44 @@ def parse_keylog(path: str | Path) -> KeylogSecrets:
     return secrets
 
 
+def iter_tls_records_from_blob(data: bytes) -> list[bytes]:
+    """Split a TCP stream / blob into TLS records."""
+    out: list[bytes] = []
+    off = 0
+    while off + 5 <= len(data):
+        ctype = data[off]
+        if ctype not in (0x14, 0x15, 0x16, 0x17):
+            # resync: scan for handshake/appdata
+            nxt = -1
+            for i in range(off + 1, min(len(data) - 5, off + 2048)):
+                if data[i] in (0x14, 0x15, 0x16, 0x17) and data[i + 1] == 0x03:
+                    nxt = i
+                    break
+            if nxt < 0:
+                break
+            off = nxt
+            continue
+        length = (data[off + 3] << 8) | data[off + 4]
+        if length > 0x4800 or off + 5 + length > len(data):
+            break
+        out.append(data[off : off + 5 + length])
+        off += 5 + length
+    return out
+
+
+def flatten_tls_records(messages: list[bytes]) -> list[bytes]:
+    """Normalize messages (streams or records) into individual TLS records."""
+    records: list[bytes] = []
+    for msg in messages:
+        if len(msg) >= 5 and msg[0] in (0x14, 0x15, 0x16, 0x17) and msg[1] == 0x03:
+            length = (msg[3] << 8) | msg[4]
+            if 5 + length == len(msg):
+                records.append(msg)
+                continue
+        records.extend(iter_tls_records_from_blob(msg))
+    return records
+
+
 def extract_client_random(handshake_body: bytes) -> bytes | None:
     """ClientHello body → 32-byte client_random (after type+len+version)."""
     if len(handshake_body) < 38 or handshake_body[0] != 0x01:
@@ -79,18 +117,39 @@ def extract_client_random(handshake_body: bytes) -> bytes | None:
 
 def find_client_randoms_in_records(records: list[bytes]) -> list[bytes]:
     out: list[bytes] = []
-    for rec in records:
+    seen: set[bytes] = set()
+    for rec in flatten_tls_records(records):
         if len(rec) < 6 or rec[0] != 0x16:
             continue
-        body = rec[5:]
-        rnd = extract_client_random(body)
-        if rnd:
-            out.append(rnd)
+        length = (rec[3] << 8) | rec[4]
+        body = rec[5 : 5 + length]
+        # may contain multiple handshake messages
+        off = 0
+        while off + 4 <= len(body):
+            htype = body[off]
+            hlen = int.from_bytes(body[off + 1 : off + 4], "big")
+            chunk = body[off : off + 4 + hlen]
+            if htype == 0x01 and len(chunk) >= 38:
+                rnd = chunk[6:38]
+                if rnd not in seen:
+                    seen.add(rnd)
+                    out.append(rnd)
+            if hlen == 0:
+                break
+            off += 4 + hlen
     return out
+
+
+def _hash_for_secret(secret: bytes):
+    """TLS 1.3 traffic secret length → hash function."""
+    if len(secret) >= 48:
+        return hashlib.sha384
+    return hashlib.sha256
 
 
 def _hkdf_expand_label(secret: bytes, label: bytes, context: bytes, length: int) -> bytes:
     """TLS 1.3 HKDF-Expand-Label (RFC 8446)."""
+    hash_alg = _hash_for_secret(secret)
     full_label = b"tls13 " + label
     hkdf_label = (
         struct.pack(">H", length)
@@ -99,22 +158,24 @@ def _hkdf_expand_label(secret: bytes, label: bytes, context: bytes, length: int)
         + bytes([len(context)])
         + context
     )
-    return _hkdf_expand(secret, hkdf_label, length)
+    return _hkdf_expand(secret, hkdf_label, length, hash_alg)
 
 
-def _hkdf_expand(secret: bytes, info: bytes, length: int) -> bytes:
-    hash_len = 32
+def _hkdf_expand(secret: bytes, info: bytes, length: int, hash_alg=hashlib.sha256) -> bytes:
+    hash_len = hash_alg().digest_size
     n = (length + hash_len - 1) // hash_len
     okm = b""
     prev = b""
     for i in range(1, n + 1):
-        prev = hmac.new(secret, prev + info + bytes([i]), hashlib.sha256).digest()
+        prev = hmac.new(secret, prev + info + bytes([i]), hash_alg).digest()
         okm += prev
     return okm[:length]
 
 
 def _tls13_traffic_key_iv(traffic_secret: bytes) -> tuple[bytes, bytes]:
-    key = _hkdf_expand_label(traffic_secret, b"key", b"", 16)
+    """Derive key/iv; AES-128 (32-byte secret) or AES-256 (48-byte secret)."""
+    key_len = 32 if len(traffic_secret) >= 48 else 16
+    key = _hkdf_expand_label(traffic_secret, b"key", b"", key_len)
     iv = _hkdf_expand_label(traffic_secret, b"iv", b"", 12)
     return key, iv
 
@@ -125,7 +186,7 @@ def _decrypt_tls13_record(
     iv: bytes,
     seq: int,
 ) -> bytes | None:
-    """Decrypt TLS 1.3 Application Data (content type 23) AES-128-GCM."""
+    """Decrypt TLS 1.3 Application Data (type 23) AES-GCM."""
     if len(record) < 5 + 16:
         return None
     if record[0] != 0x17:
@@ -142,10 +203,9 @@ def _decrypt_tls13_record(
         plain = aes_gcm_decrypt(key, bytes(nonce), ciphertext, aad)
     except Exception:
         return None
-    # TLS 1.3: last byte is inner content type
     if not plain:
         return None
-    return plain[:-1]
+    return plain[:-1]  # inner content type
 
 
 def _prf_tls12(secret: bytes, label: bytes, seed: bytes, out_len: int) -> bytes:
@@ -195,6 +255,23 @@ class DecryptResult:
     decrypted: list[bytes]
     failed: int
     tls_version: str
+    diagnostics: dict = field(default_factory=dict)
+
+
+def _overlap_randoms(records: list[bytes], secrets: KeylogSecrets) -> list[str]:
+    """Client randoms present both in traffic and keylog."""
+    found = {r.hex() for r in find_client_randoms_in_records(records)}
+    # also: raw search for keylog randoms inside payloads
+    for cr in secrets.client_randoms:
+        try:
+            needle = bytes.fromhex(cr)
+        except ValueError:
+            continue
+        for msg in records:
+            if needle in msg:
+                found.add(cr)
+                break
+    return sorted(found & secrets.client_randoms)
 
 
 def decrypt_tls_records(
@@ -202,12 +279,31 @@ def decrypt_tls_records(
     secrets: KeylogSecrets,
 ) -> DecryptResult | None:
     """Try TLS 1.3 then TLS 1.2 decrypt for Application Data records."""
-    randoms = find_client_randoms_in_records(records)
-    if not randoms:
-        # still try all known secrets if ClientHello not in this batch
-        candidates = list(secrets.client_randoms)
-    else:
-        candidates = [r.hex() for r in randoms]
+    flat = flatten_tls_records(records)
+    appdata = [r for r in flat if len(r) >= 5 and r[0] == 0x17]
+    extracted = [r.hex() for r in find_client_randoms_in_records(flat)]
+    overlap = _overlap_randoms(flat, secrets)
+
+    # Prefer overlapping randoms; else try every secret in keylog
+    candidates = overlap if overlap else sorted(secrets.client_randoms)
+
+    diag = {
+        "tls_records": len(flat),
+        "appdata_records": len(appdata),
+        "client_hellos_in_pcap": len(extracted),
+        "keylog_randoms": len(secrets.client_randoms),
+        "overlap": len(overlap),
+    }
+
+    if not appdata:
+        return DecryptResult(
+            client_random="",
+            secrets_matched=[],
+            decrypted=[],
+            failed=0,
+            tls_version="",
+            diagnostics={**diag, "reason": "no_appdata_records"},
+        )
 
     for cr_hex in candidates:
         matched: list[str] = []
@@ -224,9 +320,7 @@ def decrypt_tls_records(
             c_seq = s_seq = 0
             c_key_iv = _tls13_traffic_key_iv(c_sec) if c_sec else None
             s_key_iv = _tls13_traffic_key_iv(s_sec) if s_sec else None
-            for rec in records:
-                if len(rec) < 5 or rec[0] != 0x17:
-                    continue
+            for rec in appdata:
                 ok = None
                 if c_key_iv:
                     ok = _decrypt_tls13_record(rec, c_key_iv[0], c_key_iv[1], c_seq)
@@ -248,6 +342,7 @@ def decrypt_tls_records(
                     decrypted=decrypted,
                     failed=failed,
                     tls_version="1.3",
+                    diagnostics=diag,
                 )
 
         # --- TLS 1.2 ---
@@ -255,53 +350,66 @@ def decrypt_tls_records(
         if not master:
             continue
         matched = ["CLIENT_RANDOM"]
-        # Need server_random from ServerHello — scan handshake records
-        server_random = _find_server_random(records)
+        server_random = _find_server_random(flat)
         client_random = bytes.fromhex(cr_hex)
         if not server_random:
             continue
-        key_block = _prf_tls12(
-            master,
-            b"key expansion",
-            server_random + client_random,
-            40,  # AES-128-GCM: 16+16+4+4
-        )
-        c_key, s_key = key_block[0:16], key_block[16:32]
-        c_iv, s_iv = key_block[32:36], key_block[36:40]
-        decrypted = []
-        failed = 0
-        c_seq = s_seq = 0
-        for rec in records:
-            if len(rec) < 5 or rec[0] != 0x17:
-                continue
-            plain = _decrypt_tls12_gcm(rec, c_key, c_iv, c_seq)
-            if plain is not None:
-                c_seq += 1
-                decrypted.append(plain)
-                continue
-            plain = _decrypt_tls12_gcm(rec, s_key, s_iv, s_seq)
-            if plain is not None:
-                s_seq += 1
-                decrypted.append(plain)
-                continue
-            failed += 1
-        if decrypted:
-            return DecryptResult(
-                client_random=cr_hex,
-                secrets_matched=matched,
-                decrypted=decrypted,
-                failed=failed,
-                tls_version="1.2",
+        # try AES-128-GCM and AES-256-GCM key block sizes
+        for key_len, iv_len, block_len in ((16, 4, 40), (32, 4, 72)):
+            key_block = _prf_tls12(
+                master,
+                b"key expansion",
+                server_random + client_random,
+                block_len,
             )
+            c_key = key_block[0:key_len]
+            s_key = key_block[key_len : key_len * 2]
+            c_iv = key_block[key_len * 2 : key_len * 2 + iv_len]
+            s_iv = key_block[key_len * 2 + iv_len : key_len * 2 + iv_len * 2]
+            decrypted = []
+            failed = 0
+            c_seq = s_seq = 0
+            for rec in appdata:
+                plain = _decrypt_tls12_gcm(rec, c_key, c_iv, c_seq)
+                if plain is not None:
+                    c_seq += 1
+                    decrypted.append(plain)
+                    continue
+                plain = _decrypt_tls12_gcm(rec, s_key, s_iv, s_seq)
+                if plain is not None:
+                    s_seq += 1
+                    decrypted.append(plain)
+                    continue
+                failed += 1
+            if decrypted:
+                return DecryptResult(
+                    client_random=cr_hex,
+                    secrets_matched=matched,
+                    decrypted=decrypted,
+                    failed=failed,
+                    tls_version="1.2",
+                    diagnostics=diag,
+                )
 
-    return None
+    return DecryptResult(
+        client_random="",
+        secrets_matched=[],
+        decrypted=[],
+        failed=len(appdata),
+        tls_version="",
+        diagnostics={
+            **diag,
+            "reason": "no_overlap" if not overlap else "decrypt_failed",
+        },
+    )
 
 
 def _find_server_random(records: list[bytes]) -> bytes | None:
-    for rec in records:
+    for rec in flatten_tls_records(records):
         if len(rec) < 6 or rec[0] != 0x16:
             continue
-        body = rec[5:]
+        length = (rec[3] << 8) | rec[4]
+        body = rec[5 : 5 + length]
         if len(body) < 38 or body[0] != 0x02:  # ServerHello
             continue
         return body[6:38]

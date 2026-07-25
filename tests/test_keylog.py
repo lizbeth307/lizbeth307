@@ -80,7 +80,10 @@ SERVER_TRAFFIC_SECRET_0 aabbccddeeff00112233445566778899aabbccddeeff001122334455
                     found = ch.decrypt
             # empty keylog → no_match or no decrypt attempt with secrets
             if found:
-                self.assertIn(found.get("status"), ("no_match", "ok"))
+                self.assertIn(
+                    found.get("status"),
+                    ("no_match", "no_overlap", "decrypt_failed", "no_appdata_records", "ok"),
+                )
 
 
 if __name__ == "__main__":

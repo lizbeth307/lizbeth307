@@ -151,10 +151,12 @@ class Signal:
         appdata = peel_tls_appdata_records(records)
         result = decrypt_tls_records(records, secrets)
         if not result or not result.decrypted:
+            diag = (result.diagnostics if result else {}) or {}
             self.decrypt = {
-                "status": "no_match",
+                "status": diag.get("reason", "no_match"),
                 "keylog": keylog_summary(secrets),
                 "appdata_records": len(appdata),
+                "diag": diag,
             }
             return None
         self.decrypt = {
@@ -165,6 +167,7 @@ class Signal:
             "decrypted": len(result.decrypted),
             "failed": result.failed,
             "keylog": keylog_summary(secrets),
+            "diag": result.diagnostics,
         }
         child = self._spawn("decrypted", result.decrypted)
         child.propagate(max_depth=max_depth)
@@ -306,12 +309,15 @@ class Signal:
                     f"  decrypt: TLS {d.get('tls_version')} → {d.get('decrypted')} plaintext "
                     f"({d.get('failed', 0)} failed)"
                 )
-            elif d.get("status") == "no_match":
+            elif d.get("status") in ("no_match", "no_overlap", "decrypt_failed", "no_appdata_records"):
                 kl = d.get("keylog") or {}
+                diag = d.get("diag") or {}
                 notes.append(
-                    f"  decrypt: no key match "
-                    f"(keylog has {kl.get('client_randoms', 0)} secrets, "
-                    f"{d.get('appdata_records', 0)} appdata)"
+                    f"  decrypt: {d.get('status')} "
+                    f"(keylog={kl.get('client_randoms', 0)} secrets, "
+                    f"hellos={diag.get('client_hellos_in_pcap', '?')}, "
+                    f"overlap={diag.get('overlap', '?')}, "
+                    f"appdata={diag.get('appdata_records', d.get('appdata_records', 0))})"
                 )
         if self.deep:
             kind = self.deep.get("kind")

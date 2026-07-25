@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.6.1-full"
+VERSION = "3.6.2-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -1210,10 +1210,12 @@ def _try_keylog_decrypt(records: list[bytes], keylog: str | None) -> dict | None
     secrets = parse_keylog(path)
     result = decrypt_tls_records(records, secrets)
     if not result or not result.decrypted:
+        diag = (result.diagnostics if result else {}) or {}
         return {
             "meta": {
-                "status": "no_match",
+                "status": diag.get("reason", "no_match"),
                 "keylog": keylog_summary(secrets),
+                "diag": diag,
             },
             "plain": [],
         }
@@ -1407,8 +1409,14 @@ def format_nested_notes(layer: dict) -> list[str]:
         d = layer["decrypt"]
         if d.get("status") == "ok":
             notes.append(f"  decrypt: TLS {d.get('tls_version')} → {d.get('decrypted')} plaintext")
-        elif d.get("status") == "no_match":
-            notes.append("  decrypt: no key match (check SSLKEYLOGFILE)")
+        elif d.get("status") in ("no_match", "no_overlap", "decrypt_failed", "no_appdata_records"):
+            diag = d.get("diag") or {}
+            notes.append(
+                f"  decrypt: {d.get('status')} "
+                f"(hellos={diag.get('client_hellos_in_pcap', '?')} "
+                f"overlap={diag.get('overlap', '?')} "
+                f"appdata={diag.get('appdata_records', '?')})"
+            )
         elif d.get("status") == "error":
             notes.append(f"  decrypt: error ({d.get('error', '?')})")
     if layer.get("sequitur_rules"):
