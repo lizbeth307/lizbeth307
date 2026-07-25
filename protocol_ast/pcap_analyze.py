@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import struct
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterator
 
@@ -52,9 +52,10 @@ class FlowBucket:
     key: FlowKey
     payloads: list[bytes]
     packet_count: int = 0
+    tcp_segments: list[tuple[int, int, int, bytes]] = field(default_factory=list)
 
 
-def _parse_ipv4_l4(data: bytes) -> tuple[str, int, int, bytes] | None:
+def _parse_ipv4_l4(data: bytes) -> tuple[str, int, int, bytes, int | None] | None:
     if len(data) < 20:
         return None
     ver_ihl = data[0]
@@ -70,20 +71,20 @@ def _parse_ipv4_l4(data: bytes) -> tuple[str, int, int, bytes] | None:
     if proto == IPPROTO_UDP and len(ip_payload) >= 8:
         sport, dport, ulen = struct.unpack(">HHH", ip_payload[:6])
         payload = ip_payload[8:ulen]
-        return "udp", sport, dport, payload
+        return "udp", sport, dport, payload, None
 
     if proto == IPPROTO_TCP and len(ip_payload) >= 20:
-        sport, dport = struct.unpack(">HH", ip_payload[:4])
+        sport, dport, seq = struct.unpack(">HHI", ip_payload[:8])
         data_offset = ((ip_payload[12] >> 4) & 0x0F) * 4
         if len(ip_payload) < data_offset:
             return None
         payload = ip_payload[data_offset:]
-        return "tcp", sport, dport, payload
+        return "tcp", sport, dport, payload, seq
 
     return None
 
 
-def _extract_l4_from_frame(frame: bytes, link_type: int) -> tuple[str, int, int, bytes] | None:
+def _extract_l4_from_frame(frame: bytes, link_type: int) -> tuple[str, int, int, bytes, int | None] | None:
     if link_type == 0:  # NULL/loopback (BSD)
         if len(frame) < 4:
             return None
@@ -148,6 +149,7 @@ def extract_flows(
     *,
     min_payload: int = 4,
     min_packets: int = 3,
+    tcp_reassemble: bool = False,
 ) -> dict[str, FlowBucket]:
     """Group non-empty L4 payloads by flow (proto + port pair)."""
     buckets: dict[FlowKey, FlowBucket] = {}
@@ -156,15 +158,25 @@ def extract_flows(
         parsed = _extract_l4_from_frame(frame, link_type)
         if not parsed:
             continue
-        proto, sport, dport, payload = parsed
+        proto, sport, dport, payload, seq = parsed
         if len(payload) < min_payload:
             continue
         key = _flow_key(proto, sport, dport)
         if key not in buckets:
             buckets[key] = FlowBucket(key=key, payloads=[])
         bucket = buckets[key]
-        bucket.payloads.append(payload)
+        if proto == "tcp" and tcp_reassemble and seq is not None:
+            bucket.tcp_segments.append((sport, dport, seq, payload))
+        else:
+            bucket.payloads.append(payload)
         bucket.packet_count += 1
+
+    if tcp_reassemble:
+        from .tcp_reassemble import reassemble_tcp_payloads
+
+        for bucket in buckets.values():
+            if bucket.tcp_segments:
+                bucket.payloads = reassemble_tcp_payloads(bucket.tcp_segments)
 
     return {
         b.key.label: b

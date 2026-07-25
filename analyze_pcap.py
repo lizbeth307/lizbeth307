@@ -20,7 +20,16 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "2.1.0-deep"
+VERSION = "3.0.0-full"
+
+
+def _full_pack_path() -> Path | None:
+    for p in (Path.home(), Path(__file__).resolve().parent):
+        if (p / "protocol_ast" / "blind_v2.py").exists():
+            if str(p) not in sys.path:
+                sys.path.insert(0, str(p))
+            return p
+    return None
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
 QUIC_VERSIONS = {
@@ -803,10 +812,13 @@ def main() -> int:
     parser.add_argument("--version", action="version", version=f"analyze_pcap {VERSION}")
     parser.add_argument("pcap", nargs="?", help="path to .pcap file")
     parser.add_argument("--blind", action="store_true", help="blind deep analysis (TLS/QUIC inner frames)")
+    parser.add_argument("--nested", action="store_true", help="nested AST v2 (needs ~/protocol_ast/)")
+    parser.add_argument("--tcp-reassemble", action="store_true", help="TCP stream reassembly (with --nested)")
     parser.add_argument("--flow", help="filter flow, e.g. 443 or TCP:443")
     args = parser.parse_args()
 
-    print(f"analyze_pcap: старт v{VERSION} (deep decode embedded)", flush=True)
+    mode = "full pack" if args.nested and _full_pack_path() else "deep decode embedded"
+    print(f"analyze_pcap: старт v{VERSION} ({mode})", flush=True)
     if not args.pcap:
         parser.print_help()
         return 1
@@ -816,6 +828,34 @@ def main() -> int:
         print("На телефоні файл зазвичай: ~/downloads/PCAPdroid*.pcap", file=sys.stderr)
         return 1
     print(f"PCAP: {path} ({path.stat().st_size} bytes)\n")
+
+    if args.nested and _full_pack_path():
+        from protocol_ast.blind_v2 import format_notes, recursive_blind_analyze
+        from protocol_ast.pcap_analyze import extract_flows as ep_extract
+
+        buckets = ep_extract(path, min_packets=2, tcp_reassemble=args.tcp_reassemble)
+        if not buckets:
+            print("Потоків не знайдено.")
+            return 1
+        selected = buckets
+        if args.flow:
+            selected = {k: v for k, v in buckets.items() if _flow_matches(k, args.flow)}
+            if not selected:
+                print(f"Потік '{args.flow}' не знайдено. Доступні:", ", ".join(sorted(buckets)))
+                return 1
+        report = {"file": str(path), "nested": True, "tcp_reassemble": args.tcp_reassemble, "flows": []}
+        for label in sorted(selected, key=lambda k: -len(selected[k].payloads)):
+            layer = recursive_blind_analyze(label, selected[label].payloads, max_depth=3)
+            print(f"── {label}  packets={selected[label].packet_count}")
+            for note in format_notes(layer):
+                print(f"   • {note}" if not note.startswith("[") else f"   {note}")
+            print()
+            report["flows"].append(layer.to_dict())
+        out = path.parent / "blind_nested_report.json"
+        out.write_text(json.dumps(report, indent=2), encoding="utf-8")
+        print(f"Звіт: {out}")
+        return 0
+
     flows = extract_flows(path)
     if not flows:
         print("Потоків не знайдено. Спробуйте інший pcap.")

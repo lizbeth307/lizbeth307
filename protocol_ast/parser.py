@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from .align import FieldHypothesis, FormatHypothesis, _read_u16
+from .align import FieldHypothesis, FormatHypothesis, _read_u16, _read_u32, _read_varint
 from .ast_nodes import AstNode
 
 
@@ -58,7 +58,15 @@ def parse_message(message: bytes, fmt: FormatHypothesis) -> AstNode:
             raise ParseError(f"field {field.name} overruns message")
         chunk = message[cursor : cursor + size]
         if field.kind == "length":
-            length_value = _read_u16(message, cursor, fmt.length_endian)
+            if fmt.length_width == "u32":
+                length_value = _read_u32(message, cursor, fmt.length_endian)
+            elif fmt.length_width == "varint":
+                parsed = _read_varint(message, cursor)
+                if not parsed:
+                    raise ParseError("invalid varint length")
+                length_value, _ = parsed
+            else:
+                length_value = _read_u16(message, cursor, fmt.length_endian)
             children.append(
                 AstNode(
                     name=field.name,

@@ -15,6 +15,7 @@ def format_to_dict(fmt: FormatHypothesis) -> dict[str, Any]:
         "max_len": fmt.max_len,
         "length_field_offset": fmt.length_field_offset,
         "length_endian": fmt.length_endian,
+        "length_width": fmt.length_width,
         "fields": [
             {
                 "name": f.name,
@@ -47,6 +48,7 @@ def format_from_dict(data: dict[str, Any]) -> FormatHypothesis:
         max_len=data["max_len"],
         length_field_offset=data.get("length_field_offset"),
         length_endian=data.get("length_endian", "le"),
+        length_width=data.get("length_width", "u16"),
     )
 
 
