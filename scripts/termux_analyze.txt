@@ -1,0 +1,12 @@
+# Termux v3.3.1 — merged 16-bit DNS/TLS fields in Lua export
+
+curl -fL --retry 3 -o ~/analyze_pcap.py.new \
+  "https://raw.githubusercontent.com/lizbeth307/lizbeth307/cursor/p1-kaitai-handshake-a4e6/analyze_pcap.py?t=$(date +%s)"
+mv ~/analyze_pcap.py.new ~/analyze_pcap.py
+python3 ~/analyze_pcap.py --version
+
+# nested + TCP reassembly
+python3 ~/analyze_pcap.py ~/downloads/c.pcap --nested --tcp-reassemble
+
+# + Kaitai export
+python3 ~/analyze_pcap.py ~/downloads/c.pcap --nested --tcp-reassemble --export-kaitai ~/downloads/ksy
