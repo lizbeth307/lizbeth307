@@ -1,0 +1,20 @@
+# === TERMUX: скопіюйте по черзі ===
+
+# 0. Python (якщо ще немає)
+pkg install python
+
+# 1. Завантажити скрипти
+cd ~
+curl -L -o analyze_pcap.py \
+  "https://raw.githubusercontent.com/lizbeth307/lizbeth307/cursor/protocol-ast-proto-a4e6/analyze_pcap.py"
+curl -L -o run_pcap.sh \
+  "https://raw.githubusercontent.com/lizbeth307/lizbeth307/cursor/protocol-ast-proto-a4e6/run_pcap.sh"
+chmod +x run_pcap.sh
+
+# 2. НЕ "python" — тільки python3 або run_pcap.sh:
+python3 analyze_pcap.py ~/downloads/PCAPdroid_25_лип._12_42_30.pcap
+
+# АБО:
+bash run_pcap.sh ~/downloads/PCAPdroid_25_лип._12_42_30.pcap
+
+# Звіт: ~/downloads/probe_report.json
