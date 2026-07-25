@@ -15,8 +15,14 @@ PCAP_NSEC_LE = 0xA1B23C4D
 PCAP_NSEC_BE = 0x4D3CB2A1
 
 ETH_P_IP = 0x0800
+ETH_P_IP6 = 0x86DD
 IPPROTO_TCP = 6
 IPPROTO_UDP = 17
+IPPROTO_HOPOPTS = 0
+IPPROTO_ROUTING = 43
+IPPROTO_FRAGMENT = 44
+IPPROTO_AH = 51
+IPPROTO_DSTOPTS = 60
 
 
 COMMON_PORTS = {
@@ -55,19 +61,7 @@ class FlowBucket:
     tcp_segments: list[tuple[int, int, int, bytes]] = field(default_factory=list)
 
 
-def _parse_ipv4_l4(data: bytes) -> tuple[str, int, int, bytes, int | None] | None:
-    if len(data) < 20:
-        return None
-    ver_ihl = data[0]
-    if ver_ihl >> 4 != 4:
-        return None
-    ihl = (ver_ihl & 0x0F) * 4
-    if len(data) < ihl:
-        return None
-    proto = data[9]
-    total_len = struct.unpack(">H", data[2:4])[0]
-    ip_payload = data[ihl:total_len]
-
+def _parse_l4(proto: int, ip_payload: bytes) -> tuple[str, int, int, bytes, int | None] | None:
     if proto == IPPROTO_UDP and len(ip_payload) >= 8:
         sport, dport, ulen = struct.unpack(">HHH", ip_payload[:6])
         payload = ip_payload[8:ulen]
@@ -84,6 +78,54 @@ def _parse_ipv4_l4(data: bytes) -> tuple[str, int, int, bytes, int | None] | Non
     return None
 
 
+def _skip_ipv6_extensions(data: bytes, off: int, nxt: int) -> tuple[int, int] | None:
+    while nxt in (IPPROTO_HOPOPTS, IPPROTO_ROUTING, IPPROTO_FRAGMENT, IPPROTO_DSTOPTS, IPPROTO_AH):
+        if nxt == IPPROTO_FRAGMENT:
+            if off + 8 > len(data):
+                return None
+            nxt = data[off]
+            off += 8
+            continue
+        if off + 2 > len(data):
+            return None
+        nxt = data[off]
+        ext_len = data[off + 1]
+        off += 2 + ext_len * 8
+        if off > len(data):
+            return None
+    return off, nxt
+
+
+def _parse_ipv4_l4(data: bytes) -> tuple[str, int, int, bytes, int | None] | None:
+    if len(data) < 20:
+        return None
+    ver_ihl = data[0]
+    if ver_ihl >> 4 != 4:
+        return None
+    ihl = (ver_ihl & 0x0F) * 4
+    if len(data) < ihl:
+        return None
+    proto = data[9]
+    total_len = struct.unpack(">H", data[2:4])[0]
+    ip_payload = data[ihl:total_len]
+    return _parse_l4(proto, ip_payload)
+
+
+def _parse_ipv6_l4(data: bytes) -> tuple[str, int, int, bytes, int | None] | None:
+    if len(data) < 40 or (data[0] >> 4) != 6:
+        return None
+    payload_len = struct.unpack(">H", data[4:6])[0]
+    nxt = data[6]
+    off = 40
+    if nxt not in (IPPROTO_TCP, IPPROTO_UDP):
+        skipped = _skip_ipv6_extensions(data, off, nxt)
+        if not skipped:
+            return None
+        off, nxt = skipped
+    ip_payload = data[off : 40 + payload_len]
+    return _parse_l4(nxt, ip_payload)
+
+
 def _extract_l4_from_frame(frame: bytes, link_type: int) -> tuple[str, int, int, bytes, int | None] | None:
     if link_type == 0:  # NULL/loopback (BSD)
         if len(frame) < 4:
@@ -91,6 +133,8 @@ def _extract_l4_from_frame(frame: bytes, link_type: int) -> tuple[str, int, int,
         family = struct.unpack("<I", frame[:4])[0]
         if family == 2:  # AF_INET
             return _parse_ipv4_l4(frame[4:])
+        if family in (10, 30):  # AF_INET6 / AF_INET6 (BSD)
+            return _parse_ipv6_l4(frame[4:])
         return None
 
     if link_type == 1:  # Ethernet
@@ -99,10 +143,14 @@ def _extract_l4_from_frame(frame: bytes, link_type: int) -> tuple[str, int, int,
         eth_type = struct.unpack(">H", frame[12:14])[0]
         if eth_type == ETH_P_IP:
             return _parse_ipv4_l4(frame[14:])
+        if eth_type == ETH_P_IP6:
+            return _parse_ipv6_l4(frame[14:])
         if eth_type == 0x8100 and len(frame) >= 18:  # VLAN
             inner = struct.unpack(">H", frame[16:18])[0]
             if inner == ETH_P_IP:
                 return _parse_ipv4_l4(frame[18:])
+            if inner == ETH_P_IP6:
+                return _parse_ipv6_l4(frame[18:])
         return None
 
     if link_type == 101:  # RAW IP
@@ -114,34 +162,18 @@ def _extract_l4_from_frame(frame: bytes, link_type: int) -> tuple[str, int, int,
         proto = struct.unpack(">H", frame[14:16])[0]
         if proto == ETH_P_IP:
             return _parse_ipv4_l4(frame[16:])
+        if proto == ETH_P_IP6:
+            return _parse_ipv6_l4(frame[16:])
         return None
 
     return None
 
 
 def iter_pcap_packets(path: str | Path) -> Iterator[tuple[int, bytes]]:
-    """Yield (link_type, frame_bytes) from classic PCAP."""
-    data = Path(path).read_bytes()
-    if len(data) < 24:
-        raise ValueError("pcap too small")
+    """Yield (link_type, frame_bytes) from classic PCAP or PCAPNG."""
+    from .pcap_read import iter_packets
 
-    magic, _, _, _, _, _, link_type = struct.unpack("<IHHiIII", data[:24])
-    endian = "<"
-    if magic in (PCAP_MAGIC_BE, PCAP_NSEC_BE):
-        endian = ">"
-        magic, _, _, _, _, _, link_type = struct.unpack(">IHHiIII", data[:24])
-    elif magic not in (PCAP_MAGIC_LE, PCAP_NSEC_LE):
-        raise ValueError(f"unsupported pcap magic: {magic:#x}")
-
-    offset = 24
-    while offset + 16 <= len(data):
-        ts_sec, ts_usec, caplen, wirelen = struct.unpack(endian + "IIII", data[offset : offset + 16])
-        offset += 16
-        frame = data[offset : offset + caplen]
-        offset += caplen
-        if len(frame) < caplen:
-            break
-        yield link_type, frame
+    yield from iter_packets(path)
 
 
 def extract_flows(

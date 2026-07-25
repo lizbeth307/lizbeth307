@@ -20,7 +20,8 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.1.0-full"
+VERSION = "3.2.0-full"
+MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
 QUIC_VERSIONS = {
@@ -490,10 +491,14 @@ def deep_analyze_flow(label: str, payloads: list[bytes]) -> dict | None:
         return analyze_tls_flow(payloads)
     return None
 
-# --- PCAP ---
+# --- PCAP / PCAPNG ---
 PCAP_MAGIC_LE = 0xA1B2C3D4
 PCAP_MAGIC_BE = 0xD4C3B2A1
+PCAPNG_MAGIC = 0x0A0D0D0A
+BT_EPB = 0x00000006
+BT_IDB = 0x00000001
 ETH_P_IP = 0x0800
+ETH_P_IP6 = 0x86DD
 COMMON_PORTS = {53, 67, 68, 80, 123, 443, 5353, 8080, 8443}
 
 
@@ -514,14 +519,7 @@ def _flow_key(proto: str, sport: int, dport: int) -> FlowKey:
     return FlowKey(proto, min(sport, dport))
 
 
-def _parse_ipv4(frame: bytes, offset: int) -> tuple[str, int, int, bytes, int | None] | None:
-    data = frame[offset:]
-    if len(data) < 20 or (data[0] >> 4) != 4:
-        return None
-    ihl = (data[0] & 0x0F) * 4
-    proto = data[9]
-    total = struct.unpack(">H", data[2:4])[0]
-    ip = data[ihl:total]
+def _parse_l4(proto: int, ip: bytes) -> tuple[str, int, int, bytes, int | None] | None:
     if proto == 17 and len(ip) >= 8:
         s, d, u = struct.unpack(">HHH", ip[:6])
         return "udp", s, d, ip[8:u], None
@@ -532,31 +530,122 @@ def _parse_ipv4(frame: bytes, offset: int) -> tuple[str, int, int, bytes, int | 
     return None
 
 
+def _parse_ipv4(frame: bytes, offset: int) -> tuple[str, int, int, bytes, int | None] | None:
+    data = frame[offset:]
+    if len(data) < 20 or (data[0] >> 4) != 4:
+        return None
+    ihl = (data[0] & 0x0F) * 4
+    total = struct.unpack(">H", data[2:4])[0]
+    return _parse_l4(data[9], data[ihl:total])
+
+
+def _skip_ipv6_ext(data: bytes, off: int, nxt: int) -> tuple[int, int] | None:
+    while nxt in (0, 43, 44, 60, 51):
+        if nxt == 44:
+            if off + 8 > len(data):
+                return None
+            nxt = data[off]
+            off += 8
+            continue
+        if off + 2 > len(data):
+            return None
+        nxt = data[off]
+        ext_len = data[off + 1]
+        off += 2 + ext_len * 8
+        if off > len(data):
+            return None
+    return off, nxt
+
+
+def _parse_ipv6(frame: bytes, offset: int) -> tuple[str, int, int, bytes, int | None] | None:
+    data = frame[offset:]
+    if len(data) < 40 or (data[0] >> 4) != 6:
+        return None
+    payload_len = struct.unpack(">H", data[4:6])[0]
+    nxt = data[6]
+    off = 40
+    if nxt not in (6, 17):
+        skipped = _skip_ipv6_ext(data, off, nxt)
+        if not skipped:
+            return None
+        off, nxt = skipped
+    return _parse_l4(nxt, data[off : 40 + payload_len])
+
+
 def _extract(frame: bytes, link: int) -> tuple[str, int, int, bytes, int | None] | None:
     if link == 1 and len(frame) >= 14:
-        if struct.unpack(">H", frame[12:14])[0] == ETH_P_IP:
+        eth_type = struct.unpack(">H", frame[12:14])[0]
+        if eth_type == ETH_P_IP:
             return _parse_ipv4(frame, 14)
+        if eth_type == ETH_P_IP6:
+            return _parse_ipv6(frame, 14)
     if link == 113 and len(frame) >= 16:
-        if struct.unpack(">H", frame[14:16])[0] == ETH_P_IP:
+        eth_type = struct.unpack(">H", frame[14:16])[0]
+        if eth_type == ETH_P_IP:
             return _parse_ipv4(frame, 16)
-    if link in (0, 101):
-        return _parse_ipv4(frame, 4 if link == 0 else 0)
+        if eth_type == ETH_P_IP6:
+            return _parse_ipv6(frame, 16)
+    if link == 0 and len(frame) >= 4:
+        family = struct.unpack("<I", frame[:4])[0]
+        if family == 2:
+            return _parse_ipv4(frame, 4)
+        if family in (10, 30):
+            return _parse_ipv6(frame, 4)
+    if link == 101:
+        if len(frame) >= 1 and (frame[0] >> 4) == 4:
+            return _parse_ipv4(frame, 0)
+        if len(frame) >= 1 and (frame[0] >> 4) == 6:
+            return _parse_ipv6(frame, 0)
     return None
+
+
+def _iter_classic_pcap(data: bytes, endian: str) -> tuple[int, list[tuple[int, bytes]]]:
+    link = struct.unpack(endian + "IHHiIII", data[:24])[6]
+    packets: list[tuple[int, bytes]] = []
+    off = 24
+    while off + 16 <= len(data):
+        _, _, caplen, _ = struct.unpack(endian + "IIII", data[off : off + 16])
+        off += 16
+        packets.append((link, data[off : off + caplen]))
+        off += caplen
+    return link, packets
+
+
+def _iter_pcapng(data: bytes) -> list[tuple[int, bytes]]:
+    packets: list[tuple[int, bytes]] = []
+    link_type = 1
+    off = 0
+    while off + 8 <= len(data):
+        block_type, block_len = struct.unpack("<II", data[off : off + 8])
+        if block_len < 12 or off + block_len > len(data):
+            break
+        body = data[off + 8 : off + block_len - 4]
+        if block_type == BT_IDB and len(body) >= 2:
+            link_type = struct.unpack("<H", body[:2])[0]
+        elif block_type == BT_EPB and len(body) >= 20:
+            caplen = struct.unpack("<I", body[12:16])[0]
+            pkt = body[20 : 20 + caplen]
+            if pkt:
+                packets.append((link_type, pkt))
+        off += block_len
+    return packets
 
 
 def iter_pcap(path: Path):
     data = path.read_bytes()
+    if len(data) < 4:
+        return
     magic = struct.unpack("<I", data[:4])[0]
-    end = "<"
+    if magic == PCAPNG_MAGIC:
+        for item in _iter_pcapng(data):
+            yield item
+        return
+    endian = "<"
     if magic in (PCAP_MAGIC_BE, 0x4D3CB2A1):
-        end = ">"
-    link = struct.unpack(end + "IHHiIII", data[:24])[6]
-    off = 24
-    while off + 16 <= len(data):
-        _, _, caplen, _ = struct.unpack(end + "IIII", data[off : off + 16])
-        off += 16
-        yield link, data[off : off + caplen]
-        off += caplen
+        endian = ">"
+    _, packets = _iter_classic_pcap(data, endian)
+    for item in packets:
+        yield item
 
 
 def _iter_tls_stream(stream: bytes) -> list[bytes]:
@@ -1012,8 +1101,14 @@ def format_nested_notes(layer: dict) -> list[str]:
 def format_to_kaitai(fmt: dict, meta_id: str = "discovered") -> str:
     endian = fmt.get("endian") or fmt.get("length_endian") or "le"
     ks = "be" if endian == "be" else "le"
-    lines = [f"meta:", f"  id: {meta_id}", f"  endian: {ks}", "seq:", "  - id: message", "    type: message_body", "types:", "  message_body:", "    seq:"]
-    for f in fmt.get("fields", []):
+    all_fields = fmt.get("fields", [])
+    fields = all_fields[:MAX_EXPORT_FIELDS]
+    truncated = len(all_fields) > MAX_EXPORT_FIELDS
+    lines = [f"meta:", f"  id: {meta_id}", f"  endian: {ks}"]
+    if truncated:
+        lines.append(f"  doc: truncated from {len(all_fields)} fields to {MAX_EXPORT_FIELDS}")
+    lines += ["seq:", "  - id: message", "    type: message_body", "types:", "  message_body:", "    seq:"]
+    for f in fields:
         name = f.get("name", "field").replace("@", "_")
         kind = f.get("kind", "")
         if kind == "payload":
@@ -1028,6 +1123,80 @@ def format_to_kaitai(fmt: dict, meta_id: str = "discovered") -> str:
     return "\n".join(lines) + "\n"
 
 
+def _sanitize_lua(name: str) -> str:
+    return "".join(c if c.isalnum() or c == "_" else "_" for c in name)
+
+
+def format_to_lua(fmt: dict, *, flow: str) -> str:
+    fields = fmt.get("fields", [])[:MAX_EXPORT_FIELDS]
+    truncated = len(fmt.get("fields", [])) > MAX_EXPORT_FIELDS
+    endian = fmt.get("endian") or fmt.get("length_endian") or "be"
+    enc = "big" if endian == "be" else "little"
+    safe_flow = _sanitize_lua(flow.replace(":", "_"))
+    pname = f"discovered_{safe_flow.lower()}"
+    plabel = flow.replace("_", " ")
+    lines = [
+        f"-- Auto-generated dissector for flow {flow}",
+        f"-- Endian: {endian}" + (" (truncated)" if truncated else ""),
+        f'local proto = Proto("{pname}", "Discovered {plabel}")',
+        "",
+    ]
+    field_vars: list[tuple[str, str, str, dict]] = []
+    for i, f in enumerate(fields):
+        kind = f.get("kind", "")
+        name = _sanitize_lua(f.get("name", f"field_{i}"))
+        var = f"f_{name}"
+        field_vars.append((var, name, kind, f))
+        if kind == "length":
+            lines.append(
+                f'local {var} = ProtoField.uint16("{pname}.{name}", "{name}", base.DEC, nil, base.{enc.upper()})'
+            )
+        elif kind == "payload":
+            lines.append(f'local {var} = ProtoField.bytes("{pname}.{name}", "{name}")')
+        else:
+            lines.append(f'local {var} = ProtoField.uint8("{pname}.{name}", "{name}", base.HEX)')
+    lines.append(f"proto.fields = {{{', '.join(v[0] for v in field_vars)}}}")
+    lines.append("")
+    lines.append("function proto.dissector(buffer, pinfo, tree)")
+    lines.append(f'    pinfo.cols.protocol = "{plabel}"')
+    lines.append('    local subtree = tree:add(proto, buffer(), "Discovered message")')
+    lines.append("    local offset = 0")
+    lines.append("    local len_field = nil")
+    for var, _name, kind, f in field_vars:
+        size = f.get("size", 1)
+        if kind == "length":
+            lines += [
+                f"    len_field = buffer(offset, 2):uint{enc}()",
+                f"    subtree:add({var}, buffer(offset, 2))",
+                "    offset = offset + 2",
+            ]
+        elif kind == "payload":
+            lines += [
+                "    if len_field then",
+                f"        subtree:add({var}, buffer(offset, len_field))",
+                "    else",
+                f"        subtree:add({var}, buffer(offset))",
+                "    end",
+            ]
+        elif size and size > 1:
+            lines += [f"    subtree:add({var}, buffer(offset, {size}))", f"    offset = offset + {size}"]
+        else:
+            lines += [
+                "    if offset < buffer:len() then",
+                f"        subtree:add({var}, buffer(offset, 1))",
+                "        offset = offset + 1",
+                "    end",
+            ]
+    lines.append("end")
+    lines.append("")
+    upper = flow.upper()
+    if upper.startswith("TCP:"):
+        lines.append(f'DissectorTable.get("tcp.port"):add({int(flow.split(":")[-1])}, proto)')
+    elif upper.startswith("UDP:"):
+        lines.append(f'DissectorTable.get("udp.port"):add({int(flow.split(":")[-1])}, proto)')
+    return "\n".join(lines) + "\n"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="PCAP analyzer for Termux/Android")
     parser.add_argument("--version", action="version", version=f"analyze_pcap {VERSION}")
@@ -1036,6 +1205,7 @@ def main() -> int:
     parser.add_argument("--nested", action="store_true", help="nested AST v2 (recursive layers)")
     parser.add_argument("--tcp-reassemble", action="store_true", help="TCP stream reassembly + TLS split")
     parser.add_argument("--export-kaitai", metavar="DIR", help="export .ksy schemas per flow")
+    parser.add_argument("--export-lua", metavar="DIR", help="export Wireshark Lua dissectors per flow")
     parser.add_argument("--flow", help="filter flow, e.g. 443 or TCP:443")
     args = parser.parse_args()
 
@@ -1090,6 +1260,16 @@ def main() -> int:
                 ksy = kdir / f"{label}.ksy"
                 ksy.write_text(format_to_kaitai(layer.get("format", {}), meta_id=f"flow_{label}"), encoding="utf-8")
             print(f"Kaitai: {kdir}/")
+        if args.export_lua:
+            ldir = Path(args.export_lua).expanduser()
+            ldir.mkdir(parents=True, exist_ok=True)
+            for layer in report["flows"]:
+                label = layer["label"].replace(":", "_")
+                (ldir / f"{label}.lua").write_text(
+                    format_to_lua(layer.get("format", {}), flow=layer["label"]),
+                    encoding="utf-8",
+                )
+            print(f"Wireshark Lua: {ldir}/")
         return 0
 
     report = {"file": str(path), "blind": args.blind, "tcp_reassemble": reasm, "flows": []}
@@ -1109,6 +1289,15 @@ def main() -> int:
             if fmt:
                 (kdir / f"{label}.ksy").write_text(format_to_kaitai(fmt, meta_id=f"flow_{label}"), encoding="utf-8")
         print(f"Kaitai: {kdir}/")
+    if args.export_lua and args.blind:
+        ldir = Path(args.export_lua).expanduser()
+        ldir.mkdir(parents=True, exist_ok=True)
+        for entry in report["flows"]:
+            label = entry.get("flow", "flow").replace(":", "_")
+            fmt = entry.get("format") or entry.get("inner_format") or {}
+            if fmt:
+                (ldir / f"{label}.lua").write_text(format_to_lua(fmt, flow=entry.get("flow", label)), encoding="utf-8")
+        print(f"Wireshark Lua: {ldir}/")
     return 0
 
 

@@ -508,6 +508,18 @@ def cmd_blind(args: argparse.Namespace) -> int:
                 encoding="utf-8",
             )
         print(f"Kaitai: {kdir}/")
+    if getattr(args, "export_lua", None):
+        from protocol_ast.wireshark_export import export_flow_lua
+
+        ldir = Path(args.export_lua).expanduser()
+        ldir.mkdir(parents=True, exist_ok=True)
+        for layer in reports:
+            label = layer["label"].replace(":", "_")
+            (ldir / f"{label}.lua").write_text(
+                export_flow_lua(layer["label"], layer.get("format", {})),
+                encoding="utf-8",
+            )
+        print(f"Wireshark Lua: {ldir}/")
     return 0
 
 
@@ -643,6 +655,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_blind.add_argument("--tcp-reassemble", action="store_true", help="TCP stream reassembly + TLS split")
     p_blind.add_argument("--json", action="store_true", help="зберегти blind_nested_report.json")
     p_blind.add_argument("--export-kaitai", metavar="DIR", help="експорт .ksy на потік")
+    p_blind.add_argument("--export-lua", metavar="DIR", help="експорт Wireshark Lua dissector")
     p_blind.set_defaults(func=cmd_blind)
 
     return parser

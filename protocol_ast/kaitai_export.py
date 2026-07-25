@@ -5,22 +5,33 @@ from __future__ import annotations
 from typing import Any
 
 
+MAX_KSY_FIELDS = 32
+
+
 def format_to_kaitai(fmt: dict[str, Any], *, meta_id: str = "discovered") -> str:
     """Generate Kaitai Struct schema from discover_format() dict."""
-    fields = fmt.get("fields", [])
+    all_fields = fmt.get("fields", [])
+    fields = all_fields[:MAX_KSY_FIELDS]
+    truncated = len(all_fields) > MAX_KSY_FIELDS
     endian = fmt.get("endian") or fmt.get("length_endian") or "le"
     ks_endian = "be" if endian == "be" else "le"
     lines = [
         "meta:",
         f"  id: {meta_id}",
         f"  endian: {ks_endian}",
-        "seq:",
-        "  - id: message",
-        "    type: message_body",
-        "types:",
-        "  message_body:",
-        "    seq:",
     ]
+    if truncated:
+        lines.append(f"  doc: truncated from {len(all_fields)} fields to {MAX_KSY_FIELDS}")
+    lines.extend(
+        [
+            "seq:",
+            "  - id: message",
+            "    type: message_body",
+            "types:",
+            "  message_body:",
+            "    seq:",
+        ]
+    )
     for f in fields:
         kind = f.get("kind", "")
         name = f.get("name", "field").replace("@", "_")
