@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.8.0-full"
+VERSION = "3.8.1-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -2042,7 +2042,16 @@ def format_to_lua(fmt: dict, *, flow: str) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description="PCAP analyzer for Termux/Android")
     parser.add_argument("--version", action="version", version=f"analyze_pcap {VERSION}")
-    parser.add_argument("pcap", nargs="?", help="path to .pcap file")
+    parser.add_argument(
+        "pcap",
+        nargs="*",
+        help="path(s) to .pcap — glob OK; newest file is used when several match",
+    )
+    parser.add_argument(
+        "--self-update",
+        action="store_true",
+        help="download latest analyze_pcap + protocol_ast into $HOME (no apt)",
+    )
     parser.add_argument("--blind", action="store_true", help="blind deep analysis (TLS/QUIC inner frames)")
     parser.add_argument("--nested", action="store_true", help="nested AST v2 (recursive layers)")
     parser.add_argument("--signal", action="store_true", help="living signal propagate (depth 5, universal splitters)")
@@ -2061,6 +2070,75 @@ def main() -> int:
     parser.add_argument("--limit", type=int, default=5, help="packets to show with --dissect")
     parser.add_argument("--flow", help="filter flow, e.g. 443 or TCP:443")
     args = parser.parse_args()
+
+    if args.self_update:
+        try:
+            from protocol_ast.termux_update import download_tree
+        except Exception:
+            # bootstrap: load beside this file or $HOME/protocol_ast
+            import importlib.util
+
+            candidates = [
+                Path(__file__).resolve().parent / "protocol_ast" / "termux_update.py",
+                Path.home() / "protocol_ast" / "termux_update.py",
+            ]
+            download_tree = None
+            for fk in candidates:
+                if not fk.exists():
+                    continue
+                spec = importlib.util.spec_from_file_location("termux_update_standalone", fk)
+                if spec and spec.loader:
+                    mod = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(mod)
+                    download_tree = mod.download_tree
+                    break
+            if download_tree is None:
+                # inline minimal bootstrap from GitHub API + jsDelivr
+                print("self-update: protocol_ast/termux_update.py відсутній — bootstrap…", flush=True)
+                import json
+                import ssl
+                import time
+                import urllib.request
+
+                def _get(url: str) -> bytes:
+                    req = urllib.request.Request(url, headers={"User-Agent": "analyze_pcap-self-update"})
+                    with urllib.request.urlopen(req, timeout=60, context=ssl.create_default_context()) as r:
+                        return r.read()
+
+                branch = "cursor/signal-pipeline-p4-a4e6"
+                try:
+                    sha = json.loads(
+                        _get(f"https://api.github.com/repos/lizbeth307/lizbeth307/commits/{branch}").decode()
+                    )["sha"]
+                    base = f"https://cdn.jsdelivr.net/gh/lizbeth307/lizbeth307@{sha}"
+                except Exception:
+                    base = f"https://raw.githubusercontent.com/lizbeth307/lizbeth307/{branch}"
+                    sha = f"raw-{int(time.time())}"
+                home = Path.home()
+                (home / "protocol_ast").mkdir(exist_ok=True)
+                for rel in ("analyze_pcap.py", "probe_network.py", "protocol_ast/termux_update.py"):
+                    url = f"{base}/{rel}" if "jsdelivr" in base else f"{base}/{rel}?t={int(time.time())}"
+                    data = _get(url)
+                    dest = home / rel
+                    dest.parent.mkdir(parents=True, exist_ok=True)
+                    dest.write_bytes(data)
+                sys.path.insert(0, str(home))
+                from protocol_ast.termux_update import download_tree  # type: ignore
+
+        report = download_tree(Path.home())
+        print(f"self-update: ref={report.get('ref')}")
+        print(f"  base={report.get('base')}")
+        print(f"  files={len(report.get('files') or [])}")
+        for err in report.get("errors") or []:
+            print(f"  ⚠ {err}", file=sys.stderr)
+        fresh = Path.home() / "analyze_pcap.py"
+        if fresh.exists():
+            for line in fresh.read_text(encoding="utf-8", errors="replace").splitlines():
+                if line.startswith("VERSION"):
+                    ver = line.split("=", 1)[-1].strip().strip("\"'")
+                    print(f"analyze_pcap {ver}")
+                    break
+        return 1 if report.get("errors") and not report.get("files") else 0
 
     if args.dissect or args.dissect_html:
         mode = "dissect"
@@ -2081,11 +2159,23 @@ def main() -> int:
     if not args.pcap:
         parser.print_help()
         return 1
-    path = Path(args.pcap).expanduser()
-    if not path.exists():
-        print(f"Файл не знайдено: {path}", file=sys.stderr)
-        print("На телефоні файл зазвичай: ~/downloads/PCAPdroid*.pcap", file=sys.stderr)
+
+    # Shell glob ~/downloads/PCAPdroid_*.pcap → many args; pick newest
+    try:
+        from protocol_ast.termux_update import pick_newest_pcap
+    except Exception:
+        pick_newest_pcap = None
+    if pick_newest_pcap is not None:
+        path = pick_newest_pcap(args.pcap)
+    else:
+        cands = [Path(p).expanduser() for p in args.pcap if Path(p).expanduser().is_file()]
+        path = max(cands, key=lambda p: p.stat().st_mtime) if cands else None
+    if path is None:
+        print(f"Файл не знайдено: {args.pcap}", file=sys.stderr)
+        print("На телефоні: ~/downloads/PCAPdroid_*.pcap", file=sys.stderr)
         return 1
+    if len(args.pcap) > 1:
+        print(f"Знайдено {len(args.pcap)} файлів → беру найновіший", flush=True)
     print(f"PCAP: {path} ({path.stat().st_size} bytes)\n")
 
     if args.keylog:

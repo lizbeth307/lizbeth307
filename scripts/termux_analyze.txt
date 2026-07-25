@@ -1,30 +1,16 @@
-# Termux v3.8.0 — швидке оновлення БЕЗ apt (якщо openssl.cnf питає Y/N)
+# Termux v3.8.1 — один рядок оновлення (БЕЗ apt / openssl.cnf)
 
-SHA=b44215d333e3a176d8773808450be674523d98f7
-BASE=https://cdn.jsdelivr.net/gh/lizbeth307/lizbeth307@$SHA
-
-# --- тільки файли (рекомендовано) ---
-curl -fL -o ~/analyze_pcap.py "$BASE/analyze_pcap.py"
-curl -fL -o ~/probe_network.py "$BASE/probe_network.py"
-mkdir -p ~/protocol_ast
-for f in __init__.py aes_gcm.py tls_keylog.py pcapng_secrets.py find_keylog.py \
-  http2.py hpack_decode.py signal.py body_peel.py json_api.py binary_peel.py \
-  probe_loop.py stream_agent.py smart_probe.py active_probe.py stream_enrich.py \
-  splitters.py tls_handshake.py pcap_analyze.py pcap_read.py deep_decode.py \
-  align.py cluster.py sequitur.py parser.py serde.py pipeline.py ast_nodes.py \
-  io_utils.py tcp_reassemble.py probe_env.py; do
-  curl -fL -o ~/protocol_ast/$f "$BASE/protocol_ast/$f"
-done
+# Завжди свіжий tip (raw + cache bust):
+curl -fsSL "https://raw.githubusercontent.com/lizbeth307/lizbeth307/cursor/signal-pipeline-p4-a4e6/scripts/termux_setup.sh?t=$(date +%s)" | bash
 
 export PYTHONPATH=$HOME
-python3 ~/analyze_pcap.py --version   # має бути 3.8.0-full
+python3 ~/analyze_pcap.py --version
+# → analyze_pcap 3.8.1-full
 
-# --- ОДИН pcap (не PCAPdroid_*.pcap — * розгортає кілька файлів) ---
-PCAP=~/downloads/PCAPdroid_25_лип._22_46_14.pcap
-python3 ~/analyze_pcap.py "$PCAP" --signal --flow TCP:443 --keylog auto
-python3 ~/analyze_pcap.py "$PCAP" --stream --keylog auto
+# Glob OK — бере найновіший pcap:
+python3 ~/analyze_pcap.py ~/downloads/PCAPdroid_*.pcap --signal --flow TCP:443 --keylog auto
+python3 ~/analyze_pcap.py ~/downloads/PCAPdroid_*.pcap --stream --keylog auto
 python3 ~/probe_network.py --loop 3 --no-capture
 
-# повний setup (download спочатку; apt без питань):
-# SKIP_PKG=1 curl -fsSL "$BASE/scripts/termux_setup.sh" | bash
-# або: curl -fsSL "$BASE/scripts/termux_setup.sh" | bash
+# Наступні оновлення (вже з 3.8.1):
+python3 ~/analyze_pcap.py --self-update

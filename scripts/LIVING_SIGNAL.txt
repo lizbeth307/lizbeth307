@@ -29,16 +29,23 @@ Living Signal — головна візія
   analyze_pcap.py              — Termux single-file UI (v3.8.0)
   probe_network.py             — зонд + loop + stream + watch
 
+Оновлення (телефон) — БЕЗ apt
+-----------------------------
+  curl -fsSL "https://raw.githubusercontent.com/lizbeth307/lizbeth307/cursor/signal-pipeline-p4-a4e6/scripts/termux_setup.sh?t=$(date +%s)" | bash
+  export PYTHONPATH=$HOME
+  python3 ~/analyze_pcap.py --version          # 3.8.1-full
+  # далі: python3 ~/analyze_pcap.py --self-update
+
 Команди (телефон)
 -----------------
   export PYTHONPATH=$HOME
 
-  # offline living signal (після MITM capture)
-  python3 ~/analyze_pcap.py ~/downloads/cap.pcap \
+  # glob OK — бере найновіший pcap
+  python3 ~/analyze_pcap.py ~/downloads/PCAPdroid_*.pcap \
     --signal --flow TCP:443 --keylog auto
 
   # incremental events
-  python3 ~/analyze_pcap.py ~/downloads/cap.pcap --stream --keylog auto
+  python3 ~/analyze_pcap.py ~/downloads/PCAPdroid_*.pcap --stream --keylog auto
 
   # adaptive probe loop (без pcap теж)
   python3 ~/probe_network.py --loop 3 --no-capture
