@@ -363,6 +363,32 @@ class Signal:
                     f"  HTTP/2: {self.deep.get('frames', {})} "
                     f"streams={self.deep.get('streams', 0)}"
                 )
+                for h in (self.deep.get("headers") or [])[:3]:
+                    bits = [f"s{h.get('stream')}"]
+                    for k in (":method", ":status", ":path", ":authority", "content-type", "content-encoding"):
+                        if k in h:
+                            bits.append(f"{k}={h[k]}")
+                    notes.append("  hdr: " + " ".join(bits))
+                if self.deep.get("data_preview"):
+                    notes.append(f"  DATA: {self.deep['data_preview'][0][:80]}")
+            if kind == "http2_data":
+                notes.append(
+                    f"  http2_data: {self.deep.get('payloads', 0)} payloads "
+                    f"(html={self.deep.get('html', 0)} json={self.deep.get('json', 0)})"
+                )
+                for h in (self.deep.get("headers") or [])[:3]:
+                    bits = [f"s{h.get('stream')}"]
+                    for k in (":method", ":status", ":path", ":authority", "content-type", "content-encoding"):
+                        if k in h:
+                            bits.append(f"{k}={h[k]}")
+                    notes.append("  hdr: " + " ".join(bits))
+                for m in (self.deep.get("body_meta") or [])[:3]:
+                    notes.append(
+                        f"  meta: stream={m.get('stream')} "
+                        f"{m.get('decompress')} {m.get('raw_len')}→{m.get('plain_len')}"
+                    )
+                for prev in (self.deep.get("preview") or [])[:2]:
+                    notes.append(f"  body: {prev[:100]}")
             if kind == "http1":
                 notes.append(f"  HTTP/1: {self.deep.get('methods', {})}")
                 if self.deep.get("hosts"):

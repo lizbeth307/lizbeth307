@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from collections import Counter
+import zlib
+from collections import Counter, defaultdict
 
 HTTP2_PREFACE = b"PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n"
 
@@ -56,21 +57,139 @@ def all_single_http2_frames(messages: list[bytes]) -> bool:
     return bool(messages) and all(is_single_http2_frame(m) for m in messages)
 
 
+def _frame_body(frame: bytes) -> bytes:
+    length = int.from_bytes(frame[:3], "big")
+    return frame[9 : 9 + length]
+
+
+def _strip_pad_priority(payload: bytes, flags: int) -> bytes:
+    if flags & 0x08 and payload:  # PADDED
+        pad = payload[0]
+        end = len(payload) - pad
+        payload = payload[1:end] if end > 1 else b""
+    if flags & 0x20 and len(payload) >= 5:  # PRIORITY
+        payload = payload[5:]
+    return payload
+
+
+def decompress_http_body(data: bytes, content_encoding: str | None = None) -> tuple[bytes, str]:
+    """Try gzip/deflate/br; return (bytes, method_or_identity)."""
+    enc = (content_encoding or "").lower()
+    if data.startswith(b"\x1f\x8b") or "gzip" in enc:
+        try:
+            return zlib.decompress(data, 16 + zlib.MAX_WBITS), "gzip"
+        except Exception:
+            pass
+    if "deflate" in enc or (len(data) >= 2 and data[0] == 0x78):
+        for wbits in (zlib.MAX_WBITS, -zlib.MAX_WBITS):
+            try:
+                return zlib.decompress(data, wbits), "deflate"
+            except Exception:
+                continue
+    if "br" in enc:
+        try:
+            import brotli  # type: ignore
+
+            return brotli.decompress(data), "br"
+        except Exception:
+            pass
+    # bare brotli magic heuristic is unreliable — skip
+    return data, "identity"
+
+
+def _decode_headers_block(block: bytes, decoders: list) -> list[tuple[str, str]]:
+    for dec in decoders:
+        try:
+            hdrs = dec.decode(block)
+            if hdrs:
+                return list(hdrs)
+        except Exception:
+            continue
+    try:
+        from .hpack_decode import Decoder
+
+        return Decoder().decode(block)
+    except Exception:
+        return []
+
+
+def analyze_http2_streams(frames: list[bytes]) -> dict:
+    """HPACK-decode HEADERS + associate/decompress DATA per stream."""
+    from .hpack_decode import Decoder, get_decoder
+
+    # Two HPACK contexts (req/resp); try both on each block
+    decoders = [get_decoder(), Decoder()]
+    streams: dict[int, dict] = defaultdict(lambda: {"headers": [], "data": [], "encoding": None})
+    header_summaries: list[dict] = []
+
+    for f in frames:
+        if not is_single_http2_frame(f) and len(f) >= 9:
+            # tolerate
+            pass
+        if len(f) < 9:
+            continue
+        ftype = f[3]
+        flags = f[4]
+        sid = int.from_bytes(f[5:9], "big") & 0x7FFFFFFF
+        body = _strip_pad_priority(_frame_body(f), flags)
+
+        if ftype == 0x1 and sid:  # HEADERS
+            hdrs = _decode_headers_block(body, decoders)
+            if hdrs:
+                streams[sid]["headers"].extend(hdrs)
+                enc = next((v for k, v in hdrs if k.lower() == "content-encoding"), None)
+                if enc:
+                    streams[sid]["encoding"] = enc
+                summary = {k: v for k, v in hdrs if k.startswith(":") or k.lower() in (
+                    "content-type", "content-encoding", "content-length", "server", "location"
+                )}
+                if summary:
+                    header_summaries.append({"stream": sid, **summary})
+        elif ftype == 0x0 and sid and body:  # DATA
+            streams[sid]["data"].append(body)
+
+    bodies: list[bytes] = []
+    body_meta: list[dict] = []
+    for sid, info in streams.items():
+        if not info["data"]:
+            continue
+        raw = b"".join(info["data"])
+        plain, method = decompress_http_body(raw, info.get("encoding"))
+        bodies.append(plain)
+        hdr = {k: v for k, v in info["headers"] if k.startswith(":") or k.lower() in (
+            "content-type", "content-encoding"
+        )}
+        body_meta.append({
+            "stream": sid,
+            "encoding": info.get("encoding") or method,
+            "decompress": method,
+            "raw_len": len(raw),
+            "plain_len": len(plain),
+            **hdr,
+        })
+
+    return {
+        "streams": dict(streams),
+        "headers": header_summaries,
+        "bodies": bodies,
+        "body_meta": body_meta,
+    }
+
+
 def peel_http2_data_payloads(messages: list[bytes]) -> list[bytes]:
-    """Extract DATA frame payloads (next signal layer)."""
+    """Extract DATA payloads; decompress via stream content-encoding when possible."""
+    if all_single_http2_frames(messages):
+        analysis = analyze_http2_streams(messages)
+        if analysis["bodies"]:
+            return analysis["bodies"]
     out: list[bytes] = []
     for m in messages:
         if not is_single_http2_frame(m) or m[3] != 0x0:
             continue
-        length = int.from_bytes(m[:3], "big")
-        payload = m[9 : 9 + length]
-        flags = m[4]
-        if flags & 0x08 and payload:  # PADDED
-            pad = payload[0]
-            end = len(payload) - pad
-            payload = payload[1:end] if end > 1 else b""
+        payload = _strip_pad_priority(_frame_body(m), m[4])
         if payload:
-            out.append(payload)
+            plain, _ = decompress_http_body(payload)
+            out.append(plain)
     return out
 
 
@@ -138,9 +257,8 @@ def _text_preview(data: bytes, limit: int = 80) -> str:
 
 def http2_deep(frames: list[bytes]) -> dict:
     types: Counter[str] = Counter()
-    streams: set[int] = set()
+    stream_ids: set[int] = set()
     has_preface = False
-    data_previews: list[str] = []
     for f in frames:
         if f == HTTP2_PREFACE or f.startswith(HTTP2_PREFACE):
             has_preface = True
@@ -151,29 +269,49 @@ def http2_deep(frames: list[bytes]) -> dict:
         types[t] += 1
         sid = int.from_bytes(f[5:9], "big") & 0x7FFFFFFF
         if sid:
-            streams.add(sid)
-        if f[3] == 0x0 and len(f) > 9 and len(data_previews) < 3:
-            data_previews.append(_text_preview(f[9:]))
+            stream_ids.add(sid)
+
+    analysis = analyze_http2_streams([f for f in frames if is_single_http2_frame(f) or len(f) >= 9])
+    data_previews = [_text_preview(b, 80) for b in analysis["bodies"][:3]]
     return {
         "kind": "http2",
         "frames": dict(types),
-        "streams": len(streams),
+        "streams": len(stream_ids),
         "preface": has_preface,
         "total_frames": sum(types.values()),
         "data_preview": data_previews,
+        "headers": analysis["headers"][:8],
+        "body_meta": analysis["body_meta"][:8],
     }
 
 
 def http2_data_deep(payloads: list[bytes]) -> dict:
-    previews = [_text_preview(p, 120) for p in payloads[:5]]
-    html = sum(1 for p in payloads if b"<html" in p[:200].lower() or b"<!doctype" in p[:200].lower())
-    json_n = sum(1 for p in payloads if p[:1] in (b"{", b"[") or p.lstrip()[:1] in (b"{", b"["))
+    # If payloads are still frames, enrich; else treat as bodies
+    if payloads and all_single_http2_frames(payloads):
+        analysis = analyze_http2_streams(payloads)
+        bodies = analysis["bodies"] or payloads
+        meta = analysis["body_meta"]
+        headers = analysis["headers"]
+    else:
+        bodies = []
+        meta = []
+        headers = []
+        for p in payloads:
+            plain, method = decompress_http_body(p)
+            bodies.append(plain)
+            meta.append({"decompress": method, "raw_len": len(p), "plain_len": len(plain)})
+
+    previews = [_text_preview(p, 120) for p in bodies[:5]]
+    html = sum(1 for p in bodies if b"<html" in p[:400].lower() or b"<!doctype" in p[:400].lower())
+    json_n = sum(1 for p in bodies if p.lstrip()[:1] in (b"{", b"["))
     return {
         "kind": "http2_data",
-        "payloads": len(payloads),
+        "payloads": len(bodies),
         "html": html,
         "json": json_n,
         "preview": previews,
+        "headers": headers[:8],
+        "body_meta": meta[:8],
     }
 
 

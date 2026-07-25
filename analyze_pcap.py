@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.6.5-full"
+VERSION = "3.7.0-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -1056,9 +1056,10 @@ def _embedded_split_http2(messages: list[bytes]) -> tuple[str, list[bytes]] | No
 
     preface = b"PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n"
     frames: list[bytes] = []
-    ok = 0
+    grew = False
     for m in messages:
         if _single(m):
+            frames.append(m)
             continue
         data = m[len(preface) :] if m.startswith(preface) else m
         off = 0
@@ -1069,11 +1070,15 @@ def _embedded_split_http2(messages: list[bytes]) -> tuple[str, list[bytes]] | No
                 break
             local.append(data[off : off + 9 + ln])
             off += 9 + ln
-        if len(local) >= 2 or (local and len(messages) == 1):
+        if local:
             frames.extend(local)
-            ok += 1
-    if ok >= 1 and len(frames) >= 2:
+            if len(local) > 1:
+                grew = True
+    if len(frames) >= 2 and (grew or len(frames) > len(messages)):
         return "http2_frames", frames
+    if frames and all(_single(f) for f in frames):
+        data = [f[9:] for f in frames if f[3] == 0x0 and len(f) > 9]
+        return ("http2_data", data) if data else None
     return None
 
 
@@ -1526,6 +1531,12 @@ def format_nested_notes(layer: dict) -> list[str]:
     deep = layer.get("deep") or {}
     if deep.get("kind") == "http2":
         notes.append(f"  HTTP/2: {deep.get('frames', {})} streams={deep.get('streams', 0)}")
+        for h in (deep.get("headers") or [])[:3]:
+            bits = [f"s{h.get('stream')}"]
+            for k in (":method", ":status", ":path", ":authority", "content-type", "content-encoding"):
+                if k in h:
+                    bits.append(f"{k}={h[k]}")
+            notes.append("  hdr: " + " ".join(bits))
         if deep.get("data_preview"):
             notes.append(f"  DATA: {deep['data_preview'][0][:80]}")
     if deep.get("kind") == "http2_data":
@@ -1533,6 +1544,17 @@ def format_nested_notes(layer: dict) -> list[str]:
             f"  http2_data: {deep.get('payloads', 0)} payloads "
             f"(html={deep.get('html', 0)} json={deep.get('json', 0)})"
         )
+        for h in (deep.get("headers") or [])[:3]:
+            bits = [f"s{h.get('stream')}"]
+            for k in (":method", ":status", ":path", ":authority", "content-type", "content-encoding"):
+                if k in h:
+                    bits.append(f"{k}={h[k]}")
+            notes.append("  hdr: " + " ".join(bits))
+        for m in (deep.get("body_meta") or [])[:3]:
+            notes.append(
+                f"  meta: stream={m.get('stream')} "
+                f"{m.get('decompress')} {m.get('raw_len')}→{m.get('plain_len')}"
+            )
         for prev in (deep.get("preview") or [])[:2]:
             notes.append(f"  body: {prev[:100]}")
     if deep.get("kind") == "tls":
