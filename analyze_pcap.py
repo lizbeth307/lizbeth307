@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.7.1-full"
+VERSION = "3.8.0-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -1230,7 +1230,31 @@ def recursive_nested_analyze(
             try:
                 from protocol_ast.body_peel import body_deep
 
-                layer["deep"]["content"] = body_deep(messages)
+                charset = None
+                for h in layer["deep"].get("headers") or []:
+                    ct = h.get("content-type") or ""
+                    if "charset=" in ct.lower():
+                        charset = ct.split("charset=", 1)[-1].split(";")[0].strip()
+                        break
+                layer["deep"]["content"] = body_deep(messages, charset=charset)
+            except Exception:
+                pass
+            try:
+                from protocol_ast.json_api import json_api_deep, looks_like_json_api
+
+                if looks_like_json_api(messages):
+                    api = json_api_deep(messages, headers=layer["deep"].get("headers"))
+                    layer["deep"]["json_api"] = api
+                    layer["children"].append({
+                        "label": f"{label}/json_api",
+                        "depth": depth + 1,
+                        "messages": len(messages),
+                        "splitter": "json_api",
+                        "entropy": "structured",
+                        "deep": api,
+                        "children": [],
+                        "opaque": False,
+                    })
             except Exception:
                 pass
             layer["entropy"] = "structured"
@@ -1273,6 +1297,46 @@ def recursive_nested_analyze(
                 layer["splitter"] = "app_body"
                 layer["deep"] = body_deep(messages)
                 layer["entropy"] = "structured"
+                try:
+                    from protocol_ast.json_api import json_api_deep, looks_like_json_api
+
+                    if looks_like_json_api(messages):
+                        api = json_api_deep(messages)
+                        layer["deep"]["json_api"] = api
+                        layer["children"].append({
+                            "label": f"{label}/json_api",
+                            "depth": depth + 1,
+                            "messages": len(messages),
+                            "splitter": "json_api",
+                            "entropy": "structured",
+                            "deep": api,
+                            "children": [],
+                            "opaque": False,
+                        })
+                except Exception:
+                    pass
+                return layer
+        except Exception:
+            pass
+        try:
+            from protocol_ast.binary_peel import binary_peel
+
+            bin_deep = binary_peel(messages)
+            if bin_deep:
+                name = bin_deep["kind"]
+                layer["splitter"] = name
+                layer["deep"] = bin_deep
+                layer["entropy"] = "structured"
+                layer["children"].append({
+                    "label": f"{label}/{name}",
+                    "depth": depth + 1,
+                    "messages": len(messages),
+                    "splitter": name,
+                    "entropy": "structured",
+                    "deep": bin_deep,
+                    "children": [],
+                    "opaque": False,
+                })
                 return layer
         except Exception:
             pass
@@ -1617,6 +1681,29 @@ def format_nested_notes(layer: dict) -> list[str]:
             notes.append(f"  title: {t}")
         if deep.get("json_keys"):
             notes.append(f"  json_keys: {', '.join(deep['json_keys'][:10])}")
+    if deep.get("kind") == "json_api" or deep.get("json_api"):
+        api = deep if deep.get("kind") == "json_api" else (deep.get("json_api") or {})
+        notes.append(
+            f"  json_api: {api.get('bodies', 0)} bodies, "
+            f"{api.get('field_count', 0)} fields"
+        )
+        if api.get("paths"):
+            notes.append(f"  api_paths: {', '.join(api['paths'][:6])}")
+        if api.get("sample_keys"):
+            notes.append(f"  schema: {', '.join(api['sample_keys'][:10])}")
+    if deep.get("kind") == "protobuf":
+        notes.append(
+            f"  protobuf: {deep.get('field_count', 0)} fields "
+            f"cov={deep.get('avg_coverage', 0)}"
+        )
+        for f in (deep.get("schema") or [])[:8]:
+            notes.append(f"  pb_f{f.get('field')}: {f.get('wire')} ×{f.get('seen')}")
+    if deep.get("kind") == "msgpack":
+        notes.append(
+            f"  msgpack: parsed={deep.get('parsed', 0)} keys={deep.get('key_count', 0)}"
+        )
+        if deep.get("keys"):
+            notes.append(f"  mp_keys: {', '.join(deep['keys'][:10])}")
     if deep.get("kind") == "tls":
         if deep.get("sni_hosts"):
             notes.append(f"  SNI: {', '.join(deep['sni_hosts'][:6])}")
@@ -1959,6 +2046,8 @@ def main() -> int:
     parser.add_argument("--blind", action="store_true", help="blind deep analysis (TLS/QUIC inner frames)")
     parser.add_argument("--nested", action="store_true", help="nested AST v2 (recursive layers)")
     parser.add_argument("--signal", action="store_true", help="living signal propagate (depth 5, universal splitters)")
+    parser.add_argument("--stream", action="store_true", help="incremental living-signal events over pcap")
+    parser.add_argument("--every", type=int, default=8, help="with --stream: emit every N messages")
     parser.add_argument(
         "--keylog",
         metavar="FILE|auto",
@@ -1975,6 +2064,8 @@ def main() -> int:
 
     if args.dissect or args.dissect_html:
         mode = "dissect"
+    elif args.stream:
+        mode = "stream agent"
     elif args.signal:
         mode = "signal propagate"
         args.nested = True
@@ -2038,6 +2129,28 @@ def main() -> int:
             else:
                 print(f"Keylog: {kpath} ({kpath.stat().st_size} bytes)\n")
                 args.keylog = str(kpath)
+
+    if args.stream:
+        try:
+            from protocol_ast.stream_agent import analyze_pcap_streaming, write_stream_report
+        except Exception as exc:
+            print(f"stream agent: {exc}", file=sys.stderr)
+            return 1
+        events = analyze_pcap_streaming(
+            path,
+            every_n=args.every,
+            keylog=args.keylog,
+            flow_filter=args.flow,
+        )
+        for ev in events:
+            print(f"── {ev.flow} msgs={ev.messages} path={ev.path}")
+            for n in ev.notes[:10]:
+                print(f"   {n}" if n.startswith("[") or n.startswith("  ") else f"   • {n}")
+            print()
+        out = path.parent / "stream_report.json"
+        write_stream_report(events, out)
+        print(f"Звіт: {out}  events={len(events)}")
+        return 0 if events else 1
 
     reasm = args.tcp_reassemble or args.nested or args.signal
     flows = extract_flows(path, tcp_reassemble=reasm)

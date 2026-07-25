@@ -173,11 +173,63 @@ class Signal:
         child.propagate(max_depth=max_depth)
         return child
 
+    def _try_binary_peel(self) -> bool:
+        """Attach protobuf/msgpack child when bodies look like binary APIs."""
+        from .binary_peel import binary_peel
+
+        bin_deep = binary_peel(self.messages)
+        if not bin_deep:
+            return False
+        name = bin_deep["kind"]
+        self.splitter = name
+        self.deep = bin_deep
+        self.entropy = "structured"
+        child = self._spawn(name, self.messages)
+        child.deep = bin_deep
+        child.entropy = "structured"
+        self.children.append(child)
+        return True
+
     def propagate(self, *, max_depth: int = 5) -> Signal:
         """Discover format, peel handshake, decrypt if keylog — until entropy wall."""
         self.analyze()
         if self.depth >= max_depth or len(self.messages) < 2:
             return self
+
+        # Already-enriched http2_data leaf — body/JSON peel regardless of entropy
+        if self.depth > 0 and self.deep and self.deep.get("kind") == "http2_data":
+            from .body_peel import body_deep
+            from .json_api import json_api_deep, looks_like_json_api
+
+            charset = None
+            for h in self.deep.get("headers") or []:
+                ct = h.get("content-type") or ""
+                if "charset=" in ct.lower():
+                    charset = ct.split("charset=", 1)[-1].split(";")[0].strip()
+                    break
+            self.deep["content"] = body_deep(self.messages, charset=charset)
+            if looks_like_json_api(self.messages):
+                api = json_api_deep(self.messages, headers=self.deep.get("headers"))
+                self.deep["json_api"] = api
+                child = self._spawn("json_api", self.messages)
+                child.deep = api
+                child.entropy = "structured"
+                self.children.append(child)
+            self.entropy = "structured"
+            return self
+
+        # Binary API bodies when not clearly HTTP — works for structured entropy too
+        if self.depth > 0:
+            from .body_peel import looks_like_app_body
+            from .http2 import looks_like_http1, looks_like_http2
+
+            if (
+                not looks_like_http2(self.messages)
+                and not looks_like_http1(self.messages)
+                and not looks_like_app_body(self.messages)
+                and self._try_binary_peel()
+            ):
+                return self
 
         # High-entropy layers: peel handshake / decrypt / HTTP/2 before wall
         if self.entropy == "high" and self.depth > 0:
@@ -190,18 +242,6 @@ class Signal:
                 looks_like_http1,
                 split_http2_frames,
             )
-
-            # Already enriched http2_data leaf (bodies) — keep meta, add content class
-            if self.deep and self.deep.get("kind") == "http2_data":
-                charset = None
-                for h in self.deep.get("headers") or []:
-                    ct = h.get("content-type") or ""
-                    if "charset=" in ct.lower():
-                        charset = ct.split("charset=", 1)[-1].split(";")[0].strip()
-                        break
-                self.deep["content"] = body_deep(self.messages, charset=charset)
-                self.entropy = "structured"
-                return self
 
             h2 = split_http2_frames(self.messages)
             if h2:
@@ -218,14 +258,26 @@ class Signal:
                 self.children.append(child)
                 return self
             if looks_like_app_body(self.messages):
+                from .json_api import json_api_deep, looks_like_json_api
+
                 self.splitter = "app_body"
                 self.deep = body_deep(self.messages)
                 self.entropy = "structured"
+                if looks_like_json_api(self.messages):
+                    api = json_api_deep(self.messages)
+                    self.deep["json_api"] = api
+                    child = self._spawn("json_api", self.messages)
+                    child.deep = api
+                    child.entropy = "structured"
+                    self.children.append(child)
                 return self
             if looks_like_http1(self.messages):
                 self.splitter = "http1"
                 self.deep = http1_deep(self.messages)
                 self.entropy = "structured"
+                return self
+
+            if self._try_binary_peel():
                 return self
 
             hs = split_tls_handshake_bodies(self.messages)
@@ -257,6 +309,8 @@ class Signal:
 
         split = discover_splitter(self.messages, depth=self.depth)
         if not split:
+            if self._try_binary_peel():
+                return self
             dec = self._try_keylog_decrypt(self.messages, max_depth=max_depth)
             if dec:
                 self.children.append(dec)
@@ -418,6 +472,30 @@ class Signal:
                         notes.append(f"  title: {t}")
                     if content.get("json_keys"):
                         notes.append(f"  json_keys: {', '.join(content['json_keys'][:10])}")
+            if kind == "json_api" or self.deep.get("json_api"):
+                api = self.deep if kind == "json_api" else (self.deep.get("json_api") or {})
+                notes.append(
+                    f"  json_api: {api.get('bodies', 0)} bodies, "
+                    f"{api.get('field_count', 0)} fields"
+                )
+                if api.get("paths"):
+                    notes.append(f"  api_paths: {', '.join(api['paths'][:6])}")
+                if api.get("sample_keys"):
+                    notes.append(f"  schema: {', '.join(api['sample_keys'][:10])}")
+            if kind == "protobuf":
+                notes.append(
+                    f"  protobuf: {self.deep.get('field_count', 0)} fields "
+                    f"cov={self.deep.get('avg_coverage', 0)}"
+                )
+                for f in (self.deep.get("schema") or [])[:8]:
+                    notes.append(f"  pb_f{f.get('field')}: {f.get('wire')} ×{f.get('seen')}")
+            if kind == "msgpack":
+                notes.append(
+                    f"  msgpack: parsed={self.deep.get('parsed', 0)} "
+                    f"keys={self.deep.get('key_count', 0)}"
+                )
+                if self.deep.get("keys"):
+                    notes.append(f"  mp_keys: {', '.join(self.deep['keys'][:10])}")
             if kind == "http1":
                 notes.append(f"  HTTP/1: {self.deep.get('methods', {})}")
                 if self.deep.get("hosts"):

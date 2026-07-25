@@ -92,20 +92,35 @@ def _minimal_tls_client_hello() -> bytes:
     return struct.pack(">BHH", 0x16, 0x0301, len(body)) + body
 
 
+def _normalize_tls_hosts(
+    hosts: list[str] | list[tuple[str, int]] | None,
+) -> list[tuple[str, int]]:
+    if not hosts:
+        return [
+            ("cloudflare.com", 443),
+            ("github.com", 443),
+            ("1.1.1.1", 443),
+        ]
+    out: list[tuple[str, int]] = []
+    for h in hosts:
+        if isinstance(h, tuple):
+            out.append((h[0], int(h[1]) if len(h) > 1 else 443))
+        else:
+            out.append((str(h), 443))
+    return out[:8]
+
+
 def probe_tls(
-    hosts: list[tuple[str, int]] | None = None,
+    hosts: list[str] | list[tuple[str, int]] | None = None,
     timeout: float = 3.0,
 ) -> list[ProbeMessage]:
     """TCP TLS handshake bytes (без розшифрування — лише record layer)."""
-    hosts = hosts or [
-        ("cloudflare.com", 443),
-        ("github.com", 443),
-        ("1.1.1.1", 443),
-    ]
+    endpoints = _normalize_tls_hosts(hosts)
     hello = _minimal_tls_client_hello()
     out: list[ProbeMessage] = []
-    for host, port in hosts:
+    for host, port in endpoints:
         out.append(ProbeMessage("tcp", f"TLS:{host}", "request", hello))
+        sock = None
         try:
             sock = socket.create_connection((host, port), timeout=timeout)
             sock.settimeout(timeout)
@@ -113,16 +128,24 @@ def probe_tls(
             resp = sock.recv(8192)
             if resp:
                 out.append(ProbeMessage("tcp", f"TLS:{host}", "response", resp))
-            sock.close()
         except OSError:
             pass
+        finally:
+            if sock is not None:
+                try:
+                    sock.close()
+                except Exception:
+                    pass
     return out
 
 
-def probe_http_hosts(timeout: float = 2.0) -> list[ProbeMessage]:
+def probe_http_hosts(
+    hosts: list[str] | None = None,
+    timeout: float = 2.0,
+) -> list[ProbeMessage]:
     """HTTP response bytes (часто gzip/HTML — структура все одно видна)."""
     out: list[ProbeMessage] = []
-    for host in ("example.com", "httpbin.org"):
+    for host in (hosts or ["example.com", "httpbin.org"])[:8]:
         try:
             sock = socket.create_connection((host, 80), timeout=timeout)
             req = f"GET / HTTP/1.1\r\nHost: {host}\r\nConnection: close\r\n\r\n".encode()

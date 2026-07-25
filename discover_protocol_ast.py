@@ -508,6 +508,62 @@ def cmd_signal(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_probe_loop(args: argparse.Namespace) -> int:
+    """Adaptive active probe → Signal.propagate closed loop."""
+    from protocol_ast.probe_loop import run_probe_loop
+
+    keylog = getattr(args, "keylog", None)
+    if keylog:
+        from protocol_ast.find_keylog import resolve_keylog
+
+        kpath, kmsg = resolve_keylog(keylog)
+        print(kmsg if kpath else f"⚠  {kmsg}")
+        keylog = str(kpath) if kpath else None
+    report = run_probe_loop(rounds=args.rounds, keylog=keylog)
+    if args.json:
+        print(json.dumps(report.to_dict(), indent=2, ensure_ascii=False))
+        return 0 if report.rounds else 1
+    print(f"Probe loop: {len(report.rounds)} rounds\n")
+    for rnd in report.rounds:
+        print(f"── round {rnd.round} targets={rnd.targets} signals={len(rnd.signals)}")
+        for f in rnd.findings[:12]:
+            print(f"   • {f}")
+        print()
+    return 0 if report.all_findings else 1
+
+
+def cmd_stream(args: argparse.Namespace) -> int:
+    """Incremental living-signal agent over a pcap."""
+    from protocol_ast.stream_agent import analyze_pcap_streaming, write_stream_report
+
+    pcap = Path(args.pcap)
+    keylog = getattr(args, "keylog", None)
+    if keylog:
+        from protocol_ast.find_keylog import resolve_keylog
+
+        kpath, kmsg = resolve_keylog(keylog, pcap_path=pcap)
+        print(kmsg if kpath else f"⚠  {kmsg}")
+        keylog = str(kpath) if kpath else None
+    events = analyze_pcap_streaming(
+        pcap, every_n=args.every, keylog=keylog, flow_filter=args.flow
+    )
+    if args.json:
+        from protocol_ast.stream_agent import events_to_report
+
+        print(json.dumps(events_to_report(events), indent=2, ensure_ascii=False))
+    else:
+        print(f"Stream events: {len(events)}\n")
+        for ev in events:
+            print(f"── {ev.flow} msgs={ev.messages} path={ev.path}")
+            for n in ev.notes[:8]:
+                print(f"   {n}" if n.startswith("[") or n.startswith("  ") else f"   • {n}")
+            print()
+    out = pcap.parent / "stream_report.json"
+    write_stream_report(events, out)
+    print(f"JSON: {out}")
+    return 0 if events else 1
+
+
 def cmd_blind(args: argparse.Namespace) -> int:
     """Сліпий глибокий аналіз — рекурсія в вкладені кадри без знання протоколу."""
     from protocol_ast.blind_v2 import format_notes, recursive_blind_analyze
@@ -780,6 +836,20 @@ def build_parser() -> argparse.ArgumentParser:
         help="SSLKEYLOGFILE або auto (пошук / pcapng DSB) для decrypt через opaque wall",
     )
     p_signal.set_defaults(func=cmd_signal)
+
+    p_probe = sub.add_parser("probe-loop", help="adaptive active probe → Signal.propagate loop")
+    p_probe.add_argument("--rounds", type=int, default=3)
+    p_probe.add_argument("--keylog", metavar="FILE|auto")
+    p_probe.add_argument("--json", action="store_true")
+    p_probe.set_defaults(func=cmd_probe_loop)
+
+    p_stream = sub.add_parser("stream", help="incremental living-signal agent over pcap")
+    p_stream.add_argument("pcap")
+    p_stream.add_argument("--flow", help="фільтр потоку")
+    p_stream.add_argument("--every", type=int, default=8)
+    p_stream.add_argument("--keylog", metavar="FILE|auto")
+    p_stream.add_argument("--json", action="store_true")
+    p_stream.set_defaults(func=cmd_stream)
 
     p_dissect = sub.add_parser(
         "dissect",

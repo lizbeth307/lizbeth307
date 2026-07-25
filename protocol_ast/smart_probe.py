@@ -27,6 +27,9 @@ class FlowReport:
     format: FormatHypothesis
     hints: list[str] = field(default_factory=list)
     sample_ast: dict | None = None
+    signal: dict | None = None
+    signal_path: str | None = None
+    signal_notes: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -57,6 +60,9 @@ class ProbeReport:
                         ],
                     },
                     "sample_ast": f.sample_ast,
+                    "signal_path": f.signal_path,
+                    "signal_notes": f.signal_notes,
+                    "signal": f.signal,
                 }
                 for f in self.flows
             ],
@@ -89,12 +95,28 @@ def _analyze_group(
     source: str,
     *,
     tls_split: bool = True,
+    use_signal: bool = True,
+    keylog: str | None = None,
+    max_depth: int = 5,
 ) -> FlowReport | None:
     if "TCP" in label.upper() or "TLS" in label.upper() or "HTTP" in label.upper():
         payloads = enrich_tcp_flow_payloads(payloads, tls_split=tls_split)
     if len(payloads) < 2:
         return None
     result = discover_and_parse(payloads)
+    signal_dict = None
+    signal_path = None
+    signal_notes: list[str] = []
+    if use_signal:
+        try:
+            from .signal import propagate_flow
+
+            sig = propagate_flow(label, payloads, max_depth=max_depth, keylog=keylog)
+            signal_dict = sig.to_dict()
+            signal_path = sig.path()
+            signal_notes = sig.format_notes()[:24]
+        except Exception as exc:
+            signal_notes = [f"signal error: {exc}"]
     return FlowReport(
         source=source,
         flow=label,
@@ -103,6 +125,9 @@ def _analyze_group(
         format=result.format,
         hints=_protocol_hints(label, payloads),
         sample_ast=result.trees[0].to_dict() if result.trees else None,
+        signal=signal_dict,
+        signal_path=signal_path,
+        signal_notes=signal_notes,
     )
 
 
@@ -159,6 +184,9 @@ def run_smart_probe(
     out_dir: Path | None = None,
     min_packets: int = 2,
     min_payload: int = 4,
+    use_signal: bool = True,
+    keylog: str | None = None,
+    max_depth: int = 5,
 ) -> ProbeReport:
     env = detect_runtime()
     sources: list[str] = []
@@ -168,7 +196,10 @@ def run_smart_probe(
     if active:
         sources.append("active-probe")
         for label, payloads in run_active_probes().items():
-            rep = _analyze_group(label, payloads, "active")
+            rep = _analyze_group(
+                label, payloads, "active",
+                use_signal=use_signal, keylog=keylog, max_depth=max_depth,
+            )
             if rep:
                 flow_reports.append(rep)
 
@@ -192,7 +223,10 @@ def run_smart_probe(
             pcap_path, min_packets=min_packets, min_payload=min_payload
         )
         for label, bucket in buckets.items():
-            rep = _analyze_group(label, bucket.payloads, "pcap")
+            rep = _analyze_group(
+                label, bucket.payloads, "pcap",
+                use_signal=use_signal, keylog=keylog, max_depth=max_depth,
+            )
             if rep:
                 flow_reports.append(rep)
 
