@@ -803,7 +803,7 @@ def main() -> int:
     parser.add_argument("--flow", help="filter flow, e.g. 443 or TCP:443")
     args = parser.parse_args()
 
-    print("analyze_pcap: старт", flush=True)
+    print("analyze_pcap: старт (deep decode embedded)", flush=True)
     path = Path(args.pcap).expanduser()
     if not path.exists():
         print(f"Файл не знайдено: {path}", file=sys.stderr)
