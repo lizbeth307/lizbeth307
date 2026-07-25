@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.3.1-full"
+VERSION = "3.4.0-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -1026,13 +1026,24 @@ def _pick_nested_splitter(messages: list[bytes], depth: int, flow: str = "") -> 
         bodies = [m[5:] for m in messages if len(m) > 5 and m[0] == 0x16]
         return ("tls_handshake", bodies) if len(bodies) >= 2 else None
     rate, frames = split_tls_records(messages)
-    if rate >= 0.6 and frames and len(frames) < len(messages):
+    if rate >= 0.6 and len(frames) >= 2:
         return "tls_record", frames
-    if _is_quic_flow(flow):
-        quic = [m for m in messages if parse_quic_packet(m, permit_short=True)]
-        if len(quic) >= max(2, len(messages) // 2) and len(quic) < len(messages):
-            return "quic_packet", quic
+    long_valid = sum(
+        1 for m in messages if len(m) >= 5 and (m[0] & 0xC0) == 0xC0 and parse_quic_packet(m, permit_short=False)
+    )
+    permit_short = long_valid >= 2
+    quic = [m for m in messages if parse_quic_packet(m, permit_short=permit_short)]
+    if len(quic) >= max(2, len(messages) // 2) and len(quic) < len(messages):
+        return "quic_packet", quic
     return None
+
+
+def _sequitur_rules_estimate(messages: list[bytes]) -> int:
+    pairs: set[tuple[int, int]] = set()
+    for m in messages[:12]:
+        for i in range(min(len(m) - 1, 47)):
+            pairs.add((m[i], m[i + 1]))
+    return len(pairs)
 
 
 def recursive_nested_analyze(
@@ -1053,6 +1064,8 @@ def recursive_nested_analyze(
         "splitter": None,
         "deep": None,
         "clusters": None,
+        "sequitur_rules": _sequitur_rules_estimate(messages),
+        "opaque": False,
         "children": [],
     }
     if depth == 0:
@@ -1060,6 +1073,9 @@ def recursive_nested_analyze(
         opcodes = Counter(m[0] for m in messages if m)
         layer["clusters"] = len([v for v in opcodes.values() if v >= 2])
     if depth >= max_depth or len(messages) < 2:
+        return layer
+    if layer["entropy"] == "high" and depth > 0:
+        layer["opaque"] = True
         return layer
     split = _pick_nested_splitter(messages, depth, flow)
     if not split:
@@ -1081,6 +1097,10 @@ def format_nested_notes(layer: dict) -> list[str]:
     ]
     if layer.get("splitter"):
         notes.append(f"  splitter: {layer['splitter']}")
+    if layer.get("opaque"):
+        notes.append("  wall: opaque (high entropy)")
+    if layer.get("sequitur_rules"):
+        notes.append(f"  sequitur: ~{layer['sequitur_rules']} digrams")
     deep = layer.get("deep") or {}
     if deep.get("kind") == "tls":
         if deep.get("sni_hosts"):
@@ -1416,6 +1436,7 @@ def main() -> int:
     parser.add_argument("pcap", nargs="?", help="path to .pcap file")
     parser.add_argument("--blind", action="store_true", help="blind deep analysis (TLS/QUIC inner frames)")
     parser.add_argument("--nested", action="store_true", help="nested AST v2 (recursive layers)")
+    parser.add_argument("--signal", action="store_true", help="living signal propagate (depth 5, universal splitters)")
     parser.add_argument("--tcp-reassemble", action="store_true", help="TCP stream reassembly + TLS split")
     parser.add_argument("--export-kaitai", metavar="DIR", help="export .ksy schemas per flow")
     parser.add_argument("--export-lua", metavar="DIR", help="export Wireshark Lua dissectors per flow")
@@ -1427,6 +1448,11 @@ def main() -> int:
 
     if args.dissect or args.dissect_html:
         mode = "dissect"
+    elif args.signal:
+        mode = "signal propagate"
+        args.nested = True
+        if not args.tcp_reassemble:
+            args.tcp_reassemble = True
     elif args.nested:
         mode = "nested AST v2"
     elif args.tcp_reassemble:
@@ -1444,7 +1470,7 @@ def main() -> int:
         return 1
     print(f"PCAP: {path} ({path.stat().st_size} bytes)\n")
 
-    reasm = args.tcp_reassemble or args.nested
+    reasm = args.tcp_reassemble or args.nested or args.signal
     flows = extract_flows(path, tcp_reassemble=reasm)
     if not flows:
         print("Потоків не знайдено. Спробуйте інший pcap.")
@@ -1474,16 +1500,17 @@ def main() -> int:
         return 0
 
     if args.nested:
-        report = {"file": str(path), "nested": True, "tcp_reassemble": reasm, "flows": []}
+        max_depth = 5 if args.signal else 3
+        report = {"file": str(path), "nested": True, "signal": bool(args.signal), "tcp_reassemble": reasm, "flows": []}
         for label in sorted(selected, key=lambda k: -len(selected[k])):
-            layer = recursive_nested_analyze(label, selected[label], max_depth=3)
+            layer = recursive_nested_analyze(label, selected[label], max_depth=max_depth)
             n = layer["messages"]
             print(f"── {label}  messages={n}" + (" (TCP reasm)" if reasm and label.startswith("TCP") else ""))
             for note in format_nested_notes(layer):
                 print(f"   • {note}" if not note.startswith("[") and not note.startswith("  ") else f"   {note}")
             print()
             report["flows"].append(layer)
-        out = path.parent / "blind_nested_report.json"
+        out = path.parent / ("signal_report.json" if args.signal else "blind_nested_report.json")
         out.write_text(json.dumps(report, indent=2), encoding="utf-8")
         print(f"Звіт: {out}")
         if args.export_kaitai:

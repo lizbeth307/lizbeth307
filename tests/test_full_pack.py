@@ -56,7 +56,7 @@ class TestBlindV2(unittest.TestCase):
         self.assertGreaterEqual(layer.messages, 3)
         self.assertTrue(layer.children or layer.parse_success > 0)
         if layer.children:
-            self.assertEqual(layer.children[0].splitter, "tls_record")
+            self.assertEqual(layer.splitter, "tls_record")
 
     def test_phone_capture_nested(self) -> None:
         pcap = Path("phone_capture.pcap")

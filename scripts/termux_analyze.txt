@@ -1,4 +1,4 @@
-# Termux v3.3.1 — merged 16-bit DNS/TLS fields in Lua export
+# Termux v3.4.0 — Signal pipeline (propagate вглиб)
 
 curl -fL --retry 3 -o ~/analyze_pcap.py.new \
   "https://raw.githubusercontent.com/lizbeth307/lizbeth307/cursor/p1-kaitai-handshake-a4e6/analyze_pcap.py?t=$(date +%s)"

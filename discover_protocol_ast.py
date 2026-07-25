@@ -460,6 +460,42 @@ def cmd_wifi_analyze(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_signal(args: argparse.Namespace) -> int:
+    """Живий сигнал — blind propagation з Sequitur, без hardcoded splitters за портом."""
+    from protocol_ast.pcap_analyze import extract_flows
+    from protocol_ast.signal import propagate_flow
+
+    pcap = Path(args.pcap)
+    buckets = extract_flows(
+        pcap,
+        min_packets=args.min_packets,
+        min_payload=args.min_payload,
+        tcp_reassemble=getattr(args, "tcp_reassemble", False),
+    )
+    targets = buckets
+    if args.flow:
+        targets = {k: v for k, v in buckets.items() if args.flow.lower() in k.lower()}
+    if not targets:
+        raise SystemExit("потоки не знайдено")
+    print(f"Signal propagate {pcap} (max_depth={args.max_depth})\n")
+    reports = []
+    for label, bucket in sorted(targets.items(), key=lambda x: -x[1].packet_count):
+        sig = propagate_flow(label, bucket.payloads, max_depth=args.max_depth)
+        reports.append(sig.to_dict())
+        print(f"=== {label} ({len(bucket.payloads)} msg) path={sig.path()} ===")
+        for note in sig.format_notes():
+            print(f"  {note}" if note.startswith("[") else f"  • {note}")
+        if args.show_sequitur and sig.sequitur:
+            print("  --- sequitur ---")
+            for line in sig.sequitur.splitlines()[:6]:
+                print(f"    {line}")
+        print()
+    out = pcap.parent / "signal_report.json"
+    out.write_text(json.dumps({"file": str(pcap), "signals": reports}, indent=2), encoding="utf-8")
+    print(f"JSON: {out}")
+    return 0
+
+
 def cmd_blind(args: argparse.Namespace) -> int:
     """Сліпий глибокий аналіз — рекурсія в вкладені кадри без знання протоколу."""
     from protocol_ast.blind_v2 import format_notes, recursive_blind_analyze
@@ -701,6 +737,19 @@ def build_parser() -> argparse.ArgumentParser:
     p_blind.add_argument("--export-kaitai", metavar="DIR", help="експорт .ksy на потік")
     p_blind.add_argument("--export-lua", metavar="DIR", help="експорт Wireshark Lua dissector")
     p_blind.set_defaults(func=cmd_blind)
+
+    p_signal = sub.add_parser(
+        "signal",
+        help="живий сигнал — propagate вглиб (Sequitur + universal splitters)",
+    )
+    p_signal.add_argument("pcap")
+    p_signal.add_argument("--flow", help="фільтр потоку")
+    p_signal.add_argument("--min-packets", type=int, default=2)
+    p_signal.add_argument("--min-payload", type=int, default=4)
+    p_signal.add_argument("--max-depth", type=int, default=5)
+    p_signal.add_argument("--tcp-reassemble", action="store_true")
+    p_signal.add_argument("--show-sequitur", action="store_true", help="показати grammar")
+    p_signal.set_defaults(func=cmd_signal)
 
     p_dissect = sub.add_parser(
         "dissect",

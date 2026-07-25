@@ -2,7 +2,7 @@
 # Termux: один файл analyze_pcap.py (v3.3.1 — merged 16-bit fields)
 set -euo pipefail
 
-BRANCH="cursor/human-names-android-dissect-a4e6"
+BRANCH="cursor/signal-pipeline-p4-a4e6"
 URL="https://raw.githubusercontent.com/lizbeth307/lizbeth307/${BRANCH}/analyze_pcap.py?t=$(date +%s)"
 
 echo "=== Termux analyze_pcap update ==="
