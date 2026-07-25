@@ -1,11 +1,10 @@
-# Termux v3.8.0 — Living Signal (JSON API + stream + probe loop)
+# Termux v3.8.0 — швидке оновлення БЕЗ apt (якщо openssl.cnf питає Y/N)
 
-# 1) Оновлення тулу + helpers
-BRANCH=cursor/signal-pipeline-p4-a4e6
-BASE=https://cdn.jsdelivr.net/gh/lizbeth307/lizbeth307@$BRANCH
-# або: BASE=https://raw.githubusercontent.com/lizbeth307/lizbeth307/$BRANCH
-curl -fL --retry 3 -o ~/analyze_pcap.py.new "$BASE/analyze_pcap.py"
-mv ~/analyze_pcap.py.new ~/analyze_pcap.py
+SHA=b44215d333e3a176d8773808450be674523d98f7
+BASE=https://cdn.jsdelivr.net/gh/lizbeth307/lizbeth307@$SHA
+
+# --- тільки файли (рекомендовано) ---
+curl -fL -o ~/analyze_pcap.py "$BASE/analyze_pcap.py"
 curl -fL -o ~/probe_network.py "$BASE/probe_network.py"
 mkdir -p ~/protocol_ast
 for f in __init__.py aes_gcm.py tls_keylog.py pcapng_secrets.py find_keylog.py \
@@ -16,21 +15,16 @@ for f in __init__.py aes_gcm.py tls_keylog.py pcapng_secrets.py find_keylog.py \
   io_utils.py tcp_reassemble.py probe_env.py; do
   curl -fL -o ~/protocol_ast/$f "$BASE/protocol_ast/$f"
 done
+
 export PYTHONPATH=$HOME
-python3 ~/analyze_pcap.py --version   # → 3.8.0-full
-pip install --user brotli 2>/dev/null || true
+python3 ~/analyze_pcap.py --version   # має бути 3.8.0-full
 
-# 2) Offline living signal (після PCAPdroid MITM)
-python3 ~/analyze_pcap.py ~/downloads/c.pcap --signal --flow TCP:443 --keylog auto
-
-# 3) Incremental stream events
-python3 ~/analyze_pcap.py ~/downloads/c.pcap --stream --keylog auto
-
-# 4) Adaptive probe loop (без pcap)
+# --- ОДИН pcap (не PCAPdroid_*.pcap — * розгортає кілька файлів) ---
+PCAP=~/downloads/PCAPdroid_25_лип._22_46_14.pcap
+python3 ~/analyze_pcap.py "$PCAP" --signal --flow TCP:443 --keylog auto
+python3 ~/analyze_pcap.py "$PCAP" --stream --keylog auto
 python3 ~/probe_network.py --loop 3 --no-capture
 
-# 5) Watch growing PCAPdroid dump
-# python3 ~/probe_network.py --watch ~/storage/downloads/PCAPdroid/foo.pcap --keylog auto
-
-# MITM: curl -fsSL $BASE/scripts/pcapdroid_mitm.txt
-# Візія: curl -fsSL $BASE/scripts/LIVING_SIGNAL.txt
+# повний setup (download спочатку; apt без питань):
+# SKIP_PKG=1 curl -fsSL "$BASE/scripts/termux_setup.sh" | bash
+# або: curl -fsSL "$BASE/scripts/termux_setup.sh" | bash

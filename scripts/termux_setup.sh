@@ -1,22 +1,24 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# Termux: analyze_pcap.py v3.8.0 + living signal (JSON API / probe loop / stream)
+# Termux: analyze_pcap.py v3.8.0 + living signal helpers
+# Usage:
+#   SHA=b44215d333e3a176d8773808450be674523d98f7
+#   curl -fsSL "https://cdn.jsdelivr.net/gh/lizbeth307/lizbeth307@$SHA/scripts/termux_setup.sh" | bash
+# Or skip pkg entirely:
+#   SKIP_PKG=1 curl -fsSL "..." | bash
 set -euo pipefail
 
-BRANCH="cursor/signal-pipeline-p4-a4e6"
-BASE="https://raw.githubusercontent.com/lizbeth307/lizbeth307/${BRANCH}"
-# Prefer jsDelivr if raw.githubusercontent.com serves stale cache:
-# BASE="https://cdn.jsdelivr.net/gh/lizbeth307/lizbeth307@${BRANCH}"
-TS=$(date +%s)
+SHA="${SHA:-b44215d333e3a176d8773808450be674523d98f7}"
+BASE="${BASE:-https://cdn.jsdelivr.net/gh/lizbeth307/lizbeth307@${SHA}}"
 
-echo "=== Termux analyze_pcap + protocol_ast helpers (v3.8) ==="
-pkg install -y python curl openssl 2>/dev/null || true
-pip install --user brotli 2>/dev/null || true
+echo "=== Termux living signal v3.8 ==="
+echo "BASE=$BASE"
 
-curl -fL --retry 3 -o "$HOME/analyze_pcap.py.new" "${BASE}/analyze_pcap.py?t=${TS}"
+# 1) Download FIRST (never block on apt prompts)
+curl -fL --retry 3 -o "$HOME/analyze_pcap.py.new" "${BASE}/analyze_pcap.py"
 mv "$HOME/analyze_pcap.py.new" "$HOME/analyze_pcap.py"
 chmod +x "$HOME/analyze_pcap.py"
 
-curl -fL --retry 3 -o "$HOME/probe_network.py.new" "${BASE}/probe_network.py?t=${TS}"
+curl -fL --retry 3 -o "$HOME/probe_network.py.new" "${BASE}/probe_network.py"
 mv "$HOME/probe_network.py.new" "$HOME/probe_network.py"
 chmod +x "$HOME/probe_network.py"
 
@@ -29,21 +31,28 @@ for f in \
   align.py cluster.py sequitur.py parser.py serde.py pipeline.py ast_nodes.py \
   io_utils.py tcp_reassemble.py probe_env.py
 do
-  curl -fL --retry 3 -o "$HOME/protocol_ast/$f" "${BASE}/protocol_ast/$f?t=${TS}" || true
+  curl -fL --retry 3 -o "$HOME/protocol_ast/$f" "${BASE}/protocol_ast/$f" || echo "⚠ skip $f"
 done
 
-echo
-PYTHONPATH="$HOME${PYTHONPATH:+:$PYTHONPATH}" python3 "$HOME/analyze_pcap.py" --version
-python3 -c "import sys; sys.path.insert(0,'$HOME'); from protocol_ast.aes_gcm import backend_name; print('AES-GCM backend:', backend_name())"
+# 2) Optional packages — noninteractive, never block on openssl.cnf
+if [ "${SKIP_PKG:-0}" != "1" ]; then
+  export DEBIAN_FRONTEND=noninteractive
+  # keep existing config files; no Y/N prompts
+  pkg install -y -o Dpkg::Options::="--force-confold" python curl 2>/dev/null || true
+  pip install --user brotli 2>/dev/null || true
+fi
 
 echo
-echo "Команди:"
-echo "  export PYTHONPATH=\$HOME"
-echo "  python3 ~/analyze_pcap.py ~/downloads/c.pcap --signal --flow TCP:443 --keylog auto"
-echo "  python3 ~/analyze_pcap.py ~/downloads/c.pcap --stream --keylog auto"
-echo "  python3 ~/probe_network.py --loop 3 --no-capture"
-echo "  python3 ~/probe_network.py --watch ~/storage/downloads/PCAPdroid/foo.pcap --keylog auto"
+export PYTHONPATH="$HOME${PYTHONPATH:+:$PYTHONPATH}"
+python3 "$HOME/analyze_pcap.py" --version
+python3 -c "import sys; sys.path.insert(0,'$HOME'); from protocol_ast.aes_gcm import backend_name; print('AES-GCM backend:', backend_name())" || true
+
 echo
-echo "MITM keylog: curl -fsSL ${BASE}/scripts/pcapdroid_mitm.txt"
-echo "Living signal: curl -fsSL ${BASE}/scripts/LIVING_SIGNAL.txt"
-echo "БЕЗ слеша перед curl!  БЕЗ pip install cryptography."
+echo "Команди (ОДИН файл, не glob *):"
+echo "  export PYTHONPATH=\$HOME"
+echo "  PCAP=~/downloads/PCAPdroid_25_лип._22_46_14.pcap"
+echo "  python3 ~/analyze_pcap.py \"\$PCAP\" --signal --flow TCP:443 --keylog auto"
+echo "  python3 ~/analyze_pcap.py \"\$PCAP\" --stream --keylog auto"
+echo "  python3 ~/probe_network.py --loop 3 --no-capture"
+echo
+echo "БЕЗ слеша перед curl.  SKIP_PKG=1 щоб пропустити apt."
