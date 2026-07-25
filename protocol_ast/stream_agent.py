@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import sys
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -35,16 +36,20 @@ class StreamEvent:
 @dataclass
 class StreamAgent:
     """
-    Feed packets/payloads per flow; every `every_n` new messages (or flush)
-    re-run Signal.propagate and emit events.
+    Feed packets/payloads per flow; emit sparse Signal checkpoints
+    (not every N on phone — full TLS decrypt is expensive).
     """
 
-    every_n: int = 8
+    every_n: int = 32
     max_depth: int = 5
     keylog: str | None = None
     min_messages: int = 2
+    max_msgs: int = 48
+    max_emits_per_flow: int = 3
+    include_signal_dict: bool = False
     buffers: dict[str, list[bytes]] = field(default_factory=dict)
     last_emitted_at: dict[str, int] = field(default_factory=dict)
+    emit_count: dict[str, int] = field(default_factory=dict)
     events: list[StreamEvent] = field(default_factory=list)
 
     def feed(self, flow: str, payload: bytes) -> StreamEvent | None:
@@ -53,6 +58,10 @@ class StreamAgent:
         buf = self.buffers.setdefault(flow, [])
         buf.append(payload)
         last = self.last_emitted_at.get(flow, 0)
+        emitted = self.emit_count.get(flow, 0)
+        # Reserve final emit for flush(); intermediate only if under budget
+        if emitted >= self.max_emits_per_flow - 1:
+            return None
         if len(buf) - last >= self.every_n and len(buf) >= self.min_messages:
             return self._emit(flow)
         return None
@@ -80,41 +89,112 @@ class StreamAgent:
         payloads = self.buffers.get(flow) or []
         if len(payloads) < self.min_messages:
             return None
-        sig = propagate_flow(flow, payloads, max_depth=self.max_depth, keylog=self.keylog)
+        # Cap work: TLS decrypt on hundreds of records kills Termux
+        sample = payloads[: self.max_msgs]
+        print(
+            f"  … Signal {flow} msgs={len(payloads)} (using {len(sample)})",
+            flush=True,
+            file=sys.stderr,
+        )
+        t0 = time.time()
+        sig = propagate_flow(flow, sample, max_depth=self.max_depth, keylog=self.keylog)
+        dt = time.time() - t0
         ev = StreamEvent(
             ts=time.time(),
             flow=flow,
             messages=len(payloads),
             path=sig.path(),
             notes=sig.format_notes()[:24],
-            signal=sig.to_dict(),
+            signal=sig.to_dict() if self.include_signal_dict else {
+                "label": sig.label,
+                "path": sig.path(),
+                "elapsed_s": round(dt, 3),
+                "sampled": len(sample),
+            },
         )
         self.last_emitted_at[flow] = len(payloads)
+        self.emit_count[flow] = self.emit_count.get(flow, 0) + 1
         self.events.append(ev)
+        print(f"  … done {flow} in {dt:.1f}s", flush=True, file=sys.stderr)
         return ev
+
+
+def _select_flows(
+    buckets: dict,
+    *,
+    flow_filter: str | None,
+    max_flows: int,
+) -> list[tuple[str, Any]]:
+    items = sorted(buckets.items(), key=lambda x: -x[1].packet_count)
+    if flow_filter:
+        return [(l, b) for l, b in items if flow_filter.lower() in l.lower()]
+    # Offline default: prefer TLS/HTTP service ports, then by size
+    preferred = []
+    rest = []
+    for label, bucket in items:
+        u = label.upper()
+        if any(x in u for x in (":443", ":8443", ":80", ":8080", "TLS", "HTTP")):
+            preferred.append((label, bucket))
+        else:
+            rest.append((label, bucket))
+    ordered = preferred + rest
+    return ordered[: max(1, max_flows)]
 
 
 def analyze_pcap_streaming(
     pcap: str | Path,
     *,
-    every_n: int = 8,
+    every_n: int = 32,
     max_depth: int = 5,
     keylog: str | None = None,
     flow_filter: str | None = None,
     tcp_reassemble: bool = True,
+    max_flows: int = 3,
+    max_msgs: int = 48,
+    max_emits_per_flow: int = 3,
 ) -> list[StreamEvent]:
     """
-    Simulate streaming over an existing pcap: feed payloads in capture order
-    (approx via flow buckets) and emit incremental Signal events.
+    Offline stream simulation with sparse checkpoints (Termux-safe).
+
+    Without --flow, only the top few TLS/HTTP flows are analyzed.
     """
     pcap = Path(pcap)
-    agent = StreamAgent(every_n=every_n, max_depth=max_depth, keylog=keylog)
+    print("stream: extract flows…", flush=True, file=sys.stderr)
     buckets = extract_flows(pcap, min_packets=2, min_payload=4, tcp_reassemble=tcp_reassemble)
-    for label, bucket in sorted(buckets.items(), key=lambda x: -x[1].packet_count):
-        if flow_filter and flow_filter.lower() not in label.lower():
+    selected = _select_flows(buckets, flow_filter=flow_filter, max_flows=max_flows)
+    print(
+        f"stream: {len(buckets)} flows total → analyzing {len(selected)}",
+        flush=True,
+        file=sys.stderr,
+    )
+    agent = StreamAgent(
+        every_n=every_n,
+        max_depth=max_depth,
+        keylog=keylog,
+        max_msgs=max_msgs,
+        max_emits_per_flow=max_emits_per_flow,
+    )
+    for label, bucket in selected:
+        n = len(bucket.payloads)
+        print(f"stream: {label} ({n} msgs)…", flush=True, file=sys.stderr)
+        # Sparse checkpoints: early / mid / final (via flush)
+        if n <= agent.min_messages:
             continue
-        agent.feed_many(label, bucket.payloads)
-    agent.flush()
+        early = min(every_n, n)
+        mid = n // 2
+        checkpoints = []
+        for c in (early, mid):
+            if agent.min_messages <= c < n and c not in checkpoints:
+                checkpoints.append(c)
+        for c in checkpoints:
+            if agent.emit_count.get(label, 0) >= max_emits_per_flow - 1:
+                break
+            agent.buffers[label] = list(bucket.payloads[:c])
+            agent.last_emitted_at[label] = 0
+            agent._emit(label)
+        # final
+        agent.buffers[label] = list(bucket.payloads)
+        agent.flush(label)
     return agent.events
 
 
@@ -122,17 +202,25 @@ def watch_pcap_file(
     pcap: str | Path,
     *,
     poll_s: float = 1.0,
-    every_n: int = 8,
+    every_n: int = 32,
     max_depth: int = 5,
     keylog: str | None = None,
     max_seconds: float = 60.0,
+    max_msgs: int = 48,
+    max_emits_per_flow: int = 3,
 ) -> Iterator[StreamEvent]:
     """
     Poll a growing pcap file (e.g. PCAPdroid dump) and emit new Signal events.
     Yields events as the file grows; stops after max_seconds of idle growth.
     """
     pcap = Path(pcap)
-    agent = StreamAgent(every_n=every_n, max_depth=max_depth, keylog=keylog)
+    agent = StreamAgent(
+        every_n=every_n,
+        max_depth=max_depth,
+        keylog=keylog,
+        max_msgs=max_msgs,
+        max_emits_per_flow=max_emits_per_flow,
+    )
     seen_size = 0
     start = time.time()
     last_growth = start
@@ -144,19 +232,22 @@ def watch_pcap_file(
         if size > seen_size and size > 24:
             seen_size = size
             last_growth = time.time()
-            # full re-extract (simple + robust for Termux)
             try:
                 buckets = extract_flows(pcap, min_packets=2, min_payload=4, tcp_reassemble=True)
             except Exception:
                 time.sleep(poll_s)
                 continue
-            for label, bucket in buckets.items():
+            for label, bucket in _select_flows(buckets, flow_filter=None, max_flows=5):
                 prev = len(agent.buffers.get(label, []))
                 if len(bucket.payloads) > prev:
-                    for p in bucket.payloads[prev:]:
-                        ev = agent.feed(label, p)
-                        if ev:
-                            yield ev
+                    # replace buffer with latest (reassembly may reshuffle)
+                    agent.buffers[label] = list(bucket.payloads)
+                    grown = len(bucket.payloads) - prev
+                    if grown >= every_n or agent.last_emitted_at.get(label, 0) == 0:
+                        if agent.emit_count.get(label, 0) < max_emits_per_flow - 1:
+                            ev = agent._emit(label)
+                            if ev:
+                                yield ev
         if time.time() - last_growth > 15:
             for ev in agent.flush():
                 yield ev

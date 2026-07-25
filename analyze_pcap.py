@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.8.2-full"
+VERSION = "3.8.3-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -2056,7 +2056,12 @@ def main() -> int:
     parser.add_argument("--nested", action="store_true", help="nested AST v2 (recursive layers)")
     parser.add_argument("--signal", action="store_true", help="living signal propagate (depth 5, universal splitters)")
     parser.add_argument("--stream", action="store_true", help="incremental living-signal events over pcap")
-    parser.add_argument("--every", type=int, default=8, help="with --stream: emit every N messages")
+    parser.add_argument(
+        "--every",
+        type=int,
+        default=32,
+        help="with --stream: checkpoint spacing (default 32; phone-safe)",
+    )
     parser.add_argument(
         "--keylog",
         metavar="FILE|auto",
@@ -2226,11 +2231,19 @@ def main() -> int:
         except Exception as exc:
             print(f"stream agent: {exc}", file=sys.stderr)
             return 1
+        if not args.flow:
+            print(
+                "stream: без --flow беру топ TLS/HTTP потоки (додай --flow TCP:443 щоб звузити)",
+                flush=True,
+            )
         events = analyze_pcap_streaming(
             path,
             every_n=args.every,
             keylog=args.keylog,
             flow_filter=args.flow,
+            max_flows=3,
+            max_msgs=48,
+            max_emits_per_flow=3,
         )
         for ev in events:
             print(f"── {ev.flow} msgs={ev.messages} path={ev.path}")
