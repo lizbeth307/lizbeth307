@@ -16,6 +16,7 @@ from typing import Literal
 
 
 FieldKind = Literal["fixed", "enum", "length", "variable", "payload"]
+LengthEndian = Literal["le", "be"]
 
 
 @dataclass
@@ -33,8 +34,8 @@ class FormatHypothesis:
     fields: list[FieldHypothesis]
     min_len: int
     max_len: int
-    # offsets where a u16 LE length field was detected
     length_field_offset: int | None = None
+    length_endian: LengthEndian = "le"
 
 
 def _column_stats(messages: list[bytes], offset: int) -> tuple[Counter[int], float]:
@@ -49,8 +50,18 @@ def _column_stats(messages: list[bytes], offset: int) -> tuple[Counter[int], flo
     return vals, dominance
 
 
-def _looks_like_u16_length(messages: list[bytes], offset: int) -> float:
-    """Score how well bytes[offset:offset+2] explain trailing payload size."""
+def _read_u16(data: bytes, offset: int, endian: LengthEndian) -> int:
+    if endian == "le":
+        return data[offset] | (data[offset + 1] << 8)
+    return (data[offset] << 8) | data[offset + 1]
+
+
+def _score_u16_length(
+    messages: list[bytes],
+    offset: int,
+    endian: LengthEndian,
+) -> float:
+    """Score u16 length field; accepts ±1 byte trailer (checksum)."""
     if offset + 2 > min(len(m) for m in messages):
         return 0.0
     hits = 0
@@ -58,15 +69,31 @@ def _looks_like_u16_length(messages: list[bytes], offset: int) -> float:
     for m in messages:
         if offset + 2 >= len(m):
             continue
-        declared = m[offset] | (m[offset + 1] << 8)
-        # payload between length field and a trailing checksum byte
-        trailing = len(m) - (offset + 2) - 1
         total += 1
-        if declared == trailing:
-            hits += 1
-        elif declared == len(m) - (offset + 2):
+        declared = _read_u16(m, offset, endian)
+        rest = len(m) - (offset + 2)
+        if declared == rest or declared == rest - 1:
             hits += 1
     return hits / total if total else 0.0
+
+
+def _find_length_field(
+    messages: list[bytes],
+    min_len: int,
+) -> tuple[int | None, LengthEndian, float]:
+    best_off: int | None = None
+    best_endian: LengthEndian = "le"
+    best_score = 0.0
+    for off in range(0, max(1, min_len - 1)):
+        for endian in ("le", "be"):
+            score = _score_u16_length(messages, off, endian)
+            if score > best_score:
+                best_score = score
+                best_off = off
+                best_endian = endian
+    if best_score < 0.8:
+        return None, "le", 0.0
+    return best_off, best_endian, best_score
 
 
 def discover_format(messages: list[bytes]) -> FormatHypothesis:
@@ -76,16 +103,8 @@ def discover_format(messages: list[bytes]) -> FormatHypothesis:
     min_len = min(map(len, messages))
     max_len = max(map(len, messages))
 
-    # Scan for a u16le length field inside the shared minimum prefix.
-    length_offset: int | None = None
-    best_len_score = 0.0
-    for off in range(0, max(1, min_len - 1)):
-        score = _looks_like_u16_length(messages, off)
-        if score > best_len_score:
-            best_len_score = score
-            length_offset = off
-    if best_len_score < 0.8:
-        length_offset = None
+    # Scan for a u16 length field (LE or BE) inside the shared minimum prefix.
+    length_offset, length_endian, best_len_score = _find_length_field(messages, min_len)
 
     # Header ends right after the length field (or at min_len if none found).
     if length_offset is not None:
@@ -104,7 +123,7 @@ def discover_format(messages: list[bytes]) -> FormatHypothesis:
                     offset=i,
                     size=2,
                     kind="length",
-                    notes=f"u16le length score={best_len_score:.2f}",
+                    notes=f"u16{length_endian} length score={best_len_score:.2f}",
                 )
             )
             i += 2
@@ -211,6 +230,7 @@ def discover_format(messages: list[bytes]) -> FormatHypothesis:
         min_len=min_len,
         max_len=max_len,
         length_field_offset=length_offset,
+        length_endian=length_endian,
     )
 
 

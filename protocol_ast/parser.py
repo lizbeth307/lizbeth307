@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from .align import FieldHypothesis, FormatHypothesis
+from .align import FieldHypothesis, FormatHypothesis, _read_u16
 from .ast_nodes import AstNode
 
 
@@ -58,7 +58,7 @@ def parse_message(message: bytes, fmt: FormatHypothesis) -> AstNode:
             raise ParseError(f"field {field.name} overruns message")
         chunk = message[cursor : cursor + size]
         if field.kind == "length":
-            length_value = chunk[0] | (chunk[1] << 8)
+            length_value = _read_u16(message, cursor, fmt.length_endian)
             children.append(
                 AstNode(
                     name=field.name,

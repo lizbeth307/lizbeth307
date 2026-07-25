@@ -14,6 +14,7 @@ discover_protocol_ast.py — повноцінний скрипт для інду
   python3 discover_protocol_ast.py discover -i corpus.hex -o format.json
   python3 discover_protocol_ast.py parse -f format.json -i corpus.hex
   python3 discover_protocol_ast.py online --count 80 --refine-every 10
+  python3 discover_protocol_ast.py real-test
   python3 discover_protocol_ast.py test
 """
 
@@ -44,6 +45,7 @@ from protocol_ast.parser import ParseError, parse_message
 from protocol_ast.pipeline import DiscoveryResult, discover_and_parse
 from protocol_ast.sequitur import Sequitur, tokenize_message
 from protocol_ast.serde import format_to_dict, load_format, save_format
+from protocol_ast.fixtures.real_protocols import REAL_PROTOCOLS
 from protocol_ast.synthesize import GroundTruthMessage, make_corpus, raw_messages
 
 
@@ -308,6 +310,76 @@ def cmd_online(args: argparse.Namespace) -> int:
     return 0 if rate >= args.min_success else 1
 
 
+def cmd_real_test(args: argparse.Namespace) -> int:
+    """Тест на реальних протоколах: Modbus TCP, TLS, NTP, DNS."""
+    protocols = REAL_PROTOCOLS
+    if args.protocol:
+        if args.protocol not in protocols:
+            raise SystemExit(f"невідомий протокол: {args.protocol}")
+        protocols = {args.protocol: protocols[args.protocol]}
+
+    report: list[dict[str, Any]] = []
+    all_ok = True
+
+    for key, meta in protocols.items():
+        messages = meta["messages"]
+        result = discover_and_parse(messages)
+        checks: dict[str, Any] = {"parse_success": result.success_rate}
+
+        if "expect_length_offset" in meta:
+            checks["length_offset"] = result.format.length_field_offset
+            checks["length_offset_ok"] = (
+                result.format.length_field_offset == meta["expect_length_offset"]
+            )
+        if "expect_endian" in meta:
+            checks["endian"] = result.format.length_endian
+            checks["endian_ok"] = result.format.length_endian == meta["expect_endian"]
+        if "expect_fixed_len" in meta:
+            checks["fixed_len_ok"] = result.format.min_len == meta["expect_fixed_len"]
+
+        ok = result.success_rate >= args.min_success
+        if "expect_length_offset" in meta:
+            ok = ok and checks.get("length_offset_ok", False)
+        if "expect_endian" in meta:
+            ok = ok and checks.get("endian_ok", False)
+
+        all_ok = all_ok and ok
+        report.append(
+            {
+                "protocol": key,
+                "name": meta["name"],
+                "rfc": meta["rfc"],
+                "messages": len(messages),
+                "checks": checks,
+                "ok": ok,
+            }
+        )
+
+        if not args.json:
+            status = "PASS" if ok else "FAIL"
+            print(f"[{status}] {meta['name']} ({meta['rfc']}) — {len(messages)} msg")
+            print(
+                f"       parse={result.success_rate:.1%}  "
+                f"length@{result.format.length_field_offset} "
+                f"{result.format.length_endian}"
+            )
+            for ck, cv in checks.items():
+                if ck.endswith("_ok"):
+                    print(f"       {ck}: {cv}")
+            if args.show and result.trees:
+                print(result.trees[0].pretty())
+                print()
+
+    if args.json:
+        print(json.dumps({"ok": all_ok, "protocols": report}, indent=2))
+    elif all_ok:
+        print("\nУсі реальні тести пройдені.")
+    else:
+        print("\nДеякі тести не пройшли.", file=sys.stderr)
+
+    return 0 if all_ok else 1
+
+
 def cmd_test(_args: argparse.Namespace) -> int:
     import unittest
 
@@ -400,6 +472,19 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_test = sub.add_parser("test", help="запустити unit-тести")
     p_test.set_defaults(func=cmd_test)
+
+    p_real = sub.add_parser(
+        "real-test",
+        parents=[common],
+        help="тест на реальних протоколах (Modbus, TLS, NTP, DNS)",
+    )
+    p_real.add_argument(
+        "--protocol",
+        choices=sorted(REAL_PROTOCOLS),
+        help="лише один протокол (default: усі)",
+    )
+    p_real.add_argument("--show", type=int, default=0, help="показати AST першого msg")
+    p_real.set_defaults(func=cmd_real_test, min_success=0.85)
 
     return parser
 
