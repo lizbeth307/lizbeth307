@@ -63,7 +63,7 @@ class TestWiresharkExport(unittest.TestCase):
             "endian": "be",
             "fields": [{"name": f"f{i}", "kind": "fixed", "size": 1} for i in range(40)],
         }
-        lua = format_to_lua(fmt, flow="UDP:53")
+        lua = format_to_lua(fmt, flow="TCP:5228")
         self.assertIn("truncated", lua)
         self.assertEqual(lua.count("ProtoField"), 32)
 

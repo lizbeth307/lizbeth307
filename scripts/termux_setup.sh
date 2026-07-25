@@ -1,5 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# Termux: один файл analyze_pcap.py (v3.2.0 — pcapng, Lua export)
+# Termux: один файл analyze_pcap.py (v3.3.1 — merged 16-bit fields)
 set -euo pipefail
 
 BRANCH="cursor/human-names-android-dissect-a4e6"

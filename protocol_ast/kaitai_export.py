@@ -64,8 +64,12 @@ def format_to_kaitai(fmt: dict[str, Any], *, meta_id: str = "discovered", flow: 
                 lines.append(f"        size: {size}")
             continue
         if kind == "enum":
+            size = f.get("size", 1)
             lines.append(f"      - id: {name}")
-            lines.append("        type: u1")
+            if size == 2:
+                lines.append("        type: u2")
+            else:
+                lines.append("        type: u1")
             continue
         lines.append(f"      - id: {name}")
         lines.append("        type: u1")

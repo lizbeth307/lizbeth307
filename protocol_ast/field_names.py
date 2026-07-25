@@ -16,6 +16,37 @@ TLS_CONTENT_TYPES = {
 
 DNS_QTYPES = {1: "A", 28: "AAAA", 5: "CNAME", 15: "MX", 16: "TXT", 33: "SRV", 65: "HTTPS"}
 
+DNS_CANONICAL_FIELDS: list[dict[str, Any]] = [
+    {"name": "transaction_id", "offset": 0, "size": 2, "kind": "fixed", "display": "DNS transaction ID"},
+    {"name": "flags", "offset": 2, "size": 2, "kind": "enum", "display": "DNS flags (QR, opcode, RD, ...)"},
+    {"name": "qdcount", "offset": 4, "size": 2, "kind": "fixed", "display": "Question count"},
+    {"name": "ancount", "offset": 6, "size": 2, "kind": "fixed", "display": "Answer count"},
+    {"name": "nscount", "offset": 8, "size": 2, "kind": "fixed", "display": "Authority count"},
+    {"name": "arcount", "offset": 10, "size": 2, "kind": "fixed", "display": "Additional count"},
+    {"name": "question_data", "offset": 12, "size": -1, "kind": "payload", "display": "Question / record data"},
+]
+
+TLS_CANONICAL_FIELDS: list[dict[str, Any]] = [
+    {"name": "content_type", "offset": 0, "size": 1, "kind": "enum", "display": "TLS content type"},
+    {"name": "version", "offset": 1, "size": 2, "kind": "fixed", "display": "TLS version (e.g. 0x0303 = TLS 1.2)"},
+    {"name": "length", "offset": 3, "size": 2, "kind": "length", "display": "Fragment length"},
+    {"name": "fragment", "offset": 5, "size": -1, "kind": "payload", "display": "TLS fragment / handshake body"},
+]
+
+NTP_CANONICAL_FIELDS: list[dict[str, Any]] = [
+    {"name": "li_vn_mode", "offset": 0, "size": 1, "kind": "fixed", "display": "Leap indicator / version / mode"},
+    {"name": "stratum", "offset": 1, "size": 1, "kind": "fixed", "display": "Stratum level"},
+    {"name": "poll", "offset": 2, "size": 1, "kind": "fixed", "display": "Poll interval"},
+    {"name": "precision", "offset": 3, "size": 1, "kind": "fixed", "display": "Clock precision"},
+    {"name": "root_delay", "offset": 4, "size": 4, "kind": "fixed", "display": "Root delay"},
+    {"name": "root_dispersion", "offset": 8, "size": 4, "kind": "fixed", "display": "Root dispersion"},
+    {"name": "reference_id", "offset": 12, "size": 4, "kind": "fixed", "display": "Reference ID"},
+    {"name": "reference_timestamp", "offset": 16, "size": 8, "kind": "fixed", "display": "Reference timestamp"},
+    {"name": "originate_timestamp", "offset": 24, "size": 8, "kind": "fixed", "display": "Originate timestamp"},
+    {"name": "receive_timestamp", "offset": 32, "size": 8, "kind": "fixed", "display": "Receive timestamp"},
+    {"name": "transmit_timestamp", "offset": 40, "size": 8, "kind": "fixed", "display": "Transmit timestamp"},
+]
+
 
 def protocol_hint(flow: str) -> str | None:
     upper = flow.upper()
@@ -32,73 +63,56 @@ def protocol_hint(flow: str) -> str | None:
     return None
 
 
-def _dns_name(offset: int) -> tuple[str, str] | None:
-    names = {
-        0: ("transaction_id", "DNS transaction ID (16-bit)"),
-        2: ("flags", "DNS flags (QR, opcode, AA, RD, ...)"),
-        4: ("qdcount", "Question count"),
-        6: ("ancount", "Answer count"),
-        8: ("nscount", "Authority count"),
-        10: ("arcount", "Additional count"),
-    }
-    if offset in names:
-        return names[offset]
-    if offset >= 12:
-        return ("qname", "Query name (label-encoded)")
+def canonical_fields(flow: str) -> list[dict[str, Any]] | None:
+    proto = protocol_hint(flow)
+    if proto == "dns":
+        return copy.deepcopy(DNS_CANONICAL_FIELDS)
+    if proto == "tls":
+        return copy.deepcopy(TLS_CANONICAL_FIELDS)
+    if proto == "ntp":
+        return copy.deepcopy(NTP_CANONICAL_FIELDS)
     return None
 
 
-def _ntp_name(offset: int) -> tuple[str, str] | None:
-    names = {
-        0: ("li_vn_mode", "Leap indicator / version / mode"),
-        1: ("stratum", "Stratum level"),
-        2: ("poll", "Poll interval"),
-        3: ("precision", "Clock precision"),
-        4: ("root_delay", "Root delay"),
-        8: ("root_dispersion", "Root dispersion"),
-        12: ("reference_id", "Reference ID"),
-        16: ("reference_timestamp", "Reference timestamp"),
-        24: ("originate_timestamp", "Originate timestamp"),
-        32: ("receive_timestamp", "Receive timestamp"),
-        40: ("transmit_timestamp", "Transmit timestamp"),
-    }
-    return names.get(offset)
-
-
-def _tls_name(offset: int) -> tuple[str, str] | None:
-    names = {
-        0: ("content_type", "TLS content type"),
-        1: ("version_major", "TLS version major"),
-        2: ("version_minor", "TLS version minor"),
-        3: ("length", "Fragment length"),
-        5: ("fragment", "TLS fragment / handshake body"),
-    }
-    return names.get(offset)
-
-
-def _quic_name(offset: int) -> tuple[str, str] | None:
-    if offset == 0:
-        return ("header_form", "QUIC header form + flags")
-    if offset == 1:
-        return ("version", "QUIC version (32-bit)")
-    return None
+def canonicalize_format(flow: str, fmt: dict[str, Any]) -> dict[str, Any]:
+    """Replace blind per-byte fields with merged multi-byte layout for known protocols."""
+    fields = canonical_fields(flow)
+    if not fields:
+        return fmt
+    out = copy.deepcopy(fmt) if fmt else {}
+    out["fields"] = fields
+    out["endian"] = "be"
+    out["length_endian"] = "be"
+    out["length_field_offset"] = next((f["offset"] for f in fields if f.get("kind") == "length"), None)
+    out["length_width"] = "u16"
+    out["protocol"] = protocol_hint(flow)
+    out["canonical"] = True
+    return out
 
 
 def _name_for_offset(proto: str, offset: int) -> tuple[str, str] | None:
     if proto == "dns":
-        return _dns_name(offset)
-    if proto == "ntp":
-        return _ntp_name(offset)
+        names = {f["offset"]: (f["name"], f["display"]) for f in DNS_CANONICAL_FIELDS}
+        return names.get(offset)
     if proto == "tls":
-        return _tls_name(offset)
+        names = {f["offset"]: (f["name"], f["display"]) for f in TLS_CANONICAL_FIELDS}
+        return names.get(offset)
+    if proto == "ntp":
+        names = {f["offset"]: (f["name"], f["display"]) for f in NTP_CANONICAL_FIELDS}
+        return names.get(offset)
     if proto == "quic":
-        return _quic_name(offset)
+        if offset == 0:
+            return ("header_form", "QUIC header form + flags")
+        if offset == 1:
+            return ("version", "QUIC version (32-bit)")
     return None
 
 
 def enrich_field(flow: str, field: dict[str, Any], index: int) -> dict[str, Any]:
     """Return field dict with human name and display label when known."""
     out = dict(field)
+    if out.get("display"):
+        return out
     proto = protocol_hint(flow)
     offset = field.get("offset", index)
     kind = field.get("kind", "")
@@ -118,11 +132,6 @@ def enrich_field(flow: str, field: dict[str, Any], index: int) -> dict[str, Any]
             out["display"] = out.get("name", "payload")
         return out
 
-    if kind == "length" and proto == "tls":
-        out["name"] = "length"
-        out["display"] = "Fragment length (16-bit BE)"
-        return out
-
     if proto:
         named = _name_for_offset(proto, offset)
         if named:
@@ -136,13 +145,11 @@ def enrich_field(flow: str, field: dict[str, Any], index: int) -> dict[str, Any]
 
 
 def enrich_format(flow: str, fmt: dict[str, Any]) -> dict[str, Any]:
-    """Copy format dict with human-readable field names."""
+    """Copy format dict with human-readable field names (canonical merge when known)."""
     if not fmt:
         return fmt
-    out = copy.deepcopy(fmt)
+    merged = canonicalize_format(flow, fmt)
+    out = copy.deepcopy(merged)
     out["protocol"] = protocol_hint(flow)
-    fields = []
-    for i, f in enumerate(fmt.get("fields", [])):
-        fields.append(enrich_field(flow, f, i))
-    out["fields"] = fields
+    out["fields"] = [enrich_field(flow, f, i) for i, f in enumerate(merged.get("fields", []))]
     return out

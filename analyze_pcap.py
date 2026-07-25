@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.3.0-full"
+VERSION = "3.3.1-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -1111,25 +1111,54 @@ def _protocol_hint(flow: str) -> str | None:
     return None
 
 
+_DNS_CANONICAL = [
+    {"name": "transaction_id", "offset": 0, "size": 2, "kind": "fixed", "display": "DNS transaction ID"},
+    {"name": "flags", "offset": 2, "size": 2, "kind": "enum", "display": "DNS flags (QR, opcode, RD, ...)"},
+    {"name": "qdcount", "offset": 4, "size": 2, "kind": "fixed", "display": "Question count"},
+    {"name": "ancount", "offset": 6, "size": 2, "kind": "fixed", "display": "Answer count"},
+    {"name": "nscount", "offset": 8, "size": 2, "kind": "fixed", "display": "Authority count"},
+    {"name": "arcount", "offset": 10, "size": 2, "kind": "fixed", "display": "Additional count"},
+    {"name": "question_data", "offset": 12, "size": -1, "kind": "payload", "display": "Question / record data"},
+]
+_TLS_CANONICAL = [
+    {"name": "content_type", "offset": 0, "size": 1, "kind": "enum", "display": "TLS content type"},
+    {"name": "version", "offset": 1, "size": 2, "kind": "fixed", "display": "TLS version (e.g. 0x0303 = TLS 1.2)"},
+    {"name": "length", "offset": 3, "size": 2, "kind": "length", "display": "Fragment length"},
+    {"name": "fragment", "offset": 5, "size": -1, "kind": "payload", "display": "TLS fragment / handshake body"},
+]
+_NTP_CANONICAL = [
+    {"name": "li_vn_mode", "offset": 0, "size": 1, "kind": "fixed", "display": "Leap indicator / version / mode"},
+    {"name": "stratum", "offset": 1, "size": 1, "kind": "fixed", "display": "Stratum level"},
+    {"name": "poll", "offset": 2, "size": 1, "kind": "fixed", "display": "Poll interval"},
+    {"name": "precision", "offset": 3, "size": 1, "kind": "fixed", "display": "Clock precision"},
+    {"name": "root_delay", "offset": 4, "size": 4, "kind": "fixed", "display": "Root delay"},
+    {"name": "root_dispersion", "offset": 8, "size": 4, "kind": "fixed", "display": "Root dispersion"},
+    {"name": "reference_id", "offset": 12, "size": 4, "kind": "fixed", "display": "Reference ID"},
+    {"name": "reference_timestamp", "offset": 16, "size": 8, "kind": "fixed", "display": "Reference timestamp"},
+    {"name": "originate_timestamp", "offset": 24, "size": 8, "kind": "fixed", "display": "Originate timestamp"},
+    {"name": "receive_timestamp", "offset": 32, "size": 8, "kind": "fixed", "display": "Receive timestamp"},
+    {"name": "transmit_timestamp", "offset": 40, "size": 8, "kind": "fixed", "display": "Transmit timestamp"},
+]
+
+
+def _canonical_fields(flow: str) -> list[dict] | None:
+    proto = _protocol_hint(flow)
+    if proto == "dns":
+        return [dict(f) for f in _DNS_CANONICAL]
+    if proto == "tls":
+        return [dict(f) for f in _TLS_CANONICAL]
+    if proto == "ntp":
+        return [dict(f) for f in _NTP_CANONICAL]
+    return None
+
+
 def _enrich_field(flow: str, field: dict, index: int) -> dict:
     out = dict(field)
+    if out.get("display"):
+        return out
     proto = _protocol_hint(flow)
     off = field.get("offset", index)
     kind = field.get("kind", "")
-    dns = {
-        0: ("transaction_id", "DNS transaction ID"),
-        2: ("flags", "DNS flags"),
-        4: ("qdcount", "Question count"),
-        6: ("ancount", "Answer count"),
-        8: ("nscount", "Authority count"),
-        10: ("arcount", "Additional count"),
-    }
-    tls = {
-        0: ("content_type", "TLS content type"),
-        1: ("version_major", "TLS version major"),
-        2: ("version_minor", "TLS version minor"),
-        3: ("length", "Fragment length"),
-    }
     if kind == "payload":
         out["display"] = {
             "dns": "Question / record data",
@@ -1138,18 +1167,20 @@ def _enrich_field(flow: str, field: dict, index: int) -> dict:
             "quic": "QUIC payload",
         }.get(proto or "", out.get("name", "payload"))
         return out
-    if proto == "dns" and off in dns:
-        out["name"], out["display"] = dns[off]
-    elif proto == "tls" and off in tls:
-        out["name"], out["display"] = tls[off]
-    else:
-        out["display"] = out.get("name", f"field_{index}")
+    out["display"] = out.get("name", f"field_{index}")
     return out
 
 
 def _enrich_format(flow: str, fmt: dict) -> dict:
     if not fmt:
         return fmt
+    canonical = _canonical_fields(flow)
+    if canonical:
+        out = dict(fmt)
+        out["fields"] = [dict(f) for f in canonical]
+        out["endian"] = "be"
+        out["canonical"] = True
+        return out
     out = dict(fmt)
     out["fields"] = [_enrich_field(flow, f, i) for i, f in enumerate(fmt.get("fields", []))]
     return out
@@ -1328,6 +1359,12 @@ def format_to_lua(fmt: dict, *, flow: str) -> str:
                 f'local {var} = ProtoField.uint16("{pname}.{name}", "{label}", base.DEC, nil, base.{enc.upper()})'
             )
         elif kind == "payload":
+            lines.append(f'local {var} = ProtoField.bytes("{pname}.{name}", "{label}")')
+        elif f.get("size") == 2:
+            lines.append(
+                f'local {var} = ProtoField.uint16("{pname}.{name}", "{label}", base.HEX, nil, base.{enc.upper()})'
+            )
+        elif f.get("size", 1) > 2:
             lines.append(f'local {var} = ProtoField.bytes("{pname}.{name}", "{label}")')
         else:
             lines.append(f'local {var} = ProtoField.uint8("{pname}.{name}", "{label}", base.HEX)')

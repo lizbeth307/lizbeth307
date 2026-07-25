@@ -46,6 +46,15 @@ def format_to_lua(fmt: dict[str, Any], *, flow: str, proto_name: str | None = No
             lines.append(
                 f'local {var} = ProtoField.bytes("{pname}.{name}", "{label}")'
             )
+        elif f.get("size") == 2:
+            lines.append(
+                f'local {var} = ProtoField.uint16("{pname}.{name}", "{label}", base.HEX, nil, base.{enc.upper()})'
+            )
+        elif f.get("size", 1) > 2 and kind != "payload":
+            sz = f.get("size", 1)
+            lines.append(
+                f'local {var} = ProtoField.bytes("{pname}.{name}", "{label} ({sz} bytes)")'
+            )
         elif kind == "enum":
             lines.append(
                 f'local {var} = ProtoField.uint8("{pname}.{name}", "{label}", base.HEX)'
@@ -75,7 +84,12 @@ def format_to_lua(fmt: dict[str, Any], *, flow: str, proto_name: str | None = No
             lines.append("    else")
             lines.append(f"        subtree:add({var}, buffer(offset))")
             lines.append("    end")
-        elif size and size > 1:
+        elif size == 2:
+            lines.append(f"    if offset + 2 <= buffer:len() then")
+            lines.append(f"        subtree:add({var}, buffer(offset, 2))")
+            lines.append("        offset = offset + 2")
+            lines.append("    end")
+        elif size and size > 2:
             lines.append(f"    subtree:add({var}, buffer(offset, {size}))")
             lines.append(f"    offset = offset + {size}")
         else:

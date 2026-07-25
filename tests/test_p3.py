@@ -14,17 +14,42 @@ from protocol_ast.wireshark_export import format_to_lua
 
 
 class TestFieldNames(unittest.TestCase):
+    def test_dns_canonical_merge(self) -> None:
+        blind = {
+            "fields": [{"name": f"byte_{i}", "offset": i, "size": 1, "kind": "variable"} for i in range(20)]
+        }
+        out = enrich_format("UDP:53", blind)
+        names = [f["name"] for f in out["fields"]]
+        self.assertEqual(names[:6], ["transaction_id", "flags", "qdcount", "ancount", "nscount", "arcount"])
+        self.assertEqual(out["fields"][0]["size"], 2)
+        self.assertNotIn("byte_1", names)
+
+    def test_tls_canonical_merge(self) -> None:
+        out = enrich_format("TCP:443", {"fields": []})
+        names = [f["name"] for f in out["fields"]]
+        self.assertEqual(names, ["content_type", "version", "length", "fragment"])
+        self.assertEqual(out["fields"][1]["size"], 2)
+
     def test_dns_fields_renamed(self) -> None:
         fmt = {
             "fields": [
                 {"name": "byte_0", "offset": 0, "size": 1, "kind": "variable"},
-                {"name": "byte_1", "offset": 1, "size": 1, "kind": "variable"},
-                {"name": "enum_2", "offset": 2, "size": 1, "kind": "enum"},
             ]
         }
         out = enrich_format("UDP:53", fmt)
         self.assertEqual(out["fields"][0]["name"], "transaction_id")
-        self.assertEqual(out["fields"][2]["name"], "flags")
+        self.assertEqual(out["fields"][0]["size"], 2)
+
+    def test_lua_dns_no_byte_splits(self) -> None:
+        blind = {
+            "endian": "be",
+            "fields": [{"name": f"byte_{i}", "offset": i, "size": 1, "kind": "variable"} for i in range(16)],
+        }
+        lua = format_to_lua(blind, flow="UDP:53")
+        self.assertIn("ProtoField.uint16", lua)
+        self.assertNotIn("byte_1", lua)
+        self.assertIn("f_transaction_id", lua)
+        self.assertIn("f_flags", lua)
 
     def test_lua_uses_display_labels(self) -> None:
         fmt = enrich_format(
