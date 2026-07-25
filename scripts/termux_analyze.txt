@@ -1,0 +1,11 @@
+# === ОНОВИТИ analyze_pcap (одна команда) ===
+
+curl -fsSL -o ~/analyze_pcap.py \
+  "https://raw.githubusercontent.com/lizbeth307/lizbeth307/cursor/termux-blind-setup-a4e6/analyze_pcap.py"
+
+# Перевірка: має бути "deep decode embedded"
+python3 ~/analyze_pcap.py ~/downloads/c.pcap --blind --flow 53
+
+# Очікується:
+#   • DNS: 34/34 parsed
+#   • domains: pool.ntp.org, whatsapp.net, ...
