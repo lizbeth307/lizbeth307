@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.8.1-full"
+VERSION = "3.8.2-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -2095,7 +2095,7 @@ def main() -> int:
             if download_tree is None:
                 # inline minimal bootstrap from GitHub API + jsDelivr
                 print("self-update: protocol_ast/termux_update.py відсутній — bootstrap…", flush=True)
-                import json
+                # NOTE: do not `import json` here — it shadows module-level json for all of main()
                 import ssl
                 import time
                 import urllib.request
