@@ -24,7 +24,7 @@ ETH_P_IP = 0x0800
 COMMON_PORTS = {53, 67, 68, 80, 123, 443, 5353, 8080, 8443}
 
 
-@dataclass
+@dataclass(frozen=True)
 class FlowKey:
     proto: str
     port: int
