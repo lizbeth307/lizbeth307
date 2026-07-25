@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.4.0-full"
+VERSION = "3.5.0-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -1046,6 +1046,19 @@ def _sequitur_rules_estimate(messages: list[bytes]) -> int:
     return len(pairs)
 
 
+def _peel_tls_handshake_bodies(messages: list[bytes]) -> list[bytes]:
+    bodies: list[bytes] = []
+    for m in messages:
+        if len(m) >= 6 and m[0] == 0x16 and m[1] == 3:
+            ln = (m[3] << 8) | m[4]
+            end = 5 + ln
+            if end <= len(m):
+                bodies.append(m[5:end])
+            elif len(m) > 5:
+                bodies.append(m[5:])
+    return bodies
+
+
 def recursive_nested_analyze(
     flow: str,
     messages: list[bytes],
@@ -1053,6 +1066,7 @@ def recursive_nested_analyze(
     depth: int = 0,
     max_depth: int = 3,
     label: str | None = None,
+    keylog: str | None = None,
 ) -> dict:
     label = label or flow
     layer: dict = {
@@ -1066,6 +1080,7 @@ def recursive_nested_analyze(
         "clusters": None,
         "sequitur_rules": _sequitur_rules_estimate(messages),
         "opaque": False,
+        "decrypt": None,
         "children": [],
     }
     if depth == 0:
@@ -1074,21 +1089,249 @@ def recursive_nested_analyze(
         layer["clusters"] = len([v for v in opcodes.values() if v >= 2])
     if depth >= max_depth or len(messages) < 2:
         return layer
+
+    # High entropy: still peel Handshake, try keylog, else opaque wall
     if layer["entropy"] == "high" and depth > 0:
-        layer["opaque"] = True
+        bodies = _peel_tls_handshake_bodies(messages)
+        if len(bodies) >= 1:
+            layer["splitter"] = "tls_handshake"
+            layer["children"].append(
+                recursive_nested_analyze(
+                    flow, bodies, depth=depth + 1, max_depth=max_depth,
+                    label=f"{label}/tls_handshake", keylog=keylog,
+                )
+            )
+        dec = _try_keylog_decrypt(messages, keylog)
+        if dec:
+            layer["decrypt"] = dec["meta"]
+            if dec["plain"]:
+                layer["children"].append(
+                    recursive_nested_analyze(
+                        flow, dec["plain"], depth=depth + 1, max_depth=max_depth,
+                        label=f"{label}/decrypted", keylog=None,
+                    )
+                )
+        if not layer["children"]:
+            layer["opaque"] = True
         return layer
+
     split = _pick_nested_splitter(messages, depth, flow)
     if not split:
+        dec = _try_keylog_decrypt(messages, keylog)
+        if dec:
+            layer["decrypt"] = dec["meta"]
+            if dec["plain"]:
+                layer["children"].append(
+                    recursive_nested_analyze(
+                        flow, dec["plain"], depth=depth + 1, max_depth=max_depth,
+                        label=f"{label}/decrypted", keylog=None,
+                    )
+                )
         return layer
     splitter_name, inner = split
     layer["splitter"] = splitter_name
     if len(inner) < 2:
         return layer
     child = recursive_nested_analyze(
-        flow, inner, depth=depth + 1, max_depth=max_depth, label=f"{label}/{splitter_name}"
+        flow, inner, depth=depth + 1, max_depth=max_depth, label=f"{label}/{splitter_name}", keylog=keylog
     )
     layer["children"].append(child)
+
+    if splitter_name == "tls_record":
+        bodies = _peel_tls_handshake_bodies(inner)
+        if bodies:
+            layer["children"].append(
+                recursive_nested_analyze(
+                    flow, bodies, depth=depth + 1, max_depth=max_depth,
+                    label=f"{label}/tls_handshake", keylog=keylog,
+                )
+            )
+        dec = _try_keylog_decrypt(inner, keylog)
+        if dec:
+            layer["decrypt"] = dec["meta"]
+            if dec["plain"]:
+                layer["children"].append(
+                    recursive_nested_analyze(
+                        flow, dec["plain"], depth=depth + 1, max_depth=max_depth,
+                        label=f"{label}/decrypted", keylog=None,
+                    )
+                )
     return layer
+
+
+def _try_keylog_decrypt(records: list[bytes], keylog: str | None) -> dict | None:
+    if not keylog:
+        return None
+    path = Path(keylog).expanduser()
+    if not path.exists():
+        return None
+    try:
+        from protocol_ast.tls_keylog import decrypt_tls_records, keylog_summary, parse_keylog
+    except ImportError:
+        try:
+            return _embedded_keylog_decrypt(records, path)
+        except Exception as exc:
+            return {"meta": {"status": "error", "error": str(exc)}, "plain": []}
+    secrets = parse_keylog(path)
+    result = decrypt_tls_records(records, secrets)
+    if not result or not result.decrypted:
+        return {
+            "meta": {
+                "status": "no_match",
+                "keylog": keylog_summary(secrets),
+            },
+            "plain": [],
+        }
+    return {
+        "meta": {
+            "status": "ok",
+            "tls_version": result.tls_version,
+            "decrypted": len(result.decrypted),
+            "failed": result.failed,
+            "secrets": result.secrets_matched,
+        },
+        "plain": result.decrypted,
+    }
+
+
+def _apply_decrypt_child(layer: dict, flow: str, records: list[bytes], depth: int, max_depth: int, label: str, keylog: str | None) -> None:
+    dec = _try_keylog_decrypt(records, keylog)
+    if not dec:
+        return
+    layer["decrypt"] = dec["meta"]
+    if dec["plain"]:
+        layer["children"].append(
+            recursive_nested_analyze(
+                flow, dec["plain"], depth=depth + 1, max_depth=max_depth,
+                label=f"{label}/decrypted", keylog=None,
+            )
+        )
+
+
+def _embedded_keylog_decrypt(records: list[bytes], path: Path) -> dict | None:
+    """Termux-embedded TLS keylog decrypt (needs: pkg install python-cryptography)."""
+    import hashlib
+    import hmac as hmac_mod
+
+    try:
+        from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+    except ImportError:
+        return {
+            "meta": {
+                "status": "error",
+                "error": "install cryptography: pkg install python-cryptography",
+            },
+            "plain": [],
+        }
+
+    master: dict[str, bytes] = {}
+    c_traffic: dict[str, bytes] = {}
+    s_traffic: dict[str, bytes] = {}
+    lines = 0
+    for raw in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        parts = line.split()
+        if len(parts) < 3:
+            continue
+        label, cr, sec = parts[0], parts[1].lower(), parts[2]
+        try:
+            secret = bytes.fromhex(sec)
+        except ValueError:
+            continue
+        lines += 1
+        if label == "CLIENT_RANDOM":
+            master[cr] = secret
+        elif label == "CLIENT_TRAFFIC_SECRET_0":
+            c_traffic[cr] = secret
+        elif label == "SERVER_TRAFFIC_SECRET_0":
+            s_traffic[cr] = secret
+
+    def hkdf_expand(secret: bytes, info: bytes, length: int) -> bytes:
+        out = b""
+        prev = b""
+        i = 1
+        while len(out) < length:
+            prev = hmac_mod.new(secret, prev + info + bytes([i]), hashlib.sha256).digest()
+            out += prev
+            i += 1
+        return out[:length]
+
+    def expand_label(secret: bytes, label: bytes, length: int) -> bytes:
+        full = b"tls13 " + label
+        info = struct.pack(">H", length) + bytes([len(full)]) + full + b"\x00"
+        return hkdf_expand(secret, info, length)
+
+    def decrypt13(rec: bytes, key: bytes, iv: bytes, seq: int) -> bytes | None:
+        if len(rec) < 21 or rec[0] != 0x17:
+            return None
+        ln = (rec[3] << 8) | rec[4]
+        ct = rec[5 : 5 + ln]
+        nonce = bytearray(iv)
+        for i in range(8):
+            nonce[11 - i] ^= (seq >> (8 * i)) & 0xFF
+        try:
+            plain = AESGCM(key).decrypt(bytes(nonce), ct, rec[:5])
+            return plain[:-1] if plain else None
+        except Exception:
+            return None
+
+    # Collect client_randoms from ClientHello in records
+    randoms: list[str] = []
+    for rec in records:
+        if len(rec) >= 43 and rec[0] == 0x16:
+            body = rec[5:]
+            if body and body[0] == 0x01 and len(body) >= 38:
+                randoms.append(body[6:38].hex())
+    candidates = randoms or list(set(c_traffic) | set(s_traffic) | set(master))
+
+    for cr in candidates:
+        c_sec, s_sec = c_traffic.get(cr), s_traffic.get(cr)
+        if not (c_sec or s_sec):
+            continue
+        decrypted: list[bytes] = []
+        failed = 0
+        c_seq = s_seq = 0
+        c_kv = (expand_label(c_sec, b"key", 16), expand_label(c_sec, b"iv", 12)) if c_sec else None
+        s_kv = (expand_label(s_sec, b"key", 16), expand_label(s_sec, b"iv", 12)) if s_sec else None
+        for rec in records:
+            if len(rec) < 5 or rec[0] != 0x17:
+                continue
+            ok = None
+            if c_kv:
+                ok = decrypt13(rec, c_kv[0], c_kv[1], c_seq)
+                if ok is not None:
+                    c_seq += 1
+                    decrypted.append(ok)
+                    continue
+            if s_kv:
+                ok = decrypt13(rec, s_kv[0], s_kv[1], s_seq)
+                if ok is not None:
+                    s_seq += 1
+                    decrypted.append(ok)
+                    continue
+            failed += 1
+        if decrypted:
+            return {
+                "meta": {
+                    "status": "ok",
+                    "tls_version": "1.3",
+                    "decrypted": len(decrypted),
+                    "failed": failed,
+                    "secrets": [s for s, v in (("CLIENT_TRAFFIC_SECRET_0", c_sec), ("SERVER_TRAFFIC_SECRET_0", s_sec)) if v],
+                    "keylog": {"lines": lines, "client_randoms": len(set(c_traffic) | set(s_traffic) | set(master))},
+                },
+                "plain": decrypted,
+            }
+
+    return {
+        "meta": {
+            "status": "no_match",
+            "keylog": {"lines": lines, "client_randoms": len(set(c_traffic) | set(s_traffic) | set(master))},
+        },
+        "plain": [],
+    }
 
 
 def format_nested_notes(layer: dict) -> list[str]:
@@ -1099,6 +1342,14 @@ def format_nested_notes(layer: dict) -> list[str]:
         notes.append(f"  splitter: {layer['splitter']}")
     if layer.get("opaque"):
         notes.append("  wall: opaque (high entropy)")
+    if layer.get("decrypt"):
+        d = layer["decrypt"]
+        if d.get("status") == "ok":
+            notes.append(f"  decrypt: TLS {d.get('tls_version')} → {d.get('decrypted')} plaintext")
+        elif d.get("status") == "no_match":
+            notes.append("  decrypt: no key match (check SSLKEYLOGFILE)")
+        elif d.get("status") == "error":
+            notes.append(f"  decrypt: error ({d.get('error', '?')})")
     if layer.get("sequitur_rules"):
         notes.append(f"  sequitur: ~{layer['sequitur_rules']} digrams")
     deep = layer.get("deep") or {}
@@ -1437,6 +1688,7 @@ def main() -> int:
     parser.add_argument("--blind", action="store_true", help="blind deep analysis (TLS/QUIC inner frames)")
     parser.add_argument("--nested", action="store_true", help="nested AST v2 (recursive layers)")
     parser.add_argument("--signal", action="store_true", help="living signal propagate (depth 5, universal splitters)")
+    parser.add_argument("--keylog", metavar="FILE", help="SSLKEYLOGFILE for TLS decrypt through opaque wall")
     parser.add_argument("--tcp-reassemble", action="store_true", help="TCP stream reassembly + TLS split")
     parser.add_argument("--export-kaitai", metavar="DIR", help="export .ksy schemas per flow")
     parser.add_argument("--export-lua", metavar="DIR", help="export Wireshark Lua dissectors per flow")
@@ -1503,7 +1755,9 @@ def main() -> int:
         max_depth = 5 if args.signal else 3
         report = {"file": str(path), "nested": True, "signal": bool(args.signal), "tcp_reassemble": reasm, "flows": []}
         for label in sorted(selected, key=lambda k: -len(selected[k])):
-            layer = recursive_nested_analyze(label, selected[label], max_depth=max_depth)
+            layer = recursive_nested_analyze(
+                label, selected[label], max_depth=max_depth, keylog=args.keylog
+            )
             n = layer["messages"]
             print(f"── {label}  messages={n}" + (" (TCP reasm)" if reasm and label.startswith("TCP") else ""))
             for note in format_nested_notes(layer):

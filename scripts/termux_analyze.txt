@@ -1,4 +1,15 @@
-# Termux v3.4.0 — Signal pipeline (propagate вглиб)
+# Termux v3.5.0 — Signal + handshake peel + SSLKEYLOGFILE decrypt
+# Update:
+#   curl -fL -o ~/analyze_pcap.py.new "https://raw.githubusercontent.com/lizbeth307/lizbeth307/cursor/signal-pipeline-p4-a4e6/analyze_pcap.py?t=$(date +%s)"
+#   mv ~/analyze_pcap.py.new ~/analyze_pcap.py
+#
+# Signal:
+#   python3 ~/analyze_pcap.py ~/downloads/c.pcap --signal --flow 443
+#
+# With TLS keylog (PCAPdroid / SSLKEYLOGFILE):
+#   pkg install python-cryptography   # once
+#   python3 ~/analyze_pcap.py ~/downloads/c.pcap --signal --flow TCP:443 --keylog ~/downloads/sslkeys.log
+
 
 curl -fL --retry 3 -o ~/analyze_pcap.py.new \
   "https://raw.githubusercontent.com/lizbeth307/lizbeth307/cursor/p1-kaitai-handshake-a4e6/analyze_pcap.py?t=$(date +%s)"

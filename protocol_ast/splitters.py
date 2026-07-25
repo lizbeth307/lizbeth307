@@ -74,12 +74,48 @@ def all_single_tls_records(messages: list[bytes]) -> bool:
 
 
 def split_tls_handshake_bodies(messages: list[bytes]) -> tuple[str, list[bytes]] | None:
-    if not all_single_tls_records(messages):
-        return None
-    bodies = [m[5:] for m in messages if len(m) > 5 and m[0] == 0x16]
+    """Peel Handshake records (0x16) from a mixed TLS stream — not all-or-nothing."""
+    if all_single_tls_records(messages):
+        bodies = [m[5:] for m in messages if len(m) > 5 and m[0] == 0x16]
+        if len(bodies) >= 2:
+            return "tls_handshake", bodies
+    # Mixed stream: extract handshake bodies even if app-data dominates
+    bodies = []
+    for m in messages:
+        if len(m) >= 6 and m[0] == 0x16 and m[1] == 3:
+            ln = (m[3] << 8) | m[4]
+            if 5 + ln == len(m) or (5 + ln <= len(m) and ln > 0):
+                bodies.append(m[5 : 5 + ln] if 5 + ln <= len(m) else m[5:])
+        elif len(m) > 4 and m[0] in (0x01, 0x02, 0x0B):  # already a handshake body
+            bodies.append(m)
     if len(bodies) >= 2:
         return "tls_handshake", bodies
     return None
+
+
+def peel_tls_handshake_records(messages: list[bytes]) -> list[bytes]:
+    """Return only Handshake TLS records (full records, not bodies)."""
+    out: list[bytes] = []
+    for m in messages:
+        if len(m) >= 6 and m[0] == 0x16 and m[1] == 3:
+            ln = (m[3] << 8) | m[4]
+            if 5 + ln <= len(m):
+                out.append(m[: 5 + ln])
+            else:
+                out.append(m)
+    return out
+
+
+def peel_tls_appdata_records(messages: list[bytes]) -> list[bytes]:
+    out: list[bytes] = []
+    for m in messages:
+        if len(m) >= 6 and m[0] == 0x17 and m[1] == 3:
+            ln = (m[3] << 8) | m[4]
+            if 5 + ln <= len(m):
+                out.append(m[: 5 + ln])
+            else:
+                out.append(m)
+    return out
 
 
 def split_tls_record_frames(messages: list[bytes]) -> tuple[str, list[bytes]] | None:

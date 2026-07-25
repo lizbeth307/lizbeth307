@@ -23,6 +23,7 @@ class NestedLayer:
     sequitur_rules: int = 0
     confidence: float = 0.0
     opaque: bool = False
+    decrypt: dict | None = None
 
     def to_dict(self) -> dict:
         return {
@@ -39,6 +40,7 @@ class NestedLayer:
             "sequitur": self.sequitur,
             "clusters": self.clusters,
             "deep": self.deep,
+            "decrypt": self.decrypt,
             "children": [c.to_dict() for c in self.children],
         }
 
@@ -58,6 +60,7 @@ def _signal_to_layer(sig: Signal) -> NestedLayer:
         sequitur_rules=sig.sequitur_rules,
         confidence=sig.confidence,
         opaque=sig.opaque,
+        decrypt=sig.decrypt,
         children=[_signal_to_layer(c) for c in sig.children],
     )
 
@@ -69,9 +72,10 @@ def recursive_blind_analyze(
     depth: int = 0,
     max_depth: int = 3,
     label: str | None = None,
+    keylog: str | None = None,
 ) -> NestedLayer:
     """Backward-compatible wrapper over Signal.propagate()."""
-    sig = propagate_flow(flow, messages, max_depth=max_depth)
+    sig = propagate_flow(flow, messages, max_depth=max_depth, keylog=keylog)
     if label and label != flow:
         sig.label = label
     return _signal_to_layer(sig)
@@ -86,6 +90,14 @@ def format_notes(layer: NestedLayer) -> list[str]:
         notes[0] += f", conf={layer.confidence:.2f}"
     if layer.opaque:
         notes.append("  wall: opaque (high entropy)")
+    if layer.decrypt:
+        d = layer.decrypt
+        if d.get("status") == "ok":
+            notes.append(
+                f"  decrypt: TLS {d.get('tls_version')} → {d.get('decrypted')} plaintext"
+            )
+        elif d.get("status") == "no_match":
+            notes.append("  decrypt: no key match (check SSLKEYLOGFILE)")
     if layer.splitter:
         notes.append(f"  splitter: {layer.splitter}")
     if layer.sequitur_rules:
