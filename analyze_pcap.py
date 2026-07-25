@@ -20,16 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.0.0-full"
-
-
-def _full_pack_path() -> Path | None:
-    for p in (Path.home(), Path(__file__).resolve().parent):
-        if (p / "protocol_ast" / "blind_v2.py").exists():
-            if str(p) not in sys.path:
-                sys.path.insert(0, str(p))
-            return p
-    return None
+VERSION = "3.0.1-full"
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
 QUIC_VERSIONS = {
@@ -469,7 +460,7 @@ def _flow_key(proto: str, sport: int, dport: int) -> FlowKey:
     return FlowKey(proto, min(sport, dport))
 
 
-def _parse_ipv4(frame: bytes, offset: int) -> tuple[str, int, int, bytes] | None:
+def _parse_ipv4(frame: bytes, offset: int) -> tuple[str, int, int, bytes, int | None] | None:
     data = frame[offset:]
     if len(data) < 20 or (data[0] >> 4) != 4:
         return None
@@ -479,15 +470,15 @@ def _parse_ipv4(frame: bytes, offset: int) -> tuple[str, int, int, bytes] | None
     ip = data[ihl:total]
     if proto == 17 and len(ip) >= 8:
         s, d, u = struct.unpack(">HHH", ip[:6])
-        return "udp", s, d, ip[8:u]
+        return "udp", s, d, ip[8:u], None
     if proto == 6 and len(ip) >= 20:
-        s, d = struct.unpack(">HH", ip[:4])
+        s, d, seq = struct.unpack(">HHI", ip[:8])
         off = ((ip[12] >> 4) & 0x0F) * 4
-        return "tcp", s, d, ip[off:]
+        return "tcp", s, d, ip[off:], seq
     return None
 
 
-def _extract(frame: bytes, link: int) -> tuple[str, int, int, bytes] | None:
+def _extract(frame: bytes, link: int) -> tuple[str, int, int, bytes, int | None] | None:
     if link == 1 and len(frame) >= 14:
         if struct.unpack(">H", frame[12:14])[0] == ETH_P_IP:
             return _parse_ipv4(frame, 14)
@@ -514,18 +505,84 @@ def iter_pcap(path: Path):
         off += caplen
 
 
-def extract_flows(path: Path, min_pkts: int = 2, min_len: int = 4) -> dict[str, list[bytes]]:
-    buckets: dict[FlowKey, list[bytes]] = {}
+def _iter_tls_stream(stream: bytes) -> list[bytes]:
+    records: list[bytes] = []
+    offset = 0
+    while offset + 5 <= len(stream):
+        ctype = stream[offset]
+        if ctype not in range(20, 26) or stream[offset + 1] != 3:
+            break
+        ln = (stream[offset + 3] << 8) | stream[offset + 4]
+        end = offset + 5 + ln
+        if end > len(stream):
+            break
+        records.append(stream[offset:end])
+        offset = end
+    return records
+
+
+def _reassemble_tcp(segments: list[tuple[int, int, int, bytes]]) -> list[bytes]:
+    """segments: (sport, dport, seq, payload) → TLS records or streams."""
+    subflows: dict[tuple[int, int], list[tuple[int, bytes]]] = {}
+    for sport, dport, seq, payload in segments:
+        subflows.setdefault((sport, dport), []).append((seq, payload))
+    messages: list[bytes] = []
+    seen: set[bytes] = set()
+    for segs in subflows.values():
+        ordered = sorted(segs, key=lambda x: x[0])
+        stream = bytearray()
+        cursor: int | None = None
+        for seq, payload in ordered:
+            if cursor is None:
+                cursor = seq
+            if seq > cursor:
+                cursor = seq
+            skip = max(0, cursor - seq)
+            chunk = payload[skip:]
+            if chunk:
+                stream.extend(chunk)
+                cursor = seq + skip + len(chunk)
+        data = bytes(stream)
+        recs = _iter_tls_stream(data)
+        for item in (recs if recs else [data]):
+            if item and item not in seen:
+                seen.add(item)
+                messages.append(item)
+    return messages
+
+
+def extract_flows(
+    path: Path,
+    min_pkts: int = 2,
+    min_len: int = 4,
+    *,
+    tcp_reassemble: bool = False,
+) -> dict[str, list[bytes]]:
+    payloads: dict[FlowKey, list[bytes]] = {}
+    tcp_segs: dict[FlowKey, list[tuple[int, int, int, bytes]]] = {}
+    counts: dict[FlowKey, int] = {}
     for link, frame in iter_pcap(path):
         p = _extract(frame, link)
         if not p:
             continue
-        proto, sport, dport, payload = p
+        proto, sport, dport, payload, seq = p
         if len(payload) < min_len:
             continue
         key = _flow_key(proto, sport, dport)
-        buckets.setdefault(key, []).append(payload)
-    return {k.label: v for k, v in buckets.items() if len(v) >= min_pkts}
+        counts[key] = counts.get(key, 0) + 1
+        if proto == "tcp" and tcp_reassemble and seq is not None:
+            tcp_segs.setdefault(key, []).append((sport, dport, seq, payload))
+        else:
+            payloads.setdefault(key, []).append(payload)
+    out: dict[str, list[bytes]] = {}
+    for key, n in counts.items():
+        if n < min_pkts:
+            continue
+        if key in tcp_segs and tcp_reassemble:
+            out[key.label] = _reassemble_tcp(tcp_segs[key])
+        else:
+            out[key.label] = payloads.get(key, [])
+    return out
 
 
 # --- Discovery (спрощений) ---
@@ -807,17 +864,104 @@ def _print_flow(label: str, payloads: list[bytes], blind: bool) -> dict:
     return {"flow": label, "packets": len(payloads), "format": fmt}
 
 
+def _all_tls_records(messages: list[bytes]) -> bool:
+    for m in messages:
+        if len(m) < 5 or m[0] not in range(20, 26) or m[1] != 3:
+            return False
+        if 5 + ((m[3] << 8) | m[4]) != len(m):
+            return False
+    return bool(messages)
+
+
+def _pick_nested_splitter(messages: list[bytes], depth: int) -> tuple[str, list[bytes]] | None:
+    if depth > 0 and _all_tls_records(messages):
+        bodies = [m[5:] for m in messages if len(m) > 5 and m[0] == 0x16]
+        return ("tls_handshake", bodies) if len(bodies) >= 2 else None
+    rate, frames = split_tls_records(messages)
+    if rate >= 0.6 and frames and len(frames) < len(messages):
+        return "tls_record", frames
+    quic = [m for m in messages if parse_quic_packet(m)]
+    if len(quic) >= max(2, len(messages) // 2) and len(quic) < len(messages):
+        return "quic_packet", quic
+    return None
+
+
+def recursive_nested_analyze(
+    flow: str,
+    messages: list[bytes],
+    *,
+    depth: int = 0,
+    max_depth: int = 3,
+    label: str | None = None,
+) -> dict:
+    label = label or flow
+    layer: dict = {
+        "label": label,
+        "depth": depth,
+        "messages": len(messages),
+        "entropy": "high" if "висока" in _entropy_note(messages) else "structured",
+        "format": discover_format(messages),
+        "splitter": None,
+        "deep": None,
+        "clusters": None,
+        "children": [],
+    }
+    if depth == 0:
+        layer["deep"] = deep_analyze_flow(flow, messages)
+        opcodes = Counter(m[0] for m in messages if m)
+        layer["clusters"] = len([v for v in opcodes.values() if v >= 2])
+    if depth >= max_depth or len(messages) < 2:
+        return layer
+    split = _pick_nested_splitter(messages, depth)
+    if not split:
+        return layer
+    splitter_name, inner = split
+    layer["splitter"] = splitter_name
+    if len(inner) < 2:
+        return layer
+    child = recursive_nested_analyze(
+        flow, inner, depth=depth + 1, max_depth=max_depth, label=f"{label}/{splitter_name}"
+    )
+    layer["children"].append(child)
+    return layer
+
+
+def format_nested_notes(layer: dict) -> list[str]:
+    notes = [
+        f"[d{layer['depth']}] {layer['label']}: {layer['messages']} msg, entropy={layer['entropy']}"
+    ]
+    if layer.get("splitter"):
+        notes.append(f"  splitter: {layer['splitter']}")
+    deep = layer.get("deep") or {}
+    if deep.get("kind") == "tls" and deep.get("sni_hosts"):
+        notes.append(f"  SNI: {', '.join(deep['sni_hosts'][:6])}")
+    if deep.get("kind") == "dns" and deep.get("domains"):
+        notes.append(f"  DNS: {', '.join(deep['domains'][:6])}")
+    if deep.get("kind") == "quic":
+        notes.append(f"  QUIC: {deep.get('types', {})}")
+    if layer.get("clusters"):
+        notes.append(f"  clusters: {layer['clusters']} opcodes")
+    for ch in layer.get("children", []):
+        notes.extend(format_nested_notes(ch))
+    return notes
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="PCAP analyzer for Termux/Android")
     parser.add_argument("--version", action="version", version=f"analyze_pcap {VERSION}")
     parser.add_argument("pcap", nargs="?", help="path to .pcap file")
     parser.add_argument("--blind", action="store_true", help="blind deep analysis (TLS/QUIC inner frames)")
-    parser.add_argument("--nested", action="store_true", help="nested AST v2 (needs ~/protocol_ast/)")
-    parser.add_argument("--tcp-reassemble", action="store_true", help="TCP stream reassembly (with --nested)")
+    parser.add_argument("--nested", action="store_true", help="nested AST v2 (recursive layers)")
+    parser.add_argument("--tcp-reassemble", action="store_true", help="TCP stream reassembly + TLS split")
     parser.add_argument("--flow", help="filter flow, e.g. 443 or TCP:443")
     args = parser.parse_args()
 
-    mode = "full pack" if args.nested and _full_pack_path() else "deep decode embedded"
+    if args.nested:
+        mode = "nested AST v2"
+    elif args.tcp_reassemble:
+        mode = "TCP reassembly"
+    else:
+        mode = "deep decode embedded"
     print(f"analyze_pcap: старт v{VERSION} ({mode})", flush=True)
     if not args.pcap:
         parser.print_help()
@@ -829,34 +973,8 @@ def main() -> int:
         return 1
     print(f"PCAP: {path} ({path.stat().st_size} bytes)\n")
 
-    if args.nested and _full_pack_path():
-        from protocol_ast.blind_v2 import format_notes, recursive_blind_analyze
-        from protocol_ast.pcap_analyze import extract_flows as ep_extract
-
-        buckets = ep_extract(path, min_packets=2, tcp_reassemble=args.tcp_reassemble)
-        if not buckets:
-            print("Потоків не знайдено.")
-            return 1
-        selected = buckets
-        if args.flow:
-            selected = {k: v for k, v in buckets.items() if _flow_matches(k, args.flow)}
-            if not selected:
-                print(f"Потік '{args.flow}' не знайдено. Доступні:", ", ".join(sorted(buckets)))
-                return 1
-        report = {"file": str(path), "nested": True, "tcp_reassemble": args.tcp_reassemble, "flows": []}
-        for label in sorted(selected, key=lambda k: -len(selected[k].payloads)):
-            layer = recursive_blind_analyze(label, selected[label].payloads, max_depth=3)
-            print(f"── {label}  packets={selected[label].packet_count}")
-            for note in format_notes(layer):
-                print(f"   • {note}" if not note.startswith("[") else f"   {note}")
-            print()
-            report["flows"].append(layer.to_dict())
-        out = path.parent / "blind_nested_report.json"
-        out.write_text(json.dumps(report, indent=2), encoding="utf-8")
-        print(f"Звіт: {out}")
-        return 0
-
-    flows = extract_flows(path)
+    reasm = args.tcp_reassemble or args.nested
+    flows = extract_flows(path, tcp_reassemble=reasm)
     if not flows:
         print("Потоків не знайдено. Спробуйте інший pcap.")
         return 1
@@ -868,7 +986,22 @@ def main() -> int:
             print(f"Потік '{args.flow}' не знайдено. Доступні:", ", ".join(sorted(flows)))
             return 1
 
-    report = {"file": str(path), "blind": args.blind, "flows": []}
+    if args.nested:
+        report = {"file": str(path), "nested": True, "tcp_reassemble": reasm, "flows": []}
+        for label in sorted(selected, key=lambda k: -len(selected[k])):
+            layer = recursive_nested_analyze(label, selected[label], max_depth=3)
+            n = layer["messages"]
+            print(f"── {label}  messages={n}" + (" (TCP reasm)" if reasm and label.startswith("TCP") else ""))
+            for note in format_nested_notes(layer):
+                print(f"   • {note}" if not note.startswith("[") and not note.startswith("  ") else f"   {note}")
+            print()
+            report["flows"].append(layer)
+        out = path.parent / "blind_nested_report.json"
+        out.write_text(json.dumps(report, indent=2), encoding="utf-8")
+        print(f"Звіт: {out}")
+        return 0
+
+    report = {"file": str(path), "blind": args.blind, "tcp_reassemble": reasm, "flows": []}
     for label in sorted(selected, key=lambda k: -len(selected[k])):
         entry = _print_flow(label, selected[label], args.blind)
         print()
