@@ -1,24 +1,18 @@
-# === TERMUX: скопіюйте по черзі ===
+# === TERMUX: оновлення + глибокий аналіз ===
 
-# 0. Python (ОБОВ'ЯЗКОВО — без цього python3 не працює)
+# 0. Python
 pkg install python
 
-# 1. Автоматичне налаштування (одна команда):
+# 1. Оновити (завантажує analyze_pcap.py + protocol_ast/deep_decode.py)
 curl -fsSL "https://raw.githubusercontent.com/lizbeth307/lizbeth307/cursor/termux-blind-setup-a4e6/scripts/termux_setup.sh" | bash
 
-# 2. Аналіз вашого PCAP (ім'я файлу на ТЕЛЕФОНІ, не phone_capture.pcap з хмари):
-python3 ~/analyze_pcap.py ~/downloads/PCAPdroid_25_лип._12_42_30.pcap
+# 2. Усі потоки (TLS SNI, QUIC varint, DNS, NTP, XMPP)
+python3 ~/analyze_pcap.py ~/downloads/c.pcap --blind
 
-# 3. Сліпий аналіз TLS/QUIC (аналог discover_protocol_ast.py blind):
-python3 ~/analyze_pcap.py ~/downloads/PCAPdroid_25_лип._12_42_30.pcap --blind --flow 443
+# 3. Окремі потоки
+python3 ~/analyze_pcap.py ~/downloads/c.pcap --blind --flow 443   # TLS + QUIC
+python3 ~/analyze_pcap.py ~/downloads/c.pcap --blind --flow 53   # DNS domains
+python3 ~/analyze_pcap.py ~/downloads/c.pcap --blind --flow 5222 # Google XMPP/mtalk
+python3 ~/analyze_pcap.py ~/downloads/c.pcap --blind --flow 123   # NTP
 
-# АБО через обгортку (обхід grep /proc/stat):
-bash ~/run_pcap.sh ~/downloads/PCAPdroid_25_лип._12_42_30.pcap
-
-# Звіт: ~/downloads/probe_report.json або blind_report.json
-
-# --- Повний discover_protocol_ast.py (потрібен git + клон репо) ---
-# pkg install git python
-# git clone https://github.com/lizbeth307/lizbeth307.git
-# cd lizbeth307 && git checkout cursor/protocol-ast-proto-a4e6
-# python3 discover_protocol_ast.py blind ~/downloads/PCAPdroid*.pcap --flow 443
+# Звіт: ~/downloads/blind_report.json
