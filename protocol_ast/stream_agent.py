@@ -182,10 +182,10 @@ def analyze_pcap_streaming(
             continue
         early = min(every_n, n)
         mid = n // 2
-        checkpoints = []
-        for c in (early, mid):
-            if agent.min_messages <= c < n and c not in checkpoints:
-                checkpoints.append(c)
+        checkpoints = sorted({
+            c for c in (early, mid)
+            if agent.min_messages <= c < n
+        })
         for c in checkpoints:
             if agent.emit_count.get(label, 0) >= max_emits_per_flow - 1:
                 break
