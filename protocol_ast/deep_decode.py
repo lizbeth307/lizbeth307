@@ -41,10 +41,13 @@ def _quic_long_type_name(pkt_type: int) -> str:
     return {0: "Initial", 1: "0-RTT", 2: "Handshake", 3: "Retry"}.get(pkt_type, f"type{pkt_type}")
 
 
-def parse_quic_packet(data: bytes) -> dict | None:
+def parse_quic_packet(data: bytes, *, permit_short: bool = False) -> dict | None:
     if len(data) < 5:
         return None
     if not (data[0] & 0x80):
+        # RFC 9000 short header: form=0, fixed=1
+        if not permit_short or (data[0] & 0xC0) != 0x40 or len(data) < 8:
+            return None
         return {
             "form": "short",
             "spin": bool(data[0] & 0x20),
@@ -55,7 +58,7 @@ def parse_quic_packet(data: bytes) -> dict | None:
         return None
     pkt_type = (data[0] >> 4) & 0x03
     version = struct.unpack(">I", data[1:5])[0]
-    if version not in QUIC_VERSIONS and version > 0x0F000000:
+    if version not in QUIC_VERSIONS:
         return None
     off = 5
     if off >= len(data):
@@ -117,7 +120,15 @@ def parse_quic_packet(data: bytes) -> dict | None:
 
 
 def analyze_quic_flow(payloads: list[bytes]) -> dict:
-    parsed = [p for p in (parse_quic_packet(m) for m in payloads) if p]
+    long_valid = sum(
+        1
+        for p in payloads
+        if len(p) >= 5
+        and (p[0] & 0xC0) == 0xC0
+        and struct.unpack(">I", p[1:5])[0] in QUIC_VERSIONS
+    )
+    permit_short = long_valid >= 2
+    parsed = [p for p in (parse_quic_packet(m, permit_short=permit_short) for m in payloads) if p]
     if not parsed:
         return {"kind": "quic", "packets": len(payloads), "parsed": 0}
     types = Counter(p.get("type", p.get("form", "?")) for p in parsed)
@@ -280,9 +291,12 @@ def split_tls_records(messages: list[bytes]) -> tuple[float, list[bytes]]:
 
 
 def analyze_tls_flow(payloads: list[bytes]) -> dict:
+    from .tls_handshake import parse_client_hello
+
     rate, frames = split_tls_records(payloads)
     handshakes: list[dict] = []
     sni_hosts: list[str] = []
+    alpn_list: list[str] = []
     for fr in frames:
         if len(fr) < 6 or fr[0] != 0x16:
             continue
@@ -291,10 +305,12 @@ def analyze_tls_flow(payloads: list[bytes]) -> dict:
             continue
         htype = body[0]
         if htype == 1:
-            hosts = parse_tls_sni(body)
+            detail = parse_client_hello(body) or {}
+            hosts = detail.get("sni", [])
             if hosts:
                 sni_hosts.extend(hosts)
-            handshakes.append({"type": "ClientHello", "sni": hosts})
+            alpn_list.extend(detail.get("alpn", []))
+            handshakes.append({"type": "ClientHello", "sni": hosts, "alpn": detail.get("alpn", []), **detail})
         elif htype in TLS_HANDSHAKE_NAMES:
             handshakes.append({"type": TLS_HANDSHAKE_NAMES[htype]})
     return {
@@ -304,6 +320,7 @@ def analyze_tls_flow(payloads: list[bytes]) -> dict:
         "records": len(frames),
         "client_hellos": sum(1 for h in handshakes if h["type"] == "ClientHello"),
         "sni_hosts": sorted(set(sni_hosts))[:20],
+        "alpn": sorted(set(alpn_list))[:10],
         "handshakes": handshakes[:10],
     }
 

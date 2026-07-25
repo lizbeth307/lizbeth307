@@ -112,7 +112,12 @@ def _all_single_tls_records(messages: list[bytes]) -> bool:
     return True
 
 
-def _pick_splitter(messages: list[bytes], *, depth: int = 0) -> tuple[str, list[bytes]] | None:
+def _is_quic_flow(flow: str) -> bool:
+    u = flow.upper()
+    return u.startswith("UDP") and u.endswith(":443")
+
+
+def _pick_splitter(messages: list[bytes], *, depth: int = 0, flow: str = "") -> tuple[str, list[bytes]] | None:
     if depth > 0 and _all_single_tls_records(messages):
         bodies = [m[5:] for m in messages if len(m) > 5 and m[0] == 0x16]
         if len(bodies) >= 2:
@@ -121,8 +126,12 @@ def _pick_splitter(messages: list[bytes], *, depth: int = 0) -> tuple[str, list[
     tls_rate, tls_frames = split_tls_records(messages)
     if tls_rate >= 0.6 and tls_frames and len(tls_frames) < len(messages):
         return "tls_record", tls_frames
-    quic_frames = [m for m in messages if parse_quic_packet(m)]
-    if len(quic_frames) >= max(2, len(messages) // 2) and len(quic_frames) < len(messages):
+    quic_frames = [
+        m
+        for m in messages
+        if parse_quic_packet(m, permit_short=_is_quic_flow(flow))
+    ]
+    if _is_quic_flow(flow) and len(quic_frames) >= max(2, len(messages) // 2) and len(quic_frames) < len(messages):
         return "quic_packet", quic_frames
     lp = _split_length_prefixed(messages)
     if lp and len(lp[1]) < len(messages):
@@ -159,7 +168,7 @@ def recursive_blind_analyze(
     if depth >= max_depth or len(messages) < 2:
         return layer
 
-    split = _pick_splitter(messages, depth=depth)
+    split = _pick_splitter(messages, depth=depth, flow=flow)
     if not split:
         return layer
 
@@ -208,8 +217,11 @@ def format_notes(layer: NestedLayer) -> list[str]:
         notes.append(f"  splitter: {layer.splitter}")
     if layer.deep:
         kind = layer.deep.get("kind")
-        if kind == "tls" and layer.deep.get("sni_hosts"):
-            notes.append(f"  SNI: {', '.join(layer.deep['sni_hosts'][:6])}")
+        if kind == "tls":
+            if layer.deep.get("sni_hosts"):
+                notes.append(f"  SNI: {', '.join(layer.deep['sni_hosts'][:6])}")
+            if layer.deep.get("alpn"):
+                notes.append(f"  ALPN: {', '.join(layer.deep['alpn'][:4])}")
         if kind == "dns" and layer.deep.get("domains"):
             notes.append(f"  DNS: {', '.join(layer.deep['domains'][:6])}")
         if kind == "quic":

@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.0.1-full"
+VERSION = "3.1.0-full"
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
 QUIC_VERSIONS = {
@@ -58,10 +58,12 @@ def _quic_long_type_name(pkt_type: int) -> str:
     return {0: "Initial", 1: "0-RTT", 2: "Handshake", 3: "Retry"}.get(pkt_type, f"type{pkt_type}")
 
 
-def parse_quic_packet(data: bytes) -> dict | None:
+def parse_quic_packet(data: bytes, *, permit_short: bool = False) -> dict | None:
     if len(data) < 5:
         return None
     if not (data[0] & 0x80):
+        if not permit_short or (data[0] & 0xC0) != 0x40 or len(data) < 8:
+            return None
         return {
             "form": "short",
             "spin": bool(data[0] & 0x20),
@@ -72,7 +74,7 @@ def parse_quic_packet(data: bytes) -> dict | None:
         return None
     pkt_type = (data[0] >> 4) & 0x03
     version = struct.unpack(">I", data[1:5])[0]
-    if version not in QUIC_VERSIONS and version > 0x0F000000:
+    if version not in QUIC_VERSIONS:
         return None
     off = 5
     if off >= len(data):
@@ -134,7 +136,15 @@ def parse_quic_packet(data: bytes) -> dict | None:
 
 
 def analyze_quic_flow(payloads: list[bytes]) -> dict:
-    parsed = [p for p in (parse_quic_packet(m) for m in payloads) if p]
+    long_valid = sum(
+        1
+        for p in payloads
+        if len(p) >= 5
+        and (p[0] & 0xC0) == 0xC0
+        and struct.unpack(">I", p[1:5])[0] in QUIC_VERSIONS
+    )
+    permit_short = long_valid >= 2
+    parsed = [p for p in (parse_quic_packet(m, permit_short=permit_short) for m in payloads) if p]
     if not parsed:
         return {"kind": "quic", "packets": len(payloads), "parsed": 0}
     types = Counter(p.get("type", p.get("form", "?")) for p in parsed)
@@ -296,10 +306,52 @@ def split_tls_records(messages: list[bytes]) -> tuple[float, list[bytes]]:
     return (ok / len(messages) if messages else 0.0), frames
 
 
+def _parse_client_hello(body: bytes) -> dict | None:
+    if len(body) < 38 or body[0] != 0x01:
+        return None
+    pos = 6 + 32
+    sid_len = body[pos]
+    pos += 1 + sid_len + 2
+    cs_len = struct.unpack(">H", body[pos - 2 : pos])[0]
+    pos += cs_len + 1
+    cm_len = body[pos]
+    pos += 1 + cm_len + 2
+    ext_len = struct.unpack(">H", body[pos - 2 : pos])[0]
+    pos += 0
+    end = pos + ext_len
+    sni: list[str] = []
+    alpn: list[str] = []
+    extensions: list[str] = []
+    while pos + 4 <= end:
+        etype, elen = struct.unpack(">HH", body[pos : pos + 4])
+        pos += 4
+        edata = body[pos : pos + elen]
+        pos += elen
+        extensions.append({0: "server_name", 16: "alpn", 43: "supported_versions"}.get(etype, f"ext_{etype}"))
+        if etype == 0 and len(edata) >= 5:
+            p = 2
+            while p + 3 <= len(edata):
+                if edata[p] == 0:
+                    nlen = struct.unpack(">H", edata[p + 1 : p + 3])[0]
+                    sni.append(edata[p + 3 : p + 3 + nlen].decode("ascii", errors="replace"))
+                    p += 3 + nlen
+                else:
+                    p += 1
+        elif etype == 16 and len(edata) >= 2:
+            p = 2
+            while p < len(edata):
+                ln = edata[p]
+                p += 1
+                alpn.append(edata[p : p + ln].decode("ascii", errors="replace"))
+                p += ln
+    return {"sni": sni, "alpn": alpn, "extensions": extensions}
+
+
 def analyze_tls_flow(payloads: list[bytes]) -> dict:
     rate, frames = split_tls_records(payloads)
     handshakes: list[dict] = []
     sni_hosts: list[str] = []
+    alpn_list: list[str] = []
     for fr in frames:
         if len(fr) < 6 or fr[0] != 0x16:
             continue
@@ -308,10 +360,11 @@ def analyze_tls_flow(payloads: list[bytes]) -> dict:
             continue
         htype = body[0]
         if htype == 1:
-            hosts = parse_tls_sni(body)
-            if hosts:
-                sni_hosts.extend(hosts)
-            handshakes.append({"type": "ClientHello", "sni": hosts})
+            detail = _parse_client_hello(body) or {}
+            hosts = detail.get("sni", [])
+            sni_hosts.extend(hosts)
+            alpn_list.extend(detail.get("alpn", []))
+            handshakes.append({"type": "ClientHello", "sni": hosts, "alpn": detail.get("alpn", []), "extensions": detail.get("extensions", [])})
         elif htype in TLS_HANDSHAKE_NAMES:
             handshakes.append({"type": TLS_HANDSHAKE_NAMES[htype]})
     return {
@@ -321,6 +374,7 @@ def analyze_tls_flow(payloads: list[bytes]) -> dict:
         "records": len(frames),
         "client_hellos": sum(1 for h in handshakes if h["type"] == "ClientHello"),
         "sni_hosts": sorted(set(sni_hosts))[:20],
+        "alpn": sorted(set(alpn_list))[:10],
         "handshakes": handshakes[:10],
     }
 
@@ -873,16 +927,22 @@ def _all_tls_records(messages: list[bytes]) -> bool:
     return bool(messages)
 
 
-def _pick_nested_splitter(messages: list[bytes], depth: int) -> tuple[str, list[bytes]] | None:
+def _is_quic_flow(flow: str) -> bool:
+    u = flow.upper()
+    return u.startswith("UDP") and u.endswith(":443")
+
+
+def _pick_nested_splitter(messages: list[bytes], depth: int, flow: str = "") -> tuple[str, list[bytes]] | None:
     if depth > 0 and _all_tls_records(messages):
         bodies = [m[5:] for m in messages if len(m) > 5 and m[0] == 0x16]
         return ("tls_handshake", bodies) if len(bodies) >= 2 else None
     rate, frames = split_tls_records(messages)
     if rate >= 0.6 and frames and len(frames) < len(messages):
         return "tls_record", frames
-    quic = [m for m in messages if parse_quic_packet(m)]
-    if len(quic) >= max(2, len(messages) // 2) and len(quic) < len(messages):
-        return "quic_packet", quic
+    if _is_quic_flow(flow):
+        quic = [m for m in messages if parse_quic_packet(m, permit_short=True)]
+        if len(quic) >= max(2, len(messages) // 2) and len(quic) < len(messages):
+            return "quic_packet", quic
     return None
 
 
@@ -912,7 +972,7 @@ def recursive_nested_analyze(
         layer["clusters"] = len([v for v in opcodes.values() if v >= 2])
     if depth >= max_depth or len(messages) < 2:
         return layer
-    split = _pick_nested_splitter(messages, depth)
+    split = _pick_nested_splitter(messages, depth, flow)
     if not split:
         return layer
     splitter_name, inner = split
@@ -933,8 +993,11 @@ def format_nested_notes(layer: dict) -> list[str]:
     if layer.get("splitter"):
         notes.append(f"  splitter: {layer['splitter']}")
     deep = layer.get("deep") or {}
-    if deep.get("kind") == "tls" and deep.get("sni_hosts"):
-        notes.append(f"  SNI: {', '.join(deep['sni_hosts'][:6])}")
+    if deep.get("kind") == "tls":
+        if deep.get("sni_hosts"):
+            notes.append(f"  SNI: {', '.join(deep['sni_hosts'][:6])}")
+        if deep.get("alpn"):
+            notes.append(f"  ALPN: {', '.join(deep['alpn'][:4])}")
     if deep.get("kind") == "dns" and deep.get("domains"):
         notes.append(f"  DNS: {', '.join(deep['domains'][:6])}")
     if deep.get("kind") == "quic":
@@ -946,6 +1009,25 @@ def format_nested_notes(layer: dict) -> list[str]:
     return notes
 
 
+def format_to_kaitai(fmt: dict, meta_id: str = "discovered") -> str:
+    endian = fmt.get("endian") or fmt.get("length_endian") or "le"
+    ks = "be" if endian == "be" else "le"
+    lines = [f"meta:", f"  id: {meta_id}", f"  endian: {ks}", "seq:", "  - id: message", "    type: message_body", "types:", "  message_body:", "    seq:"]
+    for f in fmt.get("fields", []):
+        name = f.get("name", "field").replace("@", "_")
+        kind = f.get("kind", "")
+        if kind == "payload":
+            lines += ["      - id: payload", "        size-eos: true"]
+        elif kind == "length":
+            lines += [f"      - id: {name}", "        type: u2", "      - id: body", f"        size: {name}"]
+        elif kind == "fixed":
+            sz = f.get("size", 1)
+            lines += [f"      - id: {name}", f"        size: {sz}" if sz > 1 else f"        type: u1"]
+        else:
+            lines += [f"      - id: {name}", "        type: u1"]
+    return "\n".join(lines) + "\n"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="PCAP analyzer for Termux/Android")
     parser.add_argument("--version", action="version", version=f"analyze_pcap {VERSION}")
@@ -953,6 +1035,7 @@ def main() -> int:
     parser.add_argument("--blind", action="store_true", help="blind deep analysis (TLS/QUIC inner frames)")
     parser.add_argument("--nested", action="store_true", help="nested AST v2 (recursive layers)")
     parser.add_argument("--tcp-reassemble", action="store_true", help="TCP stream reassembly + TLS split")
+    parser.add_argument("--export-kaitai", metavar="DIR", help="export .ksy schemas per flow")
     parser.add_argument("--flow", help="filter flow, e.g. 443 or TCP:443")
     args = parser.parse_args()
 
@@ -999,6 +1082,14 @@ def main() -> int:
         out = path.parent / "blind_nested_report.json"
         out.write_text(json.dumps(report, indent=2), encoding="utf-8")
         print(f"Звіт: {out}")
+        if args.export_kaitai:
+            kdir = Path(args.export_kaitai).expanduser()
+            kdir.mkdir(parents=True, exist_ok=True)
+            for layer in report["flows"]:
+                label = layer["label"].replace(":", "_")
+                ksy = kdir / f"{label}.ksy"
+                ksy.write_text(format_to_kaitai(layer.get("format", {}), meta_id=f"flow_{label}"), encoding="utf-8")
+            print(f"Kaitai: {kdir}/")
         return 0
 
     report = {"file": str(path), "blind": args.blind, "tcp_reassemble": reasm, "flows": []}
@@ -1009,6 +1100,15 @@ def main() -> int:
     out = path.parent / ("blind_report.json" if args.blind else "probe_report.json")
     out.write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(f"Звіт: {out}")
+    if args.export_kaitai and args.blind:
+        kdir = Path(args.export_kaitai).expanduser()
+        kdir.mkdir(parents=True, exist_ok=True)
+        for entry in report["flows"]:
+            label = entry.get("flow", "flow").replace(":", "_")
+            fmt = entry.get("format") or entry.get("inner_format") or {}
+            if fmt:
+                (kdir / f"{label}.ksy").write_text(format_to_kaitai(fmt, meta_id=f"flow_{label}"), encoding="utf-8")
+        print(f"Kaitai: {kdir}/")
     return 0
 
 
