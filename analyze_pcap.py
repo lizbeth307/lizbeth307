@@ -1,0 +1,1116 @@
+#!/usr/bin/env python3
+"""
+analyze_pcap.py — мінімальний аналізатор PCAP для Termux/Android.
+
+ВАЖЛИВО (Termux): не запускайте через "python" — буде grep /proc/stat error!
+  pkg install python
+  python3 analyze_pcap.py ~/downloads/файл.pcap
+  python3 analyze_pcap.py ~/downloads/файл.pcap --blind --flow 443
+  bash run_pcap.sh ~/downloads/файл.pcap
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import struct
+import sys
+from collections import Counter
+from dataclasses import dataclass
+from pathlib import Path
+
+VERSION = "3.1.0-full"
+
+# Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
+QUIC_VERSIONS = {
+    0x00000001: "QUIC v1",
+    0x6B3343CF: "QUIC draft-29",
+    0xFF00001D: "QUIC draft-29",
+}
+
+TLS_HANDSHAKE_NAMES = {1: "ClientHello", 2: "ServerHello", 11: "Certificate"}
+
+
+def read_quic_varint(data: bytes, off: int) -> tuple[int, int] | None:
+    if off >= len(data):
+        return None
+    first = data[off]
+    prefix = 1 << (first >> 6)
+    if off + prefix > len(data):
+        return None
+    if prefix == 1:
+        return first & 0x3F, 1
+    if prefix == 2:
+        return ((first & 0x3F) << 8) | data[off + 1], 2
+    if prefix == 4:
+        v = 0
+        for i in range(1, 4):
+            v = (v << 8) | data[off + i]
+        return (first & 0x3F) << 24 | v, 4
+    v = 0
+    for i in range(1, 8):
+        v = (v << 8) | data[off + i]
+    return (first & 0x3F) << 56 | v, 8
+
+
+def _quic_long_type_name(pkt_type: int) -> str:
+    return {0: "Initial", 1: "0-RTT", 2: "Handshake", 3: "Retry"}.get(pkt_type, f"type{pkt_type}")
+
+
+def parse_quic_packet(data: bytes, *, permit_short: bool = False) -> dict | None:
+    if len(data) < 5:
+        return None
+    if not (data[0] & 0x80):
+        if not permit_short or (data[0] & 0xC0) != 0x40 or len(data) < 8:
+            return None
+        return {
+            "form": "short",
+            "spin": bool(data[0] & 0x20),
+            "pn_len": (data[0] & 0x03) + 1,
+            "length": len(data),
+        }
+    if not (data[0] & 0x40):
+        return None
+    pkt_type = (data[0] >> 4) & 0x03
+    version = struct.unpack(">I", data[1:5])[0]
+    if version not in QUIC_VERSIONS:
+        return None
+    off = 5
+    if off >= len(data):
+        return None
+    dcid_len = data[off]
+    off += 1
+    if off + dcid_len > len(data):
+        return None
+    dcid = data[off : off + dcid_len]
+    off += dcid_len
+    if off >= len(data):
+        return None
+    scid_len = data[off]
+    off += 1
+    if off + scid_len > len(data):
+        return None
+    scid = data[off : off + scid_len]
+    off += scid_len
+    out: dict = {
+        "form": "long",
+        "type": _quic_long_type_name(pkt_type),
+        "version": version,
+        "version_name": QUIC_VERSIONS.get(version, f"0x{version:08x}"),
+        "dcid": dcid.hex(),
+        "scid": scid.hex(),
+        "dcid_len": dcid_len,
+        "scid_len": scid_len,
+    }
+    if pkt_type == 0:
+        tok = read_quic_varint(data, off)
+        if not tok:
+            return out
+        token_len, used = tok
+        off += used
+        if off + token_len > len(data):
+            return out
+        out["token_len"] = token_len
+        off += token_len
+        ln = read_quic_varint(data, off)
+        if not ln:
+            return out
+        length, used = ln
+        out["length"] = length
+        off += used
+        pn_len = (data[0] & 0x03) + 1
+        if off + pn_len <= len(data):
+            out["packet_number"] = int.from_bytes(data[off : off + pn_len], "big")
+            out["payload_len"] = max(0, length - pn_len)
+    elif pkt_type == 2:
+        ln = read_quic_varint(data, off)
+        if ln:
+            length, used = ln
+            out["length"] = length
+            off += used
+            pn_len = (data[0] & 0x03) + 1
+            if off + pn_len <= len(data):
+                out["packet_number"] = int.from_bytes(data[off : off + pn_len], "big")
+    return out
+
+
+def analyze_quic_flow(payloads: list[bytes]) -> dict:
+    long_valid = sum(
+        1
+        for p in payloads
+        if len(p) >= 5
+        and (p[0] & 0xC0) == 0xC0
+        and struct.unpack(">I", p[1:5])[0] in QUIC_VERSIONS
+    )
+    permit_short = long_valid >= 2
+    parsed = [p for p in (parse_quic_packet(m, permit_short=permit_short) for m in payloads) if p]
+    if not parsed:
+        return {"kind": "quic", "packets": len(payloads), "parsed": 0}
+    types = Counter(p.get("type", p.get("form", "?")) for p in parsed)
+    versions = Counter(p.get("version_name", "?") for p in parsed if p.get("form") == "long")
+    long_n = sum(1 for p in parsed if p.get("form") == "long")
+    short_n = sum(1 for p in parsed if p.get("form") == "short")
+    sample = parsed[0]
+    return {
+        "kind": "quic",
+        "packets": len(payloads),
+        "parsed": len(parsed),
+        "long_header": long_n,
+        "short_header": short_n,
+        "types": dict(types),
+        "versions": dict(versions),
+        "sample": {k: sample[k] for k in sample if k not in ("dcid", "scid")},
+    }
+
+
+def _read_dns_name(data: bytes, off: int) -> tuple[str, int] | None:
+    labels: list[str] = []
+    jumped = False
+    start = off
+    for _ in range(128):
+        if off >= len(data):
+            return None
+        ln = data[off]
+        if ln == 0:
+            off += 1
+            return ".".join(labels), off
+        if ln & 0xC0 == 0xC0:
+            if off + 2 > len(data):
+                return None
+            ptr = struct.unpack(">H", data[off : off + 2])[0] & 0x3FFF
+            if not jumped:
+                start = off + 2
+            off = ptr
+            jumped = True
+            continue
+        off += 1
+        if off + ln > len(data):
+            return None
+        labels.append(data[off : off + ln].decode("ascii", errors="replace"))
+        off += ln
+    return None
+
+
+def parse_dns_packet(data: bytes) -> dict | None:
+    if len(data) < 12:
+        return None
+    qid, flags, qd, an, ns, ar = struct.unpack(">HHHHHH", data[:12])
+    if qd == 0 and an == 0:
+        return None
+    off = 12
+    questions: list[dict] = []
+    for _ in range(qd):
+        name = _read_dns_name(data, off)
+        if not name:
+            return None
+        domain, off = name
+        if off + 4 > len(data):
+            return None
+        qtype, qclass = struct.unpack(">HH", data[off : off + 4])
+        off += 4
+        questions.append({"name": domain, "qtype": qtype, "qclass": qclass})
+    is_response = bool(flags & 0x8000)
+    return {
+        "qid": qid,
+        "response": is_response,
+        "opcode": (flags >> 11) & 0xF,
+        "questions": questions,
+        "answers": an,
+    }
+
+
+def analyze_dns_flow(payloads: list[bytes]) -> dict:
+    parsed = [p for p in (parse_dns_packet(m) for m in payloads) if p]
+    domains: list[str] = []
+    for p in parsed:
+        for q in p["questions"]:
+            domains.append(q["name"])
+    qtypes = Counter()
+    for p in parsed:
+        for q in p["questions"]:
+            qtypes[q["qtype"]] += 1
+    return {
+        "kind": "dns",
+        "packets": len(payloads),
+        "parsed": len(parsed),
+        "queries": sum(1 for p in parsed if not p["response"]),
+        "responses": sum(1 for p in parsed if p["response"]),
+        "domains": sorted(set(domains))[:20],
+        "qtypes": dict(qtypes),
+    }
+
+
+def parse_tls_sni(handshake: bytes) -> list[str]:
+    if len(handshake) < 38 or handshake[0] != 0x01:
+        return []
+    pos = 4 + 2 + 32
+    if pos >= len(handshake):
+        return []
+    sid_len = handshake[pos]
+    pos += 1 + sid_len
+    if pos + 2 > len(handshake):
+        return []
+    cs_len = struct.unpack(">H", handshake[pos : pos + 2])[0]
+    pos += 2 + cs_len
+    if pos >= len(handshake):
+        return []
+    cm_len = handshake[pos]
+    pos += 1 + cm_len
+    if pos + 2 > len(handshake):
+        return []
+    ext_len = struct.unpack(">H", handshake[pos : pos + 2])[0]
+    pos += 2
+    end = pos + ext_len
+    hosts: list[str] = []
+    while pos + 4 <= end and pos + 4 <= len(handshake):
+        etype = struct.unpack(">H", handshake[pos : pos + 2])[0]
+        elen = struct.unpack(">H", handshake[pos + 2 : pos + 4])[0]
+        pos += 4
+        edata = handshake[pos : pos + elen]
+        if etype == 0 and len(edata) >= 5:
+            list_len = struct.unpack(">H", edata[:2])[0]
+            p = 2
+            while p + 3 <= 2 + list_len and p + 3 <= len(edata):
+                if edata[p] != 0:
+                    p += 1
+                    continue
+                nlen = struct.unpack(">H", edata[p + 1 : p + 3])[0]
+                p += 3
+                if p + nlen <= len(edata):
+                    hosts.append(edata[p : p + nlen].decode("ascii", errors="replace"))
+                p += nlen
+        pos += elen
+    return hosts
+
+
+def split_tls_records(messages: list[bytes]) -> tuple[float, list[bytes]]:
+    frames: list[bytes] = []
+    ok = 0
+    for m in messages:
+        off = 0
+        pkt_ok = True
+        while off + 5 <= len(m):
+            ctype, v1, ln = m[off], m[off + 1], (m[off + 3] << 8) | m[off + 4]
+            if ctype not in range(20, 26) or v1 != 3:
+                pkt_ok = False
+                break
+            end = off + 5 + ln
+            if end > len(m):
+                pkt_ok = False
+                break
+            frames.append(m[off:end])
+            off = end
+        if pkt_ok and off == len(m):
+            ok += 1
+    return (ok / len(messages) if messages else 0.0), frames
+
+
+def _parse_client_hello(body: bytes) -> dict | None:
+    if len(body) < 38 or body[0] != 0x01:
+        return None
+    pos = 6 + 32
+    sid_len = body[pos]
+    pos += 1 + sid_len + 2
+    cs_len = struct.unpack(">H", body[pos - 2 : pos])[0]
+    pos += cs_len + 1
+    cm_len = body[pos]
+    pos += 1 + cm_len + 2
+    ext_len = struct.unpack(">H", body[pos - 2 : pos])[0]
+    pos += 0
+    end = pos + ext_len
+    sni: list[str] = []
+    alpn: list[str] = []
+    extensions: list[str] = []
+    while pos + 4 <= end:
+        etype, elen = struct.unpack(">HH", body[pos : pos + 4])
+        pos += 4
+        edata = body[pos : pos + elen]
+        pos += elen
+        extensions.append({0: "server_name", 16: "alpn", 43: "supported_versions"}.get(etype, f"ext_{etype}"))
+        if etype == 0 and len(edata) >= 5:
+            p = 2
+            while p + 3 <= len(edata):
+                if edata[p] == 0:
+                    nlen = struct.unpack(">H", edata[p + 1 : p + 3])[0]
+                    sni.append(edata[p + 3 : p + 3 + nlen].decode("ascii", errors="replace"))
+                    p += 3 + nlen
+                else:
+                    p += 1
+        elif etype == 16 and len(edata) >= 2:
+            p = 2
+            while p < len(edata):
+                ln = edata[p]
+                p += 1
+                alpn.append(edata[p : p + ln].decode("ascii", errors="replace"))
+                p += ln
+    return {"sni": sni, "alpn": alpn, "extensions": extensions}
+
+
+def analyze_tls_flow(payloads: list[bytes]) -> dict:
+    rate, frames = split_tls_records(payloads)
+    handshakes: list[dict] = []
+    sni_hosts: list[str] = []
+    alpn_list: list[str] = []
+    for fr in frames:
+        if len(fr) < 6 or fr[0] != 0x16:
+            continue
+        body = fr[5:]
+        if len(body) < 4:
+            continue
+        htype = body[0]
+        if htype == 1:
+            detail = _parse_client_hello(body) or {}
+            hosts = detail.get("sni", [])
+            sni_hosts.extend(hosts)
+            alpn_list.extend(detail.get("alpn", []))
+            handshakes.append({"type": "ClientHello", "sni": hosts, "alpn": detail.get("alpn", []), "extensions": detail.get("extensions", [])})
+        elif htype in TLS_HANDSHAKE_NAMES:
+            handshakes.append({"type": TLS_HANDSHAKE_NAMES[htype]})
+    return {
+        "kind": "tls",
+        "packets": len(payloads),
+        "record_split_rate": round(rate, 3),
+        "records": len(frames),
+        "client_hellos": sum(1 for h in handshakes if h["type"] == "ClientHello"),
+        "sni_hosts": sorted(set(sni_hosts))[:20],
+        "alpn": sorted(set(alpn_list))[:10],
+        "handshakes": handshakes[:10],
+    }
+
+
+def parse_ntp_packet(data: bytes) -> dict | None:
+    if len(data) != 48:
+        return None
+    li_vn_mode = data[0]
+    mode = li_vn_mode & 0x07
+    version = (li_vn_mode >> 3) & 0x07
+    return {
+        "mode": {3: "client", 4: "server", 6: "broadcast"}.get(mode, f"mode{mode}"),
+        "version": version,
+        "stratum": data[1],
+        "poll": data[2],
+    }
+
+
+def analyze_ntp_flow(payloads: list[bytes]) -> dict:
+    parsed = [p for p in (parse_ntp_packet(m) for m in payloads) if p]
+    modes = Counter(p["mode"] for p in parsed)
+    return {
+        "kind": "ntp",
+        "packets": len(payloads),
+        "parsed": len(parsed),
+        "fixed_len": 48,
+        "modes": dict(modes),
+        "versions": dict(Counter(p["version"] for p in parsed)),
+    }
+
+
+def _scan_protobuf_tags(data: bytes, limit: int = 12) -> list[int]:
+    tags: list[int] = []
+    off = 0
+    while off < len(data) and len(tags) < limit:
+        b = data[off]
+        if b == 0:
+            off += 1
+            continue
+        field = b >> 3
+        wire = b & 0x07
+        tags.append(field)
+        off += 1
+        if wire == 0:
+            while off < len(data) and data[off] & 0x80:
+                off += 1
+            off += 1
+        elif wire == 1:
+            off += 8
+        elif wire == 2:
+            if off >= len(data):
+                break
+            ln = data[off]
+            off += 1 + ln
+        elif wire == 5:
+            off += 4
+        else:
+            break
+    return tags
+
+
+def analyze_xmpp_flow(payloads: list[bytes]) -> dict:
+    xml = sum(1 for p in payloads if p.lstrip().startswith(b"<"))
+    length_prefixed = 0
+    protobufish = 0
+    hosts: list[str] = []
+    for p in payloads:
+        if p.lstrip().startswith(b"<"):
+            m = re.search(rb'to=[\'"]([^\'"]+)[\'"]', p[:512])
+            if m:
+                hosts.append(m.group(1).decode("ascii", errors="replace"))
+            m = re.search(rb"host=[\'\"]([^\'\"]+)[\'\"]", p[:512])
+            if m:
+                hosts.append(m.group(1).decode("ascii", errors="replace"))
+        elif len(p) >= 4 and p[0] == 0 and p[1] == 0:
+            ln = struct.unpack(">H", p[2:4])[0]
+            if ln + 4 == len(p) or ln + 6 == len(p):
+                length_prefixed += 1
+        if p and p[0] in (0x08, 0x0A, 0x10, 0x12, 0x1A, 0x22):
+            protobufish += 1
+    lens = Counter(len(p) for p in payloads)
+    proto_tags: list[int] = []
+    for p in payloads:
+        if len(p) > 8 and not p.lstrip().startswith(b"<"):
+            proto_tags.extend(_scan_protobuf_tags(p))
+            break
+    return {
+        "kind": "xmpp",
+        "packets": len(payloads),
+        "xml_streams": xml,
+        "length_prefixed": length_prefixed,
+        "protobuf_like": protobufish,
+        "length_distribution": dict(lens.most_common(8)),
+        "protobuf_fields": sorted(set(proto_tags))[:12],
+        "hosts": sorted(set(hosts))[:10],
+        "notes": ["Google mtalk/XMPP binary framing on 5222" if protobufish else "XMPP stream"],
+    }
+
+
+def deep_analyze_flow(label: str, payloads: list[bytes]) -> dict | None:
+    upper = label.upper()
+    if upper == "UDP:53" or upper.endswith(":53"):
+        return analyze_dns_flow(payloads)
+    if upper == "UDP:123" or upper.endswith(":123"):
+        return analyze_ntp_flow(payloads)
+    if upper == "TCP:5222" or upper.endswith(":5222"):
+        return analyze_xmpp_flow(payloads)
+    if upper == "UDP:443" or (upper.endswith(":443") and upper.startswith("UDP")):
+        q = analyze_quic_flow(payloads)
+        if q.get("parsed", 0) > 0:
+            return q
+    if upper == "TCP:443" or (upper.endswith(":443") and upper.startswith("TCP")):
+        return analyze_tls_flow(payloads)
+    return None
+
+# --- PCAP ---
+PCAP_MAGIC_LE = 0xA1B2C3D4
+PCAP_MAGIC_BE = 0xD4C3B2A1
+ETH_P_IP = 0x0800
+COMMON_PORTS = {53, 67, 68, 80, 123, 443, 5353, 8080, 8443}
+
+
+@dataclass(frozen=True)
+class FlowKey:
+    proto: str
+    port: int
+
+    @property
+    def label(self) -> str:
+        return f"{self.proto.upper()}:{self.port}"
+
+
+def _flow_key(proto: str, sport: int, dport: int) -> FlowKey:
+    for p in (sport, dport):
+        if p in COMMON_PORTS or p < 1024:
+            return FlowKey(proto, p)
+    return FlowKey(proto, min(sport, dport))
+
+
+def _parse_ipv4(frame: bytes, offset: int) -> tuple[str, int, int, bytes, int | None] | None:
+    data = frame[offset:]
+    if len(data) < 20 or (data[0] >> 4) != 4:
+        return None
+    ihl = (data[0] & 0x0F) * 4
+    proto = data[9]
+    total = struct.unpack(">H", data[2:4])[0]
+    ip = data[ihl:total]
+    if proto == 17 and len(ip) >= 8:
+        s, d, u = struct.unpack(">HHH", ip[:6])
+        return "udp", s, d, ip[8:u], None
+    if proto == 6 and len(ip) >= 20:
+        s, d, seq = struct.unpack(">HHI", ip[:8])
+        off = ((ip[12] >> 4) & 0x0F) * 4
+        return "tcp", s, d, ip[off:], seq
+    return None
+
+
+def _extract(frame: bytes, link: int) -> tuple[str, int, int, bytes, int | None] | None:
+    if link == 1 and len(frame) >= 14:
+        if struct.unpack(">H", frame[12:14])[0] == ETH_P_IP:
+            return _parse_ipv4(frame, 14)
+    if link == 113 and len(frame) >= 16:
+        if struct.unpack(">H", frame[14:16])[0] == ETH_P_IP:
+            return _parse_ipv4(frame, 16)
+    if link in (0, 101):
+        return _parse_ipv4(frame, 4 if link == 0 else 0)
+    return None
+
+
+def iter_pcap(path: Path):
+    data = path.read_bytes()
+    magic = struct.unpack("<I", data[:4])[0]
+    end = "<"
+    if magic in (PCAP_MAGIC_BE, 0x4D3CB2A1):
+        end = ">"
+    link = struct.unpack(end + "IHHiIII", data[:24])[6]
+    off = 24
+    while off + 16 <= len(data):
+        _, _, caplen, _ = struct.unpack(end + "IIII", data[off : off + 16])
+        off += 16
+        yield link, data[off : off + caplen]
+        off += caplen
+
+
+def _iter_tls_stream(stream: bytes) -> list[bytes]:
+    records: list[bytes] = []
+    offset = 0
+    while offset + 5 <= len(stream):
+        ctype = stream[offset]
+        if ctype not in range(20, 26) or stream[offset + 1] != 3:
+            break
+        ln = (stream[offset + 3] << 8) | stream[offset + 4]
+        end = offset + 5 + ln
+        if end > len(stream):
+            break
+        records.append(stream[offset:end])
+        offset = end
+    return records
+
+
+def _reassemble_tcp(segments: list[tuple[int, int, int, bytes]]) -> list[bytes]:
+    """segments: (sport, dport, seq, payload) → TLS records or streams."""
+    subflows: dict[tuple[int, int], list[tuple[int, bytes]]] = {}
+    for sport, dport, seq, payload in segments:
+        subflows.setdefault((sport, dport), []).append((seq, payload))
+    messages: list[bytes] = []
+    seen: set[bytes] = set()
+    for segs in subflows.values():
+        ordered = sorted(segs, key=lambda x: x[0])
+        stream = bytearray()
+        cursor: int | None = None
+        for seq, payload in ordered:
+            if cursor is None:
+                cursor = seq
+            if seq > cursor:
+                cursor = seq
+            skip = max(0, cursor - seq)
+            chunk = payload[skip:]
+            if chunk:
+                stream.extend(chunk)
+                cursor = seq + skip + len(chunk)
+        data = bytes(stream)
+        recs = _iter_tls_stream(data)
+        for item in (recs if recs else [data]):
+            if item and item not in seen:
+                seen.add(item)
+                messages.append(item)
+    return messages
+
+
+def extract_flows(
+    path: Path,
+    min_pkts: int = 2,
+    min_len: int = 4,
+    *,
+    tcp_reassemble: bool = False,
+) -> dict[str, list[bytes]]:
+    payloads: dict[FlowKey, list[bytes]] = {}
+    tcp_segs: dict[FlowKey, list[tuple[int, int, int, bytes]]] = {}
+    counts: dict[FlowKey, int] = {}
+    for link, frame in iter_pcap(path):
+        p = _extract(frame, link)
+        if not p:
+            continue
+        proto, sport, dport, payload, seq = p
+        if len(payload) < min_len:
+            continue
+        key = _flow_key(proto, sport, dport)
+        counts[key] = counts.get(key, 0) + 1
+        if proto == "tcp" and tcp_reassemble and seq is not None:
+            tcp_segs.setdefault(key, []).append((sport, dport, seq, payload))
+        else:
+            payloads.setdefault(key, []).append(payload)
+    out: dict[str, list[bytes]] = {}
+    for key, n in counts.items():
+        if n < min_pkts:
+            continue
+        if key in tcp_segs and tcp_reassemble:
+            out[key.label] = _reassemble_tcp(tcp_segs[key])
+        else:
+            out[key.label] = payloads.get(key, [])
+    return out
+
+
+# --- Discovery (спрощений) ---
+def discover_format(messages: list[bytes]) -> dict:
+    if not messages:
+        return {}
+    min_len = min(map(len, messages))
+    best_off, best_score, best_end = None, 0.0, "le"
+    for off in range(max(0, min_len - 1)):
+        for end in ("le", "be"):
+            hits = total = 0
+            for m in messages:
+                if off + 2 >= len(m):
+                    continue
+                total += 1
+                if end == "le":
+                    decl = m[off] | (m[off + 1] << 8)
+                else:
+                    decl = (m[off] << 8) | m[off + 1]
+                rest = len(m) - off - 2
+                if decl == rest or decl == rest - 1:
+                    hits += 1
+            score = hits / total if total else 0
+            if score > best_score:
+                best_score, best_off, best_end = score, off, end
+    fields = []
+    header_end = (best_off + 2) if best_score >= 0.8 else min_len
+    i = 0
+    while i < header_end:
+        if best_score >= 0.8 and i == best_off:
+            fields.append({"name": "length", "offset": i, "size": 2, "kind": "length", "endian": best_end})
+            i += 2
+            continue
+        vals = Counter(m[i] for m in messages if i < len(m))
+        dom = vals.most_common(1)[0][1] / sum(vals.values()) if vals else 0
+        if dom >= 0.9:
+            fields.append({"name": f"fixed_{i}", "offset": i, "size": 1, "kind": "fixed", "value": vals.most_common(1)[0][0]})
+            i += 1
+        elif len(vals) <= 8:
+            fields.append({"name": f"enum_{i}", "offset": i, "size": 1, "kind": "enum"})
+            i += 1
+        else:
+            fields.append({"name": f"byte_{i}", "offset": i, "size": 1, "kind": "variable"})
+            i += 1
+    fields.append({"name": "payload", "offset": header_end, "size": -1, "kind": "payload"})
+    return {"fields": fields, "length_offset": best_off if best_score >= 0.8 else None, "endian": best_end}
+
+
+def _read_varint(data: bytes, off: int) -> tuple[int, int] | None:
+    if off >= len(data):
+        return None
+    first = data[off]
+    prefix = 1 << (first >> 6)
+    if off + prefix > len(data):
+        return None
+    if prefix == 1:
+        return first & 0x3F, 1
+    if prefix == 2:
+        return ((first & 0x3F) << 8) | data[off + 1], 2
+    if prefix == 4:
+        v = 0
+        for i in range(1, 4):
+            v = (v << 8) | data[off + i]
+        return (first & 0x3F) << 24 | v, 4
+    v = 0
+    for i in range(1, 8):
+        v = (v << 8) | data[off + i]
+    return (first & 0x3F) << 56 | v, 8
+
+
+def _score_varint_length(messages: list[bytes], off: int) -> float:
+    hits = total = 0
+    for m in messages:
+        if off >= len(m):
+            continue
+        parsed = _read_varint(m, off)
+        if not parsed:
+            continue
+        total += 1
+        val, used = parsed
+        rest = len(m) - off - used
+        if val == rest or val in (rest - 1, rest - 2):
+            hits += 1
+    return hits / total if total else 0.0
+
+
+def _score_tls_like(messages: list[bytes]) -> tuple[float, list[bytes]]:
+    frames: list[bytes] = []
+    ok = 0
+    for m in messages:
+        off = 0
+        pkt_ok = True
+        while off + 5 <= len(m):
+            ctype, v1, ln = m[off], m[off + 1], (m[off + 3] << 8) | m[off + 4]
+            if ctype not in range(20, 26) or v1 != 3:
+                pkt_ok = False
+                break
+            end = off + 5 + ln
+            if end > len(m):
+                pkt_ok = False
+                break
+            frames.append(m[off:end])
+            off = end
+        if pkt_ok and off == len(m):
+            ok += 1
+    return (ok / len(messages) if messages else 0.0), frames
+
+
+def _split_quic_packets(messages: list[bytes]) -> tuple[float, list[bytes]]:
+    """Legacy heuristic — only when deep_decode unavailable."""
+    frames: list[bytes] = []
+    ok = 0
+    for m in messages:
+        if len(m) < 5 or not (m[0] & 0x80) or not (m[0] & 0x40):
+            continue
+        ver = struct.unpack(">I", m[1:5])[0]
+        if ver not in (0x00000001, 0x6B3343CF, 0xFF00001D):
+            continue
+        frames.append(m)
+        ok += 1
+    return (ok / len(messages) if messages else 0.0), frames
+
+
+def _find_best_length_offset(messages: list[bytes]) -> list[dict]:
+    if not messages:
+        return []
+    min_len = min(map(len, messages))
+    cands: list[dict] = []
+    for off in range(min(24, min_len - 1)):
+        for end in ("le", "be"):
+            hits = total = 0
+            for m in messages:
+                if off + 2 >= len(m):
+                    continue
+                total += 1
+                if end == "le":
+                    decl = m[off] | (m[off + 1] << 8)
+                else:
+                    decl = (m[off] << 8) | m[off + 1]
+                rest = len(m) - off - 2
+                if decl == rest or abs(decl - rest) <= 2:
+                    hits += 1
+            if total:
+                score = hits / total
+                if score >= 0.5:
+                    cands.append({"offset": off, "kind": f"u16_{end}", "score": round(score, 3)})
+        vs = _score_varint_length(messages, off)
+        if vs >= 0.5:
+            cands.append({"offset": off, "kind": "varint", "score": round(vs, 3)})
+    return sorted(cands, key=lambda x: -x["score"])[:5]
+
+
+def _entropy_note(payloads: list[bytes]) -> str:
+    ratio = len(set(b for p in payloads[:10] for b in p[:16])) / max(1, min(16, min(len(p) for p in payloads)))
+    if ratio > 0.85:
+        return "висока ентропія → шукаємо вкладені кадри"
+    return "структурований шар"
+
+
+def _format_deep(deep: dict) -> list[str]:
+    kind = deep.get("kind", "?")
+    lines: list[str] = []
+    if kind == "tls":
+        lines.append(f"TLS: {deep.get('records', 0)} records, {deep.get('client_hellos', 0)} ClientHello")
+        if deep.get("sni_hosts"):
+            lines.append(f"SNI: {', '.join(deep['sni_hosts'][:8])}")
+    elif kind == "quic":
+        lines.append(
+            f"QUIC: long={deep.get('long_header', 0)} short={deep.get('short_header', 0)} "
+            f"types={deep.get('types', {})}"
+        )
+        if deep.get("versions"):
+            lines.append(f"versions: {deep['versions']}")
+        sample = deep.get("sample", {})
+        if sample:
+            lines.append(
+                f"sample: {sample.get('type', sample.get('form'))} "
+                f"ver={sample.get('version_name', '?')} len={sample.get('length', sample.get('length', '?'))}"
+            )
+    elif kind == "dns":
+        lines.append(f"DNS: {deep.get('parsed', 0)}/{deep.get('packets', 0)} parsed")
+        if deep.get("domains"):
+            lines.append(f"domains: {', '.join(deep['domains'][:8])}")
+    elif kind == "ntp":
+        lines.append(f"NTP: {deep.get('parsed', 0)}×48B modes={deep.get('modes', {})}")
+    elif kind == "xmpp":
+        lines.append(
+            f"XMPP: protobuf={deep.get('protobuf_like', 0)} xml={deep.get('xml_streams', 0)} "
+            f"len-framed={deep.get('length_prefixed', 0)}"
+        )
+        if deep.get("protobuf_fields"):
+            lines.append(f"protobuf fields: {deep['protobuf_fields']}")
+        for note in deep.get("notes", []):
+            lines.append(note)
+    return lines
+
+
+def blind_analyze(label: str, payloads: list[bytes]) -> dict:
+    notes: list[str] = [_entropy_note(payloads)]
+    outer = discover_format(payloads)
+    splits = _find_best_length_offset(payloads)
+    inner: dict | None = None
+    deep: dict | None = None
+
+    deep = deep_analyze_flow(label, payloads)
+
+    if deep:
+        notes.extend(_format_deep(deep))
+        if deep.get("kind") == "tls":
+            _, tls_frames = split_tls_records(payloads)
+            if tls_frames:
+                inner = discover_format(tls_frames)
+                notes.append(
+                    "внутрішній AST: "
+                    + ", ".join(f"{f['kind']}@{f['offset']}" for f in inner.get("fields", [])[:6])
+                )
+        elif deep.get("kind") == "quic":
+            notes.append("QUIC varint header parsed")
+        elif deep.get("kind") == "dns":
+            inner = discover_format(payloads)
+        elif deep.get("kind") == "ntp":
+            inner = discover_format(payloads)
+    else:
+        tls_rate, tls_frames = _score_tls_like(payloads)
+        quic_rate, quic_frames = _split_quic_packets(payloads)
+        if tls_rate >= 0.6:
+            notes.append(f"вкладені кадри type|ver|len: {tls_rate:.0%} ({len(tls_frames)} кадрів)")
+            if tls_frames:
+                inner = discover_format(tls_frames)
+                notes.append(
+                    "внутрішній AST: "
+                    + ", ".join(f"{f['kind']}@{f['offset']}" for f in inner.get("fields", [])[:6])
+                )
+        elif quic_rate >= 0.5:
+            long_n = sum(1 for p in quic_frames if p[0] & 0x80)
+            notes.append(f"UDP-кадри (QUIC-подібні): {quic_rate:.0%}, long-header={long_n}")
+            if quic_frames:
+                inner = discover_format(quic_frames)
+        elif splits:
+            notes.append(f"length-кандидат: {splits[0]}")
+
+    return {
+        "flow": label,
+        "packets": len(payloads),
+        "outer_format": outer,
+        "length_splits": splits,
+        "inner_format": inner,
+        "deep": deep,
+        "notes": notes,
+    }
+
+
+def _flow_matches(label: str, flow_filter: str) -> bool:
+    needle = flow_filter.strip().upper()
+    if ":" in needle:
+        return label.upper() == needle
+    return label.split(":")[-1] == needle
+
+
+def _print_flow(label: str, payloads: list[bytes], blind: bool) -> dict:
+    print(f"── {label}  packets={len(payloads)}  len={min(map(len,payloads))}..{max(map(len,payloads))}")
+    if blind:
+        result = blind_analyze(label, payloads)
+        for note in result["notes"]:
+            print(f"   • {note}")
+        if result.get("inner_format"):
+            print("   внутрішні поля:")
+            for f in result["inner_format"].get("fields", [])[:8]:
+                print(f"     {f['name']:12} {f['kind']:8} @{f['offset']}")
+        return result
+
+    fmt = discover_format(payloads)
+    for f in fmt.get("fields", [])[:12]:
+        print(f"   {f['name']:12} {f['kind']:8} @{f['offset']}")
+    if fmt.get("length_offset") is not None:
+        print(f"   length @{fmt['length_offset']} ({fmt['endian']})")
+    sample = payloads[0][:32].hex()
+    print(f"   sample: {sample}{'...' if len(payloads[0])>32 else ''}")
+    return {"flow": label, "packets": len(payloads), "format": fmt}
+
+
+def _all_tls_records(messages: list[bytes]) -> bool:
+    for m in messages:
+        if len(m) < 5 or m[0] not in range(20, 26) or m[1] != 3:
+            return False
+        if 5 + ((m[3] << 8) | m[4]) != len(m):
+            return False
+    return bool(messages)
+
+
+def _is_quic_flow(flow: str) -> bool:
+    u = flow.upper()
+    return u.startswith("UDP") and u.endswith(":443")
+
+
+def _pick_nested_splitter(messages: list[bytes], depth: int, flow: str = "") -> tuple[str, list[bytes]] | None:
+    if depth > 0 and _all_tls_records(messages):
+        bodies = [m[5:] for m in messages if len(m) > 5 and m[0] == 0x16]
+        return ("tls_handshake", bodies) if len(bodies) >= 2 else None
+    rate, frames = split_tls_records(messages)
+    if rate >= 0.6 and frames and len(frames) < len(messages):
+        return "tls_record", frames
+    if _is_quic_flow(flow):
+        quic = [m for m in messages if parse_quic_packet(m, permit_short=True)]
+        if len(quic) >= max(2, len(messages) // 2) and len(quic) < len(messages):
+            return "quic_packet", quic
+    return None
+
+
+def recursive_nested_analyze(
+    flow: str,
+    messages: list[bytes],
+    *,
+    depth: int = 0,
+    max_depth: int = 3,
+    label: str | None = None,
+) -> dict:
+    label = label or flow
+    layer: dict = {
+        "label": label,
+        "depth": depth,
+        "messages": len(messages),
+        "entropy": "high" if "висока" in _entropy_note(messages) else "structured",
+        "format": discover_format(messages),
+        "splitter": None,
+        "deep": None,
+        "clusters": None,
+        "children": [],
+    }
+    if depth == 0:
+        layer["deep"] = deep_analyze_flow(flow, messages)
+        opcodes = Counter(m[0] for m in messages if m)
+        layer["clusters"] = len([v for v in opcodes.values() if v >= 2])
+    if depth >= max_depth or len(messages) < 2:
+        return layer
+    split = _pick_nested_splitter(messages, depth, flow)
+    if not split:
+        return layer
+    splitter_name, inner = split
+    layer["splitter"] = splitter_name
+    if len(inner) < 2:
+        return layer
+    child = recursive_nested_analyze(
+        flow, inner, depth=depth + 1, max_depth=max_depth, label=f"{label}/{splitter_name}"
+    )
+    layer["children"].append(child)
+    return layer
+
+
+def format_nested_notes(layer: dict) -> list[str]:
+    notes = [
+        f"[d{layer['depth']}] {layer['label']}: {layer['messages']} msg, entropy={layer['entropy']}"
+    ]
+    if layer.get("splitter"):
+        notes.append(f"  splitter: {layer['splitter']}")
+    deep = layer.get("deep") or {}
+    if deep.get("kind") == "tls":
+        if deep.get("sni_hosts"):
+            notes.append(f"  SNI: {', '.join(deep['sni_hosts'][:6])}")
+        if deep.get("alpn"):
+            notes.append(f"  ALPN: {', '.join(deep['alpn'][:4])}")
+    if deep.get("kind") == "dns" and deep.get("domains"):
+        notes.append(f"  DNS: {', '.join(deep['domains'][:6])}")
+    if deep.get("kind") == "quic":
+        notes.append(f"  QUIC: {deep.get('types', {})}")
+    if layer.get("clusters"):
+        notes.append(f"  clusters: {layer['clusters']} opcodes")
+    for ch in layer.get("children", []):
+        notes.extend(format_nested_notes(ch))
+    return notes
+
+
+def format_to_kaitai(fmt: dict, meta_id: str = "discovered") -> str:
+    endian = fmt.get("endian") or fmt.get("length_endian") or "le"
+    ks = "be" if endian == "be" else "le"
+    lines = [f"meta:", f"  id: {meta_id}", f"  endian: {ks}", "seq:", "  - id: message", "    type: message_body", "types:", "  message_body:", "    seq:"]
+    for f in fmt.get("fields", []):
+        name = f.get("name", "field").replace("@", "_")
+        kind = f.get("kind", "")
+        if kind == "payload":
+            lines += ["      - id: payload", "        size-eos: true"]
+        elif kind == "length":
+            lines += [f"      - id: {name}", "        type: u2", "      - id: body", f"        size: {name}"]
+        elif kind == "fixed":
+            sz = f.get("size", 1)
+            lines += [f"      - id: {name}", f"        size: {sz}" if sz > 1 else f"        type: u1"]
+        else:
+            lines += [f"      - id: {name}", "        type: u1"]
+    return "\n".join(lines) + "\n"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="PCAP analyzer for Termux/Android")
+    parser.add_argument("--version", action="version", version=f"analyze_pcap {VERSION}")
+    parser.add_argument("pcap", nargs="?", help="path to .pcap file")
+    parser.add_argument("--blind", action="store_true", help="blind deep analysis (TLS/QUIC inner frames)")
+    parser.add_argument("--nested", action="store_true", help="nested AST v2 (recursive layers)")
+    parser.add_argument("--tcp-reassemble", action="store_true", help="TCP stream reassembly + TLS split")
+    parser.add_argument("--export-kaitai", metavar="DIR", help="export .ksy schemas per flow")
+    parser.add_argument("--flow", help="filter flow, e.g. 443 or TCP:443")
+    args = parser.parse_args()
+
+    if args.nested:
+        mode = "nested AST v2"
+    elif args.tcp_reassemble:
+        mode = "TCP reassembly"
+    else:
+        mode = "deep decode embedded"
+    print(f"analyze_pcap: старт v{VERSION} ({mode})", flush=True)
+    if not args.pcap:
+        parser.print_help()
+        return 1
+    path = Path(args.pcap).expanduser()
+    if not path.exists():
+        print(f"Файл не знайдено: {path}", file=sys.stderr)
+        print("На телефоні файл зазвичай: ~/downloads/PCAPdroid*.pcap", file=sys.stderr)
+        return 1
+    print(f"PCAP: {path} ({path.stat().st_size} bytes)\n")
+
+    reasm = args.tcp_reassemble or args.nested
+    flows = extract_flows(path, tcp_reassemble=reasm)
+    if not flows:
+        print("Потоків не знайдено. Спробуйте інший pcap.")
+        return 1
+
+    selected = flows
+    if args.flow:
+        selected = {k: v for k, v in flows.items() if _flow_matches(k, args.flow)}
+        if not selected:
+            print(f"Потік '{args.flow}' не знайдено. Доступні:", ", ".join(sorted(flows)))
+            return 1
+
+    if args.nested:
+        report = {"file": str(path), "nested": True, "tcp_reassemble": reasm, "flows": []}
+        for label in sorted(selected, key=lambda k: -len(selected[k])):
+            layer = recursive_nested_analyze(label, selected[label], max_depth=3)
+            n = layer["messages"]
+            print(f"── {label}  messages={n}" + (" (TCP reasm)" if reasm and label.startswith("TCP") else ""))
+            for note in format_nested_notes(layer):
+                print(f"   • {note}" if not note.startswith("[") and not note.startswith("  ") else f"   {note}")
+            print()
+            report["flows"].append(layer)
+        out = path.parent / "blind_nested_report.json"
+        out.write_text(json.dumps(report, indent=2), encoding="utf-8")
+        print(f"Звіт: {out}")
+        if args.export_kaitai:
+            kdir = Path(args.export_kaitai).expanduser()
+            kdir.mkdir(parents=True, exist_ok=True)
+            for layer in report["flows"]:
+                label = layer["label"].replace(":", "_")
+                ksy = kdir / f"{label}.ksy"
+                ksy.write_text(format_to_kaitai(layer.get("format", {}), meta_id=f"flow_{label}"), encoding="utf-8")
+            print(f"Kaitai: {kdir}/")
+        return 0
+
+    report = {"file": str(path), "blind": args.blind, "tcp_reassemble": reasm, "flows": []}
+    for label in sorted(selected, key=lambda k: -len(selected[k])):
+        entry = _print_flow(label, selected[label], args.blind)
+        print()
+        report["flows"].append(entry)
+    out = path.parent / ("blind_report.json" if args.blind else "probe_report.json")
+    out.write_text(json.dumps(report, indent=2), encoding="utf-8")
+    print(f"Звіт: {out}")
+    if args.export_kaitai and args.blind:
+        kdir = Path(args.export_kaitai).expanduser()
+        kdir.mkdir(parents=True, exist_ok=True)
+        for entry in report["flows"]:
+            label = entry.get("flow", "flow").replace(":", "_")
+            fmt = entry.get("format") or entry.get("inner_format") or {}
+            if fmt:
+                (kdir / f"{label}.ksy").write_text(format_to_kaitai(fmt, meta_id=f"flow_{label}"), encoding="utf-8")
+        print(f"Kaitai: {kdir}/")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
