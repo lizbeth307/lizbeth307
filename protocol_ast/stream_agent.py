@@ -38,6 +38,7 @@ def highlight_notes(notes: list[str], *, limit: int = 16) -> list[str]:
     """Prefer deep peel lines over sequitur/cluster noise; dedupe repeats."""
     scored: list[tuple[int, int, str]] = []
     seen: set[str] = set()
+    depth_headers = 0
     for i, n in enumerate(notes):
         s = n.strip()
         if not s or s in seen:
@@ -49,12 +50,13 @@ def highlight_notes(notes: list[str], *, limit: int = 16) -> list[str]:
                 rank = p
                 break
         if s.startswith("[d"):
-            # keep one layer header per unique label tail
-            rank = min(rank, 45)
+            depth_headers += 1
+            # at most two [dN] banners — they crowd out title/hdr
+            rank = 70 if depth_headers <= 2 else 99
         if "sequitur" in s or "clusters:" in s:
             rank = 90
-        if "tls_handshake/tls_handshake" in s:
-            rank = 95
+        if "tls_handshake" in s and s.startswith("[d"):
+            rank = 92
         scored.append((rank, i, n if n.startswith("  ") or n.startswith("[") else f"  {s}"))
     scored.sort(key=lambda t: (t[0], t[1]))
     out = [t[2] for t in scored[:limit]]
