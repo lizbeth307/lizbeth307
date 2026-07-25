@@ -215,7 +215,7 @@ class StreamAgent:
             flow=flow,
             messages=len(payloads),
             path=deepest_signal_path(sig),
-            notes=highlight_notes(all_notes, limit=20),
+            notes=highlight_notes(all_notes, limit=24),
             signal=sig.to_dict() if self.include_signal_dict else {
                 "label": sig.label,
                 "path": deepest_signal_path(sig),

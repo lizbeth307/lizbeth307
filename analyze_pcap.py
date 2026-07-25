@@ -2246,8 +2246,9 @@ def main() -> int:
             max_emits_per_flow=3,
         )
         for ev in events:
-            print(f"── {ev.flow} msgs={ev.messages} path={ev.path}")
-            for n in ev.notes[:10]:
+            print(f"── {ev.flow} msgs={ev.messages}")
+            print(f"   path: {ev.path}")
+            for n in ev.notes[:20]:
                 print(f"   {n}" if n.startswith("[") or n.startswith("  ") else f"   • {n}")
             print()
         out = path.parent / "stream_report.json"
