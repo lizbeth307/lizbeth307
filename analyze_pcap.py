@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """
 analyze_pcap.py — мінімальний аналізатор PCAP для Termux/Android.
-Без git, без tcpdump, без active-probe. Тільки ваш .pcap файл.
 
-Termux:
-  pkg install python
-  python analyze_pcap.py ~/downloads/PCAPdroid_25_лип._12_42_30.pcap
+ВАЖЛИВО (Termux): не запускайте через "python" — буде grep /proc/stat error!
+  python3 analyze_pcap.py ~/downloads/файл.pcap
+  bash run_pcap.sh ~/downloads/файл.pcap
 """
 
 from __future__ import annotations

@@ -124,10 +124,15 @@ def _capture_pcap(
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
-        time.sleep(seconds)
-        proc.wait(timeout=seconds + 5)
+        time.sleep(1)
+        _stimulate_traffic()
+        proc.wait(timeout=seconds + 15)
         return out.exists() and out.stat().st_size > 24
     except (OSError, subprocess.SubprocessError):
+        try:
+            proc.kill()
+        except Exception:
+            pass
         return False
 
 
@@ -177,7 +182,6 @@ def run_smart_probe(
 
     if pcap_path is None and capture and env.can_tcpdump and env.iface:
         tmp_pcap = Path(out_dir or ".") / "probe_capture.pcap"
-        _stimulate_traffic()
         if _capture_pcap(env.iface, tmp_pcap):
             pcap_path = tmp_pcap
             sources.append(f"live-capture:{env.iface}")
