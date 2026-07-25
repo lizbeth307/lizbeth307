@@ -47,6 +47,7 @@ from protocol_ast.pipeline import DiscoveryResult, discover_and_parse
 from protocol_ast.sequitur import Sequitur, tokenize_message
 from protocol_ast.serde import format_to_dict, load_format, save_format
 from protocol_ast.fixtures.real_protocols import REAL_PROTOCOLS
+from protocol_ast.blind_deep import blind_analyze
 from protocol_ast.pcap_analyze import extract_flows, flow_summary
 from protocol_ast.synthesize import GroundTruthMessage, make_corpus, raw_messages
 
@@ -460,6 +461,30 @@ def cmd_wifi_analyze(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_blind(args: argparse.Namespace) -> int:
+    """Сліпий глибокий аналіз — рекурсія в вкладені кадри без знання протоколу."""
+    pcap = Path(args.pcap)
+    buckets = extract_flows(pcap, min_packets=args.min_packets, min_payload=args.min_payload)
+    targets = buckets
+    if args.flow:
+        targets = {k: v for k, v in buckets.items() if args.flow.lower() in k.lower()}
+    if not targets:
+        raise SystemExit("потоки не знайдено")
+    print(f"Сліпий аналіз {pcap} — не знаємо протокол, лише байти\n")
+    for label, bucket in sorted(targets.items(), key=lambda x: -x[1].packet_count):
+        r = blind_analyze(label, bucket.payloads)
+        print(f"=== {label} ({r.outer_messages} msg) ===")
+        for note in r.notes:
+            print(f"  • {note}")
+        print(f"  Sequitur rules: {r.sequitur_rules}")
+        if r.inner_frames and r.inner_frames[0].child_format:
+            print("  вкладений AST:")
+            for f in r.inner_frames[0].child_format.fields[:8]:
+                print(f"    {f.name}:{f.kind}@{f.offset}")
+        print()
+    return 0
+
+
 def cmd_test(_args: argparse.Namespace) -> int:
     import unittest
 
@@ -582,6 +607,13 @@ def build_parser() -> argparse.ArgumentParser:
     p_wifi.add_argument("--dump-hex", action="store_true")
     p_wifi.add_argument("--json", action="store_true")
     p_wifi.set_defaults(func=cmd_wifi_analyze)
+
+    p_blind = sub.add_parser("blind", help="сліпий глибокий аналіз (рекурсія в кадри)")
+    p_blind.add_argument("pcap")
+    p_blind.add_argument("--flow", help="фільтр потоку")
+    p_blind.add_argument("--min-packets", type=int, default=2)
+    p_blind.add_argument("--min-payload", type=int, default=4)
+    p_blind.set_defaults(func=cmd_blind)
 
     return parser
 
