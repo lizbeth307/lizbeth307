@@ -12,15 +12,32 @@ from protocol_ast.stream_agent import StreamAgent, analyze_pcap_streaming, event
 
 
 class TestStreamSample(unittest.TestCase):
-    def test_head_tail_sample(self) -> None:
-        agent = StreamAgent(max_msgs=10)
+    def test_intermediate_is_prefix(self) -> None:
+        agent = StreamAgent(max_msgs=10, keylog=None)
         payloads = [bytes([i]) for i in range(30)]
-        sample = agent._sample(payloads)
-        self.assertEqual(len(sample), 10)
-        # head kept
-        self.assertEqual(sample[0], b"\x00")
-        # tail kept
-        self.assertEqual(sample[-1], bytes([29]))
+        sample = agent._sample(payloads, final=False)
+        self.assertEqual(sample, payloads[:10])
+
+    def test_final_keylog_uses_full(self) -> None:
+        agent = StreamAgent(max_msgs=10, keylog="/tmp/keys.txt")
+        payloads = [bytes([i]) for i in range(30)]
+        sample = agent._sample(payloads, final=True)
+        self.assertEqual(len(sample), 30)
+
+    def test_highlight_notes_prefers_title(self) -> None:
+        from protocol_ast.stream_agent import highlight_notes
+
+        notes = [
+            "[d0] TCP:443: 10 msg",
+            "  sequitur: 9 rules",
+            "  clusters: 2 opcodes",
+            "  title: Anúncio não encontrado",
+            "  hdr: s1 :status=404",
+        ]
+        hi = highlight_notes(notes, limit=3)
+        joined = "\n".join(hi)
+        self.assertIn("title:", joined)
+        self.assertIn("hdr:", joined)
 
 
 class TestStreamAgent(unittest.TestCase):

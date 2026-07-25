@@ -10,7 +10,62 @@ from pathlib import Path
 from typing import Any, Iterator
 
 from .pcap_analyze import extract_flows
-from .signal import propagate_flow
+from .signal import Signal, propagate_flow
+
+
+_NOTE_PRIORITY = (
+    "title:",
+    "hdr:",
+    "json_api",
+    "api_paths:",
+    "schema:",
+    "json_keys:",
+    "content:",
+    "HTTP/2:",
+    "http2_data:",
+    "meta:",
+    "body:",
+    "decrypt: TLS",
+    "SNI:",
+    "ALPN:",
+    "protobuf:",
+    "msgpack:",
+    "DNS:",
+)
+
+
+def highlight_notes(notes: list[str], *, limit: int = 16) -> list[str]:
+    """Prefer deep peel lines over sequitur/cluster noise for Termux UI."""
+    scored: list[tuple[int, int, str]] = []
+    for i, n in enumerate(notes):
+        s = n.strip()
+        rank = 50
+        for p, key in enumerate(_NOTE_PRIORITY):
+            if key in s:
+                rank = p
+                break
+        if s.startswith("[d"):
+            rank = min(rank, 40)
+        if "sequitur" in s or "clusters:" in s or "parse=" in s:
+            rank = max(rank, 80)
+        scored.append((rank, i, n))
+    scored.sort(key=lambda t: (t[0], t[1]))
+    out = [t[2] for t in scored[:limit]]
+    # keep chronological among selected for readability
+    out.sort(key=lambda line: notes.index(line) if line in notes else 0)
+    return out
+
+
+def deepest_signal_path(sig: Signal) -> str:
+    """Path to the deepest child with a real splitter/deep peel."""
+    best = sig
+    stack = [sig]
+    while stack:
+        node = stack.pop()
+        if node.depth >= best.depth and (node.deep or node.splitter):
+            best = node
+        stack.extend(node.children)
+    return best.path()
 
 
 @dataclass
@@ -80,45 +135,57 @@ class StreamAgent:
         for f in flows:
             if f in self.buffers and len(self.buffers[f]) >= self.min_messages:
                 if self.last_emitted_at.get(f, 0) < len(self.buffers[f]):
-                    ev = self._emit(f)
+                    ev = self._emit(f, final=True)
                     if ev:
                         out.append(ev)
         return out
 
-    def _sample(self, payloads: list[bytes]) -> list[bytes]:
-        """Keep ClientHellos at the start + later APP_DATA (not only prefix)."""
+    def _sample(self, payloads: list[bytes], *, final: bool = False) -> list[bytes]:
+        """
+        Contiguous samples only — head+tail splice breaks TLS/HTTP2 sessions.
+
+        Final+keylog: use full buffer (same as --signal; ~166 msgs is OK on phone).
+        Intermediate: contiguous prefix capped by max_msgs.
+        """
         n = len(payloads)
+        if final and self.keylog:
+            if n <= 220:
+                return list(payloads)
+            # very large: contiguous tail window (late sessions) + small head for hellos
+            head = 24
+            tail = 196
+            return list(payloads[:head]) + list(payloads[-(tail):])
         if n <= self.max_msgs:
             return list(payloads)
-        head = max(8, self.max_msgs // 3)
-        tail = self.max_msgs - head
-        return list(payloads[:head]) + list(payloads[-tail:])
+        return list(payloads[: self.max_msgs])
 
-    def _emit(self, flow: str) -> StreamEvent | None:
+    def _emit(self, flow: str, *, final: bool = False) -> StreamEvent | None:
         payloads = self.buffers.get(flow) or []
         if len(payloads) < self.min_messages:
             return None
-        # Cap work: TLS decrypt on hundreds of records kills Termux
-        sample = self._sample(payloads)
+        sample = self._sample(payloads, final=final)
         print(
-            f"  … Signal {flow} msgs={len(payloads)} (using {len(sample)})",
+            f"  … Signal {flow} msgs={len(payloads)} (using {len(sample)}"
+            f"{', final' if final else ''})",
             flush=True,
             file=sys.stderr,
         )
         t0 = time.time()
         sig = propagate_flow(flow, sample, max_depth=self.max_depth, keylog=self.keylog)
         dt = time.time() - t0
+        all_notes = sig.format_notes()
         ev = StreamEvent(
             ts=time.time(),
             flow=flow,
             messages=len(payloads),
-            path=sig.path(),
-            notes=sig.format_notes()[:24],
+            path=deepest_signal_path(sig),
+            notes=highlight_notes(all_notes, limit=20),
             signal=sig.to_dict() if self.include_signal_dict else {
                 "label": sig.label,
-                "path": sig.path(),
+                "path": deepest_signal_path(sig),
                 "elapsed_s": round(dt, 3),
                 "sampled": len(sample),
+                "final": final,
             },
         )
         self.last_emitted_at[flow] = len(payloads)
@@ -176,8 +243,6 @@ def analyze_pcap_streaming(
         flush=True,
         file=sys.stderr,
     )
-    # Final peel needs more budget when keylog decrypt is available
-    final_msgs = max(max_msgs, 96) if keylog else max_msgs
     agent = StreamAgent(
         every_n=every_n,
         max_depth=max_depth,
@@ -200,12 +265,11 @@ def analyze_pcap_streaming(
         for c in checkpoints:
             if agent.emit_count.get(label, 0) >= max_emits_per_flow - 1:
                 break
-            agent.max_msgs = max_msgs
+            # contiguous prefix only (preserves one growing capture)
             agent.buffers[label] = list(bucket.payloads[:c])
             agent.last_emitted_at[label] = 0
-            agent._emit(label)
-        # final — larger sample + head/tail so late sessions (e.g. custojusto) peel
-        agent.max_msgs = final_msgs
+            agent._emit(label, final=False)
+        # final = full buffer (same quality as --signal when keylog present)
         agent.buffers[label] = list(bucket.payloads)
         agent.flush(label)
     return agent.events
