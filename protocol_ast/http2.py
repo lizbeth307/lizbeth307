@@ -31,12 +31,10 @@ def _parse_frames(data: bytes) -> list[bytes] | None:
     while off + 9 <= len(data):
         length = int.from_bytes(data[off : off + 3], "big")
         ftype = data[off + 3]
-        if length > 16_384 + 256:  # above default SETTINGS max + slack
+        if length > 16_384 + 256:
             return frames if frames else None
-        if ftype > 0x9 and ftype not in FRAME_TYPES:
-            # unknown type — allow a few extension types < 0x20
-            if ftype > 0x1F:
-                return frames if frames else None
+        if ftype > 0x9 and ftype not in FRAME_TYPES and ftype > 0x1F:
+            return frames if frames else None
         end = off + 9 + length
         if end > len(data):
             break
@@ -47,43 +45,108 @@ def _parse_frames(data: bytes) -> list[bytes] | None:
     return frames if len(frames) >= 1 else None
 
 
+def is_single_http2_frame(msg: bytes) -> bool:
+    if len(msg) < 9:
+        return False
+    length = int.from_bytes(msg[:3], "big")
+    return 9 + length == len(msg) and msg[3] <= 0x1F
+
+
+def all_single_http2_frames(messages: list[bytes]) -> bool:
+    return bool(messages) and all(is_single_http2_frame(m) for m in messages)
+
+
+def peel_http2_data_payloads(messages: list[bytes]) -> list[bytes]:
+    """Extract DATA frame payloads (next signal layer)."""
+    out: list[bytes] = []
+    for m in messages:
+        if not is_single_http2_frame(m) or m[3] != 0x0:
+            continue
+        length = int.from_bytes(m[:3], "big")
+        payload = m[9 : 9 + length]
+        flags = m[4]
+        if flags & 0x08 and payload:  # PADDED
+            pad = payload[0]
+            end = len(payload) - pad
+            payload = payload[1:end] if end > 1 else b""
+        if payload:
+            out.append(payload)
+    return out
+
+
 def looks_like_http2(messages: list[bytes]) -> bool:
-    preface = sum(1 for m in messages if m.startswith(HTTP2_PREFACE))
-    if preface:
+    if any(m.startswith(HTTP2_PREFACE) for m in messages):
+        return True
+    if all_single_http2_frames(messages):
         return True
     ok = 0
     for m in messages:
         frames = _parse_frames(m)
-        if frames and len(frames) >= 1:
-            # SETTINGS often first after preface; type byte at [3]
-            types = [f[3] for f in frames if len(f) > 3]
-            if any(t in FRAME_TYPES for t in types):
-                ok += 1
+        if frames and any(len(f) > 3 and f[3] in FRAME_TYPES for f in frames):
+            ok += 1
     return ok >= max(1, len(messages) // 3)
 
 
 def split_http2_frames(messages: list[bytes]) -> tuple[str, list[bytes]] | None:
-    """Split decrypted payloads into HTTP/2 frames."""
-    if not looks_like_http2(messages) and not any(m.startswith(HTTP2_PREFACE) for m in messages):
-        # still try parse — decrypted appdata is often pure frames without preface
-        pass
+    """
+    Split decrypted payloads into HTTP/2 frames.
+
+    If messages are already individual frames, peel DATA payloads instead
+    (prevents infinite http2_frames → http2_frames recursion).
+    """
+    if all_single_http2_frames(messages):
+        data = peel_http2_data_payloads(messages)
+        if len(data) >= 1:
+            return "http2_data", data
+        return None
+
     frames: list[bytes] = []
     parsed_msgs = 0
     for m in messages:
         got = _parse_frames(m)
-        if got:
+        if got and not (len(got) == 1 and is_single_http2_frame(m)):
             frames.extend(got)
             parsed_msgs += 1
+        elif got and len(got) >= 2:
+            frames.extend(got)
+            parsed_msgs += 1
+        elif got and len(messages) == 1:
+            frames.extend(got)
+            parsed_msgs += 1
+
+    # Prefer multi-frame split from blobs
+    blob_frames: list[bytes] = []
+    blob_ok = 0
+    for m in messages:
+        if is_single_http2_frame(m):
+            continue
+        got = _parse_frames(m)
+        if got and len(got) >= 1:
+            blob_frames.extend(got)
+            blob_ok += 1
+    if blob_ok >= 1 and len(blob_frames) >= 2:
+        return "http2_frames", blob_frames
+
     if parsed_msgs >= 1 and len(frames) >= 2:
-        # require majority of bytes explained as frames for non-preface streams
-        return "http2_frames", frames
+        # only if we actually grew past input message count (real split)
+        if len(frames) > len(messages):
+            return "http2_frames", frames
     return None
+
+
+def _text_preview(data: bytes, limit: int = 80) -> str:
+    sample = data[:limit]
+    printable = sum(1 for b in sample if 32 <= b < 127 or b in (9, 10, 13))
+    if sample and printable / len(sample) >= 0.7:
+        return sample.decode("utf-8", errors="replace").replace("\n", "\\n")
+    return sample.hex()[:limit]
 
 
 def http2_deep(frames: list[bytes]) -> dict:
     types: Counter[str] = Counter()
     streams: set[int] = set()
     has_preface = False
+    data_previews: list[str] = []
     for f in frames:
         if f == HTTP2_PREFACE or f.startswith(HTTP2_PREFACE):
             has_preface = True
@@ -95,12 +158,28 @@ def http2_deep(frames: list[bytes]) -> dict:
         sid = int.from_bytes(f[5:9], "big") & 0x7FFFFFFF
         if sid:
             streams.add(sid)
+        if f[3] == 0x0 and len(f) > 9 and len(data_previews) < 3:
+            data_previews.append(_text_preview(f[9:]))
     return {
         "kind": "http2",
         "frames": dict(types),
         "streams": len(streams),
         "preface": has_preface,
         "total_frames": sum(types.values()),
+        "data_preview": data_previews,
+    }
+
+
+def http2_data_deep(payloads: list[bytes]) -> dict:
+    previews = [_text_preview(p, 120) for p in payloads[:5]]
+    html = sum(1 for p in payloads if b"<html" in p[:200].lower() or b"<!doctype" in p[:200].lower())
+    json_n = sum(1 for p in payloads if p[:1] in (b"{", b"[") or p.lstrip()[:1] in (b"{", b"["))
+    return {
+        "kind": "http2_data",
+        "payloads": len(payloads),
+        "html": html,
+        "json": json_n,
+        "preview": previews,
     }
 
 

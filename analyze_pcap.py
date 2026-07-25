@@ -1240,8 +1240,8 @@ def recursive_nested_analyze(
         return layer
     splitter_name, inner = split
     layer["splitter"] = splitter_name
-    if splitter_name == "http2_frames":
-        layer["deep"] = _http2_deep(inner)
+    if splitter_name in ("http2_frames", "http2_data"):
+        layer["deep"] = _http2_deep(inner, splitter_name)
         layer["entropy"] = "structured"
     if len(inner) < 2:
         return layer

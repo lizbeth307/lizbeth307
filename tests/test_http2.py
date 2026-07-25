@@ -26,12 +26,23 @@ class TestHttp2(unittest.TestCase):
         self.assertIn("SETTINGS", deep["frames"])
 
     def test_split_pure_frames(self) -> None:
-        msgs = [_frame(0x4, b"\x00" * 6) + _frame(0x1, b"\x82\x84", 1), _frame(0x0, b"hi", 1)]
+        msgs = [_frame(0x4, b"\x00" * 6) + _frame(0x1, b"\x82\x84", 1)]
         result = split_http2_frames(msgs)
         self.assertIsNotNone(result)
         assert result is not None
         deep = http2_deep(result[1])
         self.assertGreaterEqual(deep["total_frames"], 2)
+
+    def test_no_recursive_resplit(self) -> None:
+        frames = [_frame(0x4, b"\x00" * 6), _frame(0x1, b"\x82\x84", 1), _frame(0x0, b"<html>hi", 1)]
+        # already individual frames → peel DATA, do not return http2_frames again
+        result = split_http2_frames(frames)
+        self.assertIsNotNone(result)
+        assert result is not None
+        self.assertEqual(result[0], "http2_data")
+        self.assertEqual(result[1][0], b"<html>hi")
+        # DATA payloads are not http2 frames → stop
+        self.assertIsNone(split_http2_frames(result[1]))
 
 
 if __name__ == "__main__":

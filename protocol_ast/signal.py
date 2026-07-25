@@ -182,16 +182,22 @@ class Signal:
         # High-entropy layers: peel handshake / decrypt / HTTP/2 before wall
         if self.entropy == "high" and self.depth > 0:
             peeled = False
-            from .http2 import http1_deep, http2_deep, looks_like_http1, split_http2_frames
+            from .http2 import (
+                http1_deep,
+                http2_data_deep,
+                http2_deep,
+                looks_like_http1,
+                split_http2_frames,
+            )
 
             h2 = split_http2_frames(self.messages)
             if h2:
                 name, frames = h2
                 self.splitter = name
-                self.deep = http2_deep(frames)
+                self.deep = http2_data_deep(frames) if name == "http2_data" else http2_deep(frames)
                 self.entropy = "structured"
                 child = self._spawn(name, frames)
-                child.deep = http2_deep(frames)
+                child.deep = self.deep
                 child.propagate(max_depth=max_depth)
                 self.children.append(child)
                 return self
