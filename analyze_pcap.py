@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.6.2-full"
+VERSION = "3.6.3-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -1028,13 +1028,75 @@ def _is_quic_flow(flow: str) -> bool:
     return u.startswith("UDP") and u.endswith(":443")
 
 
+def _split_http2_frames(messages: list[bytes]) -> tuple[str, list[bytes]] | None:
+    try:
+        from protocol_ast.http2 import split_http2_frames
+
+        return split_http2_frames(messages)
+    except Exception:
+        return _embedded_split_http2(messages)
+
+
+def _embedded_split_http2(messages: list[bytes]) -> tuple[str, list[bytes]] | None:
+    preface = b"PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n"
+    frames: list[bytes] = []
+    ok = 0
+    for m in messages:
+        data = m[len(preface) :] if m.startswith(preface) else m
+        off = 0
+        local: list[bytes] = []
+        while off + 9 <= len(data):
+            ln = int.from_bytes(data[off : off + 3], "big")
+            if ln > 16640 or off + 9 + ln > len(data):
+                break
+            local.append(data[off : off + 9 + ln])
+            off += 9 + ln
+        if local:
+            frames.extend(local)
+            ok += 1
+    if ok >= 1 and len(frames) >= 2:
+        return "http2_frames", frames
+    return None
+
+
+def _http2_deep(frames: list[bytes]) -> dict:
+    try:
+        from protocol_ast.http2 import http2_deep
+
+        return http2_deep(frames)
+    except Exception:
+        names = {
+            0: "DATA", 1: "HEADERS", 2: "PRIORITY", 3: "RST_STREAM",
+            4: "SETTINGS", 5: "PUSH_PROMISE", 6: "PING", 7: "GOAWAY",
+            8: "WINDOW_UPDATE", 9: "CONTINUATION",
+        }
+        types: dict[str, int] = {}
+        streams: set[int] = set()
+        for f in frames:
+            if len(f) < 9:
+                continue
+            t = names.get(f[3], f"type{f[3]}")
+            types[t] = types.get(t, 0) + 1
+            sid = int.from_bytes(f[5:9], "big") & 0x7FFFFFFF
+            if sid:
+                streams.add(sid)
+        return {"kind": "http2", "frames": types, "streams": len(streams), "total_frames": sum(types.values())}
+
+
 def _pick_nested_splitter(messages: list[bytes], depth: int, flow: str = "") -> tuple[str, list[bytes]] | None:
     if depth > 0 and _all_tls_records(messages):
         bodies = [m[5:] for m in messages if len(m) > 5 and m[0] == 0x16]
         return ("tls_handshake", bodies) if len(bodies) >= 2 else None
+    if depth > 0:
+        h2 = _split_http2_frames(messages)
+        if h2:
+            return h2
     rate, frames = split_tls_records(messages)
     if rate >= 0.6 and len(frames) >= 2:
         return "tls_record", frames
+    h2 = _split_http2_frames(messages)
+    if h2:
+        return h2
     long_valid = sum(
         1 for m in messages if len(m) >= 5 and (m[0] & 0xC0) == 0xC0 and parse_quic_packet(m, permit_short=False)
     )
@@ -1125,8 +1187,21 @@ def recursive_nested_analyze(
     if depth >= max_depth or len(messages) < 2:
         return layer
 
-    # High entropy: still peel Handshake, try keylog, else opaque wall
+    # High entropy: HTTP/2 / handshake / keylog before opaque wall
     if layer["entropy"] == "high" and depth > 0:
+        h2 = _split_http2_frames(messages)
+        if h2:
+            name, frames = h2
+            layer["splitter"] = name
+            layer["deep"] = _http2_deep(frames)
+            layer["entropy"] = "structured"
+            layer["children"].append(
+                recursive_nested_analyze(
+                    flow, frames, depth=depth + 1, max_depth=max_depth,
+                    label=f"{label}/{name}", keylog=None,
+                )
+            )
+            return layer
         bodies = _peel_tls_handshake_bodies(messages)
         if len(bodies) >= 1:
             layer["splitter"] = "tls_handshake"
@@ -1165,6 +1240,9 @@ def recursive_nested_analyze(
         return layer
     splitter_name, inner = split
     layer["splitter"] = splitter_name
+    if splitter_name == "http2_frames":
+        layer["deep"] = _http2_deep(inner)
+        layer["entropy"] = "structured"
     if len(inner) < 2:
         return layer
     child = recursive_nested_analyze(
@@ -1422,6 +1500,8 @@ def format_nested_notes(layer: dict) -> list[str]:
     if layer.get("sequitur_rules"):
         notes.append(f"  sequitur: ~{layer['sequitur_rules']} digrams")
     deep = layer.get("deep") or {}
+    if deep.get("kind") == "http2":
+        notes.append(f"  HTTP/2: {deep.get('frames', {})} streams={deep.get('streams', 0)}")
     if deep.get("kind") == "tls":
         if deep.get("sni_hosts"):
             notes.append(f"  SNI: {', '.join(deep['sni_hosts'][:6])}")

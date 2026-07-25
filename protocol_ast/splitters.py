@@ -6,6 +6,7 @@ from collections import Counter
 
 from .align import discover_format
 from .deep_decode import parse_quic_packet, split_tls_records
+from .http2 import looks_like_http1, split_http2_frames
 
 
 def split_length_prefixed(messages: list[bytes]) -> tuple[str, list[bytes]] | None:
@@ -159,8 +160,14 @@ def discover_splitter(
         hs = split_tls_handshake_bodies(messages)
         if hs:
             return hs
+        h2 = split_http2_frames(messages)
+        if h2:
+            return h2
+        if looks_like_http1(messages):
+            return "http1", messages
     for fn in (
         split_tls_record_frames,
+        split_http2_frames,
         split_quic_packets,
         split_length_prefixed,
         split_fixed_size,

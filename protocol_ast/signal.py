@@ -179,9 +179,28 @@ class Signal:
         if self.depth >= max_depth or len(self.messages) < 2:
             return self
 
-        # High-entropy layers: still try handshake peel + keylog before wall
+        # High-entropy layers: peel handshake / decrypt / HTTP/2 before wall
         if self.entropy == "high" and self.depth > 0:
             peeled = False
+            from .http2 import http1_deep, http2_deep, looks_like_http1, split_http2_frames
+
+            h2 = split_http2_frames(self.messages)
+            if h2:
+                name, frames = h2
+                self.splitter = name
+                self.deep = http2_deep(frames)
+                self.entropy = "structured"
+                child = self._spawn(name, frames)
+                child.deep = http2_deep(frames)
+                child.propagate(max_depth=max_depth)
+                self.children.append(child)
+                return self
+            if looks_like_http1(self.messages):
+                self.splitter = "http1"
+                self.deep = http1_deep(self.messages)
+                self.entropy = "structured"
+                return self
+
             hs = split_tls_handshake_bodies(self.messages)
             if hs:
                 name, bodies = hs
@@ -333,6 +352,15 @@ class Signal:
                     notes.append(f"  SNI: {', '.join(self.deep['sni_hosts'][:6])}")
                 if self.deep.get("alpn"):
                     notes.append(f"  ALPN: {', '.join(self.deep['alpn'][:4])}")
+            if kind == "http2":
+                notes.append(
+                    f"  HTTP/2: {self.deep.get('frames', {})} "
+                    f"streams={self.deep.get('streams', 0)}"
+                )
+            if kind == "http1":
+                notes.append(f"  HTTP/1: {self.deep.get('methods', {})}")
+                if self.deep.get("hosts"):
+                    notes.append(f"  Host: {', '.join(self.deep['hosts'][:6])}")
             if kind == "dns" and self.deep.get("domains"):
                 notes.append(f"  DNS: {', '.join(self.deep['domains'][:6])}")
             if kind == "quic":
