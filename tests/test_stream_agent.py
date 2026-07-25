@@ -11,6 +11,18 @@ from protocol_ast.pcap_build import ethernet_ipv4_udp, write_pcap
 from protocol_ast.stream_agent import StreamAgent, analyze_pcap_streaming, events_to_report
 
 
+class TestStreamSample(unittest.TestCase):
+    def test_head_tail_sample(self) -> None:
+        agent = StreamAgent(max_msgs=10)
+        payloads = [bytes([i]) for i in range(30)]
+        sample = agent._sample(payloads)
+        self.assertEqual(len(sample), 10)
+        # head kept
+        self.assertEqual(sample[0], b"\x00")
+        # tail kept
+        self.assertEqual(sample[-1], bytes([29]))
+
+
 class TestStreamAgent(unittest.TestCase):
     def test_feed_emits_every_n(self) -> None:
         agent = StreamAgent(every_n=3, min_messages=2, max_depth=3, max_emits_per_flow=3)

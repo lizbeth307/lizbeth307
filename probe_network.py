@@ -75,12 +75,21 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Probe loop: {len(report.rounds)} rounds\n")
         for rnd in report.rounds:
             print(f"── round {rnd.round} targets={rnd.targets} signals={len(rnd.signals)}")
-            for f in rnd.findings[:12]:
-                print(f"   • {f}")
+            if rnd.findings:
+                for f in rnd.findings[:12]:
+                    print(f"   • {f}")
+            else:
+                # still show signal breadcrumbs
+                for s in rnd.signals[:4]:
+                    print(f"   • {s.get('flow')}: {s.get('path')}")
+                    for n in (s.get("notes") or [])[:3]:
+                        print(f"     {n}")
             print()
+        if report.all_findings:
+            print(f"Унікальних findings: {len(report.all_findings)}")
         if args.out_dir:
             print(f"Звіт: {args.out_dir / 'probe_loop_report.json'}")
-        return 0 if report.all_findings else 1
+        return 0 if report.rounds else 1
 
     # --- Streaming / watch ---
     if args.stream or args.watch:

@@ -44,10 +44,24 @@ class ProbeLoopReport:
         }
 
 
+def _canonical_flow(label: str) -> str:
+    """Map active-probe labels → ports Signal/deep_decode understand."""
+    u = label.upper()
+    if u.startswith("DNS"):
+        return "UDP:53"
+    if u.startswith("NTP"):
+        return "UDP:123"
+    if u.startswith("TLS"):
+        return "TCP:443"
+    if u.startswith("HTTP"):
+        return "TCP:80"
+    return label.replace(":", "_")
+
+
 def _group_messages(msgs: list[ProbeMessage]) -> dict[str, list[bytes]]:
     groups: dict[str, list[bytes]] = {}
     for m in msgs:
-        key = m.label.replace(":", "_")
+        key = _canonical_flow(m.label)
         groups.setdefault(key, []).append(m.raw)
     return groups
 
@@ -55,33 +69,41 @@ def _group_messages(msgs: list[ProbeMessage]) -> dict[str, list[bytes]]:
 def _extract_findings(sig: Signal) -> list[str]:
     notes = sig.format_notes()
     out: list[str] = []
+    keys = (
+        "SNI:",
+        "ALPN:",
+        "HTTP/2:",
+        "hdr:",
+        "title:",
+        "json_keys:",
+        "content:",
+        "decrypt: TLS",
+        "DNS:",
+        "json_api",
+        "api_paths:",
+        "schema:",
+        "protobuf:",
+        "msgpack:",
+        "pb_f",
+        "mp_keys:",
+        "handshake:",
+        "Host:",
+        "HTTP/1:",
+        "NTP",
+        "splitter:",
+    )
     for n in notes:
         s = n.strip()
-        if any(
-            k in s
-            for k in (
-                "SNI:",
-                "ALPN:",
-                "HTTP/2:",
-                "hdr:",
-                "title:",
-                "json_keys:",
-                "content:",
-                "decrypt: TLS",
-                "DNS:",
-                "json_api",
-                "api_paths:",
-                "schema:",
-                "protobuf:",
-                "msgpack:",
-                "pb_f",
-                "mp_keys:",
-            )
-        ):
+        if any(k in s for k in keys):
             out.append(s)
     # opaque walls → need keylog / mitm
     if any("opaque" in n for n in notes):
         out.append("wall:opaque → PCAPdroid MITM + SSLKEYLOGFILE")
+    # Always keep a short path breadcrumb so rounds aren't blank
+    if not out and sig.path():
+        out.append(f"path: {sig.path()}")
+        if sig.splitter:
+            out.append(f"splitter: {sig.splitter}")
     return out
 
 

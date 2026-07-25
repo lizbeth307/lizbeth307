@@ -85,12 +85,21 @@ class StreamAgent:
                         out.append(ev)
         return out
 
+    def _sample(self, payloads: list[bytes]) -> list[bytes]:
+        """Keep ClientHellos at the start + later APP_DATA (not only prefix)."""
+        n = len(payloads)
+        if n <= self.max_msgs:
+            return list(payloads)
+        head = max(8, self.max_msgs // 3)
+        tail = self.max_msgs - head
+        return list(payloads[:head]) + list(payloads[-tail:])
+
     def _emit(self, flow: str) -> StreamEvent | None:
         payloads = self.buffers.get(flow) or []
         if len(payloads) < self.min_messages:
             return None
         # Cap work: TLS decrypt on hundreds of records kills Termux
-        sample = payloads[: self.max_msgs]
+        sample = self._sample(payloads)
         print(
             f"  … Signal {flow} msgs={len(payloads)} (using {len(sample)})",
             flush=True,
@@ -150,7 +159,7 @@ def analyze_pcap_streaming(
     flow_filter: str | None = None,
     tcp_reassemble: bool = True,
     max_flows: int = 3,
-    max_msgs: int = 48,
+    max_msgs: int = 64,
     max_emits_per_flow: int = 3,
 ) -> list[StreamEvent]:
     """
@@ -167,6 +176,8 @@ def analyze_pcap_streaming(
         flush=True,
         file=sys.stderr,
     )
+    # Final peel needs more budget when keylog decrypt is available
+    final_msgs = max(max_msgs, 96) if keylog else max_msgs
     agent = StreamAgent(
         every_n=every_n,
         max_depth=max_depth,
@@ -189,10 +200,12 @@ def analyze_pcap_streaming(
         for c in checkpoints:
             if agent.emit_count.get(label, 0) >= max_emits_per_flow - 1:
                 break
+            agent.max_msgs = max_msgs
             agent.buffers[label] = list(bucket.payloads[:c])
             agent.last_emitted_at[label] = 0
             agent._emit(label)
-        # final
+        # final — larger sample + head/tail so late sessions (e.g. custojusto) peel
+        agent.max_msgs = final_msgs
         agent.buffers[label] = list(bucket.payloads)
         agent.flush(label)
     return agent.events

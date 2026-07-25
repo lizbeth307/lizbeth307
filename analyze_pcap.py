@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.8.3-full"
+VERSION = "3.8.4-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -2242,7 +2242,7 @@ def main() -> int:
             keylog=args.keylog,
             flow_filter=args.flow,
             max_flows=3,
-            max_msgs=48,
+            max_msgs=64,
             max_emits_per_flow=3,
         )
         for ev in events:
