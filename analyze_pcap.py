@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.5.0-full"
+VERSION = "3.5.1-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -879,6 +879,13 @@ def _find_best_length_offset(messages: list[bytes]) -> list[dict]:
 
 
 def _entropy_note(payloads: list[bytes]) -> str:
+    if not payloads:
+        return "порожньо"
+    # TLS handshake bodies: first byte is type (ClientHello=1, …); random fields inflate entropy
+    hs_types = {1, 2, 4, 8, 11, 12, 13, 14, 15, 16, 20}
+    hs = sum(1 for m in payloads if m and m[0] in hs_types)
+    if hs >= max(1, len(payloads) // 2):
+        return "структурований шар (TLS handshake)"
     ratio = len(set(b for p in payloads[:10] for b in p[:16])) / max(1, min(16, min(len(p) for p in payloads)))
     if ratio > 0.85:
         return "висока ентропія → шукаємо вкладені кадри"
@@ -1046,6 +1053,30 @@ def _sequitur_rules_estimate(messages: list[bytes]) -> int:
     return len(pairs)
 
 
+def _handshake_layer_deep(messages: list[bytes]) -> dict:
+    names = {
+        1: "ClientHello", 2: "ServerHello", 4: "NewSessionTicket",
+        8: "EncryptedExtensions", 11: "Certificate", 20: "Finished",
+    }
+    types: dict[str, int] = {}
+    sni: list[str] = []
+    alpn: list[str] = []
+    for m in messages:
+        if not m:
+            continue
+        types[names.get(m[0], f"type{m[0]}")] = types.get(names.get(m[0], f"type{m[0]}"), 0) + 1
+        if m[0] == 1:
+            detail = _parse_client_hello(m) or {}
+            sni.extend(detail.get("sni", []))
+            alpn.extend(detail.get("alpn", []))
+    return {
+        "kind": "tls_handshake",
+        "types": types,
+        "sni_hosts": sorted(set(sni))[:20],
+        "alpn": sorted(set(alpn))[:10],
+    }
+
+
 def _peel_tls_handshake_bodies(messages: list[bytes]) -> list[bytes]:
     bodies: list[bytes] = []
     for m in messages:
@@ -1087,6 +1118,10 @@ def recursive_nested_analyze(
         layer["deep"] = deep_analyze_flow(flow, messages)
         opcodes = Counter(m[0] for m in messages if m)
         layer["clusters"] = len([v for v in opcodes.values() if v >= 2])
+    elif "handshake" in label.lower() or (
+        messages and messages[0] and messages[0][0] in {1, 2, 4, 8, 11, 12, 13, 14, 15, 16, 20}
+    ):
+        layer["deep"] = _handshake_layer_deep(messages)
     if depth >= max_depth or len(messages) < 2:
         return layer
 
@@ -1208,21 +1243,33 @@ def _apply_decrypt_child(layer: dict, flow: str, records: list[bytes], depth: in
         )
 
 
-def _embedded_keylog_decrypt(records: list[bytes], path: Path) -> dict | None:
-    """Termux-embedded TLS keylog decrypt (needs: pkg install python-cryptography)."""
-    import hashlib
-    import hmac as hmac_mod
-
+def _gcm_decrypt(key: bytes, nonce: bytes, ciphertext: bytes, aad: bytes) -> bytes | None:
+    """AES-GCM decrypt: cryptography → pure Python (no pip build on Termux)."""
     try:
         from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-    except ImportError:
-        return {
-            "meta": {
-                "status": "error",
-                "error": "install cryptography: pkg install python-cryptography",
-            },
-            "plain": [],
-        }
+
+        return AESGCM(key).decrypt(nonce, ciphertext, aad)
+    except Exception:
+        pass
+    import sys
+
+    for root in (Path(__file__).resolve().parent, Path.home()):
+        mod = root / "protocol_ast" / "aes_gcm.py"
+        if mod.exists() and str(root) not in sys.path:
+            sys.path.insert(0, str(root))
+        try:
+            from protocol_ast.aes_gcm import _pure_aes_gcm_decrypt
+
+            return _pure_aes_gcm_decrypt(key, nonce, ciphertext, aad)
+        except Exception:
+            continue
+    return None
+
+
+def _embedded_keylog_decrypt(records: list[bytes], path: Path) -> dict | None:
+    """Termux TLS keylog decrypt — cryptography optional; pure AES via protocol_ast/aes_gcm.py."""
+    import hashlib
+    import hmac as hmac_mod
 
     master: dict[str, bytes] = {}
     c_traffic: dict[str, bytes] = {}
@@ -1271,13 +1318,27 @@ def _embedded_keylog_decrypt(records: list[bytes], path: Path) -> dict | None:
         nonce = bytearray(iv)
         for i in range(8):
             nonce[11 - i] ^= (seq >> (8 * i)) & 0xFF
-        try:
-            plain = AESGCM(key).decrypt(bytes(nonce), ct, rec[:5])
-            return plain[:-1] if plain else None
-        except Exception:
-            return None
+        plain = _gcm_decrypt(key, bytes(nonce), ct, rec[:5])
+        return plain[:-1] if plain else None
 
-    # Collect client_randoms from ClientHello in records
+    # Probe decrypt backend availability
+    has_backend = True
+    try:
+        from cryptography.hazmat.primitives.ciphers.aead import AESGCM  # noqa: F401
+    except ImportError:
+        has_backend = any(
+            (p / "protocol_ast" / "aes_gcm.py").exists()
+            for p in (Path(__file__).resolve().parent, Path.home())
+        )
+    if not has_backend:
+        return {
+            "meta": {
+                "status": "error",
+                "error": "need AES-GCM: mkdir -p ~/protocol_ast && curl aes_gcm.py into it (see termux_analyze.txt)",
+            },
+            "plain": [],
+        }
+
     randoms: list[str] = []
     for rec in records:
         if len(rec) >= 43 and rec[0] == 0x16:
@@ -1354,6 +1415,13 @@ def format_nested_notes(layer: dict) -> list[str]:
         notes.append(f"  sequitur: ~{layer['sequitur_rules']} digrams")
     deep = layer.get("deep") or {}
     if deep.get("kind") == "tls":
+        if deep.get("sni_hosts"):
+            notes.append(f"  SNI: {', '.join(deep['sni_hosts'][:6])}")
+        if deep.get("alpn"):
+            notes.append(f"  ALPN: {', '.join(deep['alpn'][:4])}")
+    if deep.get("kind") == "tls_handshake":
+        if deep.get("types"):
+            notes.append(f"  handshake: {deep['types']}")
         if deep.get("sni_hosts"):
             notes.append(f"  SNI: {', '.join(deep['sni_hosts'][:6])}")
         if deep.get("alpn"):

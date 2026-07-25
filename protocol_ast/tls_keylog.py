@@ -8,7 +8,7 @@ import struct
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from .aes_gcm import aes_gcm_decrypt
 
 
 @dataclass
@@ -139,7 +139,7 @@ def _decrypt_tls13_record(
         nonce[12 - 1 - i] ^= (seq >> (8 * i)) & 0xFF
     aad = record[:5]
     try:
-        plain = AESGCM(key).decrypt(bytes(nonce), ciphertext, aad)
+        plain = aes_gcm_decrypt(key, bytes(nonce), ciphertext, aad)
     except Exception:
         return None
     # TLS 1.3: last byte is inner content type
@@ -183,7 +183,7 @@ def _decrypt_tls12_gcm(
     nonce = implicit_iv + explicit
     aad = struct.pack(">Q", seq) + record[:3] + struct.pack(">H", length - 8)
     try:
-        return AESGCM(key).decrypt(nonce, ciphertext, aad)
+        return aes_gcm_decrypt(key, nonce, ciphertext, aad)
     except Exception:
         return None
 

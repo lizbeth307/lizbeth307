@@ -19,13 +19,62 @@ from .splitters import (
 )
 
 
+from .tls_handshake import parse_client_hello
+
+
+HANDSHAKE_TYPES = {1, 2, 4, 8, 11, 12, 13, 14, 15, 16, 20}
+
+
 def entropy_label(messages: list[bytes]) -> str:
     if not messages:
         return "empty"
+    # Handshake bodies look high-entropy due to client_random, but are structured
+    hs = sum(1 for m in messages if m and m[0] in HANDSHAKE_TYPES)
+    if hs >= max(1, len(messages) // 2):
+        return "structured"
     ratio = len(set(b for p in messages[:10] for b in p[:16])) / max(
         1, min(16, min(len(p) for p in messages))
     )
     return "high" if ratio > 0.85 else "structured"
+
+
+def _handshake_deep(messages: list[bytes]) -> dict | None:
+    hellos = []
+    types: dict[str, int] = {}
+    for m in messages:
+        if not m:
+            continue
+        name = {
+            1: "ClientHello",
+            2: "ServerHello",
+            4: "NewSessionTicket",
+            8: "EncryptedExtensions",
+            11: "Certificate",
+            12: "ServerKeyExchange",
+            14: "ServerHelloDone",
+            15: "CertificateVerify",
+            16: "ClientKeyExchange",
+            20: "Finished",
+        }.get(m[0], f"type{m[0]}")
+        types[name] = types.get(name, 0) + 1
+        if m[0] == 1:
+            detail = parse_client_hello(m)
+            if detail:
+                hellos.append(detail)
+    if not types:
+        return None
+    sni = []
+    alpn = []
+    for h in hellos:
+        sni.extend(h.get("sni", []))
+        alpn.extend(h.get("alpn", []))
+    return {
+        "kind": "tls_handshake",
+        "types": types,
+        "client_hellos": len(hellos),
+        "sni_hosts": sorted(set(sni))[:20],
+        "alpn": sorted(set(alpn))[:10],
+    }
 
 
 @dataclass
@@ -73,6 +122,10 @@ class Signal:
             cl_off = best_cluster_offset(self.messages)
             if cl_off is not None:
                 self.clusters = discover_clustered_formats(self.messages, cl_off)
+        elif "handshake" in self.label.lower() or (
+            self.messages and self.messages[0] and self.messages[0][0] in HANDSHAKE_TYPES
+        ):
+            self.deep = _handshake_deep(self.messages)
         return self
 
     def _spawn(self, label_suffix: str, messages: list[bytes]) -> Signal:
@@ -263,6 +316,13 @@ class Signal:
         if self.deep:
             kind = self.deep.get("kind")
             if kind == "tls":
+                if self.deep.get("sni_hosts"):
+                    notes.append(f"  SNI: {', '.join(self.deep['sni_hosts'][:6])}")
+                if self.deep.get("alpn"):
+                    notes.append(f"  ALPN: {', '.join(self.deep['alpn'][:4])}")
+            if kind == "tls_handshake":
+                if self.deep.get("types"):
+                    notes.append(f"  handshake: {self.deep['types']}")
                 if self.deep.get("sni_hosts"):
                     notes.append(f"  SNI: {', '.join(self.deep['sni_hosts'][:6])}")
                 if self.deep.get("alpn"):
