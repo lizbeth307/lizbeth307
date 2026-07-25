@@ -1,0 +1,21 @@
+# ═══════════════════════════════════════════════════════
+# TERMUX: grep /proc/stat — це ЗЛАМАНИЙ PROMPT, не скрипт
+# ═══════════════════════════════════════════════════════
+
+# КРОК 0 — вимкнути зламаний prompt (один раз):
+mv ~/.bashrc ~/.bashrc.bak 2>/dev/null
+mv ~/.profile ~/.profile.bak 2>/dev/null
+echo 'export PS1="$ "' > ~/.bashrc
+
+# КРОК 1 — перейменувати pcap (кирилиця може заважати):
+cp ~/downloads/PCAPdroid*.pcap ~/downloads/c.pcap
+
+# КРОК 2 — ЗАВАНТАЖИТИ НА СЕРВЕР (одна команда, без python):
+curl -F "file=@$HOME/downloads/c.pcap" https://0x0.st
+
+# → Скопіюйте URL (https://0x0.st/xxxxx) у чат Cursor
+
+# ─── АБО аналіз локально (після кроку 0) ───
+env -i PATH="/data/data/com.termux/files/usr/bin" HOME="$HOME" \
+  /data/data/com.termux/files/usr/bin/python3 \
+  "$HOME/analyze_pcap.py" "$HOME/downloads/c.pcap"
