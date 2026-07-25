@@ -146,6 +146,7 @@ def discover_format(messages: list[bytes]) -> dict:
 
 
 def main() -> int:
+    print("analyze_pcap: старт", flush=True)
     if len(sys.argv) < 2:
         print("Використання: python analyze_pcap.py ШЛЯХ.pcap", file=sys.stderr)
         return 1

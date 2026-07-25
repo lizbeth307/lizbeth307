@@ -1,23 +1,29 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# Termux: НЕ використовуйте "python" — лише цей скрипт або python3
-# bash run_pcap.sh ~/downloads/PCAPdroid_25_лип._12_42_30.pcap
+# Обхід grep /proc/stat — це шум від prompt Termux, не помилка скрипта
+set +e
+export PS1='$ '
+unset PROMPT_COMMAND 2>/dev/null
 
-set -e
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-PCAP="${1:?Вкажіть шлях до .pcap}"
+PCAP="${1:-$HOME/downloads/PCAPdroid_25_лип._12_42_30.pcap}"
+SCRIPT="${2:-$HOME/analyze_pcap.py}"
 
-# Явний інтерпретатор — обходить зламаний alias "python"
-PY=""
-for c in python3.12 python3.11 python3; do
-  if command -v "$c" >/dev/null 2>&1; then
-    PY="$c"
-    break
-  fi
-done
-if [ -z "$PY" ]; then
-  echo "Встановіть Python: pkg install python"
+if [ ! -f "$PCAP" ]; then
+  echo "Немає файлу: $PCAP"
+  ls -la "$HOME/downloads/"*.pcap 2>/dev/null
   exit 1
 fi
 
-echo "Використовую: $PY ($($PY --version 2>&1))"
-exec "$PY" "$SCRIPT_DIR/analyze_pcap.py" "$PCAP"
+PY=$(command -v python3.12 || command -v python3.11 || command -v python3)
+if [ -z "$PY" ]; then
+  echo "pkg install python"
+  exit 1
+fi
+
+echo "=== Аналіз PCAP ==="
+echo "Python: $PY"
+echo "Файл:   $PCAP ($(wc -c < "$PCAP") bytes)"
+echo "(ігноруйте grep /proc/stat — це Termux prompt)"
+echo
+
+# --norc = без .bashrc який викликає grep
+exec bash --norc --noprofile -c "\"$PY\" \"$SCRIPT\" \"$PCAP\""
