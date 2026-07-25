@@ -20,6 +20,8 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
+VERSION = "2.1.0-deep"
+
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
 QUIC_VERSIONS = {
     0x00000001: "QUIC v1",
@@ -798,12 +800,16 @@ def _print_flow(label: str, payloads: list[bytes], blind: bool) -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="PCAP analyzer for Termux/Android")
-    parser.add_argument("pcap", help="path to .pcap file")
+    parser.add_argument("--version", action="version", version=f"analyze_pcap {VERSION}")
+    parser.add_argument("pcap", nargs="?", help="path to .pcap file")
     parser.add_argument("--blind", action="store_true", help="blind deep analysis (TLS/QUIC inner frames)")
     parser.add_argument("--flow", help="filter flow, e.g. 443 or TCP:443")
     args = parser.parse_args()
 
-    print("analyze_pcap: старт (deep decode embedded)", flush=True)
+    print(f"analyze_pcap: старт v{VERSION} (deep decode embedded)", flush=True)
+    if not args.pcap:
+        parser.print_help()
+        return 1
     path = Path(args.pcap).expanduser()
     if not path.exists():
         print(f"Файл не знайдено: {path}", file=sys.stderr)
