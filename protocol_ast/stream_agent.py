@@ -35,34 +35,70 @@ _NOTE_PRIORITY = (
 
 
 def highlight_notes(notes: list[str], *, limit: int = 16) -> list[str]:
-    """Prefer deep peel lines over sequitur/cluster noise for Termux UI."""
+    """Prefer deep peel lines over sequitur/cluster noise; dedupe repeats."""
     scored: list[tuple[int, int, str]] = []
+    seen: set[str] = set()
     for i, n in enumerate(notes):
         s = n.strip()
+        if not s or s in seen:
+            continue
+        seen.add(s)
         rank = 50
         for p, key in enumerate(_NOTE_PRIORITY):
             if key in s:
                 rank = p
                 break
         if s.startswith("[d"):
-            rank = min(rank, 40)
-        if "sequitur" in s or "clusters:" in s or "parse=" in s:
-            rank = max(rank, 80)
-        scored.append((rank, i, n))
+            # keep one layer header per unique label tail
+            rank = min(rank, 45)
+        if "sequitur" in s or "clusters:" in s:
+            rank = 90
+        if "tls_handshake/tls_handshake" in s:
+            rank = 95
+        scored.append((rank, i, n if n.startswith("  ") or n.startswith("[") else f"  {s}"))
     scored.sort(key=lambda t: (t[0], t[1]))
     out = [t[2] for t in scored[:limit]]
-    # keep chronological among selected for readability
-    out.sort(key=lambda line: notes.index(line) if line in notes else 0)
+    out.sort(key=lambda line: next((i for i, n in enumerate(notes) if n.strip() == line.strip()), 0))
     return out
 
 
+_PATH_SCORE = {
+    "json_api": 100,
+    "http2_data": 95,
+    "app_body": 90,
+    "http2_frames": 85,
+    "http2": 85,
+    "body": 80,
+    "protobuf": 75,
+    "msgpack": 75,
+    "decrypted": 70,
+    "http1": 65,
+    "tls_record": 20,
+    "tls_handshake": 15,
+}
+
+
 def deepest_signal_path(sig: Signal) -> str:
-    """Path to the deepest child with a real splitter/deep peel."""
+    """Path to the most interesting peel (HTTP/2/body), not deepest handshake recurse."""
+
+    def score(node: Signal) -> tuple[int, int]:
+        tail = node.label.rsplit("/", 1)[-1]
+        kind = (node.deep or {}).get("kind") or ""
+        base = max(_PATH_SCORE.get(tail, 0), _PATH_SCORE.get(kind, 0))
+        # bonus for title / headers
+        deep = node.deep or {}
+        content = deep.get("content") or deep
+        if content.get("titles") or deep.get("titles"):
+            base += 30
+        if deep.get("headers") or deep.get("json_api"):
+            base += 10
+        return (base, node.depth)
+
     best = sig
     stack = [sig]
     while stack:
         node = stack.pop()
-        if node.depth >= best.depth and (node.deep or node.splitter):
+        if score(node) >= score(best):
             best = node
         stack.extend(node.children)
     return best.path()

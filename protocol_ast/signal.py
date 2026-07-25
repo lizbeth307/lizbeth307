@@ -196,6 +196,16 @@ class Signal:
         if self.depth >= max_depth or len(self.messages) < 2:
             return self
 
+        # Handshake bodies are already peeled — do not re-split into tls_handshake/… forever
+        if self.depth > 0 and (
+            self.label.rstrip("/").endswith("tls_handshake")
+            or (self.deep and self.deep.get("kind") == "tls_handshake")
+        ):
+            if not self.deep or self.deep.get("kind") != "tls_handshake":
+                self.deep = _handshake_deep(self.messages)
+            self.entropy = "structured"
+            return self
+
         # Already-enriched http2_data leaf — body/JSON peel regardless of entropy
         if self.depth > 0 and self.deep and self.deep.get("kind") == "http2_data":
             from .body_peel import body_deep

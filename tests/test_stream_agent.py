@@ -33,11 +33,16 @@ class TestStreamSample(unittest.TestCase):
             "  clusters: 2 opcodes",
             "  title: Anúncio não encontrado",
             "  hdr: s1 :status=404",
+            "  hdr: s1 :status=404",
+            "  SNI: a.com",
+            "  SNI: a.com",
         ]
-        hi = highlight_notes(notes, limit=3)
+        hi = highlight_notes(notes, limit=5)
         joined = "\n".join(hi)
         self.assertIn("title:", joined)
         self.assertIn("hdr:", joined)
+        self.assertEqual(sum(1 for x in hi if "hdr:" in x), 1)
+        self.assertEqual(sum(1 for x in hi if "SNI:" in x), 1)
 
 
 class TestStreamAgent(unittest.TestCase):

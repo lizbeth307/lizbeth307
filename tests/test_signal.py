@@ -32,6 +32,21 @@ class TestSignal(unittest.TestCase):
         sig = propagate_flow("TCP:443", TLS_RECORD_MESSAGES[:12], max_depth=5)
         self.assertTrue(sig.splitter or sig.children or sig.parse_success > 0)
 
+    def test_handshake_does_not_recurse(self) -> None:
+        sig = propagate_flow("TCP:443", TLS_RECORD_MESSAGES[:12], max_depth=5)
+        path = sig.path()
+        # walk children paths via notes / labels
+        labels: list[str] = []
+
+        def walk(n: Signal) -> None:
+            labels.append(n.label)
+            for c in n.children:
+                walk(c)
+
+        walk(sig)
+        nested = [l for l in labels if l.count("tls_handshake") >= 2]
+        self.assertEqual(nested, [], msg=f"handshake recurse: {nested}")
+
     def test_opaque_wall_on_random(self) -> None:
         import os
 
