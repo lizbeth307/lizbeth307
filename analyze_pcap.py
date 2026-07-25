@@ -1790,6 +1790,17 @@ def main() -> int:
         return 1
     print(f"PCAP: {path} ({path.stat().st_size} bytes)\n")
 
+    if args.keylog:
+        kpath = Path(args.keylog).expanduser()
+        if not kpath.exists():
+            print(f"⚠  --keylog: файл не знайдено: {kpath}", file=sys.stderr)
+            print("   Decrypt пропущено. Handshake peel працює і без ключів.", file=sys.stderr)
+            print("   Keylog: PCAPdroid → TLS decryption/MITM → export SSLKEYLOGFILE", file=sys.stderr)
+            print("   Потім: --keylog ~/downloads/sslkeys.log\n", file=sys.stderr)
+            args.keylog = None
+        else:
+            print(f"Keylog: {kpath} ({kpath.stat().st_size} bytes)\n")
+
     reasm = args.tcp_reassemble or args.nested or args.signal
     flows = extract_flows(path, tcp_reassemble=reasm)
     if not flows:
