@@ -32,6 +32,27 @@ class TestSignal(unittest.TestCase):
         sig = propagate_flow("TCP:443", TLS_RECORD_MESSAGES[:12], max_depth=5)
         self.assertTrue(sig.splitter or sig.children or sig.parse_success > 0)
 
+    def test_single_http2_data_peels_title(self) -> None:
+        html = (
+            b"<!DOCTYPE html><html><head><title>Anuncio nao encontrado</title>"
+            b"</head><body>x</body></html>"
+        )
+        sig = Signal(
+            label="TCP:443/http2_data",
+            messages=[html],
+            flow="TCP:443",
+            depth=1,
+        )
+        sig.deep = {
+            "kind": "http2_data",
+            "headers": [{"content-type": "text/html; charset=UTF-8", ":status": "404"}],
+        }
+        sig.propagate(max_depth=5)
+        notes = "\n".join(sig.format_notes())
+        self.assertIn("title:", notes)
+        self.assertIn("Anuncio nao encontrado", notes)
+        self.assertEqual(sig.entropy, "structured")
+
     def test_handshake_does_not_recurse(self) -> None:
         sig = propagate_flow("TCP:443", TLS_RECORD_MESSAGES[:12], max_depth=5)
         path = sig.path()

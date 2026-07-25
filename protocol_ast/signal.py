@@ -190,9 +190,40 @@ class Signal:
         self.children.append(child)
         return True
 
+    def _peel_http2_data_leaf(self) -> bool:
+        """HTML/JSON title+schema even for a single DATA payload."""
+        if not (self.deep and self.deep.get("kind") == "http2_data"):
+            return False
+        if not self.messages:
+            return False
+        from .body_peel import body_deep
+        from .json_api import json_api_deep, looks_like_json_api
+
+        charset = None
+        for h in self.deep.get("headers") or []:
+            ct = h.get("content-type") or ""
+            if "charset=" in ct.lower():
+                charset = ct.split("charset=", 1)[-1].split(";")[0].strip()
+                break
+        self.deep["content"] = body_deep(self.messages, charset=charset)
+        if looks_like_json_api(self.messages):
+            api = json_api_deep(self.messages, headers=self.deep.get("headers"))
+            self.deep["json_api"] = api
+            child = self._spawn("json_api", self.messages)
+            child.deep = api
+            child.entropy = "structured"
+            self.children.append(child)
+        self.entropy = "structured"
+        return True
+
     def propagate(self, *, max_depth: int = 5) -> Signal:
         """Discover format, peel handshake, decrypt if keylog — until entropy wall."""
         self.analyze()
+
+        # Single HTTP/2 DATA body still carries a full HTML/JSON document
+        if self.depth > 0 and self._peel_http2_data_leaf():
+            return self
+
         if self.depth >= max_depth or len(self.messages) < 2:
             return self
 
@@ -203,28 +234,6 @@ class Signal:
         ):
             if not self.deep or self.deep.get("kind") != "tls_handshake":
                 self.deep = _handshake_deep(self.messages)
-            self.entropy = "structured"
-            return self
-
-        # Already-enriched http2_data leaf — body/JSON peel regardless of entropy
-        if self.depth > 0 and self.deep and self.deep.get("kind") == "http2_data":
-            from .body_peel import body_deep
-            from .json_api import json_api_deep, looks_like_json_api
-
-            charset = None
-            for h in self.deep.get("headers") or []:
-                ct = h.get("content-type") or ""
-                if "charset=" in ct.lower():
-                    charset = ct.split("charset=", 1)[-1].split(";")[0].strip()
-                    break
-            self.deep["content"] = body_deep(self.messages, charset=charset)
-            if looks_like_json_api(self.messages):
-                api = json_api_deep(self.messages, headers=self.deep.get("headers"))
-                self.deep["json_api"] = api
-                child = self._spawn("json_api", self.messages)
-                child.deep = api
-                child.entropy = "structured"
-                self.children.append(child)
             self.entropy = "structured"
             return self
 
