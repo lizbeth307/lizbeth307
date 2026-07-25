@@ -1,0 +1,28 @@
+# ══════════════════════════════════════════
+# TERMUX SHARE — як надіслати pcap агенту
+# ══════════════════════════════════════════
+
+# 0. Один раз встановити:
+pkg install termux-api
+# + з Play Store / F-Droid: «Termux:API» (обов'язково!)
+
+# 1. Підготувати файл:
+cp ~/downloads/PCAPdroid*.pcap ~/downloads/c.pcap
+
+# 2. Завантажити скрипт (або вручну termux-share):
+curl -L -o share_pcap.sh \
+  "https://raw.githubusercontent.com/lizbeth307/lizbeth307/cursor/protocol-ast-proto-a4e6/share_pcap.sh"
+bash share_pcap.sh
+
+# 3. У меню «Поділитися» оберіть Google Drive:
+#    → Завантажити файл wifi_capture.pcap
+#    → Поділитися → «Копіювати посилання»
+#    → Вставити URL у чат Cursor
+
+# Альтернатива — Telegram:
+#    → «Збережене» (Saved Messages)
+#    → На ПК відкрити Telegram → завантажити файл
+#    → Завантажити на https://0x0.st → URL у чат
+
+# Пряма команда без скрипта:
+termux-share -a send ~/downloads/c.pcap

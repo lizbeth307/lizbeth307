@@ -1,0 +1,20 @@
+# === TERMUX v3.0.1 (один файл, все вбудовано) ===
+
+# ВАЖЛИВО: curl БЕЗ слеша на початку! НЕ /curl
+
+curl -fL --retry 3 -o ~/analyze_pcap.py.new \
+  "https://raw.githubusercontent.com/lizbeth307/lizbeth307/cursor/full-pack-p0-a4e6/analyze_pcap.py?t=$(date +%s)"
+mv ~/analyze_pcap.py.new ~/analyze_pcap.py
+python3 ~/analyze_pcap.py --version
+# → analyze_pcap 3.0.1-full
+
+# Класичний blind (SNI, DNS, QUIC):
+python3 ~/analyze_pcap.py ~/downloads/c.pcap --blind
+
+# Full pack nested + TCP reassembly (155 TLS records):
+python3 ~/analyze_pcap.py ~/downloads/c.pcap --nested --tcp-reassemble
+
+# Один потік:
+python3 ~/analyze_pcap.py ~/downloads/c.pcap --nested --tcp-reassemble --flow 443
+
+# discover_protocol_ast.py на телефоні НЕМАЄ — тільки analyze_pcap.py

@@ -1,0 +1,517 @@
+{
+  "file": "live_wifi.pcap",
+  "flows": [
+    {
+      "flow": "TCP:26053",
+      "packets": 126,
+      "format": {
+        "fields": [
+          {
+            "name": "byte_0",
+            "offset": 0,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "enum_1",
+            "offset": 1,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_2",
+            "offset": 2,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_3",
+            "offset": 3,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_4",
+            "offset": 4,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "payload",
+            "offset": 5,
+            "size": -1,
+            "kind": "payload"
+          }
+        ],
+        "length_offset": null,
+        "endian": "le"
+      }
+    },
+    {
+      "flow": "TCP:26500",
+      "packets": 27,
+      "format": {
+        "fields": [
+          {
+            "name": "fixed_0",
+            "offset": 0,
+            "size": 1,
+            "kind": "fixed",
+            "value": 0
+          },
+          {
+            "name": "enum_1",
+            "offset": 1,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "byte_2",
+            "offset": 2,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "enum_3",
+            "offset": 3,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_4",
+            "offset": 4,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "fixed_5",
+            "offset": 5,
+            "size": 1,
+            "kind": "fixed",
+            "value": 0
+          },
+          {
+            "name": "fixed_6",
+            "offset": 6,
+            "size": 1,
+            "kind": "fixed",
+            "value": 0
+          },
+          {
+            "name": "fixed_7",
+            "offset": 7,
+            "size": 1,
+            "kind": "fixed",
+            "value": 0
+          },
+          {
+            "name": "enum_8",
+            "offset": 8,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_9",
+            "offset": 9,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_10",
+            "offset": 10,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_11",
+            "offset": 11,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "payload",
+            "offset": 12,
+            "size": -1,
+            "kind": "payload"
+          }
+        ],
+        "length_offset": null,
+        "endian": "be"
+      }
+    },
+    {
+      "flow": "TCP:443",
+      "packets": 13,
+      "format": {
+        "fields": [
+          {
+            "name": "enum_0",
+            "offset": 0,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "fixed_1",
+            "offset": 1,
+            "size": 1,
+            "kind": "fixed",
+            "value": 3
+          },
+          {
+            "name": "enum_2",
+            "offset": 2,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_3",
+            "offset": 3,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "byte_4",
+            "offset": 4,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "byte_5",
+            "offset": 5,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "byte_6",
+            "offset": 6,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "byte_7",
+            "offset": 7,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "byte_8",
+            "offset": 8,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "byte_9",
+            "offset": 9,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "byte_10",
+            "offset": 10,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "byte_11",
+            "offset": 11,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "byte_12",
+            "offset": 12,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "byte_13",
+            "offset": 13,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "byte_14",
+            "offset": 14,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "byte_15",
+            "offset": 15,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "byte_16",
+            "offset": 16,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "byte_17",
+            "offset": 17,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "byte_18",
+            "offset": 18,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "byte_19",
+            "offset": 19,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "byte_20",
+            "offset": 20,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "byte_21",
+            "offset": 21,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "byte_22",
+            "offset": 22,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "byte_23",
+            "offset": 23,
+            "size": 1,
+            "kind": "variable"
+          },
+          {
+            "name": "payload",
+            "offset": 24,
+            "size": -1,
+            "kind": "payload"
+          }
+        ],
+        "length_offset": null,
+        "endian": "be"
+      }
+    },
+    {
+      "flow": "UDP:53",
+      "packets": 6,
+      "format": {
+        "fields": [
+          {
+            "name": "enum_0",
+            "offset": 0,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_1",
+            "offset": 1,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_2",
+            "offset": 2,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_3",
+            "offset": 3,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "fixed_4",
+            "offset": 4,
+            "size": 1,
+            "kind": "fixed",
+            "value": 0
+          },
+          {
+            "name": "fixed_5",
+            "offset": 5,
+            "size": 1,
+            "kind": "fixed",
+            "value": 1
+          },
+          {
+            "name": "fixed_6",
+            "offset": 6,
+            "size": 1,
+            "kind": "fixed",
+            "value": 0
+          },
+          {
+            "name": "enum_7",
+            "offset": 7,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "fixed_8",
+            "offset": 8,
+            "size": 1,
+            "kind": "fixed",
+            "value": 0
+          },
+          {
+            "name": "enum_9",
+            "offset": 9,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "fixed_10",
+            "offset": 10,
+            "size": 1,
+            "kind": "fixed",
+            "value": 0
+          },
+          {
+            "name": "enum_11",
+            "offset": 11,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_12",
+            "offset": 12,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_13",
+            "offset": 13,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_14",
+            "offset": 14,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_15",
+            "offset": 15,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_16",
+            "offset": 16,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_17",
+            "offset": 17,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_18",
+            "offset": 18,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_19",
+            "offset": 19,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_20",
+            "offset": 20,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_21",
+            "offset": 21,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_22",
+            "offset": 22,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_23",
+            "offset": 23,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_24",
+            "offset": 24,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_25",
+            "offset": 25,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_26",
+            "offset": 26,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_27",
+            "offset": 27,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_28",
+            "offset": 28,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_29",
+            "offset": 29,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_30",
+            "offset": 30,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "enum_31",
+            "offset": 31,
+            "size": 1,
+            "kind": "enum"
+          },
+          {
+            "name": "payload",
+            "offset": 32,
+            "size": -1,
+            "kind": "payload"
+          }
+        ],
+        "length_offset": null,
+        "endian": "be"
+      }
+    }
+  ]
+}
