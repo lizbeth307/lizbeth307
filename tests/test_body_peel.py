@@ -26,6 +26,13 @@ class TestBodyPeel(unittest.TestCase):
         self.assertEqual(deep["types"]["html"], 1)
         self.assertIn("Example Domain", deep["titles"])
 
+    def test_html_title_iso8859(self) -> None:
+        # "Anúncio não encontrado" in ISO-8859-1
+        title = "Anúncio não encontrado".encode("iso-8859-1")
+        html = b"<!DOCTYPE html><html><head><title>" + title + b"</title></head></html>"
+        deep = body_deep([html], charset="ISO-8859-1")
+        self.assertIn("Anúncio não encontrado", deep["titles"])
+
     def test_json_keys(self) -> None:
         raw = b'{"user":{"id":1},"items":[{"name":"a"}]}'
         deep = body_deep([raw])

@@ -57,18 +57,40 @@ def _json_keys(obj, *, prefix: str = "", limit: int = 24) -> list[str]:
     return keys[:limit]
 
 
-def html_title(data: bytes) -> str | None:
-    try:
-        text = data[:8000].decode("utf-8", errors="replace")
-    except Exception:
-        return None
+def _decode_text(data: bytes, charset: str | None = None) -> str:
+    candidates = []
+    if charset:
+        candidates.append(charset.strip().strip('"').strip("'"))
+    candidates.extend(["utf-8", "iso-8859-1", "windows-1252", "latin-1"])
+    seen: set[str] = set()
+    for enc in candidates:
+        key = enc.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        try:
+            return data.decode(enc)
+        except Exception:
+            continue
+    return data.decode("utf-8", errors="replace")
+
+
+def _charset_from_meta_html(data: bytes) -> str | None:
+    head = data[:4000].decode("ascii", errors="ignore").lower()
+    m = re.search(r'charset\s*=\s*["\']?([\w-]+)', head)
+    return m.group(1) if m else None
+
+
+def html_title(data: bytes, charset: str | None = None) -> str | None:
+    enc = charset or _charset_from_meta_html(data)
+    text = _decode_text(data[:8000], enc)
     m = re.search(r"<title[^>]*>(.*?)</title>", text, re.I | re.S)
     if not m:
         return None
     return re.sub(r"\s+", " ", m.group(1)).strip()[:120]
 
 
-def body_deep(messages: list[bytes]) -> dict:
+def body_deep(messages: list[bytes], *, charset: str | None = None) -> dict:
     kinds: Counter[str] = Counter()
     titles: list[str] = []
     json_keys: list[str] = []
@@ -76,14 +98,20 @@ def body_deep(messages: list[bytes]) -> dict:
     for m in messages[:12]:
         kind = classify_body(m)
         kinds[kind] += 1
-        previews.append(_preview(m, 100))
+        ch = charset or _charset_from_meta_html(m)
+        previews.append(_preview(_decode_text(m, ch).encode("utf-8", errors="replace"), 100) if kind in ("html", "text") else _preview(m, 100))
         if kind == "html":
-            t = html_title(m)
+            # Prefer readable UTF-8 preview for html
+            try:
+                previews[-1] = _decode_text(m, ch).replace("\n", "\\n")[:100]
+            except Exception:
+                pass
+            t = html_title(m, ch)
             if t:
                 titles.append(t)
         elif kind == "json":
             try:
-                obj = json.loads(m.decode("utf-8", errors="replace"))
+                obj = json.loads(_decode_text(m, charset or "utf-8"))
                 json_keys.extend(_json_keys(obj))
             except Exception:
                 pass

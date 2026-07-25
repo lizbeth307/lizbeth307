@@ -193,7 +193,13 @@ class Signal:
 
             # Already enriched http2_data leaf (bodies) — keep meta, add content class
             if self.deep and self.deep.get("kind") == "http2_data":
-                self.deep["content"] = body_deep(self.messages)
+                charset = None
+                for h in self.deep.get("headers") or []:
+                    ct = h.get("content-type") or ""
+                    if "charset=" in ct.lower():
+                        charset = ct.split("charset=", 1)[-1].split(";")[0].strip()
+                        break
+                self.deep["content"] = body_deep(self.messages, charset=charset)
                 self.entropy = "structured"
                 return self
 

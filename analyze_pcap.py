@@ -1255,7 +1255,13 @@ def recursive_nested_analyze(
                 try:
                     from protocol_ast.body_peel import body_deep
 
-                    child["deep"]["content"] = body_deep(frames)
+                    charset = None
+                    for h in child["deep"].get("headers") or []:
+                        ct = h.get("content-type") or ""
+                        if "charset=" in ct.lower():
+                            charset = ct.split("charset=", 1)[-1].split(";")[0].strip()
+                            break
+                    child["deep"]["content"] = body_deep(frames, charset=charset)
                 except Exception:
                     pass
             layer["children"].append(child)
