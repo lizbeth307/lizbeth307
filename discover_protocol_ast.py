@@ -477,6 +477,13 @@ def cmd_signal(args: argparse.Namespace) -> int:
         targets = {k: v for k, v in buckets.items() if args.flow.lower() in k.lower()}
     if not targets:
         raise SystemExit("потоки не знайдено")
+    keylog = getattr(args, "keylog", None)
+    if keylog:
+        from protocol_ast.find_keylog import resolve_keylog
+
+        kpath, kmsg = resolve_keylog(keylog, pcap_path=pcap)
+        print(kmsg if kpath else f"⚠  {kmsg}")
+        keylog = str(kpath) if kpath else None
     print(f"Signal propagate {pcap} (max_depth={args.max_depth})\n")
     reports = []
     for label, bucket in sorted(targets.items(), key=lambda x: -x[1].packet_count):
@@ -484,7 +491,7 @@ def cmd_signal(args: argparse.Namespace) -> int:
             label,
             bucket.payloads,
             max_depth=args.max_depth,
-            keylog=getattr(args, "keylog", None),
+            keylog=keylog,
         )
         reports.append(sig.to_dict())
         print(f"=== {label} ({len(bucket.payloads)} msg) path={sig.path()} ===")
@@ -518,6 +525,13 @@ def cmd_blind(args: argparse.Namespace) -> int:
         targets = {k: v for k, v in buckets.items() if args.flow.lower() in k.lower()}
     if not targets:
         raise SystemExit("потоки не знайдено")
+    keylog = getattr(args, "keylog", None)
+    if keylog:
+        from protocol_ast.find_keylog import resolve_keylog
+
+        kpath, kmsg = resolve_keylog(keylog, pcap_path=pcap)
+        print(kmsg if kpath else f"⚠  {kmsg}")
+        keylog = str(kpath) if kpath else None
     print(f"Сліпий аналіз v2 {pcap} — nested AST (depth={args.max_depth})\n")
     reports = []
     for label, bucket in sorted(targets.items(), key=lambda x: -x[1].packet_count):
@@ -525,7 +539,7 @@ def cmd_blind(args: argparse.Namespace) -> int:
             label,
             bucket.payloads,
             max_depth=args.max_depth,
-            keylog=getattr(args, "keylog", None),
+            keylog=keylog,
         )
         reports.append(layer.to_dict())
         print(f"=== {label} ({layer.messages} msg) ===")
@@ -742,7 +756,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_blind.add_argument("--json", action="store_true", help="зберегти blind_nested_report.json")
     p_blind.add_argument("--export-kaitai", metavar="DIR", help="експорт .ksy на потік")
     p_blind.add_argument("--export-lua", metavar="DIR", help="експорт Wireshark Lua dissector")
-    p_blind.add_argument("--keylog", metavar="FILE", help="SSLKEYLOGFILE для TLS decrypt")
+    p_blind.add_argument(
+        "--keylog",
+        metavar="FILE|auto",
+        help="SSLKEYLOGFILE або auto (пошук / pcapng DSB)",
+    )
     p_blind.set_defaults(func=cmd_blind)
 
     p_signal = sub.add_parser(
@@ -756,7 +774,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_signal.add_argument("--max-depth", type=int, default=5)
     p_signal.add_argument("--tcp-reassemble", action="store_true")
     p_signal.add_argument("--show-sequitur", action="store_true", help="показати grammar")
-    p_signal.add_argument("--keylog", metavar="FILE", help="SSLKEYLOGFILE для TLS decrypt через opaque wall")
+    p_signal.add_argument(
+        "--keylog",
+        metavar="FILE|auto",
+        help="SSLKEYLOGFILE або auto (пошук / pcapng DSB) для decrypt через opaque wall",
+    )
     p_signal.set_defaults(func=cmd_signal)
 
     p_dissect = sub.add_parser(

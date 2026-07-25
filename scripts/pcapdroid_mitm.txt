@@ -1,0 +1,111 @@
+PCAPdroid MITM → реальний keylog для living signal
+=====================================================
+Мета: отримати SSLKEYLOGFILE (або pcapng з вбудованими ключами),
+щоб Signal міг розшифрувати TLS Application Data.
+
+БЕЗ цього: handshake видно, Application Data = opaque стіна.
+З цим: HTTP/2, JSON, Protobuf всередині TLS.
+
+─────────────────────────────────────────────────────
+КРОК 1 — PCAPdroid + MITM addon
+─────────────────────────────────────────────────────
+1. Встанови PCAPdroid з F-Droid або GitHub:
+   https://github.com/emanuele-f/PCAPdroid/releases
+
+2. Відкрий PCAPdroid → ☰ Settings → Traffic dump
+   → увімкни PCAP file dump (або UDP exporter)
+
+3. ☰ Settings → TLS decryption
+   → Enable TLS decryption
+   → пройди setup wizard
+   → встанови PCAPdroid-mitm addon (mitmproxy)
+   → встанови CA сертифікат PCAPdroid
+      (Android: Settings → Security → Install CA /
+       або User credentials)
+
+4. ☰ Decryption rules → Add rule
+   Рекомендовано для першого тесту:
+   - App: Chrome (або браузер)
+   - Direction: All
+   Зелений відкритий замок у списку з'єднань = MITM OK.
+
+5. (Опційно) Block QUIC — щоб додатки падали на TLS,
+   а не на UDP:443 (QUIC часто не розшифровується).
+
+─────────────────────────────────────────────────────
+КРОК 2 — Запис з ключами
+─────────────────────────────────────────────────────
+1. Start capture у PCAPdroid
+2. Відкрий Chrome → зайди на https://example.com
+   (або Duolingo / будь-який сайт без pinning)
+3. Stop capture
+4. PCAPdroid запропонує зберегти SSLKEYLOGFILE
+   → Save → Downloads / Documents
+   Ім'я зазвичай: sslkeys.log або подібне
+
+АБО увімкни "Embed decryption secrets into the PCAP"
+→ тоді ключі всередині .pcapng (DSB), окремий лог не потрібен.
+
+─────────────────────────────────────────────────────
+КРОК 3 — Перекинути у Termux
+─────────────────────────────────────────────────────
+# скопіюй pcap + keylog у ~/downloads/
+mkdir -p ~/downloads
+# з Downloads Android (якщо termux-setup-storage):
+cp ~/storage/downloads/*.pcap* ~/downloads/ 2>/dev/null
+cp ~/storage/downloads/*ssl* ~/downloads/ 2>/dev/null
+cp ~/storage/downloads/*key* ~/downloads/ 2>/dev/null
+ls -la ~/downloads/
+
+─────────────────────────────────────────────────────
+КРОК 4 — Знайти keylog і прогнати Signal
+─────────────────────────────────────────────────────
+export PYTHONPATH=$HOME
+
+# автопошук keylog поруч з pcap / у Downloads
+python3 ~/protocol_ast/find_keylog.py ~/downloads/c.pcap
+
+# або явно
+python3 ~/analyze_pcap.py ~/downloads/c.pcap \
+  --signal --flow TCP:443 \
+  --keylog auto
+
+# або шлях напряму
+python3 ~/analyze_pcap.py ~/downloads/c.pcap \
+  --signal --flow TCP:443 \
+  --keylog ~/downloads/sslkeys.log
+
+# якщо pcapng з вбудованими ключами:
+python3 ~/analyze_pcap.py ~/downloads/capture.pcapng \
+  --signal --flow TCP:443 \
+  --keylog auto
+
+─────────────────────────────────────────────────────
+Що побачиш якщо MITM спрацював
+─────────────────────────────────────────────────────
+  decrypt: TLS Application Data → plaintext (NSS keylog)
+  http2_frames / http1 / json / protobuf ...
+замість
+  wall=opaque_no_keylog
+
+─────────────────────────────────────────────────────
+Якщо MITM НЕ спрацьовує (замок жовтий/червоний)
+─────────────────────────────────────────────────────
+• Certificate pinning у додатку
+  → Chrome/браузер працює; багато apps — ні
+  → root + Magisk + system CA / unpinning modules
+• CA не встановлений як User CA
+• Додаток вимагає system CA (Android 7+)
+• QUIC не заблокований → трафік іде UDP:443
+
+Перший успішний тест завжди: Chrome + example.com
+─────────────────────────────────────────────────────
+Оновлення тулу на телефоні
+─────────────────────────────────────────────────────
+BASE=https://raw.githubusercontent.com/lizbeth307/lizbeth307/cursor/signal-pipeline-p4-a4e6
+mkdir -p ~/protocol_ast
+curl -fsSL "$BASE/analyze_pcap.py" -o ~/analyze_pcap.py
+for f in __init__.py aes_gcm.py pcapng_secrets.py find_keylog.py; do
+  curl -fsSL "$BASE/protocol_ast/$f" -o ~/protocol_ast/$f
+done
+export PYTHONPATH=$HOME

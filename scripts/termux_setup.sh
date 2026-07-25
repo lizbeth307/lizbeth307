@@ -1,5 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# Termux: analyze_pcap.py v3.5.1 + pure AES-GCM helper (no pip cryptography)
+# Termux: analyze_pcap.py v3.6.0 + keylog auto / pcapng DSB / pure AES-GCM
 set -euo pipefail
 
 BRANCH="cursor/signal-pipeline-p4-a4e6"
@@ -14,9 +14,9 @@ mv "$HOME/analyze_pcap.py.new" "$HOME/analyze_pcap.py"
 chmod +x "$HOME/analyze_pcap.py"
 
 mkdir -p "$HOME/protocol_ast"
-curl -fL --retry 3 -o "$HOME/protocol_ast/__init__.py" "${BASE}/protocol_ast/__init__.py?t=${TS}"
-curl -fL --retry 3 -o "$HOME/protocol_ast/aes_gcm.py" "${BASE}/protocol_ast/aes_gcm.py?t=${TS}"
-curl -fL --retry 3 -o "$HOME/protocol_ast/tls_keylog.py" "${BASE}/protocol_ast/tls_keylog.py?t=${TS}"
+for f in __init__.py aes_gcm.py tls_keylog.py pcapng_secrets.py find_keylog.py; do
+  curl -fL --retry 3 -o "$HOME/protocol_ast/$f" "${BASE}/protocol_ast/$f?t=${TS}"
+done
 
 echo
 PYTHONPATH="$HOME${PYTHONPATH:+:$PYTHONPATH}" python3 "$HOME/analyze_pcap.py" --version
@@ -26,6 +26,8 @@ echo
 echo "Команди:"
 echo "  export PYTHONPATH=\$HOME"
 echo "  python3 ~/analyze_pcap.py ~/downloads/c.pcap --signal --flow TCP:443"
-echo "  python3 ~/analyze_pcap.py ~/downloads/c.pcap --signal --flow TCP:443 --keylog ~/downloads/sslkeys.log"
+echo "  python3 ~/analyze_pcap.py ~/downloads/c.pcap --signal --flow TCP:443 --keylog auto"
+echo "  python3 ~/protocol_ast/find_keylog.py ~/downloads/c.pcap"
 echo
+echo "MITM keylog: curl -fsSL ${BASE}/scripts/pcapdroid_mitm.txt"
 echo "БЕЗ слеша перед curl!  БЕЗ pip install cryptography."

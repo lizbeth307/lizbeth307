@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.5.2-full"
+VERSION = "3.6.0-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -1756,7 +1756,11 @@ def main() -> int:
     parser.add_argument("--blind", action="store_true", help="blind deep analysis (TLS/QUIC inner frames)")
     parser.add_argument("--nested", action="store_true", help="nested AST v2 (recursive layers)")
     parser.add_argument("--signal", action="store_true", help="living signal propagate (depth 5, universal splitters)")
-    parser.add_argument("--keylog", metavar="FILE", help="SSLKEYLOGFILE for TLS decrypt through opaque wall")
+    parser.add_argument(
+        "--keylog",
+        metavar="FILE|auto",
+        help="SSLKEYLOGFILE or 'auto' (search Downloads / extract pcapng DSB)",
+    )
     parser.add_argument("--tcp-reassemble", action="store_true", help="TCP stream reassembly + TLS split")
     parser.add_argument("--export-kaitai", metavar="DIR", help="export .ksy schemas per flow")
     parser.add_argument("--export-lua", metavar="DIR", help="export Wireshark Lua dissectors per flow")
@@ -1791,15 +1795,32 @@ def main() -> int:
     print(f"PCAP: {path} ({path.stat().st_size} bytes)\n")
 
     if args.keylog:
-        kpath = Path(args.keylog).expanduser()
-        if not kpath.exists():
-            print(f"⚠  --keylog: файл не знайдено: {kpath}", file=sys.stderr)
-            print("   Decrypt пропущено. Handshake peel працює і без ключів.", file=sys.stderr)
-            print("   Keylog: PCAPdroid → TLS decryption/MITM → export SSLKEYLOGFILE", file=sys.stderr)
-            print("   Потім: --keylog ~/downloads/sslkeys.log\n", file=sys.stderr)
-            args.keylog = None
+        try:
+            from protocol_ast.find_keylog import resolve_keylog
+        except ImportError:
+            resolve_keylog = None  # type: ignore[assignment]
+        if resolve_keylog is not None:
+            kpath, kmsg = resolve_keylog(args.keylog, pcap_path=path)
+            if kmsg:
+                print(kmsg if kpath else f"⚠  {kmsg}", file=sys.stderr if not kpath else sys.stdout)
+            if kpath:
+                print(f"Keylog: {kpath} ({kpath.stat().st_size} bytes)\n")
+                args.keylog = str(kpath)
+            else:
+                print("   Decrypt пропущено. Handshake peel працює і без ключів.", file=sys.stderr)
+                print("   Інструкція: scripts/pcapdroid_mitm.txt або:", file=sys.stderr)
+                print("   PCAPdroid → TLS decryption → Save SSLKEYLOGFILE", file=sys.stderr)
+                print("   Потім: --keylog auto  або  --keylog ~/downloads/sslkeys.log\n", file=sys.stderr)
+                args.keylog = None
         else:
-            print(f"Keylog: {kpath} ({kpath.stat().st_size} bytes)\n")
+            kpath = Path(args.keylog).expanduser()
+            if args.keylog.lower() == "auto" or not kpath.exists():
+                print(f"⚠  --keylog: потрібен ~/protocol_ast/find_keylog.py (або явний шлях)", file=sys.stderr)
+                print("   curl helpers: див. scripts/termux_setup.sh\n", file=sys.stderr)
+                args.keylog = None
+            else:
+                print(f"Keylog: {kpath} ({kpath.stat().st_size} bytes)\n")
+                args.keylog = str(kpath)
 
     reasm = args.tcp_reassemble or args.nested or args.signal
     flows = extract_flows(path, tcp_reassemble=reasm)
