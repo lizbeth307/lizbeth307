@@ -43,6 +43,8 @@ class TestStreamSample(unittest.TestCase):
         self.assertIn("hdr:", joined)
         self.assertEqual(sum(1 for x in hi if "hdr:" in x), 1)
         self.assertEqual(sum(1 for x in hi if "SNI:" in x), 1)
+        # title must appear near the top (not buried past UI truncation)
+        self.assertLess(next(i for i, x in enumerate(hi) if "title:" in x), 3)
 
 
 class TestStreamAgent(unittest.TestCase):

@@ -59,9 +59,8 @@ def highlight_notes(notes: list[str], *, limit: int = 16) -> list[str]:
             rank = 92
         scored.append((rank, i, n if n.startswith("  ") or n.startswith("[") else f"  {s}"))
     scored.sort(key=lambda t: (t[0], t[1]))
-    out = [t[2] for t in scored[:limit]]
-    out.sort(key=lambda line: next((i for i, n in enumerate(notes) if n.strip() == line.strip()), 0))
-    return out
+    # Keep priority order (title/hdr first) — chronological re-sort buried title past UI [:20]
+    return [t[2] for t in scored[:limit]]
 
 
 _PATH_SCORE = {
