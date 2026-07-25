@@ -13,11 +13,23 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import struct
 import sys
 from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
+
+# Termux: termux_setup.sh also installs ~/protocol_ast/deep_decode.py
+for _p in (Path(__file__).resolve().parent, Path(__file__).resolve().parent.parent, Path.home()):
+    if (_p / "protocol_ast" / "deep_decode.py").exists() and str(_p) not in sys.path:
+        sys.path.insert(0, str(_p))
+        break
+
+try:
+    from protocol_ast.deep_decode import deep_analyze_flow
+except ImportError:
+    deep_analyze_flow = None  # type: ignore[misc, assignment]
 
 # --- PCAP ---
 PCAP_MAGIC_LE = 0xA1B2C3D4
@@ -209,14 +221,17 @@ def _score_tls_like(messages: list[bytes]) -> tuple[float, list[bytes]]:
 
 
 def _split_quic_packets(messages: list[bytes]) -> tuple[float, list[bytes]]:
+    """Legacy heuristic — only when deep_decode unavailable."""
     frames: list[bytes] = []
     ok = 0
     for m in messages:
-        if not m:
+        if len(m) < 5 or not (m[0] & 0x80) or not (m[0] & 0x40):
             continue
-        if (m[0] & 0x80 and len(m) >= 5) or len(m) >= 4:
-            frames.append(m)
-            ok += 1
+        ver = struct.unpack(">I", m[1:5])[0]
+        if ver not in (0x00000001, 0x6B3343CF, 0xFF00001D):
+            continue
+        frames.append(m)
+        ok += 1
     return (ok / len(messages) if messages else 0.0), frames
 
 
@@ -256,26 +271,88 @@ def _entropy_note(payloads: list[bytes]) -> str:
     return "структурований шар"
 
 
+def _format_deep(deep: dict) -> list[str]:
+    kind = deep.get("kind", "?")
+    lines: list[str] = []
+    if kind == "tls":
+        lines.append(f"TLS: {deep.get('records', 0)} records, {deep.get('client_hellos', 0)} ClientHello")
+        if deep.get("sni_hosts"):
+            lines.append(f"SNI: {', '.join(deep['sni_hosts'][:8])}")
+    elif kind == "quic":
+        lines.append(
+            f"QUIC: long={deep.get('long_header', 0)} short={deep.get('short_header', 0)} "
+            f"types={deep.get('types', {})}"
+        )
+        if deep.get("versions"):
+            lines.append(f"versions: {deep['versions']}")
+        sample = deep.get("sample", {})
+        if sample:
+            lines.append(
+                f"sample: {sample.get('type', sample.get('form'))} "
+                f"ver={sample.get('version_name', '?')} len={sample.get('length', sample.get('length', '?'))}"
+            )
+    elif kind == "dns":
+        lines.append(f"DNS: {deep.get('parsed', 0)}/{deep.get('packets', 0)} parsed")
+        if deep.get("domains"):
+            lines.append(f"domains: {', '.join(deep['domains'][:8])}")
+    elif kind == "ntp":
+        lines.append(f"NTP: {deep.get('parsed', 0)}×48B modes={deep.get('modes', {})}")
+    elif kind == "xmpp":
+        lines.append(
+            f"XMPP: protobuf={deep.get('protobuf_like', 0)} xml={deep.get('xml_streams', 0)} "
+            f"len-framed={deep.get('length_prefixed', 0)}"
+        )
+        if deep.get("protobuf_fields"):
+            lines.append(f"protobuf fields: {deep['protobuf_fields']}")
+        for note in deep.get("notes", []):
+            lines.append(note)
+    return lines
+
+
 def blind_analyze(label: str, payloads: list[bytes]) -> dict:
     notes: list[str] = [_entropy_note(payloads)]
     outer = discover_format(payloads)
-    tls_rate, tls_frames = _score_tls_like(payloads)
-    quic_rate, quic_frames = _split_quic_packets(payloads)
     splits = _find_best_length_offset(payloads)
     inner: dict | None = None
+    deep: dict | None = None
 
-    if tls_rate >= 0.6:
-        notes.append(f"вкладені кадри type|ver|len: {tls_rate:.0%} ({len(tls_frames)} кадрів)")
-        if tls_frames:
-            inner = discover_format(tls_frames)
-            notes.append(f"внутрішній AST: {', '.join(f['kind'] + '@' + str(f['offset']) for f in inner.get('fields', [])[:6])}")
-    elif quic_rate >= 0.5:
-        long_n = sum(1 for p in quic_frames if p[0] & 0x80)
-        notes.append(f"UDP-кадри (QUIC-подібні): {quic_rate:.0%}, long-header={long_n}")
-        if quic_frames:
-            inner = discover_format(quic_frames)
-    elif splits:
-        notes.append(f"length-кандидат: {splits[0]}")
+    if deep_analyze_flow is not None:
+        deep = deep_analyze_flow(label, payloads)
+
+    if deep:
+        notes.extend(_format_deep(deep))
+        if deep.get("kind") == "tls":
+            _, tls_frames = _score_tls_like(payloads)
+            if tls_frames:
+                inner = discover_format(tls_frames)
+                notes.append(
+                    "внутрішній AST: "
+                    + ", ".join(f"{f['kind']}@{f['offset']}" for f in inner.get("fields", [])[:6])
+                )
+        elif deep.get("kind") == "quic":
+            notes.append("QUIC varint header parsed")
+        elif deep.get("kind") == "dns":
+            inner = discover_format(payloads)
+        elif deep.get("kind") == "ntp":
+            inner = discover_format(payloads)
+    else:
+        tls_rate, tls_frames = _score_tls_like(payloads)
+        quic_rate, quic_frames = _split_quic_packets(payloads)
+        if tls_rate >= 0.6:
+            notes.append(f"вкладені кадри type|ver|len: {tls_rate:.0%} ({len(tls_frames)} кадрів)")
+            if tls_frames:
+                inner = discover_format(tls_frames)
+                notes.append(
+                    "внутрішній AST: "
+                    + ", ".join(f"{f['kind']}@{f['offset']}" for f in inner.get("fields", [])[:6])
+                )
+        elif quic_rate >= 0.5:
+            long_n = sum(1 for p in quic_frames if p[0] & 0x80)
+            notes.append(f"UDP-кадри (QUIC-подібні): {quic_rate:.0%}, long-header={long_n}")
+            if quic_frames:
+                inner = discover_format(quic_frames)
+        elif splits:
+            notes.append(f"length-кандидат: {splits[0]}")
 
     return {
         "flow": label,
@@ -283,6 +360,7 @@ def blind_analyze(label: str, payloads: list[bytes]) -> dict:
         "outer_format": outer,
         "length_splits": splits,
         "inner_format": inner,
+        "deep": deep,
         "notes": notes,
     }
 

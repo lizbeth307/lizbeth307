@@ -12,6 +12,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from .align import FormatHypothesis, discover_format
+from .deep_decode import deep_analyze_flow, split_tls_records
 from .pipeline import discover_and_parse
 from .sequitur import Sequitur, tokenize_message
 
@@ -101,20 +102,14 @@ def _score_tls_like(messages: list[bytes]) -> tuple[float, list[bytes]]:
 
 
 def _split_quic_packets(messages: list[bytes]) -> tuple[float, list[bytes]]:
-    """Сліпий QUIC: long header (bit7=1) або short (bit7=0) — один UDP payload = 1+ кадрів."""
+    """Сліпий QUIC: long header з валідною version."""
+    from .deep_decode import parse_quic_packet
+
     frames: list[bytes] = []
     ok = 0
     for m in messages:
-        if not m:
-            continue
-        # Long header: RFC 9000 — form bit = 1
-        if m[0] & 0x80:
-            if len(m) >= 5:
-                frames.append(m)
-                ok += 1
-            continue
-        # Short header — все одно структурований PDU, зберігаємо як кадр
-        if len(m) >= 4:
+        p = parse_quic_packet(m)
+        if p:
             frames.append(m)
             ok += 1
     rate = ok / len(messages) if messages else 0
@@ -171,13 +166,30 @@ def blind_analyze(flow: str, payloads: list[bytes]) -> BlindReport:
     notes: list[str] = []
     outer = discover_format(payloads)
 
-    tls_rate, tls_frames = _score_tls_like(payloads)
+    tls_rate, tls_frames = split_tls_records(payloads)
     quic_rate, quic_frames = _split_quic_packets(payloads)
 
     inner: list[InnerFrame] = []
     splits = _find_best_length_offset(payloads)
 
     notes.append(_entropy_note(payloads))
+
+    deep = deep_analyze_flow(flow, payloads)
+    if deep:
+        kind = deep.get("kind")
+        if kind == "tls" and deep.get("sni_hosts"):
+            notes.append(f"SNI: {', '.join(deep['sni_hosts'][:6])}")
+        if kind == "dns" and deep.get("domains"):
+            notes.append(f"DNS domains: {', '.join(deep['domains'][:6])}")
+        if kind == "quic":
+            notes.append(
+                f"QUIC parsed: long={deep.get('long_header', 0)} "
+                f"short={deep.get('short_header', 0)} {deep.get('types', {})}"
+            )
+        if kind == "ntp":
+            notes.append(f"NTP: modes={deep.get('modes', {})}")
+        if kind == "xmpp":
+            notes.append(f"XMPP binary frames: protobuf={deep.get('protobuf_like', 0)}")
 
     if tls_rate >= 0.6:
         notes.append(f"вкладені кадри type|ver|len: {tls_rate:.0%} повідомлень ({len(tls_frames)} кадрів)")
