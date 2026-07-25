@@ -2,14 +2,37 @@
 
 from __future__ import annotations
 
+import importlib.util
 import sys
 from pathlib import Path
 
-try:
-    from .pcapng_secrets import write_keylog_beside_capture
-except ImportError:  # python3 ~/protocol_ast/find_keylog.py
-    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-    from protocol_ast.pcapng_secrets import write_keylog_beside_capture
+
+def _load_pcapng_secrets():
+    try:
+        from protocol_ast.pcapng_secrets import write_keylog_beside_capture
+
+        return write_keylog_beside_capture
+    except Exception:
+        pass
+    # Direct file load — works even when package __init__ / siblings are partial
+    here = Path(__file__).resolve().parent / "pcapng_secrets.py"
+    spec = importlib.util.spec_from_file_location("pcapng_secrets_standalone", here)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"cannot load {here}")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod.write_keylog_beside_capture
+
+
+write_keylog_beside_capture = None  # filled lazily
+
+
+def _wk():
+    global write_keylog_beside_capture
+    if write_keylog_beside_capture is None:
+        write_keylog_beside_capture = _load_pcapng_secrets()
+    return write_keylog_beside_capture
+
 
 KEYLOG_NAMES = (
     "sslkeys.log",
@@ -102,7 +125,7 @@ def resolve_keylog(
 
     # auto mode
     if pcap and pcap.exists():
-        extracted = write_keylog_beside_capture(pcap)
+        extracted = _wk()(pcap)
         if extracted:
             return extracted, f"keylog витягнуто з pcapng DSB → {extracted}"
         for sib in (

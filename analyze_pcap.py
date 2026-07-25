@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.6.0-full"
+VERSION = "3.6.1-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -1795,10 +1795,26 @@ def main() -> int:
     print(f"PCAP: {path} ({path.stat().st_size} bytes)\n")
 
     if args.keylog:
+        resolve_keylog = None
         try:
-            from protocol_ast.find_keylog import resolve_keylog
-        except ImportError:
-            resolve_keylog = None  # type: ignore[assignment]
+            from protocol_ast.find_keylog import resolve_keylog as _rk
+
+            resolve_keylog = _rk
+        except Exception as exc:
+            # Termux partial package / broken __init__ — load file directly
+            try:
+                import importlib.util
+
+                fk = Path.home() / "protocol_ast" / "find_keylog.py"
+                if not fk.exists():
+                    fk = Path(__file__).resolve().parent / "protocol_ast" / "find_keylog.py"
+                spec = importlib.util.spec_from_file_location("find_keylog_standalone", fk)
+                if spec and spec.loader:
+                    mod = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(mod)
+                    resolve_keylog = mod.resolve_keylog
+            except Exception as exc2:
+                print(f"⚠  keylog helper: {exc} / {exc2}", file=sys.stderr)
         if resolve_keylog is not None:
             kpath, kmsg = resolve_keylog(args.keylog, pcap_path=path)
             if kmsg:
@@ -1808,15 +1824,13 @@ def main() -> int:
                 args.keylog = str(kpath)
             else:
                 print("   Decrypt пропущено. Handshake peel працює і без ключів.", file=sys.stderr)
-                print("   Інструкція: scripts/pcapdroid_mitm.txt або:", file=sys.stderr)
-                print("   PCAPdroid → TLS decryption → Save SSLKEYLOGFILE", file=sys.stderr)
-                print("   Потім: --keylog auto  або  --keylog ~/downloads/sslkeys.log\n", file=sys.stderr)
+                print("   PCAPdroid → TLS decryption ON → Start → Chrome → Stop", file=sys.stderr)
+                print("   → Save SSLKEYLOGFILE у Download, потім знову --keylog auto\n", file=sys.stderr)
                 args.keylog = None
         else:
             kpath = Path(args.keylog).expanduser()
             if args.keylog.lower() == "auto" or not kpath.exists():
-                print(f"⚠  --keylog: потрібен ~/protocol_ast/find_keylog.py (або явний шлях)", file=sys.stderr)
-                print("   curl helpers: див. scripts/termux_setup.sh\n", file=sys.stderr)
+                print("⚠  --keylog: helper не завантажився; онови protocol_ast/", file=sys.stderr)
                 args.keylog = None
             else:
                 print(f"Keylog: {kpath} ({kpath.stat().st_size} bytes)\n")
