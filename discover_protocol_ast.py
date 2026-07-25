@@ -14,6 +14,7 @@ discover_protocol_ast.py — повноцінний скрипт для інду
   python3 discover_protocol_ast.py discover -i corpus.hex -o format.json
   python3 discover_protocol_ast.py parse -f format.json -i corpus.hex
   python3 discover_protocol_ast.py online --count 80 --refine-every 10
+  python3 discover_protocol_ast.py wifi-analyze capture.pcap
   python3 discover_protocol_ast.py real-test
   python3 discover_protocol_ast.py test
 """
@@ -46,6 +47,7 @@ from protocol_ast.pipeline import DiscoveryResult, discover_and_parse
 from protocol_ast.sequitur import Sequitur, tokenize_message
 from protocol_ast.serde import format_to_dict, load_format, save_format
 from protocol_ast.fixtures.real_protocols import REAL_PROTOCOLS
+from protocol_ast.pcap_analyze import extract_flows, flow_summary
 from protocol_ast.synthesize import GroundTruthMessage, make_corpus, raw_messages
 
 
@@ -380,6 +382,84 @@ def cmd_real_test(args: argparse.Namespace) -> int:
     return 0 if all_ok else 1
 
 
+def cmd_wifi_analyze(args: argparse.Namespace) -> int:
+    """Аналіз PCAP з Wi-Fi / мережі: групування потоків + AST discovery."""
+    pcap = Path(args.pcap)
+    if not pcap.exists():
+        raise SystemExit(f"файл не знайдено: {pcap}")
+
+    buckets = extract_flows(
+        pcap,
+        min_payload=args.min_payload,
+        min_packets=args.min_packets,
+    )
+
+    if not buckets:
+        print(
+            "Не знайдено потоків з достатньою кількістю пакетів.\n"
+            "Спробуйте: --min-packets 2 --min-payload 1\n"
+            "Або захопіть більше трафіку: sudo ./scripts/capture_wifi.sh wlan0 120 wifi.pcap",
+            file=sys.stderr,
+        )
+        return 1
+
+    summaries = flow_summary(buckets)
+    targets = summaries
+    if args.flow:
+        needle = args.flow.lower()
+        targets = [s for s in summaries if needle in s["flow"].lower()]
+        if not targets:
+            raise SystemExit(f"потік не знайдено: {args.flow!r}")
+
+    report: list[dict[str, Any]] = []
+
+    if not args.json:
+        print(f"PCAP: {pcap}  |  потоків: {len(buckets)}\n")
+        print("=== Потоки (TCP/UDP) ===")
+        for s in summaries[: args.list_limit]:
+            print(
+                f"  {s['flow']:20} pkts={s['packets']:4}  "
+                f"len {s['min_len']}..{s['max_len']} (avg {s['avg_len']})"
+            )
+        print()
+
+    for s in targets:
+        label = s["flow"]
+        payloads = buckets[label].payloads
+        result = discover_and_parse(payloads)
+        entry = {
+            "flow": label,
+            "packets": s["packets"],
+            "parse_success": result.success_rate,
+            "length_offset": result.format.length_field_offset,
+            "length_endian": result.format.length_endian,
+            "fields": [
+                {"name": f.name, "kind": f.kind, "offset": f.offset, "size": f.size}
+                for f in result.format.fields
+            ],
+        }
+        if result.trees:
+            entry["sample_ast"] = result.trees[0].to_dict()
+        report.append(entry)
+
+        if args.json:
+            continue
+
+        print(f"=== {label} ===")
+        _print_format(result.format)
+        print(f"parse: {result.success_rate:.1%} ({len(result.trees)} ok)")
+        if args.show and result.trees:
+            print(result.trees[0].pretty())
+            if args.dump_hex:
+                print(hex_dump(payloads[0]))
+            print()
+
+    if args.json:
+        print(json.dumps({"pcap": str(pcap), "flows": report}, indent=2))
+
+    return 0
+
+
 def cmd_test(_args: argparse.Namespace) -> int:
     import unittest
 
@@ -485,6 +565,23 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p_real.add_argument("--show", type=int, default=0, help="показати AST першого msg")
     p_real.set_defaults(func=cmd_real_test, min_success=0.85)
+
+    p_wifi = sub.add_parser(
+        "wifi-analyze",
+        help="аналіз PCAP з Wi-Fi (tcpdump/Wireshark)",
+    )
+    p_wifi.add_argument("pcap", help="файл .pcap")
+    p_wifi.add_argument(
+        "--flow",
+        help="фільтр потоку, напр. DNS, 53, TLS, 443",
+    )
+    p_wifi.add_argument("--min-packets", type=int, default=3)
+    p_wifi.add_argument("--min-payload", type=int, default=4)
+    p_wifi.add_argument("--show", type=int, default=1)
+    p_wifi.add_argument("--list-limit", type=int, default=20)
+    p_wifi.add_argument("--dump-hex", action="store_true")
+    p_wifi.add_argument("--json", action="store_true")
+    p_wifi.set_defaults(func=cmd_wifi_analyze)
 
     return parser
 
