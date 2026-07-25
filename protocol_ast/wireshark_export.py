@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from .field_names import enrich_format
+
 MAX_FIELDS = 32
 
 
@@ -13,6 +15,7 @@ def _sanitize(name: str) -> str:
 
 def format_to_lua(fmt: dict[str, Any], *, flow: str, proto_name: str | None = None) -> str:
     """Generate Wireshark Lua dissector from discover_format() dict."""
+    fmt = enrich_format(flow, fmt)
     fields = fmt.get("fields", [])[:MAX_FIELDS]
     truncated = len(fmt.get("fields", [])) > MAX_FIELDS
     endian = fmt.get("endian") or fmt.get("length_endian") or "be"
@@ -32,23 +35,24 @@ def format_to_lua(fmt: dict[str, Any], *, flow: str, proto_name: str | None = No
     for i, f in enumerate(fields):
         kind = f.get("kind", "")
         name = _sanitize(f.get("name", f"field_{i}"))
+        label = f.get("display") or name
         var = f"f_{name}"
-        field_vars.append((var, name, kind, f))
+        field_vars.append((var, name, label, kind, f))
         if kind == "length":
             lines.append(
-                f'local {var} = ProtoField.uint16("{pname}.{name}", "{name}", base.DEC, nil, base.{enc.upper()})'
+                f'local {var} = ProtoField.uint16("{pname}.{name}", "{label}", base.DEC, nil, base.{enc.upper()})'
             )
         elif kind == "payload":
             lines.append(
-                f'local {var} = ProtoField.bytes("{pname}.{name}", "{name}")'
+                f'local {var} = ProtoField.bytes("{pname}.{name}", "{label}")'
             )
         elif kind == "enum":
             lines.append(
-                f'local {var} = ProtoField.uint8("{pname}.{name}", "{name}", base.HEX)'
+                f'local {var} = ProtoField.uint8("{pname}.{name}", "{label}", base.HEX)'
             )
         else:
             lines.append(
-                f'local {var} = ProtoField.uint8("{pname}.{name}", "{name}", base.HEX)'
+                f'local {var} = ProtoField.uint8("{pname}.{name}", "{label}", base.HEX)'
             )
 
     lines.append(f"proto.fields = {{{', '.join(v[0] for v in field_vars)}}}")
@@ -59,7 +63,7 @@ def format_to_lua(fmt: dict[str, Any], *, flow: str, proto_name: str | None = No
     lines.append("    local offset = 0")
     lines.append("    local len_field = nil")
 
-    for var, name, kind, f in field_vars:
+    for var, _name, _label, kind, f in field_vars:
         size = f.get("size", 1)
         if kind == "length":
             lines.append(f"    len_field = buffer(offset, 2):uint{enc}()")

@@ -1,4 +1,4 @@
-# Termux v3.2.0 — один файл (curl БЕЗ слеша!)
+# Termux v3.3.0 — dissect + людські імена полів
 
 curl -fL --retry 3 -o ~/analyze_pcap.py.new \
   "https://raw.githubusercontent.com/lizbeth307/lizbeth307/cursor/p1-kaitai-handshake-a4e6/analyze_pcap.py?t=$(date +%s)"

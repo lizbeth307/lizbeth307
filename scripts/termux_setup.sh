@@ -2,7 +2,7 @@
 # Termux: один файл analyze_pcap.py (v3.2.0 — pcapng, Lua export)
 set -euo pipefail
 
-BRANCH="cursor/p2-wireshark-pcapng-a4e6"
+BRANCH="cursor/human-names-android-dissect-a4e6"
 URL="https://raw.githubusercontent.com/lizbeth307/lizbeth307/${BRANCH}/analyze_pcap.py?t=$(date +%s)"
 
 echo "=== Termux analyze_pcap update ==="
@@ -18,6 +18,7 @@ echo
 echo "Команди:"
 echo "  python3 ~/analyze_pcap.py ~/downloads/c.pcap --blind"
 echo "  python3 ~/analyze_pcap.py ~/downloads/c.pcap --nested --tcp-reassemble --export-kaitai ~/downloads/ksy"
-echo "  python3 ~/analyze_pcap.py ~/downloads/c.pcap --nested --export-lua ~/downloads/lua"
+echo "  python3 ~/analyze_pcap.py ~/downloads/c.pcap --dissect --flow 53 --limit 3"
+echo "  python3 ~/analyze_pcap.py ~/downloads/c.pcap --dissect-html ~/downloads/view.html --flow 443 --tcp-reassemble"
 echo
 echo "БЕЗ слеша перед curl! Правильно: curl -fsSL ..."

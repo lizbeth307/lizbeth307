@@ -4,12 +4,16 @@ from __future__ import annotations
 
 from typing import Any
 
+from .field_names import enrich_format
+
 
 MAX_KSY_FIELDS = 32
 
 
-def format_to_kaitai(fmt: dict[str, Any], *, meta_id: str = "discovered") -> str:
+def format_to_kaitai(fmt: dict[str, Any], *, meta_id: str = "discovered", flow: str = "") -> str:
     """Generate Kaitai Struct schema from discover_format() dict."""
+    if flow:
+        fmt = enrich_format(flow, fmt)
     all_fields = fmt.get("fields", [])
     fields = all_fields[:MAX_KSY_FIELDS]
     truncated = len(all_fields) > MAX_KSY_FIELDS
@@ -70,4 +74,4 @@ def format_to_kaitai(fmt: dict[str, Any], *, meta_id: str = "discovered") -> str
 
 def export_flow_kaitai(flow: str, fmt: dict[str, Any]) -> str:
     safe = flow.lower().replace(":", "_").replace("<", "").replace(">", "")
-    return format_to_kaitai(fmt, meta_id=f"flow_{safe}")
+    return format_to_kaitai(fmt, meta_id=f"flow_{safe}", flow=flow)

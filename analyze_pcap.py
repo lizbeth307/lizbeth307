@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.2.0-full"
+VERSION = "3.3.0-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -1098,7 +1098,181 @@ def format_nested_notes(layer: dict) -> list[str]:
     return notes
 
 
-def format_to_kaitai(fmt: dict, meta_id: str = "discovered") -> str:
+def _protocol_hint(flow: str) -> str | None:
+    u = flow.upper()
+    if u.endswith(":53"):
+        return "dns"
+    if u.endswith(":123"):
+        return "ntp"
+    if u.startswith("TCP") and u.endswith(":443"):
+        return "tls"
+    if u.startswith("UDP") and u.endswith(":443"):
+        return "quic"
+    return None
+
+
+def _enrich_field(flow: str, field: dict, index: int) -> dict:
+    out = dict(field)
+    proto = _protocol_hint(flow)
+    off = field.get("offset", index)
+    kind = field.get("kind", "")
+    dns = {
+        0: ("transaction_id", "DNS transaction ID"),
+        2: ("flags", "DNS flags"),
+        4: ("qdcount", "Question count"),
+        6: ("ancount", "Answer count"),
+        8: ("nscount", "Authority count"),
+        10: ("arcount", "Additional count"),
+    }
+    tls = {
+        0: ("content_type", "TLS content type"),
+        1: ("version_major", "TLS version major"),
+        2: ("version_minor", "TLS version minor"),
+        3: ("length", "Fragment length"),
+    }
+    if kind == "payload":
+        out["display"] = {
+            "dns": "Question / record data",
+            "tls": "TLS fragment",
+            "ntp": "NTP body",
+            "quic": "QUIC payload",
+        }.get(proto or "", out.get("name", "payload"))
+        return out
+    if proto == "dns" and off in dns:
+        out["name"], out["display"] = dns[off]
+    elif proto == "tls" and off in tls:
+        out["name"], out["display"] = tls[off]
+    else:
+        out["display"] = out.get("name", f"field_{index}")
+    return out
+
+
+def _enrich_format(flow: str, fmt: dict) -> dict:
+    if not fmt:
+        return fmt
+    out = dict(fmt)
+    out["fields"] = [_enrich_field(flow, f, i) for i, f in enumerate(fmt.get("fields", []))]
+    return out
+
+
+def _hex_preview(data: bytes, limit: int = 16) -> str:
+    s = data[:limit].hex()
+    return s + (f"… (+{len(data) - limit})" if len(data) > limit else "")
+
+
+def _dissect_dns_tree(data: bytes) -> list[str]:
+    p = parse_dns_packet(data)
+    if not p or len(data) < 12:
+        return [f"  raw: {_hex_preview(data)}"]
+    qid, flags, qd, an, ns, ar = struct.unpack(">HHHHHH", data[:12])
+    lines = [
+        f"DNS ({len(data)} bytes)",
+        f"  ├─ transaction_id: 0x{qid:04x}",
+        f"  ├─ flags: 0x{flags:04x} ({'response' if flags & 0x8000 else 'query'})",
+        f"  ├─ qdcount: {qd}",
+        f"  ├─ ancount: {an}",
+        f"  ├─ nscount: {ns}",
+        f"  ├─ arcount: {ar}",
+    ]
+    for i, q in enumerate(p.get("questions", [])):
+        lines.append(f"  ├─ Question #{i + 1}: {q.get('name', '?')} type={q.get('qtype')}")
+    return lines
+
+
+def _dissect_tls_tree(data: bytes) -> list[str]:
+    if len(data) < 5 or data[0] not in range(20, 26) or data[1] != 3:
+        return [f"  raw: {_hex_preview(data)}"]
+    ln = (data[3] << 8) | data[4]
+    ctype = {22: "Handshake", 23: "ApplicationData", 21: "Alert"}.get(data[0], str(data[0]))
+    lines = [
+        f"TLS Record ({len(data)} bytes)",
+        f"  ├─ content_type: {ctype} ({data[0]})",
+        f"  ├─ version: {data[1]}.{data[2]}",
+        f"  ├─ length: {ln}",
+    ]
+    body = data[5 : 5 + ln]
+    if data[0] == 0x16 and len(body) >= 4:
+        htype = body[0]
+        hname = TLS_HANDSHAKE_NAMES.get(htype, f"type{htype}")
+        lines.append(f"  ├─ handshake: {hname}")
+        if htype == 1:
+            detail = _parse_client_hello(body) or {}
+            if detail.get("sni"):
+                lines.append(f"  ├─ SNI: {', '.join(detail['sni'][:6])}")
+            if detail.get("alpn"):
+                lines.append(f"  ├─ ALPN: {', '.join(detail['alpn'][:6])}")
+    return lines
+
+
+def _dissect_quic_tree(data: bytes) -> list[str]:
+    p = parse_quic_packet(data, permit_short=True)
+    if not p:
+        return [f"  raw: {_hex_preview(data)}"]
+    if p.get("form") == "short":
+        return [f"QUIC short ({len(data)} bytes)", f"  ├─ pn_len: {p.get('pn_len')}"]
+    return [
+        f"QUIC long ({len(data)} bytes)",
+        f"  ├─ type: {p.get('type')}",
+        f"  ├─ version: {p.get('version_name')}",
+        f"  ├─ dcid_len: {p.get('dcid_len')}",
+        f"  ├─ scid_len: {p.get('scid_len')}",
+    ]
+
+
+def _dissect_packet_text(flow: str, data: bytes, index: int, fmt: dict | None = None) -> str:
+    proto = _protocol_hint(flow)
+    if proto == "dns":
+        body = _dissect_dns_tree(data)
+    elif proto == "tls":
+        body = _dissect_tls_tree(data)
+    elif proto == "quic":
+        body = _dissect_quic_tree(data)
+    else:
+        body = [f"{flow} ({len(data)} bytes)"]
+        off = 0
+        for i, f in enumerate(_enrich_format(flow, fmt or {}).get("fields", [])[:32]):
+            label = f.get("display") or f.get("name", "field")
+            if f.get("kind") == "payload":
+                body.append(f"  ├─ {label}: {_hex_preview(data[off:])}")
+                break
+            if off < len(data):
+                body.append(f"  ├─ {label}: 0x{data[off]:02x}")
+                off += 1
+    return f"=== Packet #{index} ===\n" + "\n".join(body)
+
+
+def _packets_for_dissect(flow: str, payloads: list[bytes], reasm: bool) -> list[bytes]:
+    if reasm and flow.upper().startswith("TCP"):
+        records: list[bytes] = []
+        for chunk in payloads:
+            records.extend(_iter_tls_stream(chunk))
+        return records or payloads
+    return payloads
+
+
+def _export_dissect_html(flow: str, payloads: list[bytes], limit: int, reasm: bool) -> str:
+    packets = _packets_for_dissect(flow, payloads, reasm)
+    parts = []
+    for i, pkt in enumerate(packets[:limit]):
+        text = html_escape(_dissect_packet_text(flow, pkt, i))
+        parts.append(f"<h3>Packet #{i}</h3><pre>{text}</pre>")
+    return (
+        "<!DOCTYPE html><html><head><meta charset=utf-8><meta name=viewport content='width=device-width'>"
+        f"<title>Dissect {flow}</title><style>body{{background:#111;color:#ddd;font-family:monospace;padding:12px}}"
+        "pre{white-space:pre-wrap}</style></head><body>"
+        f"<h1>Dissect {html_escape(flow)}</h1>"
+        + "".join(parts)
+        + "</body></html>"
+    )
+
+
+def html_escape(s: str) -> str:
+    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def format_to_kaitai(fmt: dict, meta_id: str = "discovered", flow: str = "") -> str:
+    if flow:
+        fmt = _enrich_format(flow, fmt)
     endian = fmt.get("endian") or fmt.get("length_endian") or "le"
     ks = "be" if endian == "be" else "le"
     all_fields = fmt.get("fields", [])
@@ -1128,6 +1302,7 @@ def _sanitize_lua(name: str) -> str:
 
 
 def format_to_lua(fmt: dict, *, flow: str) -> str:
+    fmt = _enrich_format(flow, fmt)
     fields = fmt.get("fields", [])[:MAX_EXPORT_FIELDS]
     truncated = len(fmt.get("fields", [])) > MAX_EXPORT_FIELDS
     endian = fmt.get("endian") or fmt.get("length_endian") or "be"
@@ -1145,16 +1320,17 @@ def format_to_lua(fmt: dict, *, flow: str) -> str:
     for i, f in enumerate(fields):
         kind = f.get("kind", "")
         name = _sanitize_lua(f.get("name", f"field_{i}"))
+        label = f.get("display") or name
         var = f"f_{name}"
-        field_vars.append((var, name, kind, f))
+        field_vars.append((var, name, label, kind, f))
         if kind == "length":
             lines.append(
-                f'local {var} = ProtoField.uint16("{pname}.{name}", "{name}", base.DEC, nil, base.{enc.upper()})'
+                f'local {var} = ProtoField.uint16("{pname}.{name}", "{label}", base.DEC, nil, base.{enc.upper()})'
             )
         elif kind == "payload":
-            lines.append(f'local {var} = ProtoField.bytes("{pname}.{name}", "{name}")')
+            lines.append(f'local {var} = ProtoField.bytes("{pname}.{name}", "{label}")')
         else:
-            lines.append(f'local {var} = ProtoField.uint8("{pname}.{name}", "{name}", base.HEX)')
+            lines.append(f'local {var} = ProtoField.uint8("{pname}.{name}", "{label}", base.HEX)')
     lines.append(f"proto.fields = {{{', '.join(v[0] for v in field_vars)}}}")
     lines.append("")
     lines.append("function proto.dissector(buffer, pinfo, tree)")
@@ -1162,7 +1338,7 @@ def format_to_lua(fmt: dict, *, flow: str) -> str:
     lines.append('    local subtree = tree:add(proto, buffer(), "Discovered message")')
     lines.append("    local offset = 0")
     lines.append("    local len_field = nil")
-    for var, _name, kind, f in field_vars:
+    for var, _name, _label, kind, f in field_vars:
         size = f.get("size", 1)
         if kind == "length":
             lines += [
@@ -1206,10 +1382,15 @@ def main() -> int:
     parser.add_argument("--tcp-reassemble", action="store_true", help="TCP stream reassembly + TLS split")
     parser.add_argument("--export-kaitai", metavar="DIR", help="export .ksy schemas per flow")
     parser.add_argument("--export-lua", metavar="DIR", help="export Wireshark Lua dissectors per flow")
+    parser.add_argument("--dissect", action="store_true", help="packet tree in terminal (Wireshark-like)")
+    parser.add_argument("--dissect-html", metavar="FILE", help="HTML report for phone browser")
+    parser.add_argument("--limit", type=int, default=5, help="packets to show with --dissect")
     parser.add_argument("--flow", help="filter flow, e.g. 443 or TCP:443")
     args = parser.parse_args()
 
-    if args.nested:
+    if args.dissect or args.dissect_html:
+        mode = "dissect"
+    elif args.nested:
         mode = "nested AST v2"
     elif args.tcp_reassemble:
         mode = "TCP reassembly"
@@ -1239,6 +1420,22 @@ def main() -> int:
             print(f"Потік '{args.flow}' не знайдено. Доступні:", ", ".join(sorted(flows)))
             return 1
 
+    if args.dissect or args.dissect_html:
+        for label in sorted(selected, key=lambda k: -len(selected[k])):
+            pkts = _packets_for_dissect(label, selected[label], reasm)
+            if args.dissect_html:
+                out = Path(args.dissect_html).expanduser()
+                if len(selected) > 1:
+                    out = out.with_name(f"{out.stem}_{label.replace(':', '_')}{out.suffix}")
+                out.write_text(_export_dissect_html(label, selected[label], args.limit, reasm), encoding="utf-8")
+                print(f"HTML: {out}")
+            else:
+                print(f"── {label}  ({min(args.limit, len(pkts))}/{len(pkts)} packets)\n")
+                for i, pkt in enumerate(pkts[: args.limit]):
+                    print(_dissect_packet_text(label, pkt, i))
+                    print()
+        return 0
+
     if args.nested:
         report = {"file": str(path), "nested": True, "tcp_reassemble": reasm, "flows": []}
         for label in sorted(selected, key=lambda k: -len(selected[k])):
@@ -1258,7 +1455,7 @@ def main() -> int:
             for layer in report["flows"]:
                 label = layer["label"].replace(":", "_")
                 ksy = kdir / f"{label}.ksy"
-                ksy.write_text(format_to_kaitai(layer.get("format", {}), meta_id=f"flow_{label}"), encoding="utf-8")
+                ksy.write_text(format_to_kaitai(layer.get("format", {}), meta_id=f"flow_{label}", flow=layer["label"]), encoding="utf-8")
             print(f"Kaitai: {kdir}/")
         if args.export_lua:
             ldir = Path(args.export_lua).expanduser()
@@ -1287,7 +1484,7 @@ def main() -> int:
             label = entry.get("flow", "flow").replace(":", "_")
             fmt = entry.get("format") or entry.get("inner_format") or {}
             if fmt:
-                (kdir / f"{label}.ksy").write_text(format_to_kaitai(fmt, meta_id=f"flow_{label}"), encoding="utf-8")
+                (kdir / f"{label}.ksy").write_text(format_to_kaitai(fmt, meta_id=f"flow_{label}", flow=entry.get("flow", label)), encoding="utf-8")
         print(f"Kaitai: {kdir}/")
     if args.export_lua and args.blind:
         ldir = Path(args.export_lua).expanduser()

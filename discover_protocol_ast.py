@@ -523,6 +523,50 @@ def cmd_blind(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_dissect(args: argparse.Namespace) -> int:
+    from protocol_ast.pcap_analyze import extract_flows
+    from protocol_ast.terminal_dissect import dissect_flow_text, export_flow_html
+
+    pcap = Path(args.pcap)
+    buckets = extract_flows(
+        pcap,
+        min_packets=1,
+        min_payload=args.min_payload,
+        tcp_reassemble=getattr(args, "tcp_reassemble", False),
+    )
+    targets = buckets
+    if args.flow:
+        targets = {k: v for k, v in buckets.items() if args.flow.lower() in k.lower()}
+    if not targets:
+        raise SystemExit("потоки не знайдено")
+    for label, bucket in sorted(targets.items(), key=lambda x: -x[1].packet_count):
+        if args.html:
+            out = Path(args.html).expanduser()
+            if len(targets) > 1:
+                safe = label.replace(":", "_")
+                out = out.with_name(f"{out.stem}_{safe}{out.suffix}")
+            out.write_text(
+                export_flow_html(
+                    label,
+                    bucket.payloads,
+                    limit=args.limit,
+                    tcp_reassemble=getattr(args, "tcp_reassemble", False),
+                ),
+                encoding="utf-8",
+            )
+            print(f"HTML: {out}")
+        else:
+            print(
+                dissect_flow_text(
+                    label,
+                    bucket.payloads,
+                    limit=args.limit,
+                    tcp_reassemble=getattr(args, "tcp_reassemble", False),
+                )
+            )
+    return 0
+
+
 def cmd_test(_args: argparse.Namespace) -> int:
     import unittest
 
@@ -657,6 +701,18 @@ def build_parser() -> argparse.ArgumentParser:
     p_blind.add_argument("--export-kaitai", metavar="DIR", help="експорт .ksy на потік")
     p_blind.add_argument("--export-lua", metavar="DIR", help="експорт Wireshark Lua dissector")
     p_blind.set_defaults(func=cmd_blind)
+
+    p_dissect = sub.add_parser(
+        "dissect",
+        help="дерево пакетів у терміналі / HTML (аналог Wireshark на Android)",
+    )
+    p_dissect.add_argument("pcap")
+    p_dissect.add_argument("--flow", help="фільтр потоку, напр. 53 або TCP:443")
+    p_dissect.add_argument("--limit", type=int, default=5, help="скільки пакетів показати")
+    p_dissect.add_argument("--min-payload", type=int, default=4)
+    p_dissect.add_argument("--tcp-reassemble", action="store_true")
+    p_dissect.add_argument("--html", metavar="FILE", help="зберегти HTML для перегляду в браузері")
+    p_dissect.set_defaults(func=cmd_dissect)
 
     return parser
 
