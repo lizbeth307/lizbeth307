@@ -3,12 +3,15 @@
 analyze_pcap.py — мінімальний аналізатор PCAP для Termux/Android.
 
 ВАЖЛИВО (Termux): не запускайте через "python" — буде grep /proc/stat error!
+  pkg install python
   python3 analyze_pcap.py ~/downloads/файл.pcap
+  python3 analyze_pcap.py ~/downloads/файл.pcap --blind --flow 443
   bash run_pcap.sh ~/downloads/файл.pcap
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import struct
 import sys
@@ -145,33 +148,206 @@ def discover_format(messages: list[bytes]) -> dict:
     return {"fields": fields, "length_offset": best_off if best_score >= 0.8 else None, "endian": best_end}
 
 
+def _read_varint(data: bytes, off: int) -> tuple[int, int] | None:
+    if off >= len(data):
+        return None
+    first = data[off]
+    prefix = 1 << (first >> 6)
+    if off + prefix > len(data):
+        return None
+    if prefix == 1:
+        return first & 0x3F, 1
+    if prefix == 2:
+        return ((first & 0x3F) << 8) | data[off + 1], 2
+    if prefix == 4:
+        v = 0
+        for i in range(1, 4):
+            v = (v << 8) | data[off + i]
+        return (first & 0x3F) << 24 | v, 4
+    v = 0
+    for i in range(1, 8):
+        v = (v << 8) | data[off + i]
+    return (first & 0x3F) << 56 | v, 8
+
+
+def _score_varint_length(messages: list[bytes], off: int) -> float:
+    hits = total = 0
+    for m in messages:
+        if off >= len(m):
+            continue
+        parsed = _read_varint(m, off)
+        if not parsed:
+            continue
+        total += 1
+        val, used = parsed
+        rest = len(m) - off - used
+        if val == rest or val in (rest - 1, rest - 2):
+            hits += 1
+    return hits / total if total else 0.0
+
+
+def _score_tls_like(messages: list[bytes]) -> tuple[float, list[bytes]]:
+    frames: list[bytes] = []
+    ok = 0
+    for m in messages:
+        off = 0
+        pkt_ok = True
+        while off + 5 <= len(m):
+            ctype, v1, ln = m[off], m[off + 1], (m[off + 3] << 8) | m[off + 4]
+            if ctype not in range(20, 26) or v1 != 3:
+                pkt_ok = False
+                break
+            end = off + 5 + ln
+            if end > len(m):
+                pkt_ok = False
+                break
+            frames.append(m[off:end])
+            off = end
+        if pkt_ok and off == len(m):
+            ok += 1
+    return (ok / len(messages) if messages else 0.0), frames
+
+
+def _split_quic_packets(messages: list[bytes]) -> tuple[float, list[bytes]]:
+    frames: list[bytes] = []
+    ok = 0
+    for m in messages:
+        if not m:
+            continue
+        if (m[0] & 0x80 and len(m) >= 5) or len(m) >= 4:
+            frames.append(m)
+            ok += 1
+    return (ok / len(messages) if messages else 0.0), frames
+
+
+def _find_best_length_offset(messages: list[bytes]) -> list[dict]:
+    if not messages:
+        return []
+    min_len = min(map(len, messages))
+    cands: list[dict] = []
+    for off in range(min(24, min_len - 1)):
+        for end in ("le", "be"):
+            hits = total = 0
+            for m in messages:
+                if off + 2 >= len(m):
+                    continue
+                total += 1
+                if end == "le":
+                    decl = m[off] | (m[off + 1] << 8)
+                else:
+                    decl = (m[off] << 8) | m[off + 1]
+                rest = len(m) - off - 2
+                if decl == rest or abs(decl - rest) <= 2:
+                    hits += 1
+            if total:
+                score = hits / total
+                if score >= 0.5:
+                    cands.append({"offset": off, "kind": f"u16_{end}", "score": round(score, 3)})
+        vs = _score_varint_length(messages, off)
+        if vs >= 0.5:
+            cands.append({"offset": off, "kind": "varint", "score": round(vs, 3)})
+    return sorted(cands, key=lambda x: -x["score"])[:5]
+
+
+def _entropy_note(payloads: list[bytes]) -> str:
+    ratio = len(set(b for p in payloads[:10] for b in p[:16])) / max(1, min(16, min(len(p) for p in payloads)))
+    if ratio > 0.85:
+        return "висока ентропія → шукаємо вкладені кадри"
+    return "структурований шар"
+
+
+def blind_analyze(label: str, payloads: list[bytes]) -> dict:
+    notes: list[str] = [_entropy_note(payloads)]
+    outer = discover_format(payloads)
+    tls_rate, tls_frames = _score_tls_like(payloads)
+    quic_rate, quic_frames = _split_quic_packets(payloads)
+    splits = _find_best_length_offset(payloads)
+    inner: dict | None = None
+
+    if tls_rate >= 0.6:
+        notes.append(f"вкладені кадри type|ver|len: {tls_rate:.0%} ({len(tls_frames)} кадрів)")
+        if tls_frames:
+            inner = discover_format(tls_frames)
+            notes.append(f"внутрішній AST: {', '.join(f['kind'] + '@' + str(f['offset']) for f in inner.get('fields', [])[:6])}")
+    elif quic_rate >= 0.5:
+        long_n = sum(1 for p in quic_frames if p[0] & 0x80)
+        notes.append(f"UDP-кадри (QUIC-подібні): {quic_rate:.0%}, long-header={long_n}")
+        if quic_frames:
+            inner = discover_format(quic_frames)
+    elif splits:
+        notes.append(f"length-кандидат: {splits[0]}")
+
+    return {
+        "flow": label,
+        "packets": len(payloads),
+        "outer_format": outer,
+        "length_splits": splits,
+        "inner_format": inner,
+        "notes": notes,
+    }
+
+
+def _flow_matches(label: str, flow_filter: str) -> bool:
+    needle = flow_filter.strip().upper()
+    if ":" in needle:
+        return label.upper() == needle
+    return label.split(":")[-1] == needle
+
+
+def _print_flow(label: str, payloads: list[bytes], blind: bool) -> dict:
+    print(f"── {label}  packets={len(payloads)}  len={min(map(len,payloads))}..{max(map(len,payloads))}")
+    if blind:
+        result = blind_analyze(label, payloads)
+        for note in result["notes"]:
+            print(f"   • {note}")
+        if result.get("inner_format"):
+            print("   внутрішні поля:")
+            for f in result["inner_format"].get("fields", [])[:8]:
+                print(f"     {f['name']:12} {f['kind']:8} @{f['offset']}")
+        return result
+
+    fmt = discover_format(payloads)
+    for f in fmt.get("fields", [])[:12]:
+        print(f"   {f['name']:12} {f['kind']:8} @{f['offset']}")
+    if fmt.get("length_offset") is not None:
+        print(f"   length @{fmt['length_offset']} ({fmt['endian']})")
+    sample = payloads[0][:32].hex()
+    print(f"   sample: {sample}{'...' if len(payloads[0])>32 else ''}")
+    return {"flow": label, "packets": len(payloads), "format": fmt}
+
+
 def main() -> int:
+    parser = argparse.ArgumentParser(description="PCAP analyzer for Termux/Android")
+    parser.add_argument("pcap", help="path to .pcap file")
+    parser.add_argument("--blind", action="store_true", help="blind deep analysis (TLS/QUIC inner frames)")
+    parser.add_argument("--flow", help="filter flow, e.g. 443 or TCP:443")
+    args = parser.parse_args()
+
     print("analyze_pcap: старт", flush=True)
-    if len(sys.argv) < 2:
-        print("Використання: python analyze_pcap.py ШЛЯХ.pcap", file=sys.stderr)
-        return 1
-    path = Path(sys.argv[1]).expanduser()
+    path = Path(args.pcap).expanduser()
     if not path.exists():
         print(f"Файл не знайдено: {path}", file=sys.stderr)
+        print("На телефоні файл зазвичай: ~/downloads/PCAPdroid*.pcap", file=sys.stderr)
         return 1
     print(f"PCAP: {path} ({path.stat().st_size} bytes)\n")
     flows = extract_flows(path)
     if not flows:
         print("Потоків не знайдено. Спробуйте інший pcap.")
         return 1
-    report = {"file": str(path), "flows": []}
-    for label in sorted(flows, key=lambda k: -len(flows[k])):
-        payloads = flows[label]
-        fmt = discover_format(payloads)
-        print(f"── {label}  packets={len(payloads)}  len={min(map(len,payloads))}..{max(map(len,payloads))}")
-        for f in fmt.get("fields", [])[:12]:
-            print(f"   {f['name']:12} {f['kind']:8} @{f['offset']}")
-        if fmt.get("length_offset") is not None:
-            print(f"   length @{fmt['length_offset']} ({fmt['endian']})")
-        sample = payloads[0][:32].hex()
-        print(f"   sample: {sample}{'...' if len(payloads[0])>32 else ''}\n")
-        report["flows"].append({"flow": label, "packets": len(payloads), "format": fmt})
-    out = path.parent / "probe_report.json"
+
+    selected = flows
+    if args.flow:
+        selected = {k: v for k, v in flows.items() if _flow_matches(k, args.flow)}
+        if not selected:
+            print(f"Потік '{args.flow}' не знайдено. Доступні:", ", ".join(sorted(flows)))
+            return 1
+
+    report = {"file": str(path), "blind": args.blind, "flows": []}
+    for label in sorted(selected, key=lambda k: -len(selected[k])):
+        entry = _print_flow(label, selected[label], args.blind)
+        print()
+        report["flows"].append(entry)
+    out = path.parent / ("blind_report.json" if args.blind else "probe_report.json")
     out.write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(f"Звіт: {out}")
     return 0
