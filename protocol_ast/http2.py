@@ -91,8 +91,8 @@ def split_http2_frames(messages: list[bytes]) -> tuple[str, list[bytes]] | None:
     """
     Split decrypted payloads into HTTP/2 frames.
 
-    If messages are already individual frames, peel DATA payloads instead
-    (prevents infinite http2_frames → http2_frames recursion).
+    - Blobs → individual frames (keep HEADERS/DATA, do not drop singles).
+    - Already-individual frames → peel DATA payloads (stop recursion).
     """
     if all_single_http2_frames(messages):
         data = peel_http2_data_payloads(messages)
@@ -101,36 +101,30 @@ def split_http2_frames(messages: list[bytes]) -> tuple[str, list[bytes]] | None:
         return None
 
     frames: list[bytes] = []
-    parsed_msgs = 0
-    for m in messages:
-        got = _parse_frames(m)
-        if got and not (len(got) == 1 and is_single_http2_frame(m)):
-            frames.extend(got)
-            parsed_msgs += 1
-        elif got and len(got) >= 2:
-            frames.extend(got)
-            parsed_msgs += 1
-        elif got and len(messages) == 1:
-            frames.extend(got)
-            parsed_msgs += 1
-
-    # Prefer multi-frame split from blobs
-    blob_frames: list[bytes] = []
-    blob_ok = 0
+    grew = False
     for m in messages:
         if is_single_http2_frame(m):
+            frames.append(m)
             continue
         got = _parse_frames(m)
-        if got and len(got) >= 1:
-            blob_frames.extend(got)
-            blob_ok += 1
-    if blob_ok >= 1 and len(blob_frames) >= 2:
-        return "http2_frames", blob_frames
+        if not got:
+            continue
+        frames.extend(got)
+        if len(got) > 1:
+            grew = True
+        elif len(got) == 1 and got[0] != m:
+            grew = True
 
-    if parsed_msgs >= 1 and len(frames) >= 2:
-        # only if we actually grew past input message count (real split)
-        if len(frames) > len(messages):
-            return "http2_frames", frames
+    if len(frames) < 2:
+        return None
+    # Progress: split at least one blob, or collected more frames than inputs
+    if grew or len(frames) > len(messages):
+        return "http2_frames", frames
+    # Mixed leftovers that are all single frames after collect
+    if all_single_http2_frames(frames):
+        data = peel_http2_data_payloads(frames)
+        if data:
+            return "http2_data", data
     return None
 
 

@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.6.3-full"
+VERSION = "3.6.5-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -1038,10 +1038,28 @@ def _split_http2_frames(messages: list[bytes]) -> tuple[str, list[bytes]] | None
 
 
 def _embedded_split_http2(messages: list[bytes]) -> tuple[str, list[bytes]] | None:
+    def _single(m: bytes) -> bool:
+        if len(m) < 9:
+            return False
+        ln = int.from_bytes(m[:3], "big")
+        return 9 + ln == len(m) and m[3] <= 0x1F
+
+    if messages and all(_single(m) for m in messages):
+        data = []
+        for m in messages:
+            if m[3] == 0x0:
+                ln = int.from_bytes(m[:3], "big")
+                payload = m[9 : 9 + ln]
+                if payload:
+                    data.append(payload)
+        return ("http2_data", data) if data else None
+
     preface = b"PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n"
     frames: list[bytes] = []
     ok = 0
     for m in messages:
+        if _single(m):
+            continue
         data = m[len(preface) :] if m.startswith(preface) else m
         off = 0
         local: list[bytes] = []
@@ -1051,7 +1069,7 @@ def _embedded_split_http2(messages: list[bytes]) -> tuple[str, list[bytes]] | No
                 break
             local.append(data[off : off + 9 + ln])
             off += 9 + ln
-        if local:
+        if len(local) >= 2 or (local and len(messages) == 1):
             frames.extend(local)
             ok += 1
     if ok >= 1 and len(frames) >= 2:
@@ -1059,12 +1077,18 @@ def _embedded_split_http2(messages: list[bytes]) -> tuple[str, list[bytes]] | No
     return None
 
 
-def _http2_deep(frames: list[bytes]) -> dict:
+def _http2_deep(frames: list[bytes], splitter: str = "http2_frames") -> dict:
     try:
-        from protocol_ast.http2 import http2_deep
+        from protocol_ast.http2 import http2_data_deep, http2_deep
 
-        return http2_deep(frames)
+        return http2_data_deep(frames) if splitter == "http2_data" else http2_deep(frames)
     except Exception:
+        if splitter == "http2_data":
+            previews = []
+            for p in frames[:3]:
+                s = p[:80]
+                previews.append(s.decode("utf-8", errors="replace") if s else "")
+            return {"kind": "http2_data", "payloads": len(frames), "preview": previews}
         names = {
             0: "DATA", 1: "HEADERS", 2: "PRIORITY", 3: "RST_STREAM",
             4: "SETTINGS", 5: "PUSH_PROMISE", 6: "PING", 7: "GOAWAY",
@@ -1193,7 +1217,7 @@ def recursive_nested_analyze(
         if h2:
             name, frames = h2
             layer["splitter"] = name
-            layer["deep"] = _http2_deep(frames)
+            layer["deep"] = _http2_deep(frames, name)
             layer["entropy"] = "structured"
             layer["children"].append(
                 recursive_nested_analyze(
@@ -1502,6 +1526,15 @@ def format_nested_notes(layer: dict) -> list[str]:
     deep = layer.get("deep") or {}
     if deep.get("kind") == "http2":
         notes.append(f"  HTTP/2: {deep.get('frames', {})} streams={deep.get('streams', 0)}")
+        if deep.get("data_preview"):
+            notes.append(f"  DATA: {deep['data_preview'][0][:80]}")
+    if deep.get("kind") == "http2_data":
+        notes.append(
+            f"  http2_data: {deep.get('payloads', 0)} payloads "
+            f"(html={deep.get('html', 0)} json={deep.get('json', 0)})"
+        )
+        for prev in (deep.get("preview") or [])[:2]:
+            notes.append(f"  body: {prev[:100]}")
     if deep.get("kind") == "tls":
         if deep.get("sni_hosts"):
             notes.append(f"  SNI: {', '.join(deep['sni_hosts'][:6])}")

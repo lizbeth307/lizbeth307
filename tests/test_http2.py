@@ -25,23 +25,25 @@ class TestHttp2(unittest.TestCase):
         deep = http2_deep(frames)
         self.assertIn("SETTINGS", deep["frames"])
 
-    def test_split_pure_frames(self) -> None:
-        msgs = [_frame(0x4, b"\x00" * 6) + _frame(0x1, b"\x82\x84", 1)]
-        result = split_http2_frames(msgs)
+    def test_split_keeps_headers_and_data(self) -> None:
+        # mix: one blob + already-single DATA — must not drop DATA
+        blob = _frame(0x4, b"\x00" * 6) + _frame(0x1, b"\x82\x84", 1)
+        single_data = _frame(0x0, b"<html>hi", 1)
+        result = split_http2_frames([blob, single_data])
         self.assertIsNotNone(result)
         assert result is not None
+        self.assertEqual(result[0], "http2_frames")
         deep = http2_deep(result[1])
-        self.assertGreaterEqual(deep["total_frames"], 2)
+        self.assertIn("HEADERS", deep["frames"])
+        self.assertIn("DATA", deep["frames"])
 
     def test_no_recursive_resplit(self) -> None:
         frames = [_frame(0x4, b"\x00" * 6), _frame(0x1, b"\x82\x84", 1), _frame(0x0, b"<html>hi", 1)]
-        # already individual frames → peel DATA, do not return http2_frames again
         result = split_http2_frames(frames)
         self.assertIsNotNone(result)
         assert result is not None
         self.assertEqual(result[0], "http2_data")
         self.assertEqual(result[1][0], b"<html>hi")
-        # DATA payloads are not http2 frames → stop
         self.assertIsNone(split_http2_frames(result[1]))
 
 
