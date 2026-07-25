@@ -1,0 +1,13 @@
+# Termux — 3 команди, без git
+
+# 1. Завантажити скрипт (потрібен інтернет)
+curl -L -o analyze_pcap.py \
+  "https://raw.githubusercontent.com/lizbeth307/lizbeth307/cursor/protocol-ast-proto-a4e6/analyze_pcap.py"
+
+# 2. Перевірити ваш файл
+ls -la ~/downloads/PCAPdroid_25_лип._12_42_30.pcap
+
+# 3. Аналіз (тільки pcap, без мережі)
+python analyze_pcap.py ~/downloads/PCAPdroid_25_лип._12_42_30.pcap
+
+# Звіт з'явиться: ~/downloads/probe_report.json

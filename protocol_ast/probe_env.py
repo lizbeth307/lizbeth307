@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-import platform
 import socket
 from dataclasses import dataclass
 from pathlib import Path
@@ -46,8 +45,7 @@ def _is_android() -> bool:
         return True
     if Path("/system/build.prop").exists():
         return True
-    if "android" in platform.platform().lower():
-        return True
+    # Не викликаємо platform.platform() — на Termux дає grep /proc/stat errors
     return False
 
 
@@ -99,21 +97,27 @@ def detect_runtime() -> RuntimeEnv:
 
 def android_pcap_hints() -> list[Path]:
     """Типові шляхи PCAPdroid / Termux на телефоні."""
+    home = Path.home()
     candidates = [
+        home / "downloads",
+        home / "Downloads",
+        home / "storage" / "downloads",
+        home / "storage" / "shared" / "Download",
         Path("/sdcard/Download"),
         Path("/sdcard/Downloads"),
         Path("/storage/emulated/0/Download"),
         Path("/storage/emulated/0/Downloads"),
-        Path.home() / "storage" / "downloads",
-        Path.home() / "downloads",
         Path("."),
     ]
+    patterns = ("*.pcap", "*.pcapng", "PCAPdroid*.pcap")
     found: list[Path] = []
+    seen: set[Path] = set()
     for base in candidates:
         if not base.exists():
             continue
-        for p in sorted(base.glob("*.pcap"))[:5]:
-            found.append(p)
-        for p in sorted(base.glob("*.pcapng"))[:3]:
-            found.append(p)
-    return found
+        for pat in patterns:
+            for p in sorted(base.glob(pat)):
+                if p.is_file() and p not in seen:
+                    seen.add(p)
+                    found.append(p)
+    return sorted(found, key=lambda p: p.stat().st_mtime, reverse=True)
