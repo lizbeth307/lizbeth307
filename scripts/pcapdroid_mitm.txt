@@ -93,7 +93,11 @@ python3 ~/analyze_pcap.py ~/downloads/capture.pcapng \
 ─────────────────────────────────────────────────────
 • Certificate pinning у додатку
   → Chrome/браузер працює; багато apps — ні
-  → root + Magisk + system CA / unpinning modules
+  → БЕЗ root (Termux):  ~/scan update && ~/unpin
+     (apk-mitm патчить Java TrustManager / OkHttp)
+     потім ставиш *-unpinned.apk → новий MITM → ~/scan mine
+  → якщо досі SEALED (Unity/native pin) — Frida Gadget в APK
+  → з root: Magisk + system CA / LSPosed unpin modules
 • CA не встановлений як User CA
 • Додаток вимагає system CA (Android 7+)
 • QUIC не заблокований → трафік іде UDP:443
