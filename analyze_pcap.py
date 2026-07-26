@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.8.9-full"
+VERSION = "3.8.10-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -2162,16 +2162,80 @@ def main() -> int:
         mode = "deep decode embedded"
     print(f"analyze_pcap: старт v{VERSION} ({mode})", flush=True)
 
-    # Glob + PCAPdroid folders (fresh dumps often NOT in ~/downloads/)
+    # Explicit single file vs auto/glob
+    explicit_single = (
+        len(args.pcap) == 1
+        and Path(args.pcap[0]).expanduser().is_file()
+    )
+
+    resolve_keylog = None
+    pick_pcap_for_keylog = None
+    pick_newest_pcap = None
     try:
-        from protocol_ast.termux_update import pick_newest_pcap
-    except Exception:
-        pick_newest_pcap = None
-    if pick_newest_pcap is not None:
+        from protocol_ast.find_keylog import pick_pcap_for_keylog as _ppk
+        from protocol_ast.find_keylog import resolve_keylog as _rk
+        from protocol_ast.termux_update import pick_newest_pcap as _pnp
+
+        resolve_keylog = _rk
+        pick_pcap_for_keylog = _ppk
+        pick_newest_pcap = _pnp
+    except Exception as exc:
+        try:
+            import importlib.util
+
+            fk = Path.home() / "protocol_ast" / "find_keylog.py"
+            if not fk.exists():
+                fk = Path(__file__).resolve().parent / "protocol_ast" / "find_keylog.py"
+            spec = importlib.util.spec_from_file_location("find_keylog_standalone", fk)
+            if spec and spec.loader:
+                mod = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(mod)
+                resolve_keylog = mod.resolve_keylog
+                pick_pcap_for_keylog = getattr(mod, "pick_pcap_for_keylog", None)
+        except Exception as exc2:
+            print(f"⚠  keylog helper: {exc} / {exc2}", file=sys.stderr)
+        try:
+            from protocol_ast.termux_update import pick_newest_pcap as _pnp
+
+            pick_newest_pcap = _pnp
+        except Exception:
+            pass
+
+    # Resolve keylog first (auto → newest), then pair a matching pcap
+    kpath: Path | None = None
+    if args.keylog:
+        if resolve_keylog is not None:
+            # provisional: allow search without pcap
+            kpath, kmsg = resolve_keylog(args.keylog, pcap_path=None)
+            if kmsg and not kpath:
+                print(f"⚠  {kmsg}", file=sys.stderr)
+        else:
+            kp = Path(args.keylog).expanduser()
+            if args.keylog.lower() != "auto" and kp.exists():
+                kpath = kp
+
+    path: Path | None = None
+    if explicit_single:
+        path = Path(args.pcap[0]).expanduser()
+        print(f"pcap: явний файл", flush=True)
+    elif args.keylog and kpath and pick_pcap_for_keylog is not None and (
+        not args.pcap or len(args.pcap) != 1
+    ):
+        path, ov, pmsg = pick_pcap_for_keylog(kpath, seed_paths=args.pcap or None)
+        print(f"pcap: {pmsg}", flush=True)
+        if ov == 0:
+            print(
+                "⚠  keylog не збігається з найновішим pcap — "
+                "після Stop зберігай SSLKEYLOGFILE з тієї ж сесії",
+                file=sys.stderr,
+            )
+    elif pick_newest_pcap is not None:
         path = pick_newest_pcap(args.pcap or None, also_search_defaults=True)
+        print("pcap: найновіший у PCAPdroid/Downloads", flush=True)
     else:
         cands = [Path(p).expanduser() for p in (args.pcap or []) if Path(p).expanduser().is_file()]
         path = max(cands, key=lambda p: p.stat().st_mtime) if cands else None
+
     if path is None:
         if not args.pcap:
             parser.print_help()
@@ -2179,53 +2243,24 @@ def main() -> int:
             print(f"Файл не знайдено: {args.pcap}", file=sys.stderr)
         print("Шукай: ~/storage/downloads/PCAPdroid/*.pcap", file=sys.stderr)
         return 1
-    if not args.pcap:
-        print("pcap: auto → найновіший у PCAPdroid/Downloads", flush=True)
-    else:
-        print("pcap: беру найновіший (аргументи + ~/storage/downloads/PCAPdroid/)", flush=True)
     print(f"PCAP: {path} ({path.stat().st_size} bytes)\n")
 
     if args.keylog:
-        resolve_keylog = None
-        try:
-            from protocol_ast.find_keylog import resolve_keylog as _rk
-
-            resolve_keylog = _rk
-        except Exception as exc:
-            # Termux partial package / broken __init__ — load file directly
-            try:
-                import importlib.util
-
-                fk = Path.home() / "protocol_ast" / "find_keylog.py"
-                if not fk.exists():
-                    fk = Path(__file__).resolve().parent / "protocol_ast" / "find_keylog.py"
-                spec = importlib.util.spec_from_file_location("find_keylog_standalone", fk)
-                if spec and spec.loader:
-                    mod = importlib.util.module_from_spec(spec)
-                    spec.loader.exec_module(mod)
-                    resolve_keylog = mod.resolve_keylog
-            except Exception as exc2:
-                print(f"⚠  keylog helper: {exc} / {exc2}", file=sys.stderr)
         if resolve_keylog is not None:
-            kpath, kmsg = resolve_keylog(args.keylog, pcap_path=path)
+            # re-resolve beside chosen pcap (may refine message)
+            kpath2, kmsg = resolve_keylog(args.keylog, pcap_path=path)
+            if kpath2:
+                kpath = kpath2
             if kmsg:
                 print(kmsg if kpath else f"⚠  {kmsg}", file=sys.stderr if not kpath else sys.stdout)
-            if kpath:
-                print(f"Keylog: {kpath} ({kpath.stat().st_size} bytes)\n")
-                args.keylog = str(kpath)
-            else:
-                print("   Decrypt пропущено. Handshake peel працює і без ключів.", file=sys.stderr)
-                print("   PCAPdroid → TLS decryption ON → Start → Chrome → Stop", file=sys.stderr)
-                print("   → Save SSLKEYLOGFILE у Download, потім знову --keylog auto\n", file=sys.stderr)
-                args.keylog = None
+        if kpath:
+            print(f"Keylog: {kpath} ({kpath.stat().st_size} bytes)\n")
+            args.keylog = str(kpath)
         else:
-            kpath = Path(args.keylog).expanduser()
-            if args.keylog.lower() == "auto" or not kpath.exists():
-                print("⚠  --keylog: helper не завантажився; онови protocol_ast/", file=sys.stderr)
-                args.keylog = None
-            else:
-                print(f"Keylog: {kpath} ({kpath.stat().st_size} bytes)\n")
-                args.keylog = str(kpath)
+            print("   Decrypt пропущено. Handshake peel працює і без ключів.", file=sys.stderr)
+            print("   PCAPdroid → TLS decryption ON → Start → Chrome → Stop", file=sys.stderr)
+            print("   → Save SSLKEYLOGFILE у Download з ТІЄЇ Ж сесії\n", file=sys.stderr)
+            args.keylog = None
 
     if args.stream:
         try:

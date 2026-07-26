@@ -104,6 +104,104 @@ def find_keylog_files(search_roots: list[Path] | None = None) -> list[Path]:
     return found
 
 
+def count_keylog_overlap(pcap_path: str | Path, keylog_path: str | Path) -> int:
+    """How many ClientHello randoms in pcap appear in the keylog."""
+    try:
+        from .pcap_analyze import extract_flows
+        from .tls_keylog import find_client_randoms_in_records, parse_keylog
+    except Exception:
+        return 0
+    pcap = Path(pcap_path).expanduser()
+    keylog = Path(keylog_path).expanduser()
+    if not pcap.is_file() or not keylog.is_file():
+        return 0
+    try:
+        secrets = parse_keylog(keylog)
+        if not secrets.client_randoms:
+            return 0
+        buckets = extract_flows(pcap, min_packets=1, min_payload=5, tcp_reassemble=True)
+    except Exception:
+        return 0
+    found: set[str] = set()
+    for label, bucket in buckets.items():
+        if "443" not in label.upper() and "TLS" not in label.upper():
+            # still scan other TCP — cheap enough for small recent dumps
+            if not label.upper().startswith("TCP"):
+                continue
+        for rnd in find_client_randoms_in_records(bucket.payloads):
+            found.add(rnd.hex())
+    return len(found & secrets.client_randoms)
+
+
+def pick_pcap_for_keylog(
+    keylog_path: str | Path,
+    *,
+    seed_paths: list[str | Path] | None = None,
+    max_candidates: int = 8,
+    max_bytes: int = 12_000_000,
+) -> tuple[Path | None, int, str]:
+    """
+    Among recent pcaps, pick the one that overlaps the keylog secrets.
+    Avoids pairing a brand-new dump with an older sslkeylogfile.txt (1).
+    """
+    try:
+        from .termux_update import iter_pcaps_under, pick_newest_pcap
+    except Exception:
+        pick_newest_pcap = None
+        iter_pcaps_under = None  # type: ignore
+
+    keylog = Path(keylog_path).expanduser()
+    cands: list[Path] = []
+    seen: set[Path] = set()
+    for p in seed_paths or []:
+        path = Path(p).expanduser()
+        if path.is_file():
+            rp = path.resolve()
+            if rp not in seen:
+                seen.add(rp)
+                cands.append(path)
+    if iter_pcaps_under is not None:
+        for p in iter_pcaps_under():
+            rp = p.resolve()
+            if rp not in seen:
+                seen.add(rp)
+                cands.append(p)
+    if not cands and pick_newest_pcap is not None:
+        one = pick_newest_pcap(None, also_search_defaults=True)
+        if one:
+            cands = [one]
+    # newest first, skip huge dumps for quick scoring
+    cands = sorted(cands, key=lambda p: p.stat().st_mtime, reverse=True)
+    scored: list[tuple[int, Path]] = []
+    checked = 0
+    for p in cands:
+        if checked >= max_candidates:
+            break
+        try:
+            if p.stat().st_size > max_bytes:
+                continue
+        except OSError:
+            continue
+        checked += 1
+        ov = count_keylog_overlap(p, keylog)
+        if ov > 0:
+            scored.append((ov, p))
+    if scored:
+        scored.sort(key=lambda t: (-t[0], -t[1].stat().st_mtime))
+        best_ov, best = scored[0]
+        return best, best_ov, f"pcap↔keylog overlap={best_ov} → {best.name}"
+    # fallback newest small-ish
+    for p in cands:
+        try:
+            if p.stat().st_size <= max_bytes:
+                return p, 0, f"немає overlap з keylog → беру найновіший {p.name}"
+        except OSError:
+            continue
+    if cands:
+        return cands[0], 0, f"немає overlap з keylog → {cands[0].name}"
+    return None, 0, "pcap не знайдено"
+
+
 def resolve_keylog(
     keylog_arg: str | None,
     *,
