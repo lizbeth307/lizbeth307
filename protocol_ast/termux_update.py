@@ -118,13 +118,67 @@ def download_tree(dest_home: Path | None = None, *, branch: str = BRANCH) -> dic
     return report
 
 
-def pick_newest_pcap(paths: list[str | Path]) -> Path | None:
-    """From a shell glob expansion, pick the newest existing capture file."""
+def pcap_search_roots() -> list[Path]:
+    home = Path.home()
+    return [
+        home / "storage" / "downloads" / "PCAPdroid",
+        home / "storage" / "shared" / "Download" / "PCAPdroid",
+        home / "storage" / "downloads",
+        home / "downloads",
+        home / "Download",
+        Path("/sdcard/Download/PCAPdroid"),
+        Path("/sdcard/Download"),
+    ]
+
+
+def iter_pcaps_under(roots: list[Path] | None = None) -> list[Path]:
+    out: list[Path] = []
+    seen: set[Path] = set()
+    for root in roots or pcap_search_roots():
+        if not root.is_dir():
+            continue
+        try:
+            for p in root.iterdir():
+                if not p.is_file():
+                    continue
+                if p.suffix.lower() not in {".pcap", ".pcapng"}:
+                    continue
+                rp = p.resolve()
+                if rp in seen:
+                    continue
+                seen.add(rp)
+                out.append(p)
+        except OSError:
+            continue
+    return out
+
+
+def pick_newest_pcap(
+    paths: list[str | Path] | None = None,
+    *,
+    also_search_defaults: bool = True,
+) -> Path | None:
+    """
+    Pick newest capture.
+
+    Merges shell-glob args with PCAPdroid folders (Termux often keeps
+    fresh dumps in ~/storage/downloads/PCAPdroid/, not ~/downloads/).
+    """
     cands: list[Path] = []
-    for p in paths:
+    seen: set[Path] = set()
+    for p in paths or []:
         path = Path(p).expanduser()
         if path.is_file():
-            cands.append(path)
+            rp = path.resolve()
+            if rp not in seen:
+                seen.add(rp)
+                cands.append(path)
+    if also_search_defaults:
+        for p in iter_pcaps_under():
+            rp = p.resolve()
+            if rp not in seen:
+                seen.add(rp)
+                cands.append(p)
     if not cands:
         return None
     return max(cands, key=lambda p: p.stat().st_mtime)

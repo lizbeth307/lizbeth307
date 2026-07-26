@@ -20,7 +20,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.8.8-full"
+VERSION = "3.8.9-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -2161,26 +2161,28 @@ def main() -> int:
     else:
         mode = "deep decode embedded"
     print(f"analyze_pcap: старт v{VERSION} ({mode})", flush=True)
-    if not args.pcap:
-        parser.print_help()
-        return 1
 
-    # Shell glob ~/downloads/PCAPdroid_*.pcap → many args; pick newest
+    # Glob + PCAPdroid folders (fresh dumps often NOT in ~/downloads/)
     try:
         from protocol_ast.termux_update import pick_newest_pcap
     except Exception:
         pick_newest_pcap = None
     if pick_newest_pcap is not None:
-        path = pick_newest_pcap(args.pcap)
+        path = pick_newest_pcap(args.pcap or None, also_search_defaults=True)
     else:
-        cands = [Path(p).expanduser() for p in args.pcap if Path(p).expanduser().is_file()]
+        cands = [Path(p).expanduser() for p in (args.pcap or []) if Path(p).expanduser().is_file()]
         path = max(cands, key=lambda p: p.stat().st_mtime) if cands else None
     if path is None:
-        print(f"Файл не знайдено: {args.pcap}", file=sys.stderr)
-        print("На телефоні: ~/downloads/PCAPdroid_*.pcap", file=sys.stderr)
+        if not args.pcap:
+            parser.print_help()
+        else:
+            print(f"Файл не знайдено: {args.pcap}", file=sys.stderr)
+        print("Шукай: ~/storage/downloads/PCAPdroid/*.pcap", file=sys.stderr)
         return 1
-    if len(args.pcap) > 1:
-        print(f"Знайдено {len(args.pcap)} файлів → беру найновіший", flush=True)
+    if not args.pcap:
+        print("pcap: auto → найновіший у PCAPdroid/Downloads", flush=True)
+    else:
+        print("pcap: беру найновіший (аргументи + ~/storage/downloads/PCAPdroid/)", flush=True)
     print(f"PCAP: {path} ({path.stat().st_size} bytes)\n")
 
     if args.keylog:
@@ -2248,7 +2250,7 @@ def main() -> int:
         for ev in events:
             print(f"── {ev.flow} msgs={ev.messages}")
             print(f"   path: {ev.path}")
-            for n in ev.notes[:20]:
+            for n in ev.notes:
                 print(f"   {n}" if n.startswith("[") or n.startswith("  ") else f"   • {n}")
             print()
         out = path.parent / "stream_report.json"

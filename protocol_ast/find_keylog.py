@@ -84,7 +84,13 @@ def find_keylog_files(search_roots: list[Path] | None = None) -> list[Path]:
                 if not p.is_file():
                     continue
                 low = p.name.lower()
-                if not (low.endswith(".log") or "key" in low or "ssl" in low):
+                # Android Download often saves "sslkeylogfile.txt (1)"
+                if not (
+                    low.endswith(".log")
+                    or low.endswith(".txt")
+                    or "key" in low
+                    or "ssl" in low
+                ):
                     continue
                 if p.resolve() in seen:
                     continue
@@ -93,6 +99,8 @@ def find_keylog_files(search_roots: list[Path] | None = None) -> list[Path]:
                     seen.add(p.resolve())
         except OSError:
             continue
+    # newest first — "sslkeylogfile.txt (1)" after a new MITM must win over stale copy
+    found.sort(key=lambda p: p.stat().st_mtime, reverse=True)
     return found
 
 
@@ -123,31 +131,41 @@ def resolve_keylog(
     if keylog_arg is None:
         return None, ""
 
-    # auto mode
-    if pcap and pcap.exists():
-        if pcap.is_file():
-            extracted = _wk()(pcap)
-            if extracted:
-                return extracted, f"keylog витягнуто з pcapng DSB → {extracted}"
-            for sib in (
-                pcap.with_suffix(".keylog"),
-                pcap.with_name(pcap.stem + ".keylog"),
-                pcap.parent / "sslkeys.log",
-                pcap.parent / "sslkeylogfile.txt",
-            ):
-                if sib.exists() and _looks_like_keylog(sib):
-                    return sib, f"keylog поруч із capture: {sib}"
-            search_dirs = [pcap.parent]
-        else:
-            search_dirs = [pcap]
+    # auto mode — prefer newest keylog by mtime (not first path hit)
+    home = Path.home()
+    search_dirs: list[Path] = []
+    if pcap and pcap.exists() and pcap.is_file():
+        extracted = _wk()(pcap)
+        if extracted:
+            return extracted, f"keylog витягнуто з pcapng DSB → {extracted}"
+        search_dirs.append(pcap.parent)
+        # PCAPdroid dumps live under …/PCAPdroid/; keylog often in parent Download/
+        if pcap.parent.name.lower() == "pcapdroid":
+            search_dirs.append(pcap.parent.parent)
+    search_dirs.extend(
+        [
+            home / "storage" / "downloads",
+            home / "downloads",
+            home / "storage" / "shared" / "Download",
+        ]
+    )
+    # de-dupe roots preserve order
+    roots: list[Path] = []
+    seen_r: set[Path] = set()
+    for d in search_dirs:
+        try:
+            rd = d.resolve()
+        except OSError:
+            rd = d
+        if rd in seen_r:
+            continue
+        seen_r.add(rd)
+        roots.append(d)
 
-        found = find_keylog_files(search_dirs)
-        if found:
-            return found[0], f"keylog знайдено: {found[0]}"
-
-    found = find_keylog_files()
+    found = find_keylog_files(roots)
     if found:
-        return found[0], f"keylog знайдено: {found[0]}"
+        best = found[0]  # already newest-first
+        return best, f"keylog (найновіший): {best}"
 
     return None, (
         "keylog не знайдено. Зроби новий capture з PCAPdroid TLS decryption "
