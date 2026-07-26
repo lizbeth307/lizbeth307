@@ -191,33 +191,69 @@ def _annotate_leg(conn: dict[str, Any], secrets=None) -> dict[str, Any]:
     return out
 
 
-def _parse_http_messages(plains: list[bytes]) -> list[dict[str, Any]]:
-    """Split decrypted plaintext blobs into HTTP/1 request/response messages."""
-    msgs: list[dict[str, Any]] = []
-    pending_enc: str | None = None
-    for raw in plains:
-        if not raw:
-            continue
-        if pending_enc is not None or raw.startswith(b"\x1f\x8b"):
-            enc = pending_enc
-            pending_enc = None
+def _attach_body(msgs: list[dict[str, Any]], raw: bytes, enc: str | None) -> None:
+    body, how = raw, "identity"
+    if raw.startswith(b"\x1f\x8b") or (enc and "gzip" in enc.lower()):
+        gz = _try_gunzip(raw)
+        if gz is not None:
+            body, how = gz, "gzip"
+    if msgs and msgs[-1].get("kind") in ("request", "response") and not msgs[-1].get("body"):
+        msgs[-1]["body"] = body
+        msgs[-1]["body_encoding"] = how
+        if not msgs[-1].get("content_type") and body.lstrip()[:1] in b"{[":
+            msgs[-1]["content_type"] = "application/json"
+    else:
+        msgs.append({"kind": "body", "body": body, "body_encoding": how, "content_type": "application/json"})
+
+
+def _fill_next_empty_response(msgs: list[dict[str, Any]], raw: bytes) -> bool:
+    """Attach body to the oldest response that still lacks a body (pipelined 200s)."""
+    for m in msgs:
+        if m.get("kind") == "response" and not m.get("body"):
+            enc = (m.get("headers") or {}).get("content-encoding")
             body, how = raw, "identity"
-            if raw.startswith(b"\x1f\x8b") or (enc and "gzip" in enc):
+            if raw.startswith(b"\x1f\x8b") or (enc and "gzip" in str(enc).lower()):
                 gz = _try_gunzip(raw)
                 if gz is not None:
                     body, how = gz, "gzip"
-            if msgs and msgs[-1].get("body") in (None, b""):
-                msgs[-1]["body"] = body
-                msgs[-1]["body_encoding"] = how
-            else:
-                msgs.append({"kind": "body", "body": body, "body_encoding": how})
+            m["body"] = body
+            m["body_encoding"] = how
+            if not m.get("content_type") and body.lstrip()[:1] in b"{[":
+                m["content_type"] = "application/json"
+            return True
+    return False
+
+
+def _parse_http_messages(plains: list[bytes]) -> list[dict[str, Any]]:
+    """Split decrypted plaintext blobs into HTTP/1 request/response messages."""
+    msgs: list[dict[str, Any]] = []
+    for raw in plains:
+        if not raw:
             continue
+
+        # Bare gzip / JSON body for an earlier headers-only response
+        if raw.startswith(b"\x1f\x8b") or raw.lstrip()[:1] in b"{[":
+            if _fill_next_empty_response(msgs, raw):
+                continue
+            if raw.startswith(b"\x1f\x8b"):
+                _attach_body(msgs, raw, None)
+                continue
+            # bare JSON with no empty response waiting — keep as body msg
+            if raw.lstrip()[:1] in b"{[":
+                msgs.append(
+                    {
+                        "kind": "body",
+                        "body": raw,
+                        "body_encoding": "identity",
+                        "content_type": "application/json",
+                    }
+                )
+                continue
 
         sep = raw.find(b"\r\n\r\n")
         if sep < 0:
-            head_blob, body = raw, b""
-        else:
-            head_blob, body = raw[:sep], raw[sep + 4 :]
+            continue
+        head_blob, body = raw[:sep], raw[sep + 4 :]
         lines = head_blob.split(b"\r\n")
         if not lines:
             continue
@@ -249,22 +285,18 @@ def _parse_http_messages(plains: list[bytes]) -> list[dict[str, Any]]:
                 status = int(start.split()[1])
             except Exception:
                 status = None
-
         if kind is None:
             continue
 
         enc = headers.get("content-encoding")
+        plain = body
+        how = "identity"
         if body:
-            plain = body
-            how = "identity"
             if body.startswith(b"\x1f\x8b") or (enc and "gzip" in enc.lower()):
                 gz = _try_gunzip(body)
                 if gz is not None:
                     plain, how = gz, "gzip"
-        else:
-            plain, how = b"", "identity"
-            if headers.get("content-length", "0") not in ("0", ""):
-                pending_enc = enc
+        # else: leave empty — later JSON/gzip record fills oldest empty response
 
         msgs.append(
             {
@@ -311,6 +343,22 @@ def glue_http_exchanges(plains: list[bytes]) -> list[dict[str, Any]]:
     the i-th request to the i-th response, not only immediate neighbors.
     """
     msgs = _parse_http_messages(plains)
+    # Fold trailing bare JSON "body" msgs into previous empty responses
+    folded: list[dict[str, Any]] = []
+    for m in msgs:
+        if (
+            m.get("kind") == "body"
+            and folded
+            and folded[-1].get("kind") == "response"
+            and not folded[-1].get("body")
+        ):
+            folded[-1]["body"] = m.get("body") or b""
+            folded[-1]["body_encoding"] = m.get("body_encoding") or "identity"
+            if not folded[-1].get("content_type"):
+                folded[-1]["content_type"] = m.get("content_type") or "application/json"
+            continue
+        folded.append(m)
+    msgs = folded
     reqs = [m for m in msgs if m.get("kind") == "request"]
     resps = [m for m in msgs if m.get("kind") == "response"]
 

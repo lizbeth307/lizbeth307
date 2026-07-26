@@ -107,6 +107,39 @@ class TestGameMine(unittest.TestCase):
         self.assertEqual(resp["access_key_id"], "STS.AAAA")
         self.assertEqual(resp["access_key_secret"], "BBBSECRET99")
 
+    def test_json_body_separate_tls_record(self) -> None:
+        """Lilith SDK: 200 headers in one record, JSON body in the next."""
+        login_req = (
+            b"POST /v2/api/sdk/login HTTP/1.1\r\nHost: 34.149.80.225\r\n"
+            b"Content-Type: application/x-www-form-urlencoded\r\n"
+            b"Content-Length: 11\r\n\r\nplayer_id=1"
+        )
+        login_hdr = b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: 80\r\n\r\n"
+        login_json = (
+            b'{"result":{"code":0,"msg":"success"},"data":{"app_token":"TOK",'
+            b'"app_uid":13527894,"access_token":"ACC","uid":9}}'
+        )
+        hb_req = (
+            b"POST /v2/api/sdk/account/heart_beat HTTP/1.1\r\nHost: 34.149.80.225\r\n"
+            b"Content-Type: application/x-www-form-urlencoded\r\n"
+            b"Content-Length: 9\r\n\r\napp_uid=1"
+        )
+        hb_hdr = b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: 60\r\n\r\n"
+        hb_json = b'{"result":{"code":0},"data":{"can_play":false,"heartbeat_interval":900}}'
+        for order in (
+            [login_req, hb_req, login_hdr, login_json, hb_hdr, hb_json],
+            [login_req, hb_req, login_hdr, hb_hdr, login_json, hb_json],
+        ):
+            ex = glue_http_exchanges(order)
+            self.assertEqual(ex[0]["status"], 200, order)
+            self.assertEqual(ex[0]["response"]["data"]["app_token"], "TOK")
+            self.assertEqual(ex[0]["response"]["data"]["access_token"], "ACC")
+            self.assertEqual(ex[1]["response"]["data"]["heartbeat_interval"], 900)
+            sdk = build_sdk_session([{"sni": [], "exchanges": ex}])
+            self.assertEqual(sdk["identity"]["access_token"], "ACC")
+            self.assertIsNotNone(sdk["login"]["response"])
+            self.assertIsNotNone(sdk["heartbeat"]["response"])
+
     def test_gzip_orphan_body(self) -> None:
         html = b'{"ok":true}'
         gz = zlib.compress(html, wbits=16 + zlib.MAX_WBITS)
