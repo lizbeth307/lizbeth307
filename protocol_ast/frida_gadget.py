@@ -1690,7 +1690,12 @@ Frida Gadget без root / без ПК
      pkg install openjdk-17 patchelf aapt aapt2 zip
 
 1) AFK Arena (3 splits) — App Manager → Share / Save APK → .apks:
+     ~/frida probe "/sdcard/AppManager/apks/AFK Arena_1.198.01.apks"
      ~/frida "/sdcard/AppManager/apks/AFK Arena_1.198.01.apks"
+   (копіює з /sdcard у Termux home — інакше ZipFile часто дає BadZipFile)
+
+   Якщо .apks битий: ZArchiver → Extract → папка зі splits →
+     ~/frida "/sdcard/.../extracted_folder"
 
 2) Інжект патчить ABI-split (libil2cpp) + resign УСІ splits одним ключем →
      /sdcard/Download/AFK-Arena-frida.apks
