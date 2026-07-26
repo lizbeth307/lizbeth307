@@ -45,6 +45,7 @@ need_tools() {
   local need_pkg=()
   command -v java >/dev/null 2>&1 || need_pkg+=(openjdk-17)
   command -v patchelf >/dev/null 2>&1 || need_pkg+=(patchelf)
+  command -v zip >/dev/null 2>&1 || need_pkg+=(zip)
   # aapt optional if patchelf works; still handy as apktool fallback
   if ! command -v aapt2 >/dev/null 2>&1 && ! command -v aapt >/dev/null 2>&1; then
     need_pkg+=(aapt aapt2)
@@ -341,45 +342,29 @@ main() {
     sign)
       need_tools
       local u="${2:-}"
-      if [[ -z "$u" ]]; then
-        for cand in \
-          "/sdcard/Download/777-frida.unsigned.apk" \
-          "$HOME_DIR/storage/downloads/777-frida.unsigned.apk" \
-          "$HOME_DIR/storage/shared/Download/777-frida.unsigned.apk"; do
-          [[ -f "$cand" ]] && u="$cand" && break
-        done
-      fi
       if [[ -z "$u" || ! -f "$u" ]]; then
         echo "Usage: ~/frida sign /path/to/xxx-frida.unsigned.apk" >&2
         exit 1
       fi
       python3 -m protocol_ast.frida_gadget --sign-only "$u"
-      rc=$?
-      # Make the signed APK obvious in the Android Downloads UI.
-      for src in \
-        "$HOME_DIR/unpin_work/tools/sign_out/"*debugSigned*.apk \
-        "$HOME_DIR/storage/downloads/"*-frida.apk \
-        "$HOME_DIR/storage/shared/Download/"*-frida.apk \
-        "/sdcard/Download/"*-frida.apk \
-        "/storage/emulated/0/Download/"*-frida.apk; do
-        [[ -f "$src" ]] || continue
-        echo "[*] found signed: $src ($(wc -c <"$src") bytes)" >&2
-        if [[ -n "$DOWNLOADS" ]]; then
-          dest="$DOWNLOADS/AFK-Arena-frida.apk"
-          cp -f "$src" "$dest" 2>/dev/null && echo "[*] copied → $dest" >&2
-          # also plain path Android Files often shows
-          cp -f "$src" "/sdcard/Download/AFK-Arena-frida.apk" 2>/dev/null || true
-          cp -f "$src" "/storage/emulated/0/Download/AFK-Arena-frida.apk" 2>/dev/null || true
-        fi
-        ls -la "$src" "$DOWNLOADS/AFK-Arena-frida.apk" "/sdcard/Download/AFK-Arena-frida.apk" 2>/dev/null || true
-        break
-      done
-      echo >&2
-      echo "Шукай у Files → Downloads:" >&2
-      echo "  AFK-Arena-frida.apk   або   777-frida.apk" >&2
-      echo "Або з Termux:" >&2
-      echo "  ls -la ~/unpin_work/tools/sign_out/" >&2
-      exit "$rc"
+      exit $?
+      ;;
+    install)
+      need_tools
+      local apk="${2:-/sdcard/Download/AFK-Arena-frida.apk}"
+      if [[ ! -f "$apk" ]]; then
+        apk="${2:-/sdcard/Download/777-frida.apk}"
+      fi
+      echo "[*] pm install (реальний код помилки, не UI 'parse error'):" >&2
+      python3 -m protocol_ast.frida_gadget --install "$apk"
+      exit $?
+      ;;
+    resign)
+      need_tools
+      local apk="${2:-/sdcard/Download/777.apk}"
+      echo "[*] resign-only (без Frida) — перевірка чи підпис/zip ламає install" >&2
+      python3 -m protocol_ast.frida_gadget --resign "$apk"
+      exit $?
       ;;
   esac
 

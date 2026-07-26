@@ -682,16 +682,68 @@ def rebuild_apk_surgical(
     orig_apk: Path,
     lib_overrides: dict[str, Path],
     out_apk: Path,
+    work: Path | None = None,
 ) -> None:
     """
-    Copy original APK entries as-is (same compress_type), strip META-INF,
-    replace/add only given lib/* paths. Avoids parse-error from full rezip.
+    Prefer system `zip` update (keeps original APK structure).
+    Fallback: Python copy with low extract_version (avoid Zip64 parse issues).
     """
+    overrides = {k.replace("\\", "/"): v for k, v in lib_overrides.items()}
+    if shutil.which("zip"):
+        _rebuild_apk_system_zip(orig_apk, overrides, out_apk, work)
+        return
+    _rebuild_apk_python(orig_apk, overrides, out_apk)
+
+
+def _rebuild_apk_system_zip(
+    orig_apk: Path,
+    overrides: dict[str, Path],
+    out_apk: Path,
+    work: Path | None = None,
+) -> None:
+    """cp original → zip -d META-INF → zip -0 -u lib overrides."""
+    work = work or out_apk.parent
+    stage = work / "zip_stage"
+    if stage.exists():
+        shutil.rmtree(stage)
+    stage.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(orig_apk, out_apk)
+    # Remove old signatures (ignore if absent)
+    subprocess.run(
+        ["zip", "-d", str(out_apk), "META-INF/*"],
+        check=False,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    rels: list[str] = []
+    for name, path in sorted(overrides.items()):
+        dest = stage / name
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(path, dest)
+        # Force replace: delete old entry first (ignore if missing)
+        subprocess.run(
+            ["zip", "-d", str(out_apk.resolve()), name],
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        rels.append(name)
+    if not rels:
+        return
+    # -0 = store (no compression) for .so mmap
+    cmd = ["zip", "-0", str(out_apk.resolve()), *rels]
+    subprocess.run(cmd, check=True, cwd=str(stage))
+
+
+def _rebuild_apk_python(
+    orig_apk: Path,
+    overrides: dict[str, Path],
+    out_apk: Path,
+) -> None:
     if out_apk.exists():
         out_apk.unlink()
-    overrides = {k.replace("\\", "/"): v for k, v in lib_overrides.items()}
     with zipfile.ZipFile(orig_apk, "r") as zin, zipfile.ZipFile(
-        out_apk, "w", compression=zipfile.ZIP_DEFLATED, allowZip64=True
+        out_apk, "w", compression=zipfile.ZIP_DEFLATED, allowZip64=False
     ) as zout:
         for info in zin.infolist():
             name = info.filename
@@ -706,7 +758,8 @@ def rebuild_apk_surgical(
             new_info.compress_type = info.compress_type
             new_info.external_attr = info.external_attr
             new_info.create_system = info.create_system
-            # Clear streaming data-descriptor bit; writestr computes CRC up-front.
+            new_info.create_version = getattr(info, "create_version", 20) or 20
+            new_info.extract_version = min(getattr(info, "extract_version", 20) or 20, 20)
             new_info.flag_bits = info.flag_bits & ~0x8
             zout.writestr(new_info, data, compress_type=info.compress_type)
         for name, path in sorted(overrides.items()):
@@ -714,7 +767,40 @@ def rebuild_apk_surgical(
             info = zipfile.ZipInfo(filename=name)
             info.compress_type = zipfile.ZIP_STORED
             info.external_attr = 0o100644 << 16
+            info.create_version = 20
+            info.extract_version = 20
             zout.writestr(info, data, compress_type=zipfile.ZIP_STORED)
+
+
+def pm_install(apk: Path) -> dict:
+    """
+    Install via /system/bin/pm to get a real error code (not the vague UI parse dialog).
+    Uses -t (allow test/debug packages) and -r (replace).
+    """
+    apk = apk.expanduser().resolve()
+    report: dict = {"apk": str(apk), "ok": False, "cmd": [], "output": ""}
+    pm = None
+    for cand in ("pm", "/system/bin/pm", "/system/xbin/pm"):
+        if cand == "pm" and shutil.which("pm"):
+            pm = "pm"
+            break
+        if Path(cand).is_file():
+            pm = cand
+            break
+    if not pm:
+        report["output"] = "pm not available — try Files install, or: pkg install termux-tools"
+        return report
+    cmd = [pm, "install", "-r", "-t", "--user", "current", str(apk)]
+    report["cmd"] = cmd
+    try:
+        proc = subprocess.run(
+            cmd, check=False, capture_output=True, text=True, errors="replace"
+        )
+        report["output"] = ((proc.stdout or "") + (proc.stderr or "")).strip()
+        report["ok"] = proc.returncode == 0 and "Success" in report["output"]
+    except Exception as exc:
+        report["output"] = str(exc)
+    return report
 
 
 def verify_apk(apk: Path) -> dict:
@@ -810,8 +896,8 @@ def inject_apk_zip(
                 overrides[f"lib/{abi}/{p.name}"] = p
 
     unsigned = out_apk.with_suffix(".unsigned.apk")
-    print("[*] surgical rebuild (preserve original entries)…", flush=True)
-    rebuild_apk_surgical(apk, overrides, unsigned)
+    print("[*] surgical rebuild via system zip (preserve APK structure)…", flush=True)
+    rebuild_apk_surgical(apk, overrides, unsigned, work=work)
 
     mid = verify_apk(unsigned)
     if not mid["ok"]:
@@ -1023,6 +1109,16 @@ def main(argv: list[str] | None = None) -> int:
         metavar="APK",
         help="Verify APK zip/manifest/aapt before install",
     )
+    p.add_argument(
+        "--install",
+        metavar="APK",
+        help="pm install -r -t (prints real Android error code)",
+    )
+    p.add_argument(
+        "--resign",
+        metavar="APK",
+        help="Only strip META-INF + zipalign/sign (no Frida) — test if signing alone installs",
+    )
     p.add_argument("--guide", action="store_true", help="Print usage guide")
     args = p.parse_args(argv)
 
@@ -1030,6 +1126,30 @@ def main(argv: list[str] | None = None) -> int:
         rep = verify_apk(Path(args.verify).expanduser())
         print(json.dumps(rep, indent=2, ensure_ascii=False))
         return 0 if rep.get("ok") else 1
+
+    if args.install:
+        rep = pm_install(Path(args.install))
+        print(json.dumps(rep, indent=2, ensure_ascii=False))
+        if not rep.get("ok"):
+            print(
+                "\nЯкщо бачиш INSTALL_FAILED_TEST_ONLY / INVALID_APK — скинь цей JSON.\n"
+                "Також перевір оригінал:  ~/frida install /sdcard/Download/777.apk",
+                flush=True,
+            )
+        return 0 if rep.get("ok") else 1
+
+    if args.resign:
+        src = Path(args.resign).expanduser().resolve()
+        home = Path.home()
+        out = Path(args.out).expanduser() if args.out else src.with_name(src.stem + "-resigned.apk")
+        work = home / "unpin_work" / "resign"
+        work.mkdir(parents=True, exist_ok=True)
+        unsigned = work / (src.stem + ".unsigned.apk")
+        rebuild_apk_surgical(src, {}, unsigned, work=work)
+        signed = sign_apk(unsigned, out, home=home)
+        print(json.dumps({"out": str(signed), "verify": verify_apk(signed)}, indent=2))
+        print("NEXT: ~/frida install", signed)
+        return 0
 
     if args.sign_only:
         unsigned = Path(args.sign_only).expanduser().resolve()

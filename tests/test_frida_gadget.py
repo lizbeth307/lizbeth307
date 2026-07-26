@@ -142,6 +142,7 @@ class TestZipPack(unittest.TestCase):
                     "lib/arm64-v8a/libfrida-gadget.so": gadget,
                 },
                 out,
+                work=td_path / "w",
             )
             with zipfile.ZipFile(out) as zf:
                 self.assertNotIn("META-INF/CERT.SF", zf.namelist())
