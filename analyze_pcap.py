@@ -21,7 +21,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.8.13-full"
+VERSION = "3.8.14-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -2156,6 +2156,11 @@ def main() -> int:
     parser.add_argument("--blind", action="store_true", help="blind deep analysis (TLS/QUIC inner frames)")
     parser.add_argument("--nested", action="store_true", help="nested AST v2 (recursive layers)")
     parser.add_argument("--signal", action="store_true", help="living signal propagate (depth 5, universal splitters)")
+    parser.add_argument(
+        "--mine",
+        action="store_true",
+        help="deep game mine: per-SNI economy, multi-conn decrypt, protobuf strings",
+    )
     parser.add_argument("--stream", action="store_true", help="incremental living-signal events over pcap")
     parser.add_argument(
         "--every",
@@ -2267,6 +2272,8 @@ def main() -> int:
         return 1 if report.get("errors") and not report.get("files") else 0
     if args.dissect or args.dissect_html:
         mode = "dissect"
+    elif args.mine:
+        mode = "game mine"
     elif args.stream:
         mode = "stream agent"
     elif args.signal:
@@ -2381,6 +2388,32 @@ def main() -> int:
             print("   PCAPdroid → TLS decryption ON → Start → Chrome → Stop", file=sys.stderr)
             print("   → Save SSLKEYLOGFILE у Download з ТІЄЇ Ж сесії\n", file=sys.stderr)
             args.keylog = None
+
+    if args.mine:
+        try:
+            from protocol_ast.game_mine import format_mine_report, mine_pcap
+        except Exception as exc:
+            print(f"game mine: {exc}", file=sys.stderr)
+            return 1
+        kfile = Path(args.keylog).expanduser() if args.keylog else None
+        if args.keylog and kpath:
+            kfile = kpath
+        report = mine_pcap(path, kfile)
+        text = format_mine_report(report)
+        print(text)
+        out_txt = path.parent / "mine_report.txt"
+        out_json = path.parent / "mine_report.json"
+        # Drop bulky record bytes before JSON
+        slim = dict(report)
+        detail = []
+        for a in report.get("connections_detail") or []:
+            detail.append({k: v for k, v in a.items() if k != "records"})
+        slim["connections_detail"] = detail
+        out_txt.write_text(text, encoding="utf-8")
+        out_json.write_text(json.dumps(slim, indent=2, ensure_ascii=False), encoding="utf-8")
+        print(f"\nЗвіт: {out_txt}")
+        print(f"JSON: {out_json}")
+        return 0
 
     if args.stream:
         try:

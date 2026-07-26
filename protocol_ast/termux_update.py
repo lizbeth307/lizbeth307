@@ -43,6 +43,7 @@ HELPERS = (
     "tcp_reassemble.py",
     "probe_env.py",
     "termux_update.py",
+    "game_mine.py",
 )
 ROOT_FILES = ("analyze_pcap.py", "probe_network.py")
 LAUNCHERS = (

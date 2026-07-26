@@ -70,7 +70,7 @@ for f in \
   probe_loop.py stream_agent.py smart_probe.py active_probe.py stream_enrich.py \
   splitters.py tls_handshake.py pcap_analyze.py pcap_read.py deep_decode.py \
   align.py cluster.py sequitur.py parser.py serde.py pipeline.py ast_nodes.py \
-  io_utils.py tcp_reassemble.py probe_env.py termux_update.py
+  io_utils.py tcp_reassemble.py probe_env.py termux_update.py game_mine.py
 do
   _get "${BASE}/protocol_ast/$f" "$HOME/protocol_ast/$f" || echo "⚠ skip $f"
 done
