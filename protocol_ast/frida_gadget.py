@@ -835,21 +835,29 @@ def verify_apk(apk: Path) -> dict:
             aapt_bin = str(prefix / "bin" / "aapt")
     if aapt_bin:
         try:
-            out = subprocess.check_output(
+            proc = subprocess.run(
                 [aapt_bin, "dump", "badging", str(apk)],
-                stderr=subprocess.STDOUT,
+                check=False,
+                capture_output=True,
                 text=True,
                 errors="replace",
             )
-            report["badging"] = out.splitlines()[0] if out else ""
-            if "package: name=" not in out:
+            out = (proc.stdout or "") + "\n" + (proc.stderr or "")
+            pkg_line = ""
+            for line in out.splitlines():
+                if line.startswith("package: name="):
+                    pkg_line = line
+                    break
+            report["badging"] = pkg_line or ""
+            if not pkg_line:
                 report["ok"] = False
-                report["errors"].append("aapt badging: no package name")
-        except subprocess.CalledProcessError as exc:
+                report["errors"].append(
+                    "aapt badging: no package name — "
+                    + out.strip().replace("\n", " ")[:240]
+                )
+        except Exception as exc:
             report["ok"] = False
-            report["errors"].append(
-                "aapt: " + (exc.output or str(exc))[:300]
-            )
+            report["errors"].append(f"aapt: {exc}")
     return report
 
 

@@ -355,9 +355,30 @@ main() {
       if [[ ! -f "$apk" ]]; then
         apk="${2:-/sdcard/Download/777-frida.apk}"
       fi
-      echo "[*] pm install (реальний код помилки, не UI 'parse error'):" >&2
+      echo "[*] verify + pm install attempt:" >&2
       python3 -m protocol_ast.frida_gadget --install "$apk"
+      echo >&2
+      echo "Якщо Failed transaction — це норма для Termux без root." >&2
+      echo "Став через UI:" >&2
+      echo "  termux-open \"$apk\"" >&2
       exit $?
+      ;;
+    open)
+      local apk="${2:-/sdcard/Download/777.apk}"
+      if [[ ! -f "$apk" ]]; then
+        echo "немає файлу: $apk" >&2
+        exit 1
+      fi
+      echo "[*] verify:" >&2
+      python3 -m protocol_ast.frida_gadget --verify "$apk" || true
+      echo "[*] termux-open $apk" >&2
+      if command -v termux-open >/dev/null 2>&1; then
+        termux-open "$apk"
+      else
+        echo "немає termux-open — pkg install termux-api, або відкрий файл у Files" >&2
+        exit 1
+      fi
+      exit 0
       ;;
     resign)
       need_tools
