@@ -41,16 +41,26 @@ banner() {
 EOF
 }
 
-need_java() {
-  if ! command -v java >/dev/null 2>&1; then
-    echo "[*] Need OpenJDK:  pkg install openjdk-17" >&2
+need_tools() {
+  local need_pkg=()
+  command -v java >/dev/null 2>&1 || need_pkg+=(openjdk-17)
+  command -v patchelf >/dev/null 2>&1 || need_pkg+=(patchelf)
+  # aapt optional if patchelf works; still handy as apktool fallback
+  if ! command -v aapt2 >/dev/null 2>&1 && ! command -v aapt >/dev/null 2>&1; then
+    need_pkg+=(aapt aapt2)
+  fi
+  if [[ ${#need_pkg[@]} -gt 0 ]]; then
+    echo "[*] Installing: ${need_pkg[*]}" >&2
     if command -v pkg >/dev/null 2>&1; then
-      yes | pkg install -y openjdk-17 2>/dev/null || true
+      yes | pkg install -y "${need_pkg[@]}" 2>/dev/null || true
     fi
   fi
   if ! command -v java >/dev/null 2>&1; then
-    echo "Java still missing." >&2
+    echo "Java still missing: pkg install openjdk-17" >&2
     exit 1
+  fi
+  if ! command -v patchelf >/dev/null 2>&1; then
+    echo "[!] patchelf missing — apktool fallback needs: pkg install patchelf aapt aapt2" >&2
   fi
 }
 
@@ -330,7 +340,7 @@ main() {
       ;;
   esac
 
-  need_java
+  need_tools
 
   if [[ ! -f "$HOME_DIR/protocol_ast/frida_gadget.py" ]]; then
     echo "немає protocol_ast/frida_gadget.py — ~/scan update" >&2
@@ -340,10 +350,10 @@ main() {
   local apk
   apk="$(pick_apk "$cmd")"
   echo "[*] APK: $apk"
-  echo "[*] Downloading Frida gadget / apktool on first run (large)…"
+  echo "[*] First run downloads Frida gadget (+ jars). Prefer zip+patchelf."
   echo
 
-  python3 -m protocol_ast.frida_gadget "$apk"
+  python3 -m protocol_ast.frida_gadget "$apk" --method auto
   echo
   echo "════════════════════════════════════════"
   echo "Далі:"

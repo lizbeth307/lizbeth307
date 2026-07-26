@@ -8,11 +8,13 @@ import zipfile
 from pathlib import Path
 
 from protocol_ast.frida_gadget import (
+    _pick_patch_so,
     detect_apis_in_apk,
     find_application_class,
     gadget_config_json,
     inject_load_library_smali,
     package_name,
+    zip_apk_tree,
 )
 
 
@@ -85,6 +87,33 @@ class TestSmaliInject(unittest.TestCase):
         out, note = inject_load_library_smali(smali)
         self.assertEqual(note, "already_injected")
         self.assertEqual(out.count("frida-gadget"), 1)
+
+
+class TestZipPack(unittest.TestCase):
+    def test_pick_il2cpp(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            d = Path(td)
+            (d / "libc.so").write_bytes(b"x")
+            (d / "libil2cpp.so").write_bytes(b"y")
+            self.assertEqual(_pick_patch_so(d).name, "libil2cpp.so")
+
+    def test_zip_strips_metainf_stores_so(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td) / "root"
+            (root / "lib" / "arm64-v8a").mkdir(parents=True)
+            (root / "META-INF").mkdir()
+            (root / "META-INF" / "CERT.SF").write_text("sig", encoding="utf-8")
+            (root / "classes.dex").write_bytes(b"dex")
+            so = root / "lib" / "arm64-v8a" / "libil2cpp.so"
+            so.write_bytes(b"\x00" * 64)
+            out = Path(td) / "out.apk"
+            zip_apk_tree(root, out)
+            with zipfile.ZipFile(out) as zf:
+                names = zf.namelist()
+                self.assertNotIn("META-INF/CERT.SF", names)
+                self.assertIn("lib/arm64-v8a/libil2cpp.so", names)
+                info = zf.getinfo("lib/arm64-v8a/libil2cpp.so")
+                self.assertEqual(info.compress_type, zipfile.ZIP_STORED)
 
 
 class TestWorkDir(unittest.TestCase):

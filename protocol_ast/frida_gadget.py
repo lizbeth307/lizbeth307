@@ -10,6 +10,7 @@ from __future__ import annotations
 import lzma
 import os
 import re
+import shutil
 import ssl
 import subprocess
 import tempfile
@@ -17,6 +18,16 @@ import urllib.request
 import zipfile
 from pathlib import Path
 from xml.etree import ElementTree as ET
+
+PATCH_SO_CANDIDATES = (
+    "libil2cpp.so",
+    "libunity.so",
+    "libmain.so",
+    "libUE4.so",
+    "libcocos2djs.so",
+    "libcocos2dcpp.so",
+    "libc++_shared.so",
+)
 
 FRIDA_VERSION = "16.7.19"
 APKTOOL_JAR_URL = (
@@ -416,21 +427,40 @@ def _java() -> str:
     return os.environ.get("JAVA_HOME", "") and str(Path(os.environ["JAVA_HOME"]) / "bin" / "java") or "java"
 
 
+def find_aapt() -> Path | None:
+    """Termux/system aapt — apktool's bundled Linux aapt2 cannot run on Android."""
+    for name in ("aapt2", "aapt"):
+        found = shutil.which(name)
+        if found:
+            return Path(found)
+    prefix = Path(os.environ.get("PREFIX", "/data/data/com.termux/files/usr"))
+    for name in ("aapt2", "aapt"):
+        cand = prefix / "bin" / name
+        if cand.is_file() and os.access(cand, os.X_OK):
+            return cand
+    return None
+
+
+def find_patchelf() -> Path | None:
+    found = shutil.which("patchelf")
+    if found:
+        return Path(found)
+    prefix = Path(os.environ.get("PREFIX", "/data/data/com.termux/files/usr"))
+    cand = prefix / "bin" / "patchelf"
+    if cand.is_file() and os.access(cand, os.X_OK):
+        return cand
+    return None
+
+
 def run_apktool(jar: Path, args: list[str], cwd: Path | None = None) -> None:
     cmd = [_java(), "-jar", str(jar), *args]
     subprocess.run(cmd, check=True, cwd=str(cwd) if cwd else None)
 
 
-def rebuild_sign(
-    decoded: Path,
-    out_apk: Path,
-    home: Path | None = None,
-) -> Path:
-    apktool = ensure_apktool(home)
-    unsigned = out_apk.with_suffix(".unsigned.apk")
-    run_apktool(apktool, ["b", str(decoded), "-o", str(unsigned)])
+def sign_apk(unsigned: Path, out_apk: Path, home: Path | None = None) -> Path:
     signer = ensure_uber_signer(home)
     out_dir = out_apk.parent
+    out_dir.mkdir(parents=True, exist_ok=True)
     subprocess.run(
         [
             _java(),
@@ -444,16 +474,179 @@ def rebuild_sign(
         ],
         check=True,
     )
-    # uber-apk-signer names: *.apk → *-aligned-debugSigned.apk
     candidates = sorted(out_dir.glob("*debugSigned*.apk"), key=lambda p: p.stat().st_mtime)
     if not candidates:
-        candidates = sorted(out_dir.glob("*.apk"), key=lambda p: p.stat().st_mtime)
+        # uber may write next to unsigned
+        stem = unsigned.stem.replace(".unsigned", "")
+        candidates = sorted(
+            [p for p in out_dir.glob("*.apk") if "unsigned" not in p.name.lower()],
+            key=lambda p: p.stat().st_mtime,
+        )
     if not candidates:
         raise RuntimeError("uber-apk-signer produced no APK")
     signed = candidates[-1]
     if signed.resolve() != out_apk.resolve():
         out_apk.write_bytes(signed.read_bytes())
     return out_apk
+
+
+def rebuild_sign(
+    decoded: Path,
+    out_apk: Path,
+    home: Path | None = None,
+) -> Path:
+    apktool = ensure_apktool(home)
+    unsigned = out_apk.with_suffix(".unsigned.apk")
+    aapt = find_aapt()
+    args = ["b", str(decoded), "-o", str(unsigned)]
+    if aapt:
+        args.extend(["--aapt", str(aapt)])
+    else:
+        raise RuntimeError(
+            "apktool rebuild needs Termux aapt/aapt2 "
+            "(bundled aapt2 is Linux ELF and fails on Android).\n"
+            "  pkg install aapt aapt2\n"
+            "Or use zip+patchelf path (pkg install patchelf)."
+        )
+    try:
+        run_apktool(apktool, args)
+    except subprocess.CalledProcessError:
+        # retry with aapt1 flag
+        run_apktool(apktool, [*args, "--use-aapt1"])
+    return sign_apk(unsigned, out_apk, home=home)
+
+
+def _pick_patch_so(libdir: Path) -> Path | None:
+    for name in PATCH_SO_CANDIDATES:
+        cand = libdir / name
+        if cand.is_file():
+            return cand
+    for cand in sorted(libdir.glob("lib*.so")):
+        low = cand.name.lower()
+        if "frida" in low or "gadget" in low:
+            continue
+        return cand
+    return None
+
+
+def patchelf_add_needed(so_path: Path, needed: str = "libfrida-gadget.so") -> None:
+    pe = find_patchelf()
+    if not pe:
+        raise RuntimeError("patchelf not found — run: pkg install patchelf")
+    needed_list = subprocess.check_output(
+        [str(pe), "--print-needed", str(so_path)], text=True, errors="replace"
+    ).splitlines()
+    if needed in needed_list:
+        return
+    subprocess.run([str(pe), "--add-needed", needed, str(so_path)], check=True)
+
+
+def unzip_apk(apk: Path, dest: Path) -> None:
+    if dest.exists():
+        shutil.rmtree(dest)
+    dest.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(apk) as zf:
+        zf.extractall(dest)
+
+
+def zip_apk_tree(src: Path, out_apk: Path) -> None:
+    """Repack APK; store .so / resources.arsc uncompressed for mmap extractNativeLibs=false."""
+    if out_apk.exists():
+        out_apk.unlink()
+    with zipfile.ZipFile(out_apk, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+        for path in sorted(src.rglob("*")):
+            if not path.is_file():
+                continue
+            rel = path.relative_to(src).as_posix()
+            if rel.startswith("META-INF/"):
+                continue  # strip signatures; uber-apk-signer will resign
+            # .so / .arsc must be STORED for mmap when extractNativeLibs=false
+            compress = (
+                zipfile.ZIP_STORED
+                if (rel.endswith(".so") or rel.endswith(".arsc"))
+                else zipfile.ZIP_DEFLATED
+            )
+            zf.write(path, rel, compress_type=compress)
+
+
+def inject_apk_zip(
+    apk: Path,
+    *,
+    out_apk: Path,
+    script: Path,
+    home: Path,
+    work: Path,
+    version: str = FRIDA_VERSION,
+) -> dict:
+    """
+    No apktool rebuild: unzip → drop gadget → patchelf DT_NEEDED → zip → sign.
+    Avoids Termux aapt2 ELF failure entirely.
+    """
+    root = work / "ziproot"
+    unzip_apk(apk, root)
+    abis = detect_apis_in_apk(apk)
+    placed = place_gadget_files(root, abis, script, home=home, version=version)
+    patched: list[str] = []
+    for abi in placed:
+        libdir = root / "lib" / abi
+        target = _pick_patch_so(libdir)
+        if not target:
+            raise RuntimeError(f"no native .so to patchelf under lib/{abi}")
+        patchelf_add_needed(target, "libfrida-gadget.so")
+        patched.append(f"{abi}/{target.name}")
+
+    unsigned = out_apk.with_suffix(".unsigned.apk")
+    zip_apk_tree(root, unsigned)
+    signed = sign_apk(unsigned, out_apk, home=home)
+    return {
+        "apk": str(apk),
+        "out": str(signed),
+        "abis": placed,
+        "frida": version,
+        "loader": "patchelf DT_NEEDED ← " + ", ".join(patched),
+        "script": str(script),
+        "work": str(work),
+        "mode": "script+zip",
+    }
+
+
+def inject_apk_apktool(
+    apk: Path,
+    *,
+    out_apk: Path,
+    script: Path,
+    home: Path,
+    work: Path,
+    version: str = FRIDA_VERSION,
+) -> dict:
+    decoded = work / "decoded"
+    if decoded.exists():
+        shutil.rmtree(decoded)
+    abis = detect_apis_in_apk(apk)
+    apktool = ensure_apktool(home)
+    run_apktool(apktool, ["d", str(apk), "-o", str(decoded), "-f"])
+    loader_note = patch_application_loader(decoded)
+    placed = place_gadget_files(decoded, abis, script, home=home, version=version)
+    signed = rebuild_sign(decoded, out_apk, home=home)
+    return {
+        "apk": str(apk),
+        "out": str(signed),
+        "abis": placed,
+        "frida": version,
+        "loader": loader_note,
+        "script": str(script),
+        "work": str(work),
+        "mode": "script+apktool",
+    }
+
+
+def default_out_apk(apk: Path, home: Path) -> Path:
+    downloads = home / "storage" / "downloads"
+    if not downloads.is_dir():
+        # Termux shared Download often appears here
+        alt = home / "storage" / "shared" / "Download"
+        downloads = alt if alt.is_dir() else home / "unpin_work"
+    return downloads / f"{apk.stem}-frida.apk"
 
 
 def inject_apk(
@@ -464,9 +657,11 @@ def inject_apk(
     home: Path | None = None,
     work_dir: Path | None = None,
     version: str = FRIDA_VERSION,
+    method: str = "auto",
 ) -> dict:
     """
-    Full pipeline: decode → gadget+script → smali loadLibrary → rebuild → sign.
+    Inject Frida Gadget. Prefer zip+patchelf on Termux (no aapt2).
+    method: auto | zip | apktool
     """
     apk = apk.expanduser().resolve()
     if not apk.is_file():
@@ -480,38 +675,55 @@ def inject_apk(
     work_root.mkdir(parents=True, exist_ok=True)
     work = work_dir or Path(tempfile.mkdtemp(prefix="frida_gadget_", dir=str(work_root)))
     work.mkdir(parents=True, exist_ok=True)
-    decoded = work / "decoded"
-    if decoded.exists():
-        import shutil
-
-        shutil.rmtree(decoded)
-
-    abis = detect_apis_in_apk(apk)
-    apktool = ensure_apktool(home)
-    run_apktool(apktool, ["d", str(apk), "-o", str(decoded), "-f"])
-
-    loader_note = patch_application_loader(decoded)
-    placed = place_gadget_files(decoded, abis, script, home=home, version=version)
 
     if out_apk is None:
-        downloads = home / "storage" / "downloads"
-        if not downloads.is_dir():
-            downloads = home / "unpin_work"
-        out_apk = downloads / f"{apk.stem}-frida.apk"
+        out_apk = default_out_apk(apk, home)
     out_apk = out_apk.expanduser().resolve()
     out_apk.parent.mkdir(parents=True, exist_ok=True)
 
-    signed = rebuild_sign(decoded, out_apk, home=home)
-    return {
-        "apk": str(apk),
-        "out": str(signed),
-        "abis": placed,
-        "frida": version,
-        "loader": loader_note,
-        "script": str(script),
-        "work": str(work),
-        "mode": "script",
-    }
+    errors: list[str] = []
+
+    use_zip = method in ("auto", "zip")
+    use_apktool = method in ("auto", "apktool")
+
+    if use_zip and find_patchelf():
+        try:
+            print("[*] method=zip+patchelf (no apktool rebuild)", flush=True)
+            return inject_apk_zip(
+                apk, out_apk=out_apk, script=script, home=home, work=work, version=version
+            )
+        except Exception as exc:
+            errors.append(f"zip+patchelf: {exc}")
+            print(f"[!] zip+patchelf failed: {exc}", flush=True)
+            if method == "zip":
+                raise
+
+    if use_zip and not find_patchelf() and method == "auto":
+        print("[*] patchelf missing — try: pkg install patchelf", flush=True)
+
+    if use_apktool:
+        if not find_aapt():
+            msg = (
+                "Need Termux build tools for apktool path:\n"
+                "  pkg install aapt aapt2 patchelf\n"
+                "Then re-run: ~/frida \"/sdcard/Download/777.apk\""
+            )
+            if errors:
+                raise RuntimeError(msg + "\n\nEarlier: " + " | ".join(errors))
+            raise RuntimeError(msg)
+        print("[*] method=apktool + Termux aapt", flush=True)
+        try:
+            return inject_apk_apktool(
+                apk, out_apk=out_apk, script=script, home=home, work=work, version=version
+            )
+        except Exception as exc:
+            errors.append(f"apktool: {exc}")
+            raise RuntimeError(" | ".join(errors)) from exc
+
+    raise RuntimeError(
+        "No inject method available. Install: pkg install patchelf aapt aapt2\n"
+        + " | ".join(errors)
+    )
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -523,6 +735,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("-o", "--out", help="Output APK path")
     p.add_argument("--script", help="Custom Frida JS (default: frida_ssl_unpin.js)")
     p.add_argument("--version", default=FRIDA_VERSION, help="Frida gadget version")
+    p.add_argument(
+        "--method",
+        choices=("auto", "zip", "apktool"),
+        default="auto",
+        help="auto: zip+patchelf first, else apktool+aapt",
+    )
     p.add_argument("--guide", action="store_true", help="Print usage guide")
     args = p.parse_args(argv)
 
@@ -533,13 +751,14 @@ Frida Gadget без root / без ПК
 ==============================
 0) openjdk уже стоїть — ок
 
-1) Дістати APK (один спосіб):
-     ~/frida pull com.lilithgame.hgame.gp
-   або App Manager → Save APK → Download/
-   або:  ~/frida /sdcard/Download/game.apk
+0b) Один раз на Termux:
+     pkg install openjdk-17 patchelf aapt aapt2
 
-2) Інжект:
-     ~/scan update && ~/frida
+1) Дістати APK:
+     ~/frida "/sdcard/Download/777.apk"
+
+2) Інжект (zip+patchelf, без зламаного apktool aapt2):
+     ~/scan update && ~/frida "/sdcard/Download/777.apk"
 
 3) Встанови *-frida.apk (зняти стару гру)
 
@@ -562,6 +781,7 @@ Frida Gadget без root / без ПК
         out_apk=Path(args.out) if args.out else None,
         script=Path(args.script) if args.script else None,
         version=args.version,
+        method=args.method,
     )
     print(json.dumps(report, indent=2, ensure_ascii=False))
     print()
