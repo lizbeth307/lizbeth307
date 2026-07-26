@@ -134,9 +134,84 @@ def detect_apis_in_apk(apk: Path) -> list[str]:
     return abis
 
 
+def file_magic(path: Path, n: int = 16) -> bytes:
+    with Path(path).open("rb") as f:
+        return f.read(n)
+
+
+def describe_magic(head: bytes) -> str:
+    if head[:2] == b"PK":
+        return "zip/apk"
+    if head[:3] == b"\x1f\x8b\x08":
+        return "gzip"
+    if head[:4] == b"\x28\xb5\x2f\xfd":
+        return "zstd"
+    if head[:4] == b"\x37\x7a\xbc\xaf":
+        return "7z"
+    if len(head) >= 262 and head[257:262] == b"ustar":
+        return "tar"
+    if head[:4] == b"Rar!":
+        return "rar"
+    if not head or all(b == 0 for b in head):
+        return "empty/zeros"
+    return "unknown"
+
+
+def probe_bundle(path: Path) -> dict:
+    """Diagnose why an .apks may fail to open (FUSE / corrupt / wrong type)."""
+    path = Path(path).expanduser()
+    rep: dict = {
+        "path": str(path),
+        "exists": path.exists(),
+        "is_file": path.is_file(),
+        "is_dir": path.is_dir(),
+        "size": path.stat().st_size if path.exists() else 0,
+        "magic_hex": "",
+        "magic": "",
+        "zip_ok": False,
+        "zip_error": "",
+        "apk_members": [],
+    }
+    if path.is_dir():
+        apks = sorted(p.name for p in path.glob("*.apk"))
+        rep["magic"] = "directory"
+        rep["apk_members"] = apks
+        rep["zip_ok"] = len(apks) >= 1
+        return rep
+    if not path.is_file():
+        return rep
+    try:
+        head = file_magic(path, 16)
+        rep["magic_hex"] = head.hex(" ")
+        rep["magic"] = describe_magic(head)
+    except OSError as exc:
+        rep["zip_error"] = f"read: {exc}"
+        return rep
+    try:
+        with zipfile.ZipFile(path) as zf:
+            bad = zf.testzip()
+            members = [
+                n
+                for n in zf.namelist()
+                if n.lower().endswith(".apk") and not n.endswith("/")
+            ]
+            rep["zip_ok"] = bad is None
+            rep["apk_members"] = sorted(members)
+            if bad:
+                rep["zip_error"] = f"corrupt entry: {bad}"
+    except Exception as exc:
+        rep["zip_error"] = str(exc)
+    return rep
+
+
 def looks_like_apks_bundle(path: Path) -> bool:
-    """True for App Manager / SAI .apks (or .xapk) zip of split APKs."""
+    """True for App Manager / SAI .apks (or .xapk) zip of split APKs, or a splits dir."""
     path = Path(path)
+    if path.is_dir():
+        apks = list(path.glob("*.apk"))
+        return len(apks) >= 1 and (
+            any(p.name.lower() == "base.apk" for p in apks) or len(apks) >= 2
+        )
     if not path.is_file():
         return False
     suf = path.suffix.lower()
@@ -160,6 +235,87 @@ def list_bundle_apk_members(bundle: Path) -> list[str]:
             for n in zf.namelist()
             if n.lower().endswith(".apk") and not n.endswith("/") and not n.startswith("__MACOSX/")
         )
+
+
+def materialize_local_copy(src: Path, dest_dir: Path) -> Path:
+    """
+    Copy /sdcard file into Termux home before zip random-access.
+    Android FUSE/sdcardfs often breaks ZipFile seek → BadZipFile.
+    """
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    dest = dest_dir / ("_local_" + re.sub(r"[^\w.\-]+", "_", src.name))
+    if dest.exists():
+        dest.unlink()
+    print(f"[*] copy → Termux home (avoid /sdcard FUSE zip bugs): {dest}", flush=True)
+    # Prefer cp for progress on huge files; fall back to shutil
+    if shutil.which("cp"):
+        subprocess.run(["cp", "-f", str(src), str(dest)], check=True)
+    else:
+        shutil.copy2(src, dest)
+    if dest.stat().st_size != src.stat().st_size:
+        raise RuntimeError(
+            f"copy size mismatch: src={src.stat().st_size} dest={dest.stat().st_size}"
+        )
+    return dest
+
+
+def extract_apks_archive(bundle: Path, extract_dir: Path) -> None:
+    """Extract .apks/.xapk/.zip into extract_dir (must exist, empty-ish)."""
+    errors: list[str] = []
+    # 1) stdlib zipfile
+    try:
+        with zipfile.ZipFile(bundle) as zf:
+            zf.extractall(extract_dir)
+        return
+    except Exception as exc:
+        errors.append(f"zipfile: {exc}")
+        print(f"[!] zipfile failed: {exc}", flush=True)
+
+    # 2) system unzip
+    if shutil.which("unzip"):
+        proc = subprocess.run(
+            ["unzip", "-o", str(bundle), "-d", str(extract_dir)],
+            check=False,
+            capture_output=True,
+            text=True,
+            errors="replace",
+        )
+        if proc.returncode == 0 and any(extract_dir.rglob("*.apk")):
+            return
+        errors.append(f"unzip: {(proc.stderr or proc.stdout or '')[:200]}")
+
+    # 3) bsdtar / tar
+    for tar in ("bsdtar", "tar"):
+        if not shutil.which(tar):
+            continue
+        proc = subprocess.run(
+            [tar, "-xf", str(bundle), "-C", str(extract_dir)],
+            check=False,
+            capture_output=True,
+            text=True,
+            errors="replace",
+        )
+        if proc.returncode == 0 and any(extract_dir.rglob("*.apk")):
+            return
+        errors.append(f"{tar}: {(proc.stderr or proc.stdout or '')[:160]}")
+
+    head = b""
+    try:
+        head = file_magic(bundle, 16)
+    except OSError:
+        pass
+    raise RuntimeError(
+        "не вдалось відкрити .apks як архів.\n"
+        f"  magic: {head.hex(' ') if head else '?'} ({describe_magic(head)})\n"
+        f"  size:  {bundle.stat().st_size}\n"
+        f"  path:  {bundle}\n"
+        "App Manager .apks має бути ZIP (байти PK…). Якщо magic інший — файл битий.\n"
+        "Обхід:\n"
+        "  1) ZArchiver / App Manager → Extract .apks у папку\n"
+        "  2) ~/frida \"/sdcard/.../та_папка\"\n"
+        "  3) або знову Save APK у App Manager\n"
+        "Деталі: " + " | ".join(errors)
+    )
 
 
 def apk_quick_info(apk: Path) -> dict:
@@ -1072,16 +1228,19 @@ def inject_apks_bundle(
     version: str = FRIDA_VERSION,
 ) -> dict:
     """
-    App Manager / SAI .apks: patch ABI split(s) that hold native libs, resign ALL
-    splits with the same debug key, repack .apks + leave a SAI folder.
+    App Manager / SAI .apks (or a directory of split APKs): patch ABI split(s)
+    that hold native libs, resign ALL splits with the same debug key, repack
+    .apks + leave a SAI folder.
     """
     bundle = Path(bundle).expanduser().resolve()
-    if not bundle.is_file():
+    if not bundle.exists():
         raise FileNotFoundError(bundle)
-    if not looks_like_apks_bundle(bundle) and bundle.suffix.lower() not in (
+    is_dir = bundle.is_dir()
+    if not is_dir and not looks_like_apks_bundle(bundle) and bundle.suffix.lower() not in (
         ".apks",
         ".xapk",
         ".apkm",
+        ".zip",
     ):
         raise RuntimeError(f"not an .apks bundle: {bundle}")
 
@@ -1099,16 +1258,46 @@ def inject_apks_bundle(
     if extract_dir.exists():
         shutil.rmtree(extract_dir)
     extract_dir.mkdir(parents=True)
-    print(f"[*] unpack .apks → {extract_dir}", flush=True)
-    with zipfile.ZipFile(bundle) as zf:
-        zf.extractall(extract_dir)
+
+    if is_dir:
+        print(f"[*] using splits directory: {bundle}", flush=True)
+        for p in sorted(bundle.glob("*.apk")):
+            shutil.copy2(p, extract_dir / p.name)
+        src_label = str(bundle)
+    else:
+        probe = probe_bundle(bundle)
+        print(
+            f"[*] probe: size={probe['size']} magic={probe['magic']} "
+            f"hex={probe['magic_hex']} zip_ok={probe['zip_ok']}",
+            flush=True,
+        )
+        # Always materialize off /sdcard — ZipFile needs reliable seek.
+        local = materialize_local_copy(bundle, work / "local_src")
+        local_probe = probe_bundle(local)
+        print(
+            f"[*] local probe: magic={local_probe['magic']} zip_ok={local_probe['zip_ok']} "
+            f"err={local_probe.get('zip_error') or '-'}",
+            flush=True,
+        )
+        print(f"[*] unpack .apks → {extract_dir}", flush=True)
+        try:
+            extract_apks_archive(local, extract_dir)
+        except Exception:
+            # last chance: try original path (sometimes copy itself is broken)
+            print("[*] retry unpack from original path…", flush=True)
+            extract_apks_archive(bundle, extract_dir)
+        src_label = str(bundle)
 
     # Collect split APKs (flat or nested)
     split_apks = sorted(
         p for p in extract_dir.rglob("*.apk") if p.is_file() and p.suffix.lower() == ".apk"
     )
     if not split_apks:
-        raise RuntimeError("no .apk members inside .apks — wrong export?")
+        raise RuntimeError(
+            "no .apk members inside .apks — wrong export?\n"
+            f"probe: {probe_bundle(bundle) if bundle.is_file() else 'dir'}\n"
+            "Спробуй: ZArchiver → Extract → ~/frida /шлях/до/папки"
+        )
 
     print(f"[*] splits: {len(split_apks)}", flush=True)
     for p in split_apks:
@@ -1213,7 +1402,7 @@ def inject_apks_bundle(
 
     loaders = [r.get("loader", "") for r in patched_reports]
     return {
-        "apk": str(bundle),
+        "apk": src_label,
         "out": str(out_apks),
         "sai_dir": str(sai_dir),
         "splits": [str(p) for p in signed_paths],
@@ -1304,15 +1493,22 @@ def inject_apk(
     method: auto | zip | apktool
     """
     apk = apk.expanduser().resolve()
-    if not apk.is_file():
+    if not apk.exists():
         raise FileNotFoundError(apk)
     home = home or Path.home()
     script = script or default_script_path()
     if not script.is_file():
         raise FileNotFoundError(f"SSL unpin script missing: {script}")
 
-    if looks_like_apks_bundle(apk) or apk.suffix.lower() in (".apks", ".xapk", ".apkm"):
-        print("[*] detected split bundle (.apks) — patch ABI split + resign all", flush=True)
+    if (
+        apk.is_dir()
+        or looks_like_apks_bundle(apk)
+        or apk.suffix.lower() in (".apks", ".xapk", ".apkm")
+    ):
+        print(
+            "[*] detected split bundle (.apks / dir) — patch ABI split + resign all",
+            flush=True,
+        )
         return inject_apks_bundle(
             apk,
             out_apks=out_apk,
@@ -1392,7 +1588,7 @@ def main(argv: list[str] | None = None) -> int:
     import sys
 
     p = argparse.ArgumentParser(description="Inject Frida Gadget + SSL unpin (no root)")
-    p.add_argument("apk", nargs="?", help="Path to APK or App Manager .apks")
+    p.add_argument("apk", nargs="?", help="Path to APK, App Manager .apks, or splits dir")
     p.add_argument("-o", "--out", help="Output APK / .apks path")
     p.add_argument("--script", help="Custom Frida JS (default: frida_ssl_unpin.js)")
     p.add_argument("--version", default=FRIDA_VERSION, help="Frida gadget version")
@@ -1413,6 +1609,11 @@ def main(argv: list[str] | None = None) -> int:
         help="Verify APK zip/manifest/aapt before install",
     )
     p.add_argument(
+        "--probe",
+        metavar="PATH",
+        help="Diagnose .apks / APK magic + zip integrity (no patch)",
+    )
+    p.add_argument(
         "--install",
         metavar="APK",
         help="pm install -r -t (prints real Android error code)",
@@ -1424,6 +1625,17 @@ def main(argv: list[str] | None = None) -> int:
     )
     p.add_argument("--guide", action="store_true", help="Print usage guide")
     args = p.parse_args(argv)
+
+    if args.probe:
+        rep = probe_bundle(Path(args.probe).expanduser())
+        print(json.dumps(rep, indent=2, ensure_ascii=False))
+        if not rep.get("zip_ok"):
+            print(
+                "\nЯкщо magic ≠ zip/apk — файл битий або не .apks.\n"
+                "Обхід: ZArchiver Extract → ~/frida /шлях/до/папки_зі_сплітами",
+                flush=True,
+            )
+        return 0 if rep.get("zip_ok") else 1
 
     if args.verify:
         rep = verify_apk(Path(args.verify).expanduser())

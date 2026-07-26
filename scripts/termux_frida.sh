@@ -282,8 +282,8 @@ describe_apk() {
 
 pick_apk() {
   local arg="${1:-}"
-  # Direct path (quote spaces: 777\ \(1\).apk)
-  if [[ -n "$arg" && -f "$arg" ]]; then
+  # Direct path (quote spaces) or directory of splits
+  if [[ -n "$arg" && -e "$arg" ]]; then
     echo "$arg"
     return
   fi
@@ -405,6 +405,11 @@ main() {
       python3 -m protocol_ast.frida_gadget --resign "$apk"
       exit $?
       ;;
+    probe)
+      local target="${2:-/sdcard/AppManager/apks/AFK Arena_1.198.01.apks}"
+      python3 -m protocol_ast.frida_gadget --probe "$target"
+      exit $?
+      ;;
   esac
 
   need_tools
@@ -415,9 +420,14 @@ main() {
   fi
 
   local apk
-  apk="$(pick_apk "$cmd")"
+  # Allow directory of already-extracted splits
+  if [[ -n "$cmd" && -d "$cmd" ]]; then
+    apk="$cmd"
+  else
+    apk="$(pick_apk "$cmd")"
+  fi
   echo "[*] input: $apk"
-  if [[ "$apk" == *.apks || "$apk" == *.xapk || "$apk" == *.apkm ]]; then
+  if [[ -d "$apk" || "$apk" == *.apks || "$apk" == *.xapk || "$apk" == *.apkm ]]; then
     echo "[*] Split bundle → patch ABI lib + resign all splits"
   else
     echo "[*] Surgical zip+patchelf (single APK)"

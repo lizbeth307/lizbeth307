@@ -11,12 +11,16 @@ from protocol_ast.frida_gadget import (
     _pick_patch_so,
     detect_apis_in_apk,
     detect_native_abis,
+    describe_magic,
+    extract_apks_archive,
     find_application_class,
     gadget_config_json,
     inject_load_library_smali,
     looks_like_apks_bundle,
     list_bundle_apk_members,
+    materialize_local_copy,
     package_name,
+    probe_bundle,
     rebuild_apk_surgical,
     resign_split_apk,
     verify_apk,
@@ -262,6 +266,24 @@ class TestManifestAndAbi(unittest.TestCase):
             label = format_apk_choice(bundle)
             self.assertIn("APKS", label)
             self.assertIn("IL2CPP", label)
+            probe = probe_bundle(bundle)
+            self.assertTrue(probe["zip_ok"])
+            self.assertEqual(probe["magic"], "zip/apk")
+            self.assertEqual(describe_magic(b"PK\x03\x04"), "zip/apk")
+            out = td_path / "out"
+            out.mkdir()
+            extract_apks_archive(bundle, out)
+            self.assertTrue((out / "base.apk").is_file())
+            local = materialize_local_copy(bundle, td_path / "loc")
+            self.assertEqual(local.stat().st_size, bundle.stat().st_size)
+            # directory of splits also accepted
+            splits_dir = td_path / "splits"
+            splits_dir.mkdir()
+            shutil_copy = __import__("shutil").copy2
+            shutil_copy(base, splits_dir / "base.apk")
+            shutil_copy(abi, splits_dir / "split_config.arm64_v8a.apk")
+            self.assertTrue(looks_like_apks_bundle(splits_dir))
+            self.assertTrue(probe_bundle(splits_dir)["zip_ok"])
 
     def test_resign_split_strips_metainf(self) -> None:
         with tempfile.TemporaryDirectory() as td:
