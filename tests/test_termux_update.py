@@ -78,9 +78,18 @@ class TestDownloadTreeLaunchers(unittest.TestCase):
         payload = {
             "analyze_pcap.py": b'VERSION = "9.9.9-test"\n',
             "probe_network.py": b"# probe\n",
+            "scan_app.py": b"# scan\n",
             "scripts/termux_signal.sh": (
                 b"#!/data/data/com.termux/files/usr/bin/bash\n"
                 b"exec python3 \"$HOME/analyze_pcap.py\" --signal \"$@\"\n"
+            ),
+            "scripts/termux_scan.sh": (
+                b"#!/data/data/com.termux/files/usr/bin/bash\n"
+                b'exec python3 "$HOME/scan_app.py" "$@"\n'
+            ),
+            "scripts/termux_unpin.sh": (
+                b"#!/data/data/com.termux/files/usr/bin/bash\n"
+                b'echo "unpin"\n'
             ),
         }
 
@@ -100,14 +109,19 @@ class TestDownloadTreeLaunchers(unittest.TestCase):
             home = Path(td)
             with mock.patch("protocol_ast.termux_update._fetch", side_effect=fake_fetch):
                 report = download_tree(home)
-            self.assertTrue(LAUNCHERS)
+            self.assertEqual(len(LAUNCHERS), 3)
             signal = home / "signal"
             self.assertTrue(signal.is_file(), report)
             self.assertEqual(report.get("launcher"), str(signal))
+            self.assertTrue((home / "scan").is_file(), report)
+            self.assertTrue((home / "unpin").is_file(), report)
+            launchers = report.get("launchers") or []
+            self.assertEqual(len(launchers), 3)
             text = signal.read_text(encoding="utf-8")
             self.assertTrue(text.startswith("#!"))
             self.assertIn("--signal", text)
             self.assertTrue(signal.stat().st_mode & 0o111)
+            self.assertTrue((home / "unpin").stat().st_mode & 0o111)
 
 
 if __name__ == "__main__":

@@ -6,6 +6,7 @@ SIGNAL SCAN — мінімальний універсальний сканер �
   ~/scan peel         # living signal
   ~/scan mine         # game mine + sdk_session
   ~/scan sdk          # показати останній sdk_session.json
+  ~/scan unpin        # pin bypass без root (apk-mitm)
   ~/scan update       # self-update
 """
 
@@ -17,9 +18,10 @@ import subprocess
 import sys
 from pathlib import Path
 
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 HOME = Path.home()
 ANALYZE = HOME / "analyze_pcap.py"
+UNPIN = HOME / "unpin"
 DOWNLOADS = HOME / "storage" / "downloads"
 PCAPDROID = DOWNLOADS / "PCAPdroid"
 
@@ -191,12 +193,30 @@ def cmd_stream() -> int:
     return _run([_py(), str(ANALYZE), "--stream", "--keylog", "auto", "--flow", "TCP:443"])
 
 
+def cmd_unpin(argv: list[str] | None = None) -> int:
+    """No-root SSL pin bypass via ~/unpin (apk-mitm)."""
+    extra = list(argv or [])
+    if UNPIN.is_file():
+        print("▸ unpin (apk-mitm, без root)")
+        return _run(["bash", str(UNPIN), *extra])
+    print("немає ~/unpin — спочатку: ~/scan update")
+    print()
+    print("План без root:")
+    print("  1) Extract APK (SAI / App Manager) → Download/")
+    print("  2) ~/unpin   # apk-mitm патч Java TrustManager")
+    print("  3) Встановити *-unpinned.apk")
+    print("  4) PCAPdroid MITM → ~/scan mine")
+    print("  Unity/native pin apk-mitm НЕ знімає → тоді Frida Gadget")
+    return 1
+
+
 MENU = [
     ("1", "Peel — живий сигнал (TLS→HTTP→body)", cmd_peel),
     ("2", "Mine — карта SNI + SDK session", cmd_mine),
     ("3", "SDK — останній sdk_session.json", cmd_sdk),
-    ("4", "Stream — інкрементальний агент", cmd_stream),
-    ("5", "Update — стягнути свіжий код", cmd_update),
+    ("4", "Unpin — pin bypass без root", lambda: cmd_unpin()),
+    ("5", "Stream — інкрементальний агент", cmd_stream),
+    ("6", "Update — стягнути свіжий код", cmd_update),
     ("0", "Вихід", None),
 ]
 
@@ -240,6 +260,8 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_sdk()
     if cmd in ("stream", "st"):
         return cmd_stream()
+    if cmd in ("unpin", "pin", "mitm-apk"):
+        return cmd_unpin(argv[1:])
     if cmd in ("update", "u", "self-update"):
         return cmd_update()
     if cmd in ("help", "h"):

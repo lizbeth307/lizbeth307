@@ -49,6 +49,7 @@ ROOT_FILES = ("analyze_pcap.py", "probe_network.py", "scan_app.py")
 LAUNCHERS = (
     ("scripts/termux_signal.sh", "signal"),
     ("scripts/termux_scan.sh", "scan"),
+    ("scripts/termux_unpin.sh", "unpin"),
 )
 
 
@@ -124,7 +125,10 @@ def download_tree(dest_home: Path | None = None, *, branch: str = BRANCH) -> dic
             except OSError:
                 pass
             report["files"].append(str(target))
-            report["launcher"] = str(target)
+            report.setdefault("launchers", []).append(str(target))
+            # Keep primary ~/signal for self-update fallback messaging.
+            if dest_name == "signal":
+                report["launcher"] = str(target)
         except Exception as exc:
             report["errors"].append(f"{rel} → ~/{dest_name}: {exc}")
 
