@@ -1,8 +1,8 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # Frida Gadget inject + autonomous SSL unpin (no root, no PC).
 # Usage:
-#   ~/frida                              # pick APK (deduped list)
-#   ~/frida /sdcard/Download/777.apk     # direct path (best)
+#   ~/frida                              # pick APK / .apks (deduped list)
+#   ~/frida "/sdcard/AppManager/apks/AFK Arena_1.198.01.apks"
 #   ~/frida pull [package]
 #   ~/frida pkgs                         # list lilith/hgame packages via /system/bin/pm
 #   ~/frida guide
@@ -36,7 +36,10 @@ banner() {
 ╚══════════════════════════════════════════╝
 
 Без root / без ПК:
-  APK → Frida Gadget (script mode) → ssl_unpin.js
+  APK / .apks → Frida Gadget (script mode) → ssl_unpin.js
+
+AFK Arena (3 splits):
+  ~/frida "/sdcard/AppManager/apks/AFK Arena_1.198.01.apks"
 
 EOF
 }
@@ -181,7 +184,7 @@ EOF
   echo "$base"
 }
 
-# Deduplicate the same APK seen via /sdcard vs /storage/emulated/0 vs Termux shared.
+# Deduplicate the same APK/.apks seen via /sdcard vs /storage/emulated/0 vs Termux shared.
 find_apks() {
   python3 - <<'PY'
 import os
@@ -189,6 +192,8 @@ from pathlib import Path
 
 home = Path(os.environ.get("HOME", str(Path.home())))
 roots = [
+    Path("/sdcard/AppManager/apks"),
+    Path("/storage/emulated/0/AppManager/apks"),
     home / "storage" / "downloads",
     home / "storage" / "shared" / "Download",
     home / "unpin_work",
@@ -204,25 +209,35 @@ junk = {
 }
 seen = {}
 cands = []
+patterns = ("*.apk", "*.apks", "*.xapk", "*.apkm")
 for root in roots:
     if not root.is_dir():
         continue
-    for p in root.rglob("*.apk"):
-        if not p.is_file():
-            continue
-        if p.name.lower() in junk:
-            continue
-        if "pcapdroid" in p.name.lower() and "mitm" in p.name.lower():
-            continue
-        try:
-            st = p.stat()
-            key = (st.st_ino, st.st_dev, st.st_size)
-        except OSError:
-            continue
-        if key in seen:
-            continue
-        seen[key] = p
-        cands.append(p)
+    for pat in patterns:
+        for p in root.rglob(pat):
+            if not p.is_file():
+                continue
+            if p.name.lower() in junk:
+                continue
+            if "pcapdroid" in p.name.lower() and "mitm" in p.name.lower():
+                continue
+            # skip our own output aliases to avoid re-inject loops in picker
+            low = p.name.lower()
+            if low in ("afk-arena-frida.apk", "afk-arena-frida.apks"):
+                continue
+            if "-frida.apk" in low or "-frida.apks" in low or "-frida.unsigned.apk" in low:
+                continue
+            if "frida-splits" in str(p).lower():
+                continue
+            try:
+                st = p.stat()
+                key = (st.st_ino, st.st_dev, st.st_size)
+            except OSError:
+                continue
+            if key in seen:
+                continue
+            seen[key] = p
+            cands.append(p)
 
 def score(p: Path) -> tuple:
     name = p.name.lower()
@@ -230,17 +245,22 @@ def score(p: Path) -> tuple:
         from protocol_ast.frida_gadget import apk_quick_info
         inf = apk_quick_info(p)
     except Exception:
-        inf = {"il2cpp": False, "hint": "", "size": p.stat().st_size}
-    # prefer unity/lilith/large
+        inf = {"il2cpp": False, "hint": "", "size": p.stat().st_size, "bundle": False}
+    # prefer AFK Arena .apks / unity/lilith/large
     pri = 0
+    if inf.get("bundle") or name.endswith((".apks", ".xapk", ".apkm")):
+        pri += 120
     if inf.get("il2cpp"):
         pri += 100
-    if "lilith" in (inf.get("hint") or "") or "hgame" in (inf.get("hint") or ""):
-        pri += 80
+    hint = (inf.get("hint") or "").lower()
+    if "lilith" in hint or "hgame" in hint or "afk" in hint:
+        pri += 90
     if "lilith" in name or "hgame" in name or "afk" in name:
-        pri += 60
+        pri += 80
+    if "appmanager" in str(p).lower():
+        pri += 50
     if name.startswith("777"):
-        pri += 40  # user dump candidates
+        pri -= 40  # slots777 — not AFK Arena
     if name.startswith("sc_"):
         pri += 10
     return (-pri, -inf.get("size", 0), name)
@@ -252,11 +272,11 @@ PY
 }
 
 looks_like_pkg() {
-  [[ "$1" == *.* && "$1" != *.apk && "$1" != /* && "$1" != ~/* && "$1" != -* ]]
+  [[ "$1" == *.* && "$1" != *.apk && "$1" != *.apks && "$1" != *.xapk && "$1" != *.apkm && "$1" != /* && "$1" != ~/* && "$1" != -* ]]
 }
 
 describe_apk() {
-  python3 -c "from pathlib import Path; from protocol_ast.frida_gadget import format_apk_choice; print(format_apk_choice(Path('$1')))" 2>/dev/null \
+  python3 -c "from pathlib import Path; import sys; from protocol_ast.frida_gadget import format_apk_choice; print(format_apk_choice(Path(sys.argv[1])))" "$1" 2>/dev/null \
     || echo "$(basename "$1")"
 }
 
@@ -280,12 +300,10 @@ pick_apk() {
     fi
     cat <<EOF >&2
 
-Немає APK гри. Зроби:
+Немає APK/.apks гри. Зроби:
 
-  ~/frida pkgs
-  # або App Manager → Save APK
-  # або напряму (якщо 777 = гра):
-  ~/frida "/sdcard/Download/777.apk"
+  App Manager → AFK Arena → ⋮ → Share / Save APK
+  ~/frida "/sdcard/AppManager/apks/AFK Arena_1.198.01.apks"
 EOF
     exit 1
   fi
@@ -295,7 +313,7 @@ EOF
     return
   fi
 
-  echo "Pick APK (унікальні файли; Unity/IL2CPP зверху):" >&2
+  echo "Pick APK / .apks (AFK Arena .apks і IL2CPP зверху):" >&2
   local i desc
   for i in "${!apks[@]}"; do
     desc="$(describe_apk "${apks[$i]}")"
@@ -303,20 +321,20 @@ EOF
     printf "      %s\n" "${apks[$i]}" >&2
   done
   echo >&2
-  echo "Підказка: для AFK Arena шукай IL2CPP / lilith / великий розмір." >&2
-  echo "Або без меню:  ~/frida \"/sdcard/Download/777.apk\"" >&2
+  echo "Підказка: бери файл з AppManager/apks і тегом APKS×3 / IL2CPP / afk-arena." >&2
+  echo "Або:  ~/frida \"/sdcard/AppManager/apks/AFK Arena_1.198.01.apks\"" >&2
   printf "Number: " >&2
   # read may fail / empty in weird TTYs
   n=""
   read -r n || true
   n="${n//[$'\t\r\n ']/}"
   if [[ -z "$n" ]]; then
-    echo "Empty choice. Приклад: ~/frida \"/sdcard/Download/777.apk\"" >&2
+    echo "Empty choice. Приклад: ~/frida \"/sdcard/AppManager/apks/AFK Arena_1.198.01.apks\"" >&2
     exit 1
   fi
   if [[ ! "$n" =~ ^[0-9]+$ ]] || (( n < 1 || n > ${#apks[@]} )); then
     echo "Invalid: '$n'  (треба число 1–${#apks[@]})" >&2
-    echo "Або шлях: ~/frida \"/sdcard/Download/777.apk\"" >&2
+    echo "Або шлях: ~/frida \"/sdcard/AppManager/apks/AFK Arena_1.198.01.apks\"" >&2
     exit 1
   fi
   echo "${apks[$((n - 1))]}"
@@ -398,14 +416,24 @@ main() {
 
   local apk
   apk="$(pick_apk "$cmd")"
-  echo "[*] APK: $apk"
-  echo "[*] Surgical zip+patchelf (full rebuild — old unsigned may be parse-broken)."
+  echo "[*] input: $apk"
+  if [[ "$apk" == *.apks || "$apk" == *.xapk || "$apk" == *.apkm ]]; then
+    echo "[*] Split bundle → patch ABI lib + resign all splits"
+  else
+    echo "[*] Surgical zip+patchelf (single APK)"
+  fi
   echo
 
   # Drop stale broken unsigned from older full-rezip method
-  base_name="$(basename "${apk%.apk}")-frida.unsigned.apk"
+  local stem
+  stem="$(basename "$apk")"
+  stem="${stem%.apk}"
+  stem="${stem%.apks}"
+  stem="${stem%.xapk}"
+  stem="${stem%.apkm}"
+  base_name="${stem}-frida.unsigned.apk"
   for u in \
-    "${apk%.apk}-frida.unsigned.apk" \
+    "$(dirname "$apk")/${stem}-frida.unsigned.apk" \
     "$HOME_DIR/storage/downloads/$base_name" \
     "$HOME_DIR/storage/shared/Download/$base_name" \
     "/sdcard/Download/$base_name"; do
@@ -419,8 +447,13 @@ main() {
   echo
   echo "════════════════════════════════════════"
   echo "Далі:"
-  echo "  1) Uninstall стару AFK Arena"
-  echo "  2) Встановити *-frida.apk"
+  echo "  1) Uninstall стару AFK Arena (com.lilithgame.hgame.gp)"
+  if [[ "$apk" == *.apks || "$apk" == *.xapk || "$apk" == *.apkm ]]; then
+    echo "  2) SAI / App Manager → встановити AFK-Arena-frida.apks"
+    echo "     або папку AFK-Arena-frida-splits/"
+  else
+    echo "  2) Встановити *-frida.apk (termux-open …)"
+  fi
   echo "  3) PCAPdroid MITM + Block QUIC → гра → Stop"
   echo "  4) ~/scan mine"
   echo "════════════════════════════════════════"

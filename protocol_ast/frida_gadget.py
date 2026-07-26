@@ -115,22 +115,55 @@ def gadget_config_json() -> str:
     )
 
 
-def detect_apis_in_apk(apk: Path) -> list[str]:
+def detect_native_abis(apk: Path) -> list[str]:
+    """ABIs that actually have lib/<abi>/… entries. Empty if none (config/density splits)."""
     abis: set[str] = set()
     with zipfile.ZipFile(apk) as zf:
         for name in zf.namelist():
             m = re.match(r"lib/(arm64-v8a|armeabi-v7a|x86_64|x86)/", name)
             if m:
                 abis.add(m.group(1))
-    if not abis:
-        abis.add("arm64-v8a")
-    # Prefer 64-bit first for download order
     order = ["arm64-v8a", "armeabi-v7a", "x86_64", "x86"]
     return [a for a in order if a in abis]
 
 
+def detect_apis_in_apk(apk: Path) -> list[str]:
+    abis = detect_native_abis(apk)
+    if not abis:
+        abis = ["arm64-v8a"]
+    return abis
+
+
+def looks_like_apks_bundle(path: Path) -> bool:
+    """True for App Manager / SAI .apks (or .xapk) zip of split APKs."""
+    path = Path(path)
+    if not path.is_file():
+        return False
+    suf = path.suffix.lower()
+    if suf in (".apks", ".xapk", ".apkm"):
+        return True
+    # bare zip that contains base.apk + another *.apk
+    if suf != ".zip":
+        return False
+    try:
+        with zipfile.ZipFile(path) as zf:
+            apks = [n for n in zf.namelist() if n.lower().endswith(".apk") and not n.endswith("/")]
+    except Exception:
+        return False
+    return any(Path(n).name.lower() == "base.apk" for n in apks) and len(apks) >= 2
+
+
+def list_bundle_apk_members(bundle: Path) -> list[str]:
+    with zipfile.ZipFile(bundle) as zf:
+        return sorted(
+            n
+            for n in zf.namelist()
+            if n.lower().endswith(".apk") and not n.endswith("/") and not n.startswith("__MACOSX/")
+        )
+
+
 def apk_quick_info(apk: Path) -> dict:
-    """Cheap APK fingerprint for Termux picker (no aapt)."""
+    """Cheap APK / .apks fingerprint for Termux picker (no aapt)."""
     apk = Path(apk)
     info: dict = {
         "path": str(apk),
@@ -139,6 +172,8 @@ def apk_quick_info(apk: Path) -> dict:
         "unity": False,
         "il2cpp": False,
         "hint": "",
+        "splits": 0,
+        "bundle": False,
     }
     try:
         with zipfile.ZipFile(apk) as zf:
@@ -146,25 +181,57 @@ def apk_quick_info(apk: Path) -> dict:
     except Exception as exc:
         info["hint"] = f"bad-apk:{exc}"
         return info
-    lower = [n.lower() for n in names]
-    info["il2cpp"] = any("libil2cpp.so" in n for n in lower)
-    info["unity"] = info["il2cpp"] or any(
-        "libunity.so" in n or "/unity" in n or n.endswith("unitydefaultresources") for n in lower
-    )
-    # Heuristic package hints from asset paths
-    blob = "\n".join(names[:400])
+
+    # Nested .apks / .xapk — scan member APKs for Unity / lilith hints
+    nested = [n for n in names if n.lower().endswith(".apk") and not n.endswith("/")]
+    if looks_like_apks_bundle(apk) or (len(nested) >= 2 and any(Path(n).name.lower() == "base.apk" for n in nested)):
+        info["bundle"] = True
+        info["splits"] = len(nested)
+        blob_bits: list[str] = []
+        try:
+            with zipfile.ZipFile(apk) as outer:
+                for member in nested[:8]:
+                    blob_bits.append(member.lower())
+                    try:
+                        with zipfile.ZipFile(outer.open(member)) as inner:
+                            inner_names = inner.namelist()
+                    except Exception:
+                        continue
+                    lower = [n.lower() for n in inner_names]
+                    if any("libil2cpp.so" in n for n in lower):
+                        info["il2cpp"] = True
+                    if info["il2cpp"] or any(
+                        "libunity.so" in n or "/unity" in n or n.endswith("unitydefaultresources")
+                        for n in lower
+                    ):
+                        info["unity"] = True
+                    blob_bits.extend(lower[:80])
+        except Exception:
+            pass
+        blob = "\n".join(blob_bits)
+    else:
+        lower = [n.lower() for n in names]
+        info["il2cpp"] = any("libil2cpp.so" in n for n in lower)
+        info["unity"] = info["il2cpp"] or any(
+            "libunity.so" in n or "/unity" in n or n.endswith("unitydefaultresources") for n in lower
+        )
+        blob = "\n".join(names[:400])
+
+    name_l = apk.name.lower()
     for needle, label in (
-        ("lilith", "lilith?"),
-        ("hgame", "hgame?"),
-        ("afk", "afk?"),
+        ("lilith", "lilith"),
+        ("hgame", "hgame"),
+        ("afk", "afk-arena"),
     ):
-        if needle in blob.lower():
+        if needle in blob.lower() or needle in name_l:
             info["hint"] = label
             break
     if info["il2cpp"] and not info["hint"]:
         info["hint"] = "unity-il2cpp"
     elif info["unity"] and not info["hint"]:
         info["hint"] = "unity"
+    if info["bundle"] and not info["hint"]:
+        info["hint"] = f"splits:{info['splits']}"
     return info
 
 
@@ -172,6 +239,8 @@ def format_apk_choice(apk: Path) -> str:
     inf = apk_quick_info(apk)
     mb = inf["size"] / (1024 * 1024)
     tags = []
+    if inf.get("bundle"):
+        tags.append(f"APKS×{inf.get('splits') or '?'}")
     if inf["il2cpp"]:
         tags.append("IL2CPP")
     elif inf["unity"]:
@@ -817,10 +886,13 @@ def pm_install(apk: Path) -> dict:
     return report
 
 
-def verify_apk(apk: Path) -> dict:
-    """Quick sanity checks before install (aapt + zip integrity)."""
+def verify_apk(apk: Path, *, require_dex: bool = True) -> dict:
+    """Quick sanity checks before install (aapt + zip integrity).
+
+    Config / ABI splits often have no classes*.dex — pass require_dex=False.
+    """
     report: dict = {"apk": str(apk), "ok": True, "errors": [], "badging": ""}
-    if not apk.is_file() or apk.stat().st_size < 1000:
+    if not apk.is_file() or apk.stat().st_size < 200:
         report["ok"] = False
         report["errors"].append("missing or tiny file")
         return report
@@ -834,9 +906,12 @@ def verify_apk(apk: Path) -> dict:
             if "AndroidManifest.xml" not in names:
                 report["ok"] = False
                 report["errors"].append("no AndroidManifest.xml")
-            if not any(n.startswith("classes") and n.endswith(".dex") for n in names):
+            has_dex = any(n.startswith("classes") and n.endswith(".dex") for n in names)
+            if require_dex and not has_dex:
                 report["ok"] = False
                 report["errors"].append("no classes*.dex")
+            report["has_dex"] = has_dex
+            report["native_abis"] = detect_native_abis(apk)
     except Exception as exc:
         report["ok"] = False
         report["errors"].append(f"zip: {exc}")
@@ -863,16 +938,33 @@ def verify_apk(apk: Path) -> dict:
                     pkg_line = line
                     break
             report["badging"] = pkg_line or ""
-            if not pkg_line:
+            # Config / ABI splits often have no useful badging — only hard-fail for base APKs.
+            if not pkg_line and require_dex:
                 report["ok"] = False
                 report["errors"].append(
                     "aapt badging: no package name — "
                     + out.strip().replace("\n", " ")[:240]
                 )
         except Exception as exc:
-            report["ok"] = False
-            report["errors"].append(f"aapt: {exc}")
+            if require_dex:
+                report["ok"] = False
+                report["errors"].append(f"aapt: {exc}")
     return report
+
+
+def _download_folders(home: Path) -> list[Path]:
+    folders: list[Path] = []
+    for folder in (
+        home / "storage" / "downloads",
+        home / "storage" / "shared" / "Download",
+        Path("/sdcard/Download"),
+        Path("/storage/emulated/0/Download"),
+        Path("/sdcard/AppManager/apks"),
+        Path("/storage/emulated/0/AppManager/apks"),
+    ):
+        if folder.is_dir():
+            folders.append(folder)
+    return folders
 
 
 def inject_apk_zip(
@@ -883,12 +975,15 @@ def inject_apk_zip(
     home: Path,
     work: Path,
     version: str = FRIDA_VERSION,
+    require_dex: bool = True,
+    copy_aliases: bool = True,
+    abis: list[str] | None = None,
 ) -> dict:
     """
     Surgical inject: keep original ZIP entries, only patch/add lib/* + resign.
     """
-    # Preflight: original must be a real installable APK
-    pre = verify_apk(apk)
+    # Preflight: original must be a real installable APK (or a lib split)
+    pre = verify_apk(apk, require_dex=require_dex)
     if not pre["ok"]:
         raise RuntimeError(
             "source APK failed verify — not a valid package:\n  "
@@ -899,7 +994,10 @@ def inject_apk_zip(
 
     root = work / "ziproot"
     unzip_apk(apk, root)
-    abis = detect_apis_in_apk(apk)
+    if abis is None:
+        abis = detect_native_abis(apk)
+        if not abis:
+            abis = detect_apis_in_apk(apk)
     placed = place_gadget_files(root, abis, script, home=home, version=version)
     patched: list[str] = []
     overrides: dict[str, Path] = {}
@@ -917,18 +1015,18 @@ def inject_apk_zip(
             if p.name == target.name or p.name.startswith("libfrida-gadget"):
                 overrides[f"lib/{abi}/{p.name}"] = p
 
-    unsigned = out_apk.with_suffix(".unsigned.apk")
+    unsigned = out_apk.with_name(out_apk.stem + ".unsigned.apk")
     print("[*] surgical rebuild via system zip (preserve APK structure)…", flush=True)
     rebuild_apk_surgical(apk, overrides, unsigned, work=work)
 
-    mid = verify_apk(unsigned)
+    mid = verify_apk(unsigned, require_dex=require_dex)
     if not mid["ok"]:
         raise RuntimeError(
             "unsigned APK broken after inject:\n  " + "\n  ".join(mid["errors"])
         )
 
     signed = sign_apk(unsigned, out_apk, home=home)
-    post = verify_apk(signed)
+    post = verify_apk(signed, require_dex=require_dex)
     print(f"[*] verify signed: ok={post['ok']} {post.get('badging')}", flush=True)
     if not post["ok"]:
         raise RuntimeError(
@@ -936,20 +1034,13 @@ def inject_apk_zip(
             + "\n  ".join(post["errors"])
         )
 
-    # Friendly copies for Files app
-    for dest_name in ("AFK-Arena-frida.apk", f"{apk.stem}-frida.apk"):
-        for folder in (
-            home / "storage" / "downloads",
-            home / "storage" / "shared" / "Download",
-            Path("/sdcard/Download"),
-            Path("/storage/emulated/0/Download"),
-        ):
-            if not folder.is_dir():
-                continue
-            try:
-                shutil.copy2(signed, folder / dest_name)
-            except OSError:
-                pass
+    if copy_aliases:
+        for dest_name in ("AFK-Arena-frida.apk", f"{apk.stem}-frida.apk"):
+            for folder in _download_folders(home):
+                try:
+                    shutil.copy2(signed, folder / dest_name)
+                except OSError:
+                    pass
 
     return {
         "apk": str(apk),
@@ -961,6 +1052,184 @@ def inject_apk_zip(
         "work": str(work),
         "mode": "script+surgical-zip",
         "verify": post,
+    }
+
+
+def resign_split_apk(apk: Path, out_apk: Path, home: Path, work: Path) -> Path:
+    """Strip META-INF + sign (same debug key as Frida-patched splits)."""
+    unsigned = out_apk.with_name(out_apk.stem + ".unsigned.apk")
+    rebuild_apk_surgical(apk, {}, unsigned, work=work)
+    return sign_apk(unsigned, out_apk, home=home)
+
+
+def inject_apks_bundle(
+    bundle: Path,
+    *,
+    out_apks: Path | None = None,
+    script: Path | None = None,
+    home: Path | None = None,
+    work_dir: Path | None = None,
+    version: str = FRIDA_VERSION,
+) -> dict:
+    """
+    App Manager / SAI .apks: patch ABI split(s) that hold native libs, resign ALL
+    splits with the same debug key, repack .apks + leave a SAI folder.
+    """
+    bundle = Path(bundle).expanduser().resolve()
+    if not bundle.is_file():
+        raise FileNotFoundError(bundle)
+    if not looks_like_apks_bundle(bundle) and bundle.suffix.lower() not in (
+        ".apks",
+        ".xapk",
+        ".apkm",
+    ):
+        raise RuntimeError(f"not an .apks bundle: {bundle}")
+
+    home = home or Path.home()
+    script = script or default_script_path()
+    if not script.is_file():
+        raise FileNotFoundError(f"SSL unpin script missing: {script}")
+
+    work_root = home / "unpin_work"
+    work_root.mkdir(parents=True, exist_ok=True)
+    work = work_dir or Path(tempfile.mkdtemp(prefix="frida_apks_", dir=str(work_root)))
+    work.mkdir(parents=True, exist_ok=True)
+
+    extract_dir = work / "bundle_in"
+    if extract_dir.exists():
+        shutil.rmtree(extract_dir)
+    extract_dir.mkdir(parents=True)
+    print(f"[*] unpack .apks → {extract_dir}", flush=True)
+    with zipfile.ZipFile(bundle) as zf:
+        zf.extractall(extract_dir)
+
+    # Collect split APKs (flat or nested)
+    split_apks = sorted(
+        p for p in extract_dir.rglob("*.apk") if p.is_file() and p.suffix.lower() == ".apk"
+    )
+    if not split_apks:
+        raise RuntimeError("no .apk members inside .apks — wrong export?")
+
+    print(f"[*] splits: {len(split_apks)}", flush=True)
+    for p in split_apks:
+        abis = detect_native_abis(p)
+        print(
+            f"    - {p.relative_to(extract_dir)}  "
+            f"abis={abis or '-'}  size={p.stat().st_size}",
+            flush=True,
+        )
+
+    lib_splits = [p for p in split_apks if detect_native_abis(p)]
+    if not lib_splits:
+        raise RuntimeError(
+            "жодного split з lib/<abi>/ — Frida gadget нікуди вшити.\n"
+            "Перевір що в .apks є split_config.arm64_v8a.apk (або fat base)."
+        )
+
+    out_dir = work / "signed_splits"
+    if out_dir.exists():
+        shutil.rmtree(out_dir)
+    out_dir.mkdir(parents=True)
+
+    patched_reports: list[dict] = []
+    signed_paths: list[Path] = []
+
+    for src in split_apks:
+        rel = src.relative_to(extract_dir)
+        # Keep flat names for SAI (base.apk, split_config.*.apk)
+        out_name = src.name
+        dest = out_dir / out_name
+        if dest.exists():
+            # disambiguate rare collisions
+            dest = out_dir / rel.as_posix().replace("/", "__")
+
+        abis = detect_native_abis(src)
+        split_work = work / ("w_" + re.sub(r"[^A-Za-z0-9_.-]+", "_", out_name))
+        split_work.mkdir(parents=True, exist_ok=True)
+
+        if abis:
+            print(f"[*] inject Frida → {out_name} ({', '.join(abis)})", flush=True)
+            # Prefer IL2CPP / Unity targets; require_dex only for base-like splits
+            has_dex = verify_apk(src, require_dex=False).get("has_dex", False)
+            rep = inject_apk_zip(
+                src,
+                out_apk=dest,
+                script=script,
+                home=home,
+                work=split_work,
+                version=version,
+                require_dex=bool(has_dex),
+                copy_aliases=False,
+                abis=abis,
+            )
+            patched_reports.append(rep)
+        else:
+            print(f"[*] resign only → {out_name}", flush=True)
+            resign_split_apk(src, dest, home=home, work=split_work)
+            post = verify_apk(dest, require_dex=False)
+            if not post["ok"] and "no AndroidManifest.xml" in post["errors"]:
+                raise RuntimeError(f"split broken after resign: {out_name}: {post['errors']}")
+        signed_paths.append(dest)
+
+    # Friendly SAI folder + .apks zip in Download/
+    stem = re.sub(r"[^\w.\-]+", "_", bundle.stem).strip("_") or "game"
+    if out_apks is None:
+        downloads = home / "storage" / "downloads"
+        if not downloads.is_dir():
+            alt = home / "storage" / "shared" / "Download"
+            downloads = alt if alt.is_dir() else Path("/sdcard/Download")
+            if not downloads.is_dir():
+                downloads = work_root
+        out_apks = downloads / f"{stem}-frida.apks"
+    out_apks = Path(out_apks).expanduser().resolve()
+    out_apks.parent.mkdir(parents=True, exist_ok=True)
+
+    sai_dir = out_apks.with_name(out_apks.stem + "-splits")
+    if sai_dir.exists():
+        shutil.rmtree(sai_dir)
+    sai_dir.mkdir(parents=True)
+    for p in signed_paths:
+        shutil.copy2(p, sai_dir / p.name)
+
+    if out_apks.exists():
+        out_apks.unlink()
+    with zipfile.ZipFile(out_apks, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+        for p in sorted(sai_dir.glob("*.apk")):
+            zf.write(p, p.name)
+
+    # Aliases
+    for folder in _download_folders(home):
+        try:
+            shutil.copy2(out_apks, folder / "AFK-Arena-frida.apks")
+        except OSError:
+            pass
+        alias_dir = folder / "AFK-Arena-frida-splits"
+        try:
+            if alias_dir.exists():
+                shutil.rmtree(alias_dir)
+            shutil.copytree(sai_dir, alias_dir)
+        except OSError:
+            pass
+
+    loaders = [r.get("loader", "") for r in patched_reports]
+    return {
+        "apk": str(bundle),
+        "out": str(out_apks),
+        "sai_dir": str(sai_dir),
+        "splits": [str(p) for p in signed_paths],
+        "patched": [r.get("apk") for r in patched_reports],
+        "abis": sorted({a for r in patched_reports for a in r.get("abis", [])}),
+        "frida": version,
+        "loader": " | ".join(loaders),
+        "script": str(script),
+        "work": str(work),
+        "mode": "script+apks-bundle",
+        "install": (
+            "Uninstall AFK Arena → install splits via SAI / App Manager:\n"
+            f"  .apks: {out_apks}\n"
+            f"  folder: {sai_dir}\n"
+            "  (termux-open alone often cannot install multi-split)"
+        ),
     }
 
 
@@ -1031,6 +1300,7 @@ def inject_apk(
 ) -> dict:
     """
     Inject Frida Gadget. Prefer zip+patchelf on Termux (no aapt2).
+    Accepts single .apk or App Manager .apks / .xapk split bundles.
     method: auto | zip | apktool
     """
     apk = apk.expanduser().resolve()
@@ -1040,6 +1310,17 @@ def inject_apk(
     script = script or default_script_path()
     if not script.is_file():
         raise FileNotFoundError(f"SSL unpin script missing: {script}")
+
+    if looks_like_apks_bundle(apk) or apk.suffix.lower() in (".apks", ".xapk", ".apkm"):
+        print("[*] detected split bundle (.apks) — patch ABI split + resign all", flush=True)
+        return inject_apks_bundle(
+            apk,
+            out_apks=out_apk,
+            script=script,
+            home=home,
+            work_dir=work_dir,
+            version=version,
+        )
 
     work_root = home / "unpin_work"
     work_root.mkdir(parents=True, exist_ok=True)
@@ -1111,8 +1392,8 @@ def main(argv: list[str] | None = None) -> int:
     import sys
 
     p = argparse.ArgumentParser(description="Inject Frida Gadget + SSL unpin (no root)")
-    p.add_argument("apk", nargs="?", help="Path to APK")
-    p.add_argument("-o", "--out", help="Output APK path")
+    p.add_argument("apk", nargs="?", help="Path to APK or App Manager .apks")
+    p.add_argument("-o", "--out", help="Output APK / .apks path")
     p.add_argument("--script", help="Custom Frida JS (default: frida_ssl_unpin.js)")
     p.add_argument("--version", default=FRIDA_VERSION, help="Frida gadget version")
     p.add_argument(
@@ -1193,18 +1474,18 @@ def main(argv: list[str] | None = None) -> int:
             """
 Frida Gadget без root / без ПК
 ==============================
-0) openjdk уже стоїть — ок
+0) Один раз на Termux:
+     pkg install openjdk-17 patchelf aapt aapt2 zip
 
-0b) Один раз на Termux:
-     pkg install openjdk-17 patchelf aapt aapt2
+1) AFK Arena (3 splits) — App Manager → Share / Save APK → .apks:
+     ~/frida "/sdcard/AppManager/apks/AFK Arena_1.198.01.apks"
 
-1) Дістати APK:
-     ~/frida "/sdcard/Download/777.apk"
+2) Інжект патчить ABI-split (libil2cpp) + resign УСІ splits одним ключем →
+     /sdcard/Download/AFK-Arena-frida.apks
+     /sdcard/Download/AFK-Arena-frida-splits/
 
-2) Інжект (zip+patchelf, без зламаного apktool aapt2):
-     ~/scan update && ~/frida "/sdcard/Download/777.apk"
-
-3) Встанови *-frida.apk (зняти стару гру)
+3) Зняти стару AFK Arena → встановити splits через SAI або App Manager
+   (звичайний installer часто не їсть multi-split)
 
 4) PCAPdroid MITM + Block QUIC → гра 30–60с → Stop
 
@@ -1215,7 +1496,7 @@ Frida Gadget без root / без ПК
   • script-режим: ssl_unpin.js стартує сам (без adb)
   • Java TrustManager + native BoringSSL/curl/mbedtls hooks
 
-Якщо досі SEALED — pin ще глибший / integrity; пиши лог.
+НЕ плутай з 777.apk (Slots777) — це інша гра.
 """.strip()
         )
         return 0 if args.guide or not args.apk else 2
@@ -1229,7 +1510,11 @@ Frida Gadget без root / без ПК
     )
     print(json.dumps(report, indent=2, ensure_ascii=False))
     print()
-    print("NEXT: install", report["out"], "→ PCAPdroid MITM → ~/scan mine")
+    if report.get("mode") == "script+apks-bundle":
+        print(report.get("install") or "")
+        print("NEXT: SAI/App Manager install → PCAPdroid MITM → ~/scan mine")
+    else:
+        print("NEXT: install", report["out"], "→ PCAPdroid MITM → ~/scan mine")
     return 0
 
 

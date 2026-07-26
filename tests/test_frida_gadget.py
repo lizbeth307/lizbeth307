@@ -10,11 +10,15 @@ from pathlib import Path
 from protocol_ast.frida_gadget import (
     _pick_patch_so,
     detect_apis_in_apk,
+    detect_native_abis,
     find_application_class,
     gadget_config_json,
     inject_load_library_smali,
+    looks_like_apks_bundle,
+    list_bundle_apk_members,
     package_name,
     rebuild_apk_surgical,
+    resign_split_apk,
     verify_apk,
     zip_apk_tree,
 )
@@ -201,6 +205,20 @@ class TestManifestAndAbi(unittest.TestCase):
                 zf.writestr("lib/armeabi-v7a/libil2cpp.so", b"\x00")
                 zf.writestr("classes.dex", b"dex")
             self.assertEqual(detect_apis_in_apk(apk), ["arm64-v8a", "armeabi-v7a"])
+            self.assertEqual(detect_native_abis(apk), ["arm64-v8a", "armeabi-v7a"])
+
+    def test_density_split_has_no_native_abis(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            apk = Path(td) / "split_config.xxhdpi.apk"
+            with zipfile.ZipFile(apk, "w") as zf:
+                zf.writestr("AndroidManifest.xml", b"<manifest/>")
+                zf.writestr("res/drawable/icon.png", b"png")
+            self.assertEqual(detect_native_abis(apk), [])
+            # legacy helper still defaults to arm64 for fat/unknown
+            self.assertEqual(detect_apis_in_apk(apk), ["arm64-v8a"])
+            rep = verify_apk(apk, require_dex=False)
+            self.assertTrue(rep["ok"])
+            self.assertFalse(rep.get("has_dex"))
 
     def test_quick_info_il2cpp(self) -> None:
         from protocol_ast.frida_gadget import apk_quick_info, format_apk_choice
@@ -216,6 +234,63 @@ class TestManifestAndAbi(unittest.TestCase):
             label = format_apk_choice(apk)
             self.assertIn("IL2CPP", label)
             self.assertIn("777.apk", label)
+
+    def test_apks_bundle_quick_info(self) -> None:
+        from protocol_ast.frida_gadget import apk_quick_info, format_apk_choice
+
+        with tempfile.TemporaryDirectory() as td:
+            td_path = Path(td)
+            base = td_path / "base.apk"
+            abi = td_path / "split_config.arm64_v8a.apk"
+            with zipfile.ZipFile(base, "w") as zf:
+                zf.writestr("AndroidManifest.xml", b"<manifest package='com.lilithgame.hgame.gp'/>")
+                zf.writestr("classes.dex", b"dex")
+            with zipfile.ZipFile(abi, "w") as zf:
+                zf.writestr("AndroidManifest.xml", b"<manifest/>")
+                zf.writestr("lib/arm64-v8a/libil2cpp.so", b"\x00" * 32)
+            bundle = td_path / "AFK Arena_1.198.01.apks"
+            with zipfile.ZipFile(bundle, "w") as zf:
+                zf.write(base, "base.apk")
+                zf.write(abi, "split_config.arm64_v8a.apk")
+            self.assertTrue(looks_like_apks_bundle(bundle))
+            self.assertEqual(list_bundle_apk_members(bundle), ["base.apk", "split_config.arm64_v8a.apk"])
+            inf = apk_quick_info(bundle)
+            self.assertTrue(inf["bundle"])
+            self.assertEqual(inf["splits"], 2)
+            self.assertTrue(inf["il2cpp"])
+            self.assertIn("afk", inf["hint"])
+            label = format_apk_choice(bundle)
+            self.assertIn("APKS", label)
+            self.assertIn("IL2CPP", label)
+
+    def test_resign_split_strips_metainf(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            td_path = Path(td)
+            home = td_path / "home"
+            home.mkdir()
+            src = td_path / "split_config.xxhdpi.apk"
+            with zipfile.ZipFile(src, "w") as zf:
+                zf.writestr("AndroidManifest.xml", b"<manifest/>")
+                zf.writestr("res/a.png", b"png")
+                zf.writestr("META-INF/CERT.SF", b"sig")
+            out = td_path / "out.apk"
+            # jarsigner path when uber unavailable — still strips via surgical first
+            unsigned = td_path / "u.apk"
+            rebuild_apk_surgical(src, {}, unsigned, work=td_path / "w")
+            with zipfile.ZipFile(unsigned) as zf:
+                self.assertNotIn("META-INF/CERT.SF", zf.namelist())
+                self.assertIn("AndroidManifest.xml", zf.namelist())
+            # resign_split_apk needs java/keytool in CI — skip if missing
+            import shutil
+
+            if not shutil.which("jarsigner") and not shutil.which("java"):
+                self.skipTest("no java/jarsigner")
+            try:
+                resign_split_apk(src, out, home=home, work=td_path / "rw")
+            except Exception as exc:
+                # uber may fail without network jar; jarsigner may still work
+                if not out.is_file():
+                    self.skipTest(f"signing unavailable: {exc}")
 
 
 if __name__ == "__main__":
