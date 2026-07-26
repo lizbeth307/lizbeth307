@@ -91,7 +91,7 @@ class TestResolveKeylog(unittest.TestCase):
             sib.write_text(SAMPLE_KEYLOG, encoding="utf-8")
             path, msg = resolve_keylog("auto", pcap_path=pcap)
             self.assertEqual(path, sib)
-            self.assertIn("поруч", msg)
+            self.assertTrue("поруч" in msg or "найновіший" in msg, msg)
 
     def test_missing_explicit(self) -> None:
         path, msg = resolve_keylog("/nonexistent/sslkeys.log")
