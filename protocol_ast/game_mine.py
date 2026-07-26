@@ -13,47 +13,12 @@ from urllib.parse import parse_qs
 
 PRINTABLE_RE = re.compile(rb"[\x20-\x7e]{4,}")
 
-SECRET_KEYS = {
-    "pass",
-    "password",
-    "app_token",
-    "access_token",
-    "security_token",
-    "access_key_id",
-    "access_key_secret",
-    "sign",
-    "signature",
-    "token",
-    "google_aid",
-    "android_id",
-    "adid",
-    "nonce_str",
-}
-
-
 def _ja3_ish(ch: dict) -> str:
     ciphers = "-".join(ch.get("cipher_suites") or [])
     exts = "-".join(ch.get("extensions") or [])
     alpn = ",".join(ch.get("alpn") or [])
     raw = f"{ch.get('client_version', '')},{ciphers},{exts},{alpn}"
     return hashlib.md5(raw.encode()).hexdigest()
-
-
-def _redact_value(key: str, val: Any) -> Any:
-    if key.lower() not in SECRET_KEYS:
-        return val
-    s = str(val)
-    if len(s) <= 8:
-        return "***"
-    return f"{s[:4]}…{s[-4:]} (len={len(s)})"
-
-
-def _redact_obj(obj: Any) -> Any:
-    if isinstance(obj, dict):
-        return {k: _redact_value(k, _redact_obj(v)) for k, v in obj.items()}
-    if isinstance(obj, list):
-        return [_redact_obj(x) for x in obj]
-    return obj
 
 
 def _strings(blob: bytes, *, limit: int = 80) -> list[str]:
@@ -351,15 +316,15 @@ def glue_http_exchanges(plains: list[bytes]) -> list[dict[str, Any]]:
                 "path": m.get("path"),
                 "host": m.get("host"),
                 "content_type": m.get("content_type"),
-                "request": _redact_obj(_body_as_data(m.get("body") or b"", m.get("content_type") or "")),
+                "request": _body_as_data(m.get("body") or b"", m.get("content_type") or ""),
                 "status": None,
                 "response": None,
             }
             if i + 1 < len(msgs) and msgs[i + 1]["kind"] == "response":
                 resp = msgs[i + 1]
                 ex["status"] = resp.get("status")
-                ex["response"] = _redact_obj(
-                    _body_as_data(resp.get("body") or b"", resp.get("content_type") or "")
+                ex["response"] = _body_as_data(
+                    resp.get("body") or b"", resp.get("content_type") or ""
                 )
                 i += 2
             else:
@@ -374,8 +339,8 @@ def glue_http_exchanges(plains: list[bytes]) -> list[dict[str, Any]]:
                     "content_type": m.get("content_type"),
                     "request": None,
                     "status": m.get("status"),
-                    "response": _redact_obj(
-                        _body_as_data(m.get("body") or b"", m.get("content_type") or "")
+                    "response": _body_as_data(
+                        m.get("body") or b"", m.get("content_type") or ""
                     ),
                     "orphan_response": True,
                 }
@@ -465,7 +430,7 @@ def merge_bidirectional(legs: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def build_sdk_session(sessions: list[dict[str, Any]]) -> dict[str, Any]:
-    """Extract Lilith SDK login/heartbeat exchanges into a clean redacted doc."""
+    """Extract Lilith SDK login/heartbeat exchanges (full secrets kept)."""
     sdk: dict[str, Any] = {
         "endpoints": [],
         "login": None,
@@ -507,25 +472,29 @@ def build_sdk_session(sessions: list[dict[str, Any]]) -> dict[str, Any]:
                 resp = ex.get("response") if isinstance(ex.get("response"), dict) else {}
                 data = resp.get("data") if isinstance(resp, dict) else None
                 if isinstance(data, dict):
-                    sdk["identity"] = _redact_obj(
-                        {
-                            "app_uid": data.get("app_uid") or req.get("player_id") or req.get("app_uid"),
-                            "uid": data.get("uid"),
-                            "gm_openid": data.get("gm_openid"),
-                            "plat_openid": data.get("plat_openid"),
-                            "app_token_expire_at": data.get("app_token_expire_at"),
-                            "bindings": data.get("bindings"),
-                            "identity": data.get("identity"),
-                            "is_reg": data.get("is_reg"),
-                            "game_id": req.get("game_id"),
-                            "app_id": req.get("app_id"),
-                            "app_version": req.get("app_version"),
-                            "channel_id": req.get("channel_id"),
-                            "env_id": req.get("env_id"),
-                            "install_id": req.get("install_id"),
-                            "sdk_version": req.get("sdk_version"),
-                        }
-                    )
+                    sdk["identity"] = {
+                        "app_uid": data.get("app_uid") or req.get("player_id") or req.get("app_uid"),
+                        "uid": data.get("uid"),
+                        "gm_openid": data.get("gm_openid"),
+                        "plat_openid": data.get("plat_openid"),
+                        "app_token": data.get("app_token") or req.get("pass") or req.get("app_token"),
+                        "access_token": data.get("access_token"),
+                        "app_token_expire_at": data.get("app_token_expire_at"),
+                        "bindings": data.get("bindings"),
+                        "lilith_bindings": data.get("lilith_bindings"),
+                        "identity": data.get("identity"),
+                        "is_reg": data.get("is_reg"),
+                        "game_id": req.get("game_id"),
+                        "app_id": req.get("app_id"),
+                        "app_version": req.get("app_version"),
+                        "channel_id": req.get("channel_id"),
+                        "env_id": req.get("env_id"),
+                        "install_id": req.get("install_id"),
+                        "sdk_version": req.get("sdk_version"),
+                        "sdk_session_id": req.get("sdk_session_id"),
+                        "android_id": req.get("android_id"),
+                        "google_aid": req.get("google_aid"),
+                    }
             elif "heart_beat" in path:
                 sdk["heartbeat"] = {
                     "request": ex.get("request"),
@@ -694,7 +663,7 @@ def format_mine_report(report: dict[str, Any]) -> str:
 
     sdk = report.get("sdk_session") or {}
     lines.append("")
-    lines.append("--- SDK SESSION (redacted) ---")
+    lines.append("--- SDK SESSION ---")
     if sdk.get("identity"):
         lines.append(f"  identity: {json.dumps(sdk['identity'], ensure_ascii=False)[:300]}")
     if sdk.get("login"):

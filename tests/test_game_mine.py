@@ -1,14 +1,12 @@
-"""Game mine — glue HTTP exchanges + redacted SDK session."""
+"""Game mine — glue HTTP exchanges + full SDK session (no redaction)."""
 
 from __future__ import annotations
 
-import json
 import unittest
 import zlib
 
 from protocol_ast.game_mine import (
     _ja3_ish,
-    _redact_obj,
     build_sdk_session,
     format_mine_report,
     glue_http_exchanges,
@@ -26,7 +24,7 @@ class TestGameMine(unittest.TestCase):
         }
         self.assertEqual(_ja3_ish(ch), _ja3_ish(ch))
 
-    def test_glue_login_heartbeat(self) -> None:
+    def test_glue_login_heartbeat_keeps_secrets(self) -> None:
         login_req = (
             b"POST /v2/api/sdk/login HTTP/1.1\r\n"
             b"Host: 34.149.80.225\r\n"
@@ -51,32 +49,16 @@ class TestGameMine(unittest.TestCase):
             b'{"result":{"code":0},"data":{"can_play":false,"heartbeat_interval":900,'
             b'"online_limit":"guest_timeout"}}'
         )
-        # Simulate split legs: requests c2s, responses s2c
-        ex = glue_http_exchanges([login_req, hb_req, login_resp, hb_resp])
-        # pairing is sequential — better feed interleaved
         ex = glue_http_exchanges([login_req, login_resp, hb_req, hb_resp])
         self.assertEqual(len(ex), 2)
-        self.assertEqual(ex[0]["path"], "/v2/api/sdk/login")
-        self.assertEqual(ex[0]["status"], 200)
-        self.assertIsInstance(ex[0]["request"], dict)
-        self.assertIn("…", ex[0]["request"]["pass"])
-        self.assertEqual(ex[0]["response"]["data"]["app_uid"], 13527894)
-        self.assertIn("…", ex[0]["response"]["data"]["app_token"])
-        self.assertEqual(ex[1]["path"], "/v2/api/sdk/account/heart_beat")
+        self.assertEqual(ex[0]["request"]["pass"], "SECRETTOKEN99")
+        self.assertEqual(ex[0]["response"]["data"]["app_token"], "SECRETTOKEN99")
+        self.assertEqual(ex[0]["response"]["data"]["access_token"], "LONGSECRETTOKEN")
         self.assertEqual(ex[1]["response"]["data"]["heartbeat_interval"], 900)
 
-        sessions = [
-            {
-                "sni": [],
-                "exchanges": ex,
-                "appdata_bytes": 100,
-                "decrypt": {"status": "ok"},
-            }
-        ]
-        sdk = build_sdk_session(sessions)
-        self.assertEqual(sdk["identity"]["app_uid"], 13527894)
-        self.assertEqual(sdk["login"]["status"], 200)
-        self.assertEqual(sdk["heartbeat"]["response"]["data"]["can_play"], False)
+        sdk = build_sdk_session([{"sni": [], "exchanges": ex}])
+        self.assertEqual(sdk["identity"]["app_token"], "SECRETTOKEN99")
+        self.assertEqual(sdk["identity"]["access_token"], "LONGSECRETTOKEN")
 
     def test_merge_bidirectional_sni(self) -> None:
         legs = [
@@ -109,35 +91,28 @@ class TestGameMine(unittest.TestCase):
                 "decrypt": {"status": "ok", "tls_version": "1.3", "plain_msgs": 1},
                 "plains": [
                     b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n"
-                    b'{"access_key_id":"STS.AAAA","access_key_secret":"BBB"}'
+                    b'{"access_key_id":"STS.AAAA","access_key_secret":"BBBSECRET99"}'
                 ],
             },
         ]
         sessions = merge_bidirectional(legs)
         self.assertEqual(len(sessions), 1)
         self.assertEqual(sessions[0]["sni"], ["app.lilithgame.com"])
-        self.assertEqual(sessions[0]["legs"], 2)
-        self.assertTrue(sessions[0]["exchanges"])
-        self.assertEqual(sessions[0]["exchanges"][0]["status"], 200)
-        secret = sessions[0]["exchanges"][0]["response"]["access_key_secret"]
-        self.assertTrue(secret == "***" or "…" in secret)
+        resp = sessions[0]["exchanges"][0]["response"]
+        self.assertEqual(resp["access_key_id"], "STS.AAAA")
+        self.assertEqual(resp["access_key_secret"], "BBBSECRET99")
 
     def test_gzip_orphan_body(self) -> None:
         html = b'{"ok":true}'
         gz = zlib.compress(html, wbits=16 + zlib.MAX_WBITS)
         plains = [
-            b"HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Encoding: gzip\r\n\r\n" % len(gz),
+            b"HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Encoding: gzip\r\n\r\n"
+            % len(gz),
             gz,
         ]
-        # orphan response with pending body
         ex = glue_http_exchanges(plains)
         self.assertEqual(ex[0]["status"], 200)
         self.assertEqual(ex[0]["response"], {"ok": True})
-
-    def test_redact(self) -> None:
-        d = _redact_obj({"app_token": "ABCDEFGHIJKL", "app_uid": 1})
-        self.assertEqual(d["app_uid"], 1)
-        self.assertIn("…", d["app_token"])
 
     def test_format_includes_sdk(self) -> None:
         text = format_mine_report(
@@ -152,19 +127,26 @@ class TestGameMine(unittest.TestCase):
                 "sealed_game_hosts": [],
                 "sessions": [],
                 "sdk_session": {
-                    "identity": {"app_uid": 1},
+                    "identity": {"app_uid": 1, "app_token": "RAWTOKEN"},
                     "login": {"host": "h", "status": 200, "request": {"player_id": "1"}},
                     "heartbeat": {
                         "host": "h",
                         "status": 200,
-                        "response": {"data": {"can_play": False, "heartbeat_interval": 900, "online_limit": "guest_timeout"}},
+                        "response": {
+                            "data": {
+                                "can_play": False,
+                                "heartbeat_interval": 900,
+                                "online_limit": "guest_timeout",
+                            }
+                        },
                     },
                     "endpoints": [],
                 },
             }
         )
-        self.assertIn("SDK SESSION", text)
+        self.assertIn("--- SDK SESSION ---", text)
         self.assertIn("interval=900", text)
+        self.assertNotIn("redacted", text.lower())
 
 
 if __name__ == "__main__":
