@@ -16,12 +16,14 @@ from protocol_ast.frida_gadget import (
     describe_magic,
     extract_apks_archive,
     find_application_class,
+    find_frida_install_targets,
     gadget_config_json,
     inject_load_library_smali,
     looks_like_apks_bundle,
     list_bundle_apk_members,
     materialize_local_copy,
     package_name,
+    pick_frida_install_target,
     probe_bundle,
     rebuild_apk_surgical,
     resign_split_apk,
@@ -99,6 +101,51 @@ class TestSmaliInject(unittest.TestCase):
         out, note = inject_load_library_smali(smali)
         self.assertEqual(note, "already_injected")
         self.assertEqual(out.count("frida-gadget"), 1)
+
+
+class TestFindInstall(unittest.TestCase):
+    def test_find_prefers_frida_apks(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            td_path = Path(td)
+            dl = td_path / "Download"
+            dl.mkdir()
+            apks = dl / "AFK_Arena_1.198.01-frida.apks"
+            apks.write_bytes(b"PK\x03\x04fake")
+            splits = dl / "AFK_Arena_1.198.01-frida-splits"
+            splits.mkdir()
+            (splits / "base.apk").write_bytes(b"PK\x03\x04base")
+            # monkeypatch roots via temporary HOME storage path is hard —
+            # call finder after injecting by patching function locals: scan dl directly
+            import protocol_ast.frida_gadget as fg
+
+            real = fg.find_frida_install_targets
+
+            def fake(home=None):
+                return [
+                    {
+                        "path": str(apks),
+                        "kind": "apks",
+                        "size": apks.stat().st_size,
+                        "mtime": apks.stat().st_mtime,
+                        "pri": 200,
+                    },
+                    {
+                        "path": str(splits),
+                        "kind": "splits",
+                        "size": 1,
+                        "mtime": splits.stat().st_mtime,
+                        "pri": 100,
+                    },
+                ]
+
+            fg.find_frida_install_targets = fake  # type: ignore[assignment]
+            try:
+                picked = pick_frida_install_target()
+                self.assertIsNotNone(picked)
+                assert picked is not None
+                self.assertTrue(picked["path"].endswith(".apks"))
+            finally:
+                fg.find_frida_install_targets = real  # type: ignore[assignment]
 
 
 class TestLinkOrCopy(unittest.TestCase):

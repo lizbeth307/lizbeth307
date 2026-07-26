@@ -830,6 +830,82 @@ def choose_work_root(home: Path | None = None) -> Path:
     return best
 
 
+def find_frida_install_targets(home: Path | None = None) -> list[dict]:
+    """
+    Locate newest patched AFK Arena outputs for SAI / App Manager install.
+    Prefers *.apks bundles; also lists *-frida-splits/ dirs with base.apk.
+    """
+    home = home or Path.home()
+    roots = [
+        Path("/sdcard/Download"),
+        Path("/storage/emulated/0/Download"),
+        home / "storage" / "downloads",
+        home / "storage" / "shared" / "Download",
+        Path("/sdcard/AppManager/apks"),
+        Path("/storage/emulated/0/AppManager/apks"),
+        Path("/sdcard/unpin_work"),
+        home / "unpin_work",
+    ]
+    seen: set[tuple[int, int, int]] = set()
+    found: list[dict] = []
+
+    def _add(path: Path, kind: str) -> None:
+        try:
+            st = path.stat()
+            key = (st.st_ino, st.st_dev, st.st_size)
+        except OSError:
+            return
+        if key in seen:
+            return
+        seen.add(key)
+        name = path.name.lower()
+        pri = 0
+        if kind == "apks":
+            pri += 100
+        if "frida" in name:
+            pri += 80
+        if "afk" in name or "arena" in name or "lilith" in name or "hgame" in name:
+            pri += 60
+        if name == "afk-arena-frida.apks":
+            pri += 40
+        found.append(
+            {
+                "path": str(path),
+                "kind": kind,
+                "size": st.st_size,
+                "mtime": st.st_mtime,
+                "pri": pri,
+            }
+        )
+
+    for root in roots:
+        if not root.is_dir():
+            continue
+        try:
+            for p in root.rglob("*-frida.apks"):
+                if p.is_file():
+                    _add(p, "apks")
+            for p in root.rglob("AFK-Arena-frida.apks"):
+                if p.is_file():
+                    _add(p, "apks")
+            for p in root.rglob("*-frida-splits"):
+                if p.is_dir() and (p / "base.apk").is_file():
+                    _add(p, "splits")
+            for p in root.rglob("AFK-Arena-frida-splits"):
+                if p.is_dir() and (p / "base.apk").is_file():
+                    _add(p, "splits")
+        except OSError:
+            continue
+
+    found.sort(key=lambda x: (-x["pri"], -x["mtime"], -x["size"]))
+    return found
+
+
+def pick_frida_install_target(home: Path | None = None) -> dict | None:
+    cands = find_frida_install_targets(home)
+    return cands[0] if cands else None
+
+
 def cleanup_stale_work(work_root: Path, keep: Path | None = None) -> None:
     """Remove old frida_apks_* / frida_gadget_* temps to reclaim space."""
     if not work_root.is_dir():
@@ -1915,7 +1991,14 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument(
         "--install",
         metavar="APK",
-        help="pm install -r -t (prints real Android error code)",
+        nargs="?",
+        const="",
+        help="Find patched .apks / open with installer (optional path)",
+    )
+    p.add_argument(
+        "--find-install",
+        action="store_true",
+        help="List newest *-frida.apks / *-frida-splits for install",
     )
     p.add_argument(
         "--resign",
@@ -1924,6 +2007,11 @@ def main(argv: list[str] | None = None) -> int:
     )
     p.add_argument("--guide", action="store_true", help="Print usage guide")
     args = p.parse_args(argv)
+
+    if args.find_install:
+        cands = find_frida_install_targets()
+        print(json.dumps(cands, indent=2, ensure_ascii=False))
+        return 0 if cands else 1
 
     if args.probe:
         rep = probe_bundle(Path(args.probe).expanduser())
@@ -1941,16 +2029,33 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(rep, indent=2, ensure_ascii=False))
         return 0 if rep.get("ok") else 1
 
-    if args.install:
-        rep = pm_install(Path(args.install))
-        print(json.dumps(rep, indent=2, ensure_ascii=False))
-        if not rep.get("ok"):
-            print(
-                "\nЯкщо бачиш INSTALL_FAILED_TEST_ONLY / INVALID_APK — скинь цей JSON.\n"
-                "Також перевір оригінал:  ~/frida install /sdcard/Download/777.apk",
-                flush=True,
-            )
-        return 0 if rep.get("ok") else 1
+    if args.install is not None:
+        target_path = (args.install or "").strip()
+        if target_path:
+            target = {"path": str(Path(target_path).expanduser()), "kind": "apks"}
+        else:
+            picked = pick_frida_install_target()
+            if not picked:
+                print(
+                    "Немає *-frida.apks / *-frida-splits.\n"
+                    "Спочатку: ~/frida \"/sdcard/AppManager/apks/AFK Arena_1.198.01.apks\"",
+                    file=sys.stderr,
+                )
+                return 1
+            target = picked
+            print(f"[*] auto: {target['path']} ({target['kind']})", flush=True)
+        # For single .apk try pm; for .apks just report path for shell termux-open
+        pth = Path(target["path"])
+        if pth.is_file() and pth.suffix.lower() == ".apk":
+            rep = pm_install(pth)
+            print(json.dumps(rep, indent=2, ensure_ascii=False))
+            return 0 if rep.get("ok") else 1
+        print(json.dumps(target, indent=2, ensure_ascii=False))
+        print(
+            "\nOPEN_THIS_FILE=" + target["path"],
+            flush=True,
+        )
+        return 0
 
     if args.resign:
         src = Path(args.resign).expanduser().resolve()
@@ -2000,8 +2105,9 @@ Frida Gadget без root / без ПК
      /sdcard/Download/AFK-Arena-frida.apks
      /sdcard/Download/AFK-Arena-frida-splits/
 
-3) Зняти стару AFK Arena → встановити splits через SAI або App Manager
-   (звичайний installer часто не їсть multi-split)
+3) Зняти стару AFK Arena, потім авто-знайти й відкрити установщик:
+     ~/frida install
+   (шукає newest *-frida.apks у Download; обери App Manager / SAI)
 
 4) PCAPdroid MITM + Block QUIC → гра 30–60с → Stop
 

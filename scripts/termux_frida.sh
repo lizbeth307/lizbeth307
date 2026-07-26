@@ -344,6 +344,102 @@ EOF
   echo "${apks[$((n - 1))]}"
 }
 
+open_frida_install() {
+  local hint="${1:-}"
+  local target=""
+
+  if [[ -n "$hint" && -e "$hint" ]]; then
+    target="$hint"
+  else
+    target="$(
+      python3 - <<'PY'
+from protocol_ast.frida_gadget import find_frida_install_targets
+cands = find_frida_install_targets()
+# prefer .apks file over splits directory
+for c in cands:
+    if c.get("kind") == "apks":
+        print(c["path"])
+        raise SystemExit(0)
+if cands:
+    print(cands[0]["path"])
+PY
+    )"
+  fi
+
+  if [[ -z "$target" ]]; then
+    # shell fallback glob (newest by ls -t)
+    local cand
+    cand="$(ls -t /sdcard/Download/*-frida.apks /storage/emulated/0/Download/*-frida.apks 2>/dev/null | head -n1 || true)"
+    if [[ -n "$cand" && -f "$cand" ]]; then
+      target="$cand"
+    fi
+  fi
+
+  if [[ -z "$target" || ! -e "$target" ]]; then
+    cat <<EOF >&2
+[!] Не знайдено патчений AFK Arena.
+
+Спочатку:
+  ~/frida "/sdcard/AppManager/apks/AFK Arena_1.198.01.apks"
+
+Потім:
+  ~/frida install
+EOF
+    return 1
+  fi
+
+  echo "[*] знайдено: $target" >&2
+  echo >&2
+  echo "⚠  Спочатку ЗНІМИ звичайну AFK Arena," >&2
+  echo "   інакше підпис не збіжиться." >&2
+  echo >&2
+  echo "Відкриваю установщик — обери App Manager або SAI." >&2
+  echo >&2
+
+  if [[ -d "$target" ]]; then
+    echo "[*] це папка splits: $target" >&2
+    echo "    SAI/App Manager → Install from folder / вибери всі .apk" >&2
+    # Open folder in system Files if possible
+    if command -v termux-open >/dev/null 2>&1; then
+      termux-open "$target" && return 0
+    fi
+    return 0
+  fi
+
+  if command -v termux-open >/dev/null 2>&1; then
+    echo "[*] termux-open \"$target\"" >&2
+    termux-open "$target" && return 0
+  fi
+
+  local uri="file://${target}"
+  for starter in am /system/bin/am; do
+    if [[ -x "$starter" ]] || command -v "$starter" >/dev/null 2>&1; then
+      echo "[*] $starter start VIEW" >&2
+      if "$starter" start -a android.intent.action.VIEW -d "$uri" \
+        -t "application/octet-stream" >/dev/null 2>&1; then
+        return 0
+      fi
+      if "$starter" start -a android.intent.action.VIEW -d "$uri" \
+        -n io.github.muntashirakon.AppManager/.apk.installer.PackageInstallerActivity \
+        >/dev/null 2>&1; then
+        return 0
+      fi
+    fi
+  done
+
+  cat <<EOF >&2
+Не вдалось авто-відкрити. Вручну:
+
+  Files → Download → $(basename "$target")
+  → відкрити через App Manager / SAI
+
+Або:
+  pkg install termux-api
+  termux-open "$target"
+EOF
+  return 1
+}
+
 main() {
   banner
   local cmd="${1:-}"
@@ -371,36 +467,14 @@ main() {
       python3 -m protocol_ast.frida_gadget --sign-only "$u"
       exit $?
       ;;
-    install)
-      need_tools
-      local apk="${2:-/sdcard/Download/AFK-Arena-frida.apk}"
-      if [[ ! -f "$apk" ]]; then
-        apk="${2:-/sdcard/Download/777-frida.apk}"
-      fi
-      echo "[*] verify + pm install attempt:" >&2
-      python3 -m protocol_ast.frida_gadget --install "$apk"
-      echo >&2
-      echo "Якщо Failed transaction — це норма для Termux без root." >&2
-      echo "Став через UI:" >&2
-      echo "  termux-open \"$apk\"" >&2
+    install|open)
+      # Auto-find newest *-frida.apks / splits and hand to system installer
+      open_frida_install "${2:-}"
       exit $?
       ;;
-    open)
-      local apk="${2:-/sdcard/Download/777.apk}"
-      if [[ ! -f "$apk" ]]; then
-        echo "немає файлу: $apk" >&2
-        exit 1
-      fi
-      echo "[*] verify:" >&2
-      python3 -m protocol_ast.frida_gadget --verify "$apk" || true
-      echo "[*] termux-open $apk" >&2
-      if command -v termux-open >/dev/null 2>&1; then
-        termux-open "$apk"
-      else
-        echo "немає termux-open — pkg install termux-api, або відкрий файл у Files" >&2
-        exit 1
-      fi
-      exit 0
+    find|find-install|where)
+      python3 -m protocol_ast.frida_gadget --find-install
+      exit $?
       ;;
     resign)
       need_tools
@@ -462,12 +536,8 @@ main() {
   echo "════════════════════════════════════════"
   echo "Далі:"
   echo "  1) Uninstall стару AFK Arena (com.lilithgame.hgame.gp)"
-  if [[ "$apk" == *.apks || "$apk" == *.xapk || "$apk" == *.apkm ]]; then
-    echo "  2) SAI / App Manager → встановити AFK-Arena-frida.apks"
-    echo "     або папку AFK-Arena-frida-splits/"
-  else
-    echo "  2) Встановити *-frida.apk (termux-open …)"
-  fi
+  echo "  2) ~/frida install          # сам знайде .apks і відкриє установщик"
+  echo "     ~/frida find             # лише показати шлях"
   echo "  3) PCAPdroid MITM + Block QUIC → гра → Stop"
   echo "  4) ~/scan mine"
   echo "════════════════════════════════════════"
