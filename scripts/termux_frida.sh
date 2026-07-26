@@ -338,6 +338,24 @@ main() {
       echo "Далі:  ~/frida" >&2
       exit 0
       ;;
+    sign)
+      need_tools
+      local u="${2:-}"
+      if [[ -z "$u" ]]; then
+        for cand in \
+          "/sdcard/Download/777-frida.unsigned.apk" \
+          "$HOME_DIR/storage/downloads/777-frida.unsigned.apk" \
+          "$HOME_DIR/storage/shared/Download/777-frida.unsigned.apk"; do
+          [[ -f "$cand" ]] && u="$cand" && break
+        done
+      fi
+      if [[ -z "$u" || ! -f "$u" ]]; then
+        echo "Usage: ~/frida sign /path/to/xxx-frida.unsigned.apk" >&2
+        exit 1
+      fi
+      python3 -m protocol_ast.frida_gadget --sign-only "$u"
+      exit $?
+      ;;
   esac
 
   need_tools
