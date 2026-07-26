@@ -49,17 +49,22 @@ class TestGameMine(unittest.TestCase):
             b'{"result":{"code":0},"data":{"can_play":false,"heartbeat_interval":900,'
             b'"online_limit":"guest_timeout"}}'
         )
-        ex = glue_http_exchanges([login_req, login_resp, hb_req, hb_resp])
+        # Pipelined: both requests, then both responses (real PCAPdroid order)
+        ex = glue_http_exchanges([login_req, hb_req, login_resp, hb_resp])
         self.assertEqual(len(ex), 2)
+        self.assertEqual(ex[0]["path"], "/v2/api/sdk/login")
+        self.assertEqual(ex[0]["status"], 200)
         self.assertEqual(ex[0]["request"]["pass"], "SECRETTOKEN99")
         self.assertEqual(ex[0]["response"]["data"]["app_token"], "SECRETTOKEN99")
         self.assertEqual(ex[0]["response"]["data"]["access_token"], "LONGSECRETTOKEN")
+        self.assertEqual(ex[1]["path"], "/v2/api/sdk/account/heart_beat")
         self.assertEqual(ex[1]["response"]["data"]["heartbeat_interval"], 900)
 
         sdk = build_sdk_session([{"sni": [], "exchanges": ex}])
         self.assertEqual(sdk["identity"]["app_token"], "SECRETTOKEN99")
         self.assertEqual(sdk["identity"]["access_token"], "LONGSECRETTOKEN")
-
+        self.assertEqual(sdk["login"]["status"], 200)
+        self.assertEqual(sdk["heartbeat"]["response"]["data"]["can_play"], False)
     def test_merge_bidirectional_sni(self) -> None:
         legs = [
             {

@@ -304,9 +304,54 @@ def _body_as_data(body: bytes, content_type: str = "") -> Any:
 
 
 def glue_http_exchanges(plains: list[bytes]) -> list[dict[str, Any]]:
-    """Pair HTTP/1 requests with the next response."""
+    """
+    Pair HTTP/1 requests with responses.
+
+    Supports pipelining (login+heartbeat requests, then both 200s) by matching
+    the i-th request to the i-th response, not only immediate neighbors.
+    """
     msgs = _parse_http_messages(plains)
+    reqs = [m for m in msgs if m.get("kind") == "request"]
+    resps = [m for m in msgs if m.get("kind") == "response"]
+
+    # Also try sequential neighbor pairing when counts mismatch badly
     exchanges: list[dict[str, Any]] = []
+    if reqs and resps and len(resps) >= len(reqs):
+        for i, req in enumerate(reqs):
+            resp = resps[i]
+            exchanges.append(
+                {
+                    "method": req.get("method"),
+                    "path": req.get("path"),
+                    "host": req.get("host"),
+                    "content_type": req.get("content_type"),
+                    "request": _body_as_data(
+                        req.get("body") or b"", req.get("content_type") or ""
+                    ),
+                    "status": resp.get("status"),
+                    "response": _body_as_data(
+                        resp.get("body") or b"", resp.get("content_type") or ""
+                    ),
+                }
+            )
+        for resp in resps[len(reqs) :]:
+            exchanges.append(
+                {
+                    "method": None,
+                    "path": None,
+                    "host": resp.get("host"),
+                    "content_type": resp.get("content_type"),
+                    "request": None,
+                    "status": resp.get("status"),
+                    "response": _body_as_data(
+                        resp.get("body") or b"", resp.get("content_type") or ""
+                    ),
+                    "orphan_response": True,
+                }
+            )
+        return exchanges
+
+    # Fallback: walk in order (non-pipelined)
     i = 0
     while i < len(msgs):
         m = msgs[i]
@@ -350,6 +395,25 @@ def glue_http_exchanges(plains: list[bytes]) -> list[dict[str, Any]]:
             i += 1
     return exchanges
 
+
+def _looks_like_login_response(obj: Any) -> bool:
+    if not isinstance(obj, dict):
+        return False
+    data = obj.get("data") if isinstance(obj.get("data"), dict) else obj
+    if not isinstance(data, dict):
+        return False
+    return "app_uid" in data and ("app_token" in data or "access_token" in data)
+
+
+def _looks_like_heartbeat_response(obj: Any) -> bool:
+    if not isinstance(obj, dict):
+        return False
+    data = obj.get("data") if isinstance(obj.get("data"), dict) else obj
+    if not isinstance(data, dict):
+        return False
+    return "heartbeat_interval" in data or "online_limit" in data or (
+        "svr_time" in data and "can_play" in data
+    )
 
 def merge_bidirectional(legs: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Glue TCP legs that share a port pair (client↔server)."""
@@ -438,11 +502,21 @@ def build_sdk_session(sessions: list[dict[str, Any]]) -> dict[str, Any]:
         "sls_token": None,
         "identity": {},
     }
+    orphan_login_resp = None
+    orphan_hb_resp = None
+
     for sess in sessions:
         sni = ",".join(sess.get("sni") or []) or "(ip)"
         for ex in sess.get("exchanges") or []:
             path = ex.get("path") or ""
             host = ex.get("host") or sni
+            resp = ex.get("response")
+            if ex.get("orphan_response") or not path:
+                if orphan_login_resp is None and _looks_like_login_response(resp):
+                    orphan_login_resp = {"status": ex.get("status"), "response": resp, "host": host}
+                if orphan_hb_resp is None and _looks_like_heartbeat_response(resp):
+                    orphan_hb_resp = {"status": ex.get("status"), "response": resp, "host": host}
+
             entry = {
                 "host": host,
                 "sni": sess.get("sni"),
@@ -465,50 +539,93 @@ def build_sdk_session(sessions: list[dict[str, Any]]) -> dict[str, Any]:
                 sdk["login"] = {
                     "request": ex.get("request"),
                     "status": ex.get("status"),
-                    "response": ex.get("response"),
+                    "response": resp,
                     "host": host,
                 }
-                req = ex.get("request") if isinstance(ex.get("request"), dict) else {}
-                resp = ex.get("response") if isinstance(ex.get("response"), dict) else {}
-                data = resp.get("data") if isinstance(resp, dict) else None
-                if isinstance(data, dict):
-                    sdk["identity"] = {
-                        "app_uid": data.get("app_uid") or req.get("player_id") or req.get("app_uid"),
-                        "uid": data.get("uid"),
-                        "gm_openid": data.get("gm_openid"),
-                        "plat_openid": data.get("plat_openid"),
-                        "app_token": data.get("app_token") or req.get("pass") or req.get("app_token"),
-                        "access_token": data.get("access_token"),
-                        "app_token_expire_at": data.get("app_token_expire_at"),
-                        "bindings": data.get("bindings"),
-                        "lilith_bindings": data.get("lilith_bindings"),
-                        "identity": data.get("identity"),
-                        "is_reg": data.get("is_reg"),
-                        "game_id": req.get("game_id"),
-                        "app_id": req.get("app_id"),
-                        "app_version": req.get("app_version"),
-                        "channel_id": req.get("channel_id"),
-                        "env_id": req.get("env_id"),
-                        "install_id": req.get("install_id"),
-                        "sdk_version": req.get("sdk_version"),
-                        "sdk_session_id": req.get("sdk_session_id"),
-                        "android_id": req.get("android_id"),
-                        "google_aid": req.get("google_aid"),
-                    }
             elif "heart_beat" in path:
                 sdk["heartbeat"] = {
                     "request": ex.get("request"),
                     "status": ex.get("status"),
-                    "response": ex.get("response"),
+                    "response": resp,
                     "host": host,
                 }
             elif "sls/token" in path:
                 sdk["sls_token"] = {
                     "request": ex.get("request"),
                     "status": ex.get("status"),
-                    "response": ex.get("response"),
+                    "response": resp,
                     "host": host,
                 }
+
+    # Attach pipelined/orphan responses that failed neighbor pairing
+    if sdk.get("login") and not sdk["login"].get("response") and orphan_login_resp:
+        sdk["login"]["response"] = orphan_login_resp.get("response")
+        sdk["login"]["status"] = orphan_login_resp.get("status") or sdk["login"].get("status")
+    if sdk.get("heartbeat") and not sdk["heartbeat"].get("response") and orphan_hb_resp:
+        sdk["heartbeat"]["response"] = orphan_hb_resp.get("response")
+        sdk["heartbeat"]["status"] = orphan_hb_resp.get("status") or sdk["heartbeat"].get("status")
+
+    # If login response was wrongly glued onto heartbeat, swap by shape
+    lg = sdk.get("login") or {}
+    hb = sdk.get("heartbeat") or {}
+    if lg.get("request") and _looks_like_heartbeat_response(lg.get("response")) and _looks_like_login_response(
+        hb.get("response")
+    ):
+        lg["response"], hb["response"] = hb.get("response"), lg.get("response")
+        lg["status"], hb["status"] = hb.get("status"), lg.get("status")
+    if lg.get("request") and not lg.get("response") and _looks_like_login_response(hb.get("response")):
+        # heartbeat carried login body; look for true hb in orphans
+        lg["response"] = hb.get("response")
+        lg["status"] = hb.get("status")
+        if orphan_hb_resp:
+            hb["response"] = orphan_hb_resp.get("response")
+            hb["status"] = orphan_hb_resp.get("status")
+        elif _looks_like_login_response(hb.get("response")):
+            hb["response"] = None
+
+    req = lg.get("request") if isinstance(lg.get("request"), dict) else {}
+    resp = lg.get("response") if isinstance(lg.get("response"), dict) else {}
+    data = resp.get("data") if isinstance(resp, dict) else None
+    if isinstance(data, dict):
+        sdk["identity"] = {
+            "app_uid": data.get("app_uid") or req.get("player_id") or req.get("app_uid"),
+            "uid": data.get("uid"),
+            "gm_openid": data.get("gm_openid"),
+            "plat_openid": data.get("plat_openid"),
+            "app_token": data.get("app_token") or req.get("pass") or req.get("app_token"),
+            "access_token": data.get("access_token"),
+            "app_token_expire_at": data.get("app_token_expire_at"),
+            "bindings": data.get("bindings"),
+            "lilith_bindings": data.get("lilith_bindings"),
+            "identity": data.get("identity"),
+            "is_reg": data.get("is_reg"),
+            "ip": data.get("ip"),
+            "game_id": req.get("game_id"),
+            "app_id": req.get("app_id"),
+            "app_version": req.get("app_version"),
+            "channel_id": req.get("channel_id"),
+            "env_id": req.get("env_id"),
+            "install_id": req.get("install_id"),
+            "sdk_version": req.get("sdk_version"),
+            "sdk_session_id": req.get("sdk_session_id"),
+            "android_id": req.get("android_id"),
+            "google_aid": req.get("google_aid"),
+        }
+    elif req:
+        sdk["identity"] = {
+            "app_uid": req.get("player_id") or req.get("app_uid"),
+            "app_token": req.get("pass") or req.get("app_token"),
+            "game_id": req.get("game_id"),
+            "app_id": req.get("app_id"),
+            "app_version": req.get("app_version"),
+            "channel_id": req.get("channel_id"),
+            "env_id": req.get("env_id"),
+            "install_id": req.get("install_id"),
+            "sdk_version": req.get("sdk_version"),
+            "sdk_session_id": req.get("sdk_session_id"),
+            "android_id": req.get("android_id"),
+            "google_aid": req.get("google_aid"),
+        }
     return sdk
 
 
