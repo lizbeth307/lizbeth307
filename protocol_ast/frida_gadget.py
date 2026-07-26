@@ -476,7 +476,9 @@ def inject_apk(
     if not script.is_file():
         raise FileNotFoundError(f"SSL unpin script missing: {script}")
 
-    work = work_dir or Path(tempfile.mkdtemp(prefix="frida_gadget_", dir=str(home / "unpin_work")))
+    work_root = home / "unpin_work"
+    work_root.mkdir(parents=True, exist_ok=True)
+    work = work_dir or Path(tempfile.mkdtemp(prefix="frida_gadget_", dir=str(work_root)))
     work.mkdir(parents=True, exist_ok=True)
     decoded = work / "decoded"
     if decoded.exists():
