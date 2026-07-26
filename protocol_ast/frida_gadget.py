@@ -736,22 +736,121 @@ def ensure_debug_keystore(home: Path | None = None) -> Path:
     return ks
 
 
+def _same_device(a: Path, b: Path) -> bool:
+    try:
+        return os.stat(a).st_dev == os.stat(b if b.exists() else b.parent).st_dev
+    except OSError:
+        try:
+            return os.stat(a).st_dev == os.stat(b.parent).st_dev
+        except OSError:
+            return False
+
+
+def _link_or_copy(src: Path, dest: Path) -> None:
+    """Hardlink when possible (0 extra space), else copy."""
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    if dest.exists():
+        dest.unlink()
+    try:
+        os.link(src, dest)
+        return
+    except OSError:
+        pass
+    shutil.copy2(src, dest)
+
+
+def _move_file(src: Path, dest: Path) -> None:
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    if dest.exists():
+        dest.unlink()
+    shutil.move(str(src), str(dest))
+
+
+def disk_free_bytes(path: Path) -> int:
+    try:
+        return int(shutil.disk_usage(path).free)
+    except OSError:
+        return 0
+
+
+def choose_work_root(home: Path | None = None) -> Path:
+    """Prefer /sdcard — Termux home is often tiny on Android."""
+    home = home or Path.home()
+    candidates = [
+        Path("/sdcard/unpin_work"),
+        Path("/storage/emulated/0/unpin_work"),
+        home / "storage" / "shared" / "unpin_work",
+        home / "unpin_work",
+    ]
+    scored: list[tuple[int, Path]] = []
+    for c in candidates:
+        try:
+            c.mkdir(parents=True, exist_ok=True)
+            probe = c / ".write_probe"
+            probe.write_bytes(b"ok")
+            probe.unlink()
+        except OSError:
+            continue
+        scored.append((disk_free_bytes(c), c))
+    if not scored:
+        d = home / "unpin_work"
+        d.mkdir(parents=True, exist_ok=True)
+        return d
+    scored.sort(key=lambda x: -x[0])
+    best_free, best = scored[0]
+    print(
+        f"[*] work root: {best}  (free≈{best_free / (1024**3):.2f} GiB)",
+        flush=True,
+    )
+    return best
+
+
+def cleanup_stale_work(work_root: Path, keep: Path | None = None) -> None:
+    """Remove old frida_apks_* / frida_gadget_* temps to reclaim space."""
+    if not work_root.is_dir():
+        return
+    for p in work_root.iterdir():
+        if keep and p.resolve() == keep.resolve():
+            continue
+        name = p.name
+        if not (
+            name.startswith("frida_apks_")
+            or name.startswith("frida_gadget_")
+            or name.startswith("local_src")
+            or name == "sign_out"
+        ):
+            continue
+        try:
+            if p.is_dir():
+                shutil.rmtree(p, ignore_errors=True)
+            else:
+                p.unlink(missing_ok=True)
+            print(f"[*] cleaned stale: {p}", flush=True)
+        except OSError:
+            pass
+
+
 def sign_apk_uber(
     unsigned: Path,
     out_apk: Path,
     home: Path | None = None,
     *,
     skip_zipalign: bool = False,
+    consume_unsigned: bool = False,
+    sign_dir: Path | None = None,
 ) -> Path:
     signer = ensure_uber_signer(home)
     # Sign into a private work dir so uber does not scan all of Download/
     home = home or Path.home()
-    sign_dir = tools_dir(home) / "sign_out"
+    sign_dir = Path(sign_dir) if sign_dir else (tools_dir(home) / "sign_out")
     if sign_dir.exists():
         shutil.rmtree(sign_dir)
     sign_dir.mkdir(parents=True, exist_ok=True)
     local_unsigned = sign_dir / unsigned.name
-    shutil.copy2(unsigned, local_unsigned)
+    if consume_unsigned:
+        _move_file(unsigned, local_unsigned)
+    else:
+        _link_or_copy(unsigned, local_unsigned)
 
     # uber-apk-signer: -o and --overwrite are mutually exclusive — use -o only.
     cmd = [
@@ -784,15 +883,27 @@ def sign_apk_uber(
         raise RuntimeError("uber-apk-signer produced no APK")
     signed = candidates[-1]
     out_apk.parent.mkdir(parents=True, exist_ok=True)
-    out_apk.write_bytes(signed.read_bytes())
+    # move (not read_bytes) — critical for 600MB+ asset splits
+    _move_file(signed, out_apk)
+    # drop leftovers (unsigned / aligned intermediates)
+    shutil.rmtree(sign_dir, ignore_errors=True)
     return out_apk
 
 
-def sign_apk_jarsigner(unsigned: Path, out_apk: Path, home: Path | None = None) -> Path:
+def sign_apk_jarsigner(
+    unsigned: Path,
+    out_apk: Path,
+    home: Path | None = None,
+    *,
+    consume_unsigned: bool = False,
+) -> Path:
     """Last-resort v1 signature (openjdk keytool/jarsigner)."""
     ks = ensure_debug_keystore(home)
     out_apk.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(unsigned, out_apk)
+    if consume_unsigned:
+        _move_file(unsigned, out_apk)
+    else:
+        _link_or_copy(unsigned, out_apk)
     subprocess.run(
         [
             "jarsigner",
@@ -814,7 +925,14 @@ def sign_apk_jarsigner(unsigned: Path, out_apk: Path, home: Path | None = None) 
     return out_apk
 
 
-def sign_apk(unsigned: Path, out_apk: Path, home: Path | None = None) -> Path:
+def sign_apk(
+    unsigned: Path,
+    out_apk: Path,
+    home: Path | None = None,
+    *,
+    consume_unsigned: bool = False,
+    sign_dir: Path | None = None,
+) -> Path:
     """Sign APK with uber (v2/v3). Prefer zipalign; fall back to skip / jarsigner."""
     errors: list[str] = []
     attempts: list[bool] = []
@@ -823,13 +941,29 @@ def sign_apk(unsigned: Path, out_apk: Path, home: Path | None = None) -> Path:
     attempts.append(True)  # skipZipAlign
     for skip in attempts:
         try:
-            return sign_apk_uber(unsigned, out_apk, home=home, skip_zipalign=skip)
+            # Never consume inside uber retries — hardlink/copy into sign_dir instead.
+            out = sign_apk_uber(
+                unsigned,
+                out_apk,
+                home=home,
+                skip_zipalign=skip,
+                consume_unsigned=False,
+                sign_dir=sign_dir,
+            )
+            if consume_unsigned and unsigned.exists():
+                unsigned.unlink(missing_ok=True)
+            return out
         except Exception as exc:
             errors.append(f"uber(skipZipAlign={skip}): {exc}")
             print(f"[!] uber-apk-signer failed: {exc}", flush=True)
     try:
         print("[*] falling back to jarsigner (v1 only — may fail install on Android 11+)", flush=True)
-        return sign_apk_jarsigner(unsigned, out_apk, home=home)
+        out = sign_apk_jarsigner(
+            unsigned, out_apk, home=home, consume_unsigned=consume_unsigned
+        )
+        if consume_unsigned and unsigned.exists():
+            unsigned.unlink(missing_ok=True)
+        return out
     except Exception as exc:
         errors.append(f"jarsigner: {exc}")
         raise RuntimeError("signing failed: " + " | ".join(errors)) from exc
@@ -908,6 +1042,8 @@ def rebuild_apk_surgical(
     lib_overrides: dict[str, Path],
     out_apk: Path,
     work: Path | None = None,
+    *,
+    consume_orig: bool = False,
 ) -> None:
     """
     Prefer system `zip` update (keeps original APK structure).
@@ -915,9 +1051,14 @@ def rebuild_apk_surgical(
     """
     overrides = {k.replace("\\", "/"): v for k, v in lib_overrides.items()}
     if shutil.which("zip"):
-        _rebuild_apk_system_zip(orig_apk, overrides, out_apk, work)
+        _rebuild_apk_system_zip(
+            orig_apk, overrides, out_apk, work, consume_orig=consume_orig
+        )
         return
+    # Python fallback: always write a fresh out_apk, then drop orig if consumed.
     _rebuild_apk_python(orig_apk, overrides, out_apk)
+    if consume_orig and orig_apk.exists() and orig_apk.resolve() != out_apk.resolve():
+        orig_apk.unlink(missing_ok=True)
 
 
 def _rebuild_apk_system_zip(
@@ -925,14 +1066,24 @@ def _rebuild_apk_system_zip(
     overrides: dict[str, Path],
     out_apk: Path,
     work: Path | None = None,
+    *,
+    consume_orig: bool = False,
 ) -> None:
-    """cp original → zip -d META-INF → zip -0 -u lib overrides."""
+    """link/move original → zip -d META-INF → zip -0 lib overrides."""
     work = work or out_apk.parent
     stage = work / "zip_stage"
     if stage.exists():
         shutil.rmtree(stage)
     stage.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(orig_apk, out_apk)
+    if orig_apk.resolve() == out_apk.resolve():
+        pass
+    elif consume_orig:
+        _move_file(orig_apk, out_apk)
+    else:
+        # Must copy — `zip -d` mutates in place (hardlink would corrupt source).
+        if out_apk.exists():
+            out_apk.unlink()
+        shutil.copy2(orig_apk, out_apk)
     # Remove old signatures (ignore if absent)
     subprocess.run(
         ["zip", "-d", str(out_apk), "META-INF/*"],
@@ -1171,7 +1322,7 @@ def inject_apk_zip(
             if p.name == target.name or p.name.startswith("libfrida-gadget"):
                 overrides[f"lib/{abi}/{p.name}"] = p
 
-    unsigned = out_apk.with_name(out_apk.stem + ".unsigned.apk")
+    unsigned = work / (out_apk.stem + ".unsigned.apk")
     print("[*] surgical rebuild via system zip (preserve APK structure)…", flush=True)
     rebuild_apk_surgical(apk, overrides, unsigned, work=work)
 
@@ -1181,7 +1332,13 @@ def inject_apk_zip(
             "unsigned APK broken after inject:\n  " + "\n  ".join(mid["errors"])
         )
 
-    signed = sign_apk(unsigned, out_apk, home=home)
+    signed = sign_apk(
+        unsigned,
+        out_apk,
+        home=home,
+        consume_unsigned=True,
+        sign_dir=work / "sign_out",
+    )
     post = verify_apk(signed, require_dex=require_dex)
     print(f"[*] verify signed: ok={post['ok']} {post.get('badging')}", flush=True)
     if not post["ok"]:
@@ -1211,11 +1368,33 @@ def inject_apk_zip(
     }
 
 
-def resign_split_apk(apk: Path, out_apk: Path, home: Path, work: Path) -> Path:
+def resign_split_apk(
+    apk: Path,
+    out_apk: Path,
+    home: Path,
+    work: Path,
+    *,
+    consume_src: bool = False,
+    sign_dir: Path | None = None,
+) -> Path:
     """Strip META-INF + sign (same debug key as Frida-patched splits)."""
-    unsigned = out_apk.with_name(out_apk.stem + ".unsigned.apk")
-    rebuild_apk_surgical(apk, {}, unsigned, work=work)
-    return sign_apk(unsigned, out_apk, home=home)
+    unsigned = work / (out_apk.stem + ".unsigned.apk")
+    if unsigned.exists():
+        unsigned.unlink()
+    rebuild_apk_surgical(
+        apk, {}, unsigned, work=work, consume_orig=consume_src
+    )
+    # source already moved/copied away — free original if still present
+    if consume_src and apk.exists() and apk.resolve() != unsigned.resolve():
+        apk.unlink(missing_ok=True)
+    signed = sign_apk(
+        unsigned,
+        out_apk,
+        home=home,
+        consume_unsigned=True,
+        sign_dir=sign_dir,
+    )
+    return signed
 
 
 def inject_apks_bundle(
@@ -1231,6 +1410,9 @@ def inject_apks_bundle(
     App Manager / SAI .apks (or a directory of split APKs): patch ABI split(s)
     that hold native libs, resign ALL splits with the same debug key, repack
     .apks + leave a SAI folder.
+
+    Disk-aware: work on /sdcard when possible, extract one split at a time,
+    move/consume sources, avoid duplicate 600MB+ copies.
     """
     bundle = Path(bundle).expanduser().resolve()
     if not bundle.exists():
@@ -1249,21 +1431,52 @@ def inject_apks_bundle(
     if not script.is_file():
         raise FileNotFoundError(f"SSL unpin script missing: {script}")
 
-    work_root = home / "unpin_work"
-    work_root.mkdir(parents=True, exist_ok=True)
+    work_root = choose_work_root(home)
+    cleanup_stale_work(work_root)
+    # Also scrub tiny Termux-home leftovers from older runs
+    home_unpin = home / "unpin_work"
+    if home_unpin.is_dir() and home_unpin.resolve() != work_root.resolve():
+        cleanup_stale_work(home_unpin)
+
     work = work_dir or Path(tempfile.mkdtemp(prefix="frida_apks_", dir=str(work_root)))
     work.mkdir(parents=True, exist_ok=True)
+    sign_dir = work / "sign_out"
 
-    extract_dir = work / "bundle_in"
-    if extract_dir.exists():
-        shutil.rmtree(extract_dir)
-    extract_dir.mkdir(parents=True)
+    # Final outputs on shared storage (not Termux home)
+    stem = re.sub(r"[^\w.\-]+", "_", bundle.stem).strip("_") or "game"
+    if out_apks is None:
+        downloads = Path("/sdcard/Download")
+        for cand in (
+            home / "storage" / "downloads",
+            home / "storage" / "shared" / "Download",
+            Path("/sdcard/Download"),
+            Path("/storage/emulated/0/Download"),
+            work_root,
+        ):
+            if cand.is_dir() or cand == work_root:
+                try:
+                    cand.mkdir(parents=True, exist_ok=True)
+                    downloads = cand
+                    break
+                except OSError:
+                    continue
+        out_apks = downloads / f"{stem}-frida.apks"
+    out_apks = Path(out_apks).expanduser().resolve()
+    out_apks.parent.mkdir(parents=True, exist_ok=True)
+    sai_dir = out_apks.with_name(out_apks.stem + "-splits")
+    if sai_dir.exists():
+        shutil.rmtree(sai_dir)
+    sai_dir.mkdir(parents=True)
+
+    src_label = str(bundle)
+    member_names: list[str] = []
+    local_bundle: Path | None = None
+    dir_sources: list[Path] = []
 
     if is_dir:
         print(f"[*] using splits directory: {bundle}", flush=True)
-        for p in sorted(bundle.glob("*.apk")):
-            shutil.copy2(p, extract_dir / p.name)
-        src_label = str(bundle)
+        dir_sources = sorted(p for p in bundle.glob("*.apk") if p.is_file())
+        member_names = [p.name for p in dir_sources]
     else:
         probe = probe_bundle(bundle)
         print(
@@ -1271,134 +1484,203 @@ def inject_apks_bundle(
             f"hex={probe['magic_hex']} zip_ok={probe['zip_ok']}",
             flush=True,
         )
-        # Always materialize off /sdcard — ZipFile needs reliable seek.
-        local = materialize_local_copy(bundle, work / "local_src")
-        local_probe = probe_bundle(local)
-        print(
-            f"[*] local probe: magic={local_probe['magic']} zip_ok={local_probe['zip_ok']} "
-            f"err={local_probe.get('zip_error') or '-'}",
-            flush=True,
-        )
-        print(f"[*] unpack .apks → {extract_dir}", flush=True)
+        # Prefer extract from /sdcard path if zip_ok — skip 475MB home copy when possible.
+        # Fall back to local materialize if sequential extract fails.
+        local_bundle = bundle
+        if not probe.get("zip_ok"):
+            local_bundle = materialize_local_copy(bundle, work / "local_src")
+        else:
+            # Small probe already sought OK on /sdcard — still copy only if extract fails.
+            print("[*] will extract members one-by-one (no full unpack)", flush=True)
         try:
-            extract_apks_archive(local, extract_dir)
-        except Exception:
-            # last chance: try original path (sometimes copy itself is broken)
-            print("[*] retry unpack from original path…", flush=True)
-            extract_apks_archive(bundle, extract_dir)
-        src_label = str(bundle)
+            with zipfile.ZipFile(local_bundle) as zf:
+                member_names = sorted(
+                    n
+                    for n in zf.namelist()
+                    if n.lower().endswith(".apk")
+                    and not n.endswith("/")
+                    and not n.startswith("__MACOSX/")
+                )
+        except Exception as exc:
+            print(f"[!] list members failed ({exc}) — materialize local copy", flush=True)
+            local_bundle = materialize_local_copy(bundle, work / "local_src")
+            with zipfile.ZipFile(local_bundle) as zf:
+                member_names = sorted(
+                    n
+                    for n in zf.namelist()
+                    if n.lower().endswith(".apk")
+                    and not n.endswith("/")
+                    and not n.startswith("__MACOSX/")
+                )
 
-    # Collect split APKs (flat or nested)
-    split_apks = sorted(
-        p for p in extract_dir.rglob("*.apk") if p.is_file() and p.suffix.lower() == ".apk"
-    )
-    if not split_apks:
+    if not member_names:
         raise RuntimeError(
             "no .apk members inside .apks — wrong export?\n"
-            f"probe: {probe_bundle(bundle) if bundle.is_file() else 'dir'}\n"
             "Спробуй: ZArchiver → Extract → ~/frida /шлях/до/папки"
         )
 
-    print(f"[*] splits: {len(split_apks)}", flush=True)
-    for p in split_apks:
-        abis = detect_native_abis(p)
+    print(f"[*] splits: {len(member_names)}", flush=True)
+    for name in member_names:
+        print(f"    - {name}", flush=True)
+
+    patched_reports: list[dict] = []
+    signed_paths: list[Path] = []
+    saw_native = False
+
+    def _load_one(name: str) -> Path:
+        """Extract/copy a single split into work/one/ and return its path."""
+        nonlocal local_bundle
+        one_dir = work / "one"
+        if one_dir.exists():
+            shutil.rmtree(one_dir)
+        one_dir.mkdir(parents=True)
+        dest = one_dir / Path(name).name
+        if is_dir:
+            src = next(p for p in dir_sources if p.name == name)
+            shutil.copy2(src, dest)
+            return dest
+        assert local_bundle is not None
+        try:
+            with zipfile.ZipFile(local_bundle) as zf:
+                with zf.open(name) as src_f, open(dest, "wb") as out_f:
+                    shutil.copyfileobj(src_f, out_f, length=1024 * 1024)
+        except Exception:
+            # FUSE seek flake — materialize once then retry
+            local_bundle = materialize_local_copy(bundle, work / "local_src")
+            with zipfile.ZipFile(local_bundle) as zf:
+                with zf.open(name) as src_f, open(dest, "wb") as out_f:
+                    shutil.copyfileobj(src_f, out_f, length=1024 * 1024)
+        return dest
+
+    # Process smaller splits first so Frida inject finishes before huge asset resign
+    def _member_size(name: str) -> int:
+        if is_dir:
+            for p in dir_sources:
+                if p.name == name:
+                    return p.stat().st_size
+            return 0
+        try:
+            assert local_bundle is not None
+            with zipfile.ZipFile(local_bundle) as zf:
+                return int(zf.getinfo(name).file_size)
+        except Exception:
+            return 0
+
+    ordered = sorted(member_names, key=_member_size)
+
+    for name in ordered:
+        out_name = Path(name).name
+        dest = sai_dir / out_name
         print(
-            f"    - {p.relative_to(extract_dir)}  "
-            f"abis={abis or '-'}  size={p.stat().st_size}",
+            f"[*] free≈{disk_free_bytes(work) / (1024**3):.2f} GiB before {out_name}",
             flush=True,
         )
+        src = _load_one(name)
+        size_mb = src.stat().st_size / (1024 * 1024)
+        abis = detect_native_abis(src)
+        print(
+            f"[*] {out_name}: {size_mb:.1f} MiB  abis={abis or '-'}",
+            flush=True,
+        )
+        split_work = work / ("w_" + re.sub(r"[^A-Za-z0-9_.-]+", "_", out_name))
+        if split_work.exists():
+            shutil.rmtree(split_work)
+        split_work.mkdir(parents=True)
 
-    lib_splits = [p for p in split_apks if detect_native_abis(p)]
-    if not lib_splits:
+        try:
+            if abis:
+                saw_native = True
+                print(f"[*] inject Frida → {out_name} ({', '.join(abis)})", flush=True)
+                has_dex = verify_apk(src, require_dex=False).get("has_dex", False)
+                rep = inject_apk_zip(
+                    src,
+                    out_apk=dest,
+                    script=script,
+                    home=home,
+                    work=split_work,
+                    version=version,
+                    require_dex=bool(has_dex),
+                    copy_aliases=False,
+                    abis=abis,
+                )
+                patched_reports.append(rep)
+            else:
+                print(f"[*] resign only → {out_name}", flush=True)
+                resign_split_apk(
+                    src,
+                    dest,
+                    home=home,
+                    work=split_work,
+                    consume_src=True,
+                    sign_dir=sign_dir,
+                )
+                post = verify_apk(dest, require_dex=False)
+                if not post["ok"] and "no AndroidManifest.xml" in post["errors"]:
+                    raise RuntimeError(
+                        f"split broken after resign: {out_name}: {post['errors']}"
+                    )
+            signed_paths.append(dest)
+        finally:
+            # Drop per-split temps aggressively
+            shutil.rmtree(work / "one", ignore_errors=True)
+            shutil.rmtree(split_work, ignore_errors=True)
+            shutil.rmtree(sign_dir, ignore_errors=True)
+
+    # Drop local materialized .apks if any
+    local_src_dir = work / "local_src"
+    if local_src_dir.exists():
+        shutil.rmtree(local_src_dir, ignore_errors=True)
+
+    if not saw_native:
         raise RuntimeError(
             "жодного split з lib/<abi>/ — Frida gadget нікуди вшити.\n"
             "Перевір що в .apks є split_config.arm64_v8a.apk (або fat base)."
         )
 
-    out_dir = work / "signed_splits"
-    if out_dir.exists():
-        shutil.rmtree(out_dir)
-    out_dir.mkdir(parents=True)
+    splits_bytes = sum(p.stat().st_size for p in sai_dir.glob("*.apk"))
+    free = disk_free_bytes(out_apks.parent)
+    packed = False
+    if free < splits_bytes + 64 * 1024 * 1024:
+        print(
+            f"[!] мало місця для .apks-архіву "
+            f"(free≈{free / (1024**3):.2f} GiB, need≈{splits_bytes / (1024**3):.2f} GiB) — "
+            f"став з папки splits",
+            flush=True,
+        )
+        out_apks = sai_dir  # install path is the folder
+    else:
+        if out_apks.exists():
+            out_apks.unlink()
+        print(f"[*] packing {out_apks} …", flush=True)
+        # STORED: APKs already compressed; avoids huge recompress CPU/temp
+        with zipfile.ZipFile(out_apks, "w", compression=zipfile.ZIP_STORED) as zf:
+            for p in sorted(sai_dir.glob("*.apk")):
+                zf.write(p, p.name)
+        packed = True
 
-    patched_reports: list[dict] = []
-    signed_paths: list[Path] = []
-
-    for src in split_apks:
-        rel = src.relative_to(extract_dir)
-        # Keep flat names for SAI (base.apk, split_config.*.apk)
-        out_name = src.name
-        dest = out_dir / out_name
-        if dest.exists():
-            # disambiguate rare collisions
-            dest = out_dir / rel.as_posix().replace("/", "__")
-
-        abis = detect_native_abis(src)
-        split_work = work / ("w_" + re.sub(r"[^A-Za-z0-9_.-]+", "_", out_name))
-        split_work.mkdir(parents=True, exist_ok=True)
-
-        if abis:
-            print(f"[*] inject Frida → {out_name} ({', '.join(abis)})", flush=True)
-            # Prefer IL2CPP / Unity targets; require_dex only for base-like splits
-            has_dex = verify_apk(src, require_dex=False).get("has_dex", False)
-            rep = inject_apk_zip(
-                src,
-                out_apk=dest,
-                script=script,
-                home=home,
-                work=split_work,
-                version=version,
-                require_dex=bool(has_dex),
-                copy_aliases=False,
-                abis=abis,
-            )
-            patched_reports.append(rep)
-        else:
-            print(f"[*] resign only → {out_name}", flush=True)
-            resign_split_apk(src, dest, home=home, work=split_work)
-            post = verify_apk(dest, require_dex=False)
-            if not post["ok"] and "no AndroidManifest.xml" in post["errors"]:
-                raise RuntimeError(f"split broken after resign: {out_name}: {post['errors']}")
-        signed_paths.append(dest)
-
-    # Friendly SAI folder + .apks zip in Download/
-    stem = re.sub(r"[^\w.\-]+", "_", bundle.stem).strip("_") or "game"
-    if out_apks is None:
-        downloads = home / "storage" / "downloads"
-        if not downloads.is_dir():
-            alt = home / "storage" / "shared" / "Download"
-            downloads = alt if alt.is_dir() else Path("/sdcard/Download")
-            if not downloads.is_dir():
-                downloads = work_root
-        out_apks = downloads / f"{stem}-frida.apks"
-    out_apks = Path(out_apks).expanduser().resolve()
-    out_apks.parent.mkdir(parents=True, exist_ok=True)
-
-    sai_dir = out_apks.with_name(out_apks.stem + "-splits")
-    if sai_dir.exists():
-        shutil.rmtree(sai_dir)
-    sai_dir.mkdir(parents=True)
-    for p in signed_paths:
-        shutil.copy2(p, sai_dir / p.name)
-
-    if out_apks.exists():
-        out_apks.unlink()
-    with zipfile.ZipFile(out_apks, "w", compression=zipfile.ZIP_DEFLATED) as zf:
-        for p in sorted(sai_dir.glob("*.apk")):
-            zf.write(p, p.name)
-
-    # Aliases
-    for folder in _download_folders(home):
-        try:
-            shutil.copy2(out_apks, folder / "AFK-Arena-frida.apks")
-        except OSError:
-            pass
-        alias_dir = folder / "AFK-Arena-frida-splits"
-        try:
-            if alias_dir.exists():
-                shutil.rmtree(alias_dir)
-            shutil.copytree(sai_dir, alias_dir)
-        except OSError:
-            pass
+    # Alias names on Download (no full copytree of multi-GB)
+    if packed and out_apks.is_file():
+        for folder in _download_folders(home):
+            alias = folder / "AFK-Arena-frida.apks"
+            try:
+                if alias.resolve() != out_apks.resolve():
+                    _link_or_copy(out_apks, alias)
+            except OSError:
+                pass
+    alias_splits = Path("/sdcard/Download/AFK-Arena-frida-splits")
+    try:
+        if alias_splits.resolve() != sai_dir.resolve():
+            if alias_splits.exists() or alias_splits.is_symlink():
+                if alias_splits.is_dir() and not alias_splits.is_symlink():
+                    shutil.rmtree(alias_splits)
+                else:
+                    alias_splits.unlink(missing_ok=True)
+            try:
+                os.symlink(sai_dir, alias_splits)
+            except OSError:
+                pass
+    except OSError:
+        pass
 
     loaders = [r.get("loader", "") for r in patched_reports]
     return {
@@ -1415,9 +1697,9 @@ def inject_apks_bundle(
         "mode": "script+apks-bundle",
         "install": (
             "Uninstall AFK Arena → install splits via SAI / App Manager:\n"
-            f"  .apks: {out_apks}\n"
             f"  folder: {sai_dir}\n"
-            "  (termux-open alone often cannot install multi-split)"
+            + (f"  .apks: {out_apks}\n" if packed else "  (.apks skipped — low disk)\n")
+            + "  (termux-open alone often cannot install multi-split)"
         ),
     }
 

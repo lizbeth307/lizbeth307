@@ -41,6 +41,10 @@ banner() {
 AFK Arena (3 splits):
   ~/frida "/sdcard/AppManager/apks/AFK Arena_1.198.01.apks"
 
+Якщо No space left:
+  rm -rf ~/unpin_work /sdcard/unpin_work
+  # робота йде на /sdcard (більше місця)
+
 EOF
 }
 
