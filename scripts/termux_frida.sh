@@ -350,8 +350,39 @@ main() {
   local apk
   apk="$(pick_apk "$cmd")"
   echo "[*] APK: $apk"
-  echo "[*] First run downloads Frida gadget (+ jars). Prefer zip+patchelf."
+  echo "[*] Prefer zip+patchelf; sign with --skipZipAlign if needed."
   echo
+
+  # If a previous run left an unsigned APK, try finishing sign only first.
+  unsigned_guess="${apk%.apk}-frida.unsigned.apk"
+  # also common Download locations
+  base_name="$(basename "${apk%.apk}")-frida.unsigned.apk"
+  for u in "$unsigned_guess" \
+    "$HOME_DIR/storage/downloads/$base_name" \
+    "$HOME_DIR/storage/shared/Download/$base_name" \
+    "/sdcard/Download/$base_name"; do
+    if [[ -f "$u" ]]; then
+      echo "[*] found leftover unsigned: $u" >&2
+      echo "[*] trying sign-only…" >&2
+      if python3 - <<PY
+from pathlib import Path
+from protocol_ast.frida_gadget import sign_apk, default_out_apk
+u = Path("$u")
+apk = Path("$apk")
+out = default_out_apk(apk, Path.home())
+sign_apk(u, out)
+print(out)
+PY
+      then
+        echo "════════════════════════════════════════"
+        echo "Signed OK (from leftover unsigned)."
+        echo "Далі: uninstall гру → встанови *-frida.apk → MITM → ~/scan mine"
+        echo "════════════════════════════════════════"
+        exit 0
+      fi
+      break
+    fi
+  done
 
   python3 -m protocol_ast.frida_gadget "$apk" --method auto
   echo

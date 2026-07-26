@@ -452,42 +452,165 @@ def find_patchelf() -> Path | None:
     return None
 
 
+def find_zipalign() -> Path | None:
+    found = shutil.which("zipalign")
+    if found:
+        return Path(found)
+    prefix = Path(os.environ.get("PREFIX", "/data/data/com.termux/files/usr"))
+    for cand in (
+        prefix / "bin" / "zipalign",
+        prefix / "libexec" / "zipalign",
+        Path("/system/bin/zipalign"),
+    ):
+        if cand.is_file() and os.access(cand, os.X_OK):
+            return cand
+    # Sometimes shipped next to aapt
+    aapt = find_aapt()
+    if aapt:
+        sib = aapt.parent / "zipalign"
+        if sib.is_file() and os.access(sib, os.X_OK):
+            return sib
+    return None
+
+
 def run_apktool(jar: Path, args: list[str], cwd: Path | None = None) -> None:
     cmd = [_java(), "-jar", str(jar), *args]
     subprocess.run(cmd, check=True, cwd=str(cwd) if cwd else None)
 
 
-def sign_apk(unsigned: Path, out_apk: Path, home: Path | None = None) -> Path:
-    signer = ensure_uber_signer(home)
-    out_dir = out_apk.parent
-    out_dir.mkdir(parents=True, exist_ok=True)
+def ensure_debug_keystore(home: Path | None = None) -> Path:
+    ks = tools_dir(home) / "debug.keystore"
+    if ks.is_file():
+        return ks
     subprocess.run(
         [
-            _java(),
-            "-jar",
-            str(signer),
-            "--apks",
-            str(unsigned),
-            "--out",
-            str(out_dir),
-            "--allowResign",
+            "keytool",
+            "-genkeypair",
+            "-v",
+            "-keystore",
+            str(ks),
+            "-alias",
+            "androiddebugkey",
+            "-keyalg",
+            "RSA",
+            "-keysize",
+            "2048",
+            "-validity",
+            "10000",
+            "-storepass",
+            "android",
+            "-keypass",
+            "android",
+            "-dname",
+            "CN=Android Debug,O=Android,C=US",
         ],
         check=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
     )
-    candidates = sorted(out_dir.glob("*debugSigned*.apk"), key=lambda p: p.stat().st_mtime)
+    return ks
+
+
+def sign_apk_uber(
+    unsigned: Path,
+    out_apk: Path,
+    home: Path | None = None,
+    *,
+    skip_zipalign: bool = False,
+) -> Path:
+    signer = ensure_uber_signer(home)
+    # Sign into a private work dir so uber does not scan all of Download/
+    home = home or Path.home()
+    sign_dir = tools_dir(home) / "sign_out"
+    if sign_dir.exists():
+        shutil.rmtree(sign_dir)
+    sign_dir.mkdir(parents=True, exist_ok=True)
+    local_unsigned = sign_dir / unsigned.name
+    shutil.copy2(unsigned, local_unsigned)
+
+    cmd = [
+        _java(),
+        "-jar",
+        str(signer),
+        "--apks",
+        str(local_unsigned),
+        "--out",
+        str(sign_dir),
+        "--allowResign",
+        "--overwrite",
+    ]
+    zipalign = None if skip_zipalign else find_zipalign()
+    if zipalign:
+        cmd.extend(["--zipAlignPath", str(zipalign)])
+        print(f"[*] zipalign: {zipalign}", flush=True)
+    else:
+        cmd.append("--skipZipAlign")
+        print("[*] zipalign not in PATH — signing with --skipZipAlign", flush=True)
+
+    subprocess.run(cmd, check=True)
+
+    candidates = sorted(sign_dir.glob("*debugSigned*.apk"), key=lambda p: p.stat().st_mtime)
     if not candidates:
-        # uber may write next to unsigned
-        stem = unsigned.stem.replace(".unsigned", "")
         candidates = sorted(
-            [p for p in out_dir.glob("*.apk") if "unsigned" not in p.name.lower()],
+            [p for p in sign_dir.glob("*.apk") if "unsigned" not in p.name.lower()],
             key=lambda p: p.stat().st_mtime,
         )
     if not candidates:
         raise RuntimeError("uber-apk-signer produced no APK")
     signed = candidates[-1]
-    if signed.resolve() != out_apk.resolve():
-        out_apk.write_bytes(signed.read_bytes())
+    out_apk.parent.mkdir(parents=True, exist_ok=True)
+    out_apk.write_bytes(signed.read_bytes())
     return out_apk
+
+
+def sign_apk_jarsigner(unsigned: Path, out_apk: Path, home: Path | None = None) -> Path:
+    """Last-resort v1 signature (openjdk keytool/jarsigner)."""
+    ks = ensure_debug_keystore(home)
+    out_apk.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(unsigned, out_apk)
+    subprocess.run(
+        [
+            "jarsigner",
+            "-sigalg",
+            "SHA256withRSA",
+            "-digestalg",
+            "SHA-256",
+            "-keystore",
+            str(ks),
+            "-storepass",
+            "android",
+            "-keypass",
+            "android",
+            str(out_apk),
+            "androiddebugkey",
+        ],
+        check=True,
+    )
+    return out_apk
+
+
+def sign_apk(unsigned: Path, out_apk: Path, home: Path | None = None) -> Path:
+    """Sign APK; tolerate missing Android SDK zipalign on Termux."""
+    errors: list[str] = []
+    for skip in (False, True):
+        # If zipalign exists, first attempt uses it; second skips.
+        if not skip and not find_zipalign():
+            continue
+        try:
+            return sign_apk_uber(unsigned, out_apk, home=home, skip_zipalign=skip)
+        except Exception as exc:
+            errors.append(f"uber(skip={skip}): {exc}")
+    # Always try skipZipAlign once more even if find_zipalign was true but uber failed
+    try:
+        return sign_apk_uber(unsigned, out_apk, home=home, skip_zipalign=True)
+    except Exception as exc:
+        errors.append(f"uber(skip=True): {exc}")
+    try:
+        print("[*] falling back to jarsigner (v1)", flush=True)
+        return sign_apk_jarsigner(unsigned, out_apk, home=home)
+    except Exception as exc:
+        errors.append(f"jarsigner: {exc}")
+        raise RuntimeError("signing failed: " + " | ".join(errors)) from exc
 
 
 def rebuild_sign(
@@ -495,24 +618,14 @@ def rebuild_sign(
     out_apk: Path,
     home: Path | None = None,
 ) -> Path:
+    """
+    apktool rebuild without recompiling resources (avoids aapt2 $drawable bugs).
+    Expects decode was done with apktool d -r (resources not decoded).
+    """
     apktool = ensure_apktool(home)
     unsigned = out_apk.with_suffix(".unsigned.apk")
-    aapt = find_aapt()
-    args = ["b", str(decoded), "-o", str(unsigned)]
-    if aapt:
-        args.extend(["--aapt", str(aapt)])
-    else:
-        raise RuntimeError(
-            "apktool rebuild needs Termux aapt/aapt2 "
-            "(bundled aapt2 is Linux ELF and fails on Android).\n"
-            "  pkg install aapt aapt2\n"
-            "Or use zip+patchelf path (pkg install patchelf)."
-        )
-    try:
-        run_apktool(apktool, args)
-    except subprocess.CalledProcessError:
-        # retry with aapt1 flag
-        run_apktool(apktool, [*args, "--use-aapt1"])
+    # Do NOT pass --aapt: with -r decode, resources are copied as-is.
+    run_apktool(apktool, ["b", str(decoded), "-o", str(unsigned)])
     return sign_apk(unsigned, out_apk, home=home)
 
 
@@ -619,14 +732,30 @@ def inject_apk_apktool(
     work: Path,
     version: str = FRIDA_VERSION,
 ) -> dict:
+    """
+    apktool d -r (keep binary resources) → smali loadLibrary → gadget → b → sign.
+    Avoids aapt2 recompile of Material $avd_* drawables.
+    """
     decoded = work / "decoded"
     if decoded.exists():
         shutil.rmtree(decoded)
     abis = detect_apis_in_apk(apk)
     apktool = ensure_apktool(home)
-    run_apktool(apktool, ["d", str(apk), "-o", str(decoded), "-f"])
+    # -r: do not decode resources (critical on modern Material APKs)
+    run_apktool(apktool, ["d", "-r", "-f", str(apk), "-o", str(decoded)])
+    # Manifest is still decoded as XML with -r; resources stay binary.
     loader_note = patch_application_loader(decoded)
     placed = place_gadget_files(decoded, abis, script, home=home, version=version)
+    for abi in placed:
+        libdir = decoded / "lib" / abi
+        target = _pick_patch_so(libdir)
+        if not target:
+            continue
+        try:
+            patchelf_add_needed(target, "libfrida-gadget.so")
+            loader_note += f" + patchelf {abi}/{target.name}"
+        except Exception:
+            pass
     signed = rebuild_sign(decoded, out_apk, home=home)
     return {
         "apk": str(apk),
@@ -636,7 +765,7 @@ def inject_apk_apktool(
         "loader": loader_note,
         "script": str(script),
         "work": str(work),
-        "mode": "script+apktool",
+        "mode": "script+apktool-r",
     }
 
 
@@ -695,23 +824,32 @@ def inject_apk(
         except Exception as exc:
             errors.append(f"zip+patchelf: {exc}")
             print(f"[!] zip+patchelf failed: {exc}", flush=True)
+            # If unsigned exists, retry sign only (common: zipalign missing)
+            unsigned = out_apk.with_suffix(".unsigned.apk")
+            if unsigned.is_file():
+                try:
+                    print("[*] retry sign on existing unsigned APK…", flush=True)
+                    signed = sign_apk(unsigned, out_apk, home=home)
+                    return {
+                        "apk": str(apk),
+                        "out": str(signed),
+                        "abis": detect_apis_in_apk(apk),
+                        "frida": version,
+                        "loader": "patchelf (sign retry)",
+                        "script": str(script),
+                        "work": str(work),
+                        "mode": "script+zip",
+                    }
+                except Exception as exc2:
+                    errors.append(f"sign-retry: {exc2}")
             if method == "zip":
-                raise
+                raise RuntimeError(" | ".join(errors)) from exc
 
     if use_zip and not find_patchelf() and method == "auto":
         print("[*] patchelf missing — try: pkg install patchelf", flush=True)
 
     if use_apktool:
-        if not find_aapt():
-            msg = (
-                "Need Termux build tools for apktool path:\n"
-                "  pkg install aapt aapt2 patchelf\n"
-                "Then re-run: ~/frida \"/sdcard/Download/777.apk\""
-            )
-            if errors:
-                raise RuntimeError(msg + "\n\nEarlier: " + " | ".join(errors))
-            raise RuntimeError(msg)
-        print("[*] method=apktool + Termux aapt", flush=True)
+        print("[*] method=apktool d -r (no resource recompile)", flush=True)
         try:
             return inject_apk_apktool(
                 apk, out_apk=out_apk, script=script, home=home, work=work, version=version
@@ -721,7 +859,7 @@ def inject_apk(
             raise RuntimeError(" | ".join(errors)) from exc
 
     raise RuntimeError(
-        "No inject method available. Install: pkg install patchelf aapt aapt2\n"
+        "No inject method available. Install: pkg install patchelf\n"
         + " | ".join(errors)
     )
 
