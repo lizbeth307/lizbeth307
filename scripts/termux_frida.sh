@@ -43,8 +43,8 @@ EOF
 
 need_java() {
   if ! command -v java >/dev/null 2>&1; then
-    echo "[*] Need OpenJDK for apktool / signer"
-    echo "    Run once:  pkg install openjdk-17"
+    echo "[*] Need OpenJDK for apktool / signer" >&2
+    echo "    Run once:  pkg install openjdk-17" >&2
     if command -v pkg >/dev/null 2>&1; then
       yes | pkg install -y openjdk-17 2>/dev/null || yes | pkg install -y openjdk-21 2>/dev/null || true
     fi
@@ -68,7 +68,7 @@ pm_paths() {
   return 1
 }
 
-# Copy installed package APK(s) into Downloads (works when base.apk is world-readable).
+# Copy installed package APK(s). Progress → stderr; final base path → stdout.
 pull_package() {
   local pkg="$1"
   local dest_dir="${2:-$DOWNLOADS}"
@@ -77,7 +77,7 @@ pull_package() {
   fi
   mkdir -p "$dest_dir"
 
-  echo "[*] pm path $pkg …"
+  echo "[*] pm path $pkg …" >&2
   mapfile -t paths < <(pm_paths "$pkg")
   if [[ ${#paths[@]} -eq 0 || -z "${paths[0]:-}" ]]; then
     echo "[!] Package not installed or pm unavailable: $pkg" >&2
@@ -92,15 +92,15 @@ pull_package() {
     local name
     name="$(basename "$src")"
     local dst="$out_dir/$name"
-    echo "    [$i] $src"
+    echo "    [$i] $src" >&2
     if [[ ! -r "$src" ]]; then
       echo "        ⚠ not readable (no root) — skip" >&2
       continue
     fi
     if cp -f "$src" "$dst" 2>/dev/null; then
-      echo "        → $dst ($(wc -c <"$dst") bytes)"
+      echo "        → $dst ($(wc -c <"$dst") bytes)" >&2
       copied=$((copied + 1))
-      if [[ "$name" == "base.apk" || "$i" -eq 1 ]]; then
+      if [[ "$name" == "base.apk" || -z "$base" ]]; then
         base="$dst"
       fi
     else
@@ -108,7 +108,7 @@ pull_package() {
     fi
   done
 
-  if [[ "$copied" -eq 0 ]]; then
+  if [[ "$copied" -eq 0 || -z "$base" ]]; then
     cat <<EOF >&2
 [!] Could not read APK from /data/app (common without root).
 
@@ -124,22 +124,19 @@ EOF
     return 1
   fi
 
-  # Convenience copy of base into Downloads root
-  if [[ -n "$base" && -n "$DOWNLOADS" ]]; then
+  if [[ -n "$DOWNLOADS" ]]; then
     local nice="$DOWNLOADS/${pkg}.apk"
     cp -f "$base" "$nice"
-    echo "[*] base → $nice"
-    echo "$nice"
-  else
-    echo "$base"
+    echo "[*] base → $nice" >&2
+    base="$nice"
   fi
 
   if [[ "$copied" -gt 1 ]]; then
-    echo
-    echo "[!] Split APK ($copied files) in: $out_dir"
-    echo "    Patching base only; after ~/frida finishes, install via SAI:"
-    echo "    all re-signed apks from the output folder (same key)."
+    echo >&2
+    echo "[!] Split APK ($copied files) in: $out_dir" >&2
+    echo "    After inject: install ALL splits via SAI (same signing key)." >&2
   fi
+  echo "$base"
   return 0
 }
 
@@ -156,8 +153,13 @@ find_apks() {
   local r
   for r in "${roots[@]}"; do
     [[ -d "$r" ]] || continue
-    find "$r" -maxdepth 3 -type f \( -iname '*.apk' -o -iname '*.apks' \) 2>/dev/null
+    find "$r" -maxdepth 3 -type f -iname '*.apk' 2>/dev/null
   done | sort -u
+}
+
+looks_like_pkg() {
+  # com.foo.bar — not a path, not a flag
+  [[ "$1" == *.* && "$1" != *.apk && "$1" != /* && "$1" != ~/* && "$1" != -* ]]
 }
 
 pick_apk() {
@@ -167,22 +169,15 @@ pick_apk() {
     return
   fi
 
-  # Package name → pull
-  if [[ -n "$arg" && "$arg" == *.* && "$arg" != *.apk && "$arg" != /* && "$arg" != ~* ]]; then
-    local pulled
-    pulled="$(pull_package "$arg")" || exit 1
-    # last line is path
-    echo "$pulled" | tail -n1
+  if [[ -n "$arg" ]] && looks_like_pkg "$arg"; then
+    pull_package "$arg"
     return
   fi
 
   mapfile -t apks < <(find_apks)
-  # Prefer non -frida / non -unpinned originals first in UI, but list all
   if [[ ${#apks[@]} -eq 0 ]]; then
-    echo "[*] No APK in Download — trying pm pull $DEFAULT_PKG …"
-    local pulled
-    if pulled="$(pull_package "$DEFAULT_PKG")"; then
-      echo "$pulled" | tail -n1
+    echo "[*] No APK in Download — trying pm pull $DEFAULT_PKG …" >&2
+    if pull_package "$DEFAULT_PKG"; then
       return
     fi
     cat <<EOF >&2
@@ -209,12 +204,12 @@ EOF
     echo "${apks[0]}"
     return
   fi
-  echo "Pick APK:"
+  echo "Pick APK:" >&2
   local i
   for i in "${!apks[@]}"; do
-    printf "  %2d) %s\n" "$((i + 1))" "${apks[$i]}"
+    printf "  %2d) %s\n" "$((i + 1))" "${apks[$i]}" >&2
   done
-  printf "Number: "
+  printf "Number: " >&2
   read -r n
   if [[ ! "$n" =~ ^[0-9]+$ ]] || (( n < 1 || n > ${#apks[@]} )); then
     echo "Invalid" >&2
@@ -232,10 +227,9 @@ main() {
       exit 0
       ;;
     pull)
-      need_java
       pull_package "${2:-$DEFAULT_PKG}" >/dev/null
-      echo
-      echo "Далі:  ~/frida"
+      echo >&2
+      echo "Далі:  ~/frida" >&2
       exit 0
       ;;
   esac
