@@ -58,6 +58,8 @@ _get "${BASE}/analyze_pcap.py" "$HOME/analyze_pcap.py"
 chmod +x "$HOME/analyze_pcap.py"
 _get "${BASE}/probe_network.py" "$HOME/probe_network.py"
 chmod +x "$HOME/probe_network.py"
+_get "${BASE}/scripts/termux_signal.sh" "$HOME/signal"
+chmod +x "$HOME/signal"
 
 mkdir -p "$HOME/protocol_ast"
 export PYTHONPATH="$HOME${PYTHONPATH:+:$PYTHONPATH}"

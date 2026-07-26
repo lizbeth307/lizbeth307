@@ -45,6 +45,9 @@ HELPERS = (
     "termux_update.py",
 )
 ROOT_FILES = ("analyze_pcap.py", "probe_network.py")
+LAUNCHERS = (
+    ("scripts/termux_signal.sh", "signal"),
+)
 
 
 def _fetch(url: str, timeout: float = 60.0) -> bytes:
