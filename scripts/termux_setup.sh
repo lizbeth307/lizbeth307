@@ -58,8 +58,12 @@ _get "${BASE}/analyze_pcap.py" "$HOME/analyze_pcap.py"
 chmod +x "$HOME/analyze_pcap.py"
 _get "${BASE}/probe_network.py" "$HOME/probe_network.py"
 chmod +x "$HOME/probe_network.py"
+_get "${BASE}/scan_app.py" "$HOME/scan_app.py"
+chmod +x "$HOME/scan_app.py"
 _get "${BASE}/scripts/termux_signal.sh" "$HOME/signal"
 chmod +x "$HOME/signal"
+_get "${BASE}/scripts/termux_scan.sh" "$HOME/scan"
+chmod +x "$HOME/scan"
 
 mkdir -p "$HOME/protocol_ast"
 export PYTHONPATH="$HOME${PYTHONPATH:+:$PYTHONPATH}"
@@ -83,12 +87,12 @@ python3 "$HOME/analyze_pcap.py" --version
 test -f "$HOME/probe_network.py" && echo "probe_network.py: OK"
 
 echo
-echo "Готово. Універсальна команда:"
-echo "  ~/signal"
+echo "Готово. Універсальний сканер:"
+echo "  ~/scan"
 echo
-echo "Інше:"
-echo "  ~/signal --stream"
+echo "Або одразу:"
+echo "  ~/scan peel | ~/scan mine | ~/scan sdk"
+echo "  ~/signal          # peel без меню"
 echo "  python3 ~/analyze_pcap.py --self-update"
-echo "  python3 ~/probe_network.py --loop 3 --no-capture"
 echo
 echo "НЕ запускай pkg у цьому скрипті — apt більше не чіпаємо."
