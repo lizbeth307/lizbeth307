@@ -118,6 +118,59 @@ def detect_apis_in_apk(apk: Path) -> list[str]:
     return [a for a in order if a in abis]
 
 
+def apk_quick_info(apk: Path) -> dict:
+    """Cheap APK fingerprint for Termux picker (no aapt)."""
+    apk = Path(apk)
+    info: dict = {
+        "path": str(apk),
+        "name": apk.name,
+        "size": apk.stat().st_size if apk.is_file() else 0,
+        "unity": False,
+        "il2cpp": False,
+        "hint": "",
+    }
+    try:
+        with zipfile.ZipFile(apk) as zf:
+            names = zf.namelist()
+    except Exception as exc:
+        info["hint"] = f"bad-apk:{exc}"
+        return info
+    lower = [n.lower() for n in names]
+    info["il2cpp"] = any("libil2cpp.so" in n for n in lower)
+    info["unity"] = info["il2cpp"] or any(
+        "libunity.so" in n or "/unity" in n or n.endswith("unitydefaultresources") for n in lower
+    )
+    # Heuristic package hints from asset paths
+    blob = "\n".join(names[:400])
+    for needle, label in (
+        ("lilith", "lilith?"),
+        ("hgame", "hgame?"),
+        ("afk", "afk?"),
+    ):
+        if needle in blob.lower():
+            info["hint"] = label
+            break
+    if info["il2cpp"] and not info["hint"]:
+        info["hint"] = "unity-il2cpp"
+    elif info["unity"] and not info["hint"]:
+        info["hint"] = "unity"
+    return info
+
+
+def format_apk_choice(apk: Path) -> str:
+    inf = apk_quick_info(apk)
+    mb = inf["size"] / (1024 * 1024)
+    tags = []
+    if inf["il2cpp"]:
+        tags.append("IL2CPP")
+    elif inf["unity"]:
+        tags.append("Unity")
+    if inf["hint"]:
+        tags.append(inf["hint"])
+    tag = (" [" + ", ".join(tags) + "]") if tags else ""
+    return f"{inf['name']}  ({mb:.1f} MB){tag}"
+
+
 def _android_name(elem: ET.Element, attr: str) -> str | None:
     return elem.attrib.get(f"{{{ANDROID_NS}}}{attr}") or elem.attrib.get(attr)
 

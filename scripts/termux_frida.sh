@@ -1,16 +1,18 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # Frida Gadget inject + autonomous SSL unpin (no root, no PC).
 # Usage:
-#   ~/frida                         # auto-pull AFK Arena if possible, else pick APK
-#   ~/frida com.lilithgame.hgame.gp # pull package + inject
-#   ~/frida /path/app.apk
+#   ~/frida                              # pick APK (deduped list)
+#   ~/frida /sdcard/Download/777.apk     # direct path (best)
 #   ~/frida pull [package]
+#   ~/frida pkgs                         # list lilith/hgame packages via /system/bin/pm
 #   ~/frida guide
 set -euo pipefail
 
 PREFIX="${PREFIX:-/data/data/com.termux/files/usr}"
 HOME_DIR="${HOME:-$PREFIX/home}"
 export PYTHONPATH="${HOME_DIR}${PYTHONPATH:+:$PYTHONPATH}"
+# Android tools often live here; Termux PATH usually omits them.
+export PATH="/system/bin:/system/xbin:${PATH}"
 
 DEFAULT_PKG="${FRIDA_PKG:-com.lilithgame.hgame.gp}"
 
@@ -35,40 +37,80 @@ banner() {
 
 Без root / без ПК:
   APK → Frida Gadget (script mode) → ssl_unpin.js
-  Java + native (BoringSSL/curl/mbedtls) hooks
-  при старті гри — сам, без adb.
 
 EOF
 }
 
 need_java() {
   if ! command -v java >/dev/null 2>&1; then
-    echo "[*] Need OpenJDK for apktool / signer" >&2
-    echo "    Run once:  pkg install openjdk-17" >&2
+    echo "[*] Need OpenJDK:  pkg install openjdk-17" >&2
     if command -v pkg >/dev/null 2>&1; then
-      yes | pkg install -y openjdk-17 2>/dev/null || yes | pkg install -y openjdk-21 2>/dev/null || true
+      yes | pkg install -y openjdk-17 2>/dev/null || true
     fi
   fi
   if ! command -v java >/dev/null 2>&1; then
-    echo "Java still missing. Install openjdk then re-run ~/frida" >&2
+    echo "Java still missing." >&2
     exit 1
   fi
 }
 
+# Resolve pm/cmd from system image (Termux rarely has them on PATH alone).
+pm_bin() {
+  local c
+  for c in pm /system/bin/pm /system/xbin/pm; do
+    if [[ -x "$c" ]] || command -v "$c" >/dev/null 2>&1; then
+      echo "$c"
+      return 0
+    fi
+  done
+  return 1
+}
+
+cmd_bin() {
+  local c
+  for c in cmd /system/bin/cmd; do
+    if [[ -x "$c" ]] || command -v "$c" >/dev/null 2>&1; then
+      echo "$c"
+      return 0
+    fi
+  done
+  return 1
+}
+
 pm_paths() {
-  local pkg="$1"
-  if command -v pm >/dev/null 2>&1; then
-    pm path "$pkg" 2>/dev/null | sed -n 's/^package://p'
-    return 0
+  local pkg="$1" out="" bin
+  if bin="$(pm_bin)"; then
+    out="$("$bin" path "$pkg" 2>/dev/null | sed -n 's/^package://p' || true)"
   fi
-  if command -v cmd >/dev/null 2>&1; then
-    cmd package path "$pkg" 2>/dev/null | sed -n 's/^package://p'
+  if [[ -z "$out" ]] && bin="$(cmd_bin)"; then
+    out="$("$bin" package path "$pkg" 2>/dev/null | sed -n 's/^package://p' || true)"
+  fi
+  if [[ -n "$out" ]]; then
+    printf '%s\n' "$out"
     return 0
   fi
   return 1
 }
 
-# Copy installed package APK(s). Progress → stderr; final base path → stdout.
+list_game_packages() {
+  local bin out=""
+  if bin="$(pm_bin)"; then
+    out="$("$bin" list packages 2>/dev/null || true)"
+  fi
+  if [[ -z "$out" ]] && bin="$(cmd_bin)"; then
+    out="$("$bin" package list packages 2>/dev/null || true)"
+  fi
+  if [[ -z "$out" ]]; then
+    echo "[!] pm/cmd недоступний у цьому Termux (немає /system/bin/pm)." >&2
+    echo "    Тоді: App Manager → Save APK, або напряму:" >&2
+    echo "    ~/frida \"/sdcard/Download/777.apk\"" >&2
+    return 1
+  fi
+  echo "$out" | sed -n 's/^package://p' | grep -iE 'lilith|hgame|afk|arena' || true
+  echo "── усі пакети з 'game' (уривок) ──" >&2
+  echo "$out" | sed -n 's/^package://p' | grep -i game | head -n 40 >&2 || true
+}
+
 pull_package() {
   local pkg="$1"
   local dest_dir="${2:-$DOWNLOADS}"
@@ -78,9 +120,11 @@ pull_package() {
   mkdir -p "$dest_dir"
 
   echo "[*] pm path $pkg …" >&2
-  mapfile -t paths < <(pm_paths "$pkg")
+  mapfile -t paths < <(pm_paths "$pkg" || true)
   if [[ ${#paths[@]} -eq 0 || -z "${paths[0]:-}" ]]; then
-    echo "[!] Package not installed or pm unavailable: $pkg" >&2
+    echo "[!] Пакет не знайдено / pm недоступний: $pkg" >&2
+    echo "    Спробуй:  ~/frida pkgs" >&2
+    echo "    (може інший package name, або гру знято)" >&2
     return 1
   fi
 
@@ -89,12 +133,12 @@ pull_package() {
   mkdir -p "$out_dir"
   for src in "${paths[@]}"; do
     i=$((i + 1))
-    local name
+    local name dst
     name="$(basename "$src")"
-    local dst="$out_dir/$name"
+    dst="$out_dir/$name"
     echo "    [$i] $src" >&2
     if [[ ! -r "$src" ]]; then
-      echo "        ⚠ not readable (no root) — skip" >&2
+      echo "        ⚠ not readable — skip" >&2
       continue
     fi
     if cp -f "$src" "$dst" 2>/dev/null; then
@@ -103,23 +147,16 @@ pull_package() {
       if [[ "$name" == "base.apk" || -z "$base" ]]; then
         base="$dst"
       fi
-    else
-      echo "        ⚠ cp failed" >&2
     fi
   done
 
   if [[ "$copied" -eq 0 || -z "$base" ]]; then
     cat <<EOF >&2
-[!] Could not read APK from /data/app (common without root).
+[!] /data/app не читається без root.
 
-Do this instead:
-  1) Install F-Droid → "App Manager" (or SAI / APK Extractor)
-  2) Extract: $pkg
-  3) Copy .apk into Download/
-  4) ~/frida
-
-Or if you already have an apk:
-  ~/frida /sdcard/Download/your.apk
+App Manager → Save APK set для гри → Download/
+або вкажи файл:
+  ~/frida "/sdcard/Download/777.apk"
 EOF
     return 1
   fi
@@ -130,45 +167,95 @@ EOF
     echo "[*] base → $nice" >&2
     base="$nice"
   fi
-
-  if [[ "$copied" -gt 1 ]]; then
-    echo >&2
-    echo "[!] Split APK ($copied files) in: $out_dir" >&2
-    echo "    After inject: install ALL splits via SAI (same signing key)." >&2
-  fi
   echo "$base"
-  return 0
 }
 
+# Deduplicate the same APK seen via /sdcard vs /storage/emulated/0 vs Termux shared.
 find_apks() {
-  local roots=()
-  [[ -n "$DOWNLOADS" ]] && roots+=("$DOWNLOADS")
-  roots+=(
-    "$HOME_DIR/storage/shared/Download"
-    "$HOME_DIR/storage/downloads"
-    "$HOME_DIR/unpin_work"
-    "/sdcard/Download"
-    "/storage/emulated/0/Download"
-  )
-  local r
-  for r in "${roots[@]}"; do
-    [[ -d "$r" ]] || continue
-    find "$r" -maxdepth 3 -type f -iname '*.apk' 2>/dev/null
-  done | sort -u
+  python3 - <<'PY'
+import os
+from pathlib import Path
+
+home = Path(os.environ.get("HOME", str(Path.home())))
+roots = [
+    home / "storage" / "downloads",
+    home / "storage" / "shared" / "Download",
+    home / "unpin_work",
+    Path("/sdcard/Download"),
+    Path("/storage/emulated/0/Download"),
+]
+junk = {
+    "f-droid.apk",
+    "telegram.apk",
+    "com.termux.api_1001.apk",
+    "pcapdroid-mitm_v1.4_arm64-v8a.apk",
+    "porcupine demo_2.1.0_apkpure.apk",
+}
+seen = {}
+cands = []
+for root in roots:
+    if not root.is_dir():
+        continue
+    for p in root.rglob("*.apk"):
+        if not p.is_file():
+            continue
+        if p.name.lower() in junk:
+            continue
+        if "pcapdroid" in p.name.lower() and "mitm" in p.name.lower():
+            continue
+        try:
+            st = p.stat()
+            key = (st.st_ino, st.st_dev, st.st_size)
+        except OSError:
+            continue
+        if key in seen:
+            continue
+        seen[key] = p
+        cands.append(p)
+
+def score(p: Path) -> tuple:
+    name = p.name.lower()
+    try:
+        from protocol_ast.frida_gadget import apk_quick_info
+        inf = apk_quick_info(p)
+    except Exception:
+        inf = {"il2cpp": False, "hint": "", "size": p.stat().st_size}
+    # prefer unity/lilith/large
+    pri = 0
+    if inf.get("il2cpp"):
+        pri += 100
+    if "lilith" in (inf.get("hint") or "") or "hgame" in (inf.get("hint") or ""):
+        pri += 80
+    if "lilith" in name or "hgame" in name or "afk" in name:
+        pri += 60
+    if name.startswith("777"):
+        pri += 40  # user dump candidates
+    if name.startswith("sc_"):
+        pri += 10
+    return (-pri, -inf.get("size", 0), name)
+
+cands.sort(key=score)
+for p in cands:
+    print(p)
+PY
 }
 
 looks_like_pkg() {
-  # com.foo.bar — not a path, not a flag
   [[ "$1" == *.* && "$1" != *.apk && "$1" != /* && "$1" != ~/* && "$1" != -* ]]
+}
+
+describe_apk() {
+  python3 -c "from pathlib import Path; from protocol_ast.frida_gadget import format_apk_choice; print(format_apk_choice(Path('$1')))" 2>/dev/null \
+    || echo "$(basename "$1")"
 }
 
 pick_apk() {
   local arg="${1:-}"
+  # Direct path (quote spaces: 777\ \(1\).apk)
   if [[ -n "$arg" && -f "$arg" ]]; then
     echo "$arg"
     return
   fi
-
   if [[ -n "$arg" ]] && looks_like_pkg "$arg"; then
     pull_package "$arg"
     return
@@ -176,26 +263,18 @@ pick_apk() {
 
   mapfile -t apks < <(find_apks)
   if [[ ${#apks[@]} -eq 0 ]]; then
-    echo "[*] No APK in Download — trying pm pull $DEFAULT_PKG …" >&2
+    echo "[*] Немає APK — pm pull $DEFAULT_PKG …" >&2
     if pull_package "$DEFAULT_PKG"; then
       return
     fi
     cat <<EOF >&2
 
-Немає APK. Зроби ОДИН з варіантів:
+Немає APK гри. Зроби:
 
-A) Авто (якщо система дає читати base.apk):
-   ~/frida pull $DEFAULT_PKG
-   ~/frida
-
-B) Вручну (надійніше):
-   1. F-Droid → App Manager
-   2. Знайти AFK Arena ($DEFAULT_PKG)
-   3. ☰ → Save APK set / Export → Download/
-   4. ~/frida
-
-C) Якщо APK уже є:
-   ~/frida /sdcard/Download/name.apk
+  ~/frida pkgs
+  # або App Manager → Save APK
+  # або напряму (якщо 777 = гра):
+  ~/frida "/sdcard/Download/777.apk"
 EOF
     exit 1
   fi
@@ -204,15 +283,29 @@ EOF
     echo "${apks[0]}"
     return
   fi
-  echo "Pick APK:" >&2
-  local i
+
+  echo "Pick APK (унікальні файли; Unity/IL2CPP зверху):" >&2
+  local i desc
   for i in "${!apks[@]}"; do
-    printf "  %2d) %s\n" "$((i + 1))" "${apks[$i]}" >&2
+    desc="$(describe_apk "${apks[$i]}")"
+    printf "  %2d) %s\n" "$((i + 1))" "$desc" >&2
+    printf "      %s\n" "${apks[$i]}" >&2
   done
+  echo >&2
+  echo "Підказка: для AFK Arena шукай IL2CPP / lilith / великий розмір." >&2
+  echo "Або без меню:  ~/frida \"/sdcard/Download/777.apk\"" >&2
   printf "Number: " >&2
-  read -r n
+  # read may fail / empty in weird TTYs
+  n=""
+  read -r n || true
+  n="${n//[$'\t\r\n ']/}"
+  if [[ -z "$n" ]]; then
+    echo "Empty choice. Приклад: ~/frida \"/sdcard/Download/777.apk\"" >&2
+    exit 1
+  fi
   if [[ ! "$n" =~ ^[0-9]+$ ]] || (( n < 1 || n > ${#apks[@]} )); then
-    echo "Invalid" >&2
+    echo "Invalid: '$n'  (треба число 1–${#apks[@]})" >&2
+    echo "Або шлях: ~/frida \"/sdcard/Download/777.apk\"" >&2
     exit 1
   fi
   echo "${apks[$((n - 1))]}"
@@ -226,9 +319,12 @@ main() {
       python3 -m protocol_ast.frida_gadget --guide
       exit 0
       ;;
+    pkgs|packages|list-pkg)
+      list_game_packages
+      exit 0
+      ;;
     pull)
       pull_package "${2:-$DEFAULT_PKG}" >/dev/null
-      echo >&2
       echo "Далі:  ~/frida" >&2
       exit 0
       ;;
@@ -237,7 +333,7 @@ main() {
   need_java
 
   if [[ ! -f "$HOME_DIR/protocol_ast/frida_gadget.py" ]]; then
-    echo "немає protocol_ast/frida_gadget.py — спочатку: ~/scan update" >&2
+    echo "немає protocol_ast/frida_gadget.py — ~/scan update" >&2
     exit 1
   fi
 
@@ -250,13 +346,11 @@ main() {
   python3 -m protocol_ast.frida_gadget "$apk"
   echo
   echo "════════════════════════════════════════"
-  echo "Далі на телефоні:"
-  echo "  1) Settings → Apps → AFK Arena → Uninstall"
-  echo "  2) Files → Download → встанови *-frida.apk"
-  echo "     (якщо split — SAI: усі apk з *_pulled + signed)"
-  echo "  3) PCAPdroid: target=гра, TLS decrypt ON, Block QUIC"
-  echo "  4) Увійди 30–60с → Stop → export pcap+keylog"
-  echo "  5) ~/scan mine   ← дивись OPEN vs SEALED"
+  echo "Далі:"
+  echo "  1) Uninstall стару AFK Arena"
+  echo "  2) Встановити *-frida.apk"
+  echo "  3) PCAPdroid MITM + Block QUIC → гра → Stop"
+  echo "  4) ~/scan mine"
   echo "════════════════════════════════════════"
 }
 

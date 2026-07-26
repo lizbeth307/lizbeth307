@@ -114,6 +114,21 @@ class TestManifestAndAbi(unittest.TestCase):
                 zf.writestr("classes.dex", b"dex")
             self.assertEqual(detect_apis_in_apk(apk), ["arm64-v8a", "armeabi-v7a"])
 
+    def test_quick_info_il2cpp(self) -> None:
+        from protocol_ast.frida_gadget import apk_quick_info, format_apk_choice
+
+        with tempfile.TemporaryDirectory() as td:
+            apk = Path(td) / "777.apk"
+            with zipfile.ZipFile(apk, "w") as zf:
+                zf.writestr("lib/arm64-v8a/libil2cpp.so", b"\x00")
+                zf.writestr("assets/bin/Data/lilith_config", b"x")
+            inf = apk_quick_info(apk)
+            self.assertTrue(inf["il2cpp"])
+            self.assertIn("lilith", inf["hint"])
+            label = format_apk_choice(apk)
+            self.assertIn("IL2CPP", label)
+            self.assertIn("777.apk", label)
+
 
 if __name__ == "__main__":
     unittest.main()
