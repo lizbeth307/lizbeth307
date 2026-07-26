@@ -96,7 +96,8 @@ python3 ~/analyze_pcap.py ~/downloads/capture.pcapng \
   → БЕЗ root (Termux):  ~/scan update && ~/unpin
      (apk-mitm патчить Java TrustManager / OkHttp)
      потім ставиш *-unpinned.apk → новий MITM → ~/scan mine
-  → якщо досі SEALED (Unity/native pin) — Frida Gadget в APK
+  → якщо досі SEALED (Unity/native):  ~/frida
+     (Frida Gadget script-mode + ssl_unpin.js) → *-frida.apk → MITM
   → з root: Magisk + system CA / LSPosed unpin modules
 • CA не встановлений як User CA
 • Додаток вимагає system CA (Android 7+)

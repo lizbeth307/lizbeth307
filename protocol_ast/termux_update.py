@@ -44,12 +44,15 @@ HELPERS = (
     "probe_env.py",
     "termux_update.py",
     "game_mine.py",
+    "frida_gadget.py",
+    "frida_ssl_unpin.js",
 )
 ROOT_FILES = ("analyze_pcap.py", "probe_network.py", "scan_app.py")
 LAUNCHERS = (
     ("scripts/termux_signal.sh", "signal"),
     ("scripts/termux_scan.sh", "scan"),
     ("scripts/termux_unpin.sh", "unpin"),
+    ("scripts/termux_frida.sh", "frida"),
 )
 
 

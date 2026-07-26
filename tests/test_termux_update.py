@@ -91,6 +91,10 @@ class TestDownloadTreeLaunchers(unittest.TestCase):
                 b"#!/data/data/com.termux/files/usr/bin/bash\n"
                 b'echo "unpin"\n'
             ),
+            "scripts/termux_frida.sh": (
+                b"#!/data/data/com.termux/files/usr/bin/bash\n"
+                b'echo "frida"\n'
+            ),
         }
 
         def fake_fetch(url: str, timeout: float = 60.0) -> bytes:
@@ -109,14 +113,15 @@ class TestDownloadTreeLaunchers(unittest.TestCase):
             home = Path(td)
             with mock.patch("protocol_ast.termux_update._fetch", side_effect=fake_fetch):
                 report = download_tree(home)
-            self.assertEqual(len(LAUNCHERS), 3)
+            self.assertEqual(len(LAUNCHERS), 4)
             signal = home / "signal"
             self.assertTrue(signal.is_file(), report)
             self.assertEqual(report.get("launcher"), str(signal))
             self.assertTrue((home / "scan").is_file(), report)
             self.assertTrue((home / "unpin").is_file(), report)
+            self.assertTrue((home / "frida").is_file(), report)
             launchers = report.get("launchers") or []
-            self.assertEqual(len(launchers), 3)
+            self.assertEqual(len(launchers), 4)
             text = signal.read_text(encoding="utf-8")
             self.assertTrue(text.startswith("#!"))
             self.assertIn("--signal", text)

@@ -6,7 +6,8 @@ SIGNAL SCAN — мінімальний універсальний сканер �
   ~/scan peel         # living signal
   ~/scan mine         # game mine + sdk_session
   ~/scan sdk          # показати останній sdk_session.json
-  ~/scan unpin        # pin bypass без root (apk-mitm)
+  ~/scan unpin        # pin bypass без root (apk-mitm, Java)
+  ~/scan frida        # Frida Gadget + SSL unpin (Java+native)
   ~/scan update       # self-update
 """
 
@@ -18,10 +19,11 @@ import subprocess
 import sys
 from pathlib import Path
 
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 HOME = Path.home()
 ANALYZE = HOME / "analyze_pcap.py"
 UNPIN = HOME / "unpin"
+FRIDA = HOME / "frida"
 DOWNLOADS = HOME / "storage" / "downloads"
 PCAPDROID = DOWNLOADS / "PCAPdroid"
 
@@ -204,9 +206,26 @@ def cmd_unpin(argv: list[str] | None = None) -> int:
     print("План без root:")
     print("  1) Extract APK (SAI / App Manager) → Download/")
     print("  2) ~/unpin   # apk-mitm патч Java TrustManager")
-    print("  3) Встановити *-unpinned.apk")
+    print("  3) якщо SEALED лишився → ~/frida  (Gadget + native)")
     print("  4) PCAPdroid MITM → ~/scan mine")
-    print("  Unity/native pin apk-mitm НЕ знімає → тоді Frida Gadget")
+    return 1
+
+
+def cmd_frida(argv: list[str] | None = None) -> int:
+    """No-root Frida Gadget inject + autonomous SSL unpin."""
+    extra = list(argv or [])
+    if FRIDA.is_file():
+        print("▸ frida gadget (script mode, без root/ПК)")
+        return _run(["bash", str(FRIDA), *extra])
+    # Direct module fallback after self-update of helpers but before launcher
+    mod = HOME / "protocol_ast" / "frida_gadget.py"
+    if mod.is_file():
+        print("▸ frida_gadget.py (немає ~/frida launcher — module)")
+        if extra and extra[0] in ("guide", "help", "-h", "--help"):
+            return _run([_py(), "-m", "protocol_ast.frida_gadget", "--guide"])
+        return _run([_py(), "-m", "protocol_ast.frida_gadget", *extra])
+    print("немає ~/frida — спочатку: ~/scan update")
+    print("Потім: Extract APK → ~/frida → install *-frida.apk → MITM → ~/scan mine")
     return 1
 
 
@@ -214,9 +233,10 @@ MENU = [
     ("1", "Peel — живий сигнал (TLS→HTTP→body)", cmd_peel),
     ("2", "Mine — карта SNI + SDK session", cmd_mine),
     ("3", "SDK — останній sdk_session.json", cmd_sdk),
-    ("4", "Unpin — pin bypass без root", lambda: cmd_unpin()),
-    ("5", "Stream — інкрементальний агент", cmd_stream),
-    ("6", "Update — стягнути свіжий код", cmd_update),
+    ("4", "Unpin — Java pin (apk-mitm)", lambda: cmd_unpin()),
+    ("5", "Frida — Gadget + native SSL unpin", lambda: cmd_frida()),
+    ("6", "Stream — інкрементальний агент", cmd_stream),
+    ("7", "Update — стягнути свіжий код", cmd_update),
     ("0", "Вихід", None),
 ]
 
@@ -262,6 +282,8 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_stream()
     if cmd in ("unpin", "pin", "mitm-apk"):
         return cmd_unpin(argv[1:])
+    if cmd in ("frida", "gadget", "fgadget"):
+        return cmd_frida(argv[1:])
     if cmd in ("update", "u", "self-update"):
         return cmd_update()
     if cmd in ("help", "h"):

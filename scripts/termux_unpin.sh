@@ -44,7 +44,7 @@ banner() {
 ВАЖЛИВО:
   • Java / OkHttp / network-security-config  → apk-mitm часто знімає
   • Unity IL2CPP / native BoringSSL pin     → apk-mitm НЕ знімає
-    тоді треба Frida Gadget всередині APK (складніше без ПК)
+    тоді:  ~/frida   (Gadget + ssl_unpin.js, без ПК)
 
 EOF
 }
@@ -244,11 +244,10 @@ A. Швидкий експеримент (рекомендовано зараз)
 
 B. Якщо app-global* лишається SEALED
    Pin сидить у native/Unity, не в Java.
-   Варіанти без root:
-   1) Frida Gadget вшити в APK (repackage + gadget + script)
-      — на Termux важко (потрібні android-ndk/apktool/ключ)
-   2) Готовий "mod APK" з ком'юніті (ризик троянів — обережно)
-   3) Емулятор на ПК з root/Frida (у тебе без ПК — пропускаємо)
+   →  ~/frida
+      (вшиває Frida Gadget 16.7.19 + ssl_unpin.js у script-режимі;
+       Java + BoringSSL/curl/mbedtls hooks без adb/ПК)
+   Потім знову PCAPdroid MITM + ~/scan mine.
 
 C. Що НЕ треба для цього флоу
    • Magisk / LSPosed / JustTrustMe  (потрібен root)

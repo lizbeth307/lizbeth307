@@ -66,6 +66,8 @@ _get "${BASE}/scripts/termux_scan.sh" "$HOME/scan"
 chmod +x "$HOME/scan"
 _get "${BASE}/scripts/termux_unpin.sh" "$HOME/unpin"
 chmod +x "$HOME/unpin"
+_get "${BASE}/scripts/termux_frida.sh" "$HOME/frida"
+chmod +x "$HOME/frida"
 
 mkdir -p "$HOME/protocol_ast"
 export PYTHONPATH="$HOME${PYTHONPATH:+:$PYTHONPATH}"
@@ -76,7 +78,8 @@ for f in \
   probe_loop.py stream_agent.py smart_probe.py active_probe.py stream_enrich.py \
   splitters.py tls_handshake.py pcap_analyze.py pcap_read.py deep_decode.py \
   align.py cluster.py sequitur.py parser.py serde.py pipeline.py ast_nodes.py \
-  io_utils.py tcp_reassemble.py probe_env.py termux_update.py game_mine.py
+  io_utils.py tcp_reassemble.py probe_env.py termux_update.py game_mine.py \
+  frida_gadget.py frida_ssl_unpin.js
 do
   _get "${BASE}/protocol_ast/$f" "$HOME/protocol_ast/$f" || echo "⚠ skip $f"
 done
@@ -93,9 +96,10 @@ echo "Готово. Універсальний сканер:"
 echo "  ~/scan"
 echo
 echo "Або одразу:"
-echo "  ~/scan peel | ~/scan mine | ~/scan sdk | ~/scan unpin"
+echo "  ~/scan peel | ~/scan mine | ~/scan sdk | ~/scan unpin | ~/scan frida"
 echo "  ~/signal          # peel без меню"
-echo "  ~/unpin           # pin bypass без root (apk-mitm)"
+echo "  ~/unpin           # Java pin bypass (apk-mitm)"
+echo "  ~/frida           # Frida Gadget + native SSL unpin"
 echo "  python3 ~/analyze_pcap.py --self-update"
 echo
 echo "НЕ запускай pkg у цьому скрипті — apt більше не чіпаємо."
