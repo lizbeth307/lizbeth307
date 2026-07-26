@@ -747,16 +747,41 @@ def _same_device(a: Path, b: Path) -> bool:
 
 
 def _link_or_copy(src: Path, dest: Path) -> None:
-    """Hardlink when possible (0 extra space), else copy."""
+    """Hardlink when possible (0 extra space), else copy.
+
+    Android/Termux Python builds often omit os.link entirely (AttributeError).
+    """
     dest.parent.mkdir(parents=True, exist_ok=True)
-    if dest.exists():
-        dest.unlink()
-    try:
-        os.link(src, dest)
-        return
-    except OSError:
-        pass
+    if dest.exists() or dest.is_symlink():
+        if dest.is_dir() and not dest.is_symlink():
+            shutil.rmtree(dest)
+        else:
+            dest.unlink(missing_ok=True)
+    link = getattr(os, "link", None)
+    if callable(link):
+        try:
+            link(src, dest)
+            return
+        except OSError:
+            pass
     shutil.copy2(src, dest)
+
+
+def _symlink_or_skip(target: Path, dest: Path) -> bool:
+    """Best-effort symlink; Android often blocks it. Returns True on success."""
+    symlink = getattr(os, "symlink", None)
+    if not callable(symlink):
+        return False
+    try:
+        if dest.exists() or dest.is_symlink():
+            if dest.is_dir() and not dest.is_symlink():
+                shutil.rmtree(dest)
+            else:
+                dest.unlink(missing_ok=True)
+        symlink(str(target), str(dest))
+        return True
+    except OSError:
+        return False
 
 
 def _move_file(src: Path, dest: Path) -> None:
@@ -1670,15 +1695,7 @@ def inject_apks_bundle(
     alias_splits = Path("/sdcard/Download/AFK-Arena-frida-splits")
     try:
         if alias_splits.resolve() != sai_dir.resolve():
-            if alias_splits.exists() or alias_splits.is_symlink():
-                if alias_splits.is_dir() and not alias_splits.is_symlink():
-                    shutil.rmtree(alias_splits)
-                else:
-                    alias_splits.unlink(missing_ok=True)
-            try:
-                os.symlink(sai_dir, alias_splits)
-            except OSError:
-                pass
+            _symlink_or_skip(sai_dir, alias_splits)
     except OSError:
         pass
 

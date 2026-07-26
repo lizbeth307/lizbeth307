@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import os
 import tempfile
 import unittest
 import zipfile
 from pathlib import Path
 
 from protocol_ast.frida_gadget import (
+    _link_or_copy,
     _pick_patch_so,
     detect_apis_in_apk,
     detect_native_abis,
@@ -97,6 +99,24 @@ class TestSmaliInject(unittest.TestCase):
         out, note = inject_load_library_smali(smali)
         self.assertEqual(note, "already_injected")
         self.assertEqual(out.count("frida-gadget"), 1)
+
+
+class TestLinkOrCopy(unittest.TestCase):
+    def test_copy_when_link_missing(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            td_path = Path(td)
+            src = td_path / "a.bin"
+            dest = td_path / "b.bin"
+            src.write_bytes(b"hello-link")
+            real_link = getattr(os, "link", None)
+            try:
+                if hasattr(os, "link"):
+                    delattr(os, "link")
+                _link_or_copy(src, dest)
+                self.assertEqual(dest.read_bytes(), b"hello-link")
+            finally:
+                if real_link is not None and not hasattr(os, "link"):
+                    setattr(os, "link", real_link)
 
 
 class TestZipPack(unittest.TestCase):
