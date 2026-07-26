@@ -291,9 +291,17 @@ class Signal:
                     self.children.append(child)
                 return self
             if looks_like_http1(self.messages):
+                from .http2 import http1_body_messages
+
+                h1 = http1_deep(self.messages)
                 self.splitter = "http1"
-                self.deep = http1_deep(self.messages)
+                self.deep = {k: v for k, v in h1.items() if k != "bodies"}
                 self.entropy = "structured"
+                bodies = http1_body_messages(h1)
+                if bodies:
+                    child = self._spawn("http1_body", bodies)
+                    child.propagate(max_depth=max_depth)
+                    self.children.append(child)
                 return self
 
             if self._try_binary_peel():
@@ -519,6 +527,20 @@ class Signal:
                 notes.append(f"  HTTP/1: {self.deep.get('methods', {})}")
                 if self.deep.get("hosts"):
                     notes.append(f"  Host: {', '.join(self.deep['hosts'][:6])}")
+                for r in (self.deep.get("requests") or [])[:3]:
+                    notes.append(
+                        f"  req: {r.get('method')} {r.get('path', '')}"
+                        + (f" host={r['host']}" if r.get("host") else "")
+                    )
+                if self.deep.get("statuses"):
+                    notes.append(f"  status: {self.deep['statuses'][:6]}")
+                for m in (self.deep.get("body_meta") or [])[:2]:
+                    notes.append(
+                        f"  meta: {m.get('decompress')} {m.get('raw_len')}→{m.get('plain_len')}"
+                    )
+                binary = self.deep.get("binary") or {}
+                if binary.get("kind"):
+                    notes.append(f"  binary: {binary.get('kind')}")
             if kind == "dns" and self.deep.get("domains"):
                 notes.append(f"  DNS: {', '.join(self.deep['domains'][:6])}")
             if kind == "quic":

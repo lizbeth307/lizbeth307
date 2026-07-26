@@ -347,29 +347,156 @@ def looks_like_http1(messages: list[bytes]) -> bool:
     return hits >= max(1, len(messages) // 4)
 
 
-def http1_deep(messages: list[bytes]) -> dict:
-    methods: Counter[str] = Counter()
-    hosts: list[str] = []
-    for m in messages[:40]:
-        head = m.split(b"\r\n", 1)[0][:200]
+def _http1_split_head_body(msg: bytes) -> tuple[list[bytes], bytes] | None:
+    """Return (header_lines, body) for an HTTP/1 message, or None."""
+    sep = msg.find(b"\r\n\r\n")
+    if sep < 0:
+        # Request/status line only (body may be next TLS record)
+        if b"\r\n" in msg[:512] and (
+            msg.startswith(b"HTTP/1.")
+            or any(msg.startswith(m + b" ") for m in (b"GET", b"POST", b"HEAD", b"PUT", b"DELETE", b"PATCH", b"OPTIONS", b"CONNECT"))
+        ):
+            return msg.split(b"\r\n"), b""
+        return None
+    head = msg[:sep]
+    body = msg[sep + 4 :]
+    return head.split(b"\r\n"), body
+
+
+def _http1_header_map(lines: list[bytes]) -> dict[str, str]:
+    out: dict[str, str] = {}
+    for raw in lines[1:40]:
+        if b":" not in raw:
+            continue
+        k, v = raw.split(b":", 1)
         try:
-            line = head.decode("ascii", errors="ignore")
+            out[k.strip().decode("ascii", errors="ignore").lower()] = v.strip().decode(
+                "utf-8", errors="replace"
+            )
         except Exception:
             continue
+    return out
+
+
+def http1_deep(messages: list[bytes]) -> dict:
+    """
+    Summarize HTTP/1.x traffic after TLS decrypt.
+
+    Also collects decompressed body blobs for further peel (protobuf / JSON).
+    """
+    methods: Counter[str] = Counter()
+    hosts: list[str] = []
+    requests: list[dict] = []
+    statuses: list[int] = []
+    body_meta: list[dict] = []
+    bodies: list[bytes] = []
+    previews: list[str] = []
+
+    # Pair orphan Content-Length bodies that arrived as separate TLS records
+    pending_enc: str | None = None
+
+    for m in messages[:60]:
+        if not m:
+            continue
+        # Standalone gzip/deflate body from a prior response/request
+        if pending_enc is not None or m.startswith(b"\x1f\x8b") or (len(m) >= 2 and m[0] == 0x78):
+            enc = pending_enc
+            pending_enc = None
+            plain, how = decompress_http_body(m, enc)
+            body_meta.append(
+                {"decompress": how, "raw_len": len(m), "plain_len": len(plain)}
+            )
+            bodies.append(plain)
+            previews.append(plain[:80].hex() if sum(1 for b in plain[:40] if 32 <= b < 127) < 28 else plain[:80].decode("utf-8", errors="replace").replace("\n", "\\n"))
+            continue
+
+        parts = _http1_split_head_body(m)
+        if not parts:
+            continue
+        lines, body = parts
+        if not lines:
+            continue
+        try:
+            start = lines[0].decode("ascii", errors="ignore")
+        except Exception:
+            continue
+        hdrs = _http1_header_map(lines)
+
+        req_hit = False
         for meth in ("GET", "POST", "HEAD", "PUT", "CONNECT", "OPTIONS", "DELETE", "PATCH"):
-            if line.startswith(meth + " "):
+            if start.startswith(meth + " "):
                 methods[meth] += 1
+                bits = start.split()
+                path = bits[1] if len(bits) > 1 else ""
+                host = hdrs.get("host", "")
+                if host:
+                    hosts.append(host)
+                entry = {"method": meth, "path": path[:160], "host": host}
+                # Interesting custom headers seen in game APIs
+                for k in ("content-type", "content-encoding", "a22", "rediskeyuuid", "status", "nstat"):
+                    if k in hdrs:
+                        entry[k] = hdrs[k][:80]
+                requests.append(entry)
+                req_hit = True
                 break
-        if line.startswith("HTTP/1."):
+        if not req_hit and start.startswith("HTTP/1."):
             methods["RESPONSE"] += 1
-        for raw in m.split(b"\r\n")[:20]:
-            if raw.lower().startswith(b"host:"):
-                try:
-                    hosts.append(raw.split(b":", 1)[1].strip().decode("ascii", errors="ignore"))
-                except Exception:
-                    pass
-    return {
+            try:
+                statuses.append(int(start.split()[1]))
+            except Exception:
+                pass
+
+        enc = hdrs.get("content-encoding")
+        if body:
+            plain, how = decompress_http_body(body, enc)
+            body_meta.append(
+                {
+                    "decompress": how,
+                    "raw_len": len(body),
+                    "plain_len": len(plain),
+                    "content_type": hdrs.get("content-type", ""),
+                }
+            )
+            bodies.append(plain)
+            printable = sum(1 for b in plain[:60] if 32 <= b < 127)
+            previews.append(
+                plain[:100].decode("utf-8", errors="replace").replace("\n", "\\n")
+                if printable >= 40
+                else plain[:64].hex()
+            )
+        elif hdrs.get("content-length") and hdrs.get("content-length") != "0":
+            # Body likely in the next record
+            pending_enc = enc
+
+    deep: dict = {
         "kind": "http1",
         "methods": dict(methods),
         "hosts": sorted(set(hosts))[:20],
+        "requests": requests[:12],
+        "statuses": statuses[:12],
+        "body_meta": body_meta[:8],
+        "preview": previews[:4],
+        "bodies": bodies[:12],
     }
+    if bodies:
+        try:
+            from .body_peel import body_deep
+
+            deep["content"] = body_deep(bodies)
+        except Exception:
+            pass
+        try:
+            from .binary_peel import binary_peel
+
+            pb = binary_peel(bodies)
+            if pb:
+                deep["binary"] = {k: pb[k] for k in pb if k != "samples"}
+        except Exception:
+            pass
+    return deep
+
+
+def http1_body_messages(deep: dict) -> list[bytes]:
+    """Bodies extracted by http1_deep for child peel."""
+    bodies = deep.get("bodies") or []
+    return [b for b in bodies if isinstance(b, (bytes, bytearray)) and b]

@@ -21,7 +21,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.8.12-full"
+VERSION = "3.8.13-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -1217,9 +1217,8 @@ def recursive_nested_analyze(
         layer["deep"] = deep_analyze_flow(flow, messages)
         opcodes = Counter(m[0] for m in messages if m)
         layer["clusters"] = len([v for v in opcodes.values() if v >= 2])
-    elif "handshake" in label.lower() or (
-        messages and messages[0] and messages[0][0] in {1, 2, 4, 8, 11, 12, 13, 14, 15, 16, 20}
-    ):
+    elif "tls_handshake" in label.lower():
+        # Only label-driven: first-byte heuristics false-positive on protobuf (tag 0x08 etc.)
         layer["deep"] = _handshake_layer_deep(messages)
     if depth >= max_depth or len(messages) < 2:
         return layer
@@ -1291,6 +1290,31 @@ def recursive_nested_analyze(
                     pass
             layer["children"].append(child)
             return layer
+        # HTTP/1.1 after TLS decrypt (game APIs often use HTTP/1 + gzip + protobuf)
+        try:
+            from protocol_ast.http2 import http1_body_messages, http1_deep, looks_like_http1
+
+            if looks_like_http1(messages):
+                h1 = http1_deep(messages)
+                layer["splitter"] = "http1"
+                # Do not persist raw body bytes into JSON report
+                layer["deep"] = {k: v for k, v in h1.items() if k != "bodies"}
+                layer["entropy"] = "structured"
+                bodies = http1_body_messages(h1)
+                if bodies:
+                    layer["children"].append(
+                        recursive_nested_analyze(
+                            flow,
+                            bodies,
+                            depth=depth + 1,
+                            max_depth=max_depth,
+                            label=f"{label}/http1_body",
+                            keylog=None,
+                        )
+                    )
+                return layer
+        except Exception:
+            pass
         try:
             from protocol_ast.body_peel import body_deep, looks_like_app_body
 
@@ -1363,6 +1387,54 @@ def recursive_nested_analyze(
         if not layer["children"]:
             layer["opaque"] = True
         return layer
+
+    # Structured layers can still be HTTP/1.1 / app bodies (mixed with TLS leftovers)
+    if depth > 0:
+        try:
+            from protocol_ast.http2 import http1_body_messages, http1_deep, looks_like_http1
+
+            if looks_like_http1(messages):
+                h1 = http1_deep(messages)
+                layer["splitter"] = "http1"
+                layer["deep"] = {k: v for k, v in h1.items() if k != "bodies"}
+                layer["entropy"] = "structured"
+                bodies = http1_body_messages(h1)
+                if bodies:
+                    layer["children"].append(
+                        recursive_nested_analyze(
+                            flow,
+                            bodies,
+                            depth=depth + 1,
+                            max_depth=max_depth,
+                            label=f"{label}/http1_body",
+                            keylog=None,
+                        )
+                    )
+                return layer
+        except Exception:
+            pass
+        try:
+            from protocol_ast.body_peel import body_deep, looks_like_app_body
+
+            if looks_like_app_body(messages):
+                layer["splitter"] = "app_body"
+                layer["deep"] = body_deep(messages)
+                layer["entropy"] = "structured"
+                return layer
+        except Exception:
+            pass
+        try:
+            from protocol_ast.binary_peel import binary_peel
+
+            bin_deep = binary_peel(messages)
+            if bin_deep:
+                name = bin_deep["kind"]
+                layer["splitter"] = name
+                layer["deep"] = bin_deep
+                layer["entropy"] = "structured"
+                return layer
+        except Exception:
+            pass
 
     split = _pick_nested_splitter(messages, depth, flow)
     if not split:
@@ -1641,6 +1713,34 @@ def format_nested_notes(layer: dict) -> list[str]:
     if layer.get("sequitur_rules"):
         notes.append(f"  sequitur: ~{layer['sequitur_rules']} digrams")
     deep = layer.get("deep") or {}
+    if deep.get("kind") == "http1":
+        notes.append(f"  HTTP/1: {deep.get('methods', {})}")
+        if deep.get("hosts"):
+            notes.append(f"  host: {', '.join(deep['hosts'][:4])}")
+        for r in (deep.get("requests") or [])[:4]:
+            bits = [r.get("method", "?"), r.get("path", "")]
+            if r.get("host"):
+                bits.append(f"host={r['host']}")
+            if r.get("content-type"):
+                bits.append(f"ct={r['content-type']}")
+            notes.append("  req: " + " ".join(str(x) for x in bits if x))
+        if deep.get("statuses"):
+            notes.append(f"  status: {deep['statuses'][:6]}")
+        for m in (deep.get("body_meta") or [])[:3]:
+            notes.append(
+                f"  meta: {m.get('decompress')} {m.get('raw_len')}→{m.get('plain_len')}"
+                + (f" ct={m.get('content_type')}" if m.get("content_type") else "")
+            )
+        for prev in (deep.get("preview") or [])[:2]:
+            notes.append(f"  body: {prev[:100]}")
+        content = deep.get("content") or {}
+        if content.get("types"):
+            notes.append(f"  content: types={content.get('types')}")
+        binary = deep.get("binary") or {}
+        if binary.get("kind"):
+            notes.append(
+                f"  binary: {binary.get('kind')} fields={binary.get('field_count', binary.get('key_count', '?'))}"
+            )
     if deep.get("kind") == "http2":
         notes.append(f"  HTTP/2: {deep.get('frames', {})} streams={deep.get('streams', 0)}")
         for h in (deep.get("headers") or [])[:3]:
