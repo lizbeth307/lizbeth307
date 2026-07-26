@@ -528,6 +528,7 @@ def sign_apk_uber(
     local_unsigned = sign_dir / unsigned.name
     shutil.copy2(unsigned, local_unsigned)
 
+    # uber-apk-signer: -o and --overwrite are mutually exclusive — use -o only.
     cmd = [
         _java(),
         "-jar",
@@ -537,7 +538,6 @@ def sign_apk_uber(
         "--out",
         str(sign_dir),
         "--allowResign",
-        "--overwrite",
     ]
     zipalign = None if skip_zipalign else find_zipalign()
     if zipalign:
@@ -545,7 +545,7 @@ def sign_apk_uber(
         print(f"[*] zipalign: {zipalign}", flush=True)
     else:
         cmd.append("--skipZipAlign")
-        print("[*] zipalign not in PATH — signing with --skipZipAlign", flush=True)
+        print("[*] no zipalign binary — --skipZipAlign", flush=True)
 
     subprocess.run(cmd, check=True)
 
@@ -590,23 +590,20 @@ def sign_apk_jarsigner(unsigned: Path, out_apk: Path, home: Path | None = None) 
 
 
 def sign_apk(unsigned: Path, out_apk: Path, home: Path | None = None) -> Path:
-    """Sign APK; tolerate missing Android SDK zipalign on Termux."""
+    """Sign APK with uber (v2/v3). Prefer zipalign; fall back to skip / jarsigner."""
     errors: list[str] = []
-    for skip in (False, True):
-        # If zipalign exists, first attempt uses it; second skips.
-        if not skip and not find_zipalign():
-            continue
+    attempts: list[bool] = []
+    if find_zipalign():
+        attempts.append(False)  # use zipalign
+    attempts.append(True)  # skipZipAlign
+    for skip in attempts:
         try:
             return sign_apk_uber(unsigned, out_apk, home=home, skip_zipalign=skip)
         except Exception as exc:
-            errors.append(f"uber(skip={skip}): {exc}")
-    # Always try skipZipAlign once more even if find_zipalign was true but uber failed
+            errors.append(f"uber(skipZipAlign={skip}): {exc}")
+            print(f"[!] uber-apk-signer failed: {exc}", flush=True)
     try:
-        return sign_apk_uber(unsigned, out_apk, home=home, skip_zipalign=True)
-    except Exception as exc:
-        errors.append(f"uber(skip=True): {exc}")
-    try:
-        print("[*] falling back to jarsigner (v1)", flush=True)
+        print("[*] falling back to jarsigner (v1 only — may fail install on Android 11+)", flush=True)
         return sign_apk_jarsigner(unsigned, out_apk, home=home)
     except Exception as exc:
         errors.append(f"jarsigner: {exc}")
@@ -867,6 +864,7 @@ def inject_apk(
 def main(argv: list[str] | None = None) -> int:
     import argparse
     import json
+    import sys
 
     p = argparse.ArgumentParser(description="Inject Frida Gadget + SSL unpin (no root)")
     p.add_argument("apk", nargs="?", help="Path to APK")
@@ -879,8 +877,28 @@ def main(argv: list[str] | None = None) -> int:
         default="auto",
         help="auto: zip+patchelf first, else apktool+aapt",
     )
+    p.add_argument(
+        "--sign-only",
+        metavar="UNSIGNED_APK",
+        help="Only zipalign+sign an existing *-frida.unsigned.apk",
+    )
     p.add_argument("--guide", action="store_true", help="Print usage guide")
     args = p.parse_args(argv)
+
+    if args.sign_only:
+        unsigned = Path(args.sign_only).expanduser().resolve()
+        if not unsigned.is_file():
+            print(f"missing: {unsigned}", file=sys.stderr)
+            return 1
+        out = Path(args.out).expanduser() if args.out else unsigned.with_name(
+            unsigned.name.replace(".unsigned.apk", ".apk").replace("-frida.unsigned.apk", "-frida.apk")
+        )
+        if out == unsigned:
+            out = unsigned.with_name(unsigned.stem.replace(".unsigned", "") + "-signed.apk")
+        signed = sign_apk(unsigned, out)
+        print(json.dumps({"out": str(signed)}, indent=2))
+        print("NEXT: install", signed)
+        return 0
 
     if args.guide or not args.apk:
         print(
