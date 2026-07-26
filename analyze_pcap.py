@@ -21,7 +21,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.8.14-full"
+VERSION = "3.8.15-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -2403,16 +2403,18 @@ def main() -> int:
         print(text)
         out_txt = path.parent / "mine_report.txt"
         out_json = path.parent / "mine_report.json"
-        # Drop bulky record bytes before JSON
-        slim = dict(report)
-        detail = []
-        for a in report.get("connections_detail") or []:
-            detail.append({k: v for k, v in a.items() if k != "records"})
-        slim["connections_detail"] = detail
+        out_sdk = path.parent / "sdk_session.json"
+        # sessions already slim; drop any accidental bytes
+        slim = json.loads(json.dumps(report, default=str))
         out_txt.write_text(text, encoding="utf-8")
         out_json.write_text(json.dumps(slim, indent=2, ensure_ascii=False), encoding="utf-8")
+        out_sdk.write_text(
+            json.dumps(slim.get("sdk_session") or {}, indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
         print(f"\nЗвіт: {out_txt}")
         print(f"JSON: {out_json}")
+        print(f"SDK:  {out_sdk}")
         return 0
 
     if args.stream:
