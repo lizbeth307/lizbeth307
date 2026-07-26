@@ -660,7 +660,7 @@ def unzip_apk(apk: Path, dest: Path) -> None:
 
 
 def zip_apk_tree(src: Path, out_apk: Path) -> None:
-    """Repack APK; store .so / resources.arsc uncompressed for mmap extractNativeLibs=false."""
+    """Full repack (legacy). Prefer rebuild_apk_surgical()."""
     if out_apk.exists():
         out_apk.unlink()
     with zipfile.ZipFile(out_apk, "w", compression=zipfile.ZIP_DEFLATED) as zf:
@@ -669,14 +669,102 @@ def zip_apk_tree(src: Path, out_apk: Path) -> None:
                 continue
             rel = path.relative_to(src).as_posix()
             if rel.startswith("META-INF/"):
-                continue  # strip signatures; uber-apk-signer will resign
-            # .so / .arsc must be STORED for mmap when extractNativeLibs=false
+                continue
             compress = (
                 zipfile.ZIP_STORED
                 if (rel.endswith(".so") or rel.endswith(".arsc"))
                 else zipfile.ZIP_DEFLATED
             )
             zf.write(path, rel, compress_type=compress)
+
+
+def rebuild_apk_surgical(
+    orig_apk: Path,
+    lib_overrides: dict[str, Path],
+    out_apk: Path,
+) -> None:
+    """
+    Copy original APK entries as-is (same compress_type), strip META-INF,
+    replace/add only given lib/* paths. Avoids parse-error from full rezip.
+    """
+    if out_apk.exists():
+        out_apk.unlink()
+    overrides = {k.replace("\\", "/"): v for k, v in lib_overrides.items()}
+    with zipfile.ZipFile(orig_apk, "r") as zin, zipfile.ZipFile(
+        out_apk, "w", compression=zipfile.ZIP_DEFLATED, allowZip64=True
+    ) as zout:
+        for info in zin.infolist():
+            name = info.filename
+            if name.endswith("/"):
+                continue
+            if name.startswith("META-INF/") or name.startswith("META-INF\\"):
+                continue
+            if name.replace("\\", "/") in overrides:
+                continue
+            data = zin.read(info.filename)
+            new_info = zipfile.ZipInfo(filename=name, date_time=info.date_time)
+            new_info.compress_type = info.compress_type
+            new_info.external_attr = info.external_attr
+            new_info.create_system = info.create_system
+            # Clear streaming data-descriptor bit; writestr computes CRC up-front.
+            new_info.flag_bits = info.flag_bits & ~0x8
+            zout.writestr(new_info, data, compress_type=info.compress_type)
+        for name, path in sorted(overrides.items()):
+            data = path.read_bytes()
+            info = zipfile.ZipInfo(filename=name)
+            info.compress_type = zipfile.ZIP_STORED
+            info.external_attr = 0o100644 << 16
+            zout.writestr(info, data, compress_type=zipfile.ZIP_STORED)
+
+
+def verify_apk(apk: Path) -> dict:
+    """Quick sanity checks before install (aapt + zip integrity)."""
+    report: dict = {"apk": str(apk), "ok": True, "errors": [], "badging": ""}
+    if not apk.is_file() or apk.stat().st_size < 1000:
+        report["ok"] = False
+        report["errors"].append("missing or tiny file")
+        return report
+    try:
+        with zipfile.ZipFile(apk) as zf:
+            bad = zf.testzip()
+            if bad:
+                report["ok"] = False
+                report["errors"].append(f"zip corrupt: {bad}")
+            names = set(zf.namelist())
+            if "AndroidManifest.xml" not in names:
+                report["ok"] = False
+                report["errors"].append("no AndroidManifest.xml")
+            if not any(n.startswith("classes") and n.endswith(".dex") for n in names):
+                report["ok"] = False
+                report["errors"].append("no classes*.dex")
+    except Exception as exc:
+        report["ok"] = False
+        report["errors"].append(f"zip: {exc}")
+    aapt = find_aapt()
+    # prefer aapt (not aapt2) for dump badging
+    aapt_bin = shutil.which("aapt") or (str(aapt) if aapt and aapt.name == "aapt" else None)
+    if not aapt_bin:
+        prefix = Path(os.environ.get("PREFIX", "/data/data/com.termux/files/usr"))
+        if (prefix / "bin" / "aapt").is_file():
+            aapt_bin = str(prefix / "bin" / "aapt")
+    if aapt_bin:
+        try:
+            out = subprocess.check_output(
+                [aapt_bin, "dump", "badging", str(apk)],
+                stderr=subprocess.STDOUT,
+                text=True,
+                errors="replace",
+            )
+            report["badging"] = out.splitlines()[0] if out else ""
+            if "package: name=" not in out:
+                report["ok"] = False
+                report["errors"].append("aapt badging: no package name")
+        except subprocess.CalledProcessError as exc:
+            report["ok"] = False
+            report["errors"].append(
+                "aapt: " + (exc.output or str(exc))[:300]
+            )
+    return report
 
 
 def inject_apk_zip(
@@ -689,14 +777,24 @@ def inject_apk_zip(
     version: str = FRIDA_VERSION,
 ) -> dict:
     """
-    No apktool rebuild: unzip → drop gadget → patchelf DT_NEEDED → zip → sign.
-    Avoids Termux aapt2 ELF failure entirely.
+    Surgical inject: keep original ZIP entries, only patch/add lib/* + resign.
     """
+    # Preflight: original must be a real installable APK
+    pre = verify_apk(apk)
+    if not pre["ok"]:
+        raise RuntimeError(
+            "source APK failed verify — not a valid package:\n  "
+            + "\n  ".join(pre["errors"])
+            + "\nGet a fresh APK via App Manager (Save APK set), not a random dump."
+        )
+    print(f"[*] source OK: {pre.get('badging') or apk.name}", flush=True)
+
     root = work / "ziproot"
     unzip_apk(apk, root)
     abis = detect_apis_in_apk(apk)
     placed = place_gadget_files(root, abis, script, home=home, version=version)
     patched: list[str] = []
+    overrides: dict[str, Path] = {}
     for abi in placed:
         libdir = root / "lib" / abi
         target = _pick_patch_so(libdir)
@@ -704,10 +802,47 @@ def inject_apk_zip(
             raise RuntimeError(f"no native .so to patchelf under lib/{abi}")
         patchelf_add_needed(target, "libfrida-gadget.so")
         patched.append(f"{abi}/{target.name}")
+        # all gadget-related + patched target
+        for p in libdir.iterdir():
+            if not p.is_file():
+                continue
+            if p.name == target.name or p.name.startswith("libfrida-gadget"):
+                overrides[f"lib/{abi}/{p.name}"] = p
 
     unsigned = out_apk.with_suffix(".unsigned.apk")
-    zip_apk_tree(root, unsigned)
+    print("[*] surgical rebuild (preserve original entries)…", flush=True)
+    rebuild_apk_surgical(apk, overrides, unsigned)
+
+    mid = verify_apk(unsigned)
+    if not mid["ok"]:
+        raise RuntimeError(
+            "unsigned APK broken after inject:\n  " + "\n  ".join(mid["errors"])
+        )
+
     signed = sign_apk(unsigned, out_apk, home=home)
+    post = verify_apk(signed)
+    print(f"[*] verify signed: ok={post['ok']} {post.get('badging')}", flush=True)
+    if not post["ok"]:
+        raise RuntimeError(
+            "signed APK failed verify (parse-error risk):\n  "
+            + "\n  ".join(post["errors"])
+        )
+
+    # Friendly copies for Files app
+    for dest_name in ("AFK-Arena-frida.apk", f"{apk.stem}-frida.apk"):
+        for folder in (
+            home / "storage" / "downloads",
+            home / "storage" / "shared" / "Download",
+            Path("/sdcard/Download"),
+            Path("/storage/emulated/0/Download"),
+        ):
+            if not folder.is_dir():
+                continue
+            try:
+                shutil.copy2(signed, folder / dest_name)
+            except OSError:
+                pass
+
     return {
         "apk": str(apk),
         "out": str(signed),
@@ -716,7 +851,8 @@ def inject_apk_zip(
         "loader": "patchelf DT_NEEDED ← " + ", ".join(patched),
         "script": str(script),
         "work": str(work),
-        "mode": "script+zip",
+        "mode": "script+surgical-zip",
+        "verify": post,
     }
 
 
@@ -882,8 +1018,18 @@ def main(argv: list[str] | None = None) -> int:
         metavar="UNSIGNED_APK",
         help="Only zipalign+sign an existing *-frida.unsigned.apk",
     )
+    p.add_argument(
+        "--verify",
+        metavar="APK",
+        help="Verify APK zip/manifest/aapt before install",
+    )
     p.add_argument("--guide", action="store_true", help="Print usage guide")
     args = p.parse_args(argv)
+
+    if args.verify:
+        rep = verify_apk(Path(args.verify).expanduser())
+        print(json.dumps(rep, indent=2, ensure_ascii=False))
+        return 0 if rep.get("ok") else 1
 
     if args.sign_only:
         unsigned = Path(args.sign_only).expanduser().resolve()

@@ -14,6 +14,8 @@ from protocol_ast.frida_gadget import (
     gadget_config_json,
     inject_load_library_smali,
     package_name,
+    rebuild_apk_surgical,
+    verify_apk,
     zip_apk_tree,
 )
 
@@ -114,6 +116,44 @@ class TestZipPack(unittest.TestCase):
                 self.assertIn("lib/arm64-v8a/libil2cpp.so", names)
                 info = zf.getinfo("lib/arm64-v8a/libil2cpp.so")
                 self.assertEqual(info.compress_type, zipfile.ZIP_STORED)
+
+    def test_surgical_preserves_manifest_compression(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            td_path = Path(td)
+            orig = td_path / "orig.apk"
+            with zipfile.ZipFile(orig, "w") as zf:
+                zf.writestr("AndroidManifest.xml", b"<manifest/>", compress_type=zipfile.ZIP_DEFLATED)
+                zf.writestr("classes.dex", b"dex123", compress_type=zipfile.ZIP_DEFLATED)
+                zf.writestr(
+                    "lib/arm64-v8a/libil2cpp.so",
+                    b"\x00" * 32,
+                    compress_type=zipfile.ZIP_STORED,
+                )
+                zf.writestr("META-INF/CERT.SF", b"sig")
+            new_so = td_path / "libil2cpp.so"
+            new_so.write_bytes(b"\x01" * 40)
+            gadget = td_path / "libfrida-gadget.so"
+            gadget.write_bytes(b"G" * 16)
+            out = td_path / "out.apk"
+            rebuild_apk_surgical(
+                orig,
+                {
+                    "lib/arm64-v8a/libil2cpp.so": new_so,
+                    "lib/arm64-v8a/libfrida-gadget.so": gadget,
+                },
+                out,
+            )
+            with zipfile.ZipFile(out) as zf:
+                self.assertNotIn("META-INF/CERT.SF", zf.namelist())
+                self.assertEqual(
+                    zf.getinfo("AndroidManifest.xml").compress_type, zipfile.ZIP_DEFLATED
+                )
+                self.assertEqual(zf.read("lib/arm64-v8a/libil2cpp.so"), b"\x01" * 40)
+                self.assertEqual(zf.read("lib/arm64-v8a/libfrida-gadget.so"), b"G" * 16)
+            rep = verify_apk(out)
+            # aapt may be missing in CI — zip checks should pass
+            self.assertNotIn("no AndroidManifest.xml", rep["errors"])
+            self.assertNotIn("no classes*.dex", rep["errors"])
 
 
 class TestWorkDir(unittest.TestCase):
