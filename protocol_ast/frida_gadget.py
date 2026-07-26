@@ -774,13 +774,20 @@ def _rebuild_apk_python(
 
 def pm_install(apk: Path) -> dict:
     """
-    Install via /system/bin/pm to get a real error code (not the vague UI parse dialog).
-    Uses -t (allow test/debug packages) and -r (replace).
+    Try /system/bin/pm install. On unrooted Termux this usually fails with
+    binder 'Failed transaction' — that is NOT an APK parse error.
     """
     apk = apk.expanduser().resolve()
-    report: dict = {"apk": str(apk), "ok": False, "cmd": [], "output": ""}
+    report: dict = {
+        "apk": str(apk),
+        "ok": False,
+        "cmd": [],
+        "output": "",
+        "note": "",
+        "verify": verify_apk(apk),
+    }
     pm = None
-    for cand in ("pm", "/system/bin/pm", "/system/xbin/pm"):
+    for cand in ("/system/bin/pm", "/system/xbin/pm", "pm"):
         if cand == "pm" and shutil.which("pm"):
             pm = "pm"
             break
@@ -788,7 +795,8 @@ def pm_install(apk: Path) -> dict:
             pm = cand
             break
     if not pm:
-        report["output"] = "pm not available — try Files install, or: pkg install termux-tools"
+        report["output"] = "pm binary not found"
+        report["note"] = "Use: termux-open " + str(apk)
         return report
     cmd = [pm, "install", "-r", "-t", "--user", "current", str(apk)]
     report["cmd"] = cmd
@@ -800,6 +808,12 @@ def pm_install(apk: Path) -> dict:
         report["ok"] = proc.returncode == 0 and "Success" in report["output"]
     except Exception as exc:
         report["output"] = str(exc)
+    if "Failed transaction" in report["output"]:
+        report["note"] = (
+            "Termux cannot call package manager (no root/Shizuku). "
+            "This does NOT mean the APK is invalid. Install via UI:\n"
+            f"  termux-open {apk}"
+        )
     return report
 
 
