@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from protocol_ast.termux_update import file_url, pick_newest_pcap, resolve_base
+from protocol_ast.termux_update import LAUNCHERS, download_tree, file_url, pick_newest_pcap, resolve_base
 
 
 class TestPickNewest(unittest.TestCase):
@@ -71,6 +71,43 @@ class TestResolve(unittest.TestCase):
             base, ref = resolve_base("cursor/signal-pipeline-p4-a4e6")
         self.assertIn("raw.githubusercontent.com", base)
         self.assertIn("cursor/signal-pipeline-p4-a4e6", ref)
+
+
+class TestDownloadTreeLaunchers(unittest.TestCase):
+    def test_writes_signal_launcher(self) -> None:
+        payload = {
+            "analyze_pcap.py": b'VERSION = "9.9.9-test"\n',
+            "probe_network.py": b"# probe\n",
+            "scripts/termux_signal.sh": (
+                b"#!/data/data/com.termux/files/usr/bin/bash\n"
+                b"exec python3 \"$HOME/analyze_pcap.py\" --signal \"$@\"\n"
+            ),
+        }
+
+        def fake_fetch(url: str, timeout: float = 60.0) -> bytes:
+            # tip resolve
+            if "api.github.com" in url:
+                return b'{"sha":"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"}'
+            for rel, data in payload.items():
+                if url.rstrip("/").endswith(rel) or f"/{rel}" in url:
+                    return data
+            # helpers
+            if "/protocol_ast/" in url:
+                return b"# helper\n"
+            raise RuntimeError(f"unexpected url {url}")
+
+        with tempfile.TemporaryDirectory() as td:
+            home = Path(td)
+            with mock.patch("protocol_ast.termux_update._fetch", side_effect=fake_fetch):
+                report = download_tree(home)
+            self.assertTrue(LAUNCHERS)
+            signal = home / "signal"
+            self.assertTrue(signal.is_file(), report)
+            self.assertEqual(report.get("launcher"), str(signal))
+            text = signal.read_text(encoding="utf-8")
+            self.assertTrue(text.startswith("#!"))
+            self.assertIn("--signal", text)
+            self.assertTrue(signal.stat().st_mode & 0o111)
 
 
 if __name__ == "__main__":

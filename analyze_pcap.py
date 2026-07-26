@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import struct
 import sys
@@ -20,7 +21,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.8.11-full"
+VERSION = "3.8.12-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -2077,66 +2078,86 @@ def main() -> int:
     args = parser.parse_args()
 
     if args.self_update:
+        # Always refresh termux_update.py from tip FIRST, then exec that copy.
+        # Otherwise an old on-device helper can skip new launchers (e.g. ~/signal).
+        import importlib.util
+        import ssl
+        import time
+        import urllib.request
+
+        def _get(url: str) -> bytes:
+            req = urllib.request.Request(url, headers={"User-Agent": "analyze_pcap-self-update"})
+            with urllib.request.urlopen(req, timeout=60, context=ssl.create_default_context()) as r:
+                return r.read()
+
+        branch = "cursor/signal-pipeline-p4-a4e6"
+        home = Path.home()
+        (home / "protocol_ast").mkdir(parents=True, exist_ok=True)
         try:
-            from protocol_ast.termux_update import download_tree
+            sha = json.loads(
+                _get(f"https://api.github.com/repos/lizbeth307/lizbeth307/commits/{branch}").decode()
+            )["sha"]
+            base = f"https://cdn.jsdelivr.net/gh/lizbeth307/lizbeth307@{sha}"
         except Exception:
-            # bootstrap: load beside this file or $HOME/protocol_ast
-            import importlib.util
+            base = f"https://raw.githubusercontent.com/lizbeth307/lizbeth307/{branch}"
+            sha = f"raw-{int(time.time())}"
 
-            candidates = [
-                Path(__file__).resolve().parent / "protocol_ast" / "termux_update.py",
-                Path.home() / "protocol_ast" / "termux_update.py",
-            ]
-            download_tree = None
-            for fk in candidates:
-                if not fk.exists():
-                    continue
-                spec = importlib.util.spec_from_file_location("termux_update_standalone", fk)
-                if spec and spec.loader:
-                    mod = importlib.util.module_from_spec(spec)
-                    spec.loader.exec_module(mod)
-                    download_tree = mod.download_tree
+        helper_rel = "protocol_ast/termux_update.py"
+        helper_url = f"{base}/{helper_rel}" if "jsdelivr" in base else f"{base}/{helper_rel}?t={int(time.time())}"
+        try:
+            helper_bytes = _get(helper_url)
+            helper_path = home / helper_rel
+            tmp = Path(str(helper_path) + ".new")
+            tmp.write_bytes(helper_bytes)
+            tmp.replace(helper_path)
+            print(f"self-update: refreshed {helper_path} from {sha}", flush=True)
+        except Exception as exc:
+            print(f"self-update: warn — could not refresh termux_update.py: {exc}", file=sys.stderr)
+
+        download_tree = None
+        for fk in (
+            home / "protocol_ast" / "termux_update.py",
+            Path(__file__).resolve().parent / "protocol_ast" / "termux_update.py",
+        ):
+            if not fk.exists():
+                continue
+            spec = importlib.util.spec_from_file_location("termux_update_fresh", fk)
+            if spec and spec.loader:
+                mod = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(mod)
+                download_tree = getattr(mod, "download_tree", None)
+                if download_tree is not None:
                     break
-            if download_tree is None:
-                # inline minimal bootstrap from GitHub API + jsDelivr
-                print("self-update: protocol_ast/termux_update.py відсутній — bootstrap…", flush=True)
-                # NOTE: do not `import json` here — it shadows module-level json for all of main()
-                import ssl
-                import time
-                import urllib.request
+        if download_tree is None:
+            print("self-update: FATAL — protocol_ast/termux_update.py missing", file=sys.stderr)
+            return 1
 
-                def _get(url: str) -> bytes:
-                    req = urllib.request.Request(url, headers={"User-Agent": "analyze_pcap-self-update"})
-                    with urllib.request.urlopen(req, timeout=60, context=ssl.create_default_context()) as r:
-                        return r.read()
-
-                branch = "cursor/signal-pipeline-p4-a4e6"
-                try:
-                    sha = json.loads(
-                        _get(f"https://api.github.com/repos/lizbeth307/lizbeth307/commits/{branch}").decode()
-                    )["sha"]
-                    base = f"https://cdn.jsdelivr.net/gh/lizbeth307/lizbeth307@{sha}"
-                except Exception:
-                    base = f"https://raw.githubusercontent.com/lizbeth307/lizbeth307/{branch}"
-                    sha = f"raw-{int(time.time())}"
-                home = Path.home()
-                (home / "protocol_ast").mkdir(exist_ok=True)
-                for rel in ("analyze_pcap.py", "probe_network.py", "protocol_ast/termux_update.py"):
-                    url = f"{base}/{rel}" if "jsdelivr" in base else f"{base}/{rel}?t={int(time.time())}"
-                    data = _get(url)
-                    dest = home / rel
-                    dest.parent.mkdir(parents=True, exist_ok=True)
-                    dest.write_bytes(data)
-                sys.path.insert(0, str(home))
-                from protocol_ast.termux_update import download_tree  # type: ignore
-
-        report = download_tree(Path.home())
+        report = download_tree(home)
         print(f"self-update: ref={report.get('ref')}")
         print(f"  base={report.get('base')}")
         print(f"  files={len(report.get('files') or [])}")
         for err in report.get("errors") or []:
             print(f"  ⚠ {err}", file=sys.stderr)
-        fresh = Path.home() / "analyze_pcap.py"
+        launcher = Path(report["launcher"]) if report.get("launcher") else home / "signal"
+        if launcher.is_file() and os.access(launcher, os.X_OK):
+            print(f"  launcher={launcher}")
+        else:
+            print(f"  ⚠ launcher missing or not executable: {launcher}", file=sys.stderr)
+            # Last-resort: write a tiny inline ~/signal so the next command works.
+            try:
+                inline = (
+                    "#!/data/data/com.termux/files/usr/bin/bash\n"
+                    "set -euo pipefail\n"
+                    'export PYTHONPATH="${HOME}${PYTHONPATH:+:$PYTHONPATH}"\n'
+                    'FLOW="${FLOW:-TCP:443}"\n'
+                    'exec python3 "$HOME/analyze_pcap.py" --signal --flow "$FLOW" --keylog auto "$@"\n'
+                )
+                launcher.write_text(inline, encoding="utf-8")
+                launcher.chmod(0o755)
+                print(f"  launcher={launcher} (inline fallback)")
+            except Exception as exc:
+                print(f"  ⚠ could not write ~/signal: {exc}", file=sys.stderr)
+        fresh = home / "analyze_pcap.py"
         if fresh.exists():
             for line in fresh.read_text(encoding="utf-8", errors="replace").splitlines():
                 if line.startswith("VERSION"):
@@ -2144,7 +2165,6 @@ def main() -> int:
                     print(f"analyze_pcap {ver}")
                     break
         return 1 if report.get("errors") and not report.get("files") else 0
-
     if args.dissect or args.dissect_html:
         mode = "dissect"
     elif args.stream:

@@ -105,6 +105,27 @@ def download_tree(dest_home: Path | None = None, *, branch: str = BRANCH) -> dic
         except Exception as exc:
             report["errors"].append(f"{name}: {exc}")
 
+    for rel, dest_name in LAUNCHERS:
+        url = file_url(base, rel)
+        try:
+            data = _fetch(url)
+            if not data or not data.lstrip().startswith(b"#!"):
+                raise RuntimeError(f"launcher payload looks empty/invalid ({len(data)} bytes)")
+            # Normalize CRLF → LF so Termux bash shebang resolves.
+            data = data.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+            target = home / dest_name
+            tmp = Path(str(target) + ".new")
+            tmp.write_bytes(data)
+            tmp.replace(target)
+            try:
+                target.chmod(0o755)
+            except OSError:
+                pass
+            report["files"].append(str(target))
+            report["launcher"] = str(target)
+        except Exception as exc:
+            report["errors"].append(f"{rel} → ~/{dest_name}: {exc}")
+
     for name in HELPERS:
         url = file_url(base, f"protocol_ast/{name}")
         try:

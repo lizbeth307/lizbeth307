@@ -83,11 +83,12 @@ python3 "$HOME/analyze_pcap.py" --version
 test -f "$HOME/probe_network.py" && echo "probe_network.py: OK"
 
 echo
-echo "Готово. Приклади:"
-echo "  export PYTHONPATH=\$HOME"
-echo "  python3 ~/analyze_pcap.py ~/downloads/PCAPdroid_*.pcap --signal --flow TCP:443 --keylog auto"
-echo "  python3 ~/analyze_pcap.py ~/downloads/PCAPdroid_*.pcap --stream --keylog auto"
-echo "  python3 ~/probe_network.py --loop 3 --no-capture"
+echo "Готово. Універсальна команда:"
+echo "  ~/signal"
+echo
+echo "Інше:"
+echo "  ~/signal --stream"
 echo "  python3 ~/analyze_pcap.py --self-update"
+echo "  python3 ~/probe_network.py --loop 3 --no-capture"
 echo
 echo "НЕ запускай pkg у цьому скрипті — apt більше не чіпаємо."
