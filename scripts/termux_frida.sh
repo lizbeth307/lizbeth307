@@ -354,7 +354,32 @@ main() {
         exit 1
       fi
       python3 -m protocol_ast.frida_gadget --sign-only "$u"
-      exit $?
+      rc=$?
+      # Make the signed APK obvious in the Android Downloads UI.
+      for src in \
+        "$HOME_DIR/unpin_work/tools/sign_out/"*debugSigned*.apk \
+        "$HOME_DIR/storage/downloads/"*-frida.apk \
+        "$HOME_DIR/storage/shared/Download/"*-frida.apk \
+        "/sdcard/Download/"*-frida.apk \
+        "/storage/emulated/0/Download/"*-frida.apk; do
+        [[ -f "$src" ]] || continue
+        echo "[*] found signed: $src ($(wc -c <"$src") bytes)" >&2
+        if [[ -n "$DOWNLOADS" ]]; then
+          dest="$DOWNLOADS/AFK-Arena-frida.apk"
+          cp -f "$src" "$dest" 2>/dev/null && echo "[*] copied → $dest" >&2
+          # also plain path Android Files often shows
+          cp -f "$src" "/sdcard/Download/AFK-Arena-frida.apk" 2>/dev/null || true
+          cp -f "$src" "/storage/emulated/0/Download/AFK-Arena-frida.apk" 2>/dev/null || true
+        fi
+        ls -la "$src" "$DOWNLOADS/AFK-Arena-frida.apk" "/sdcard/Download/AFK-Arena-frida.apk" 2>/dev/null || true
+        break
+      done
+      echo >&2
+      echo "Шукай у Files → Downloads:" >&2
+      echo "  AFK-Arena-frida.apk   або   777-frida.apk" >&2
+      echo "Або з Termux:" >&2
+      echo "  ls -la ~/unpin_work/tools/sign_out/" >&2
+      exit "$rc"
       ;;
   esac
 
