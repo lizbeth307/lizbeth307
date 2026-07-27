@@ -1,8 +1,6 @@
 /*
- * Minimal Java SSL unpin for Lilith — OkHttp CertificatePinner ONLY.
- * No TrustManagerImpl, no SSLContext.init, no Interceptor, no registerClass.
- * Designed so the script itself stays small (anti-tamper scans strings).
- *
+ * Minimal Frida Gadget unpin — OkHttp pin check bypass only.
+ * Keep this file tiny; no conscrypt / native SSL hooks.
  * Injector sets: var MODE = "java";
  */
 (function () {
