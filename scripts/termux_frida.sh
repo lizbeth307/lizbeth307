@@ -790,11 +790,18 @@ EOF
     pause_until_user_ready
   fi
 
-  # Fresh wait window starts AFTER user confirms install/launch.
-  clear_logs
-  echo "[doctor] логи скинуто перед очікуванням — перезапусти гру якщо вже відкрита" >&2
-  echo "[doctor] (якщо гра вже біжить — закрий і відкрий ще раз)" >&2
-  sleep 2
+  local existing
+  existing="$(newest_log || true)"
+  if [[ -n "$existing" && -s "$existing" ]]; then
+    vibrate_ok
+    echo "[doctor] лог уже є після твого запуску: $existing" >&2
+    diagnose_log "$existing"
+    echo
+    echo "Далі: PCAPdroid MITM + Block QUIC → пограй → Stop → ~/scan mine"
+    return 0
+  fi
+
+  echo "[doctor] логу ще немає — чекаю (перезапусти гру якщо вже відкривав)…" >&2
   wait_for_log "$timeout_s"
   local rc=$?
   if (( rc == 0 )); then
