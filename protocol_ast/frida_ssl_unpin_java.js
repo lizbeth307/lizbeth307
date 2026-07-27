@@ -1,6 +1,6 @@
 /*
  * Minimal Frida Gadget unpin — OkHttp pin check bypass only.
- * Keep this file tiny; no conscrypt / native SSL hooks.
+ * Logging copied from frida_probe.js (File + Java FOS) — that path worked on-device.
  * Injector sets: var MODE = "java";
  */
 (function () {
@@ -13,15 +13,16 @@
     "/sdcard/Download/" + NAME,
     "/storage/emulated/0/Download/" + NAME,
     "/sdcard/Android/data/" + PKG + "/files/" + NAME,
+    "/storage/emulated/0/Android/data/" + PKG + "/files/" + NAME,
   ];
-  // Stay quiet through Lilith splash + SDK; only then touch OkHttp.
-  var HOOK_DELAY_MS = 25000;
+  // Long quiet window: prove heartbeats before touching OkHttp.
+  var HOOK_DELAY_MS = 45000;
 
   function mkdirp(path) {
     try {
       var mkdir = new NativeFunction(
-        Module.findExportByName("libc.so", "mkdir") ||
-          Module.findExportByName(null, "mkdir"),
+        Module.findExportByName(null, "mkdir") ||
+          Module.findExportByName("libc.so", "mkdir"),
         "int",
         ["pointer", "int"]
       );
@@ -35,36 +36,6 @@
     } catch (_) {}
   }
 
-  function logLibc(line) {
-    try {
-      var openPtr =
-        Module.findExportByName("libc.so", "open") ||
-        Module.findExportByName(null, "open");
-      var writePtr =
-        Module.findExportByName("libc.so", "write") ||
-        Module.findExportByName(null, "write");
-      var closePtr =
-        Module.findExportByName("libc.so", "close") ||
-        Module.findExportByName(null, "close");
-      if (!openPtr || !writePtr || !closePtr) return;
-      var openFn = new NativeFunction(openPtr, "int", ["pointer", "int", "int"]);
-      var writeFn = new NativeFunction(writePtr, "int", ["int", "pointer", "int"]);
-      var closeFn = new NativeFunction(closePtr, "int", ["int"]);
-      // O_WRONLY|O_CREAT|O_APPEND = 1|64|1024
-      var flags = 1 | 64 | 1024;
-      var buf = Memory.allocUtf8String(line);
-      var n = line.length;
-      for (var i = 0; i < PATHS.length; i++) {
-        try {
-          var fd = openFn(Memory.allocUtf8String(PATHS[i]), flags, 0x1b6);
-          if (fd < 0) continue;
-          writeFn(fd, buf, n);
-          closeFn(fd);
-        } catch (_) {}
-      }
-    } catch (_) {}
-  }
-
   function log(msg) {
     var line = "[ssl-unpin/" + MODE + " " + new Date().toISOString() + "] " + msg + "\n";
     try {
@@ -72,8 +43,8 @@
     } catch (_) {}
     try {
       mkdirp("/sdcard/Android/data/" + PKG + "/files");
+      mkdirp("/storage/emulated/0/Android/data/" + PKG + "/files");
     } catch (_) {}
-    logLibc(line);
     for (var i = 0; i < PATHS.length; i++) {
       try {
         var f = new File(PATHS[i], "a");
@@ -82,6 +53,24 @@
         f.close();
       } catch (_) {}
     }
+    // Same Java fallback that made probe logs visible in Download/
+    try {
+      if (typeof Java !== "undefined" && Java.available) {
+        Java.perform(function () {
+          try {
+            var FileCls = Java.use("java.io.File");
+            var FOS = Java.use("java.io.FileOutputStream");
+            var dir = FileCls.$new("/sdcard/Download");
+            if (!dir.exists()) dir.mkdirs();
+            var out = FOS.$new("/sdcard/Download/" + NAME, true);
+            var bytes = Java.use("java.lang.String").$new(line).getBytes("UTF-8");
+            out.write(bytes);
+            out.flush();
+            out.close();
+          } catch (_) {}
+        });
+      }
+    } catch (_) {}
   }
 
   function hookPinOnly() {
@@ -90,16 +79,20 @@
       return;
     }
     Java.perform(function () {
+      var hooked = 0;
       try {
         var C = Java.use("okhttp3.CertificatePinner");
-        var n = 0;
         C.check.overloads.forEach(function (ov) {
-          ov.implementation = function () {
-            return;
-          };
-          n++;
+          try {
+            ov.implementation = function () {
+              return;
+            };
+            hooked++;
+          } catch (e1) {
+            log("pin overload fail: " + e1);
+          }
         });
-        log("CertificatePinner.check x" + n);
+        log("CertificatePinner.check x" + hooked);
       } catch (e) {
         log("CertificatePinner missing/skip: " + e);
       }
@@ -107,9 +100,11 @@
         var C2 = Java.use("okhttp3.CertificatePinner");
         if (C2["check$okhttp"]) {
           C2["check$okhttp"].overloads.forEach(function (ov) {
-            ov.implementation = function () {
-              return;
-            };
+            try {
+              ov.implementation = function () {
+                return;
+              };
+            } catch (_) {}
           });
           log("CertificatePinner.check$okhttp");
         }

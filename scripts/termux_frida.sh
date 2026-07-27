@@ -548,8 +548,21 @@ clear_logs() {
 pkg_installed() {
   local pm
   pm="$(pm_bin 2>/dev/null || true)"
-  [[ -n "$pm" ]] || return 1
-  "$pm" path "$DEFAULT_PKG" 2>/dev/null | grep -q "package:"
+  if [[ -n "$pm" ]]; then
+    if "$pm" path "$DEFAULT_PKG" 2>/dev/null | grep -q "package:"; then
+      return 0
+    fi
+    if "$pm" list packages 2>/dev/null | grep -q "$DEFAULT_PKG"; then
+      return 0
+    fi
+  fi
+  # Termux often cannot see other apps — treat existing fresh log as installed.
+  local logf
+  logf="$(newest_log || true)"
+  if [[ -n "$logf" && -s "$logf" ]]; then
+    return 0
+  fi
+  return 1
 }
 
 try_uninstall() {
