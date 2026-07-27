@@ -1,0 +1,64 @@
+Living Signal — головна візія
+=============================
+
+Байт-потік, що сам відновлює структуру і проростає вглиб через шари
+протоколу — без імен бекенду, без ручних dissector’ів.
+
+Шлях (вже працює на PCAPdroid MITM + Termux)
+--------------------------------------------
+  PCAP bytes
+    → TCP reassembly
+    → TLS records / handshake peel (SNI, ALPN)
+    → NSS keylog decrypt (AES-GCM, SHA256/384)
+    → HTTP/2 frames (HPACK headers)
+    → DATA decompress (gzip / br)
+    → HTML title / JSON API schema
+    → protobuf / MessagePack peel (якщо binary API)
+    → signal_report.json
+
+Компоненти
+----------
+  protocol_ast/signal.py       — Signal.propagate (ядро)
+  protocol_ast/splitters.py    — універсальні peel’ери
+  protocol_ast/tls_keylog.py   — SSLKEYLOGFILE decrypt
+  protocol_ast/http2.py        — frames + HPACK + br/gzip
+  protocol_ast/json_api.py     — schema merge для JSON API
+  protocol_ast/binary_peel.py  — protobuf wire + msgpack
+  protocol_ast/probe_loop.py   — adaptive active probe → Signal
+  protocol_ast/stream_agent.py — інкрементальний агент по pcap
+  analyze_pcap.py              — Termux single-file UI (v3.8.0)
+  probe_network.py             — зонд + loop + stream + watch
+
+Оновлення (телефон) — БЕЗ apt
+-----------------------------
+  curl -fsSL "https://raw.githubusercontent.com/lizbeth307/lizbeth307/cursor/signal-pipeline-p4-a4e6/scripts/termux_setup.sh?t=$(date +%s)" | bash
+  export PYTHONPATH=$HOME
+  python3 ~/analyze_pcap.py --version          # 3.8.1-full
+  # далі: python3 ~/analyze_pcap.py --self-update
+
+Команди (телефон)
+-----------------
+  export PYTHONPATH=$HOME
+
+  # glob OK — бере найновіший pcap
+  python3 ~/analyze_pcap.py ~/downloads/PCAPdroid_*.pcap \
+    --signal --flow TCP:443 --keylog auto
+
+  # incremental events
+  python3 ~/analyze_pcap.py ~/downloads/PCAPdroid_*.pcap --stream --keylog auto
+
+  # adaptive probe loop (без pcap теж)
+  python3 ~/probe_network.py --loop 3 --no-capture
+
+  # watch growing PCAPdroid dump
+  python3 ~/probe_network.py --watch ~/storage/downloads/PCAPdroid/foo.pcap --keylog auto
+
+Desktop
+-------
+  python3 discover_protocol_ast.py signal capture.pcap --keylog auto
+  python3 discover_protocol_ast.py probe-loop --rounds 3
+  python3 discover_protocol_ast.py stream capture.pcap --every 8
+
+MITM keylog
+-----------
+  див. scripts/pcapdroid_mitm.txt

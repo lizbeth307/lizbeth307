@@ -1,0 +1,16 @@
+# Termux v3.8.1 — один рядок оновлення (БЕЗ apt / openssl.cnf)
+
+# Завжди свіжий tip (raw + cache bust):
+curl -fsSL "https://raw.githubusercontent.com/lizbeth307/lizbeth307/cursor/signal-pipeline-p4-a4e6/scripts/termux_setup.sh?t=$(date +%s)" | bash
+
+export PYTHONPATH=$HOME
+python3 ~/analyze_pcap.py --version
+# → analyze_pcap 3.8.1-full
+
+# Glob OK — бере найновіший pcap:
+python3 ~/analyze_pcap.py ~/downloads/PCAPdroid_*.pcap --signal --flow TCP:443 --keylog auto
+python3 ~/analyze_pcap.py ~/downloads/PCAPdroid_*.pcap --stream --keylog auto
+python3 ~/probe_network.py --loop 3 --no-capture
+
+# Наступні оновлення (вже з 3.8.1):
+python3 ~/analyze_pcap.py --self-update
