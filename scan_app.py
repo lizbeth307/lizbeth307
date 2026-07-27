@@ -229,14 +229,21 @@ def cmd_frida(argv: list[str] | None = None) -> int:
     return 1
 
 
+def cmd_doctor(argv: list[str] | None = None) -> int:
+    """update → rebuild → open installer → wait for frida-unpin.log."""
+    print("▸ frida doctor")
+    return cmd_frida(["doctor", *(argv or [])])
+
+
 MENU = [
     ("1", "Peel — живий сигнал (TLS→HTTP→body)", cmd_peel),
     ("2", "Mine — карта SNI + SDK session", cmd_mine),
     ("3", "SDK — останній sdk_session.json", cmd_sdk),
     ("4", "Unpin — Java pin (apk-mitm)", lambda: cmd_unpin()),
     ("5", "Frida — Gadget + native SSL unpin", lambda: cmd_frida()),
-    ("6", "Stream — інкрементальний агент", cmd_stream),
-    ("7", "Update — стягнути свіжий код", cmd_update),
+    ("6", "Doctor — update→build→install→log", lambda: cmd_doctor()),
+    ("7", "Stream — інкрементальний агент", cmd_stream),
+    ("8", "Update — стягнути свіжий код", cmd_update),
     ("0", "Вихід", None),
 ]
 

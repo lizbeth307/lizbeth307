@@ -3,6 +3,7 @@
 # Usage:
 #   ~/frida                              # pick APK / .apks (deduped list)
 #   ~/frida "/sdcard/AppManager/apks/AFK Arena_1.198.01.apks"
+#   ~/frida doctor [probe|java|java-tm|native]   # update→build→install→wait log
 #   ~/frida pull [package]
 #   ~/frida pkgs                         # list lilith/hgame packages via /system/bin/pm
 #   ~/frida guide
@@ -15,6 +16,8 @@ export PYTHONPATH="${HOME_DIR}${PYTHONPATH:+:$PYTHONPATH}"
 export PATH="/system/bin:/system/xbin:${PATH}"
 
 DEFAULT_PKG="${FRIDA_PKG:-com.lilithgame.hgame.gp}"
+DEFAULT_SOURCE_APKS="${FRIDA_SOURCE_APKS:-/sdcard/AppManager/apks/AFK Arena_1.198.01.apks}"
+LOG_NAME="frida-unpin.log"
 
 DOWNLOADS=""
 for cand in \
@@ -38,8 +41,9 @@ banner() {
 Без root / без ПК:
   APK / .apks → Frida Gadget (script mode) → ssl_unpin.js
 
-AFK Arena (3 splits):
-  ~/frida "/sdcard/AppManager/apks/AFK Arena_1.198.01.apks"
+AFK Arena (splits):
+  ~/frida doctor              # update → java pin → install → wait log
+  ~/frida "/sdcard/AppManager/apks/AFK Arena_1.198.01.apks" java
 
 Якщо No space left:
   rm -rf ~/unpin_work /sdcard/unpin_work
@@ -440,6 +444,312 @@ EOF
   return 1
 }
 
+notify() {
+  local title="$1"
+  local content="$2"
+  if command -v termux-notification >/dev/null 2>&1; then
+    termux-notification --title "$title" --content "$content" --id frida-doctor 2>/dev/null || true
+  fi
+  if command -v termux-toast >/dev/null 2>&1; then
+    termux-toast "$title: $content" 2>/dev/null || true
+  fi
+  echo "[doctor] $title — $content" >&2
+}
+
+vibrate_ok() {
+  if command -v termux-vibrate >/dev/null 2>&1; then
+    termux-vibrate -d 200 2>/dev/null || true
+  fi
+}
+
+log_candidates() {
+  cat <<EOF
+/sdcard/Download/$LOG_NAME
+/storage/emulated/0/Download/$LOG_NAME
+$HOME_DIR/storage/downloads/$LOG_NAME
+/sdcard/Android/data/$DEFAULT_PKG/files/$LOG_NAME
+/storage/emulated/0/Android/data/$DEFAULT_PKG/files/$LOG_NAME
+EOF
+}
+
+newest_log() {
+  local f best="" best_m=0 m
+  while IFS= read -r f; do
+    [[ -f "$f" ]] || continue
+    m=$(stat -c %Y "$f" 2>/dev/null || echo 0)
+    if (( m >= best_m )); then
+      best_m=$m
+      best=$f
+    fi
+  done < <(log_candidates)
+  [[ -n "$best" ]] && echo "$best"
+}
+
+clear_logs() {
+  local f
+  while IFS= read -r f; do
+    rm -f "$f" 2>/dev/null || true
+  done < <(log_candidates)
+}
+
+pkg_installed() {
+  local pm
+  pm="$(pm_bin 2>/dev/null || true)"
+  [[ -n "$pm" ]] || return 1
+  "$pm" path "$DEFAULT_PKG" 2>/dev/null | grep -q "package:"
+}
+
+try_uninstall() {
+  local pm
+  pm="$(pm_bin 2>/dev/null || true)"
+  if [[ -z "$pm" ]]; then
+    echo "[doctor] pm недоступний — зніми гру вручну в App Manager" >&2
+    return 1
+  fi
+  if ! pkg_installed; then
+    echo "[doctor] пакет ще не встановлений — ок" >&2
+    return 0
+  fi
+  echo "[doctor] пробую uninstall $DEFAULT_PKG …" >&2
+  if "$pm" uninstall --user 0 "$DEFAULT_PKG" >/dev/null 2>&1 \
+    || "$pm" uninstall "$DEFAULT_PKG" >/dev/null 2>&1; then
+    echo "[doctor] uninstall ok" >&2
+    return 0
+  fi
+  echo "[doctor] uninstall відхилено (немає прав) — ЗНІМИ гру вручну перед Install" >&2
+  notify "Frida doctor" "Зніми AFK Arena вручну, потім Install у SAI"
+  return 1
+}
+
+find_source_apks() {
+  local hint="${1:-}"
+  if [[ -n "$hint" && -e "$hint" ]]; then
+    echo "$hint"
+    return 0
+  fi
+  if [[ -e "$DEFAULT_SOURCE_APKS" ]]; then
+    echo "$DEFAULT_SOURCE_APKS"
+    return 0
+  fi
+  local c
+  for c in \
+    "/sdcard/AppManager/apks/AFK Arena_1.198.01.apks" \
+    "/storage/emulated/0/AppManager/apks/AFK Arena_1.198.01.apks" \
+    "/sdcard/Download/AFK Arena_1.198.01.apks"; do
+    if [[ -e "$c" ]]; then
+      echo "$c"
+      return 0
+    fi
+  done
+  # newest App Manager lilith/afk .apks
+  c="$(ls -t /sdcard/AppManager/apks/*.{apks,APKS} 2>/dev/null | head -n1 || true)"
+  if [[ -n "$c" && -f "$c" ]]; then
+    echo "$c"
+    return 0
+  fi
+  return 1
+}
+
+run_self_update() {
+  echo "[doctor] ▸ self-update…" >&2
+  if [[ -x "$HOME_DIR/scan" ]]; then
+    "$HOME_DIR/scan" update || true
+  elif [[ -f "$HOME_DIR/protocol_ast/termux_update.py" ]]; then
+    python3 -m protocol_ast.termux_update || true
+  else
+    echo "[doctor] немає update helper — пропускаю" >&2
+  fi
+  if [[ -f "$HOME_DIR/analyze_pcap.py" ]]; then
+    grep -m1 '^VERSION' "$HOME_DIR/analyze_pcap.py" >&2 || true
+  fi
+}
+
+diagnose_log() {
+  local logf="$1"
+  echo
+  echo "════════ frida-unpin.log (tail) ════════"
+  tail -n 40 "$logf" 2>/dev/null || cat "$logf"
+  echo "════════════════════════════════════════"
+  echo
+  if grep -q 'ALIVE no-hooks\|probe ' "$logf" 2>/dev/null; then
+    echo "[doctor] VERDICT: probe живий (gadget OK, хуків немає)" >&2
+  elif grep -q 'pin-only ready\|CertificatePinner' "$logf" 2>/dev/null; then
+    echo "[doctor] VERDICT: java pin-hook вставлено — можна MITM + ~/scan mine" >&2
+  elif grep -q 'Java soft hooks done\|ready' "$logf" 2>/dev/null; then
+    echo "[doctor] VERDICT: soft/native hooks ready" >&2
+  elif grep -q 'heartbeat' "$logf" 2>/dev/null; then
+    echo "[doctor] VERDICT: скрипт живий (heartbeat є), хуки ще не встигли / crash на хуках" >&2
+    echo "         Подивись останній рядок перед падінням." >&2
+  elif grep -q 'boot MODE=' "$logf" 2>/dev/null; then
+    echo "[doctor] VERDICT: boot був, потім тиша — crash дуже рано" >&2
+  else
+    echo "[doctor] VERDICT: лог є, але незрозумілий — кинь tail у чат" >&2
+  fi
+}
+
+wait_for_log() {
+  local timeout_s="${1:-180}"
+  local start now elapsed logf
+  start=$(date +%s)
+  echo "[doctor] чекаю лог до ${timeout_s}с (встанови → відкрий гру)…" >&2
+  notify "Frida doctor" "Install splits → відкрий гру → чекаю лог"
+  while true; do
+    now=$(date +%s)
+    elapsed=$((now - start))
+    if (( elapsed > timeout_s )); then
+      echo "[doctor] timeout ${timeout_s}с — логу немає" >&2
+      echo "  Перевір: усі 4 splits, arm64_v8a, extraAsset" >&2
+      echo "  ls: $(log_candidates | tr '\n' ' ')" >&2
+      return 1
+    fi
+    logf="$(newest_log || true)"
+    if [[ -n "$logf" && -s "$logf" ]]; then
+      # require a fresh log (mtime within last timeout window)
+      local m
+      m=$(stat -c %Y "$logf" 2>/dev/null || echo 0)
+      if (( m + 5 >= start )); then
+        vibrate_ok
+        notify "Frida doctor" "Лог з'явився"
+        echo "[doctor] лог: $logf (${elapsed}с)" >&2
+        # wait a bit more for heartbeats / hooks
+        sleep 8
+        diagnose_log "$logf"
+        return 0
+      fi
+    fi
+    if (( elapsed % 15 == 0 )); then
+      if pkg_installed; then
+        echo "[doctor] … ${elapsed}с пакет є, чекаю запуск/лог" >&2
+      else
+        echo "[doctor] … ${elapsed}с ще немає пакету / логу" >&2
+      fi
+    fi
+    sleep 2
+  done
+}
+
+frida_doctor() {
+  local mode="java"
+  local skip_build=0
+  local skip_update=0
+  local wait_only=0
+  local timeout_s=240
+  local source=""
+  local arg
+
+  while [[ $# -gt 0 ]]; do
+    arg="$1"
+    shift || true
+    case "$arg" in
+      probe|java|java-tm|pin|native|full)
+        mode="$arg"
+        ;;
+      --skip-build)
+        skip_build=1
+        ;;
+      --skip-update)
+        skip_update=1
+        ;;
+      --wait-only|wait|log)
+        wait_only=1
+        skip_build=1
+        skip_update=1
+        ;;
+      --timeout)
+        timeout_s="${1:-240}"
+        shift || true
+        ;;
+      --timeout=*)
+        timeout_s="${arg#--timeout=}"
+        ;;
+      -h|--help)
+        cat <<'EOF'
+~/frida doctor [mode] [опції]
+
+  mode: probe | java (default) | java-tm | native
+
+  --skip-update   не тягнути self-update
+  --skip-build    не перезбирати (лише uninstall/install + wait)
+  --wait-only     тільки чекати лог після твого install/запуску
+  --timeout SEC   скільки чекати лог (default 240)
+
+Приклади:
+  ~/frida doctor
+  ~/frida doctor probe
+  ~/frida doctor --wait-only
+EOF
+        return 0
+        ;;
+      *)
+        if [[ -e "$arg" ]]; then
+          source="$arg"
+        else
+          echo "[doctor] невідомий аргумент: $arg" >&2
+          return 1
+        fi
+        ;;
+    esac
+  done
+
+  echo "[doctor] mode=$mode  timeout=${timeout_s}s" >&2
+
+  if (( skip_update == 0 )); then
+    run_self_update
+  fi
+
+  # Refresh launcher from update (this script may be mid-run from old copy —
+  # rebuild uses python module which was updated).
+  need_tools
+
+  if (( wait_only == 0 )); then
+    clear_logs
+    echo "[doctor] старі логи очищено" >&2
+
+    if (( skip_build == 0 )); then
+      if [[ -z "$source" ]]; then
+        source="$(find_source_apks || true)"
+      fi
+      if [[ -z "$source" || ! -e "$source" ]]; then
+        echo "[doctor] немає source .apks — задай шлях:" >&2
+        echo "  ~/frida doctor java \"/sdcard/AppManager/apks/AFK Arena_1.198.01.apks\"" >&2
+        return 1
+      fi
+      echo "[doctor] source: $source" >&2
+      echo "[doctor] ▸ rebuild unpin-mode=$mode …" >&2
+      notify "Frida doctor" "Rebuild $mode…"
+      python3 -m protocol_ast.frida_gadget "$source" --method zip --unpin-mode "$mode"
+    else
+      echo "[doctor] skip-build — беру вже зібраний *-frida.apks" >&2
+    fi
+
+    try_uninstall || true
+    echo
+    echo "╔══════════════════════════════════════════╗"
+    echo "║  ЗАРАЗ: App Manager / SAI → Install      ║"
+    echo "║  постав УСІ 4 splits, потім відкрий гру ║"
+    echo "╚══════════════════════════════════════════╝"
+    echo
+    open_frida_install "" || true
+    notify "Frida doctor" "Install усі splits → відкрий гру"
+  else
+    echo "[doctor] wait-only — не чіпаю APK" >&2
+  fi
+
+  wait_for_log "$timeout_s"
+  local rc=$?
+  if (( rc == 0 )); then
+    echo
+    echo "Далі: PCAPdroid MITM + Block QUIC → пограй → Stop → ~/scan mine"
+    return 0
+  fi
+  echo
+  echo "Немає логу.Checklist:"
+  echo "  1) гра встановлена?  /system/bin/pm path $DEFAULT_PKG"
+  echo "  2) серед splits є arm64_v8a?"
+  echo "  3) ~/frida doctor probe   # перевірка gadget без хуків"
+  return "$rc"
+}
+
 main() {
   banner
   local cmd="${1:-}"
@@ -447,6 +757,11 @@ main() {
     -h|--help|help|guide|plan)
       python3 -m protocol_ast.frida_gadget --guide
       exit 0
+      ;;
+    doctor|doc|fix)
+      shift || true
+      frida_doctor "$@"
+      exit $?
       ;;
     pkgs|packages|list-pkg)
       list_game_packages
@@ -484,8 +799,19 @@ main() {
       exit $?
       ;;
     probe)
+      # ~/frida probe [path]  → diagnose bundle; if path missing keep old behavior
+      if [[ -n "${2:-}" && -e "${2:-}" ]]; then
+        python3 -m protocol_ast.frida_gadget --probe "$2"
+        exit $?
+      fi
+      # allow ~/frida probe as mode via doctor? keep diagnose default path
       local target="${2:-/sdcard/AppManager/apks/AFK Arena_1.198.01.apks}"
       python3 -m protocol_ast.frida_gadget --probe "$target"
+      exit $?
+      ;;
+    log|wait-log)
+      shift || true
+      frida_doctor --wait-only "$@"
       exit $?
       ;;
   esac
@@ -552,11 +878,7 @@ main() {
   echo "  3) Відкрити гру ≥30с → cat /sdcard/Download/frida-unpin.log"
   echo "  4) PCAPdroid MITM + Block QUIC → ~/scan mine"
   echo
-  echo "Якщо знову close:"
-  echo "  ~/frida \"…apks\" probe     # тест: gadget без хуків"
-  echo "  ~/frida \"…apks\" java      # лише OkHttp pin (default)"
-  echo "  ~/frida \"…apks\" java-tm   # + TrustManager (часто crash)"
-  echo "  ~/frida \"…apks\" native    # + safe BoringSSL"
+  echo "Або все разом:  ~/frida doctor $unpin_mode"
   echo "════════════════════════════════════════"
 }
 
