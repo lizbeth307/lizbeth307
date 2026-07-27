@@ -103,6 +103,11 @@ def default_script_path() -> Path:
     return Path(__file__).resolve().parent / "frida_ssl_unpin.js"
 
 
+def java_script_path() -> Path:
+    """Minimal pin-only script (no TrustManager / Interceptor strings)."""
+    return Path(__file__).resolve().parent / "frida_ssl_unpin_java.js"
+
+
 def probe_script_path() -> Path:
     return Path(__file__).resolve().parent / "frida_probe.js"
 
@@ -110,19 +115,30 @@ def probe_script_path() -> Path:
 def prepare_unpin_script(mode: str = "java", script: Path | None = None, work: Path | None = None) -> Path:
     """
     Bake FRIDA unpin MODE into a temp script copy.
-    mode: probe | java | native
+    mode: probe | java | java-tm | native
+      java    → pin-only minimal script (survives Lilith splash)
+      java-tm → fuller Java (TrustManager) — often crashes Lilith
+      native  → Java soft + safe BoringSSL
     """
     mode = (mode or "java").strip().lower()
     if mode in ("full", "all"):
         mode = "native"
+    if mode in ("pin", "java-pin"):
+        mode = "java"
     if mode == "probe":
         src = script or probe_script_path()
+    elif mode == "java":
+        src = script or java_script_path()
     else:
+        # java-tm / soft / native share the fuller script; bake MODE in.
         src = script or default_script_path()
+        if mode in ("soft", "tm"):
+            mode = "java-tm"
     if not src.is_file():
         raise FileNotFoundError(src)
     text = src.read_text(encoding="utf-8", errors="replace")
     if mode != "probe":
+        # Fuller script uses MODE gates; pin-only script only has a log tag.
         text = re.sub(
             r'var MODE = "[^"]*";',
             f'var MODE = "{mode}";',
@@ -131,9 +147,9 @@ def prepare_unpin_script(mode: str = "java", script: Path | None = None, work: P
         )
     out_dir = work or Path(tempfile.mkdtemp(prefix="frida_script_"))
     out_dir.mkdir(parents=True, exist_ok=True)
-    out = out_dir / f"frida_unpin_{mode}.js"
+    out = out_dir / f"frida_unpin_{mode.replace('-', '_')}.js"
     out.write_text(text, encoding="utf-8")
-    print(f"[*] unpin script MODE={mode} → {out}", flush=True)
+    print(f"[*] unpin script MODE={mode} → {out} ({src.name})", flush=True)
     return out
 
 
@@ -2013,9 +2029,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     p.add_argument(
         "--unpin-mode",
-        choices=("probe", "java", "native", "full"),
+        choices=("probe", "java", "java-tm", "pin", "native", "full"),
         default="java",
-        help="probe=no hooks (crash test); java=TrustManager only; native=+safe BoringSSL",
+        help="probe=no hooks; java=OkHttp pin-only @25s; java-tm=TrustManager (crashy); native=+BoringSSL",
     )
     p.add_argument(
         "--sign-only",

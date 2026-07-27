@@ -282,11 +282,12 @@
       return;
     }
     log("installing hooks now…");
-    safe(hookJavaSoft, "java");
+    // Pin-only lives in frida_ssl_unpin_java.js; this file always does soft Java.
+    safe(hookJavaSoft, "java-tm");
     if (MODE === "native" || MODE === "full") {
       safe(hookNativeSafe, "native");
     } else {
-      log("skip native (MODE=java)");
+      log("skip native (MODE=" + MODE + ")");
     }
     log("ready");
   }, HOOK_DELAY_MS);

@@ -531,9 +531,9 @@ main() {
     fi
   done
 
-  # Optional: ~/frida FILE probe|java|native   or FRIDA_UNPIN_MODE=…
+  # Optional: ~/frida FILE probe|java|java-tm|native   or FRIDA_UNPIN_MODE=…
   local unpin_mode="java"
-  if [[ "${2:-}" == "probe" || "${2:-}" == "java" || "${2:-}" == "native" || "${2:-}" == "full" ]]; then
+  if [[ "${2:-}" == "probe" || "${2:-}" == "java" || "${2:-}" == "java-tm" || "${2:-}" == "pin" || "${2:-}" == "native" || "${2:-}" == "full" ]]; then
     unpin_mode="$2"
   elif [[ "${2:-}" == "--unpin-mode" && -n "${3:-}" ]]; then
     unpin_mode="$3"
@@ -542,19 +542,20 @@ main() {
   fi
   unpin_mode="${FRIDA_UNPIN_MODE:-$unpin_mode}"
 
-  echo "[*] unpin-mode: $unpin_mode  (probe=без хуків, java=soft TrustManager/OkHttp @12s, native=+BoringSSL)"
+  echo "[*] unpin-mode: $unpin_mode  (probe=без хуків, java=лише OkHttp pin @25s, java-tm=TrustManager, native=+BoringSSL)"
   python3 -m protocol_ast.frida_gadget "$apk" --method zip --unpin-mode "$unpin_mode"
   echo
   echo "════════════════════════════════════════"
   echo "Далі:"
   echo "  1) Uninstall стару AFK Arena"
   echo "  2) ~/frida install"
-  echo "  3) Відкрити гру → cat /sdcard/Download/frida-unpin.log"
+  echo "  3) Відкрити гру ≥30с → cat /sdcard/Download/frida-unpin.log"
   echo "  4) PCAPdroid MITM + Block QUIC → ~/scan mine"
   echo
   echo "Якщо знову close:"
   echo "  ~/frida \"…apks\" probe     # тест: gadget без хуків"
-  echo "  ~/frida \"…apks\" java      # лише Java (default)"
+  echo "  ~/frida \"…apks\" java      # лише OkHttp pin (default)"
+  echo "  ~/frida \"…apks\" java-tm   # + TrustManager (часто crash)"
   echo "  ~/frida \"…apks\" native    # + safe BoringSSL"
   echo "════════════════════════════════════════"
 }

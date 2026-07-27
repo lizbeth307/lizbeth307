@@ -46,6 +46,7 @@ HELPERS = (
     "game_mine.py",
     "frida_gadget.py",
     "frida_ssl_unpin.js",
+    "frida_ssl_unpin_java.js",
     "frida_probe.js",
 )
 ROOT_FILES = ("analyze_pcap.py", "probe_network.py", "scan_app.py")
