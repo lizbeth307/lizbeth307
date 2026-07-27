@@ -1,15 +1,32 @@
 /*
  * Autonomous SSL / cert-pin bypass for Frida Gadget (script mode).
+ * Crash-safe: delay hooks until after splash; never throw out of boot.
  * Target: Frida 16.x gadget (Java bridge bundled).
- * Covers: Java TrustManager / OkHttp / Conscrypt + native BoringSSL/OpenSSL/curl/mbedtls.
  */
 (function () {
   "use strict";
 
+  var LOG_PATH = "/sdcard/Download/frida-unpin.log";
+
   function log(msg) {
+    var line = "[ssl-unpin] " + msg;
     try {
-      console.log("[ssl-unpin] " + msg);
+      console.log(line);
     } catch (_) {}
+    try {
+      var f = new File(LOG_PATH, "a");
+      f.write(line + "\n");
+      f.flush();
+      f.close();
+    } catch (_) {}
+  }
+
+  function safe(fn, label) {
+    try {
+      fn();
+    } catch (e) {
+      log((label || "err") + ": " + e);
+    }
   }
 
   function hookJava() {
@@ -18,9 +35,9 @@
       return;
     }
     Java.perform(function () {
-      log("Java.perform — installing TrustManager hooks");
+      log("Java.perform — TrustManager hooks");
 
-      try {
+      safe(function () {
         var ArrayList = Java.use("java.util.ArrayList");
         var TrustManagerImpl = Java.use(
           "com.android.org.conscrypt.TrustManagerImpl"
@@ -29,11 +46,9 @@
           return ArrayList.$new();
         };
         log("hooked TrustManagerImpl.checkTrustedRecursive");
-      } catch (e) {
-        log("TrustManagerImpl: " + e);
-      }
+      }, "TrustManagerImpl");
 
-      try {
+      safe(function () {
         var X509TrustManager = Java.use("javax.net.ssl.X509TrustManager");
         var SSLContext = Java.use("javax.net.ssl.SSLContext");
         var TrustManagers = Java.registerClass({
@@ -56,37 +71,33 @@
           this.init(km, [tm], sr);
         };
         log("hooked SSLContext.init");
-      } catch (e) {
-        log("SSLContext: " + e);
-      }
+      }, "SSLContext");
 
       ["okhttp3.CertificatePinner"].forEach(function (name) {
-        try {
+        safe(function () {
           var C = Java.use(name);
           C.check.overloads.forEach(function (ov) {
             ov.implementation = function () {};
           });
           log("neutralized " + name + ".check");
-        } catch (_) {}
+        }, name);
       });
 
-      try {
+      safe(function () {
         var HttpsURLConnection = Java.use("javax.net.ssl.HttpsURLConnection");
         HttpsURLConnection.setDefaultHostnameVerifier.implementation =
           function () {};
         HttpsURLConnection.setHostnameVerifier.implementation = function () {};
         log("hooked HttpsURLConnection verifiers");
-      } catch (e) {
-        log("HttpsURLConnection: " + e);
-      }
+      }, "HttpsURLConnection");
 
-      try {
+      safe(function () {
         var NSTM = Java.use(
           "android.security.net.config.NetworkSecurityTrustManager"
         );
         NSTM.checkPins.implementation = function () {};
         log("hooked NetworkSecurityTrustManager.checkPins");
-      } catch (_) {}
+      }, "NSTM");
     });
   }
 
@@ -94,93 +105,78 @@
 
   function attachOnce(name, onEnter) {
     if (hooked[name]) return false;
-    var addr = Module.findExportByName(null, name);
+    var addr = null;
+    try {
+      addr = Module.findExportByName(null, name);
+    } catch (_) {
+      return false;
+    }
     if (!addr) return false;
     hooked[name] = true;
-    Interceptor.attach(addr, { onEnter: onEnter });
-    log("attached " + name);
-    return true;
+    try {
+      Interceptor.attach(addr, {
+        onEnter: function (args) {
+          try {
+            onEnter(args);
+          } catch (_) {}
+        },
+      });
+      log("attached " + name);
+      return true;
+    } catch (e) {
+      log("attach fail " + name + ": " + e);
+      return false;
+    }
   }
 
-  function hookNative() {
-    log("native SSL hooks…");
+  function hookNativeLight() {
+    log("native SSL hooks (light)…");
 
-    var acceptAll = new NativeCallback(
-      function (_ssl, _out_alert) {
-        return 0; /* ssl_verify_ok */
-      },
-      "int",
-      ["pointer", "pointer"]
-    );
-
-    attachOnce("SSL_CTX_set_custom_verify", function (args) {
-      args[2] = acceptAll;
-    });
-    attachOnce("SSL_set_custom_verify", function (args) {
-      args[2] = acceptAll;
-    });
+    // Prefer mode flags over replacing callbacks (safer across BoringSSL versions).
     attachOnce("SSL_CTX_set_verify", function (args) {
       args[1] = ptr(0);
-      args[2] = ptr(0);
     });
     attachOnce("SSL_set_verify", function (args) {
       args[1] = ptr(0);
-      args[2] = ptr(0);
     });
     attachOnce("mbedtls_ssl_conf_authmode", function (args) {
-      args[1] = ptr(0); /* MBEDTLS_SSL_VERIFY_NONE */
+      args[1] = ptr(0);
     });
-
     attachOnce("curl_easy_setopt", function (args) {
       var opt = args[1].toInt32();
-      // CURLOPT_SSL_VERIFYPEER=64, CURLOPT_SSL_VERIFYHOST=81
       if (opt === 64 || opt === 81) {
         args[2] = ptr(0);
       }
     });
 
-    Process.enumerateModules().forEach(function (m) {
-      var n = m.name.toLowerCase();
-      if (
-        n.indexOf("unity") < 0 &&
-        n.indexOf("il2cpp") < 0 &&
-        n.indexOf("mbedtls") < 0 &&
-        n.indexOf("curl") < 0
-      ) {
-        return;
-      }
-      ["mbedtls_ssl_conf_authmode", "SSL_CTX_set_custom_verify", "SSL_CTX_set_verify"].forEach(
-        function (sym) {
-          try {
-            var exp = m.findExportByName(sym);
-            if (!exp) return;
-            var key = m.name + "!" + sym;
-            if (hooked[key]) return;
-            hooked[key] = true;
-            if (sym.indexOf("custom_verify") >= 0) {
-              Interceptor.attach(exp, {
-                onEnter: function (args) {
-                  args[2] = acceptAll;
-                },
-              });
-            } else {
-              Interceptor.attach(exp, {
-                onEnter: function (args) {
-                  args[1] = ptr(0);
-                },
-              });
-            }
-            log("attached " + key);
-          } catch (_) {}
-        }
+    // Custom verify — only if NativeCallback works; wrap tightly.
+    safe(function () {
+      var acceptAll = new NativeCallback(
+        function (_ssl, _out_alert) {
+          return 0;
+        },
+        "int",
+        ["pointer", "pointer"]
       );
-    });
+      attachOnce("SSL_CTX_set_custom_verify", function (args) {
+        args[2] = acceptAll;
+      });
+      attachOnce("SSL_set_custom_verify", function (args) {
+        args[2] = acceptAll;
+      });
+    }, "custom_verify");
+  }
 
-    var dl =
-      Module.findExportByName(null, "android_dlopen_ext") ||
-      Module.findExportByName(null, "dlopen");
-    if (dl && !hooked.dlopen) {
-      hooked.dlopen = true;
+  function armDlopenRefresh() {
+    var dl = null;
+    try {
+      dl =
+        Module.findExportByName(null, "android_dlopen_ext") ||
+        Module.findExportByName(null, "dlopen");
+    } catch (_) {}
+    if (!dl || hooked.dlopen) return;
+    hooked.dlopen = true;
+    try {
       Interceptor.attach(dl, {
         onEnter: function (args) {
           try {
@@ -193,22 +189,29 @@
           if (!this.path) return;
           var p = this.path.toLowerCase();
           if (
-            p.indexOf("il2cpp") >= 0 ||
-            p.indexOf("unity") >= 0 ||
             p.indexOf("ssl") >= 0 ||
             p.indexOf("curl") >= 0 ||
-            p.indexOf("mbedtls") >= 0
+            p.indexOf("mbedtls") >= 0 ||
+            p.indexOf("cocos") >= 0
           ) {
-            log("dlopen " + this.path + " — refresh native hooks");
-            hookNative();
+            log("dlopen " + this.path + " — refresh");
+            safe(hookNativeLight, "refresh-native");
           }
         },
       });
+      log("dlopen watcher armed");
+    } catch (e) {
+      log("dlopen watch fail: " + e);
     }
   }
 
-  log("booting ssl_unpin");
-  hookJava();
-  hookNative();
-  log("ready");
+  log("booting ssl_unpin (delayed, crash-safe)");
+  // Let Lilith / cocos finish early init before any Interceptor/Java work.
+  var delayMs = 4000;
+  setTimeout(function () {
+    safe(hookJava, "java");
+    safe(hookNativeLight, "native");
+    safe(armDlopenRefresh, "dlopen");
+    log("ready");
+  }, delayMs);
 })();

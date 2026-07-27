@@ -110,7 +110,8 @@ def gadget_config_json() -> str:
         '  "interaction": {\n'
         '    "type": "script",\n'
         '    "path": "libfrida-gadget.script.so"\n'
-        "  }\n"
+        "  },\n"
+        '  "teardown": "minimal"\n'
         "}\n"
     )
 
