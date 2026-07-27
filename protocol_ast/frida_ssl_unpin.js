@@ -13,21 +13,28 @@
 (function () {
   "use strict";
 
-  var LOG_PATH = "/sdcard/Download/frida-unpin.log";
   // Injector may rewrite this line: var MODE = "java"|"native";
   var MODE = "java";
+  var LOG_PATHS = [
+    "/sdcard/Android/data/com.lilithgame.hgame.gp/files/frida-unpin.log",
+    "/storage/emulated/0/Android/data/com.lilithgame.hgame.gp/files/frida-unpin.log",
+    "/data/data/com.lilithgame.hgame.gp/files/frida-unpin.log",
+    "/sdcard/Download/frida-unpin.log",
+  ];
 
   function log(msg) {
-    var line = "[ssl-unpin/" + MODE + "] " + msg;
+    var line = "[ssl-unpin/" + MODE + "] " + msg + "\n";
     try {
       console.log(line);
     } catch (_) {}
-    try {
-      var f = new File(LOG_PATH, "a");
-      f.write(line + "\n");
-      f.flush();
-      f.close();
-    } catch (_) {}
+    for (var i = 0; i < LOG_PATHS.length; i++) {
+      try {
+        var f = new File(LOG_PATHS[i], "a");
+        f.write(line);
+        f.flush();
+        f.close();
+      } catch (_) {}
+    }
   }
 
   function safe(fn, label) {
