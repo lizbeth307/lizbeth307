@@ -21,7 +21,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "3.8.40-full"
+VERSION = "3.8.41-full"
 MAX_EXPORT_FIELDS = 32
 
 # Deep decode embedded for Termux single-file deploy (sync: protocol_ast/deep_decode.py)
@@ -2352,10 +2352,23 @@ def main() -> int:
         print(f"pcap: {pmsg}", flush=True)
         if ov == 0:
             print(
-                "⚠  keylog не збігається з найновішим pcap — "
-                "після Stop зберігай SSLKEYLOGFILE з тієї ж сесії",
+                "⚠  keylog не збігається з pcap (overlap=0) — "
+                "Stop PCAPdroid → Save dump → Save SSLKEYLOGFILE з ТІЄЇ Ж сесії",
                 file=sys.stderr,
             )
+            if args.mine:
+                if path is not None:
+                    print(f"PCAP: {path} ({path.stat().st_size} bytes)", flush=True)
+                print(f"Keylog: {kpath} ({kpath.stat().st_size} bytes)", flush=True)
+                print(
+                    "⛔  mine зупинено: різні сесії. "
+                    "Інакше decrypt hang на години (старий баг ≤3.8.40).\n"
+                    "   Перевір: ls -lat ~/storage/downloads/PCAPdroid | head\n"
+                    "   Або явно: python analyze_pcap.py --mine 'FILE.pcap' "
+                    "--keylog 'sslkeylogfile.txt (N)'",
+                    file=sys.stderr,
+                )
+                return 2
     elif pick_newest_pcap is not None:
         path = pick_newest_pcap(args.pcap or None, also_search_defaults=True)
         print("pcap: найновіший у PCAPdroid/Downloads", flush=True)

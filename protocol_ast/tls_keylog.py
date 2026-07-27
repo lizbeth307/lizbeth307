@@ -259,18 +259,12 @@ class DecryptResult:
 
 
 def _overlap_randoms(records: list[bytes], secrets: KeylogSecrets) -> list[str]:
-    """Client randoms present both in traffic and keylog."""
+    """Client randoms present both in traffic and keylog.
+
+    Only uses ClientHello-parsed randoms — never scans the whole keylog as
+    needles (that is O(secrets×payload) and hangs Termux on big dumps).
+    """
     found = {r.hex() for r in find_client_randoms_in_records(records)}
-    # also: raw search for keylog randoms inside payloads
-    for cr in secrets.client_randoms:
-        try:
-            needle = bytes.fromhex(cr)
-        except ValueError:
-            continue
-        for msg in records:
-            if needle in msg:
-                found.add(cr)
-                break
     return sorted(found & secrets.client_randoms)
 
 
@@ -284,8 +278,10 @@ def decrypt_tls_records(
     extracted = [r.hex() for r in find_client_randoms_in_records(flat)]
     overlap = _overlap_randoms(flat, secrets)
 
-    # Prefer overlapping randoms; else try every secret in keylog
-    candidates = overlap if overlap else sorted(secrets.client_randoms)
+    # NEVER brute-force every keylog secret when there is no overlap.
+    # A 180KB SSLKEYLOGFILE × dozens of TCP legs was hanging ~/scan mine
+    # for 1+ hours on phone after pairing a fresh keylog with an old pcap.
+    candidates = overlap
 
     diag = {
         "tls_records": len(flat),
@@ -303,6 +299,16 @@ def decrypt_tls_records(
             failed=0,
             tls_version="",
             diagnostics={**diag, "reason": "no_appdata_records"},
+        )
+
+    if not candidates:
+        return DecryptResult(
+            client_random="",
+            secrets_matched=[],
+            decrypted=[],
+            failed=len(appdata),
+            tls_version="",
+            diagnostics={**diag, "reason": "no_overlap"},
         )
 
     for cr_hex in candidates:

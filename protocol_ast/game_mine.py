@@ -683,9 +683,21 @@ def mine_pcap(path: Path, keylog: Path | None = None) -> dict[str, Any]:
         from .tls_keylog import parse_keylog
 
         secrets = parse_keylog(keylog)
+        print(
+            f"mine: keylog secrets={len(secrets.client_randoms)} "
+            f"(lines={secrets.lines})",
+            flush=True,
+        )
 
-    legs = [_annotate_leg(c, secrets) for c in extract_tcp_connections(path)]
+    raw_conns = extract_tcp_connections(path)
+    print(f"mine: TCP legs={len(raw_conns)} — annotate…", flush=True)
+    legs: list[dict[str, Any]] = []
+    for i, c in enumerate(raw_conns, 1):
+        legs.append(_annotate_leg(c, secrets))
+        if i == 1 or i % 25 == 0 or i == len(raw_conns):
+            print(f"mine: leg {i}/{len(raw_conns)}", flush=True)
     sessions = merge_bidirectional(legs)
+    print(f"mine: sessions={len(sessions)}", flush=True)
     sdk_session = build_sdk_session(sessions)
 
     by_sni: dict[str, dict[str, Any]] = {}

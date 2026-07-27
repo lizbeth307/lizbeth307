@@ -190,16 +190,35 @@ def pick_pcap_for_keylog(
         scored.sort(key=lambda t: (-t[0], -t[1].stat().st_mtime))
         best_ov, best = scored[0]
         return best, best_ov, f"pcap↔keylog overlap={best_ov} → {best.name}"
-    # fallback newest small-ish
+    # No shared ClientHello secrets — prefer pcap closest in mtime to keylog
+    # (not blindly "newest"), so a Jul-27 keylog does not drag in a Jul-26 dump
+    # while a same-day capture is missing / still open in PCAPdroid.
+    try:
+        kl_mtime = keylog.stat().st_mtime
+    except OSError:
+        kl_mtime = 0.0
+    small: list[Path] = []
     for p in cands:
         try:
             if p.stat().st_size <= max_bytes:
-                return p, 0, f"немає overlap з keylog → беру найновіший {p.name}"
+                small.append(p)
         except OSError:
             continue
-    if cands:
-        return cands[0], 0, f"немає overlap з keylog → {cands[0].name}"
-    return None, 0, "pcap не знайдено"
+    pool = small or list(cands)
+    if not pool:
+        return None, 0, "pcap не знайдено"
+    best = min(pool, key=lambda p: abs(p.stat().st_mtime - kl_mtime))
+    age_h = abs(best.stat().st_mtime - kl_mtime) / 3600.0
+    recent = ", ".join(
+        f"{p.name} ({p.stat().st_size}b)"
+        for p in sorted(pool, key=lambda x: x.stat().st_mtime, reverse=True)[:5]
+    )
+    return (
+        best,
+        0,
+        f"немає overlap з keylog → найближчий за часом {best.name} "
+        f"(Δ≈{age_h:.1f}h). свіжі: {recent}",
+    )
 
 
 def resolve_keylog(
