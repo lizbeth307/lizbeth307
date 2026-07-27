@@ -1,14 +1,14 @@
 /*
- * SSL unpin for Frida Gadget — staged & crash-safe.
+ * SSL unpin for Frida Gadget — staged & crash-safe (Lilith / AFK Arena).
  *
- * Modes (via global FRIDA_UNPIN_MODE baked at inject time, default "java"):
- *   probe  — no hooks (use frida_probe.js instead)
- *   java   — Java TrustManager / OkHttp only (default; safest for Lilith splash)
+ * Modes (baked at inject: var MODE = "…"):
+ *   probe  — use frida_probe.js instead
+ *   java   — soft Java only (NO SSLContext.init / NO registerClass)
  *   native — java + safe BoringSSL (hook callback retval, never NativeCallback swap)
  *
- * Why games die at ~4–8s: replacing SSL_CTX_set_custom_verify's callback with a
- * Frida NativeCallback of the wrong ABI → SIGSEGV on first TLS handshake.
- * Correct pattern: Interceptor.attach(existingCallback) + retval.replace(0).
+ * Lilith dies if we replace TrustManagers via SSLContext.init+registerClass
+ * during splash. Soft path: CertificatePinner + TrustManagerImpl.verifyChain
+ * after a long delay, with heartbeats so logs show when it dies.
  */
 (function () {
   "use strict";
@@ -23,11 +23,15 @@
     "/sdcard/Android/data/" + PKG + "/files/" + NAME,
     "/storage/emulated/0/Android/data/" + PKG + "/files/" + NAME,
   ];
+  // Splash + Lilith SDK often settle by ~8–12s; 2.5s was too early.
+  var HOOK_DELAY_MS = 12000;
+  var inJava = false;
 
   function mkdirp(path) {
     try {
       var mkdir = new NativeFunction(
-        Module.findExportByName(null, "mkdir") || Module.findExportByName("libc.so", "mkdir"),
+        Module.findExportByName(null, "mkdir") ||
+          Module.findExportByName("libc.so", "mkdir"),
         "int",
         ["pointer", "int"]
       );
@@ -48,6 +52,7 @@
     } catch (_) {}
     try {
       mkdirp("/sdcard/Android/data/" + PKG + "/files");
+      mkdirp("/storage/emulated/0/Android/data/" + PKG + "/files");
     } catch (_) {}
     for (var i = 0; i < LOG_PATHS.length; i++) {
       try {
@@ -57,6 +62,8 @@
         f.close();
       } catch (_) {}
     }
+    // Never nest Java.perform while already inside Java.perform — that can crash.
+    if (inJava) return;
     try {
       if (typeof Java !== "undefined" && Java.available) {
         Java.perform(function () {
@@ -81,76 +88,105 @@
     }
   }
 
-  function hookJava() {
+  function hookJavaSoft() {
     if (typeof Java === "undefined" || !Java.available) {
       log("Java unavailable");
       return;
     }
     Java.perform(function () {
-      log("Java hooks…");
+      inJava = true;
+      try {
+        log("Java soft hooks…");
 
-      safe(function () {
-        var ArrayList = Java.use("java.util.ArrayList");
-        var TrustManagerImpl = Java.use(
-          "com.android.org.conscrypt.TrustManagerImpl"
-        );
-        if (TrustManagerImpl.checkTrustedRecursive) {
-          TrustManagerImpl.checkTrustedRecursive.implementation = function () {
-            return ArrayList.$new();
-          };
-          log("TrustManagerImpl.checkTrustedRecursive");
-        }
-      }, "TrustManagerImpl");
+        // --- OkHttp pin bypass (common for app-global / vip / psp) ---
+        safe(function () {
+          try {
+            var C = Java.use("okhttp3.CertificatePinner");
+            C.check.overloads.forEach(function (ov) {
+              ov.implementation = function () {
+                return;
+              };
+            });
+            log("okhttp3.CertificatePinner.check");
+          } catch (e) {
+            log("CertificatePinner skip: " + e);
+          }
+          try {
+            var C2 = Java.use("okhttp3.CertificatePinner");
+            if (C2["check$okhttp"]) {
+              C2["check$okhttp"].overloads.forEach(function (ov) {
+                ov.implementation = function () {
+                  return;
+                };
+              });
+              log("okhttp3.CertificatePinner.check$okhttp");
+            }
+          } catch (_) {}
+        }, "okhttp");
 
-      safe(function () {
-        var X509TrustManager = Java.use("javax.net.ssl.X509TrustManager");
-        var SSLContext = Java.use("javax.net.ssl.SSLContext");
-        // Unique class name per process start to avoid re-register crashes
-        var clsName = "com.signal.EmptyTM" + Date.now();
-        var TrustManagers = Java.registerClass({
-          name: clsName,
-          implements: [X509TrustManager],
-          methods: {
-            checkClientTrusted: function () {},
-            checkServerTrusted: function () {},
-            getAcceptedIssuers: function () {
-              return [];
-            },
-          },
-        });
-        var tm = TrustManagers.$new();
-        SSLContext.init.overload(
-          "[Ljavax.net.ssl.KeyManager;",
-          "[Ljavax.net.ssl.TrustManager;",
-          "java.security.SecureRandom"
-        ).implementation = function (km, _tm, sr) {
-          this.init(km, [tm], sr);
-        };
-        log("SSLContext.init");
-      }, "SSLContext");
+        // --- Conscrypt TrustManagerImpl (no SSLContext.init / no registerClass) ---
+        safe(function () {
+          var TMI = Java.use("com.android.org.conscrypt.TrustManagerImpl");
+          if (TMI.verifyChain) {
+            TMI.verifyChain.implementation = function (
+              untrustedChain,
+              trustAnchorChain,
+              host,
+              clientAuth,
+              ocspData,
+              tlsSctData
+            ) {
+              return untrustedChain;
+            };
+            log("TrustManagerImpl.verifyChain");
+          }
+          if (TMI.checkTrustedRecursive) {
+            var ArrayList = Java.use("java.util.ArrayList");
+            TMI.checkTrustedRecursive.implementation = function () {
+              return ArrayList.$new();
+            };
+            log("TrustManagerImpl.checkTrustedRecursive");
+          }
+        }, "TrustManagerImpl");
 
-      safe(function () {
-        var C = Java.use("okhttp3.CertificatePinner");
-        C.check.overloads.forEach(function (ov) {
-          ov.implementation = function () {};
-        });
-        log("okhttp3.CertificatePinner");
-      }, "CertificatePinner");
+        // --- Android network-security config pins ---
+        safe(function () {
+          var N = Java.use(
+            "android.security.net.config.NetworkSecurityTrustManager"
+          );
+          if (N.checkPins) {
+            N.checkPins.implementation = function () {};
+            log("NetworkSecurityTrustManager.checkPins");
+          }
+        }, "NSTM");
 
-      safe(function () {
-        var H = Java.use("javax.net.ssl.HttpsURLConnection");
-        H.setDefaultHostnameVerifier.implementation = function () {};
-        H.setHostnameVerifier.implementation = function () {};
-        log("HttpsURLConnection");
-      }, "HttpsURLConnection");
+        // --- Hostname verifier: accept all WITHOUT replacing SSLContext ---
+        safe(function () {
+          var HUV = Java.use("javax.net.ssl.HttpsURLConnection");
+          var Allow = Java.use("javax.net.ssl.HostnameVerifier");
+          // Hook instance setters only — do not invent a new class if possible.
+          // Use a tiny registerClass ONLY if needed; Lilith crashed on SSLContext.init,
+          // not necessarily on HV alone. Prefer hooking verify() on known verifiers.
+          try {
+            var OkHV = Java.use("okhttp3.internal.tls.OkHostnameVerifier");
+            if (OkHV.verify) {
+              OkHV.verify.overloads.forEach(function (ov) {
+                ov.implementation = function () {
+                  return true;
+                };
+              });
+              log("OkHostnameVerifier.verify→true");
+            }
+          } catch (_) {}
+          // noop dangerous setDefaultHostnameVerifier(null) patterns — skip
+          void HUV;
+          void Allow;
+        }, "hostname");
 
-      safe(function () {
-        var N = Java.use(
-          "android.security.net.config.NetworkSecurityTrustManager"
-        );
-        N.checkPins.implementation = function () {};
-        log("NetworkSecurityTrustManager.checkPins");
-      }, "NSTM");
+        log("Java soft hooks done");
+      } finally {
+        inJava = false;
+      }
     });
   }
 
@@ -172,8 +208,6 @@
     try {
       Interceptor.attach(addr, {
         onEnter: function (args) {
-          // BoringSSL: void SSL_CTX_set_custom_verify(SSL_CTX*, int mode, callback)
-          // callback is args[2]. Do NOT replace with NativeCallback — hook it.
           var cb = args[2];
           if (cb.isNull()) return;
           var ck = cb.toString();
@@ -183,7 +217,6 @@
             Interceptor.attach(cb, {
               onLeave: function (retval) {
                 try {
-                  // ssl_verify_ok == 0
                   retval.replace(0);
                 } catch (_) {}
               },
@@ -202,13 +235,11 @@
 
   function hookNativeSafe() {
     log("native hooks (safe BoringSSL pattern)…");
-    // Prefer named modules when present; also scan null for system libssl.
     ["libssl.so", "libboringssl.so", "libsscronet.so", null].forEach(function (m) {
       hookCustomVerifyExport(m, "SSL_CTX_set_custom_verify");
       hookCustomVerifyExport(m, "SSL_set_custom_verify");
     });
 
-    // Soft mode flags only — no callback pointer swaps.
     safe(function () {
       var a = Module.findExportByName(null, "SSL_CTX_set_verify");
       if (!a || hookedCb.ssl_ctx_set_verify) return;
@@ -238,19 +269,25 @@
     }, "SSL_get_verify_result");
   }
 
-  log("boot MODE=" + MODE);
-  // Short delay so cocos splash can paint; keep under anti-tamper patience.
+  log("boot MODE=" + MODE + " delay=" + HOOK_DELAY_MS + "ms");
+  var hb = 0;
+  setInterval(function () {
+    hb += 1;
+    log("heartbeat #" + hb);
+  }, 2000);
+
   setTimeout(function () {
     if (MODE === "probe") {
       log("probe mode — no hooks");
       return;
     }
-    safe(hookJava, "java");
+    log("installing hooks now…");
+    safe(hookJavaSoft, "java");
     if (MODE === "native" || MODE === "full") {
       safe(hookNativeSafe, "native");
     } else {
-      log("skip native (MODE=java). Re-inject with --unpin-mode native if needed.");
+      log("skip native (MODE=java)");
     }
     log("ready");
-  }, 2500);
+  }, HOOK_DELAY_MS);
 })();

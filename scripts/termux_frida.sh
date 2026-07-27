@@ -542,7 +542,7 @@ main() {
   fi
   unpin_mode="${FRIDA_UNPIN_MODE:-$unpin_mode}"
 
-  echo "[*] unpin-mode: $unpin_mode  (probe=без хуків, java=лише Java, native=+BoringSSL)"
+  echo "[*] unpin-mode: $unpin_mode  (probe=без хуків, java=soft TrustManager/OkHttp @12s, native=+BoringSSL)"
   python3 -m protocol_ast.frida_gadget "$apk" --method zip --unpin-mode "$unpin_mode"
   echo
   echo "════════════════════════════════════════"
