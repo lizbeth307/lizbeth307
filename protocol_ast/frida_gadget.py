@@ -911,14 +911,18 @@ def find_frida_install_targets(home: Path | None = None) -> list[dict]:
         seen.add(key)
         name = path.name.lower()
         pri = 0
+        # Prefer splits folder for install — multi-split .apks often fails via termux-open.
+        if kind == "splits":
+            pri += 120
         if kind == "apks":
-            pri += 100
+            pri += 90
         if "frida" in name:
             pri += 80
         if "afk" in name or "arena" in name or "lilith" in name or "hgame" in name:
             pri += 60
-        if name == "afk-arena-frida.apks":
-            pri += 40
+        # Prefer versioned newest builds over static aliases when mtime ties.
+        if name in ("afk-arena-frida.apks", "afk-arena-frida-splits"):
+            pri -= 10
         found.append(
             {
                 "path": str(path),
@@ -948,7 +952,8 @@ def find_frida_install_targets(home: Path | None = None) -> list[dict]:
         except OSError:
             continue
 
-    found.sort(key=lambda x: (-x["pri"], -x["mtime"], -x["size"]))
+    # Newest first, then preference score.
+    found.sort(key=lambda x: (-x["mtime"], -x["pri"], -x["size"]))
     return found
 
 

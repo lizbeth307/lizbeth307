@@ -351,6 +351,7 @@ EOF
 open_frida_install() {
   local hint="${1:-}"
   local target=""
+  local opened=0
 
   if [[ -n "$hint" && -e "$hint" ]]; then
     target="$hint"
@@ -359,7 +360,11 @@ open_frida_install() {
       python3 - <<'PY'
 from protocol_ast.frida_gadget import find_frida_install_targets
 cands = find_frida_install_targets()
-# prefer .apks file over splits directory
+# prefer splits folder (multi-split) over .apks for installer UX
+for c in cands:
+    if c.get("kind") == "splits":
+        print(c["path"])
+        raise SystemExit(0)
 for c in cands:
     if c.get("kind") == "apks":
         print(c["path"])
@@ -371,11 +376,15 @@ PY
   fi
 
   if [[ -z "$target" ]]; then
-    # shell fallback glob (newest by ls -t)
     local cand
-    cand="$(ls -t /sdcard/Download/*-frida.apks /storage/emulated/0/Download/*-frida.apks 2>/dev/null | head -n1 || true)"
-    if [[ -n "$cand" && -f "$cand" ]]; then
+    cand="$(ls -td /sdcard/Download/*-frida-splits /storage/emulated/0/Download/*-frida-splits 2>/dev/null | head -n1 || true)"
+    if [[ -n "$cand" && -d "$cand" ]]; then
       target="$cand"
+    else
+      cand="$(ls -t /sdcard/Download/*-frida.apks /storage/emulated/0/Download/*-frida.apks 2>/dev/null | head -n1 || true)"
+      if [[ -n "$cand" && -f "$cand" ]]; then
+        target="$cand"
+      fi
     fi
   fi
 
@@ -393,55 +402,99 @@ EOF
   fi
 
   echo "[*] знайдено: $target" >&2
-  echo >&2
-  echo "⚠  Спочатку ЗНІМИ звичайну AFK Arena," >&2
-  echo "   інакше підпис не збіжиться." >&2
-  echo >&2
-  echo "Відкриваю установщик — обери App Manager або SAI." >&2
-  echo >&2
-
   if [[ -d "$target" ]]; then
-    echo "[*] це папка splits: $target" >&2
-    echo "    SAI/App Manager → Install from folder / вибери всі .apk" >&2
-    # Open folder in system Files if possible
+    echo "[*] splits у папці:" >&2
+    ls -lah "$target"/*.apk 2>/dev/null | sed 's/^/    /' >&2 || true
+  fi
+  echo >&2
+  echo "⚠  Зніми стару AFK Arena (якщо ще стоїть)." >&2
+  echo "   App Manager / SAI → постав УСІ .apk зі splits." >&2
+  echo >&2
+
+  try_open_path() {
+    local p="$1"
     if command -v termux-open >/dev/null 2>&1; then
-      termux-open "$target" && return 0
-    fi
-    return 0
-  fi
-
-  if command -v termux-open >/dev/null 2>&1; then
-    echo "[*] termux-open \"$target\"" >&2
-    termux-open "$target" && return 0
-  fi
-
-  local uri="file://${target}"
-  for starter in am /system/bin/am; do
-    if [[ -x "$starter" ]] || command -v "$starter" >/dev/null 2>&1; then
-      echo "[*] $starter start VIEW" >&2
-      if "$starter" start -a android.intent.action.VIEW -d "$uri" \
-        -t "application/octet-stream" >/dev/null 2>&1; then
+      echo "[*] termux-open \"$p\"" >&2
+      if termux-open "$p" 2>/dev/null; then
         return 0
       fi
-      if "$starter" start -a android.intent.action.VIEW -d "$uri" \
-        -n io.github.muntashirakon.AppManager/.apk.installer.PackageInstallerActivity \
-        >/dev/null 2>&1; then
+      # some Termux:API builds need chooser
+      if termux-open --chooser "$p" 2>/dev/null; then
         return 0
       fi
     fi
-  done
+    local uri="file://${p}"
+    local starter
+    for starter in am /system/bin/am; do
+      if [[ -x "$starter" ]] || command -v "$starter" >/dev/null 2>&1; then
+        echo "[*] $starter VIEW $p" >&2
+        if "$starter" start -a android.intent.action.VIEW -d "$uri" \
+          -t "resource/folder" >/dev/null 2>&1; then
+          return 0
+        fi
+        if "$starter" start -a android.intent.action.VIEW -d "$uri" \
+          -t "application/vnd.android.package-archive" >/dev/null 2>&1; then
+          return 0
+        fi
+        if "$starter" start -a android.intent.action.VIEW -d "$uri" \
+          -t "application/octet-stream" >/dev/null 2>&1; then
+          return 0
+        fi
+        if "$starter" start -a android.intent.action.VIEW -d "$uri" \
+          -n io.github.muntashirakon.AppManager/.apk.installer.PackageInstallerActivity \
+          >/dev/null 2>&1; then
+          return 0
+        fi
+      fi
+    done
+    return 1
+  }
+
+  if try_open_path "$target"; then
+    opened=1
+  fi
+
+  # If we opened .apks but splits exist, also print splits path as primary manual route.
+  local splits_hint=""
+  if [[ -f "$target" ]]; then
+    splits_hint="${target%.apks}-splits"
+    if [[ ! -d "$splits_hint" ]]; then
+      splits_hint="$(ls -td /sdcard/Download/*-frida-splits 2>/dev/null | head -n1 || true)"
+    fi
+  elif [[ -d "$target" ]]; then
+    splits_hint="$target"
+  fi
 
   cat <<EOF >&2
-Не вдалось авто-відкрити. Вручну:
 
-  Files → Download → $(basename "$target")
-  → відкрити через App Manager / SAI
+──────── вручну (надійніше) ────────
+Папка:
+  ${splits_hint:-$target}
 
-Або:
-  pkg install termux-api
-  termux-open "$target"
+App Manager → Install APKs → ця папка → галочки на ВСІХ 4:
+  base.apk
+  split_config.arm64_v8a.apk
+  split_config.xxhdpi.apk
+  split_extraAsset.apk
+────────────────────────────────────
 EOF
+
+  if (( opened == 1 )); then
+    return 0
+  fi
   return 1
+}
+
+pause_until_user_ready() {
+  echo >&2
+  notify "Frida doctor" "Install 4 splits → відкрий гру → Enter у Termux"
+  echo "╔══════════════════════════════════════════════╗" >&2
+  echo "║  1) Встанови УСІ 4 splits (App Manager/SAI)  ║" >&2
+  echo "║  2) Відкрий гру і тримай ≥30с                ║" >&2
+  echo "║  3) Повернись сюди і натисни Enter           ║" >&2
+  echo "╚══════════════════════════════════════════════╝" >&2
+  printf "Enter коли гра відкрита (або вже впала): " >&2
+  read -r _ || true
 }
 
 notify() {
@@ -731,10 +784,17 @@ EOF
     echo
     open_frida_install "" || true
     notify "Frida doctor" "Install усі splits → відкрий гру"
+    pause_until_user_ready
   else
     echo "[doctor] wait-only — не чіпаю APK" >&2
+    pause_until_user_ready
   fi
 
+  # Fresh wait window starts AFTER user confirms install/launch.
+  clear_logs
+  echo "[doctor] логи скинуто перед очікуванням — перезапусти гру якщо вже відкрита" >&2
+  echo "[doctor] (якщо гра вже біжить — закрий і відкрий ще раз)" >&2
+  sleep 2
   wait_for_log "$timeout_s"
   local rc=$?
   if (( rc == 0 )); then
