@@ -2,19 +2,17 @@
  * SSL unpin for Frida Gadget — staged & crash-safe (Lilith / AFK Arena).
  *
  * Modes (baked at inject: var MODE = "…"):
- *   probe  — use frida_probe.js instead
- *   java   — soft Java only (NO SSLContext.init / NO registerClass)
- *   native — java + safe BoringSSL (hook callback retval, never NativeCallback swap)
+ *   java-tm — soft Java TrustManager + OkHttp (often crashes Lilith)
+ *   native  — java-tm + safe BoringSSL (hook callback retval, never NativeCallback swap)
  *
- * Lilith dies if we replace TrustManagers via SSLContext.init+registerClass
- * during splash. Soft path: CertificatePinner + TrustManagerImpl.verifyChain
- * after a long delay, with heartbeats so logs show when it dies.
+ * Prefer MODE=java via frida_ssl_unpin_java.js (pin-only). This fuller script
+ * is for java-tm / native only.
  */
 (function () {
   "use strict";
 
-  // Injector may rewrite this line: var MODE = "java"|"native";
-  var MODE = "java";
+  // Injector may rewrite this line: var MODE = "java-tm"|"native";
+  var MODE = "java-tm";
   var PKG = "com.lilithgame.hgame.gp";
   var NAME = "frida-unpin.log";
   var LOG_PATHS = [
@@ -24,7 +22,7 @@
     "/storage/emulated/0/Android/data/" + PKG + "/files/" + NAME,
   ];
   // Splash + Lilith SDK often settle by ~8–12s; 2.5s was too early.
-  var HOOK_DELAY_MS = 12000;
+  var HOOK_DELAY_MS = 20000;
   var inJava = false;
 
   function mkdirp(path) {

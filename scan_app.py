@@ -8,6 +8,7 @@ SIGNAL SCAN — мінімальний універсальний сканер �
   ~/scan sdk          # показати останній sdk_session.json
   ~/scan unpin        # pin bypass без root (apk-mitm, Java)
   ~/scan frida        # Frida Gadget + SSL unpin (Java+native)
+  ~/scan doctor       # frida doctor: update→build→install→wait log
   ~/scan update       # self-update
 """
 
@@ -19,7 +20,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-VERSION = "1.2.0"
+VERSION = "1.2.1"
 HOME = Path.home()
 ANALYZE = HOME / "analyze_pcap.py"
 UNPIN = HOME / "unpin"
@@ -291,6 +292,8 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_unpin(argv[1:])
     if cmd in ("frida", "gadget", "fgadget"):
         return cmd_frida(argv[1:])
+    if cmd in ("doctor", "doc", "fix"):
+        return cmd_doctor(argv[1:])
     if cmd in ("update", "u", "self-update"):
         return cmd_update()
     if cmd in ("help", "h"):
