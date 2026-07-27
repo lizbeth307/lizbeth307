@@ -15,17 +15,39 @@
 
   // Injector may rewrite this line: var MODE = "java"|"native";
   var MODE = "java";
+  var PKG = "com.lilithgame.hgame.gp";
+  var NAME = "frida-unpin.log";
   var LOG_PATHS = [
-    "/sdcard/Android/data/com.lilithgame.hgame.gp/files/frida-unpin.log",
-    "/storage/emulated/0/Android/data/com.lilithgame.hgame.gp/files/frida-unpin.log",
-    "/data/data/com.lilithgame.hgame.gp/files/frida-unpin.log",
-    "/sdcard/Download/frida-unpin.log",
+    "/sdcard/Download/" + NAME,
+    "/storage/emulated/0/Download/" + NAME,
+    "/sdcard/Android/data/" + PKG + "/files/" + NAME,
+    "/storage/emulated/0/Android/data/" + PKG + "/files/" + NAME,
   ];
 
+  function mkdirp(path) {
+    try {
+      var mkdir = new NativeFunction(
+        Module.findExportByName(null, "mkdir") || Module.findExportByName("libc.so", "mkdir"),
+        "int",
+        ["pointer", "int"]
+      );
+      var parts = path.split("/");
+      var cur = "";
+      for (var i = 0; i < parts.length; i++) {
+        if (!parts[i]) continue;
+        cur += "/" + parts[i];
+        mkdir(Memory.allocUtf8String(cur), 0x1ed);
+      }
+    } catch (_) {}
+  }
+
   function log(msg) {
-    var line = "[ssl-unpin/" + MODE + "] " + msg + "\n";
+    var line = "[ssl-unpin/" + MODE + " " + new Date().toISOString() + "] " + msg + "\n";
     try {
       console.log(line);
+    } catch (_) {}
+    try {
+      mkdirp("/sdcard/Android/data/" + PKG + "/files");
     } catch (_) {}
     for (var i = 0; i < LOG_PATHS.length; i++) {
       try {
@@ -35,6 +57,20 @@
         f.close();
       } catch (_) {}
     }
+    try {
+      if (typeof Java !== "undefined" && Java.available) {
+        Java.perform(function () {
+          try {
+            var FOS = Java.use("java.io.FileOutputStream");
+            var out = FOS.$new("/sdcard/Download/" + NAME, true);
+            var bytes = Java.use("java.lang.String").$new(line).getBytes("UTF-8");
+            out.write(bytes);
+            out.flush();
+            out.close();
+          } catch (_) {}
+        });
+      }
+    } catch (_) {}
   }
 
   function safe(fn, label) {
