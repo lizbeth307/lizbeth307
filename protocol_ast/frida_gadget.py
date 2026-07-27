@@ -103,6 +103,40 @@ def default_script_path() -> Path:
     return Path(__file__).resolve().parent / "frida_ssl_unpin.js"
 
 
+def probe_script_path() -> Path:
+    return Path(__file__).resolve().parent / "frida_probe.js"
+
+
+def prepare_unpin_script(mode: str = "java", script: Path | None = None, work: Path | None = None) -> Path:
+    """
+    Bake FRIDA unpin MODE into a temp script copy.
+    mode: probe | java | native
+    """
+    mode = (mode or "java").strip().lower()
+    if mode in ("full", "all"):
+        mode = "native"
+    if mode == "probe":
+        src = script or probe_script_path()
+    else:
+        src = script or default_script_path()
+    if not src.is_file():
+        raise FileNotFoundError(src)
+    text = src.read_text(encoding="utf-8", errors="replace")
+    if mode != "probe":
+        text = re.sub(
+            r'var MODE = "[^"]*";',
+            f'var MODE = "{mode}";',
+            text,
+            count=1,
+        )
+    out_dir = work or Path(tempfile.mkdtemp(prefix="frida_script_"))
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out = out_dir / f"frida_unpin_{mode}.js"
+    out.write_text(text, encoding="utf-8")
+    print(f"[*] unpin script MODE={mode} → {out}", flush=True)
+    return out
+
+
 def gadget_config_json() -> str:
     # Relative path: resolved next to libfrida-gadget.so inside the APK lib dir.
     return (
@@ -1507,6 +1541,7 @@ def inject_apks_bundle(
     home: Path | None = None,
     work_dir: Path | None = None,
     version: str = FRIDA_VERSION,
+    unpin_mode: str = "java",
 ) -> dict:
     """
     App Manager / SAI .apks (or a directory of split APKs): patch ABI split(s)
@@ -1529,10 +1564,6 @@ def inject_apks_bundle(
         raise RuntimeError(f"not an .apks bundle: {bundle}")
 
     home = home or Path.home()
-    script = script or default_script_path()
-    if not script.is_file():
-        raise FileNotFoundError(f"SSL unpin script missing: {script}")
-
     work_root = choose_work_root(home)
     cleanup_stale_work(work_root)
     # Also scrub tiny Termux-home leftovers from older runs
@@ -1543,6 +1574,9 @@ def inject_apks_bundle(
     work = work_dir or Path(tempfile.mkdtemp(prefix="frida_apks_", dir=str(work_root)))
     work.mkdir(parents=True, exist_ok=True)
     sign_dir = work / "sign_out"
+    script = prepare_unpin_script(unpin_mode, script=script, work=work / "script")
+    if not script.is_file():
+        raise FileNotFoundError(f"SSL unpin script missing: {script}")
 
     # Final outputs on shared storage (not Termux home)
     stem = re.sub(r"[^\w.\-]+", "_", bundle.stem).strip("_") or "game"
@@ -1862,19 +1896,18 @@ def inject_apk(
     work_dir: Path | None = None,
     version: str = FRIDA_VERSION,
     method: str = "auto",
+    unpin_mode: str = "java",
 ) -> dict:
     """
     Inject Frida Gadget. Prefer zip+patchelf on Termux (no aapt2).
     Accepts single .apk or App Manager .apks / .xapk split bundles.
     method: auto | zip | apktool
+    unpin_mode: probe | java | native
     """
     apk = apk.expanduser().resolve()
     if not apk.exists():
         raise FileNotFoundError(apk)
     home = home or Path.home()
-    script = script or default_script_path()
-    if not script.is_file():
-        raise FileNotFoundError(f"SSL unpin script missing: {script}")
 
     if (
         apk.is_dir()
@@ -1892,12 +1925,16 @@ def inject_apk(
             home=home,
             work_dir=work_dir,
             version=version,
+            unpin_mode=unpin_mode,
         )
 
     work_root = home / "unpin_work"
     work_root.mkdir(parents=True, exist_ok=True)
     work = work_dir or Path(tempfile.mkdtemp(prefix="frida_gadget_", dir=str(work_root)))
     work.mkdir(parents=True, exist_ok=True)
+    script = prepare_unpin_script(unpin_mode, script=script, work=work / "script")
+    if not script.is_file():
+        raise FileNotFoundError(f"SSL unpin script missing: {script}")
 
     if out_apk is None:
         out_apk = default_out_apk(apk, home)
@@ -1973,6 +2010,12 @@ def main(argv: list[str] | None = None) -> int:
         choices=("auto", "zip", "apktool"),
         default="auto",
         help="auto: zip+patchelf first, else apktool+aapt",
+    )
+    p.add_argument(
+        "--unpin-mode",
+        choices=("probe", "java", "native", "full"),
+        default="java",
+        help="probe=no hooks (crash test); java=TrustManager only; native=+safe BoringSSL",
     )
     p.add_argument(
         "--sign-only",
@@ -2130,6 +2173,7 @@ Frida Gadget без root / без ПК
         script=Path(args.script) if args.script else None,
         version=args.version,
         method=args.method,
+        unpin_mode=args.unpin_mode,
     )
     print(json.dumps(report, indent=2, ensure_ascii=False))
     print()

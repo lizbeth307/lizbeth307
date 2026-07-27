@@ -1,15 +1,24 @@
 /*
- * Autonomous SSL / cert-pin bypass for Frida Gadget (script mode).
- * Crash-safe: delay hooks until after splash; never throw out of boot.
- * Target: Frida 16.x gadget (Java bridge bundled).
+ * SSL unpin for Frida Gadget — staged & crash-safe.
+ *
+ * Modes (via global FRIDA_UNPIN_MODE baked at inject time, default "java"):
+ *   probe  — no hooks (use frida_probe.js instead)
+ *   java   — Java TrustManager / OkHttp only (default; safest for Lilith splash)
+ *   native — java + safe BoringSSL (hook callback retval, never NativeCallback swap)
+ *
+ * Why games die at ~4–8s: replacing SSL_CTX_set_custom_verify's callback with a
+ * Frida NativeCallback of the wrong ABI → SIGSEGV on first TLS handshake.
+ * Correct pattern: Interceptor.attach(existingCallback) + retval.replace(0).
  */
 (function () {
   "use strict";
 
   var LOG_PATH = "/sdcard/Download/frida-unpin.log";
+  // Injector may rewrite this line: var MODE = "java"|"native";
+  var MODE = "java";
 
   function log(msg) {
-    var line = "[ssl-unpin] " + msg;
+    var line = "[ssl-unpin/" + MODE + "] " + msg;
     try {
       console.log(line);
     } catch (_) {}
@@ -31,28 +40,32 @@
 
   function hookJava() {
     if (typeof Java === "undefined" || !Java.available) {
-      log("Java bridge unavailable — native hooks only");
+      log("Java unavailable");
       return;
     }
     Java.perform(function () {
-      log("Java.perform — TrustManager hooks");
+      log("Java hooks…");
 
       safe(function () {
         var ArrayList = Java.use("java.util.ArrayList");
         var TrustManagerImpl = Java.use(
           "com.android.org.conscrypt.TrustManagerImpl"
         );
-        TrustManagerImpl.checkTrustedRecursive.implementation = function () {
-          return ArrayList.$new();
-        };
-        log("hooked TrustManagerImpl.checkTrustedRecursive");
+        if (TrustManagerImpl.checkTrustedRecursive) {
+          TrustManagerImpl.checkTrustedRecursive.implementation = function () {
+            return ArrayList.$new();
+          };
+          log("TrustManagerImpl.checkTrustedRecursive");
+        }
       }, "TrustManagerImpl");
 
       safe(function () {
         var X509TrustManager = Java.use("javax.net.ssl.X509TrustManager");
         var SSLContext = Java.use("javax.net.ssl.SSLContext");
+        // Unique class name per process start to avoid re-register crashes
+        var clsName = "com.signal.EmptyTM" + Date.now();
         var TrustManagers = Java.registerClass({
-          name: "com.signal.EmptyTrustManager",
+          name: clsName,
           implements: [X509TrustManager],
           methods: {
             checkClientTrusted: function () {},
@@ -70,148 +83,131 @@
         ).implementation = function (km, _tm, sr) {
           this.init(km, [tm], sr);
         };
-        log("hooked SSLContext.init");
+        log("SSLContext.init");
       }, "SSLContext");
 
-      ["okhttp3.CertificatePinner"].forEach(function (name) {
-        safe(function () {
-          var C = Java.use(name);
-          C.check.overloads.forEach(function (ov) {
-            ov.implementation = function () {};
-          });
-          log("neutralized " + name + ".check");
-        }, name);
-      });
+      safe(function () {
+        var C = Java.use("okhttp3.CertificatePinner");
+        C.check.overloads.forEach(function (ov) {
+          ov.implementation = function () {};
+        });
+        log("okhttp3.CertificatePinner");
+      }, "CertificatePinner");
 
       safe(function () {
-        var HttpsURLConnection = Java.use("javax.net.ssl.HttpsURLConnection");
-        HttpsURLConnection.setDefaultHostnameVerifier.implementation =
-          function () {};
-        HttpsURLConnection.setHostnameVerifier.implementation = function () {};
-        log("hooked HttpsURLConnection verifiers");
+        var H = Java.use("javax.net.ssl.HttpsURLConnection");
+        H.setDefaultHostnameVerifier.implementation = function () {};
+        H.setHostnameVerifier.implementation = function () {};
+        log("HttpsURLConnection");
       }, "HttpsURLConnection");
 
       safe(function () {
-        var NSTM = Java.use(
+        var N = Java.use(
           "android.security.net.config.NetworkSecurityTrustManager"
         );
-        NSTM.checkPins.implementation = function () {};
-        log("hooked NetworkSecurityTrustManager.checkPins");
+        N.checkPins.implementation = function () {};
+        log("NetworkSecurityTrustManager.checkPins");
       }, "NSTM");
     });
   }
 
-  var hooked = {};
+  var hookedCb = {};
 
-  function attachOnce(name, onEnter) {
-    if (hooked[name]) return false;
-    var addr = null;
+  function hookCustomVerifyExport(moduleName, exportName) {
+    var addr;
     try {
-      addr = Module.findExportByName(null, name);
+      addr = moduleName
+        ? Module.findExportByName(moduleName, exportName)
+        : Module.findExportByName(null, exportName);
     } catch (_) {
-      return false;
+      return;
     }
-    if (!addr) return false;
-    hooked[name] = true;
+    if (!addr) return;
+    var key = (moduleName || "*") + "!" + exportName;
+    if (hookedCb[key]) return;
+    hookedCb[key] = true;
     try {
       Interceptor.attach(addr, {
         onEnter: function (args) {
+          // BoringSSL: void SSL_CTX_set_custom_verify(SSL_CTX*, int mode, callback)
+          // callback is args[2]. Do NOT replace with NativeCallback — hook it.
+          var cb = args[2];
+          if (cb.isNull()) return;
+          var ck = cb.toString();
+          if (hookedCb[ck]) return;
+          hookedCb[ck] = true;
           try {
-            onEnter(args);
+            Interceptor.attach(cb, {
+              onLeave: function (retval) {
+                try {
+                  // ssl_verify_ok == 0
+                  retval.replace(0);
+                } catch (_) {}
+              },
+            });
+            log("hooked verify cb via " + key);
+          } catch (e) {
+            log("cb hook fail " + key + ": " + e);
+          }
+        },
+      });
+      log("watching " + key);
+    } catch (e) {
+      log("watch fail " + key + ": " + e);
+    }
+  }
+
+  function hookNativeSafe() {
+    log("native hooks (safe BoringSSL pattern)…");
+    // Prefer named modules when present; also scan null for system libssl.
+    ["libssl.so", "libboringssl.so", "libsscronet.so", null].forEach(function (m) {
+      hookCustomVerifyExport(m, "SSL_CTX_set_custom_verify");
+      hookCustomVerifyExport(m, "SSL_set_custom_verify");
+    });
+
+    // Soft mode flags only — no callback pointer swaps.
+    safe(function () {
+      var a = Module.findExportByName(null, "SSL_CTX_set_verify");
+      if (!a || hookedCb.ssl_ctx_set_verify) return;
+      hookedCb.ssl_ctx_set_verify = true;
+      Interceptor.attach(a, {
+        onEnter: function (args) {
+          try {
+            args[1] = ptr(0);
           } catch (_) {}
         },
       });
-      log("attached " + name);
-      return true;
-    } catch (e) {
-      log("attach fail " + name + ": " + e);
-      return false;
-    }
-  }
+      log("SSL_CTX_set_verify mode=0");
+    }, "SSL_CTX_set_verify");
 
-  function hookNativeLight() {
-    log("native SSL hooks (light)…");
-
-    // Prefer mode flags over replacing callbacks (safer across BoringSSL versions).
-    attachOnce("SSL_CTX_set_verify", function (args) {
-      args[1] = ptr(0);
-    });
-    attachOnce("SSL_set_verify", function (args) {
-      args[1] = ptr(0);
-    });
-    attachOnce("mbedtls_ssl_conf_authmode", function (args) {
-      args[1] = ptr(0);
-    });
-    attachOnce("curl_easy_setopt", function (args) {
-      var opt = args[1].toInt32();
-      if (opt === 64 || opt === 81) {
-        args[2] = ptr(0);
-      }
-    });
-
-    // Custom verify — only if NativeCallback works; wrap tightly.
     safe(function () {
-      var acceptAll = new NativeCallback(
-        function (_ssl, _out_alert) {
-          return 0;
-        },
-        "int",
-        ["pointer", "pointer"]
-      );
-      attachOnce("SSL_CTX_set_custom_verify", function (args) {
-        args[2] = acceptAll;
-      });
-      attachOnce("SSL_set_custom_verify", function (args) {
-        args[2] = acceptAll;
-      });
-    }, "custom_verify");
-  }
-
-  function armDlopenRefresh() {
-    var dl = null;
-    try {
-      dl =
-        Module.findExportByName(null, "android_dlopen_ext") ||
-        Module.findExportByName(null, "dlopen");
-    } catch (_) {}
-    if (!dl || hooked.dlopen) return;
-    hooked.dlopen = true;
-    try {
-      Interceptor.attach(dl, {
-        onEnter: function (args) {
+      var a = Module.findExportByName(null, "SSL_get_verify_result");
+      if (!a || hookedCb.ssl_get_verify_result) return;
+      hookedCb.ssl_get_verify_result = true;
+      Interceptor.attach(a, {
+        onLeave: function (retval) {
           try {
-            this.path = args[0].readCString();
-          } catch (_) {
-            this.path = null;
-          }
-        },
-        onLeave: function () {
-          if (!this.path) return;
-          var p = this.path.toLowerCase();
-          if (
-            p.indexOf("ssl") >= 0 ||
-            p.indexOf("curl") >= 0 ||
-            p.indexOf("mbedtls") >= 0 ||
-            p.indexOf("cocos") >= 0
-          ) {
-            log("dlopen " + this.path + " — refresh");
-            safe(hookNativeLight, "refresh-native");
-          }
+            retval.replace(0);
+          } catch (_) {}
         },
       });
-      log("dlopen watcher armed");
-    } catch (e) {
-      log("dlopen watch fail: " + e);
-    }
+      log("SSL_get_verify_result → 0");
+    }, "SSL_get_verify_result");
   }
 
-  log("booting ssl_unpin (delayed, crash-safe)");
-  // Let Lilith / cocos finish early init before any Interceptor/Java work.
-  var delayMs = 4000;
+  log("boot MODE=" + MODE);
+  // Short delay so cocos splash can paint; keep under anti-tamper patience.
   setTimeout(function () {
+    if (MODE === "probe") {
+      log("probe mode — no hooks");
+      return;
+    }
     safe(hookJava, "java");
-    safe(hookNativeLight, "native");
-    safe(armDlopenRefresh, "dlopen");
+    if (MODE === "native" || MODE === "full") {
+      safe(hookNativeSafe, "native");
+    } else {
+      log("skip native (MODE=java). Re-inject with --unpin-mode native if needed.");
+    }
     log("ready");
-  }, delayMs);
+  }, 2500);
 })();

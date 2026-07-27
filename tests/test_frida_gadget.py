@@ -256,6 +256,18 @@ class TestManifestAndAbi(unittest.TestCase):
         self.assertIn('"type": "script"', cfg)
         self.assertIn("libfrida-gadget.script.so", cfg)
 
+    def test_prepare_unpin_script_modes(self) -> None:
+        from protocol_ast.frida_gadget import prepare_unpin_script
+
+        with tempfile.TemporaryDirectory() as td:
+            td_path = Path(td)
+            java = prepare_unpin_script("java", work=td_path / "j")
+            self.assertIn('var MODE = "java";', java.read_text(encoding="utf-8"))
+            native = prepare_unpin_script("native", work=td_path / "n")
+            self.assertIn('var MODE = "native";', native.read_text(encoding="utf-8"))
+            probe = prepare_unpin_script("probe", work=td_path / "p")
+            self.assertIn("no hooks", probe.read_text(encoding="utf-8"))
+
     def test_manifest_application(self) -> None:
         xml = """<?xml version="1.0" encoding="utf-8"?>
 <manifest package="com.lilithgame.hgame.gp" xmlns:android="http://schemas.android.com/apk/res/android">

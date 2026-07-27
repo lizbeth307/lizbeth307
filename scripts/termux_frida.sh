@@ -531,15 +531,31 @@ main() {
     fi
   done
 
-  python3 -m protocol_ast.frida_gadget "$apk" --method zip
+  # Optional: ~/frida FILE probe|java|native   or FRIDA_UNPIN_MODE=…
+  local unpin_mode="java"
+  if [[ "${2:-}" == "probe" || "${2:-}" == "java" || "${2:-}" == "native" || "${2:-}" == "full" ]]; then
+    unpin_mode="$2"
+  elif [[ "${2:-}" == "--unpin-mode" && -n "${3:-}" ]]; then
+    unpin_mode="$3"
+  elif [[ "${2:-}" == --unpin-mode=* ]]; then
+    unpin_mode="${2#--unpin-mode=}"
+  fi
+  unpin_mode="${FRIDA_UNPIN_MODE:-$unpin_mode}"
+
+  echo "[*] unpin-mode: $unpin_mode  (probe=без хуків, java=лише Java, native=+BoringSSL)"
+  python3 -m protocol_ast.frida_gadget "$apk" --method zip --unpin-mode "$unpin_mode"
   echo
   echo "════════════════════════════════════════"
   echo "Далі:"
-  echo "  1) Uninstall стару AFK Arena (com.lilithgame.hgame.gp)"
-  echo "  2) ~/frida install          # сам знайде .apks і відкриє установщик"
-  echo "     ~/frida find             # лише показати шлях"
-  echo "  3) PCAPdroid MITM + Block QUIC → гра → Stop"
-  echo "  4) ~/scan mine"
+  echo "  1) Uninstall стару AFK Arena"
+  echo "  2) ~/frida install"
+  echo "  3) Відкрити гру → cat /sdcard/Download/frida-unpin.log"
+  echo "  4) PCAPdroid MITM + Block QUIC → ~/scan mine"
+  echo
+  echo "Якщо знову close:"
+  echo "  ~/frida \"…apks\" probe     # тест: gadget без хуків"
+  echo "  ~/frida \"…apks\" java      # лише Java (default)"
+  echo "  ~/frida \"…apks\" native    # + safe BoringSSL"
   echo "════════════════════════════════════════"
 }
 
