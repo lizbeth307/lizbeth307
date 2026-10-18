@@ -15105,6 +15105,131 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Method: 9 WebSearch calls; prices re-read from primary shop pages and Shopify JSON on 18 Oct 2026.
 
+## searchB:waveshare_lc76g_24370_rtc_cr2032_cell (run `wf_a268b76e-da0`)
+
+- **Part:** GNSS receiver + RTC backup cell: Waveshare LC76G Multi-GNSS Module (SKU 24370, Quectel LC76G(AB), Airoha AG3352) + RTC CR2032 cell with 2-pin 1.25 mm lead for Q6A J11 (ALLNET "RTC Battery for RADXA SBC"). Tier core, group GNSS, qty 1. Angle B (generic modules, clones, DIY, used units with measured evidence).
+- **Current price usd:** 15.94 (Waveshare 24370 $14.99 verified on waveshare.com 18 Oct 2026 + ALLNET RTC battery $0.95, confirmed in the ALLNET catalog dump as product 'rtc-battery-for-radxa-sbc', in stock). Excludes shipping and import VAT. EU reference: Eckstein (DE) sells the same WS24370 at EUR 18.94 incl. 19% VAT (EUR 15.92 net), about $21.29 incl. VAT at 1.1241.
+- **Critical specs:**
+  - Constellations, tracked at the same time (Quectel LC76G spec V1.1): GPS L1 C/A, GLONASS L1, Galileo E1, BDS B1I+B1C, QZSS L1 C/A. 4 systems + QZSS, 47 tracking channels.
+  - SBAS with EGNOS (Europe). The spec lists WAAS, EGNOS, MSAS and GAGAN.
+  - Sensitivity: tracking -166 dBm, reacquisition -159 dBm, acquisition -147 dBm. LNA built into the module.
+  - Accuracy: 1.5 m CEP horizontal (24 h static, -130 dBm). TTFF without assistance: cold 28 s, warm 25 s, hot 1 s. With EASY: cold 15 s.
+  - 1PPS output with 30 ns RMS accuracy (Quectel spec; the Waveshare wiki table says 100 ns, so the primary spec governs). The pulse can be held until a 3D fix ($PAIR752 / $PQTMCFGPPS). Saving it with $PQTMSAVEPAR still needs a bench test. PPS goes to header pin 7 (GPIO96) on a wire of 20 cm or less.
+  - Interference: a built-in multi-tone active interference canceller plus jamming status ($PAIR391, PQTMJAMMINGSTATUS) feeding the labd/chrony gate. Spoof flags are not on the LC76G; the MAX-M10S is the optional path for them.
+  - Interface: UART at 3.3 V logic, 115200 baud default, NMEA 0183 V4.10. Works with gpsd 3.25 and chrony on Ubuntu 24.04 arm64 with no vendor driver, on UART6 (/dev/ttyHS1, /dev/gnss0). RESET pin reachable for spoof recovery.
+  - Power: the board takes 5 V and makes 3.3 V with its onboard RT9193-33 LDO. The module draws 36 mA in acquisition and tracking (about 0.12 W) and 13 uA in backup.
+  - External active antenna: IPEX connector with VCC_RF bias (about 3.1 V at 20 mA for the Waveshare 25346 on P7). Antenna short/open detection. An active ceramic patch comes with the board.
+  - Hot-start backup: MS621FE rechargeable cell on the board.
+  - Environment and build: -40 to +85 C operating, CE, RoHS. A genuine Quectel module from an authorized channel. Small board with an MX1.25 8-pin header.
+  - RTC cell: CR2032 Li-MnO2 at 3.0 V nominal. Capacity about 200 mAh or more is needed for multi-year RTC hold. It needs a pre-wired 2-pin 1.25 mm plug that fits Q6A J11 (check polarity), low self-discharge, and a genuine cell, not a relabel. The current ALLNET cell's brand and capacity are not stated.
+- **Candidates:**
+  1.
+    - **Name:** Waveshare LC76G 24370 + ALLNET RTC Battery for RADXA SBC (current pick)
+    - **Kind:** current_part
+    - **Price usd:** 15.94 (14.99 + 0.95, both verified 18 Oct 2026)
+    - **Spec comparison:** Reference for every other row. LC76G(AB): 5 systems tracked together plus SBAS/EGNOS, -166/-159/-147 dBm, 1.5 m CEP, 1PPS 30 ns RMS, jamming status, UART/NMEA, 5 V board input, IPEX with antenna bias, MS621FE backup. The RTC cell is a CR2032 on a 2-pin 1.25 mm lead; ALLNET gives no brand or capacity.
+    - **Worse in:** Nothing under this rule. Known limits that no cheap candidate below removes: no spoof flags (jamming only); PPS persistence still needs a bench test; RTC cell brand and capacity are unstated.
+    - **Compatibility:** Fits the stack: UART6 on pins 16/18, PPS on pin 7, 5 V feed, IPEX to SMA-K bulkhead pigtail to P7, gpsd/chrony on noble arm64. RTC plug fits J11 (check polarity).
+    - **Risks:** Waveshare does not ship to Iran or Russia (Quectel restriction; not a problem in the EU). Configuration is lost on power-down unless PQTMSAVEPAR persistence passes the bench test. No independent measurement of this board was found either; all figures are Quectel datasheet values.
+    - **Seller url:** https://www.waveshare.com/lc76g-gnss-module.htm ; https://shop.allnetchina.cn/products/rtc-battery-for-radxa-sbc
+    - **Sources:**
+      - https://www.waveshare.com/lc76g-gnss-module.htm
+      - https://quectel.com/content/uploads/2024/03/Quectel_LC76G_Series_GNSS_Specification_V1.1-1-1.pdf
+      - https://www.waveshare.com/wiki/LC76G_GNSS_Module
+      - https://eckstein-shop.de/WaveShare-LC76G-Multi-GNSS-Module-EN
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/src_cmp/shop.allnetchina.cn_p1.json
+  2.
+    - **Name:** DIY carrier PCB around a bare Quectel LC76GABMD (same silicon as the current pick)
+    - **Kind:** diy
+    - **Price usd:** Module $5.20 ex VAT at Comet (BG, more than 25 in stock in Sofia, verified), or $14.48 at Dasenic. Full DIY build (my model, not verified): about $9-24 before VAT. That covers the module, a 3.3 V LDO (about $0.1-0.3), an MS621FE backup cell (about $1-2), u.FL (about $0.3-0.5), passives, and a 5-piece 2-layer PCB (about $2) plus PCB and parts shipping (about $2-15).
+    - **Spec comparison:** Same module, so the datasheet RF and timing specs are identical: -166 dBm, 1.5 m CEP, 30 ns PPS, jamming status. The board-level result (antenna bias filtering, ground plane, LDO noise, backup charge circuit) depends on my layout. No independent measurement of any DIY LC76G carrier exists to prove it matches the Waveshare board.
+    - **Worse in:** No measured evidence that it is equal. Build quality and reliability depend on hand assembly. It loses the active ceramic patch and cable that come with the Waveshare board. Saving is $0 to about $6 at best, and only if the PCB and parts ride on other orders. Bare-module shipping to my EU country from Comet is unknown (free delivery only within Bulgaria above EUR 40).
+    - **Compatibility:** Electrically the same once built: 3.3 V I/O, UART, PPS, RESET, and VCC_RF available. It needs my own 5 V to 3.3 V LDO and IPEX footprint.
+    - **Risks:** RF layout errors could raise the noise floor or let the antenna bias couple into the RF path. No CE or vendor test for the assembly. Comet lists the part as 16x16x6.95 mm, which contradicts the Quectel 10.1x9.7x2.4 mm; their listing data is unreliable, so confirm the MPN at order. REJECTED under angle B: no measurements.
+    - **Seller url:** https://store.comet.bg/en/Catalogue/Product/41774
+    - **Sources:**
+      - https://store.comet.bg/en/Catalogue/Product/41774
+      - https://dasenic.com/product/quectel-lc76gabmd-8189480
+      - https://quectel.com/content/uploads/2024/03/Quectel_LC76G_Series_GNSS_Specification_V1.1-1-1.pdf
+  3.
+    - **Name:** Generic ATGM336H-6N-74 (ZhongKe Micro AT6668) boards; legitimate-brand example M5Stack Unit GPS SMA (U190)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Bare module about AUD 5.32 (about $3.5) in a JLCPCB-style parts table (unverified). AliExpress boards were not price-checked. M5Stack U190 price not checked.
+    - **Spec comparison:** Constellations match (GPS, GLONASS, Galileo E1, BDS B1I+B1C, QZSS, SBAS L1). CEP <1.5 m (vendor). Cold TTFF 23 s vs 28 s (better). Tracking -162 dBm vs -166 dBm (4 dB WORSE). Acquisition -160 dBm on M5Stack's page; the generic table says cold start -148 dBm. 1PPS is in the 6N manual, but timing accuracy was not found. M5Stack U190 runs at about 41 mA on 5 V.
+    - **Worse in:** Tracking sensitivity 4 dB worse on the datasheet. No documented jamming/interference status output, so the labd jam gate would lose its input. Config persistence not documented. PPS timing accuracy not stated. M5Stack U190 does not bring PPS out on its HY2.0-4P connector at all. No independent measurement against the LC76G or any reference was found (the Peter Tanner comparison uses datasheet values only).
+    - **Compatibility:** UART/NMEA works with gpsd. The U190 has an SMA input but no PPS pin, which fails the pin 7 PPS requirement. Bare-module boards need DIY or unknown AliExpress carriers.
+    - **Risks:** AliExpress ATGM boards are often mislabelled; AT6558 parts are sold under other names. Specs conflict between listings. REJECTED: worse sensitivity and no jamming status, no measured evidence.
+    - **Seller url:** https://docs.m5stack.com/en/unit/Unit_GPS_SMA
+    - **Sources:**
+      - https://docs.m5stack.com/en/unit/Unit_GPS_SMA
+      - https://git.petertanner.dev/peter/peter-tanner.github.io/src/commit/e3bb886a8b99f673dd6a5a4095fc5133654d4ac7/_posts/2024-11-25-Chinese-ZHONGKEWEI-ATGM-GNSS-modules-comparison.md
+      - https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/8165/U190.pdf
+  4.
+    - **Name:** Generic ATGM336H-5N31 / 5N11 / 5NR32 (AT6558 / AT6558R) breakouts
+    - **Kind:** generic_or_clone
+    - **Price usd:** Bare module about AUD 3.85-5.06 (about $2.5-3.4) per the same parts table (unverified). AliExpress boards not price-checked.
+    - **Spec comparison:** 5N31: GPS + BDS only. 5N11: GPS only. 5NR32: GPS/BDS/GLONASS ('?'). None has Galileo. CEP 2.5 m vs 1.5 m. Tracking -162 dBm vs -166 dBm. Cold TTFF 32 s vs 28 s. 5NR32 maximum update rate is 5 Hz.
+    - **Worse in:** No Galileo (the main European constellation), fewer systems, 1 m worse CEP, 4 dB worse tracking sensitivity, slower TTFF, no jamming status. Datasheet values only, no measurements.
+    - **Compatibility:** UART/NMEA works with gpsd. PPS pin and IPEX vary by board.
+    - **Risks:** EEVblog users have found AT6558 chips inside 'u-blox'-labelled breakouts, so origin is uncertain. REJECTED: worse on several critical specs.
+    - **Seller url:** 
+    - **Sources:**
+      - https://git.petertanner.dev/peter/peter-tanner.github.io/src/commit/e3bb886a8b99f673dd6a5a4095fc5133654d4ac7/_posts/2024-11-25-Chinese-ZHONGKEWEI-ATGM-GNSS-modules-comparison.md
+      - https://eevblog.com/forum/metrology/fake-gnss-modules-and-timekeeping
+  5.
+    - **Name:** Waveshare L76K Multi-GNSS Module (SKU 23721, AT6558R), and the generic L76K boards built on it
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 12.99 (Waveshare, verified 18 Oct 2026). Generic L76K boards not price-checked.
+    - **Spec comparison:** Systems: GPS/BDS/GLONASS/QZSS, no Galileo (Waveshare product page says GPS/BDS/QZSS). Tracking -162 dBm vs -166. Reacquisition -160 dBm vs -159 (1 dB better). Acquisition -148 dBm vs -147 (1 dB better). CEP 2.0 m vs 1.5 m. Maximum update rate 5 Hz vs 10 Hz. 32 tracking channels vs 47. Waveshare table lists timing accuracy 30 ns. Interference detection and anti-jamming are not listed (LC76G: yes). Has an MS621FE backup and PPS.
+    - **Worse in:** No Galileo, 4 dB worse tracking sensitivity, worse CEP, fewer channels, lower maximum rate, no jamming status. Saves only $2.
+    - **Compatibility:** UART/NMEA at 9600 default; works with gpsd. Same footprint class.
+    - **Risks:** REJECTED: worse on several critical specs.
+    - **Seller url:** https://www.waveshare.com/l76k-gps-module.htm
+    - **Sources:**
+      - https://www.waveshare.com/l76k-gps-module.htm
+      - https://www.waveshare.com/wiki/LC76G_GNSS_Module
+  6.
+    - **Name:** Cheap drone 'M10' GNSS modules (UBX-M10050 on third-party PCBs, AliExpress/FPV brands)
+    - **Kind:** generic_or_clone
+    - **Price usd:** about 10-20 (unverified; no listing checked)
+    - **Spec comparison:** Genuine M10 would add spoofing/jamming state flags, but the datasheet lists no flash, so config lives in battery-backed RAM. Typical drone boards bring out only 5V/GND/TX/RX (sometimes compass I2C) and use a fixed patch, with no PPS pad and no IPEX/u.FL for an external antenna. No cheap M10 board with PPS + u.FL turned up; the cheapest verified one is the SparkFun MAX-M10S GPS-18037 at EUR 39.52 at Mouser, which is more expensive. One IntoFPV hobbyist test found a cheap M10050 board about 10 dB less sensitive on average than a u-blox M8Q, mostly blamed on the antenna.
+    - **Worse in:** No PPS output and no external antenna connector on typical units, which fails the pin 7 PPS and P7 antenna roles. Measured sensitivity can be far lower than reference designs. Config not persistent without UART TX at every power-up.
+    - **Compatibility:** Fails: no PPS for chrony/pps-gpio, and no IPEX for the Waveshare 25346 on P7.
+    - **Risks:** High fake, counterfeit and clone risk on AliExpress (IntoFPV 'M10 GPS modules not all the same'; ArduPilot reports most AliExpress units are fake; Meshtastic clone/counterfeit/fake taxonomy). REJECTED.
+    - **Seller url:** 
+    - **Sources:**
+      - https://IntoFPV.com/t-m10-gps-modules-not-all-the-same
+      - https://intofpv.com/t-cheap-m10-based-gpss-now-available
+      - https://discuss.ardupilot.org/t/emphasize-the-importance-of-authentic-gps-modules/42585/3
+      - https://meshtastic.org/docs/development/reference/gnss-modules/
+      - https://www.digikey.co.uk/en/products/detail/u-blox/EVK-M101/15195540
+  7.
+    - **Name:** 'u-blox NEO-6M / NEO-M8N' labelled generic breakouts (GY-GPS6MV2 class)
+    - **Kind:** generic_or_clone
+    - **Price usd:** low single digits (unverified; not price-checked)
+    - **Spec comparison:** Genuine NEO-6M is GPS-only (no Galileo, BDS or GLONASS, and the lowest sensitivity of the u-blox line per Meshtastic). Genuine M8 tracks only 3 major systems at once. Many units are counterfeit or fake with other chips inside (EEVblog found an AT6558 in a u-blox-labelled breakout).
+    - **Worse in:** Fewer constellations, lower sensitivity, unknown silicon. Not legally genuine when relabelled.
+    - **Compatibility:** UART/NMEA works with gpsd, but provenance fails the 'not a counterfeit' rule.
+    - **Risks:** Counterfeit or fake. REJECTED.
+    - **Seller url:** 
+    - **Sources:**
+      - https://meshtastic.org/docs/development/reference/gnss-modules/
+      - https://eevblog.com/forum/metrology/fake-gnss-modules-and-timekeeping
+  8.
+    - **Name:** RTC cell alternatives: Electrokit 'CR2032 with cable 3V 210 mAh' (2-pin 1.25 mm, 50 mm lead), or no-name AliExpress CR2032 with MX1.25 lead
+    - **Kind:** generic_or_clone
+    - **Price usd:** Electrokit: 32 SEK incl. 25% VAT, about $3.3 (approximate rate), 182 in stock (verified). AliExpress no-name: about $0.3-0.6 (unverified, not price-checked).
+    - **Spec comparison:** Electrokit gives 210 mAh, 3 V Li-MnO2, a 1.25 mm 2-pin plug (made for the Raspberry Pi 5 BAT header), and an EU seller. That is equal or better in documentation than ALLNET's unstated capacity, but it costs about 3.5x more. AliExpress cells state no brand and no measured capacity.
+    - **Worse in:** Electrokit: not cheaper. AliExpress: no capacity, brand or self-discharge evidence, so it cannot be shown not-worse. Separate shipping would cancel the saving (the ALLNET cell rides in the board order).
+    - **Compatibility:** Both use the 2-pin 1.25 mm pitch that Radxa specifies for its RTC batteries. Polarity must be checked on J11 for any cell.
+    - **Risks:** Polarity mismatch on third-party leads. Weak no-name cells would lead to the reaudit's warning: rtc-ds1307/m41t11 has no oscillator-fail check, so a brown-out could give a plausible but wrong hctosys time. Keep the ALLNET $0.95 cell.
+    - **Seller url:** https://www.electrokit.com/en/cr2032-med-kabel-3.0v-180mah
+    - **Sources:**
+      - https://www.electrokit.com/en/cr2032-med-kabel-3.0v-180mah
+      - https://docs.radxa.com/en/accessories/battery/2p-rtc-bat
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/src_cmp/shop.allnetchina.cn_p1.json
+- **Notes:** VERDICT (angle B): keep the current part. Nothing cheaper is proven not-worse. Every cheaper generic or clone module is worse on the datasheet in at least one critical spec. ATGM/AT6558/AT6668 and L76K tracking is -162 dBm vs -166. AT6558 parts and the L76K lack Galileo. None documents a jamming-status output, which the labd/chrony gate needs. Some have no PPS or no IPEX. The only spec-identical route is a DIY carrier around a bare LC76GABMD ($5.20 ex VAT at Comet BG). It saves $0 to about $6 at best (my model). No measurements of any DIY LC76G carrier exist, and it loses the included patch antenna, so it fails angle B's evidence rule. No used LC76G units were found. Used u-blox timing boards (M8T class) would be better but are expected to cost more than $14.99; I did not price-check them. For the RTC cell, the ALLNET $0.95 cell is already the cheapest verified pre-wired option. The verified EU alternative (Electrokit, 210 mAh) costs about $3.3, and no-name AliExpress leads have no capacity evidence. EU note: buying the same Waveshare board from an EU stockist (Eckstein DE, EUR 18.94 incl. 19% VAT) costs more than Waveshare direct. Ordering direct from Waveshare to the EU adds import VAT; I did not check whether Waveshare collects VAT through IOSS. Spec discrepancy to record: the Quectel spec V1.1 gives 1PPS accuracy of 30 ns RMS for LC76G(AB), while the Waveshare wiki comparison table says 100 ns. The primary Quectel spec governs. Neither is an independent measurement, and none was found anywhere for the LC76G. All candidates are receive-only GNSS receivers, so the hard rules are not affected. Search budget used: 11 WebSearch calls.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
@@ -26244,6 +26369,166 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   All items are passive cables, and every hard rule holds: receive-only, no loops, conducted-only bench use for VNA screening.
   
   Budget used: 15 WebSearch calls. The DigiKey CAB.011 and RF Parts pages were fetched live; the Delock and Passion Radio pages were blocked (HTTP 401 and redirect loops).
+
+## searchB:cable_bulkhead_set_7_sma_1_f_bulkheads_r (run `wf_e32114dd-52d`)
+
+- **Part:** Cable/bulkhead set (core, RF group, qty 1 set): panel bulkheads, 6 internal RG316 SMA jumpers, 4 RG316 field feed jumpers 1-2 m, F-F bulkhead + 1 m thin 75 ohm F-F lead, IPX-SMA GNSS pigtail, 2x shielded 15 cm V4L USB extensions + ferrites, 4 CH334F pad pigtails, touch lead with VBUS cut, shielded 10-15 cm HDMI + Mix 31/61, SMA M-M / F-SMA / barrel adapters, USB3 A-A EDL cable. Correction from reaudit B: P5 is now a BNC bulkhead, so the panel needs 6 SMA (P1-P3, P6, P7, optional P8) + 1 BNC + 1 F, not 7 SMA + 1 F. Lime RX1/RX2/REF IN bulkheads come from the separate Taoglas MHF4L line.
+- **Current price usd:** 90-170. This is the STACK.md estimate ("model"), not a line-item quote. The only verified piece is the RTL-SDR Blog SMA Pigtail Antenna Adapter Set at $18.95 (rtl-sdr.com/store, Oct 2026).
+- **Critical specs:**
+  - 50 ohm coax frequency range: 60 kHz (HF/LF on P5) to at least 2.3 GHz (L-band 1.69-1.7 GHz, GNSS 1.575 GHz, UHF 437 MHz, VHF 137 MHz, S-band via Lime). Lime 3.3-3.8 GHz goes only through the separate MHF4L pigtails.
+  - Insertion loss no worse than RG316: Habia RG316/C 0.54 / 0.86 / 1.29 dB/m at 0.4 / 1 / 2 GHz (koax24), plus about 0.07-0.10 dB per good SMA pair at 1.3 GHz. This matters most on the 137 MHz jumpers ahead of the in-case LNA (0.06-0.36 dB budget).
+  - Return loss per assembly: I propose S11 <= -20 dB from 0.1 to 2.3 GHz as the acceptance limit (my proposal; STACK only says 'within limits').
+  - Shielding at least that of single-braid RG316 (shielding factor 40 dB for RG316/C; RG316D 70 dB; Pasternack RG316-DS 85 dB). The RF bay sits next to the bucks, the SoC and HDMI, and the end-to-end noise baseline must change by less than 0.5 dB when the field set is swapped in.
+  - DC pass-through: 4.5 V bias at up to 300 mA on P2/P3; 12.5-13 V at about 0.14 A on the P5 Boni path; 13.2/18 V LNB on the F path. Centre-conductor DC resistance is acceptable at these currents.
+  - Temperature: FEP/PTFE class, -55 to +200 C. Inside the case the air reaches up to about 60-70 C in sun.
+  - Connectors: true SMA, not RP-SMA, to the IEC 61169-15 / MIL-STD-348 interface. Male pin protrusion 0 to +0.127 mm, so it cannot damage the V4L, Flamingo+, SAWbird+ or LiteVNA jacks. Gold-plated contacts, about 500 matings for panel ports.
+  - Bulkheads: O-ring or gasket for the IPX4/IP54 target; thread length to suit a 2-3 mm ASA wall plus the 2 mm Al plate; nut and lockwasher bonded to the plate; P5 keyed BNC; F used only on the LNB path.
+  - Mechanical: RG316 static bend radius about 15 mm; flex life and connector retention matter for the four 1-2 m feed jumpers used outdoors; strain relief at the panel.
+  - 75 ohm F lead: 75 ohm, double-shielded (Class A, >=85 dB at 30-1000 MHz, EN 50117 class), tight F connectors (ingress test at 733-758 MHz SDL/PMSE and DVB-T around the 739.5 MHz IF), passes LNB DC, thin and flexible (about 5 mm) for the carry kit, 1 m, F male at both ends.
+  - USB extensions: USB 2.0 High-Speed compliant, USB-A male to USB-A female (the V4L has a USB-A male plug and draws 250-270 mA per its datasheet), 15 cm, foil plus braid with 360-degree shell bonding at both ends, room for a Mix 31 clamp; must pass the terminated noise-floor A/B on the V4L.
+  - Ferrites: known material, Fair-Rite Mix 31 for 1-300 MHz (0431164281: 315 ohm at 100 MHz per TME) and Mix 61 for HDMI, with an ID that fits the cable. An unknown material is not acceptable, because the HF+ and V4L noise budget depends on impedance at 1-30 MHz.
+  - Pigtails: IPX-to-SMA bulkhead on 1.13 mm cable for the LC76G at 1575 MHz (check the connector generation: MHF1/u.FL and MHF4/W.FL do not mate). CH334F pad pigtails shielded, with the shield bonded. HDMI 10-15 cm High Speed and shielded for the 151.5 MHz pixel clock.
+  - Legal EU sale (CE/RoHS), not counterfeit. All parts are passive, so the receive-only and conducted-only rules are unaffected. Ferrite clamps on cables are chokes, not loop antennas or H-field probes.
+- **Candidates:**
+  1.
+    - **Name:** Generic O-ring SMA(f) bulkhead to right-angle SMA(m) RG316 pigtails, 20 cm, 10-pack (AliExpress; store not shown on the search page)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 22.29 per 10 (about 2.23 each) on the AliExpress search page, Oct 2026. Listing details are unverified. AliExpress adds EU VAT at checkout. Two packs ($44.58) allow culling.
+    - **Spec comparison:** One part per port replaces a bulkhead plus an internal jumper, so each path has one SMA interface fewer: about 0.03-0.07 dB less loss and one reflection fewer at 1.3 GHz (Bob Atkins' literature summary). If the cable is genuine RG316, 20 cm costs about 0.17 dB at 1 GHz and 0.26 dB at 2 GHz (RG316/C 0.86 / 1.29 dB/m), which equals the current RG316. Single braid, same class as the current RG316. The O-ring is stated, matching the IPX4/IP54 target.
+    - **Worse in:** No VSWR, loss, plating or braid-coverage data from the seller, and the store is unknown. Reliability evidence for AliExpress RG316 is negative: DM1TBE measured more than 4 dB loss at 28 MHz on 2 of 3 AliExpress RG316 cables after weeks of field use, cause not found (plug or crimp). Some listings mix SMA and RP-SMA. Pin depth is unknown. Not proven equal before purchase; it counts as equal only for units that pass the acceptance below.
+    - **Compatibility:** SMA female on the panel, right-angle SMA male to the Flamingo+, injector and HMC7992 board jacks. Covers P1-P3 and P6-P8 plus spares; P5 is BNC and P7 GNSS needs an IPX pigtail instead. Thread length against 2-3 mm ASA plus the 2 mm Al plate is unverified. Lime ports stay on the Taoglas MHF4L line.
+    - **Risks:** Use only after per-unit acceptance, conducted on your own LiteVNA with the far end terminated: S21 <= 0.3 dB and S11 <= -20 dB from 0.1 to 2.3 GHz (my proposed limits); 10x visual check and pin gauge (male pin 0 to +0.127 mm); pull test; flex 10 times and sweep again. Then the end-to-end terminated noise baseline must change by less than 0.5 dB against a reference cable. Saving against a branded bulkhead route is about $20-60 (estimate: Amphenol SMA jacks list at about $7.30 each on DigiKey).
+    - **Seller url:** https://www.aliexpress.com/w/wholesale-sma-female-bulkhead-waterproof-o-ring-to-sma-male-rg316.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-sma-female-bulkhead-waterproof-o-ring-to-sma-male-rg316.html
+      - https://qrper.com/2023/04/coax-cables-i-used-for-sota-pota-a-horror-story/
+      - https://bobatkins.com/radio/SMA_connector_losses.html
+      - https://www.koax24.de/en/product-info/coaxial-cable/koaxialkabel-50-ohm/24-32-mm-size2/rg316d-rd316.html
+      - https://rfessentials.com/rf-knowledge-base/how-do-i-inspect-an-sma-connector-for-damage-using-a-connector-gauge/
+      - https://www.digikey.com/en/products/result?keywords=amphenol%20132134
+  2.
+    - **Name:** Generic AliExpress RG316 SMA(m)-SMA(m) crimp jumpers, 5 cm to 1 m options
+    - **Kind:** generic_or_clone
+    - **Price usd:** 1.09-2.43 each as listed (teaser prices; 1-2 m prices unverified)
+    - **Spec comparison:** Nominally RG316, so loss and temperature class equal the current part if the cable is genuine.
+    - **Worse in:** The measured field evidence is negative: DM1TBE (QRPer, Apr 2023) found 2 of 3 AliExpress RG316 cables losing more than 4 dB (under half the power) at 28 MHz after a few weeks of use. No VSWR, loss or shielding data. REJECTED for the 4 field feed jumpers of 1-2 m, because flex reliability outdoors is a spec. Acceptable only for static internal runs, under the same per-unit acceptance as the bulkhead pigtails.
+    - **Compatibility:** SMA male both ends. The page shows RP-SMA variants under 'SMA' titles, so check each one.
+    - **Risks:** Possible cable fakes (RG174 sold as RG316), poor crimps, wrong gender, protruding pins.
+    - **Seller url:** https://www.aliexpress.com/w/wholesale-rg316-sma-male-to-sma-male-cable.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-rg316-sma-male-to-sma-male-cable.html
+      - https://qrper.com/2023/04/coax-cables-i-used-for-sota-pota-a-horror-story/
+  3.
+    - **Name:** Goobay 1 m F Class A lead from Reichelt: 66620 (5.0 mm, double-shielded, rating '85') or 58814 (5.4 mm, 3-fold shield, rating '95')
+    - **Kind:** generic_or_clone
+    - **Price usd:** 2.92 (EUR 2.60 incl. VAT at Reichelt, Oct 2026; 66620 ships in 3-5 days, 58814 in stock)
+    - **Spec comparison:** 75 ohm, Class A, 1 m. The 66620 (5.0 mm, double shield, 85) matches the stack's 'thin, double-shielded 75 ohm' requirement. The 58814 rates higher (95) but is thicker. Both pass LNB DC.
+    - **Worse in:** The screening figure is Goobay's own number, given without a unit or a test report, so it is not independently measured. Inner conductor, attenuation and F-connector type (screw or compression) are not stated. The 66620 title reads 'connector, socket', i.e. F plug to F socket, not F-F; check the variant. The 58814 is 0.4 mm thicker.
+    - **Compatibility:** P4 F-F bulkhead to the Bullseye LNB. Needs F male at both ends (or an F-F barrel). Keep F on the LNB path only.
+    - **Risks:** Accept only after a receive-only ingress test at 733-758 MHz with the LNB off and then on, plus an S21/S11 sweep with the 50/75 ohm mismatch accounted for. Re-tighten the F connectors.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/connection_cable_f_class_a_connector_socket_1_m-303289
+    - **Sources:**
+      - https://www.reichelt.de/de/en/shop/search/f%20connection%20cable%201%20m%20class%20a
+      - https://www.reichelt.com/de/en/shop/product/connection_cable_f_class_a_connector_socket_1_m-303289
+      - https://www.ssb.de/shop/download/RG6/Datasheet%20RG%206%20Indoor%20and%20Outdoor%20coaxial%20cable%20EN.pdf
+  4.
+    - **Name:** RTL-SDR Blog SMA Straight Antenna Adapter Set (SMA to N, UHF, BNC, PAL and F female, plus SMA M-M; no cable)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 14.95 (vs 18.95 for the current RG316 pigtail set; rtl-sdr.com/store, Oct 2026)
+    - **Spec comparison:** Same five interface types plus M-M. Dropping the 20 cm RG316 (about 0.17 dB at 1 GHz) and one interface gives equal or better loss and match: commercial straight adapters typically run 0.05-0.2 dB maximum (Bob Atkins' literature summary).
+    - **Worse in:** No strain relief: a heavy N, UHF or BNC cable on a rigid adapter levers the SMA it sits on. That is acceptable on the plate-bonded panel bulkheads but not on device jacks. No independent measurement of these adapters (the time-nuts N-barrel test shows price does not predict return loss). A rigid adapter cannot reach awkward ports.
+    - **Compatibility:** Same SMA interfaces as the current set. With P5 now BNC, the BNC adapter is no longer needed for the Boni-Whip.
+    - **Risks:** Sweep each adapter on the LiteVNA and gauge the pins before first use on the VNA ports.
+    - **Seller url:** https://www.rtl-sdr.com/store/
+    - **Sources:**
+      - https://www.rtl-sdr.com/store/
+      - https://bobatkins.com/radio/SMA_connector_losses.html
+      - https://www.febo.com/pipermail/time-nuts/2013-March/074872.html
+  5.
+    - **Name:** DIY jumpers: Habia RG316/C (EUR 2.81/m) or RG316D (EUR 8.04/m) from koax24.de, with SMA crimp plugs and a hex crimp tool
+    - **Kind:** diy
+    - **Price usd:** Cable for about 7.5 m: about $24 (RG316/C) or about $68 (RG316D); the page does not make VAT clear. About 20 branded plugs at roughly $7 each is about $140 (Amphenol SMA parts on DigiKey, $7.30-7.90), plus an unpriced tool. NOT cheaper with branded plugs; generic plugs are unproven.
+    - **Spec comparison:** RG316/C: 0.54 / 0.86 / 1.29 dB/m at 0.4 / 1 / 2 GHz, 2.45 mm, shielding factor 40 dB. RG316D: same loss at 0.4 and 1 GHz, 1.35 dB/m at 2 GHz, 2.9 mm, shielding factor 70 dB (better shielding).
+    - **Worse in:** Not cheaper with branded plugs. RG316D loses 0.06 dB/m more at 2 GHz and is thicker. DIY crimp quality has to be proven unit by unit on the VNA.
+    - **Compatibility:** Any length; SMA or BNC ends.
+    - **Risks:** Rejected as a cheaper analog. Noted only as a shielding upgrade (RG316D) for the internal RF bay if the noise baseline fails.
+    - **Seller url:** https://www.koax24.de/en/product-info/coaxial-cable/koaxialkabel-50-ohm/24-32-mm-size2/rg316d-rd316.html
+    - **Sources:**
+      - https://www.koax24.de/en/product-info/coaxial-cable/koaxialkabel-50-ohm/24-32-mm-size2/rg316d-rd316.html
+      - https://www.digikey.com/en/products/result?keywords=amphenol%20132134
+      - https://www.pasternack.com/images/ProductPDF/RG316-DS-FT.pdf
+  6.
+    - **Name:** Used or surplus branded SMA jumpers (Huber+Suhner Multiflex/Sucoform, Rosenberger, Amphenol) on eBay
+    - **Kind:** used
+    - **Price usd:** Unverified (eBay returned HTTP 403 to the fetch)
+    - **Spec comparison:** Branded semi-flexible cable classes are generally lower-loss and better-shielded than RG316 (not verified in this run).
+    - **Worse in:** Unknown flex history, connector wear and pin depth. No price evidence, so it cannot be shown to be cheaper.
+    - **Compatibility:** SMA; the lengths on offer are random.
+    - **Risks:** Not recommended until priced and measured: VNA sweep plus pin gauge per unit.
+    - **Seller url:** https://www.ebay.de/sch/i.html?_nkw=huber+suhner+multiflex+86+sma
+    - **Sources:** []
+  7.
+    - **Name:** Generic clip-on ferrites ('Ni-Zn, 1-1000 MHz', eBay/AliExpress)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Unverified (well under $1 each in typical listings)
+    - **Spec comparison:** No impedance curve; the material is not identified.
+    - **Worse in:** No independent measurement found (3 searches; the nanovna-users threads were paywalled). Fair-Rite Mix 31 0431164281 (315 ohm at 100 MHz) costs only $1.23-2.62 at TME, so the saving is a few dollars, in exchange for unknown suppression at 1-30 MHz. REJECTED.
+    - **Compatibility:** Clamp IDs vary.
+    - **Risks:** Rejected under angle B.
+    - **Seller url:** https://www.tme.eu/en/details/0431164281/ferrites-for-cables/fair-rite/
+    - **Sources:**
+      - https://www.tme.eu/en/details/0431164281/ferrites-for-cables/fair-rite/
+  8.
+    - **Name:** Generic shielded 15 cm USB-A M-F extensions and generic 10-15 cm HDMI leads
+    - **Kind:** generic_or_clone
+    - **Price usd:** Unverified
+    - **Spec comparison:** Possibly equal, but no shielding or noise data exists for any specific generic part.
+    - **Worse in:** No measured evidence: the RTL-SDR forum tests of USB extensions and ferrites are anecdotal and contradictory. REJECTED under angle B.
+    - **Compatibility:** USB-A male on the V4L (datasheet); USB 2.0 HS.
+    - **Risks:** Whatever is bought, the terminated noise-floor A/B on the V4L (less than 0.5 dB rise) stays the gate.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+      - https://www.rtl-sdr.com/reducing-usb-shield-interference-rtl-sdr-dongles/
+  9.
+    - **Name:** KEEP CURRENT: the 4 RG316 field feed jumpers of 1-2 m from a branded or proven source, the 2 shielded USB extensions, Fair-Rite Mix 31/61 ferrites, the shielded HDMI, the IPX-SMA and CH334F pigtails and the USB3 A-A cable
+    - **Kind:** current_part
+    - **Price usd:** Part of the 90-170 estimate
+    - **Spec comparison:** No cheaper generic, DIY or used option for these items has measured evidence of being not worse.
+    - **Worse in:** -
+    - **Compatibility:** As specified in STACK.
+    - **Risks:** Prices are still estimates; P5 now needs a BNC bulkhead in place of one SMA.
+    - **Seller url:** 
+    - **Sources:** []
+- **Notes:** Angle B result: no generic, clone, DIY or used part has independent measurements showing it is not worse than the current set. The one independent measurement found on generic RG316 points the other way: DM1TBE (QRPer, 2023) saw 2 of 3 AliExpress RG316 cables lose more than 4 dB at 28 MHz after weeks of use.
+  
+  Three cheaper options qualify only conditionally. Each counts as not worse only per unit, after your own conducted acceptance on the LiteVNA plus the stack's terminated noise-baseline test:
+  (1) Generic O-ring SMA bulkhead RG316 pigtails, $22.29 per 10, for the static internal paths only. One part replaces a bulkhead plus an internal jumper, so each path also has one SMA interface fewer.
+  (2) Goobay 1 m Class A F lead, EUR 2.60 incl. VAT at Reichelt. Check that the variant is F-F, and run the 733-758 MHz ingress test.
+  (3) The RTL-SDR Blog straight adapter set at $14.95 instead of the $18.95 pigtail set. It is equal or better on loss but gives no strain relief, so use it only on plate-bonded panel ports.
+  Total saving is roughly $25-70 against the estimate (unverified; the current price is not itemised).
+  
+  Rejected:
+  - Generic RG316 for the 1-2 m field feed jumpers: measured reliability problem.
+  - Generic ferrites: no data, and Fair-Rite is only $1.23-2.62 at TME.
+  - Generic USB extensions and HDMI leads: no measured data.
+  - DIY with branded plugs: not cheaper. RG316D gives 70 dB vs 40 dB shielding but is +0.06 dB/m at 2 GHz and thicker.
+  - Used branded jumpers: unpriced (eBay blocked).
+  
+  Corrections for v2:
+  - P5 is a BNC bulkhead (reaudit B), so the panel needs 6 SMA + 1 BNC + 1 F.
+  - The V4L has a USB-A male plug and draws 250-270 mA (V4L datasheet), so the extensions are USB-A M to F.
+  
+  Inspection rules:
+  - Check every generic SMA for RP-SMA mix-ups and pin protrusion (0 to +0.127 mm) before it touches a V4L, LiteVNA or Lime-path jack.
+  - The GNSS pigtail must match the LC76G connector generation: MHF1 and MHF4 do not mate.
+  
+  Evidence limits:
+  - Prices on the AliExpress search pages are teaser prices, and listing details and stores were not shown.
+  - Koax24 does not make its VAT treatment clear.
+  - Goobay's screening ratings carry no unit or test report.
+  
+  Search use: 11 WebSearch calls.
 
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
