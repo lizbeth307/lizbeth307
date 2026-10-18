@@ -72411,6 +72411,80 @@ The parallel agent had already copied the MCP #4 assignment into 1.1, 1.2 and 11
 
 Sources used: DigiKey US/DE/AT, BerryBase, Pololu, Crowd Supply guide and listing, myriadrf M.2 v1.2 reference, tinytronics.nl, reichelt versandkosten pages, nooelec.com, karkkainen.com, barrabespro.com, decathlon.com.cy, rtl-sdr.com/store, store.uputronics.com, fnirsi.com, billiger.de, belkin.com, toom.de, ifixit.com, passion-radio.com, DuPont Molykote 4 page, gainta.com, TME, ti.com/distributors, the Quectel LC76G spec PDF and the ECB eurofxref feed.
 
+## sync:09-testy (run `wf_e814e149-dd1`)
+
+I synced `/home/user/lizbeth307/sat-receiver-audit/build/09-testy.md` with the current STACK.md. All changes were small edits and the tables still have the right number of columns. No city names or per-city angles were added. Every signal-source step stays conducted-only into a load or DUT. I made one wording fix ("іншого користувача" → "іншого призначення").
+
+**Decision codes** (STACK §1.1 only has C1-C25 and D1-D16)
+- Header: "рішення D1-D19" now reads "STACK.md §1.1 (C1-C25, D1-D16)", and §5.8 is added to the source list.
+- These codes came from the external list and were replaced with the matching STACK 1.1 code:
+
+  | Test | Was | Now |
+  |---|---|---|
+  | W-06 (libairspyhf) | D4 | C22 |
+  | ПОЛ-15 (libairspyhf) | D4 | C22 |
+  | ПОЛ-03 | C11, D3 | C11 |
+  | ПОЛ-07 (USCG) | D10 | C16 |
+  | ПОЛ-08 | D11 | C16 |
+  | ПОЛ-10 | D1 | §1.2, C22 |
+  | ПОЛ-13 | D9 | C23 |
+  | П-07 | D9 | C23 |
+  | Ж-06 | D13, D14 | C9; §5.2 |
+  | Ж-10 | D15 | C17 |
+  | Ж-11 | D15 | plain wording + §8 eFuse row |
+  | Ж-15 | D12 | D13 |
+  | USB-02, ЛАБ-22, П-06, L-3 (Airspy) | D7 | §8.2 |
+  | V4L-1, V4L-4 | D2 | C21 |
+  | IMU-01 | D18 | D12 |
+  | ЛАБ-20 | D19 | D14 |
+  | §12 heading | D6, D7, D17 | C1; §8, §8.1 |
+  | P20 | D5 | C22 |
+
+- Kept because they already match the §1.1 meaning: D4 (display acceptance), D5 (Wisecoco), D6 (Т-01 thermal), D9 (А-04 pcie0), D10 (A/B method), D11 (L-7 LAB5, which STACK itself cites).
+
+**Updated tests**
+- **Calendar (§9.1, §9.2):** added the V-pol gate before the QRO.cz is first powered, the Elektro-L3 TLE check before the first LRIT, and the LIME3V3 gate inside the Lime acceptance window.
+- **Ж-08 (§8 TPS7A4701 (b)):** TBD removed. Windows now come from load limits, measured on each unit: Bullseye 11.5-14 V at the F connector, Boni 12-15 V at the barrel, with the IC bands listed. ±0.2 V is a design target, not a reject reason.
+- **Ж-09 (§8 «Рішення про шину LNB»):** 13.2 V with Bullseye; 12.5 V via ANY-OUT once a QRO.cz is bought.
+- **Ж-11 (§8, §2.11.1):** added the 4th eFuse (LIME3V3). Reflow-only now names hot plate, hot air or PCBA.
+- **Ж-15 (§8.2):**
+  - `i2cdetect` must show 0x20, 0x21, 0x22, 0x23, 0x30, 0x41, 0x43, 0x48, 0x49 with no collisions.
+  - New step (viii): short each switch output with the e-load on GPB0-GPB3; each must set INTF and hold until INTCAP is read.
+  - #4 must pass the same tests (ii)-(vii).
+- **W-09 (§8.2):** added the optional TS-RDF5K check (≥20 USB boots).
+- **V4L-10 (§8.1):** Bench only. The whisker antenna is disconnected and its combiner port terminated in 50 Ohm. The −20 dBm tone goes only into the DUT.
+- **КАБ-01 (§8):** Goobay check now covers S11/S21 with the 50/75 Ohm mismatch, the ingress A/B with the LNB unpowered and powered, the DC drop under load, and the fallback 66620.
+- **LNB-01 (§8, §8.1 RF-8):** bench ingress scan 733-758 MHz plus the B28 uplink edge 703-733 MHz. Fail: any carrier in 739.4-740.1 MHz.
+- **ANT-01 (§8 not-verified item 1):** patch noise-floor step ≥8 dB, and the noise hump must cover 1525-1660 MHz.
+- **GNSS-01 (§5.8, §8):** 10 cold starts compared with the Quectel spec (28 s cold, 25 s warm, 1 s hot). Pass: median and every start ≤60 s, hot ≤5 s.
+- **GNSS-02 (§8 not-verified item 2):** GLONASS (gnssid 6) in the fix within 10 min of cold start on the Waveshare 25346. Fail → LC76G without GLONASS, or ANN-MB5.
+- **Д-02 (§8 display row):** added the 60-min D36V28F5 test for a 5 V-only display board.
+- **Т-03 (§8.2):** record the Lime pedestal temperature in modes H/I.
+- **Т-07 (§8.2):** before ordering, confirm the GS-1 cap has a chain, otherwise buy 11× GS-3; check the chain on arrival.
+- **L-3 (§8.1):** Lime rates never go below 7 Msps. 2 Msps and 3-6.99 Msps must be rejected cleanly. The old 3-6 Msps bench test is removed.
+- **LIME-01 (§8 open power decisions (a)):** TBD removed. TPS259470ARPWR switch with starting RILM 1.65 kOhm. FLT must not trip over 20 power-ons with riser and Lime; final RILM is 1.5-2× the measured Lime current.
+- **LIME-04 (§8 Lime row):** TBD removed. 2 dB pad from the Nooelec 100815 kit after the YAT-10A+. S21 of both at 1420 MHz must total ≥12.0 dB, otherwise use the 3 dB pad.
+- **L-12 (§8.1):** added the documentation answers; only the Lime/ADT-Link letter items remain.
+- **ЛАБ-12 (§3.1, §8.2):** wire TBD removed. goobay 55157 plug must fit snugly; hub output VBUS ≥4.75 V under full load.
+- **ЛАБ-22 (§8.2):** Airspy Mini gate is now ≤456 mA on the LAB port, or J5 total <1.5 A.
+- **П-10 (§8):** V-pol beacon test at 12.5 V before the QRO.cz is first powered; cross-pol ≥15 dB down.
+- **П-11 (§8):** field scan 733-758 MHz plus B28 uplink edge 703-733 MHz; DVB-T removed.
+- **П-14 (§8.2, §5.8):**
+  - Guy rope: OL on 1 m of dry cord, otherwise use polyester cord.
+  - Tripod checks (2), (3), (5), (6) added.
+  - Bag checks (1)-(6) added, with the Zildjian fallback.
+  - Fibreglass mast only with your explicit consent.
+
+**New tests**
+- **П-16 (§8, §5.8):** S-band helix A/B, 7 turns vs 2-3 turns, on 2208-2288 MHz passes.
+- **П-17 (§5.8):** deployment timing, beacon C/N within 1 dB of baseline after each trip, conducted balun checks, cable TDR with the antenna disconnected.
+
+**Open-items list (§15)** now holds only what STACK still leaves open: S-band LNA, BNC DC-block, NVMe 2230 test-drive price, the Lime/ADT-Link letter, QRO.cz POTY price (confirm in cart, no letter needed), Elektro-L3 TLE, and the Airspy Mini scope choice. A "settled" row lists what moved into tests.
+
+**Left open or inconsistent**
+- The §8.1 RF-4 row in STACK.md still says "вирішуєте ви" and mentions a PTC on the LNB bus. §8 and §9.1 say this is decided and that there is no PTC. I followed §8.
+- Still TBD in the test file: S-band LNA, BNC DC-block, NVMe test-drive price.
+
 ## write:tests+bom (run `wf_fa12e9b4-a87`)
 
 I wrote the three "tests+bom" files to `/home/user/lizbeth307/sat-receiver-audit/build/`, all in Ukrainian. The CSV passes the csv.reader check (146 rows, 16 columns each). A script that sums the CSV rows reproduces every group and tier subtotal in STACK.md §2.12 and §3.6 to the cent. Both .md files have consistent table column counts. There are no SVGs in this group.
