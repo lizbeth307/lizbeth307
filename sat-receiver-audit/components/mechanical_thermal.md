@@ -239,6 +239,8 @@ _Run `wf_e6b8e5e2-124`_
   - A bias-tee built into the LNB bulkhead (with PTC fuse and toggle) removes the external 13 V injector box.
 - **Confidence:** medium
 
+_Агент цього етапу ще працює (run `wf_e6b8e5e2-124`)._
+
 ## Форуми та досвід спільноти (`forums`)
 
 _Run `wf_e6b8e5e2-124`_
@@ -1169,5 +1171,185 @@ _Run `wf_e6b8e5e2-124`_
 
 ## Адверсаріальна перевірка (`verify`)
 
-_Агент цього етапу ще працює (run `wf_e6b8e5e2-124`)._
+_Run `wf_e6b8e5e2-124`_
+
+- **Component:** Mechanical, thermal and enclosure: M.2 riser, MHF4-to-SMA pigtails and SMA panel, Q6A and LimeSDR Micro cooling, case, RF shielding, ergonomics, size and weight
+- **Recommendation holds:** так
+- **Issues:**
+  1.
+    - **Claim:** LimeSDR Micro cooling: cut an M.2 SSD heatsink to cover the top-side area opposite the LMS7002M and LA9310, and push forced air over both faces of the card.
+    - **Problem:** Lime's v1.2 drawings put the LMS7002M about 50-61.5 mm from the edge connector on the bottom side. The top side directly opposite it carries the RF front-end: RF switch IC3, baluns and matching parts next to X2/X4. Metal and pads there can detune the RF; Lime staff warned about this on the LimeSDR Mini. Heat that has to cross the card PCB to reach a top-side heatsink also conducts poorly. The same fix list also asks for a sealed, soldered copper-clad RF bay with slots of 7 mm or less, which cannot also carry forced air across both faces of the card.
+    - **Correction:** Take the heat straight off the package tops, which face the riser's female board. The R4F female board is mostly empty FR4 with 2230/2242/2260 holes and a 2280 standoff, so cut a window of about 26x20 mm under the region 36-62 mm from the edge. Raise an aluminium pedestal from the mid-plate through the window and add a 0.5-1.5 mm gap pad (at least 6 W/mK) onto the LMS7002M and LA9310. Fit external fins on the plate in the fan path, so the RF bay stays sealed. Add a small top-side heatsink only over the LA9310/digital area (37-45 mm from the edge). Keep 3 mm clear of the MHF4 receptacles and away from the RF area at the far end.
+    - **Source:** https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/overview.html (LimeSDR-Micro_M.2_2280_v1.2_components_top/bot.png); https://discourse.myriadrf.org/t/limesdr-mini-thermal-pad/3132; https://www.adt.link/product/R44SF.html
+  2.
+    - **Claim:** Internal heat is about 17-25 W, and the display adds 'several W'.
+    - **Problem:** The user now wants a panel of at least 1000 nits, higher than FHD. Panels like that draw far more: the BenQ PVS7 (7-inch, 1920x1200, 2000 nits) is 10 W typical and 18 W maximum, and an IMA 7-inch 1920x1200 2000-nit unit is 16 W maximum. Even a 1000-nit 1024x600 module draws 4.5-7.8 W. About 15 W of sun on the display face comes on top of that.
+    - **Correction:** Plan for 25-35 W of internal heat plus solar load. Battery runtime from 72 Wh is then about 2-3 h. Active cooling is required, not optional. Derate the backlight with temperature.
+    - **Source:** https://www.benq.eu/en-eu/monitor/creative-pro/pvs7/spec.html; https://www.litemax.com/product-detail/0765-I-durapixel-industrial-display/
+  3.
+    - **Claim:** A single 40 mm NF-A4x10 fan in series (intake, display back, LimeSDR, Q6A fins, exhaust, or the reverse order).
+    - **Problem:** The NF-A4x10 gives 8.9 m3/h at only 1.95 mm H2O. At 25-35 W, air rises about 10-14 K even at free-air flow (P/(rho*cp*V)); behind meshes, a fin stack and ducts the flow roughly halves, so the last part in line sees air 20 K or more above ambient. Air that has passed the sun-loaded display preheats everything after it.
+    - **Correction:** Use two parallel paths:
+  - (a) The proven setup: a 30-40 mm fan blowing straight down onto the Q6A stepped copper fin stack.
+  - (b) A separate small 5 V radial blower (4010/5015 class, unverified price $3-5) through the 4-6 mm channel behind the display and over the external fins of the mid-plate, which carry the LimeSDR heat.
+  The LimeSDR cools by conduction, so its shielded bay needs no airflow.
+    - **Source:** https://noctua.at/en/nf-a4x10-5v-pwm/specification; https://forum.radxa.com/t/best-heatsink-cooling-solutions-for-dragon-q6a/30123
+  4.
+    - **Claim:** Size about 200-205 x 130-135 x 42-48 mm and 1.0-1.2 kg. The display is modelled as a Raspberry Pi Touch Display 2 (about 250 g). Heatsinks, fan and plate together weigh 80-110 g.
+    - **Problem:** The Pi Touch Display 2 is a DSI, 720x1280, non-sunlight-readable panel, so it is not usable here and is the wrong weight and power class. A 2 mm aluminium plate of 200x130 mm alone weighs about 140 g (52 cm3 x 2.7 g/cm3). The stack is thicker than estimated: front wall 2.5 + panel 5-6 + air channel 4-6 + plate 2 + 6 mm standoffs + 1.6 mm PCB + 10-13 mm fin stack + 10 mm fan + back wall 2.5, about 50-55 mm. Radxa's STEP model confirms 16.3 mm stacked USB-A and 3.7 mm of parts below the PCB.
+    - **Correction:** With a bare high-brightness panel plus an HDMI driver board, expect about 205-215 x 130-140 x 50-55 mm and 1.2-1.4 kg. With a cased field monitor (520-700 g) it is 1.4-1.6 kg. A 5.7 mm low-profile copper cooler with a side-blowing blower can bring the thickness to about 45 mm.
+    - **Source:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_3d_stp_v1.21.zip (parsed); https://www.benq.eu/en-eu/monitor/creative-pro/pvs7/spec.html
+  5.
+    - **Claim:** The 4x21700 pack as a detachable 2x2-cell grip, about 46x46x145 mm.
+    - **Problem:** The geometry is wrong. Four 21700 cells in a 2x2 bundle measure about 44x44x72 mm; a 46x46x145 mm block holds eight cells.
+    - **Correction:** Two rows of two cells end to end, about 46x25x150 mm, makes a good flat grip. A 2x2 block is about 46x46x80 mm with the BMS.
+    - **Source:** 21700 cell = 21 x 70 mm (standard format)
+  6.
+    - **Claim:** R44SF dimensions: male end 21.2 mm with a 3.8 mm stack, and an 80 mm female board with M2 screws and nuts.
+    - **Problem:** These figures come from the R44SS drawing, which is a male-to-male jumper (a 21.2 mm male end plus an 80 mm male board), not the R44SF. The R44SF photo and schematic show a short R4S male end with an FR4 clamp pad and a separate R4F female board carrying a socket, 2230/2242/2260 holes and a 2280 standoff. The female socket height, and so the gap under the card, is not published.
+    - **Correction:** The male end is probably the same R4S board. Confirm the female socket height and pad clearance with the ADT_R44_3D.zip STEP before designing the pedestal. The schematic confirms that PERST#, CLKREQ#, PEWAKE#, REFCLK and 3.3 V are carried, so the XTRX 'missing PERST' failure does not apply to ADT. Check this point on any generic FPC riser.
+    - **Source:** https://www.adt.link/product/R44SF.html; http://www.adt.link/Uploads/download/ADT_R44SF%20schematic%2020191105.pdf; http://www.adt.link/Uploads/download/ADT_R44SS%20dimension%2020200326.pdf
+  7.
+    - **Claim:** Bench baseline: plug the LimeSDR straight into J13 with the tail supported ('even 2280 devices can be just plugged in').
+    - **Problem:** From Radxa STEP v1.21 (my parse): the 2230 standoff is 4.7 mm tall at about X 9.8-14.8, Y 10.8-13.3, which sets the card plane at about 4.7 mm. LimeSDR bottom-side parts (IC16 clock buffer and IC27 LDO, about 24-30 mm from the edge) can land on that standoff. The LA9310 (37.5-45.4 mm from the edge) would sit about 0.4 mm above the USB-C shell (top at 3.10 mm). The J21 header (8.5 mm) collides outright. An SSD is single-sided; the LimeSDR is not.
+    - **Correction:** Before any direct-plug test, measure with calipers. Put Kapton on the standoff, or confirm the bottom-side parts clear it. Remove or move the J21 header first. Never use direct plug in the final build.
+    - **Source:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_3d_stp_v1.21.zip; https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/overview.html
+  8.
+    - **Claim:** HDMI mode: use 2560x1600 CVT-RB at 268.5 MHz to keep pixel-clock harmonics out of the bands.
+    - **Problem:** The harmonic arithmetic is correct (I re-ran it: nearest 6x = 1611 MHz, 25 MHz clear). But most sunlight-readable 7-inch panels are 1920x1200, and every standard timing for that resolution hits a band:
+  - 148.5 MHz: 5x = 742.5 MHz (LNB IF) and 15x = 2227.5 MHz (S-band).
+  - 154.0 MHz CVT-RB: 11x = 1694 MHz (HRPT).
+  The panel's own HDMI-to-MIPI/eDP bridge clocks are not covered at all. FPV-style unshielded HDMI FFC ribbons radiate broadband TMDS noise.
+    - **Correction:** For a 1920x1200 panel, force a custom pixel clock of about 166 MHz (60 Hz, Htotal about 2240, Vtotal about 1235). It has at least 19 MHz clearance to all bands and needs 3.98 Gb/s, which fits 2-lane HBR (4.32 Gb/s). An alternative is CVT standard blanking at 193.25 MHz (19 MHz clear), but that needs HBR2. Use a shielded micro-coax HDMI cable, not an FFC ribbon, and measure the panel's own spurs.
+    - **Source:** https://www.sigidwiki.com/wiki/HDMI_RFI_Clock; my own harmonic scan up to 2.4 GHz
+  9.
+    - **Claim:** Power J21 from a Pololu D36V50F9 9 V buck ($39.95).
+    - **Problem:** The 9 V choice is right: the schematic shows an SMBJ15CA TVS, a CH224D PD sink and an SY81012 buck on the ADP12V rail, so 16.8 V from a full 4S pack is too high. But Pololu lists the part as 'Rationed', and it costs $40 plus shipping to Ukraine.
+    - **Correction:** A cheaper choice is a Mini560 fixed-9 V synchronous buck (about 11-20 V in, 5 A nominal, about 500 kHz, 29x18 mm, about $2-4, unverified). It covers 12.0-16.8 V and the Q6A's 10-15 W. Add an LC pi-filter and a ferrite on its output. Keep the Pololu as the premium option.
+    - **Source:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf; https://www.pololu.com/product/4094; https://hubtronics.in/dc-dc-power-converter-modules/mini560-9v-5a-step-down-stabilized-module
+  10.
+    - **Claim:** Noctua NF-A4x10 5V PWM runs 0-5000 rpm and is speed-controlled through the PoE-HAT pwm-gpio overlay.
+    - **Problem:** Scan UK lists it at 1000-5000 rpm, so it does not stop at 0 %. The overlay sets a 1 ms period (1 kHz), far below the 21-28 kHz PC fan-PWM spec, so expect ticking and coarse steps. Running pwm-gpio at 25 kHz costs CPU. Rozetka (Ukraine) stocks only the 12 V NF-A4x10 PWM (1019 UAH), which will not run correctly on 5 V.
+    - **Correction:** Order the 5 V version from the EU (Dateks about EUR 26 incl. VAT), or use a cheap 5 V fan with on/off 60/50 C hysteresis through an AO3400. Test noise before relying on 1 kHz PWM.
+    - **Source:** https://www.scan.co.uk/products/40mm-noctua-nf-a4x10-5v-pwm-beige-brown-7-blade-sso2-bearing-1000-5000rpm-52cfm-airflow-196db-4-pin; https://github.com/radxa-pkg/radxa-overlays/blob/main/arch/arm64/boot/dts/qcom/overlays/qcs6490-radxa-dragon-q6a-poe-hat.dtso; https://hard.rozetka.com.ua/ua/373960119/p373960119/
+  11.
+    - **Claim:** Budget option: a PETG shell is fine if the device is not left in direct sun.
+    - **Problem:** The brief says the device is used outdoors, often in sunlight, and the user wants a 1000-nit display for that reason. PETG softens at about 75-80 C. ASA filament costs about the same.
+    - **Correction:** Use light-coloured ASA in the budget build too. The saving from PETG is about $0-3.
+    - **Source:** https://forum.prusa3d.com/forum/english-forum-general-discussion-announcements-and-releases/my-print-melted-on-my-window-sill
+- **Forum and fix assessment:** Most of the research holds up under independent checks. I verified these points:
+  - The Q6A board is 85.0 x 56.0 mm (Radxa 2D drawing v1.21).
+  - J13 is a top-side M.2 socket at X 1.4-23.3, Y 37.9-46.1 mm, 5.5 mm tall.
+  - The 2230 standoff is 4.7 mm tall at about 12 mm from the HDMI edge. J21 is 8.5 mm tall and USB-C is 3.1 mm tall, both under the 2280 path (my parse of STEP v1.21).
+  - The SoC is at X 38.9-50.9, Y 28-42 and the LPDDR5 at X 38.4-53.4, Y 14.4-26.8, so the 32x31 mm heatsink keep-in is valid.
+  - The LimeSDR LMS7002M, LA9310 and switchers are on the bottom side (Lime v1.2 drawings).
+  - LimeSDR M.2 Basic is $249 / $299 with GNSS, new orders ship Dec 15 2026, and Lime's MHF4L-SMA bulkhead cable is $6 plus $18 shipping.
+  - Lime asks for cooling rated at 10 W or more; Zack's '~4 W' is confirmed (Aug 24 2026). No measured Micro temperatures exist yet.
+  - The ADT R44SF exists at $19 for 5 or 10 cm on adt.link (a Newegg snippet shows $29.99 for 10 cm), is PCIe 3.0 x4 tested, and carries PERST#, CLKREQ# and REFCLK. Its male end has no 2230 screw, so it needs a clamp.
+  - pcie1 has a 32-bit window of 0x1fd00000 at 0x40300000, so the 256 MB BAR0 fits in exactly one aligned slot.
+  - Radxa kernel PR #551 (Kioxia UFS PA_TACTIVATE quirk) was merged on May 11 2026.
+  - The PoE-HAT overlay uses pwm-gpio on GPIO 56 with a 60 C trip and contains the 'cpu0-thermall' typo.
+  - The Calin23 fan script exists and was tested on Armbian 25.11.2.
+  - The schematic contains an SMBJ15CA, CH224D and SY81012VDC on ADP12V, and the M.2 3.3 V rail comes from a 4 A ETA3521, so the slot can supply the LimeSDR.
+  - MHF4 is rated for 30 mating cycles (DigiKey, I-PEX PRS-1745).
+  - The setup page names RX-B 'X3' while the v1.2 overview names it 'X4'.
+  
+  The proposed fixes are mostly sound: 9 V into J21, the clamp and acceptance tests for the riser, pcie_aspm=off, Gen2 fallback, the pogo-pad insulation window, Wi-Fi rfkill, the pixel-clock plan, and branded or screened pigtails.
+  
+  Three fixes need correcting:
+  - **LimeSDR cooling:** the top-side heatsink would sit over RF matching parts. Cool the chips from the bottom through a window in the female board instead.
+  - **Airflow:** a single series duct cannot cool a sealed RF bay; use two paths and conduction.
+  - **Heat budget and enclosure:** the high-nit display was underestimated, which makes the heat budget, size and weight figures optimistic.
+  
+  The forum record still has no Q6A + PCIe SDR or R44SF-on-ARM report, so the riser acceptance test (70 boots, AER/CESta counters, 60-minute stream) remains mandatory.
+- **Final recommendation:**
+  - **Name:** Hybrid build: light-grey ASA shell, 2 mm aluminium mid-plate (chassis, ground, shield wall, heat spreader), ADT-Link R44SF 5 cm riser with a windowed female board, conduction-cooled LimeSDR, copper fin stack plus fan on the Q6A, separate blower for the display channel, 9 V buck into J21, shielded RF bay with 1.13 mm MHF4-SMA bulkheads, captured 1/4"-20 nut in the plate
+  - **Price:** About $130-200, excluding the SDR, board, display and cells:
+  - R44SF 5 cm: $19 plus shipping (shipping not verified).
+  - Two Lime MHF4L-SMA cables: $12, bundled with the SDR order; or prom.ua RF1.13 cables at 63 UAH each, screened with a NanoVNA.
+  - I-PEX 90435-001 MHF4 tool: about EUR 16.
+  - Q6A stepped copper cooler: $17-30 (AliExpress, intermittent stock), or a fin stack plus NF-A4x10 5V PWM (about EUR 26 in the EU).
+  - 5 V blower: $3-5 (unverified).
+  - Aluminium plate, pedestal and gap pads: $15-25 (unverified).
+  - ASA filament, 0.4 kg: about $8-12.
+  - Copper-clad FR4 and tape: about $5.
+  - SMA bulkheads: $8-15.
+  - 9 V buck: Mini560, about $3 (unverified), or Pololu D36V50F9 at $39.95 (rationed).
+  - IR-reflective film and printed sun hood: $5-10.
+  - Strap, buttons, EC11 encoder and TPU bumpers: $10-20.
+  - **Sources:**
+    - https://www.adt.link/product/R44SF.html
+    - http://www.adt.link/Uploads/download/ADT_R44SF%20schematic%2020191105.pdf
+    - https://www.crowdsupply.com/lime-micro/limesdr-micro
+    - https://myriadrf.org/projects/limesdr-micro/user/M.2/setup.html
+    - https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/overview.html
+    - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_2d_dimensions_v1.21.pdf
+    - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_3d_stp_v1.21.zip
+    - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+    - https://github.com/radxa-pkg/radxa-overlays/blob/main/arch/arm64/boot/dts/qcom/overlays/qcs6490-radxa-dragon-q6a-poe-hat.dtso
+    - https://github.com/Calin23/dragon-q6a-fan-control
+    - https://github.com/radxa/kernel/pull/551
+    - https://www.pololu.com/product/4094
+    - https://www.benq.eu/en-eu/monitor/creative-pro/pvs7/spec.html
+    - https://discourse.myriadrf.org/t/limesdr-micro-m-2-power-consumption/13304
+  - **Why:** The architecture survives scrutiny, with corrected details.
+  - **Riser:** The R44SF is the only riser found with a published Gen3 x4 test and confirmed sideband wiring. It is needed because direct plug collides with J21 and possibly the 2230 standoff, and puts the LA9310 0.4 mm above USB-C.
+  - **SDR cooling:** The LimeSDR's hot chips face the female board. A window plus pedestal to the plate is the only heat path that avoids metal over the RF front-end on the top side, and it keeps the RF bay sealed.
+  - **Airflow:** The Q6A keeps the proven fin-stack-plus-fan setup (55-80 C in forum and review reports). The display and plate get their own blower path, because a high-nit panel adds 6-18 W and fights sun load.
+  - **Power:** 9 V into J21 stays below the 15 V TVS limit across 12.0-16.8 V. The Q6A USB-C stays unused (cover it).
+  - **Shell:** ASA in a light colour survives sun.
+  - **Tripod mount:** A captured nut or a thread tapped in the plate replaces heat-set inserts.
+  - **Expected result:** about 205-215 x 130-140 x 50-55 mm and 1.2-1.4 kg, so it needs a strap and a boom/tripod mount.
+- **Final budget option:**
+  - **Name:** ASA print (not PETG) + generic AliExpress M.2 M-key FPC extender (validate it; check that PERST#/CLKREQ#/REFCLK are wired) + Pi-style 30-40 mm heatsink/fan on 5 V with on/off hysteresis + windowed riser board and aluminium-strip pedestal for the LimeSDR + soldered copper-clad FR4 shields + prom.ua RF1.13 MHF4-SMA pigtails + Mini560 9 V buck
+  - **Price:** About $45-75 total (several items unverified):
+  - Generic riser: $2-9.
+  - Pi-style heatsink and fan: $3-6.
+  - AO3400 MOSFET: under $1.
+  - Pigtails: 2-4 x 63 UAH.
+  - ASA filament: $8-12.
+  - Aluminium strip and a gap pad: $5-8.
+  - FR4 and copper tape: about $5.
+  - Mini560 buck: about $3.
+  - SMA bulkheads and a captured 1/4"-20 nut: $10-15.
+  - Strap: about $5.
+  - **Why:** It keeps the same safe architecture: SDR on a riser, conduction-cooled LimeSDR, fan on the Q6A, sealed RF bay, 9 V into J21. It cuts about $80-120 from the main build. ASA costs about the same as PETG and survives sun. Upgrade to the $19 ADT R44SF if the cheap riser fails 70-boot enumeration or shows non-zero CESta/UESta after a 60-minute stream.
+- **Known problems and fixes to apply:**
+  - Riser retention: the R44SF male end (about 21 mm) ends about 9 mm short of the Q6A 2230 standoff (4.7 mm tall, about 12 mm from the HDMI edge). Print an ASA clamp bar screwed into that standoff (M2) that presses the FR4 pad down through 1 mm foam. Fold the cable 90 degrees upward within about 5 mm after the pad. No case surface may press on the flex.
+  - J21 header (8.5 mm) and USB-C (J8) lie in the 2280/riser path. Desolder J21 and wire 9 V/GND/PWR from the bottom pads with a twisted pair, 470 uF plus 10 uF at the board. Tape over J8 and never feed USB-C and J21 at the same time.
+  - Power: 4S (16.8 V full) exceeds J21's SMBJ15CA TVS (15 V standoff). Feed J21 at 9 V through a synchronous buck (Mini560 9 V or Pololu D36V50F9) with an LC filter. Fit a 5 A fuse and reverse-polarity protection at the pack.
+  - LimeSDR cooling: the hot chips are on the bottom side, facing the riser board. Cut a window in the R4F female board under the region 36-62 mm from the edge (check first for traces). Add an aluminium pedestal from the mid-plate and a 0.5-1.5 mm gap pad of at least 6 W/mK. Fit plate fins in the blower path. Put no metal over the top-side RF area (IC3 and the baluns near X1/X2/X4). Log 'Board Temperature' (TMP1075) and lms7_temp; fan rule 55/45 C, alarm at 70 C. Soak 60 min at 61.44 Msps.
+  - Q6A cooling: use a stepped copper block (paste on the SoC, pad on the LPDDR5, check with an imprint) inside the 32x31 mm keep-in X 26-58, Y 12-43 mm, plus a 30-40 mm 5 V fan. Control it with the fixed PoE-HAT overlay (GPIO 56, 'cpu0-thermal' spelling corrected, trip 50 C) through an AO3400/2N7002, or with the Calin23 script, or with plain on/off at 60/50 C. Expect 1 kHz PWM ticking on Noctua fans.
+  - Display heat: a panel of 1000 nits or more adds 6-18 W. Fit a 4-6 mm air channel behind the panel fed by its own blower, an IR-reflective film (no sealed air gap), a light bezel and a slide-on sun hood. Put an NTC on the panel back and derate the backlight at 60 C. Require a panel rated to 70 C or more.
+  - Bring-up acceptance for the riser:
+  - pcie_aspm=off during bring-up.
+  - lspci LnkSta 8GT/s x1 and BAR0 256M assigned.
+  - 50 warm and 20 cold boots, all enumerating.
+  - Clear AER CESta/UESta, stream 60 min, then re-read; they must stay zero.
+  - Fallbacks: setpci Gen2 retrain, then the DT max-link-speed = <2>.
+  - HDMI RFI:
+  - 2560x1600 panel: pin 2560x1600R@60 (268.5 MHz) with video= on the kernel command line.
+  - 1920x1200 panel: use a custom ~166 MHz EDID timing.
+  - Never fall back to 1080p60 (742.5 MHz and 2227.5 MHz harmonics).
+  - Use a shielded micro-coax HDMI cable (not an FFC ribbon) with ferrites, routed away from the RF bay.
+  - Measure on/off noise-floor deltas in every band.
+  - RF bay: solder copper-clad FR4 on all seams, slots of 7 mm or less, and bond the SMA bulkheads to the plate. Keep the RTL-SDR in its own aluminium case grounded to the plate, with a short SMA jumper. LNAs go at the antennas. rfkill Wi-Fi/BT and leave USB 3 empty during L/S-band work.
+  - Pigtails: 1.13 mm, 75-100 mm long, plain SMA (not RP-SMA). Screen each one with a NanoVNA (reject over 1.5 dB round trip at 2.2 GHz). Mate and unmate only with the I-PEX 90435-001 tool. Add strain-relief clips; 30 mating cycles maximum. Do not bring TX X1 to the panel. Check the X3/X4 silkscreen for RX-B.
+  - Mid-plate: cut a window over the Q6A bottom battery pogo pads and add an insulating sheet (+ pad assumed live at about 4.2 V). Use 6 mm M2.5 standoffs (bottom parts reach 3.7 mm). Bond the plate to GND at one standoff. Give the UFS module a pad to a boss on the plate.
+  - Tripod/boom mount: a captured 1/4"-20 nut, or a thread tapped in the aluminium plate. Do not use heat-set inserts alone for a device of about 1.3 kg on a boom.
+  - IMU: mount the BNO085 rigidly in line with the boom mount, several cm from the fan, battery leads and speaker. Use brass or nylon screws nearby and calibrate in the finished assembly.
+  - Storage on the Kioxia UFS module: use a Radxa kernel built after May 11 2026 (PR #551), or add the PA_TACTIVATE quirk on other kernels. Do not mistake those reboots for overheating.
+  - Batteries: insulate the cells from the SDR/SoC heat. Do not charge during heavy passes or above 45 C cell temperature.
+- **Remaining uncertainties:**
+  - The R4F female socket height and the gap between the LimeSDR underside and the female board are unpublished. Pedestal height depends on the ADT_R44_3D STEP or calipers.
+  - Exact LimeSDR bottom-side part heights, and whether a part lands on the Q6A's 4.7 mm 2230 standoff in a direct-plug test, come from my reading of 2D drawings (+/-2 mm).
+  - No measured LimeSDR Micro power or temperatures and no Q6A + PCIe SDR report exist yet. New orders ship Dec 15 2026.
+  - No R44SF-on-ARM report. ADT shipping to Ukraine and the AliExpress price are unverified (adt.link $19; Newegg snippet $29.99 for 10 cm).
+  - The display model is not chosen. Weight (180-700 g), power (6-18 W), its internal bridge clocks, and whether it accepts 268.5 MHz or a custom 166 MHz timing are unknown.
+  - Whether the msm DP driver trains HBR or HBR2 for a given mode (it affects broadband S-band noise) is untested.
+  - Pololu D36V50F9 is rationed. Mini560 specs vary between listings (11-20 V vs 11-32 V input, under 4 A sustained without a heatsink).
+  - AliExpress Q6A copper cooler stock and price ($17-30) are intermittent and unverified. Its clearance next to the riser's folded cable is unverified.
+  - Blower, aluminium, gap pad, SMA bulkhead and strap prices are estimates, not dated quotes.
+  - Thundercomm RUBIK Pi 3 as a no-riser fallback: its M.2 2280 support was not confirmed (official spec only says M.2 Key M, PCIe 3.0 x2). Launch price was $179.
+- **Confidence:** medium
 
