@@ -954,5 +954,491 @@ _Run `wf_f924b2ab-5ad`_
 
 ## Власні виправлення (`fixes`)
 
+_Run `wf_f924b2ab-5ad`_
+
+- **Component:** Power system (battery, charging, converters, fuel gauge) for the Radxa Dragon Q6A handheld satellite receiver (v3)
+- **Fixes:**
+  1.
+    - **Problem:** No published measurement of a Q6A and LimeSDR Micro M.2 running together, and the M.2 3.3 V source chain is unproven at that load.
+    - **Proposed fix:** The Q6A schematic v1.21 (sheets 'DC-IN' and 'M_KEY', read directly) shows plenty of headroom. The real weak points are the 2230-to-2280 extension and heat, so verify those and fix them if needed.
+  
+  The verified chain:
+  - 12 V input to a SY81012VDC buck: 2.7-16 V in, 12 A. Its feedback divider (120k/20k, 0.6 V reference) sets VPH_PWR to 4.2 V. Its MODE resistor (62 kΩ) gives about 1 MHz.
+  - VPH_PERI to a SY7120RAC boost (U24). The ILMT resistor (100 kΩ) sets a 10 A peak switch limit (ILMT = 1200/R in kΩ, minus 2). The FS resistor (100 kΩ) gives about 1.04 MHz. The feedback divider (80.6k/20k, 1 V reference) sets 5.03 V. The inductor (L47) is 1.5 µH/10 A.
+  - VCC_5V_PERI to a dedicated M.2 buck, ETA3521 (U20): 2.5-6 V in, 4 A, 2 MHz COT, 1 µH/4 A inductor. Its 91k/20k divider sets 3.33 V. Its enable comes from PMIC LDO L18B.
+  
+  The load against that chain:
+  - My calculation: the boost can supply about 7 A (~35 W) at 5 V before hitting its current limit.
+  - LimeSDR worst case is 8.25 W (the PCIe 2.5 A allowance), and Lime staff say about 4 W typical. That is 1.2-2.5 A of the ETA3521's 4 A, or about 1-1.9 A from the 5 V rail.
+  - The USB-A VBUS goes through WS4612 load switches. Their 3.24 kΩ ISET resistors give a limit of about 2.1 A (Ilim = 6800/Rset).
+  
+  Keep VCC_5V_PERI lightly loaded: put the display and fan on external rails, and leave only the RTL-SDR (~0.27 A) on USB.
+    - **Steps:**
+      - Use a short, rigid 2230-to-2280 extender (a PCB or metal-bracket type, not a flex riser).
+  - Measure the resistance of its 3.3 V path end to end: pins 2, 4, 12, 14, 16, 18, 70, 72 and 74 against the GND pins. Use 4-wire measurement or a 1 A test current. Target <50 mΩ.
+      - Put a heatsink or thermal pad on the LimeSDR shield (Lime's guide says to design cooling for at least 10 W). Make sure the Q6A fan airflow reaches the M.2 area.
+      - Boot and check the PCIe link:
+  - `lspci -vv | grep -E 'LnkCap|LnkSta'` should show 8GT/s x1.
+  - `dmesg | grep -iE 'aer|pcie.*(error|link)'` should be clean.
+      - Run a 60-minute worst-case load, all at once:
+  - `stress-ng --cpu 8 --timeout 3600 &`
+  - An NPU benchmark.
+  - `rtl_test -s 2.4e6` on the RTL-SDR.
+  - A Lime RX stream: run `SoapySDRUtil --find` to get the driver key, then `SoapySDRUtil --args="driver=<key>" --rate=61.44e6 --direction=RX`.
+      - During the load test, measure at the card end of the extender.
+  - DMM: 3.3 V should be at least 3.20 V (absolute minimum 3.135 V, which is −5%).
+  - Scope (AC-coupled, 20 MHz bandwidth): ripple or droop under 100 mV p-p.
+  - Also check the 40-pin 5 V (pin 2): at least 4.85 V.
+      - Check temperatures with an IR thermometer or thermocouple: the Lime shield, the Q6A M.2-buck area and the SY7120 area should all stay under about 85-90 °C.
+      - If 3.3 V sags, try these in order:
+  - Replace the extender.
+  - Add 2x 100 µF low-ESR polymer capacitors on the card-side 3.3 V pads, if the extender has pads.
+  - Last resort: cut the extender's 3.3 V trace and feed the card from a separate 3.3 V/3 A synchronous buck. Never parallel it with the Q6A's ETA3521.
+    - **How to verify:** Pass when all of these hold over 60 minutes at 61.44 Msps with CPU and NPU loaded:
+  - No PCIe AER errors or link drops.
+  - No SoapySDR overflows ('O').
+  - 3.3 V at the card ≥3.20 V and 40-pin 5 V ≥4.85 V.
+  - No thermal throttling.
+  
+  Record the J21 input power with the INA228 so the real Q6A+Lime figure replaces the estimates in the power budget.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/1912111437_Silergy-Corp-SY7120RAC_C207631.pdf
+      - https://atta.szlcsc.com/upload/public/pdf/source/20240509/0FD7B458A1C7C9AED0BF280C094B69EB.pdf
+      - https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2403151643_etasolution-ETA3521FSG_C22362743.pdf
+      - https://discourse.myriadrf.org/t/limesdr-micro-m-2-power-consumption/13304
+      - https://myriadrf.org/projects/limesdr-micro/user/M.2/setup.html
+  2.
+    - **Problem:** Q6A boot when powered from the header is inconsistent: some boards need the PWR button.
+    - **Proposed fix:** Likely root cause, found in the schematic (JTAG sheet) and a UART log:
+  - The board fakes a power-key press at every cold power-up. An SGM811 supervisor (U7) on the PMIC's always-on VREG_SYS_1P8 drives Q18/Q17 through an RC (R75 10 kΩ, C325 10 µF), and Q17 pulls PWR_ON_KEY (= J21 pin 3) low.
+  - The pulse lasts the SGM811 reset timeout (240 ms typical, 150-560 ms rated) plus about 70 ms of RC delay (my estimate). That is roughly 0.2-0.6 s.
+  - The UEFI log posted on the Radxa forum says: 'Boot up PwrKey press 75 ms detected is less than expected 400 ms duration.' So the firmware wants at least 400 ms and only sees part of the pulse.
+  - The result therefore varies from unit to unit and with temperature and supply ramp.
+  - Re-applying power within a few seconds of a shutdown does not re-trigger the circuit, because VREG_SYS_1P8 has not collapsed.
+  
+  The fix:
+  - Update the boot firmware.
+  - Generate a guaranteed long press externally on J21 pin 3, open-drain only, from the small power-controller MCU that also handles shutdown (see the next fix).
+    - **Steps:**
+      - Update the SPI boot firmware to the latest Radxa release, using the Radxa staff method from the folder flat_build/spinor/dragon-q6a: `sudo edl-ng --hostdev-as-target /dev/mtd0 rawprogram rawprogram0.xml patch0.xml`.
+      - Connect a 3.3 V USB-UART to 40-pin pins 6, 8 and 10 (GND, TX, RX) at 115200 baud. Log cold boots and look for the 'PwrKey press N ms' line.
+      - Add an open-drain 'press' on J21 pin 3.
+  - Use a 2N7002 or AO3400 (gate through 1 kΩ, 100 kΩ pull-down) or a PC817 optocoupler, with the switch from pin 3 to pin 2 (GND).
+  - Never drive pin 3 high: it is the PMIC's KPD_PWR_N net (1.8 V domain), wired-OR with the on-board button.
+      - Add a power-controller MCU (ATtiny402/412 or CH32V003), fed from the pack by a TLV70433 LDO (2.5-24 V in, 3.2 µA quiescent).
+  - Firmware: when the case button is pressed, close the load switch and at the same moment pull pin 3 low for 1.5 s, then release.
+  - At t = 10 s, check 40-pin pin 1 (3.3 V, present only while the PMIC is running).
+  - If it is absent, retry once with a 2 s press.
+  - Only ever pulse when pin 1 is absent, because a press while the board is running asks it to shut down.
+      - Fallback without an MCU: wire J21 pin 3 to a second case button. Optional board mod: add 47-100 µF (6.3 V, X5R) in parallel with C325 to lengthen the on-board pulse (my estimate: +0.2-0.5 s).
+      - After a deliberate power-off, leave input power removed for at least 10 s before re-applying it.
+    - **How to verify:** Run 50 cold power-ups (input off ≥10 s) at room temperature and 20 at about −10 °C (pack and board in a freezer).
+  - Pass: 50/50 and 20/20 reach login.
+  - The UART log shows a press of at least 400 ms.
+  - With the board already running, the MCU must not issue a 1.5 s press (it checks pin 1 first).
+    - **Confidence:** medium
+    - **Sources:**
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://forum.radxa.com/t/upcoming-radxa-dragon-q6a/26723
+      - https://forum.radxa.com/t/how-to-setup-dragon-q6a-to-boot-without-pressing-the-power-button/30852
+      - https://e2e.ti.com/cfs-file/__key/communityserver-discussions-components-files/196/SGMICRO_2D00_SGM811.pdf
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/power-header
+      - https://www.ti.com/lit/ds/symlink/tlv704.pdf
+  3.
+    - **Problem:** Q6A draws 1.9-2.5 W after software shutdown, and Radxa has published no fix.
+    - **Proposed fix:** Analysis:
+  - The 1.9-2.5 W report says it was measured after typing 'halt'. On systemd, halt stops the CPUs but does not power the board off, which fits the reporter's own remark that the figure depended on CPU frequency.
+  - In the schematic, the 5 V boost (SY7120 EN), the 3.3 V and 1.8 V bucks and the M.2 3.3 V buck are all enabled from PMIC LDO L18B. A real `poweroff` should therefore switch them all off.
+  - That would leave only the always-on SY81012 (650-850 µA quiescent) and the PMIC. My estimate is well under 0.1 W, but this is unverified.
+  
+  Fix:
+  - Always use `poweroff`.
+  - Map the power key to poweroff.
+  - Add a true hard cut anyway, because 72 Wh stored in 'shut down' devices must not drain.
+    - **Steps:**
+      - Measure first. Read input power with the INA228 or a DC meter after each of `sudo systemctl halt`, `sudo systemctl poweroff`, and a hard cut.
+      - Make the power key power the board off.
+  - In /etc/systemd/logind.conf, set HandlePowerKey=poweroff.
+  - On GNOME images, also set the power-button action, or use a lightweight session.
+  - Run `evtest` to confirm the PMIC power key produces KEY_POWER.
+      - Add a hard cut: a Pololu #2812 Big Pushbutton Power Switch MP between the pack fuse and the 12 V regulator.
+  - $5.95; 4.5-40 V (32 V recommended); about 8 A; reverse-voltage protection; <0.01 µA when off.
+  - ON, OFF and CTRL inputs take pulses above 1 V.
+      - MCU logic (same MCU as the previous fix):
+  - Short press while running: send a 200 ms pulse on J21 pin 3 for a graceful poweroff.
+  - When 40-pin pin 1 (3.3 V) has been gone for 5 s: pulse the Pololu OFF input.
+  - Long press of 6 s: forced OFF.
+      - Low-battery protection.
+  - Linux powers off at 3.40 V/cell, read from the INA228.
+  - MCU backup through a pack divider (1 MΩ/150 kΩ + 100 nF): graceful shutdown at 3.30 V/cell, hard cut at 3.20 V/cell.
+      - Alternative without an MCU: a script /usr/lib/systemd/system-shutdown/cut-power that uses gpioset (libgpiod) to pulse a 40-pin GPIO, through 1 kΩ, into Pololu OFF. Or simply press the Pololu button after the screen goes dark.
+      - For storage and transport, unplug the XT30 battery connector.
+    - **How to verify:** With the hard cut open, measure pack current with a DMM in series after 1 minute of settling.
+  - Expected: about 0.2-0.3 mA (~4 mW). That is the IP2368 at 180 µA (datasheet standby at 14.8 V) plus the BMS and MCU. Self-discharge then dominates over months.
+  - Also confirm that nothing back-powers the Q6A through USB or HDMI while it is off.
+    - **Confidence:** high
+    - **Sources:**
+      - https://forum.radxa.com/t/upcoming-radxa-dragon-q6a/26723
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://www.pololu.com/product/2812
+      - https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2308290920_INJOINIC-IP2368-BZ-VGLIP_C5203723.pdf
+      - https://www.ti.com/lit/ds/symlink/tlv704.pdf
+  4.
+    - **Problem:** Radxa staff and docs disagree on the header input range (4.5-16 V vs 3.6-16 V vs '12 V only'), and nobody has bench-tested 3S direct.
+    - **Proposed fix:** Resolved from the schematic.
+  
+  What is on the board:
+  - J21 pin 1 (ADP12V_IN) connects straight to the ADP12V node. The only parts there are C602 (10 µF/25 V) and the SY81012 input capacitors C611/C612 (22 µF/16 V).
+  - The SY81012 operates from 2.7 to 16 V (18 V absolute maximum). Its EN is always on through a 100 kΩ pull-up.
+  - There is NO TVS and NO reverse-polarity protection on the header path. The SMBJ15CA sits on the USB-C VBUS side, behind the DMP2160 switch.
+  
+  What that means:
+  - '12 V' is only the nominal value. Radxa staff (BigfootACA) state 3.6-16 V with 5, 9 or 12 V recommended, and say the input is stepped down to 4.2 V by the SY81012.
+  - Practical window: about 6-14 V.
+  - Upper limit: 16 V ceramics, DC-bias derating, and hot-plug ringing that can reach roughly 2x Vin (LT AN88).
+  - Lower limit: 4.2 V output plus dropout, and header current at low voltage.
+  
+  Recommended topology: 4S plus a 12 V buck.
+  - The same rail feeds the LNB.
+  - J21 current stays around 2 A.
+  
+  3S direct also works and is the quietest option, with no external converter. But it gives only 54 Wh, and pin current reaches about 2.8 A at 9 V and 25 W.
+    - **Steps:**
+      - Bench sweep.
+  - Lab supply with a 3.5 A limit, and a 100 µF electrolytic at J21.
+  - Boot at 12.0 V and run the full load from the M.2 power test above.
+  - Step 14 → 12 → 10 → 9 → 8 → 7 → 6 → 5.5 → 5.0 V, 5 minutes each.
+  - Log dmesg, PCIe AER and USB disconnects, and note the brownout voltage.
+  - Never go above 15 V.
+      - Option A (recommended): 4S → Pololu D36V50F12.
+  - $39.95; 13.3-50 V in; 12 V ±4%; up to 4.5 A; about 500 kHz; reverse-voltage protection; EN pin.
+  - When the pack falls below about 13.3 V the output simply drops out. The Q6A tolerates this, and the LNB keeps working to about 11.5 V.
+      - Option B: 3S (9.0-12.6 V) wired straight to J21.
+  - Set the IP2368 cell-count resistor (RBAT_NUM) to 9.1 kΩ and its charge-voltage resistor (RVSET) to 10 kΩ or less.
+  - Check J21 pin and wire heating: the header's current rating is not published.
+  - The LNB then needs its own small 13 V boost.
+      - Add the protection the board lacks at J21:
+  - A 3-4 A fuse.
+  - Reverse-polarity protection (the Pololu #2812 provides it).
+  - An SMBJ14A TVS.
+  - A 100-220 µF 25 V electrolytic to damp hot-plug ringing.
+      - Use a keyed, latched 3-pin housing with strain relief on J21. A forum user notes the 12 V pin is about 1.5 mm from the USB-C shell ground.
+      - Seal the Q6A's own USB-C port with a glued blank plug or a cover. VBUS from any source turns on the Q5 switch and parallels that source with the header rail; Radxa says not to use USB-C when supplying 12 V externally.
+      - Never connect raw 4S to J21: 16.8 V, or 16.4 V at 4.10 V/cell, is above the 16 V caps and the SY81012 rating.
+    - **How to verify:** - The sweep log shows stable operation from 8 V or lower up to 14 V at full load. The expected brownout is about 4.5-5 V, since VPH_PWR is 4.2 V.
+  - J21 pin and wire temperature rise stays under 20 °C at maximum load.
+  - A scope on J21 during switch-on shows overshoot below 15 V.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://forum.radxa.com/t/how-to-power-the-dragon-q6a/30400
+      - https://forum.radxa.com/t/dragon-q6a-12v-input-header-voltage-range/30233
+      - https://atta.szlcsc.com/upload/public/pdf/source/20240509/0FD7B458A1C7C9AED0BF280C094B69EB.pdf
+      - https://www.pololu.com/product/4095
+      - https://www.analog.com/media/en/technical-documentation/application-notes/an88f.pdf
+      - https://forum.radxa.com/t/upcoming-radxa-dragon-q6a/26723
+  5.
+    - **Problem:** IP2368/IP2366 behaviour with a load on the battery side during charging is undocumented: termination, CV hold, the safety timer and BMS interaction.
+    - **Proposed fix:** Behaviour, from IP2368 datasheet V1.41:
+  - Supports 2-5 cells (not 6).
+  - CC/CV charging. It terminates when IBAT falls below ISTOP = 100 mA and restarts when VBAT drops below VTRGT − N x 0.1 V.
+  - Charge cut-off timer TEND is 45-51 h.
+  - VTRGT = 4000 mV + 0.02 x RVSET (Ω) per cell.
+  - In current mode, ICHRG = 0.2 x RISET (mA).
+  - It switches at 250 kHz.
+  
+  With the device's load on the battery node, the charger's output current is load plus battery current. Any load above 100 mA means it never terminates: it floats in CV at VTRGT until the 48 h timer.
+  
+  Fix:
+  - Lower the float voltage.
+  - Add software termination that uses the NTC-inhibit line from the RF-noise fix below.
+  - Balance-charge monthly.
+  - Size the charge current for load plus charge.
+    - **Steps:**
+      - Replace RVSET (R4 on the reviewed board; stock 10 kΩ = 4.20 V) with 5.1 kΩ 1% for 4.10 V/cell (16.4 V pack), or 7.5 kΩ for 4.15 V.
+      - Set ISET_MODE to GND through 1 kΩ (R1), and RISET to 15 kΩ. That gives a 3.0 A battery-side limit, so a 65 W PD source covers a ~30 W load plus ~1 A of charging.
+      - Put the INA228 shunt directly in the battery lead: pack+ → 10 A fuse → shunt → the node that feeds both IP2368 BAT+ and the load switch. It then sees net battery current. The earlier wiring note placed the IP2368 on the battery side of the shunt, which would hide charging current.
+      - Software termination in the gauge daemon:
+  - If V ≥ 16.35 V and net current stays within ±0.1 A for 10 minutes, assert CHG_INHIBIT.
+  - Release it when V drops below 15.8 V (3.95 V/cell) or the charger is unplugged.
+      - Balancing.
+  - Cheap BMS boards usually bleed only near 4.18-4.20 V/cell, so at 4.10 V they rarely balance.
+  - Once a month, do a full 4.20 V balance charge through the pack's balance lead with an FPV charger such as the ISDT 608PD (about $30-42; USB-C PD input 5-28 V/140 W; 1-6S; 0.8 A/cell balancing). Alternatively, fit a 4S active balancer.
+      - 48 h timer: test whether an inhibit toggle restarts it. If it does not, unplug and replug the USB-C cable every 2 days during long blackout sessions, and have the daemon warn you.
+      - BMS lockout test: discharge the pack until the BMS trips, then plug in the PD charger. The IP2368 trickle-charges at 50-200 mA below 3 V/cell, which should release the BMS; confirm that it does.
+    - **How to verify:** Run 72 h plugged in at typical load.
+  - Cells never exceed 4.11 V (DMM on the balance lead).
+  - The INA228 log shows inhibit/release cycles.
+  - Pack temperature stays under 40 °C.
+  - Charging still works after 48 h, or the timer behaviour is documented.
+  
+  The BMS-lockout recovery succeeds 3 out of 3 times.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2308290920_INJOINIC-IP2368-BZ-VGLIP_C5203723.pdf
+      - https://mysku.club/blog/aliexpress/100034.html
+      - https://github.com/D-314/IP2368-Arduino-Library
+      - https://darwinfpv.com/products/isdt-608pd-lipo-charger-dc-240w-10a-usb-c-140w-5a-smart-digital-charger
+      - https://www.ti.com/product/BQ25798
+  6.
+    - **Problem:** AliExpress IP2368 boards vary in quality: dead-on-arrival units, a reported spontaneous burn-out, and heat over 100 °C at 5 A.
+    - **Proposed fix:** Treat the board as untrusted: qualify each one on the bench, derate it, protect it thermally and with fuses, and keep a second, known-good charge path.
+  
+  Why the boards run hot: the mysku review found the stock RISET is 27 kΩ, which asks for 5.4 A (the chip clamps it to 5 A), and one MOSFET went above 100 °C at 5.1 A. Cutting the charge current to 2.5-3 A cuts the I²R losses by roughly 3-4x.
+  
+  Other notes from the review:
+  - The stock cell-count resistor (R7) is 13 kΩ, which is 4S.
+  - The NTC position (R6) has a fixed 10 kΩ resistor.
+  - Readers report that the COUT variant needs a 'charge activation' (a USB-C charger plugged in once) before its reverse output works. The NACT variant does not.
+    - **Steps:**
+      - Buy 2-3 boards (about $5-10 each; prices unverified). Choose listings whose photos show the IP2368 marking, and note the variant (COUT or NACT).
+      - Incoming check with a DMM:
+  - R7 13 kΩ = 4S.
+  - RVSET and RISET values as expected.
+  - NTC position.
+  - Inspect the solder joints of the 4 power MOSFETs and the inductor.
+      - Derate: change RISET to 12.4-15 kΩ (2.5-3 A).
+      - Burn-in: charge for 2 h at 3 A from a 65 W PD charger, with thermocouples on the MOSFETs and inductor. Pass when they stay under 75 °C at 25 °C ambient, inside the closed case.
+      - Mounting:
+  - Thermal pad to an aluminium plate or the case wall.
+  - At least 10 mm from the cells, with a Kapton or FR4 barrier.
+  - In the fan airflow.
+      - Protection:
+  - A 10 A fuse in the battery lead.
+  - A 5 A fuse or polyfuse on the VBUS side.
+  - A KSD9700 70 °C normally-open bimetal switch glued to the hottest MOSFET, wired in parallel with the CHG_INHIBIT MOSFET, so overheating stops charging.
+      - Keep a spare board, plus a Plan B charger (ISDT 608PD) that works through the XT30 and balance lead.
+    - **How to verify:** Each board must pass:
+  - The 2 h burn-in.
+  - 20 plug/unplug cycles at each of 5, 9, 15 and 20 V.
+  - Reverse PD output into a phone.
+  - The NTC hot and cold tests from the next fix.
+  
+  Log temperatures, and fit only boards that pass.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://mysku.club/blog/aliexpress/100034.html
+      - https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2308290920_INJOINIC-IP2368-BZ-VGLIP_C5203723.pdf
+      - https://oscarliang.com/isdt-608pd-charger/
+      - https://darwinfpv.com/products/isdt-608pd-lipo-charger-dc-240w-10a-usb-c-140w-5a-smart-digital-charger
+  7.
+    - **Problem:** IP2368 boards ship with a fixed 10 kΩ resistor in place of the NTC, so there is no cold-charge inhibit.
+    - **Proposed fix:** Fit a real 10 kΩ, B = 3380 NTC on the cells. The datasheet's thresholds are built around exactly this part (it shows a 10 kΩ @ 25 °C, B = 3380 NTC in its BOM).
+  
+  How the NTC pin works:
+  - The pin sources 80 µA or 20 µA.
+  - Too hot: below 0.39 V at 80 µA, i.e. R < 4.88 kΩ, about 45 °C. Charging stops.
+  - Too cold: above 0.55 V at 20 µA, i.e. R > 27.5 kΩ, about 0 °C (a B3380 NTC reads 28.2 kΩ at 0 °C). Charging stops.
+  - The reviewer measured that discharge stops at about 0.23 V, roughly 60 °C.
+  - The datasheet says to put a 10 kΩ resistor there only when no NTC is wanted.
+  
+  For winter use, warm the pack before charging.
+    - **Steps:**
+      - Remove R6 (10 kΩ). Keep the 100 nF capacitor at the chip pin, as the datasheet requires.
+      - Fit a 10 kΩ B3380 NTC: an epoxy bead (MF52-type) or Murata NCP18XH103F03RB. A B3435 type shifts the thresholds by only about 1 °C.
+  - Use a twisted pair of 10-20 cm.
+  - Bond it to the middle cell with Kapton tape or thermal epoxy, under the pack's thermal wrap.
+      - Prefer a BMS that has its own NTC cut-off as a second layer.
+      - Cold practice:
+  - Insulate the pack (foam liner in the case).
+  - Run the receiver for 15-20 minutes before plugging in a charger, so its ~10-20 W of heat warms the pack.
+  - Never charge a pack that has been sitting below 0 °C.
+    - **How to verify:** - Cold: put the pack at −5 °C for 1 h, then plug in the charger. The INA228 shows no charge current. Charging resumes after the pack warms above about 2-3 °C.
+  - Hot: heat the pack to about 47 °C (hair dryer). Charging stops.
+  - Check the NTC pin voltage: about 0.8 V at 80 µA at 25 °C.
+    - **Confidence:** high
+    - **Sources:**
+      - https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2308290920_INJOINIC-IP2368-BZ-VGLIP_C5203723.pdf
+      - https://mysku.club/blog/aliexpress/100034.html
+      - https://done.land/components/power/powersupplies/battery/chargers/charge-discharge/ip2366/
+  8.
+    - **Problem:** There are no RF-noise measurements of the IP23xx charger, LTC3780 or Pololu converters next to the SDR inputs (137 MHz to 2.2 GHz).
+    - **Proposed fix:** Measure it yourself with an A/B procedure, and build in a charge-inhibit line.
+  
+  Known noise sources:
+  - IP2368: 250 kHz buck-boost. It switches only while charging or running its reverse output.
+  - Q6A on-board: the SY81012 at about 1 MHz, and the SY7120 at about 1.04 MHz. The SY7120's MODE pin is pulled low through R167 (100 kΩ), so it runs PFM at light load.
+  - The external 12 V buck.
+  - The display's backlight driver.
+  
+  Inhibit trick (undocumented by Injoinic, so bench-verify it):
+  - Pull the IP2368 NTC pin down through a GPIO-driven MOSFET and 2.2 kΩ. With the NTC in parallel, the total is under 2.9 kΩ, which the chip reads as above 60 °C.
+  - Its converter should then stop: charging stops, and so does the reverse output.
+  - The same line serves the software termination in the IP2368 load-on-battery fix above.
+    - **Steps:**
+      - Wire CHG_INHIBIT: a free 40-pin GPIO → 1 kΩ → 2N7002 gate (100 kΩ pull-down). The drain connects through 2.2 kΩ to the IP2368 NTC pin; the source goes to GND.
+  - Wrap recordings: `gpioset` (libgpiod v2, with -z) to assert, then run SatDump or SDR++, then release.
+      - Converter hygiene:
+  - Shielded-inductor converters, using forced-PWM where the part allows it (for example the LTC3780 FCB pin).
+  - An output pi-filter: high-current ferrite bead + 10-22 µF ceramic + 100 µF electrolytic, and the same on the input.
+  - Mix-31 clip ferrites or common-mode chokes on the DC leads. A libre.space test saw nearly 20 dB less noise at 144 MHz with ferrites on cables.
+  - Tin-plate or copper-tape shield box, with converters at least 5-10 cm from the LNAs and SMA pigtails.
+      - Feed the LNAs from an LT3045-class LDO behind an LC filter. Never feed them from a switcher directly.
+      - Baseline: SDR input terminated in 50 Ω, device on battery, charger unplugged.
+  - `rtl_power -f 136M:138.5M:2k -g 40 -i 10 -e 2m base.csv`
+  - Repeat for 144-147 MHz and 434-439 MHz.
+  - For 1.69-1.71 GHz and 2.20-2.29 GHz, use soapy_power with the Lime.
+      - Repeat the sweeps with each source switched on in turn:
+  - Charger charging at 2-3 A.
+  - Charger plugged in with inhibit asserted.
+  - LNB feed on.
+  - Display at 100% vs 20%.
+  - 12 V buck at light vs heavy load.
+  
+  Then repeat with the real antennas connected.
+      - Optional, only if PFM spurs from the Q6A's own 5 V boost are found: remove R167 so MODE floats, which the SY7120 datasheet says gives PWM. This costs some light-load efficiency.
+    - **How to verify:** Pass criteria for each condition against the baseline:
+  - Median noise floor rises by 0.5 dB or less.
+  - No new spurs more than 3 dB above the floor within ±1 MHz of 137.1/137.9, 145.8, 435-438, 1698-1707 and 2200-2290 MHz.
+  - With inhibit asserted, the charger condition must match the baseline.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2308290920_INJOINIC-IP2368-BZ-VGLIP_C5203723.pdf
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/1912111437_Silergy-Corp-SY7120RAC_C207631.pdf
+      - https://community.libre.space/t/rf-shileding-and-interference-from-steppers/235
+      - https://www.rtl-sdr.com/tip-effect-of-power-sources-on-the-ham-it-up-upconverter/
+  9.
+    - **Problem:** Bullseye LNB current draw is not published.
+    - **Proposed fix:** Size the feed from comparable universal single LNBs, then measure the actual unit. This applies only if an LNB is kept for the non-dish QO-100 antenna.
+  
+  Comparable datasheet figures at 11.5-14 V (vertical):
+  - ALPS BSTE8: 80 mA typical.
+  - Inverto SNL410: 95 mA.
+  - Kathrein KEL 411: 165 mA typical.
+  - Norsat PLL LNBFs: 120-150 mA maximum.
+  
+  The Bullseye adds a TCXO. Budget 200 mA (2.4 W) and design for 300 mA.
+    - **Steps:**
+      - Feed from the 12 V rail (11.5-14 V selects vertical, which is correct for the QO-100 NB downlink).
+  - Switch: AO3401 P-MOSFET driven by a 2N7002 from a GPIO (gate network 10 kΩ/100 kΩ).
+  - Protection: a 0.3 A-hold polyfuse, or a TPS2595-class eFuse.
+  - Then an RF choke (10-22 µH, self-resonance above 1 GHz, or a ready bias-tee) and a DC-block capacitor toward the SDR.
+      - Measure with a DMM in series:
+  - Inrush and steady current at 11.5, 12.0 and 13.0 V.
+  - Steady current at 20 °C and at about 0 °C.
+      - Turn the LNB off when not doing QO-100; it saves 1-3 W.
+    - **How to verify:** - Steady current under 250 mA, and the polyfuse never trips at a cold start.
+  - The voltage at the LNB F-connector stays between 11.5 and 14 V across the pack's discharge range.
+  - The QO-100 beacon is visible at the expected IF (~739-740 MHz with a 9750 MHz LO).
+    - **Confidence:** medium
+    - **Sources:**
+      - https://www.rtl-sdr.com/?p=44655
+      - https://zajadacz.de/app/documents/Datenblaetter_KAWE_S20110027_TDatenblatt_M_C21542.pdf
+      - https://www.alltrade.co.uk/public/product/5445-sp-idlp-snl410-premu-opnenv031018-pdf.pdf
+      - https://www.norsat.com/products/custom-lnb-100098
+      - https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines/
+  10.
+    - **Problem:** The power draw of a 1000+ nit sunlight-readable HDMI panel has not been measured.
+    - **Proposed fix:** Re-budget the display using vendor figures, then measure it.
+  
+  Vendor figures (ratings, not measurements):
+  - Litemax 7" 1600-nit (12 V; HDMI on one variant): 5.5 or 8.9 W depending on model.
+  - Litemax 10.1" 1920x1200, 1000-nit: 6.5-8.5 W.
+  - FeelWorld LUT7 (7", 1920x1200, 2200 nits, 7-24 V DC input): rated about 16-20 W.
+  
+  Impact: at full brightness the display can be the single largest load, 8-20 W. A typical LimeSDR session may then be 25-35 W instead of 20-23 W, so 72 Wh lasts about 1.8-2.6 h.
+  
+  Double-duty: a field-monitor-style panel with 7-24 V input can run straight from the 4S pack or the 12 V rail, so no 5 V buck is needed.
+    - **Steps:**
+      - Measure the panel's current at 0, 25, 50 and 100% brightness, on white and black screens. On LCDs the draw is set by the backlight, not by the content.
+      - Power:
+  - Panels with 7-24 V input: feed from the 12 V rail through a 3 A fuse.
+  - 5 V panels: a dedicated synchronous 5 V/4 A buck, with the same pi-filter and ferrites as the other converters.
+      - Add automatic brightness with a VEML7700 or BH1750 ambient-light sensor on the I2C6 bus (alongside the INA228). Default to 40-60% in shade.
+      - For long sessions, carry a second 4S1P pack with an XT30 connector. Each pack stays under the 100 Wh airline limit.
+    - **How to verify:** - INA228 power logs per mode replace the estimates.
+  - The runtime prediction on screen matches a real discharge test within 10%.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://litemax.com/product-detail/0708-T-durapixel-industrial-display
+      - https://litemax.com/product-detail/1015-M-Ubipixel-industrial-display
+      - https://www.parkcameras.com/shop/Feelworld-LUT7-7-Inch-Touch-Screen-Field-Monitor_B158653V
+      - https://www.adorama.com/felut7.html
+  11.
+    - **Problem:** Linux support for the I2C fuel gauge on the Q6A (INA228 driver, 40-pin I2C overlays) is unverified.
+    - **Proposed fix:** Verified from the Radxa apt repository (qcs6490-noble, Release dated 24 Sep 2026):
+  - Kernel linux-image-7.0.11-7-qcom ships drivers/hwmon/ina238.ko, which supports the INA228 since Linux 6.17. It also ships ina2xx.ko and ina3221.ko.
+  - radxa-overlays 0.2.31 includes qcs6490-radxa-dragon-q6a-i2c6.dtso (pin 3 SDA, pin 5 SCL, 100 kHz) and an i2c6-ssd1306 example. That example is the template for an INA228 overlay.
+  
+  A catch: the INA228's ENERGY register is unsigned, so it adds charge and discharge together. CHARGE (0x0A, 40-bit two's complement, in coulombs) is the right register for state of charge, but the hwmon driver exposes only energy1_input. So compute charge in userspace.
+  
+  The driver's default shunt is 2.5 mΩ, so the Adafruit board's 15 mΩ shunt must be set in device tree.
+    - **Steps:**
+      - Wire the INA228 to I2C6: pins 1 (3.3 V), 3 (SDA), 5 (SCL) and 9 (GND). Put the shunt in the battery lead, as in the IP2368 load-on-battery fix above.
+      - Create the overlay `&i2c6 { qcom,enable-gsi-dma; status = "okay"; clock-frequency = <100000>; #address-cells = <1>; #size-cells = <0>; power-monitor@40 { compatible = "ti,ina228"; reg = <0x40>; shunt-resistor = <15000>; }; }; &spi6 { status = "disabled"; }; &uart6 { status = "disabled"; };`, compile it with `dtc -@`, install it through rsetup's overlay manager the same way radxa-overlays are, and reboot.
+      - Check:
+  - `i2cdetect -l` to find the bus, then `i2cdetect -y <bus>` shows 0x40.
+  - `sudo modprobe ina238`.
+  - `cat /sys/class/hwmon/hwmon*/name` shows ina228; read in1_input, curr1_input and power1_input.
+      - Gauge daemon (Python, 1 Hz):
+  - Integrate curr1_input to get state of charge.
+  - Optionally read the coulomb counter directly: `i2ctransfer -f -y <bus> w1@0x40 0x0a r5@0x40`.
+  - Reset to 100% at 16.35 V with |I| < 0.1 A, and to 0% at 13.2 V under load.
+  - Log W per mode.
+  - Drive CHG_INHIBIT and the low-battery poweroff.
+      - Budget alternative: an INA226 module ($2-4; driver ina2xx).
+  - Replace its R100 shunt (only ±0.82 A range) with an R010 2512 resistor (±8.2 A).
+  - Then `echo ina226 0x40 | sudo tee /sys/bus/i2c/devices/i2c-<N>/new_device` and `echo 10000 | sudo tee .../shunt_resistor`.
+      - Kernel note: 7.0.11 has reported HDMI and VPU regressions on the Q6A. If you stay on 6.18.2-x (also newer than 6.17), check with `modinfo ina238` that the module is present.
+    - **How to verify:** - At 1.00 A from a lab load, the INA reading is within 1% of a reference DMM.
+  - Over a full discharge, the counted capacity is within 3-5% of the cells' rating.
+  - The value survives a reboot, and the overlay is listed as active.
+    - **Confidence:** high
+    - **Sources:**
+      - https://radxa-repo.github.io/qcs6490-noble/dists/qcs6490-noble/main/Contents-arm64.gz
+      - https://raw.githubusercontent.com/radxa-pkg/radxa-overlays/main/arch/arm64/boot/dts/qcom/overlays/qcs6490-radxa-dragon-q6a-i2c6.dtso
+      - https://docs.kernel.org/hwmon/ina238.html
+      - https://raw.githubusercontent.com/torvalds/linux/master/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
+      - https://www.ti.com/lit/ds/symlink/ina228.pdf
+      - https://www.adafruit.com/product/5832
+      - https://forum.radxa.com/t/31304
+  12.
+    - **Problem:** Charging from USB-C PD solar panels or other fluctuating sources through the IP23xx (no MPPT) is undocumented: renegotiation and dropouts under clouds.
+    - **Proposed fix:** What the IP2368 does have (datasheet):
+  - An input-voltage control loop that cuts charge current to what the source can actually deliver.
+  - It caps input power at the PD-advertised power.
+  - It does not do MPPT.
+  
+  Options, in order of preference:
+  1. Buffer the solar energy: panel → a power station or power bank with MPPT → USB-C PD → device. This is the most robust option and needs no hardware change.
+  2. A direct PD panel, with a 'SOLAR' setting that limits the IP2368 to about 60-70% of the panel's rating, so the panel stays near its maximum-power point instead of collapsing and renegotiating.
+  3. For real MPPT and a true power path, replace the IP2368 with a BQ25798 (1-4S buck-boost, 3.6-24 V input, VOC-sampling MPPT, NVDC path). The open-hardware Marek128b V2.1 board (BSD-2) is DIY assembly.
+    - **Steps:**
+      - Build the 'SOLAR' setting.
+  - Use the IP2368's input-power mode (leave ISET_MODE floating). In this mode P = 4 W per kΩ of RISET, per the datasheet example: 15 kΩ = 60 W.
+  - An SPDT switch selects RISET 5.1 kΩ (about 20 W) for SOLAR or 10 kΩ (40 W) for MAINS.
+  - Only change it with USB-C unplugged, because ISET may be read only at start-up.
+      - Mark the 'SOLAR' position on the case. Note that in input-power mode the battery current varies with pack voltage.
+      - Field test, 2 h with passing clouds:
+  - Log INA228 net battery current at 1 Hz.
+  - Count on/off transitions (renegotiation cycles).
+  - Compare the Wh harvested with the panel → power-bank → device path.
+    - **How to verify:** In SOLAR mode, under partial cloud, there are fewer than 1 charge dropout per 10 minutes and the harvested energy is within 20% of the buffered path. If not, use the buffered path or the BQ25798.
+    - **Confidence:** low
+    - **Sources:**
+      - https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2308290920_INJOINIC-IP2368-BZ-VGLIP_C5203723.pdf
+      - https://mysku.club/blog/aliexpress/100034.html
+      - https://www.ti.com/product/BQ25798
+      - https://github.com/Marek128b/BQ25798-mppt-solar-charger
+- **Residual risks:**
+  - The real Q6A power draw (idle, NPU, Q6A plus Lime) is still unmeasured. All runtime numbers are estimates until the INA228 logs exist.
+  - The schematic analysis applies to v1.21 boards. Other PCB revisions may differ, so check the revision silkscreen.
+  - The UEFI power-key policy (the ≥400 ms requirement) may change with firmware updates. The external 1.5 s press covers both cases.
+  - The NTC-pull charge-inhibit trick is not documented by Injoinic. Bench-verify that the converter really stops; the reverse PD output and the board LEDs also show a fault while it is asserted.
+  - How the IP2368's 48 h charge timer interacts with inhibit toggles is unknown. Long blackout sessions may need a cable replug every 2 days.
+  - Most cheap BMS boards rarely balance at 4.10-4.15 V/cell, so monthly 4.20 V balance charges or an active balancer are needed.
+  - AliExpress IP2368, BMS and cell prices and listings were not verified. Counterfeit or relabelled 21700 cells are common, so test capacity and internal resistance.
+  - The Pololu D36V50F12 has an ultrasonic power-save mode at light load. Its variable switching frequency could produce wandering spurs; check this in the A/B noise test.
+  - A 2000-nit field-monitor display rated 16-20 W could halve runtime. Brightness control is the biggest runtime lever.
+  - The J21 header's current rating is not published. The 3S-direct option pushes about 2.8 A at 25 W.
+  - Radxa kernel 7.0.11 has reported HDMI and VPU regressions on the Q6A. The overlay must be re-checked after each kernel or radxa-overlays update.
+  - The LimeSDR Micro M.2 price and schedule may still change (latest found: $249, new orders shipping Dec 15, 2026), which delays real power measurements.
+  - Optional board mods (C325 capacitor, removing R167) are fine-pitch rework and may void the warranty.
+
+## Адверсаріальна перевірка (`verify`)
+
 _Агент цього етапу ще працює (run `wf_f924b2ab-5ad`)._
 
