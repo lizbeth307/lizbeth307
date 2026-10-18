@@ -18426,6 +18426,114 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   FX rates (EUR/USD about 1.17, PLN) are assumptions, not verified for Oct 2026. The WebSearch budget ran out after the first query, so other EU Pololu resellers (Kamami 403, RobotShop EU 403, Eckstein 404, Mouser 503) could not be checked; this search is incomplete and a cheaper EU reseller may exist.
 
+## searchA:pololu_2813_hp_pushbutton_power_switch (run `wf_a268b76e-da0`)
+
+- **Part:** Main power switch: Pololu #2813, the Big Pushbutton Power Switch with Reverse Voltage Protection, HP. Group Power, tier core, qty 2 (1 spare). It sits on node N to SW after the INA228 shunt. The button is wired on-only (A to GND). The Pico GP13 OFF pulse and the TLV3012 UV supervisor holding OFF are diode-ORed through BAT54s.
+- **Current price usd:** 17.90 for 2 (8.95 each, 1-4 pcs; 8.23 each at 5+), checked on pololu.com 18 Oct 2026. Status is 'Rationed (Active and Preferred)', backorders allowed. This price excludes VAT and shipping. For an EU delivery the buyer pays US shipping plus all import VAT, duties and brokerage fees (pololu.com/ordering).
+- **Critical specs:**
+  - Voltage range for a 4S pack (13.2-16.4 V in use, 16.8 V during balancing) with SMBJ17A TVS on N and SW: recommended operating range of at least 4.5-32 V (the stack's design limit is 32 V) and an absolute maximum of at least 40 V
+  - Continuous current of at least 6.0 A at 55 C MOSFET temperature, 16 A at 150 C, and 90 A maximum. Pololu's footnote says these are at 12 V, 22 C ambient, still air, and the re-audit says this is not an ambient rating. Stack load: 3.4 A without the Lime, 4.6 A at the peak of the default with-Lime build, behind a 7.5 A fuse
+  - MOSFET combined on-resistance of at most 8.6 mOhm at 10 V (13 mOhm at 4.5 V). At the 4.6 A peak that is about 40 mV drop and about 0.18 W
+  - Off-state current of at most 0.2 uA. The switch sits on the always-on node N, which has a standby budget of about 170-185 days
+  - On-state supply current of about 120 uA/V or less (about 2 mA at 16.8 V; most of it is the LED)
+  - Built-in reverse-voltage protection (the J21 power path relies on the #2813 for it)
+  - Latching soft-power logic that matches the wiring: A to GND gives on-only; an OFF input that a >1 V high pulse or level turns off (3.3 V Pico GP13 and push-pull TLV3012 through BAT54); a held OFF must keep the switch off; ON/CTRL inputs; built-in button debounce
+  - Starts off when power is first applied (Pololu says it can start on only near the top of its range)
+  - Size 0.8 x 1.0 x 0.16 in, 2.7 g, solder pads or 5 mm terminal blocks rated 16 A, fits the power-board layout
+  - Genuine Pololu part from Pololu or a distributor listed on pololu.com (no clones), RoHS 3. Supply risk: status is 'Rationed'
+- **Candidates:**
+  1.
+    - **Name:** Pololu #2813 HP, the same part, from Botland (an official Pololu distributor listed on pololu.com; Botland index PLL-05117, EAN 5903351244862)
+    - **Kind:** current_part
+    - **Price usd:** botland.de: EUR 7.99 each including 19% DE VAT (EUR 6.72 net), about $8.99 gross / $7.56 net at the ECB rate of 1.1253 USD/EUR (16 Oct 2026). botland.com.pl: PLN 34.90 including 23% VAT (PLN 28.37 net), about $8.99 / $7.31. For 2: EUR 15.98 gross, about $17.98 gross / $15.12 net. Both in stock. Shipping: botland.de free from EUR 100; GLS EU from EUR 8.07 (botland.store)
+    - **Spec comparison:** Same SKU, so every spec is the same: 4.5-32 V recommended, 40 V absolute maximum, 6.0 A at 55 C, 16 A at 150 C, 90 A maximum, 8.6 mOhm at 10 V, less than 0.2 uA off, reverse-voltage protection, A/B/ON/OFF/CTRL inputs, 0.8 x 1.0 in.
+    - **Worse in:** Nothing in specs. Net price is $1.39 less per unit ($2.78 less for 2). Including VAT, EUR 15.98 for 2 costs less than Pololu-direct $17.90 plus EU import VAT of about 19-27% plus US shipping and brokerage. Before paying, check that the delivered parts show the Pololu HP board markings.
+    - **Compatibility:** Identical part, so it is a drop-in. Best bought together with the rest of the Pololu order (D36V50F12 x2, D36V28F5) to pass the EUR 100 free-shipping threshold. I did not check whether Botland stocks those items.
+    - **Risks:** Prices are as of 18 Oct 2026 and may be promotional; the page mentions a per-order quantity limit without giving it. botland.store sells only to VAT-registered businesses; consumers should use botland.de or botland.com.pl. Botland's English and German titles are machine-translated ('Large HP MOSFET Switch ... back current protection'), but the listing is 'Pololu 2813'.
+    - **Seller url:** https://botland.de/suche?s=pololu+2813
+    - **Sources:**
+      - https://www.pololu.com/product/2813/distributors
+      - https://botland.store/digital-switches/5117-large-hp-mosfet-switch-45-40v16a-with-back-current-protection-pololu-2813-5903351244862.html
+      - https://botland.com.pl/szukaj?s=pololu+2813
+      - https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml
+  2.
+    - **Name:** Pololu #2812, Big Pushbutton Power Switch with Reverse Voltage Protection, MP
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 5.95 each (5.47 at 5+), 11.90 for 2, from pololu.com, status Rationed
+    - **Spec comparison:** Same: 4.5-32 V recommended, 40 V absolute maximum, same board size and pinout (A/B/ON/OFF/CTRL), reverse-voltage protection, about 120 uA/V on-state. Different: on-resistance 30 mOhm at 10 V vs 8.6 (40 vs 13 at 4.5 V); 4.0 A vs 6.0 A at 55 C; 8 A vs 16 A at 150 C; 40 A vs 90 A maximum. Off-state current is better: less than 0.01 uA vs less than 0.2 uA.
+    - **Worse in:** Current capacity and on-resistance. The 4.6 A peak of the with-Lime build is above its 4.0 A at 55 C figure. Drop at 4.6 A is about 138 mV vs 40 mV, and dissipation about 0.63 W vs 0.18 W. REJECTED (worse).
+    - **Compatibility:** Drop-in for pinout and controls, but not for the stack's current needs.
+    - **Risks:** Would run hot in a warm case at Lime peaks.
+    - **Seller url:** https://www.pololu.com/product/2812
+    - **Sources:**
+      - https://www.pololu.com/product/2812
+      - https://www.pololu.com/product/2813
+  3.
+    - **Name:** Pololu #2815, Big MOSFET Slide Switch with Reverse Voltage Protection, HP
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 8.49 each (7.81 at 5+), 16.98 for 2, from pololu.com, status Rationed
+    - **Spec comparison:** Same MOSFET figures: 8.6 mOhm at 10 V, 6.0 A at 55 C, 16 A at 150 C, 90 A maximum, 4.5-32 V recommended, 40 V absolute maximum, reverse-voltage protection, 0.8 x 1.0 in. On-state current is better: about 65 uA/V vs 120. Off-state current is not published.
+    - **Worse in:** It has no latch and no OFF input. Its state follows only a physical switch to GND or the ON pin level (above about 1 V). That means it cannot do on-only pushbutton start, the Pico OFF pulse after poweroff, or the TLV3012 holding OFF under UV; the Pico runs from the switched rail, so it cannot hold ON before it has power. Off-state current is unspecified. REJECTED (function incompatible). It saves only $0.46 each.
+    - **Compatibility:** Not compatible with the D1/D3 shutdown and supervisor scheme without an extra latch circuit, which would turn it into a DIY design.
+    - **Risks:** Not applicable: rejected.
+    - **Seller url:** https://www.pololu.com/product/2815
+    - **Sources:**
+      - https://www.pololu.com/product/2815
+  4.
+    - **Name:** Pololu #2809, Mini Pushbutton Power Switch with Reverse Voltage Protection, SV
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 4.95 each (4.55 at 5+), from pololu.com
+    - **Spec comparison:** 4.5-32 V recommended and 40 V absolute maximum, both the same. 2.0 A vs 6.0 A at 55 C; 4.3 A vs 16 A at 150 C; 7.2 A vs 90 A maximum; 90 mOhm at 4.5 V / 50 mOhm at 10 V vs 13 / 8.6. Off-state below 0.01 uA (better). Same controls, smaller board (0.6 x 0.7 in).
+    - **Worse in:** Current and on-resistance. It is below even the 3.4 A load without the Lime. REJECTED.
+    - **Compatibility:** Same control logic, different footprint.
+    - **Risks:** Would overheat.
+    - **Seller url:** https://www.pololu.com/product/2809
+    - **Sources:**
+      - https://www.pololu.com/product/2809
+      - https://www.pololu.com/product/2813
+  5.
+    - **Name:** Pololu #2808, Mini Pushbutton Power Switch with Reverse Voltage Protection, LV
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 4.95 each (4.55 at 5+), from pololu.com
+    - **Spec comparison:** Recommended 2.2-16 V and 20 V absolute maximum vs 4.5-32 V and 40 V. 3.0 A vs 6.0 A at 55 C, 12 A vs 90 A maximum. On-state current about 210 uA/V (worse). Off-state about 0.01 uA (better).
+    - **Worse in:** Voltage: a 4S pack at 16.4-16.8 V is above its 16 V recommended maximum, and the 20 V absolute maximum leaves no TVS margin. Current is also lower. REJECTED.
+    - **Compatibility:** Not compatible with a 4S pack.
+    - **Risks:** Overvoltage.
+    - **Seller url:** https://www.pololu.com/product/2808
+    - **Sources:**
+      - https://www.pololu.com/product/2808
+      - https://www.pololu.com/product/2813
+  6.
+    - **Name:** Adafruit #1400, Push-button Power Switch Breakout
+    - **Kind:** other_brand
+    - **Price usd:** 5.95 each (1-9), in stock at adafruit.com
+    - **Spec comparison:** 3-14 V DC vs 4.5-40 V. 3 A with a DMG3415U P-FET ('gets a little toasty' at 3 A) vs 6 A at 55 C / 16 A. Off-state 0.5 uA vs less than 0.2 uA. KILL pin (1 V or more turns it off and holds it off) is comparable to OFF. Push-on/push-off toggle only; no on-only mode is documented. No reverse-polarity protection is specified, and the body diode passes current back from the load.
+    - **Worse in:** Voltage (a 4S pack exceeds 14 V), current, off-state current, reverse protection. REJECTED.
+    - **Compatibility:** Not compatible with a 4S pack.
+    - **Risks:** Overvoltage and overheating.
+    - **Seller url:** https://www.adafruit.com/product/1400
+    - **Sources:**
+      - https://www.adafruit.com/product/1400
+  7.
+    - **Name:** SparkFun Soft Power Switch, JST 2mm (PRT-26993; the Mk1 SPX-17870 is retired)
+    - **Kind:** other_brand
+    - **Price usd:** 7.32 each (PRT-26993, in stock). The Mk1 was 3.95 but is retired and out of stock
+    - **Spec comparison:** PRT-26993: 1.8-5.5 V, 2 A continuous / 4 A peak, 2 A PTC, less than 1 uA off, PUSH/OFF/BTN pins. Mk1: up to 12 V, 4 A, under 50 nA. Neither publishes reverse protection or on-resistance.
+    - **Worse in:** Voltage (5.5 V or 12 V maximum vs a 16.8 V pack) and current. REJECTED.
+    - **Compatibility:** Not compatible with a 4S pack.
+    - **Risks:** Not applicable: rejected.
+    - **Seller url:** https://www.sparkfun.com/products/26993
+    - **Sources:**
+      - https://www.sparkfun.com/products/26993
+      - https://www.sparkfun.com/products/17870
+- **Notes:** VERDICT: keep the Pololu #2813 HP. No cheaper part that is a different design is not-worse. The one real saving is buying the same genuine #2813 from Botland, an official Pololu distributor listed on Pololu's own distributor page. Botland charges EUR 7.99 each including 19% VAT (EUR 6.72 net), about $8.99 gross / $7.56 net at the ECB rate of 1.1253 (16 Oct 2026), and it is in stock. For 2 that is EUR 15.98, about $17.98 gross / $15.12 net. Pololu direct is $17.90 before VAT and shipping, and EU import VAT, duties and brokerage are the buyer's cost (pololu.com/ordering). The saving only holds if the Botland order passes the EUR 100 free-shipping threshold on botland.de or is bundled with other parts; otherwise GLS EU from EUR 8.07 erases it. The 5+ price break ($8.23) does not help for a quantity of 2.
+  
+  Other EU distributors checked: Robot Italy EUR 13.10 (on order), not cheaper. TME POLOLU-2813 shows no visible price; its page data gives a range of 25.6-29.0 USD with an unclear unit, and it says 0 in stock while the page data says 12, so this is unverified. RobotShop EU, Kamami and Electrokit could not be read (Cloudflare block or 404). DigiKey Marketplace ships from Pololu in the USA; I did not fetch its price.
+  
+  Spec reminder from the re-audit: 6 A at 55 C is a MOSFET temperature at 22 C ambient in still air, not an enclosure rating. At the 4.6 A peak the HP dissipates only about 0.18 W, which is why the MP (4.0 A, 30 mOhm) is rejected.
+  
+  Limits of this search: the shared WebSearch budget was already used up before my first query, so I made no successful web searches. All candidates come from primary product pages and distributor listings fetched directly. Not checked: Analog Devices LTC2955 or Maxim MAX16150 evaluation boards (analog.com returned 503), Pi-specific 5 V boards (Mausberry, Pimoroni OnOff SHIM; outside the voltage range by design), and generic AliExpress bistable MOSFET modules, which belong to the generic/clone and DIY angles. None of the candidates affects the receive-only or conducted-only rules. The bench item 'does a held OFF from the supervisor block the button on pin A' still applies to whichever #2813 is bought.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.

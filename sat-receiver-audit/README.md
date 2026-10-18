@@ -29,6 +29,7 @@
 | [Npu training](components/npu_training.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Power](components/power.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_f924b2ab-5ad` |
 | [Rf frontend](components/rf_frontend.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_30889068-251` |
+| [Rtl sdr blog v4l r828s](components/rtl_sdr_blog_v4l_r828s.md) | · research · forums · fixes ✅ verify | `—` |
 | [Software](components/software.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_e49d4f53-8d4` |
 | [Software stack](components/software_stack.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Storage](components/storage.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_3e735695-e00` |
