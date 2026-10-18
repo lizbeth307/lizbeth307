@@ -35963,6 +35963,174 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Unverified: Elektor's ex-VAT basis and shipping fee; GOTRONIK EU shipping; Zeenko AliExpress price; RF Explorer and Siglent figures, which come from search snippets of retailer pages.
 
+## searchA:noise_source_mini_circuits_zfl_500ln_or (run `wf_e5582d4c-0a2`)
+
+- **Part:** Noise source: Mini-Circuits ZFL-500LN+ (or ZFL-500+) in a DIY N8DMT-type source + box (bench, Lab instruments, qty 1). Angle A: cheaper SKUs from the same vendor, other official sellers and distributors, other established brands.
+- **Current price usd:** 116.81 for the ZFL-500LN+ (Mini-Circuits direct, qty 1-4, more than 100 in stock, no EOL; verified 18 Oct 2026). Add the box at $5-10 (unverified) for a line total of $121.81-126.81. Prices are ex VAT with shipping extra. The stack line of $104.55-126.81 is the lower ZFL-500+ option ($99.55) and this one, each with the box.
+- **Critical specs:**
+  - Frequency coverage of usable ENR. Minimum 28 MHz-2.4 GHz (the stack's ENR table), with the working points 137, 435, 1090, 1420, 1541-1545, 1575, 1691-1704 and 2200-2290 MHz. The current part also reaches HF (spec from 0.1 MHz), which serves HF+/Boni-Whip chain checks and P11 scalar sweeps.
+  - ENR level after the permanent 10 dB output pad. Current pick, model: about 17-20 dB from 28 to 500 MHz. Datasheet G+NF gives 17.2-17.9 dB; Mini-Circuits' own 12 V S2P gain gives 19.1-19.8 dB; N8DMT measured 20.5-21.0 dB. Mini-Circuits S2P at 12 V shows 24.0-24.6 dB gain at 1.09 GHz, 20.3-20.7 dB at 1.42 GHz, 16.5-16.9 dB at 1.69-1.70 GHz and 17.3-18.1 dB at 2.2-2.4 GHz. N8DMT measured 16.1 dB at 1296 MHz and 8.4 dB at 2400 MHz. Target: at least about 15 dB to 1.3 GHz and at least about 10 dB at 1.4-2.4 GHz (Y-factor on SDRs with 4-8 dB NF).
+  - ENR smoothness and flatness: no ripple or resonance inside each band, so the stored per-band ENR table stays valid.
+  - ENR stability against supply voltage. The current LN+ moves about 1.0 dB/V (S2P unit #1: 26.65 dB at 12 V, 29.70 dB at 15 V) or 1.17 dB/V (datasheet). Stability against temperature and on/off repeatability also matter.
+  - Source match and hot/cold match change at the pad output. The amplifier's own S22 matters. The current LN+ has S22 of -28 to -46 dB below 150 MHz, -16 dB at 500 MHz, -7 dB at 1 GHz, and -3 to -5 dB above 1.3 GHz, so the 10 dB pad is mandatory.
+  - Stability and spectral purity: unconditionally stable with a 50 Ohm input termination and the output pad; no oscillation, no spurs.
+  - Power: it must run from the regulated AUX12 (12.00 V +/-0.05 V), with absolute max at least 13 V (the current part allows 17 V). Current must stay within the 0.15 A budget; the current LN+ draws 37 mA at 12 V (S2P header). It must switch through the NOISE EN P-FET and settle quickly enough for an automated Y-factor run.
+  - Build: SMA female, shielded rugged metal case (conducted-only rule, no radiation), -20 to +71 C. It must fit the bench Pelican kit.
+  - Genuine part from Mini-Circuits or an authorised distributor. Lawful to import into the EU.
+  - Rule check: total output stays far below the 40 dBm-or-less rule for receive chains. Model: about -62 dBm total over 2.4 GHz at about 18 dB ENR. Conducted-only and BENCH-only.
+- **Candidates:**
+  1.
+    - **Name:** Mini-Circuits ZFL-500LN+ (current part, baseline)
+    - **Kind:** current_part
+    - **Price usd:** 116.81 (Mini-Circuits direct, qty 1-4, more than 100 in stock, verified), plus a $5-10 box. EU: ex VAT, with shipping and import VAT extra. The shipment can be combined with the stack's other Mini-Circuits items (BLK-89-S+, ANNE-50+, 086-6SM+, VAT-30W2+).
+    - **Spec comparison:** Datasheet: 0.1-500 MHz; NF 2.9 dB typ; gain 24 dB min; flatness +/-0.5 dB; 15 V nominal, 60 mA max; 17 V max; VSWR 1.5/1.6.
+  12 V typical table: gain 24.30-24.88 dB.
+  Mini-Circuits S2P, 2 units at 12 V, 0.3 MHz-12 GHz:
+  - gain 26.2-26.8 dB from 28 to 500 MHz;
+  - 24.0-24.6 dB at 1.09 GHz, 20.3-20.7 dB at 1.42 GHz, 18.6-18.8 dB at 1.54 GHz, 16.5-16.9 dB at 1.69 GHz, 17.4-18.1 dB at 2.2-2.4 GHz, 14.8-15.5 dB at 3 GHz;
+  - S22 -3 to -5 dB above 1.3 GHz; S12 about -45 dB;
+  - Idd 37 mA at 12 V.
+  Gain sensitivity: 1.0-1.2 dB/V.
+    - **Worse in:** Baseline. Poor output match out of band (S22 -3 to -5 dB above 1.3 GHz), so the 10 dB pad is mandatory. High supply sensitivity (1.0-1.2 dB/V). Padded ENR falls to roughly 10 dB at 1.69 GHz (model) and 8.4 dB at 2.4 GHz (N8DMT, measured).
+    - **Compatibility:** As planned: AUX12 12.00 V, NOISE EN P-FET, SMA, case Y460.
+    - **Risks:** None new. Your own ENR table is mandatory.
+    - **Seller url:** https://www.minicircuits.com/WebStore/dashboard.html?model=ZFL-500LN%2B
+    - **Sources:**
+      - https://www.minicircuits.com/pdfs/ZFL-500LN+.pdf
+      - https://www.minicircuits.com/pages/s-params/ZFL-500LN+_VIEW.pdf
+      - https://www.minicircuits.com/pages/s-params/ZFL-500LN+_S2P.zip
+      - https://qsl.net/n8dmt/test-page/diy-test-equipment/low-cost-diy-noise-source/index.html
+  2.
+    - **Name:** Mini-Circuits ZFL-500+ (SMA), same case Y460, same vendor
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 99.55 (Mini-Circuits direct, qty 1-4, more than 100 in stock, no EOL, PCN16-075 only; verified 18 Oct 2026). Plus a $5-10 box = $104.55-109.55. That is $17.26 less than the LN+.
+  EU distributor: DigiKey AT 3157-ZFL-500+-ND, EUR 107.80 ex VAT / EUR 129.36 incl. 20% VAT ($121.18 / $145.41). It has 0 in stock, 10 expected 24 Nov 2026, 30-week lead time, so it is dearer than direct.
+  Mini-Circuits shipping to the EU is unverified; the only data point is a 2014 anecdote of about $102 for UPS shipping and handling. Import VAT is paid at your country's rate. Combining this order with the stack's other Mini-Circuits items spreads the shipping.
+    - **Spec comparison:** Range: 0.05-500 MHz vs 0.1-500 MHz (equal or better).
+  Gain at 12 V: 24.12-24.28 dB vs 24.30-24.88 dB (datasheet tables). The LN+ S2P shows 26.2-26.8 dB, so in-band gain is about 0.2-2.5 dB lower.
+  NF: 4.04-4.31 dB vs 2.9-3.0 dB. For a noise source, higher NF adds output noise.
+  Modelled unpadded ENR (G+NF) at 12 V, 0.05-500 MHz: 28.2-28.5 dB vs 27.2-27.9 dB (LN+ datasheet) or 29.1-29.8 dB (LN+ S2P). That is equal within about +/-1 dB; padded about 18.3 dB vs 17.2-19.8 dB.
+  Flatness at 12 V: +/-0.08 dB vs +/-0.29 dB (better).
+  Supply sensitivity: 0.29 dB/V (24.19 to 25.06 dB from 12 to 15 V) vs 1.0-1.2 dB/V, about 4x better for ENR stability.
+  Output VSWR: 1.06-1.10 vs 1.08-1.45 in band. S2P S22 is -17.8 dB at 500 MHz, -14.7 dB at 740 MHz and -12.4 dB at 1 GHz, vs LN+ -16.3, -10.7 and -7.3 dB (better).
+  Out of band: S2P (BNC unit) gain is 23.6 dB at 740 MHz, 23.2 dB at 902 MHz and 22.9-23.0 dB at 1 GHz, vs LN+ 25.5-25.8, 24.9-25.3 and 24.2-24.6 dB. It is lower in absolute terms but has a gentler slope (-1.1 vs -2.1 dB from 500 MHz to 1 GHz).
+  Max supply 17 V on both; operating temperature -20 to +71 C on both; same case, connectors and build.
+    - **Worse in:** (1) Above 1 GHz there are no published data: the ZFL-500+ S2P stops at 1 GHz, while the LN+ S2P runs to 12 GHz. Gain and ENR in the stack's key Y-factor bands, 1.42-1.70 GHz and 2.2-2.4 GHz, are UNVERIFIED and could be lower than the LN+.
+  (2) Supply current is 80 mA max at 15 V vs 60 mA. The 12 V figure is unpublished; LN+ draws 37 mA at 12 V. Both stay within the 0.15 A budget.
+  (3) Reverse isolation S12 is about -38 dB vs -45 dB. This does not matter with a terminated input.
+  (4) The NF of 4.2 dB would be worse only if the unit were reused as a receive LNA, which the stack does not do; the LNA V2 spare covers that.
+  (5) The published ZFL-500+ S2P was measured on the BNC version.
+    - **Compatibility:** Drop-in: same Y460 case and SMA female connectors, same 12 V AUX12 feed and NOISE EN P-FET switching, same box, same pads (50 Ohm or 5 dB pad on the input, permanent 10 dB on the output). Within the 0.15 A PTC/TPS budget.
+    - **Risks:** This is PLAUSIBLE, not proven not-worse. Gate on arrival, before it replaces the LN+:
+  (a) LiteVNA S21 at 12.00 V from 28 MHz to 2.4 GHz, with total pad of at least gain + 3 dB per the stack's LNA rule. Accept only if S21 is no worse than LN+ S2P minus 1 dB: at least 19.3 dB at 1.42 GHz, at least 15.5 dB at 1.69 GHz, and at least 16.3 dB at 2.2-2.4 GHz.
+  (b) tinySA ENR with the 10 dB pad: at least 10 dB at 1.69 GHz and at least 8.4 dB at 2.4 GHz.
+  (c) Measure the current at 12 V.
+  If the gate fails, keep or return to the LN+. The Mini-Circuits return policy was not checked.
+  Buy only from Mini-Circuits or DigiKey/Mouser; no marketplace sellers.
+    - **Seller url:** https://www.minicircuits.com/WebStore/dashboard.html?model=ZFL-500%2B
+    - **Sources:**
+      - https://www.minicircuits.com/pdfs/ZFL-500+.pdf
+      - https://www.minicircuits.com/pages/s-params/ZFL-500+_VIEW.pdf
+      - https://www.minicircuits.com/pages/s-params/ZFL-500+_S2P.zip
+      - https://www.digikey.at/en/products/detail/mini-circuits/ZFL-500/21727830
+      - https://www.febo.com/pipermail/time-nuts/2014-December/089320.html
+  3.
+    - **Name:** Mini-Circuits ZX60-V63+ (0.05-6 GHz gain block, SMA)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 92.90 (Mini-Circuits direct, qty 1-4; only 11 in stock, more by 4 Nov 2026; verified). That is $6.65 under the ZFL-500+ and $23.91 under the LN+. It needs a 12-to-5 V regulator in the box (about $1-3, not priced).
+    - **Spec comparison:** Datasheet: 50 MHz-6 GHz.
+  Gain: 21.9 dB at 50 MHz, 21.1 dB at 0.8 GHz, 20.3 dB at 2 GHz, 19.2 dB at 3 GHz.
+  NF: 3.6-3.8 dB.
+  Output RL: 15.7, 15.5 and 13.6 dB at 0.05, 0.8 and 2 GHz.
+  Supply: 5.0 V +/-0.2 V, 69 mA typ (78 max), 5.7 V absolute max.
+  Modelled padded ENR: about 15.5 dB at 50 MHz, 14.8 dB at 0.8 GHz, 14.0 dB at 2 GHz, 13.0 dB at 3 GHz. That is better than the LN+ at 1.6-3 GHz (LN+ about 10-11 dB at 1.69 GHz by model, 8.4 dB measured at 2.4 GHz) and much better output match out of band.
+    - **Worse in:** NOT not-worse:
+  (1) No coverage below 50 MHz, so the 28 MHz ENR point and all HF use are lost.
+  (2) Padded ENR from 50 to 1000 MHz is about 15 dB vs 17-20 dB for the current part, roughly 2-5 dB lower. Matching it would need a smaller pad, which costs hot/cold match isolation.
+  (3) Supply sensitivity is unpublished (rated at 5.0 V only).
+  (4) It needs a separate 5 V rail or LDO instead of plain AUX12.
+  (5) Stock is thin.
+    - **Compatibility:** SMA, small GC957 case. It needs a 5 V regulator off AUX12 inside the box; NOISE EN switching still works ahead of the regulator. The ENR table and procedures would change at the low end.
+    - **Risks:** Rejected under the not-worse rule. It is a deliberate trade the user would have to accept explicitly: better at L/S band, worse below 1 GHz and at HF.
+    - **Seller url:** https://www.minicircuits.com/WebStore/dashboard.html?model=ZX60-V63%2B
+    - **Sources:**
+      - https://www.minicircuits.com/pdfs/ZX60-V63+.pdf
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=ZX60-V63%2B
+  4.
+    - **Name:** Mini-Circuits ZFL-500 (non-plus), new old stock, RF Parts Co. (US)
+    - **Kind:** used
+    - **Price usd:** 89.91 (RF Parts, 'In Stock'; verified). The page says 'No longer available for export', so an EU buyer needs a US forwarder at extra cost (unverified).
+    - **Spec comparison:** Listing: 0.05-500 MHz, NF 4.2 dB typ, shielded rugged case. Connector type is not listed. The older non-plus ZFL-500 datasheet gives about 20 dB nominal gain and 15 V / 80 mA, so the variant and gain revision are uncertain.
+    - **Worse in:** Unknown connector (BNC or SMA) and revision. It may be the older 20 dB-nominal version, about 4 dB less gain, so lower ENR. Non-RoHS pre-'+' part. No export, no warranty data, no S2P for this lot.
+    - **Compatibility:** Same case family if it is the SMA version. Otherwise the same as ZFL-500+.
+    - **Risks:** Export block, unverifiable revision, and forwarder cost could erase the $9.64 saving vs ZFL-500+. Not recommended from the EU.
+    - **Seller url:** https://www.rfparts.com/zfl-500.html
+    - **Sources:**
+      - https://www.rfparts.com/zfl-500.html
+      - https://hallaweb.jlab.org/tech/Detectors/public_html/manuals/data_sheets-manuals/M-N/M/mini-circuits/ZFL-500.pdf
+  5.
+    - **Name:** RF Bay (now an Ironwave Technologies company) LNA-2500, 0.1-2500 MHz, SMA
+    - **Kind:** other_brand
+    - **Price usd:** UNVERIFIED: quote only. No price published on everythingRF; rfbayinc.com redirects to ironwavetech.com, which returned 403. EU availability unknown.
+    - **Spec comparison:** Published listing, seen only in a search snippet of everythingRF; the page itself returned 403 and the datasheet was not read: 0.1 MHz-2.5 GHz, gain 25 dB, flatness +/-1.5 dB, NF 2.4 dB, P1dB +1 dBm, 12 V / 17 mA, SMA. If true, the modelled padded ENR is about 17 dB flat from 0.1 to 2500 MHz. That would equal the current part below 500 MHz and beat it at 1.4-2.4 GHz, with a third of the current.
+    - **Worse in:** Unknown: specs and price are both unverified; there is no S2P, no supply-sensitivity data and no stability data. P1dB of +1 dBm does not matter for a noise source.
+    - **Compatibility:** SMA, 12 V, so in principle a drop-in on AUX12. Case and size unknown.
+    - **Risks:** Cannot be shown cheaper or not-worse without a quote and the datasheet. Unbranded eBay modules sold as '0.1-2500MHz gain 25dB' at about $8.90 copy this spec line; they are clones, not RF Bay, and belong to angle B. Buy only from RF Bay/Ironwave directly.
+    - **Seller url:** https://www.everythingrf.com/products/microwave-rf-amplifiers/rf-bay/567-791-lna-2500
+    - **Sources:**
+      - https://www.everythingrf.com/products/microwave-rf-amplifiers/rf-bay/567-791-lna-2500
+      - https://www.ebay.com/itm/156393810366
+  6.
+    - **Name:** Nooelec LaNA wideband LNA (SKU 100812)
+    - **Kind:** other_brand
+    - **Price usd:** 37.95 (Nooelec store; verified)
+    - **Spec comparison:** 20 MHz-4 GHz; 3.3-5.5 V via USB, DC or bias tee; 50-80 mA; aluminium case with internal EMI shield; ESD-protected. Gain and NF are NOT published on the product page.
+    - **Worse in:** No coverage below 20 MHz (HF lost). With no gain or NF numbers, the ENR cannot be modelled. For a low-NF LNA the padded ENR is roughly its gain minus 10 dB, likely well under the current 17-20 dB below 1 GHz (inference, unverified). Supply sensitivity unknown. It needs a 5 V feed instead of AUX12.
+    - **Compatibility:** SMA; needs 5 V. Size is fine.
+    - **Risks:** Rejected: it cannot be shown not-worse and the low end is lost. Buy only from Nooelec or authorised resellers (clone risk).
+    - **Seller url:** https://www.nooelec.com/store/lana.html
+    - **Sources:**
+      - https://www.nooelec.com/store/lana.html
+- **Notes:** VERDICT (angle A)
+  - The cheapest candidate that is plausibly not worse is the Mini-Circuits ZFL-500+ at $99.55 direct, saving $17.26 vs the ZFL-500LN+ at $116.81. It is equal or better in every published spec that matters, but only from 0.05 to 1000 MHz:
+    - modelled ENR equal within about +/-1 dB;
+    - flatness, output match and supply sensitivity are better (0.29 vs 1.0-1.2 dB/V).
+  - Its 1-2.4 GHz behaviour is unpublished, and that is where the stack's L/S-band Y-factor work happens. So it is not proven not-worse.
+  - Recommendation: buy the ZFL-500+ only with the arrival gate in its entry (LiteVNA S21 and tinySA ENR against the LN+ S2P minus 1 dB). Otherwise keep the ZFL-500LN+.
+  - Nothing else cheaper from my angle passes the rule.
+  
+  NEW FINDING (affects reaudit_D item 5)
+  - Mini-Circuits' own ZFL-500LN+ S2P files (2 units, date code 1227, 12 V, Idd 37 mA) show 26.2-26.8 dB gain from 28 to 500 MHz at 12 V. The datasheet table shows 24.3-24.9 dB.
+  - With the S2P gain the padded ENR model becomes 19.1-19.8 dB against N8DMT's 20.5 dB. That closes about 2 dB of the '3 dB unexplained' gap, and the rest is within tinySA +/-2 dB.
+  - S2P supply slope: 1.02 dB/V (unit #1: 26.65 dB at 12 V, 29.70 dB at 15 V).
+  - The LN+ S2P out of band gives 20.3-20.7 dB at 1.42 GHz, 16.5-16.9 dB at 1.69 GHz, 17.3-18.1 dB at 2.2-2.4 GHz and 14.8-15.5 dB at 3 GHz. S22 is -3 to -5 dB above 1.3 GHz, which confirms that the permanent 10 dB pad is essential.
+  - These are measured S-parameters; NF out of band is still unknown, so ENR there is a model.
+  
+  CHECKED AND REJECTED (more expensive, though better at L/S band). Mini-Circuits direct, 18 Oct 2026:
+  - ZX60-3018G-S+: $132.75. 20 MHz-3 GHz, 12 V 34 mA, gain 22.8 dB at 100 MHz down to 19.8 dB at 2.38 GHz, NF about 2.6 dB, 12.5 V absolute max.
+  - ZJL-3G+: $198.25.
+  - ZFL-1000LN+: $131.43.
+  - ZFL-1000+: $116.81.
+  - ZFL-2000+: $309.49.
+  - ZX60-33LN-S+: EOL notices, non-catalog.
+  - ZX60-V62+: $92.90, 50 MHz-6 GHz. Fails on coverage below 50 MHz; its datasheet was not read.
+  - Calibrated heads are far more expensive: Pasternack PE85N1000 $3,980, PE85N1006 $2,071.43, PE85N1005 $6,580. Fairview FMNG1003 (10 MHz-6 GHz, 26 dB ENR) is discontinued.
+  - No noise source from Kuhne or SV1AFN was found; I did not invent one.
+  - Mouser EU returned 503, so no Mouser price.
+  
+  EU / VAT
+  - Mini-Circuits direct is the cheapest source for both ZFL parts (USD, ex VAT). Import VAT and any duty are added. Shipping to the EU is unverified.
+  - Put the ZFL in the same Mini-Circuits order as the stack's BLK-89-S+, ANNE-50+, 086-6SM+ and VAT-30W2+ (shopping order step 8) to share shipping.
+  - DigiKey AT is DDP but dearer: ZFL-500+ EUR 107.80 ex VAT / EUR 129.36 incl. 20% VAT, out of stock.
+  
+  RULES
+  - All candidates are conducted-only bench sources, BENCH-only via AUX12, with no antenna connection.
+  - Total output is about -62 dBm over 2.4 GHz (model), far below the rule of -40 dBm or less into chains.
+  - No loops, no transmitter, no decoding.
+  - Whatever amplifier is chosen, your own ENR table is required (EXT GAIN 0, tinySA attenuation of at least 10 dB, logged supply voltage). The N8DMT numbers are a sanity reference only.
+  
+  Searches used: 8 WebSearch. Datasheet and S2P files were read from minicircuits.com.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.

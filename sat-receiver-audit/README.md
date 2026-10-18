@@ -38,6 +38,7 @@
 | [Printed 30 mm hinged hood 7in ar film ve](components/printed_30_mm_hinged_hood_7in_ar_film_ve.md) | · research · forums · fixes ✅ verify | `—` |
 | [Radxa armor 7056a heatsink or stepped cu](components/radxa_armor_7056a_heatsink_or_stepped_cu.md) | · research · forums · fixes ✅ verify | `—` |
 | [Radxa ufs 3 1 128 gb ra022 b10j0u2](components/radxa_ufs_3_1_128_gb_ra022_b10j0u2.md) | · research · forums · fixes ✅ verify | `—` |
+| [Raspberry pi pico rp2040 hmi supervisor](components/raspberry_pi_pico_rp2040_hmi_supervisor.md) | · research · forums · fixes ✅ verify | `—` |
 | [Rf frontend](components/rf_frontend.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_30889068-251` |
 | [Rtl sdr blog v4l r828s](components/rtl_sdr_blog_v4l_r828s.md) | · research · forums · fixes ✅ verify | `—` |
 | [Shielded hdmi lead adafruit 2420 2x wurt](components/shielded_hdmi_lead_adafruit_2420_2x_wurt.md) | · research · forums · fixes ✅ verify | `—` |
