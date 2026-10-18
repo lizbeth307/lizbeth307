@@ -2875,6 +2875,463 @@
   
   Budget: 12 WebSearch calls. Raw downloads are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/status_dl and scripts in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/status_scripts.
 
+## small:stack (run `wf_41027870-8e7`)
+
+- **Remove:**
+  1.
+    - **Item:** LimeSDR Micro M.2 2280 Basic pre-order, plus 2x MHF4L-SMA cables
+    - **Why:** With antennas of 20 cm or less, the only things it reaches that the V4L cannot are S-band targets: the Black Kite-1/2 telemetry and the CARTOSAT-3 carrier (both reliable), and the PHASMA, science-dump and HamTV humps (opportunistic). It would also add AWS at 1707 MHz (opportunistic, needs at least 3.6 Msps), full-band Iridium and Ku high-band TV carrier humps. Metop AHRPT, Elektro LRIT and QO-100 DATV are lost in both tiers whichever SDR is used. The card also ships only on 15 Dec 2026 with an unmerged arm64 driver. Crowd Supply refunds in full if you cancel before it ships.
+    - **Saving:** About $309-314 landed: $249 + $18 shipping + about $30-35 Ukrainian duty/VAT + $12 cables.
+  2.
+    - **Item:** Everything that only exists for the Lime: ADT-Link R44SF riser and its printed clamp bar, the windowed female board, the aluminium pedestal and gap pad, the Lime share of the plate fins, the I-PEX 90435-001 MHF4 tool, and desoldering J21
+    - **Why:** The M.2 slot is now empty, so the 2280-overhang problem, the Gen3 riser qualification and the 10 W or more conduction path all go away. J21 only had to come off because it sat in the riser's path.
+    - **Saving:** About $37 ($19 riser + about EUR 16 tool) plus about $5-10 of plate and pad material, and about 45-65 g
+  3.
+    - **Item:** Samsung T7 1 TB USB SSD
+    - **Why:** It was the 56-160 Msps capture target. The largest stream left is 2x RTL at 2.56 Msps 8-bit, about 10 MB/s. One 15-minute HRPT pass is 4.6 GB (18.4 GB/h, my calculation), which the 128 GB UFS holds easily. Removing it also frees the hub-free blue USB 3.1 port for the RTL.
+    - **Saving:** About $207 (from 9,299 UAH) and about 70 g with its cable
+  4.
+    - **Item:** Q6A 12 GB tier (bought for the 8 GiB mlocked RAM ring)
+    - **Why:** No 61-160 Msps bursts remain, so 8 GB is plenty.
+    - **Saving:** About $50-74: $189.99 (Allnet) versus EUR 121 incl. VAT / EUR 100 ex VAT (TinyTronics)
+  5.
+    - **Item:** RTL-SDR Blog dipole kit used as the 92 cm 137 MHz V-dipole
+    - **Why:** EXCLUDED by size (arms 53.4 cm). The 20 cm tuned loop is modelled at only 0.3-1.3 dB below it in rural noise.
+    - **Saving:** $17.95
+  6.
+    - **Item:** Crossed WB2HOL 2 m 3-element and N2SPI 6-element 70 cm Yagi (rigid or foldable rebuild)
+    - **Why:** EXCLUDED by size (0.7 m boom, elements 34-105 cm)
+    - **Saving:** About $25-40 in materials
+  7.
+    - **Item:** 11-turn 47 cm L-band helix, 44 cm fold-flat helicone, and the planned 2x2 helix array
+    - **Why:** EXCLUDED by size. The array (4 LNAs, about $180-200) was experimental and was aimed only at Metop, which stays unreachable.
+    - **Saving:** About $15-30 in materials, plus about $180-200 for array LNAs that will now never be bought
+  8.
+    - **Item:** QO-100 20-23 dBi conical horns and the 30 cm W1GHZ metal-plate lens
+    - **Why:** EXCLUDED: the horns are 12.7-17.8 cm across, 15-28 cm long on the LNB; the lens assembly is about 65 cm deployed.
+    - **Saving:** About $15-45 in materials
+  9.
+    - **Item:** 18 V (horizontal) branch of the 13/18 V LNB supply
+    - **Why:** It existed only for wideband DATV, which is lost in every tier (needs 31-32 dBi). A fixed 13 V supply for the vertical NB transponder is enough.
+    - **Saving:** A few dollars, plus one GPIO-switched feedback path
+  10.
+    - **Item:** Lime-only RF protection and S-band parts: 10-12 dB pads on the Lime ports, the SMA DC-block 2-pack, the S-band LNA, the Sysmocom cf2235-kt30 cavity (option), and the second LNA V2
+    - **Why:** No Lime ports remain. Each RTL chain is DC-blocked by its bias-tee injector. One NA-701 plus one LNA V2 now covers both 2 m and 70 cm.
+    - **Saving:** About $45 ($25 DC blocks + $19.95 LNA V2), plus EUR 65.45 if the cavity option had been bought
+  11.
+    - **Item:** Fourth Molicel P50B cell and the Pololu D36V50F12 12 V buck (if you take the 3S option)
+    - **Why:** Peak load falls from about 45-52 W to about 24-32 W (my calculation), and J21 accepts 3S directly (power study budget path). Dropping the buck also removes one always-on switcher next to receivers whose small antennas now make host noise the limit.
+    - **Saving:** About $45-49 ($39.95 buck + one cell) and about 75 g
+  12.
+    - **Item:** Long LMR-240-class jumpers and the MHF4 pigtail set
+    - **Why:** These are replaced by four thin 0.5-1 m leads with ferrite chokes. LNAs sit at each feed, and no MHF4 ports remain.
+    - **Saving:** About $20 net (from $40-60 down to $20-40)
+  13.
+    - **Item:** Lime software stack: LimeSuiteNG limesdr-micro-staging with la9310 DKMS (gcc-12 fix), the PCI class-0 fixup kernel rebuild, SMMU identity and real-time thread tuning (isolcpus/nohz_full), the mbuffer 8 GB ring recorder, the CS16 packer, and the MRC combiner
+    - **Why:** With nothing on PCIe, there is no out-of-tree kernel module and no early-adopter driver.
+    - **Saving:** $0, but it removes the project's largest bring-up risk and roughly weeks of work after December
+- **Keep:**
+  1.
+    - **Item:** Radxa Dragon Q6A (8 GB) on Radxa OS r2, BIOS 260120, kernel 6.18.2-4-qcom held, with an active copper fin stack and fan
+    - **Why:** The verified integration work stays valid: kernel holds, HDMI fixes, UART6 GNSS, J21 power, USB topology, and the case designed from the STEP model. Load is now about 4-6 W. The NPU stays optional (the CPU ONNX classifier is the default).
+  2.
+    - **Item:** Radxa UFS 3.1 128 GB (Samsung KLUDG4UHDC)
+    - **Why:** OS plus all pass recordings. It avoids the Kioxia hibernate (H8) bug on the 6.18.2-4 kernel. It holds about 5 h of raw 2.56 Msps cu8 IQ, or decoded products only.
+  3.
+    - **Item:** RTL-SDR Blog V4L, now the only SDR
+    - **Why:** Its datasheet gives 500 kHz-1.766 GHz and 2.56 Msps stable, which covers every target still reachable except S-band: 137.9, 145.8-146 and 435-438 MHz, the 739.5-740 MHz QO-100 IF, 1537-1545 MHz, GNSS L1 and 1700 MHz HRPT. It needs the patched noble librtlsdr2 (+v4l1) package.
+  4.
+    - **Item:** Nooelec SAWbird+ NOAA
+    - **Why:** It is now mandatory, not optional. It must sit at the feed of the 137 MHz loop: a small antenna has a low noise temperature, and without the LNA it loses another 1-3 dB. Power it at 5 V through an injector (170 mA is too close to the V4L tee's 180 mA).
+  5.
+    - **Item:** Nooelec SAWbird+ GOES
+    - **Why:** Meteor-M N2-3/N2-4 HRPT at 1700 MHz, bolted to the helix feed (passband about 1648-1728 MHz). On the RTL path, use a 5 V injector and run a 2-hour soak test in the closed case.
+  6.
+    - **Item:** Nooelec Flamingo+ FM
+    - **Why:** Goes in front of the LNA V2 on the broadband NA-701 chain at strong-FM sites. The tuned loop does not need it: by my calculation the loop alone rejects 88-108 MHz by about 34-39 dB, and the SAW after it adds more.
+  7.
+    - **Item:** RTL-SDR Blog Wideband LNA V2 (one unit)
+    - **Why:** At the NA-701 feed for 145.8-146 MHz (AO-73/JO-97 BPSK, AO-7) and 435-438 MHz (ISS, CubeSats), behind the Flamingo+ where FM is strong. Use the 3 dB-pad overload test near DVB-T2 and LTE 800.
+  8.
+    - **Item:** Othernet Bullseye TCXO LNB
+    - **Why:** Used bare it is a STRICT-tier antenna. The beacon, CW and FT8 are documented without a dish (OK1DX, RigExpert). Keep the wide-acquisition beacon tracker, the DC block and the 10-20 dB pad into the RTL.
+  9.
+    - **Item:** SMA bias-tee injectors with TPS2553 load switches and polyfuses
+    - **Why:** One injector for RTL-A (5 V, shared by the loop and NA-701 LNAs, one antenna at a time). Two for RTL-B: 5 V for the L-band SAWbirds and 13 V for the LNB. The injectors also do the DC blocking, and the RTL's own tee stays off.
+  10.
+    - **Item:** Wisecoco 7in 1920x1080 2000+ nit HDMI kit with USB touch, RP2040/VEML7700 dimmer, short shielded HDMI with ferrites
+    - **Why:** Sunlight readability is unchanged by the antenna rule. It is now about 30-45% of typical draw, so auto-dimming is the main runtime lever. Use the 1080p52 128.7 MHz EDID if the board accepts it.
+  11.
+    - **Item:** Power architecture: Molicel P50B cells, BMS, IP2368 (charge-only BZ preferred, 4.10 V/cell, real NTC), Pololu #2813, INA228 on an always-on supply, LT3045 LNA LDO
+    - **Why:** Unchanged design. Only the series count drops to 3S, and J21 is fed directly behind a fuse, TVS and bulk capacitor.
+  12.
+    - **Item:** Quectel LC76G (UART6) with its active patch, BNO085 in an RP2040-Zero USB puck, CR2032 on the Q6A RTC
+    - **Why:** The IMU matters more now: it keeps the satellite in the loop plane (nulls lie along the loop axis) and points the helix and cone. Removing the steel tape-measure elements also helps the magnetometer. The spoofing gate (RTC, saved QTH, chrony maxchange) stays.
+  13.
+    - **Item:** ASA shell, 2 mm aluminium mid-plate, Q6A fan path, separate display blower, soldered FR4 shield bay, captured 1/4"-20 nut
+    - **Why:** The display plus sun load still needs both airflow paths. The plate is still the ground and shield wall, and a tripod or mast mount is still needed.
+  14.
+    - **Item:** Software core: SatDump master built from source (RTL only), SDR++ noble aarch64 deb, GNU Radio 3.10.9.2, gr-satellites 5.5.0, Gpredict with the OMM alias bridge, Skyfield pointing aid, QO-100 beacon tracker
+    - **Why:** All of these already run on the RTL-only path (the software study's budget option). The only change is a config for two RTLs: unique serials via rtl_eeprom -s and two SatDump processes.
+- **Add:**
+  1.
+    - **Item:** Second RTL-SDR Blog V4L, used as an active second receiver and EOL hot spare
+    - **Why:** Neither the Lime (RX1/RX2 share one LO) nor a single V4L can receive two bands at once. Two V4Ls can: Meteor-M N2-4 LRPT on the loop and HRPT on the helix in the same pass, or VHF/UHF alongside the QO-100 IF. The R828S is end-of-life with about a year of stock left. Put RTL-A on the blue USB 3.1 port (now free of the T7) and RTL-B on a hub port, with Wi-Fi off during passes.
+    - **Price:** $37.95 (official store and the RTLSDRBlog AliExpress store; 2 units plus filters stay under the EUR 150 duty-free limit)
+    - **Sources:**
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/narrowband_sdr.json
+  2.
+    - **Item:** DIY 20 cm tuned small loop for 137.9 MHz (SMALL tier): 10 mm copper tube, C0G fixed capacitor plus 1-10 pF air trimmer (about 3.5 pF total), 4 cm Faraday coupling loop, short insulating mast. STRICT alternative: 12-13 cm loop.
+    - **Why:** This is the only allowed way to keep Meteor LRPT close to V-dipole performance. Calculated values: Rr 1.36 Ω, efficiency -0.9 to -1.5 dB, about +0.3 dBi, about 1.4 MHz 3 dB bandwidth, so one fixed tuning to 137.9 MHz covers both Meteors (and Orbcomm) with no motor. Decodes are expected from about 17° elevation (marginal); the 12 cm STRICT loop from about 20°, but it needs peaking every pass (0.1-0.55 MHz bandwidth). Keep it at least one diameter from the mid-plate, on 0.5-1 m of coax.
+    - **Price:** About $15-30 in materials (estimate)
+    - **Sources:**
+      - https://www.qsl.net/v/vk5br/LoopAntennas/VHFLoopAntenna.htm
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/small_ant/phys.py
+  3.
+    - **Item:** Nagoya NA-701 dual-band whip, genuine, SMA-male (21 cm, at the SMALL limit). Strictly-under-20 cm alternatives: Diamond SRH-701 (19 cm) or Baofeng A-V85 (16.8 cm, best sub-20 cm whip in W9MDB's 146 MHz test). STRICT alternative: DIY 12 cm loaded 70 cm whip.
+    - **Why:** One antenna and one LNA chain for 2 m and 70 cm. Estimated about -3 dBi at 145.8 MHz and about 0 dBi at 436 MHz. Expected results: ISS SSTV/APRS/repeater on 437.5-437.8 MHz reliable even in the STRICT tier, AO-73/JO-97 telemetry reliable, 1 W 9k6 CubeSats only above about 40-45°. W9MDB measured a black-sticker clone 8 dB worse, so check any unit with a VNA.
+    - **Price:** 950 UAH (about $21) at ТЕХ-ІНФОРМ on Prom.ua (in stock 18 Oct 2026), or EUR 15.95 at k-po.com. SRH-701: EUR 16.90 + EUR 14.20 shipping (WiMo).
+    - **Sources:**
+      - https://prom.ua/ua/search?search_term=nagoya%20na-701
+      - https://www.k-po.com/product/nagoya-na-701-sma-male
+      - https://www.miklor.com/COM/pdf/AntennaTestingW9MDB.pdf
+      - https://www.wimo.com/en/srh-701
+  4.
+    - **Item:** DIY 4-turn RHCP L-band helix on a 20 cm aluminium disc (6.2 cm diameter, 43 mm pitch, 17.6 cm tall), with a matching strip for its 140-160 Ω feed. STRICT alternative: 2-turn helix on a 12 cm disc.
+    - **Why:** One antenna covers 1525-1710 MHz. NEC2 models give 10.2-10.9 dBic, about 9.7 dBic expected on air. Meteor HRPT becomes reliable from about 13-18° elevation (margin +3.4 to +4.7 dB), against marginal above about 22-28° for the 2-turn. Inmarsat-C margin is about +10 dB. Use it on a mini tripod, and use the always-on Inmarsat NCS carrier as the fixed A/B reference, since Elektro-L is off.
+    - **Price:** About $5-12 in materials (estimate)
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/lband_small/scripts/helix_univ.py
+      - https://blog.metislair.com/docs/Radio/Creating%20a%20helix%20for%20direct%20satrx.html
+  5.
+    - **Item:** Nooelec SAWbird+ iO (1542 MHz), swapped with the GOES LNA at the helix feed
+    - **Why:** Inmarsat-C EGC SafetyNET on 1537-1545 MHz, a public GMDSS safety broadcast, reliable even in the STRICT tier. The SAWbird+ GOES passband (about 1648-1728 MHz) blocks these frequencies. Decode with stdcdec or Scytale-C set to SafetyNET and bulletin-board packets only.
+    - **Price:** $49.95 (Nooelec page, 18 Oct 2026)
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird.html
+      - https://www.rtl-sdr.com/rtl-sdr-tutorial-decoding-inmarsat-std-c-egc-messages/
+  6.
+    - **Item:** DIY clamp-on conical cone for the Bullseye LNB, 11 cm mouth by 8.3 cm long (LNB plus cone at most 20 cm overall)
+    - **Why:** About 18.8 dBi calculated. That gives a QO-100 beacon C/N0 of about 33 dB-Hz, which makes the 400 bit/s BPSK beacon frames reliable (+6.5 dB or more) and CW copyable down to about 10 dB below the beacon. Beacon-level SSB stays about 1 dB short, and DATV is lost. The bare LNB remains the STRICT fallback.
+    - **Price:** About $3-10 (aluminium flashing, rivets, tape; or PETG with copper tape)
+    - **Sources:**
+      - http://www.w1ghz.org/antbook/chap2.pdf
+      - https://destevez.net/2019/03/qo-100-beacons-power/
+  7.
+    - **Item:** Four thin 0.5-1 m coax leads (RG316/RG174 class) with clip-on ferrite common-mode chokes, plus SMA/F adapters
+    - **Why:** Small antennas have low antenna temperatures (about 400-1200 K at VHF, about 350 K at UHF), so self-noise from the Q6A, HDMI and DC-DC converters a few cm away would set the floor. The leads keep each antenna and its LNA away from the box. The lead does not count toward antenna size.
+    - **Price:** About $20-40 (estimate)
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+  8.
+    - **Item:** Receive-only decoder software: WSJT-X (QO-100 FT8), Direwolf (ISS 437.825 APRS, with no iGate), an SSTV decoder for Robot 36 (arm64 package not verified), stdcdec or Scytale-C (SafetyNET only)
+    - **Why:** These cover the targets that remain reliable. ISS SSTV Series 34 is on 437.55 MHz, Robot 36, from 22 to 25 Oct 2026 (times TBD), which makes it the first easy validation event.
+    - **Price:** $0
+    - **Sources:**
+      - https://www.ariss.org/upcoming-sstv-events.html
+  9.
+    - **Item:** NanoVNA covering at least 3 GHz (tool, not in the BOM total)
+    - **Why:** Now close to mandatory: it tunes the loop, trims and checks the whips (and catches fake NA-701s), matches the helix's 140-160 Ω feed, and screens the coax.
+    - **Price:** $60-130 (unverified, from antennas.json)
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/antennas.json
+  10.
+    - **Item:** OPTIONAL S-band module, NOT in the revised BOM: ADALM-PLUTO on USB (it takes RTL-B's port during S-band sessions), plus a 2-turn S helix on a 12 cm disc, an S-band LNA and the Sysmocom cf2235-kt30 cavity. Alternatively, re-order the LimeSDR later.
+    - **Why:** This is the only way back to the two reliable S-band targets, Black Kite-1/2 2286/2288 MHz 38k4 telemetry and the CARTOSAT-3 2224.797 MHz carrier, without the M.2 riser and the 10 W cooling path. Its range of 325 MHz-3.8 GHz is general knowledge and not re-verified. Leave its TX unconfigured and terminated.
+    - **Price:** $253.32 at DigiKey, 1,573 in stock on 18 Oct 2026 (shipping to Ukraine not verified); cavity EUR 65.45; total about $350-400
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/analog-devices-inc/ADALM-PLUTO/6624230
+      - https://shop.sysmocom.de/S-Band-cavity-filter-2170-2300-MHz/cf2235-kt30
+      - https://network.satnogs.org/observations/15185665/
+- **Sdr decision:** HOW I APPLIED THE 18 OCT 2026 RULE
+  - STRICT: largest deployed dimension about 12 cm or less. This covers patches, the bare LNB, stubbies, the 12 cm loop, the 12 cm loaded whip and the 2-turn helix on a 12 cm disc.
+  - SMALL: about 20 cm or less. This covers the 20 cm loop, NA-701/SRH-701-class whips, the 17 cm whip, the 4-turn helix on a 20 cm disc, and the LNB with an 11 cm cone at 20 cm or less overall.
+  - EXCLUDED: every dish, and anything about 20-25 cm or more when deployed, even if it folds. That rules out the 92 cm V-dipole, the WB2HOL/N2SPI Yagis, the 47 cm helix, the 44 cm helicone, the 23 dBi horn, the 30 cm lens and the 2x2 array.
+  - Coax leads are not counted as antenna size. The default build uses SMALL-tier antennas; STRICT swaps are listed with their cost in dB.
+  
+  DECISION: drop the LimeSDR Micro and cancel the pre-order before it ships on 15 Dec 2026 (full refund before shipment). The RTL-SDR Blog V4L becomes the only SDR type, with two units in use.
+  - Range: 500 kHz-1.766 GHz and 2.56 Msps stable, per the V4L datasheet.
+  - What it covers, all at 2.56 Msps or less:
+    - 137.9 MHz LRPT at 1.024 Msps.
+    - 145.8-146 and 435-438 MHz signals, all under 0.2 MHz wide.
+    - The QO-100 NB transponder at a 739.5-740 MHz IF.
+    - Inmarsat-C at 1537-1545 MHz and GNSS L1.
+    - Meteor HRPT at 1700 MHz, at 2.4-2.56 Msps.
+  
+  What the Lime alone would still reach with allowed antennas:
+  - Reliable, with a 12 cm S helix plus LNA and cavity: Black Kite-1/2 S-band 38k4 GMSK telemetry (2286/2288 MHz) and the CARTOSAT-3 CW carrier (2224.797 MHz).
+  - Opportunistic only: AWS at 1707 MHz (needs at least 3.6 Msps), PHASMA, S-band science humps, the HamTV carrier, Ku high-band carrier humps above 11.516 GHz, and full-band Iridium.
+  - Metop AHRPT, Elektro-L LRIT and QO-100 DATV are out of reach in both tiers with any SDR.
+  
+  That is two niche reliable targets for about $310-320 landed, plus a riser, a cooling path of 10 W or more, an unmerged arm64 driver and an S-band LNA with a EUR 65.45 cavity.
+  
+  Two V4Ls give something the Lime cannot: its RX1/RX2 share one LO, so it receives one band at a time.
+  - RTL-A on the blue USB 3.1 port: 137/145/435 MHz.
+  - RTL-B on a hub port with Wi-Fi off: L-band and the QO-100 IF.
+  - Example: LRPT and HRPT from the same Meteor N2-4 pass.
+  - If S-band is wanted later, add a USB module (ADALM-PLUTO, $253.32 at DigiKey, in stock) instead of reviving the PCIe design.
+  
+  STILL REACHABLE (band studies, models ±3 dB)
+  - Reliable:
+    - ISS SSTV on 437.55 MHz (Series 34, 22-25 Oct 2026, confirmed on ARISS today), ISS APRS on 437.825 MHz and the FM repeater on 437.800 MHz, receive only.
+    - AO-73/JO-97 BPSK telemetry and the AO-7 beacon.
+    - RS-44 and FO-29 CW beacons (reliable to marginal).
+    - Inmarsat-C EGC SafetyNET, GNSS and EGNOS.
+    - QO-100 NB beacons, CW and FT8 on the bare LNB, plus BPSK beacon frames with the cone.
+    - Meteor-M N2-4 HRPT with the 20 cm helix, from about 13-18° elevation.
+  - Marginal:
+    - Meteor-M N2-4 LRPT: 20 cm loop from about 17°, 12 cm loop from about 20°. No published decode with an antenna under 20 cm exists.
+    - Meteor HRPT on the STRICT 2-turn helix, above about 22-28°.
+    - 1 W 9k6 UHF CubeSats on passes above about 40-45°.
+  - Opportunistic: Meteor N2-3 LRPT, SO-50 (overhead passes), SSB on the linear transponders, VHF APRS digipeaters, AO-91, and the FY-2H carriers.
+  - Lost: Metop AHRPT, Elektro LRIT (also switched off), QO-100 SSB from typical stations, DATV and the multimedia beacon, 0.5 W and 19k2+ CubeSats, and most low passes. All APT is gone because NOAA POES ended in 2025.
+  - Legal: Iridium and Orbcomm are limited to carrier and Doppler only, because the input files conflict on this.
+  
+  PHYSICS
+  - A quarter wave is 54.5 cm at 137.5 MHz and 17.2 cm at 436 MHz.
+  - 137.5 MHz antennas:
+    - 20 cm loop: Rr 1.36 Ω, efficiency -0.9 to -1.5 dB, about +0.3 dBi.
+    - 12 cm loop: Rr 0.18 Ω, -3.0 to -3.8 dB, about -2 dBi.
+    - 12 cm loaded whip: Rr 1.2 Ω, -6.6 to -9.7 dB.
+  - At 137 MHz, rural man-made plus galactic noise is about 2000-2300 K. Noise rather than efficiency is then the limit, so the 20 cm loop loses only 0.3-1.3 dB of SNR against the V-dipole. The penalty is larger at a truly quiet site.
+  - At 436 MHz the 17 cm whip is full size (Rr about 24 Ω). Its 11 dB gap to the Yagi is lost directivity, which noise cannot hide.
+  - At L-band and 10.5 GHz, 12-20 cm is 0.7 λ or more. Efficiency stays above 90%, and only aperture limits gain.
+  - My calculation: the loop's own selectivity (Q about 98) rejects 88-108 MHz by about 34-39 dB.
+  
+  BORDERLINE (EXCLUDED, listed only for reconsideration)
+  - 70 cm Moxon (25x10 cm): about +5.4 dB. 1 W CubeSats work from about 15-20° elevation, and SO-50 and SSB improve.
+  - 4-element 70 cm Yagi (29x34 cm): within 1.5 dB of the 6-element.
+  - WB2HOL (105x51 cm): brings back VHF FM, APRS and SSB, plus about 6 dB at 137 MHz.
+  - 44 cm helicone or 47 cm helix: +5-8 dB at 1.7 GHz. HRPT from about 5°, and Metop or AWS on high passes.
+  - 33 cm S cone: +4-6.5 dB.
+  - 23 dBi horn (+1.5 dB) or 30 cm lens (+6 dB): QO-100 beacon-level SSB becomes copyable.
+  - 92 cm V-dipole: only +0.3-1.3 dB over a good 20 cm loop. Bring it back only if the loop fails validation.
+- **Compute decision:** Keep the Radxa Dragon Q6A, but buy the 8 GB board from TinyTronics NL: EUR 121 incl. NL VAT, or EUR 100 ex VAT (about $116-140), 20+ in stock on 18 Oct 2026 per compute.json. It replaces the 12 GB board at $189.99 from Allnet.
+  
+  Why 8 GB is enough:
+  - Every reason for 12 GB and PCIe Gen3 is gone: no 61-160 Msps bursts, no 8 GiB mlocked RAM ring, no M.2 SDR.
+  - The new worst case is two RTLs at 2.56 Msps 8-bit (about 10 MB/s), live SatDump HRPT/LRPT, gr-satellites, an SDR++ waterfall and an optional small classifier.
+  - Board power at that load is about 4-6 W. Idle is 2.9 W and full stress 9.3-10.1 W (Geerling/sbc-bench).
+  
+  Why not a cheaper board:
+  - Smaller boards could run this load, but none is a clear win.
+  - A733 boards (Radxa Cubie A7A $50-75, Orange Pi 4 Pro $48-71) have BSP 5.15 kernels and an undocumented NPU SDK.
+  - The RK3576 ROCK 4D 6 GB costs $98.99 and needs an RKNN port.
+  - Any switch saves only about $20-90. It would throw away the verified Q6A integration: pinned kernel, HDMI/EDID fixes, UART6 GNSS bring-up, the J21 3S power path, the USB/hub topology and the STEP-based case.
+  - A Raspberry Pi 5 8 GB is $175 MSRP (compute.json) and has no NPU.
+  
+  Changes to the Q6A setup:
+  - Use path A: Radxa OS r2 on BIOS 260120, kernel 6.18.2-4-qcom held, the Samsung 128 GB UFS and the golden NPU set.
+  - Out-of-tree work is gone: no out-of-tree module, no LA9310 PCI class-code quirk, no SMMU identity group, no isolcpus/nohz_full real-time thread.
+  - The NPU stays optional, with the CPU ONNX classifier as the default.
+  - Leave the M.2 slot empty and covered. A 2230 NVMe can go in later if ever needed.
+  - Keep active cooling: the SoC still throttles at about 90 °C under full load, and the 2000-nit display heats the box.
+  - USB plan: RTL-A on the blue USB 3.1 port. Touch, IMU puck and RTL-B on the three USB 2.0 hub ports. GNSS on UART6.
+  
+  Revisit the board choice only if the NPU goal is dropped.
+- **Display power mechanical impact:** DISPLAY: keep the Wisecoco 7in 2000+ nit HDMI kit with USB touch. The antenna rule does not change the sunlight requirement.
+  - It is now the largest single load: about 3.6-4.8 W at 60% brightness and 6-8 W at full, i.e. 30-45% of typical draw. The RP2040/VEML7700 auto-dimmer is the biggest runtime lever.
+  - RFI matters more, because the small antennas pick up little noise of their own:
+    - Use the 1080p52 128.7 MHz EDID if the board accepts it. At 1080p60 the 148.5 MHz clock sits 2.7 MHz above 145.8 MHz, and its 5th harmonic (742.5 MHz) sits 2.5 MHz above the QO-100 NB IF.
+    - Use a short shielded HDMI cable with ferrites.
+    - Keep every antenna and LNA on 0.5-1 m of coax with a choke, away from the box.
+  - Option if size and power matter more than sun readability: the Waveshare 5DP-CAPLCD-B (5in, 800 nits, 4.2 W, $47-55). It brings the case to about 160x100x55-60 mm and 0.85-0.95 kg (mechanical estimate).
+  
+  POWER (my calculation):
+  - At the pack: typical about 11-17 W (was about 25-28 W), peak about 24-32 W (was about 45-52 W).
+  - Load is now:
+    - Q6A: 4-6 W.
+    - V4L: about 1.3 W each.
+    - LNA: 0.7-0.85 W each.
+    - Fans: 0.8-2 W.
+    - GNSS and IMU: about 0.3 W.
+    - LNB in QO-100 mode: 1.4-3.6 W.
+    - Conversion losses: 8-12%.
+  - The Lime's M.2 3.3 V allowance (up to 8.25 W) leaves the Q6A's roughly 17 W internal 5 V_PERI budget.
+  - Recommendation: 3S1P Molicel P50B (54 Wh) wired straight into J21 (pack, 7.5 A fuse, INA228, #2813, SMBJ14A, 220 µF, J21):
+    - This is the power study's budget topology. J21 sees only about 1.5 A peak, because the display, LNAs and LNB run from their own regulators.
+    - Strap the IP2368 for 3S at 4.10 V/cell.
+    - Runtime: about 2.8-4.0 h typical, against about 2.2-2.4 h before on 72 Wh.
+    - Keeping the 4S1P pack (72 Wh, about +$45, about +75 g) gives about 3.7-5.3 h.
+  - The LNB needs only a fixed 13 V, from a GPIO-switched MT3608/XL6009-class boost on the 3S pack. There is no 18 V branch.
+  
+  MECHANICAL/THERMAL:
+  - Removed:
+    - The R44SF riser, its clamp bar and the windowed female board.
+    - The Lime pedestal and gap pad, and the Lime part of the plate fins.
+    - The MHF4 pigtails and the I-PEX tool.
+    - The internal T7 SSD.
+  - J21 no longer needs desoldering, which was only for the riser path. Still fit a keyed, latched housing.
+  - Internal heat falls from about 25-35 W to about 11-17 W typical and 24-32 W peak, including the display. The Q6A fin stack, its fan and the display blower stay; the Lime's 10 W conduction path goes.
+  - The FR4 shield bay now holds two V4Ls in their own aluminium cases bonded to the plate, plus three injectors.
+  - SMA panel: RTL-A (VHF/UHF), RTL-B (L-band/IF), and an F-type 13 V LNB port with a guarded switch and LED.
+  - Size: the footprint stays display-limited at about 205-215 x 130-140 mm; at best about 10 mm shorter without the top-edge Lime strip (estimate). Thickness stays about 50-55 mm (about 45 mm with a low-profile cooler), because the panel, plate and cooler set it.
+  
+  GNSS/IMU: unchanged parts.
+  - Mount the puck on the antenna in use. On the loop, keep the satellite in the loop plane, because the nulls lie along the axis.
+  - On the helix and cone, take elevation from gravity and peak on the signal.
+  - Dropping the steel tape elements improves the compass.
+  
+  STORAGE: the 128 GB UFS only. It holds about 5 h of raw IQ at 18.4 GB/h, or keep products only.
+  
+  SOFTWARE:
+  - Removed: the Lime stack.
+  - Added: a SafetyNET-only Inmarsat-C decoder, WSJT-X, Direwolf (no iGate), an SSTV decoder, and a two-RTL SatDump configuration.
+- **Revised bom:**
+  1.
+    - **Item:** Radxa Dragon Q6A 8 GB
+    - **Price:** EUR 121 incl. NL VAT / EUR 100 ex VAT (about $116-140)
+    - **Note:** TinyTronics NL, 20+ in stock 18 Oct 2026; replaces 12 GB at $189.99
+  2.
+    - **Item:** Q6A stepped copper cooler + 5 V fan (on/off 60/50 C via AO3400)
+    - **Price:** $17-30
+    - **Note:** Unchanged
+  3.
+    - **Item:** Radxa UFS 3.1 128 GB (Samsung KLUDG4UHDC)
+    - **Price:** $65.90
+    - **Note:** Allnet China in stock (TinyTronics EUR 58, 2-4 weeks). Only storage now.
+  4.
+    - **Item:** RTL-SDR Blog V4L x2
+    - **Price:** $75.90 ($37.95 each)
+    - **Note:** RTL-A on the blue USB 3.1 port (VHF/UHF), RTL-B on a hub port (L-band/QO-100 IF). Buy only from official channels; patched librtlsdr2.
+  5.
+    - **Item:** Nooelec SAWbird+ NOAA
+    - **Price:** $49.95
+    - **Note:** At the 137 MHz loop feed, 5 V via injector. Price corrected: $44.95 is the Barebones version.
+  6.
+    - **Item:** Nooelec SAWbird+ GOES
+    - **Price:** $49.95
+    - **Note:** At the helix feed for 1700 MHz HRPT. Price corrected.
+  7.
+    - **Item:** Nooelec SAWbird+ iO (1542 MHz)
+    - **Price:** $49.95
+    - **Note:** NEW. Swapped onto the helix for Inmarsat-C SafetyNET.
+  8.
+    - **Item:** Nooelec Flamingo+ FM
+    - **Price:** $24.95
+    - **Note:** In front of the LNA V2 on the NA-701 chain at strong-FM sites (price not re-checked)
+  9.
+    - **Item:** RTL-SDR Blog Wideband LNA V2 (QPL9547) x1
+    - **Price:** $19.95
+    - **Note:** At the NA-701 feed, 2 m and 70 cm. The filtered Uputronics 435 option shows only a stock alert at Kubii (18 Oct 2026).
+  10.
+    - **Item:** RF small parts: 3 SMA bias-tee injectors, 3 TPS2553 switches, polyfuses, 13 V boost (MT3608/XL6009 class), F-SMA adapter, 4 ferrite CM chokes
+    - **Price:** $25-45 (unverified)
+    - **Note:** 18 V branch and Lime pads/DC blocks removed
+  11.
+    - **Item:** DIY 20 cm tuned copper loop, 137.9 MHz (STRICT: 12 cm loop)
+    - **Price:** $15-30 (estimate)
+    - **Note:** NEW. Fixed-tuned (about 1.4 MHz BW); insulating mast; keep at least 20 cm from the plate
+  12.
+    - **Item:** Nagoya NA-701 genuine SMA-male (or SRH-701 19 cm / A-V85 16.8 cm; STRICT: DIY 12 cm loaded whip)
+    - **Price:** 950 UAH (about $21) Prom.ua, or EUR 15.95
+    - **Note:** NEW. 2 m + 70 cm; check with a VNA (clone risk)
+  13.
+    - **Item:** DIY 4-turn RHCP L-band helix on 20 cm disc (STRICT: 2-turn on 12 cm disc)
+    - **Price:** $5-12 (estimate)
+    - **Note:** NEW. Matching strip to 50 Ω; mini tripod
+  14.
+    - **Item:** Othernet Bullseye TCXO LNB
+    - **Price:** $29.95
+    - **Note:** rtl-sdr.com, 70 in stock 18 Oct 2026; bare = STRICT; cap the red F port
+  15.
+    - **Item:** DIY 11 cm x 8.3 cm clamp-on cone for the LNB
+    - **Price:** $3-10
+    - **Note:** NEW. About 18.8 dBi; LNB + cone at most 20 cm overall
+  16.
+    - **Item:** LNB power inserter + DC block + 10-20 dB pad + RG6/F-SMA
+    - **Price:** $15-30 (unverified)
+    - **Note:** Fixed 13 V, vertical (NB) only
+  17.
+    - **Item:** 4x thin 0.5-1 m coax leads (RG316/RG174) + adapters
+    - **Price:** $20-40 (estimate)
+    - **Note:** NEW. Replace long LMR-240 jumpers
+  18.
+    - **Item:** Wisecoco 7in 1920x1080 2000+ nit HDMI kit + USB touch, 5 V buck, shielded HDMI + ferrites, RP2040/VEML7700 dimmer
+    - **Price:** $152-167
+    - **Note:** Unchanged. Confirm touch is USB-HID and check the board input voltage (matters with 3S).
+  19.
+    - **Item:** Power 3S1P: 3x Molicel P50B, Daly 3S 20 A BMS, IP2368 (3S strap, 4.10 V/cell, 10k B3380 NTC), Pololu #2813, Adafruit INA228, LT3045 LNA LDO, fuse/SMBJ14A/220 µF/XT30
+    - **Price:** $79-100
+    - **Note:** Was 4S1P $125-160 with the D36V50F12; keep 4S if you want about 4-5 h
+  20.
+    - **Item:** Quectel LC76G (Waveshare 24370) + BNO085 + RP2040-Zero puck + CR2032
+    - **Price:** $50-55 direct (3,600-4,100 UAH locally)
+    - **Note:** Unchanged
+  21.
+    - **Item:** Mechanical: ASA shell, 2 mm Al mid-plate (no Lime pedestal), display blower, FR4 shield bay for 2 RTLs, SMA/F bulkheads, sun hood, strap/encoder/bumpers, captured 1/4"-20 nut
+    - **Price:** $49-87
+    - **Note:** Riser, MHF4 tool and Lime cooling removed
+  22.
+    - **Item:** Software (Radxa OS r2, SatDump, SDR++, GNU Radio, gr-satellites, Gpredict, WSJT-X, Direwolf, SSTV decoder, stdcdec/Scytale-C)
+    - **Price:** $0
+    - **Note:** No out-of-tree kernel modules
+  23.
+    - **Item:** Tool: NanoVNA covering at least 3 GHz
+    - **Price:** $60-130 (unverified)
+    - **Note:** Strongly recommended; not in totals
+  24.
+    - **Item:** OPTIONAL S-band module: ADALM-PLUTO + 2-turn S helix + S-band LNA + Sysmocom cf2235-kt30
+    - **Price:** About $350-400 ($253.32 DigiKey + EUR 65.45 + LNA)
+    - **Note:** Not in totals. Only for Black Kite-1/2 and CARTOSAT-3.
+- **Cost before after:** Before: about $1,600-1,850. This is my de-duplicated sum of the audited final picks, before shipping and import costs except the Lime's duty. It excludes the VNA and the optional S-band cavity and Uputronics.
+  
+  After: about $930-1,135 with the 3S pack, or about $975-1,195 if the 4S pack is kept. That saves about $670-715. Neither figure includes shipping to Ukraine, which was not verified for most vendors.
+  
+  Largest removals:
+  - LimeSDR Micro, landed: about $309-314
+  - Samsung T7 1 TB: about $207
+  - Q6A 12 GB to 8 GB: about $50-74
+  - Fourth cell plus the 12 V buck: about $45-49
+  - Riser plus MHF4 tool: about $37
+  - Yagi, helicone, horn, lens and DC-block materials: about $80-150
+  
+  Additions:
+  - Second V4L: $37.95
+  - SAWbird+ iO: $49.95
+  - Loop, whip, helix and cone: about $40-75
+  - Thin coax leads: $20-40
+  
+  Corrections found:
+  - Nooelec now lists the SAWbird+ NOAA and SAWbird+ GOES at $49.95 each. The $44.95 in the input files is the Barebones price.
+  - The Uputronics 435 MHz CubeSat preamp shows only a stock-alert form at Kubii (EUR 47.64), so it is not in the BOM.
+  - The cost tally scripts are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/smallstack/bom.py and bom2.py.
+- **Size weight power before after:** Device box:
+  - Before: about 205-215 x 130-140 x 50-55 mm, about 1.2-1.4 kg (mechanical_thermal.json; bare panel plus driver board). Add about 70 g for the internal T7 and its cable.
+  - After: about 200-215 x 120-140 x 45-55 mm, about 1.05-1.25 kg (my estimate). The changes are: Lime under 20 g, riser 15 g, pigtails about 10 g, pedestal and fins 20-40 g, T7 and cable about 70 g and one cell about 70 g removed; a second V4L of about 30 g added.
+  - The footprint stays set by the 7-inch display, and the thickness by the panel, plate and cooler stack.
+  
+  Antenna kit (estimates):
+  - Before: about 1.4-2.0 kg. The largest deployed pieces were the 92 cm V-dipole, the 105 cm 2 m Yagi elements and the 44-47 cm L-band antenna.
+  - After: about 0.7-0.9 kg, with nothing over about 20 cm deployed. Breakdown:
+    - 20 cm loop with its SAWbird: about 200-280 g
+    - NA-701: about 15 g
+    - Helix on a 20 cm disc with its LNA: about 210 g
+    - LNB plus cone: about 200-250 g
+    - Four thin leads: about 100 g
+  
+  Power at the pack (my calculation, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/smallstack/pwr.py):
+  - Before: typical about 25-28 W, peak about 45-52 W, internal heat about 25-35 W.
+  - After: typical about 11-17 W, peak about 24-32 W.
+  
+  Runtime (85% of nominal capacity usable):
+  - Before: about 2.2-2.4 h typical on 72 Wh.
+  - After, 3S1P 54 Wh: about 2.8-4.0 h typical, about 1.4-1.9 h at peak.
+  - After, 4S1P 72 Wh kept: about 3.7-5.3 h typical.
+- **Risks:**
+  - Meteor LRPT with antennas under 20 cm is model-based only (±3 dB); no published decode exists. Validate on 2-3 high Meteor N2-4 passes and A/B the loop against the NA-701 by SatDump SNR. If it fails, the only fix is a borderline item: the 92 cm V-dipole or the 137 MHz tape Yagi.
+  - Host self-noise is now the likely real limit. Small antennas have low antenna temperatures, and the Q6A, HDMI, IP2368, display boost and USB sit within centimetres. Run terminated-input and antenna-on noise sweeps with each source switched on and off at 137.9, 145.9, 437, 739.5, 1542 and 1700 MHz. Keep antennas on 0.5-1 m choked coax, switch Wi-Fi off, and use the 1080p52 EDID if the board accepts it.
+  - Tuned loops detune with hands, temperature and nearby metal. The 20 cm loop's roughly 1.4 MHz bandwidth tolerates a fixed tuning; the STRICT 12 cm loop (0.1-0.55 MHz) must be peaked every pass on sky noise. A varactor instead of the air trimmer costs about 2.7 dB more.
+  - The whole receiver now depends on one end-of-life tuner (R828S, stock expected to last about a year). Buy both V4Ls now, back up their EEPROMs, fit GPIO VBUS-cut pigtails for the 'stuck noisy until replug' fault, and keep a V3/V3c fallback, which is 2-3 dB worse. Meteor HRPT at 2.56 Msps against a 2.7 MHz main lobe is a marginal sample rate (software.json).
+  - L-band interference: LTE Band 3 uplink (1710-1730 MHz) falls inside the SAWbird+ GOES passband. The smaller, wider-beam helix has less margin than the 47 cm helix, and GNSS jammers near the front may raise the 1.5-1.6 GHz noise floor (plausible, unverified). Choose shielded sites and keep the LNA at the feed.
+  - The 70 cm chain has no band filter: the Uputronics 435 CubeSat preamp is out of stock (Kubii stock alert, 18 Oct 2026). A broadband LNA V2 on a broadband whip near DVB-T2, LTE 800 or pagers can overload the 8-bit RTL. Run the 3 dB-pad test and use the Flamingo+ at strong-FM sites.
+  - 3S directly into J21 has no public long-term bench test (Radxa staff give 4.5-16 V; the docs say 12 V). The Wisecoco board's input voltage is unknown, and a 12 V-only board would need a buck-boost from 3S. Measure hot-plug overshoot and J21 heating, or keep the 4S1P pack and the D36V50F12.
+  - Cancelling the Lime loses S-band (Black Kite-1/2, CARTOSAT-3) and AWS. Lime pricing has moved before ($199 to $249), so a later re-order may cost more. The ADALM-PLUTO alternative is unverified on the Q6A and for shipping to Ukraine.
+  - Satellite status: Meteor N2-3's VHF antenna is partly undeployed. ISS SSTV runs only during events (Series 34 is 22-25 Oct 2026, times TBD). Which satellite serves the EMEA Inmarsat-C NCS (Alphasat or I-6 F1) and its exact frequency are unverified, so scan 1537-1545 MHz. Elektro-L LRIT is off, so use the Inmarsat carrier as the fixed L-band reference.
+  - Corrections to the inputs: (1) the status agent wrote that no ISS SSTV event after May 2026 was posted, but ARISS lists Series 33 (2-6 Oct) and Series 34 (22-25 Oct 2026); (2) the SAWbird+ prices are $49.95, not $44.95; (3) the earlier conflict over who uses the blue USB 3.1 port (RTL or T7) disappears now that the T7 is gone.
+  - Legal frame: receive only, with the LimeSDR/Pluto TX never configured. Under martial law, which runs to 31 Oct 2026 and an extension is expected, do not iGate or publish APRS positions, geotagged images or station coordinates (Art. 114-2). Filter Inmarsat to SafetyNET only. The inputs conflict on Iridium and Orbcomm (system frames versus carrier/Doppler only), so use carrier and Doppler only. Military, Starlink, Cospas-Sarsat and private traffic are excluded. Expect GNSS spoofing. Watch for UXO at field sites and call 101 if you find any.
+
 ## fold:vhf_uhf (run `wf_4a343103-e9e`)
 
 - **Band group:** VHF/UHF: 137 MHz Meteor-M LRPT, 145.8 MHz ISS SSTV, 435-438 MHz CubeSats (RTL-SDR V4L for 137/145.8 MHz, LimeSDR Micro for 435 MHz). Targets unchanged. Packing targets unchanged: recommended tier has no piece longer than about 35 cm; ultra-compact tier no piece longer than about 20 cm.
