@@ -1112,3 +1112,7 @@ P5: G4 (механіка, польове кріплення) завершено,
 - Сумки: Deuter Futura 27 (Bergfreunde, €123.96) + Millenium Classic Stick Bag як м'який чохол (Thomann, €9.90) + саморобна труба Marley HT 50 мм. ≈$155, умовно (перевірити ціну обраного кольору).
 Джерела: polymaker wiki (ASA TDS), 3djake.de, quietpc.nl, gelid.com, cnckitchen.store, piekarz.pl, rollei.de, bergfreunde.de, thomann.de, toom.de, tme.eu/digikey (LTW VENT-PS1YBK-O8002).
 
+## 2026-10-18 14:22 UTC
+
+P5 (проміжне): G3 — офіційні ціни TI на TPS7A47 (ti.com, part details): TPS7A4701RGWT — $3.319, TPS7A4700RGWR (ANY-OUT) — $2.766, TPS7A4701-EP — $6.952. У стеку було $10–20 за 2 шт. (не перевірено). За прайсом TI це ≈$6.6 за 2 шт.; наявність і доставку ще не перевірено. Джерело: https://www.ti.com/product/TPS7A47/part-details/TPS7A4701RGWT
+
