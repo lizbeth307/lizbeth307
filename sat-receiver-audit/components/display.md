@@ -1066,5 +1066,386 @@ _Run `wf_0e70c405-a03`_
 
 ## Власні виправлення (`fixes`)
 
+_Run `wf_0e70c405-a03`_
+
+- **Component:** Display (very bright, ideally above Full HD) for the Radxa Dragon Q6A handheld: HDMI path through the RA620 bridge, Wisecoco 7in 2000+ nit kit (primary), Midas 7in 1200x1920 2500-nit panel (experimental upgrade)
+- **Fixes:**
+  1.
+    - **Problem:** No one has documented a stable above-FHD (2560x1600 or 2560x1440) HDMI panel on the Q6A. Known factors: the SC7280 DPU caps each source pipe (SSPP) at 2400 px, virtual planes matter, and one monitor fell back to 1024x768.
+    - **Proposed fix:** I traced the root cause in the msm DPU source. Two DP fixes that landed in stable 7.2.y in September 2026 also apply.
+  
+  (1) Plane splitting. The SC7280 catalog sets max_linewidth=2400 per SSPP and max_mixer_width=2560, and dpu_crtc.c sets MAX_HDISPLAY_SPLIT=1080. So every mode wider than 1080 px is driven by the LM_2+LM_3 mixer pair with 3D merge, and each half of the plane needs its own pipe.
+  - Legacy (non-virtual) planes own exactly one SSPP per plane and must use multirect-parallel mode.
+  - With UBWC-compressed buffers, which freedreno compositors use for scanout, each rectangle is limited to max_linewidth/2 = 1200 px.
+  - A 2560-wide plane (2 x 1280) therefore fails the atomic check with -E2BIG ('can't use split source'), and the screen shows no signal.
+  - 1920-wide modes (2 x 960) and portrait modes (1200 or 1600 wide, i.e. 600 or 800 per half) never hit this limit.
+  - Virtual planes reserve a second SSPP instead. They are on by default only from Linux 7.1 (commit b0907ee59e24). On 6.18 and 7.0 they need msm.dpu_use_virtual_planes=1.
+  
+  (2) Cached-EDID bug. Stable fix 96379c2dec72 adds the missing drm_edid_connector_update() before add_modes on a cached EDID. Without it, a re-probe adds no EDID modes, and DRM falls back to its no-EDID mode list, which tops out at 1024x768. That is exactly the Samsung G80SD symptom. This link is my inference; the poster did not confirm it.
+  
+  (3) Link-bandwidth bug. Stable fix 4483604a4fd6 fixes the link bandwidth check when wide bus is enabled. Older kernels could accept modes that need up to twice the bandwidth of a 2-lane link (the commit's example is 4K60 on 2 lanes), which gives a black screen.
+  
+  Link budget: data-lanes <0 1> and no link-frequencies property, so the driver defaults to HBR2. That is 8.64 Gbps of payload, with a DP pixel-clock cap of 675 MHz.
+  
+  Plan:
+  - Run a kernel at 7.2.9 or later (or apply the parameter plus the backports).
+  - Prefer a portrait-native above-FHD panel.
+  - Use reduced-blanking modes of about 330 MHz or less.
+    - **Steps:**
+      - Choose the kernel. Use the rafaelwms Ubuntu 26.04.1 v1.3.0 image (Armbian edge 7.2.9; HDMI confirmed on hardware), or a 7.2.y stable kernel that contains 96379c2dec72 and 4483604a4fd6. On Radxa 6.18.2-x, use step 2 instead.
+      - On 6.18 or 7.0 kernels, enable virtual planes:
+  sudo sed -i '1 s/$/ msm.dpu_use_virtual_planes=1/' /etc/kernel/cmdline
+  sudo kernel-install add $(uname -r) /boot/vmlinuz-$(uname -r)
+  Reboot, then check that cat /sys/module/msm/parameters/dpu_use_virtual_planes prints Y.
+      - Read the panel EDID before buying or committing to a mode:
+  sudo apt install edid-decode libdrm-tests
+  edid-decode /sys/class/drm/card1-HDMI-A-1/edid
+  Accept a preferred mode up to about 330 MHz:
+  - 2560x1600@60 CVT-RB is 268.5 MHz (6.44 Gbps).
+  - 2560x1440@60 RB is 241.5 MHz.
+  Avoid 2560x1600 standard CVT (348.5 MHz). It exceeds the 340 MHz HDMI 1.4 TMDS limit and would need HDMI 2.0 scrambling on both the RA620 and the panel board, which is unverified.
+      - Prefer panels that scan natively in portrait (1200x1920, 1600x2560). A width of 2400 or less means the plane is never split. Rotate the screen in GNOME Settings > Displays, or with xrandr --output HDMI-1 --rotate left under X11.
+      - Test outside the desktop:
+  1. sudo systemctl isolate multi-user.target
+  2. echo 0x1e | sudo tee /sys/module/drm/parameters/debug
+  3. modetest -M msm -c (note the HDMI connector id and the CRTC id)
+  4. modetest -M msm -s <conn>@<crtc>:2560x1600-60 -v
+  5. sudo dmesg | grep -iE 'E2BIG|split source|underrun|link train|msm_dp'
+      - Last resort, if a 2560-wide mode fails only inside the compositor: add FD_MESA_DEBUG=noubwc to /etc/environment. This forces non-UBWC buffers and costs memory bandwidth. Mesa describes it as 'Disable UBWC for all internal buffers'; its effect on scanout buffers is unverified.
+      - If dmesg shows link training failing at voltage swing level 3, rebuild the kernel with the one-line RA620 patch (DP_TRAIN_LEVEL_MAX 3->2, posted May 2026). It is not merged in v7.3-rc1 or 7.2.9.
+      - Do not add link-frequencies for HBR3, even though the SoC DP OPP table has an 810 MHz entry. The RA620's HBR3 support is undocumented, and it already fails at swing level 3. Treat HBR3 as an experiment only.
+    - **How to verify:** Pass criteria:
+  (a) The virtual-planes parameter reads Y.
+  (b) modetest shows vblanks at 60 Hz and the test pattern, with no E2BIG or underrun lines in dmesg.
+  (c) GNOME keeps the native mode across 20 cold boots, 20 reboots and 10 HDMI re-plugs. Log head -1 /sys/class/drm/card1-HDMI-A-1/modes from a boot service each time.
+  (d) A 2-hour SDR++ waterfall run at the high resolution shows no blanking.
+  
+  A fallback to 1024x768 on an older kernel confirms the cached-EDID bug, and upgrading the kernel fixes it.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_2_sc7280.h
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+      - https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b0907ee59e24d3dad572b4ccc6db018b00ca14c8
+      - https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=96379c2dec7252cab85a6bc0d350a656bfc0c7c3
+      - https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=4483604a4fd6635282f8d134d035136db9bd4d8f
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/msm/dp/dp_link.c
+      - https://raw.githubusercontent.com/torvalds/linux/master/arch/arm64/boot/dts/qcom/kodiak.dtsi
+      - https://lore.gitlab.freedesktop.org/drm-ai-reviews/20260522060645.4399-6-graham.oconnor@gmail.com/
+      - https://lkml.indiana.edu/2605.2/12737.html
+      - https://forum.radxa.com/t/samsung-g80sd-can-not-negotiate-resolution-refresh-rate/31118
+      - https://gitlab.freedesktop.org/mesa/mesa/-/raw/main/src/gallium/drivers/freedreno/freedreno_screen.c
+  2.
+    - **Problem:** The Wisecoco 7in 1920x1080 2000-2500 nit HDMI kit has no community build or review. The listing gives touch as I2C, the brightness inconsistently, and no driver chip, input voltage or power figure.
+    - **Proposed fix:** Treat it as an unverified part. Buy it against a written spec, test it on arrival, and plan a fallback for each unknown:
+  - Touch: if the board exposes USB HID, hid-multitouch handles it. If the touch is a bare I2C controller (the spec table says 'Interface Type: I2C'), wire it to the Q6A header I2C and use the mainline goodix (GT911) or edt-ft5x06 (FocalTech) driver, loaded through a devicetree-overlay line in the boot entry.
+  - Brightness: measure it yourself by pressing a lux meter flat on a white screen (luminance L is about illuminance E divided by pi).
+  - EDID and orientation: dump the EDID, then force or override the mode.
+  - Power: feed it from a 12 V buck converter and measure the current.
+  
+  The page price is $132 (panel plus HDMI board). It says 2000+ cd/m2 typical against 2500 in the title, lists an outline of 164.22x97.98 mm, landscape by default, and -20 to 70 C operation.
+    - **Steps:**
+      - Before paying, ask the seller (AliExpress chat, or 'Get a Quote' on wisecocodisplay.com) to confirm in writing:
+  - panel part number;
+  - minimum and typical nits;
+  - native scan (1920x1080 landscape or 1080x1920 portrait) and the EDID mode list;
+  - HDMI board chip (a Lontium LT6911-class bridge or a Realtek scaler) and whether it has an OSD;
+  - input voltage range and current at full brightness;
+  - touch controller part (GT911 or FT5x06) and whether the board turns it into USB HID (ask for the VID:PID);
+  - full optical bonding and AR/AG finish;
+  - high-Tni liquid crystal or maximum surface temperature;
+  - backlight driver IC and how brightness is set (keys, PWM pad, DDC/CI).
+  Also ask for photos of both sides of the board.
+      - Bench power-up from a 12 V supply with a 1.5 A current limit. Record the current at minimum and at full brightness and compute P = 12 x I. I estimate about 6-8 W at full. If it is above 10 W, redo the thermal design.
+      - Brightness without a luminance meter: show a full-white screen, darken the room, and press a lux meter (UT383-class, range at least 8000 lux) flat on the glass. For a near-Lambertian source filling the hemisphere, L is about E/pi, so 2000 nits reads about 6300 lux and 1000 nits about 3100 lux. Expect roughly 25% error.
+      - Check video on the Q6A:
+  - cat /sys/class/drm/card1-HDMI-A-1/status
+  - edid-decode /sys/class/drm/card1-HDMI-A-1/edid
+  - modetest -M msm -c
+  If the panel is portrait-only (1080x1920), keep that mode and rotate in GNOME. If the EDID is wrong:
+  1. Put a corrected copy in /lib/firmware/edid/panel.bin.
+  2. Add drm.edid_firmware=HDMI-A-1:edid/panel.bin to /etc/kernel/cmdline.
+  3. Add the file to the initramfs with an initramfs-tools hook that calls add_firmware, the same way the Armbian Q6A BSP adds GPU firmware.
+  4. Run kernel-install add.
+      - Check USB touch:
+  - lsusb (WCH CH57x touch boards use VID 1a86)
+  - sudo libinput list-devices
+  - sudo evtest (expect ABS_MT_SLOT 0-9 and X/Y ranges that match the panel)
+      - I2C touch fallback:
+  1. Measure the header logic level first. Radxa does not publish it; idle-high SDA on pin 3 should read 3.3 V or 1.8 V.
+  2. Wire VDD/GND/SDA/SCL to pins 1/6/3/5 (I2C6, enabled in the mainline DT), INT to pin 7 (GPIO_96) and RST to pin 12 (GPIO_97).
+  3. Find the address with i2cdetect -y 6.
+  4. Write an overlay node under &i2c6:
+  touchscreen@5d { compatible = "goodix,gt911"; reg = <0x5d>; interrupt-parent = <&tlmm>; interrupts = <96 IRQ_TYPE_EDGE_FALLING>; irq-gpios = <&tlmm 96 GPIO_ACTIVE_HIGH>; reset-gpios = <&tlmm 97 GPIO_ACTIVE_HIGH>; touchscreen-size-x = <1920>; touchscreen-size-y = <1080>; };
+  For a FocalTech controller, use "edt,edt-ft5406" at reg <0x38> instead.
+  5. Compile it with cpp and dtc -@, copy it to the ESP, and add a devicetree-overlay line to /boot/efi/loader/entries/*.conf (the same mechanism rsetup uses).
+      - Test with polarized sunglasses at 0, 45 and 90 degrees before fixing the screen orientation in the case.
+      - Run a 30-minute full-white soak at full brightness with thermocouples on the backlight frame and on the hottest IC of the driver board.
+    - **How to verify:** Acceptance criteria (return or open a dispute if any fail):
+  - contact lux reading of at least 5600 (about 1800 nits);
+  - 10-finger touch reaching the host as evdev multitouch;
+  - the correct native mode after 20 cold boots;
+  - 9 W or less at full brightness;
+  - no blackening or image retention after the 30-minute soak;
+  - no air gap: at a grazing angle, a pen tip on the glass shows no doubled reflection.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://www.wisecocodisplay.com/product/7-inch-1920x1080-high-brightness-2500nits-lcd-panel-with-hdmi-in-board-ips-mipi-interface-tft-lcd-screen/
+      - https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/plain/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/pin-gpio
+      - https://docs.radxa.com/en/dragon/q6a/low-level-dev/radxa-os-boot
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/input/touchscreen/goodix.c
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/input/touchscreen/edt-ft5x06.c
+      - https://raw.githubusercontent.com/armbian/build/main/config/boards/radxa-dragon-q6a.conf
+  3.
+    - **Problem:** No community experience exists for the Midas MDT0700F1IHHC 2500-nit 1200x1920 DSI panel, or for any third-party DSI panel on the Q6A. The FT7250 controller has no confirmed driver.
+    - **Proposed fix:** Make this a staged, experimental path with a hard go/no-go gate, and prefer an HDMI-to-MIPI bridge build over the Q6A's own DSI.
+  
+  Why a gate: Q6A DSI is not proven on any image.
+  - A Sept 2026 report with the official 8HD panel on kernel 6.18.2-3 shows DSI-1 'connected', the jadard-jd9365da driver bound, frames completing with zero drm.debug errors, yet only a grey backlight glow, and vblank at exactly half the mode rate.
+  - The mainline Q6A DP patch series disables DSI.
+  
+  Panel facts from the Midas datasheet:
+  - FT7250 TDDI chip (display driver plus in-cell touch), 4-lane MIPI.
+  - Init is DCS 0x11, wait 300 ms, DCS 0x29, wait 200 ms.
+  - Supplies: IOVCC 1.8 V (50 mA max), VSP +5.5 V and VSN -5.5 V (75 mA max each).
+  - Two LED rails, Vf 16 V typical and 19.2 V max. Total current 200/300/400/500 mA gives 1000/1500/2000/2500 nits.
+  - Touch is I2C at 1.8 V, 400 kHz max.
+  - No porch timings are given; the datasheet says 'Refer to Focal Tech FT7250'.
+    - **Steps:**
+      - Gate test, no new hardware: get a picture from an official Radxa 8HD or 10FHD panel on your kernel. If it stays grey, drop the DSI-direct route.
+      - Before ordering, ask Midas or Farnell support for the FT7250 video-mode timing table: pclk, HFP/HSA/HBP, VFP/VSA/VBP, burst or non-burst mode, and lane rate. As a placeholder only (not Midas data), mainline panel-simple has the 1200x1920 BOE TV080WUM-NL0: 160 MHz, H 120/20/21, V 21/3/18, burst plus sync pulse, RGB888, 4 lanes.
+      - Route A (recommended): an HDMI-to-4-lane-MIPI bridge board (LT6911C-class for 1200x1920@60) whose vendor will flash firmware for this panel from the timing table, using the 2-command init. The Q6A then sees an ordinary HDMI EDID that is 1200 px wide, so planes are never split and no Q6A DSI work is needed.
+      - Power rails, if the bridge board lacks them:
+  - VSP/VSN: TI TPS65132 dual +/-5.5 V LCD bias IC (I2C-programmable; mainline regulator driver exists).
+  - IOVCC: a 1.8 V LDO.
+  - Backlight: one TPS61169 boost per LED rail from 5 V, with PWM on CTRL at 20-25 kHz (datasheet range 5-100 kHz). The PWM sets the 204 mV FB reference, so the LEDs are DC-dimmed with no current bursts. R_FB = 0.204 V / I, so 1.36 ohm gives 150 mA per rail (about 1500 nits total) and 1.0 ohm gives 204 mA per rail (about 2000 nits). At 204 mA and up to 19.2 V, the peak switch current from 5 V approaches the 1.2 A minimum limit. Use 1.36 ohm, or a 12 V-input LED driver for 2000 nits or more.
+      - Touch:
+  - The FT7250 I2C runs at 1.8 V, so put a PCA9306 or BSS138 level shifter between it and the Q6A header I2C.
+  - Find the address with i2cdetect (FocalTech usually uses 0x38).
+  - Bind edt-ft5x06 with compatible "focaltech,ft8719". That entry uses the generic FocalTech register map with 10 points; FT7250 is not in the list, so this is unverified.
+  - In-cell touch answers only after the panel leaves sleep. Blacklist the module and modprobe it from a systemd unit after the display is up, or rebind it through /sys/bus/i2c/drivers/edt_ft5x06/bind.
+      - Route B (DSI-direct, only after the gate passes):
+  1. Write a DT overlay that enables mdss_dsi and mdss_dsi_phy with data-lanes <0 1 2 3> and a panel node.
+  2. Write a minimal panel driver cloned from mainline panel-jadard-jd9365da-h3.c (Radxa's own 8HD driver). Replace its init with mipi_dsi_dcs_exit_sleep_mode, msleep(300), mipi_dsi_dcs_set_display_on, msleep(200).
+  3. Add a reset GPIO and the regulators from the power-rails step.
+  4. The Q6A DSI connector is 39-pin, 0.3 mm pitch. Take the pinout from Radxa's schematic and build a custom FPC adapter to the panel's 40-pin 0.5 mm FFC.
+    - **How to verify:** - Gate: a picture appears on the official panel.
+  - Route A: a flicker-free 60 Hz image; the FT7250 answers on I2C after display-on; evtest shows 10 slots.
+  - Backlight: an ammeter in series reads about 150 or 204 mA per rail, and the boost ICs stay below 85 C.
+  - Route B: the modetest -M msm DSI-1 pattern is visible and the vblank rate equals the mode rate, not half of it.
+    - **Confidence:** low
+    - **Sources:**
+      - https://www.farnell.com/datasheets/3984938.pdf
+      - https://forum.radxa.com/t/radxa-display-8-hd-black-screen-on-dragon-q6a/30454
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/mipi-dsi
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/panel/panel-simple.c
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/regulator/tps65132-regulator.c
+      - https://www.ti.com/lit/ds/symlink/tps61169.pdf
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/input/touchscreen/edt-ft5x06.c
+      - https://lore.gitlab.freedesktop.org/drm-ai-reviews/20260522060645.4399-6-graham.oconnor@gmail.com/
+  4.
+    - **Problem:** Q6A kernel updates keep breaking the display path, and Radxa has not published a root-cause fix.
+    - **Proposed fix:** Harden the device for field use: freeze a known-good kernel, make every kernel change reversible without a working screen, and always keep a serial console.
+  
+  Known-good kernels:
+  - Radxa 6.18.2-4-qcom. A Radxa developer wrote '6.18 preferred for full feature support'.
+  - Armbian edge 7.2.9 plus Armbian's QCS6490 DP/DPU patches, as shipped in the rafaelwms image. HDMI and apt upgrade were tested on hardware.
+  
+  Known-bad kernels:
+  - 7.0.11-x-qcom: black HDMI with 'Unexpected DP AUX IRQ 0x00000008' and 'Cannot find any crtc or sizes'. A forum user (not Radxa) found the workaround clk_ignore_unused, because 7.0 switches off clocks that EDK2 left running.
+  - Armbian 7.2.3: sheared image with a 'low vbp+vfp' warning.
+  
+  Mainline root-cause fixes: the HPD rework (May 2026), then the cached-EDID and link-bandwidth fixes in 7.2.y (Sept 2026).
+    - **Steps:**
+      - Hold the kernel packages:
+  sudo apt-mark hold linux-image-radxa-dragon-q6a linux-headers-radxa-dragon-q6a embloader
+  These are the Radxa OS package names from the 7.0.11 thread. Check with apt-mark showhold. Also add the same names to Unattended-Upgrade::Package-Blacklist in /etc/apt/apt.conf.d/50unattended-upgrades.
+      - Keep the old kernel and its loader entry. Check ls /boot/efi/loader/entries/, and run sudo bootctl status to see the loader name and whether it supports boot counting. Radxa OS uses Boot Loader Specification entries with /etc/kernel/cmdline and kernel-install.
+      - Boot a new kernel only once at first: sudo bootctl set-oneshot <new-entry>.conf, then reboot. If HDMI is dead, a power cycle returns to the default entry. If boot counting is supported, make the fallback automatic with echo 3 | sudo tee /etc/kernel/tries, so new entries get +3 tries. If the new kernel never passes the health check in the next step, the loader falls back to the old one by itself after 3 tries.
+      - Create the HDMI health check script /usr/local/sbin/hdmi-ok:
+  for i in $(seq 30); do for c in /sys/class/drm/card*-HDMI-A-1; do [ "$(cat $c/status)" = connected ] && [ $(wc -c < $c/edid) -ge 128 ] && exit 0; done; sleep 1; done; exit 1
+  Create /etc/systemd/system/hdmi-health.service:
+  [Unit] Before=boot-complete.target
+  [Service] Type=oneshot, ExecStart=/usr/local/sbin/hdmi-ok, RemainAfterExit=yes
+  [Install] RequiredBy=boot-complete.target
+  Then run systemctl enable hdmi-health.service.
+      - Serial console: the debug UART5 is on header pins 8 (TX) and 10 (RX), with GND on pin 6, at 115200 8N1. The mainline DT has serial0 = uart5 and stdout-path 115200n8, and Armbian uses ttyMSM0. Measure the idle TX voltage first and pick a matching 3.3 V or 1.8 V USB-UART adapter. Keep console=ttyMSM0,115200n8 in /etc/kernel/cmdline, and connect with picocom -b 115200 /dev/ttyUSB0.
+      - If you must run 7.0.x, append clk_ignore_unused to /etc/kernel/cmdline and run kernel-install add. It costs a little idle power.
+      - Keep a golden image. Before each upgrade, boot from a USB stick and image the UFS:
+  sudo dd if=/dev/sda bs=16M status=progress | zstd -T0 > /mnt/usb/q6a-$(date +%F).img.zst
+  Check the device name with lsblk first. Keep the vendor image and the v1.3.0 image on the same stick.
+      - Pre-configure SSH and a static IP on Ethernet, so you can recover headless if HDMI dies.
+    - **How to verify:** - Rehearse a failure: install a known-bad kernel (7.0.11-x without clk_ignore_unused) as a counted entry and reboot. Within 3 boots the board must be back on the good kernel with working HDMI. journalctl -b -1 -u hdmi-health shows the failed checks.
+  - apt full-upgrade -s keeps the held packages back.
+  - The serial console shows the boot log from power-on.
+    - **Confidence:** high
+    - **Sources:**
+      - https://forum.radxa.com/t/linux-7-0-hdmi-not-working/31304
+      - https://forum.radxa.com/t/latest-q6a-update-to-linux-7-0-no-hdmi/31288
+      - https://forum.radxa.com/t/ubuntu-26-04-1-lts-images-for-the-radxa-dragon-q6a-now-on-linux-7-2-9-hdmi-works-wi-fi-bt-audio-npu-apt-upgrade-safe/31574
+      - https://raw.githubusercontent.com/rafaelwms/ubuntu-26.04.1-dragon-q6a/main/docs/pesquisa.md
+      - https://raw.githubusercontent.com/armbian/build/main/config/sources/families/qcs6490.conf
+      - https://docs.radxa.com/en/dragon/q6a/low-level-dev/radxa-os-boot
+      - https://systemd.io/AUTOMATIC_BOOT_ASSESSMENT/
+      - https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/plain/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/log/drivers/gpu/drm/msm/dp?h=linux-7.2.y
+  5.
+    - **Problem:** Software brightness control over HDMI (DDC/CI through the msm DP to RA620 path) is undocumented. Cheap boards often do not answer DDC/CI, so auto-dimming, the main battery saver, has no software path.
+    - **Proposed fix:** Test DDC/CI first, at zero cost. The msm DP driver registers an I2C-over-AUX adapter (drm_dp_aux_register), so ddcutil can reach address 0x37 if the RA620 forwards it and the board implements MCCS. Expect a failure on cheap boards.
+  
+  Then do a small hardware mod that does not depend on the Q6A kernel. An RP2040 'display co-processor' (about $4-6):
+  - drives the board's backlight dimming input with 20-25 kHz PWM;
+  - auto-dims from a VEML7700 lux sensor;
+  - caps brightness on panel temperature from an NTC;
+  - doubles as a USB-HID mouse-wheel tuning knob.
+  The Q6A's 40-pin header lists no PWM function, so a small MCU is the simplest PWM source.
+    - **Steps:**
+      - Test DDC/CI:
+  1. sudo apt install ddcutil i2c-tools; sudo modprobe i2c-dev
+  2. sudo ddcutil detect --verbose
+  3. i2cdetect -l to find the DP AUX adapter, then i2cdetect -y <bus>. 0x50 is the EDID; 0x37 is DDC/CI.
+  4. If 0x37 is present: ddcutil --bus <bus> getvcp 10, then setvcp 10 30.
+  No answer at 0x37 means no DDC/CI.
+      - Identify the backlight boost IC on the driver board from its marking and datasheet. Find its CTRL/DIM/PWM/EN pin and probe it while changing the OSD brightness. A steady logic level at 100% indicates a PWM or enable input.
+      - Cut the trace or lift the pin from the board MCU or scaler. Drive it from an RP2040-Zero GPIO through 1 kOhm, and add a 100 kOhm pull-up to the board logic rail so the backlight fails bright if the MCU dies. Check the IC's input thresholds; for the TPS61169 they are VH 1.2 V and VL 0.4 V.
+      - PWM frequency: for PWM-to-analog ICs (for example the TPS61169: 5-100 kHz, LEDs DC-dimmed with no current bursts), use 20-25 kHz. For ICs that burst the LED current, use their analog-dimming mode if they have one. Chopping 0.4-0.5 A at the PWM rate radiates RF noise.
+      - Sensors:
+  - VEML7700 on I2C address 0x10, behind a small diffuser, facing the same direction as the screen.
+  - A 10 kOhm NTC glued to the backlight frame, on an RP2040 ADC pin.
+  - A rotary encoder on 2 GPIOs.
+      - Firmware (CircuitPython is enough):
+  - duty = clamp(0.1 + 0.9*log10(lux/50)/log10(2000), 0.1, 1.0);
+  - cap duty at 50% above 60 C panel temperature and at 20% above 68 C;
+  - the encoder sends HID wheel events, which step the frequency in SDR++;
+  - a USB-CDC command 'B 0-100' lets the Q6A set brightness manually.
+      - Linux-side alternative for the lux part only: put the VEML7700 on Q6A I2C6 and read it with the mainline veml6030 IIO driver, which supports veml7700. This still needs some PWM source.
+    - **How to verify:** - LED current or input power at duty 10%, 50% and 100% should change monotonically, with no audible whine.
+  - Covering the sensor dims the screen within 1-2 s.
+  - A camera at 1/4000 s shows no banding.
+  - Heating the NTC to 62 C with a hot-air gun caps the duty.
+  - The encoder tunes SDR++.
+  - Compare 4S pack current in shade and in full sun to quantify the saving (estimated 3-5 W).
+    - **Confidence:** medium
+    - **Sources:**
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/msm/dp/dp_aux.c
+      - https://www.ti.com/lit/ds/symlink/tps61169.pdf
+      - https://www.ti.com/product/TPS61169
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/iio/light/veml6030.c
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/pin-gpio
+  6.
+    - **Problem:** No measurements exist of RF emissions from a 2000-nit backlight boost converter or an HDMI-to-MIPI board placed a few cm from 137/145/435 MHz, 1.7 GHz and 2.2 GHz receivers and the GNSS module.
+    - **Proposed fix:** Predict, then measure, then suppress.
+  
+  Prediction (my own harmonic calculation against the receive bands, plus or minus 2-3 MHz guard). The HDMI TMDS clock equals the pixel clock and is normally not spread-spectrum.
+  - 1920x1080@60 CEA (148.5 MHz): 5th harmonic at 742.5 MHz, inside the QO-100 wideband IF (741-749 MHz with a 9.75 GHz LO); 15th harmonic at 2227.5 MHz, in S-band.
+  - 1080p60 CVT-RB (138.5 MHz): the fundamental sits next to Meteor LRPT.
+  - 1920x1200@60 RB (154 MHz): 11th harmonic at 1694 MHz (GOES HRIT and L-band HRPT).
+  - 2560x1440 RB: 7th harmonic at 1690.5 MHz.
+  - 2560x1600 RB: 6th harmonic at 1611 MHz (GNSS edge).
+  - 1280x800 RB: 2nd harmonic at 142 MHz.
+  
+  Clean choice: a pixel clock of about 127.5-129.2 MHz is clean at every harmonic up to 2.3 GHz, for 137, 144-146, 435-438, 739-750, 1559-1610, 1690-1710 and 2200-2290 MHz. For example, 1080p with CEA porches at 52 Hz gives 128.7 MHz; for a 1200x1920 panel with BOE-like porches, 57.3 Hz gives 153.0 MHz. The bridge's DSI clock is about 3x the pixel clock per lane: 445.5 MHz at 148.5 (just above 438), and about 386 MHz at 128.7.
+  
+  Suppression: a filtered separate rail, a shielded boost converter, a short shielded HDMI cable with ferrites, DC dimming, a grounded metal plate, and LNAs at the antennas.
+    - **Steps:**
+      - Sweep with the RTL-SDR, first into a 50 ohm terminator and then with the real antenna on the case:
+  rtl_power -f 130M:150M:2k -g 40 -i 5 -e 120 -c 25% A.csv
+  Repeat for 430M:440M, 735M:755M, 1555M:1615M and 1685M:1715M.
+  States to compare: display unplugged; display at minimum brightness; at full brightness; black screen vs white screen; each candidate mode. Diff the CSVs bin by bin and flag rises above 3 dB. Use the LimeSDR in SDR++ with heavy averaging for 2200-2290 MHz.
+      - Use the u-blox M10 as a free 1575 MHz interference meter: poll UBX-MON-RF (jamming indicator) and watch C/N0, for example with gpsd's ubxtool -p MON-RF and cgps, with the display off and on.
+      - Make a DIY H-field probe: a 15 mm loop at the end of RG316 with a shield gap at the tip, connected to the RTL-SDR. Sniff the boost inductor, the bridge board, the HDMI connector and the cable while watching the waterfall.
+      - Set a clean pixel clock through EDID:
+  1. Copy the EDID.
+  2. Set the DTD#1 pixel clock (bytes 54-55, 10 kHz units, little-endian). 128.70 MHz = 12870 = 0x3246, so the bytes are 46 32.
+  3. Fix byte 127 so the 128-byte block sums to 0 mod 256.
+  4. Check the result with edid-decode.
+  5. Load it with drm.edid_firmware=HDMI-A-1:edid/clean52.bin.
+  If the panel rejects 52 Hz, pick another clean value from the same calculation.
+      - Display rail: give it its own buck converter, then a damped pi filter:
+  - input: 2 x 10 uF 25 V X7R;
+  - 10 uH shielded inductor, Isat at least 2 A;
+  - at the board: 2 x 10 uF + 100 nF + 1 nF + 100 pF;
+  - damping: 1 ohm in series with 47 uF electrolytic (corner about 11 kHz, far below the ~1 MHz boost switching).
+  Add a 600 ohm at 100 MHz ferrite bead rated 2 A or more at the board input.
+      - Boost converter: cover the inductor and IC with a tinplate shield can or conductive copper tape, bonded to ground at several points. Twist the LED wires and clip a ferrite on them. Use DC dimming (the brightness-control fix), not burst PWM.
+      - HDMI cable: 10-15 cm, fully shielded (or a shielded FPC cable), with ferrite clamps at both ends: material 31 for VHF and material 61 for UHF. Route it away from the SDR pigtails.
+      - Layout: put a 1 mm aluminium plate between the display stack and the Q6A/SDR section, grounded at several points; it also spreads display heat. Put the first LNA at each antenna feed. Add a shield can over the LimeSDR Micro and use double-shielded MHF4-to-SMA pigtails.
+    - **How to verify:** - With the terminator, no receive-band bin rises more than 1-2 dB over the display-unplugged baseline in any display state.
+  - M10 C/N0 changes by less than 1 dB-Hz with the display on.
+  - On consecutive Meteor LRPT and CubeSat passes, SatDump reports the same SNR with the display at full brightness and off.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/panel/panel-simple.c
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/msm/dp/dp_link.c
+      - https://www.ti.com/lit/ds/symlink/tps61169.pdf
+      - https://forum.radxa.com/t/linux-7-0-hdmi-not-working/31304
+  7.
+    - **Problem:** Nobody knows how a 6-8 W, 2000-nit panel inside a closed 3D-printed handheld behaves thermally in summer sun, including the risk of the LCD clearing (going black).
+    - **Proposed fix:** Model it, design for it, then measure. My rough steady-state model for the 164x98 mm Wisecoco module assumes 950 W/m2 direct sun face-on, absorptance 0.85, 35 C air, and 7 W of backlight and board. The sun puts about 13 W into the glass, more than the backlight. Estimated panel temperatures:
+  - sealed back, still air: about 100 C;
+  - 2 m/s breeze: about 80 C;
+  - fan-swept air gap behind the panel: about 68 C;
+  - plus IR-rejecting film: about 60 C;
+  - shaded by a hood at 1000 nits: about 44 C.
+  Vendor data put standard LC clearing points at about 75 C and high-Tni panels at 80-110 C; Wisecoco rates operation to 70 C.
+  Conclusion: shading and forced air are mandatory, and backlight derating on temperature is the safety net.
+    - **Steps:**
+      - Print the case in ASA or a PC blend, in white or light grey. Use PETG only away from the screen and never use PLA.
+      - Arrange the Q6A fan to pull intake air through a 4-6 mm gap behind the metal backlight frame, then across the Q6A heatsink, exhausting at the far edge. Add a thermal pad from the frame to the 1 mm aluminium plate (the same plate as in the RF fix).
+      - Add a 25-35 mm deep hood over the top and sides, hinged so it folds down as a lid.
+      - If the glass is not AR-coated, apply a clear IR-rejecting window film. Check with the panel on that it causes no rainbow effect with the LCD polarizer.
+      - Glue an NTC to the backlight frame. The RP2040 caps brightness at 50% above 60 C and at 20% above 68 C, and the UI shows a warning.
+      - Field test at noon in clear sky, panel face-on to the sun at full brightness. Log the frame and glass temperatures every 30 s for 45 minutes, with and without the hood and fan. Watch for dark patches.
+    - **How to verify:** Pass: frame at or below 60 C and glass at or below 65 C after 45 minutes at 35 C ambient with the hood and fan; no darkening; no deformation of the case. If measured temperatures come in well below the model, relax the derating thresholds.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://www.wisecocodisplay.com/product/7-inch-1920x1080-high-brightness-2500nits-lcd-panel-with-hdmi-in-board-ips-mipi-interface-tft-lcd-screen/
+      - https://digitalview.com/blog/high-tni-lcd-panels
+      - https://elosupport.elotouch.com/hc/en-us/articles/31648421556247
+      - https://riverdi.com/blog/lcd-temperature-range
+      - https://www.farnell.com/datasheets/3984938.pdf
+  8.
+    - **Problem:** GLFW apps (SDR++, SatDump) get no native Wayland touch support: GLFW issue #42 is still open and the SDR++ maintainer refuses an app-side fix.
+    - **Proposed fix:** Run SDR++ and SatDump as X11 clients under XWayland. For clients that do not request XI2 touch events, the X server turns the first touch into emulated pointer events, so ImGui sees normal press, drag and release.
+  
+  The trap on Ubuntu 26.04: glfw3 3.4-4 is a single library with both backends (libglfw3-wayland is now a transitional package). GLFW 3.4's _glfwSelectPlatform picks Wayland when XDG_SESSION_TYPE=wayland and WAYLAND_DISPLAY are set. glfw3.h has no touch API, so on Wayland touch silently does nothing.
+  
+  Fix: launch the apps with XDG_SESSION_TYPE=x11. XWayland provides DISPLAY, so GLFW picks X11.
+  
+  On Ubuntu 24.04 (glfw 3.3.10), the libglfw3 package is the X11 build, so touch already works there.
+    - **Steps:**
+      - Check which GLFW the app uses: ldd $(which sdrpp) | grep glfw, and apt policy libglfw3.
+      - Override the launchers: copy sdrpp.desktop to ~/.local/share/applications/ and set Exec=env XDG_SESSION_TYPE=x11 sdrpp. Do the same for SatDump (Exec=env XDG_SESSION_TYPE=x11 satdump-ui). Unsetting WAYLAND_DISPLAY also works, because GLFW then fails Wayland and falls back to X11.
+      - Confirm the app is running on X11: DISPLAY=:0 xinput list shows the XWayland touch device, and xprop can select the SDR++ window (this works only for X11 clients).
+      - Map the touchscreen to the HDMI output:
+  gsettings set org.gnome.desktop.peripherals.touchscreen:/org/gnome/desktop/peripherals/touchscreens/<vid>:<pid>/ output "['<vendor>','<product>','<serial>']"
+  Use the strings from the panel's EDID. Under Wayland the compositor rotates touch together with the image, so no libinput calibration matrix is needed.
+      - Add the encoder from the brightness-control fix as a wheel input, or remap a USB knob with input-remapper. Pointer emulation provides no wheel and no pinch.
+      - Fallback if a future image drops XWayland: a minimal Xorg kiosk session (xinit plus a small window manager). First check that xserver-xorg-core is available for that image.
+    - **How to verify:** - Tap and drag the waterfall to tune; tap menus and sliders.
+  - With the screen rotated 90 degrees, a touch in a corner lands in that same corner.
+  - The override still works after apt upgrade.
+  - Negative control: launching without the variable brings the touch failure back, which confirms the diagnosis.
+    - **Confidence:** high
+    - **Sources:**
+      - https://raw.githubusercontent.com/glfw/glfw/3.4/src/platform.c
+      - https://raw.githubusercontent.com/glfw/glfw/master/include/GLFW/glfw3.h
+      - https://packages.ubuntu.com/resolute/libglfw3-wayland
+      - https://packages.ubuntu.com/noble/libglfw3
+- **Residual risks:**
+  - There is still no plug-and-play module in 5.5-8 in that is above FHD, at least 1000 nits, and has HDMI plus USB touch. The Midas route is experimental, and Q6A DSI is unproven: the official 8HD shows only a grey screen with vblank at half rate.
+  - Radxa does not document the Q6A header logic level (1.8 V or 3.3 V). Measure it before wiring the UART, I2C touch or sensors.
+  - RA620 limits are undocumented: HBR3, DDC/CI passthrough and HDMI 2.0 scrambling. The swing-level-2 patch is not in mainline (DP_TRAIN_LEVEL_MAX is still 3 in v7.3-rc1), so self-built kernels may need it.
+  - The panel board or panel may reject the 52 Hz (128.7 MHz) clean-clock mode. In that case spur avoidance relies on shielding and filtering alone. Harmonic levels can only be measured, not predicted.
+  - Automatic kernel fallback needs BLS boot counting in the Q6A loader (systemd-boot or Radxa's embloader); bootctl status will show whether it is supported. Holding the kernel also delays security fixes, and 7.3 or later may regress again.
+  - Several items are unverified: FT7250 compatibility with edt-ft5x06, the Midas porch timings, whether a vendor will flash an LT6911-class bridge for this panel, and Wisecoco's touch interface and board chip.
+  - The thermal model is crude (about +/-15 K). On 35-38 C Ukrainian summer days, an unshaded panel can exceed its 70 C rating even with venting.
+  - The web-search budget ran out during this pass. So these are unverified: Wisecoco current stock and shipping to Ukraine (only the $132 page price was read), the Midas price and lead time (EUR 324 and 12 weeks, from earlier research), the RA620 datasheet, and the availability of I2C-to-USB-HID touch bridge boards.
+  - FD_MESA_DEBUG=noubwc might not affect compositor scanout buffers. Treat it as a last resort; kernel 7.1+ virtual planes are the real fix.
+
+## Адверсаріальна перевірка (`verify`)
+
 _Агент цього етапу ще працює (run `wf_0e70c405-a03`)._
 

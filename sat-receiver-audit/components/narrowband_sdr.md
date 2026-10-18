@@ -1029,5 +1029,160 @@ _Run `wf_eb446444-464`_
 
 ## Адверсаріальна перевірка (`verify`)
 
+_Run `wf_eb446444-464`_
+
+- **Component:** Second / narrowband SDR (RTL-SDR Blog V4 is EOL; proposed: RTL-SDR Blog V4L on the Radxa Dragon Q6A, alongside the LimeSDR Micro)
+- **Recommendation holds:** так
+- **Issues:**
+  1.
+    - **Claim:** Community: 'a cleaner route on Ubuntu is to rebuild the Debian 2.0.3-1 source package so the librtlsdr2 SONAME is kept'.
+    - **Problem:** Wrong. Debian 2.0.3-1 builds the package librtlsdr0 (SONAME .so.0), with Breaks/Replaces: librtlsdr2 (<< 2.0.2). Installing it on noble forces apt to remove librtlsdr2, and with it every noble package that depends on it: soapysdr0.8-module-rtlsdr, gr-osmosdr, gqrx, and the SDR++ noble .deb.
+    - **Correction:** Rebuild noble's own 2.0.1-2build1 source package with osmocom commits 0204c9c (V4L support) and 65f0658 (USB-hang fix). I tested this: both patches apply cleanly to the noble source with offsets only, the library compiles, and objdump shows SONAME librtlsdr.so.2. I built on amd64; an arm64 build was not tested.
+    - **Source:** https://sources.debian.org/data/main/r/rtl-sdr/2.0.3-1/debian/control ; https://launchpad.net/ubuntu/+source/rtl-sdr/2.0.1-2build1
+  2.
+    - **Claim:** Researcher integration note and RTL-SDR Blog V4L guide: 'apt purge ^librtlsdr', build osmocom master, then rebuild SoapyRTLSDR, gr-osmosdr, SatDump and SDR++ from source.
+    - **Problem:** On Ubuntu 24.04 this is destructive and unnecessary. The purge removes the whole apt SDR stack. Upstream 2.0.2+ installs SONAME .so.0, so the SDR++ noble .deb and the distro Soapy/gr-osmosdr, which want .so.2, break. The official guide also clones osmocom/rtl-sdr and then runs 'cd rtl-sdr-blog', which fails.
+    - **Correction:** Use the patched noble librtlsdr2 package (2.0.1-2build1+v4l1) and put it on apt-mark hold. Then only SatDump has to be built from source: its nightly has no Ubuntu arm64 .deb, only satdump_rpi64_latest_arm64.deb.
+    - **Source:** https://www.rtl-sdr.com/V4L ; https://github.com/SatDump/SatDump/releases/tag/nightly
+  3.
+    - **Claim:** Debian/Ubuntu librtlsdr disables zero-copy on arm64 (Debian bug #1041701 fix).
+    - **Problem:** It does not, because of a typo. debian/rules in noble 2.0.1-2build1 and in Debian 2.0.3-1 passes -DENABLE_ZEROCOPY=$DEB_ZEROCOPY_OPTION. Make expands that to the literal 'EB_ZEROCOPY_OPTION', which CMake treats as true. I reproduced it: the result is -DENABLE_ZEROCOPY=1. Upstream's default is OFF. The fixer is right, but the original Odroid failure ran on a 4.9 kernel, so on the Q6A's 6.x kernel this is a precaution rather than a proven cause.
+    - **Correction:** In debian/rules, change $DEB_ZEROCOPY_OPTION to $(DEB_ZEROCOPY_OPTION) when building the patched package.
+    - **Source:** https://sources.debian.org/data/main/r/rtl-sdr/2.0.3-1/debian/rules ; https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1041701
+  4.
+    - **Claim:** Researcher: the RTL-SDR Blog V3 has 'VHF/UHF performance close to the V4L'.
+    - **Problem:** The V4L datasheet MDS chart shows the V3 about 2 dB worse at 137 MHz (about -138.6 vs -140.7 dBm) and about 3 dB worse at 435-740 MHz. That matters for no-LNA 145.8 MHz and 435 MHz use. With a 20 dB, 0.7 dB NF filtered LNA in front, the difference becomes negligible.
+    - **Correction:** Say the V3 is about 2-3 dB less sensitive at VHF/UHF than the V4L and has identical overload behaviour (same two-tone curve).
+    - **Source:** https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+  5.
+    - **Claim:** Community: Ubuntu 26.04 has 2.0.2 and 'only the next Ubuntu dev series has 2.0.3-1'.
+    - **Problem:** Launchpad lists 2.0.3-1 in the current stable release, Ubuntu 26.10 (published 2026-10-01). 26.04 LTS indeed has 2.0.2-2build1 and noble has 2.0.1-2build1. The Q6A images are 24.04, so the practical conclusion does not change.
+    - **Correction:** Minor. Stock V4L support exists only in Ubuntu 26.10 and later; on the Q6A's 24.04 image, use the patched package.
+    - **Source:** https://launchpad.net/ubuntu/+source/rtl-sdr
+  6.
+    - **Claim:** BOM: LimeSDR Micro costs $199 and ships from about Sept 30, 2026, and covers 30 MHz-3.8 GHz.
+    - **Problem:** Outdated. Crowd Supply now lists $249 (Basic) and $299 (GNSS), and new orders ship Dec 15, 2026. Lime staff give about 4 W draw. In the LimeSuiteNG limesdr-micro code the matched RX paths are LNAL 0.3-2.2 GHz, LNAW 0.7-2.6 GHz and LNAH 3.3-3.8 GHz, with a minimum of 7 MS/s. So 137 MHz and 145.8 MHz fall below every optimised match. The Lime also needs the out-of-tree la9310_limesdr kernel module.
+    - **Correction:** This strengthens the case for keeping the V4L. It is the primary VHF receiver, the only radio usable until at least mid-December, and about 1.3 W versus about 4 W.
+    - **Source:** https://www.crowdsupply.com/lime-micro/limesdr-micro ; https://discourse.myriadrf.org/t/limesdr-micro-m-2-power-consumption/13304 ; https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp
+  7.
+    - **Claim:** Fixer: the Uputronics 435 MHz preamp 'wants 5-26 V', so do not run it from the V4L's 4.5 V bias tee.
+    - **Problem:** Probably outdated. Recent Uputronics filtered preamps are listed with the bias-tee input limited to 5 V maximum, because of component supply, and as '100% compatible with the Airspy bias-tee', which is 4.5 V. The 5-26 V regulator figure comes from older revisions. I found no datasheet for the 435 MHz model specifically.
+    - **Correction:** Check the exact revision. A current unit is likely to run from the V4L's 4.5 V tee, and you must NOT feed it more than 5 V from the main rail.
+    - **Source:** https://thepihut.com/products/162mhz-ais-filtered-preamplifier ; https://discussions.flightaware.com/t/biast-recommendation/82979
+  8.
+    - **Claim:** Community: mainline SDR++ does not recognise the HydraSDR, so a fork is needed.
+    - **Problem:** Outdated. SDR++ master now contains source_modules/hydrasdr_source, and fobossdr_source as well.
+    - **Correction:** No fork is needed for HydraSDR, but this only matters if you upgrade to a 12-bit radio.
+    - **Source:** https://github.com/AlexandreRouma/SDRPlusPlus/tree/master/source_modules
+  9.
+    - **Claim:** Researcher: the Q6A USB 2.0 ports 'may share one hub (unverified)'.
+    - **Problem:** Now confirmed from the Radxa V1.21 schematic, USB sheet (sheet 28). U23 is an FE1.1s hub on the SoC's HS-only USB1. It feeds the J5 top socket, both J2 sockets and the onboard AIC8800 Wi-Fi/BT. The blue USB 3.1 port (J5 bottom) connects directly to USB0, which appears as Bus 002/003. Both VBUS switches are WS4612 with EN tied to IN through 100 kOhm and Rset 3.24 kOhm, so about 2.1 A each; the '500mA' labels are trace annotations. The Q19/Q21 switch on the USB3 port's VBUS is driven by VDD_FUSB itself, not by a GPIO. So the fixer is right that no port's VBUS can be switched in software.
+    - **Correction:** Put the V4L on the blue port. Use the fixer's external VBUS-cut pigtail if you want hard power-cycling.
+    - **Source:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf ; https://docs.radxa.com/en/dragon/q6a/hardware-use/usb
+  10.
+    - **Claim:** No reviewer considered the display as an RFI source for the V4L.
+    - **Problem:** The display is now likely HDMI. On the Q6A, HDMI is made by a DP-to-HDMI bridge from USB0's combo PHY (schematic sheets 28-29), inside the same palm-sized case. A 1080p60 HDMI TMDS clock is 148.5 MHz, only 2.7 MHz from ISS SSTV at 145.8 MHz; its 3rd harmonic is 445.5 MHz, close to the 435-438 MHz CubeSats. Higher resolutions bring other clocks and harmonics. This is an inference from standard CEA-861 timings and has not been measured on this build.
+    - **Correction:** Add the display to the noise survey. Pick an HDMI mode and pixel clock whose harmonics avoid 136-138, 144-147, 435-438 and 739-741 MHz. Keep the HDMI link short and shielded with ferrites, and blank or dim the display during weak passes if spurs appear.
+    - **Source:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+  11.
+    - **Claim:** Researcher: the Airspy Mini is the 'optional upgrade' for RF-dense locations.
+    - **Problem:** Missing caveats. The official Airspy page rates it for -10 to +40 C only, which is marginal in a sun-exposed sealed handheld. It uses the same R820T2-class tuner front end, so filtering remains the real fix for FM and DVB-T2 overload. Linux gaps remain: SoapyAirspy has no ppm correction, and the SatDump Stop-deadlock PR #1172 is unmerged.
+    - **Correction:** Keep it as a conditional upgrade only after filtered LNAs prove insufficient, and give it a ventilated bay.
+    - **Source:** https://airspy.com/airspy-mini/
+  12.
+    - **Claim:** Researcher: about $34.20 for the V4L on the official AliExpress listing.
+    - **Problem:** Unverifiable. The AliExpress item page redirects to a geo page and renders empty for fetchers. The official store price ($37.95, 455 in stock) is verified.
+    - **Correction:** Budget $37.95 plus shipping, and read the landed price to Ukraine at AliExpress checkout.
+    - **Source:** https://www.rtl-sdr.com/product/rtl-sdr-blog-v4l-lite-r828s-rtl2832u-1ppm-tcxo-sma-software-defined-radio-dongle-only/
+- **Forum and fix assessment:** The forum findings do not change the verdict. Keep a second SDR and make it the V4L. They do change how it is integrated, and the fixer's proposals are mostly sound. I checked these points independently.
+  
+  - **Packaging fix:** correct and the best route. The V4L and USB-hang patches apply to noble's 2.0.1 source and build with SONAME librtlsdr.so.2. That keeps the apt SDR stack (SoapyRTLSDR, gr-osmosdr, gqrx, gr-satellites 5.5.0 from noble universe, and SDR++ noble aarch64 nightly) working without rebuilds. The community's alternative of rebuilding Debian 2.0.3-1 is wrong, because that package is librtlsdr0/.so.0 and breaks librtlsdr2.
+  - **Zero-copy typo:** real, reproduced with CMake.
+  - **USB topology fix:** correct per the schematic. The blue port is on the separate USB0 controller. Both VBUS switches allow about 2.1 A and cannot be switched in software.
+  - **VBUS-cut pigtail circuit:** electrically sound. The P-FET body diode blocks when off, it is on by default with the GPIO floating, and it works from 1.8 V or 3.3 V logic. A load-switch IC would be simpler but is not required.
+  - **SatDump two-process isolation:** verified in source. plugin.cpp loads ./plugins before the system directory, and the Lime enumerator calls LMS_Open/LMS_Close on every device in getAvailableSources. The workaround is valid. #1177 is still open and has no maintainer reply.
+  - **LimeSDR Micro VHF concern:** confirmed by the limesdr-micro branch code (LNAL from 0.3 GHz, 7 MS/s minimum). The V4L is the primary VHF receiver.
+  - **Overload analysis:** matches the datasheet. With a 95 MHz blocker, 3 dB desense occurs at -12 dBm at low VHF and -20 to -40 dBm at 300-1600 MHz, versus -7 dBm and +8 dBm for the V4. The FSPL estimate of about -4 dBm at 2 km from a 10 kW ERP mast is arithmetically right.
+  - **Per-band filtered LNAs and FM bandstop before any gain:** this is the right call. Verified figures: FM bandstop $16.95, more than 50 dB rejection, less than 0.5 dB loss below 1 GHz. SAWbird NOAA $49.95, at least 20 dB gain, NF 0.7 dB, about 80 mA at 3-5 V, so it runs from the V4L tee.
+  - **Corrections to the fix set:** the Uputronics bias-voltage advice is probably outdated. SDR++ now supports HydraSDR in mainline. The explicit DVB blacklist is optional, because noble's package is built with DETACH_KERNEL_DRIVER=ON, but harmless.
+  - **New risk not covered by any reviewer:** HDMI pixel-clock RFI (148.5 MHz for 1080p60) inside the case. It must go into the bench noise survey.
+  - **Purchase path:** delivery to Ukraine via the RTLSDRBlog AliExpress store is confirmed by RTL-SDR Blog. The official Ukrainian reseller sdr.in.ua shows 'online store temporarily not working' but still lists genuine V4 at 2,950 UAH, V3 at 2,500 UAH and Airspy R2 at 10,800 UAH, with a phone and Telegram contact. Parcels up to EUR 150 are currently exempt from duty and VAT. The Rada voted on Oct 15, 2026 to add VAT from the first euro, effective no earlier than July 2027.
+- **Final recommendation:**
+  - **Name:** RTL-SDR Blog V4L (Lite), dongle only (R828S + RTL2832U, 500 kHz-1.766 GHz, 2.56 MS/s, 1 ppm TCXO, 4.5 V/180 mA bias tee, HF upconverter), bought from the official RTL-SDR Blog channels. Run it on the Q6A's blue USB 3.1 port with the patched noble librtlsdr2 package.
+  - **Price:** $37.95 at the official store and eBay (455 in stock on the official store, Oct 2026; ships from China). The official AliExpress store (RTLSDRBlog Store no. 4523039) is the route to Ukraine; its listing price was not verifiable. Buying 2 units (about $76) plus the $16.95 FM bandstop stays under EUR 150, so no Ukrainian duty or VAT before July 2027.
+  - **Sources:**
+    - https://www.rtl-sdr.com/product/rtl-sdr-blog-v4l-lite-r828s-rtl2832u-1ppm-tcxo-sma-software-defined-radio-dongle-only/
+    - https://www.rtl-sdr.com/rtl-sdr-blog-v4l-lite-now-available-for-purchase/
+    - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+    - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+    - https://www.rtl-sdr.com/rtl-sdr-blog-v4-end-of-line/
+    - https://github.com/osmocom/rtl-sdr/commit/0204c9cfb1c5ff7bd64f466ce5b8fe53b40a636a
+    - https://launchpad.net/ubuntu/+source/rtl-sdr
+    - https://www.crowdsupply.com/lime-micro/limesdr-micro
+    - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp
+    - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+  - **Why:** Keep a second SDR.
+  - **The Lime cannot cover VHF at the same time as L/S-band.** Its two RX channels share one RX LO, so it cannot take 137 MHz together with 1.7 GHz. Its matched RX paths start at 300 MHz (LNAL), so the V4L is effectively the primary VHF receiver for 137 MHz LRPT and 145.8 MHz SSTV.
+  - **It is the only radio available for months.** The Lime is now $249 and ships Dec 15, 2026, so the V4L is the only radio for building the SatDump, gr-satellites and NPU pipeline until then.
+  - **It is the low-power mode** (about 1.3 W versus about 4 W for the Lime).
+  
+  The V4L is the genuine, in-stock successor of the EOL V4. It has the best VHF/UHF MDS of the RTL family on the datasheet (about -140.7 dBm from 100-550 MHz, versus about -138 for the V3 and -137 for the V4). It keeps the upconverter, TCXO and bias tee, the bias tee can power a SAWbird NOAA (80 mA), and it costs the same as a V3.
+  
+  Its weaknesses are both manageable:
+  - **Overload is the same as the V3.** Fix it with the FM bandstop and band-filtered LNAs placed before any gain.
+  - **It needs librtlsdr with commit 0204c9c.** On Ubuntu 24.04, rebuilding noble's own package with 2 patches (verified to apply and build with SONAME .so.2) solves this cleanly.
+  
+  It is also hardware-compatible: USB 2.0 HS at about 5 MB/s on a dedicated controller, 250-270 mA plus up to 180 mA for the bias tee against a port switch limited to about 2.1 A, and a USB-A dongle on a short extension.
+  
+  Buy a spare now: the R828S stockpile is expected to last about one year.
+- **Final budget option:**
+  - **Name:** RTL-SDR Blog V3 (R860), dongle only, or the V3c USB-C variant. Alternative: a genuine leftover V4 from an official reseller, e.g. sdr.in.ua, if it reopens or answers by phone/Telegram.
+  - **Price:** V3 / V3c dongle only: $34.95-39.95 (official stores); V3 with dipole kit: $44.95-49.95. A genuine V4 is listed at 2,950 UAH (about $71) by sdr.in.ua, whose webshop is currently paused.
+  - **Why:** The V3 is in stable production and works out of the box with stock Ubuntu 24.04 librtlsdr2, with no driver build. It has the same bias tee, TCXO and overload behaviour as the V4L, at about 2-3 dB worse VHF/UHF MDS and weak direct-sampling HF, which is not a project goal. The V3c's USB-C socket lets you use a strain-relieved cable instead of a dongle hanging off the port in a handheld. It saves only about $3, so choose it only for zero driver friction or if V4L stock runs out.
+  
+  A genuine V4 from a listed reseller is the other good fallback. It has the best strong-signal immunity (+8 dBm vs about -24 dBm blocker tolerance at 400 MHz) and works with stock 2.0.1 packages. Never buy a 'V4' from Prom.ua, Rozetka or third-party marketplace sellers. Dropping the second SDR entirely is not advisable.
+- **Known problems and fixes to apply:**
+  - Driver ('deaf, only DC spike'):
+  - Do NOT apt purge.
+  - Run: apt-get source rtl-sdr (noble 2.0.1-2build1).
+  - Add osmocom commits 0204c9c (V4L) and 65f0658 (USB-hang fix) as quilt patches.
+  - In debian/rules, change $DEB_ZEROCOPY_OPTION to $(DEB_ZEROCOPY_OPTION).
+  - Build with dch --local +v4l and dpkg-buildpackage -b.
+  - Install, then: apt-mark hold librtlsdr2 librtlsdr-dev rtl-sdr.
+  - Verify: rtl_test prints 'RTL-SDR Blog V4 Lite Detected' and objdump shows SONAME librtlsdr.so.2.
+  - Never use AppImages or Flatpaks with a bundled old librtlsdr.
+  - Install the rest from noble apt: soapysdr-module-rtlsdr, gr-osmosdr, gnuradio, gr-satellites 5.5.0. Install SDR++ from sdrpp_ubuntu_noble_aarch64.deb. Build SatDump master from source; there is no Ubuntu arm64 .deb. Build LimeSuiteNG (limesdr-micro branch) before SatDump so the limesdrng plugin is built. Use make -j4 to -j6 with zram to avoid freezes.
+  - USB placement: use the BLUE USB 3.1 port (USB0, Bus 002). All three black USB 2.0 ports share the FE1.1s hub with the onboard Wi-Fi. Put GNSS and IMU on UART/I2C. Disable autosuspend for 0bda:2838 via a udev rule. Check with 'lsusb -t'.
+  - Overload (the V4L has no triplexer or notch):
+  - Order the chain antenna -> band filter or SAW-LNA -> coax -> V4L. Never put a broadband SPF5189Z or QPL9547 LNA ahead of the FM bandstop.
+  - 137 MHz: SAWbird NOAA ($49.95, 80 mA from the V4L tee).
+  - 145.8 MHz: FM bandstop only ($16.95, more than 50 dB rejection).
+  - 435 MHz: a 435 MHz SAW-filtered LNA; check its bias-voltage spec.
+  - Set gain manually with AGC off. Run the 6 dB attenuator test at each new site.
+  - Conducted and radiated noise: Q6A bucks, the 4S pack, the LimeSDR and now the HDMI display (1080p60 TMDS clock 148.5 MHz, 3rd harmonic 445.5 MHz). Do a terminated rtl_power survey with each source switched on and off. Pick a display mode whose clock harmonics avoid the satellite bands. Use a short shielded HDMI link with ferrites, a ferrite on the USB extension, and keep the dongle at least 10 cm from the SoC and buck inductors. If spurs appear, feed the dongle's 5 V from a filtered rail.
+  - Bench acceptance before trusting it in the field (no Q6A + SDR report exists anywhere): 15 minutes of 'rtl_test -s 2400000' under CPU, NPU, Wi-Fi and display load with zero 'lost at least' lines; then 2.56 and 3.2 MS/s margin tests; a ppm drift check after a 30-minute soak in the closed case; one real Meteor LRPT decode at 1.024 MS/s.
+  - 'Stuck noisy until replug': the Q6A cannot cut VBUS in software (WS4612 EN hard-wired). Add a GPIO-driven VBUS-cut pigtail fed from the 5 V buck, normally on (AO3401A plus PNP/NPN driver). Add a pre-pass health check with the recovery ladder: re-open, usbreset, sysfs port disable/enable, then hard power cycle. Run decoders as systemd units with Restart=on-failure.
+  - Two SDRs in SatDump:
+  - Set unique serials: back up first with 'rtl_eeprom -r', then 'rtl_eeprom -s 00000137'. Never change the 'RTLSDRBlog' / 'Blog V4L' strings, which V4L detection depends on.
+  - Run two separate SatDump CLI processes. Move liblimesdrng_sdr_support.so into /opt/satdump-lime/plugins so the RTL process never LMS_Opens the Lime.
+  - Do not use one satdump_sdr_server for both (#1177 is open).
+  - Heat and mechanics: keep the thermal pad and aluminium case. Give it its own vented bay away from the Q6A exhaust. Use a 10-15 cm USB-A extension with strain relief. Print the case in PETG or ASA. Use 1.024 MS/s for LRPT.
+  - Bias-tee safety: the WB2HOL Yagi's hairpin match is a DC short. Enable bias only with a bias-powered LNA in line, or use a DC block.
+  - Counterfeits and supply: buy only from the RTLSDRBlog AliExpress store (4523039 / 1101427871), eBay 'rtl-sdr-blog', or listed resellers. Treat Prom.ua and Rozetka 'V4' / 'HTOOL' listings as fakes. Buy 2 V4Ls now while R828S stock lasts. Keep the V3 or V3c as the long-term fallback.
+- **Missed better options:**
+  - RTL-SDR Blog V3c (USB-C), same price and in stable production: better for handheld mechanics (a cable instead of a dongle hanging off the port) and plug-and-play on noble, at the cost of about 2-3 dB VHF/UHF MDS and HF quality.
+  - A genuine leftover RTL-SDR Blog V4 from an official reseller. sdr.in.ua (Ukraine) lists it at 2,950 UAH but its webshop is paused; it has a phone and Telegram contact. It offers the best overload immunity and stock-driver support, which suits the RF-dense Ukrainian urban environment.
+  - Not better, though worth knowing: RigExpert Fobos SDR (a Ukrainian brand). It is $395-445, a wideband 14-bit USB 3.0 receiver with reported FM-band mirror and image issues and mixed Linux reviews, and it duplicates the Lime's role. Not suitable as the narrowband second SDR.
+- **Remaining uncertainties:**
+  - The patched librtlsdr2 recipe was verified here only on amd64 (patch application, compile, SONAME .so.2). The arm64 build on the Q6A, and actual V4L reception with the 2.0.1-based library (which lacks the 2024 r82xx fast-retune changes the V4L code was written on top of), are untested.
+  - USB sample-loss, conducted noise and thermal behaviour of any SDR on a Dragon Q6A or QCS6490 board are completely unreported. The bench test will be the first data.
+  - HDMI or DSI display RFI at 137-146 MHz and 435-438 MHz is inferred from standard pixel clocks, not measured. The actual mode, the bridge spread-spectrum settings and the shielding decide it.
+  - The landed AliExpress price and transit time to Ukraine for the V4L were not verifiable. The $34.20 listing price is unconfirmed.
+  - The Q6A 40-pin GPIO logic level (1.8 V or 3.3 V) is undocumented. The proposed VBUS-cut driver works with either, but the line mapping (gpiochip4 line 96 = pin 7, per Radxa's example) should be confirmed with gpioinfo.
+  - Bias-tee voltage tolerance of the specific 435 MHz Uputronics (or other) CubeSat LNA revision.
+  - LimeSDR Micro real-world VHF sensitivity, below its 300 MHz matched range, is unmeasured. If it proves good, the V4L becomes a helper rather than the primary VHF receiver.
+  - How long R828S/V4L stock will last (stated as about one year), when the USB-C V4L variant will ship, and V5 timing (2027 at the earliest).
+- **Confidence:** high
+
 _Агент цього етапу ще працює (run `wf_eb446444-464`)._
 
