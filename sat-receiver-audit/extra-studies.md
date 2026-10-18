@@ -23561,6 +23561,1720 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Downloaded reference copies (untrusted data, not executed) are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/labui2_dl/ (forum JSON, labwc sources, greetd 0.9.0 source, systemd v255 logind, qt6-wayland debian dir, aic8800 sources, Pico/RP2040 datasheets). The dump helper script is /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/labui2_scripts/dump.py. No user data was sent in any request.
 
+## extract:reaudit_C (run `wf_9cc6cab3-efa`)
+
+- **Source:** reaudit_C
+- **Changes:**
+  1.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** correction
+    - **Part:** RTL-SDR Blog multipurpose dipole kit #1 (V-диполь LRPT)
+    - **Anchor:** Вуса 53.4 см, 120°, вісь Пн-Пд, 1-1.1 м над землею.
+    - **Instruction:** Replace this sentence with: «Вуса 53.4 см кожен (≈2.5 секції, мітка на трубці), горизонтальний V 120° у власному друкованому затискачі 120° (PETG/ASA: тримає обидві телескопічні трубки біля основи, вставка 1/4-20, стрілка бісектриси). Висота 1.0-1.1 м (1.087 м = λ/2 на 137.9 MHz) на кожному проході, без зниження для високих проходів. Орієнтація за прогнозованим макс. кутом місця (модель PyNEC): ≥35° (зокрема всі спроби N2-3) — бісектриса Пн-Пд, лінія кінців Сх-Зх; ≤30° — повернути на 90° (кінці Пн-Пд, борт до проходу); без нагляду — бісектриса Пн-Пд. Не для постійного монтажу надворі (бруд заїдає телескопи, продавець). На прибутті: різьби M5 і центр-оплітка розімкнено (>1 MΩ); дефектність близько 1.7 % за продавцем. Запасна телескопічна пара — набір #2.» Keep the rest of the row (17.95, 357 шт., бюджетна альтернатива) unchanged.
+    - **Reason:** «Вісь Пн-Пд» is ambiguous; 9A4QV's original text puts the V bisector N-S. PyNEC pass model: bisector N-S at 1.087 m gives 9.3-10.6 min above -6 dB on passes peaking ≥40° against 6.6-6.9 min with tips N-S; tips N-S wins only on passes ≤25°. Rotation, not lowering, is the fix. Vendor QC rate ~1.7 %.
+    - **Sources:** https://www.rtl-sdr.com/simple-noaameteor-weather-satellite-antenna-137-mhz-v-dipole/ ; https://www.rtl-sdr.com/DIPOLE ; https://community.libre.space/t/mathematical-modeling-and-physical-optimization-of-v-dipole-antennas-for-vhf-imaging-satellite-reception/14844 ; https://www.rtl-sdr.com/product/rtl-sdr-blog-multipurpose-dipole-antenna-kit/
+    - **Saving usd:** 0
+  2.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** replace_part
+    - **Part:** Антена 70 см (штир DIY / SRH-701 / A-V85)
+    - **Anchor:** | Штир діапазону 70 см (17-19 см) | DIY 17 см, або Diamond SRH-701 (19 см) / Baofeng A-V85 (16.8 см) | 1 | 3-25 | DIY / роздріб | модель |
+    - **Instruction:** Replace the whole row with two rows. Row 1: «| Антена 70 см (за замовчуванням) | Основа дипольного набору #1 (повторно; RTL-A ділиться в часі між LRPT і UHF через SP4T) з двома короткими елементами 5-13 см, повністю висунутими (≈14 + 2 см на бік, резонанс ≈445 MHz), прямий 180°, бортом до проходу; провід основи 60 см RG174 (SMA-M, феритовий дросель) прямо в ANT Uputronics 440 | 1 | 0 (повторно; опційно третій набір +17.95) | RTL-SDR Blog | модель | Модель на 437.5 MHz: розузгодження 0.22-0.32 dB (Q 6-10), провід 0.38-0.57 dB, разом +1.3...+1.5 dB над штирем 0 dBi (підсилення штиря саме не виміряне). Телескопічний, тобто складаний — відповідає правилу без вашого підтвердження; антена на 60 см від шумів пристрою. Доплер-трекінг увімк. Набір #2 не використовувати — він на HF+ для AIS, що працює одночасно. Третій набір — щоб не переставляти елементи між проходами LRPT і UHF; у тому самому замовленні RTL-SDR Blog (ЄС: офіційний AliExpress/eBay; однакові набори — одна тарифна позиція за правилом вартості). |». Row 2: «| Запасний штир 70 см | DIY штир λ/4 17.1 см на SMA-M або Diamond SRH-701 (WiMo SKU 17039; SMA-M, 19 см, 26 g; 3 dBi на 432 MHz і 0 dBi на 144 MHz за продавцем, не виміряно) | 1 | 3-19.00 | DIY / WiMo (ЄС): SRH-701 EUR 16.90 з ПДВ ≈ $19.00 (+EUR 14.20 доставка), у наявності, 1-2 дні | модель | Лише запасний; лишається в списку на ваше підтвердження (мала жорстка антена). Baofeng A-V85 прибрано скрізь (за конвенцією Baofeng SMA-F, поточного лістингу не знайдено, слабкий результат на UHF). |»
+    - **Reason:** No source gives a measured gain for any small 70 cm whip on a handheld; the W9MDB figures quoted for the whips are the 146 MHz column. The dipole kit's short elements fully extended give a model +1.3-1.5 dB over a 0 dBi whip and are rule-compliant (telescopic). Kit #1 is free during UHF passes (RTL-A time-shared), kit #2 is not (AIS concurrent). Stage-2 tape length 16.3 cm/side is not reachable; fully extended is the only setting.
+    - **Sources:** https://www.rtl-sdr.com/using-our-new-dipole-antenna-kit/ ; https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/ ; https://www.wimo.com/en/srh-701 ; https://www.miklor.com/COM/pdf/AntennaTestingW9MDB.pdf
+    - **Saving usd:** 0-6.00 on the row upper bound (3-25 → 3-19.00); default 70 cm antenna costs 0; optional third kit +17.95
+  3.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** source_url
+    - **Part:** RTL-SDR Blog active L-band patch
+    - **Anchor:** RTL-SDR Blog (на buy-сторінці; URL товару 404)
+    - **Instruction:** Replace the source cell with: «RTL-SDR Blog, набір v2 (сірий), buy-сторінка (add-to-cart 35592); AliExpress 4000311955837; у ЄС — лише офіційні AliExpress/eBay; EU landed = ціна + доставка + імпортний ПДВ + EUR 3 + EUR 2 на тарифну позицію (правило вартості; доставку не перевірено)». Model cell may add «Active L-Band 1525-1660 MHz Patch Antenna Set v2». Price 59.95 stays (re-confirmed 18.10.2026).
+    - **Reason:** Re-audit located the live buy route and AliExpress item; the 'URL 404' note is outdated. The user is in Europe, so the EU landed-cost rule applies to a China/US seller.
+    - **Sources:** https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/ ; https://www.rtl-sdr.com/preorder-sale-active-l-band-1525-1660-inmarsat-and-iridium-patch-back-in-stock-for-44-95/
+    - **Saving usd:** 0
+  4.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** correction
+    - **Part:** RTL-SDR Blog active L-band patch
+    - **Anchor:** Inmarsat-C і GNSS-SDR; живлення з каналу ch3 інжектора після DC-sense.
+    - **Instruction:** Replace with: «RHCP, патч 175x175 мм, LNA потім SAW, 3.3-5 V, 15-20 mA (макс. 20 mA); дріт 2 м RG174 (2.4 dB на 1541 MHz, до 3.6 dB для омідненої сталі — модель), штатив (бажано) і присоска. Inmarsat-C EGC SafetyNET лише через egc-gate; GNSS-SDR на RTL-B — лише тест запуску; не для HRPT і GOES (продавець). Живлення з ch3 на 4.5 V після DC-sense, що приймає 15-20 mA як активну антену. Між патчем і пристроєм щонайменше 1 м коаксіалу (продавець). Підсилення і NF LNA, краї SAW і стать роз'єму корпусу не опубліковано — записати на прибутті.» Keep «Бюджет: 2-виткова спіраль + SAWbird+ iO (прибрано).»
+    - **Reason:** Vendor release post and comments: RHCP, 15-20 mA, SAW after LNA, ≥1 m coax recommended, not for HRPT/GOES. u-blox measured RG174 loss 1.2 dB/m replaces 0.98 dB/m.
+    - **Sources:** https://www.rtl-sdr.com/preorder-sale-active-l-band-1525-1660-inmarsat-and-iridium-patch-back-in-stock-for-44-95/ ; https://cdn.sparkfun.com/assets/0/b/a/5/2/ANN-MB5_Datasheet.pdf
+    - **Saving usd:** 0
+  5.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** correction
+    - **Part:** Waveshare 25346 GNSS antenna; u-blox ANN-MB5 option
+    - **Anchor:** | GNSS-антена | Waveshare GNSS L1+L5 active (25346) | 1 | 16.99 | Waveshare | перевірено | На P7 (3.3 V від LC76G), дріт 1-3 м; також опорна L1 для лабораторії. Бюджет: u-blox ANN-MB5 $42.50 (дорожче). |
+    - **Instruction:** Replace the row with: «| GNSS-антена | Waveshare 25346 «GPS External Antenna (D)» | 1 | 16.99 | Waveshare | перевірено | RHCP, 2 dBi, LNA 28±2 dB (у бюджетах 28 dB), NF ≤2 dB, 3.0-18 V, ≤20 mA, фіксований дріт 3 м RG174 (≈3.6 dB на L1), SMA-J. Використовується як L1-антена: LC76G приймає лише L1 (GPS L1 C/A, GLONASS L1, Galileo E1, BDS B1I/B1C, QZSS), L5 не використовує жоден приймач стеку. GLONASS у списку діапазонів немає, але графік S21 продавця має 39.09 dB на 1.602 GHz — підтвердити C/N0 GLONASS на LC76G. На P7 зміщення від плати LC76G (VCC плати від 5 V; очікувано 3.06-3.19 V при 10-20 mA, модель; приймання ≥3.05 V під 20 mA). Надлишок дроту змотати подалі від краю USB 3/HDMI/DC-DC; магніт ≥30 см від паку BNO085 або кріплення стрічкою. Також опорна L1 для лабораторії. Опція стійкості (не бюджетна, +$25.51): u-blox ANN-MB5-00 (SparkFun GPS-25071, $42.50, у наявності; США — правило вартості ЄС): L1 1559-1608 MHz і L5 1164-1186 MHz, SAW перед LNA (45 dB нижче 1459 MHz, 35 dB вище 1708 MHz), LNA 15±3 dB, NF 2.0 dB, 3.0-5.0 V 17 mA без захисту від перенапруги і зворотної полярності, 4.5 dBic на землі 12 см (потрібна пластина ≥10-12 см); модель системного NF 2.3-3.0 dB проти ≈2.0 dB у 25346 — брати заради стійкості, не чутливості. |»
+    - **Reason:** Vendor confirms a fixed 3 m lead; LC76G is L1-only (Quectel spec V1.1); the 'no GLONASS' claim is half true (vendor S21 plot covers 1.602 GHz). ANN-MB5 is not a budget item and has no sensitivity case; its value is pre-LNA SAW filtering. ANN-MB5 datasheet R03 says mass production (not obsolete).
+    - **Sources:** https://www.waveshare.com/gps-external-antenna-d.htm ; https://www.waveshare.com/img/devkit/accessories/GPS-External-Antenna-D/GPS-External-Antenna-D-details-7.jpg ; https://quectel.com/content/uploads/2024/03/Quectel_LC76G_Series_GNSS_Specification_V1.1-1-1.pdf ; https://cdn.sparkfun.com/assets/0/b/a/5/2/ANN-MB5_Datasheet.pdf ; https://www.sparkfun.com/u-blox-multi-band-active-gnss-antenna-l1-l5-ann-mb5.html
+    - **Saving usd:** 0 (ANN-MB5 is an optional +25.51 cost)
+  6.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** correction
+    - **Part:** Підсумок групи 2.4
+    - **Anchor:** **175.79-207.79 (≈176-208)**
+    - **Instruction:** Change to «**175.79-201.79 (≈176-202)**» and add to the note: «A-V85 прибрано (рядок штиря $3-19.00; 70 см за замовчуванням — набір #1, $0); +$17.95 з третім дипольним набором; +$25.51 з ANN-MB5.» In the same note cell replace «(залежить від регіону)» with «(Європа — купується)».
+    - **Reason:** Arithmetic 2x17.95 + (3-19.00) + 59.95 + (10-20) + 49.95 + 16.99 with the A-V85 dropped; re-audit reproduced the old 175.79-207.79 first.
+    - **Sources:** reaudit_C corrected_spec section 5 (Group subtotal)
+    - **Saving usd:** 6.00 on the upper bound
+  7.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** correction
+    - **Part:** Пелюстковий гелікон
+    - **Anchor:** Спільні з патч-рівнем спіраль і SAWbird+ GOES. 15.7 dBic (модель).
+    - **Instruction:** Replace with: «Спільні з патч-рівнем спіраль і SAWbird+ GOES. 13-15.7 dBic (модель; виміряного підсилення немає). Задокументовано HRPT з рук на гелікон t0nito + RTL + SatDump (NOAA, відео 06.01.2025 — після кінця POES не повторити; Meteor — з других рук, 2024). Пелюстки 0.3-0.5 мм: хорди 6.9/16.8 см, похила 17.7 см, язички 1 см, перекриття ≥1 см; диск 18 см → устя 44 см, глибина 12 см (42.7° від площини диска). Для A/B кута t0nito (29.7°) — окремий набір пелюсток (хорда обода 18.6 см), не ті самі пелюстки з клиновими щілинами.»
+    - **Reason:** No measured helicone gain exists (pe2bz '+3 dB' is a waterfall guess); hand-tracked HRPT is documented. The same petals cannot form the 29.7° t0nito geometry (rim chord 18.6 cm vs 16.8 cm petal top edge, 0-1.8 cm wedge gaps).
+    - **Sources:** https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309 ; https://www.rtl-sdr.com/saveitforparts-testing-a-3d-printable-satellite-antenna-for-noaa-meteor-and-other-polar-orbiting-l-band-satellites/
+    - **Saving usd:** 0
+  8.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** correction
+    - **Part:** Схрещений Yagi — файли Axotron v3
+    - **Anchor:** DIY (файли Axotron v3 3MF безкоштовні)
+    - **Instruction:** Replace with: «DIY (файли Axotron v3 3MF від 14.01.2026: 18 деталей + креслення, ліцензію не вказано — лише для особистої збірки; основи затискачів перекреслити під квадратну штангу 20x20 мм або взяти круглу 16 мм зі шпонковими друкованими муфтами ±5°)».
+    - **Reason:** Axotron v3 is its own YagiCAD geometry on a 16 mm round PVC boom; the STACK hybrid (WB2HOL lengths on Axotron parts, 20x20 boom) needs redrawn clamp bases; the zip states no license.
+    - **Sources:** https://axotron.se/blog/?p=1619 ; https://axotron.se/blog/wp-content/uploads/2025/02/2m-antenna-v3.zip
+    - **Saving usd:** 0
+  9.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** correction
+    - **Part:** Схрещений Yagi — муфти паразитних елементів, свердління стрічки
+    - **Anchor:** Налаштування лише на прийом; активний елемент — прямий розрізний + hairpin;
+    - **Instruction:** Insert after this phrase: «паразитні елементи 70 см (REF, D1-D4) з половин ≤17.0 см з'єднуються струмопровідною наскрізною муфтою M3 (латунь або нержавійка), <1 Ohm від кінця до кінця (DMM після кожного збирання) — без неї Yagi падає до ≈2 dBi (оцінка); DE — ізольований розріз 12 мм + hairpin ≈11.5 nH (≈11-12 мм дроту 2 мм при проміжку 12 мм; розраховано, фіксовано, без S11); стрічки 2 m свердляться 3.5 мм за напрямною Axotron зі сталевими пластинами (нержавійка M3, подовжені затискачі, краї під спортивною стрічкою); hairpin 2 m — 127 мм дроту 14-18 AWG (W9RH). Модель: 70 см 10.9-11.0 dBi, F/B 25-27 dB; 2 m 8.3 dBi без втрат (≈7.9 dBi зі сталлю), F/B 18 dB, Z 14-22j;».
+    - **Reason:** No source says how the split parasitic halves join; on an insulating insert each becomes two 17 cm stubs (silent ~9 dB loss). Axotron drills the tape on purpose; the 'never drill' advice is from another build. NEC confirms hairpin values.
+    - **Sources:** https://www.amsat.org/articles/n2spi/JulAug06AmsatJournal.pdf ; https://wa5vjb.com/yagi-pdf/cheapyagi.pdf ; https://axotron.se/blog/?p=1619 ; https://www.w9rh.org/wp-content/uploads/2024/01/2m-tape-measure-yagi-instructions.pdf
+    - **Saving usd:** 0
+  10.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** keep_with_note
+    - **Part:** Дорожній штатив
+    - **Anchor:** | Штатив | Дорожній, до 35 см у складеному, від 1.2 м, міні-панорамна голова, 1/4-20 | 1 | 40-100 | — | модель |
+    - **Instruction:** Part, seller, price and specs come from the G4 analog (Rollei Compact Traveler No. 1 Aluminium SKU 22585, rollei.de, 2026 listing figures). From reaudit_C add only: head is a ball head, not a mini pan head (fine for a GEO horn and a static V); real mass about 1.17-1.35 kg for named 32-35 cm tripods, not 0.3-0.6 kg (backpack +0.6-1.0 kg); alternative Manfrotto BeFree One Aluminium (32 cm, 130 cm, 1350 g, 2.5 kg, fixed ball head; EUR 119.95 = USD 134.98 at one EU retailer); check helicone and horn balance at 30° elevation. Replace «міні-панорамна голова» with «кульова голова».
+    - **Reason:** Both named tripods have ball heads and weigh 2-4x the STACK's figure. G4 analog keeps the Rollei and supersedes reaudit_C's 2016 datasheet values.
+    - **Sources:** https://justmore.dk/images/media/ProductsDocs/Rollei-Compact-Traveler-No-I-kamerastativ-sort.pdf ; https://bigbearsound.com/products/manfrotto-befree-one-aluminium-travel-tripod-with-head-black
+    - **Saving usd:** per G4 analog
+  11.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** other
+    - **Part:** Кожух L-band патча (опційно, DIY)
+    - **Anchor:** | LNA Inmarsat-C | Nooelec SAWbird+ iO cased (100788) | 1 | 49.95 | Nooelec | перевірено | Лише після проходження egc-gate. |
+    - **Instruction:** Add a new row after this one: «| Кожух L-band патча | Складаний алюмінієвий кожух: 4 пласкі листи близько 10 x 15 см + задня пластина, частини ≤20 см (DIY) | 1 | <5 | DIY | модель | Анекдотично +4-5 dB (один користувач: AERO SNR 8-9 → 12-14 dB; лише РЧ-доказ). Не тарілка (STACK уже приймає сегментні рупори). У списку на ваше підтвердження; приймати лише після тесту до/після на C/N0 NCS (лише прийом), залишити лише при ≥2 dB. |»
+    - **Reason:** Re-audit new option: passive gain for the patch tier on Inmarsat-C, anecdotal.
+    - **Sources:** https://www.rtl-sdr.com/techminds-reviews-our-rtl-sdr-blog-l-band-patch-antenna-horn-dish-mod/
+    - **Saving usd:** 0 (optional cost under 5)
+  12.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** condition
+    - **Part:** Airspy Mini (швидкий L-band SDR)
+    - **Anchor:** | Швидкий L-band SDR | Airspy Mini | 1 | близько 140-160 (GBP ~110) | Moonraker | не перевірено | Лише після горба Metop і тесту 2.88 Msps. |
+    - **Instruction:** Seller, price and status come from the G6 analog (ITEAD DE, IM150415001EU). From reaudit_C add to the note: «Lime залишено (збірка за замовчуванням): після доставки (15.12.2026) Metop/AWS ідуть з гелікона + SAWbird+ GOES на Lime RX на ≥6 Msps ci16 (sysclk Lime ≥30 MHz, операторська нотатка 30). До того — V4L 2.88 Msps з DC-блоком. Airspy Mini купувати лише якщо ворота (a)/(b) провалені І Lime не пройшов 15-хвилинне захоплення без втрат на цьому тракті.»
+    - **Reason:** The kept LimeSDR Micro M.2 (0.3-3.8 GHz, 12-bit, up to 56 MHz) captures Metop's full 3.5 MHz and AWS's 2.59 MHz at ≥6 Msps; behind the 38 dB SAWbird+ GOES its NF does not matter. G6 keeps the Airspy gated, so it is a condition, not a removal.
+    - **Sources:** https://github.com/SatDump/SatDump/issues/727 ; https://www.a-centauri.com/articoli/beyond-poes-amateur-satellite-reception ; https://www.a-centauri.com/articoli/easy-hrpt-guide
+    - **Saving usd:** 0 now; the gated Airspy cost (G6 landed about 123-143) is avoided if the Lime passes
+  13.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** condition
+    - **Part:** LimeSDR Micro — роль для Metop/AWS
+    - **Anchor:** Бюджет: Airspy Mini лише для швидкостей AHRPT.
+    - **Instruction:** Replace with: «Lime бере Metop-B/C AHRPT і AWS на ≥6 Msps ci16 з гелікона + SAWbird+ GOES (шлях підтверджує власник РЧ-тракту); у приймання Lime додати 15-хв захоплення без втрат на 6 Msps. Airspy Mini — лише запасний за воротами (2.11).»
+    - **Reason:** Lime kept by the user; re-audit makes it the wide L-band path.
+    - **Sources:** https://github.com/SatDump/SatDump/issues/727
+    - **Saving usd:** 0
+  14.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** seller_or_price
+    - **Part:** QO-100 LNB upgrade QRO.cz SDR LO 9750
+    - **Anchor:** Апгрейд: QRO.cz LNB.
+    - **Instruction:** Replace with: «Апгрейд: QRO.cz «SDR LO 9750 classic» — hamparts.shop (ЄС, CZ), EUR 52.03 з ПДВ ($58.55; EUR 43.00 без ПДВ = $48.39), у наявності, 2-3 дні; +12 V = V-pol (NB), +15 V (старий IF IC) або +18 V (новий) = H; 1 ppm темп., 2 ppm початкова (зсув 0-20 kHz, у таблиці 0-30 kHz); TCXO 0.5 ppm лише у версії X 390; 180 mA; «0.2 ppm» (WiMo) у виробника немає. Версія «with POTY adapter» (хвилевід — мідна трубка 22 мм) дала б одномодове горло рупора 20 мм ID — деталі й ціну уточнити в QRO.cz (не перевірено). Купувати лише після рішення про шину LNB і перевірки V-pol.» Bullseye seller, price and quantity in this row follow the G6 analog; region text follows the user decision (Europe, kit bought).
+    - **Reason:** Manufacturer page contradicts the 0.2 ppm figure; 13.2 V sits between the 12 V V-pol and 15 V H-pol setpoints of old-IF-IC units (threshold unpublished).
+    - **Sources:** https://hamparts.shop/10-ghz-lnb-with-pll-and-tcxo.html
+    - **Saving usd:** 0 (optional cost 58.55)
+  15.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** correction
+    - **Part:** Підсумки 2.12 — рівень antenna-patch
+    - **Anchor:** | antenna-patch | антени, що завжди з собою | **176-208** | 175.79-207.79 |
+    - **Instruction:** Change to «| antenna-patch | антени, що завжди з собою | **176-202** | 175.79-201.79 |». Lower the upper bounds of every summary row that includes the patch tier by 6.00 (Пристрій + патч-антени, + обидва рівні, + лабораторія, Усе, крім опційного) and then recompute all summary rows once all other v2 changes (analogs) are applied; do not hard-code the old sums. In C24 (01a) the same tier figure becomes $176-202.
+    - **Reason:** A-V85 dropped; whip row 3-19.00.
+    - **Sources:** reaudit_C corrected_spec section 5
+    - **Saving usd:** 6.00 on the upper bound
+  16.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** correction
+    - **Part:** Waveshare LC76G 24370 — живлення VCC
+    - **Anchor:** UART6, PPS на пін 7. Роз'єм RTC звірити з аркушем 18 схеми.
+    - **Instruction:** Append: «VCC плати — від 5 V 40-pin хедера (пін 2 або 4), не від 3V3 (пін 1/17): плата має власний RT9193-33 (VIN 2.5-5.5 V, падіння 170 mV при 200 mA), з 3.3 V він у просіданні, і зміщення антени за моделлю лише 2.91-3.04 V при 20 mA — нижче мінімуму 3.0 V антен 25346 і ANN-MB5; з 5 V — 3.06-3.19 V при 10-20 mA (модель). UART і PPS лишаються логікою 3.3 V. R5 (10 Ohm) ніколи не перемикати. Приймання: ≥3.05 V на P7 під навантаженням 20 mA.»
+    - **Reason:** Waveshare's board VCC is rated 3.3V/5V and its own wiring tables use 5 V; gnss_imu.json wiring used 3V3, putting the LDO in dropout (model).
+    - **Sources:** https://www.richtek.com/assets/product_file/RT9193/DS9193-18.pdf ; https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf ; https://www.waveshare.com/wiki/LC76G_GNSS_Module
+    - **Saving usd:** 0
+  17.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** correction
+    - **Part:** Uputronics 440 MHz CubeSAT filtered preamp
+    - **Anchor:** | Передпідсилювач 70 см | Uputronics 440 MHz CubeSAT filtered preamp (LNA, потім SAW 30 MHz) | 1 | 68.71 (GBP 51.59 з ПДВ) | Uputronics (власний магазин, UK) | перевірено (є в наявності) |
+    - **Instruction:** In the model cell replace «(LNA, потім SAW 30 MHz)» with «(обмежувач Skyworks, ФВЧ нижче 100 MHz, LNA, потім SAW; смуга ≈427-452 MHz на −3.4 dB за графіком продавця UNCAL, рівна на 435-438 MHz; NF 0.75 dB, ≥19 dB на 440 MHz; SMA-F обидва порти, корпус V3 69x40x12 мм)». Price, seller and status cells follow the G1 analog (Uputronics EU storefront); do not take reaudit_C's GBP 51.59 as the v2 price.
+    - **Reason:** Vendor 440 MHz plot: 19.63 dB at 440 MHz, 16.27 dB at 427.33 MHz, 16.17 dB at 452.0 MHz — about 25 MHz between the -3.4 dB points, not '30 MHz'. Datasheet Rev 3.0 confirms the chain.
+    - **Sources:** https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808 ; https://store.uputronics.com/products/uputronics-filtered-preamps
+    - **Saving usd:** 0
+  18.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** correction
+    - **Part:** Uputronics 440 — вхід зміщення і монтаж
+    - **Anchor:** Вхід зміщення залежить від ревізії (плати з березня 2020 — 5-26 V; поточні — «5V max», реєстр #98);
+    - **Instruction:** Replace with: «Даташит Rev 3.0 (18.10.2024): вхід зміщення 3.5-5.5 V (понад 5.5 V — незворотне пошкодження), ≈50 mA; 4.5 V на ch2 у межах (реєстр #98 закрито на папері, вимір на ch2 лишається); роз'єм ANT з DC-блоком, без проходу зміщення; без живлення сигнал не проходить (UI: «ch2 off = no UHF»); кріпити на короткій перемичці SMA M-F або кронштейні, не консоллю на P2;».
+    - **Reason:** Stage-1 'bias input 5 V' conflict refuted by datasheet Rev 3.0; unpowered unit passes no signal, so a DC-sense fault looks like a dead band.
+    - **Sources:** https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808
+    - **Saving usd:** 0
+  19.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** correction
+    - **Part:** Uputronics 434 MHz variant
+    - **Anchor:** Варіант 434 MHz ($55.92 = GBP 41.99) — вузький ISM SAW, не брати.
+    - **Instruction:** Replace with: «Варіант 434 MHz (GBP 41.99) ніколи не брати: за графіком продавця 20.25 dB на 434 MHz і 16.08 dB на 437.67 MHz (−4.2 dB на каналах МКС, CubeSat і APRS).»
+    - **Reason:** Vendor plot quantifies the narrow passband; blocks a false economy.
+    - **Sources:** https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808
+    - **Saving usd:** 0
+  20.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** 40-pin хедер — 5 V для LC76G
+    - **Anchor:** | 1/17, 2/4 | 3.3 V / 5 V | 3.3 V живить MCP #1/#3 і детектор «Q6A увімкнена» Pico | — |
+    - **Instruction:** Change the usage cell to: «3.3 V живить MCP #1/#3 і детектор «Q6A увімкнена» Pico; 5 V (пін 2 або 4) живить VCC плати LC76G (не 3.3 V — RT9193-33 плати мусить регулювати)».
+    - **Reason:** LC76G VCC from 3.3 V puts its LDO in dropout and the antenna bias below 3.0 V (model).
+    - **Sources:** https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf ; https://www.richtek.com/assets/product_file/RT9193/DS9193-18.pdf
+    - **Saving usd:** 0
+  21.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** Порт P7 GNSS і запасне зміщення
+    - **Anchor:** | P7 GNSS | SMA, 3.3 V від LC76G | до LC76G |
+    - **Instruction:** Replace with: «| P7 GNSS | SMA-K (гніздо) прохідний; зміщення антени від плати LC76G (VCC_RF через R5 10 Ohm + L1 68 nH на лінії IPEX; VCC плати від 5 V; очікувано 3.06-3.19 V при 10-20 mA, модель; приймання ≥3.05 V під 20 mA) | IPX-пігтейл до IPEX LC76G 24370. Запасне зовнішнє зміщення: канал TPS2553 → bias-tee на P7 → SMA DC-блок між bias-tee і IPX-пігтейлом (без нього ≈117 mA зворотного живлення у VCC_RF і вихід LDO, модель); з зовнішнім зміщенням статус антени LC76G не має сенсу; R5 ніколи не перемикати; антену з КЗ по DC ніколи не під'єднувати |».
+    - **Reason:** Module RF_IN already has a 100 pF block (C6); the hazard is the board's 68 nH + 10 Ohm network tying the IPEX line to 3.3 V. R5 limits a short to about 0.32 A but would dissipate about 1 W; the RT9193 limit is 360-400 mA.
+    - **Sources:** https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf
+    - **Saving usd:** 0 (SMA DC block about 5-10 only if the fallback is used)
+  22.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** Порт P2 UHF — Uputronics 440 і антена 70 см
+    - **Anchor:** Uputronics 440 (LNA → SAW 30 MHz) — завжди перша деталь після антени: на патч-рівні прикручується до P2, на складаному — біля живлення 70 см Yagi
+    - **Instruction:** Replace with: «Uputronics 440 (LNA → SAW, смуга ≈427-452 MHz на −3.4 dB за графіком продавця; варіант 434 MHz ніколи) — завжди перша деталь після антени: на патч-рівні на короткій перемичці SMA M-F або кронштейні (не консоллю на P2), антена за замовчуванням — основа дипольного набору #1 з короткими елементами, провід 60 см прямо в ANT; на складаному — біля живлення 70 см Yagi. Без живлення сигналу немає (ANT з DC-блоком) — збій DC-sense чи відмова токена на ch2 виглядає як «мертвий діапазон», UI показує «ch2 off = no UHF»».
+    - **Reason:** Corrected passband; mounting and unpowered-no-passthrough risk; new 70 cm default.
+    - **Sources:** https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808 ; https://www.rtl-sdr.com/using-our-new-dipole-antenna-kit/
+    - **Saving usd:** 0
+  23.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** Тракт Meteor LRPT
+    - **Anchor:** | Meteor LRPT 137.1/137.9 MHz | Дипольний набір #1 як V (вуса 53.4 см, 120°, Пн-Пд, 1-1.1 м) на 1-1.5 м RG316 | Те саме; опційно перемічені стрічки Yagi (близько 7.7 dBi) |
+    - **Instruction:** Replace with: «| Meteor LRPT 137.1/137.9 MHz | Дипольний набір #1 як V (вуса 53.4 см, 120°, 1.0-1.1 м; бісектриса Пн-Пд для проходів з піком ≥35°, кінці Пн-Пд для ≤30°; без нагляду — бісектриса Пн-Пд) на 1-1.5 м RG316 | Те саме; опційно окремий набір стрічок LRPT для Yagi 2 m (R 111.4, DE 2x47.8 з проміжком 19-25 мм, D 94.6 см) — перемічування тих самих стрічок на 137.5 MHz прибрано (+0.5...+1.2 dB проти правильно орієнтованого V на середніх кутах, модель) |».
+    - **Reason:** Orientation correction; the 137.5 MHz re-mark is mechanically impossible on Axotron's drilled clamps (fixed length per cut).
+    - **Sources:** https://www.rtl-sdr.com/simple-noaameteor-weather-satellite-antenna-137-mhz-v-dipole/ ; https://axotron.se/blog/?p=1619
+    - **Saving usd:** 0
+  24.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** replace_part
+    - **Part:** Тракт МКС/CubeSat 70 см — антена патч-рівня
+    - **Anchor:** | Штир 17 см або A-V85/SRH-701 на Uputronics 440 на P2, нахилений боком |
+    - **Instruction:** Replace the patch-tier cell with: «| Дипольний набір #1 з короткими елементами (повністю висунуті, прямий 180°, бортом до проходу) на Uputronics 440 (перемичка SMA M-F або кронштейн); запасний — SRH-701 або DIY 17.1 см, нахилений боком; Доплер-трекінг увімк. |».
+    - **Reason:** New 70 cm default (model +1.3-1.5 dB over a 0 dBi whip); A-V85 removed.
+    - **Sources:** https://www.rtl-sdr.com/using-our-new-dipole-antenna-kit/
+    - **Saving usd:** 0
+  25.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** removal
+    - **Part:** Baofeng A-V85 у тракті 2 m
+    - **Anchor:** | 2 m 145.8-146 MHz (опційно) | A-V85/SRH-701 |
+    - **Instruction:** Change to «| 2 m 145.8-146 MHz (опційно) | SRH-701 |» (A-V85 deleted; SRH-701 kept here).
+    - **Reason:** A-V85 removed everywhere (likely SMA-F, no current listing, poor UHF result).
+    - **Sources:** https://www.miklor.com/COM/pdf/AntennaTestingW9MDB.pdf
+    - **Saving usd:** 0
+  26.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** Тракт Meteor HRPT
+    - **Anchor:** спіраль на межі вище 25-30° (модель); гелікон +8.9...+9.4 dB (модель)
+    - **Instruction:** Replace with: «лише 1700.000 MHz (1705 MHz — лише перевірка потужності); 4-виткова спіраль — на межі...недоступно (−4...+3 dB, модель); гелікон +3...+9 dB (модель; 13-15.7 dBic без виміру); RTL-B 2.4 Msps або Lime; ворота спурів — інтегрована потужність у смузі ≥20 dB нижче шуму і жодної лінії в ±50 kHz від 1700.000 MHz вище фону +10 dB при вимкнених pcie0 і GPSDO».
+    - **Reason:** STACK's own numbers put the helix 6.4-7.4 dB below the helicone; Meteor HRPT uses 1700 MHz only (SatDump, IU1QPR, SatNOGS).
+    - **Sources:** https://raw.githubusercontent.com/SatDump/SatDump/master/resources/pipelines/Meteor-M.json ; https://www.a-centauri.com/articoli/easy-hrpt-guide
+    - **Saving usd:** 0
+  27.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** Тракт Inmarsat-C — L-band патч
+    - **Anchor:** | Inmarsat-C EGC SafetyNET | L-band патч RTL-SDR Blog | Гелікон + SAWbird+ iO (утримано до egc-gate) | P3 → RTL-B T1 | Відкидання на рівні заголовка; канали LES ніколи не налаштовуються |
+    - **Instruction:** Extend the notes cell with: «патч на дроті 2 м щонайменше за 1 м від пристрою; наведення перед демодуляцією — az/el з IMU, потім ручний перебір нахилу й обертання на живому C/N0 NCS (лише потужність), потім фіксація штатива; журнал потужності 1.43-1.52 і 1.616-1.66 GHz поряд з C/N0 NCS (суміжні SDL і внутрішньосмугові uplink-завади)».
+    - **Reason:** Vendor requires ≥1 m of coax; pointing changes SNR by 2-10 dB per 5°; patch LNA is exposed to adjacent SDL and in-band uplinks.
+    - **Sources:** https://www.rtl-sdr.com/preorder-sale-active-l-band-1525-1660-inmarsat-and-iridium-patch-back-in-stock-for-44-95/ ; https://www.rtl-sdr.com/techminds-reviews-our-rtl-sdr-blog-l-band-patch-antenna-horn-dish-mod/
+    - **Saving usd:** 0
+  28.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** Тракт GNSS
+    - **Anchor:** | GNSS L1 / regional SBAS | Waveshare L1+L5 активна |
+    - **Instruction:** Change to «| GNSS L1 / SBAS (EGNOS) | Waveshare 25346 (L1; L5 не використовується), магніт ≥30 см від паку BNO085 |».
+    - **Reason:** LC76G is L1-only; region Europe → EGNOS; magnet distance rule.
+    - **Sources:** https://quectel.com/content/uploads/2024/03/Quectel_LC76G_Series_GNSS_Specification_V1.1-1-1.pdf ; https://discuss.ardupilot.org/t/compass-variance-and-mag-field/119041
+    - **Saving usd:** 0
+  29.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** Тракт QO-100
+    - **Anchor:** | QO-100 NB (утримано до регіону) | Голий Bullseye + конус 11 см | Рупор 6 сегментів на штативі | P4 → RTL-B T2 | CW маяк — голий LNB; PSK — конус або рупор; DATV і типовий SSB без тарілки недосяжні |
+    - **Instruction:** Replace with: «| QO-100 NB (Європа, кут місця 12-46°; LNB куплено) | Голий Bullseye + конус 11 см | Рупор 6 сегментів на штативі | P4 → RTL-B T2 | CW маяк — голий LNB (+3...+8 dB у 50 Hz, модель); PSK — конус (лише C/N0-монітор) або рупор; поворот LNB на перекіс з GNSS-фіксу (0-36° у Європі); DATV і типовий SSB без тарілки недосяжні |».
+    - **Reason:** User decision (Europe) plus the corrected link constant G+11...14 dB-Hz and skew.
+    - **Sources:** https://destevez.net/2019/03/changes-to-the-qo-100-nb-transponder-settings/ ; https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines
+    - **Saving usd:** 0
+  30.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** Порт P4 LNB — атенюатор ПЧ
+    - **Anchor:** інжектор LNB (дросель ≥1 A — встановлюється після воріт регіону, C23; DC-блок) → атенюатор 15 dB (20 dB, якщо виміряне підсилення LNB понад 60 dB) → RTL-B T2
+    - **Instruction:** Replace with: «інжектор LNB (дросель ≥1 A; DC-блок) → атенюатор 15/20/30 dB, обраний на стенді: найменший, що дає підйом шуму ≥10 dB без компресії (C/N0 маяка незмінний при кроці підсилення RTL на 10 dB) → RTL-B T2; ПЧ — RG6 з компресійними F-роз'ємами; з собою пади 10+10 і 20 dB SMA».
+    - **Reason:** Model: LNB noise density -128...-112 dBm/Hz; a 30 dB pad still leaves LNB noise 8-16 dB above the RTL floor (cost 0.1-0.6 dB); 15 dB risks R828D compression at 66 dB LNB gain; OK1DX used about 20 dB.
+    - **Sources:** http://ok1dx.cz/techinfo/qo100/qo100.html ; https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+    - **Saving usd:** 0
+  31.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** ПЧ LNB — атенюатор
+    - **Anchor:** тому атенюатор 15/20 dB (атенюація не коштує SNR, бо домінує шум LNB)
+    - **Instruction:** Change «15/20 dB» to «15/20/30 dB (вибір на стенді; 30 dB коштує 0.1-0.6 dB, модель)».
+    - **Reason:** Same IF-pad correction.
+    - **Sources:** http://ok1dx.cz/techinfo/qo100/qo100.html
+    - **Saving usd:** 0
+  32.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** new_risk
+    - **Part:** ПЧ LNB 739.5 MHz у Європі
+    - **Anchor:** проникнення DVB-T і LTE B28 перевірити, коли відомий регіон.
+    - **Instruction:** Replace with: «Регіон — Європа: ПЧ 739.5-740.0 MHz лежить у дуплексному проміжку європейського діапазону 700 MHz (LTE B28 uplink 703-733 MHz, downlink 758-788 MHz); сильні DVB-T, LTE чи SDL поблизу можуть проникати в неекранований тракт ПЧ (інженерна оцінка, не виміряно) — польова перевірка 730-750 MHz обов'язкова (розділ 8); RG6 з компресійними F і інжектор з DC-блоком в екранованому РЧ-відсіку.»
+    - **Reason:** Bare-LNB beacon margin is only +3...+8 dB (model), so leakage matters.
+    - **Sources:** https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines
+    - **Saving usd:** 0
+  33.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** Трекер маяка QO-100
+    - **Anchor:** Трекер маяка: захоплення на широкому потоці
+    - **Instruction:** Insert before this phrase: «Частоти маяків — лише з AMSAT-DL (10489.500 / 10489.750 / 10489.9935 / 10490.000 MHz), не з SatNOGS DB (там лишаються застарілі 10489.795 «active» і новий 10489.503). Нижній і верхній CW маяки — F1A зі зсувом 400 Hz (два тони): трекер 50 Hz має чекати енергію у двох бінах.»
+    - **Reason:** SatNOGS DB API (18.10.2026) still lists a stale BPSK 10489.795 entry as active; AMSAT-DL bandplan states F1A with a 400 Hz shift.
+    - **Sources:** https://db.satnogs.org/api/transmitters/?format=json&satellite__norad_cat_id=43700 ; https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines
+    - **Saving usd:** 0
+  34.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** Lime: S-band і широкий L-band
+    - **Anchor:** S-band: 7-виткова спіраль у конусі, S-band LNA (не названо), резонатор cf2235-kt30 на RX2
+    - **Instruction:** Extend with: «(7 витків проти 2-3 витків у тому самому конусі — A/B лише прийом до фіналізації живлення); планувальник пропонує S-band лише для NORAD з алоу-листа (Black Kite-1/2, PHASMA-LAMARR/DIRAC) — інші об'єкти 2200-2300 MHz (DMSP/WSF-M 2252.5, Cosmos-2558 2284, PAZ 2285 MHz) у смузі cf2235-kt30 ніколи не плануються; L-band ch3 на Lime RX1 — також для Metop/AWS на ≥6 Msps ci16».
+    - **Reason:** Lime kept: the S-band chain now covers military-operated downlinks, so a NORAD allow-list is the guard; a long helix in the cone may underperform (pe2bz anecdote).
+    - **Sources:** https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309 ; https://github.com/SatDump/SatDump/tree/master/resources/pipelines
+    - **Saving usd:** 0
+  35.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** Meteor-M N2-4 LRPT — модуляція
+    - **Anchor:** | Meteor-M N2-4 LRPT | 137.900 MHz (запасна 137.100), QPSK 72k |
+    - **Instruction:** Change the frequency cell to «137.900 MHz (запасна 137.100; N2-4 також 137.9125 MHz 80k), OQPSK 72k (SatDump meteor_m2-x_lrpt; NRZ-M, Viterbi k=7, RS 223 interleave 4), запасний 80k interleaved (meteor_m2-x_lrpt_80k)».
+    - **Reason:** SatDump pipeline definition; labelling only.
+    - **Sources:** https://raw.githubusercontent.com/SatDump/SatDump/master/resources/pipelines/Meteor-M.json
+    - **Saving usd:** 0
+  36.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** Meteor-M N2-4 LRPT — бюджет V-диполя
+    - **Anchor:** V-диполь NEC 3.0 dBi у зеніті, КСХ 1.47, лінійна (−3 dB на RHCP)
+    - **Instruction:** Replace with: «V-диполь над землею на 1.087 м (PyNEC, Sommerfeld, модель): у площині бісектриси +2.8/+7.0/+7.7/+5.4/+0.3/−4.3 dBi на 10/20/30/45/60/90°, у площині кінців −7.3/−2.8/−0.1/+1.1/−1.0/−4.3 dBi; лінійна (−3 dB на RHCP); орієнтація за проходом (бісектриса Пн-Пд для ≥35°, кінці Пн-Пд для ≤30°); на ефірі SatNOGS декодує N2-4 з 18° макс. кута місця (фіксовані QFH/турнікет, 23/25 спостережень з даними, 15-18.10.2026); захоплення 1.024 Msps, AGC RTL і тюнера вимк., DC-блок увімк. (IU1QPR); обгортка: синхронізація на 72k без продуктів → продукти з CADU після dd bs=8192 skip=4 (#1212)».
+    - **Reason:** The free-space 'NEC 3.0 dBi at zenith' line is replaced by the over-ground, orientation-dependent pattern (zenith -4.3 dBi over ground).
+    - **Sources:** https://network.satnogs.org/api/observations/?norad_cat_id=57166&status=good ; https://www.rtl-sdr.com/simple-noaameteor-weather-satellite-antenna-137-mhz-v-dipole/
+    - **Saving usd:** 0
+  37.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** Meteor-M N2-4 LRPT — складаний рівень
+    - **Anchor:** складаний (той самий V-диполь; опційно стрічки Yagi 2 m перемічені на 137.5 MHz) | надійно | 0 dB зміни; опційно близько 7.7 dBi з наведенням (+6 dB, модель) для слабких проходів
+    - **Instruction:** Replace with: «складаний (той самий V-диполь; опційно окремий набір стрічок LRPT для Yagi 2 m) | надійно | 0 dB зміни; Yagi з наведенням 8.2 dBi, F/B 21 dB на 137.5 MHz (NEC), але проти правильно орієнтованого V-диполя лише +0.5...+1.2 dB на середніх кутах місця, більше біля зеніту і на краях проходу (модель)».
+    - **Reason:** '+6 dB vs V-dipole' assumed the wrong V orientation; re-mark on the same tapes is unbuildable.
+    - **Sources:** https://axotron.se/blog/?p=1619
+    - **Saving usd:** 0
+  38.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** Meteor-M N2-3 LRPT
+    - **Anchor:** Бюджет N2-4 мінус 3-6 dB (частково нерозкрита VHF-антена супутника, оцінка не кількісна); очікувати лише вище близько 40-60°
+    - **Instruction:** Replace with: «Декодовано станціями SatNOGS QFH/турнікет на проходах з піком 22-39° (17.10.2026; 20/25 спостережень з даними, найнижчий 22°) — фіксовані кругові антени, близько на 3 dB кращі за лінійний V біля зеніту; з V-диполем планувати проходи з піком від 30-35° (оцінка 25-35°), бісектриса Пн-Пд на 1.0-1.1 м; «−3...−6 dB» — оцінка спільноти (IU1QPR: антена LRPT не розкрилася і стоїть під нахилом — діагноз спільноти), замінити порівнянням SNR SatDump N2-3 проти N2-4; WMO OSCAR: N2-3 «working with limitations» через відмову X-band; статус «на межі» до власних декодів».
+    - **Reason:** STACK's 'only above 40-60°' is too pessimistic per SatNOGS on-air data.
+    - **Sources:** https://network.satnogs.org/api/observations/?norad_cat_id=57166&status=good ; https://network.satnogs.org/api/stations/?id=2381
+    - **Saving usd:** 0
+  39.
+    - **Section:** 04_capabilities
+    - **Kind:** replace_part
+    - **Part:** МКС SSTV — антена патч-рівня
+    - **Anchor:** патч (штир 17 см або A-V85/SRH-701 на Uputronics 440, нахилений)
+    - **Instruction:** Replace with «патч (дипольний набір #1, короткі елементи повністю висунуті, прямий, бортом до проходу, на Uputronics 440; запасний — SRH-701 або 17.1 см)».
+    - **Reason:** New 70 cm default; A-V85 removed.
+    - **Sources:** https://www.rtl-sdr.com/using-our-new-dipole-antenna-kit/
+    - **Saving usd:** 0
+  40.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** МКС SSTV — Доплер і частоти
+    - **Anchor:** серія 34 — 22-25.10.2026
+    - **Instruction:** Replace with: «серія 34 «ARISS Hardware» — 22-25.10.2026, час не оголошено, 437.55 MHz, Robot 36, 36 с увімк./2 хв вимк., потужність не вказано (10 W — лише для серії 31). Доплер-трекінг обов'язковий (±10.2-10.5 kHz; без нього FM-фільтр ≈36 kHz коштує ≈3.8 dB, модель). Незалежна модель: CNR у 15 kHz при 0 dBi і 4 dB втрат — 13.3-19.3 dB на 10° і 23.2-29.2 dB на 60° (5-10 W, 300-600 K). «Надійно» — модель до декодування з трекінгом. Основна 437.550; вторинні 437.825 і 145.800 (лише у вікнах подій, з маскою голосу); Robot 36 або PD120 через slowrx».
+    - **Reason:** ARISS page (fetched 18.10.2026); Doppler cost model; 145.800 is also the crew-contact voice downlink.
+    - **Sources:** https://www.ariss.org/upcoming-sstv-events.html
+    - **Saving usd:** 0
+  41.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** МКС APRS 437.825
+    - **Anchor:** статус APRS «активний, ще тестується»
+    - **Instruction:** Append: «; під час подій SSTV APRS очікувано вимкнено (те саме радіо Zvezda)».
+    - **Reason:** ARISS status page of 7 Oct 2026: SSTV scheduled from the Zvezda radio that carries APRS.
+    - **Sources:** https://www.ariss.org/current-status-of-iss-stations.html
+    - **Saving usd:** 0
+  42.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** CubeSat 1 W 9k6 — патч-рівень
+    - **Anchor:** | CubeSat 1 W 9k6 | 435-438 MHz | патч (нахилений штир) | на межі | −5.3 / +0.1 / +2.5 / +4.1 / +5.0 / +5.3 dB на 10/30/45/60/75/90°; вертикальний штир ніколи не позитивний;
+    - **Instruction:** Replace with: «| CubeSat 1 W 9k6 | 435-438 MHz | патч (дипольний набір #1, короткі елементи; запасний — нахилений штир) | на межі | для 0 dBi, запас над 13 dB Eb/N0: −5.8/−0.4/+2.1/+3.6/+4.5/+4.8 dB (600 K) до −2.8/+2.6/+5.1/+6.6/+7.5/+7.8 dB (300 K) на 10/30/45/60/75/90° (модель); диполь +1.3...+1.5 dB над штирем 0 dBi (модель); маржі нахиленого штиря вимірами не підтверджені; вертикальний штир ніколи не позитивний;» (keep the rest of the row).
+    - **Reason:** Independent link model; W9MDB gives no 70 cm handheld gain; dipole default.
+    - **Sources:** https://www.miklor.com/COM/pdf/AntennaTestingW9MDB.pdf
+    - **Saving usd:** 0
+  43.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** Декодер gr-satellites
+    - **Anchor:** gr-satellites 5.5 / SatDump (офлайн із запису)
+    - **Instruction:** Change to «gr-satellites (main 4210dc4 +labN або v5.9.0 + 10d27cb + 1bcf1d8; ніколи 5.5.0) / SatDump (офлайн із запису)». Apply the same replacement of «gr-satellites 5.5» in the folding-tier CubeSat row of 4.1.
+    - **Reason:** 5.5.0 and plain 5.9.0 carry the FileReceiver path-traversal bug; the stage-2 pair 10d27cb + 71dc9a1 is wrong (71dc9a1 does not exist).
+    - **Sources:** https://github.com/daniestevez/gr-satellites/commit/10d27cb ; https://github.com/daniestevez/gr-satellites/commit/1bcf1d8
+    - **Saving usd:** 0
+  44.
+    - **Section:** 04_capabilities
+    - **Kind:** removal
+    - **Part:** AO-73 / JO-97 — антена
+    - **Anchor:** патч (A-V85/SRH-701 на P8 WIDE, опційно)
+    - **Instruction:** Change to «патч (SRH-701 на P8 WIDE, опційно)» and in the margin cell add «AO-73 — лише телеметрія; EIRP JO-97 (145.840 MHz) — модель».
+    - **Reason:** A-V85 removed everywhere.
+    - **Sources:** reaudit_C antennas_patch_chip correction 5; targets corrected_spec
+    - **Saving usd:** 0
+  45.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** AO-91
+    - **Anchor:** AO-91 близько +1 dB лише в зеніті
+    - **Instruction:** Append: «; AO-91 «рідко активний» (2 почуто / 6 не почуто за 720 год до 18.10.2026, AMSAT) — прибрано з плану тестів».
+    - **Reason:** AMSAT status API.
+    - **Sources:** AMSAT status API (720 h to 18 Oct 2026), per reaudit_C targets confirmed 16
+    - **Saving usd:** 0
+  46.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** Meteor-M HRPT — патч-рівень, статус
+    - **Anchor:** | Meteor-M HRPT | 1700 MHz RHCP, 665.4 ksym/s | патч (4-виткова спіраль на диску 18 см + SAWbird+ GOES) | на межі |
+    - **Instruction:** Change the status cell to «на межі — недоступно».
+    - **Reason:** Helix is 6.4-7.4 dB below the helicone in STACK's own numbers; margin -4...+3 dB (model).
+    - **Sources:** https://www.a-centauri.com/articoli/easy-hrpt-guide
+    - **Saving usd:** 0
+  47.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** Meteor-M HRPT — патч-рівень, запас і ворота спурів
+    - **Anchor:** +1.5...+3 dB у середньому вище 25-30° (модель, м'який якір), мінус 0.3-0.5 dB за диск 18 см; RTL-B 2.4-2.56 Msps; спершу сканувати власні спури 1699.2 і 1704.0 MHz; pcie0 вимк., LNB вимк.
+    - **Instruction:** Replace with: «−4...+3 dB (модель; спіраль на 6.4-7.4 dB нижче гелікона), мінус 0.3-0.5 dB за диск 18 см; лише 1700.000 MHz (1705 MHz — лише перевірка потужності); RTL-B 2.4 Msps або Lime; ворота спурів: інтегрована потужність спурів у смузі ≥20 dB нижче шуму і жодної лінії в ±50 kHz від 1700.000 MHz вище фону +10 dB при вимкнених pcie0 і GPSDO; 1699.2 і 1704.0 MHz — не блокери; pcie0 вимк., LNB вимк.».
+    - **Reason:** A CW line X dB above the floor in a 2.3 Hz bin is X - 60.4 dB relative to noise in a 2.5 MHz band (negligible); only PLL capture at the 1700.000 MHz residual carrier matters.
+    - **Sources:** https://raw.githubusercontent.com/SatDump/SatDump/master/resources/pipelines/Meteor-M.json ; https://www.a-centauri.com/articoli/easy-hrpt-guide
+    - **Saving usd:** 0
+  48.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** Meteor-M HRPT — гелікон
+    - **Anchor:** +8.9...+9.4 dB у середньому (NEC); задокументованого декодування без тарілки з рук немає — перші проходи вище 40° зі штатива від 50 см
+    - **Instruction:** Replace with: «+3...+9 dB (модель; гелікон 13-15.7 dBic без виміряного підсилення); задокументовано HRPT з рук на гелікон t0nito + RTL + SatDump (NOAA, відео 06.01.2025 — після кінця POES не повторити; Meteor — з других рук, 2024); спільнота: «easily receivable on a portable helicone»; перші проходи вище 40° зі штатива».
+    - **Reason:** No measured helicone gain; hand-tracked HRPT exists.
+    - **Sources:** https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309 ; https://www.rtl-sdr.com/saveitforparts-testing-a-3d-printable-satellite-antenna-for-noaa-meteor-and-other-polar-orbiting-l-band-satellites/
+    - **Saving usd:** 0
+  49.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** Metop-B/C AHRPT — назва рядка
+    - **Anchor:** | Metop-B AHRPT | 1701.3 MHz | складаний (гелікон) | на межі (експеримент) |
+    - **Instruction:** Change the target cell to «Metop-B/C AHRPT» and the frequency cell to «1701.3 MHz, QPSK 2.333 Msym/s (metop_ahrpt)».
+    - **Reason:** OSPO (3 Sep 2026): MetOp-B AHRPT 'Yes', MetOp-C 'No'; C has one community decode.
+    - **Sources:** https://www.ospo.noaa.gov/operations/metop/status.html ; https://github.com/SatDump/SatDump/issues/1208
+    - **Saving usd:** 0
+  50.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** Metop-B AHRPT — втрати модулятора
+    - **Anchor:** −1.5...0 dB у середньому плюс переривчасті втрати модулятора близько 7 dB;
+    - **Instruction:** Replace with: «−1.5...0 dB у середньому (модель); «втрати модулятора близько 7 dB» не знайдено в OSPO, SatDump чи IU1QPR — поза бюджетом, виміряти обвідну C/N0 Metop-B за прохід; OSPO: B «Yes», C «No»; C — один звіт спільноти (Атени, серпень 2026, антена невідома); ворота (b) — на B і C;».
+    - **Reason:** Unverified claim removed from the margin; Metop-C label corrected.
+    - **Sources:** https://www.ospo.noaa.gov/operations/metop/status.html ; https://github.com/SatDump/SatDump/issues/1208
+    - **Saving usd:** 0
+  51.
+    - **Section:** 04_capabilities
+    - **Kind:** condition
+    - **Part:** Metop — SDR (V4L / Lime / Airspy)
+    - **Anchor:** (b) прохід вище 45° і пошук горба на 1701.3 MHz; Airspy Mini — лише якщо (a) провалиться
+    - **Instruction:** Replace the Airspy clause with: «; SDR: V4L 2.88 Msps з DC-блоком (82% смуги) до приходу Lime, далі Lime ≥6 Msps ci16 (гелікон + SAWbird+ GOES → Lime RX); Airspy Mini — лише запасний за воротами (якщо Lime не пройде 15-хв захоплення без втрат)».
+    - **Reason:** Lime kept; G6 keeps the Airspy gated.
+    - **Sources:** https://github.com/SatDump/SatDump/issues/727 ; https://www.a-centauri.com/articoli/beyond-poes-amateur-satellite-reception
+    - **Saving usd:** 0
+  52.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** AWS PFM
+    - **Anchor:** AWS іде за тими самими воротами; Airspy Mini — лише якщо (a) провалиться. EIRP не опубліковано
+    - **Instruction:** Replace with: «AWS іде за тими самими воротами; смуга 2.59 MHz вміщається в 2.88 Msps; після приходу Lime — Lime ≥6 Msps ci16; Airspy Mini — лише запасний за воротами. Результати воріт: декод / «SYNC but filler: link OK, no payload» (історичне спостереження #854 з 3.11.2024, під час введення) / провал; над Європою зображення очікуються, коли видно Kiruna (IU1QPR, 2025). OSCAR: Operational, 1707 MHz, 3400 kHz, RHCP; EIRP не опубліковано».
+    - **Reason:** Filler mode dates from commissioning; AWS dumps when Kiruna is in view, which favours Europe.
+    - **Sources:** https://github.com/SatDump/SatDump/issues/854 ; https://www.a-centauri.com/articoli/beyond-poes-amateur-satellite-reception ; https://space.oscar.wmo.int/satellites/view/aws_pfm
+    - **Saving usd:** 0
+  53.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** GEO L-band: Elektro-L5 GGAK/LRIT, FY-2H, Elektro-L3
+    - **Anchor:** | FY-2H несуча / Elektro-L LRIT | 1687.5 або 1690.5 MHz (уточнити на ефірі) / 1691 MHz | складаний (гелікон) | на межі | FY-2H — лише несуча (тест A/B, лінійна, −3 dB); Elektro LRIT — близько 3 dB нижче звітів з тарілкою 65 см, LRIT декодується при близько +1 dB SNR; статус Elektro-L5 непевний; залежить від регіону | SatDump (LRIT) |
+    - **Instruction:** Replace with rows: (1) «| Elektro-L5 GGAK (76.05E) | 1693 MHz, PM 5 ksym/s | складаний (гелікон) | на межі — лише схід і центр Європи (≈ на схід від 13E) | Перший тест Elektro; успіх — синхронізація кадрів + кількість CADU; ≈7-8 dB легше за LRIT (модель, рівний EIRP; EIRP GGAK не опубліковано) | SatDump elektro_ggak (без плагіна) |» (2) «| Elektro-L5 LRIT | 1691 MHz, BPSK 294 ksym/s (128.5 kbps інформації), захоплення 1 Msps | складаний (гелікон) | на межі — лише схід і центр Європи | Якір: тарілка 65 см 3-4 dB SNR (після PR #616 — чисто нижче 3 dB); гелікон 0...−5 dB проти якоря (поляризація невідома; нахил гелікона не повертає лінійну складову); поріг ≈+1 dB (супровідник, теорія); очікувано −2...+4 dB (модель); успіх — синхронізація + сегменти з правильним CRC | SatDump (LRIT) |» (3) «| FY-2H (79.2E), лише несуча | 1687.5 MHz S-VISSR спершу, потім 1690.5 MHz | складаний (гелікон) | на межі — та сама межа довготи | Лінійна, −3 dB на RHCP; OSCAR: Operational, «Only Limited access» | — |» (4) «| Elektro-L3 / Elektro-L2 (14.5W) | L-band | складаний | невідомо | L3 — ціль автоматично, коли стане стаціонарним біля 14.5W (тоді 8-45° над усією Європою); статус невідомий з TLE 9.10.2026; L2 (14.52W, стаціонарний) — лише перевірка несучої | — |» (5) «| FY-2G, GK-2A, FY-4B, GOES | — | — | не в збірці для Європи | FY-2G −22...+4.7°; GK-2A і FY-4B не видно; GOES-East до 9.9° (Лісабон) і не видно на схід від Парижа (модель); лише опційний профіль подорожей | — |». Add above the rows: «Кут місця — з GNSS-фіксу і живого TLE; ціль показується, лише якщо TLE стаціонарний (|n − 1.00274| < 0.0005 обертів/добу) і кут місця ≥5°. Elektro-L5/FY-2H: Берлін 7.6/5.8°, Рим 10.8/8.5°, Варшава 12.0/10.3°, Атени 20.6/18.2°; нижче або біля горизонту з Лісабона, Дубліна, Лондона, Мадрида, Парижа (модель).»
+    - **Reason:** Region Europe: geometry model (spherical Earth, GEO 42164 km). #600 CRC errors were a SatDump regression fixed by PR #616. GGAK advantage is 7-8 dB, not 10.7 dB. L3 status unknown since 9 Oct; stationarity gate decides.
+    - **Sources:** https://db.satnogs.org/api/tle/?norad_cat_id=67756 ; https://db.satnogs.org/api/tle/?norad_cat_id=44903 ; https://space.oscar.wmo.int/satellites/view/fy_2g ; https://github.com/SatDump/SatDump/issues/600 ; https://github.com/SatDump/SatDump/issues/1141 ; https://raw.githubusercontent.com/SatDump/SatDump/master/resources/pipelines/Elektro_Arktika.json ; https://space.oscar.wmo.int/satellites/view/electro_l_n5
+    - **Saving usd:** 0
+  54.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** Inmarsat-C — смуга демодуляції
+    - **Anchor:** | Inmarsat-C EGC SafetyNET | 1537.0-1544.2 MHz, BPSK 1200 sym/s |
+    - **Instruction:** Change the frequency cell to «скан NCS лише за потужністю 1537.0-1543.9 MHz; демодуляцію замасковано від 1544.0 MHz; 1544.0-1545.0 MHz — без демодуляції і без даних для всіх супутників; BPSK 1200 sym/s».
+    - **Reason:** 1544-1545 MHz holds Cospas-Sarsat MEOSAR/LEOSAR downlinks (GSC: Galileo SAR 1544-1545 MHz).
+    - **Sources:** https://www.gsc-europa.eu/node/6925
+    - **Saving usd:** 0
+  55.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** Inmarsat-C — РЧ-обґрунтування патч-рівня
+    - **Anchor:** РЧ покрито (rtl-sdr.com повідомляє декодування з патчем;
+    - **Instruction:** Replace with: «РЧ: декодування спільноти з цим патчем (TechMinds 2019, коментарі блогу) — лише РЧ-доказ; підсилення/NF продавець не публікує; патч на дроті 2 м ≥1 м від пристрою; перед демодуляцією — наведення (IMU az/el → ручний перебір нахилу/обертання на живому C/N0 NCS → фіксація штатива); журнал потужності 1.43-1.52 і 1.616-1.66 GHz поряд з C/N0 NCS; мережа Inmarsat-C оновлюється для роботи до 2040 (I-8 — 2028); список несучих NCS (sigidwiki: 1537.70, 1537.10, 1541.45 MHz) лежить у скані — фіксованої таблиці не постачати;».
+    - **Reason:** Correction 8 (wording and pointing step); Riviera 20 May 2025 on network life.
+    - **Sources:** https://www.rtl-sdr.com/techminds-reviews-our-rtl-sdr-blog-l-band-patch-antenna-horn-dish-mod/ ; https://www.rivieramm.com/news-content-hub/technology-advances-gmdss-for-safety-data-and-communications-84881 ; https://sigidwiki.com/wiki/Inmarsat-C_TDM
+    - **Saving usd:** 0
+  56.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** GNSS L1 + SBAS
+    - **Anchor:** обидва (Waveshare L1+L5 на P7) | надійно | Не обмежено антеною; межа — глушіння і підміна; ворота правдоподібності; EGNOS → «regional SBAS» (WAAS, MSAS, GAGAN за видимістю) | LC76G → gpsd 3.25 → chrony;
+    - **Instruction:** Replace with: «обидва (Waveshare 25346, L1, на P7) | надійно | Не обмежено антеною; межа — глушіння і підміна; ворота правдоподібності; SBAS = EGNOS (PRN 121 і 136 у звіті EGNOS за серпень 2026; SDCM може з'являтися на сході Європи); мітки з gpsd SKY (gnssid 1, svid 120-158) через версійну таблицю PRN→система — дані призначень, не таблиця місць; невідомі — «SBAS PRN n» | LC76G → gpsd ≥3.25-3ubuntu3.2 (noble-security) → chrony; конфіг LC76G повторно при кожному завантаженні;».
+    - **Reason:** Labelling by system needs a PRN table (assignment data, allowed); gpsd security pin; Waveshare 'config lost' FAQ is about the L76, re-apply stays as insurance.
+    - **Sources:** https://gpsd.gitlab.io/gpsd/gpsd_json.html ; https://egnos.gsc-europa.eu/node/12832 ; https://launchpad.net/ubuntu/+source/gpsd ; https://www.waveshare.com/wiki/LC76G_GNSS_Module
+    - **Saving usd:** 0
+  57.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** QO-100 NB — CW маяк
+    - **Anchor:** | QO-100 NB, CW маяк | 10489.500 MHz (ПЧ 739.500) | патч (голий Bullseye) — залежить від регіону | на межі — за воротами регіону (LNB у необов'язковому наборі) | CW маяк близько +6...+9 dB у 50 Hz (модель) (узгоджено з OK1DX); FT8 — експеримент |
+    - **Instruction:** Replace with: «| QO-100 NB, CW маяк | 10489.500 MHz (ПЧ 739.500), CW F1A зі зсувом 400 Hz | патч (голий Bullseye) — Європа, кут місця 12-46° | на межі, ймовірно (LNB куплено) | CW маяк +3...+8 dB у 50 Hz (модель G + 11...14 dB-Hz, центр 12.5; OK1DX — прийом CW без тарілки з перших рук); поворот LNB на перекіс з фіксу; ризик — LTE/DVB-T/SDL біля ПЧ 739.5 MHz; FT8 — експеримент |».
+    - **Reason:** EA4GPZ's corrected analysis gives G+12-13 dB-Hz; plan G+11...14. User decision Europe.
+    - **Sources:** https://destevez.net/2019/03/changes-to-the-qo-100-nb-transponder-settings/ ; http://ok1dx.cz/techinfo/qo100/qo100.html
+    - **Saving usd:** 0
+  58.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** QO-100 NB — PSK маяк з конусом
+    - **Anchor:** Eb/N0 5.4-8.8 dB (модель); з голим LNB PSK −3...0 dB (втрачено)
+    - **Instruction:** Replace with: «Eb/N0 ≈3.8-6.8 dB з конусом 18.8 dBi (верхня межа; планувати 15-17 dBi до A/B) — лише C/N0-монітор маяка; з голим LNB PSK втрачено».
+    - **Reason:** Corrected link constant; horn/cone gains are upper bounds through the multimode 64 mm cap plane.
+    - **Sources:** https://destevez.net/2019/03/changes-to-the-qo-100-nb-transponder-settings/ ; http://www.w1ghz.org/antbook/chap3.pdf
+    - **Saving usd:** 0
+  59.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** QO-100 NB — рупор
+    - **Anchor:** PSK — на межі лише через ворота регіону (запас за моделлю — 8-13 dB); SSB рівня маяка — на межі | 21 dBi: CW маяк 17-20 dB у 50 Hz, PSK Eb/N0 8-11 dB; 23 dBi: 19-22 і 10-13 dB; SSB рівня маяка 0...+3 dB (21 dBi), +2...+5 dB (23 dBi) у 2.5 kHz
+    - **Instruction:** Replace with: «PSK — на межі; SSB рівня маяка — на межі, здебільшого нижче читабельності | модель G + 12.5 ±1.5 dB-Hz: 21 dBi — CW маяк 15-18 dB у 50 Hz, BPSK Eb/N0 6-9 dB, SSB рівня маяка −2...+1 dB у 2.5 kHz; 23 dBi — 17-20 dB, 8-11 dB, 0...+3 dB; 21.06/23.02 dBi — верхні межі для ідеального горла TE11 (Bullseye живить через багатомодову площину ковпачка 64 мм) — планувати ≈18-21 dBi до A/B».
+    - **Reason:** Corrected constant and throat-mode risk (crude phase-error estimate 2-3 dB lower for the horn).
+    - **Sources:** https://destevez.net/2019/03/changes-to-the-qo-100-nb-transponder-settings/ ; http://www.w1ghz.org/antbook/chap3.pdf
+    - **Saving usd:** 0
+  60.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** S-band (Lime)
+    - **Anchor:** | S-band | ті самі | складаний + Lime (лише якщо залишено) | на межі (опортуністично) | 7-виткова S-спіраль у конусі 14.2 dBic (NEC);
+    - **Instruction:** Replace with: «| S-band | ті самі | складаний + Lime (збірка за замовчуванням) | на межі (опортуністично) | 7-виткова S-спіраль у конусі 14.2 dBic (NEC) — може поступатися 2-3-витковій (pe2bz, одна станція), A/B до фіналізації; планувальник — лише NORAD з алоу-листа: Black Kite-1 (SatNOGS 98527, 2288 MHz) і Black Kite-2 (98371, 2286 MHz) GMSK 38400 — тимчасові номери, TLE можуть бути відсутні; PHASMA-LAMARR/DIRAC 2210/2208 MHz; інші об'єкти 2200-2300 MHz не пропонуються (DMSP/WSF-M 2252.5, Cosmos-2558 2284, PAZ 2285 MHz — у смузі cf2235-kt30); HamTV 2395 MHz — лише перевірка несучої Lime; PHASMA UHF 400.55/400.60 MHz FSK 50k — лише складаний рівень, бюджет не змодельовано;».
+    - **Reason:** Lime kept → S-band rows default; compliance guard for military-operated S-band downlinks.
+    - **Sources:** https://db.satnogs.org/api/satellites/BMYD-8328-6159-7072-4807/ ; https://db.satnogs.org/api/satellites/PKWP-7958-4818-1008-2291/ ; https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309
+    - **Saving usd:** 0
+  61.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** SID / TDF 162 kHz
+    - **Anchor:** | SID (космічна погода) | Ті самі цивільні ДХ-несучі | складаний (Boni-Whip) | на межі | Лише амплітуда;
+    - **Instruction:** Insert after «Лише амплітуда;»: « маска TDF 162 kHz — вівторок 06:00-12:00 UTC (об'єднання прочитань «08:00-12:00» без часового поясу; звузити за журналами ефіру);».
+    - **Reason:** Wikipedia gives 08:00-12:00 without a time zone; if local, it is 06:00-10:00 UTC (CEST) or 07:00-11:00 UTC (CET). Avoids false SID events.
+    - **Sources:** https://en.wikipedia.org/wiki/ALS162_time_signal
+    - **Saving usd:** 0
+  62.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** Виключення: Cospas-Sarsat, ARGOS, relay
+    - **Anchor:** | Cospas-Sarsat 406.0-406.1 MHz і 1544.5 MHz, ARGOS/DCP, Yunhai-1, GRAVES | Виключено каталогом. |
+    - **Instruction:** Replace with: «| Cospas-Sarsat 406.0-406.1 MHz і 1544.0-1545.0 MHz (низхідні MEOSAR/LEOSAR: Galileo SAR 1544-1545 MHz; LEOSAR 1544.5), ARGOS/DCP (зокрема Metop-C A-DCS 465.9875 MHz), «Data relay» Elektro-L5 465 MHz, записи SARSAT Meteor N2-3/N2-4 1544.5 MHz, Yunhai-1, GRAVES | Виключено каталогом: імпортер SatNOGS — алоу-лист, другий шар — заборона 1544-1545 і 406.0-406.1 MHz та назв SARSAT/Cospas/ARGOS/DCS/relay/voice/suit/EVA/Soyuz. «Return link 1544.9 MHz» не використовувати (Galileo Return Link — сервіс у навігаційному повідомленні). |»
+    - **Reason:** SatNOGS transmitter lists carry these as active; a denylist is not enough. GSC confirms the band.
+    - **Sources:** https://www.gsc-europa.eu/node/6925 ; https://db.satnogs.org/api/transmitters/?satellite__norad_cat_id=43689 ; https://db.satnogs.org/api/transmitters/?satellite__norad_cat_id=67756
+    - **Saving usd:** 0
+  63.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** Виключення: службовий голос МКС у каталозі
+    - **Anchor:** | Службовий голос МКС/Союз, повітряний і морський голос (пресети) |
+    - **Instruction:** Extend the justification cell of this row with: «Записи SatNOGS МКС (25544) «active» не імпортуються: голос Soyuz VHF 143.625 і 130.167 MHz; скафандр/EVA 121.100, 121.275, 121.750, 139.208, 400.575 MHz; EMU 414.2 і 417.1 MHz; телеметрія Dragon 2205.5/2216 і Falcon 9 2232.5/2272.5 MHz; ICARUS 468.1 MHz; Ku 15003.4 MHz; TORU 2.725/2.86 GHz. Для МКС імпортуються лише 437.550 SSTV, 437.825 APRS, 437.800 FM, 145.800 SSTV і 2395 HamTV.»
+    - **Reason:** SatNOGS ISS transmitter list (18.10.2026).
+    - **Sources:** https://db.satnogs.org/api/transmitters/?satellite__norad_cat_id=25544
+    - **Saving usd:** 0
+  64.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** Виключення: конвеєри SatDump
+    - **Anchor:** | CARTOSAT-3 | Подвійного призначення; не обґрунтовує S-band. |
+    - **Instruction:** Add a row after it: «| Конвеєри SatDump поза алоу-листом: Syracuse-3 TLM, Cosmos-2558/2518, DMSP, WSF-M, PAZ, китайський космоплан, ANGELS, Gazelle/OTB-3, Yunhai, Orbcomm, Inmarsat STD-C/Aero, Analog, Ominous, SpaceX, DVB_Test, мережеві (_tcp/_udp/mqtt) | Не постачаються (у пакеті лише Meteor-M.json, MetOp.json, AWS.json, FengYun-2.json, Elektro_Arktika.json без elektro_ggak_mqtt); ці конвеєри працюють на модулях ядра без плагінів, тож вимикання плагінів їх не зупиняє; CI-аудит ID конвеєрів з deny-regex. |»
+    - **Reason:** Plugin allow-list does not disable core-module pipelines; SatDump also loads ./pipelines.json and user pipelines.json.
+    - **Sources:** https://github.com/SatDump/SatDump/tree/master/resources/pipelines ; https://raw.githubusercontent.com/SatDump/SatDump/master/resources/pipelines/Work-In-Progress.json ; https://raw.githubusercontent.com/SatDump/SatDump/master/resources/pipelines/Others.json
+    - **Saving usd:** 0
+  65.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C8 — атенюатор ПЧ LNB
+    - **Anchor:** Інжекція через дросель від 1 A з боку антени після DC-блоку, далі атенюатор 15 dB (20 dB, якщо виміряне підсилення LNB понад 60 dB).
+    - **Instruction:** Replace the attenuator clause with: «далі атенюатор 15/20/30 dB, обраний на стенді (найменший, що дає підйом шуму ≥10 dB без компресії; 30 dB коштує 0.1-0.6 dB, модель).»
+    - **Reason:** IF pad model; 15 dB risks R828D compression at 66 dB LNB gain.
+    - **Sources:** http://ok1dx.cz/techinfo/qo100/qo100.html
+    - **Saving usd:** 0
+  66.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** condition
+    - **Part:** C8 — уставка шини LNB 13.2 V / 12.5 V
+    - **Anchor:** Приймання: 0 V вимкнено; 13.2 V ±0.2 V на F-роз'ємі під навантаженням при батареї від 13.8 V.
+    - **Instruction:** Keep 13.2 V as the default strap (G3/G6 analogs: no rail change). Append: «Опція (reaudit_C, рішення власника живлення/ваше): 12.5 V ±0.2 V через ANY-OUT TPS7A4701 — підходить обом LNB (Bullseye вертикаль 11.5-14 V; QRO.cz +12 V = V-pol) і дає ≈0.7 V більше запасу на просідання батареї. Якщо лишається 13.2 V і куплено QRO.cz — перевірити V-pol тестом маяка (старі IF IC перемикаються на H при +15 V з неопублікованим порогом). Вікна ±0.2 V — це вимірювані на кожному екземплярі ворота (G3: гарантована смуга ІС ±0.33 V на 13.2 V і ±0.31 V на 12.5 V).»
+    - **Reason:** Possible silent ~20 dB cross-pol loss on the QRO.cz upgrade path; analogs keep the strap and leave the choice to the user.
+    - **Sources:** https://hamparts.shop/10-ghz-lnb-with-pll-and-tcxo.html ; https://www.passion-radio.com/lnb-pll/lnb-othernet-978.html
+    - **Saving usd:** 0
+  67.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** replace_part
+    - **Part:** C15 — антена 70 см патч-рівня
+    - **Anchor:** штир 17 см або A-V85/SRH-701; передпідсилювач Uputronics 440;
+    - **Instruction:** Replace with: «70 см — дипольний набір #1 з короткими елементами, повністю висунутими (за замовчуванням; запасний — SRH-701 або DIY 17.1 см); передпідсилювач Uputronics 440 на перемичці SMA M-F або кронштейні;».
+    - **Reason:** Dipole default; A-V85 removed.
+    - **Sources:** https://www.rtl-sdr.com/using-our-new-dipole-antenna-kit/
+    - **Saving usd:** 0
+  68.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C15 — список на підтвердження
+    - **Anchor:** Малі жорсткі штирі й спіралі потребують вашого підтвердження.
+    - **Instruction:** Replace with: «На ваше підтвердження лишаються лише жорсткий SRH-701 або штир 17 см (запасні), 4-виткова спіраль і опційний кожух L-band патча; L-band патч, GNSS-антена, керамічна антена LC76G і телескопічний дипольний набір відповідають правилу.»
+    - **Reason:** Rule status in the patch/chip re-audit; none is a loop or a dish.
+    - **Sources:** reaudit_C antennas_patch_chip corrected_spec section 6
+    - **Saving usd:** 0
+  69.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C23 — перевірка ПЧ у Європі
+    - **Anchor:** коли він відомий — перевірити проникнення в ПЧ LNB (DVB-T 734-742 MHz, LTE B28 uplink).
+    - **Instruction:** Replace with: «Регіон — Європа (18.10.2026): польова перевірка проникнення в ПЧ 739.5-740.0 MHz (дуплексний проміжок 700 MHz: B28 uplink 703-733 / downlink 758-788 MHz, DVB-T, SDL) обов'язкова (розділ 8); SBAS — EGNOS; GEO L-band — Elektro-L5/FY-2H лише на схід від ≈13E, за фіксом і живим TLE.»
+    - **Reason:** Region known; IF sits in the 700 MHz duplex gap; bare-LNB margin is thin.
+    - **Sources:** https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines
+    - **Saving usd:** 0
+  70.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** D8 — Uputronics 440 і монтаж
+    - **Anchor:** Uputronics 440 MHz CubeSAT filtered preamp (LNA, потім SAW 30 MHz; GBP 51.59, є в наявності) завжди перша деталь після антени — на патч-рівні прикручується до роз'єму
+    - **Instruction:** Replace with: «Uputronics 440 MHz CubeSAT filtered preamp (LNA, потім SAW зі смугою ≈427-452 MHz на −3.4 dB за графіком продавця; Rev 3.0 3.5-5.5 V, ≈50 mA; варіант 434 MHz ніколи; продавець і ціна — за аналогом G1) завжди перша деталь після антени — на патч-рівні на короткій перемичці SMA M-F або кронштейні, не консоллю на роз'ємі».
+    - **Reason:** Corrected passband and mounting; reaudit's GBP 51.59 price superseded by G1.
+    - **Sources:** https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808
+    - **Saving usd:** 0
+  71.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** D10 — критерій спурів для широкосмугових сигналів
+    - **Anchor:** Пройдено: жодної лінії на 3 dB і більше над фоном у робочому вікні;
+    - **Instruction:** Append after this clause: « для HRPT/AHRPT критерій інший: інтегрована потужність спурів у смузі ≥20 dB нижче шуму і жодної лінії в ±50 kHz від 1700.000 MHz вище фону +10 dB (pcie0 і GPSDO вимк.); бін 2.3 Hz лишається для CW-маяків, Inmarsat 1200 sym/s біля несучої і H1 (лінія X dB над фоном у біні 2.3 Hz = X − 60.4 dB відносно шуму в смузі 2.5 MHz);».
+    - **Reason:** A CW spur near a wideband signal matters only through PLL capture at the residual carrier; 1704.0/1699.2 MHz are not blockers.
+    - **Sources:** https://www.a-centauri.com/articoli/easy-hrpt-guide
+    - **Saving usd:** 0
+  72.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** D14 — вага польового набору (штатив)
+    - **Anchor:** За моделлю польове навантаження близько 5.5-7.4 kg повністю
+    - **Instruction:** Append: « (до виправлення штатива; реальні штативи 32-35 см важать 1.14-1.35 kg замість 0.3-0.6 kg — рюкзак +0.6-1.0 kg, модель)».
+    - **Reason:** Tripod mass underestimated 2-4x.
+    - **Sources:** https://justmore.dk/images/media/ProductsDocs/Rollei-Compact-Traveler-No-I-kamerastativ-sort.pdf
+    - **Saving usd:** 0
+  73.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C22 — закріплення SatDump
+    - **Anchor:** SatDump 2.0-alpha, SDR++ і SDRangel 7.27.2 (RX-only) з джерел як deb-пакети +labN.
+    - **Instruction:** Replace «SatDump 2.0-alpha» with «SatDump master 1aedd60 (2.0.0 alpha) з cherry-pick c0b6f88 (CLI add_flag → add_option, #1191) і 6b5957f (витік буфера clock-recovery), 96bb626 опційно (лише HRIT)»; add «gr-satellites main 4210dc4 як +labN (не з apt)».
+    - **Reason:** Lowest-risk pin that fixes headless CLI decoding; the dev branch carries unrelated UI commits.
+    - **Sources:** https://github.com/SatDump/SatDump/commits/dev ; https://github.com/SatDump/SatDump/issues/1191 ; https://github.com/SatDump/SatDump/commit/c0b6f8876c514990c2f22ca98b2a6c8a6f290a5d
+    - **Saving usd:** 0
+  74.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** C7 — SatDump не відкриває SDR
+    - **Anchor:** проходи записуються, потім SatDump декодує з базового файлу (живий потік — лише якщо 2.0-alpha це підтримує)
+    - **Instruction:** Append: «; SatDump ніколи не відкриває SDR — усі плагіни sdr_sources (зокрема RTLSDR, LIMESDR, AIRSPY, SOAPY) вимкнено на збірці, тож другого відкривача поза токеном зміщення і масками labrx немає».
+    - **Reason:** Keeping SatDump's rtlsdr/limesdr plugins would create a second SDR opener bypassing labd's bias token and labrx masks.
+    - **Sources:** https://raw.githubusercontent.com/SatDump/SatDump/master/plugins/CMakeLists.txt
+    - **Saving usd:** 0
+  75.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C24 — підсумок патч-антен
+    - **Anchor:** патч-антени $176-208
+    - **Instruction:** Change to «патч-антени $176-202» and recompute dependent totals with all v2 changes.
+    - **Reason:** A-V85 dropped.
+    - **Sources:** reaudit_C corrected_spec section 5
+    - **Saving usd:** 6.00 on the upper bound
+  76.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #2 egc-gate — розбір заголовка
+    - **Anchor:** розбирати тільки заголовки й сервісні коди;
+    - **Instruction:** Replace with: «розбирати тільки заголовки й сервісні коди за правилами egc-gate: (1) клас дескриптора з першого байта (medium = 10xxxxxx, довжина pkt[1]+2; long = 11xxxxxx, довжина pkt[1..2]+3; short не може бути EGC); тип = byte0 & 0x3F; EGC — типи 0x30/0x31/0x32 (сирий байт 0xB0-0xB2 або 0xF0-0xF2); (2) сервісний код — на зсуві довжини дескриптора (2 для medium, 3 для long; SatDump жорстко бере pkt[2]); (3) приймати лише SafetyNET {0x04, 0x13, 0x14, 0x24, 0x31, 0x34, 0x44, 0x73}; відкидати всі System {0x00, 0x11, 0x23, 0x33} і FleetNET {0x02, 0x72}; (4) рішення — на першому фрагменті пакетів 0x3D/0x3E (внутрішній дескриптор на byte 2); (5) 2-байтову контрольну суму перевіряти лише на прийнятих пакетах до складання; відкинуті — без CRC і без копіювання; (6) декодер кадрів — похідний від SatDump module_stdc_decoder; pkt_parser, egc_parser і msg_parser ніколи не компілюються; таблицю кодів звірити з таблицею C2 International SafetyNET Services Manual (відкрито);».
+    - **Reason:** Stage-2 spec matched raw bytes and byte 2 — would never match and would misparse long descriptors; SatDump inmarsat_stdc_parser defaults to save_files=true.
+    - **Sources:** https://github.com/SatDump/SatDump/blob/master/plugins/inmarsat_support/stdc/packets_structs.h ; https://github.com/SatDump/SatDump/blob/master/plugins/inmarsat_support/stdc/pkt_structs.cpp ; https://github.com/SatDump/SatDump/blob/master/plugins/inmarsat_support/stdc/pkt_parser.cpp
+    - **Saving usd:** 0
+  77.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #2 — діапазон скану NCS
+    - **Anchor:** NCS шукати на ефірі скануванням 1537-1545 MHz **лише за потужністю**
+    - **Instruction:** Append: « (демодуляцію замасковано від 1544.0 MHz; 1544.0-1545.0 MHz — Cospas-Sarsat, без демодуляції і без даних для всіх супутників; кандидати NCS — 1537.0-1543.9 MHz; перед демодуляцією — крок наведення патча на живому C/N0 NCS)».
+    - **Reason:** Galileo SAR 1544-1545 MHz downlink band inside the scan.
+    - **Sources:** https://www.gsc-europa.eu/node/6925
+    - **Saving usd:** 0
+  78.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #1 — Cospas-Sarsat
+    - **Anchor:** Cospas-Sarsat 1544.5 MHz
+    - **Instruction:** Change to «Cospas-Sarsat 1544.0-1545.0 MHz (MEOSAR/LEOSAR; Galileo SAR 1544-1545 MHz; LEOSAR 1544.5)».
+    - **Reason:** Whole band masked; '1544.9 return link' label dropped.
+    - **Sources:** https://www.gsc-europa.eu/node/6925
+    - **Saving usd:** 0
+  79.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #3 — маска TDF
+    - **Anchor:** TDF 162 kHz. Декодування часу
+    - **Instruction:** Change to «TDF 162 kHz (маска обслуговування — вівторок 06:00-12:00 UTC, звузити за журналами). Декодування часу».
+    - **Reason:** Time zone of the 08:00-12:00 gap unknown.
+    - **Sources:** https://en.wikipedia.org/wiki/ALS162_time_signal
+    - **Saving usd:** 0
+  80.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #7 — версія gpsd
+    - **Anchor:** GNSS (з SBAS) → gpsd 3.25 → chrony 4.5
+    - **Instruction:** Change to «GNSS (з SBAS = EGNOS) → gpsd ≥3.25-3ubuntu3.2 (noble-security) → chrony 4.5».
+    - **Reason:** noble-security carries 3.25-3ubuntu3.2 (8 Jan 2026); upstream 3.27.1 fixed CVE-2025-67268/67269.
+    - **Sources:** https://launchpad.net/ubuntu/+source/gpsd
+    - **Saving usd:** 0
+  81.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #29 — gr-satellites
+    - **Anchor:** gr-satellites 5.5.0, SoapySDR 0.8.1
+    - **Instruction:** Remove gr-satellites from the apt list and add: «gr-satellites — з джерел: main 4210dc4 (5.10.0-git, 22.09.2026; містить 10d27cb, 1bcf1d8, 45b146f, 882e503) як +labN deb проти GNU Radio 3.10.9.2 noble, або v5.9.0 + cherry-pick 10d27cb і 1bcf1d8 (71dc9a1 не існує); ніколи 5.5.0 чи чистий 5.9.0; пісочниця systemd (ProtectHome=yes, ReadWritePaths лише каталог виходу); CI подає імена '../x', '/etc/x', '..', 'a/b' (ім'я '..' досі проходить перевірку 1bcf1d8 і роняє приймач — DoS, не запис)».
+    - **Reason:** Stage-2 cherry-pick recipe would have failed; residual '..' crash.
+    - **Sources:** https://github.com/daniestevez/gr-satellites/commit/10d27cb ; https://github.com/daniestevez/gr-satellites/commit/1bcf1d8 ; https://github.com/daniestevez/gr-satellites/commits/main
+    - **Saving usd:** 0
+  82.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #29 — версія gpsd
+    - **Anchor:** gnss-sdr 0.0.19 (або 0.0.22 з джерел), gpsd 3.25, chrony 4.5.
+    - **Instruction:** Change «gpsd 3.25» to «gpsd ≥3.25-3ubuntu3.2 (noble-security)».
+    - **Reason:** Security pin.
+    - **Sources:** https://launchpad.net/ubuntu/+source/gpsd
+    - **Saving usd:** 0
+  83.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #30 — збірка і запуск SatDump
+    - **Anchor:** | Збірка SatDump (#30) | master (2.0.0-alpha) з джерел із Soapy і legacy API LimeSuiteNG; без inmarsat_support; запуск з LC_NUMERIC=C, один обмежений у часі systemd-run unit на прохід, ніколи satdump_sdr_server. Останній нумерований реліз — 1.2.2. |
+    - **Instruction:** Replace the decision cell with: «master 1aedd60 + c0b6f88 + 6b5957f (96bb626 опційно); cmake: -DBUILD_GUI=OFF -DBUILD_TOOLS=OFF -DBUILD_TESTING=OFF -DBUILD_OPENCL=OFF -DPLUGINS_ALL=OFF -DPLUGIN_METEOR=ON -DPLUGIN_NOAA_METOP=ON -DPLUGIN_AWS=ON -DPLUGIN_ELEKTRO_ARKTIKA=ON -DPLUGIN_XRIT=ON -DPLUGIN_FY2=ON; кожен плагін sdr_sources вимкнено поіменно (AIRSPY, HYDRASDR, AIRSPYHF, HACKRF, LIMESDR, SDRPLAY, PLUTOSDR, BLADERF, LITEXM2SDR, USRP, RTLSDR, MIRISDR, SPYSERVER, RTLTCP, SDRPP_SERVER, AARONIA, RFNM, FOBOSSDR, NET_SOURCE, REMOTE_SDR, SOAPY, SDDC); -DPLUGIN_EXPERIMENTAL_DEVICES_SUPPORT=OFF, TOOLS_APP, WEBHOOK_APP, PORTAUDIO_SINK, AAUDIO_SINK — OFF; CMAKE_INSTALL_RPATH на каталог плагінів; без GOES/GK2A/FY4 (лише опційний профіль подорожей); без inmarsat_support і Soapy. Пакет конвеєрів: лише Meteor-M.json, MetOp.json, AWS.json, FengYun-2.json, Elektro_Arktika.json (без elektro_ggak_mqtt), жодних інших JSON чи .json.inc. Конфіг: kepler_update_interval «Never» (типово 1 день з http://orbicentral.net), TLE/OMM постачає labd. Unit проходу: один обмежений у часі systemd-run на прохід, окремий користувач, порожній WorkingDirectory у власності root, без pipelines.json у робочому й користувацькому каталозі (ProtectHome=read-only або користувач без HOME-конфігу), PrivateNetwork=yes, LC_ALL=C.UTF-8, CLI завжди «--key=value», провал при «CALCEPH ERROR», без autotrack, ніколи satdump_sdr_server. CI: deny-regex ID конвеєрів (syracuse, cosmos, dmsp, wsf, yunhai, angels, gazelle, spaceplane, paz, orbcomm, inmarsat, ominous, analog, spacex, _tcp, _udp, mqtt) на збірці й у самоперевірці; ldd без бібліотек SDR і мережі (librtlsdr, LimeSuite, soapy); одне офлайн-декодування на кожен дозволений конвеєр на arm64.» Keep «Останній нумерований реліз — 1.2.2.»
+    - **Reason:** Plugin selection does not disable core-module military pipelines; SatDump loads ./pipelines.json and user pipelines.json; default config fetches TLE over plain HTTP; SDR plugins would bypass labd/labrx; PLUGIN_SOAPY is OFF by default and 'NOT RECOMMENDED'. Also drops the librtlsdr-dev conflict risk (#1030/#864).
+    - **Sources:** https://github.com/SatDump/SatDump/tree/master/src-core/pipeline/modules ; https://raw.githubusercontent.com/SatDump/SatDump/master/src-core/pipeline/pipeline.cpp ; https://raw.githubusercontent.com/SatDump/SatDump/master/plugins/CMakeLists.txt ; https://raw.githubusercontent.com/SatDump/SatDump/master/satdump_cfg.json
+    - **Saving usd:** 0
+  84.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #79 — LC76G
+    - **Anchor:** | GNSS LC76G (#79) | Waveshare 24370 LC76G на UART6 (/dev/ttyHS1, udev /dev/gnss0);
+    - **Instruction:** Insert after this phrase: « VCC плати — від 5 V (пін 2/4), не від 3V3; конфіг `$PAIR` повторно при кожному завантаженні з init-хука і зчитування назад (дешева страховка: FAQ Waveshare «втрата конфігу при втраті живлення» стосується L76, не LC76G); PPS-проводку підтверджує власник GNSS (у таблицях проводки Waveshare PPS — NC);».
+    - **Reason:** Refuted finding: the Waveshare FAQ is about the L76; LDO dropout on 3V3.
+    - **Sources:** https://www.waveshare.com/wiki/LC76G_GNSS_Module ; https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf
+    - **Saving usd:** 0
+  85.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #82 — розміщення GNSS-антени і правило USB 3
+    - **Anchor:** | Зовнішня активна антена на дроті 1-3 м; патч на кришці — лише якщо пройде тест C/N0 увімк./вимк. HDMI, USB 3 і DC-DC — подалі від патча і його коаксіалу. | USB 3 глушить GNSS у межах близько 2 м. |
+    - **Instruction:** Replace with: «| Зовнішня активна антена на фіксованому дроті 3 м (надлишок змотати подалі від краю USB 3/HDMI/DC-DC); магніт ≥30 см від паку BNO085 або кріплення стрічкою; керамічна антена з комплекту LC76G на кришці — лише якщо пройде той самий тест C/N0. HDMI, USB 3 і DC-DC — подалі від антени і коаксіалу (близько 1-2 м — правило спільноти). | «USB 3 глушить GNSS у межах ≈2 м» — правило спільноти (OpenMarine 2020-21: проблема на 0.9 м, полегшення на 1.8 м, фікс на ≈1.5 м; USB 2 або екранування вирішували), виміряних C/N0 немає. ArduPilot: проблема компаса на 9 см від магніту, зникла на 15 см. |» and in the consequences cell add «при провалі C/N0 ≤1 dB-Hz — накопичувач у режимі USB 2 під час GNSS-критичної роботи або екранування накопичувача і кабелю».
+    - **Reason:** Evidence wording; free fallback; magnet risk.
+    - **Sources:** https://forum.openmarine.net/printthread.php?tid=3062 ; https://discuss.ardupilot.org/t/compass-variance-and-mag-field/119041
+    - **Saving usd:** 0
+  86.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #90 — S-band тракт
+    - **Anchor:** | S-band тракт (#90) | Лише з Lime:
+    - **Instruction:** Change «Лише з Lime:» to «Lime залишено — тракт за замовчуванням (опортуністично):» and append to the consequences: «A/B 7-виткової проти 2-3-виткової спіралі в конусі до фіналізації (pe2bz: 5.2 витка — «still weak», ≈2 витки — краще); планувальник — лише NORAD з алоу-листа (Black Kite-1/2, PHASMA-LAMARR/DIRAC); S-band LNA досі не названо».
+    - **Reason:** User kept the Lime; compliance guard; helix-length risk.
+    - **Sources:** https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309
+    - **Saving usd:** 0
+  87.
+    - **Section:** 01b_decisions_register
+    - **Kind:** condition
+    - **Part:** #91 — Airspy Mini
+    - **Anchor:** | Airspy Mini для швидкостей AHRPT (#91) | Опційно за воротами: лише після воріт «горб на одній спіралі» і тесту V4L 2.88 Msps. 6 Msps, близько $146.50 (GBP 110, без дати). |
+    - **Instruction:** Replace the decision cell with: «Основний широкий L-band тракт — Lime (залишено): гелікон + SAWbird+ GOES → Lime RX на ≥6 Msps ci16 після доставки 15.12.2026 (sysclk ≥30 MHz); до того — V4L 2.88 Msps з DC-блоком. Airspy Mini — запасний за воротами: лише після воріт «горб» і тесту V4L 2.88 Msps і лише якщо Lime не пройшов 15-хв захоплення без втрат на цьому тракті; продавець і ціна — за аналогом G6.»
+    - **Reason:** Lime at ≥6 Msps removes the 82 % truncation of the V4L; G6 keeps the Airspy as a gated part.
+    - **Sources:** https://github.com/SatDump/SatDump/issues/727 ; https://www.a-centauri.com/articoli/beyond-poes-amateur-satellite-reception
+    - **Saving usd:** 0 now (gated cost avoided if the Lime passes)
+  88.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #102 — шлях оновлення QRO.cz
+    - **Anchor:** шлях оновлення QRO.cz 0.2 ppm
+    - **Instruction:** Replace with: «шлях оновлення QRO.cz «SDR LO 9750» (EUR 52.03 з ПДВ = $58.55, hamparts.shop, ЄС): +12 V = V-pol, +15 V (старий IF IC) / +18 V (новий) = H; 1 ppm темп., 2 ppm початкова (зсув 0-20 kHz); 180 mA; «0.2 ppm» у виробника не вказано».
+    - **Reason:** Manufacturer data; WiMo table appears transposed (403, could not be re-read).
+    - **Sources:** https://hamparts.shop/10-ghz-lnb-with-pll-and-tcxo.html
+    - **Saving usd:** 0
+  89.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #102 — атенюатор ПЧ
+    - **Anchor:** ПЧ близько 739.5 MHz на RTL-B через інжектор з DC-блоком і атенюатор 15/20 dB
+    - **Instruction:** Change «15/20 dB» to «15/20/30 dB (вибір на стенді; RG6 з компресійними F-роз'ємами)».
+    - **Reason:** IF pad model.
+    - **Sources:** http://ok1dx.cz/techinfo/qo100/qo100.html
+    - **Saving usd:** 0
+  90.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #102 — маяки F1A і перекіс поляризації
+    - **Anchor:** Маяки 10489.500 (CW/FSK) і 10489.750 MHz (BPSK 400 bit/s)
+    - **Instruction:** Change to «Маяки 10489.500 (CW F1A, зсув 400 Hz — два тони) і 10489.750 MHz (BPSK 400 bit/s); також 10489.9935 (8APSK 7200 bit/s) і 10490.000 (CW F1A); частоти лише з AMSAT-DL. Перекіс поляризації в Європі 0-36° (до 1.8 dB): labd рахує поворот LNB і кут місця з GNSS-фіксу (tan ψ = sin Δlon / tan lat, супутник 25.9E), друкований адаптер шийки 40 мм зі шкалою ±45° і стопорним гвинтом, пік за C/N0 маяка кроками 5°».
+    - **Reason:** AMSAT-DL bandplan; skew must be set from the fix (no city tables).
+    - **Sources:** https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines
+    - **Saving usd:** 0
+  91.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #107 — консервативна модель QO-100
+    - **Anchor:** (близько G + 13...16 dB-Hz): голий LNB — CW маяк; конус 11 x 8.3 см (близько 18.8 dBi) — PSK маяк на межі; рупор 21/23 dBi — маяки, CW, SSB рівня маяка.
+    - **Instruction:** Replace with: «(G + 11...14 dB-Hz, центр 12.5; виправлений аналіз EA4GPZ: 48 dB-Hz на транспондері, погіршення 3.5 dB, лише низхідний C/N0 ≈46.8 dB-Hz при тарілці «як 60 см» 33.8-34.8 dBi → G + 12.0...13.0): голий LNB — CW маяк +3...+8 dB у 50 Hz, ймовірно; конус 11 x 8.3 см (верхня межа 18.8 dBi) — лише C/N0-монітор PSK-маяка; рупор (верхні межі 21.06/23.02 dBi, планувати ≈18-21) — маяки; SSB рівня маяка — на межі, здебільшого нижче читабельності.»
+    - **Reason:** EA4GPZ's first 45 dB-Hz post included system noise; G+16 upper end is optimistic.
+    - **Sources:** https://destevez.net/2019/03/changes-to-the-qo-100-nb-transponder-settings/ ; https://destevez.net/2019/03/new-dish-for-eshail-2-reception/
+    - **Saving usd:** 0
+  92.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #109 — видимість GEO з Європи
+    - **Anchor:** Те саме стосується Alphasat, I-6 F1, Elektro-L 76E, FY-2H 79E, PRN EGNOS і ДХ-станцій часу.
+    - **Instruction:** Replace with: «Регіон — Європа (модель, сферична Земля, GEO 42164 km): Elektro-L5 76.05E / FY-2H 79.2E — Лісабон −4.9/−7.3°, Лондон −0.1/−2.1°, Париж +1.9/−0.1°, Берлін 7.6/5.8°, Рим 10.8/8.5°, Варшава 12.0/10.3°, Атени 20.6/18.2°; FY-2G 99.2E — від −22.2 до +4.7° (рядок прибрано); GOES-East 75.2W — до 9.9° (Лісабон), не видно на схід від Парижа; GK-2A і FY-4B не видно; Alphasat/QO-100 (≈25E) — 12-46°; супутник на 14.5W — 8-45° над усією Європою. Ціль показується, лише якщо TLE стаціонарний (|n − 1.00274| < 0.0005 обертів/добу) і кут місця ≥5°; без таблиць міст — усе з фіксу.» Do not add any Kyiv figure.
+    - **Reason:** User region Europe; western Europe has no LRIT/FY-2 target unless Elektro-L3 is commissioned at 14.5W.
+    - **Sources:** https://db.satnogs.org/api/tle/?norad_cat_id=67756 ; https://db.satnogs.org/api/tle/?norad_cat_id=43491 ; https://space.oscar.wmo.int/satellites/view/fy_2g ; https://db.satnogs.org/api/tle/?norad_cat_id=39215
+    - **Saving usd:** 0
+  93.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #111 — W9MDB
+    - **Anchor:** Виміри W9MDB на 146 MHz проти NA-771: A-V85 −0.8 dB, NA-701 −2.3 dB, UV-5R −9.8 dB, SRH805S −29.8 dB; одна копія NA-701 гірша на 8-10 dB.
+    - **Instruction:** Replace with: «W9MDB v1.2 (15.10.2013) — наземний лінк HT на 2 милі біля обличчя, не геометрія супутника; для 70 см придатний лише стовпець 435 MHz без калібрування («only relative values»): A-V85 близько на 8.7 dB і NA-701 на 10.4-12.5 dB нижче NA-771; SRH-701 не вимірювали. Жодне джерело не дає виміряного підсилення малого штиря 70 см на ручному пристрої — тому 70 см за замовчуванням — дипольний набір.»
+    - **Reason:** #111 quoted the 146 MHz column for a 70 cm claim.
+    - **Sources:** https://www.miklor.com/COM/pdf/AntennaTestingW9MDB.pdf
+    - **Saving usd:** 0
+  94.
+    - **Section:** 01b_decisions_register
+    - **Kind:** removal
+    - **Part:** #111 — перелік малих жорстких антен
+    - **Anchor:** штир 17 см, A-V85 (16.8 см) або SRH-701 (19 см)
+    - **Instruction:** Change to «штир 17.1 см або SRH-701 (19 см) — лише як запасні 70 см» (A-V85 deleted) and add the optional L-band patch shroud to the confirmation list.
+    - **Reason:** A-V85 removed; rule status.
+    - **Sources:** reaudit_C antennas_patch_chip correction 5
+    - **Saving usd:** 0
+  95.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #112 — чип Johanson
+    - **Anchor:** чип Johanson 433 MHz — −4 dBi
+    - **Instruction:** Change to «чип Johanson 0433AT62A0020002U Rev 4.0 (AEC-Q200, 25x5x1.2 мм, 423-443 MHz) — піковий −4.0 / −6.8 dBi, середній −4.0 / −7.2 dBi (конфігурації 1 і 2); жоден чип не стоїть у VHF/UHF тракті».
+    - **Reason:** Rev 4.0 datasheet values.
+    - **Sources:** https://johansontechnology.com/docs/4353/0433AT62A0020002U.pdf
+    - **Saving usd:** 0
+  96.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #113 — монтаж 70 см
+    - **Anchor:** | Монтаж і орієнтація штиря (#113) | Штирі — на SMA корпусу (через Uputronics на P2), нахилені так, щоб супутник був збоку (за підказкою IMU).
+    - **Instruction:** Replace the start of the decision with: «70 см за замовчуванням — дипольний набір #1 (короткі елементи повністю висунуті, прямий 180°, бортом до проходу) з дротом 60 см до ANT Uputronics; запасні штирі — на Uputronics на перемичці SMA M-F або кронштейні (не консоллю на P2), нахилені так, щоб супутник був збоку (за підказкою IMU).»
+    - **Reason:** New default and mounting rule.
+    - **Sources:** https://www.rtl-sdr.com/using-our-new-dipole-antenna-kit/
+    - **Saving usd:** 0
+  97.
+    - **Section:** 01b_decisions_register
+    - **Kind:** bench_test
+    - **Part:** #113 — A/B на серії 34
+    - **Anchor:** A/B вертикально/нахилено на SSTV серії 34 (22-25.10.2026).
+    - **Instruction:** Replace with: «A/B диполь (набір #1) проти SRH-701 на Uputronics з Доплер-трекінгом на SSTV серії 34 (22-25.10.2026), якщо деталі прийдуть вчасно; диполь — за замовчуванням, якщо не гірший (≥0 dB); інакше — наступна подія ARISS SSTV або щоденні маяки CubeSat 9k6 і APRS МКС 437.825.»
+    - **Reason:** Default changed; parts may not arrive before 22 Oct.
+    - **Sources:** https://www.ariss.org/upcoming-sstv-events.html
+    - **Saving usd:** 0
+  98.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #114-#120 — V-диполь
+    - **Anchor:** V-диполь з дипольного набору: вуса 53.4 см, 120°, вісь Пн-Пд, 1-1.1 м над землею, NEC 3.0 dBi у зеніті, КСХ 1.47, лінійна поляризація (−3 dB на RHCP).
+    - **Instruction:** Replace with: «V-диполь з дипольного набору: вуса 53.4 см, 120°, 1.0-1.1 м над землею на кожному проході; орієнтація за макс. кутом місця — ≥35° бісектриса Пн-Пд (кінці Сх-Зх), ≤30° кінці Пн-Пд, без нагляду бісектриса Пн-Пд; над землею (PyNEC, модель) зеніт −4.3 dBi, пік +7.7 dBi на 30° у площині бісектриси, у вільному просторі 2.8 dBi у зеніті; лінійна (−3 dB на RHCP); правило зниження до 0.5-0.75 м не застосовувати (5.3-5.8 хв проти 10.3-10.6 хв на високих проходах).»
+    - **Reason:** Orientation correction; the NEC 3.0 dBi zenith figure ignores ground.
+    - **Sources:** https://www.rtl-sdr.com/simple-noaameteor-weather-satellite-antenna-137-mhz-v-dipole/ ; https://community.libre.space/t/mathematical-modeling-and-physical-optimization-of-v-dipole-antennas-for-vhf-imaging-satellite-reception/14844
+    - **Saving usd:** 0
+  99.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #114-#120 — схрещений Yagi
+    - **Anchor:** WB2HOL 3 ел. (2 m, сталева рулетка на котушках Axotron v3) + N2SPI 6 ел. (70 см) на штанзі 20x20 мм
+    - **Instruction:** Replace with: «WB2HOL 3 ел. електрично (2 m: R 105.1 см на 0; DE 2x45.1 см, проміжок 19-25 мм, на 0.203 м; D 89.2 см на 0.508 м; hairpin 127 мм дроту 14-18 AWG; NEC 8.3 dBi без втрат, F/B 18 dB, Z 14-22j) на механіці Axotron v3 (котушки, пружинні затискачі, напрямна для свердління стрічки 3.5 мм; основи затискачів перекреслити під 20x20 мм; файли без ліцензії — лише особиста збірка; такий гібрид ще ніхто не будував) + N2SPI 6 ел. (70 см, пруток Al #8 AWG 3.26 мм з різьбою M3: REF 0.0300, DE 0.0935, D1 0.1697, D2 0.3158, D3 0.4745, D4 0.6396 м; довжини 339.7/313.7/314.3/304.8/304.8/279.4 мм; паразитні половини — через струмопровідну муфту M3, <1 Ohm; DE — розріз 12 мм + hairpin ≈11.5 nH) на штанзі 20x20 мм».
+    - **Reason:** Axotron v3 geometry differs from WB2HOL; coupler gap is a silent ~9 dB risk.
+    - **Sources:** https://axotron.se/blog/?p=1619 ; https://www.w9rh.org/wp-content/uploads/2024/01/2m-tape-measure-yagi-instructions.pdf ; https://www.amsat.org/articles/n2spi/JulAug06AmsatJournal.pdf
+    - **Saving usd:** 0
+  100.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #114-#120 — гелікон
+    - **Anchor:** 15.7 dBic, пучок 24-28°.
+    - **Instruction:** Change to «13-15.7 dBic (модель; виміряного підсилення немає; межа апертури 44 см — 17.9 dBi, тобто 15.7 dBic ≈ 60 % ККД), пучок 24-28°.»
+    - **Reason:** No measured gain exists.
+    - **Sources:** https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309
+    - **Saving usd:** 0
+  101.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #114-#120 — рупор QO-100
+    - **Anchor:** 3 внутрішні — близько 21 dBi з рук, усі 6 — близько 23 dBi на штативі.
+    - **Instruction:** Replace with: «3 внутрішні — до 21.06 dBi з рук, усі 6 — до 23.02 dBi на штативі (Balanis, ідеальне горло TE11 — верхні межі; Bullseye живить через багатомодову площину ковпачка 64 мм, тож планувати ≈18-21 dBi, конус ≈15-17 dBi до A/B); горло на виміряній площині червоного ковпачка, R_in = r/sin 13.8° (134.2-138.3 мм для горла 64-66 мм); варіант QRO.cz з POTY (мідна трубка 22 мм, горло 20 мм ID, R_in 41.9 мм) — після підтвердження в QRO.cz.»
+    - **Reason:** Multimode throat; crude phase-error estimate 2-3 dB lower for the horn and more for the cone.
+    - **Sources:** http://www.w1ghz.org/antbook/chap3.pdf ; https://hamparts.shop/10-ghz-lnb-with-pll-and-tcxo.html ; https://www.passion-radio.com/lnb-pll/lnb-othernet-978.html
+    - **Saving usd:** 0
+  102.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #121-#128 — опорне L-band GEO-джерело
+    - **Anchor:** опорне L-band джерело — NCS Inmarsat-C першим, FY-2H другим, Elektro-L LRIT — лише якщо чути;
+    - **Instruction:** Replace with: «опорне L-band GEO-джерело для всієї Європи — NCS Inmarsat-C (Alphasat 24.9E на 12-46°); Elektro-L5 (спершу GGAK 1693 MHz, потім LRIT 1691 MHz) і FY-2H (несуча) — лише схід і центр Європи (≈ на схід від 13E), за фіксом і живим TLE; Elektro-L3 — автоматично, коли стаціонарний біля 14.5W;».
+    - **Reason:** Europe geometry.
+    - **Sources:** https://db.satnogs.org/api/tle/?norad_cat_id=67756 ; https://db.satnogs.org/api/tle/?norad_cat_id=44903
+    - **Saving usd:** 0
+  103.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #121-#128 — LRPT
+    - **Anchor:** 137 MHz — лише Meteor-M N2-4 і N2-3 LRPT на 137.900 MHz (72k)
+    - **Instruction:** Change «(72k)» to «(OQPSK 72k, запасний 80k interleaved; N2-5 — 2027 або пізніше)».
+    - **Reason:** SatDump pipeline labelling; WMO OSCAR N2-5 planned.
+    - **Sources:** https://raw.githubusercontent.com/SatDump/SatDump/master/resources/pipelines/Meteor-M.json
+    - **Saving usd:** 0
+  104.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #121-#128 — Metop
+    - **Anchor:** Metop — невідомо до перевірки на ефірі;
+    - **Instruction:** Replace with: «Metop: OSPO (03.09.2026) — B AHRPT «Yes», C «No» (C — один звіт спільноти); перевірка на ефірі на B і C;».
+    - **Reason:** OSPO status page.
+    - **Sources:** https://www.ospo.noaa.gov/operations/metop/status.html
+    - **Saving usd:** 0
+  105.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #47 — 145.800 MHz і кеш SatNOGS
+    - **Anchor:** 145.800 MHz востаннє — серія 28 (липень 2025). | Частоти беруться з кешу SatNOGS DB. |
+    - **Instruction:** Change the consequences cell to: «Частоти — з кешу SatNOGS DB через імпортер-алоу-лист (NORAD, частота ±10 kHz, режим); 145.800 MHz — також голосовий низхідний канал ARISS crew-contact: IQ лише у вікнах подій SSTV, оголошених ARISS, і без мови.»
+    - **Reason:** 145.800 MHz is also 'Mode V/V FM (crew)' active in SatNOGS.
+    - **Sources:** https://db.satnogs.org/api/transmitters/?satellite__norad_cat_id=25544 ; https://www.ariss.org/upcoming-sstv-events.html
+    - **Saving usd:** 0
+  106.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #54 — імпортер SatNOGS
+    - **Anchor:** Сторінки ARISS (18.10.2026). | Частоти з кешу SatNOGS DB. |
+    - **Instruction:** Change the consequences cell to: «Частоти з кешу SatNOGS DB лише через алоу-лист (NORAD, частота ±10 kHz, режим); для МКС — 437.550 SSTV, 437.825 APRS, 437.800 FM, 145.800 SSTV, 2395 HamTV; другий шар — заборона 1544-1545, 406.0-406.1 MHz і назв SARSAT/Cospas/ARGOS/DCS/relay/voice/suit/EVA/Soyuz; невідомий передавач — у список «review», ніколи в профілі.»
+    - **Reason:** The SatNOGS ISS entry alone carries Soyuz/suit/EVA/EMU voice, Dragon/Falcon telemetry and ICARUS as active; a denylist would import them.
+    - **Sources:** https://db.satnogs.org/api/transmitters/?satellite__norad_cat_id=25544
+    - **Saving usd:** 0
+  107.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #55 — підписи меню
+    - **Anchor:** Підписати QO-100 NB «лише маяк/CW/сильний SSB», Metop, FY, Elektro — «експериментально»
+    - **Instruction:** Change to «Підписати QO-100 NB «маяки; SSB рівня маяка — на межі», Metop, AWS, FY, Elektro — «експериментально»; Elektro і FY-2H показувати лише з прапорцем «видно звідси»».
+    - **Reason:** Corrected QO-100 constant; Europe GEO visibility.
+    - **Sources:** https://destevez.net/2019/03/changes-to-the-qo-100-nb-transponder-settings/
+    - **Saving usd:** 0
+  108.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** gpsd + LC76G конфіг
+    - **Anchor:** LC76G: `$PAIR752,2,100` (PPS лише з 3D), `$PAIR391,1` (виявлення глушіння). |
+    - **Instruction:** Replace with: «LC76G: `$PAIR752,2,100` (PPS лише з 3D), `$PAIR391,1` (виявлення глушіння) — надсилаються при кожному ввімкненні з init-хука gpsd/labd і зчитуються назад до довіри PPS; SBAS (EGNOS) — мітки з gpsd SKY gnssid 1 / svid 120-158 через версійну таблицю PRN→система, невідомі — «SBAS PRN n». |»
+    - **Reason:** Re-apply at boot is cheap insurance; SBAS labelling needs a PRN table.
+    - **Sources:** https://gpsd.gitlab.io/gpsd/gpsd_json.html ; https://www.waveshare.com/wiki/LC76G_GNSS_Module
+    - **Saving usd:** 0
+  109.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** gpsd — версія
+    - **Anchor:** | gpsd 3.25 + chrony 4.5 |
+    - **Instruction:** Change to «| gpsd ≥3.25-3ubuntu3.2 (noble-security) + chrony 4.5 |».
+    - **Reason:** Security pin.
+    - **Sources:** https://launchpad.net/ubuntu/+source/gpsd
+    - **Saving usd:** 0
+  110.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Дозволені декодери — SatDump і gr-satellites
+    - **Anchor:** супутники — SatDump (без inmarsat_support), gr-satellites 5.5;
+    - **Instruction:** Replace with: «супутники — SatDump (закріплена збірка #30: лише 5 JSON конвеєрів Meteor-M, MetOp, AWS, FengYun-2, Elektro_Arktika без elektro_ggak_mqtt; усі sdr_sources-плагіни і inmarsat_support вимкнено), gr-satellites (main 4210dc4 +labN або v5.9.0 + 10d27cb + 1bcf1d8; ніколи 5.5.0; у пісочниці systemd з ProtectHome=yes і ReadWritePaths лише на каталог виходу);».
+    - **Reason:** Pipeline allow-list and gr-satellites security fix.
+    - **Sources:** https://github.com/SatDump/SatDump/tree/master/resources/pipelines ; https://github.com/daniestevez/gr-satellites/commit/1bcf1d8
+    - **Saving usd:** 0
+  111.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** Пакування — gr-satellites з apt
+    - **Anchor:** gr-satellites 5.5.0, SoapySDR 0.8.1, SoapyRTLSDR 0.3.3, Gpredict 2.3 (радіо лише «RX only»)
+    - **Instruction:** Remove «gr-satellites 5.5.0, » from the apt list (and pin gr-satellites 5.5.0 from noble to −1).
+    - **Reason:** noble ships 5.5.0-2build2 with the FileReceiver bug.
+    - **Sources:** https://github.com/daniestevez/gr-satellites/commits/main
+    - **Saving usd:** 0
+  112.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** Пакування — з джерел
+    - **Anchor:** з джерел: SoapyAirspyHF, SatDump, SDR++, SDRangel, slowrx.
+    - **Instruction:** Change to «з джерел: SoapyAirspyHF, SatDump (master 1aedd60 + c0b6f88 + 6b5957f), gr-satellites (main 4210dc4, 5.10.0-git, проти GNU Radio 3.10.9.2), SDR++, SDRangel, slowrx.»
+    - **Reason:** Pins from the re-audit.
+    - **Sources:** https://github.com/SatDump/SatDump/commits/dev ; https://github.com/daniestevez/gr-satellites/commits/main
+    - **Saving usd:** 0
+  113.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Unit проходу SatDump
+    - **Anchor:** проходи записуються, потім SatDump 2.0-alpha декодує з базового файлу (живий канал — лише якщо alpha це підтримує).
+    - **Instruction:** Append: «SatDump ніколи не відкриває SDR (лише запис labrx або файл/FIFO). Unit проходу: один обмежений у часі systemd-run на прохід, окремий користувач, порожній WorkingDirectory у власності root, без pipelines.json у робочому й користувацькому каталозі (ProtectHome=read-only або користувач без HOME-конфігу), PrivateNetwork=yes (або IPAddressDeny=any), LC_ALL=C.UTF-8, CLI завжди «--key=value», провал unit при «CALCEPH ERROR», без autotrack і satdump_sdr_server; satdump_cfg.json — kepler_update_interval «Never», TLE/OMM з файлу labd.»
+    - **Reason:** SatDump loads ./pipelines.json and user pipelines.json; default config fetches OMM/TLE over plain HTTP at every launch.
+    - **Sources:** https://raw.githubusercontent.com/SatDump/SatDump/master/src-core/pipeline/pipeline.cpp ; https://raw.githubusercontent.com/SatDump/SatDump/master/satdump_cfg.json
+    - **Saving usd:** 0
+  114.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** Меню Satellites
+    - **Anchor:** Satellites (LRPT, HRPT, Metop/FY «експериментально», Elektro LRIT,
+    - **Instruction:** Change to «Satellites (LRPT з карткою проходу «V: bisector N-S» / «V: tips N-S» за прогнозованим макс. кутом місця, HRPT, Metop/AWS «експериментально», Elektro GGAK/LRIT і FY-2H — лише з прапорцем «видно звідси» (стаціонарний TLE, кут ≥5°),».
+    - **Reason:** Per-pass V orientation must be shown by labd; Europe GEO gate.
+    - **Sources:** https://www.rtl-sdr.com/simple-noaameteor-weather-satellite-antenna-137-mhz-v-dipole/
+    - **Saving usd:** 0
+  115.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** Меню QO-100
+    - **Anchor:** QO-100 NB і монітор маяків — за регіоном
+    - **Instruction:** Change to «QO-100 NB і монітор маяків (Європа; підказка «rotate LNB x°» і кут місця з GNSS-фіксу; маяки F1A — два тони)».
+    - **Reason:** Region decided; skew from the fix.
+    - **Sources:** https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines
+    - **Saving usd:** 0
+  116.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** labd — політики каталогу і планувальника
+    - **Anchor:** Політика: egc-gate (профіль вимкнений до тесту на змішаному записі),
+    - **Instruction:** Insert after this phrase: « egc-gate з розбором класу дескриптора (сервісний код на зсуві 2/3, рішення на першому фрагменті 0x3D/0x3E, CRC лише прийнятих), імпортер SatNOGS — алоу-лист (NORAD, частота ±10 kHz, режим) з другим шаром заборон, планувальник S-band — лише NORAD з алоу-листа, GEO-цілі — лише стаціонарний TLE і кут ≥5°, підказки перекосу LNB і орієнтації V з фіксу, «ch2 off = no UHF» при вимкненому Uputronics, маска TDF 162 kHz у вівторок 06:00-12:00 UTC,».
+    - **Reason:** Re-audit compliance and usability controls.
+    - **Sources:** https://github.com/SatDump/SatDump/blob/master/plugins/inmarsat_support/stdc/packets_structs.h ; https://db.satnogs.org/api/transmitters/?satellite__norad_cat_id=25544
+    - **Saving usd:** 0
+  117.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Статична маска голосу 145.800 MHz
+    - **Anchor:** а також 145.800 MHz, коли записується 2 m;
+    - **Instruction:** Change to «а також 145.800 MHz, коли записується 2 m (це й голосовий низхідний канал ARISS crew-contact): поза оголошеними ARISS вікнами SSTV маска діє завжди; усередині вікна — FM-демодуляція наживо в slowrx, IQ лише поки мову не класифіковано, при мові IQ не зберігається;».
+    - **Reason:** Keeps the no-voice-IQ rule while allowing SSTV on 145.800 inside events.
+    - **Sources:** https://db.satnogs.org/api/transmitters/?satellite__norad_cat_id=25544 ; https://www.ariss.org/upcoming-sstv-events.html
+    - **Saving usd:** 0
+  118.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** Оновлення TLE/OMM для SatDump
+    - **Anchor:** Оновлення TLE/OMM — через домашній Wi-Fi або USB-накопичувач/microSD;
+    - **Instruction:** Append: « SatDump сам ефемериди не завантажує (kepler_update_interval «Never»; типовий конфіг тягне OMM/TLE з http://orbicentral.net без шифрування) — файл TLE/OMM постачає labd;».
+    - **Reason:** Removes unauthenticated ephemeris and field network attempts.
+    - **Sources:** https://raw.githubusercontent.com/SatDump/SatDump/master/satdump_cfg.json
+    - **Saving usd:** 0
+  119.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** replace_part
+    - **Part:** Патч-чохол — 70 см
+    - **Anchor:** штир 17 см або A-V85/SRH-701; Uputronics 440 (коли не на P2);
+    - **Instruction:** Replace with: «короткі елементи дипольного набору #1 для 70 см (опційно третій набір, +$17.95, щоб не переставляти елементи між проходами LRPT і UHF); запасний SRH-701 або штир 17.1 см; Uputronics 440 і коротка перемичка SMA M-F або кронштейн;».
+    - **Reason:** New default; A-V85 removed; Uputronics not cantilevered on P2.
+    - **Sources:** https://www.rtl-sdr.com/using-our-new-dipole-antenna-kit/
+    - **Saving usd:** 0
+  120.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Складаний рюкзак — штатив
+    - **Anchor:** дорожній штатив ≤35 см з панорамною головою;
+    - **Instruction:** Change to «дорожній штатив ≤35 см з кульовою головою, 1/4-20 (модель і ціна — за аналогом G4);».
+    - **Reason:** Both named tripods have ball heads, not pan heads.
+    - **Sources:** https://justmore.dk/images/media/ProductsDocs/Rollei-Compact-Traveler-No-I-kamerastativ-sort.pdf
+    - **Saving usd:** 0
+  121.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Вага — штатив
+    - **Anchor:** | Штатив | 0.3-0.6 kg | — |
+    - **Instruction:** Change to «| Штатив | 1.14-1.4 kg (рядок набору 1.2-1.4 kg; маса Rollei — за аналогом G4) | — |».
+    - **Reason:** Named 32-35 cm tripods weigh 1.17-1.35 kg.
+    - **Sources:** https://justmore.dk/images/media/ProductsDocs/Rollei-Compact-Traveler-No-I-kamerastativ-sort.pdf ; https://bigbearsound.com/products/manfrotto-befree-one-aluminium-travel-tripod-with-head-black
+    - **Saving usd:** 0
+  122.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Вага — польовий рюкзак
+    - **Anchor:** **близько 4.6-6.1 kg** без КХ і щогли; **5.5-7.4 kg** повністю
+    - **Instruction:** Change to «**близько 5.2-7.1 kg** без КХ і щогли; **6.1-8.4 kg** повністю (модель; +0.6-1.0 kg за реальним штативом)»; propagate the same delta to the weight line in 2.12 and D14.
+    - **Reason:** Backpack +0.6-1.0 kg from the tripod correction.
+    - **Sources:** reaudit_C antennas_foldable correction 15
+    - **Saving usd:** 0
+  123.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Виготовлення — схрещений Yagi
+    - **Anchor:** стрічки WB2HOL на котушках Axotron v3 на 0, 0.20 і 0.51 м з мітками для 145.8 і 137.5 MHz (R 111.4, DE 2x47.8, D 94.6 см); вставні половини елементів 70 см ≤17 см з кольоровим кодуванням на 0.030/0.094/0.170/0.316/0.475/0.640 м; прямий розрізний DE (0.95 x 13 in) + hairpin.
+    - **Instruction:** Replace with: «стрічки WB2HOL (R 105.1 см на 0; DE 2x45.1 см з проміжком 19-25 мм на 0.203 м; D 89.2 см на 0.508 м) на котушках, пружинних затискачах і напрямній Axotron v3 (основи затискачів перекреслити під 20x20 мм, або кругла штанга 16 мм зі шпонковими муфтами ±5°; майданчики hairpin на затискачі DE); стрічку свердлити 3.5 мм на свердлильному верстаті за напрямною зі сталевими пластинами 5x15x37 мм, зняти задирки, нержавійка M3, подовжені задній/передній/активний затискачі, краї під спортивною стрічкою; еластичні фіксатори — лише для згорнутих котушок; hairpin 2 m — 127 мм дроту 14-18 AWG. Міток 137.5 MHz немає: для LRPT — окремий підписаний набір із трьох стрічок (111.4 / 2x47.8 з проміжком 19-25 мм / 94.6 см), що міняється на затискачах. Половини елементів 70 см ≤17.0 см (пруток Al 3.26 мм, різьба M3) з кольоровим кодуванням на 0.030/0.094/0.170/0.316/0.475/0.640 м; паразитні — через струмопровідну наскрізну муфту M3 (латунь/нержавійка), довжини міряти від кінця до кінця з муфтою; DE — ізольований прямий розріз 12 мм + hairpin ≈11.5 nH (≈11-12 мм дроту 2 мм при 12 мм; розраховано, фіксовано).»
+    - **Reason:** Axotron drills tapes; one tape cannot show two lengths; couplers prevent a silent ~9 dB loss.
+    - **Sources:** https://axotron.se/blog/?p=1619 ; https://www.w9rh.org/wp-content/uploads/2024/01/2m-tape-measure-yagi-instructions.pdf ; https://wa5vjb.com/yagi-pdf/cheapyagi.pdf
+    - **Saving usd:** 0
+  124.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Виготовлення — приймання Yagi без S11
+    - **Anchor:** паразитні половини стрічок електрично з'єднані
+    - **Instruction:** Change to «паразитні половини елементів 70 см з'єднані муфтою (<1 Ohm від кінця до кінця, DMM після кожного збирання), половини DE розімкнені між собою, крім hairpin (КЗ по DC очікуване)».
+    - **Reason:** Continuity check replaces an unspecified joint.
+    - **Sources:** https://www.amsat.org/articles/n2spi/JulAug06AmsatJournal.pdf
+    - **Saving usd:** 0
+  125.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Виготовлення — гелікон
+    - **Anchor:** Приймання: C/N0 GNSS і несучої NCS, шум Сонця, A/B з 4-витковою спіраллю.
+    - **Instruction:** Append: « Для A/B кута t0nito (134→440 мм, висота 88 мм, 29.7°) — другий набір пелюсток (хорда обода 18.6 см, похила ≈17.7 см) або клинові щілини 0-1.8 см під алюмінієвою стрічкою (тоді це не геометрія t0nito). S-band (Lime): A/B 7-виткової (46.7 мм, крок 32.5 мм, 228 мм) проти 2-3-виткової спіралі в тому самому конусі до фіналізації.»
+    - **Reason:** Petal geometry and S-band helix-length risk.
+    - **Sources:** https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309
+    - **Saving usd:** 0
+  126.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Виготовлення — рупор і конус QO-100
+    - **Anchor:** сегменти з напівкутом 13.8°, внутрішні радіуси 84-267 мм, зовнішні 255-378 мм, 28.6° кожен; шви алюмінієвою стрічкою (зазор <0.2 мм); друкований хомут 40.2 мм і кільця 127/180 мм; **лише вертикаль 13.2 V або поворот LNB, 18 V немає**.
+    - **Instruction:** Replace with: «горло — кільце на виміряній площині червоного ковпачка (Passion Radio: OD 64 мм; F4DAV: 60 мм — виміряти до друку), на друкованому адаптері шийки 40 мм зі шкалою перекосу ±45° і стопорним гвинтом; ковпачок не знімати і не різати. Рупор: 6 сегментів 28.6°, напівкут 13.8°, 0.3-0.5 мм Al; 3 внутрішні — від R_in = r_горла/sin 13.8° (134.2-138.3 мм для горла 64-66 мм) до 267 мм, 3 зовнішні — 255-378 мм; кільця 127/180 мм; шви з перекриттям ≥5 мм, на заклепках, зверху струмопровідна алюмінієва стрічка. Конус: напівкут 22.9°, устя 110.5 мм, R_in = r/sin 22.9° (82-85 мм для горла 64-66 мм). Опційно QRO.cz з POTY (трубка 22 мм, горло 20 мм ID, R_in 41.9 мм; довші внутрішні сегменти розділити, кожен <23 см) — після підтвердження в QRO.cz. **Лише вертикаль (13.2 V, або 12.5 V за рішенням власника живлення), 18 V немає**.»
+    - **Reason:** Throat moves to the cap plane; gains are upper bounds for a multimode feed; seam-loss risk.
+    - **Sources:** https://www.passion-radio.com/lnb-pll/lnb-othernet-978.html ; https://hamparts.shop/10-ghz-lnb-with-pll-and-tcxo.html ; http://www.w1ghz.org/antbook/chap3.pdf
+    - **Saving usd:** 0
+  127.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** bench_test
+    - **Part:** A/B QO-100 — очікування
+    - **Anchor:** очікування +8...+12 dB (21 dBi) і +11...+15 dB (23 dBi) над голим LNB; абсолютний C/N0 маяка близько G+13...G+16 dB-Hz підтверджує консервативну модель.
+    - **Instruction:** Replace with: «порівняти абсолютний C/N0 маяків з G + 11...14 dB-Hz (центр 12.5); LNB з перекосом із фіксу, пік кроками 5°; один прогін 6 сегментів повторити після переклеювання швів (зміна >1 dB — шви з втратами); до друку кільця записати OD ковпачка, виступ і видиму апертуру живлення; журнал рівня LTE B28/DVB-T біля ПЧ 739.5 MHz. Константу моделі дає цей A/B.»
+    - **Reason:** Corrected constant; A/B becomes the source of the constant.
+    - **Sources:** https://destevez.net/2019/03/changes-to-the-qo-100-nb-transponder-settings/
+    - **Saving usd:** 0
+  128.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** bench_test
+    - **Part:** A/B L-band — гелікон проти спіралі
+    - **Anchor:** FY-2H другою (частоту 1687.5/1690.5 MHz встановити на ефірі), Elektro-L LRIT — лише якщо чути; кути — з фіксу.
+    - **Instruction:** Replace with: «плюс GNSS C/N0 і підйом шуму Сонця; несуча NCS — європейська за скануванням лише за потужністю; FY-2H (1687.5, потім 1690.5 MHz) і Elektro-L5 (GGAK 1693, потім LRIT 1691 MHz) — лише зі сходу/центру Європи (кут ≥5°); кути — з фіксу; перевага гелікона >4 dB над спіраллю повертає Metop/AWS у «на межі (експеримент)».»
+    - **Reason:** Europe geometry; decision rule for Metop/AWS.
+    - **Sources:** reaudit_C antennas_foldable bench test 8
+    - **Saving usd:** 0
+  129.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** bench_test
+    - **Part:** A/B VHF — орієнтація V-диполя
+    - **Anchor:** 7. A/B VHF: V-диполь проти перемічених на 137.5 MHz стрічок на одному проході Meteor; FM-режектор лишається в тракті.
+    - **Instruction:** Replace with: «7. A/B VHF: два набори (#1 і #2), вуса 53.4 см, 120°, 1.087 м, ≥3 м один від одного; A — бісектриса Пн-Пд, B — кінці Пн-Пд; один прохід Meteor N2-4/N2-3 на RTL-A і запасному V4L (обидва з Flamingo+ і LNA), антени між приймачами міняти через прохід; ≥8 проходів з піком 15-85°; правило за проходом приймається, якщо A виграє ≥2 хв декодованого часу на проходах ≥40°, а B виграє на ≤25°. FM-режектор лишається в тракті.»
+    - **Reason:** Settles the main orientation correction on air (receive-only).
+    - **Sources:** https://www.rtl-sdr.com/simple-noaameteor-weather-satellite-antenna-137-mhz-v-dipole/
+    - **Saving usd:** 0
+  130.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** other
+    - **Part:** Запасні частини польового набору
+    - **Anchor:** запасна котушка стрічки.
+    - **Instruction:** Append: « один запасний нарізаний і просвердлений набір стрічок 2 m; запасна муфта M3 для паразитного елемента 70 см».
+    - **Reason:** Axotron build drills tapes; couplers are load-bearing.
+    - **Sources:** https://axotron.se/blog/?p=1619
+    - **Saving usd:** 0
+  131.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Компонування — GNSS-антена
+    - **Anchor:** GNSS-антена — зовнішня на дроті 1-3 м; патч на кришці — лише якщо пройде тест C/N0 увімк./вимк.
+    - **Instruction:** Replace with: «GNSS-антена 25346 — зовнішня на фіксованому дроті 3 м (надлишок змотати подалі від краю USB 3/HDMI/DC-DC; ≈1-2 м — правило спільноти OpenMarine); керамічна антена LC76G на кришці — лише якщо пройде тест C/N0 увімк./вимк. (≤1 dB-Hz).»
+    - **Reason:** Fixed lead; evidence wording.
+    - **Sources:** https://www.waveshare.com/gps-external-antenna-d.htm ; https://forum.openmarine.net/printthread.php?tid=3062
+    - **Saving usd:** 0
+  132.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** new_risk
+    - **Part:** Магніт GNSS-антени біля паку IMU
+    - **Anchor:** Пак — щонайменше 15-20 см від сталі (стрічки Yagi 2 m)
+    - **Instruction:** Insert before this phrase: «Магнітна основа GNSS-антени 25346 — щонайменше 30 см від паку BNO085 або кріплення стрічкою (ArduPilot: проблема компаса на 9 см, зникла на 15 см). »
+    - **Reason:** New risk 6 in the patch/chip re-audit.
+    - **Sources:** https://discuss.ardupilot.org/t/compass-variance-and-mag-field/119041
+    - **Saving usd:** 0
+  133.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Відомі лінії — 1704.0 MHz
+    - **Anchor:** | 144.000 / 432.000 / 1704.0 | 12 MHz (хаб, RP2040) | 2 m / 70 см / Metop |
+    - **Instruction:** Change the target cell to «2 m / 70 см / Metop (1704.0 — не блокер HRPT: смугу 1705 MHz ніхто не використовує, а CW-лінія незначна в смузі 2.5 MHz)».
+    - **Reason:** Refuted stage-1 finding.
+    - **Sources:** https://raw.githubusercontent.com/SatDump/SatDump/master/resources/pipelines/Meteor-M.json
+    - **Saving usd:** 0
+  134.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** new_risk
+    - **Part:** Відомі лінії — 1700.000 MHz
+    - **Anchor:** | 1700.000 | 25 MHz × 68 (NIC, опора LNB), 100 MHz × 17 (pcie0/Lime), 10 MHz × 170 (GPSDO) | Meteor HRPT |
+    - **Instruction:** Change the target cell to «Meteor HRPT — головний ризик: лінія на залишковій несучій може захопити PLL pm_demod на слабких проходах; ворота: жодної лінії в ±50 kHz вище фону +10 dB при вимкнених pcie0 і GPSDO».
+    - **Reason:** New risk 9 in the targets re-audit.
+    - **Sources:** https://raw.githubusercontent.com/SatDump/SatDump/master/resources/pipelines/Meteor-M.json
+    - **Saving usd:** 0
+  135.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Відомі лінії — 1699.2 MHz
+    - **Anchor:** | 1699.2 | V4L 28.8 MHz × 59 | Meteor HRPT |
+    - **Instruction:** Change the target cell to «Meteor HRPT (не блокер; критерій — інтегрована потужність спурів у смузі ≥20 dB нижче шуму)».
+    - **Reason:** Only PLL capture near the carrier matters.
+    - **Sources:** https://www.a-centauri.com/articoli/easy-hrpt-guide
+    - **Saving usd:** 0
+  136.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** new_risk
+    - **Part:** L-band патч — внутрішньосмугові і суміжні завади
+    - **Anchor:** **11. Політика.**
+    - **Instruction:** Add a new item after item 11: «**12. L-band патч.** SAW патча (1525-1660 MHz) пропускає uplink Iridium (1616-1626.5 MHz) і терміналів Inmarsat (1626.5-1660.5 MHz): судно, літак чи BGAN-термінал поруч можуть наситити LNA патча або 8-бітний RTL-B (величину не перевірено; найважливіше в морі і біля терміналів). Суміжні наземні мережі доходять до LNA перед SAW: EU LTE Band 75 SDL 1432-1517 MHz (розгортання на Band 32 в IT, UK, DE, LV за Wikipedia), Японія Band 11/21 до 1510.9 MHz, US Band 74 downlink 1475-1518 MHz; US Band 24 (1526-1536 MHz, Ligado) — у смузі і не фільтрується (статус 2026 не перевірено). Журнал потужності 1.43-1.52 і 1.616-1.66 GHz поряд з C/N0 NCS; переміститися, якщо фон росте.»
+    - **Reason:** New risks 2 and 3 of the patch/chip re-audit; the Honeywell source describes the US in-band case, not EU SDL.
+    - **Sources:** https://en.wikipedia.org/wiki/LTE_frequency_bands
+    - **Saving usd:** 0
+  137.
+    - **Section:** 08_open_bench
+    - **Kind:** correction
+    - **Part:** Струми — Uputronics 440
+    - **Anchor:** Uputronics 440: підсилення і NF при фактичній напрузі ch2 (нижче 4.5 V); якщо ревізія потребує 5 V — окремий канал 5.0 V або явне прийняття 4.5 V.
+    - **Instruction:** Replace with: «Uputronics 440 Rev 3.0: вхід 3.5-5.5 V (4.5 V у межах), ≈50 mA на ch2 — базова лінія тривоги labd; кондуктивний тест підсилення і смуги — окремий рядок.»
+    - **Reason:** Datasheet Rev 3.0 refutes the 5 V-only reading.
+    - **Sources:** https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808
+    - **Saving usd:** 0
+  138.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Рівень ПЧ LNB і горло рупора
+    - **Anchor:** | LNB: рівень ПЧ з атенюаторами 15 і 20 dB (десенсибілізація); підсилення LNB; діаметр шийки і хвилеводу до рупора.
+    - **Instruction:** Change to «| LNB: рівень ПЧ з атенюаторами 15/20/30 dB — підйом шуму ≥10 dB і без компресії (C/N0 маяка незмінний при кроці підсилення RTL на 10 dB), обрати найменший, що проходить; підсилення LNB; OD червоного ковпачка (60 чи 64 мм), виступ і видима апертура живлення до друку кільця горла; струм Bullseye холодним і гарячим при 12.5 і 13.2 V.» (keep the HF part of the row).
+    - **Reason:** IF pad and throat corrections.
+    - **Sources:** http://ok1dx.cz/techinfo/qo100/qo100.html ; https://www.passion-radio.com/lnb-pll/lnb-othernet-978.html
+    - **Saving usd:** 0
+  139.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Lime — захоплення 6 Msps і S-band
+    - **Anchor:** S-band LNA назвати і оцінити | C1 |
+    - **Instruction:** Change to «S-band LNA назвати і оцінити; 15-хв захоплення без втрат на 6 Msps ci16 на тракті гелікон + SAWbird+ GOES → Lime RX (рішення щодо Airspy Mini); A/B S-спіралі 7 проти 2-3 витків на проходах 2208-2288 MHz через cf2235-kt30 (SNR і тривалість несучої) | C1 |».
+    - **Reason:** Lime replaces the Airspy for Metop/AWS; S-band helix risk.
+    - **Sources:** https://github.com/SatDump/SatDump/issues/727 ; https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309
+    - **Saving usd:** 0
+  140.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** Перевірки на ефірі — GEO і Metop
+    - **Anchor:** Elektro-L5 LRIT 1691 MHz, частота несучої FY-2H (1687.5 чи 1690.5 MHz), який NCS Inmarsat над вами | До купівлі масиву 2x2 чи Airspy Mini |
+    - **Instruction:** Replace with: «Elektro-L5 — спершу GGAK 1693 MHz (синхронізація кадрів + CADU), потім LRIT 1691 MHz на 1 Msps (SNR, сегменти з правильним CRC) — лише зі сходу/центру Європи; із заходу — лише перевірка потужності 1691/1693 MHz у бік 14.5W (L2/L3); несуча FY-2H (1687.5, потім 1690.5 MHz) — та сама межа; який NCS Inmarsat над вами | До купівлі масиву 2x2; Airspy Mini — лише якщо Lime не пройде 15-хв захоплення без втрат |».
+    - **Reason:** Europe geometry; Lime-first route.
+    - **Sources:** https://raw.githubusercontent.com/SatDump/SatDump/master/resources/pipelines/Elektro_Arktika.json ; https://db.satnogs.org/api/tle/?norad_cat_id=44903
+    - **Saving usd:** 0
+  141.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Антени — A/B на ефірі (заміна старого рядка)
+    - **Anchor:** | Антени: A/B штиря вертикально/нахилено на SSTV серії 34; V-диполь проти перемічених стрічок; гелікон проти спіралі на NCS; перерахунок NEC для диска 18 см | Лише прийом | 22-25.10.2026 і далі |
+    - **Instruction:** Replace with: «| Антени 70 см на серії 34 (22-25.10.2026, 437.55 MHz, Доплер-трекінг увімк.): запис IQ, декодування slowrx, CNR за кутом місця проти моделі (≥13.3 dB на 10°); диполь набору #1 (короткі елементи) проти SRH-701 на Uputronics на сусідніх проходах або маяках того самого проходу, SNR несучої при однаковому куті; декодоване зображення — перше польове підтвердження «надійно»; перерахунок NEC для диска 18 см | Диполь — за замовчуванням, якщо ≥0 dB краще; лише прийом | 22-25.10.2026, якщо деталі прийдуть вчасно; інакше наступна подія ARISS |».
+    - **Reason:** Merges reaudit_C tests (patch/chip test 9 and targets test 4); V-dipole and helicone A/B move to their own rows.
+    - **Sources:** https://www.ariss.org/upcoming-sstv-events.html
+    - **Saving usd:** 0
+  142.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** GNSS — C/N0 приймання
+    - **Anchor:** | GNSS: TTFF LC76G; C/N0 патча на кришці увімк./вимк. дисплея і сховища; поведінка регіонального блокування Quectel (невідомо) | C/N0 ≤1 dB-Hz зміни | Після складання |
+    - **Instruction:** Replace with: «| GNSS (лише прийом, LC76G GSV, відкрите небо, по 10 хв): TTFF LC76G; крок 1 — 25346 проти вбудованої керамічної антени LC76G (і ANN-MB5, якщо куплено); крок 2 — USB 3 SSD у простої проти потоку, HDMI/дисплей вимк. проти увімк.; C/N0 за сузір'ями, зокрема GLONASS (питання G1 для 25346); поведінка регіонального блокування Quectel (невідомо) | ≤1 dB-Hz втрат; при провалі — повтор з накопичувачем у режимі USB 2 або екранованим | Після складання |».
+    - **Reason:** GNSS acceptance test from the patch/chip re-audit.
+    - **Sources:** https://www.waveshare.com/gps-external-antenna-d.htm ; https://forum.openmarine.net/printthread.php?tid=3062
+    - **Saving usd:** 0
+  143.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Відповідність — egc-gate, SatDump, SatNOGS, gr-satellites
+    - **Anchor:** | Відповідність: тест egc-gate на змішаному записі (на диск, текст чи екран не потрапляє жоден байт не-SafetyNET);
+    - **Instruction:** Insert after this phrase: « одиничні тести egc-gate на синтетичних пакетах medium і long, multiframe start/continue, з поганою контрольною сумою і кожним сервісним кодом; жодна несуча від 1544.0 MHz не демодулюється; аудит пакета SatDump на arm64 (список завантажених ID конвеєрів з trace-логом, провал на deny-regex; підкладений pipelines.json з syracuse3_tlm у робочому і користувацькому каталозі має бути відкинутий або проігнорований); тест імпортера SatNOGS на живих списках МКС, Metop-C, Elektro-L5 і Meteor (імпортуються лише рядки алоу-листа; Soyuz, suit, EVA, EMU, Dragon, Falcon, ICARUS, ARGOS, relay 465 MHz і SARSAT відкидаються); пісочниця gr-satellites — кадр FileReceiver з іменами '../x', '/etc/x', '..', 'a/b': запис лише в каталог виходу, без неперехопленого збою (або керований перезапуск);».
+    - **Reason:** Compliance tests from the targets re-audit.
+    - **Sources:** https://github.com/SatDump/SatDump/blob/master/plugins/inmarsat_support/stdc/packets_structs.h ; https://raw.githubusercontent.com/SatDump/SatDump/master/src-core/pipeline/pipeline.cpp ; https://db.satnogs.org/api/transmitters/?satellite__norad_cat_id=25544 ; https://github.com/daniestevez/gr-satellites/commit/1bcf1d8
+    - **Saving usd:** 0
+  144.
+    - **Section:** 08_open_bench
+    - **Kind:** rule
+    - **Part:** Питання 3 — малі жорсткі антени
+    - **Anchor:** 3. Чи прийнятні малі жорсткі антени з частинами до 20-23 см (штир 17 см, A-V85/SRH-701, 4-виткова спіраль, голий LNB з конусом) поряд із патч, чип і складаними.
+    - **Instruction:** Replace with: «3. Чи прийнятні малі жорсткі антени з частинами до 20-23 см (SRH-701 або штир 17.1 см — лише як запасні 70 см, 4-виткова спіраль, голий LNB з конусом) і опційний складаний алюмінієвий кожух L-band патча (частини ≤20 см) поряд із патч, чип і складаними. 70 см за замовчуванням — телескопічний дипольний набір (складаний, підтвердження не потрібне).»
+    - **Reason:** Open question shrinks to the whip, the helix and the new shroud; A-V85 removed.
+    - **Sources:** reaudit_C antennas_patch_chip corrected_spec section 6
+    - **Saving usd:** 0
+  145.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** P7 — DC-запас зміщення GNSS
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX, `$PQTMVERNO`); GPIO96 вільний;
+    - **Instruction:** Add a new row before this one: «| P7 DC-запас: VCC LC76G на 3V3, потім на 5 V; навантаження 150 Ohm (≈20 mA при 3.0 V) на P7, потім 25346 через SMA DC-pass трійник; VCC на модулі (очікувано 3.26 V з 3V3 і 3.30 V з 5 V) | ≥3.05 V на P7; при провалі — запасне зовнішнє зміщення з DC-блоком; лише DC, нічого не випромінюється | На прибутті LC76G |».
+    - **Reason:** Verifies the LDO-dropout correction.
+    - **Sources:** https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf ; https://www.richtek.com/assets/product_file/RT9193/DS9193-18.pdf
+    - **Saving usd:** 0
+  146.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Магніт 25346 і BNO085
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX, `$PQTMVERNO`); GPIO96 вільний;
+    - **Instruction:** Add a new row before this one: «| Магніт: зміна курсу BNO085 з шайбою 25346 на 10, 20 і 30 см у чотирьох орієнтаціях | <1°, інакше кріплення стрічкою | Після складання паку IMU |».
+    - **Reason:** Magnet risk (ArduPilot 9/15 cm).
+    - **Sources:** https://discuss.ardupilot.org/t/compass-variance-and-mag-field/119041
+    - **Saving usd:** 0
+  147.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** L-band патч — на прибутті
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX, `$PQTMVERNO`); GPIO96 вільний;
+    - **Instruction:** Add a new row before this one: «| L-band патч на прибутті: ущільнення корпусу і бобишки гвинтів, стать роз'єму; ch3 на 4.5 V — DC-sense 15-20 mA | Записати; DC-sense приймає 15-20 mA | На прибутті |».
+    - **Reason:** Vendor connector gender and LNA data unpublished.
+    - **Sources:** https://www.rtl-sdr.com/preorder-sale-active-l-band-1525-1660-inmarsat-and-iridium-patch-back-in-stock-for-44-95/
+    - **Saving usd:** 0
+  148.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** L-band патч — крок шумового фону
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX, `$PQTMVERNO`); GPIO96 вільний;
+    - **Instruction:** Add a new row before this one: «| Крок фону L-band патча на RTL-B T1 (лише прийом): спершу 50 Ohm на P3, потім живлений патч на чисте небо подалі від дуги GEO, на дроті 2 м ≥1 м від пристрою | Крок ≥8 dB — LNA патча домінує в NF тракту | Після приходу RTL-B і патча |».
+    - **Reason:** Vendor publishes no LNA gain/NF.
+    - **Sources:** https://www.rtl-sdr.com/preorder-sale-active-l-band-1525-1660-inmarsat-and-iridium-patch-back-in-stock-for-44-95/
+    - **Saving usd:** 0
+  149.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Inmarsat-C — захоплення NCS
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX, `$PQTMVERNO`); GPIO96 вільний;
+    - **Instruction:** Add a new row before this one: «| Захоплення Inmarsat-C (лише прийом, лише потужність): скан 1537-1545 MHz з az/el IMU, ручний перебір нахилу й обертання, фіксація на піку C/N0 NCS; журнал C/N0 NCS разом з потужністю 1.43-1.52 і 1.616-1.66 GHz; повтор на другому місці біля відомої соти LTE/NR SDL | Демодуляція лише через egc-gate після тесту на змішаному записі | До першого використання профілю |».
+    - **Reason:** Pointing step and blocker logging.
+    - **Sources:** https://www.rtl-sdr.com/techminds-reviews-our-rtl-sdr-blog-l-band-patch-antenna-horn-dish-mod/
+    - **Saving usd:** 0
+  150.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Дипольний набір — DC-перевірка на прибутті
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX, `$PQTMVERNO`); GPIO96 вільний;
+    - **Instruction:** Add a new row before this one: «| Дипольні набори на прибутті (омметр, без РЧ): центр-оплітка розімкнено (>1 MΩ), кожен елемент — неперервність до свого провідника, різьби M5 входять чисто; положення фериту на дроті | Дефектні — заміна (≈1.7 % за продавцем; бувала партія без різьби, замінена безкоштовно) | На прибутті |».
+    - **Reason:** QC risk (damaged M5 threads, braid strands shorting).
+    - **Sources:** https://www.rtl-sdr.com/using-our-new-dipole-antenna-kit/ ; https://www.rtl-sdr.com/DIPOLE
+    - **Saving usd:** 0
+  151.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Uputronics 440 — кондуктивний стенд
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX, `$PQTMVERNO`); GPIO96 вільний;
+    - **Instruction:** Add a new row before this one: «| Uputronics 440 (лише кондуктивно, Bench, навантаження 50 Ohm): DC-sense ≈50 mA на 4.5 V; tinySA як джерело ≤−40 dBm в ANT — підсилення ≥19 dB на 437.5 MHz, краї −3 dB біля 427/452 MHz; без живлення тракт сильно ослаблений | Відповідність Rev 3.0 | Крок 5 запуску |».
+    - **Reason:** Acceptance for the kept preamp (G1 analog adds 435.0/437.55/437.825 MHz and 470/800-960 MHz rejection).
+    - **Sources:** https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808
+    - **Saving usd:** 0
+  152.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Кожух L-band патча (опційно)
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX, `$PQTMVERNO`); GPIO96 вільний;
+    - **Instruction:** Add a new row before this one: «| Кожух L-band патча (лише з вашого дозволу): C/N0 NCS до і після, та сама процедура наведення | Лишити лише при ≥2 dB | Після тесту захоплення NCS |».
+    - **Reason:** Anecdotal +4-5 dB must be confirmed receive-only.
+    - **Sources:** https://www.rtl-sdr.com/techminds-reviews-our-rtl-sdr-blog-l-band-patch-antenna-horn-dish-mod/
+    - **Saving usd:** 0
+  153.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** V-диполь — A/B орієнтації і висоти
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX, `$PQTMVERNO`); GPIO96 вільний;
+    - **Instruction:** Add a new row before this one: «| V-диполь, A/B орієнтації (лише прийом): набори #1 і #2, вуса 53.4 см, 120°, 1.087 м, ≥3 м один від одного; A — бісектриса Пн-Пд, B — кінці Пн-Пд; той самий прохід Meteor N2-4/N2-3 на RTL-A і запасному V4L (обидва з Flamingo+ і LNA), антени міняти між приймачами через прохід; SNR SatDump від часу і декодовані рядки, ≥8 проходів з піком 15-85°. Опційно висота: A на 1.087 м проти 0.75 м на 4 високих проходах (очікувано 1.087 м не гірше за часом на −6 dB, модель) | Правило за проходом приймається, якщо A виграє ≥2 хв декодованого часу на ≥40°, а B — на ≤25° | Після приходу SAWbird+ NOAA і Flamingo+ |».
+    - **Reason:** Settles the main V-dipole correction.
+    - **Sources:** https://www.rtl-sdr.com/simple-noaameteor-weather-satellite-antenna-137-mhz-v-dipole/ ; https://community.libre.space/t/mathematical-modeling-and-physical-optimization-of-v-dipole-antennas-for-vhf-imaging-satellite-reception/14844
+    - **Saving usd:** 0
+  154.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Meteor N2-3 проти N2-4
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX, `$PQTMVERNO`); GPIO96 вільний;
+    - **Instruction:** Add a new row before this one: «| Meteor N2-4 проти N2-3 на V-диполі: по 5 проходів з однаковим макс. кутом; SNR SatDump, кут набуття і втрати синхронізації, запасні 72k/80k/skip=4 | Замінює оцінку −3...−6 dB | Після перших проходів LRPT |».
+    - **Reason:** Replaces the community estimate with own data.
+    - **Sources:** https://network.satnogs.org/api/observations/?norad_cat_id=57166&status=good
+    - **Saving usd:** 0
+  155.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Yagi 70 см — неперервність і приймання
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX, `$PQTMVERNO`); GPIO96 вільний;
+    - **Instruction:** Add a new row before this one: «| Yagi 70 см: DMM після кожного збирання — кожен паразитний <1 Ohm від кінця до кінця через муфту, половини DE розімкнені між собою, крім hairpin (КЗ по DC), DC-sense labd блокує зміщення без LNA; на ефірі — маяки CubeSat 9k6 і APRS МКС 437.825 або наступна подія ARISS SSTV (серія 34 для збірки зарано), SNR проти штиря 17 см на тому самому проході | Перевага ≈8-11 dB на ≥30° (модель); <5 dB — підозра на муфту або hairpin | Після збирання Yagi |».
+    - **Reason:** Prevents a silent ~9 dB loss; schedule realism.
+    - **Sources:** https://www.amsat.org/articles/n2spi/JulAug06AmsatJournal.pdf ; https://www.ariss.org/current-status-of-iss-stations.html
+    - **Saving usd:** 0
+  156.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** QO-100 — A/B, шина і поляризація, ПЧ
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX, `$PQTMVERNO`); GPIO96 вільний;
+    - **Instruction:** Add new rows before this one: «| QO-100 A/B після купівлі: голий Bullseye / конус / 3 сегменти / 6 сегментів; C/N0 10489.750 BPSK і 10489.500 CW-F1A з перекосом із фіксу, пік кроками 5°; порівняти з G + 11...14 dB-Hz; повтор 6 сегментів після переклеювання швів; рівень LTE B28 на ПЧ 739.5 MHz | Константа моделі — з цього тесту; зміна >1 dB після швів — шви з втратами | Після купівлі LNB |» and «| Шина LNB і поляризація: струм Bullseye холодним і гарячим при 12.5 і 13.2 V; з QRO.cz (якщо куплено) — V-pol на обраній шині (C/N0 маяка проти LNB, поверненого на 90°) | Кросполяризація ≥15 dB нижче | Після купівлі LNB |» and «| Проникнення в ПЧ у Європі: LNB без живлення з термінованим F-портом, потім коаксіал з вимкненим LNB; скан 730-750 MHz у полі (DVB-T, LTE B28, SDL); повтор з увімкненим LNB | Будь-яка несуча в 739.4-740.1 MHz над шумом — краще екранування або інший план LO/ПЧ | Перше поле з LNB |».
+    - **Reason:** QO-100 tests from the foldable and targets re-audit (tests 4-7 and targets test 13).
+    - **Sources:** https://destevez.net/2019/03/changes-to-the-qo-100-nb-transponder-settings/ ; https://hamparts.shop/10-ghz-lnb-with-pll-and-tcxo.html ; https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines
+    - **Saving usd:** 0
+  157.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Гелікон проти спіралі; HRPT
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX, `$PQTMVERNO`); GPIO96 вільний;
+    - **Instruction:** Add new rows before this one: «| Гелікон проти 4-виткової спіралі (лише прийом): несуча європейського NCS зі скану, GNSS C/N0, підйом шуму Сонця; опційно другий набір пелюсток 29.7° | >4 dB над спіраллю повертає Metop/AWS у «на межі (експеримент)» | Після першої спіралі |» and «| Meteor HRPT: гелікон проти 4-виткової спіралі на проходах >40° зі штатива — SNR SatDump і відсоток синхронізації деформатора | Реальний запас гелікона (+3...+9 dB модель) і патч-рівня (−4...+3 dB модель) | Після першої спіралі |» and «| Ворота спурів HRPT: 60 с IQ на 1700 MHz, 2.4 Msps, кришка закрита; інтегрована потужність спурів у 1698.75-1701.25 MHz відносно шуму; будь-яка лінія в ±50 kHz від 1700.000 MHz з pcie0 і GPSDO увімк./вимк. | ≤−20 dB відносно шуму; без лінії вище фону +10 dB | A/B-матриця |».
+    - **Reason:** Helicone and HRPT tests from the foldable and targets re-audit.
+    - **Sources:** https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309 ; https://www.a-centauri.com/articoli/easy-hrpt-guide
+    - **Saving usd:** 0
+  158.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Metop-B/C і AWS на ефірі
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX, `$PQTMVERNO`); GPIO96 вільний;
+    - **Instruction:** Add a new row before this one: «| Metop-B і Metop-C на 1701.3 MHz і AWS на 1707 MHz: зараз V4L 2.88 Msps з DC-блоком, після доставки — Lime 6 Msps ci16; C/N0 горба, синхронізація, частка заповнювача AWS; обвідна C/N0 Metop-B за прохід (питання «7 dB втрат модулятора») | 15-хв захоплення Lime на 6 Msps без втрат — пункт приймання Lime | Після першої спіралі / після Lime |».
+    - **Reason:** Lime-first route; unverified 7 dB claim measured instead.
+    - **Sources:** https://github.com/SatDump/SatDump/issues/727 ; https://www.ospo.noaa.gov/operations/metop/status.html
+    - **Saving usd:** 0
+  159.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Самоперевірка видимості GEO
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX, `$PQTMVERNO`); GPIO96 вільний;
+    - **Instruction:** Add a new row before this one: «| Видимість GEO: подати фікси Лісабона, Парижа, Берліна й Атен — labd ховає Elektro-L5/FY-2H нижче 5°; Elektro-L3 з'являється лише при стаціонарному живому TLE | Без таблиць міст: фікси подаються як тестові координати | CI і запуск labd |».
+    - **Reason:** Verifies the stationarity and elevation gate.
+    - **Sources:** https://db.satnogs.org/api/tle/?norad_cat_id=44903
+    - **Saving usd:** 0
+  160.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** SatDump — CLI і мережа
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX, `$PQTMVERNO`); GPIO96 вільний;
+    - **Instruction:** Add new rows before this one: «| SatDump CLI на закріпленій збірці: декодувати збережений baseband Meteor 72k з '--samplerate=1024000 --baseband_format=cu8' і з '--samplerate 1024000' — обидва мають працювати після c0b6f88; окремо — чи працює '--k=v' на нелатаному 1aedd60 | Обидві форми працюють | CI arm64 |» and «| Мережа SatDump: unit проходу з PrivateNetwork=yes і kepler «Never» під strace -f -e trace=connect | Нуль викликів connect(); TLE з файлу labd | CI arm64 |».
+    - **Reason:** Pin and egress checks.
+    - **Sources:** https://github.com/SatDump/SatDump/issues/1191 ; https://raw.githubusercontent.com/SatDump/SatDump/master/satdump_cfg.json
+    - **Saving usd:** 0
+  161.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** SBAS-мітки і ALS162
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX, `$PQTMVERNO`); GPIO96 вільний;
+    - **Instruction:** Add new rows before this one: «| SBAS-мітки: gpsd SKY показує gnssid 1 для PRN 121/123/136 протягом 10 хв після холодного старту; мітки переживають цикл живлення з повторним конфігом при завантаженні | Так | Після складання |» and «| ALS162 162 kHz: журнал амплітуди 4 вівторки, щоб знайти реальне вікно обслуговування в UTC | Звузити маску 06:00-12:00 UTC | Після приходу Boni-Whip |».
+    - **Reason:** SBAS labelling and TDF mask refinement.
+    - **Sources:** https://gpsd.gitlab.io/gpsd/gpsd_json.html ; https://en.wikipedia.org/wiki/ALS162_time_signal
+    - **Saving usd:** 0
+  162.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Штатив і деталі Axotron
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX, `$PQTMVERNO`); GPIO96 вільний;
+    - **Instruction:** Add new rows before this one: «| Штатив: гелікон (≈0.4-0.5 kg) і рупор + LNB на 30° кута місця, 1.1-1.3 м, вітер ≈20 km/h | Голова повзе ≤2° за 10 хв | Після купівлі штатива |» and «| Деталі Axotron на штанзі 20x20: надрукувати перекреслені основи затискачів, 20 циклів складання/розкладання з виміром ортогональності площин (±5°) і огляд на заломи стрічки; лише якщо лишається окремий набір LRPT — чи вміщує котушка рефлектора 55.7 см стрічки 25 мм | Без заломів, ±5° | Після друку |».
+    - **Reason:** Mechanical acceptance from the foldable re-audit.
+    - **Sources:** https://axotron.se/blog/?p=1619
+    - **Saving usd:** 0
+  163.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** Відкриті умови: шина LNB, POTY, неперевірене
+    - **Anchor:** | Можливо не враховані в BOM дрібниці:
+    - **Instruction:** Add new rows before this one: «| Рішення про шину LNB: 13.2 V (за замовчуванням) чи 12.5 V ±0.2 V через ANY-OUT TPS7A4701 (reaudit_C) | Рішення власника живлення / ваше; вікна ±0.2 V — вимірювані ворота на екземпляр | До купівлі QRO.cz |», «| QRO.cz «with POTY adapter»: чи має вхід під мідну трубку 22 мм і яка ціна | Лист у QRO.cz | До рупора з одномодовим горлом |» and «| Не перевірено: підсилення/NF LNA, краї SAW і стать роз'єму L-band патча; відгук патча 25346 на GLONASS G1 і позасмугове придушення; виміряне підсилення будь-якого малого штиря 70 см на ручному пристрої; наявність A-V85; чи «out in stock» Amazon USA у дипольного набору означає наявність; файли Thingiverse 3421430/6436342 і MakerWorld 1127183 (403; замість них власний затискач V); сторінки WiMo (403); «7 dB втрат модулятора» Metop-B; що на 1544.9 MHz; TLE Black Kite-1/2 (тимчасові номери SatNOGS); статус Elektro-L3 після 9.10.2026 | Позначено «не перевірено» в тексті | Перед відповідним кроком |».
+    - **Reason:** Conditions and unverified items from all three re-audit records.
+    - **Sources:** https://www.ti.com/product/TPS7A47 ; https://hamparts.shop/10-ghz-lnb-with-pll-and-tcxo.html
+    - **Saving usd:** 0
+  164.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Ворота Metop (a) — зв'язок з Lime
+    - **Anchor:** 15 хв rtl_test 2.88 Msps на синьому порту | C5; ворота Metop (a) | W1-2 |
+    - **Instruction:** Change the gate cell to «C5; ворота Metop (a) — для V4L до приходу Lime; після Lime — 15-хв захоплення Lime на 6 Msps без втрат».
+    - **Reason:** Lime-first route for Metop/AWS.
+    - **Sources:** https://github.com/SatDump/SatDump/issues/727
+    - **Saving usd:** 0
+  165.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Дипольні набори RTL-SDR Blog
+    - **Anchor:** 2 дипольні набори, L-band патч
+    - **Instruction:** Change to «2 дипольні набори (опційно третій для 70 см, +$17.95; однакові набори — одна тарифна позиція), L-band патч (v2, сірий)». Add at the end of the step: «На прибутті: DC-перевірка дипольних наборів (різьби M5, центр-оплітка розімкнено), стать роз'єму патча.»
+    - **Reason:** Optional third kit; vendor QC rate ~1.7 %.
+    - **Sources:** https://www.rtl-sdr.com/using-our-new-dipole-antenna-kit/
+    - **Saving usd:** 0 (optional +17.95)
+  166.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** keep_with_note
+    - **Part:** Uputronics 440 у кроці 7
+    - **Anchor:** Uputronics 440 ($68.71 = GBP 51.59 з ПДВ)
+    - **Instruction:** Replace with «Uputronics 440 MHz CubeSAT (лише цей варіант, ніколи 434 MHz; продавець і ціна — за аналогом G1, EU-вітрина) + коротка перемичка SMA M-F або кронштейн».
+    - **Reason:** Re-audit wording; G1 supersedes the GBP price.
+    - **Sources:** https://store.uputronics.com/products/uputronics-filtered-preamps
+    - **Saving usd:** per G1 analog
+  167.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Waveshare і GNSS-опції
+    - **Anchor:** Waveshare (LC76G, RP2040-Zero для паку, L1+L5 антена)
+    - **Instruction:** Change to «Waveshare (LC76G, RP2040-Zero для паку, антена 25346 L1); опційно SparkFun ANN-MB5 (GPS-25071, $42.50, США — правило вартості ЄС) лише для стійкості; SMA DC-блок ($5-10) — лише якщо знадобиться запасне зовнішнє зміщення P7; запасний штир SRH-701 — WiMo (ЄС), EUR 16.90 з ПДВ, лише якщо A/B на серії 34 не на користь диполя».
+    - **Reason:** Wording and conditional items.
+    - **Sources:** https://www.sparkfun.com/u-blox-multi-band-active-gnss-antenna-l1-l5-ann-mb5.html ; https://www.wimo.com/en/srh-701
+    - **Saving usd:** 0
+  168.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Набір QO-100 (крок 11)
+    - **Anchor:** | 11 | Коли підтверджено, що ви в зоні Es'hail-2 | Bullseye ($29.95; Technofix уже без наявності — не зволікати), деталі F/LC/PTC, дросель інжектора LNB ≥1 A, матеріали рупора; виміряти струм LNB при 13.2 V, потім PTC і атенюатор. | Ворота регіону (C23). |
+    - **Instruction:** Replace with: «| 11 | Зараз (Європа, рішення 18.10.2026) | Bullseye — продавець, ціна і кількість за аналогом G6 (запасний LNB радять обидва джерела); 75 Ohm F-термінатор на червоний порт 25 MHz (модель — за G6); деталі F/75 Ohm, RG6 з компресійними F, LC/PTC, дросель інжектора LNB ≥1 A; матеріали рупора і конуса; пади SMA 10+10 і 20 dB; опційно QRO.cz SDR LO 9750 (hamparts.shop, EUR 52.03 з ПДВ = $58.55) — лише після рішення про шину; виміряти струм LNB при 12.5 і 13.2 V холодним і гарячим, потім PTC і атенюатор. | Постачання тоншає: Technofix без наявності (GBP 31.99), Passion Radio «last items», RTL-SDR Blog 70 шт.; одна рецензія 2026 — у більшості магазинів закінчився. |»
+    - **Reason:** Region Europe; supply risk.
+    - **Sources:** https://www.passion-radio.com/lnb-pll/lnb-othernet-978.html ; https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/ ; https://shop.technofix.uk/bullseye-ultra-high-stability-single-lnb-for-qo-100-2ppm-tcxo
+    - **Saving usd:** per G6 analog
+  169.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** condition
+    - **Part:** Airspy Mini (крок 13)
+    - **Anchor:** Airspy Mini (лише після горба Metop і тесту 2.88 Msps)
+    - **Instruction:** Change to «Airspy Mini (лише після горба Metop і тесту 2.88 Msps і лише якщо Lime не пройде 15-хв захоплення без втрат на ≥6 Msps на тракті гелікон + SAWbird+ GOES; продавець — за G6)».
+    - **Reason:** Lime-first route.
+    - **Sources:** https://github.com/SatDump/SatDump/issues/727
+    - **Saving usd:** 0
+  170.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Ранні перевірки — серія 34
+    - **Anchor:** МКС SSTV серії 34 (22-25.10.2026, 437.550 MHz), якщо V4L і диполь прийдуть вчасно;
+    - **Instruction:** Replace with: «МКС SSTV серії 34 (22-25.10.2026, 437.550 MHz, Robot 36): IQ, slowrx, CNR за кутом місця, A/B диполя набору #1 (короткі елементи) проти SRH-701 на Uputronics з Доплер-трекінгом — якщо V4L, диполь і Uputronics прийдуть вчасно (інакше будь-яким наявним приймачем лише як довідка); приймання Yagi 70 см (hairpin DE) — пізніше, на наступній події ARISS SSTV або щоденних маяках CubeSat 9k6 і APRS МКС 437.825;».
+    - **Reason:** Parts not yet bought or built for the Yagi; series 34 too early for it.
+    - **Sources:** https://www.ariss.org/upcoming-sstv-events.html
+    - **Saving usd:** 0
+  171.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Запуск QO-100 (крок 12)
+    - **Anchor:** 12. **Після підтвердження регіону в зоні Es'hail-2:** Bullseye і матеріали рупора, струм LNB при 13.2 V, потім PTC і атенюатор; A/B QO-100.
+    - **Instruction:** Replace with: «12. **QO-100 (Європа):** Bullseye і матеріали рупора; струм LNB при 12.5 і 13.2 V; PTC; вибір атенюатора 15/20/30 dB; перекіс LNB з фіксу; перевірка проникнення в ПЧ 730-750 MHz; виміряти ковпачок до друку кільця горла; A/B QO-100 (голий / конус / 3 / 6 сегментів).»
+    - **Reason:** Region decided; new tests.
+    - **Sources:** https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines
+    - **Saving usd:** 0
+  172.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** condition
+    - **Part:** Запуск — відкладене
+    - **Anchor:** Відкладено: microSD, T7, Airspy Mini.
+    - **Instruction:** Change the Airspy part to «Airspy Mini — лише за воротами (крок 13 закупівель; Lime перевіряється першим)».
+    - **Reason:** Lime-first route.
+    - **Sources:** https://github.com/SatDump/SatDump/issues/727
+    - **Saving usd:** 0
+  173.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Запуск — РЧ-деталі (крок 5)
+    - **Anchor:** 5. **РЧ-деталі (тиждень 1-2):** виміряти струми HF+, Uputronics і LNA V2;
+    - **Instruction:** Append: « P7: VCC LC76G від 5 V, DC ≥3.05 V під 150 Ohm; ch3 DC-sense 15-20 mA для L-band патча; Uputronics ≈50 mA на 4.5 V і кондуктивне підсилення ≥19 dB на 437.5 MHz; DC-перевірка дипольних наборів;».
+    - **Reason:** Early acceptance tests.
+    - **Sources:** https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf ; https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808
+    - **Saving usd:** 0
+  174.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Антени — нові джерела
+    - **Anchor:** - W9MDB виміри штирів: https://www.miklor.com/COM/pdf/AntennaTestingW9MDB.pdf
+    - **Instruction:** Add after this line: «- RTL-SDR Blog dipole kit (продукт і інструкція): https://www.rtl-sdr.com/product/rtl-sdr-blog-multipurpose-dipole-antenna-kit/ ; https://www.rtl-sdr.com/using-our-new-dipole-antenna-kit/» «- 9A4QV V-диполь 137 MHz: https://www.rtl-sdr.com/simple-noaameteor-weather-satellite-antenna-137-mhz-v-dipole/ ; libre.space V-диполь: https://community.libre.space/t/mathematical-modeling-and-physical-optimization-of-v-dipole-antennas-for-vhf-imaging-satellite-reception/14844» «- RTL-SDR Blog L-band патч: https://www.rtl-sdr.com/preorder-sale-active-l-band-1525-1660-inmarsat-and-iridium-patch-back-in-stock-for-44-95/ ; TechMinds: https://www.rtl-sdr.com/techminds-reviews-our-rtl-sdr-blog-l-band-patch-antenna-horn-dish-mod/» «- Waveshare 25346: https://www.waveshare.com/gps-external-antenna-d.htm ; u-blox ANN-MB5: https://cdn.sparkfun.com/assets/0/b/a/5/2/ANN-MB5_Datasheet.pdf» «- Uputronics FPA даташит Rev 3.0: https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808» «- Diamond SRH-701 (WiMo): https://www.wimo.com/en/srh-701 ; Johanson 0433AT62A0020002U: https://johansontechnology.com/docs/4353/0433AT62A0020002U.pdf» «- WB2HOL (копія W9RH): https://www.w9rh.org/wp-content/uploads/2024/01/2m-tape-measure-yagi-instructions.pdf ; Axotron v3 zip: https://axotron.se/blog/wp-content/uploads/2025/02/2m-antenna-v3.zip ; WA5VJB Cheap Yagi: https://wa5vjb.com/yagi-pdf/cheapyagi.pdf» «- Saveitforparts гелікон: https://www.rtl-sdr.com/saveitforparts-testing-a-3d-printable-satellite-antenna-for-noaa-meteor-and-other-polar-orbiting-l-band-satellites/» «- Штативи: https://justmore.dk/images/media/ProductsDocs/Rollei-Compact-Traveler-No-I-kamerastativ-sort.pdf ; https://bigbearsound.com/products/manfrotto-befree-one-aluminium-travel-tripod-with-head-black» «- USB 3 і GNSS (OpenMarine): https://forum.openmarine.net/printthread.php?tid=3062 ; магніт і компас (ArduPilot): https://discuss.ardupilot.org/t/compass-variance-and-mag-field/119041»
+    - **Reason:** Key URLs used by the antenna corrections.
+    - **Sources:** reaudit_C antennas_patch_chip and antennas_foldable sources
+    - **Saving usd:** 0
+  175.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** GNSS — нові джерела
+    - **Anchor:** - Waveshare LC76G: https://www.waveshare.com/lc76g-gnss-module.htm
+    - **Instruction:** Add after this line: «- LC76G схема/мануал: https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf ; wiki: https://www.waveshare.com/wiki/LC76G_GNSS_Module» «- Richtek RT9193: https://www.richtek.com/assets/product_file/RT9193/DS9193-18.pdf ; Quectel LC76G spec V1.1: https://quectel.com/content/uploads/2024/03/Quectel_LC76G_Series_GNSS_Specification_V1.1-1-1.pdf» «- gpsd JSON (SBAS gnssid 1): https://gpsd.gitlab.io/gpsd/gpsd_json.html ; gpsd у Ubuntu: https://launchpad.net/ubuntu/+source/gpsd ; EGNOS звіт: https://egnos.gsc-europa.eu/node/12832»
+    - **Reason:** Sources for the LC76G power fix and SBAS labelling.
+    - **Sources:** reaudit_C antennas_patch_chip correction 0; targets correction 16
+    - **Saving usd:** 0
+  176.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** QO-100 — нові джерела
+    - **Anchor:** - Othernet Bullseye LNB: https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+    - **Instruction:** Add after this line: «- Bullseye (Passion Radio, ЄС): https://www.passion-radio.com/lnb-pll/lnb-othernet-978.html ; Technofix: https://shop.technofix.uk/bullseye-ultra-high-stability-single-lnb-for-qo-100-2ppm-tcxo» «- QRO.cz LNB (hamparts.shop): https://hamparts.shop/10-ghz-lnb-with-pll-and-tcxo.html» «- EA4GPZ, виправлений аналіз QO-100: https://destevez.net/2019/03/changes-to-the-qo-100-nb-transponder-settings/ ; https://destevez.net/2019/03/new-dish-for-eshail-2-reception/» «- OK1DX, QO-100 без тарілки: http://ok1dx.cz/techinfo/qo100/qo100.html» «- SatNOGS DB передавачі QO-100: https://db.satnogs.org/api/transmitters/?format=json&satellite__norad_cat_id=43700»
+    - **Reason:** Sources for the QO-100 constant, LNB options and beacon list.
+    - **Sources:** reaudit_C antennas_foldable corrections 6-12
+    - **Saving usd:** 0
+  177.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Цілі і SatDump — нові джерела
+    - **Anchor:** - SatDump issue #727 (V4 на 2.88 Msps): https://github.com/SatDump/SatDump/issues/727 ; релізи: https://github.com/SatDump/SatDump/releases
+    - **Instruction:** Add after this line: «- SatDump конвеєри і модулі: https://github.com/SatDump/SatDump/tree/master/resources/pipelines ; https://github.com/SatDump/SatDump/tree/master/src-core/pipeline/modules ; pipeline.cpp: https://raw.githubusercontent.com/SatDump/SatDump/master/src-core/pipeline/pipeline.cpp ; plugins/CMakeLists.txt: https://raw.githubusercontent.com/SatDump/SatDump/master/plugins/CMakeLists.txt ; satdump_cfg.json: https://raw.githubusercontent.com/SatDump/SatDump/master/satdump_cfg.json» «- SatDump issues #1191, #600, #1141, #1208, #854: https://github.com/SatDump/SatDump/issues/1191 ; https://github.com/SatDump/SatDump/issues/600 ; https://github.com/SatDump/SatDump/issues/1141 ; https://github.com/SatDump/SatDump/issues/1208 ; https://github.com/SatDump/SatDump/issues/854» «- SatDump stdc packets_structs.h (egc-gate): https://github.com/SatDump/SatDump/blob/master/plugins/inmarsat_support/stdc/packets_structs.h» «- gr-satellites виправлення: https://github.com/daniestevez/gr-satellites/commit/10d27cb ; https://github.com/daniestevez/gr-satellites/commit/1bcf1d8» «- SatNOGS передавачі МКС: https://db.satnogs.org/api/transmitters/?satellite__norad_cat_id=25544 ; спостереження N2-3: https://network.satnogs.org/api/observations/?norad_cat_id=57166&status=good ; TLE Elektro-L5 і L3: https://db.satnogs.org/api/tle/?norad_cat_id=67756 ; https://db.satnogs.org/api/tle/?norad_cat_id=44903» «- WMO OSCAR FY-2G: https://space.oscar.wmo.int/satellites/view/fy_2g ; GSC Galileo SAR: https://www.gsc-europa.eu/node/6925 ; ALS162: https://en.wikipedia.org/wiki/ALS162_time_signal ; смуги LTE: https://en.wikipedia.org/wiki/LTE_frequency_bands» «- IU1QPR (2025-2026, версії без дати): https://www.a-centauri.com/articoli/beyond-poes-amateur-satellite-reception ; HRPT guide v1.0.2: https://www.a-centauri.com/articoli/easy-hrpt-guide» «- Inmarsat-C до 2040 (Riviera): https://www.rivieramm.com/news-content-hub/technology-advances-gmdss-for-safety-data-and-communications-84881 ; NCS TDM (sigidwiki): https://sigidwiki.com/wiki/Inmarsat-C_TDM»
+    - **Reason:** Key URLs of the targets re-audit; IU1QPR cited as 2025-2026 undated versions.
+    - **Sources:** reaudit_C targets_link_budgets sources
+    - **Saving usd:** 0
+  178.
+    - **Section:** 00_header_toc
+    - **Kind:** replace_part
+    - **Part:** Опис рівнів антен — 70 см
+    - **Anchor:** штир діапазону 70 см завдовжки 17-19 см
+    - **Instruction:** Replace with «антена 70 см — короткі телескопічні елементи дипольного набору (запасний — штир 17-19 см)».
+    - **Reason:** New 70 cm default.
+    - **Sources:** https://www.rtl-sdr.com/using-our-new-dipole-antenna-kit/
+    - **Saving usd:** 0
+  179.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** Прибрано за reaudit_C
+    - **Anchor:** | Цілі NOAA APT (завершено 2025), Metop LRPT, FY-3 L-band, Elektro як гарантоване джерело A/B;
+    - **Instruction:** Add new rows after the row that starts with this phrase: «| Baofeng A-V85 як штир 70 см | SMA-F за конвенцією Baofeng, поточного лістингу не знайдено, слабкий результат на UHF (W9MDB, 435 MHz); 70 см — дипольний набір, запасний SRH-701/17.1 см. |» «| Перемічування стрічок Yagi 2 m на 137.5 MHz | Не будується на просвердлених затискачах Axotron (довжина фіксується розрізом); замість — окремий набір стрічок LRPT або лише V-диполь. |» «| Рядки FY-2G, GOES HRIT, GK-2A LRIT, FY-4 і плагіни PLUGIN_GOES/GK2A/FY4 у збірці для Європи | FY-2G −22...+4.7°, GK-2A і FY-4B не видно, GOES-East до 9.9° (модель) — лише опційний профіль подорожей. |» «| Плагіни SDR-джерел SatDump (RTLSDR, LIMESDR, AIRSPY, SOAPY тощо) і збірка «з Soapy і legacy API LimeSuiteNG» | SatDump лише декодує записи labrx; другий відкривач SDR обходив би токен зміщення і маски. |» «| Пункт «спури 1699.2 і 1704.0 MHz» у воротах HRPT; «втрати модулятора Metop-B ≈7 dB» у бюджеті; «QRO.cz 0.2 ppm» | Не блокери / не підтверджено / немає у виробника. |» «| AO-91 у плані тестів | «Рідко активний» (2 з 8 почуто за 720 год). |»
+    - **Reason:** Items removed or superseded by the re-audit.
+    - **Sources:** https://www.miklor.com/COM/pdf/AntennaTestingW9MDB.pdf ; https://axotron.se/blog/?p=1619 ; https://raw.githubusercontent.com/SatDump/SatDump/master/plugins/CMakeLists.txt ; https://hamparts.shop/10-ghz-lnb-with-pll-and-tcxo.html
+    - **Saving usd:** 0
+  180.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** Виправлення #26 — Uputronics
+    - **Anchor:** 26. Передпідсилювачі Uputronics: вхід зміщення залежить від ревізії (плати з березня 2020 — 5-26 V; поточні — «5V max»).
+    - **Instruction:** Replace with: «26. Передпідсилювачі Uputronics: даташит Rev 3.0 (18.10.2024) — вхід зміщення 3.5-5.5 V (понад 5.5 V — пошкодження), ≈50 mA; 4.5 V на ch2 у межах; смуга SAW 440 MHz — ≈427-452 MHz на −3.4 dB, не «30 MHz»; варіант 434 MHz на 437.67 MHz −4.2 dB.»
+    - **Reason:** Refuted stage-1 finding; corrected passband.
+    - **Sources:** https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808
+    - **Saving usd:** 0
+  181.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** Нові виправлення 37+ (reaudit_C)
+    - **Anchor:** 36. wideband_sdr: «спіраль на RX-A і ПЧ LNB на RX-B одночасно» — фізично неможливо (один LO); економія на Lime з урахуванням регіонального мита ($309-314) не застосовна.
+    - **Instruction:** Append numbered items after 36: «37. LC76G: VCC плати від 3V3 тримає RT9193-33 у просіданні (зміщення антени 2.91-3.04 V при 20 mA, модель) — живити від 5 V.» «38. #111: цифри W9MDB — зі стовпця 146 MHz; для 70 см лише некалібрований 435 MHz, SRH-701 не вимірювали; 70 см за замовчуванням — дипольний набір.» «39. 25346 — «L1+L5», але використовується як L1; «немає GLONASS» — лише в текстовому списку (S21 39.09 dB на 1.602 GHz); ANN-MB5 — не бюджетна, а опція стійкості (+$25.51); «obsolete» спростовано (R03 mass production).» «40. «USB 3 глушить GNSS у межах 2 м» — правило спільноти, не вимір.» «41. V-диполь: «вісь Пн-Пд» неоднозначна; за 9A4QV — бісектриса Пн-Пд; правило зниження до 0.5-0.75 м спростовано; «NEC 3.0 dBi у зеніті» — вільний простір (над землею −4.3 dBi).» «42. Meteor N2-3 «лише вище 40-60°» спростовано (SatNOGS декодує з 22°); LRPT — OQPSK 72k, не QPSK.» «43. QO-100: «G + 13...16 dB-Hz» → G + 11...14 (виправлений аналіз EA4GPZ); рупор 21/23 dBi і конус 18.8 dBi — верхні межі; «QRO.cz 0.2 ppm» — немає у виробника (1 ppm темп., 2 ppm початкова).» «44. Вага штатива 0.3-0.6 kg → 1.14-1.35 kg; голови кульові, не панорамні.» «45. Elektro: помилки CRC у #600 — регресія SatDump, виправлена PR #616; GGAK легший за LRIT на 7-8 dB, не 10.7; Elektro-L5/FY-2H з заходу Європи нижче або біля горизонту; FY-2G не резерв.» «46. HRPT: спури 1699.2/1704.0 MHz не блокери; ризик — лише лінія 1700.000 MHz; патч-рівень −4...+3 dB, не +1.5...+3; «декодування з рук немає» спростовано (t0nito, 2025).» «47. «Втрати модулятора Metop-B ≈7 dB» не підтверджено; Metop-C — один звіт спільноти, OSPO «No».» «48. gr-satellites: коміту 71dc9a1 немає; пара виправлень — 10d27cb + 1bcf1d8; 5.5.0 з apt не використовувати.» «49. egc-gate: 0x30/0x31/0x32 — 6-бітні типи дескриптора, сервісний код на зсуві 2 або 3; SatNOGS-імпортер — алоу-лист; «return link 1544.9 MHz» прибрано.» «50. Конвеєри SatDump на модулях ядра працюють без плагінів — потрібен алоу-лист JSON і контрольований робочий каталог.»
+    - **Reason:** Section 7 records corrected errors; these are the re-audit's corrections and refuted findings that change v1 text.
+    - **Sources:** reaudit_C corrections and refuted_findings (all three records)
+    - **Saving usd:** 0
+- **Already in v1:**
+  - RTL-SDR Blog Active L-band patch at $59.95, RHCP, 20 mA bias from ch3 after DC-sense (02b, 05b P3) — re-confirmed 18 Oct 2026
+  - Waveshare 25346 price $16.99 (02b) — re-confirmed
+  - Nooelec SAWbird+ GOES cased 100792 at $49.95, ≥30 dB, 180 mA, on ch3 4.5 V via TPS2553 (≥240 mA), never micro-USB (02b, 05d step 3, #97)
+  - RTL-SDR Blog dipole kit $17.95, 357 in stock, 23 cm packed, M5 thread, 53.4 cm arms at 120°, 1-1.1 m height (02b) — only the orientation wording changes
+  - Inmarsat-C: power-only NCS scan 1537-1545 MHz, no fixed channel table, egc-gate as the only path, SatDump inmarsat_support and SDRangel demodinmarsat not built (01b #2, 04, 05c)
+  - No APT targets: NOAA-18/19/15 ended 06.06/13.08/19.08.2025 (01b #121-128, 04)
+  - Meteor LRPT on 137.900 MHz (backup 137.100) and Meteor HRPT on 1700 MHz, 665.4 ksym/s (04)
+  - Receive-only antenna acceptance, no VNA/S11 on any antenna (01b #0, 05d 5.8 'Без S11') — reaudit_C's 'delete inherited S11 lines' is already done in v1
+  - Patch/chip physics #112: half-wave patch at 137.9 MHz ≈52 cm (FR4) / ≈25 cm (εr 20); aperture limit 7.6 / 12.1 dBi at 1.70 GHz (recomputed 51.8/24.3 cm and 7.65/12.09 dBi)
+  - Patch and chip antennas cannot serve 137-146 MHz or HRPT (01a C15, D16)
+  - Quiet-Sun rise 0.7-1.2 dB over Tsys 125 K (re-audit model ≈0.9 dB at 60 sfu)
+  - ISS SSTV Series 34 on 22-25 Oct 2026 at 437.55 MHz, Robot 36 (04, 07 #17)
+  - AMSAT-DL beacons 10489.500/10489.750 MHz with IF 739.500/739.750 on LO 9750; '10489.55 MHz' marked as an error (01b #102, 06)
+  - Bare-LNB QO-100 CW reception is documented (OK1DX) — v1 cites it
+  - Ultracompact boom: joints at 0.13/0.25/0.40/0.56 m, pieces ≤16 cm, ≥3.6 cm from elements (05d step 2)
+  - Helix C=1.1λ, 61.7 mm diameter, 43 mm pitch, 2 mm Cu; petal chords 6.9/16.8 cm, slant 17.7 cm, 1 cm tabs, ≥1 cm overlap (05d step 3, #114-120)
+  - Gore horn 13.8° half-angle, 28.6° gores, rings 127/180 mm, outer 255-378 mm (05d step 4) — only throat radius and seams change
+  - Bias blocked on DC-shorted profiles (WB2HOL hairpin, 9:1 balun) via DC-sense (01b #101, 05b)
+  - Flamingo+ FM → SAWbird+ NOAA RF path for 137 MHz on both tiers (D8, 05b P1)
+  - HamTV 2395 MHz blocked by the cf2235-kt30 resonator; Black Kite 2286/2288 MHz GMSK 38k4 and PHASMA 2208/2210 MHz as S-band targets (01b #90)
+  - NAVTEX on 490/518/4209.5 kHz (04 4.2) — Europe default; US profile stays 'check on air'
+  - Uputronics 440 is always the first part after the 70 cm antenna; the 434 MHz variant is not bought (02a, D8)
+  - FY-3 unreachable: X-band ≈7.8 GHz, FY-3C L-band ended Nov 2024 (04)
+  - ISS SSTV CNR 18.8-22 dB at 10-60° is consistent with the independent model; CubeSat patch margins sit within the new model range
+  - Static voice mask on 437.800 and 436.795 MHz before any raw write (05c) — only the 145.800 handling is refined
+  - The stage-1/2 low-mount rule (0.5-0.75 m for high passes) and the stage-2 'never drill the tape' note are not in v1 text, so nothing to remove there; v1 keeps 1-1.1 m
+  - Elektro-L5 commissioning status at 76E and FY-2H at 79E (07 #18) — re-confirmed by OSCAR/TLE
+- **Not applied:**
+  1.
+    - **Item:** GEO elevation figures for Kyiv (Elektro-L5 18.3°, FY-2H 16.5°, FY-2G 4.7°) in the Europe visibility table
+    - **Why:** Hard rule: no Kyiv angles. Only the other European cities are used; the FY-2G range is stated as −22.2...+4.7° without naming the city.
+  2.
+    - **Item:** Othernet Bullseye at Passion Radio 'EUR 29.94 ex VAT (USD 33.69)' and RTL-SDR Blog USD 29.95 as the EU order source
+    - **Why:** Superseded by the G6 analog: EUR 29.94 is VAT-inclusive (EUR 24.95 ex VAT), the RTL-SDR Blog webstore does not ship to the EU, and G6 sets 2 units from Passion Radio with landed prices. Only reaudit_C's 'buy now', 'spare advised' and the 75 ohm terminator are applied.
+  3.
+    - **Item:** Drop the Airspy Mini entirely (saves about $140-160)
+    - **Why:** Superseded by the G6 analog, which keeps the Airspy Mini as a gated part from ITEAD DE. Only the technical route (Lime at ≥6 Msps first) and an extra gate condition (buy only if the Lime fails its 15-min zero-drop capture) are applied; no saving is claimed.
+  4.
+    - **Item:** Uputronics 440 price GBP 51.59 (about $68.71), 'available'
+    - **Why:** Superseded by the G1 analog (EU storefront EUR 52.95 ex VAT = $59.52; EU landed about $70.8-72.0). Only the technical corrections (passband, Rev 3.0 bias range, mounting, never the 434 MHz variant) are applied.
+  5.
+    - **Item:** Rollei Compact Traveler No. 1 datasheet figures (31.5 cm folded, 134 cm, 1170 g, 5 kg, price TBD) and packed tripod size 31.5-32 cm
+    - **Why:** Superseded by the G4 analog, which uses the 2026 listing (34.5 cm, 145 cm, 113 cm column down, 1.14 kg, 8 kg; EUR 50.95 incl. VAT). Only the ball-head wording, weight correction, the Manfrotto alternative note and the balance/creep test are applied.
+  6.
+    - **Item:** Switch the LNB rail outright from 13.2 V to 12.5 V ±0.2 V
+    - **Why:** The G3 analog lists both straps and leaves the choice to the user, and G6 says no rail change; precedence makes it a conditional option for the power owner/user, plus a V-pol check if 13.2 V stays and QRO.cz is bought.
+  7.
+    - **Item:** Targets record: 'the 739.5 MHz IF sits inside the European LTE B28 uplink (703-748 MHz)'
+    - **Why:** Contradicted by the foldable record of the same re-audit (CEPT 700 MHz plan: B28 UL 703-733 MHz, DL 758-788 MHz, so the IF lies in the duplex gap). The duplex-gap wording is applied; 703-748 MHz is only the full 3GPP B28 uplink.
+  8.
+    - **Item:** Targets record: Series 34 as 'tilted vs vertical whip A/B'
+    - **Why:** Superseded inside the same re-audit by the patch/chip record (the dipole kit is the new 70 cm default; the A/B is dipole vs SRH-701) and the foldable record (parts may not arrive before 22 Oct; the Yagi acceptance moves to later events).
+  9.
+    - **Item:** Thingiverse 3421430 / MakerWorld 1127183 printed 120° holder
+    - **Why:** Unverified (403 to curl and WebFetch, license unknown); v1 does not cite them. The re-audit's replacement, our own printed V clamp, is applied instead.
+  10.
+    - **Item:** Packed-size line 'tripod 31.5-32 cm (within the 35 cm maximum)'
+    - **Why:** Superseded by the G4 analog (34.5 cm folded with the head; backpack inner length ≥36 cm).
+  11.
+    - **Item:** Re-price the tripods in USD in P5
+    - **Why:** Already done by the G4 analog.
+- **Notes:** I read the source in full: three records (antennas_patch_chip, antennas_foldable, targets_link_budgets), each with its confirmed, corrections, new_risks, refuted_findings, corrected_spec and bench_tests entries. Every anchor in this list was checked with an exact-string count against the section files in stack_v2_parts, and each occurs exactly once. Several 08_open_bench rows share the same insertion anchor, the Q6A row ('| Q6A: TX UART6 ...'). Insert them before that row in the order listed.
+  
+  How precedence was handled:
+  - Analog decisions were treated as authoritative for part, seller and price: G1 (Uputronics, SAWbird+ GOES), G3 (TPS7A4701 rail, LC76G), G4 (Rollei tripod), G5 (RF accessory set) and G6 (Bullseye, Airspy Mini). Where reaudit_C conflicts with them, I applied only its technical content and listed the price or seller part under not_applied.
+  - The G3 analog cites reaudit_D for the same LC76G 5 V VCC feed, so another extractor may emit the same change. The two are consistent.
+  - reaudit_C's narrow SatDump allow-list (5 pipeline JSONs; no GOES, GK2A or FY4 in the Europe build) satisfies operator notes 1 and 14, which are allow-list rules. Turning off every sdr_sources plugin also covers operator note 23 (no SDR sinks), because the sinks sit in the sdr_sources plugin folders.
+  - With the limesdr plugin off, SatDump no longer needs LimeSuiteNG. Operator note 28's reason '(SatDump)' for limesuiteng-legacyapi therefore falls away. The package list itself is left to whoever extracts operator note 28.
+  - Operator note 13 (helicone about equal to a 65 cm dish, Elektro LRIT about 3.3-4.3 dB) is superseded by reaudit_C's model: 0 to −5 dB against the dish anchor, so about −2...+4 dB expected.
+  - Operator notes 16 and 19 (Elektro-L3 as the primary European LRIT target) are applied only as reaudit_C's conditional gate: L3 becomes a target automatically once its TLE is stationary.
+  - Operator note 22 (LC76G loses its config on power loss) is refuted: that FAQ is about the L76. The boot re-apply is kept as insurance.
+  
+  Totals: the patch-tier upper bound falls by $6.00 (A-V85 dropped). Every summary row must be recomputed after all v2 changes; I gave only the delta.
+  
+  Weights (model): the tripod correction adds 0.6-1.0 kg to the backpack, giving 5.2-7.1 kg without HF and mast and 6.1-8.4 kg in full.
+  
+  EU landed costs: reaudit_C gives none for its US or China items (RTL-SDR Blog kits and patch, SparkFun ANN-MB5). For these I state that the landed-cost rule applies instead of inventing figures. EUR prices given for EU sellers: WiMo SRH-701 EUR 16.90 incl. VAT plus EUR 14.20 shipping; hamparts.shop QRO.cz EUR 52.03 incl. VAT ($58.55).
+  
+  Section 11 (change log) is not in the section enum, so no change was emitted for it. The section 7 corrections block (07_corrections, items 37-50) can feed it.
+
 ## searchA:adafruit_bno085_4754_rp2040_zero_metal_p (run `wf_a268b76e-da0`)
 
 - **Part:** IMU pack: Adafruit BNO085 (4754) on SPI0 of a Waveshare RP2040-Zero (20187), in a metal puck bonded to the cable braid; GX12 4-pin pair; 1.5-2 m shielded 4-core lead; TVS. Framed UART at 115200 with CRC to Pico UART1, never USB.
