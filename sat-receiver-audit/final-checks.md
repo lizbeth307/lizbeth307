@@ -1360,6 +1360,562 @@
   
   Files: calculations in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/iface/budget.py; decision dumps in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/iface/decisions.txt and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/iface/verdict.txt; schematic text at /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_sch/q6a_sch.txt (USB sheet lines 4330-4610, header lines 3600-3940).
 
+## integration:lens3 (run `wf_221684d9-b6c`)
+
+- **Lens:** RF CHAIN + COEXISTENCE. I traced the RF path for every target in both antenna tiers (antenna, filter/LNA, injector, selector, SDR) and checked the bias-tee rules, the FM band-stop, the LNB feed, the HF wire and active whip, and the HF+ selector and shielding. I scanned harmonics and combs against every signal window in use: display pixel and DSI clocks, PCIe refclk and onboard Ethernet, SoC/hub/RP2040/V4L/GPSDO/Lime clocks, USB3, bucks, PWM, USB frame rates and the display line rate. I also reviewed the noise-floor A/B plan and the receive-only guards. Constraints: Q6A held, receive-only, no loops, world prices.
+- **Issues:**
+  1.
+    - **Area:** Noise-floor A/B / acceptance method
+    - **Components:**
+      - radio_lab P4 terminated-floor audit
+      - display RF A/B acceptance
+      - lab_ui_hf HF noise A/B
+      - small_antenna_stack first_tests
+      - foldable build step 9
+      - LC76G
+    - **Problem:** Every coexistence decision (12 V regulator, display clock, Ethernet, hub, fan, charger) defers to the A/B test, but the A/B as written cannot see the spurs that hurt narrowband targets. P4 sweeps with rtl_power at 100 kHz bins, and the display test passes on a broadband '1-2 dB rise' in 5 windows. With NF 5 dB the floor is -119 dBm per 100 kHz bin, against -152 dBm in a 50 Hz CW/beacon filter (model). A CW line at -158 dBm costs about 1 dB on a QO-100 CW beacon, an Inmarsat-C 1200 sym/s carrier or an H1 channel, yet it sits about 39 dB below the 100 kHz bin floor. It is invisible. Further gaps: (a) four separate A/B plans with different band lists, none covering ADS-B, AIS, sondes, H1, Inmarsat-C 1537-1545 or GNSS together; (b) the HF A/B (0.1/0.5/1/5/10/20 MHz) skips the LF carriers 40/60/77.5/162 kHz and NAVTEX 490/518/4209.5 kHz; (c) the GNSS pass mark uses u-blox UBX-MON-RF, which the LC76G does not have; (d) no states for HDMI link off vs backlight off, pcie0/Ethernet, fan PWM vs DC, USB traffic, LNB/LNA/Boni rails, or a closed case at temperature.
+    - **Severity:** major
+    - **Evidence:** radio_lab.final.procedures[4] step 1 ('rtl_power -f 24M:1766M:100k -g 40 -i 10 -e 120'); display_market.final.acceptance_tests[8] ('Pass: 1-2 dB or less rise', windows 130-150/430-440/735-755/1685-1715/2200-2300, 'u-blox UBX-MON-RF'); lab_ui_hf.final.hf_receiver.setup[8]; small_antenna_stack.final.first_tests[0]; register #82 (LC76G has no MON-RF). Floors from my model: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfcx/stage.py.
+    - **Fix:** Replace all four with one matrix (budget table 'A/B matrix'). Per used signal window: 60 s of IQ at 2.4 Msps, FFT 2^20 (2.3 Hz bins), Welch-averaged; flag every line 6 dB or more above the local floor. HF+: terminated, then on each antenna, at 40/60/77.5/162/490/518/4209.5 kHz with 1 Hz RBW. GNSS: GSV mean C/N0 of the 8 strongest SVs, plus GNSS-SDR C/N0 on a V4L. Run lid closed after a 30 min warm soak. Pass: no line 3 dB or more above the floor inside any used signal window; broadband rise of 0.5 dB or less inside windows; GNSS change of 1 dB-Hz or less. Output: a versioned spur mask (freq, width, source) consumed by SatDump wrappers, auto_rx, the NPU labeller and the UI.
+    - **Fix cost:** $0; about 4-5 h per full run, 30 min for the regression subset
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/display_market.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfcx/stage.py
+  2.
+    - **Area:** Board clocks: onboard Ethernet on pcie0
+    - **Components:**
+      - Q6A RTL8111K/RTL8125BG footprint
+      - pcie0 100 MHz refclk
+      - 25 MHz Ethernet crystal
+      - Meteor HRPT chain
+      - GNSS L1
+      - radiosondes
+    - **Problem:** The 1700.000 MHz line is credited only to the Lime PCIe (register #127, P4). But the Q6A's own Ethernet controller sits on pcie0, with a 100 MHz refclk and a 25 MHz crystal. 100 MHz x17 and 25 MHz x68 both land exactly on 1700.000 MHz, the Meteor HRPT carrier centre (main lobe 1698.65-1701.35). Further lines: 25 MHz x63 = 1575.000 MHz (0.42 MHz from GPS L1, inside the C/A main lobe); 100 x4 and 25 x16 = 400.000 MHz (sonde band edge); 100 x16 and 25 x64 = 1600.0 MHz (GLONASS G1 channels -4/-3). The no-Lime build therefore still has these lines. The Bullseye's 25 MHz reference adds the same 1700.000/1575.000 lines whenever the LNB is powered.
+    - **Severity:** major
+    - **Evidence:** Schematic v1.21 text /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_sch/q6a_sch.txt: lines 883-937 (PCIE0_REFCLK_P/M, TX/RX), 4105-4133 (LANWAKEB, PERSTB, CKXTAL1/2, 'RTL8125BG' / '(RTL8111K)' dual footprint), 4314 ('25MHz_12PF_10ppm'); compute verify ('onboard NIC is 1 GbE RTL8111 on pcie0'); register #127 and radio_lab P4 list 1700.000 MHz only for the Lime. Harmonic scan: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfcx/harm.py.
+    - **Fix:** Add a field-image DT overlay that disables pcie0; Ethernet is not used in the field, and Wi-Fi is on USB. Keep pcie0 for home/bench boots. Add the state 'pcie0 enabled / disabled' to the A/B at 1700.000, 1575.000, 400.000 and 1600.0 MHz with narrow RBW. If the 25 MHz crystal keeps oscillating with the controller in reset and its line is 3 dB or more above the floor, copper-tape the PHY area to the mid-plate. Interlock LNB EN with the RTL-B selector so the LNB is powered only on its own path.
+    - **Fix cost:** $0 (overlay and labd rule); copper tape about $2 if needed
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_sch/q6a_sch.txt
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfcx/harm.py
+  3.
+    - **Area:** FM band-stop placement (conflict between final-check lenses)
+    - **Components:**
+      - Nooelec Flamingo+ FM
+      - SAWbird+ NOAA
+      - RTL-SDR Blog LNA V2
+      - TPS2553 injector
+    - **Problem:** The P2 power lens decided 'Flamingo+ FM ... on the SDR side of the injector'. That puts the filter after the LNA. rf_frontend's 2 m chain (b) does the same: LNA V2 at the feed, powered through the Flamingo+. The SAWbird+ NOAA is LNA-SAW-LNA, so its first MMIC, like the wideband LNA V2, sees the whole FM band unfiltered. Intermod it creates in-band cannot be removed downstream. The register rule (filter ahead of any gain; no broadband LNA ahead of the FM filter) and the completeness lens ('ahead of its LNA') are the RF-correct reading. The DC-pass concern behind the power lens's placement disappears with the correct placement: bias enters at the LNA's RF output, so no current flows through a filter on the antenna side.
+    - **Severity:** major
+    - **Evidence:** sat-receiver-audit/final-checks.md line 342 (power lens C10 decision) and line 190 (fix 13); rf_frontend.verify.final_recommendation.why (b) ('LNA V2 at the feed ... power it from the RTL's 4.5 V bias tee through the Flamingo+'); antennas.forums.recommendation_impact ('put the FM band-stop after the LNA'); register #96/#99; datasheet facts in rf_frontend.verify.issues[4] (first MMIC unfiltered). The Nooelec page (fetched) gives -3 dB points at 75/120 MHz, more than 60 dB rejection, 250 mA DC pass and +18 dBm maximum input. My model: 0.06-0.45 dB SNR cost at 137 MHz for 0.5-1.2 dB filter loss.
+    - **Fix:** Use one rule in every file: antenna, then Flamingo+ FM, then VHF LNA at the feed, then coax, then injector (TPS2553), then selector, then RTL. Use two units, one on the 137 MHz entry and one on the 2 m entry. Delete 'SDR side of the injector', rf_frontend (b) and the antennas 'after the LNA' option. Only the Uputronics 162 AIS SAW preamp may run without it.
+    - **Fix cost:** $0 (the second Flamingo+, $24.95, is already in the completeness lens)
+    - **Sources:**
+      - https://www.nooelec.com/store/flamingo-plus-fm.html
+      - /home/user/lizbeth307/sat-receiver-audit/final-checks.md
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+  4.
+    - **Area:** HF/LF chain: common-mode path on the feed coax
+    - **Components:**
+      - Airspy HF+ Discovery
+      - Balun One Nine v2 (9:1)
+      - Boni-Whip
+      - HF SMA bulkhead
+      - 5-10 m RG-316/RG-174
+    - **Problem:** The no-loop HF design depends on putting the feed point 5-10 m from the handheld. That only helps if the coax shield does not carry the handheld's common-mode noise out to the antenna. The files specify only 'clip-on ferrites at the receiver end'. One or two snap-on ferrites give little CM impedance below a few MHz (engineering judgement, not measured), so they do almost nothing at the LF time signals (40-162 kHz), NAVTEX 490/518 kHz or MW/160 m. For an E-field whip, the received signal is the voltage between element and shield (PA3FWM tn07), so CM noise on the shield is received directly. On this path the bucks, the display line rate, USB frame combs and fan PWM reach the Boni-Whip and the 9:1 counterpoise.
+    - **Severity:** major
+    - **Evidence:** lab_ui_hf.final.hf_antenna.setup[3] ('clip-on ferrites ... (a general common-mode choke)'); radio_lab lab_bom (HF antennas: '5-10 m thin coax with clip-on ferrites'); lab_ui_hf.design.hf_chain (PA3FWM quote: grounding only through the coax picks up 'much noise'); register #94/#95 (LF depends on the active whip).
+    - **Fix:** Fit a two-stage coax CM choke at the HF bulkhead, on the antenna side of the Boni-Whip injector. DC still passes on the centre conductor. (a) LF/MF: about 25-40 turns of RG-316 on an FT-240-77 or a nanocrystalline core; design target 1 kOhm or more CM impedance at 60 kHz. (b) HF: 10-12 turns on FT-240-31 or a stack of 31-mix beads; target 2-5 kOhm at 1-30 MHz. Bond the bulkhead shield to the mid-plate at the entry point. Drive a ground stake or lay a counterpoise at the antenna end. Measure CM impedance conducted on the LiteVNA (shunt-through S21) before use. Turn counts are a design target, not verified.
+    - **Fix cost:** About $15-30 for toroids, RG-316 and a bracket (unverified)
+    - **Sources:**
+      - https://www.pa3fwm.nl/technotes/tn07.html
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  5.
+    - **Area:** HF+ input selector (HF / VHF / 50 ohm)
+    - **Components:**
+      - Airspy HF+ Discovery (single SMA)
+      - selector relays
+      - MCP23017 #1 GPB2-3
+      - TCA9535 readback
+    - **Problem:** No part is named, yet the AIS-on-HF+ default and the terminated-floor state depend on it. Latching coax relays cost $242 or more with 12/28 V coils (completeness lens). The obvious PCB RF relay, the Panasonic ARJ22A03 (2-coil latching), is listed at about $114-332 each with 10-22 week lead times and is marked NRND at one Mouser region, so it is not a hobby part. The HMC241 is rightly rejected (DC blocks hurt LF).
+    - **Severity:** major
+    - **Evidence:** register #93 (part TBD, missing from BOM and totals); lab_ui_hf.final.hf_receiver.setup[7]; final-checks.md line 1862; ARJ22A03 distributor search (flywing-tech $204.13 at qty 1, cytech about $114, IBS $331.75, Burklin EUR 217.60, Mouser.kr NRND).
+    - **Fix:** Use two Omron G6K-2F-RF (50 ohm high-frequency DPDT PCB relays; insertion loss 0.2 dB or less, isolation 20 dB same pole and 30 dB different poles at 1 GHz, per RS listings) on a small 50 ohm CPWG board inside the HF+ can. Wire them series-shunt: the second pole of each relay drops the unselected path onto 50 ohm, which raises isolation. The de-energised default puts the HF+ on its 50 ohm load. Use the single-winding latching G6KU variant with an H-bridge only if the 100 mW hold power matters. Acceptance on the LiteVNA, conducted: 35 dB or more isolation at 162-260 MHz and 0.3 dB or less loss from 10 kHz to 260 MHz. Isolation at 162 MHz is my extrapolation from the 1 GHz figures and must be measured.
+    - **Fix cost:** About GBP 43-52 for two relays (RS UK ex VAT, non-latching), plus $5-10 board and driver; about $60-80 in total
+    - **Sources:**
+      - https://uk.rs-online.com/web/p/hf-rf-relays/0492917?gb=s
+      - https://uk.rs-online.com/web/p/hf-rf-relays/0492913P?gb=s
+      - https://www.flywing-tech.com/product-detail/high-frequency-rf-relays-panasonic-electric-works-arj22a03-9cab24fc
+      - https://www.cytechsystems.com/de/product/arj22a03z
+      - https://www.tti.com/content/dam/tti-commons/supplier/panasonic/ecom/panasonic-rj-series-datasheet.pdf
+  6.
+    - **Area:** Bias-tee rule leftovers
+    - **Components:**
+      - RTL-SDR Blog V4L tee (4.5 V / 180 mA)
+      - SAWbird+ GOES
+      - SAWbird+ H1
+      - SAWbird+ NOAA
+      - LNA V2
+      - TPS2553 injectors
+    - **Problem:** Several final texts still break the rule (TPS2553 injector for every SAWbird+; V4L tee only for LNAs of 80 mA or less):
+  - rf_frontend final (d) and known_problems[4]: the SAWbird+ GOES on the RTL tee 'after a 2-hour soak test'.
+  - rf_frontend (b): the LNA V2 on the RTL tee through the Flamingo+.
+  - radio_lab lab_bom and sweeps[2]: the SAWbird+ H1 'then the V4L (bias tee, 120 mA under the 180 mA limit)'. 120 mA breaks the 80 mA rule.
+  - foldable build step 3: the SAWbird+ GOES 'powered by 5 V through its micro-USB, with a DC block'. That runs a USB power lead up to the feed and puts 5 V on the LNA's RF output.
+  - rf_frontend known_problems[9]: a '100-160 mA polyfuse in each bias feed', which trips under 170-180 mA.
+    - **Severity:** major
+    - **Evidence:** rf_frontend.verify.final_recommendation.why (b)/(d) and known_problems_and_fixes_to_apply[4]/[9]; radio_lab.final.lab_bom (SAWbird+ H1 item) and radio_lab.sweeps[2].notes; foldable_antennas.final.build_and_test_steps[2]; register #97/#100.
+    - **Fix:** Use one table in STACK.md (budget table 'Bias and RF rails'). Every SAWbird+ (NOAA 170 mA, GOES 140-180 mA, H1 120 mA, iO current unpublished) runs through an injector at the SDR end, fed by a TPS2553 at 300 mA nominal with FAULT readback. The V4L tee may power only the L-band active patch (20 mA), the LNA V2 (draw unpublished; measure it), the non-plus SAWbird GOES (30 mA) and NOAA (80 mA), and Uputronics preamps after a revision check, and only through the librtlsdr LAB_BIAS_OK gate. No micro-USB power at the feed. Delete the polyfuse rule and the soak allowance.
+    - **Fix cost:** $0 (text); the injectors are already budgeted
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+  7.
+    - **Area:** 70 cm / 2 m front-end order and filter part
+    - **Components:**
+      - 17 cm whip / SRH-701 / A-V85
+      - RTL-SDR Blog LNA V2 (QPL9547)
+      - Nooelec Ham Filter Bank Barebones
+      - 70 cm crossed-Yagi feed
+    - **Problem:** The completeness lens found that one 2 m/70 cm entry with a 430-440 MHz BPF ahead of the LNA kills 2 m. The order is also wrong for UHF, where the external noise is low. With a BPF of 1-2 dB loss ahead of a 0.7 dB NF LNA, Te is 148-262 K, against 61-64 K with the LNA first. That costs 0.75-2.84 dB of SNR at Tant 150-400 K (my model) on links whose margins are -5.3 to +5.3 dB (1 W 9k6 CubeSats). The only purchasable 70 cm filter found is the Nooelec Ham Filter Bank Barebones ($66.95; 70 cm 420-450 MHz, 2 m 144-148 MHz). Its loss and rejection are unpublished, it is powered, and its input-bias pushbutton can put 4.5 V on a DC-shorted hairpin antenna. Its 420-450 MHz passband also passes PMR446 and 433.92 MHz ISM.
+    - **Severity:** major
+    - **Evidence:** final-checks.md lines 1455-1470 (completeness lens); small_antenna_stack.final.revised_stack[9]/[10] ('70 cm BPF ahead of the LNA V2'); reachable rows (CubeSat margins -5.3 to +5.3 dB); Nooelec page fetched 18 Oct 2026. Model: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfcx/stage.py.
+    - **Fix:** Use separate entries. 70 cm: whip or Yagi, then LNA V2 at the bulkhead or feed, then the 70 cm filter, then injector, selector and RTL. Change to BPF first only where the P12 site survey shows the LNA V2 compressing (near cell sites). 2 m: whip or Yagi, then Flamingo+ #2, then LNA V2, then optionally the 2 m filter-bank section. General rule: at VHF the filter goes first, because sky noise dominates (0.06-0.45 dB cost); at UHF and L-band the LNA goes first. Tape over or disable the filter bank's input-bias button. Run a P2 VNA check (loss at 437 MHz, rejection at 380-400, 446, 470-790 and 791-960 MHz) before relying on it.
+    - **Fix cost:** $0 beyond the completeness lens ($66.95 filter bank, $19.95 second LNA V2, $24.95 second Flamingo+)
+    - **Sources:**
+      - https://www.nooelec.com/store/ham-filter-bank.html
+      - /home/user/lizbeth307/sat-receiver-audit/final-checks.md
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfcx/stage.py
+  8.
+    - **Area:** Display field-mode clock: leftovers, tolerance and verification
+    - **Components:**
+      - Wisecoco 7in FHD HDMI-to-MIPI board
+      - RA620 DP-to-HDMI
+      - EDID override
+      - labwc output config
+    - **Problem:** 128.70 MHz is still in display_market (q6a_settings[3]/[4], acceptance_tests[1]/[2]), in small_antenna_stack (Wisecoco row) and in the lab_ui_hf UI tests. My scan confirms that its 12th harmonic (1544.4 MHz) falls in the Inmarsat-C NCS band, and with a 0.5% down-spread it smears over 1536.7-1544.4 MHz, the whole band. The register's 127.9 MHz is clean in all used signal windows, but its SSC-proof clean window is only 127.79-128.04 MHz (±0.1%), so the delivered clock must be measured, not assumed. The register's alternative, 164.4-168.4 MHz, puts the strongest emission (the fundamental) 2-6 MHz above AIS and on the edge of the Uputronics 162 SAW passband (158.2-165.8 MHz); 166.0 MHz also fails once 0.5% SSC is applied. Other open points: DSI clock = 3x pclk only in non-burst video mode (a burst-mode bridge sets its own lane rate); the CEA extension still advertises 148.5 MHz (VIC 16), which the compositor may pick after a hotplug; and the DP link from the SoC to the RA620 is broadband whatever the pixel clock, so only 'link off' removes it.
+    - **Severity:** major
+    - **Evidence:** register #77/#53 and conflict 12; display_market.final.q6a_settings[3]/[4] and acceptance_tests; my scans /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfcx/harm.py and win.py (25 signal windows including FM, VOR, NOAA WX, DAB, UAT, Iridium carrier and HamTV; 0.5 MHz guard; strong-emission LNA/SAW passbands for n of 3 or less); radio_lab lab_bom (Uputronics 162 7.6 MHz SAW).
+    - **Fix:** Field EDID with two DTDs, tried in this order. (1) 151.50 MHz, 1920x1080, H total 2200 (88/44/148), V total 1148 (27/5/36), 59.99 Hz. It is clean with SSC across a 1.6 MHz window (150.755-152.35), and its line rate of 68.86 kHz is at least 7.95 kHz from every LF carrier. (2) 127.90 MHz at 2200x1125, 51.68 Hz. Strip the CEA VIC list. Keep 148.5 MHz for bring-up only, marked non-preferred. Pin the mode in the labwc output config. Acceptance: read the actual clock (modetest, debugfs), then confirm with the tinySA or an RTL on a near-field E-probe that the 10th/11th (151.5) or 12th (127.9) harmonic is a line at the predicted frequency, not a smear. Ask Wisecoco for the bridge's DSI mode and lane rate. Update all the files together.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfcx/harm.py
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfcx/win.py
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/display_market.json
+  9.
+    - **Area:** LF/MF comb sources (time signals, SID, NAVTEX)
+    - **Components:**
+      - fan PWM (pwm-gpio / PoE-HAT overlay)
+      - backlight dimming PWM
+      - USB SOF/microframes
+      - display line rate
+      - IP2368 (250 kHz)
+      - D36V50F12 (~500 kHz)
+    - **Problem:** None of these combs is frequency-planned against the in-scope LF carriers:
+  - The PoE-HAT fan overlay runs PWM at 1 kHz. Its harmonics land exactly on 40, 60, 162, 490 and 518 kHz.
+  - display_market recommends 20-25 kHz backlight PWM; 20 kHz puts harmonics exactly on 40 and 60 kHz.
+  - USB 1 kHz frames and 8 kHz microframes give exact integer-kHz lines (40 kHz = 5x8 kHz).
+  - The display line rate at 127.9 MHz is 58.14 kHz, 1.86 kHz from MSF/WWVB 60 kHz.
+  - The IP2368's 250 kHz second harmonic is 500 kHz, 10 kHz from NAVTEX 490.
+  - The D36V50F12 near 500 kHz is already flagged by the power lens.
+  Amplitude-only SID logging is especially exposed, because a fixed line on the carrier biases the logged amplitude.
+    - **Severity:** minor
+    - **Evidence:** register #17 ('PoE-HAT overlay uses 1 kHz PWM'); display_market.final.sunlight_measures[6] ('20-25 kHz PWM'); lab_ui_hf hf_capabilities (LF time signals, SID amplitude, NAVTEX); final-checks.md line 115 (power lens, D36V50F12). My calculation: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfcx/lf.py.
+    - **Fix:** Set fan and backlight PWM to 24.0 kHz; up to the 40th harmonic every line stays at least 5.5 kHz from 40/60/77.5/162/490/518 kHz. Alternatively use DC (100% duty) or analog dimming. Add an 'LF Quiet' profile in labd:
+  - HDMI link off (wlr-randr --off; keys, encoders and LED stay live) and backlight off;
+  - fan on DC;
+  - charger unplugged;
+  - LAB 5 V, Ethernet/pcie0 and the LNB/LNA rails off;
+  - the HF+ is the only USB device streaming.
+  SID logging subtracts a terminated-input baseline recorded in the same profile.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfcx/lf.py
+  10.
+    - **Area:** Known-line list for P4 and the spur mask
+    - **Components:**
+      - Leo Bodnar Mini (10 MHz)
+      - QCS6490 76.8 MHz XO / 19.2 MHz
+      - V4L 28.8 MHz TCXO
+      - CH334F/FE1.1s/RP2040 12 MHz
+      - Lime 30.72 MHz (conditional)
+    - **Problem:** The P4 list (144.000, 432.000, 1704.000, 1700.000, 737.28, 1689.6, 740.000, 1415.7, 1544.4 MHz) misses lines that fall inside used signal windows:
+  - GPSDO 10 MHz: x142 = 1420.000 (H1), x109 = 1090.000 (ADS-B), x154 = 1540.000 (Inmarsat-C), x40 = 400.000, x169 = 1690.0, x170 = 1700.0.
+  - SoC 76.8 MHz: x22 = 1689.6 (FY-2H/Elektro window).
+  - SoC 19.2 MHz: x74 = 1420.8 (H1 window), x82 = 1574.4 (on the lower Galileo E1 BOC lobe), x21 = 403.2.
+  - V4L 28.8 MHz: x14 = 403.2 (sondes), next to the listed 1699.2.
+  - Lime 30.72 MHz: x52 = 1597.44 (GLONASS G1).
+  - 12 MHz: x130 = 1560.0 (BDS B1I).
+  Line amplitudes are unknown; most are high-order harmonics.
+    - **Severity:** minor
+    - **Evidence:** radio_lab.final.procedures[4] step 3; XO value from q6a_sch.txt line 2377 ('76.8MHZ_7PF_12PPM'); scan /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfcx/harm.py.
+    - **Fix:** Add these lines to P4 and the spur mask (budget table 'Known lines'). Keep the GPSDO off and disconnected for H1, ADS-B and Inmarsat-C sessions. Configure auto_rx to ignore 400.000 and 403.2 MHz.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfcx/harm.py
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_sch/q6a_sch.txt
+  11.
+    - **Area:** LNB path: interlocks, IF level, ingress
+    - **Components:**
+      - Othernet Bullseye TCXO LNB
+      - 13.2 V LNB rail
+      - RTL-B selector (SP4T)
+      - IF pad
+    - **Problem:** Three gaps on the LNB path:
+  - The LNB stays powered while RTL-B listens to L-band. LNB IF noise (-22 to -38 dBm integrated over about 1.2 GHz at 50-66 dB gain, my model) then leaks through the 30-37 dB isolation of the selector into the L-band path, adding about 0.4 dB of noise (model), and the LNB's 25 MHz reference adds 1700.000/1575.000 MHz lines.
+  - The pad is given as 10-20 dB. At 66 dB LNB gain, 10 dB leaves about -32 dBm at the V4L, inside its 3 dB desense range (-20 to -40 dBm).
+  - The 739.5 MHz IF is region-exposed: DVB-T channel 54 (734-742 MHz) where UHF TV still runs to 790 MHz, and the LTE B28 uplink (703-748 MHz) in APAC. Both can couple in through F-connector or cable ingress.
+    - **Severity:** minor
+    - **Evidence:** register #105 (pad 10-20 dB, noise -33 to -22 dBm, V4L desense -20 to -40 dBm); completeness-lens SP4T selectors (isolation 30-37 dB); model /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfcx/stage.py.
+    - **Fix:** labd powers the LNB only while the RTL-B selector is on the LNB port. Inject 13.2 V on the antenna side of the DC-free selector. Use a 15 dB pad as the default and 20 dB when the measured LNB gain is above 60 dB; padding costs no SNR, because LNB noise dominates. Use a double-shielded IF lead and tight F connectors. Add 'LNB on, IF terminated at the LNB' and 'LNB off' to the A/B.
+    - **Fix cost:** $0 (one extra pad from the kit)
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfcx/stage.py
+  12.
+    - **Area:** IMU puck next to the Yagi feeds
+    - **Components:**
+      - BNO085 puck with RP2040-Zero
+      - USB-CDC lead on the boom
+      - crossed 2 m/70 cm Yagi
+    - **Problem:** The pointing puck sits on the boom. Its RP2040 12 MHz crystal has harmonics at 144.000 and 432.000 MHz, close to the 2 m and 70 cm feeds. Its USB-CDC cable (12 Mb/s full-speed) runs along the boom past the driven elements. The magnetic distance rule (15-20 cm from steel and power leads) does not cover RF.
+    - **Severity:** minor
+    - **Evidence:** gnss_imu final (RP2040-Zero over USB-CDC); register #81 (x12 = 144.000, x36 = 432.000; on/off A/B requested); radio_lab usb_power_case_plan (H2 boom IMU puck).
+    - **Fix:** Use a metal puck bonded to the cable shield, with a 31/43-mix ferrite at the puck end. Mount it on the boom rear, 30 cm or more behind the driven elements. Prefer the UART relay to the HMI RP2040, which takes USB off the boom. Add 'puck on/off' at 145.9 and 437 MHz with narrow RBW to the A/B.
+    - **Fix cost:** $0-5
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/gnss_imu.json
+  13.
+    - **Area:** AIS on the HF+: no antenna for the 'VHF bus'
+    - **Components:**
+      - Airspy HF+ VHF mode
+      - RTL-SDR Blog dipole kit
+      - AIS-catcher
+    - **Problem:** The HF+ is the default AIS receiver, but the 'VHF bus' is never defined. The only VHF antenna, the dipole kit, is set to 53.4 cm arms for LRPT or re-set for AIS (44 cm), sondes or ADS-B, so LRPT and continuous AIS cannot run together.
+    - **Severity:** minor
+    - **Evidence:** lab_ui_hf.final.hf_receiver.why and setup[7] ('VHF bus'); register #115 (one dipole kit re-set per band) and #128.
+    - **Fix:** Add a second RTL-SDR Blog dipole kit (44 cm arms, vertical) on a dedicated VHF bulkhead that feeds the selector's VHF port. Its spare elements also serve the spare V4L's sonde and ADS-B runs.
+    - **Fix cost:** $17.95
+    - **Sources:**
+      - https://www.rtl-sdr.com/DIPOLE
+  14.
+    - **Area:** Sled LNA bias supply
+    - **Components:**
+      - external RF sled
+      - sled 5 V buck
+      - TPS2553
+      - SAWbird+ on sled ports
+    - **Problem:** The sled makes its LNA bias with a switching 5 V buck from AUX 12 V, inside the same box as the HMC7992 and the bias tees, with no post-regulator. Ripple and switching spurs go straight up the coax to LNAs whose bias is their RF output port.
+    - **Severity:** minor
+    - **Evidence:** radio_lab.final.lab_bom (sled build parts: '5 V buck, 2x TPS2553 bias switches'); usb_power_case_plan (AUX loads).
+    - **Fix:** Use buck to about 6 V, then LC, then a low-noise LDO at 4.5-5 V, then the TPS2553s. Fit a shield wall between the buck and the switch/RF section of the sled box.
+    - **Fix cost:** About $5-10
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  15.
+    - **Area:** Receive-only guard: on-board Wi-Fi/BT
+    - **Components:**
+      - FCU760K (AIC8800D80) on FE1.1s port 4
+      - labd QUIET/field profiles
+    - **Problem:** rfkill soft-blocks the radio, but the module stays enumerated and polled on the same single-TT USB 2.0 hub as RTL-B, the HF+ and touch. A NetworkManager or firmware fault can bring it back. The guard also does not cover a Pluto (libiio) if one is bought.
+    - **Severity:** minor
+    - **Evidence:** register #8 and #11; final-checks.md (FCU760K on FE1.1s P4).
+    - **Fix:** In field and QUIET profiles, rfkill wlan and bluetooth, then de-authorise the USB device (echo 0 > /sys/bus/usb/devices/<port>/authorized). Re-authorise only in HOME/BENCH. The self-test confirms it is absent from lsusb. Extend the guard to libiio TX if a Pluto is bought.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/report_research.json
+  16.
+    - **Area:** Lime-only coexistence (conditional)
+    - **Components:**
+      - LimeSDR Micro
+      - Samsung T7 on USB 3 (5 Gb/s class)
+      - PCIe Gen3 riser
+    - **Problem:** If the Lime is kept:
+  - T7 SuperSpeed traffic is broadband, strongest near 2.4-2.5 GHz (well known; Intel white paper, not re-fetched). That is next to the S-band targets (PHASMA 2208/2210, Black Kite 2286/2288 MHz), and it also raises the L1 floor.
+  - Files say 'T7 idle during L/S passes' but give no recording path. Black Kite needs only about 1 Msps.
+  - Lime lines at 737.28 MHz (2.2 MHz below the QO-100 NB IF), 1597.44, 1689.6 and 1720.32 MHz.
+    - **Severity:** minor
+    - **Evidence:** register #72/#127; radio_lab usb_power_case_plan (T7 floor check at 1.7/2.2 GHz); P4 line list.
+    - **Fix:** labrx decimates S-band and L-band passes to 1 Msps or less and writes to UFS, so the T7 never writes during L/S/GNSS sessions. Keep the riser shielded and the RF bay seams at 7 mm or less. Add the 1597.44 MHz line to the mask.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+- **Proposed decisions:**
+  1.
+    - **Question:** C1 LimeSDR Micro: keep or drop
+    - **Decision:** Gated optional, as the register says: keep the cancellable pre-order and decide on 31 Jan 2027 or on delivery. No core RF chain depends on it. 137/145 MHz never go to the Lime.
+    - **Reason:** Every core target has an RTL or HF+ chain (budget table 'RF path per target'). The Lime adds only S-band telemetry, AHRPT rates and wideband NPU IQ.
+    - **Consequences:** In the Lime build: 10-12 dB pads after each SAWbird, a band filter on every port, T7 idle in L/S/GNSS sessions, the 737.28/1597.44/1689.6/1720.32 MHz lines in the mask, and its own A/B run.
+    - **Alternatives rejected:** Drop now (loses S-band before testing); make it core (driver unmerged, ships 15 Dec 2026).
+  2.
+    - **Question:** C2 Q6A RAM tier
+    - **Decision:** 12 GB now, as the register says.
+    - **Reason:** RAM cannot be added later; there is no RF impact.
+    - **Consequences:** None for RF.
+    - **Alternatives rejected:** 8 GB (closes the Lime and NPU-training options).
+  3.
+    - **Question:** C3 Pack 3S vs 4S
+    - **Decision:** 4S1P P50B, as the register and power lens say.
+    - **Reason:** For RF, 4S lets the LNB (13.2 V) and Boni-Whip (12.5 V) rails be plain LDOs from the pack, with no switching converter near the IF or the HF feed.
+    - **Consequences:** LDO dissipation up to about 1.1 W (LNB) and 0.9 W (Boni) at 16.8 V; pad both to the mid-plate.
+    - **Alternatives rejected:** 3S (needs boost converters for LNB and Boni, which are new spur sources).
+  4.
+    - **Question:** C4 12 V regulator for J21
+    - **Decision:** Start with the D36V50F12, which is buyable, and gate it on an RF test. With HF+ in LF Quiet, at loads of 0.3/1/3 A in the sealed case, there must be no line 3 dB or more above the floor within ±5 kHz of 40/60/77.5/162/490/518/4209.5 kHz, and no wandering line in HF target windows during load steps. If it fails, replace it with a forced-PWM synchronous buck switching at 1 MHz or more, spread spectrum off, synced (part to source in P5, unverified).
+    - **Reason:** Its roughly 500 kHz fundamental straddles NAVTEX 490/518 kHz, and its power-save mode wanders. A switching frequency of 1 MHz or more keeps every fundamental out of LF/MF. A buck is enough above the 13.2-13.6 V cutoff.
+    - **Consequences:** Possible later cost of about $20-40 for the replacement (unverified). The CM choke and remote feed remain the main HF defence.
+    - **Alternatives rejected:** Buck-boost by default (no buyable forced-PWM 5 A part found, and not needed above the cutoff); trusting the regulator without a narrow-RBW test.
+  5.
+    - **Question:** C5 USB port map
+    - **Decision:** Register map: blue USB0 = RTL-A (T7 with the Lime); FE1.1s P1 RTL-B, P2 touch, P3 CH334F (H1 HMI, H2 IMU if not on UART, H3 LAB, H4 HF+). RF rules: both V4Ls sit in the RF bay on 10-20 cm shielded extensions with ferrites; the HF+ is in its can on H4; Wi-Fi is de-authorised in the field; the spare V4L goes on LAB USB, outside the case.
+    - **Reason:** FE1.1s RF streams total about 13.3 MB/s against 35-40 MB/s practical. The dongles stay away from the HDMI/J5 edge.
+    - **Consequences:** Extension leads plus ferrites cost about $10.
+    - **Alternatives rejected:** Dongles plugged straight into J5 next to the HDMI bridge.
+  6.
+    - **Question:** C6 40-pin header and bus map
+    - **Decision:** Register map, with fan PWM at 24.0 kHz (or on/off through the AO3400, as the power lens prefers for pin-33 drive). No PWM in LF Quiet.
+    - **Reason:** 1 kHz, 20 kHz and 30 kHz PWM put harmonics exactly on LF carriers. 24 kHz keeps them at least 5.5 kHz away.
+    - **Consequences:** Change the overlay's PWM period.
+    - **Alternatives rejected:** The PoE-HAT 1 kHz overlay.
+  7.
+    - **Question:** C7 Hardware ownership
+    - **Decision:** labd is the sole owner. RF interlocks it enforces: LNB EN only while the RTL-B selector is on the LNB port; bias locked off on DC-short profiles (9:1, hairpin Yagis); selector power-on default = 50 ohm; GPSDO and noise source only in BENCH, with antenna paths terminated.
+    - **Reason:** These interlocks are the hardware half of the receive-only and no-DC-into-shorts rules.
+    - **Consequences:** The interlock tests go into the labd test suite.
+    - **Alternatives rejected:** Advisory flocks per engine.
+  8.
+    - **Question:** C8 LNB supply
+    - **Decision:** LT3045 at 13.2 V from the switched pack node; two in parallel if the measured draw is above 0.33 A. EN from labd gives a true 0 V. ILIM is the single limit at 1.5-2x the measured draw (maximum 0.5 A per device). Then LC plus ferrite, injection on the antenna side of the DC-free selector, and the F port. No 18 V branch.
+    - **Reason:** An LDO puts no switching spurs on the 739.5 MHz IF path. EN gives the required disconnect and ILIM gives one current limit. 16.8-13.2 V at 0.3 A is about 1.1 W. LT3045: 20 V input, 500 mA, programmable current limit, typical 260 mV dropout (measured about 314 mV at 300 mA).
+    - **Consequences:** The LNB voltage tracks pack minus about 0.3 V below 13.5 V (still at or above the Bullseye's 11.5 V minimum). The QRO.cz upgrade at about 400 mA needs two parallel parts.
+    - **Alternatives rejected:** TPS65233 (13.4/18.2 V IC, QFN, 22 kHz features not needed); MT3608/XL6009 boost (no disconnect, switching noise); SEPIC S18V20AHV plus #2813 (a switching converter beside the IF, plus an extra switch).
+  9.
+    - **Question:** C9 LNA bias rule
+    - **Decision:** Every SAWbird+ runs through an injector at the SDR end, fed by a TPS2553 at 300 mA nominal with FAULT readback. The V4L tee may power only LNAs of 80 mA or less (L-band patch 20 mA, LNA V2 after measurement, SAWbird GOES 30 mA, SAWbird NOAA 80 mA), through the LAB_BIAS_OK gate. No micro-USB power at the feed.
+    - **Reason:** SAWbird+ NOAA 170 mA, GOES 140-180 mA and H1 120 mA leave no margin on the 180 mA tee in a warm case.
+    - **Consequences:** Delete rf_frontend (b)/(d), the radio_lab H1-on-tee line, foldable step 3's micro-USB feed and the 100-160 mA polyfuse.
+    - **Alternatives rejected:** GOES+ on the tee after a soak; PTCs rated at 25 C.
+  10.
+    - **Question:** C10 FM filter
+    - **Decision:** Nooelec Flamingo+ FM, two units, each at the antenna side of its VHF LNA (137 MHz and 2 m).
+    - **Reason:** Both the SAWbird+ NOAA and the LNA V2 have an unfiltered first gain stage. The filter costs 0.06-0.45 dB at VHF sky temperatures (model). Bias enters at the LNA output, so no DC crosses the filter.
+    - **Consequences:** Overrides the power lens's 'SDR side of the injector'.
+    - **Alternatives rejected:** SDR-side placement (the LNA meets FM unprotected); the RTL-SDR Blog band-stop (more than 50 dB, no DC rating).
+  11.
+    - **Question:** C11 librtlsdr
+    - **Decision:** The .so.2 rebuild of noble 2.0.1 (0204c9c + 65f0658), plus the bias-tee gate patch and rtl_biast diverted.
+    - **Reason:** Keeps the consumers working and lets labd enforce the bias rules.
+    - **Consequences:** First build on the Q6A in the W1-2 gates.
+    - **Alternatives rejected:** 2.0.3 (.so.0); purge-and-fork.
+  12.
+    - **Question:** C12 Display field-mode pixel clock
+    - **Decision:** Field EDID with two DTDs, tried in this order. (1) 151.50 MHz at 2200x1148 (59.99 Hz). (2) 127.90 MHz at 2200x1125 (51.68 Hz). Strip the CEA VICs and keep 148.5 MHz only for bring-up. Drop 128.70 and 164.4-168.4 MHz. Confirm the delivered clock by modetest and by near-field harmonic measurement.
+    - **Reason:** Both candidates are clean in all 25 used windows. 151.5 MHz holds a 1.6 MHz clean window even with 0.5% SSC (127.9 MHz only 0.25 MHz), runs at 60 Hz, and its line rate is 7.95 kHz clear of the LF carriers (127.9 MHz: 1.86 kHz from 60 kHz). 164.4-168.4 MHz sits at the AIS SAW edge and 166.0 MHz fails with SSC.
+    - **Consequences:** Update display_market, display, small_antenna_stack, the lab_ui_hf UI tests and the kernel cmdline (video=...@60 or @52) together. Ask Wisecoco for the DSI mode and lane rate.
+    - **Alternatives rejected:** 128.70 (Inmarsat-C x12); 148.5 (fundamental 0.5 MHz above the 2 m filter, x3 = 445.5 MHz inside the 70 cm filter); 138.5 (inside the SAWbird+ NOAA passband); 164.4-168.4.
+  13.
+    - **Question:** C13 PPS on the held kernel
+    - **Decision:** Out-of-tree pps-gpio on 6.18.2-4.
+    - **Reason:** Keeps the HDMI/NPU kernel hold; no RF impact.
+    - **Consequences:** None for RF.
+    - **Alternatives rejected:** Route B on 7.0.11.
+  14.
+    - **Question:** C14 INA228
+    - **Decision:** I2C0, user-space i2c-dev, shunt in the pack lead.
+    - **Reason:** Agrees with the register; no RF impact.
+    - **Consequences:** None for RF.
+    - **Alternatives rejected:** ina238 hwmon binding.
+  15.
+    - **Question:** C15 Antenna tiers
+    - **Decision:** Two tiers. Tier 1 (always carried): case whips (17 cm, SRH-701/A-V85), 2- and 4-turn helices, the RTL-SDR Blog L-band patch, the bare LNB with the 11 cm cone, and the 23 cm dipole kit as the LRPT default. Tier 2: the crossed Yagi (ultra-compact build), petal helicone and gore horn. No loops.
+    - **Reason:** Patch and chip antennas cannot serve 137-146 MHz. The dipole kit already meets the piece-size rule, so LRPT on the V-dipole is available in both tiers.
+    - **Consequences:** The case helical whip for 137 MHz stays experimental.
+    - **Alternatives rejected:** Helical whip as the LRPT default.
+  16.
+    - **Question:** C16 Receive-only and policy leftovers
+    - **Decision:** Strike the register list. RF additions: replace the antenna S11 steps (foldable steps 2-4, small-stack first_tests[2], antennas verify) with the receive-only P9/P15 checks; de-authorise Wi-Fi/BT in the field; extend the guard to libiio if a Pluto is bought.
+    - **Reason:** Any antenna S11 sweep radiates.
+    - **Consequences:** Antenna tuning relies on beacon SNR, Sun noise and GNSS C/N0.
+    - **Alternatives rejected:** Brief indoor µW sweeps (default: not allowed).
+  17.
+    - **Question:** C17 HF antenna chain
+    - **Decision:** Boni-Whip on an LT3045 at 12.5 V (ILIM 0.2 A provisional, EN from labd, default off, DC-sense first). The 9:1 wire is for HF only. Add a two-stage coax CM choke at the HF bulkhead (77-mix for LF/MF, 31-mix for HF) and a ground stake at the antenna. HF+ selector: two Omron G6K-2F-RF in series-shunt (HF / VHF / 50 ohm), default 50 ohm.
+    - **Reason:** The remote feed point helps only if the coax shield is isolated in common mode. The G6K is a stocked, roughly GBP 21-26 50 ohm relay, against $114-332 for the ARJ22A03.
+    - **Consequences:** Add about $75-110 to the HF chain. Confirm the HF-loop removal with the user.
+    - **Alternatives rejected:** Clip-on ferrites only; ARJ22A03; coax relays at $242 or more; HMC241.
+  18.
+    - **Question:** C18 Storage
+    - **Decision:** T7 only with the Lime. labrx never writes to the T7 during L/S/GNSS sessions; those are decimated to UFS.
+    - **Reason:** USB 3 noise near 2.4 GHz and at L1.
+    - **Consequences:** None in the no-Lime build.
+    - **Alternatives rejected:** T7 always on.
+  19.
+    - **Question:** C19 CPU allocation
+    - **Decision:** Register plan.
+    - **Reason:** No RF impact.
+    - **Consequences:** None for RF.
+    - **Alternatives rejected:** Trainer on the A55 cores.
+  20.
+    - **Question:** C20 Roadmaps
+    - **Decision:** Run the narrow-RBW terminated-floor A/B in the W1-2 gates, with both candidate display modes and pcie0 on/off, before buying antennas and region-dependent parts.
+    - **Reason:** It decides the display mode, the 12 V regulator and the Ethernet overlay.
+    - **Consequences:** About 5 h of bench time.
+    - **Alternatives rejected:** A/B after assembly.
+  21.
+    - **Question:** C21 V4L count
+    - **Decision:** Buy 3: RTL-A and RTL-B plus a spare that doubles as the LAB-USB monitor (ADS-B or sondes) with its own antenna (second dipole kit).
+    - **Reason:** Simultaneous chains need separate antennas.
+    - **Consequences:** +$17.95 for the second dipole kit.
+    - **Alternatives rejected:** Fourth V4L now.
+  22.
+    - **Question:** C22 Software recipes
+    - **Decision:** Register recipes, plus spur-mask consumers (SatDump wrapper, auto_rx, NPU labeller).
+    - **Reason:** Fixed lines are otherwise detected as signals.
+    - **Consequences:** One spur-mask file under version control.
+    - **Alternatives rejected:** Per-app ad-hoc masks.
+  23.
+    - **Question:** C23 Region unknown
+    - **Decision:** Defer the LNB, horn, SAWbird+ iO and GNSS-module choice. labd computes GEO visibility from the fix. RF: check LNB IF ingress (DVB-T 694-790 MHz, LTE B28 uplink) once the region is known.
+    - **Reason:** GEO targets and IF ingress depend on the region.
+    - **Consequences:** The LNB rail is built anyway.
+    - **Alternatives rejected:** Buying now.
+  24.
+    - **Question:** C24 Costs and weights
+    - **Decision:** Add RF deltas: CM chokes $15-30, selector $60-80, second dipole kit $17.95, sled LDO $5-10. Total about $100-140 on top of the completeness lens's $112 of filters and LNA.
+    - **Reason:** These items are missing from every BOM.
+    - **Consequences:** HF chain total about $280-500.
+    - **Alternatives rejected:** None.
+  25.
+    - **Question:** C25 P1b completion
+    - **Decision:** Closed: report_research.json exists.
+    - **Reason:** I read it in full.
+    - **Consequences:** STACK.md must carry the RF tables from this lens.
+    - **Alternatives rejected:** None.
+  26.
+    - **Question:** R1 Ethernet/pcie0 in the field
+    - **Decision:** Field DT overlay with pcie0 disabled; pcie0 enabled only on home/bench boots.
+    - **Reason:** 25 MHz x68 and 100 MHz x17 = 1700.000 MHz; 25 MHz x63 = 1575.000 MHz.
+    - **Consequences:** No wired Ethernet in the field.
+    - **Alternatives rejected:** Leaving it on and masking the HRPT centre line.
+  27.
+    - **Question:** R2 Front-end order rule
+    - **Decision:** VHF: filter, then LNA. UHF and L-band: LNA, then filter (SAWbirds have the SAW integrated). Fall back to filter first only where the P12 survey shows LNA compression.
+    - **Reason:** At 437 MHz, filter first costs 0.75-2.84 dB (model). At 137 MHz it costs 0.06-0.45 dB.
+    - **Consequences:** Patch-tier 70 cm: whip, LNA V2, filter bank, RTL.
+    - **Alternatives rejected:** BPF first everywhere.
+- **Budget tables:**
+  - RF PATH PER TARGET (core, no Lime; tier 1 = always carried, tier 2 = foldable)
+  | Target | Tier-1 chain | Tier-2 chain | SDR / bias |
+  | LRPT 137.1/137.9 | dipole kit V 53.4 cm > Flamingo+#1 > SAWbird+ NOAA (cased, feed) > 1-2 m RG-316 > injector | same | RTL-A, tee OFF, TPS2553 300 mA, gain 10-25 dB |
+  | 2 m 145.8-146 | SRH-701/A-V85 > Flamingo+#2 > LNA V2 | Yagi 2 m (hairpin = DC short) > Flamingo+#2 > LNA V2 | RTL-A |
+  | ISS 437.55/.80/.825, 435-438 | 17 cm whip > LNA V2 > filter bank 420-450 | Yagi 70 cm > LNA V2 > BPF | RTL-B or RTL-A; tee only if LNA V2 is 80 mA or less |
+  | Inmarsat-C 1537-1545 | 2/4-turn helix > SAWbird+ iO, or L-band patch (20 mA) | helicone > iO | RTL-B; clock not 128.70 |
+  | HRPT 1700 | 4-turn helix > SAWbird+ GOES | helicone > GOES | RTL-B 2.4-2.56 Msps; pcie0 off; LNB off |
+  | H1 1420.4 | helix > SAWbird+ H1 (injector) | helicone > H1 > VBFZ-1400 | RTL-B; GPSDO off |
+  | GNSS L1/EGNOS | LC76G active patch; GNSS-SDR: L1 patch on V4L tee | same | T7 idle; pcie0 off |
+  | QO-100 | bare LNB / 11 cm cone > F > LT3045 13.2 V tee > 15-20 dB pad | 3/6-gore horn | RTL-B; LNB EN only when selected |
+  | ADS-B 1090 | spare V4L + Uputronics 1090 or Pro Stick Plus, 6.5 cm | same | LAB USB |
+  | AIS 162 | dipole kit #2 (44 cm) > VHF port > G6K selector | same | HF+ VHF |
+  | Sondes 400-406 | spare V4L, 17.7 cm (+Uputronics 403) | same | mask 400.000/403.2 |
+  | HF 0.5-31 MHz | 7-15 m wire + 9:1 at 5-10 m > RG-316 > CM choke > selector | same | all bias OFF |
+  | LF 40-162 kHz, NAVTEX | Boni-Whip at 2 m or more (12.5 V via injector) > CM choke (77-mix) > selector | same | LF Quiet |
+  - PIXEL-CLOCK CANDIDATES (my scan, 25 used windows, 0.5 MHz guard, n of 40 or less; strong-emission passbands for n of 3 or less)
+  | pclk MHz | Totals / refresh | Hits | Clean window with 0.5% SSC |
+  | 128.70 | 2200x1125 / 52.0 Hz | x12 = 1544.4 (Inmarsat-C) | none (smears 1536.7-1544.4) |
+  | 127.90 | 2200x1125 / 51.68 Hz | none | 127.79-128.04 |
+  | 151.50 | 2200x1148 / 59.99 Hz | none | 150.755-152.35; line rate 68.86 kHz |
+  | 166.0 | 2200x1260 / about 60 Hz | none without SSC; fails with SSC | 166.635-168.65; fundamental at AIS SAW edge |
+  | 148.5 | CEA 1080p60 | x3 = 445.5 inside 420-450 BPF; fundamental 0.5 MHz above 2 m filter | bring-up only |
+  | 138.5 | CVT-RB | fundamental inside SAWbird+ NOAA passband | reject |
+  | 83.77 / 71.0 | 4D 1280x800 | 1089.0 ADS-B / 1420.0 H1, 1562.0 B1I, 1704.0 | reject |
+  - KNOWN LINES FOR P4 AND THE SPUR MASK (exact harmonic in a used window; amplitude unmeasured)
+  | MHz | Source | Target hit | Control |
+  | 1700.000 | 25 MHz x68 (Ethernet, LNB ref), 100 MHz x17 (pcie0 / Lime), 10 MHz x170 | Meteor HRPT centre | pcie0 off; LNB EN interlock; GPSDO off |
+  | 1699.2 | V4L 28.8 x59 | HRPT | mask |
+  | 1575.000 | 25 MHz x63 | GPS L1 (0.42 MHz offset) | pcie0 off; LNB off |
+  | 1574.4 | 19.2 MHz x82 | Galileo E1 lobe | measure |
+  | 1600.0 / 1597.44 | 100 x16, 25 x64 / Lime 30.72 x52 | GLONASS G1 | as above |
+  | 1560.0 | 12 MHz x130 | BDS B1I | shield hub |
+  | 1544.4 | 128.70 x12 | Inmarsat-C | change clock |
+  | 1540.0 | GPSDO 10 x154 | Inmarsat-C | GPSDO off |
+  | 1420.000 / 1420.8 | GPSDO 10 x142 / 19.2 x74 | H1 | GPSDO off; mask |
+  | 1090.000 | GPSDO 10 x109 | ADS-B | GPSDO off |
+  | 1689.6 | 76.8 x22, Lime 30.72 x55 | FY-2H/Elektro window | mask |
+  | 740.000 / 737.28 | GPSDO x74 / Lime x24 | QO-100 NB IF | GPSDO off |
+  | 403.2 / 400.000 | 28.8 x14, 19.2 x21 / 25 x16, 100 x4, 10 x40 | sondes | auto_rx ignore list |
+  | 144.000 / 432.000 / 1704.0 | 12 MHz x12/x36/x142 | near 2 m/70 cm, Metop | puck and hub placement |
+  - BIAS AND RF RAILS
+  | Rail | Load | Current | Limit | Source |
+  | LNA feed VHF | SAWbird+ NOAA | 170 mA | TPS2553 300 mA | LAB 5 V > LT3045 4.5 V |
+  | LNA feed L | GOES+ / iO / H1 | 140-180 / unpublished / 120 mA | TPS2553 300 mA | same |
+  | LNA feed UHF/2 m | LNA V2 (x2) | unpublished (measure) | V4L tee if 80 mA or less, else TPS2553 | tee or same |
+  | Worst simultaneous LNA | NOAA + GOES + 2x LNA V2 | about 0.4-0.45 A | LT3045 0.5 A | - |
+  | LNB 13.2 V | Bullseye | 200-300 mA budget (unpublished) | ILIM 1.5-2x measured | LT3045 (x2 above 0.33 A); 1.1 W at 16.8 V |
+  | Boni 12.5 V | Boni-Whip | unpublished | ILIM 0.2 A provisional | LT3045; 0.86 W at 16.8 V |
+  | HF+ | HF+ Discovery | unpublished (0.1-0.3 A) | LAB 5 V, VBUS-cut | CH334F H4 |
+  | V4L x2-3 | dongles | 250-270 mA each | WS4612 about 2.1 A / LAB TPS2553 1 A | VCC_5V_PERI / LAB |
+  - USB RF STREAMS (no Lime)
+  | Device | Port | Rate |
+  | RTL-A 2.56 Msps 8-bit IQ | blue USB0 (USB2 HS) | 5.12 MB/s |
+  | RTL-B | FE1.1s P1 | 5.12 MB/s |
+  | HF+ 768 ksps int16 | CH334F H4 | 3.07 MB/s |
+  | Spare V4L (monitor) | LAB USB via CH334F H3 | 5.12 MB/s |
+  | Touch, IMU, HMI | FE1.1s/CH334F | less than 0.1 MB/s |
+  | FE1.1s total | single TT, 35-40 MB/s practical | about 13.3 MB/s |
+  | Lime build: Lime PCIe 56 Msps cs16 > T7 on blue | - | 224 MB/s |
+  - GAIN STAGING (model: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfcx/stage.py)
+  | Case | Result |
+  | 70 cm, BPF 1/2/3 dB first vs LNA V2 (NF 0.7) first | Te 148/262/405 K vs 61/64/68 K; SNR loss 0.75-4.05 dB at Tant 150-400 K |
+  | 137 MHz, Flamingo+ 0.5-1.2 dB before SAWbird+ NOAA | 0.06-0.45 dB at Tant 1000-3000 K |
+  | LNB IF integrated noise (Tsys 100 K, 1.2 GHz) | 50/60/66 dB gain: -37.8/-27.8/-21.8 dBm; with 20 dB pad -57.8/-47.8/-41.8 dBm (V4L 3 dB desense -20 to -40 dBm) |
+  | Spur visibility (NF 5 dB) | floor -119 dBm/100 kHz, -135/2.5 kHz, -152/50 Hz, -165/2.3 Hz |
+  - LF COMB PLANNING (/tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfcx/lf.py; carriers 40, 60, 77.5, 162, 490, 518 kHz)
+  | Source | Closest harmonic to a carrier |
+  | PWM 1 / 20 / 30 kHz | 0 kHz (exact hits) |
+  | PWM 25 kHz | 2.5 kHz (75 vs 77.5) |
+  | PWM 24.0 kHz | 5.5 kHz (best in 20-32 kHz) |
+  | USB SOF 1 kHz / 8 kHz | exact on 40/60/162/490/518 kHz / exact on 40 kHz |
+  | Line rate 127.9 MHz / 2200 | 58.14 kHz, 1.86 kHz from 60 |
+  | Line rate 151.5 MHz / 2200 | 68.86 kHz, 7.95 kHz clear |
+  | IP2368 250 kHz | 500 kHz, 10 kHz from NAVTEX 490 |
+  - A/B MATRIX (one plan replacing P4, display A/B, HF A/B and the small-stack tests)
+  | Item | Spec |
+  | Windows | the 25 used windows (pixel-clock table) plus the known lines; HF+ at 40/60/77.5/162/490/518/4209.5 kHz, 1, 7, 14 MHz |
+  | Method | 60 s IQ per window, 2^20 FFT, Welch average; HF+ 1 Hz RBW; GNSS GSV mean C/N0 (top 8) plus GNSS-SDR |
+  | States | each one alone: HDMI link off / backlight 0-50-100% / mode A or B; pcie0 on/off; Wi-Fi deauth; fan DC / PWM; LAB 5 V; CH334F; charger; LNB on/off; LNA rails; Boni rail; puck; V4L streaming on the shared hub; T7 (Lime build) |
+  | Conditions | terminated at the SDR, then at the LNA input, then on antenna; lid closed after a 30 min soak |
+  | Pass | no line 3 dB or more above the floor inside a used window; broadband rise 0.5 dB or less; GNSS 1 dB-Hz or less; result saved as the spur mask |
+- **Checks passed:**
+  - 128.70 MHz x12 = 1544.4 MHz falls inside Inmarsat-C 1537.0-1544.2 (plus guard), as the register says; the field clock must change.
+  - 127.9 MHz is clean in all 25 used signal windows: Meteor, 2 m, AIS, NOAA WX, sondes, 70 cm, QO-100 NB IF, ADS-B, UAT, H1, Inmarsat-C, B1I, L1/E1/SBAS, G1, Iridium carrier, FY-2H/Elektro, HRPT, Metop/AWS, S-band, FM, VOR, DAB. Its SSC-proof window is 127.79-128.04 MHz. The register's '127.84-127.99' agrees within my wider signal-window model.
+  - 148.5 MHz has no harmonic in a used signal window. Its L5 hit (1188.0) is irrelevant because no receiver in the stack uses L5. It still fails on the fundamental next to the 2 m filter and on x3 inside the 70 cm filter, so 'bring-up only' stands.
+  - The register's 9:1 limit is consistent: WB9-1 is rated 0.125-125 MHz, so the LF time signals correctly rely on the active E-field whip.
+  - Flamingo+ FM (fetched): $24.95, more than 60 dB rejection, -3 dB at 75/120 MHz, 250 mA DC pass, +18 dBm maximum. It passes 137/145.8 MHz with about 0.5 dB loss.
+  - A purchasable 70 cm filter exists: Nooelec Ham Filter Bank Barebones, $66.95, 2 m 144-148 MHz and 70 cm 420-450 MHz (fetched). This partly answers register open question 18; loss is unpublished.
+  - LT3045 suits both the 13.2 V LNB and 12.5 V Boni rails: 20 V input, 500 mA, programmable current limit, typical 260 mV dropout (about 314 mV at 300 mA reported), output to 15 V.
+  - Using the injector at the SDR end both powers the SAWbird+ through its output port and blocks DC from the SDR; no extra DC block is needed on the RTL ports.
+  - LNB IF level: integrated noise of -22 to -38 dBm with a 15-20 dB pad stays below the V4L desense range without SNR loss, because LNB noise dominates.
+  - USB bandwidth: about 13.3 MB/s of RF streams on the FE1.1s, against 35-40 MB/s practical.
+  - Lime coexistence is already handled in the files: one RX LO (dual RX only within a band), 137/145 MHz kept on the RTL, 10-12 dB pads after the SAWbirds, the TX port terminated, and the software guard against TX sink blocks.
+  - Receive-only: no core chain contains a transmitter. RTL and HF+ are RX-only, the LNB has no TX, and signal sources are conducted-only with pad rules (tinySA -40 dBm or less, 30 dB or more above 800 MHz, GPSDO 80 dB plus a DC block). QUIET mode rfkills WLAN and Bluetooth in radio_lab, the Pinecil runs with BT off and the FNB58 is the Std variant.
+  - LTE B3 uplink (1710-1730 MHz) inside the SAWbird+ GOES passband is known and correctly handled: low gain, avoid crowds, optional 1695-1712 MHz post-filter.
+  - The V4L and both SAWbird+ parts are metal-cased; the V4L case is aluminium, which suits RF-bay placement on short shielded extensions.
+- **Notes:** Method. I read user_requirements.md and report_research.json in full: register decisions, compliance, corrections, conflicts, open questions and verdict. From the studies and audits I read the RF-relevant fields: radio_lab final (BOM, procedures P0-P21, USB/power plan), rf_frontend verify, lab_ui_hf HF receiver/antenna, small_antenna_stack revised stack and first tests, foldable kit and build steps, display_market settings and acceptance, and the mechanical RF notes. I also read the Q6A schematic text for clocks and PCIe0, and the existing final-checks.md. The power, interface and completeness lenses already cover the D36V50F12 near NAVTEX, the software bias-tee bypass, the missing 2 m filter and the RTL SP4T selectors. I reference them rather than repeat them, and I flag where the power lens's FM-filter placement contradicts RF practice.
+  
+  Models (all calculations, not measurements), in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfcx/:
+  - harm.py: harmonic hits against 18 core signal windows, extended to 25 (with broadcast and Lime bands) in a second run.
+  - win.py: clean pixel-clock windows, with and without 0.5% down-spread SSC.
+  - lf.py: LF comb planning.
+  - stage.py: Friis gain staging, LNB IF level and spur visibility.
+  Harmonic amplitudes are unknown. The scans only say where a line can fall; the narrow-RBW A/B decides whether it matters.
+  
+  Web: 4 WebSearch and 5 WebFetch calls (2 failed: an Analog Devices 503 and a Coilcraft 403). Verified this session: the Flamingo+ FM page; the Nooelec Ham Filter Bank page; LT3045 headline specs (Digi-Key highlight, ADI forum); Omron G6K-2F-RF RF specs and RS UK prices (about GBP 21-26 ex VAT, non-latching); Panasonic ARJ22A03 prices and lead times (about $114-332, NRND at one Mouser region).
+  
+  Unverified: CM-choke turn counts and impedances (design targets); G6K isolation at 162-260 MHz (extrapolated from 1 GHz); whether the RTL8111/RTL8125 25 MHz crystal keeps running with pcie0 disabled; DP/RA620 SSC behaviour; the Wisecoco DSI mode; whether the panel accepts 2200x1148 at 60 Hz or 51.7 Hz; the Ham Filter Bank's loss and selection method; currents of the LNA V2, SAWbird+ iO, Bullseye, Boni-Whip and HF+; the forced-PWM 12 V replacement part; and the USB 3 2.4 GHz noise level (well known, not re-fetched).
+  
+  Physics against wishes: no-loop HF stays limited by local noise, so the CM choke plus the remote feed is the closest compliant option. Patch and chip antennas cannot serve VHF. Typical QO-100 SSB and DATV still need dish-class gain. An antenna S11 sweep always radiates.
+
 ## completeness:lens2 (run `wf_6ce87eb1-883`)
 
 - **Lens:** MISSING PARTS: cables and adapters, RF switching and its drive, bias tees, DC blocks, pads, loads, filters, fuses, PTCs and TVS, connectors and DC jacks, power key, charger input, fasteners, thermal parts, fan, sun hood, strap and tripod mount, weather protection, bags, spares, tools, flashing media, and the home-base PC for QAIRT 2.42.
