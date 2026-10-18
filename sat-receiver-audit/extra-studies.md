@@ -13114,6 +13114,257 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   **Rule compliance.** No alternative boards; the spare is the same Q6A SKU. Everything here is software, firmware, packaging or accessory work, and receive-only on air.
 
+## community:software_stack (run `wf_9603e249-d87`)
+
+- **Subsystem:** software_stack
+- **Findings:**
+  1.
+    - **Claim in stack:** C11/5.4: fix the 'zerocopy typo' in the noble rtl-sdr rebuild
+    - **Finding:** Confirmed with binary evidence and a field report. The official noble arm64 librtlsdr.so.2.0.1 (librtlsdr2_2.0.1-2build1_arm64.deb from ports.ubuntu.com) contains the zero-copy code paths: the strings 'Allocating %d zero-copy buffers' and 'Detected Kernel usbfs mmap() bug, falling back to buffers in userspace' are both present. So the $DEB_ZEROCOPY_OPTION typo really does compile zero-copy in on arm64. Debian 2.0.1-2 was meant to close bug #1041701, and the typo means that fix never took effect. That bug was reported on an Odroid N2+ (arm64, Debian): with zero-copy, 'rtl_tcp outputs only zeros without any error', and the library's mmap-bug detector usually missed the fault. Building with zero-copy off made the tools 'consistently work'.
+    - **Verdict:** confirmed
+    - **Action:** Keep the $(DEB_ZEROCOPY_OPTION) fix. Add a CI check: strings librtlsdr.so.2 | grep -c 'zero-copy' must return 0 for the +lab arm64 build. Add a runtime self-test before every pass: capture 1 s from each RTL and fail if the sample variance is about 0 (all zeros), because this fault is silent. Never install Ubuntu's own arm64 librtlsdr2 (pin it at -1 by version).
+    - **Impact:** Without the fix, any consumer (SoapyRTLSDR, SDR++, SatDump, readsb, OWRX+) can record all-zero IQ on ARM with no error.
+    - **Sources:**
+      - https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1041701
+      - http://ports.ubuntu.com/pool/universe/r/rtl-sdr/librtlsdr2_2.0.1-2build1_arm64.deb
+      - https://git.launchpad.net/ubuntu/+source/rtl-sdr/plain/debian/rules?h=ubuntu/noble
+  2.
+    - **Claim in stack:** C11: bias-tee token gate in librtlsdr; 'EEPROM bias default off'
+    - **Finding:** The rtl-sdr-blog fork, which rtl-sdr.com's V4L guide tells users to build after purging librtlsdr, has two bias hacks that osmocom does not have. First, rtlsdr_set_offset_tuning(dev,on) calls rtlsdr_set_bias_tee(dev,on) (rtlsdrblog issue #70, 2025). Second, at open it reads the EEPROM IR-endpoint bit (buf[7]&0x02) and, when the bit is clear, forces the bias tee on and makes rtlsdr_set_bias_tee_gpio refuse to turn it off. Osmocom 2.0.1 plus the cherry-picks has neither hack (checked in source): its rtl_eeprom has no -b option, and offset tuning returns -2 on R820T/R828D/V4L. V4L detection is an exact strcmp on manufacturer 'RTLSDRBlog' and product 'Blog V4L'. rtl-sdr.com says 'do not change the EEPROM manufacturer or product strings'; if they change, HF upconversion and input switching are lost silently.
+    - **Verdict:** new_risk
+    - **Action:** Never install or vendor the rtl-sdr-blog fork. CI: every ELF whose NEEDED list includes librtlsdr must resolve to the +lab librtlsdr.so.2. Reject packages that bundle their own librtlsdr; the device self-test greps 'RTL-SDR Blog V4 Lite Detected' per dongle. Keep stage-1's narrowed gate (public entry points, GPIO 0 only). labd writes only the serial (rtl_eeprom -s), after taking a backup with rtl_eeprom -r. Also keep the EEPROM IR bit set, so the dongle cannot force bias on when it is used with blog drivers on another host.
+    - **Impact:** Stops a second, ungated route to 4.5 V on the coax, and silent loss of V4L HF.
+    - **Sources:**
+      - https://github.com/rtlsdrblog/rtl-sdr-blog/issues/70
+      - https://github.com/rtlsdrblog/rtl-sdr-blog/blob/master/src/librtlsdr.c
+      - https://www.rtl-sdr.com/v4l/
+      - https://github.com/osmocom/rtl-sdr/blob/v2.0.1/src/librtlsdr.c
+  3.
+    - **Claim in stack:** labd identifies SDRs and bias tokens by device serial; auto_rx, readsb and AIS-catcher use RTL devices
+    - **Finding:** Field report, radiosonde_auto_rx #1016 (closed Feb 2026): a host with 3 RTL-SDRs and an RTL-SDR Blog V4 dropped out with 'usb_claim_interface error -6'. The maintainer traced it to device-ID handling: 'things can get weird with how rtl_fm/rtl_power interpret the device id field'. A numeric device ID can be taken as an index rather than a serial. His advice was to use non-numeric serials.
+    - **Verdict:** new_risk
+    - **Action:** Give each RTL a non-numeric serial in which no serial is a prefix or suffix of another (e.g. LABRXA, LABRXB), and select devices only by serial in every engine config (auto_rx sdr_device_idx, readsb --device, AIS-catcher -d:serial, SoapyRTLSDR serial=).
+    - **Impact:** Prevents a lease from opening the wrong dongle, and prevents a bias token from matching the wrong device.
+    - **Sources:**
+      - https://github.com/projecthorus/radiosonde_auto_rx/issues/1016
+  4.
+    - **Claim in stack:** C13/C22 (stage-1 unverified): libgpiod 1.6.3 needs GPIO_CDEV_V1; pps-gpio must be out of tree; dvb_usb_rtl28xxu blacklist; slowrx via snd-aloop
+    - **Finding:** Checked in /boot/config-6.18.2-4-qcom, extracted from the official linux-image-6.18.2-4-qcom 6.18.2-4 deb (built 30 Mar 2026). Results: CONFIG_GPIO_CDEV=y and CONFIG_GPIO_CDEV_V1=y, so libgpiod 1.6.3 works. CONFIG_PPS=y with '# CONFIG_PPS_CLIENT_GPIO is not set', so the DKMS module is needed. CONFIG_SND_ALOOP=m, so snd-aloop is available for slowrx. CONFIG_DVB_USB_V2 is not set, so dvb_usb_rtl28xxu does not exist (the blacklist is harmless). CONFIG_QCOM_WDT=m and ARM_SMC_WATCHDOG=y. CONFIG_PREEMPT_DYNAMIC=y with PREEMPT_VOLUNTARY as the default, so preempt=full works. AppArmor: CONFIG_SECURITY_APPARMOR=y, but CONFIG_LSM="landlock,lockdown,yama,integrity,bpf" and DEFAULT_SECURITY_DAC=y, so AppArmor is inactive unless the cmdline adds lsm=.
+    - **Verdict:** confirmed
+    - **Action:** Close the stage-1 unverified item: keep libgpiod 1.6.3 and the pps-gpio DKMS module. Do not count on Ubuntu's AppArmor profiles (gpsd, chrony) for confinement; systemd sandboxing (DevicePolicy, ReadOnlyPaths, IPAddressDeny) is the effective layer. Self-test: aa-status reports the state; if AppArmor is ever enabled, allow /dev/ttyHS1 in the gpsd profile. Use qcom-wdt for the boot watchdog (see the boot-chain finding).
+    - **Impact:** Removes an open W1-2 risk and corrects the security model.
+    - **Sources:**
+      - linux-image-6.18.2-4-qcom_6.18.2-4_arm64.deb (local copy /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/swstack/img618.deb, config extracted to /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/comm_sw/k618/boot/config-6.18.2-4-qcom)
+  5.
+    - **Claim in stack:** 5.4 update/rollback: A/B root, 'systemd-boot with boot counting and a rescue entry'
+    - **Finding:** Radxa OS does not run systemd-boot on the Q6A. RadxaOS-SDK installs 'systemd-boot sdboot-is-embloader' for every EDK2 SoC (qcs6490 firmware_type=edk2) and runs bootctl install --no-variables --entry-token=literal:RadxaOS. sdboot-is-embloader 0.7 'diverts the systemd-boot EFI binaries to use embloader'. embloader (BigfootACA, last commit 2026-08-20) parses BLS Type #1 entries, including the devicetree and devicetree-overlay keys. It honors LoaderEntryOneShot and LoaderEntryDefault, but has no boot counting: there is no '+N-M' filename counter and no LoaderBootCountPath. Community reports: (a) Radxa staff reproduced that a UKI (systemd-stub) silently reboots on BIOS 260120 (GekkoNZ, Jun 2026), while 'systemd-boot (works)' and grub work. The firmware fix is only in 260916, which is not compatible with Radxa OS 24. (b) apt full-upgrade bumped embloader 0.6 -> 0.7 together with the 7.0.11 kernel meta (forum 31304, Aug 2026). (c) After an rupdate, one board stopped autobooting and waits at the boot menu for Enter (forum 30925, May 2026, unresolved). Linux-side EFI variables use qcom uefisecapp: radxa,dragon-q6a is in the QSEECOM allowlist of radxa linux-6.18.2, but persistence is unproven (forum users found efibootmgr had no effect). Design gaps not covered by those reports: one literal entry token plus the same held kernel in both slots means kernel-install in slot B overwrites slot A's entry. The image uses root=UUID, which becomes ambiguous if slot B is a dd copy.
+    - **Verdict:** corrected
+    - **Action:** Choose one of two routes in W1-2. (A) Purge sdboot-is-embloader, run bootctl update to the real systemd-boot 255 binaries, and write BLS Type #1 entries (never a UKI) with explicit devicetree and devicetree-overlay lines (lab-q6a.dtbo) plus '+3' counters; systemd-bless-boot then blesses the slot. (B) Keep embloader and do trial boots through LoaderEntryOneShot, with a qcom-wdt RuntimeWatchdogSec reset, and bless with bootctl set-default. On both routes: give each slot its own /etc/kernel/entry-token (labA, labB), boot with root=PARTUUID, give slot B a fresh filesystem UUID, keep the loader.conf timeout finite and non-interactive, and hold embloader, sdboot-is-embloader, systemd-boot and systemd-boot-efi. Acceptance: forced bad boot -> automatic return to the old slot with no keyboard, 10 times.
+    - **Impact:** As written, the rollback net does not exist on the shipped boot chain, and a loader update can leave the handheld waiting at a menu.
+    - **Sources:**
+      - https://github.com/RadxaOS-SDK/rsdk/blob/main/src/share/rsdk/build/mod/packages/categories/core.libjsonnet
+      - https://github.com/RadxaOS-SDK/rsdk/blob/main/src/share/rsdk/configs/socs.json
+      - https://radxa-repo.github.io/noble/dists/noble/main/binary-arm64/Packages
+      - https://github.com/BigfootACA/embloader
+      - https://forum.radxa.com/t/uki-boot-on-20250120-firmware/30896
+      - https://forum.radxa.com/t/linux-7-0-hdmi-not-working/31304
+      - https://forum.radxa.com/t/q6a-no-longer-autoboots-into-radxaos/30925
+      - https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/drivers/firmware/qcom/qcom_scm.c
+  6.
+    - **Claim in stack:** #24/#35: hold list plus a -1 list; the aptly mirror is the only source; Mesa 25.2.8 held; golden NPU set (QAIRT 2.42, CDSP c4-00004)
+    - **Finding:** RadxaOS-SDK adds Launchpad PPAs to every qcs6490 image: ppa:ubuntu-qcom-iot/qcom-ppa since commit 42b9c78 (22 Aug 2025), so the r2 image includes it, and ppa:kisak/turtle since b17a31b (15 Sep 2026, 'use Mesa >= 26.1'); ppa:mozillateam/ppa is added too. As of today, the qcom-ppa noble arm64 index carries qairt-dsp-binaries, qairt-libs and libqnn1 2.49.0, linux-firmware-dragonwing 20260825 (Replaces/Breaks firmware-qcm6490-msl and firmware-qcom-hlosfw), qcom-adreno* 1.855.3 and dragonwing-defaults. kisak/turtle carries Mesa 26.1.8~kisak1~n. apt-mark hold does not stop new package names from these PPAs from being installed. Radxa staff also tell users not to run 'apt upgrade' on the Q6A (forum, Feb 2026).
+    - **Verdict:** new_risk
+    - **Action:** On first boot, delete every PPA list (qcom-ppa, kisak-turtle, mozillateam) and the radxa lists after mirroring. Pin 'release o=LP-PPA-ubuntu-qcom-iot-qcom-ppa' and 'o=LP-PPA-kisak-turtle' at -1. Add linux-firmware-dragonwing, qairt-*, libqnn*, qcom-adreno*, dragonwing-defaults and mesa >= 26 to the -1 list. The update bundle refuses any package whose origin is not the aptly repo.
+    - **Impact:** Protects the golden NPU set and the Mesa/Turnip hold from silent replacement.
+    - **Sources:**
+      - https://github.com/RadxaOS-SDK/rsdk/commit/42b9c782b1117c20585b65f6155336dd6d513ad9
+      - https://github.com/RadxaOS-SDK/rsdk/commit/b17a31b39266446d7ec7ea91c654e244b6df5609
+      - https://ppa.launchpadcontent.net/ubuntu-qcom-iot/qcom-ppa/ubuntu/dists/noble/main/binary-arm64/Packages.gz
+      - https://ppa.launchpadcontent.net/kisak/turtle/ubuntu/dists/noble/main/binary-arm64/Packages.gz
+      - https://forum.radxa.com/t/new-kernel-breaks-npu/30241
+  7.
+    - **Claim in stack:** #30/5.4: SatDump master (2.0.0-alpha) from source, pinned; decodes Meteor LRPT from baseband; uses OMM
+    - **Finding:** Issue-tracker checks against master 1aedd60 (still master HEAD; dev is 96bb626, 2026-10-08): (1) #1195, the Meteor LRPT 80k decoder hang, is fixed in 1aedd60, since module_meteor_lrpt_decoder.cpp has 'return should_run();'. (2) #1212 (open, RTL-SDR V4, Ubuntu/Win/Android, v1.2.x and 2.0): LRPT decodes succeed or fail with tiny pll_bw changes. A collaborator attributes this to 'the start of data and counters'; the workaround is to trim the first CADU frames (dd skip=4). (3) #1207 (open): Rotctl fails when LC_NUMERIC uses a comma (Ubuntu 24.04.4, 2.0.0-alpha); LC_NUMERIC=C fixes it. (4) #1224 (open): the CLI crashes at startup because the Kepler auto-update fires with last_run=0 at the same time as init_core. The default config also fetches OMM from http://orbicentral.net (plain HTTP) once a day at launch. (5) #1221: master reads 6-digit NORAD IDs from 17-column OMM CSV; SupGP 19-column CSV is rejected whole, and Alpha-5 TLEs are unsupported. (6) #864: on a Pi 4, 'make -j nproc' froze at 45%; '-j3' helped.
+    - **Verdict:** corrected
+    - **Action:** Keep the 1aedd60 pin. Ship satdump_cfg with kepler_update_interval 'Never' and feed labd's local CelesTrak GP OMM (17-column CSV or JSON, never SupGP). Set Environment=LC_NUMERIC=C in every SatDump unit. In labd: if an LRPT decode yields no product, retry once on the CADU with the first frames trimmed, and log both runs. On the builder, use -j4 with swap or zram.
+    - **Impact:** Avoids a startup crash path, an unsigned network fetch, and lost Meteor passes.
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/issues/1195
+      - https://github.com/SatDump/SatDump/issues/1212
+      - https://github.com/SatDump/SatDump/issues/1207
+      - https://github.com/SatDump/SatDump/issues/1224
+      - https://github.com/SatDump/SatDump/issues/1221
+      - https://github.com/SatDump/SatDump/issues/864
+      - https://github.com/SatDump/SatDump/blob/master/satdump_cfg.json
+  8.
+    - **Claim in stack:** #31/#29: keep the SDR++ RIGCTL_SERVER for Gpredict Doppler
+    - **Finding:** The maintainer confirmed in SDR++ #1061 (Jul 2024; issue still open) that the rigctl server is single-client only. Clients that open a new TCP connection per command exhaust ports, and the server then fails with 'Could not start rigctl server: std::exception' until SDR++ restarts. Gpredict up to v2.6 also deadlocks its radio-control worker when the rigctld endpoint drops or restarts (#425): GTK calls from the worker thread and stale-socket reuse. That is fixed only on master (21e95dc, 11 Oct 2026).
+    - **Verdict:** new_risk
+    - **Action:** Make Gpredict the only rigctl client, on one persistent connection; labd must never poll the SDR++ rigctl port. Start or stop Gpredict radio control only through labd when SDR++ leases change. Build Gpredict from a commit that contains 21e95dc (see the Gpredict finding).
+    - **Impact:** Doppler control would otherwise hang after the first lease change.
+    - **Sources:**
+      - https://github.com/AlexandreRouma/SDRPlusPlus/issues/1061
+      - https://github.com/csete/gpredict/issues/425
+  9.
+    - **Claim in stack:** #29 (stage-1 new_option): build Gpredict 2.6 as +lab
+    - **Finding:** v2.6 (a1a1fec, 16 Aug 2026) misses the fixes that landed on master 7-11 Oct 2026, up to 1d80049: the radio-control deadlock (21e95dc), reading the full mean-motion field from TLE line 2 (dd2edc0, #426), rejecting TLE epochs that contain letters (f05abf3, #427), and rotator read fields that never updated (f1739fc). Still open as of 18 Oct 2026: #435, a one-byte stack overflow in rotctld_socket_rw() (recv(sock,buffout,sizeout,0) then buffout[size]=0 at gtk-rot-ctrl.c:180, with an arm64 stack-protector abort), and #434, a heap out-of-bounds read/write in the transponder update when the loaded JSON lacks a NUL.
+    - **Verdict:** corrected
+    - **Action:** Build Gpredict at master 1d80049 (not the v2.6 tag) plus a local patch: recv(..., sizeout-1, 0), a negative-return check, and full buffer treated as an error. Disable network transponder and TLE updates in Gpredict; labd supplies files from the alias bridge. Leave the rotator controller unused.
+    - **Impact:** Removes a known arm64 crash and the Doppler deadlock.
+    - **Sources:**
+      - https://github.com/csete/gpredict/issues/435
+      - https://github.com/csete/gpredict/issues/434
+      - https://github.com/csete/gpredict/commits/master
+  10.
+    - **Claim in stack:** Decoder allow-list: gr-satellites 5.5.0 from noble (stage-1: rebuild 5.9.0)
+    - **Finding:** Security reports (#803, and #820 of 26 May 2026, CVSS 8.4 per the reporter) cover a path traversal in FileReceiver subclasses such as qo100_multimedia. A filename transmitted over the air is joined into the output path unsanitized, so a crafted frame can write any file (or a .pth for code execution). The range is 4.7.0 to 5.9.0 inclusive, which includes noble's 5.5.0 and the 5.9.0 release that stage-1 proposed. The fix is only on main: 10d27cb (Mar 2026) plus 1bcf1d8 (29 May 2026; the first fix was broken). Other post-5.9.0 hardening: length checks in packet cropping (c526924), a re-entrant Viterbi (833e259), a Viterbi error-path free (45b146f) and a BCH uint8 overflow (882e503). No release exists after v5.9.0. Separately, 5.5.0 and 5.9.0 write a default config with submit_tlm = yes (telemetry with station lat/lon goes to SatNOGS DB). The 'disable if no callsign/location' check was broken until fb887cf (16 Jun 2026).
+    - **Verdict:** new_risk
+    - **Action:** Build gr-satellites from main pinned at 4210dc4 (22 Sep 2026) as +lab against noble GNU Radio 3.10.9.2, not apt 5.5.0 and not v5.9.0. Ship config.ini with submit_tlm = no and set GR_SATELLITES_SUBMIT_TLM=0. Run decoder units with PrivateNetwork=yes or IPAddressDeny=any, ReadWritePaths limited to the products directory, and NoNewPrivileges. Add a CI test that a crafted '../' filename frame cannot write outside that directory.
+    - **Impact:** Closes an over-the-air file-write path and a hidden location upload.
+    - **Sources:**
+      - https://github.com/daniestevez/gr-satellites/issues/820
+      - https://github.com/daniestevez/gr-satellites/commit/10d27cb44c9ab268e739d9dbc0712ef544a4dadd
+      - https://github.com/daniestevez/gr-satellites/commit/1bcf1d8bccac463550c70091d76a24b09178b1c3
+      - https://github.com/daniestevez/gr-satellites/commit/fb887cf70777af29655f923393b740668d28e964
+  11.
+    - **Claim in stack:** #31 (stage-1 new_option): build libairspyhf from a pinned master commit (1.8.1) as 'libairspyhf0 +lab'
+    - **Finding:** Upstream master sets SOVERSION 0 (libairspyhf.so.0), but noble's libairspyhf1 ships libairspyhf.so.1, because Debian carries a bump-soversion patch. SDR++ #1805 (Aug 2026) shows the failure: after a source install of 1.8.1, the aarch64 deb plugin failed with 'libairspyhf.so.1: cannot open shared object file', and a symlink did not help. Airspy declined to tag releases (#62, 7 Jan 2026: 'No'). Debian airspyhf 1.6.8-5 (sid/forky, 20 Sep 2025) is upstream 1.6.8-59-g87cf12a ('would be 1.8.1 if upstream released'). It includes the use-after-free fix and the 4k-sample buffers and keeps libairspyhf1 / SONAME .so.1.
+    - **Verdict:** corrected
+    - **Action:** Backport Debian airspyhf 1.6.8-5 to noble as libairspyhf1 1.6.8-5~lab1 (SONAME .so.1). Build SoapyAirspyHF 0.2.1 and SDR++/SDRangel against it. Do not package libairspyhf0. Keep ppm correction in labrx.
+    - **Impact:** Gets the 2025 HF+ fixes without breaking any .so.1 consumer.
+    - **Sources:**
+      - https://github.com/AlexandreRouma/SDRPlusPlus/issues/1805
+      - https://github.com/airspy/airspyhf/issues/62
+      - https://sources.debian.org/src/airspyhf/1.6.8-5/debian/
+      - https://packages.ubuntu.com/noble/arm64/libairspyhf1/filelist
+      - https://github.com/airspy/airspyhf/blob/master/libairspyhf/src/CMakeLists.txt
+  12.
+    - **Claim in stack:** 5.4: sdrangelsrv for NAVTEX/RTTY/WEFAX/Radio Clock as an exclusive lease
+    - **Finding:** SDRangel #2268 (RK3588, aarch64, Ubuntu 22.04): FFTW plan creation without a wisdom file took about 5 minutes in total, 20.1 s at n=128 up to 121.5 s at n=1024. The maintainers say that on such SBCs 'it is mandatory to use a FFT Wisdom file'. #2388 (Ubuntu 24.04 aarch64, source build): an older wisdom file could not be imported after a rebuild, and a new one had to be generated. sdrangel and sdrangelsrv accept -w/--fftwf-wisdom <file> (mainparser.cpp), and the log prints 'no FFTW wisdom file' or 'successfully imported'. Separately, #1111 (2020-22, Intel xHCI) saw Airspy HF+ stop/start failures in SDRangel ('EP not empty, refuse reset'); it was unresolved and closed as stale.
+    - **Verdict:** new_risk
+    - **Action:** At build-out and after any libfftw3 update, generate single-precision wisdom on the Q6A with fftwf-wisdom (libfftw3-bin) for the sizes used. Pass -w /var/lib/lab/fftw/sdrangel.wisdom in the sdrangelsrv and Expert-GUI units. The self-test requires 'successfully imported'. Keep the USB recovery ladder for the HF+ lease hand-off.
+    - **Impact:** Without wisdom, a lease hand-off can stall for minutes and miss a NAVTEX or WEFAX slot.
+    - **Sources:**
+      - https://github.com/f4exb/sdrangel/issues/2268
+      - https://github.com/f4exb/sdrangel/issues/2388
+      - https://github.com/f4exb/sdrangel/issues/1111
+      - https://github.com/f4exb/sdrangel/blob/v7.27.2/sdrbase/mainparser.cpp
+  13.
+    - **Claim in stack:** #7/5.4: gpsd 3.25 on UART6 (/dev/gnss0); chrony 'refclock PPS /dev/pps0 lock NMEA'
+    - **Finding:** This supports stage-1's correction. The chrony 4.5 docs pair 'refclock PPS /dev/pps0 lock NMEA' with an NMEA source given 'offset 0.5 delay 0.2 refid NMEA noselect'. The gpsd Time Service HOWTO shows a measured SHM 0 (NMEA) offset of +495 ms with 8.9 ms std dev, against PPS at 202 ns std dev. gpsd must run as root so that SHM 0/1 are created (mode 0600). Q6A community: UART6 (pins 16/18) appears as /dev/ttyHS1, not ttySx (forum 30455). One user found an error in Radxa's qcs6490-radxa-dragon-q6a-uart6.dtbo and patched it locally; the fix was never published (forum 30063, Jan 2026). As of Aug 2026, rsetup shows pin-state errors for UART 6/7/14. gpsd 3.27.5 broke the SHM layout on armhf (#403, 80 vs 96 bytes), whereas 3.25 worked.
+    - **Verdict:** confirmed
+    - **Action:** Use 'refclock SHM 0 refid NMEA offset <measured> delay 0.2 noselect' plus 'refclock PPS /dev/pps0 lock NMEA refid PPS prefer'. Measure the LC76G NMEA offset at 115200 in W1-2. Make the udev rule create /dev/lab/gnss from the ttyHS device of the UART6 DT node path. Enable UART6/UART7 in lab-q6a.dtso itself rather than through Radxa's uart6 dtbo. Do not move gpsd past 3.25 without an SHM test against chrony.
+    - **Impact:** Time and location service start reliably, without relying on a known-buggy overlay.
+    - **Sources:**
+      - https://chrony-project.org/doc/4.5/chrony.conf.html
+      - https://gpsd.gitlab.io/gpsd/gpsd-time-service-howto.html
+      - https://forum.radxa.com/t/using-serial-ports-on-dragon-q6/30455
+      - https://forum.radxa.com/t/using-uart-in-native-mode-solved/30063
+      - https://gitlab.com/gpsd/gpsd/-/issues/403
+  14.
+    - **Claim in stack:** OpenWebRX+ 1.2.126 with pins; no digital voice modes
+    - **Finding:** luarvique's PPA page calls the Noble build 'experimental' and points support to Telegram only (t.me/openwebrx); the GitHub repo has no public issues, so no Noble/arm64 field reports could be found. The page also says the Pi image adds digital voice (DMR, NXDN and others) by running 'sudo install-softmbe.sh', which builds mbelib. The noble repo carries codecserver, codecserver-driver-ambe3k, digiham and python3-digiham.
+    - **Verdict:** new_risk
+    - **Action:** Add to the CI and device audit: no libmbe*, no codecserver softmbe driver, no install-softmbe.sh. Pin codecserver-driver-* and digiham at -1 (already in stage-1). Because no community reports exist, treat OWRX+ on noble arm64 as unvalidated and give it its own soak test in W1-2.
+    - **Impact:** Closes a one-command route to digital-voice decoding.
+    - **Sources:**
+      - https://luarvique.github.io/ppa/
+      - https://luarvique.github.io/ppa/noble/Packages
+  15.
+    - **Claim in stack:** Stage-1 upstream status claims (SoapySDR 0.9.0, SoapyRTLSDR 0.3.4, SoapyAirspyHF 0.2.1, rtl-sdr v2.0.3, LimeSuiteNG branches, SatDump master)
+    - **Finding:** Re-checked with git ls-remote today. Tags soapy-sdr-0.9.0, soapy-rtlsdr-0.3.4, soapy-airspyhf-0.2.1 and osmocom v2.0.3 exist. LimeSuiteNG limesdr-micro-staging is 37cb183 and limesdr-micro is 80ffad5; the only tag is v25.1.0. SatDump master is still 1aedd60; Gpredict master is 1d80049. No public report was found of SatDump, SDR++, SDRangel, OpenWebRX+ or an RTL-SDR/HF+ running on a Dragon Q6A or QCS6490: Radxa forum searches for 'rtl-sdr', 'sdr', 'airspy' and 'satdump' returned nothing relevant. One USB data point (forum 31352): only two isochronous UVC cameras fit per Q6A USB 2.0 bus. That does not apply to the bulk-transfer RTL and HF+, but it argues against isochronous USB audio or cameras on the SDR buses.
+    - **Verdict:** unverified
+    - **Action:** Treat every engine as unvalidated on the Q6A until the W1-2 soak (2x V4L + HF+ for 8 h, all engines leased in turn). Keep isochronous devices off the SDR hub.
+    - **Impact:** Sets expectations; there is no community proof for this platform.
+    - **Sources:**
+      - https://github.com/pothosware/SoapySDR/tags
+      - https://github.com/osmocom/rtl-sdr/tags
+      - https://github.com/myriadrf/LimeSuiteNG/branches
+      - https://forum.radxa.com/t/dragon-q6a-four-usb-uvc-cameras-fail-due-to-excessive-bandwidth-reservation/31352
+- **Current status oct 2026:** Status as of 18 Oct 2026, from issue trackers, forums, package indexes and git.
+  
+  Boot chain:
+  - On EDK2 boards, Radxa OS ships embloader 0.7 in place of systemd-boot. It reads BLS entries but has no boot counting.
+  - A UKI fails on BIOS 260120 (Radxa reproduced it); the fix is only in BIOS 260916.
+  - Since Aug 2025 Radxa images add ppa:ubuntu-qcom-iot/qcom-ppa, which now carries QAIRT 2.49 and linux-firmware-dragonwing 20260825. Since 15 Sep 2026 they also add kisak/turtle, which carries Mesa 26.1.8.
+  - The 6.18.2-4 kernel config has GPIO_CDEV_V1=y, PPS=y, PPS_CLIENT_GPIO off, SND_ALOOP=m and no DVB_USB_V2. AppArmor is not in CONFIG_LSM.
+  
+  rtl-sdr:
+  - The noble arm64 librtlsdr2 binary really is built with zero-copy (the Debian rules typo). The field symptom is silent all-zero IQ (Debian #1041701).
+  - The rtl-sdr-blog fork has offset-tuning and EEPROM force-bias hacks that osmocom does not have.
+  
+  SatDump (master 1aedd60, dev 96bb626 of 8 Oct):
+  - The LRPT 80k hang is fixed.
+  - Open: the LRPT start-of-data bug (#1212), the comma-locale rotctl bug (#1207) and the Kepler auto-update startup race (#1224). Auto-update fetches orbicentral.net over plain HTTP.
+  
+  SDR++ and Gpredict:
+  - The SDR++ rigctl server is single-client.
+  - Gpredict master 1d80049 (11 Oct) fixes a radio-control deadlock that v2.6 still has.
+  - Gpredict #435 (arm64 rotctld one-byte overflow) and #434 (transponder heap out-of-bounds) are open.
+  
+  gr-satellites:
+  - 4.7.0-5.9.0 have an over-the-air FileReceiver path traversal; the fix is on main only (1bcf1d8 of 29 May, pin 4210dc4 of 22 Sep).
+  - Default submit_tlm=yes until Jun 2026; no release after 5.9.0.
+  
+  libairspyhf:
+  - Upstream has no tags (maintainer refuses).
+  - Upstream master is SONAME .so.0, Debian/Ubuntu ship .so.1. Debian 1.6.8-5 is effectively 1.8.1 with .so.1.
+  
+  SDRangel:
+  - An FFTW wisdom file is mandatory on ARM SBCs (about 5 min plan time without it on RK3588); sdrangelsrv takes -w.
+  
+  OpenWebRX+:
+  - Noble is still 'experimental'; support is via Telegram only.
+  
+  Other tags:
+  - SoapySDR 0.9.0, SoapyRTLSDR 0.3.4, SoapyAirspyHF 0.2.1 and rtl-sdr v2.0.3 exist.
+  - LimeSuiteNG staging is 37cb183 (no new release).
+  
+  No public report shows any of these SDR apps running on a Q6A/QCS6490. All of this is free software; there are no prices.
+- **Notes:** Method and limits:
+  - The shared WebSearch budget was already used up when I made my first query, so I made no web-search-engine queries. Everything else came from primary sources:
+    - WebFetch of GitHub issue pages and in-repo issue filters (SatDump, SDR++, SDRangel, gr-satellites, Gpredict, airspyhf, rtl-sdr-blog, auto_rx, AIS-catcher);
+    - the Radxa Discourse JSON API (site search plus topic JSON);
+    - the gpsd GitLab issues API and bugs.debian.org;
+    - the sources.debian.org API;
+    - the Launchpad PPA indexes;
+    - read-only git clones of embloader, RadxaOS-SDK rsdk, gr-satellites, gpredict and SatDump.
+  - The kernel config was extracted from the official linux-image-6.18.2-4-qcom deb that was already in the scratchpad.
+  - If more community searching is wanted (Reddit, groups.io, Telegram), it needs a follow-up turn with a fresh search budget.
+  
+  What I checked directly:
+  - The noble arm64 librtlsdr2 deb was downloaded and inspected with strings: the zero-copy code is present.
+  - The osmocom and rtl-sdr-blog sources were compared for the bias hacks.
+  
+  Not verified:
+  - Whether EFI variable writes persist on the Q6A (uefisecapp is allowlisted, but the forum's efibootmgr attempts failed).
+  - Whether the r2 image actually contains kisak/turtle; it was added to rsdk after r2. qcom-ppa has been in rsdk since Aug 2025, so the r2 image is assumed to include it.
+  - What linux-firmware-dragonwing would overwrite relative to radxa-firmware-qcs6490.
+  - The LC76G NMEA offset.
+  - Performance or stability of any engine on the Q6A.
+  
+  Highest-impact items:
+  1. The rollback design assumes systemd-boot boot counting, but the shipped loader is embloader without it. The entry-token and root=UUID collisions across the A/B slots must also be fixed.
+  2. gr-satellites must be built from main 4210dc4, with telemetry submission forced off and decoders sandboxed.
+  3. Remove or -1 the Radxa-added PPAs, and hold embloader.
+  4. Zero-copy off plus an all-zeros self-test.
+  5. The libairspyhf SONAME must stay .so.1 (backport Debian 1.6.8-5).
+  6. Gpredict at master plus the #435 patch; Gpredict as the sole SDR++ rigctl client.
+  7. SatDump: auto-update off, LC_NUMERIC=C, LRPT retry.
+  8. SDRangel: FFTW wisdom.
+  9. Non-numeric RTL serials; never install the rtl-sdr-blog fork.
+  
+  Working files (scratch, not deliverables), all under /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/comm_sw:
+  - k618/boot/config-6.18.2-4-qcom
+  - noble_arm64/
+  - embloader/
+  - rsdk/ and rsdk_full/
+  - grsat/
+  - gpredict/
+  - satdump/
+  - the PPA indexes ubuntu-qcom-iot_qcom-ppa.gz and kisak_turtle.gz
+  - the forum topic JSON files t*.json
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
@@ -16076,6 +16327,414 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - P50B chart images: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pw_dl/p50b/img/
   - Radxa forum JSON: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pw_dl/radxa_forum/
   - Pololu forum JSON: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pw_dl/pololu_forum/
+
+## community:gnss_imu_location (run `wf_d9388111-e66`)
+
+- **Subsystem:** gnss_imu_location: GNSS LC76G with MS621FE backup cell, PPS on the held 6.18.2 kernel (DKMS pps-gpio, GPIO96), BNO085 IMU pack (RP2040-Zero, framed UART to Pico), Q6A RTC (M41T11-compatible, CR2032), location service with plausibility/spoofing gate and city-table-free fallbacks, WMM2025 declination, pointing aid. Stage 2: community experience checked against stage-1 findings.
+- **Findings:**
+  1.
+    - **Claim in stack:** Stage-1 'current status': newest LC76G AB firmware is LC76GABNR12A04S (2025-05-08); protocol spec v1.4 is the newest public one; 'flashing the wrong variant bricked one user's module'
+    - **Finding:** Community threads correct all three points.
+  - **Firmware.** In Quectel thread 57735 (May-Jun 2026), A04S is the *user's* current firmware. Quectel then emailed that user 'the latest FW version', so a newer AB build probably exists. Its version string is not public.
+  - **Docs.** Quectel's LC76G product page now lists Protocol Specification V1.5, an 'EASY & EPOC Difference Introduction' V1.0, Firmware Upgrade Guide V1.2 and QGNSS V2.5. They sit behind a free Quectel login.
+  - **Flashing.** Thread 58652 (Jul 2026) is not a brick. The upgrade failed because of reset timing: with QGNSS V2.4 and a .cfg file, the module must be reset within 20 s of the handshake. The user wrote 'it's working now'.
+  - v1.4 documents $PAIR753 only for LC26G-T (modes 0/2/3/4). Quectel staff still told an LC76G user to send $PAIR753,1, and the module accepted it.
+    - **Verdict:** corrected
+    - **Action:** - Register a Quectel account and archive Protocol Spec V1.5 and the EASY/EPOC note in build/docs.
+  - Replace 'no newer firmware' with 'newer than A04S available on request by email'.
+  - Remove the 'bricked' claim.
+  - Keep the no-field-update policy (QGNSS is Windows-only) and log $PQTMVERNO*58 at bring-up.
+    - **Impact:** Documentation accuracy; the EPOC commands are only documented in the login-gated note.
+    - **Sources:**
+      - https://forums.quectel.com/t/latest-firmware-for-gnss-modules-lc79h-al-lc79h-el-and-lc76g-series/57735
+      - https://forums.quectel.com/t/unable-to-flash-new-firmware-in-lc76g-ab-gnss-module-via-qgnss/58652
+      - https://www.quectel.com/product/gnss-lc76g/
+      - https://forums.quectel.com/uploads/short-url/rUEismNTHFHWMMyJR1WxrcTaRB7.pdf
+  2.
+    - **Claim in stack:** #1093 'Quectel regional lock behaviour (unknown)'; stage-1 changed it to 'no functional region lock documented; only a shipping embargo'
+    - **Finding:** Quectel thread 57394 (11-12 May 2026): a truck-tracker user with sibling LC86G modules (firmware LC86GABNR12A02S, the same Airoha family and naming scheme as LC76G) said all units worked except in the Russia region. Quectel staff replied: 'Unfortunately the module will not be working in Russia.' This is a functional firmware restriction, not only shipping, and its mechanism is undocumented. No LC76G-specific report was found. EASA SIB 2022-02R4 lists the Baltic Sea, Black Sea, eastern Mediterranean and Arctic as active spoofing areas.
+  
+  Risk (model, untested): if the check is position-based, a spoof that places the fix inside Russia, or travel close to that border, could make the module stop delivering fixes.
+    - **Verdict:** corrected
+    - **Action:** - Reword #1093: 'Functional region restriction confirmed by Quectel for sibling LC86G (Russia); mechanism undocumented; assume LC76G behaves the same; also a Waveshare shipping embargo (Iran/Russia); altitude limit 10 km.'
+  - In the gate, label 'fix lost while C/N0 is normal and the jamming flag is clear' as a possible lockout or spoof, not as an antenna fault.
+  - Name the MAX-M10S as the receiver for trips toward the eastern EU border.
+    - **Impact:** Low for normal EU use. It reverses stage-1's 'no functional lock'.
+    - **Sources:**
+      - https://forums.quectel.com/t/lc86g-not-working-in-russia/57394
+      - https://ad.easa.europa.eu/ad/2022-02R4
+  3.
+    - **Claim in stack:** LC76G PPS feeds chrony; stage-1: keep EPOC ON; sub-100 ns PPS is ample
+    - **Finding:** The only public LC76G timing build is a Waveshare LC76G + Raspberry Pi 4 (aarch64) + chrony stratum-1 server (Quectel thread 57109 and GitHub agspoon/LC76G-Time-Server, Apr-May 2026).
+  - Normally under 100 ns RMS.
+  - Every ~3 h, for ~30 min, RMS offset rose to about 14 us, root dispersion to about 55 us, and chrony frequency swung by about +/-3-6 ppm (Grafana plot in the repo).
+  - The cause was the host OS. It disappeared under in-memory Alpine Linux, and the exact cause was never found.
+  - EPOC off ($PAIR496,0*2D + $PAIR513*3D + $PAIR002*38) cut mean RMS by ~35 %; $PAIR753,1 gave a further 5-8 %.
+  - Stationary mode chose a fixed position 'many meters' off.
+    - **Verdict:** confirmed
+    - **Action:** - Keep EPOC on. TTFF matters more on a handheld.
+  - Do not use stationary or position-hold modes on a moving device.
+  - New: lab-cal must measure SDR ppm directly against PPS or GNSS-SDR, not from chrony's 'frequency'. Host events can swing that value by several ppm for tens of minutes.
+  - Log 'chronyc tracking' during calibrations and reject runs whose RMS offset exceeds about 5 us.
+    - **Impact:** Protects ppm calibration from host-side timing noise.
+    - **Sources:**
+      - https://forums.quectel.com/t/significant-periodic-1pps-noise-with-lc76g-module/57109
+      - https://github.com/agspoon/LC76G-Time-Server
+  4.
+    - **Claim in stack:** $PAIR752,2,100: PPS only on a 3D fix
+    - **Finding:** Quectel thread 45880 (Apr 2025): with PPSType 1 ('after first fix'), an LC76G kept pulsing for 45 min after the antenna was disconnected and then stopped, because the error had accumulated. Quectel's alternative, 'PPS always output', free-runs the pulse from the module RTC. Spec v1.4 confirms types 0-4 (5-8 are LC26G-T only), pulse width 1-999 ms, example $PAIR752,2,100*39.
+  
+  PPSType 2 drops PPS as soon as the 3D fix is lost. That is right for chrony: no unsynchronised pulses ever reach the kernel.
+    - **Verdict:** confirmed
+    - **Action:** Keep PPSType 2. Never use 1 or 4 on this device. Provision it with the save command (stage-1: $PAIR513*3D).
+    - **Impact:** Holds.
+    - **Sources:**
+      - https://forums.quectel.com/t/gnss-lc76g-1-pss-configuration/45880
+      - https://forums.quectel.com/uploads/short-url/rUEismNTHFHWMMyJR1WxrcTaRB7.pdf
+  5.
+    - **Claim in stack:** #79 / C6: LC76G on UART6 (pins 16/18) via the Radxa uart6 overlay; TX needed for PAIR provisioning; W1-2 loopback test
+    - **Finding:** Community record for Q6A header UARTs, as of 18 Oct 2026:
+  - **30063 (Jan 2026):** a user found 'an error' in qcs6490-radxa-dragon-q6a-uart6.dtbo and got bidirectional /dev/ttyHS1, but never published the fix. Asked in Sept 2026, still unanswered.
+  - **31422 (6 Sep 2026):** Q6A receives UART data but its TX never arrives, while the same script works on Pi 4/5 and ROCK 5T. Unresolved.
+  - **30455 #3 and 30642:** rsetup shows every UART pin state as 'error'.
+  - **Overlay history:** radxa-overlays has changed the uart6 overlay only in metadata (exclusives Apr 2026, compatibles May 2026). Radxa disabled uart12 in Mar 2026 as 'cannot work normally'.
+  - **Kernel source (Radxa 6.18.2):** qcom_geni_serial_port_setup() returns -ENXIO with 'Invalid FW loaded, proto' if the serial engine already holds non-UART firmware. If the engine is unprogrammed, it loads UART firmware from 'firmware-name'. GSI DMA is forced off for UART, so the overlay's qcom,enable-gsi-dma does no harm.
+  - **UEFI:** Radxa staff say the per-SE mode is set in 'Radxa Platform Configuration -> GPIO -> QUPV3_xxx Mode' (thread 29642). A wrong SE6 mode is a plausible, unconfirmed cause of the reports above.
+    - **Verdict:** new_risk
+    - **Action:** In W1-2:
+  1. Check dmesg for 'Invalid FW loaded' or 'UART firmware load failed'.
+  2. Check the UEFI QUPV3 SE6 mode (set it to UART if listed).
+  3. Run the TX-to-RX loopback.
+  
+  TX-free fallback: provision the LC76G once through a USB-UART adapter (CP2102/CH340 on a PC or a Q6A USB2 port). Send PAIR752/391 and $PAIR513, then $PQTMVERNO. Saved settings survive in flash, so RX plus PPS is enough at runtime. Also wire the LC76G RST pin to a spare GPIO so the gate can reset the module without TX.
+    - **Impact:** Medium. Unproven UART TX on this board is the most common Q6A community complaint. The fallback removes TX from the runtime critical path.
+    - **Sources:**
+      - https://forum.radxa.com/t/using-uart-in-native-mode-solved/30063
+      - https://forum.radxa.com/t/uart-transmission/31422
+      - https://forum.radxa.com/t/using-serial-ports-on-dragon-q6/30455
+      - https://forum.radxa.com/t/30642
+      - https://forum.radxa.com/t/how-to-enable-spi-and-use-gpio/29642
+      - https://github.com/radxa-pkg/radxa-overlays
+      - https://github.com/radxa/kernel/tree/linux-6.18.2
+  6.
+    - **Claim in stack:** chrony: 'refclock PPS /dev/pps0 lock NMEA' (stage-1 fix: add 'refclock SHM 0 refid NMEA offset <measured> delay 0.2 noselect')
+    - **Finding:** Primary docs support stage-1's fix and refine it.
+  - **Pattern.** The chrony 4.5 chrony.conf(5) example is exactly 'refclock PPS /dev/pps0 lock NMEA refid GPS1' plus an NMEA source marked 'noselect'.
+  - **gpsd as root** writes coarse time to SHM 0 and PPS to SHM 1 (mode 0600). Its chrony socket is named from the *basename of the device path as given*. With DEVICES=/dev/gnss0 that is /run/chrony.gnss0.sock.
+  - **gpsd howto:** 'offset 0.9999' is a placeholder, 'not a number to be used in production'.
+  - **Latency evidence:** sibling LC29H (Quectel 47717) sends NMEA ~80 ms after PPS, jumping to 300-400 ms once every 30 min while it saves ephemeris to flash.
+  - **Lock window:** chrony 4.1+ accepts a pairing only within 40 % of the pulse interval (0.4 s). Model: with offset ~0.08-0.15 s both cases pair. With the man-page value of 0.5 s, the normal 80 ms samples miss by 0.42 s and are rejected.
+    - **Verdict:** corrected
+    - **Action:** Use:
+  - 'refclock SHM 0 refid NMEA offset <measured median, expect 0.08-0.15> delay 0.2 noselect'
+  - 'refclock PPS /dev/pps0 lock NMEA refid PPS prefer'
+  
+  Measure the offset in W1-2 ('chronyc sourcestats'). Prefer SHM over SOCK: it needs no socket-name or AppArmor rule for gnss0. Never use 0.5 or 0.9999.
+    - **Impact:** Without a correct offset, PPS lock fails intermittently.
+    - **Sources:**
+      - https://chrony-project.org/doc/4.5/chrony.conf.html
+      - https://gitlab.com/gpsd/gpsd/-/blob/master/www/gpsd-time-service-howto.adoc
+      - https://gitlab.com/gpsd/gpsd/-/blob/master/gpsd/timehint.c
+      - https://forums.quectel.com/t/47717
+  7.
+    - **Claim in stack:** Stage-1: gpsd AppArmor profile omits ttyHS (latent; AppArmor inactive on the Radxa kernel)
+    - **Finding:** Confirmed and extended.
+  - **Radxa kernel:** linux-6.18.2 qcom_module.config has SECURITY_APPARMOR=y, but CONFIG_LSM='landlock,lockdown,yama,integrity,bpf' and DEFAULT_SECURITY_DAC. The live bootargs posted in forum 30063 contain no apparmor=1.
+  - **gpsd profile (noble):** allows /dev/tty{,S,USB,AMA,ACM}N, /dev/pps* and only /run/chrony.tty{,S,USB,AMA}N.sock. ttyHS1 is denied, and so is chrony.gnss0.sock.
+  - **chrony profile:** usr.sbin.chronyd from 4.5-1ubuntu4.2 allows /dev/pps*, /dev/rtc* and /run/chrony.*.sock. For gpsd SHM it says to add 'capability ipc_owner,' to local/usr.sbin.chronyd (LP #722815).
+    - **Verdict:** confirmed
+    - **Action:** In W1-2, run 'cat /sys/kernel/security/lsm'. If apparmor is listed, ship two local rules:
+  - local/usr.sbin.gpsd: '/dev/ttyHS[0-9]* rw,'
+  - local/usr.sbin.chronyd: 'capability ipc_owner,'
+  
+  Otherwise none are needed.
+    - **Impact:** Latent; matters only if a future image enables AppArmor.
+    - **Sources:**
+      - https://ports.ubuntu.com/ubuntu-ports/pool/main/c/chrony/chrony_4.5-1ubuntu4.2_arm64.deb
+      - https://ports.ubuntu.com/ubuntu-ports/pool/main/g/gpsd/gpsd_3.25-3ubuntu3.2_arm64.deb
+      - https://bugs.launchpad.net/bugs/722815
+      - https://github.com/radxa/kernel/tree/linux-6.18.2
+      - https://forum.radxa.com/t/using-uart-in-native-mode-solved/30063
+  8.
+    - **Claim in stack:** #7 gate: a fix is accepted only after plausibility checks; chrony 'maxchange 5 1 -1'
+    - **Finding:** Integration gap: chrony reads gpsd's SHM and /dev/pps0 directly, so the system clock takes GNSS time before the location service's gate has judged it. With 'maxchange 5 1 -1', once the clock is set from a spoofed source, later true time more than 5 s away is ignored until chronyd restarts (model reasoning from the directive semantics).
+  
+  chrony 4.4+ (noble ships 4.5) has 'chronyc selectopts <address|refid> [+|-option]', which works on refclocks by refid and takes effect at the next selection or on 'reselect'.
+    - **Verdict:** new_option
+    - **Action:** - Configure the PPS refclock with 'noselect' at boot.
+  - When the gate passes: 'chronyc selectopts PPS -noselect' followed by 'chronyc reselect'.
+  - On a spoof or jamming flag: '+noselect'.
+  - Grant labd or the location service chronyc access through the local command socket, not over the network.
+    - **Impact:** Medium. It makes the gate govern system time as the STACK intends.
+    - **Sources:**
+      - https://chrony-project.org/doc/4.5/chronyc.html
+      - https://chrony-project.org/doc/4.5/chrony.conf.html
+      - https://ports.ubuntu.com/ubuntu-ports/pool/main/c/chrony/chrony_4.5-1ubuntu4.2_arm64.deb
+  9.
+    - **Claim in stack:** Spoofing gate inputs: RTC, saved position, TLE window, jamming flag (stage-1 options: LF time-station cross-check, C/N0 uniformity, |B|/dip vs WMM)
+    - **Finding:** EASA SIB 2022-02R4 (22 Jul 2026, revises R3 of 5 Jul 2024):
+  - **Areas:** spoofing and jamming keep increasing, notably in the southern and eastern Mediterranean, Black Sea, Middle East, Baltic Sea and Arctic.
+  - **Effects:** misleading position that can persist *after leaving the affected area*; 'loss or misleading time and/or date'; ground systems that take timing from GNSS are also affected.
+  - **Advice:** 'Monitor the GNSS time versus non-GNSS time sources'.
+  
+  The LC76G spec v1.4 gives a recovery tool. $PAIR006*3C (cold start) erases stored time, position, almanac and ephemeris but keeps settings. $PAIR007*3D (full cold start) also restores factory settings, which would wipe PPS and jamming provisioning.
+    - **Verdict:** new_option
+    - **Action:** - Keep the stage-1 LF time-station cross-check (DCF77/MSF first in the EU) as the preferred non-GNSS time reference.
+  - After a spoof flag clears, send $PAIR006*3C (or pulse RST) and re-run the first-fix gate. Never send $PAIR007.
+  - Keep the PPS refclock 'noselect' until then.
+    - **Impact:** Stops spoofed state carried in the module's backup RAM from reappearing after the event.
+    - **Sources:**
+      - https://ad.easa.europa.eu/ad/2022-02R4
+      - https://forums.quectel.com/uploads/short-url/rUEismNTHFHWMMyJR1WxrcTaRB7.pdf
+  10.
+    - **Claim in stack:** #7 RTC 'RS4C411 with CR2032'; stage-1: M41T11-compatible; time window should grow with RTC age
+    - **Finding:** Radxa Q6A RTC docs:
+  - CR2032, '2-Pin 1.25mm', 3.3 V, polarity warning, /dev/rtc0.
+  - Check with 'dmesg | grep rtc' ('registered as rtc0', driver rtc-ds1307).
+  - hwclock needs 'apt install util-linux util-linux-extra' on noble.
+  - The page does not name the chip and says nothing about charging.
+  
+  Forum 31194 (16 Jul 2026), asking whether the connector can use and recharge an ML2020, has no answer.
+  
+  Kernel source (Radxa 6.18.2 rtc-ds1307.c): for m41t11 the driver returns -EINVAL only when the clock-halt (CH) bit is set. This type has no oscillator-fail flag, so after a brown-out or a weak cell the kernel can accept a plausible but wrong time.
+    - **Verdict:** confirmed
+    - **Action:** - Use a primary CR2032 with a pre-wired 1.25 mm plug only; no ML2020/LIR cells until Radxa states the connector charges.
+  - Add util-linux-extra to the install plan.
+  - Keep the stage-1 growing window and 'unverified' state. Also treat an RTC year earlier than the image build date as 'RTC unset'.
+    - **Impact:** Holds, with an added package and a stronger case for the 'unverified' handling.
+    - **Sources:**
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/rtc
+      - https://forum.radxa.com/t/31194
+      - https://github.com/radxa/kernel/tree/linux-6.18.2
+  11.
+    - **Claim in stack:** C13: custom pps-gpio node in lab-q6a.dtso; DKMS pps-gpio on held 6.18.2; Route B (7.0.11) rejected
+    - **Finding:** - **Overlay:** radxa-overlays issue #425 (Jul 2025) requested a pps-gpio overlay. A Radxa member replied that 'dtoverlay=pps-gpio,gpiopin=18' is a Raspberry Pi-only feature. The issue is still open and unimplemented; no Q6A PPS overlay exists (repo head e713889, 14 Oct 2026).
+  - **Held kernel:** 6.18.2 still has drivers/pps/clients/pps-gpio.c in the tree and no PPS_CLIENT_GPIO in qcom_module.config.
+  - **Forum titles supporting the 6.18.2 hold:** 31427 (Sep 2026) 'qcom-iris VPU firmware download fails on 7.0.11-5/6; 6.18.2-3 (Venus) works'; 31391 (Sep 2026) 'CDSP FastRPC session still fails ... kernel 7.0.11-5'.
+  - **Not found:** any public pps-gpio report on a QCS6490 board. WebSearch budget was exhausted, so this is unsearched rather than absent.
+  - **Pin 7 conflict:** radxa-overlays #534 (MI2S0 audio on Q6A) names GPIO97/98/100, not GPIO96.
+    - **Verdict:** confirmed
+    - **Action:** Keep the DKMS build plus the custom node. In W1-2:
+  - check 'grep CONFIG_PPS= /boot/config-*';
+  - check the owner of gpio96 in debugfs pinmux-pins;
+  - run 'ppstest /dev/pps0'.
+  
+  If an MI2S0 audio overlay is ever enabled, re-check pin 7.
+    - **Impact:** Holds.
+    - **Sources:**
+      - https://github.com/radxa-pkg/radxa-overlays/issues/425
+      - https://github.com/radxa-pkg/radxa-overlays/issues/534
+      - https://forum.radxa.com/c/dragon/q6a/71
+      - https://github.com/radxa/kernel/tree/linux-6.18.2
+  12.
+    - **Claim in stack:** Stage-1 new_option: SPI between RP2040-Zero and BNO085 (SCK, MOSI, MISO, CS, INT, RST)
+    - **Finding:** **I2C problem confirmed.** SparkFun forum 67222 (Oct 2025): a BNO086 on an RP2040 gives good data at 100 kHz but intermittent or no response at 350-400 kHz. The replier attributes it to BNO08x clock stretching.
+  
+  **SPI wiring (Adafruit 4754 Arduino guide):**
+  - P0 and P1 to 3V; SCL to SCK, SDA to MISO, DI to MOSI; CS, INT and RST to GPIO.
+  - The pinouts page says INT and RST are 'Required for stable SPI operation'.
+  
+  **Adafruit_BNO08x 1.2.7 (Aug 2026) source:**
+  - SPI at 1 MHz, mode 3, waits on INT.
+  - UART-SHTP at 3 Mbaud.
+  - Supports a single BNO08x only.
+  
+  **CEVA datasheet 1.17:**
+  - PS1 and PS0 high select SPI.
+  - PS0/WAKE must stay high from before reset until the first H_INTN; the datasheet recommends it on a GPIO for wake.
+  - SPI clock max 3 MHz.
+  - The host must answer H_INTN within ~10 ms.
+    - **Verdict:** confirmed
+    - **Action:** Specify SPI with:
+  - SCK, MOSI, MISO, CS, INT, RST on GPIO;
+  - P1 tied to 3V3;
+  - P0/WAKE on a GPIO held high through reset (or tied to 3V3 as Adafruit does).
+  
+  That is 6-7 GPIO. Use SPI at 1 MHz and service INT within 10 ms. Keep I2C at 100 kHz only as a fallback.
+    - **Impact:** Removes the main BNO08x failure mode; the wiring detail is corrected.
+    - **Sources:**
+      - https://community.sparkfun.com/t/bno086-and-rp2040-dont-work-faster-than-100-khz/67222
+      - https://learn.adafruit.com/adafruit-9-dof-orientation-imu-fusion-breakout-bno085/arduino
+      - https://learn.adafruit.com/adafruit-9-dof-orientation-imu-fusion-breakout-bno085/pinouts
+      - https://github.com/adafruit/Adafruit_BNO08x
+      - https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf
+  13.
+    - **Claim in stack:** Pointing aid: elevation from gravity, azimuth from sun sighting plus Game Rotation Vector; library choice not fixed (SparkFun BNO086 listed as alternative)
+    - **Finding:** Open library defects that would corrupt az/el:
+  1. **SparkFun_BNO08x v1.0.6** (last release Jul 2024): getGravity(x,y,z,acc) returns the X component for all three axes (source lines 512-514; issue #31, Jan 2026, open). The single-axis getGravityX/Y/Z are correct.
+  2. **CEVA sh2 issue #16** (Jul 2025, open): q_to_ypr() has its yaw and roll output pointers swapped between euler.h and euler.c. A fork fix is unmerged.
+  3. **sh2 issue #3** (2021, open, title only): sh2_setReorientation x/y flipped relative to Game RV i/j.
+  4. **Adafruit_BNO08x:**
+     - #27: RAW reports alone cause a sensor reset.
+     - #37 (Apr 2026): UART init hangs forever if no sensor is present.
+     - #29: hardwareReset() not defined.
+    - **Verdict:** new_risk
+    - **Action:** - Pack firmware: Adafruit_BNO08x 1.2.7 over SPI.
+  - Send quaternions over the framed UART and do the quaternion-to-az/el conversion on the Q6A in our own code, with unit tests at known orientations (flat facing north, plus 90 deg about each axis).
+  - Do not use the sh2 euler helpers, sh2_setReorientation or SparkFun getGravity().
+  - Never enable RAW reports alone.
+  - Put a timeout and watchdog around init.
+    - **Impact:** Medium. Silent axis swaps would put pointing off by tens of degrees.
+    - **Sources:**
+      - https://github.com/sparkfun/SparkFun_BNO08x_Arduino_Library/issues
+      - https://github.com/sparkfun/SparkFun_BNO08x_Arduino_Library
+      - https://github.com/ceva-dsp/sh2/issues/16
+      - https://github.com/ceva-dsp/sh2/issues
+      - https://github.com/adafruit/Adafruit_BNO08x/issues
+  14.
+    - **Claim in stack:** Pointing: Game RV only, re-sight every 15-20 min; magnetometer off on the steel-tape Yagi; IMU pack 30 cm behind elements
+    - **Finding:** Community data:
+  - **SlimeVR IMU comparison:**
+    - BNO085 has a 'reset time' of 45-60 min.
+    - It is rated 'Poor', with 'unreliable tracking' and 'suffers significantly from the stomp bug'.
+    - It was discontinued from the SlimeVR store, availability is 'Insufficient', and AliExpress listings are 'very misleading'.
+    - LSM6DSV 'seems to perform just as well as the BNO085, but at a lower cost'.
+  - **Arduino forum 904696:** 9-DOF heading jumped 45-90 deg while the accuracy flag read 3; Game RV was more stable.
+  - **CEVA sh2 #18 (Mar 2026, no fix):** under strong ~40 Hz vibration the gravity output sticks (X and Y = 0, Z = max) until the vibration stops.
+  
+  All of this supports the STACK's Game RV plus sun-sight approach.
+    - **Verdict:** confirmed
+    - **Action:** - Keep the 15-20 min re-sight prompt. It is conservative against the 0.5 deg/min datasheet figure; relax it only after field measurement.
+  - Buy only from Adafruit or SparkFun.
+  - On the Q6A, drop IMU frames whose gravity magnitude is not about 1 g, or which show a stuck X=Y=0 pattern.
+  - Keep the pack mechanically isolated from fans.
+    - **Impact:** Holds; adds a small sanity filter.
+    - **Sources:**
+      - https://docs.slimevr.dev/diy/imu-comparison.html
+      - https://forum.arduino.cc/t/bno085-calibration-process/904696
+      - https://github.com/ceva-dsp/sh2/issues/18
+  15.
+    - **Claim in stack:** gpsd 3.25 (-n -p -s 115200) with the LC76G; LC76G NMEA quirks
+    - **Finding:** Low-risk compatibility, based on the gpsd sources and hardware list.
+  - **No LC76G entry.** gpsd has no LC76G regression log. The gpscap.ini entry '[LC76]' (2020, rated 'poor', 'strange NMEA') points to the LC29D/LC79D L1/L5 protocol spec, so it is not this Airoha part.
+  - **No PMTK probing in practice.** gpsd 3.25 sends PMTK or PQ commands only in reply to PMTK705/PMTK424 or PQ sentences. The LC76G rejects PMTK with '$PAIR001,314,4' (Quectel thread 27199) and does not emit PMTK705.
+  - **QZSS GSV.** gpsd issue #415 (Sept 2026, open): $GQGSV is dropped from gpspipe and port 2947. This affects only the QZSS sky view, and QZSS is not visible from Europe.
+  - **Waveshare wiki is inconsistent:**
+    - It gives 9600 in the Pi guides against a 115200 default.
+    - It shows PPS as NC.
+    - Its FAQ says settings revert because 'the L76 has no internal memory', copied from the L76 page.
+    - The Quectel spec ($PAIR513 saves to flash) governs.
+    - **Verdict:** confirmed
+    - **Action:** - Keep gpsd 3.25 at 115200. Use '-b' (read-only) in field mode.
+  - Exclude QZSS from the C/N0-uniformity spoof check.
+  - Do not follow the Waveshare wiki for baud rate or persistence.
+    - **Impact:** Low.
+    - **Sources:**
+      - https://gitlab.com/gpsd/gpsd/-/blob/master/www/gpscap.ini
+      - https://gitlab.com/gpsd/gpsd/-/blob/release-3.25/drivers/driver_nmea0183.c
+      - https://forums.quectel.com/t/module-lc76g-does-not-respond-to-pmtk314-command/27199
+      - https://gitlab.com/gpsd/gpsd/-/work_items/415
+      - https://www.waveshare.com/wiki/LC76G_GNSS_Module
+  16.
+    - **Claim in stack:** UART6 appears as /dev/ttyHS1; udev /dev/gnss0
+    - **Finding:** Forum 30455 (Mar 2026): with UART6 and UART12 enabled, the ports appeared as /dev/ttyHS1 and /dev/ttyHS2, not ttyS6/ttyS12. This matches stage-1's point that numbering follows probe order.
+    - **Verdict:** confirmed
+    - **Action:** Keep the udev match on KERNELS=='998000.serial' and never hard-code ttyHS1.
+    - **Impact:** Holds.
+    - **Sources:**
+      - https://forum.radxa.com/t/using-serial-ports-on-dragon-q6/30455
+  17.
+    - **Claim in stack:** BOM: Waveshare LC76G 24370 $14.99; Adafruit BNO085 4754 $29.50; Uputronics MAX-M10S GBP 28.79/34.79
+    - **Finding:** Prices re-checked on 18 Oct 2026:
+  - **Waveshare LC76G:** schema.org offer USD 14.99 'InStock' (tiers 14.19 / 13.79 / 13.63). Its spec table gives cold start 26 s autonomous and hot start 1 s; the wiki says ~35 s outdoors.
+  - **Adafruit 4754:** USD 29.50, 'InStock'.
+  - **Uputronics:** 3V GBP 28.79, 5V GBP 34.79. The note '3V Version currently out of stock until w/b 5th October 2026' is still on the page; the JSON availability is null.
+    - **Verdict:** confirmed
+    - **Action:** Keep the prices. Re-check Uputronics 3V stock at order time.
+    - **Impact:** Holds.
+    - **Sources:**
+      - https://www.waveshare.com/lc76g-gnss-module.htm
+      - https://www.adafruit.com/product/4754
+      - https://store.uputronics.com/products/ublox-max-m8q-breakout-for-active-antennas
+  18.
+    - **Claim in stack:** WMM2025 at the fix point (pygeomag 1.1.0)
+    - **Finding:** NCEI: WMM2025 was released 17 Dec 2024 and expires 31 Dec 2029. No out-of-cycle release is listed. The Jan 2026 annual report and the Aug 2025 technical report (WMM and WMMHR) are out; the 27 Jan 2026 news item is the HDGM model. pygeomag has only 2 open issues (plots, conda-forge) and none about accuracy.
+    - **Verdict:** confirmed
+    - **Action:** Keep. Pin pygeomag 1.1.0 and the WMM2025 COF in the venv.
+    - **Impact:** Holds.
+    - **Sources:**
+      - https://www.ncei.noaa.gov/products/world-magnetic-model
+      - https://github.com/boxpet/pygeomag/issues
+- **Current status oct 2026:** As of 18 Oct 2026:
+  
+  **GNSS module**
+  - LC76G (Waveshare 24370) is $14.99 and listed InStock.
+  - Quectel's LC76G page lists Protocol Spec V1.5, an EASY & EPOC note V1.0, Firmware Upgrade Guide V1.2 and QGNSS V2.5, all behind a free login.
+  - A firmware build newer than LC76GABNR12A04S (2025-05-08) is available by email on request (Quectel thread 57735, June 2026).
+  - Quectel confirmed in May 2026 that the sibling LC86G 'will not be working in Russia'. This is a functional restriction whose mechanism is undocumented.
+  - The only public LC76G timing build reaches under 100 ns RMS on a Pi 4; its periodic noise came from the host OS.
+  
+  **Q6A header UART**
+  - UART TX on the header is unproven for the community. One user (Sep 2026) remains unresolved; another's overlay fix (Jan 2026) was never published.
+  - The radxa-overlays uart6 overlay has had only metadata changes since Nov 2025.
+  - The kernel refuses a serial engine that has non-UART firmware loaded ('Invalid FW loaded'). UEFI has per-SE 'QUPV3_xxx Mode' settings.
+  
+  **PPS**
+  - No Radxa pps-gpio overlay exists. Issue #425 is open, and Radxa calls dtoverlay=pps-gpio a Raspberry Pi feature.
+  - Forum reports of VPU and FastRPC regressions on 7.0.11 support holding 6.18.2.
+  
+  **chrony and gpsd (noble)**
+  - chrony 4.5-1ubuntu4.2 has 'selectopts', so the gate can switch refclocks on and off.
+  - Its AppArmor profile needs 'capability ipc_owner' for SHM. gpsd's profile allows only chrony.tty{,S,USB,AMA}N.sock. Both matter only if AppArmor is enabled; the Radxa kernel's CONFIG_LSM leaves it off.
+  
+  **RTC**
+  - Radxa docs: CR2032, 2-pin 1.25 mm, polarity warning, rtc-ds1307 driver. hwclock comes from util-linux-extra. The docs are silent on charging, and an ML2020 question (Jul 2026) is unanswered.
+  
+  **IMU**
+  - Adafruit 4754 is $29.50 InStock. Adafruit_BNO08x 1.2.7 (Aug 2026) does SPI at 1 MHz and UART-SHTP at 3 Mbaud.
+  - SparkFun BNO08x v1.0.6 (Jul 2024) has an open getGravity() bug.
+  - CEVA sh2 has an open q_to_ypr yaw/roll swap (#16) and a 40 Hz vibration glitch (#18).
+  - SlimeVR lists the BNO085 as discontinued from its store and rates its availability 'Insufficient'.
+  
+  **Spoofing**
+  - EASA SIB 2022-02R4 (22 Jul 2026) lists the Baltic, Black Sea, eastern Mediterranean, Middle East and Arctic. It warns that time and date can be misleading and that effects persist after leaving the area.
+  
+  **Magnetic model**
+  - WMM2025 is valid to 31 Dec 2029 with no out-of-cycle update.
+- **Notes:** **Method.** The shared WebSearch budget was already used up before my first query: my only search returned 'budget used up'. I made no web searches and did not work around the limit. Everything here comes from direct fetches of primary or known pages:
+  - Discourse JSON for Quectel forum threads 57109, 45880, 57394, 57735, 58652, 47717, 33867 and 27199.
+  - Radxa forum threads 30063, 31422, 30455, 29642, 31194 and 30642, plus the Q6A category topic listing.
+  - SparkFun community thread 67222.
+  - GitHub issue listings for Adafruit_BNO08x, SparkFun_BNO08x, ceva-dsp/sh2, radxa-overlays (#425, #534) and pygeomag.
+  - GitLab gpsd issues 415 and 281.
+  - git clones: radxa-overlays, radxa/kernel linux-6.18.2 (configs, rtc-ds1307, qcom_geni_serial, qcom-geni-se), gpsd master and release-3.25, Adafruit_BNO08x, SparkFun_BNO08x, agspoon/LC76G-Time-Server.
+  - The noble chrony 4.5-1ubuntu4.2 .deb (AppArmor profile and man pages).
+  - EASA SIB 2022-02R4 PDF; Radxa, Adafruit, Waveshare and NCEI pages; Uputronics product JSON.
+  
+  Downloaded material is in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/s2gnss/.
+  
+  **Models, not measurements:**
+  - The chrony lock-window arithmetic (NMEA offset 0.08-0.15 s against the 0.4 s limit).
+  - The risk that a spoofed first lock plus 'maxchange 5 1 -1' pins chrony to wrong time.
+  - The risk that Quectel's region restriction trips on a spoofed position.
+  
+  **Unverified:**
+  - Whether the LC76G AB has the same Russia restriction as the LC86G.
+  - The version string of the newer LC76G firmware.
+  - The contents of the login-gated V1.5 spec.
+  - Whether a wrong UEFI QUPV3 SE6 mode explains the Q6A TX reports.
+  - Any public pps-gpio result on QCS6490.
+  - The RS4C411 part name.
+  - RP2040-Zero boot or crystal-startup quirks: the pico-sdk board header sets no XOSC delay, and no reports were checked.
+  - Reddit, Discord and YouTube were not checked (no search budget).
+  
+  **Stage-1 findings changed by this pass:**
+  - The 'no functional region lock' correction is reversed.
+  - The 'wrong variant bricked a module' claim is removed.
+  - 'v1.4 is the newest public spec' and 'no newer firmware' are corrected.
+  - The BNO085 SPI wiring is refined: P1 to 3V3, and P0/WAKE high through reset.
+  - The chrony fix is refined: a measured offset (never 0.5 or 0.9999), and SHM preferred over SOCK.
+  
+  **New items:**
+  - chronyc selectopts gating by the location gate.
+  - $PAIR006 cold start after a spoof (never $PAIR007).
+  - A TX-free provisioning fallback through USB-UART, plus the RST GPIO.
+  - The UEFI QUPV3 mode and dmesg checks.
+  - The pointing-library defects (SparkFun getGravity, sh2 q_to_ypr).
+  - util-linux-extra for hwclock.
+  - Lab-cal must not use chrony's frequency for ppm.
+  
+  **Hard rules.** All are kept: receive-only, no loops, no city tables, no emitter geolocation, and IMU heading shown live only. The Russia-restriction note concerns the device's own position, not any emitter.
 
 ## report:compute_software_ai (run `wf_df1900ef-872`)
 
