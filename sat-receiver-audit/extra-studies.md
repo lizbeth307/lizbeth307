@@ -1092,6 +1092,176 @@
   
   Not verified: generic cable OD and shield build, AliExpress store identities, EU VAT and shipping on any line, the StarTech HDMM30CM certification, and the Roline price (taken from a search summary). Searches used: 13 WebSearch calls.
 
+## searchA:shielded_hdmi_lead_adafruit_2420_2x_wurt (run `wf_071e1025-145`)
+
+- **Part:** Shielded HDMI lead + clip-on ferrites (Display group, core tier, qty 1 set). Current pick is Adafruit 2420 + 2x Wurth 74271140. Run: Q6A HDMI-A-1 (full-size HDMI-A) to the Wisecoco HDMI-in board (full-size HDMI-A, per re-audit D). For the 4D fallback the panel end is Mini-HDMI.
+- **Current price usd:** 17.77 = Adafruit 2420 $9.95 (adafruit.com, checked 18 Oct 2026, in stock) + 2x Wurth 74271140 at $3.91 each (DigiKey, checked 18 Oct 2026). This set does not work as written. The Adafruit drawing CHDMI-AM-AM-457 gives the 2420 as 457 +/-15 mm long with a 5.2 +/-0.15 mm OD. The 74271140 only closes on 2-3 mm cable, and the 2420 is 3x the 10-15 cm spec length. The same-vendor set that actually fits is 2420 + 2x Wurth 74271112 (4.5-6 mm cable, $4.38 each at DigiKey) = $18.71.
+- **Critical specs:**
+  - Connectors: HDMI Type A male at both ends for the Q6A to Wisecoco run. Mini-HDMI at the panel end only for the 4D fallback, which ships with a 50 cm cable in the box.
+  - Length: 10-15 cm per the corrected stack spec (re-audit D); display.json allows up to about 20 cm. Shorter means less radiating length. Excess length is laid as a flat S-fold, never coiled, and kept away from the RF bay and GNSS feed.
+  - Rated bandwidth: at least HDMI High Speed (Category 2). The 151.50 MHz field mode needs 1.515 Gb/s per TMDS lane (about 4.5 Gb/s total). A documented or ATC-tested rating is preferred to an unstated one.
+  - Shielding: foil-shielded TMDS pairs with drains plus an overall braid (copper beats aluminium), bonded 360 degrees to metal plug shells at both ends. No candidate publishes transfer impedance, so the A/B noise test in STACK section 4 is the real acceptance test.
+  - Conductor gauge (insertion loss and DC on pin 18): 30 AWG or heavier preferred. The 2420 uses 7/0.08 mm strands, about 0.035 mm2 (roughly 32 AWG).
+  - All 19 pins wired, including pin 18 (+5 V, through the series Schottky per the back-power rule), pin 19 HPD, DDC 15/16 and pin 13 CEC.
+  - Cable OD and flexibility for routing inside the handheld. The OD must match the ferrite bore so the ferrite sits snug.
+  - Ferrite common-mode impedance at 25 and 100 MHz must be at least that of the current 74271140 (92/178 ohm, NiZn 4W620). The fitting 74271112 gives 175/316 ohm. Coverage should run from about 30 MHz to 1 GHz (137, 145, 151.5, 435, 1090 MHz and up).
+  - Ferrite mechanics: bore matched to the cable OD, latch retention, UL94 V-0 housing, temperature at least -20 to +60 C in the field (WE-STAR-TEC is rated -50 to +105 C).
+  - Connector build: gold-plated contacts, metal shell, molded strain relief, PVC jacket rated for field temperatures.
+  - Genuine part from an official or authorised seller, with traceable stock.
+- **Candidates:**
+  1.
+    - **Name:** CURRENT: Adafruit 2420 Slim HDMI 450 mm + 2x Wurth WE-STAR-TEC 74271140
+    - **Kind:** current_part
+    - **Price usd:** 17.77 as listed ($9.95 + 2x $3.91). As corrected to a set that fits (2420 + 2x 74271112 at $4.38): $18.71.
+    - **Spec comparison:** Baseline figures. Cable: 457 mm long, OD 5.2 mm. Five pairs, each with its own Al/Mylar foil and drain, plus four singles at 7/0.08 mm (about 32 AWG). Overall aluminium braid (16 carriers x 4 ends x 0.12 mm Al). Gold-plated iron-shell HDMI-A plugs, all 19 pins wired per the wire diagram, contact resistance 3 ohm max. No HDMI speed or certification is stated. Ferrite 74271140: 92/178 ohm at 25/100 MHz, NiZn 4W620, 2-3 mm cable, -50 to +105 C, UL94 V0, key lock. 74271112 (the one that fits): 175/316 ohm at 25/100 MHz, 4.5-6 mm cable, same body rating.
+    - **Worse in:** Against the stack spec: 3x too long (457 mm against 10-15 cm). The listed ferrite cannot close on the 5.2 mm cable. No rated bandwidth is published. The braid is aluminium, not copper.
+    - **Compatibility:** HDMI-A to HDMI-A as required. Passive, so no driver or rail impact. Pin 18 is wired, so the series Schottky rule is unchanged.
+    - **Risks:** The Adafruit page contradicts itself on OD (4 mm in the description, 5 mm in the specs); the drawing says 5.2 mm. The cable is not HDMI-certified.
+    - **Seller url:** https://www.adafruit.com/product/2420
+    - **Sources:**
+      - https://www.adafruit.com/product/2420
+      - https://cdn-shop.adafruit.com/product-files/2420/C3242-002_CHDMI-AM-AM-457.pdf
+      - https://www.digikey.com/en/products/result?keywords=74271140
+      - https://www.digikey.com/en/products/result?keywords=74271112
+      - https://www.we-online.com/en/components/products/WE-STAR-TEC
+  2.
+    - **Name:** RECOMMENDED: Lindy 36960 0.3 m High Speed HDMI (Anthra Line) + 2x Fair-Rite 0431164281 (Mix 31 Round Cable Snap-It)
+    - **Kind:** other_brand
+    - **Price usd:** About 13.80 before VAT and shipping. Cable: GBP 6.09 ex VAT, about $8.10 at an assumed 1.33 USD/GBP (GBP 7.31 including UK VAT, about $9.72; the FX rate was not checked). Ferrites: 2x $2.85 = $5.70 at DigiKey, 103,515 in stock. Lindy UK shipping starts at GBP 3.99, and post-Brexit import into the EU may add charges. The EU price from Lindy's own EU shops was not obtained, because lindy.de returned an error. The ferrites can go on the DigiKey order the stack already places.
+    - **Spec comparison:** Cable against the 2420:
+  - Length 0.3 m vs 0.457 m: better, closer to the 10-15 cm spec.
+  - Conductors 30 AWG Cu vs about 32 AWG: better.
+  - Shield: Cu braid with 65% coverage, sold as 'triple shielded', vs an Al braid with per-pair foil. Equal or better on paper; the 2420's braid coverage is not published.
+  - Rating: High Speed with Ethernet, 18 Gb/s, ATC approved, UL raw cable, vs unrated: better.
+  - Plating: 24K gold, 15 um on the connectors and 3 um on the phosphor-copper pins: equal or better.
+  - Warranty: 10 years.
+  
+  Ferrite 0431164281 against the 74271140, from the Fair-Rite datasheet of 15 Sep 2026:
+  - Typical 104/170/315/380 ohm at 10/25/100/250 MHz vs 92/178 at 25/100 MHz: better. Even the minimum (listed value less 20%: about 136/252 ohm) beats it.
+  - Against the 74271112 that fits the 2420 (175/316): equal within 3%.
+  - Bore 6.30 mm minimum (DigiKey: 6.60 mm), 39.5 mm long, polypropylene case UL94 V-0.
+    - **Worse in:** Cable OD is 6.0 mm vs 5.2 mm: slightly stiffer, with a larger bend radius. Still 30 cm, not 10-15 cm, though shorter than the current 45 cm. No published operating temperature for the Fair-Rite core (the WE part states -50 to +105 C). The Fair-Rite snap-it has a latch but no WE-STAR-KEY lock. A 0.3-0.6 mm bore clearance on the 6.0 mm cable can be shimmed with heat-shrink. Lindy UK stock is ambiguous: the page shows both '22 In Stock Now' and 'Sorry, out of stock'.
+    - **Compatibility:** HDMI-A to HDMI-A, passive. The bore fits the 6.0 mm jacket. Standard HDMI construction, but the 19-pin wiring is not documented pin by pin, so check pins 18 and 19 with a continuity test on arrival. No rule impact.
+    - **Risks:** Shield effectiveness at 137-1090 MHz is not published for either cable; prove it with the display A/B test. Ferrite impedance above 300 MHz is unverified for every candidate, the current one included. Lindy also sells in the EU, but EU price and availability were not verified.
+    - **Seller url:** https://www.lindy.co.uk/search/?q=36960
+    - **Sources:**
+      - https://www.lindy.co.uk/search/?q=36960
+      - https://screenmoove.com/products/lindy-0-3m-hdmi-high-speed-hdmi-cable-anthra-line-36960
+      - https://www.digikey.com/en/products/result?keywords=0431164281
+      - https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/9036/431164281.pdf
+  3.
+    - **Name:** Lindy 36960 0.3 m + 2x Laird 28A0593-0A2 snap ferrite (highest-impedance option)
+    - **Kind:** other_brand
+    - **Price usd:** About 14.24 before VAT and shipping: cable about $8.10 (GBP 6.09 ex VAT, FX assumed) + 2x $3.07 at DigiKey (93,067 in stock).
+    - **Spec comparison:** Cable is the same as in the recommended option. Ferrite per the Laird datasheet: nominal 186/407/575 ohm at 25/100/300 MHz, minimum 305 ohm at 100 MHz. That is better than the 74271140 (92/178) and better than the 74271112 (175/316). Bore 6.76 mm, length 52.9 mm.
+    - **Worse in:** The 6.76 mm bore on a 6.0 mm cable leaves 0.76 mm of play. It needs a heat-shrink or tape shim to stay snug and keep its impedance. Operating temperature and housing rating could not be read from the datasheet. Two 53 mm cores take up about 106 mm of the 300 mm cable. The cable trade-offs are the same as in the recommended option.
+    - **Compatibility:** Fits the 6.0 mm Lindy jacket with a shim. Too loose on the 5.2 mm 2420, and the 7.3 mm Delock will not fit at all.
+    - **Risks:** The temperature rating is unverified, so check it before field use at -20 C.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=28A0593-0A2
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=28A0593-0A2
+      - https://www.laird.com/document/datasheet/28a0593-0a2-datasheet
+      - https://www.lindy.co.uk/search/?q=36960
+  4.
+    - **Name:** Keep Adafruit 2420, swap the ferrites for 2x Fair-Rite 0431164281
+    - **Kind:** other_brand
+    - **Price usd:** 15.65 ($9.95 + 2x $2.85)
+    - **Spec comparison:** Cable unchanged. Ferrite impedance 170/315 ohm typical at 25/100 MHz vs 92/178 for the 74271140: better. Equal to the 74271112 that properly fits the 2420 (175/316), while costing $3.06 less than 2420 + 2x 74271112 ($18.71).
+    - **Worse in:** Fit: the 6.30 mm minimum bore on the 5.2 mm cable leaves about 1.1 mm of play. Without a heat-shrink shim the core slides and effective impedance drops (by how much is not quantified). The cable's own shortcomings remain: 45 cm instead of 10-15 cm, and no rated bandwidth.
+    - **Compatibility:** Same as the current part.
+    - **Risks:** Fit-related impedance loss is unmeasured. The core temperature rating is not stated on the Fair-Rite sheet.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=0431164281
+    - **Sources:**
+      - https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/9036/431164281.pdf
+      - https://cdn-shop.adafruit.com/product-files/2420/C3242-002_CHDMI-AM-AM-457.pdf
+  5.
+    - **Name:** Delock 83352 High Speed HDMI with Ethernet 0.25 m A-A + 2x Wurth 74271131
+    - **Kind:** other_brand
+    - **Price usd:** About 17.13: cable up to $7.63 ex VAT at TME (listed offer range $5.20-7.63, MOQ 1; the qty-1 price was not shown, stock data conflicting) + 2x $4.75 at DigiKey. EU retail: EUR 6.99 including VAT at aio.lv (snapshot valid only until 11 Jul 2026, stale), up to EUR 15.90-21.24 at PcComponentes.
+    - **Spec comparison:** Cable against the 2420:
+  - Length 0.25 m vs 0.457 m: better.
+  - Conductors 30 AWG Cu vs about 32 AWG: better.
+  - Shield 'double shielded' with twisted pairs vs foil-per-pair + Al braid: equal on paper; Delock does not publish braid material or coverage.
+  - Rating HDMI 1.4 High Speed, 10.2 Gb/s, vs unrated: better.
+  - Gold-plated contacts: equal.
+  
+  Ferrite 74271131: 125/235 ohm at 25/100 MHz for 6-7.5 mm cable, vs 92/178 for the 74271140: better. Same WE-STAR-TEC body (-50 to +105 C, UL94 V0, key lock).
+    - **Worse in:** OD 7.3 mm vs 5.2 mm: noticeably stiffer and bulkier (67.9 g gross). The 7.3 mm OD sits near the top of the 74271131's 6-7.5 mm range. Saves only about $0.64, and the TME qty-1 price is unconfirmed.
+    - **Compatibility:** HDMI-A to HDMI-A, passive. Must use the 74271131 or 74271132 (7-8.5 mm, price not checked). The 6.6 mm Fair-Rite and Laird cores do not fit.
+    - **Risks:** Price varies a lot between sellers. TME stock data conflicts (0 vs 16).
+    - **Seller url:** https://www.tme.eu/en/details/delock-83352/hdmi-cables/delock/83352/
+    - **Sources:**
+      - https://www.tme.eu/en/details/delock-83352/hdmi-cables/delock/83352/
+      - https://www.tme.com/Document/4f8aca94ec6a62989db4c1e9d1051670/DELOCK-83352_EN.pdf
+      - https://aio.lv/en/product--delock-83352--16738.md
+      - https://www.pccomponentes.fr/cable-hdmi-delock-83352-0-25-m-noir
+      - https://www.digikey.com/en/products/result?keywords=74271131
+  6.
+    - **Name:** Waveshare DIY HDMI: 2x HDMI Adapter Horizontal (mfr 14474) + 0.2 m EMI-shielded FFC (SKU 14721)
+    - **Kind:** diy
+    - **Price usd:** About 7.37 plus a flat-cable ferrite: 2x $3.19 (RobotShop US cached listing, an on-demand item; Waveshare's own adapter price was not readable) + $0.99 for the FFC ($0.87 at 1-9 pcs on waveshare.com).
+    - **Spec comparison:** Length 0.2 m: better than 0.457 m. The FFC is described as 'EMI shielded', 20-pin, 0.5 mm pitch, 100 +/-10 ohm. The adapter is an HDMI-A male plug to FFC, 29.5 x 18 x 4.5 mm. No rated bandwidth or eye test is published.
+    - **Worse in:** Shield termination: nothing says the FFC shield film bonds to the plug shells (no 360-degree braid-to-shell path). Durability: 0.5 mm-pitch FFC latch contacts under handheld vibration. Round snap ferrites do not fit a 10.7 mm-wide flat cable. Pin completeness is not documented. Treat as worse until A/B-tested.
+    - **Compatibility:** HDMI-A to HDMI-A, passive. Mini-HDMI adapters exist for the 4D fallback.
+    - **Risks:** Unverified shielding and pin mapping. The RobotShop price is a cached snapshot.
+    - **Seller url:** https://www.waveshare.com/product/accessories/adapters-cables-antennas/ffc-20pin-0.5pitch-0.2m-opposite-side-contact.htm
+    - **Sources:**
+      - https://www.waveshare.com/product/accessories/adapters-cables-antennas/ffc-20pin-0.5pitch-0.2m-opposite-side-contact.htm
+      - https://www.waveshare.com/product/accessories/adapters-cables-antennas/hdmi-adapter-vertical.htm
+      - https://www.robotshop.com/products/waveshare-diy-hdmi-cable-hdmi-adapter-horizontal
+  7.
+    - **Name:** Adafruit DIY HDMI FPC kit: 2x 3548 straight HDMI plug + 3560 10 cm ribbon (the stack's existing budget option)
+    - **Kind:** diy
+    - **Price usd:** 14.50 (2x $6.50 + $1.50; the 20 cm ribbon 3561 is $1.95)
+    - **Spec comparison:** Length 10 cm meets the 10-15 cm spec, which none of the round cables do. Adafruit says it tested 1080p on a Raspberry Pi.
+    - **Worse in:** Adafruit itself says these kits are 'not going to be as durable or shielded as ready-made cables'. Unneeded pins may be left open (pin 14 reported open). No rated bandwidth. A copper-tape wrap is an unmeasured mitigation. Worse in shielding and durability.
+    - **Compatibility:** HDMI-A to HDMI-A, or 3552 Mini-HDMI for the 4D. Passive.
+    - **Risks:** Shielding regression near 137-151.5 MHz harmonics. FPC latch reliability.
+    - **Seller url:** https://www.adafruit.com/product/3548
+    - **Sources:**
+      - https://www.adafruit.com/product/3548
+      - https://www.adafruit.com/product/3560
+      - https://www.adafruit.com/product/3561
+  8.
+    - **Name:** Adafruit 2197 HDMI Flat Cable 30 cm
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 3.95
+    - **Spec comparison:** Length 30.5 cm: better than 45.7 cm. 'Basic flat HDMI 1.4' cable, 2.7 mm thick, 27 g, molded grips.
+    - **Worse in:** No datasheet. Shielding construction, gauge and pin wiring are all unstated, so it cannot be shown to be not-worse. A flat profile means round snap ferrites do not fit; it would need a flat-cable ferrite (not priced). Treat as worse or unverified.
+    - **Compatibility:** HDMI connectors at both ends; the page does not explicitly say Type A. Passive.
+    - **Risks:** Unknown shielding, which is the main job of this part.
+    - **Seller url:** https://www.adafruit.com/product/2197
+    - **Sources:**
+      - https://www.adafruit.com/product/2197
+- **Notes:** VERDICT (Angle A): a cheaper option that is not worse exists, with one disclosed trade-off. Lindy 36960 (0.3 m, 30 AWG Cu, Cu braid plus 'triple shielded', 18 Gb/s, ATC approved, 10-year warranty) with 2x Fair-Rite 0431164281 Mix 31 snap-its comes to about $13.80 before VAT and shipping, against $17.77 listed and $18.71 for the corrected fitting set.
+  - Better: shorter, heavier gauge, rated bandwidth, and ferrites with 170/315 ohm against 92/178 ohm at 25/100 MHz.
+  - Worse: cable OD is 6.0 mm against 5.2 mm, slightly stiffer.
+  - For maximum suppression use 2x Laird 28A0593-0A2 instead (186/407/575 ohm at 25/100/300 MHz, about $14.24 total), shimmed with heat-shrink.
+  - The cheapest swap that keeps the cable is 2420 + 2x 0431164281 at $15.65. It needs a heat-shrink shim because of the 1.1 mm play.
+  
+  CURRENT PART IS MIS-SPECIFIED. The 74271140 cannot close on the 2420 (5.2 mm OD per the Adafruit drawing; the ferrite takes 2-3 mm cable). The 2420 is 457 mm long against the 10-15 cm spec. Re-audit D already flagged this; this check confirms it from the drawing and live prices.
+  
+  NO ESTABLISHED-BRAND ROUND HDMI-A to HDMI-A AT 10-15 cm FOUND.
+  - Shortest found: Delock 83352 at 25 cm and Lindy 36960 at 30 cm.
+  - 10-20 cm exists only as DIY FPC (Adafruit, Waveshare). Adafruit itself says these are less shielded and less durable, so they count as worse.
+  - Roline 11.04.5586 (0.15 m) is HDMI female to Mini-HDMI male, not a plug-to-plug cable.
+  
+  EXCLUDED, MORE EXPENSIVE: StarTech HDMM30CM 0.3 m ($12.09 at DigiKey US; EUR 10.62 ex VAT at DigiKey IE). The 2420 from other sellers: Jameco $13.15, OpenCircuit NL EUR 16.00 incl. VAT. Adafruit direct at $9.95 is the cheapest source for the 2420. Wurth 74271142 (3.5-5 mm) is $4.51, more than the 74271140. TDK ZCAT1730-0730A ($2.42) is only 80 ohm, so worse.
+  
+  OPTIONAL: to keep the original Mix-31/61 pairing, use one 0431164281 plus one Fair-Rite 0461164281 (Mix 61, 230 ohm at 100 MHz, 6.6 mm bore, $3.59, 20,506 in stock). Its 25 MHz impedance was not verified and is likely lower than Mix 31.
+  
+  UNVERIFIED:
+  - GBP/USD rate (1.33 assumed).
+  - Lindy EU-shop price, and Lindy UK stock (the page contradicts itself).
+  - Delock qty-1 price at TME (range $5.20-7.63 only) and live EU retail prices.
+  - Fair-Rite and Laird operating temperatures.
+  - Ferrite impedance above 300 MHz for every candidate, the current one included.
+  - Pin-by-pin 19-pin wiring of the Lindy and Delock cables (check pins 18 and 19 for continuity on arrival).
+  
+  ACCEPTANCE: no candidate publishes shield transfer impedance. Whichever is bought must pass the STACK section 4 display A/B test before the choice is final: HDMI on/off, 151.50 and 127.90 MHz modes, E-field probe only (no H-field loops). Pass means no line at least 3 dB above the floor, broadband rise of 0.5 dB or less, and GNSS change of 1 dB-Hz or less.
+  
+  RULES: the part is passive and has no effect on receive-only operation, conducted-only sources or the other hard rules. Keep the pin 18 series Schottky as specified. Lay any extra cable length as a flat S-fold, not a coil.
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
