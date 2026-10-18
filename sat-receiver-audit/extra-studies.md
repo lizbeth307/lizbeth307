@@ -41707,6 +41707,106 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - Limitation: my one WebSearch was refused because the shared per-turn web-search budget was already used up, so no forum or review measurements could be gathered. All findings come from direct WebFetch/curl of primary pages (raspberrypi.com, datasheets.raspberrypi.com, GitHub raw sources, Adafruit, The Pi Hut and Pimoroni Shopify JSON, Berrybase). eBay.de was blocked (HTTP 403), so used prices are unverified. The user can send a follow-up or raise CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION to continue the measurement search, for example on WCH-LinkE with an RP2040.
   - Downloaded datasheets: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dbgprobe_dl/raspberry-pi-debug-probe-product-brief.pdf and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dbgprobe_dl/raspberry-pi-debug-probe-schematics.pdf.
 
+## searchA:pinecil_v2_ironos_bluetooth_off (run `wf_e5582d4c-0a2`)
+
+- **Part:** Pinecil V2 (PINECIL-BB2), IronOS >=2.23 with Bluetooth Off, PD Mode = No Dynamic, power limit 60 W, non-EPR USB-C cable. Bench tier, Bench electronics, qty 1
+- **Current price usd:** 25.99 at pine64.com, PINECIL-BB2 'Community price' (retail is 35.99). In stock on 18 Oct 2026. Ships from CN/HK. Shipping is calculated at checkout (not verified), and the buyer pays import VAT and duties to the EU. EU-stocked prices: PINE64 EU store EUR 67.50 incl. VAT with free shipping, OUT OF STOCK on 18 Oct 2026, 2-year warranty. Keycapsss (DE) EUR 56.00 (stock not checked).
+- **Critical specs:**
+  - Main input: USB-C PD at 20 V fixed (non-EPR) from the Anker 737 bank. Needs about 60 W usable at 20 V and no more than about 3 A at 20 V on a standard cable. Pinecil: PD/QC 12-20 V 3 A; 64 W at 20 V with the 6.2 Ohm short tip; auto-detects 6.2/8 Ohm tips.
+  - Emergency input (STACK D7): the 4S pack at 13.6-16.4 V through the fused XT30-DC5525 lead on the node-N service port (5 A fuse). This needs a real DC barrel input, and the iron's PEAK current must stay well under 5 A. IronOS irons have no DC/DC converter, so peak current is V/R_tip. Pinecil: DC5525 12-24 V; 2.2-2.6 A peak at 13.6-16.4 V with the 6.2 Ohm tip (calculation).
+  - Programmable low-voltage cutoff that matches the stack's 13.6 V poweroff (4S, 3.3-3.4 V/cell), plus a programmable power limit and PD mode. Pinecil does all of this in IronOS.
+  - Heat-up and recovery on heavy joints: SMA bodies, XT30, coax shields, ground planes. Pinecil: about 6 s to working temperature (vendor figure).
+  - Tip range and tip cost: heavy chisel/knife tips (B2/BC2/C4/D24/K) as well as fine tips, cheaply available in the EU. Pinecil takes all TS100-compatible tips (about 9-10 USD each at Sequre for TS-type tips).
+  - Temperature range at least 100-400 C, with stable PID control. Pinecil: 100-400 C (store); calibration needed only if more than +/-5 C off (wiki).
+  - ESD: a ground point that bonds to the iFixit mat. Pinecil V2: rear ground screw.
+  - Radio: none, or BLE that can be turned off permanently (QUIET rule: Pinecil IronOS Bluetooth = Off). A radio-free iron counts as better.
+  - Firmware: open and configurable. IronOS is fully supported on Pinecil V2, with no OLED limitation.
+  - Build, authenticity and compliance: genuine units only, CE RED/RoHS, warranty. PINE64 states it does NOT sell on AliExpress. Pinecil: SAE 304 core, PC shell; FCC/CE RED/RoHS; 30-day warranty from the global store, 2 years from the EU store/affiliates.
+  - Size and weight for the lab-case pouch. Pinecil: 155 mm with tip, 28 g.
+- **Candidates:**
+  1.
+    - **Name:** PINE64 Pinecil V2 (PINECIL-BB2), global Pine Store - CURRENT PART
+    - **Kind:** current_part
+    - **Price usd:** 25.99 (community price; retail 35.99), shipping and EU import VAT extra. EU-stocked: PINE64 EU EUR 67.50 incl. VAT, free shipping (out of stock 18 Oct 2026); Keycapsss EUR 56.00
+    - **Spec comparison:** Baseline. USB-C PD/QC 12-20 V 3 A. DC5525 12-24 V (min 3 A). About 64 W at 20 V with the 6.2 Ohm ST-B2 tip. EPR 28 V is only tentative and disabled by default. TS100 tip compatible. 100-400 C. About 6 s heat-up (vendor). Rear ground screw. BL706 with BLE, off by default in IronOS 2.23+. Full IronOS support (cutoff, power limit, PD mode). FCC/CE RED/RoHS.
+    - **Worse in:** Has a BLE radio that must be kept disabled (handled by the IronOS setting). Only a 30-day warranty from the global store.
+    - **Compatibility:** Fully matches the stack: PD 20 V from the Anker 737, DC5525 from the fused 4S service port at about 2.2-2.6 A peak, IronOS 4S cutoff.
+    - **Seller url:** https://pine64.com/product/pinecil-smart-mini-portable-soldering-iron/
+    - **Risks:** Clones are sold on AliExpress under the PINE64 name; genuine units come in a white box, black handle with green grip, BL706 chip, and pass the Authenticity Checker. The EU store is out of stock.
+    - **Sources:**
+      - https://pine64.com/product/pinecil-smart-mini-portable-soldering-iron/
+      - https://wiki.pine64.org/wiki/Pinecil
+      - https://pine64.com/shipping/
+      - https://pine64eu.com/product/pinecil-smart-mini-portable-soldering-iron/
+      - https://keycapsss.com/search?search=pinecil
+      - https://github.com/Ralim/IronOS
+  2.
+    - **Name:** SEQURE S60P (C210 tip), 'without power plug' variant, official Sequre store
+    - **Kind:** other_brand
+    - **Price usd:** 24.50 (compare-at 26.99), USD store, ships from China, buyer pays import duties/VAT. Shipping cost not verified
+    - **Spec comparison:** Input: USB-C only. PD2.0/3.0, QC2.0/3.0, PPS, and raw 'DC max 21 V' through the Type-C port; NO DC5525 barrel (Pinecil has one: worse). Power: 60 W with a >=60 W PD source (Pinecil about 64 W: roughly equal). Tip: C210-compatible. Sequre's own S60 rating of 12 V/60 W implies about 2.4 Ohm (my calculation, not a published figure), so with no DC/DC converter the peak current is about 5.7-6.8 A on the 4S pack at 13.6-16.4 V (Pinecil 2.2-2.6 A: worse, over the 5 A service-port fuse). At 20 V PD it depends on PPS/protocol selection to stay inside 3 A (not verified with the Anker 737). Temperature: 50-500 C (better range). Tips sold: K, I, IS, BC1 only, all fine C210 tips; no heavy chisel tips for SMA/XT30 (worse). Display 128x32 OLED. No radio (better). Ground clamp wire sold for S20/S60; a ground point on the S60P is not verified. IronOS: listed but PARTIAL (OLED resolution), with the DC column marked unsupported (worse than full Pinecil support). No published accuracy figure and no published low-voltage cutoff in the stock firmware (unverified). 120x15x15 mm, 22 g.
+    - **Worse in:** No DC5525 input. Peak current from the 4S emergency path is about 5.7-6.8 A (calculation), more than the 5 A fuse. Fine C210 tips only, so heavy joints are weaker. Only partial IronOS support, with DC input unsupported. No verified battery cutoff. Raw DC on a USB-C plug is a hazard on a bench full of USB-C devices.
+    - **Compatibility:** PD from the Anker 737 probably works (PPS/protocol behaviour with this bank not verified). The D7 emergency 4S path is NOT compatible as designed.
+    - **Seller url:** https://sequremall.com/products/sequer-s60p-upgraded-version-electric-soldering-iron-supports-pd-qc-dc-pps-power-supply-compatible-with-c210-soldering-iron-tip-precision-electronic-mobile-phone-repair-tool-anti-static-soldering-pen-60w
+    - **Risks:** Store policy says no refunds once the parcel is with the courier; buyer pays import duties. No independent measurements were checked (search budget exhausted).
+    - **Sources:**
+      - https://sequremall.com/products.json
+      - https://github.com/Ralim/IronOS
+      - https://ralim.github.io/IronOS/Hardware/
+      - https://sequremall.com/policies/shipping-policy
+  3.
+    - **Name:** FNIRSI HS-01 (base, no adapter), official FNIRSI store
+    - **Kind:** other_brand
+    - **Price usd:** 25.99 (compare-at 47.70). SAME price as the Pinecil, NOT cheaper. Free shipping over 30 USD (this item is under 30). FNIRSI offers an EU duty service for orders under 150 USD (exact coverage not stated)
+    - **Spec comparison:** PD 9-20 V, max 65 W (roughly equal). DC 9-24 V, max 96 W, through the USB-C port, no barrel (worse: raw DC on USB-C). 96 W at 24 V implies about 6 Ohm (calculation), so 4S peak current is about 2.3-2.7 A (OK). 80-420 C (roughly equal). Claims PID accuracy under 2% (marketing; no measurements checked). No radio (better). Proprietary integrated tips at 14.99 USD each (worse than about 9-10 USD TS-type tips). Closed firmware with no published low-voltage cutoff or power-limit setting (worse). CE and WEEE only. No ground point stated.
+    - **Worse in:** Not cheaper. Closed firmware with no programmable 4S cutoff. Costlier proprietary tips. Raw DC through USB-C. No documented ground point.
+    - **Compatibility:** PD from the Anker 737 OK. The 4S path would need an XT30-to-USB-C raw-DC lead (not in the stack).
+    - **Seller url:** https://www.fnirsi.com/products/hs-01
+    - **Risks:** Rejected on price parity and missing features.
+    - **Sources:**
+      - https://www.fnirsi.com/products.json
+      - https://www.fnirsi.com/policies/shipping-policy
+  4.
+    - **Name:** SEQURE S99 (C245 tip, 5.5 Ohm), 'without power plug' variant
+    - **Kind:** other_brand
+    - **Price usd:** 26.20, NOT cheaper (+0.21 USD)
+    - **Spec comparison:** PD/QC/PPS plus raw DC up to 21 V on USB-C; no barrel. 75 W with the 5.5 Ohm tip, 150 W with an optional 2.5 Ohm tip (better power). C245 tips (better for heavy joints). 50-500 C. No radio. IronOS lists the S99 with DC supported. Peak at 20 V is about 3.6 A, so it needs a 5 A e-marked cable (the Anker 737 has 20 V/5 A per the re-audit). 4S peak about 2.5-3.0 A (calculation).
+    - **Worse in:** Not cheaper. No DC5525 barrel. Needs a 5 A e-marked cable at 20 V.
+    - **Compatibility:** Would work with a 5 A cable on the bank. The 4S path would need a raw-DC USB-C lead.
+    - **Seller url:** https://sequremall.com/products/sequer-s99-soldering-iron-support-pd-qc-dc-pps-power-supply-compatible-with-c245-tip-for-drone-rc-model-welding-repair-tool-anti-static-welding-pen
+    - **Risks:** Listed for completeness only; excluded by the 'cheaper' rule.
+    - **Sources:**
+      - https://sequremall.com/products.json
+      - https://github.com/Ralim/IronOS
+  5.
+    - **Name:** SEQURE SI012 (T12 tips) / SI012 Pro (DC5525) / SQ-D60B (TS tips)
+    - **Kind:** other_brand
+    - **Price usd:** SI012 26.50; SI012 Pro 28.00; SQ-D60B 27.80. All NOT cheaper
+    - **Spec comparison:** SI012 Pro has PD/QC plus a DC5525 barrel and T12 tips. Specs not examined in depth because none is cheaper than 25.99.
+    - **Worse in:** Not cheaper.
+    - **Compatibility:** Not assessed (excluded on price).
+    - **Seller url:** https://sequremall.com/
+    - **Risks:** -
+    - **Sources:**
+      - https://sequremall.com/products.json
+- **Notes:** Verdict (Angle A): KEEP the Pinecil V2. No cheaper part is not-worse. Only one candidate costs less on sticker price: the SEQURE S60P at 24.50 vs 25.99. It is worse on several specs that matter here:
+  (1) It has no DC5525 barrel.
+  (2) Its implied low-resistance C210 tip puts about 5.7-6.8 A peak on the D7 emergency 4S path, more than the 5 A service-port fuse. This is a calculation from Sequre's 12 V/60 W S60 rating; it is not a measurement.
+  (3) Only fine C210 tips are sold for it, no heavy tips for SMA/XT30.
+  (4) IronOS support is partial and its DC input is unsupported.
+  (5) No battery cutoff is verified.
+  The FNIRSI HS-01 is the same price, not cheaper. The Sequre S99, SI012/SI012 Pro and SQ-D60B all cost more.
+  
+  Other Pinecil SKUs and sellers: pine64.com lists only the V2 (PINECIL-BB2) at the 25.99 community price, which is the cheapest official offer. EU-stocked sellers are 2-2.6x dearer: PINE64 EU EUR 67.50 incl. VAT (out of stock), Keycapsss EUR 56.00. Ordering from the global store means paying EU import VAT and a carrier fee on top. That shipping cost was not verified; read it at checkout. Do NOT buy 'Pinecil' on AliExpress: PINE64 states it has no AliExpress store or authorized resellers there, so such units are counterfeits.
+  
+  Side benefit not taken: the S60P, S99 and HS-01 have no radio, which would drop the BLE-off rule. That alone does not offset their regressions.
+  
+  Verify before any switch:
+  - The C210 tip resistance (implied, not published).
+  - S60P PPS behaviour with the Anker 737.
+  - Independent temperature-accuracy measurements for all candidates.
+  None of these were checked: the shared WebSearch budget ran out after my first query. I used WebFetch on primary pages and the official Shopify product feeds (sequremall.com/products.json, fnirsi.com/products.json) instead. Prices were read on 18 Oct 2026 and are in USD unless marked EUR.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
