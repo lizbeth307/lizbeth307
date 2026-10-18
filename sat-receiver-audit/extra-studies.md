@@ -13365,6 +13365,389 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - the PPA indexes ubuntu-qcom-iot_qcom-ppa.gz and kisak_turtle.gz
   - the forum topic JSON files t*.json
 
+## community:npu_training (run `wf_9603e249-d87`)
+
+- **Subsystem:** npu_training (stage 2, community experience): SpecDet INT8 on HTP v68 / QAIRT 2.42, CPU stage-2 embedder, Phase-0 gate, x86-64 Ubuntu 22.04 conversion host, ORT CPU fallback, class policy gate, data handling, training budgets
+- **Findings:**
+  1.
+    - **Claim in stack:** #40: vtcm_mb=2; a 4,194,304-byte request fails with 0x138d; about 2 MB is granted (stage 1: 'no primary source, unverified')
+    - **Finding:** Several community reports agree.
+  - Forum 31208 (Leandro, 20 Jul 2026, QAIRT 2.42.0.251225 matched on an x86 container and the board, soc_id 35, v68): a context binary fails with 'Request feature vtcm size with value 4194304 unsupported ... Failed to create context from binary with err 0x138d'. It asked for 4 MB even when built with vtcm_mb=8 or 0. The same model loaded as a raw DLC (prepared on the device) crashed the CDSP during 'Finalizing Graphs' after 100k+ 'crouton_to_vtcm' warnings; dmesg showed 'crash detected in cdsp', then the kernel recovered it.
+  - Forum 31078 #9: the same user can run models but 'only able to pass 2MB' of VTCM.
+  - PrismPhi porting notes (Qwen3.5 on Q6A): 'Raising the 2K shapes to 4K failed at 2 MB VTCM ... Increasing the VTCM option alone compiled a graph that still failed on the board.'
+  - Radxa packaging: fastrpc 1.0.7-2 'change Q8B soc_id from 498 to 460 for 4MB vtcm', and setup-dsp.sh fakes /sys/devices/soc0/soc_id only on SC8280XP boards. This implies the runtime maps soc_id 498 (QCS6490) to 2 MB.
+    - **Verdict:** confirmed
+    - **Action:** Keep vtcm_mb=2 and soc_model 35. In CI, reject any context binary whose qnn-context-binary-utility dump shows VTCM above 2 MB. Never prepare graphs on the device: inferd-htp loads only offline context binaries, never a DLC or online prepare.
+    - **Impact:** medium
+    - **Sources:**
+      - https://forum.radxa.com/t/31208
+      - https://forum.radxa.com/t/31078
+      - https://github.com/PrismPhi/radxa-dragon-q6a-qwen3.5-0.8b-qcs6490-qnn-npu
+      - https://raw.githubusercontent.com/radxa-pkg/fastrpc/main/debian/changelog
+      - https://raw.githubusercontent.com/radxa-pkg/fastrpc/main/fastrpc/usr/libexec/fastrpc/setup-dsp.sh
+  2.
+    - **Claim in stack:** #39: 'v68 firmware rejects FP16 and FP32'; A16W8 only after a test (stage 1: unverified, one community log)
+    - **Finding:** Now backed by four independent sources.
+  - Forum 31217 and Immich discussion #25112 (Dual-O, 21-22 Jul 2026): 'ERROR: The SocModel doesn't support FP16'.
+  - PrismPhi porting notes: 'An FP16 Cast after the final head failed session creation'.
+  - Qualcomm AI Hub Models v0.64.0 (QAIRT 2.50) model cards: across 15 pages QCS6490 appears only as w8a8 (25 rows) and w8a16 (14 rows), never float, while other chips have float rows.
+  - The same cards show that w8a16 does run on the QCS6490 NPU. Latency ratio w8a16/w8a8: MobileNet-v2 2.385/1.325 ms (1.8x) and YOLOv8-Det 10.46/4.01 ms (2.6x) on the DLC path; YOLOv8-Det 18.67/4.71 ms (4.0x) on the ONNX path.
+    - **Verdict:** confirmed
+    - **Action:** Treat FP16/FP32 on HTP as unavailable. Keep the single A16W8 Phase-0 test (fam head only) and budget 2-4x the INT8 latency for it.
+    - **Impact:** medium
+    - **Sources:**
+      - https://forum.radxa.com/t/31217
+      - https://github.com/immich-app/immich/discussions/25112
+      - https://github.com/PrismPhi/radxa-dragon-q6a-qwen3.5-0.8b-qcs6490-qnn-npu
+      - https://huggingface.co/qualcomm/MobileNet-v2
+      - https://huggingface.co/qualcomm/YOLOv8-Detection
+  3.
+    - **Claim in stack:** #39 / #42: separate Clip-bounded outputs (obj, box, fam(12), occ) with explicit encodings
+    - **Finding:** Detection heads on QCS6490 repeatedly collapse when outputs share a quantisation scale.
+  - Forum 30899 (May 2026): a concatenated YOLOv8 (1,84,8400) output quantised to one INT8 scale gives 'garbage detections'. Splitting boxes and scores fixed it. QNN also flattens outputs, which must be reshaped and dequantised per output.
+  - Forum 31368 (26 Aug 2026), a 3-class detector: after splitting into one tensor per class, 'two of the three class channels come back as literal zero after quantization', with both Split and Slice. The local qairt-converter -> qairt-quantizer -> qnn-context-binary-generator chain also segfaulted at context generation (QAIRT version not stated).
+  - Forum 31462 (16 Sep 2026): QAIRT 2.49 YOLOv8n still collapses after the boxes/scores split.
+    - **Verdict:** new_risk
+    - **Action:** Keep fam(12) as one tensor, not 12 slices. Pin each output encoding with --quantization_overrides to the Clip range, not to calibration statistics. Make the calibration set class-balanced across all 12 families. Add a CI check on the HTP (qnn-net-run 2.42) output: every fam channel and obj/box/occ must show non-zero variance and match FP32 within tolerance on held-out tiles.
+    - **Impact:** medium
+    - **Sources:**
+      - https://forum.radxa.com/t/30899
+      - https://forum.radxa.com/t/31368
+      - https://forum.radxa.com/t/31462
+  4.
+    - **Claim in stack:** #42 / Phase 0: INT8 vs FP32 AP within 2 points; frozen INT8 w8a8 with per-channel weights
+    - **Finding:** PrismPhi's measured port on Q6A HTP v68 (ORT 1.27 + QNN EP 2.3.0, QAIRT 2.47) found three problems.
+  - 'Native error could increase even when CPU QDQ looked better.'
+  - Device measurements showed channel-wise output offsets in fully-connected layers, fixed with 50 bias corrections derived from zero input. The same offsets reproduced element-for-element on SM8350, which is also v68.
+  - 'A quantizer option claiming per-channel weights did not make the old exported MatMul weights per-channel': 1,033 weights turned out to be per-tensor.
+  Together these mean that CPU-side QDQ or AIMET simulation is not a reliable stand-in for HTP accuracy.
+    - **Verdict:** new_risk
+    - **Action:** Measure the AP gate on real HTP outputs (2.42 qnn-net-run or inferd-htp), never on ORT CPU QDQ or AIMET simulation. Add a zero-input probe of SpecDet's outputs to the golden gate. Audit the serialised encodings (per-channel axis and scale count for every Conv weight) in the DLC/context dump. Give inferd-cpu (QDQ on CPU) its own fusion thresholds, since it will not be bit-identical to HTP.
+    - **Impact:** medium
+    - **Sources:**
+      - https://github.com/PrismPhi/radxa-dragon-q6a-qwen3.5-0.8b-qcs6490-qnn-npu
+      - https://forum.radxa.com/t/31448
+  5.
+    - **Claim in stack:** #42: stage-2 E-S embedder and prototypes run FP32 on the CPU; only the conv detector is INT8 on HTP
+    - **Finding:** Community INT8 results on the Q6A HTP support keeping embeddings off the NPU.
+  - ArcFace face-verification accuracy fell to 51% (random) under INT8 (pre-activation BN -> Conv -> PReLU).
+  - CLIP ViT-SO400M embeddings collapsed to cos-sim 0.99+ versus 0.70-0.91 in FP32 (Dual-O, Immich #25112 and forum 31217).
+  An embedding net is exactly what the stack keeps in FP32 on the CPU.
+    - **Verdict:** confirmed
+    - **Action:** No change. Never move E-S to HTP INT8 without an embedding-diversity test (pairwise cos-sim spread on held-out crops).
+    - **Impact:** low
+    - **Sources:**
+      - https://github.com/immich-app/immich/discussions/25112
+      - https://forum.radxa.com/t/31217
+  6.
+    - **Claim in stack:** 5.4 / #36: golden FastRPC set (CDSP c4-00004, ADSP c9-00028, fastrpc_shell_3/unsigned_3) recorded by SHA-256
+    - **Finding:** Every working community report comes from an exactly matched firmware, shell, skel and libcdsprpc set; any mismatch gives a silent 0x80000600 (forum 30699, 31391, 29847, 31078).
+  - In the radxa-firmware-qcs6490 0.2.42 deb, fastrpc_shell_unsigned_3 is a CDSP.HT.2.5.c4-00004-KODIAK-1 build of 20250508, SHA-256 655a003255ae01d8b9c3eb2e978765d7dacbdf1ac5c7cf7ac8e171ac09f03dff, so it matches cdsp.mbn c4-00004.
+  - In radxa-pkg/radxa-firmware git, that shell file has not changed since 11 Mar 2026. cdsp.mbn and adsp.mbn changed on 17 Sep 2026 (b3d3840), and the commit message says 'To support PM7250B Type-C controller'.
+  - The 1 Sep report (29847 #6) of 'c4 firmware + c3 shell inside 0.2.41' therefore conflicts with Radxa's git history; it was most likely a file overwritten by another package. Armbian firmware PR #129, linux-firmware, linux-firmware-dragonwing and hexagon-dsp-binaries-* write the same paths (30699 #22, 31078 #4).
+  - One user fixed 0x80000600 only after dpkg -V showed modified shells and he restored pristine package files (31078 #8). A firmware swap needed a CDSP remoteproc stop/start; a reboot alone was not enough (29847 #6).
+    - **Verdict:** new_risk
+    - **Action:** Golden gate before every NPU start:
+  - dpkg -V radxa-firmware-qcs6490 is clean;
+  - dpkg -S shows radxa-firmware-qcs6490 as the only owner of cdsp/adsp.mbn and dsp/cdsp/*;
+  - SHA-256 manifest matches.
+  Also:
+  - Forbid (apt pin -1) linux-firmware-dragonwing, firmware-qcom-dsp, hexagon-dsp-binaries-* and qcom-fastrpc1.
+  - In Phase 0, test both the r2 set and the 0.2.42 set (same version strings, different hashes), then pin one.
+  - Ask the power subsystem whether the 0.2.42 PM7250B Type-C change matters for the Q6A.
+    - **Impact:** high
+    - **Sources:**
+      - https://radxa-repo.github.io/noble/pool/main/r/radxa-firmware/radxa-firmware-qcs6490_0.2.42_all.deb
+      - https://github.com/radxa-pkg/radxa-firmware/commit/b3d3840
+      - https://github.com/radxa-pkg/radxa-firmware/commits/main/radxa-firmware-qcs6490/usr/share/qcom/qcs6490/radxa/dragon-q6a/dsp/cdsp/fastrpc_shell_unsigned_3
+      - https://forum.radxa.com/t/30699
+      - https://forum.radxa.com/t/29847
+      - https://forum.radxa.com/t/31078
+      - https://forum.radxa.com/t/31391
+  7.
+    - **Claim in stack:** 5.4: golden set includes the fastrpc and libcdsprpc1 versions; packages held
+    - **Finding:** Older fastrpc versions are disappearing from the repo, and 1.0.6/1.0.7 have open problems.
+  - The qcs6490-noble pool now holds only fastrpc/libcdsprpc1 1.0.7-3; 1.0.3-1, 1.0.4-1 and 1.0.6-3 return 404. GitHub radxa-pkg/fastrpc releases still list 1.0.3-1 through 1.0.7-3 (20-21 assets each; contents only listed for 1.0.7-3).
+  - Forum 31391 (31 Aug): fastrpc 1.0.7-1 on 7.0.11-5 with firmware 0.2.41 fails with 'remotectl1 domains not supported'. It is unresolved; the reporter moved to Armbian.
+  - Upstream qualcomm/fastrpc #371 (5 Aug 2026, open/stale): with 1.0.6, CDSP signed and unsigned tests fail 0/3 (0x72) on the QCS6490 RB3 Gen 2. Since 1.0.6 the fastrpc group is created at startup, and the maintainer expects the issue still exists in 1.0.7, hidden in the debs by a udev patch.
+  - Combinations reported working: fastrpc 1.0.4-1 + kernel 6.18.2-3 + QAIRT 2.42 (31208, fastrpc_test 3/3); fastrpc-test 1.0.4-1 (30850).
+    - **Verdict:** new_risk
+    - **Action:** Download and archive fastrpc, libcdsprpc1, the listener libs and fastrpc-test for 1.0.4-1 and 1.0.7-3 from the GitHub releases now, with SHA-256. In Phase 0, run fastrpc_test -a v68 and the 2.42 golden model on each, then pin and hold the one that passes. Never let apt move fastrpc.
+    - **Impact:** high
+    - **Sources:**
+      - https://radxa-repo.github.io/qcs6490-noble/dists/qcs6490-noble/main/binary-arm64/Packages
+      - https://github.com/radxa-pkg/fastrpc/releases
+      - https://github.com/qualcomm/fastrpc/issues/371
+      - https://forum.radxa.com/t/31391
+      - https://forum.radxa.com/t/31208
+      - https://forum.radxa.com/t/30850
+  8.
+    - **Claim in stack:** 5.4: inferd-htp sandbox (WatchdogSec=5, MemoryMax=1G, CPUAffinity 0-3, one exec thread); per-lease DevicePolicy=closed/DeviceAllow drop-ins; no DSP library path given
+    - **Finding:** Several runtime details are not covered by the stack.
+  - On every boot, Radxa's fastrpc.service runs setup-dsp.sh, which does 'rm -rf /usr/lib/dsp' and re-links it to /usr/share/qcom/qcs6490/radxa/dragon-q6a/dsp chosen from the DT model string 'Radxa Dragon Q6A'.
+  - qcom-qnn-sdk-v68 installs libQnnHtpV68Skel.so in /usr/lib/aarch64-linux-gnu, and the 0.2.42 DSP tree has no QNN skel. Forum 31208 confirms that users must point ADSP_LIBRARY_PATH at a skel.
+  - Device nodes: since 1.0.6 they are root:fastrpc 0640/0660 (31078 listing). The strace in 31078 shows libcdsprpc opening /dev/fastrpc-cdsp-secure first, and DMA_HEAP_IOCTL_ALLOC is used.
+  - Mismatched stub and skel (host 2.46 vs skel 2.42) gave 0x80000406 (30850).
+    - **Verdict:** new_risk
+    - **Action:** In the inferd-htp unit:
+  - Set ADSP_LIBRARY_PATH to a read-only golden 2.42 skel directory first, then /usr/lib/dsp/cdsp.
+  - Point LD_LIBRARY_PATH at the 2.42 libs only.
+  - Add DeviceAllow for /dev/fastrpc-cdsp, /dev/fastrpc-cdsp-secure and /dev/dma_heap/system (rw).
+  - Set SupplementaryGroups=fastrpc and do not use PrivateDevices.
+  - Use an empty WorkingDirectory.
+  - Add Requires/After=fastrpc.service cdsprpcd.service.
+  Also keep lab-q6a.dtso from changing /model, and log the 'build version' lines at startup.
+    - **Impact:** high
+    - **Sources:**
+      - https://raw.githubusercontent.com/radxa-pkg/fastrpc/main/fastrpc/usr/libexec/fastrpc/setup-dsp.sh
+      - https://raw.githubusercontent.com/radxa-pkg/fastrpc/main/debian/fastrpc.service
+      - https://forum.radxa.com/t/31208
+      - https://forum.radxa.com/t/31078
+      - https://forum.radxa.com/t/30850
+  9.
+    - **Claim in stack:** Phase 0 / 5.4: fastrpc_test 3/3 plus golden gate on QAIRT 2.42.0.251225
+    - **Finding:** Radxa's 'NPU Quick Validation' does not exercise 2.42.
+  - The ModelScope bundle radxa/resnet50_qairt/6490 (uploaded 2 Sep 2025) carries its own qnn-net-run, libQnnHtp.so (2,366,112 B), libQnnHtpV68Stub.so and libQnnHtpV68Skel.so (8,100,444 B). Users' logs show 'build version: v2.37.1.250807093845'.
+  - The 2.42 deb's libQnnHtp.so is 2,316,960 B and its V68 skel 9,040,240 B.
+  - The community kit and Radxa docker image radxazifeng278/qairt-npu-v68:v1.2 pair QAIRT 2.42 with qnn-net-run 2.37.1.
+  - Radxa staff said 2.37.1 was the version tested on the Q6A and that 2.42 'can still be used' (30264).
+  So a passing quick validation proves FastRPC works, not the 2.42 runtime.
+    - **Verdict:** new_risk
+    - **Action:** Define the Phase-0 pass only with qnn-net-run from qcom-qnn-sdk-v68 2.42, the 2.42 V68 skel and a SpecDet context built on the 2.42 host. Record backend, skel and binary build versions in the golden manifest. Do not rely on the ModelScope bundle or the Radxa docker images.
+    - **Impact:** medium
+    - **Sources:**
+      - https://www.modelscope.cn/models/radxa/resnet50_qairt
+      - https://forum.radxa.com/t/30321
+      - https://forum.radxa.com/t/30264
+      - https://github.com/vladisUl/npu_runtime_armbian
+      - https://docs.radxa.com/en/dragon/q6a/app-dev/npu-dev/qairt-install
+  10.
+    - **Claim in stack:** #36: DT overlay adds memory-region (shared-dma-pool) to both fastrpc nodes (from forum 31078/31208)
+    - **Finding:** Radxa engineer strongtz (forum 30699 #20-21, 6 Aug 2026): 'fastrpc on cdsp doesn't need reserved DMA memory ... The no reserved DMA memory for FASTRPC error is misleading', and the in-kernel qcom_pd_mapper replaces the pd-mapper daemon. The community evidence agrees:
+  - Leandro (31208) passed fastrpc_test 3/3 without the overlay.
+  - Frederico_S (31391) added the overlay and still failed.
+  - 'okay' (31078) needed the overlay and pristine DSP files, and found that the active boot path is the systemd-boot entry under /boot/efi, not extlinux.
+  There is also a tooling bug: rsetup's update_entry_overlays calls an undefined get_product_id and silently points the loader entry at the first .dtb in the package (another board's DT) (31391).
+    - **Verdict:** corrected
+    - **Action:** Make the shared-dma-pool overlay optional. In Phase 0, test without it first and add it only if fastrpc_test or the golden model fails. If used, install it straight into the systemd-boot entry (devicetree-overlay) and never through rsetup. CI should check that the loader entry names qcs6490-radxa-dragon-q6a.dtb.
+    - **Impact:** low
+    - **Sources:**
+      - https://forum.radxa.com/t/30699
+      - https://forum.radxa.com/t/31391
+      - https://forum.radxa.com/t/31078
+      - https://forum.radxa.com/t/31208
+  11.
+    - **Claim in stack:** #36: initramfs hook loads adsp.mbn/cdsp.mbn
+    - **Finding:** Community reports confirm the problem the hook solves.
+  - On R2 booted from NVMe, remoteproc requests the firmware at about 1 s, before the rootfs is mounted, and gets error -2. Adding the blobs to the initramfs fixed it (30321 #9).
+  - RadxaOS users still see 'request_firmware failed: -2' and need a manual 'echo start' (30699 #16).
+  radxa-firmware-qcs6490 0.2.42 now ships its own initramfs hook, which copies /lib/firmware/qcom/qcs6490/radxa/* into the initramfs, so whatever is on disk at update-initramfs time is what boots.
+    - **Verdict:** confirmed
+    - **Action:** Keep the hook, and run the golden SHA-256 check before every update-initramfs. Phase 0 should check that dmesg shows 'remote processor cdsp is now up' on cold boot from UFS without manual start.
+    - **Impact:** low
+    - **Sources:**
+      - https://forum.radxa.com/t/30321
+      - https://forum.radxa.com/t/30699
+      - https://radxa-repo.github.io/noble/pool/main/r/radxa-firmware/radxa-firmware-qcs6490_0.2.42_all.deb
+  12.
+    - **Claim in stack:** 5.4: CDSP restart ladder, wait >=15 s after restart; 8 h soak with fault injection
+    - **Finding:** Community failure modes all fit a ladder.
+  - A failed QNN session in a privileged docker container broke the NPU on the host too, until a reboot (30396).
+  - A firmware change needed a remoteproc stop/start; a reboot alone was not enough (29847 #6).
+  - A CDSP fatal error caused an automatic kernel subsystem restart, with qnn-net-run dying by SIGSEGV (31208).
+  - On a misconfigured RadxaOS 6.18.2-4 board, 'leaving the DSPs running has hung the board twice, once requiring fsck' (30699 #16; unverified cause).
+    - **Verdict:** confirmed
+    - **Action:** Make the ladder explicit:
+  1. Destroy and re-create the QNN context.
+  2. Stop/start the CDSP remoteproc, wait 15 s or more, run fastrpc_test.
+  3. Mark the NPU dead for the session, move to ORT CPU ('reduced coverage') and reboot only between passes.
+  Also:
+  - Run inferd-htp natively under systemd, never in a container.
+  - Ask compute to arm the hardware watchdog (QCOM_WDT, systemd RuntimeWatchdogSec).
+  - Include a forced CDSP crash and recovery in the 8 h soak.
+    - **Impact:** medium
+    - **Sources:**
+      - https://forum.radxa.com/t/30396
+      - https://forum.radxa.com/t/29847
+      - https://forum.radxa.com/t/31208
+      - https://forum.radxa.com/t/30699
+  13.
+    - **Claim in stack:** 5.4: inferd-htp 'one execution thread'; ORT 1.23.2 QNN EP optional
+    - **Finding:** onnxruntime-qnn issue #892 (30 Sep 2026, open; maintainer reproduced it on 17 Oct 2026): HTP sessions whose Run() is called from many threads with varied inputs 'silently return wrong results (no error)' after about 60-170 requests. The workaround is to run from the thread that created the sessions, and the maintainer suspects the QNN API itself. It was seen on HTP v73 with QNN EP 2.6.0; v68 is untested. Separately, forum 31046 (QAIRT 2.42 + Radxa onnxruntime_qnn 1.23.2 segfault) is still unanswered.
+    - **Verdict:** confirmed
+    - **Action:** Specify that inferd-htp creates the backend, device and context and calls graphExecute on one and the same thread for its lifetime, and never shares a context. During the 8 h soak, re-run a fixed canary tile every N minutes and compare its output hash with the golden output.
+    - **Impact:** medium
+    - **Sources:**
+      - https://github.com/onnxruntime/onnxruntime-qnn/issues/892
+      - https://forum.radxa.com/t/31046
+  14.
+    - **Claim in stack:** C19 / 5.4: inferd-cpu (ONNX Runtime 1.31) on A55 with CPUQuota 100%; 4-6 tiles/s
+    - **Finding:** ORT's threading doc: by default intra-op threads = number of physical cores, with affinity applied automatically, and thread-pool spinning is 'Default: 1 (Enabled)', which 'consumes more CPU cycles, resources, and power'. Under CPUAffinity=0-3 and CPUQuota=100%, the defaults would create up to 8 threads that spin against the quota. The ORT 1.31.0 notes show Arm work only for KleidiAI SVE2.1/SME FP16 GEMM, which the A55/A78 lack; the ONNX dependency stays at 1.22.0 (IR 13 / opset 27). No community A55 throughput number could be found; WebSearch was unavailable.
+    - **Verdict:** new_risk
+    - **Action:** Set intra_op_num_threads=1, inter_op_num_threads=1, session.intra_op.allow_spinning=0 and session.inter_op.allow_spinning=0. Set no ORT affinities; let systemd pin. Benchmark tiles/s with exactly these settings in Phase 0. An opset 17-21 / IR 10 export satisfies both the 2.42 converter and ORT 1.31.
+    - **Impact:** medium
+    - **Sources:**
+      - https://onnxruntime.ai/docs/performance/tune-performance/threading.html
+      - https://github.com/microsoft/onnxruntime/releases/tag/v1.31.0
+  15.
+    - **Claim in stack:** C20: HTP gate p99 <= 28 ms at 50% load without Lime; <= 11.7 ms or <= 41 tiles/s with Lime
+    - **Finding:** Measured reference points for QCS6490:
+  - AI Hub Models v0.64.0 (QAIRT 2.50, RB3 Gen 2): MobileNet-v2 (3.49 M params, about 0.30 GMAC) w8a8 1.33 ms on the DLC path and 1.06 ms on the ONNX path; YOLOv8-Det w8a8 4.0 ms.
+  - Community: YOLOv8n about 10 ms with QAIRT 2.46 in Frigate (31047, user claim).
+  Model, MAC scaling only (input shape and depthwise efficiency differ):
+  - SpecDet-S about 1.0-1.3 ms and SpecDet-M about 3.1-3.9 ms.
+  - HTP duty 2.2-7.0% at 16.6-17.6 tiles/s and 5.5-17% at 42.5 tiles/s.
+  - The gates therefore have 3-20x margin, and per-call FastRPC overhead and power will dominate.
+  The 2.42 HTP doc offers DCVS v3 power modes, sleep latency, and RPC polling (0-10000 µs) or RPC control latency; polling keeps a CPU core awake.
+    - **Verdict:** confirmed
+    - **Action:** Keep the gates, and use AI Hub numbers only as an upper-level reference. Phase 0 adds:
+  - an INA228 sweep of HTP perf modes (DCVS on/balanced vs performance/burst, RPC polling off vs on);
+  - p99 and per-call overhead for each mode.
+  Pick the lowest-power mode that meets p99 with 2x margin.
+    - **Impact:** medium
+    - **Sources:**
+      - https://huggingface.co/qualcomm/MobileNet-v2
+      - https://huggingface.co/qualcomm/YOLOv8-Detection
+      - https://forum.radxa.com/t/31047
+  16.
+    - **Claim in stack:** #37 / #38 / question 7: QAIRT 2.42 only; Set B (ORT 1.27 + onnxruntime-qnn 2.3.0 / QAIRT 2.47) removed
+    - **Finding:** Community reports of newer QAIRT on stock c4-00004 firmware are mixed, and most failures trace to a stub/skel/firmware mismatch.
+  Working:
+  - 2.46 after copying the matching 2.46 libQnnHtpV68Skel.so and libc++ links into the DSP path (30850; the user also swapped the mbn files).
+  - 2.46 in Frigate (31047).
+  - 2.47 via QNN EP 2.3.0 (31448).
+  - 2.49 executes, with wrong outputs (31462).
+  Failing: Dual-O says the 'firmware caps at QNN interface 2.32.0 (QAIRT 2.42)' and '2.46+ fail with QNN_DEVICE_ERROR_INVALID_CONFIG' (31217, 31234); 2.46 failed for Mylab (31234).
+  Radxa docs (captured 13 Oct 2026) still say 'Please use QAIRT SDK version 2.42.0.251225'. Aarch64 Linux onnxruntime-qnn wheels have existed since the 2.1.0 preview (22 Apr 2026) and bundle their own newer QAIRT libs.
+    - **Verdict:** confirmed
+    - **Action:** Keep 2.42 on the device. Never pip-install onnxruntime-qnn into any device venv: it would load newer libQnnHtp against the 2.42 skel. For question 7, present Set B or native 2.47 only as a separately golden-gated stack with its own matched skel.
+    - **Impact:** medium
+    - **Sources:**
+      - https://forum.radxa.com/t/30850
+      - https://forum.radxa.com/t/31047
+      - https://forum.radxa.com/t/31448
+      - https://forum.radxa.com/t/31462
+      - https://forum.radxa.com/t/31217
+      - https://forum.radxa.com/t/31234
+      - https://github.com/onnxruntime/onnxruntime-qnn/issues/176
+      - https://docs.radxa.com/en/dragon/q6a/app-dev/npu-dev/qairt-install
+  17.
+    - **Claim in stack:** #45 / 5.4: conversion host = x86-64 container ubuntu:22.04 / Python 3.10 with archived QAIRT 2.42 (container 'not verified')
+    - **Finding:** Community use of this setup:
+  - An x86 conversion container with QAIRT 2.42.0.251225 matched to the board runtime produced binaries that load on the Q6A (31208, once vtcm was right).
+  - PrismPhi built contexts offline on Windows x64 with vtcm_mb=2, htp_arch=68 and graph-I/O quantization offload disabled. He reports that concurrent large compile jobs crashed in a QNN DLL, while serial builds worked.
+  - QAIRT 2.37.1's check-python-dependency rejects Ubuntu 24.04 (30538), which supports keeping 22.04.
+  - Python 3.10 reached end of life on 2026-10-01 (3.10.22); Ubuntu 22.04 standard support ends 2027-06-01 (ESM to 2032). Radxa's page suggests a conda Python 3.10, which gets no Ubuntu security backports.
+    - **Verdict:** confirmed
+    - **Action:** Keep the frozen offline ubuntu:22.04 container. Prefer Ubuntu's apt python3.10 over conda inside it, so Canonical patches apply until 2027-06. Run qnn-context-binary-generator jobs serially. Keep build logs for failed jobs.
+    - **Impact:** low
+    - **Sources:**
+      - https://forum.radxa.com/t/31208
+      - https://github.com/PrismPhi/radxa-dragon-q6a-qwen3.5-0.8b-qcs6490-qnn-npu
+      - https://forum.radxa.com/t/30538
+      - https://endoflife.date/api/python.json
+      - https://endoflife.date/api/ubuntu.json
+  18.
+    - **Claim in stack:** #23 / 5.4: hold linux-image-6.18.2-4-qcom with the NPU set; unattended-upgrades removed
+    - **Finding:** Kernel and package churn has broken the NPU repeatedly.
+  - 6.18.2-2 exposed no /dev/fastrpc-* nodes while 6.18.2-1 did, and Radxa replied 'Please do not use the sudo apt upgrade command' (30241).
+  - 7.0.11-2 with fastrpc 1.0.6 failed fastrpc_test (31078 #2).
+  - 7.0.11-5 with fastrpc 1.0.7 failed with remotectl1 (31391).
+  - Forum topics also report the qcom-iris VPU failing on 7.0.11-5/6 while 6.18.2-3 works (31427), and 'Linux 7.0 HDMI not working' (31304).
+  - Morgan (24 Feb 2026) called NPU breakage after a system upgrade 'a known bug' (30397).
+    - **Verdict:** confirmed
+    - **Action:** Keep the 6.18.2-4 hold and the archived GitHub debs; this is shared with compute. Every kernel, firmware or fastrpc change is a runtime change and goes through fastrpc_test, the 2.42 golden gate and the 8 h soak.
+    - **Impact:** high
+    - **Sources:**
+      - https://forum.radxa.com/t/30241
+      - https://forum.radxa.com/t/31078
+      - https://forum.radxa.com/t/31391
+      - https://forum.radxa.com/t/30397
+      - https://forum.radxa.com/c/dragon/q6a/71
+  19.
+    - **Claim in stack:** #37: never use AI Hub QNN/DLC artifacts
+    - **Finding:** More community evidence supports the rule.
+  - AI Hub produced 2.45.x context binaries that do not run on runtime 2.42 (30908, 30952).
+  - AI Hub now warns that '--quantize_full_type is deprecated' and that compiling straight to qnn_context_binary 'has been deprecated' in favour of submit_compile_and_link_jobs (30899, 26 May 2026).
+  - AI Hub lists only the RB3 Gen 2 (Qualcomm Linux 1.6) as the QCS6490 target, not Ubuntu (30952).
+    - **Verdict:** confirmed
+    - **Action:** Keep the rule. AI Hub is used only for upper-level reference latencies.
+    - **Impact:** low
+    - **Sources:**
+      - https://forum.radxa.com/t/30908
+      - https://forum.radxa.com/t/30952
+      - https://forum.radxa.com/t/30899
+  20.
+    - **Claim in stack:** Roadmap / #47: first live recordings from ISS SSTV Series 34 (22-25.10.2026) at 437.550 MHz
+    - **Finding:** The ARISS page, re-read on 18 Oct 2026 (entry dated 2026-10-14), still says 22-25 Oct, start and stop times 'TBD (will be updated here)', 437.55 MHz +/- Doppler, Robot 36, 36 s on / 2 min off. No change or cancellation.
+    - **Verdict:** confirmed
+    - **Action:** Re-check the page on 20-21 Oct for times. Record SigMF on RTL-A with the static voice mask active.
+    - **Impact:** low
+    - **Sources:**
+      - https://www.ariss.org/upcoming-sstv-events.html
+  21.
+    - **Claim in stack:** C19 CPU-mode 4-6 tiles/s; #44 T2 4.5-10.8 min on A78; #45 T3 GPU budgets; 5.4 voice rule (no voice IQ)
+    - **Finding:** No community measurements were found for:
+  - ORT CPU tiles/s on a Cortex-A55;
+  - torch CPU training time on QCS6490 A78 cores;
+  - GPU training budgets for this model class.
+  The only nearby data point is HF Transformers Whisper on the Q6A CPU: tiny about 1x realtime, small about 2.3x (30230, Jan 2026), which says nothing about SpecDet. The fail-closed voice rule from stage 1 has no community counterpart. WebSearch was unavailable for further hunting.
+    - **Verdict:** unverified
+    - **Action:** Keep the stage-1 Phase-0 benchmarks: ORT 1.31 SpecDet-S FP32/QDQ on one A55 and one A78, and one T2 epoch with torch 2.14.1+cpu on CPU4-6. Keep the fail-closed voice rule and its unit test.
+    - **Impact:** low
+    - **Sources:**
+      - https://forum.radxa.com/t/30230
+- **Current status oct 2026:** Community picture on 18 Oct 2026, from the Radxa forum, GitHub trackers and community repos:
+  
+  - **What works.** The Q6A HTP v68 runs INT8 CNN and ViT graphs reliably when the whole stack matches exactly: cdsp.mbn c4-00004, fastrpc_shell_unsigned_3 c4-00004, the skel from the same SDK as libQnnHtp/stub, and libcdsprpc. QAIRT 2.42.0.251225 is still what Radxa documents. A matched x86 container with 2.42 builds binaries that load (forum 31208). The community also ran newer stacks (2.46, 2.47 via QNN EP 2.3.0, 2.49), each with its own matched skel.
+  - **Hard limits confirmed.** VTCM is 2 MB: a 4 MB request fails with 0x138d, and DLC prepare on the device crashed the CDSP. FP16/FP32 is unavailable on v68. Detection heads collapse with shared or calibration-derived output scales.
+  - **Main operational risk is packaging churn.**
+    - The qcs6490-noble pool (Release 24 Sep 2026) keeps only fastrpc 1.0.7-3; older versions are only on GitHub releases.
+    - fastrpc 1.0.6/1.0.7 have open CDSP problems (qualcomm/fastrpc #371; forum 31391 'remotectl1').
+    - radxa-firmware-qcs6490 0.2.42 (17 Sep) rebuilt adsp/cdsp.mbn for PM7250B Type-C, but keeps the c4-00004 shell, which has been unchanged since March.
+    - fastrpc.service recreates /usr/lib/dsp on every boot.
+    - Other firmware packages write the same paths.
+  - **Other community findings.**
+    - onnxruntime-qnn #892, open as of 17 Oct: multi-threaded Run() gives silently wrong results.
+    - PrismPhi documented HTP-specific INT8 output offsets that CPU QDQ does not show.
+  - **No change** to the hardware purchase list for this subsystem. Software stays at $0.
+- **Notes:** **Method**
+  - Sources were primary or first-hand only:
+    - Radxa forum Discourse JSON, including all 24 posts of 30699, plus 29847, 29959, 30225, 30230, 30241, 30264, 30312, 30321, 30396, 30397, 30538, 30692, 30812, 30850, 30899, 30908, 30952, 31046, 31047, 31078, 31208, 31217, 31234, 31368, 31391, 31448, 31462, 31466 and 31574.
+    - The forum's own search, 6 queries, all made before I learned the shared web-search budget was gone.
+    - GitHub pages through WebFetch: radxa-pkg/radxa-firmware commits; radxa-pkg/fastrpc releases, changelog, fastrpc.service and setup-dsp.sh; qualcomm/fastrpc #371; onnxruntime-qnn #892 and #176; the onnxruntime v1.31.0 release; Immich discussion #25112.
+    - PrismPhi repo docs (porting.md, rebuilding.md) and the vladisUl/npu_runtime_armbian README.
+    - The ModelScope file API for radxa/resnet50_qairt.
+    - The Radxa apt index and pool (HTTP status checks), and a download of task-qualcomm-npu 0.1.0-14 (metapackage only: Depends fastrpc, fastrpc-dev).
+    - The stage-1 unpacked radxa-firmware-qcs6490 0.2.42 and qcom-qnn-sdk-v68 debs, re-inspected for shell version, sizes and skel location.
+    - The local QAIRT 2.42 HTP doc (DCVS and RPC polling), AI Hub model cards on Hugging Face (v0.64.0, QAIRT 2.50), endoflife.date and the ARISS page.
+  - WebSearch: I made 0 calls; the shared per-turn budget was already used up, so I did no Reddit, YouTube or Discord hunting.
+  - Not fetched: the Medium write-up by Olof Astrand (403).
+  - **Model numbers** (my Python arithmetic, not measurements):
+    - SpecDet-S about 1.0-1.3 ms and SpecDet-M about 3.1-3.9 ms on HTP, scaled from MobileNet-v2 by MAC count only.
+    - HTP duty 2-17%.
+    - A16/A8 latency ratios computed from the AI Hub tables.
+  - **Community claims I could not verify:**
+    - the 'firmware caps at QNN interface 2.32' statement;
+    - 'DSPs running hung the board / fsck';
+    - Frigate's 10 ms;
+    - the 0.2.41 'c3 shell' report, which contradicts Radxa's git history for that file.
+  - **Local evidence files:**
+    - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/npu_s2 (forum thread JSONs t_*.json, cat_0.json, cat_1.json, ms_resnet.json, dl_task/)
+    - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/npu_s2_scripts/dump.py
+    - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/npu_rr/deb_fw/x
+    - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/npu_rr/deb_qnn/x
+    - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_prism
+    - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_perf
+  - **Changes to stage 1:**
+    - #40 (VTCM 2 MB / 0x138d) moves from unverified to confirmed; the source is forum 31208.
+    - #39 FP16 rejection moves to confirmed.
+    - #36 shared-dma-pool overlay becomes optional, per Radxa staff.
+    - New risks: the fastrpc version pool and service behaviour; the ADSP_LIBRARY_PATH, device-node and group settings missing from the inferd-htp unit; Radxa quick validation running 2.37.1 libs; HTP-vs-CPU QDQ fidelity; per-class output collapse; ORT thread and spinning defaults.
+  - **Cross-subsystem items:**
+    - Power: 0.2.42 DSP firmware exists 'to support PM7250B Type-C controller'.
+    - Compute: hardware watchdog; rsetup overlay bug; kernel 7.0.x regressions.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
