@@ -11,6 +11,7 @@
 | Компонент | Етапи (✅ готово, ⏳ працює) | Поточний run |
 |---|---|---|
 | [2 mm al mid plate copper clad fr4 rf bay](components/2_mm_al_mid_plate_copper_clad_fr4_rf_bay.md) | · research · forums · fixes ✅ verify | `—` |
+| [65 100 w usb c pd charger 5 a c c cable](components/65_100_w_usb_c_pd_charger_5_a_c_c_cable.md) | · research · forums · fixes ✅ verify | `—` |
 | [Adafruit bno085 4754 rp2040 zero metal p](components/adafruit_bno085_4754_rp2040_zero_metal_p.md) | · research · forums · fixes ✅ verify | `—` |
 | [Adafruit ch334f mtt hub 5997](components/adafruit_ch334f_mtt_hub_5997.md) | · research · forums · fixes ✅ verify | `—` |
 | [Adafruit ina228 5832](components/adafruit_ina228_5832.md) | · research · forums · fixes ✅ verify | `—` |
