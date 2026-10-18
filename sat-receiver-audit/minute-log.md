@@ -60,3 +60,9 @@
 - Радіолабораторія: ДВ-сигнали часу — модуль CANADUINO 60 кГц (WWVB/MSF/JJY60, є варіант DCF77); фільтровані підсилювачі Uputronics для AIS 162, радіозондів 403 і ADS-B 1090 МГц; КХ-режими публічних служб: WEFAX і NAVTEX (SITOR-B). Джерела: universal-solder.com, store.uputronics.com.
 - КХ і меню: у SDRangel є issue #2741 про помилку збирання на Raspberry Pi 5 (Debian trixie) — збирання на ARM64 можливе, але з проблемами; перевірити на Q6A. Джерело: github.com/f4exb/sdrangel/issues/2741.
 
+## 2026-10-18 02:12 UTC
+
+- Малі антени («стек»): ARISS анонсує нові SSTV-серії 2026 — Series 33 «Student Education» і Series 34 «ARISS Hardware» (Експедиція 75), обидві на 437,55 МГц, Robot 36, 36 с передачі / 2 хв паузи. Джерело: ariss.org (SSTV).
+- Радіолабораторія (ПЗ): агент перевіряє клієнт SatNOGS (Docker compose на arm64), безголовий автотрекінг SatDump (розклад прольотів з командного рядка) і GNSS-SDR (PVT-монітор по UDP/protobuf з дрейфом годинника приймача). Джерела: wiki.satnogs.org, docs.satdump.org, gnss-sdr.org.
+- КХ і меню: агент з'ясовує версію/архітектури одного з КХ-застосунків (поточна 3.15; ARM64 не вказано).
+
