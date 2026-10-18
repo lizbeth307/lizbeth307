@@ -2835,6 +2835,144 @@
   - No independent bench measurements exist for any of these boards. That matters little for a digital expander; the datasheets govern.
   - Software note: any non-MCP23017 chip needs a labd port and a re-test of the power-on all-off behavior.
 
+## searchB:adafruit_mcp23017_5346_0x20_outputs_0x22 (run `wf_071e1025-145`)
+
+- **Part:** GPIO expanders x2: Adafruit MCP23017 breakout PID 5346 (#1 at 0x20, all outputs; #3 at 0x22, inputs plus GPA7/GPB7 outputs). They sit on Q6A I2C2 (pins 27/28, behind the UM3204H, 100 kHz), are powered from the Q6A 3.3 V rail, have 100k pull-downs, and are driven by labd through smbus2.
+- **Current price usd:** 11.90 for 2 ($5.95 each at Adafruit, in stock, re-checked 18 Oct 2026; $5.36 each at 10+). EU/UK reference: The Pi Hut GBP 5.70 each incl. UK VAT = $7.59 (1 GBP = 1.3318 USD). The Adafruit US price has no tax; an EU buyer adds import VAT on the Adafruit bring-up order.
+- **Critical specs:**
+  - 16 I/O over I2C. Hardware address must set to 0x20 and 0x22 with no clash on I2C2 (sled MCP23017 #2 at 0x21, ADS1115 at 0x48, RP2040 counter at 0x30)
+  - Power-on state: every pin a high-Z input with NO internal pull-up active at POR, so the 100k pull-downs hold every enable low during boot. The part is powered only from the Q6A 3.3 V rail, so with the Q6A off every enable is off. Any part that pulls pins high at POR is disqualified
+  - Runs at VDD 3.3 V (MCP23017: 1.8-5.5 V) with a 3.3 V output swing
+  - Output drive per pin: MCP23017 sinks/sources 25 mA (abs max per pin, DS20001952D); VDD pin max 125 mA. The real loads are logic enables, FET gates and relay-driver inputs, all under 1 mA
+  - Hardware RESET input (RESET low = all pins inputs = all enables off). The board has it on a 10k pull-up
+  - Interrupt: INTA/INTB mirrored, open-drain configurable (IOCON), INTCAP capture and DEFVAL compare, so short FAULT pulses on 0x22 are latched. Wired to header pin 5
+  - Configurable weak pull-ups (GPPU, 40-115 uA at 5 V) for open-drain FAULT/PG inputs on 0x22, if labd relies on them
+  - I2C speed of at least 100 kHz (MCP23017: 100k/400k/1.7 MHz)
+  - On-board I2C pull-ups. Stack rule: no pull-ups below 10k on the header side (UM3204H is TXS-type with its own 10k). Adafruit 5346 hard-wires 10k on SDA/SCL with no cut jumper, so two boards add 5k in parallel. Also 10k on INTA/INTB
+  - Errata: GPA7/GPB7 are output-only on current MCP23017 silicon. The pin plan already allows for this
+  - Software: labd uses the MCP23017 register map through smbus2. PINCTRL_MCP23S08 is not built in the held kernel; GPIO_PCA953X is built in
+  - Temperature: MCP23017 is rated -40..+85 C at VDD 1.8-5.5 V (+125 C only at 4.5-5.5 V)
+  - Standby current of 1 uA max
+  - Build: genuine Microchip silicon from an authorized channel. Adafruit board is 43x18x5 mm with 4 x 2.5 mm holes, 2x STEMMA QT, 0.1 uF + 2x10 uF decoupling, and a power LED that can be cut off (SJ1)
+- **Candidates:**
+  1.
+    - **Name:** DIY: 2x Microchip MCP23017-E/SO (SOIC-28) placed on the stack's own 2-layer power PCB ('Власні PCB' line), with 100 nF + 10 uF decoupling, 10k RESET pull-up, hard-strapped address pins (A2..A0 = 000 for 0x20 and 010 for 0x22), no I2C pull-ups fitted, and the 100k pull-downs on the same board
+    - **Kind:** diy
+    - **Price usd:** About $3.5-4.0 for both: chips $3.24 (DigiKey MCP23017-E/SO $1.62 each at qty 1, 13,353 in stock, verified) or $3.35 incl. 19% VAT (Reichelt EUR 1.49 each, in stock, verified; $1.41 ex VAT), plus about $0.2-0.5 for passives (estimate, unverified). PCB area adds no fabrication cost if added before the power-PCB order (board already budgeted at $10-30, model). Saves about $8 against $11.90, and more against an EU-landed Adafruit price
+    - **Spec comparison:** Same die and same datasheet (DS20001952D) as the -E/ML QFN on the Adafruit board: 16 I/O, POR to high-Z inputs with pull-ups off, 25 mA sink/source, RESET pin, INTA/INTB mirror and open drain, INTCAP/DEFVAL, GPPU pull-ups, 1.7 MHz I2C, 1 uA standby, -40..+85 C at 3.3 V. Same register map and addresses, so labd is unchanged. Better than the Adafruit board in three ways: no added I2C pull-ups, so the >=10k header-side rule holds by construction (vs 5k added by two 5346 boards); no INT pull-ups unless chosen; two STEMMA QT/JST-SH cable joints removed from a handheld. Pull-downs and enables sit on one PCB
+    - **Worse in:** No electrical spec is worse. The cost is design work: it must be laid out and DRC-checked before the power PCB is ordered. No third-party measurement exists for this specific build, so it needs acceptance tests: (1) through a full Q6A boot, every enable stays below 0.1 V; (2) 1e6 I2C reads with zero errors (stack test); (3) INT mirror and open-drain behaviour checked; (4) IDD with Q6A idle. If the PCB is already ordered, this candidate is not available without a respin
+    - **Compatibility:** Same as now: I2C2 at 100 kHz, 0x20/0x22, smbus2 labd code unchanged, GPA7/GPB7 output-only plan unchanged. VDD must come from the Q6A 3.3 V rail (not a board-local 3.3 V) to keep the rule that the Q6A off means every enable is off. Check back-power: FAULT/PG pull-ups on rails that stay live while the Q6A is off must not feed VDD through I/O ESD diodes (this applies to the Adafruit board too). SOIC-28 at 1.27 mm pitch is easy to hand-solder. Receive-only and conducted-only rules are unaffected
+    - **Risks:** Layout or strap error (A-pins have no internal bias and must be tied). Reichelt's status as a Microchip-authorized distributor is not verified; DigiKey is authorized. Price for passives is an estimate
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=MCP23017-E
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=MCP23017-E
+      - https://www.reichelt.com/de/en/shop/product/i_o_extension_16bit_1_8_-_5v_serial_i2c_so-28-282743
+      - https://www.reichelt.com/de/en/shop/search/mcp23017
+      - local datasheet MCP23017 DS20001952D: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ds_mcp23017/mcp.txt
+      - Adafruit 5346 Eagle schematic: https://github.com/adafruit/Adafruit-MCP23017-PCB (local copy /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_ada5346/sch.xml)
+  2.
+    - **Name:** DIY: 2x MCP23017-E/SP (DIP-28) on perfboard
+    - **Kind:** diy
+    - **Price usd:** Chips $3.38 (DigiKey $1.69 each, 8,127 in stock, verified) or $3.93 incl. VAT (Reichelt EUR 1.75 each). Perfboard, sockets and passives not priced (unverified), about $5-7 total
+    - **Spec comparison:** Electrically identical (same die and datasheet). Reichelt lists the DIP at -40..+85 C, which equals the 3.3 V rating of every package
+    - **Worse in:** Build quality and reliability: a hand-wired perfboard (and DIP sockets, if used) in a handheld that sees vibration and cold is mechanically worse than Adafruit's fabricated PCB. Larger. Fails the not-worse rule on build quality
+    - **Compatibility:** Same register map, addresses and wiring as now
+    - **Risks:** Wiring errors, socket fretting, flex cracks. Only acceptable as a bench prototype
+    - **Seller url:** https://www.digikey.com/en/products/detail/microchip-technology/MCP23017-E-SP/894272
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/microchip-technology/MCP23017-E-SP/894272
+      - https://www.reichelt.com/de/en/shop/search/mcp23017
+  3.
+    - **Name:** Soldered 333007 'IO expander MCP23017 breakout' with easyC (Reichelt DEBO IO EXPANDER)
+    - **Kind:** other_brand
+    - **Price usd:** $4.95 each incl. 19% VAT (EUR 4.40; $4.16 ex VAT), so $9.89 for 2 incl. VAT. Reichelt shows 'Available on 10/26/2026', so not in stock today (verified)
+    - **Spec comparison:** Same MCP23017 chip (package not stated), so the silicon specs are equal. 38x22 mm, 2 holes, 2x easyC (JST-SH, Qwiic-compatible). Pinout sheet: I2C pull-ups can be disconnected (JP1 5 V / JP2 3.3 V, normally closed), which is better for the >=10k rule. Address jumpers JP5-7 to GND, default 0x27. On-board 3.3 V regulator with disconnect (JP3) and bypass (JP4, normally open) jumpers
+    - **Worse in:** Default VCC is 5 V through an on-board regulator. Fed from the Q6A 3.3 V, the chip runs below 3.3 V unless JP4 is bridged (and JP3 cut). This is a rework step plus an unknown regulator part. Changing from 0x27 to 0x20/0x22 needs 3 or 2 jumpers bridged per board. Pull-up values, RESET network and LED are not documented. No independent measurement. Outside angle B (branded board), so angle A should verify
+    - **Compatibility:** Register map unchanged. 0x20/0x22 reachable through jumpers. Usable at 3.3 V only after the regulator bypass
+    - **Risks:** Stock date is 26 Oct 2026. Undocumented passives. Its rework is equal in effort to fitting the DIY chips
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/developer_boards_-_i_o_expansion_board_mcp23017-376528
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/product/developer_boards_-_i_o_expansion_board_mcp23017-376528
+      - https://cdn-reichelt.de/documents/datenblatt/A300/IO-EXPANDER-MCP23017-BREAKOUT.pdf
+  4.
+    - **Name:** Waveshare 15391 MCP23017 IO Expansion Board
+    - **Kind:** other_brand
+    - **Price usd:** $5.99 each, $5.39 each at qty 2, so $10.78 plus shipping from Waveshare (shipping unverified). EU: Reichelt EUR 11.50 each incl. VAT = $12.93 (more expensive). The Pi Hut GBP 5.80
+    - **Spec comparison:** Same chip. Schematic (scratchpad copy): 10k I2C pull-ups (R3/R4) with no visible jumper, RESET 10k + 100 nF RC, address jumpers with 10k, 100 nF decoupling, power LED. 38x23 mm. PH2.0 6-pin connector carries INTA/INTB
+    - **Worse in:** Hard-wired 10k I2C pull-ups, as on the Adafruit board. Less bulk decoupling (100 nF vs 0.1 uF + 2x10 uF). Saves only $1.12 before shipping, which probably cancels it. Outside angle B
+    - **Compatibility:** Register map unchanged. Addresses through jumpers. 3.3 V works
+    - **Risks:** Shipping cost erases the saving. No independent measurement
+    - **Seller url:** https://www.waveshare.com/mcp23017-io-expansion-board.htm
+    - **Sources:**
+      - https://www.waveshare.com/mcp23017-io-expansion-board.htm
+      - https://www.reichelt.com/de/en/shop/search/mcp23017
+  5.
+    - **Name:** DIY: 2x TI TCA9535PWR (TSSOP-24) on own PCB, the stack's listed budget alternative
+    - **Kind:** diy
+    - **Price usd:** Chips $4.00 for 2 (DigiKey $2.00 each at qty 1, $1.469 at qty 10, 36,887 in stock, verified). Dearer than the MCP23017-E/SO DIY option
+    - **Spec comparison:** 16 I/O, 1.65-5.5 V, POR to inputs with no internal pull-ups (passes the boot-off rule), addresses 0x20-0x27, open-drain INT, 5 V-tolerant I/O, standby about 1 uA. Better than MCP23017 in three ways: no GPA7/GPB7 errata, rated -40..+125 C at 3.3 V (derated IOL), and supported by the in-kernel gpio-pca953x driver (built in, compatible 'ti,tca9535')
+    - **Worse in:** No hardware RESET pin. IOH 10 mA vs 25 mA. One INT with no capture/compare register, so a short FAULT pulse can be missed if it ends before the read. 400 kHz max vs 1.7 MHz (harmless at 100 kHz). No internal pull-ups, so open-drain FAULT/PG inputs need external resistors. labd register code must be rewritten. Several specs are worse and it costs more than the MCP DIY option, so it is rejected. Calling the TCA9535 a 'budget alternative' in STACK.md trades away RESET, drive and INT capture
+    - **Compatibility:** I2C2, 0x20/0x22 OK. Driver: labd rewrite or a DT overlay with gpio-pca953x
+    - **Risks:** TI store shows TCA9535PWR out of stock at TI direct; DigiKey has stock
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=TCA9535PWR
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=TCA9535PWR
+      - https://www.ti.com/product/TCA9535/part-details/TCA9535PWR
+      - local TI SCPS201F datasheet: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ds_tca9535/tca9535.txt
+  6.
+    - **Name:** Generic AliExpress/marketplace MCP23017 modules (e.g. CJMCU-2317 type)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not verified. The WebSearch budget was used up before any search ran, so no listing was found or priced
+    - **Spec comparison:** Unknown: chip origin, pull-up values, decoupling and RESET network are all unverified
+    - **Worse in:** No independent measurement, so it is rejected under angle B. Gray-market chip origin cannot be shown to be genuine and legal
+    - **Compatibility:** Would be register-compatible if the chip is genuine
+    - **Risks:** Counterfeit or remarked silicon, unknown pull-ups (possibly 4.7k, which would break the >=10k rule), poor soldering
+    - **Seller url:** 
+    - **Sources:** []
+  7.
+    - **Name:** Generic PCA9555 / TCA9555 / CAT9555 16-bit expander modules
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not checked (rejected on datasheet grounds)
+    - **Spec comparison:** 16 I/O, I2C, 0x20-0x27, open-drain INT
+    - **Worse in:** Fails a hard rule. Internal 100k I/O pull-ups are always on while pins are inputs; TI's datasheet says the pull-up 'pulls the I/O to a default high when configured as an input and undriven' (CAT9555: 'weak pull-up resistor (typical 100 kOhm)'). Against the stack's 100k pull-downs, every enable sits near VCC/2 (about 1.65 V) from POR until labd runs, so the outputs are not off during boot. No RESET pin
+    - **Compatibility:** Kernel driver built in, but the boot state is unsafe
+    - **Risks:** Enables ambiguous during boot
+    - **Seller url:** 
+    - **Sources:**
+      - local TI TCA9555 datasheet: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ds/tca9555.txt
+      - local CAT9555 datasheet: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ds/cat9555.txt
+  8.
+    - **Name:** Generic PCF8575 / PCF8574 modules (also Adafruit PCF8575 5611, GBP 5.80 at The Pi Hut)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not compared (rejected)
+    - **Spec comparison:** 16 quasi-bidirectional I/O, 400 kHz
+    - **Worse in:** Fails a hard rule. TI SCPS121I: 'At power on, the I/Os are high. In this mode, only a current source to VCC is active'. Every enable would turn on at boot. No direction registers, no RESET
+    - **Compatibility:** Different register model
+    - **Risks:** Supplies switched on during boot
+    - **Seller url:** https://www.ti.com/lit/ds/symlink/pcf8575.pdf
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/pcf8575.pdf
+  9.
+    - **Name:** Current part kept as the module option: Adafruit MCP23017 5346
+    - **Kind:** current_part
+    - **Price usd:** 11.90 for 2
+    - **Spec comparison:** Baseline. From the Eagle schematic: MCP23017 QFN (-E/ML); one 10k array on SCL, SDA, RESET (pull-ups) and A2 (pull-down); another on INTA/INTB (pull-ups) and A0/A1 (pull-downs); 0.1 uF + 2x10 uF; LED can be cut off at SJ1
+    - **Worse in:** The I2C pull-ups cannot be removed without also losing the RESET pull-up and A2 pull-down, because they share one 4-resistor array
+    - **Compatibility:** As designed
+    - **Risks:** None new
+    - **Seller url:** https://www.adafruit.com/product/5346
+    - **Sources:**
+      - https://www.adafruit.com/product/5346
+      - https://learn.adafruit.com/adafruit-mcp23017-i2c-gpio-expander/pinouts
+      - https://github.com/adafruit/Adafruit-MCP23017-PCB
+- **Notes:** Verdict (angle B): one cheaper option is not worse: 2x genuine MCP23017-E/SO from an authorized distributor, placed on the stack's own power PCB. It costs about $3.5-4 against $11.90 and is the same silicon and datasheet as the Adafruit board's QFN. It is better on the I2C pull-up rule and has fewer cable joints. The condition is that it is laid out before the power PCB is ordered and passes the acceptance tests. If that PCB is already frozen, keep the Adafruit 5346: no cheaper ready-made module was shown to be not-worse.
+  
+  No candidate here breaks receive-only, conducted-only or the no-loop rules. The real hard rule for this part is that every enable must be off at boot. That rule rejects PCA9555/TCA9555/CAT9555 (always-on 100k pull-ups) and PCF8575/8574 (I/Os high at power-on). TCA9535 and PCAL9535A pass the boot rule but lack a RESET pin and have 10 mA source drive. TCA9535 also has no INT capture. So STACK.md's 'budget alternative TCA9535' is a spec trade and should be labelled that way. PCAL9535A (pull-ups off by default, latched inputs) was not priced.
+  
+  Side finding for the current design: two Adafruit 5346 boards put two hard-wired 10k pull-ups on SDA/SCL (5k combined) behind the UM3204H, which already has its own 10k. Check this against the 'no pull-ups below 10k on the header side' rule. Bare chip on The Pi Hut is GBP 3.00 incl. UK VAT = $4.00, not the cheapest. Used units were not searched; they are unlikely to beat $1.62 silicon. EU source for the chip: Reichelt EUR 1.49 incl. 19% VAT, in stock. FX 1 EUR = 1.1241 USD, 1 GBP = 1.3318 USD.
+  
+  Limits: the WebSearch budget was already used up when this step started (0 searches run), so generic AliExpress modules could not be found or measured; they are rejected for lack of evidence. All prices above come from WebFetch of distributor pages or the scratchpad cache, 18 Oct 2026.
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
