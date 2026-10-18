@@ -9001,6 +9001,218 @@
   
   HARD RULES: purely passive mechanics. Nothing transmits, there are no loop structures, and the thermostat bench check is a conducted/thermal test only.
 
+## searchA:weather_kit_ipx4_ip54_mesh_foam_eptfe_ve (run `wf_37583a7b-1a8`)
+
+- **Part:** Weather kit IPX4/IP54 (core, Mechanical, 1 set): stainless mesh + hydrophobic foam on the intakes, ePTFE vents, port caps (SMA x up to 11, F, USB-C, USB-A, 3.5 mm, LAB BUS), clear rain sleeve, 2-3 IP65 boxes with glands for the feed LNAs, self-amalgamating tape, dielectric grease, silica gel
+- **Current price usd:** 45-110 (estimate only; STACK.md row and final_completeness.json name no SKUs, so the figure cannot be checked. A verified branded build of the same content costs about 105-159 USD ex VAT, so the 45 USD low end is not reachable without dropping items. See notes.)
+- **Critical specs:**
+  - Whole-device target: IPX4 (IEC 60529 oscillating-tube or hand-held spray, 10 min) with every cap fitted, plus IP5X-style dust protection at the intakes. This is the stack's own bench test. IP67 is out of reach because of forced air.
+  - Intake media pressure drop: at most 5 Pa at the flow of the 40 mm 5 V fan and of the display blower. Both have very low static pressure, so the PPI and thickness of the foam decide whether cooling survives.
+  - Intake media materials: non-wicking, hydrophobic, reticulated foam that is washable or replaceable. The outer layer is corrosion-proof (304/316 stainless mesh) and resists punctures and insects. Flame behaviour is self-extinguishing. It fits the 32x32 mm hole pattern of the 40 mm fan and the blower intake.
+  - ePTFE vents: rated IP67 or IP68. Airflow of about 1000 ml/min or more at 70 mbar for pressure equalisation of the sealed cavities (display, battery bay, each LNA box). An oleophobic membrane is preferred, because skin oil and sunscreen reach a handheld. Temperature at least -40 to +85 C under solar load. The housing is UV-stable. The mount suits a printed ASA wall: an M12 screw-in with an O-ring, or an adhesive vent on a flat land.
+  - Port caps: fit an SMA jack (1/4-36), F female, USB-C, USB-A, 3.5 mm and the LAB BUS. Tethered (chain or lanyard) so they are not lost in the field. Sealing: IP67 when capped is preferred. Non-corroding. Must never short a centre pin, because bias-tee ports exist.
+  - Rain sleeve: clear, so the display stays readable. Its circumference must exceed the 140x60 mm section (400 mm perimeter), and its length must exceed 225 mm. Open bottom, so the intakes are never blocked or turned upward. Reusable.
+  - LNA boxes: IP65 or better. UV-stable material (polycarbonate or die-cast aluminium). The interior must fit the SAWbird-class LNA plus mated SMA plugs. Glands rated IP68 with a clamping range that matches the coax (RG316 about 2.5 mm; RG58/LMR-195 about 5 mm). Add a vent per box so it does not pump in condensation.
+  - Self-amalgamating tape: EPR rubber of 0.76 mm (Scotch 23 class), or silicone self-fusing tape. UV resistance, directly or with a vinyl overwrap.
+  - Dielectric grease: silicone and non-curing, compatible with silicone and NBR O-rings and gland seals.
+  - Desiccant: orange or green indicating silica gel that is cobalt-free, because blue cobalt-dichloride gel is a CLP Carc. 1B / REACH SVHC substance in the EU. Regenerable. 5-10 g packets, plus a humidity indicator card.
+  - Legality and quality: genuine branded parts from authorised distributors. All parts are passive and mechanical, so receive-only and the conducted-source rules are unaffected, and no loop or H-probe is involved.
+- **Candidates:**
+  1.
+    - **Name:** Current pick: unspecified weather kit (estimate)
+    - **Kind:** current_part
+    - **Price usd:** 45-110 (estimate, no SKUs)
+    - **Spec comparison:** Baseline. The specs are only generic (IPX4/IP54 target; stainless mesh plus hydrophobic foam at 5 Pa or less; ePTFE vents; silicone caps; sleeve; IP65 boxes plus glands; tape; grease; silica gel). It names no part numbers, ratings or prices.
+    - **Worse in:** n/a. It cannot be verified: there is no vent airflow or IP figure, no cap IP rating and no foam pressure-drop data.
+    - **Compatibility:** Matches D15 and the case design by definition.
+    - **Risks:** The price range is not grounded. With branded parts the real cost is about 105-159 USD ex VAT (see notes).
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md (line 276)
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/final_completeness.json
+  2.
+    - **Name:** Gainta G201-IP67 polycarbonate box, 58x64x35 mm, IP67 (x3, LNA boxes)
+    - **Kind:** other_brand
+    - **Price usd:** 3.43-4.16 each (TME, ex VAT, from page structured data); 10.29-12.48 for 3. For comparison, Hammond 1554B2GY is 8.79-11.24 each (TME), 26.37-33.72 for 3.
+    - **Spec comparison:** IP67 is better than the IP65 the kit requires. Polycarbonate, light grey. Hammond 1554B2GY: 65x65x40 mm polycarbonate, UL94V-0. Hammond's catalogue rates the 1554 series IP66/IP68; that was not re-read in this pass. Gainta is an established Taiwanese enclosure maker sold by TME.
+    - **Worse in:** About 7x1x5 mm smaller outside than the 1554B2, so the interior is tighter. The fit of the LNA with mated SMA plugs is NOT verified (Nooelec gives no SAWbird dimensions). The IP67 rating is below Hammond's IP68, but above the IP65 the kit requires. No flammability grade is shown on the TME page.
+    - **Compatibility:** Passive enclosure, no electrical interface. Drill for an M12 gland and an M12 vent. Check the interior against the actual LNA plus SMA plugs before ordering 3.
+    - **Risks:** TME stock fields are inconsistent (structured data says 141 in stock, the visible field says 0). If the LNA does not fit, a larger Gainta IP67 size is needed (unpriced).
+    - **Seller url:** https://www.tme.eu/en/details/g201-ip67/multipurpose-enclosures/gainta/
+    - **Sources:**
+      - https://www.tme.eu/en/details/g201-ip67/multipurpose-enclosures/gainta/
+      - https://www.tme.eu/en/details/hm-1554b2gy/multipurpose-enclosures/hammond/1554b2gy/
+      - https://www.nooelec.com/store/sawbird-goes.html
+  3.
+    - **Name:** Gainta G104MF-IP67 die-cast aluminium box with fixing lugs, 58x64x35 mm, IP67 (x3, LNA boxes; shielded option)
+    - **Kind:** other_brand
+    - **Price usd:** 4.96-6.61 each (TME, ex VAT, structured data); 14.88-19.83 for 3. Still about 11-14 USD cheaper than 3 x Hammond 1554B2GY.
+    - **Spec comparison:** IP67, die-cast aluminium, fixing lugs for strapping to a mast or boom. The metal adds shielding of the LNA from local interference, and aluminium resists UV better than polycarbonate.
+    - **Worse in:** Same size limit as the G201. Heavier than polycarbonate (weight not on the page). Metal must be drilled carefully for glands.
+    - **Compatibility:** Passive. Same size check as the G201.
+    - **Risks:** TME stock fields are inconsistent (structured data says 503, the visible field says 0).
+    - **Seller url:** https://www.tme.eu/en/details/g104mf-ip67/multipurpose-enclosures/gainta/
+    - **Sources:**
+      - https://www.tme.eu/en/details/g104mf-ip67/multipurpose-enclosures/gainta/
+  4.
+    - **Name:** Amphenol LTW VENT-PS1NBK-O8001 screw-in ePTFE vent, M12x1.5, IP68 (x5: display cavity, battery bay, 3 LNA boxes)
+    - **Kind:** other_brand
+    - **Price usd:** 1.92-3.20 each (TME, ex VAT, structured data); 9.60-16.00 for 5. The non-O variant VENT-PS1NBK-N8001 is 1.33-2.45 each (TME), or 1.40 (Future Electronics). For comparison, Gore VE7 adhesive vents at RS come only in 50-packs: GBP 292.90 (20 mm) or GBP 189.15 (5.5x10.2 mm) per pack ex VAT.
+    - **Spec comparison:** Amphenol VE-series catalogue: N8001 has an ePTFE membrane, 1000 ml/min at 70 mbar, IP68 (2 m, 1 h) and IP69K, -40 to +125 C, and a UV-resistant UL94V-0 nylon housing. This was taken from a search extraction, because the catalogue PDF text could not be machine-read. TME confirms M12x1.5, IP68, -40 to 125 C, polyamide body and an O-ring included. The temperature range is wider than the stack needs. Gore VE7/VE9 are rated IP64/IP67/IP68 depending on mounting.
+    - **Worse in:** The oleophobic grade of the O8001 is NOT confirmed on TME. Its catalogue text gives 'O' as the oleophobic code, but which part-number position is the membrane code is ambiguous. The plain N8001 is non-oleophobic, which is worse than Gore's standard oleophobic membranes for a handheld (skin oil, sunscreen). It is a 16 mm-tall screw-in, not a flat adhesive vent, so it needs an M12 hole and a wall of about 2-3 mm or more. Water entry pressure is not published for this part.
+    - **Compatibility:** M12x1.5 tapped hole or a hole plus nut in printed ASA, sealed with an O-ring. Fits the Gainta boxes too. These are pressure-equalisation vents only: they are NOT the battery-pack thermal-runaway vent path required by rule P2.
+    - **Risks:** Confirm the oleophobic code with Amphenol or TME before ordering O8001. Stock fields are inconsistent (structured data says 699).
+    - **Seller url:** https://www.tme.eu/en/details/vent-ps1nbk-o8001/enclosures-other-accessories/amphenol-ltw/ltw-vent-ps1nbk-o8001/
+    - **Sources:**
+      - https://www.tme.eu/en/details/vent-ps1nbk-o8001/enclosures-other-accessories/amphenol-ltw/ltw-vent-ps1nbk-o8001/
+      - https://www.tme.eu/en/details/vent-ps1nbk-n8001/enclosure-accessories/amphenol-ltw/
+      - https://www.amphenol.co.jp/military/catalog/VEseries.pdf
+      - https://www.futureelectronics.com/p/2145235
+      - https://uk.rs-online.com/web/p/enclosure-ventilation/2879531
+      - https://uk.rs-online.com/web/p/enclosure-ventilation/2842970
+      - https://www.gore.com/products/venting/adhesive-vents
+  5.
+    - **Name:** Orion Fans GRM40-45 40 mm filter-guard assembly (ABS guard + 45 PPI polyurethane foam), plus M40-45 spare media, behind a stainless mesh outer layer
+    - **Kind:** other_brand
+    - **Price usd:** GRM40-45: 2.38 each at 1, 1.996 at 10 (DigiKey US, 3,737 in stock); 4.76 for 2. M40-45 spare foam: 0.60 each (DigiKey Mexico, not stocked, 15-week lead time). The stainless mesh sheet is not priced (estimate 5-10 USD).
+    - **Spec comparison:** A ready, fitted foam carrier for the 40 mm fan intake. Polyurethane foam at 45 PPI. Flammability 'self-extinguishing' (no standard named). Fits the OD4010/4020/4028 40 mm fan frames.
+    - **Worse in:** On its own it has no stainless outer mesh: the ABS grille is weaker against punctures and crushing and is not an insect or fine-debris barrier, so keep the stainless mesh in front. Pressure drop is NOT published on DigiKey, so it must be bench-checked against the 5 Pa limit (the datasheet PDF was not read). Hydrophobicity and the polyether-vs-polyester grade of the foam are not stated. It does not fit the blower intake, which needs cut foam from the M40-45 sheet or a bulk sheet.
+    - **Compatibility:** Mounts on the 40 mm fan's 32x32 mm hole pattern; 5 V fan unaffected. Note: in rain, never face an intake upward (stack rule).
+    - **Risks:** Possible loss of cooling if the 45 PPI pressure drop exceeds what the 5 V fan can supply. A 30 PPI grade may be needed (not checked).
+    - **Seller url:** https://www.digikey.com/en/products/detail/orion-fans/GRM40-45/2621296
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/orion-fans/GRM40-45/2621296
+      - https://orionfans.com/productFiles/datasheet/GRM40.pdf
+      - https://www.digikey.kr/en/products/detail/orion-fans/M40-45/3782922
+      - https://www.digikey.jp/en/products/detail/qualtek/09150-M-45/273619
+  6.
+    - **Name:** GCT RFCT-SMA-CAP-GS-1 SMA-jack protective cap with chain, IP67, gold-plated (x up to 11)
+    - **Kind:** other_brand
+    - **Price usd:** 2.74-4.13 each (TME, ex VAT, structured data); 30.14-45.43 for 11. Alternatives: Amphenol RF 202112-10 (brass, gold, chain) at 3.89 each or 3.305 at 10 (DigiKey; 0 stock, 12-week lead time); TE 3-1478985-0 brass with chain at 4.76 each (DigiKey, per search).
+    - **Spec comparison:** IP67 when capped, chained, metal with gold plating. Better than the kit's untethered, unrated silicone caps in sealing, tether, UV life and wear on the 1/4-36 thread.
+    - **Worse in:** Not cheaper than generic silicone caps: this is the single largest cost in a branded kit. Material and chain details are not on the TME page, only 'chain', 'gold-plated' and 'IP67'.
+    - **Compatibility:** Fits SMA jacks (P1-P8, RX1, RX2, REF IN). Shown as 'for SMA socket'. A cap on a jack touches only the outer threads. Still, fit caps only with the bias-tee ports disabled (labd default).
+    - **Risks:** TME stock is inconsistent (structured data says 211). 'Bag of 50' is the packaging, but the minimum order is 1.
+    - **Seller url:** https://www.tme.eu/en/details/rfct-sma-cap-gs-1/sma-smb-smc-connectors/gct/
+    - **Sources:**
+      - https://www.tme.eu/en/details/rfct-sma-cap-gs-1/sma-smb-smc-connectors/gct/
+      - https://www.digikey.com/en/products/detail/amphenol-rf/202112-10/1989883
+      - https://azcus.digikey.com/en/products/detail/te-connectivity-amp-connectors/3-1478985-0/1890799
+  7.
+    - **Name:** Essentra EFA02-43-001 PVC SMA dust cap (branded budget cap)
+    - **Kind:** other_brand
+    - **Price usd:** 1.32 (DigiKey, per search, no stock) to 1.53 each (Dasenic), 0.85 at 1,000. About 14.5-17 for 11.
+    - **Spec comparison:** Black PVC push or thread dust cap for SMA. Cheaper than metal IP67 caps.
+    - **Worse in:** No tether (lost in the field), no IP rating, and the thread engagement is not confirmed. PVC ages under UV and cold. Worse than the IP67 chained caps, and not proven better than silicone caps. NOT acceptable as not-worse.
+    - **Compatibility:** SMA jacks (thread fit unverified).
+    - **Risks:** Unverified fit. Listing-aggregator price.
+    - **Seller url:** https://dasenic.com/product/essentra-efa02-43-001-8229769
+    - **Sources:**
+      - https://dasenic.com/product/essentra-efa02-43-001-8229769
+      - https://www.electronicsdatasheets.com/manufacturers/essentra-components/parts/efa02-43-001
+  8.
+    - **Name:** OP/TECH USA Rainsleeve 18in, 2-pack (part 9001132)
+    - **Kind:** other_brand
+    - **Price usd:** 9.49 (Pictureline sale) to 12.99 (Walmart) for 2 sleeves; UK Jessops GBP 8.00. No EU listing was checked.
+    - **Spec comparison:** Clear polyethylene. Fits up to 7 in (17.8 cm) diameter and 18 in (45.7 cm) length (Holdan, ProCam, B&H): a circumference of about 559 mm against the 400 mm section perimeter, and 457 mm against 225 mm length, so it fits. Drawstring with barrel lock, 54 g, lifetime warranty (OP/TECH copy on Adorama for the Small model).
+    - **Worse in:** Thin PE, so it is semi-disposable: the 2-pack covers wear. The camera-eyepiece hole has to be closed or used as a cable exit. Glazer's lists a conflicting 14 in length (outlier). Do NOT use the 'Small' 8 in model: its 4.5 in diameter is too small.
+    - **Compatibility:** Slides over the receiver with the open end down, so the intakes are not blocked. In rain: LOCK plus encoder-only operation (stack rule).
+    - **Risks:** US prices; EU price and VAT not checked.
+    - **Seller url:** https://www.pictureline.com/products/op-tech-rainsleeve
+    - **Sources:**
+      - https://www.pictureline.com/products/op-tech-rainsleeve
+      - https://www.walmart.com/ip/160397155
+      - https://www.holdan.co.uk/products/details/OPTE8415
+      - https://procam.com/a/llms/products/op-tech-18-rainsleeve-2-pack
+      - https://www.bhphotovideo.com/c/product/469774-REG/OP_TECH_USA_9001132_18_Rainsleeve_Set_of.html
+      - https://www.jessops.com/p/optech/rainsleeve-2-pack-93775
+      - https://www.adorama.com/op-tech-rainsleeve-small-8-inch-46-cm-two-pack/p/otrss8
+  9.
+    - **Name:** LAPP SKINTOP ST-M 12x1.5 cable gland (53111400), IP68, clamping 3.5-7 mm (x6)
+    - **Kind:** other_brand
+    - **Price usd:** 0.35-0.98 each (TME, ex VAT, structured data); 2.10-5.88 for 6. Locknuts not priced.
+    - **Spec comparison:** IP68. Polyamide body, chloroprene seal, -20 to +100 C, UL94V-2. LAPP is a tier-1 gland brand.
+    - **Worse in:** Its clamping range starts at 3.5 mm, so it does NOT seal RG316 (about 2.5 mm). The thin-coax entries need a smaller-range gland (not priced). The -20 C lower limit is narrower than the vents' -40 C.
+    - **Compatibility:** Matches the M12 holes used for the vents. Suits RG58/LMR-195-class coax.
+    - **Risks:** Stock fields inconsistent (structured data says 4,562).
+    - **Seller url:** https://www.tme.eu/en/details/skintop-st-m12x1.5/glands/lapp/53111400/
+    - **Sources:**
+      - https://www.tme.eu/en/details/skintop-st-m12x1.5/glands/lapp/53111400/
+  10.
+    - **Name:** 3M Scotch 23 EPR self-amalgamating tape, 19 mm x 9.15 m
+    - **Kind:** other_brand
+    - **Price usd:** About 14.5-19.6 (EUR 12.50 ex VAT on sale at MW.dk, EUR 15.63 incl. VAT; Silmid FR EUR 16.89). EUR/USD rate for Oct 2026 not verified. Element14 AU lists AUD 42.11, so avoid that channel.
+    - **Spec comparison:** The reference product for this kit line: EPR rubber, 0.76 mm, self-fusing.
+    - **Worse in:** Leaves residue when removed after each session, and needs a vinyl overwrap for long UV exposure. The MW.dk listing URL suggests a 25 mm width, so confirm the size.
+    - **Compatibility:** For coax joints and feed connectors outside the case.
+    - **Risks:** Price snapshot from a sale.
+    - **Seller url:** https://silmid.com/fr/tapes/insulating-tapes/3m-23-rubber-splicing-tape-19mmx9-15mt-roll
+    - **Sources:**
+      - https://ehandel.mw.dk/en/3m-diverse-tape/3m-selvvulkaniserende-gummitape-23-25x076mm-x-915m
+      - https://silmid.com/fr/tapes/insulating-tapes/3m-23-rubber-splicing-tape-19mmx9-15mt-roll
+      - https://au.element14.com/3m/23-19mm/splicing-tape-epr-9-14m-x-19-05mm/dp/143079
+  11.
+    - **Name:** Permatex dielectric tune-up grease (81150, 0.33 oz tube; or 22058, 3 oz)
+    - **Kind:** other_brand
+    - **Price usd:** 81150: 8.80 (Walmart). 22058: 10.49 (Amazon via camelcamelcamel; ASIN mismatch flagged, so treat with caution).
+    - **Spec comparison:** Silicone dielectric grease for connectors and seals. The temperature range is NOT verified in this pass.
+    - **Worse in:** No published grade comparison against DOWSIL/Molykote 4 was found; treat it as equivalent only once the TDS is read.
+    - **Compatibility:** Use on O-rings, gland seals and cap threads, not packed into RF mating faces.
+    - **Risks:** US retail prices only.
+    - **Seller url:** https://www.walmart.com/c/brand/permatex-home-improvement-lubricants-greases
+    - **Sources:**
+      - https://www.walmart.com/c/brand/permatex-home-improvement-lubricants-greases
+      - https://camelcamelcamel.com/product/B0DFZM11GM
+  12.
+    - **Name:** Wisedry 5 g orange indicating silica gel, cobalt-free, 60-pack
+    - **Kind:** other_brand
+    - **Price usd:** Not found (UNVERIFIED). Dry & Dry 5 g x 3,000 orange cobalt-free costs 59.99 on eBay, about 0.02 per packet, but that is bulk.
+    - **Spec comparison:** Turns from orange to dark green when saturated, cobalt-chloride-free, regenerable in an oven or microwave, absorbs up to 35% of its weight (listing claim).
+    - **Worse in:** Price unverified. No humidity indicator card included.
+    - **Compatibility:** Goes in the battery bay, the display cavity and the LNA boxes.
+    - **Risks:** Marketplace listings. Buy the orange cobalt-free type only (EU).
+    - **Seller url:** https://www.desertcart.ae/products/38664549-5g-x-60-packs.md
+    - **Sources:**
+      - https://www.desertcart.ae/products/38664549-5g-x-60-packs.md
+      - https://ebay.com/p/23012300326
+  13.
+    - **Name:** Budget alternative already in STACK: caps + rain sleeve only
+    - **Kind:** current_part
+    - **Price usd:** About 13-58 (sleeve 9.49-12.99 plus generic silicone caps, est. 3-8, or GCT IP67 caps 30-45)
+    - **Spec comparison:** Keeps only the caps and the sleeve.
+    - **Worse in:** WORSE. It drops the intake mesh and foam, the ePTFE vents, the LNA boxes, glands, tape, grease and desiccant. The intakes are unprotected, so IPX4 and IP5X at the intakes fail, the feed LNAs are exposed, and the sealed cavities have no pressure equalisation. Not allowed under the not-worse rule.
+    - **Compatibility:** -
+    - **Risks:** Water and dust ingress through the forced-air path.
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md (line 276)
+- **Notes:** VERDICT: no cheaper not-worse kit was found from Angle A. Keep the kit's content, but replace the generic 45-110 USD estimate with a verified SKU list. Three sub-items have a cheaper branded choice that is not worse:
+  (1) LNA boxes: Gainta G201-IP67 (polycarbonate, 3.43-4.16 USD) or G104MF-IP67 (die-cast aluminium, 4.96-6.61 USD) instead of Hammond 1554B2GY (8.79-11.24 USD). For 3 boxes this saves about 14-21 USD. The boxes are IP67 against the IP65 required, but the LNA fit must be checked first.
+  (2) Vents: Amphenol LTW VENT-PS1NBK-O8001 at 1.92-3.20 USD each, instead of Gore VE adhesive vents, which RS sells only in 50-packs (GBP 189-293 per pack). Confirm the oleophobic code; the plain N8001 at 1.33-2.45 USD is non-oleophobic and therefore worse for a handheld.
+  (3) Intakes: the Orion GRM40-45 filter guard (2.38 USD) can carry the foam behind the stainless mesh. Its pressure drop must be bench-checked against the 5 Pa limit.
+  
+  VERIFIED-BUILD COST (Angle A, ex VAT, before shipping; quantities assumed: 11 SMA caps, 5 vents, 3 boxes, 6 glands): about 105-159 USD. The breakdown:
+  - intakes 11-16 (mesh estimated)
+  - vents 9.6-16
+  - GCT IP67 chained SMA caps 30-45
+  - other caps 3-8 (estimated)
+  - sleeve 9.5-13
+  - boxes 10.3-12.5
+  - glands 2.1-5.9
+  - 3M 23 tape 14.5-19.6
+  - grease 8.8-10.5
+  - silica gel 6-12 (estimated)
+  
+  With generic silicone SMA caps instead of IP67 chained caps (Angle B territory, unverified), the build is about 77-119 USD. The STACK low end of 45 USD is therefore optimistic and should be raised. The tethered IP67 SMA caps are the biggest cost. They are better than the kit's silicone caps (sealing, tether); whether a cheaper generic cap is not worse is for the generic or clone angle to prove.
+  
+  New spec items found: each sealed LNA box needs its own vent, or it will pump in condensation. LAPP ST-M12 glands do not seal RG316, so a smaller gland is needed for thin coax. The ePTFE vents are not the battery thermal-runaway vent path (rule P2 stays separate). Use only cobalt-free silica gel in the EU.
+  
+  Caveats on prices:
+  - TME prices come from page structured data (AggregateOffer). The visible price was hidden, and the stock fields were inconsistent.
+  - EU VAT (19-27% by country) is added for consumers.
+  - US retail prices (OP/TECH, Permatex) were not re-checked in EU shops.
+  - The Amphenol airflow of 1000 ml/min at 70 mbar comes from a search extraction of the catalogue PDF, because the PDF text could not be machine-read.
+  
+  All items are passive mechanical parts, so every hard rule holds (receive-only, conducted-only sources, no loops). The Q6A and the antennas are untouched.
+
 ## small:lband_sband (run `wf_41027870-8e7`)
 
 - **Band group:** L-band 1.5-1.7 GHz and S-band 2.2-2.4 GHz with antennas of at most 12 cm (STRICT) or 20 cm (SMALL). Dishes and anything tens of cm deployed are EXCLUDED, including the foldable helicones, the 11-turn helix and the 2x2 helix arrays. Rule interpretation as given: STRICT means the largest deployed dimension is about 12 cm or less; SMALL means about 20 cm or less; foldable or telescopic antennas that are larger when deployed are excluded and appear only in the borderline note.
