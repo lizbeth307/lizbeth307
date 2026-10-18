@@ -33775,6 +33775,202 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Also seen and rejected as not cheaper: Mini-Kits PGA-103-WB (AUD 72.50) and GALI-39 (AUD 71), both wideband with no filter. Out of scope: the KrakenRF Discovery Dish L-band feed (dish-related, an antenna).
 
+## searchA:litevna_64 (run `wf_e5582d4c-0a2`)
+
+- **Part:** LiteVNA 64 (Zeenko), bench VNA, Lab instruments, qty 1, conducted use only
+- **Current price usd:** 175.73 ex VAT (EUR 156.33) / 210.88 incl. FR VAT (EUR 187.60), Passion Radio, re-checked 18 Oct 2026: still 'In stock', quantityAvailable=5, reduction EUR 26.17 with no end date, 'Hardware version: 3.1'. Shipping not included.
+- **Critical specs:**
+  - Frequency range at least 50 kHz-6.3 GHz. The stack measures the HF choke at 60 kHz and 1-30 MHz, 137/162-260/435 MHz parts, L-band 1.5-1.7 GHz, S-band 2.2-2.4 GHz, Lime 0.3-3.8 GHz parts, and pads/DC blocks to 6 GHz.
+  - S21 dynamic range at least 90 dB below 3 GHz and 50 dB at 3 GHz and above. This is the HW 3.1 baseline the re-audit adopted. It covers the G6K isolation of 35 dB or more, HMC7992 isolation and filter rejection.
+  - S11 noise floor after cal at least as good as -50 dB below 3 GHz and -40 dB at 3 GHz and above.
+  - Reference stability of 0.5 ppm or better.
+  - S11 + S21 (1-path 2-port), with S22/S12 by reversing the DUT; TDR/DTF; Touchstone export; 10-1001 points on the device, up to 1024/65535 over USB; sweep of 550 pts/s or faster.
+  - Source level control through binary-protocol registers 0x41/0x42 (levels 1-3), used for LNA tests behind 30-40 dB pads. Port 1 is conducted only.
+  - Host interface: USB-C CDC-ACM (VID:PID 04b4:0008), NanoVNA-V2 binary protocol, supported by NanoVNA-Saver main (pipx) and the scikit-rf NanoVNAv2 driver on Ubuntu 24.04 arm64. No vendor kernel driver. labd owns /dev/lab/litevna.
+  - Power: USB 5 V +/-0.5 V at 1 A max (fits the LAB-port budget). Internal Li-po of 2000 mAh or more for standalone and microSD fallback use.
+  - Standalone UI: 3.95 in 480x320 touch display plus jog, microSD for saving.
+  - SMA female ports. The box must include the male OSL plus an SMA F-F adapter (the stack builds its female OSL from these) and 2x 30 cm M-M cables.
+  - Pocket size (about 140x75x20 mm) so it fits the Pelican/Apache bench case.
+  - Genuine Zeenko unit from an authorised seller (high clone risk), with EU GPSR/CE and an EU warranty. No added radios (no Wi-Fi/BT variants).
+- **Candidates:**
+  1.
+    - **Name:** LiteVNA 64 (current pick) at Passion Radio, FR
+    - **Kind:** current_part
+    - **Price usd:** 175.73 ex VAT / 210.88 incl. FR VAT (EUR 156.33 / 187.60)
+    - **Spec comparison:** Baseline. 50 kHz-6.3 GHz; DR 90 dB (<3 GHz) / 50 dB (>=3 GHz); S11 floor <-50/<-40 dB; <0.5 ppm; >550 pts/s; 10-1001 points (device), 1-1024 (USB); 3.95 in 480x320 touch; 2000 mAh; microSD; HW 3.1.
+    - **Worse in:** Baseline.
+    - **Compatibility:** Baseline. 04b4:0008, NanoVNA-Saver/scikit-rf on arm64.
+    - **Seller url:** https://www.passion-radio.com/analyzer-spectrum/lite-vna64-2730.html
+    - **Sources:**
+      - https://www.passion-radio.com/analyzer-spectrum/lite-vna64-2730.html (curl, 18 Oct 2026: price block, quantityAvailable=5, data sheet)
+    - **Risks:** Only 5 left ('last items'). The discount can be withdrawn at any time.
+  2.
+    - **Name:** LiteVNA 64 at Eleshop (Elektor), product ELE005341 (same SKU, other official seller)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 162.53 ex VAT (EUR 144.59), i.e. 13.20 below the pick. 193.41 incl. 19% DE VAT (EUR 172.06); about 195.04 incl. 20% FR VAT (computed), i.e. about 15.84 below. UNVERIFIED: search-index snapshots of eleshop.eu/.de/.nl, because the live pages return Cloudflare 403. Shipping cost not seen.
+    - **Spec comparison:** Same Zeenko LiteVNA 64. The listing (snippet) says 50 kHz-6.3 GHz, 3.95 in touch, 2000 mAh, and DR >90 dB (50 kHz-3 GHz) / >70 dB (3-6.3 GHz). The >=3 GHz figure would beat the pick's 50 dB: per the LiteVNA guide, >70 dB above 3 GHz is HW v0.3.3. Not confirmed; vendors copy-paste these lines inconsistently. Box per eleshop.de snippet: USB cable, 2x 30 cm SMA M-M SS405, male OPEN/SHORT/LOAD, SMA F-F. This matches the stack's OSL + F-F need.
+    - **Worse in:** Nothing known on paper: it is the same device. The HW revision is unconfirmed (it could equally be HW 3.1, which still ties the pick). Before ordering, get the HW revision and the Zeenko origin in writing. On arrival, check the version screen and the 04b4:0008 enumeration.
+    - **Compatibility:** Identical to the pick: same USB ID, protocol, power and box.
+    - **Seller url:** https://eleshop.eu/litevna-5341.html
+    - **Sources:**
+      - https://eleshop.eu/litevna-5341.html (snippet: 144.59 EUR excl. VAT, in stock, ELE005341)
+      - https://eleshop.de/litevna.html (snippet: 172,06 EUR inkl. 19% MwSt, exkl. 144,59 EUR, Vorrätig; Lieferumfang)
+      - https://www.eleshop.nl/litevna-64.html
+      - https://tinysa.org/wiki/pmwiki.php?n=Main.Buying (Eleshop listed as the official Europe seller of Zeenko's tinySA)
+    - **Risks:** Price, stock and HW revision not live-verified (403). EU shipping fee unknown and could erase part of the $13-16 saving. The re-audit's LiteVNA seller list (Passion Radio, Lab401, Zeenko AliExpress) does not yet include Eleshop. Eleshop is Elektor's own shop and appears on tinySA.org's official list, so counterfeit risk is low, but confirm that the manufacturer is Zeenko (GPSR block).
+  3.
+    - **Name:** LiteVNA-64 at GOTRONIK, PL (official tinySA reseller; lists 'Producent Zeenko')
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 179.85 ex VAT (699.19 zl net, EUR 160.00 at the ECB rate 4.37 PLN of 16 Oct 2026); 221.22 incl. 23% PL VAT (860.00 zl). Verified on the product PDF dated 18-10-2026 14:40. Ships in 24 h.
+    - **Spec comparison:** Listing: 50 kHz-6.3 GHz; S11 floor -50/-40 dB; 0.5 ppm; 550/800 pts/s; 21-1024 points (device), 1-65535 (USB); 3.95 in 480x320; 2000 mAh; SD; SMA-F. DR is given as '>70 dB (<3 GHz), 90 dB (v0.3.1, 20 avg)'. Box: USB-C cable, 2x SMA-M 30 cm, OSL, 2 cal adapters, SMA F-F.
+    - **Worse in:** Not cheaper: $4.12 more ex VAT than Passion Radio. Specs are equal. Keep only as a fallback if Passion Radio and Eleshop sell out.
+    - **Compatibility:** Identical device.
+    - **Seller url:** https://www.gotronik.pl/litevna-64-analizator-sieci-wektorowej-50khz-6-3ghz-p-10197.html
+    - **Sources:**
+      - https://www.gotronik.pl/litevna-64-analizator-sieci-wektorowej-50khz-6-3ghz-kartapdf-10197.html (product PDF, 18 Oct 2026)
+      - https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml
+    - **Risks:** tinySA.org lists GOTRONIK for tinySA Ultra/Ultra+ only, not explicitly for LiteVNA. HW revision not stated.
+  4.
+    - **Name:** LiteVNA 64 at Neven.cz (official tinySA reseller for Central/Eastern Europe)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 179.13 ex VAT (3,876.03 CZK computed from 4,690 CZK incl. 21% VAT; EUR 159.36 at 24.323); 216.75 incl. VAT. In stock.
+    - **Spec comparison:** The listing claims HW 0.3.3, but also DR >70 dB (<3 GHz) / >50 dB (>=3 GHz), which looks like stale copy. S11 floor -50/-40 dB; <0.5 ppm; 3.95 in 480x320; 2000 mAh; SMA-F.
+    - **Worse in:** Not cheaper ($3.40 more ex VAT). The listed DR below 3 GHz (70 dB) is under the pick's 90 dB on paper, though probably a copy error. The listed manufacturer is 'NANOLAB', which makes the origin unclear.
+    - **Compatibility:** Same device if genuine.
+    - **Seller url:** https://www.neven.cz/p/litevna-6ghz-prenosny-vektorovy-sitovy-analyzator
+    - **Sources:**
+      - https://www.neven.cz/p/litevna-6ghz-prenosny-vektorovy-sitovy-analyzator
+      - https://www.neven.cz/search?phrase=litevna
+    - **Risks:** Manufacturer field does not say Zeenko. Box contents differ ('4 SMA connectors'); the F-F adapter is not confirmed.
+  5.
+    - **Name:** LiteVNA 62 (Zeenko, smaller sibling) at Neven.cz / Eleshop
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** Neven: 152.40 ex VAT / 184.40 incl. CZ VAT (3,297.52 / 3,990 CZK), in stock (verified). Eleshop: about 146.13 ex VAT (EUR 130.00; search snippet, unverified).
+    - **Spec comparison:** Same RF section per the sellers: 50 kHz-6.3 GHz, same DR and S11 floor lines, <0.5 ppm, HW 0.3.3 (Neven), SMA-F. Display 2.8 in 320x240 vs 3.95 in 480x320; battery 1300 mAh vs 2000 mAh.
+    - **Worse in:** Display: smaller and lower resolution. Battery: 35% less capacity. Both matter for standalone/microSD bench use, so it fails the not-worse rule. Rejected.
+    - **Compatibility:** Same USB ID and protocol as far as known (not verified for the 62).
+    - **Seller url:** https://www.neven.cz/p/litevna-6ghz-prenosny-vektorovy-sitovy-analyzator
+    - **Sources:**
+      - https://www.neven.cz/p/litevna-6ghz-prenosny-vektorovy-sitovy-analyzator
+      - https://eleshop.eu/litevna.html (snippet: 130 EUR excl. VAT)
+    - **Risks:** Would trade away display and battery, so not acceptable under the user's rule.
+  6.
+    - **Name:** LiteVNA 64 at Astroradio, ES (official tinySA reseller)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 189.51 ex VAT (EUR 168.59 computed) / 229.31 incl. 21% IVA (EUR 203.99); EUR 199.91 with a 2% bank-transfer discount. In stock.
+    - **Spec comparison:** Same device.
+    - **Worse in:** Not cheaper (+$13.78 ex VAT).
+    - **Compatibility:** Same.
+    - **Seller url:** https://www.astroradio.com/?post_type=product&s=litevna
+    - **Sources:**
+      - https://www.astroradio.com/?post_type=product&s=litevna
+    - **Risks:** None beyond price.
+  7.
+    - **Name:** LiteVNA 64 at Lab401 (vendor field 'DeepElec', SKU ZEENKO-LITEVNA)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 215.83 (EUR 192.00; Shopify JSON 18 Oct 2026; VAT basis unclear)
+    - **Spec comparison:** Same device per the seller. The text is stale (>70/>50 dB, 1300 mAh).
+    - **Worse in:** Not cheaper (+$40 ex VAT, or about +$5 if EUR 192 includes VAT).
+    - **Compatibility:** Same.
+    - **Seller url:** https://lab401.com/products/litevna
+    - **Sources:**
+      - https://lab401.com/products/litevna.json
+    - **Risks:** Pentest-oriented marketing (antenna tuning at 433 MHz) is irrelevant here. Spec text is stale.
+  8.
+    - **Name:** LiteVNA 64 at R&L Electronics, US (official tinySA reseller)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 189.95 (search result title; page returned 503, unverified)
+    - **Spec comparison:** Same device.
+    - **Worse in:** Not cheaper than $175.73, and US-to-EU import adds VAT and duty.
+    - **Compatibility:** Same.
+    - **Seller url:** https://www.randl.com/index.php?main_page=product_info&products_id=75669
+    - **Sources:**
+      - https://www.randl.com/index.php?main_page=product_info&products_id=75669
+    - **Risks:** Not live-verified.
+  9.
+    - **Name:** LiteVNA 64 v0.3.3 at the Zeenko AliExpress factory store
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** about 200-213 (US-site snapshots in the search index: $212.63, 'lowest price in 90 days'; $200.05 in a related block). UNVERIFIED: AliExpress redirects to login.
+    - **Spec comparison:** Same device. The title says Version 0.3.3, which per the guide means >70 dB above 3 GHz, but this is not confirmed.
+    - **Worse in:** Not cheaper than $175.73 ex VAT. EU checkout price (VAT included) not seen.
+    - **Compatibility:** Same.
+    - **Seller url:** https://www.aliexpress.com/item/1005003551867442.html
+    - **Sources:**
+      - https://www.aliexpress.com/item/1005003551867442.html
+      - https://zeenko.aliexpress.com/store/5800447 (linked from tinySA.org Buying)
+    - **Risks:** Many look-alike listings (HamGeek, 'Hugen', HLFEC). Only the store linked from tinySA.org counts.
+  10.
+    - **Name:** NanoVNA-F V3 (SYSJOINT/Chelegance/SeeSii)
+    - **Kind:** other_brand
+    - **Price usd:** about 373 (GBP 279.95 at Moonraker UK; search snippet, unverified)
+    - **Spec comparison:** 1 MHz-6 GHz vs 50 kHz-6.3 GHz; S21 DR 65 dB (3 GHz) / 60 dB (6 GHz) vs 90/50; S11 50/40 dB (same); +/-1 ppm vs 0.5 ppm; 101-801 points vs 1001; 4.3 in screen; 4500 mAh.
+    - **Worse in:** No coverage below 1 MHz (fails the 60 kHz choke and LF work). DR below 3 GHz is 25 dB worse. Stability is worse. It is also more expensive.
+    - **Compatibility:** Different protocol (NanoVNA-F); NanoVNA-Saver support differs. Not evaluated further.
+    - **Seller url:** https://moonrakeronline.com/chelegance-nanovna-f-v3-vna-6g
+    - **Sources:**
+      - https://moonrakeronline.com/chelegance-nanovna-f-v3-vna-6g
+      - https://www.sdrstore.eu/test-and-measurement/spectrum-analyzer/nanovna-f-v3-1mhz-6ghz-portable-vector-network-analyzer-vna-for-mf-hf-vhf-uhf-shf/
+    - **Risks:** Reviewers report inconsistent long-term reliability (onesdr).
+  11.
+    - **Name:** Chelegance SV6301A
+    - **Kind:** other_brand
+    - **Price usd:** WiMo page read as EUR 949 incl. VAT (fetch summary; reading uncertain). Either way above the pick.
+    - **Spec comparison:** 1 MHz-6.3 GHz; S21 75 dB (<3 GHz) / 60 dB (>=3 GHz); S11 50/40 dB; +/-1 ppm (<140 MHz); 7 in 1024x600; 2x 3350 mAh; N-female; 1.15 kg.
+    - **Worse in:** No coverage below 1 MHz. DR below 3 GHz 15 dB worse. Stability worse. Large and heavy (1.15 kg). Much more expensive. Only the >=3 GHz DR is better (+10 dB).
+    - **Compatibility:** Not a NanoVNA-V2 protocol device; arm64 host support not checked.
+    - **Seller url:** https://www.wimo.com/en/vna-sv6301a-vector-network-analyzer
+    - **Sources:**
+      - https://www.wimo.com/en/vna-sv6301a-vector-network-analyzer
+      - https://www.digikey.com/en/products/detail/seeed-technology-co-ltd/109990525/21526017
+    - **Risks:** Rejected.
+  12.
+    - **Name:** NanoVNA V2 Plus4 / Plus4 Pro (NanoRFE/HCXQS)
+    - **Kind:** other_brand
+    - **Price usd:** about 299-409 (Halibut June 2024 $299; Newegg $359-409 from third parties; official Tindie price not seen; unverified)
+    - **Spec comparison:** 50 kHz-4.4 GHz vs 6.3 GHz; claimed >90 dB DR; same V2 binary protocol family (NanoVNA-Saver supported).
+    - **Worse in:** Range stops at 4.4 GHz, so pads, DC blocks and harmonic checks above 4.4 GHz are lost. More expensive.
+    - **Compatibility:** Protocol-compatible; USB on arm64 fine.
+    - **Seller url:** https://www.tindie.com/products/hcxqsgroup/nanovna-v2
+    - **Sources:**
+      - https://www.tindie.com/products/hcxqsgroup/nanovna-v2
+      - https://electronics.halibut.com/?p=813
+    - **Risks:** Clone-heavy market. Rejected on range and price.
+  13.
+    - **Name:** DeepElec DeepVNA 101
+    - **Kind:** other_brand
+    - **Price usd:** not checked (range alone disqualifies it)
+    - **Spec comparison:** 10 kHz-1.5 GHz; 70 dB DR; 4.3 in; 5000 mAh.
+    - **Worse in:** No coverage above 1.5 GHz (misses L-band 1.54-1.7 GHz, GNSS and S-band). Lower DR.
+    - **Compatibility:** Not evaluated.
+    - **Seller url:** https://www.passion-radio.com/analyzer-spectrum/deep-vna-2706.html
+    - **Sources:**
+      - https://www.passion-radio.com/analyzer-spectrum/deep-vna-2706.html
+      - https://www.gotronik.pl/deepvna101-analizator-sieci-wektorowej-10khz-1-5ghz-deepelec-kartapdf-10199.html
+    - **Risks:** Rejected.
+- **Notes:** VERDICT (Angle A): no other brand at or below the price is not-worse. Every alternative brand loses something. NanoVNA-F V3 and SV6301A start at 1 MHz and have 75 dB or less DR below 3 GHz. NanoVNA V2 Plus4 stops at 4.4 GHz. DeepVNA 101 and NanoVNA-H4-class units stop at 1.5 GHz. All of them also cost more. LiteVNA 62 is cheaper but has a smaller 2.8 in 320x240 screen and a 1300 mAh battery, so it is rejected.
+  
+  The only cheaper not-worse option is the SAME Zeenko LiteVNA 64 from Eleshop (Elektor; official tinySA seller for Europe): EUR 144.59 ex VAT = $162.53, i.e. $13.20 cheaper ex VAT, or about $15.84 cheaper incl. FR VAT. Its listing claims >90/>70 dB (the pick has 90/50), and its box includes male OSL + F-F.
+  
+  Caveats:
+  - Eleshop pages block automated fetch (Cloudflare 403). Price, stock and DR come from search-index snapshots, not a live read.
+  - Shipping is unknown.
+  
+  Recommendation:
+  - Switch the line to Eleshop only after a live check of price, stock and shipping, plus written confirmation of the Zeenko origin and HW revision. The swap is worth it only if Eleshop's EU shipping is less than about $13-16 more than Passion Radio's.
+  - Otherwise keep Passion Radio (5 units left; buy promptly). Add Eleshop and GOTRONIK to the authorised LiteVNA seller list.
+  
+  Other sellers checked (none cheaper ex VAT):
+  - GOTRONIK $179.85 ex (verified PDF 18 Oct 2026)
+  - Neven $179.13 ex
+  - Astroradio $189.51 ex
+  - R&L $189.95
+  - Zeenko AliExpress about $200-213
+  - Lab401 $215.83
+  
+  Rate basis: 1 EUR = 1.1241 USD (stack). PLN/CZK use the ECB rates of 16 Oct 2026 (4.37 and 24.323).
+  
+  Hard rules: unaffected. Same instrument, port 1 conducted only, Bench-gated, no loops. LibreVNA (100 kHz-6 GHz, full 2-port) was not price-checked. It has no built-in screen or battery and is believed to cost well above the pick (unverified), so it is not a not-worse cheaper option.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
