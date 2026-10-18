@@ -4933,3 +4933,9 @@ I committed and pushed the updated Inmarsat-C rule in REQUIREMENTS.md, and the w
 
 ---
 
+### 🤖 Зведення #182 — 2026-10-18 08:27:32 UTC
+
+Add an operator-notes input to stack v2 so items I spot during P4 reach the v2 stack, and seed it with the SatDump pipeline gap.
+
+---
+
