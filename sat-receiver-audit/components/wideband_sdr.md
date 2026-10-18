@@ -908,5 +908,160 @@ _Run `wf_e64436d6-ae7`_
 
 ## Адверсаріальна перевірка (`verify`)
 
+_Run `wf_e64436d6-ae7`_
+
+- **Component:** Wideband PCIe SDR (M.2 slot of the Radxa Dragon Q6A): LimeSDR Micro M.2 2280
+- **Recommendation holds:** так
+- **Issues:**
+  1.
+    - **Claim:** v3 stack: LimeSDR Micro costs $199 on Crowd Supply.
+    - **Problem:** The $199 early-bird price ended in May 2026. The page also leaves out the Ukrainian landed cost.
+    - **Correction:** Basic (no GNSS) is $249 + $18 worldwide shipping; GNSS is $299. Crowd Supply does not prepay VAT for Ukraine, so the buyer pays the duty. Under the current rules that is 10% duty + 20% VAT on the value above EUR 150, roughly $30-35 on this parcel, plus any courier brokerage fee. The Rada passed the repeal of the EUR 150 exemption on Oct 15, 2026; its effective date is not confirmed and is probably 2027. Plan on about $300-320 landed, plus $12-18 for MHF4L-SMA cables.
+    - **Source:** https://www.crowdsupply.com/lime-micro/limesdr-micro ; https://www.crowdsupply.com/guide/fulfillment-and-logistics ; https://english.nv.ua/nation/tax-exemption-for-international-packages-worth-up-to-150-euros-repealed-by-ukraine-s-parliament-50650346.html
+  2.
+    - **Claim:** v3: deliveries from about Sept 30, 2026. Research: latest updates are Jun 17 and Jul 31, 2026.
+    - **Problem:** The updates page lists only 8 updates and the newest is Jun 17, 2026 ('component sourcing has started… ship in September'). There is no Jul 31 update. Nobody has confirmed a backer delivery on Crowd Supply, MyriadRF Discourse (searched Oct 18) or the web.
+    - **Correction:** Treat it as a pre-order with no confirmed shipments. New orders show 'ships Dec 15, 2026'. Ukraine is not on Crowd Supply's restricted-country list, and store orders can be cancelled for a full refund before shipment.
+    - **Source:** https://www.crowdsupply.com/lime-micro/limesdr-micro/updates ; https://discourse.myriadrf.org/search.json?q=limesdr%20micro%20order:latest ; https://www.crowdsupply.com/guide/policies-and-procedures
+  3.
+    - **Claim:** v3: install the card in the Q6A slot 'via a 2230->2280 extension'.
+    - **Problem:** Most products sold as '2230 to 2280 adapters' are SSD length brackets. They let a short SSD sit in a long slot, which is the opposite of what is needed here. The Q6A has a 2230 M-key slot (PCIe Gen3 x2) and the Micro is an 80 mm B+M card, so the card would overhang by about 50 mm.
+    - **Correction:** Option 1: plug the card straight into the 2230 socket and hold its 80 mm end with a 3D-printed post and an M2 screw. First check which side of the board the slot is on and what it clears; that was not verified. Option 2: use a short M-key male-to-female flex extender (ADT-Link R44SF 20 cm about $40 on Newegg, generic 5 cm Gen4 flex about $27 + shipping on eBay). Then check that LnkSta reads 8GT/s x1.
+    - **Source:** https://docs.radxa.com/en/dragon/q6a/hardware-use/nvme ; https://www.newegg.com/p/2S7-01Z1-00EH8
+  4.
+    - **Claim:** Research: 'Lime says 12-bit sample depth'; ADCs are in the LA9310.
+    - **Problem:** The Crowd Supply and CNX spec lists do not give an ADC bit depth, and the NXP pages I found give 153 Msps but no resolution. In LimeSuiteNG the Micro always uses 16-bit samples on the PCIe link ('mConfig.linkFormat = DataFormat::I16; // always force I16 link').
+    - **Correction:** Treat the bit depth as unverified. Because the link is always 16-bit, 2 channels x 61.44 Msps = 492 MB/s, which needs Gen3. At Gen2 x1 (about 400 MB/s usable) only one full-rate channel fits.
+    - **Source:** https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/boards/LimeSDR_Micro/LA9310_TRX.cpp ; https://www.cnx-software.com/2026/04/15/limesdr-micro-m-2-2280-sdr-card-pairs-nxp-la9310-baseband-processor-with-lms7002m-rf-transceiver/
+  5.
+    - **Claim:** Research: up to 160 Msps; sample rates are flexible down to decode rates.
+    - **Problem:** Not mentioned in the research: LimeSDR_Micro.cpp sets samplingRateRange = {7e6, 160e6} ('going below 7MHz without decimation introduces noise'). Applications cannot ask for less than 7 Msps.
+    - **Correction:** Run the Micro at 7.68 Msps or more and decimate on the host. SatDump does this; the cost is about 31 MB/s and some CPU. For decode recordings use 7.68 Msps in cs8/ZIQ. Meteor/Metop/FY HRPT all fit.
+    - **Source:** https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp
+  6.
+    - **Claim:** Research: the Arm/Qualcomm SMMU is a major unknown for DMA (by analogy with the LiteX M2SDR __pa mmap bug).
+    - **Problem:** Overstated. The la9310_limesdr code is SMMU-safe by construction. It allocates with kzalloc + dma_map_single and programs the IOVA into the outbound window. It mmaps through dma_mmap_coherent, which on the IOMMU path uses virt_to_page(cpu_addr), not __pa. The DMA mask is set with dma_set_mask_and_coherent. Radxa's 7.0.11 DTS gives pcie1 an iommu-map to SID 0x1c80 and lists an NVIDIA dGPU and a Chelsio NIC as tested, and kodiak.dtsi marks pcie1 dma-coherent.
+    - **Correction:** Keep the SMMU in translation mode. If faults appear, switch only the device's IOMMU group to identity; never use a global arm-smmu.disable. The risk is now low to medium, not high.
+    - **Source:** https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/drivers/linux/la9310_limesdr/la9310_character_device.c ; https://github.com/radxa/kernel/blob/linux-7.0.11/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts ; https://github.com/radxa/kernel/blob/linux-7.0.11/arch/arm64/boot/dts/qcom/kodiak.dtsi
+  7.
+    - **Claim:** Fixes: the card's MSI goes through the DesignWare controller's internal MSI (msi0-msi7).
+    - **Problem:** kodiak.dtsi pcie1 has 'msi-map = <0x0 &intc 0x0 0x1000>' to the GICv3 (msi-controller). When msi-map is present, the DWC host driver does not use its internal MSI controller, so MSI doorbell writes go through the SMMU (the kernel maps them).
+    - **Correction:** No action is needed. When debugging missing interrupts, look at GIC/SMMU MSI mapping, not the DWC iMSI-RX.
+    - **Source:** https://github.com/radxa/kernel/blob/linux-7.0.11/arch/arm64/boot/dts/qcom/kodiak.dtsi
+  8.
+    - **Claim:** No one discusses BAR sizing; the slot is assumed to accept any PCIe device.
+    - **Problem:** New finding: la9310_pci.c says 'Default BAR0 size is 256MB, some systems can't map that much'. It assigns BARs at probe time because the ROM bootloader reports PCI class 00. The Q6A pcie1 32-bit window is 0x40300000 + 0x1fd00000 (about 509 MB). The kernel sizes the bridge window at 384 MB with 128 MB alignment, which lands at 0x48000000-0x60000000 and ends exactly at the window limit, so there is no margin.
+    - **Correction:** This probably works, since Radxa lists an NVIDIA dGPU as tested on pcie1. Still, verify on first boot: 'sudo lspci -vv -s 0001:01:00.0' must show Region 0 [size=256M] assigned, and dmesg must not show 'Failed to assign BAR resources'. Do not put a PCIe switch or a second device on that link.
+    - **Source:** https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/drivers/linux/la9310_limesdr/la9310_pci.c ; https://github.com/radxa/kernel/blob/linux-7.0.11/arch/arm64/boot/dts/qcom/kodiak.dtsi
+  9.
+    - **Claim:** Research: the Q6A M.2 3.3 V current limit is undocumented and possibly shared.
+    - **Problem:** The schematic answers this.
+    - **Correction:** Schematic v1.21, sheet 33 (M_KEY) shows a dedicated ETA3521 buck (U20, 1 µH/4 A inductor, R88 91k/R133 20k giving 3.33 V) from VCC_5V_PERI to VCC_3V3_MKEY. The PCIe lanes are on standard M.2 lanes 0-1 (pins 41-49 and 29-37), so an x1 B+M card works. Lime states about 4 W, roughly 1.2 A at 3.3 V, which leaves about 3x margin. VCC_5V_PERI also feeds USB, so keep the 5 V USB loads modest.
+    - **Source:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf ; https://discourse.myriadrf.org/t/limesdr-micro-m-2-power-consumption/13304
+  10.
+    - **Claim:** Research integration: keep the helix on RX-A and the QO-100 LNB IF on RX-B; S-band 2.2-2.3 GHz is covered and is a reason for the card.
+    - **Problem:** This was not updated after the user dropped dishes. Without a dish, S-band (and later X-band) downlinks are not realistically receivable on handheld antennas. QO-100 narrowband needs less than 1 MHz, which the RTL-SDR handles through whatever non-dish downconverter the antenna component picks.
+    - **Correction:** The card's real value is now the 56-100 MHz live view, high-rate raw IQ for the NPU classifier, and two simultaneous L-band/IF inputs. None of the decoding goals strictly needs it.
+    - **Source:** Project update (dish abandoned); https://myriadrf.org/projects/limesdr-micro/user/M.2/setup.html
+  11.
+    - **Claim:** Research budget option: the RTL-SDR V4 alone covers everything except S-band and the wide view.
+    - **Problem:** It also cannot do full-rate Metop or FengYun AHRPT, which need about 6 Msps or more; the RTL-SDR tops out at about 2.4-3.2 Msps stable.
+    - **Correction:** If you need AHRPT before the Micro is proven, a USB 2.0 Airspy Mini (6 Msps, 24-1700/1800 MHz, about £110 at Moonraker) or Airspy R2 (10 Msps, about £200) is the cheaper path. See the budget option.
+    - **Source:** https://moonrakeronline.com/airspy-mini-sdr ; https://www.rtl-sdr.com/review-airspy-mini/
+  12.
+    - **Claim:** Fixes: the 32-entry RX ring patch plus isolcpus=7 for the RX thread.
+    - **Problem:** The ring analysis checks out in code. RxSetup uses SubdivideBuffer(...,16 KB,16), and at 61.44 Msps packetsToBatch is clamped to 8 x 2048 B, giving 16 x 16 KB = 1.07 ms. The firmware MFIFO_SIZE is 32. Two corrections: (a) the SoapySDR plugin does not expose packetsInBatch, so SatDump/SDR++ users need the source patch, not just limeTRX flags; (b) on QCS6490, cpu7 is the single 2.7 GHz prime core, and isolating it takes the fastest core away from SatDump DSP.
+    - **Correction:** Pin lime:Rx0 to an A78 2.4 GHz core (cpu4-6) at SCHED_FIFO and leave cpu7 for DSP, or measure both. For the patch, try 24 entries first, then 32, and revert if the VSPA times out.
+    - **Source:** https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/boards/LimeSDR_Micro/LA9310_TRX.cpp ; https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/chips/LA9310/firmware/dma_tcd_fifo.h ; https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/plugins/soapysdr/Settings.cpp
+- **Forum and fix assessment:** The forum findings are accurate. The only small error is a non-existent 'Jul 31' Crowd Supply update.
+  
+  - **Delivery:** there are still no confirmed deliveries or independent hands-on reports. The Crowd Supply updates page ends at Jun 17, 2026, and MyriadRF Discourse has no delivery topics.
+  - **Driver branches:** confirmed with git ls-remote. limesdr-micro-staging head is 37cb1833 (Oct 16, 2026) and limesdr-micro is 80ffad5. The recent commits fix overrun recovery, stream pacing and IRQ init, so this is early-adopter software.
+  - **Q6A platform (checked in Radxa's linux-7.0.11 DTS, kodiak.dtsi and schematic v1.21):** pcie1 is domain 1, num-lanes 2, dma-coherent, with an iommu-map to SID 0x1c80. The tested-device list includes an NVIDIA dGPU and a Chelsio NIC. The M.2 slot has its own 4 A ETA3521 3.3 V buck and standard lane-0/1 wiring. USB3 and the 2-lane DP for HDMI sit on separate combo-PHY lanes.
+  - **Fixes that hold up:** the DKMS/CMake option names (BUILD_DRIVERS_LA9310, LA9310_LIMESDR_DKMS, BUILD_PLUGINS_SOAPYSDR, INSTALL_FIRMWARE). The firmware files are in-tree and the HIF check is real. The setpci Gen2 force sequence (LnkCtl2 0x30, retrain bit in LnkCtl 0x10) is correct, as are usbfs_memory_mb=0, the Friis numbers (1.2/1.6 dB) and the Y-factor formula. The data-rate and storage arithmetic (221 GB per 15-minute pass at 61.44 Msps; 8 GB RAM ring is about 32 s) is right, and the per-IOMMU-group identity fallback is the right call.
+  - **Fixes that need correcting:** (1) MSI goes to the GIC through msi-map, not the DWC internal MSI. (2) isolcpus=7 sacrifices the prime core. (3) The ring-depth patch is required for Soapy users, because packetsInBatch is not exposed through Soapy. (4) The mechanical plan must avoid '2230-to-2280' SSD length brackets, which go the wrong way.
+  - **Missed by all three agents:** the LA9310 256 MB BAR0 against the about-509 MB pcie1 window. By calculation it fits exactly, and the dGPU test suggests it works, but it needs checking. Also missed: the 7 Msps minimum sample rate, and the fact that SatDump now has a native LimeSuiteNG source plugin (limesdrng_sdr_support, linking limesuiteng-legacyapi).
+  - **Effect on the pick:** none of this overturns it. It does make the driver's SMMU risk lower than the research claimed, and the delivery and stream-stability risks remain the main ones.
+- **Final recommendation:**
+  - **Name:** LimeSDR Micro M.2 2280 Basic (no GNSS), cancellable pre-order, plus 2x MHF4L-to-SMA(f) bulkhead cables. Mount it directly in the Q6A M-key 2230 socket with a support post at 80 mm, or on a short Gen3/Gen4 M-key flex extender.
+  - **Price:** $249 + $18 worldwide shipping = $267. Cables 2 x $6 = $12. Ukrainian import about $30-35 under the current EUR 150 rule (10% duty + 20% VAT on the excess) plus possible courier brokerage. Total about $310-320. Add $27-44 if you use a flex extender.
+  - **Why:** It is still the only wideband SDR that is all of these: about $250, sold to the public, PCIe, and the right size for the Q6A.
+  
+  Why it fits the Q6A:
+  - B+M card in the M-key slot, Gen3 x1, about 4 W from a dedicated 4 A 3.3 V buck.
+  - 100 MHz / up to 160 Msps half-duplex RX, 2 RF RX ports, 30 MHz-3.8 GHz.
+  - The 3.8 GHz ceiling does not matter now that dishes are dropped.
+  - The driver's DMA path uses the standard DMA API in an SMMU-safe way. Radxa's device tree shows pcie1 is dma-coherent and tested with dGPU and NIC endpoints.
+  
+  Why not the alternatives (checked Oct 18, 2026):
+  - Out of stock: LiteX M2SDR (EUR 699), HamGeek M2SDR ($376) and HamGeek LibreSDR M2SDR ($299).
+  - About twice the price or more: bladeRF xA4 ($540, in stock) and xSDR ($549, A+E key).
+  - No usable PCIe-class bandwidth: HackRF Pro (20 Msps).
+  - USB3 options depend on unmeasured Q6A USB3 throughput.
+  
+  Treat it as an early-adopter part:
+  - No confirmed deliveries yet; new orders ship Dec 15, 2026.
+  - Driver on the limesdr-micro-staging branch.
+  - RX DMA ring of only about 1 ms.
+  
+  Order now, since the order can be cancelled. Build and test the driver on the Q6A before the card arrives, keep the RTL-SDR path as the working baseline, and decide on 31 Jan 2027.
+  - **Sources:**
+    - https://www.crowdsupply.com/lime-micro/limesdr-micro
+    - https://www.crowdsupply.com/lime-micro/limesdr-micro/updates
+    - https://myriadrf.org/projects/limesdr-micro/user/M.2/setup.html
+    - https://github.com/myriadrf/LimeSuiteNG/tree/limesdr-micro-staging
+    - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/drivers/linux/la9310_limesdr/la9310_base.c
+    - https://github.com/radxa/kernel/blob/linux-7.0.11/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+    - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+    - https://discourse.myriadrf.org/t/limesdr-micro-m-2-power-consumption/13304
+    - https://www.crowdsupply.com/guide/fulfillment-and-logistics
+    - https://github.com/enjoy-digital/litex_m2sdr
+    - https://www.nuand.com/product/bladerf-xa4/
+    - https://www.crowdsupply.com/wavelet-lab/xsdr
+- **Final budget option:**
+  - **Name:** Defer the wideband card: RTL-SDR V4/V4L only. If you need full-rate Metop or FengYun AHRPT before the Micro is proven, add an Airspy Mini on a USB 2.0 port.
+  - **Price:** $0 extra. With the Airspy Mini, about £110 at Moonraker UK (about $140; launch price was $99). An Airspy R2 (10 Msps) is about £200. The Micro can be added later for about $310 landed.
+  - **Why:** With dishes dropped, every decoding goal fits in 10 MHz or less:
+  - LRPT, SSTV and CubeSats need under 0.2 MHz.
+  - QO-100 narrowband through the IF needs under 1 MHz.
+  - Meteor HRPT needs about 3 Msps.
+  - Metop and FY-3 AHRPT need about 6 Msps.
+  
+  The RTL-SDR handles all of these except AHRPT. The Airspy Mini (12-bit, 6 Msps, up to about 1.7-1.8 GHz) covers AHRPT on a USB 2.0 port, where throughput is not a concern. SatDump supports both natively.
+  
+  You give up the 56-100 MHz live view, wideband IQ for the NPU classifier, and S-band, which is not realistic without a dish anyway. No wideband PCIe or USB3 SDR cheaper than the Micro Basic was in stock on Oct 18, 2026: the LibreSDR M2SDR ($299) and HamGeek M2SDR ($376) were sold out, and the bladeRF xA4 costs $540.
+- **Known problems and fixes to apply:**
+  - Ordering: buy the Micro Basic ($249 + $18), skip GNSS ($299), and add 2 MHF4L-SMA(f) cables ($6 each). It is a store pre-order (ships Dec 15, 2026), cancellable for a full refund before shipment. Budget about $30-35 Ukrainian duty+VAT under the current EUR 150 rule, which becomes VAT-from-first-euro once bill 16051-1 takes effect. Set a decision gate of 31 Jan 2027.
+  - Mechanics: do NOT buy a '2230-to-2280 SSD adapter' bracket, which goes the wrong way. Either insert the card directly and support its 80 mm end with a printed post and M2 screw (check the slot side and clearance first), or use a short M-key male-to-female flex (ADT-Link R44SF 20 cm about $40, generic 5 cm about $27). The card is up to about 4 mm tall on top; use mixed-thickness thermal pads under an aluminium heatsink in the fan's airflow.
+  - Slot pre-test: before the SDR arrives, run a cheap 2280 NVMe in the same mount or extender. Then run 'lspci -vv -s 0001:01:00.0' (expect LnkSta 8GT/s x1 for the Micro) and a 15-minute fio read. One Q6A slot died on the forum, and cleaning the slot fixed another board.
+  - PCIe link errors: read and clear 'setpci -s 0001:01:00.0 CAP_EXP+0a.w'. If correctable errors appear, force Gen2 with 'setpci -s 0001:00:00.0 CAP_EXP+30.w=0002:000f' followed by 'CAP_EXP+10.w=0020:0020'. Make it persistent with a DT overlay '&pcie1 { max-link-speed = <2>; };'. At Gen2, use only 1 RX channel at 61.44 Msps, because the link is always I16.
+  - BAR check (new): LA9310 BAR0 is 256 MB and the Q6A pcie1 window is about 509 MB, so it fits with no margin. On first boot, confirm 'Region 0 ... [size=256M]' in lspci and no 'Failed to assign BAR resources' in dmesg. Do not add a PCIe switch.
+  - Driver build on the Q6A now (aarch64): install linux-headers for the running kernel plus dkms. Clone LimeSuiteNG -b limesdr-micro-staging and pin a commit (37cb1833 as of Oct 16). Configure with -DBUILD_DRIVERS_LA9310=ON -DLA9310_LIMESDR_DKMS=ON -DBUILD_PLUGINS_SOAPYSDR=ON -DBUILD_GUI=OFF. Take driver, library and firmware from the same commit, because of the HIF version check. Load la9310_limesdr at boot, since it kzallocs 4 MiB (order-10) DMA buffers. Run 'apt-mark hold' on the kernel and header packages. Rebuild DKMS before any kernel change, and remove stale DKMS builds if you see 'Exec format error' or 'disagrees about version of symbol'.
+  - SMMU: keep translation on. If you see 'Unhandled context fault … cbfrsynra=0x1c80', unbind the driver, set /sys/kernel/iommu_groups/<G>/type=identity, then rebind. Use iommu.passthrough=1 only from a spare boot entry, and check that the NPU (FastRPC), HDMI and UFS still work. Never use arm-smmu.disable=1.
+  - Sample loss (about 1.07 ms hardware ring): set the performance governor and preempt=full. After the app starts, set the lime:Rx0 thread to 'chrt -f 70' and pin it to cpu4-6. Optionally patch SubdivideBuffer(...,16) to 24, then 32 (firmware MFIFO_SIZE is 32), and set packetsToBatch=dmaBatchSize/packetSize; this is required for Soapy users. Verify with 'limeTRX -l info' that 15-minute runs show 0 loss deltas.
+  - Minimum 7 Msps: the Micro will not stream below 7 Msps. Use 7.68 Msps and host decimation, and record decode captures as cs8/ZIQ (about 28 GB per 15-minute pass in cs16, half that in cs8). Keep 61.44 Msps for a tmpfs RAM ring (8 GB is about 32 s) and write snapshots on a trigger.
+  - Software: build SatDump after LimeSuiteNG. It has a native 'limesdrng_sdr_support' plugin that links limesuiteng-legacyapi. Use SoapySDR (LimeSuiteNG plugin) for SDR++ and GNU Radio, or gr-limesuiteng. At high rates, record first and decode offline, because XTRX users saw garbled CADUs when decoding live.
+  - Thermal and power: budget 5 W at the 12 V input (Lime says about 4 W) and design cooling for 10 W, per Lime. Log the TMP1075 'Board Temperature' and lms7_temp. XTRX boards with the same RFIC hit 80 °C without airflow. Optionally fit an INA226 shunt in the 12 V feed; it doubles as battery telemetry for the UI.
+  - RF: the card has no bias tee, so use an external SMA bias tee for the L-band LNA. Keep VHF (137/145 MHz) on the RTL-SDR, because the Micro's RX matching starts at 300 MHz. Put the LNA (≤1 dB NF, ≥18 dB gain) at the antenna. Keep inputs below +10 dBm. Set the RX analog LPF to match the sample rate to avoid images. Shield the card from the SBC and the HDMI display to reduce spurs.
+  - Storage: if the Kioxia 256 GB UFS is used, run only on a Radxa kernel with the PA_TACTIVATE quirk. Prove that 250 MB/s sustained UFS writes run alongside PCIe DMA with fio before relying on full-rate captures.
+  - PPS/GNSS: use the separate u-blox M10 or ATGM336H for the pointing UI and gpsd. Feed its PPS to the Micro's MHF4 PPS input only after the documented resistor change (remove R176, fit R179 on v1.1/v1.2 boards).
+- **Remaining uncertainties:**
+  - Whether any LimeSDR Micro units have shipped yet, and whether the Dec 15, 2026 date holds. No backer or independent reports existed as of Oct 18, 2026.
+  - Whether la9310_limesdr builds and loads on Radxa's 7.0.x qcom kernel; the source has version guards up to 6.16. Also whether multi-channel and 61.44 Msps streaming are stable on aarch64; Lime has validated on x86 only.
+  - Whether the 256 MB BAR0 is actually assigned in the Q6A's 509 MB pcie1 window. It fits exactly by calculation and a dGPU is listed as tested, but this is untested with the Micro.
+  - Whether the 32-entry RX ring patch works with the VSPA firmware, and what worst-case scheduling latency the Q6A shows under UFS and GPU load.
+  - Which side of the Q6A the M.2 slot is on, and whether a direct-plugged 80 mm card clears the other components; I did not verify the board drawing. Extender signal integrity at Gen3 is also unverified.
+  - The ADC bit depth (12-bit is claimed but not documented on Crowd Supply or NXP pages I found), the noise figure and return loss per port, and idle or RX-only power.
+  - The effective date of Ukraine's repeal of the EUR 150 parcel exemption, and which carrier and brokerage fees apply to Crowd Supply's $18 worldwide shipping.
+  - Sustained Q6A USB 3.1 throughput, which decides whether the bladeRF xA4 or RFNM USB3 options are viable fallbacks. It is still unmeasured.
+  - Current Airspy Mini/R2 retail prices in USD and EUR (only undated UK listings found), and RFNM's 2026 availability.
+- **Missed better options:**
+  - HamGeek LibreSDR M2SDR (SKU 100912; AD9361 + XC7A200T, M.2): $299, cheaper than the $376 HamGeek board the research listed. Sold out on hgeek.com (Shopify availability=false, Oct 18, 2026) with no community track record, so it is not better today.
+  - Airspy Mini or R2 (USB 2.0): about £110 or £200. This was missed as a budget path for full-rate Metop and FY AHRPT, which the RTL-SDR-only budget option cannot do. It is not a wideband replacement.
+  - RFNM (also LA9310-based; USB3; 12-bit, 122 MHz on one cable, 160+ MHz on two): pre-order prices were a $299 motherboard plus a $179 Lime daughterboard. 2026 availability is unverified and it depends on the Q6A's unproven USB3 throughput, so it is not better.
+  - Wavelet xSDR (2230, 122.88 Msps, 4 RF ports, ships Oct 30, 2026): Wavelet sells a $12 M.2 B+M-key adapter for the uSDR that might fit the xSDR into the Q6A slot without overhang, but that is unverified. At $549 and with no Arm reports it is not better value.
+  - None of these is strictly better or cheaper and also available. The Micro Basic remains the pick.
+- **Confidence:** medium
+
 _Агент цього етапу ще працює (run `wf_e64436d6-ae7`)._
 
