@@ -1916,6 +1916,628 @@
   
   Physics against wishes: no-loop HF stays limited by local noise, so the CM choke plus the remote feed is the closest compliant option. Patch and chip antennas cannot serve VHF. Typical QO-100 SSB and DATV still need dish-class gain. An antenna S11 sweep always radiates.
 
+## integration:lens4 (run `wf_221684d9-b6c`)
+
+- **Lens:** RESOURCES + LAB SYSTEM + MECHANICAL: Q6A RAM tier vs the IQ ring and apps; CPU core allocation and RT pinning; storage (UFS, T7 or microSD/NVMe, rolling caps, rollback); the LimeSDR keep-or-drop and what depends on it; case layout, display bonding and sun hood, connectors, the two antenna kits, the bench kit, packed volume and weight, field setup time
+- **Issues:**
+  1.
+    - **Area:** RAM / IQ ring
+    - **Components:**
+      - Q6A 12 GB
+      - labrx RAM ring
+      - inferd-htp/cpu
+      - T2 trainer
+      - SatDump
+      - SDRangel
+      - OpenWebRX+
+      - Lab Shell
+    - **Problem:** Four incompatible ring sizes, two of which over-commit the 12 GB board. npu_training final fixes the ring at 6 GiB ('never shrunk live') and adds the 2 GiB trainer plus 1-1.35 GiB inferd. storage final wants an 8 GiB mlocked ring. The register says 4 GiB with training (Lime) and 1.5 GiB or less without the Lime. lab_ui_hf assumes about 4 GiB, compute 2-4 GiB. My model (app RSS figures are estimates; nothing has been measured on the Q6A) leaves -1.2 to +1.1 GiB free in Train mode with the 6 GiB ring. Every mlocked byte is unreclaimable, so the OOM killer would go after SatDump or the Shell.
+    - **Severity:** major
+    - **Fix:** One ring per hardware set, sized once at boot by labrx: 1.5 GiB without the Lime (98 s of 2xRTL+HF+ at 16.4 MB/s), 4 GiB with the Lime (19.2 s at 56 Msps ci16, 38 s ci8). Add an exclusive 'Burst' profile that stops the trainer, OpenWebRX+, SDRangel and Expert GUIs, then mlocks a second 3 GiB segment, failing gracefully. That gives 7 GiB, about 30 s of 160 Msps while draining to the T7. Delete the 6 GiB and 8 GiB figures. Measure MemTotal and the RSS of each app in the W1-2 gates.
+    - **Evidence:** npu_training.json final.budgets ('IQ ring: 6 GiB with training enabled ... 8 GiB without'); storage.json verify.final_recommendation ('8 GiB mlocked RAM ring'); report_research.json decisions #46. Visible RAM measured: 6 GB board 5609 MB (sbc-bench KBw_, kernel 6.16.7), 8 GB board 7604 MiB (Geerling #85), so a 12 GB board shows about 11.3-11.4 GiB (my extrapolation). Model: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/lens_rlm/calc/budgets.py
+    - **Fix cost:** $0 (labrx config and text edits)
+    - **Sources:**
+      - https://raw.githubusercontent.com/ThomasKaiser/sbc-bench/master/results/KBw_.txt
+      - https://github.com/geerlingguy/sbc-reviews/issues/85
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/storage.json
+  2.
+    - **Area:** RAM tier / purchase
+    - **Components:**
+      - Radxa Dragon Q6A 8 GB vs 12 GB
+    - **Problem:** small_antenna_stack downgrades to the 8 GB board to save $50-74, but the saving is now EUR 22.31 ex VAT at one EU seller. My model (estimates, unmeasured) shows the 8 GB board (7.43 GiB visible) is already over-committed in the no-Lime 'train between passes' scenario: -0.2 to +2.2 GiB free with a 1 GiB ring. RAM cannot be added later.
+    - **Severity:** major
+    - **Fix:** Buy the 12 GB board now: TinyTronics NL at EUR 122.31 ex VAT / EUR 148 incl. VAT, 10+ in stock, fetched 18 Oct 2026; or Allnet at $189.99, in stock today. Strike the 8 GB downgrade from small_antenna_stack.
+    - **Evidence:** TinyTronics 12 GB page fetched 18 Oct 2026: EUR 148.00 incl. / EUR 122.31 excl. VAT, '10+ pieces in stock'. compute.json verify: 8 GB EUR 121 incl. / EUR 100 ex VAT. Allnet products/radxa-dragon-q6a.js fetched today: 12 GB 18999 available, 8 GB 15999 unavailable, 6 GB 14999 available. This settles summaries #75 vs #86.
+    - **Fix cost:** +EUR 22 ex VAT over the 8 GB board; about EUR 40 less than Allnet's $189.99
+    - **Sources:**
+      - https://www.tinytronics.nl/en/development-boards/single-board-computers/radxa-dragon-q6a-qcs6490-12gb
+      - https://shop.allnetchina.cn/products/radxa-dragon-q6a.js
+  3.
+    - **Area:** CPU allocation / RT
+    - **Components:**
+      - CPU0-3 A55
+      - CPU4-6 A78
+      - CPU7 A78
+      - lime:Rx0
+      - labclassify
+      - T2 trainer
+      - SatDump
+      - loggers
+    - **Problem:** There are four core plans: npu_training (CPU7 RX; CPU4-6 FFT fallback, decoders and trainer), lab_ui_hf final (labclassify on CPU0-3, CPU7 always isolated), wideband verify (lime:Rx0 on cpu4-6 at FIFO 70) and storage/compute (taskset 7, chrt -f 50 or -f 10). Load model (estimates): an LRPT+HRPT pass with two SatDump instances, labrx and the P4 loggers (readsb, AIS-catcher, auto_rx) needs about 2.8-4.5 A78 cores. With the Lime, CPU7 is isolated and only 3 A78 cores remain. If VkFFT on the Adreno 643 fails (untested), the LIME-W CPU FFT fallback needs about 2 more A78 cores. A Lime wideband survey and a pass then cannot run together. Without the Lime, CPU7 is idle unless it is released. One more risk to check: if lime:Rx0 busy-polls, the default RT throttle (950 ms per 1 s) leaves 50 ms gaps, about the depth of the LA9310 FIFO.
+    - **Severity:** major
+    - **Fix:** Use one table. CPU0-3: UI, daemons, inferd-htp host, Stage-2 embedder, ORT CPU fallback (CPUQuota 100%). CPU4-6, or CPU4-7 without the Lime: labrx, engines and loggers. The T2 trainer gets AllowedCPUs 4-6/4-7, SCHED_IDLE and nice 19, and runs only between passes. CPU7 is isolated with FIFO 50 only in the Lime kernel-cmdline variant, with the Lime MSI moved off CPU7. labd pauses P4 loggers during Lime passes. Add 'VkFFT N=65536 on Turnip at 854 FFT/s or more' and 'zero limeTRX losses for 60 min with an LRPT+HRPT pass running' to the Lime gate. Check whether lime:Rx0 blocks or polls; if it polls, measure losses with RT throttling on.
+    - **Evidence:** npu_training.json final.budgets 'Core plan'; lab_ui_hf.json final.ui_system.resource_arbitration 'CPU classes'; report_research.json decisions #19; storage.json verify fix ('taskset -c 7 chrt -f 50'); compute.json verify ('chrt -f 10'); npu_training 'CPU-fallback FFT: N=65536 ... about 2 A78 cores'
+    - **Fix cost:** $0 (unit files and cmdline variant); about 1 day of bench time
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/wideband_sdr.json
+  4.
+    - **Area:** USB ports and bandwidth
+    - **Components:**
+      - blue USB 3.1
+      - FE1.1s hub
+      - Adafruit CH334F
+      - RTL-A
+      - RTL-B
+      - HF+
+      - HMI RP2040
+      - IMU puck
+      - LAB USB
+      - T7
+    - **Problem:** The 'Lime-agnostic' map runs out of ports. With the Lime, the T7 takes the blue port and RTL-A must move to the CH334F. If UART7 cannot be enabled, the USB devices are RTL-A, RTL-B, touch, HMI RP2040, HF+ and LAB, which is 6 devices for exactly 6 endpoints (3 FE1.1s ports minus 1 for the CH334F, plus 4 CH334F ports). That leaves no port for the FT232RL GNSS/PPS fallback, the RP2040 counter, an Airspy Mini, a Pluto or a puck on USB-CDC. radio_lab also limits the FE1.1s to '3 continuous streams', while the 4th-V4L monitor configuration runs 4 streams.
+    - **Severity:** major
+    - **Fix:** 1) The IMU is always relayed through the HMI RP2040's second UART (as lab_ui_hf specifies), so it never takes a USB port. 2) Add a second Adafruit CH334F behind CH334F #1 H3: LAB USB plus 3 spares. Hub depth to a bench instrument becomes 4, within USB 2.0's limit of 5. 3) Replace the '3 streams' rule with an aggregate cap of 25 MB/s on the FE1.1s tree (about 65% of the practical 35-40 MB/s). 4 streams are 18.2 MB/s. Test 30 min with zero dropped samples.
+    - **Evidence:** report_research.json decisions #129 (map; H2 IMU 'if not on UART'); radio_lab.json final.usb_power_case_plan (H1-H4 full; '3 continuous streams'); lab_ui_hf.json final.stack_changes ('relays the BNO085 over its second UART'); minute-log 05:19 (interfaces lens: 'CH334F full ... with Lime+T7 RTL-A nowhere')
+    - **Fix cost:** $4.95 plus about 0.1-0.25 W; 20 cm3
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/report_research.json
+  5.
+    - **Area:** 5 V rails with the Lime
+    - **Components:**
+      - VCC_5V_PERI (SGM40666AS, about 17 W)
+      - LAB 5 V (D36V28F5, 3.2 A)
+      - T7
+      - LimeSDR Micro
+      - SAWbird+ injectors
+    - **Problem:** With spec allowances, the Lime set on VCC_5V_PERI is Lime 8.25 + T7 about 4.5 + RTL-B 1.3 + tee 0.35 + fan 1 = 15.4 W (90% of about 17 W), or more if Wi-Fi is on. The power lens reports 20.6 W with both RTLs on the board. Moving RTL-A and all injectors to LAB 5 V puts that rail at about 1.9-2.2 A (CH334F x2 0.1, HMI 0.05, IMU 0.03, HF+ 0.1-0.2 unpublished, RTL-A 0.27-0.35, 2 SAWbird+ 0.36, LNA V2 about 0.1, LAB port up to 1.0), above the planned 2 A fuse.
+    - **Severity:** major
+    - **Fix:** Keep the T7 on the blue port's own VBUS. Put RTL-A (Lime case), the HF+ and all injectors on LAB 5 V. Fuse LAB 5 V at 3 A (the regulator is rated 3.2 A) and cap the LAB port at 0.8 A in field mode. Measure each USB device with the FNB58 and the Lime 3.3 V draw. Accept the Lime only if the measured VCC_5V_PERI sum is 14 W or less.
+    - **Evidence:** report_research.json decisions #62 (17 W, Lime allowance 8.25 W); storage.json verify ('T7 (under 1 A)'); minute-log 05:16 and 05:19 (power lens 20.6 W; LAB 5 V 2.2-2.4 A sum of limits)
+    - **Fix cost:** $0-1 (fuse value); measurement time
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/report_research.json
+      - /home/user/lizbeth307/sat-receiver-audit/minute-log.md
+  6.
+    - **Area:** Storage / rollback
+    - **Components:**
+      - Radxa UFS 128 GB
+      - Samsung T7 1 TB
+      - lab-snap
+      - offline update bundle
+    - **Problem:** Rollback snapshots ('lab-snap' ext4 on the T7) and the offline update path ('insert the T7 with a GPG-signed bundle') both depend on a drive that is bought only if the Lime is kept. The no-Lime build would have no rollback, while self-test plus rollback is a stated design rule. A removable USB 3 drive is also a weak rollback medium: it is a known jammer near the GNSS and L-band chain.
+    - **Severity:** major
+    - **Fix:** Use an A/B root on UFS in every variant: ESP 1 GiB, root A 24 GiB, root B 24 GiB, with /etc/kernel/tries boot counting and a rescue entry. Updates go to the inactive root and are blessed after self-test. The T7 or SD card keeps only data plus a second snapshot copy. Update bundles come from any USB stick on LAB USB.
+    - **Evidence:** lab_ui_hf.json final.ui_system.packaging_and_updates (steps 1 and 3 use the T7); stack_changes 'STORAGE: the T7 gets an ext4 lab-snap partition'; report_research.json decisions #35 and #72; gnss_imu decision #82 (USB 3 jams GNSS within about 2 m)
+    - **Fix cost:** $0 (48 GiB of UFS)
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  7.
+    - **Area:** Storage capacity / retention
+    - **Components:**
+      - UFS 128 GB
+      - microSD
+      - 2230 NVMe
+      - T7
+    - **Problem:** No file has a combined partition or rolling-cap plan. After the A/B root, the 20 GB NPU quota, the local apt repo and map tiles, UFS keeps only about 35-42 GiB for recordings: 1.0-1.2 h of dual-RTL raw (36.9 GB/h) or 0.6-0.7 h with the HF+ cf32 added (59 GB/h). lab_ui_hf sends HF+ raw (22 GB/h) to UFS, and small_antenna_stack still claims 'about 5 h on UFS'.
+    - **Severity:** minor
+    - **Fix:** Adopt the storage table in budget_tables. Products are kept by default. Unpinned raw is deleted after the decoder oracle runs. Raw caps: UFS 30 GiB rolling; microSD about 200 GB / 14 days; T7 400 GB NPU raw / 14 days plus 300 GB captures. labrx refuses a raw start that its cap cannot hold.
+    - **Evidence:** budgets.py model; report_research.json decisions #73; small_antenna_stack.json stack.display_power_mechanical_impact ('about 5 h of raw IQ at 18.4 GB/h')
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/lens_rlm/calc/budgets.py
+  8.
+    - **Area:** Boot robustness with data media
+    - **Components:**
+      - SPI firmware 251013/260120 boot order
+      - microSD
+      - NVMe
+      - LAB USB stick
+    - **Problem:** The firmware boot order is USB > SD > NVMe > eMMC > UFS. A data microSD, NVMe or update stick carrying an ESP (for example, a reused rescue card) would boot instead of UFS in the field.
+    - **Severity:** minor
+    - **Fix:** Data media are ext4 or exFAT with no ESP. The rescue card is kept outside the case and labelled. Acceptance test: 20 cold boots with the data card and a LAB USB stick inserted all land on UFS.
+    - **Evidence:** storage.json forums known_fix ('boot order USB > SD > NVMe > eMMC > UFS')
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/storage.json
+  9.
+    - **Area:** Case envelope and HMI
+    - **Components:**
+      - ASA shell
+      - Al mid-plate
+      - Wisecoco/4D panel
+      - main encoder 30-35 mm knob
+      - volume encoder
+      - 6 sealed keys
+      - HF+ can
+      - selector relays
+      - CH334F/LAB interface
+    - **Problem:** mechanical_thermal's 205-215 x 130-140 x 50-55 mm, 1.2-1.4 kg predates the HF+ Discovery and its can, the HF+ input selector, the RTL input selectors and internal VHF LNA bay, the LAB interface, the second V4L, the speaker and the HMI (a 30-35 mm main knob, a second encoder and 6 keys of 12 mm or more at 13 mm pitch). A right-hand HMI column (38-42 mm) beside the 164.2 mm glass gives 214-218 x 131-141 mm. My parts-volume model (estimates) is 0.79-1.03 L, which is 58-75% of a 215x135x55 interior. That is above the roughly 50% that hand-wired RF builds manage. Also, the pack geometry differs between power.json (flat 86x71x22 mm) and mechanical (46x25x150 mm).
+    - **Severity:** major
+    - **Fix:** Plan for about 220-225 x 135-140 x 55-60 mm and 1.2-1.5 kg without the Lime (1.35-1.65 kg with it), using a right-hand HMI column. Do the CAD layout from Radxa STEP v1.21 and the measured panel before printing. Use the 46x25x150 mm pack. Make the shell parametric. Mirror the hardware column for left-handers by reprinting, not with soft keys.
+    - **Evidence:** mechanical_thermal.json verify.issues (thickness stack 50-55 mm, plate 140 g); lab_ui_hf.json final.stack_changes ('Main tune/focus push-encoder with a 30-35 mm knob', 'Six sealed keys of at least 12 mm at 13 mm or more pitch', HF+ can); report_research.json decisions #70 ('footprint has not been re-derived for 2 encoders and 6 keys'); model /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/lens_rlm/calc/mech.py
+    - **Fix cost:** $0 design; about $10-27 for an extra ASA print
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/mechanical_thermal.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  10.
+    - **Area:** Connectors / panel
+    - **Components:**
+      - RF bulkheads
+      - F port
+      - HF post
+      - GNSS SMA
+      - USB-C charge
+      - LAB USB
+      - LAB BUS
+      - audio
+      - IMU puck lead
+    - **Problem:** No file has a single connector list. Bulkheads appear in four files under different names. The IMU puck (on the boom, UART to the HMI RP2040) has no case connector. The source of the HF+ 'VHF bus' (for AIS) is undefined. The completeness lens notes that each RTL has one SMA but 2-4 antenna sources, and that there is no IP target. The total is 11-14 case penetrations.
+    - **Severity:** major
+    - **Fix:** Freeze the panel. Top (antenna) edge: VHF/UHF SMA (RTL-A chain, no bias out), L-BAND SMA (RTL-B, 5 V via TPS2553), LNB F (13.2 V), HF SMA plus ground post, GNSS SMA (3.3 V active); with the Lime add LIME RX1/RX2 SMA and an optional REF IN. Bottom (noisy) edge: IP2368 USB-C (the only power input), capped LAB USB-A, 6-pin locking LAB BUS, 3.5 mm audio, and the T7 lead exit (Lime only). Back: captured 1/4-20 nut, strap lugs, 4-pin locking IMU puck socket. Internal relays: RTL-A selects VHF/UHF chain, HF+ VHF bus or 50 ohm; RTL-B selects L-BAND, LNB IF or 50 ohm. Pitch 20 mm or more for glove and wrench clearance: 5 RF ports = 100 mm, 8 = 160 mm on a 215 mm edge.
+    - **Evidence:** radio_lab.json integ.internal_vs_external and final.usb_power_case_plan; lab_ui_hf.json final.stack_changes ('HF SMA bulkhead, plus a ground/counterpoise post'); small_antenna_stack.json final.revised_stack (mechanical row); minute-log 05:12 (completeness lens: no input routing, no IP target)
+    - **Fix cost:** About $15-30 (two latching SP3T relays, a 4-pin locking connector, extra bulkheads; estimate)
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /home/user/lizbeth307/sat-receiver-audit/minute-log.md
+  11.
+    - **Area:** Two antenna kits: VHF front-end topology
+    - **Components:**
+      - patch/chip tier whips
+      - foldable V-dipole
+      - crossed Yagi (hairpin DC short)
+      - Flamingo+ FM
+      - SAWbird+ NOAA
+      - LNA V2 + 70 cm BPF
+    - **Problem:** The two tiers need opposite topologies on the same RTL-A input. The patch tier puts the 'LNA directly behind its bulkhead, never on a remote lead'. The foldable tier puts the FM filter and SAWbird+ NOAA at the feed, with a 5 V injector at the SDR. The 'FM filter ahead of any gain' rule then needs two Flamingo+ and two SAWbird+ NOAA. Bias rules also multiply: the Yagi feeds are DC shorts.
+    - **Severity:** major
+    - **Fix:** Use one internal VHF/UHF front end for both kits: VHF/UHF bulkhead, then Flamingo+ FM, then a relay to either SAWbird+ NOAA (137 MHz) or 70 cm BPF + LNA V2 (145.8/435 MHz), with a third throw to the HF+ VHF bus. External VHF leads stay unpowered (bias permanently off on that port). Penalty of 1-2 m RG316 (0.3-0.6 dB) ahead of the LNA at 137 MHz: 0.06-0.36 dB SNR with Ta of 565-1830 K (my model, ITU-R P.372 galactic and rural values). L-band LNAs stay at the feed (1-1.5 dB/m coax loss, cold sky).
+    - **Evidence:** report_research.json decisions #85, #96, #101, #113; small_antenna_stack.json final.revised_stack; foldable_antennas.json final.foldable_kit; mech.py SNR calculation
+    - **Fix cost:** Saves $74.90 (a second Flamingo+ at $24.95 and a second SAWbird+ NOAA at $49.95); one more relay throw, about $3-5
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+  12.
+    - **Area:** Antenna kits: shared L-band parts
+    - **Components:**
+      - 4-turn RHCP helix
+      - patch-tier 20 cm disc
+      - helicone 18 cm base disc
+      - SAWbird+ GOES/iO
+    - **Problem:** The patch tier mounts the 4-turn helix on a 20 cm disc. The foldable helicone uses an 18 cm base disc whose petals are cut for 18 cm. That is two discs and two gain sets for the same helix (the register already flags 10.2-10.9 vs 11.6-12.0 dBic).
+    - **Severity:** minor
+    - **Fix:** Use one 18 cm, 1.5 mm Al disc as both the patch-tier helix ground plane and the helicone base, with the same 4-turn helix and the same SAWbird+ mount. The patch tier loses an estimated 0.3-0.5 dB of aperture limit against 20 cm (model; NEC re-run needed). This saves a part and makes patch-tier results transfer to the helicone.
+    - **Evidence:** small_antenna_stack.json final.revised_stack (4-turn on 20 cm disc); foldable_antennas.json final.foldable_kit (18 cm disc, 'no-fold fallback: 4-5 turn helix on an 18 cm plate, 11.6-12.0 dBic'); report_research.json decisions #117
+    - **Fix cost:** Saves about $5-10 and 100-150 g
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+  13.
+    - **Area:** Packing, volume and weight
+    - **Components:**
+      - field sling/backpack
+      - foldable kit
+      - HF kit
+      - Boni-Whip mast
+      - mini tripod
+      - Pelican 1450 lab case
+    - **Problem:** radio_lab still uses the superseded antenna tier: antennas 2.5-3 L / 0.6-1.0 kg, sling 3.0-3.6 kg, and 'handheld and antennas fit along the Pelican'. The foldable kit is 6-6.5 L (a 35x25x10 cm pouch) and 1.3-1.8 kg with the LNB, LNAs and jumpers. The supports (mini pan-tilt tripod, a mast of 2 m or more for the Boni-Whip) are not counted anywhere. Model (estimates): field load about 15.8 L and 5.1-7.0 kg (4.2-5.8 kg without the HF kit and mast), so a sling is not enough. Pelican: core+extended+HF is 8.8 L (61% of 14.5 L); adding the handheld gives 72%, which will not close with dividers. Loaded case 8.2-9.1 kg, above the 7-8 kg cabin limits of many airlines.
+    - **Severity:** major
+    - **Fix:** Use a 15-20 L daypack for the field tier: handheld, foldable pouch, HF kit, field pouch, tripod, mast. The Pelican carries the bench kit only. Instruments with Li cells (tinySA, LiteVNA), the 88.8 Wh bank and the 72 Wh pack travel in the cabin bag; the Pelican can be checked. Rewrite the packing and weight tables.
+    - **Evidence:** radio_lab.json final.usb_power_case_plan and totals; foldable_antennas.json final.total_packed_volume_and_weight; report_research.json decisions #71; mech.py model. Pelican dimensions and weight are from the radio_lab file, unverified (pelican.com returned 403).
+    - **Fix cost:** About $30-60 daypack, $20-50 mini tripod, $15-30 sectioned mast (estimates, unverified)
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+  14.
+    - **Area:** Display bonding, panel choice and thermal path
+    - **Components:**
+      - Wisecoco 7in FHD
+      - 4D Systems 4DHDMI-70-1280-800-CT-EAR-1000
+      - sun hood
+      - display blower
+    - **Problem:** The case front cannot be designed: Wisecoco bonding, glass outline (164.2x98 mm is inferred), touch path and input supply are all unconfirmed. An air-gapped 2000-nit panel (1.5:1 at 100 klx) is worse than the bonded 1000-nit 4D (1.7:1). The 4D now has a world price ($128.95 DigiKey, 13 in stock per the P2 procurement note), about the Wisecoco's $132, but its 1280x800 has no clean pixel clock between 65 and 90 MHz. The files also disagree on the hood (15-25 mm in display.json, 25-35 mm in display_market and mechanical) and on airflow (display_market: panel air 'into the Q6A heatsink'; mechanical verifier: two separate paths).
+    - **Severity:** major
+    - **Fix:** Give Wisecoco one week for written answers on bonding, HID VID:PID, EDID, input V/A and the 51.7 Hz mode; otherwise order the 4D and budget labd's per-profile modeset table. Leave the bezel parametric until the panel is on the bench. Hood: 30 mm, hinged, folds flat as a lid (about 5 mm, 40-80 g estimate). Airflow: two separate paths per the verifier; display air must never pre-heat the Q6A fins.
+    - **Evidence:** display_market.json final.verdict, sunlight_measures and acceptance_tests; display.json research ('15-25 mm 3D-printed sun hood'); mechanical_thermal.json verify.issues (two parallel paths); minute-log 05:12 (4D $128.95 DigiKey); report_research.json decisions #78
+    - **Fix cost:** $0 (decision and sequencing); 4D about -$3 vs Wisecoco
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/display_market.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/mechanical_thermal.json
+  15.
+    - **Area:** Sun hood vs auto-dimming
+    - **Components:**
+      - VEML7700
+      - RP2040 dimmer
+      - sun hood
+    - **Problem:** The lux sensor is placed 'facing the same way as the screen', which puts it inside the 25-35 mm hood. In full sun it would read the hood's shade and dim the panel exactly when full brightness is needed.
+    - **Severity:** minor
+    - **Fix:** Mount the VEML7700 on the outer top face of the bezel, outside the hood aperture. Alternatively add a reed or hall 'hood open' input that shifts the dimming curve.
+    - **Evidence:** display_market.json final.sunlight_measures ('Auto-dim from a VEML7700 behind a diffuser facing the same way as the screen'; 'Hood: 25-35 mm deep ... hinged so it folds down as a lid')
+    - **Fix cost:** $1-3
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/display_market.json
+  16.
+    - **Area:** Tripod/boom mount
+    - **Components:**
+      - 2 mm Al mid-plate
+      - 1/4-20 mount
+    - **Problem:** mechanical final allows 'a captured nut, or a thread tapped in the aluminium plate'. A 1/4-20 thread (1.27 mm pitch) in 2 mm aluminium engages only 1.57 threads, too few for a 1.2-1.6 kg device on a boom.
+    - **Severity:** minor
+    - **Fix:** Use only a captured 1/4-20 nut, or a press-in steel insert in a bonded boss of 6 mm or more. Never a tapped 2 mm plate.
+    - **Evidence:** mechanical_thermal.json verify.known_problems ('captured 1/4"-20 nut, or a thread tapped in the aluminium plate'); mech.py (2/1.27 = 1.57)
+    - **Fix cost:** $1-3
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/mechanical_thermal.json
+  17.
+    - **Area:** Lime-dependent mechanical work and its order
+    - **Components:**
+      - J21 header
+      - ADT-Link R44SF
+      - Al mid-plate
+      - Lime pedestal
+    - **Problem:** The Lime path requires desoldering J21 (8.5 mm, in the riser path). That cannot be undone and complicates an RMA, yet the board has known DDR and boot-loop failures and needs a burn-in inside the return window. The files do not order these steps. Building the case for the Lime before the gate wastes the aluminium plate if the Lime is dropped; building without provisions means a new plate later.
+    - **Severity:** minor
+    - **Fix:** Order: 12 h stressapptest and 50-100 cold boots, then decide on the Lime, then desolder J21 only if the Lime is kept. Cut the mid-plate once with the Lime pedestal and riser-clamp holes (no cost). Print the no-Lime shell first; if the Lime is kept, reprint only the top-edge strip.
+    - **Evidence:** mechanical_thermal.json verify.known_problems (J21 desolder); compute.json verify (burn-in, return window); report_research.json decisions #22 and #69
+    - **Fix cost:** $0; about $10 for a later strip reprint
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/mechanical_thermal.json
+  18.
+    - **Area:** Ergonomics (wish vs physics)
+    - **Components:**
+      - handheld 1.2-1.6 kg
+      - hand strap
+      - tripod
+    - **Problem:** The 'one hand' wish is designed into the inputs (encoders and keys), but a 1.2-1.6 kg box held at reading distance for a 10-15 min pass while hand-tracking an antenna is not realistic one-handed.
+    - **Severity:** minor
+    - **Fix:** State plainly that one-hand means input, not holding. Supply a hand strap plus a neck strap, and a 1/4-20 mini tripod for the device or the antenna. Tracking passes put the device on the strap or tripod and the free hand on the antenna.
+    - **Evidence:** mechanical_thermal.json verify ('needs a strap and a boom/tripod mount'); lab_ui_hf.json final.ui_system.design_rules
+    - **Fix cost:** $10-25 (estimate)
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  19.
+    - **Area:** T7 placement
+    - **Components:**
+      - Samsung T7
+      - RF bay
+      - GNSS patch
+    - **Problem:** small_antenna_stack treats the T7 as internal (+70 g). Inside, it would sit in 25-35 W of internal heat and radiate USB 3 noise next to the L-band, S-band and GNSS paths. The storage file also relies on it being hot-swappable.
+    - **Severity:** minor
+    - **Fix:** Mount the T7 outside on the bottom (noisy) edge with a short shielded cable and a strap, away from the top-edge antennas. Run the floor A/B at 1.7/2.2 GHz and the GNSS C/N0 check with the T7 on and off.
+    - **Evidence:** small_antenna_stack.json stack.size_weight_power_before_after ('internal T7'); report_research.json decisions #72 and #82; storage.json verify (T7 Shield rated 0-60 C)
+    - **Fix cost:** $0-10
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/storage.json
+  20.
+    - **Area:** Field setup time
+    - **Components:**
+      - foldable kit
+      - patch kit
+      - HF wire
+      - Boni-Whip
+      - pass scheduler
+    - **Problem:** No file states setup time per profile, and the pass scheduler warns only at T-10 and T-2 min. Foldable targets are 8-13 min in all (dipole 2, Yagi 4, helicone 3, horn 4; the ultra-compact Yagi adds 4-5 min). HF wire with a remote feed and a Boni-Whip on a mast take an estimated 8-12 and 5-8 min. Separately, register #84's 'LRPT and HRPT on the same pass needs two antennas pointed by one operator' is too strict: the V-dipole on its stand runs unattended on RTL-A while the helicone is hand-tracked on RTL-B.
+    - **Severity:** minor
+    - **Fix:** Add setup_min to each function profile. The pass card warns at T-(setup+5) min. Allow 'V-dipole fixed + helicone tracked' as a dual-SDR pass profile, with the RAM and CPU cost of two SatDump instances shown.
+    - **Evidence:** foldable_antennas.json final.build_and_test_steps (step 10 drill targets) and ultra_compact_tier; lab_ui_hf.json final.ui_system.design_rules (banners at T-10 and T-2 min)
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+  21.
+    - **Area:** Memory policy
+    - **Components:**
+      - systemd OOM handling
+      - mlock limits
+      - swap
+    - **Problem:** No file sets LimitMEMLOCK for the mlocked ring, OOM ordering across the lab units, or the swap policy. storage says 'swapoff -a'; npu_training says 'OOM order: trainer, inferd, fusiond; capture last'. If systemd-oomd is active on the Radxa OS desktop image (unverified), it would kill whole cgroups by pressure, possibly the Shell session.
+    - **Severity:** minor
+    - **Fix:** labrx: LimitMEMLOCK=infinity, OOMScoreAdjust=-900. labd and labpowerd: -1000. Trainer 900, Expert GUIs 700, OpenWebRX+ 500, inferd 300. No disk swap; a zram of 1 GiB at low priority. Disable systemd-oomd or limit it to the trainer and Expert slices. Test: the trainer pushes past MemoryMax and the capture continues.
+    - **Evidence:** npu_training.json final.budgets ('OOM order'); storage.json verify ('Run swapoff -a')
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+  22.
+    - **Area:** Price basis for storage
+    - **Components:**
+      - Samsung T7 1 TB
+      - microSD
+      - 2230 NVMe
+    - **Problem:** Storage prices in the files are stale. The T7 is quoted as $207 (hotline.ua) or $190-275 (undated). The 2026 NAND shortage raised all flash prices: T7 1 TB $190 on sale at Amazon (8 Jun 2026, street $275), $229.99 at B&H per the P2 procurement note. Samsung PRO Endurance 256 GB was $81.99 at Amazon in an Apr 2026 snapshot (was about $20-27 in 2023-24). The Crucial P310 1 TB 2230 averaged $102.80 with a $159.99 peak in Feb 2026. These swings change the Lime premium and the choice of no-Lime secondary storage.
+    - **Severity:** minor
+    - **Fix:** Re-price at order time. Treat the figures as volatile. Decisions below use ranges: T7 $190-275, microSD 256 GB about $48-82, 2230 TLC 1 TB about $100-160 (unverified).
+    - **Evidence:** PCWorld 8 Jun 2026; Slickdeals snapshot (5 Apr 2026); camelcamelcamel P310; minute-log 05:12
+    - **Fix cost:** $0
+    - **Sources:**
+      - https://www.pcworld.com/article/3158933/samsung-fast-t7-portable-ssd-finally-drops-in-price-190-was-285.html
+      - https://slickdeals.net/f/17754051-samsung-pro-endurance-256gb-microsdxc-memory-card-with-adapter-25-54-via-amazon
+      - https://camelcamelcamel.com/product/B0D61Z8R1W
+  23.
+    - **Area:** Single ring vs engines that open SDRs
+    - **Components:**
+      - labrx
+      - SatDump live
+      - NPU AI tap
+    - **Problem:** The single-ring model (labrx owns the stream) conflicts with SatDump live passes, which open the SDR themselves. During a pass the NPU tap and the MARK pre-trigger ring then see no IQ. The interfaces lens raised this as a blocker; from the resource side, the cost of fanning out to decoders is negligible (5 MB/s per RTL).
+    - **Severity:** minor
+    - **Fix:** labrx is always the SDR owner. Decoders take IQ from labrx through a FIFO, UDP or a shared-memory reader. Expert hand-offs, when no tap is needed, stay as labd leases. Budget 0.05-0.1 A78 core per fan-out (estimate).
+    - **Evidence:** minute-log 05:15 (completeness lens: 'SatDump on a pass occupies the SDR, so the NPU has no IQ tap'); report_research.json decisions #50
+    - **Fix cost:** $0 (software)
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/minute-log.md
+- **Proposed decisions:**
+  1.
+    - **Question:** C1. LimeSDR Micro: keep or drop, and what depends on it?
+    - **Decision:** Keep it as a gated optional. Keep the cancellable pre-order only if it is refundable before shipping (small_antenna_stack says Crowd Supply refunds pre-orders in full before shipping; check the order type). Decide on delivery (about 15 Dec 2026) or by 31 Jan 2027. Keep it only if all of these hold: (1) the user wants S-band or 56 MHz wideband NPU survey; (2) riser acceptance: 8 GT/s x1, 50 warm and 20 cold boots, zero AER after 60 min; (3) VkFFT N=65536 on Turnip at 854 FFT/s or more, and zero limeTRX losses during an LRPT+HRPT pass; (4) VCC_5V_PERI measured at 14 W or less with the Lime, T7 and RTL-B; (5) the 1.7/2.2 GHz floor rises 1 dB or less with the T7 active. v1 is built without the Lime; the mid-plate is pre-drilled for it.
+    - **Reason:** No core target needs the Lime. It adds S-band, 12-bit 435 MHz, AHRPT-rate capture and three of the five NPU profiles, but it costs about $475-700 more than the no-Lime storage option, plus 4-10 W, +0.15 kg, +5-10 mm of case, a desoldered J21 and an isolated A78 core.
+    - **Consequences:** If kept: T7 on blue USB 3.1, RTL-A on the CH334F, 4 GiB ring, CPU7 cmdline variant, LAB 5 V fuse 3 A, top-edge strip reprint, REF IN and P4/P5/P7/P14/P18 enabled. If dropped: the M.2 slot is free for a 2230 NVMe, there is no CPU7 isolation, the ring is 1.5 GiB, RTL-A goes on the blue port, NPU profiles are RTL-F/RTL-C/HF-F only, and S-band needs the Pluto either/or.
+    - **Alternatives rejected:** Buying it unconditionally now (unverified driver on ARM, 160 Msps unproven). Cancelling now (loses the only 56 MHz NPU survey path before any test). Pluto in parallel (duplicates the Lime and adds TX).
+  2.
+    - **Question:** C2. Q6A RAM tier and the single RAM budget
+    - **Decision:** Buy the 12 GB board now from TinyTronics: EUR 122.31 ex VAT / EUR 148 incl. VAT, 10+ in stock on 18 Oct 2026. Allnet at $189.99 is the second source (in stock today). Ring sizes are set at boot: 1.5 GiB without the Lime, 4 GiB with it, plus a +3 GiB Burst segment that is allowed only when the trainer, OpenWebRX+, SDRangel and Expert GUIs are stopped. MemoryMax: inferd-htp 1 GiB, trainer 2 GiB.
+    - **Reason:** The 8 GB board is now only EUR 22 cheaper at the same seller, and my model shows it over-committed in Train mode. 12 GB leaves 3.3-7.4 GiB free without the Lime and 0.8-4.9 GiB with it.
+    - **Consequences:** Delete the 6 GiB and 8 GiB ring figures and the small stack's 8 GB downgrade. Measure MemTotal and app RSS in the W1-2 gates.
+    - **Alternatives rejected:** 8 GB board (over-committed with the trainer). A fixed 6-8 GiB ring (OOM risk). Shrinking the ring live (fragile).
+  3.
+    - **Question:** C3. Pack 3S vs 4S
+    - **Decision:** 4S1P P50B (72 Wh) with a regulated 12 V rail into J21, as the register recommends. Restate runtimes using the power lens's realistic 50-58 Wh usable.
+    - **Reason:** Several loads need 12 V or more (LNB 13.2 V, Boni-Whip 12.5 V, AUX 12 V, 4D display 12 V, Pinecil). 3S cannot build those rails as designed.
+    - **Consequences:** +75 g and about +$45. The cell row sits in the case as 46x25x150 mm.
+    - **Alternatives rejected:** 3S direct to J21 (no clean rail for 12.5/13.2 V loads).
+  4.
+    - **Question:** C4. 12 V regulator: D36V50F12 or a forced-PWM buck-boost
+    - **Decision:** Decide after the terminated-floor spur A/B and a sealed-case current test, as the register says. Buy two D36V50F12 now ('Rationed') as the default; switch only if light-load spurs appear on NAVTEX/LF.
+    - **Reason:** This is outside my lens. The only resource point is its 13.3 V dropout against the 13.6 V Linux cutoff, which is acceptable.
+    - **Consequences:** Hardware cut at 13.4 V or above.
+    - **Alternatives rejected:** 9 V into J21 (based on a misplaced-TVS reading).
+  5.
+    - **Question:** C5. USB port map
+    - **Decision:** Without the Lime: blue USB 3.1 = RTL-A. FE1.1s P1 = RTL-B, P2 = touch, P3 = CH334F #1 (H1 HMI RP2040 only if UART7 fails, H2 spare, H3 CH334F #2 for LAB USB plus 3 spares, H4 HF+). The IMU is always relayed by the HMI RP2040. With the Lime: blue = T7 on its own VBUS, RTL-A on CH334F #1 H2. Aggregate cap 25 MB/s on the FE1.1s tree.
+    - **Reason:** This is the only map with a free port in every case (UART7 working or not, Lime or not).
+    - **Consequences:** +$4.95 and about +0.2 W. Hub depth 4 to a bench instrument. The '3 streams' rule is retired.
+    - **Alternatives rejected:** The single-CH334F map (full with Lime and no UART7). T7 on the FE1.1s (USB 2.0 cannot carry 224 MB/s).
+  6.
+    - **Question:** C6. 40-pin header, buses, IMU interface, fan pin
+    - **Decision:** Accept the register map (PPS pin 7/GPIO96, UART6 16/18 LC76G, UART7 32/29 HMI, I2C0 INA228 only, I2C2 MCP23017 x2 + RP2040 target, no BNO085 on I2C). The IMU goes through the HMI RP2040's second UART in all cases. Fan: plain on/off at 60/50 C through an AO3400, on whichever of pin 33 or GPIO56 is free after the expander count.
+    - **Reason:** On/off avoids 1 kHz PWM ticking and CPU cost. Relaying the IMU frees a USB port.
+    - **Consequences:** The puck lead needs a 4-pin locking case socket.
+    - **Alternatives rejected:** IMU on USB-CDC (uses a port). BNO085 on I2C2 (clock stretching).
+  7.
+    - **Question:** C7. Hardware ownership and the single ring
+    - **Decision:** labd is the only lease and lock authority. labrx is the only SDR stream owner, ring and recorder. SatDump, SDRangel and OpenWebRX+ consume IQ from labrx fan-out when REC, MARK or the AI tap is active. A direct device open is allowed only under an Expert lease with no tap. labclassify runs inferd and fusiond.
+    - **Reason:** One ring is the only way the RAM budget closes and MARK pre-trigger works during passes.
+    - **Consequences:** The npu_training daemons are renamed into labrx and labclassify. SatDump runs with a file, pipe or UDP source (to be verified on the 2.0 alpha).
+    - **Alternatives rejected:** Engines owning SDRs (two rings, no tap during passes).
+  8.
+    - **Question:** C8. LNB supply
+    - **Decision:** Accept the register: 13.2 V ±0.2 V at the F connector, true disconnect, switch rated 20 V or more, no 18 V, one current limit at 1.5-2x the measured Bullseye draw.
+    - **Reason:** Outside my lens. Physics: 18 V only selects horizontal WB/DATV, which is lost without a dish.
+    - **Consequences:** The rf_frontend and lab_ui_hf 13.4/18.2 V entries are deleted.
+    - **Alternatives rejected:** A switchable 13/18 V boost.
+  9.
+    - **Question:** C9. LNA bias rule
+    - **Decision:** Accept: a TPS2553 at 250-300 mA for every SAWbird+. The V4L tee only for LNAs of 80 mA or less. Under C10b, VHF EXT leads get no bias at all.
+    - **Reason:** 170-180 mA LNAs on a 180 mA tee leave no margin.
+    - **Consequences:** The injectors move to LAB 5 V, which is why that rail needs a 3 A fuse.
+    - **Alternatives rejected:** A 100-160 mA PTC (trips).
+  10.
+    - **Question:** C10. FM filter
+    - **Decision:** One Nooelec Flamingo+ FM, fitted permanently inside the case at the head of the unified VHF/UHF chain (see C10b).
+    - **Reason:** With one internal VHF front end, one filter covers both antenna kits.
+    - **Consequences:** No second filter in the foldable kit.
+    - **Alternatives rejected:** A filter at every feed (two parts, two LNAs).
+  11.
+    - **Question:** C10b. One VHF/UHF front end for both antenna kits
+    - **Decision:** VHF/UHF bulkhead, then Flamingo+ FM, then a relay to SAWbird+ NOAA (137 MHz), 70 cm BPF + LNA V2 (145.8/435 MHz) or the HF+ VHF bus (AIS), then RTL-A. Whips screw onto the same bulkhead. The foldable V-dipole and Yagi run on 1-2 m of unpowered RG316. L-band LNAs stay at the feed.
+    - **Reason:** 0.3-0.6 dB of coax ahead of the LNA costs only 0.06-0.36 dB SNR at 137 MHz, because the sky is hot (model). The design is simpler and removes the DC-short bias hazard on the Yagi hairpin.
+    - **Consequences:** Saves $74.90. One relay throw.
+    - **Alternatives rejected:** LNA at the feed for VHF (duplicate filter and LNA, bias interlocks).
+  12.
+    - **Question:** C11. librtlsdr recipe
+    - **Decision:** Accept the register: rebuild noble 2.0.1 with commits 0204c9c and 65f0658, keep the .so.2 SONAME, hold it.
+    - **Reason:** Outside my lens.
+    - **Consequences:** First arm64 build on the Q6A.
+    - **Alternatives rejected:** Purge-and-fork; 2.0.3 .so.0.
+  13.
+    - **Question:** C12. Display field-mode clock
+    - **Decision:** Wisecoco: about 127.9 MHz (51.7 Hz, 2200x1125) by EDID override, or 164.4-168.4 MHz if accepted. 4D fallback: per-profile modeset table in labd, since no clock between 65 and 90 MHz is clean.
+    - **Reason:** The register's harmonic scan; 128.70 MHz hits 1544.4 MHz.
+    - **Consequences:** Lab UI tests use the field mode.
+    - **Alternatives rejected:** 128.70 MHz; native 1080p60 in the field.
+  14.
+    - **Question:** C12b. Panel choice deadline and case sequencing
+    - **Decision:** Wisecoco gets one week for written answers on bonding, HID VID:PID, EDID, input V/A and the 51.7 Hz mode. Otherwise buy the 4D ($128.95 DigiKey per the P2 procurement note). The bezel CAD starts only after the panel passes acceptance. Hood: 30 mm, hinged, lies flat as a lid. Lux sensor outside the hood.
+    - **Reason:** Bonding sets sun contrast more than nits do, and the case front depends on the real outline.
+    - **Consequences:** The case design waits about 2-4 weeks for the panel.
+    - **Alternatives rejected:** Designing for the inferred 164.2x98 mm outline now.
+  15.
+    - **Question:** C13. Kernel hold vs PPS
+    - **Decision:** Accept: an out-of-tree pps-gpio DKMS on 6.18.2-4. Drop Route B.
+    - **Reason:** Outside my lens.
+    - **Consequences:** Also build pps-ldisc if the FT232RL fallback is used; it now has a spare CH334F port.
+    - **Alternatives rejected:** The 7.0.11 kernel.
+  16.
+    - **Question:** C14. INA228 access
+    - **Decision:** Accept: I2C0, user-space i2c-dev, no DT binding, shunt in the pack lead.
+    - **Reason:** Outside my lens.
+    - **Consequences:** Fix the npu_training placement.
+    - **Alternatives rejected:** The ina238 hwmon driver.
+  17.
+    - **Question:** C15. Antenna tiers
+    - **Decision:** STACK.md has two tiers built on shared parts. The patch/chip tier (always carried: whips, 2-turn and 4-turn helix, bare LNB with an 11 cm cone, L-band patch) is a subset of the backpack foldable kit (V-dipole as the LRPT default, ultra-compact crossed Yagi as default, petal helicone, gore horn). Shared: one 18 cm helix disc and helix, one Bullseye, one set of SAWbird+ GOES/iO, one internal VHF chain. Every small_antenna_stack removal is re-decided: Lime gated, T7 tied to the Lime, 12 GB kept, foldables restored, loops struck.
+    - **Reason:** Shared parts cut weight and cost and let results carry over between tiers.
+    - **Consequences:** The patch-tier helix loses an estimated 0.3-0.5 dB on 18 cm instead of 20 cm (model).
+    - **Alternatives rejected:** Two independent kits; the 20 cm helical whip as LRPT default.
+  18.
+    - **Question:** C16. Receive-only and policy leftovers
+    - **Decision:** Accept the register's strike list in full before STACK.md.
+    - **Reason:** Hard rules govern.
+    - **Consequences:** No resource effect except removing the H-probe line (-$50 to -109).
+    - **Alternatives rejected:** None.
+  19.
+    - **Question:** C17. HF antenna chain and HF+ selector
+    - **Decision:** Boni-Whip at 12.5 V from the LDO. A latching DC-capable signal relay selects HF / VHF bus / 50 ohm (part TBD; budget $5-15 and 6-12 cm3). The HF+ in its can stays inside at the far end from the bucks. The wire is for HF only; LF time signals use the whip.
+    - **Reason:** The case volume model already includes the can and the selector.
+    - **Consequences:** Add both to the BOM and to the case CAD.
+    - **Alternatives rejected:** HMC241 (its DC blocks hurt LF). An external HF+ (uses the LAB port).
+  20.
+    - **Question:** C18. Storage, secondary drive, rolling caps, rollback
+    - **Decision:** Every variant gets an A/B root on UFS (ESP 1 + 2x24 GiB) with boot counting. Without the Lime: an internal 256 GB V30 endurance-class microSD (A2 is irrelevant for sequential IQ) for raw IQ and a second snapshot copy; a TLC 2230 NVMe in the free M.2 slot (Radxa measured 1467 MB/s write; about $100-160 per TB, unverified) only if pinned raw over about 6 h is needed. Updates come from a USB stick on LAB USB. With the Lime: T7 1 TB on blue USB 3.1, mounted outside on the bottom edge. Caps as in budget_tables.
+    - **Reason:** Rollback must not depend on an optional drive. The worst no-Lime stream, 16.4 MB/s, is 1/3.7 of the measured microSD write (61.45 MB/s), and the card can be removed as a data mule.
+    - **Consequences:** UFS keeps about 35-42 GiB for recordings (about 1 h dual-RTL raw). Products-only is the default.
+    - **Alternatives rejected:** T7 without the Lime ($190-275 for unused bandwidth plus USB 3 RFI). Snapshots on removable media only.
+  21.
+    - **Question:** C19. CPU allocation and RT pinning
+    - **Decision:** CPU0-3 (A55): UI, daemons, inferd host, Stage-2 embedder, ORT CPU fallback (CPUQuota 100%). CPU4-6 (A78), or CPU4-7 without the Lime: labrx, engines, loggers; the T2 trainer at SCHED_IDLE and nice 19 between passes only. CPU7: isolated with FIFO 50 for lime:Rx0 only in the Lime cmdline variant, irqaffinity=0-6; P4 loggers paused during Lime passes. Measure cpu7 vs cpu4-6 at FIFO 70 with the limeTRX loss counters.
+    - **Reason:** The trainer on the A55 cores would take about 2.5x longer and compete with the UI. The A78 pool is the scarce resource once CPU7 is isolated.
+    - **Consequences:** Fix lab_ui_hf (trainer and CPU7), npu_training and compute. Add VkFFT to the Lime gate.
+    - **Alternatives rejected:** Isolating CPU7 always. Running the trainer on the A55 cores. lime:Rx0 on the shared pool without measurement.
+  22.
+    - **Question:** C20. Roadmaps
+    - **Decision:** Accept: NPU Phase 0 inside the W1-2 gates; the minimal labeller and the 1.5 GiB ring in P0b; HF-F and second-RTL profiles before HF classes show in the UI.
+    - **Reason:** The ring and labeller are prerequisites for collecting data.
+    - **Consequences:** None for resources.
+    - **Alternatives rejected:** The labeller in Feb-Apr 2027.
+  23.
+    - **Question:** C21. V4L count and continuous monitors
+    - **Decision:** Buy 3: RTL-A and RTL-B plus 1 spare. AIS goes on the HF+ VHF bus. Continuous ADS-B or sonde monitoring uses a 4th V4L ($37.95) on a spare CH334F #2 port or LAB USB, inside the 25 MB/s cap (4 streams = 18.2 MB/s).
+    - **Reason:** A spare that is always in service is not a spare.
+    - **Consequences:** +$37.95 only if continuous monitoring is wanted. About +0.27 A on LAB 5 V.
+    - **Alternatives rejected:** Using the spare as the monitor.
+  24.
+    - **Question:** C22. Software recipes
+    - **Decision:** Accept: one venv per tool, pipx NanoVNA-Saver, PySide6 6.12, libgpiod v1, Skyfield 1.55 pip, SatDump 2.0-alpha from source, OpenWebRX+ pinned.
+    - **Reason:** Outside my lens. A local apt repo of about 4 GiB is budgeted on UFS.
+    - **Consequences:** Each tool tested on the Q6A.
+    - **Alternatives rejected:** apt nanovna-saver 0.6.3; skyfield 1.48.
+  25.
+    - **Question:** C23. Region unknown
+    - **Decision:** Accept: ask the user and hold off buying the LNB, horn and SAWbird+ iO.
+    - **Reason:** Outside my lens.
+    - **Consequences:** The QO-100 parts of the kit (horn gores, cone) may drop out, saving about 0.2 kg and 0.6-1 L.
+    - **Alternatives rejected:** Buying everything now.
+  26.
+    - **Question:** C24. Costs and weights
+    - **Decision:** Adopt my recomputed figures (models): handheld 1.2-1.5 kg without the Lime, 1.35-1.65 kg with it, about 220-225 x 135-140 x 55-60 mm. Field backpack 15-20 L, 4.2-5.8 kg (5.1-7.0 kg with the HF kit and mast). Pelican bench case 8.8 L of 14.5 L, 8.2-9.1 kg. Net Lime premium about $475-700, plus the S-band chain.
+    - **Reason:** The old totals use the superseded antenna tier and omit the HF+, HMI and supports.
+    - **Consequences:** Re-price everything at world prices in P5. Flash prices are volatile in 2026.
+    - **Alternatives rejected:** radio_lab's 3.0-3.6 kg sling.
+  27.
+    - **Question:** C25. P1b completion
+    - **Decision:** Resolved: final/report_research.json exists (576,735 B, 04:51). The errata blocks for summaries.md and minute-log.md are still to be added before STACK.md.
+    - **Reason:** The file is present.
+    - **Consequences:** None.
+    - **Alternatives rejected:** None.
+  28.
+    - **Question:** Case layout and HMI placement
+    - **Decision:** Right-hand HMI column (38-42 mm: 30-35 mm main knob, volume encoder, 2x3 sealed keys at 13 mm pitch) beside the glass. Antenna connectors on the top edge, power and data on the bottom edge, 1/4-20 captured nut on the back, internal pack 46x25x150 mm. Parametric shell; a mirrored left-hand print on request.
+    - **Reason:** This is the only layout that keeps width near 215-225 mm and height at 131-141 mm with glove-size controls.
+    - **Consequences:** Thickness 55-60 mm to keep the internal fill near 50-63%.
+    - **Alternatives rejected:** HMI row below the display (162-166 mm tall). HMI split on both sides (about 260 mm wide).
+- **Checks passed:**
+  - Allnet China has the Q6A 12 GB in stock at $189.99 (8 GB unavailable, 6 GB $149.99), from products/radxa-dragon-q6a.js fetched 18 Oct 2026. This settles summaries #75 vs #86.
+  - TinyTronics lists the Q6A 12 GB at EUR 148.00 incl. VAT / EUR 122.31 ex VAT with 10+ in stock (fetched 18 Oct 2026). That is EUR 22.31 ex VAT above the 8 GB board (EUR 100 ex VAT per compute.json).
+  - Visible RAM after firmware carve-outs is measured on two boards: 6 GB shows 5609 MB (sbc-bench KBw_, kernel 6.16.7) and 8 GB shows 7604 MiB (Geerling #85). The register's 'about 11 GiB visible' for 12 GB is consistent; my extrapolation is 11.3-11.4 GiB.
+  - Ring durations reproduced: 4 GiB = 19.2 s and 6 GiB = 28.8 s at 224 MB/s; 8 GiB at 160 Msps I16 draining at 395 MB/s = 35 s; 1.5 GiB = 98 s of 2xRTL+HF+.
+  - Recording rates reproduced: 1 V4L 18.4 GB/h, 2 V4L 36.9 GB/h, 2 V4L + HF+ cf32 59 GB/h, Lime 56 Msps ci16 806 GB/h, ci8 403 GB/h. The register's correction of the small stack is right.
+  - microSD on the Q6A: 61.45 MB/s sequential write and 0.80 MB/s 4K random write (Geerling #85). That is 3.7x headroom over the worst no-Lime stream, so it is adequate as raw-IQ secondary storage, not as an OS drive.
+  - FE1.1s bandwidth with 4 streams (2 RTL + HF+ + monitor V4L) is 18.2 MB/s, under the practical 35-40 MB/s. USB 2.0 hub depth with two CH334F plus a bench hub is 4, within the limit of 5.
+  - Placing the 137 MHz LNA inside the case behind 1-2 m of RG316 costs 0.06-0.36 dB SNR (my model with Ta of 565-1830 K), so one internal VHF chain can serve both antenna kits.
+  - The 2230 NVMe option is real when the Lime is absent: the Q6A M.2 slot is M-key 2230 Gen3 x2, Radxa measured 1467 MB/s write, and it needs no riser (storage.json alternatives). There is one slot-failure forum report (30807).
+  - The foldable kit meets the piece-size rule (longest pieces 35/34 cm Yagi; ultra-compact 20 cm or less). Packed volume 6-6.5 L and 1.0-1.4 kg of antennas are taken as given in foldable_antennas final.
+  - Pelican 1450 holds core + extended + HF bench objects at 8.8 L of 14.5 L (61%), but not the handheld and antennas as well.
+  - The mechanical verifier's thickness stack (50-55 mm), two-path airflow, ASA shell and riser and pedestal concept are consistent with the Q6A STEP-derived numbers in mechanical_thermal.json.
+  - The UI ergonomics (15/20 mm targets, 3 mm gaps, encoders and keys for every capture-critical leaf, 1.5 s holds) are internally consistent and were verified in lab_ui_hf. My finding concerns the hardware envelope, not the UI rules.
+  - The T7 1 TB world price is now documented: $190 on an Amazon sale on 8 Jun 2026 (PCWorld; street $275) and $229.99 at B&H (P2 procurement note). The register's $207 hotline.ua figure is superseded.
+- **Budget tables:**
+  - RAM, 12 GB Q6A (visible about 11.37 GiB, extrapolated from measured 6/8 GB boards). App RSS are MODEL estimates in GiB: OS base 0.45-0.7 | labwc+Xwayland+labbar 0.15-0.3 | Lab Shell 0.3-0.6 | lab daemons 0.12-0.25 | labrx 0.15-0.35 + shm 0.06 | inferd-htp+cpu+fusiond 0.6-1.35 | SatDump pass 0.4-1.2 | SDRangel 0.2-0.5 | OpenWebRX+ 0.2-0.5 | loggers 0.25-0.5 | Expert GUI 0.25-0.5 | trainer 2.0 (cap).
+  Scenario / ring / free GiB:
+  - No Lime, pass / 1.5 / 4.6-7.4
+  - No Lime, lab or Expert / 1.5 / 4.3-7.1
+  - No Lime, train / 1.5 / 3.3-5.6
+  - Lime, pass / 4.0 / 2.1-4.9
+  - Lime, train / 4.0 / 0.8-3.1
+  - Lime, train / 6.0 (npu final) / -1.2 to +1.1 OVER
+  - 8 GB board, no Lime, train / 1.0 / -0.2 to +2.2 OVER
+  - CPU (MODEL, cores of demand):
+  - CPU0-3 A55 1.9 GHz: Shell, labwc, Xwayland, bar 0.4-0.8; daemons, gpsd, chrony 0.1-0.2; inferd host, fusiond, Stage 2 0.3-0.5; ORT fallback up to 1.0 (CPUQuota). Typical 0.8-1.5 of 4; 1.8-2.5 in CPU-fallback mode.
+  - CPU4-6 (+7 without the Lime) A78 2.4 GHz: labrx DSP and tiling 0.3-0.5; SatDump 1-2 per instance; SDRangel or OpenWebRX+ 0.3-1.0; loggers 0.5-1.0; LIME-W CPU FFT fallback about 2 (only if VkFFT fails); T2 trainer 3 (SCHED_IDLE, between passes). LRPT+HRPT pass plus loggers = 2.8-4.5, which fits 4 cores without the Lime and needs logger pausing on 3 cores with it.
+  - CPU7 A78 2.7 GHz: lime:Rx0, FIFO 50, isolated (Lime only); otherwise in the pool.
+  - Storage:
+  - UFS 128 GB (about 119 GiB): ESP 1 | root A 24 | root B 24 (A/B rollback) | apt repo 4 | map tiles 4 | NPU dataset 18.6 (20 GB) | models and golden set 0.3 | logs 0.5. That leaves about 35-42 GiB of recordings: 1.0-1.2 h dual-RTL raw, 0.6-0.7 h with HF+. Raw cap 30 GiB rolling. Write 388 MB/s inside the about 4 GiB WriteBooster cache; post-cache unknown (estimate 120-200 MB/s).
+  - No Lime: microSD 256 GB V30 endurance, 61 MB/s measured class (3.7x the 16.4 MB/s worst stream), 6.5 h dual-RTL, cap 200 GB / 14 days, about $48-82 (2026, volatile). Option: 2230 NVMe 1 TB, 1467 MB/s, 25 h dual-RTL, about $100-160 (unverified).
+  - Lime: T7 1 TB on blue USB 3.1, 395 MB/s port limit (1.76x 224 MB/s), 1.15 h at 56 Msps ci16. NPU raw 400 GB / 14 days | captures and bursts 300 GB | exFAT exchange 64 GiB | snapshot copy 64 GiB. $190-275.
+  - USB ports and bandwidth (MB/s):
+  - Blue USB 3.1: RTL-A 5.12 (no Lime) or T7 up to 224 (Lime).
+  - FE1.1s P1: RTL-B 5.12. P2: touch HID under 0.1. P3: CH334F #1. Internal: Wi-Fi/BT, rfkilled.
+  - CH334F #1: H1 HMI RP2040 (only if UART7 fails) | H2 spare, or RTL-A 5.12 with the Lime | H3 CH334F #2 (LAB USB-A plus 3 spares: FT232RL GNSS fallback, RP2040 counter, 4th V4L 4.8) | H4 HF+ 3.1.
+  - FE1.1s aggregate: 13.4 typical, 18.2 with a monitor V4L; cap 25 (practical ceiling 35-40). Hub depth to a bench instrument 4 of 5 allowed.
+  - 5 V rails (A or W; spec allowances, HF+ unpublished):
+  - VCC_5V_PERI, about 17 W (SGM40666AS). No Lime: 2 V4L 2.6 + tees 0.7 + fan 0.5-1 = 3.8-4.3 W. Lime: Lime 4-5 typical (8.25 allowance) + T7 2.5-4.5 + RTL-B 1.3 + tee 0.35 + fan 1 = 9.2-12.2 W typical, 15.4 W at allowances. Gate: measured 14 W or less.
+  - LAB 5 V (D36V28F5, 3.2 A): CH334F x2 0.1 + HMI 0.05 + IMU 0.03 + HF+ 0.1-0.2 + SAWbird+ x2 0.36 + LNA V2 0.1 + LAB port 1.0 (0.8 in field mode) = 1.7-1.9 A. With the Lime add RTL-A 0.27-0.35 for 2.0-2.2 A. Fuse 3 A, not 2 A.
+  - Connectors (case penetrations):
+  - Top edge: VHF/UHF SMA, L-BAND SMA (5 V bias), LNB F (13.2 V), HF SMA + ground post, GNSS SMA (3.3 V). Lime adds RX1, RX2 and optional REF IN, for 5-8 RF ports at 20 mm pitch (100-160 mm of a 215 mm edge).
+  - Bottom edge: IP2368 USB-C (the only power input), capped LAB USB-A, LAB BUS 6-pin locking, 3.5 mm audio, T7 lead (Lime only).
+  - Back: 1/4-20 captured nut, 2-4 strap lugs, IMU puck 4-pin locking socket.
+  - Total 11-14 penetrations; an IP target is still to be set.
+  - Mechanical, weight and volume (MODEL):
+  - Handheld: 214-218 x 131-141 mm footprint with a right-hand HMI column; plan 220-225 x 135-140 x 55-60 mm. Parts 0.79-1.03 L, which fills 58-75% of a 215x135x55 interior or 48-63% of 225x140x60. 1.2-1.5 kg without the Lime, 1.35-1.65 kg with it. Hood 30 mm, about 5 mm folded, 40-80 g.
+  - Patch-tier extras (whips, 2-turn helix, cone, L-band patch): 0.15-0.3 kg, about 0.6 L.
+  - Foldable kit: 6-6.5 L, 1.3-1.8 kg with LNB, LNAs and jumpers.
+  - HF kit 0.4-0.5 kg, 0.8 L. Boni-Whip and mast 0.5-0.75 kg. Mini tripod 0.3-0.6 kg. Field pouch 0.8 kg, 2 L.
+  - Field backpack (15-20 L): 4.2-5.8 kg, or 5.1-7.0 kg with the HF kit and mast.
+  - Bench: Pelican 1450, 14.5 L interior; core 5.5 L / 4.3-4.8 kg, extended 2.5 L / 1.4 kg, HF 0.8 L. Fill 61%. Loaded 8.2-9.1 kg.
+  - Field setup time (targets and estimates, unmeasured):
+  - Boot to Shell: target 60 s or less (measure). GNSS 3D fix with 6+ satellites: target 60 s or less (LC76G TTFF unverified). IMU sun-sight north: about 1 min.
+  - Patch tier: whip 0.5 min; helix on mini tripod 2 min; LNB with cone, pointed, 2-3 min.
+  - Foldable (foldable step 10 targets): dipole 2, Yagi 4 (ultra-compact 8-9), helicone 3, horn 4; all 13 min (17-18 ultra).
+  - HF wire with 9:1, counterpoise and 5-10 m coax: 8-12 min. Boni-Whip on a 2 m mast with ground stake: 5-8 min.
+  - Bench (mat, bank, hub, VNA SOL per band): 10-15 min.
+  - Arrival to first LEO pass with one antenna: 6-10 min. Full camp including HF: 25-35 min.
+  - Lime keep vs drop, cost from my lens (USD, before VAT):
+  - Keep: Lime $267 (incl. $18 shipping) + T7 $190-275 + R44SF $19 + 2x MHF4 $12 + I-PEX tool about $18 + pedestal, pad and fins $10-25 (estimate) + Lime pads and DC blocks $40-65 (estimate) + VLM-33-S+ $69.60 (optional) = about $556-751. S-band adds a EUR 65.45 cavity plus an unpriced LNA.
+  - Drop: microSD 256 GB $48-82, or 2230 NVMe 1 TB $100-160.
+  - Net premium about $475-700, plus 4-10 W, +0.15 kg, +5-10 mm length, J21 desoldered, CPU7 isolated.
+- **Notes:** I read the requirements and the register in full: summary, 143 decisions, compliance, corrections, the 25 conflicts and the open questions. Then I cross-read the resource, mechanical and packing fields of compute, storage, mechanical_thermal, npu_training, lab_ui_hf, radio_lab, foldable_antennas, small_antenna_stack, display_market and display, plus the tail of minute-log.md (the P2 procurement, completeness and power lenses).
+  
+  What I settled myself:
+  - 7 web calls: Allnet stock JSON, TinyTronics 12 GB, sbc-bench KBw_, Geerling #85, the PCWorld T7 article, a 2230 NVMe price search and a microSD price search. pelican.com returned 403, so the Pelican figures stay unverified.
+  - Two local models, both estimates where noted: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/lens_rlm/calc/budgets.py (RAM, ring and storage) and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/lens_rlm/calc/mech.py (envelope, fill, weight, packing, 1/4-20 engagement, VHF LNA-placement penalty). App RSS, CPU loads, part volumes and setup times are my estimates, not measurements, and are labelled MODEL.
+  
+  Main conclusions:
+  1. Buy the 12 GB Q6A from TinyTronics now. It is EUR 22 ex VAT more than the 8 GB board, and the 8 GB board is over-committed with the trainer.
+  2. Size one ring per hardware set: 1.5 GiB without the Lime, 4 GiB with it, plus a 3 GiB Burst segment. Delete the 6 GiB and 8 GiB figures.
+  3. CPU7 is isolated only with the Lime. The trainer runs on the A78 cores at SCHED_IDLE between passes. The Lime gate must include a VkFFT benchmark and a loss test during a pass.
+  4. Rollback lives on an A/B UFS root in every variant. The T7 exists only with the Lime. Without the Lime, an internal V30 endurance microSD (or a 2230 NVMe in the free M.2 slot) holds raw IQ.
+  5. USB needs a second $4.95 CH334F, and the IMU always goes through the HMI RP2040. LAB 5 V needs a 3 A fuse.
+  6. The case must be re-derived for the HMI column, the HF+ can and the selectors: about 220-225 x 135-140 x 55-60 mm, 1.2-1.65 kg.
+  7. One internal VHF/UHF front end serves both antenna kits, and one 18 cm helix disc serves both tiers.
+  8. The field tier is a 15-20 L daypack of 4.2-7.0 kg, not a sling. The Pelican carries the bench kit only.
+  
+  All 25 register conflicts have an explicit decision. Those outside my lens (C3, C4, C8, C9, C11, C13, C14, C16, C20, C22, C23) endorse the register, with only the resource side effects noted.
+  
+  Physics and evidence against wishes:
+  - One-hand use applies to the inputs, not to holding a 1.2-1.6 kg device.
+  - Flash prices are volatile in 2026: T7 street price $275, microSD about 3-4x its 2024 price.
+  
+  Unverified and needing bench work:
+  - MemTotal and app RSS on the 12 GB board; UFS post-cache write; HF+ current; the Lime's real 3.3 V draw; VkFFT on the Adreno 643.
+  - Whether lime:Rx0 busy-polls (RT throttling); whether systemd-oomd is present on Radxa OS.
+  - Pelican weight and dimensions; Wisecoco outline and bonding; the 4D price, which comes from the procurement note and was not re-fetched by me.
+  
+  Sources: https://shop.allnetchina.cn/products/radxa-dragon-q6a.js ; https://www.tinytronics.nl/en/development-boards/single-board-computers/radxa-dragon-q6a-qcs6490-12gb ; https://raw.githubusercontent.com/ThomasKaiser/sbc-bench/master/results/KBw_.txt ; https://github.com/geerlingguy/sbc-reviews/issues/85 ; https://www.pcworld.com/article/3158933/samsung-fast-t7-portable-ssd-finally-drops-in-price-190-was-285.html ; https://camelcamelcamel.com/product/B0D61Z8R1W ; https://slickdeals.net/f/17754051-samsung-pro-endurance-256gb-microsdxc-memory-card-with-adapter-25-54-via-amazon
+
 ## completeness:lens2 (run `wf_6ce87eb1-883`)
 
 - **Lens:** MISSING PARTS: cables and adapters, RF switching and its drive, bias tees, DC blocks, pads, loads, filters, fuses, PTCs and TVS, connectors and DC jacks, power key, charger input, fasteners, thermal parts, fan, sun hood, strap and tripod mount, weather protection, bags, spares, tools, flashing media, and the home-base PC for QAIRT 2.42.
