@@ -1067,3 +1067,7 @@ P5 (проміжне): G3 — кандидат на заряджальний п�
 
 P5 (проміжне): G6 — кандидат замість LBE-1420 ($175.80): GPSDO від Elektronik-Idee Weber GmbH (DE), $94.90. Але в нього фіксовані виходи 10 і 40 МГц, тоді як LBE-1420 програмується від 1 Гц до 1.1 ГГц. Тому за гнучкістю частоти він гірший; рішення ще немає. G3 — Waveshare RP2040-Zero з роз'ємами (WS-20335) коштує €5.90 у ЄС, 36 шт. на складі. Джерела: elektronik-idee.de, leobodnar.com (LBE-1420, datasheet v1.1).
 
+## 2026-10-18 13:50 UTC
+
+P5 (проміжне): G3 — роз'єм GX12 4-pin Olimex CONNECTOR-GX12-4 (пайка під чашку) коштує €1.74 за 1 шт., на складі 2 388. G5 — FNIRSI FNB58 (без BT) у Berrybase за €49.90 з ПДВ, але зараз його немає в наявності. G6 — FlightAware Pro Stick Plus за специфікацією має підсилювач 19 дБ, NF 0.4 дБ, OIP3 +39 дБ (база для порівняння з аналогами). Джерела: digikey/olimex (CONNECTOR-GX12-4), https://www.berrybase.de/fnirsi-fnb58-usb-tester-4-28-v-0-7a-140w-schwarz, flightaware.com/adsb/prostick/.
+
