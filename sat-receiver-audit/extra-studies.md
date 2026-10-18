@@ -44691,6 +44691,296 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - No product, price or spec was invented. Items marked unverified come from STACK or the earlier research files.
   - Downloaded PDFs are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/toolsB_dl/.
 
+## searchA:tools_spares_notebook_build_tools_calipe (run `wf_e5582d4c-0a2`)
+
+- **Part:** Tools, spares, notebook and build tools (bench tier, group Tools, qty 1 set). The STACK line names no SKUs; it is a cost model. It adds the hand-tool roll, spares kit, notebook and organiser (final_world_sourcing: $165-260 est.) to the build tools: calipers, snips + deburr tool, M5 tap and die, heat gun (final_completeness: $80-140 est.).
+- **Current price usd:** 245-400 (model estimate, unverified; no SKUs named). For comparison, the cheapest set of named, established-brand items that is not worse (below) costs about $300-390 before VAT, or about $345-450 with 19% DE VAT, all from EU stock. Most of that is verified at TME / iFixit EU; tap wrench, die stock, deburr tool, tweezers, organiser and the spares kit are still estimates.
+- **Critical specs:**
+  - Calipers, range: 0-150 mm. That covers the Q6A board (85.0 +/-0.2 mm), the LNB neck and waveguide ID, PCB thickness (1.44-1.76 mm acceptance) and the thermal-pad gap (0.25 mm compression).
+  - Calipers, accuracy: 0.01 mm reading, error <= +/-0.03 mm. Published spec (DIN 862 or a stated error limit), hardened stainless.
+  - Calipers, jaws and depth: outside jaws, inside jaws or cross points (waveguide/LNB ID), and a depth rod (module-to-case-floor gap). Standard button cell.
+  - Calipers, no radio: no Bluetooth or wireless data output (QUIET mode, receive-only lab).
+  - Snips: cut 0.3-0.5 mm aluminium petals and gores cleanly. Rating >= 0.7 mm steel; hardened Cr-Mo or Cr-V blades.
+  - Deburr tool: a swivel-blade deburrer for the sharp aluminium edges.
+  - Flush cutter: precision flush cut, for electronics.
+  - Wire stripper: covers 20 AWG silicone down to 26-30 AWG (about 0.05-0.5 mm2) without nicking strands.
+  - M5 tap and die, thread: M5x0.8 ISO coarse, to match the M5 thread of the RTL-SDR Blog dipole kit. Tap ISO2/6H, die 6g.
+  - M5 tap and die, build: HSS or better; die 20 mm OD with a matching die stock; tap wrench that fits the tap square (about 4.5-4.9 mm). Works in aluminium or brass rod.
+  - Heat gun, temperature: a low stage <= 300 C. It is used for heat-shrink near ASA/PETG prints and PTFE coax.
+  - Heat gun, safety and build: thermal fuse or overheat protection; nozzle accessories available; CE; 230 V EU plug; warranty >= 2-3 years.
+  - Precision drivers: PH000-PH2, hex 1.5/2.0/2.5 mm (M2.5 socket-head screws), TORX/TORX security T5-TR10, S2 bits, flexible extension.
+  - Notebook: waterproof field notebook with a metric ruler (the git lab notebook on the device stays).
+  - Spares: identical genuine parts to the installed ones (same ratings), from authorised distributors.
+  - Kit-wide: no part transmits (no BLE calipers or label makers). EU stock preferred to avoid the EUR 3 per-line duty and the EUR 2 handling fee (operator notes 34/35).
+- **Candidates:**
+  1.
+    - **Name:** Current line: model 'tools, spares, notebook, build tools' (no SKUs)
+    - **Kind:** current_part
+    - **Price usd:** 245-400 (estimate, unverified)
+    - **Spec comparison:** No specs are given; it is only a cost bucket. Under the not-worse rule, the reference is the requirement list in critical_specs.
+    - **Worse in:** Not applicable. Its main weakness is that the estimate is not tied to any part.
+    - **Compatibility:** n/a
+    - **Risks:** The low end ($245) cannot be reached with the established-brand set below once EU VAT is added. Real cost is likely in the upper half of the range.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/final_integration.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/final_completeness.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/final_world_sourcing.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  2.
+    - **Name:** SCALA 230.207-X digital pocket caliper, 150 mm (TME SC230207)
+    - **Kind:** other_brand
+    - **Price usd:** 34.00-36.84 (TME structured data; VAT basis not stated, normally net) = about 40.5-43.8 with 19% VAT
+    - **Spec comparison:** Scala catalogue, Type 230, DIN 862:
+  - 0-150 mm, 40 mm jaws, 0.01 mm / 0.0005 in reading
+  - cross points for inside measuring; square depth bar with fixing screw
+  - hardened stainless; capacitive scale; replaceable battery
+  - RS232 data output (wired, no radio)
+  Meets every caliper item in critical_specs.
+    - **Worse in:** No error limit is printed for Type 230; it is only 'per DIN 862' (my reading: about +/-0.03 mm at 150 mm, unverified). Against a Mitutoyo-class +/-0.02 mm reference it may be 0.01 mm worse on paper, which does not matter for this stack's tolerances (+/-0.2 mm board, 1.44-1.76 mm PCB, 0.25 mm pad compression). No IP rating (the IP67 230.234 variant exists, price not seen).
+    - **Compatibility:** Bench tool. Measure unpowered boards only.
+    - **Risks:** TME stock display conflicts (visible 0, structured data 16). Accuracy figure not printed.
+    - **Seller url:** https://www.tme.eu/en/details/sc230207/measuring-tools/scala/230-207-x/
+    - **Sources:**
+      - https://www.tme.eu/en/details/sc230207/measuring-tools/scala/230-207-x/
+      - https://www.tme.eu/Document/96421f4bab8d6bf5ce968d85c506fee4/SCALA+Katalog.pdf
+  3.
+    - **Name:** BERNSTEIN 7-511 digital caliper 0-150 mm (TME BRN-7-511)
+    - **Kind:** other_brand
+    - **Price usd:** 48.49-51.96 (TME structured data, likely net) = about 57.7-61.8 with 19% VAT
+    - **Spec comparison:** TME lists 0-150 mm and 'measurement accuracy 0.02 mm'. This is the cheapest verified caliper that states +/-0.02 mm, if a Mitutoyo-class 0.02 mm limit is taken as the reference.
+    - **Worse in:** Unverified: resolution, jaw type, depth rod, battery and ESD rating are not on the page (the datasheet PDF was over 10 MB and could not be read). Costs $14-15 more than SCALA.
+    - **Compatibility:** Bench tool.
+    - **Risks:** Not clear whether '0.02 mm' is accuracy or resolution. Stock display conflicts.
+    - **Seller url:** https://www.tme.eu/en/details/brn-7-511/measuring-tools/bernstein/7-511/
+    - **Sources:**
+      - https://www.tme.eu/en/details/brn-7-511/measuring-tools/bernstein/7-511/
+  4.
+    - **Name:** BAHCO 1150D digital caliper 150 mm (TME SA.1150D), checked and rejected
+    - **Kind:** other_brand
+    - **Price usd:** 85.07-94.88 (TME structured data)
+    - **Spec comparison:** 0-150 mm, +/-0.03 mm, stainless, LR44.
+    - **Worse in:** Not cheaper: about 2.5x the SCALA price for the same +/-0.03 mm.
+    - **Compatibility:** Bench tool.
+    - **Risks:** None beyond price.
+    - **Seller url:** https://www.tme.eu/en/details/sa.1150d/measuring-tools/bahco/1150d/
+    - **Sources:**
+      - https://www.tme.eu/en/details/sa.1150d/measuring-tools/bahco/1150d/
+  5.
+    - **Name:** STANLEY 2-14-556 MaxSteel tin snips 250 mm (TME STL-2-14-556)
+    - **Kind:** other_brand
+    - **Price usd:** 14.05-15.09 (TME structured data, likely net) = about 16.7-18.0 with 19% VAT
+    - **Spec comparison:** Chrome-molybdenum steel, cuts steel sheet up to 0.7 mm, 250 mm. 0.3-0.5 mm aluminium is well inside that capacity.
+    - **Worse in:** TME does not say whether it is straight-pattern or compound aviation-type. If it is a plain tinner's snip, tight curves on petals and gores are harder than with a compound left/right aviation snip. Check the pattern before buying if curved gores are cut by hand. No deburrer included.
+    - **Compatibility:** Bench tool.
+    - **Risks:** Stock display conflicts (inventory 2).
+    - **Seller url:** https://www.tme.eu/en/details/stl-2-14-556/shears-scissors-knives/stanley/2-14-556/
+    - **Sources:**
+      - https://www.tme.eu/en/details/stl-2-14-556/shears-scissors-knives/stanley/2-14-556/
+  6.
+    - **Name:** VÖLKEL M5 kit: 27434 M5x0.8 HSS round die DIN 223, 20x7 mm, tol. 6g + 90530 M5x0.8 HSS-E tap, ISO2/6H, through holes + Völkel 14010 tap wrench No. 1 + 15003 die stock 20x7 mm
+    - **Kind:** other_brand
+    - **Price usd:** Die 4.88-6.33 and tap 3.24-4.22 (both TME, likely net). Wrench EUR 10.90 and die stock EUR 4.10 (Völkel list, excl. VAT, sold to dealers only) = about 16.9. Total about 25-28 net, about 30-33 with 19% VAT.
+    - **Spec comparison:** - Exact M5x0.8 ISO coarse, die 6g / tap 6H, matching standard M5 nuts and the dipole kit's M5 thread.
+  - HSS die and HSS-E (cobalt) tap: equal to or better than any HSS reference.
+  - Die stock 20x7 mm matches the die. Wrench No. 1 (2.0-6.3 mm square) takes the tap square.
+  - German maker, sold through TME (EU stock).
+    - **Worse in:** Nothing against the spec. The 27434 die is rated for steels up to 800 N/mm2. For brass rod, Völkel also makes a brass-specific die (57234, price not seen).
+    - **Compatibility:** Cuts M5 male threads on 5 mm aluminium or brass rod (extension elements) and M5 female threads in couplings.
+    - **Risks:** Völkel sells only to dealers, so wrench and die-stock retail prices are unverified; TME did not list them. Pack quantity of Völkel's '5 pieces' items is unclear. Confirm the dipole kit's thread is M5x0.8 with a nut first.
+    - **Seller url:** https://www.tme.eu/en/details/volkel-27434/threading-dies-and-taps/volkel/27434/
+    - **Sources:**
+      - https://www.tme.eu/en/details/volkel-27434/threading-dies-and-taps/volkel/27434/
+      - https://www.tme.eu/en/details/volkel-90530/threading-dies-and-taps/volkel/90530/
+      - https://voelkel.com/en/round-die-din-223-din-en-22568-hss-m-5-x-0.8/27434
+      - https://voelkel.com/en/products/threading-tools/threading-tool-holder
+      - https://voelkel.com/en/products/threading-tools/round-dies-hexagon-die-nuts/m-metric
+  7.
+    - **Name:** GSR 00706010 13-piece tap and die set M3-M8 with holders (TME), checked and rejected
+    - **Kind:** other_brand
+    - **Price usd:** 17.74-21.28 (TME structured data)
+    - **Spec comparison:** Taps and dies M3, M4, M5, M6, M8 with hand holders and an Allen key.
+    - **Worse in:** Tool steel grade (HSS or carbon steel), tolerance class and die size are not stated. Build quality cannot be shown to be not worse, so it is rejected under the rule.
+    - **Compatibility:** Would fit the task if HSS.
+    - **Risks:** Unknown material. Stock 2.
+    - **Seller url:** https://www.tme.eu/en/details/gsr-00706010/threading-dies-and-taps/gsr/00706010/
+    - **Sources:**
+      - https://www.tme.eu/en/details/gsr-00706010/threading-dies-and-taps/gsr/00706010/
+  8.
+    - **Name:** STEINEL HL 1821 S heat gun (TME HL1821S, art. 068929)
+    - **Kind:** other_brand
+    - **Price usd:** 32.21-33.24 (TME structured data, likely net) = about 38.3-39.6 with 19% VAT
+    - **Spec comparison:** Steinel datasheet:
+  - 1800 W; 2 stages, 300 C / 550 C; 350-450 l/min
+  - micanite heater; thermal fuse against overheating
+  - 2.2 m cord; 220-230 V; 0.72 kg; CE
+  - 3-year warranty; Steinel nozzles (reducer etc.) available
+  Meets every heat-gun item in critical_specs.
+    - **Worse in:** No adjustable temperature below 300 C, and the heater is not replaceable. Against an adjustable reference (e.g. Steinel HL 1920 E, 80-630 C) it is worse in fine control near ASA/PETG prints: keep the gun moving and use a reducer nozzle.
+    - **Compatibility:** Bench only (mains). Not part of the field kit.
+    - **Risks:** Stock display conflicts (structured inventory 80).
+    - **Seller url:** https://www.tme.eu/en/details/hl1821s/hot-air-guns-and-accessories/steinel/hl-1821-s/
+    - **Sources:**
+      - https://www.tme.eu/en/details/hl1821s/hot-air-guns-and-accessories/steinel/hl-1821-s/
+      - https://www.tme.eu/Document/231a46234b0441bf13f931a4f7e7d4a9/HL1821S.pdf
+  9.
+    - **Name:** GOOBAY 77821 heat gun 1.5 kW, ADVANCED series (TME), checked and rejected
+    - **Kind:** other_brand
+    - **Price usd:** 22.67-25.91 (TME structured data)
+    - **Spec comparison:** 200 C / 500 C (the lower stage is gentler than Steinel's 300 C), 450 l/min, 1.5 kW, 4 nozzles, 1.3 m cable, 220-240 V EU.
+    - **Worse in:** No thermal fuse or warranty term published on the listing. Shorter cord (1.3 vs 2.2 m). Only one airflow is listed. Goobay (Wentronic) is a distributor brand, and build quality and reliability are unverified against Steinel. Rejected unless a datasheet shows overheat protection.
+    - **Compatibility:** Bench only.
+    - **Risks:** Stock 2. OEM product.
+    - **Seller url:** https://www.tme.eu/en/details/goobay-77821/hot-air-guns-and-accessories/goobay/77821/
+    - **Sources:**
+      - https://www.tme.eu/en/details/goobay-77821/hot-air-guns-and-accessories/goobay/77821/
+  10.
+    - **Name:** STEINEL HL 1920 E heat gun (TME), upgrade only if adjustable low temperature is required
+    - **Kind:** other_brand
+    - **Price usd:** 64.39-66.97 (TME structured data)
+    - **Spec comparison:** 2 kW; 80 C stage, then 80-630 C in 9 settings; 150-500 l/min; cold-air stage; thermal fuse.
+    - **Worse in:** Not cheaper: about twice the HL 1821 S. Better in temperature control.
+    - **Compatibility:** Bench only.
+    - **Risks:** None.
+    - **Seller url:** https://www.tme.eu/en/details/hl1920e/hot-air-guns-and-accessories/steinel/hl-1920-e/
+    - **Sources:**
+      - https://www.tme.eu/en/details/hl1920e/hot-air-guns-and-accessories/steinel/hl-1920-e/
+  11.
+    - **Name:** iFixit Mako 64-bit driver kit from the iFixit EU store (ships from Germany): the same SKU from another official seller
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** EUR 39.95 = about 44.9 (EU store; VAT basis not stated on the page). The US store is $39.95 plus EU import VAT, the EUR 3 duty, EUR 2 handling from about 1 Nov 2026 and express shipping.
+    - **Spec comparison:** Identical: 64 S2 bits including hex 0.7-5.0 mm (2.0 mm for M2.5 socket-head screws), PH000-PH2, TORX T2-T5, TR6-TR25, JIS, Tri-point; 150 mm flex extension; magnetic driver.
+    - **Worse in:** Nothing.
+    - **Compatibility:** Covers the M2.5 board screws and case hardware.
+    - **Risks:** None.
+    - **Seller url:** https://www.ifixit.com/en-eu/products/mako-driver-kit-64-precision-bits
+    - **Sources:**
+      - https://www.ifixit.com/en-eu/products/mako-driver-kit-64-precision-bits
+      - https://www.ifixit.com/products/mako-driver-kit-64-precision-bits
+  12.
+    - **Name:** iFixit Moray 32-bit driver kit, checked and rejected
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 19.95 (iFixit US)
+    - **Spec comparison:** 32 S2 bits: hex 1.5/2.5/3.0/4.0, PH000/0/1/2, T3-T5, TR6-TR15.
+    - **Worse in:** No 2.0 mm hex, which the M2.5 socket-head screws need. No PH00 or JIS. Fewer bits. Rejected.
+    - **Compatibility:** Incomplete for the stack.
+    - **Risks:** None.
+    - **Seller url:** https://www.ifixit.com/products/moray-driver-kit
+    - **Sources:**
+      - https://www.ifixit.com/products/moray-driver-kit
+  13.
+    - **Name:** KNIPEX 78 61 125 Super Knips flush cutter (TME)
+    - **Kind:** other_brand
+    - **Price usd:** 20.67-22.16 (TME structured data, likely net)
+    - **Spec comparison:** 125 mm precision side cutter for electronics. A reference-grade electronics flush cutter.
+    - **Worse in:** Nothing for this use. Cut capacity is not on the TME page.
+    - **Compatibility:** Hand-tool roll.
+    - **Risks:** None; 517 in structured-data stock.
+    - **Seller url:** https://www.tme.eu/en/details/knp.7861125/cutting-pliers/knipex/78-61-125/
+    - **Sources:**
+      - https://www.tme.eu/en/details/knp.7861125/cutting-pliers/knipex/78-61-125/
+  14.
+    - **Name:** JOKARI 40026 PWS-Plus precision stripper (TME)
+    - **Kind:** other_brand
+    - **Price usd:** 20.80-24.51 (TME structured data, likely net)
+    - **Spec comparison:** Round wire, 0.3-1.0 mm diameter, roughly 28-18 AWG. Covers the 20 AWG silicone wire and the fine signal wire.
+    - **Worse in:** Does not reach 30 AWG (0.255 mm). If 30 AWG is a real need, the only fully covering option seen is KNIPEX 12 42 195 MultiStrip 10 (0.03-10 mm2, 32-7 AWG) at $88.29-94.60. JOKARI 20050 and KNIPEX 12 62 180 (0.2-6 mm2, 24-10 AWG; $20.92-24.06 and $39.45-42.27) do not cover 26-30 AWG and are rejected.
+    - **Compatibility:** Hand-tool roll.
+    - **Risks:** The TME page does not say whether 0.3-1.0 mm is conductor or outer diameter.
+    - **Seller url:** https://www.tme.eu/en/details/jokari-40026/strippers-for-wire-cable/jokari/40026/
+    - **Sources:**
+      - https://www.tme.eu/en/details/jokari-40026/strippers-for-wire-cable/jokari/40026/
+      - https://www.tme.eu/en/details/knp.1242195/strippers-for-wire-cable/knipex/12-42-195/
+      - https://www.tme.eu/en/details/ck-20050/strippers-for-wire-cable/jokari/20050/
+      - https://www.tme.eu/en/details/knp.1262180/strippers-for-wire-cable/knipex/12-62-180/
+  15.
+    - **Name:** Rite in the Rain No. 373 side-spiral all-weather notebook
+    - **Kind:** other_brand
+    - **Price usd:** 9.95 (riteintherain.com; ground shipping to the contiguous US only)
+    - **Spec comparison:** 64 pages, 4.625x7 in, Polydura cover with imperial and metric rulers, rust-resistant binding, all-weather paper.
+    - **Worse in:** Nothing against the spec. A plain paper notebook (about $2-5) would be worse: not waterproof in the field.
+    - **Compatibility:** Field and bench.
+    - **Risks:** The maker does not ship to the EU from its own store. The EU reseller price was not verified.
+    - **Seller url:** https://www.riteintherain.com/no-373-side-spiral-notebook
+    - **Sources:**
+      - https://www.riteintherain.com/no-373-side-spiral-notebook
+  16.
+    - **Name:** Spares kit bought as identical genuine parts from TME (EU stock) in the main order, e.g. Littelfuse SMBJ14A and Amass XT30U-M
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** SMBJ14A 0.066-0.22 each (MOQ 5); XT30U-M 0.43-1.12. The kit total stays an estimate of about 80-130, dominated by the spare IP2368 boards, BMS, RP2040-Zero, fan and MHF4 pigtails.
+    - **Spec comparison:** Same part numbers and ratings as the installed parts, from an authorised distributor.
+    - **Worse in:** Nothing. Each spare must follow its parent part's own analog decision (G1-G4).
+    - **Compatibility:** Identical to installed parts.
+    - **Risks:** Both example parts showed 0 TME stock today. Buy from Mouser, DigiKey DE or LCSC (landed cost per operator note 35), and never from unbranded XT30 sellers (fakes).
+    - **Seller url:** https://www.tme.eu/en/details/smbj14a-lf/unidirectional-tvs-smd-diodes/littelfuse/smbj14a/
+    - **Sources:**
+      - https://www.tme.eu/en/details/smbj14a-lf/unidirectional-tvs-smd-diodes/littelfuse/smbj14a/
+      - https://www.tme.eu/en/details/xt30u-m/dc-power-connectors/amass/
+  17.
+    - **Name:** Borrow or use a makerspace (the stack's budget alternative)
+    - **Kind:** used
+    - **Price usd:** 0
+    - **Spec comparison:** Depends on the tools available.
+    - **Worse in:** Caliper calibration, tap/die wear and heat-gun condition are all unknown. Not available for field repair. Spares and the notebook cannot be borrowed. Fine for one-off build steps such as threading M5 rods.
+    - **Compatibility:** Build phase only.
+    - **Risks:** No traceability of measurements.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/final_integration.json
+- **Notes:** VERDICT
+  There is no current part to beat: the line is a cost model with no SKUs. So I set the not-worse reference from what the stack actually needs (critical_specs) and picked the cheapest established-brand item from EU stock for each sub-item.
+  
+  Cheapest not-worse set, verified unless marked
+  - Build tools:
+    - SCALA 230.207-X calipers: $34.00
+    - Stanley 2-14-556 tin snips: $14.05
+    - Völkel 27434 M5 HSS die: $4.88
+    - Völkel 90530 M5 HSS-E tap: $3.24
+    - Völkel tap wrench + die stock: about $16.9 (dealer list price, not verified at retail)
+    - Deburr tool: about $8-15 (unverified; TME does not stock one)
+    - Steinel HL 1821 S heat gun: $32.21
+    - Subtotal: about $113-128 net, or $135-152 with 19% VAT.
+  - Hand-tool roll:
+    - iFixit Mako from the EU store: EUR 39.95 = $44.9
+    - Knipex 78 61 125 flush cutter: $20.67
+    - Jokari 40026 stripper: $20.80
+    - Tweezers and spudger: about $10-20 (unverified)
+    - Subtotal: about $104-121 with VAT.
+  - Notebook and labels: about $15-25. The EU route for Rite in the Rain is unverified.
+  - Spares kit: still the $80-130 estimate.
+  - Organiser: about $10-20 (unverified).
+  - Total: about $300-390 net, or about $345-450 with 19% DE VAT. That is the upper half of the $245-400 model or slightly above it. The model's low end is not reachable with established brands once EU VAT is included.
+  
+  Recommendation
+  Keep the line, but replace the model with these named SKUs and re-price it at about $345-450 incl. VAT.
+  - No candidate is both cheaper than the model and not worse across the whole set. The real savings are in sourcing:
+    - Buy the same SKUs EU-side (iFixit EU, TME) instead of US/UK, which avoids the EUR 3 per-line duty, the EUR 2 handling fee, import VAT and express shipping.
+    - Choose SCALA over Bahco or Mitutoyo-class calipers.
+    - Choose the HL 1821 S over the HL 1920 E.
+    - Use the Knipex MultiStrip 10 ($88-95) only if 30 AWG must be stripped.
+  - Borrowing or a makerspace is still $0 for build-only steps, but not for spares or field repair.
+  
+  Spec trades stated openly
+  - SCALA's error limit is only 'per DIN 862' and not printed. It may be +/-0.03 mm rather than +/-0.02 mm, which is irrelevant for the stack's tolerances. Bernstein 7-511 (0.02 mm, $48.49) is the not-worse fallback if +/-0.02 mm is required.
+  - The Stanley snip's pattern (straight or compound) is not stated.
+  - The HL 1821 S has fixed 300/550 C stages, not adjustable temperature.
+  - Jokari 40026 covers about 28-18 AWG, not 30 AWG.
+  - Rejected:
+    - Goobay heat gun: no published overheat protection or warranty.
+    - GSR tap/die set: steel grade not stated.
+    - iFixit Moray: no 2.0 mm hex for the M2.5 screws.
+    - Jokari 20050 and Knipex 12 62 180 strippers: 24 AWG minimum.
+    - Bahco 1150D: not cheaper.
+  
+  Hard rules: no item transmits. The SCALA data output is wired RS232, and BLE calipers and label makers are excluded. No loops, no signal sources. The heat gun is mains, bench only.
+  
+  Method limits
+  - WebSearch was unavailable: the per-turn limit, shared by all agents, was already used up at my first call. So there was no forum or review cross-check. Everything comes from WebFetch on primary pages: TME listings and documents, Steinel datasheet, SCALA catalogue, voelkel.com, iFixit and Rite in the Rain.
+  - TME prices are the USD figures in its page structured data. The VAT basis is not stated (TME B2B list prices are normally net), and every TME page shows conflicting stock (visible 0 vs a structured-data inventory count). Confirm price and stock in the cart before ordering.
+  - Mitutoyo (shop.mitutoyo.eu) and Conrad returned 403, so no Mitutoyo price was verified.
+  - Völkel tap wrench and die stock prices are dealer list prices excl. VAT, pack quantity unclear.
+  - Unverified: deburrer, tweezers, organiser, label prices, and the EU price for Rite in the Rain.
+  - FX 1.1241 USD/EUR (stack).
+  - Downloaded catalogue text: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_scala/scala.txt
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
