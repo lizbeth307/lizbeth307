@@ -1123,5 +1123,157 @@ _Run `wf_6b9836f8-796`_
 
 ## Адверсаріальна перевірка (`verify`)
 
+_Run `wf_6b9836f8-796`_
+
+- **Component:** Antennas and cabling (137 MHz, 145.8 MHz, 435-438 MHz, 1.7 GHz HRPT, 2.2 GHz, QO-100 IF) for the Q6A + LimeSDR Micro M.2 + RTL-SDR Blog V4L handheld, dish-free
+- **Recommendation holds:** ні
+- **Issues:**
+  1.
+    - **Claim:** Recommended kit: 35-40 cm camping dish for QO-100. Budget kit: 55-60 cm Ukrainian dish. Optional premium: Discovery Dish for L/S-band.
+    - **Problem:** This contradicts the user's update that dishes are abandoned. All three dish lines in the price totals are invalid. The dish-free L-band link is also weaker: Meti's 11-turn helix decoded Elektro LRIT at 1.5 dB SNR, against 5-6 dB on a 70 cm Discovery Dish.
+    - **Correction:** Drop every dish. For L-band, use a DIY helix or helicone with the SAWbird bolted to the feed. QO-100 is reduced to beacon/CW-grade reception on a horn fitted to the LNB, and is deferred to the separate QO-100 antenna component. Keep the Discovery Dish figures only as a performance benchmark.
+    - **Source:** https://www.rtl-sdr.com/receiving-elektro-l3-lrit-weather-satellite-images-with-an-11-turn-helix-antenna-and-no-dish/
+  2.
+    - **Claim:** The N2SPI cheap 70 cm Yagi has 7 elements.
+    - **Problem:** Wrong. Table 3 of the article lists 6 elements: REF 13-3/8 in, DE 13 in, D1 12-3/8 in, D2 12 in, D3 12 in, D4 11 in. The seventh boom hole is for the half-folded driven element. The design is on a 30 in foam-board boom and is fed with an RG58 BNC jumper.
+    - **Correction:** Build 6 elements. Positions from the reflector are 0 / 2.5 / 5.5 / 11.25 / 17.5 / 24.0 in, which I derived from the article's wide-end positions 24-1/4 / 21-3/4 / 18-3/4 / 13 / 6-3/4 / 1/4 in. Cut each element to within ±1/32 in.
+    - **Source:** https://www.amsat.org/articles/n2spi/JulAug06AmsatJournal.pdf
+  3.
+    - **Claim:** Fix document: use Elektro-L N3 LRIT at about 1691 MHz from 76E as the steady source for the helix gain A/B test.
+    - **Problem:** This is out of date. Elektro-L3 went quiet around 10 Sep 2026 and is drifting to 14.5°W (expected around 12 Oct 2026, with no L-band transmissions during the drift). Elektro-L5 has now been commissioned at 76°E and is transmitting LRIT/HRIT.
+    - **Correction:** Use Elektro-L5 at 76°E (about 19° elevation from Kyiv) on 1691 MHz. Elektro-L3 at 14.5°W is an option once it resumes. Both sit inside the SAWbird GOES 1648-1728 MHz passband. Bonus: the helix gets a no-tracking geostationary target (LRIT decodes at about +1 dB SNR).
+    - **Source:** https://www.rtl-sdr.com/?p=67091
+  4.
+    - **Claim:** Fix document: 3840x2160@60 (594 MHz) and 2560x1440@60 (241.5 MHz) HDMI modes are RF-clear in all six bands.
+    - **Problem:** The 4K60 claim is wrong. Above 340 Mcsc, HDMI 2.0 uses a 1/40 TMDS clock ratio, so the clock lane runs at 594/4 = 148.5 MHz. That is the same as 1080p60, and 2.7 MHz from ISS 145.8 MHz. Also, 241.5 MHz x7 = 1690.5 MHz, which is 0.5 MHz from Elektro LRIT at 1691 MHz and inside the SAWbird passband.
+    - **Correction:** Prefer 2560x1600@60 reduced blanking (268.5 MHz) or 4K30 (297 MHz). Avoid 1080p50/60 and 4K60. Whether the Q6A can output these modes is unverified, so confirm with modetest and measure with a 50-ohm terminator on the SDR input.
+    - **Source:** https://e2e.ti.com/support/interface/f/138/t/595650
+  5.
+    - **Claim:** The V4L is a drop-in successor to the V4 for the 137/145 MHz path; only an optional FM band-stop is mentioned.
+    - **Problem:** The V4L datasheet says it lacks the V4's additional input filtering. Its two-tone FM desense results are 'identical to the V3 models'. Its bias tee is 4.5 V at 180 mA continuous.
+    - **Correction:** Make the RTL-SDR Blog FM band-stop filter ($16.95, more than 50 dB rejection at 88-108 MHz, under 0.5 dB loss) standard in the 137/145 MHz path. Without an LNA, sky noise dominates at VHF, so the filter's loss hardly matters. If a bias-tee-powered LNA is used, either the filter must pass DC or the LNA must be powered separately.
+    - **Source:** https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+  6.
+    - **Claim:** Findings: wire the case bulkheads to Lime X2 and X3.
+    - **Problem:** The LimeSDR Micro M.2 v1.2 RF-control reference names the RX MHF4 connectors X2 and X4, and TX X1. RX matching ranges are RX_L 0.3-2.2 GHz, RX_W 0.7-2.6 GHz and RX_H 3.3-3.8 GHz.
+    - **Correction:** Label the pigtails X2/X4 to match the board. 137 and 145.8 MHz must go to the RTL, because they are below the Lime's 0.3 GHz RX_L range. 435 MHz, 1.7 GHz and 2.2 GHz go to the Lime.
+    - **Source:** https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/rfcontrol.html
+  7.
+    - **Claim:** Community and fix documents: the 3D-printed helicone has community proof for hand-tracked HRPT.
+    - **Problem:** The RTL-SDR.com write-up of saveitforparts' helicone reports success only on NOAA HRPT. NOAA-19 was decommissioned on 13 Aug 2025 and NOAA-15 on 19 Aug 2025. I found no first-hand, documented dish-free hand-tracked Meteor-M N2-3/N2-4, Metop or FY-3 HRPT decode.
+    - **Correction:** Treat dish-free HRPT as experimental. Build the higher-gain helix (C = 1.1 wavelength) or the helicone, start with high Meteor-M N2-4 passes, and validate the antenna first on Elektro-L5 LRIT.
+    - **Source:** https://www.rtl-sdr.com/saveitforparts-testing-a-3d-printable-satellite-antenna-for-noaa-meteor-and-other-polar-orbiting-l-band-satellites/ ; https://www.ospo.noaa.gov/Operations/POES/status.html
+  8.
+    - **Claim:** Fix document: the PCIe 100 MHz refclk 17th harmonic is a 1700.000 MHz line, but only if spread-spectrum clocking is off.
+    - **Problem:** This gets the case backwards. With the usual 0.5% down-spread SSC, the 17th harmonic is not removed. It is smeared over about 1691.5-1700 MHz, which covers both Elektro LRIT (1691) and the lower edge of Meteor HRPT. There are also RTL 28.8 MHz x59 = 1699.2 MHz, inside the Meteor 1700 MHz signal, and Lime 30.72 MHz x55 = 1689.6 MHz.
+    - **Correction:** Run the terminated-input spur scan from 1688 to 1712 MHz on both SDRs, with the host idle and with PCIe streaming. If the RTL shows its 1699.2 MHz line, receive Meteor HRPT on the Lime.
+    - **Source:** https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/clock.html
+  9.
+    - **Claim:** Findings: the Discovery Dish costs $149 plus $125 per feed.
+    - **Problem:** Prices are inconsistent: the RTL-SDR store lists 'Discovery Dish $214 + shipping'. The point is moot now that dishes are abandoned.
+    - **Correction:** Remove it from the budget.
+    - **Source:** https://www.rtl-sdr.com/store/
+  10.
+    - **Claim:** Findings: the Bullseye LNB IF can go straight to the RTL-SDR or the Lime.
+    - **Problem:** There is a hidden overload risk. With 50-66 dB of gain and 0.5 dB NF, the LNB puts roughly -20 to -28 dBm of broadband noise (my estimate) across its 739-1950 MHz output into the SDR. In addition, the Lime has a 30.72 MHz x24 = 737.28 MHz spur 2.3 MHz from the NB IF.
+    - **Correction:** Route the IF to the V4L through a DC-blocked injector. Run the RTL gain low (about 20-30 dB) or add a 6-10 dB attenuator. Keep the RTL bias tee off.
+    - **Source:** https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+- **Forum and fix assessment:** I checked the forum findings and the agent's own fixes against primary sources. Most hold up; three pieces of evidence needed correction (Elektro-L slot, HDMI 4K60 clock, helicone evidence).
+  
+  What I confirmed:
+  - **N2SPI** is a 6-element design (AMSAT Journal Table 3).
+  - **SAWbird+ GOES** draws 180 mA nominal and has at least 30 dB gain, $44.95. **SAWbird GOES** draws 30 mA and has at least 20 dB gain, $39.95. Both are centred on 1688 MHz with an 80 MHz passband, take 3-5 V by bias tee or 3.3-5.5 V external, and carry Nooelec's DC-block warning.
+  - **V4L bias tee** is 4.5 V at 180 mA. The V4L also has no V4-style input filtering.
+  - **LimeSDR Micro** VCTCXO is ±50 ppb from -40 to 85 C and ±1 ppm calibration. The RX ports are 0.3-2.2, 0.7-2.6 and 3.3-3.8 GHz.
+  - **ESD8472** specs match the fix: 5.3 V working, 7 V minimum breakdown, 0.2 pF. I did not re-verify the Lime BOM placement.
+  - **QO-100 NB** downlink is vertical (13 V) and WB is horizontal (18 V).
+  - **Bullseye** is $29.95 with 70 in stock, ±10 kHz at 23 C and ±30 kHz over temperature, factory calibration within 1 kHz.
+  - **Retail:** the dipole kit is $17.95 and the FM band-stop is $16.95. AliExpress delivery to Ukraine works.
+  
+  The engineering fixes are sound:
+  - Helix geometry: C = 1.1 wavelength gives D 61.7 mm, S 43 mm, 473 mm long. C = 0.9 wavelength gives D 50.5 mm, S 35.2 mm.
+  - Horn dimensions: 20 dBi needs a 127 mm aperture with 188 mm slant.
+  - QO-100 link math: I re-derived it from EA4GPZ's 45 dB-Hz BPSK beacon on a 95 cm dish that is off focus and behaves like a 60 cm one. A 20 dBi horn gives about 31-33 dB-Hz, so CW in 50 Hz is about +14-16 dB, PSK at 400 bps is decodable, and SSB in 2.5 kHz is about -3 to -1 dB.
+  - Kyiv QO-100 pointing of 186° azimuth / 32° elevation checks out.
+  - Crossed-Yagi orthogonality, the DC-block rules, external 5 V for the SAWbird+, the beacon-lock approach and dropping the shared 25 MHz clock are all correct.
+  
+  Corrections needed in the fixes:
+  - **Elektro-L slot.** Elektro-L3 left 76E in September 2026; Elektro-L5 is now there.
+  - **HDMI 4K60 is not RF-clear.** Its TMDS clock is 148.5 MHz.
+  - **HDMI 1440p60 is risky for the Elektro test.** Its 7th harmonic lands at 1690.5 MHz, next to Elektro's 1691 MHz.
+  - **PCIe SSC smears the 1700 MHz harmonic rather than removing it.**
+  - **Dish-free HRPT evidence is NOAA-only (now dead) or second-hand.**
+  - **The V4L's missing input filter makes the FM band-stop mandatory, not optional.**
+  
+  All NEC gains and the horn SNRs are unmeasured models, ±1-3 dB.
+- **Final recommendation:**
+  - **Name:** Dish-free portable kit: RTL-SDR Blog multipurpose dipole kit as the 137 MHz V-dipole (also retuned for ISS 145.8) + FM band-stop + DIY crossed 2 m/70 cm handheld (WB2HOL 3-el tape Yagi horizontal + N2SPI 6-el 70 cm vertical, two separate feeds) + DIY 11-turn RHCP helix C=1.1λ (or 6-8 turn helicone) with Nooelec SAWbird+ GOES bolted to the feed on external 5 V + DC blocks/quality pigtails/LMR-240-class jumpers; QO-100 only as optional beacon/CW add-on (Bullseye TCXO LNB + DIY 20-23 dBi conical horn, IF to the RTL)
+  - **Price:** Core about $185-215: dipole kit $17.95, FM band-stop $16.95, SAWbird+ GOES $44.95, crossed-Yagi materials about $20-30 (estimate), helix materials about $15 (estimate), 2x SMA DC blocks about $25 (eBay 2-pack), cables/pigtails/adapters about $40-60 (estimate). Optional QO-100 beacon add-on about $60: Bullseye $29.95 + horn sheet and printed clamp about $10 + 13/18 V injector and RG6/F-SMA about $20 (estimates). A VNA covering at least 3 GHz, strongly advised, costs an extra $60-130 (unverified).
+  - **Why:** Every target is covered without a dish, and the kit packs into a backpack.
+  
+  - **137 and 145.8 MHz:** The V-dipole is proven on LRPT; set arms to 53.4 cm, open to 120°, align north-south and hold about 1 m above ground. Both bands must use the RTL, because the Lime's RX matching starts at 0.3 GHz.
+  - **2 m + 70 cm Yagi:** In NEC2 (agent's own unmeasured model), mounting the two Yagis crossed keeps both patterns (7.9 dBi and 11 dBi). The two feeds allow 145.8 on the RTL and 435 on the Lime at the same time, with no duplexer because the station is receive-only.
+  - **L-band helix:** The C = 1.1λ helix (D 61.7 mm, S 43 mm, 473 mm, 20 cm plate) models at about 13.5 dBic, about 1.7 dB better than the original C = 1.0 design. The helicone models at about 14.7 dBic. Beams are 24-34° wide, so the BNO085 pointing aid makes hand-tracking practical.
+  - **SAWbird+ GOES at the feed:** It gives 30 dB gain and SAW filtering (1648-1728 MHz), which the unfiltered LMS7002M needs. Power it from a current-limited 5 V rail, never the RTL bias tee, because its 180 mA draw is exactly the V4L limit. Put a DC block before the Lime port, because the Lime's TVS breaks down at about 7 V.
+  - **Geostationary test target:** Elektro-L5 at 76°E (1691 MHz LRIT/HRIT) gives the helix a target that needs no tracking, and lets you validate the antenna before attempting the harder Meteor-M N2-4 HRPT.
+  - **FM band-stop:** It is now mandatory because the V4L dropped the V4's input filtering.
+  - **QO-100:** Without a dish, the best achievable is the CW beacon (about +15 dB in 50 Hz) and the PSK beacon. That is enough for pointing and beacon-lock, but SSB is about 0 dB. Buy the LNB only if that is acceptable.
+  - **Sources:**
+    - https://www.rtl-sdr.com/store/
+    - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+    - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-goes.html
+    - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-goes.html
+    - https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/rfcontrol.html
+    - https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/clock.html
+    - https://www.amsat.org/articles/n2spi/JulAug06AmsatJournal.pdf
+    - https://www.w9rh.org/wp-content/uploads/2024/01/2m-tape-measure-yagi-instructions.pdf
+    - https://www.rtl-sdr.com/receiving-elektro-l3-lrit-weather-satellite-images-with-an-11-turn-helix-antenna-and-no-dish/
+    - https://www.rtl-sdr.com/?p=67091
+    - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+    - https://destevez.net/2019/03/qo-100-beacons-power/
+    - https://amsat-uk.org/satellites/geo/eshail-2/
+    - https://www.mouser.com/datasheet/3/101/1/ESD8472-D.PDF
+- **Final budget option:**
+  - **Name:** Minimum dish-free kit: the RTL-SDR Blog dipole kit used for both 137 MHz (V-dipole) and 145.8 MHz (arms reset to about 49 cm), plus FM band-stop, plus the N2SPI 6-element 70 cm Yagi on a varnished wood batten, plus the DIY 11-turn C=1.1λ helix with the 30 mA SAWbird GOES on the V4L's 4.5 V bias tee for Meteor HRPT, plus RG58 jumpers. QO-100 and the 2 m Yagi are skipped.
+  - **Price:** About $110-150: dipole kit $17.95, FM band-stop $16.95, SAWbird GOES $39.95, plus DIY Yagi and helix materials, one DC block and RG58/SMA adapters at about $35-75 (estimates). Add about $60 for the Bullseye and horn beacon-only add-on later.
+  - **Why:** Every satellite on the list except QO-100 is still reachable at roughly half the price.
+  
+  - **No 2 m Yagi:** AMSAT-UK and RTL-SDR.com say a simple dipole or ground plane is enough for ISS SSTV, so the WB2HOL can be dropped.
+  - **SAWbird GOES on the RTL bias tee:** At 30 mA it sits well within the V4L's 180 mA limit, so no external 5 V rail or bias tee is needed. Meteor-M N2-4 HRPT at 665 kbps fits within the V4L's 2.56 MHz stable bandwidth.
+  - **What you give up:** Metop and FY-3 AHRPT, which need more bandwidth and therefore the Lime. You also lose simultaneous 2 m/70 cm reception.
+  - **RG58 is acceptable here:** It loses about 1-2 dB at 137-435 MHz over 3-5 m, and it only follows the LNA at L-band.
+  - **Watch-out:** The RTL's own 28.8 MHz x59 = 1699.2 MHz spur sits inside the Meteor HRPT signal. If it shows in the terminated-input scan, move HRPT to the Lime with an external 5 V supply and a DC block.
+- **Known problems and fixes to apply:**
+  - Drop every dish from the plan. L-band relies on the helix: 11 turns of 2-2.5 mm copper, coil diameter 61.7 mm, pitch 43 mm, length 473 mm, wound right-hand (RHCP) on PETG/ASA spacers, not on solid PVC. Use a 20x20 cm aluminium ground plate, feed point 30.9 mm off-centre, and a gradual first quarter-turn for matching. Trim to S11 better than -10 dB over 1690-1710 MHz. The helicone (6-8 turns in a 40 cm, 15 cm deep cone) gives about 1 dB more.
+  - Bolt the SAWbird+ GOES directly onto the helix SMA, with no cable before the LNA. Power it at 5 V through its micro-USB from a current-limited switch (about 300 mA) or a polyfuse. Never power it from the RTL bias tee (180 mA is exactly the V4L limit). Fit an SMA DC block before the Lime bulkhead.
+  - Lime protection: no Lime port may ever see more than 5 V DC, because the on-board ESD8472 has 5.3 V working and 7 V minimum breakdown. Fit DC blocks on every powered path. LNB 13/18 V goes only to the RTL path, through an injector, and uses F connectors so it cannot be mated to the Lime by mistake. Check the centre pin for DC before connecting. Use name-brand MHF4 pigtails no longer than 15 cm, mate them once, glue them to SMA bulkheads and label them X2/X4 to match the board.
+  - Band routing: 137 and 145.8 MHz go to the RTL V4L, since the Lime RX_L path starts at 0.3 GHz. 435 MHz, 1.7 GHz and 2.2 GHz go to the Lime. Both Lime RX channels share one RX synthesiser, so 435 MHz and 1.7 GHz cannot be received at the same time.
+  - V4L front end: put the RTL-SDR Blog FM band-stop ($16.95) in the 137/145 MHz path. Skip the wideband LNA at VHF unless tests show a gain. If you use a bias-tee-powered LNA, make sure DC passes through the filter, or power the LNA separately. Do not put the SPF5189Z or QPL9547 wideband LNA in front of the Lime.
+  - On Ubuntu 24.04 ARM, remove the distro librtlsdr and build the rtl-sdr-blog driver from source, then rebuild SoapyRTLSDR/SatDump against it. The V4L requires updated drivers (SatDump issue #696 symptom: no lock on Linux).
+  - V-dipole: arms 53.4 cm for 137 MHz (about 49 cm for 145.8), opened to 120°, axis north-south, held about 1 m above ground. The kit's telescopic sections and tripod wear out, so carry spares or fit fixed 53 cm rods. A splice block plus hot-melt glue strengthens the terminal block.
+  - Crossed 2 m/70 cm Yagi: use a non-conductive boom about 0.7 m long. Mount the 2 m half horizontal (reflector at 0, driven element at 0.20 m, director at 0.51 m) and the 70 cm half vertical (0.030, 0.094, 0.170, 0.316, 0.475, 0.640 m). Key the clips so the planes stay orthogonal within ±5°; co-planar mounting collapses the 70 cm gain to about 3.6 dBi in NEC. Use two separate feeds and tune each with a VNA once fully assembled. With 19 mm tape, lengthen the WB2HOL driven element halves from about 451 mm to about 468 mm. Cut the N2SPI to its 6-element Table 3 lengths.
+  - RF self-noise from the host: do not run 1080p50/60 or 4K60 HDMI, whose 148.5 MHz TMDS clock lands near ISS 145.8. Avoid 1440p60 (241.5 MHz x7 = 1690.5 MHz, next to Elektro 1691). Prefer 2560x1600@60 reduced blanking (268.5 MHz) or 4K30 (297 MHz) if the Q6A supports them (unverified). Add Mix-31 ferrites on the HDMI, USB-C PD and coax leads, shield the Lime in its own copper-lined compartment, and turn Wi-Fi/BT off during passes.
+  - Spur scan with 50-ohm terminators, host idle and then streaming: check Lime 30.72 MHz harmonics (737.28, 1689.6, 1720.32, 2211.84 MHz), RTL 28.8 MHz harmonics (144.0 and 1699.2 MHz) and PCIe 100 MHz x17 (a line at 1700.000 MHz, or smeared over 1691.5-1700 MHz with SSC). Choose the SDR or offset that avoids them.
+  - Validate the helix on Elektro-L5 at 76°E, 1691 MHz LRIT/HRIT, about 19° elevation from Kyiv, or on Elektro-L3 at 14.5°W once it transmits again. Do not use Elektro-L3 at 76E, which has moved. Then try high Meteor-M N2-4 HRPT passes (1700 MHz, RHCP). Expect Metop/FY-3 AHRPT to decode only on high passes, and only on the Lime.
+  - QO-100 without a dish is beacon/CW only. Fit a 20 dBi conical horn (127 mm aperture, 188 mm slant, 0.3-0.5 mm aluminium, ASA clamp on the 40 mm LNB collar; 23 dBi needs a 180 mm aperture). Feed 13 V for the vertical NB transponder and 18 V for horizontal WB. Route the IF (about 739.5 MHz) to the V4L at low gain or through a 6-10 dB attenuator. Correct drift with SDRangel Frequency Tracker or GNU Radio beacon-lock. Cap the red F port; trimming the LNB with the optional G4EML calibrator voids the warranty.
+  - Measure every cable, DC block and injector with a VNA covering at least 3 GHz (a NanoVNA-H4 tops out around 1.5 GHz) at 137, 146, 436, 740, 1700 and 2250 MHz. Reject anything more than 30% over its datasheet loss, with S11 worse than -15 dB, or whose loss jumps more than 0.2 dB when the cable is bent at the connector.
+  - Weatherproofing: use PETG for shaded parts and ASA for parts in sun (not PLA). Replace the foam board with a varnished wood batten, lacquer the tape elements, put adhesive heat-shrink over the hairpin, seal the SMA and SAWbird with self-amalgamating tape, and drill a drain hole in the horn.
+  - Legal: martial law has been extended through at least 31 Oct 2026. Operate receive-only from private property away from infrastructure, keep the Lime TX port capped, do not stream or post live or geotagged photos, carry a Ukrainian-language explanation, and ask LRU/UCRF in writing.
+- **Remaining uncertainties:**
+  - No documented dish-free, hand-tracked Meteor-M N2-3/N2-4, Metop or FY-3 HRPT decode exists. The helicone successes were NOAA (decommissioned in 2025) or second-hand. Meteor/Metop L-band EIRP is not published.
+  - All antenna gains (helix 13.5 dBic, helicone 14.7 dBic, crossed Yagi 7.9/11.0 dBi) and the QO-100 horn SNRs are unmeasured NEC or link-budget models, ±1-3 dB. No horn-on-LNB QO-100 build with measured SNR was found.
+  - Whether the Q6A HDMI output supports 2560x1600@60 RB or 4K30 timings, and the Q6A's actual RF self-noise (including the PCIe SSC smear near 1700 MHz), are unverified.
+  - The ESD8472 plus 510 pF DC-block placement on the LimeSDR Micro comes from the fix agent's BOM reading. I confirmed the ESD8472 specs but not its placement on the board. The DC-block rule holds either way.
+  - Elektro-L5 xRIT schedule and Elektro-L3's restart at 14.5°W (no official Roscosmos announcement) are not confirmed.
+  - Shipping of Nooelec SAWbirds to Ukraine is unverified. Fallbacks are EU eBay resellers (eBay.de lists Nooelec SAWbird models) or a forwarder.
+  - Prices for DIY materials, AliExpress LMR-240 clones, DC blocks (an eBay 2-pack was about $25), injectors, MHF4 pigtails and a VNA covering at least 3 GHz are estimates.
+  - Ukrainian martial-law rules on public receive-only antenna use: no current official source was found.
+- **Confidence:** medium
+- **Missed better options:**
+  - Elektro-L5 at 76°E (1691 MHz LRIT/HRIT, now commissioned) gives the dish-free helix a geostationary target that needs no tracking. It decodes at about +1 dB SNR, so it serves both as an extra receive goal and as a fixed gain-test source. None of the agents identified the current satellite in that slot.
+  - The RTL-SDR Blog FM band-stop ($16.95) should be standard, because the V4L has no V4-style input filtering.
+  - If the V4L kit is still unavailable, the RTL-SDR Blog V3 plus dipole kit bundle ($44.95-49.95) is cheaper than a V4L plus separate kit ($55.90). It is useful as a spare RTL and a source of the 137 MHz dipole.
+  - For 435 MHz on the Lime, a band-pass-filtered 70 cm LNA (for example the Passion Radio 430-440 MHz PGA-103+ preamp; price not verified) beats a wideband LNA, but it needs external DC because the Lime has no bias tee.
+
 _Агент цього етапу ще працює (run `wf_6b9836f8-796`)._
 
