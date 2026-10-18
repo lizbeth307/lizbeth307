@@ -279,3 +279,7 @@
 
 - Підготовлено скрипти наступних фаз: P3 sat-receiver-stack-v1.js (чернетка STACK.md → 2 перевіряльники правил/цифр → виправлення), P4 sat-receiver-reaudit.js (16 підсистем у 4 групах: дослідження → спільнота → адверсаріальна перевірка), P5 sat-receiver-analogs.js (2 пошуки на деталь + адверсаріальна перевірка «не гірше»). Синтаксис перевірено.
 
+## 2026-10-18 05:09 UTC
+
+- P2 закупівля, група SDR+RF+антени (офіційні канали, світові ціни, 18.10.2026): RTL-SDR Blog V4L $37.95 (455 шт.); Airspy HF+ Discovery $169 iTead (Moonraker $223.95, AstroRadio $248); LimeSDR Micro M.2 Basic $267 з доставкою (передзамовлення); ADT-Link R44SF $19; RTL-SDR Blog Wideband LNA V2 $19.95; SAWbird+ GOES / iO у корпусі $49.95; Flamingo+ FM v2 $24.95 (RTL-SDR Blog FM-фільтр $16.95); BLK-89-S+ $20.26; Bullseye TCXO LNB $29.95 (70 шт.); комплект диполів RTL-SDR Blog $17.95; активна L-band патч-антена RTL-SDR Blog $59.95; Waveshare GNSS L1+L5 $16.99 (u-blox ANN-MB5 $42.50); Balun One Nine v2 $26.95; Boni-Whip $123.95 Moonraker / $184 WiMo (з 20.11); Tecsun AN-05 $14.49; SP4T: генерична плата HMC7992 ~$14.70 (не перевірено) vs EV1HMC7992 $319 vs ZSWA4-63DR+ $307 (немає). Рамки в групі виключено. Джерела: rtl-sdr.com/store, itead.cc, crowdsupply.com, nooelec.com, minicircuits.com, digikey.com, waveshare.com, sparkfun.com, moonraker.eu, wimo.com.
+
