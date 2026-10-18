@@ -19,6 +19,7 @@
 | [Adafruit mcp23017 5346 0x20 outputs 0x22](components/adafruit_mcp23017_5346_0x20_outputs_0x22.md) | · research · forums · fixes ✅ verify | `—` |
 | [Adi lt3045 paralleled 4 5 v lna rail](components/adi_lt3045_paralleled_4_5_v_lna_rail.md) | · research · forums · fixes ✅ verify | `—` |
 | [Airspy hf discovery](components/airspy_hf_discovery.md) | · research · forums · fixes ✅ verify | `—` |
+| [Airspy mini](components/airspy_mini.md) | · research · forums · fixes ✅ verify | `—` |
 | [Allnet 64 gb microsd adafruit 5212 reade](components/allnet_64_gb_microsd_adafruit_5212_reade.md) | · research · forums · fixes ✅ verify | `—` |
 | [Aneng an8008 9 dmm](components/aneng_an8008_9_dmm.md) | · research · forums · fixes ✅ verify | `—` |
 | [Anker 737 power bank 20 v 5 a pdo 100 wh](components/anker_737_power_bank_20_v_5_a_pdo_100_wh.md) | · research · forums · fixes ✅ verify | `—` |
@@ -37,6 +38,7 @@
 | [Display](components/display.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_0e70c405-a03` |
 | [Display hmi](components/display_hmi.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Flightaware pro stick plus](components/flightaware_pro_stick_plus.md) | · research · forums · fixes ✅ verify | `—` |
+| [Fnirsi dps 150 bench supply](components/fnirsi_dps_150_bench_supply.md) | · research · forums · fixes ✅ verify | `—` |
 | [Fnirsi fnb58 std no radio](components/fnirsi_fnb58_std_no_radio.md) | · research · forums · fixes ✅ verify | `—` |
 | [Generic hmc7992 sp4t boards rtl a and rt](components/generic_hmc7992_sp4t_boards_rtl_a_and_rt.md) | · research · forums · fixes ✅ verify | `—` |
 | [Gnss imu](components/gnss_imu.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_45d278c2-004` |
