@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1500" height="1180" viewBox="0 0 1500 1180" font-family="Arial, Helvetica, sans-serif">
+<title>Розріз і план компонування корпусу</title>
+<defs>
+<marker id="ar" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker>
+<marker id="al" viewBox="0 0 10 10" refX="0" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M10,0 L0,5 L10,10 z" fill="#000"/></marker>
+</defs>
+<rect x="0" y="0" width="1500" height="1180" fill="#ffffff"/>
+<text x="20.0" y="34.0" font-size="18" text-anchor="start" font-weight="bold" fill="#000">05. Розташування: збірний бічний розріз (шари спереду назад) і план зон</text>
+<text x="20.0" y="56.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Джерело: STACK.md §5.8 «Усередині, спереду назад», «Під Lime», §5.6 «Тепло», §1.1 D15, §2.9, §2.11.1. Розріз збірний: деталі з різних місць плану спроєктовано</text>
+<text x="20.0" y="72.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">на одну площину; підписані розміри — зі STACK.md, решта товщин і висот — не в масштабі (TBD з CAD на Radxa STEP V1.21).</text>
+<text x="25.0" y="108.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">РОЗРІЗ (масштаб 4.5 px = 1 мм; ліворуч — лице, праворуч — задня стінка)</text>
+<rect x="175.0" y="130.0" width="258.8" height="630.0" fill="none" stroke="#000" stroke-width="2.2"/>
+<rect x="175.0" y="130.0" width="258.8" height="20.2" fill="#e3e3e3" stroke="#000" stroke-width="1"/>
+<line x1="175.0" y1="166.0" x2="40.0" y2="166.0" stroke="#2a6" stroke-width="3"/>
+<text x="40.0" y="160.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">козирок 30 (відкр.)</text>
+<rect x="152.5" y="170.5" width="22.5" height="117.0" fill="none" stroke="#000" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="148.0" y="298.5" font-size="12" text-anchor="end" font-weight="normal" fill="#000">закр.: +≈5</text>
+<rect x="179.5" y="122.0" width="12.0" height="8.0" fill="#ffd966" stroke="#000" stroke-width="0.8"/>
+<rect x="188.5" y="224.5" width="31.5" height="441.0" fill="#eef3f8" stroke="#000" stroke-width="1.4"/>
+<rect x="220.0" y="265.0" width="13.5" height="369.0" fill="#cfe2cf" stroke="#000" stroke-width="1"/>
+<text x="204.2" y="445.0" font-size="12" text-anchor="middle" font-weight="normal" fill="#000" transform="rotate(-90 204.2 445.0)">скло+панель (товщ. TBD)</text>
+<text x="227.2" y="449.5" font-size="12" text-anchor="middle" font-weight="normal" fill="#000" transform="rotate(-90 227.2 449.5)">HDMI-плата 96.2x82</text>
+<line x1="166.0" y1="224.5" x2="166.0" y2="665.5" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="161.0" y="449.0" font-size="12" text-anchor="end" font-weight="normal" fill="#000">скло 98</text>
+<rect x="233.5" y="152.5" width="22.5" height="594.0" fill="#f2f9ff" stroke="#000" stroke-width="0.6" stroke-dasharray="3,2"/>
+<line x1="243.4" y1="310.0" x2="256.0" y2="310.0" stroke="#666" stroke-width="1.2"/>
+<line x1="243.4" y1="337.0" x2="256.0" y2="337.0" stroke="#666" stroke-width="1.2"/>
+<line x1="243.4" y1="364.0" x2="256.0" y2="364.0" stroke="#666" stroke-width="1.2"/>
+<line x1="243.4" y1="391.0" x2="256.0" y2="391.0" stroke="#666" stroke-width="1.2"/>
+<line x1="243.4" y1="418.0" x2="256.0" y2="418.0" stroke="#666" stroke-width="1.2"/>
+<line x1="243.4" y1="445.0" x2="256.0" y2="445.0" stroke="#666" stroke-width="1.2"/>
+<line x1="243.4" y1="472.0" x2="256.0" y2="472.0" stroke="#666" stroke-width="1.2"/>
+<line x1="243.4" y1="499.0" x2="256.0" y2="499.0" stroke="#666" stroke-width="1.2"/>
+<line x1="243.4" y1="526.0" x2="256.0" y2="526.0" stroke="#666" stroke-width="1.2"/>
+<line x1="243.4" y1="553.0" x2="256.0" y2="553.0" stroke="#666" stroke-width="1.2"/>
+<line x1="243.4" y1="580.0" x2="256.0" y2="580.0" stroke="#666" stroke-width="1.2"/>
+<line x1="243.4" y1="607.0" x2="256.0" y2="607.0" stroke="#666" stroke-width="1.2"/>
+<rect x="256.0" y="150.2" width="9.0" height="596.2" fill="#9aa7b4" stroke="#000" stroke-width="1"/>
+<rect x="234.8" y="670.0" width="19.8" height="45.0" fill="#ffffff" stroke="#000" stroke-width="1"/>
+<text x="244.8" y="700.0" font-size="11" text-anchor="middle" font-weight="bold" fill="#000">B</text>
+<line x1="244.8" y1="755.5" x2="244.8" y2="724.0" stroke="#06c" stroke-width="1.6" marker-end="url(#ar)"/>
+<line x1="244.8" y1="661.0" x2="244.8" y2="292.0" stroke="#06c" stroke-width="1.6" marker-end="url(#ar)"/>
+<text x="246.8" y="281.0" font-size="11" text-anchor="start" font-weight="normal" fill="#06c">→ боковий викид</text>
+<rect x="224.5" y="746.5" width="40.5" height="13.5" fill="#bcd" stroke="#000" stroke-width="1"/>
+<rect x="269.5" y="152.5" width="157.5" height="90.0" fill="#e8f0fb" stroke="#000" stroke-width="1.2"/>
+<text x="348.2" y="188.5" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">РЧ-відсік (FR4 35/35 мкм)</text>
+<text x="348.2" y="215.5" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">глибина/висота — TBD</text>
+<rect x="339.2" y="89.5" width="13.5" height="60.8" fill="#c9a227" stroke="#000" stroke-width="1"/>
+<line x1="346.0" y1="150.2" x2="310.0" y2="175.0" stroke="#7a5" stroke-width="1.4"/>
+<rect x="269.5" y="251.5" width="94.5" height="94.5" fill="#fdebd3" stroke="#000" stroke-width="1.4" stroke-dasharray="6,3"/>
+<text x="316.8" y="292.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">екран HF+</text>
+<text x="316.8" y="319.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">Г 21</text>
+<line x1="269.5" y1="359.0" x2="364.0" y2="359.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="316.8" y="372.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">21</text>
+<rect x="292.0" y="373.0" width="7.2" height="153.0" fill="#4a7" stroke="#000" stroke-width="1"/>
+<rect x="265.0" y="379.0" width="27.0" height="6.0" fill="#bbb" stroke="#000" stroke-width="0.6"/>
+<rect x="265.0" y="514.0" width="27.0" height="6.0" fill="#bbb" stroke="#000" stroke-width="0.6"/>
+<rect x="265.0" y="436.0" width="24.8" height="27.0" fill="#ddd" stroke="#000" stroke-width="0.8"/>
+<text x="278.5" y="492.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">UFS</text>
+<rect x="301.0" y="400.0" width="45.0" height="108.0" fill="#e7c9a9" stroke="#000" stroke-width="1.2"/>
+<text x="323.5" y="457.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">Cu ≤35</text>
+<rect x="382.0" y="364.0" width="45.0" height="180.0" fill="#dfe6ee" stroke="#000" stroke-width="1.2"/>
+<circle cx="404.5" cy="454.0" r="18.0" fill="none" stroke="#000" stroke-width="0.8"/>
+<text x="404.5" y="565.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">Noctua 40</text>
+<rect x="430.8" y="557.5" width="6.0" height="40.5" fill="#bcd" stroke="#000" stroke-width="1"/>
+<line x1="451.8" y1="575.5" x2="355.0" y2="517.0" stroke="#c40" stroke-width="1.6" marker-end="url(#ar)"/>
+<line x1="350.5" y1="454.0" x2="377.5" y2="454.0" stroke="#c40" stroke-width="1.6" marker-end="url(#ar)"/>
+<line x1="429.2" y1="400.0" x2="455.8" y2="377.5" stroke="#c40" stroke-width="1.6" marker-end="url(#ar)"/>
+<rect x="265.0" y="566.5" width="22.5" height="45.0" fill="#b8c4cf" stroke="#000" stroke-width="1"/>
+<rect x="287.5" y="557.5" width="6.8" height="67.5" fill="#356" stroke="#000" stroke-width="1"/>
+<rect x="294.2" y="566.5" width="20.2" height="45.0" fill="#ffffff" stroke="#000" stroke-width="0.8" stroke-dasharray="3,2"/>
+<path d="M299.2,521.5 C328.0,535.0 328.0,548.5 294.2,562.0" fill="none" stroke="#356" stroke-width="1.2" stroke-dasharray="4,2"/>
+<rect x="274.0" y="634.0" width="148.5" height="108.0" fill="#fff3f3" stroke="#000" stroke-width="1.6"/>
+<rect x="280.8" y="640.8" width="135.0" height="94.5" fill="none" stroke="#000" stroke-width="0.6" stroke-dasharray="2,2"/>
+<line x1="270.9" y1="634.0" x2="270.9" y2="742.0" stroke="#a33" stroke-width="2.2"/>
+<circle cx="348.2" cy="688.0" r="3.0" fill="#a33" stroke="#a33" stroke-width="1.2"/>
+<text x="348.2" y="715.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">пак 46x25x150</text>
+<line x1="422.5" y1="661.0" x2="447.8" y2="652.0" stroke="#a33" stroke-width="1.4" marker-end="url(#ar)"/>
+<rect x="193.0" y="733.0" width="31.5" height="13.5" fill="#f6d" stroke="#000" stroke-width="0.8"/>
+<rect x="422.5" y="589.0" width="11.2" height="36.0" fill="#888" stroke="#000" stroke-width="0.8"/>
+<rect x="433.8" y="328.0" width="45.0" height="18.0" fill="#c9a227" stroke="#000" stroke-width="0.8"/>
+<rect x="451.8" y="634.0" width="36.0" height="112.5" fill="#e0e0e0" stroke="#000" stroke-width="1.2"/>
+<line x1="492.2" y1="625.0" x2="492.2" y2="755.5" stroke="#aaa" stroke-width="2"/>
+<text x="469.8" y="688.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">T7</text>
+<line x1="175.0" y1="782.0" x2="433.8" y2="782.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="304.4" y="796.0" font-size="12" text-anchor="middle" font-weight="normal" fill="#000">55-60 (D15: 57.5)</text>
+<line x1="137.0" y1="130.0" x2="137.0" y2="760.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="132.0" y="449.0" font-size="12" text-anchor="end" font-weight="normal" fill="#000">135-140</text>
+<line x1="503.8" y1="99.0" x2="514.0" y2="99.0" stroke="#888" stroke-width="0.6"/>
+<text x="520.0" y="103.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Прохідник SMA (P1-P3, P6, P8): стінка 4-5 (ASA + 2 мм Al), ≥3 витки</text>
+<line x1="503.8" y1="171.0" x2="514.0" y2="171.0" stroke="#888" stroke-width="0.6"/>
+<text x="520.0" y="175.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">РЧ-відсік уздовж верхнього краю: 2x V4L, Flamingo+, SAWbird+ NOAA, плата</text>
+<text x="520.0" y="192.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">інжекторів (2+1 HMC7992), інжектор LNB з атенюатором</text>
+<line x1="503.8" y1="288.0" x2="514.0" y2="288.0" stroke="#888" stroke-width="0.6"/>
+<text x="520.0" y="292.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Екран HF+ Schubert 6B ≈112x56x21 (у плані — угорі праворуч); Boni bias-tee</text>
+<text x="520.0" y="309.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">і плата G6K — поруч, поза екраном</text>
+<line x1="503.8" y1="396.0" x2="514.0" y2="396.0" stroke="#888" stroke-width="0.6"/>
+<text x="520.0" y="400.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Q6A 85x56 на стійках M2.5 до пластини 2.0 Al (EN AW-5754, 130 W/mK)</text>
+<line x1="503.8" y1="450.0" x2="514.0" y2="450.0" stroke="#888" stroke-width="0.6"/>
+<text x="520.0" y="454.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Шлях 1: задній забір → Cu ≤35x35 (або Armor 7056A) → Noctua NF-A4x10 5V</text>
+<text x="520.0" y="471.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">40 мм → викид ззаду зверху; ≥2.7 м³/год; SoC-до-забору ≤3.5 K/W</text>
+<line x1="503.8" y1="486.0" x2="514.0" y2="492.0" stroke="#888" stroke-width="0.6"/>
+<text x="520.0" y="496.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">UFS: прокладка на бобишку ≥30 від п'єдесталу Lime і регуляторів</text>
+<line x1="503.8" y1="580.5" x2="514.0" y2="580.5" stroke="#888" stroke-width="0.6"/>
+<text x="520.0" y="584.5" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Lime 2280 на R44SF 5 см + п'єдестал і прокладка ≥6 W/mK; верх ≤4.5,</text>
+<text x="520.0" y="601.5" font-size="12" text-anchor="start" font-weight="normal" fill="#000">низ ≤1.35; вікно riser ≈26x20; сторона пластини — TBD (CAD)</text>
+<line x1="503.8" y1="684.0" x2="514.0" y2="684.0" stroke="#888" stroke-width="0.6"/>
+<text x="520.0" y="688.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Батарея: відсік ≈54x33x158 (модель), піна 3 мм, відбивна плівка, бар'єр</text>
+<text x="520.0" y="705.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">1 мм FR-4/слюда (червоний), NTC на середньому елементі, вентиляція назовні</text>
+<line x1="503.8" y1="738.0" x2="514.0" y2="738.0" stroke="#888" stroke-width="0.6"/>
+<text x="520.0" y="742.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">IP2368 на стінці внизу, ≥10 від елементів; KSD9700 70 °C на MOSFET</text>
+<text x="20.0" y="820.0" font-size="12" text-anchor="start" font-weight="bold" fill="#000">Ліва частина розрізу:</text>
+<text x="20.0" y="838.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">• скло + бондована панель + AR-плівка; HDMI-плата 96.2x82;</text>
+<text x="20.0" y="855.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">• канал 4-6 (синій) з повітродувкою B 5 V; шлях 2: нижній забір</text>
+<text x="20.0" y="872.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">  (сітка 316 + піна Qualtek 36.4) → канал → ребра пластини → боковий</text>
+<text x="20.0" y="889.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">  викид (сторона TBD); повітря дисплея не гріє ребра Q6A;</text>
+<text x="20.0" y="906.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">• середня пластина 2.0 з ребрами; регулятори прикріплені до неї;</text>
+<text x="20.0" y="923.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">• задня стінка: бобишка гайки 1/4-20 (сірий), гніздо GX16-4 (жовтий,</text>
+<text x="20.0" y="940.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">  ≈46 у зчепленні), тримач T7 85x57x8 ззовні, зазор 3-5, шторка.</text>
+<text x="880.0" y="128.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">ПЛАН ЗОН (вид спереду крізь дисплей; 2.5 px = 1 мм)</text>
+<rect x="880.0" y="150.0" width="562.5" height="350.0" fill="none" stroke="#000" stroke-width="2"/>
+<rect x="887.5" y="157.5" width="262.5" height="55.0" fill="#e8f0fb" stroke="#000" stroke-width="1"/>
+<text x="1017.5" y="182.5" font-size="12" text-anchor="middle" font-weight="normal" fill="#000">РЧ-відсік (уздовж верхнього краю)</text>
+<text x="1017.5" y="200.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">висота зони — TBD</text>
+<rect x="1155.0" y="157.5" width="280.0" height="140.0" fill="#fdebd3" stroke="#000" stroke-width="1.2"/>
+<text x="1295.0" y="200.0" font-size="12" text-anchor="middle" font-weight="normal" fill="#000">Екран HF+ угорі праворуч</text>
+<text x="1295.0" y="220.0" font-size="12" text-anchor="middle" font-weight="normal" fill="#000">≈112 x 56 x 21</text>
+<line x1="1155.0" y1="291.5" x2="1435.0" y2="291.5" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="1295.0" y="287.5" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">112</text>
+<rect x="1360.0" y="302.5" width="75.0" height="50.0" fill="#fff" stroke="#000" stroke-width="1" stroke-dasharray="4,2"/>
+<text x="1397.5" y="322.5" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">Boni</text>
+<text x="1397.5" y="340.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">+G6K</text>
+<rect x="930.0" y="217.5" width="212.5" height="140.0" fill="#e6f4ea" stroke="#000" stroke-width="1.4"/>
+<circle cx="938.8" cy="226.2" r="4.4" fill="none" stroke="#000" stroke-width="1"/>
+<circle cx="1083.8" cy="226.2" r="4.4" fill="none" stroke="#000" stroke-width="1"/>
+<circle cx="938.8" cy="348.8" r="4.4" fill="none" stroke="#000" stroke-width="1"/>
+<circle cx="1083.8" cy="348.8" r="4.4" fill="none" stroke="#000" stroke-width="1"/>
+<text x="1035.0" y="240.0" font-size="12" text-anchor="middle" font-weight="bold" fill="#000">Q6A 85x56</text>
+<text x="1035.0" y="257.5" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">отвори ⌀3.5 на 58x49,</text>
+<text x="1035.0" y="272.5" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">3.5 від країв</text>
+<rect x="992.5" y="280.0" width="87.5" height="65.0" fill="none" stroke="#000" stroke-width="1" stroke-dasharray="5,3"/>
+<text x="1036.2" y="300.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">Cu ≤35x35 /</text>
+<text x="1036.2" y="315.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">Noctua 40</text>
+<circle cx="955.0" cy="325.0" r="7.5" fill="none" stroke="#000" stroke-width="1" stroke-dasharray="2,2"/>
+<text x="955.0" y="347.5" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">UFS</text>
+<rect x="1100.0" y="302.5" width="65.0" height="50.0" fill="none" stroke="#356" stroke-width="1" stroke-dasharray="2,2"/>
+<rect x="1150.0" y="305.0" width="200.0" height="55.0" fill="#dde6ef" stroke="#000" stroke-width="1.2"/>
+<text x="1255.0" y="327.5" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">Lime 2280 (22x80) на п'єдесталі</text>
+<text x="1255.0" y="345.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">місце — TBD (CAD)</text>
+<text x="1132.5" y="297.5" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">вікно 26x20</text>
+<rect x="887.5" y="362.5" width="395.0" height="130.0" fill="#fff3f3" stroke="#000" stroke-width="1.6"/>
+<text x="1085.0" y="410.0" font-size="12" text-anchor="middle" font-weight="normal" fill="#000">Батарейний відсік ≈54x33x158 (модель), зліва внизу</text>
+<text x="1085.0" y="430.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">пак 46x25x150; бар'єр, вентиляція назовні</text>
+<text x="1085.0" y="447.5" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">орієнтація 33/54 у глибині — TBD (D15)</text>
+<line x1="887.5" y1="484.5" x2="1282.5" y2="484.5" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="1085.0" y="480.5" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">158</text>
+<rect x="1287.5" y="362.5" width="147.5" height="40.0" fill="#f0f0d8" stroke="#000" stroke-width="1.2"/>
+<text x="1361.2" y="380.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">силова плата</text>
+<text x="1361.2" y="395.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">(габарит TBD)</text>
+<rect x="1310.0" y="407.5" width="120.0" height="85.0" fill="#fbe3f4" stroke="#000" stroke-width="1.2"/>
+<text x="1370.0" y="440.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">IP2368 48x34</text>
+<text x="1370.0" y="457.5" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">на стінці внизу</text>
+<text x="1370.0" y="475.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">≥10 від елементів</text>
+<rect x="930.0" y="350.0" width="212.5" height="142.5" fill="none" stroke="#777" stroke-width="1" stroke-dasharray="8,4"/>
+<text x="1035.0" y="485.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#555">T7 ззаду ззовні 85x57</text>
+<line x1="961.2" y1="140.0" x2="961.2" y2="150.0" stroke="#c9a227" stroke-width="2"/>
+<line x1="1011.2" y1="140.0" x2="1011.2" y2="150.0" stroke="#c9a227" stroke-width="2"/>
+<line x1="1061.2" y1="140.0" x2="1061.2" y2="150.0" stroke="#c9a227" stroke-width="2"/>
+<line x1="1111.2" y1="140.0" x2="1111.2" y2="150.0" stroke="#c9a227" stroke-width="2"/>
+<line x1="1161.2" y1="140.0" x2="1161.2" y2="150.0" stroke="#c9a227" stroke-width="2"/>
+<line x1="1211.2" y1="140.0" x2="1211.2" y2="150.0" stroke="#c9a227" stroke-width="2"/>
+<line x1="1261.2" y1="140.0" x2="1261.2" y2="150.0" stroke="#c9a227" stroke-width="2"/>
+<line x1="1311.2" y1="140.0" x2="1311.2" y2="150.0" stroke="#c9a227" stroke-width="2"/>
+<line x1="1361.2" y1="140.0" x2="1361.2" y2="150.0" stroke="#c9a227" stroke-width="2"/>
+<text x="1161.2" y="136.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">P1 … P8, RX1 (крок 20)</text>
+<line x1="870.0" y1="170.0" x2="880.0" y2="170.0" stroke="#c9a227" stroke-width="2"/>
+<line x1="870.0" y1="220.0" x2="880.0" y2="220.0" stroke="#c9a227" stroke-width="2"/>
+<text x="868.0" y="197.5" font-size="10" text-anchor="end" font-weight="normal" fill="#000">RX2, REF IN</text>
+<text x="820.0" y="530.0" font-size="12" text-anchor="start" font-weight="bold" fill="#000">Зазори і правила плану (STACK.md §5.8, §5.6):</text>
+<text x="820.0" y="548.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">• MCP23017 #1, #3, #4 — ≥15-20 від TPS7A4701, PTC і дроселів buck;</text>
+<text x="820.0" y="565.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">  доріжки I2C подалі від вузлів перемикання; D36V28F5 біля нижнього забору;</text>
+<text x="820.0" y="582.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">• D36V50F12 і 2x TPS7A4701 прикріплені до пластини (exposed pad);</text>
+<text x="820.0" y="599.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">• пластина: отвори ±0.2, площинність ≤0.2, без різьби в пластині;</text>
+<text x="820.0" y="616.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">• дві кишені під ферити HDMI ≈40x20x20 уздовж траси HDMI — місце TBD;</text>
+<text x="820.0" y="633.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">• HDMI 2420 457 мм — пласка S-укладка подалі від РЧ-відсіку і фідера GNSS;</text>
+<text x="820.0" y="650.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">• клапани O8002 M12 на порожнині дисплея і батарейному відсіку, ніколи догори;</text>
+<text x="820.0" y="667.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">• кольорові зони перекриваються лише тому, що лежать на різних глибинах.</text>
+<rect x="820.0" y="1050.0" width="660.0" height="120.0" fill="none" stroke="#000" stroke-width="1.5"/>
+<line x1="820.0" y1="1080.0" x2="1480.0" y2="1080.0" stroke="#000" stroke-width="1"/>
+<text x="830.0" y="1071.0" font-size="14" text-anchor="start" font-weight="bold" fill="#000">Корпус приймача — розріз і план зон</text>
+<text x="830.0" y="1100.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Аркуш: 05-roztashuvannia-section (2/3)</text>
+<text x="830.0" y="1118.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Версія: v2, 18.10.2026    Одиниці: мм</text>
+<text x="830.0" y="1136.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Джерело: STACK.md v2 (розділи вказано на аркуші)</text>
+<text x="830.0" y="1154.0" font-size="13" text-anchor="start" font-weight="bold" fill="#b00000">«теоретичний проєкт — перевірити на стенді»</text>
+</svg>
