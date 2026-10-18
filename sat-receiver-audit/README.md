@@ -22,6 +22,7 @@
 | [Cable bulkhead set 7 sma 1 f bulkheads r](components/cable_bulkhead_set_7_sma_1_f_bulkheads_r.md) | · research · forums · fixes ✅ verify | `—` |
 | [Compute](components/compute.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_88090a59-878` |
 | [Compute os](components/compute_os.md) | ✅ research · forums · fixes ✅ verify | `—` |
+| [Daly 4s 15 a common port balancing bms](components/daly_4s_15_a_common_port_balancing_bms.md) | · research · forums · fixes ✅ verify | `—` |
 | [Dish replacement](components/dish_replacement.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_5a66d65f-c3f` |
 | [Display](components/display.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_0e70c405-a03` |
 | [Display hmi](components/display_hmi.md) | ✅ research · forums · fixes ✅ verify | `—` |
@@ -34,6 +35,7 @@
 | [Lab ui](components/lab_ui.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Mech thermal storage](components/mech_thermal_storage.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Mechanical thermal](components/mechanical_thermal.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_e6b8e5e2-124` |
+| [Molicel inr21700 p50b](components/molicel_inr21700_p50b.md) | · research · forums · fixes ✅ verify | `—` |
 | [Narrowband sdr](components/narrowband_sdr.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_eb446444-464` |
 | [Nooelec flamingo fm v2 100813](components/nooelec_flamingo_fm_v2_100813.md) | · research · forums · fixes ✅ verify | `—` |
 | [Nooelec sawbird goes cased 100792](components/nooelec_sawbird_goes_cased_100792.md) | · research · forums · fixes ✅ verify | `—` |
