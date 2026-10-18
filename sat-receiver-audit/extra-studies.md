@@ -28447,6 +28447,117 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   5. PD input is 20 V max (user reports), so the usable output is about 18.6 V max (model). That is enough for 16.4 V.
   6. Pin the pydps150 / dps150tool version in labd and record the firmware version.
 
+## searchB:pelican_1450_apache_3800_case_with_divid (run `wf_c3ba734e-52b`)
+
+- **Part:** Bench case: Pelican/Peli 1450 Protector (foam or padded dividers), qty 1, lab extended tier, bench kit only (Apache 3800 already dropped by re-audit D: US in-store only)
+- **Current price usd:** 169.95 (Pelican 1450 with foam, Glazer's US, in stock; verified by re-audit D, 18 Oct 2026). EU reference, checked today: Peli 1450 Foam Black (1450-000-110E) EUR 209 incl. 19% DE VAT at Thomann.de, in stock (about $240 at an assumed 1.15 USD/EUR; rate not verified). Thomann's USD storefront lists $196. Peli UK lists GBP 176.29 incl. VAT (from search results, page not fetched). The padded-divider config (1454, or the 1455 divider set) costs more; no EU price found. The old $30 low end (Apache 3800) is void for an EU user.
+- **Critical specs:**
+  - Interior at least about 37 x 26 x 15 cm / 15 L, so the 8.8 L bench kit fills about 59% and 35 cm pieces lie flat. Peli 1450EU datasheet: 37.4 x 26.0 x 15.4 cm, 15.0 L (lid 4.4 cm, base 11.1 cm)
+  - Exterior about 40.9 x 33.1 x 17.5 cm or smaller (bench footprint, checked-bag friendly)
+  - Weight: 2.5 kg empty, 2.9 kg with foam, or lighter (loaded case 8.2-9.1 kg)
+  - Ingress IP67 (1 m, 30 min) with a silicone/polymer O-ring lid seal
+  - Impact and crush: tested to Def Stan 81-41 / MIL C-4150J; polypropylene, open-cell core, solid wall
+  - Automatic pressure purge valve (3 um hydrophobic vent) for checked air travel
+  - Operating and storage range -40 to +87.8 C
+  - Hardware: stainless steel hinge pins, double-throw latches, padlock protectors (TSA lock 1506TSA available)
+  - Interior retention for LiteVNA, Hantek 6022BE, Pinecil, Anker 737, attenuators and torque wrench: padded dividers (1454/1455), TrekPak (1450TPKIT) or Pick N Pluck foam (1451 spare set)
+  - Warranty: Peli lifetime guarantee, which per Peli covers the original owner with proof of purchase
+  - Spare parts available (1453 O-ring, 1451 foam); genuine and legally sold in the EU (not a knock-off)
+  - Travel rule from re-audit D: no spare cells or power banks inside the case when it is checked (Anker 737 and Li-cell instruments go in the cabin bag). The case is passive, so the RF hard rules do not apply.
+- **Candidates:**
+  1.
+    - **Name:** Used genuine Peli 1450 with foam (lid egg-crate foam plus base foam, partly pre-cut), private seller, Kleinanzeigen Bonn, condition 'Gut', posted 19.09.2026
+    - **Kind:** used
+    - **Price usd:** about 69 (EUR 60 'VB' = negotiable, plus DHL shipping of about EUR 7-10; the shipping cost is not stated)
+    - **Spec comparison:** Same part. If genuine and undamaged, every physical spec equals new: 37.4x26x15.4 cm, 15 L, 2.9 kg, IP67, Def Stan 81-41, purge valve, stainless pins, -40 to +87.8 C. The listing confirms the model only in its title; it gives no dimensions. Check the photos and the molded PELI 1450 marking.
+    - **Worse in:** Warranty. Per Peli, the lifetime guarantee covers the original owner with proof of purchase, so it is lost. This private sale also has no statutory warranty or returns. The base foam is already cut for camera gear: replace it with a new 1451/1450-400-000E foam set (EUR 45 new on Kleinanzeigen, list price EUR 60.38) or DIY closed-cell foam. Seal and valve condition are unknown until tested. On paper this counts as worse (warranty), not as equal.
+    - **Compatibility:** Same as the current part. Fits the 8.8 L bench kit at 59%. Kleinanzeigen is a German domestic marketplace, so delivery outside Germany is unlikely without a forwarder.
+    - **Risks:** Listing may be gone (Sep 2026). Possible knock-off or a drilled shell (drilling voids IP67). Worn O-ring. Scam risk: use Kleinanzeigen 'Sicher bezahlen' or collect in person. Acceptance test before use: check for drilled holes; check the O-ring (replace with 1453 if flattened or cracked) and the purge valve; check latches and hinge pins; submerge for 30 min with dry paper towel inside.
+    - **Seller url:** https://www.kleinanzeigen.de/s-anzeige/peli-1450-case-robuster-transportkoffer-mit-schaumstoffeinlage/3517054312-245-23694
+    - **Sources:**
+      - https://www.kleinanzeigen.de/s-anzeige/peli-1450-case-robuster-transportkoffer-mit-schaumstoffeinlage/3517054312-245-23694
+      - https://www.kleinanzeigen.de/s-peli-1450/k0
+      - https://docs.rs-online.com/330f/A700000016088780.pdf
+      - https://blog.peli.com/lifetime-warranty-for-collectors-cases/
+      - https://www.kleinanzeigen.de/s-anzeige/peli-schaumstoffeinsatz-1450-400-000e-fuer-peli-1450-neu/3426032670-245-6460
+  2.
+    - **Name:** Used genuine Peli 1450, yellow, 'neuwertig' (like new), with 'Einbaurahmen' (panel/mounting frame), no foam, private seller, Kleinanzeigen Iserlohn, posted 11.09.2026
+    - **Kind:** used
+    - **Price usd:** about 88 (EUR 69 VB plus EUR 7.69 shipping = EUR 76.69, about $88 at an assumed 1.15). Add an interior: 1451 foam set (about EUR 45-60) or a padded divider set (no EU price found).
+    - **Spec comparison:** Seller lists exterior 409x331x175 mm, interior 374x260x154 mm, base 111 mm, lid 44 mm, 2.5 kg without foam. This matches the Peli 1450EU datasheet. The shell specs equal new (IP67, Def Stan 81-41, purge valve, stainless pins).
+    - **Worse in:** Lifetime guarantee lost (original owner only). Private sale: 'keine Garantie oder Gewährleistung oder Rücknahme'. No interior included. Confirm the mounting frame was fitted without drilling the shell; drilling breaks IP67 and voids the guarantee. Yellow colour (cosmetic only).
+    - **Compatibility:** Same as the current part once an insert is fitted. The panel frame can be removed or used to hold a bench panel.
+    - **Risks:** Frame fitting method unverified. Listing age. Seal and valve condition. Run the same acceptance test as for the first candidate.
+    - **Seller url:** https://www.kleinanzeigen.de/s-anzeige/neuwertig-peli-1450-schutz-koffer-mit-einbaurahmen-gelb/3509507812-242-1740
+    - **Sources:**
+      - https://www.kleinanzeigen.de/s-anzeige/neuwertig-peli-1450-schutz-koffer-mit-einbaurahmen-gelb/3509507812-242-1740
+      - https://docs.rs-online.com/330f/A700000016088780.pdf
+      - https://blog.peli.com/lifetime-warranty-for-collectors-cases/
+  3.
+    - **Name:** Used genuine Peli 1450, orange, with padded adjustable dividers and lid foam (the 'with dividers' config), private seller, Kleinanzeigen Dortmund, condition 'Sehr gut', pickup only, posted 23.09.2026
+    - **Kind:** used
+    - **Price usd:** about 173 (EUR 150 at an assumed 1.15; pickup only)
+    - **Spec comparison:** Shell identical to new (IP67 stated by the seller and Peli). Includes padded velcro dividers plus lid foam, so it matches the 'with dividers' requirement directly.
+    - **Worse in:** Lifetime guarantee lost. Private sale, no returns. In USD it is no cheaper than the US foam price ($169.95). It is cheaper only against EU new prices (EUR 209 foam; the divider version costs more).
+    - **Compatibility:** Same as the current part.
+    - **Risks:** Pickup only (Dortmund). Seal and valve condition. Divider wear. Same acceptance test.
+    - **Seller url:** https://www.kleinanzeigen.de/s-anzeige/einen-originalen-peli-1450-case-in-orange/3521514666-245-28107
+    - **Sources:**
+      - https://www.kleinanzeigen.de/s-anzeige/einen-originalen-peli-1450-case-in-orange/3521514666-245-28107
+      - https://www.thomann.de/de/peli_1450_000_110.htm
+  4.
+    - **Name:** Apache 3800 Weatherproof Protective Case, Large (Harbor Freight SKU 63927), Pelican-style clone
+    - **Kind:** generic_or_clone
+    - **Price usd:** 39.99 (US, in-store only)
+    - **Spec comparison:** Interior 14-7/8 x 10-5/8 x 6-1/8 in (about 37.8x27.0x15.6 cm; HF's own feature list conflicts slightly). Exterior 16.5x13x6.75 in. 5.95 lb shipping weight. Polypropylene with rubber seal. Adjustable (not automatic) pressure relief valve. Padlock holes.
+    - **Worse in:** IP65 (manufacturer claim) versus IP67. No drop or crush standard. Warranty 90 days versus lifetime. No independent measurements of the 3800: Recoil submerged only a smaller Apache (over 1 h, dry), and Primer Peak (5-year user) never submersion-tested and called it 'not professional grade'. Not sold in the EU.
+    - **Compatibility:** Size would fit the kit, but the case cannot be bought in Europe; a US reseller plus shipping and import VAT removes most of the saving.
+    - **Risks:** No measured evidence of IP67 or crush equivalence, so Angle B rejects it.
+    - **Seller url:** https://www.harborfreight.com/3800-weatherproof-protective-case-large-black-63927.html
+    - **Sources:**
+      - https://www.harborfreight.com/3800-weatherproof-protective-case-large-black-63927.html
+      - https://primerpeak.com/harbor-freight-apache-case-review-budget-pelican-2022/amp
+      - https://www.recoilweb.com/?p=143943
+  5.
+    - **Name:** Current part, new: Peli 1450 Foam (1450-000-110E, Made in Germany), EU dealer
+    - **Kind:** current_part
+    - **Price usd:** 169.95 US (Glazer's); EUR 209 incl. VAT at Thomann.de (about $240 at an assumed 1.15)
+    - **Spec comparison:** Reference: 37.4x26x15.4 cm, 15.0 L, 2.5/2.9 kg, IP67, MIL C-4150J, Def Stan 81-41, automatic purge valve, -40 to +87.8 C, stainless pins, lifetime guarantee.
+    - **Worse in:** Nothing (this is the baseline).
+    - **Compatibility:** Matches the stack (D14 bench kit, 59% fill).
+    - **Risks:** None significant. Buy from an authorised dealer to avoid knock-offs.
+    - **Seller url:** https://www.thomann.de/de/peli_1450_000_110.htm
+    - **Sources:**
+      - https://www.thomann.de/de/peli_1450_000_110.htm
+      - https://www.thomannmusic.com/peli_1450_000_110.htm
+      - https://docs.rs-online.com/330f/A700000016088780.pdf
+      - https://www.glazerscamera.com/products/pelican-1450-black
+- **Notes:** Verdict (Angle B): no generic, clone or DIY case is proven not-worse.
+  - The Apache 3800 is IP65, carries a 90-day warranty, is US-only, and has no measured IP67 or crush data. Rejected.
+  - I found no independent tests (submersion, Def Stan or MIL drop, crush) for generic Amazon or AliExpress "IP67 1450-size" cases. Rejected as a class; no specific product is listed for that reason.
+  - A DIY shell cannot show IP67 or crush equivalence. Rejected.
+  - A DIY interior (closed-cell foam or EVA dividers) inside a genuine Peli 1450 is acceptable, because the insert does not set any protection rating.
+  
+  The only Angle-B route is a USED genuine Peli 1450:
+  - EUR 60 VB with foam, or EUR 69 VB + 7.69 shipping without foam; about $69-88.
+  - Optionally add a new foam set (EUR 45-60) and a 1453 O-ring (price not checked). That gives about EUR 105-140 total, against EUR 209 new in the EU.
+  - Physically it is identical. It is still worse on one spec, so this is not silent: Peli's lifetime guarantee covers the original owner with proof of purchase, and a private sale also has no statutory warranty.
+  - Under the strict not-worse rule, keep the new Peli 1450. Under Angle B, a used case is acceptable only if the user accepts losing the warranty, and only after the arrival tests pass: check authenticity (molded PELI 1450 marking, 1450EU 'Made in Germany' or US marking, automatic purge valve, stainless pins); check for drilled holes; inspect or replace the O-ring; run a 30-min submersion with dry paper towel inside.
+  
+  Other caveats:
+  - Kleinanzeigen is a German domestic marketplace. Listings date from Sep 2026 and may be gone; "VB" means negotiable. The first EUR 100 '1450' hits were actually 1500s and are excluded.
+  - eBay.de, idealo and geizhals blocked fetching, so I could not read the wider used-market or EU price spread.
+  
+  Correction to STACK.md: interior 15.0 L, not 14.5 L, so the fill is 8.8/15.0 = 59%. This matches re-audit D.
+  
+  Cross-angle pointer, not evaluated under Angle B (other brand):
+  - B&W outdoor.case Type 4000 RPD with padded dividers: $140 incl. VAT on astroshop.eu, 1-2 weeks.
+  - Specs: interior 38.5x26.5x16.5 cm, 16.6 L, 2.3 kg, IP67, automatic valve.
+  - Worse on paper: temperature range -30 to +80 C versus -40 to +87.8 C. I found no Def Stan or MIL drop/crush claim, and no stated warranty length.
+  - Angle A should verify it (https://www.astroshop.eu/multi-purpose-cases/b-w-type-4000-case-black-compartment-divisions/p,55933).
+  
+  Peli's own knock-off warning: https://peliproducts.co.uk/blogs/news/risks-buying-knock-off-peli-case. USD conversions use an assumed 1.15 USD/EUR (not verified for Oct 2026).
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
