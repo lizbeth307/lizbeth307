@@ -9378,6 +9378,42 @@
 
 Окремо: імена опцій CMake для SatDump і SDR++ я записав за назвами модулів зі STACK.md і позначив «звірити з CMakeLists.txt закріпленого коміту». Самі значення я не вигадував.
 
+## write:mech+antennas (run `wf_2107bbb0-748`)
+
+I wrote all six files for the mech+antennas group in `/home/user/lizbeth307/sat-receiver-audit/build/`. Every SVG passes the `xml.dom.minidom` check, and none has scripts or external references. Each SVG has the title block with the name, "v2, 18.10.2026", units, and «теоретичний проєкт — перевірити на стенді». I rendered each one to PNG to check for text running off the canvas or over other labels, and fixed what I found. Two things need saying up front: the layout plan and section are zoning sketches, not coordinates, and many positions and hole sizes are marked TBD because STACK.md leaves them open.
+
+**Files**
+- `05-mekhanika.md` (37.4 KB): envelope and materials, front face and HMI, a 22-row part placement list, the layers from front to back, and every port per wall (type, hole, bias, internal path, cap). It also covers clearances, the two cooling air paths and heat paths into the plate, sealing to IPX4/IP54, the mass budget, mechanical acceptance checks and a TBD table.
+- `05-roztashuvannia-front.svg` (16.3 KB): front view with the display, hood hinge (plus a side inset of the hood open and closed), the HMI column with encoders and the 2x3 buttons, VEML7700, and the top-edge ports at 20 mm pitch. Dimensions are in mm.
+- `05-roztashuvannia-section.svg` (24.7 KB): one side section that projects parts from different places onto a single plane. It shows the display stack, the 4-6 mm air channel and blower, the 2 mm plate with fins, the Q6A with cooler and Noctua fan, the Lime on its pedestal and riser, the RF bay, the HF+ can, the battery bay with barrier and vent, IP2368, the T7 holder, the 1/4-20 nut boss and GX16-4. A plan of the zones sits alongside.
+- `05-roztashuvannia-panel.svg` (26.2 KB): drawings of each wall. Top edge: P1-P8 and RX1. Left wall: RX2 and REF IN. Right wall. Bottom edge: USB-C, LAB USB-A, LAB BUS, 3.5 mm audio, T7 cable seal, air intake. Rear wall: GX16-4 (16 mm hole, 18.8 mm nut, about 46 mm mated), 1/4-20 nut boss, service hatch, strap lugs and slots, fan exhaust and intake, T7 holder. A hole and part legend is included.
+- `06-anteny.md` (39.7 KB): a summary table of all antennas (tier, targets, connector, port, bias, packed and deployed size, price). It then covers build dimensions and setup for each antenna. Orientation is computed from the GNSS fix, with the V-dipole rule, the QO-100 skew formula, the GEO visibility gates and a symbolic elevation formula. Acceptance is receive-only (DMM continuity, conducted checks, noise floor, beacons, sun noise, A/B tests; no S11 on air). Deploy times, packing checklists, outdoor safety and a TBD table follow.
+- `06-anteny-komplekty.svg` (58.4 KB): 15 panels showing each antenna packed and deployed with key dimensions. Panels 1-7 are the patch tier, 8-14 the folding tier, and 15 is packing. There are no loops and no dishes, and the HF wire is labelled as an open wire.
+
+**STACK.md sections used:** §1.1 C15 and D15; §2.4, 2.5, 2.6, 2.8, 2.9, 2.10, 2.11.1, 2.11.2, 2.11.3; §4.1-4.3; §5.3; §5.6; §5.8; §11.4; §11.5. From the decisions file: D8, D9, D16, D17, D18, D19.
+
+**Marked TBD, and why** (STACK.md leaves these open or gives no value):
+- The display bezel, which STACK.md says is drawn only after the panel passes acceptance; also the glass/panel stack thickness and the active area, which must be measured.
+- The volume knob diameter (Adafruit 2055) and the order of the button rows.
+- Hole sizes for F (P4), BNC (P5), SMA-K (P7) and the Taoglas CAB.01075 bulkheads (RX1, RX2, REF IN).
+- Exact positions:
+  - where the port row sits on the top edge, by depth and distance to the edges;
+  - the order of items on the bottom edge;
+  - which side the path-2 air exhaust uses;
+  - where items sit on the rear wall.
+- Which side of the plate the Lime sits on and its coordinates; the Lime 3.3 V power switch part; the depth of the RF bay; where the LC76G board goes; and whether the battery bay's 54 mm or 33 mm runs front to back.
+- SKUs not given: the LED window, the piezo acoustic vent, the T7 cable seal and the RG316 cable glands.
+- The 1:1 plate drilling template, which must be generated from the Radxa STEP V1.21 file and is not in this package.
+- Antennas:
+  - the Boni-Whip rod length (not published);
+  - the N2SPI 70 cm element lengths (STACK.md gives only positions and the 17 cm limit per half);
+  - the S-band LNA (not named);
+  - the sizes of the GNSS antenna puck and the Bullseye LNB;
+  - the Bullseye cap OD (64 or 60 mm, measure before printing);
+  - the V-dipole rule for passes peaking between 30° and 35°, since STACK.md only defines ≥35° and ≤30°.
+
+The 172 mm helix length is my own arithmetic (4 turns × 43 mm pitch) and is labelled as derived.
+
 ## extract:analogs_G1 (run `wf_2f4f3ad2-91a`)
 
 - **Source:** analogs_G1
