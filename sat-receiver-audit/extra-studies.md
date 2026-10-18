@@ -4154,6 +4154,71 @@
   
   Wording: "Pico відкриває #2813" became "Pico розмикає #2813", because "відкриває" can be misread in Ukrainian as "turns the switch on". All signal-source steps are marked conducted-only, the BLE and 2.4 GHz checks are receive-only, and the probes are E-field only (no loop or H-field probe).
 
+## edit:05a_arch_power:b2 (run `wf_1721ea96-ee2`)
+
+- **Section:** 05a_arch_power
+- **Applied:**
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+  - 58
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  - 64
+  - 65
+  - 66
+  - 67
+  - 68
+  - 69
+  - 70
+- **Skipped:** []
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/05a_arch_power.md, with the Edit tool, on top of the batch-1 edits. No change was skipped. I checked the numbers against the files in final/ (reaudit_D, analogs G1-G6).
+  
+  Conflicts and how they were settled:
+  - 36 vs 61 (supervisor row): G3 (61) wins. The row is now "Апаратний UV-компаратор" using MCP65R41T-1202E/CHY: model trip 12.79 V and release 13.62 V, bench gate 12.8±0.1 V at 25 and 50 °C. Re-audit D's "близько 12.8 V, калібрувати" is merged in.
+  - 38 vs 51 (BMS row): G3 (51) wins, so the "2.5-2.8 V/ел." range stays, followed by the Daly UVP/OVP values. Re-audit D's model name DL-J05G-L4S15ATJ and the 4.15 V OVP release are merged in. The action adds that a DOCP/short-circuit trip resets only by pulling the 7.5 A fuse, and COCP by removing the charger.
+  - 41 (re-audit D) vs 53a (G3) vs 67 (G5) on the Anker 737: G5 is the newest P5 file and corrects the claim that "Anker 737 is DRP". So USB-C2 (output-only per Anker, to be confirmed with the FNB58) feeds the IP2368 and the ISDT 608PD, and field charging from the bank counts only after the DRP tests on C2 pass. G3's "not a source for the IP2368" is narrowed to C1, the DRP port (flapping against Try.SRC). G3's sources stay: IKEA SJÖSS E2502-EU plus RUNDHULT 5 A as the main charger (conditional, gates G0-G7), Xiaomi AD65GEU as fallback, and the indoor 5-35 °C usage rule. Re-audit D's "ISDT 608PD USB-C is bidirectional" is kept.
+  - 53d vs 67 (ISDT current): merged as "струмом 2.5 A, не понад 3 A (COCP Daly 10±2 A; режиму зберігання немає)".
+  - 54 (G3) beats the batch-1 re-audit wording: "не аварійне відключення" became "не захисне відключення", and "4.5-32 V рекомендовано" was added.
+  
+  Changes merged into text that was already there (no repeats):
+  - 43: mode H was already marked as the default session. The recomputed 1.88 / 1.62 h went into the paragraph below the table.
+  - 52: the topology already said retail COUT board. I added "eFuse" and "BZ як плата не продається".
+  - 57: the LNB row already said there is no PG pin and used the TLV3011, so no text change.
+  - 58: the BONI rail was already 13.8 V with the eFuse and no PTC. I added that MF-MSMF030-2 is deleted, that v2 picks 13.8 V over 12.5 V, and the ANY-OUT sum.
+  - 59: the LNA channels already used TPS2553DBVR-1. The LAB USB-A note now names the same -1 part (34.8k, 685-817 mA).
+  - 45 and 62 (OFF row): combined. The row has the new model (0.014-0.029 W, 50-105 days from 50% SoC, 145-500 days with the INA228 in shutdown). The Daly Iq note, the AON branch ≤11 µA and the advice to pull the fuse for storage (≥203 days) are in a note under the table.
+  
+  Additions taken from the source files, beyond the literal change text:
+  - 70: USD prices next to the EUR ones for the Botland D36V28F5, as the brief requires (USD 17.13 / 20.38, from G3 decision 6 and G6 decision 14).
+  - 47: the EU price for the D36V50F5 escape route (BerryBase EUR 34.95, analogs G3, marked unverified) and the 30 min at 50 °C fuse test (re-audit D).
+  - 60: the TLV3012AIDBVR fallback for the conditional MCP65R41 swap, and "EN floating, never to N" (G3 decision 12).
+  - 56: RGWT also applied to the BONI LDO, because G3 decision 9 covers both units.
+  
+  Subtotals: this file has no price subtotals. No change altered a rail current or runtime value, so no power or runtime figures needed recomputing.
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
@@ -25163,6 +25228,53 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - idx 36 and idx 71 rewrite the sled row and its port assignment.
   - idx 70 sets the extended budget minimum to ≈$286.
   - idx 66 and idx 76 replace the core and extended subtotals.
+
+## edit:03a_lab_core_ext_hf:b2 (run `wf_63edf951-e40`)
+
+- **Section:** 03a_lab_core_ext_hf
+- **Applied:**
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+- **Skipped:** []
+- **Notes:** All 26 changes are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/03a_lab_core_ext_hf.md. Every table row still has 7 columns.
+  
+  Conflicts and how they were settled:
+  - 27 vs 47 (Anker 737): G3 is an analog decision and outranks reaudit_D, so 47 won. The bank is not a charging source for the device through IP2368 and is for bench and instruments only. I dropped 27's 'зарядник приймача ... з C2; заряд приймача від банку не гарантований до тесту DRP'. From 27 I kept A1289 and the PDO/EPR wording, 86.4 Wh (модель), 'USB-C1 DRP / C2 лише вихід' and 'ISDT живити з C2'. Price 109.99 is unchanged; G5 sets it in batch 3.
+  - 37 (HF total): G1's 426.17 low end uses the v1 Boni-Whip figure of 123.95. G1 has no Boni-Whip decision. The current row, 167.49-178.73 from reaudit_B (batch 1), stands, so the total is 469.71-546.74 (169+44+8.56+18.71+46.95+167.49+15 / 169+50+8.86+23.71+66.44+178.73+50). The other parts of 37 are applied: the $62.71-73.71 wording and the BNC jumper and lead now sit in the 2.10 cable set, merged with the 5.5/2.1 mm plug note already there.
+  - 36 (sled): merged with the reaudit_B throw map already in the file. RF1 is the park, order is RF2 A / RF3 B / RF4 BENCH, plus 'порядок фіксує таблиця labd'. Isolation acceptance is ≥40 dB at 0.1-1.7 GHz, taken from G1's own conditions: 37-40 dB is accepted with a layout fix logged, and below 37 dB needs rework. This matches G6's ≥37 dB acceptance coming in batch 3. I also added the '7992' marking check. Price was kept as instructed. The source cell now names DigiKey for the HMC7992.
+  - 39 was already in the file from batch 1, so I merged it with 43. 43's literal 'Omron G6K-2F-RF' is replaced by the G1 #7 -S DC5 relays already present. The driver now counts only in 2.6, and the board becomes 'плата-носій'.
+  - 30: the core subtotal 1,507.76-1,843.07 already includes the +$33.18. I re-summed every row and none of this batch's edits changes a summed price: noise source still 104.55-126.81, LiteVNA, tinySA and mat unchanged. No change made.
+  - 33/34: Apache 3800 and its $30 removed. The case row is Pelican 1450, 169 (US ex-tax, with foam), 15.0 L, 59%. The extended subtotal is recomputed to 641.67-707.67 (≈642-708). The extended budget minimum is recomputed to ≈$342 (49.95+73+169+50.53), because the $30 case no longer exists.
+  - 31: 1 Hz-1.1 GHz and +11 dBm were already present, so only the new specs were added.
+  - 48: I wrote 'уточнити перед купівлею' instead of 'уточнити в P5', because P5 in this stack is the HF BNC port.
+  - 42: I left out the meta parenthetical '(якщо рішення G5/G6...)'.
+  - 51: the reaudit ENR and test content is kept and merged with the G5 note.
+  
+  Heads-up for batch 3: idx 60-63, 69, 73 and 74 replace whole rows. They would drop reaudit content added here unless merged, notably the DPS-150 power-on overshoot test (32), the hub STT/power rules (28), the ISDT BLE rules (29) and the LBE-1420 notes (31).
 
 ## edit:11f_changes_operator_totals:b1 (run `wf_64e39fc3-0f9`)
 
