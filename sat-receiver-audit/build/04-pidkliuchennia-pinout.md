@@ -132,7 +132,8 @@ FAULT ключів VBUS RTL-B, HF+ і RTL-A на MCP #3 не йдуть (#3 за
 | GPB0 (вхід) | FAULT ключа VBUS RTL-B | TPS2553DBVR-1 (D13); засувка labd: EN low, пауза, EN high, ліміт спроб | — |
 | GPB1 (вхід) | FAULT ключа VBUS HF+ | TPS2553DBVR-1, канал GPA4 | — |
 | GPB2 (вхід) | FAULT ключа VBUS RTL-A | ключ GPA2 (якщо обраний ключ має вихід FAULT) | — |
-| GPA2-GPA7, GPB3-GPB7 | резерв | — | — |
+| GPB3 (вхід) | FLT ключа LIME3V3 | відкритий стік, автоповтор 110 ms — labd знімає EN після повторних FLT (§5.2) | — |
+| GPA2-GPA7, GPB4-GPB7 | резерв | — | — |
 
 Живлення, 100 nF + 10 мкФ і RESET через 10k — як у #1/#3; INTA/INTB віддзеркалені, відкритий стік (IOCON.ODR = 1), спільно з INT MCP #3 на пін 5 (GPIO25) — labd читає INTF/INTCAP обох; підтягування FAULT лише до 3V3_Q6A. Лінії кнопкового розширювача PI4IOE5V9555 для цих сигналів не беруться, бо ними керує labd з Q6A (§8 «Розподіл ліній I/O і MCP23017 #4»).
 
