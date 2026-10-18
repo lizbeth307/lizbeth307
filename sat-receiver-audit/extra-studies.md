@@ -15091,6 +15091,398 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Still unverified: the hairpin DE on the N2SPI, Axotron spool capacity for the 137.5 MHz marks, the gore horn and cone gains, the bare-LNB beacon C/N0, the OK1PHU 30 dB pad advice, and MakerWorld holder 1127183 (page 403).
 
+## community:targets_link_budgets (run `wf_d3593e9c-5ce`)
+
+- **Subsystem:** targets_link_budgets (stage 2: community experience)
+- **Findings:**
+  1.
+    - **Claim in stack:** Meteor-M N2-4 LRPT on 137.900 MHz (backup 137.100), 72k, rated reliable on the V-dipole (53.4 cm legs, 120 deg, N-S, 1-1.1 m). Stage 1: try the 72k pipeline first, then 80k.
+    - **Finding:** Confirmed by community sources.
+  - SatDump maintainers in issue #975 (Sep 2025) prescribe the same antenna: a V-dipole with about 53 cm legs, oriented N-S, 0.5-1 m above the ground.
+  - IU1QPR's 2026 guide: 72k is the standard mode and 80k is only a fallback test. About 1.024 Msps is enough. Never use 250 ksps, and never use RTL AGC or tuner AGC. DC blocking should be on.
+  - SatNOGS, 17-18 Oct 2026: 23 of 25 'good' N2-4 observations include decoded MSU-MR images, on passes with max elevation 18-90 deg.
+  - 80k decoder bug: 2.0-alpha hung in Viterbi because the file callback returned false (#1195). The fix (commit 7bcd531, PR #1214, 15 Sep 2026) is in master; I checked the source and the callback now returns should_run().
+  - Open bug #1212 (Sep 2026): some files fail to decode because of how the data starts (frame counters). The maintainer's workaround is to trim the first frames of the CADU file (dd ... bs=8192 skip=4) and decode again.
+    - **Verdict:** confirmed
+    - **Action:** Keep the rating and the antenna geometry. In the pass wrapper:
+  - Run 72k first, then 80k.
+  - If 72k gives SYNC but no products, re-run the products step on the CADU with the first 4x8192 bytes skipped, before marking the pass failed.
+  - Keep about 1.024 Msps with RTL AGC off.
+    - **Impact:** Primary target holds. Two known decoder failure modes now have automatic workarounds.
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/issues/975
+      - https://www.a-centauri.com/articoli/meteor-satellite-reception
+      - https://github.com/SatDump/SatDump/issues/1195
+      - https://github.com/SatDump/SatDump/issues/1212
+      - https://network.satnogs.org/api/observations/?sat_id=VSVI-4798-5613-4587-2414&status=good
+  2.
+    - **Claim in stack:** Meteor-M N2-3 LRPT 'on the edge': the N2-4 budget minus 3-6 dB (VHF antenna partly undeployed); expect decodes only above about 40-60 deg.
+    - **Finding:** The cause is a community diagnosis, not an official one.
+  - dereksgc (via rtl-sdr.com) suspects the LRPT antenna did not fully deploy.
+  - IU1QPR (2026) says it failed to deploy and sits tilted, which causes fading and alternating weak and strong signal. He advises against QFH antennas for N2-3.
+  - rtl-sdr.com calls N2-4 'much better than M2-3'.
+  
+  The elevation limit is too pessimistic. SatNOGS, 17-18 Oct 2026: 20 of 24 'good' N2-3 observations include decoded MSU-MR images, at max elevations 22-89 deg. The low passes were decoded by fixed QFH and turnstile stations (Piszkesteto, CGBSAT, NKUA EVRIPOS).
+    - **Verdict:** corrected
+    - **Action:** Change the expectation to: 'decodes with fades from about 25-35 deg (community QFH and turnstile stations decode from 22 deg). The V-dipole may need about 5-10 deg more.' Keep the -3...-6 dB figure labelled as a community estimate. Replace it with an on-air comparison of N2-3 and N2-4 SNR on similar passes.
+    - **Impact:** More usable N2-3 passes in the test plan.
+    - **Sources:**
+      - https://www.rtl-sdr.com/tag/meteor-m2-3/
+      - https://www.a-centauri.com/articoli/meteor-satellite-reception
+      - https://www.rtl-sdr.com/tag/meteor-m2-4/
+      - https://network.satnogs.org/api/observations/?sat_id=TLCE-8079-2988-7210-7028&status=good
+      - https://network.satnogs.org/api/stations/?id=5026
+  3.
+    - **Claim in stack:** Stage-1 new risk: Meteor HRPT may be on 1705 MHz, which would put the 1704.0 MHz self-spur in band.
+    - **Finding:** Every community report uses 1700 MHz:
+  - IU1QPR's HRPT guide (v1.0.2, 2026) lists N2-3 and N2-4 at 1700 MHz only.
+  - SatDump #656 (N2-4 HRPT) and Scott Tilley's N2-4 pass were on 1700.0 MHz.
+  - SatNOGS station 5242 JF6FYI (L-band helical antenna plus a HackRF clone, no dish) recorded N2-3 HRPT 'with-signal' on 1700 MHz on 17 Oct 2026 (87 deg pass).
+  
+  The SatNOGS 1705 MHz entry for N2-4 is a pre-launch copy of OSCAR (citation OSCAR, Feb 2024), not an observation.
+  
+  The in-band spur that actually matters at 1700 MHz is 1699.2 MHz, already in the stack's spur table. The 1704.0 MHz spur lies outside a 2.4-2.56 Msps capture centred on 1700 MHz.
+    - **Verdict:** corrected
+    - **Action:** Keep 1700.0 MHz as the only scheduled HRPT frequency. Use 1705 MHz only as a power-only fallback check when 1700 MHz is silent. Downgrade the 1704.0 MHz item from blocker to 'check only if 1705 is ever used'. Keep the 1699.2 MHz spur in the D10 matrix as the HRPT in-band spur.
+    - **Impact:** Removes a false blocker. N2-3 HRPT is confirmed transmitting on 1700 MHz in Oct 2026.
+    - **Sources:**
+      - https://www.a-centauri.com/articoli/easy-hrpt-guide
+      - https://github.com/SatDump/SatDump/issues/656
+      - https://www.rtl-sdr.com/tag/meteor-m2-4/
+      - https://network.satnogs.org/api/observations/?id=15225772
+      - https://network.satnogs.org/api/stations/?id=5242
+      - https://db.satnogs.org/api/transmitters/?satellite__norad_cat_id=59051
+  4.
+    - **Claim in stack:** Meteor HRPT: helicone tier reliable at +8.9...+9.4 dB (NEC). Patch tier (4-turn helix + SAWbird+ GOES) on the edge at +1.5...+3 dB. 'No documented hand-held decode without a dish.'
+    - **Finding:** Helicone tier:
+  - IU1QPR ('Beyond POES', 2026): Meteor HRPT is 'strong enough for a portable helicone antenna'.
+  - saveitforparts' 3D-printed helicone (Thingiverse 6436342), hand-tracked, with an RTL-SDR on a phone running SatDump, decoded NOAA HRPT (a service that has now ended). No SNR was given.
+  
+  Dish baseline: IU1QPR's HRPT guide says an 80 cm dish 'readily works' and 60-70 cm needs care. My model: 18.0-20.5 dBi at 1.7 GHz, which is 2-5 dB above the helicone's 15.7 dBic. Community advice also matches the stack: SAWbird+ GOES, avoid SPF5189-class wideband LNAs, 2.4 Msps for Meteor.
+  
+  Patch tier: I found no report of a decode with a 4-turn helix.
+    - **Verdict:** confirmed
+    - **Action:** Keep the helicone tier, but cite it as 'community: helicone sufficient (IU1QPR); margin model only' and carry the margin as +3...+9 dB until measured. Keep the patch tier 'on the edge, unproven'. Run the first HRPT validation on the helicone from a tripod, then try the 4-turn helix.
+    - **Impact:** The helicone rating now has a qualitative community anchor. The patch tier has none.
+    - **Sources:**
+      - https://www.a-centauri.com/articoli/beyond-poes-amateur-satellite-reception
+      - https://www.a-centauri.com/articoli/easy-hrpt-guide
+      - https://www.rtl-sdr.com/tag/hrpt/
+  5.
+    - **Claim in stack:** Metop-B AHRPT 1701.3 MHz: helicone 'on the edge (experiment)' with intermittent modulator losses of about 7 dB. Stage 1: Metop-C state in conflict (OSPO 'No', SatNOGS 'active'). Gate: 2.88 Msps on the V4L.
+    - **Finding:** Metop-C status (SatDump #1208, opened 31 Aug 2026): an amateur L-band station in Athens decoded Metop-B and Metop-C AHRPT on 1701.3 MHz on five passes, 9-23 Aug 2026, with SatDump 2.0. Metop-C AHRPT is therefore receivable over Europe despite OSPO's 'No'.
+  
+  Sample rate:
+  - #727 (2024): an RTL-SDR Blog V4 decoded MetOp after raising the rate to 2.88 Msps with DC block and AGC enabled.
+  - IU1QPR (2026): RTL-SDR results are 'not guaranteed'. 2.4 Msps is too little; try 2.56-2.6. 3.2 Msps works only with an Etron EJ168 USB controller. Sample drops break Viterbi sync.
+  - IU1QPR: Metop needs an 80-100 cm dish; a helicone works 'with some compromise'.
+  
+  No community source mentions a 7 dB modulator loss.
+    - **Verdict:** corrected
+    - **Action:** Mark Metop-C as 'receivable in Europe per community decodes, Aug 2026'. Run gate (b) on both B and C. Keep gate (a) at 2.88 Msps with DC block, the setting that worked on a V4 in #727. Keep the 7 dB figure as unverified or remove it. The helicone tier stays experimental.
+    - **Impact:** Two Metop targets instead of one. The sample-rate gate now has a community success case.
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/issues/1208
+      - https://github.com/SatDump/SatDump/issues/727
+      - https://www.a-centauri.com/articoli/easy-hrpt-guide
+      - https://www.a-centauri.com/articoli/beyond-poes-amateur-satellite-reception
+  6.
+    - **Claim in stack:** AWS 1707 MHz, helicone on the edge, same gates as Metop; stage 1 ranks AWS ahead of Metop.
+    - **Finding:** SatDump #854 (Nov 2024): SatDump showed SYNCED but produced no images. The maintainer had checked that AWS was broadcasting only filler over most of the world, with data dumps mainly over Europe. IU1QPR (2026): AWS dumps on the same L-band frequency when in view of the Kiruna ground station.
+    - **Verdict:** new_risk
+    - **Action:** Add a third outcome to the AWS gate: SYNCED-but-filler counts as 'link OK, no payload', not as a receiver failure. Record frame sync and the CADU fill ratio. Keep AWS ahead of Metop for the link test, but do not count on AWS imagery outside Europe.
+    - **Impact:** Prevents a false 'failed' verdict on the helicone and RTL-B chain.
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/issues/854
+      - https://www.a-centauri.com/articoli/beyond-poes-amateur-satellite-reception
+  7.
+    - **Claim in stack:** Stage 1: Elektro-L5 active at 76 deg E; Elektro-L3 at 14.5 deg W 'pending commissioning, check on air'; remove L2.
+    - **Finding:** Elektro-L5 at 76 deg E is confirmed. The L3 relocation is not.
+  - Model from the latest TLEs on SatNOGS (Space-Track source): L5 at 76.05 deg E, stationary (17 Oct 2026).
+  - L3, epoch 9 Oct 2026 14:12 UTC: at about 6.7 deg W, mean motion 0.99421 rev/day, still drifting west at about 3.07 deg/day. It had not stopped at 14.5 deg W. Extrapolated to 18 Oct, about 32 deg W, unless it has braked since. No newer L3 TLE was on SatNOGS.
+  - Elektro-L2 (TLE 18 Oct): stationary at 14.52 deg W, inclination 7.0 deg. It still occupies the slot.
+  - rtl-sdr.com: Roscosmos has not confirmed the move. The drift is from amateur TLE tracking, and one reader reports L3 at about 25 deg W.
+  - OSCAR's L3 page is stale (2024-09-30, 76 deg E).
+    - **Verdict:** corrected
+    - **Action:** Do not hard-code GEO slots. labd should list a GEO source only when its current TLE is stationary, |n - 1.00274| < 0.0005 rev/day, and should compute the sub-satellite longitude for the visibility flag from that TLE. Mark L3 as 'drifting, not a target until stationary'. Keep L5 at 76 deg E as the Elektro target.
+    - **Impact:** Avoids pointing at an empty Atlantic slot. Visibility is computed from orbit data, not from slot tables.
+    - **Sources:**
+      - https://db.satnogs.org/api/tle/?norad_cat_id=44903
+      - https://db.satnogs.org/api/tle/?norad_cat_id=67756
+      - https://db.satnogs.org/api/tle/?norad_cat_id=41105
+      - https://www.rtl-sdr.com/?p=67091
+      - https://space.oscar.wmo.int/satellites/view/electro_l_n3
+  8.
+    - **Claim in stack:** Elektro-L LRIT 1691 MHz on the helicone: about 3 dB below 65 cm dish reports; LRIT decodes at about +1 dB SNR.
+    - **Finding:** The anchor needs restating.
+  - SatDump #600 (Jan 2024), Elektro-L4: a 65 cm Discovery dish with a linear feed, RTL-SDR at 2.56 Msps or Airspy Mini, decoded on an Orange Pi 5 (arm64). SNR was 3.2-4.2 dB, with CRC errors and misaligned segments at that level; PR #616 partly fixed this.
+  - In the same thread the maintainer wrote that under 1 dB 'should be enough' in theory, and that Elektro/Arktika signals have a linear polarisation component.
+  - SatDump #1141 (May 2026), Elektro-L5 during commissioning: a 10-turn endfire helix plus RTL-SDR showed a visible 1691 MHz signal but never got frame sync (SatDump 1.2.2). Cellular interference was visible. No maintainer reply.
+  - The SatDump pipeline runs Elektro LRIT as BPSK 294 ksym/s at 1 Msps.
+  
+  My model: a 65 cm dish is 18.6 dBi at 1691 MHz, so about 15.6 dBic-equivalent on an RHCP signal with a linear feed. The 15.7 dBic helicone is therefore about equal to that anchor, not 3 dB below, if the signal is pure RHCP.
+    - **Verdict:** corrected
+    - **Action:** Rewrite the justification: 'anchor = 65 cm dish with linear feed at 3-4 dB SNR, with errors; helicone about equal (model); a 10-turn helix got no sync on L5'. Remove '+1 dB' as the practical threshold. Success = frame sync plus CRC-valid segments, with a 1 Msps capture. Keep the row on the edge and experimental.
+    - **Impact:** The rating stays the same, but its basis is now honest and testable.
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/issues/600
+      - https://github.com/SatDump/SatDump/issues/1141
+      - https://raw.githubusercontent.com/SatDump/SatDump/master/resources/pipelines/Elektro_Arktika.json
+  9.
+    - **Claim in stack:** The GEO L-band reference list holds only the Inmarsat NCS, FY-2H and Elektro LRIT. There is no low-rate GEO beacon target.
+    - **Finding:** SatDump ships an 'ELEKTRO-L GGAK' pipeline: 1693 MHz, PM demodulation, 5 ksym/s, uncoded CCSDS (1792-byte CADU). This is space-weather instrument telemetry from a civil meteorological satellite. The #1141 reporter, who never got LRIT sync, said the GGAK signal 'looks ok' on the 10-turn helix.
+  
+  My model, by symbol rate only: 17.7 dB less noise bandwidth than the 294k LRIT. Allowing about 7 dB for the missing FEC, GGAK is about 10.7 dB easier, assuming equal EIRP (the GGAK EIRP is not published). 1693 MHz is inside the SAWbird+ GOES passband.
+    - **Verdict:** new_option
+    - **Action:** Add the row 'Elektro-L5 GGAK 1693 MHz, 5k: helicone experimental, 4-turn helix carrier and frame-sync check'. Use it as the first Elektro test, ahead of LRIT. Allow-list only the plain 'ELEKTRO-L GGAK' pipeline, not 'GGAK MQTT Test'.
+    - **Impact:** Gives the most likely GEO L-band decode on the small antennas, over Eurasia and Africa.
+    - **Sources:**
+      - https://raw.githubusercontent.com/SatDump/SatDump/master/resources/pipelines/Elektro_Arktika.json
+      - https://github.com/SatDump/SatDump/issues/1141
+  10.
+    - **Claim in stack:** Stage 1: GK-2A LRIT needs about the same as Elektro LRIT; GOES HRIT needs about 8.6 dB more.
+    - **Finding:** Wrong reference rate. The SatDump pipelines give Elektro LRIT at 294 ksym/s, GK-2A LRIT at 128 ksym/s, FY-4A LRIT at 90 ksym/s and GOES HRIT at 927 ksym/s. Relative to Elektro LRIT, by symbol rate only (model, equal EIRP and Eb/N0): GK-2A about -3.6 dB (easier), FY-4A about -5.1 dB, GOES HRIT about +5.0 dB, FY-2 S-VISSR (660k) about +3.5 dB.
+    - **Verdict:** corrected
+    - **Action:** Fix the text of the region rows: GK-2A LRIT is easier than Elektro LRIT, and GOES HRIT is +5 dB, still a carrier and C/N0 check only on the helicone.
+    - **Impact:** Corrects the ranking of the region-gated experiments.
+    - **Sources:**
+      - https://raw.githubusercontent.com/SatDump/SatDump/master/resources/pipelines/GK2A.json
+      - https://raw.githubusercontent.com/SatDump/SatDump/master/resources/pipelines/Elektro_Arktika.json
+      - https://raw.githubusercontent.com/SatDump/SatDump/master/resources/pipelines/GOES.json
+  11.
+    - **Claim in stack:** FY-2H at 79 deg E is the carrier-only L-band reference, with EOL '2026 or later'.
+    - **Finding:** FY-2H:
+  - Community activity continues. SatDump PR #1220 (SVISSR telemetry, merged to dev on 25 Sep 2026) shows sample output with a 79.3 deg E sub-satellite point (that longitude is FY-2H's slot), so someone was decoding FY-2H S-VISSR around Sep 2026.
+  
+  FY-2G (new option):
+  - WMO OSCAR (updated 2026-10-12): operational at 99.2 deg E, S-VISSR on 1687.5 MHz (linear, 2 MHz), LRIT on 1690.5 MHz.
+  - SatDump #1198 (Aug 2026): a user decoded FY-2G with an RTL-SDR Blog V4.
+    - **Verdict:** new_option
+    - **Action:** Add FY-2G at 99.2 deg E as a second FY-2 carrier reference, region-gated, with the same pipeline and the same linear -3 dB note. This also covers FY-2H going silent.
+    - **Impact:** Redundant GEO reference for Asia and Oceania.
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/pull/1220
+      - https://space.oscar.wmo.int/satellites/view/fy_2g
+      - https://github.com/SatDump/SatDump/issues/1198
+  12.
+    - **Claim in stack:** SatDump is built from master (2.0.0-alpha); the pass wrapper uses the CLI with --option value arguments.
+    - **Finding:** SatDump #1191 (arm64, v2.0.0-alpha-4a72c2e): the CLI mis-parses '--option value' (for example --samplerate, --baseband_format), so the pipeline aborts. The fix, c0b6f88 'Fix CLI stuff' (30 Sep 2026), is on the dev branch only.
+  
+  I checked with git:
+  - master HEAD 1aedd60 (30 Sep 2026 06:22 UTC) still calls add_flag at src-core/core/cli/pipeline.cpp lines 35 and 37.
+  - dev HEAD 96bb626 (8 Oct 2026) also has 6b5957f (clock-recovery sample buffer leak fix) and 96bb626 (xRIT DecompWT HRIT fix).
+    - **Verdict:** corrected
+    - **Action:** Pin SatDump to dev 96bb626, or to master 1aedd60 with c0b6f88, 6b5957f and 96bb626 cherry-picked. Add an arm64 CI test that runs an offline 'meteor_m2-x_lrpt_72k' decode of a stored baseband with --samplerate and --baseband_format given in both the '--k v' and '--k=v' forms.
+    - **Impact:** Without this, every headless pass decode on master can fail at argument parsing.
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/issues/1191
+      - https://github.com/SatDump/SatDump/commits/dev
+      - https://raw.githubusercontent.com/SatDump/SatDump/master/src-core/core/cli/pipeline.cpp
+  13.
+    - **Claim in stack:** Stage-1 allow-list build: -DPLUGINS_ALL=OFF plus PLUGIN_METEOR, NOAA_METOP, AWS, ELEKTRO_ARKTIKA, FY2 (+GOES, GK2A, FY4); WEBHOOK and REMOTE_SDR off.
+    - **Finding:** Dependencies and defaults (master plugins/CMakeLists.txt and per-plugin CMake files):
+  - elektro_arktika_support, gk2a_support, goes_support and fengyun4_support all link xrit_support. With PLUGINS_ALL=OFF, PLUGIN_XRIT is also OFF.
+  - Community analogues: #794, where a build with PLUGINS_ALL=OFF failed at link time on a missing plugin library (dvb_support); and #1182 (Aug-Sep 2026), where a plugin could not find libxrit_support.so at run time (RPATH), and SatDump segfaulted at launch.
+  - These source and app plugins are ON by default, independent of PLUGINS_ALL: SPYSERVER, RTLTCP, SDRPP_SERVER, NET_SOURCE, REMOTE_SDR, TOOLS_APP, WEBHOOK_APP, plus the HackRF, Pluto, BladeRF, SDRplay, HydraSDR, Aaronia, RFNM, FobosSDR, MiriSDR and LiteX source plugins. BUILD_OPENCL is ON.
+  - #877: OpenCL through CLVK on ARM GPUs lacks uint16 support, so GPU warping fails or the projected image goes missing.
+    - **Verdict:** corrected
+    - **Action:** Use this cmake line:
+  -DPLUGINS_ALL=OFF -DPLUGIN_XRIT=ON plus the allow-list
+  -DPLUGIN_SPYSERVER_SUPPORT=OFF -DPLUGIN_RTLTCP_SUPPORT=OFF -DPLUGIN_SDRPP_SERVER_SUPPORT=OFF -DPLUGIN_NET_SOURCE_SDR_SUPPORT=OFF -DPLUGIN_REMOTE_SDR_SUPPORT=OFF -DPLUGIN_WEBHOOK_APP=OFF -DPLUGIN_TOOLS_APP=OFF
+  all SDR source plugins OFF except RTLSDR (plus AIRSPY or LIMESDR only if that hardware is kept)
+  -DBUILD_TOOLS=OFF -DBUILD_TESTING=OFF -DBUILD_OPENCL=OFF
+  CMAKE_INSTALL_RPATH set to the plugin directory.
+  
+  CI checks:
+  - ldd every installed .so and fail on 'not found'.
+  - Run 'satdump version' and one offline pipeline per allowed plugin.
+    - **Impact:** Otherwise the allow-list build either fails to link or crashes at start. It would also ship network-facing sources.
+    - **Sources:**
+      - https://raw.githubusercontent.com/SatDump/SatDump/master/plugins/CMakeLists.txt
+      - https://github.com/SatDump/SatDump/issues/794
+      - https://github.com/SatDump/SatDump/issues/1182
+      - https://github.com/SatDump/SatDump/issues/877
+  14.
+    - **Claim in stack:** Run SatDump with LC_NUMERIC=C, one time-bounded systemd-run unit per pass, never satdump_sdr_server; record first, then decode.
+    - **Finding:** Confirmed by issues:
+  - #1231 (Oct 2026): a decimal-comma locale gives 'CALCEPH ERROR: Current locale does not create the decimal point' and 'Could not open ephemeris data! NOVAS will not work!'.
+  - #1166 (Jul 2026, open): the live pipeline freezes after 4-14 h with a remote satdump_sdr_server.
+  - #644: memory grows in long UI and autotrack sessions.
+  - 6b5957f: clock-recovery buffer leak (fixed on dev).
+  - #1231 also shows the 2.0-alpha 'legacy autotrack' CLI hanging at start-up.
+    - **Verdict:** confirmed
+    - **Action:** Keep. In each pass unit also set LC_ALL=C.UTF-8, fail the unit if the log contains 'CALCEPH ERROR', and do not use SatDump autotrack (labd schedules the passes).
+    - **Impact:** The stack's choices match the failure modes users report.
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/issues/1231
+      - https://github.com/SatDump/SatDump/issues/1166
+      - https://github.com/SatDump/SatDump/issues/644
+  15.
+    - **Claim in stack:** SatDump decodes from V4L recordings via librtlsdr .so.2+lab.
+    - **Finding:** In SatDump #1030 (Aug 2025, Raspberry Pi 4 with a genuine RTL-SDR V4), bias-T and DC block did not take effect and gain was suspected not to be applied. The reporter traced it to the Debian default rtl-sdr drivers, which do not support the V4, being used instead of the custom-built ones. #864 (Raspberry Pi 4 arm64, 1.2.1 deb, RTL-SDR v4): the rtlsdr source failed with an error at rtlsdr_sdr.cpp:214, unresolved. The SatDump README build line installs the distribution's librtlsdr-dev.
+    - **Verdict:** confirmed
+    - **Action:** Build SatDump's rtlsdr plugin against the +lab librtlsdr (pkg-config path), and never install the distribution's librtlsdr-dev on the builder. The CI ldd check must show the plugin resolving to the +lab library.
+    - **Impact:** Avoids silently wrong tuner settings on L-band passes.
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/issues/1030
+      - https://github.com/SatDump/SatDump/issues/864
+  16.
+    - **Claim in stack:** CubeSats decoded offline with gr-satellites 5.5 (noble); stage 1: build v5.9.0 from source.
+    - **Finding:** Security issue:
+  - gr-satellites #803 (16 Mar 2026) and #820 (26 May 2026): the FileReceiver path for qo100_multimedia uses a file name taken from the received frame without sanitising it. An over-the-air sender can write files anywhere the user can write. The reporter claims code execution via a Python .pth file (their CVSS 8.4).
+  - Affected range: 4.7.0 to 5.9.0, so both noble's 5.5.0 and v5.9.0.
+  - Fix history: 10d27cb (Mar 2026) broke every FileReceiver subclass (pathlib has no 'dirname'). PR #832 (merge 1bcf1d8, 29 May 2026) fixed that.
+  - No tagged release after v5.9.0.
+  
+  Build: in #776 the maintainer says CI runs on Ubuntu 24.04.
+    - **Verdict:** new_risk
+    - **Action:** Do not ship 5.5.0 or plain v5.9.0. Build gr-satellites from main at 1bcf1d8 or later (or v5.9.0 plus 10d27cb and 71dc9a1) as a +labN deb. Run it as a dedicated user in its own venv under a systemd unit with ProtectHome=yes and ReadWritePaths limited to the output directory. Add a CI test that feeds a frame with a '../' file name.
+    - **Impact:** Closes a remote file-write path from received RF. Any amateur on the air could otherwise target the device.
+    - **Sources:**
+      - https://github.com/daniestevez/gr-satellites/issues/803
+      - https://github.com/daniestevez/gr-satellites/issues/820
+      - https://github.com/daniestevez/gr-satellites/pull/832
+      - https://github.com/daniestevez/gr-satellites/releases
+      - https://github.com/daniestevez/gr-satellites/issues/776
+  17.
+    - **Claim in stack:** Inmarsat-C EGC SafetyNET on the patch tier; egc-gate parses only packet headers and discards every non-SafetyNET packet at header level.
+    - **Finding:** Reception on the patch: DK8OK's review (Dec 2021, BladeRF) and a DragonOS video both decode STD-C with the RTL-SDR Blog active L-band patch. Neither gives SNR figures.
+  
+  Header-level filtering is feasible. The open-source STD-C parser in SatDump (master 1aedd60, plugins/inmarsat_support/stdc) reads EGC packets as follows:
+  - Frame ID 0x30 (single header) or 0x31/0x32 (double header).
+  - Service code in byte 2.
+  - Priority and repetition in byte 3.
+  - Address and payload only from byte 8.
+  
+  Service-code table in that code:
+  - SafetyNET: 0x04, 0x13, 0x14, 0x24, 0x31, 0x34, 0x44, 0x73.
+  - FleetNET: 0x02, 0x72.
+  - System: 0x00 'All ships (general call)', 0x11, 0x23, 0x33.
+  
+  Multi-frame packets are reassembled before parsing.
+    - **Verdict:** confirmed
+    - **Action:** Implement egc-gate as: keep a packet only if its frame ID is 0x30/0x31/0x32 and its service code is in {0x04,0x13,0x14,0x24,0x31,0x34,0x44,0x73}.
+  - Decide on the first fragment.
+  - Drop the remaining fragments without reassembling them.
+  - Never read byte 8 or beyond of a rejected packet.
+  - Discard 0x00 by default.
+  - Cross-check the table against the IMO/Inmarsat SafetyNET manual, since it comes from community code.
+  - Add unit tests with synthetic frames.
+    - **Impact:** Makes the header-only rule concrete and testable.
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/blob/master/plugins/inmarsat_support/stdc/packets_structs.h
+      - https://github.com/SatDump/SatDump/blob/master/plugins/inmarsat_support/stdc/pkt_structs.cpp
+      - https://www.rtl-sdr.com/tag/inmarsat/
+  18.
+    - **Claim in stack:** Stage 1: mask Cospas-Sarsat 1544.0-1545.0 MHz; refresh frequencies from the SatNOGS cache.
+    - **Finding:** SatNOGS DB also lists Cospas-Sarsat relays on the weather satellites:
+  - Elektro-L3 'Data Relay LHCP Mode L 1544.5 MHz'.
+  - Elektro-L2 'SARSAT - L-Band 1544.5 MHz'.
+  - Meteor-M N2-4 and N2-3 have SARSAT L-band transmitter entries; SatNOGS stations (JF6FYI, M0EYT) observed them at 1544.5 MHz on 12 and 14 Oct 2026.
+  
+  A naive import of the SatNOGS cache would therefore bring excluded transmitters into the catalogue.
+    - **Verdict:** confirmed
+    - **Action:** Apply the 1544.0-1545.0 MHz mask to every satellite, including Meteor and Elektro. The SatNOGS cache importer should drop any transmitter whose frequency is in 1544-1545 MHz or 406.0-406.1 MHz, or whose description matches SARSAT or Cospas.
+    - **Impact:** Keeps the exclusion intact through automatic catalogue updates.
+    - **Sources:**
+      - https://db.satnogs.org/api/transmitters/?satellite__norad_cat_id=44903
+      - https://db.satnogs.org/api/transmitters/?satellite__norad_cat_id=41105
+      - https://network.satnogs.org/api/observations/?sat_id=VSVI-4798-5613-4587-2414&status=bad
+  19.
+    - **Claim in stack:** ISS: SSTV 437.550 Robot 36 (Series 34, 22-25 Oct 2026); APRS 437.825 MHz 'active, still being tested'; FM repeater 437.800 MHz.
+    - **Finding:** ARISS station status (7 Oct 2026): SSTV events come from the Zvezda D710GA, the same radio that is now running APRS on 437.825 MHz. APRS is therefore likely to be off during Series 34. Series 33 ran 2 Oct 09:00 UTC to 6 Oct 15:55 UTC. Series 34 times are still TBD. The ARISS SSTV gallery says its image library is offline and asks users to hold decodes.
+    - **Verdict:** confirmed
+    - **Action:** Mark the APRS row as 'expected off during SSTV events', and schedule no APRS tests on 22-25 Oct. Keep the SSTV IQ and decoded images locally (the gallery is offline).
+    - **Impact:** Avoids reading a missing APRS signal as a receiver fault.
+    - **Sources:**
+      - https://www.ariss.org/current-status-of-iss-stations.html
+      - https://www.ariss.org/upcoming-sstv-events.html
+      - https://ariss.pzk.org.pl/sstv/
+  20.
+    - **Claim in stack:** Amateur targets: AO-73 / JO-97 BPSK telemetry; JO-97 on 145.840 MHz with EIRP not verified.
+    - **Finding:** SatNOGS DB lists JO-97 'BPSK1k2 TLM' on 145.840 MHz, plus its U/V CW and SSB transponder at 145.855-145.875 MHz (SSB entry updated 2026-06-27). I found no community EIRP figure. The stage-1 AMSAT reports stand.
+    - **Verdict:** confirmed
+    - **Action:** Keep the JO-97 row. The EIRP stays a model until a pass is measured.
+    - **Impact:** Small.
+    - **Sources:**
+      - https://db.satnogs.org/api/transmitters/?satellite__norad_cat_id=43803
+  21.
+    - **Claim in stack:** GNSS L1 plus SBAS via LC76G -> gpsd -> chrony.
+    - **Finding:** The Waveshare LC76G wiki marks the LC76G(AB) as supporting an L1 SBAS receiver, but does not say which systems. It also says configuration is lost on power loss, and its demo wiring leaves PPS unconnected. The Quectel product page does not mention SBAS.
+    - **Verdict:** unverified
+    - **Action:** labd re-applies the GNSS configuration (constellations, SBAS, baud rate, NMEA set) at every boot. Keep stage 1's generic SBAS PRN labelling, and verify on air that SBAS PRNs appear in GSV.
+    - **Impact:** Small. Avoids silently losing SBAS after a power cycle.
+    - **Sources:**
+      - https://www.waveshare.com/wiki/LC76G_GNSS_Module
+      - https://www.quectel.com/product/gnss-lc76g/
+  22.
+    - **Claim in stack:** QO-100 NB conservative model (bare LNB gets the CW beacon; cone gets the PSK beacon on the edge).
+    - **Finding:** I found no community numbers. The AMSAT-DL bandplan publishes no beacon EIRP or minimum dish size. rtl-sdr.com's QO-100 posts give no figures for a bare LNB, horn or patch; one Bullseye-LNB report does not state the antenna or SNR.
+    - **Verdict:** unverified
+    - **Action:** No change. The A/B test (bare LNB, cone, 3 and 6 segments) remains the only anchor for the constant.
+    - **Impact:** The margin stays a model.
+    - **Sources:**
+      - https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines
+      - https://www.rtl-sdr.com/tag/qo-100/
+  23.
+    - **Claim in stack:** LF time signals include TDF 162 kHz; stage 1 flags the Tuesday 08:00-12:00 gap.
+    - **Finding:** Wikipedia, last edited 24 May 2026: ALS162 is still in use at 800 kW, with routine Tuesday 08:00-12:00 interruptions and no announced end date. The USCG NAVCEN page returned 403, so US MF NAVTEX status is still unverified.
+    - **Verdict:** confirmed
+    - **Action:** Keep the Tuesday mask. NAVTEX in the US profile stays 'check on air'.
+    - **Impact:** Small.
+    - **Sources:**
+      - https://en.wikipedia.org/wiki/ALS162_time_signal
+- **Current status oct 2026:** Status as of 18 Oct 2026 (stage 2).
+  
+  **137 MHz weather:**
+  - Meteor-M N2-4 and N2-3 are both on 137.900 MHz, 72k.
+  - SatNOGS, 17-18 Oct: images decoded on N2-4 passes from 18 deg max elevation, and on N2-3 passes from 22 deg (fixed QFH and turnstile stations).
+  - The N2-3 antenna fault is a community diagnosis (tilted, partly deployed), not an official one.
+  
+  **Polar L-band (1.7 GHz):**
+  - Meteor HRPT is on 1700 MHz. A SatNOGS L-band helix plus HackRF station showed N2-3 HRPT 'with-signal' on 17 Oct. No community report of 1705 MHz use.
+  - Metop-B and Metop-C AHRPT were both decoded by an amateur station in Athens, 9-23 Aug 2026. This resolves the stage-1 conflict over Metop-C, at least for Europe.
+  - AWS has historically sent filler outside Europe, with dumps near Kiruna.
+  
+  **Geostationary L-band:**
+  - Elektro-L5 is stationary at 76.05 deg E (TLE, 17 Oct).
+  - Elektro-L3 is not confirmed at 14.5 deg W. Its last SatNOGS TLE (9 Oct) shows it at about 6.7 deg W, still drifting west at about 3.07 deg/day.
+  - Elektro-L2 still sits at 14.52 deg W, inclination 7 deg.
+  - FY-2H shows community S-VISSR activity in Sep 2026.
+  - FY-2G is operational at 99.2 deg E (OSCAR, 12 Oct 2026).
+  - Elektro GGAK (1693 MHz, 5k) is a low-rate GEO beacon with a SatDump pipeline.
+  
+  **ISS:** Series 34 runs 22-25 Oct, times TBD. SSTV and APRS share the Zvezda radio, so expect APRS off during the event. The ARISS SSTV gallery is offline.
+  
+  **Software:**
+  - SatDump master is 1aedd60 (30 Sep). The fixes for the CLI '--k v' parsing (#1191) and the clock-recovery leak are on dev only (head 96bb626, 8 Oct). The 80k LRPT hang fix is in master.
+  - gr-satellites v5.9.0 and noble's 5.5.0 carry an over-the-air path-traversal bug. It is fixed on main (1bcf1d8, 29 May 2026) but not in any release.
+- **Notes:** **Method and limits**
+  - The WebSearch budget for this turn was already used up at my first call, so I made no web searches.
+  - Community evidence came from WebFetch of primary sources:
+    - SatDump and gr-satellites GitHub issue pages (filtered views of the trackers themselves)
+    - rtl-sdr.com tag pages and IU1QPR's (a-centauri.com) 2026 guides
+    - ARISS pages
+    - SatNOGS DB and Network APIs (observations, stations, TLEs)
+    - a sparse git clone of SatDump master and dev
+  - Not reached: Reddit, Discord or Matrix logs, YouTube, and Thingiverse (403).
+  - I found no report specific to the Radxa Dragon Q6A, QCS6490 or Ubuntu 24.04 arm64. The closest arm64 reports are Orange Pi 5 (Elektro LRIT and Meteor HRPT decoding, #600 and #656) and Raspberry Pi 4/5 (#864, #1030, #1139, #877).
+  
+  **Models**
+  - All numbers below are models, not measurements: Elektro-L longitudes and drift computed from TLEs; dish versus helicone gain; scaling of GEO targets by symbol rate.
+  - Script: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/tlb2/scripts/geo_scale.py
+  - Downloads (SatNOGS observations, transmitters, TLEs): /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/tlb2/dl/
+  - SatDump sparse clone (master 1aedd60, dev fetched to 96bb626): /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/tlb2/gitsd/sd
+  
+  **Highest priority**
+  1. gr-satellites: build from main at 1bcf1d8 or later, never 5.5.0 or plain v5.9.0, and sandbox it. Over-the-air file write.
+  2. SatDump: pin dev 96bb626, or master plus cherry-picks, because of the CLI bug. Add PLUGIN_XRIT=ON and turn off all network sources, the apps, OpenCL and the tools. Without this the allow-list build either does not link or crashes, and it ships network-facing sources.
+  3. GEO visibility from live TLEs: Elektro-L3 is still drifting.
+  4. Metop-C is receivable in Europe.
+  5. Elektro GGAK is the best small-antenna GEO target.
+  
+  **Still unverified:** the Metop-B '7 dB modulator' figure, the QO-100 constant, the patch-tier (4-turn helix) HRPT margin, and USCG NAVTEX status.
+
 ## community:power (run `wf_d9388111-e66`)
 
 - **Subsystem:** power
