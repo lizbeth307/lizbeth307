@@ -685,5 +685,228 @@ _Run `wf_e64436d6-ae7`_
 
 ## Власні виправлення (`fixes`)
 
+_Run `wf_e64436d6-ae7`_
+
+- **Component:** Wideband PCIe SDR: LimeSDR Micro M.2 2280 in the M.2 slot of the Radxa Dragon Q6A
+- **Fixes:**
+  1.
+    - **Problem:** There is no public confirmation that LimeSDR Micro units have shipped, and no independent hands-on report exists.
+    - **Proposed fix:** Make the Micro a cancellable dependency that blocks nothing. Pre-order the Basic now. Crowd Supply lets you cancel a pre-order for a full refund any time before it ships. Before the card arrives, validate everything around it: driver build, M.2 bay, thermal path, scheduling latency and UFS throughput, using a 2280 NVMe as a stand-in. Set a hard decision date. The fallback choice is decided by a USB3 test you run now (see the USB3 fix). On arrival, run an acceptance test and publish the results; that becomes the missing independent report.
+    - **Steps:**
+      - Order the LimeSDR Micro M.2 2280 Basic: $249 plus $18 worldwide shipping. The product page (checked Oct 2026) says 'Pre-order, ships Dec 15, 2026'. The campaign was funded May 28 with 130 backers, and the last update is dated Jun 17, 2026. Skip the GNSS variant.
+      - Track progress weekly in two places. Code: in a LimeSuiteNG clone, run `git fetch && git log --since=2.weeks --oneline origin/limesdr-micro-staging`. Recent commits are from Oct 16, 2026, for example 'implement Rx timestamps recovery after overruns'. Forum: `curl -s 'https://discourse.myriadrf.org/search.json?q=limesdr%20micro%20order:latest'`.
+      - Until delivery, run all narrowband work on the RTL-SDR V4/V4L: LRPT, SSTV, CubeSats, QO-100 narrowband through the LNB IF, and Meteor HRPT at about 2.4-3.2 Msps.
+      - Build the 2280 M.2 bay, heatsink and cable routing now. Put a cheap 2280 NVMe in it as a placeholder to test the extender, thermals and PCIe+UFS concurrency (see those fixes).
+      - Decision gate, 31 Jan 2027. If there is still no shipping notice, choose from measured data. If the USB3 gate test passes (at least 350 MB/s sustained), buy the bladeRF 2.0 micro xA4 ($540, in stock, built-in bias tees). If it fails, keep waiting, because every PCIe alternative is sold out (LiteX M2SDR) or has the wrong key (xSDR is A+E).
+      - Do not buy a HackRF clone as a stopgap. Prom.ua listings looked like roughly 10,000-15,000 UAH (I did not verify individual listings), which is close to the Micro's price for an 8-bit, 20 Msps radio.
+      - On arrival, run the acceptance script: `limeDevice --full`, check dmesg, then 15-minute `limeTRX` runs at 7.68, 30.72 and 61.44 Msps while logging loss/overrun counts, temperatures and power. Post the results on MyriadRF Discourse.
+    - **How to verify:** The order page shows a pre-order you can cancel. The fallback is chosen from logged USB3 measurements, not guesses. On arrival, the acceptance runs show 0 loss events at the sample rate you actually need.
+    - **Confidence:** high
+    - **Sources:**
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro/updates
+      - https://crowdsupply.com/guide/policies-and-procedures
+      - https://github.com/myriadrf/LimeSuiteNG/tree/limesdr-micro-staging
+      - https://prom.ua/ua/search?search_term=hackrf%20one
+      - https://www.nuand.com/product/bladerf-xa4/
+  2.
+    - **Problem:** Micro support is not merged into LimeSuiteNG develop (limesdr-micro-staging is 206 commits ahead of and 163 behind develop as of Oct 16, 2026), and Lime has validated it only on x86. The Q6A runs Radxa's 7.0.11-qcom kernel.
+    - **Proposed fix:** Build and pin the staging branch on the Q6A (aarch64) now, before the hardware arrives. Kernel driver, host library and firmware must all come from the same commit, because the driver rejects firmware whose HIF version does not match. Install the la9310_limesdr kernel module through DKMS against Radxa's own header package, and confirm it compiles and loads on kernel 7.0 while there is still time to fix problems.
+    - **Steps:**
+      - Install the build dependencies: `sudo apt install linux-headers-radxa-dragon-q6a dkms build-essential cmake git pkg-config libusb-1.0-0-dev libsoapysdr-dev soapysdr-tools`. Radxa's linux-qcom packaging (7.0.11-7, Sep 17, 2026) builds a linux-headers-radxa-dragon-q6a package.
+      - Clone and pin a commit: `git clone -b limesdr-micro-staging https://github.com/myriadrf/LimeSuiteNG && cd LimeSuiteNG && git checkout 37cb1833`, the branch head as of 2026-10-16. Write the hash down. The prebuilt firmware (firmware/limesdr-micro/limesdr-micro-m4.bin, limesdr-micro-iqplayer.eld and limesdr-micro-eeprom.bin) lives in the same commit and is installed by INSTALL_FIRMWARE=ON.
+      - Configure, build and install: `cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_DRIVERS_LA9310=ON -DBUILD_DRIVERS_LIMEPCIE=OFF -DLA9310_LIMESDR_DKMS=ON -DBUILD_PLUGINS_SOAPYSDR=ON -DBUILD_GUI=OFF && cmake --build build -j8 && sudo cmake --install build && sudo ldconfig`.
+      - Confirm the module works on kernel 7.0 without hardware: `dkms status`, `modinfo la9310_limesdr`, `sudo modprobe la9310_limesdr; dmesg | tail`. The source already has version guards for kernel 6.3, 6.4, 6.10 and 6.16 API changes, but nobody has reported building it on 7.0.
+      - Load the module at boot: `echo la9310_limesdr | sudo tee /etc/modules-load.d/la9310.conf`. The driver kzalloc()s two 4 MiB physically contiguous DMA buffers (scratch and IQ flood), and that allocation can fail on a fragmented system after a long uptime.
+      - Check `SoapySDRUtil --info` lists the limesuiteng module. Build SatDump and SDR++ against the same system SoapySDR (0.8.x).
+      - Freeze the kernel for field use: `sudo apt-mark hold linux-image-radxa-dragon-q6a linux-headers-radxa-dragon-q6a`. Radxa moved from 6.18 to 7.0 during 2026. Try new kernels on a spare SD card first; DKMS rebuilds automatically, but the driver may not.
+      - Move to Lime's arm64 APT repo (repo.myriadrf.org) or a tagged release only after the Micro code reaches develop and your acceptance test passes again.
+    - **How to verify:** `dkms status` shows la9310_limesdr installed for `uname -r`, and modprobe loads it with no oops. With the card fitted, dmesg shows 'using 64bit DMA mask', 'HIF Version', and an 'IQ Flood Buffer size: 4194304' line with no errors, and `limeDevice --full` lists the LimeSDR Micro.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSuiteNG/tree/limesdr-micro-staging/drivers/linux/la9310_limesdr
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/docs/user/linux/apt.rst
+      - https://github.com/radxa-pkg/linux-qcom
+      - https://forum.radxa.com/t/dragon-q6a-fastrpc-npu-fails-fastrpc-ioctl-init-create-returns-0x80000600-on-cdsp/31078
+  3.
+    - **Problem:** New finding from the code: the receive DMA ring holds only about 1.1-1.6 ms of samples, so a non-realtime aarch64 system will drop samples. In LA9310_TRX.cpp, RxSetup uses 16 transfers (SubdivideBuffer(..., 16 KB, 16)), each sized to about 100 µs of samples. At 61.44 Msps that is 16 x 16 KB = 256 KB = 1.07 ms. At 7.68 Msps it is 16 x 2 KB, again 1.07 ms. The RX worker thread 'lime:Rx0' runs at normal priority (the SetOSThreadPriority call is commented out). Any scheduling stall over about 1 ms (UFS writeback, GPU, compositor) overwrites data and shows up as 'loss' or 'samples discontinuity'. This is a likely reason it was validated on x86 only.
+    - **Proposed fix:** Measure scheduling latency now. Then make the RX thread realtime and pin it to an A78 core, enable full preemption, and deepen the ring to 32 transfers. The VSPA TCD and output-block FIFOs are 32 deep (MFIFO_SIZE=32), and every transfer can use the full 16 KB batch. The resulting buffer depth is 2.1 ms at 61.44 Msps, 4.3 ms at 30.72 Msps and about 17 ms at 7.68 Msps.
+    - **Steps:**
+      - Before the card arrives: `sudo apt install rt-tests stress-ng fio`. Run the UFS write load (fio at 250 MB/s) with SDR++ and the display active, plus `sudo cyclictest -m -S -p 80 -i 200 -h 2000 -D 15m -q`. Record the maximum latency for each CPU.
+      - Add `preempt=full` to the kernel command line; Radxa's kernel is PREEMPT_DYNAMIC. Set `sudo cpupower frequency-set -g performance`, because Radxa's config defaults to ondemand. Optionally add `isolcpus=7 nohz_full=7 rcu_nocbs=7`. Re-run cyclictest; the target is under 300 µs on the chosen core.
+      - After SatDump or SDR++ starts, run `for t in /proc/$(pgrep -f satdump)/task/*; do [ "$(cat $t/comm)" = "lime:Rx0" ] && sudo chrt -f -p 70 ${t##*/} && sudo taskset -cp 7 ${t##*/}; done`. This is safe because usePoll defaults to true, so the thread blocks waiting for an interrupt (WaitSIRQ). Never give SCHED_FIFO to a busy-yield loop.
+      - Quick test with no code change: `limeTRX --rxPacketsInBatch 8 --time 900000 -o /dev/null -l info` at low sample rates. This makes every transfer 16 KB.
+      - Two-line library patch in src/boards/LimeSDR_Micro/LA9310_TRX.cpp: change `SubdivideBuffer(rx_lane_dma_mem[l], dmaBatchSize, 16)` to `..., 32)`. After packetsToBatch is computed, set `mRx.packetsToBatch = dmaBatchSize / packetSize;`. Rebuild, and keep the patch with the pinned commit.
+      - In /proc/interrupts, watch the PCI-MSI line for the card (about 15k interrupts/s at 61.44 Msps with 16 KB transfers). Test with that IRQ on the same A78 core as lime:Rx0 and on a different one.
+    - **How to verify:** The LimeSuiteNG stream log (limeTRX -l info) reports overrun and loss deltas. Targets: 0 loss in 15 minutes at 61.44 Msps while UFS records in parallel, and 0 loss in 1 hour at decode rates (7.68 Msps). If the 32-entry ring breaks streaming (garbage samples or VSPA timeouts), revert to 16 and report it to Lime; the VSPA firmware may assume 16.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/boards/LimeSDR_Micro/LA9310_TRX.cpp
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/chips/LA9310/firmware/dma_tcd_fifo.h
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/chips/LA9310/firmware/IQStreamer_DMA.cpp
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/cli/limeTRX.cpp
+      - https://github.com/radxa-pkg/linux-qcom
+  4.
+    - **Problem:** No PCIe SDR has been reported working on a QCS6490 or Q6A, and it is unknown how Qualcomm's SMMU behaves with these drivers.
+    - **Proposed fix:** Most of this risk goes away on inspection. Radxa's vendor device tree (kernel linux-7.0.11) lists devices tested on the M.2 PCIe controller: QPS615, ASM1182e and ASM2824 switches, an NVIDIA dGPU and a Chelsio T520-CR 10GbE NIC. It maps every requester ID to SMMU stream 0x1c80, and kodiak.dtsi marks pcie1 dma-coherent. la9310_limesdr uses the standard DMA API: a 64-bit dma_set_mask_and_coherent, kzalloc plus dma_map_single, and the resulting IOVA programmed into the LA9310's outbound address translation. A NIC uses the same path, so SMMU translation should be transparent. MSI goes through the DesignWare controller's internal MSI (msi0-msi7). Keep translation on. If context faults appear, switch only this device's IOMMU group to identity at runtime. Do not set iommu.passthrough=1 globally, because it can also affect the NPU (FastRPC), video and display.
+    - **Steps:**
+      - Before the card arrives, the NVMe stand-in proves DMA through the SMMU on this slot. Radxa measured 1467 MB/s write.
+      - On first boot with the card: `sudo dmesg | grep -iE 'la9310|smmu|iommu|qcom-pcie'` and `ls -l /sys/bus/pci/devices/0001:01:00.0/iommu_group`. pcie1 is PCI domain 1.
+      - Stream for 10 minutes and watch for `arm-smmu 15000000.iommu: Unhandled context fault ... iova=0x... cbfrsynra=0x1c80`. Compare the faulting IOVA with the 'bus:0x...' addresses the driver prints for the scratch and IQ flood buffers. A fault outside those ranges means the firmware is writing somewhere it was never mapped.
+      - If faults appear: `D=0001:01:00.0; G=$(basename $(readlink /sys/bus/pci/devices/$D/iommu_group)); echo $D | sudo tee /sys/bus/pci/drivers/la9310_limesdr/unbind; echo identity | sudo tee /sys/kernel/iommu_groups/$G/type; echo $D | sudo tee /sys/bus/pci/drivers/la9310_limesdr/bind`. The kernel's iommu_group_store_type only refuses while a DMA-API driver is bound. Make it persistent with a systemd oneshot that runs before modprobe.
+      - Only if that fails: try `iommu.passthrough=1` from a spare boot entry, and check that the NPU (FastRPC), HDMI and UFS still work.
+      - If the link drops on idle-to-stream transitions, also test `pcie_aspm=off`.
+    - **How to verify:** No SMMU faults in 1 hour of streaming. Samples are non-zero and a known carrier (for example the QO-100 beacon on the IF) is visible. The NPU demo still runs.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/radxa/kernel/blob/linux-7.0.11/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://github.com/radxa/kernel/blob/linux-7.0.11/arch/arm64/boot/dts/qcom/kodiak.dtsi
+      - https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://github.com/torvalds/linux/blob/master/drivers/iommu/iommu.c
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/drivers/linux/la9310_limesdr/la9310_pci.c
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/drivers/linux/la9310_limesdr/la9310_base.c
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/nvme
+  5.
+    - **Problem:** The Micro's power draw and the Q6A M.2 3.3 V capacity have not been characterized together, raising brown-out and runtime concerns.
+    - **Proposed fix:** The Q6A schematic (v1.21, M_KEY page) settles the rail question. The M.2 slot has its own ETA3521 buck, U20, running from VCC_5V_PERI to VCC_3V3_MKEY. It uses a 1 µH/4 A inductor (L24) and 3x 22 µF output capacitors, and the divider R88 91k / R133 20k gives 0.6 x (1 + 91/20) = 3.33 V. The ETA3521 is rated at 4 A. This regulator is not the one feeding the 40-pin header's 3.3 V. Lime says the Micro draws 'about 4 W, depending on configuration' (about 1.2 A at 3.3 V), and calls 2.5 A the M.2 specification allowance. That leaves about 3x margin. What remains is to measure the real draw and the thermal behaviour.
+    - **Steps:**
+      - Fit an INA226 module (about $2-5) with a 10 mΩ shunt in the 12 V feed to the Q6A, read over I2C on the 40-pin header with the ina2xx hwmon driver or python smbus2. It doubles as battery and power telemetry for the UI. Log idle, then streaming at 7.68, 30.72 and 61.44 Msps with 1 and 2 RX channels. Micro power is roughly ΔP at 12 V x 0.8, since the board converts 12 V to 4.2 V (SY81012), then 5 V, then 3.3 V.
+      - Budget 5 W at 12 V for the Micro until you have measurements. VCC_5V_PERI also feeds the USB ports (RTL-SDR plus LNA bias tee), the HDMI 5 V and the USB hub, so keep extra 5 V loads small.
+      - For brown-out, run `dmesg -w` across 20 stream start/stop cycles and check `lspci -vv -s 0001:01:00.0 | grep LnkSta` after each one.
+      - If the link drops at stream start, add a 220-470 µF low-ESR polymer capacitor across 3.3 V and GND at the card end of the extender or breakout.
+      - Thermal: Lime says to design for at least 10 W. Use thermal pads of mixed thickness, since components reach about 4 mm, under an aluminium heatsink in the fan's airflow. Every 10 s, log `readSensor("lms7_temp")` through SoapySDR Python and the 'Board Temperature' custom parameter (TMP1075) through LimeSuiteNG.
+    - **How to verify:** Measured ΔP is 5 W or less. There are no link-down events over 20 start cycles. In a 30-minute run at 61.44 Msps and 35 °C ambient, board temperature levels off below about 70 °C.
+    - **Confidence:** high
+    - **Sources:**
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2403151643_etasolution-ETA3521FSG_C22362743.pdf
+      - https://discourse.myriadrf.org/t/limesdr-micro-m-2-power-consumption/13304
+      - https://forum.radxa.com/t/how-to-power-the-dragon-q6a/30400
+      - https://myriadrf.org/projects/limesdr-micro/user/M.2/setup.html
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/plugins/soapysdr/Settings.cpp
+  6.
+    - **Problem:** There are no measured noise figure, sensitivity or return-loss figures for the Micro's RX ports.
+    - **Proposed fix:** Design the chain so the Micro's noise figure barely matters, then measure the whole system with a sky/ground Y-factor. For chip-level reference, Lime's LMS7002M measurement report gives a DSB noise figure at maximum gain of about 2 dB at 800 and 1850 MHz and about 4 dB at 2600 MHz. It rises to 5-12 dB at low gain or away from the matched frequency. Board-level figures will be worse. One LNA with at most 1 dB NF and at least 18 dB gain at the antenna fixes this: for example the RTL-SDR Blog Wideband LNA V2 (QPL9547, about 1 dB and 15-20 dB on the board). By the Friis formula, a 1 dB/18 dB LNA, then 1 dB of cable, then a Micro at 6 dB NF gives a 1.2 dB system NF. With the Micro at 10 dB, the system is still only 1.6 dB.
+    - **Steps:**
+      - 1.7 GHz chain: helix, 1.7 GHz SAW filter, LNA powered by bias tee, at most 1 m of low-loss coax, then X2 (RX-A). S-band 2.2-2.3 GHz: S-band filter, LNA, then X3, using the LNAW path (0.7-2.6 GHz), since LNAL is only matched up to 2.2 GHz. QO-100 IF at about 740 MHz: the LNB's gain is enough, so no extra LNA.
+      - At 1.7 GHz, try both LNAL (0.3-2.2 GHz) and LNAW, which both cover the band, and keep whichever gives the higher Y-factor.
+      - Set gain: raise RX gain until the sky noise floor stops rising relative to the ADC floor, then back off about 3 dB. Keep the strongest in-band signal well below the +10 dBm damage limit and below compression.
+      - Y-factor test: point the antenna at cold sky (above 40° elevation, away from the Sun), then at ground or trees. Measure mean power in a quiet sub-band with SDR++'s averaged FFT or a short Python script. Y = P_ground / P_sky. Then Trx = (290 - Y x Tsky) / (Y - 1), with Tsky about 30-50 K including spillover. A system NF near 1 dB (Trx about 75 K) should give a Y of about 5 dB at 1.7 GHz.
+      - On the same pass, compare the identical LNA chain into the RTL-SDR V4 and into the Micro, using SatDump SNR and Viterbi BER on Meteor HRPT.
+      - Optional: a NanoVNA V2 (to 3 GHz) measures X2/X3 S11 at 435, 740, 1700 and 2250 MHz.
+    - **How to verify:** The sky/ground Y-factor with the Micro is within 0.5 dB of the RTL-SDR plus the same LNA. HRPT locks from about 10° elevation and decodes cleanly above 20°.
+    - **Confidence:** high
+    - **Sources:**
+      - https://www.limemicro.com/downloads/lms7002m_measurements-v1_05.pdf
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp
+      - https://www.qorvo.com/products/p/QPL9547
+      - https://www.passion-radio.com/accessoires-sdr/filtre-adsb-764.html
+      - https://discourse.myriadrf.org/t/limesdr-micro-m-2-pcie-frequency-range/13348
+  7.
+    - **Problem:** Running PCIe Gen3 through an M.2 2230-to-2280 extender to an SDR is untested, and link errors would look like driver bugs.
+    - **Proposed fix:** First choice is no extender: plug the 80 mm card straight into the 2230 slot and support its far end. Use an extender only if the board's layout forces it, and then the shortest Gen4-rated shielded flex. Measure link errors directly with the PCIe status registers and the DesignWare RAS-DES counters. If errors appear, force Gen2. Gen2 x1 still carries one channel at 61.44 Msps but not two.
+    - **Steps:**
+      - Check the geometry. If the 80 mm card can run past the board edge, or over an area with no tall components, plug it in directly and support the 80 mm end with a 3D-printed post and an M2 screw. The B+M-keyed card fits the M-key socket.
+      - Otherwise use the shortest available Gen4-rated M.2 M-key to M-key flex, for example the ADT-Link R44SF family. Newegg lists the 20 cm version at $39.99; shorter AliExpress lengths and prices are not verified.
+      - Check the link: `sudo lspci -vv -s 0001:01:00.0 | grep -E 'LnkCap|LnkSta'` should show 8GT/s x1. Read and clear the error status with `sudo setpci -s 0001:01:00.0 CAP_EXP+0a.w` and `sudo setpci -s 0001:01:00.0 CAP_EXP+0a.w=000f`. The CESta/UESta lines in `lspci -vvv` for 0001:00:00.0 and the card also latch errors.
+      - If the kernel has CONFIG_PCIE_DW_DEBUGFS, enable and read /sys/kernel/debug/dwc_pcie_1c08000.pcie/rasdes_event_counter/{lcrc_err,receiver_err,bad_tlp,replay_timeout}/counter_value.
+      - Run a 15-minute 61.44 Msps stream; with the stand-in NVMe, run `fio --rw=read --bs=1M --direct=1 --iodepth=16 --runtime=900` instead. Any correctable errors mean you should force Gen2: `sudo setpci -s 0001:00:00.0 CAP_EXP+30.w=0002:000f; sudo setpci -s 0001:00:00.0 CAP_EXP+10.w=0020:0020`. To make it persistent, add a device-tree overlay `&pcie1 { max-link-speed = <2>; };`; the DesignWare driver reads max-link-speed.
+      - At Gen2 x1 (about 400 MB/s usable), limit use to one RX channel at 61.44 Msps (246 MB/s). Two channels need 492 MB/s, because the card always DMAs 16-bit complex samples; I12 conversion happens on the host after the DMA.
+    - **How to verify:** 0 correctable errors and an unchanged LnkSta after 1 hour at the chosen link speed, and 0 sample-loss events at the same time.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://www.newegg.com/p/2S7-01Z1-00EH8
+      - https://github.com/torvalds/linux/blob/master/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+      - https://github.com/torvalds/linux/blob/master/drivers/pci/controller/dwc/pcie-designware.c
+      - https://github.com/radxa/kernel/blob/linux-7.0.11/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/boards/LimeSDR_Micro/LA9310_TRX.cpp
+  8.
+    - **Problem:** Sustained USB 3.1 throughput on the Q6A is unmeasured, so a USB3 fallback (bladeRF xA4, B220 mini) cannot be judged.
+    - **Proposed fix:** Run a cheap gate test now with a USB3 NVMe enclosure, after tuning the USB stack. The vendor device tree runs usb_1 in host mode, with USB3 on two lanes of the USB/DisplayPort combo PHY and DisplayPort on the other two (mdss_dp data-lanes <0 1>, feeding the RA620 HDMI bridge). USB3 and HDMI can therefore run at the same time.
+    - **Steps:**
+      - Tune first: `echo 0 | sudo tee /sys/module/usbcore/parameters/usbfs_memory_mb` (0 removes the limit libusb SDRs hit), add `usbcore.autosuspend=-1` to the kernel command line, set the performance governor, and pin the xHCI interrupt (`grep -i xhci /proc/interrupts`, then write an A78 core mask to /proc/irq/N/smp_affinity).
+      - Gate test: put a USB3 NVMe enclosure (about $15-20) on the USB 3.1 Type-A port and run `sudo fio --name=usb --filename=/dev/sdX --rw=read --bs=1M --direct=1 --ioengine=libaio --iodepth=16 --time_based --runtime=900`. Repeat with --rw=write, and log CPU with `mpstat -P ALL 5`.
+      - Pass means at least 350 MB/s sustained for 15 minutes using less than 50% of one core. That makes a 61.44 Msps USB3 SDR (246 MB/s) viable. Below 250 MB/s, a USB fallback is capped at about 20-30 Msps.
+      - Optional libusb-level test: an FX3 SuperSpeed Explorer kit (CYUSB3KIT-003, about £56-93 at Farnell) running the streamer firmware. FX3 is the same USB3 chip used in the bladeRF and B210.
+      - If you buy an SDR: UHD args `num_recv_frames=256,recv_frame_size=16360` for B2xx clones; bladeRF via SoapyBladeRF with larger buffers/transfers settings.
+    - **How to verify:** fio bandwidth and mpstat logs. With a real SDR, `benchmark_rate --rx_rate 61.44e6 --duration 600` (UHD) or a 10-minute bladeRF-cli receive to /dev/null reports zero overflows.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/radxa/kernel/blob/linux-7.0.11/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://uk.farnell.com/infineon/cyusb3kit-003/dev-board-usb-controller/dp/2448471
+      - https://www.nuand.com/product/bladerf-xa4/
+  9.
+    - **Problem:** Sustained recording at 61.44 Msps sc16 to UFS while streaming over PCIe is unverified.
+    - **Proposed fix:** Recording at the full rate is mainly a capacity problem. 61.44 Msps sc16 is 245.76 MB/s, so one 15-minute pass is 221 GB, almost the whole 256 GB UFS module. Use tiered capture instead: (1) record only what decoding needs, which is 7.68 Msps (AHRPT and Meteor HRPT need about 3-8 Msps): 30.7 MB/s in cs16, about 28 GB per pass, or half that in cs8 or SatDump's ZIQ; (2) send 61.44 Msps only into a RAM ring and write snapshots to disk on a trigger; (3) prove PCIe and UFS concurrency now with the NVMe stand-in. The Kioxia UFS stalls were fixed by Radxa's PA_TACTIVATE quirk in May 2026, and measured writes after the fix were about 473 MB/s.
+    - **Steps:**
+      - Check that the UFS fix is present: run `uname -r` (7.0.11-qcom or later), and check that `dmesg | grep -iE 'ufshcd|ufs'` shows no errors over 1 hour.
+      - Concurrency test with the 2280 NVMe stand-in in the M.2 bay: `sudo fio --name=dma --filename=/dev/nvme0n1 --rw=read --bs=1M --direct=1 --ioengine=libaio --iodepth=8 --rate=260m --time_based --runtime=900 &` while running `sudo fio --name=rec --directory=/data --size=200G --rw=write --bs=4M --direct=1 --ioengine=libaio --iodepth=4 --rate=250m --time_based --runtime=900 --write_bw_log=rec --log_avg_msec=1000`. Run cyclictest alongside, and log `/sys/class/thermal/thermal_zone*/temp`.
+      - Pass means per-second write bandwidth never drops below 250 MB/s, no ufshcd errors, and the SoC stays below about 85 °C.
+      - For buffered writers such as SatDump, set `sudo sysctl vm.dirty_background_bytes=268435456 vm.dirty_bytes=1073741824` and mount the data partition with noatime (ext4), or use f2fs.
+      - RAM ring for wideband snapshots: `sudo mount -t tmpfs -o size=8G tmpfs /mnt/iqring`. 8 GB holds about 32 s at 61.44 Msps. Copy to UFS after the pass, or when the NPU classifier triggers.
+      - For decode recordings, use 7.68 Msps (the Micro needs at least 7 Msps without decimation; otherwise use the Soapy OVERSAMPLING setting) in cs8 or ZIQ format.
+    - **How to verify:** The fio bandwidth logs stay at or above 250 MB/s for 15 minutes. With the Micro, recordings show 0 loss events, and each file's size equals rate x duration x bytes per sample.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://forum.radxa.com/t/ufs-random-reboots/30630
+      - https://raw.githubusercontent.com/SatDump/SatDump/master/src-core/common/dsp/io/baseband_type.h
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/plugins/soapysdr/Settings.cpp
+  10.
+    - **Problem:** The LiteX M2SDR still has open Arm and SoapySDR issues and is sold out.
+    - **Proposed fix:** Do not count it as plan B. Both issues are still open: #156 (opened Jul 27, 2026; last comment Jul 28) is a link death under sustained DMA on a Jetson with an active SMMU, root cause unknown; #149 (opened Jul 22, 2026) is SoapySDR returning mostly-zero buffers on the 2026-05-15 gateware. If you do get one, use it the way the reporters got clean data.
+    - **Steps:**
+      - Use the C tools (m2sdr_rf, m2sdr_record), not SoapySDR, until #149 is fixed.
+      - Run `m2sdr_rf --calibrate-delay` after every sample-rate change, because changing the AD9361 rate resets the interface delay.
+      - Build the driver with PR #157 (AER error_detected/slot_reset handlers) so a fatal PCIe event does not hang the host.
+      - Start at Gen2 x1 and step up only after 1 hour with no errors.
+      - Pre-order only where the pre-order is cancellable.
+    - **How to verify:** m2sdr_record files contain more than 99% non-zero samples, and a 1-hour stream has no AER fatal events.
+    - **Confidence:** high
+    - **Sources:**
+      - https://github.com/enjoy-digital/litex_m2sdr/issues/156
+      - https://github.com/enjoy-digital/litex_m2sdr/issues/149
+      - https://github.com/enjoy-digital/litex_m2sdr
+  11.
+    - **Problem:** The HamGeek M2SDR and LibreSDR B220 mini have no community track record.
+    - **Proposed fix:** Avoid both as fallbacks. If the USB3 gate passes, choose the bladeRF 2.0 micro xA4 instead: it is in stock, vendor-supported, has bias tees and a mature libbladeRF. If you buy a clone anyway, buy where returns are possible and run an acceptance test inside the return window.
+    - **Steps:**
+      - `uhd_find_devices` and `uhd_usrp_probe`: check that the FPGA image matches your UHD version and that the B210-mode USB or PCIe enumeration is stable across 10 reboots.
+      - `benchmark_rate --rx_rate 30.72e6 --duration 600`, then the same at 61.44e6: zero overflows (no 'O' markers).
+      - Check frequency error against a known carrier, for example the QO-100 beacon on the IF or a GSM/LTE downlink. Compare with the claimed ±0.5 ppm VCTCXO, and check GPSDO lock on the HamGeek if it is fitted.
+      - Decode one real Meteor HRPT pass in SatDump and compare SNR with the RTL-SDR plus the same LNA.
+    - **How to verify:** All four checks pass inside the return window; otherwise return the unit.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://www.hgeek.com/products/hamgeek-m2sdr-software-defined-radio-m-2-xc7a200-rf-transceiver-module-gpsdo-40m-clock-output
+      - https://www.sdrstore.eu/software-defined-radio/instruments/plutosdr/70mhz-6ghz-2r2t-b210-mini-ad9361-sdr-development-board-libresdr-uhd-pluto-oai-support/
+      - https://www.nuand.com/product/bladerf-xa4/
+  12.
+    - **Problem:** Several communities could not be checked (Reddit, EEVblog, BATC, Nuand forum, Qualcomm forum).
+    - **Proposed fix:** Use the Discourse JSON APIs, which return clean data where HTML scraping fails; both worked in this research. Check the blocked sites by hand in a normal browser once a month.
+    - **Steps:**
+      - `curl -s 'https://discourse.myriadrf.org/search.json?q=limesdr%20micro%20order:latest'` and `curl -s 'https://forum.radxa.com/search.json?q=q6a%20pcie'`. Read whole threads with `/t/<id>.json`. Stay within rate limits; MyriadRF throttles bursts.
+      - Check by hand: r/RTLSDR and r/sdr (search 'LimeSDR Micro', 'bladeRF Pi 5', 'B210 clone'), EEVblog RF section, BATC forum QO-100 threads, and the Nuand forum after logging in.
+      - Post your own Q6A acceptance results (fixes 1-3) on MyriadRF Discourse and the Radxa forum.
+    - **How to verify:** A monthly search log with dates and links, and replies to your posts.
+    - **Confidence:** high
+    - **Sources:**
+      - https://discourse.myriadrf.org/t/limesdr-micro-m-2-power-consumption/13304
+      - https://forum.radxa.com/t/radxa-q6a-4s1p-powering/31611
+- **Residual risks:**
+  - Delivery date is outside your control. Crowd Supply says 'ships Dec 15, 2026', and there has been no project update since Jun 17. Your acceptance test will probably be the first independent data on this board.
+  - The 32-entry RX ring patch is untested. If the VSPA firmware assumes 16 entries, only realtime scheduling remains, which leaves about 1.07 ms of buffering at 61.44 Msps. Full-rate streaming would then depend on worst-case latency staying low.
+  - No one has publicly built or run la9310_limesdr on Linux 7.0 or the QCS6490. A Lime firmware or HIF change can also break a mixed setup, so driver, library and firmware must stay on one commit.
+  - Forcing Gen2 because of extender signal integrity rules out 2 x 61.44 Msps, since the card always DMAs 16-bit samples. Only one full-rate channel would then be possible.
+  - The 12 V header accepts 4.5-16 V (Radxa staff, Oct 15, 2026). A 4S Li-ion pack reaches 16.8 V when full, so it must be regulated before the board. That belongs to the power component, but a brown-out or overvoltage would also take out the SDR.
+  - HDMI is a 2-lane DisplayPort feeding the RA620 bridge, on the same combo PHY as USB3 (vendor device tree mdss_dp data-lanes <0 1>). Whether a high-resolution sunlight-readable HDMI panel works on 2 lanes needs checking by the display component. There was also a Linux 7.0 HDMI regression thread on the Radxa forum (Aug 2026).
+  - Global iommu.passthrough=1 may break the NPU (FastRPC), video or display. Use only the per-group identity switch.
+  - The upstream device tree maps the endpoint to SID 0x1c81, while Radxa's maps everything to 0x1c80. Distributions using mainline device trees, such as Armbian, may behave differently from Radxa's image.
+  - Not verified: the AliExpress M.2 extender prices and lengths, Prom.ua prices for individual listings, the UAH/USD rate, and Ukrainian import VAT or duty.
+  - Micro noise figure and power figures are still Lime's statements or chip-level data until you measure them. The Friis margin covers the noise figure risk only if an LNA with at least 18 dB gain sits at the antenna.
+
+## Адверсаріальна перевірка (`verify`)
+
 _Агент цього етапу ще працює (run `wf_e64436d6-ae7`)._
 

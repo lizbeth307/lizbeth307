@@ -839,5 +839,410 @@ _Run `wf_30889068-251`_
 
 ## Власні виправлення (`fixes`)
 
+_Run `wf_30889068-251`_
+
+- **Component:** RF front-end (LNAs, filters, bias tees, LNB power, antenna sharing, protection)
+- **Fixes:**
+  1.
+    - **Problem:** RTL-SDR Blog Wideband LNA V2 (QPL9547) has no published board-level gain curve, P1dB or OIP3, and no field reports. Its unfiltered predecessor overloaded an RTL-SDR at a strong-FM SatNOGS site.
+    - **Proposed fix:** Treat the V2 as a linear gain block and measure it once. Chip data: OP1dB about +22 dBm (distributor 22.7 dBm), P3dB about 1 dB higher (Qorvo forum), OIP3 +39 dBm and 19.5 dB gain at 1.9 GHz. So the LNA is rarely the part that overloads; the SDR behind it is.
+  
+  Fixes:
+  - Put the LNA at the antenna and a band filter at the SDR end. The filter must pass DC, because the LNA is powered back through the coax.
+  - Set the SDR gain by measurement instead of by habit.
+  - Drop the LNA altogether on 145.8 MHz ISS SSTV, which is a strong signal.
+  - If the pad test shows intermodulation, add a 3-6 dB SMA attenuator at the SDR input. After about 20 dB of LNA gain this costs very little noise figure.
+  - At sites with strong FM (under ~2 km from a transmitter), move the FM bandstop in front of the LNA. Read from the datasheet plot, the Flamingo+ loses about 0.3 dB at 145 MHz and about 1 dB at 137 MHz. At VHF, sky and man-made noise dominate, so that loss is negligible.
+    - **Steps:**
+      - Measure the unit on the bench. Read the supply current with a multimeter in series with the bias line, or a USB power meter on the dongle with bias on and off.
+  Then measure S21 at 145.8, 435, 740, 1700 and 2250 MHz. Use a LiteVNA 64 (50 kHz-6.3 GHz, EUR 144.59 ex-VAT at eleshop.eu; also listed by the Ukrainian shop selteq.com.ua, price not checked) or a NanoVNA-H (up to 1.5 GHz). Put a 20 dB pad on the LNA input. Keep the gain table.
+      - Survey each site with the antenna connected straight to the RTL-SDR (no LNA) at 0 dB gain:
+    rtl_power -f 24M:1760M:200k -g 0 -i 10 -e 5m site.csv
+    heatmap.py site.csv site.png
+  List the FM (87.5-108), DVB-T2 (470-790), GSM/LTE 900, LTE 1800 and 2100 peaks.
+      - Chain for 145.8 MHz: Yagi -> LNA V2 at the feed -> coax -> Flamingo+ FM (passes DC) -> RTL-SDR, with the RTL bias tee switched on.
+  Chain for 435 MHz: Yagi -> LNA V2 -> coax -> 10 MHz-6 GHz bias tee (RF+DC port toward the LNA) -> 70 cm filter (see fix 10) -> SDR. A SAW or cavity filter does not pass DC, so inject the LNA power on the antenna side of it.
+      - Set the gain. With the antenna connected, raise SDR gain until the noise floor in an empty part of the band sits 6-10 dB above the floor measured with the SDR input terminated in 50 Ohm. Stop there, and keep every carrier below about -10 dBFS.
+      - Run the pad test, which is the decisive overload check. Insert a 3 dB SMA pad in front of the SDR.
+  - Real signals and the noise floor drop by about 3 dB.
+  - Spurs that drop by 6-9 dB are intermodulation products made inside the receiver. Lower the gain, keep the pad, or add a filter.
+      - If spurs remain at a strong-FM site, move the FM filter in front of the LNA and repeat the pad test.
+    - **How to verify:** Pass criteria:
+  - The 3 dB pad test shows no spurs that drop by more than 3 dB in 136-146 MHz and 430-440 MHz.
+  - On a CubeSat or ISS pass through at least 5 m of coax, SatDump or SDR++ SNR with the LNA is equal to or better than without it.
+  - The measured gain table is the reference for every later gain-staging decision.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-wideband-lna-bias-tee-powered/
+      - https://www.qorvo.com/products/p/QPL9547
+      - https://forum.qorvo.com/t/qpl9547-saturated-output-power/22133
+      - https://www.rfmw.com/ProductDetail/QPL9547-Qorvo/675339
+      - https://community.libre.space/t/fm-bandstop-not-working/13752
+      - https://www.nooelec.com/store/downloads/dl/file/id/96/product/320/flamingo_fm_filter_datasheet_revision_1.pdf
+      - https://eleshop.eu/litevna.html
+      - https://selteq.com.ua/en/litevna-64/
+  2.
+    - **Problem:** LimeSDR Micro M.2 (ships Dec 2026): no bias tee, unknown DC tolerance of the bare MHF4 RX ports, no measured performance below 300 MHz, and earlier Lime boards were damaged by overload.
+    - **Proposed fix:** Assume the RX ports must never see DC.
+  
+  The RX switches are SKY13414-485LF (Lime rfcontrol page). Skyworks' wording for this switch family is "No external blocking capacitors are required on the RF paths unless VDC is externally applied". The Micro's schematic is not public, so whether DC blocks are fitted is unknown.
+  
+  Feed every powered device through a bias tee whose RF-only port faces the Lime. That one part both powers the LNA and blocks DC from the Lime. Power the bias tees from a GPIO-switched, current-limited 5 V switch: TI TPS2553 (2.5-6.5 V input, 75-1700 mA adjustable limit, active-high EN, FAULT output, SOT-23-6).
+  
+  Add overload protection, because both LNAs can push the Lime past its +10 dBm maximum safe input:
+  - SAWbird+ GOES: OP1dB +20 dBm, 38 dB gain.
+  - QPL9547: OP1dB about +22 dBm.
+  - Example: a 5 W 70 cm handheld 5 m away puts about -2 dBm into the LNA (free-space loss 39 dB), which drives the LNA into saturation.
+  - Protection: a Mini-Circuits VLM-33-S+ limiter (30-3000 MHz, 0.23 dB typical loss, ~+11.5 dBm typical output when limiting, 2 W maximum input) plus a 3 dB pad. On L-band, a 6 dB pad after the SAWbird alone is enough.
+  
+  Keep 137 and 145.8 MHz on the RTL-SDR until the A/B test below. Lime staff said on 13 Oct 2026 that 0.3 and 0.7 GHz are the edges of the matching-optimised ranges and that "there are no gaps in frequency coverage".
+    - **Steps:**
+      - With the Lime unpowered, measure DC resistance from the centre pin of each RX port to ground through the MHF4-SMA pigtail, and record it.
+  - Open circuit: a switch port or series capacitor.
+  - About 0 Ohm: a balun or inductor to ground.
+  Either way, never apply DC to the port.
+      - Build one bias module per Lime RX port:
+    5 V rail -> TPS2553 (limit about 250 mA, set R_ILIM with TI's calculator) -> 10 uH + 10 uF filter -> DC port of a 10 MHz-6 GHz SMA bias tee.
+  - EN goes to a Q6A 40-pin header GPIO (3.3 V logic).
+  - FAULT goes to a GPIO input.
+  - The bias tee's RF port goes to the Lime through a MHF4L-SMA pigtail.
+      - Power the LNA and confirm with a multimeter that the SMA on the Lime side reads 0 V DC while the LNA side reads about 5 V.
+      - Fit the VLM-33-S+ plus a 3 dB pad on the UHF chain, and a 6 dB pad after the SAWbird+ GOES on the L-band chain. This is mandatory at hamfests, near repeaters, or on rooftops with other transmitters.
+      - A/B test below 300 MHz: antenna -> LNA (at least 20 dB gain) -> 2-way splitter -> RTL-SDR and Lime LNAL. Record the same Meteor LRPT pass at 137.9 MHz and the same ISS pass at 145.8 MHz on both radios. Compare SatDump SNR and noise floor. Repeat on a 435 MHz CubeSat.
+      - In software, use the LNAL path (0.3-2.2 GHz) for 435 MHz and the 739.5 MHz QO-100 IF, and LNAW (0.7-2.6 GHz) for 1.7 and 2.2 GHz. Under the limesdr-micro LimeSuiteNG branch, confirm the device key and antenna names with:
+    SoapySDRUtil --find
+    SoapySDRUtil --probe
+    - **How to verify:** Pass criteria:
+  - 0 V DC on every Lime RX port with all LNAs powered.
+  - The TPS2553 FAULT line stays high in normal use and asserts when the coax is deliberately shorted.
+  - In the A/B test, Lime SNR at 137/145 MHz is within 1-2 dB of the RTL-SDR. If it is not, VHF stays on the RTL-SDR permanently.
+  - The pad test on the Lime shows no intermodulation.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://discourse.myriadrf.org/t/limesdr-micro-m-2-pcie-frequency-range/13348
+      - https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/rfcontrol.html
+      - https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/overview.html
+      - https://atta.szlcsc.com/upload/public/pdf/source/20180126/C150901_15169562034341309383.pdf
+      - https://www.ti.com/product/TPS2553
+      - https://www.minicircuits.com/pdfs/VLM-33-S+.pdf
+      - https://www.nooelec.com/store/sawbird-plus-goes.html
+  3.
+    - **Problem:** Unknown rejection of LTE Band 3 (uplink 1710-1785 MHz, downlink 1805-1880 MHz) by the SAWbird(+) GOES, which matters for HRPT next to dense Ukrainian LTE 1800.
+    - **Proposed fix:** Nooelec's own datasheet (Rev 1, 2022-06-24) answers most of this. The gain plot below is read by eye, about +/-3 dB.
+  
+  SAWbird+ GOES specs: LNA -> SAW -> LNA, 38 dB gain at 1694 MHz, 70 MHz 3 dB bandwidth, 80 MHz 10 dB bandwidth, NF 1.2 dB (Tn 100-120 K), 140 mA, OP1dB +20 dBm, maximum input 0 dBm.
+  
+  Gain read from the plot:
+  - About 37 dB from 1650 to 1720 MHz.
+  - 28 dB at 1730 MHz, 18 dB at 1740, 10 dB at 1750, 0 dB at 1760, -10 dB at 1780-1795.
+  - About -5 dB flat from 1.8 to 2.6 GHz.
+  
+  What that means for LTE:
+  - LTE 1800 downlink and 2100 are about 42-45 dB below the HRPT gain, so they reach the SDR about 5 dB weaker than at the antenna. A typical -25 to -35 dBm near a mast is harmless at moderate SDR gain.
+  - The real threat is LTE Band 3 uplink from nearby phones. 1710-1730 MHz gets full gain and cannot be filtered: it is only 2 MHz above the FY-3 band edge.
+  - Worked example: a phone at +23 dBm 3 m away gives about -24 dBm at the antenna and about +14 dBm out of the SAWbird+, which is above the Lime's +10 dBm maximum. Hence the 6 dB pad.
+  
+  Fixes:
+  1. A 6 dB pad after the SAWbird. With 38 dB in front of it, the noise figure cost is under 0.1 K.
+  2. Low SDR gain.
+  3. Pick sites and passes away from crowds and masts.
+  4. Only if the survey shows a problem, a second filter after the SAWbird, where its loss costs nothing:
+     - DIY interdigital or combline filter, 3-4 resonators, passband about 1695-1712 MHz.
+     - Or a commercial cavity: Anatech AB1690B865 (1674-1706 MHz, insertion loss <2.5 dB, >45 dB at 1730-2150 MHz). It is 164x84x57 mm, the price is unlisted, and its 1706 MHz upper edge clips FY-3 at 1704.5 MHz, so ask for a custom 1690-1712 MHz version.
+    - **Steps:**
+      - Phase 1 can run before the Lime arrives, because the RTL-SDR V4/V4L reaches 1.766 GHz. Chain: helix -> SAWbird+ GOES at the feed (140 mA from the dongle's 4.5 V / 180 mA bias tee) -> RTL-SDR at about 20 dB gain.
+  Point the helix at the horizon toward the nearest mast, then at zenith:
+    rtl_power -f 1650M:1766M:100k -g 20 -i 5 -e 10m lte.csv
+  Later, repeat to 1.9 GHz with the Lime (soapy_power; check the flags with --help).
+      - Record 2 s of IQ with the Lime at the planned rate (6-10 Msps) and gain. Check that the peak |IQ| stays below 0.5 of full scale (-6 dBFS) with a short numpy script. Repeat with people using phones nearby.
+      - Pad test: add 3 dB between the SAWbird and the SDR, and check that nothing in 1695-1712 MHz drops by more than 3 dB.
+      - If the downlink or uplink residue clips the ADC at the gain you need, build or buy the second filter. Tune it with a LiteVNA to: insertion loss under 2 dB at 1698-1710 MHz, at least 30 dB at 1750 MHz, and at least 40 dB at 1805 MHz.
+      - Treat 1710-1730 MHz uplink interference as something filtering cannot fix. Record raw IQ and note phone activity. Prefer Meteor (1700 MHz), which is furthest from the LTE edge.
+    - **How to verify:** Pass criteria:
+  - A spectrum survey and IQ peak test showing more than 6 dB of headroom.
+  - The pad test is clean.
+  - An HRPT pass decoded in SatDump at a site within about 500 m of an LTE 1800 mast. Compare SNR with and without the extra filter.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://www.nooelec.com/store/downloads/dl/file/id/108/product/296/sawbird_goes_datasheet_revision_1.pdf
+      - https://www.nooelec.com/store/sawbird-plus-goes.html
+      - https://anatechelectronics.com/1690-mhz-cavity-band-pass-filter.html
+      - https://itu.int/dms_pub/itu-r/opb/rep/R-REP-SA.2329-2014-PDF-E.pdf
+      - https://community.libre.space/t/fm-bandstop-not-working/13752
+  4.
+    - **Problem:** No documented no-dish (helix-only) Meteor or Metop HRPT success that names its front end, so the 11-turn helix plus SAWbird HRPT link is unproven.
+    - **Proposed fix:** Treat this as a link to engineer and verify, not to hope for.
+  
+  Nearest evidence:
+  - A hand-tracked 1.7 GHz helical feed in a 3D-printed cone, with a Nooelec GOES preamp and an RTL-SDR, gave "nice Meteor images" (libre.space).
+  - An 11-turn RHCP helix with no dish decoded Elektro-L3 LRIT at 1.5 dB SNR, against 5-6 dB on a 70 cm dish.
+  - saveitforparts got NOAA HRPT hand-tracked with an RTL-SDR and SatDump.
+  
+  Gain comparison:
+  - A realistic 11-turn helix gives about 13-15 dBic. The Kraus formula says 16 dBi but overestimates.
+  - A 60 cm dish gives about 18.0 dBi and a 90 cm dish about 21.5 dBi (55% efficiency), so the helix is 3-8 dB short of typical HRPT dish setups.
+  - The helix's half-power beamwidth is about 31 degrees, so hand pointing with the BNO085 is easy.
+  
+  Recover the margin with:
+  - The LNA right at the feed, with no coax before it.
+  - High passes. Slant range for an 820 km orbit is about 820 km at zenith, 1430 km at 30 degrees elevation and 2800 km at 5 degrees. Path loss at 1.7 GHz is 155.3, 160.3 and 166.4 dB. That is up to about 11 dB, partly offset by the satellites' shaped antennas.
+  - Meteor HRPT first (665.4 kbps, about 3 MHz wide, works on an RTL-SDR at 2.4 Msps).
+  - Then Metop (4.5 MHz) and FY-3 on the Lime.
+  - Optionally a cone reflector, the 'helicone' design.
+    - **Steps:**
+      - Screw the SAWbird+ GOES straight onto the helix SMA with a right-angle adapter. Add a weather cover. Use one short cable, 1-2 m of low-loss coax, to the SDR.
+      - Y-factor check of the antenna and LNA. Measure power in about 1 MHz of empty spectrum near 1690 MHz, first with the helix at clear zenith sky and then pointed at the ground.
+  Expect Y of about 3.5-4.5 dB: roughly 290 K + 110 K against 40 K + 110 K, using Tn 100-120 K from the datasheet.
+  If Y is under 2 dB, look for coax before the LNA, a bad match, or interference.
+      - Sun-noise check: point at the Sun and expect about 0.5-1 dB rise. The calculation: Ae is about 0.06 m^2 at 14 dBic, and about 100 sfu gives a ~22 K rise against a system temperature of ~150 K.
+  Use the Sun peak to calibrate the BNO085 azimuth and elevation offsets, which also removes magnetic declination and mounting error.
+      - Record raw IQ on every pass: RTL at 2.4 Msps for Meteor, Lime at 6-8 Msps for Metop and FY-3. Decode offline in SatDump with the Meteor HRPT, Metop AHRPT and FY-3 pipelines.
+      - Start with passes above 40 degrees maximum elevation. Log SNR against elevation and keep pointing within +/-10 degrees.
+      - If SNR at 30 degrees is still marginal, add a cone or wider ground-plane reflector, or a longer helix (15-20 turns), or hand the problem to the antenna component.
+    - **How to verify:** Pass criteria:
+  - Y-factor of at least 3 dB.
+  - A repeatable Sun-noise peak.
+  - A Meteor HRPT pass decoded in SatDump with most scan lines valid on a pass above 40 degrees.
+  - The SNR-versus-elevation log shows the minimum usable elevation.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309
+      - https://www.rtl-sdr.com/receiving-elektro-l3-lrit-weather-satellite-images-with-an-11-turn-helix-antenna-and-no-dish/
+      - https://www.rtl-sdr.com/saveitforparts-testing-a-3d-printable-satellite-antenna-for-noaa-meteor-and-other-polar-orbiting-l-band-satellites/
+      - https://www.nooelec.com/store/downloads/dl/file/id/108/product/296/sawbird_goes_datasheet_revision_1.pdf
+      - https://sigidwiki.com/wiki/METEOR-M_High_Resolution_Picture_Transmission_(HRPT)
+  5.
+    - **Problem:** Bullseye LNB current draw is unpublished. Cheap TV power inserters (rated 950-2150 MHz) may not pass the 739.5 MHz QO-100 IF. A raw 4S pack (12.0-16.8 V) can flip the LNB's polarisation.
+    - **Proposed fix:** Typical LNB datasheets switch to vertical at 11.5-14 V and horizontal at 16-19 V, and draw under 200 mA (Fagor; Inverto lists about 110 mA). A 4S pack therefore spans both states: at full charge, 16.8 V selects horizontal. So use a regulated, current-limited, switchable supply.
+  
+  Option A, cleanest:
+  - TI TPS65233 LNB regulator: active part, 4.5-20 V input, 13.4/18.2 V output selected over I2C, resistor-set current limit up to 1 A, 22 kHz tone, fault flags.
+  - One part gives polarisation select, current limit and fault reporting on the Q6A I2C bus.
+  - Evaluation board: TPS65233EVM.
+  
+  Option B, hobby modules:
+  - A boost module from the 5 V rail (for example MT3608-class, price not verified) trimmed to 13.4 V.
+  - For 18.2 V, a second feedback resistor switched in by a GPIO-driven N-MOSFET.
+  - A 10 uH + 100 uF + 100 nF filter plus a ferrite to suppress switching noise.
+  - A 300 mA polyfuse.
+  - An INA219 on I2C to log current.
+  
+  Inject through an SMA bias tee rated 10 MHz-6 GHz (covers 740 MHz by spec) rather than an F-type TV inserter, and measure whichever injector you use.
+    - **Steps:**
+      - Measure the Bullseye current: bench supply at 13.0 V -> mA meter -> bias tee DC port -> LNB, then repeat at 18 V. Note the start-up surge.
+      - Set the current limit to 1.5-2x the measured value (probably 250-300 mA).
+      - Measure the injector with a NanoVNA, DC port unpowered. Target: S21 loss of 0.5 dB or less and S11 of -10 dB or better at 730-750 MHz. Reject any TV inserter that fails.
+      - Check the regulation: supply the regulator from 12.0 V and from 16.8 V (a full 4S pack). The LNB voltage must stay at 13.4 +/-0.2 V at full load, with ripple under 20 mV p-p measured on an oscilloscope or with an AC voltmeter.
+      - Polarity check: on the QO-100 narrowband beacon, which is vertical, compare beacon SNR at 13.4 V and 18.2 V. It should drop markedly at 18 V.
+      - If the 50-66 dB LNB gain pushes the RTL-SDR into intermodulation (3 dB pad test), add a 6-10 dB pad at the SDR.
+    - **How to verify:** Pass criteria:
+  - A logged LNB current figure.
+  - Regulator output steady across the whole battery voltage range.
+  - Injector loss measured at 740 MHz.
+  - Beacon SNR changes as expected when switching between 13.4 and 18.2 V.
+  - The current limit trips cleanly on a deliberate coax short.
+    - **Confidence:** high
+    - **Sources:**
+      - https://www.ti.com/product/TPS65233
+      - https://fagorelectronica.com/site/assets/files/15826/lnb-18.pdf
+      - https://www.inverto.tv/download/file/59560f47059b9-1498812231.pdf
+      - https://www.rtl-sdr.com/the-othernet-bullseye-tcxo-lnb-for-qo-100-reception/
+      - https://m0aws.co.uk/?p=1811
+      - https://www.passion-radio.com/satellite-qo-100/bias-tee-rf-power-supply-module-for-lnb-qo100-and-lna-head-1267.html
+  6.
+    - **Problem:** AliExpress HMC241 SP4T switch boards are unmeasured: genuine chip or clone, logic level, isolation, and whether DC-block capacitors are fitted.
+    - **Proposed fix:** First choice: skip the switch. A handheld uses one antenna per pass, and three ports are available at once (RTL-SDR + Lime RX1 + Lime RX2), so antennas can simply be swapped by hand.
+  
+  If you want switching anyway, qualify one board on the bench before building it in.
+  
+  Known datasheet facts:
+  - Analog Devices: DC-blocking capacitors are required on RFC and RF1-4, so DC must never pass through the switch.
+  - The HMC241QS16 predecessor: control low 0 to +0.8 V, high +2.0 to +5.0 V at about 70 uA, supply +5 V +/-10%.
+  
+  The Q6A 40-pin header GPIOs pass through UM3204H/UM3304 1.8-to-3.3 V auto-direction translators (schematic v1.21). That gives 3.3 V logic, which meets the 2.0 V high threshold. These translators drive weakly, so do not add strong pull-ups or pull-downs.
+  
+  Always mount the switch after the LNAs and inject LNA power on the antenna side of it.
+    - **Steps:**
+      - Check the board visually: chip marking, 5 V supply input, and series capacitors on all five RF ports.
+      - With the board unpowered, measure resistance RFx to RFC and RFx to ground with a multimeter. Any DC path means the board needs inline DC blocks.
+      - Power it at 5 V and drive A/B from the header. Find the lines with gpioinfo, then (libgpiod v2 on Ubuntu 24.04):
+    gpioset -c gpiochipN -z <lineA>=1 <lineB>=0
+  Confirm that each code selects the expected port.
+      - RF test with a wideband noise source (price not verified) into RF1 and RFC into the SDR. Sweep 100 MHz-1.76 GHz on the RTL-SDR and up to 2.3 GHz on the Lime.
+  - Insertion loss: compare against a through-barrel.
+  - Isolation: P(RF1 selected) - P(RF2 selected), port by port.
+      - Accept the board only if insertion loss is 1.5 dB or less, and isolation is at least 40 dB below 1 GHz and at least 30 dB at 1.7-2.3 GHz.
+    - **How to verify:** A measured insertion-loss and isolation table.
+  
+  On air: a strong FM or DVB-T signal on an unselected antenna must not appear above the noise floor on the selected path.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://www.analog.com/en/products/HMC241AQS16.html
+      - https://cdn.components.ru/media/PDF/1445148.pdf
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+  7.
+    - **Problem:** Unknown whether the RTL-SDR Blog FM bandstop passes 170-180 mA, and whether the V4/V4L 4.5 V / 180 mA bias tee runs a SAWbird+ reliably in a warm, closed case.
+    - **Proposed fix:** Datasheets show the margins are thin. The SAWbird+ NOAA draws 170 mA over bias tee and 175 mA over USB. The SAWbird+ GOES draws 140 mA (120-160). The V4 bias tee is rated 180 mA continuous, the V4L article gives no current figure, and its LDO is pin-compatible with the LP5907. The RTL-SDR Blog FM filter is "safe to 80 mA, possibly 200 mA".
+  
+  Redesign the chains so the question no longer matters:
+  (a) 137 MHz chain: delete the FM filter. The SAWbird+ NOAA plot already shows about 65 dB of rejection across 88-108 MHz (about -25 dB gain against +41 dB). Power it from the internal GPIO-switched 5 V (TPS2553) through a bias tee placed at the RTL input, with the dongle's bias tee off. The bias tee's capacitor also keeps DC away from the dongle input, which avoids the ESD-diode trip that Nooelec warns about for externally powered LNAs.
+  (b) 145.8 MHz chain: use the FM filter between the LNA V2 and the dongle only after measuring the LNA current. At 80 mA or less either filter works; above that, use the Flamingo+.
+  (c) Any 140-180 mA load that still runs from the dongle's bias tee must pass a soak test first.
+    - **Steps:**
+      - Measure the current of each LNA: bench 5 V -> mA meter -> bias tee -> LNA.
+      - Load-test the FM filter: 5.0 V -> filter -> 27 Ohm / 1 W resistor (about 185 mA) for 60 minutes. Log the DC drop across the filter (should stay under 50 mV) and the case temperature.
+      - Soak-test the dongle: V4 or V4L with bias on plus the LNA, inside the closed case at the worst-case internal temperature (about 45-50 C) for 2 hours. Log the LNA supply voltage with a multimeter in min/max mode and the dongle current with a USB power meter. Any dropout means switching to the external supply.
+      - Set the bias explicitly in every application, because a SatNOGS user (May 2026) found the bias tee switched off when an observation started:
+  - SDR++: 'Bias-T' checkbox.
+  - SatDump: the bias option in the RTL source settings.
+  - SoapyRTLSDR: biastee=true.
+  - Command line: rtl_biast -b 1.
+  The hardware GPIO supply avoids this software dependence entirely.
+    - **How to verify:** Pass criteria:
+  - The logged voltage at the LNA never falls below 4.3 V during the 2-hour soak.
+  - The filter's DC drop is stable.
+  - The SAWbird LED stays on.
+  - The noise-floor rise with the LNA powered stays constant through the soak.
+    - **Confidence:** high
+    - **Sources:**
+      - https://www.nooelec.com/store/downloads/dl/file/id/112/product/301/sawbird_noaa_datasheet_revision_1.pdf
+      - https://www.nooelec.com/store/downloads/dl/file/id/108/product/296/sawbird_goes_datasheet_revision_1.pdf
+      - https://www.rtl-sdr.com/wp-content/uploads/2024/12/RTLSDR_V4_Datasheet_V_1_0.pdf
+      - https://www.rtl-sdr.com/rtl-sdr-com-broadcast-fm-band-stop-filter-88-108-mhz-reject-now-for-sale/
+      - https://www.rtl-sdr.com/rtl-sdr-blog-v4l-lite-now-available-for-purchase/
+      - https://community.libre.space/t/v4-rtl-sdr-bias-tee-issue/14699
+      - https://www.nooelec.com/store/sawbird-plus-noaa.html
+  8.
+    - **Problem:** No data on the Dragon Q6A's per-port USB 2.0 current limit, or on RF self-noise from the Q6A (Wi-Fi/BT, fan, HDMI, PCIe, UFS) between 137 MHz and 2.2 GHz.
+    - **Proposed fix:** Answered from the Radxa schematic v1.21 (dl.radxa.com).
+  
+  USB data:
+  - The three USB 2.0 Type-A ports sit behind a Terminus FE1.1S 4-port USB 2.0 hub (U23).
+  - The hub's 4th port feeds the Quectel FCU760K Wi-Fi 6 / BT 5.4 USB module (U21), whose power is switched by WIFI_PWR_EN.
+  - All of these share one 480 Mb/s uplink. An RTL-SDR at 2.4 Msps needs only about 38 Mb/s.
+  
+  USB power:
+  - VBUS comes from two WS4612 current-limit switches, each with Rset = 3.24 kOhm. The schematic note "Ilim (A)=6800/Rset (ohm)" gives about 2.1 A per switch.
+  - U33 feeds VDD_USB_VBUSTYPEA (the J2 dual USB 2.0 stack). U35 feeds VDD_FUSB (the USB 2.0 port under the USB 3 port in J5).
+  - So there is no per-port 500 mA trip. Dongle (270 mA) plus LNA (170 mA) is about 0.45 A, well inside the limit.
+  
+  Noise to test for (hypotheses):
+  - PCIe 100 MHz reference clock: the 17th harmonic is 1700.0 MHz, spread to 1691.5-1700 MHz with -0.5% spread-spectrum clocking. That lands right on Meteor HRPT, and the Lime sits on that PCIe link. The 22nd and 23rd harmonics fall at 2200 and 2300 MHz.
+  - HDMI 1080p60 pixel clock (148.5 MHz): x5 = 742.5 MHz, next to the 739.5-740 MHz QO-100 IF; x15 = 2227.5 MHz, inside S-band.
+  - The Lime's 30.72 MHz VCTCXO: x24 = 737.28 MHz.
+  - 2.4 GHz Wi-Fi and Bluetooth next to S-band.
+  
+  Mitigation:
+  - Plug the RTL-SDR into the lower USB 2.0 port of J5, alone on U35, using a 20-30 cm shielded extension with clip-on ferrites.
+  - Disable Wi-Fi/BT during L-band and S-band captures.
+  - Shield the M.2 extension and Lime with copper tape bonded to ground.
+  - Choose an HDMI mode whose harmonics miss the bands.
+    - **Steps:**
+      - Run lsusb -t and confirm the RTL-SDR sits under the FE1.1s hub (usually 1a40:0101). Put a USB power meter in line and read the current with bias off and on.
+      - Take a terminated baseline: 50 Ohm terminators on the RTL-SDR and both Lime ports, then
+    rtl_power -f 24M:1766M:100k -g 40 -i 10 -e 2m base.csv
+  Do the same with a Lime sweep up to 2.3 GHz.
+      - Toggle one subsystem at a time and re-sweep:
+  - Wi-Fi/BT off: nmcli radio wifi off; rfkill block all. For a hard off: echo 0 | sudo tee /sys/bus/usb/devices/<port>/authorized
+  - HDMI off, then 1080p60 / 1440p60 / 4K30.
+  - Fan off, then on.
+  - fio sequential write to the UFS.
+  - NPU and GPU load.
+  - Lime streaming (PCIe active).
+      - Look closely at 1691-1701 MHz (PCIe), 739-743 MHz (HDMI and VCTCXO) and 2200-2290 MHz with the Lime at 10 Msps on a 50 Ohm terminator.
+      - Mitigate what shows up, re-test, and record which configuration is clean for each band (for example: no Wi-Fi during HRPT and S-band; HDMI mode X while on QO-100).
+    - **How to verify:** Pass criteria:
+  - A diff of each spectrum against the terminated baseline shows no spur more than 3 dB above it in 136-138, 145-146, 435-438, 739-741, 1698-1710 and 2200-2290 MHz in the planned capture configuration.
+  - The USB meter shows stable VBUS (at least 4.75 V) with the LNA powered.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://docs.radxa.com/en/dragon/q6a/download
+      - https://www.quectel.com/product/wi-fi-bluetooth-fcu760k/
+      - https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/overview.html
+  9.
+    - **Problem:** The RTL-SDR Blog V4L (R828S, $37.95) has no switchable FM notch, and its input is diplexed rather than triplexed. There are no field reports of it with LNAs or filters.
+    - **Proposed fix:** Accept it and move all FM rejection outside the dongle.
+  
+  137 MHz:
+  - The SAWbird+ NOAA's SAW gives about 65 dB of FM rejection (datasheet plot).
+  - Its 2.6 MHz 3 dB passband (136.2-138.8 MHz) covers 137.1 and 137.9 MHz.
+  - Gain: 41 dB. NF: 1.1 dB. OP1dB: +20 dBm. Maximum input: 0 dBm.
+  
+  145.8 MHz:
+  - Flamingo+ FM: 70 dB typical stopband depth, 0.5 dB typical passband loss (plot: about 0.3 dB at 145 MHz), passes DC.
+  - Optionally a filtered 2 m preamp (fix 10).
+  
+  If a V4 (R828D, triplexer plus notch) is still in stock, it is the better VHF dongle. Otherwise the V4L plus external filters is equivalent at the antenna port.
+    - **Steps:**
+      - Before and after fitting the filter, sweep 80-150 MHz with the antenna connected and compare. FM carriers should fall by at least 50 dB.
+      - Run the 3 dB pad test (fix 1) at 137.9 MHz and 145.8 MHz with the planned gain.
+      - Record a Meteor LRPT pass and an ISS pass. The SatDump SNR and the absence of FM-image spurs in the waterfall confirm the chain.
+    - **How to verify:** Pass criteria:
+  - No FM or FM-image spurs in 136-146 MHz with the pad test passing.
+  - SNR on Meteor LRPT and ISS is comparable to reports from V4 users at similar sites.
+    - **Confidence:** high
+    - **Sources:**
+      - https://www.rtl-sdr.com/rtl-sdr-blog-v4l-lite-now-available-for-purchase/
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-v4l-lite-r828s-rtl2832u-1ppm-tcxo-sma-software-defined-radio-dongle-only/
+      - https://www.nooelec.com/store/downloads/dl/file/id/112/product/301/sawbird_noaa_datasheet_revision_1.pdf
+      - https://www.nooelec.com/store/downloads/dl/file/id/96/product/320/flamingo_fm_filter_datasheet_revision_1.pdf
+  10.
+    - **Problem:** Price, stock and shipping to Ukraine are unverified for the EU filtered 2 m / 70 cm LNAs and the S-band filter. The Spacewalker 434 is still not purchasable.
+    - **Proposed fix:** Prefer a domestic source.
+  
+  VHFDesign: the team's callsigns (US4ICI, US2IDR, UR3IQO, UR7IJM, UR6ISU) carry Ukrainian prefixes, so it is very likely a Ukrainian team. Products:
+  - LNA-70cm-ATF531-SAW: >22 dB, NF <0.4 dB at 432 MHz, OIP3 37 dBm, 3 dB filter bandwidth <20 MHz, +24 dBm maximum input, 12 V / 140 mA over the feeder.
+  - LNA-70cm-EME-SAV541-SAW: >18 dB, NF <0.3 dB, OIP3 33 dBm, 12 V / 40 mA.
+  - LNA 2m ATF531: >26 dB, NF <0.3 dB, filter bandwidth <15 MHz.
+  - N-female connectors as standard, SMA on request.
+  - Prices are behind a login; ask by email.
+  
+  The 12 V LNAs need a 12 V bias tee from a regulated rail. Do not share the 13.4 V LNB rail: the ATF531 maximum is 12 V.
+  
+  Fallback for 70 cm: build a Spacewalker-style LNA. The open schematic SWL434 v1.3 uses 2x QPL9547 and 3x Shoulder HDF434A1-S6 SAW filters. Only the schematic is published, no layout, so you would draw your own PCB.
+  
+  S-band: sysmocom cf2235-kt30 cavity filter.
+  - EUR 65.45 (VAT status unclear).
+  - 2170-2300 MHz, insertion loss 1.0 dB or less, at least 30 dB rejection below 2160 MHz (the 2.1 GHz cellular band).
+  - 124x47x33 mm, 186 g, indoor-rated.
+  - Ships UPS only, once a week.
+  - Mount it after the LNA V2. Move it before the LNA only if UMTS/LTE 2100 overloads the LNA.
+    - **Steps:**
+      - Email admin@vhfdesign.com and ask for: price, SMA option, delivery inside Ukraine (Nova Poshta?), and the measured S21 of the 70 cm SAW unit across 425-445 MHz. Their spec only says the passband is under 20 MHz wide, so 437-438 MHz must be confirmed.
+      - Ask sysmocom whether UPS will deliver to your oblast. If not, ask about a forwarding route through an EU address.
+      - Build a 12 V feed for the VHFDesign LNA: regulated 12.0 V -> polyfuse -> SMA/N bias tee DC port, switched by GPIO through a P-MOSFET.
+      - Measure every received unit with the LiteVNA, plus the 3 dB pad test, before field use.
+    - **How to verify:** Pass criteria:
+  - The measured S21 of the 70 cm unit is flat within 1 dB from 435 to 438 MHz and at least 40 dB down at 470 MHz (DVB-T2).
+  - The S-band filter loses 1 dB or less at 2200-2290 MHz and gives at least 30 dB at 2160 MHz.
+  - A CubeSat pass at 435-438 MHz shows equal or better SNR than the LNA V2 chain, with no DVB-T2 or LTE spurs.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://community.libre.space/t/rx-only-filtered-lnas-for-vhf-and-uhf-where-to-find/6897
+      - https://www.vhfdesign.com/
+      - https://vhfdesign.com/lnas/lna-eme-atf531-for-2m-and-70cm-bands.html
+      - https://vhfdesign.com/lnas/lna-eme-sav541-for-73cm-and-70cm-bands.html
+      - https://vhfdesign.com/contacts
+      - https://github.com/zodoczi/Spacewalker-LNA
+      - https://www.crowdsupply.com/decent-labs/spacewalker-lna-434-mhz
+      - https://shop.sysmocom.de/S-Band-cavity-filter-2170-2300-MHz/cf2235-kt30
+      - https://www.sysmocom.de/downloads/rf_filter_cf2235-kt30.pdf
+      - https://community.libre.space/t/station-4125-s-band/13718
+- **Residual risks:**
+  - LimeSDR Micro M.2: the Crowd Supply page says shipping 15 Dec 2026 (pre-order; it could slip further). Its RX schematic is not public, so the presence of DC blocks and the real performance below 300 MHz stay unknown until the board is in hand. Until then, run phase 1 (VHF, UHF and Meteor HRPT) on the RTL-SDR alone.
+  - LTE Band 3 uplink at 1710-1730 MHz cannot be filtered. It sits only 2 MHz above the FY-3 band edge and inside the SAWbird passband. Phones within ~10 m can desensitise or overload the HRPT chain; the 6 dB pad and limiter only protect the hardware.
+  - SAWbird rejection figures were read by eye from Nooelec's Rev 1 plots (about +/-3 dB). Unit-to-unit spread is unknown.
+  - Helix-only HRPT link margin is still unproven for Meteor, Metop and FY-3. If high passes are marginal, a reflector or a larger antenna will be needed (covered by the antenna component).
+  - The board-level P1dB and gain curve of the QPL9547 LNA V2 remain unmeasured; the VNA gives small-signal gain only.
+  - PCIe reference-clock, HDMI and VCTCXO spur predictions are hypotheses until the terminated-input audit is run on the real hardware.
+  - Bullseye LNB current is unknown until measured. The design assumes under 300 mA, based on generic LNB datasheets.
+  - The V4L bias-tee current rating appears only on a third-party listing (180 mA), not on the official V4L page.
+  - Prices not verified: VHFDesign LNAs, Anatech AB1690B865, TPS65233/EVM, MT3608 modules, VLM-33-S+, DC blocks (a third-party Nooelec DC-block listing at $91.99 looks marked up), noise sources and HMC241 boards. Shipping to Ukraine also not verified for Nooelec, rtl-sdr.com and sysmocom (UPS only).
+  - The Q6A 40-pin header GPIOs go through auto-direction level translators. Heavy loads, or strong pull-ups/pull-downs on those lines, can misbehave, so buffer any load that needs current.
+  - Hamfests and nearby transmitters: limiters cap the SDR input at about +8 to +12 dBm, but direct coupling from a co-located transmitter can still exceed ratings. Keep receive-only gear away from active transmitters.
+
+## Адверсаріальна перевірка (`verify`)
+
 _Агент цього етапу ще працює (run `wf_30889068-251`)._
 
