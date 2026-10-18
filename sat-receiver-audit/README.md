@@ -13,6 +13,7 @@
 | [2 mm al mid plate copper clad fr4 rf bay](components/2_mm_al_mid_plate_copper_clad_fr4_rf_bay.md) | · research · forums · fixes ✅ verify | `—` |
 | [Adafruit bno085 4754 rp2040 zero metal p](components/adafruit_bno085_4754_rp2040_zero_metal_p.md) | · research · forums · fixes ✅ verify | `—` |
 | [Adafruit ch334f mtt hub 5997](components/adafruit_ch334f_mtt_hub_5997.md) | · research · forums · fixes ✅ verify | `—` |
+| [Adafruit ina228 5832](components/adafruit_ina228_5832.md) | · research · forums · fixes ✅ verify | `—` |
 | [Adafruit mcp23017 5346 0x20 outputs 0x22](components/adafruit_mcp23017_5346_0x20_outputs_0x22.md) | · research · forums · fixes ✅ verify | `—` |
 | [Airspy hf discovery](components/airspy_hf_discovery.md) | · research · forums · fixes ✅ verify | `—` |
 | [Allnet 64 gb microsd adafruit 5212 reade](components/allnet_64_gb_microsd_adafruit_5212_reade.md) | · research · forums · fixes ✅ verify | `—` |
@@ -63,6 +64,7 @@
 | [Targets link budgets](components/targets_link_budgets.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Tca9517 buffer 74lvc1g17 2n7002 ao3400 f](components/tca9517_buffer_74lvc1g17_2n7002_ao3400_f.md) | · research · forums · fixes ✅ verify | `—` |
 | [Tinplate hf can lc mix 31 on vbus](components/tinplate_hf_can_lc_mix_31_on_vbus.md) | · research · forums · fixes ✅ verify | `—` |
+| [Travel tripod 35 cm folded 1 2 m or more](components/travel_tripod_35_cm_folded_1_2_m_or_more.md) | · research · forums · fixes ✅ verify | `—` |
 | [Two stage coax cm choke ft 240 77 ft 240](components/two_stage_coax_cm_choke_ft_240_77_ft_240.md) | · research · forums · fixes ✅ verify | `—` |
 | [Uputronics 440 mhz cubesat filtered prea](components/uputronics_440_mhz_cubesat_filtered_prea.md) | · research · forums · fixes ✅ verify | `—` |
 | [Waveshare lc76g 24370 rtc cr2032 cell](components/waveshare_lc76g_24370_rtc_cr2032_cell.md) | · research · forums · fixes ✅ verify | `—` |
