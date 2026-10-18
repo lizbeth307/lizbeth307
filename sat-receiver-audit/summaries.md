@@ -3227,3 +3227,37 @@ Launching the study requested: drop everything that needs dishes or antennas ten
 
 ---
 
+### 🤖 Зведення #111 — 2026-10-18 01:11:59 UTC
+
+**Зведення (тік, коміт 5d66089).** Нових запусків не було, черга порожня. Готово 11 з 12 компонентів.
+
+- **Ринок екранів:** завершено пошук яскравих комплектів і голих панелей. Wisecoco 7″ 1920×1080 на 2000+ ніт ($132) лишається основним вибором. Це досі єдиний знайдений комплект, де є одночасно ≥2000 ніт, плата HDMI і сенсор, і його можна просто купити. На сторінці тепер вказано «Landscape by Default», отже EDID буде 1920×1080 альбомний і повертати зображення не доведеться.
+- **Два шляхи «понад FHD»** (обидва без готового комплекту):
+  1. **VIEWE 8″ 1200×1920 трансфлективна** ($74,99 + плата UEDX6911 $18).
+     - Повна оптична склейка, відбиття 7%. За розрахунком на сонці контраст близько 6–17:1 при всього 1–4 Вт, а основний вибір дає 7:1 при 6–8 Вт.
+     - Мінуси: на сонці кольори бліді, у приміщенні лише 369 ніт, кут огляду 60°, товару немає в наявності.
+     - Роз'єми не збігаються: у панелі шлейф на 45 контактів, у плати 30/40, а потужності плати замало для підсвітки.
+  2. **Youritech 7″ 1200×1920** (2000 ніт з сенсором in-cell або 1500 ніт). Лише під запит ціни, з їхньою платою HDMI і USB-сенсором.
+- **Відкинуто як надто тьмяне:**
+  - Kingtech 8″ 1200×1920 — 500 ніт;
+  - Wisecoco 7″ 1920×1200 з HDMI — 500 ніт ($69);
+  - Wisecoco 6″ 2560×1440 — 450 ніт;
+  - BOE GV070WUM-L50 — 1000 ніт, без плати;
+  - у Waveshare максимум 800 ніт.
+- **Софт (перевірка):** нові підтвердження з форуму Radxa.
+  - Після оновлення до 7.0 і відкату на 6.18.2-4 зникла звукова карта. Тобто відкат не повертає все як було, тож потрібен «золотий» образ диска, а не просто старе ядро.
+  - CDSP/FastRPC на 7.0.11-5 падає навіть після виправлення memory-region (вересень 2026). Це ще раз підтверджує, що лишатися треба на 6.18.2.
+- **Складні антени (QO-100):** звітів про прийом QO-100 на рупор без тарілки досі не знайдено. У Bullseye гетеродин 9750/10600 МГц.
+- **Дослідження малих антен:** агенти ще читають вхідні файли.
+
+Джерела:
+- [VIEWE 8″ 1200×1920 transflective](https://viewedisplay.com/product/8-inch-1200x1920-transflective-tft-sunlight-readable-and-low-power-high-resolution-touch-display/)
+- [Youritech 7″ 1200×1920 2000 nits in-cell](https://www.youritech.com/products/7-inch-tft-lcd-display-1200x1920-high-brightness-2000nits-mipi-lcd-display-with-in-cell-touch.html)
+- [Youritech 7,02″ 1500 nits](https://www.youritech.com/products/7-02-inch-tft-lcd-display-1200x1920-mipi-high-brightness-1500nits-lcd-module.html)
+- [BOE GV070WUM-L50](https://www.slw-ele.com/gv070wum-l50-1sp0.html)
+- [Wisecoco 7″ 2500 nits HDMI](https://www.wisecocodisplay.com/product/7-inch-1920x1080-high-brightness-2500nits-lcd-panel-with-hdmi-in-board-ips-mipi-interface-tft-lcd-screen/)
+- [Radxa forum: Linux 7.0 no HDMI](https://forum.radxa.com/t/latest-q6a-update-to-linux-7-0-no-hdmi/31288)
+- [Bullseye LNB](https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/)
+
+---
+
