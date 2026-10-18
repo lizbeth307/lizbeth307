@@ -19,7 +19,7 @@
 | [Display](components/display.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_0e70c405-a03` |
 | [Display hmi](components/display_hmi.md) | ✅ research · forums · fixes · verify | `—` |
 | [Gnss imu](components/gnss_imu.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_45d278c2-004` |
-| [Gnss imu location](components/gnss_imu_location.md) | ✅ research · forums · fixes · verify | `—` |
+| [Gnss imu location](components/gnss_imu_location.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Hf receiver](components/hf_receiver.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Lab instruments](components/lab_instruments.md) | ✅ research · forums · fixes · verify | `—` |
 | [Lab ui](components/lab_ui.md) | ✅ research · forums · fixes · verify | `—` |
