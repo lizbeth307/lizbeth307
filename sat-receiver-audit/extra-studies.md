@@ -1838,6 +1838,151 @@
   
   Downloaded evidence is in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pico_dl_ds/pico-ds.pdf, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pico_dl_yd/sch.pdf and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pico_dl_weact/pinout.png.
 
+## searchA:bourns_pec11r_4215f_s0024_x3_c_k_ksc641j (run `wf_071e1025-145`)
+
+- **Part:** HMI set: Bourns PEC11R-4215F-S0024 encoders x3 (2 fitted + 1 spare), C&K KSC641J LFS IP67 tact keys x10, Adafruit 2055 35 mm scrubber knobs x2
+- **Current price usd:** 17.75 (re-checked at DigiKey on 18 Oct 2026: PEC11R-4215F-S0024 is $2.95 at qty 1, 13,117 in stock, so x3 = $8.85; KSC641J LFS is $0.70 at qty 10, 30,086 in stock, so x10 = $7.00; Adafruit 2055 is $0.95 at qty 1-4, in stock, so x2 = $1.90). USD excluding VAT and shipping. For EU delivery, DigiKey adds 19-27% VAT at checkout.
+- **Critical specs:**
+  - ENCODER: 24 PPR with 24 detents, i.e. one full quadrature cycle per detent. The PIO firmware counts 4 per detent, so a 15-PPR/30-detent or 20-PPR part means a firmware change and a different tuning step.
+  - ENCODER: integrated SPST push switch. Both encoder pushes are inputs on the PCA9555/TCA9555. Switch life >= 20,000 cycles; actuation force 610 +/- 306 gf.
+  - ENCODER: rotational life >= 30,000 cycles minimum (PEC11R datasheet REV.D04/26).
+  - ENCODER: contact bounce <= 2.0 ms at 15 RPM, 60 RPM max, working with the 10k/10k/10 nF filter at 3.3 V; contact rating 10 mA @ 5 VDC; insulation resistance 100 Mohm @ 250 VDC.
+  - ENCODER: operating temperature -30 to +70 C or wider (field use in a European winter).
+  - ENCODER: metal 6 mm flatted (D) shaft that takes the Adafruit 2055 snap-on knob; shaft side load >= 2.04 kgf; metal M7x0.75 bushing with nut and washer. The bushing thread (LB) must be long enough for the 2.4-3 mm ASA front wall plus a panel O-ring plus a 0.5 mm washer plus the 2.0 mm nut.
+  - ENCODER: vertical-shaft PCB through-hole, 12 mm body, IP40 body (sealing comes from the panel O-ring or boot), 5 g.
+  - KEYS: IP67-sealed switch, because the case targets IPX4/IP54 and the keys sit under a silicone keypad or boots.
+  - KEYS: operating force about 3.4 N (340 +/- 85 gf), chosen for gloves and to resist accidental presses in a handheld. Lower force counts as worse here.
+  - KEYS: mechanical life >= 300,000 cycles.
+  - KEYS: operating temperature -40 to +85 C.
+  - KEYS: bounce <= 1 ms (C&K spec); debounce is also done in firmware.
+  - KEYS: tactile hard actuator, travel 0.4 +/- 0.2 mm; contact resistance <= 100 mohm; insulation >= 10 Mohm.
+  - KEYS: SMT J-lead, 6.2 mm class footprint on the keypad PCB with 12 mm caps; actuator height 7.7 mm today. The keypad PCB is not laid out yet, so footprint and height can still change in P7.
+  - KEYS: works at low-level switching current at 3.3 V on TCA9555 inputs (contact minimum-current rating).
+  - KNOBS: fit and retention on a 6 mm D/flatted metal shaft; about 35 mm diameter with a finger dimple for one-finger spin tuning in gloves.
+  - ALL: genuine parts from an authorized distributor, Active status, enough stock; buy in the same DigiKey order the stack already places.
+- **Candidates:**
+  1.
+    - **Name:** Bourns PEC11R-4220F-S0024 (same series, 20 mm flatted shaft instead of 15 mm), x3
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 2.69 each at qty 1-4 (DigiKey PEC11R-4220F-S0024-ND, 9,155 in stock, Active), so x3 = 8.07 vs 8.85 (saves 0.78). TME lists it at 0 stock; TME's schema price of 1.29-1.48 USD is UNVERIFIED and it cannot be ordered now.
+    - **Spec comparison:** Same datasheet and model as the current part; only the shaft-length code changes (20 vs 15). 24 PPR / 24 detents (detent code 2): equal. Push momentary switch, 20,000 cycles, 610 +/- 306 gf: equal. Rotational life 30,000 min: equal. Bounce 2 ms at 15 RPM, 60 RPM max: equal. -30 to +70 C: equal. IP40: equal. Metal 6 mm flatted shaft and metal M7x0.75 bushing: equal. DigiKey confirms Vertical orientation, Panel/PCB through-hole, 6 mm flatted end, 30K cycles. Mechanically better: the bushing thread is LB = 7 mm vs 5 mm, and the flat length is F = 10 mm vs 7 mm (datasheet shaft table). With the 2.5-3 mm ASA wall, an O-ring of about 1 mm under the panel, a 0.5 mm washer and the 2.0 mm nut, the stack needs about 6-6.5 mm of thread. The 15 mm part's 5 mm bushing cannot take that; the 20 mm part's 7 mm can.
+    - **Worse in:** Nothing electrical. The shaft stands about 5 mm further proud of the panel: trim the metal shaft to suit the knob, or let the knob sit higher. After trimming 3-4 mm the flat is still >= the 15 mm version's 7 mm. Not a spec loss, but a build step, stated here.
+    - **Compatibility:** Drop-in: same footprint, pinout, filter circuit, PIO firmware and 6 mm D knob. Same DigiKey order as now.
+    - **Risks:** Shaft trim length must be set in CAD once the knob bore depth is measured. The Adafruit 2055 fit on the D-shaft is still to be checked, the same as for the current part.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=PEC11R-4220F-S0024
+    - **Sources:**
+      - https://www.bourns.com/docs/Product-Datasheets/PEC11R.pdf
+      - https://www.digikey.com/en/products/result?keywords=PEC11R-4220F-S0024
+      - https://www.digikey.com/en/products/result?keywords=PEC11R-4215F-S0024
+      - https://www.tme.eu/en/details/pec11r-4220f-s0024/incremental-type-encoders/bourns/
+  2.
+    - **Name:** E-Switch TL3145BF350QJ (IP67 sealed SMT tact, 5.2 mm actuator, 350 gf, silver, J-lead), x10
+    - **Kind:** other_brand
+    - **Price usd:** 0.367 each at qty 10 (DigiKey; 0.42 at qty 1; 5,989 in stock, Active), so x10 = 3.67 vs 7.00 (saves 3.33)
+    - **Spec comparison:** Force 350 +/- 80 gf vs 340 +/- 85 gf: equal. Life 500,000 cycles at 350 gf (E-Switch datasheet 4.2.2024) vs 300,000: better. (DigiKey shows 3,000,000, which is the 180 gf figure; the datasheet value is used.) IP67 vs IP67: equal. -40 to +85 C: equal. Travel 0.5 mm (datasheet) vs 0.4 +/- 0.2 mm: equal or better. (DigiKey says 0.15 mm, which conflicts with the datasheet.) Contact resistance 100 mohm max: equal. Insulation 100 Mohm at 500 VDC vs >= 10 Mohm at 100 V: better. Dielectric 250 VAC: equal. Rating 50 mA / 12 VDC vs 50 mA / 32 VDC: irrelevant at 3.3 V. Silver plating, the same contact metal class as KSC641J LFS. Body 6.45 x 6.45 mm vs 6.2 x 6.2 mm; J-lead SMT.
+    - **Worse in:** Bounce time is not specified (C&K states <= 1 ms), so treat it as UNVERIFIED; the firmware debounce covers it. Actuator height is 5.2 mm vs 7.7 mm, so the keypad PCB sits 2.5 mm closer to the panel or the caps/boots get 2.5 mm longer. That is a mechanical change, not a performance loss. No published tactile-feel measurement for either part.
+    - **Compatibility:** Different land pattern (6.45 mm body, 7.0 mm pad span per the datasheet). This is free now because the keypad PCB is drawn in P7. Same SPST-NO function and the same TCA9555 wiring. Same DigiKey order.
+    - **Risks:** E-Switch is an established US brand sold by DigiKey and Mouser, so counterfeit risk is low from authorized stock. The DigiKey attribute data disagrees with the datasheet on life and travel; the datasheet governs. Glove-feel check on the first article.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=TL3145BF350QJ
+    - **Sources:**
+      - https://configured-product-images.s3.amazonaws.com/Datasheets/TL3145.pdf
+      - https://www.digikey.com/en/products/result?keywords=TL3145BF350QJ
+      - https://www.digikey.com/en/products/result?keywords=E-Switch%20IP67%20tactile
+      - https://www.tme.eu/Document/f93a4f13570c490b639b5e693f5d3fda/tactile%281%29.pdf
+  3.
+    - **Name:** C&K KSC441J ST1 LFS (same KSC family, soft actuator, 5.2 mm), x10
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 0.629 each at qty 10 (DigiKey; 0.73 at qty 1; 28,357 in stock), so x10 = 6.29 (saves 0.71)
+    - **Spec comparison:** Force 3.4 +/- 1 N vs 3.4 +/- 0.85 N. Life 300,000: equal. IP67: equal. -40 to +85 C (silver): equal. Bounce <= 1 ms (same series sheet): equal. Travel 0.7 +/- 0.25 mm vs 0.4 +/- 0.2 mm. Same 6.2 mm J-lead footprint family. Height 5.2 mm vs 7.7 mm.
+    - **Worse in:** Soft (elastomer) actuator instead of a hard actuator, so a less crisp click is likely (feel not measured). Wider force tolerance (+/- 1 N vs +/- 0.85 N). Shorter actuator. Saves much less than the TL3145.
+    - **Compatibility:** Same C&K KSC J-bend land pattern; needs the cap/boot stack adjusted by 2.5 mm.
+    - **Risks:** Not recommended over the TL3145; listed for completeness.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=KSC441J%20ST1%20LFS
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=KSC441J%20ST1%20LFS
+      - https://www.tme.eu/Document/f93a4f13570c490b639b5e693f5d3fda/tactile%281%29.pdf
+  4.
+    - **Name:** Alps Alpine SKRAAQE010 (SKRA, IP67, 6.2 x 6.2 x 5.2 mm, 3.43 N)
+    - **Kind:** other_brand
+    - **Price usd:** 0.46 at qty 1 (DigiKey, 14,331 in stock); qty-10 price not shown (UNVERIFIED)
+    - **Spec comparison:** Force 3.43 N: equal. IP6X/IPX7 (IP67-equivalent): equal. -40 to +90 C: better. Minimum rating 10 uA / 1 VDC: better for low-current GPIO inputs. Travel 0.55 mm: equal. Contact resistance 100 mohm: equal. Insulation 100 Mohm: better. 1,000 h cold/dry-heat/damp-heat tests published.
+    - **Worse in:** Operating life is 100,000 cycles vs 300,000, so it is WORSE. Bounce is not stated. Actuator height 5.2 mm.
+    - **Compatibility:** SMT 6.2 mm. Land pattern differs from KSC6; would need a new keypad footprint.
+    - **Risks:** Rejected on life. Alps also has SKRAALE010 (400 gf, 3.4 mm high, $0.42), which is in the same series and so presumably also has the lower life (not checked).
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=Alps%20IP67%20tactile%20switch
+    - **Sources:**
+      - https://tech.alpsalpine.com/e/products/detail/SKRAAQE010/
+      - https://www.digikey.com/en/products/result?keywords=Alps%20IP67%20tactile%20switch
+  5.
+    - **Name:** Alps Alpine EC11E15244G1 (the 'EC11 + O-ring' budget idea, genuine Alps)
+    - **Kind:** other_brand
+    - **Price usd:** not re-checked (Alps sells in 1,200-2,400 pcs MOQ; distributor price UNVERIFIED)
+    - **Spec comparison:** Push switch, 20,000 cycles: equal. Switch force 6 N vs 6.1 N: about equal. -40 to +85 C: better. Bounce 2 ms / chattering 3 ms: equal or worse. Metal 6 mm flat shaft, 20 mm: equal. Insulation 100 Mohm: equal.
+    - **Worse in:** Rotational life 15,000 cycles vs 30,000, so it is WORSE (the whole EC11E series is rated 15,000). No 24-PPR/24-detent variant exists: options are 9/18, 15/30 and 18/36 pulses/detents, so the firmware counting changes. The budget EC11 option in STACK.md therefore does not pass the not-worse rule.
+    - **Compatibility:** Different footprint (11 mm body).
+    - **Risks:** Rejected.
+    - **Seller url:** https://tech.alpsalpine.com/e/products/detail/EC11E15244G1/
+    - **Sources:**
+      - https://tech.alpsalpine.com/e/products/detail/EC11E15244G1/
+      - https://tech.alpsalpine.com/e/products/category/encorders/sub/01/series/ec11e/
+  6.
+    - **Name:** Bourns PEC12R-xx20F-S0024 (12 mm, 24 PPR, 24 detents, push switch)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** not checked (UNVERIFIED)
+    - **Spec comparison:** 30,000 rotations: equal. 20,000 switch cycles: equal. 2 ms bounce: equal. 100 RPM: better. -30 to +70 C: equal. IP40: equal. 610 gf switch: equal.
+    - **Worse in:** Insulated (plastic) flatted shaft vs a metal shaft. Insulation resistance 10 Mohm vs 100 Mohm. 3 g body; some mounting codes have no bushing. So it is WORSE in build quality.
+    - **Compatibility:** Different terminal/bushing codes and footprint.
+    - **Risks:** Rejected on shaft material.
+    - **Seller url:** https://www.bourns.com/docs/Product-Datasheets/PEC12R.pdf
+    - **Sources:**
+      - https://www.bourns.com/docs/Product-Datasheets/PEC12R.pdf
+  7.
+    - **Name:** Rejected, not cheaper or no detents: TT/BI EN11-HSM1AF15 ($4.42, 20 PPR, 34-week lead time); PEC11R-4220K-S0024 knurled ($2.91); PEC11R-4215K-S0024 ($2.80); PEC11R-4020F-S0024 ($2.64, no detents); PEC11R-4015F-S0024 ($2.85, no detents); Alps EC12E 24-PPR ($2.03+, no push switch); Wurth WS-TASV 430753051832 ($1.96, 320 gf); Same Sky TS08-66-43-BK-160-SMT-67 ($0.32, 160 gf only); C&K KSC643J LFG gold (not stocked, 15-week lead time)
+    - **Kind:** other_brand
+    - **Price usd:** see name
+    - **Spec comparison:** Each is either more expensive than the current part or worse in a critical spec (detents, push switch, force, life).
+    - **Worse in:** EN11: price and 20 PPR. Knurled PEC11R: price. 40xx PEC11R: no detents. EC12E: no switch. WS-TASV: price and 320 gf. TS08: 160 gf. KSC643J LFG: availability.
+    - **Compatibility:** n/a
+    - **Risks:** n/a
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=EN11-HSM1AF15
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=EN11-HSM1AF15
+      - https://www.digikey.com/en/products/result?keywords=PEC11R-4220K-S0024
+      - https://www.digikey.com/en/products/result?keywords=EC12E%20alps%20encoder
+      - https://www.digikey.com/en/products/result?keywords=Wurth%20tact%20switch%20IP67
+      - https://www.digikey.com/en/products/result?keywords=TS08-66%20SMT-67
+      - https://www.digikey.com/en/products/result?keywords=KSC643J%20LFG
+  8.
+    - **Name:** Adafruit 2055 Scrubber Knob 35 mm (KEEP), x2
+    - **Kind:** current_part
+    - **Price usd:** 0.95 each (qty 1-4; 0.86 at qty 5-49), so x2 = 1.90
+    - **Spec comparison:** 34.7 mm diameter, 10.5 mm high, finger groove, snap-on. Made for Adafruit 377, whose page points to the PEC11 datasheet and a 6 mm D-shaft knob, so it should suit a PEC11R 6 mm flatted shaft.
+    - **Worse in:** Retention is snap-on (no set screw) and the material is unstated. No cheaper knob from an established brand was found; Adafruit 5527 is $2.95 and set-screw knobs from Kilo, Eagle and similar brands cost more.
+    - **Compatibility:** 6 mm D/flatted shaft, still to be confirmed on the first article (same open item as before).
+    - **Risks:** DigiKey stocking of 2055 is UNVERIFIED. If DigiKey carries it, buying there would remove a separate US Adafruit shipment and its import VAT, which is worth more than any knob saving.
+    - **Seller url:** https://www.adafruit.com/product/2055
+    - **Sources:**
+      - https://www.adafruit.com/product/2055
+      - https://www.adafruit.com/product/377
+- **Notes:** RECOMMENDED SET (angle A, every critical spec equal or better): Bourns PEC11R-4220F-S0024 x3 ($8.07) + E-Switch TL3145BF350QJ x10 ($3.67) + Adafruit 2055 x2 ($1.90, kept) = $13.64 vs $17.75. That saves $4.11 (23%), all within the DigiKey order already planned. Every trade is stated: the 20 mm shaft is trimmed to suit the knob; the keypad cap/boot stack is 2.5 mm taller (TL3145 actuator 5.2 mm vs KSC641J 7.7 mm); TL3145 bounce is unspecified (C&K: <= 1 ms), covered by firmware debounce.
+  
+  FINDING ON THE CURRENT PICK: the PEC11R-4215F has only a 5 mm M7 bushing thread (datasheet shaft table LB = 5). With the stack's 2.4-3 mm ASA front wall, a panel O-ring of about 1 mm, the 0.5 mm washer and the 2.0 mm nut (about 6-6.5 mm in all), it cannot be nutted through the wall with an O-ring. The cheaper 4220F has a 7 mm bushing and fixes this. Even without the price difference it is the better part.
+  
+  FINDING ON THE KEYS: C&K rates silver (LFS) KSC contacts at 1 mA minimum current (gold LFG: 0.1 mA). TCA9555/PCA9555 inputs with only the internal pull-up (about 100 kohm, about 33 uA at 3.3 V) run below that. E-Switch TL3145 is also silver and states no minimum. Whichever key is used, add external pull-ups of about 2.2-3.3 kohm on the 6 key lines and the 2 encoder-push lines (about 1-1.5 mA while pressed, under $0.10), or use gold parts. The gold KSC643J LFG is not stocked at DigiKey (15-week lead time).
+  
+  EC11 BUDGET OPTION: the genuine Alps EC11E series is rated 15,000 rotations (vs 30,000) and has no 24/24 variant, so the 'EC11 + O-ring' budget line in STACK.md does not pass the not-worse rule.
+  
+  VERIFICATION LIMITS:
+  - The web-search budget (shared across agents) ran out after one query. All data came from WebFetch on primary pages: Bourns and E-Switch datasheets (PDF), the C&K KSC datasheet via TME, Alps product pages, and DigiKey and Adafruit listings.
+  - Mouser returned 503.
+  - TME shows contradictory stock (0 visible; 575 in its schema for KSC641J LFS) and no price tiers; its schema price ranges are UNVERIFIED.
+  - The LCSC page did not render.
+  - Farnell was not checked.
+  - EU VAT (19-27%) is added at DigiKey EU checkout; DigiKey's EU free-shipping threshold and DDP terms were not re-checked.
+  - No independent bounce or tactile-feel measurements were found for any key; the comparison rests on datasheets.
+  
+  Hard rules: all parts are passive HMI parts with no RF, TX, loop or source implications.
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
@@ -29896,6 +30041,129 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - Ready-made SO-239 line isolators (DX Engineering, Balun Designs): I did not price them; they are typically dearer and made for transmitting power levels.
   
   Buy Fair-Rite and TDK cores only from authorized distributors (DigiKey, Mouser, TME, Farnell) to avoid relabelled marketplace cores. Mouser and Farnell pages returned HTTP 503 and could not be checked. EU prices quoted are DigiKey DE, ex VAT, and 19% DE VAT where shown; VAT for another EU country follows its own rate.
+
+## searchB:two_stage_coax_cm_choke_ft_240_77_ft_240 (run `wf_e32114dd-52d`)
+
+- **Part:** Two-stage coax common-mode choke at the HF bulkhead: Fair-Rite 5977003801 (FT-240-77, LF/MF stage) + Fair-Rite 2631803802 (FT-240-31 equivalent, HF stage), wound with RG316, on a bracket bonded to the mid-plate; qty 1, tier core, group HF
+- **Current price usd:** Cores: $20.12 at DigiKey qty 1, verified 18 Oct 2026 (5977003801 $10.77, 417 in stock; 2631803802 $9.35). Cheapest legitimate prices found for the same cores: 5977003801 at RS Austria for EUR 7.88 net / EUR 9.46 incl. 20% VAT (about $8.86 / $10.63; from a search snippet, page blocked, data from spring 2026, unverified); 2631803802 at TME for $4.75-8.65 (break mapping not shown, stock ambiguous). With about 2.5 m of RG316, two SMA connectors and the bracket (my estimate, not priced), the total is about $28-35 at DigiKey or about $22-30 using RS/TME. The stack's '15-30 (unverified)' is slightly low at DigiKey qty-1 prices.
+- **Critical specs:**
+  - Common-mode |Z| of at least 1 kOhm at 60 kHz (stage 1; stack target). From the datasheet AL (2950 nH ±25% at 10 kHz), the FT-240-77 needs about 30 turns at nominal AL, or about 35 turns at -25% AL. RG316 fits about 39 turns in one layer on the 35.55 mm ID.
+  - Combined CM |Z| of 2-5 kOhm across 1-30 MHz, with no dips at self-resonance between 40 kHz and 31 MHz (HF+ range). Mostly resistive (Rs > |Xs|) where possible, so the choke cannot resonate with the CM path (G3TXQ, K9YC).
+  - Ferrite mix and µ' that are genuine and repeatable: MnZn 77 (µi 2000) for LF/MF, 31 (µi 1500) for HF. AL tolerance ±25%. K9YC measured about ±10% spread among new #31 cores and much wider over 12 years, so every build is measured on the LiteVNA (conducted bench only).
+  - MnZn dimensional resonance (#31 and #77 both have it, per K9YC). Look for it in the LiteVNA sweep.
+  - Differential path: 50 ohm RG316 through the choke, about 0.1 dB or less of insertion loss to 31 MHz for about 2.5 m (estimate), and good return loss.
+  - DC pass-through on the center conductor for the Boni-Whip bias (12.5 V, PTC limit about 0.11-0.14 A), with low DCR. A coax-wound choke passes DC.
+  - Shield continuity to the bulkhead bonded to the plate. FEP/PTFE jacket insulates the conductive MnZn core.
+  - Size and mass in a handheld: each FT-240 is 61x35.55x12.7 mm and 106-118 g. Needs mounting and strain relief.
+  - Temperature: cores rated -55 to +90 C (TME). RG316 PTFE.
+  - Legitimacy: genuine Fair-Rite or an authorised reseller, not unbranded 'FT240' cores of unknown mix.
+  - Rule check: a coax CM choke is not an antenna, loop or H-field probe, so it is compliant. Receive-only, so no power or heat rating is needed.
+- **Candidates:**
+  1.
+    - **Name:** Same design, genuine Fair-Rite 5977003801 + 2631803802, bought from the cheapest legitimate channels (RS Austria/DE, TME, Arrow, DigiKey; PL1 Electronics on eBay UK for 2631803802)
+    - **Kind:** current_part
+    - **Price usd:** Cores: DigiKey $20.12 qty 1 (verified 18 Oct 2026). EU: RS AT 5977003801 EUR 7.88 net (about $8.86; unverified snippet) + TME 2631803802 $4.75-8.65 (range only) = about $13.6-17.5 for the cores. Arrow listed 2631803802 at $3.63 qty 1 but was out of stock (NA6O survey, 21 Dec 2025; +22% US tariff). PL1 Electronics eBay: GBP 11.49 incl. VAT (about $15.30) for 2631803802 (search snippet, unverified; no US shipping).
+    - **Spec comparison:** Identical parts, so every spec is identical. K9YC states that Fair-Rite makes virtually all ferrite toroids hams use and that each mix has a distinct impedance curve, so the authorised channels carry the genuine material.
+    - **Worse in:** Nothing. RS and TME stock and prices need re-checking: TME shows 0 stock for 5977003801 with MOQ 200, and the RS DE 100-pack was sold out in spring 2026.
+    - **Compatibility:** Identical to the current design.
+    - **Risks:** The RS and eBay prices come from search snippets (pages blocked). TME's quantity-1 price is not shown explicitly.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=5977003801
+    - **Sources:**
+      - https://www.fair-rite.com/product/toroids-5977003801/
+      - https://www.fair-rite.com/product/round-cable-emi-suppression-cores-2631803802/
+      - https://www.digikey.com/en/products/result?keywords=5977003801
+      - https://www.tme.eu/en/details/2631803802/ring-ferrites/fair-rite/
+      - https://www.tme.eu/en/details/5977003801/ring-ferrites/fair-rite/
+      - https://at.rs-online.com/web/p/ferrit-ringkern/2555245
+      - https://na6o.com/rfi/ewExternalFiles/ferrite%20costs%20and%20sources.txt
+      - https://www.ebay.de/itm/187038109997
+  2.
+    - **Name:** DIY stage 1 on two stacked Fair-Rite 5977002701 cores (FT-140-77 size, 35.55x23x12.7 mm, AL 2400 nH ±25% each), with about 24 turns of RG316 in one layer; HF stage unchanged (2631803802)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** Stage-1 cores: 2 x $3.18 = $6.36 at DigiKey qty 1, against $10.77 for one 5977003801, so $4.41 saved. DigiKey shows 0 in stock, with 371 due 16 Oct 2026.
+    - **Spec comparison:** Same mix 77 and the same vendor. Model (mine, not measured): stacked AL 4.8 µH x 24^2 = 2.76 mH, or about 1.04 kOhm at 60 kHz. The FT-240-77 gives 2.66 mH at 30 turns. Smaller OD (35.55 vs 61 mm) and about the same mass. The 23 mm ID limits one layer of 2.5-2.6 mm RG316 to about 24 turns.
+    - **Worse in:** No independent measurement exists, so the angle-B rule rejects it. There is no turn headroom: at -25% AL the model gives only about 780 Ohm at 60 kHz, and a second layer adds interwinding capacitance, which lowers the self-resonance and hurts 0.5-3 MHz. The FT-240-77 can take about 35-39 turns.
+    - **Compatibility:** Same interfaces, DC pass-through and bracket concept, and a smaller footprint.
+    - **Risks:** Unproven at 60 kHz and in the MF gap. Acceptable only if the user's LiteVNA sweep (40 kHz-31 MHz) shows equal or better |Z| and Rs than the FT-240-77 stage at every frequency.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=5977002701
+    - **Sources:**
+      - https://www.fair-rite.com/product/toroids-5977002701/
+      - https://www.digikey.com/en/products/result?keywords=5977002701
+      - https://www.hellschreiber.com/radio/pdf-ant/2018Cookbook.pdf
+  3.
+    - **Name:** DIY: both stages on Fair-Rite 2631803802 (#31, 2.4 in) cores; stage 1 wound with about 35 turns of RG316 instead of using the FT-240-77
+    - **Kind:** diy
+    - **Price usd:** 2 x $9.35 = $18.70 at DigiKey qty 1, against $20.12, so $1.42 saved.
+    - **Spec comparison:** Same size. #31 has µi 1500 against 2000 for #77. Fair-Rite gives no AL for 2631803802. My geometric estimate is about 2.1 µH/turn^2, so 35 turns give about 2.6 mH, or about 970 Ohm at 60 kHz (model). K9YC measured RG179, a 2.5 mm PTFE coax the same size as RG316, on 2.4 in #31 cores: 27, 24, 22 and 21 turns for 160, 80, 40 and 30 m. That shows small PTFE coax works on #31 but each winding is centred on one band.
+    - **Worse in:** Lower µ' at 60 kHz needs more turns, so the self-resonance falls and the 0.3-2 MHz region gets weaker. Even at 35 turns it misses the 1 kOhm target at nominal AL. No measured data below 1.8 MHz, so the angle-B rule rejects it. The saving is negligible.
+    - **Compatibility:** Same as the current part.
+    - **Risks:** Fails the 60 kHz target without measurement proof.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=5977003801
+    - **Sources:**
+      - https://www.fair-rite.com/product/round-cable-emi-suppression-cores-2631803802/
+      - https://www.hellschreiber.com/radio/pdf-ant/2018Cookbook.pdf
+  4.
+    - **Name:** Palomar Engineers F240-31 (sold as 'FT240-3I', mix 31 class, country of origin China, maker not named)
+    - **Kind:** generic_or_clone
+    - **Price usd:** $29.95 per 3-pack on sale (about $9.98 per core); list $34.95
+    - **Spec comparison:** Same size (61x35.6x12.7 mm). States µi 1500. No impedance or AL data, and no statement of the core maker.
+    - **Worse in:** Not cheaper than DigiKey's genuine 2631803802 ($9.35). Its material is not traceable to Fair-Rite and has no independent measurement, so the angle-B rule rejects it.
+    - **Compatibility:** Would fit the HF stage mechanically.
+    - **Risks:** The mix equivalence is unverified.
+    - **Seller url:** https://palomar-engineers.com/ferrite-application-experts-2/FT240-3I-ID=1-4-AC-DC-Coax-Noise-Filter-RFI-Range-1-300-MHz-Mini-Pack-of-3-p491545766
+    - **Sources:**
+      - https://palomar-engineers.com/ferrite-application-experts-2/FT240-3I-ID=1-4-AC-DC-Coax-Noise-Filter-RFI-Range-1-300-MHz-Mini-Pack-of-3-p491545766
+  5.
+    - **Name:** Unbranded 'FT240-31' / 'FT240-77' cores on AliExpress or eBay, no maker named
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not found. My searches turned up no AliExpress listing, and eBay pages were blocked (403).
+    - **Spec comparison:** Unknown. No datasheet, no AL or µ, no measurement.
+    - **Worse in:** I found no independent measurement comparing no-name cores with Fair-Rite. K9YC notes each mix has a distinctly different curve, so an unknown core may be the wrong mix. Rejected.
+    - **Compatibility:** Mechanically the same size if it really is FT-240.
+    - **Risks:** Counterfeit or mislabelled mix, and a large spread in µ'.
+    - **Sources:**
+      - https://www.hellschreiber.com/radio/pdf-ant/2018Cookbook.pdf
+  6.
+    - **Name:** Würth WE-TOF 74270191 (61x35.5x20 mm, material 4 W 620) / 74270198 (61x35.5x12.7 mm, 4 W 1500)
+    - **Kind:** other_brand
+    - **Price usd:** 74270191: $7.16 at DigiKey qty 1 (655 in stock). 74270198: not priced.
+    - **Spec comparison:** The WE-TOF series spans µi 380-1500, so 4 W 620 is about µi 620, versus 2000 for #77. Würth publishes only 1-2 turn impedance at 25 and 100 MHz (97 and 156 Ohm for 1 turn on 74270191). No data below 25 MHz.
+    - **Worse in:** Much lower µ at 60 kHz, so far less LF/MF inductance per turn. It cannot replace the FT-240-77 stage. For the HF stage there is no data at 1-25 MHz and no independent measurement. Rejected.
+    - **Compatibility:** Same window size, so RG316 fits.
+    - **Risks:** Material behaviour at HF and LF is undocumented.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=74270191
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=74270191
+      - https://www.we-online.com/en/components/products/WE-TOF?sq=74270191
+  7.
+    - **Name:** Clip-on / snap-on ferrites on the coax (the stack's budget alternative)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not priced in this pass (a few dollars each)
+    - **Spec comparison:** A split core has an air gap that lowers effective µ, and a small window allows few turns. The stack already records it as inadequate below a few MHz.
+    - **Worse in:** Far lower CM impedance at 60 kHz-2 MHz. Rejected.
+    - **Compatibility:** Clips onto RG316 easily.
+    - **Risks:** Silently fails the LF/MF target.
+  8.
+    - **Name:** Used or ready-made coax line isolators (e.g. Palomar coax jumper chokes rated 1.8-65 MHz)
+    - **Kind:** used
+    - **Price usd:** Not priced; I found no used listings with measurements.
+    - **Spec comparison:** Rated from 1.8 MHz upward, with no data at 60 kHz-1.8 MHz. Built for RG-8X-class coax and transmit power.
+    - **Worse in:** Missing the LF/MF stage entirely. Larger and heavier. No independent measurement. Rejected.
+    - **Compatibility:** Would need adapters to SMA/RG316, and would not fit the bulkhead bracket.
+    - **Risks:** Fails the 60 kHz target.
+    - **Sources:**
+      - https://palomar-engineers.com/rfi-kits/am-broadcast-rfi-kits/Coax-Feed-Line-Common-Mode-Chokes-c21444165
+- **Notes:** VERDICT (angle B): keep the current part. None of the cheaper candidates I found has independent measurements showing equal or better CM impedance from 60 kHz to 30 MHz. The only not-worse saving is to buy the same genuine Fair-Rite cores more cheaply. In the EU that means RS (5977003801 at about EUR 7.88 net) and TME (2631803802 at $4.75-8.65), which brings the cores to about $13.6-17.5 against $20.12 at DigiKey qty 1. Re-check both pages: they were blocked or ambiguous.
+  
+  The closest DIY saving is two stacked FT-140-77 cores (Fair-Rite 5977002701, $6.36 against $10.77). It is rejected here because it is unmeasured and leaves no turn headroom at -25% AL. It could pass only if the user's own LiteVNA acceptance sweep shows it equal or better everywhere from 40 kHz to 31 MHz.
+  
+  DESIGN FACT TO CARRY INTO v2 (model from the Fair-Rite AL, not measured): 1 kOhm at 60 kHz on one FT-240-77 needs about 30 turns at nominal AL (2950 nH), or about 35 at -25%. That is about 1.7-2.0 m of RG316, and it fits in one layer. The LF stage's self-resonance will then sit low, roughly the 1 MHz region (my estimate from K9YC's RG179 data). The #31 stage must cover upward from there, so the LiteVNA sweep must check the hand-off region at 0.3-3 MHz specifically.
+  
+  K9YC measured about ±10% µ' spread among new #31 2.4 in cores, and wider spreads over years. Turn counts should be set from the measurement, not copied. MnZn dimensional resonance is possible in both mixes.
+  
+  Prices: DigiKey prices were fetched live on 18 Oct 2026. The RS, eBay PL1 and Arrow figures come from search snippets or the NA6O survey (Dec 2025) and are unverified. RG316, SMA connectors and the bracket are not priced. FX used: 1 EUR = 1.1241 USD, 1 GBP = 1.3318 USD.
+  
+  I used 11 web searches. Mouser, RS and eBay pages returned 503/403.
 
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
