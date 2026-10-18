@@ -1192,3 +1192,7 @@ P5: G5 (лабораторні прилади) завершено, 16 рішен
 - Інструменти: конкретні SKU (штангенциркуль Goobay 77001, ножиці Stanley 2-14-556, мітчик і плашка M5 VÖLKEL, термофен Goobay 77822). Разом ≈$335–391, верхня половина кошторису.
 Джерела: eleshop.eu, passion-radio.com, elektor.com, astroradio.com, minicircuits.com, aliexpress (офіційні лістинги), botland.de, reichelt.com, billiger.de/mediamarkt.de, waveshare.com, lindinger.at, isdt.co/buy, tme.eu, ifixit.com/eu, tinysa.org.
 
+## 2026-10-18 16:38 UTC
+
+P5 (проміжне): G6 — FNIRSI DPS-150 (150 W) в Elektor (NL, ЄС) коштує €59.00 з ПДВ і є в наявності; у FNIRSI DE варіант Std без адаптера — 55.68. У стеку закладено $73–75. Elektor з EU-складом вигідніший з урахуванням п. 35 (мито ЄС). Рішення буде після верифікації. Джерело: https://www.elektor.com/products/fnirsi-dps150-dc-power-supply-150-w
+
