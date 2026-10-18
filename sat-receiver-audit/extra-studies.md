@@ -16010,6 +16010,138 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   None of these cells affects the hard rules (receive-only, conducted-only sources, no loops). The 'never flown', containment and 4.10 V daily-charge rules apply to any cell chosen.
 
+## searchA:daly_4s_15_a_common_port_balancing_bms (run `wf_a268b76e-da0`)
+
+- **Part:** Daly DL-J05G-L4S15ATJ, a 4S Li-ion 15 A common-port BMS with passive balancing (Power group, core tier, qty 1)
+- **Current price usd:** 8.99 (TinyTronics NL, EUR 8.00 incl. 21% NL VAT = $8.99; EUR 6.61 ex VAT = $7.43; at 1 EUR = 1.1241 USD). Seen live on 18 Oct 2026, "Only 9 pieces in stock". STACK.md rounds this to 9.00.
+- **Critical specs:**
+  - Chemistry and topology: 4S Li-ion NMC (4.2 V class) with a common port. Charge and discharge share P-, because the IP2368 charger and node N sit downstream of the BMS. A LiFePO4 or separate-port board does not fit.
+  - OVP: 4.25 +/-0.05 V, release 4.15 V. It must stay above the monthly 4.20 V ISDT balance and the IP2368 CV of 16.25-16.57 V, and must not exceed about 4.30 V. A tighter tolerance counts as better.
+  - UVP: 2.70 +/-0.05 V, release 3.0 V. It must stay at or above 2.5 V (the P50B minimum) across its tolerance. The stack's D1 cutoff table uses 2.70 V as the last line of defence.
+  - Continuous discharge rating: 15 A. The real need is 4.6 A at the Lime peak, with the 7.5 A blade fuse downstream. Under the user's rule, a lower rating counts as worse.
+  - Discharge OCP: 40 +/-10 A. Charge OCP: 10 +/-2 A (charging runs at up to 3 A). Short-circuit delay: 10-500 us.
+  - On-resistance: under 20 mOhm. It is part of the 0.5 V sag budget at 4.6 A.
+  - Balancing: passive, 30 +/-10 mA per cell, starting at 4.18 V or more, only while charging. In practice it acts only during the monthly 4.20 V balance.
+  - Self-consumption: under 500 uA in operation. The standby model budgets 0-0.5 mA for the BMS, and storage of 50-105 days depends on it.
+  - Recovery behaviour: UVP releases at 3.0 V. The board must wake on the IP2368 trickle (100-200 mA) in 3 of 3 tries. A short-circuit trip must release with the always-on load (about 1 mA) present.
+  - Size and mass: 61 x 35 x 9 mm, 35 g. The pack bay gives a 9.7 mm end gap or an external spot. The heat sink must be isolated from cells and nickel.
+  - Operating range: -40 to 85 C. No BMS NTC is needed, because the IP2368's NTC enforces the 0-45 C charge window.
+  - No radio: no Bluetooth or Wi-Fi smart BMS, because of EMI near the L-band and S-band chains.
+  - Traceable brand spec sheet (Daly Product Specification Approval) and a legitimate EU seller with VAT paid, so the board is not a counterfeit.
+- **Candidates:**
+  1.
+    - **Name:** Daly DL-J05G-L4S15ATJ, 4S Li-ion 15 A, common port, with balance (current part)
+    - **Kind:** current_part
+    - **Price usd:** 8.99 incl. VAT (EUR 8.00); 7.43 ex VAT (EUR 6.61)
+    - **Seller url:** https://www.tinytronics.nl/en/power/bms-and-chargers/bms/daly-bms-li-ion-li-po-protection-circuit-4s-15a-with-balancing
+    - **Spec comparison:** Baseline, from the TinyTronics page and the Daly spec PDF (model DL-J05G-L4S15ATJ confirmed on page 1 of the PDF):
+  - OVP 4.25 +/-0.05 V, release 4.15 V
+  - UVP 2.70 +/-0.05 V, release 3.0 V
+  - DOCP 40 +/-10 A, COCP 10 +/-2 A, 15 A continuous
+  - Passive balance 30 +/-10 mA at 4.18 V or more
+  - Ron under 20 mOhm, Iq under 500 uA (Ron and Iq from the stage-2/3 re-audit reading of the Daly spec)
+  - 61 x 35 x 9 mm, 35 g, -40 to 85 C
+    - **Worse in:** Nothing; this is the reference. Known weak points are the small 30 mA balance current and the unmeasured real Iq.
+    - **Compatibility:** Fits the stack as designed: common port, NMC thresholds, the D1 cutoff table and the bay end gap.
+    - **Risks:** Only 9 in stock at TinyTronics on 18 Oct 2026, so buy one plus a spare now. The TinyTronics PDF file name says DL-J04G3, while the page and the PDF content say DL-J05G. The charger-wake test (3/3) is still pending.
+    - **Sources:**
+      - https://www.tinytronics.nl/en/power/bms-and-chargers/bms/daly-bms-li-ion-li-po-protection-circuit-4s-15a-with-balancing
+      - https://www.tinytronics.nl/product_files/005102_Data-Sheet-of-DL-J04G3-L04S15ATJ-BMS-circuits.pdf
+  2.
+    - **Name:** Daly DL-J13G3-F04S20ATJ, LiFePO4 4S (listed as 15 A, specified as 20 A), with balance
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 7.87 incl. VAT (EUR 7.00); 6.51 ex VAT (EUR 5.79). 50+ in stock.
+    - **Seller url:** https://www.tinytronics.nl/en/power/bms-and-chargers/bms/daly-j13g3-bms-lifepo4-protection-circuit-4s-15a-with-balancing
+    - **Spec comparison:** Better on paper:
+  - Balance 70 +/-25 mA vs 30 mA
+  - 20 A continuous vs 15 A
+  - DOCP 60 +/-10 A, COCP 25 +/-3 A
+  - 61 x 35 x 10 mm, 37 g (same footprint)
+  
+  Wrong chemistry:
+  - OVP 3.65 +/-0.05 V (release 3.55 V) vs 4.25 V
+  - UVP 2.30 +/-0.05 V (release 2.7 V) vs 2.70 V
+  - Balance starts at 3.525 V
+  - Iq and Ron not published on the page
+    - **Worse in:** Disqualifying. The 3.65 V OVP would cut the NMC pack at 14.6 V, far below the 16.4 V daily target, so most of the capacity is lost. The 2.30 V UVP is below the P50B 2.5 V minimum. Balancing would bleed cells continuously above 3.525 V.
+    - **Compatibility:** Not compatible with a 4S NMC pack. The page also contradicts itself on the model (title says F04S15ATJ, specs say F04S20ATJ).
+    - **Risks:** Rejected. Possible lead (unverified): TinyTronics stocks a Li-ion J13G3 in 7S (DL-J13G3-L07S15ATJ). If Daly makes a 4S Li-ion J13G3 (L04S) at a similar price with 70 mA balance and 20 A, it could beat the J05G, but no 4S Li-ion J13G3 listing, spec or price was found. Ask TinyTronics or Daly.
+    - **Sources:**
+      - https://www.tinytronics.nl/en/power/bms-and-chargers/bms/daly-j13g3-bms-lifepo4-protection-circuit-4s-15a-with-balancing
+      - https://www.tinytronics.nl/en/power/bms-and-chargers/bms/daly-bms-li-ion-li-po-protection-circuit-7s-15a-with-balancing
+  3.
+    - **Name:** No-brand 'Li-ion/Li-Po Protection circuit (BMS) - 4S - with Balancing' (TinyTronics BMS4S30A, SKU 002133)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 5.62 incl. VAT (EUR 5.00); 4.64 ex VAT (EUR 4.13). 50+ in stock.
+    - **Seller url:** https://www.tinytronics.nl/en/power/bms-and-chargers/bms/li-ionli-po-protection-circuit-(bms)-4s
+    - **Spec comparison:** Equal:
+  - OVP 4.25 +/-0.05 V
+  - Common port (P+/P-)
+  
+  Better:
+  - 30 A continuous discharge and charge (vs 15 A)
+  - 8 mm thick (vs 9 mm)
+  
+  Worse:
+  - UVP 2.55 +/-0.08 V (vs 2.70 V); the worst case of 2.47 V is below the P50B 2.5 V minimum
+  - 56 x 45 mm footprint is larger (2520 vs 2135 mm2)
+  
+  Not published (all specified on the Daly):
+  - OVP and UVP release voltages
+  - Balance current and start voltage
+  - Quiescent current
+  - Ron
+  - Overcurrent threshold (only a 75 +/-5 A short-circuit trip is given)
+  - Recovery and wake behaviour
+    - **Worse in:** UVP margin is worse: tolerance reaches 2.47 V, below the cell minimum. It is also unprovable on balance current and threshold, Iq (which drives the standby budget), Ron, release voltages and recovery behaviour. Brand traceability and spec documentation are worse (no brand, no datasheet).
+    - **Compatibility:** Electrically usable for 4S NMC with a common port. The larger footprint may not fit the 9.7 mm end gap layout, and the bay layout would need checking.
+    - **Risks:** Rejected under the not-worse rule: the missing specs cannot be shown to be equal or better, and the UVP is lower. TinyTronics itself warns the 30 A ratings may exceed what the cells can take.
+    - **Sources:**
+      - https://www.tinytronics.nl/en/power/bms-and-chargers/bms/li-ionli-po-protection-circuit-(bms)-4s
+  4.
+    - **Name:** QSKJ QS-B405ANL-25A 'Li-ion/Li-Po Protection Circuit (BMS) - 4S' (TinyTronics BMS4S25A-2.8-4.25, SKU 002932)
+    - **Kind:** other_brand
+    - **Price usd:** 3.93 incl. VAT (EUR 3.50); 3.25 ex VAT (EUR 2.89). 50+ in stock.
+    - **Seller url:** https://www.tinytronics.nl/en/power/bms-and-chargers/bms/qskj-li-ionli-po-protection-circuit-(bms)-4s
+    - **Spec comparison:** Better:
+  - OVP 4.25 +/-0.025 V (tighter than +/-0.05 V)
+  - 25 A continuous charge and discharge
+  - Optional 10k NTC cut at 65 C
+  
+  Different:
+  - UVP 2.80 +/-0.08 V (vs 2.70 V); it can trip at up to 2.88 V and lose a little energy
+  - Short circuit 60 +/-5 A
+  
+  Not stated: OVP and UVP release, Iq, Ron, port type and size (shown only in images).
+  
+  No balancing: the page says 'The chip does not support a balancing'.
+    - **Worse in:** No cell balancing at all (Daly: 30 mA). Its higher UVP gives up some low-end energy. Iq, Ron, release voltages and recovery behaviour are unpublished.
+    - **Compatibility:** 4S NMC thresholds suit the pack, but it has no balancing. The pack would depend entirely on the monthly ISDT balance.
+    - **Risks:** Rejected: loses the balancing function. The rule forbids trading away a spec.
+    - **Sources:**
+      - https://www.tinytronics.nl/en/power/bms-and-chargers/bms/qskj-li-ionli-po-protection-circuit-(bms)-4s
+- **Notes:** VERDICT (Angle A): keep the current part. The Daly DL-J05G-L4S15ATJ from TinyTronics, EUR 8.00 incl. VAT ($8.99), is the cheapest established-brand 4S NMC common-port balancing BMS I could find with published specs. The three cheaper boards at the same seller are each worse on at least one spec that matters here, or cannot be proven equal:
+  - Daly J13G3 4S: LiFePO4 thresholds.
+  - No-brand 30 A board: lower UVP and unpublished balance current, Iq and recovery behaviour.
+  - QSKJ 25 A board: no balancing.
+  
+  Checked and not cheaper (so not listed as candidates):
+  - Daly's own Shopify store (bmsdaly.com/products.json, read 18 Oct 2026): the cheapest Li-ion 4S hardware board is the G/H-series 'Li-ion 4S 12V / 15A NTC' (SKU G11-JG-107266) at $14.80, plus shipping and VAT. It adds an NTC cut, but costs about 1.6 times as much.
+  - Daly on AliExpress (search page, US view, before EU VAT): hardware Daly 4S 15A listings start at $10.70 (lowest variant of the '2024 DALY BMS 3S...16S' listing) and go up to $14.95-16.38. The $1.09 and $1.29 prices are one-time new-shopper promotions, not real prices. I could not read individual item pages or the per-variant price of a 4S Li-ion 15A board (captcha), so those are unverified, and no evidence suggests they beat EUR 8 with VAT. Marketplace Daly listings also carry a counterfeit and mislabel risk.
+  - Enerprof.de sells only the Daly 4S LiFePO4 15A, at EUR 12.99: wrong chemistry, and dearer.
+  - JBD (jbdbms.com) has no hardware 4S Li-ion 10-20 A board. The nearest, SP04S010A and DH04SA01, are smart BMS (20-35 A and 20-80 A, LFP and NMC). Price unverified; smart or Bluetooth boards conflict with the stack's no-radio EMI rule.
+  - Bestech: no 4S 14.8 V 15 A datasheet could be found, and an Endless-Sphere report describes shorted balance transistors on its D-series boards. Not a candidate.
+  
+  Lead worth one email (unverified): Daly's newer J13G3 generation exists in Li-ion 7S (DL-J13G3-L07S15ATJ at TinyTronics), and the 4S LiFePO4 J13G3 sells for EUR 7.00 with a 70 mA balance and 20 A rating. If TinyTronics or Daly can supply a 4S Li-ion J13G3 (L04S) with OVP of 4.25 V or tighter, UVP of 2.70 V or higher and Iq under 500 uA, at no more than EUR 8, it would be a not-worse or better swap. No such listing, spec or price was found, so nothing changes now.
+  
+  Generic EU boards (Sigmanortec RO, 4S 40A balance at about 11.57 RON; robu.in and similar) belong to Angle B. They are unverified (Sigmanortec returned 403) and have no datasheet for Iq, balance current or release voltages.
+  
+  Action unchanged:
+  - Buy the Daly at TinyTronics in the same order as the Q6A and UFS. Consider 2 (one spare), because only 9 were in stock.
+  - Keep the bench tests: charger wake 3/3, short-circuit release with the always-on load, Iq measured against the 500 uA spec, and the OVP point during the 4.20 V ISDT balance.
+  
+  WebSearch calls used: 12. Converted at 1 EUR = 1.1241 USD.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
