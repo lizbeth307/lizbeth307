@@ -27556,6 +27556,142 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Limits: 10 WebSearch calls used. eBay, Kleinanzeigen and hfunderground blocked fetching (403/503). The Arctic DX sensitivity PDF could not be fetched; that page gives only Discovery MW AM sensitivity (-110 to -111 dBm, 6 kHz AM, 30% mod), with no comparison numbers. HF+ current draw is still unmeasured.
 
+## searchA:hf_selector_2x_omron_g6k_2f_rf_5_v_serie (run `wf_e32114dd-52d`)
+
+- **Part:** HF+ input selector: 2x Omron (now Aratas) G6K-2F-RF DC5 DPDT relays in series-shunt, plus a driver PCB (K1 = HF/P5, K2 = VHF2-AIS/P6; de-energised, the HF+ sits on 50 ohm and both antenna ports are terminated)
+- **Current price usd:** 62-80 per set (STACK: RS UK, GBP 43-52 for two relays ex VAT, plus driver PCB). Relays alone: $50.12 for two at DigiKey US, $25.06 each, Z2037-ND, 6,930 in stock, active (verified 18 Oct 2026).
+- **Critical specs:**
+  - Passband reaches down to DC with no series DC block: the HF+ covers 0.5 kHz-31 MHz and 64-260 MHz, and LF time signals sit at 40-77.5 kHz. The stack already rejected the HMC241 because its DC blocks hurt LF.
+  - Insertion loss of the whole assembly ≤0.3 dB from 10 kHz to 260 MHz (stack acceptance). At VHF any loss adds straight to the HF+ noise floor (MDS -141 dBm).
+  - Isolation ≥35 dB at 162-260 MHz, conducted, for the pair (stack acceptance), plus HF-to-VHF port isolation. Datasheet guarantee for the G6K-RF is 20 dB min between contacts of the same polarity and 30 dB min between contacts of different polarity, both at 1 GHz. Omron's average curve shows about 46 dB at 162 MHz and about 41 dB at 260 MHz for one open contact (read off the plot, ±2 dB).
+  - 50 ohm match: VSWR ≤1.2 at 1 GHz (datasheet).
+  - Linearity: metal contacts, so no IIP3 or P1dB penalty against the HF+ (IIP3 +13/+15 dBm, +10 dBm max input). Carry rating 3 W and switching rating 1 W, both at 1 GHz.
+  - Fail-safe state: non-latching relays with Form C contacts, so on power loss or during boot the HF+ goes to 50 ohm and both antenna ports are terminated. This state is needed for the terminated-floor measurements and the boot state.
+  - Coil: 5 V, 21.1 mA, 237 ohm, about 105 mW, driven from an MCP23017 through an FET, with only one coil energised at a time. Must-operate ≤80% of rated voltage and must-release ≥10%. Correction to STACK: the coil is about 0.105 W, not 0.12-0.15 W.
+  - Robustness on a 5-10 m HF wire or active-whip port: 750 VAC across open contacts, 1 A carry, and no CMOS junction exposed to ESD.
+  - Endurance and environment: 5x10^7 mechanical operations; -40 to +70 C; plastic sealed.
+  - Size: SMD body 10.3 x 6.9 x 5.4 mm, fitting inside the tinplate HF+ can next to the Boni bias tee.
+  - Legitimate supply: from an authorised distributor, with either the Omron or the Aratas marking accepted (the rebrand is confirmed in reaudit B).
+- **Candidates:**
+  1.
+    - **Name:** Aratas/Omron G6K-2F-RF DC5, the same part from DigiKey (2 pcs)
+    - **Kind:** current_part
+    - **Price usd:** 50.12 for 2 ($25.06 each, DigiKey US Z2037-ND; $22.32 each at qty 10). EU: EUR 44.00 for 2 at DigiKey DE (EUR 22.00 each, about $49.46 at 1.1241). The DE page does not say whether VAT is included. DE shipping is free from EUR 75 and EUR 25 below that. Against RS UK at GBP 43-52 ex VAT (about $57-69), this saves about $7-19.
+    - **Spec comparison:** Same part number, so every spec is identical: DPDT, 50 ohm; at 1 GHz isolation 20/30 dB min, insertion loss 0.2 dB max, VSWR 1.2 max; 3 W carry and 1 W switching; 5 V coil at 21.1 mA, 237 ohm, about 100 mW; 5x10^7 mechanical operations; -40 to +70 C; 10.3 x 6.9 x 5.4 mm.
+    - **Worse in:** Nothing. The relay may be marked Aratas instead of Omron, which is the same product line after the rebrand.
+    - **Compatibility:** Drop-in. Footprint, driver and labd mapping are unchanged.
+    - **Risks:** Below EUR 75 a EUR 25 shipping charge applies, so bundle it with other DigiKey lines. VAT is added at checkout (rate depends on the country).
+    - **Seller url:** https://www.digikey.com/en/products/detail/aratas-formerly-omron-components/G6K-2F-RF-DC5/503107
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/aratas-formerly-omron-components/G6K-2F-RF-DC5/503107
+      - https://www.digikey.de/de/products/result?keywords=G6K-2F-RF%20DC5
+      - https://nonprod.docs.rs-online.com/6357/0900766b80b76be8.pdf
+  2.
+    - **Name:** Aratas/Omron G6K-2F-RF-S DC5, small-footprint SKU (2 pcs)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 39.38 for 2 ($19.69 each, DigiKey US, 2,027 in stock, active). EU: EUR 34.58 for 2 at DigiKey DE (EUR 17.29 each, about $38.87). TME lists it but has 0 in stock.
+    - **Spec comparison:** Same datasheet (Omron K908) and same guaranteed figures: 20/30 dB isolation, 0.2 dB insertion loss and VSWR 1.2, all at 1 GHz; 3 W/1 W RF; same 5 V coil (21.1 mA, about 100 mW); same body 10.3 x 6.9 x 5.4 mm; same endurance and temperature range. Only the ground-terminal footprint differs (lead span 10.7 mm instead of 12.8 mm). Omron's average curves (read off the plot, ±2 dB):
+  - Isolation: about 44 dB at 162 MHz and about 39 dB at 260 MHz, against about 46/41 dB for the standard part. Below 50 MHz it is about 50-62 dB, against about 55-77 dB.
+  - Insertion loss at 260 MHz: about 0.03-0.05 dB for both.
+  - Return loss: similar.
+  - Above about 1.5 GHz the -S is better, but that band is irrelevant here.
+    - **Worse in:** Typical open-contact isolation is about 2-5 dB lower below 300 MHz (Omron's average curve). The guaranteed minimum is the same. With the series-shunt pole, the ≥35 dB acceptance should still pass, but this has to be measured on the LiteVNA.
+    - **Compatibility:** Electrically and in software identical. The not-yet-drawn driver PCB needs the -S land pattern from Omron's mounting drawing.
+    - **Risks:** Strictly worse in typical isolation, so it is not 'not worse' under the user's rule unless the user accepts that. TME has no stock.
+    - **Seller url:** https://www.digikey.com/en/products/detail/aratas-formerly-omron-components/G6K-2F-RF-S-DC5/1936449
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=G6K-2F-RF
+      - https://www.digikey.de/de/products/result?keywords=G6K-2F-RF-S
+      - https://nonprod.docs.rs-online.com/6357/0900766b80b76be8.pdf
+      - https://www.tme.eu/en/details/g6k-2f-rf-s-5dc/miniature-electromagnetic-relays/aratas-formerly-omron-components/g6k-2f-rf-s-5vdc/
+  3.
+    - **Name:** Aratas/Omron G6K-2F-RF-S DC4.5 (2 pcs), each with a 22 ohm series resistor to run from the 5 V rail
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 27.44 for 2 ($13.72 each, DigiKey US Z2827-ND, 1,091 in stock, active, sold by DigiKey and not a marketplace seller), plus about $0.10 for two 0805 resistors. EU: EUR 24.10 for 2 at DigiKey DE (EUR 12.05 each, about $27.09). TME has 0 in stock.
+    - **Spec comparison:** Same relay and RF figures as the -S DC5 above. Coil: 4.5 V, 23.2 mA, 194 ohm, 100 mW; must-operate 3.6 V, must-release 0.45 V. From 5 V through 22 ohm, the coil sees about 4.49 V (rated) and the draw is about 116 mW, against about 105.5 mW for the DC5 coil. At 60 C the operate margin is about 10%, against about 9% for DC5 on 5 V (model, coil resistance +15%).
+    - **Worse in:** (1) The same 2-5 dB lower typical isolation as the -S DC5. (2) About 11 mW (10%) more draw per energised coil, and only one coil is ever on. (3) One extra resistor per coil. Without the resistor the coil would run at 111% of rated voltage. That is inside the 150% maximum, but Omron describes the maximum as an instantaneous limit, so the resistor is required.
+    - **Compatibility:** Same driver FET and MCP23017 lines. Add the resistor in series with the coil and keep the flyback diode across the coil. Uses the -S land pattern.
+    - **Risks:** Cheapest genuine option found, but strictly worse in two small specs, so it is not compliant with the rule without the user's explicit OK. DigiKey's low price on DC4.5 relative to DC5 is a pricing quirk that may not last.
+    - **Seller url:** https://www.digikey.com/en/products/detail/aratas-formerly-omron-components/G6K-2F-RF-S-DC4-5/1936448
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/aratas-formerly-omron-components/G6K-2F-RF-S-DC4-5/1936448
+      - https://www.digikey.de/de/products/result?keywords=G6K-2F-RF-S
+      - https://nonprod.docs.rs-online.com/6357/0900766b80b76be8.pdf
+  4.
+    - **Name:** TE Connectivity Axicom HF3 1462051-2 (HF3 53, 5 V monostable SPDT, 50 ohm), 2 pcs
+    - **Kind:** other_brand
+    - **Price usd:** 35.44 for 2 ($17.72 each, DigiKey US, 1,903 in stock). A third relay, needed to restore every fail-safe property, brings it to $53.16, which is more than the current part.
+    - **Spec comparison:** TE datasheet 108-98000 (2025). The RF figures are not marked as typical or guaranteed.
+  - Better: isolation 80 dB at 100 MHz and 72 dB at 900 MHz; insertion loss 0.03/0.12 dB; VSWR 1.05/1.20; DC to 3 GHz; 2 A; 50 W RF at 2.5 GHz; -55 to +85 C; RT III wash-tight.
+  - Coil: 178 ohm, 140 mW, operate 3.75 V, release 0.5 V.
+  - Mechanical endurance: 10^7 operations.
+  - Size: 14.6 x 7.2 x 10 mm, 2.5 g.
+    - **Worse in:** (1) It is SPDT. Two of them can either put the HF+ on 50 ohm when de-energised or terminate both antenna ports when de-energised, not both at once. The DPDT series-shunt pair does both. (2) Coil 140 mW against about 105 mW (+33%). (3) Mechanical endurance 10^7 against 5x10^7 operations. (4) Larger: 10 mm tall against 5.4 mm, and 14.6 mm long against 10.3 mm, inside the HF+ can. (5) TE's own product page says it is not currently available direct; DigiKey has stock.
+    - **Compatibility:** Same 5 V FET drive and MCP23017 lines; a new PCB layout is needed. The topology would change to K1 common = HF+, K1 NC = K2 common, and K2 NC = 50 ohm.
+    - **Risks:** Better RF, but it loses the both-ports-terminated default state and is worse on coil power, endurance and size, so it is not 'not worse'.
+    - **Seller url:** https://www.digikey.com/en/products/detail/te-connectivity-potter-brumfield-relays/1462051-2/5427798
+    - **Sources:**
+      - https://www.te.com/en/product-1462051-2.html
+      - https://www.te.com/commerce/DocumentDelivery/DDEController?Action=srchrtrv&DocNm=108-98000&DocType=Data%20Sheet&DocLang=English&DocFormat=pdf&PartCntxt=1462051-2
+      - https://www.digikey.com/en/products/filter/high-frequency-rf-relays/963
+  5.
+    - **Name:** Aratas/Omron G6K-2F-Y DC5, the standard (non-RF) G6K (2 pcs)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 10.18 for 2 ($5.09 each, DigiKey US)
+    - **Spec comparison:** Same mechanism family and coil class. Omron publishes no guaranteed RF figures for it, only typical curves from 1 to 100 MHz (sample G6K-2G):
+  - isolation about 46 dB at 100 MHz;
+  - insertion loss already about 0.2 dB at 100 MHz and rising, against about 0.03 dB for the -RF;
+  - VSWR up to about 1.25.
+  There is no data at all for 162-260 MHz.
+    - **Worse in:** Insertion loss and VSWR are already worse at 100 MHz, and both are unspecified across the 64-260 MHz VHF range. It has no RF rating. Rejected.
+    - **Compatibility:** Same footprint class and drive, but it cannot be accepted without its own VHF characterisation, and the published data already fails 'not worse'.
+    - **Risks:** Rejected under the user's rule.
+    - **Seller url:** https://www.digikey.com/en/products/detail/aratas-formerly-omron-components/G6K-2F-Y-DC5/307648
+    - **Sources:**
+      - https://omronfs.omron.com/en_US/ecb/products/pdf/en-g6k.pdf
+      - https://www.digikey.com/en/products/result?keywords=G6K-2F-Y%20DC5
+  6.
+    - **Name:** RF reed relays: Coto 9814-05-00, Standex-Meder CRF05-1A, Coto 9002-05-00 (5 V, SPST-NO)
+    - **Kind:** other_brand
+    - **Price usd:** $12.08 / $9.66 / $6.89 each (DigiKey US). Three are needed for three states: about $21-36.
+    - **Spec comparison:** 1 Form A (normally open) only, per the DigiKey listing. I did not check their RF datasheets in this run.
+    - **Worse in:** Normally-open contacts are open at power loss, so a de-energised 50 ohm state for the HF+ and terminated ports is impossible. This breaks the fail-safe and terminated-floor requirement. Rejected without further spec work.
+    - **Compatibility:** Would need a different topology and drive.
+    - **Risks:** Rejected.
+    - **Seller url:** https://www.digikey.com/en/products/filter/high-frequency-rf-relays/963
+    - **Sources:**
+      - https://www.digikey.com/en/products/filter/high-frequency-rf-relays/963
+- **Notes:** VERDICT
+  - **Rule-compliant pick:** keep the same part, Aratas/Omron G6K-2F-RF DC5, and buy it from DigiKey: $50.12 for two, or EUR 44.00 at DigiKey DE (about $49.46). STACK's RS UK price is GBP 43-52 (about $57-69). This saves about $7-19 per set, and nothing about the part changes.
+  - **No other brand is both cheaper and not worse.** In DigiKey's RF-relay category (the listing appeared to run in ascending price order; not confirmed), nothing DPDT, 50 ohm and RF-rated in stock came below the G6K-2F-RF-S DC4.5.
+  
+  OPTIONAL, NEEDS THE USER'S EXPLICIT OK (it gives up a small amount of spec)
+  - **G6K-2F-RF-S DC4.5 plus a 22 ohm resistor per coil:** $27.44 for two, a further $22.68 cheaper than the same-part pick.
+  - **G6K-2F-RF-S DC5:** $39.38 for two.
+  - Both have the same guaranteed RF figures, but Omron's average curves show 2-5 dB lower typical isolation below 300 MHz. The DC4.5 option also draws about 11 mW more per energised coil.
+  - If either is accepted, keep the LiteVNA acceptance unchanged: ≥35 dB isolation at 162-260 MHz and ≤0.3 dB loss from 10 kHz to 260 MHz.
+  
+  REJECTED OR NOT CHEAPER
+  | Part | Price | Why |
+  |---|---|---|
+  | Panasonic RA ARA200A05 | $38.54 each | Insertion loss 0.3 dB max against 0.2 dB; coil 140 mW; 14.7 x 9.7 x 5.9 mm |
+  | Panasonic RJ (ARJ) | $114 or more | No 5 V single-side-stable coil; 200 mW coil |
+  | Omron G6Z-1F-A DC5 | n/a | Obsolete at DigiKey |
+  | Panasonic ARE1305 (RE series) | n/a | No DigiKey result; status not verified |
+  | G6KU-2F-RF (latching) | n/a | Loses the fail-safe 50 ohm default |
+  | G6K-2F-RF-T DC5 | $26.03 | Not cheaper |
+  | G6K-2F-RF-V DC5 | $77.58 | Not cheaper |
+  | Coto 2341-05-020 SPDT | $23.75 | Dearer than the HF3 and still SPDT |
+  
+  Solid-state switches (pSemi/ADI-class) are outside this angle. They were not considered further because they have no defined 50 ohm state when unpowered, and the stack already rejected the HMC241 over its DC blocks.
+  
+  CORRECTIONS FOR STACK
+  1. **Coil power:** the G6K-2F-RF 5 V coil draws 21.1 mA at 237 ohm, about 105 mW, not 0.12-0.15 W (Omron datasheet; the DigiKey listing agrees).
+  2. **Isolation basis:** Omron's average curve gives about 46 dB at 162 MHz and about 41 dB at 260 MHz for one open contact. That already supports the ≥35 dB acceptance before the shunt pole is counted. These are plot readings (±2 dB), not guarantees.
+  3. **EU sourcing:** TME lists the -S DC5 and -S DC4.5 but has 0 in stock. Mouser, Farnell and RS pages were blocked (403/503), so their prices are not verified. DigiKey DE did not say whether its EUR prices include VAT; in this run I assumed they are ex VAT (not verified). EUR is converted at 1.1241 USD as in reaudit B.
+  
+  The driver PCB, flyback diodes and FETs are the same for every candidate and are left out of the price comparison. All candidates are passive, receive-only parts and keep every hard rule. Downloaded datasheets are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/g6k_dl/, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/hf3_dl/ and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/g6ky_dl/.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
