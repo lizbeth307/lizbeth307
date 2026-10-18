@@ -18921,6 +18921,44 @@
   
   Left out of scope: the C6 I2C2 list of used addresses (0x20, 0x21, 0x22, 0x30, 0x48) does not include 0x49 for the AD8318 box ADS1115. The files do not say whether that box sits on I2C2, so I did not change C6.
 
+## fix:B:b1 (run `wf_588afa12-702`)
+
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+- **Rejected:**
+  1.
+    - **Idx:** 8
+    - **Why:** Already fixed. The 11.4 row 27 now uses regional bands (6-12° central Europe, 18-21° south-east, below the horizon in Iberia, Ireland and the UK) and says the city table was removed. Row 42 reads 'GOES-East 75.2W до 9.9° лише на крайньому заході (Ірландія, Португалія)'. No Berlin, Athens, Lisbon or Paris angles are left in 11.4. Section 8 still lists city coordinates, but only as CI test fixtures, which decision D9 allows.
+  2.
+    - **Idx:** 9
+    - **Why:** Already fixed. The 11.6 note-19 row now reads 'GOES-East 75.2W видно лише на крайньому заході (Ірландія, Португалія; ≤9.9°)', with no city named.
+  3.
+    - **Idx:** 10
+    - **Why:** Already fixed, per decision D10. The USCG WEFAX question is gone from the section 8 user questions (item 6 is now the QAIRT question). USCG is excluded by rule in 1.1 C16, 4.2 and 6.1.
+- **Totals changed:** None. No BOM or lab row price changed, so 2.x, 2.12, 3.6, 9 and 11.7 are unchanged. Idx 12 recomputed only the 9.1 step 2 RTL-SDR Blog order figure: $243.60 webstore without the LNA V2, plus the LNA V2 at $32.36-34.61, gives $275.96-278.21 (with options up to $310.86-313.11). The 3.1 row already had the LNA V2 at $32.36-34.61. Idx 11 changed only the basis wording of the Airspy Mini row in 11.7. The 16.78-36.78 range and the sums 43.88-87.64 and 413.48-717.31 are unchanged. Idx 14 removed MF-MSMF030-2 from the buy lists without a price change, because G3 #13 gives the PTCs only as a combined $0.89.
+- **Summary uk:** Застосовано 17 із 20 проблем пакета 1 ланцюга B у /home/user/lizbeth307/sat-receiver-audit/STACK.md. У 7 #23 стоїть підсумок extended ≈$570-630 (з Peli 1450 до ≈$730.50), а H-field зондів у стеку немає.
+  Правило landed cost (EUR 3 мита + EUR 2 UHF за рядок) тепер діє для Uputronics при IOSS (≈$76.4-77.6 плюс доставка), а також для R44SF/ADT-Link, JLCPCB/PCBWay, PINE64, TOJOIN, RG402, FNB58, AN8009, IP2368, Arace і окремого замовлення SAWbird+ iO. Ці продавці додані до списку поза ЄС у «Митниця і ПДВ».
+  Замовлення RTL-SDR Blog у 9.1 крок 2 перераховано з LNA V2 за ціною ЄС ($275.96-278.21); додано примітку, що однією посилкою воно перевищує EUR 150.
+  Рядок BMS у 5.1 тепер 2.65-2.75 V/ел. Шина Boni вирішена: eFuse без PTC, MF-MSMF030-2 прибрано з 8, 9.1 і 11.1. Для TPS259470ARPWR ×3 прийнято правило: лише оплавлення.
+  ID UFS винесено з воріт B1 на прибуття UFS. Назву Daly у джерелах 10 виправлено. 2N7002 для AUX12 більше не купується двічі. Кошик HMI оновлено (TL3145, PI4IOE5V9555).
+  Пункти 8, 9 і 10 уже були виправлені до мене. Підсумки не змінилися.
+
 ## extract:operator_notes (run `wf_5ed966cd-eee`)
 
 - **Source:** operator_notes
