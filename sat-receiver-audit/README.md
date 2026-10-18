@@ -46,6 +46,7 @@
 | [Two stage coax cm choke ft 240 77 ft 240](components/two_stage_coax_cm_choke_ft_240_77_ft_240.md) | · research · forums · fixes ✅ verify | `—` |
 | [Uputronics 440 mhz cubesat filtered prea](components/uputronics_440_mhz_cubesat_filtered_prea.md) | · research · forums · fixes ✅ verify | `—` |
 | [Wideband sdr](components/wideband_sdr.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_e64436d6-ae7` |
+| [Wisecoco 7in 1920x1080 2000 nit hdmi kit](components/wisecoco_7in_1920x1080_2000_nit_hdmi_kit.md) | · research · forums · fixes ✅ verify | `—` |
 
 Етапи: research — дослідження; forums — відгуки з форумів; fixes — власні виправлення (лише якщо на форумах не знайшлося рішення); verify — адверсаріальна перевірка.
 
