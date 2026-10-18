@@ -2334,6 +2334,511 @@
   
   Input files used: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/digest.md, software.json, storage.json, gnss_imu.json, narrowband_sdr.json, wideband_sdr.json, antennas.json and display.json in the same folder. Downloaded package indexes and checked sources are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/labsw/ (subfolders idx, dl, sdist, whl).
 
+## lab:bench_tools (run `wf_1dd437c5-0cf`)
+
+- **Area:** General portable lab tools: pocket DMM, USB-C/PD meter, USB scope plus logic analyzer (sigrok/PulseView on arm64), UART/SWD probe, UVC thermal camera, portable soldering, current-limited supply, ESD, hand tools, spares, notebook/labels, carry case, and how the instruments get power in the field
+- **Items:**
+  1.
+    - **Name:** ANENG AN8008 pocket DMM (AN8009 is the variant with a thermocouple)
+    - **Category:** multimeter
+    - **Purpose in lab:** Continuity and polarity checks of the XT30, DC5525 and J21 3-pin leads. Rail checks: 9/12 V buck, Q6A 5 V and 3.3 V, LT3045 LNA rail, bias-tee output. uA standby and off-current of the pack chain. mA checks of LNA and bias-tee current against the V4L's 180 mA limit. Pack current up to about 4 A on the 10 A range. Diode and capacitance checks.
+    - **Key specs:** 9999 counts, basic DC accuracy 0.5%. 9.999 mV range at 1 uV resolution. 99.99 uA (10 nA resolution) and 999.9 uA (0.1 uA). 999.9 mA, 9.999 A. 0.01 ohm mA shunt, so burden voltage is very low. DC current accuracy is +/-0.8%+3 on the uA ranges and +/-1%+3 on mA/A. Current ranging is manual and the ranges have gaps. AC bandwidth 3 kHz (-3 dB). The frequency counter reaches about 10 MHz at about 1.4 V. Resistance tops out at 9.999 Mohm. Continuity is latched and sounds at 40-50 ohm. 10 mm fuses. The printed 600 V CAT III / 1000 V CAT II rating is judged unlikely in practice by the reviewer. The AN8009 swaps the square-wave output for temperature sensing and NCV (retailer description only, not checked in detail).
+    - **Size weight power:** Same case as the ANENG AN8002; exact size and weight are not published in the review (unverified). Runs on 2x AAA: 1.2-2 mA typical, 5.5 mA with backlight, 15 mA with the buzzer sounding. That works out to hundreds of hours per set (my calculation).
+    - **Interface and linux:** None. It is standalone with no logging. Logging is covered by the INA228 in the device and by the FNB58.
+    - **Price:** About GBP 15 delivered in the reviewer's purchase (older review). The current AliExpress/EU price is unverified; expect roughly $20-35 (unverified).
+    - **Tier:** core
+    - **Integration notes:** Before inserting the meter in series, move the lead from the A jack to the uA jack (see the off-current procedure). Keep spare 10 mm fuses in the kit; open the meter to read their rating. Add a pair of mini-grabber leads (unverified price) so you can measure hands-free on 0.1 in headers. For hot-spot spot checks the AN8009's K-type thermocouple is a cheap complement to the thermal camera.
+    - **Sources:**
+      - https://www.markhennessy.co.uk/budget_multimeters/aneng_an8008.htm
+      - https://budgetlightforum.com/t/test-review-of-dmm-aneng-an8008/47061
+      - https://www.desertcart.sn/products/78091074
+    - **Availability:** Widely sold on AliExpress and EU marketplaces. Live stock was not checked (unverified).
+    - **Cheaper alternative:** ANENG AN8002: same case, but no 10 nA uA range (price unverified). Nothing cheaper keeps the 10 nA range.
+    - **Safety notes:** Low-energy electronics only, never mains: the reviewer doubts the CAT ratings and finds the input protection minimal. Never leave a lead in the A/mA jack while measuring voltage on the 4S pack, because that shorts the pack through the shunt. The pack can deliver tens of amps.
+  2.
+    - **Name:** FNIRSI FNB58 USB/USB-C PD tester (Std variant, no Bluetooth)
+    - **Category:** USB-C power / PD meter
+    - **Purpose in lab:** Qualify PD chargers and power banks for the IP2368 charge input: read the PDOs and trigger 20 V. Measure and log what each USB device on the Q6A draws (RTL-SDR V4L 250-270 mA, IMU puck, scope, thermal camera, LA) against the shared ~17 W VCC_5V_PERI budget. Also cable resistance, e-marker reading and a ripple view.
+    - **Key specs:** 4-28 V, 0-7 A, 0-140 W. D+/D- 0-3.3 V. Triggers QC2.0/3.0, FCP/SCP, AFC, PD2.0/3.0 and VOOC/WARP. PD monitor and e-marker cable reading. Waveform logging at 2-100 sps; ripple drawing up to 4 Msps on the device itself. Ports: USB-A, micro-USB and Type-C. The product page does not name PD 3.1 or PPS.
+    - **Size weight power:** Size and weight are not on the official page (unverified). It is powered by the bus it measures, which must be at least 4 V.
+    - **Interface and linux:** USB HID. The community logger baryluk/fnirsi-usb-power-data-logger (Python 3.6+ and pyusb) is tested on Linux for the FNB48, C1 and FNB58. It logs V, I, D+/D-, temperature, Ws and As at a fixed 100 sps. It needs root or the supplied udev rule. It cannot detect the PD type, and firmware updates need Windows (a VM works). The tool is pure Python, so it should run on the Q6A (arm64), but the author has not tested arm64 (unverified).
+    - **Price:** $58.99 on fnirsi.com, shown reduced from $98.99 (checked Oct 2026). AliExpress is usually lower (unverified).
+    - **Tier:** core
+    - **Integration notes:** Put it inline between a Q6A USB-A port and the device under test. Put it inline between the PD source and the receiver's IP2368 USB-C when qualifying chargers. NEVER plug it into the Q6A's own USB-C port: that port is hard-wired to the 12 V input and back-feeds (power.json). Choose the Std variant so there is no 2.4 GHz Bluetooth radio near the 2.2 GHz receive chain.
+    - **Sources:**
+      - https://www.fnirsi.com/products/fnb58
+      - https://github.com/baryluk/fnirsi-usb-power-data-logger
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/power.json
+    - **Availability:** In stock on fnirsi.com (Oct 2026). AliExpress not checked.
+    - **Cheaper alternative:** FNIRSI FNB48S: the logger README says it 'should also work' (price unverified). Or a basic inline USB-C meter without logging (unverified).
+    - **Safety notes:** 28 V maximum. Do not insert it in PD 3.1 EPR paths at 36/48 V.
+  3.
+    - **Name:** Hantek 6022BL USB oscilloscope plus logic analyzer
+    - **Category:** USB oscilloscope / logic analyzer
+    - **Purpose in lab:** 2-channel scope for converter ripple and spur attribution, using the known fundamentals from power.json: IP2368 250 kHz, SY81012 about 1 MHz, SY7120 1.04 MHz in PFM. Also LNA-rail noise, bias-tee voltage, fan PWM, and PPS and UART edge sanity. Its logic-analyzer mode handles UART, I2C and PPS.
+    - **Key specs:** 2 channels, 8-bit, 20 MHz listed bandwidth, 1 Mohm || 25 pF, AC/DC coupling. 48 MS/s headline, but OpenHantek6022 caps it at 30 MS/s with CH1 only, because 48 MS/s USB streaming is unstable. Software trigger only, no onboard memory. Logic analyzer: 16 channels in hardware, 8 channels at up to 24 MHz in sigrok. It is a scope OR a logic analyzer, never both at once; the H/P button selects the mode at plug-in. Inside (per the sigrok teardown): CY7C68013A or CBM9002A, an AMS1117-3.3 LDO and a Mornsun A0505S 2 W isolated DC/DC.
+    - **Size weight power:** Size and weight not verified. USB bus-powered. Its draw is not published; the 2 W isolated converter plus the FX2 suggest budgeting up to about 0.5 A at 5 V (my inference). Measure it with the FNB58.
+    - **Interface and linux:** USB 2.0 HS. LA mode enumerates as 0925:3881 (the Saleae Logic ID) and uses sigrok's fx2lafw driver. Ubuntu noble universe has PulseView 0.4.2 for arm64 (libsigrok 0.5.2) and sigrok-firmware-fx2lafw 0.1.7 (arch: all); the firmware loads into RAM on every plug-in. Scope mode (04b4:602a) uses OpenHantek6022, which is Linux-first, has CI-built arm64 .debs, and offers a spectrum view, CH1/CH2/MATH software trigger, Vpp/RMS/frequency/THD measurements, cursors and offset calibration. The sigrok wiki says only the 6022BL's LA mode is supported, so do not plan on PulseView for its scope mode.
+    - **Price:** GBP 110 ex VAT at The Debug Store UK (EUR 134.95 ex VAT in its FR store). About $126-135 in elecena's 2024 feed. AliExpress price unverified.
+    - **Tier:** core
+    - **Integration notes:** Plug it into a free port on the Q6A's USB 2.0 hub. A 30 MS/s stream is about 30 MB/s on the 480 Mb/s hub it shares with Wi-Fi and the RTL-SDR, so turn Wi-Fi off and don't record IQ while capturing. To measure ripple, use the x1 setting with a ground spring, or a short 50 ohm coax pigtail through a 1 uF DC block, with AC coupling.
+    - **Sources:**
+      - https://sigrok.org/wiki/Hantek_6022BL
+      - https://sigrok.org/wiki/Hantek_6022BE
+      - https://sigrok.org/wiki/Fx2lafw
+      - https://github.com/OpenHantek/OpenHantek6022
+      - https://packages.ubuntu.com/noble/pulseview
+      - https://packages.ubuntu.com/noble/sigrok-firmware-fx2lafw
+      - https://thedebugstore.com/products/hantek-6022bl-oscilloscope-analyser-uk
+      - https://elecena.pl/product/25316954/rss
+    - **Availability:** Sold by The Debug Store UK and Polish shops (gotronik.pl). SainSmart's listing is discontinued.
+    - **Cheaper alternative:** Hantek 6022BE (scope only, about $85-120 on eBay or GBP 85 ex VAT, often sold out) plus a $10 fx2lafw LA. The total is similar, but you can run scope and LA at the same time and scope mode also works in sigrok.
+    - **Safety notes:** Treat the probe ground as the Q6A's USB ground (inference: the isolated converter alone does not prove a floating input). Clip it ONLY to device GND (mid-plate or 40-pin GND). Never clip it to the high side of the INA228 shunt, a pack + terminal or a charger output; that shorts through the USB ground. Use x10 probes above the 5 V range.
+  4.
+    - **Name:** Generic fx2lafw 24 MHz 8-channel logic analyzer (CY7C68013A 'Saleae clone')
+    - **Category:** logic analyzer
+    - **Purpose in lab:** A dedicated LA so the scope and the LA can run at once. It stays wired as a debug harness on the GNSS, IMU and fan lines and doubles as a spare.
+    - **Key specs:** CY7C68013A with a 24 MHz crystal, 8 channels, up to 24 MHz sampling. fx2lafw lists Saleae Logic clones (Noname I, MCU123, Pandatron PLA8, Mollex) at 100% support. Input buffering and protection vary by clone; some use 74LVC245-type buffers. Use on 3.3 V logic.
+    - **Size weight power:** Thumb-drive size (dimensions unverified). Bus-powered, about 100 mA (unverified).
+    - **Interface and linux:** sigrok fx2lafw driver. PulseView and sigrok-cli in the Ubuntu noble arm64 universe, plus sigrok-firmware-fx2lafw. Decoders: uart, i2c, spi and others from libsigrokdecode.
+    - **Price:** About $10 (HiLetgo, per a 2026 buying guide). SparkFun-branded unit: EUR 28.75-37 on elecena in 2025, or AUD 44.82 ex GST at Core Electronics (out of stock). Newegg clone: $43.99.
+    - **Tier:** core
+    - **Integration notes:** Make a labelled 10-wire harness with micro clips: D0 PPS (pin 7/GPIO96 net), D1 LC76G TX, D2 LC76G RX, D3 SDA, D4 SCL, D5 BNO INT, D6 fan tach (pin 18), D7 spare, plus GND. It shares the USB 2.0 hub, which is fine at 1-4 MS/s.
+    - **Sources:**
+      - https://sigrok.org/wiki/Fx2lafw
+      - https://microcontrollerslab.com/best-logic-analyzers-for-embedded-developers-2026-buying-guide/
+      - https://core-electronics.com.au/usb-logic-analyzer-24mhz-8-channel.html.md
+      - https://www.newegg.com/p/3C6-01S2-01438
+      - https://elecena.pl/product/27748736/rss
+    - **Availability:** Commodity item; clones are everywhere.
+    - **Cheaper alternative:** A bare CY7C68013A-56 FX2LP dev board (about $8-9 on eBay) running fx2lafw. It has no input protection.
+    - **Safety notes:** 3.3/5 V logic only. Never connect it to RF, LNB/bias-tee DC (13/18 V) or pack nets.
+  5.
+    - **Name:** Raspberry Pi Debug Probe (USB-UART plus SWD/CMSIS-DAP)
+    - **Category:** UART / SWD debug adapter
+    - **Purpose in lab:** 3.3 V UART for the Q6A debug console on 40-pin pins 8/10/14 at 115200. That console is required for DDR/boot-loop diagnosis, the 50-100 cold-boot test and EDL recovery (digest). It can also talk to the LC76G directly if Q6A UART6 TX is suspect, and it does SWD for the RP2040-Zero IMU puck through OpenOCD.
+    - **Key specs:** USB-to-UART bridge plus a USB-to-SWD bridge (CMSIS-DAP), 3.3 V nominal I/O. Comes with a USB cable and three cables: JST-JST, JST to 0.1 in female, and JST to 0.1 in male.
+    - **Size weight power:** 22 x 32 mm in a clear case. Bus-powered.
+    - **Interface and linux:** Appears as CDC-ACM; USB_ACM, FTDI_SIO, CH341 and CP210X are all in the Radxa kernels (gnss_imu.json). Works with OpenOCD and picocom/minicom.
+    - **Price:** $12.00 at PiShop US (in stock).
+    - **Tier:** core
+    - **Integration notes:** The Q6A cannot capture its own boot console, so that job needs a second computer at home base. In the field, use the probe from a free Q6A hub port for GNSS work. Wiring for the console: probe RX to pin 8 (Q6A TX), probe TX to pin 10 (Q6A RX), GND to pin 14. That is the Pi-style mapping; confirm it on the Radxa pinout.
+    - **Sources:**
+      - https://www.raspberrypi.com/products/debug-probe/
+      - https://www.pishop.us/product/raspberry-pi-debug-probe/
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/gnss_imu.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/digest.md
+    - **Availability:** In stock at PiShop US.
+    - **Cheaper alternative:** A 3.3 V CP2102 or CH340 USB-UART dongle, about $2-5 (unverified). No SWD.
+    - **Safety notes:** 3.3 V only. Never connect it to 5 V TTL or RS-232 levels.
+  6.
+    - **Name:** TOPDON TC001, the original single-lens model (alternative: InfiRay P2 Pro)
+    - **Category:** USB UVC thermal camera
+    - **Purpose in lab:** Hot-spot checks: Q6A SoC/heatsink (throttles at about 90-91 C), LimeSDR (target 75 C or less), IP2368 MOSFET (over 100 C reported at 5 A), the bucks, the display backlight driver, cells while charging, and hot shorts on new boards.
+    - **Key specs:** 256x192 sensor, 40 mK NETD, 25 Hz, -20 to 550 C, accuracy max(+/-2 C, +/-2%). It enumerates as UVC and streams 256x384: the top half is the image, the bottom half is temperature data. The InfiRay P2 Pro has the same sensor class and the same 256x384 UVC format.
+    - **Size weight power:** TC001: 71x42x14 mm, 30 g, 350 mW, with a 50 cm cable and a Type-C to Type-A adapter in the box. P2 Pro: 27x18x9.8 mm, 9 g, 350-400 mW.
+    - **Interface and linux:** UVC. PyThermalCamera (Python 3 plus python3-opencv, run as src/tc001v4.2.py --device N) is tested on Debian and on Raspberry Pi. It reads the raw stream without vendor commands. The Rust crate topdon_thermal_rs also targets the TC001 on Linux. Whether the Radxa 6.18 kernel has UVC enabled is unverified: check with v4l2-ctl --list-devices.
+    - **Price:** GBP 259.99 (YPC UK, Jan 2026). About EUR 265 on AliExpress and GBP 150-160 discounted on eBay (EEVblog, 2023). P2 Pro: $250-300 (AnandTech, Dec 2023), or $239 with macro lens in a 2023 sale. 2026 prices for the P2 Pro were not verified.
+    - **Tier:** extended
+    - **Integration notes:** Plug it into a free USB 2.0 hub port with the supplied A adapter. Put Kapton-tape dots (high emissivity) on shiny heatsinks and cans before reading them. It only sees through an open lid, so compare its readings with /sys/class/thermal zones and LimeSDR temperatures. Save frames to the lab notebook.
+    - **Sources:**
+      - https://github.com/leswright1977/PyThermalCamera
+      - https://blog.kowatek.com/?p=34630
+      - https://at-web1.www.anandtech.com/show/21200/infiray-p2-pro-and-topdon-tc001-thermal-cameras-capsule-review
+      - https://www.ypc.co.uk/product/topdon-tc001-thermal-imaging-camera-for-android-infrared-thermal-imager-usb-c-512x384-high-resolution-testing-range-20%e2%84%83-550%e2%84%83-0-1%e2%84%83-test-precision-for-phone-tablet-windows/
+      - https://www.eevblog.com/forum/thermal-imaging/budget-imager-recommendations/msg5312566/
+      - https://docs.rs/topdon_thermal_rs
+      - https://github.com/LeoDJ/P2Pro-Viewer
+    - **Availability:** The plain TC001 is marked discontinued at one retailer (South Africa); the current models are the TC001 Plus and TC001 Max (Max: EUR 284.99 on Amazon DE, 29 Sep 2026). Buy a listing that is explicitly the plain TC001 or a P2 Pro, with a return window, and check UVC on the Q6A inside that window.
+    - **Cheaper alternative:** Adafruit MLX90640 55 deg breakout (product 4407): 32x24, I2C/STEMMA QT, +/-2 C over 0-100 C, 25.7x17.7x16 mm, 3.5 g, $74.95, out of stock at Adafruit. It goes on the Q6A's 40-pin I2C. Or use the AN8009 thermocouple for spot readings.
+    - **Safety notes:** Passive sensor. It emits nothing.
+  7.
+    - **Name:** PINE64 Pinecil V2 soldering iron, plus a fused XT30-to-DC5525 lead
+    - **Category:** portable soldering iron
+    - **Purpose in lab:** Field and bench soldering: SMA/coax pigtails, XT30 and DC leads, antenna element joints, header pins, copper-clad FR4 shield cans.
+    - **Key specs:** USB-C PD/QC 12-20 V at 3 A or more. DC5525 barrel, centre-positive, 12-24 V at 3 A or more. Officially 24 V/88 W; the stock ST-B2 short tip (6.2 ohm) gives about 64 W at 20 V and about 92 W at 24 V. Takes TS100-compatible tips. Open-source IronOS with these settings: Power source cutoff (DC=10 V, or S=3.3 V per cell); per-cell Minimum voltage (2.4-3.7 V for 4-6S); Power limit (on USB-PD the effective limit is the lower of this and the source's advertised wattage); PD Mode ('No Dynamic' disables EPR and PPS). Has BLE (app needs IronOS 2.21+).
+    - **Size weight power:** 155 x 12.8 x 16.2 mm with tip, 28 g. From the 4S pack in its 13.6-16.4 V working window, P = V^2/6.2 ohm, about 30-43 W at 2.2-2.65 A (my calculation).
+    - **Interface and linux:** None needed. A BLE app is optional.
+    - **Price:** $25.99 community price (retail $35.99), in stock at the PINE64 store. Spare TS100-type tips, flux and solder: about $15-30 (unverified).
+    - **Tier:** core
+    - **Integration notes:** Field power A (preferred): a PD power bank at 20 V/3 A or more. Field power B: the receiver pack's XT30 service lead (the one power.json uses for the ISDT balance charger) through a home-made XT30-to-DC5525 lead with its own 5 A inline fuse. On that lead set IronOS Power source to 4S and Minimum voltage to 3.4 V/cell (13.6 V), which matches the stack's Linux poweroff threshold. Stop SDR recording while soldering, because the heater PWM and the BLE radio are noise sources.
+    - **Sources:**
+      - https://wiki.pine64.org/wiki/Pinecil
+      - https://pine64.com/product/pinecil-smart-mini-portable-soldering-iron/
+      - https://ralim.github.io/IronOS/Settings/
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/power.json
+    - **Availability:** In stock at the PINE64 store (Oct 2026).
+    - **Cheaper alternative:** I verified nothing cheaper with comparable quality. The Pinecil is already the low-cost reference.
+    - **Safety notes:** PINE64's warnings: use only a DC5525 centre-positive plug (a 5521 plug can break the jack), stay at 24 V or less on the barrel, and never connect USB-C and the barrel at the same time. Turn the device's master switch off and unplug the pack before soldering inside the device. Keep the tip away from the cells and the ASA shell. Ventilate fumes, and wash hands after handling leaded solder.
+  8.
+    - **Name:** FNIRSI DPS-150 current-limited DC supply
+    - **Category:** bench power supply (DC)
+    - **Purpose in lab:** First power-up of new or repaired modules at a current limit: LNAs at 5 V, the Q6A at 9-12 V into J21, buck and BMS boards. Also LNB bias at 13 V. Finds shorts before they burn a trace.
+    - **Key specs:** 0-30 V, 0-5 A, up to 150 W (depends on the source). Step-down only, so the output must stay below the input. One listing gives a 5-32 V input. 0.01 V resolution. Claimed ripple under 20 mV (manufacturer claim; no independent measurement found). Claimed protections: OVP, OCP, short-circuit, over-temperature. 2.8 in 320x240 IPS. Accepts PD/QC chargers, power banks and DC adapters (listing). A DPS150PD variant exists.
+    - **Size weight power:** Size and weight unverified. Powered from a PD bank or charger, or from the 4S pack through the XT30 lead (the DC input connector type is unverified).
+    - **Interface and linux:** USB/PC control is unverified. Community WebSerial tools are reported, but I did not verify them.
+    - **Price:** EUR 64.95 incl. VAT at Elektor; HK$398 at a Hong Kong retailer.
+    - **Tier:** extended
+    - **Integration notes:** An 18 V LNB test needs a 20 V PD input (step-down dropout is unverified). It is a switching supply, so it is NOT a clean reference for spur A/B tests; for those use the 3S-direct battery path or a linear supply at home base.
+    - **Sources:**
+      - https://elektor.com/products/fnirsi-dps150-dc-power-supply-150-w
+      - https://elektor.com/products/fnirsi-dps150pd-programmable-dc-power-supply
+      - https://hackaday.io/project/205688-fnirsi-dps-150-unboxing-the-budget-power-supply
+      - https://core-electronics.com.au/fnirsi-dps-150-mini-dc-adjustable-cnc-programmable-regulated-switching-power-supply.html
+    - **Availability:** Elektor (one listing shows 2 in stock), Core Electronics, and others.
+    - **Cheaper alternative:** A USB-C PD trigger board plus a CC/CV buck module (unverified prices). Clumsier, and it has no display-grade readout.
+    - **Safety notes:** DC only, no RF. Set the current limit before connecting anything. Never back-feed it from the pack into its output.
+  9.
+    - **Name:** Anker 737 Power Bank (PowerCore 24K, 140 W): instrument and charging source
+    - **Category:** field power
+    - **Purpose in lab:** Separate field power for instruments that need PD (Pinecil at 20 V, DPS-150, a powered hub). It also serves as the receiver's charging source through the IP2368, so the 72 Wh receiver pack isn't drained by tools.
+    - **Key specs:** 24,000 mAh / 88.8 Wh, 140 W PD 3.1 with two-way charging. 2x USB-C plus 1x USB-A. 140 W needs a PD 3.1 cable and device. A 28 V output was not confirmed.
+    - **Size weight power:** 155.7 x 54.6 x 49.5 mm, 630 g.
+    - **Interface and linux:** Not applicable.
+    - **Price:** $119.99 on an Anker US page, GBP 119, EUR 157.79. $94.99 at Abt with a rebate that ended 08/09/2026.
+    - **Tier:** extended
+    - **Integration notes:** It is bidirectional. power.json warns that bidirectional IP2368 boards (COUT/NACT) use Try.SRC and can push power INTO such banks. With the preferred charge-only (BZ) IP2368 this is fine; otherwise check the current direction with the FNB58 first. 88.8 Wh is under the common 100 Wh airline limit.
+    - **Sources:**
+      - https://anker.com/products/a1289
+      - https://www.abt.com/Anker-737-Power-Bank-PowerCore-24K-A1289011ANKA1289011/p/193795.html
+      - https://galaxus.nl/en/s1/product/anker-powercore-24k-737-140w-24000-mah-140-w-8880-wh-powerbanks-21600160
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/power.json
+    - **Availability:** Widely sold; regional prices differ.
+    - **Cheaper alternative:** Any 65 W, 20,000 mAh PD bank with a 20 V/3 A PDO (unverified models and prices). Qualify it with the FNB58.
+    - **Safety notes:** Li-ion. Carry it in cabin baggage when flying, and don't charge it below 0 C.
+  10.
+    - **Name:** iFixit Portable Anti-Static Mat (with 1 Mohm wrist strap)
+    - **Category:** ESD protection
+    - **Purpose in lab:** An ESD-controlled surface for opening the receiver, handling the LimeSDR (ESD8472 TVS on its RX ports), the Q6A, LNAs and MHF4 pigtails in the field.
+    - **Key specs:** 60 x 60 cm (24 x 24 in). Surface resistance 10^7-10^9 ohm. Grounding wire with a 10 mm snap. 1.8 m, 1 Mohm wrist strap that adjusts up to XL.
+    - **Size weight power:** Folded size and weight not listed (unverified). Needs no power.
+    - **Interface and linux:** Not applicable.
+    - **Price:** $34.95 (iFixit).
+    - **Tier:** core
+    - **Integration notes:** In the field there is often no earth. Bond the mat, the wrist strap and the device's aluminium mid-plate/GND to the same 10 mm snap; equipotential bonding is what matters. Lay the mat before opening the case.
+    - **Sources:**
+      - https://www.ifixit.com/products/portable-anti-static-mat
+    - **Availability:** In stock at iFixit (Oct 2026).
+    - **Cheaper alternative:** A generic wrist strap with a 1 Mohm cord plus a small dissipative mat (about $5-15, unverified).
+    - **Safety notes:** Never use a wrist strap near mains or high-energy circuits. Its 1 Mohm resistor protects against static only.
+  11.
+    - **Name:** Hand-tool roll: iFixit Mako 64-bit driver kit plus cutters, strippers, tweezers, spudger
+    - **Category:** hand tools
+    - **Purpose in lab:** M2.5 board screws, case screws, small hex keys, opening the ASA shell, cable prep, and SMD handling during repairs.
+    - **Key specs:** Mako: 64 precision bits plus a 1/4 in to 4 mm adapter, including Phillips, flat, hex, TORX, TORX security, Pentalobe, Tri-point, JIS, nut drivers and spanner bits. Also flush cutters, a 20-30 AWG stripper, ESD-safe tweezers, a nylon spudger and an SMA 8 mm open wrench (unverified items).
+    - **Size weight power:** Mako case: 17.8 x 10.9 x 3.8 cm (weight not listed). Needs no power.
+    - **Interface and linux:** Not applicable.
+    - **Price:** Mako: $39.95 (iFixit). Other tools: about $20-35 (unverified).
+    - **Tier:** core
+    - **Integration notes:** Use the hex or Phillips bit that matches the case's M2.5 hardware. Store the tools in the soft organiser next to the ESD mat.
+    - **Sources:**
+      - https://www.ifixit.com/products/mako-driver-kit-64-precision-bits
+    - **Availability:** In stock at iFixit.
+    - **Cheaper alternative:** A generic 24-in-1 precision driver set (about $8-15, unverified).
+    - **Safety notes:** Use only non-conductive tools (spudger, nylon) near live pack wiring.
+  12.
+    - **Name:** Spare-parts kit, built from the audited stack
+    - **Category:** spares
+    - **Purpose in lab:** Field repair of the most likely failures named in the input files.
+    - **Key specs:** Power: 2 spare 7.5 A fuses plus 5 A fuses for the iron lead; 2 XT30 pairs; SMBJ14A TVS; a 220 uF/25 V cap; a 10k B3380 NTC; a KSD9700 70 C thermal switch; 1-2 spare IP2368 boards (power.json: buy 2-3 and burn each in); a spare 4S BMS; 20 AWG silicone wire. Compute/IO: CR2032 for the RTC; a spare RP2040-Zero (about $3) for the IMU puck; one short USB A-to-C cable and one A-to-micro cable; Dupont jumpers; 0.1 in headers. Mechanical/thermal: M2.5 screws and standoffs; thermal pads; paste; a spare 40 mm 5 V fan; Kapton tape. RF: 2 spare MHF4 (1.13 mm) to SMA pigtails (MHF4 is rated for only 30 mating cycles); SMA M-F and F-F barrels; an inline DC block; a 50 ohm SMA load. Optionally a second RTL-SDR V4L (narrowband.json recommends buying two).
+    - **Size weight power:** One compartment box of about 20 x 12 x 4 cm, about 300-400 g (estimate).
+    - **Interface and linux:** Not applicable.
+    - **Price:** About $80-130 total (estimate; most parts unverified). Known prices from the inputs: Pololu #2813 $8.95; IP2368 board $14-17 (Prom.ua); RP2040-Zero about $3.
+    - **Tier:** core
+    - **Integration notes:** Label each compartment and keep an inventory sheet in the notebook. Swap a pigtail rather than repeatedly re-mating a worn MHF4.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/power.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/mechanical_thermal.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/narrowband_sdr.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/gnss_imu.json
+    - **Availability:** Commodity parts. The IP2368 board variant (BZ vs COUT/NACT) needs care when buying.
+    - **Cheaper alternative:** Fuses, XT30s and pigtails only (about $25, unverified).
+    - **Safety notes:** Store spare Li-ion-related boards insulated. Put no loose cells in the kit.
+  13.
+    - **Name:** Lab notebook and labelling
+    - **Category:** documentation / labelling
+    - **Purpose in lab:** A traceable lab: what was measured, with which setup, and which cable is which band or port.
+    - **Key specs:** A waterproof field notebook such as Rite in the Rain (unverified price). Heat-shrink cable labels or coloured bands for each SMA lead (RX-A, RX-B, RTL, LNB, GNSS). A digital notebook on the device: a git repo ~/lab holding .sr captures, FNB58 CSVs, INA228 logs and thermal frames, each with a date, setup and pass/fail line. Optional: a Brother P-touch label maker; the Linux CLI ptouch-print (libusb, v1.9) exists, but its supported-model list was not verified.
+    - **Size weight power:** Notebook about 100-200 g. A label maker runs on AAA cells (unverified).
+    - **Interface and linux:** git and plain text/CSV on the Q6A. ptouch-print for USB P-touch models (model list unverified).
+    - **Price:** About $10-25 for the notebook and labels (unverified). A label maker is about $25-60 (unverified).
+    - **Tier:** core
+    - **Integration notes:** Every procedure below ends with a notebook entry. Tag captures with the git commit of the device software build.
+    - **Sources:**
+      - https://git.familie-radermacher.ch/linux/ptouch-print.git
+    - **Availability:** Commodity.
+    - **Cheaper alternative:** A pencil, a paper notebook, and masking tape with a fine marker.
+    - **Safety notes:** None.
+  14.
+    - **Name:** Carry: soft tool organiser (everyday) plus an optional hard case (Pelican 1450 or Apache 3800)
+    - **Category:** carry case / organiser
+    - **Purpose in lab:** Carry the core lab next to the 1.0-1.2 kg receiver (mechanical_thermal.json estimate). The hard case is for transport and travel with the antennas, whose pieces are at most 35 cm.
+    - **Key specs:** Soft organiser: padded, with elastic loops and mesh pockets, about 25 x 18 cm (generic, unverified). Pelican 1450: interior 37.1 x 25.8 x 15.2 cm, so 35 cm antenna pieces fit lying flat; IP-rated watertight transit case. Apache 3800 (Harbor Freight): forum users call it about the same size as a Pelican 1450, with decent foam (official dimensions not found).
+    - **Size weight power:** Pelican 1450: 2.5 kg without foam, 2.9 kg with foam. Soft organiser about 200-400 g (unverified).
+    - **Interface and linux:** Not applicable.
+    - **Price:** Pelican 1450: $106-169 depending on seller. Apache 3800: $30-35 reported by forum users. Soft organiser about $15-35 (unverified).
+    - **Tier:** extended
+    - **Integration notes:** The core is the soft organiser. The hard case is extended because it weighs more than double the receiver. Pick-and-pluck foam: receiver, folded antennas, tool roll, organiser.
+    - **Sources:**
+      - https://au.rs-online.com/web/p/transit-cases/2030766
+      - https://robertscamera.com/1450-case-black
+      - https://www.pokerchipforum.com/goto/post?id=521629
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/mechanical_thermal.json
+    - **Availability:** Pelican is sold worldwide; Apache is sold in the US (Harbor Freight) only.
+    - **Cheaper alternative:** The Apache 3800, about $30-35 versus $106-169 for the Pelican.
+    - **Safety notes:** Pack the Li-ion receiver and the power bank so the master switch cannot be pressed in transit.
+  15.
+    - **Name:** Digilent Analog Discovery 3
+    - **Category:** USB multi-instrument (scope, AWG, LA, supplies)
+    - **Purpose in lab:** A step up from the Hantek: 14-bit 2-channel scope, 16-channel LA/pattern generator, protocol analyzer, and network analysis on audio/HF baseband and LC filters. For conducted bench tests only.
+    - **Key specs:** Scope: 2 differential channels, 14-bit, 125 MS/s, +/-25 V, over 30 MHz with the BNC adapter. AWG: 2 channels, 14-bit, 125 MS/s, +/-5 V output, 12 MHz bandwidth. 16 digital I/O at 125 MS/s, 3.3 V and 5 V tolerant. Supplies 0.5-5 V and -0.5 to -5 V; their 800 mA rating needs an auxiliary supply. USB-C; Digilent recommends a 5 V/2.5 A or 5 V/4 A adapter.
+    - **Size weight power:** Size and weight unverified. Powered from USB-C, plus an auxiliary 5 V supply (from the PD bank via a 5 V adapter) when using the supplies.
+    - **Interface and linux:** WaveForms runs on Windows, macOS and Linux, and CNX says on 'some Arm devices such as the Raspberry Pi'. The arm64 package on the Q6A is NOT confirmed (Digilent pages returned 403).
+    - **Price:** $379.00 list. $303.20 at Studica, $374.95 at Jameco.
+    - **Tier:** optional
+    - **Integration notes:** Buy only after confirming an arm64 WaveForms build for Ubuntu 24.04. Until then, run it from a laptop at home base.
+    - **Sources:**
+      - https://www.cnx-software.com/2023/06/05/analog-discovery-3-a-125-ms-s-usb-oscilloscope-waveform-generator-logic-analyzer-and-variable-power-supply/
+      - https://www.studica.com/digilent/analog-discovery-3
+      - https://www.jameco.com/z/410-415-Digilent-Analog-Discovery-3-125-MS-s-USB-Oscilloscope-Waveform-Generator-Logic-Analyzer-and-Variable-Power-Supply_2357247.html
+    - **Availability:** Sold by Digilent and distributors.
+    - **Cheaper alternative:** Hantek 6022BL plus the fx2lafw LA (already core) for everything except the AWG and the 14-bit front end.
+    - **Safety notes:** The AWG is a signal generator, so CONDUCTED BENCH USE ONLY. Never connect it to an antenna. +/-5 V into 50 ohm is about +24 dBm (my calculation). Put 40 dB or more of attenuation (about -16 dBm out) before any SDR input, keeping total input far below +10 dBm (antennas.json), or feed it only into filters or dummy loads.
+  16.
+    - **Name:** Small USB 2.0 hub with external 5 V input (bench sessions only)
+    - **Category:** USB power / port expansion
+    - **Purpose in lab:** Run the scope, LA, FNB58 and thermal camera at the same time without loading the Q6A's VCC_5V_PERI. The hub is powered from the PD bank's USB-A port.
+    - **Key specs:** 4-port USB 2.0 hub with a separate 5 V power input (generic; model unverified).
+    - **Size weight power:** Pocket size. Powered from the bank, not the Q6A.
+    - **Interface and linux:** Standard USB hub class.
+    - **Price:** About $10-25 (unverified).
+    - **Tier:** optional
+    - **Integration notes:** Bench use only: all of its traffic still goes through the Q6A's single 480 Mb/s FE1.1s hub shared with Wi-Fi. Remove it before passes.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/compute.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/narrowband_sdr.json
+    - **Availability:** Commodity.
+    - **Cheaper alternative:** Plug one instrument at a time into the free hub port.
+    - **Safety notes:** Use a hub that blocks back-power into the host when its own supply is connected (check before buying; unverified).
+- **Capabilities added:**
+  - uA-to-10 A current, mV-resolution voltage, continuity, diode and capacitance measurements anywhere in the field (AN8008), including the off-state drain of the pack chain at 10 nA resolution
+  - USB and USB-C PD power analysis: PDO reading and triggering, e-marker reading, cable resistance, and 100 sps V/I logging into the device itself via the Linux HID logger (FNB58)
+  - 2-channel 20 MHz scope with a spectrum view and software trigger on arm64 (OpenHantek6022 .deb), for converter ripple, spur attribution and rail-noise checks
+  - 8-channel 24 MHz logic analysis with UART, I2C and SPI decoders in PulseView 0.4.2 / sigrok-cli from the Ubuntu noble arm64 repositories, on the receiver itself
+  - Simultaneous scope plus LA capture (6022BL in scope mode plus the fx2lafw LA)
+  - 3.3 V UART console access to the Q6A (boot-loop/EDL recovery) and the GNSS module, plus SWD/CMSIS-DAP to the RP2040 IMU puck
+  - 256x192 radiometric thermal imaging over UVC on Linux (TC001 + PyThermalCamera) for hot-spot and thermal-soak checks
+  - Field soldering from a PD bank or from the receiver's own 4S pack, with an IronOS undervoltage cutoff matched to the stack's 13.6 V Linux poweroff
+  - Current-limited 0-30 V / 0-5 A DC supply for first power-up of modules and LNA/LNB bias tests (DPS-150)
+  - An ESD-controlled work surface with equipotential bonding to the device chassis, no earth required
+  - A documented, labelled lab: git-tracked captures, logs and thermal frames with a pass/fail line per procedure
+  - Organised transport, with a hard-case option that fits 35 cm antenna pieces
+- **Procedures:**
+  1.
+    - **Name:** GNSS UART and PPS capture (LC76G to Q6A UART6, PPS on pin 7/GPIO96)
+    - **Steps:**
+      - Leave gpsd running; the LA probes are passive. Turn Wi-Fi off (nmcli radio wifi off) to free the USB 2.0 hub.
+      - Clip LA GND to device GND (40-pin GND or the mid-plate). Connect D0 to the PPS net (pin 7/GPIO96), D1 to LC76G TXD (UART6 RX), and D2 to LC76G RXD (UART6 TX).
+      - Capture: sigrok-cli -d fx2lafw -c samplerate=4m --time 5s -C D0,D1,D2 -o ~/lab/gnss_pps.sr, then open the file in PulseView.
+      - Add a UART decoder at 115200 8N1 (the LC76G default) on D1 and on D2.
+      - Check that there is exactly one PPS edge per second and exactly one NMEA burst after each edge, at a stable offset. Read the offset with cursors and confirm that RMC/ZDA time labels the preceding edge.
+      - Send a PAIR command from the Q6A and confirm it appears on D2 and that $PAIR001 comes back on D1. This proves UART6 TX works, which gnss_imu.json lists as not guaranteed.
+      - Check that nothing else drives GPIO96. The inputs assign pin 7 both to PPS (gnss_imu.json) and to the RTL VBUS-cut example (narrowband_sdr.json).
+      - Note in the log that the LA's 24 MHz crystal is undisciplined (about +/-50 ppm), so this capture checks presence and latency, not PPS accuracy; chrony statistics or a GPSDO judge accuracy. Commit the .sr file and the result.
+    - **Needs:**
+      - Generic fx2lafw 24 MHz 8-channel logic analyzer (CY7C68013A 'Saleae clone')
+      - Hantek 6022BL USB oscilloscope plus logic analyzer
+      - Lab notebook and labelling
+  2.
+    - **Name:** BNO085 I2C clock-stretch and error check (gnss_imu.json acceptance test)
+    - **Steps:**
+      - Clip D3 to SDA, D4 to SCL, D5 to INT and GND. If the IMU is in the RP2040-Zero puck, probe the puck's pads.
+      - Sample at 4 MHz or more (at least 10x the 400 kHz bus) for 10-30 s using sigrok-cli -d fx2lafw -c samplerate=4m, then add an I2C decoder in PulseView.
+      - Measure the longest SCL-low stretch with cursors, and count NAKs and repeated starts. The pass mark from the inputs is a stretch of at most a few ms.
+      - Repeat at 100 kHz and at 400 kHz. Correlate with dmesg (-EREMOTEIO/-ETIMEDOUT/'geni') and with the SHTP sequence-gap counter from the 24 h soak.
+      - Log the stretch, the error counts and the bus speed in the notebook.
+    - **Needs:**
+      - Generic fx2lafw 24 MHz 8-channel logic analyzer (CY7C68013A 'Saleae clone')
+      - Lab notebook and labelling
+  3.
+    - **Name:** Power-rail ripple and SDR spur attribution
+    - **Steps:**
+      - Get a reference spectrum: run the narrowband_sdr.json rtl_power runs (130-150, 430-440, 735-745 MHz) with the Q6A on a battery path with no switcher (3S direct) or on a linear supply at home base, then on the 4S pack with the bucks.
+      - Plug the 6022BL in scope mode (hold H/P while plugging in) and start OpenHantek6022. Use the x1 setting with a ground spring, or a 50 ohm pigtail through a 1 uF DC block, AC-coupled. Clip ground only to device GND.
+      - Probe the J21 input, the Q6A 5 V on the 40-pin header, the LT3045 LNA output and the RTL bias-tee output. Read Vpp and the spectrum-view fundamental: 250 kHz (IP2368, only while charging), about 1 MHz (SY81012), 1.04 MHz bursts (SY7120 in PFM at light load), the J21 buck, and display backlight PWM.
+      - Match the spacing of each spur comb in the rtl_power heatmap to one of these fundamentals to find the culprit.
+      - Apply the fix (ferrite, pi-filter, forced PWM, rerouting) and repeat steps 1-3. Log before and after (Vpp and spur level) in the notebook.
+    - **Needs:**
+      - Hantek 6022BL USB oscilloscope plus logic analyzer
+      - ANENG AN8008 pocket DMM (AN8009 is the variant with a thermocouple)
+      - Lab notebook and labelling
+  4.
+    - **Name:** USB current budget audit on the Q6A ports
+    - **Steps:**
+      - Put the FNB58 inline between the Q6A USB-A port and each device in turn: RTL-SDR V4L (expect 250-270 mA), IMU puck, scope, LA, thermal camera.
+      - Log 10 minutes per device with sudo ./fnirsi_logger.py > ~/lab/usb_<dev>.csv (100 sps) while the device works normally. Look for inrush, droop below 4.75 V and dropouts.
+      - Design to 500 mA per instrument. The board's '500 mA' port labels are trace annotations; the WS4612 switches limit at about 2.1 A each (narrowband_sdr.json).
+      - Add the measured USB loads to the estimates for the LimeSDR (about 4 W), fan, GNSS and IMU. Check the total against the roughly 17 W (about 3.5 A at 5 V) VCC_5V_PERI budget in power.json.
+      - Record which instruments may share the free hub port, and whether the external-power hub is needed.
+    - **Needs:**
+      - FNIRSI FNB58 USB/USB-C PD tester (Std variant, no Bluetooth)
+      - Small USB 2.0 hub with external 5 V input (bench sessions only)
+      - Lab notebook and labelling
+  5.
+    - **Name:** PD charging-source qualification and IP2368 burn-in (power.json requirements)
+    - **Steps:**
+      - For each charger, power bank or PD solar source: connect the FNB58 to the source alone and read its PDOs, or trigger 20 V. Record the maximum current at 20 V.
+      - Put the FNB58 inline between the source and the receiver's IP2368 USB-C. Never use the Q6A's own USB-C, which back-feeds the 12 V input.
+      - Charge at the 3 A setting (RISET 15k) for 2 h while logging V/I at 100 sps. Every 15 minutes, take a TC001 frame of the IP2368 MOSFETs, inductor and cells with the lid open and Kapton dots on the parts.
+      - Fail the board if the KSD9700 trips, if cell temperature passes 45 C, or if the MOSFET keeps climbing. Treat a hotspot above about 85 C as a fail; that threshold is my own, since the inputs report only the over-100 C failure.
+      - If the board is a bidirectional COUT/NACT type, check that the current never reverses into a bidirectional bank such as the Anker 737.
+      - Test the post-protection 'USB-C kick' recovery 3 times out of 3, and log the source as approved or rejected.
+    - **Needs:**
+      - FNIRSI FNB58 USB/USB-C PD tester (Std variant, no Bluetooth)
+      - TOPDON TC001, the original single-lens model (alternative: InfiRay P2 Pro)
+      - ANENG AN8008 pocket DMM (AN8009 is the variant with a thermocouple)
+      - Anker 737 Power Bank (PowerCore 24K, 140 W): instrument and charging source
+  6.
+    - **Name:** Off-state and standby current audit
+    - **Steps:**
+      - Turn the master switch OFF. Pull the 7.5 A pack fuse and put the DMM leads across the fuse holder. Start on the 10 A range, then step down to 999.9 mA and 999.9 uA, so inrush cannot blow the meter fuse.
+      - Read the drain with the switch OFF: BMS, IP2368 standby, the INA228's always-on LDO, and the #2813 at under 0.2 uA claimed.
+      - Switch to the 10 A range BEFORE turning the switch on. Boot, then run 'poweroff' and read the residual drain. Repeat after 'halt' (power.json expects 1.9-2.5 W after halt).
+      - Compute storage time as 72 Wh divided by the measured power for each state, and write it on the case label.
+      - Refit the fuse, and confirm with the DMM that the J21 input reads the regulated 9/12 V.
+    - **Needs:**
+      - ANENG AN8008 pocket DMM (AN8009 is the variant with a thermocouple)
+      - Lab notebook and labelling
+  7.
+    - **Name:** Thermal soak hot-spot map
+    - **Steps:**
+      - Lid off, device on the ESD mat. Put Kapton dots on the Q6A heatsink, the LimeSDR window/pedestal, the J21 buck and the IP2368.
+      - Run stress-ng --cpu 8 --timeout 30m with a LimeSDR stream (the mechanical_thermal.json test). Log /sys/class/thermal zones every 10 s.
+      - Take TC001 frames every 5 minutes with PyThermalCamera (src/tc001v4.2.py --device N).
+      - Pass marks from the inputs: CPU zones at or below 80-85 C, LMS7002M at or below 75 C, no LimeSDR overruns, and RX calibration still working after the soak.
+      - Close the lid and repeat with internal sensors only. Record the lid-on minus lid-off offset, so later field checks can rely on the sensors.
+    - **Needs:**
+      - TOPDON TC001, the original single-lens model (alternative: InfiRay P2 Pro)
+      - iFixit Portable Anti-Static Mat (with 1 Mohm wrist strap)
+      - Lab notebook and labelling
+  8.
+    - **Name:** First power-up of a new or repaired module (smoke test)
+    - **Steps:**
+      - Unpowered: use the DMM's ohm range to check for shorts across each rail and from input to GND. Confirm connector polarity.
+      - Set the DPS-150 to the nominal voltage and a current limit just above the expected draw. Examples: LNA 5 V at 200 mA; Q6A 9-12 V into J21 at 2.5 A; LNB 13 V at 300 mA, from a 20 V PD input.
+      - Connect, ramp up, and watch for CC mode. If CC trips, view the board with the TC001 to find the hot short.
+      - Measure the rails with the DMM, then the ripple with the scope.
+      - Only after the module passes should it move to its conducted RF bench tests (RF area: VNA, noise source into loads or attenuators; nothing radiated). Log the result.
+    - **Needs:**
+      - FNIRSI DPS-150 current-limited DC supply
+      - ANENG AN8008 pocket DMM (AN8009 is the variant with a thermocouple)
+      - TOPDON TC001, the original single-lens model (alternative: InfiRay P2 Pro)
+      - Hantek 6022BL USB oscilloscope plus logic analyzer
+  9.
+    - **Name:** Field solder repair (coax pigtail, XT30 or antenna joint)
+    - **Steps:**
+      - Turn the device's master switch OFF. If working inside the case, unplug the pack's XT30 as well.
+      - Lay out the ESD mat. Bond the mat, the wrist strap and the device mid-plate to the 10 mm snap.
+      - Power the Pinecil from the PD bank at 20 V. Alternatively, use the pack's XT30 service lead through the fused XT30-to-DC5525 lead, with IronOS Power source = 4S and Minimum voltage = 3.4 V/cell. Never connect both inputs.
+      - Solder at about 320-350 C for leaded solder (typical practice). Use flux and keep each joint short in time.
+      - Check with the DMM: centre-to-shield open, centre and shield continuity end to end, and correct polarity on DC leads.
+      - Do an RF conducted check with the RF-area tools, then log the repair.
+    - **Needs:**
+      - PINE64 Pinecil V2 soldering iron, plus a fused XT30-to-DC5525 lead
+      - iFixit Portable Anti-Static Mat (with 1 Mohm wrist strap)
+      - ANENG AN8008 pocket DMM (AN8009 is the variant with a thermocouple)
+      - Hand-tool roll: iFixit Mako 64-bit driver kit plus cutters, strippers, tweezers, spudger
+      - Anker 737 Power Bank (PowerCore 24K, 140 W): instrument and charging source
+  10.
+    - **Name:** Q6A boot console and recovery at home base
+    - **Steps:**
+      - Wire the Debug Probe: probe RX to Q6A pin 8 (TX), probe TX to pin 10 (RX), GND to pin 14. Confirm the pins on the Radxa pinout.
+      - On a second computer, run picocom -b 115200 /dev/ttyACM0 with logging on.
+      - Run the digest's arrival test: 50-100 cold boots and a 12 h stressapptest. Capture each boot log and look for DDR-training aborts and 10 s reset loops.
+      - Before any firmware change, back up the SPI NOR (cdt/ddr partitions) with edl-ng, as the digest requires. Store the console logs in the notebook.
+    - **Needs:**
+      - Raspberry Pi Debug Probe (USB-UART plus SWD/CMSIS-DAP)
+      - Lab notebook and labelling
+  11.
+    - **Name:** LNA and bias-tee current check
+    - **Steps:**
+      - With the DMM on the mA range in series with the bias-tee DC feed (or with the DPS-150 supplying the LNA), measure the SAWbird+ current.
+      - Compare it with the RTL-SDR V4L bias-tee limit of 4.5 V/180 mA. If it is at or above about 170 mA, feed the LNA from the LT3045 rail through a quality bias tee, as antennas.json and power.json recommend.
+      - Use the scope to check that the LNA supply ripple has not risen with the extra load. Log the result.
+    - **Needs:**
+      - ANENG AN8008 pocket DMM (AN8009 is the variant with a thermocouple)
+      - FNIRSI DPS-150 current-limited DC supply
+      - Hantek 6022BL USB oscilloscope plus logic analyzer
+- **Rejected:**
+  1.
+    - **Name:** Fluke 101 pocket DMM
+    - **Why:** It has no current ranges (no uA or mA), so it cannot do the off-current or LNA-current checks. Reviews also note it lacks AutoHold and True RMS. About $42.
+  2.
+    - **Name:** Hantek 6022BE as the only scope
+    - **Why:** No logic analyzer, at a similar price (about $85-120 on eBay, GBP 85 ex VAT, often sold out) to the 6022BL at about $126-135. It is kept only as part of the cheaper 'BE plus $10 LA' split.
+  3.
+    - **Name:** PulseView/sigrok for the 6022BL's scope mode
+    - **Why:** The sigrok wiki says only the 6022BL's 8-channel LA mode is supported. Use OpenHantek6022 (Linux-first, arm64 .debs from CI) for scope mode.
+  4.
+    - **Name:** TOPDON TC001 Plus and TC001 Max
+    - **Why:** Current dual-lens models (Max EUR 284.99 in Sept 2026), but I found no confirmation of Linux UVC radiometric access for them. The PyThermalCamera evidence covers the original TC001, and a PR covers the TC002C Duo.
+  5.
+    - **Name:** InfiRay P2 Pro as the primary camera
+    - **Why:** It is tiny (9 g), and AnandTech confirms the same UVC 256x384 format, but P2Pro-Viewer says Linux is untested and I found no 2026 price. It stays as the alternative.
+  6.
+    - **Name:** MLX90640 32x24 as the primary thermal imager
+    - **Why:** 32x24 pixels is too coarse for SMD hot spots, and the Adafruit 4407 is out of stock. It stays as the cheap alternative.
+  7.
+    - **Name:** Powering or measuring through the Q6A's USB-C port
+    - **Why:** That port is hard-wired to the 12 V input. Anything plugged in while J21 is powered gets back-fed (power.json), which can damage the instrument or the board.
+  8.
+    - **Name:** Powering instruments from the receiver's IP2368 USB-C (reverse PD)
+    - **Why:** The stack prefers a charge-only BZ board. Bidirectional COUT/NACT boards use Try.SRC and may push power into banks (power.json). A separate PD bank is safer and saves the 72 Wh pack.
+  9.
+    - **Name:** Digilent Analog Discovery 3 as core
+    - **Why:** $379. Its +/-5 V AWG (about +24 dBm into 50 ohm) can destroy SDR inputs if misused. An arm64 WaveForms build for Ubuntu 24.04 is unconfirmed (Digilent pages returned 403). Kept as optional, conducted bench use only.
+  10.
+    - **Name:** FNIRSI FNB58 BT variant
+    - **Why:** It adds a 2.4 GHz radio next to the 2.2 GHz receive chain for no gain, since Linux logging runs over USB.
+  11.
+    - **Name:** Pelican 1450 as the everyday carrier
+    - **Why:** 2.5-2.9 kg empty, more than double the receiver. Kept as an extended transport case; the soft organiser is core.
+  12.
+    - **Name:** Hot-air rework station or butane iron in the field kit
+    - **Why:** Hot air draws far more power than the PD bank or 4S pack can sensibly supply (my assessment, no product checked). A butane iron puts an open flame next to Li-ion cells and the ASA shell.
+- **Notes:** TIER TOTALS (approximate; unverified items are estimates).
+  - Core, about $500-620: AN8008 about $20-35, FNB58 $58.99, Hantek 6022BL about $126-145, fx2lafw LA about $10, Debug Probe $12, Pinecil $25.99 plus tips/consumables about $15-30 plus fused lead about $5, iFixit mat $34.95, Mako $39.95 plus other tools about $20-35, spares about $80-130, notebook/labels about $10-25, soft organiser about $15-35.
+  - Extended, about $480-690: TC001 about GBP 260 / EUR 265-285, DPS-150 EUR 64.95, Anker 737 $95-120, Pelican 1450 $106-169 (or Apache 3800 about $30-35).
+  - Optional: AD3 $303-379, external-power USB hub about $10-25, label maker about $25-60, MLX90640 $74.95.
+  
+  FIELD POWER PLAN.
+  - DMM: 2x AAA, hundreds of hours. Label maker: own cells.
+  - FNB58: powered by the bus it measures.
+  - Scope, LA, Debug Probe and thermal camera: Q6A USB-A ports, all on VCC_5V_PERI (about 17 W total, shared with the LimeSDR). Design to 500 mA per instrument, one instrument at a time on the free FE1.1s hub port, or use the external-power hub fed from the PD bank.
+  - Pinecil, DPS-150 and AD3 auxiliary supply: a separate PD bank (Anker 737, 88.8 Wh).
+  - Emergency only: the Pinecil from the receiver's 4S pack through a fused XT30-to-DC5525 lead. That gives about 30-43 W at 13.6-16.4 V (calculation); IronOS 4S/3.4 V-per-cell cutoff matches the stack's 13.6 V poweroff.
+  - The receiver's own USB-C (Q6A) is never a power port. The IP2368 USB-C is the only external power port, and it is charge-only.
+  
+  RECEIVE-ONLY AND CONDUCTED-ONLY.
+  - None of these tools is meant to transmit.
+  - Signal sources (the AD3 AWG, the scope's 1 kHz probe-calibration pin, the DPS-150 DC output) are for conducted bench use into cables, attenuators, filters, LNAs or dummy loads only. Never connect them to antennas.
+  - Pad any generator by 40 dB or more before an SDR input, keeping total input far below +10 dBm.
+  - Prefer variants with no radio (FNB58 Std). The Pinecil's BLE and the iron's heater PWM are noise sources, so pause SDR recordings while soldering.
+  - Generic legal notes (country unknown): follow local rules for Li-ion transport (both the 72 Wh pack and the 88.8 Wh bank are under the common 100 Wh airline limit; carry them in the cabin), lead-solder handling and disposal, and e-waste. Thermal imagers are subject to import/export rules in some jurisdictions, so check before shipping one across borders. Mains work is out of scope for these meters.
+  
+  CONFLICTS FOUND IN THE INPUT FILES, for the integration phase.
+  1. Pin 7/GPIO96 is assigned to GNSS PPS in gnss_imu.json and used as the RTL VBUS-cut example in narrowband_sdr.json.
+  2. The USB 3.1 port goes to the NVMe enclosure in compute.json but to the RTL-SDR V4L in narrowband_sdr.json. Either way at least one USB 2.0 hub port stays free for instruments.
+  3. USB-A '500 mA' are trace labels; the WS4612 switches limit at about 2.1 A (narrowband_sdr.json), and the real limit is the shared ~17 W VCC_5V_PERI.
+  
+  UNVERIFIED.
+  - Current AliExpress prices for AN8008, 6022BL, fx2lafw clones and FNB58.
+  - 6022BL USB draw and dimensions; FNB58 dimensions; DPS-150 PC control and DC input connector.
+  - Whether the Radxa 6.18 kernel has UVC enabled; WaveForms on arm64; OpenHantek6022 arm64 .deb on Ubuntu noble (CI artifact, not tested here); the ptouch-print model list.
+  - 2026 P2 Pro price; Apache 3800 dimensions.
+  
+  Budget used: 11 WebSearch calls. Sites that blocked or failed: digilent.com (403), pelican.com (403), topdon.com and infiray.com (JS-only or 503), miniware.com.cn (503), fnirsi.com (429 except for the FNB58 page).
+
 ## small:lband_sband (run `wf_41027870-8e7`)
 
 - **Band group:** L-band 1.5-1.7 GHz and S-band 2.2-2.4 GHz with antennas of at most 12 cm (STRICT) or 20 cm (SMALL). Dishes and anything tens of cm deployed are EXCLUDED, including the foldable helicones, the 11-turn helix and the 2x2 helix arrays. Rule interpretation as given: STRICT means the largest deployed dimension is about 12 cm or less; SMALL means about 20 cm or less; foldable or telescopic antennas that are larger when deployed are excluded and appear only in the borderline note.
