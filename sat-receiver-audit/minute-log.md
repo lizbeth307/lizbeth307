@@ -571,3 +571,11 @@ P4, нове (не перевірено):
 - D (IMU): в Adafruit_BNO08x є issue #37: ініціалізація по UART блокує програму назавжди, якщо датчик не підключено. Якщо прошивка Pico використовує цю бібліотеку для IMU-паку, потрібні тайм-аут і watchdog. Інакше пакет, що відвалився, підвісить увесь HMI-супервізор (кнопки, UV-відсічку).
 Джерела: github.com/myriadrf/LimeSuiteNG/issues (#408, #409), github.com/myriadrf/LimeSDR-Micro_FW/issues, github.com/adafruit/Adafruit_BNO08x/issues/37.
 
+## 2026-10-18 09:02 UTC
+
+P4, нове (не перевірено):
+- B (безпека bias-tee): у форку librtlsdr від RTL-SDR Blog є «хак»: коли вмикається offset tuning, разом із ним вмикається й bias-tee. Зроблено для програм, які не вміють керувати bias-tee (звіт jgraef). Наш токен LAB_BIAS_OK закриває лише rtlsdr_set_bias_tee() і rtlsdr_set_bias_tee_gpio(). Треба перевірити, що ворота закривають УСІ шляхи до GPIO0: цей хак, якщо він потрапив у вибрані коміти, виклики rtlsdr_set_gpio_* і прапорець «force bias» в EEPROM. Додати тест: offset tuning без токена → на bias має бути 0 V. Окремо SatDump #1030: при запуску rtl-sdr з CLI не застосовуються bias-T, підсилення і DC-block (1.2.2/1.2.3); перевірити на закріпленому коміті 2.0-alpha. Пункт №12 в operator_notes.
+- C (модель): гелікон 15.7 dBic на 1691 MHz приблизно дорівнює (+0.1 dB) тарілці 65 см з лінійним опромінювачем. Звідси оцінка SNR для Elektro LRIT — близько 3.3–4.3 dB (за звітами спільноти з тарілкою, при тій самій Tsys). Це краще, ніж у v1 («близько 3 dB гірше за тарілку 65 см»). Пункт №13; чекаю верифікатора C.
+- D: SlimeVR пише, що BNO085 зняли з продажу в їхньому магазині. Там же згадано «stomp bug» і підробки. Це підтверджує ризик із постачанням IMU.
+Джерела: issue до librtlsdr про offset tuning і bias tee (за агентом B), github.com/SatDump/SatDump/issues/1030, docs.slimevr.dev (сторінка про IMU).
+
