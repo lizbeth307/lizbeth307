@@ -15091,6 +15091,312 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Still unverified: the hairpin DE on the N2SPI, Axotron spool capacity for the 137.5 MHz marks, the gore horn and cone gains, the bare-LNB beacon C/N0, the OK1PHU 30 dB pad advice, and MakerWorld holder 1127183 (page 403).
 
+## community:power (run `wf_d9388111-e66`)
+
+- **Subsystem:** power
+- **Findings:**
+  1.
+    - **Claim in stack:** J21 accepts 4.5-16 V (forum only); Q6A docs say 12 V only (stage 1 verdict: unverified)
+    - **Finding:** Posters with the 'Radxa Team' badge confirm this on the forum several times:
+  - strongtz (20 Jan 2026) first said '3.6V 4.5V to 16V'. On 26 Jan 2026 he corrected it to 4.5-16 V and described the path: ADP12V (USB-C and header) → SY81012 → VPH_PWR 4.2 V → SY7120 boost → VCC_5V_PERI 5 V.
+  - strongtz repeated 4.5-16 V on 30 Jan 2026 and on 15 Oct 2026 ('can only handle 4.5V to 16V') in reply to a 4S1P question.
+  - BigfootACA (2 Mar 2026) gave 3.6-16 V, recommended 5, 9 or 12 V, and wrote: 'Do not use the USB Type-C interface if you are supplying 12V externally'.
+  - Jack (Radxa Team) says the Q6A negotiates 12 V from a 45 W PD charger.
+  The official docs still publish no range.
+    - **Verdict:** confirmed
+    - **Action:** Upgrade from 'forum-only' to 'Radxa staff, forum; not in the official docs'. Keep regulated 12 V on J21 and treat 16 V as an absolute limit (raw 4S at 16.8 V stays forbidden). Keep the sealed Q6A USB-C rule, which staff now state explicitly. Keep the OVLO eFuse at about 13.5 V on J21 from stage 1.
+    - **Impact:** The dropout-zone and brown-out tests stay. The input-range risk drops from unverified to vendor-staff-confirmed.
+    - **Sources:**
+      - https://forum.radxa.com/t/5v-power-supply-and-android/30083
+      - https://forum.radxa.com/t/how-to-power-the-dragon-q6a/30400
+      - https://forum.radxa.com/t/dragon-q6a-12v-input-header-voltage-range/30233
+      - https://forum.radxa.com/t/radxa-q6a-4s1p-powering/31611
+      - https://forum.radxa.com/t/using-the-nothing-charger-with-q6a/30220
+  2.
+    - **Claim in stack:** Linux shutdown: poweroff (never halt; halt draws 1.9-2.5 W). The Pico opens #2813 3 s after the Q6A 3.3 V rail disappears.
+    - **Finding:** The only public off-state number is from user willy (21 Sep 2025, early firmware and image): software power-off with 'halt' left the board in a 'low-to-medium consumption state (1.9 to 2.5W)'. No one has published the draw after 'systemctl poweroff', or whether the 3.3 V rail on the 40-pin header actually collapses. The Radxa 7.0.11 defconfig has POWER_RESET_MSM, QCOM_PON and SYSCON_POWEROFF, but CONFIG_POWER_RESET_GPIO is absent, so a DT gpio-poweroff hand-off would need a kernel module build. If the 3.3 V rail stays up in some off state, the Pico never fires and about 2 W drains 72 Wh in about 1.5 days (model).
+    - **Verdict:** new_risk
+    - **Action:** Give the Pico a second, software-independent trigger. labpowerd sends an ARM-OFF frame on UART7 before poweroff, and a /usr/lib/systemd/system-shutdown/ hook sends a final OFF-NOW frame. The Pico pulses #2813 OFF on 3.3 V loss, OR 20-30 s after OFF-NOW, OR 60 s after heartbeat loss following ARM-OFF. Bring-up: measure J21 current with the INA228 for 2 min after 'systemctl poweroff' and record whether 3.3 V drops.
+    - **Impact:** Prevents a silent overnight pack drain. Software only, no BOM change.
+    - **Sources:**
+      - https://forum.radxa.com/t/upcoming-radxa-dragon-q6a/26723
+      - https://raw.githubusercontent.com/radxa/kernel/linux-7.0.11/arch/arm64/configs/radxa_qcom_7_0_defconfig
+      - https://forum.pololu.com/t/raspberry-pi-can-it-turn-itself-off-with-the-mini-pushbutton-power-switch/21371
+  3.
+    - **Claim in stack:** LAB5: Pololu D36V28F5 → Pico (RP2040-Zero, powered from LAB5 via VSYS), hub, fans, LNA rail. Back-feed rules cover only the Q6A VBUS and HDMI.
+    - **Finding:** On the Pololu forum (2 Jul 2026), staff (PatrickM) reproduced a user report (67 V measured): applying 'slightly over 5V to VOUT' of a D36V28Fx 'would generate high voltages (over 60V) on VIN'. Pololu calls this a characteristic of the IC used on the D36V28Fx and recommends an ideal-diode reverse protector.
+  Waveshare's FAQ says RP2040-Zero VSYS is 'connected to the VUSB pin directly' and recommends a diode for external supplies. So plugging the Pico's USB-C into a PC (firmware flashing) back-feeds about 5 V into LAB5.
+  With #2813 OFF, the D36V28F5 VIN is the SW node. That node carries the TPS7A4701s (36 V abs max), the D36V50F12 (50 V) and 25 V caps, and has no TVS: SMBJ17A sits on node N, and #2813 is one-directional.
+  The TPS2553 data sheet gives reverse-voltage protection (IREV 0.01 uA at VOUT 6.5 V, VIN 0 V), so the LAB USB-A and HF+ VBUS paths cannot back-feed.
+    - **Verdict:** new_risk
+    - **Action:** Four changes:
+  (a) Feed the Pico 5V/VSYS from LAB5 through a Schottky or an ideal diode.
+  (b) Add a second SMBJ17A (Vishay/Littelfuse) on the SW node.
+  (c) Assembly rule: flash the Pico only with the main switch ON, or with the Pico unplugged from LAB5.
+  (d) Bench test with SW OFF: apply 5.1 V, current-limited to 50 mA, to LAB5. The SW node must stay below 17 V.
+    - **Impact:** Closes a back-feed path that could destroy both TPS7A4701s and the SYS12 module during routine firmware work. Cost about $1.
+    - **Sources:**
+      - https://forum.pololu.com/t/strange-behavior-of-d36v28f5-pololu-3782/29129
+      - https://www.waveshare.com/wiki/RP2040-Zero
+      - https://www.ti.com/lit/ds/symlink/tps2553.pdf
+      - https://www.pololu.com/product/2813
+  4.
+    - **Claim in stack:** LAB5 regulator choice (D36V28F5, $23.95); budget alternatives
+    - **Finding:** In the same thread Pololu says its D30V30F5 (#4892) 'handles backfed power much better': 5 V on VOUT passed about 5 V to VIN, but 5.5 V on VOUT gave about 11 V on VIN.
+  Product page (18 Oct 2026): 5 V ±4%, 3-4 A, 5-45 V input, about 700 kHz under heavy load, power-save mode at light load, reverse-voltage protection to 40 V, 100 k EN pull-up, EN sleep 0.65-1.05 V, $29.95, 'Rationed (Active and Preferred)'.
+    - **Verdict:** new_option
+    - **Action:** Keep the D36V28F5 with the diode and clamp fixes. Use the D30V30F5 only as a fallback, and only if it passes the same HF+ A/B spur gate (its about 700 kHz fundamental and harmonics move with load).
+    - **Impact:** +$6 if adopted; it does not remove the need for the Pico diode.
+    - **Sources:**
+      - https://forum.pololu.com/t/strange-behavior-of-d36v28f5-pololu-3782/29129
+      - https://www.pololu.com/product/4892
+  5.
+    - **Claim in stack:** IP2368 'BZ charge-only' board (stage 1: all retail boards are bidirectional COUT; add reverse blocking)
+    - **Finding:** The data sheet (V1.41) confirms the mechanism:
+  - IP2368_COUT adds C-port discharge.
+  - It has 'Try.SRC: when the partner is a DRP device it preferentially charges the partner'.
+  - 'IP2368_COUT by default must be charge-activated after a battery is first connected before it will discharge'. _NACT removes the activation.
+  A hands-on review (mysku.club) agrees:
+  - Boards are bidirectional and toggle Rp/Rd while idle; sellers warn never to connect two DRP ports.
+  - After battery connection or a protection trip there is no output until a USB-C charge 'kicks' it.
+  - One of two boards was dead on arrival.
+  So a DRP power bank (the Anker 737 named in STACK) or a phone would be charged FROM the pack.
+    - **Verdict:** confirmed
+    - **Action:** Keep the stage-1 mitigation: a reverse-blocking eFuse (TPS25947 class) between the enclosure USB-C and the board, or a one-way PD adapter only. Remove the Anker 737 from the STACK as a charge source. Fix the goods-in test: do it AFTER one activation charge. An un-activated COUT board shows no VBUS and would falsely pass as charge-only. Buy two or three boards (one DOA in two is reported).
+    - **Impact:** Without the fix, a power bank or phone drains the pack. The test-order fix avoids a false pass.
+    - **Sources:**
+      - https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+      - https://mysku.club/blog/aliexpress/100034.html
+  6.
+    - **Claim in stack:** IP2368 board settings: RISET 15k = 3 A, RVSET 5.1k, NTC 10k B3380, KSD9700 at 70 C, no charging in HF/LF Quiet
+    - **Finding:** Hands-on numbers (mysku, 3S board, default RISET 27k = 5.4 A):
+  - One MOSFET just above 100 C while charging at 5.1 A; the back inductor at 60-70 C during discharge.
+  - 92.4-94.3% discharge efficiency; about 0.1 mA quiescent measured (data sheet ISTB 180 uA at 14.8 V).
+  - The board's 'NTC' footprint holds a fixed 10 k resistor. The pin must not float.
+  - Measured NTC trip voltages: charge stop at 0.39 V (above 45 C) and 0.55 V (below 0 C); discharge stop at 0.24 V (above 60 C) and 1.39 V (below -20 C).
+  - Boards ship with either an HT7550 (30 V) or an ME6201 5 V LDO. The author says the ME6201 is a 16 V part (a commenter cites 30 V; unverified), which a 16.4-16.8 V 4S pack would exceed.
+  - The data sheet gives trickle charge of 100 mA below 2.5 V and 200 mA up to N×3 V (12 V for 4S), and asks for 100 nF on the NTC pin.
+    - **Verdict:** confirmed
+    - **Action:** Keep 3 A. The thermal data supports it, and so does the KSD9700. On goods-in:
+  - Read the 5 V LDO marking; if it is ME6201, replace it with a part rated 30 V or more (verify that part's data sheet).
+  - Fit the real NTC on a cell plus 100 nF at the pin.
+  - Confirm that the 200 mA trickle restarts a pack held at Daly UVP (10.8 V).
+    - **Impact:** Avoids an input-overvoltage failure of the board LDO at full 4S charge (unverified rating) and confirms that recovery from UVP works.
+    - **Sources:**
+      - https://mysku.club/blog/aliexpress/100034.html
+      - https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+  7.
+    - **Claim in stack:** Daly 4S 15 A BMS; cutoff 2.5-2.8 V/cell (stage 1: self-consumption and wake behaviour not published)
+    - **Finding:** TinyTronics links Daly's own spec ('DL-J05G-L4S15ATJ', version A0, April 2023). It gives:
+  - OVP 4.25±0.05 V (1±0.5 s), release 4.15 V.
+  - UVP 2.7±0.05 V (1±0.5 s), release 3.0 V.
+  - Discharge OCP 40±10 A, released by removing the load. Charge OCP 10±2 A, released by removing the charger.
+  - Short circuit 10-500 us, released by removing the load.
+  - On-resistance <20 mOhm.
+  - Balancing 30±10 mA only 'under charging' and at 4.18 V or more.
+  - Self-consumption in operation <500 uA; sleep 0 uA ('no communication, no current, no key signal').
+  - Warnings: the BMS heat-sink face must not touch the cells, and the anodised sink must not touch nickel strip. Wiring order: B- first, then the sense lead from B0 up, then plug in the sense connector. Never two BMS in series or parallel.
+  Community:
+  - done.land: generic 4S BMS boards ship 'locked' and unlock with charger voltage.
+  - Pololu forum (2020, staff): a 4S BMS and a regulator with a few-mA quiescent current oscillate at the UVP point, and the pack would not take a charge until the regulator was disconnected.
+    - **Verdict:** corrected
+    - **Action:** Record self-consumption as <500 uA (spec maximum; measure it). Keep the software cutoff (13.2 V) and the 12.8 V supervisor well above UVP (10.8 V) and hold the regulators off. This is exactly the oscillation fix. Bench tests:
+  - After a short-circuit trip, the about 1 mA AON load on node N must not stop the 'remove load' release; if it does, the charger releases it.
+  - Wake from UVP with the IP2368 trickle, 3/3.
+  Add the Daly wiring order and the heat-sink isolation to the assembly instructions.
+    - **Impact:** Standby budget grows (see next finding). Assembly safety notes are added.
+    - **Sources:**
+      - https://www.tinytronics.nl/product_files/005102_Data-Sheet-of-DL-J04G3-L04S15ATJ-BMS-circuits.pdf
+      - https://www.tinytronics.nl/en/power/bms-and-chargers/bms/daly-bms-li-ion-li-po-protection-circuit-4s-15a-with-balancing
+      - https://done.land/components/power/powersupplies/battery/bms/4s/25a/
+      - https://forum.pololu.com/t/s18v20f12-and-bms-undervoltage-cut-off-problem/20521
+  8.
+    - **Claim in stack:** OFF draw (INA228 + IP2368 standby + BMS + supervisor) about 13-14 mW, 170-185 days (stage 1: about 110 days from 50% storage)
+    - **Finding:** Model at 14.8 V. The AON LDO is linear, so every mA at 3.3 V is drawn at pack voltage. Loads: INA228 0.64 mA typical / 1.1 mA max, Adafruit LED about 0.13 mA, TPS709 1 uA, TPS3762 4 uA, IP2368 0.18 mA, Daly 0-0.5 mA.
+  - BMS at 0 mA: 14.1 mW, 106 days from 36 Wh (50%) or 171 days from 58 Wh.
+  - BMS at 0.5 mA: 21.5 mW, 70 days or 112 days.
+  - Worst case: 28.3 mW, 53 days or 85 days.
+  - With the INA228 in shutdown and the LED removed: 2.8-10.2 mW, 147-539 days.
+    - **Verdict:** corrected
+    - **Action:** Restate standby as 'about 50-105 days from 50% storage (model)'. Add a storage rule: for more than 2-4 weeks, pull the 7.5 A pack fuse (or a dedicated storage link) so only the BMS stays on the cells. Bench-measure the total OFF current at 14.8 V; target 1.0 mA or less.
+    - **Impact:** Prevents an over-discharged pack after a season in a drawer. No BOM cost.
+    - **Sources:**
+      - https://www.tinytronics.nl/product_files/005102_Data-Sheet-of-DL-J04G3-L04S15ATJ-BMS-circuits.pdf
+      - https://www.ti.com/lit/ds/symlink/ina228.pdf
+      - https://github.com/adafruit/Adafruit-INA228-PCB
+  9.
+    - **Claim in stack:** Adafruit INA228 #5832 prep: remove the I2C pull-ups (stage 1: also remove the power LED, 'could halve standby'; close the VBUS jumper for high side)
+    - **Finding:** From Adafruit's own Eagle files:
+  - The LED is green D1 with R7 = 10 k from VCC. At 3.3 V that is about 0.11-0.15 mA (model), about 1.9 mW at 14.8 V through the linear AON LDO. Worth removing, but it does not halve standby; stage 1 overstated it.
+  - R6 is ONE 4×10 k array (RESPACK_4X0603). Its four elements are SCL→VCC, SDA→VCC, ADDR0→GND and ADDR1→GND. Removing it to kill the pull-ups also floats A0/A1. TI's INA228 data sheet says the device 'samples the state of pins A0 and A1 on every bus communication', so floating pins give a random address.
+  - SJ1 (VBUS-VIN+) is an arrow jumper with two separate copper polygons (about 0.4 mm gap), so it is OPEN by default, as the Learn guide says. The repo README wording ('cut the jumper') is stale.
+  - TI data sheet: ENERGY/CHARGE are invalid in triggered mode, so use continuous mode; the oscillator is ±0.5%.
+    - **Verdict:** corrected
+    - **Action:** Remove R6 and R7. Then either solder-close both the A0 and A1 jumpers (both to VS → address 0x45) or wire both ADDR pads to GND (0x40), and set labpowerd to match. Close SJ1 for the high-side shunt. Run the INA228 in continuous mode.
+    - **Impact:** Avoids an intermittent fuel gauge (address drift) that would only show in the field.
+    - **Sources:**
+      - https://github.com/adafruit/Adafruit-INA228-PCB
+      - https://learn.adafruit.com/adafruit-ina228-i2c-power-monitor/pinouts
+      - https://www.ti.com/lit/ds/symlink/ina228.pdf
+  10.
+    - **Claim in stack:** INA228 via i2c-dev, no DT binding; blacklist ina238
+    - **Finding:** The Radxa kernel branch linux-6.18.2 drivers/hwmon/ina238.c lists 'ina228' / 'ti,ina228' with has_energy (energy64 input only). The CHARGE register is defined but no charge attribute is exposed. radxa_qcom_7_0_defconfig has CONFIG_SENSORS_INA238=m and CONFIG_I2C_CHARDEV=y. Without a DT node or a manual new_device the driver does not bind by itself (it has no detect routine).
+    - **Verdict:** confirmed
+    - **Action:** Keep i2c-dev plus 'blacklist ina238' in modprobe.d. Do not add a ti,ina228 node to lab-q6a.dtso. Add 'i2cdetect shows 0x40/0x45, not UU' to bring-up.
+    - **Impact:** None. This confirms the decision on Radxa's own 6.18.2 and 7.0.11 kernels.
+    - **Sources:**
+      - https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/drivers/hwmon/ina238.c
+      - https://raw.githubusercontent.com/radxa/kernel/linux-7.0.11/arch/arm64/configs/radxa_qcom_7_0_defconfig
+  11.
+    - **Claim in stack:** SYS12 D36V50F12 backup EN divider about 0.10 (sleep about 12.0 V, wake about 13.5 V); about 500 kHz with power-save
+    - **Finding:** Pololu staff (BrandonM, 2023): the #4095 D36V50F12 'has a 100k pull-up resistor between the EN and VIN pins'. Staff (Claire, 2024): the D36V50F12 EN pin 'can handle voltages up to 55V irrespective of the VIN voltage'.
+  Model with 1.2/1.35 V thresholds:
+  - A single 11.0 k from EN to GND gives a ratio of 0.0991, so sleep at 12.1 V and wake at 13.6 V.
+  - But ±5% on the internal 100 k moves sleep to 11.6-12.7 V.
+  Staff measured about 100 mV p-p output ripple at 4 A and 200 mV dips on 0/1↔4 A steps (5 V unit). Staff (2024) say 100 mV p-p or more from Pololu switchers 'would not be surprising'.
+    - **Verdict:** confirmed
+    - **Action:** Make the backup-EN divider stiff so the internal 100 k does not matter: about 9.1 k over 1.0 k (about 1.5 mA, only while ON). Then calibrate. Keep the J21 pi filter and the C4 A/B spur gate; the community data shows broadband ripple at the 100 mV level.
+    - **Impact:** A predictable dropout-zone cutoff; no cost change.
+    - **Sources:**
+      - https://forum.pololu.com/t/use-d36v50f12-to-power-sync/24475
+      - https://forum.pololu.com/t/maximum-voltage-on-enable-input/25259
+      - https://forum.pololu.com/t/d36v50-performance-data/22782
+      - https://forum.pololu.com/t/will-a-buck-converter-cause-too-much-noise-in-a-signal-termination-circuit/25082
+  12.
+    - **Claim in stack:** Main switch Pololu #2813: button on-only (A to GND), OFF pulse from the Pico, OFF held by the AON supervisor (12.8 V trip / 13.6 V release, TPS3762 proposed in stage 1)
+    - **Finding:** Pololu forum and product page:
+  - A 28 V user found the #2813 defaulting ON at power-up; staff suggested 1 nF from VIN to A. Our 13-16.8 V is mid-range, so this is unlikely.
+  - A Mini switch misbehaved on a noisy wall-wart supply and worked from a battery.
+  - Staff: ON/OFF/CTRL are 'intended to be used with short pulsed signals and not to be held'. The page: 'leaving any of them in a high state could interfere with the switch's other control methods'.
+  - TI lists the TPS3762 output as 'Active-low, Open-drain' only, but #2813 OFF needs a HIGH level (>1 V) to turn off.
+    - **Verdict:** new_risk
+    - **Action:** Add an inverter: TPS3762 open-drain output with about 1 M pull-up to AON → N-FET → OFF, with about 1 M pull-up so OFF goes high on undervoltage (about 3-7 uA, model). Keep the held-OFF versus button test. Add a test: 20 PD-charger plug/unplug cycles at 250 kHz IP2368 switching on node N, with the device both OFF and ON. The #2813 state must never change.
+    - **Impact:** Without the inverter the supervisor cannot hold OFF at all. The noise test catches spontaneous turn-on while charging.
+    - **Sources:**
+      - https://forum.pololu.com/t/default-off-for-big-pushbutton-at-higher-voltages/22186
+      - https://forum.pololu.com/t/default-on-and-toggle-off-with-big-pushbutton-power-switch/11964
+      - https://forum.pololu.com/t/momentary-button-only-turns-on-mini-pushbutton-power-switch/26790
+      - https://www.pololu.com/product/2813
+      - https://www.ti.com/product/TPS3762
+  13.
+    - **Claim in stack:** Cells: Molicel P50B; runtime model 58 Wh warm / 50 Wh cold (0 C or about 300 cycles); goods-in 68-71 g, at least 4.85 Ah, IR
+    - **Finding:** The V1.1 data sheet charts (extracted images):
+  - To 2.5 V (rate not stated): about 4.82 Ah at 23 C, 4.65 Ah at 10 C and 4.52 Ah at 0 C (about -6%), with a plateau about 0.1 V/cell lower at 0 C.
+  - The -10/-20/-30 C traces are not legible. At -40 C the curve shows an initial sag to about 2.65 V and about 4.15 Ah.
+  - Cycle chart: about 90% after 500 cycles at +1C/-1C.
+  Community (BudgetLightForum, Oct 2025): a 'P50B' bought from a flashlight vendor (Wurkkos) arrived visibly used, with oxidation and scratches on the + terminal and nearly flat. Forum advice: new cells have no terminal or wrap marks and about 3.5-3.8 V OCV (forum claim).
+  No Mooch or lygte-info P50B test could be retrieved.
+    - **Verdict:** confirmed
+    - **Action:** Keep 50 Wh cold as conservative at 0 C (model). Below -10 C, treat runtime as unverified; warm-start the pack or insulate it. Let the 13.2 V/10 s software cutoff ignore the first 60 s after power-on in cold starts. Goods-in: visual check of terminals and wrap, OCV, IR, 68-71 g and capacity, and reject cells with terminal wear.
+    - **Impact:** Confirms the cold derate and adds a cheap counterfeit/used-cell screen.
+    - **Sources:**
+      - https://www.fsaeonline.com/content/Molicel-TDS--INR-21700-P50B-80122.pdf
+      - https://budgetlightforum.com/t/fake-or-damaged-molicell-p50b/230574
+  14.
+    - **Claim in stack:** Pico pulls J21 pin 3 low 0.8-1.0 s if the Q6A heartbeat is missing; Q6A auto-boot
+    - **Finding:** Radxa forum, May 2026:
+  - Several users' boards boot on power-up from USB-C or the header; one header-powered board needed the button. Radxa Team advised a BIOS update (unconfirmed fix).
+  - After 'rupdate', another board stopped at the UEFI boot menu and waited for Enter. efibootmgr and an SPI update did not help (unresolved).
+  - Separately, some 12 GB boards entered 10-15 s reset loops (DDR training aborts after an SPI update). Radxa treated these as hardware/RMA.
+    - **Verdict:** confirmed
+    - **Action:** Keep the PWR-pin pulse. Add a bring-up and regression check after every rsetup/SPI/firmware update: a cold power-on reaches the login with no keyboard. Log the UEFI boot entry. Do not diagnose 10-15 s reset loops as a power fault before checking serial for DDR_ABORT.
+    - **Impact:** A headless handheld stuck in UEFI looks like a power failure. This check separates the two.
+    - **Sources:**
+      - https://forum.radxa.com/t/how-to-setup-dragon-q6a-to-boot-without-pressing-the-power-button/30852
+      - https://forum.radxa.com/t/q6a-no-longer-autoboots-into-radxaos/30925
+      - https://forum.radxa.com/t/help-radxa-q6a-infinite-boot-loop-reset-every-10-seconds-hardware-issue-suspected/30749
+  15.
+    - **Claim in stack:** LNB13V2 / BONI12V5 TPS7A4701: EN from MCP #1, PTC, LC, 13.2 V at the F connector
+    - **Finding:** TPS7A47 data sheet Rev G:
+  - V_EN(HI) ≥ 2.0 V and V_EN(LO) ≤ 0.4 V, so 3.3 V MCP23017 drive is fine.
+  - Shutdown current 3.04 uA typical / 60 uA max at 35 V.
+  - OUT pin abs min is -0.4 V. A coax/F-port hot-plug or the LNB's own capacitance discharging through the choke can push OUT negative.
+  - No community reports were retrievable: TI E2E returned 403 and WebSearch was exhausted.
+    - **Verdict:** new_risk
+    - **Action:** Add a Schottky from OUT (cathode) to GND (anode) on both TPS7A4701 outputs, plus the external rail comparator replacing the non-existent PG (stage 1). Minor.
+    - **Impact:** Cheap protection of a long-lead part (out of stock at TI and LCSC).
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+  16.
+    - **Claim in stack:** LNB current 0.2-0.3 A (unpublished); LT3045 PSRR near dropout; Boni-Whip 9-15 V range
+    - **Finding:** The RTL-SDR Blog Bullseye article and its comments still give no current (11.5-14 V V-pol only). The ADI LT3045 data sheet was again unreachable (connection reset / empty reply), so PSRR at 0.25-0.45 V headroom is unverified. No new Boni-Whip data was found.
+    - **Verdict:** unverified
+    - **Action:** Keep the bench measurements already in STACK: LNB current before sizing the PTC; 4.5 V-rail ripple at 500 kHz with LAB5 at low tolerance; Boni range from the shipped manual.
+    - **Impact:** Unchanged.
+    - **Sources:**
+      - https://www.rtl-sdr.com/?p=44655
+  17.
+    - **Claim in stack:** Q6A 2.9 / 9.3 / 10.1 W (Geerling) as runtime-model inputs
+    - **Finding:** Re-read issue #85: idle 2.9 W 'at wall', stress-ng 9.3 W, Geekbench 9.5 W, HPL 10.1 W, LLM 7.8-7.9 W. No off-state, PD-voltage or brown-out data in the thread.
+    - **Verdict:** confirmed
+    - **Action:** Keep as conservative inputs; replace them with INA228 logs in W1-2.
+    - **Impact:** None.
+    - **Sources:**
+      - https://github.com/geerlingguy/sbc-reviews/issues/85
+- **Current status oct 2026:** Status on 18 Oct 2026, from community and primary pages.
+  
+  **Radxa Dragon Q6A**
+  - Staff with the Radxa Team badge have now repeated four times (Jan-Oct 2026) that the 12 V header takes 4.5-16 V. The latest is strongtz on 15 Oct 2026, in reply to a 4S1P question.
+  - Staff say not to use USB-C while the header is powered.
+  - Radxa's kernel trees linux-6.18.2 and linux-7.0.11 include INA228 in the ina238 hwmon driver as a module (energy only).
+  - CONFIG_POWER_RESET_GPIO is not built.
+  - The only public off-state number is still 1.9-2.5 W after 'halt' (Sep 2025). The draw after 'poweroff' is unpublished.
+  
+  **Pololu**
+  - On 2 Jul 2026 Pololu confirmed that back-feeding a D36V28Fx output above about 5 V pumps its input above 60 V. They suggest an ideal diode, or the D30V30F5 (#4892, $29.95, Rationed).
+  
+  **IP2368 boards**
+  - They remain bidirectional COUT boards. Per the data sheet, COUT uses Try.SRC and needs a charge to activate after the battery is first connected.
+  - Community data: MOSFET above 100 C at 5.1 A, 92-94% efficiency, about 0.1 mA quiescent, a fixed 10 k on the NTC footprint, and a 5 V LDO that varies between boards.
+  
+  **Daly 4S 15 A BMS**
+  - TinyTronics still lists it at €8.00 with 9 in stock.
+  - Its linked Daly spec (DL-J05G-L4S15ATJ A0) gives self-consumption <500 uA and release by load or charger removal.
+  
+  **Adafruit INA228 #5832**
+  - The PCB files show the pull-ups and the address pull-downs share one 10 k array.
+  - The VBUS jumper is open by default, so close it for high-side use.
+  
+  **Not found**
+  - No EOL or recall notices for any power part.
+  - No public handheld or battery Q6A build reports beyond forum questions.
+- **Notes:** **Method limits**
+  - WebSearch was unavailable: the shared 200-call budget for this turn was already used up by other agents. So Reddit, EEVblog, Discord/Matrix and YouTube were not searched.
+  - Community evidence came instead from direct reads of:
+    - The Radxa and Pololu Discourse forums (category listings plus topic JSON).
+    - mysku.club, BudgetLightForum, GitHub, Waveshare, TinyTronics.
+    - Adafruit's Eagle files, parsed locally.
+    - TI and Molicel data sheets.
+  - Not reachable: ADI (LT3045), TI E2E (403), mikrocontroller.net (Cloudflare), the lygte-info P50B test (URL not found), and any Mooch P50B report.
+  - Ask for a follow-up run if a web-search pass over Reddit and EEVblog for IP2368, Daly and P50B is wanted.
+  
+  **Most important new items for STACK v2**
+  1. D36V28F5 back-feed plus the RP2040-Zero's direct VBUS-VSYS link can pump the unclamped SW node above 60 V while the main switch is off. Fix with a Pico diode, an SMBJ17A on SW and a flashing rule.
+  2. A second Pico OFF trigger (shutdown-hook frame plus timeout), because no public data shows the Q6A 3.3 V rail collapsing after poweroff.
+  3. TPS3762 is active-low open-drain only, so an inverter is needed to hold the #2813 OFF high.
+  4. Removing the Adafruit R6 array floats A0/A1. Close both address jumpers (0x45) or ground them.
+  5. Daly self-consumption is <500 uA, which puts standby at about 50-105 days from 50% SoC (model). Add a storage rule: pull the 7.5 A pack fuse.
+  6. Do the IP2368 COUT goods-in test after one activation charge, and drop the Anker 737 (DRP) as a charge source unless reverse blocking is fitted.
+  7. Make the D36V50F12 backup-EN divider stiff (about 9.1 k / 1.0 k), because the internal EN pull-up is 100 k to VIN.
+  
+  **Corrections to stage 1**
+  - The INA228 LED costs about 1.9 mW, not 'halving standby'.
+  - The Daly quiescent current IS published (<500 uA max).
+  - J21 4.5-16 V moves from unverified to staff-confirmed.
+  
+  **Other points**
+  - All standby, runtime, divider and LED figures are Python models at 14.8 V.
+  - The 3S direct-to-J21 idea (9-12.6 V, within the staff 4.5-16 V window) remains publicly untested. It would also lose the LDO-derived 13.2 V LNB and 12.5 V Boni rails, so 4S stays.
+  - Rule check: everything here is receive-side power. No transmitters, loops or dishes are involved, and prices are world USD (EUR converted where stated).
+  
+  **Files**
+  - Adafruit INA228 Eagle files: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pw_dl/ada_ina228/
+  - INA228 data sheet: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pw_dl/ina228ds/ina228.txt
+  - Daly spec text: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pw_dl/daly/dl.txt
+  - P50B chart images: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pw_dl/p50b/img/
+  - Radxa forum JSON: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pw_dl/radxa_forum/
+  - Pololu forum JSON: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pw_dl/pololu_forum/
+
 ## report:compute_software_ai (run `wf_df1900ef-872`)
 
 - **Scope:** This audit covers the Q6A compute board, kernel/OS pinning, the full software stack, the NPU (QAIRT 2.42, INT8), the spectrum-based NPU training system and the lab menu/UI. Read in full or near full: final/compute.json, software.json, npu_training.json, lab_ui_hf.json and user_requirements.md (governing). Also read the whole of minute-log.md, the newest summaries.md entries plus keyword greps across summaries.md and extra-studies.md, and the parts of small_antenna_stack.json, radio_lab.json, display_market.json, foldable_antennas.json and wideband_sdr.json that touch this scope. All 18 named final/*.json files exist (plus foldable_partial.json and digest.md). final/report_research.json from P1b does not exist yet. I did not read wideband_sdr, narrowband_sdr, display, storage, rf_frontend, gnss_imu, power, mechanical_thermal, antennas or dish_replacement beyond targeted greps, because they are outside this scope. components/compute.md and software.md were spot-checked and match the JSON. I used 7 web lookups to settle disputes: ISS frequencies, SatDump version, the QAIRT 0x1388 error, VTCM size and noble libgpiod.
