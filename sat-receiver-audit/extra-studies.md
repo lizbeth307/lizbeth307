@@ -15521,6 +15521,504 @@
   
   All link margins and antenna gains in the report are NEC or formula models (±1-3 dB, with EIRPs mostly assumed) until the on-air A/B tests are done.
 
+## report:power_mech_display (run `wf_df1900ef-872`)
+
+- **Scope:** P1b report audit, subsystems: power (battery 3S vs 4S, rails 9 V vs 12 V, charger, gauge, cutoffs), mechanical/thermal (case, riser, cooling), storage, display (bonded FHD 2000-nit vs fallbacks, EDID/pixel clock), and GNSS/IMU with auto-location. Inputs read: user_requirements.md (governing; identical to sat-receiver-audit/REQUIREMENTS.md), minute-log.md, summaries.md (all user messages plus summaries #77, #87, #94-95, #103, #128, #163-169), extra-studies.md (small:verify_stack_legal and dispmkt checks), components/power.md and mechanical_thermal.md (spot-checked; they mirror the JSON), and final/*.json for power, mechanical_thermal, storage, display, display_market, gnss_imu, small_antenna_stack, radio_lab, lab_ui_hf, npu_training and foldable_antennas. All 18 named JSON files exist; none is missing. The P1b output final/report_research.json does not exist yet. Facts I checked myself: Q6A schematic v1.21 DC-IN page (curl plus pdftotext); SG Micro SGM40666A page; Pololu D36V50F12 page; Radxa forum thread 31611; two web searches (Samsung T7 world price, Airspy HF+ Discovery current); and pixel-clock harmonic scans against 16 lab receive bands (scripts in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/audit_calc/harm.py, clean2.py, clean3.py).
+- **Items:**
+  1.
+    - **Subsystem:** power
+    - **Topic:** Battery series count: 3S1P vs 4S1P (Molicel P50B)
+    - **Current decision:** Conflict between studies. power.json (verify), radio_lab, npu_training and lab_ui_hf use 4S1P at 72 Wh. small_antenna_stack switched to 3S1P at 54 Wh, wired straight into J21 with no 12 V buck. My recommendation: go back to 4S1P plus a regulated 12 V rail. The 3S choice was made under the superseded '<=20 cm deployed' rule and before the lab and HF studies added loads that need 12 V or more.
+    - **Key numbers:** 4S: 12.0-16.8 V (16.4 V at 4.10 V/cell), 72 Wh, about 61-65 Wh usable to the 13.6 V cutoff, about 272 g of cells. 3S: 9.0-12.6 V, 54 Wh, about 46 Wh usable. Loads that need 12 V or more: LNB 13.0-13.4 V; Boni-Whip 12.0 V (published ranges 9-15 V and 12-15 V); AUX 12 V (sled, noise source, 28 V boost); 4D fallback display 12 V at 540 mA; Pinecil at 30-43 W from 4S. A 4S pack costs about $45 and 75 g more than 3S.
+    - **Evidence:** small_antenna_stack.json stack.remove and final.revised_stack; radio_lab.json final.usb_power_case_plan; lab_ui_hf.json final.stack_changes (12.0 V LDO 'from 4S pack'); npu_training.json final.hardware_needs (72 Wh pack); small_antenna_stack final.open_questions[0] (rule conflict).
+    - **Status:** conflict
+    - **Conflicts or errors:** (1) small_antenna_stack assumed that host noise and a single 13 V boost were the only extra needs. With 3S, the 12 V loads from later studies would each need a boost or a buck-boost, which brings back the switchers that 3S was meant to remove. (2) radio_lab and lab_ui_hf were written against the 4S baseline and never saw the 3S change.
+    - **Needed action:** Make 4S1P the final pick. Keep 3S direct-to-J21 only as the budget option, and only with one 12 V buck-boost for all 12 V loads. Restate runtimes for one pack choice in STACK.md.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/power.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  2.
+    - **Subsystem:** power
+    - **Topic:** Cells: Molicel P50B, price and authenticity
+    - **Current decision:** Use 4x Molicel P50B, bought only from established sellers. Test capacity and internal resistance before welding. The P60B (6 Ah, 86 Wh as 4S) is not yet practical.
+    - **Key numbers:** 5.0 Ah, 18 Wh, 60 A continuous, about 68 g per cell. Price quoted only from Prom.ua (Ukraine): 219-380 UAH (about $5-9) per cell. A 155 UAH listing was flagged as a likely fake.
+    - **Evidence:** power.json verify issues and final_recommendation; molicel.com/inr-21700-p50b; budgetlightforum fake-P50B thread.
+    - **Status:** unverified
+    - **Conflicts or errors:** Only Ukrainian prices are given. The requirements say to use world prices, with Ukrainian prices as reference only.
+    - **Needed action:** Re-price from world sources (manufacturer distributors, EU/US shops, AliExpress official stores) for 4 cells plus a spare.
+    - **Sources:**
+      - https://www.molicel.com/inr-21700-p50b/
+      - https://budgetlightforum.com/t/fake-or-damaged-molicell-p50b/230574
+  3.
+    - **Subsystem:** power
+    - **Topic:** Q6A input limits and where the TVS sits (J21 header)
+    - **Current decision:** Never put raw 4S on J21. Feed J21 a regulated 12 V (or 3S in the budget path) behind a fuse, reverse protection (#2813), an SMBJ14A after the regulator, and 100-220 uF/25 V bulk capacitance. Use a keyed, latched 3-pin housing.
+    - **Key numbers:** Header range 4.5-16 V (strongtz, 15 Oct 2026). SY81012 buck rated 2.7-16 V input. C611/C612 are 22 uF/16 V. D19 (SMBJ15CA, 15 V standoff) sits on TYPEC_IN, ahead of the Q5 DMP2160 switch. J21 connects to ADP12V_IN after Q5.
+    - **Evidence:** I read the schematic v1.21 DC-IN text: D19 is next to TYPEC_IN/VBUS, Q5 DMP2160 sits between TYPEC_IN and ADP12V_IN, and J21 is on ADP12V_IN. Radxa forum 31611: 'The 12V header pins can only handle 4.5V to 16V power input' (strongtz; the page does not mark him as staff).
+    - **Status:** verified
+    - **Conflicts or errors:** mechanical_thermal.json verify (and summary #103) says the SMBJ15CA is 'on the J21/ADP12V rail'. That is wrong: power.json verify read the schematic correctly. The conclusion (no raw 4S) still holds, but because of the 16 V capacitors and buck, not the TVS. small_antenna_stack verifier: an SMBJ14A placed on the pack side would conduct at 16.8 V with 4S, so it belongs after the regulator.
+    - **Needed action:** Correct the mechanical write-up and summary #103. Put the SMBJ14A at the J21 side only. If the pack side needs a TVS with 4S, use an 18 V-standoff part.
+    - **Sources:**
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://forum.radxa.com/t/radxa-q6a-4s1p-powering/31611
+  4.
+    - **Subsystem:** power
+    - **Topic:** J21 rail voltage: 9 V vs 12 V, and the regulator
+    - **Current decision:** Use 12 V (power.json): Pololu D36V50F12 into J21 and the 12 V loads. mechanical_thermal chose 9 V (Mini560 at about $3, or Pololu D36V50F9) for a reason that has been refuted. I recommend 12 V: it is Radxa's documented nominal, draws less current (24 W is 2.0 A at 12 V vs 2.7 A at 9 V), and the same rail can serve AUX, the display and other 12 V loads.
+    - **Key numbers:** D36V50F12 (checked on the Pololu page): 13.3-50 V input, 12 V +/-4%, about 500 kHz at heavy load, typical maximum 4.5 A at 36 V in (2.3-6.5 A depending on conditions), EN thresholds 1.2/1.35 V, $39.95, stock 'Rationed'. It has an ultrasonic power-save mode at light load. D36V50F9: 9.9-50 V in, $39.95, rationed. Radxa asks for at least 24 W (12 V/2 A) with USB 3.1 and PCIe loaded.
+    - **Evidence:** pololu.com/product/4095 (WebFetch today); power.json verify; mechanical_thermal.json verify issue on the 9 V buck; summaries #86 and #87 list it as an open cross-component conflict.
+    - **Status:** conflict
+    - **Conflicts or errors:** (1) The 9 V choice rests on the misplaced-TVS reading. (2) power.json research asks for a 'forced-PWM' 12 V rail, but the D36V50F12 is not forced-PWM (power-save mode), so wandering spurs at light load are possible. (3) Its continuous current at 13-17 V input inside a closed case is unknown. The planned 12 V load is Q6A up to 2 A, plus AUX up to 0.75 A, plus the display up to about 0.75 A, about 3.5 A in total.
+    - **Needed action:** Close the conflict in favour of 12 V. Run the terminated-floor A/B test with the D36V50F12, or choose a verified forced-PWM 12 V buck rated 5 A or more. Bench-test continuous current at 13.6 V input in the sealed case.
+    - **Sources:**
+      - https://www.pololu.com/product/4095
+      - https://www.pololu.com/product/4094
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/mechanical_thermal.json
+  5.
+    - **Subsystem:** power
+    - **Topic:** Auxiliary rails: LAB 5 V, AUX 12 V, LNB 13 V, HF active antenna 12.0 V, LNA LDO
+    - **Current decision:** LAB 5 V: Pololu D36V28F5 after the master switch, 2 A fuse plus pi-filter. AUX 12 V: switched branch of the 12 V rail through a clamped-gate P-FET and a 0.75 A-hold PTC, default OFF. LNB: dedicated 13.0-13.4 V TPS65233-class regulator, 250-300 mA limit, on the internal tee. Boni-Whip: 12.0 V from an LC-filtered low-noise LDO on the pack, with polyfuse and GPIO load switch. LNAs: LT3045-class LDO. No 9 V rail (AD8318 dropped). 28 V for a noise head: external boost.
+    - **Key numbers:** D36V28F5: 5 V/3.2 A, $23.95. AO3401A V_GS absolute maximum is +/-12 V, so clamp the gate to about -6 V. LNB through the ZFBT bias tee drops to 10.6-11.4 V when fed 12 V, which is why it needs 13.0-13.4 V. The LNB current is unpublished; budget 200-300 mA (1.4-3.6 W). Boni-Whip LDO dropout must be under 1.2 V at the 13.2 V threshold.
+    - **Evidence:** radio_lab.json final.stack_changes and usb_power_case_plan; lab_ui_hf.json final.stack_changes; small_antenna_stack verifier (extra-studies.md, small:verify_stack_legal).
+    - **Status:** model_only
+    - **Conflicts or errors:** (1) power.json says 'one 12 V rail feeds the LNB'; radio_lab overrides this with 13.0-13.4 V. (2) small_antenna_stack's LNB plan (MT3608/XL6009 boost switched by a TPS2553) is wrong: the TPS2553 is rated 2.5-6.5 V, and a plain boost with no output disconnect leaves 8.5-12 V on the F port when 'off'. (3) The 18 V branch is correctly removed: QO-100 NB is vertical (13 V).
+    - **Needed action:** Record one rail table in STACK.md with source, regulator, limit and switch for each rail. Mark the power.json single-rail LNB claim and the small-stack boost/TPS2553 plan as superseded.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - /home/user/lizbeth307/sat-receiver-audit/extra-studies.md
+  6.
+    - **Subsystem:** power
+    - **Topic:** Q6A internal 5 V_PERI and USB-A power budget
+    - **Current decision:** Keep only small loads on the Q6A's own 5 V: RTL-SDRs, fan, GNSS and IMU. The display, hub, instruments, HF+ and LAB port go on separate rails from the pack. The stacked USB-A pair is limited by one WS4612 switch.
+    - **Key numbers:** SGM40666A OVP switch ahead of the SY7120 boost: 4.5 A continuous (checked on the SG Micro page), so VCC_5V_PERI is about 17 W (about 3.5 A at 5 V). WS4612 USB-A limit about 2.1 A (Rset 3.24 kOhm, read from the schematic, not measured). The LimeSDR M.2 allowance alone is 8.25 W of that 17 W.
+    - **Evidence:** power.json verify issue on the SY7120; sg-micro.com/product/SGM40666A (WebFetch today); storage.json verify issue on WS4612.
+    - **Status:** verified
+    - **Conflicts or errors:** lab_ui_hf.json final.stack_changes still says USB VBUS is 'fed from a 5 V boost good for about 7 A'. That is the refuted fixes-agent claim: the upstream SGM40666A limits it to about 17 W.
+    - **Needed action:** Correct lab_ui_hf. Power the HF+ and the bias-tee injectors from LAB 5 V, not from VCC_5V_PERI, especially if the Lime stays.
+    - **Sources:**
+      - https://www.sg-micro.com/product/SGM40666A
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+  7.
+    - **Subsystem:** power
+    - **Topic:** Charger: IP2368
+    - **Current decision:** IP2368 USB-C PD board, charge-only BZ version preferred, set to 4.10 V/cell (RVSET 5.1k) and 3 A (RISET 15k), with a real 10k B3380 NTC on the middle cell. Its port is the only external power input. Do a 4.20 V balance charge monthly with an ISDT 608PD. Never charge below 0 C.
+    - **Key numbers:** 2-5 cells (datasheet V1.41; 6S support was dropped). Up to 100 W. 250 kHz. Charge timer 45-51 h. Standby 180 uA. MOSFET over 100 C at 5 A. At 4S and 3 A, about 49 W, so it needs a 60 W or larger PD source. For use while charging with a 25 W load, a 45-65 W source is needed. Board price $14-17 (Prom.ua reference). ISDT 608PD 1,979-2,250 UAH reference.
+    - **Evidence:** power.json verify (datasheet V1.41 checked by the verifier; mikrocontroller.net wrong-direction report).
+    - **Status:** verified
+    - **Conflicts or errors:** (1) power.json research's 'reverse power bank' double duty and 'charge from any power bank' are refuted: COUT/NACT boards use Try.SRC and can push power into a power bank. (2) It is unknown whether charge-only BZ boards are easy to find. (3) World prices are not verified; only Ukrainian ones are given.
+    - **Needed action:** Source a BZ board at a world price. Bench-test the NTC charge inhibit, thermal-pad the board to the case, and burn in 2-3 boards at 3 A for 2 h.
+    - **Sources:**
+      - https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+  8.
+    - **Subsystem:** power
+    - **Topic:** Protection chain: BMS, master switch, fuse, USB-C back-feed
+    - **Current decision:** 4S common-port balancing BMS (15-20 A). Pololu #2813 HP as master switch, placed after the IP2368 tap so the pack charges while the device is off. Fuse at the pack. The Q6A USB-C port gets a removable silicone plug and a label, not glue.
+    - **Key numbers:** #2813: $8.95, 4.5-40 V, 6 A at 55 C, under 0.2 uA off, reverse protection. #2812 is only about 4 A at 55 C, so rejected. Fuse: 7.5 A (power.json) vs 5 A (mechanical_thermal). Peak pack current about 4 A at 13 V. BMS price $5-12, unverified.
+    - **Evidence:** power.json verify issues; mechanical_thermal.json known_problems.
+    - **Status:** conflict
+    - **Conflicts or errors:** Fuse rating differs between studies (7.5 A vs 5 A). Some BMS boards ship locked and need a charger 'kick' to wake.
+    - **Needed action:** Fix one fuse value: 7.5 A suits 4S with a 45-52 W peak; 5 A only if the Lime is dropped and the 3S budget path is used. Test BMS wake by charger 3 out of 3 times.
+    - **Sources:**
+      - https://www.pololu.com/product/2813
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/power.json
+  9.
+    - **Subsystem:** power
+    - **Topic:** Fuel gauge: INA228
+    - **Current decision:** Adafruit INA228 (#5832) with its shunt in the pack lead, ahead of both the IP2368 and the loads, so charge current is also counted. Power it from an always-on 3.3 V LDO and remove the breakout pull-ups. Use CHARGE coulomb counting, not voltage percentage. Reset to 100% at 16.35 V with current under 0.1 A.
+    - **Key numbers:** $14.95, 15 mOhm shunt, up to 10 A, 40-bit CHARGE register. Forum reports show voltage-based percentages off by 20-90%.
+    - **Evidence:** power.json verify issue on shunt placement; lab_ui_hf.json (I2C0 pins 13/15, read via i2c-dev with no kernel driver bound).
+    - **Status:** conflict
+    - **Conflicts or errors:** (1) Bus: power.json used the i2c6 overlay (pins 3/5) as the template, but enabling the UART6 overlay disables i2c6 (gnss_imu verify), and lab_ui_hf and radio_lab put the INA228 on I2C0. (2) npu_training.json hardware_needs says the INA228 is 'on the 12 V J21 rail'; it is on the pack lead, so it cannot isolate NPU power. (3) Driver: power.json uses ina238 hwmon (shipped in the 7.0.11 kernel; presence in the held 6.18.2 kernel not shown), while lab_ui_hf uses user-space i2c-dev.
+    - **Needed action:** Fix the bus at I2C0 and the driver at user-space i2c-dev. If NPU incremental power must be measured, add a second INA on the 12 V J21 branch.
+    - **Sources:**
+      - https://www.adafruit.com/product/5832
+      - https://www.ti.com/product/INA228
+  10.
+    - **Subsystem:** power
+    - **Topic:** Low-battery cutoffs, power key and auto-boot
+    - **Current decision:** Three-stage cutoff (power.json): Linux poweroff at 3.4 V/cell (13.6 V) read from the INA228, D36V50F12 EN divider at about 12.8 V as hardware cut, BMS (2.5-2.8 V/cell) as last resort. Auto-boot by an open-drain 0.5-1.5 s pulse on J21 pin 3. lab_ui_hf adds an RP2040 hard cut (shutdown request or 6 s hold or critical voltage, AND no heartbeat) and logind HandlePowerKey=ignore, with labpowerd handling the key.
+    - **Key numbers:** The Q6A still draws 1.9-2.5 W after 'halt'. The UEFI wants a key press of at least 400 ms. lab_ui_hf's LDO is sized against a '13.2 V shutdown threshold'.
+    - **Evidence:** power.json verify known_problems; lab_ui_hf.json final.stack_changes (HARD POWER CUT).
+    - **Status:** conflict
+    - **Conflicts or errors:** (1) Thresholds disagree: 13.6 V vs 13.2 V vs 12.8 V. (2) Power key: HandlePowerKey=poweroff (power.json) vs ignore plus labpowerd (lab_ui_hf). (3) Below 13.3 V the D36V50F12 drops out, so the 12 V rail sags before the 12.8 V hardware cut.
+    - **Needed action:** Publish one cutoff table (Linux, hardware, BMS) for the chosen pack. labpowerd must call poweroff, never halt. Put the RP2040 that drives the #2813 OFF input and the J21 pin 3 pulse on the always-on rail.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/power.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  11.
+    - **Subsystem:** power
+    - **Topic:** Power budget and runtime
+    - **Current decision:** With the Lime: typical 25-28 W, peak 45-52 W, about 2.2-2.6 h on 72 Wh. Without the Lime (small stack): 11-17 W with a single RTL, 13-21 W for QO-100 or dual RTL, 24-32 W peak. That gives 2.8-4.0 h (single RTL) or 2.2-3.5 h (QO-100/dual RTL) on 3S, and 3.7-5.3 h on 4S. On-device training adds 3-6 W for 1-11 min.
+    - **Key numbers:** Measured Q6A: 2.9 W idle, 9.3 W stress-ng, 10.1 W HPL (Geerling). V4L: 1.3 W each. LNAs: 0.7-0.85 W each. Display: 3.6-4.8 W at 60%, 6-8 W at full (estimate). HF+ current: unpublished (my search found none; one unofficial worst-case estimate of 2.2 W is for the original HF+). Boni-Whip and LNB currents: unpublished. Usable capacity taken as 85%. The arithmetic reproduces: 54x0.85/11-17 W gives 2.7-4.2 h.
+    - **Evidence:** small_antenna_stack.json final.cost_size_power_delta; radio_lab.json power scenarios; npu_training.json budgets; geerlingguy sbc-reviews #85; rigpix HF+ Discovery page.
+    - **Status:** model_only
+    - **Conflicts or errors:** (1) radio_lab and npu_training still quote the with-Lime baseline, small_antenna_stack the no-Lime one. (2) The display power is scaled from the Midas datasheet, not measured.
+    - **Needed action:** After the Lime decision, recompute one per-mode budget including HF+, Boni-Whip and the lab rails. Measure everything with the INA228 at first power-up.
+    - **Sources:**
+      - https://github.com/geerlingguy/sbc-reviews/issues/85
+      - https://rigpix.com/miscrx/airspy_hfplusdiscovery.htm
+      - https://www.rtl-sdr.com/measuring-the-usb-power-consumption-of-various-software-defined-radios/
+  12.
+    - **Subsystem:** power
+    - **Topic:** Display supply
+    - **Current decision:** The Wisecoco board's input voltage is unknown. The 4D fallback takes 12 V at 540 mA (6.5 W). The Waveshare and Newhaven budget panels take 5 V (at least 850 mA; 6-7.5 W). Pass only D+/D-/GND to the Q6A and power the board's VBUS from its own regulator, so it never back-feeds.
+    - **Key numbers:** Acceptance limit: 9 W or less at full white on the 12 V rail with a 1.5 A limit.
+    - **Evidence:** display_market.json final (q6a_settings, acceptance_tests); power.json missed_better_options.
+    - **Status:** unverified
+    - **Conflicts or errors:** power.json's idea of feeding a '7-24 V sunlight display straight from the pack' only applies to field monitors (LUT7 and similar), which display_market rejected (no host touch). With 3S direct, a 12 V-input board may not run at 9-12.6 V. This is also open in small_antenna_stack.
+    - **Needed action:** Get the Wisecoco input range in writing. Plan the display on the 12 V rail (4S) or its own buck-boost (3S).
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/display_market.json
+  13.
+    - **Subsystem:** mechanical_thermal
+    - **Topic:** M.2 riser (ADT-Link R44SF) and the LimeSDR mechanical path
+    - **Current decision:** Needed only if the LimeSDR Micro M.2 stays. In that case: R44SF 5 cm riser with a printed clamp bar, a windowed female board, an aluminium pedestal with a 6 W/mK or better gap pad, J21 desoldered and wired from the bottom pads, and MHF4 handled only with the I-PEX 90435-001 tool. small_antenna_stack removed the Lime and with it all of this.
+    - **Key numbers:** R44SF $19. Plugging the card straight in collides with J21 (8.5 mm tall), may land on the 2230 standoff (4.7 mm), and puts the LA9310 about 0.4 mm above the USB-C shell. Design cooling for 10 W (about 4 W typical). Lime price $249 + $18 shipping; orders ship 15 Dec 2026. Acceptance: link 8GT/s x1, 50 warm and 20 cold boots, zero AER errors after 60 min of streaming.
+    - **Evidence:** mechanical_thermal.json verify; small_antenna_stack.json stack.remove. radio_lab (REF IN to Lime J4, 10 dB pads), lab_ui_hf (CPU7 isolated for lime:Rx0), npu_training (Lime TX terminator) and foldable_antennas (Lime on 435 MHz and S-band) all still assume the Lime.
+    - **Status:** conflict
+    - **Conflicts or errors:** Studies disagree on whether the Lime exists. With foldable antennas allowed again, the small stack's 'Lime reaches only 2 niche targets' argument was made for the ≤20 cm tier only. foldable_antennas assigns the Lime to 435 MHz polarisation diversity and the S-band helix.
+    - **Needed action:** Decide the Lime (or a USB S-band module) in the final checks. If the Lime stays, keep the riser package and the acceptance test. If not, delete every Lime-only item (riser, pedestal, MHF4, J21 desolder, CPU7 isolation, REF IN, TX terminator).
+    - **Sources:**
+      - https://www.adt.link/product/R44SF.html
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+  14.
+    - **Subsystem:** mechanical_thermal
+    - **Topic:** Enclosure, size and weight
+    - **Current decision:** Light-grey ASA shell; PETG rejected because it softens at 75-80 C. A 2 mm aluminium mid-plate serves as chassis, ground, shield wall and heat spreader. Soldered copper-clad FR4 RF bay. Captured 1/4"-20 nut in the plate. Strap required. Battery is 2 rows of 2 cells end to end.
+    - **Key numbers:** With the Lime: about 205-215 x 130-140 x 50-55 mm, 1.2-1.4 kg. Without: about 200-215 x 120-140 x 45-55 mm, 1.05-1.25 kg. A 200x130 mm plate alone weighs about 140 g. 4S pack about 46x25x150 mm. The likely Wisecoco glass outline is 164.2x98 mm (inferred from its Youritech twin). Lab additions inside the case: about 20 cm3, 50 g and 0.5 W or less, plus an HF+ can of 35-45 cm3.
+    - **Evidence:** mechanical_thermal.json verify issues (size, plate mass, pack geometry); small_antenna_stack size_weight_power_before_after; radio_lab internal_vs_external.
+    - **Status:** model_only
+    - **Conflicts or errors:** The earlier 200-205 x 130-135 x 42-48 mm, 1.0-1.2 kg estimate is superseded: it modelled the wrong display. The earlier 46x46x145 mm pack would hold 8 cells. The size has not been re-derived for the chosen panel plus 2 encoders and 6 keys of at least 12 mm at 13 mm or more pitch (lab_ui_hf).
+    - **Needed action:** Re-derive the footprint from the real panel outline and the HMI layout once the display is confirmed.
+    - **Sources:**
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_3d_stp_v1.21.zip
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/mechanical_thermal.json
+  15.
+    - **Subsystem:** mechanical_thermal
+    - **Topic:** Cooling and heat budget
+    - **Current decision:** Two parallel airflow paths. (a) A stepped copper block on the SoC (inside the 32x31 mm keep-in) with a 30-40 mm 5 V fan, switched on/off at 60/50 C through an AO3400. (b) A separate 5 V blower through a 4-6 mm channel behind the display and over the plate fins. The Lime, if kept, is cooled by conduction. Display: NTC derating to 50% above 60 C and 20% above 68 C, light bezel, 25-35 mm hood.
+    - **Key numbers:** Internal heat with Lime plus bright display: 25-35 W. Without the Lime: 11-17 W typical, 24-32 W peak. Solar load on the 7in face: about 13.5-17 W. A bare board shut down at about 105 C; passive cooling throttles above 90 C; fan plus heatsink holds 55-80 C. The NF-A4x10 5V has a 1000 rpm minimum, so it never stops on PWM. The PoE-HAT overlay runs 1 kHz PWM (ticking) and has the 'cpu0-thermall' typo.
+    - **Evidence:** mechanical_thermal.json verify; Radxa forum 30123; noctua.at spec; radxa-overlays PoE-HAT dtso.
+    - **Status:** model_only
+    - **Conflicts or errors:** Fan pin: the PoE-HAT overlay uses GPIO56, while radio_lab moves the fan to header pin 33 (pwm-gpio, spi14 disabled). There is no single pin map. The UFS module runs at about 60 C even with fans and needs a pad to a boss on the case.
+    - **Needed action:** Publish one header pin and bus map (PPS 7, UART6 16/18, UART7 32/29, I2C0 13/15, I2C2 27/28, fan, spi14). Run a 45-minute noon soak: frame 60 C or less, glass 65 C or less.
+    - **Sources:**
+      - https://forum.radxa.com/t/best-heatsink-cooling-solutions-for-dragon-q6a/30123
+      - https://noctua.at/en/nf-a4x10-5v-pwm/specification
+      - https://github.com/radxa-pkg/radxa-overlays/blob/main/arch/arm64/boot/dts/qcom/overlays/qcs6490-radxa-dragon-q6a-poe-hat.dtso
+  16.
+    - **Subsystem:** mechanical_thermal
+    - **Topic:** Packing and carry
+    - **Current decision:** Tier 1 sling: handheld, folded antennas with every piece 35 cm or less, HF wire kit, 2 L field pouch. Tier 2: Pelican 1450 lab case with padded dividers. Both Li-ion packs go in cabin baggage.
+    - **Key numbers:** Sling 3.0-3.6 kg. Pelican 1450: 14.5 L interior, 2.5-2.9 kg empty, packed about 8-9 kg. Pack 72 Wh and bank 88.8 Wh, both under the 100 Wh limit. The 1420 MHz flat horn (35x35x3 cm) does not fit the case.
+    - **Evidence:** radio_lab.json final.usb_power_case_plan.
+    - **Status:** model_only
+    - **Conflicts or errors:** Assumes 4S and the Lime-era handheld weight of 1.2-1.4 kg.
+    - **Needed action:** Update after the pack and Lime decisions.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  17.
+    - **Subsystem:** storage
+    - **Topic:** Boot and pass drive: Radxa UFS 3.1 128 GB (Samsung)
+    - **Current decision:** Radxa UFS 128GB RA022-B10J0U2 (Samsung KLUDG4UHDC-B0E1). Avoid the 256 GB Kioxia module unless the PR #551 quirk is present. Run only the Radxa vendor kernel, held together with its headers. Identify the chip on arrival (manufacturer ID 0x01CE is Samsung, 0x0198 Kioxia).
+    - **Key numbers:** $65.90 at Allnet China (in stock); EUR 58 at Tinytronics (2-4 weeks). dd 1703 MB/s read / 388 MB/s write, inside the WriteBooster cache (4 GiB in Radxa's XML). Post-cache write is unknown and may be 120-200 MB/s. Rated 0-70 C. RTL raw IQ is 18.4 GB/h per 2.56 Msps stream; 15 min of HRPT is 4.6 GB.
+    - **Evidence:** storage.json verify; Radxa forum 30630; radxa/kernel PR #551.
+    - **Status:** verified
+    - **Conflicts or errors:** storage.json research's 256/512 GB pick is superseded (sold out; Kioxia bug). The '9 days uptime' report was really 9 h 51 min.
+    - **Needed action:** Run a long fio fill test (about 70% of free space) before trusting the UFS for anything above narrowband rates.
+    - **Sources:**
+      - https://shop.allnetchina.cn/products/high-performance-ufs-3-1-module
+      - https://forum.radxa.com/t/ufs-random-reboots/30630
+      - https://github.com/radxa/kernel/pull/551
+  18.
+    - **Subsystem:** storage
+    - **Topic:** Wideband drive: Samsung T7 1 TB, and a cheaper alternative
+    - **Current decision:** Conflict. storage.json, radio_lab, lab_ui_hf (lab-snap rollback partition) and npu_training (waterfall archive, raw snaps) keep the T7 on the blue USB 3.1 port. small_antenna_stack removes it (largest stream is 2 RTLs, about 10 MB/s) and gives that port to an RTL.
+    - **Key numbers:** T7: about 480 MB/s after its cache; the Q6A USB 3.1 port manages about 395 MB/s (fio). 56 MHz cs16 is 245.76 MB/s, so 1 TB holds about 68 min. Price $207 is from hotline.ua in UAH. World street price swung between $190 and $275 during the NAND shortage (PCWorld, undated). Without the Lime the worst stream is 2 RTLs plus HF+ cf32: about 16.4 MB/s, about 59 GB/h (my calculation).
+    - **Evidence:** storage.json verify; small_antenna_stack stack.remove; lab_ui_hf final.stack_changes (STORAGE); npu_training budgets (STORAGE); PCWorld deal article.
+    - **Status:** conflict
+    - **Conflicts or errors:** (1) The T7 is needed only for Lime-rate capture. (2) The price is Ukrainian, not a world price. (3) Missed option: if the Lime is dropped, a V30/A2 microSD card in the Q6A slot (30 MB/s or more guaranteed sequential) would cover 16.4 MB/s for much less. This is my inference, not tested on the Q6A. (4) USB 3 activity near the GNSS patch is a known jammer.
+    - **Needed action:** Tie the T7 to the Lime decision. If the Lime goes, evaluate microSD for raw-IQ and snapshot storage, and keep the T7 only if it is already bought. Re-price at world prices.
+    - **Sources:**
+      - https://ssd-tester.com/samsung_portable_ssd_t7_1tb.html
+      - https://www.pcworld.com/article/3158933/samsung-fast-t7-portable-ssd-finally-drops-in-price-190-was-285.html
+  19.
+    - **Subsystem:** storage
+    - **Topic:** RAM ring buffer and recorder
+    - **Current decision:** An 8 GiB mlocked ring (6 GiB while training) for 160 Msps bursts, drained to the T7. Never point limeTRX straight at disk: use mbuffer -L or a custom mlocked ring. Request CS16, because the Micro forces an I16 link.
+    - **Key numbers:** 160 Msps I16 = 640 MB/s. 8 GiB holds about 13.4 s with no drain, about 35 s draining to the T7, about 101 s packed to 12 bit on the CPU. The LA9310 FIFO holds about 50 ms. Soapy 'CS12' from limesuiteng is stored as int16.
+    - **Evidence:** storage.json verify (LimeSuiteNG source: LA9310_TRX.cpp, types.h, limeTRX.cpp); npu_training budgets (RAM 12 GB).
+    - **Status:** conflict
+    - **Conflicts or errors:** A 6-8 GiB ring needs the 12 GB Q6A. small_antenna_stack downgraded the board to 8 GB on the grounds that no wideband bursts remain. All of this is Lime-only.
+    - **Needed action:** Resolve together with the Lime and RAM-tier decision. If the Lime is dropped, delete the ring, mbuffer and CS16 recorder items.
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro/src/src/boards/LimeSDR_Micro/LA9310_TRX.cpp
+  20.
+    - **Subsystem:** storage
+    - **Topic:** Capacity policy for the full lab
+    - **Current decision:** No explicit policy. NPU: 20 GB UFS dataset quota; waterfall archive 2.8-22 GB/h (T7 only); raw snaps rolling about 400 GB on the T7. HF+ recordings cf32_le at 6.1 MB/s to UFS.
+    - **Key numbers:** 128 GB UFS minus the OS (about 20-30 GB, estimate) leaves about 95-100 GB: about 5 h of one RTL raw stream, or about 1.6 h of 2 RTLs plus HF+ raw (my calculation).
+    - **Evidence:** npu_training.json budgets; lab_ui_hf stack_changes; small_antenna_stack keep list.
+    - **Status:** model_only
+    - **Conflicts or errors:** lab_ui_hf sends HF+ raw (22 GB/h) to UFS, while small_antenna_stack keeps all pass recordings on UFS too. Nothing checks the combined total.
+    - **Needed action:** Define a retention policy (products by default, raw only when pinned) and size the secondary storage from it.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+  21.
+    - **Subsystem:** display
+    - **Topic:** Main pick: Wisecoco 7in FHD 2000+ nit kit
+    - **Current decision:** Wisecoco 7in (6.97in) 1920x1080 LTPS with HDMI-in board and capacitive touch, bought only after the seller confirms in writing that touch reaches the host as USB-HID (VID:PID) and that the cover glass is optically bonded. Otherwise buy the 4D Systems fallback.
+    - **Key numbers:** $132, 0 reviews, re-read 18 Oct 2026. Spec table '2000+ cd/m2 typ'; '2500' appears only in the title. 316 PPI. Sun contrast model at 100 klx: bonded plus AR film 6.2:1; bonded plain 2.4:1; air gap 1.5:1; bonded 1000-nit panel 3.6:1. Acceptance: contact-lux 5600 lx or more (about 1800 nits), 9 W or less, 20 cold boots.
+    - **Evidence:** display_market.json final.main_pick; wisecocodisplay.com product page; a different Wisecoco 7in kit enumerates as CH57x 1a86:e5e3 (Pi forum t=368455).
+    - **Status:** unverified
+    - **Conflicts or errors:** (1) The touch interface is listed as 'I2C' (in-cell); a USB bridge is plausible but unproven. (2) Power, input voltage, bonding and EDID are all unknown. (3) Ukraine-specific buying advice (EUR 150 duty threshold, Prom.ua) is superseded: the user is not in Ukraine and has named no country.
+    - **Needed action:** Send the seller questions (display_market open_questions). Ask also about a glove-mode or thick-cover touch firmware and the panel's operating temperature.
+    - **Sources:**
+      - https://www.wisecocodisplay.com/product/7-inch-1920x1080-high-brightness-2500nits-lcd-panel-with-hdmi-in-board-ips-mipi-interface-tft-lcd-screen/
+      - https://forums.raspberrypi.com/viewtopic.php?t=368455
+  22.
+    - **Subsystem:** display
+    - **Topic:** User wish 'above Full HD' versus evidence
+    - **Current decision:** The objective result stands: a bonded FHD 2000-nit panel beats any dim above-FHD kit. Above FHD is only possible as a Midas MDT0700F1IHHC 1200x1920 bring-up project.
+    - **Key numbers:** Acuity limit 291 PPI at 30 cm, 249 PPI at 35 cm. 7in FHD is 315 PPI; 7.02in 1200x1920 is 322.5 PPI, so the visible gain is nil, apart from 11% more pixels on the short axis. Every buyable above-FHD kit is 287-706 nits. Midas: 1000/1500/2000/2500 nits at 200/300/400/500 mA, Vf 16 V (19.2 V max), so plan 2000 nits at 6.4 W of LEDs. EUR 324.37 ex VAT, 12-week lead time, no porch timings published, landed about EUR 420-500 plus a bridge, LED driver and touch bridge.
+    - **Evidence:** display_market.json final (what_above_fhd_costs_us, above_fhd_tier); Farnell datasheet 3984938.
+    - **Status:** verified
+    - **Conflicts or errors:** The wish conflicts with the market and with optics. The closest option is the Midas project; there is no plug-and-play kit.
+    - **Needed action:** Keep the Midas only as an optional lab project behind its gate tests (FT7250 timings, a vendor-flashed bridge, a 400 mA LED driver at up to 19.2 V).
+    - **Sources:**
+      - https://www.farnell.com/datasheets/3984938.pdf
+  23.
+    - **Subsystem:** display
+    - **Topic:** Fallbacks: 4D Systems 1000-nit, Waveshare and Newhaven budget panels
+    - **Current decision:** Verified fallback: 4D Systems 4DHDMI-70-1280-800-CT-EAR-1000. Budget: Waveshare 5DP-CAPLCD-B (the -B variant only). Step-up budget: Newhaven NHD-7.0-HDMI-HR-RSXP-CTU.
+    - **Key numbers:** 4D: 1000 nits typ, 'Optical Bonded to LCD', no AR coating as standard, 12 V at 540 mA (6.5 W), -20 to 70 C, GT928 touch over USB-C (HID class not stated); priced only at 9,520 UAH (about $229). Waveshare: 800 nits, 4.2 W, needs at least 850 mA, $46.99-54.99. Newhaven: 940 nits, FT5426 USB-HID, $120.20, bonding not stated.
+    - **Evidence:** display_market.json final.ranked_candidates; 4DHDMI datasheet R1.0; waveshare.com; newhavendisplay.com.
+    - **Status:** violates_requirements
+    - **Conflicts or errors:** The 4D price comes only from a Ukrainian shop, against the world-price rule. Waveshare is below the 1000-nit wish.
+    - **Needed action:** Get a 4D Systems world price (manufacturer store or distributor) and international shipping.
+    - **Sources:**
+      - https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_0.pdf
+      - https://www.waveshare.com/5dp-caplcd.htm
+      - https://www.newhavendisplay.com/nhd70hdmihrrsxpctu-p-9649.html
+  24.
+    - **Subsystem:** display
+    - **Topic:** EDID and pixel clock for the Wisecoco FHD (RF cleanliness)
+    - **Current decision:** Bring-up at 1080p60 CEA (148.5 MHz) only. Field mode: an EDID override at 1080p52, 128.70 MHz (totals 2200x1125, 45 lines of vertical blanking, 3.09 Gbps, 36% of 2-lane HBR2), loaded with drm.edid_firmware. The vertical-blanking sum VFP+VSW+VBP must be at least 24 lines (sc7280 requirement).
+    - **Key numbers:** My scan of 16 lab bands with a 1 MHz guard: 128.70 MHz puts its 12th harmonic at 1544.4 MHz, inside Inmarsat-C 1537-1545 (small stack: 2.9 MHz from the 1541.45 MHz NCS). 148.5 MHz hits 742.5 MHz (QO-100 wideband IF), 1188.0 MHz (GNSS L5) and 2227.5 MHz. 138.5 MHz sits inside 137-138 MHz. The alternative 135.76 MHz hits 1221.8 MHz (GNSS L2). Clean against all 16 bands, including S-band and Inmarsat-C: 127.84-127.99 MHz, i.e. about 51.7 Hz with 2200x1125 totals.
+    - **Evidence:** display_market.json final.q6a_settings; display.json verify issue on the RF fix; small_antenna_stack revised_stack (display line); my scripts harm.py and clean2.py.
+    - **Status:** conflict
+    - **Conflicts or errors:** (1) display_market and display.json checked only 6 bands (137, 145, 435, 739-750, 1690-1710, 2200-2300) and called 128.7 MHz 'clean'. That misses Inmarsat-C SafetyNET, which was added later as a reliable target. (2) display.json final_recommendation still says 'run at native 1080p60', contradicting its own RF fix; display_market supersedes it. (3) Whether the bridge and panel accept about 52 Hz is unverified. TMDS, DSI (about 3x the pixel clock) and backlight-boost noise are broadband and not fixed by any clock choice.
+    - **Needed action:** Change the field mode to about 127.9 MHz (or verify that 1544.4 MHz is harmless in the A/B sweep). Add Inmarsat-C, ADS-B, AIS, sonde, H1 and GNSS bands to the RF A/B test list. Keep shielding, ferrites and the filtered display rail mandatory.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/audit_calc/clean2.py
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/display_market.json
+      - https://www.sigidwiki.com/wiki/HDMI_RFI_Clock
+  25.
+    - **Subsystem:** display
+    - **Topic:** EDID for the 4D 1280x800 fallback
+    - **Current decision:** display_market: video=HDMI-A-1:1280x800@60, CVT 83.77 MHz, listing only weak hits at the 19th harmonic (1591.5 MHz) and the 27th (2261.6 MHz).
+    - **Key numbers:** Also at 83.77 MHz: 13th harmonic at 1089.0 MHz (ADS-B 1090, 1 MHz away) and 14th at 1172.8 MHz (L5). No pixel clock between 65 and 90 MHz is clean across all 16 lab bands, even with a 0.5 MHz guard (my clean3.py).
+    - **Evidence:** display_market.json q6a_settings; my scans harm.py and clean3.py.
+    - **Status:** conflict
+    - **Conflicts or errors:** The ADS-B hit was missed. At low pixel clocks the harmonics are too dense for any clock to be clean, so physics rules out a clock-only fix.
+    - **Needed action:** For the 4D, rely on shielding, and add per-profile mode switching (labd picks a clock clean for the active band; one modeset per profile change) if the board accepts multiple timings.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/audit_calc/clean3.py
+  26.
+    - **Subsystem:** display
+    - **Topic:** Q6A HDMI and kernel constraints
+    - **Current decision:** Hold the Radxa 6.18.2-x kernel. 7.0.x breaks HDMI, and mainline 7.3-rc has no Q6A display device tree. Modes 1920 px wide or less need no virtual planes; above 2400 px needs msm.dpu_use_virtual_planes=1. Never use the 348.5 MHz CVT 2560x1600 mode.
+    - **Key numbers:** sc7280 limits: 2400 px line width, 24-line prefetch. 2560x1600 RB at 268.5-268.6 MHz uses 75-77% of the link.
+    - **Evidence:** display.json verify; display_market refuted_claims; dpu_7_2_sc7280.h.
+    - **Status:** verified
+    - **Conflicts or errors:** This kernel hold clashes with the GNSS PPS route that needs 7.0.11 (see the GNSS item).
+    - **Needed action:** Keep the hold and solve PPS on 6.18.2.
+    - **Sources:**
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_2_sc7280.h
+      - https://forum.radxa.com/t/latest-q6a-update-to-linux-7-0-no-hdmi/31288
+  27.
+    - **Subsystem:** display
+    - **Topic:** Touch with gloves, sun dimming and HMI
+    - **Current decision:** Capacitive touch is the main input. Encoders and keys back it up: 2 push-encoders and 6 sealed keys of at least 12 mm (lab_ui_hf). Auto-dimming by an RP2040 with a VEML7700 lux sensor and 20-25 kHz PWM-to-analog dimming, the same MCU as the HMI. DDC/CI is expected to fail on cheap boards.
+    - **Key numbers:** Touch targets of 15 mm or more. Run brightness at 30-50% most of the time.
+    - **Evidence:** npu_training hardware_needs ('capacitive touch generally does not register through ordinary gloves'); lab_ui_hf ui_system; display_market sunlight_measures.
+    - **Status:** conflict
+    - **Conflicts or errors:** The wish for a touch menu usable with gloves conflicts with how standard projected-capacitive touch works. Glove support depends on controller firmware, which is unknown for the Wisecoco and 4D boards.
+    - **Needed action:** Ask the vendors about glove mode. Keep every capture-critical action on the physical keys and encoders.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  28.
+    - **Subsystem:** gnss_imu
+    - **Topic:** GNSS receiver: Quectel LC76G on UART6
+    - **Current decision:** Waveshare 24370 LC76G on UART6 (/dev/ttyHS1, udev link /dev/gnss0) with gpsd 3.25 and chrony 4.5. PPS optional on header pin 7 (GPIO96). Configure with $PAIR752,2,100 (PPS only with a 3D fix) and $PAIR391,1 (jamming detection). Never use its I2C interface. Fallback: FT232RL USB-UART with PPS on DCD.
+    - **Key numbers:** $14.99 direct (Waveshare). Prom.ua 1,344-1,502 UAH, made to order. Timing-grade PPS under 100 ns RMS (community). NMEA time 10-100 ms is enough for passes and Doppler.
+    - **Evidence:** gnss_imu.json verify (Quectel protocol spec v1.4; Radxa pin docs; mainline dts).
+    - **Status:** unverified
+    - **Conflicts or errors:** UART6 TX on the current Radxa image is unproven (forum reports of RX-only operation). It is also unverified whether GPIO96 is free in the vendor device tree.
+    - **Needed action:** Run a loopback test plus a $PQTMVERNO reply check at bring-up, and keep the FT232RL fallback.
+    - **Sources:**
+      - https://www.waveshare.com/LC76G-GNSS-Module.htm
+      - https://forums.quectel.com/uploads/short-url/rUEismNTHFHWMMyJR1WxrcTaRB7.pdf
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/pin-gpio
+  29.
+    - **Subsystem:** gnss_imu
+    - **Topic:** PPS route versus the held kernel
+    - **Current decision:** Route B (kernel pps-gpio plus 'refclock PPS /dev/pps0 lock NMEA') needs the 7.0.11 kernel. Route A is a user-space SOCK daemon. radio_lab proposes an out-of-tree pps-gpio module.
+    - **Key numbers:** PPS_CLIENT_GPIO=m in linux-7.0.11 and absent from the 6.18.2 qcom fragment. Route A sign fix: send offset = +f (or f-1 when f >= 0.5), not -f. The socket must be /run/chrony.*.sock for AppArmor.
+    - **Evidence:** gnss_imu.json verify (chrony refclock_sock.c and refclock.c); display.json, which requires holding 6.18.2.
+    - **Status:** conflict
+    - **Conflicts or errors:** Route B conflicts with the 6.18.2 kernel hold needed for HDMI. The original Route A daemon had the sign inverted and would never lock.
+    - **Needed action:** Choose Route A with the corrected sign, or build pps-gpio out of tree after confirming that CONFIG_PPS is on in 6.18.2. Confirm with chronyc sourcestats.
+    - **Sources:**
+      - https://gitlab.com/chrony/chrony/-/raw/master/refclock_sock.c
+      - https://raw.githubusercontent.com/radxa/kernel/linux-7.0.11/arch/arm64/configs/radxa_qcom_7_0_defconfig
+  30.
+    - **Subsystem:** gnss_imu
+    - **Topic:** Jamming and spoofing hedge
+    - **Current decision:** The LC76G reports jamming only (PAIRSPF / PQTMJAMMINGSTATUS), never spoofing. If spoofing flags matter, swap in the Uputronics MAX-M10S (u-blox M10: spoofDetState, jammingState, native gpsd UBX driver). The plausibility gate stays in either case.
+    - **Key numbers:** MAX-M10S breakout from GBP 28.80 (about $38) at The Pi Hut; low stock.
+    - **Evidence:** gnss_imu.json verify issue on EW flags and missed_better_options.
+    - **Status:** verified
+    - **Conflicts or errors:** The 'Ukrainian EW and spoofing' framing is superseded (user not in Ukraine), but generic spoofing protection is still valid. The Quectel regional-lock behaviour (staff: an LC86G 'will not be working in Russia') is unknown for the LC76G.
+    - **Needed action:** Decide LC76G vs MAX-M10S once the user's region is known.
+    - **Sources:**
+      - https://thepihut.com/collections/new-products-maker/products/ublox-max-m8q-breakout-for-active-antennas
+  31.
+    - **Subsystem:** gnss_imu
+    - **Topic:** IMU: BNO085 puck, its interface and mounting
+    - **Current decision:** gnss_imu: BNO085 (Adafruit) or BNO086 (SparkFun) in an RP2040-Zero USB-CDC puck on the antenna boom, read as ARVR-RV plus Game RV, with sun-sight 'set north'.
+    - **Key numbers:** $29.50 (BNO085) / $34.95 (BNO086); RP2040-Zero about $3. Rotation vector 2.0 deg static / 3.5 deg dynamic, gravity 1.5 deg; about +/-3-5 deg in practice. One stored calibration (DCD) only; per-antenna DCD needs FRS 0x1F1F save/restore code. Keep 15-20 cm or more from steel, LNB, battery and power leads.
+    - **Evidence:** gnss_imu.json verify; lab_ui_hf stack_changes (HMI RP2040 relays the BNO085 over UART7); radio_lab (boom puck on CH334F H2); display.json (display RP2040 hosts the BNO085); small_antenna_stack (puck used for 'loop plane').
+    - **Status:** conflict
+    - **Conflicts or errors:** (1) Four different interfaces: USB-CDC puck, CH334F hub port, UART relay through the HMI RP2040, or the in-case display MCU. An in-case magnetometer sits next to the cells, fan and backlight currents. (2) The small stack's 'keep the satellite in the loop plane' guidance is superseded (no loops). (3) RP2040 12 MHz and 48 MHz clocks have harmonics at 144 MHz (inside 2 m) and 432 MHz.
+    - **Needed action:** Pick one: a boom or antenna puck with its own MCU, linked by UART to the HMI RP2040 (saves a USB port) or by USB. Shield the puck and run an on/off noise-floor A/B test at 137/145/435 MHz.
+    - **Sources:**
+      - https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf
+      - https://www.adafruit.com/product/4754
+      - https://www.sparkfun.com/sparkfun-vr-imu-breakout-bno086-qwiic.html
+  32.
+    - **Subsystem:** gnss_imu
+    - **Topic:** Kyiv-specific magnetic constants
+    - **Current decision:** gnss_imu.json known_problems check calibration against Kyiv values (|B| about 51 uT, dip about 67.6 deg) and use about +8.5 deg declination 'in Kyiv'.
+    - **Key numbers:** WMM2025 is valid 2025-2030 and can be evaluated offline at any fix.
+    - **Evidence:** gnss_imu.json verify known_problems_and_fixes_to_apply; summary #128 (WMM2025 offline declination).
+    - **Status:** superseded
+    - **Conflicts or errors:** The user is not in Ukraine, and the requirements forbid fixed city data. Summary #128 already plans the correct approach (WMM2025 at the device's own fix).
+    - **Needed action:** Replace the constants with |B|, dip and declination computed from WMM2025 at the gated position.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/gnss_imu.json
+  33.
+    - **Subsystem:** gnss_imu
+    - **Topic:** Auto-location chain and plausibility gate
+    - **Current decision:** GNSS (with SBAS/EGNOS) feeds gpsd, which feeds chrony (maxchange 5 1 -1, rtcsync). A location service accepts a fix only if: 3D with 6 or more satellites; time within +/-120 s of the RTC (RS4C411 with a CR2032 on a 2-pin 1.25 mm lead); date inside the TLE window; within 100 km of the last good position, otherwise the user is asked to confirm. The position is then published to Gpredict, SatDump and the pointing aid.
+    - **Key numbers:** A 100 km position error changes QO-100 pointing by only 1-2 deg, against antenna beamwidths of 15-40 deg. LEO pass timing shifts by seconds.
+    - **Evidence:** summary #128; gnss_imu.json verify (RTC resolved, chrony semantics checked).
+    - **Status:** model_only
+    - **Conflicts or errors:** Not specified: what happens on first boot or after a CR2032 failure, when there is no saved position and the RTC is unset, so the gate has no reference.
+    - **Needed action:** Add a bootstrap rule: accept a fix stable for N minutes with 8 or more satellites, plus NTP when Wi-Fi is up. Write the location service and gate tests.
+    - **Sources:**
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/rtc
+      - https://gitlab.com/chrony/chrony/-/raw/master/refclock.c
+  34.
+    - **Subsystem:** gnss_imu
+    - **Topic:** Location fallbacks when GNSS is unavailable
+    - **Current decision:** Summary #128 lists: last good position plus RTC; manual entry or choosing a city from an offline list; a coarse sun fix from IMU plus time (error of hundreds of km).
+    - **Key numbers:** Sun fix: the 1.5 deg gravity accuracy gives about 165 km per degree of error.
+    - **Evidence:** summaries.md #128.
+    - **Status:** violates_requirements
+    - **Conflicts or errors:** 'Choose a city from an offline list' breaks the requirement 'no city tables'.
+    - **Needed action:** Remove the city list and keep manual lat/lon or Maidenhead locator entry. Optionally add GNSS-SDR on a V4L as an independent second fix source; it is not an anti-spoofing measure.
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/summaries.md
+  35.
+    - **Subsystem:** gnss_imu
+    - **Topic:** GNSS antenna placement and in-case noise
+    - **Current decision:** Use an external active antenna on a 1-3 m lead. If the patch stays on the lid, put a solid ground plane under it that also shields the HDMI cable and backlight converter. Keep HDMI, USB 3 and DC-DC wiring away from the patch and its coax.
+    - **Key numbers:** A SAM-M10Q needed a ground plane of about 12 cm. USB 3 has been reported to jam GNSS within about 2 m.
+    - **Evidence:** gnss_imu.json verify issue on antenna mounting.
+    - **Status:** model_only
+    - **Conflicts or errors:** The T7 on USB 3.1 (if kept) adds to the risk. The display's RF A/B test should log C/N0 (UBX-MON-RF exists only on u-blox; the LC76G has no equivalent).
+    - **Needed action:** Include a GNSS C/N0 on/off check in the display and storage acceptance tests.
+    - **Sources:**
+      - https://community.sparkfun.com/t/sam-m10q-breakout-cannot-acquire-fix/67651
+  36.
+    - **Subsystem:** gnss_imu
+    - **Topic:** LimeSDR Micro GNSS variant
+    - **Current decision:** Skip the +$50 GNSS variant and keep the separate GNSS module.
+    - **Key numbers:** $299 vs $249. Firmware HEAD 13628a9 (29 Sep 2026) has no NMEA pass-through, no PPS-in handler and no GPSDO loop.
+    - **Evidence:** gnss_imu.json verify (LimeSDR-Micro_FW and LimeSuiteNG source).
+    - **Status:** verified
+    - **Conflicts or errors:** Matters only if the Lime stays.
+    - **Needed action:** None beyond the Lime decision.
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSDR-Micro_FW
+  37.
+    - **Subsystem:** power
+    - **Topic:** USB port map (affects power, storage, GNSS and IMU)
+    - **Current decision:** Three versions. small_antenna_stack: RTL-A on blue USB 3.1; touch, IMU puck and RTL-B on the hub. radio_lab: T7 on USB 3.1; RTL, touch and a CH334F hub (display RP2040, boom puck, LAB USB, HF+) on the FE1.1s. lab_ui_hf: T7 on USB 3.1; V4L, HF+ and touch on the FE1.1s; HMI and IMU on UART7; GNSS on UART6.
+    - **Key numbers:** 4 host ports: 1x USB 3.1 plus 3x USB 2.0 on a single-TT FE1.1s hub shared with Wi-Fi. About 35-40 MB/s practical. The base stack has 5 devices.
+    - **Evidence:** small_antenna_stack keep/add; radio_lab final.stack_changes; lab_ui_hf final.stack_changes.
+    - **Status:** conflict
+    - **Conflicts or errors:** Depends on the T7, Lime, IMU-interface and UART7 decisions. UART7 overlay availability is unverified.
+    - **Needed action:** Freeze one map after the Lime decision. Test the HF+ and V4L on the FE1.1s together for 30 minutes with zero dropped samples.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  38.
+    - **Subsystem:** power
+    - **Topic:** Ukraine-specific context in power, storage, display and GNSS picks
+    - **Current decision:** Many prices and rules come from Prom.ua, hotline.ua, Rozetka and the NBU exchange rate, plus the Ukrainian EUR 150 duty limit, 'Ukrainian winter' cold-start rules and Ukrainian EW assumptions.
+    - **Key numbers:** Examples: P50B 219-380 UAH; IP2368 600-700 UAH; T7 9,299 UAH; 4D display 9,520 UAH; BNO085 2,121-2,480 UAH; Daly 3S BMS 407 UAH.
+    - **Evidence:** power.json, storage.json, display_market.json, gnss_imu.json and small_antenna_stack.json (legal notes).
+    - **Status:** superseded
+    - **Conflicts or errors:** The user is not in Ukraine and has named no country, so these prices are reference only. Cold-climate limits (charging only above 0 C; UFS and T7 rated from 0 C) still apply wherever the user lives.
+    - **Needed action:** Re-price every power, storage, display and GNSS line from manufacturers or EU/US shops for the analog phase (P5).
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/REQUIREMENTS.md
+- **Open questions:**
+  - Does the LimeSDR Micro M.2 stay, now that foldable antennas are allowed again (foldable_antennas assigns it to 435 MHz diversity and S-band)? This one decision controls the riser and J21 desoldering, the T7, the 12 GB vs 8 GB board and RAM ring, the 10 W cooling path, the peak power (45-52 W vs 24-32 W), the USB map and the CPU7 isolation.
+  - Which parts are already bought (12 GB Q6A, T7, fourth P50B, D36V50F12, Lime pre-order)? Avoided spend counts only for unbought parts.
+  - Wisecoco: does touch enumerate as USB-HID (VID:PID, number of points)? Is the cover glass optically bonded, and AR or AG treated? What is the board input voltage and current at full brightness? What is the EDID, and does the board and panel accept a custom 51.7-52 Hz mode (about 127.9 MHz)? Is there a glove mode, and what is the operating and clearing temperature?
+  - What is the 4D Systems 4DHDMI-70-1280-800 world price and shipping, and does its touch enumerate as standard HID? Does its board accept a non-CVT EDID timing?
+  - What is the D36V50F12's continuous current at 13.6-16.4 V input in the sealed case? Are its light-load power-save spurs visible near 137-438 MHz and 1.5-1.7 GHz, or is a forced-PWM 12 V buck needed?
+  - What is the current rating of the J21 3-pin header (unpublished; the header was designed for Radxa's PoE HAT)?
+  - What are the measured currents of the Airspy HF+ Discovery (not published; my search found no figure), the Boni-Whip and the Bullseye LNB, needed for the final power budget?
+  - Do charge-only IP2368_BZ boards exist at world prices? Does the NTC-pull charge inhibit stop the IP2368 cleanly within its 45-51 h timer?
+  - Q6A bring-up: does UART6 TX work? Is GPIO96 (pin 7) free in the vendor device tree? Can the UART7 overlay be enabled? Is CONFIG_PPS on in 6.18.2 (needed for an out-of-tree pps-gpio module)?
+  - Which single IMU interface and mount: puck on the antenna via UART to the HMI RP2040, or USB-CDC? With which shielding against RP2040 harmonics at 144 and 432 MHz?
+  - What should the location gate do on first boot or after an RTC battery failure, when there is no saved position and no valid RTC time?
+  - Which country or climate will the device be used in? This drives world pricing and customs, Quectel regional behaviour, the cold-start and charging limits, and whether the MAX-M10S spoofing hedge is worth it.
+  - What is the post-WriteBooster sustained write speed of the 128 GB Samsung UFS (long fio fill)? What raw-IQ retention policy applies, and is a microSD card enough as secondary storage if the T7 is dropped?
+  - What is the consolidated 40-pin header and bus map (PPS, UART6, UART7, I2C0, I2C2, fan PWM, spi14, MCP23017 expanders)? The studies contradict each other.
+- **Notes:** I found 37 items: 5 verified, 12 model-only, 4 unverified, 12 conflicts, 2 superseded and 2 that break the requirements.
+  
+  The biggest problem is a split baseline. small_antenna_stack, written under the old 20 cm rule, removed the LimeSDR, the T7, the riser and the 12 GB board, and moved to a 3S pack. radio_lab, lab_ui_hf, npu_training and foldable_antennas were all built on the earlier baseline: 4S pack, 12 V rail, Lime, T7 and 12 GB. Most of the power, mechanical and storage conflicts trace back to that.
+  
+  Recommendations for the final checks:
+  - Use a 4S1P pack with a 12 V rail into J21. 9 V into J21 was chosen because of a misread schematic.
+  - Treat the riser, T7 and RAM ring as Lime-only.
+  - Fix the display field-mode pixel clock: 128.7 MHz has its 12th harmonic at 1544.4 MHz, inside the Inmarsat-C band. About 127.9 MHz is clean across all 16 lab bands.
+  - Replace the city-list location fallback, which the requirements forbid.
+  
+  Facts I settled myself:
+  - The SMBJ15CA TVS sits on the USB-C side, not on the J21 path (schematic v1.21 text).
+  - The SGM40666A is rated 4.5 A continuous, so the Q6A's internal 5 V rail is about 17 W, not 7 A.
+  - The D36V50F12 needs 13.3-50 V in, has a light-load power-save mode (it is not forced-PWM), and is in 'Rationed' stock.
+  - The Q6A header accepts 4.5-16 V (strongtz, 15 Oct 2026; the forum page does not mark him as Radxa staff).
+  
+  Lookups used: one curl download (the schematic), three WebFetch calls and two WebSearch calls.
+  
+  Not reviewed in depth because they are outside this scope: compute, wideband_sdr, narrowband_sdr, rf_frontend, antennas, software and dish_replacement JSONs. I also noted, without auditing it, that small_antenna_stack's compute section compared other boards (A733, RK3576, Pi 5), although the requirements say no alternative search for the Q6A. The P1b register (final/report_research.json) does not exist yet. The components/*.md files match the JSON content.
+  
+  Sources from the web searches:
+  - [PCWorld: Samsung T7 price drop](https://www.pcworld.com/article/3158933/samsung-fast-t7-portable-ssd-finally-drops-in-price-190-was-285.html)
+  - [RigPix: Airspy HF+ Discovery](https://rigpix.com/miscrx/airspy_hfplusdiscovery.htm)
+  - [rtl-sdr.com: SDR USB power measurements](https://www.rtl-sdr.com/measuring-the-usb-power-consumption-of-various-software-defined-radios/)
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
