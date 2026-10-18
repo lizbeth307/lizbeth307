@@ -68,6 +68,7 @@
 | [Rtl sdr blog v4l r828s](components/rtl_sdr_blog_v4l_r828s.md) | · research · forums · fixes ✅ verify | `—` |
 | [Shielded hdmi lead adafruit 2420 2x wurt](components/shielded_hdmi_lead_adafruit_2420_2x_wurt.md) | · research · forums · fixes ✅ verify | `—` |
 | [Shock corded mast 7 x 35 cm about 2 4 m](components/shock_corded_mast_7_x_35_cm_about_2_4_m.md) | · research · forums · fixes ✅ verify | `—` |
+| [Sma torque wrench 0 9 n m adapter set](components/sma_torque_wrench_0_9_n_m_adapter_set.md) | · research · forums · fixes ✅ verify | `—` |
 | [Software](components/software.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_e49d4f53-8d4` |
 | [Software stack](components/software_stack.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Storage](components/storage.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_3e735695-e00` |
