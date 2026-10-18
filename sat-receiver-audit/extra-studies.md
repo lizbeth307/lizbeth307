@@ -3602,6 +3602,183 @@
   
   Hard rules: all items are passive service-kit parts with no RF or transmit role, and no rule is affected.
 
+## searchB:allnet_64_gb_microsd_adafruit_5212_reade (run `wf_071e1025-145`)
+
+- **Part:** Recovery set: ALLNET 64 GB microSD (ALN-TFUHS1-64) + Adafruit 5212 USB-C microSD reader + Adafruit 6324 USB-C to USB-A 2 m cable + USB3 A-A EDL cable (rescue card kept outside the case)
+- **Current price usd:** 31.89 for 1 set: ALLNET card 16.99 + Adafruit 5212 6.95 + Adafruit 6324 2.95 + A-A cable 5.00 (the 5.00 is what is left of the set total; no seller is named). All three named prices were checked live on 18 Oct 2026 and exclude VAT. Discrepancy: the re-audit (reaudit_D, storage) lists 2x ALLNET 64 GB cards, which would make the set 48.88; the STACK row prices one card. In Europe, EU import VAT (17-27%) and handling are added to the ALLNET and Adafruit items.
+- **Critical specs:**
+  - microSD capacity: at least 64 GB nominal, at least 59.5 GB real (the ALLNET listing says 'Real Capacity: 59.5GB'), checked with f3write/f3read on arrival. It must hold the rescue Radxa OS r2 image plus the offline archive: BIOS 260120 zip, edl-ng, the image with SHA-256, and two raw 32 MiB SPI NOR dumps.
+  - microSD bus and boot: SDXC UHS-I that runs SDR104 at 1.8 V on the Q6A (vqmmc l6c 1.65-3.544 V) and boots there. Boot order is USB > microSD > NVMe > eMMC > UFS.
+  - microSD sequential speed: at least 80.6 MB/s read and 42.0 MB/s write. These are ALLNET's own figures, not independent. On the Q6A the slot measured 73.7 MB/s read and 61.45 MB/s write with a Samsung Pro+ (Geerling, via reaudit_D), so the slot caps reads at about 74 MB/s.
+  - microSD random 4K (A1/A2 class): matters only if the board runs from SD, i.e. the rescue boot or waiting for UFS. ALLNET gives no A-class, U-class or V-class and no IOPS.
+  - microSD reliability: genuine part with no capacity fraud, a warranty, operating and storage temperature range (stored in a field kit outside the case), and keeping its data when stored unpowered. ALLNET publishes none of these except capacity.
+  - Reader host interface: plug type must match the hosts. The 5212 has a USB-C plug only, so it cannot go into the Q6A's USB-A ports without an A-male to C-female adapter. Must be standard USB mass-storage class (no driver on Ubuntu 24.04 arm64 or any laptop OS) and support SDXC 64 GB.
+  - Reader throughput and build: the 5212 page gives no USB version, controller, UHS support or speed, so it is unmeasured. Size is 23x16x10 mm with a keychain, and cards can be swapped while it is plugged in.
+  - 6324 cable: USB-C male to USB-A male, data-capable (USB 2.0 HS at least), 2 m, woven jacket about 3.5 mm, RoHS. Its role in the recovery set is not stated in STACK. My inference is EDL or data from a USB-C-only laptop to the Q6A's blue USB-A port; it cannot connect the 5212, since both are plugs.
+  - EDL A-A cable: USB 3.0 (5 Gbps) A-male to A-male with all SuperSpeed and High-Speed pairs wired, shielded, and long enough (about 0.5-1 m) to reach the blue USB-A port (J5 bottom, USB0) through the service hatch. Pass: the board enumerates as 05c6:9008 in EDL, and two edl-ng reads of the whole SPI NOR (33,554,432 B) give the same SHA-256.
+  - A-A VBUS caveat, applies to every candidate: generic A-A cables connect VBUS to VBUS; the USB 3.0 spec debug A-A cable leaves it out. Whether Q6A EDL needs host VBUS, and whether the Q6A port drives VBUS in EDL, is not verified. Check continuity with a meter and bench-test before use.
+  - Hard rules: these are passive storage and cable parts, so no RF and no transmit. The set keeps every rule: receive-only, no loops, conducted-only.
+- **Candidates:**
+  1.
+    - **Name:** CURRENT: ALLNET 64 GB microSDXC UHS-1 (ALN-TFUHS1-64) + Adafruit 5212 + Adafruit 6324 + unnamed USB3 A-A cable
+    - **Kind:** current_part
+    - **Price usd:** 31.89 (16.99 + 6.95 + 2.95 + 5.00 implied), ex VAT; EU import VAT extra
+    - **Spec comparison:** Card: UHS-I, ALLNET-stated 42.0 MB/s write and 80.6 MB/s read, real capacity 59.5 GB, in stock. No A, U or V class, temperature rating, warranty or OEM is published. 5212: USB-C plug, mass-storage, no stated speed, in stock. 6324: woven 2 m C-to-A, about 3.5 mm, 93 in stock, USB version not stated. A-A cable: not specified anywhere.
+    - **Worse in:** Baseline. The card speeds come only from ALLNET and the 5212 speed is unknown, so no candidate can be measured against them. Every candidate below is compared only on published specs.
+    - **Compatibility:** Card boots the Q6A from SD. The 5212 fits USB-C laptops only, not the Q6A's USB-A ports. The 6324 has no documented role in this set.
+    - **Risks:** The ALLNET card has an unknown OEM, so run f3 on arrival. Adafruit ships from the US, so EU import VAT and duty apply. The A-A cable's seller and price are a placeholder.
+    - **Seller url:** https://shop.allnetchina.cn/products/allnet-micro-sd
+    - **Sources:**
+      - https://shop.allnetchina.cn/products/allnet-micro-sd
+      - https://www.adafruit.com/product/5212
+      - https://www.adafruit.com/product/6324
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json
+  2.
+    - **Name:** ALLNET 'USB 3.0 Male Type A to A 1m for ROCK PI 4' (SKU 158949), generic cable replacing only the unnamed A-A
+    - **Kind:** generic_or_clone
+    - **Price usd:** 3.95 ex VAT (about 4.78 with 21% EU import VAT). In stock 18 Oct 2026. Set becomes 30.84 (saves 1.05).
+    - **Spec comparison:** USB 3.0 A-male to A-male, 1 m (the URL handle says 1.5 m, so measure it). ALLNET sells it 'For USB firmware upgrading, USB gadgets and Android ADB debug', the same host-to-board USB-A flashing job as EDL. The unnamed current cable has no specs at all, so on paper this one is equal: same standard (USB 3.0) and a stated length.
+    - **Worse in:** Nothing known. Wire gauge, shielding and VBUS wiring are not stated, the same unknowns as the current cable. No independent measurement exists, so under angle B it counts only after the bench gate passes: 05c6:9008 enumerates, and two whole-chip edl-ng reads give matching SHA-256.
+    - **Compatibility:** Fits the blue USB-A port (J5 bottom, USB0) through the service hatch. Ships in the same ALLNET order as the UFS and the microSD, so no extra shipping.
+    - **Risks:** Possible VBUS-to-VBUS connection: meter it and bench-test. Generic, unbranded cable. The seller is the stack's existing Radxa distributor, so it is legal and not a counterfeit risk.
+    - **Seller url:** https://shop.allnetchina.cn/products/usb-3-0-male-type-a-to-a-1-5m-for-rock-pi-4
+    - **Sources:**
+      - https://shop.allnetchina.cn/products/usb-3-0-male-type-a-to-a-1-5m-for-rock-pi-4.js
+  3.
+    - **Name:** Goobay 95716 USB 3.0 SuperSpeed cable A plug to A plug, 0.5 m (Berrybase DE)
+    - **Kind:** other_brand
+    - **Price usd:** 3.21 incl. VAT (EUR 2.86 incl. 19% DE VAT; about 2.70 ex VAT). 0.5 m in stock (14 pcs); the 1.0 m price is not shown.
+    - **Spec comparison:** USB 3.0 at 5 Gbit/s, AWG 28, 3 shields, round cable, made by Wentronic (DE). Better documented than the unnamed current cable: shielding and gauge are stated.
+    - **Worse in:** Length is 0.5 m, against about 1 m for the ALLNET cable; enough on a bench, tight from the hatch to a laptop. VBUS wiring not stated. Needs a separate Berrybase order, and Berrybase shipping (not checked) would cancel the saving of about 1.8 unless that order already exists. No measured EDL use.
+    - **Compatibility:** Same USB-A to USB-A use. EU seller with VAT included, so no import step.
+    - **Risks:** Shipping cost; VBUS wiring (meter it); same bench gate as above.
+    - **Seller url:** https://www.berrybase.de/en/detail/019234a38bc47171813a89a25b5960ab
+    - **Sources:**
+      - https://www.berrybase.de/en/detail/019234a38bc47171813a89a25b5960ab
+  4.
+    - **Name:** The Pi Hut 'Male to Male USB 3.0 Cable (Type A to A)' 1 m
+    - **Kind:** generic_or_clone
+    - **Price usd:** 4.00 incl. UK VAT (GBP 3.00; about 3.33 ex VAT); 2 m is GBP 5.00 (6.66). In stock.
+    - **Spec comparison:** USB 3.2 Gen 1 at 5 Gbit/s, A-male to A-male, 1/2/5 m, host-to-device only (not a crossover cable).
+    - **Worse in:** Not worse on paper. The UK seller means post-Brexit customs and VAT handling for an EU address (not verified), which can wipe out the 1.00 saving. Gauge, shielding and VBUS not stated. No measured EDL use.
+    - **Compatibility:** Same use as the A-A cable.
+    - **Risks:** UK-to-EU import cost; VBUS wiring; bench gate.
+    - **Seller url:** https://thepihut.com/products/usb-3-0-male-to-male-extension-cable
+    - **Sources:**
+      - https://thepihut.com/products/usb-3-0-male-to-male-extension-cable.js
+  5.
+    - **Name:** Goobay 93593 USB-A to USB-A 2.0 cable, 1.8 m (TinyTronics NL)
+    - **Kind:** other_brand
+    - **Price usd:** 3.37 incl. VAT (EUR 3.00; EUR 2.48 = 2.79 ex VAT). In stock.
+    - **Spec comparison:** USB 2.0 High-Speed only, 1.8 m. EU seller, and could ride the TinyTronics board order for free shipping.
+    - **Worse in:** Max data rate: 480 Mbit/s against 5 Gbit/s, which breaks the USB3 spec. It could slow UFS flashing over EDL if Firehose on the QCS6490 runs at SuperSpeed (not verified). The page does not state that it is male-to-male. REJECTED by the not-worse rule.
+    - **Compatibility:** Should work for EDL at High-Speed (not verified).
+    - **Risks:** Speed downgrade.
+    - **Seller url:** https://www.tinytronics.nl/en/cables-and-connectors/cables-and-adapters/usb/usb-a/goobay-93593-usb-a-usb-a-2.0-cable-1.8m-black
+    - **Sources:**
+      - https://www.tinytronics.nl/en/cables-and-connectors/cables-and-adapters/usb/usb-a
+  6.
+    - **Name:** Berrybase '2in1 microSD Cardreader mit USB-A und USB-C Stecker, USB 2.0, schwarz' (art. 125454), replacing the Adafruit 5212
+    - **Kind:** generic_or_clone
+    - **Price usd:** 4.38 incl. VAT (EUR 3.90 incl. 19% DE VAT; about 3.68 ex VAT). 100+ in stock. Saves about 2.57 against the 5212 before shipping.
+    - **Spec comparison:** Both a USB-A and a USB-C plug, so it plugs into the Q6A's USB-A ports and into USB-C laptops; the 5212 has USB-C only. USB 2.0, aluminium housing, plug-and-play with no driver. The 5212's USB version and speed are unstated, so the two cannot be compared on throughput.
+    - **Worse in:** Unproven: no speed figure, controller, maximum capacity or UHS support stated, and 0 reviews. Under angle B (measured evidence only) it is NOT certified not-worse. It can replace the 5212 only if a measurement (f3write/f3read plus dd on the ALLNET card) matches or beats the 5212, so with neither unit measured it stays UNVERIFIED. A separate Berrybase order adds shipping (not checked).
+    - **Compatibility:** Mass-storage class; works on Ubuntu 24.04 arm64 and laptops. It also removes the need for an A-to-C adapter on the Q6A side.
+    - **Risks:** Generic no-name controller; the 64 GB SDXC support must be checked on arrival; shipping cost.
+    - **Seller url:** https://www.berrybase.de/en/2in1-microsd-cardreader-mit-usb-a-und-usb-c-stecker-usb-2.0-schwarz
+    - **Sources:**
+      - https://www.berrybase.de/en/2in1-microsd-cardreader-mit-usb-a-und-usb-c-stecker-usb-2.0-schwarz
+      - https://www.berrybase.de/en/search?search=microSD
+  7.
+    - **Name:** Generic metal mini USB-C microSD readers: ALLNET 'USB-C to Micro SD SDXC card reader' (ACC-USBC2SDXC-READER) and The Pi Hut 'Mini USB-C MicroSD Card Reader'
+    - **Kind:** generic_or_clone
+    - **Price usd:** ALLNET 3.49 ex VAT, OUT OF STOCK; Pi Hut 5.33 incl. UK VAT (GBP 4.00), in stock
+    - **Spec comparison:** Same form as the 5212: USB-C plug, metal body, LED, key-ring hole. The ALLNET one states 480 Mbps max (USB 2.0); the Pi Hut one states no speed.
+    - **Worse in:** No measured throughput for either, and the ALLNET one is out of stock. A related Pi Hut USB-A mini reader states only 16 MB/s read and 6 MB/s write, which shows how slow such generics can be. REJECTED: no measured evidence of being equal.
+    - **Compatibility:** USB-C hosts only, like the 5212.
+    - **Risks:** Unknown controller; UK import for the Pi Hut one.
+    - **Seller url:** https://shop.allnetchina.cn/products/usb-c-sd-card-reader
+    - **Sources:**
+      - https://shop.allnetchina.cn/products/usb-c-sd-card-reader.js
+      - https://thepihut.com/products/mini-usb-c-microsd-card-reader.js
+      - https://thepihut.com/products/usb-microsd-card-reader-writer-microsd-microsdhc-microsdxc.js
+  8.
+    - **Name:** DIY / no purchase: write and refresh the rescue card in the Q6A's own microSD slot instead of a reader
+    - **Kind:** diy
+    - **Price usd:** 0 (drops 6.95 for the 5212)
+    - **Spec comparison:** The slot is measured at 73.7 MB/s read and 61.45 MB/s write (1M sequential, Samsung Pro+, Geerling sbc-reviews #85 via reaudit_D), very likely faster than any USB 2.0 reader.
+    - **Worse in:** Loses the main rescue function: it cannot write a card from a laptop when the Q6A will not boot, which is exactly the rescue case. Hot-inserting a card while running from UFS is not verified (card-detect not checked in the DTS), and the card must be pulled before a reboot because SD boots before UFS. REJECTED as a replacement; use it alongside the reader only.
+    - **Compatibility:** Native slot.
+    - **Risks:** An accidental SD boot; an untested hot-plug.
+    - **Seller url:** 
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json
+  9.
+    - **Name:** Kingston Canvas Select Plus Gen3 64 GB microSDXC A1 (SDCS3/64GB) at TinyTronics NL
+    - **Kind:** other_brand
+    - **Price usd:** 20.80 incl. NL VAT (EUR 18.50); 17.19 ex VAT (EUR 15.29). 20+ in stock in Eindhoven.
+    - **Spec comparison:** Better on paper than the ALLNET card: UHS-I, Class 10, U1, V10, A1; 100 MB/s max read; -25 to 85 C operating; Kingston lifetime warranty; SD adapter included; CE/FCC/RoHS.
+    - **Worse in:** Price: 0.20 MORE than ALLNET ex VAT (17.19 vs 16.99), so it is not a cheaper analog in the USD base. Including VAT it is about equal to ALLNET plus 21% import VAT (about 20.56 before handling). Write speed is not listed on the page; independent measurement not fetched. Use it only if it saves shipping or customs by riding the TinyTronics board order.
+    - **Compatibility:** Standard SDXC UHS-I, so it should boot the Q6A (not tested on a Q6A).
+    - **Risks:** None specific; EU seller, genuine stock.
+    - **Seller url:** https://www.tinytronics.nl/en/data-storage/sd-cards/kingston-canvas-select-plus-gen3-64gb-class-10-uhs-i-a1-microsd-card-with-sd-card-adapter
+    - **Sources:**
+      - https://www.tinytronics.nl/en/data-storage/sd-cards/kingston-canvas-select-plus-gen3-64gb-class-10-uhs-i-a1-microsd-card-with-sd-card-adapter
+      - https://www.tinytronics.nl/en/data-storage/sd-cards
+  10.
+    - **Name:** Raspberry Pi official A2 microSD 64 GB (store brand)
+    - **Kind:** other_brand
+    - **Price usd:** 40.75 incl. UK VAT for the pre-installed 64 GB (GBP 30.60, Pi Hut). No plain-card price found at an EU reseller (Berrybase search returned none).
+    - **Spec comparison:** C10, U3, V30, A2. Vendor-published 4K random: 3,200 read / 1,200 write IOPS on a Pi 4 (DDR50) and 5,000 / 2,000 on a Pi 5 (SDR104). Production promised until at least January 2028.
+    - **Worse in:** Price: more than double the ALLNET card. REJECTED as not cheaper.
+    - **Compatibility:** Standard SDXC UHS-I.
+    - **Risks:** UK import for an EU buyer.
+    - **Seller url:** https://thepihut.com/products/noobs-preinstalled-sd-card
+    - **Sources:**
+      - https://www.raspberrypi.com/products/sd-cards/
+      - https://thepihut.com/products/noobs-preinstalled-sd-card.js
+  11.
+    - **Name:** Generic/no-name or used 64 GB microSD (AliExpress, marketplace lots)
+    - **Kind:** generic_or_clone
+    - **Price usd:** not priced (rejected on principle)
+    - **Spec comparison:** No independent measurements tie any listing to a known OEM.
+    - **Worse in:** Fake capacity and counterfeit risk. Used cards have unknown wear and no TBW, and cannot be shown equal in endurance or data retention. REJECTED: no measured evidence, and they fail the not-counterfeit rule.
+    - **Compatibility:** n/a
+    - **Risks:** Losing the rescue card silently is the exact failure this set exists to prevent.
+    - **Seller url:** 
+    - **Sources:** []
+  12.
+    - **Name:** Adafruit 6324 alternatives (generic C-to-A data cables)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Pi Hut USB-A to USB-C black: 2 m GBP 4.50 = 5.99 (in stock), 1 m GBP 3.50 = 4.66 (out of stock)
+    - **Spec comparison:** 480 Mbps data, 3 A.
+    - **Worse in:** No cheaper equal-length (2 m) generic found; the 6324 at 2.95 is already the cheapest. KEEP the 6324.
+    - **Compatibility:** Same.
+    - **Risks:** -
+    - **Seller url:** https://thepihut.com/products/usb-a-to-usb-c-cable-1m
+    - **Sources:**
+      - https://thepihut.com/products/usb-a-to-usb-c-cable-1m.js
+- **Notes:** VERDICT, angle B (generic, clone, DIY or used parts, accepted only with measured evidence):
+  - Keep the ALLNET 64 GB card, the Adafruit 5212 and the Adafruit 6324.
+  - The only cheaper analog that is not worse is the A-A EDL cable: ALLNET's generic 'USB 3.0 Male Type A to A 1m' at 3.95, against the 5.00 placeholder. It ships in the ALLNET order the user already needs for the UFS, so the set drops to 30.84 (a 1.05 saving).
+  - That swap is conditional on a bench gate before the cable is trusted for SPI work: meter the VBUS continuity, the board must enumerate as 05c6:9008, and two whole-chip edl-ng reads (33,554,432 B) must give the same SHA-256.
+  
+  Why nothing else qualifies:
+  - (a) microSD: the cheapest EU branded 64 GB card (Kingston Canvas Select Plus Gen3, TinyTronics EUR 15.29 ex VAT = 17.19) costs 0.20 more ex VAT than ALLNET's 16.99, although its specs are better: A1, V10, -25 to 85 C, lifetime warranty. Including VAT the two are roughly equal, because ALLNET's price excludes EU import VAT; it only makes sense if it rides the TinyTronics board order. Generic and used cards are rejected (fake-capacity risk, no measurements). The Raspberry Pi A2 card is far more expensive.
+  - (b) Reader: the cheapest useful generic is the Berrybase 2-in-1 USB-A + USB-C USB 2.0 reader at EUR 3.90 incl. VAT (4.38). Its connectors are actually better: it plugs into the Q6A's USB-A ports, which the 5212 cannot. But neither it nor the 5212 has a published speed or measurement, so under angle B it stays UNVERIFIED and is not a substitute. Adopt it only after a side-by-side f3/dd measurement, and only if a Berrybase order already exists, since shipping was not checked.
+  - (c) 6324: no cheaper 2 m generic found.
+  
+  Stack issues found:
+  - The 5212 has a USB-C plug only, so it cannot plug into the Q6A's USB-A ports. The 6324 (C plug to A plug) cannot bridge that, and the 6324's role in the recovery set is not documented. Decide whether a dual-plug reader or an A-male to C-female adapter is needed.
+  - The re-audit (reaudit_D) specifies 2x ALLNET cards (48.88), but the STACK row prices one (31.89).
+  - ALLNET's 42.0/80.6 MB/s are ALLNET's own figures, not independent: run f3write/f3read on arrival, as the stack already plans.
+  
+  Method limits:
+  - The shared WebSearch budget was already used up when this step began; my first search was refused. All evidence comes from WebFetch and curl of primary seller pages (ALLNET Shopify JSON, Adafruit, TinyTronics, Berrybase, The Pi Hut, raspberrypi.com) and the local re-audit files, checked 18 Oct 2026.
+  - An independent measurement of the Adafruit 5212 or the ALLNET card could not be searched for. You can send a follow-up to continue the search.
+  - Currency uses the stack's model rates: EUR 1 = USD 1.1241 (EUR 148 = 166.37) and GBP 1 = USD 1.3318 (GBP 132 = 175.80). Ex-VAT figures are derived from the shown VAT rate.
+  - Shipping costs for Berrybase, The Pi Hut and ALLNET into the EU were not checked.
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
