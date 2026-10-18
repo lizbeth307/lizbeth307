@@ -19099,6 +19099,22 @@ The 172 mm helix length is my own arithmetic (4 turns × 43 mm pitch) and is lab
   
   Left out of scope: the C6 I2C2 list of used addresses (0x20, 0x21, 0x22, 0x30, 0x48) does not include 0x49 for the AD8318 box ADS1115. The files do not say whether that box sits on I2C2, so I did not change C6.
 
+## fix:C2:b2 (run `wf_54a5171c-9f1`)
+
+- **Applied:**
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+- **Rejected:** []
+- **Totals changed:** none. All five fixes change wording only. No price, BOM count or subtotal changed, so 2.x, 2.12, 3.6, 9 and 11.7 stay as they are.
+- **Summary uk:** idx 5: «лише опційний профіль подорожей» прибрано в 1.2 #30, 4.1 (FY-2G/GK-2A/FY-4B/GOES-East), 6.2, 11.4 #38 і #47. Замість нього тепер стоїть «не збираються: у європейському алоу-листі їхніх конвеєрів немає», як у 5.4 і за рішенням D1.
+  idx 6: у 8.1 L-3 більше немає тестів Lime на 3-6 Msps. Запити 3-6.99 Msps відхиляються так само чисто, як 2 Msps, бо labrx, профілі SatDump і UI Tune мають жорстку межу 7 Msps (D6; посилання 1.2 #43, 6.2). Тестів нижче 7 Msps немає.
+  idx 7: в алоу-листі channelrx у 1.2 #31 і 11.6 #35 прибрано APT, радіозонди і DAB, бо в збірку SDRangel вони не входять (радіозонди — auto_rx, DAB — welle-cli; 5.4).
+  idx 8: в 11.3 #44 DSC тепер можливий лише з лабораторним патчем demoddsc, який відкидає формати 120/123/114. Без патча demoddsc не збирається.
+  idx 9: в 11.6 #34 APRS/AX.25 тепер іде не через OpenWebRX+ (режиму packet в modes.py немає, direwolf заборонено), а через demodpacket SDRangel, лише APRS.
+
 ## fix:B:b1 (run `wf_588afa12-702`)
 
 - **Applied:**
@@ -29107,6 +29123,34 @@ I wrote all four files for the "block+rf" group. Both SVGs pass the XML check yo
   - **Result of the loss check:** no valid v1 content was found lost without a reason. The only v1-related gaps reported are stale or incomplete statements: the 1.1 intro, the section 2 intro, the input-file list and the #83 condition.
   
   Two findings are outside a strict structure-and-language reading but are internal contradictions caused by wording, so I kept them: the per-city angles against the city-table rule, and «куплено» against «купується» for QO-100.
+
+## fix:C4:b4 (run `wf_9cc628d1-359`)
+
+- **Applied:**
+  - 15
+  - 16
+- **Rejected:** []
+- **Totals changed:** none (text-only fixes; no price, count or subtotal changed in 2.x, 2.12, 3.6, 9 or 11.7)
+- **Summary uk:** idx 15: у 8.1, рядок V4L-10 (запасний комплект біля FM), дописано умову Bench. Вуса від'єднано, їхній вхід суматора навантажено на 50 Ohm, V4L і фільтр є DUT. Генератор ніколи не з'єднаний з антеною, а −20 dBm подається лише в DUT. Це відповідає жорсткому правилу «лише кондуктивно» і «Правилу лабораторії» з розділу 3.
+  idx 16 (D16): у 5.1 (примітка під таблицею часу роботи) тепер «рішенням 18.10.2026 прийнято близько 1.9 год замість 3.3 год режиму B без Lime (модель; ...)». У 5.1 (рядок LNB13V2/eFuse) «вирішує користувач» замінено на «вирішуєте ви». В 11.1 #75 тепер «повідомити вам як компроміс тактів і живлення».
+  Ціни, кількості, проміжні суми й підсумки не змінювалися. Інші вживання слова «користувач» (згода користувача, простір користувача, сервісні користувачі) лишилися: вони не належать до цієї проблеми.
+  Файл: /home/user/lizbeth307/sat-receiver-audit/STACK.md
+
+## fix:C3:b3 (run `wf_9cc628d1-359`)
+
+- **Applied:**
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+- **Rejected:** []
+- **Totals changed:** None. All five fixes change only wording, and no BOM row price changed. idx 11 adds a conditional exception to the text in 1.1 C24, 2.12 and 11.7, in three paragraphs. If the Black Friday 2026 HF+ sale happens, the 2.2 subtotal becomes 240.60-249.05 instead of 282.85, and every core total goes down by 33.80-42.25. The stored subtotals 2.x, 2.12, 3.6, 9 and 11.7 are unchanged. The conditional total 413.48-717.31 and its 369.60-629.67 share inside the totals stay as they were. A new figure is now named alongside them: ≈$336-587 already in the BOM rows (335.80-587.42; device 124.91-280.43, lab 210.89-306.99).
+- **Summary uk:** idx 10: у 8 (рядок «Проникнення в ПЧ у Європі»), 9.2 крок 11 і 11.4 #21 старий скан 730-750 MHz із DVB-T замінено на 733-758 MHz (SDL/PMSE/PPDR) плюс край B28 uplink 703-733 MHz. DVB-T у смузі 700 MHz більше немає (повторний аудит B, рішення ЄС 2016/687). Критерій 739.4-740.1 MHz не змінено.
+  idx 11: у C24, 2.12 і 11.7 додано виняток. Умовна економія HF+ на розпродажі Black Friday (33.80-42.25, G1 #6) у рядки BOM не входить, бо 2.2 рахує $169. У рядках уже ≈$336-587. Якщо розпродаж буде, 2.2 становитиме 240.60-249.05, а всі підсумки core стануть нижчими на 33.80-42.25.
+  idx 12: у 7 п. 23 застарілу вагу слінга 3.7-4.4 kg замінено вагою рюкзака Deuter Futura 27 (5.60-7.01 / 6.50-8.26 kg; на спині 6.85-8.26 / 7.75-9.51 kg).
+  idx 13: D13 виправлено за картою 5.2: 20 виходів (16+2+2) і 18 входів (14 на #3, 4 на #4). Запропонована перевіркою цифра «14 входів» не враховувала входи FAULT/FLT на GPB0-GPB3 MCP #4, тож її уточнено.
+  idx 14: у 4.3 до WEFAX військових операторів додано станції NWS під керуванням USCG (USCG — збройна служба, P2; рішення D10).
 
 ## extract:reaudit_C (run `wf_9cc6cab3-efa`)
 
@@ -51938,6 +51982,68 @@ I found no hard-rule violations in the build files, and the documents are comple
 
 My check scripts and renders are in `/tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/qa7/`.
 
+## p7:consistency-fix (run `wf_ca872011-28e`)
+
+I fixed every mismatch I could confirm in build files 01–10. STACK.md changed under me during this pass, though: since about 21:44 a parallel "open questions" agent has been committing edits to it roughly every minute. The build files were checked against STACK as it stood when I read it, plus the MCP23017 #4 assignment that was committed partway through. The other new STACK decisions are listed at the end and are not yet in the build files.
+
+## Fixes made in the build files
+
+1. **Lab core total was missing the Jokari 20050 stripper.**
+   - `10-bom.csv`, Instruments row: now 363.63–419.63 instead of 335–391, with Jokari 20050 listed in the kit. Source: STACK §3.1 and §3.6.
+   - `10-bom.md`:
+     - lab core now reads 1,638.02–1,796.43; with the reserved Passion Radio/Astroradio offers 1,680.69; without VAT 1,565.19–1,716.31.
+     - device + lab now reads 4,976.49–5,579.15 with Lime and 4,370.03–4,970.69 without.
+     - "everything except optional" now reads 5,558.72–6,208.88 with Lime and 4,952.26–5,600.42 without.
+     - The EU landed lower bounds now read ≥5,067–5,669 and ≥5,649–6,299; I also updated the check line.
+     - The lab budget variant now reads ≈$1,520–1,540 instead of ≈$1,491–1,511.
+   - The CSV still parses (146 rows × 16 columns) and the lab-core rows now sum to 1,638.02–1,796.43.
+2. **`08-zbyrannia.md`, step 0 tools:** added Jokari 20050. Fixed a caliper/micrometer mix-up: SCALA 533.501 is the micrometer, and the caliper is Goobay 77001 with SCALA 230.207-X as fallback. Source: STACK §3.1, the CSV and test ЛАБ-14.
+3. **`08-zbyrannia.md`, step 1:** Goobay 95717 was labelled as the card reader. The reader is Adafruit 5212 + 6324; Goobay 95717 is the A-A cable for EDL. Source: STACK §2.1.
+4. **Boni-Whip chain order:** `02-zhyvlennia.md` (topology block and BONI13V8 row) and `02-zhyvlennia.svg` drew it as bias-tee → K1 → P5. It is now: the bias-tee sends DC up the coax to P5, and its RF output goes to K1 → HF+. Source: STACK §5.3, matching `03-rf-trakt`.
+5. **`01-blok-skhema.md` §2.9:** VCC_5V_PERI listed RTL-B as a load. RTL-B VBUS is now shown from LAB5 through TPS2553, and RTL-A on H2 from LAB5 through the GPA2 key. Source: D13 and §5.2, matching `02-zhyvlennia`.
+6. **GNSS fallback bias** in `06-anteny.md` and `06-anteny-komplekty.svg` panel 6: "separate 5 V bias-tee" is now "TPS2553 channel → bias-tee on P7 → SMA DC block". Source: STACK §2.4 and §5.3.
+7. **`06-anteny.md`, two smaller fixes:**
+   - "EUR 2 UHF" now reads "EUR 2 збору за обробку", the STACK term.
+   - I removed the claim that the horn segments travel in the DN50 tube. STACK does not say this, and the SVG says they don't.
+8. **I2C bus numbers:** `07-pz-vstanovlennia.md` §5.3 and `08-zbyrannia.md` step 14 had hard-coded `i2cdetect -y -r 0/2`. They now find N with `i2cdetect -l`, marked TBD, because STACK §5.2 only says `-r N`.
+9. **MCP23017 #4:** STACK §5.2 now assigns its address and lines.
+   - Address 0x23, strapped A2 to GND, A1/A0 to 3V3_Q6A.
+   - Outputs: GPA0 = EN LIME3V3, GPA1 = RESET LC76G.
+   - Inputs: GPB0/GPB1/GPB2 = FAULT of the VBUS keys for RTL-B, HF+ and RTL-A; GPB3 = FLT of the LIME3V3 key.
+   - Shares the pin 5 interrupt with MCP #3.
+
+   This also settles the conflict the writers had flagged (RTL-B FAULT sent to a full MCP #3). Updated:
+   - `04-pidkliuchennia-pinout.md`: pin 27/28 row, address table, the conflict note, §4.3 table, J5-upper row in the USB map, the D13 path, and the open-items list.
+   - `02-zhyvlennia.md` (VBUS rows, LIME3V3 row, open items) and `02-zhyvlennia.svg`.
+   - `01-blok-skhema.md` and `01-blok-skhema.svg`.
+   - `03-rf-trakt.md` open item 10.
+   - `07-pz-vstanovlennia.md`, `08-zbyrannia.md` (steps 4, 7, 13 and open items), `09-testy.md` (Ж-06, Ж-15, open items), `10-bom.csv` row 55, `10-bom.md`.
+
+All SVGs pass the XML check, including the three I edited (01, 02, 06). I measured the edited SVG text lines with the file's own font and they fit their boxes.
+
+## Inconsistencies inside STACK.md (left as they are, files follow the rule)
+
+- **§2.3 HMC7992 row** says 1 nF on RFC-B, but the §5.3 rule and the §2.7 PCB row say 100 pF on all RTL-B pins. Files follow §5.3; `03-rf-trakt.md` already notes this.
+- **§5.1 VCC_5V_PERI row** still lists RTL-B as a load, against D13 and §5.2. Files follow D13.
+- **MCP #4 address:** §5.2, §8, §2.6 and §2.8 say "призначено 0x23", but §1.1, §9.1 and §11.x still say "призначити на схемі", as does D12. I followed §5.2/§8, as the more specific sections, because STACK outranks the decisions file.
+- **edl-ng version:** the package hold is edl-ng 1.4.1, while §2.1 and §9.2 archive and read with edl-ng v1.6.0. `07-pz-vstanovlennia.md` is unchanged.
+
+## New STACK decisions not yet in the build files (added by the other agent during this pass)
+
+Files 02, 03, 04, 08, 09 and 10 still show these as TBD or with old values:
+- **LNB bus:** decided — 13.2 V with Bullseye, 12.5 V if the QRO.cz LNB is bought, with load-limit windows measured per unit.
+- **LIME3V3 load switch:** a fourth TPS259470ARPWR ($2.06, RILM 1.65 kOhm). STACK says the Lime set becomes 608.52–610.52 but has not yet added this to §2.12.
+- **H1 on the Lime path:** a 2 dB pad from the Nooelec 100815 set, so 12 dB in total; gate ≥12.0 dB at 1420 MHz, otherwise a 3 dB pad.
+- **Lime RX connectors:** X2 and X4 (X3 was removed in v1.1). The build files still say "X3/X4".
+- **Smaller items:**
+  - SMA caps: GS-1 vs GS-3 condition for the chain.
+  - QRO.cz POTY adapter: confirmed.
+  - GOES/GK2A/FY4: "not built".
+  - Black Kite: NORAD 66741 and 68474.
+  - Several rows moved from "не перевірено" to "перевірено".
+
+`build/README.md`, which is outside files 01–10 and which I did not edit, still gives "address and lines of MCP23017 #4" as an example of a TBD.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
@@ -72149,6 +72255,32 @@ My check scripts and renders are in `/tmp/claude-0/-home-user-lizbeth307/f89a86b
   - Unverified: deburrer, tweezers, organiser, label prices, and the EU price for Rite in the Rain.
   - FX 1.1241 USD/EUR (stack).
   - Downloaded catalogue text: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_scala/scala.txt
+
+## openq:8-main (run `wf_e7454e89-9a0`)
+
+```json
+[
+  {"item": "8 table: TPS7A4701 (b), acceptance windows for the LNB/Boni rails", "outcome": "settled", "what_changed": "The 'вирішуєте ви' text is replaced by a decision made under the delegation clause in user_requirements.md. Each unit is measured at the load connector, with IN >= VO+1 V, against the load limits: Bullseye vertical 11.5-14 V, Boni 12-15 V at the barrel. The guaranteed IC bands sit inside those windows: 12.87-13.53 / 12.19-12.81 / 13.455-14.145 V. +/-0.2 V stays a design target only. The gate column now reads (a), (b), (c) passed. Same change in 1.1 C8.", "source": "analogs_G3 #9 (b); reaudit_B/C; user_requirements.md delegation"},
+  {"item": "8 table: LNB rail decision, 13.2 V or 12.5 V", "outcome": "settled + bench test", "what_changed": "Bullseye stays on 13.2 V, because its band 12.87-13.53 V is inside the 11.5-14 V vertical range. If the QRO.cz is bought, the ANY-OUT straps go to 12.5 V for both LNBs, with no part change. Bench test: V-pol beacon test on 12.5 V, cross-pol >=15 dB down. Deadline: before the QRO.cz is first powered (9.1 step 11). Matching edits in 1.1 C8, 2.11.2, 5.8, the 'Шина LNB і поляризація' row, 9.1 step 11 and 11.4.", "source": "reaudit_C (12.5 V suits both LNBs; QRO.cz +12 V = V-pol, H threshold at +15 V unpublished); analogs_G3 #9"},
+  {"item": "8 table: QRO.cz 'with POTY adapter', 22 mm input and price", "outcome": "answered", "what_changed": "The vendor page says '22 mm Cu tube diameter' and 'POTY pipe WG fixed by M4 screw'. The adapter is printed PETG and the 2.4 GHz antenna is not included. The page shows EUR 52.03 incl. VAT and no surcharge for the POTY option. A separate adapter listing costs EUR 12.10 incl. VAT ($13.60). The gate is now 'confirm the price in the cart' instead of 'e-mail QRO.cz'. Matching edits in 1.2 #114, 2.11.2, 5.8 and 11.4.", "source": "https://hamparts.shop/10-ghz-lnb-with-pll-and-tcxo.html"},
+  {"item": "8 table, Lime row: open question on the H1 attenuator (12 dB needed vs YAT-10A+ at 10 dB)", "outcome": "answered (from files) + bench test", "what_changed": "The H1 profile adds the 2 dB pad from the Nooelec 100815 set, which is already in the lab core (3.1). That is no new part and no cost. Gate: measured S21 of YAT-10A+ plus the pad >= 12.0 dB at 1420 MHz; if not, use the 3 dB pad from the same set. Fit is checked on the case fit-up. Matching edits in 1.2 #69, 2.11.1 Lime parts and 5.3.", "source": "analogs_G6 #3 and #7; BOM 3.1 RF accessories"},
+  {"item": "8 table (a): load switch for the Lime 3.3 V, part not chosen", "outcome": "answered (vendor datasheet)", "what_changed": "Chosen part: a 4th TI TPS259470ARPWR, the same part already used three times. Datasheet values: 2.7-23 V, 5.5 A, 28.3 mOhm typ, reverse blocking, EN/UVLO 1.20 V, auto-retry 110 ms. Starting RILM 1.65 kOhm gives ILIM 1.80-2.20 A; the final RILM is 1.5-2x the measured Lime current. TPS2553 is rejected (1.5 A max). FLT goes to MCP #4 GPB3, so the reserve lines are now GPB4-GPB7. Gate: FLT stays clear over 20 power-ons with the riser and Lime; forced hang recovers by power cycle; deadline is the PCB order. Edits in the BOM 2.11.1 row ($2.06, DigiKey) and kit note (608.52-610.52), 2.7, the eFuse row in 8, 5.1 LIME3V3, 5.2 MCP #4 and 9.1 step 6. NOT done: the +$2.06 is not yet added to the 2.12 totals.", "source": "TI SLVSFC9C (May 2026) https://www.ti.com/lit/ds/symlink/tps25947.pdf; analogs_G3 #13 price; operator note 30"},
+  {"item": "8 table: former 'не перевірено' list (10 sub-items)", "outcome": "answered / bench test", "what_changed": "The row is rewritten item by item. (1) L-band patch: the vendor publishes no LNA/SAW specs. Bench: connector gender on arrival, LNA step >=8 dB, and the SAW noise hump must cover 1525-1660 MHz. (2) Waveshare 25346 does not list GLONASS. Bench: GLONASS satellites (gnssid 6) in the fix within 10 min of a cold start; fallback is no GLONASS or the ANN-MB5. (3) 70 cm whip gain: the ISS SSTV A/B test covers it. (4)-(6) closed as not needed. (7) The 7 dB Metop modulator claim: per-pass C/N0 envelope on air. (8) 1544.9 MHz is a planned MEOSAR downlink on GPS III and GLONASS-K. RR 5.356 limits 1544-1545 MHz to distress and safety, so it stays unlogged and nothing is decoded. (9) Black Kite-1/2 are tracked as NORAD 66741 and 68474, with Space-Track TLEs updated 18.10.2026; same edit in 4.1. (10) Elektro-L3: the newest CelesTrak set is still the 9.10.2026 epoch, so the labd rule is unchanged.", "source": "rtl-sdr.com; waveshare.com 25346 page; db.satnogs.org (both Black Kite pages); celestrak GP 44903; UNOOSA tech-33 and ICG 2018 wgs_04; spektrum.ctu.cz RR 5.356"},
+  {"item": "8 table: small parts possibly missing from the BOM", "outcome": "answered (files) + gate", "what_changed": "Already in the BOM: the BNC jumpers (2.10) and the XT30-DC5525 service lead (2.7, battery assembly row, item 5). The 5.5/2.1 mm plug is in 9.1 step 9 but has no price. Still without SKU or price: the sealed power button with the XT30 transport jumper ($8-15, model) and the 3.5 mm panel extension with headphones ($30-65, model). Gate: SKU, seller and EU price named and the rows added to 2.6/2.9, before the mechanical order (CAD).", "source": "analogs_G3 battery sundries; final_completeness.json HMI/audio"},
+  {"item": "8 table: process row (errata blocks, deadline 'До P4')", "outcome": "settled", "what_changed": "Checked: there are still no errata blocks in summaries.md or minute-log.md. The corrections themselves are already in sections 7 and 11. Marked as a documentation task, not a bench item. The expired deadline is replaced with 'before the next phase report'.", "source": "grep of the repo files"},
+  {"item": "8 table: Molicel M65A option, gate 'P5 / стенд'", "outcome": "settled", "what_changed": "P5 is closed: G3 rejected the M65A as an analog. A bench test applies only if M65A cells are ever reordered.", "source": "analogs_G3"},
+  {"item": "Q2: small rigid antennas and the patch shroud", "outcome": "settled (hard rule)", "what_changed": "Answered yes. The rule limits piece size (about 20-23 cm, at most about 35 cm). The pieces are SRH-701 19 cm, whip 17.1 cm, an 18 cm disc, the 11x8.3 cm cone and shroud parts <=20 cm; none is a loop or a dish. The shroud stays only with >=2 dB C/N0 gain. 'на ваше підтвердження' is removed in 1.1 C15, 1.2 #111, the 2.4 whip and QO-100 rows, the 2.11.3 shroud row and the 8 shroud row.", "source": "user_requirements.md hard rules"},
+  {"item": "Q4: home x86-64 PC", "outcome": "bench test (gate)", "what_changed": "From the files: QAIRT 2.42 converter and quantizer exist only for x86_64 Linux and Windows. So the host can be your PC, a VM or an ubuntu:22.04 container. Training runs on the home PC with a GPU or on Colab/Kaggle, never on the Q6A. Gate: the 'Домашня база, CI конвертера' row (same context hash on two rebuilds, clean pip check). Deadline: before the first conversion (W1-2); CPU mode runs until then.", "source": "reaudit_A; npu_training.json"},
+  {"item": "Q5: newer QAIRT if 2.42 fails", "outcome": "bench test (gate)", "what_changed": "Order of trials: Set A against HTP gate C20 plus an 8 h soak, then Set B in its own venv against the same gates, then CPU mode C20. Moving to Set B departs from your stated 'QAIRT 2.42' wish, so it will be flagged in the phase report.", "source": "npu_training.json (two pinned runtime sets, chosen by golden test plus 8 h soak); 1.1 C20"},
+  {"item": "Q6: Midas 1200x1920", "outcome": "settled (user requirement)", "what_changed": "Only a separate bring-up project, outside the build and the totals. 7-inch FHD gives 315 PPI against a visual acuity limit of 291 PPI at 30 cm. Order only if you ask.", "source": "user_requirements.md; 1.2 #74-#76"},
+  {"item": "Q7: parts already bought", "outcome": "settled (default rule)", "what_changed": "Until you answer, no part counts as bought and 9.1 starts at step 1. The answer is only needed to avoid duplicate orders, before step 1.", "source": "9.1; D8"},
+  {"item": "Q8: touch sensor through gloves", "outcome": "bench test", "what_changed": "Moved into the 'Рукавиці, сонце, дощ' row. Pass: >=95% first-try hits with 3 glove types. On a fail, the gloved HMI runs on the buttons and encoders already in 2.6. Deadline: on panel arrival, within the D4 30-day window.", "source": "8 glove row; 2.6"},
+  {"item": "Change log", "outcome": "n/a", "what_changed": "Added 11.6 row 49 summarising these decisions. Added a section 10 block 'Відкриті питання розділу 8' with the URLs used.", "source": "-"},
+  {"item": "Left unchanged", "outcome": "already settled", "what_changed": "Q1 and Q3 were already answered. The Airspy Mini row matches D7. The G6K and display rows were already gated with deadlines. The prices row is unchanged: the EUR 2 handling-fee start date is not officially confirmed (secondary sources say 1.11.2026; C(2026)6694 was not found). The MCP23017 #4 'призначити на схемі' item is in 8.2 (the other agent's part); 5.2 already shows 0x23.", "source": "v2_decisions D7; web search"}
+]
+```
+
+Edited file: /home/user/lizbeth307/sat-receiver-audit/STACK.md
 
 ## write:tests+bom (run `wf_fa12e9b4-a87`)
 
