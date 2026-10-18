@@ -37722,6 +37722,163 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   LIMITS: eBay, AliExpress, TEquipment and Telegaertner pages were blocked (403, empty pages or bot walls). The shared WebSearch budget ran out after 7 searches, so AliExpress official-store and Amazon prices for the TOJOIN and RTL-SDR sets were not checked. Prices marked 'snippet' or 'unverified' need a manual check. FX: 1.1241 USD/EUR.
 
+## searchB:sma_torque_wrench_0_9_n_m_adapter_set (run `wf_e5582d4c-0a2`)
+
+- **Part:** SMA torque wrench 0.9 N·m (8 in-lb, 5/16 in / 8 mm head) + SMA adapter set (bench tier, RF accessories, qty 1 set)
+- **Current price usd:** 50.84-62.84 = TOJOIN eBay wrench $35.89 (from radio_lab.json; the live eBay listing could NOT be confirmed because eBay returns 403 to fetches) + RTL-SDR Blog SMA Straight Antenna Adapter Set $14.95 (6 pcs, 9 in stock on rtl-sdr.com, 18 Oct 2026) or the Semi-Rigid RG402 set $26.95. The same RTL-SDR Blog sets cost more on AliExpress: straight $21.35, RG402 $32.30.
+- **Critical specs:**
+  - Preset torque matched to the stack's connectors. 0.9 N·m (8 in-lb) is right for stainless SMA and for 3.5/2.92 mm mating. The TekBox data says brass SMA should get 0.5 N·m, and SMA-to-3.5/2.92 mm 0.56 N·m. Most SDR-grade ports here (V4L, LNA V2, SAWbird, tinySA, LiteVNA) are probably gold-plated brass (not verified). Confirm which value applies before buying, as already flagged in reaudit_D ('confirm with Zeenko').
+  - Torque accuracy and repeatability. Reference points: TekBox ±0.05 N·m (±5.6% at 0.9), Centric RF ±8%, Telegartner ±0.02 N·m. Floor for 'not worse': mean within ±10% of the preset, measured both directions over 10 breaks.
+  - Mechanism: fixed-preset break-over (toggle/cam), not a click-adjustable or plain ratchet that can over-torque. The preset must not drift in transport (the wrench lives in the Pelican lab case).
+  - Head: open-end 8 mm (5/16 in) hardened steel (CrMo-class), with no jaw spread or play. Slim enough to fit between the 7 SMA panel connectors and onto Mini-Circuits pads and adapters.
+  - Build life: pivot wear and spring set over hundreds of cycles; ideally a calibration certificate or a way to re-check.
+  - Adapter set: 50 Ohm SMA to N, BNC, UHF, F and PAL, plus SMA M-M. Gold-plated centre pins with pin depth in spec, so they don't damage the LiteVNA or tinySA ports. Return loss adequate to at least 1.766 GHz (V4L top), and to 2.2-3.8 GHz only if Lime is kept. Screen on the LiteVNA on arrival.
+  - Legit and non-counterfeit (no fake 'Keysight' wrenches). EU purchase with VAT stated, USD base (FX 1 EUR = 1.1241 USD as used in the stack).
+- **Candidates:**
+  1.
+    - **Name:** CURRENT: TOJOIN 0.9 N·m 5/16 in SMA torque wrench (eBay) + RTL-SDR Blog SMA Straight Antenna Adapter Set (or RG402 set)
+    - **Kind:** current_part
+    - **Price usd:** 35.89 + 14.95 = 50.84 (RG402 set variant: 62.84)
+    - **Spec comparison:** Baseline. Wrench: 0.9 N·m preset, 8 mm head, break-over. No published accuracy figure and no independent measurement found, so it is unverified too. A search result snippet described a TOJOIN 5/16 in 0.9 N·m listing from a 100% feedback seller, but price and availability could not be confirmed (eBay 403). Adapter set: 6 straight adapters (N, UHF, BNC, PAL, F female, plus SMA M-M). Plating, impedance and loss are not stated; the page only says 'less loss than the pigtail adapters'.
+    - **Worse in:** Reference part. Its own accuracy is undocumented, so it should pass the same dead-weight acceptance test as any replacement.
+    - **Compatibility:** Passive tool, fits the bench kit. No rail or driver issues; no hard-rule issues.
+    - **Risks:** Live listing not confirmed. Accuracy unknown. 0.9 N·m may over-torque brass SMA jacks.
+    - **Seller url:** https://www.rtl-sdr.com/product/rtl-sdr-blog-sma-straight-antenna-adapter-set/
+    - **Sources:**
+      - https://www.rtl-sdr.com/store/
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-sma-straight-antenna-adapter-set/
+      - file:/tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  2.
+    - **Name:** AliExpress 'AA83 SMA torque wrench, 8MM opening, straight' (item 3256809218457447)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 17.87 (was 24.15), aliexpress.us search-page price; EU price incl. VAT not seen. Wrench saving about $18 vs TOJOIN.
+    - **Spec comparison:** 8 mm opening, straight handle. The preset torque is NOT stated in the title. Accuracy, mechanism and material are not seen (the item page did not render). 35 sold, rating 5.
+    - **Worse in:** Unproven: no stated torque and no independent measurement. REJECTED under angle B unless it passes the acceptance test in notes, which has to be done after purchase.
+    - **Compatibility:** 8 mm head fits SMA. Passive tool.
+    - **Risks:** Unknown preset, which could be 1 N·m or adjustable. Unknown jaw hardness. Preset may drift.
+    - **Seller url:** https://www.aliexpress.us/item/3256809218457447.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-sma-torque-wrench.html
+  3.
+    - **Name:** AliExpress '920L SMA torque wrench RF, 6.5/8/20 mm openings' (item 3256808438875101)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 13.69 (was 19.56), aliexpress.us search-page price
+    - **Spec comparison:** Several openings (6.5/8/20 mm), so probably an adjustable or multi-head type. Torque not stated. 146 sold, rating 4.9. No accuracy data.
+    - **Worse in:** Unproven torque and accuracy. A multi-opening or adjustable design is easier to mis-set than a fixed preset. REJECTED under angle B without measurement.
+    - **Compatibility:** 8 mm head is usable. The 20 mm head (N-type) is not needed.
+    - **Risks:** Unknown mechanism and preset.
+    - **Seller url:** https://www.aliexpress.us/item/3256808438875101.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-sma-torque-wrench.html
+  4.
+    - **Name:** AliExpress Mxita SMA torque wrench, 8 mm opening (items 3256811968955217, 3256806231826906, 2251832605408705)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 21.56-25.71 (search-page prices)
+    - **Spec comparison:** 8 mm opening. Torque not stated in the titles. The most-sold listing (254 sold) has only a 3.5 star rating, which hints at quality complaints (review text not readable).
+    - **Worse in:** Unproven torque. The low rating on the high-volume listing is a negative signal. REJECTED under angle B.
+    - **Compatibility:** 8 mm head, passive.
+    - **Risks:** Possible QC spread between units.
+    - **Seller url:** https://www.aliexpress.us/item/3256811968955217.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-sma-torque-wrench.html
+  5.
+    - **Name:** gnss.store (Eltehs SIA, Riga, Latvia) 'Torque Wrench for SMA 8 mm HF Connectors' ELT0491, EU stock
+    - **Kind:** generic_or_clone
+    - **Price usd:** 28.09 ex VAT (EUR 24.99); about 33.99 with 21% LV VAT (EUR 30.24). Destination-country VAT and shipping not checked.
+    - **Spec comparison:** Bidirectional SMA wrench in a plastic case, more than 10 in stock, EU seller. The page states NO torque value and NO accuracy. The datasheet needs a login.
+    - **Worse in:** Torque value and accuracy undocumented, no measurement. Only about $2-8 cheaper than TOJOIN once VAT is added. REJECTED under angle B.
+    - **Compatibility:** Intended for GNSS antenna SMA, passive.
+    - **Risks:** Preset unknown, possibly 0.5 or 0.9 N·m. Ask the seller for the datasheet.
+    - **Seller url:** https://gnss.store/products/elt0491
+    - **Sources:**
+      - https://gnss.store/products/elt0491
+  6.
+    - **Name:** Used Keysight/Agilent 8710-1765 (8 in-lb, 5/16 in)
+    - **Kind:** used
+    - **Price usd:** about 75 + 20.58 shipping (sold eBay.de listing, date unclear, seen via search snippet only). A 2018 EEVblog post cites $38 'like new' on AliExpress, which is historical.
+    - **Spec comparison:** Genuine metrology-grade break-over wrench, 8 in-lb, 5/16 in. Equal or better build. TestEquity says it is for 3.5 mm/SMA DUT connectors, not NMD test-port connectors.
+    - **Worse in:** Not worse in specs, but NOT cheaper at current used prices (about $96 delivered vs $35.89). Calibration of a used unit is unknown unless a certificate comes with it.
+    - **Compatibility:** Fits SMA. Passive.
+    - **Risks:** Counterfeit 'Keysight' wrenches exist on marketplaces. Wear on used units.
+    - **Seller url:** https://www.ebay.de/itm/177223043661
+    - **Sources:**
+      - https://www.ebay.de/itm/177223043661
+      - https://testequity.com/product/17408-2-8710-1765
+      - https://www.eevblog.com/forum/projects/diy-sma-torque-wrench/
+  7.
+    - **Name:** Used/surplus Utica A5 5/16 in torque wrenches (EEVblog report)
+    - **Kind:** used
+    - **Price usd:** 12.50 each shipped (2018 report; no current listing found, unverified)
+    - **Spec comparison:** Snap-on/Utica-class tool. TheSteve (EEVblog, 2018) calibrated them with weights for SMA and 3.5 mm and said they 'break the same as the Keysight ones'. That is a measured comparison, but no numbers were published.
+    - **Worse in:** Qualitative evidence only (no N·m figures). No live listing or price for 2026. Preset needs setting and checking by the user.
+    - **Compatibility:** 5/16 in open-end works for SMA.
+    - **Risks:** Availability unknown. Adjustable types can drift. A dead-weight check is required.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.eevblog.com/forum/rf-microwave/sma-torque-wrench/
+      - https://www.eevblog.com/forum/projects/diy-sma-torque-wrench/
+  8.
+    - **Name:** DIY SMA torque wrench (EEVblog rhb build: EMT tube, spring, marble detent)
+    - **Kind:** diy
+    - **Price usd:** about 0-10 (scrap materials)
+    - **Spec comparison:** Built 'by eye' and never calibrated. The builder reported asymmetric release (marble loose, pivot not centred) and said it is 'not quite as repeatable as a torque wrench'.
+    - **Worse in:** Worse in repeatability, build quality and documented accuracy. REJECTED.
+    - **Compatibility:** Possible in principle.
+    - **Risks:** Over- or under-torque of VNA and SDR ports.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.eevblog.com/forum/projects/diy-sma-torque-wrench/
+  9.
+    - **Name:** Generic AliExpress SMA adapters/kits in place of the RTL-SDR Blog set (e.g. 24PCS SMA-TNC/UHF/BNC/N kit item 3256809197947262; single SMA-x adapters $0.85-2.15)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 24PCS kit 27.99 (more expensive). A matching set of 5-6 single adapters is roughly $6-10 (estimate from search-page unit prices, unverified).
+    - **Spec comparison:** Same class of gold-plated brass adapters. No return loss, pin depth or plating data, and no independent measurements found. The RTL-SDR Blog set has no published RF specs either, but it comes through the official RTL-SDR Blog channel.
+    - **Worse in:** Unproven RF quality and pin depth (risk to LiteVNA/tinySA ports). No PAL adapter seen in the generic kits. REJECTED under angle B. Saving would be about $5-9 at most.
+    - **Compatibility:** SMA 50 Ohm, passive.
+    - **Risks:** Out-of-spec centre-pin depth can damage instrument ports. VNA-screen anything bought.
+    - **Seller url:** https://www.aliexpress.us/item/3256809197947262.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-sma-adapter-kit.html
+      - https://www.aliexpress.com/w/wholesale-rtl-sdr-blog-adapter-set.html
+  10.
+    - **Name:** Reference only: TekBox TBTWR-05NM / 0.9 N·m break-over wrench (EU)
+    - **Kind:** other_brand
+    - **Price usd:** Meilhaus DE: EUR 47.60 incl. VAT = $53.51, out of stock. Electrokit SE (0.5 N·m version): 529 SEK incl. 25% VAT, 4 in stock.
+    - **Spec comparison:** Documented ±0.05 N·m, break-over, 8 mm, 0.5 or 0.9 N·m factory preset (custom possible). Non-accredited calibration certificate on request. Better documented than TOJOIN.
+    - **Worse in:** Not cheaper than TOJOIN ($35.89). Listed only as the accuracy benchmark, and as the 0.5 N·m option if the brass-port torque is confirmed.
+    - **Compatibility:** SMA, 3.5 mm, 2.92 mm.
+    - **Risks:** None noted.
+    - **Seller url:** https://www.electrokit.com/en/momentnyckel-for-sma-kontakter-0.5nm
+    - **Sources:**
+      - https://www.meilhaus.de/en/tbtwr.htm
+      - https://www.electrokit.com/en/momentnyckel-for-sma-kontakter-0.5nm
+- **Notes:** VERDICT (angle B): nothing cheaper is proven not-worse by independent measurement, so KEEP the current part: TOJOIN $35.89 + RTL-SDR Blog straight set $14.95 = $50.84. The RG402 set ($62.84 total) is a choice about function, not quality.
+  
+  Why nothing qualifies:
+  - Cheap generic wrenches exist: AliExpress $13.69-25.71 and gnss.store Latvia EUR 24.99 ex VAT. None states a measured torque, and most don't state the preset at all.
+  - The only independent evidence found is qualitative. EEVblog 2018: cheap Utica and eBay wrenches 'break the same as the Keysight ones' and 'seemed accurate and repeatable', with no numbers.
+  - Used Keysight 8710-1765 costs more (about $75 + $20.58 shipping).
+  - The DIY build is uncalibrated and repeats poorly.
+  
+  Optional route to save about $18-22: buy the AA83 ($17.87) or 920L ($13.69) and run a dead-weight acceptance test. Apply the same test to the TOJOIN, whose accuracy is also undocumented.
+  - Setup: clamp a stainless SMA barrel or bulkhead in a vise and hold the handle horizontal. Hang a water bottle from a thread at a measured radius r from the connector axis. Add water until the wrench breaks over, then weigh the bottle on a kitchen scale (±1 g). T = m·9.81·r; 0.9 N·m is 0.917 kg at 100 mm or 0.765 kg at 120 mm. KrudyZ's version: 2 lb at 4 in = 8 in-lb.
+  - Repeat 10 times in each direction. Accept if the mean is 0.81-0.99 N·m and the spread is ±5% or less. Method uncertainty is about ±2% (r ±1 mm, angle ≤5°).
+  - Only a unit that passes counts as 'measured equal'. Until then it is not a not-worse analog.
+  
+  Spec flag (not to be traded silently):
+  - TekBox data recommends 0.5 N·m for brass SMA and 0.56 N·m for SMA-to-3.5/2.92 mm. 0.9 N·m is for stainless SMA and for 3.5/2.92 mm mating.
+  - Most SDR-grade ports in this stack are probably brass (not verified). Settle the preset first, as reaudit_D already says, before choosing any wrench.
+  
+  Adapters: generic AliExpress singles could save about $5-9, but nobody has measured their return loss or pin depth, so they are rejected. Screen whatever is bought on the LiteVNA.
+  
+  Limits of this pass:
+  - The shared WebSearch budget ran out after 7 searches.
+  - eBay pages return 403, so the live TOJOIN listing and its price are NOT confirmed.
+  - AliExpress item pages did not render. Prices and sold counts come from AliExpress search pages (aliexpress.us), not item pages; EU VAT-inclusive prices are not seen.
+  - FX: 1 EUR = 1.1241 USD, the rate used elsewhere in the stack.
+  
+  No hard-rule issues: passive tools only.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
