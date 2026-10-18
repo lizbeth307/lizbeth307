@@ -3750,3 +3750,88 @@
   - Clearing point and max operating temperature under sun load. Is there a thermal or metal-frame recommendation?
   - Price for 1-2 samples (panel + CTP + HDMI board + cables), lead time, and an express quote to Ukraine (DDP if possible).
 
+## dispmkt:check4 (run `wf_a429c611-ea2`)
+
+- **Name:** Youritech ET070WU07-O, 7.0 in 1200x1920 MIPI panel claimed at 1500 nits, no touch. The claim that it is "identical to the Wisecoco $69 500-nit kit panel" is tested here.
+- **Exists and orderable:** ні
+- **Confirmed specs:** These are Youritech's own pages and images only. No datasheet is published anywhere.
+  (1) Two live Youritech product pages carry part number ET070WU07-O. Both are "Get a quote" only, with no price, MOQ, stock or datasheet. Images on the first page were uploaded 2021/08 and on the second 2020/03.
+  (2) 7.0 in (7.02 in calculated from the active area), 1200(RGB)x1920 portrait, RGB vertical stripe, 0.07875 mm pitch, active area 94.5x151.2 mm. 322.5 PPI (calculated).
+  (3) Interface is MIPI DSI 4-lane, per the image banners "MIPI 4 lane" (2020/03/ET070WU07-O_01.jpg) and "MIPI 4 lane interface" (2021/08/ET070WU07-O_01.jpg). The text field reads "Dgital".
+  (4) IPS, normally black, 80/80/80/80 viewing angle, contrast 1200:1 (typ). Hard-coat surface treatment, no TSP, no cover glass.
+  (5) Backlight is "45 PCS WHITE LED, 20Khours", and the field "Backlight power consumption" says "9~11v". Logic is 5.5 V typ at 60 mA.
+  (6) Luminance is 1500 cd/m2 typ. This comes only from Youritech's spec table and a marketing banner ("1200(RGB)x1920 · 1500 cd/m2 Brightness"). There is no minimum value, no measurement conditions and no independent measurement.
+  (7) The photos show an orange FPC folded across the back of one short edge, with a connector on its top edge and two bonded tails. A separate 2-wire backlight lead exits the long side. A dark backlight/frame strip sticks out past the glass on one long side.
+- **Refuted or doubtful:**
+  - OPERATING TEMPERATURE REFUTED: the candidate says -20 to 70 C and calls the sisters 'only -10 to 60 C'. Youritech's second ET070WU07-O page (7-inch-high-brightness-display-1500nits-1200x1920-mipi-tft-lcd-display.html) says -10~60 C operating and -30~70 C storage. Youritech's own cross-reference list on its 7-inch pages also says 'ET070WU07-O (LCD, 1200x1920, MIPI, 1500nits, -10~60 C, 160.8x98.7mm)'. Only the 2021 page says -20~70 C.
+  - OUTLINE CONTRADICTED: the text says 160.80x98.70x1.97 mm. The 'Product parameters' dimension image on the same page (uploads/2021/08/ET070WU07-O_02.jpg) gives 107.98 x 163.8 mm overall. That is exactly the outline Youritech lists for ET070WU12-O, and for ET070WU10-O (107.98x163.8x4.05 mm, 1350 nits, 4-lane MIPI 40 pins). The photographed module has a backlight frame wider than the glass and external LED leads. A 1.97 mm thickness is doubtful for a 45-LED, 1500-nit module, since the same-outline ET070WU10-O is 4.05 mm. The text outline is probably the bare base cell copied from another datasheet.
+  - PANEL TECHNOLOGY CONTRADICTED: the text table says 'a-Si TFT-LCD', but the page's own banner image says 'LTPS TFT active matrix'. Wisecoco's panel is listed as LTPS.
+  - WISECOCO-COMPATIBILITY HYPOTHESIS UNSUPPORTED AND VISUALLY CONTRADICTED: the FPC in Wisecoco's rear photo (wp-content/uploads/2026/05/7-inch-1920-1200-lcd-2-2.webp) has two green rigid islands with inductors, a board-to-board connector, a flex tail and the label '8813070'. It has no separate backlight wires. Youritech's FPC is a different wide flex with a top-edge connector (it looks marked '30', unconfirmed) and has external backlight wires. Different FPC means a different pinout and power scheme. Wisecoco's 40-pin adapter and HDMI-to-MIPI board cannot be assumed to work. The only things that match are the text outline 160.8x98.7 and the -10~60 / -30~70 C temperatures. Those hint at a shared base glass with a re-backlit module, but that is not proven.
+  - Contrast differs: Youritech says 1200:1 and Wisecoco says 1100:1. Not decisive, but more evidence the documents are not for the same part.
+  - 1500 nits is vendor marketing and a table value only. Youritech lists a same-outline sibling at 1350 nits (ET070WU10-O). There is no datasheet minimum and no measured value from anyone.
+  - The backlight field '9~11v' is garbled: no current is given, and it is unclear whether a driver is on board. The external 2-wire lead suggests a bare LED string that needs a constant-current driver. Assuming 3S x 15P (an inference from 45 LEDs and 9-11 V), current would be about 300-600 mA. Unverified.
+  - No HDMI path exists for this panel. Youritech advertises driver boards in general but none for this part. The Q6A's MIPI-DSI only supports Radxa panels, so the panel cannot be driven directly.
+  - No touch, which fails a hard requirement.
+  - No community reports, teardown, or luminance review found. Not on prom.ua (search for 'ET070WU07' returns nothing). No Alibaba or Made-in-China listing found.
+- **Touch reaches host as usb hid:** no
+- **Q6a mode line and link check:** Calculated, assuming some unknown HDMI-to-MIPI bridge sits in front of the panel. The Q6A cannot drive this MIPI panel directly.
+  
+  Width and blanking: 1200 px is under the 2400 px DPU linewidth, so no virtual planes are needed.
+  
+  Standard modes and their harmonics:
+  - CVT-RBv2 1200x1920@60: htotal 1280, vtotal 1975 (55 lines vertical blanking, meets the 24-line rule). 151.68 MHz, 3.64 Gbps. Fits 2-lane HBR (4.32) and HBR2 (8.64). The 15th harmonic, 2275.2 MHz, falls in 2200-2300.
+  - CVT-RBv1 @60: htotal 1360, vtotal 1975, 161.0 MHz, 3.86 Gbps. The 14th harmonic, 2254 MHz, falls in 2200-2300.
+  - JDI LT070ME05000-style native timing (from memory of the mainline panel driver, not verified): 1340x1934@60, 155.49 MHz, only 14 lines of vertical blanking. If a bridge's EDID copied this, it would break the 24-line DP rule. Its 11th harmonic, 1710.4 MHz, sits on the 1690-1710 edge.
+  - RBv2 @50: 125.82 MHz. The 18th harmonic, 2264.8 MHz, falls in 2200-2300.
+  
+  Harmonic-clean custom modes (up to the 20th harmonic, calculated):
+  - 1360x2042@60: 166.63 MHz, 4.0 Gbps, 122 lines vertical blanking. Nearest harmonic is 20.6 MHz from any band. Fits HBR.
+  - 1304x1994@60: 156.01 MHz. Only 6 MHz margin: the 11th harmonic is 1716.1 MHz.
+  - 1296x1986@50: 128.69 MHz, 3.09 Gbps. Same clock as your known-clean 1080p@52 mode.
+  
+  These modes only help if the bridge's EDID or scaler accepts custom timings. The bridge's own DSI clock is free-running: about 455-483 MHz at 4 lanes x ~0.9-0.97 Gbps. At 151.68 MHz input its 5th harmonic is about 2275 MHz, which is in band. Its scaler and DDR clocks are also uncontrolled and need sniffing with the receiver itself.
+- **Rf harmonics check:** All figures calculated.
+  - CVT-RB 60 Hz modes (151.68 and 161.0 MHz) land in 2200-2300 MHz at the 14th-15th harmonic.
+  - A JDI-like 155.49 MHz timing hits 1710.4 MHz.
+  - 50 Hz RBv2 (125.82 MHz) hits 2264.8 MHz.
+  - Clean choices: 1360x2042@60 at 166.63 MHz (at least 20 MHz margin), or 1296x1986@50 at 128.69 MHz (8.3 MHz margin).
+  - The bridge board adds its own DSI HS clock (about 455-483 MHz; at 455 MHz the 5th harmonic is 2275 MHz) plus scaler and DDR clocks the host cannot control. Real emissions are broadband around these lines, so a near-field scan with the SDR across all six bands is mandatory.
+- **Sunlight readability estimate:** Calculated ambient contrast (ACR) in 100 klx sun, with diffuse reflectance Rd:
+  - At the claimed 1500 nits: about 5.7 with the bare hard-coat (Rd about 1%), about 3.4 with an air-gapped add-on CTP (Rd about 2%), about 10 with a bonded AR cover (Rd about 0.5%).
+  - If real luminance is only 750-1000 nits (plausible, given the 1350-nit sibling and no minimum spec): about 3.3-4.1 bare, and about 2.2-2.6 with an air-gapped touch panel.
+  - Readable in direct sun only if the 1500 nits is real and any touch layer is optically bonded. The hard-coat (non-AR) surface gives strong specular glare.
+- **Power and thermal:** Estimated, not from a datasheet.
+  - Backlight: assuming 45 LEDs as 3S x 15P at 9-11 V (inference) and 20-40 mA per string, about 3-6.6 W.
+  - Panel logic: 5.5 V x 60 mA = 0.33 W (Youritech figure).
+  - HDMI-to-MIPI scaler or bridge board: about 1-2.5 W (estimate).
+  - Total: about 4.5-9 W, roughly 0.35-0.7 A from the 4S pack.
+  - An external constant-current LED driver is probably needed. A buck driver from the 12 V Pololu rail has only about 1 V of headroom at an 11 V string voltage, so a buck-boost or SEPIC CC driver from the pack is safer.
+  - Heat: about 75-80% of backlight power becomes heat inside a thin module. Full sun adds about 14.3 W incident on the active area (1000 W/m2 x 0.0143 m2, calculated).
+  - Youritech's own catalog line rates operating temperature at only -10~60 C. That is easy to exceed in a closed handheld in Ukrainian summer sun. Expect forced derating of the backlight and possible LC blackening near the clearing point.
+- **Real price and shipping to ukraine:** Unknown. Youritech publishes no price: both ET070WU07-O pages are quote-only B2B with MOQ not stated. For reference, the Wisecoco 500-nit kit is $69.00 with the HDMI-to-MIPI 40-pin board (verified on wisecocodisplay.com). Its compatibility with this panel is not established. No Ukrainian seller: prom.ua search for ET070WU07 returns nothing. Shipping would be express courier from Shenzhen (cost not verified). Budget for customs and VAT, and confirm the current Ukrainian duty-free threshold. Add the cost of a separate LED driver, a bridge board and a bonded PCAP with a USB controller, none of which is quoted.
+- **Questions for seller:**
+  - Send the full spec-approval datasheet for ET070WU07-O, with minimum and typical luminance, the measurement method, and the LED configuration (series/parallel, Vf, If per string, total power).
+  - Your two ET070WU07-O pages conflict. Which outline is correct: 160.8x98.7x1.97 mm or 107.98x163.8 mm (and what thickness)? Which temperature range: -20~70 C or -10~60 C? Which technology: a-Si or LTPS?
+  - Who makes the base glass and what is its part number? Which driver IC? What is the FPC pin count, pinout and mating connector part number? Please provide the DSI init sequence and the native timing (HFP/HBP/HSA, VFP/VBP/VSA, pixel clock).
+  - Is the backlight a bare LED string on a separate cable? Which constant-current driver and dimming method (PWM frequency) do you recommend?
+  - Do you supply an HDMI-to-MIPI board proven with this exact panel? Which bridge chip? What EDID (preferred mode, portrait 1200x1920 input or scaled 1920x1200)? Does it accept custom timings such as 1360x2042@60 at 166.6 MHz or 1296x1986@50 at 128.7 MHz, with at least 24 lines of vertical blanking? What are its supply and power?
+  - Can you optically bond a PCAP with a USB-HID controller (give the controller IC and USB VID:PID) and an AR or AG cover glass? Price and MOQ?
+  - Can you provide a luminance measurement report from a production sample at rated current, plus backlight derating versus temperature and the LC clearing point?
+  - What are the sample price, MOQ and lead time? Is there DDP or DAP shipping to Ukraine, and what warranty applies?
+- **Keep:** ні
+- **Reason:** Drop. The candidate fails a hard requirement: it has no touch. It has no HDMI path; the only proposed path, Wisecoco's 40-pin HDMI-to-MIPI board, rests on a text outline that Youritech's own dimension drawing (107.98x163.8 mm) and FPC photos contradict. The FPC differs from Wisecoco's panel and the backlight uses separate wires. Its specs conflict across Youritech's own two pages (-20~70 vs -10~60 C, a-Si vs LTPS, 1.97 mm thickness against a 4.05 mm, 1350-nit sibling of the same outline). The 1500 nits is a vendor table and banner value only, with no datasheet. There is no price or availability, and nothing sold in Ukraine. The 1200x1920 resolution itself would fit the Q6A, which is why the receiver could cope with it given a known bridge. If Youritech is pursued at all, ask instead about ET070WU01-HLT (7 in 1200x1920, 2000 nits typ, in-cell touch, listed on the Youritech site). It still needs a bridge and a USB-HID touch path, so it would need its own check.
+- **Sources:**
+  - https://www.youritech.com/products/oem-odm-high-brightness-1500-nits-mipi-lcd-display-screen-for-outdoor-7-inch-tft-ips-lcd-display-1200x1920-lcd-module.html
+  - https://www.youritech.com/uploads/2021/08/ET070WU07-O_01.jpg
+  - https://www.youritech.com/uploads/2021/08/ET070WU07-O_02.jpg
+  - https://www.youritech.com/uploads/2021/08/ET070WU07-O-7.0-inch-1200x1920-IPS-LCD-Display-MIPI-interface-3.jpg
+  - https://www.youritech.com/products/7-inch-high-brightness-display-1500nits-1200x1920-mipi-tft-lcd-display.html
+  - https://www.youritech.com/uploads/2020/03/ET070WU07-O_01.jpg
+  - https://www.youritech.com/products/7-inch-high-brightness-display-1500nits-ips-1200x1920-mipi-tft-lcd-display.html
+  - https://www.youritech.com/products/7-inch-lcd-display-1200x1920-high-resolution-lcd-panel-40-pins-mipi-16-7m-tft-lcd-module.html
+  - https://www.youritech.com/products/7-inch-high-brightness-display-1300nits-ips-1200x1920-mipi-tft-lcd-display.html
+  - https://www.youritech.com/products/7-inch-tft-lcd-display-1200x1920-high-brightness-2000nits-mipi-lcd-display-with-in-cell-touch.html
+  - https://www.wisecocodisplay.com/product/7-inch-tft-lcd-module-mipi-40-pin-1920x1200-ips-lcd-display/
+  - https://www.wisecocodisplay.com/wp-content/uploads/2026/05/7-inch-1920-1200-lcd-2-2.webp
+  - https://prom.ua/ua/search?search_term=ET070WU07
+
