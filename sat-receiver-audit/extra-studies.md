@@ -1506,3 +1506,350 @@
   
   **Local copies:** the panel datasheet is saved at /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pdf/ueed080.pdf and the board datasheet at /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pdf/uedx6911.pdf. The calculation script is /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/calc_disp.py.
 
+## dispmkt:consumer_reuse (run `wf_a429c611-ea2`)
+
+- **Angle:** Reusing consumer panels: 7-8in 2.5K portable monitors, spare screens from handheld gaming PCs (AYANEO, Legion Go/Go S, MSI Claw, OneXPlayer, Steam Deck OLED), tablet panels with HDMI driver boards (iPad mini, Sharp 7.9in QXGA, Nexus 7 JDI, Legion Tab, Galaxy Tab Active5), and phone or foldable AMOLED panels with HDMI boards. For each: realistic full-screen brightness through a third-party board, whether touch reaches the host, and availability (including Ukraine).
+- **Candidates:**
+  1.
+    - **Name:** AYANEO KUN 8.4in 2.5K IPS panel (brightest measured consumer above-FHD panel)
+    - **Size in:** 8.4
+    - **H res:** 1600
+    - **V res:** 2560
+    - **Brightness nits:** 678
+    - **Brightness evidence:** Independent measurement (Notebookcheck, X-Rite i1Pro 2, inside the device): 677.6 nits average, 706 max, 684 center, 91% uniformity, 1360:1 contrast. The reviewer still found it 'significantly impaired outdoors'. My estimate of sun contrast is about 3.1:1, against 7.3:1 for 2000 nits.
+    - **Panel tech:** IPS LCD. Portrait-native: the kernel's drm_panel_orientation_quirks entry for 'AYA NEO KUN' is lcd1600x2560_rightside_up. 10-point touch. DC dimming, with 20 kHz flicker between 30% and 80%.
+    - **Ppi:** 359
+    - **Host interface:** Inside the device it is almost certainly eDP (x86 APU), but that is my inference. No spare panel and no HDMI board found.
+    - **Touch to host:** Unknown. The touch controller sits on the device's internal bus; no USB HID path exists.
+    - **Optical bonding and coating:** Glossy cover glass, laminated in the device.
+    - **Power w:** Not published for the panel alone.
+    - **Supply:** n/a (no driver board)
+    - **Dimensions weight:** Not published.
+    - **Operating temp:** Not published.
+    - **Price:** Not sold as a spare. An AliExpress search on 18 Oct 2026 for KUN screens returned only a $70 KUN battery.
+    - **Availability:** No spare panel listing found.
+    - **Ukraine availability:** None found.
+    - **Q6a compatibility:** Good on paper, but no board exists. It is 1600 px wide in its native portrait mode, so it fits the 2400 px DPU limit without virtual planes. 1600x2560@60 CVT-RB is about 278 MHz (6.67 Gbps, my calculation), under the 330 MHz practical ceiling.
+    - **Rf notes:** My calculation: 278 MHz has its 8th harmonic at 2224 MHz (S-band). 59.3 Hz CVT-RB (274.5 MHz) has no hits in any receive band. Behind a scaler board, the HDMI clock follows whichever EDID mode the host picks.
+    - **Community reports:** Notebookcheck: readable outdoors only at an angle. No DIY reuse reports found.
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.notebookcheck.net/Ayaneo-Kun-gaming-handheld-in-review-Performance-beast-for-individualists.797526.0.html
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/drm_panel_orientation_quirks.c
+      - https://www.aliexpress.com/w/wholesale-ayaneo-kun-lcd-screen.html
+  2.
+    - **Name:** Lenovo Legion Go (8APU1) 8.8in 2560x1600 144 Hz screen + digitizer assembly, with a generic 40-pin eDP-to-HDMI/Type-C board
+    - **Size in:** 8.8
+    - **H res:** 1600
+    - **V res:** 2560
+    - **Brightness nits:** 413
+    - **Brightness evidence:** Independent measurement (Notebookcheck): 413.3 nits average, 460 max, 444 center, 80% uniformity, 979:1 contrast. Lenovo claims 500. A generic eDP board can at best match this if it drives the panel's backlight PWM at 100%. Sun contrast about 2.3:1 (my estimate).
+    - **Panel tech:** IPS LCD, 144 Hz. Portrait-native: kernel quirk 'Legion Go 8APU1' is lcd1600x2560_leftside_up. PWM 700 Hz.
+    - **Ppi:** 343
+    - **Host interface:** The panel is eDP (my inference from the AMD Z1 platform). Generic '40-pin EDP 2560x1600/2560x1440 Type-C/HDMI driver board' listings cost $21.34-22.45, but none claims Legion Go fit. The panel's FPC connector and pinout are unverified and may not be the standard 40-pin laptop connector.
+    - **Touch to host:** The digitizer comes laminated in the spare assembly. Its controller interface is unknown and probably not USB. You would need to wire it to the Q6A header I2C as I2C-HID, which is unverified.
+    - **Optical bonding and coating:** Laminated, glossy and reflective (Notebookcheck: outdoor use is 'a bit of a nuisance').
+    - **Power w:** Not published.
+    - **Supply:** Generic eDP boards take 5 V USB-C or 12 V, depending on the board.
+    - **Dimensions weight:** Not published for the assembly.
+    - **Operating temp:** Not published (consumer part).
+    - **Price:** AliExpress (18 Oct 2026): $43.92 (25 sold) and $79.80 for '8APU1 WT001' assemblies; $207.60 for the Lenovo FRU 5D10S40055 assembly. Generic eDP board about $22.
+    - **Availability:** AliExpress. Assemblies are plentiful; a driver board that fits is not.
+    - **Ukraine availability:** A prom.ua search turned up only screen protectors (134-799 UAH), no display assemblies. AliExpress ships to Ukraine.
+    - **Q6a compatibility:** Uncertain. The portrait 1600 px width avoids the DPU 2400 px limit, and 278 MHz CVT-RB fits the DP link (my calculation). Unknowns: whether the board offers a 60 Hz 1600x2560 EDID, whether the eDP connector and pinout match, and whether touch can be wired.
+    - **Rf notes:** 278 MHz 8th harmonic at 2224 MHz; 59.3 Hz (274.5 MHz) is clean (my calculation). The board's eDP link is a separate emitter (HBR is 2.7 Gbps).
+    - **Community reports:** Notebookcheck review only. No DIY HDMI conversion reports found.
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.notebookcheck.net/Lenovo-Legion-Go-gaming-handheld-review-Good-idea-not-quite-perfectly-executed.794034.0.html
+      - https://www.aliexpress.com/w/wholesale-legion-go-screen-driver-board.html
+      - https://www.aliexpress.com/w/wholesale-legion-go-screen-hdmi-type-c-controller-board.html
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/drm_panel_orientation_quirks.c
+      - https://prom.ua/search?search_term=Legion%20Go%20дисплей
+  3.
+    - **Name:** Lenovo Legion Go S / MSI Claw 8 AI+ 8.0in 1920x1200 120 Hz IPS panel (PN8007QB1-1)
+    - **Size in:** 8
+    - **H res:** 1920
+    - **V res:** 1200
+    - **Brightness nits:** 509
+    - **Brightness evidence:** Independent measurement (Notebookcheck, Legion Go S): 509.3 nits average, 538.8 max, 1171:1 contrast, no PWM. Notebookcheck's ICC profile file name is 'NS080WUM_LX1'. Sun contrast about 2.6:1 (my estimate).
+    - **Panel tech:** IPS LCD, 120 Hz, glossy.
+    - **Ppi:** 283
+    - **Host interface:** eDP in the device (my inference). No HDMI board listed for it.
+    - **Touch to host:** The $112.50 'Legion Go S LCD with touch panel digitizer' includes a digitizer; its interface is unknown. The $87.71 PN8007QB1-1 listing does not mention touch.
+    - **Optical bonding and coating:** Glossy; strong reflections (Notebookcheck).
+    - **Price:** $87.71 (PN8007QB1-1) or $112.50 (with digitizer) on AliExpress, 18 Oct 2026.
+    - **Availability:** AliExpress spare parts.
+    - **Ukraine availability:** Not found on prom.ua.
+    - **Q6a compatibility:** Video should be easy (1920 px wide, about 154 MHz), but you need an eDP board that supports this panel. Only marginally above FHD.
+    - **Rf notes:** 1920x1200@60 CVT-RB at 154 MHz has its 11th harmonic at 1694 MHz (L-band HRPT/HRIT). 50.6 Hz (129.25 MHz) is clean (my calculation).
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.notebookcheck.net/Lenovo-Legion-Go-S-gaming-handheld-review-Steam-Deck-killer-or-Windows-victim.961296.0.html
+      - https://www.aliexpress.com/w/wholesale-legion-go-screen-driver-board.html
+  4.
+    - **Name:** OneXPlayer 2 Pro 8.4in 2560x1600 IPS (handheld panel)
+    - **Size in:** 8.4
+    - **H res:** 2560
+    - **V res:** 1600
+    - **Brightness nits:** 287
+    - **Brightness evidence:** Independent measurement (Notebookcheck): 287 nits in the comparison table, 311 nits in the review text, 'much less bright than the competition'.
+    - **Panel tech:** IPS LCD
+    - **Ppi:** 358
+    - **Host interface:** No spare panel or HDMI kit found.
+    - **Touch to host:** None available.
+    - **Price:** Not found as a spare.
+    - **Availability:** None found.
+    - **Q6a compatibility:** Not applicable.
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.notebookcheck.net/OneXPlayer-2-Pro-gaming-handheld-tablet-or-detachable-in-review-multifaceted-device-with-strong-Ryzen-7.798258.0.html
+  5.
+    - **Name:** Lenovo Legion Tab / Legion Y700 8.8in 2560x1600 (and Gen 5 3040x1904) tablet panels
+    - **Size in:** 8.8
+    - **H res:** 1600
+    - **V res:** 2560
+    - **Brightness nits:** 421
+    - **Brightness evidence:** Independent measurement (Notebookcheck, TB320FC): 420.8 nits average, 472 max. Gen 3: about 420 full-screen, 441 SDR max, 900 HDR peak. Gen 5 (3040x1904): Notebookcheck news quotes 600 nits typical from Lenovo's spec.
+    - **Panel tech:** IPS LCD, 144-165 Hz
+    - **Ppi:** 343
+    - **Host interface:** Android SoC, so probably MIPI DSI (my inference). An AliExpress search for 8.8in 2560x1600 HDMI kits (18 Oct 2026) found none; the results were 16-17in laptop panels only.
+    - **Touch to host:** None available.
+    - **Price:** No panel-plus-board kit found.
+    - **Availability:** None as a usable kit.
+    - **Q6a compatibility:** 2560x1600: about 278 MHz in portrait would fit, but no board exists. Gen 5's 3040x1904@60 CVT-RB needs 376-387 MHz (my calculation), above the about 330 MHz ceiling.
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.notebookcheck.net/Lenovo-Legion-Tab-review-How-well-does-the-gaming-tablet-perform-despite-its-older-SoC.875790.0.html
+      - https://www.notebookcheck.net/Lenovo-Legion-Tab-Series.994031.0.html
+      - https://www.aliexpress.com/w/wholesale-8.8-inch-2560x1600-144hz-lcd-panel.html
+  6.
+    - **Name:** Sharp LQ079L1SX01 7.9in 1536x2048 (QXGA) IPS with HDMI/Type-C-to-MIPI driver board (tablet panel kit)
+    - **Size in:** 7.9
+    - **H res:** 1536
+    - **V res:** 2048
+    - **Brightness nits:** 460
+    - **Brightness evidence:** Datasheet-style listing, not a measurement: Wisecoco's 7.9in 1536x2048 MIPI panel (2 ch, 4 data lanes, 50-pin) lists '460 cd/m2 (Typ.)', 1000:1. That listing gives no part number; I infer it is the same Sharp-class panel the AliExpress LQ079L1SX01 kits use. Cheap boards may run the LEDs below typical current. Sun contrast about 2.4:1 (my estimate).
+    - **Panel tech:** IPS LCD, dual-port MIPI
+    - **Ppi:** 324
+    - **Host interface:** HDMI (and Type-C DP) into an HDMI-to-dual-MIPI board. One kit advertises 90-degree rotation to 2048x1536.
+    - **Touch to host:** No touch in any kit. Wisecoco says 'Touch Panel Available' without naming the interface.
+    - **Optical bonding and coating:** Bare panel, no cover glass.
+    - **Power w:** Not published. My estimate is 2-3 W at about 460 nits.
+    - **Supply:** The panel needs 1.8 / +5.6 / -5.6 V (Wisecoco); the board generates these. Board input is not stated, typically 5 V USB-C.
+    - **Dimensions weight:** 125.55 x 171.3 x 3.15 mm (Wisecoco)
+    - **Operating temp:** -20 to 60 C (Wisecoco)
+    - **Price:** AliExpress (18 Oct 2026): $34.45 (LQ079L1SX01 HDMI-to-MIPI kit, 7 sold), $36.62 (HDMI/Type-C kit with rotation, 26 sold), $49.14. Wisecoco panel + board $75.
+    - **Availability:** AliExpress and Wisecoco.
+    - **Ukraine availability:** prom.ua (MobiDance) lists LQ079L1SX01/SX02/SX04/SX06/SX09 panels at 1,571 UAH, 'ready to ship'. That is the panel only, no board.
+    - **Q6a compatibility:** Good for video. It is 1536 px wide, so planes are never split. CVT-RB 1536x2048@60 is 214.25 MHz, 5.14 Gbps (my calculation). The board's EDID decides the actual timing, and touch must be added separately.
+    - **Rf notes:** 214.25 MHz has no harmonic in any receive band up to 2.3 GHz (my calculation), if the board's EDID uses that timing.
+    - **Community reports:** None specific to Linux or Radxa found.
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-7.9-inch-2048x1536-hdmi-driver-board.html
+      - https://www.wisecocodisplay.com/product/7-9-inch-tft-lcd-display-1536x2048-portrait-type-lcd-panel/
+      - https://prom.ua/search?search_term=LQ079L1SX01
+  7.
+    - **Name:** JDI LT070ME05000 7.0in 1200x1920 (Nexus 7 2013 panel) with HDMI-to-MIPI controller
+    - **Size in:** 7
+    - **H res:** 1200
+    - **V res:** 1920
+    - **Brightness nits:** 450
+    - **Brightness evidence:** Distributor listing, seen only as a search snippet (aeri.com page returned 403): 450 cd/m2. Not measured. Sun contrast about 2.4:1 (my estimate).
+    - **Panel tech:** IPS LCD, MIPI DSI
+    - **Ppi:** 323
+    - **Host interface:** HDMI through an HDMI-to-MIPI board. A search snippet says Digitalview's MIP-1000 lists LT070ME05000 as supported, with a possible 30 Hz HDMI input limit (page returned 503, unverified).
+    - **Touch to host:** None (bare panel).
+    - **Price:** Bare panel $23.75 on AliExpress (5 sold). Board price unknown.
+    - **Availability:** Panel on AliExpress; matching board unverified.
+    - **Ukraine availability:** Not checked separately; AliExpress ships.
+    - **Q6a compatibility:** 1200 px wide, so planes are never split; 161 MHz (3.86 Gbps) is easy. Needs a board; no touch.
+    - **Rf notes:** CVT-RB 161 MHz has its 14th harmonic at 2254 MHz; 58.4 Hz (156.75 MHz) is clean (my calculation).
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.aeri.com/pn/JDI/lt070me05000
+      - https://digitalview.com/controllers/mip-1000-lcd-controller.html
+      - https://www.aliexpress.com/w/wholesale-LT070ME05000-hdmi.html
+  8.
+    - **Name:** Wisecoco 7in AMOLED 1920x1080 90-165 Hz, on-cell touch ('High Bright 900 Nits' HDMI kit for Raspberry Pi)
+    - **Size in:** 7
+    - **H res:** 1920
+    - **V res:** 1080
+    - **Brightness nits:** 850
+    - **Brightness evidence:** Listing figures only: Wisecoco page 'Brightness: 850 nits'; AliExpress title '900 Nits'. Neither says whether this is full-white or peak/HBM. On an OLED, full-white through a generic board is usually well below the peak. Sun contrast at most about 3.7:1 (my estimate).
+    - **Panel tech:** AMOLED, MIPI 4-lane, 10-bit, on-cell touch
+    - **Ppi:** 315
+    - **Host interface:** HDMI (AliExpress kit 'For Raspberry Pi'). The Wisecoco page lists the bare panel with 'driver board integration' as an option.
+    - **Touch to host:** The kit title says touch screen. Interface is unconfirmed; Wisecoco touch boards have shown up on the Pi forum as CH57x USB HID, but not for this model.
+    - **Optical bonding and coating:** On-cell touch, so no separate touch layer or air gap.
+    - **Operating temp:** -30 to 70 C (Wisecoco)
+    - **Price:** $150 panel (Wisecoco); $234 kit (AliExpress, 21 sold, 18 Oct 2026).
+    - **Availability:** AliExpress Wisecoco store and Wisecoco site.
+    - **Ukraine availability:** Via AliExpress; no local stock found.
+    - **Q6a compatibility:** 1080p60 is safe. Not above FHD.
+    - **Rf notes:** CEA 148.5 MHz hits 742.5 and 2227.5 MHz. Use 1080p@52 Hz (128.7 MHz) only if the board accepts it.
+    - **Community reports:** None. Burn-in risk with the static SDR++/SatDump UI, as with the Waveshare AMOLED.
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.wisecocodisplay.com/product/7-inch-1920-1080-165hz-850nits-oled-amoled-display/
+      - https://www.aliexpress.com/w/wholesale-wisecoco-7-inch-1920x1080-high-brightness-hdmi.html
+  9.
+    - **Name:** Wisecoco 8in foldable / flexible AMOLED 2480x1860 (foldable-phone-class panel) with driver board and integrated touch
+    - **Size in:** 8
+    - **H res:** 2480
+    - **V res:** 1860
+    - **Brightness nits:** 600
+    - **Brightness evidence:** Listing figure: '600 Cd/m2' on the $350 kit page. The bare MIPI versions list 450 and 473 nits, '473 nit Peak Brightness'. Not measured; OLED full-white will be lower. Sun contrast about 2.5-2.9:1 (my estimate).
+    - **Panel tech:** Flexible AMOLED, MIPI
+    - **Ppi:** 388
+    - **Host interface:** 'With Driver Board' and 'Compatible with Raspberry Pi PC', but the board's inputs are not stated (assume HDMI/Type-C).
+    - **Touch to host:** 'Multi-point touch, integrated'; interface not stated.
+    - **Dimensions weight:** Outline 165.68 x 137.91 (kit) / 165.89 x 126.12 mm (bare); active area 162.69 x 122.02 mm
+    - **Price:** $350 kit; $180-209 bare MIPI panel (Wisecoco).
+    - **Availability:** Wisecoco quote; no reviews.
+    - **Ukraine availability:** None found.
+    - **Q6a compatibility:** Poor. Landscape 2480 px is above the 2400 px DPU limit, so it needs virtual planes (msm.dpu_use_virtual_planes=1 on 6.18). CVT-RB 303 MHz / 7.27 Gbps landscape, or 309 MHz portrait (my calculation), is close to the practical ceiling. 4:3 aspect.
+    - **Rf notes:** 303-309 MHz: no harmonics in the receive bands (my calculation).
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.wisecocodisplay.com/product/8-inch-flexible-amoled-display-2480x1860-ips-oled-bendable-ultrathin-screen/
+      - https://www.wisecocodisplay.com/product/8-inch-foldable-oled-2480x1860-60hz-mipi-ultra-thin-flexible-amoled/
+      - https://www.wisecocodisplay.com/product/custom-8-inch-2k-qhd-oled-screen-2480x1860-ultra-thin-amoled-display/
+  10.
+    - **Name:** Wisecoco 6in flexible AMOLED 2880x1440 with Type-C/HDMI driver board
+    - **Size in:** 6
+    - **H res:** 2880
+    - **V res:** 1440
+    - **Brightness nits:** 600
+    - **Brightness evidence:** Listing figure: '600 cd/m2 (typical)' on Wisecoco's panel page, which is internally inconsistent (one table says 2560x1440). Not measured.
+    - **Panel tech:** Flexible AMOLED, MIPI-DSI 4-lane, landscape-native
+    - **Ppi:** 537
+    - **Host interface:** HDMI / Type-C board (AliExpress kit)
+    - **Touch to host:** Not stated.
+    - **Dimensions weight:** 150.06 x 71.28 mm outline
+    - **Operating temp:** -20 to 70 C
+    - **Price:** $226.79 AliExpress kit (16 sold); $239 bare panel (Wisecoco).
+    - **Availability:** AliExpress Wisecoco store.
+    - **Ukraine availability:** Via AliExpress only.
+    - **Q6a compatibility:** Poor. 2880 px wide needs DPU virtual planes; CVT-RB about 270 MHz (my calculation). The earlier audit's Pi forum thread shows this resolution booting in portrait. 18:9 at 6in is a cramped UI area.
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.wisecocodisplay.com/product/6-inch-2k-flexible-oled-display-2880-1440/
+      - https://www.aliexpress.com/w/wholesale-amoled-hdmi-touch-screen-6-inch.html
+  11.
+    - **Name:** Wisecoco 7.8in flexible AMOLED 1440x1920 with driver board
+    - **Size in:** 7.8
+    - **H res:** 1440
+    - **V res:** 1920
+    - **Brightness nits:** 300
+    - **Brightness evidence:** Listing: '300cd/m2 (Typ.)'.
+    - **Panel tech:** Flexible AMOLED, MIPI
+    - **Ppi:** 308
+    - **Host interface:** Listed as 'HDMI ; Micro usb' (Type-C board in the image alt text).
+    - **Touch to host:** Not stated.
+    - **Dimensions weight:** 166 x 129.5 mm outline
+    - **Price:** $343 (Wisecoco)
+    - **Availability:** Wisecoco quote.
+    - **Q6a compatibility:** Fine for video (1440 wide, about 190 MHz), but far too dim.
+    - **Rf notes:** CVT-RB 189.5 MHz hits 1705.5 and 2274 MHz (my calculation).
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.wisecocodisplay.com/product/7-8-inch-1920x1440-flexible-touch-display/
+  12.
+    - **Name:** Steam Deck OLED 7.4in 1280x800 HDR OLED
+    - **Size in:** 7.4
+    - **H res:** 1280
+    - **V res:** 800
+    - **Brightness nits:** 482
+    - **Brightness evidence:** Independent measurement (Notebookcheck): 481.9 nits average, 485 max in desktop mode; 580 nits center in Game Mode with auto-brightness off. Valve advertises 600 SDR. No full-field HDR figure published.
+    - **Panel tech:** OLED, 90 Hz, portrait-native 800x1280 (kernel quirk). Notebookcheck lists an ANX7530 bridge in the device.
+    - **Ppi:** 204
+    - **Host interface:** No third-party HDMI board found.
+    - **Touch to host:** None available.
+    - **Optical bonding and coating:** Optional anti-reflective etched glass. Notebookcheck says it 'can also be used in the sunshine'.
+    - **Price:** n/a
+    - **Availability:** No usable kit.
+    - **Q6a compatibility:** Not applicable; below FHD.
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.notebookcheck.net/Steam-Deck-1-TB-OLED-review-Minimalist-performance-maximum-gaming-fun.802764.0.html
+  13.
+    - **Name:** Samsung Galaxy Tab Active5 8in 1920x1200 rugged tablet panel
+    - **Size in:** 8
+    - **H res:** 1920
+    - **V res:** 1200
+    - **Brightness nits:** 600
+    - **Brightness evidence:** Manufacturer spec, 600 nits, repeated by retailers and reviews. No lab measurement found. Trusted Reviews says it is 'fully legible' in spring sunlight.
+    - **Panel tech:** TFT LCD
+    - **Ppi:** 283
+    - **Host interface:** No spare panel with an HDMI board found.
+    - **Touch to host:** None available.
+    - **Price:** n/a
+    - **Availability:** No reuse kit.
+    - **Q6a compatibility:** Not applicable.
+    - **Verdict vs current pick:** unverifiable
+    - **Sources:**
+      - https://www.trustedreviews.com/reviews/samsung-galaxy-tab-active-5
+      - https://mynexttablet.com/samsung-galaxy-tab-active5-review/
+  14.
+    - **Name:** Apple iPad mini panels: 6/7 (8.3in 2266x1488) and 2-5 (7.9in 2048x1536, LP079QX1)
+    - **Size in:** 8.3
+    - **H res:** 1488
+    - **V res:** 2266
+    - **Brightness nits:** 500
+    - **Brightness evidence:** Apple's published spec for the mini 6/7, from prior knowledge; not re-fetched this session.
+    - **Panel tech:** IPS LCD
+    - **Ppi:** 327
+    - **Host interface:** AliExpress searches on 18 Oct 2026 ('ipad mini 6 screen driver board hdmi', 'LP079QX1 hdmi', '7.9 inch 2048x1536 hdmi driver board') found no board for any iPad mini panel. Boards exist only for the 9.7in iPad 3/4/5/Air panels (LP097QX1/QX2), at $15.75-59.79, too large for this project. One 9.7in kit includes a digitizer ($55.69).
+    - **Touch to host:** None available.
+    - **Price:** n/a
+    - **Availability:** No mini-size kit.
+    - **Q6a compatibility:** Not applicable. A hypothetical 2266x1488@60 CVT-RB mode would be about 223 MHz (my calculation).
+    - **Verdict vs current pick:** unverifiable
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-ipad-mini-6-screen-driver-board-hdmi.html
+      - https://www.aliexpress.com/w/wholesale-LP079QX1-hdmi.html
+      - https://www.aliexpress.com/w/wholesale-ipad-mini-lcd-hdmi-driver-board.html
+- **Best above fhd:** No new consumer-reuse candidate is both above FHD and bright enough for direct sun.
+  - The brightest above-FHD consumer panel measured is the AYANEO KUN 8.4in 1600x2560 (Notebookcheck: 678 nits average, 706 max), but it is not sold as a spare and has no HDMI board.
+  - The only purchasable above-FHD reuse kit is the Sharp LQ079L1SX01 7.9in 1536x2048 HDMI-to-MIPI kit: $34-49 on AliExpress, 460 nits typical per the Wisecoco listing, no touch. Bare panels are on prom.ua at 1,571 UAH.
+  - Close behind is the Legion Go 8.8in 1600x2560 assembly with digitizer ($44-80), but it is only 413 nits measured and needs an unverified generic eDP board and wiring work for touch.
+  
+  All of these sit at about 2.3-3.1:1 in sun, against about 7.3:1 at 2000 nits (my estimate). The earlier audit's Midas 7.02in 1200x1920 2500-nit panel therefore stays the only above-FHD panel that is bright in sun.
+- **Best overall:** Keep the Wisecoco 7in 1920x1080 2000+ nit LTPS kit with HDMI board and capacitive touch.
+  - Every consumer handheld or tablet panel reachable through third-party boards measures 287-706 nits full-screen: Notebookcheck measurements for Legion Go, Legion Go S, Legion Tab, OneXPlayer 2 Pro, AYANEO KUN and Steam Deck OLED; listing figures for the Wisecoco and AliExpress AMOLED and Sharp kits.
+  - Phone and foldable AMOLED kits list only 300-900 nits, and those are peak or listing figures; high-brightness mode is not reachable through such boards.
+  - None of the reuse kits found has documented USB-HID touch.
+  - The best consumer AMOLED alternative, the Wisecoco 7in 1920x1080 AMOLED kit with touch ('850/900 nits', $150 panel / $234 kit), is still FHD, much dimmer than 2000 nits, and at risk of burn-in from the static SDR++/SatDump UI.
+- **Notes:** Method:
+  - 11 WebSearch calls.
+  - WebFetch on primary pages: Notebookcheck reviews, Wisecoco product and search pages, AliExpress search-result pages (readable; individual item pages render empty), prom.ua search, and the Linux drm_panel_orientation_quirks.c source.
+  
+  Key facts:
+  1. Consumer handheld and tablet panels top out at about 400-700 nits full-screen, measured in the original device. A third-party board can match that only if it drives the backlight fully.
+     - eDP handheld panels usually have an integrated LED driver, so 100% PWM gets the OEM maximum.
+     - MIPI tablet panels depend on the board's LED current, which is often below typical on cheap boards.
+     - Phone and foldable AMOLED boards cannot reach high-brightness mode, and full-white is far below peak.
+  2. Several handheld panels are portrait-native per the kernel quirk table: Legion Go 1600x2560, AYANEO KUN 1600x2560, GPD Win Mini 1080x1920, Steam Deck 800x1280. This suits the 2400 px DPU limit.
+  3. No 7-8in 2.5K portable monitor exists in searches. The only 7-8in portable monitors found are 1280x800 or 1920x1080 at about 300-500 nits (Elecrow SH080T 300 nits; Wisecoco 7in portable monitors, one titled 500 nits; Waveshare 8in 1280x800, optically bonded).
+  4. Legion Tab Gen 5 (3040x1904) needs 376-387 MHz (my calculation), which exceeds the Q6A's practical ceiling.
+  
+  Ukraine:
+  - prom.ua lists LQ079L1SX0x 7.9in panels at 1,571 UAH, ready to ship.
+  - No Legion Go or handheld screen assemblies were found on prom.ua; AliExpress remains the route.
+  
+  My own calculations (Python):
+  - Pixel clocks: CVT-RB v1 approximation.
+  - Sun contrast: 100 klx x 1% diffuse reflectance / pi, about 318 nits reflected.
+  
+  Unverified:
+  - Legion Go eDP connector and pinout vs the generic 40-pin boards.
+  - Digitalview MIP-1000 support for LT070ME05000 (from a search snippet; page returned 503).
+  - Apple's 500-nit iPad mini spec (from prior knowledge).
+- **Wisecoco 7in open questions resolved:** Not resolved.
+  - An AliExpress search on 18 Oct 2026 for Wisecoco 7in 1920x1080 high-brightness HDMI listings found no Wisecoco-branded listing titled 2000 or 2500 nits. The Wisecoco 7in titles found were 500-nit 120 Hz units, 1080p portable monitors with USB-C/Type-C, and the 900-nit AMOLED.
+  - One non-Wisecoco listing could be a second source for the same panel class: 'Sunlight Readable Display 7 Inch 1920x1080 2000 Nits High Brightness Wide Temperature LCD Display Outdoor Automotive Display', $156.03, 14 sold (https://www.aliexpress.us/item/3256805747391997.html). Its title mentions neither HDMI nor touch, and the item page could not be read.
+  - No listing title mentions USB-HID touch, 12 V input or optical bonding.
+  - So the open points from the audit remain: touch interface (USB HID vs I2C), board input voltage and current, EDID and orientation, and lamination. Get them in writing from the seller.
+
