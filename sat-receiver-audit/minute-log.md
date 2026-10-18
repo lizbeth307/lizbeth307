@@ -66,3 +66,8 @@
 - Радіолабораторія (ПЗ): агент перевіряє клієнт SatNOGS (Docker compose на arm64), безголовий автотрекінг SatDump (розклад прольотів з командного рядка) і GNSS-SDR (PVT-монітор по UDP/protobuf з дрейфом годинника приймача). Джерела: wiki.satnogs.org, docs.satdump.org, gnss-sdr.org.
 - КХ і меню: агент з'ясовує версію/архітектури одного з КХ-застосунків (поточна 3.15; ARM64 не вказано).
 
+## 2026-10-18 02:13 UTC
+
+- Навчання NPU: завершено 2 з 5 sweep-агентів, стартували наступні.
+- Радіолабораторія (ПЗ): у SDR++ модулі джерел вмикаються опціями збирання (airspy_source, airspyhf_source, audio_source, …, усі ON за замовчуванням) — для Lime треба OPT_BUILD_SOAPY_SOURCE=ON (як і зазначено в аудиті ПЗ). Джерело: github.com/AlexandreRouma/SDRPlusPlus (README).
+
