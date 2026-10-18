@@ -900,3 +900,8 @@ P4 ЗАВЕРШЕНО: група D (живлення, GNSS/IMU, дисплей/
 Джерела: Molicel DS V1.1; IP2368 DS V1.41; TI TPS7A47 SBVS204G, INA228 SLYS021A, TPS2553 SLVS841F, TPS709 SBVS186H, TPS25947 SLVSFC9C; pololu.com (#4095, #3782, #2813, форум t/29129); Quectel LC76G spec v1.4; Radxa Q6A schematic v1.21; radxa-pkg/linux-qcom releases; arduino-pico 6.3.0; wisecoco listing; tinysa.org; passion-radio.com; minicircuits.com; github.com/NanoVNA-Saver/nanovna-saver; pine64.org; molicel.com.
 P5: запущено G2 (дисплей/HMI/накопичувачі, wf_071e1025-145) і G3 (живлення/GNSS/IMU, wf_a268b76e-da0); G1 триває.
 
+## 2026-10-18 10:47 UTC
+
+Проміжне, P5 G1 (аналог плат HMC7992 SP4T, $30–40 з маркетплейсу): кандидат — мікросхема Mini-Circuits HSWA4-63DR+ (SP4T) за 8,91 € без ПДВ за 1 шт. (5,45 € від 20 шт.), статус Active, але 0 на складі, термін виготовлення 14 тижнів; потребує власної плати, тож рішення — після верифікатора (ізоляція ≥30 dB, стан при вмиканні). Також шукаються б/у ZSWA4-63DR і EV1HMC7992LP3D. G3 перевіряє дешевші модулі BNO086/BNO085 (SparkFun SEN-22857 у шведському магазині 549 SEK з ПДВ, немає в наявності) і корпуси Hammond 1590A/1550WA для IMU.
+Джерела: сторінка дистриб'ютора HSWA4-63DR+ (журнал wf_e32114dd-52d); сторінка магазину SparkFun BNO086 (журнал wf_a268b76e-da0).
+
