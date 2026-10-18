@@ -12356,6 +12356,161 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
 - **Outside this task:** the errata blocks in summaries.md and minute-log.md are not written.
 - **Still open:** the questions for you (region, HF loop removal, small rigid antennas, whether to keep the Lime by 1 Dec 2026, a home PC, the US Coast Guard-run weather fax stations) and all the bench measurements are listed in section 8.
 
+## stack:check1 (run `wf_63d37cf4-10a`)
+
+- **Lens:** RULES: hard rules and user_requirements.md (receive-only, conducted-only sources, no private content, no military targets, no loops or H-field probes, no dishes, antenna piece size, no city tables or Kyiv angles, USD world prices, Q6A stays, no Set B, no voice IQ, no TX-capable software, Wi-Fi/BT off in field, Artemis stop rule, gender-neutral wording), checked line by line against /home/user/lizbeth307/sat-receiver-audit/STACK.md (1257 lines).
+- **Problems:**
+  1.
+    - **Where:** STACK.md lines 108 and 752 (Gpredict 2.3, Hamlib 4.5.5 installed from apt); ban list at line 750
+    - **Problem:** Hamlib's rigctl/rigctld and Gpredict's radio controller are installed with no restriction. Both can key and tune an attached transceiver: Hamlib has set_ptt ('T 1'), and Gpredict has uplink/duplex TRX modes. WSJT-X GUI and fldigi are banned for the same reason (they can transmit through an external rig), so this is TX-capable software left on the device.
+    - **Severity:** rule_violation
+    - **Fix:** Ship only the libhamlib library that Gpredict needs. Divert or remove the rigctl/rigctld binaries, or patch them to refuse set_ptt. Build or configure Gpredict with the rotator and RX-Doppler controller only (no uplink/duplex/TRX radio types). Add these to the CI and self-test forbidden list next to wsjtx and fldigi.
+    - **Evidence:** Line 108: 'Gpredict 2.3 (з мостом 5-значних псевдонімів), Hamlib 4.5.5'. Line 750 forbids 'wsjtx GUI, fldigi, QSSTV, direwolf, SoapyRemote...' but names neither Hamlib PTT nor Gpredict TX modes. user_requirements line 44: 'No TX-capable software on the device'.
+  2.
+    - **Where:** STACK.md lines 37 (C1 'Відкинуто ... паралельний Pluto (може передавати, дублює Lime)'), 143 and 975 ('ADALM-PLUTO — Може передавати і дублює Lime'), compared with 95, 133, 292 and 884
+    - **Problem:** The Pluto is rejected because it 'can transmit', but the optional LimeSDR Micro is just as TX-capable (1T2R hardware, LimeSuiteNG/limeTRX TX APIs). The Lime's TX is blocked only by an ExecStartPre lint of flags and sink blocks plus a 50-ohm load on the TX port. The rejection reason contradicts the kept option, and the software side still installs TX-capable drivers, against rule line 44.
+    - **Severity:** contradiction
+    - **Fix:** Say explicitly that the Lime is TX-capable hardware. Give the Pluto rejection only the 'duplicates the Lime' reason, or apply the same reason to both. Make the Lime TX block structural rather than lint-only: patch the la9310/LimeSuiteNG Soapy module so setupStream(SOAPY_SDR_TX) and the TX path return an error, as was done for the librtlsdr bias token. Keep the TX port terminated and add a self-test that the TX stream cannot be opened.
+    - **Evidence:** Line 95: 'ExecStartPre відкидає sink-блоки soapy/osmosdr/limesuiteng, SOAPY_SDR_TX і прапорці TX limeTRX ... TX-порт Lime закрито навантаженням 50 Ohm'. The register (report_research.json) itself says of the Pluto: 'Like the Lime, it reintroduces a transmit-capable device'.
+  3.
+    - **Where:** STACK.md line 746 (Instruments hub: 'Signal generator — лише кондуктивно'); lines 392, 402 and 900
+    - **Problem:** The signal-generator leaf is not gated by Bench mode. Only the S11/S21 page is. The lab_ui_hf final had 'Only inside Bench mode, after a 1.5 s hold on antenna disconnected', and STACK dropped that gate. The tinySA travels in the field pouch and is used on antennas on site ('огляд tinySA', overload survey). The tinySA Ultra's generator output uses the same RF connector as its analyzer input, so one mode change radiates into the antenna. It also runs standalone 'на власній батареї', which no labd interlock can stop.
+    - **Severity:** missing
+    - **Fix:** Restore 'Signal generator — тільки в режимі Bench, утримання 1.5 с «антену від'єднано»'. In the labd tinySA driver, refuse any generator/output-on command outside Bench, and send output-off on every field/QUIET profile change. Add a field-kit rule: the tinySA's own generator menu is never used while an antenna is connected (a checklist item, plus a label on the unit).
+    - **Evidence:** Line 746: 'Instruments (Bench mode, «Conducted S11/S21 (DUT/load only)» — лише в Bench, tinySA, Signal generator — лише кондуктивно, ...'. Line 900: 'польовий чохол: tinySA, FNB58, ...'. Line 402: 'Огляд перевантаження на місці ... tinySA ...'. lab_ui_hf.json: 'Signal generator (conducted only) ... Only inside Bench mode, after a 1.5 s hold'.
+  4.
+    - **Where:** STACK.md line 744 (Режим 2, ексклюзивна оренда рушія: '... Expert-GUI SDR++/SDRangel — рушій відкриває пристрій сам, ai_tap=false, REC лише продукти'); lines 736 and 821
+    - **Problem:** The voice-IQ ban and the 3-30 kHz / 225-400 MHz storage mask are enforced only inside labrx ('Маска спурів і маска діапазонів до запису; IQ голосу не зберігає'). In an exclusive lease, SDR++ and SDRangel open the SDR themselves, and both have their own baseband/IQ and audio recorders (the SDR++ recorder module, SDRangel device 'record' and FileSink). Those bypass both masks. 'REC лише продукти' covers only the Shell REC key, not the engines' own recorders.
+    - **Severity:** missing
+    - **Fix:** Build SDR++ without the recorder module (or with baseband mode disabled) and SDRangel without FileSink or device-level IQ recording. Run every Expert-GUI and engine lease with ReadOnlyPaths=/data (or InaccessiblePaths) except for a products directory written by labd. Add these to the build audit.
+    - **Evidence:** Rule lines 41 and 43: 'no IQ of voice boxes is kept at all ... raw IQ retention excludes voice bins before writing'; band bins are 'masked to no data before storage'. STACK puts the masks only in labrx (lines 736, 821).
+  5.
+    - **Where:** STACK.md line 750 (forbidden list names only the 'Heat Map' SDRangel plugin); line 142 (Lime: 'Два RX ділять один LO')
+    - **Problem:** With the Lime kept, there are two coherent RX channels. SDRangel's MIMO channel plugins (doa2 direction-of-arrival, interferometer) then give AoA/DF, which rule line 40 bans. They are not on the forbidden list. The TX MIMO plugin beamsteeringcwmod is caught only if the 'TX .so' audit matches it.
+    - **Severity:** missing
+    - **Fix:** Add the SDRangel channelmimo plugins (doa2, interferometer, beamsteeringcwmod) and featuresimpleptt and featurelimerfe to the forbidden-plugin audit next to Heat Map, both at build time and in the runtime plugin-load check (line 95 already asks to extend it to runtime-loaded plugins).
+    - **Evidence:** Line 750: 'плагіни SDRangel Inmarsat C і Heat Map'. Rule line 40: 'no DF/AoA/emitter tracks'.
+  6.
+    - **Where:** STACK.md line 746 ('Map & Point (з режимом «пік на сигналі»)')
+    - **Problem:** The 'peak on signal' mode is added with no target restriction. The menu otherwise inherits lab_ui_hf, whose Live map has a 'survey heat map' layer that is not explicitly purged here. Peaking a directional antenna on an arbitrary terrestrial signal and showing it on a map amounts to DF and emitter geolocation.
+    - **Severity:** missing
+    - **Fix:** Restrict 'пік на сигналі' to satellite/GEO beacons, the Sun and published beacons (the completeness resolution: 'beacon C/N0 ... for GEO and LEO'). No bearing line or emitter marker on the map, nothing stored. State that the Live map layers are only own position, aircraft, ships, sondes, satellite ground tracks and APRS, with the survey heat map layer removed.
+    - **Evidence:** lab_ui_hf.json Live map: 'layers: own position, aircraft, ships, sondes, satellite ground tracks, survey heat map, APRS'. Rule line 40: 'no GNSS-tagged per-emitter heat maps ... no DF/AoA'.
+  7.
+    - **Where:** STACK.md lines 87 ('NCS шукати на ефірі скануванням 1537-1545 MHz'), 483 and 746 ('скан NCS 1537-1545 MHz')
+    - **Problem:** The scan band holds LES TDM carriers as well as the NCS. To tell an NCS from an LES carrier you have to demodulate it and read frame headers, so the scan would tune and demodulate LES channels. Rule line 37 says 'LES/ship message channels are not tuned at all'.
+    - **Severity:** missing
+    - **Fix:** Make the scan power-only (carrier list with no demodulation). Demodulate only carriers on the published Inmarsat NCS common-channel frequency list for the visible ocean region. If the egc-gate does not confirm the NCS bulletin-board header within N frames, abort with no frame assembly. Add a test that no non-NCS carrier is ever demodulated.
+    - **Evidence:** Rule line 37: 'LES/ship message channels are not tuned at all'. Line 1057: 'NCS шукати на ефірі'.
+  8.
+    - **Where:** STACK.md line 766 (Phase 1 classes 'lte_dl і gsm_dl (лише зайнятість)'; 'wifi і bt_ble — лише з Lime') compared with lines 93, 86 and 529
+    - **Problem:** Line 93 excludes 'приватні служби' NPU classes. Iridium/Orbcomm get 'безіменна зайнятість ... без названої цілі ... і класу NPU' (line 86) and DMR/P25 'лише безіменна зайнятість' (line 529). Yet cellular, Wi-Fi and Bluetooth, which are private services, get named classes. The class policy is inconsistent.
+    - **Severity:** contradiction
+    - **Fix:** Either replace these with service-neutral modulation-family occupancy labels (e.g. ofdm_wideband, gmsk_carrier) that carry no service name, or state one rule for all private services: named occupancy-only classes allowed, no content. Then apply it the same way to Iridium, Orbcomm, DMR and P25.
+    - **Evidence:** Line 93: 'Виключені класи: ... військові, відбитки передавачів, приватні служби'. Line 86: 'Iridium і Orbcomm ... лише як безіменна зайнятість (без названої цілі, продукту Доплера і класу NPU)'.
+  9.
+    - **Where:** STACK.md line 767 ('маска 3-30 kHz і 225-400 MHz для боксів unknown_energy') compared with line 886 ('бокси NPU ...'); line 88 (HF+ window centred near 290 kHz)
+    - **Problem:** Line 767 applies the military-band mask only to unknown_energy boxes. Named-class boxes (e.g. cs_gmsk_fsk on the 16-25 kHz naval MSK carriers inside the 290 kHz HF-F window, or any class inside 240-320 / 360-380 MHz) would be labelled and stored. Line 886 masks all NPU boxes. The two statements conflict.
+    - **Severity:** contradiction
+    - **Fix:** Make line 767 match line 886: every NPU box, of any class, plus MARK/SNAP, occupancy and export bins inside 3-30 kHz and 225-400 MHz is dropped or masked before storage. Add a unit test with a named-class synthetic signal at 20 kHz and 300 MHz.
+    - **Evidence:** Line 886: 'Біни 3-30 kHz і 225-400 MHz маскуються в «no data» до запису (огляди, БД зайнятості, бокси NPU, MARK/SNAP, експорт)'. Line 88: 'Одне вікно HF+ з центром близько 290 kHz'.
+  10.
+    - **Where:** STACK.md line 960 (allowed list: 'Дозволено: V і телескопічні диполі, Moxon, Yagi ...')
+    - **Problem:** The operational loop definition counts the halo (a bent dipole with a gap) as a loop, but the Moxon rectangle (bent elements forming a near-closed rectangle) is allowed. The definition is inconsistent, and the Moxon is not used anywhere in the BOM.
+    - **Severity:** contradiction
+    - **Fix:** Drop 'Moxon' from the allowed list, or classify it with halo/quad/delta as excluded, and add it to the CI grep pattern.
+    - **Evidence:** Line 960: 'QFH ..., eggbeater, quad, delta, biquad, halo, big wheel ... Дозволено: ... Moxon'.
+  11.
+    - **Where:** STACK.md lines 53 ('Попросити вас підтвердити видалення КХ-рамки'), 89 ('запис цієї вимоги в історії не знайдено'), 958 and 1098 ('у записах немає вашого повідомлення про це; останнє повідомлення про КХ просило додати активну рамку')
+    - **Problem:** The governing user_requirements.md line 11 says the HF active loop and everything for it 'were removed by the user'. STACK says no record of this exists and that the user's last HF message asked to add a loop. That contradicts the governing file and suggests the loop ban could be reversed. The integration verifier asked for a phase-end question, but not for this claim.
+    - **Severity:** contradiction
+    - **Fix:** Keep the phase-end item but reword it: 'The loop ban is binding (user_requirements line 11). If you ever want an HF loop back, say so explicitly; physics favours a loop near a noisy device.' Delete 'запис цієї вимоги в історії не знайдено' and 'останнє повідомлення ... просило додати активну рамку'.
+    - **Evidence:** user_requirements.md line 11: 'NO loop antennas of any kind: the HF active loop and everything for it ... were removed by the user.'
+  12.
+    - **Where:** STACK.md line 746 ('System (Radios off/on блокує wlan і bluetooth)') and line 874 (LF Quiet: 'Wi-Fi деавторизовано' only), compared with line 92
+    - **Problem:** Line 92 says Bluetooth is permanently off (service masked, driver blacklisted) and Wi-Fi unblocks only at home by a hold. The menu leaf 'Radios off/on' implies both radios can be switched on from the menu in any mode, and the LF Quiet profile names Wi-Fi only. Field and QUIET mode must rfkill both radios.
+    - **Severity:** contradiction
+    - **Fix:** Rename the leaf to 'Wi-Fi (лише вдома, утримання 1.5 с; автоматичне блокування в будь-якому польовому/QUIET профілі); Bluetooth вимкнено назавжди'. In line 874 write 'Wi-Fi і BT: rfkill + authorized=0'.
+    - **Evidence:** Line 92: 'Bluetooth вимкнено назавжди ...; Wi-Fi розблоковується лише вдома утриманням'. Rule line 32: 'Field/QUIET mode: rfkill block wlan AND bluetooth'.
+  13.
+    - **Where:** STACK.md lines 158 and 369 ('Масив 2x2 ... для Metop/AWS — лише експеримент'), line 1089 ('До купівлі масиву 2x2 чи Airspy Mini')
+    - **Problem:** The 2x2 helix array keeps a purchase gate but has no size rule. The foldable study models it on a 56 cm ground plane with 5-11-turn helices (11 turns x 43 mm is about 47 cm), which breaks the 20-23 cm (max about 35 cm) piece rule unless it folds.
+    - **Severity:** missing
+    - **Fix:** Either drop the array, or require a folding build: ground plane in petals or segments of 23 cm or less, helices of 23 cm or less (5 turns x 43 mm = 21.5 cm), and every piece within the rule. State this next to the experiment.
+    - **Evidence:** foldable_antennas.json: '2x2 arrays ...: 11-turn 18.75, 7-turn 17.8, 5-turn 16.8 dBic on a 56 cm ground'. Rule line 10: 'prefer every piece <= 20-23 cm, at most about 35 cm'.
+  14.
+    - **Where:** STACK.md lines 470-471 and 699 (CubeSat 435-438 MHz passes recorded raw, then decoded), line 469 (ISS FM repeater 437.800), lines 475 and 821
+    - **Problem:** Raw pass IQ at 2.4-2.56 Msps around 437 MHz contains known FM voice channels (ISS repeater 437.800 MHz, SO-50 436.795 MHz). Voice exclusion rests on NPU nfm_voice detection ('смуги голосу ... ніколи не пишуться'), which the stack itself rates unmeasured ('на межі'). A missed detection keeps voice IQ.
+    - **Severity:** missing
+    - **Fix:** Before any raw write, add a static voice mask for published FM voice downlinks inside the recorded span (437.800 ± 8 kHz, 436.795 ± 8 kHz, and any active 145.800 voice), independent of the NPU. Add a test on a pass recording that contains repeater voice.
+    - **Evidence:** Rule line 43: 'raw IQ retention excludes voice bins before writing'. Line 744: 'проходи записуються, потім SatDump декодує з базового файлу'.
+  15.
+    - **Where:** STACK.md lines 94, 127, 748 and 750 (OpenWebRX+ kept; multimon-ng 'лише EAS і лише в профілі US'; pager decoders forbidden)
+    - **Problem:** STACK says OpenWebRX+ 'містить заборонені декодери' but blocks them only by pinning digiham and codecserver to -1. OpenWebRX+ can drive multimon-ng for pager (POCSAG/FLEX) and selcall modes. Once multimon-ng is installed for EAS in the US profile, those pager modes become available, against 'декодери пейджерів' being forbidden.
+    - **Severity:** missing
+    - **Fix:** Disable the pager, selcall and digital-voice modes in the pinned OpenWebRX+ config (feature flags / mode list) and test that they are absent. Install multimon-ng only behind a wrapper that permits '-a EAS' alone. Add both to the policy audit.
+    - **Evidence:** Line 127: 'OpenWebRX+ містить заборонені декодери'. Line 748: 'multimon-ng — лише EAS і лише в профілі US'. Line 750: 'декодери пейджерів і транкінгу' forbidden.
+  16.
+    - **Where:** STACK.md line 391 (LiteVNA capability 'S11/S21 ..., TDR/DTF, Touchstone')
+    - **Problem:** DTF (distance to fault) is normally measured with the antenna on the end of the feedline, which radiates. The capability row lists TDR/DTF with no condition. Only line 944 says 'кабелі — TDR з від'єднаною антеною'.
+    - **Severity:** missing
+    - **Fix:** Write 'TDR/DTF лише на кабелі з від'єднаною антеною (кінець навантажено або відкрито), у режимі Bench'.
+    - **Evidence:** Rule line 45: 'no antenna sweeps on air, no exception'. Line 944: 'кабелі — TDR з від'єднаною антеною'.
+  17.
+    - **Where:** STACK.md lines 136 (Midas 'EUR 324.37'), 144 and 302 (cavity 'EUR 65.45'), 193 ('GBP 41.99'), 267 ('від GBP 28.80'), 339 ('Lab401 EUR 192'), 340 ('Mirfield GBP 189.95'), 350 ('iFixit EU EUR 29.95'), 1122/1124/1128 (purchase plan in GBP/EUR only)
+    - **Problem:** Line 7 says all prices are in USD, but several lines give a price only in EUR or GBP, with no USD figure. Others mix VAT-inclusive EU prices into a 'без ПДВ' basis.
+    - **Severity:** style
+    - **Fix:** Convert each one with the stated rates (1 EUR = 1.1241 USD, 1 GBP = 1.3318 USD) and put the USD figure first, with the local-currency figure in brackets, e.g. 'cavity $73.57 (EUR 65.45)'. Mark VAT-inclusive figures as such.
+    - **Evidence:** Line 7: 'Усі ціни — у USD, без доставки, імпортного ПДВ і мита'. Rule: world prices in USD.
+  18.
+    - **Where:** STACK.md line 939 ('з голим LNB, чашкою 18 dBi, 3 і 6 сегментами')
+    - **Problem:** 'Чашка' (cup) can be read as a small dish. Elsewhere the same part is the cone feed horn ('конус 11 x 8.3 см (близько 18.8 dBi)', line 153).
+    - **Severity:** style
+    - **Fix:** Replace 'чашкою 18 dBi' with 'конусом 11 x 8.3 см (близько 18.8 dBi)'.
+    - **Evidence:** Rule line 9: 'No dishes of any size'. Line 153 uses 'конус'.
+  19.
+    - **Where:** STACK.md line 3 ('штир 70 см' in the always-carry list) and line 206 (row title 'Штир 70 см')
+    - **Problem:** '70 см' names the band but reads as the whip's length, which would break the 35 cm maximum. The real part is 16.8-19 cm.
+    - **Severity:** style
+    - **Fix:** Write 'штир діапазону 70 см (17-19 см)' in both places.
+    - **Evidence:** Line 206: 'DIY 17 см, або Diamond SRH-701 (19 см) / Baofeng A-V85 (16.8 см)'.
+  20.
+    - **Where:** STACK.md line 521 ('ДХ 3-30 kHz (SID на 16-25 kHz, «VLF time signals»)')
+    - **Problem:** 3-30 kHz is VLF (ДНЧ), not ДХ (LF). The excluded naval band carries the same 'ДХ' label as the allowed 'цивільні ДХ-несучі' SID, which invites confusion in the menu, policy text and CI keyword checks.
+    - **Severity:** style
+    - **Fix:** Rename it 'ДНЧ (VLF) 3-30 kHz — військово-морські передавачі'.
+    - **Evidence:** Line 512: 'SID ... цивільні ДХ-несучі' (allowed). Rule line 36.
+- **Notes:** I found 20 problems. Two are rule violations as written: Hamlib/Gpredict left on the device as TX-control software, and the Lime/Pluto contradiction, where the Lime is just as TX-capable as the rejected Pluto. The biggest enforcement gaps are:
+  - the tinySA signal generator is not limited to Bench mode;
+  - the SDR++ and SDRangel recorders bypass the voice and military-band masks;
+  - SDRangel's direction-finding (doa2/interferometer) plugins would become usable if the Lime is kept;
+  - the Inmarsat-C NCS scan would demodulate LES carriers.
+  
+  Clean on this lens:
+  - No Kyiv, Ukraine, UAH or martial-law text.
+  - No city tables (only admin-0 polygons for jurisdiction, last fix, manual lat/lon or Maidenhead).
+  - No dishes in the BOM.
+  - No loop antennas or H-field probes, apart from the Moxon inconsistency.
+  - No antenna S11 steps: the S11 page is Bench-only and acceptance checks are receive-only.
+  - Set B is removed. The QAIRT question at line 1103 is a legitimate phase-end ask.
+  - VLF SID is dropped and SID runs only on civil LF carriers, amplitude only.
+  - The Artemis stop rule is present (lines 92, 408, 532).
+  - URH is rejected. wsjtx GUI, fldigi, QSSTV, direwolf and SoapyRemote are banned.
+  - The bias token and EEPROM bias-off are present.
+  - The Q6A stays.
+  - Battery: never flown, 0-45 °C NTC window, supervised charging, about 50 % storage SoC (line 948).
+  
+  Gendered wording: none refers to the user. The text addresses the user as 'ви', and line 715 uses 'Одна людина'. Line 1257 uses generic masculine forms ('тому, хто приймає', 'радіоаматорам'), which is normal Ukrainian legal register; you could reword it, but it is not required.
+  
+  Small rigid antennas (17-19 cm whips, the 4-turn helix, the bare LNB and cone) are under 23 cm and are already put to the user, as C15 and the completeness check require, so I did not count them as violations.
+  
+  Assumptions I did not re-check against datasheets:
+  - The tinySA Ultra's generator output shares the analyzer's RF connector.
+  - OpenWebRX+ can use multimon-ng for pager and selcall modes.
+  - SDRangel ships doa2, interferometer and beamsteeringcwmod MIMO plugins.
+  
+  Confirm these on the actual packages before writing the fixes. The file was not edited.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
