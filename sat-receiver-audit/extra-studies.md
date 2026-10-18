@@ -14995,6 +14995,116 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
       - https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf
 - **Notes:** VERDICT (angle B): no generic, clone or used IMU board is proven equal by independent measurements. Keep the genuine Adafruit 4754 BNO085 ($29.50) and the Waveshare RP2040-Zero ($3.99; STACK's $4.99 is high). The real saving is on the pack hardware, which STACK only estimated at $30-55. A priced, spec-compliant set costs about $10-13 plus shipping and $2-4 of unpriced items: Hammond 1550Z101 IP66 die-cast aluminium box, Olimex GX12-4 set, LAPP LiYCY 4x0.25 braid-shielded lead (2 m), TI TPD4E05U06 TVS, and a gland, 5 V-line TVS and brass screws still to price. That brings the line to about $45-50 against $64.49-89.49 without trading a spec. Open checks on that set: no GX12 IP rating (cap it and spray-test, or use an IP67 M8 per the re-audit); PVC LiYCY cold-flex (use PUR for winter); Hammond screws and a nickel-plated gland should be non-magnetic or placed away from the BNO085. The only cheaper genuine-chip route is the DIY BNO085 board (DigiKey chip $12.29, Active, 0 stock, restock 26 Oct 2026; Adafruit CC BY-SA EAGLE files). It is conditional on PCBA or stencil reflow plus acceptance tests (SH-2 ID, calibration status 3, 30 min Game RV drift at or below 0.5 deg/min, gravity against a level, 1e6-frame UART test), saves about $10-15, and is not recommended over the 4754 unless the stack's own PCB run is already happening. The SlimeVR BNO085 module (EUR 12) is I2C-only (no SPI), its crystal is unverified and it is sold out, so it is worse in interface. LSM6DSV and ICM-45686 modules match the BNO085's yaw drift only in SlimeVR 6-DOF community tests, with no measured absolute heading, gravity or mag-calibration data; reject them as replacements. Conflict: SlimeVR docs call the BNO085 'discontinued', but DigiKey shows it Active with restocks scheduled and Adafruit and DigiKey hold thousands of 4754 boards. Flag for STACK: the 'budget alternative SparkFun BNO086 $34.95' costs more than the 4754's $29.50, so it is not a budget option (price not re-checked here). EU buying: the 4754 via DigiKey EU or an EU reseller avoids import VAT on Adafruit US orders (Opencircuit NL EUR 42.50 incl. VAT is dearer). Searches used: 9 WebSearch calls. The SlimeVR shop returned HTTP 429, so its figures come from search snippets and are unverified.
 
+## searchA:waveshare_lc76g_24370_rtc_cr2032_cell (run `wf_a268b76e-da0`)
+
+- **Part:** GNSS + RTC: Waveshare LC76G GNSS Module (SKU 24370, Quectel LC76G(AB) on AG3352) + CR2032 RTC cell for the Q6A (core tier, group GNSS, qty 1)
+- **Current price usd:** 15.94 = 14.99 + 0.95. 14.99 is the Waveshare 24370 qty-1 price, without VAT or shipping (re-checked 18 Oct 2026; higher quantities get $14.19/$13.79/$13.63; EUR view EUR 13.40 = $15.06). Waveshare quotes shipping by hand, and EU import VAT, duties and carrier fees are the buyer's ("Duties & Taxes": customer's responsibility). 0.95 is ALLNET China "RTC Battery for RADXA SBC", read from the shop JSON on 18 Oct 2026: available, "works as well with Radxa X4", so it is pre-wired for the Radxa 2-pin 1.25 mm RTC header. FX (open.er-api, 18 Oct 2026): 1 EUR = 1.1241 USD, 1 GBP = 1.3318, 1 PLN = 0.2574, 1 SEK = 0.1009.
+- **Critical specs:**
+  - Constellations and bands: GPS L1 C/A, GLONASS L1, Galileo E1, BDS B1I+B1C, QZSS; 4 GNSS + QZSS at the same time; 47 tracking channels (Quectel LC76G spec V1.1). Galileo matters in Europe.
+  - SBAS with EGNOS (region Europe; gpsd shows it as PRN 120-158)
+  - Sensitivity: tracking -166 dBm, acquisition -147 dBm, reacquisition -159 dBm. TTFF without assistance 28/25/1 s (cold/warm/hot)
+  - Horizontal accuracy 1.5 m CEP autonomous; up to 10 Hz (1 Hz used)
+  - 1PPS on the header, 30 ns RMS, gated to a 3D fix (PQTMCFGPPS / PAIR752), with no free-running pulses. It feeds chrony through pps-gpio on Q6A pin 7
+  - Interference awareness the location gate uses: jamming detection (PAIRSPF, PQTMJAMMINGSTATUS, JAM_IND) plus the on-chip multi-tone interference canceller
+  - Settings saved in non-volatile memory (PQTMSAVEPAR). This is load-bearing because Q6A UART6 TX is unproven, and it is why the MAX-M10S, with no flash, was rejected
+  - Host interface: 3.3 V UART, 115200 default, 9600-921600; NMEA 0183 4.10 that gpsd 3.25 parses as generic NMEA, no USB; RESET pin; 8-pin MX1.25 header (VCC, GND, TX, RX, 1PPS, RESET, SDA, SCL)
+  - Power: board fed 5 V into its onboard RT9193-33 LDO; about 36 mA tracking; 13 uA backup
+  - External active antenna: IPEX socket with bias of at least 3.0 V at up to 20 mA for the Waveshare 25346 (28 dB, 3.0-18 V)
+  - Hot-start backup: rechargeable MS621FE, 5.5 mAh, about 17.6 days hold (model)
+  - Module rated -40 to +85 C; CE (Europe); genuine Quectel through an official channel; ships to the EU (the Quectel embargo covers only Iran and Russia)
+  - RTC cell: CR2032 Li-MnO2 primary, 3 V, no charging (Radxa states none). Needs a pre-wired 2-pin 1.25 mm (MX1.25 / Molex 51021-compatible) plug whose polarity matches Q6A J11, about 210-220 mAh, from a legitimate source
+- **Candidates:**
+  1.
+    - **Name:** Same SKU (Waveshare 24370 LC76G) from Botland, an EU retailer: botland.de or botland.com.pl
+    - **Kind:** current_part
+    - **Price usd:** botland.de: EUR 15.08 incl. 19% DE VAT = $16.95; EUR 12.67 net = $14.24. botland.com.pl: PLN 65.90 incl. 23% VAT = $16.96; PLN 53.58 net = $13.79. Shipping cost not verified.
+    - **Spec comparison:** Identical part (same Waveshare SKU 24370, index WSR-23562, EAN 5904422385798; listing shows AG3352, GPS/GLONASS/Galileo/BDS/QZSS, the 8-pin cable, and an active ceramic antenna attached). Every spec equals the current pick.
+    - **Worse in:** No spec is worse. On price, the net price is $0.75 (DE) to $1.20 (PL) below Waveshare's ex-VAT $14.99. For an EU consumer it is the lowest landed price found: Waveshare direct adds shipping plus import VAT and a carrier fee, which would put it at roughly $18 or more (estimate). The only gain is price; quality and supply chain are the same.
+    - **Compatibility:** Drop-in: same board, same wiring (5 V VCC, UART6, PPS to pin 7, IPEX antenna).
+    - **Risks:** botland.store (English site) is B2B only and needs a VAT ID, so a private buyer should use botland.de or botland.com.pl. The structured data says InStock, but the page template also shows 'next delivery' text, so confirm stock at checkout. Shipping cost to other EU countries not checked. Botland's status as an authorised Waveshare distributor is not verified; it is a large, long-established retailer with its own warehouse, so counterfeit risk is low.
+    - **Seller url:** https://botland.de/gps-module/23562-multi-gnss-ortungsmodul-lc76g-gps-beidou-bds-glonass-galileo-qzss-waveshare-24370-5904422385798.html
+    - **Sources:**
+      - https://botland.de/gps-module/23562-multi-gnss-ortungsmodul-lc76g-gps-beidou-bds-glonass-galileo-qzss-waveshare-24370-5904422385798.html
+      - https://botland.com.pl/moduly-gps/23562-modul-pozycjonowania-multi-gnss-lc76g-gps-beidou-bds-glonass-galileo-qzss-waveshare-24370-5904422385798.html
+      - https://www.waveshare.com/lc76g-gnss-module.htm
+      - https://www.waveshare.com/shipping
+  2.
+    - **Name:** Waveshare L76K Multi-GNSS Module (SKU 23721, AT6558R)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 12.99 qty 1 (Waveshare; higher quantities $12.39/$12.09/$11.97)
+    - **Spec comparison:** Waveshare's own LC76G vs L76K table: GNSS GPS/GLONASS/BDS/QZSS vs LC76G's +Galileo; SBAS N/A vs WAAS/EGNOS; tracking -162 vs -166 dBm; acquisition -148 vs -147 dBm; reacquisition -160 vs -159 dBm; cold TTFF 30 s vs 26-28 s; max update 5 Hz vs 10 Hz; UART max 115200 (default 9600) vs 921600; timing 30 ns on both; MS621FE backup and PPS pin on both.
+    - **Worse in:** No Galileo, no SBAS/EGNOS, 4 dB worse tracking sensitivity, 5 Hz max, slower UART. Jamming-flag output not documented (unverified). Fails the not-worse rule.
+    - **Compatibility:** Same footprint family and header style, and PPS is present. NMEA works with gpsd. The PAIR/PQTM provisioning (PPS gate, jamming flag, PQTMSAVEPAR) does not apply because it uses CASIC commands.
+    - **Risks:** Rejected: Galileo and EGNOS loss in Europe.
+    - **Seller url:** https://www.waveshare.com/l76k-gps-module.htm
+    - **Sources:**
+      - https://www.waveshare.com/l76k-gps-module.htm
+      - https://www.waveshare.com/lc76g-gnss-module.htm
+  3.
+    - **Name:** M5Stack Unit GPS SMA / GPS/BDS Unit with SMA Antenna (AT6668, ATGM336H module)
+    - **Kind:** other_brand
+    - **Price usd:** 12.50 (M5Stack official store, available; includes a 1 m active antenna)
+    - **Spec comparison:** GPS/QZSS/BDS B1I+B1C/Galileo E1/GLONASS R1, 50 ch, 10 Hz, NMEA 4.1, 115200. Tracking -162 dBm (LC76G -166); 'acquisition' -160 dBm and cold start -148 dBm (labels differ from Quectel's); cold 23 s, hot 1 s. 5 V at 40.9 mA operating (LC76G board about 36 mA module). Board 71.4x24x8 mm with SMA.
+    - **Worse in:** No 1PPS: the HY2.0-4P Grove connector carries only 5V/GND/TX/RX (M5Stack docs for Unit GPS v1.1). Tracking 4 dB worse. EGNOS, jamming-flag output, PPS accuracy and flash config save are not documented. No backup cell documented. Fails the not-worse rule.
+    - **Compatibility:** UART works with gpsd as NMEA, but there is no PPS for chrony, so the PPS path and gate are lost. The included 1555-1580 MHz antenna is irrelevant because we keep the 25346.
+    - **Risks:** Rejected for losing PPS. Anti-interference claims are marketing only.
+    - **Seller url:** https://shop.m5stack.com/products/gps-bds-unit-with-sma-antenna-at6668
+    - **Sources:**
+      - https://shop.m5stack.com/products/gps-bds-unit-with-sma-antenna-at6668
+      - https://docs.m5stack.com/en/unit/Unit-GPS%20v1.1
+  4.
+    - **Name:** M5Stack Module GPS v2.1 (AT6668, ATGM336H module, M5 Core stacking module)
+    - **Kind:** other_brand
+    - **Price usd:** 13.95 (M5Stack official store, available; includes a 1 m active antenna)
+    - **Spec comparison:** Same AT6668 GNSS set as above (GPS/QZSS/BDS/GAL/GLO, 50 ch, 10 Hz). Tracking -162 dBm vs -166; cold 23 s; has a PPS output and SMA; 28.35 mA operating at 5 V; backup is a 20,000 uF 3.3 V supercap.
+    - **Worse in:** Tracking sensitivity 4 dB worse. Backup is a supercap: hold about 20-60 min (model, assuming 10-30 uA backup draw), against about 17.6 days for the MS621FE, so most power-ups become cold starts after storage. PPS accuracy, EGNOS, jamming-flag output and flash save are not documented. Board is 54x63.6x13.1 mm (M-Bus stacking format), much larger. Fails the not-worse rule.
+    - **Compatibility:** Wiring to Q6A UART6 and pin 7 possible through its M-Bus pins with flying leads (DIP switch selects TX/RX). Mechanically awkward in the handheld.
+    - **Risks:** Rejected: sensitivity, backup and undocumented timing.
+    - **Seller url:** https://shop.m5stack.com/products/gps-module-v2-1-with-antenna-atgm336h
+    - **Sources:**
+      - https://shop.m5stack.com/products/gps-module-v2-1-with-antenna-atgm336h
+  5.
+    - **Name:** Seeed Grove - GPS (Air530)
+    - **Kind:** other_brand
+    - **Price usd:** 11.99 as shown on the Seeed page (labelled the 10+ quantity price; qty-1 price unverified). In stock in US, CN and DE warehouses.
+    - **Spec comparison:** GPS/BDS/GLONASS/Galileo/QZSS + SBAS (Seeed wiki); cold about 30 s, warm about 4 s; up to 60 mA; 3.3/5 V; serial at 9600 in the examples. Sensitivity, accuracy, PPS spec, antenna type and backup are not published on the Seeed pages.
+    - **Worse in:** No PPS on the 4-wire Grove lead (5V/GND/2 serial). Higher current (60 mA vs about 36 mA). Sensitivity, EGNOS behaviour, jamming flag, flash save and external active-antenna support are undocumented. Fails the not-worse rule.
+    - **Compatibility:** NMEA over UART would work with gpsd; the PPS path is lost.
+    - **Risks:** Rejected. Specs mostly unpublished.
+    - **Seller url:** https://www.seeedstudio.com/Grove-GPS-Air530-p-4584.html
+    - **Sources:**
+      - https://www.seeedstudio.com/Grove-GPS-Air530-p-4584.html
+      - https://wiki.seeedstudio.com/Grove-GPS-Air530/
+- **Notes:** VERDICT (angle A): keep the Waveshare LC76G 24370 and the ALLNET $0.95 Radxa RTC battery. No other brand or cheaper SKU under $14.99 is not-worse. Every cheaper board found (Waveshare L76K, M5Stack AT6668 x2, Seeed Air530) loses at least one of: Galileo, EGNOS, -166 dBm tracking, PPS on the connector, documented jamming flag, flash config save, days-long backup. The only saving is where to buy: an EU buyer can get the same SKU from Botland (botland.de EUR 15.08 incl. VAT = $16.95, net $14.24; botland.com.pl PLN 65.90 = $16.96, net $13.79), which avoids Waveshare's separate shipping and import VAT/handling. Botland shipping cost not verified. botland.store is B2B only.
+  
+  Same-SKU EU sellers checked that are NOT cheaper:
+  - Eckstein (DE) EUR 18.94 incl. VAT = $21.29, page says not available to some delivery countries: https://eckstein-shop.de/WaveShare-LC76G-Multi-GNSS-Module-EN
+  - OpenCircuit (NL) EUR 22.75 incl. VAT = $25.57, "available from 2026-08-15", stock unclear: https://opencircuit.shop/product/lc76g-multi-gnss-module-supports-gps-bds
+  - Waveshare EUR view EUR 13.40 ex VAT = $15.06.
+  - The Waveshare AliExpress store price could not be retrieved (unverified).
+  - TME has no LC76G in its standard catalogue (one MIKROE-6743 hit, unidentified, price not shown).
+  
+  Other brands checked that are NOT cheaper:
+  - DFRobot TEL0157 $17.90; also worse (no Galileo, 2.0 m CEP): https://www.dfrobot.com/product-2651.html
+  - Uputronics MAX-M10S 3V GBP 28.79 = $38.34; it stays the optional spoof-flag build per reaudit D.
+  
+  RTC cell:
+  - ALLNET "RTC Battery for RADXA SBC" $0.95 is the cheapest found and is made for the Radxa 1.25 mm 2-pin header (https://shop.allnetchina.cn/products/rtc-battery-for-radxa-sbc). The listing states no cell brand or capacity, so check it on arrival and check polarity against Q6A J11 (Radxa doc only warns about polarity).
+  - More expensive options with full specs:
+    - Hardkernel RTC Backup Battery $2.50 ex tax: CR2032, 220 mAh, Molex 51021-0200-compatible 1.25 mm, 70 mm lead, red = +. Good backup if the ALLNET cell is unavailable, but check polarity: https://hardkernel.com/shop/rtc-backup-battery
+    - Electrokit CR2032 with 1.25 mm 2-pin cable: SEK 32 incl. 25% VAT = $3.23, unbranded, 210 mAh, 182 in stock: https://www.electrokit.com/en/cr2032-med-kabel-3.0v-180mah
+    - Ameridroid wired CR2032 $7.95.
+  - Do not buy the JST-SH 1.0 mm variants: wrong pitch.
+  
+  Not evaluated (other angles or unverified):
+  - Bare Quectel LC76G module on a DIY carrier (DIY angle). Distributor pages returned no listing.
+  - Generic ATGM336H/AT6668 boards (generic angle).
+  - Beitian BE-280 (u-blox M10050, 28x28x8.4 mm, -166 dBm, 30 ns time pulse per a reseller page; no price found; probably built-in patch antenna and M10 has no flash). It would fail the flash-config rule like the MAX-M10S, but this is unverified.
+  
+  Hard rules: every candidate is a receive-only GNSS receiver. No loops, no transmit, nothing aimed at military systems.
+  
+  Method: 9 WebSearch calls; prices re-read from primary shop pages and Shopify JSON on 18 Oct 2026.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
