@@ -18959,6 +18959,30 @@
   ID UFS винесено з воріт B1 на прибуття UFS. Назву Daly у джерелах 10 виправлено. 2N7002 для AUX12 більше не купується двічі. Кошик HMI оновлено (TL3145, PI4IOE5V9555).
   Пункти 8, 9 і 10 уже були виправлені до мене. Підсумки не змінилися.
 
+## fix:A:b1 (run `wf_588afa12-702`)
+
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+- **Rejected:** []
+- **Totals changed:** No main subtotal or total changed (2.x price columns, 2.12, 3.6, 9 and 11.7 sums are unchanged). Only notes and alternative figures changed: 2.2 group EU-landed note 347.6-352.1 -> 347.6-352.2 (3x V4L 141.1-145.7). 2.1 alternative with the non-EU cooling base 300.64-329.96 -> 300.66-329.98 (base 33.49-38.49). 2.9 weather set note now reads about 115.5-167.7, and the price column stays 116-168 as its rounding. idx 7 was fixed by naming the conversion rate (ECB 1.1253 or G6 about 1.124/1.125) in the tripod, case, DPS-150 and H1 rows and in Позначки, the alternative the problem itself offers, so the folding 542.26-612.99 and extended 570.25-629.73 subtotals and the totals above them are unchanged. idx 9 and 10 change only landed text: Pro Stick Plus about $74.95 in the joint parcel / $114.90 alone, HF+ from the CN warehouse at least $210.48, LA landed variant $93-108; the 69.92 and 89-102 price columns stay. 11.7: the mat saving stays 1.25 (G5 saving_usd) with a note that it is 1.28 at 1.1241, so the firm saving is still ≈$55.62.
+- **Summary uk:** Виправлено всі 17 проблем (idx 0-16) у /home/user/lizbeth307/sat-receiver-audit/STACK.md, жодну не відхилено. Lime більше ніде не подано як необов'язковий, формулювання в заголовку гендерно нейтральне. Таблиці кутів для міст замінено регіональними діапазонами з нотатки 19 (рядки 1.2 #109, 4.1, 11.x); фікси міст лишилися лише як тестові координати CI у розділі 8. Станції WEFAX NWS під керуванням USCG виключено правилом P2, питання до вас видалено, решту питань перенумеровано (посилання на них оновлено). Перераховано ціни: економія TinyTronics $62.48-63.52; шасі, KSD9700 і Silmid — за курсом 1.1241; QRO.cz, килимок, Robbe, QuietPC, Passion Radio — уточнено; Pro Stick Plus і HF+ — з EUR 2 UHF; округлення V4L. У рядках штатива, кейса, DPS-150 і H1 назвали курс (ECB 1.1253 / G6 ≈1.124-1.125) замість перерахунку, тому основні підсумки 2.12, 3.6, 9 і 11.7 не змінилися. Ліміт Lime скрізь ≥7 Msps (нижче заблоковано), ворота Airspy Mini — за рішенням D7. TPS2553 скрізь 265/299/339 mA. Маса: 1.73-1.96 kg з Lime, рюкзак 6.85-8.26 / 7.75-9.51 kg. Роз'єм IMU — GX16-4 з ковпачком на ланцюжку.
+
 ## extract:operator_notes (run `wf_5ed966cd-eee`)
 
 - **Source:** operator_notes
