@@ -31376,6 +31376,209 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - I verified the Nooelec price and specs, the rtl-sdr.com launch-post measurements and the 9A4QV DIY measurements myself today. Generic-module data, the Tindie price and the Passion Radio price come from the G1 file of the same day and are marked as such.
   - A follow-up run with search budget could look for independent NanoVNA sweeps of AliExpress FM traps and for EU used listings.
 
+## searchB:pololu_d36v28f5_2_for_a_5_v_only_display (run `wf_c3ba734e-52b`)
+
+- **Part:** Pololu D36V28F5 #2 (#3782), an optional 5 V buck from SW to the display board, used only if the display board accepts 5 V and nothing else. Tier optional, qty 1.
+- **Current price usd:** 23.95 at qty 1 from Pololu direct (22.03 each at qty 5; status "Rationed", verified 18 Oct 2026). The same SKU at Botland (a distributor Pololu lists, shipping from PL) is EUR 18.11 including DE VAT, which is about USD 20.38 gross or USD 17.13 net at ECB 1.1253. Shipping starts at EUR 4.69.
+- **Critical specs:**
+  - Input range must cover the SW node at 12.0-16.8 V in operation and survive the SMBJ17A clamp at about 27.6 V. Current part: 5.3-50 V.
+  - Output must be 5.0 V +/-4% from 0 A to full load, inside the 4.75-5.25 V USB tolerance the board's 5 V ports expect.
+  - Continuous current must be at least 2.8 A, which is the 14 W acceptance ceiling (D4) at 5 V. It must hold that in the closed enclosure at about 50 C. Current part: 3.2 A typical at 36 V in, 2.5-4 A range, more at 12-16 V in.
+  - Efficiency must be at least 88% at 12-16 V in and 1-3 A, which is the stack model value. Pololu gives 80-90%.
+  - Switching frequency: about 500 kHz fixed under load, with power-save mode staying above 20 kHz. No fundamental or harmonic may fall within +/-5 kHz of 40, 60, 77.5, 162, 490, 518 or 4209.5 kHz (C4 spur gate). The frequency tolerance should be known.
+  - Output ripple and noise, plus conducted noise back onto SW. HF+ A/B at load steps of 0.3-3 A.
+  - EN must be driven by a Pico GPIO: sleep below 1.2 V, wake above 1.35 V, 100 k pull-up to VIN, and sleep draw of about 10-20 uA per volt. The display must be off whenever the Q6A is off.
+  - Protections: reverse voltage to 40 V, over-current, short circuit, over-temperature, output under- and over-voltage, and soft start to limit display inrush.
+  - Back-feed behaviour: the D36V28Fx pumps VIN above 60 V when VOUT is fed slightly over 5 V (Pololu forum t/29129). The board's USB-C VBUS must stay open.
+  - Quiescent current 2-3 mA.
+  - Size at most 17.8 x 20.3 x 8.8 mm, 0.1 in pins, through-hole, no reflow.
+  - Genuine part from a legal source: Pololu or a Pololu-listed distributor, not a counterfeit.
+  - Hard rules: no RF output; its only RF effect is spurs, which go through the C4 receive A/B gate. No loops.
+- **Candidates:**
+  1.
+    - **Name:** No converter: feed the display's DC barrel from the existing DISP12 rail (SYS12 -> LC -> TPS259470A eFuse, ILIM 1.5 A, OVLO about 13.5 V, EN on Pico GP16)
+    - **Kind:** diy
+    - **Price usd:** 0.00 extra. Every DISP12 part is already in the BOM because it is the stack's default display feed. Saves 23.95 USD list (about 20.38 EU gross).
+    - **Spec comparison:** Input: the Wisecoco driver board image labels the barrel 'DC(5-24V)'. I checked this myself in the listing image 7-inch-2000-nits-lcd-7.webp. The image also shows 'Type-C(5V 2A) Touch+Power' and 'Type-C(5V 2A) Power'. Per re-audit D, the 4D fallback (datasheet R1.5) takes 12 V at 540 mA on a barrel. So both panels take SYS12 = 12.0 V +/-4% directly.
+  Current: the eFuse limit of 1.5 A at 12 V gives 18 W, against 16 W for the D36V28F5 (3.2 A x 5 V). That covers the 14 W ceiling (1.27 A at 11.0 V).
+  Control: EN on GP16 matches the D36V28F5 EN function.
+  Protection is better: active current limit, OVLO, and back-to-back FETs with true reverse-current blocking (TPS25947 family, Rev C). That removes the D36V28F5 back-feed pump risk.
+  Spurs: one fewer 500 kHz switcher, whose harmonics sit 10 kHz from 490 kHz and 18 kHz from 518 kHz.
+  Power in the cable: the barrel carries 1.17 A instead of about 2.8 A at 5 V, so I2R loss is lower.
+  Size, mass and heat: removes a module and its loss of about 1.9 W (14 W at 88%) from inside the enclosure.
+  The 5 V USB-C power ports are rated only 5 V 2A (10 W), below the 14 W budget. A 5 V feed would therefore have to go into the barrel anyway, near the bottom of its 5-24 V range.
+    - **Worse in:** Nothing proven worse. Two items are unverified and must be measured, not assumed:
+  (1) End-to-end efficiency. The path is D36V50F12 at 92%, then the board's own input converter, whose efficiency is unknown. The D4 acceptance already caps input power at 14 W / 7.5 W at 11.0 V.
+  (2) Spurs from the board's own converter at 12 V input versus 5 V input are unmeasured. They are covered by the existing RF A/B with the display on and off, plus the C4 gate.
+  SYS12 carries up to 1.27 A extra, but that load is already in the DISP12 budget. Confirm that the 4.2 A SYS12 heat-soak gate counts it.
+    - **Compatibility:** Drop-in. It uses the existing DISP12 rail, eFuse and LC filter, and needs no driver (driver-neutral on Ubuntu 24.04 arm64). Barrel size is still unknown: ask Wisecoco under D5 along with the current at 12 V at 25/50/100%. Touch USB carries only D+/D-/GND and VBUS stays open, as in re-audit D. HDMI pin 18 keeps its Schottky. All hard rules hold.
+    - **Risks:** The input claim comes from a vendor listing image, not a datasheet. Get it confirmed in Wisecoco's written D5 answers and test stability at SYS12 = 11.0 V on arrival. If a future panel is genuinely 5 V-only, this candidate does not apply and the D36V28F5 from Botland comes back.
+    - **Seller url:** https://www.wisecocodisplay.com/product/7-inch-1920x1080-high-brightness-2500nits-lcd-panel-with-hdmi-in-board-ips-mipi-interface-tft-lcd-screen/
+    - **Sources:**
+      - https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-inch-2000-nits-lcd-7.webp
+      - https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_5.pdf
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/disp5v_img/w7.png
+  2.
+    - **Name:** Pololu D36V28F5 #3782, same SKU, bought from Botland (EU) instead of Pololu US. Kept only as the contingency if a 5 V-only panel ever replaces Wisecoco/4D.
+    - **Kind:** current_part
+    - **Price usd:** EUR 18.11 gross (page structured data; earlier pass gives EUR 15.22 net), about USD 20.38 gross / 17.13 net. Shipping from EUR 4.69, free over EUR 100 within DE.
+    - **Spec comparison:** Identical part: Pololu #3782, EAN 5903351242837, maker Pololu Corp., Las Vegas. Specs as on pololu.com/product/3782: 5.3-50 V in, 5 V +/-4%, 3.2 A at 36 V in, about 500 kHz, Iq 2-3 mA, reverse protection to 40 V, OCP, short-circuit and thermal protection, output UV/OV protection, soft start, EN and PG, 17.8 x 20.3 x 8.8 mm.
+    - **Worse in:** Nothing; it is the same part. The back-feed pump caveat is unchanged.
+    - **Compatibility:** Identical footprint and pins.
+    - **Risks:** Botland shows 'Auf Lager' but also 'nicht auf Lager' text, so confirm quantity at checkout. Delivery country coverage varies by storefront (.de / .com.pl / .cz). The fallback seller is TME POLOLU-3782.
+    - **Seller url:** https://botland.de/abwartswandler/17169-d36v28f5-abwartswandler-5v-32a-pololu-3782-5903351242837.html
+    - **Sources:**
+      - https://www.pololu.com/product/3782
+      - https://www.pololu.com/distributors
+      - https://botland.de/abwartswandler/17169-d36v28f5-abwartswandler-5v-32a-pololu-3782-5903351242837.html
+  3.
+    - **Name:** Generic '3A USB socket for 12V and 24V' panel-mount buck (QC3/AFC/FCP chip, voltmeter display)
+    - **Kind:** generic_or_clone
+    - **Price usd:** not verified (HKJ gives no price)
+    - **Spec comparison:** HKJ measured: about 3.7 A available at 5 V; 12 mA idle from 12 V; input cutoff about 9.5 V; series input diode for reverse polarity; overload protection. Temperatures after 1 h at 5 V 3 A: M1 54-58 C, hotspot 66-68 C.
+    - **Worse in:** Noise: 163 mVpp at 0.5 A, 134 mVpp at 1 A, 280 mVpp at 2.5 A (30-40 mV rms).
+  Idle current: 12 mA, against 2-3 mA.
+  No EN pin.
+  Switching frequency unknown, so the C4 spur mask cannot be checked.
+  QC negotiation can raise VBUS to 9/12 V, a hazard for a 5 V-only board.
+  No output OVP stated.
+  Size: 36 mm round x 51 mm deep, 26 g.
+  Not a board-mount module.
+    - **Compatibility:** Poor. Panel-socket form, USB-A output, would need an added eFuse/load switch for EN.
+    - **Risks:** QC up-voltage, noise, unknown chip and frequency.
+    - **Seller url:** 
+    - **Sources:**
+      - https://lygte-info.dk/review/USBpower%203A%20USB%20socket%20for%2012V%20and%2024V%20UK.html
+  4.
+    - **Name:** Generic 'DC to DC converter 6-24V to 5V 3A' car USB module (eBay seller bestgoodbuy)
+    - **Kind:** generic_or_clone
+    - **Price usd:** not verified
+    - **Spec comparison:** HKJ measured: about 90% efficiency at 0.5 A from 6 V and up; about 17 mA no load; stays within USB tolerance only up to about 2 A at 11.6 V and 14.6 V. At 3 A the loss is 3.5 W.
+    - **Worse in:** Current: only about 2 A within tolerance, against 2.8 A required.
+  Noise: 42-53 mV rms.
+  Protection: HKJ saw no overload protection, no reverse-polarity protection and no undervoltage cutout.
+  No EN pin.
+  Frequency unknown.
+  Rated input DC 6-23 V, which is below the 27.6 V clamp.
+    - **Compatibility:** Fails the input transient and the current requirement.
+    - **Risks:** Thermal loss inside the enclosure; unprotected.
+    - **Seller url:** 
+    - **Sources:**
+      - https://lygte-info.dk/review/USB%20supply%20review%2001%20UK.html
+  5.
+    - **Name:** Generic LM2596 adjustable buck module ('20W DC-DC Step Down')
+    - **Kind:** generic_or_clone
+    - **Price usd:** not verified
+    - **Spec comparison:** HKJ measured: 3-40 V in; rated 2 A, 3 A only with an extra heatsink; 65 kHz; about 200 mVpp output noise (spec says 30 mV); about 60 C heatsink at only 1 A. HKJ says it 'gets too hot for a long lifetime' at 2 A.
+    - **Worse in:** Current: 2 A, against 2.8 A or more.
+  Frequency: 65 kHz, so harmonics 130/195/260/325/390/455/520 kHz; 520 kHz lands 2 kHz from 518 kHz (C4 list).
+  Noise: about 200 mVpp.
+  Control and protection: no EN, OVP or UVP; trimpot output.
+  Size: 43 x 21 x 14 mm.
+  Fake LM2596 chips are common.
+    - **Compatibility:** Fails current, spur mask and size.
+    - **Risks:** Counterfeit IC, trimpot drift.
+    - **Seller url:** 
+    - **Sources:**
+      - https://lygte-info.dk/review/Power%20Adjustable%20buck%20converter%20LM2596%20UK.html
+  6.
+    - **Name:** Generic 'DC-DC 10A 6.5-60V to 1.25-30V' LT3800 module
+    - **Kind:** generic_or_clone
+    - **Price usd:** not verified
+    - **Spec comparison:** HKJ measured: LT3800 with TPCA8053 FETs; about 90% efficiency at 12 V in.
+    - **Worse in:** Size: 75 x 21 x 16 mm.
+  No over-temperature protection seen.
+  Output voltage drifted in use; trimpot hard to set.
+  The module died at 60 V / 2.5 A.
+  No EN mentioned; noise and frequency not reported.
+  The reviewer: 'I do not really like this module'.
+    - **Compatibility:** Too large, unprotected.
+    - **Risks:** Drift, failure, no thermal shutdown.
+    - **Seller url:** 
+    - **Sources:**
+      - https://lygte-info.dk/review/Converter%20DC-DC%2010A%206.5-60V%20to%201.25-30V%20UK.html
+  7.
+    - **Name:** Generic MP2307 'Converter DC-DC 3A 4.75-23V to 1.0-17V' (Mini-360 class)
+    - **Kind:** generic_or_clone
+    - **Price usd:** not verified
+    - **Spec comparison:** Per the earlier LAB5 analog pass, which checked HKJ: 340 kHz, 23 V max input, up to 25 mA no load, trimpot output.
+    - **Worse in:** Thermal: 144.5 C hotspot at 2.5 A (12 V in, 5 V out), and it overheats at 3 A.
+  Input: 23 V max, below the 27.6 V clamp.
+  Noise: high.
+  No EN or full protections.
+    - **Compatibility:** Fails current, thermals and input transient.
+    - **Risks:** Thermal failure.
+    - **Seller url:** 
+    - **Sources:**
+      - https://lygte-info.dk/review/Converter%20DC-DC%203A%204.75-23V%20to%201.0-17V%20UK.html
+  8.
+    - **Name:** Generic XL4015/XL4016-class 180 kHz buck modules
+    - **Kind:** generic_or_clone
+    - **Price usd:** not verified
+    - **Spec comparison:** XL4016 datasheet (local copy): 40 V abs max input; oscillator 144-216 kHz (180 kHz typ); frequency folds back to 48 kHz on short circuit; efficiency 87-93% typ.
+    - **Worse in:** Spurs: the +/-20% oscillator tolerance puts the fundamental band over 162 kHz, and the 3rd harmonic (432-648 kHz) covers both 490 and 518 kHz. The 48 kHz foldback sits between 40 and 60 kHz.
+  Control: no EN, trimpot output.
+  Size: much larger than 17.8 x 20.3 mm.
+  Evidence: no independent measurement was obtained in this pass, so angle B rejects it.
+    - **Compatibility:** Fails the C4 spur mask and size.
+    - **Risks:** Remarked or counterfeit XL chips are widely reported (unverified here).
+    - **Seller url:** 
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_xl4016/xl4016.txt
+  9.
+    - **Name:** DIY TI TPSM63604RDLR module buck (FPWM/SYNC) on our own PCB
+    - **Kind:** diy
+    - **Price usd:** about 12.48 (DigiKey qty 1, from the earlier LAB5 pass) plus about 3 of passives, about 15.5 total, before PCB, reflow, shipping and VAT
+    - **Spec comparison:** Per the datasheet, as checked in the earlier pass:
+  Better: 4 A, +/-1% FB, fixed frequency in FPWM (200 kHz-2.2 MHz, can sync to a clock), 7 uA Iq.
+  Worse: VIN 36 V recommended / 42 V abs max (still covers 27.6 V); no output OVP.
+    - **Worse in:** Protection: no input reverse protection (-0.3 V abs min), against 40 V on the Pololu.
+  Back-feed: the -3 A negative current limit in FPWM leaves boost-back into VIN uncharacterized.
+  Build: needs reflow of a B3QFN (MSL3) on our own unmeasured layout.
+  Thermal: data is for a 4-layer 2 oz board.
+  Evidence: no independent measured board exists, so angle B rejects it.
+    - **Compatibility:** New footprint and power-board revision.
+    - **Risks:** Layout-dependent EMI and thermals; unqualified.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=TPSM63604RDLR
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/tpsm63604.pdf
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G3_power_gnss_imu.json
+  10.
+    - **Name:** Used Pololu D36V28F5
+    - **Kind:** used
+    - **Price usd:** not verified (no listing could be read; eBay returned 403 in the earlier pass)
+    - **Spec comparison:** Same specs if genuine.
+    - **Worse in:** Unknown history, including possible earlier back-feed events that pumped VIN above 60 V and stressed the input cap and IC. No measured evidence for any specific unit. The saving would be a few USD at most.
+    - **Compatibility:** Identical.
+    - **Risks:** Hidden damage, possible clone.
+    - **Seller url:** 
+    - **Sources:**
+      - https://forum.pololu.com/t/strange-behavior-of-d36v28f5-pololu-3782/29129
+- **Notes:** Answer: the cheapest option that is not worse is to buy nothing. Remove D36V28F5 #2 from the optional list and run the panel from the existing DISP12 rail, which saves USD 23.95. This matches what re-audit D already decided on 18 Oct 2026.
+  
+  I checked the Wisecoco listing's own port diagram myself (image 7-inch-2000-nits-lcd-7.webp). It labels the barrel 'DC(5-24V)'. Its two USB-C power ports are labelled only '5V 2A' (10 W), so a 5 V feed could not meet the 14 W budget at 100% through USB-C anyway. The 4D fallback takes 12 V at 540 mA on a barrel, per re-audit D citing the 4D datasheet R1.5. So both panels run from DISP12 (SYS12 -> LC -> TPS259470A, ILIM 1.5 A, EN on GP16).
+  
+  This is better than the current part on current headroom (18 W vs 16 W), reverse and back-feed protection, spur sources (one fewer 500 kHz switcher), heat inside the enclosure, size and cost. Two things are unproven and must not be assumed:
+  - end-to-end efficiency through the board's own input converter;
+  - spurs from that converter at 12 V input.
+  Both are covered by existing gates: the D4 power acceptance at 11.0 V and the RF A/B test with the display on and off. Two follow-ups:
+  - Ask Wisecoco for written confirmation of the 5-24 V input and the barrel size (D5).
+  - Check that the SYS12 4.2 A heat-soak gate counts the 1.27 A display load.
+  
+  Contingency, only if a genuinely 5 V-only panel ever comes back: keep the same Pololu D36V28F5 but buy it from Botland at EUR 18.11 gross (about USD 20.38; USD 17.13 net). That is the same SKU from a distributor Pololu lists, not an analog. Fallback seller: TME POLOLU-3782.
+  
+  Angle B result: none of the generic, clone, DIY or used modules with independent measurements is not-worse. They fail on one or more of:
+  - current: about 2 A within tolerance for the 6-24V USB module (HKJ), 2 A for the LM2596;
+  - noise: 134-280 mVpp, about 200 mVpp, 42-53 mV rms;
+  - spur-mask frequency: LM2596 65 kHz x 8 = 520 kHz; XL40xx 144-216 kHz;
+  - EN, protections, input transient or size.
+  Their prices were not verified because HKJ gives none. Mini560- and MP1584-class modules were not assessed: I found no measured evidence, so they are rejected under the angle-B rule.
+  
+  Limits of this pass: the shared WebSearch budget was already used up at my first search, so I used WebFetch on primary pages (HKJ reviews, Pololu, Botland, the Wisecoco listing) plus the earlier LAB5 analog pass (final/analogs_G3_power_gnss_imu.json). Some numbers come from that earlier pass and were not re-fetched: the MP2307 measurement, the TPSM63604 price and the Botland net price. A broader search could still find a measured generic module, but with the part being dropped it would not change the decision.
+  
+  No hard rule is affected: receive-only, conducted-only sources, no loops, and the Q6A and antennas untouched.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
