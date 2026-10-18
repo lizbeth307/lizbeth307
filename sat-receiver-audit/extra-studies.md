@@ -26980,6 +26980,135 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - A used unit (eBay.de, US seller, $110.25, from a search snippet) belongs to the used angle and was not evaluated.
   - The prices for the HF+ itself were opened live on 18 Oct 2026. eleshop.eu's RSP1B price comes from a search snippet only, and Passion Radio's from an earlier stage.
 
+## searchB:airspy_hf_discovery (run `wf_e32114dd-52d`)
+
+- **Part:** Airspy HF+ Discovery (HF/LF receiver + second VHF receiver 64-260 MHz; tier core, group HF, qty 1; on CH334F H4 behind FE1.1s P3, in its own tin shield, input via 2x Omron G6K selector)
+- **Current price usd:** 169.00 (ITEAD, EU warehouse, verified 18 Oct 2026 in reaudit_B; product page re-read today: USD 169.00, VAT handling not stated, 1-year replacement warranty + 30-day return). EU reference: WiMo EUR 232 incl. VAT; UK dealers GBP 219.95 incl. VAT.
+- **Critical specs:**
+  - Coverage HF 0.5 kHz-31 MHz (stack uses civil LF time signals DCF77/MSF/TDF/JJY 40-162 kHz, NAVTEX 490/518 kHz, NDB/MW, HF; bins below 30 kHz are masked anyway) and VHF 64-260 MHz (AIS 161.975/162.025, FM-RDS, airband/VOR 108-137, NFM)
+  - Sensitivity: MDS -140.0 dBm/500 Hz HF; -141.5 dBm (64-118 MHz) and -141.0 dBm (118-260 MHz) VHF (airspy.com)
+  - Linearity: IIP3 +15 dBm HF / +13 dBm VHF at max gain; BDR 110 dB HF / 95 dB VHF; built-in low-loss preselectors (HF HPF 0/5/10/17 MHz, LPF 5/31 MHz; VHF 60-118 / 118-260 MHz). Matters with the wire/Boni-Whip next to strong European MW/SW/FM transmitters
+  - Independent strong-signal measurement: SM5BSZ 7.2 MHz, all receivers set to equal 26 dB NF: 3 dB behind the Perseus and ahead of every other receiver tested (sets the not-worse bar)
+  - IQ bandwidth: 768 ksps (660 kHz alias/image-free) and 912 ksps; rate list 192/384/456/768/912 k for the OpenWebRX+ profiles; 18-bit DDC, 16-bit IQ out; 120 dB image rejection
+  - Clock: 0.5 ppm TCXO, 1 ppb adjustment, flash-stored calibration (airspyhf_calibrate); firmware minimum R4.0.7, target R5.0.1
+  - Max RF input +10 dBm; single 50 ohm SMA input (fits the K1/K2 G6K selector); no bias tee (DC blocked toward it)
+  - Interface/driver: USB 2.0 HS micro-B, VID:PID 03eb:800c; noble arm64 libairspyhf 1.6.8-4build1, SoapyAirspyHF 0.2.1, SDRangel 7.27.2, OpenWebRX+, SatDump, AIS-catcher, SDR++
+  - Power: 5 V from LAB5 through load switch + LC + Mix-31; 0.3 A placeholder (not measured yet); must fit the VBUS current limit and the E 'LF/HF Quiet' runtime budget
+  - Mechanical: 45x60x10 mm, about 28-32 g, plastic enclosure (stack adds a tin shield); -45..+85 C
+  - Receive-only hardware (no TX path); genuine unit (buy only from airspy.com dealer list)
+- **Candidates:**
+  1.
+    - **Name:** Airspy HF+ Discovery, new, ITEAD (current pick)
+    - **Kind:** current_part
+    - **Price usd:** 169.00 (VAT handling not stated on the ITEAD page)
+    - **Spec comparison:** Baseline. All critical specs as listed. 1-year replacement + 30-day return from ITEAD.
+    - **Worse in:** nothing (baseline)
+    - **Compatibility:** Already integrated (CH334F H4, tin shield, G6K selector, LAB5 rail, noble arm64 stack).
+    - **Risks:** VAT may be added for an EU delivery; check at checkout.
+    - **Seller url:** https://itead.cc/product/airspy-hf-discovery/
+    - **Sources:**
+      - https://itead.cc/product/airspy-hf-discovery/
+      - https://airspy.com/airspy-hf-discovery/
+  2.
+    - **Name:** Used genuine Airspy HF+ Discovery (eBay with Money Back Guarantee, or an EU dealer's used/demo unit)
+    - **Kind:** used
+    - **Price usd:** UNVERIFIED. One eBay.de-indexed listing from a US seller (Cleveland OH, 'used', possibly demo/return): USD 110.25 + 5.02 shipping, date unclear, probably expired (eBay returns 403 to fetch, so seen only in search snippets). Landed in the EU with 19-21% import VAT is about USD 137-140; duty and courier fees not checked. One UK private sale of a new-condition unit at GBP 175 is not cheaper. The RigReference estimate of USD 113 ('Good') rests on a single 2019 new price, so it is weak.
+    - **Spec comparison:** Same hardware, so every spec equals the current part if the unit is genuine and undamaged: 0.5 kHz-31 MHz + 64-260 MHz equal; MDS -140/-141.5/-141.0 dBm equal; IIP3 +15/+13 dBm equal; BDR 110/95 dB equal; preselectors equal; 768/912 ksps equal; 0.5 ppm TCXO equal; +10 dBm max input equal; size, mass, USB, driver and power equal. Equality is NOT proven per unit: it has to be measured on arrival (see risks).
+    - **Worse in:** Not worse in specs if it passes acceptance. Worse in warranty and support: no ITEAD 1-year replacement; a private EU sale carries no statutory warranty; EU dealers may limit second-hand goods to 1 year. Unknown history: front-end damage from overload or ESD on long wires, or an early pre-production unit (SM5BSZ notes his pre-production Discovery had slightly higher NF than production units).
+    - **Compatibility:** Identical: micro-USB, 03eb:800c, same udev rule and libairspyhf 1.6.8 on noble arm64, same tin shield and selector. Flash R5.0.1 (Windows 10/11 or bossac), then recalibrate. FLASH.bat writes -152 ppb if the stored value is 0.
+    - **Risks:** No documented HF+ Discovery clones were found. The UK 'Enhanced version' listings are Nevada / Waters & Stanton dealer stock, not clones. Treat third-party 'For Airspy ...' listings as suspect anyway. Acceptance, all conducted, inside the return window: (1) airspyhf_info gives S/N, firmware and rate list incl. 768000/912000, and lsusb shows 03eb:800c; (2) noise floor on a 50 ohm terminator at 0.1, 1, 7, 14, 28, 100, 162 and 250 MHz, plus MDS within about 2 dB of -140 dBm/500 Hz, using the tinySA as a conducted source through stepped attenuators; (3) one blocking check with a strong conducted out-of-band tone, staying below +10 dBm; (4) offset within 0.5 ppm against the GNSS-disciplined reference before calibration; (5) 60 min streaming on CH334F H4 with no drops, and current measured. Buy only if the landed price is at most about USD 140, i.e. at least about USD 29 below new; otherwise keep new.
+    - **Seller url:** https://www.ebay.de/itm/256976414445 (unverified, likely expired)
+    - **Sources:**
+      - https://www.ebay.de/itm/256976414445
+      - https://rigreference.com/rigs/6437-hf-discovery
+      - https://www.rtl-sdr.com/airspy-hf-discovery-collection-of-tests-and-reviews/
+      - https://airspy.com/airspy-hf-discovery/
+  3.
+    - **Name:** Used Airspy HF+ (original, now 'HF+ Dual Port')
+    - **Kind:** used
+    - **Price usd:** No live listing found. RigReference estimate USD 133 'Good', derived from a single 2017 new price of USD 199 (weak).
+    - **Spec comparison:** Datasheet: HF 9 kHz-31 MHz vs 0.5 kHz (worse, though the stack masks below 30 kHz); VHF 64-260 MHz equal, but above 174 MHz a second Band-III tuner 'with reduced performance' (worse); MDS -140 dBm HF equal, VHF -141.5/-142.5/-140.5/-140 dBm about equal; IIP3 +15/+13 dBm and BDR 110/95 dB equal on paper; 0.5 ppm equal; 768 ksps equal. Measured (SM5BSZ, 7.2 MHz, equal 26 dB NF): -10 dB vs Perseus against the Discovery's -3 dB, so about 7 dB worse in real strong-signal dynamic range. No preselector bank. 55x90x12 mm vs 45x60x10 mm.
+    - **Worse in:** Measured strong-signal dynamic range (about 7 dB), no preselectors (rtl-sdr.com: users reported desense by extremely strong signals), VHF above 174 MHz, LF lower edge, size. REJECT.
+    - **Compatibility:** Same libairspyhf family, but two RF ports and a larger box: does not fit the planned 45x60 tin shield; the selector wiring would change.
+    - **Risks:** Discontinued; used only; firmware support for this hardware variant not checked.
+    - **Seller url:** 
+    - **Sources:**
+      - https://airspy.com/airspy-hf-plus/
+      - https://www.rtl-sdr.com/leif-continues-his-comparisons-of-the-airspy-hf-discovery-rsp1-perseus-and-more-sdrs/
+      - https://www.rtl-sdr.com/airspy-hf-discovery-now-available-for-preorder-brief-initial-review/
+      - https://rigreference.com/rigs/6275-hf
+  4.
+    - **Name:** Airspy R2/Mini + SpyVerter upconverter (incl. AliExpress Airspy R2 clones)
+    - **Kind:** generic_or_clone
+    - **Price usd:** R2 clone USD 139 without enclosure (rtl-sdr.com clone article, about 2018, so old). The stack itself prices an Airspy Mini at about USD 140-160 before adding a SpyVerter. Not cheaper.
+    - **Spec comparison:** Measured (SM5BSZ, 7.2 MHz, equal NF): Airspy+SpyVerter -18 dB vs Perseus against the Discovery's -3 dB, so about 15 dB worse in strong-signal dynamic range. Two boxes, an upconverter chain, and higher USB power.
+    - **Worse in:** Dynamic range (about 15 dB, measured), size/power (two units), and no clone-quality data. REJECT.
+    - **Compatibility:** libairspy is on arm64, but a second device, extra USB port and more power do not fit the USB map or power budget as cleanly.
+    - **Risks:** Clone performance and software support 'not known' (rtl-sdr.com).
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.rtl-sdr.com/leif-continues-his-comparisons-of-the-airspy-hf-discovery-rsp1-perseus-and-more-sdrs/
+      - https://www.rtl-sdr.com/cloned-sdrplay-and-airspy-units-now-appearing-on-aliexpress-ebay/
+  5.
+    - **Name:** SDRplay RSP1 clones (MSi2500/MSi001 copies sold on AliExpress/eBay as 'RSP1A')
+    - **Kind:** generic_or_clone
+    - **Price usd:** USD 139 in the rtl-sdr.com clone article (about 2018); current price not verified
+    - **Spec comparison:** Measured (SM5BSZ, 7.2 MHz, equal NF): RSP1 -23 dB vs Perseus, about 20 dB worse than the Discovery in strong-signal dynamic range. SDRplay says the clones copy the discontinued RSP1, not the RSP1A. No measurement of the clones themselves.
+    - **Worse in:** Dynamic range (about 20 dB, measured on the original RSP1), and unknown clone quality. REJECT.
+    - **Compatibility:** Official SDRplay API support for clones is not assured; the open-driver path on arm64 was not checked.
+    - **Risks:** Mislabelled listings (advertised as RSP1A); unstable units reported anecdotally.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.rtl-sdr.com/cloned-sdrplay-and-airspy-units-now-appearing-on-aliexpress-ebay/
+      - https://www.rtl-sdr.com/leif-continues-his-comparisons-of-the-airspy-hf-discovery-rsp1-perseus-and-more-sdrs/
+  6.
+    - **Name:** RX888 MkII (generic Chinese 16-bit direct-sampling SDR, many AliExpress sellers)
+    - **Kind:** generic_or_clone
+    - **Price usd:** About USD 170 on AliExpress (rtl-sdr.com TechMinds review summary), not cheaper
+    - **Spec comparison:** 1 kHz-1.7 GHz, up to 64 MHz bandwidth below 64 MHz, 10 MHz above. No calibrated MDS/IIP3 comparison with the Discovery found. Qualitative test (VA3ROM, Dec 2022, 22 m QRSS): only the HF+ Discovery and the IC-7300 heard the weakest signals; the author would not buy the RX-888 MkII again.
+    - **Worse in:** Not cheaper; no measured parity (anecdotally weaker on weak HF signals); USB 3 / FX3-class data rate and a higher power draw (not measured here) clash with the USB map and the USB-3 desense note (operator note 7); driver support criticised by SDR developers. REJECT.
+    - **Compatibility:** Needs a SuperSpeed port and the SDDC driver stack. Not verified on noble arm64.
+    - **Risks:** Many sellers with varying builds; no independent lab data.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.rtl-sdr.com/techminds-reviewing-the-rx888-mk2-software-defined-radio/
+      - https://mail.lwca.org/mb/msg/13218.htm
+  7.
+    - **Name:** Second RTL-SDR Blog V4L in HF/upconverter mode (STACK budget alternative)
+    - **Kind:** other_brand
+    - **Price usd:** about 37.95 (stack price: 3 for 113.85)
+    - **Spec comparison:** 8-bit ADC against an 18-bit DDC; far lower BDR/IIP3 than 110 dB / +15 dBm; no LF (STACK: 'без ДХ', so no DCF77/MSF/TDF/JJY); about 2.4-2.88 Msps (more bandwidth, but not needed here).
+    - **Worse in:** LF coverage, dynamic range, sensitivity. REJECT for not-worse. It stays only as the budget fallback already noted.
+    - **Compatibility:** Fully compatible (librtlsdr on noble arm64).
+    - **Risks:** none new
+    - **Seller url:** 
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md
+  8.
+    - **Name:** Third-party 'For Airspy HF + Discovery SDR ... High Dynamic Range' eBay.de listing
+    - **Kind:** generic_or_clone
+    - **Price usd:** unknown (eBay returns 403 to fetch; seen in search results only)
+    - **Spec comparison:** No measurements or teardown; it is not clear whether it is a genuine unit, an accessory or a copy.
+    - **Worse in:** No evidence of equality. REJECT under the measured-evidence rule.
+    - **Compatibility:** unknown
+    - **Risks:** Possible counterfeit or accessory-only listing; not on the airspy.com dealer list.
+    - **Seller url:** https://www.ebay.de/itm/167535233505
+    - **Sources:**
+      - https://www.ebay.de/itm/167535233505
+- **Notes:** VERDICT (angle B): no clone, generic module or DIY build has measured evidence of being not-worse than the HF+ Discovery. The only option that is equal in every spec is a used genuine Discovery, and it is conditional: it must pass the conducted acceptance tests inside a return window, and the landed price must be at most about USD 140 (incl. EU import VAT) to be worth the lost ITEAD warranty. Current used-price evidence is thin and unverified: one eBay-indexed US listing at USD 110.25 + 5.02, and one UK private sale at GBP 175, which is not cheaper. DEFAULT: keep the new HF+ Discovery from ITEAD at USD 169.00. Buy used only if a qualifying offer turns up. HF+ timing is not tied to the 1 Dec 2026 Lime deadline.
+  
+  Key independent measurement (SM5BSZ via rtl-sdr.com; 7.2 MHz, all receivers attenuated to equal 26 dB NF; night strong-signal test; daytime ranking similar): Perseus 0 dB (reference), HF+ Discovery -3 dB, HF+ Dual Port -10 dB, AFEDRI SDR-Net -15 dB, Airspy+SpyVerter -18 dB, RSP1 -23 dB. In all his tests the Discovery was second only to the Perseus. So none of the cheaper alternatives in the SM5BSZ set is not-worse.
+  - A used Perseus would be better on HF but has no 64-260 MHz coverage, so it loses the AIS/FM/VOR role. Its used price was not found.
+  - AFEDRI: price not checked (rejected on its measured 12 dB deficit).
+  
+  DIY: there is no open-hardware equivalent. The HF+ is a closed NXP-based design with closed firmware. SoftRock-class QSD + soundcard kits lack 64-260 MHz and full LF, and no measured parity was found. Standalone Chinese DSP radios (TEF668x, Malahit class) do not stream IQ to the Q6A and fail compatibility. These were not researched further.
+  
+  Counterfeits: no documented HF+ Discovery clone was found. The 'Enhanced version' eBay listings are UK dealer stock (Nevada, Waters & Stanton) at GBP 219.95.
+  
+  Hard rules: every candidate is receive-only hardware. Acceptance tests use conducted sources only (tinySA through attenuators into the SMA, never on air). No loop antennas are involved.
+  
+  Limits: 10 WebSearch calls used. eBay, Kleinanzeigen and hfunderground blocked fetching (403/503). The Arctic DX sensitivity PDF could not be fetched; that page gives only Discovery MW AM sensitivity (-110 to -111 dBm, 6 kHz AM, 30% mod), with no comparison numbers. HF+ current draw is still unmeasured.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
