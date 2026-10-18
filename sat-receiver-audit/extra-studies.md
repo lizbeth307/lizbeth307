@@ -30246,6 +30246,177 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Rules: every candidate is a receive-only passive amplifier, with no TX, no loops and no change to the egc-gate or header-level discard.
 
+## searchA:v30_endurance_microsd_128_256_gb (run `wf_c3ba734e-52b`)
+
+- **Part:** V30 endurance microSD 128-256 GB (second storage / raw overflow and second snapshot copy; tier optional, group Optional / gated, qty 1)
+- **Current price usd:** 25-82 (STACK v1 estimate, marked volatile, no SKU named). Lowest price I could verify today (18 Oct 2026) for a card that meets the spec floor: $42.60 incl. 19% DE VAT ($35.80 ex VAT), for SanDisk High Endurance 128 GB at Berrybase, EUR 37.90. Rate used: 1 EUR = 1.1241 USD. Shipping not included.
+- **Critical specs:**
+  - Capacity at least 128 GB, microSDXC (128-256 GB band). At the 13.3 MB/s worst-case no-Lime stream, 128 GB holds about 2.6 h of overflow.
+  - Bus is UHS-I. The Q6A slot measured 61.45 MB/s write and 73.7 MB/s read (Jeff Geerling, iozone, Samsung Pro Plus 32 GB; figure taken from storage.json). UHS-II and SD Express pins would sit unused, so they count for nothing.
+  - Guaranteed sustained sequential write of V30/U3 (30 MB/s minimum), which is 2.3x the worst-case 13.3 MB/s disk stream. U1/V10 guarantees only 10 MB/s, which is below that stream, so it fails.
+  - Rated sequential write at least 40 MB/s, and real sustained writes without stalls (sequential preallocated files).
+  - Endurance rated for continuous writing (surveillance/endurance class, given as hours, P/E cycles or TBW), plus the warranty term. Non-endurance consumer cards fail this spec.
+  - Operating temperature -25 to 85 C: field cold starts, and the card sits inside the case near the roughly 60 C UFS boss.
+  - Works with the standard Linux mmc/sdhci-msm stack on Ubuntu 24.04 arm64, with no vendor driver. 3.3 V / 1.8 V UHS-I signalling, standard microSD size for the Q6A slot.
+  - Hard rule: no ESP on the data card (boot order USB > SD > NVMe > eMMC > UFS), so a data card must never boot. This holds for any card and is a formatting rule.
+  - Authentic and legally sold. Buy from an established EU retailer. On arrival, check the card's manufacturer ID with cat /sys/block/mmcblk*/device/manfid and oemid, then run a full-card f3write/f3read.
+  - Random-I/O class (A1/A2) is NOT critical: no database or journald on the SD, only sequential files. On-card health reporting is a nice-to-have, not required.
+- **Candidates:**
+  1.
+    - **Name:** Reference: STACK v1 generic 'V30 endurance microSD 128-256 GB' (no SKU)
+    - **Kind:** current_part
+    - **Price usd:** 25-82 (model, volatile)
+    - **Spec comparison:** Defines the floor only: V30/U3, endurance class, 128-256 GB, UHS-I. It names no maker, endurance rating, temperature range or warranty.
+    - **Worse in:** Not a buyable part. The floor needs a concrete SKU so endurance, temperature and warranty can be checked.
+    - **Compatibility:** Q6A microSD slot, standard mmc driver; data card with no ESP.
+    - **Risks:** None specific to a part. Prices for this card class swung sharply in 2026 (see the STACK note).
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md lines 54, 297, 823
+  2.
+    - **Name:** SanDisk High Endurance microSDXC 128 GB, SDSQQNR-128G-GN6IA (EAN 0619659173104), from Berrybase (DE)
+    - **Kind:** other_brand
+    - **Price usd:** 42.60 incl. 19% DE VAT (EUR 37.90) = 35.80 ex VAT, plus shipping. In stock: 48 pcs, 1-3 days (Berrybase, 18 Oct 2026). Same SKU elsewhere: Reichelt EUR 38.95 ($43.78; currently unavailable), Alternate EUR 41.59 ($46.75, in stock, + EUR 7.99 shipping).
+    - **Spec comparison:** Every floor spec is met.
+  - Capacity: 128 GB microSDXC, equal.
+  - Bus: UHS-I, equal.
+  - Write class: V30/U3/Class 10, so 30 MB/s guaranteed sustained, equal to the floor (2.3x of 13.3 MB/s).
+  - Rated speed: 100 MB/s read / 40 MB/s write.
+  - Measured write (Gough Lui, 64 GB SKU of the same line, on a PC reader): 65-88 MB/s, no stalls, H2testw clean. Not measured on the Q6A.
+  - Endurance: up to 20,000 h of recording (Berrybase and Reichelt listings). My model, assuming the 26 Mbit/s basis shown on the 64 GB packaging: about 234 TB, or about 1,800 full-card writes. Even a full 128 GB overflow every day would take about 5 years to reach that.
+  - Temperature: -25 to 85 C (Berrybase, Reichelt), meets the spec.
+    - **Worse in:** Nothing against the floor.
+  
+  Against pricier endurance cards:
+  - Lower endurance rating than Samsung PRO Endurance or SanDisk Max Endurance.
+  - Lower rated write than ADATA High Endurance (40 vs 80 MB/s).
+  - Warranty is short: 2 years printed on the 64 GB packaging (Gough Lui, 2020). The 128 GB term is NOT verified.
+  - No on-card health reporting.
+  
+  None of these is below a spec the stack needs.
+    - **Compatibility:** Standard microSDXC UHS-I, standard mmc driver. Expected manufacturer ID 0x000003 (SanDisk) and oemid 0x5344 ('SD'); these are commonly reported values, so confirm them on the card. Format ext4 or exFAT with no ESP. The rated 40 MB/s sits under the Q6A's roughly 61 MB/s slot limit.
+    - **Risks:** - Reichelt lists this exact part number under the title 'Max Endurance', but the part is High Endurance (Max Endurance is SDSQQVR). Do not pay for, or expect, the Max Endurance rating.
+  - Counterfeit risk is lower at Berrybase, Reichelt or Alternate, but still run f3write/f3read and the ID check on arrival.
+  - Write speed on the Q6A is not yet measured (target at least 30 MB/s in a 30-minute fio sequential test).
+    - **Seller url:** https://www.berrybase.de/en/sandisk-high-endurance-microsdxc-uhs-i-u3-memory-card-adapter-128gb
+    - **Sources:**
+      - https://www.berrybase.de/en/sandisk-high-endurance-microsdxc-uhs-i-u3-memory-card-adapter-128gb
+      - https://www.reichelt.com/de/en/shop/product/microsdhc_memory_card_128_gb_sandisk_max_endurance-298158
+      - https://www.alternate.de/SanDisk/128GB-High-Endurance-Speicherkarte/html/product/1560228
+      - https://goughlui.com/2020/01/15/quick-review-sandisk-high-endurance-video-64gb-microsdxc-card-sdsqqnr-064g-gn6ia/
+  3.
+    - **Name:** SanDisk High Endurance microSDXC 256 GB, SDSQQNR-256G-GN6IA (EAN 0619659173227), from Berrybase (DE)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 83.07 incl. 19% DE VAT (EUR 73.90) = 69.81 ex VAT. In stock: 85 pcs (Berrybase, 18 Oct 2026). Alternate EUR 77.90 ($87.57, in stock). Reichelt EUR 76.95 ($86.50, unavailable).
+    - **Spec comparison:** Same line as the 128 GB card: V30/U3, 100/40 MB/s, -25 to 85 C, 20,000 h listed. Double the capacity, so about 5.2 h of 13.3 MB/s overflow. Cost per GB is slightly lower: EUR 0.289/GB vs EUR 0.296/GB.
+    - **Worse in:** Not worse on any spec. It costs $40.47 more than the 128 GB card, which puts it at the top of the $25-82 band. The listed 20,000 h is the same figure as on the 128 GB listing, so the per-capacity endurance is not verified.
+    - **Compatibility:** Same as the 128 GB card.
+    - **Risks:** Same as the 128 GB card. Buy it only if 256 GB of overflow is actually needed; in the with-Lime default build, the T7 already holds the bulk raw data.
+    - **Seller url:** https://www.berrybase.de/en/sandisk-high-endurance-microsdxc-uhs-i-u3-memory-card-adapter-256gb
+    - **Sources:**
+      - https://www.berrybase.de/en/sandisk-high-endurance-microsdxc-uhs-i-u3-memory-card-adapter-256gb
+      - https://www.alternate.de/SanDisk/High-Endurance-256-GB-microSDXC-Speicherkarte/html/product/1560229
+  4.
+    - **Name:** ADATA High Endurance microSDXC 128 GB, AUSDX128GUI3V30SHA2-RA1, from Alternate (DE)
+    - **Kind:** other_brand
+    - **Price usd:** 67.33 incl. 19% DE VAT (EUR 59.90) = 56.58 ex VAT. Not in stock: order lead time 9-15 business days (Alternate, 18 Oct 2026). 256 GB: EUR 82.90 ($93.19).
+    - **Spec comparison:** Better on rated speed: 100/80 MB/s, V30/U3, A2. Temperature -25 to 85 C, equal.
+    - **Worse in:** Not cheaper: $24.73 more than the SanDisk High Endurance 128 GB. Endurance hours/TBW and warranty are NOT verified (ADATA's site returned 403).
+    - **Compatibility:** UHS-I; standard mmc driver. A2 gives no benefit here, and Linux uses the A2 command queue only partly.
+    - **Risks:** Endurance spec not verified; long lead time.
+    - **Seller url:** https://www.alternate.de/ADATA/High-Endurance-128-GB-microSDXC-Speicherkarte/html/product/1561613
+    - **Sources:**
+      - https://www.alternate.de/ADATA/High-Endurance-128-GB-microSDXC-Speicherkarte/html/product/1561613
+      - https://www.alternate.de/listing.xhtml?q=endurance+microsd
+  5.
+    - **Name:** Samsung PRO Endurance (2022) microSDXC 128 GB, MB-MJ128KA/EU
+    - **Kind:** other_brand
+    - **Price usd:** 73.01 incl. VAT at Reichelt (EUR 64.95; currently unavailable). 87.57 at Alternate (EUR 77.90; 1 in stock). 256 GB MB-MJ256KA/EU: Reichelt EUR 129 ($145.01, unavailable), Alternate EUR 152.90 ($171.87).
+    - **Spec comparison:** Speed equal to SanDisk HE: 100/40 MB/s, V30/U3. Temperature -25 to 85 C, equal. Endurance is better: Reichelt quotes 'up to 16 years (140,160 h)', but uses the identical text on the 128 GB and 256 GB pages, so the 128 GB figure is NOT verified. Samsung's spec pages returned 403.
+    - **Worse in:** Not cheaper: $30-45 more than the SanDisk High Endurance 128 GB. Not worse on any spec.
+    - **Compatibility:** UHS-I; standard mmc driver; expected manufacturer ID 0x00001b (Samsung).
+    - **Risks:** Stock is thin. Per-capacity endurance and warranty are not verified.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/microsdxc_memory_card_128gb_samsung_pro_endurance-336143
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/product/microsdxc_memory_card_128gb_samsung_pro_endurance-336143
+      - https://www.reichelt.com/de/en/shop/product/microsdxc_memory_card_256gb_samsung_pro_endurance-336144
+      - https://www.alternate.de/Samsung/PRO-Endurance-128-GB-microSDXC-2022-Speicherkarte/html/product/1843451
+  6.
+    - **Name:** SanDisk Max Endurance microSDXC 128 GB, SDSQQVR-128G-GN6IA (EAN 0619659178529), from Reichelt
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 80.88 incl. 19% DE VAT (EUR 71.95); limited stock, 1-2 days (Reichelt, 18 Oct 2026).
+    - **Spec comparison:** Speed equal: 100/40 MB/s, V30/U3. Temperature -25 to 85 C, equal. Higher endurance claim: Reichelt states 120,000 h, which may be the 256 GB figure (not verified per capacity).
+    - **Worse in:** Not cheaper: $38.28 more than the SanDisk High Endurance 128 GB. Not worse on any spec.
+    - **Compatibility:** Same as the SanDisk High Endurance.
+    - **Risks:** Do not confuse it with Reichelt's mislabelled SDSQQNR-128G 'Max Endurance' listing.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/microsdhc_memory_card_128_gb_sandisk_max_endurance-298162
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/product/microsdhc_memory_card_128_gb_sandisk_max_endurance-298162
+  7.
+    - **Name:** Kingston High-Endurance microSDXC 128 GB, SDCE/128GB
+    - **Kind:** other_brand
+    - **Price usd:** 23.55 incl. VAT at Reichelt (EUR 20.95), but currently unavailable and probably a stale price. 87.57 at Alternate (EUR 77.90, 'newly arrived'). 256 GB: Reichelt EUR 109.95 ($123.59), Alternate EUR 103.90 ($116.79).
+    - **Spec comparison:** From the Kingston datasheet:
+  - Better: 3K P/E cycles, 26.9K h (24/7 over the 3-year warranty), an optional health-monitoring tool, and a 3-year warranty.
+  - Equal: -25 to 85 C, 95/45 MB/s rated.
+  - WORSE: UHS-I U1, Class 10, A1, with no V30 rating.
+    - **Worse in:** Guaranteed sustained write: U1 = 10 MB/s, which is below the 13.3 MB/s worst-case stream, against V30 = 30 MB/s. This fails a critical spec, so it is rejected despite the low Reichelt price.
+    - **Compatibility:** UHS-I; standard mmc driver.
+    - **Risks:** The EUR 20.95 price cannot be bought today. The health tool's Linux support is not verified.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/microsdxc_memory_card_128_gb_high_endurance-272312
+    - **Sources:**
+      - https://www.kingston.com/datasheets/SDCE_us.pdf
+      - https://www.reichelt.com/de/en/shop/product/microsdxc_memory_card_128_gb_high_endurance-272312
+      - https://www.alternate.de/Kingston/High-Endurance-128-GB-microSDXC-Speicherkarte/html/product/1537415
+  8.
+    - **Name:** KIOXIA EXCERIA HIGH ENDURANCE microSDXC 128 GB, LMHE1G128GG2 (EAN 4582563851160), from TME
+    - **Kind:** other_brand
+    - **Price usd:** UNVERIFIED: TME shows only an aggregate range of 30.82-44.02 (no net/gross stated, no qty-1 price). 0 in stock, 'hardly available'. 256 GB LMHE1G256GG2: aggregate 64.85-92.64, also 0 stock.
+    - **Spec comparison:** From TME: V30/U3, 100 MB/s read, -25 to 85 C (meets those floor specs). Write speed, endurance hours and warranty are NOT listed, and Kioxia's site returned 403.
+    - **Worse in:** Cannot be shown to be not-worse: write speed and endurance rating are unverified. It also cannot be bought today.
+    - **Compatibility:** UHS-I; standard mmc driver; expected manufacturer ID 0x000002 (Toshiba/Kioxia; not verified).
+    - **Risks:** No stock; unverified specs and price.
+    - **Seller url:** https://www.tme.eu/en/details/lmhe1g128gg2/memory-cards/kioxia/
+    - **Sources:**
+      - https://www.tme.eu/en/details/lmhe1g128gg2/memory-cards/kioxia/
+      - https://www.tme.eu/en/details/lmhe1g256gg2/memory-cards/kioxia/
+      - https://www.tme.eu/html/EN/kioxia/ramka_41032_EN_pelny.html
+- **Notes:** VERDICT
+  - STACK v1 names no SKU for this part, so "not worse" was judged against the floor in critical_specs: 128-256 GB, UHS-I, V30, endurance-rated, -25 to 85 C, established brand.
+  - Cheapest verified card that meets every floor spec: SanDisk High Endurance 128 GB SDSQQNR-128G-GN6IA, EUR 37.90 incl. VAT at Berrybase ($42.60 incl. / $35.80 ex VAT, in stock).
+    - The same SKU at Reichelt is EUR 38.95 (currently unavailable). Once restocked it can ride the Reichelt order already planned for the rescue cards and A-A cable, so it would cost no extra shipping and is then the cheapest landed option.
+  - Nothing cheaper is not-worse:
+    - Kingston SDCE/128GB is U1 (10 MB/s guaranteed, below the 13.3 MB/s stream), and its EUR 20.95 Reichelt price is out of stock.
+    - Kioxia LMHE1G128GG2 has unverified write and endurance specs and zero stock.
+    - Plain consumer V30 cards (EVO/Ultra class) fail the endurance requirement and were not priced.
+  - Pricier options that are better (not needed):
+    - Samsung PRO Endurance: higher endurance claim.
+    - SanDisk Max Endurance: higher endurance claim.
+    - ADATA High Endurance: 80 MB/s rated write.
+  
+  STACK CONTEXT
+  - Under the user's 18 Oct decision (Lime kept), the default build has the T7 1 TB as secondary storage. STACK C18 and reaudit_D treat this microSD as the no-Lime overflow option, and reaudit_D calls it "optional and unpriced". So the card is optional in the default build: buy it only if the T7 is absent, or for a second snapshot copy.
+  
+  STACK CORRECTIONS
+  - Price band 25-82 becomes $42.60 (128 GB) / $83.07 (256 GB) incl. DE VAT, verified 18 Oct 2026.
+  - Reichelt lists SDSQQNR-128G/256G (High Endurance) under the title "Max Endurance". Order by part number, not by title.
+  
+  ON-ARRIVAL GATE (any card)
+  - Read /sys/block/mmcblk*/device/{manfid,oemid,name}. Expect SanDisk 0x000003 / 0x5344.
+  - Full-card f3write/f3read.
+  - 30-minute sequential fio write on the Q6A, with at least 30 MB/s sustained and no stalls longer than 1 s.
+  - Format with no ESP, then do one cold boot with the card inserted and confirm it boots from UFS.
+  
+  WHAT IS NOT VERIFIED
+  - SanDisk High Endurance 128 GB warranty: 2 years seen only on the 64 GB packaging, in a 2020 review.
+  - Per-capacity endurance hours for Samsung and SanDisk Max Endurance: the retailer text is identical across capacities.
+  - ADATA endurance and warranty.
+  - Kioxia write speed, endurance and price.
+  - US-store prices: B&H, Newegg, Micro Center and Amazon blocked fetches.
+  
+  LIMITS OF THIS SEARCH
+  - The WebSearch budget for this turn was already used up by other agents (0 of about 15 searches available). Every result above comes from WebFetch on primary retailer pages (Reichelt, Berrybase, Alternate, TME), the Kingston datasheet PDF and one measured review.
+  - These manufacturer sites returned 403/404/503: Samsung, SanDisk (JavaScript-only page), Kingston web page, ADATA, Kioxia, Transcend, WD Purple. So Lexar High-Endurance, WD Purple QD101, Transcend 350V and official AliExpress store listings were not checked; a follow-up search could cover them.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
