@@ -258,6 +258,328 @@ _Run `wf_30889068-251`_
   - Cross-component note: the LimeSDR Micro M.2 GNSS variant ($299 vs $249 Basic) has a GNSS chip with an active-antenna MHF4 connector, which could replace the separate u-blox or ATGM module. That costs $50 more than an M10 module, so it is only worth it for tight time and frequency sync.
 - **Confidence:** medium
 
+_Run `wf_feb0e95a-cfc`_
+
+- **Subsystem:** rf_frontend (LNAs, FM band-stop, bias tees and TPS2553 limits, LNB 13.2 V feed, RF switches, DC blocks, protection, lab sled)
+- **Findings:**
+  1.
+    - **Claim in stack:** LNA+SAW 137 MHz: Nooelec SAWbird+ NOAA cased (100800), $49.95; 41 dB, NF 1.1 dB, 170 mA; placed inside the case after the Flamingo+, bias fed into the SAWbird output from injector ch1.
+    - **Finding:** Confirmed. SKU 100800 (with enclosure) is $49.95 and orderable. Datasheet Rev 1 (2022-06-29) gives 41 dB at 137.5 MHz, 2.6 MHz 3 dB / 3 MHz 10 dB bandwidth, NF 1.1 dB, 170 mA via bias tee (175 mA via USB), OP1dB +20 dBm, maximum input 0 dBm, Vin 3.3-5.5 V, and 'RF Output + DC Power' on the output port. The live product page still says 'min 30 dB', '180 mA nominal' and a '5 MHz bandpass'. The stack's 180 mA budget covers both figures. 4.5 V minus the TPS2553 drop is inside the supply range.
+    - **Verdict:** confirmed
+    - **Action:** Keep. Keep the current budget at 180 mA (product-page figure). Make sure input power stays at or below 0 dBm (the max) at strong-signal sites; the Flamingo+ in front handles FM.
+    - **Impact:** None
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-noaa-308.html
+      - https://www.nooelec.com/store/downloads/dl/file/id/112/product/301/sawbird_noaa_datasheet_revision_1.pdf
+  2.
+    - **Claim in stack:** Budget option for 137 MHz: 'SAWbird NOAA without + (80 mA)'.
+    - **Finding:** Not a budget option. The non-plus Nooelec SAWbird NOAA (SKU 100852) costs $49.95, the same as the cased SAWbird+ NOAA. Specs: at least 20 dB, about 0.7 dB NF, about 80 mA, no published bandwidth. The cheaper part is the SAWbird+ NOAA Barebones (SKU 100799) at $44.95, which is electrically the same as the plus model.
+    - **Verdict:** corrected
+    - **Action:** Change the budget entry to 'SAWbird+ NOAA Barebones 100799, $44.95, mounted inside the shielded RF compartment'. List the non-plus SAWbird NOAA only as a lower-current alternative (80 mA), not as a saving.
+    - **Impact:** Budget line -$5. It was wrongly shown as a saving.
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-noaa.html
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-noaa.html
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird.html
+  3.
+    - **Claim in stack:** FM band-stop: Nooelec Flamingo+ FM v2 (100813), $24.95; >60 dB rejection, 0.5 dB typ / 1.2 dB max loss, 250 mA DC pass; filter first on VHF.
+    - **Finding:** Confirmed. The product page shows $24.95 and 'v2'. It specifies more than 60 dB typical average and more than 70 dB typical maximum stopband rejection, -3 dB points at 75 and 120 MHz, out-of-band loss below 0.25 dB, at least 250 mA DC handling, and +18 dBm maximum input. Datasheet Rev 1 (2019) gives passband loss 0.01/0.5/1.2 dB (min/typ/max) and a stopband of 80.5-114.8 MHz. On P1 no DC crosses it (bias enters at the SAWbird output), so the DC rating does not matter there.
+    - **Verdict:** confirmed
+    - **Action:** Keep. The RTL-SDR Blog band-stop is still $16.95 on the buy page, and its DC rating is still unpublished (its old product URL now returns 404).
+    - **Impact:** None
+    - **Sources:**
+      - https://www.nooelec.com/store/flamingo-plus-fm.html
+      - https://www.nooelec.com/store/downloads/dl/file/id/96/product/320/flamingo_fm_filter_datasheet_revision_1.pdf
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+  4.
+    - **Claim in stack:** Uputronics 440 MHz CubeSAT filtered preamp: bias input depends on revision ('5-26 V' vs '5V max', registry #98); running at 4.5 V via ch2 is not verified; GBP 51.59 incl. VAT = $68.71; in stock.
+    - **Finding:** Resolved by Uputronics' FPA Series datasheet Rev 3.0 (18/10/2024):
+  - Bias-tee input 3.5-5.5 V; above 5.5 V causes permanent damage. 4.5 V (minus the TPS2553 and choke drop) is inside the spec.
+  - About 50 mA, average NF 0.75 dB, at least 19 dB gain for the 440 MHz model.
+  - Antenna connector DC-blocked (no bias pass-through), a Skyworks limiter on the antenna input, and an HPF below 100 MHz.
+  - USB-C and bias tee may be connected at the same time.
+  - When unpowered there is no signal pass-through and the unit attenuates heavily.
+  - Not rated for outdoor use and not IP rated.
+  Vendor plot of the 440 MHz unit: 19.63 dB at 440 MHz, 16.27 dB at 427.3 MHz and 16.17 dB at 452 MHz, so 435-438 MHz sits on the flat top. All variants show available=true on 18 Oct 2026. The store price of GBP 51.59 appears to include 20% UK VAT: all FPA prices divide by 1.2 to x.99 values (inferred, not confirmed at checkout).
+    - **Verdict:** corrected
+    - **Action:** Remove the '5-26 V' / 'not verified at 4.5 V' caveat and mark it 'in spec, 3.5-5.5 V; still measure current'. In labd, never route more than 5.5 V to any port the Uputronics can reach. At about 50 mA, ch2 qualifies for the TCBT-2R5G+ budget injector. Add a rain cover at the Yagi feed. Use the ex-VAT world price: GBP 42.99, about $57.26, to be confirmed at checkout.
+    - **Impact:** About -$11.45 against the stack's $68.71 if the export price is ex-VAT. Removes an open bring-up risk.
+    - **Sources:**
+      - https://store.uputronics.com/products/uputronics-filtered-preamps
+      - https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808
+  5.
+    - **Claim in stack:** Uputronics 434 MHz variant ($55.92 = GBP 41.99) is a narrow ISM SAW; do not buy.
+    - **Finding:** Confirmed by the vendor plot. The 434 MHz unit measures 20.25 dB at 434 MHz, 15.92 dB at 429.97 MHz and 16.08 dB at 437.97 MHz. The top of the 435-438 MHz CubeSat band is therefore about 4 dB down.
+    - **Verdict:** confirmed
+    - **Action:** Keep the 440 MHz variant.
+    - **Impact:** None
+    - **Sources:**
+      - https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808
+  6.
+    - **Claim in stack:** RTL-A/RTL-B input switches: generic HMC7992 SP4T boards; the 50 Ohm load goes on the throw that the 'all low' power-up state selects (planned as T4); isolation >=30 dB; 3.3 V logic; all throws without DC.
+    - **Finding:** Mapping error. In the HMC7992 datasheet (Rev 0, Table 6), A=Low, B=Low selects RFC-RF1, not RF4. RF4 needs A and B both high. The part has no EN pin and no all-off state, so one path is always connected. An MCP23017 resets to inputs (high-Z), so the A/B lines float at boot unless resistors define them.
+  Other datasheet values:
+  - 0.1-6 GHz, non-reflective.
+  - Insertion loss 0.6 dB typ / 0.9 dB max (0.1-2 GHz). Isolation 40 dB min / 45 dB typ (0.1-2 GHz), 32/37 dB (2-4 GHz).
+  - Off-state return loss only 7 dB at 0.1-0.4 GHz, so the internal termination of unused ports is a poor 50 Ohm at VHF.
+  - VDD 3.0-5.4 V. VIH min is 1.15 V at VDD 3.3 V and 1.55 V at VDD 5 V, so 3.3 V logic is fine.
+  - Every RF pin is DC-coupled and needs a blocking capacitor.
+  - The chip is Active at DigiKey: $13.10 (qty 1), 4,655 in stock.
+    - **Verdict:** corrected
+    - **Action:** Either put the 50 Ohm park load on RF1, or fit pull-ups on A and B (for example 10k to 3.3 V) so power-up selects RF4. Fit the pull resistors either way. Check that the chosen generic board has DC-blocking capacitors on all five RF pins. Keep the conducted isolation qualification at >=30 dB.
+    - **Impact:** Without this fix, at power-up the SDR would sit on an antenna path (VHF-137 / L-band) instead of the load, against the Bench/park rule.
+    - **Sources:**
+      - https://www.farnell.com/datasheets/2283884.pdf
+      - https://www.digikey.com/en/products/detail/analog-devices-inc/HMC7992LP3DE/5873027
+  7.
+    - **Claim in stack:** HMC7992 generic boards, 2 pcs, $30-40, marketplace (unverified).
+    - **Finding:** No primary marketplace listing was verified. A Walmart.ca listing shows a 'HMC7992 Non-Reflective SP4T RF Switch Module' at $20.49 (currency and date unclear). The bare chip costs $10.25-13.10 at DigiKey/Mouser/Newark (qty 1). The stack already has a custom 2-layer injector PCB with C0G blocks.
+    - **Verdict:** new_option
+    - **Action:** Option: place the two HMC7992LP3DE chips directly on the custom injector PCB (about $13 each), with your own C0G blocks, A/B pull resistors and a shield can. This removes the unknowns of a generic board (missing DC blocks, layout isolation) and two SMA jumpers per switch. Otherwise buy one generic board first and qualify it on the LiteVNA before buying the second.
+    - **Impact:** About -$5 to -$15 and two fewer coax hops per receiver. Needs a 4-layer or carefully grounded QFN footprint (model).
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/analog-devices-inc/HMC7992LP3DE/5873027
+      - https://www.walmart.ca/en/ip/HMC7992-Non-Reflective-SP4T-RF-Switch-Module-PCB-Material-0-1-6GHz-Frequency-Range-3V-5V-Power-Supply-45dB-Isolation-0-6dB-Insertion-Loss-58dBm-IIP3/4LT6JIAL4ULJ
+  8.
+    - **Claim in stack:** Scope alternative: Mini-Circuits connectorized SP4T switch instead of HMC7992.
+    - **Finding:** The Mini-Circuits ZSWA4-63DR+ (absorptive SP4T, 1-6000 MHz, SMA) costs $307.32 at qty 1-9, with 0 in stock at Mini-Circuits and 0 at DigiKey.
+    - **Verdict:** confirmed
+    - **Action:** Keep the HMC7992. Do not use a Mini-Circuits connectorized switch.
+    - **Impact:** None
+    - **Sources:**
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=ZSWA4-63DR%2B
+  9.
+    - **Claim in stack:** TPS2553 current switches: LNA ch1-4 at 300 mA nominal (from 240 mA minimum), LAB port 0.75 A; check the latching TPS2553-1; 10 pcs $5.50 at LCSC; TI store out of stock.
+    - **Finding:** Mostly confirmed.
+  - TI status: ACTIVE (datasheet Rev F). VIN 2.5-6.5 V, adjustable limit 75 mA-1.7 A, RILIM 15-232 kΩ.
+  - Fault behaviour: the plain part holds constant current; the '-1' suffix latches off.
+  - Reverse-voltage comparator trips at VOUT-VIN 95-190 mV.
+  - From the datasheet equations (my calculation), RILIM = 88.7 kΩ gives 265 / 299 / 339 mA (min/nom/max, resistor tolerance excluded). The stack's '240 mA min' is therefore conservative.
+  - Price: a DigiKey listing shows TPS2553DBVR at $1.16. The LCSC $5.50 for 10 was not re-verified.
+  - The TPS2553 cannot be used on the 12.5 V or 13.2 V rails (6.5 V maximum).
+    - **Verdict:** confirmed
+    - **Action:** Use TPS2553-1 (latch-off) on the outward-biased channels ch2-ch4, so a shorted feed does not sit in constant-current mode, and have labd clear the latch by toggling EN. Specify RILIM 88.7 kΩ 1%. The reverse-voltage block also covers the case where a user powers the Uputronics from USB-C while ch2 is on.
+    - **Impact:** Low. Better fault behaviour on the antenna-facing ports.
+    - **Sources:**
+      - https://www.ti.com/product/TPS2553
+      - https://www.ti.com/lit/ds/symlink/tps2553.pdf
+      - https://www.digikey.com/en/products/result?keywords=TPS2553DBVR
+  10.
+    - **Claim in stack:** LNB13V2 rail: SW -> LC -> TPS7A4701 (3-36 V, 1 A, 307 mV dropout) -> 13.2 V ±0.2 V at the F connector; preliminary 0.45 A PTC; internal limit and OTP; PG to MCP #3; EN from MCP #1 GPB0 only when RTL-B is on T2. The BONI12V5 rail is the same, also with PG.
+    - **Finding:** Part choice and these specs confirmed: Active; 3-36 V; 1 A; dropout 307 mV typ / 450 mV max at 1 A; θJA 30.5 °C/W.
+  Three corrections:
+  1. The TPS7A47 has no power-good pin (pins: OUT, NC, SENSE/FB, the ANY-OUT pins, GND, EN, NR, IN; 'PG' does not appear anywhere in the datasheet). 'PG on MCP #3' is impossible for both the LNB and Boni rails.
+  2. Current limit is 1.0 A min / 1.26 A typ, and TI says the LDO is not designed to run steadily in current limit. A shorted F centre pin at 16.4 V input would dissipate about 20 W until thermal shutdown cycles, with only a slow PTC behind it.
+  3. Overall accuracy is ±2.5%, so 13.2 V ±0.33 V, not ±0.2 V. That is still inside the LNB vertical-polarisation range (<14 V).
+  The dissipation model (0.96 W at 0.3 A from 16.4 V) is confirmed.
+    - **Verdict:** corrected
+    - **Action:** After each TPS7A4701, add a TI TPS2596 eFuse (Active; 2.7-19 V; current limit adjustable 0.125-2 A, ±10.4% max; latch or auto-retry; FLT pin) set to about 1.5-2x the measured LNB current (Boni about 0.125 A). Wire FLT to MCP #3 in place of the nonexistent PG. The PTCs become optional. Option: a TPS25962x variant has a fast 13.8 V over-voltage clamp, which would keep the LNB from ever seeing horizontal-polarisation voltage if the LDO fails short (variant ordering not verified). Correct the tolerance to ±0.33 V, or trim it.
+    - **Impact:** A design error in the power board netlist (PG pin). Fault protection on the only connector that carries 13.2 V.
+    - **Sources:**
+      - https://www.ti.com/product/TPS7A47
+      - https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+      - https://www.ti.com/product/TPS2596
+  11.
+    - **Claim in stack:** QO-100 NB via a bare Bullseye LNB on P4 with 13.2 V (vertical); Bullseye $29.95, 70 in stock; gain 50-66 dB; current 0.2-0.3 A unpublished.
+    - **Finding:** Confirmed. AMSAT-DL states 'Downlink polarisation for the NB transponder is V (vertical linear polarization)', so a 13 V class feed is correct. The Bullseye page shows $29.95, 70 in stock, gain 50-66 dB, NF 0.5 dB, LO 9750/10600 MHz, 2 ppm TCXO, ±30 kHz over -20 to 60 °C, factory calibration within 1 kHz, IF 739-1950 MHz, and a 25 MHz reference output on a second F connector. Current draw and the V/H voltage thresholds are still unpublished. The buy page says the LNB needs a 12-19 V bias tee and that the RTL's 4.5 V tee is not for this LNB.
+    - **Verdict:** confirmed
+    - **Action:** Keep it held behind the region gate. Measure the LNB current at 13.2 V before setting the eFuse limit. Leave the 25 MHz reference port unterminated or capped (it is an output).
+    - **Impact:** None
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+      - https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines/
+  12.
+    - **Claim in stack:** LNB IF: total noise into the SDR -33...-22 dBm (model), so a 15 dB attenuator (20 dB if LNB gain is over 60 dB) sits between the injector and RTL-B T2.
+    - **Finding:** My own model, kT·B over the 739-1950 MHz IF with Tsys 150-300 K and gain 50-66 dB, gives -36 to -17 dBm. That brackets the stack's range, with a slightly hotter top end. The HMC7992 (P1dB +33-35 dBm) is not a concern. Keeping the attenuator after the DC block is correct.
+    - **Verdict:** confirmed
+    - **Action:** Keep 15/20 dB and the 3 dB-pad intermod test. Choose 20 dB as the default if the measured LNB gain is unknown.
+    - **Impact:** None (model)
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+  13.
+    - **Claim in stack:** 13.2 V into an ANNE-50+ (1 W) would dissipate about 3.5 W, so there is a DC block before every SDR and instrument; lab kit has 2x BLK-89-S+ ($20.26) and 3x ANNE-50+ ($14.84).
+    - **Finding:** Confirmed. 13.2²/50 = 3.48 W. The ANNE-50+ datasheet (Rev H) gives 1 W at 50 °C, derated linearly to 0.35 W at 100 °C. It costs $14.84 with more than 1,000 in stock at Mini-Circuits. The BLK-89-S+ datasheet (Rev G) gives 0.1-8000 MHz, 50 V DC, 4 W RF (1 W at 100 °C), and insertion loss 0.10 dB typ at 100-1000 MHz. It costs $20.26 with more than 1,000 in stock at Mini-Circuits (DigiKey shows 0).
+    - **Verdict:** confirmed
+    - **Action:** Keep.
+    - **Impact:** None
+    - **Sources:**
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=ANNE-50%2B
+      - https://www.minicircuits.com/pdfs/ANNE-50+.pdf
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=BLK-89-S%2B
+      - https://www.minicircuits.com/pdfs/BLK-89-S+.pdf
+  14.
+    - **Claim in stack:** Budget injector: Mini-Circuits TCBT-2R5G+ $11.31, only on channels <=150 mA (200 mA maximum).
+    - **Finding:** Specs confirmed: 20-2500 MHz; insertion loss 0.2 dB typ (20-2500 MHz), 0.35 dB (200-1250 MHz) and 0.7 dB (1250-2500 MHz); 200 mA DC; 25 V maximum at the DC port; a required external 0.01 µF capacitor. Price corrected: Mini-Circuits now lists only a 10-49 tier at $9.05 each (no 1-9 tier) with 71 in stock. DigiKey shows 1,589.
+    - **Verdict:** corrected
+    - **Action:** Update the price to $9.05 each at qty 10+ (about $90 minimum from Mini-Circuits), or buy singles from DigiKey. Eligible channels: Uputronics 440 (about 50 mA), the L-band patch (20 mA), H1 (120 mA) and LNA V2 (90 mA). Not eligible: SAWbird+ NOAA/GOES/iO (170-180 mA).
+    - **Impact:** Small price change. Minimum-order trap.
+    - **Sources:**
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=TCBT-2R5G%2B
+      - https://www.minicircuits.com/pdfs/TCBT-2R5G+.pdf
+  15.
+    - **Claim in stack:** Spare LNA: RTL-SDR Blog Wideband LNA V2, $19.95, 208 in stock, 90 mA; also the LNA for the optional P8 WIDE/2 m path behind a second Flamingo+.
+    - **Finding:** Confirmed. The product page shows $19.95, 208 in stock, 100 MHz-6 GHz, NF below 1 dB, 3-5 V, QPL9547-based. The buy page states 'Needs 3-5V, 90mA bias tee power'. Gain and P1dB are still unpublished. The Qorvo QPL9547 page could not be fetched (HTTP 429). No LNA V3 is listed.
+    - **Verdict:** confirmed
+    - **Action:** Keep. Measure gain and current at bring-up as already planned.
+    - **Impact:** None
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-wideband-lna-bias-tee-powered/
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+  16.
+    - **Claim in stack:** L-band LNA: Nooelec SAWbird+ GOES cased (100792), $49.95; 38 dB, NF 1.2 dB, 140 mA typ / 180 mA budget, OP1dB +20 dBm, max input 0 dBm, passband 1648-1728 MHz (LTE B3 uplink inside); Barebones 100791 $44.95.
+    - **Finding:** Confirmed. The product page shows SKU 100792, $49.95, an 80 MHz passband around 1688 MHz, '180 mA nominal' and 'at least 30 dB'. Datasheet Rev 1 (2022-06-24): 70 MHz 3 dB / 80 MHz 10 dB bandwidth, 38 dB (printed in the Max column), NF 1.2 dB, 120/140/160 mA, OP1dB +20 dBm, Pin max 0 dBm. The Barebones is $44.95 on the category page. No new SAWbird variants (17 products, all orderable).
+    - **Verdict:** confirmed
+    - **Action:** Keep. Keep the 180 mA budget on ch3.
+    - **Impact:** None
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-goes-302.html
+      - https://www.nooelec.com/store/downloads/dl/file/id/108/product/296/sawbird_goes_datasheet_revision_1.pdf
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird.html
+  17.
+    - **Claim in stack:** Inmarsat-C LNA: SAWbird+ iO cased (100788) $49.95, bought only after the egc-gate.
+    - **Finding:** Confirmed. SKU 100788, $49.95, 1542 MHz centre, 60 MHz passband, at least 30 dB, 180 mA nominal, 3-5 V via SMA. The iO Barebones is $44.95.
+    - **Verdict:** confirmed
+    - **Action:** Keep it behind the egc-gate. The budget alternative is the Barebones at $44.95 inside the shielded compartment.
+    - **Impact:** None
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-io-303.html
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird.html?p=2
+  18.
+    - **Claim in stack:** Extended: SAWbird+ H1, $45-50, unverified (URL gave 404); 120 mA, 65 MHz, >=40 dB, NF about 0.8 dB.
+    - **Finding:** The product page now resolves: SKU 100811 at $49.95, at least 40 dB, NF about 0.8 dB (Barebones about 1.05 dB), 120 mA nominal, 65 MHz passband at 1420 MHz, 3-5.5 V, three feed options.
+    - **Verdict:** corrected
+    - **Action:** Set the price to $49.95 (verified 18 Oct 2026) and use the new URL.
+    - **Impact:** Extended total moves to the top of its range ($49.95 instead of $45-50).
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-h1.html
+  19.
+    - **Claim in stack:** HF+ input switch: 2x Omron G6K-2F-RF 5 V in series-parallel; GBP 43-52 for two (RS UK); >=35 dB isolation at 162-260 MHz and <=0.3 dB loss from 10 kHz to 260 MHz; unpowered = HF+ on 50 Ohm.
+    - **Finding:** Part is valid, but the brand has changed. OMRON's Device & Module Solutions business was spun off on 1 July 2026 as Aratas Corporation (Carlyle-owned, independent from 1 Oct 2026). DigiKey now lists 'G6K-2F-RF DC5, Aratas (formerly Omron Components)' at $25.06 and the 3 GHz 'G6K-2F-RF-T DC5' at $26.03, so about $50-52 for two. The datasheet rates it at 1 GHz: isolation at least 20 dB between same-polarity contacts and at least 30 dB between different-polarity contacts, insertion loss at most 0.2 dB. The '>=35 dB at 162-260 MHz' for the series-parallel pair is a model, not a datasheet value. The HMC7992 is no substitute: it is specified only from 0.1 GHz and has no defined unpowered state.
+    - **Verdict:** new_risk
+    - **Action:** Order by part number, accepting the Aratas or Omron marking; the part numbers are unchanged. Price from DigiKey (about $50-52 for two) or RS. Keep the relays; measure the isolation on the LiteVNA.
+    - **Impact:** Sourcing/branding only. No reported spec change.
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=G6K-2F-RF%20DC5
+      - https://www.digikey.com/en/products/result?keywords=G6K-2F-RF-T%20DC5
+      - https://www.omron.com/global/en/news/2026/07/c0701-1.html
+      - https://www.electropages.com/blog/2026/07/omron-electronic-components-rebrands-aratas
+      - https://electronicsdatasheets.com/download/51d58e51e34e242f4000002a.pdf?format=pdf
+  20.
+    - **Claim in stack:** RF sled (extended): HMC7992 SP4T + PE4302 + MCP23017 #2 + ADS1115 + buck->LC->LDO bias + enclosure, $104-168 marketplace; isolation 30-37 dB, not the vendor's 45 dB; RF4 50 Ohm default; source on RF3 <= -40 dBm with RF1/RF2 loaded.
+    - **Finding:** Partly corrected. The PE4302 is on pSemi's discontinued list (2016 EOL group). The PE4312 is 'In Production' and is pin-compatible with the PE4302: 1 MHz-4 GHz, 31.5 dB in 0.5 dB steps, 2.3-5.5 V, 1.8 V logic compatible, and it does not need the PE4302's series resistors on C16/DATA. Marketplace 'PE4302' modules are therefore old stock or clones. The 30-37 dB isolation expectation is conservative against the chip spec (40 dB min at 0.1-2 GHz). As above, the HMC7992 default (A=B=low) selects RF1, not RF4. Marketplace module prices were not re-verified.
+    - **Verdict:** corrected
+    - **Action:** Specify a PE4312 module, or check the chip marking on arrival. Add A/B pull-ups so the sled powers up on RF4 (50 Ohm), or move the load to RF1. Keep the conducted-only rule (at most -40 dBm, antenna ports loaded).
+    - **Impact:** EOL part in the sled BOM. Fails unsafe at power-up unless the pull-ups are added.
+    - **Sources:**
+      - https://psemi.com/?p=11471
+      - https://www.psemi.com/products/digital-step-attenuators/pe4312
+      - https://www.farnell.com/datasheets/2283884.pdf
+  21.
+    - **Claim in stack:** V4L bias tees off in core (librtlsdr token, EEPROM bias off); spare V4L tee only for LNAs <=90 mA; V4L tee rated 4.5 V / 180 mA.
+    - **Finding:** Confirmed. rtl-sdr.com/v4l says the 4.5 V bias tee 'can continuously pull up to 180 mA', with a self-resetting thermal fuse and LDO overcurrent protection, and that updated drivers are required. The rtlsdrblog GitHub release V1.4.0 (marked Latest) adds V4L support; the release page shows a date without the year.
+    - **Verdict:** confirmed
+    - **Action:** Keep the gating. Pin the driver to rtl-sdr-blog V1.4.0 or later.
+    - **Impact:** None
+    - **Sources:**
+      - https://www.rtl-sdr.com/v4l/
+      - https://github.com/rtlsdrblog/rtl-sdr-blog/releases
+  22.
+    - **Claim in stack:** P5 (HF) is an SMA that tolerates DC and carries 12.5 V up the coax only in the Boni profile; DC-sense runs before any bias is enabled.
+    - **Finding:** New risk. P2, P3 and P5 all use SMA. An Uputronics FPA plugged into P5 while the Boni profile is active would take 12.5 V (permanent damage above 5.5 V per its datasheet). A SAWbird is 'not recommended' above 5 V. DC-sense would see an LNA as a valid load, not a short. The Boni-Whip itself has a BNC connector (WiMo listing), ships with its own bias tee, and is specified for 12-15 V (WiMo ES says 9-15 V). A forum quote of the manual gives about 40 mA maximum; not verified at the primary source.
+    - **Verdict:** new_risk
+    - **Action:** Physically key P5: use a BNC bulkhead (it matches the Boni-Whip and HF wire baluns) so no SMA LNA can mate with the 12.5 V port. Keep DC-sense, and add an explicit 'Boni attached' confirmation in the menu. The Boni rail limit can be the TPS2596 set near 0.125 A.
+    - **Impact:** Prevents destroying a $50-70 LNA through one wrong plug.
+    - **Sources:**
+      - https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808
+      - https://www.wimo.com/en/18067
+      - https://forums.radioreference.com/threads/boni-whip-power-supply-questions.455226
+  23.
+    - **Claim in stack:** Protection: SMBJ TVS and fuses on power rails, DC-sense before bias, bias blocked on DC-short profiles, 'discharge antennas before connecting'; no RF ESD or limiter element is listed on the antenna ports.
+    - **Finding:** New risk. The SAWbird+ NOAA sits behind a passive, DC-passing Flamingo+ on P1, and the SAWbird+ GOES sits directly on the helix feed. Nooelec publishes no ESD limiter for either; their first stage is a bare MMIC. By contrast the Uputronics FPA has a Skyworks limiter and a <100 MHz HPF on its input. The stack has no static bleed or limiter on P1, P3 or P6.
+    - **Verdict:** new_risk
+    - **Action:** Add a DC static-bleed shunt inductor at the no-DC ports P1 and P6 (high impedance at 137-260 MHz; value to be chosen and verified on the LiteVNA; model). On the biased ports P2 and P3, choose a low-capacitance RF TVS with a working voltage above 5 V (part not yet selected or verified). Qualify the insertion loss conducted. The earlier audit's Mini-Circuits VLM-33-S+ limiter ($69.60) was not re-verified and is overkill for the device; keep it only as a bench option.
+    - **Impact:** Robustness of the unprotected first-stage LNAs in dry or windy field use.
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-noaa-308.html
+      - https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808
+  24.
+    - **Claim in stack:** ADS-B budget alternative: Uputronics 1090 preamp GBP 44.39 ($59.12).
+    - **Finding:** Confirmed available at GBP 44.39; datasheet gives at least 14 dB. The same VAT inference applies: GBP 36.99 ex-VAT, about $49.27.
+    - **Verdict:** corrected
+    - **Action:** Use the ex-VAT world price after confirming at checkout.
+    - **Impact:** About -$10 on the budget line.
+    - **Sources:**
+      - https://store.uputronics.com/products/uputronics-filtered-preamps
+      - https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808
+  25.
+    - **Claim in stack:** 137 MHz first stage is the SAWbird+ NOAA (no alternative listed).
+    - **Finding:** Alternative exists: the Uputronics 137.5 MHz NOAA FPA (GBP 59.99 incl. VAT, about $66.58 ex-VAT inferred; available). Specs: at least 22 dB, about 50 mA, average NF 0.75 dB, Skyworks input limiter and HPF, but larger V2 enclosure. It is not better on price or gain. Its advantages are about one third of the current and ESD protection.
+    - **Verdict:** new_option
+    - **Action:** Do not switch now. Use it as a fallback if the SAWbird+ NOAA suffers ESD or overload failures in the field.
+    - **Impact:** None now
+    - **Sources:**
+      - https://store.uputronics.com/products/uputronics-filtered-preamps
+      - https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808
+  26.
+    - **Claim in stack:** LNA4V5 bus from 2x ADI LT3045 in parallel (about 1 A); LCSC $8.33 each (unverified).
+    - **Finding:** Not re-verified in this pass: analog.com returned HTTP 503 on every attempt, and the price was not checked. Only the interface matters for this subsystem: 4 x 300 mA TPS2553 limits (1.2 A) exceed the pair's about 1 A, which the stack already handles through the labd budget (LNA total <= 1.0 A).
+    - **Verdict:** unverified
+    - **Action:** Leave this to the power-subsystem audit. Keep the labd LNA budget at <= 1.0 A.
+    - **Impact:** None for RF
+    - **Sources:**
+      - https://www.analog.com/en/products/lt3045.html
+  27.
+    - **Claim in stack:** Rule compliance of the RF front end: receive-only; signal sources (GPSDO, noise source, tinySA generator, VNA port 1) only in Bench mode, conducted, all switches on 50 Ohm, <= -40 dBm; no loop or H-field parts; no dish (bare LNB, horn, or cone).
+    - **Finding:** Confirmed. No component in this subsystem transmits on air. The sled and HMC7992 isolation (40 dB min on the chip, 30-37 dB expected at board level) keeps a -40 dBm bench source at least 70 dB below 0 dBm at the loaded antenna ports. The Bullseye on a horn or cone is dish-free. Correcting the HMC7992 power-up state above is needed so that the park-at-50-Ohm rule actually holds at boot.
+    - **Verdict:** confirmed
+    - **Action:** Apply the HMC7992 A/B pull fix. Otherwise no change.
+    - **Impact:** None once the fix is applied
+    - **Sources:**
+      - https://www.farnell.com/datasheets/2283884.pdf
+      - https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines/
+- **Current status oct 2026:** As of 18 Oct 2026:
+  - Nooelec: the SAWbird line is unchanged (17 products, all orderable, no EOL notices). Free worldwide shipping on orders over $100. Prices: SAWbird+ NOAA, GOES, iO and H1 cased $49.95; Barebones $44.95; Flamingo+ FM v2 $24.95. Datasheets are still Rev 1 (2019/2022).
+  - Uputronics: every FPA variant shows available. The FPA datasheet is Rev 3.0 (18/10/2024) and settles the bias-voltage question at 3.5-5.5 V.
+  - RTL-SDR Blog: Wideband LNA V2 $19.95 (208 in stock), Bullseye LNB $29.95 (70 in stock), FM band-stop $16.95. Admin comments on the buy page say the V4 is EOL; the V4L 'limited first batch' is sold from the China warehouse. Driver rtl-sdr-blog V1.4.0 (Latest) adds V4L support.
+  - HMC7992LP3DE: Active at DigiKey, $13.10, 4,655 in stock.
+  - Mini-Circuits: ZSWA4-63DR+ $307.32 with zero stock. TCBT-2R5G+ now $9.05 at qty 10-49 only. BLK-89-S+ $20.26 and ANNE-50+ $14.84 (more than 1,000 in stock each).
+  - TI: TPS2553, TPS7A47 and TPS2596 are all Active.
+  - Omron relays (G6K-2F-RF) are now sold under the Aratas brand (spun off 1 Jul 2026, independent 1 Oct 2026); DigiKey shows $25-26 each.
+  - pSemi PE4302 is discontinued (2016 group); the PE4312 is In Production and pin-compatible.
+- **Notes:** I checked against primary sources: manufacturer pages, datasheet PDFs downloaded and text-extracted, vendor response plots viewed, TI, Mini-Circuits, pSemi, DigiKey and AMSAT-DL. I used about 8 WebSearch calls.
+  
+  **Fixes that need a design change:**
+  1. **HMC7992 power-up state.** With A=B=low the switch selects RF1, not RF4. Add pull resistors, or move the 50 Ohm park load to RF1.
+  2. **TPS7A4701 has no PG pin.** It also has no usable short-circuit limit, since its current limit is 1.0 A min and it is not meant to run there. Add a TPS2596 eFuse with its FLT line to MCP #3 on both the LNB and the Boni rails.
+  3. **P5 needs physical keying.** The 12.5 V Boni rail sits on an SMA like the LNA ports; a BNC on P5 stops an SMA LNA from mating with it.
+  4. **PE4302 in the sled is EOL.** Specify the pin-compatible PE4312.
+  
+  **Resolved open item:** the Uputronics 440 runs on 3.5-5.5 V at about 50 mA, so the 4.5 V ch2 feed is in spec.
+  
+  **Price corrections:**
+  - SAWbird NOAA (non-plus) is not cheaper ($49.95). The real budget part is the SAWbird+ NOAA Barebones at $44.95.
+  - SAWbird+ H1 is verified at $49.95.
+  - TCBT-2R5G+ is $9.05, at quantity 10 or more.
+  - Uputronics store prices appear to include 20% UK VAT. This is inferred from all prices dividing to .99 values. The ex-VAT 440 price is about $57.26; confirm at checkout.
+  
+  **Numbers I computed (not datasheet values):**
+  - TPS2553 RILIM 88.7 kΩ gives 265/299/339 mA (from TI's equations).
+  - LNB IF noise: -36 to -17 dBm (kTB model).
+  - ANNE-50+ at 13.2 V: 3.48 W.
+  
+  **Not verified:**
+  - LT3045 and the ADI pages (analog.com returned 503); the HMC7992 datasheet was read from Farnell's copy instead.
+  - QPL9547 gain and P1dB (Qorvo returned 429).
+  - Generic HMC7992 and PE43xx module prices (only a Walmart.ca listing at $20.49).
+  - LCSC TPS2553 price.
+  - Bullseye LNB current.
+  - Boni-Whip current (40 mA comes only from a forum quote).
+  - Exact RF TVS part for the biased ports.
+  - The G6K series-parallel isolation figure (a model).
+  
+  Downloaded datasheets are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfdl/.
+
 ## Форуми та досвід спільноти (`forums`)
 
 _Run `wf_30889068-251`_
