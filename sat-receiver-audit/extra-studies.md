@@ -16039,6 +16039,81 @@
   - The only lost anchor is idx 33. Its anchor was the full R_1_0 URL, which idx 21 has already replaced with the same R_1_5 URL that idx 33 asks for. Batch 2 should find that line by the prefix '- 4D Systems 4DHDMI даташит:' and only add the DigiKey and Newhaven links.
   - Batch 2 will see some repeats, which it should merge: VEML7700, Bourns PEC11R datasheet, HMC7992 datasheet, the HAB-FPA datasheet, I-PEX MHF 4L, Samsung T7, smartmontools, the Pi Hut delivery page, LiteVNA guide and tinySA Buying.
 
+## edit:02e_bom_optional_totals:b1 (run `wf_47c804ff-504`)
+
+- **Section:** 02e_bom_optional_totals
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 20
+  - 21
+  - 22
+  - 23
+- **Skipped:**
+  1.
+    - **Idx:** 19
+    - **Why:** Superseded by a higher-precedence source. Analogs G2 #3 (P5) rejects the FPC kit as a budget alternative, and idx 23 (also G2) explicitly asks for the recompute with the Arace and FPC items removed. So the FPC item was taken out of the budget variant and kept only as a routing fallback, rather than having its delta corrected from -3.27 to -1.15. This also covers batch-2 idx 24. The Arace part of idx 19 is the same as idx 23, which was applied.
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/02e_bom_optional_totals.md, using Edit.
+  
+  How the file is laid out now:
+  - I can only edit this file, so the rows that should move into core (Lime) and into the antenna tiers (QO-100) cannot go to 02a or 02b. Instead 2.11 now has three parts:
+    - 2.11.1 Lime set, counted in core: the board (267, Crowd Supply), 4x Taoglas CAB.01075 cables (18.36, DigiKey DE), the Lime parts per G6 #7 (90.65-91.65), a new row for the labd-controlled M.2 3.3 V load switch (no price, status модель), and the T7 at Reichelt (231.45 = EUR 205.90 incl. VAT). Subtotal 607.46-608.46.
+    - 2.11.2 QO-100 set, counted in the antenna tiers: 2 LNBs from Passion Radio plus 2 AXING terminators, about 97.41-124.46 (my estimate).
+    - 2.11.3 optional and gated items.
+  - The heading of 2.11 is renamed to match. The assembler may move 2.11.1 and 2.11.2 into 2.2-2.5 if wanted.
+  
+  Where two changes conflicted:
+  - **idx 8 vs idx 20 (Lime parts price):** G6 #7 won. The line is now 89.65 plus 1-2 for passives (a model figure), not "unchanged 87-127".
+  - **idx 13 and idx 14 (Lime sample rate):** I wrote ≥7 Msps and a 15-minute capture at 7 Msps, not the ≥6 Msps in the change text. Re-audit B's Lime spec blocks every rate below 7 Msps, G6 #12 uses a 7 Msps capture, and operator note 30 requires sysclk ≥30 MHz.
+  - **idx 10 (Bullseye 25 MHz port):** G6 #9 won over re-audit B r3 corr 16. The port always gets a DC-decoupled AXING terminator, instead of "terminator only at 0 V, otherwise a dust cap".
+  
+  Recomputed totals:
+  - **Optional group (2.11.3):** 248.12-359.50. This removes the Lime set, the QO-100 set and the D36V28F5 #2 row, and uses the Airspy landed price of 123.22-142.60. The shroud (under $5, DIY) is not counted. microSD and AD8318 still carry their v1 prices; batch-2 idx 41 and 45 change them.
+  - **Core:** 1,718.33-2,164.00 without Lime (G1 delta), plus the Lime set, gives 2,325.79-2,772.46. Patch tier is 175.79-201.79. QO-100 is its own row in the tier table.
+  - **Summary rows:**
+  
+  | summary row | USD |
+  |---|---|
+  | core with Lime | 2,325.79-2,772.46 |
+  | core without Lime (fallback) | 1,718.33-2,164.00 |
+  | + patch + QO-100 | 2,598.99-3,098.71 |
+  | + both antenna tiers | 2,949.89-3,723.88 |
+  | + bench | 4,424.47-5,533.77 |
+  | everything except optional | 4,922.19-6,241.49 |
+  
+  - **Still at v1 values:** the foldable, bench and extended tiers. Batch-2 idx 29-34 and 46 will change them and must re-add.
+  - **Budget variant (idx 22 and 23 combined):** I combined idx 22 (G1 deltas) with idx 23 (Arace and FPC items removed); NKON stays in until batch-2 idx 28 removes it. Results:
+    - without Lime: ≈$1,706, or ≈$1,635 with manual switching;
+    - with Lime: ≈$2,314, or ≈$2,243;
+    - device + both antenna tiers + QO-100: ≈$2,788 / ≈$2,717 with Lime, ≈$2,181 / ≈$2,110 without.
+    - These replace both the ≈$1,698 / ≈$1,627 / ≈$2,075 figures from idx 22 and the ≈$1,747 from idx 23.
+  
+  What I could only do in part:
+  - **idx 5 (EU-landed totals):** The files have no landed cost for the lines in 2.1-2.10, so a full EU-landed total cannot be built without inventing numbers. I added landed figures only for what this file holds:
+    - Lime set in DE at 19% VAT (my model): about $698-699, plus normal duty on the board, the courier fee and shipping;
+    - core with Lime in the EU: at least ≈$2,416-2,863, without the import extras on non-EU lines in 2.1-2.10.
+  
+  Other points:
+  - **Weight:** I combined idx 6 and idx 21. The default with Lime is about 1.7-1.9 kg (model); without Lime about 1.6-1.8 kg. The backpack and Pelican weight figures are unchanged; batch-2 idx 33 and 35 cover them.
+  - **Gender-neutral wording:** I reworded two phrases ("на покупцеві", "один користувач").
+
 ## fold:vhf_uhf (run `wf_4a343103-e9e`)
 
 - **Band group:** VHF/UHF: 137 MHz Meteor-M LRPT, 145.8 MHz ISS SSTV, 435-438 MHz CubeSats (RTL-SDR V4L for 137/145.8 MHz, LimeSDR Micro for 435 MHz). Targets unchanged. Packing targets unchanged: recommended tier has no piece longer than about 35 cm; ultra-compact tier no piece longer than about 20 cm.
