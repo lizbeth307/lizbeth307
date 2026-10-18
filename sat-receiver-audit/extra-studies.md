@@ -17394,6 +17394,150 @@
   
   No subtotals live in this file; C24 only points to 2.12.
 
+## edit:11c_changes_reaudit_B:b1 (run `wf_53f2b30c-e42`)
+
+- **Section:** 11c_changes_reaudit_B (NEW 11.3 corrections from re-audit B: receivers and RF) — file /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/11c_changes_reaudit_B.md
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+  - 58
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  - 64
+  - 65
+  - 66
+  - 67
+  - 68
+  - 69
+  - 70
+  - 71
+  - 72
+  - 73
+  - 74
+  - 75
+  - 76
+  - 77
+  - 78
+  - 79
+  - 80
+  - 81
+  - 82
+  - 83
+  - 84
+  - 85
+  - 86
+  - 87
+  - 88
+  - 89
+  - 90
+  - 91
+  - 92
+  - 93
+  - 94
+  - 95
+  - 96
+  - 97
+  - 98
+  - 99
+  - 100
+  - 101
+  - 102
+  - 103
+  - 104
+  - 105
+  - 106
+  - 107
+  - 108
+  - 109
+  - 110
+  - 111
+  - 112
+  - 113
+  - 114
+- **Skipped:** []
+- **Notes:** Batch 1 created the file with Write. It starts with "### 11.3. Виправлення P4: приймачі і РЧ (повторний аудит B)", then a one-line note on sources, then a table | № | розділ STACK | що виправлено або додано | чому | with 55 rows. Every row has 5 columns (checked by script).
+  
+  How entries were grouped: all 115 entries are merged by topic. Examples: HF+ without DAB = idx 0/40/56/74/81/104; Boni 13.8 V = 1/9/51/80/103/106; HMC7992 RF1 park = 14/67/76/110/114; throw map = 69-72/75/76/78/80; eFuse instead of PTC = 43/44/64/68/103/104; Lime receive-only = 18/85/89/109.
+  
+  Section numbers in the "розділ STACK" column come from the `section` field of the matching entries in the other v2_changes JSONs. I confirmed the subsection boundaries against the current heading lines.
+  
+  Precedence conflict:
+  - idx 9 gives a ±0.2 V Boni window (13.8 ±0.2 V at the barrel). analogs_G3 #9 (P5, higher precedence) says the guaranteed IC band at 13.8 V is ±0.345 V and that the ±0.2 V windows of STACK and re-audit B/C are too tight. G3 #9 won. Row 2 gives 13.8 V with the ≥12.0 V barrel gate and per-unit measurement, and states that G3 #9 wins.
+  
+  Checked against the analog files, no conflict:
+  - idx 36 (new RTL-SDR Blog FM band-stop row for the spare V4L): this is a new part role. G1 #2 only rejected it as a replacement for the P1 Flamingo+. The row cites the G1 #2 spec trade.
+  - idx 108: Uputronics EUR 52.95 + VAT matches G1 #3.
+  - idx 35: the V3 fallback matches G1 #0.
+  - idx 43/44: the eFuse matches G3 #9/#13.
+  - idx 6: TPS2553DBVR-1 matches G3 #11.
+  
+  Wording: 'покупця' and 'рішення користувача' were reworded to neutral forms ('країну призначення', 'При купівлі в ЄС', 'рішення від 18.10.2026').
+  
+  Subtotals: none live in this file. idx 36 and idx 43 ask for the 2.3 and 2.7 subtotals to be recomputed, but those live in 02a_bom_compute_receivers_rf.md and 02c_bom_display_power_gnss.md. idx 51 gives the recomputed 3.6 HF-chain figure (483.44-589.17 + LDO/eFuse share); it is recorded in row 2, but the 3.6 row itself is in 03b.
+  
+  Minor details left out for brevity, not rejected: rtl-433 pinned -1 (idx 12); Lime 'park with streams stopped / LMS channels disabled over SPI' (idx 19).
+  
+  The 'what' fields in 11c_changes_reaudit_B.json are cut off at 220 characters. Full instructions were read from the matching entries in the other v2_changes JSONs. Scratch extract: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/11c_full.txt
+
 ## extract:operator_notes (run `wf_5ed966cd-eee`)
 
 - **Source:** operator_notes
