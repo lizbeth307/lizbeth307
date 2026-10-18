@@ -1,5 +1,572 @@
 # Додаткові дослідження: повні відповіді субагентів
 
+## small:lband_sband (run `wf_41027870-8e7`)
+
+- **Band group:** L-band 1.5-1.7 GHz and S-band 2.2-2.4 GHz with antennas of at most 12 cm (STRICT) or 20 cm (SMALL). Dishes and anything tens of cm deployed are EXCLUDED, including the foldable helicones, the 11-turn helix and the 2x2 helix arrays. Rule interpretation as given: STRICT means the largest deployed dimension is about 12 cm or less; SMALL means about 20 cm or less; foldable or telescopic antennas that are larger when deployed are excluded and appear only in the borderline note.
+- **Small antennas:**
+  1.
+    - **Name:** DIY 'universal' 2-turn RHCP axial helix for L-band on a 12 cm aluminium disc
+    - **Type:** diy
+    - **Band:** 1525-1710 MHz from one antenna: Inmarsat-C 1537-1545, GNSS L1 1575, Iridium 1618-1626.5, HRPT 1700-1707
+    - **Size cm:** Helix 6.2 cm diameter (C = 1.1λ at 1.70 GHz), 43 mm pitch, about 9 cm tall, on a 12 cm disc. Largest dimension 12 cm, so STRICT.
+    - **Gain or efficiency:** My NEC2 model (PyNEC, same code as foldable_partial.json) gives RHCP 7.99 / 8.05 / 8.16 / 8.32 / 8.59 dBic at 1525 / 1542 / 1575 / 1621 / 1700 MHz, with cross-polar 11-12 dB down. The same code models the 11-turn helix about 1.2 dB above its field anchor (13.98 vs 12.75 dBic), so expect roughly 7-7.4 dBic on air. Feed impedance is about 140-160 Ω -j55, so it needs a matching strip or a quarter-wave transformer to 50 Ω. At 9 cm it is not electrically short (0.5λ): conductor loss is under 0.1 dB, and the limit is directivity, not efficiency. Beam about 60-70°, so it is easy to hand-point.
+    - **Price:** About $5-10 in copper wire, aluminium disc and PETG former (estimate). Add one band LNA: Nooelec SAWbird+ iO (1542 MHz), SAWbird+ IR (1620 MHz) or SAWbird+ GOES (1688 MHz), each $49.95 (dual-LNA and Barebones versions $44.95) on today's Nooelec listing.
+    - **Availability incl ukraine:** Materials are local hardware-store items in Ukraine. Nooelec ships internationally (Ukraine delivery not verified). The SAWbird+ GOES already in the stack covers only about 1648-1728 MHz, so Inmarsat and Iridium need the iO or IR variant, or a wideband LNA where there is no strong LTE nearby.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/lband_small/scripts/helix_univ.py
+      - https://blog.metislair.com/docs/Radio/Creating%20a%20helix%20for%20direct%20satrx.html
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird.html
+  2.
+    - **Name:** DIY 2-turn or 3-turn RHCP helix for S-band on a 12 cm disc
+    - **Type:** diy
+    - **Band:** 2.2-2.45 GHz (S-band CubeSats and science downlinks at 2.2-2.3 GHz, amateur 2.40-2.45 GHz)
+    - **Size cm:** Helix 4.7 cm diameter, 32.5 mm pitch. 2 turns is 6.9 cm tall, 3 turns is 10.1 cm tall, on a 12 cm disc. STRICT.
+    - **Gain or efficiency:** NEC2 model: 2 turns 8.97 dBic at 2.25 GHz and 9.37 at 2.40 GHz; 3 turns 9.75 and 10.29. Allow about -1 dB for real builds. A 3 cm cup rim changes it by 0.1 dB or less, so it is not worth adding. The aperture of a 12 x 12 cm broadside antenna caps it at 10.1 dBi (2.25 GHz). An end-fire helix can slightly exceed that because its length counts.
+    - **Price:** About $3-5 in materials (estimate). Plus an S-band LNA and a Sysmocom cf2235-kt30 cavity (2170-2300 MHz, EUR 65.45) for 2.2-2.3 GHz, or a 2.4 GHz band-pass filter for the amateur band.
+    - **Availability incl ukraine:** DIY with local materials. Sysmocom ships within the EU; forwarding to Ukraine not verified.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/lband_small/scripts/helix_small.py
+      - https://shop.sysmocom.de/S-Band-cavity-filter-2170-2300-MHz/cf2235-kt30
+  3.
+    - **Name:** DIY air-dielectric corner-truncated RHCP square patch on a 12 cm plate
+    - **Type:** diy
+    - **Band:** One band per patch: about 1541 MHz (Inmarsat), 1621 MHz (Iridium) or 1700 MHz (HRPT)
+    - **Size cm:** Patch about 9.0 cm (1.54 GHz) or about 8.3 cm (1.70 GHz), 6-8 mm air gap, 12 x 12 cm ground plate, about 1.5 cm thick. STRICT.
+    - **Gain or efficiency:** Estimate 6-7.5 dBic. The 12 x 12 cm aperture limit at 100% efficiency is 6.8 dBi at 1.54 GHz and 7.6 dBi at 1.70 GHz (calculation). With a single truncated-corner feed the axial ratio stays under 3 dB over only about 1-2% (about 20-30 MHz), so one patch cannot cover Inmarsat, Iridium and HRPT. I did not model it, and the helix above beats it at the same size.
+    - **Price:** About $3-8 (aluminium or copper sheet, nylon spacers, SMA) (estimate)
+    - **Availability incl ukraine:** DIY, local materials
+    - **Sources:**
+      - https://ntrs.nasa.gov/api/citations/19670009367/downloads/19670009367.pdf
+  4.
+    - **Name:** Generic active GPS 'puck' with its 1575 MHz band-pass filter bridged (rtl-sdr.com method)
+    - **Type:** modify
+    - **Band:** Inmarsat-C 1537-1545 MHz (off-tune); GNSS L1
+    - **Size cm:** About 4-5 cm puck, 25 mm ceramic patch. STRICT.
+    - **Gain or efficiency:** Not published. The ceramic patch is tuned to 1575 MHz with about 10-20 MHz bandwidth, so at 1541 MHz it is mismatched (estimate -2 to 0 dBic). rtl-sdr.com: the modified GPS antenna is 'just on the edge of being able to decode' STD-C NCS. Bridge the filter marked '1575'/'1575P' with wire, or with about 100 pF if it sits between amplifier stages with no DC block.
+    - **Price:** Low (a few dollars); Ukrainian prices not verified
+    - **Availability incl ukraine:** Widely sold in Ukraine (Prom.ua/Rozetka class listings; specific listing not verified). Needs 3-5 V bias, for example from the RTL-SDR V4L bias tee.
+    - **Sources:**
+      - https://www.rtl-sdr.com/rtl-sdr-tutorial-decoding-inmarsat-std-c-egc-messages/
+  5.
+    - **Name:** Waveshare LC76G GNSS board with its own active antenna (already in the stack)
+    - **Type:** buy
+    - **Band:** GNSS L1: GPS, GLONASS, Galileo, BeiDou, QZSS
+    - **Size cm:** Small ceramic active antenna supplied with the board, a few cm. STRICT.
+    - **Gain or efficiency:** Not published (typical small active ceramic patch). Fit for timing and position. Spoofing and jamming in Ukraine are the real limit, not antenna gain.
+    - **Price:** $14.99 direct; 1,344-1,502 UAH on Prom.ua (made to order), per gnss_imu.json
+    - **Availability incl ukraine:** Prom.ua (made to order), per gnss_imu.json
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/gnss_imu.json
+  6.
+    - **Name:** RTL-SDR Blog active L-band patch (1525-1660 MHz)
+    - **Type:** buy
+    - **Band:** Inmarsat 1525-1559, GNSS L1, Iridium 1616-1626.5. NOT 1.70 GHz HRPT.
+    - **Size cm:** Patch 17.5 x 17.5 cm (vendor page). This puts it in SMALL, not STRICT.
+    - **Gain or efficiency:** Gain not published. RHCP, built-in LNA followed by a SAW filter, 3.3-5 V bias tee at about 20 mA maximum (admin comment), 'higher gain and wider radiation pattern' than the old model. The vendor says it 'cannot' be used for weak signals that need a dish, such as HRPT or GOES. thebaldgeek ranked GPS puck < this patch < 7-turn helix < Discovery Dish on Inmarsat. SA2KNG called it 'not super strong'.
+    - **Price:** $59.95 at the RTL-SDR store per the October 2026 audit (antennas.json); earlier pre-order $44.95 with free worldwide shipping to most countries
+    - **Availability incl ukraine:** RTL-SDR Blog store and official AliExpress store. Delivery to Ukraine not verified.
+    - **Sources:**
+      - https://www.rtl-sdr.com/preorder-sale-active-l-band-1525-1660-inmarsat-and-iridium-patch-back-in-stock-for-44-95/
+      - https://community.airframes.io/t/discovery-dish-rtlsdr-blog-l-band-acars/181
+      - https://community.libre.space/t/equipment-for-l-band-and-s-band-rx/11031
+  7.
+    - **Name:** DIY 4-turn RHCP L-band helix on a 20 cm disc
+    - **Type:** diy
+    - **Band:** 1525-1710 MHz (same helix geometry as the strict 2-turn)
+    - **Size cm:** Helix 6.2 cm diameter, 17.6 cm tall, on a 20 cm disc. SMALL.
+    - **Gain or efficiency:** NEC2 model: 10.20 / 10.27 / 10.40 / 10.59 / 10.92 dBic at 1525 / 1542 / 1575 / 1621 / 1700 MHz. Allow about -1.2 dB on air (about 9.7 dBic at 1.7 GHz). A 3-turn helix on a 20 cm disc (13.3 cm tall) models 10.23 dBic at 1.70 GHz. The 20 x 20 cm broadside aperture limit is 12.1 dBi at 1.70 GHz.
+    - **Price:** About $5-12 plus a SAWbird+ GOES (in stack) or iO/IR ($49.95)
+    - **Availability incl ukraine:** DIY, local materials
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/lband_small/scripts/helix_univ.py
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/lband_small/scripts/helix_small.py
+  8.
+    - **Name:** DIY 4-turn RHCP S-band helix on a 20 cm disc
+    - **Type:** diy
+    - **Band:** 2.2-2.45 GHz
+    - **Size cm:** Helix 4.7 cm diameter, 13.4 cm tall, on a 20 cm disc. SMALL.
+    - **Gain or efficiency:** NEC2 model: 11.43 dBic at 2.25 GHz and 11.63 at 2.40 GHz; a 3-turn models 10.85 / 11.13. Allow about -1 dB on air. Aperture limit for 20 x 20 cm is 14.5 dBi (2.25 GHz).
+    - **Price:** About $3-8 plus the S-band LNA and cavity (as above)
+    - **Availability incl ukraine:** DIY
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/lband_small/scripts/helix_small.py
+  9.
+    - **Name:** DIY 2x2 air-patch array on a 20 x 20 cm board with a Wilkinson or branch-line feed
+    - **Type:** diy
+    - **Band:** L (1.54-1.70 GHz) or S (2.2-2.3 GHz), one design per band
+    - **Size cm:** 20 x 20 x 1.5 cm. SMALL. Element spacing is only about 0.57λ at 1.70 GHz.
+    - **Gain or efficiency:** Estimate 10-11 dBic at 1.70 GHz and 12-13 dBic at 2.25 GHz, against aperture limits of 12.1 and 14.5 dBi. No tested 1.7 GHz RHCP 2x2 design or Gerber was found, and it is no better than the 4-turn helix of the same size.
+    - **Price:** About $15-40 (estimate)
+    - **Availability incl ukraine:** DIY only
+    - **Sources:**
+      - https://oar.a-star.edu.sg/communities-collections/articles/19720
+  10.
+    - **Name:** YUST 4G LTE MIMO 2x17 dBi panel, 200 x 200 x 40 mm (or the R-Net 'Kvadrat' 2x17, 205 x 205 x 50 mm)
+    - **Type:** modify
+    - **Band:** Sold for 1700-2700 MHz LTE (the YUST listing title does not state the band). Usable for HRPT at the 1.70 GHz band edge and for S-band.
+    - **Size cm:** 20 x 20 x 4 cm (YUST) / 20.5 x 20.5 x 5 cm (R-Net). SMALL, at the 20 cm limit.
+    - **Gain or efficiency:** '17 dBi' is impossible for this aperture, which caps it at 12.1 dBi at 1.70 GHz and 14.5 dBi at 2.25 GHz. Realistic is about 10-11 dBi linear per port at 1.7 GHz and 11-13 at 2.25 GHz (foldable_partial.json). On RHCP satellites one port loses 3 dB (about 7-8 dBic-equivalent). Both ports through a DIY 90° branch-line hybrid recover about 10 dBic. Measure the match at 1.70 GHz with a VNA.
+    - **Price:** YUST 1,018 UAH; R-Net 1,900 UAH (Prom.ua). Connectorised hybrids cost $504 or more, so build a DIY branch-line coupler.
+    - **Availability incl ukraine:** In stock on Prom.ua (Ukraine), checked 18 Oct 2026
+    - **Sources:**
+      - https://prom.ua/Antenny-mimo-2x2.html
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_partial.json
+- **Satellites:**
+  1.
+    - **Satellite:** Inmarsat-C network control station (NCS) common channel. For Ukraine: Alphasat (logical IOR, migrated to 'Alphasat EMEA') at about 25°E, elevation 32° azimuth 187° from Kyiv (36° from Odesa). The MEAS Inmarsat-4 satellite near 64°E is at about 24° elevation (longitude is general knowledge, not verified).
+    - **Band:** L, 1537.0-1544.2 MHz (Inmarsat-C receive band). sigidwiki NCS channels: 1537.10 (IOR), 1537.70 (AOR-W), 1541.45 (AOR-E/POR).
+    - **Capability:** EGC SafetyNET maritime safety information (NAVAREA/METAREA III warnings, SAR and met broadcasts) and NCS bulletin-board/system packets only
+    - **Status oct 2026:** Inmarsat-C is still a GMDSS service. That IOR now runs on Alphasat comes from UK MIN 582. That the IOR NCS stays on 1537.10 MHz after migration is my inference, not verified: scan 1537-1544 MHz on air.
+    - **Antenna:** STRICT: 2-turn helix + SAWbird+ iO, or a 12 cm air patch at 1541 MHz. STRICT fallback: modified GPS puck. SMALL: RTL-SDR Blog active L-band patch.
+    - **Antenna size cm:** 12 (helix/patch); 4-5 (GPS puck); 17.5 (RTL-SDR Blog patch)
+    - **Tier:** strict
+    - **Link margin:** Calculation of G/T against the Inmarsat-C ship-terminal G/T of -23 dB/K (spec from general knowledge, not re-fetched):
+  - 2-turn helix (~7.5 dBic, Tsys 200 K): -15.5 dB/K, +7.5 dB.
+  - 4-turn helix on 20 cm: +10 dB.
+  - RTL-SDR Blog patch (gain unpublished, 5-6 dBic assumed): about +5.5 dB.
+  - Modified GPS puck: about -3 dB, consistent with rtl-sdr.com's 'on the edge'.
+    - **Reachability:** reliable
+    - **Receiver:** RTL-SDR V4L, USB about 4 kHz wide, 1200 sym/s BPSK, decoded with stdcdec or Scytale-C (available now)
+    - **Legal:** Allowed: SafetyNET is a public safety broadcast.
+  - Configure the decoder to keep only SafetyNET and bulletin-board packets.
+  - Excluded: FleetNET (commercial subscriber broadcasts), LES TDM channels and any addressed message, Aero ACARS, C-channel voice, BGAN/Fleet traffic.
+  - Martial law: do not publish logs tied to your location, and do not redistribute analysis of Black Sea warnings.
+    - **Signal:** Geostationary, about 2.5 kHz wide, always on
+    - **Evidence:** rtl-sdr.com tutorial: RTL-SDR Blog patch 'near-guaranteed', modified GPS antenna 'just on the edge', helix best. thebaldgeek ranking: puck < patch < helix < dish.
+    - **Sources:**
+      - https://www.rtl-sdr.com/rtl-sdr-tutorial-decoding-inmarsat-std-c-egc-messages/
+      - https://sigidwiki.com/wiki/Inmarsat-C_TDM
+      - https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/750319/MIN_582__M_F__Change_to_Inmarsat_Satellite_Services_including_GMDSS.pdf
+      - https://www.furuno.com/en/products/satellite-communications/felcom20/index.html
+      - https://www.rtl-sdr.com/preorder-sale-active-l-band-1525-1660-inmarsat-and-iridium-patch-back-in-stock-for-44-95/
+  2.
+    - **Satellite:** Iridium constellation (LEO): ring-alert and system broadcast frames
+    - **Band:** L, 1618-1626.5 MHz (gr-iridium)
+    - **Capability:** Satellite and beam IDs, satellite position and broadcast timing from the ring alert (IRA) and broadcast (IBC) frames, used for timing, positioning and tracking experiments
+    - **Status oct 2026:** Operational (general knowledge). The RTL-SDR Blog patch page lists Iridium decoding as a use case.
+    - **Antenna:** STRICT: 2-turn helix (8.3 dBic modelled at 1621 MHz) pointed up + SAWbird+ IR, or a modified GPS puck. SMALL: RTL-SDR Blog patch.
+    - **Antenna size cm:** 12 / 4-5 / 17.5
+    - **Tier:** strict
+    - **Link margin:** Iridium is designed for roughly 0 dBi handset antennas, and a 7-8 dBic helix is about 7 dB better (qualitative calculation). gr-iridium: the burst count 'is largely dependent on your antenna'.
+    - **Reachability:** reliable
+    - **Receiver:** RTL-SDR V4L centred near 1622 MHz captures only part of the 8.5 MHz band (README). The LimeSDR at 10 Msps or more captures all of it.
+    - **Legal:** Decode and keep only the IRA/IBC system frames, and strip the paging identifier (TMSI) fields. Never decode IMS/IDA/MSG (pager/SMS) or VOC (voice). Those are private content and excluded.
+    - **Signal:** Bursty TDMA, Doppler up to about ±36 kHz (general knowledge)
+    - **Evidence:** gr-iridium README; RTL-SDR Blog patch product page
+    - **Sources:**
+      - https://github.com/muccc/gr-iridium
+      - https://www.rtl-sdr.com/preorder-sale-active-l-band-1525-1660-inmarsat-and-iridium-patch-back-in-stock-for-44-95/
+  3.
+    - **Satellite:** GNSS: GPS, Galileo, GLONASS and BeiDou L1 (LC76G receiver in the stack, and optionally raw L1 recorded through the RTL-SDR)
+    - **Band:** L, 1561-1606 MHz (B1, E1/L1, G1)
+    - **Capability:** Position, time, PPS; raw L1 recording for GNSS-SDR experiments
+    - **Status oct 2026:** Operational. Widespread jamming and spoofing in Ukraine.
+    - **Antenna:** LC76G board active antenna (STRICT); active GPS puck or the 2-turn helix (8.2 dBic at 1575 MHz) on the RTL-SDR bias tee
+    - **Antenna size cm:** a few cm to 12
+    - **Tier:** strict
+    - **Link margin:** Designed for omnidirectional patches, so antenna gain is not the limit. Jamming, spoofing and urban LTE are. The narrower helix beam (about 60-70°) sees fewer satellites, so use the patch for navigation.
+    - **Reachability:** reliable
+    - **Receiver:** LC76G on UART (in stack); RTL-SDR V4L for raw recording (GNSS-SDR on the Q6A is unverified)
+    - **Legal:** Receive-only navigation signals are allowed. Never publish position or timing logs from Ukraine. Treat fixes as untrusted, using the IMU/RTC spoofing gate from gnss_imu.json.
+    - **Signal:** Spread spectrum below the noise floor
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/gnss_imu.json
+  4.
+    - **Satellite:** EGNOS SBAS geostationary satellites: PRN 123 Astra 5B (31.5°E, elevation 32° from Kyiv), PRN 136 SES-5 (5°E, 27°), PRN 121 Eutelsat 5WB (5°W, 23°)
+    - **Band:** L1 1575.42 MHz (and L5)
+    - **Capability:** SBAS correction and integrity messages from a geostationary navigation signal
+    - **Status oct 2026:** PRN 121 joined the operational platform in September 2025 (GPS World). PRN 123 and 136 are listed, but sources conflict on test or operational mode, and Astra 5B's slot is given as 23.5°E or 31.5°E. No 2026 operational notice was found.
+    - **Antenna:** Any GNSS antenna above
+    - **Antenna size cm:** a few cm to 12
+    - **Tier:** strict
+    - **Link margin:** Same signal class as GPS L1, so it is not antenna-limited
+    - **Reachability:** reliable
+    - **Receiver:** LC76G (whether it uses or outputs SBAS is not verified) or an SDR GNSS receiver (not verified on the Q6A)
+    - **Legal:** Public navigation signal; allowed
+    - **Sources:**
+      - https://en.wikipedia.org/wiki/European_Geostationary_Navigation_Overlay_Service
+      - https://www.gpsworld.com/tag/eutelsat-satellite
+      - https://www.gps.gov/sites/default/files/2026-02/L1CA-PRN-code-assignments-2026-Jan_2.pdf
+  5.
+    - **Satellite:** Meteor-M N2-3 and N2-4 HRPT, STRICT tier
+    - **Band:** L, 1700 MHz RHCP, 2x 665.4 ksym/s
+    - **Capability:** Full-resolution 6-channel MSU-MR imagery at 1 km/px, on high passes only
+    - **Status oct 2026:** Both active (SatDump sat_list)
+    - **Antenna:** 2-turn universal helix on a 12 cm disc + SAWbird+ GOES at the feed, or a 12 cm air patch at 1.70 GHz
+    - **Antenna size cm:** 12
+    - **Tier:** strict
+    - **Link margin:** Calculation from the field anchor: 12.75 dBic 11-turn helix gave 7 dB average SNR (metislair), and SatDump needs 0.5 dB.
+  - 2-turn helix at 7.4-8.6 dBic: average 1.7-2.8 dB, margin +1.2 to +2.3 dB. Zenith 5.6-6.8 dB, so it decodes only above about 22-28° elevation.
+  - 12 cm patch (about 7 dBic): +0.8 dB, decodes above about 31°.
+  Assumptions: the anchor average corresponds to about 35° elevation; no isoflux shaping; patch pointing gain and ground-noise loss cancel to ±1 dB. Meteor EIRP is not verified (±2-3 dB).
+    - **Reachability:** marginal
+    - **Receiver:** RTL-SDR V4L at 2.4-2.56 Msps, SatDump meteor_hrpt (works now)
+    - **Legal:** Public weather broadcast; allowed. Do not publish imagery of Ukrainian territory that could reveal infrastructure.
+    - **Evidence:** No dish-free or patch-based Meteor HRPT decode was found (one search). The result is calculated only.
+    - **Sources:**
+      - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+      - https://blog.metislair.com/docs/Radio/Creating%20a%20helix%20for%20direct%20satrx.html
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/lband_small/scripts/budget.py
+  6.
+    - **Satellite:** Meteor-M N2-3 and N2-4 HRPT, SMALL tier
+    - **Band:** L, 1700 MHz RHCP
+    - **Capability:** Full HRPT on most passes with maximum elevation above about 25°
+    - **Status oct 2026:** Both active (SatDump)
+    - **Antenna:** 4-turn helix on a 20 cm disc + SAWbird+ GOES, or the YUST/R-Net 20 cm LTE panel through a 90° hybrid
+    - **Antenna size cm:** 20 (helix 17.6 cm tall)
+    - **Tier:** small
+    - **Link margin:** Calculation, same anchor and assumptions as the strict entry:
+  - 4-turn helix at 9.7-10.9 dBic: average SNR 3.9-5.2 dB, margin +3.4 to +4.7 dB, decodes above about 13-18° elevation.
+  - LTE panel with hybrid (about 10 dBic): +3.8 dB, above about 16°.
+  - LTE panel single port (about 7.5 dBic-equivalent): only +1.2 dB.
+  - RTL-SDR Blog patch: no, 1700 MHz is outside its SAW filter.
+    - **Reachability:** reliable
+    - **Receiver:** RTL-SDR V4L + SatDump
+    - **Legal:** Allowed (as above)
+    - **Evidence:** Calculated only, with no field precedent. Validate first on a high pass.
+    - **Sources:**
+      - https://blog.metislair.com/docs/Radio/Creating%20a%20helix%20for%20direct%20satrx.html
+      - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+  7.
+    - **Satellite:** Metop-B / Metop-C AHRPT
+    - **Band:** L, 1701.3 MHz RHCP, 2.33 Msym/s QPSK (needs at least 4 dB SNR)
+    - **Capability:** Full AVHRR/IASI direct broadcast
+    - **Status oct 2026:** Sources conflict:
+  - NOAA OSPO (3 Sep 2026): Metop-C AHRPT 'No'.
+  - WMO OSCAR: 1701.3 MHz 'not in use'.
+  - SatDump: both active, with Metop-B suffering intermittent modulator issues.
+    - **Antenna:** None within 20 cm
+    - **Antenna size cm:** needs about 56-60 cm (2x2 helix array) or a 60 cm dish
+    - **Tier:** none
+    - **Link margin:** Calculation from the EUMETSAT flux-density spec (dish_replacement.json): a 13 dBic helix gives Es/N0 of -1 to +3 dB.
+  - SMALL (9.7-10.9 dBic): -4.3 to +0.9 dB, short by 3.1-8.3 dB.
+  - STRICT (7.4-8.6 dBic): short by 5.4-10.6 dB.
+    - **Reachability:** not_reachable
+    - **Receiver:** Would need the LimeSDR (above 2.56 Msps)
+    - **Legal:** Public weather broadcast
+    - **Sources:**
+      - https://www.ospo.noaa.gov/operations/metop/status.html
+      - https://user.eumetsat.int/s3/eup-strapi-media/TD_18_Metop_Direct_Readout_AHRPT_Technical_Description_v3_A_1cb789b653.pdf
+      - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+  8.
+    - **Satellite:** Arctic Weather Satellite (AWS, ESA)
+    - **Band:** L, 1707 MHz RHCP, 1.785 Msym/s, 600 km orbit
+    - **Capability:** MWR microwave imager direct broadcast (unencrypted)
+    - **Status oct 2026:** Active (SatDump). 'Signal usually suffers from significant fading when facing away from you at lower elevations.'
+    - **Antenna:** 4-turn helix on a 20 cm disc + SAWbird+ GOES (passes 1707 MHz)
+    - **Antenna size cm:** 20
+    - **Tier:** small
+    - **Link margin:** Calculation only. EIRP is not published; I assumed it equals Meteor HRPT's (not verified), with a -4.3 dB symbol-rate penalty and +2.8 dB for the closer orbit.
+  - SMALL (10.3 dBic): about 7 dB at zenith, about 2 dB at 30°.
+  - STRICT (8 dBic): about 4.7 dB at zenith.
+  - Decode threshold unknown (3-4 dB assumed).
+    - **Reachability:** opportunistic
+    - **Receiver:** LimeSDR Micro (needs at least 3.6 Msps; ships 15 Dec 2026), SatDump aws pipeline
+    - **Legal:** Public weather broadcast
+    - **Sources:**
+      - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+      - https://space.oscar.wmo.int/satellites/view/aws_pfm
+  9.
+    - **Satellite:** Elektro-L N3 / N5 LRIT (76°E; elevation 18° from Kyiv, 15° from Lviv, 21° from Kharkiv)
+    - **Band:** L, 1691 MHz RHCP, 294 ksym/s
+    - **Capability:** Reduced-resolution geostationary imagery every 3 h
+    - **Status oct 2026:** SatDump: N3 transmissions paused pending N5 commissioning; N5 LRIT 'off for commissioning', with sporadic transmissions. N4 (165.75°E) is not visible from Ukraine.
+    - **Antenna:** None within 20 cm
+    - **Antenna size cm:** needs about 12.5 dBic or more (the 47 cm 11-turn helix or the 44 cm fold cone)
+    - **Tier:** none
+    - **Link margin:** Calculation: the 11-turn helix gave only about 1.5 dB-equivalent against about +1 dB needed.
+  - SMALL: -1.6 to -0.3 dB, short by 1.3-2.6 dB.
+  - STRICT: short by 3.7-4.8 dB.
+    - **Reachability:** not_reachable
+    - **Receiver:** RTL-SDR V4L, SatDump
+    - **Legal:** Public weather broadcast (Russian state satellite). Receiving it is allowed; avoid publishing anything that ties your location to the reception.
+    - **Sources:**
+      - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+      - https://blog.metislair.com/docs/Radio/Creating%20a%20helix%20for%20direct%20satrx.html
+  10.
+    - **Satellite:** FengYun-2H (79°E; elevation 17° from Kyiv, 13° from Lviv, 20° from Kharkiv): geostationary L-band carriers
+    - **Band:** L. 1690.5 MHz LRIT test-pattern carrier every 3 h from 00:48 UTC ('fairly strong carrier'); 1702.5 MHz analogue telemetry, always on. Both linearly polarised.
+    - **Capability:** Carrier detection only, as a fixed beacon for comparing antennas. S-VISSR imagery at 1687.5 MHz (660 ksym/s) needs a dish.
+    - **Status oct 2026:** Active per SatDump
+    - **Antenna:** 4-turn helix on a 20 cm disc on a tripod; long-FFT carrier detection
+    - **Antenna size cm:** 20
+    - **Tier:** small
+    - **Link margin:** Not computable: EIRP is not published. Linear polarisation costs 3 dB on a CP antenna. Reception with small antennas is not verified.
+    - **Reachability:** opportunistic
+    - **Receiver:** RTL-SDR V4L, narrow FFT
+    - **Legal:** Public weather satellite
+    - **Sources:**
+      - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+  11.
+    - **Satellite:** Black Kite-1 and Black Kite-2 (RapidTek, Taiwan): S-band telemetry
+    - **Band:** S, 2288.0 / 2286.0 MHz, GMSK 38.4 kbps ('S-band 38k4 Telemetry', SatNOGS DB)
+    - **Capability:** Decoding housekeeping telemetry frames
+    - **Status oct 2026:** In orbit. Decoded frames on SatNOGS through 17 Oct 2026.
+    - **Antenna:** 2-turn or 3-turn S-band helix on a 12 cm disc + LNA + Sysmocom cf2235-kt30 cavity
+    - **Antenna size cm:** 12
+    - **Tier:** strict
+    - **Link margin:** Evidence:
+  - Pi Station 1 (Belgium), listed antenna a discone, decoded frames on passes with maximum elevation 9-32° (for example observation 15185665, 18°).
+  - SM0TGU (fixed 4-turn helix, which the owner calls 'very weak') decoded both satellites.
+  Relative calculation: the 2-turn S helix (about 8-9 dBic) is about 9-11 dB above a discone (0-2 dBi linear, -3 dB on CP).
+    - **Reachability:** reliable
+    - **Receiver:** LimeSDR Micro (ships 15 Dec 2026) + gr-satnogs GMSK. The RTL-SDR V4L cannot tune 2.29 GHz.
+    - **Legal:** Commercial satellite telemetry. Keep only housekeeping telemetry, and do not inspect or publish any IoT user payload.
+    - **Signal:** LEO, GMSK 38.4 kbps
+    - **Sources:**
+      - https://network.satnogs.org/observations/15185665/
+      - https://network.satnogs.org/observations/15200762/
+      - https://network.satnogs.org/stations/2830/
+      - https://db.satnogs.org/api/transmitters/?format=json
+  12.
+    - **Satellite:** CARTOSAT-3 (ISRO Earth observation): S-band CW carrier
+    - **Band:** S, 2224.797 MHz CW
+    - **Capability:** Carrier and Doppler logging only (no data)
+    - **Status oct 2026:** SM0TGU logged the signal on passes with 11-82° maximum elevation (Aug-Sep 2026)
+    - **Antenna:** 2-turn S helix on a 12 cm disc + LNA + cavity
+    - **Antenna size cm:** 12
+    - **Tier:** strict
+    - **Link margin:** A fixed, non-tracking 4-turn helix (about 9-10 dBic) sees it, and a CW carrier gains a lot of processing gain in a narrow FFT. A hand-pointed 8-9 dBic helix is comparable (relative estimate).
+    - **Reachability:** reliable
+    - **Receiver:** LimeSDR Micro (from Dec 2026)
+    - **Legal:** Civil Earth-observation satellite; record carrier and Doppler only
+    - **Sources:**
+      - https://network.satnogs.org/observations/14910274/
+      - https://network.satnogs.org/stations/2830/
+  13.
+    - **Satellite:** PHASMA-DIRAC and PHASMA-LAMARR (Libre Space Foundation, Greece; spectrum-monitoring CubeSats, about 492-505 km)
+    - **Band:** S, 2208.0 / 2210.0 MHz, FSK 400 kbps
+    - **Capability:** Telemetry frames
+    - **Status oct 2026:** In orbit. The good S-band SatNOGS observations in my sample (Oct 2026) come only from NuSpace SN3 (Singapore, helix) and the ISAE 3 m dish.
+    - **Antenna:** 4-turn S-band helix on a 20 cm disc
+    - **Antenna size cm:** 20
+    - **Tier:** small
+    - **Link margin:** Calculation with an assumed EIRP of 0-5 dBW (not published): 400 kbps FSK needs about 68 dB-Hz. A 10.5 dBic antenna gives 62-67 dB-Hz at zenith and 54-59 dB-Hz at 20° elevation, so it falls short unless the EIRP is higher.
+    - **Reachability:** opportunistic
+    - **Receiver:** LimeSDR Micro
+    - **Legal:** Open science/amateur-friendly mission; telemetry allowed
+    - **Sources:**
+      - https://network.satnogs.org/observations/15220201/
+      - https://libre.space/projects/phasma/
+      - https://network.satnogs.org/stations/4125/
+  14.
+    - **Satellite:** Other S-band science and weather telemetry or dumps: PROBA-2 (2235 MHz, dumps over Redu), Hinode (2256.22 MHz), Metop-B/C S-band telemetry (2230 MHz), NOAA-20/NOAA-21/Suomi-NPP global telemetry (2247.5 MHz), TRISAT-S (2280.5 MHz)
+    - **Band:** S, 2.2-2.3 GHz, mostly 65 ksym/s to 2 Msym/s
+    - **Capability:** Seeing the signal hump and Doppler; decoding unlikely
+    - **Status oct 2026:** Active per SatDump. SatNOGS 'with-signal' observations in Aug-Sep 2026 used larger antennas: S59MZ's 50 cm Wi-Fi grid (PROBA-2, TRISAT-S) and JF6FYI's helix (Hinode).
+    - **Antenna:** 4-turn S-band helix on a 20 cm disc
+    - **Antenna size cm:** 20
+    - **Tier:** small
+    - **Link margin:** Those stations used 50 cm grids or helices that are 3-6 dB better than a 20 cm helix. Rates up to 2 Msym/s need 66 dB-Hz or more (calculation).
+    - **Reachability:** opportunistic
+    - **Receiver:** LimeSDR Micro
+    - **Legal:** Civil science and weather telemetry; allowed
+    - **Sources:**
+      - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+      - https://network.satnogs.org/stations/1260/
+      - https://network.satnogs.org/stations/5242/
+  15.
+    - **Satellite:** ISS HamTV (ARISS)
+    - **Band:** S, 2395 MHz RHCP, DVB-S 2.0 Msym/s, FEC 1/2, 2 W into a patch
+    - **Capability:** Carrier hump only. Video needs a dish.
+    - **Status oct 2026:** Powered on again on 29 Jul 2025 (BATC wiki, no later update). SM0TGU's fixed helix logged the signal in Jan 2026. Current schedule not verified.
+    - **Antenna:** 4-turn S helix on a 20 cm disc
+    - **Antenna size cm:** 20
+    - **Tier:** small
+    - **Link margin:** BATC recommends 'a dish of 0.6-1.2 meters', about 21-27 dBi, which is 10-16 dB more than a 20 cm helix. A naive budget (2 W, no ISS-side losses) would be near threshold at high elevation, but I trust the field guidance.
+    - **Reachability:** opportunistic
+    - **Receiver:** LimeSDR Micro + a 2.4 GHz filter (the cf2235 cavity blocks 2395 MHz); Q6A Wi-Fi off
+    - **Legal:** Amateur broadcast; allowed
+    - **Sources:**
+      - https://wiki.batc.org.uk/HAMTV_from_the_ISS
+      - https://db.satnogs.org/api/transmitters/?format=json
+  16.
+    - **Satellite:** Other 2.4 GHz amateur-satellite downlinks (UmKA-1 2402.4 MHz BPSK 2 Mbps; DELFI-N3XT 2405 MHz; about 35 other active 2400-2450 MHz transmitters in SatNOGS DB)
+    - **Band:** S, 2400-2450 MHz
+    - **Capability:** Telemetry
+    - **Status oct 2026:** SatNOGS shows no good 2.4 GHz observations since the latest ones listed here: UmKA-1 Nov 2025 (Mogielnica station), DELFI-N3XT Oct 2025. For most of the newer CubeSats, the latest 25 good observations each contain no 2.4 GHz entry.
+    - **Antenna:** None verified
+    - **Antenna size cm:** 20
+    - **Tier:** none
+    - **Link margin:** Most run 0.25-10 Mbps and need 62-70 dB-Hz or more (calculation), with no evidence of reception on small antennas. 2.4 GHz Wi-Fi interference is severe.
+    - **Reachability:** not_reachable
+    - **Receiver:** LimeSDR Micro
+    - **Legal:** Amateur; allowed
+    - **Sources:**
+      - https://db.satnogs.org/api/transmitters/?format=json
+      - https://network.satnogs.org/api/observations/
+  17.
+    - **Satellite:** FengYun-3 series AHRPT
+    - **Band:** FY-3C L-band ended Nov 2024; FY-3D to FY-3H AHRPT is X-band (7.79-7.86 GHz)
+    - **Capability:** None
+    - **Status oct 2026:** No L-band FengYun-3 in service (dish_replacement.json, SatDump)
+    - **Antenna:** Tracked dish of about 1 m
+    - **Antenna size cm:** about 100
+    - **Tier:** none
+    - **Link margin:** Not applicable
+    - **Reachability:** not_reachable
+    - **Receiver:** n/a
+    - **Legal:** Public weather
+    - **Sources:**
+      - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+  18.
+    - **Satellite:** Meteosat-11 (9.5°E, elevation 29° from Kyiv): PGS raw data at 1686.83 MHz
+    - **Band:** L, 3.75 Msym/s, linear
+    - **Capability:** Raw SEVIRI
+    - **Status oct 2026:** Active (SatDump)
+    - **Antenna:** Dish needed
+    - **Antenna size cm:** dish
+    - **Tier:** none
+    - **Link margin:** Ground-station downlink at a high symbol rate; far below a 20 cm antenna (qualitative)
+    - **Reachability:** not_reachable
+    - **Receiver:** n/a
+    - **Legal:** Allowed, but not reachable
+    - **Sources:**
+      - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+  19.
+    - **Satellite:** EXCLUDED, military: Yunhai-1 01-04 (1704 MHz, SatDump calls it an 'encrypted military satellite'), DMSP F17/F18 (2252.5 MHz, USSF), Coriolis (2221.5 MHz, USSF), EWS-G2 (1676 MHz, USSF), OPS 5644 (2237.5 MHz), EMISAT (2255.14 MHz)
+    - **Band:** L/S
+    - **Capability:** Excluded: no decoding guidance
+    - **Status oct 2026:** Some appear in SatNOGS and SatDump listings
+    - **Antenna:** n/a
+    - **Antenna size cm:** n/a
+    - **Tier:** none
+    - **Link margin:** n/a
+    - **Reachability:** not_reachable
+    - **Receiver:** n/a
+    - **Legal:** EXCLUDED under the military rule. Do not record or share.
+    - **Sources:**
+      - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+  20.
+    - **Satellite:** EXCLUDED, private communications: Inmarsat Aero/ACARS, C-channel voice, BGAN/Fleet, FleetNET and LES message channels; Iridium voice/SMS/pager (IMS/IDA/VOC); Thuraya user traffic; Globalstar 2483.5-2500 MHz downlinks
+    - **Band:** L/S
+    - **Capability:** Excluded
+    - **Status oct 2026:** Active
+    - **Antenna:** n/a
+    - **Antenna size cm:** n/a
+    - **Tier:** none
+    - **Link margin:** n/a (several of these are physically receivable with the same patch, which is why the decoder filter matters)
+    - **Reachability:** not_reachable
+    - **Receiver:** n/a
+    - **Legal:** EXCLUDED: private communications content
+    - **Sources:**
+      - https://www.rtl-sdr.com/preorder-sale-active-l-band-1525-1660-inmarsat-and-iridium-patch-back-in-stock-for-44-95/
+  21.
+    - **Satellite:** EXCLUDED, Cospas-Sarsat L-band relay downlinks (1544.5 MHz SARP/MEOSAR on Meteor, Metop, NOAA, GOES, Elektro, BeiDou)
+    - **Band:** L, 1544.5 MHz
+    - **Capability:** Excluded
+    - **Status oct 2026:** Listed in SatNOGS DB
+    - **Antenna:** n/a
+    - **Antenna size cm:** n/a
+    - **Tier:** none
+    - **Link margin:** n/a
+    - **Reachability:** not_reachable
+    - **Receiver:** n/a
+    - **Legal:** EXCLUDED: relays of personal distress-beacon data and positions to ground stations. This is not a published broadcast.
+    - **Sources:**
+      - https://db.satnogs.org/api/transmitters/?format=json
+- **Lost vs foldable:**
+  1.
+    - **Target:** Meteor-M N2-3/N2-4 HRPT (1700 MHz)
+    - **Needed:** 0.5 dB SNR (SatDump); about 12.75 dBic for +6.5 dB average margin
+    - **Gap db:** Calculation:
+  - Foldable helicone (15.7 dBic model): +9.4 dB average, decodes from about 5° elevation.
+  - SMALL 4-turn helix: +3.4 to +4.7 dB, from about 13-18°.
+  - STRICT 2-turn helix: +1.2 to +2.3 dB, from about 22-28°.
+  Loss vs foldable: about 5-6 dB (SMALL) or 7-8 dB (STRICT). In practice STRICT keeps only high passes and the middle of each pass.
+    - **What would bring it back:** The 11-turn helix (47 cm tall) or the 44 cm fold-flat helicone, both excluded by size. Within the rule: use the SMALL 4-turn helix on a tripod, put the LNA at the feed, and accept only passes above 25-30°.
+  2.
+    - **Target:** Metop-B/C AHRPT (1701.3 MHz, 2.33 Msym/s)
+    - **Needed:** 4 dB SNR; about 16-19 dBic
+    - **Gap db:** Foldable helicone: about 0 to +0.5 dB average (degraded but possible on high passes). SMALL: short by 3.1-8.3 dB. STRICT: short by 5.4-10.6 dB (calculation).
+    - **What would bring it back:** The 56-60 cm 2x2 spring-helix array (17-18 dBic after the combiner, model) on a tripod, or the EUMETSAT archive instead of live reception. Check on air first, since the AHRPT status conflicts between sources.
+  3.
+    - **Target:** AWS 1707 MHz
+    - **Needed:** Unknown (about 3-4 dB assumed); EIRP unpublished
+    - **Gap db:** Foldable: about 12 dB at zenith and 7 dB at 30° (if EIRP equals Meteor's; unverified). SMALL: about 7 / 2 dB. STRICT: about 4.7 / -0.3 dB. About 5 dB lost.
+    - **What would bring it back:** Fold helicone (borderline). The LimeSDR is needed in any case.
+  4.
+    - **Target:** Elektro-L LRIT 1691 MHz
+    - **Needed:** About +1 dB; at least 12.5 dBic
+    - **Gap db:** SMALL short by 1.3-2.6 dB; STRICT short by 3.7-4.8 dB (calculation). The transmitter is paused or commissioning anyway (SatDump).
+    - **What would bring it back:** 11-turn helix or fold helicone (borderline), once Elektro-L5 or L3 resumes LRIT. For antenna A/B tests, use the always-on Inmarsat NCS carrier at 1537-1541 MHz instead.
+  5.
+    - **Target:** Weak S-band CubeSats and science dumps (PHASMA 400 kbps, PROBA-2, Hinode, Metop/JPSS S-band telemetry)
+    - **Needed:** About 62-68 dB-Hz or more for 125 kbps to 2 Msym/s
+    - **Gap db:** Foldable S options model 14.2 dBic (helix in the L cone) or 15.5 dBic (33 cm S cone), against 10.9-11.4 dBic (SMALL 20 cm helix) and 9-9.75 dBic (STRICT): about 3-6.5 dB lost.
+    - **What would bring it back:** 33 cm fold S-band cone (packs to about 14 cm across; borderline). Strong targets need nothing: Black Kite-1/2 and the CARTOSAT-3 carrier remain reachable at 12 cm.
+  6.
+    - **Target:** Inmarsat-C SafetyNET, Iridium system frames, GNSS, EGNOS
+    - **Needed:** Designed for small or omnidirectional antennas
+    - **Gap db:** 0 dB. Nothing lost. The 12 cm 2-turn helix is about 5-10 dB above what these systems need (G/T calculation).
+    - **What would bring it back:** Not needed
+- **Borderline note:** BORDERLINE, EXCLUDED by the 18 Oct rule and shown only so the user can reconsider. Each of these is tens of centimetres when deployed:
+  - 44 cm fold-flat petal or fabric helicone (15.7 dBic modelled; packs to about 19 x 19 x 4 cm), or the rigid 11-turn helix (47 cm tall). Either would add 5-8 dB at 1.7 GHz. That restores Meteor HRPT from about 5° elevation, brings Elektro-L LRIT back to its threshold when it transmits, and makes Metop and AWS possible on high passes.
+  - 33 cm S-band fold cone (15.5 dBic). Adds 4-6.5 dB, enough for PHASMA-class 400 kbps CubeSats and the science dumps.
+  - 56-60 cm 2x2 spring-helix array (17-18 dBic). The only non-dish route to Metop AHRPT.
+  None of them is needed for Inmarsat-C SafetyNET, Iridium system frames, GNSS/EGNOS, Black Kite or CARTOSAT-3. Those are fully reachable within 12 cm.
+- **Notes:** BOTTOM LINE: at 1.5-2.4 GHz the 12/20 cm rule removes little.
+  - STRICT (12 cm or less), one DIY 2-turn helix: Inmarsat-C SafetyNET, Iridium system frames, GNSS/EGNOS, and the strong S-band telemetry and carriers (Black Kite-1/2, CARTOSAT-3) are reliable. Meteor HRPT works only on high passes.
+  - SMALL (20 cm or less): Meteor HRPT becomes reliable on most passes. AWS, the FY-2H carriers, PHASMA and the HamTV carrier stay opportunistic.
+  - Lost: Metop AHRPT (3-10 dB short), Elektro-L LRIT (1.3-4.8 dB short and paused anyway), weak S-band dumps, and video or data from the 2.4 GHz amateur satellites.
+  
+  PHYSICS:
+  - 12-20 cm is 0.6-1.5λ at these bands, so nothing is electrically short. Radiation efficiency stays above 90% (helix conductor loss under 0.1 dB modelled). The limit is aperture and directivity.
+  - Broadside aperture limits at 100% efficiency (calculation): 12 x 12 cm gives 6.8 / 7.6 / 10.1 dBi at 1.54 / 1.70 / 2.25 GHz; 20 x 20 cm gives 11.2 / 12.1 / 14.5 dBi. End-fire helices exceed the cross-section limit slightly because their length counts, which is why they beat patches of the same size.
+  - External sky noise is low (about 5-50 K). Tsys is set by the LNA (NF about 1 dB, about 75 K), ground pick-up through wide beams (+30-60 K estimated) and, above all, man-made interference: LTE B3 at 1805-1880 MHz, B1 at 2110-2170 MHz, and Wi-Fi at 2.4 GHz, including the Q6A's own Wi-Fi.
+  - Possibly also GNSS jammers near the front raising the noise floor at 1.5-1.6 GHz. Plausible, not verified.
+  - So SAW or cavity filtering at the feed matters more than another dB of gain.
+  
+  RECEIVERS:
+  - The RTL-SDR V4L (up to 1.766 GHz) covers every L-band target today: Inmarsat, Iridium (partial band), GNSS and Meteor HRPT at 2.4-2.56 Msps.
+  - AWS, Metop and all S-band need the LimeSDR Micro (30 MHz-3.8 GHz, $249, ships 15 Dec 2026). The S-band chain is LNA then Sysmocom cf2235-kt30 (2170-2300 MHz), or a 2.4 GHz band-pass filter for HamTV and the amateur band, since the cf2235 blocks 2.4 GHz.
+  
+  LNAs:
+  - SAWbird+ GOES (in stack, passband about 1648-1728 MHz) blocks Inmarsat and Iridium. Add a SAWbird+ iO (1542 MHz) or SAWbird+ IR (1620 MHz) and swap at the helix feed.
+  - Today's Nooelec listing: $49.95 each; dual-LNA and Barebones versions $44.95.
+  - Correction: the files quote the SAWbird+ GOES at $44.95, but that is the Barebones price; the SAWbird+ GOES itself is now $49.95.
+  
+  CORRECTION: the RTL-SDR Blog L-band patch is 175 x 175 mm (vendor). That makes it SMALL tier, not STRICT, and it is out of band for HRPT.
+  
+  MODELS: NEC2 (PyNEC), reusing fold() from the foldable work. Scripts:
+  - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/lband_small/scripts/helix_small.py
+  - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/lband_small/scripts/helix_univ.py
+  - Link budgets and geostationary look angles: budget.py and geo.py in the same folder.
+  - Assumed model optimism is about 1.2 dB, from the 11-turn cross-check (13.98 modelled vs 12.75 anchor).
+  
+  LINK BUDGETS: all are calculations. I reused the dish_replacement.json anchors and did not redo them:
+  - Meteor: 7 dB average with 12.75 dBic, 0.5 dB needed.
+  - Metop: Es/N0 -1 to +3 dB with a 13 dBic helix, 4 dB needed.
+  - LRIT: 1.5 dB-equivalent, +1 dB needed.
+  - Added assumption: the Meteor pass average sits at about 35° elevation (zenith about +3.9 dB). Slant-range penalty at 830 km is 9.3 / 6.8 / 4.8 / 2.5 dB at 10 / 20 / 30 / 45° elevation.
+  - Generic S-band CubeSat EIRP of 0-5 dBW is an assumption.
+  - Black Kite reachability rests on real SatNOGS decodes (a discone and a fixed helix), not on an assumed EIRP.
+  
+  FIRST TESTS:
+  1. 2-turn helix + SAWbird+ iO on the Inmarsat NCS. This also gives an always-on fixed A/B reference at 1.54 GHz, now that Elektro is off.
+  2. Iridium.
+  3. A high Meteor pass with the SAWbird+ GOES.
+  4. After December, Black Kite on the Lime.
+  Check S11 better than -10 dB with a NanoVNA after matching the 140-160 Ω helix.
+  
+  LEGAL AND SAFETY: receive-only.
+  - Filter the decoders to SafetyNET, bulletin-board and Iridium IRA/IBC frames only.
+  - Military and private-content targets are listed as excluded, with no decoding guidance.
+  - Under martial law, do not publish receptions, imagery or logs that reveal your position or infrastructure. Expect GNSS jamming and spoofing.
+  - In the field, watch for unexploded ordnance and call 101.
+  
+  UNVERIFIED:
+  - That the IOR NCS stays on 1537.10 MHz after the move to Alphasat.
+  - Alphasat at 25°E and the MEAS satellite at 64°E (general knowledge).
+  - The Inmarsat-C G/T spec of -23 dB/K (general knowledge).
+  - The RTL-SDR patch's gain.
+  - Meteor and AWS EIRP.
+  - LC76G SBAS output.
+  - HamTV's Oct 2026 schedule.
+  - Ukrainian prices for GPS pucks and shipping to Ukraine.
+  
+  SEARCH BUDGET: 5 WebSearch calls used. SatNOGS DB and Network APIs, the SatDump sat_list, and the vendor and BATC pages were read directly.
+
 ## fold:vhf_uhf (run `wf_4a343103-e9e`)
 
 - **Band group:** VHF/UHF: 137 MHz Meteor-M LRPT, 145.8 MHz ISS SSTV, 435-438 MHz CubeSats (RTL-SDR V4L for 137/145.8 MHz, LimeSDR Micro for 435 MHz). Targets unchanged. Packing targets unchanged: recommended tier has no piece longer than about 35 cm; ultra-compact tier no piece longer than about 20 cm.
