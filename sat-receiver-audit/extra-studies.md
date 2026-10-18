@@ -24120,6 +24120,50 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   Moxon виключено консервативно; заборона рамок записана як обов'язкова. Ціни подано в USD першими, базу ПДВ позначено як змішану.
   Не вигадував: тепло режиму H і тепловий корпус лише позначено для перерахунку; кількість ліній HMC7992 беремо з даташиту.
 
+## edit:02d_bom_case_cables:b1 (run `wf_63edf951-e40`)
+
+- **Section:** 02d_bom_case_cables
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+- **Skipped:** []
+- **Notes:** I applied all 18 changes in place in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/02d_bom_case_cables.md. Every table row still has 7 columns. Where changes overlapped, I merged them as follows.
+  
+  Merges and conflicts:
+  - idx 0 went into the new cable row from idx 4. The panel is now 6 SMA + 1 BNC (P5) + 1 F, and the row says why P5 is BNC: no SMA LNA can mate with the Boni port, which carries DC.
+  - idx 1 (reaudit_B) and idx 7 (analogs_G1) both rewrite the HF+ USB sentence. They do not conflict, so I combined them: micro-USB B (inferred from the WiMo box cable, confirm on arrival); short shielded micro-USB pigtail from CH334F H4 with strain relief; connector shell bonded to the mid plate; 2x Fair-Rite 2631480002 (G1 #8). The ferrites are noted as counted in the "Екран HF+" row of 2.3.
+  - idx 2 (reaudit_B) vs idx 6 (analogs_G1) on the Boni-Whip leads: G1 wins on the part. The BNC-SMA lead ($5-10) is removed from the "Можливо не враховано" list. The P5 BNC-to-SMA RG316 jumper and the BNC M-M lead are now in the set and the row. From reaudit_B I kept the 5.5/2.1 mm barrel plug for the supplied bias tee in the "not counted" list, because no file gives its price.
+  - idx 3 (reaudit_D), idx 6 (G1) and idx 8 (G2) all touch the HDMI lead. I took G1's de-duplication: the HDMI lead is no longer in the set, it is counted only in row 2.6, and this file says "тут не рахувати". The part comes from G2: Adafruit 2420, 457 mm, with 2x Fair-Rite 0431164281 (Mix 31). That replaces reaudit_D's generic "ферити Mix 31". The flat S-fold away from the RF bay and the GNSS feed, and the open 10-15 cm spec, come from reaudit_D and G2. The Wurth 74271140 goes on the touch-sensor lead (2-3 mm, D+/D-/GND only) in both the paragraph and the row; its $3.91 sits in its own 2.6 line, as routed in the 02c changes.
+  - idx 9 vs idx 12: G4 (idx 12) changes the case ASA from Grey PF01003 to White PF01002. The hood note therefore says "з цієї ж світлої котушки ASA (White PF01002, близько 50 g)", not "світло-сірої".
+  - idx 10 went into the new weather row from idx 16. It adds the acoustic ePTFE vent over the piezo port and the frosted sealed window or light pipe for the status LED (20° lens alone does not give 60°). Neither has an SKU or price in the files, so they are marked as an open line outside the sum.
+  - idx 11 (USB3 A-A cable = Goobay 95717 from row "Відновлення" 2.1, do not buy twice) is applied in both the paragraph and the cable row.
+  - idx 12, 13 and 14 are applied as given: the new "Корпус" row, then the new rows "Гвинти M3" and "Ремінь на руку" directly after it.
+  - idx 15 and 16 are applied as given for the "Шасі" and "Захист від погоди" rows.
+  
+  Two additions not in the change list:
+  - The cable row now has the landed-cost rule (hard rule, operator_notes 34-35) for the lines bought outside the EU: Lindy UK and AliExpress. It covers import VAT, EUR 3 duty per tariff line up to EUR 150, the EUR 2 fee per line from about 1.11.2026, and shipping.
+  - The cable row also has G1 condition B: buy Lindy from its EU store or an EU distributor and re-check the EU price before ordering, plus the Lindy UK shipping of GBP 3.99.
+  
+  Subtotals recomputed:
+  - 2.9: 126.6 + 20.91 + 13.49 + 35 + 116 = 312.0, and 126.6 + 28.21 + 13.49 + 70 + 168 = 406.3, so **312-406**. With the EU ASA price it is about 314-408. The note says: no shipping, weather kit ex VAT, chassis is a model, v1 was 178-313. This replaces the analog's 249-371, which counted only the weather kit.
+  - 2.10: **75-145** (model). The note says v1 was 90-170 and that moving the HDMI lead to 2.6 is a re-allocation, not a saving.
+
 ## community:compute_os (run `wf_9603e249-d87`)
 
 - **Subsystem:** compute_os (Radxa Dragon Q6A, which stays): stage 2 check against community reports. Covers RAM tier, BIOS/SPI, the held 6.18.2-4 kernel and apt holds, DT overlays, USB/VBUS, M.2, cooling, NPU firmware, QAIRT 2.42 and FastRPC.
