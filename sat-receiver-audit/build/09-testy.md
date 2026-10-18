@@ -280,7 +280,7 @@
 | P17 | Логіка, GNSS/PPS, I2C, консоль | W-04, W-05, IMU-01, ЛАБ-07, ЛАБ-08 |
 | P18 | Тепловий прогін | Т-01 |
 | P19 | Польова пайка і роз'єми | ЛАБ-09, правило 7 розділу 0 |
-| P20 | Додаткові види прийому (КХ і публічні діапазони) | Boni-Whip 13.8 V, поріг ≥12.0 V на штекері; fldigi → канали SDRangel; WEFAX — fax в OpenWebRX+ за цивільним allow-list; DRM лише з Dream без передавача або з demoddrm SDRangel; wsjtx GUI → lab-wsjt-decoders (D5) |
+| P20 | Додаткові види прийому (КХ і публічні діапазони) | Boni-Whip 13.8 V, поріг ≥12.0 V на штекері; кроки fldigi замінено каналами SDRangel (fldigi може передавати — заборонено); WEFAX — fax в OpenWebRX+ за цивільним allow-list; DRM лише з Dream без передавача або з demoddrm SDRangel; wsjtx GUI → lab-wsjt-decoders (D5) |
 | P21 | Збір даних, ідентифікація, резервні копії | ПОЛ-09 |
 
 Формули (§3.5): F2 = (ENR − Y2(Tc/T0 − 1))/(Y2 − 1); F1 = F_sys − (F2 − 1)/G1; NF = P_MDS + 174 − 10log10(ENBW); T_rx = (T_hot − Y·T_cold)/(Y − 1).
