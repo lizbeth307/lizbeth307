@@ -23952,6 +23952,249 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   The pass/fail resistance thresholds for nickel and the plated-steel comparisons are textbook-resistivity models, not measurements. No part here touches the RF hard rules.
 
+## searchB:pack_sundries_nickel_fish_paper_kapton_j (run `wf_a268b76e-da0`)
+
+- **Part:** Pack sundries (nickel, fish paper, Kapton, JST-XH 5-pin, XT30 service lead), spot-weld service, FR-4/mica barrier, foam + reflective film, fire bag (Battery group, core, 1 set)
+- **Current price usd:** 50-110 (model estimate, not a seller price). Breakdown from final_completeness.json: sundries 10-25, shop spot-weld 20-40, barrier/vent parts + fire bag 20-45.
+- **Critical specs:**
+  - Interconnect: pure nickel strip (Ni200/201 class, not nickel-plated steel), 0.15 x 8 mm, weldable on a shop or kWeld-class welder. Load is 2-3.5 A typical and 4.63 A peak (61.1 W / 13.2 V, model), with a 7.5 A pack fuse. Resistance per 100 mm of 0.15x8 is about 7.1 mOhm (Ni201) or 7.9 mOhm (Ni200), against about 11.7-14.2 mOhm for low-carbon/plated steel. These are textbook resistivities (8.5/9.5 vs 14-17 uOhm-cm); the primary datasheet fetch failed. Plated steel also corrodes.
+  - Model: about 135 mm of series strip in the 2x2 4S layout gives about 11 mOhm. That is 0.13 W at 3.5 A and 0.23 W at 4.63 A with Ni200, and roughly 1.5-1.8x that with plated steel. Small either way, but plated steel is still worse on paper.
+  - Goods-in test that separates the two (a magnet does not, because both are magnetic): pass 1.00 A through the strip and read the mV across 100 mm with a DMM. Pure Ni reads 7-8 mV; plated steel reads 11.5 mV or more.
+  - Insulator rings: 21700 size, adhesive fish/barley paper about 0.2-0.3 mm. The outer diameter must cover the crimp shoulder (the can is the negative terminal at the + end), and the rings must survive welding heat.
+  - Polyimide (Kapton) tape: polyimide film, not PET, at least as thick as the reference tape, silicone adhesive, rated 260 C or more. Breakdown of more than 1 kV leaves a huge margin over 16.8 V, so abrasion resistance (film thickness) is what matters. The stack row also lists glass-fibre tape and a 4S wrap.
+  - Balance lead: genuine JST XHP-5 housing with XH crimps (SXH/BXH-001T-P0.6), 250 V / 3 A, 10 mOhm contact, -25 to +85 C, 22-28 AWG. It must mate the ISDT 608PD XH balance port and the Daly BMS sense leads.
+  - XT30 service lead: genuine Amass XT30 (15 A rated, -20 to 120 C, UL94 V-0 housing, gold-flash brass). 18 AWG silicone wire to the DC5525 end; the service port has a 5 A fuse after the INA228 shunt.
+  - Spot weld: consistent weld energy, a peel/pull test passed on coupons, no burn-through and minimal heat into the cell, rated for pure Ni 0.15 mm. No soldering to cells and no spring holders (stack rule).
+  - Barrier: 1 mm, non-conductive, and must not ignite or melt under a vent/flame jet. Mica (stable to several hundred C) is better than FR-4 (UL94 V-0 but Tg about 130-140 C). It must fit the 54x33x158 mm compartment envelope.
+  - Insulation: 3 mm closed-cell foam (low k, about 0.04 W/mK or less, rated for 80-90 C or more, non-conductive, low flammability) plus a reflective film. Any aluminium layer must face away from the cells and nickel, because it is conductive.
+  - Fire bag: contains flame and ejecta for a 72 Wh pack (93.6 Wh if M65A). The pack is internal and charges in the device (IP2368, and the ISDT through the service port with the main switch off), so a bag used for charging must fit the whole device: about 225x140x60 mm plus a cable exit. A pack-only bag only works for storage.
+  - Genuineness: no counterfeit XT30 or JST, and no 'pure nickel' that is actually plated steel. EU-stock sellers are preferred (cost rule 34).
+- **Candidates:**
+  1.
+    - **Name:** Genuine JST XHP-5 housing + 5x JST BXH-001T-P0.6 crimps (reichelt DE)
+    - **Kind:** current_part
+    - **Price usd:** 0.53 per housing + 5 crimps (EUR 0.07 + 5 x EUR 0.08, incl. 19% VAT; in stock). Needs an XH crimp tool (not priced).
+    - **Spec comparison:** Same part as the current pick, now with a verified price. reichelt lists 250 V / 3 A, 10 mOhm contact resistance, -25 to +85 C, Nylon 66, 2.5 mm pitch.
+    - **Worse in:** Nothing; it is the genuine part. Crimping skill is needed. Buying a pre-made lead with a genuine housing avoids that.
+    - **Compatibility:** Standard XH 5-pin for the 4S balance tap, so it mates the ISDT 608PD and an XH service connector.
+    - **Risks:** Low. Crimp quality: pull-test each crimp.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/jst_socket_housing_1x5-pin_xh-185088
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/product/jst_socket_housing_1x5-pin_xh-185088
+      - https://www.reichelt.com/de/en/shop/product/jst_crimp_contact_socket_xh-185091
+  2.
+    - **Name:** Clone 'XH2.54' 5-pin housings/crimps or pre-made marketplace 4S balance leads
+    - **Kind:** generic_or_clone
+    - **Price usd:** unverified (no listing fetched)
+    - **Spec comparison:** Same nominal geometry and claimed 3 A rating. No measured contact resistance, retention force or material data found.
+    - **Worse in:** Unproven contact resistance, retention and plastic grade. REJECTED under angle B: no measurements, and genuine JST costs only cents (row above), so a clone saves nothing.
+    - **Compatibility:** Usually mates XH, but tolerances vary.
+    - **Risks:** Loose or intermittent balance sense leading to BMS or charger mis-balance.
+    - **Seller url:** 
+    - **Sources:** []
+  3.
+    - **Name:** Robbe Modellsport XH balancer cable 4S battery side, 100 mm, 22 AWG (Lindinger AT)
+    - **Kind:** other_brand
+    - **Price usd:** 3.36 (EUR 2.99, OUT OF STOCK on the page saved 18 Oct 2026)
+    - **Spec comparison:** Pre-made 5-pin XH lead in 22 AWG (as thick as XH allows). JST provenance and contact data are not stated.
+    - **Worse in:** Contact/housing origin not documented, so it is not proven equal to genuine JST. Not cheaper than self-crimped genuine parts unless the crimp tool is counted.
+    - **Compatibility:** XH 4S, battery side.
+    - **Risks:** Out of stock; unknown housing brand.
+    - **Seller url:** https://www.lindinger.at/en/BATTERIES/CHARGERS-POWER-SUPPLIES/Charging-Accessories/Balancer-Equalizer/Robbe-Modellsport-XH-BALANCER-CABLE-4S-BATTERY-SIDE-100MM-22AWG-0-32MM2-1PCS/9762228
+    - **Sources:**
+      - https://www.lindinger.at/en/BATTERIES/CHARGERS-POWER-SUPPLIES/Charging-Accessories/Balancer-Equalizer/Robbe-Modellsport-XH-BALANCER-CABLE-4S-BATTERY-SIDE-100MM-22AWG-0-32MM2-1PCS/9762228
+  4.
+    - **Name:** Genuine Amass XT30 (BerryBase DE female; Pimoroni UK XT30U-F/M)
+    - **Kind:** current_part
+    - **Price usd:** 0.54 per female at BerryBase (EUR 0.48 incl. VAT, 6 in stock). Pimoroni: 0.77 each for XT30U-F or XT30U-M (GBP 0.58; UK seller, so EU flat duty + VAT apply).
+    - **Spec comparison:** Current part. BerryBase lists 15 A rated, 500 V, -20 to 120 C, brass with gold flash, polyamide UL94 V-0, 1000 mating cycles, manufacturer Changzhou Amass. Contact resistance is not listed.
+    - **Worse in:** Nothing. BerryBase gives no Amass part number (its SKU is A-XT30) and lists no male part, so the male half may need another seller.
+    - **Compatibility:** XT30 service port and lead to DC5525; matches the stack's 'original Amass XT30' rule.
+    - **Risks:** Low; check the AMASS moulding on arrival.
+    - **Seller url:** https://www.berrybase.de/amass-xt30-weiblicher-stecker-fuer-dc-stromversorgung-loetanschluss-15a-nennstrom
+    - **Sources:**
+      - https://www.berrybase.de/amass-xt30-weiblicher-stecker-fuer-dc-stromversorgung-loetanschluss-15a-nennstrom
+      - https://shop.pimoroni.com/products/amass-xt30-connector
+  5.
+    - **Name:** Clone/no-name XT30 (marketplace)
+    - **Kind:** generic_or_clone
+    - **Price usd:** unverified
+    - **Spec comparison:** No measured contact resistance or temperature-rise data found.
+    - **Worse in:** REJECTED: the stack's authenticity rule requires original Amass. No measured evidence, and the genuine part costs about $0.54, so there is nothing to save.
+    - **Compatibility:** Mechanically XT30.
+    - **Risks:** Counterfeit or poor contacts, causing heat at the 5 A service port.
+    - **Seller url:** 
+    - **Sources:** []
+  6.
+    - **Name:** Generic marketplace 'pure nickel' 0.15 x 8 mm strip, accepted only after a goods-in 4-wire test
+    - **Kind:** generic_or_clone
+    - **Price usd:** unverified (marketplace listings could not be fetched: eBay 403, NKON 403, AliExpress not tried)
+    - **Spec comparison:** Equal only if the measurement passes: 7-8 mV per 100 mm at 1.00 A (Ni200/201). Plated steel reads 11.5 mV or more and must be returned. Thickness: 0.15 mm +/- 0.01 by micrometer.
+    - **Worse in:** No independent measurement of any specific listing was found, so under angle B it is CONDITIONAL. Only the user's goods-in measurement can qualify a roll.
+    - **Compatibility:** Same strip; the battery shop's welder must suit pure Ni 0.15.
+    - **Risks:** Mislabelled plated steel is common: higher resistance and rust. Thickness may be under spec.
+    - **Seller url:** 
+    - **Sources:** []
+  7.
+    - **Name:** Nickel-plated steel (Hilumin-type) strip 0.15 x 8 mm
+    - **Kind:** generic_or_clone
+    - **Price usd:** unverified (cheaper than pure Ni in general; no listing fetched)
+    - **Spec comparison:** Resistivity about 1.5-1.8x pure Ni (textbook). The model pack loss is 0.2-0.24 W at 3.5 A vs 0.13 W with Ni200.
+    - **Worse in:** Higher resistance and corrosion of cut edges and scratches. REJECTED (worse spec, even though the loss is small).
+    - **Compatibility:** Welds fine.
+    - **Risks:** Rust in humid field use.
+    - **Seller url:** 
+    - **Sources:** []
+  8.
+    - **Name:** Thermal Grizzly Kapton insulation sheet TG-KIS-10-60-50 (50 strips, 10 x 60 mm; reichelt DE)
+    - **Kind:** other_brand
+    - **Price usd:** 5.51 (EUR 4.90 incl. 19% VAT, in stock)
+    - **Spec comparison:** Kapton, 40 um thick, max 280 C, breakdown over 1 kV, adhesive-backed. 50 x 60 mm is about 3 m of 10 mm strip, enough for one 4-cell pack.
+    - **Worse in:** 40 um total thickness may be thinner than the reference tape (the current pick's thickness is unspecified). Only 10 mm wide. Check that it is not thinner than the planned tape where nickel crosses the can shoulder.
+    - **Compatibility:** Fits the use: cross-over insulation, the NTC bond and the BMS area.
+    - **Risks:** Low; branded EU stock.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/kapton_insulation_sheet-414962
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/product/kapton_insulation_sheet-414962
+  9.
+    - **Name:** CELLCON PA-R376 polyimide tape, 8 mm x 33 m (reichelt DE)
+    - **Kind:** other_brand
+    - **Price usd:** 19.05 (EUR 16.95 incl. VAT)
+    - **Spec comparison:** Polyimide film 0.050 mm, silicone adhesive. Film is at least as thick as standard 1-mil Kapton tape, so equal or better.
+    - **Worse in:** Nothing found, but it is probably not cheaper than the current tape budget. Listed as the verified not-worse reference.
+    - **Compatibility:** Yes.
+    - **Risks:** Low.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/polyimide_film_tape_one-sided_8_mm_33_m-152966
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/product/polyimide_film_tape_one-sided_8_mm_33_m-152966
+      - https://www.reichelt.com/de/en/shop/product/polyimide_tape_0_5_inch-259148
+  10.
+    - **Name:** Generic marketplace 'Kapton/polyimide' tape
+    - **Kind:** generic_or_clone
+    - **Price usd:** unverified
+    - **Spec comparison:** No independent thickness or material data. Accept only after goods-in checks: total thickness by micrometer at least that of the reference, and a 300 C iron touch that leaves no melt or shrink (PET fails).
+    - **Worse in:** Unproven film thickness and material, so CONDITIONAL or REJECTED under angle B. The branded EU options above cost $5-19.
+    - **Compatibility:** Yes.
+    - **Risks:** PET sold as polyimide.
+    - **Seller url:** 
+    - **Sources:** []
+  11.
+    - **Name:** Generic 21700 terminal insulator rings, black, 20 pcs (18650 Battery Store)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 1.49 per 20 (in stock 18 Oct 2026; US seller, so EU duty/VAT/shipping apply)
+    - **Spec comparison:** Listed as 'high-temperature insulating fiber', ID about 10 mm, OD about 18 mm, about 0.3 mm thick. No measured dielectric or heat data.
+    - **Worse in:** An OD of about 18 mm may not fully cover the about 21 mm crimp shoulder (fit unverified). No measurements. CONDITIONAL: check that the OD covers the shoulder on a P50B before use.
+    - **Compatibility:** 21700 cells.
+    - **Risks:** Incomplete shoulder coverage, which risks a short through a nickel edge.
+    - **Seller url:** https://www.18650batterystore.com/products/21700-insulator-black
+    - **Sources:**
+      - https://www.18650batterystore.com/products/21700-insulator-black
+  12.
+    - **Name:** Generic epoxy-fibreglass insulator sheet 208x175x0.5 mm (18650 Battery Store), two layers as the barrier
+    - **Kind:** generic_or_clone
+    - **Price usd:** 2.00 per sheet (in stock; US seller)
+    - **Spec comparison:** Epoxy/fibreglass, 0.5 mm, yellow, 55 g. No FR-4/UL94 V-0 grade or Tg stated; the stated mass implies about 3 g/cm3, unlike FR-4 at about 1.85, so the material is unclear.
+    - **Worse in:** Flame rating and material not proven equal to FR-4, and far below mica for thermal runaway. REJECTED as the barrier unless an FR-4/UL94 V-0 datasheet is provided.
+    - **Compatibility:** Fits when cut down; 2 x 0.5 mm = 1 mm.
+    - **Risks:** Non-FR epoxy could burn.
+    - **Seller url:** https://www.18650batterystore.com/products/epoxy-insulator-sheet-208-175-0-5mm-lifepo4-cell-separator
+    - **Sources:**
+      - https://www.18650batterystore.com/products/epoxy-insulator-sheet-208-175-0-5mm-lifepo4-cell-separator
+  13.
+    - **Name:** Use the 2 mm aluminium mid-plate as the barrier (budget alternative already in final_completeness.json)
+    - **Kind:** diy
+    - **Price usd:** 0 (already in the build)
+    - **Spec comparison:** Aluminium melts at about 660 C (textbook) and is a heat conductor and an electrical conductor.
+    - **Worse in:** Worse than mica and FR-4: it conducts heat to the board side, melts under a cell flame jet, and is conductive next to nickel. REJECTED.
+    - **Compatibility:** Already present.
+    - **Risks:** Shorts and heat spread.
+    - **Seller url:** 
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/final_completeness.json
+  14.
+    - **Name:** kWeld DIY spot welder (keenlab, DE), instead of a shop weld
+    - **Kind:** diy
+    - **Price usd:** 190-199 ex VAT (EUR 169-177 plus 19% VAT, so 226-237 incl. VAT) for the complete kit. Also needs a source of 1500 A or more (e.g. 3S 5 Ah 130C LiPo; not priced).
+    - **Spec comparison:** Better process control: Joule metering measures weld-spot resistance on each pulse and sets the pulse so every weld gets the same energy. Up to 500 J, 2000 A switch, pure Ni up to 0.3 mm. Evidence is community feedback (eevblog, endless-sphere), not a formal lab test.
+    - **Worse in:** Not cheaper: $226-237 plus a LiPo, against $20-40 (estimate) for one shop weld. REJECTED for a single pack; worth it only for repeated builds.
+    - **Compatibility:** Welds pure Ni 0.15 mm.
+    - **Risks:** DIY welding skill; LiPo hazard of the weld source.
+    - **Seller url:** https://www.keenlab.de/index.php/shop/
+    - **Sources:**
+      - https://www.keenlab.de/index.php/portfolio-item/kweld/
+      - https://www.keenlab.de/index.php/shop/
+  15.
+    - **Name:** Malectrics DIY Arduino spot welder, prebuilt kit V4
+    - **Kind:** diy
+    - **Price usd:** 108.59 (EUR 96.60, OUT OF STOCK) plus cables, tips and a 12 V car battery of 400-600 CCA or a LiPo
+    - **Spec comparison:** Timed pulses of 1-100 ms (up to 500 ms) with a pre-pulse. Firmware 3.2.1 can measure pulse voltage and current, but no published lab weld data. Reviews and videos only.
+    - **Worse in:** No measured weld-quality evidence, less consistent than energy control, and more expensive than one shop weld. REJECTED.
+    - **Compatibility:** Seller reports 0.15 and 0.25 mm nickel.
+    - **Risks:** Out of stock; DIY.
+    - **Seller url:** https://malectrics.eu/product/diy-arduino-battery-spot-welder-prebuilt-kit-v3/
+    - **Sources:**
+      - https://malectrics.eu/
+      - https://malectrics.eu/product/diy-arduino-battery-spot-welder-prebuilt-kit-v3/
+  16.
+    - **Name:** Cheap marketplace spot welders (capacitor or LiPo handhelds)
+    - **Kind:** generic_or_clone
+    - **Price usd:** unverified
+    - **Spec comparison:** No independent measurements found in this pass.
+    - **Worse in:** REJECTED: no measured weld energy or consistency data.
+    - **Compatibility:** Unknown on pure Ni 0.15.
+    - **Risks:** Weak or cold welds, can damage.
+    - **Seller url:** 
+    - **Sources:** []
+  17.
+    - **Name:** Generic fibreglass/silicone LiPo bags: Robbe 23x30 cm, Absima, Robbe Lipoguard M (Lindinger AT), Pimoroni sack (UK)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Robbe 23x30 cm: 7.30 (EUR 6.49). Absima: 10.06 (EUR 8.95; internal 170x70x70 mm). Robbe Lipoguard M: 19.10 (EUR 16.99; 155x90x115 mm). Pimoroni sack: 6.99 (GBP 5.25, plus UK-to-EU duty). Lindinger items in stock 18 Oct 2026.
+    - **Spec comparison:** Manufacturer claims only. Absima: 'flame retardant fiberglass'. Robbe: 'liquid silicone' fabric that 'prevents open flames and keeps heat out for a short time', 'not designed to prevent smoke'. No independent burn test was found for any bag in this pass.
+    - **Worse in:** Containment is unproven, so none qualifies as 'proven equal' under angle B. The Absima and Lipoguard M cannot hold the whole device (about 225x140x60 mm), so they are storage-only for a removed pack. Only the flat 23x30 cm bag plausibly fits the device (fit unverified).
+    - **Compatibility:** For charging in-bag, the device must fit and a cable exit is needed.
+    - **Risks:** Burn-through and smoke at 72-94 Wh; false sense of safety.
+    - **Seller url:** https://www.lindinger.at/en/RC-Electronics/Drive-Set/Batteries/Robbe-Modellsport-Lipo-Bag-protective-case-ROBBE-23x30cm/9787514
+    - **Sources:**
+      - https://www.lindinger.at/en/RC-Electronics/Drive-Set/Batteries/Robbe-Modellsport-Lipo-Bag-protective-case-ROBBE-23x30cm/9787514
+      - https://www.lindinger.at/en/RC-Electronics/Drive-Set/Batteries/ABSIMA-LIPO-LOADING-AND-TRANSPORT-BAG/9774651
+      - https://www.lindinger.at/en/RC-Electronics/Drive-Set/Batteries/Robbe-Modellsport-Lipoguard-M-approx.-155x90x115mm-High-quality-design/9811106
+      - https://shop.pimoroni.com/products/lipo-safety-charge-sack
+  18.
+    - **Name:** Non-combustible surface only (tile or steel tray), no bag
+    - **Kind:** diy
+    - **Price usd:** about 0
+    - **Spec comparison:** STACK line 950 already allows 'supervised charging on a non-combustible surface OR in a fire bag'.
+    - **Worse in:** No ejecta or flame containment at all, so it is worse than any bag. It is an existing rule alternative, not a not-worse analog.
+    - **Compatibility:** Yes.
+    - **Risks:** Flame and ejecta reach nearby items.
+    - **Seller url:** 
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md
+- **Notes:** VERDICT (angle B): I found no generic, clone, DIY or used item that is both cheaper and proven not worse by independent measurement. **Keep the current set.**
+  
+  - **Welding:** both DIY welders cost more than one shop weld. kWeld is about $226-237 incl. VAT plus a LiPo; Malectrics is $108.59 (out of stock) plus a car battery. So the shop weld ($20-40, unverified) stays.
+  - **Connectors:** clone XH/XT30 saves nothing. Genuine parts are cents from EU stock: JST XHP-5 + 5 crimps $0.53 (reichelt); Amass XT30 female $0.54 (BerryBase).
+  - **Nickel and polyimide tape:** generic rolls qualify only by the user's own goods-in measurement.
+    - Nickel: 1.00 A through 100 mm should read 7-8 mV. Plated steel reads 11.5 mV or more.
+    - Tape: micrometer thickness plus a 300 C iron test (PET fails).
+    - Verified cheap tape options: Thermal Grizzly Kapton sheet $5.51 (40 um, possibly thin; check), CELLCON 50 um film $19.05.
+  - **Barrier:** mica is strictly better than FR-4, so if both cost about the same, pick mica. No mica sheet listing was verified (reichelt only has TO-220-size washers). Reject the $2 generic epoxy sheet (no FR grade) and the aluminium mid-plate.
+  - **Fire bag:** I found no independent burn test for any bag. Size matters: the pack is internal and charges in the device, so an in-bag charge needs inner space of about 225x140x60 mm plus a cable exit. Pack-sized bags (Absima, Lipoguard M) are storage-only.
+  - **Foam and reflective film:** no verified listing or measured data found. Keep as specified. Any aluminium layer must face away from the cells and nickel.
+  
+  Suggested acceptance tests (they make the shop weld and the generic materials measurable):
+  - Weld test coupons on empty 21700 practice cans (18650 Battery Store, $7/10, out of stock) and peel-test them.
+  - Do a 4-wire resistance check of each strip run against the Ni200 model (about 11 mOhm for about 135 mm).
+  
+  EVIDENCE LIMITS:
+  - WebSearch: 0 calls made. The shared per-turn limit was already used up before my first query, so I could not search for independent fire-bag or nickel tests. A follow-up turn with search budget could look for bag burn tests (e.g. FAA fire-containment-bag reports) and measured nickel-strip purity tests.
+  - Primary pages fetched today: keenlab.de shop and kWeld page, malectrics.eu, berrybase.de (XT30, polyimide set €13.20, out of stock), and 18650batterystore.com (Shopify JSON).
+  - reichelt and lindinger pages came from files a parallel agent downloaded today, in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/sundries_dl.
+  - Blocked or unreadable: NKON, TinyTronics and TME (403 challenge), eBay (403), JS-only listings (Botland, Akkuteile), and the JST XH datasheet PDF (fonts would not render; the XH figures come from reichelt instead).
+  - Nickel and steel resistivities are textbook values (the Special Metals PDF returned 404).
+  
+  My raw downloads are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/g3sB/dl. USD uses the stack rates: 1 EUR = 1.1241 USD, 1 GBP = 1.3318 USD. EU prices include VAT where stated. UK and US sellers add the post-July-2026 EU flat duty plus import VAT (operator note 34).
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
