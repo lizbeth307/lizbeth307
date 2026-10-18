@@ -64,6 +64,7 @@
 | [Two stage coax cm choke ft 240 77 ft 240](components/two_stage_coax_cm_choke_ft_240_77_ft_240.md) | · research · forums · fixes ✅ verify | `—` |
 | [Uputronics 440 mhz cubesat filtered prea](components/uputronics_440_mhz_cubesat_filtered_prea.md) | · research · forums · fixes ✅ verify | `—` |
 | [Waveshare lc76g 24370 rtc cr2032 cell](components/waveshare_lc76g_24370_rtc_cr2032_cell.md) | · research · forums · fixes ✅ verify | `—` |
+| [Weather kit ipx4 ip54 mesh foam eptfe ve](components/weather_kit_ipx4_ip54_mesh_foam_eptfe_ve.md) | · research · forums · fixes ✅ verify | `—` |
 | [Wideband sdr](components/wideband_sdr.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_e64436d6-ae7` |
 | [Wisecoco 7in 1920x1080 2000 nit hdmi kit](components/wisecoco_7in_1920x1080_2000_nit_hdmi_kit.md) | · research · forums · fixes ✅ verify | `—` |
 
