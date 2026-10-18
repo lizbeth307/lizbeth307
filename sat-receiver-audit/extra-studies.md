@@ -3508,3 +3508,84 @@
   
   Scratch calculations are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/acr2.py and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/harm.py.
 
+## dispmkt:check1 (run `wf_a429c611-ea2`)
+
+- **Name:** Youritech ET070WU01-HLT (7.02in 1200x1920 MIPI, in-cell touch, "2000 nits"); Microtech MTF070UG53A-V1 has the same outline
+- **Exists and orderable:** ні
+- **Confirmed specs:** Youritech product page (images uploaded 2026/06), with only "Get a quote" as a way to order. It lists: ET070WU01-HLT, 7in, 1200x1920, MIPI, transmissive, outline 105.46x162.82 mm, active area 94.5x151.2 mm, viewing angle 80/80/80/80, "2000 cd/m2 (Typ.)", operating -20 to 70 C (storage -30 to 80 C), touch "yes (In-Cell)". The page does not list a driver IC, MIPI lane count, touch controller, backlight figures, contrast, datasheet, price or MOQ.
+  
+  The Microtech MTF070UG53A-V1 HKTDC listing has the title "7 inch LCD screen 1920*1200 ... 2000 high brightness 40pin display panel with MIPI interface". Its table gives outline 105.46x162.82x2.4 mm, active area 94.5x151.2 mm, pitch 0.07875 mm, 8-bit, "Without TP", LED white backlight and a 25-45 day lead time. Brightness is missing from the table.
+  
+  Calculated: 7.02in diagonal, 323 PPI.
+  
+  The same active area, pitch and pin count appear in the Midas MDT0700F1IHHC-MIPI datasheet (a different product). It specifies ADS 8-bit+FRC, in-cell FocalTech FT7250 TDDI with touch on I2C (TP_SCL/SDA/INT at 1.8 V), a 40-way 0.5 mm FFC, IOVCC 1.8 V, VSP/VSN +/-5.5 V, CR >=1200, and a cover lens with AR. Its backlight table gives Vf 16 V typ (19.2 V max at 240 mA) and If 200/300/400/500 mA for 1000/1500/2000/2500 nits, with "thermal considerations apply" at 2500. This is probably the same upstream glass as the Youritech and Microtech parts, but that is an inference.
+- **Refuted or doubtful:**
+  - The 2000 nits figure is only a vendor web-page 'Typ.' value (Youritech) and a listing-title phrase (Microtech). No datasheet or independent measurement exists for either part number. Web searches for both part numbers return nothing.
+  - Youritech's catalog is unreliable. Its 1200x1920 listing uses the part number ET070WU01-TT for two different products: a 350-nit, 115x176 mm in-cell panel and a '1300nits IPS' panel.
+  - The two vendors' parts are 'identical' only in outline and active area. Youritech lists in-cell touch; Microtech lists 'Without TP'.
+  - No HDMI board exists for this model. The only Youritech product with an HDMI driver board is a 4in 720x720 module. The generic 'controller board integration' text is a service offer, not a product.
+  - Touch cannot reach the host as USB HID as sold. An in-cell TDDI (FT7250 on the same-glass Midas part) reports over I2C/SPI, and TDDI touch sensing runs in the display blanking intervals (the OVT TD4160 brief, for example, says '120/60 Hz long H-blank'). A custom MCU bridge is needed, and so is the vendor's touch protocol and firmware. Off-spec refresh rates chosen for RF reasons may break touch.
+  - The candidate's RF claim ('60 Hz ~150 MHz hits 748.8/2246 MHz') rests on an assumed htotal. With JDI-like htotal 1340 and 24-line vblank (156.30 MHz) no harmonic falls in a band. With JDI's exact 14-line timing (155.49 MHz) the 11th harmonic is 1710.4 MHz, on the band edge. With CVT-RBv2-like 1280x1944 (149.3 MHz) the 5th harmonic lands at 746.5 MHz. The real EDID is unknown.
+  - The native DSI timing of this glass class (JDI LT070ME05000 in mainline Linux) has only 14 lines of vertical blanking, below the Q6A DP minimum of 24. Whether the panel and the touch accept a longer VFP is unverified.
+  - Not orderable off the shelf: request-for-quote only, no price, MOQ unknown, Microtech lead time 25-45 days. Not sold in Ukraine: prom.ua finds nothing for ET070WU01. It does carry low-brightness JDI 7in 1920x1200 31-pin MIPI replacement panels, which are a different part.
+- **Touch reaches host as usb hid:** no
+- **Q6a mode line and link check:** This is a bare MIPI panel, so it needs a 4-lane HDMI-to-MIPI bridge (LT6911C/UXC class) flashed with this panel's init code and timing. No such bridge is offered for this model, and the EDID will come from the bridge firmware.
+  
+  Reference timing (mainline panel-jdi-lt070me05000.c, same 94.5x151.2 mm format, not confirmed for this part): 1200+48+32+60 = 1340 htotal, 1920+3+5+6 = 1934 vtotal, 155.493 MHz at 60 Hz, 4 lanes, video mode.
+  
+  Calculated mode that meets the 24-line rule: 1340x1944 at 60 Hz = 156.30 MHz. At 24 bpp that is 3.75 Gbps, 43% of HBR2 x2 (8.64 Gbps) and 87% of HBR x2. That is far below the ~330 MHz ceiling and within RA620 HDMI limits.
+  
+  Width is 1200 px, under the 2400 px DPU limit, so virtual planes are not needed. The panel is portrait-native, so landscape means rotating in the compositor (GPU).
+  
+  Risks: the panel's tolerance for VFP >= 10 lines and for refresh rates below 55 Hz is unknown, and TDDI touch timing depends on the display timing.
+  
+  Calculated RF-clean option: 1340x1944 at 49.2-49.5 Hz (128.2-129.0 MHz), with at least 7 MHz harmonic margin. It may be outside the panel and touch spec.
+- **Power and thermal:** All figures below are calculated. Backlight values come from the same-glass Midas datasheet, not from this part.
+  
+  - Backlight: 2000 nits = 400 mA x 16 V = 6.4 W of LED power, up to about 7.7 W if Vf approaches the 19.2 V maximum. With 85-90% boost efficiency that is about 7.1-9 W from the 12 V rail.
+  - Logic: up to about 0.9 W (Midas maximum IDD: IOVCC 50 mA, VSP/VSN 75 mA each).
+  - Bridge board: plus about 1 W.
+  - Display total: about 8-10 W, roughly 0.6-0.7 A from a 4S pack. A UEDX6911-class board (about 1.3 W) cannot drive this backlight, so an external constant-current LED driver is needed.
+  - Sun load: 1000 W/m2 on the 172 cm2 front is about 17 W, most of it absorbed, on top of 6-8 W of backlight. In a sealed handheld this can push the panel past its 70 C operating limit; the LC then clears and the screen goes black. Midas adds a thermal caveat even at 2500 nits in open air.
+  - Mitigations: ambient-light and temperature-based dimming, a rear heat spreader with venting, and shielding of the boost converter.
+- **Keep:** ні
+- **Reason:** It does not survive checking. The 2000-nit figure is a vendor web-page claim only, with no datasheet, no measurement, and a catalog that reuses one part number for two products. It is a bare MIPI panel with no HDMI board offered for this model. Its in-cell TDDI touch is I2C/SPI, tied to display timing, and has no USB HID path. Its native timing class has 14-line vblank, below the 24 the Q6A needs, and the RF picture depends on an unknown EDID. The backlight needs about 7-9 W plus a separate LED driver. It is request-for-quote only, price unknown, and not sold in Ukraine. To build a 7in 1200x1920 2000-nit panel from parts, the Midas MDT0700F1IHHC-MIPI is the better-documented sibling: it has a real datasheet with a current-vs-luminance table, the FT7250 touch controller, and an AR cover lens. A search snippet put it at about EUR 324 ex VAT with a 12-week lead time on Farnell; the page itself returned 503 to me. It still needs an HDMI-to-MIPI bridge and an I2C-to-USB-HID bridge.
+- **Sources:**
+  - https://www.youritech.com/products/7-inch-tft-lcd-display-1200x1920-high-brightness-2000nits-mipi-lcd-display-with-in-cell-touch.html
+  - https://www.youritech.com/resolution/1200x1920/
+  - https://www.hktdc.com/event/electronicasia/en/product/1Z03HV3K9
+  - https://www.hktdc.com/event/electronicasia/en/product/1Z03H5SXH
+  - https://www.farnell.com/datasheets/3984938.pdf
+  - https://export.farnell.com/midas-displays/mdt0700f1ihhc-mipi/lcd-tft-display-7-1200x1920p-mipi/dp/4248109
+  - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/panel/panel-jdi-lt070me05000.c
+  - https://www.ovt.com/wp-content/uploads/2024/01/TD4160-PB-v1.0-WEB.pdf
+  - https://prom.ua/ua/search?search_term=ET070WU01
+- **Questions for seller:**
+  - Please send the full specification or approval sheet for ET070WU01-HLT, including luminance measurement conditions, minimum luminance, and the LED string configuration (number of strings, Vf, If at 2000 nits).
+  - Which display/TDDI IC does it use (FT7250?), is touch on I2C or SPI, and is the touch firmware stored in flash or does the host have to download it at every boot?
+  - What are the MIPI lane count, video or command mode, and full timing (HFP/HBP/HSA/VFP/VBP/VSA, pixel clock)? What are the minimum and maximum frame rate and the maximum VFP? Does the panel accept 24 or more lines of vertical blanking and 50-52 Hz, and does touch still work at those settings?
+  - Can you supply a tested HDMI-to-MIPI board for this exact model? Which chip and EDID does it use, does it include an LED driver, and does it provide touch as USB HID (VID:PID, tested on Linux)?
+  - What are the backlight driver input voltage, PWM dimming frequency and efficiency, and the panel's high-temperature derating and LC clearing point at 2000 nits?
+  - Can you add bonded AR/AG cover glass, and what is the resulting thickness?
+  - Is this the same glass as Microtech MTF070UG53A-V1 or Midas MDT0700F1IHHC-MIPI?
+  - Why does part number ET070WU01-TT appear as both a 350-nit and a 1300-nit product on your site?
+  - What are the price and MOQ for 1-2 samples, the lead time, courier (DHL/FedEx) shipping cost to Ukraine, and the Incoterms?
+- **Real price and shipping to ukraine:** There is no public price; Youritech sells by quote only, and Microtech lists no price and a 25-45 day lead time. The closest documented reference is the Midas MDT0700F1IHHC-MIPI (2500 nits, same active area). A search snippet put it at about EUR 324 ex VAT at quantity 1 with a 12-week lead time on Farnell; the page returned 503 to me, so that is unverified. Shipping from Shenzhen to Ukraine would be by courier (DHL/FedEx), and no cost is stated. Ukrainian import VAT and duty above the duty-free threshold apply, so check the current threshold. Neither part is sold in Ukrainian shops.
+- **Rf harmonics check:** All values are calculated, harmonics up to 2.4 GHz.
+  
+  | Timing | Pixel clock | Result |
+  |---|---|---|
+  | 1340x1944 at 60 Hz (24-line vblank) | 156.30 MHz | No hits. Near misses: fundamental 10.3 MHz above 146 MHz, 11th at 1719.3 MHz (9.3 MHz above 1710), 14th at 2188.2 MHz (11.8 MHz below 2200). |
+  | JDI exact 1340x1934 at 60 Hz | 155.49 MHz | 11th harmonic at 1710.4 MHz, on the 1690-1710 band edge: a hit. |
+  | CVT-RBv2-like 1280x1944 at 60 Hz | 149.30 MHz | 5th at 746.5 MHz (QO-100 IF) and 15th at 2239.5 MHz: hits. |
+  | CVT-RB v1 1360x1975 at 60 Hz | 161.16 MHz | 14th at 2256 MHz: a hit. |
+  | 1340x1944 at 49.2-49.5 Hz | 128.2-129.0 MHz | Clean, at least 7 MHz margin. |
+  
+  - Bridge DSI clock (4-lane non-burst, about 3x pixel clock): 468.9 MHz at 60 Hz, no harmonics in band. In burst mode the rate is set by the bridge firmware, so ask the seller.
+  - The 6-8 W backlight boost converter and its PWM are a strong broadband noise source and need shielding.
+- **Sunlight readability estimate:** Calculated, and valid only if the 2000 nits is real. Using CR 1200 from the Midas sibling:
+  - At 100 klx: about 13:1 with 0.5% diffuse reflectance (bonded AR cover), about 7:1 at 1%, about 4:1 at 2%.
+  - At 50 klx: about 26:1, 13:1 and 7:1 respectively.
+  
+  In-cell touch adds no separate touch layer. Cover glass is not stated: an air-gapped cover would add about 8% specular glare. Bonded AR glass is needed to be truly sunlight-readable. Because the brightness is unverified, this estimate is conditional.
+
