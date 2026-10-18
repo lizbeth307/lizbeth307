@@ -9735,6 +9735,160 @@
   
   Sources: https://www.buddipole.com/shockcordmast.html ; https://www.wimo.com/de/buddipole-aluminum-schockcord-mast ; https://decathlon.com.gr/en/p/3740-quechua-85-mm-fiberglass-tent-pole-kit.html ; https://www.h2r-equipements.com/accessoire-de-tente-camping-randonnee/10065-cao-kit-reparation-arceau-fibre.html ; https://www.sotabeams.co.uk/mini-telescopic-mast-4-1-m-13-5-ft/ ; https://www.wimo.com/en/18067-mh ; https://moonrakeronline.com/bonito-antenna-mast-mounting-bracket-for-boni-whip-gigactiv-and-megaloop ; https://www.rtl-sdr.com/an-opensource-mini-whip-antenna-and-upconverter-design-for-rtl-sdrs/ ; https://preview.radio-workshop.co.uk/g4nsj-mini-whip-active-antenna-hf-lf-vlf/ ; https://www.sportsmobileforum.com/threads/fiberglass-or-pvc-mast-suggestions.742780/ ; https://www.cabelas.com/shop/en/stansport-7mm-shock-corded-tent-pole-replacement-kit ; https://eurekacamping.johnsonoutdoors.com/us/shop/outlet/fiberglass-tent-pole-repair-replacement-kit
 
+## searchB:travel_tripod_35_cm_folded_1_2_m_or_more (run `wf_37583a7b-1a8`)
+
+- **Part:** Travel tripod, 35 cm or less folded, 1.2 m or more, pan-tilt or ball head with pan lock, 1/4-20 (antenna-foldable tier, Supports, qty 1). Re-audit default: Rollei Compact Traveler No. 1 Aluminium. Alternative: Manfrotto BeFree One Aluminium at EUR 119.95.
+- **Current price usd:** USD 57.33 = EUR 50.95 incl. 19% DE VAT. Rollei Compact Traveler No. 1 Aluminium, black, SKU 22585, EAN 4048805225859, rollei.de, 18 Oct 2026. Lowest price of the last 30 days is EUR 50.95; RRP is EUR 99. Ex-VAT about USD 48.18. Orange costs EUR 58.95 = USD 66.34. Shipping is free from EUR 100; below that it is charged, amount not verified. Rate used: 1.1253 USD/EUR, the same rate as the re-audit. This is below the STACK estimate of 40-100 and far below the Manfrotto alternative (USD 134.98).
+- **Critical specs:**
+  - Folded length with head: 35 cm or less. This is the backpack rule (every part 35 cm or less). The packing table assumed 31.5-32 cm, so margin matters.
+  - Max height: 1.2 m or more (STACK), 1.1 m or more (re-audit). The V-dipole element sits at 1.0-1.1 m (1.087 m = lambda/2 at 137.9 MHz), and the helicone and horn at 1.1-1.3 m. Preferably reached with the centre column down, for stiffness.
+  - Min height: 50 cm or less. The HRPT passes are worked from a tripod starting at 50 cm.
+  - Real holding capacity of legs and head under a cantilevered, windy load. Loads: helicone about 0.4-0.5 kg with a 44 cm cone (large sail area), and the 6-gore horn plus Bullseye LNB at 30 deg elevation. Re-audit acceptance test: head creep of 2 deg or less in 10 min in about 20 km/h wind. The vendor load rating is only a proxy.
+  - Head geometry for az/el pointing: an independent 360 deg pan lock (azimuth) separate from the tilt or ball lock, tilt to 90 deg (drop notch) for zenith passes, a level reference, an Arca-Swiss quick-release plate, and a 1/4-20 screw. The screw fits the device's steel insert and the printed 120 deg V clamp with its 1/4-20 insert.
+  - Leg stiffness and wind stability: top tube diameter 22 mm or more, 5 sections or fewer, positive leg-angle stops, spikes or rubber feet, and a ballast hook so the backpack can hang under the column.
+  - Mass: 1.2-1.4 kg or less (re-audit kit weight line).
+  - Build quality and reliability: aluminium construction, twist locks, spare parts available (feet, leg plates, head, plate), a warranty, a legal EU seller with a GPSR responsible person, and a genuine (not counterfeit) unit.
+  - Hard rules: a passive mechanical support, so no RF or receive-only issues. Aluminium legs under the horizontal V are a small, equal effect across all metal candidates.
+- **Candidates:**
+  1.
+    - **Name:** Rollei Compact Traveler No. 1 Aluminium, black (current part, cheapest verified source: rollei.de own shop)
+    - **Kind:** current_part
+    - **Price usd:** 57.33 (EUR 50.95 incl. 19% VAT, plus shipping below EUR 100, fee not verified)
+    - **Spec comparison:** The rollei.de listing of 18 Oct 2026 (sold with a 'Version 2026' head and plate) differs from the datasheet the re-audit used. Folded: 34.5 cm vs 31.5 cm. Min height: 34.5 cm vs 32 cm. Max height: 145 cm (113 cm working height with column down) vs 134 cm. Weight with head: 1.14 kg vs 1.17 kg. Rated load: 8 kg vs 5 kg. Head: 197 g with 3/8 in connection and 4 cm base vs 275 g, 45 mm base, 8 kg. Unchanged: aluminium, 5 sections at 22/19/16/13/10 mm, twist locks, spikes, reverse fold, monopod 49-151 cm, Arca-Swiss plate 4x4x1 cm. The datasheet describes the head as 'pan, lock and tilt' (a panorama ball head with a separate pan lock), with 3 spirit levels, a 1/4 in screw, and a '360 deg rotating center column hook'. The datasheet weights and dimensions are the reference for the other candidates.
+    - **Worse in:** Nothing against the stack rules, with two caveats about the 2026 listing. (1) Folded 34.5 cm leaves 0.5 cm margin under 35 cm, and the packing table (31.5-32 cm) must be updated. (2) The 2026 box contents list no tripod hook, and the head is lighter (197 g vs 275 g), so ballast and holding torque are unverified. It has a ball head, not a true pan-tilt head; the re-audit accepted that.
+    - **Compatibility:** 1/4 in screw on an Arca plate fits the device's 1/4-20 insert and the printed V clamp. The column-down working height of 113 cm meets the 1.0-1.1 m V-dipole height without extending the column. Min height 34.5 cm meets the 50 cm or less need. 2-3 working days delivery in the EU.
+    - **Risks:** This is a sale price (RRP EUR 99, 'Black Weeks' banner), so it may change. Do the re-audit creep test (helicone and horn at 30 deg, 2 deg or less in 10 min) inside the 14-day free return window, then measure folded length with the head and check the hook. The press awards (Fototest 06/2017, fotoMAGAZIN 2015, FOTO HITS) are cited by Rollei only, were not fetched, and predate the 2026 version. 24-month exchange guarantee. The GPSR responsible person is Rollei GmbH & Co. KG, Norderstedt.
+    - **Seller url:** https://www.rollei.de/products/stativ-compact-traveler-no-1
+    - **Sources:**
+      - https://www.rollei.de/products/stativ-compact-traveler-no-1
+      - https://www.rollei.de/products/stativ-compact-traveler-no-1.js
+      - https://justmore.dk/images/media/ProductsDocs/Rollei-Compact-Traveler-No-I-kamerastativ-sort.pdf
+  2.
+    - **Name:** Used Rollei Compact Traveler No. 1 Aluminium (pre-2026 or 2026, eBay.de or Kleinanzeigen)
+    - **Kind:** used
+    - **Price usd:** Unverified. eBay.de returned HTTP 403 and no used listing could be read.
+    - **Spec comparison:** Same model, so the same datasheet specs, but only if the unit is complete and undamaged. A pre-2026 unit would be better in folded length (31.5 cm vs 34.5 cm) and includes the hook, but is worse in max height (134 cm vs 145 cm) and rated load (5 kg vs 8 kg claimed). No independent measurement of a used unit exists. Equality can only be shown by our own acceptance test on receipt.
+    - **Worse in:** Cannot be shown not-worse before purchase. Likely risks: worn twist locks, head creep, a missing Arca plate or hook, bent lower 10 mm sections. No 24-month guarantee and no 14-day free return from a private seller.
+    - **Compatibility:** Same as the current part. The old and 2026 heads differ (the 2026 head has a 3/8 in connection), so spares must match the version. Rollei still sells leg-plate and rubber-foot sets for the 'No. 1 Alu/Carbon' (items 22756, 22757).
+    - **Risks:** Only worth it if the total with shipping is clearly below about EUR 35 and the seller accepts a return after the creep test. Otherwise the new unit at EUR 50.95 with warranty is the better buy. Reject if a unit fails the creep test or shows slipping leg sections.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.rollei.de/search?q=compact+traveler+no.+1
+  3.
+    - **Name:** Rollei Compact Traveler Star S1 (video pan-tilt head)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 20.20 (EUR 17.95 incl. VAT)
+    - **Spec comparison:** Folded 38 cm (the spec table; the description says 40 cm) vs 31.5-34.5 cm. Max height 125 cm vs 134-145 cm. Min height 38.5 cm. Load 2 kg vs 5-8 kg. 4 sections at 11-20 mm (top tube 20 mm vs 22 mm). 570 g without head. It has a true video pan-tilt head, which is better for az/el in principle.
+    - **Worse in:** Folded length breaks the 35 cm rule. Rated load is 2.5-4x lower and the legs are thinner, so it is weaker against wind and the cantilevered helicone. Smaller height margin. No independent measurements.
+    - **Compatibility:** 1/4 in on a quick-release plate. Rejected.
+    - **Risks:** Rejected.
+    - **Seller url:** https://www.rollei.de/products/compact-traveler-star-s1-20837
+    - **Sources:**
+      - https://www.rollei.de/products/compact-traveler-star-s1-20837
+  4.
+    - **Name:** Rollei Compact Creator (aluminium and plastic)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 39.37 (EUR 34.99 incl. VAT)
+    - **Spec comparison:** Folded 50 cm vs 31.5-34.5 cm. Max 152 cm (123 cm working). Min 47 cm. Load 2.5 kg vs 5-8 kg. 4 sections, top 22.5 mm. 739 g. Aluminium plus plastic.
+    - **Worse in:** Folded length breaks the 35 cm rule. Load is lower and plastic parts weaken the build quality.
+    - **Compatibility:** 1/4 in screw. Rejected.
+    - **Risks:** Rejected.
+    - **Seller url:** https://www.rollei.de/products/stativ-aluminium-stativ-compact-creator-26930
+    - **Sources:**
+      - https://www.rollei.de/products/stativ-aluminium-stativ-compact-creator-26930
+  5.
+    - **Name:** Rollei Compact Traveler Mini M-1
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 46.08 (EUR 40.95 incl. VAT)
+    - **Spec comparison:** Max height 49 cm vs 134-145 cm. Packed 16 cm. 0.71 kg. Aluminium, 5 sections, 8 kg rated load.
+    - **Worse in:** Height fails the 1.1-1.2 m requirement, so it cannot serve the V-dipole, horn or helicone heights.
+    - **Compatibility:** 1/4 in screw on an Arca plate. Rejected as the main tripod.
+    - **Risks:** Rejected.
+    - **Seller url:** https://www.rollei.de/products/stativ-compact-traveler-mini-m-1-schwarz-20846
+    - **Sources:**
+      - https://www.rollei.de/products/stativ-compact-traveler-mini-m-1-schwarz-20846
+  6.
+    - **Name:** NEEWER TP53 (Entry Level) metal travel tripod
+    - **Kind:** other_brand
+    - **Price usd:** 29.99 (neewer.com, US price; EU price and VAT not checked)
+    - **Spec comparison:** Height 42-146 cm. Load 1.5 kg vs 5-8 kg. 568 g. The folded length is not stated on the page; the 42 cm minimum height suggests it is longer than 35 cm (unverified).
+    - **Worse in:** Load rating is 3-5x lower. The folded length is probably over 35 cm. No independent measurements.
+    - **Compatibility:** Phone and camera mount. Rejected.
+    - **Risks:** Rejected.
+    - **Seller url:** https://www.neewer.com/products/neewer-entry-level-version-tp53-metal-travel-tripod-66607525
+    - **Sources:**
+      - https://www.neewer.com/products/neewer-entry-level-version-tp53-metal-travel-tripod-66607525
+  7.
+    - **Name:** NEEWER Basics TP12 aluminium travel tripod
+    - **Kind:** other_brand
+    - **Price usd:** 49.99 (neewer.com, US price)
+    - **Spec comparison:** Dimensions given as 51 / 134 / 169 cm (folded 51 cm). Load 5 kg. Weight 1.33 kg vs 1.14-1.17 kg. Aluminium and plastic.
+    - **Worse in:** Folded 51 cm breaks the 35 cm rule. Heavier. Plastic parts. No measurements. Not meaningfully cheaper.
+    - **Compatibility:** Rejected.
+    - **Risks:** Rejected.
+    - **Seller url:** https://www.neewer.com/products/neewer-basics-tp12-aluminum-alloy-travel-tripod-66607053
+    - **Sources:**
+      - https://www.neewer.com/products/neewer-basics-tp12-aluminum-alloy-travel-tripod-66607053
+  8.
+    - **Name:** ZOMEi Q555 aluminium travel tripod (official store)
+    - **Kind:** other_brand
+    - **Price usd:** 79.99 (zomei.com official store; AliExpress prices not verified)
+    - **Spec comparison:** Folded 17.5 in = 44.5 cm. Height 22.7-62.5 in = 58-159 cm. 2.9 lb = 1.32 kg. Universal ball head.
+    - **Worse in:** Folded length breaks the 35 cm rule. Heavier. Min height 58 cm is above the 50 cm need. More expensive than the Rollei. No measurements.
+    - **Compatibility:** Rejected.
+    - **Risks:** Rejected.
+    - **Seller url:** https://www.zomei.com/products/travel-tripod-q555black
+    - **Sources:**
+      - https://www.zomei.com/products/travel-tripod-q555black
+  9.
+    - **Name:** Ulanzi TT53 Traveler-Uka tripod
+    - **Kind:** other_brand
+    - **Price usd:** 69.99 (ulanzi.com)
+    - **Spec comparison:** Dimensions 10x8.5x43 cm folded (43 cm). 52-180 cm. 1.2 kg. Ball head 3 kg, tripod 8 kg. Aluminium plus ABS.
+    - **Worse in:** Folded 43 cm breaks the 35 cm rule. The head load (3 kg) is below the Rollei head. More expensive. No measurements.
+    - **Compatibility:** Rejected.
+    - **Risks:** Rejected.
+    - **Seller url:** https://www.ulanzi.com/products/tt53-traveler-uka-tripod-t093gbb1
+    - **Sources:**
+      - https://www.ulanzi.com/products/tt53-traveler-uka-tripod-t093gbb1
+  10.
+    - **Name:** Flexible mini tripod included in the RTL-SDR Blog dipole kit (budget alternative already noted in STACK)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 0 extra (already in the USD 17.95 dipole kit)
+    - **Spec comparison:** Tabletop flexible tripod. Exact height and load are unpublished (not verified).
+    - **Worse in:** Fails 1.1-1.2 m height, load and wind stability. STACK already notes that without the real tripod the horn and helicone must be hand-held.
+    - **Compatibility:** 1/4 in. Rejected as an equal; it stays only as the documented budget fallback.
+    - **Risks:** Rejected as not-worse.
+    - **Seller url:** https://www.rtl-sdr.com/using-our-new-dipole-antenna-kit/
+    - **Sources:**
+      - https://www.rtl-sdr.com/using-our-new-dipole-antenna-kit/
+  11.
+    - **Name:** DIY or 3D-printed tripod or pan-tilt head
+    - **Kind:** diy
+    - **Price usd:** n/a
+    - **Spec comparison:** No DIY design with independent measurements of stiffness, creep or wind stability was found. The search budget was exhausted, so this could not be checked further.
+    - **Worse in:** Unproven in every stability spec. Printed PETG or ASA under a cantilevered load would also need its own creep data.
+    - **Compatibility:** Rejected under the angle-B evidence rule.
+    - **Risks:** Rejected.
+    - **Seller url:** 
+    - **Sources:** []
+- **Notes:** Verdict: keep the current part, the Rollei Compact Traveler No. 1 Aluminium (black). At EUR 50.95 incl. VAT (USD 57.33) on rollei.de it is already the cheapest verified option that meets every rule. It costs about USD 78 less than the Manfrotto BeFree One alternative (which is also worse: 2.5 kg load, 1.35 kg, fixed head). It is cheaper than every budget-brand candidate that comes close in specs. Every cheaper item found fails at least one hard spec: folded length over 35 cm (Star S1, Compact Creator, Neewer TP53 and TP12, Zomei Q555, Ulanzi TT53), height (Mini M-1, the dipole-kit mini tripod) or load.
+  
+  Angle B evidence: no generic or clone travel tripod with independent stability measurements was found. The WebSearch budget was already used up (shared limit) on the first call, so review and measurement sites could not be searched. All data came from direct fetches of vendor and official-store pages; AliExpress and K&F Concept could not be read (403), and eBay.de returned 403, so used prices are unverified. Rollei's cited press awards (Fototest 06/2017, fotoMAGAZIN 2015, FOTO HITS) were not fetched and predate the 2026 version.
+  
+  STACK and re-audit corrections:
+  (1) Price: USD 57.33 incl. VAT (EUR 50.95; sale vs RRP EUR 99, so buy before the price moves).
+  (2) The current rollei.de spec table (sold with a Version 2026 head and plate) differs from the datasheet the re-audit used: folded 34.5 cm (vs 31.5), min height 34.5 cm, max 145 cm (113 cm column down), 1.14 kg, 8 kg claimed, a 197 g head with 3/8 in connection. The packing table's 31.5-32 cm should become 34.5 cm, which leaves only 0.5 cm margin.
+  (3) The 2026 box contents list no ballast hook. Verify on arrival.
+  
+  On-receipt acceptance, inside the 14-day free return window:
+  - measure the folded length with the head;
+  - confirm the pan lock works independently of the ball lock, and that 90 deg tilt works via the drop notch;
+  - run the re-audit creep test: helicone and horn plus LNB at 30 deg elevation, 1.1-1.3 m, about 20 km/h wind, 2 deg or less in 10 min;
+  - confirm the Arca plate fits the printed V clamp's 1/4-20 insert.
+  
+  The 2026 spec-table figures are vendor data, not measured. Product URLs used: https://www.rollei.de/products/stativ-compact-traveler-no-1 ; https://justmore.dk/images/media/ProductsDocs/Rollei-Compact-Traveler-No-I-kamerastativ-sort.pdf ; https://bigbearsound.com/products/manfrotto-befree-one-aluminium-travel-tripod-with-head-black (re-audit source for the Manfrotto price).
+
 ## small:lband_sband (run `wf_41027870-8e7`)
 
 - **Band group:** L-band 1.5-1.7 GHz and S-band 2.2-2.4 GHz with antennas of at most 12 cm (STRICT) or 20 cm (SMALL). Dishes and anything tens of cm deployed are EXCLUDED, including the foldable helicones, the 11-turn helix and the 2x2 helix arrays. Rule interpretation as given: STRICT means the largest deployed dimension is about 12 cm or less; SMALL means about 20 cm or less; foldable or telescopic antennas that are larger when deployed are excluded and appear only in the borderline note.
