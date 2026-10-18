@@ -968,6 +968,130 @@
   
   Hard-rule check: all displays here are receive-neutral. For any candidate with a USB touch bridge, the BLE-silence test is still required.
 
+## searchB:shielded_hdmi_lead_adafruit_2420_2x_wurt (run `wf_071e1025-145`)
+
+- **Part:** Display link: Q6A HDMI out (RA620 bridge, HDMI-A-1) to Wisecoco 7in HDMI board. BOM line: Adafruit 2420 + 2x Wurth 74271140 ferrites (Tier core, group Display, qty 1 set)
+- **Current price usd:** 17.77 = Adafruit 2420 $9.95 (adafruit.com, in stock) + 2x Wurth 74271140 at $3.91 (DigiKey listing). Both re-checked 18 Oct 2026; shipping and EU VAT not included. The reaudit (D) and the vendor pages show the set fails its own spec. 2420 is 'Slim HDMI Cable - 450mm' (OD 4-5 mm; the page says both '5mm' and '4mm'), but the run must be 10-15 cm. The 74271140 is for 2-3 mm cable only, so it does not fit the 2420. A fitting Wurth core costs more: 74271142 (3.5-5 mm, same 92/178 ohm) is $4.51.
+- **Critical specs:**
+  - Connectors: HDMI Type-A male on both ends. Q6A side is full-size; the Wisecoco input is full-size per reaudit D. Straight or right-angle to suit the layout. The 4D fallback panel needs Mini-HDMI (Type C) on the panel end.
+  - Length 10-15 cm, the shortest possible run (reaudit D spec). A longer lead radiates the TMDS harmonics better. The 2420 at 450 mm does not meet this.
+  - Bandwidth: carries 151.50 MHz and 127.90 MHz pixel clocks (TMDS about 1.5 Gb/s per lane, 1080p60-class). Any real High Speed (HDMI 1.4) cable or better does this.
+  - Shield construction and termination: shielded TMDS pairs plus an overall foil and braid, with a 360-degree bond from shield to plug shell at both ends. Measured data shows this is what decides radiated emission. HDMI 1.4 TMDS is not scrambled, so the cable radiates content combs at 1565-1610 MHz (GNSS), 1688-1710 MHz (HRPT), 404 MHz (sondes) and 1421 MHz (H1).
+  - Proof of shielding: an EMI measurement (Premium or Ultra High Speed certification includes an EMI test at an ATC), or the stack's own A/B test (HDMI link on/off: no line 3 dB or more above the local floor, broadband rise of 0.5 dB or less, GNSS C/N0 change of 1 dB-Hz or less).
+  - Outer diameter and flexibility: the OD must match the ferrite's cable range (74271140 takes 2-3 mm; 74271142/74271111 take 3.5-5 mm; 74271112 takes 4.5-6 mm). The bend radius must suit the 4-6 mm air channel and the panel-to-Q6A geometry.
+  - Ferrite common-mode impedance at least equal to the current set: 2x 74271140 gives about 184 ohm at 25 MHz and 356 ohm at 100 MHz (one turn each, series sum, approximate). NiZn '4 W 620'. No GHz figure is published, so at L-band the shield does the work.
+  - Ferrite mechanics: core length must fit the free cable length between the overmoulds (74271140 is 32.6 mm, so two cores need about 65 mm). Hinged with a positive lock that holds under handheld vibration.
+  - Pin 18 (+5 V) must be cut or diode-isolated (STACK D4/P16 back-feed rule). Either the cable allows this or it is done on the board side.
+  - Build: overmoulded strain relief, metal plug shells, retention for a handheld, and operation across the device's field temperature range.
+  - Legal, genuine sourcing. If certification is claimed, the label must scan in the HDMI Cable Certification app. Passive part, so no receive-only, loop or conducted-source issue. Not a loop antenna or H-field probe.
+- **Candidates:**
+  1.
+    - **Name:** Generic 'Ultra Short HDMI 2.0 Cable 4K 60Hz' 15 cm A-A (AliExpress, unbranded), plus a Wurth core sized to its OD
+    - **Kind:** generic_or_clone
+    - **Price usd:** 1.09 sale / 4.34-4.83 list (AliExpress search page, 18 Oct 2026; 4.9 stars, 2,000+ and 10,000+ sold; store name not shown; EU VAT added at checkout, not checked). Add $4.38-4.51 for a 74271111/74271142 core if the OD is 3.5-5 mm. The OD is unknown, so the core choice is unverified.
+    - **Spec comparison:** Length 15 cm: meets the 10-15 cm spec, which the 2420 at 450 mm does not. Connectors A-A: same. Bandwidth 'HDMI 2.0 4K60' is a listing claim, unverified, and far more than 151.5 MHz needs. No shielding claimed and no certification. No EMI measurement for this SKU or any equivalent. OD and shield termination unknown.
+    - **Worse in:** Shield quality and termination are unproven, and that is the spec that decides emissions. Seller unknown; durability and retention unknown. REJECTED under angle B: no measured evidence. It could qualify only after our own bench A/B test plus a teardown of one sample to check the 360-degree shield-to-shell bond (method of Erjavec 2020).
+    - **Compatibility:** Fits A-A at 15 cm if the plug bodies leave about 33-41 mm of free cable for one core. Pin 18 isolation must be done on the board side. Passive, no driver.
+    - **Risks:** Large unit-to-unit variation. Counterfeit HDMI logo use is common. The listing price is a welcome-deal price.
+    - **Seller url:** https://www.aliexpress.com/w/wholesale-hdmi-cable-15cm-male-to-male.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-hdmi-cable-15cm-male-to-male.html
+      - https://repozitorij.uni-lj.si/Dokument.php?id=135910&lang=slv
+  2.
+    - **Name:** DIY FPC HDMI kit: 2x Adafruit 3548 straight plug + Adafruit 3560 10 cm ribbon (optional grounded copper-tape wrap)
+    - **Kind:** diy
+    - **Price usd:** 14.50 (2x $6.50 + $1.50, adafruit.com, in stock, 18 Oct 2026). Use 3550 right-angle at $6.50 if needed. Copper tape not priced.
+    - **Spec comparison:** Length 10 cm: meets spec. Connectors A-A: same. Bandwidth: Adafruit tested 1080p with a Pi, enough for 151.5 MHz (not tested at our modes). Shielding: Adafruit's own page says the kit is 'not going to be as durable or shielded as ready-made cables'. No shield layer or metal shell is described. No EMI measurement, with or without the tape wrap. A ferrite on a 10 mm-wide flat ribbon needs a flat-cable core; none is chosen or priced.
+    - **Worse in:** Shielding: the vendor states it is worse, and the TMDS content combs land in the GNSS, HRPT and sonde bands. Durability is also worse by the vendor's statement. The copper-tape fix is unmeasured. REJECTED: worse in shielding and build, and $3.27 is too small a saving to trade those.
+    - **Compatibility:** Mechanically flexible and easy to route. The straight-through FPC may make the pin 18 cut easy (inference, not verified). Passive.
+    - **Risks:** FPC clip connectors loosen under vibration. Unshielded radiation sits about 1-2 cm from the panel and near the RF bay.
+    - **Seller url:** https://www.adafruit.com/product/3548
+    - **Sources:**
+      - https://www.adafruit.com/product/3548
+      - https://www.adafruit.com/product/3560
+      - https://www.adafruit.com/product/3550
+  3.
+    - **Name:** Generic unbranded clip-on ferrites (AliExpress/Amazon) in place of 2x Wurth 74271140
+    - **Kind:** generic_or_clone
+    - **Price usd:** not checked (no specific listing verified)
+    - **Spec comparison:** Material, mix and impedance at 25/100 MHz are unknown. Three searches found no independent VNA or impedance-analyser measurements of cheap clip-ons; only manufacturer ratings were found (e.g. RND clip-on rated 60 ohm @100 MHz, below the 178 ohm of 74271140). WE-STAR-TEC 4 W 620 has a datasheet of 92/178 ohm per core.
+    - **Worse in:** Impedance and material unproven; lock and retention unknown. REJECTED under angle B: no measured evidence.
+    - **Compatibility:** Would fit if the ID matches the cable OD. Passive.
+    - **Risks:** Mislabelled mixes and MnZn cores sold as broadband NiZn. Weak latches.
+    - **Seller url:** 
+    - **Sources:**
+      - https://uk.rs-online.com/web/p/ferrite-rings/0804854
+      - https://www.we-online.com/en/components/products/WE-STAR-TEC
+  4.
+    - **Name:** HDMI-certified (Premium High Speed or Ultra High Speed) short cable, the only cable class with independent EMI testing
+    - **Kind:** other_brand
+    - **Price usd:** No 10-15 cm certified cable found. Shortest found: StarTech HDMM30CM 0.3 m, shown as 'Premium Certified' in one reseller title (unverified; price not verified). Roline Premium 1 m: EUR 26.84 ex VAT / EUR 32.48 incl. VAT at RS (from search summary, page not fetched).
+    - **Spec comparison:** EMI: certification requires low-EMI testing at an HDMI Forum ATC (hdmi.org), which is measured evidence. Bandwidth: far more than needed. Length 0.3-1 m: 2-7 times the 10-15 cm spec.
+    - **Worse in:** Length, which is a direct radiating-length penalty. Not cheaper (Roline). REJECTED for this slot. Keep it in mind only as a reference cable for the bench A/B test.
+    - **Compatibility:** A-A, passive. It would have to be coiled in the case, which is not acceptable.
+    - **Risks:** The StarTech certification is not confirmed on the HDMI database or app.
+    - **Seller url:** https://uk.rs-online.com/web/p/hdmi-cables/1448662
+    - **Sources:**
+      - https://hdmi.org/spec21sub/ultrahighspeedcable
+      - https://comsys.co.nz/product/startechcom-1-30cm-premium-certified-high-speed-hdmi-14-cable-wethernet-ltw-hdmm30cm
+      - https://uk.rs-online.com/web/p/hdmi-cables/1448662
+  5.
+    - **Name:** Cable bundled with the display (4D ships a 50 cm HDMI cable; Wisecoco kit contents unknown)
+    - **Kind:** other_brand
+    - **Price usd:** 0 (included)
+    - **Spec comparison:** Length 50 cm (4D): worse than the 10-15 cm spec. The 4D panel input is Mini-HDMI per reaudit D. Shield construction is unknown and there is no measurement.
+    - **Worse in:** Length; shielding unproven. REJECTED. Use it only for the first bench bring-up.
+    - **Compatibility:** The 4D cable fits only the 4D fallback. The Wisecoco cable is unknown until arrival.
+    - **Risks:** 
+    - **Seller url:** 
+    - **Sources:**
+      - https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_5.pdf
+  6.
+    - **Name:** Same vendor, cheaper SKU: 1x Wurth 74271111 (3.5-5 mm, 175/316 ohm @25/100 MHz) instead of 2x 74271140, on the 2420 or a short cable
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 4.38 (DigiKey listing, 18 Oct 2026) vs 7.82 for two 74271140. Set total with the 2420 would be $14.33.
+    - **Spec comparison:** Fits 3.5-5 mm, matching the 2420's 4-5 mm OD; the 74271140 does not fit. Impedance 175/316 ohm vs about 184/356 ohm for two 74271140 in series: about 5% lower at 25 MHz and 11% lower at 100 MHz (approximate). Body 41x23.4x18 mm vs 2x 32.6x19x13 mm, so less total length on a short cable. Same 4 W 620 NiZn and WE-STAR-TEC latch.
+    - **Worse in:** Paper impedance at 25 and 100 MHz. On paper it is NOT strictly not-worse. In practice the current 2x 74271140 cannot be fitted to the 2420 at all. The fitting not-worse equivalent is 2x 74271142 at $9.02 (set $18.97, more expensive).
+    - **Compatibility:** Fits the 2420. One core suits a 10-15 cm cable better than two.
+    - **Risks:** Not in my angle (B). Listed so the BOM fix is visible.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=74271111
+    - **Sources:**
+      - https://www.we-online.com/en/components/products/WE-STAR-TEC
+      - https://www.digikey.com/en/products/result?keywords=74271111
+      - https://www.digikey.com/en/products/result?keywords=74271142
+      - https://www.digikey.com/en/products/result?keywords=74271140
+  7.
+    - **Name:** KEEP (corrected current line): 10-15 cm shielded A-A cable chosen at assembly to its OD, plus a WE-STAR-TEC core sized to that OD; move the 74271140 to the 2-3 mm touch USB lead
+    - **Kind:** current_part
+    - **Price usd:** about 14.50-25 (reaudit D estimate, not a verified listing)
+    - **Spec comparison:** Reference.
+    - **Worse in:** No measured shielding evidence exists for the 2420 either. Acceptance relies on the stack's HDMI on/off A/B test.
+    - **Compatibility:** As STACK D4/C12.
+    - **Risks:** 
+    - **Seller url:** https://www.adafruit.com/product/2420
+    - **Sources:**
+      - https://www.adafruit.com/product/2420
+      - https://www.we-online.com/en/components/products/WE-STAR-TEC
+- **Notes:** VERDICT (angle B): no generic, clone, DIY or used candidate is PROVEN not-worse, so keep the current line in its reaudit-corrected form. That form is a 10-15 cm shielded A-A cable plus a WE-STAR-TEC core sized to the cable OD. As priced ($17.77), the line is internally broken. The 2420 is 450 mm long, not 10-15 cm, and its OD is 4-5 mm. The 74271140 only takes 2-3 mm cable (WE-STAR-TEC table). The fitting not-worse core, 74271142, costs more ($4.51 each).
+  
+  KEY MEASURED EVIDENCE (independent): A. Erjavec, University of Ljubljana thesis, 2020, measured in the SIQ Ljubljana semi-anechoic chamber to CISPR 16-2-3 / EN 55032 with an AOC I2470SWQ monitor and an HP ProBook 640 G5. Five HDMI cables were tested. Worst-case margin to the Class A limit:
+  - Sandberg 3 m, EUR 13.33: +2.24 dB at 148.35 MHz (fail)
+  - Profigold, EUR 59.89: +1.55 dB at 890.1 MHz (fail)
+  - Kramer 3 m, EUR 31.84: -3.37 dB
+  - UF Hotron, bundled, 1.45 m: -5.11 dB
+  - generic cable bundled with the monitor, 1.75 m: -14.62 dB (its top peak, at 36 MHz, was not from the HDMI cable)
+  
+  Price did not predict the result. The cause was always the shield-to-connector termination: a thin drain wire, an unbonded metal shell, foil not bonded to the braid, or holes in the shell. A complete 360-degree solder bond gave the best result. Length is a partial confounder (1.45-3 m).
+  
+  Consequences:
+  1. A cheap generic 15 cm cable cannot be accepted on paper, and neither can the uncertified 2420. Adafruit states no shielding or EMI data for it.
+  2. The only paper proof is HDMI Premium or Ultra High Speed certification, which includes EMI testing. No certified cable at 10-15 cm was found (shortest about 0.3 m, unverified).
+  3. A conditional path exists, NOT yet measured. Buy 2-3 generic 15 cm A-A cables (AliExpress about $1.09-4.83). Cut one open to check the 360-degree shield bond. Run the stack's HDMI-link on/off A/B in the field EDID modes, with black and white flat fills, at 1565-1610, 1688-1710, 1421, 404 and 148-153 MHz plus the GNSS C/N0 check, against the 2420 coiled the same way. Adopt one only if it is equal or better, and then record that measurement.
+  
+  Also: the WE-STAR-TEC data covers only 25/100 MHz, so the ferrites do little against the L-band TMDS combs. There, shield quality and the period-1 palette rule do the work. Possible same-vendor saving: 1x 74271111 ($4.38) fits the 2420 and gives 175/316 ohm. That saves $3.44 against 2x 74271140, but on paper it is 5-11% below the two-core sum, so it is not strictly not-worse.
+  
+  Not verified: generic cable OD and shield build, AliExpress store identities, EU VAT and shipping on any line, the StarTech HDMM30CM certification, and the Roline price (taken from a search summary). Searches used: 13 WebSearch calls.
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
