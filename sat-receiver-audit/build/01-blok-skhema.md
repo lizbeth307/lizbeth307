@@ -82,7 +82,7 @@ Raspberry Pi Pico (RP2040, без радіо) обмінюється з Q6A че
 На I2C2 також стоять 2× INA3221 (0x41, 0x43) і TCA9517DR до LAB BUS.
 
 ### 2.14. GNSS, IMU і час (§2.8, §5.2)
-Waveshare LC76G 24370 → UART6 (/dev/lab/gnss), PPS → пін 7 (pps-gpio, /dev/pps-gnss). VCC плати — 5 V хедера (пін 2/4), ніколи 3.3 V. RESET — через MCP23017 #4 GPA1 і 2N7002. Пак IMU: Adafruit BNO085 4754 і Waveshare RP2040-Zero 20187 у Hammond 1550Z101, з'єднаний через Olimex GX16-4 (D18) і дріт HELU 4x0.14 2 м з UART1 Pico. RTC — RS4C411ZAE на платі Q6A (J11) з первинною CR2032. Час: gpsd → chrony.
+Waveshare LC76G 24370 → UART6 (/dev/lab/gnss), PPS → пін 7 (pps-gpio, /dev/pps-gnss). VCC плати — 5 V хедера (пін 2/4), ніколи 3.3 V. RESET — через MCP23017 #4 GPA1 і 2N7002. Пак IMU: Adafruit BNO085 4754 і Waveshare RP2040-Zero 20187 у Hammond 1550Z101, з'єднаний через Olimex GX16-4 з ковпачком на ланцюжку (§5.2 «Інші шини», §5.8) і дріт HELU 4x0.14 2 м з UART1 Pico. RTC — RS4C411ZAE на платі Q6A (J11) з первинною CR2032. Час: gpsd → chrony.
 
 ### 2.15. Дерево живлення (§5.1; повна схема — `02-zhyvlennia.svg`)
 - **Батарея.** 4S1P Molicel P50B (72 Wh номінально) → Daly 4S 15 A BMS → запобіжник blade 7.5 A → шунт INA228 15 mOhm → вузол N.
@@ -90,14 +90,14 @@ Waveshare LC76G 24370 → UART6 (/dev/lab/gnss), PPS → пін 7 (pps-gpio, /de
 - **Від SW:**
   - D36V50F12 → SYS12: J21 (Q6A), DISP12 і AUX12 (лише BENCH);
   - D36V28F5 → LAB5 (запобіжник 3 A): Pico, CH334F, пак IMU, вентилятори, HF+, LAB USB-A, VBUS RTL-B і LNA4V5 (2× LT3045 4.5 V);
-  - TPS7A4701 → eFuse TPS259630DDAR → INA3221 → LNB13V2 13.2 V;
-  - TPS7A4701 → eFuse TPS259630DDAR (RILM 7.87k) → INA3221 → BONI13V8 13.8 V (D15).
-- **LIME3V3.** M.2 3.3 V Q6A → ключ навантаження (деталь — на стенді) → R44SF.
+  - TPS7A4701 → eFuse TPS259630DDAR → INA3221 → LNB13V2 13.2 V (з Bullseye; 12.5 V для обох LNB перемичками ANY-OUT, якщо куплено QRO.cz — §8 «Рішення про шину LNB»);
+  - TPS7A4701 → eFuse TPS259630DDAR (RILM 7.87k) → INA3221 → BONI13V8 13.8 V, без PTC (§1.1 C17, §8 «Відкриті рішення щодо живлення» (b)).
+- **LIME3V3.** M.2 3.3 V Q6A → ключ навантаження TI TPS259470ARPWR (4-й екземпляр тієї самої деталі; стартовий RILM 1.65 kOhm = ILIM 1.80-2.20 A, остаточний — 1.5-2× виміряного струму Lime; EN — MCP #4 GPA0, FLT — MCP #4 GPB3) → R44SF (§5.1, §2.11.1, §8 «Відкриті рішення щодо живлення» (a)).
 - **Бюджет (модель).** Збірка з Lime: пік батареї 4.6 A; режим H — 30.8 W, близько 1.9 год. Режим B без Lime — 17.6 W, близько 3.3 год.
 
 ### 2.16. Лабораторний набір — окремий блок (§3.1, §3.2, §3.3)
 - **Core:** LiteVNA 64; tinySA Ultra+ ZS407; шумове джерело ZFL-500+ (умова A) або ZFL-500LN+; атенюатори Nooelec 100815, 2× VAT-30W2+, 2× BLK-89-S+; навантаження 3× ANNE-50+; 3× 086-6SM+; ключ SMA 0.9 N·m; запасний LNA V2; FNB58; AN8009; Hantek 6022BE + fx2lafw; Debug Probe SC0889; Pinecil V2; Anker 737; стендовий хаб Waveshare 23062 (STT); ISDT 608PD.
-- **Extended:** GPSDO LBE-1420; RF sled v2 (HMC7992 + PE4312 + MCP23017 #2 0x21 + ADS1115 0x48); Pro Stick Plus; SAWbird+ H1; DPS-150; кейс B&W outdoor.case 4000 RPD, запасний Peli 1450 (D19).
+- **Extended:** GPSDO LBE-1420; RF sled v2 (HMC7992 + PE4312 + MCP23017 #2 0x21 + ADS1115 0x48); Pro Stick Plus; SAWbird+ H1; DPS-150; кейс B&W outdoor.case 4000 RPD, запасний Peli 1450 (§3.2).
 - **Підключення до пристрою:** вхід BENCH (HMC7992-B RF4), LAB BUS (I2C-B, AUX 12 V, GND), LAB USB-A (стендовий хаб), REF IN (лише Lime).
 - **Правила.** Усі джерела — кондуктивно і не вище −40 dBm; у Bench усі антенні тракти паркуються на 50 Ohm, зміщення вимкнене. Сторінка SWR/S11 доступна лише з навантаженням чи DUT на порту (§3, «Правило лабораторії»).
 
