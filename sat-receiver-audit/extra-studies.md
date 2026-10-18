@@ -29760,6 +29760,143 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Prices: DigiKey USD qty 1 ex VAT, fetched 18 Oct 2026. Schubert EUR incl. VAT, converted at the stack rate 1 EUR = 1.1241 USD. The HF+ Discovery ships in a plastic case (rtl-sdr.com); confirm the can fit with or without it.
 
+## searchA:two_stage_coax_cm_choke_ft_240_77_ft_240 (run `wf_e32114dd-52d`)
+
+- **Part:** Two-stage coax common-mode choke on the HF+ HF coax at P5 (LF/MF stage FT-240-77 = Fair-Rite 5977003801, HF stage FT-240-31 = Fair-Rite 2631803802, wound with RG316, bonded bracket to the mid-plate). Qty 1.
+- **Current price usd:** Cores verified 18 Oct 2026: DigiKey US 5977003801 $10.77 (417 in stock) + 2631803802 $9.35 (15,676 in stock) = $20.12 at qty 1. DigiKey DE: EUR 9.46 + 8.21 = EUR 17.67 ex VAT (EUR 21.03 with 19% DE VAT). RG316 (about 2.6 m wound at my turn estimates), 2 SMA and the bracket are not priced (estimate $5-10). Total about $25-30, inside the stack's 15-30 range. The stack had marked the price unverified; the core prices are now verified.
+- **Critical specs:**
+  - CM impedance at least 1 kOhm at 60 kHz, held across the civil LF targets: JJY 40, MSF 60, DCF77 77.5, TDF 162 kHz (STACK C17 target). With nominal AL, the current pick needs about 30 turns on the FT-240-77 (AL 2950 nH +/-25%).
+  - CM impedance 2-5 kOhm (at least 2 kOhm) over 1-30 MHz, with no deep dip where the two stages hand over (series resonance between the capacitive LF stage and the inductive HF stage). The current HF stage needs about 13 turns on the FT-240-31 for 2 kOhm at 1 MHz (single-turn Z 12 ohm at 1 MHz).
+  - No gap across 0.3-1 MHz: NAVTEX 490/518 kHz, NDB and MW sit between the two stages.
+  - Differential path unchanged: 50-ohm RG316 with negligible insertion loss to 31 MHz (the HF+ range) and SMA at both ends.
+  - DC pass for the Boni-Whip: 12.5 V +/-0.25 V at about 0.11-0.14 A on the centre conductor with return on the shield. No DC block, and low loop resistance, so fewer wound turns is better. The DC is differential, so the core sees no bias.
+  - Core material stability over the field temperature range (about -20 to +60 C): mu vs T, and Curie temperature well above (77 at least 200 C, 31 at least 130 C).
+  - Size and weight inside the 220-225 x 135-140 x 55-60 mm case near P5. Current cores: 61 mm OD x 2 x 12.7 mm, 106 + 118 g = 224 g.
+  - Mechanics: ceramic cores secured on a bracket bonded to the plate, RG316 bend radius respected at the core edges, coated core or edge protection preferred.
+  - Genuine, traceable core material: unmarked marketplace 'FT-240-xx' cores cannot be checked for mix by eye, so buy only from authorized distributors.
+  - Verifiable on the bench: conducted CM-impedance measurement on the LiteVNA (no on-air sweep). The choke is not an antenna or an H-field loop probe, so the no-loop rule does not apply to it.
+- **Candidates:**
+  1.
+    - **Name:** Keep FT-240-77 (Fair-Rite 5977003801) for the LF stage. Replace the FT-240-31 HF stage with 1x Fair-Rite 2631102002 #31 round cable core (25.9 OD x 12.8 ID x 28.6 mm), 8-9 turns of RG316.
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $13.71 in cores (DigiKey US qty 1: $10.77 + $2.94; 2631102002 has 76,935 in stock). EU: DigiKey DE EUR 9.46 + 2.58 = EUR 12.04 ex VAT (2631102002 is EUR 3.07 with 19% VAT). TME (PL) shows USD 1.50-2.71 for 2631102002, but the price basis and stock are unconfirmed. Saves about $6.41 over the current cores. A second sleeve for margin adds $2.94.
+    - **Spec comparison:** Same maker and same #31 material in the HF stage. Fair-Rite gives the single-turn Z of 2631102002 as 31-38 ohm at 1 MHz, 79-90 at 5 MHz, 103-110 at 10 MHz and 156-163 at 25 MHz. For FT-240-31 it gives 10.2-12, 28-32.5, 40-41 and 61-63 ohm. That is 2.6-3x more per turn squared, matching the geometry (h*ln(OD/ID) 20.2 vs 6.86). With N-squared scaling, 8 turns on the sleeve give about 2.0 kOhm at 1 MHz, the same as about 13 turns on the FT-240-31, and nominally equal or higher at 5-25 MHz. Using fewer turns means 0.6 m of wound coax instead of about 0.8 m, so DC loop resistance is lower. The LF stage is unchanged. The HF stage weighs 55 g instead of 118 g and is 26 mm diameter instead of 61 mm. Fair-Rite says minimum Z is typically the listed value less 20%, the same for both parts.
+    - **Worse in:** Nothing on datasheet figures. Unverified: the self-resonance and peak placement of 8 turns of RG316 on a 28.6 mm sleeve against 13 turns on a toroid; I found no independent measurement (the K9YC cookbook would not load, HTTP 503). Mechanical: the 12.8 mm bore takes about 12 single-layer turns at most. The 6.55 mm end wall makes a tighter RG316 bend than the 12.7 mm FT-240 wall, so check the cable's minimum bend radius and wind loosely. Accept only if the LiteVNA conducted CM sweep shows at least the FT-240-31 stage's value at 1, 3, 7, 14 and 30 MHz.
+    - **Compatibility:** Drop-in at the same location and bracket. SMA RG316 is unchanged and Boni DC passes. Receive-only, conducted-only measurement; no rule is touched. Authorized Fair-Rite distributors (DigiKey, Mouser, TME) carry it.
+    - **Risks:** The not-worse claim rests on the datasheet plus scaling, not a measurement (the current pick is also unmeasured). AL/Z tolerance is about +/-20-25%, so wind 1 extra turn and trim after measuring.
+    - **Seller url:** https://www.digikey.de/en/products/result?keywords=2631102002
+    - **Sources:**
+      - https://fair-rite.com/product/round-cable-emi-suppression-cores-2631102002/
+      - https://fair-rite.com/product/round-cable-emi-suppression-cores-2631803802/
+      - https://www.digikey.com/en/products/result?keywords=2631102002
+      - https://www.digikey.de/en/products/result?keywords=2631102002
+      - https://www.tme.eu/en/details/2631102002/ferrite-sleeves/fair-rite/
+  2.
+    - **Name:** TDK B64290L0659X830 (R 40x24x16, N30, epoxy coated) for the LF stage, about 20 turns of RG316, plus 1x Fair-Rite 2631102002 #31 sleeve for the HF stage (8-9 turns)
+    - **Kind:** other_brand
+    - **Price usd:** $12.44 in cores (DigiKey US qty 1: B64290L0659X830 $9.50 with 262 in stock, plus $2.94). EU: DigiKey DE EUR 8.34 + 2.58 = EUR 10.92 ex VAT (EUR 9.92 and EUR 3.07 with 19% VAT). Saves about $7.68.
+    - **Spec comparison:** TDK datasheet (May 2023): N30 AL 7000 nH +/-25% against 2950 nH for FT-240-77, mu_i 4300 against 2000. Coated 41.8 OD max, 22.5 ID min, 17.2 mm high max; about 61 g against 106 g. About 20 turns give 2.8 mH, 1.06 kOhm at 60 kHz, against 30 turns on FT-240-77; about 25 single-layer turns fit. Less coax is wound (about 1.2 m against about 1.8 m). The epoxy coating protects the RG316 jacket better than the uncoated Fair-Rite cores. TDK markets N30 for broadband transformers and current-compensated chokes. The HF stage is as in candidate 1.
+    - **Worse in:** Lower Curie temperature: about 130 C for N30, not verified here (the N30 material sheet would not load), against at least 200 C for #77. Irrelevant at field temperatures, but mu vs T at -20 C is unverified. Above about 300-400 kHz the N30 roll-off against #77 is unverified, so the 0.3-1 MHz handover region must be measured. Different maker and material from the current choice.
+    - **Compatibility:** Mechanically smaller than the FT-240 (41.8 mm against 61 mm OD), so it fits the same bracket area. Same coax, SMA and DC path. No rule impact.
+    - **Risks:** Accept only if the LiteVNA conducted sweep at 40, 60, 77.5, 162, 518 kHz and 1 MHz, done once at room temperature and once cold if possible, equals or exceeds the FT-240-77 stage. The N30 frequency behaviour is unverified.
+    - **Seller url:** https://www.digikey.de/en/products/result?keywords=B64290L0659X830
+    - **Sources:**
+      - https://www.tdk-electronics.tdk.com/inf/80/db/fer/r_40_0_24_0_16_0.pdf
+      - https://www.digikey.com/en/products/result?keywords=B64290L0659X830
+      - https://www.digikey.de/en/products/result?keywords=B64290L0659X830
+      - https://fair-rite.com/product/toroids-5977003801/
+  3.
+    - **Name:** 2x Fair-Rite 5978002701 (#78, 35.55x23x12.7 mm) stacked for the LF stage, about 23 turns, plus 1x Fair-Rite 2631102002 for the HF stage
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $9.02 in cores at DigiKey US qty 1 ($3.04 x 2 + $2.94). Out of stock today: 0 on hand, 371 expected 30 Oct 2026, 20-week standard lead time. No EU price checked.
+    - **Spec comparison:** Fair-Rite: #78 mu_i 2300 (against 2000 for #77), 'low-loss inductive applications up to 500 kHz' (the #77 page says up to 100 kHz), AL 2545 nH +/-25% per core, 5090 nH stacked. About 23 turns give 2.69 mH, 1.01 kOhm at 60 kHz; up to about 25 single-layer turns fit. The pair weighs 66 g against 106 g. The stacked pair has about the same Ae as the FT-240 with a shorter path length.
+    - **Worse in:** Availability: not orderable at qty 1 today. The single-layer window is almost full (23 of about 25 turns). Winding capacitance and SRF are unmeasured.
+    - **Compatibility:** Same mounting approach on a smaller footprint (35.6 mm OD). No rule impact.
+    - **Risks:** Delivery date can slip; this is a different material grade. Gate on the LiteVNA as for candidates 1 and 2.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=5978002701
+    - **Sources:**
+      - https://fair-rite.com/product/toroids-5978002701/
+      - https://www.digikey.com/en/products/result?keywords=5978002701
+  4.
+    - **Name:** 2x Fair-Rite 5977002701 (#77, 'FT-140-77' size 35.55x23x12.7 mm) stacked for the LF stage, about 24 turns, plus 1x Fair-Rite 2631102002 for the HF stage
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $9.30 in cores at DigiKey US qty 1 ($3.18 x 2 + $2.94), but 0 in stock (371 past due, estimated 16 Oct 2026). TME: out of stock, MOQ 742 (about USD 1.31 each). RS Norway sells boxes of 371 only.
+    - **Spec comparison:** Same #77 material as the current pick. AL 2400 nH +/-25% per core, 4800 nH stacked (above the FT-240-77's 2950). About 24 turns give 2.76 mH, 1.04 kOhm at 60 kHz, against 30 turns on the FT-240-77. 66 g against 106 g.
+    - **Worse in:** Not orderable at qty 1 now. The single-layer window is nearly full. SRF is unmeasured.
+    - **Compatibility:** Same as candidate 3.
+    - **Risks:** Stock. Gate on the LiteVNA.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=5977002701
+    - **Sources:**
+      - https://fair-rite.com/product/toroids-5977002701/
+      - https://www.digikey.com/en/products/result?keywords=5977002701
+      - https://www.tme.eu/en/details/5977002701/ring-ferrites/fair-rite/
+  5.
+    - **Name:** Current part (Fair-Rite 5977003801 + 2631803802) from the cheapest verified seller
+    - **Kind:** current_part
+    - **Price usd:** DigiKey US $10.77 + $9.35 = $20.12. DigiKey DE EUR 17.67 ex VAT. Other sellers checked: TME 2631803802 USD 4.75-8.65 (basis and stock unconfirmed), with 5977003801 not in TME standard stock. Alltronics on eBay, FT-240-77 2-pack $34.95. Amidon FT-240-77 at RS Portugal EUR 28.15 each, out of stock. FW-RFPower on eBay, FT-240-31 $8.25 + $5.75 US shipping. A third-party price list dated Dec 2025 shows Arrow 2631803802 at $3.63-4.83 but out of stock.
+    - **Spec comparison:** Identical part.
+    - **Worse in:** Nothing; it is the same part. Only TME might be cheaper for the #31 core, and that is unverified.
+    - **Compatibility:** Identical.
+    - **Risks:** Marketplace or Amidon-branded cores cost more and are harder to trace. Use authorized distributors.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=5977003801
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=5977003801
+      - https://www.digikey.com/en/products/result?keywords=2631803802
+      - https://www.digikey.de/en/products/result?keywords=5977003801
+      - https://www.digikey.de/en/products/result?keywords=2631803802
+      - https://www.tme.eu/en/details/2631803802/ferrite-sleeves/fair-rite/
+      - https://www.ebay.de/itm/187467991406
+      - https://www.ebay.de/itm/205166468777
+      - https://pt.rs-online.com/web/p/anillos-de-ferrita/2884445
+      - https://na6o.com/rfi/ewExternalFiles/ferrite%20costs%20and%20sources.txt
+  6.
+    - **Name:** 2x Fair-Rite 2631803802 (FT-240-31 for both stages, no #77)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $18.70 at DigiKey US ($9.35 x 2). Saves only $1.42.
+    - **Spec comparison:** #31 mu_i 1500 against 2000 for #77. Estimated AL is about 2050 nH (from the Fair-Rite 1 MHz single-turn Z), so the LF stage needs about 36 turns for 1 kOhm at 60 kHz, against 30. The HF stage is identical.
+    - **Worse in:** LF stage: 36 turns against 30 means about 20% more wound coax, more winding capacitance and a lower SRF, near the 0.3-1 MHz handover; the window is about 41 turns. Not recommended for a $1.42 saving.
+    - **Compatibility:** Same.
+    - **Risks:** Likely worse at 0.3-1 MHz. Rejected unless measurement proves otherwise.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=2631803802
+    - **Sources:**
+      - https://fair-rite.com/product/round-cable-emi-suppression-cores-2631803802/
+      - https://fair-rite.com/product/toroids-5977003801/
+  7.
+    - **Name:** Palomar Engineers SLO31-1/2-5 slip-on Mix 31 bead line isolator (ready-made)
+    - **Kind:** other_brand
+    - **Price usd:** $19.95 (sale; list $29.95), for 1/2 in coax
+    - **Spec comparison:** Palomar's listing gives 1.8-100 MHz in the title and 3-300 MHz (5 beads) in the spec table. Beads slid over the coax act as a single-pass choke.
+    - **Worse in:** No meaningful impedance at 40-500 kHz, and below the 2 kOhm target at 1-3 MHz. It is sized for 1/2 in coax, not RG316, and is bulkier. This is the same failure as the 'clip-on ferrites' budget option already rejected in STACK. Not cheaper in any meaningful way.
+    - **Compatibility:** Poor: wrong cable size, no SMA.
+    - **Risks:** Rejected.
+    - **Seller url:** https://palomar-engineers.com/catalog/Slip-On-Feed-Line-Common-Mode-Line-Isolator-Choke-1-2-12-7mm-coax-cable-1-8-100-MHz-5-10-15-20-bead-option-Mix-31-p74536045
+    - **Sources:**
+      - https://palomar-engineers.com/catalog/Slip-On-Feed-Line-Common-Mode-Line-Isolator-Choke-1-2-12-7mm-coax-cable-1-8-100-MHz-5-10-15-20-bead-option-Mix-31-p74536045
+- **Notes:** BOTTOM LINE (Angle A): 
+  - Cheapest in-stock option with the lowest risk: candidate 1. Keep the FT-240-77 LF stage and swap only the FT-240-31 HF stage for one Fair-Rite 2631102002 #31 sleeve with 8-9 turns. Cores cost $13.71 instead of $20.12 (EUR 12.04 instead of 17.67 ex VAT at DigiKey DE). The HF stage is 63 g lighter and much smaller, and the same maker and #31 material are kept.
+  - Candidate 2 (TDK N30 R40 for LF plus the sleeve) saves $7.68, but it changes the LF material, so it depends more on measurement.
+  - Candidates 3 and 4 (stacked FT-140-size #78/#77) are the cheapest at about $9, but neither can be ordered at qty 1 today.
+  
+  ALL 'not worse' judgements are datasheet values plus N-squared scaling, not measurements.
+  - I found no independent measurement of these cores wound with RG316.
+  - The K9YC cookbook returned HTTP 503 at both URLs.
+  - The current pick is itself unmeasured.
+  
+  Required gate before swapping: wind both the current choke and the candidate. On the LiteVNA, conducted bench only, measure CM |Z| and R at 40, 60, 77.5, 162 and 518 kHz and at 1, 3, 7, 14 and 30 MHz. Keep the candidate only if it is equal or better at every point and meets at least 1 kOhm at 60 kHz and 2-5 kOhm over 1-30 MHz, with no handover dip. Otherwise keep the current FT-240-77 + FT-240-31.
+  
+  The turn counts are my calculations (AL tolerance +/-25%); STACK.md gives no turn count:
+  - Current pick: about 30 turns on the 77 core and 13 on the 31 core.
+  - Candidates: about 20 turns on N30, 23-24 on two stacked FT-140 cores, 8 on the sleeve.
+  
+  Rejected or not pursued:
+  - An all-#31-sleeve LF stage: it needs 13 or more turns on a bore that holds about 12, or a stack 86-114 mm long.
+  - Ferroxcube TX36/23/15-3E25: not stocked at DigiKey, 14-week lead time, MOQ 1680.
+  - VAC VITROPERM nanocrystalline cores: not found at DigiKey; not verified.
+  - FT-240-43: #43 is weaker below about 5 MHz, so it is worse at LF/MF by material class.
+  - Ready-made SO-239 line isolators (DX Engineering, Balun Designs): I did not price them; they are typically dearer and made for transmitting power levels.
+  
+  Buy Fair-Rite and TDK cores only from authorized distributors (DigiKey, Mouser, TME, Farnell) to avoid relabelled marketplace cores. Mouser and Farnell pages returned HTTP 503 and could not be checked. EU prices quoted are DigiKey DE, ex VAT, and 19% DE VAT where shown; VAT for another EU country follows its own rate.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
