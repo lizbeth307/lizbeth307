@@ -26738,6 +26738,154 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Not found or unverified: the GNSS chip and constellations inside the 1420 (the 1421 datasheet says 'multiple GNSS'); 1420 enclosure material and shielding; whether the warranty transfers. EU buyers: leobodnar.com is a UK seller, so check post-Brexit import VAT; Batronix (DE) EUR 184.45 incl. VAT is the clean EU price. All rules are kept: conducted only, no transmitter, no loops.
 
+## searchA:leo_bodnar_lbe_1420_gpsdo (run `wf_c3ba734e-52b`)
+
+- **Part:** Leo Bodnar LBE-1420 GPSDO (extended lab: Lime J4 external reference at 30.72/10 MHz, and a conducted calibration tone behind 80 dB plus a BLK-89-S+), qty 1
+- **Current price usd:** 175.80 (GBP 132 at the Leo Bodnar shop, 1.3318 USD/GBP; the shop does not say whether VAT is included). For a buyer in Europe the real figure is higher. The Bodnar shop's 'European Union' region shows EUR 165.53 (= $186.07), and its shipping page says EU orders ship from a partner in France with import VAT paid at checkout. Uputronics sells the same unit at GBP 158.40 'Tax included', which is exactly 132 x 1.20. My inference from this is that GBP 132 / EUR 165.53 are ex-VAT prices, which would put the EU landed price at about EUR 197-205 plus shipping (unverified until a checkout quote).
+- **Critical specs:**
+  - Programmable output: must hit exactly 10 MHz and 30.72 MHz for Lime Micro J4 (firmware accepts 10-52 MHz), plus conducted tones up to 1.1 GHz for RTL/Lime/tinySA/HF+ ppm checks. LBE-1420: 1 Hz-1.1 GHz, 'infinite resolution' (datasheet).
+  - Locked accuracy/stability: datasheet says it approaches 1e-12 long term. EEVblog measurement against an Efratom Rb: 1 s ADEV about 5e-11, drift about 30-40 ns/h, with a ~100 s wobble caused by airflow and temperature. The requirement is ppb-level SDR calibration.
+  - Phase noise at 10 MHz (datasheet typ.): -72/-101/-128/-147/-156/-159/-164 dBc/Hz at 1 Hz/10 Hz/100 Hz/1 kHz/10 kHz/100 kHz/1 MHz; sub-ps RMS jitter. This matters because, as the Lime reference, it is multiplied by about +44.6 dB at 1.7 GHz.
+  - Output level and waveform: +11 dBm at 10 MHz, 3.3 V CMOS square wave, 50 ohm source. It drives Lime J4 directly. Rise/fall 300/260 ps.
+  - Spurs/harmonics: the square wave gives an odd-harmonic comb. Fractional-PLL spurs are not published. The 80 dB + DC-block rule applies.
+  - Holdover and transient behaviour: glitchless entry and exit on GNSS loss (no phase or frequency jumps); acquisition about 30 s.
+  - Power: USB-C 5 V, 250 mA max (1.25 W or less) from the LAB 5 V rail or a power bank; no 12 V OCXO warm-up.
+  - Size: 69 x 40 x 12 mm, fits a pouch.
+  - Linux on Ubuntu 24.04 arm64: USB HID 1dd2:2443, configured with the open-source bvernoux/lbe-142x (simontheu/lbe-1420 as fallback); NMEA over a USB virtual serial port; settings kept in flash.
+  - GNSS input: SMA, 3.3 V / 30 mA antenna bias; active antenna with 5 m cable included (cost item only; antennas are out of scope); u-blox M10 inside (EEVblog).
+  - Build and legal: CE/FCC/UKCA, 2-year warranty, bought from Bodnar or an authorized reseller (not a clone).
+  - Rules: used conducted-only, never into an antenna; off and disconnected during H1, ADS-B and Inmarsat-C sessions.
+- **Candidates:**
+  1.
+    - **Name:** Leo Bodnar LBE-1420, bought direct (UK shop; EU orders go through the French partner)
+    - **Kind:** current_part
+    - **Price usd:** 175.80 (GBP 132). EU region shows EUR 165.53 = $186.07; import VAT is charged at checkout and probably comes on top (inference), plus shipping
+    - **Spec comparison:** This is the reference: 1 Hz-1.1 GHz, +11 dBm, 3.3 V CMOS, -164 dBc/Hz at 1 MHz, sub-ps jitter, 5 V 250 mA, USB HID with an open-source Linux tool.
+    - **Worse in:** Nothing (reference). Measured short-term stability (1 s ADEV about 5e-11) is worse than OCXO units (about 1e-11), but that is irrelevant at ppb-level calibration.
+    - **Compatibility:** Already integrated: Lime J4 direct drive, hidraw udev 1dd2:2443, LAB 5 V rail.
+    - **Risks:** VAT basis of the EUR 165.53 is not stated. Shipping cost is only shown at checkout.
+    - **Seller url:** https://www.leobodnar.com/shop/index.php?main_page=product_info&products_id=393
+    - **Sources:**
+      - https://www.leobodnar.com/shop/index.php?main_page=product_info&products_id=393
+      - https://www.leobodnar.com/shop/index.php?main_page=index&cPath=107
+      - https://www.leobodnar.com/shop/index.php?main_page=shippinginfo
+      - https://www.eevblog.com/forum/metrology/a-closer-look-at-the-leo-bodnar-lbe1-420-and-the-precision-gpsdo
+  2.
+    - **Name:** Same SKU (LBE-1420) from Batronix, Germany (EU stock)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 174.24 net (EUR 155.00 net); 207.34 incl. 19% DE VAT (EUR 184.45). In stock. Shipping extra; the shipping cost and the VAT rate for other EU countries are not shown
+    - **Spec comparison:** Identical device (EAN 5060992290020). Same scope of delivery: USB A-C cable and active antenna with 5 m cable. 2-year warranty.
+    - **Worse in:** Nothing in specs. On price it is only $1.56 cheaper ex-VAT than GBP 132, and the gross price depends on the destination-country VAT rate (unverified).
+    - **Compatibility:** Identical.
+    - **Risks:** Batronix's EU-VAT notice is dated 2021, so check the destination VAT at checkout. Shipping is extra for the LBE-1420 (the dearer models list free shipping to DE and nearby countries).
+    - **Seller url:** https://www.batronix.com/shop/frequency-references/GPSDO/LBE-1420.html
+    - **Sources:**
+      - https://www.batronix.com/shop/frequency-references/GPSDO/LBE-1420.html
+      - https://www.batronix.com/shop/frequency-references/GPSDO/index.html
+  3.
+    - **Name:** Same SKU (LBE-1420) from Uputronics, UK (Bodnar's named UK distributor)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 210.96 UK (GBP 158.40 'Tax included'); 179.80 with DE/FR localisation (EUR 159.95, 'taxes calculated at checkout')
+    - **Spec comparison:** Identical device.
+    - **Worse in:** Not cheaper. Uputronics collects EU tax via IOSS only under EUR 150; this order is above that, so it ships from the UK with import VAT, broker fees and the post-1-July-2026 flat EU duty (operator note 34).
+    - **Compatibility:** Identical.
+    - **Risks:** Stock is contradictory: the search page says 'Sold Out', the product JSON says available.
+    - **Seller url:** https://store.uputronics.com/products/lbe-1420-gps-locked-clock-source
+    - **Sources:**
+      - https://store.uputronics.com/products/lbe-1420-gps-locked-clock-source
+      - https://store.uputronics.com/pages/where-to-buy
+  4.
+    - **Name:** Leo Bodnar Mini Precision GPS Reference Clock
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 175.80 (GBP 132), the same price, so not cheaper
+    - **Spec comparison:** Range 400 Hz-810 MHz vs 1 Hz-1.1 GHz. 10 MHz phase noise -145/-150/-153/-155 dBc/Hz at 1k/10k/100k/1M vs -147/-156/-159/-164. +10.3 dBm (32 mA) vs +11 dBm. Better in one respect: drive adjustable 8-32 mA (+6.4 to +10.3 dBm). Mini-USB vs USB-C. 70 x 41 x 15 mm. Same 250 mA.
+    - **Worse in:** Frequency range (no tones from 810 MHz to 1.1 GHz, no 1 Hz-400 Hz), phase noise 6-9 dB worse from 10 kHz upwards, older connector. Bodnar itself recommends the LBE-1420 instead.
+    - **Compatibility:** 30.72 and 10 MHz are reachable. A different Linux tool would be needed (stack tool targets 142x).
+    - **Risks:** Legacy product.
+    - **Seller url:** https://www.leobodnar.com/shop/index.php?main_page=product_info&products_id=301
+    - **Sources:**
+      - https://www.leobodnar.com/shop/index.php?main_page=product_info&products_id=301
+  5.
+    - **Name:** Leo Bodnar LBE-1421 (2-port, 1PPS)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 263.70 (GBP 198); Batronix EUR 225 net = $252.92
+    - **Spec comparison:** Better: two outputs (1 Hz-800 MHz with switchable 1PPS, and 1 Hz-1.4 GHz), thermal pads and conformal coating (EEVblog, May 2025).
+    - **Worse in:** Price only. Not a cheaper analog.
+    - **Compatibility:** Same family and tooling (lbe-142x).
+    - **Risks:** None found.
+    - **Seller url:** https://www.leobodnar.com/shop/index.php?main_page=index&cPath=107
+    - **Sources:**
+      - https://www.leobodnar.com/shop/index.php?main_page=index&cPath=107
+      - https://www.batronix.com/shop/frequency-references/GPSDO/index.html
+  6.
+    - **Name:** Elektronik-Idee 'GPSDXO' GPS-disciplined 40/10 MHz source (Germany, Tindie)
+    - **Kind:** other_brand
+    - **Price usd:** 94.90 (Tindie; ships from Germany; stock not stated, the page shows a notify form)
+    - **Spec comparison:** Fixed outputs: 10 MHz sine at about 1-2 dBm, 40 MHz at about 1.2 Vpp (made for ADALM-Pluto), and 1PPS. Accuracy 1 ppb typ. (0.5 ppb best) vs about 1e-11. Phase noise -112/-130/-150 dBc/Hz at 1k/10k/>=100k vs -147/-156/-159/-164. Better in two respects: 5 V at 90-110 mA, and 1PPS out. Size 88 x 38 x 103 mm, 200 g. ATGM336H GNSS module. USB-C virtual COM.
+    - **Worse in:** No programmable frequency (no 30.72 MHz, no 1 Hz-1.1 GHz tones); 9-35 dB worse phase noise; about 100x worse accuracy; 9-10 dB lower output; bigger. The ATGM336H GNSS chip is a clone-class part.
+    - **Compatibility:** Whether Lime J4 locks to a 1-2 dBm 10 MHz sine is unverified (J4 is currently driven with 3.3 V CMOS). No Linux tool is named.
+    - **Risks:** Inconsistent page text (TCXO vs 'no temperature-controlled oscillator'; micro-USB vs USB-C cable). Availability unclear.
+    - **Seller url:** https://www.tindie.com/products/elidee/gps-disciplined-4010mhz-frequency-source-0001ppm/
+    - **Sources:**
+      - https://www.tindie.com/products/elidee/gps-disciplined-4010mhz-frequency-source-0001ppm/
+  7.
+    - **Name:** BG7TBL 10 MHz LCD GNSS disciplined oscillator (OCXO)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 205.00 + 15.88 shipping from Shenzhen (eBay.de listing, date unclear), so not cheaper
+    - **Spec comparison:** Fixed 10 MHz sine at about +13 dBm plus 1PPS. OCXO, so better 1 s ADEV (about 1e-11 vs about 5e-11 measured by EEVblog) and lower close-in noise. One version's listing gives 12 V DC up to 15 W and 107 x 55 x 122 mm.
+    - **Worse in:** No programmable output (no 30.72 MHz, no tones); about 12x the power (12 V rail and warm-up surge); much larger; early versions had a documented frequency offset (about 1.5 Hz low at 10 MHz). Not cheaper either.
+    - **Compatibility:** 10 MHz works for J4. A 12 V supply is needed. No HID tool; its management interface depends on the variant.
+    - **Risks:** Many variants with different OCXOs and GNSS modules, and clones; ask the seller what is inside.
+    - **Seller url:** https://www.ebay.de/itm/124281373714
+    - **Sources:**
+      - https://www.ebay.de/itm/124281373714
+      - https://www.qsl.net/vk2kfj/gpsdo.html
+      - https://www.eevblog.com/forum/metrology/a-closer-look-at-the-leo-bodnar-lbe1-420-and-the-precision-gpsdo
+  8.
+    - **Name:** QRP Labs ProgRock2 (assembled) + QRP Labs GPS receiver kit
+    - **Kind:** other_brand
+    - **Price usd:** 18 (ProgRock2) + 21 (QLG3 kit; whether it has a 1PPS output is not stated, and the QLG2-SE price was not checked), about 39 plus case, shipping and EU import charges
+    - **Spec comparison:** Si5351A or MS5351M, 3.5 kHz to about 200 MHz, two outputs when GPS-disciplined, 3.3 V p-p square, 3.5-12 V supply. Disciplined by counting the 1PPS and correcting the frequency (no PLL phase lock to GNSS). Accuracy, phase noise and jitter are not published.
+    - **Worse in:** Range about 200 MHz vs 1.1 GHz; Si5351-class jitter (tens of ps class, unverified here) vs sub-ps; step-corrected frequency instead of glitchless lock; no USB HID or Linux tool; kit-grade build.
+    - **Compatibility:** 30.72 and 10 MHz are possible. It needs a 3.3 V GNSS supply and a serial config path.
+    - **Risks:** MS5351M clone chip may be fitted. Ships from outside the EU (duty).
+    - **Seller url:** https://qrp-labs.com/progrock2.html
+    - **Sources:**
+      - https://qrp-labs.com/progrock2.html
+      - https://qrp-labs.com/qlg3.html
+  9.
+    - **Name:** gpsfreak open hardware (TI LMK05318B + u-blox MAX-M10S)
+    - **Kind:** diy
+    - **Price usd:** about 50 per unit when building two (author estimate; DIY only, PCB from JLCPCB)
+    - **Spec comparison:** Four programmable outputs, 1 Hz to 1.6 GHz claimed (the datasheet maximum of 1250 or 800 MHz is disputed in the thread). Phase noise and ADEV not measured. Accuracy <1 ppb claimed, not measured.
+    - **Worse in:** Specs unverified and unmeasured; DIY build quality; no certification or warranty. Outside angle A.
+    - **Compatibility:** Controlled by Python scripts with flash-stored config. Linux and arm64 support not stated.
+    - **Risks:** Experimental project.
+    - **Seller url:** https://github.com/rcls/gpsfreak
+    - **Sources:**
+      - https://www.eevblog.com/forum/oshw/open-source-gps-disciplined-frequency-generator
+  10.
+    - **Name:** Budget alternative already in core: PPS count + GNSS-SDR ppm
+    - **Kind:** diy
+    - **Price usd:** 0
+    - **Spec comparison:** Gives a ppm or ppb estimate for the receivers.
+    - **Worse in:** It is not a reference source: it cannot drive Lime J4 and cannot give a conducted calibration tone. Not an analog.
+    - **Compatibility:** Already in the stack.
+    - **Risks:** None.
+    - **Seller url:** 
+    - **Sources:** []
+- **Notes:** VERDICT: no cheaper part is equal or better on every spec, so keep the Leo Bodnar LBE-1420. Bodnar has no cheaper SKU: the Mini costs the same GBP 132 and is worse in range and phase noise, and the LBE-1421/1423/1425 cost GBP 198-360. The cheaper or other-brand options I found all give something up: no programmable 30.72 MHz or 1.1 GHz tones, worse phase noise, more power, or unmeasured DIY. One 'cheaper' BG7TBL listing is in fact $205 + shipping. I found no established-brand programmable GPSDO with sub-ps jitter, 5 V/250 mA power and a Linux HID tool under GBP 132. A u-blox LEA-M8F (has a 30.72 MHz output) came up in a forum, but I found no finished product with it.
+  
+  EU SOURCING (same part, not worse by definition):
+  - Batronix DE: EUR 155 net (= $174.24, $1.56 below the stack's $175.80) / EUR 184.45 incl. 19% VAT, in stock, shipping extra. It is the cheapest verified EU-stock listing.
+  - Bodnar direct: EU region EUR 165.53, ships from a French partner with import VAT at checkout. If that price is ex-VAT (likely, because Uputronics' GBP 158.40 tax-included equals 132 x 1.2), landed cost is about EUR 197-205 + shipping, which is above Batronix.
+  - Uputronics: EUR 159.95, but ships from the UK above the EUR 150 IOSS limit, so import VAT + broker fees + the new EU flat duty apply; stock is contradictory.
+  - Action: get checkout quotes from Batronix and Bodnar-EU for the user's country before ordering, and list the landed EUR price in v2.
+  
+  UNVERIFIED: the VAT basis of the Bodnar GBP 132 / EUR 165.53 prices; the Batronix VAT rate for EU countries other than Germany; Batronix shipping cost; Lime J4 acceptance of a low-level sine reference (relevant only to the Elektronik-Idee unit); BG7TBL listing date and stock; whether the QLG3 has 1PPS and the QLG2-SE price; all gpsfreak specs.
+  
+  Rule check: every candidate is a conducted-only source; none involves loops or TX on air. Keep the 80 dB + DC block rule and the 'off during H1/ADS-B/Inmarsat-C' rule whichever seller is used. The EEVblog tester also notes the LBE-1420's 10-1000 s stability depends on airflow and temperature, so it should sit in a still-air pouch or be wrapped during Lime trims.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
