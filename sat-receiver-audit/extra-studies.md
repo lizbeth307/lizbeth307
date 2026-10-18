@@ -26634,3 +26634,288 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
 - **Current status oct 2026:** The Airspy HF+ Discovery is still sold at USD 169 by ITEAD (EU, US and CN warehouses; the page still lists firmware R2.0.0) and at EUR 232 incl. VAT by WiMo. Latest firmware is still R5.0.1 (2024-12-11). The Windows-only flasher depends on WMIC, which Microsoft removed from Windows 11 in the Aug/Sep 2026 preview updates (wmic_dlc.zip is a temporary workaround). Host library: upstream master 1.8.1 (head 24fe8ff, 22 Jul 2026); upstream refuses to tag releases (issue #62). Debian/Ubuntu ship 1.6.8 with the soname bumped to 1. Master drops the exported airspyhf_flash_calibration symbol. SoapyAirspyHF 0.2.1 was tagged 2026-10-10 with the gain-detection fix; Debian/Ubuntu still ship 0.2.0. SDRangel 7.27.2 (19 Aug 2026) has NAVTEX, RTTY, FT8, DSC and Radio Clock (MSF, DCF77, TDF, WWVB, JJY 40). DRM (14 Oct 2026) and WEFAX (1 Oct 2026) exist only on master, and RBU and PCSK-225 in Radio Clock are also master-only. OpenWebRX+ 1.2.126 has DRM (with dream 2.2-20251114 arm64 from the luarvique repo), FAX, NAVTEX, FT8 and WSPR. Boni-Whip: in stock at Bonito's own shop for EUR 149 incl. VAT (65 mA typical, 12-15 V, bias tee included, no power supply); WiMo lists EUR 159, available from 20.11.2026. I found no public report of an HF+ running on a Dragon Q6A or QCS6490.
 - **Notes:** Method and limits. The shared WebSearch budget for this turn ran out after three searches, so I could not search Reddit, Discord/Matrix logs, YouTube or groups.io; community coverage is thinner than the task asked for. I used issue trackers and primary pages fetched directly instead: airspyhf, SoapyAirspyHF, SDR++, SDRangel, OpenWebRX (jketterl) and AIS-catcher on GitHub; sources.debian.org; packages.ubuntu.com; the luarvique Packages index; the WSJT-X CMakeLists on SourceForge; the Radxa forum's own Discourse search (no Airspy or SDR reports on the Q6A); bonito.net and hamradioshop.net; ITEAD, WiMo and Nooelec; rtl-sdr.com and AB9IL articles; and Microsoft support. I read the firmware zip's README and FLASH.bat as text and executed nothing from it. Models (Python, labelled as such): the USB ring depth from SAMPLES_TO_TRANSFER x 8 transfers; the Boni-Whip antenna-end voltage at the vendor's 65 mA with stage 1's assumed resistances; EUR to USD at STACK's own rate (1.1241); the EU VAT landed price. Stage-1 results now overturned or tightened: (1) SDRangel overwrites the flash ppb with its own LO ppm on start, so labd must push LOppmTenths, contrary to stage 1's 'applies automatically in SDRangel'. (2) DRM and WEFAX are not in the pinned SDRangel 7.27.2; use OpenWebRX+ (dream, fax) for v1. (3) A source-built libairspyhf 1.8.1 is not drop-in (soname 0 vs Debian's 1; flash_calibration symbol removed), and SoapyAirspyHF 0.2.0 silently disables gains with 1.8.1, so pair any 1.8.1 build with SoapyAirspyHF 0.2.1. (4) The minimum firmware rises to R4.0.7, because ITEAD's listed R2.0.0 is the version with the 1.5 h TIMEOUT stall and older firmware breaks Low-IF rates. (5) Boni-Whip current is now a vendor figure (65 mA typical), which confirms the 13.8 V feed, and Bonito's shop has it in stock at EUR 149. User decisions made after stage 1 (Europe, DAB+ on, Lime kept) reinforce moving DAB+ off the HF+ (V4L or Lime). Policy items for the decoders owner, outside this scope: OpenWebRX+ also offers DSC and SITOR-B modes, which must follow the P2 DSC and SITOR allow-lists, and Dream's possible transmitter mode must be checked before it is allowed. Still not measured: HF+ current (idle and streaming), shield A/B noise, balun LF loss, and USB stability behind FE1.1s and CH334F on the Q6A's kernel 6.18.
 
+## community:rf_frontend (run `wf_feb0e95a-cfc`)
+
+- **Subsystem:** rf_frontend (stage 2, community experience): LNAs, FM band-stop, bias tees and TPS2553, LNB 13.2 V feed, RF switches, DC blocks, protection, lab sled
+- **Findings:**
+  1.
+    - **Claim in stack:** C11 / stage 1: V4L bias tees off in core (librtlsdr token, EEPROM bias off); stage 1 action 'pin the driver to rtl-sdr-blog V1.4.0 or later'.
+    - **Finding:** Corrected. The V1.4.0 tag on rtlsdrblog/rtl-sdr-blog/releases is titled 'RTL-SDR-BLOG Windows Release V1.4.0', so it is a Windows DLL release and not a Linux pin. Osmocom tagged 'Release 2.0.3' (797f814) on 11 Aug 2026. That release contains 0204c9c 'Add RTL-SDR Blog V4L Support' and 65f0658 'Fix application hang on USB transfer errors', the same two commits C11 cherry-picks onto noble 2.0.1.
+  
+  The two code bases differ on bias-tee safety (I read both librtlsdr.c files):
+  - The rtl-sdr-blog fork has an 'RTL-SDR-BLOG Hack': rtlsdr_set_offset_tuning(dev,on) calls rtlsdr_set_bias_tee(dev,on) on R820T/R828D tuners. The fork detects the V4L as tuner_type R820T, so any app that ticks 'offset tuning' switches the 4.5 V tee.
+  - The fork also forces the bias on at open when EEPROM byte 7 bit 1 = 0 (force_bt), and then ignores 'off' requests.
+  - Osmocom master has neither: offset tuning just returns -2.
+  - rtl-sdr.com/v4l: 'the legacy DVB-T TV drivers will activate the bias tee by default.'
+  
+  Community reports on ARM:
+  - SatNOGS (WT0DX, 3 May 2026): soapy 'biastee' is a bool. Only 'biastee=true' worked, and the tee stays on after the observation ends.
+  - SatNOGS (va2wbt/w6msu, Aug 2024): V4 + SAWbird+ NOAA on a Pi 3B+ was dead until a V4-capable librtlsdr was installed.
+  - SatDump #1030 (Aug 2025): the bias setting was ignored because a Docker build shipped Debian's stock librtlsdr.
+    - **Verdict:** corrected
+    - **Action:** Drop stage 1's 'rtl-sdr-blog V1.4.0' pin and keep C11's osmocom-based build (or rebuild from osmocom 2.0.3 while keeping SONAME .so.2). Never install the rtl-sdr-blog fork on the device. If it is ever used, put the LAB_BIAS_OK gate inside rtlsdr_set_bias_tee_gpio(), which is the function all three paths call.
+  
+  Strengthen the dvb blacklist: add 'install dvb_usb_rtl28xxu /bin/false' and run update-initramfs, or set CONFIG_DVB_USB_RTL28XXU=n in the held 6.18.2-4 kernel.
+  
+  At startup labd calls rtlsdr_set_bias_tee(dev,0) on every V4L; the gate allows 'off'. Read rtl_eeprom at intake and confirm the force_bt bit is 1.
+  
+  At bring-up, measure DC on each V4L SMA during boot, before labd starts.
+    - **Impact:** Closes three ways the 4.5 V tee could switch on behind labd's back (kernel DVB driver, offset-tuning hack, EEPROM force). Removes a Linux driver pin that does not exist.
+    - **Sources:**
+      - https://github.com/rtlsdrblog/rtl-sdr-blog/releases
+      - https://github.com/osmocom/rtl-sdr/commits/master
+      - https://raw.githubusercontent.com/rtlsdrblog/rtl-sdr-blog/master/src/librtlsdr.c
+      - https://raw.githubusercontent.com/osmocom/rtl-sdr/master/src/librtlsdr.c
+      - https://github.com/rtlsdrblog/rtl-sdr-blog/issues/70
+      - https://www.rtl-sdr.com/v4l/
+      - https://community.libre.space/t/v4-rtl-sdr-bias-tee-issue/14699?page=2
+      - https://community.libre.space/t/satnogs-3649-rtl-sdr-blog-v4-issues/11942
+      - https://github.com/SatDump/SatDump/issues/1030
+  2.
+    - **Claim in stack:** RTL-A/RTL-B HMC7992 SP4T: 50 Ohm on the 'all low' power-up throw (planned T4). Stage 1: A=B=low selects RF1; fit pull-ups on A/B or move the load to RF1; check DC blocks on all five pins.
+    - **Finding:** Truth table confirmed (datasheet Table 6): A=B=Low gives RF1 and High/High gives RF4. D13 already puts 100k pull-downs on every MCP23017 output, so at boot the switch sits on RF1 (VHF-137 on RTL-A, L-band on RTL-B).
+  
+  The datasheet's power-up sequence argues against stage 1's pull-up option: GND, then VDD, then control inputs, because 'Powering the logic control inputs before the VDD supply can inadvertently forward bias and damage the internal ESD protection structures.' Pull-ups to the Q6A 3.3 V while the switch VDD comes from a later or switched RF rail would do exactly that.
+  
+  The datasheet also says all RF pins are DC-coupled and need blocking capacitors, and recommends small bypass capacitors on A/B for isolation.
+  
+  The stack's DC block sits on the throw side (injector, then DC block, then T1). If the V4L tee is ever switched on (see the driver finding), its 4.5 V lands on the DC-coupled RFC pin, which runs at VDD 3.3 V.
+    - **Verdict:** corrected
+    - **Action:** Prefer moving the 50 Ohm park load to RF1, which keeps D13's 'pull-down = safe' convention, rather than adding pull-ups. If pull-ups are ever used, tie them to the HMC7992's own VDD.
+  
+  Power the HMC7992 VDD from the same 3.3 V rail as the MCP23017s, or add about 1 kOhm series resistors in A/B, so the logic can never lead VDD. labd must not drive A/B while the RF board rail is off.
+  
+  Fit a C0G DC block on RFC (switch to SDR) as well as on RF1-RF4, and add 100 pF bypass on A/B. On a generic board, check all five caps and the A/B network on arrival.
+    - **Impact:** Makes the park-at-50-Ohm rule hold at boot without risking the switch's ESD structures. Protects the switch from an accidental V4L tee.
+    - **Sources:**
+      - https://www.farnell.com/datasheets/2283884.pdf
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md (D13, 5.3)
+  3.
+    - **Claim in stack:** C8 LNB13V2 rail (TPS7A4701 -> 13.2 V, PG to MCP #3). Stage 1: no PG pin; add a TPS2596 eFuse with FLT to MCP #3; option: a TPS25962x 13.8 V fast clamp.
+    - **Finding:** Stage 1's main fix is confirmed: the TPS7A47 datasheet has no PG, its ICL is 1.0 A min / 1.26 A typ, 'not designed to operate at a steady-state current limit', and overall accuracy is ±2.5% (12.87-13.53 V, my calculation).
+  
+  The TPS25962x option is wrong for this rail (TPS2596 datasheet SLVSET8A):
+  - The 13.8 V option's clamp threshold V_OVC is 12.97 / 13.77 / 14.52 V (min/typ/max). Its clamping output is 13.13 / 13.58 / 13.97 V. The minimum threshold lies below the 13.2 V nominal.
+  - The datasheet also says that for TPS25962x 'the input voltage should be limited to the selected Output Voltage Clamp Option'.
+  
+  The TPS25963x parts (TPS259630 latch-off, TPS259631 auto-retry) have an adjustable OVLO with a 1.17 / 1.2 / 1.22 V rising threshold.
+  
+  I_LIM is set by RILM in the range 453-7869 Ohm. The table points (3.83k = 0.247 A, 909 = 1.005 A, 453 = 2.004 A) give I_LIM ≈ 910-946 A·Ohm / RILM (my fit).
+    - **Verdict:** corrected
+    - **Action:** Use a TPS259630 (latch-off) or TPS259631 after each TPS7A4701, not a TPS25962x.
+  
+  Set the OVLO divider for about 14.2-14.3 V with 0.5% resistors. With 1% resistors the trip window is 13.57-14.73 V (model): just above the rail maximum and below the 16 V horizontal threshold.
+  
+  Use RILM of about 2.0-2.1 kOhm for about 0.45 A on the LNB, and about 7.5 kOhm for about 0.125 A on the Boni rail (model). Wire FLT to MCP #3. ILM also gives an analog current monitor that can feed an ADC.
+  
+  Ordering codes and stock for TPS25963x are not verified.
+    - **Impact:** Avoids an eFuse that would clamp the rail in normal use. Keeps the LNB on vertical polarisation if the LDO fails short.
+    - **Sources:**
+      - https://www.ti.com/product/TPS2596
+      - https://www.ti.com/lit/ds/symlink/tps2596.pdf
+      - https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+  4.
+    - **Claim in stack:** Meteor LRPT: P1 -> RTL-A T1, about 1 Msps, gain 10-25 dB, with the SAWbird+ NOAA (41 dB) inside the case after the Flamingo+.
+    - **Finding:** Partly corrected by community practice.
+  - SatNOGS thread on SAWbird+ NOAA + NESDR SMArTee: SA2KNG recommends RTL gain of about 3-10 dB with this 41 dB LNA. The poster ran gain 0 with the LNA and 49 without.
+  - The same poster found the signal clean with the LNA at the SDR on 3 ft of RG58, but 'haywire' with the LNA at the antenna. Interference sources were not resolved.
+  - The stack's placement (LNA inside the case, 1-1.5 m RG316 to the dipole) matches the configuration that worked.
+  
+  Model: with 41 dB ahead and about 1.5 dB injector, DC-block and switch loss, even an RTL NF of 20 dB adds only about 0.04 dB to system NF. Higher RTL gain buys no SNR and only costs headroom.
+  
+  Nooelec: the SAWbird+ NOAA has 'protection circuitry ... for overvoltage', and up to 12 V 'should still work and will not damage the device' but is not for long-term use. An externally powered SAWbird can trip an SDR's ESD diode, so a DC block is needed; the stack already has one.
+    - **Verdict:** corrected
+    - **Action:** Set the RTL-A default for the VHF-137 profile to about 5 dB (range 0-15 dB) instead of 10-25 dB. At bring-up, sweep gain and take the lowest value at which the noise floor still rises about 5-8 dB above the gain-0 floor (model). Keep the SAWbird+ inside the shielded RF compartment.
+    - **Impact:** More strong-signal headroom on the V4L, which has no notch (see the Flamingo+ finding), at no SNR cost.
+    - **Sources:**
+      - https://community.libre.space/t/observation-10391348-noaa-19-33591/12377
+      - https://community.libre.space/t/observation-10391348-noaa-19-33591/12377?page=2
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-noaa-308.html
+  5.
+    - **Claim in stack:** C10: Flamingo+ FM v2 first on VHF (>60 dB, 0.5 dB typ). Stage 1 new_risk: P1 has no ESD/limiter element.
+    - **Finding:** Confirmed, with one correction to stage 1. The Nooelec product page states: 'Flamingo+ FM has its front end protected by an ESD diode meant for RF applications.' So P1 already has an RF ESD element ahead of the SAWbird (vendor claim; the 2019 Rev 1 datasheet does not mention it).
+  
+  The V4L makes the filter more important. rtl-sdr.com and its admin say the V4L has no notch filters (the R828S has no open_d pin) and uses diplexed rather than triplexed input filtering, so it is 'less protected against strong signals'.
+  
+  Community evidence:
+  - K2PI (SatNOGS, Jul 2024): a GPIO Labs FM filter gave 'a full 10dB more attenuation than the Nooelec Flamingo' (version not stated, method not given).
+  - 2020 SatNOGS thread: the RTL-SDR.com band-stop placed before an LNA 'seemed to trash any satellite reception'. That filter has under 4 dB loss only above about 120 MHz (admin) and was still more than 11 dB down at 118 MHz (reader Joe). The Flamingo+ datasheet gives -3 dB at about 120 MHz and 0.5 dB typical passband loss.
+  - Admin on the RTL-SDR band-stop: 'safe to pass 80mA, and possibly up to 200mA'.
+    - **Verdict:** confirmed
+    - **Action:** Keep the Flamingo+ first on P1. At intake, measure S21 at 137.1/137.9 MHz on the LiteVNA; expect 0.5 dB or less and reject above 1.2 dB.
+  
+  The GPIO Labs filter is a possible stronger option for very strong FM sites (price and specs not verified).
+  
+  Downgrade stage 1's P1 ESD risk. A static bleed is still useful on P6, which has no filter in front of the HF+ relay.
+    - **Impact:** Removes one stage-1 protection item for P1.
+    - **Sources:**
+      - https://www.nooelec.com/store/flamingo-plus-fm.html
+      - https://www.rtl-sdr.com/rtl-sdr-blog-v4l-lite-now-available-for-purchase/
+      - https://community.libre.space/t/system-optimization-and-terrestrial-rfi/11939
+      - https://community.libre.space/t/seem-to-have-similar-worse-performance-with-lna/5867
+      - https://www.rtl-sdr.com/rtl-sdr-com-broadcast-fm-band-stop-filter-88-108-mhz-reject-now-for-sale/
+  6.
+    - **Claim in stack:** Stage 1 protection new_risk: add a TVS on biased P2/P3, a shunt bleed on P1/P6; static on first-stage MMICs.
+    - **Finding:** Community evidence supports a protection element but is mixed on the cause.
+  - 9A4QV (LNA4ALL): MMICs get 'damaged due to statics or corona discharge effect on the antenna'. A damaged LNA 'can draw more than 250mA, in some cases even maximum current that the supply can deliver'. Anti-parallel BAV99 diodes 'will degrade NF and S11 a bit' and create IMD when strong broadcast signals are present.
+  - SatNOGS 'QFH antennas can burn pre-amps' (2018-2019): didierp09 fixed it with head-to-tail BAV99 and ran a Uputronics 137 MHz LNA about 2 years without failure. The original poster finally blamed his antenna ('The problem was my ** antenna'), so the earlier audit's 'ESD likely' was stronger than the thread.
+  - BAV99 cannot go on P2/P3: anti-parallel diodes would clamp the 4.5 V bias to about 0.7 V.
+  - A partly failed SAWbird drawing about 260-300 mA would not trip a TPS2553 set to 265/299/339 mA (stage 1 numbers), and the TPS2553 has no current-monitor output.
+    - **Verdict:** corrected
+    - **Action:** Use a low-capacitance RF TVS with a working voltage of at least 6 V on P2/P3 (part still to be chosen) and qualify it conducted. On P6, prefer a shunt bleed inductor to BAV99 because of the broadcast IMD.
+  
+  Add per-channel current readback for ch1-ch4, for example a shunt plus a multi-channel monitor (part not chosen or verified). labd should alarm at more than about 20% over each LNA's bring-up baseline, not only on the TPS2553 trip.
+    - **Impact:** Detects degraded or ESD-damaged LNAs before they cook. Avoids a protection part that would kill the bias.
+    - **Sources:**
+      - https://lna4all.blogspot.com/
+      - https://community.libre.space/t/qfh-antennas-can-burn-pre-amps/1959
+      - https://www.ti.com/product/TPS2553-1
+  7.
+    - **Claim in stack:** Uputronics 440 MHz FPA, GBP 51.59 incl. VAT = $68.71. Stage 1: use the ex-VAT world price GBP 42.99 (about $57.26), -$11.45; same for the 1090 preamp.
+    - **Finding:** The datasheet is re-confirmed (Rev 3.0, 18/10/2024):
+  - Bias input 3.5-5.5 V ('Exceeding 5.5V will cause permanent damage'), about 50 mA, NF 0.75 dB.
+  - Antenna port DC-blocked, Skyworks limiter, HPF below 100 MHz.
+  - 'If the unit is not powered there is no passthrough of signal'.
+  - USB-C and bias may be connected together; some Apple USB-C chargers do not trigger because of the low current.
+  - Saved store JSON (18 Oct): all prices divide by 1.2 to x.99 values (51.59 → 42.99, 44.39 → 36.99), consistent with UK-VAT-inclusive prices.
+  
+  The stage-1 saving is wrong for this user: user_requirements says 'Region: Europe'. A European buyer pays destination VAT (EU 17-27%, by IOSS or at import), so the landed cost is about the UK incl.-VAT figure (GBP 42.99 × 1.21 ≈ GBP 52 ≈ $69, model).
+  
+  Community: a Uputronics 137 MHz LNA ran about 2 years without failure (didierp09).
+    - **Verdict:** corrected
+    - **Action:** Keep the budget at $68.71 for the 440 MHz unit and $59.12 for the 1090 unit (VAT-inclusive, Europe). Use ex-VAT prices only for a non-VAT destination. Keep the 440 MHz on ch2 (bias is required for any signal). Re-check at checkout; the store returned 429 today.
+    - **Impact:** Reverses stage 1's -$11.45 and about -$10 'savings' for a European buyer.
+    - **Sources:**
+      - https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808
+      - https://store.uputronics.com/products/uputronics-filtered-preamps
+      - https://community.libre.space/t/qfh-antennas-can-burn-pre-amps/1959
+  8.
+    - **Claim in stack:** QO-100: bare Bullseye LNB on P4 at 13.2 V; DC block before every SDR; LNB current unpublished; 15/20 dB attenuator.
+    - **Finding:** Confirmed.
+  - RTL-SDR store: 'Requires a 12-19V bias tee power injector, the V3/V4's 4.5V bias tee is NOT for this LNB'. 11.5-14 V selects vertical and 16-19 V horizontal.
+  - Product page (18 Oct): $29.95, 70 in stock, gain 50-66 dB, LO stability ±10 kHz at 23 °C / ±30 kHz over -20 to 60 °C, IF return loss only 8 dB (739-1950 MHz). The pad after the injector also improves the match.
+  - Real-world support for the DC-block rule (buy-page comment, AntonioColombo, about 3 months ago): a 12 V bias tee connected to a V4's SMA by mistake killed the 3.3 V LDO near the USB connector.
+  - No community current figure was found. The Othernet forum no longer resolves (ENOTFOUND), and the rtl-sdr.com Bullseye article comments give no current. The Medium write-up of a Bullseye on a homemade bias tee returned 403.
+    - **Verdict:** confirmed
+    - **Action:** Keep the plan. Measure LNB current at 13.2 V before setting the TPS2596 RILM. Keep a DC block between every SDR and anything that can carry the LNB or Boni rails.
+    - **Impact:** None. The LNB current is still unverified.
+    - **Sources:**
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+      - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+      - https://www.rtl-sdr.com/the-othernet-bullseye-tcxo-lnb-for-qo-100-reception/
+      - https://www.rtl-sdr.com/tag/qo-100/
+  9.
+    - **Claim in stack:** P5 HF SMA carries 12.5 V up the coax in the Boni profile. Stage 1: key P5 with a BNC so no SMA LNA can mate.
+    - **Finding:** Confirmed, with nuance and a new sourcing risk.
+  - Nooelec says SAWbird+ units have overvoltage protection: up to 12 V 'should still work and will not damage the device', not long-term, and damage is not covered by warranty. 12.5 V is just above that.
+  - The Uputronics FPA is permanently damaged above 5.5 V. The LNA V2 is rated 3-5 V.
+  - WiMo (18 Oct) lists the 'Boni-Whip Active antenna 10 kHz - 300 MHz, BNC' with '2x BNC' and the bias tee included, at EUR 159.00 incl. VAT (EUR 133.61 net). It shows 'Available from 20.11.2026', so the antenna is not in stock now.
+  - Boni current is still unverified: the radioreference thread returned 503 three times.
+    - **Verdict:** new_risk
+    - **Action:** Keep the BNC on P5, plus DC-sense and the explicit 'Boni attached' confirmation. Schedule P5/Boni bring-up after the WiMo date, or check other EU stockists. Measure the Boni current before setting the eFuse at about 0.125 A.
+    - **Impact:** Delays the LF/VLF time-signal profile by about 1 month if WiMo is the only source.
+    - **Sources:**
+      - https://www.wimo.com/en/18067
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-goes-302.html
+      - https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808
+  10.
+    - **Claim in stack:** HRPT: SAWbird+ GOES at the helix feed (passband 1648-1728 MHz, LTE B3 uplink inside), handheld helix/helicone.
+    - **Finding:** New risk from a model. Community (OK9SGC HRPT guide, 17 Dec 2021, updated Nov 2022): use a filtered LNA ('very strong interference from the lower bands (especially broadcast FM)' can overwhelm HRPT). It also says a SAWbird 'has been proven to leak current into the RF output port and into the SDR', so a separate DC block is needed; the stack has one.
+  
+  The guide does not cover LTE. Europe (the user's region) has dense B3 (1710-1785 MHz uplink), and the SAWbird+ GOES passes 1710-1728 MHz.
+  
+  Model: input P1dB is about OP1dB 20 - 38 + 1 = -17 dBm. A +23 dBm handset at 1 m in a 0 dBi direction gives about -14 dBm (compression); at 0.5 m in an 8 dBi main lobe, about 0 dBm, the absolute-maximum input. At 5 m the margin is +3 to +11 dB. Real handsets usually transmit well below +23 dBm.
+    - **Verdict:** new_risk
+    - **Action:** Add to the HRPT procedure: phones, including companions' phones, at least 5 m away or in flight mode during a pass. labd flags a sudden noise-floor rise of more than 10 dB on RTL-B T1. No hardware change.
+    - **Impact:** Low. Avoids desense, or in the worst case damage, of the L-band LNA during hand tracking.
+    - **Sources:**
+      - https://sgcderek.github.io/blog/beginner-hrpt-guide.html
+      - https://www.nooelec.com/store/downloads/dl/file/id/108/product/296/sawbird_goes_datasheet_revision_1.pdf
+  11.
+    - **Claim in stack:** Spare LNA: RTL-SDR Blog Wideband LNA V2 ($19.95, QPL9547, 90 mA); P8 WIDE/2 m behind a second Flamingo+.
+    - **Finding:** Confirmed, with sparse community data.
+  - Product page (18 Oct): V2, $19.95, 208 in stock, 100 MHz-6 GHz, NF below 1 dB, 3-5 V. The buy page says '3 - 5v, 90mA'. No reviews, gain or P1dB are published.
+  - RTL-SDR admin: with 'strong interferers or already have a strong signal, then it may make the situation worse.'
+  - Qorvo forum (Jun 2025, EVB data): QPL9547 about 10 dB gain and about 1 dB NF at 6 GHz.
+  - Qorvo forum (Apr 2025): the device can be driven past P1dB (about 22 dBm per the asker); P3dB is about 1 dB higher.
+  - The Passion Radio review cited in the earlier audit could not be re-fetched (redirect loop).
+    - **Verdict:** confirmed
+    - **Action:** Keep it as the spare/P8 LNA, behind the Flamingo+ only. Measure gain at 145/437 MHz and current at bring-up. Expect gain to fall steeply toward GHz.
+    - **Impact:** None
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-wideband-lna-bias-tee-powered/
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+      - https://forum.qorvo.com/t/qpl9547-noise-figure-data-with-input-6ghz/22808
+      - https://forum.qorvo.com/t/qpl9547-saturated-output-power/22133
+  12.
+    - **Claim in stack:** Sled step attenuator PE4302 (stage 1: EOL, use the pin-compatible PE4312).
+    - **Finding:** Confirmed by community. EEVblog 2016: 'Peregrine has discontinued the PE4302 and replaced it with the PE4312'. A buyer found the eBay module to be 'a Chinese copy of the Peregrine evaluation board' that works but whose response 'wasn't all that flat', with extra attenuation at HF. Experienced users advise not relying on a digital step attenuator to protect an instrument front end; a DC block is the better investment.
+    - **Verdict:** confirmed
+    - **Action:** Specify a PE4312 module and check the chip marking. Sweep the module on the LiteVNA from 1 MHz to 2 GHz at 0/15.5/31.5 dB before trusting the steps. Keep the DC blocks and do not count the DSA as protection.
+    - **Impact:** None beyond stage 1
+    - **Sources:**
+      - https://eevblog.com/forum/rf-microwave/digital-step-attenuator-pe4302-anybody
+      - https://www.psemi.com/products/digital-step-attenuators/pe4312
+  13.
+    - **Claim in stack:** HF+ input switch: 2x Omron G6K-2F-RF 5 V (stage 1: now sold as Aratas).
+    - **Finding:** Confirmed. Electropages (23 Jul 2026): 'OMRON Electronic Components Rebrands as Aratas', with the 'same portfolio of components'. DigiKey lists 'G6K-2F-RF DC5', manufacturer 'Aratas (Formerly Omron Components)', at $25.06. No community measurements of G6K series-parallel isolation at 162-260 MHz were found.
+    - **Verdict:** confirmed
+    - **Action:** Order by part number and accept either marking. Measure isolation on the LiteVNA.
+    - **Impact:** None
+    - **Sources:**
+      - https://www.electropages.com/blog/2026/07/omron-electronic-components-rebrands-aratas
+      - https://www.digikey.com/en/products/result?keywords=G6K-2F-RF%20DC5
+  14.
+    - **Claim in stack:** TPS2553 per-channel limit; stage 1: TPS2553-1 latch-off on ch2-ch4.
+    - **Finding:** Confirmed. TI product page (Active): the -1 version 'latches off the power switch during overcurrent or reverse-voltage conditions', FAULT goes low, VIN 2.5-6.5 V, limit 75-1700 mA. Community: bias-tee LDOs fail in the field. Anthony9 reports five V3 dongles with damaged bias-tee LDOs; the admin says the V4L's 4.5 V LDO is a Chinese part pin-compatible with the LP5907. This supports keeping LNA power off the V4L tees.
+    - **Verdict:** confirmed
+    - **Action:** Keep the TPS2553-1 on ch2-ch4 and the V4L tees off in core.
+    - **Impact:** None
+    - **Sources:**
+      - https://www.ti.com/product/TPS2553-1
+      - https://www.rtl-sdr.com/rtl-sdr-blog-v4l-lite-now-available-for-purchase/
+  15.
+    - **Claim in stack:** Generic HMC7992 boards (marketplace, unverified); Q6A-specific RF/bias experience.
+    - **Finding:** Unverified. The only listing found (Walmart.ca) shows a bot wall, and analog.com (EngineerZone links) returned 503. The Radxa Dragon category (page 1, to 15 Oct 2026) has no topics on RTL-SDR, bias tees, LNAs or USB VBUS. The only relevant thread is Radxa (strongtz, 15 Oct 2026): the 12 V header accepts '4.5V to 16V', so a full 4S pack at 16.8 V is above it (this is for the power audit). I found no public report of this RF front end on a Q6A/QCS6490 or on Ubuntu 24.04 arm64. The closest are Raspberry Pi/Debian reports, which are all driver or packaging issues.
+    - **Verdict:** unverified
+    - **Action:** Buy one generic HMC7992 board first and qualify it, or use the custom-PCB option. Treat all Q6A-side RF behaviour as untested until W1-2 bring-up.
+    - **Impact:** None now
+    - **Sources:**
+      - https://forum.radxa.com/c/dragon/70
+      - https://forum.radxa.com/t/radxa-q6a-4s1p-powering/31611
+- **Current status oct 2026:** As of 18 Oct 2026:
+  - **RTL-SDR drivers:** Osmocom rtl-sdr 2.0.3 (11 Aug 2026) includes V4L support (0204c9c) and the USB-hang fix (65f0658), and has no bias-tee hacks. rtl-sdr-blog V1.4.0 (Latest) is a Windows DLL release. The rtl-sdr-blog fork's librtlsdr still turns the bias tee on through offset tuning and through the EEPROM force_bt bit. The V4L has no FM notch and uses diplexed input filtering.
+  - **Nooelec:** SAWbird+ pages have no reviews. They state overvoltage protection (up to 12 V not damaging, not long-term) and the need for a DC block when the LNA is externally powered. The Flamingo+ FM v2 page states an RF ESD diode on its input.
+  - **Uputronics:** FPA datasheet Rev 3.0 is unchanged. The store returned 429 today; prices in the saved store JSON are consistent with UK-VAT-inclusive pricing.
+  - **TI:** TPS2553-1 and TPS2596 are Active. TPS25962x has fixed 3.8/5.7/13.8 V clamps; the 13.8 V threshold minimum is 12.97 V. TPS25963x has an adjustable OVLO.
+  - **Aratas:** the Omron rebrand is confirmed (G6K-2F-RF DC5, $25.06 at DigiKey).
+  - **Boni-Whip:** WiMo shows it at EUR 159 incl. VAT, available from 20.11.2026.
+  - **Bullseye LNB:** $29.95, 70 in stock. Current draw is still unpublished, and the Othernet forum domain no longer resolves.
+  - **Q6A:** no public Q6A or QCS6490 reports on this RF chain were found.
+- **Notes:** **Method limit:** the shared WebSearch budget for this turn was already used up when I started (the first query was refused: '200 per turn, shared by every agent'). I ran 0 web searches. All evidence comes from WebFetch on primary pages I already knew (SatNOGS Discourse threads, GitHub issues and releases, rtl-sdr.com pages and comments, Nooelec/TI/Qorvo forum pages, WiMo, DigiKey, Radxa forum) and from reading source code and datasheets. A follow-up turn with a fresh search budget could look for Bullseye current reports, HMC7992 module reviews, Boni-Whip current and Q6A SDR posts.
+  
+  **Corrections to stage 1:**
+  1. The rtl-sdr-blog V1.4.0 pin is a Windows release. Keep C11's osmocom build: it avoids the fork's offset-tuning and EEPROM bias paths, and there is a DVB-T default-on path to block too.
+  2. For the HMC7992, prefer moving the load to RF1 over pull-ups, because the datasheet's VDD-before-logic rule makes pull-ups risky. Add a DC block on RFC.
+  3. The TPS25962x 13.8 V clamp overlaps the 13.2 V rail. Use a TPS25963x with OVLO at about 14.2-14.3 V.
+  4. The ex-VAT Uputronics 'saving' does not apply to a European buyer.
+  5. P1 already has the Flamingo+'s RF ESD diode (vendor claim).
+  6. The QFH 'burned preamps' thread is weaker evidence for ESD than the earlier audit claimed.
+  
+  **New items:**
+  - RTL-A gain on VHF-137 should start at about 5 dB (community practice is 0-10 dB with the 41 dB SAWbird+).
+  - Per-channel LNA current readback, because a damaged LNA can sit just under the TPS2553 trip.
+  - LTE B3 handset desense of the SAWbird+ GOES (model).
+  - Boni-Whip availability.
+  
+  **Model numbers, not measurements:** rail tolerance 12.87-13.53 V; OVLO windows 13.85-14.44 V (ideal resistors) and 13.57-14.73 V (1% resistors); RILM fit 910-946 A·Ohm, giving about 2.1 kOhm for 0.45 A and about 7.5 kOhm for 0.125 A; LTE handset levels; NF contribution of RTL gain.
+  
+  **Not verified:** Bullseye current; Boni current (radioreference returned 503); generic HMC7992 board details; GPIO Labs filter price and specs; Passion Radio LNA V2 review; Uputronics checkout VAT handling; TPS25963x ordering codes.
+  
+  **Local files:**
+  - Source files read: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/s2src/blog_librtlsdr.c and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/s2src/osmo_librtlsdr.c
+  - TPS2596 datasheet: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/s2dl/tps2596.pdf
+  - Extracted text: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/s2txt/</notes>
+  </invoke>
+  
+
