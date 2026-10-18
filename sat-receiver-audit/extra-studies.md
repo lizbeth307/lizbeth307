@@ -27441,6 +27441,199 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Searches used: 13 WebSearch, plus WebFetch and curl on primary store JSON and pages.
 
+## searchB:rf_sled_hmc7992_sp4t_pe4302_mcp23017_2_a (run `wf_c3ba734e-52b`)
+
+- **Part:** RF sled (extended tier, Lab extended, qty 1): HMC7992 SP4T + PE4302 0-31.5 dB DSA + MCP23017 #2 (0x21) + ADS1115 (0x48) + buck→LC→LDO LNA bias + aluminium box with shield wall, on LAB BUS (I2C-B via TCA9517, AUX 12 V, GND). Corrected role (re-audit B / G1): RF1 = 49.9 Ohm park (A=B=Low selects RF1), RF2 tract A, RF3 tract B, RF4 BENCH. Conducted sources only, at most -40 dBm on BENCH with the antenna throws loaded.
+- **Current price usd:** 104-168 (STACK, unverified, not itemized). Known parts of it: generic HMC7992 board $6-41 (marketplace, unverified); generic PE4302 module about $17.72 delivered (eBay EUR 9.88 + 5.88, July 2025 listing, not re-checked); Adafruit 5346 MCP23017 $5.95; Adafruit 1085 ADS1115 $14.95 (verified 18 Oct 2026); bias, box and SMA parts not priced.
+- **Critical specs:**
+  - SP4T switch coverage: at least 137 MHz to 1.71 GHz, including the 739.5 MHz LNB IF. Below 100 MHz (HF BENCH) the HMC7992 is unspecified until swept.
+  - Switch insertion loss: max 0.9 dB at 0.1-2 GHz (HMC7992: 0.6 typ / 0.9 max).
+  - Switch isolation, RFC to every off throw: at least 40 dB at 0.1-2 GHz on the chip; on the board, no worse than the expected 30-37 dB, target 37-40 dB or more. This is what enforces the leakage rule (BENCH source at most -40 dBm with RF2/RF3 loaded).
+  - Switch return loss: on-state at least 20 dB (chip 25 dB); off throws absorptive 50 Ohm (chip off-state RL 7 dB at 0.1-2 GHz, 15 dB at 0.4-1 GHz).
+  - Switch linearity and power: P1dB 33 dBm, IIP3 56 dBm at 3.3 V; terminated 27 dBm. No negative-voltage generator, so no switch spurs.
+  - Switch power-up state: A=B=Low (MCP23017 high-Z plus 100k pull-downs) must select RF1 with the on-board 49.9 Ohm park. VDD must come up before the control lines (same 3.3 V rail).
+  - DC blocking on all 5 switch RF pins: 1 nF C0G for VHF-137 (a 100 pF eval BOM costs about 0.2 dB and gives RL near 13 dB at 137 MHz, G1 model); 10 nF if BENCH must reach HF.
+  - Step attenuator: 0-31.5 dB in 0.5 dB steps (6-bit), 1 MHz-4 GHz, monotonic. Insertion loss about 1-1.5 dB below 2.5 GHz (measured on the PE4302 module). Step accuracy good to at least 1.5 GHz, stored in a VNA correction table. IIP3 at least PE4302 level. Known safe power-up state. Spurs from the internal negative-voltage generator (if any) at or below about -140 dBm.
+  - Control: 3.3 V CMOS logic. MCP23017 at 0x21 with 16 GPIO (GPA7/GPB7 output-only on current silicon), high-Z at POR, 100k pull-downs. Line budget: 2 (switch A/B) + 6 (attenuator C0.5-C16) + 1 (LE, if latched) + NOISE EN + LNA EN = 11 of 16.
+  - ADC: genuine TI ADS1115 (16-bit, PGA, 4 single-ended inputs, up to 860 SPS per the TI datasheet, not re-fetched; 2.0-5.5 V), I2C 0x48. It must not be a 12-bit ADS1015 relabel.
+  - Linux: no new kernel driver. smbus2/i2c-dev from labd (or pinctrl-mcp23s08) on Ubuntu 24.04 arm64; I2C2 at 100 kHz through TCA9517, 4.7k pull-ups on the sled side.
+  - LNA bias: AUX12 input (PTC 0.75 A hold) → buck to about 6 V → LC → low-noise LDO at 4.5-5 V → a TPS2553 per channel (RILIM 88.7k: 265/299/339 mA). Efficient (not a linear drop from 12 V). It must add no spurs at 137/437/739.5/1540-1710 MHz with the switch powered and unpowered.
+  - Enclosure: aluminium, about 110x70x30 mm, about 250 g, with a shield wall between the RF section and the buck, SMA bulkheads and a locking 6-pin LAB BUS connector.
+  - Authenticity and build: franchised genuine silicon (no ADI-logo marketplace boards, no remarked HMC241 or ADS1015). Same or better assembly quality.
+  - Rules: receive-only; sled sources conducted-only into loads or a DUT; no on-air sweeps; no loops.
+- **Candidates:**
+  1.
+    - **Name:** Current: generic marketplace HMC7992 SP4T board + generic PE4302 module + Adafruit 5346 MCP23017 + Adafruit 1085 ADS1115 + DIY buck→LC→LDO bias + box
+    - **Kind:** current_part
+    - **Price usd:** 104-168 (unverified, not itemized)
+    - **Spec comparison:** Baseline. Switch: HMC7992 datasheet values only if the die is genuine. No measured S-parameters exist for any generic board (G1, and my search found none). DC-block values are unknown. Attenuator: PE4302 module measured by Silicon Chip (2018): 0 dB loss 1-1.5 dB below 2.5 GHz, about 3.5 dB at 4 GHz; accuracy good to about 1.5 GHz (e.g. 16 dB nominal = 16.06 dB at 1.5 GHz). Module is hard-wired for direct parallel with 10k pull-downs, so it powers up at 0 dB. ADS1115 and MCP23017 on Adafruit breakouts.
+    - **Worse in:** Provenance. The generic HMC7992 boards photographed carry an ADI logo on a board ADI does not make, at below-chip-cost prices. A remarked HMC241 would pass a LiteVNA check while being about 11 dB worse in IIP3 (G1). The PE4302 has been EOL since 2016-2018, so modules use old or recycled stock. The attenuator powers up at 0 dB, not at max attenuation.
+    - **Compatibility:** As in STACK, but STACK still needs these corrections: park on RF1, not RF4 (A=B=Low selects RF1); the HMC7992 has 2 control lines (A/B), not V1-V3; PE4302 is EOL.
+    - **Risks:** Counterfeit or remarked dies on both RF boards. Unknown DC blocks, so worse IL/RL at 137 MHz if they copied the 100 pF eval BOM. Isolation must be qualified conducted (expected 30-37 dB).
+    - **Seller url:** https://www.walmart.ca/en/ip/HMC7992-Non-Reflective-SP4T-RF-Switch-Module-PCB-Material-0-1-6GHz-Frequency-Range-3V-5V-Power-Supply-45dB-Isolation-0-6dB-Insertion-Loss-58dBm-IIP3/4LT6JIAL4ULJ
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G1_receivers_rf.json (HMC7992 decision)
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_B_receivers_rf.json (PE4302 EOL, RF1 park)
+      - https://siliconchip.com.au/Issue/2018/June/El+Cheapo+Modules+17%3A+4GHz+digital+attenuator
+      - https://www.adafruit.com/product/1085
+  2.
+    - **Name:** DIY integrated sled PCB with franchised genuine chips: ADI HMC7992LP3DE + pSemi PE4312 (pin-compatible PE4302 successor) + Microchip MCP23017T-E/SS + TI ADS1115IDGSR + buck→LC→LT3045→TPS2553 bias, in a Hammond 1590B die-cast box
+    - **Kind:** diy
+    - **Price usd:** About $61-105 ex VAT total (model). Verified parts: HMC7992LP3DE EUR 11.50 ex VAT = $12.93 (EUR 13.685 = $15.38 incl. 19% VAT; DigiKey DE, 18 Oct 2026, via G1); PE4312 $2.42 (RFMW, pSemi franchised, 0 stock, 46,751 due 6 Nov 2026; US seller, EU landed cost unverified); MCP23017T-E/SS EUR 1.48 = $1.66 (DigiKey DE, 27,989 in stock); ADS1115IDGSR EUR 4.64 = $5.22 ex VAT (EUR 5.52 incl. VAT; DigiKey DE, 36,903 in stock, Active); Hammond 1590B EUR 9.29 = $10.44 ex VAT (SOS Electronic) or EUR 10.53 (RS NL, EU stock). Verified subtotal $32.67. Not priced (model): PCB $5-20 (about $0-5 if panelized into the injector-PCB order), 5-6 SMA edge jacks $6-15, bias parts $12-25, LAB BUS connector, pull-ups and shield wall $5-12.
+    - **Spec comparison:** Switch: the same HMC7992 die from a franchised channel, so the chip specs are equal (0.6/0.9 dB IL, 40 dB min / 45 dB typ isolation, RL 25 dB on-state, P1dB 33 dBm, IIP3 56 dBm, no NVG). Board is equal or better: 1 nF C0G blocks on all 5 pins, on-board 49.9 Ohm RF1 park, VDD on the MCP rail (correct sequencing), GCPW with via fence and shield-can footprint. Attenuator, PE4312 against the measured PE4302 module: same 1 MHz-4 GHz, 0-31.5 dB, 0.5 dB steps. Accuracy is better: ±(0.10 + 1% of setting) dB at 1 GHz and ±(0.15 + 2%) at 2.2 GHz, against a module rated only 'good to about 1.5 GHz'. IIP3 is +59 dBm; pSemi calls the part 'higher linearity, improved attenuation accuracy, faster switching' than the PE4302. Switching is 500 ns. Insertion loss is 1.3 typ / 1.5 max dB below 1 GHz and 1.5 / 1.8 dB at 1-2.2 GHz, against 1.0-1.5 dB measured on the module, so equal within the measurement spread. Return loss is at least 14 dB (18 typ) at 1-2.2 GHz. Power-up is safer: in latched parallel mode with LE low at power-up and PUP1 = PUP2 = 1, it starts at 31.5 dB, while the module starts at 0 dB. The internal NVG gives -140 dBm typ spurs. VDD is 2.3-5.5 V at 130 µA, logic is 1.8 V-compatible with a 3.6 V max, so 3.3 V MCP drive is fine. MCP23017 and ADS1115: the same dies as the Adafruit breakouts, with documented franchised provenance (the Adafruit 1085 page does not state the chip source). Bias: the same buck→LC→LDO→TPS2553 topology as the handheld's LNA4V5 rail, with genuine chips. Box: genuine die-cast aluminium.
+    - **Worse in:** Nothing in RF or measurement specs, by datasheet. Three caveats. (1) PE4312 insertion loss is only equal within spread: on our board it could come out up to about 0.3 dB above the best measured PE4302 module at 1-2.2 GHz (model); accept only if the LiteVNA shows it no worse than the module plus 0.2 dB. (2) It needs a PCB layout and SMD reflow (QFN-16 3x3 EPAD MSL3, QFN-20 4x4 MSL1, VSSOP-10, SSOP-28), so labour and first-spin risk. Board-level isolation and IL are proven only by our own conducted LiteVNA qualification, not by independent measurement. (3) The Hammond 1590B is 112.4 x 60.5 x 31 mm, about 10 mm narrower than the planned 110x70x30 mm; inner size not verified, so plan a board of about 100x50 mm or less (model).
+    - **Compatibility:** Same I2C addresses (MCP 0x21 with A0 high, ADS1115 0x48 with ADDR to GND) and the same labd smbus2 code. Switch is 2-line A/B with RF1 park, as in the G1 remap. PE4312 has the same C0.5-C16 parallel mapping as the PE4302. A 7th line for LE is needed if latched mode is used for the safe power-up (11 of 16 MCP lines used); the labd change is small (pulse LE). Pin 7 (PUP1) has an internal pull-down, so PUP1/PUP2 need external pull-ups for the 31.5 dB start. The datasheet requires 10k series resistors on pins 1 and 3. No new kernel driver on Ubuntu 24.04 arm64. 3.3 V logic, negligible current (HMC7992 0.16 mA, PE4312 0.13 mA).
+    - **Risks:** PE4312 EU sourcing: DigiKey lists it 'Not Available', TME has no listing, Mouser and Richardson returned 503/403. RFMW (US) has 0 stock until about 6 Nov 2026, and US→EU shipping, flat customs duty and VAT (operator note 34) can wipe out the roughly $15 saving over the module unless it is bundled into another order. Qualification needed: G1 checks (1)-(8) on the switch (IL ≤0.9 dB, isolation ≥40 dB target / ≥37 dB accept, RL ≥20 dB, RF1 park at reset, no new spurs), plus a PE4312 sweep of all 64 states from 1 MHz to 2.2 GHz into a correction table, and the 31.5 dB power-up check. All conducted, into loads, never on air.
+    - **Seller url:** https://www.digikey.de/en/products/detail/analog-devices-inc/HMC7992LP3DE/5873027
+    - **Sources:**
+      - https://www.digikey.de/en/products/detail/analog-devices-inc/HMC7992LP3DE/5873027 (via G1, 18 Oct 2026)
+      - https://www.farnell.com/datasheets/2283884.pdf (HMC7992 Rev 0, via G1)
+      - https://psemi.com/pdf/datasheets/pe4312ds.pdf (DOC-81482-4.01, 06/2026, read: Tables 2-5, ordering PE4312C-Z)
+      - https://www.psemi.com/products/digital-step-attenuators/pe4312 (In Production)
+      - https://psemi.rfmw.com/ProductDetail/PE4312-pSemi/472826/ ($2.42 for qty 1-2,999, 0 stock)
+      - https://www.digikey.de/en/products/detail/texas-instruments/ADS1115IDGSR/2231567
+      - https://www.digikey.de/en/products/detail/microchip-technology/MCP23017-E-SS/894273 (MCP23017-E/SS on backorder; substitute MCP23017T-E/SS EUR 1.48)
+      - https://soselectronic.com/en-ro/products/hammond/1590b-54713
+      - https://nl.rs-online.com/web/p/general-purpose-enclosures/3439524
+      - https://siliconchip.com.au/Issue/2018/June/El+Cheapo+Modules+17%3A+4GHz+digital+attenuator
+  3.
+    - **Name:** Hybrid DIY: the same genuine-chip sled PCB (HMC7992LP3DE, MCP23017T-E/SS, ADS1115IDGSR, bias) but keeping the generic PE4302 module (the one Silicon Chip measured) on a short SMA jumper
+    - **Kind:** diy
+    - **Price usd:** About $79-128 ex VAT (model): verified subtotal without PE4312 $30.25 + PE4302 module about $17.72 delivered (eBay EUR 9.88 + 5.88, not re-checked) + jumper $3-8 + the same unpriced PCB, jacks, bias and misc as the full DIY.
+    - **Spec comparison:** Switch, MCP23017, ADS1115, bias and box: as in the full DIY (equal or better than current). Attenuator: identical to the current pick (same module type; Silicon Chip measured 1-1.5 dB IL below 2.5 GHz, accuracy good to about 1.5 GHz).
+    - **Worse in:** Not worse than the current part, but worse than the full DIY: PE4302 EOL provenance, 0 dB power-up state, and lower specified accuracy and linearity than the PE4312. Saving over the current part is small or zero at the top of the range.
+    - **Compatibility:** Same as the current part for the attenuator (direct parallel, 6 lines, 10k pull-downs on the module, 3.3 V). Same as the full DIY otherwise.
+    - **Risks:** The module chip may be recycled or remarked old stock; check the marking and sweep all states on the LiteVNA. The DIY PCB has the same qualification needs as the full DIY.
+    - **Seller url:** https://siliconchip.com.au/Issue/2018/June/El+Cheapo+Modules+17%3A+4GHz+digital+attenuator
+    - **Sources:**
+      - https://siliconchip.com.au/Issue/2018/June/El+Cheapo+Modules+17%3A+4GHz+digital+attenuator
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json (PE4302 eBay EUR 9.88 + 5.88, July 2025 listing)
+  4.
+    - **Name:** Generic marketplace HMC7992 SP4T boards (AliExpress 3256809527409961 / 1005009856440413 / 3256808774768321 / 3256808728006825; Walmart.ca Joystore)
+    - **Kind:** generic_or_clone
+    - **Price usd:** About $6.22-20.89 each (AliExpress snapshots, unverified); Walmart.ca CA$20.49 (about $14.7, bot wall)
+    - **Spec comparison:** Claims copied from the HMC7992 datasheet (45 dB isolation, 0.6 dB IL). No independent VNA measurement of any generic board was found: my search came up empty, as did G1's two search angles.
+    - **Worse in:** Unproven provenance and board design: ADI-logo silkscreen on a board ADI does not make, prices below the authorized chip price, unknown DC blocks (likely 100 pF, which is worse at 137 MHz), and no RF1 park. Rejected under angle B for having no measured evidence.
+    - **Compatibility:** Electrically the same 2-line control and 3.3-5 V supply, but a separately powered board breaks the VDD-before-control order.
+    - **Risks:** Counterfeit or remarked die (HMC241 passes a LiteVNA check while being worse in IIP3 and P1dB).
+    - **Seller url:** https://www.aliexpress.us/item/3256808774768321.html
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G1_receivers_rf.json
+      - https://www.walmart.ca/en/ip/HMC7992-Non-Reflective-SP4T-RF-Switch-Module-PCB-Material-0-1-6GHz-Frequency-Range-3V-5V-Power-Supply-45dB-Isolation-0-6dB-Insertion-Loss-58dBm-IIP3/4LT6JIAL4ULJ
+  5.
+    - **Name:** Generic HMC472 6-bit DSA module (Banggood 1769385 / AliExpress 'HMC472 6-bit Digital Attenuator')
+    - **Kind:** generic_or_clone
+    - **Price usd:** About GBP 14 + GBP 3 shipping (Silicon Chip, Oct 2022; not re-checked)
+    - **Spec comparison:** Measured by Silicon Chip (Signal Hound SA44B + TG44A): 0 dB IL under 2 dB to about 1.5 GHz, about 2.5 dB at 2.64 GHz, about 3.5 dB at 2.95 GHz. Rated accuracy ±(0.35 dB + 5%). DC-3.8 GHz. 5 V supply. The self-contained unit uses only 1 dB steps (V6 not connected).
+    - **Worse in:** Insertion loss (up to 2.5 dB at 2.64 GHz against 1-1.5 dB), accuracy (±(0.35 + 5%) against ±(0.10 + 1%) for the PE4312), upper frequency (3.8 against 4 GHz), 5 V logic and supply. Not cheaper. Rejected.
+    - **Compatibility:** Needs 5 V and level checking; a different control mapping than the PE4302.
+    - **Risks:** Generic GaAs module of unknown provenance.
+    - **Seller url:** https://siliconchip.com.au/Issue/PE/2022/October/Self-Contained+3.8GHz+Digital+Attenuator
+    - **Sources:**
+      - https://siliconchip.com.au/Issue/PE/2022/October/Self-Contained+3.8GHz+Digital+Attenuator
+  6.
+    - **Name:** Generic 'LF-6 GHz 0.25 dB' DSA module (Banggood 1648810, suspected HMC1119)
+    - **Kind:** generic_or_clone
+    - **Price usd:** About GBP 25 + postage (Silicon Chip, 2022; not re-checked)
+    - **Spec comparison:** Seller claims only (LF-6 GHz, 0-31.75 dB in 0.25 dB steps, IL under 1.5 dB). Silicon Chip only suspected the chip and did not measure it. No independent measurement found.
+    - **Worse in:** No measured evidence (rejected under angle B). More expensive than the PE4302 module or a PE4312 chip.
+    - **Compatibility:** Unknown control interface and logic level.
+    - **Risks:** Chip identity unconfirmed.
+    - **Seller url:** https://siliconchip.com.au/Issue/PE/2022/October/Self-Contained+3.8GHz+Digital+Attenuator
+    - **Sources:**
+      - https://siliconchip.com.au/Issue/PE/2022/October/Self-Contained+3.8GHz+Digital+Attenuator
+  7.
+    - **Name:** Used Mini-Circuits ZX76-31R5-PP-S+ connectorized 6-bit parallel DSA (eBay)
+    - **Kind:** used
+    - **Price usd:** US $29.99 used (US seller, Rancho Cordova; search snapshot) or EUR 129.68 + EUR 79.86 shipping (Beijing seller); listings not opened
+    - **Spec comparison:** Mini-Circuits datasheet (read): DC-2400 MHz; 0-31.5 dB in 0.5 dB steps; accuracy excellent (e.g. 16 dB bit 0.1 typ / 0.3 max dB at DC-1 GHz, 0.15 / 0.5 dB at 1-2.4 GHz); 0 dB IL 1.5 typ / 2.2 max dB (DC-1 GHz) and 2.0 / 3.0 dB (1-2.4 GHz); input IP3 +52 dBm; VSWR 1.2 typ; Vdd 2.7-3.3 V, Schmitt-trigger inputs, latch enable; rugged unibody case, factory-tested design.
+    - **Worse in:** Insertion loss (1.5-2.0 dB typ against 1.0-1.5 dB measured on the PE4302 module and 1.3-1.5 dB for the PE4312), upper frequency (2.4 against 4 GHz), IIP3 (+52 against +59 dBm for the PE4312), max input +24 dBm. ESD rating is only 500 V HBM. Better only in accuracy and build. Rejected (it would trade IL and range).
+    - **Compatibility:** 3 V parallel control, so it could be driven by MCP #2; external SMA box, adds 2 cable runs.
+    - **Risks:** Used, so condition is unknown; US/China import adds duty, VAT and shipping to the EU; which eBay URL carries which price was not confirmed.
+    - **Seller url:** https://www.ebay.de/itm/136042689985
+    - **Sources:**
+      - https://www.minicircuits.com/pdfs/ZX76-31R5-PP+.pdf
+      - https://www.ebay.de/itm/136042689985
+      - https://www.ebay.de/itm/153441503783
+      - https://www.ebay.de/itm/177099733891
+  8.
+    - **Name:** Used Mini-Circuits RUDAT-6000-30 USB/RS232 programmable attenuator; used Mini-Circuits USB-SP4T-63 switch; used ADI EV1HMC7992LP3D
+    - **Kind:** used
+    - **Price usd:** RUDAT-6000-30 US $175 used (US seller, search snapshot); USB-SP4T-63 sold out used (new $694.97 at Mouser, which does not ship it to EU or UK consumers); EV1HMC7992LP3D: no used listing found (new about $250-320 per G1)
+    - **Spec comparison:** Specs not checked: rejected on price alone, since each costs more than the sled part it would replace.
+    - **Worse in:** Price (not cheaper); size; separate USB control instead of the LAB BUS.
+    - **Compatibility:** USB HID devices would need their own userspace tool on arm64 (not checked).
+    - **Risks:** Used condition; US import costs.
+    - **Seller url:** https://www.ebay.com/p/26055367424
+    - **Sources:**
+      - https://www.ebay.com/p/26055367424
+      - https://www.ebay.de/itm/405093096790
+      - https://no.farnell.com/en-NO/analog-devices/ev1hmc7992lp3d/evaluation-board-rf-sp4t-switch/dp/4033134
+  9.
+    - **Name:** Generic ADS1115 breakout modules (AliExpress/Amazon blue 'ADS1115' boards)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not priced (commodity, typically a few dollars; unverified)
+    - **Spec comparison:** Independent reports show 'ADS1115' modules that are really the 12-bit ADS1015: readings in 16-count steps, and the four LSBs always zero. One TI E2E case had a genuine-looking 'BOGI' marking; another fix was declaring the chip an ADS1015 in code.
+    - **Worse in:** Resolution (12 against 16 bits) when relabelled, and unprovable provenance even when the marking looks right. Rejected; the genuine TI chip on the sled PCB costs EUR 4.64.
+    - **Compatibility:** Same I2C address map, so a fake would be silent until tested.
+    - **Risks:** Counterfeit; a low-bit test catches ADS1015 relabels but not other degraded clones.
+    - **Seller url:** https://forum.arduino.cc/t/ads1115-problems-or-fake/658746
+    - **Sources:**
+      - https://forum.arduino.cc/t/ads1115-problems-or-fake/658746
+      - https://e2e.ti.com/support/data-converters/f/73/t/925508
+      - https://e2e.ti.com/support/data-converters/f/73/t/921116
+      - https://www.elektroda.com/rtvforum/topic4094810.html
+  10.
+    - **Name:** Generic regulator modules for the sled bias (AliExpress 'LT3045 ultra-low-noise' boards; MP1584/LM2596 buck modules) and generic MCP23017 (CJMCU) boards
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not priced (unverified)
+    - **Spec comparison:** No independent noise or ripple measurement of a generic LT3045 module was found. A measured precedent: an AliExpress LM2596 module carried fake LM2596 chips switching at about 28 kHz instead of 150 kHz (EEVblog). No measured evidence for generic MCP23017 boards either.
+    - **Worse in:** No measured evidence (rejected under angle B). Risk of higher ripple or spurs going up the coax to the LNAs. The genuine MCP23017T-E/SS chip (EUR 1.48) costs no more than a module.
+    - **Compatibility:** Would fit electrically, but output noise and the current limit are unknown.
+    - **Risks:** Counterfeit regulators; spurs in the 137-1710 MHz chains.
+    - **Seller url:** https://www.eevblog.com/forum/dodgy-technology/fake-voltage-regulator-from-ali-express/msg5155224/
+    - **Sources:**
+      - https://www.eevblog.com/forum/dodgy-technology/fake-voltage-regulator-from-ali-express/msg5155224/
+      - https://diyaudio.com/community/threads/approaching-noiselessness-with-the-lt3045.396792/page-2
+  11.
+    - **Name:** Manual SMA swaps (STACK budget alternative)
+    - **Kind:** diy
+    - **Price usd:** about 0 (uses existing jumpers and pads)
+    - **Spec comparison:** No switching or attenuation hardware.
+    - **Worse in:** Loses software path selection, the boot-time 50 Ohm park, scripted 0.5 dB attenuation sweeps, the 3 dB overload test without re-cabling, and labd logging. Adds connector wear. It is not an analog; fallback only.
+    - **Compatibility:** Compatible, but the P4/P7/P13 procedures become manual.
+    - **Risks:** Mating-cycle wear; risk of a mis-cabled source reaching a live chain (the rule stays conducted-only).
+    - **Seller url:** 
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md (sled row, budget alternative)
+- **Notes:** Result (angle B: generic, clone, DIY, used; measured evidence required). No off-the-shelf generic, clone or used item is proven not-worse by independent measurement:
+  - Generic HMC7992 boards have no measurements anywhere and fail the provenance check.
+  - The HMC472 module is measured and worse (IL and accuracy).
+  - The HMC1119 module is unmeasured.
+  - The used Mini-Circuits ZX76-31R5-PP-S+ is worse in IL (1.5-2.0 dB typ), range (2.4 GHz) and IIP3 (+52 dBm).
+  - RUDAT, USB-SP4T and EV1 boards are not cheaper.
+  - Generic ADS1115 modules have documented ADS1015 relabels.
+  - Generic LDO and buck modules have no noise data.
+  
+  The only cheaper route that is not worse is the DIY integrated sled PCB with franchised genuine chips. Verified chip-plus-box subtotal is $32.67; the whole sled is about $61-105 ex VAT (model), against $104-168 unverified for the current part, so it is likely about $30-60 cheaper (model, not guaranteed). Its specs are equal or better by datasheet: same HMC7992 die, a better-defined board, a PE4312 with better accuracy and linearity and a 31.5 dB safe power-up, and the same MCP23017 and ADS1115 dies with traceable provenance. Its proof is chip-level manufacturer data plus our own conducted LiteVNA qualification, not an independent measurement, so it is conditional.
+  
+  Decision rule:
+  - If the PE4312 cannot be landed in the EU without the US import cost eating the saving (DigiKey lists it Not Available; RFMW is at 0 stock until about 6 Nov 2026), use the hybrid (DIY board plus the measured PE4302 module). It is still not worse than the current part.
+  - If the user does not want SMD reflow work, keep the current part. Even then, replace its generic HMC7992 board with the genuine chip on a spare injector PCB, per G1.
+  - In every case the sled is extended tier, so buying it can wait until the PE4312 stock arrives. The DIY board's chips can ride on the existing DigiKey DE order (shopping step 7). Do not buy 10 HMC7992s for the EUR 9.05 break, because the 4-chip total is lower.
+  
+  STACK corrections to carry, from re-audit B, G1 and this step:
+  1. The sled row still says 'RF4 50 Ohm default'. The park is RF1 (A=B=Low).
+  2. 'HMC7992 V1-V3' is wrong: the HMC7992 has 2 lines (A/B).
+  3. PE4302 is EOL; specify PE4312 or the measured module.
+  4. If the PE4312 runs in latched mode, add an LE line on MCP #2 (11 of 16 lines used) and pull PUP1/PUP2 up for a 31.5 dB start.
+  5. The datasheet requires 10k series resistors on PE4312 pins 1 and 3.
+  6. Below 100 MHz (HF BENCH), the HMC7992 IL and isolation are unspecified until swept; use 10 nF C0G blocks if BENCH must reach HF.
+  
+  Hard rules hold: the sled stays passive receive-path plus conducted bench routing, with BENCH sources at most -40 dBm into loads or a DUT, no on-air sweeps and no loops.
+  
+  Prices are in USD at 1.1241 USD/EUR (as in G1), ex VAT unless stated, with DE 19% VAT shown where known. Unverified items are marked. Used 10 WebSearch calls. PE4312 pricing at Mouser, Richardson RFPD and Octopart could not be checked (503/403).
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
@@ -40749,6 +40942,110 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   LA: no cheaper candidate that is not worse. The generic FX2 board at $8-12 is already the floor, so keep it.
   
   Method limits: the shared WebSearch budget was already used up when this step started, so 0 searches ran. All findings come from WebFetch of primary pages: hantek.com, sigrok wiki, OpenHantek README and limitations doc, Botland, AliExpress search. Pages that failed: Amazon.de (503), Conrad and eBay.de (403), the OWON site (503), the SainSmart site (429), and the AliExpress item pages (empty or captcha). AliExpress prices are US-region USD without EU VAT. A follow-up search pass could confirm Amazon.de and the Hantek official-store EU prices and the VDS1022 price.
+
+## searchB:hantek_6022be_fx2lafw_la (run `wf_e5582d4c-0a2`)
+
+- **Part:** Hantek 6022BE USB oscilloscope + separate generic CY7C68013A (fx2lafw) 8-channel logic analyser (bench tier, Bench electronics, qty 1 set)
+- **Current price usd:** 141-172. This is the 6022BE from The Debug Store at GBP 100 ex VAT / GBP 120 inc VAT ($133.18-159.82, per the re-audit) plus a generic FX2 LA at about $8-12. The UK-to-EU flat duty, import VAT and DHL Express from operator note 34 are not included, so the landed cost in Europe is higher.
+- **Critical specs:**
+  - 2 analog channels sampled together (CH1+CH2)
+  - Analog bandwidth: 20 MHz on the datasheet. Independent forum measurement (womai, EEVblog): about 17 MHz for large signals at 1 V/div and a bit under 10 MHz at 100 mV/div. A candidate must match or beat this measured response, not just the headline figure.
+  - ADC: 8-bit AD9288. OpenHantek streams at most 30 MS/s with CH1 only, or 15 MS/s with both channels (48 MS/s is unstable). Oversampling at 10 MS/s or below gives about 10-12 effective bits.
+  - Hardware gain steps x1/x2/x5/x10, giving full scale of +/-5 V, +/-2.5 V, +/-1 V and +/-0.5 V (about 3.9 mV/LSB at +/-0.5 V). The 20 and 50 mV/div ranges are digital zoom only.
+  - Input 1 MOhm || 25 pF. Safe input +/-35 V at x1 (Botland lists 35 Vpp, so take the more conservative figure). +/-50 V measurable with the supplied x10 probes. This is needed for the 12-20 V rails, the 13.0-13.4 V LNB bias and the DPS-150 overshoot check (pass at 13.6 V peak or less).
+  - Noise floor with open input at 20 mV/div: about 5-10 mV (Aurora, EEVblog). This sets the limit for converter ripple and spur checks at 250 kHz-1.04 MHz.
+  - Coupling: DC only as shipped. AC needs the documented hardware mod, a BNC DC block or the CHx AC math mode. A candidate must be equal or better.
+  - Accuracy: gain set by 5% resistors, DC accuracy +/-3% (spec). Offset calibration is stored in EEPROM, and gain can be calibrated with calibrate_6022.py.
+  - Two 1x/10x probes included
+  - Ubuntu 24.04 arm64: OpenHantek6022 3.4.1-rc2 arm64 .deb (VID:PID 04b4:6022), libsigrok hantek-6xxx as a fallback, and firmware loaded into RAM on every plug-in (FW0210), so the unit cannot be bricked
+  - USB 2.0 HS bulk, bus-powered, at most about 0.5 A to stay under the LAB port's TPS2553 0.75 A limit, and at most 30 MB/s of streaming under the labd caps
+  - LA: 8 channels at up to 24 MS/s, streamed with no fixed sample depth, using noble's fx2lafw 0.1.7, PulseView 0.4.2 and sigrok-cli 0.7.2. Fixed thresholds work with 3.3 V logic, and 5 V-tolerant buffered inputs are preferred. Unlimited depth matters for the 24 h PPS-to-NMEA log.
+  - Scope and LA can capture at the same time, because they are two separate devices (a PPS edge on the LA while watching a rail on the scope)
+  - Genuine part from a legal seller with an EU importer. Prefer EU stock because of the flat duty on UK/US parcels since 1 July 2026 (operator note 34).
+  - Receive-only rules: the scope is passive and the 1 kHz calibration output is used only into the probe. Nothing here transmits.
+- **Candidates:**
+  1.
+    - **Name:** Hantek 6022BE (same part) from Botland, Polish EU importer, plus a buffered generic FX2 LA
+    - **Kind:** current_part
+    - **Price usd:** Scope: EUR 67.30 on botland.store (search snippet: EUR 56.55 net, so the 67.30 includes 19% VAT) = $75.65 at 1.1241, or PLN 299.00 gross / 243.09 net on botland.com.pl (about $75-82, PLN rate is my model and not verified). LA: $5-10. Set: about $81-86, plus GLS EU shipping from EUR 8.07 ($9.07). Model landed total about $90-95, against $141-172 plus UK duty for the current source.
+    - **Spec comparison:** Same model, so every spec in critical_specs is identical: 2 ch, 20 MHz spec (about 17 MHz measured at 1 V/div), 8-bit AD9288, 30/15 MS/s streamed, 1 MOhm || 25 pF, x1/x2/x5/x10 gains, DC accuracy +/-3%, two 1x/10x probes and a USB cable in the box. Botland lists 'Maximum input 35 Vpp', while the OpenHantek manual gives +/-35 V safe; use the more conservative figure. The LA half is unchanged: CY7C68013A, 8 ch at 24 MS/s via fx2lafw.
+    - **Worse in:** Nothing in the specs. Sourcing points to check: the probe model is not named on the page; the price widget failed to load ('Nie udało się pobrać ceny'), so 299 PLN and EUR 67.30 come from the page data; the stock section lists both 'in stock' and 'Na zamówienie'; botland.store's text says it sells only to registered businesses with a VAT ID. Consumer sales are confirmed only on botland.com.pl (30-day withdrawal right, 24-month warranty), and consumer shipping outside Poland/Lithuania is not confirmed.
+    - **Compatibility:** Identical: USB 04b4:6022, OpenHantek6022 3.4.1-rc2 arm64 .deb, libsigrok hantek-6xxx, same power draw and same bench case. On arrival: check lsusb 04b4:6022; open the case and confirm the AD9288, the AD8065 front end and the Mornsun A0505S-2WR2 against the sigrok photos; confirm FW0210 loads; run offset calibration with shorted inputs; check the 1 kHz calibration square wave; check the response at 1/10/17/20 MHz at 1 V/div with a conducted source (tinySA generator into a 50 Ohm feed-through, lowest level, no antenna anywhere); measure the noise floor at 100 mV/div; measure the draw with the FNB58.
+    - **Seller url:** https://botland.com.pl/oscyloskopy/6716-oscyloskop-hantek-6022be-usb-pc-20mhz-2-kanaly-5904422359867.html
+    - **Risks:** Low counterfeit risk: Botland is named as the EU market introducer, the manufacturer is Shenzhen-based and the item has GPSR data. Stock and consumer cross-border shipping must be confirmed at checkout. Botland does not appear to stock a generic FX2 LA (its search found none), so the LA comes from another seller.
+    - **Sources:**
+      - https://botland.store/oscilloscopes/6716-oscilloscope-hantek-6022be-usb-pc-20mhz-2-channels-5904422359867.html
+      - https://botland.com.pl/szukaj?s=hantek+6022
+      - https://botland.com.pl/oscyloskopy/6716-oscyloskop-hantek-6022be-usb-pc-20mhz-2-kanaly-5904422359867.html
+      - https://sigrok.org/wiki/Hantek_6022BE
+      - https://www.eevblog.com/forum/testgear/hantek-6022be-20mhz-usb-dso/
+  2.
+    - **Name:** Buffered FX2 LA clone (MCU123 Saleae-Logic-clone type: CY7C68013A + NXP 74HC245) for the LA half of the set
+    - **Kind:** generic_or_clone
+    - **Price usd:** $5-10, the range given on the sigrok wiki (AliExpress, Taobao, hotmcu.com). No live EU listing was checked: AZ-Delivery returned HTTP 429, and Berrybase and Botland list no such board.
+    - **Spec comparison:** 8 ch at 24 MHz via fx2lafw (sigrok support status 100%). The 74HC245 buffer gives fixed thresholds VIH 2.0 V / VIL 0.8 V and a -0.5 to 5.25 V input range. That is equal on speed, channels and streaming depth to an unbuffered board (Lcsoft Mini Board: no buffer, no resistors) and better in input protection and 5 V tolerance.
+    - **Worse in:** Nothing compared with the stack's 'generic CY7C68013A' board. Like every fixed-threshold FX2 board it cannot read 1.8 V logic, but the current part cannot either.
+    - **Compatibility:** Enumerates as 0925:3881 (Saleae Logic ID); noble's fx2lafw 0.1.7, PulseView 0.4.2 and sigrok-cli 0.7.2 work unchanged; HS bulk, bus-powered. Keep the labd rule: LA above 12 MS/s only with RTL-B and HF+ paused.
+    - **Seller url:** https://sigrok.org/wiki/MCU123_Saleae_Logic_clone
+    - **Risks:** Sold by random marketplace vendors, so the FX2 may be a CBM9002A substitute. Check that the board has the 74HC245 (and ideally series resistors) before buying, and run a 24 MS/s 10-minute capture with no drops on arrival.
+    - **Sources:**
+      - https://sigrok.org/wiki/MCU123_Saleae_Logic_clone
+      - https://sigrok.org/wiki/Fx2lafw
+  3.
+    - **Name:** Used Hantek 6022BE, or used Voltcraft DSO-2020 USB (rebadged 6022-compatible), from the EU second-hand market
+    - **Kind:** used
+    - **Price usd:** UNVERIFIED. eBay.de, eBay.co.uk, eBay.com and Kleinanzeigen all returned HTTP 403 to fetches, so no used price could be confirmed. Model: worth it only at about $40 or less landed with both probes, because a new unit from Botland costs about $76.
+    - **Spec comparison:** If genuine, the hardware is identical (same AD9288, AD8065, x1-x10 gains). OpenHantek supports both the 6022BE (04b4:6022) and the DSO-2020 (04b4:2020). Firmware is loaded into RAM, so a used unit cannot be bricked, and offset/gain can be recalibrated with OpenHantek and calibrate_6022.py. No independent measurement of DSO-2020 hardware identity was found; compatibility rests on the OpenHantek README.
+    - **Worse in:** No warranty, against 24 months new from Botland. Probes may be missing or degraded. Front-end damage from earlier over-voltage is invisible (the clamp diode limits Ve to +/-5 V, and more than +/-35 V can damage the unit). Accept only after the on-arrival measurement checklist under the first candidate.
+    - **Compatibility:** Same as the current part. The DSO-2020 uses PID 0x2020, which OpenHantek supports; check that the 60-openhantek.rules udev file covers it.
+    - **Seller url:** 
+    - **Risks:** Unverified price and condition. Possible mislabelled units; a SainSmart DDS120 (different front end) can be sold as 6022-compatible. Without a measured pass this candidate is rejected.
+    - **Sources:**
+      - https://raw.githubusercontent.com/OpenHantek/OpenHantek6022/main/README.md
+      - https://raw.githubusercontent.com/OpenHantek/OpenHantek6022/main/docs/OpenHantek6022_User_Manual.pdf
+  4.
+    - **Name:** Hantek 6022BL (scope + 16-ch hardware LA in one unit), REJECTED
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $84-102 on AliExpress, store unconfirmed (STACK v1). The Debug Store listing is 404. This costs more than the Botland 6022BE plus a generic LA (about $81-86).
+    - **Spec comparison:** Same nominal 20 MHz / 48 MS/s / 8-bit / 1 MOhm || 25 pF, and OpenHantek says it works identically in scope mode. The front end differs: 2x EL5166 + 2x AD8065, with the ADC under a heatsink and unidentified (AD9288 or MXT2088 is a guess). No independent measurement of its bandwidth or noise was found. Better: PP80B 80 MHz probes and 16 hardware LA channels (sigrok uses 8).
+    - **Worse in:** Scope OR LA, chosen with the H/P button at plug-in, so analog and digital cannot be captured at the same time (the current set can). Analog equality is unproven by measurement. Not cheaper than the first candidate.
+    - **Compatibility:** 04b4:602a for OpenHantek scope mode; 0925:3881 for fx2lafw LA mode; arm64 OK.
+    - **Seller url:** 
+    - **Risks:** AliExpress store not confirmed; grey-copy risk from marketplaces (STACK 9.1).
+    - **Sources:**
+      - https://sigrok.org/wiki/Hantek_6022BL
+      - https://raw.githubusercontent.com/OpenHantek/OpenHantek6022/main/docs/OpenHantek6022_User_Manual.pdf
+  5.
+    - **Name:** DIY Raspberry Pi Pico logic analyser (gusmanb LogicAnalyzer or pico-coder sigrok-pico) to replace the FX2 LA, REJECTED
+    - **Kind:** diy
+    - **Price usd:** About $4-5 for a Pico (Raspberry Pi list price, not fetched in this step) plus an optional level-shifter board. At most about $5 saved against the $5-10 FX2 board.
+    - **Spec comparison:** gusmanb: 24 ch at 100 MS/s (Pico 2 'blast' mode at 400 MS/s still under test), but buffered capture of at most 131,071 samples in 8-ch mode, 65,535 in 16-ch mode and 32,767 in 24-ch mode, and 'does not transfer data in real time'. It is 3.3 V only unless the TXU0104 shifter is fitted (1.65-5.5 V). sigrok-pico: 21 digital + 3 analog channels; its driver was merged into sigrok mainline in Sep 2023.
+    - **Worse in:** Capture depth: block capture instead of fx2lafw's streaming, which breaks the 24 h PPS log. Compatibility: per the project page, PulseView 0.4.2 and sigrok-cli 0.7.2 (the noble packages) do not support the sigrok-pico driver, so newer sigrok would have to be built from source, outside the pinned apt set. gusmanb uses its own non-sigrok app, and sigrok is used only for decoders and export.
+    - **Compatibility:** Breaks the stack's pinned noble sigrok packages. An unshifted Pico is not 5 V tolerant.
+    - **Seller url:** https://github.com/gusmanb/logicanalyzer
+    - **Risks:** DIY build, no measured equality to fx2lafw streaming, extra software maintenance.
+    - **Sources:**
+      - https://github.com/gusmanb/logicanalyzer
+      - https://github.com/pico-coder/sigrok-pico
+  6.
+    - **Name:** SainSmart DDS120 (FX2-based 6022-class USB scope), REJECTED
+    - **Kind:** other_brand
+    - **Price usd:** Not found (not verified)
+    - **Spec comparison:** OpenHantek supports it (VID:PID 8102:8102), but with 'a different analog front end and sigrok-based firmware with some limitations'. No independent measurement of its bandwidth, noise or gain steps was found.
+    - **Worse in:** Unproven front end and acknowledged software limitations. Under angle B it is rejected for lack of measured evidence.
+    - **Compatibility:** OpenHantek and libsigrok hantek-6xxx
+    - **Seller url:** 
+    - **Risks:** No measurements and no price; marketplace-only sourcing.
+    - **Sources:**
+      - https://raw.githubusercontent.com/OpenHantek/OpenHantek6022/main/README.md
+      - https://raw.githubusercontent.com/OpenHantek/OpenHantek6022/main/docs/OpenHantek6022_User_Manual.pdf
+- **Notes:** VERDICT (angle B): no generic, clone, DIY or used part is proven by measurement to be not worse than the Hantek 6022BE and also cheaper. The cheapest not-worse option is the same part from a cheaper EU seller: Botland (Polish EU importer) lists the 6022BE at EUR 67.30 (about $75.65) or PLN 299 gross, against GBP 120 inc VAT at The Debug Store, which also carries UK-to-EU flat duty, import VAT and DHL Express since 1 July 2026 (operator note 34). Pair it with a buffered MCU123-type FX2 LA ($5-10, 74HC245 input buffer, -0.5 to 5.25 V input range). The set comes to about $81-86 plus GLS EU shipping from EUR 8.07, about $55-90 below $141-172, with no spec traded away and simultaneous scope and LA capture kept. If the Botland stock or consumer cross-border shipping cannot be confirmed at checkout, keep the current part and source.
+  
+  SPEC CORRECTION for v2: on independent measurement the 6022BE is not 20 MHz on every range. It reaches about 17 MHz at 1 V/div and a bit under 10 MHz at 100 mV/div (womai, EEVblog). The smallest real hardware range is +/-0.5 V full scale (x10 gain, about 3.9 mV/LSB); 20 and 50 mV/div are digital zoom. The input is DC-coupled only. For ripple work, use a DC block or the AC mod, plus oversampling (10-12 effective bits at 10 MS/s or below). This is still enough for the converter fundamentals at 250 kHz-1.04 MHz and for PPS/UART edges.
+  
+  REJECTED: the 6022BL, because it is scope OR LA and its different front end (EL5166 + AD8065, ADC unidentified) has no measured equality. Pico LAs, because they use buffered capture (at most 131k samples) or need sigrok newer than noble's PulseView 0.4.2 / sigrok-cli 0.7.2. The DDS120, because of its different front end and no measurements. Used units pass only on the arrival checklist; their price is unverified.
+  
+  LIMITS OF THIS PASS: the shared web-search budget ran out on my first query, so the rest of the work used WebFetch on primary pages only. Used-market prices could not be checked (eBay.de, .co.uk and .com and Kleinanzeigen all returned 403). No EU listing for the generic LA was confirmed (AZ-Delivery returned 429). The Hantek official AliExpress store price was not checked. The PLN-to-USD conversion is my model. Rules: everything here is passive receive-side test gear; any bandwidth check uses a conducted source into a 50 Ohm feed-through at the lowest level with no antenna connected; there are no loops or H-field probes.
 
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
