@@ -4742,3 +4742,20 @@ I committed and pushed the remaining change, the updated REQUIREMENTS.md with th
 
 ---
 
+### 🧑 Повідомлення користувача — 2026-10-18 04:06:46 UTC
+
+> Stop hook feedback:
+> [~/.claude/stop-hook-git-check.sh]: There are uncommitted changes in the repository. Please commit and push these changes to the remote branch.
+
+### 🤖 Зведення #170 — 2026-10-18 04:06:58 UTC
+
+I committed and pushed the requirements update (b4c4fba), and the working tree is clean now.
+
+The new decisions it records:
+- **SID logging:** I dropped logging on 16–25 kHz VLF carriers, because those transmitters are naval. Space-weather logging now uses only the amplitude of civilian LF time-signal carriers, such as DCF77 and MSF.
+- **Inmarsat-C:** only EGC SafetyNET is processed. User traffic is never demodulated or decoded, not even in memory.
+- **Power meter:** the tinySA covers it with its channel-power measurement. An AD8318 is optional.
+- **Location without GNSS:** the fallback uses no city list. It uses the last good fix or manually entered coordinates.
+
+---
+
