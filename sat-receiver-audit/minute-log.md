@@ -592,3 +592,7 @@ P4, нове:
 - A (пакети): Radxa OS r2 підключає PPA ubuntu-qcom-iot/qcom-ppa. У ньому вже лежать libqnn1, libqnn-dev і qairt-dsp-binaries версії 2.49.0, а також linux-firmware-dragonwing 20260825. Без закріплення apt підтягне QNN 2.49, на якій, за темою 31462, на QCS6490 ламається квантизація. У v2 для цих пакетів треба поставити Pin-Priority −1, а QAIRT лишити на 2.42.0.251225. Додав у operator_notes, пункт №15.
 Джерела: SatDump pipelines/*.json (за агентом C); RadxaOS-SDK rsdk socs.json; launchpad.net/~ubuntu-qcom-iot/+archive/ubuntu/qcom-ppa (за агентом A).
 
+## 2026-10-18 09:09 UTC
+
+P4, D/A (відновлення, нова опція; не перевірено): Armbian Imager 2.0, за статтею Armbian від 26 серпня (рік не вказано, імовірно 2026), уміє прошивати UFS на Radxa Dragon Q6A через EDL по USB без сторонніх програм. Для інструкції зі складання (P7) це запасний спосіб відновити плату, якщо зламано обидва слоти A/B: кнопка EDL і кабель USB-A↔USB-A, далі Armbian Imager або qdl. Образ все одно беремо від Radxa (r2), а не від Armbian. Джерело: armbian.com, стаття про Armbian Imager 2.0 (за агентом D).
+
