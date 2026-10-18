@@ -20436,6 +20436,290 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   SOURCING NOTE: no franchised source is cheaper for qty 2. DigiKey EDD is $10.00 (backorder to 18 Jan 2027) and IDD is $11.37 (in stock); TME is out of stock. LCSC MSOP at $8.33 stays the cheapest verified in-stock source, with the moderate risk of a non-franchised seller already noted in the stack.
 
+## searchB:ti_tps2553_lab_port_0_75_a_lna_ch1_4_300 (run `wf_a268b76e-da0`)
+
+- **Part:** TI TPS2553 adjustable current-limited power switch (TPS2553DBVR-1, the latch-off version the re-audit requires). Qty 10, used for: LAB USB-A port at 0.75 A (RILIM 34.8k); LNA ch1-4 at 300 mA (88.7k), with 162k on TCBT channels; HF+ and RTL VBUS at 1.5-2x the measured current. EN comes from MCP #1 and FAULT goes to MCP #3.
+- **Current price usd:** STACK figure: $5.50 for 10. That is $0.55 each, which matches the LCSC qty-1 price of the non-latch TPS2553DBVR. Prices verified 18 Oct 2026, all ex-VAT, before shipping: (a) LCSC C111738, TPS2553DBVR-1 (genuine TI, latch-off): $0.2959 each at 5+, so $2.96 for 10, 2,665 in stock. (b) LCSC C55266, TPS2553DBVR (constant-current): $0.4515 at 10+, so $4.52 for 10, 51,678 in stock. (c) DigiKey TPS2553DBVR-1: $0.766 at 10, so $7.66, 4,259 in stock. (d) TME (EU) does not stock it as a standard item (request only). If EU VAT of about 21% is paid on the LCSC price, 10 pcs cost about $3.58 (model). Whether LCSC collects VAT at checkout for EU orders is not verified.
+- **Critical specs:**
+  - Operating VIN covers the 4.5 V LNA rail and the 5.0 V LAB5 rail with margin. TPS2553: 2.5-6.5 V operating, 7 V abs max on IN and OUT.
+  - One resistor sets the current limit across every point the stack needs: TCBT channels 144-192 mA (162k); LNA channels 265/299/339 mA (88.7k); LAB port 685/747/817 mA (34.8k); HF+ and RTL VBUS at 1.5-2x the measured current (about 0.3-0.6 A). Datasheet range: 75 mA-1.7 A typ, RILIM 15-232k.
+  - Current-limit accuracy is guaranteed over the full junction range (TJ -40..125 C), not only at 25 C. TPS2553: 475-565 mA at 49.9k; 110-150 mA at 210k; 1200-1375 mA at 20k.
+  - A latch-off version (-1) is available, and toggling EN resets it, so labd can reset each channel. The re-audit requires -1 on all LNA channels.
+  - FAULT deglitch is 5 / 7.5 / 10 ms (min/typ/max) for overcurrent. The 5 ms minimum must exceed the inrush time into the HF+ VBUS LC (100 uF) so the latch does not trip falsely.
+  - Open-drain FAULT, 180 mV max at 1 mA and 1 uA leakage. It asserts on both overcurrent and reverse-voltage.
+  - Short-circuit response 2 us typ.
+  - RDS(on) 85 mOhm typ / 135 mOhm max (DBV). At 300 mA that is at most 41 mV of drop, which matters for the Uputronics 440 on the 4.5 V rail.
+  - Reverse-voltage comparator (95-190 mV) plus reverse leakage of 0.01 uA typ (1 uA max), to stop back-feed from the LNA, bias tee or USB device side.
+  - Controlled soft start: rise 0.7-1.5 ms, turn-on 3 ms max.
+  - Supply current 140 uA max on and 1 uA max off (battery idle budget).
+  - Thermal shutdown at 135 C in current limit and 155 C otherwise.
+  - Active-high EN; threshold 0.66-1.1 V, driven directly by MCP23017 3.3 V GPIO.
+  - Safety certification: UL Listed E169910 and NEMKO IEC 60950-1 (build quality and reliability).
+  - SOT-23-6 (DBV), hand-solderable. Pinout IN, GND, EN, FAULT, ILIM, OUT; RILIM values already worked out from TI's equations.
+  - RF cleanliness: the internal charge pump that drives the N-FET gate is a possible spur source on LNA bias rails. No candidate specifies it, so it must be measured with the tinySA at the LNA ports (already planned in C9/P16).
+  - Genuine part from a traceable distributor (counterfeit rule). It is pure hardware, so there is no driver or Ubuntu dependency.
+- **Candidates:**
+  1.
+    - **Name:** TI TPS2553DBVR-1 from LCSC (C111738), the current part at the cheapest verified source
+    - **Kind:** current_part
+    - **Price usd:** $0.2959 each (5+), so $2.96 for 10, ex-VAT; 2,665 in stock 18 Oct 2026. DigiKey fallback: $0.766 at 10 ($7.66).
+    - **Spec comparison:** Identical part, so every spec is equal: datasheet SLVS841F Rev F (Aug 2016), 2.5-6.5 V, 85/135 mOhm, IOS table as listed, 2 us, latch-off, FAULT deglitch 5-10 ms, UL E169910.
+    - **Worse in:** Nothing. It is 46% cheaper than the $5.50 in the STACK, and the latch-off -1 is cheaper at LCSC than the non-latch TPS2553DBVR ($0.4515).
+    - **Compatibility:** Drop-in: same part number, RILIM values unchanged (88.7k / 162k / 34.8k). It fits in the Week-1 LCSC order already planned, so shipping is shared.
+    - **Risks:** As far as I know LCSC is not on TI's authorized-distributor list (not verified). The counterfeit risk for a $0.30 part is low but not zero. Inspect goods-in markings and check each channel's trip point with the electronic-load ramp already planned (262-342 mA). For full traceability, DigiKey costs about $4.70 more for 10.
+    - **Seller url:** https://www.lcsc.com/product-detail/C111738.html
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/C111738.html
+      - https://www.digikey.com/en/products/result?keywords=TPS2553DBVR-1
+      - https://www.ti.com/lit/ds/symlink/tps2553.pdf
+      - https://www.ti.com/product/TPS2553
+  2.
+    - **Name:** HTC Korea TAEJIN 'TPS2553D' (TPS2553DSF6), a clone sold under a TI-style part number
+    - **Kind:** generic_or_clone
+    - **Price usd:** $0.418 at 10, so $4.18 (JLCPCB/LCSC library price for C2904147); only 9 in stock.
+    - **Spec comparison:** Only a one-page datasheet preview is published (Apr 2021 R1.0, 'please contact us'), with no electrical tables. Stated: 2.8-5.5 V; 200 mA-2.25 A adjustable; foldback short-circuit protection; 90 uA on, 5 uA max standby; reverse-current protection; output auto-discharge. There is no guaranteed accuracy figure, no latch-off version, no deglitch or response-time spec, and no UL listing shown. I found no independent measurements.
+    - **Worse in:** Its 200 mA minimum cannot set the 144-192 mA TCBT channels. VIN max 5.5 V vs 6.5 V. No latch-off. No accuracy, response or deglitch guarantees. No certification. It also costs more than the genuine TPS2553DBVR-1 at LCSC. REJECT.
+    - **Compatibility:** SOT-23-6, but the pinout and RILIM curve cannot be confirmed from the published preview.
+    - **Risks:** Re-using TI's part number invites mix-ups, and counterfeit screening is impossible. No measured evidence exists, so it fails the Angle B requirement.
+    - **Seller url:** https://jlcpcb.com/partdetail/C2904147
+    - **Sources:**
+      - https://datasheet.lcsc.com/datasheet/pdf/95e12b1803bef9899f6e94da4831a0c3.pdf?productCode=C2904147
+  3.
+    - **Name:** Silergy SY6280AAC (generic USB power switch common in Chinese modules)
+    - **Kind:** generic_or_clone
+    - **Price usd:** $0.0926 at qty 1 (JLCPCB/LCSC library price for C55136), about $0.93 for 10; 105,329 in stock. LCSC retail page not fetched.
+    - **Spec comparison:** Datasheet is a 'Preliminary target design spec', AN_SY6280 Rev 0.1. VIN 2.4-5.5 V (6 V abs max); RDS(on) 80 mOhm typ (no max); ILIM = 6800/Rset, 0.75-1.25 A at 6.8k (±25%, 25 C only); ILIM min 0.4 A, max 2 A; IQ 25 uA; no FAULT/FLG pin; thermal auto-retry; output discharge; reverse blocking only when shut down. SOT-23-5 with a different pinout. I found no independent measurements.
+    - **Worse in:** It cannot set 300 mA or 144-192 mA (0.4 A minimum). It has no FAULT output, so there is nothing to wire to MCP #3. Accuracy is ±25% with no temperature spec. No latch-off, no short-circuit response spec, 6 V abs max, no UL/CB. REJECT.
+    - **Compatibility:** Not pin-compatible (SOT-23-5); the FAULT wiring would be lost.
+    - **Risks:** The datasheet is preliminary and there is no measured evidence.
+    - **Seller url:** https://jlcpcb.com/partdetail/C55136
+    - **Sources:**
+      - https://datasheet.lcsc.com/datasheet/pdf/0271e5b2ca2a46b8bb16f65855f12fe2.pdf?productCode=C55136
+  4.
+    - **Name:** TI TPS2553DDBVR (TPS2553D, the constant-current-only re-spin), found incidentally; same-vendor cheaper SKU, outside Angle B
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $0.1878 each (5+), so $1.88 for 10 at LCSC C521201 (11,035 in stock); $1.08 less than the -1.
+    - **Spec comparison:** Datasheet SLVSDL7 (Sep 2016). IOS table identical to the TPS2553 (49.9k: 475-565 mA; 210k: 110-150 mA; 20k: 1200-1375 mA); 85/135 mOhm; 2 us; reverse-voltage comparator; FAULT; UL E169910 / NEMKO. VIN 2.7-6.5 V (vs 2.5). IIN_on max 150/130 uA (vs 140/120). TJ max 150 C.
+    - **Worse in:** It has no latch-off version, and the re-audit requires latch-off on LNA ch1-4. On a shorted LAB port it would sit in current limit dissipating about 3.7 W and cycle in thermal shutdown instead of latching off. Supply current is also slightly higher. REJECT as a straight swap. A mixed BOM (-1 on the LNA channels, D on LAB and VBUS) would change fault behaviour and saves under $1.
+    - **Compatibility:** Pin- and RILIM-compatible with the TPS2553 DBV.
+    - **Risks:** Same LCSC traceability caveat as the current part.
+    - **Seller url:** https://www.lcsc.com/product-detail/C521201.html
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/C521201.html
+      - https://www.ti.com/lit/ds/symlink/tps2553d.pdf
+  5.
+    - **Name:** Diodes Inc. AP22653AW6-7 (latch-off, active-high EN), found incidentally; other brand, outside Angle B
+    - **Kind:** other_brand
+    - **Price usd:** $0.2607 each (5+), so $2.61 for 10 at LCSC C1511768 (6,955 in stock); DigiKey $0.30 at 10. Saves only $0.35 over the genuine TPS2553DBVR-1 at LCSC.
+    - **Spec comparison:** Datasheet DS41186 Rev 5-2 (Mar 2026). VIN 3.0-5.5 V (6 V abs max) vs 2.5-6.5 V (7 V). RDS(on) 65 typ / 135 max mOhm (equal max). ILIMIT 125 mA-2.665 A. At 49.9k: 441-539 mA over TA -40..85 C (TPS2553: 475-565 mA over TJ -40..125 C). At 210k: 95-155 mA at 25 C only. Foldback short current (e.g. 140 mA at 49.9k). Short-circuit response 5 us typ vs 2 us. FAULT blanking 2/6/20 ms vs 5/7.5/10 ms. Reverse trip 65 mV typ; reverse-current limit 0.32 A. Output discharge 600 Ohm. UL E322375 and IEC 60950-1 CB. Same SOT-26 pin order (IN, GND, EN, FAULT, ILIM, OUT).
+    - **Worse in:** Narrower VIN and lower abs max (6 V vs 7 V). Slower short-circuit response. Its 2 ms minimum fault blanking makes false latch-off on HF+ LC inrush more likely. Low-current accuracy is guaranteed only at 25 C. The RILIM curve differs, so all resistors would need re-calculating. I found no independent measurements. REJECT.
+    - **Compatibility:** Footprint-compatible, but the RILIM values change and the foldback behaviour would need qualifying into the 100 uF HF+ LC.
+    - **Risks:** Genuine-brand part with low counterfeit risk, but no measured evidence for this stack.
+    - **Seller url:** https://www.lcsc.com/product-detail/C1511768.html
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/C1511768.html
+      - https://www.digikey.com/en/products/result?keywords=AP22653AW6-7
+      - https://www.diodes.com/assets/Datasheets/AP22652_53.pdf
+  6.
+    - **Name:** TI TPS25221DBVR (TI's listed pin-for-pin alternative), outside Angle B
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $0.583 at 10 at DigiKey, so $5.83 (6,954 in stock). Not cheaper than the TPS2553DBVR-1 at LCSC ($2.96).
+    - **Spec comparison:** Datasheet SLVSDT3D (Dec 2019). VIN 2.5-5.5 V; 70/110 mOhm; ILIMIT 275 mA-2.7 A; 210k gives 210-370 mA over temperature; 80k gives 610-790 mA; 1.5 us response; deglitch 6-12 ms; reverse blocking only when disabled; UL 60950/62368.
+    - **Worse in:** It cannot set 144-192 mA (TCBT channels). Its 300 mA-class setting has a wide spread (210-370 mA). No latch-off version. VIN max 5.5 V. No reverse-voltage comparator while enabled. It is also more expensive than the LCSC -1. REJECT.
+    - **Compatibility:** Pin-compatible, but a different RILIM curve.
+    - **Risks:** None beyond the spec shortfalls.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=TPS25221DBVR
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/tps25221.pdf
+      - https://www.ti.com/product/TPS2553
+  7.
+    - **Name:** DIY discrete current limiter (P-MOSFET plus sense resistor plus BJT or comparator trip), or INA3221 software cut-off only
+    - **Kind:** diy
+    - **Price usd:** Not priced. It needs several parts per channel against a $0.30 IC, so it cannot be cheaper in practice (not costed).
+    - **Spec comparison:** I found no independent measurements showing equal 2 us short-circuit response, ±9% limit accuracy over temperature, reverse-voltage blocking, latch-off with a 5-10 ms deglitch, or a FAULT output. An INA3221 polled over I2C reacts in milliseconds, not microseconds.
+    - **Worse in:** Response time, accuracy over temperature, reverse protection, certification, part count and board area. REJECT, because there is no measured evidence of equality.
+    - **Compatibility:** Would need a new layout and labd changes. The INA3221 stays as the monitor the re-audit already added, not as a replacement.
+    - **Risks:** Unqualified protection on the LNA and USB rails.
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/tps2553.pdf
+  8.
+    - **Name:** Used, reclaimed or loose-lot 'TPS2553' ICs (marketplace pulls)
+    - **Kind:** used
+    - **Price usd:** Not priced. No specific listing was checked.
+    - **Spec comparison:** No traceability and no measurements. Remarked or reclaimed parts cannot be shown to match SLVS841F.
+    - **Worse in:** Fails the counterfeit and traceability rule, and genuine new parts already cost $0.30. REJECT.
+    - **Compatibility:** Nominally a drop-in.
+    - **Risks:** Counterfeit or remarked die, wrong variant (-1 vs constant-current), ESD-damaged pulls.
+- **Notes:** VERDICT: keep the TI TPS2553DBVR-1. No cheaper part that is not worse exists from my angle (generic, clone, DIY, used). None of these has independent measured evidence, and each one checked is worse on at least one critical spec. The real saving comes from the source and the SKU, not from an analog. The genuine latch-off TPS2553DBVR-1 is $0.2959 at LCSC (C111738), so $2.96 for 10, against the $5.50 in the STACK (which matches the non-latch DBVR's qty-1 price) and $7.66 at DigiKey. Update the BOM line to 'TPS2553DBVR-1, LCSC C111738, $2.96/10, verified 18 Oct 2026'. That also settles the STACK's open item 'check the -1 latch variant'.
+  
+  Search limits: my first WebSearch call returned 'budget used up' (a shared limit across agents), so I could not search forums or reviews for independent measurements. Everything here comes from manufacturer datasheets fetched directly and from distributor pages: LCSC product pages, the JLCPCB parts API (same LCSC catalogue), DigiKey and TME. Mouser returned 503.
+  
+  Candidates checked:
+  - Clones: the HTC Korea 'TPS2553D' (only a one-page preview is published, 200 mA minimum, and it costs more) and the Silergy SY6280AAC (preliminary datasheet, no FAULT pin, 0.4 A minimum, ±25%). Both rejected.
+  - Found incidentally, outside my angle: the TI TPS2553D (identical except it has no latch-off), the Diodes AP22653A (narrower VIN, slower response, 2 ms minimum blanking) and the TI TPS25221 (275 mA minimum, no latch, and more expensive). All rejected. The angle A agent should confirm these.
+  
+  EU sourcing: TME does not stock it. DigiKey and Mouser ship to the EU with VAT. LCSC prices are ex-VAT; at about 21% VAT, 10 pcs come to about $3.58 (model). Ordering it with the Week-1 LCSC order shares the shipping.
+  
+  Unchanged checks:
+  - Goods-in marking inspection plus the electronic-load trip test per channel (262-342 mA at 88.7k; 144-192 mA at 162k; 685-817 mA at 34.8k).
+  - Confirm that HF+ VBUS inrush into the 100 uF LC finishes inside the 5 ms minimum FAULT deglitch. Model: about 1.5 ms at 0.34 A.
+  - tinySA spur check of the charge pump on each LNA bias port.
+  
+  Hard rules are unaffected: the part is DC protection only, with no RF emission path.
+
+## searchA:ti_tps2553_lab_port_0_75_a_lna_ch1_4_300 (run `wf_a268b76e-da0`)
+
+- **Part:** TI TPS2553 adjustable current-limited power-distribution switch, x10. Uses: LAB USB-A port at 0.75 A (RILIM 34.8k, 685/747/817 mA); LNA bias channels ch1-4 at 300 mA (88.7k, 265/299/339 mA), or 162k (144/166/192 mA) on TCBT channels; HF+ VBUS and RTL-A/RTL-B VBUS cutoffs. EN comes from MCP23017 #1 and FAULT goes to MCP #3. Re-audit B chose TPS2553DBVR-1 (latch-off) for every LNA channel.
+- **Current price usd:** 5.50 for 10 (about 0.55 each, LCSC, from the stack, NOT re-verified; LCSC is not a TI-franchised distributor). Verified references on 18 Oct 2026: DigiKey TPS2553DBVR-1 is 1.06 at qty 1 and 0.766 at qty 10 (7.66 for 10), 4,259 in stock, Active. DigiKey TPS2553DBVR is 1.16 at qty 1. TI store: TPS2553DBVR out of stock, no price shown. TME (PL, EU): TPS2553DBVR out of stock, price range 0.52-0.95 shown. TME TPS2553DBVR-1: out of stock, MOQ 3000. Model at 21% EU VAT: DigiKey 10 pcs about 9.27; LCSC 10 pcs about 6.66 plus shipping (VAT collected via IOSS).
+- **Critical specs:**
+  - VIN operating range covers the 4.5 V LNA rail (2x LT3045) and the 5.0 V LAB5 rail with margin: TPS2553 2.5-6.5 V, abs max 7 V on IN/OUT/EN/FAULT, IN-to-OUT +/-7 V
+  - Single-resistor adjustable current limit that reaches all stack settings: ~166 mA (TCBT channels, 162k), ~300 mA (LNA, 88.7k), ~0.5-0.6 A (HF+/RTL VBUS at 1.5-2x measured), ~0.75 A (LAB, 34.8k). TPS2553 range 75 mA-1.7 A, RILIM 15-232k
+  - Current-limit min/max guaranteed over TJ -40..125 C: TPS2553 110-150 mA at 210k, 475-565 mA at 49.9k (+/-9%), 1200-1375 mA at 20k; equations IOSmin=25230/R^1.016, IOSnom=23950/R^0.977, IOSmax=22980/R^0.94
+  - Constant-current limiting (no foldback), so it starts into the HF+ VBUS LC (100 uH/100 uF) and 120 uF USB loads; latch-off variant (-1) that labd resets with an EN toggle
+  - FAULT open-drain, VOL <=180 mV at 1 mA; overcurrent deglitch 5/7.5/10 ms, reverse deglitch 2/4/6 ms; asserts on overcurrent, overtemperature and reverse voltage
+  - Short-circuit response 2 us typ
+  - Reverse protection while enabled: comparator (VOUT-VIN) 95-135-190 mV, FET off in 3-7 ms. Reverse leakage when unpowered IREV 0.01/1 uA. Needed for the no-back-feed rules (bench hub on its own bank, RTL/HF+ VBUS, LNA bias lines)
+  - RDS(on) 85 typ / 95 max mOhm at 25 C, 135 max over temperature (SOT-23 DBV). Drop at the 4.5 V LNA rail is about 15-24 mV at 180 mA
+  - EN active-high, VIH 1.1 V / VIL 0.66 V (3.3 V MCP23017). Fail-safe OFF through a pull-down when the MCP/Q6A is unpowered
+  - Supply current: off <=1 uA, on 100-140 uA
+  - Continuous output 1.2 A at TJ <=125 C (1.5 A at <=105 C); dual thermal sensors (135 C in current limit, 155 C); UVLO 2.35/2.45 V; soft start with 0.7-1.5 ms rise
+  - SOT-23-6 DBV, hand-solderable, pinout IN-GND-EN-FAULT-ILIM-OUT
+  - UL listed E169910 plus NEMKO IEC 60950-1 (LAB USB-A port)
+  - Genuine supply chain: authorized distributor, or a reputable non-franchised one with the risk noted
+  - RF: linear DC switch, no switching spurs. Every candidate here is also linear, so RF and receive-only rules are not affected
+- **Candidates:**
+  1.
+    - **Name:** TI TPS2553DBVR-1 (latch-off) - KEEP
+    - **Kind:** current_part
+    - **Price usd:** About 0.55 each / 5.50 for 10 at LCSC (unverified). DigiKey 0.766 each at qty 10 / 7.66 for 10 (verified 18 Oct 2026, 4,259 in stock).
+    - **Spec comparison:** Reference part (TI SLVS841F). VIN 2.5-6.5 V, abs max 7 V. RDS(on) 85/95 mOhm. Limit 75 mA-1.7 A, guaranteed over TJ -40..125 C. 2 us short-circuit response. Reverse comparator 95-190 mV. IREV 1 uA max. Off current 1 uA. FAULT deglitch 5-10 ms. Constant-current mode or latch-off. UL E169910.
+    - **Worse in:** Nothing (this is the baseline). It has no output discharge and no current readback; the INA3221 from re-audit B covers readback.
+    - **Compatibility:** As designed: same RILIM values (34.8k, 88.7k, 162k), EN from MCP23017 #1, FAULT to MCP #3.
+    - **Risks:** LCSC is not TI-franchised: low but non-zero counterfeit risk, and the 0.55 price was not re-checked. DigiKey (authorized) costs 2.16 more for 10. TI store and TME are out of stock.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=TPS2553DBVR-1
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/tps2553.pdf
+      - https://www.digikey.com/en/products/result?keywords=TPS2553DBVR-1
+      - https://www.ti.com/product/TPS2553/part-details/TPS2553DBVR
+      - https://www.tme.eu/en/details/tps2553dbvr-1/power-switches-integrated-circuits/texas-instruments/
+      - https://www.tme.eu/en/details/tps2553dbvr/power-switches-integrated-circuits/texas-instruments/
+  2.
+    - **Name:** Diodes Inc AP22653AW6-7 (latch-off, active-high EN, SOT26)
+    - **Kind:** other_brand
+    - **Price usd:** 0.30 each at qty 10 / 3.00 for 10 (DigiKey, 85,075 in stock, Active; verified 18 Oct 2026)
+    - **Spec comparison:** Better: RDS(on) 65/90 mOhm at 25 C (vs 85/95; 135 max over temp, same); 2.1 A continuous (vs 1.5 A); reverse-current limit 0.32 A with a 65 mV trip and blocking during shutdown; 600 Ohm output discharge. Equal: IREV 0.01/1 uA, off current 1 uA, UL E322375 + IEC 60950-1 CB, latch-off (A) and constant-current versions, same SOT26 pinout (IN, GND, EN, FAULT, ILIM, OUT). Worse: VIN 3.0-5.5 V and abs max 6.0 V (vs 6.5 V / 7 V). Limit at 210k is 95-155 mA at 25 C only (vs 110-150 mA over TJ -40..125). At 49.9k: 441-539 mA over TA -40..85 (+/-10%) vs 475-565 mA over TJ -40..125 (+/-9%). Short-circuit response 5 us vs 2 us. Foldback ISHORT (140 mA at 49.9k vs a 490 mA limit). Fault blanking 2/6/20 ms vs 5/7.5/10 ms. EN VIH 1.5 V (fine with 3.3 V). IQ 140/160 uA vs 120/140.
+    - **Worse in:** Lower overvoltage margin (5.5 V operating / 6.0 V abs max); wider and less fully specified current-limit tolerance at the 166 mA and 300 mA settings; slower short-circuit response (5 vs 2 us); foldback during start. Model: starting into the HF+ VBUS 100 uF LC at the folded-back current could pass the 2 ms minimum blanking and latch off the A version.
+    - **Compatibility:** Footprint drop-in. Every RILIM must be recalculated (different curve: 49.9k gives 490 mA). Works at 4.5 V and 5.0 V. Back-feed behaviour is equal or better.
+    - **Risks:** Not admissible under the not-worse rule. Use only if the user explicitly accepts the voltage-margin, accuracy and speed trade, and after a bench test of start-up into the HF+ LC.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=AP22653AW6-7
+    - **Sources:**
+      - https://www.diodes.com/assets/Datasheets/AP22652_53.pdf
+      - https://www.digikey.com/en/products/result?keywords=AP22653AW6-7
+  3.
+    - **Name:** SG Micro SGM2593XN6G/TR (SOT-23-6; replaces the obsolete SGM2553)
+    - **Kind:** other_brand
+    - **Price usd:** Unverified (no distributor price fetched; LCSC is likely the source and its pages could not be read)
+    - **Spec comparison:** Better: RDS(on) 65 typ / 98 max mOhm (-40..85 C), 125 max at 125 C; IQ 27 uA; reverse trip 7-39 mV; 2 us short-circuit response (equal). Same SOT-23-6 pinout (VIN, GND, EN, nFAULT, ILIM, VOUT). EN has an internal 1.2 MOhm pull-down (fail-safe off). Worse: limit tolerance 125-245 mA at 38k (about +/-33%) and 345-467 mA at 17k (about +/-15%) vs TPS2553 +/-9-15%; no latch-off variant; recommended maximum on VOUT/EN 5.5 V, abs max on other pins 6 V; COUT 10 uF minimum required; overcurrent flag delay 14 ms typ with no min/max; shutdown leakage 5 uA max (vs 1 uA).
+    - **Worse in:** Current-limit accuracy at every stack setting, no latch-off, lower voltage ratings, looser leakage limits.
+    - **Compatibility:** Footprint drop-in, but RILIM must be recalculated (ILIM = 6612/R^0.982). It cannot meet the 144-192 mA TCBT window with margin.
+    - **Risks:** Not admissible. The UL file E532373 carries an asterisk in the datasheet (status not checked). Price not verified.
+    - **Seller url:** https://www.sg-micro.com/product/SGM2593
+    - **Sources:**
+      - https://www.sg-micro.com/product/SGM2593
+      - https://www.sg-micro.com/product/SGM2553
+  4.
+    - **Name:** HTC Korea / Taejin TPS2553DSF6 ('TPS2553D', a different die with a TI-like name)
+    - **Kind:** generic_or_clone
+    - **Price usd:** TME shows only a 0.23-0.76 range with no price breaks; stock shows 0 (2,642 in the page data). Unverified.
+    - **Spec comparison:** Worse: VIN 2.8-5.5 V; limit 200 mA-2.25 A with typical values only (no min/max at all); foldback short-circuit current (112 mA ISC at an 80k / 200 mA setting); RDS(on) 100/120 mOhm; no latch-off; EN VIH 2.0 V; FLAG does not report reverse current; off current 5 uA max; TA -40..85 C. Same: SOT-23-6 pinout, reverse-current protection, 1 us response typ. Has auto-discharge (100 Ohm).
+    - **Worse in:** No guaranteed current-limit tolerance, cannot reach 166 mA, worse RDS(on), no latch-off, narrower VIN range.
+    - **Compatibility:** Footprint drop-in; RILIM values are completely different.
+    - **Risks:** Not admissible. Name-confusion hazard: an order for 'TPS2553D' could deliver this part instead of TI silicon.
+    - **Seller url:** https://www.tme.eu/en/details/tps2553dsf6-tt/power-switches-integrated-circuits/taejin-technology-htc-korea/tps2553dsf6/
+    - **Sources:**
+      - https://www.tme.eu/en/details/tps2553dsf6-tt/power-switches-integrated-circuits/taejin-technology-htc-korea/tps2553dsf6/
+      - https://www.tme.eu/Document/61eb04013d28a6b59869ff93fe956d6c/TPS2553D.pdf
+  5.
+    - **Name:** TI TPS2552DBVR-1 (same die, active-low EN)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 0.65 each at qty 10 / 6.50 for 10 (DigiKey, 1,272 in stock; verified). Cheaper than TPS2553-1 at DigiKey, but not cheaper than 5.50.
+    - **Spec comparison:** Identical electrical specifications (same datasheet) except the EN polarity.
+    - **Worse in:** Active-low EN needs a pull-up to IN. When the MCP23017 is unpowered (Q6A off, LAB5 on), that pull-up back-feeds the MCP's ESD diodes and the EN pin is clamped low, which can turn the switch ON. This breaks the fail-safe-off and no-back-feed rules.
+    - **Compatibility:** Footprint drop-in; labd logic would need to be inverted.
+    - **Risks:** Rejected for the fail-safe reason above.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=TPS2552DBVR-1
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=TPS2552DBVR-1
+      - https://www.ti.com/lit/ds/symlink/tps2553.pdf
+  6.
+    - **Name:** TI TPS25221DBVR (TI-listed pin-for-pin alternate)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 0.583 each at qty 10 / 5.83 for 10 (DigiKey, 6,954 in stock; verified). Not cheaper than 5.50.
+    - **Spec comparison:** Better: RON 70 mOhm typ; short-circuit response 1.5 us; off current 0.5 uA. Worse: limit range starts at 275 mA (210k gives 210-370 mA), so 166 mA is impossible and 300 mA is at the edge of the range; no latch-off version; reverse blocking only when disabled (no reverse comparator while on); VIN 2.5-5.5 V, abs max 6 V.
+    - **Worse in:** Cannot set the TCBT channels, poor accuracy at 300 mA, no latch-off, no reverse protection while enabled, lower voltage margin.
+    - **Compatibility:** Footprint drop-in; RILIM curve differs.
+    - **Risks:** Not admissible and not cheaper.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=TPS25221DBVR
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/tps25221.pdf
+      - https://www.digikey.com/en/products/result?keywords=TPS25221DBVR
+      - https://www.ti.com/product/TPS2553
+  7.
+    - **Name:** TI TPS25200DRVR (5 V eFuse with overvoltage clamp)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 0.713 each at qty 10 / 7.13 for 10 (DigiKey; 0 in stock, 3,000 due 16 Nov 2026). Not cheaper.
+    - **Spec comparison:** Better: input withstands 20 V, OUT clamped at 5.25-5.55 V, OVLO 7.6 V, 60 mOhm, 2.6 A. Worse: WSON-6 only; IREV 3/5 uA; no latch-off; reverse blocking only when disabled; 85 mA-2.9 A range with 40-130 mA tolerance at the low end; 3.5 us short-circuit response.
+    - **Worse in:** Package, reverse leakage, no latch-off, no reverse protection while enabled, low-end accuracy.
+    - **Compatibility:** Not a SOT-23 drop-in (2x2 mm WSON).
+    - **Risks:** Not admissible, not cheaper, currently out of stock.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=TPS25200DRVR
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/tps25200.pdf
+      - https://www.digikey.com/en/products/result?keywords=TPS25200DRVR
+  8.
+    - **Name:** Microchip MIC2009A-1YM6-TR
+    - **Kind:** other_brand
+    - **Price usd:** 0.56 at qty 1, 0.4743 at qty 100 (DigiKey, 105,252 in stock; no qty-10 tier shown, so the 10-piece cost is unverified)
+    - **Spec comparison:** Worse: P-channel FET with 170 mOhm typ RDS(on) (2x TPS2553); 900 mA maximum output; VIN 2.5-5.5 V; -40..85 C. The limit-accuracy table was not fetched.
+    - **Worse in:** RDS(on), current rating, voltage range.
+    - **Compatibility:** SOT-23-6; pinout not checked.
+    - **Risks:** Not admissible.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=MIC2009A-1YM6
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=MIC2009A-1YM6
+  9.
+    - **Name:** onsemi NCP380 (adjustable version)
+    - **Kind:** other_brand
+    - **Price usd:** Not checked (rejected on specifications first)
+    - **Spec comparison:** Adjustable range 0.5-2.1 A only; 595-805 mA at 40k (+/-15%); TSOP version limited to 1.0 A; VIN 2.5-5.5 V. RDS(on) 55/75 mOhm (DFN) is better.
+    - **Worse in:** Cannot set 166 mA or 300 mA; worse accuracy at 0.75 A.
+    - **Compatibility:** TSOP-5/6 or UDFN6; different pinout.
+    - **Risks:** Not admissible.
+    - **Seller url:** https://www.onsemi.com/pdf/datasheet/ncp380-d.pdf
+    - **Sources:**
+      - https://www.onsemi.com/pdf/datasheet/ncp380-d.pdf
+- **Notes:** VERDICT: keep the TI TPS2553DBVR-1 (latch-off, as re-audit B chose). I found nothing cheaper that is not worse.
+  
+  - **Cheaper parts (verified prices):** Diodes AP22653AW6-7 costs 3.00 for 10 at DigiKey, and HTC/Taejin 'TPS2553D' and SG Micro SGM2593 may also be cheaper (prices unverified). Each is worse on at least one critical spec: overvoltage margin, current-limit tolerance at the 166/300 mA settings, short-circuit speed, latch-off, or foldback.
+  - **Other TI options:** TPS2552-1, TPS25221 and TPS25200 cost 5.83-7.13 for 10, so none is cheaper than 5.50. TPS2552-1 also breaks fail-safe-off when the MCP is unpowered.
+  
+  Where to buy:
+  - LCSC at about 5.50 for 10 if the cart confirms it. LCSC is not TI-franchised.
+  - Otherwise DigiKey (TI-authorized): 7.66 for 10, 4,259 in stock. EU billing is ex-VAT with VAT added at checkout; at 21% that is about 9.27 (model).
+  - TI store and TME are out of stock (TME's -1 has a 3,000 MOQ).
+  
+  If the user ever accepts the AP22653A trade:
+  - Recompute every RILIM; the curve differs (49.9k gives 490 mA).
+  - Bench-test start-up into the HF+ 100 uH/100 uF LC.
+  - Trip-test each channel at 4.5 V with an electronic load.
+  
+  Limits of this check:
+  - WebSearch was unavailable: the shared per-turn budget was already used up on the first call. All evidence comes from WebFetch of primary datasheets and distributor pages.
+  - No independent bench measurements of any candidate were found. All comparisons use datasheet min/max values; 'model' marks calculations.
+  - LCSC and JLCPCB pages could not be read (JS-only pages, API access denied). Mouser and Farnell returned 503.
+  
+  Datasheet copies: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ds_tps2553/tps2553.txt, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ds_cand/ap.txt, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ds_cand/sgm.txt, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ds_cand/t221.txt, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ds_cand/t200.txt, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ds_htc/htc.txt.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
