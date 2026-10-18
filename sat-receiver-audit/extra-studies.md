@@ -28964,6 +28964,263 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   METHOD NOTES: analog.com returned 503, so AD9361 chip values are from the ADI datasheet as quoted in search snippets. eBay listing pages returned 403, so eBay prices are snippets and marked unverified. Primary sources fetched: Crowd Supply Micro and XTRX pages, Ettus B200/B210 and B200mini spec sheets, the Librespace PDF report, Lime's LMS7002M measurement report (pdftotext), LimeSuiteNG source on raw.githubusercontent.com, and myriadrf forum threads. Downloaded files are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/limeB_dl/.
 
+## searchA:lime_parts_adt_link_r44sf_i_pex_90435_00 (run `wf_c3ba734e-52b`)
+
+- **Part:** Lime-only parts set (with-Lime build is now the default; user decision 18 Oct 2026). Contents after the re-audit: (1) ADT-Link R44SF 5 cm M.2 M-key riser; (2) MHF4L mating/unmating tool. Re-audit B corrected 'I-PEX 90435-001' to I-PEX 90609-0001; (3) aluminium pedestal, gap pad and plate fins for the Lime's bottom-side LMS7002M/LA9310; (4) RF accessories: DC blocks on Lime RX1/RX2, a 10 dB pad after the SAWbird+ GOES on the RX1 L-band route, and a 50 Ohm load on Lime TX X1; (5) third HMC7992 SP4T that routes L-band ch3 to RTL-B or Lime RX1. Re-audit G1 turned it from a marketplace board into a genuine chip on the injector PCB.
+- **Current price usd:** STACK v1 lists 87-127 (a model, mostly unverified). My recount of the corrected contents at the prices I verified today (ex VAT and shipping, qty 1): R44SF 5 cm 19.00 (adt.link); I-PEX 90609-0001 18.31 (DigiKey US; EUR 16.08 ex VAT / 19.14 incl. VAT at DigiKey DE, 358 in stock); pedestal stock about 4.42 (Alu-Verkauf EUR 3.81, per G4) plus a share of the Gelid GP-Ultimate 1.0 mm pad (EUR 4.14 for 90x50, shared with the mechanical set, per G4); fins have no SKU or price; 2x Mini-Circuits BLK-89-S+ 40.52 (20.26 each from Mini-Circuits; DigiKey DE EUR 21.34 ex VAT, 0 in stock, 10 due 27 Oct); 1x 10 dB pad, about 21.07 if it is a Mini-Circuits VAT-10A+ (STACK names no SKU); Lime TX load ANNE-50+ 14.84 (Mini-Circuits); HMC7992LP3DE chip 13.10 (DigiKey US today; EUR 11.50 ex VAT at DigiKey DE per G1). That totals about 131-136 plus fins, above the STACK range. Landing it in the EU adds VAT, plus EUR 3 customs duty per tariff line and the EUR 2 handling fee (from about 1 Nov 2026) on the ADT-Link (CN) and Mini-Circuits (US) direct orders.
+- **Critical specs:**
+  - RISER: PCIe Gen3 8 GT/s, x1 at minimum, error-free. The Lime trains Gen3 x1; the Gen2 fallback cannot carry 2x56 Msps. R44SF is rated PCIe 3.0 x4, 32 Gb/s. Acceptance: LnkSta 8GT/s x1 and zero AER errors in 60 min.
+  - RISER: every sideband and power line wired through: PERST#, CLKREQ#, REFCLK, PEWAKE#, 3.3 V. ADT's R44SF schematic confirms these. The riser must also carry the Lime's 3.3 V current; its current rating is unpublished, so check with INA228 and the riser temperature.
+  - RISER: EMI-shielded flat cables (R44SF uses conductive-polymer shielding on five flat cables), because the riser sits next to the RF bay.
+  - RISER: 5 cm length to fit the case and pedestal layout. The female board must take a 2280 B+M card and have empty FR4 that can be windowed (about 26x20 mm at 36-62 mm) for the pedestal. A published STEP model (ADT_R44_3D) is needed to design the pedestal height.
+  - TOOL: specified by I-PEX for the MHF 4L 1.13 mm plug 20565-001R-13 (Taoglas MHF4L-SMA cables). It protects the Lime's 9 TE CONMHF4 receptacles from damage. Genuine I-PEX.
+  - PEDESTAL/PAD/FINS: aluminium pedestal (about 130-170 W/mK class), flat to 0.2 mm, height taken from the STEP; gap pad 0.5-1.5 mm, rated at least 6 W/mK (maker claim), electrically non-conductive, soft (about 60-70 Shore OO), compressible; designed for 10 W; plate fins in the blower path. Pass: lms7_temp at most 75 C in the 45-min midday soak, ufs-thermal no worse.
+  - DC BLOCK: covers at least 0.3-3.8 GHz (Lime RX range, S-band 2.2 GHz and the 3.3-3.8 GHz wish included); IL about 0.1-0.15 dB typ; DC rating at least 50 V (the system carries 4.5 V LNA bias and 13.2 V LNB feed); SMA M/F; low VSWR.
+  - 10 dB PAD (RX1 after SAWbird+ GOES): DC to at least 3.8 GHz (1.7 GHz is the actual use); 10 +/- 0.3 dB; VSWR at most 1.5 (1.2 typ) to 3 GHz; power at least 0.5 W (the real level is below 0 dBm); -40 C to at least +85 C.
+  - TX LOAD (Lime X1): 50 Ohm, DC to at least 3.8 GHz; return loss at least 30 dB min to 4 GHz is the current part's spec; must absorb the worst-case LMS7002M TX output (milliwatts; the Micro's exact maximum was not re-checked). 1 W at 50 C current spec; -55 to +100 C. Receive-only support part: TX stays software-blocked.
+  - 3rd HMC7992: genuine ADI part from a franchised distributor. 0.1-6 GHz; IL 0.6 typ / 0.9 max dB; isolation 40 min / 45 typ dB at 0.1-2 GHz; IIP3 56 dBm, P1dB 33 dBm at 3.3 V; absorptive; VDD 3.0-5.4 V, VIH 1.15 V; A=B=Low selects RF1 (park); no negative-voltage generator, so no switch spurs; C0G blocks on all 5 RF pins (board design).
+- **Candidates:**
+  1.
+    - **Name:** ADT-Link R44SF 5 cm (current riser)
+    - **Kind:** current_part
+    - **Price usd:** 19.00 at adt.link, verified 18 Oct 2026; shipping not verified. EU landing adds VAT, EUR 3 duty and EUR 2 handling fee from about 1 Nov.
+    - **Spec comparison:** Reference. PCIe 3.0 x4 'full speed, 32G/bps'; conductive-polymer EMI shielding on 5 flat cables; 1.4 mm wire. Length options 3 cm $21, 5 cm $19, 10 cm $19, 15 cm $20 and up. Sideband wiring confirmed in ADT's schematic (mechanical_thermal).
+    - **Worse in:** n/a (reference)
+    - **Compatibility:** Q6A M.2 M-key 2230 host to the Lime M.2 card. A clamp is needed because the male end has no 2230 screw. The variant that takes a 2280 card still needs confirming with ADT-Link.
+    - **Risks:** Same price at Amazon US (QJJ/ADTLink listing $20), so it is not cheaper there.
+    - **Seller url:** https://www.adt.link/product/R44SF.html
+    - **Sources:**
+      - https://www.adt.link/product/R44SF.html
+      - https://www.adt.link/product/R44F.html
+      - https://www.amazon.com/M-2-NVMe-Extender-Extension-Cable/dp/B0B62RVM43
+  2.
+    - **Name:** ADT-Link M44SF (PCIe 4.0 x4 M.2-to-M.2 extender)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 19.00 for 10 cm (adt.link, verified); no 5 cm option listed (lengths 10-100 cm)
+    - **Spec comparison:** PCIe 4.0 x4, 64 Gb/s, against R44SF's 3.0 x4 (better, though Gen3 x1 is enough). Metal plus conductive-polymer EMI shielding (equal or better).
+    - **Worse in:** Not cheaper: same $19. The shortest option is 10 cm against the 5 cm the case layout uses. Sideband wiring, the female-board layout for the pedestal window and the STEP model are not verified for this SKU.
+    - **Compatibility:** M.2 key-M on both ends per the page. Card-length support and fit are unverified.
+    - **Risks:** Re-designing the pedestal and window for a different female board; Gen4 margins do not help a Gen3 x1 link.
+    - **Seller url:** https://www.adt.link/product/M44V4.html
+    - **Sources:**
+      - https://www.adt.link/product/M44V4.html
+      - https://www.adt.link/m2m.html
+  3.
+    - **Name:** Delock 64136 Riser Card M.2 Key M extension NVMe, 20 cm
+    - **Kind:** other_brand
+    - **Price usd:** about 81 (EUR 69.95 at LDLC, verified; VAT basis not stated)
+    - **Spec comparison:** PCIe 4.0 compatible; takes 2230-2280 M- or B+M-key modules; component clearance 1.5 mm. Shielding not stated.
+    - **Worse in:** About 4x the price. 20 cm cable against 5 cm. Shielding and sideband wiring not stated.
+    - **Compatibility:** M.2 M-key both ends. Linux 5.4+ per the listing.
+    - **Risks:** Rejected: dearer and longer.
+    - **Seller url:** https://www.ldlc.com/en/product/PB00677604.html
+    - **Sources:**
+      - https://www.ldlc.com/en/product/PB00677604.html
+  4.
+    - **Name:** I-PEX 90609-0001 MHF 4L mating/unmating tool (current tool after the re-audit correction)
+    - **Kind:** current_part
+    - **Price usd:** 18.31 (DigiKey US 5378-90609-0001-ND, 358 in stock, Active); EUR 16.08 ex VAT / 19.14 incl. VAT at DigiKey DE (verified 18 Oct 2026)
+    - **Spec comparison:** Reference. I-PEX lists 90609-0001 as the insertion/extraction tool for MHF 4L plugs 20572-001R-08 and 20565-001R-13 (1.13 mm).
+    - **Worse in:** n/a (reference)
+    - **Compatibility:** For the 4 Taoglas MHF4L-SMA cables on the Lime's TE CONMHF4 receptacles. The Taoglas plug is not necessarily genuine I-PEX, so fit is likely but unverified.
+    - **Risks:** Add it to the existing DigiKey DE order to avoid a separate shipment.
+    - **Seller url:** https://www.digikey.de/en/products/result?keywords=90609-0001
+    - **Sources:**
+      - https://www.i-pex.com/product/mhf-4l
+      - https://www.digikey.com/en/products/result?keywords=90609-0001
+      - https://www.digikey.de/en/products/result?keywords=90609-0001
+  5.
+    - **Name:** I-PEX 90435-001 MHF 4 mating/unmating tool (the STACK v1 pick)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 18.10 (DigiKey US); EUR 15.89 at DigiKey DE. Saves 0.21.
+    - **Spec comparison:** Same maker and build quality. It is the MHF 4 tool.
+    - **Worse in:** I-PEX's MHF 4L page does not list 90435-001 as a tool for the 20565-001R-13 MHF 4L plug; it lists only 90609-0001, 90873-0001 and the tweezers. Using it is an unverified fit on the Lime's receptacles, a spec trade for 0.21.
+    - **Compatibility:** MHF 4L is 'intermatable with MHF 4' at the connector level, but tool geometry against the MHF 4L plug is not documented.
+    - **Risks:** Possible damage to the TE CONMHF4 receptacles on the Lime, which are hard to rework. Rejected.
+    - **Seller url:** https://www.digikey.de/en/products/detail/i-pex/90435-001/25819261
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=90609-0001
+      - https://www.digikey.de/en/products/result?keywords=90609-0001
+      - https://www.i-pex.com/product/mhf-4l
+  6.
+    - **Name:** I-PEX 90615-0013 / 90616-0008 MHF 4L tweezers, 90873-0001 push/pull tool
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 321.04 / 337.10 / 64.56 (DigiKey US, verified)
+    - **Spec comparison:** Also specified for MHF 4L plugs (90615-0013 for 20565-001R-13).
+    - **Worse in:** Much dearer. Not cheaper.
+    - **Compatibility:** Same plugs.
+    - **Risks:** Rejected on price.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=90615-0013
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=90615-0013
+      - https://www.i-pex.com/product/mhf-4l
+  7.
+    - **Name:** Mini-Circuits BLK-89-S+ DC block x2 (current, Lime RX1/RX2)
+    - **Kind:** current_part
+    - **Price usd:** 20.26 each at Mini-Circuits (1-9; 17.54 at 10-24), >1,000 in stock; DigiKey DE EUR 21.34 ex VAT / 25.39 incl. VAT, 0 in stock, 10 due 27 Oct 2026
+    - **Spec comparison:** Reference. 0.1-8000 MHz; IL 0.10 typ / 0.3 max at 100-1000 MHz; +50 V DC; SMA-F/SMA-M (Rev G per re-audit B). Mini-Circuits also lists BLK-18-S+ at 29.73, which is dearer.
+    - **Worse in:** n/a (reference)
+    - **Compatibility:** SMA, passive, no driver.
+    - **Risks:** Order with the lab-core Mini-Circuits order (2 more BLK-89-S+ there). 4 in total is still below the 10-piece break.
+    - **Seller url:** https://www.minicircuits.com/WebStore/dashboard.html?model=BLK-89-S%2B
+    - **Sources:**
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=BLK-89-S%2B
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=BLK-18-S%2B
+      - https://www.digikey.de/en/products/result?keywords=BLK-89-S%2B
+  8.
+    - **Name:** Crystek CBLK-300-3 SMA DC block
+    - **Kind:** other_brand
+    - **Price usd:** about 19.88 at DigiKey/Mouser per search snippet (UNVERIFIED); one DigiKey page snapshot showed 26.84
+    - **Spec comparison:** Established brand, SMA in-line block, 300 kHz to 3 GHz (RS listing title).
+    - **Worse in:** Upper frequency 3 GHz against 8 GHz. It covers the Lime's 1.7 GHz and 2.2 GHz uses but cuts the 3.3-3.8 GHz coverage the user listed as a Lime requirement. IL and voltage rating not checked. Saving is at most 0.38.
+    - **Compatibility:** SMA, passive.
+    - **Risks:** Rejected: it trades away a frequency-range spec for under 0.40.
+    - **Seller url:** https://th.rs-online.com/web/p/dc-blocks/7924164
+    - **Sources:**
+      - https://th.rs-online.com/web/p/dc-blocks/7924164
+      - https://digikey.cn/en/products/detail/crystek-corporation/CBLK-300-3/1767722
+  9.
+    - **Name:** Nooelec SMA In-Line DC Block (2 W)
+    - **Kind:** other_brand
+    - **Price usd:** 24.95 (nooelec.com search page)
+    - **Spec comparison:** 2 W maximum power. Frequency range and DC voltage rating not shown on the page.
+    - **Worse in:** Dearer than BLK-89-S+, and the DC voltage and frequency specs are unpublished on the page.
+    - **Compatibility:** SMA.
+    - **Risks:** Rejected.
+    - **Seller url:** https://www.nooelec.com/store/catalogsearch/result/?q=dc+block
+    - **Sources:**
+      - https://www.nooelec.com/store/catalogsearch/result/?q=dc+block
+  10.
+    - **Name:** On-board C0G DC block for Lime RX1 on the injector PCB (replaces one BLK-89-S+)
+    - **Kind:** diy
+    - **Price usd:** about 0.1-0.3 for one 0402 C0G at 50 V or more (price not verified); saves about 20.26
+    - **Spec comparison:** The third HMC7992 is now on the injector PCB with C0G blocks on all 5 RF pins (G1 design: 100 pF or 1 nF C0G on the L-band throws), so the RX1 route already has a DC block rated at least 50 V. Model: a 100 pF series cap is about 0.9 Ohm at 1.7 GHz, so the added loss is negligible.
+    - **Worse in:** Board-level IL and return loss are unmeasured, against BLK-89-S+'s published 0.10 dB. It covers RX1 only; RX2 (S-band) still needs a block unless the S-band LNA/cavity chain gets its own board. Outside angle A (design change).
+    - **Compatibility:** Same PCB order; no new interface.
+    - **Risks:** Accept only after a LiteVNA conducted check: IL at most 0.15 dB at 1.7 GHz and 0 V DC at the Lime RX1 SMA with the injector on. The verifier must agree that the on-board block counts as RX1's block.
+    - **Seller url:** 
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G1_receivers_rf.json
+  11.
+    - **Name:** Mini-Circuits VAT-10A+ 10 dB SMA attenuator (reference for the RX1 pad; STACK names no SKU)
+    - **Kind:** current_part
+    - **Price usd:** 21.07 (Mini-Circuits 1-9, >1,000 in stock); DigiKey listing 25.28
+    - **Spec comparison:** Datasheet Rev C (read): DC-6000 MHz; 10 +/- 0.3 dB; flatness 0.25 dB at DC-3 GHz; VSWR 1.2 typ / 1.5 max at DC-3 and 3-5 GHz; 1.7 W at 25 C, derating to 1.0 W at 85 C; -45 to +100 C. VAT-10W2+ costs 31.43, which is dearer.
+    - **Worse in:** n/a (reference)
+    - **Compatibility:** SMA, passive. Placed after the HMC7992 RX1 throw, so it sees no DC.
+    - **Risks:** None noted.
+    - **Seller url:** https://www.minicircuits.com/WebStore/dashboard.html?model=VAT-10A%2B
+    - **Sources:**
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=VAT-10A%2B
+      - https://www.minicircuits.com/pdfs/VAT-10A+.pdf
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=VAT-10W2%2B
+  12.
+    - **Name:** Second Nooelec SMA attenuator kit (1/2/3/6/10/20 dB, 2 W, 6 GHz) for the Lime 10 dB pad
+    - **Kind:** other_brand
+    - **Price usd:** 47.95 per kit (Nooelec sells no single 10 dB piece on the search page)
+    - **Spec comparison:** 2 W, 6 GHz per STACK; accuracy and VSWR not published on the page.
+    - **Worse in:** Dearer than one VAT-10A+, and accuracy and VSWR are unpublished. Taking the 10 dB out of the lab-core kit instead would leave the lab kit short.
+    - **Compatibility:** SMA.
+    - **Risks:** Rejected.
+    - **Seller url:** https://www.nooelec.com/store/catalogsearch/result/?q=dc+block
+    - **Sources:**
+      - https://www.nooelec.com/store/catalogsearch/result/?q=dc+block
+  13.
+    - **Name:** On-board 10 dB 0402 pi-pad after the HMC7992 Lime throw (replaces the SMA pad)
+    - **Kind:** diy
+    - **Price usd:** under 1 for three 1% 0402 thin-film resistors (about 96 / 71 / 96 Ohm; price not verified); saves about 21
+    - **Spec comparison:** Attenuation accuracy from 1% resistors is about +/-0.1 dB at DC (model). At 1.7 GHz on 50 Ohm GCPW the expected accuracy is within +/-0.3-0.5 dB and VSWR under 1.3 (model, unmeasured). Power is about 60 mW per 0402 against a signal below 1 mW.
+    - **Worse in:** No published S-parameters: accuracy and VSWR above 1 GHz are unproven until measured. It can't be removed or changed without rework. Outside angle A.
+    - **Compatibility:** Same injector PCB; G1 already proposes an on-board pi-pad option for the LNB IF.
+    - **Risks:** Accept only if a LiteVNA conducted sweep from 0.3 to 3.8 GHz shows 10 +/- 0.5 dB and VSWR 1.5 or better. Otherwise fit VAT-10A+.
+    - **Seller url:** 
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G1_receivers_rf.json
+  14.
+    - **Name:** Mini-Circuits ANNE-50+ SMA-M 50 Ohm termination (current Lime TX X1 load)
+    - **Kind:** current_part
+    - **Price usd:** 14.84 (Mini-Circuits, per re-audit B; price not re-fetched today)
+    - **Spec comparison:** Datasheet Rev H (read): DC-18 GHz; return loss 30 dB min at DC-4 GHz (35-46 dB typ at 0.6-4 GHz); 1 W at 50 C, derating to 350 mW at 100 C; -55 to +100 C; case LL561, 4.0 g.
+    - **Worse in:** n/a (reference)
+    - **Compatibility:** On X1 through a Taoglas MHF4L-SMA cable.
+    - **Risks:** None noted.
+    - **Seller url:** https://www.minicircuits.com/WebStore/dashboard.html?model=ANNE-50%2B
+    - **Sources:**
+      - https://www.minicircuits.com/pdfs/ANNE-50+.pdf
+  15.
+    - **Name:** Mini-Circuits ANNE-50L+ SMA-M 50 Ohm termination
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 9.41 (Mini-Circuits 1-9, >1,000 in stock; verified 18 Oct 2026). Saves 5.43.
+    - **Spec comparison:** Same maker, same case LL561, same 4.0 g, same -55 to +100 C. DC-12 GHz (it covers 3.8 GHz). Input power 1.0 W max, derating linearly to 325 mW at 100 C (ANNE-50+: 1 W at 50 C to 350 mW at 100 C). Return loss 26 dB min at DC-4 GHz, 21 at 4-8 GHz, 18 at 8-12 GHz (datasheet Rev E, read).
+    - **Worse in:** Published minimum return loss at DC-4 GHz is 26 dB against 30 dB. Derating may start lower: the datasheet does not state the start temperature, and if it starts at 25 C that is about 0.69 W at 60 C against about 0.87 W. Upper frequency 12 GHz against 18 GHz is irrelevant here. For a dump load on a software-blocked TX port carrying milliwatts, 26 dB return loss (VSWR 1.105) and 0.3 W or more have large margin, but these are published-spec reductions, not equal specs.
+    - **Compatibility:** Drop-in: SMA male on the same MHF4L-SMA cable.
+    - **Risks:** Conditional: accept only if the verifier rules that TX-load return loss beyond about 20 dB is not a spec that matters for this stack. Add a Bench-mode conducted leakage check at X1 (already planned).
+    - **Seller url:** https://www.minicircuits.com/WebStore/dashboard.html?model=ANNE-50L%2B
+    - **Sources:**
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=ANNE-50L%2B
+      - https://www.minicircuits.com/pdfs/ANNE-50L+.pdf
+      - https://www.minicircuits.com/pdfs/ANNE-50+.pdf
+  16.
+    - **Name:** Joymax Electronics CT-SAA03T-006M SMA plug terminator
+    - **Kind:** other_brand
+    - **Price usd:** 6.16 (DigiKey US, 403 in stock, 8-week lead time)
+    - **Spec comparison:** Datasheet (read): DC-6 GHz, 50 Ohm, VSWR 1.3 or better, -40 to +85 C, about 4.4 g.
+    - **Worse in:** VSWR 1.3 (return loss about 17.7 dB) against 30 dB minimum. No power rating published. Temperature range -40 to +85 C against -55 to +100 C.
+    - **Compatibility:** SMA male; fits the MHF4L-SMA cable.
+    - **Risks:** Rejected: worse on three published specs, and the power rating is unknown.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=CT-SAA03T-006M
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=CT-SAA03T-006M
+      - https://file.joymax.com.tw/Datasheet/CT-SAA03T-006M.pdf
+  17.
+    - **Name:** ADI HMC7992LP3DE chip from DigiKey (current third switch after G1)
+    - **Kind:** current_part
+    - **Price usd:** 13.10 (DigiKey US, verified today); EUR 11.50 ex VAT / 13.685 incl. VAT at DigiKey DE (G1, 18 Oct; 4,655 in stock; 10-piece break EUR 9.05)
+    - **Spec comparison:** Reference (critical specs above, from the HMC7992 Rev 0 datasheet as read by G1/re-audit B).
+    - **Worse in:** n/a (reference)
+    - **Compatibility:** On the existing injector PCB, third SP4T section, park on RF1.
+    - **Risks:** TME does not stock it (checked). Farnell, Mouser and ADI pages returned 503 today.
+    - **Seller url:** https://www.digikey.de/en/products/detail/analog-devices-inc/HMC7992LP3DE/5873027
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=HMC7992LP3DE
+      - https://www.digikey.de/en/products/detail/analog-devices-inc/HMC7992LP3DE/5873027
+      - https://www.tme.eu/en/katalog/?queryPhrase=HMC7992LP3DE
+  18.
+    - **Name:** Same ADI HMC7992LP3DE from Mouser
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 10.25 qty 1 (search-result snippet via findchips; undated; 1,331 in stock at the time; UNVERIFIED, since the Mouser page returned 503). Saves about 2.85 if true.
+    - **Spec comparison:** Identical die and part number from an ADI-authorised distributor, so every spec is equal.
+    - **Worse in:** Nothing in specs. The price is unverified, and buying one chip apart from the DigiKey order adds a separate shipment (Mouser EU free-shipping threshold not checked).
+    - **Compatibility:** Identical.
+    - **Risks:** Worth taking only if the whole HMC7992 batch (3-4 chips) moves to Mouser at a verified lower price.
+    - **Seller url:** https://www.mouser.com/ProductDetail/Analog-Devices/HMC7992LP3DE
+    - **Sources:**
+      - https://www.findchips.com/search/HMC7992LP3DE
+  19.
+    - **Name:** Same ADI HMC7992LP3DE from Richardson RFPD
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 6.89 qty 1 (search snippet; stock 0; UNVERIFIED, page returned 403)
+    - **Spec comparison:** Same part. Richardson RFPD is an established RF distributor; its ADI franchise status was not verified today.
+    - **Worse in:** Out of stock in the snippet. Price and franchise status unverified.
+    - **Compatibility:** Identical.
+    - **Risks:** Check stock, franchise status and minimums before relying on it.
+    - **Seller url:** https://shop.richardsonrfpd.com/Products/Product/HMC7992LP3DE
+    - **Sources:**
+      - https://shop.richardsonrfpd.com/Products/Product/HMC7992LP3DE
+- **Notes:** VERDICT FOR THIS LINE (angle A): mostly KEEP. Only small, conditional savings exist.
+  - Riser: keep the ADT-Link R44SF 5 cm ($19). No cheaper ADT SKU or established brand is not-worse. M44SF costs the same and only comes in 10 cm. Delock 64136 is about 4x the price at 20 cm. Generic AliExpress FPC risers ($2-9) are outside this angle and were already rejected (sideband wiring and shielding unproven).
+  - Tool: keep the I-PEX 90609-0001 ($18.31 / EUR 16.08 ex VAT at DigiKey DE). Do not go back to 90435-001: it saves $0.21 but I-PEX does not list it for the MHF 4L plug.
+  - Pedestal, pad and fins: no new candidate here. Use G4's picks (Alu-Verkauf AlMg3 stock; Gelid GP-Ultimate 1.0 mm shared with the mechanical set). The fins have no SKU, so there is nothing to compare.
+  - DC blocks: keep Mini-Circuits BLK-89-S+. Crystek CBLK-300-3 stops at 3 GHz; Nooelec costs more. RX1's block can conditionally be the on-board C0G on the third HMC7992 section (DIY, saves about $20 after a LiteVNA check).
+  - 10 dB pad: VAT-10A+ ($21.07) is the established reference, since the STACK names no SKU. An on-board 0402 pi-pad is a conditional DIY saving of about $21.
+  - TX load: ANNE-50L+ ($9.41) saves $5.43. Its published return loss is worse (26 vs 30 dB minimum to 4 GHz) and its derating wording differs, so it is listed openly as worse, as a conditional swap for the verifier to rule on.
+  - HMC7992: same genuine chip. Mouser at $10.25 (unverified snippet) saves about $2.85 per chip only if the whole batch moves; otherwise stay with DigiKey DE.
+  - Savings totals: angle A alone gives about $5-8 (ANNE-50L+ plus a possible Mouser price). Adding the conditional on-board options gives about $46-49.
+  EU COST: ADT-Link (CN) and Mini-Circuits (US) direct orders each carry import VAT, plus EUR 3 customs duty per tariff line (consignment up to EUR 150, IOSS or postal), plus the EUR 2 per-line handling fee from about 1 Nov 2026, plus shipping (ADT-Link shipping cost not verified; its shipping page returned 404). Put the Lime's Mini-Circuits parts into the lab-core Mini-Circuits order (4 BLK and 4 ANNE in total stay below the 10-piece breaks), or buy them at DigiKey DE (BLK-89-S+ EUR 21.34 ex VAT, 0 in stock until 27 Oct), so the order lands as one consignment.
+  STACK corrections to carry: rows 133, 293 and 1127 still say 'I-PEX 90435-001'; they should say 90609-0001 (re-audit B). The line total should be restated as about $131-136 ex VAT/shipping, plus fins, instead of the model 87-127.
+  RULES: every candidate is a passive part or a receive-path switch. Nothing transmits; the TX load only terminates the software-blocked Lime TX port. No loops, no H-field probes; signal sources stay conducted-only (VNA qualification into loads/DUT). The Q6A and the antennas were not touched.
+  UNVERIFIED: Mouser, Richardson and Crystek prices (search snippets; pages blocked); the derating start temperature of ANNE-50L+; whether the Taoglas MHF4L plugs fit the I-PEX tool; R44SF current rating and the variant that takes a 2280 card; ADT-Link shipping cost; Lime Micro maximum TX output.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
