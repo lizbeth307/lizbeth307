@@ -1440,5 +1440,216 @@ _Run `wf_f924b2ab-5ad`_
 
 ## Адверсаріальна перевірка (`verify`)
 
+_Run `wf_f924b2ab-5ad`_
+
+- **Component:** Power system (battery, charging, 12 V rail, power switch, fuel gauge) for the Radxa Dragon Q6A handheld satellite receiver
+- **Recommendation holds:** так
+- **Issues:**
+  1.
+    - **Claim:** Researcher: never feed raw 4S into J21 because 16.8 V exceeds the SMBJ15CA 15 V TVS standoff.
+    - **Problem:** Wrong reason. I read schematic v1.21, sheet DC-IN. The SMBJ15CA (D19) sits on the USB-C VBUS side, before the back-to-back DMP2160 switch (Q5). The J21 header path has no TVS and no reverse-polarity protection. Only C602 (10 uF/25 V) and C611/C612 (22 uF/16 V) sit in front of the SY81012.
+    - **Correction:** The conclusion still holds: no raw 4S. The real limits are the 16 V input capacitors and the SY81012, and Radxa staff state 4.5-16 V (Oct 15, 2026). The builder must add their own fuse, reverse protection, TVS and bulk capacitor in front of J21.
+    - **Source:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf (sheet DC-IN); https://forum.radxa.com/t/radxa-q6a-4s1p-powering/31611
+  2.
+    - **Claim:** Fixes agent: the Q6A's SY7120 5 V boost can deliver about 7 A (~35 W), so there is plenty of headroom for the LimeSDR.
+    - **Problem:** This ignores the stage before the boost. VPH_PWR reaches VPH_PERI through an SGM40666 OVP switch (U28), which SG Micro rates at 4.5 A continuous.
+    - **Correction:** VCC_5V_PERI is good for roughly 4.2 V x 4.5 A x 0.92 = ~17 W (~3.5 A at 5 V); this is my calculation. That budget is shared by the M.2 3.3 V buck (LimeSDR up to 8.25 W), VCC_3V3, VCC_1V8, all USB ports, the 40-pin 5 V and the fan. It is still enough for Lime + RTL + fan + GNSS/IMU, but no display backlight or other big load may hang off Q6A USB or 40-pin 5 V.
+    - **Source:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf (U28 SGM40666AS, U24 SY7120); https://sg-micro.com/product/SGM40666A
+  3.
+    - **Claim:** Researcher: peak load ~35-37 W at the battery, sunlight display 5-10 W.
+    - **Problem:** A 1000-2200 nit 7-inch panel draws more. The FeelWorld LUT7 (2200 nit, 7-24 V input) is rated 20 W.
+    - **Correction:** Re-budget at the pack:
+  - Typical (Lime + SatDump + display ~60%): ~25-28 W.
+  - Peak (Lime, NPU, display 100%, LNB): ~45-52 W, about 4 A at 13 V.
+  - Size the fuse at 7.5 A and the master switch for at least 6 A.
+    - **Source:** https://www.adorama.com/felut7.html ; https://www.bhphotovideo.com/c/product/1531472-REG/feelworld_lut7_7_touch_screen.html
+  4.
+    - **Claim:** Researcher: IP2368 supports 2-6S.
+    - **Problem:** IP2368 datasheet V1.41 says 2-5 cells. Its changelog states that 6S support was dropped (Nov 2023). Prom.ua listings still advertise 2-6S.
+    - **Correction:** 4S is supported, so the stock strap R7 = 13 kOhm is fine. Do not rely on 6S.
+    - **Source:** IP2368 datasheet V1.41: https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+  5.
+    - **Claim:** Researcher: the IP23xx USB-C port doubles as a reverse power bank for phones and radios, and charges from any power bank.
+    - **Problem:** Per the datasheet, the standard IP2368_BZ is charge-only. Only the COUT/NACT variants discharge, and they implement DRP Try.SRC: when connected to another DRP device they preferentially SOURCE power to it. Most modern power banks have bidirectional C ports, so the handheld may charge the bank instead of itself, or flip direction. A seller listing warns never to join two bidirectional C ports, and a mikrocontroller.net report describes wrong-direction behaviour.
+    - **Correction:** Prefer a charge-only (BZ) IP2368 board.
+  - If you buy a bidirectional COUT/NACT board, charge from output-only C ports (power stations, PD wall/car chargers, PD solar) or from a power bank's USB-A port with an A-to-C cable (15-18 W).
+  - Test every power bank you plan to use.
+  - Drop 'reverse power bank' as a design goal.
+    - **Source:** IP2368 datasheet V1.41 sections 6 and 12.2; https://www.walmart.com/ip/5799421375 ; https://www.mikrocontroller.net/topic/569785
+  6.
+    - **Claim:** Researcher wiring: BMS -> fuse -> master switch -> INA228 shunt -> loads, with the IP23xx BAT on the battery side of the shunt.
+    - **Problem:** With this wiring the shunt never sees charge current. And if the master switch sits before the IP23xx tap, the pack cannot charge while the device is off.
+    - **Correction:** Pack+ -> 7.5 A fuse -> INA228 shunt -> node N.
+  - Node N feeds IP2368 BAT+ permanently.
+  - Node N also feeds the master switch, then the loads.
+  - Power the INA228 from an always-on 3.3 V LDO so its 40-bit CHARGE accumulator keeps counting while the Q6A is off. Remove the breakout's pull-ups to avoid back-feeding the unpowered Q6A I2C pins.
+  - Otherwise, re-initialise state of charge from rested OCV at boot.
+    - **Source:** https://www.ti.com/product/INA228 ; https://www.adafruit.com/product/5832
+  7.
+    - **Claim:** Fixes agent: Pololu #2812 Big Pushbutton Power Switch MP handles about 8 A.
+    - **Problem:** Pololu gives 8 A only at a 150 C MOSFET temperature. At 55 C it is about 4 A, which is marginal for the ~4 A peak pack current.
+    - **Correction:** Use the Pololu #2813 HP instead: $8.95, 4.5-40 V, 6 A at 55 C, <0.2 uA off, reverse protection.
+    - **Source:** https://www.pololu.com/product/2812 ; https://www.pololu.com/product/2813
+  8.
+    - **Claim:** Stack/researcher: LimeSDR Micro M.2 costs $199 and deliveries start ~Sept 30, 2026.
+    - **Problem:** Crowd Supply now lists the M.2 2280 Basic at $249 ($18 worldwide shipping) and the GNSS version at $299. New orders ship Dec 15, 2026.
+    - **Correction:** Budget $267 delivered. Real Q6A + Lime power measurements cannot happen before ~late Dec 2026.
+    - **Source:** https://www.crowdsupply.com/lime-micro/limesdr-micro
+  9.
+    - **Claim:** Researcher budget option: a single LTC3780 module supplies both the Q6A and the LNB.
+    - **Problem:** Community reports describe AliExpress LTC3780 boards as 'staggeringly noisy' and their output as collapsing under ~48 W loads. That is the worst choice next to an SDR front-end.
+    - **Correction:** Use a quality 12 V buck: Pololu D36V50F12 (verified $39.95; 13.3-50 V in; 12 V +/-4%; ~4.5 A typ; ~500 kHz; precise EN thresholds; stock marked 'Rationed'). On a budget, drop the converter entirely and run 3S straight into J21 (see the budget option).
+    - **Source:** https://www.pololu.com/product/4095 ; https://community.element14.com/challenges-projects/project14/portable-electronics-kit/f/forum/39004/ltc3780-buck-boost-converter
+  10.
+    - **Claim:** Researcher: IP2368 board ~$5-10, P50B cells ~$28-40 for four, Ukrainian availability unverified.
+    - **Problem:** Prices are now checked on Prom.ua (Oct 2026):
+  - IP2368 bidirectional boards: 600-700 UAH (~$14-17); the bare chip is 231 UAH.
+  - Molicel P50B single cells: 219-380 UAH (~$5-9). One 155 UAH listing is suspiciously cheap, and a BudgetLightForum report describes a used or fake P50B.
+  - P60B (6 Ah, announced June 2025): no retail listings in Ukraine.
+    - **Correction:** Four P50B cost ~$25-36 locally; buy from established sellers and test capacity and IR. The IP2368 board costs ~$14-17 in Ukraine, or less on AliExpress (unverified).
+    - **Source:** https://prom.ua/ua/search?search_term=IP2368 ; https://prom.ua/ua/search?search_term=Molicel%20P50B ; https://budgetlightforum.com/t/fake-or-damaged-molicell-p50b/230574
+  11.
+    - **Claim:** Fixes agent: glue a blank plug into the Q6A USB-C port.
+    - **Problem:** Back-feed is real: VBUS from any source turns on Q5 and parallels it with the header rail. But per Radxa docs EDL flashing uses the USB-A port, so USB-C is power-only and is handy for bench power when the pack is disconnected.
+    - **Correction:** Use a removable silicone dust plug and a warning label instead of glue. Never plug anything into it while J21 is powered.
+    - **Source:** https://docs.radxa.com/en/dragon/q6a/low-level-dev/edl-mode ; https://forum.radxa.com/t/how-to-power-the-dragon-q6a/30400
+- **Forum and fix assessment:** VERDICT: The community findings are accurate. I re-checked them against primary sources:
+  - Radxa staff, via the Discourse JSON: strongtz gives 4.5-16 V (Jan and Oct 2026); BigfootACA gives 3.6-16 V and says not to use USB-C while the header is powered.
+  - willy measured 1.9-2.5 W after 'halt'.
+  - The UEFI 'PwrKey press 75 ms ... expected 400 ms' log line exists in that thread.
+  - Geerling measured 2.9 W idle, 9.3 W stress-ng and 10.1 W HPL.
+  - Lime staff say the Micro M.2 draws ~4 W.
+  
+  The fixes are mostly sound. I verified their datasheet numbers directly:
+  - IP2368 V1.41:
+    - VTRGT = 4000 + 0.02 x RVSET (5.1k = 4.10 V; minimum 4.1 V/cell).
+    - ISET_MODE to GND with RISET 15k gives 3 A; input-power mode is 4 W per kOhm.
+    - ISTOP 100 mA, charge timer TEND 45-51 h, standby 180 uA at 14.8 V, 250 kHz.
+    - NTC trips at 0.39 V with 80 uA (hot) and 0.55 V with 20 uA (cold), designed for a 10k B3380.
+  - Software support:
+    - The radxa-overlays i2c6 overlay exists.
+    - Radxa kernel 7.0.11-7 ships ina238.ko, which supports the INA228.
+  - Pololu D36V50F12 and #2812 specs and prices match.
+  
+  Corrections to the fixes:
+  1. The Q6A 5 V_PERI headroom is ~17 W, not 35 W, because of the SGM40666 4.5 A switch upstream of the boost.
+  2. The #2812 is only ~4 A at 55 C; use the #2813 HP.
+  3. Power the INA228 from an always-on rail, or charge done while the device is off goes uncounted.
+  4. The IP2368 COUT/NACT Try.SRC behaviour conflicts with 'charge from power banks'. This is the biggest practical gap. Choose a charge-only board, or charge from one-way ports.
+  5. 3S-direct needs real hot-plug protection: ringing can approach 2 x 12.6 V, above the SY81012's 18 V absolute maximum, so a soft switch, a bulk electrolytic and a TVS are mandatory.
+  
+  The researcher's architecture (4S, regulated feed into the J21 header, IP23xx USB-C charger, separate balancing BMS, INA228) holds. Its weak parts were:
+  - the LTC3780 regulator;
+  - the shunt placement;
+  - the TVS reasoning;
+  - the display power estimate;
+  - the 'reverse power bank' double-duty.
+- **Final recommendation:**
+  - **Name:** 4S1P Molicel P50B (72 Wh) + IP2368 USB-C PD charger (charge-only BZ preferred, set to 4.10 V/cell and 3 A, real NTC) + Pololu D36V50F12 12 V buck into Q6A J21 + Pololu #2813 HP switch + Adafruit INA228 gauge on an always-on supply
+  - **Price:** About $125-160 before shipping:
+  - 4x P50B: ~$25-36 (219-380 UAH each on Prom.ua).
+  - 4S common-port balancing BMS, 15-20 A: $5-12 (unverified).
+  - IP2368 board: $14-17 on Prom.ua (cheaper on AliExpress, unverified).
+  - Pololu D36V50F12: $39.95.
+  - Pololu #2813: $8.95.
+  - Adafruit INA228: $14.95.
+  - LT3045 LNA LDO module: $5-10 (unverified).
+  - 10k B3380 NTC, 7.5 A fuse, XT30, nickel strip, ferrites, pi-filter parts, SMBJ14A, 220 uF: ~$10-15.
+  - Optional ISDT 608PD backup balance charger: ~1,979-2,250 UAH (~$47-54).
+  - **Why:** WIRING:
+  - Pack+ -> 7.5 A fuse -> INA228 shunt -> node N.
+  - Node N -> IP2368 BAT+ (always connected, so the pack charges while the device is off).
+  - Node N -> #2813 switch -> D36V50F12 (EN divider as a ~12.8 V hardware cutoff) -> pi-filter -> J21 pins 1/2. A GPIO-switched, polyfused branch feeds an LNB if one is used.
+  - A 7-24 V sunlight display is fed straight from the switched pack node; a 5 V panel gets its own filtered 5 V buck.
+  - J21 pin 3 goes to a case button or an MCU press pulse.
+  
+  WHY:
+  - The 4S range never violates the 16 V header limit once regulated. At 4S the battery current stays at about 4 A or less even at a ~50 W peak, and the 12 V rail also suits an LNB (11.5-14 V).
+  - There is no USB-PD dependency for the Q6A, so a charger plug or unplug never glitches it.
+  - Runtime with a 72 Wh pack: ~2.3-2.6 h typical (Lime 56 MHz, bright display), ~5 h light (RTL-SDR, dim display), ~1.3 h worst case. Carry a second XT30 pack for long sessions.
+  - **Sources:**
+    - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+    - https://forum.radxa.com/t/radxa-q6a-4s1p-powering/31611
+    - https://forum.radxa.com/t/how-to-power-the-dragon-q6a/30400
+    - https://github.com/geerlingguy/sbc-reviews/issues/85
+    - https://discourse.myriadrf.org/t/limesdr-micro-m-2-power-consumption/13304
+    - https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+    - https://www.pololu.com/product/4095
+    - https://www.pololu.com/product/2813
+    - https://www.adafruit.com/product/5832
+    - https://docs.kernel.org/hwmon/ina238.html
+    - https://www.molicel.com/inr-21700-p50b/
+    - https://prom.ua/ua/search?search_term=Molicel%20P50B
+    - https://prom.ua/ua/search?search_term=IP2368
+    - https://www.adorama.com/felut7.html
+- **Final budget option:**
+  - **Name:** 3S1P Molicel P50B pack (54 Wh) wired straight into Q6A J21, with no external 12 V converter
+  - **Price:** About $55-75:
+  - 3x P50B: ~$18-27.
+  - Daly 3S 20 A common-port BMS: 407 UAH (~$10) on Prom.ua.
+  - IP2368 board: ~$14-17 on Prom.ua (cheaper on AliExpress, unverified).
+  - Pololu #2813: $8.95.
+  - INA226 module: $2-4 (unverified).
+  - TVS, capacitor, fuse, XT30, nickel strip: ~$5-8.
+  - Optional 13 V boost for an LNB: ~$3-10 (unverified).
+  - **Why:** PARTS AND WIRING:
+  - Pack: 3S1P P50B (9.0-12.3 V).
+  - BMS: Daly 3S 20 A common-port BMS, with balancing.
+  - Charging: IP2368 strapped for 3S (RBAT_NUM 9.1k) at 4.10 V/cell, with a real NTC.
+  - Main path: fuse -> INA226 module (R010 shunt fitted) -> Pololu #2813 switch -> 220 uF/25 V electrolytic + SMBJ14A TVS -> J21 directly.
+  - Display (7-24 V type) and LNAs (via LDO) run from the same node.
+  
+  WHY:
+  - The whole pack range sits inside the staff-stated 4.5-16 V window and the SY81012's 2.7-16 V rating, so there is no external switching converter. That makes it the quietest and cheapest option, with the fewest failure points.
+  - Trade-offs:
+    - 25% less energy (~1.8-2 h typical, ~4 h light).
+    - J21 carries up to ~2.5 A.
+    - An LNB (11.5-14 V) needs its own small switched boost converter.
+    - Radxa docs still say '12 V' and no public long-term 3S bench test exists, so do the 6-14 V sweep first.
+  - It beats the researcher's LTC3780 budget path, which has poor noise and stability reports.
+- **Known problems and fixes to apply:**
+  - Never put raw 4S on J21. The header path has no TVS and no reverse protection, only 16 V capacitors and the SY81012. Feed it a regulated 12 V, or 3S, behind a fuse, reverse protection (#2813), an SMBJ14A TVS and a 100-220 uF/25 V electrolytic. Use a keyed, latched 3-pin housing.
+  - Q6A USB-C back-feed: VBUS from any source switches Q5 on and parallels it with J21. Cover the port with a removable plug and a label. Make the IP2368 port the only charging input.
+  - The Q6A draws 1.9-2.5 W after 'halt'. Use poweroff (HandlePowerKey=poweroff), and put the #2813 hard switch after the IP2368 tap so the pack still charges while the device is off.
+  - Auto-boot from J21 is inconsistent (the UEFI log wants a press of at least 400 ms). Update the SPI firmware. Add an open-drain 0.5-1.5 s pulse on J21 pin 3, sent by an MCU or a second case button, and only when 40-pin 3.3 V is absent.
+  - Low-battery handling:
+  - Linux powers off at ~3.4 V/cell (13.6 V), read from the INA228.
+  - Hardware cut via the D36V50F12 EN divider at ~12.8 V.
+  - The BMS cutoff (2.5-2.8 V/cell) is the last resort only. This avoids BMS lock-out and regulator oscillation (Pololu forum case).
+  - IP2368 board heat (MOSFET over 100 C at 5 A): set RISET to 15k (3 A), thermal-pad the board to the case, keep it 10 mm or more from the cells, and fit a 70 C KSD9700 or similar. Buy 2-3 boards and burn each in for 2 h at 3 A.
+  - The IP2368 ships with a fixed 10k resistor in place of the NTC. Fit a 10k B3380 NTC on the middle cell (charging stops below 0 C and above 45 C). Never charge a pack below 0 C; let the receiver warm it for 15-20 min first.
+  - Use-while-charging: with any load over 100 mA the IP2368 never terminates and floats in CV until the 45-51 h timer. Set 4.10 V/cell (RVSET 5.1k). Optionally add the NTC-pull charge inhibit, then bench-verify it and its effect on the timer. Do a 4.20 V balance charge monthly (ISDT 608PD via the balance lead), because cheap BMS boards barely balance at 4.10 V.
+  - IP2368 COUT/NACT boards use Try.SRC and may push power INTO bidirectional power banks. Prefer a charge-only (BZ) board. Otherwise charge from output-only PD ports or a USB-A port with an A-to-C cable, and test each power bank. For use while charging, a source of 45-65 W or more is needed: a 20 W bank cannot keep up with a 25 W load.
+  - Some IP2368 boards need a USB-C 'kick' after the battery is connected or after a protection trip; NACT variants do not. Some BMS boards ship locked. Recover both by plugging in the PD charger; confirm this works 3 out of 3 times.
+  - Q6A internal 5 V_PERI is limited to about 17 W by the SGM40666 (4.5 A). Keep only the LimeSDR, RTL-SDR, fan, GNSS and IMU on it. Power the display from the pack or the 12 V rail, never from a Q6A USB port.
+  - LimeSDR through the 2230-to-2280 extender: measure at least 3.20 V at the card under a 61.44 Msps + CPU + NPU load. Heatsink the card and design for 10 W.
+  - Fuel gauge:
+  - Use INA228 coulomb counting, not voltage-based percentage, which forum reports show is off by 20-90%.
+  - Put the shunt in the pack lead.
+  - Set shunt-resistor = <15000> in the overlay.
+  - Power the INA228 from an always-on LDO so off-state charging is counted, or re-sync from rested OCV at boot.
+  - Reset to 100% at 16.35 V with current under 0.1 A.
+  - EMI: the IP2368 switches at 250 kHz, the D36V50F12 at ~500 kHz (power-save mode at light load), and the Q6A SY81012/SY7120 at ~1 MHz (the SY7120 runs PFM at light load because MODE is pulled low). Use pi-filters, a shielded corner, Mix-31 ferrites and an LT3045 for the LNAs. Run A/B noise-floor sweeps at 137, 145.8, 435-438, 1698-1707 and 2200-2290 MHz with each source on and off.
+  - Before blaming the power system for reboots, rule out the Kioxia UFS bug (needs a kernel with the PA_TACTIVATE quirk, Armbian 26.05+) and disable auto-suspend.
+  - Counterfeit cells: avoid outlier-cheap listings (e.g. 155 UAH 'P50B'). Check the wrap and terminals, and test capacity and IR before spot-welding.
+- **Missed better options:**
+  - Feed a 7-24 V-input sunlight display (field-monitor style; LUT7 is 7-24 V, 20 W) directly from the switched 4S pack node. This removes the 5 V display buck and keeps 8-20 W off both the 12 V converter and the Q6A's internal 5 V.
+  - Use the D36V50F12 EN pin (precise 1.2/1.35 V thresholds) with a resistor divider as a hardware low-voltage cutoff. This removes the need for an MCU for the last-resort cut.
+  - Pololu #2813 HP ($8.95, 6 A at 55 C) instead of the #2812 MP as the master switch: it gives reverse protection, near-zero off current and an OFF input in one part.
+  - 3S1P direct into J21 with no external converter (Radxa staff: 4.5-16 V). This is the quietest and cheapest path if 54 Wh is enough.
+  - ISDT 608PD (USB-C PD 5-28 V/140 W input, 0.8 A/cell balancing, ~1,979-2,250 UAH on Prom.ua) as a backup charger and monthly balancer through the XT30 and balance lead. It also charges from power stations and power banks.
+  - Molicel P60B (6 Ah, announced June 2025) would give a 86 Wh 4S1P pack, but there are no retail listings in Ukraine, so it is not a practical option yet.
+- **Remaining uncertainties:**
+  - Measured Q6A + LimeSDR + NPU + sunlight-display draw: all runtime figures are estimates until the INA228 logs exist, and the Lime only ships from Dec 15, 2026.
+  - Whether charge-only IP2368_BZ boards are easy to find (most listings are bidirectional), and real AliExpress prices and quality of IP2368 and BMS boards.
+  - Whether the NTC-pull charge inhibit stops the IP2368 cleanly, and how it interacts with the 45-51 h charge timer.
+  - The D36V50F12's continuous current at 13-17 V input in a closed case, and the spur behaviour of its light-load power-save mode near the SDR bands.
+  - 3S-direct: there is no public long-term bench test at 9-12.6 V. Hot-plug overshoot and J21 pin heating at ~2.5 A must be measured.
+  - Bullseye LNB current (budget 200-300 mA), and whether an LNB is used at all now that dishes are abandoned.
+  - J21 connector current rating (not published; the header was designed for Radxa's PoE HAT).
+  - Whether the ina238 hwmon driver resets the INA228 accumulators on probe (affects off-state charge counting).
+  - The UAH/USD rate in October 2026 (~42 assumed).
+- **Confidence:** medium
+
 _Агент цього етапу ще працює (run `wf_f924b2ab-5ad`)._
 
