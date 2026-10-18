@@ -17857,6 +17857,121 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - The DIY BOM prices beyond the IC and inductor are my estimate, not verified.
   - USD/EUR is 1.1241, the stack's rate.
 
+## searchB:pololu_d36v28f5_lab5 (run `wf_a268b76e-da0`)
+
+- **Part:** Pololu D36V28F5 (#3782), LAB5 5 V rail. Tier core, group Power, qty 1, 3 A fuse after it.
+- **Current price usd:** 23.95 at Pololu direct (22.03 each for 5+), status "Rationed (Active and Preferred)", backorders allowed. Shipping from the US and EU import VAT come on top for a buyer in Europe.
+- **Critical specs:**
+  - Input range must cover the switched SW node of the 4S pack: 13.0-16.8 V (13.2 V software cutoff, 16.4 V qualification point), with margin above the SMBJ17A clamp on node N. Current part: 5.3-50 V, with reverse-voltage protection to 40 V.
+  - Output 5.0 V +/-4% (4.8-5.2 V). The 2x LT3045 rail at 4.5 V needs LAB5 at 4.8 V or more. LAB5 also feeds the CH334F hub 5 V, Pico VSYS, IMU pack, fans, HF+ and the LAB USB-A port.
+  - Continuous current: at least 3 A (3 A fuse). The stack load is 2.0 A, or 2.3 A in the with-Lime default build (RTL-A on the hub). Qualification gate (STACK test table, line 1075): 3.5 A for 60 min in the closed enclosure at 14.0 V and 16.4 V input, output within 4%, no thermal shutdown. Pololu states 3.2 A typical at 36 V in and 2.5-4 A depending on input and heat.
+  - Efficiency about 88% at about 2 A from 14-16 V in. This figure is used in the runtime model; Pololu states 80-90% typical.
+  - Switching behaviour and spurs: about 500 kHz under load, power-save at light load that stays above 20 kHz. It must pass the C4 gate: an HF+ narrowband A/B with LAB5 load steps of 0.3-3 A, with no line 3 dB or more above the floor within +/-5 kHz of 40, 60, 77.5, 162, 490, 518 and 4209.5 kHz or inside any allowed decoder band. A part with a lower or wandering frequency (65-340 kHz generics) puts harmonics into LF/MF. Fixed-frequency forced PWM would be better.
+  - Output ripple and noise low enough for the LC + LT3045 LNA rail (500 kHz ripple test with LAB5 at 4.8 V) and for the HF+ feed (load switch + LC + Mix-31).
+  - Protections: over-current and short-circuit, thermal shutdown, soft-start, output under- and over-voltage protection; PG output (open drain) and EN input (100k pull-up, sleep below 1.2 V) available.
+  - No-load quiescent current 2-3 mA. Minor, because LAB5 switches with SW.
+  - Size 17.8 x 20.3 x 8.8 mm with two M2 holes, mounted on the power board at the bottom right near the lower vent. Must survive the closed-enclosure heat test.
+  - Back-feed behaviour: on the D36V28Fx, VOUT slightly above 5 V pumps VIN above 60 V (Pololu forum t/29129). The stack mitigates this with Schottkys on the Pico and the IMU pack. A replacement must not be worse here.
+  - Genuine part from Pololu or an authorized distributor; no counterfeit or relabelled module.
+- **Candidates:**
+  1.
+    - **Name:** Pololu D36V28F5 #3782 (same genuine part) from Botland, Poland (claims to be an official Pololu distributor)
+    - **Kind:** current_part
+    - **Price usd:** about 20.57 including 23% PL VAT (79.90 PLN gross; 64.96 PLN net, about 16.73 USD). Converted at the ECB reference rates of 16 Oct 2026 (1 EUR = 4.37 PLN = 1.1253 USD). The English B2B store botland.store lists EUR 18.11 (about 20.38 USD; net EUR 15.22).
+    - **Spec comparison:** Identical part, so every spec is identical: 5.3-50 V in, 5 V +/-4%, 3.2 A typical, about 500 kHz with power-save above 20 kHz, 17.8 x 20.3 x 8.8 mm, same protections and the same back-feed behaviour.
+    - **Worse in:** Nothing in specs. Sourcing caveats: botland.store sells only to registered businesses with a VAT ID; botland.com.pl is the Polish consumer store. Both pages show 'in stock' but also a notify-when-available form, so stock is ambiguous. EU-wide shipping from the consumer store is not verified; GLS EU from EUR 8.07 is shown on the B2B store.
+    - **Compatibility:** Drop-in: same part.
+    - **Risks:** Stock and shipping to the user's EU country need confirming at checkout. If shipping is added, the saving over Pololu direct (23.95 plus US shipping plus EU import VAT) shrinks but probably stays positive for a single unit. The distributor status is Botland's own claim, not checked on pololu.com.
+    - **Seller url:** https://botland.com.pl/przetwornice-step-down/17169-d36v28f5-przetwornica-step-down-5v-32a-pololu-3782-5903351242837.html
+    - **Sources:**
+      - https://botland.com.pl/szukaj?s=D36V28F5
+      - https://botland.store/converters-step-down/17169-step-down-voltage-converter-d36v28f5-5v-32a-pololu-3782-5903351242837.html
+      - https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html
+      - https://www.pololu.com/product/3782
+  2.
+    - **Name:** Generic 'DC-DC 3A 4.75-23V to 1.0-17V' mini buck module, MP2307 (Mini-360 class, 22.2 x 17.3 mm)
+    - **Kind:** generic_or_clone
+    - **Price usd:** not verified (no listing fetched)
+    - **Spec comparison:** Independent measurement by HKJ (lygte-info.dk). Input 4.75-23 V vs 5.3-50 V. 340 kHz per the vendor spec, vs about 500 kHz. Mode change around 0.1 A at 12 V in. No-load current up to 25 mA vs 2-3 mA. At 2.5 A, 12 V in, 5 V out, the hottest point read 144.5 C ('way too high'). At 3 A it may hit thermal shutdown. Output set by trimpot (+/-0.1 V hard to hit, 0.5 V realistic) vs a fixed 5 V +/-4%. 'A lot of noise' with high input voltage; external caps are recommended.
+    - **Worse in:** Continuous current and thermals (cannot meet the 3.5 A / 60 min enclosure gate), input margin (23 V max vs the SMBJ17A clamp), output accuracy (trimpot drift), noise, no-load current, no PG/EN, no measured protections. Rejected.
+    - **Compatibility:** Fits by size, but would fail the C4 thermal and spur gates.
+    - **Risks:** Counterfeit or relabelled chips are common on this class of module; protections were not tested.
+    - **Seller url:** 
+    - **Sources:**
+      - https://lygte-info.dk/review/Converter%20DC-DC%203A%204.75-23V%20to%201.0-17V%20UK.html
+  3.
+    - **Name:** Generic LM2596 adjustable buck module (43 x 21 x 14 mm)
+    - **Kind:** generic_or_clone
+    - **Price usd:** not verified (no listing fetched)
+    - **Spec comparison:** Independent measurement by HKJ. Rated 2 A (3 A only with an added heatsink) vs 3.2 A. Ripple about 200 mVpp, rising with input voltage (vendor claims 30 mV). Heatsink 140.4 C at 2 A out from 24 V in. The review quotes 65 kHz from the vendor spec. Size about 43 x 21 x 14 mm vs 17.8 x 20.3 x 8.8 mm. Non-synchronous, so lower efficiency.
+    - **Worse in:** Current, ripple (about 200 mVpp), heat, efficiency, size, and switching frequency (low harmonics fall into the 40-518 kHz watch list). The review does not say whether the chip is genuine. Rejected.
+    - **Compatibility:** Too big for the power-board slot; would fail the C4 spur gate.
+    - **Risks:** Fake LM2596 chips are widespread on these boards.
+    - **Seller url:** 
+    - **Sources:**
+      - https://lygte-info.dk/review/Power%20Adjustable%20buck%20converter%20LM2596%20UK.html
+  4.
+    - **Name:** Generic 'DC-DC 7A 9-60V to 3-32V' module (LT3800 controller + MCU, 62 x 44 x 18 mm)
+    - **Kind:** generic_or_clone
+    - **Price usd:** not verified (no listing fetched)
+    - **Spec comparison:** Independent measurement by HKJ. Current headroom is higher: about 6 A at 9 V in / 5 V out, 5.5 A at 12 V in. Input 9-60 V. But about 200 kHz, noise 'fairly high even at moderate or no load' (light output filtering), heatsink 98.7 C at 5.5 A from 12 V in, and about 4 W of loss at 5.5 A. Size 62 x 44 x 18 mm vs 17.8 x 20.3 x 8.8 mm. The on-board MCU and a 0.4 A XL7005A pre-regulator are extra noise sources.
+    - **Worse in:** Noise and spurs (about 200 kHz plus an MCU clock), size (about 7x the footprint), efficiency at the stack's 2 A operating point not measured. Rejected.
+    - **Compatibility:** Does not fit the power board; would fail the C4 spur gate.
+    - **Risks:** The reviewer warns the specs are optimistic; the MCU firmware is not open.
+    - **Seller url:** 
+    - **Sources:**
+      - https://lygte-info.dk/review/Converter%20DC-DC%207A%209-60V%20to%203-32V%20UK.html
+  5.
+    - **Name:** Generic 'DC-DC 2-24V to 2-28V 2A' module (MT3908)
+    - **Kind:** generic_or_clone
+    - **Price usd:** not verified
+    - **Spec comparison:** HKJ-tested module rated 2 A, vs 3.2 A typical and the 3.5 A gate. Detailed figures not extracted.
+    - **Worse in:** Current rating below the 3 A fuse and the 2.3 A with-Lime load. Rejected on rating alone.
+    - **Compatibility:** Not adequate for LAB5.
+    - **Risks:** -
+    - **Seller url:** 
+    - **Sources:**
+      - https://lygte-info.dk/review/Converter%20DC-DC%202-24V%20to%202-28V%202A%20MT3908%20UK.html
+      - https://lygte-info.dk/info/index%20UK.html
+  6.
+    - **Name:** DIY synchronous buck on the power board: TI LMR33640 (3.8-36 V, 4 A, 400 kHz / 1 MHz) or TI TPS62933F (3.8-30 V, 3 A, forced continuous mode, 200 kHz-2.2 MHz via RT)
+    - **Kind:** diy
+    - **Price usd:** not verified. TI, Mouser and LCSC pages did not return prices (TI shows LMR33640ADDAR as out of stock). The BOM is plausibly well under 23.95 USD, but no price is verified.
+    - **Spec comparison:** Datasheet (manufacturer) values only. LMR33640: 36 V in, 4 A (more than 3.2 A), Iq 24 uA (better), peak efficiency above 95%, but frequency foldback at light load like the Pololu. TPS62933F: forced continuous mode at a fixed RT frequency, which is better for the C4 spur gate, but 30 V in and 3 A, which is below the 3.5 A / 60 min gate. Neither has reverse-voltage protection to 40 V (would need an external P-FET or diode), and neither has a PG output. Back-feed behaviour not characterized for either.
+    - **Worse in:** No independent measurement of a built board exists. Ripple, EMI and thermals depend on layout, inductor and caps and cannot be shown equal before a bench test. TPS62933F is worse in current; LMR33640 has no forced PWM. Reverse protection and PG are missing unless added. Build quality depends on the builder. Not qualified under this angle.
+    - **Compatibility:** Could sit on the power board (Ubuntu/driver-neutral). This is the same path the stack already reserves as the C4 fallback ('synchronous buck with forced PWM via RT/SYNC, part chosen in P5'). Consider it only if the D36V28F5 fails the C4 spur or heat gate, and then qualify it with the same gates.
+    - **Risks:** Layout errors produce spurs in the 40-518 kHz watch list. Hand-soldering an HSOIC or SOT583 package with a thermal pad. The part numbers and frequency suffixes need datasheet confirmation (the TI pages do not map suffix to frequency or mode).
+    - **Seller url:** https://www.ti.com/product/LMR33640
+    - **Sources:**
+      - https://www.ti.com/product/LMR33640
+      - https://www.ti.com/product/LMR33640/part-details/LMR33640ADDAR
+      - https://www.ti.com/product/TPS62933F
+      - https://www.ti.com/product/LMR33630
+  7.
+    - **Name:** Used Pololu D36V28F5
+    - **Kind:** used
+    - **Price usd:** not verified (eBay returned HTTP 403; no listing found)
+    - **Spec comparison:** Would be identical if genuine and undamaged.
+    - **Worse in:** Unknown history. A used D36V28Fx may already have seen the back-feed pump (>60 V on VIN), which can stress the input capacitor and IC. No measured evidence per unit.
+    - **Compatibility:** Drop-in.
+    - **Risks:** No listing verified, and it saves at most a few USD against the 20.57 USD new EU price. Not recommended.
+    - **Seller url:** 
+    - **Sources:**
+      - https://forum.pololu.com/t/29129
+- **Notes:** Verdict from angle B (generic, clone, DIY, used): no generic or clone module proven not-worse by independent measurement was found. Keep the Pololu D36V28F5. The only verified saving is the same genuine part from Botland, PL (claims official Pololu distributor): 79.90 PLN including 23% VAT, about 20.57 USD at ECB 16 Oct 2026 rates. Pololu direct is 23.95 USD plus US shipping plus EU import VAT. Confirm stock and EU shipping at checkout; botland.store is B2B-only (needs a VAT ID).
+  
+  Evidence for rejecting generics: HKJ (lygte-info.dk) measurements show MP2307 '3A' minis at a 144.5 C hotspot at 2.5 A, LM2596 boards at about 200 mVpp ripple and 140 C, and the 7 A LT3800 board at 62x44 mm with 'fairly high' noise. All are worse in current, thermals, noise or size, and in input margin or output accuracy.
+  
+  Not assessed, so rejected per this angle (no independent measurement found): Mini560 / Mini560 Pro, MP1584EN and XL4015-class modules, and any Pololu clones. The WebSearch budget for this turn was exhausted on the first query (shared 200-call cap), so this sweep is not exhaustive. A follow-up turn with search budget could check those classes.
+  
+  The DIY TI buck (LMR33640 or TPS62933F) matches the stack's own C4 fallback. Use it only if the D36V28F5 fails the C4 spur or heat gate, and qualify it with the same gates.
+  
+  Still open for the current part (from the re-audit): enclosure heat at 3.5 A for 60 min (STACK line 1075); 500 kHz ripple on the LT3045 rail with LAB5 at 4.8 V; back-feed Schottkys on the Pico and the IMU pack (the D36V28Fx pumps VIN above 60 V when VOUT is back-fed, forum t/29129).
+  
+  Pololu's D30V30F5 (29.95 USD) back-feeds much better but is more expensive. D24V22F5-class same-vendor parts are below the 3 A need; they belong to angle A and were not checked here.
+  
+  All non-Pololu module prices are marked not verified because no listing was fetched.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
