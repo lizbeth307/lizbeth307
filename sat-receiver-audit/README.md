@@ -64,6 +64,7 @@
 | [Storage](components/storage.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_3e735695-e00` |
 | [Targets link budgets](components/targets_link_budgets.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Tca9517 buffer 74lvc1g17 2n7002 ao3400 f](components/tca9517_buffer_74lvc1g17_2n7002_ao3400_f.md) | · research · forums · fixes ✅ verify | `—` |
+| [Ti tps7a4701 ldo lnb 13 2 v boni 12 5 v](components/ti_tps7a4701_ldo_lnb_13_2_v_boni_12_5_v.md) | · research · forums · fixes ✅ verify | `—` |
 | [Tinplate hf can lc mix 31 on vbus](components/tinplate_hf_can_lc_mix_31_on_vbus.md) | · research · forums · fixes ✅ verify | `—` |
 | [Travel tripod 35 cm folded 1 2 m or more](components/travel_tripod_35_cm_folded_1_2_m_or_more.md) | · research · forums · fixes ✅ verify | `—` |
 | [Two stage coax cm choke ft 240 77 ft 240](components/two_stage_coax_cm_choke_ft_240_77_ft_240.md) | · research · forums · fixes ✅ verify | `—` |
