@@ -208,7 +208,8 @@ pcie_aspm=off isolcpus=nohz,domain,managed_irq,7 nohz_full=7 rcu_nocbs=7 irqaffi
 ```sh
 cat /sys/kernel/debug/pinctrl/*/pinmux-pins | grep -E 'gpio96|pin 96'   # власник лише pps-gpio
 ls -l /dev/lab/gnss /dev/lab/pico /dev/pps-gnss
-i2cdetect -y -r 0 ; i2cdetect -y -r 2                                   # адреси, не UU
+i2cdetect -l                                                            # номери шин I2C0 / I2C2 (N0, N2 — TBD, STACK.md 5.2 їх не задає)
+i2cdetect -y -r N0 ; i2cdetect -y -r N2                                 # адреси, не UU
 ```
 
 | перевірка | прохід |
