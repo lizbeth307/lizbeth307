@@ -29221,6 +29221,254 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   RULES: every candidate is a passive part or a receive-path switch. Nothing transmits; the TX load only terminates the software-blocked Lime TX port. No loops, no H-field probes; signal sources stay conducted-only (VNA qualification into loads/DUT). The Q6A and the antennas were not touched.
   UNVERIFIED: Mouser, Richardson and Crystek prices (search snippets; pages blocked); the derating start temperature of ANNE-50L+; whether the Taoglas MHF4L plugs fit the I-PEX tool; R44SF current rating and the variant that takes a 2280 card; ADT-Link shipping cost; Lime Micro maximum TX output.
 
+## searchB:lime_parts_adt_link_r44sf_i_pex_90435_00 (run `wf_c3ba734e-52b`)
+
+- **Part:** Lime-only parts set (with-Lime build is the default after the user's 18 Oct 2026 decision): ADT-Link R44SF 5 cm M.2 riser; MHF4L mating/unmating tool; Al pedestal + gap pad + plate fins (10 W conduction path); DC blocks on Lime RX1/RX2 and a 10-12 dB pad after the SAWbird on the Lime L-band route; 3rd HMC7992 SP4T (routes L-band ch3 to RTL-B or Lime RX1). Angle B: generic, clone, DIY and used options, accepted only with measured evidence.
+- **Current price usd:** 87-127. This is the STACK v1 model and is unverified; only the R44SF at $19 was verified. My rebuild from prices verified on 18 Oct 2026 (ex VAT, before shipping) comes out higher: R44SF $19.00 + I-PEX 90609-0001 €16.08 = $18.08 + 2x BLK-89-S+ $40.52 + 1x inline 10 dB pad (the stack names no part, so I priced VAT-10A+ at €22.20 = $24.96 as the reference) + HMC7992 chip €11.50 = $12.93 comes to about $115.5. Pedestal, pad and fins are on top of that and unpriced. FX 1 EUR = 1.1241 USD.
+- **Critical specs:**
+  - Riser: M.2 M-key male that fits the Q6A 2230 slot J13 (pcie1, Gen3 x2), to an M-key female that takes the 2280 Lime. It must carry PERST#, CLKREQ#, PEWAKE#, REFCLK and 3.3 V. Acceptance: link at 8 GT/s x1, zero AER errors over 60 min at 2x56 Msps, zero limeTRX drops, 50 warm + 20 cold boots.
+  - Riser mechanics and EMI: about 5 cm length, shielded cable (it runs next to the RF bay), stack height <=3.8 mm over J13, an 80 mm female board that can take the ~26x20 mm pedestal window, and a STEP model for CAD.
+  - Tool: must fit the MHF 4L 1.13 mm lock plug, because the Taoglas cables are MHF4L. I-PEX names 90609-0001 for it; 90435-001 is the MHF 4 tool. The aim is to service the $249 Lime's receptacles without damage.
+  - Thermal: a conduction path for 10 W (Lime typical ~4 W in modes H/I). Gap pad >=6 W/mK with 0.5-1.5 mm gap fill, electrically non-conductive, compliant (Lime top <=4.5 mm, bottom <=1.35 mm). Al pedestal flat and bonded to the plate. Acceptance in the 45-min noon soak: LMS7002M <=75 C, frame <=60 C.
+  - DC block (RX1 L-band 1.5-1.71 GHz; RX2 S-band 2.2-2.3 GHz; Lime tuning range 0.3-3.8 GHz): reference BLK-89-S+ IL 0.12 dB typ at 2 GHz / 0.18 at 3 GHz, RL 26 / 24.5 dB, 50 V DC. The stack's highest DC is 13.53 V (LNB) and the L-band LNA bias is 4.5 V.
+  - 10-12 dB pad after the SAWbird: reference VAT-10A+ 10+/-0.3 dB, flatness 0.25 dB to 3 GHz, VSWR 1.2 typ / 1.5 max to 5 GHz, 1.7 W. Its job is to keep the Lime well below its +10 dBm absolute input maximum and out of compression, and to present 50 ohm to the SAW output.
+  - 3rd HMC7992: 0.1-6 GHz, IL 0.6/0.9 dB, isolation 40 dB min (>=30 dB in conducted qualification), IIP3 56 dBm, P1dB 33 dBm, absorptive, A=B=low selects RF1 = 50 ohm park, 3.3 V logic from the MCP23017 rail, genuine part from a franchised distributor.
+  - Compatibility and rules: all passive or I2C-controlled, so nothing changes on Ubuntu 24.04 arm64. Receive-only: the Lime TX port is terminated and TX is blocked in software. All qualification is conducted only (LiteVNA into loads or a DUT, never on air). No loops.
+- **Candidates:**
+  1.
+    - **Name:** ADT-Link R44SF 5 cm (keep)
+    - **Kind:** current_part
+    - **Price usd:** 19.00 list on adt.link (verified 18 Oct 2026), plus shipping (unverified). It ships from China, so EU landed cost adds import VAT + EUR 3 duty per item, plus the EUR 2 handling fee from about 1 Nov 2026.
+    - **Spec comparison:** PCIe 3.0 x4 '32G/bps (Max.)'. Five flat cables, each with conductive-polymer EMI shielding, 1.4 mm thick. 3 cm costs $21, 5 cm and 10 cm $19 each. The 5 cm length is already ADT's cheapest. Resellers charge more: Newegg 10 cm $25.58-29.99, and an eBay.de listing titled R44SF $59.50.
+    - **Worse in:** Nothing; it is the reference part. Open points from the re-audit: confirm with ADT-Link which variant takes a 2230 host and a 2280 B+M card. The ADT product page makes no 100%-tested claim; that note was in an older ADT drawing.
+    - **Compatibility:** Male end fits within the J13 2230 footprint with a 3.8 mm stack. The female board can be windowed for the pedestal. STEP is available.
+    - **Risks:** No independent AER measurement of the R44SF on this host exists. One anecdote reports correctable PCIe errors with an ADT adapter on a different board. The stack's Stage 0 / riser A/B acceptance test covers this.
+    - **Seller url:** https://www.adt.link/product/R44SF.html
+    - **Sources:**
+      - https://www.adt.link/product/R44SF.html
+      - https://www.ebay.de/itm/253658960351
+      - https://forums.anandtech.com/threads/any-experience-issues-with-nvme-key-m-extender-cable.2601704
+  2.
+    - **Name:** Generic no-name M.2 M-key to M-key NVMe extension cables (AliExpress/eBay/Amazon)
+    - **Kind:** generic_or_clone
+    - **Price usd:** unverified (search results only; none confirmed cheaper than $19 landed)
+    - **Spec comparison:** No published link-margin, AER or BER measurement for any generic M.2 extender. My search found only uncontrolled forum anecdotes ('seemed to work', with no error testing).
+    - **Worse in:** Unproven signal integrity and shielding. Unknown whether PERST#/CLKREQ#/REFCLK are carried; the stack notes the XTRX 'missing PERST' failure on generic FPC risers.
+    - **Compatibility:** Unknown; it depends on the listing.
+    - **Risks:** REJECTED under angle B: no measured evidence.
+    - **Seller url:** 
+    - **Sources:**
+      - https://forum.level1techs.com/t/m-2-to-pcie-adapter-myth-or-reality/207239
+      - https://forums.anandtech.com/threads/any-experience-issues-with-nvme-key-m-extender-cable.2601704
+  3.
+    - **Name:** DIY: no riser, Lime plugged straight into J13 with a printed tail support
+    - **Kind:** diy
+    - **Price usd:** 0
+    - **Spec comparison:** Removes one connector pair, so electrically it could be at least as good on the link. This is already the stack's Stage 0 baseline test.
+    - **Worse in:** Per mechanical_thermal.json, the card overhangs about 35-40 mm, covers J8/J21 and may hit HDMI. The LA9310 sits over the Q6A edge components, and the SDR sits next to SoC/DSI noise, so RF isolation is worse. There is no shielded bay and no pedestal cooling.
+    - **Compatibility:** Conflicts with the planned layout (RF bay, pedestal window).
+    - **Risks:** REJECTED: no measurement shows equal noise floor or thermal performance; the layout analysis shows it is worse.
+    - **Seller url:** 
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/mechanical_thermal.json (alternatives[3])
+  4.
+    - **Name:** I-PEX 90609-0001 MHF 4L mating/unmating tool (keep, corrected part number)
+    - **Kind:** current_part
+    - **Price usd:** 18.08 ex VAT (EUR 16.08; EUR 19.14 = $21.52 incl. VAT) at DigiKey DE, 358 in stock, Active, verified 18 Oct 2026. DigiKey US $18.31.
+    - **Spec comparison:** It is the tool I-PEX names for MHF 4L plugs. STACK v1's 90435-001 is the MHF 4 tool.
+    - **Worse in:** Nothing.
+    - **Compatibility:** Matches the Taoglas MHF4L 1.13 mm cables on the Crowd Supply order.
+    - **Risks:** The cables are Taoglas-made, so tool fit is likely but not verified.
+    - **Seller url:** https://www.digikey.de/en/products/result?keywords=90609-0001
+    - **Sources:**
+      - https://www.digikey.de/en/products/result?keywords=90609-0001
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_B_receivers_rf.json (results[2].corrections[7])
+  5.
+    - **Name:** I-PEX 90435-001 (MHF 4 tool, the part STACK v1 lists)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 17.86 (EUR 15.89 at DigiKey DE; VAT status not stated on the page)
+    - **Spec comparison:** About $0.2 cheaper.
+    - **Worse in:** Wrong mating system: an MHF 4 tool, not the MHF 4L lock tool. No listing says it works with MHF 4L.
+    - **Compatibility:** Not confirmed for the MHF4L plugs.
+    - **Risks:** REJECTED: incompatible, and the saving is negligible.
+    - **Seller url:** https://www.digikey.de/en/products/result?keywords=90609-0001
+    - **Sources:**
+      - https://www.digikey.de/en/products/result?keywords=90609-0001
+      - https://azcus.digikey.com/en/products/detail/i-pex/90435-001/25819261
+  6.
+    - **Name:** Generic MHF4 / IPEX4 puller tools (marketplace)
+    - **Kind:** generic_or_clone
+    - **Price usd:** unverified
+    - **Spec comparison:** No source confirms they fit the MHF 4L lock.
+    - **Worse in:** Unknown fit, so a real risk of damaging the Lime receptacles.
+    - **Compatibility:** Unconfirmed.
+    - **Risks:** REJECTED: no evidence.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.digikey.ph/en/products/detail/i-pex/90609-0001/25819274
+  7.
+    - **Name:** DIY DC blocks on the injector PCB: Murata GJM1555C1H220JB01D (22 pF C0G 50 V 0402, high-Q) as the RF3 throw cap of the 3rd HMC7992 section (Lime RX1). The same cap at the S-band bias-tee output (Lime RX2) only if the S-band LNA is fed from an injector channel on that PCB.
+    - **Kind:** diy
+    - **Price usd:** 0.12 each (EUR 0.11 qty 1, DigiKey DE, 18,671 in stock, Active). Replaces BLK-89-S+ at $20.26 each, saving about $20 per port ($40 if both ports).
+    - **Spec comparison:** DC rating 50 V, same as BLK-89-S+; the stack's maximum is 13.53 V. RX1 already sees two C0G caps in series upstream (the injector RF output cap and the HMC7992 RFC cap, both required by G1), so the throw cap makes three. Model (RF Essentials ESL ~0.4 nH for 0402): SRF about 1.7 GHz, so |Z| about 0-2 ohm over 1.5-2.3 GHz. That gives IL <0.02 dB and RL >35 dB from the cap alone, against BLK-89-S+ measured typical 0.12 dB / 26 dB at 2 GHz. It also removes two SMA interfaces and a jumper.
+    - **Worse in:** (1) Low-frequency end: about 24 ohm at 300 MHz (RL ~13 dB, model), so it is wrong for any throw that must pass 0.3-1 GHz; there, use 100 pF, or 100 pF in parallel with 10 pF. (2) An MLCC can flex-crack, whereas the coaxial unibody BLK-89 cannot. This is mitigated by the 2-3 caps in series. (3) RF power rating is lower, but RX levels are below 0 dBm. (4) No independent measurement exists for our board: evidence is Murata data plus a model until the LiteVNA test.
+    - **Compatibility:** Sits on the existing custom injector PCB, inside G1's HMC7992 section; no driver or rail change. RX2 qualifies only if the S-band LNA bias tee is on that PCB; otherwise keep an inline BLK-89-S+ on RX2.
+    - **Risks:** CONDITIONAL. Accept after conducted LiteVNA tests into loads: section IL and RL at 1.69-1.71 and 2.2-2.3 GHz, RL >=24 dB (not worse than BLK-89); and 0 V DC at the Lime connector with the ch3 4.5 V bias on.
+    - **Seller url:** https://www.digikey.de/en/products/result?keywords=GJM1555C1H220JB01D
+    - **Sources:**
+      - https://www.digikey.de/en/products/result?keywords=GJM1555C1H220JB01D
+      - https://www.minicircuits.com/pdfs/BLK-89-S+.pdf
+      - https://rfessentials.com/rf-knowledge-base/what-is-the-frequency-response-of-a-dc-block-capacitor-and-how-do-i-select-the-r/
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G1_receivers_rf.json (HMC7992 decision, C0G blocks on all 5 RF pins)
+  8.
+    - **Name:** Generic marketplace SMA DC blocks (AliExpress)
+    - **Kind:** generic_or_clone
+    - **Price usd:** unverified
+    - **Spec comparison:** The only independently measured cheap block I found is N-type, not SMA (Peter Tanner, spectrum analyzer): IL about 0.2 dB at 915 MHz and 2.45 GHz, up to 0.5 dB in-band, measured only to 2.9 GHz, no RL data. BLK-89-S+ is 0.12 dB at 2 GHz and 0.18 dB at 3 GHz, with RL 26 / 24.5 dB.
+    - **Worse in:** Insertion loss (measured worse), RL unknown, DC rating unknown, no SMA measurement.
+    - **Compatibility:** N-type would need adapters.
+    - **Risks:** REJECTED: measured worse or not measured.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.petertanner.dev/posts/Aliexpress-DC-block-characterization/
+      - https://www.minicircuits.com/pdfs/BLK-89-S+.pdf
+  9.
+    - **Name:** Used or marketplace Mini-Circuits BLK-89-S+
+    - **Kind:** used
+    - **Price usd:** 24.97 + 3.99 shipping (eBay.de, Shenzhen seller, 'new other'); 24.99 (eBay AU, used, untested, titled 'BLK-89')
+    - **Spec comparison:** Same part if genuine.
+    - **Worse in:** Price: more than the new $20.26 from Mini-Circuits. Provenance and condition are unknown.
+    - **Compatibility:** Same.
+    - **Risks:** REJECTED: not cheaper.
+    - **Seller url:** https://www.ebay.de/itm/312651746481
+    - **Sources:**
+      - https://www.ebay.de/itm/312651746481
+      - https://www.ebay.com.au/itm/116406315294
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=BLK-89-S%2B
+  10.
+    - **Name:** DIY on-board 10 dB pad: Mini-Circuits YAT-10A+ (2x2 mm MMIC, thin-film on GaAs) on the Lime RX1 throw of the 3rd HMC7992 section, behind the C0G block
+    - **Kind:** diy
+    - **Price usd:** 4.42 ex VAT (EUR 3.93; EUR 4.68 incl. VAT) at DigiKey DE, 9,040 in stock, Active, verified 18 Oct 2026. Replaces an inline SMA pad: VAT-10A+ EUR 22.20 = $24.96, saving about $20.5.
+    - **Spec comparison:** Datasheet, measured on Mini-Circuits' CPW test board. Attenuation 9.6-10.4 dB over DC-5 GHz with flatness included; typical 9.98 at 1 GHz and 9.96 at 2 GHz. VAT-10A+ is 10+/-0.3 at 10 MHz plus 0.25 dB flatness to 3 GHz; typical 10.16 at 2 GHz. VSWR 1.09 typ / 1.25 max (DC-5 GHz) against 1.2 typ / 1.5 max, so YAT is better. Power 1.7 W for both, derated to 1.0 W at 85 C. DC-18 GHz against DC-6 GHz. The family includes 12 dB if 12 dB is wanted.
+    - **Worker note:** 
+    - **Worse in:** (1) Operating case temperature is -40 to +85 C against -45 to +100 C. That is on paper only: the stack's internal limits are a 60 C frame and 75 C LMS7002M. (2) Field-swappability: changing the value needs hot-air rework instead of a screw-on swap. Keep the bench-kit SMA pads for experiments. (3) Board-level VSWR depends on our 2-layer FR4 GCPW, not Mini-Circuits' test board.
+    - **Compatibility:** Same PCB and process as the HMC7992 (stencil or hot-air on the EPAD). Needs one edge RF connector toward the Taoglas MHF4L-SMA(f) cable; that connector is not priced and partly offsets the saving. Passive; no software change.
+    - **Risks:** CONDITIONAL. Accept after a conducted LiteVNA sweep of the finished section (de-embedded with the thru coupon G1 already requires): S21 10+/-0.5 dB and RL >=20 dB at 1.5-1.71 GHz (and at 2.2-2.3 GHz if that throw is ever used). If RL is below 20 dB, keep an inline pad.
+    - **Seller url:** https://www.digikey.de/en/products/result?keywords=YAT-10A%2B
+    - **Sources:**
+      - https://www.minicircuits.com/pdfs/YAT-10A+.pdf
+      - https://www.digikey.de/en/products/result?keywords=YAT-10A%2B
+      - https://www.minicircuits.com/pdfs/VAT-10A+.pdf
+      - https://www.digikey.de/en/products/result?keywords=mini-circuits%2010%20dB%20attenuator
+  11.
+    - **Name:** DIY 0402 resistor pi-pad (about 96/71/96 ohm) on the injector PCB
+    - **Kind:** diy
+    - **Price usd:** under 1 (model, unpriced)
+    - **Spec comparison:** No measured data for this layout. Mini-Circuits markets the YAT as the alternative to DIY resistor pads because of parasitics and repeatability.
+    - **Worse in:** Unproven accuracy and VSWR at 1.7-2.3 GHz; low power rating (irrelevant at RX levels).
+    - **Compatibility:** Same PCB.
+    - **Risks:** REJECTED under angle B: no measured evidence. The YAT costs only about $4.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.minicircuits.com/pdfs/YAT-10A+.pdf
+  12.
+    - **Name:** Generic marketplace SMA fixed attenuators
+    - **Kind:** generic_or_clone
+    - **Price usd:** unverified
+    - **Spec comparison:** No independent NanoVNA/LiteVNA measurement of a cheap unbranded 10 dB SMA pad found. Branded datasheets show +/-0.5 to +/-1 dB and VSWR 1.15-1.4 to 3 GHz.
+    - **Worse in:** Unproven.
+    - **Compatibility:** SMA inline.
+    - **Risks:** REJECTED: no measured evidence.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.l-com.com/coaxial-2w-10-db-rf-fixed-attenuator-sma-male-to-sma-female-stainless-steel-body-up-to-3-ghz
+  13.
+    - **Name:** 3rd HMC7992: genuine ADI HMC7992LP3DE chip as a section of the custom injector PCB (G1 route)
+    - **Kind:** diy
+    - **Price usd:** 12.93 ex VAT (EUR 11.50; EUR 13.685 incl. 19% VAT) at DigiKey DE, plus about $1-2 of passives (model). Verified by G1 on 18 Oct 2026.
+    - **Spec comparison:** Same die and datasheet specs: IL 0.6/0.9 dB, isolation 40 dB min / 45 typ, IIP3 56 dBm, P1dB 33 dBm, A=B=low selects RF1. The board level is defined: C0G blocks on all pins, 49.9 ohm park on RF1, VDD shared with the MCP rail. The RF2 to RTL-B link becomes an on-board trace, which removes a jumper.
+    - **Worse in:** Nothing proven worse. Board-level IL and isolation still need measurement (the same is true of the current pick, which is unmeasured).
+    - **Compatibility:** Same 2-line control and truth table; MCP23017 I2C already in labd. 3-4 chips stay below the 10-piece price break; buying 10 at EUR 9.05 costs more in total.
+    - **Risks:** Conditional on G1's LiteVNA tests (IL <=0.9 dB, isolation >=40 dB at 0.1-1.7 GHz, power-up park, spurs) and the '7992' marking check.
+    - **Seller url:** https://www.digikey.de/en/products/detail/analog-devices-inc/HMC7992LP3DE/5873027
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G1_receivers_rf.json
+      - https://www.farnell.com/datasheets/2283884.pdf
+  14.
+    - **Name:** Generic marketplace HMC7992 SP4T boards (AliExpress about $6-16 each)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 6.22-15.58 each (G1 snapshots, unverified)
+    - **Spec comparison:** No measured S-parameters for any generic board. Some boards sell below the authorized chip price. ADI-logo silkscreen on a board ADI does not make. A remarked HMC241 would pass a LiteVNA check while being about 11 dB worse in IIP3.
+    - **Worse in:** Counterfeit risk, unknown DC-block values (100 pF copies are worse at 137 MHz), linearity we cannot verify.
+    - **Compatibility:** Pin and logic compatible.
+    - **Risks:** REJECTED: no measurements, counterfeit indicators.
+    - **Seller url:** 
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G1_receivers_rf.json (rejected list)
+  15.
+    - **Name:** DIY Wilkinson or resistive splitter instead of the 3rd switch (feed RTL-B and Lime at once)
+    - **Kind:** diy
+    - **Price usd:** about 1-5 (model)
+    - **Spec comparison:** Loss 3.2-6 dB (Wilkinson or resistive) against 0.6 dB. Port-to-port isolation about 20-25 dB (model) against 40 dB min.
+    - **Worse in:** Insertion loss and isolation. Lime spurs and LO leakage (1689.6 MHz is in the L-band) would reach RTL-B, and there is no 50 ohm park.
+    - **Compatibility:** Passive.
+    - **Risks:** REJECTED: worse.
+    - **Seller url:** 
+    - **Sources:** []
+  16.
+    - **Name:** DIY pedestal machined from AlMg3 bar (Alu-Verkauf DE, 25x25x75 mm, same parcel as G4's mid-plate)
+    - **Kind:** diy
+    - **Price usd:** 4.28 (EUR 3.81 incl. 19% VAT, per G4; not re-verified by me). Shipping is shared with the plate parcel: DE EUR 6.95, AT/Benelux/DK EUR 12.95.
+    - **Spec comparison:** Model: a 25x25 mm block, 5 mm tall, has R = t/(kA) of about 0.06 K/W at k = 130 W/mK (5754), or about 0.045 K/W at 6082-T6. That is under 0.6 K at 10 W, small next to the gap pad's roughly 1-2 K/W.
+    - **Worse in:** 5754 conductivity is about 25% below 6082/6061 (on paper roughly +0.15 K at 10 W). Use 6082 or 1050A bar if available at the same price. Hand facing must reach 0.2 mm flatness.
+    - **Compatibility:** Fits the riser window (~26x20 mm, so cut to 24x18 mm) and is bonded to the plate.
+    - **Risks:** CONDITIONAL on the stack's 45-min soak (LMS7002M <=75 C, frame <=60 C) and the flatness check. Do not double-count with G4's chassis line, which already carries 'pedestal stock'.
+    - **Seller url:** 
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G4_mechanical_field.json (chassis set)
+  17.
+    - **Name:** Gap pad: Lime strip cut from G4's Gelid GP-Ultimate 1.0 mm 90x50 sheet (TP-GP04-B)
+    - **Kind:** current_part
+    - **Price usd:** 0 extra (the sheet is EUR 4.14 at QuietPC NL in G4's set, covering the Lime, LPDDR5 and UFS gaps); or a 120x20 strip at EUR 2.61
+    - **Spec comparison:** Claimed 15 W/mK, 60-70 Shore OO, compresses 30%, so a 1.0 mm pad fills 0.7-1.0 mm gaps (inside the 0.5-1.5 mm spec). There is no independent W/mK measurement; Gelid itself no longer publishes W/mK.
+    - **Worse in:** Evidence only: the >=6 W/mK gate rests on the maker's claim. In a search snippet, Igor's Lab measured Arctic TP-3 at 'up to or well over 6 W/m-K' depending on thickness (page returned 403). I did not verify a TP-3 price, so it is only an evidence-backed fallback.
+    - **Compatibility:** 20 mm wide strip covers the 26x20 mm window.
+    - **Risks:** Fit check in CAD first (G4 condition); the pedestal temperature gate stays.
+    - **Seller url:** 
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G4_mechanical_field.json (mechanical set)
+      - https://www.igorslab.de/en/arctic-tp-3-vs-arctic-apt2560-in-the-test-if-it-has-to-be-a-thermal-pad/
+  18.
+    - **Name:** Plate fins in the blower path (keep)
+    - **Kind:** current_part
+    - **Price usd:** unpriced in STACK
+    - **Spec comparison:** No generic finned heatsink with independently measured Rth was found. The stack's thermal soak is the only acceptance test.
+    - **Worse in:** n/a
+    - **Compatibility:** Mid-plate, path 2 (display-channel blower).
+    - **Risks:** Keep the current approach; no angle-B candidate.
+    - **Seller url:** 
+    - **Sources:** []
+- **Notes:** VERDICT (angle B): keep the R44SF, the I-PEX tool (corrected to 90609-0001) and the fins. Cheaper and not worse, each conditional on a conducted LiteVNA qualification:
+  (a) DC blocks become on-board C0G caps in the 3rd HMC7992 section. RX1 always qualifies; RX2 only if the S-band LNA bias tee is on the injector PCB.
+  (b) The inline 10 dB pad becomes an on-board Mini-Circuits YAT-10A+. Its datasheet VSWR is better than VAT-10A+ (1.09/1.25 against 1.2/1.5).
+  (c) The 3rd HMC7992 becomes a genuine chip on the same PCB (G1 route).
+  (d) The pedestal is cut from bar stock in G4's parcel.
+  (e) The pad is a strip from G4's Gelid sheet.
+  
+  Line total (ex VAT, before shipping, fins unpriced): about $59 with both DC blocks on board, or about $79 if RX2 keeps a BLK-89-S+. My verified rebuild of the current set is about $115.5 plus pedestal, pad and fins. Saving: about $36-56, plus the separate generic switch board, 2 inline parts and 1-2 SMA jumpers. Not priced: one extra edge RF connector on the PCB for the Lime RX1 output.
+  
+  Not traded away, but stated: YAT-10A+ is rated -40..+85 C against -45..+100 C (inside the stack's limits). An on-board pad cannot be swapped in the field. A single MLCC can flex-crack, mitigated by 2-3 caps in series upstream. 22 pF is wrong for any throw that must pass 0.3-1 GHz (use 100 pF there). The 5754 pedestal alloy conducts about 25% less than 6082, a model difference of about 0.15 K at 10 W.
+  
+  Rejected for lack of measured evidence, or measured worse: generic M.2 risers; direct insertion; 90435-001 (wrong tool); generic MHF4 pullers; AliExpress DC blocks (the one measured unit is worse); used BLK-89 (not cheaper, $24.97-24.99); generic SMA pads; DIY resistor pads; generic HMC7992 boards; a splitter in place of the 3rd switch.
+  
+  EU: DigiKey DE prices are ex VAT; add national VAT. ADT-Link ships from China, so add import VAT, the EUR 3 duty per item, and the EUR 2 handling fee from about 1 Nov 2026 (operator note 35).
+  
+  Unverified: ADT shipping cost, R44SF variant and 2280 fit, MHF4L tool fit on the Taoglas plugs, Alu-Verkauf price (taken from G4), TP-3 price and full data (Igor's Lab returned 403), and board-level S-parameters until measured.
+  
+  Rules: all parts are passive or receive-path, qualification is conducted-only into loads or a DUT, the Lime TX port stays terminated and TX stays blocked in software, and there are no loops.
+  
+  FX 1 EUR = 1.1241 USD. Six WebSearch calls used.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
