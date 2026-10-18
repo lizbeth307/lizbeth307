@@ -24589,3 +24589,198 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - Optional sunlight-readable secondary status display (memory LCD or e-paper) on the RP2040: noise, price and value are unverified.
 - **Confidence:** medium
 
+## community:narrowband_sdr (run `wf_feb0e95a-cfc`)
+
+- **Subsystem:** narrowband_sdr (RTL-SDR Blog V4L x2 + spare: RTL-A VHF/UHF on the blue USB 3.1 port, RTL-B L-band/LNB IF on FE1.1s P1, spare on the LAB USB port) - stage 2, community experience
+- **Findings:**
+  1.
+    - **Claim in stack:** C11: rebuild librtlsdr with 'the zerocopy typo fixed' (stage 1 found that noble debian/rules passes $DEB_ZEROCOPY_OPTION, which make expands to 'EB_ZEROCOPY_OPTION')
+    - **Finding:** The typo matters in practice on arm64. Ubuntu's official noble arm64 build log for rtl-sdr 2.0.1-2build1 shows '-DENABLE_ZEROCOPY=EB_ZEROCOPY_OPTION', then '-- Building with usbfs zero-copy support enabled', and every librtlsdr.c compile line carries -DENABLE_ZEROCOPY=1. The intent was the opposite: line 5 of debian/rules picks OFF for arm64/armel/armhf, and changelog 2.0.1-2 says 'debian/rules takes upstream default for arm/arm64 (Closes: #1041701)'. That bug is a community report from an arm64 Odroid N2+: rtl_tcp output only zeros and rtl_test reported lost bytes, because the usbfs-mmap bug check failed to trigger the fallback; building with zerocopy off fixed it every time. Upstream commit 81833a1 (2019) turned zerocopy off by default because the mapped memory 'might cause a bus error on some ARM systems'. So stock noble librtlsdr2 on the Q6A runs zero-copy, and the bug Debian closed is not actually fixed on noble.
+    - **Verdict:** confirmed
+    - **Action:** Keep the C11 fix and make it explicit: -DENABLE_ZEROCOPY=OFF. CI greps the arm64 build log for 'zero-copy support disabled'. The runtime self-test asserts that stderr never shows 'Allocating 15 zero-copy buffers'. Do not use the stock noble librtlsdr2 for W1-2 smoke tests, because its results would not represent the shipped stack.
+    - **Impact:** Moderate. Without the fix the risk is silent zero or lost-sample IQ on arm64, which looks like a dead antenna.
+    - **Sources:**
+      - https://launchpad.net/ubuntu/+source/rtl-sdr/2.0.1-2build1/+build/28133054/+files/buildlog_ubuntu-noble-arm64.rtl-sdr_2.0.1-2build1_BUILDING.txt.gz
+      - https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1041701
+      - http://archive.ubuntu.com/ubuntu/pool/universe/r/rtl-sdr/rtl-sdr_2.0.1-2build1.debian.tar.xz
+      - https://github.com/osmocom/rtl-sdr/commit/81833a1cf6288fee93a9157c0f60cafb5ec340b9
+  2.
+    - **Claim in stack:** RTL-B serves Meteor HRPT 1700, Metop 1701.3 and AWS 1707 MHz from a closed RF bay; C11 uses the osmocom driver and never ships the rtlsdrblog fork
+    - **Finding:** osmocom v2.0.3 lacks the L-band PLL-lock fix that RTL-SDR Blog ships in its own driver. Fork commit d80421b ('l-band lock optimizations', 2023-08-24, still in fork master aed0ea1) does two things: (1) it sets VCO current to maximum on every r82xx_set_pll (reg 0x12 written 0x06, mask 0xff) instead of osmocom's 'VCO current = 100' (0x80) with a single step to 0x60 only after a failed lock; (2) it sets the PLL drop-out/divider buffer current (reg 0x17 div_buf_cur = 0xa0, which the 0x30 mask makes 0x20). osmocom v2.0.3 tuner_r82xx.c has neither, and no osmocom commit after v2.0.3 adds them (origin/master = 797f814 'Release 2.0.3'). Community measurements on R820T-family chips: rtl-sdr.com's beta test of this change used one known-bad dongle at 1.65 GHz. It failed after 20 s on the stock driver, after 2 min with the driver change alone and after about 15 min with passive cooling alone; with cooling plus the driver change it ran indefinitely. A separate rtl-sdr.com article: R820T2 units ran over 48 h above 1.5 GHz in shade but failed in direct sun. Also, in osmocom a lost lock prints '[R82XX] PLL not locked!' and r82xx_set_freq jumps to err with rc = 0, so rtlsdr_set_center_freq() reports success. The failure is silent at the API level. The readsb #81 and Home Assistant reports show this string with no messages decoded. The R828S's lock margin at 1.70-1.707 GHz when hot is unmeasured.
+    - **Verdict:** new_risk
+    - **Action:** Add a separate patch to the lab librtlsdr2 (2.0.3-0+lab1) that ports d80421b. osmocom's set_pll uses a shadow-register bulk write, so set reg 0x12 bits 7:5 = 000 in regs[2] instead of 0x80, keep the existing bit 3 (SDM) logic, and set reg 0x17 bits 5:4 as the fork does. Run the existing thermal gate as an A/B (patched vs unpatched): 60 min at 1700 and 1707 MHz, closed case, worst-case ambient, then compare dropouts and noise floor. labrx redirects librtlsdr's stderr and treats 'PLL not locked!' as a failed tune that triggers retune and alarm. Bond the dongle cases to the plate.
+    - **Impact:** High for summer HRPT/AHRPT on RTL-B. It is the cheapest mitigation for the stage-1 thermal risk.
+    - **Sources:**
+      - https://github.com/rtlsdrblog/rtl-sdr-blog/commit/d80421b
+      - https://github.com/osmocom/rtl-sdr/blob/v2.0.3/src/tuner_r82xx.c
+      - https://rtl-sdr.com/beta-testing-a-modified-rtl-sdr-driver-for-l-band-heat-issues/
+      - https://www.rtl-sdr.com/?p=9747
+      - https://github.com/wiedehopf/readsb/issues/81
+  3.
+    - **Claim in stack:** Datasheet-derived gain/MDS figures (V4L desense -12...-40 dBm, MDS about -140.7 dBm/500 Hz at VHF/UHF, implied NF about 3.3 dB) used in the gain plan
+    - **Finding:** In the launch-post comments, the RTL-SDR Blog admin describes the MDS method: a calibrated generator with attenuators, SDR# on Windows, 2.4 MSPS, 64K FFT, Blackman-Harris window, max gain, normalised to 500 Hz by adding 8.3 dB. My check: bin = 36.6 Hz and Blackman-Harris ENBW is about 73.4 Hz, which gives a 10log(500/73.4) correction of 8.33 dB, so the method is self-consistent. These numbers come from the blog-fork driver, whose tuner registers differ from osmocom 2.0.3: filt_gain 0x30 vs 0x10, VCO current and div_buf_cur (as above), reg 06 init 0x30 vs 0x32, and loop-through bit. The implied NF also depends on the MDS definition, which is not stated: 3.3 dB if MDS means 3 dB SNR, 6.3 dB if it means 0 dB SNR (VHF/UHF); at 1.7 GHz, 14 vs 17 dB. A commenter (Kevin) expected a steeper HF MDS rise and plans his own tests. No independent V4L measurements have been published yet.
+    - **Verdict:** corrected
+    - **Action:** In the gain plan, label the datasheet MDS and two-tone figures as 'Windows / blog-driver, definition unstated', give the NF as a 3.3-6.3 dB range (model), and measure the real Q6A/lab-driver numbers in the D10 A/B matrix. The filter-first topology and the LNB attenuator stay.
+    - **Impact:** Low. LNAs dominate the noise figure; the change only affects how firmly the numbers are stated.
+    - **Sources:**
+      - https://www.rtl-sdr.com/rtl-sdr-blog-v4l-lite-now-available-for-purchase/
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+      - https://github.com/rtlsdrblog/rtl-sdr-blog/blob/master/src/tuner_r82xx.c
+  4.
+    - **Claim in stack:** Serials are programmed at assembly (stage-1 correction of 'unique serial numbers', row 183/C21); udev /dev/lab/<name> by serial
+    - **Finding:** Community reports confirm duplicate factory serials. sdr-radio forum, 2024-06-21: two V4s both read 'RTLSDRBlog::Blog V4::00000001'. Home Assistant thread, 2025-11-30: a V4 with SN 00000001. radiosonde_auto_rx #1016 (2025-07-28) shows a second trap: a V4 with SN 00000002 alongside two other dongles failed with 'usb_claim_interface error -6' because device '2' in the config was taken as an index. The maintainer advised a non-numeric serial. Source check: osmocom verbose_device_search() (used by rtl_power, rtl_fm, rtl_tcp, rtl_test, rtl_biast) first parses the string with strtol(base 0) as an index ('00000002' is octal 2), then tries exact, prefix and suffix serial matches.
+    - **Verdict:** confirmed
+    - **Action:** Serial rules: non-numeric, starting with a letter, and no serial a prefix or suffix of another. For example LAB-RTLA, LAB-RTLB and LAB-RTLS for the spare. Check with 'rtl_test -d LAB-RTLB' and in SatDump (rtlsdr_get_index_by_serial). Do this before any 2-dongle test or auto_rx run.
+    - **Impact:** Without it, auto_rx and rtl_* tools open the wrong dongle or fail.
+    - **Sources:**
+      - https://forum.sdr-radio.com/viewtopic.php?p=11166
+      - https://github.com/projecthorus/radiosonde_auto_rx/issues/1016
+      - https://community.home-assistant.io/t/rtl-sdr-blog-v4-not-working-on-home-assistant-green-ads-b-add-ons-detailed-findings-workarounds/957075
+      - https://github.com/osmocom/rtl-sdr/blob/v2.0.3/src/convenience/convenience.c
+  5.
+    - **Claim in stack:** C11 bias-tee token in librtlsdr plus 'EEPROM bias default off' are the bias controls; dvb_usb_rtl28xxu is blacklisted
+    - **Finding:** Every SDR app that carries its own librtlsdr copy bypasses C11: the GPIO0 token, the zerocopy-off build and the V4L patches. Examples: SDRangel's external/CMakeLists.txt (master) builds its own librtlsdr from osmocom RTLSDR_TAG v2.0.3 whenever ENABLE_EXTERNAL_LIBRARIES is ON or AUTO; PR #2911 (merged 2026-09-08) moved the Flatpak, Snap and .deb/Windows/Mac builds to 2.0.3. In the community, bundled copies are the usual reason a V4L 'plays but shows no signal': SDR++ 1.3.0 on Windows (#1807, 2026-08-28; fixed by swapping in the new DLL); SDR++ Android (#1813, open); and the Home Assistant add-on container ('Found Rafael Micro R828D tuner', '[R82XX] PLL not locked!', 'No E4000 tuner found, aborting'). Reseller guides (sdrstore.eu, 2026-08-21) and the official V4L guide also tell Linux and Pi users to build librtlsdr0 debs from source and to run 'rtl_eeprom -b 1' to force bias. Both conflict with C11's .so.2 and bias-off policy.
+    - **Verdict:** new_risk
+    - **Action:** Build SDRangel with -DENABLE_EXTERNAL_LIBRARIES=OFF. Ban snap, flatpak, AppImage and docker SDR apps on the device. CI and self-test: 'find / -name "librtlsdr*.so*"' returns only the lab librtlsdr2 files, and ldd of the SDR++ rtl_sdr_source, the SDRangel rtlsdr plugin, the SatDump rtlsdr plugin, rtl_connector, readsb and rtl_433 all resolve to the lab .so.2. Do not apply community 'purge and build librtlsdr0' recipes.
+    - **Impact:** Moderate. It closes a silent bypass of the bias-tee gate and of the V4L or zerocopy fixes.
+    - **Sources:**
+      - https://github.com/f4exb/sdrangel/blob/master/external/CMakeLists.txt
+      - https://github.com/f4exb/sdrangel/pull/2911
+      - https://github.com/AlexandreRouma/SDRPlusPlus/issues/1807
+      - https://github.com/AlexandreRouma/SDRPlusPlus/issues/1813
+      - https://community.home-assistant.io/t/rtl-sdr-blog-v4-not-working-on-home-assistant-green-ads-b-add-ons-detailed-findings-workarounds/957075
+      - https://www.sdrstore.eu/rtl-sdr-v4l-setup-guide-windows-linux-raspberry-pi-sdrpp-sdrsharp-adsb/
+  6.
+    - **Claim in stack:** Core V4L tees off (token, EEPROM off); spare tee only with token; dvb_usb_rtl28xxu blacklisted
+    - **Finding:** The official V4L guide says 'Legacy DVB-T drivers enable the bias tee by default, so blacklist them.' Kernel source (drivers/media/usb/dvb-usb-v2/rtl28xxu.c, master) drives GPIO0 high ('power on slave demod on GPIO0') only in the R828D branch. The R828S answers the R820T ID probe first, so from the source the V4L should not get bias from the DVB driver (inferred from source, not measured). A second gap: osmocom librtlsdr never writes GPIO0 at open or close; it is written only through rtlsdr_set_bias_tee(_gpio). So a GPIO0 = 1 left by any earlier process, or by the DVB driver on a V4-type board, stays on until VBUS is removed. The Debian blacklist file is a plain 'blacklist', which does not stop an explicit modprobe and must also be in the initramfs.
+    - **Verdict:** new_option
+    - **Action:** labd calls rtlsdr_set_bias_tee(dev, 0) right after every open; 'off' is always allowed under the GPIO0-only token. Add 'install dvb_usb_rtl28xxu /bin/false' and run update-initramfs. Self-test on the spare: 0 V DC on its SMA and the red bias LED off before any LAB-port instrument is connected.
+    - **Impact:** Low to moderate. It protects bench instruments and DC-shorted antennas on the spare.
+    - **Sources:**
+      - https://www.rtl-sdr.com/V4L
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/media/usb/dvb-usb-v2/rtl28xxu.c
+      - https://github.com/osmocom/rtl-sdr/blob/v2.0.3/src/librtlsdr.c
+  7.
+    - **Claim in stack:** C11 token patch (stage-1 correction: gate only GPIO0, because GPIO5 is the V4L upconverter switch)
+    - **Finding:** Re-read in osmocom v2.0.3 tuner_r82xx.c. The V4L branch sets priv->input = band, then calls rtlsdr_set_bias_tee_gpio(priv->rtl_dev, 5, !cable_1_in), i.e. GPIO5 = 1 for every band above 28.8 MHz, and jumps to err if that call returns <0. The stage-1 correction stands. A PLL-lock failure jumps to err before this block, but priv->input has not been updated yet, so the next tune retries the switch and no state gets stuck.
+    - **Verdict:** confirmed
+    - **Action:** Keep the GPIO0-only gate and the CI tune sequence 137.9 -> 1700 -> 7 -> 437 MHz with LAB_BIAS_OK unset.
+    - **Impact:** High if ignored: both core receivers would go deaf above 28.8 MHz.
+    - **Sources:**
+      - https://github.com/osmocom/rtl-sdr/blob/v2.0.3/src/tuner_r82xx.c
+  8.
+    - **Claim in stack:** C11 relies on 65f0658 (USB hang fix); RTL-A and RTL-B on 15 cm extensions with ferrites; MCP23017 #1 GPA2/GPA3 cut VBUS to RTL-A/RTL-B
+    - **Finding:** Community reports describe V4 streams that stop. PE0SAT (SatNOGS, 2024-03): 'V4 units can stop streaming IQ data intermittently'; a reboot or USB reset helps. rtlsdrblog #54 (2024-07): a V4 crashed after 10-20 s in OpenWebRX and SDR++ with 'cb transfer status: 5, canceling...' and 'rtlsdr_read_async failed with r = -5'. The cause was weak USB port power, fixed by moving to a port wired directly to the motherboard. 65f0658 makes rtlsdr_read_async() return -1 on device loss instead of hanging, but a stall with no USB error still needs a watchdog. The stack has VBUS cut switches but defines no SDR stall recovery.
+    - **Verdict:** new_option
+    - **Action:** labrx watchdog: if rtlsdr_read_async returns -1 or no samples arrive for 2 s, close the device, cut VBUS for 1 s via GPA2/GPA3, reopen by serial and log the event. W1-2: measure VBUS at the dongle end of each extension at 2.56 Msps and require at least 4.75 V.
+    - **Impact:** Moderate. Saves unattended passes and long surveys.
+    - **Sources:**
+      - https://community.libre.space/t/rtlsdr-v4-not-receiving/11441
+      - https://github.com/rtlsdrblog/rtl-sdr-blog/issues/54
+      - https://github.com/osmocom/rtl-sdr/commit/65f06585ea46160cd2d7bee8b3f641c14771c2ee
+  9.
+    - **Claim in stack:** USB: RTL-A on the blue USB 3.1 port as USB 2 HS; FE1.1s tree carries RTL-B + HF+ + one LAB device + sensor (Wi-Fi on P4); stage 1 left the blue port's default role unverified
+    - **Finding:** This resolves the stage-1 open item. The Radxa vendor kernel DT (radxa/kernel branch linux-6.18.2, qcs6490-radxa-dragon-q6a.dts) has '&usb_1 { dr_mode = "host"; status = "okay"; }' with usb_1_hsphy and usb_1_qmpphy enabled. The QMP PHY splits lanes: DP on lanes 0-1 to the HDMI bridge, USB3 on lanes 2-3. usb_2 is host-only with the onboard 'usb1a40,0101' (Terminus FE1.1s) hub: connectors on ports 1-3, FCU760K Wi-Fi on port 4. This matches the STACK USB map. The current mainline master DTS does not enable usb_1 at all; Graham O'Connor's May-2026 series (6/6 'Enable USB3 SuperSpeed', dr_mode host, 5000M confirmed; the reviewer asked for a squash) is not in master. On mainline or another non-Radxa kernel, RTL-A on the blue port would not enumerate. The Radxa Q6A forum already shows 7.0.x kernels and Ubuntu 26.04.1 images on 7.2.9. I found no RTL-SDR or USB complaints there (first page of 30 topics up to 2026-10-15).
+    - **Verdict:** confirmed
+    - **Action:** Keep the 6.18.2-4 kernel hold. Add to W1-2: the usb_1 dwc3 node's dr_mode reads 'host' and lsusb -t shows the V4L at 480M on the blue port. Any kernel change re-runs this check before RTL-A is trusted.
+    - **Impact:** Low while the kernel stays held. A kernel or image change could silently drop RTL-A.
+    - **Sources:**
+      - https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://raw.githubusercontent.com/torvalds/linux/master/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://lkml.rescloud.iu.edu/2605.2/12779.html
+      - https://forum.radxa.com/c/dragon/q6a/
+  10.
+    - **Claim in stack:** USB throughput budget only (MB/s); several RTL-class devices plus HF+ (and Lime when fitted) open at once
+    - **Finding:** Model, not a field report. librtlsdr's default async buffers are 15 x 256 KiB = 3.75 MiB per dongle. Linux limits usbfs URB memory to 16 MiB by default (usbcore.usbfs_memory_mb). RTL-A + RTL-B + the spare (or the Pro Stick under readsb, with similar buffers) is about 11.25 MiB before HF+ and Lime. Apps that raise their buffer count, or the Lime, can exceed the limit. librtlsdr then prints 'Failed to submit transfer ... increase your allowed usbfs buffer size ... echo 0 > /sys/module/usbcore/parameters/usbfs_memory_mb' and cancels.
+    - **Verdict:** new_option
+    - **Action:** Set usbcore.usbfs_memory_mb=0 (or 128) on the kernel command line, and include the 4-stream FE1.1s test in W1-2 with the Lime attached when the Lime is kept.
+    - **Impact:** Low without the Lime, moderate with it.
+    - **Sources:**
+      - https://github.com/osmocom/rtl-sdr/blob/v2.0.3/src/librtlsdr.c
+  11.
+    - **Claim in stack:** Soapy/SDRangel HF clamp for the V4L (stage-1 new risk); 'force direct_samp=0 in every config'
+    - **Finding:** Re-checked today. SoapyRTLSDR master Settings.cpp gives 0-1764 MHz only for R828D plus 'Blog V4', so the V4L gets 24-1764 MHz. SDRangel master rtlsdrinput.cpp line 166 applies m_frequencyHighRangeMin = 0 only to 'Blog V4'. Neither tracker has a V4L issue or PR. SoapyRTLSDR's open items are #64 and #65 (direct sampling) and #83 ('Support devices by index when serial number isn't available', 2026-09-02). Community evidence on direct sampling: rtlsdrblog #63, opened 2025-03-09 by luarvique (the OpenWebRX+ maintainer) and still open: OpenWebRX users report the V4 'stops working when direct sampling is turned on'; the driver does not ignore the setting. The V4L guide says direct sampling yields nothing on V4-series boards.
+    - **Verdict:** confirmed
+    - **Action:** Keep stage-1 actions. Also: OpenWebRX+ device profiles must have no direct_sampling key and Soapy arg strings no direct_samp. If V4L HF via Soapy or SDRangel is ever wanted, send the one-line 'Blog V4L' match upstream, as SoapyRTLSDR PR #70 did for the V4.
+    - **Impact:** Low for the main build, since HF is on the HF+.
+    - **Sources:**
+      - https://github.com/pothosware/SoapyRTLSDR/blob/master/Settings.cpp
+      - https://github.com/pothosware/SoapyRTLSDR/issues
+      - https://github.com/f4exb/sdrangel/blob/master/plugins/samplesource/rtlsdr/rtlsdrinput.cpp
+      - https://github.com/rtlsdrblog/rtl-sdr-blog/issues/63
+      - https://www.rtl-sdr.com/V4L
+  12.
+    - **Claim in stack:** C11 base version (stage-1 new option: prefer osmocom v2.0.3 rebuilt as .so.2)
+    - **Finding:** Downstream projects have converged on 2.0.3. SDR++ commit 'deps: upgrade librtlsdr to osmocom v2.0.3' (2026-09-12, refs #1813), SDRangel PR #2911 (2026-09-08), and RTL-SDR Blog's own text 'Osmocom has added V4L support'. osmocom has no commits after 797f814 'Release 2.0.3' (2026-08-12), and the fork's last commit is aed0ea1 (2026-03-22). I found no 2.0.3 regression reports in the SDR++, SDRangel, SoapyRTLSDR, readsb, rtl_433, auto_rx or OpenWebRX+ trackers (gitea.osmocom.org was blocked by bot protection).
+    - **Verdict:** confirmed
+    - **Action:** Keep the stage-1 option (2.0.3 rebuilt as .so.2, zerocopy OFF, GPIO0-only token) and add the L-band VCO patch from the finding above.
+    - **Impact:** Uses the same code most V4L users run.
+    - **Sources:**
+      - https://github.com/AlexandreRouma/SDRPlusPlus/issues/1813
+      - https://github.com/f4exb/sdrangel/pull/2911
+      - https://github.com/osmocom/rtl-sdr/releases/tag/v2.0.3
+  13.
+    - **Claim in stack:** Price $37.95 each, 455 in stock at the official store; EU buyers use official eBay or AliExpress 4523039; V4L not on Amazon USA
+    - **Finding:** Product page today: 'USD $37.95', '455 in stock', schema InStock. The buy page says 'first manufacturing batch is a small batch, so stocks are limited', 'Amazon USA warehouse not stocked yet', 'Chinese worldwide warehouse in stock', with Amazon and the kit 'in 2-3 months'. Launch-post comments add an EU caveat: a buyer in Poland was blocked on AliExpress. The admin replied that AliExpress has an EU-wide block on many products, that the V4L listing has since been fixed, that V3 EU listings were still being restored, and pointed to eBay. On USB-C, the admin replied 'coming soon' once production ramps up; there is no listing. The product page has no user reviews yet.
+    - **Verdict:** confirmed
+    - **Action:** Keep the order of 3 now. EU buyers confirm at AliExpress checkout that the listing ships to their country, with the eBay 'rtl-sdr-blog' store as fallback. Do not plan around a USB-C V4L.
+    - **Impact:** Sourcing only.
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-v4l-lite-r828s-rtl2832u-1ppm-tcxo-sma-software-defined-radio-dongle-only/
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+      - https://www.rtl-sdr.com/rtl-sdr-blog-v4l-lite-now-available-for-purchase/
+  14.
+    - **Claim in stack:** OpenWebRX+ 1.2.126 mirrored; dump1090-fa-minimal and the OWRX+ decoders share the RTL dongles through labd leases
+    - **Finding:** The OpenWebRX+ changelog, at 1.2.99, says it was 'Fixing RTLSDR issues caused by dump978-fa' and switched to 'dump978-fa-minimal', and asks users to apt remove dump978-fa and skyaware978. The full FlightAware packages ship services that start at boot and claim RTL dongles outside labd. The upstream changelog now also lists 1.2.127 (dated 2026-10-19: empty URLs allowed, LoRa units fixed).
+    - **Verdict:** new_risk
+    - **Action:** CI ban list: dump978-fa, skyaware978, full dump1090-fa and piaware. Only the -minimal variants are allowed. Self-test: no process other than the leaseholder has /dev/bus/usb/<RTL> open (lsof). The 1.2.126 pin stands, with 1.2.127 a non-RF update to review later.
+    - **Impact:** Low. Prevents a hidden second owner of an RTL dongle.
+    - **Sources:**
+      - https://raw.githubusercontent.com/luarvique/openwebrx/master/CHANGELOG.md
+      - https://raw.githubusercontent.com/luarvique/openwebrx/master/debian/changelog
+- **Current status oct 2026:** Status on 2026-10-18 from community sources.
+  
+  Hardware and sourcing:
+  - The V4L is on sale at USD 37.95 with 455 in stock (China warehouse). It is not at Amazon USA yet; Amazon and the kit are due in "2-3 months".
+  - The first batch is "small, stocks limited".
+  - The AliExpress EU block on the V4L listing has been fixed, according to the admin.
+  - A USB-C V4L is promised only as "coming soon" in an admin reply.
+  - No independent V4L measurements or reviews are published yet. One commenter has ordered a unit to test HF and VHF/UHF MDS.
+  
+  Software:
+  - osmocom 2.0.3 (2026-08-12) is now the version downstream projects bundle: SDR++ (2026-09-12) and SDRangel Flatpak, Snap and external builds (PR #2911, 2026-09-08). There are no commits after 2.0.3.
+  - The rtlsdrblog fork (last commit 2026-03-22) still carries L-band VCO and PLL tweaks that osmocom lacks.
+  - No V4L issues exist in the SoapyRTLSDR, SatDump, OpenWebRX+ or rtl_433 trackers.
+  - SDR++ #1807 (Windows, old DLL, "no signal") is closed; SDR++ #1813 (Android) is open.
+  - SoapyRTLSDR and SDRangel master still clamp V4L HF at 24 MHz.
+  - rtlsdrblog #63 (direct sampling breaks the V4 in OpenWebRX) remains open.
+  
+  Platform:
+  - Ubuntu noble's arm64 librtlsdr2 2.0.1-2build1 is built with zero-copy ON because of the DEB_ZEROCOPY_OPTION typo.
+  - The Radxa linux-6.18.2 DT sets the blue USB 3.1 port to host. Mainline master does not enable that port yet (patch series from May 2026 is pending).
+  - I found no public RTL-SDR reports on the Q6A or QCS6490.
+- **Notes:** How this was checked:
+  - Search budget: 6 WebSearch calls succeeded. The 7th (HRPT/PLL heat reports) was refused because the shared per-turn search limit had already been used up by other agents, so I made no further searches. Reddit, Discord/Matrix logs and YouTube were therefore not covered; search results returned no Reddit threads on the V4L. If those are needed, the user can send a follow-up to continue the search or raise CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION.
+  - Instead, I read primary pages directly: GitHub issue lists and threads (github.com/<repo>/issues), Libre Space, sdr-radio, the Home Assistant forum, the Radxa Q6A forum category, the Debian BTS, the Launchpad build log, the RTL-SDR Blog store, guide and launch-post comments, and raw source from GitHub (osmocom, rtlsdrblog, SoapyRTLSDR, SDRangel, OpenWebRX+, Linux mainline, radxa/kernel linux-6.18.2).
+  - gitea.osmocom.org was blocked by bot protection (Anubis). The GitHub REST and GraphQL APIs were refused for repositories outside this session.
+  - Downloads are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/nb2_dl: the noble arm64 build log, both Q6A DTS files, rtl28xxu.c, the SDRangel and Soapy sources, and the OWRX+ changelogs. The stage-1 git clones in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/nb_git were reused and fetched.
+  
+  Most important results:
+  1. The zerocopy typo is a real arm64 defect: the official noble arm64 build has zero-copy enabled, and Debian bug #1041701 (zeros and lost bytes on arm64) is effectively unfixed on noble.
+  2. osmocom 2.0.3 lacks RTL-SDR Blog's own L-band PLL-lock fix (d80421b, max VCO current). The community data point: driver change plus cooling turned a 20 s failure at 1.65 GHz into indefinite operation. A lost PLL lock is also silent at the API level. Porting the patch and A/B-testing it in the thermal gate is the cheapest HRPT/AHRPT mitigation.
+  3. Bundled librtlsdr copies (SDRangel external libraries, Flatpak, Snap, AppImage, containers) bypass the token and zerocopy fixes.
+  4. Numeric serials collide with the device index in rtl_* tools (auto_rx #1016), so serials must be non-numeric.
+  5. The stage-1 unverified blue-port role is resolved: host in the Radxa 6.18.2 DT, but missing in mainline.
+  
+  Models, labelled in the findings:
+  - NF from MDS depends on the MDS definition: 3.3 vs 6.3 dB.
+  - The usbfs memory estimate is about 3.75 MiB per dongle at default buffers.
+  - The claim that the kernel DVB driver does not drive GPIO0 on the V4L is inferred from source, not measured.
+  
+  Still unverified:
+  - R828S PLL lock margin at 1.70-1.707 GHz when hot.
+  - Case temperature of the V4L.
+  - Airspy Mini or R2 above 1700 MHz.
+  - Live eBay and AliExpress V4L prices.
+  - Any RTL-SDR report on the QCS6490.
+
