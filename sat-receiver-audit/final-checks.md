@@ -4000,3 +4000,485 @@
   24. Costs: this group is re-priced above at world prices.
   25. P1b completion: outside this group; write report_research.json errata before P2.
 
+## sourcing:group3 (run `wf_b9cc0186-94e`)
+
+- **Group:** POWER + GNSS/IMU + MECHANICAL (4S1P Molicel P50B pack, Daly 4S BMS, IP2368 charger, Pololu D36V50F12 / D36V28F5 / S18V20AHV / #2813, LT3045 LDOs, Adafruit INA228, TPS2553 switches, fuses/PTCs, XT30/DC jacks, Waveshare LC76G, Radxa RTC cell, BNO085 puck with RP2040-Zero, ASA shell, inserts, screws, gap pads, strap, 1/4-20 mount)
+- **Offers:**
+  1.
+    - **Item:** Molicel INR21700-P50B 5000 mAh 21700 cell (buy 5: 4 for 4S1P + 1 spare)
+    - **Seller:** 18650 Battery Store (US cell retailer)
+    - **Url:** https://www.18650batterystore.com/products/molicel-21700-p50b-5000mah-50a-battery
+    - **Price:** USD 9.99 (sale; regular 11.99)
+    - **Price usd:** 9.99
+    - **In stock:** yes (store product JSON available=true on 18 Oct 2026; an older search snippet said sold out)
+    - **Ships to:** US (international shipping of loose cells not confirmed)
+    - **Official channel:** ні
+    - **Notes:** Established specialist cell retailer; Molicel has no retail store. Counterfeit/re-wrapped cell risk: test capacity (>=4.85 Ah), IR and weight (~68-70 g) before welding.
+  2.
+    - **Item:** Molicel INR21700-P50B 5000 mAh 21700 cell
+    - **Seller:** Battery Junction (US)
+    - **Url:** https://www.batteryjunction.com/molicel-inr21700-p50b
+    - **Price:** USD 11.35
+    - **Price usd:** 11.35
+    - **In stock:** yes (store JSON available=true)
+    - **Ships to:** US
+    - **Official channel:** ні
+    - **Notes:** Established US cell retailer; qty breaks from 10 pcs (not read).
+  3.
+    - **Item:** Molicel P50B 21700 5000 mAh, 2-pack
+    - **Seller:** RaceDayQuads (US)
+    - **Url:** https://www.racedayquads.com/products/molicel-p50b-21700-5000mah-60a-3-7v-li-ion-battery-2pcs
+    - **Price:** USD 18.49 per 2 cells
+    - **Price usd:** 9.25 per cell
+    - **In stock:** yes (store JSON available=true)
+    - **Ships to:** US
+    - **Official channel:** ні
+    - **Notes:** Cheapest in-stock per-cell price seen; buy 3 packs for 5 cells + 1 extra.
+  4.
+    - **Item:** Molicel 21700 P50B 5000 mAh
+    - **Seller:** Kiwi Quads (New Zealand)
+    - **Url:** https://kiwiquads.co.nz/product/molicel-21700-p50b-5000mah/
+    - **Price:** NZD 22.99 (1-4 pcs; bulk tiers lower)
+    - **Price usd:** 13.02
+    - **In stock:** yes (page shows In stock, stock level 27)
+    - **Ships to:** NZ
+    - **Official channel:** ні
+    - **Notes:** Oceania source.
+  5.
+    - **Item:** Molicel INR21700-P50B 5000 mAh
+    - **Seller:** NKON (Netherlands, EU)
+    - **Url:** https://www.nkon.nl/en/molicel-inr21700-p50b-5000mah-50a.html
+    - **Price:** EUR 6.75 incl. VAT (EUR 5.58 ex VAT); EUR 5.79 at 10 pcs
+    - **Price usd:** 7.60
+    - **In stock:** unclear: store page returned 403 to me; seen only in search snippets, one of which carried a pre-order note
+    - **Ships to:** EU
+    - **Official channel:** ні
+    - **Notes:** Cheapest EU source if in stock; verify on the live page. A cheaper 'reduced cycle' grade-B listing exists; do not use it.
+  6.
+    - **Item:** DALY 4S 15A Li-ion common-port balancing BMS (DL-J05G-L4S15ATJ)
+    - **Seller:** TinyTronics (Eindhoven, NL)
+    - **Url:** https://www.tinytronics.nl/en/power/bms-and-chargers/bms/daly-bms-li-ion-li-po-protection-circuit-4s-15a-with-balancing
+    - **Price:** EUR 8.00 incl. VAT (EUR 6.61 ex)
+    - **Price usd:** 9.00
+    - **In stock:** yes (9 pcs)
+    - **Ships to:** NL/EU (delivery page not read)
+    - **Official channel:** ні
+    - **Notes:** Li-ion thresholds: OV 4.25 V, UV 2.70 V, 15 A continuous, OCP 40 A, charge protection 10 A, passive balancing 30 mA from 4.18 V (so it balances only during the monthly 4.20 V charge; the daily 4.10 V charge never triggers it). 61x35x9 mm, 35 g. Test BMS wake by charger 3 out of 3 times.
+  7.
+    - **Item:** IP2368 100 W 4S bidirectional USB-C PD charge board (generic, unbranded)
+    - **Seller:** Newegg marketplace, third-party seller shipping from China
+    - **Url:** https://www.newegg.com/p/3C6-00RD-001C4
+    - **Price:** USD 15.79 (search snippet; the page itself returned 403)
+    - **Price usd:** 15.79
+    - **In stock:** unknown
+    - **Ships to:** US (ships from China)
+    - **Official channel:** ні
+    - **Notes:** Only marketplace listings exist (Newegg USD 15.79-23.98 CAD, Walmart 2-pack USD 19.94, OnBuy RON 83.27; snippet range USD 12.50-24.59). All of them are bidirectional COUT/NACT boards; I found no charge-only BZ board. Quality varies: buy 2-3, set RISET 15k (3 A) and RVSET 5.1k (4.10 V/cell), fit a real 10k B3380 NTC, burn in for 2 h.
+  8.
+    - **Item:** Injoinic IP2368_I2C_COUT chip (for a self-built charger board)
+    - **Seller:** LCSC (C5372184)
+    - **Url:** https://www.lcsc.com/product-detail/C5372184.html
+    - **Price:** USD 2.17 (1 pc)
+    - **Price usd:** 2.17
+    - **In stock:** no (0)
+    - **Ships to:** worldwide
+    - **Official channel:** так
+    - **Notes:** Reference price for the chip only; the board route above is the practical one.
+  9.
+    - **Item:** Pololu 12V 4.5A Step-Down Voltage Regulator D36V50F12 (#4095), 12 V into Q6A J21
+    - **Seller:** Pololu (manufacturer store)
+    - **Url:** https://www.pololu.com/product/4095
+    - **Price:** USD 39.95 (USD 36.75 each at 5+)
+    - **Price usd:** 39.95
+    - **In stock:** rationed (Active and Preferred), backorders allowed
+    - **Ships to:** worldwide
+    - **Official channel:** так
+    - **Notes:** 13.3-50 V in, 12 V +-4%, 4.5 A typical (2.3-6.5 A depending on conditions). Not forced-PWM. Set the EN hardware cut at 13.4 V or more, because it drops out below 13.3 V.
+  10.
+    - **Item:** Pololu 5V 3.2A Step-Down Voltage Regulator D36V28F5 (#3782), LAB 5 V rail
+    - **Seller:** Pololu (manufacturer store)
+    - **Url:** https://www.pololu.com/product/3782
+    - **Price:** USD 23.95 (USD 22.03 at 5+)
+    - **Price usd:** 23.95
+    - **In stock:** rationed, backorders allowed
+    - **Ships to:** worldwide
+    - **Official channel:** так
+    - **Notes:** 5.3-50 V in, 3.2 A typical, about 500 kHz at heavy load, 17.8x20.3x8.8 mm. Has a light-load power-save mode, so include it in the spur A/B test.
+  11.
+    - **Item:** Pololu Adjustable 9-30V Step-Up/Step-Down Regulator S18V20AHV (#2573), LNB 13.2 V feed
+    - **Seller:** Pololu (manufacturer store)
+    - **Url:** https://www.pololu.com/product/2573
+    - **Price:** USD 36.49 (USD 33.57 at 5+)
+    - **Price usd:** 36.49
+    - **In stock:** rationed, backorders allowed
+    - **Ships to:** worldwide
+    - **Official channel:** так
+    - **Notes:** 3-30 V in, 2 A typical. A buck-boost is needed because 4S swings 12-16.8 V across the 13.2 V target. Pololu states the SEPIC output is NOT fully disconnected when EN is low, so it needs a separate 40 V-rated switch (a second #2813) for a true 0 V off state.
+  12.
+    - **Item:** Pololu Big Pushbutton Power Switch with Reverse Voltage Protection, HP (#2813): master switch, plus a second one as the LNB switch
+    - **Seller:** Pololu (manufacturer store)
+    - **Url:** https://www.pololu.com/product/2813
+    - **Price:** USD 8.95 (USD 8.23 at 5+)
+    - **Price usd:** 8.95
+    - **In stock:** rationed, backorders allowed
+    - **Ships to:** worldwide
+    - **Official channel:** так
+    - **Notes:** 4.5-40 V (32 V recommended), 6.0 A continuous at 55 C, <0.2 uA off, reverse protection. Buy 2 (master and LNB) plus 1 spare.
+  13.
+    - **Item:** Adafruit INA228 85V 20-bit power monitor (#5832), fuel gauge with its shunt in the pack lead
+    - **Seller:** Adafruit (manufacturer store)
+    - **Url:** https://www.adafruit.com/product/5832
+    - **Price:** USD 14.95 (USD 13.46 at 10+)
+    - **Price usd:** 14.95
+    - **In stock:** yes
+    - **Ships to:** worldwide
+    - **Official channel:** так
+    - **Notes:** 15 mOhm 0.1% shunt, up to 10 A, 85 V. Remove the breakout pull-ups, power it from an always-on 3.3 V LDO, and read it on I2C0 through user-space i2c-dev.
+  14.
+    - **Item:** Analog Devices LT3045EMSE#PBF ultra-low-noise LDO (buy 2: 5 V LNA rail and 12.5 V Boni-Whip rail)
+    - **Seller:** LCSC (C580012)
+    - **Url:** https://www.lcsc.com/product-detail/voltage-regulators-linear-low-drop-out-ldo-regulators_analog-devices-lt3045emse-pbf_C580012.html
+    - **Price:** USD 8.33 (1 pc), 7.27 (10 pcs)
+    - **Price usd:** 8.33
+    - **In stock:** yes (1,603)
+    - **Ships to:** worldwide
+    - **Official channel:** ні
+    - **Notes:** 1.8-20 V in, 500 mA, 260 mV dropout, so 12.5 V out works down to the 13.6 V pack cutoff. LCSC is not an ADI-franchised distributor (moderate counterfeit risk); ADI, Mouser and DigiKey pages blocked my fetch. No ready LT3045 module found at an official store; it needs a small carrier PCB.
+  15.
+    - **Item:** TI TPS2553DBVR adjustable current-limited load switch (buy 4: 3 for SAWbird+ at 250-300 mA, 1 for the LAB port at about 1 A)
+    - **Seller:** LCSC (C55266)
+    - **Url:** https://www.lcsc.com/product-detail/C55266.html
+    - **Price:** USD 0.5455 (1), 0.4515 (10)
+    - **Price usd:** 0.55
+    - **In stock:** yes (51,688)
+    - **Ships to:** worldwide
+    - **Official channel:** ні
+    - **Notes:** 2.5-6.5 V, so it suits 5 V rails only (never the LNB or AUX 12 V). Choose the plain DBVR (constant-current, auto-recover), not the -1 latch-off variant. No ready carrier board found: use a SOT-23-6 breakout. LCSC also lists TPS2553DDBVR (C521201) at USD 0.19 with 11,035 in stock; I did not check its datasheet.
+  16.
+    - **Item:** TI TPS2553DBVR
+    - **Seller:** Texas Instruments store
+    - **Url:** https://www.ti.com/product/TPS2553/part-details/TPS2553DBVR
+    - **Price:** USD 0.358 (TI listed price, volume tier)
+    - **Price usd:** 0.36
+    - **In stock:** no (schema.org OutOfStock on TI.com)
+    - **Ships to:** worldwide (TI store)
+    - **Official channel:** так
+    - **Notes:** Manufacturer channel, out of stock on 18 Oct 2026.
+  17.
+    - **Item:** Littelfuse 029707.5WXNV MINI blade fuse 7.5 A 32 VDC (pack fuse if the Lime is kept)
+    - **Seller:** LCSC (C178942)
+    - **Url:** https://www.lcsc.com/product-detail/C178942.html
+    - **Price:** USD 0.101 each (MOQ 5)
+    - **Price usd:** 0.10
+    - **In stock:** yes (7,500)
+    - **Ships to:** worldwide
+    - **Official channel:** ні
+    - **Notes:** Buy alongside the 5 A part; it costs cents.
+  18.
+    - **Item:** Littelfuse 0297005.WXNV MINI blade fuse 5 A (pack fuse for the no-Lime 4S build)
+    - **Seller:** LCSC (C151093)
+    - **Url:** https://www.lcsc.com/product-detail/C151093.html
+    - **Price:** USD 0.1326 each (MOQ 5)
+    - **Price usd:** 0.13
+    - **In stock:** yes (15,390)
+    - **Ships to:** worldwide
+    - **Official channel:** ні
+    - **Notes:** Same family. The 2 A LAB 5 V fuse (0297002.WXNV) was not price-checked.
+  19.
+    - **Item:** Littelfuse 0FHM0001ZXJ inline MINI blade fuse holder, splash-proof
+    - **Seller:** LCSC (C427665)
+    - **Url:** https://www.lcsc.com/product-detail/C427665.html
+    - **Price:** USD 3.51 (1), 3.04 (10)
+    - **Price usd:** 3.51
+    - **In stock:** yes (14 only)
+    - **Ships to:** worldwide
+    - **Official channel:** ні
+    - **Notes:** Low stock: order early, or buy 2.
+  20.
+    - **Item:** Bourns MF-R075 PTC resettable fuse, 0.75 A hold, 60 V (AUX 12 V branch)
+    - **Seller:** LCSC (C208478)
+    - **Url:** https://www.lcsc.com/product-detail/C208478.html
+    - **Price:** USD 0.178 each (MOQ 5)
+    - **Price usd:** 0.18
+    - **In stock:** yes (3,955)
+    - **Ships to:** worldwide
+    - **Official channel:** ні
+    - **Notes:** Matches the 0.75 A-hold AUX PTC; the 0.5 A value was rejected for nuisance trips. The LNB polyfuse value waits for the measured Bullseye current (1.5-2x); other MF-R values are on the same page family.
+  21.
+    - **Item:** Amass XT30U-F female connector (pack and spare-pack lead; XT30U-M male not price-checked)
+    - **Seller:** LCSC (C99102)
+    - **Url:** https://www.lcsc.com/product-detail/C99102.html
+    - **Price:** USD 0.207 each (MOQ 5)
+    - **Price usd:** 0.21
+    - **In stock:** yes (42,545)
+    - **Ships to:** worldwide
+    - **Official channel:** ні
+    - **Notes:** Genuine Amass part (manufacturer listed). Clone XT30s are common on marketplaces.
+  22.
+    - **Item:** XKB DC-022B-2.0 panel-mount DC jack, 5.5x2.0 mm, 2 A, 30 V (AUX 12 V and Boni-Whip injector outlets)
+    - **Seller:** LCSC (C319097)
+    - **Url:** https://www.lcsc.com/product-detail/C319097.html
+    - **Price:** USD 0.41 (1), 0.32 (10)
+    - **Price usd:** 0.41
+    - **In stock:** yes (2,421)
+    - **Ships to:** worldwide
+    - **Official channel:** ні
+    - **Notes:** If 5.5x2.5 mm (DC5525) leads are kept, the DC-022B-2.5 (C319096) is out of stock. Key or colour-code each outlet so that 12 V AUX and 12.5 V whip cannot be swapped.
+  23.
+    - **Item:** Adafruit Panel Mount 2.1mm DC barrel jack (#610)
+    - **Seller:** Adafruit (manufacturer store)
+    - **Url:** https://www.adafruit.com/product/610
+    - **Price:** USD 2.95
+    - **Price usd:** 2.95
+    - **In stock:** no (out of stock)
+    - **Ships to:** worldwide
+    - **Official channel:** так
+    - **Notes:** Alternative to the LCSC jack when back in stock.
+  24.
+    - **Item:** MYOUNG BH-21700-A5BJ001 single 21700 holder, THT (bench and test fixture only)
+    - **Seller:** LCSC (C20606809)
+    - **Url:** https://www.lcsc.com/product-detail/C20606809.html
+    - **Price:** USD 1.65 (1), 1.38 (10)
+    - **Price usd:** 1.65
+    - **In stock:** yes (278)
+    - **Ships to:** worldwide
+    - **Official channel:** ні
+    - **Notes:** Use it for capacity/IR testing before welding. The field pack is spot-welded with nickel strip (2 rows of 2 cells, end to end), because spring contacts cause brown-outs at about 4 A peaks. The SMD version BH-21700-B1BJ001 (C20606791) costs USD 0.91, 1,846 in stock.
+  25.
+    - **Item:** Waveshare LC76G Multi-GNSS Module (SKU 24370), on UART6 with PPS on pin 7
+    - **Seller:** Waveshare (manufacturer store)
+    - **Url:** https://www.waveshare.com/lc76g-gnss-module.htm
+    - **Price:** USD 14.99 (13.63 at the 4+ tier)
+    - **Price usd:** 14.99
+    - **In stock:** unknown (page shows Add to Cart, no stock text)
+    - **Ships to:** worldwide except Iran and Russia (Waveshare restriction)
+    - **Official channel:** так
+    - **Notes:** Includes an active ceramic antenna, an MX1.25 8-pin cable and an onboard MS621FE rechargeable backup cell, so no separate GNSS backup cell is needed. GPS/BDS/GLONASS/Galileo/QZSS, 1PPS, UART at 115200 baud by default. Use UART only.
+  26.
+    - **Item:** RTC Battery for RADXA SBC (CR2032-type cell on a lead for the Q6A RTC header)
+    - **Seller:** Allnet China (official Radxa distributor)
+    - **Url:** https://shop.allnetchina.cn/products/rtc-battery-for-radxa-sbc
+    - **Price:** USD 0.95
+    - **Price usd:** 0.95
+    - **In stock:** yes
+    - **Ships to:** worldwide (Allnet)
+    - **Official channel:** так
+    - **Notes:** The listing does not name the Q6A or the connector. Confirm the 2-pin 1.25 mm plug against Q6A schematic sheet 18 before relying on it. It is the time anchor for the location/spoofing gate (rtcsync).
+  27.
+    - **Item:** Adafruit 9-DOF Orientation IMU Fusion Breakout BNO085 (#4754), boom puck
+    - **Seller:** Adafruit (manufacturer store)
+    - **Url:** https://www.adafruit.com/product/4754
+    - **Price:** USD 29.50 (26.55 at 10+)
+    - **Price usd:** 29.50
+    - **In stock:** yes
+    - **Ships to:** worldwide
+    - **Official channel:** так
+    - **Notes:** Genuine CEVA part. Avoid unbranded GY-BNO085 clones (marketplace clone risk).
+  28.
+    - **Item:** SparkFun VR IMU Breakout BNO086 Qwiic (SEN-22857), alternative puck IMU
+    - **Seller:** SparkFun (manufacturer store)
+    - **Url:** https://www.sparkfun.com/sparkfun-vr-imu-breakout-bno086-qwiic.html
+    - **Price:** USD 34.95
+    - **Price usd:** 34.95
+    - **In stock:** yes
+    - **Ships to:** worldwide
+    - **Official channel:** так
+    - **Notes:** Rotation vector 2.0 deg static, 3.5 deg dynamic. 25.4x30.5 mm, 3 g.
+  29.
+    - **Item:** Waveshare RP2040-Zero (puck MCU, USB-CDC bridge for the BNO085)
+    - **Seller:** Waveshare (manufacturer store)
+    - **Url:** https://www.waveshare.com/rp2040-zero.htm
+    - **Price:** USD 3.99-4.99 (without / with pre-soldered header)
+    - **Price usd:** 3.99-4.99
+    - **In stock:** unknown (not shown)
+    - **Ships to:** worldwide except Iran and Russia
+    - **Official channel:** так
+    - **Notes:** Its 12 MHz clock has harmonics at 144.000 and 432.000 MHz: run the on/off noise-floor A/B at 137/145/435 MHz and keep the puck 15-20 cm or more from the LNAs.
+  30.
+    - **Item:** Polymaker ASA 1.75 mm, Grey, 1 kg (light-grey ASA shell, sun hood, clamps)
+    - **Seller:** Polymaker US store (manufacturer)
+    - **Url:** https://us.polymaker.com/products/asa
+    - **Price:** USD 26.99 (Grey 1 kg); USD 25.99 White 1 kg
+    - **Price usd:** 26.99
+    - **In stock:** yes (product listed available)
+    - **Ships to:** US store (Polymaker runs regional stores)
+    - **Official channel:** так
+    - **Notes:** One spool covers the about 0.4 kg shell plus the printed sun hood. Do not use PETG.
+  31.
+    - **Item:** Prusament ASA Signal White 800 g
+    - **Seller:** Prusa Research (manufacturer store)
+    - **Url:** https://www.prusa3d.com/category/prusament-asa/
+    - **Price:** USD 25.92 (price shown for US shipping)
+    - **Price usd:** 25.92
+    - **In stock:** yes
+    - **Ships to:** worldwide
+    - **Official channel:** так
+    - **Notes:** No grey Prusament ASA is listed. White is equally good for sun load; a light colour is the requirement.
+  32.
+    - **Item:** CNC Kitchen Heat Set Insert M2.5 x 4 mm, 100 pcs
+    - **Seller:** CNC Kitchen (manufacturer store, DE)
+    - **Url:** https://cnckitchen.store/products/gewindeeinsatz-threaded-insert-m2-5-standard-100-stk-pcs
+    - **Price:** EUR 9.90
+    - **Price usd:** 11.14
+    - **In stock:** yes
+    - **Ships to:** EU and international (DE store; rates not read)
+    - **Official channel:** так
+    - **Notes:** M2.5 for board/standoff bosses. Brass is non-magnetic, so it is fine near the IMU.
+  33.
+    - **Item:** CNC Kitchen Heat Set Insert M3 x 5.7, 100 pcs
+    - **Seller:** CNC Kitchen (manufacturer store, DE)
+    - **Url:** https://cnckitchen.store/products/heat-set-insert-m3-x-5-7-100-pieces
+    - **Price:** EUR 9.40
+    - **Price usd:** 10.58
+    - **In stock:** yes
+    - **Ships to:** EU and international
+    - **Official channel:** так
+    - **Notes:** Shell closure screws.
+  34.
+    - **Item:** CNC Kitchen Heat Set Insert 1/4"-20 x 12.7 (camera thread), 20 pcs
+    - **Seller:** CNC Kitchen (manufacturer store, DE)
+    - **Url:** https://cnckitchen.store/products/heat-set-insert-1-4-20x12-7-camera-thread-20-pieces
+    - **Price:** EUR 9.90
+    - **Price usd:** 11.14
+    - **In stock:** yes
+    - **Ships to:** EU and international
+    - **Official channel:** так
+    - **Notes:** Use only on the IMU puck and accessories. For the 1.2-1.4 kg handheld, the tripod/boom mount must be a captured 1/4-20 nut or a thread tapped in the 2 mm aluminium mid-plate (an insert alone is not allowed).
+  35.
+    - **Item:** CNC Kitchen M2.5 Screw TX8 stainless steel low-profile, 25 pcs (M2.5x6; other lengths EUR 5.08-7.50)
+    - **Seller:** CNC Kitchen (manufacturer store, DE)
+    - **Url:** https://cnckitchen.store/products/m2-5-screw-stainless-steel-aisi-304-low-head
+    - **Price:** EUR 6.00 (M2.5x6)
+    - **Price usd:** 6.75
+    - **In stock:** yes
+    - **Ships to:** EU and international
+    - **Official channel:** так
+    - **Notes:** For the main chassis. An M2.5 assortment set costs EUR 31.90.
+  36.
+    - **Item:** CNC Kitchen Copper Hex Socket Cap Screw M2.5x12, 10 pcs (non-magnetic, IMU puck)
+    - **Seller:** CNC Kitchen (manufacturer store, DE)
+    - **Url:** https://cnckitchen.store/products/m2-5x12-copper-hex-socket-cap-screw-10pcs
+    - **Price:** EUR 5.70
+    - **Price usd:** 6.41
+    - **In stock:** yes
+    - **Ships to:** EU and international
+    - **Official channel:** так
+    - **Notes:** Meets the brass/nylon/non-ferrous screw rule within 15-20 cm of the BNO085.
+  37.
+    - **Item:** Gelid GP-Extreme 12 W/mK thermal pad 80x40x2.0 mm (TP-GP01-D)
+    - **Seller:** QuietPC (NL)
+    - **Url:** https://quietpc.co.nl/gelid-gp-pads
+    - **Price:** EUR 4.98 (was 8.01)
+    - **Price usd:** 5.60
+    - **In stock:** yes (61)
+    - **Ships to:** about 100 countries selectable (rates not read)
+    - **Official channel:** ні
+    - **Notes:** Above the 6 W/mK minimum. For the IP2368 board to the case, the UFS module to its boss, and the Lime pedestal if kept. The 3.0 mm (TP-GP01-E) costs EUR 6.64 (13 in stock). The GP-Ultimate 1.0 mm 90x50 costs EUR 4.14 (stock not shown) for the 0.5-1.5 mm gaps.
+  38.
+    - **Item:** Peak Design Leash camera strap with anchor links (handheld strap)
+    - **Seller:** Peak Design (manufacturer store)
+    - **Url:** https://www.peakdesign.com/products/leash
+    - **Price:** USD 49.95
+    - **Price usd:** 49.95
+    - **In stock:** unknown (Add to cart shown)
+    - **Ships to:** US store shown (international not stated)
+    - **Official channel:** так
+    - **Notes:** Quick-release anchors fit the 2 strap points on the shell. Any rated camera strap works; this is the only official-store strap price I saw.
+- **Not found:**
+  1.
+    - **Item:** IP2368 charge-only (BZ) board from an official or branded store
+    - **Closest equivalent:** Generic bidirectional IP2368 4S 100 W boards on Newegg/Walmart/OnBuy marketplaces, USD 12.50-24.59 (search snippets; pages returned 403/captcha)
+    - **Note:** There is no manufacturer store. Charge from output-only PD ports or a USB-A-to-C lead, or test the power bank. Buy 2-3 boards and burn them in.
+  2.
+    - **Item:** Forced-PWM 12 V buck-boost rated 5 A or more (alternative to the D36V50F12)
+    - **Closest equivalent:** Pololu D36V50F12 (#4095, USD 39.95)
+    - **Note:** Pololu's step-up/step-down regulators top out at 2.5-3 A (S13V30F5, S13V25Fx), and none is a 12 V 5 A part. The D36V50F12 stays unless the terminated-floor spur A/B fails.
+  3.
+    - **Item:** Ready LT3045 low-noise LDO module from an official store
+    - **Closest equivalent:** LT3045EMSE#PBF chip, LCSC C580012, USD 8.33
+    - **Note:** analog.com (503), Mouser and DigiKey (403) blocked the fetch, so the ADI eval-board price was not seen. Generic AliExpress LT3045 modules were not checked.
+  4.
+    - **Item:** TPS2553 carrier/breakout board
+    - **Closest equivalent:** TPS2553DBVR chip, LCSC C55266, USD 0.55, on a SOT-23-6 adapter
+    - **Note:** No ready module found.
+  5.
+    - **Item:** Captured 1/4"-20 stainless hex nut (tripod/boom mount)
+    - **Closest equivalent:** Any 18-8 stainless 1/4"-20 hex nut from a hardware store, or a thread tapped in the aluminium plate
+    - **Note:** Bolt Depot returned 403. The CNC Kitchen 1/4"-20 insert is for the puck and accessories only.
+  6.
+    - **Item:** 2 mm aluminium mid-plate, copper-clad FR4 RF bay, IR-reflective film
+    - **Closest equivalent:** Laser-cut sheet service (quote-based), generic FR4 sheet
+    - **Note:** Not price-checked. The earlier estimate was USD 15-25 for plate and pads and USD 5 for FR4 (unverified).
+  7.
+    - **Item:** Sun hood
+    - **Closest equivalent:** Printed from the same ASA spool (25-35 mm slide-on hood)
+    - **Note:** No purchase needed.
+  8.
+    - **Item:** SMBJ14A TVS (after the 12 V regulator), 10k B3380 NTC, KSD9700 70 C bimetal switch, 2 A LAB fuse, XT30U-M, nickel strip
+    - **Closest equivalent:** Standard LCSC/Mouser stock lines (the same LCSC order as above)
+    - **Note:** Not price-checked within the search budget; each costs cents to about USD 1.
+  9.
+    - **Item:** Separate GNSS backup cell
+    - **Closest equivalent:** Onboard MS621FE on the Waveshare LC76G
+    - **Note:** Included, so no purchase.
+  10.
+    - **Item:** ISDT 608PD backup/monthly balance charger (optional)
+    - **Closest equivalent:** Previous reference 1,979-2,250 UAH (about USD 47-54), Ukrainian price only
+    - **Note:** World price not checked.
+  11.
+    - **Item:** 3S budget pack parts (3S BMS, INA226)
+    - **Closest equivalent:** n/a
+    - **Note:** Not sourced, because 4S is the decision (see conflict 3).
+- **Notes:** FX: ECB reference rate of 16 Oct 2026. 1 EUR = 1.1253 USD; 1 GBP = 1.3335 USD; 1 NZD = 0.5664 USD. LCSC prices are in USD at the first ladder step (some have MOQ 5). Prices exclude shipping, VAT and duty.
+  
+  SUBTOTAL for this group (4S build, buying the cheapest in-stock official or established offer):
+  - Power: about USD 254. This covers 5x P50B at 9.99, the Daly BMS at 9.00, 2 IP2368 boards at about 17, the D36V50F12, D36V28F5 and S18V20AHV, 2x #2813, the INA228, 2x LT3045, 4x TPS2553, both fuse values, the holder, the PTC, XT30s, the jack and the RTC cell.
+  - GNSS/IMU: about USD 49.5 (LC76G, Adafruit BNO085, RP2040-Zero).
+  - Mechanical: about USD 123 (ASA, M2.5 and 1/4-20 inserts, screws, copper screws, 2 Gelid pads, Peak Design strap).
+  - Total about USD 426, or about USD 376 without the USD 49.95 strap.
+  Shipping caveat: loose Li-ion cells mostly ship by ground and domestically only. A buyer outside the US/EU/NZ should buy the P50Bs from an established cell retailer in their own country and verify capacity, IR and weight.
+  
+  CLONE/QUALITY RISK:
+  - P50B: re-wrapped fakes exist, so test every cell.
+  - BNO085: buy Adafruit or SparkFun, not GY-BNO085 clones.
+  - IP2368: board quality varies, so burn in 2-3 boards.
+  - LCSC is not franchised for TI/ADI: moderate risk for the LT3045.
+  - XT30: buy genuine Amass.
+  - Pololu items show 'Rationed': quantity is limited per order, and backorders are allowed.
+  
+  Rule check: nothing in this group transmits or uses a loop. The H-field probe and AS3935 exclusions do not touch it.
+  
+  RESOLUTION OF ALL 25 conflicts_for_final_checks:
+  1. LimeSDR Micro: gated optional. Keep the cancellable pre-order and decide on 31 Jan 2027 or on delivery; no core function depends on it. Reason: it does not ship before Dec 2026 and its power and heat are unmeasured, while the core targets are covered by the V4Ls and the HF+. Power parts here are sized so that nothing has to be re-bought if it stays: BMS 15 A, the 7.5 A fuse costs cents, and the #2813 is rated 6 A.
+  2. RAM: buy the 12 GB Q6A now. RAM cannot be upgraded, and it keeps training and the Lime open. Re-check Allnet stock on the order date.
+  3. Pack: 4S1P P50B (72 Wh), closed. Reason: the LNB at 13.2 V, the Boni-Whip at 12.5 V through an LDO, AUX 12 V and the 12 V display all need a source above 12 V, and 3S would need extra boost stages. Buy 5 cells and the Daly 4S 15 A BMS.
+     - Fuse: 5 A now (no-Lime peak 24-32 W is about 2.4-2.7 A at 12-13.6 V; charging at 3 A), and 7.5 A only if the Lime is kept (about 4 A peak).
+     - Thresholds: Linux poweroff at 13.6 V; D36V50F12 EN cut at 13.4 V or more; BMS 2.70 V/cell (Daly) as last resort.
+  4. 12 V regulator: buy the D36V50F12 now. It is available, rated 4.5 A, and its EN pin gives the hardware cut. No forced-PWM 12 V buck-boost of 5 A or more exists in the official channels checked. Replace it only if the terminated-floor spur A/B or the sealed-case current test at 13.6 V input fails.
+  5. USB map: freeze the Lime-agnostic map. Blue USB 3.1 port: RTL-A (or the T7 only with the Lime). FE1.1s P1 RTL-B, P2 touch, P3 CH334F (H1 HMI RP2040, H2 IMU puck, H3 LAB USB-A, H4 HF+). The HF+ and injectors run from LAB 5 V (D36V28F5). Reason: the same map works in both Lime cases and keeps load off VCC_5V_PERI (about 17 W).
+  6. 40-pin map: freeze it.
+     - Pins: PPS pin 7 (GPIO96); UART6 16/18 for the LC76G; I2C0 13/15 for the INA228 only; I2C2 27/28 for the MCP23017s and RP2040 counter, with no BNO085; UART7 32/29 only for the HMI RP2040 if it works.
+     - IMU interface: the USB-CDC puck (RP2040-Zero + BNO085) on CH334F H2. Reason: it does not depend on the unverified UART7, it avoids BNO085 clock stretching on GENI I2C, and the boom puck needs its own MCU and cable anyway.
+     - Fan: on/off at 60/50 C through an AO3400 on GPIO56 (PoE-HAT overlay with the 'cpu0-thermal' spelling fixed). Pin 33 pwm-gpio is the fallback. With on/off control the 1 kHz PWM ticking is irrelevant.
+  7. Ownership: labd is the sole owner and lock authority for every rail switch here (LNB #2813, AUX P-FET, TPS2553 ENs, LAB VBUS). labrx owns the single ring and the recorder. labclassify runs inferd and fusiond. Reason: one lease mechanism prevents two daemons toggling the same supply.
+  8. LNB supply: 13.2 V +-0.2 V from the Pololu S18V20AHV, switched by a second #2813 (40 V-rated, true off), then an LC filter, ferrite and polyfuse, on F connectors. No 18 V branch. Reason: the Bullseye needs 11.5-14 V for vertical; Pololu says the SEPIC's EN does not disconnect the output; the TPS2553 is only rated 2.5-6.5 V. Set one current limit at 1.5-2x the measured draw, choosing the PTC after the bench measurement.
+  9. LNA bias: a TPS2553DBVR at 250-300 mA for every SAWbird+ (constant-current variant, FAULT to labd). The V4L tee powers only LNAs of 80 mA or less. Delete the 100-160 mA PTC rule.
+  10. FM filter: Flamingo+ FM only.
+  11. librtlsdr: the .so.2 rebuild of noble 2.0.1 (0204c9c + 65f0658) only.
+  12. Display: about 127.9 MHz (51.7 Hz) field mode, or 164.4-168.4 MHz if the panel accepts it. Add 1415.7/1544.4 MHz and the LF time bands to the A/B test.
+  13. PPS: out-of-tree pps-gpio on 6.18.2-4; drop Route B. Buy the FT232RL fallback (and build pps-ldisc) only if the UART6 TX loopback fails.
+  14. INA228: Adafruit #5832 on I2C0 through user-space i2c-dev with no DT binding. Shunt in the pack lead ahead of both the IP2368 and the loads, so it counts charge and discharge. Always-on 3.3 V supply, pull-ups removed. Its 10 A shunt rating exceeds both fuse values.
+  15. Antenna tiers: re-decide under the two-tier rule. LRPT uses the V-dipole; the crossed Yagi defaults to the ultra-compact build; strike every loop. Outside this group.
+  16. Policy leftovers: strike all of them (VNA antenna S11, Inmarsat-C decode-then-filter replaced by the header-level rule, VLF SID, BT rfkill and the Artemis stop added, voice IQ and Set B removed, Iridium/CARTOSAT rows, H-probes, city lists and Kyiv constants, wsjtx GUI and fldigi, the bearing log). For this group, the location gate uses WMM2025 at the fix and the RTC anchor; there is no city table.
+  17. HF chain: Boni-Whip at 12.5 V from an LT3045 on 4S. It has 1.1 V headroom at the 13.6 V cutoff against a 260 mV dropout, and 12.5 V meets both the 9-15 V and 12-15 V published ranges. LF time signals rely on the active whip. The selector relay is outside this group. The HF-loop removal follows REQUIREMENTS.md.
+  18. Storage: the T7 only with the Lime; otherwise a V30/A2 microSD or an A/B UFS root, with products kept by default and raw IQ only when pinned.
+  19. CPU: inference fallback on the A55 cores; T2 training on CPU4-6 between passes; CPU7 isolated only with the Lime.
+  20. Roadmap: NPU Phase 0 inside W1-2 (19 Oct-1 Nov 2026); a minimal labeller in P0b; HF-F and second-RTL profiles before HF classes appear in the UI.
+  21. V4L: buy 3 (2 in service plus 1 spare).
+  22. Software: one venv-per-tool recipe (NanoVNA-Saver via pipx, PySide6 6.12), libgpiod v1, Skyfield 1.55 from pip, SatDump 2.0-alpha from source, OpenWebRX+ with pins.
+  23. Region unknown: buy the LC76G now (USD 14.99, worldwide except Iran/Russia, jamming flags only). Add a u-blox M10 (Uputronics MAX-M10S) only if spoof flags matter in the user's region. Prices here are world prices. Hold the LNB, horn and SAWbird+ iO until the region is known.
+  24. Costs and weights: this group is re-priced at world prices, about USD 426 (see the subtotal above). The sling (about 3.7-4.4 kg) and the case weight are to be recomputed after the panel outline is confirmed.
+  25. P1b completion: final/report_research.json now exists (read for this task). The summaries.md and minute-log.md errata blocks remain for the orchestrator.
+  
+  Sources fetched on 18 Oct 2026: Pololu #4095/#3782/#2573/#2813 and categories 131/133; Adafruit 5832/4754/610; SparkFun SEN-22857; Waveshare LC76G and RP2040-Zero; LCSC C55266, C580012, C5372184, C178942, C151093, C427665, C208478, C99102, C319097, C319096, C20606809, C20606791, C521201; TI TPS2553DBVR; TinyTronics Daly; 18650batterystore, BatteryJunction and RaceDayQuads (Shopify JSON); Kiwiquads; Polymaker; Prusa; CNC Kitchen (Shopify JSON); QuietPC; Peak Design; Allnet. NKON, Newegg, Walmart, OnBuy, Mouser, DigiKey, TME, Farnell, Bolt Depot and analog.com blocked fetches; their figures are marked as snippets or not found. Scratch files are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pm_fetch.
+
