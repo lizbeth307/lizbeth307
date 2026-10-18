@@ -34996,6 +34996,164 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Searches used: 8 WebSearch calls.
 
+## searchA:tinysa_ultra_zs407 (run `wf_e5582d4c-0a2`)
+
+- **Part:** tinySA Ultra+ ZS407 (spectrum analyser, low-level conducted generator and reference power meter; bench tier, qty 1)
+- **Current price usd:** 204.28 ex VAT / 247.18 incl. 21% ES VAT (Astroradio EUR 219.89 incl. VAT; EUR 215.50 = $242.24 by bank transfer). Re-checked 18 Oct 2026: still EUR 219.89 and 'En stock entrega inmediata'. Free shipping only to mainland Spain; shipping to other EU countries is not stated.
+- **Critical specs:**
+  - Frequency coverage: 100 kHz-900 MHz in normal mode (input low-pass filter, no mirror images); ULTRA mode to 7.3 GHz with level calibration to 7.3 GHz. The stack uses a 0.8-7.3 GHz survey profile. ZS406 and ZS405 reach only 5.3 GHz.
+  - Sensitivity: lowest discernible signal -102 dBm (30 MHz, 30 kHz RBW, LNA off) and -145 dBm (200 Hz RBW, LNA on). Built-in 20 dB LNA with NF 5 dB up to 6 GHz. Needed for the Y-factor/ENR routine and the noise-floor A/B tests.
+  - Linearity: P1dB -1 dBm and IIP3 +15 dBm at 0 dB attenuation; spur-free dynamic range 70 dB at 30 kHz RBW; 0-31 dB step attenuator.
+  - Input robustness: +6 dBm absolute max at 0 dB attenuation; +20 dBm short-term peak at 30 dB; +/-5 V DC max (the stack still puts a DC block in front of it).
+  - Level accuracy: +/-2 dB absolute after calibration; detector linearity +/-2 dB below 5.3 GHz and +/-5 dB from 5.3 to 6 GHz; 0.5 dB resolution. Its channel power is the stack's reference power meter.
+  - Resolution and purity: RBW 0.2/1/3/10/30/100/300/600/850 kHz; phase noise -108 dBc/Hz at 100 kHz and -115 dBc/Hz at 1 MHz offset (30 MHz carrier); 50 us minimum burst in zero span.
+  - Generator (conducted, Bench only): sine 0.1-900 MHz with harmonics below -40 dBc; -115 to -19 dBm in 1 dB steps; +/-2 dB from -72 to -19 dBm up to 800 MHz; 57.2 Hz resolution; AM/FM. Square wave to 6 GHz and test signal to 7.3 GHz.
+  - Standalone field use: own 5000 mAh battery (>=3 h), charges in <=1 h at 500 mA; 4 in 480x320 resistive touch screen; microSD; 117x72x23 mm.
+  - Stack interface: USB-C CDC serial with the tinySA command set. labd's allow-list driver, QtTinySA v2.0.1, firmware tinySA4_v1.4-252 and the udev match on CDC interface 00 all depend on it, on Ubuntu 24.04 arm64.
+  - Authenticity: tinySA.org-listed sellers only, because clones cannot be recognised (tinySA.org: 'You can't!'). Hardware must be ZS407 (V0.5.3 or later), not ZS406 or ZS405.
+- **Candidates:**
+  1.
+    - **Name:** tinySA Ultra+ ZS407 from Astroradio (current pick)
+    - **Kind:** current_part
+    - **Price usd:** 204.28 ex VAT / 247.18 incl. VAT (EUR 219.89); 242.24 by bank transfer (EUR 215.50)
+    - **Spec comparison:** Reference unit. All critical specs as listed (tinySA.org specification page).
+    - **Worse in:** Nothing; this is the baseline.
+    - **Compatibility:** Full: same device, firmware and command set the labd driver and QtTinySA are built around.
+    - **Risks:** Low: the seller is on the tinySA.org list. Shipping cost outside mainland Spain not stated.
+    - **Seller url:** https://www.astroradio.com/p/tinysa-ultra-analizador-de-espectro-plus/
+    - **Sources:**
+      - https://www.astroradio.com/p/tinysa-ultra-analizador-de-espectro-plus/
+      - https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Specification
+      - https://tinysa.org/wiki/pmwiki.php?n=Main.Buying
+  2.
+    - **Name:** tinySA Ultra+ ZS407 from Elektor (same SKU, other seller; Elektor SKU 21021, vendor field 'tinySA')
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 182.10 ex VAT / 220.35 incl. VAT (EUR 196.02 incl. VAT; ex-VAT EUR 162.00 inferred, since 196.02/1.21 = 162.00 exactly). Saves $22.18 ex VAT or $26.83 incl. VAT. Shipping not checked.
+    - **Spec comparison:** Same product. Elektor's published spec text matches tinySA.org point for point: 0.1-900 MHz / 7.3 GHz ULTRA level-calibrated, LDS -102/-145 dBm, LNA NF 5 dB to 6 GHz, P1dB -1 dBm, IIP3 +15 dBm, +/-2 dB, RBW 0.2-850 kHz, phase noise -108/-115 dBc/Hz, generator -115 to -19 dBm (+/-2 dB to 800 MHz), square wave to 6 GHz, test signal to 7.3 GHz. Box adds a 32 GB microSD card and an antenna.
+    - **Worse in:** Nothing in published specs (it is the same SKU). The only gap is that Elektor does not appear on the tinySA.org safe-seller list, so a genuine unit is not guaranteed.
+    - **Compatibility:** Identical if genuine. Same USB CDC command set, firmware and QtTinySA.
+    - **Risks:** Elektor is not on the tinySA.org safe-seller list (checked 18 Oct 2026), so it breaks the stack's authenticity rule as written. Elektor is a large, established Dutch retailer and the listing names tinySA as vendor, but I could not confirm its supply chain. Use it only after written confirmation that units come from Zeenko or a listed distributor, with hardware V0.5.3 or later; then run the selftest on arrival. Listed as available and shipping EU-wide (product tags include EU/DE/FR/NL/IE/GB/INT). Shipping fee and whether VAT changes with the destination country are not checked.
+    - **Seller url:** https://www.elektor.com/products/tinysa-ultra-zs407-spectrum-analyzer
+    - **Sources:**
+      - https://www.elektor.com/products/tinysa-ultra-zs407-spectrum-analyzer
+      - https://www.elektor.com/products/tinysa-ultra-zs407-spectrum-analyzer.js
+      - https://tinysa.org/wiki/pmwiki.php?n=Main.Buying
+  3.
+    - **Name:** tinySA Ultra+ ZS407 from GOTRONIK (Poland; on tinySA.org list), SKU TINYSA-ULTRA-ZS407, EAN 5902186301931
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 188.01 ex VAT / 231.25 incl. 23% PL VAT (PLN 730.89 net / PLN 899.00 gross, a promotional price; PLN converted at ECB 4.3700 per EUR). Saves about $16 against Astroradio.
+    - **Spec comparison:** Same product. The listing gives 100 kHz-900 MHz / 7.3 GHz ULTRA, square wave to 6.3 GHz, RBW 0.2-850 kHz, 0-31 dB attenuator, LNA +20 dB, 5000 mAh battery (~3 h), 117x72x23 mm. Box adds a 32 GB microSD card and an antenna.
+    - **Worse in:** Nothing in specs. Availability is worse: 'Chwilowo niedostępny' (temporarily unavailable) on 18 Oct 2026, and the stack needs this part early because the 12 V regulator decision waits on it.
+    - **Compatibility:** Identical.
+    - **Risks:** Out of stock now. Shipping outside Poland is not stated on the page (unverified). The promotion may end before restock.
+    - **Seller url:** https://www.gotronik.pl/tinysa-ultra-analizator-widma-100khz-7-3ghz-zs407-zeenko-p-13267.html
+    - **Sources:**
+      - https://www.gotronik.pl/tinysa-ultra-analizator-widma-100khz-7-3ghz-zs407-zeenko-p-13267.html
+      - https://tinysa.org/wiki/pmwiki.php?n=Main.Buying
+      - https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html
+  4.
+    - **Name:** tinySA Ultra+ ZS407 from the Zeenko factory store on AliExpress (store 5800447; tinySA.org calls it 'guaranteed to deliver genuine tinySA')
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** Unverified: the store page renders by JavaScript and no item price could be read.
+    - **Spec comparison:** Same product (the factory itself).
+    - **Worse in:** Nothing in specs. Price, shipping and import costs unknown: above EUR 150 the IOSS scheme does not apply, so import VAT and carrier handling fees are added (exact costs not verified).
+    - **Compatibility:** Identical; select the ZS407 colour variant.
+    - **Risks:** Low counterfeit risk, but only in the Zeenko store itself; other AliExpress sellers sell clones. Landed EU cost unknown, so check it at checkout before choosing this over Astroradio.
+    - **Seller url:** https://zeenko.aliexpress.com/store/5800447/pages/all-items.html?SearchText=tinysa
+    - **Sources:**
+      - https://tinysa.org/wiki/pmwiki.php?n=Main.Buying
+  5.
+    - **Name:** tinySA Ultra+ ZS407 from Switch Science (Japan; listed)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 194.24 ex JP consumption tax / 213.67 incl. (JPY 33,800). Sold out.
+    - **Spec comparison:** Same product.
+    - **Worse in:** Sold out. After international shipping, EU import VAT and handling it is not cheaper than Astroradio (exact shipping not checked).
+    - **Compatibility:** Identical.
+    - **Risks:** Sold out; import from outside the EU.
+    - **Seller url:** https://www.switch-science.com/products/11120
+    - **Sources:**
+      - https://www.switch-science.com/products/11120.js
+  6.
+    - **Name:** tinySA Ultra+ ZS407 at other listed sellers: R&L (US), Mirfield (UK), Neven (CZ), AURSINC/SeeSii on Amazon
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** None is cheaper. R&L $219.95 (out of stock, US; EU import VAT and shipping extra). Mirfield $252.98 (GBP 189.95; VAT basis not stated) plus $9.99 (GBP 7.50) post, with post-Brexit EU import VAT on top. Neven $221.15 ex / $267.59 incl. (CZK 4,785.12 / 5,790; out of stock). Amazon.nl AURSINC EUR 319.99 ($359.70, ASIN B0DSL5M7X5); SeeSii EUR 366.03 ($411.45, ASIN B0DZ25S2GX).
+    - **Spec comparison:** Same product.
+    - **Worse in:** Price only: all are more expensive than Astroradio. STACK's 'budget alternative Mirfield GBP 189.95' is wrong: $252.98 is $5.80 MORE than Astroradio incl. VAT, before post and import VAT. Drop that note.
+    - **Compatibility:** Identical.
+    - **Risks:** Low counterfeit risk (all listed), but no saving.
+    - **Seller url:** https://www.randl.com/index.php?main_page=advanced_search_result&search_in_description=1&keyword=tinysa
+    - **Sources:**
+      - https://www.randl.com/index.php?main_page=advanced_search_result&search_in_description=1&keyword=tinysa
+      - https://www.mirfield-electronics.co.uk/
+      - https://www.neven.cz/p/tinysa-ultra-zs-407-prenosny-spektralni-analyzator-a-generator
+      - https://www.amazon.nl/s?k=tinySA+Ultra%2B+ZS407
+  7.
+    - **Name:** tinySA Ultra+ ZS406 (cheaper SKU from the same maker)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** R&L $169.95 (in stock, US); Neven $159.65 ex / $193.18 incl. VAT (CZK 3,454.55 / 4,180; 12 in stock); Lab401 EUR 163 ($183.23; listed as 'Ultra+' with 5.4 GHz, so a ZS406; Lab401 is not on the tinySA.org list); Amazon.nl AURSINC EUR 228.90.
+    - **Spec comparison:** Zeenko: 'ZS406 ... Ultra mode up to 5.3 GHz, level calibrated up to 6 GHz; square wave up to 4.4 GHz or RF test signal up to 5.4 GHz; other specs same as ZS405'. tinySA.org: LNA NF 5 dB rated up to 4 GHz (6 GHz only for ZS407). Normal-mode 900 MHz, battery, RBW, P1dB/IIP3 and the +/-2 dB figures are the same.
+    - **Worse in:** Frequency range 5.3 GHz ULTRA (calibrated to 6 GHz) vs 7.3 GHz; generator square wave 4.4 GHz vs 6 GHz; test signal 5.4 GHz vs 7.3 GHz; LNA NF rating 4 GHz vs 6 GHz. This breaks the stack's 0.8-7.3 GHz survey profile and the LNA/NF capability above 4 GHz. Rejected.
+    - **Compatibility:** Same firmware family and command set, so the driver would work, but specs are worse.
+    - **Risks:** Rejected on specs.
+    - **Seller url:** https://www.neven.cz/p/tinysa-ultra-zs-406-prenosny-spektralni-analyzator-a-generator
+    - **Sources:**
+      - https://www.zeenko.tech/tinysa
+      - https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Specification
+      - https://www.randl.com/index.php?main_page=advanced_search_result&search_in_description=1&keyword=tinysa
+      - https://lab401.com/products/tinysa-ultra
+  8.
+    - **Name:** tinySA Ultra ZS405 (original Ultra)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** GOTRONIK $144.09 ex / $177.23 incl. VAT (PLN 560.16 / 689; model inferred from '100 kHz-5.3 GHz' in the title); Mirfield GBP 149.95 ($199.70) plus post.
+    - **Spec comparison:** Zeenko: normal mode 0.1-800 MHz; ULTRA to 5.3 GHz (calibrated to 6 GHz); sine to 800 MHz; square wave to 4.4 GHz. tinySA.org: battery >=2 h (vs 3 h for Ultra+). Mirfield says the Ultra+ has 'better phase noise'.
+    - **Worse in:** Normal-mode range 800 vs 900 MHz; ULTRA range 5.3 vs 7.3 GHz; generator range; battery 2 vs 3 h; phase noise; LNA NF rating 4 vs 6 GHz. Rejected.
+    - **Compatibility:** Same command set, but specs are worse.
+    - **Risks:** Rejected on specs.
+    - **Seller url:** https://www.gotronik.pl/tinysa-ultra-analizator-widma-od-100khz-do-5-3ghz-p-10214.html
+    - **Sources:**
+      - https://www.zeenko.tech/tinysa
+      - https://www.gotronik.pl/tinysa-ultra-analizator-widma-od-100khz-do-5-3ghz-p-10214.html
+      - https://www.mirfield-electronics.co.uk/
+  9.
+    - **Name:** RF Explorer 6G Combo PLUS Slim (Seeed / RF Explorer)
+    - **Kind:** other_brand
+    - **Price usd:** 544.25 (GBP 408.66 at Cool Components, from a search snippet, not fetched)
+    - **Spec comparison:** From retailer listings, not the maker's datasheet: 50 kHz-960 MHz and 240-6100 MHz ports; average noise level -125 dBm with LNA; amplitude accuracy +/-3 dB; RBW 2.6-600 kHz; +30 dBm max input; 25 dB LNA; 30/60 dB attenuators; no signal generator.
+    - **Worse in:** More expensive. Also worse on accuracy (+/-3 vs +/-2 dB), top frequency (6.1 vs 7.3 GHz), minimum RBW (2.6 kHz vs 200 Hz), no generator, and a different protocol (labd driver and QtTinySA unusable). Rejected.
+    - **Compatibility:** Poor: different serial protocol; would need a new labd driver.
+    - **Risks:** Rejected.
+    - **Seller url:** https://coolcomponents.co.uk/products/rf-explorer-6g-combo-plus-slim
+    - **Sources:**
+      - https://coolcomponents.co.uk/products/rf-explorer-6g-combo-plus-slim
+      - https://core-electronics.com.au/rf-explorer-6g-combo-plus-slim-seeed-studio.html
+  10.
+    - **Name:** Siglent SSA3015X Plus (cheapest bench spectrum analyser from an established brand found)
+    - **Kind:** other_brand
+    - **Price usd:** 1,302.83 ex VAT (EUR 1,159 net at Batronix, Eleshop and Welectron, from search snippets)
+    - **Spec comparison:** 9 kHz-1.5 GHz; RBW 1 Hz-1 MHz; 10.1 in screen. Better RBW and DANL, but mains-powered, with no battery or built-in generator (the tracking generator is a paid licence).
+    - **Worse in:** About 6x the price. Range 1.5 vs 7.3 GHz; not handheld or battery-powered; no built-in generator. Rejected. Rigol, Owon and Signal Hound bench units are also far above $204 (not re-priced).
+    - **Compatibility:** SCPI over USB/LAN; would need a new driver; does not fit the field case.
+    - **Risks:** Rejected.
+    - **Seller url:** https://www.batronix.com/shop/siglent/spektrum-analyser-aktion.html
+    - **Sources:**
+      - https://www.batronix.com/shop/siglent/spektrum-analyser-aktion.html
+      - https://eleshop.eu/siglent-ssa3015x-plus-spectrum-analyser.html
+- **Notes:** Verdict (angle A): no other established brand is both cheaper and not worse. RF Explorer is worse and more expensive; Siglent, Rigol and other bench units cost about 6x and lack battery and range. The cheaper same-family SKUs (ZS406, ZS405) are worse in ULTRA range (5.3 vs 7.3 GHz), generator range and LNA NF rating, and the ZS405 also in normal range and battery, so they are rejected.
+  
+  KEEP the part: tinySA Ultra+ ZS407. Seller options, all for the same genuine SKU:
+  (1) Astroradio stays the default: verified in stock today, listed seller, EUR 219.89 incl. VAT ($204.28 ex). Shipping outside Spain must be checked.
+  (2) GOTRONIK (listed): $188.01 ex VAT / $231.25 incl. 23% VAT, about $16 cheaper, but temporarily unavailable and EU shipping unverified. Switch only if it restocks before the order date and ships to the user's country.
+  (3) Elektor: $182.10 ex VAT (EUR 162.00 inferred) / $220.35 incl. (EUR 196.02), in stock, about $22-27 cheaper. Elektor is NOT on the tinySA.org safe-seller list, so it breaks the stack's authenticity rule unless Elektor confirms in writing that its units come from Zeenko or a listed distributor (hardware V0.5.3 or later). With that confirmation it is the cheapest not-worse in-stock option found.
+  (4) The Zeenko AliExpress factory store is a guaranteed-genuine source, but its price and landed EU cost (import VAT above EUR 150) could not be read. Check it at checkout.
+  
+  Correct STACK: 'Budget: Mirfield $252.98 (GBP 189.95)' is not a budget option. It costs more than Astroradio incl. VAT before GBP 7.50 post and post-Brexit EU import VAT.
+  
+  Avoid eBay and unbranded Amazon/AliExpress 'TinySA ULTRA' listings (EUR 178-394 on amazon.nl): there is a clone risk and tinySA.org names clone sellers.
+  
+  Conversions: EUR at the stack rate 1.1241, GBP at 1.3318. PLN 4.3700, CZK 24.323 and JPY 177.82 per EUR are ECB reference rates of 16 Oct 2026 (ECB USD that day was 1.1253). Prices exclude shipping. EU B2C sellers normally charge the buyer's country VAT, so ex-VAT figures are the fair basis for comparison.
+  
+  Unverified: Elektor's ex-VAT basis and shipping fee; GOTRONIK EU shipping; Zeenko AliExpress price; RF Explorer and Siglent figures, which come from search snippets of retailer pages.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
