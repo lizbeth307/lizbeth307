@@ -2,14 +2,14 @@
 
 Звіт оновлюється автоматично під час аудиту. Тут зібрано всі повні відповіді субагентів і всі зведення.
 
-- [Хронологія всіх зведень](summaries.md) — 95 записів
+- [Хронологія всіх зведень](summaries.md) — 96 записів
 - Повні відповіді субагентів по кожному компоненту — посилання в таблиці нижче
 
 | Компонент | Етапи (✅ готово, ⏳ працює) | Поточний run |
 |---|---|---|
 | [Antennas](components/antennas.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_6b9836f8-796` |
 | [Compute](components/compute.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_88090a59-878` |
-| [Dish replacement](components/dish_replacement.md) | ✅ research ✅ forums ✅ fixes ⏳ verify | `wf_5a66d65f-c3f` |
+| [Dish replacement](components/dish_replacement.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_5a66d65f-c3f` |
 | [Display](components/display.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_0e70c405-a03` |
 | [Gnss imu](components/gnss_imu.md) | ✅ research ✅ forums ✅ fixes ⏳ verify | `wf_45d278c2-004` |
 | [Mechanical thermal](components/mechanical_thermal.md) | ✅ research ✅ forums ✅ fixes ⏳ verify | `wf_e6b8e5e2-124` |

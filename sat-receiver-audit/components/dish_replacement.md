@@ -1007,5 +1007,228 @@ _Run `wf_5a66d65f-c3f`_
 
 ## Адверсаріальна перевірка (`verify`)
 
-_Агент цього етапу ще працює (run `wf_5a66d65f-c3f`)._
+_Run `wf_5a66d65f-c3f`_
+
+- **Component:** Antennas to replace the dishes: QO-100 at 10.489 GHz (LNB, IF about 739-740 MHz) and L-band HRPT at 1.70 GHz
+- **Recommendation holds:** так
+- **Issues:**
+  1.
+    - **Claim:** Peak the antenna on the 'CW beacon at 10489.55 MHz (IF 739.55 MHz)' (research integration notes).
+    - **Problem:** This is the wrong frequency. The AMSAT-DL narrowband bandplan gives the lower beacon at 10489.500 (CW/F1A, 400 Hz shift), the middle beacon at 10489.750 (400 bit/s BPSK), a multimedia beacon at 10489.9935 and the upper beacon at 10490.000 MHz.
+    - **Correction:** Peak and measure C/N on 10489.500 and 10489.750 MHz, which is IF 739.500 and 739.750 MHz with the 9750 MHz LO. The own-fixes agent already corrected this.
+    - **Source:** https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines
+  2.
+    - **Claim:** Decoding the QO-100 wideband DATV beacon needs about 33 dBi or more.
+    - **Problem:** This overstates the requirement by about 2 dB. BATC's measured beacon MER (10491.5 MHz, 1.5 MS, DVB-S2 4/5): 60 cm dish 6 dB, 70 cm 7 dB, 80 cm 8 dB, 1.2 m 10 dB, saturating near 12 dB. Fitting a saturation model to these puts the QPSK 4/5 threshold (about 3 dB MER) near a 40-45 cm dish, about 31 dBi.
+    - **Correction:** The DATV beacon needs about 31-32 dBi, roughly a 45 cm dish. For DATV user signals, BATC recommends a dish of 90 cm or more. The conclusion is unchanged: the best non-dish options reach 27-28 dBi, so DATV stays out of reach.
+    - **Source:** https://wiki.batc.org.uk/Receiving_Oscar_100_DATV_signals
+  3.
+    - **Claim:** The QRO.cz TCXO LNB costs 'from €65', and 13 V selects vertical, 18 V horizontal. Own fix: 'briefly feed 18 V' to check the polarisation.
+    - **Problem:** €65 is only WiMo's cheapest variant, and WiMo shows €54.62 shipping on top. QRO.cz's own shop (hamparts.shop) prices the 10 MHz external-reference dual-LO LNB at €199 ex VAT (€240.79 incl.) and the bias-tee box at €63 ex VAT. WiMo states 12 V = horizontal and 15 V = vertical. The QRO.cz manual gives an 11-15 VDC supply range and about 400 mA typical draw. Applying 18 V would exceed the stated rating.
+    - **Correction:** Budget about €120 delivered for the cheapest QRO.cz variant. On QRO.cz units, test polarisation with 12 V and 15 V only, never 18 V. The 13/18 V convention applies to the Bullseye and standard TV LNBs. Allow about 5 W for the QRO.cz box.
+    - **Source:** https://www.wimo.com/en/qo-100-10ghz-lnb-qro-cz ; https://hamparts.shop/blog/lnb-dual-lo-ref-manual.html ; https://hamparts.shop/
+  4.
+    - **Claim:** 'Metop-B is the only live AHRPT source' (research) versus 'Metop-C is active, skip Metop-B' (own fixes).
+    - **Problem:** Primary sources disagree:
+  - NOAA OSPO (updated 3 Sep 2026): Metop-C AHRPT 'No', Metop-B 'Yes'.
+  - WMO OSCAR (27 Aug 2026): Metop-C 1701.3 MHz 'not in use', 1707 MHz 'used part time'.
+  - SatDump sat_list: both active at 1701.3 MHz, with Metop-B's 'intermittent modulator issues'.
+  - metislair: about 7 dB loss on Metop-B since 03/2025.
+    - **Correction:** Treat Metop AHRPT availability as unknown until checked on air. Before building any array, record high passes of both Metops with the single helix and look at both 1701.3 and 1707 MHz. Add AWS (1707 MHz, 1.785 Msym/s, 600 km orbit, active with end of life 2029 or later) as a parallel target.
+    - **Source:** https://www.ospo.noaa.gov/operations/metop/status.html ; https://space.oscar.wmo.int/satellites/view/metop_c ; https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json ; https://blog.metislair.com/docs/Radio/L%20band%20weather%20satellite%20reception%20guide.html
+  5.
+    - **Claim:** Keep the 11-turn helix for Meteor-M HRPT and Elektro-L LRIT.
+    - **Problem:** SatDump lists Elektro-L3 as 'transmissions paused pending Elektro-L5 commissioning', and L5 is 'still commissioning, with sporadic transmissions'. Even when L3 was on, metislair's 11-turn helix gave only about 1.5 dB equivalent on LRIT.
+    - **Correction:** Meteor-M N2-3 and N2-4 HRPT (1700 MHz, both active) are the only verified dish-free L-band targets today. Count Elektro-L as opportunistic.
+    - **Source:** https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json ; https://blog.metislair.com/docs/Radio/Creating%20a%20helix%20for%20direct%20satrx.html
+  6.
+    - **Claim:** The 30 cm W1GHZ lens gives 27.4 dBi when put in front of the 20-23 dBi horn.
+    - **Problem:** The 27.4 dBi was measured at 10.368 GHz with a 17.5 dBi Gunnplexer horn at about 21 in (53 cm) focal distance. The 150 mm lens gave 20.9 dBi at about 8 in. A 20-23 dBi horn has a narrower beam and would under-illuminate the lens at that distance, losing gain. The plates must also be perpendicular to the waveguide's wide wall.
+    - **Correction:** Feed the lens with a horn of about 17.5-18 dBi (mouth about 100 mm), or recompute the focal length in HDL_ANT for the horn you use. Recompute the plate curvature for 10.489 GHz. With 19.05 mm foam, the effective index changes from about 0.651 to about 0.661. Set the horn-to-lens spacing on the beacon.
+    - **Source:** http://www.w1ghz.org/antbook/chap3.pdf (Table 3-1)
+  7.
+    - **Claim:** mrc_combine.py (own fix 3) combines a pass recorded from LimeSDR RX1 and RX2.
+    - **Problem:** The algorithm is sound: I re-ran sim_test.py and it gives +3.01 dB for equal branches, 3.76 dB for 2/-1 dB branches, and recovers lags exactly. The file handling, however, fails on real passes:
+  - It loads the whole interleaved CS16 file with np.fromfile and converts it to complex64. A 15-minute two-channel pass at 7.68 Msps is about 55 GB on disk and about 110 GB in RAM, so it runs out of memory on the 16 GB Q6A.
+  - It estimates the lag from the first second only, which is noise if recording starts before the satellite rises, and applies the lag even when peak/median is below 5.
+  - The docstring says the weights are interpolated, but the code holds them piecewise constant.
+    - **Correction:** Read the file through np.memmap and process it in 2 s chunks. Scan 1 s windows across the pass and use the lag with the highest peak/median. Refuse to apply a lag whose ratio is below 5. Better still, run the combiner in a streaming GNU Radio graph and write only the combined, decimated output. That also cuts storage from about 55 GB to under 15 GB per pass.
+    - **Source:** /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dishfix_ag/mrc_combine.py (reviewed and simulation re-run)
+  8.
+    - **Claim:** The QO-100 beacon tracker (own fix 4) acquires over ±400 kHz behind a decimate-by-8 freq_xlating filter (taps low_pass 300 kHz cutoff, 100 kHz transition, centred on the PSK beacon).
+    - **Problem:** acquire() needs the lower beacon 250 kHz below the PSK beacon. Behind a 300 kHz low-pass, the lower beacon falls outside the passband whenever the LNB error is below about -50 kHz. Plain PLL LNBs are -140 to -180 kHz off (F1ATB), and the Goobay is specified at ±300 kHz. Even unfiltered at 960 ksps, errors below -230 kHz cannot be acquired. The simulation passed only because it fed unfiltered baseband directly.
+    - **Correction:** Run acquisition on the 7.68 Msps stream, or on a decimate-by-4 branch with about ±800 kHz passband centred on 10489.625 MHz (IF 739.625). Then hand the coarse offset to the narrow tracker. With a Bullseye (±30 kHz) or a QRO.cz TCXO LNB, the bug is masked.
+    - **Source:** /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dishfix_ag/qo100_beacon_track.py ; https://f1atb.fr/qo-100-live/
+  9.
+    - **Claim:** The LimeSDR Micro ($199, deliveries from about 30 Sept 2026) is the IF and L-band receiver.
+    - **Problem:** Crowd Supply now lists Basic $249 and GNSS $299 (shipping $18 worldwide). Orders placed now ship 15 Dec 2026. The page does not mention a bias tee.
+    - **Correction:** Start with the RTL-SDR V4/V4L, which works now and leaves the Lime free for L-band later:
+  - The QO-100 narrowband transponder is only 500 kHz wide, which the RTL-SDR covers easily at the 739 MHz IF.
+  - It also handles Meteor HRPT at 1.7 GHz on a helix.
+  - The V4L listing gives no frequency range and warns that not all applications support it yet.
+  - External bias tees and DC blocks are mandatory for both SDRs.
+    - **Source:** https://www.crowdsupply.com/lime-micro/limesdr-micro ; https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+  10.
+    - **Claim:** 'The 22 mm copper pipe in the POTY adapter is the natural horn throat.'
+    - **Problem:** Unverified. Neither WiMo nor the QRO.cz manual gives the tube diameter, and BATC wiki pages mention POTY without dimensions. The Bullseye page gives no flange or feed dimensions.
+    - **Correction:** Remove the LNB cap and measure the waveguide inside diameter before cutting anything. Single-mode TE11 at 10.49 GHz needs an inside diameter of 16.8-21.9 mm (both limits checked). A no-surgery alternative: a cone that clamps over the LNB's 40 mm feed, with gain confirmed by the bare-LNB A/B test.
+    - **Source:** https://www.wimo.com/en/qo-100-10ghz-lnb-qro-cz ; https://hamparts.shop/blog/lnb-dual-lo-ref-manual.html
+  11.
+    - **Claim:** Community findings: 'RigExpert TBR-AN-1 gives no S/N figures.' Research: 'FT8 decoded at -12 to -14 dB.'
+    - **Problem:** The note's WSJT-X screenshot shows decodes at -11 to -15 dB, so the research is right. The LNB used was not stock: it was modified for a GPSDO-locked 25 MHz reference, and the note says aiming within ±20° is enough.
+    - **Correction:** Keep the bare-LNB evidence, but note it came from a reference-locked LNB. A stock TCXO LNB needs the beacon tracker for FT8 and SSB.
+    - **Source:** https://rigexpert.com/files/product_documentation/gpsdo/TBR-AN-1.pdf
+  12.
+    - **Claim:** FengYun-3D/E/F/G/H AHRPT is X-band at 30-38.4 Msym/s.
+    - **Problem:** Minor error: FY-3G sends AHRPT at 7790 MHz and only 6 Msym/s (drifting orbit), and FY-3F is LHCP. FY-3C, the last L-band FengYun, ended in 11-2024.
+    - **Correction:** The conclusion is unchanged: there is no L-band FengYun-3, and X-band needs a tracked dish.
+    - **Source:** https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+  13.
+    - **Claim:** LimeSuiteNG issue #356 'Channel Alignment' was opened by Andrew Back.
+    - **Problem:** It was opened by ztamosevicius on 29 Jul 2026. A port exists on a work branch (65 unit tests pass, not verified on hardware) and covers LimeSDR-USB first, then X3, XTRX and MMX8. The LimeSDR Micro is not mentioned.
+    - **Correction:** The conclusion holds: there is no driver alignment for the Micro, so use the software MRC combiner or a passive combiner.
+    - **Source:** https://github.com/myriadrf/LimeSuiteNG/issues/356
+  14.
+    - **Claim:** The 2x2 helix array gives Metop about 6-7 dB SNR on medium and high passes.
+    - **Problem:** My own check against EUMETSAT's AHRPT spec: power flux density -133 dBW/m² per 1.5 MHz, up to about -128 dBW/m² converted from -154 dBW/m² per 4 kHz; QPSK 3/4 at 2.33 Mbit/s coded; reference station G/T 6 dB/K with a 1.8 m dish; assumed Tsys about 150 K.
+  - Single 11-turn helix: about -1 to +3 dB Es/N0.
+  - 2x2 array (about 17-18 dBic after losses): about 3-8 dB depending on elevation.
+  The research figure is plausible only for passes above about 30°. Low passes stay under the 4 dB threshold, and Metop-B's modulator fault makes it unreliable.
+    - **Correction:** Keep the array as experimental and gate it with the staged plan. Measure the single-helix signal as a spectral hump (in-band power against noise floor), because SatDump will not lock below threshold, so its SNR readout is meaningless there.
+    - **Source:** https://user.eumetsat.int/s3/eup-strapi-media/TD_18_Metop_Direct_Readout_AHRPT_Technical_Description_v3_A_1cb789b653.pdf (Tables 3-4)
+- **Forum and fix assessment:** The forum work is mostly sound and does change the recommendation in the right direction.
+  
+  QO-100, what holds up:
+  - Dish-free narrowband reception is real and documented:
+    - RigExpert decoded FT8 at -11 to -15 dB with an LNB alone (verified in the PDF screenshot; the LNB was GPSDO-referenced).
+    - OK1DX copied the CW beacon (page was 503 today, so not re-read).
+    - A Passion Radio buyer reports the same; SARTS only as a search snippet.
+  - Nobody has published QO-100 results with a horn or lens. The horn and lens figures are physics-based estimates, and the horn geometry checks out:
+    - 20 dBi: 126 mm mouth, 185 mm slant, half-angle 19.9°, cone 147 mm from a 20 mm throat.
+    - 23 dBi: 178 mm mouth, 370 mm slant, cone about 319 mm.
+    - Waveguide limits: TE11 cutoff at 16.8 mm and TM01 at 21.9 mm inside diameter.
+  - W1GHZ's lens table is verified (17.5 / 20.9 / 27.4 dBi), but it was fed by a 17.5 dBi horn at 10.368 GHz.
+  - The BATC MER table confirms DATV is out of reach for any non-dish option.
+  - I could not find an independent anchor for the absolute narrowband beacon C/N; the 90 cm '>30 dB' figure has an unknown bandwidth. Keep the ±4 dB caveat and rely on the A/B measurement.
+  
+  QO-100 fixes:
+  - The A/B horn test and the 'fix the supply voltage, rotate the LNB' method are good.
+  - The 18 V step is unsafe for the QRO.cz unit (rated 11-15 V; WiMo gives 12 V horizontal / 15 V vertical).
+  - The beacon-frequency correction to 10489.500/10489.750 is right.
+  - The beacon tracker's algorithm works in simulation, but the proposed flowgraph has an acquisition bug: the 300 kHz low-pass removes the lower beacon for LNB errors below about -50 kHz. Acquire on the wide stream first.
+  
+  L-band, what holds up:
+  - Meteor-M N2-3/N2-4 HRPT with an 11-turn helix (metislair, about 7 dB average) is the only proven dish-free target.
+  - Elektro-L3 is paused. FengYun-3 L-band is gone. Metop status is contradictory across NOAA, WMO and SatDump. AWS at 1707 MHz is a valid new target.
+  
+  L-band fixes:
+  - The staged go/no-go plan and the software MRC combiner are technically sound. I re-ran the simulation: +3.01 dB for equal branches.
+  - mrc_combine.py will run out of memory on real 55 GB pass files and picks its lag from the first second only. It needs memmap/streaming and a lag search across the pass.
+  - The Friis three-antenna and sun-noise methods are numerically correct (51.0 dB path loss at 5 m; about 14 K sun-noise rise for a 13 dBic helix at 80 sfu).
+  - Metislair's recommended Sysmocom cavity filter (1525-1705 MHz) would block AWS at 1707 MHz. The SAWbird+ GOES (80 MHz passband centred on 1688 MHz) passes everything from 1700 to 1707 MHz.
+  
+  Search limits: the shared WebSearch budget was exhausted before this review started (all three searches refused). No new forum searches were possible (for horn or Selfsat QO-100 reports, or dish-free Metop decodes), so this review relies on WebFetch of primary sources.
+- **Final recommendation:**
+  - **Name:** QO-100: Othernet Bullseye TCXO LNB, first used bare, then with a DIY optimum conical horn (20 dBi handheld, then 23 dBi on a tripod), optionally adding a 300 mm W1GHZ metal-plate lens fed by a ~17.5-18 dBi horn for about 27 dBi. Upgrade path: the QRO.cz 0.2 ppm TCXO LNB with POTY adapter. L-band: keep the 11-turn RHCP helix with a SAWbird+ GOES at the feed for Meteor-M N2-3/N2-4 HRPT. A 1x2 or 2x2 helix array for Metop-C/AWS stays experimental, built only after on-air gating.
+  - **Price:** QO-100:
+  - Bullseye: $29.95 (rtl-sdr.com, 70 in stock; shipping to Ukraine not verified).
+  - Horn materials: about $5-20.
+  - Lens: about $10-25 in aluminium foil and 19 mm XPS foam.
+  - Power inserter, DC block and pad: about $15-30 (not verified).
+  - QRO.cz alternative: €65 plus €54.62 shipping at WiMo.
+  L-band:
+  - SAWbird+ GOES: $44.95 (Nooelec).
+  - Helix materials: about $5-20.
+  - Array option: about 4 x $44.95 = $180 in LNAs, plus combiner and materials.
+  - **Sources:**
+    - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+    - https://www.wimo.com/en/qo-100-10ghz-lnb-qro-cz
+    - https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines
+    - https://rigexpert.com/files/product_documentation/gpsdo/TBR-AN-1.pdf
+    - http://www.w1ghz.org/antbook/chap2.pdf
+    - http://www.w1ghz.org/antbook/chap3.pdf
+    - https://wiki.batc.org.uk/Receiving_Oscar_100_DATV_signals
+    - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-goes.html
+    - https://blog.metislair.com/docs/Radio/Creating%20a%20helix%20for%20direct%20satrx.html
+    - https://blog.metislair.com/docs/Radio/L%20band%20weather%20satellite%20reception%20guide.html
+    - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+    - https://user.eumetsat.int/s3/eup-strapi-media/TD_18_Metop_Direct_Readout_AHRPT_Technical_Description_v3_A_1cb789b653.pdf
+    - https://www.ospo.noaa.gov/operations/metop/status.html
+    - https://space.oscar.wmo.int/satellites/view/aws_pfm
+  - **Why:** QO-100:
+  - Bullseye over QRO.cz: in stock at $29.95 against about €120 delivered. Its ±10-30 kHz drift is handled by the (corrected) beacon tracker, which you need for SSB anyway. Its 25 MHz reference output is a bonus.
+  - Bare-LNB reception of the beacon and FT8 is documented, so the horn's estimated +10-13 dB goes directly into SSB quality: about 14-17 dB beacon C/N in 2.7 kHz (±4 dB).
+  - The 300 mm lens is the only non-dish path to about 27 dBi. That makes typical SSB stations readable.
+  - DATV needs about 31-32 dBi (BATC MER data), which no non-dish option reaches.
+  
+  L-band:
+  - Meteor-M N2-3/N2-4 HRPT is the only target with real dish-free decodes. Elektro-L3 is paused, FengYun-3 L-band has ended, and Metop availability is contradictory across sources.
+  - The EUMETSAT flux-density spec puts a single helix below the Metop threshold, and a 2x2 array (about 0.16 m², the same aperture as metislair's 60 cm minimum dish) at roughly 3-8 dB, so only high passes would decode.
+  
+  First receiver: use the RTL-SDR V4/V4L for both bands now. The LimeSDR Micro ships 15 Dec 2026 at $249.
+- **Final budget option:**
+  - **Name:** Bare Bullseye TCXO LNB, then a tinplate or copper ~18-20 dBi conical horn from an HDL_ANT template, into the RTL-SDR V4/V4L through a 13 V power inserter, DC block and 10-20 dB pad, with the fixed beacon tracker. For L-band, a single 11-turn helix with a SAWbird GOES barebones on the same RTL-SDR, for Meteor-M HRPT only.
+  - **Price:** About $95-130:
+  - Bullseye: $29.95.
+  - SAWbird GOES barebones: $39.95 (30 mA, so the RTL-SDR's 4.5 V bias tee can power it).
+  - Horn and helix materials: about $10-30.
+  - Power inserter, DC block, pad and 13 V buck-boost: about $15-30 (not verified).
+  Shipping is extra.
+  - **Why:** This keeps every verified dish-free result: QO-100 beacon, FT8, CW and beacon-level SSB, plus Meteor HRPT. It uses the SDR the user already owns, so it works before the LimeSDR Micro ships. It drops Metop, AWS, DATV and weak SSB. The Goobay €5.90 PLL LNB is cheaper, but its ±300 kHz stability could not be verified and needs a wide-acquisition tracker.
+- **Known problems and fixes to apply:**
+  - The LNB's 50-66 dB gain overloads the SDR. Fit a DC block and a 10-20 dB pad for the RTL-SDR, or 20-30 dB for the LimeSDR. Aim for a 10-15 dB noise rise when the LNB is powered, and confirm with the 3 dB-pad compression test.
+  - Polarisation and supply voltage:
+  - Bullseye and standard LNBs: 13 V vertical (narrowband), 18 V horizontal.
+  - QRO.cz: rated 11-15 V (WiMo: 12 V horizontal, 15 V vertical). Never apply 18 V.
+  - Fix the voltage, then rotate the LNB or horn in 15° steps to find the beacon maximum. Expect at least 15 dB cross-polar rejection.
+  - Use a buck-boost, not a plain buck, because the 4S pack swings 12-16.8 V. Add a 0.5 A polyfuse.
+  - Beacon frequencies are 10489.500 MHz (CW/FSK) and 10489.750 MHz (BPSK), i.e. IF 739.500 and 739.750 MHz. Do not use 10489.55.
+  - Beacon tracker: acquire on the wide stream (7.68 Msps, or ±800 kHz centred on IF 739.625) before narrowing to 960 ksps with a 300 kHz low-pass. Otherwise the lower beacon is filtered out for LNB errors below about -50 kHz. Keep the re-acquire logic for times when the beacon is off or jammed.
+  - Operate outdoors with a clear path to 25.9°E. OK1DX found that 10 GHz did not pass through window glass. Pointing: Kyiv 186°/32°, Lviv 178°/33°, Kharkiv 193°/32°, Odesa 187°/36°.
+  - Horn build:
+  - Measure the LNB waveguide inside diameter first; it must be 16.8-21.9 mm for single-mode operation.
+  - Remove any dielectric plug, keep any step under 1 mm or taper it, and solder the seams.
+  - 20 dBi: 126 mm mouth, cone 147 mm. 23 dBi: 178 mm mouth, cone about 319 mm (from a 20 mm throat).
+  - Validate against the bare LNB on the same day; expect +8 to +12 dB (20 dBi) or +11 to +15 dB (23 dBi).
+  - Lens:
+  - Feed it with a horn of about 17.5-18 dBi, or recompute the focal length in HDL_ANT.
+  - Recompute the curvature for 10.489 GHz.
+  - Make the plates 1-2 inches oversize, keep them parallel to the E-field, and set the horn-to-lens spacing on the beacon.
+  - L-band LNA:
+  - Put one SAWbird+ GOES ($44.95, 180 mA) or SAWbird GOES ($39.95, 30 mA) at each feed. Avoid SPF5189Z-type wideband boards.
+  - Keep a DC block on the SDR side, because the SAWbird back-feeds DC when powered over USB.
+  - If you add a cavity filter, do not use the Sysmocom 1525-1705 MHz part when targeting AWS at 1707 MHz.
+  - Helix site practice:
+  - Mount it 50 cm or more above ground and vary the height during the pass.
+  - Bend up the ground-plane edges (about +1.5 dB) and rotate the helix (about +1 dB).
+  - Shadow cell towers with buildings or trees, and put phones in airplane mode.
+  - Wind it RHCP, since it sits over a ground plane.
+  - Match its 140-150 Ω feed impedance and check with a NanoVNA that reaches 1.8 GHz or more.
+  - Before building any array:
+  - Record Metop-B and Metop-C (check both 1701.3 and 1707 MHz) and AWS (1707 MHz) with the single helix.
+  - Measure the signal as a spectral hump; SatDump's SNR readout is meaningless below lock.
+  - Build 1x2 or 2x2 only if the gates pass. Expect decodes only on passes above about 30°. Skip Metop-B, whose modulator loses about 7 dB intermittently.
+  - mrc_combine.py:
+  - Switch to np.memmap and chunked processing; a 15-minute two-channel pass is about 55 GB.
+  - Search the whole pass for the lag with the highest peak/median, and reject any below 5.
+  - Or combine in a streaming GNU Radio graph and store only the combined, decimated output.
+  - Do not plan on Elektro-L3 (paused) or FengYun-3 L-band (ended 11-2024). FengYun-2H S-VISSR at 1687.5 MHz (79°E, about 16-17° elevation from Kyiv, linearly polarised) can serve as a fixed reference to compare L-band antennas without tracking.
+- **Missed better options:**
+  - Use the RTL-SDR V4/V4L, which the user already owns, as the QO-100 IF receiver. The narrowband transponder is only 500 kHz wide at a 739 MHz IF. The same RTL-SDR also handles Meteor HRPT. This frees the LimeSDR Micro, which ships only on 15 Dec 2026 at $249, for wideband and L-band work. The V4L has software-compatibility caveats.
+  - AWS (Arctic Weather Satellite): 1707 MHz, 1.785 Msym/s, 600 km orbit (Metop is at 830 km), active with end of life 2029 or later, SatDump pipeline aws_pfm. It is a possibly easier second L-band target than Metop. Its transmit power is not published, and it fades at low elevation.
+  - FengYun-2H at 79°E (S-VISSR at 1687.5 MHz, plus a test-pattern carrier at 1690.5 MHz every 3 hours). It is a geostationary signal for measuring and comparing the helix, array and panel at 1.69 GHz without tracking. Polarisation is linear, so subtract 3 dB in absolute terms.
+  - The Bullseye's 25 MHz reference output (red F connector) is unused in every plan. It is a stable reference that could be logged or compared against the SDR clock.
+  - A cone that clamps over the LNB's 40 mm feed, as a no-surgery alternative to removing the cap and inserting a throat tube. Its gain is not predicted in advance, so verify it with the A/B beacon test.
+- **Remaining uncertainties:**
+  - No published QO-100 reception with a horn, lens, zone plate or flat panel. The absolute beacon C/N estimates (about 28 + G dB-Hz) rest on an anchor of unknown bandwidth (the BATC 90 cm '>30 dB' snippet), so treat them as ±4 dB until your own A/B measurement.
+  - Metop AHRPT status conflicts across NOAA OSPO (Metop-C 'No'), WMO OSCAR (Metop-C 1701.3 'not in use', 1707 'part time') and SatDump (both active at 1701.3). Only an on-air check resolves it.
+  - AWS transmit power and decode threshold are unknown, as is Meteor-M HRPT transmit power. My Metop link budget assumes Tsys of about 150 K and that the EUMETSAT flux-density range is -133 to about -128 dBW/m² per 1.5 MHz.
+  - The internal waveguide diameter of the Bullseye and Goobay LNBs, and the POTY tube diameter, could not be verified.
+  - Shipping of the Bullseye (rtl-sdr.com store) and of QRO.cz/WiMo to Ukraine, and the delivered prices, were not verified.
+  - The Goobay 67269 specs (±300 kHz, €5.90) could not be re-checked; the Passion Radio pages return a redirect loop.
+  - The RTL-SDR V4L frequency range (whether it reaches 1.7 GHz) and its software support are not stated on the store page.
+  - The LimeSDR Micro's 7 Msps minimum sample rate, dual-RX streaming and RX overload level with an LNB have no field reports yet.
+  - The OK1DX page returned HTTP 503 today. Its bare-LNB findings were taken from the earlier agents' reading.
+  - The shared WebSearch budget was exhausted, so no new forum searches were possible (Selfsat on QO-100, horn on QO-100, dish-free Metop or AWS). Only WebFetch of primary sources and the SatNOGS Discourse search, which found nothing, were used.
+- **Confidence:** medium
 
