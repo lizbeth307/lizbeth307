@@ -396,3 +396,335 @@
   
   **What is documented and what is new.** Axotron v3's roll-up spools and split boom are a documented build; the crossed packable variant and the split or pivot N2SPI are my untested modifications. Budget: 17 WebSearch calls.
 
+## fold:lband_sband (run `wf_4a343103-e9e`)
+
+- **Band group:** L-band HRPT/AHRPT 1.69-1.71 GHz and S-band 2.2-2.3 GHz (foldable replacements for the rigid 11-turn helix (473 mm on a 20x20 cm plate) and the rigid helicone (440 mm cone))
+- **Options:**
+  1.
+    - **Band:** L (1.69-1.71 GHz); S-band via a swap-in helix in the same cone
+    - **Name:** Fold-flat PETAL helicone: 18 cm base disc + 8 clip-on aluminium petals (cone 18 to 44 cm, 12 cm deep) + 5-turn C=1.1λ RHCP spring helix
+    - **Type:** diy
+    - **Fold method:** The cone is 8 trapezoid petals of 0.3-0.5 mm aluminium, each about 6.9 cm wide at the bottom, 16.8 cm at the top and 17.7 cm along the slant, plus 1 cm overlap tabs. They clip onto the rim of a 1.5 mm aluminium base disc 18 cm across, with no tools, and lie flat in a stack for transport. The cone wall sits 47° from the axis. The helix is 2 mm phosphor-bronze or copper-clad-steel spring wire wound at 61.7 mm diameter with a 43 mm pitch. It compresses flat onto a 2-section fibreglass rod and is pulled up into printed pitch stops. The SAWbird+ GOES bolts under the disc.
+    - **Packed size cm:** Petal stack plus disc about 19 x 19 x 3-4 cm. Helix compressed is about 7 cm across x 3 cm; the rod collapses to about 20 cm (or use a rigid 5-turn helix tube about 7 x 23 cm). All within the 30-35 cm tier.
+    - **Deployed size cm:** Cone 44 cm across x 12 cm deep; helix 21.5 cm tall; about 44 x 44 x 23 cm overall
+    - **Weight g:** About 350-450 g (estimate)
+    - **Setup time:** 2-3 min: 8 clips, pull up the helix, screw on the SMA
+    - **Gain:** 15.7 dBic at 1.70 GHz (my NEC2 model), flat at 15.6-15.7 from 1.65 to 1.75 GHz, beam 24-28° wide. A 4-turn helix models 15.7 and a 7-turn 16.0 dBic. A t0nito-like shallower cone (9 cm deep) models 14.8-15.3.
+    - **Gain vs current pick db:** +2.2 dB vs the rigid 11-turn helix (13.5). Like-for-like in my model it is +1.7 dB (13.98 for an 11-turn on a 20 cm disc). +1.0 dB vs the rigid 40 cm/15 cm helicone (14.7; my model reproduces 14.74). Models are ±1-3 dB.
+    - **Price:** About $20-35 in materials (aluminium sheet and disc, wire, PETG stops, clips; estimate), plus the SAWbird+ GOES ($44.95) already in the kit
+    - **Availability:** DIY from hardware-store aluminium, wire and fibreglass rod (available in Ukraine; prices not verified)
+    - **Durability notes:** Overlap the petals at least 1 cm so the radial seams don't break the surface currents (an assumption, not modelled). Store the petals flat in a stiff sleeve because dents only cost a little. Don't use soft copper for the spring helix: it work-hardens. Phosphor bronze, Cu-clad steel and even stainless model within 0.06 dB of copper. Per-turn pitch errors of ±6 mm cost 0.3 dB or less, and a ±15% overall stretch error costs 0.3 dB or less (model). The cone catches wind like a small umbrella.
+    - **Evidence:** Field precedent for the shape: the t0nito/pe2bz helicone (134 mm base to 440 mm top, 88 mm high, mesh on 8 printed holders) gave clearly stronger signals than a flat reflector at 1545, 1700 and 2250 MHz. Saveitforparts hand-tracked NOAA HRPT with it. No folding version and no SNR figures were published. The gains here are my NEC2 models (PyNEC 2.3.4, wire-grid cone), scripts in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/nec_fold/.
+    - **Sources:**
+      - https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309
+      - https://www.rtl-sdr.com/saveitforparts-testing-a-3d-printable-satellite-antenna-for-noaa-meteor-and-other-polar-orbiting-l-band-satellites/
+      - https://blog.metislair.com/docs/Radio/Creating%20a%20helix%20for%20direct%20satrx.html
+  2.
+    - **Band:** L (1.69-1.71 GHz)
+    - **Name:** Pocket FABRIC helicone ('umbrella cone'): same 18 to 44 cm, 12 cm deep cone in copper-nickel ripstop on 8 hinged fibreglass ribs + 4-turn spring helix
+    - **Type:** diy
+    - **Fold method:** Eight 3 mm fibreglass ribs (kite spars) about 17.7 cm long are hinged at the edge of an 18 cm base disc and fold inward over it. The CuNi ripstop cone is cut as a 265° annular sector, inner radius 12.2 cm and outer 29.9 cm, and is taped or sewn to the ribs. An elastic cord holds the rim. The 4-turn spring helix (61.7 mm diameter, 172 mm tall) compresses to about 1 cm.
+    - **Packed size cm:** A disc about 19 cm across x 3-4 cm thick, plus a rod 18 cm or shorter. Everything is 20 cm or less, so it meets the ultra-compact tier.
+    - **Deployed size cm:** 44 cm across x 12 cm cone; helix 18 cm
+    - **Weight g:** About 250-350 g (estimate)
+    - **Setup time:** 1-2 min
+    - **Gain:** 15.6 dBic modelled with octagonal flat facets between the ribs (an ideal cone gives 15.7)
+    - **Gain vs current pick db:** +2.1 dB vs the rigid 11-turn (+1.6 like-for-like); +0.9 vs the rigid helicone (models)
+    - **Price:** About $15-30 (estimate). A 1 m x 1.1 m piece of CuNi fabric costs about $10-15 (UK listing GBP 83 for an 8 x 1.1 m roll; not verified for Ukraine), plus kite spars, disc and wire.
+    - **Availability:** CuNi 'Faraday/RFID' fabric is sold on AliExpress, Walmart and U-buy. No Prom.ua per-metre listing was found. Aluminium fly-screen mesh is a stiffer local alternative.
+    - **Durability notes:** Fabric only works as a continuous conductive sheet. Laird and Schlegel CuNi ripstop measures 0.07 Ω/sq or less with more than 62-96 dB of shielding, and Holland's mesh 0.13 Ω/sq or less up to 10 GHz. My model shows sparse radial wires without fabric collapse the gain (8 radials: 10.9 dBic; 4 radials: 8.4), so the fabric must not tear. The ribs can splinter, so cap them with heat-shrink. The fabric is the part most likely to wear first.
+    - **Evidence:** There is no field precedent for a fabric helicone. The cone shape follows the t0nito mesh-on-8-holders build. The fabric figures are vendor datasheets. The gains are my model.
+    - **Sources:**
+      - https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309
+      - https://www.directindustry.com/prod/schlegel-electronic-materials/product-229436-2314787.html
+      - https://hollandshielding.com/pdfs/Conductive-mesh-8900-TDS-rev-02-06-2026.pdf
+      - https://marianinc.com/wp-content/uploads/2025/08/PS-1373.pdf
+      - https://www.u-buy.co.uk/product/QV08DUB3A-military-grade-faraday-fabric-5g-emf-protection-signal-shielding-fabric-faraday-material-nickel-copper-faraday-cloth-conductive-for-shields-rfid
+  3.
+    - **Band:** L (1.69-1.71 GHz)
+    - **Name:** Spring/telescopic 11-turn C=1.1λ helix + foldable ground plane (hinged 20x20 plate OR a 30 cm pop-up CuNi disc, optional 4 cm cup rim)
+    - **Type:** modify
+    - **Fold method:** The existing 11-turn design (61.7 mm diameter, 43 mm pitch, 473 mm) is wound from spring wire. It is stretched along a 3-section telescopic fibreglass rod into printed pitch stops and compresses to about 3 cm. For the ground plane there are three choices: (a) two 10x20 cm aluminium halves on a piano hinge; (b) a twist-fold spring-steel hoop covered in CuNi fabric (a 56 cm photo reflector folds to 23 cm and weighs 274 g, so a 30 cm hoop should fold to about 12 cm); (c) an 18 cm disc with a 4 cm fabric rim flaring to 24 cm.
+    - **Packed size cm:** Ground plane 20 x 10 x 0.5 cm (hinged) or about 12-13 cm across x 2 cm (pop-up); rod about 18-20 cm; helix about 7 cm across x 3 cm
+    - **Deployed size cm:** 20-30 cm ground plane; 48-50 cm tall
+    - **Weight g:** About 200-300 g (estimate)
+    - **Setup time:** 1-2 min
+    - **Gain:** Modelled: 20 cm disc 13.98, 30 cm disc 13.88, 14 cm disc 13.71, cup rim 14.48 dBic. A 40 cm disc drops to 13.14. 8-turn 12.9, 6-turn 12.0, 5-turn 11.6.
+    - **Gain vs current pick db:** -0.3 to +0.5 dB (cup rim) vs the rigid 11-turn helix, i.e. essentially the same if the ground is solid or fabric. -1.0 to -1.5 dB vs the rigid helicone.
+    - **Price:** About $10-25 (estimate); the photo-reflector frame price was not verified
+    - **Availability:** DIY. Photo pop-up reflectors are widely sold; the stock 'silver' cover's conductivity is unverified, so test it with an ohmmeter or recover it with CuNi fabric.
+    - **Durability notes:** It is the simplest to get right because the geometry is the proven rigid pick. It is tolerant: ±6 mm per-turn pitch error costs 0.3 dB or less and ±4 mm radius error 0.4 dB or less (model). The hinge must be continuous metal.
+    - **Evidence:** The rigid version is field-proven: Meti's 11-turn helix gave about 7 dB average SNR on Meteor-M2-3, and bending up the ground-plane edges gained about 1.5 dB. The collapsible version is untested; the gains are my model.
+    - **Sources:**
+      - https://blog.metislair.com/docs/Radio/Creating%20a%20helix%20for%20direct%20satrx.html
+      - https://www.skroutz.mt/s/65550879/smallrig-foldable-photography-reflector-60cm.html
+      - https://patents.google.com/patent/US9142882
+      - https://patents.google.com/patent/DE202010013085U1/en
+  4.
+    - **Band:** L and S (one antenna)
+    - **Name:** Dual-band C=0.9λ 7-turn helix in the fold-flat 44 cm cone
+    - **Type:** diy
+    - **Fold method:** Same petal or fabric cone. The helix is 50.5 mm across with a 35.2 mm pitch and is 246 mm long as a spring. Swap the LNA at the feed (SAWbird+ GOES for L-band; wideband LNA plus Sysmocom cf2235-kt30 cavity for S-band) or use a diplexer.
+    - **Packed size cm:** As for the petal or fabric helicone: about 19 x 19 x 4 cm plus a rod of about 20-25 cm
+    - **Deployed size cm:** 44 cm across x about 25 cm
+    - **Weight g:** About 300-450 g (estimate)
+    - **Setup time:** 2-3 min plus an LNA swap
+    - **Gain:** 14.4 dBic at 1.70 GHz and 15.4 dBic at 2.25 GHz (model)
+    - **Gain vs current pick db:** L-band: +0.9 vs the rigid 11-turn, but -1.3 vs the C=1.1 fold helicone. S-band: +1.9 to +2.2 vs the rigid C=0.9 11-turn S helix (13.2-13.5 dBic).
+    - **Price:** About $20-35 in materials (estimate). The S-band chain is extra: Sysmocom cf2235-kt30 EUR 65.45 plus an LNA.
+    - **Availability:** DIY
+    - **Durability notes:** Same as the cone options. The SAWbird+ GOES passes only 1648-1728 MHz, so S-band always needs its own LNA and filter.
+    - **Evidence:** Model only. The 75%-scaled t0nito helicone did receive S-band on SatNOGS.
+    - **Sources:**
+      - https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309
+      - https://shop.sysmocom.de/S-Band-cavity-filter-2170-2300-MHz/cf2235-kt30
+  5.
+    - **Band:** S (2.2-2.3 GHz)
+    - **Name:** S-band helix in the L-band fold cone (7-turn C=1.1λ at 2.25 GHz) OR a dedicated 33 cm S-band fold cone with a 5-turn helix
+    - **Type:** diy
+    - **Fold method:** (a) A 7-turn helix, 46.7 mm across with a 32.5 mm pitch and 228 mm long, on its own SMA. It nests inside the 61.7 mm L-band helix for transport. (b) A separate cone scaled to 75% (13.6 cm base to 33 cm rim, 9 cm deep) in petals or fabric, with a 5-turn helix about 16 cm tall.
+    - **Packed size cm:** (a) No extra bulk beyond the helix. (b) About 14 cm across x 3 cm, plus a 16-17 cm helix. Ultra-compact tier.
+    - **Deployed size cm:** (a) 44 cm cone. (b) 33 cm cone.
+    - **Weight g:** (a) About 30-50 g extra. (b) About 200-250 g (estimate).
+    - **Setup time:** (a) 30 s to swap. (b) 1-2 min.
+    - **Gain:** (a) 14.2 dBic (a 5-turn in the L cone gives only 13.0). (b) 15.5 dBic. Both at 2.25 GHz, modelled.
+    - **Gain vs current pick db:** (a) +0.7 to +1.0 dB. (b) +2.0 to +2.3 dB vs the rigid C=0.9 11-turn S helix (13.2-13.5 dBic).
+    - **Price:** (a) About $3-5. (b) About $10-20 (estimate). Plus the S-band LNA and cavity.
+    - **Availability:** DIY
+    - **Durability notes:** Same as the L-band cones. Wi-Fi 2.4 GHz and LTE sit near the band, so the cavity filter is mandatory.
+    - **Evidence:** pe2bz: the 75%-scaled helicone 'There is reception' at 2250 MHz, and after 72 h it found three weak S-band satellites missed before. The gains here are my model.
+    - **Sources:**
+      - https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309
+      - https://community.libre.space/t/station-4125-s-band/13718
+  6.
+    - **Band:** L (Metop-oriented)
+    - **Name:** Fold-flat 2x2 array of spring helices on a 56-60 cm pop-up CuNi ground + 4-way Wilkinson combiner
+    - **Type:** diy
+    - **Fold method:** Four 7- or 11-turn spring helices on telescopic fibreglass rods stand at about 28-30 cm spacing on a twist-fold spring-hoop ground. A 56 cm photo reflector folds to 23 cm, 274 g; recover it in CuNi fabric. Four equal-length cables run to an RF ONE PDM-00503-S4 combiner (0.7 dB loss, 0.5-3 GHz).
+    - **Packed size cm:** A disc about 23 cm across x 2-3 cm, plus 4 compressed helices (about 7 x 3 cm each), 4 rods 20 cm or shorter, a combiner and cables. The 30-35 cm tier.
+    - **Deployed size cm:** About 56-60 x 56-60 cm; 30-50 cm tall
+    - **Weight g:** About 0.9-1.3 kg with a tripod head (estimate)
+    - **Setup time:** 5-10 min plus a pan-tilt tripod
+    - **Gain:** Modelled before the combiner: 11-turn 18.75, 7-turn 17.8, 5-turn 16.8 dBic. After the 0.7 dB combiner: 18.0 / 17.1 / 16.1 dBic.
+    - **Gain vs current pick db:** +4.5 dB (11-turn) / +3.6 dB (7-turn) vs the rigid 11-turn helix
+    - **Price:** About $40-80 in materials (estimate). Combiner and pop-up frame prices are not verified. Optionally 4 SAWbirds at $44.95 each instead of combining before the LNA.
+    - **Availability:** DIY. The combiner is from RF ONE through distributors.
+    - **Durability notes:** The most complex option. Phase matching needs equal cables and a matching strip per helix, checked with a VNA covering 3 GHz or more. Do not use LimeSDR RX1/RX2 software combining until channel alignment is fixed: LimeSuiteNG issue #356 is open and the LMS7002M flips phase by 0/180° on retune.
+    - **Evidence:** Model only. Nobody has documented a dish-free Metop decode.
+    - **Sources:**
+      - https://www.everythingrf.com/products/power-dividers/rf-one-electronics/612-1911-pdm-00503-s4
+      - https://www.skroutz.mt/s/65550879/smallrig-foldable-photography-reflector-60cm.html
+      - https://discourse.myriadrf.org/t/limesdr-xtrx-rx-data-out-of-sync/13290
+      - https://www.amrita.edu/publication/design-of-axial-mode-helical-antenna-array-for-noaa-18-hrpt-reception-at-1700mhz/
+  7.
+    - **Band:** L and S
+    - **Name:** Flat 2x2 CP patch-tile array (4 air-dielectric corner-truncated patches on 13x13 cm tiles + 4-way combiner)
+    - **Type:** diy
+    - **Fold method:** Four separate tiles stack like coasters and clip onto a folding X-frame at about 0.75λ spacing (about 13 cm), with 4 equal SMA cables to a Wilkinson combiner. Or one 26x26 cm board hinged once.
+    - **Packed size cm:** About 13 x 13 x 4 cm (tiles), or 26 x 13 x 1 cm (hinged board). Ultra-compact.
+    - **Deployed size cm:** About 26 x 26 x 1-2 cm
+    - **Weight g:** About 300-500 g (estimate)
+    - **Setup time:** 3-5 min (4 SMA connections)
+    - **Gain:** About 11-13 dBic (estimate). The physical limit for 26x26 cm is 14.4 dBi at 100% efficiency; a measured A*STAR 2x2 L-band array gives more than 11.0 dBic over 1.51-1.68 GHz.
+    - **Gain vs current pick db:** -0.5 to -2.5 dB vs the rigid 11-turn helix
+    - **Price:** About $20-50 DIY (estimate). No commercial 1.7 GHz RHCP 2x2 board or Gerber was found.
+    - **Availability:** DIY only (would need a design scaled and simulated for 1.70 GHz)
+    - **Durability notes:** Robust once built, but the CP patch tuning and feed network are the hardest DIY step. No advantage over the helicone.
+    - **Evidence:** Only the literature: A*STAR EuCAP 2024, an INMARSAT/GNSS band 2x2. No HRPT use found.
+    - **Sources:**
+      - https://oar.a-star.edu.sg/communities-collections/articles/19720
+      - https://ntrs.nasa.gov/api/citations/19670009367/downloads/19670009367.pdf
+  8.
+    - **Band:** L and S
+    - **Name:** 20 cm dual-polarised 4G/LTE MIMO panel, 1700-2700 MHz (R-Net 'Kvadrat' 2x17, 205x205x50 mm)
+    - **Type:** buy
+    - **Fold method:** Does not fold. It is a flat 'book', so it fits the size targets but not the spirit of 'must fold'. Bigger panels (Energy 2x24, 43x43 cm) fail the packing target.
+    - **Packed size cm:** 20.5 x 20.5 x 5 cm
+    - **Deployed size cm:** 20.5 x 20.5 x 5 cm
+    - **Weight g:** About 600 g (listing)
+    - **Setup time:** 0-1 min
+    - **Gain:** The '17 dBi' label is impossible: its aperture caps it at 12.3 dBi at 1.70 GHz. Realistic is about 10-11 dBi linear, and 1.70 GHz is below its 1710 MHz band edge. On an RHCP satellite one port gives about 7-8 dBic-equivalent. Both ports through a 90° hybrid give about 10-10.5 dBic. At 2.25 GHz, about 11-13 dBi per port.
+    - **Gain vs current pick db:** L-band: -5.5 to -6.5 dB on a single port; -3 to -4 dB with a hybrid. S-band: -3.5 to -5.5 dB single port; -0.5 to -2.5 dB with a hybrid.
+    - **Price:** 1900 UAH for the R-Net (Energy 2x15 at 230 mm: 935 UAH). Connectorised 90° hybrids are expensive (E-meca 1.7-2.2 GHz N-type $504; Pasternack 1-18 GHz $1,100), so use a DIY branch-line coupler or software combining.
+    - **Availability:** In stock on Prom.ua (Ukraine)
+    - **Durability notes:** Rugged and weatherproof. Real gain and match at 1.70 GHz are unverified, so measure with a VNA. Software combining hits the LimeSDR phase-alignment issue.
+    - **Evidence:** Only Prom.ua specs and my aperture calculation. No HRPT reports with these panels.
+    - **Sources:**
+      - https://prom.ua/Antenny-mimo-2x2.html
+      - https://e-meca.com/collections/3-db-hybrids-couplers
+      - https://www.pasternack.com/sma-coupler-18-ghz-pe2cp1144-p.aspx
+  9.
+    - **Band:** L
+    - **Name:** Segmented 1.7 GHz loop Yagi (26 elements, 1.81 m boom in 6 push-fit 30 cm sections)
+    - **Type:** diy
+    - **Fold method:** Square aluminium boom in 6 plug-together sections of about 30 cm. The loops (about 6 cm across) stay riveted to their section.
+    - **Packed size cm:** About 31 x 8 x 8 cm bundle
+    - **Deployed size cm:** 181 cm long
+    - **Weight g:** About 400-700 g (estimate)
+    - **Setup time:** 2-3 min, plus a tripod or mount
+    - **Gain:** About 20 dBi linear. This is a reader's estimate, not measured. On RHCP that is about 17 dBic-equivalent after the 3 dB polarisation loss.
+    - **Gain vs current pick db:** About +3.5 dB vs the rigid 11-turn (unverified). A 1 m version would be about +1.5 (my rough scaling).
+    - **Price:** About $20-40 DIY (estimate)
+    - **Availability:** DIY
+    - **Durability notes:** Narrowband, so it needs tuning. Hand-tracking a 1.8 m boom through a LEO pass is hard and it catches wind. One user found it much cleaner than a helix against terrestrial interference. A linear single port loses a constant 3 dB on CP signals.
+    - **Evidence:** rtl-sdr.com RSP2 HRPT tutorial and its comments: decoded HRPT, no SNR figures.
+    - **Sources:**
+      - https://www.rtl-sdr.com/a-tutorial-on-receiving-hrpt-weather-satellite-images-with-an-sdrplay-rsp2/
+  10.
+    - **Band:** L and S
+    - **Name:** Folding short-backfire (35 cm pop-up fabric main reflector + 4.4 cm fabric rim + 7 cm sub-reflector on a rod + crossed-dipole feed)
+    - **Type:** diy
+    - **Fold method:** The main reflector is a twist-fold spring hoop with CuNi fabric (35 cm should fold to about 14 cm). The rim is a fabric band. The sub-reflector disc sits on a fibreglass rod about 8.8 cm above. CP comes from a crossed-dipole feed through a 90° hybrid.
+    - **Packed size cm:** About 14-15 cm across x 3 cm, plus a 10 cm rod. Ultra-compact.
+    - **Deployed size cm:** 35 cm across x about 10 cm
+    - **Weight g:** About 200-300 g (estimate)
+    - **Setup time:** 2-4 min
+    - **Gain:** 12-16 dBi (literature for a 2-2.5λ rim). After the hybrid that is about 11.5-14.5 dBic.
+    - **Gain vs current pick db:** -2 to +1 dB vs the rigid 11-turn
+    - **Price:** About $15-30 plus a DIY hybrid (estimate)
+    - **Availability:** DIY
+    - **Durability notes:** Needs a CP feed network that the helix gives for free. No HRPT precedent. It does no better than the helicone, so it is not preferred.
+    - **Evidence:** Only the literature. Gain was not modelled here.
+    - **Sources:**
+      - https://en.wikipedia.org/wiki/Short_backfire_antenna
+      - https://ntrs.nasa.gov/api/citations/19670009367/downloads/19670009367.pdf
+  11.
+    - **Band:** L
+    - **Name:** Foil-lined umbrella reflector + linear PCB feed (Saveitforparts build)
+    - **Type:** modify
+    - **Fold method:** An ordinary umbrella lined with foil tape folds like an umbrella, with the feed on a short rod.
+    - **Packed size cm:** About 25-35 cm (travel-umbrella class; estimate)
+    - **Deployed size cm:** About 90-100 cm across (estimate; the article gives no size)
+    - **Weight g:** About 400-700 g (estimate)
+    - **Setup time:** 1-2 min
+    - **Gain:** Not measured. The builder calls it 'not a great antenna, but it's something that can be used in a pinch'. A linear feed loses 3 dB on RHCP, and a helix feed in a reflector must be LHCP.
+    - **Gain vs current pick db:** Unknown (unverified). It could match or beat the helix if the shape is close to a paraboloid, but there is no data.
+    - **Price:** About $10-20 (estimate)
+    - **Availability:** DIY
+    - **Durability notes:** This brings back a dish-shaped reflector, which the user abandoned. It is not a paraboloid and is very wind-sensitive. The builder had trouble with the helical feed.
+    - **Evidence:** Received GOES, NOAA and Meteor HRPT signals. The PCB linear feed 'worked much better' than the helix feed.
+    - **Sources:**
+      - https://www.rtl-sdr.com/saveitforparts-building-an-l-band-satellite-antenna-out-of-an-umbrella/
+  12.
+    - **Band:** L and S
+    - **Name:** Commercial compact or deployable antennas checked: none qualifies
+    - **Type:** buy
+    - **Fold method:** None is a hobby-priced folding 1.7 GHz RHCP antenna
+    - **Packed size cm:** Not applicable
+    - **Gain:** RTL-SDR Blog L-band patch: 1525-1660 MHz, and the vendor says it is not for HRPT. Southwest Antennas 1005-007 conical helix: 1.7-2.7 GHz, 4 dBic. PRC-Com HC-1400-10: 1.1-1.7 GHz, 14.5 dBi, 4.7 kg (10.4 lb), rigid. Discovery Dish: 65 cm in 3 petals, still a dish. HCT Helios deployable helix: space-grade, 400-3000 MHz, memory-alloy deployment, no price.
+    - **Gain vs current pick db:** Not applicable (the patch and the Southwest helix are 9-10 dB worse; the PRC-Com is not portable)
+    - **Price:** Patch $59.95; the others are not hobby-priced or are unpriced
+    - **Availability:** No commercial folding 1.7 GHz antenna for hobbyists was found
+    - **Sources:**
+      - https://www.rtl-sdr.com/preorder-sale-active-l-band-1525-1660-inmarsat-and-iridium-patch-back-in-stock-for-44-95/
+      - https://everythingrf.com/products/all-antennas/southwest-antennas/741-685-1005-007
+      - https://www.everythingrf.com/products/all-antennas/prc-com/741-2369-hc-1400-10
+      - https://www.rtl-sdr.com/discovery-dish-pre-launch-a-lightweight-dish-and-feed-for-l-band-weather-satellites-and-hydrogen-line-reception/comment-page-4
+      - https://satsearch.co/products/helical-communication-technologies-helios-deployable-antenna
+- **Recommended:** Fold-flat PETAL helicone with swap-in helices.
+  
+  - **Build:** an 18 cm 1.5 mm aluminium base disc with the SAWbird+ GOES bolted underneath. Eight clip-on 0.3-0.5 mm aluminium petals form an 18 to 44 cm cone, 12 cm deep, overlapping at least 1 cm.
+  - **L-band helix:** 5 turns, C=1.1λ, RHCP, 61.7 mm across, 43 mm pitch, 2 mm phosphor-bronze or Cu-clad-steel spring wire on a 2-section fibreglass rod with printed pitch stops.
+  - **S-band helix:** 7 turns, C=1.1λ at 2.25 GHz, 46.7 mm across, 32.5 mm pitch, 228 mm. It nests inside the L-band helix and needs the wideband LNA plus a Sysmocom cf2235-kt30 cavity.
+  - **Packed:** about 19 x 19 x 4 cm plus a rod of about 20-23 cm, roughly 0.4-0.5 kg. Setup is 2-3 min with no tools.
+  - **Gain (my NEC2 model, ±1-3 dB):** L-band 15.7 dBic, which is +2.2 dB vs the rigid 11-turn (+1.7 like-for-like) and +1.0 vs the rigid helicone. S-band 14.2 dBic, +0.7 to +1.0 vs the rigid S helix. A dedicated 33 cm S cone would give 15.5 dBic.
+  - **Why:** it is the only foldable option that improves gain rather than losing it, keeps native RHCP, needs no combiner and no 2-channel software, and copies a field-tested shape (the t0nito mesh-on-8-holders helicone).
+  - **First test:** validate on Elektro-L5 LRIT at 1691 MHz against the rigid helix before trusting the numbers.
+- **Ultra compact:** Pocket FABRIC helicone: the same 18 to 44 cm, 12 cm cone made of copper-nickel ripstop (0.07 Ω/sq or less) on 8 hinged 3 mm fibreglass ribs that fold in over the 18 cm base disc, with a 4-turn C=1.1λ spring helix (172 mm, compresses to about 1 cm).
+  
+  - **Packed:** a disc about 19 cm across x 3-4 cm plus a rod 18 cm or shorter. Every part is 20 cm or less, about 250-350 g, 1-2 min setup.
+  - **Gain:** 15.6 dBic modelled with octagonal facets, about +2 dB vs the rigid 11-turn.
+  - **If no fabric is wanted:** the 11-turn spring helix on a 30 cm twist-fold pop-up disc (about 12-13 cm across x 2 cm packed, plus a 20 cm rod) models 13.7-13.9 dBic, essentially the same as the rigid pick (-0.3 to +0.4 dB).
+  - **Fallback with no folding at all:** a rigid 4-5 turn helix on an 18 cm plate (18 x 18 x 19-22 cm) models 11.6-12.0 dBic, -1.5 to -1.9 dB. Meteor is still kept; Metop is lost.
+- **Losses:**
+  1.
+    - **Target:** Meteor-M N2-3/N2-4 HRPT, 1.70 GHz, 665 kbps (needs 0.5 dB SNR in SatDump)
+    - **With foldable kit:** kept
+    - **Margin change db:** +1.7 to +2.2 dB vs the rigid 11-turn helix (model). Estimated average SNR is about 8.5-9.5 dB, a margin of about +8.9 to +9.4 dB, against about +7.2 dB with the rigid pick. Spring 11-turn with pop-up ground: -0.3 to +0.4 dB. No-fold 5-turn helix on a plate: -1.9 dB, margin still about +5 dB.
+    - **What we lose:** Nothing in link margin if the fold helicone is built correctly. What we do lose:
+  - 2-3 min of setup.
+  - Wind tolerance: the 44 cm cone catches wind like an umbrella.
+  - Spare-part risk: petals, ribs and clips can get lost.
+  - The beam is slightly narrower (24-28° vs 28-32°), so a ±7° hand-pointing error costs about 0.9 dB instead of 0.65 dB.
+  - Certainty: the gain is a model, and no first-hand dish-free hand-tracked Meteor HRPT decode has been documented.
+    - **Workaround:** Use a 20-25 cm folding mini tripod with a pan-tilt head and the BNO085 pointing aid. Hold the antenna at least 50 cm above ground. A/B test against the rigid helix on Elektro-L5 LRIT.
+  2.
+    - **Target:** Metop-B AHRPT, 1.70 GHz, about 3.5 Mbps / 2.333 Msym/s (needs 4 dB SNR). Metop-C AHRPT is 'No' per NOAA OSPO, Sept 2026.
+    - **With foldable kit:** degraded
+    - **Margin change db:** The rigid 11-turn is about -1.6 dB below threshold on a pass average, effectively lost. The fold helicone is about 0 to +0.5 dB average (+1.7 to +2.2 dB better), but minus 0.5-1 dB of pointing loss and about 0.5 dB of build tolerance. Slant range costs 6.8 dB at 20° elevation and 2.5 dB at 45°, relative to zenith.
+    - **What we lose:** Low and medium passes (maximum elevation below about 45°) and the ends of every pass. At best, partial AVHRR swaths near the time of closest approach on high passes. Decode reliability will be poor. The Metop EIRP is not verified, so the estimate is ±2-3 dB. Nobody has documented a dish-free Metop decode.
+    - **Workaround:** Fold-flat 2x2 spring-helix array on a 60 cm pop-up ground: 17.1-18.0 dBic after the combiner (model), about +2 to +3 dB average margin, 5-10 min setup on a tripod. Or a segmented 1.8 m loop Yagi (about 17 dBic-equivalent, unverified). Or the umbrella reflector (gain unknown). Or Metop data from online archives instead of reception.
+  3.
+    - **Target:** FengYun-3 AHRPT
+    - **With foldable kit:** lost
+    - **Margin change db:** Not applicable
+    - **What we lose:** Lost with any antenna, rigid or foldable. FY-3C L-band ended in 2024, and FY-3D to FY-3H AHRPT is X-band at 7.8 GHz and 30-38 Msym/s, which needs a tracked dish of roughly 1 m.
+    - **Workaround:** None within this kit
+  4.
+    - **Target:** Elektro-L5 LRIT, 1691 MHz, geostationary at 76°E (bonus target and gain-test source)
+    - **With foldable kit:** kept
+    - **Margin change db:** +1.7 to +2.2 dB vs the rigid helix (model). LRIT decodes at about +1 dB SNR.
+    - **What we lose:** Nothing. It needs no tracking, so the fold helicone can sit on a mini tripod.
+    - **Workaround:** Use it as the A/B reference to measure the real gain of each foldable build
+  5.
+    - **Target:** S-band 2.2-2.3 GHz downlinks (CubeSat/SatNOGS-class)
+    - **With foldable kit:** kept
+    - **Margin change db:** +0.7 to +1.0 dB (7-turn S helix in the L cone) or +2.0 to +2.3 dB (dedicated 33 cm S cone) vs the rigid C=0.9 11-turn S helix (13.2-13.5 dBic). The dual-band C=0.9 helix gives +1.9 to +2.2 on S-band but costs 1.3 dB on L-band vs the C=1.1 helix in the same fold cone. Our files hold no absolute S-band link budget.
+    - **What we lose:** Simultaneous L/S reception from one feed. You must swap the helix and the LNA, because the SAWbird+ GOES passes only 1648-1728 MHz. The S chain needs its own LNA and cavity (Sysmocom cf2235-kt30, EUR 65.45). There is a 30 s swap per band change. Whether a given weak CubeSat decodes remains unknown, as it was with the rigid pick.
+    - **Workaround:** Keep a dedicated 33 cm fold S cone (packs about 14 cm across x 3 cm) if S-band matters more than one-cone simplicity
+  6.
+    - **Target:** Kit-level: setup time, reliability, mechanics (all L/S options)
+    - **With foldable kit:** degraded
+    - **Margin change db:** 0 to -0.5 dB per assembly from build tolerance: modelled ±6 mm per-turn pitch error costs 0.3 dB or less, octagonal fabric facets 0.15 dB. Sparse radial wires without fabric cost 1.8-5.6 dB, so avoid them.
+    - **What we lose:** - Setup goes from 0 to 1-3 min (5-10 min for the 2x2 array).
+  - More parts to lose.
+  - Repeat-folding wear on the fabric, ribs and spring wire. Soft copper fatigues; use phosphor bronze or Cu-clad steel.
+  - Each fold or unfold can shift the geometry slightly.
+  - Every gain figure is an unmeasured NEC2 model, ±1-3 dB.
+    - **Workaround:** Print pitch stops into the rod, key the petals so they fit only one way, carry 2 spare ribs and clips, and keep the matching strip glued. Check S11 better than -10 dB over 1690-1710 MHz after each trip with a VNA covering 3 GHz or more.
+- **Other ways out:**
+  - Meteor LRPT at 137 MHz with the V-dipole already in the kit, as the fallback when HRPT fails. LRPT is 72 kbps and carries fewer MSU-MR channels than HRPT (3 vs 6, which is general knowledge and was not re-verified in this run). No 1.7 GHz antenna is needed.
+  - Elektro-L5 LRIT at 1691 MHz from a fixed mini tripod. It is geostationary at 76°E and about 19° up from Kyiv, so it needs no tracking. It decodes at about +1 dB SNR, keeps an L-band target alive even on a 4-5 turn plate helix, and serves as the gain test source.
+  - For Metop-B: a fold-flat 2x2 spring-helix array on a 60 cm twist-fold CuNi ground (packs to a disc about 23 cm across). It models 17.1-18.0 dBic after a 0.7 dB Wilkinson combiner. Use passive combining into a single RX, not LimeSDR RX1/RX2, until LimeSuiteNG channel alignment (issue #356) is fixed.
+  - For Metop-B: a segmented 1.8 m loop Yagi in 6 sections of 30 cm (about 20 dBi linear per a reader estimate, unverified, so about 17 dBic-equivalent on RHCP). It is also cleaner against LTE than a helix, but hard to hand-track.
+  - A foil-lined travel umbrella with a linear PCB feed (Saveitforparts received GOES, NOAA and Meteor HRPT with one). It folds to umbrella size, but its gain is unmeasured and it brings back a dish shape.
+  - Mount any of the antennas on a 20-25 cm folding tripod with a pan-tilt head to remove 0.5-1.5 dB of hand-pointing loss with the 24-28° beams.
+  - If the user also rejects fabric and petals: a rigid 4-5 turn helix on an 18 cm plate (11.6-12.0 dBic modelled, packs 18 x 18 x 19-22 cm). Meteor HRPT keeps about 5 dB of margin, Metop is lost, and S-band uses a 5-turn S helix (11.4 dBic modelled, about -2 dB).
+  - Use online archives (for example the EUMETSAT Data Store, not checked in this run) for Metop and FengYun imagery that the kit can no longer receive.
+- **Notes:** Working targets unchanged: packed 30-35 cm for the backpack tier and 20 cm or less for the ultra-compact tier, with a large deployed size allowed if setup takes a few minutes. The recommended fold helicone has no part over about 19-23 cm, so it also meets the ultra-compact tier with a 4-turn or spring helix.
+  
+  **Modelling (all gains are my models, unmeasured)**
+  - NEC2 via PyNEC 2.3.4. Wire-grid discs and cones, 2 mm copper wire, gain as maximum RHCP.
+  - Cross-check against earlier results: the same code reproduces the earlier helicone figure (40 cm rim, 15 cm deep: 14.74 dBic vs 14.7). It gives 13.98 dBic for the 11-turn on a 20 cm round disc, against the earlier 13.5 on a square plate, so deltas are quoted both ways (±0.5 dB).
+  - Main new finding: a shallower, wider cone (18 cm base to 44 cm rim, 12 cm deep) with only 4-7 turns models 15.6-16.0 dBic, flat across 1.65-1.75 GHz, with a 24-28° beam. So the long helix is unnecessary. The cone is the part that folds, and the 17-23 cm helix fits the packing target even when rigid.
+  - Tolerance results:
+    - ±6 mm per-turn pitch error costs 0.3 dB or less; ±10 mm costs up to 0.6 dB.
+    - ±4 mm radius error costs 0.4 dB or less.
+    - ±10-15% overall stretch error costs 0.1-0.3 dB.
+    - Phosphor bronze or stainless instead of copper costs 0.06 dB or less.
+    - Octagonal fabric facets cost 0.15 dB.
+    - A radial-wire-only ground plane is bad: 8.4-12.2 dBic.
+    - A 40 cm flat disc is worse than a 20-30 cm one.
+    - A 4 cm cup rim adds 0.5 dB.
+  - 2x2 arrays (before the combiner): 11-turn 18.75, 7-turn 17.8, 5-turn 16.8 dBic on a 56 cm ground.
+  - S-band: a scaled 33 cm helicone gives 15.5 dBic; a C=1.1λ 7-turn S helix in the L-band cone gives 14.2; a 5-turn on a 15 cm disc gives 11.4.
+  - Scripts are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/nec_fold/ (fold.py, t2-t10.py).
+  
+  **Margin anchor (reused from dish_replacement.json, not redone)**
+  - Meti's 11-turn helix (about 12.75 dBic) gave about 7 dB average SNR on Meteor-M2-3, against 0.5 dB needed.
+  - Metop is estimated at about 1.6 dB average, against 4 dB needed (5.4 dB symbol-rate penalty, EIRP unverified).
+  - I assumed SNR scales dB-for-dB with antenna gain.
+  - Slant range at about 830 km orbit height costs 9.3 dB at 10° elevation, 6.8 dB at 20°, 4.8 dB at 30° and 2.5 dB at 45°, relative to zenith.
+  
+  **Evidence gaps**
+  - I found no hobby or commercial folding 1.7 GHz antenna anywhere. The evidence for the concept is patents (US9142882 compressible spiral; DE202010013085U1 self-expanding helix; US8970447 nanosat deployable helix), the Georgia Tech origami helix and the HCT Helios space-grade deployable helix.
+  - The closest real precedent is the t0nito/pe2bz helicone: mesh on 8 holders, stronger signals at 1545, 1700 and 2250 MHz, no SNR figures.
+  - Unverified prices: CuNi fabric (about GBP 83 for 8 x 1.1 m), the pop-up reflector frame, the combiner, and all DIY materials.
+  - Unverified gains: the 4G panel at 1.70 GHz (below its band edge), and the umbrella and loop-Yagi figures.
+  
+  **Polarisation**
+  - Linear antennas (LTE panels, loop Yagi, umbrella with a PCB feed) lose a constant 3 dB on RHCP Meteor and Metop signals.
+  - Fixing that takes a 90° hybrid. Connectorised hybrids cost $504 (E-meca 1.7-2.2 GHz) to $1,100 (Pasternack), so use a DIY branch-line coupler or software combining. Software combining is blocked on the LimeSDR Micro by the RX phase-alignment issue.
+  
+  **Search budget:** 16 web searches used.
+
