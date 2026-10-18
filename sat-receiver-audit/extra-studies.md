@@ -41531,6 +41531,120 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   No files were edited.
 
+## check:numbers (run `wf_a9665c78-f1d`)
+
+- **Lens:** NUMBERS: prices, subtotals and totals in sections 1 (C1, C24), 2, 3, 9 and 11 of STACK.md, checked against row values, the analogs/reaudit/sourcing files and the landed-cost rule in operator_notes items 34-35
+- **Problems:**
+  1.
+    - **Where:** 3.1 «Підсумок core»: «Нижня межа — найдешевші умовні варіанти: LiteVNA Eleshop $162.53 без ПДВ, tinySA Elektor $182.10 без ПДВ» … «Верхня межа — LiteVNA $210.88 і tinySA $247.18 з ПДВ»; Debug Probe row «10.86 без ПДВ (EUR 9.66, розрахунок) / 12.93 з 19% ПДВ DE»; the same bench range is repeated in 2.12, 3.6, C24 and the 11.7 v1→v2 table
+    - **Problem:** Basis mixing inside one range. For three bench items sold by EU shops (Eleshop/Passion Radio, Elektor/Astroradio, reichelt), the lower bound is the ex-VAT price and the upper bound is the incl.-VAT price. A private EU buyer cannot pay the ex-VAT EU price. About $73 of the $231 bench spread is VAT, not price variation. The Debug Probe bound is the same reichelt item on both sides.
+    - **Severity:** contradiction
+    - **Fix:** Put each range on one basis. Recommended, to match the other EU bench rows (MediaMarkt, Lindinger, TME, reichelt, iFixit, Botland), incl. VAT: LiteVNA 195.04-210.88, tinySA 220.35-247.18, Debug Probe 12.93. This gives bench 1,609.39-1,767.80 (vs v1 +134.81/−42.09). Knock-on totals: core+extended 2,179.64-2,397.53; device + both antenna tiers + bench, with Lime 4,945.96-5,548.62, without Lime 4,339.50-4,940.16; everything except optional, with Lime 5,516.21-6,178.35, without Lime 4,909.75-5,569.89; same composition as v1 4,242.09-4,815.70 and 4,812.34-5,445.43; EU landed lower bounds 5,036.05-5,638.71 and 5,606.30-6,268.44. The other option is ex VAT on both bounds (175.73, 204.28, 10.86), which gives bench 1,536.56-1,687.68. Update 2.12, 3.6, C24 and 11.7 to match.
+    - **Evidence:** STACK 3.1 rows VNA, Аналізатор спектра, Відлагоджувач; analogs_G5_lab_bench.json #0, #1, #9 chosen_price_usd; recomputation
+  2.
+    - **Where:** 3.2 «Підсумок extended»: «H1 $49.95 (Nooelec США, без ПДВ) / $61.93 (Amazon EU)»
+    - **Problem:** The lower bound is the ex-VAT US price. The same row says that this route lands in the EU at «≥65.1-66.1 з ПДВ, EUR 3 мита і EUR 2 UHF, плюс доставка», which is more than the incl.-VAT Amazon.nl upper bound. For the EU buyer the range is inverted and mixes bases.
+    - **Severity:** contradiction
+    - **Fix:** Use the chosen EU channel on both sides: H1 $61.93 (Amazon.nl, EUR 55.10 incl. VAT). The other option is ex VAT on both sides, 49.95-51.18. Extended becomes 582.23-629.73 (vs v1 +84.51/−77.99). Every lower total that includes extended rises by 11.98: core+extended 2,118.79; everything except optional 5,455.36 with Lime and 4,848.90 without; EU landed 5,545.45.
+    - **Evidence:** STACK 3.2 row «LNA H1»; analogs_G6_extended_optional.json #3 chosen_price_usd (EUR 55.10 incl. 21% NL VAT, about $61.93)
+  3.
+    - **Where:** 2.1 row «Плата»: «$59.72-63.52 проти ALLNET з ПДВ ще до доставки, мита і збору за обробку»; 9.1 step 1: «Економія TinyTronics на платі проти ALLNET landed — $59.72-63.52»
+    - **Problem:** Arithmetic mixes VAT rates. 59.72 = ALLNET at 19% ($226.09) minus TinyTronics at 21% NL VAT ($166.37). At the same destination VAT on both sides: 19% gives 189.99×1.19 − 137.49×1.19 = 226.09 − 163.61 = 62.48; 21% gives 229.89 − 166.37 = 63.52. The UFS row in the same table uses equal rates (12.02 × 1.19-1.21 = 14.30-14.54).
+    - **Severity:** wrong_number
+    - **Fix:** Replace with «$62.48-63.52 (однаковий ПДВ країни призначення 19-21% на обох: TinyTronics $163.61-166.37 проти ALLNET $226.09-229.89)» in 2.1 and in 9.1 step 1.
+    - **Evidence:** STACK 2.1 row «Плата» (EUR 122.31 без ПДВ, 189.99, 226.09-229.89) and row «Сховище» (14.30-14.54); recomputation at 1.1241
+  4.
+    - **Where:** 9.1 step 2: «запасний LNA V2 (замовлення близько $263.55; з третім дипольним набором — $281.50; з FM-режекторним фільтром … — $280.50; з обома — $298.45, розрахунок)»
+    - **Problem:** $263.55 is the v1 total from final_world_sourcing. It contains the LNA V2 at the webstore price of $19.95. v2 says EU buyers cannot pay that price («Було: $19.95 — ціна webstore rtl-sdr.com для країн поза ЄС») and puts it at $32.36-34.61 via the official AliExpress listing. G5 #5 says to recompute this order total as EU-landed, and it was not recomputed.
+    - **Severity:** wrong_number
+    - **Fix:** «$243.60 за цінами вебмагазину без LNA V2 + LNA V2 $32.36-34.61 (офіційний AliExpress, з ПДВ, EUR 3 мита і EUR 2 UHF) = $275.96-278.21; з третім дипольним набором — $293.91-296.16; з FM-режектором — $292.91-295.16; з обома — $310.86-313.11». Add that as one consignment (about EUR 217-250) the order exceeds EUR 150, so normal duty applies instead of EUR 3 per line.
+    - **Evidence:** final_world_sourcing.json «RTL-SDR Blog: $263.55» (LNA V2 $19.95); analogs_G5_lab_bench.json #5 chosen_price_usd and stack_changes («Recompute the order total as EU-landed»); STACK 3.1 row «Запасний LNA»
+  5.
+    - **Where:** 2.9 row «Шасі»: «Пластина Alu-Verkauf 150x250 EUR 5.95 з 19% ПДВ ($6.90)»; also in 11.1 №42: «$2.55 / $3.14 з ПДВ 23 %»
+    - **Problem:** Undisclosed rates. The USD values were copied from G4, which converted at approximate rates (EUR 1.16, PLN 0.27, SEK 0.105 USD). Позначки give 1 EUR = 1.1241 USD; other rows use 4.37 PLN/EUR, and 2.8 uses SEK 32 = $3.23. The chassis values are about 3% too high, and the KSD9700 PLN conversion disagrees with the GOTRONIK and LAB5 rows.
+    - **Severity:** wrong_number
+    - **Fix:** At 1.1241: plate $6.69; pedestal EUR 3.81 = $4.28 or EUR 8.33 = $9.36; shipping DE EUR 6.95 = $7.81, AT/BE/NL/LU/DK EUR 12.95 = $14.56, FR EUR 19.50 = $21.92, SE EUR 27.50 = $30.91; RS nut EUR 11.63 ≈ $13.07. KSD9700 at 4.37 PLN/EUR: 5 pcs 9.45 PLN ≈ $2.43 net / $2.99 with 23% VAT (1 pc ≈ $0.71). Electrokit 76 SEK ≈ $7.67 at the 2.8 SEK rate. If the G4 values are kept instead, add «курс G4: EUR 1.16, PLN 0.27, SEK 0.105 (наближено)» to the row.
+    - **Evidence:** analogs_G4_mechanical_field.json #1 chosen_price_usd («FX is approximate (EUR 1.16, PLN 0.27, SEK 0.105 USD)»); STACK «Позначки» («курс 1 EUR = 1.1241 USD»); 11.1 header («де вказано інше — так у рядку»)
+  6.
+    - **Where:** 2.5 row «Штатив»: «57.33 (EUR 50.95 з 19% ПДВ DE)»; 3.2 row «Кейс»: «127.27 (EUR 113.10 з ПДВ»; 3.2 row «Лабораторне джерело»: «62.64 (EUR 55.68»; 3.2 row «LNA H1»: «61.93 (EUR 55.10»
+    - **Problem:** These rows were converted at 1.1253 (tripod, case), 1.125 (DPS-150) or 1.124 (H1). The row does not say so, against Позначки (1.1241) and the 11.1 rule that other rates are named in the row. The errors flow into the folding and extended subtotals and every total above them.
+    - **Severity:** wrong_number
+    - **Fix:** At 1.1241: tripod $57.27 (DE/AT landed $64.00, other EU $71.87; Manfrotto $134.84, difference $77.57). Case $127.14 / $122.53 / $134.27; Peli $234.94. DPS-150 $62.59 / $66.32 (EUR 66.26 = $74.48; saving $3.73). H1 $61.94 (ex VAT $51.19). Folding tier becomes 542.20-612.93 (560.20-657.98 with horn materials). Extended becomes 570.07-629.53 (730.20 with Peli). Shift C24, 2.12 and 3.6 by the same cents. Or name the rate in each row and in Позначки.
+    - **Evidence:** analogs_G4_mechanical_field.json #4 current_price_usd («Rate 1.1253 USD/EUR»); analogs_G6_extended_optional.json #5 and #3 («about $61.93 at 1.124»); STACK «Позначки»
+  7.
+    - **Where:** 2.11.2: «EUR 52.03 з ПДВ ($58.55; EUR 43.00 без ПДВ = $48.39)»; 3.1 «Антистатичний килимок»: «разом близько $39.22 DE / $43.72 інші»; 3.1 «Інструменти» (row says «Курс 1.1241»): «Lindinger EUR 26.99 = $30.37»; 2.11.3: «= $17.13 / $20.38»; 2.9 «Захист від погоди»: «курс 1.15 USD/EUR (не перевірено)»; 2.1: «QuietPC GBP 13.96 = $18.57»; 2.2: «EUR 49.92 з 20% ПДВ = $56.11 за шт. (EUR 149.76 = $168.33 за 3)»
+    - **Problem:** More conversions off the document rates (1.1241 USD/EUR, 1.3318 USD/GBP). Most are at 1.1253 or 1.15. The mat row also uses $33.67 in the price column but $33.70 for its saving (1.25). The tools row states 1.1241 and then converts at 1.1253.
+    - **Severity:** wrong_number
+    - **Fix:** QRO.cz $58.49 / $48.34. Mat $39.17 / $43.67, saving $1.28. Robbe $30.34 (also in 2.7). D36V28F5 #2 note $17.11 / $20.36 (or name ECB 1.1253 there). Weather: MOLYKOTE ≈$12.04, Scotch 23 ≈$14.05-21.52, set ≈115.5-167.7. QuietPC $18.59, so the outside-EU cooling base is 33.49-38.49 and the 2.1 alternative is 300.66-329.98. Passion Radio V4L $56.12 per unit / $168.35 for 3 (also 9.1 step 2 and 11.1 №1).
+    - **Evidence:** STACK «Позначки» and 11.1 header; analogs_G4 #2 («FX assumed at 1.15»); analogs_G2 #1 («NF-A4x10 5V 18.57 = QuietPC GBP 13.96»); recomputation
+  8.
+    - **Where:** 3.2 «ADS-B приймач»: «(близько $72.70 за стик з ПДВ і митом, модель; окремо — близько $112.65)»; 2.2 HF+: «щонайменше $208.23»; 9.1 «Митниця і ПДВ»: «щонайменше $208.23 проти $206.52 зі складу DE»
+    - **Problem:** Landed figures leave out the EUR 2 UHF. Operator note 35 applies it per line to orders landing from about 1.11.2026. The Pro Stick Plus is bought last (9.1 step 13), and the HF+ purchase window is 27.11-2.12.2026, so both land after 1.11.
+    - **Severity:** wrong_number
+    - **Fix:** Pro Stick Plus about $74.95 in the joint Pi Hut parcel and about $114.90 alone (+EUR 2 = $2.25). HF+ from the CN warehouse «щонайменше $210.48» (plus normal duty and courier fee), in 2.2 and 9.1.
+    - **Evidence:** operator_notes.md item 35 (UHF EUR 2 per item from about 1 Nov 2026; landed-cost formula); analogs_G6_extended_optional.json #1 (72.70 «incl. 19% VAT and duty»)
+  9.
+    - **Where:** 3.1 row «Осцилограф і LA»: «89-102 (з доставкою в ЄС: осцилограф $81-90 + LA $8-12)»; 11.1 №55: «Набір $89-102 landed»
+    - **Problem:** The LA $8-12 is the unchanged v1 price with no seller, before VAT and duty, but here it is called delivered/landed. The same row puts the AliExpress LA landed at «близько $12-18».
+    - **Severity:** wrong_number
+    - **Fix:** «89-102 (осцилограф з доставкою в ЄС $81-90 + LA $8-12 без ПДВ і мита; з LA з AliExpress landed $12-18 — $93-108)». Make the same change in 11.1 №55, or use 93-108 in the bench subtotal (+4/+6).
+    - **Evidence:** analogs_G5_lab_bench.json #8 chosen_price_usd («89-102 landed … Plus the unchanged LA at $8-12»)
+  10.
+    - **Where:** 3.1 row «Інструменти»: «335-391 (з 19% ПДВ DE; без доставки двох посилок TME + reichelt)» vs «Курс 1.1241; ціни TME — як нетто.»
+    - **Problem:** The VAT basis contradicts itself. The TME values in the row are gross. Völkel 15003 $5.74 = $4.82 net × 1.19. The HL 1920 E option +$40.14 = $79.69 gross − $39.56. The SCALA fallback +$22.49 = $43.84 gross − $21.35. So «ціни TME — як нетто» is wrong.
+    - **Severity:** contradiction
+    - **Fix:** Replace «ціни TME — як нетто» with «ціни TME — брутто (з 19% ПДВ DE, структуровані дані TME)».
+    - **Evidence:** analogs_G5_lab_bench.json #15 rejected («SCALA 230.207-X … $36.84 net, $43.84 gross»; «HL 1920 E (TME $66.97 net, $79.69 gross)»; die stock «$3.70-4.82 net»)
+  11.
+    - **Where:** 9.1 step 13: «Lime не пройде 15-хв захоплення без втрат на ≥6 Msps»; 11.4 №26: «після приходу Lime — Lime ≥6 Msps ci16»
+    - **Problem:** Contradicts the hard floor of 7 Msps: 2.11.1 «15-хв захоплення без втрат на 7 Msps», 2.11.3 «≥7 Msps», 11.6 №46 «профілі Lime ≥7 Msps» and re-audit B «Block anything below 7 Msps».
+    - **Severity:** contradiction
+    - **Fix:** Write «≥7 Msps» in 9.1 step 13 and 11.4 №26. Outside this lens the same change is needed in 1.2 (line 161) and 4.1 (lines 550-551).
+    - **Evidence:** reaudit_B_receivers_rf.json («Allowed: 7-61.44 Msps … Block anything below 7 Msps»); STACK 2.11.1, 2.11.3, 11.6 №46
+  12.
+    - **Where:** 3.1 «Відлагоджувач»: «DigiKey DE 2648-SC0889-ND у замовленні кроку 7»; 11.1 №56: «у замовленні DigiKey (крок 7)»; 11.1 №65: «в наявному замовленні DigiKey DE (крок 7)»
+    - **Problem:** 9.1 places the single consolidated DigiKey DE order in step 6(в). Step 7 says «окремого замовлення DigiKey у цьому кроці немає». Step 5 gives the Debug Probe as «DigiKey DE, крок 6», and step 13 puts the sled chips «у замовленні DigiKey DE кроку 6».
+    - **Severity:** contradiction
+    - **Fix:** Change «крок 7» to «крок 6» in 3.1, 11.1 №56 and №65 (and in 8, line 1517).
+    - **Evidence:** STACK 9.1 steps 5, 6(в), 7, 13
+  13.
+    - **Where:** 9.1 step 6(в): «Сам кошик HMI (3 PEC11R, 10 KSC641J, 2 ферити, 2 Pico, TCA9555) — близько EUR 27 без ПДВ»
+    - **Problem:** The cart lists superseded parts copied from the pre-decision G2 text. KSC641J and TCA9555 are now only fallbacks. v2 buys PEC11R-4220F, TL3145BF350QJ ×12 and PI4IOE5V9555LEX. With the v2 parts the cart is 8.07 + 4.40 + 5.70 + 9.18 + 2.62 = $29.97 ≈ EUR 26.7.
+    - **Severity:** contradiction
+    - **Fix:** «Сам кошик HMI (3 PEC11R-4220F, 12 TL3145, 2 ферити, 2 Pico, PI4IOE5V9555 + п'єзо + LED) — близько EUR 27 без ПДВ».
+    - **Evidence:** STACK 2.6 rows «Енкодери, кнопки, ручки», «Розширювач кнопок», «HDMI-кабель», «MCU HMI»; analogs_G2 text «The HMI basket (3 PEC11R, 10 KSC641J, 2 ferrites, 2 Pico, TCA9555) is about EUR 27»
+  14.
+    - **Where:** 3.6: «рядки DigiKey DE, Mouser, Botland, ITEAD DE, Eleshop/Elektor, sled і плата Lime — без ПДВ»; 2.12: «у пристрої — Nooelec, RTL-SDR Blog, Adafruit, Wisecoco, LCSC, AliExpress, Waveshare, JLCPCB»
+    - **Problem:** The basis descriptions are wrong or incomplete. Botland's Hantek is incl. VAT and GLS shipping ($81.0). The Eleshop DPS-150 fallback in the extended upper bound is incl. VAT ($66.38). The bench LNA V2 ($32.36-34.61) includes EUR 3 duty and UHF. LBE-1420 ($193.08) includes VAT and shipping (DDP). The 2.12 list of non-EU device sellers whose surcharges are not summed leaves out Diamond Coatings (Diamox, 2.6) and the US-only Polymaker ($25.99) and Peak Design ($49.95) prices in the 2.9 case base.
+    - **Severity:** missing
+    - **Fix:** In 3.6 and 2.12 add: «Botland — без ПДВ у 2.7, з ПДВ і доставкою для Hantek (3.1); Eleshop — без ПДВ для LiteVNA, з ПДВ для DPS-150 (запасний); LNA V2 — з ПДВ, EUR 3 мита і UHF; LBE-1420 — з ПДВ і доставкою (DDP)». Add Diamond Coatings, Polymaker US and Peak Design (US) to the 2.12 non-EU list.
+    - **Evidence:** STACK 3.1 rows «Осцилограф і LA» and «Запасний LNA»; 3.2 rows «GPSDO» and «Лабораторне джерело»; 2.6 «Козирок»; 2.9 «Корпус»
+  15.
+    - **Where:** 2.1 row «Плата»: «166.37 (EUR 148.00 з ПДВ NL …) / запас 189.99 без ПДВ ЄС»; row «Сховище»: «65.20 (EUR 58.00 з 21% ПДВ NL) / … запас 65.90 без ПДВ»; subtotal «303.53-332.85»
+    - **Problem:** One range mixes incl.-VAT EU prices (lower bound) with ex-VAT non-EU prices (upper bound). For an EU buyer the ALLNET upper bound is really at least $226.09 / $78.42 before shipping, duty and UHF. The note discloses this but gives no same-basis subtotal.
+    - **Severity:** style
+    - **Fix:** Add same-basis figures to the 2.1 subtotal note: ex VAT for the plate and UFS (137.49-189.99, 53.88-65.90) gives 263.33-332.85; EU incl. VAT (ALLNET + 19% import VAT, before shipping, duty and UHF) gives 303.53-381.47.
+    - **Evidence:** STACK 2.1 rows and subtotal note; recomputation
+  16.
+    - **Where:** 11.7 «Тверда економія»: «Anker 737 A1289 (G5 #12) | … EUR 82.99 з ПДВ | 16.70 | проти бази $109.99»
+    - **Problem:** The «firm» saving compares a DE price incl. 19% VAT ($93.29) with a US price without sales tax ($109.99). Same-basis figures are $31.60 ex VAT ($78.39 vs $109.99) or $30.35 incl. VAT against anker.com/de.
+    - **Severity:** style
+    - **Fix:** Label it «з ПДВ ЄС проти ціни США без податку (консервативно)», or use $31.60 ex VAT. That would make firm savings ≈$70.52, of which lab $32.85.
+    - **Evidence:** STACK 3.1 row «Банк живлення»; analogs_G5_lab_bench.json #12
+  17.
+    - **Where:** 2.3 «Підсумок групи»: «у ЄС — плюс ПДВ і для Nooelec, RTL-SDR Blog, Uputronics UK і Mini-Circuits — мито/UHF»
+    - **Problem:** No 2.3 row is bought from Mini-Circuits. The Uputronics row uses the EU storefront (EUR 52.95 ex VAT), not the UK store.
+    - **Severity:** style
+    - **Fix:** «у ЄС — плюс ПДВ, а для Nooelec, RTL-SDR Blog і Uputronics (якщо EU-вітрина відвантажує з UK через IOSS) — мито/UHF за правилом вартості ввезення (у рядках)».
+    - **Evidence:** STACK 2.3 rows «Передпідсилювач 70 см» and the other 2.3 sellers
+  18.
+    - **Where:** 2.2 row «RTL-A, RTL-B, запасний»: «тобто близько $141.1-145.6 за 3 (модель)»; «Підсумок групи»: «= близько $347.6-352.1»
+    - **Problem:** Rounding error: 140.04 + EUR 5 ($5.62) = 145.66, which rounds to 145.7, and 145.66 + 206.52 = 352.18, which rounds to 352.2.
+    - **Severity:** wrong_number
+    - **Fix:** «$141.1-145.7 за 3» and «близько $347.6-352.2».
+    - **Evidence:** analogs_G1_receivers_rf.json #0 (45.16-46.68 per unit, 135.5-140.0 for 3); operator_notes.md item 35 (EUR 3 + EUR 2 per line)
+- **Notes:** Recomputed and correct: every group subtotal in 2.1-2.11 (303.53-332.85, 282.85, 249.49-261.79, 255.20-281.20/175.79-201.79, 560.26-658.04/542.26-612.99, 221.24-237.59, 400.87-495.07, 69.67-71.67, 312.00-406.30, Lime 606.46-608.46, QO-100 97.41-124.46, optional 272.52-289.58, 312.24-350.22, 976.39-1,022.50). Also correct: all 2.12 roll-ups (core 1,914.65-2,233.12 / 2,521.11-2,841.58 and all summary rows), the same-composition comparison, the budget variant (1,844, 2,450, 276.55, 3,070.86, 2,366.99), the EU landed lower bounds (+90.09), the bench 1,536.56-1,767.80 and extended 570.25-629.73 sums, the HF chain 524.71-576.74, the 3.6 table, the v1 deltas, the G1/G2/G3/G4 decomposition (+155.25/−19.65), and the 11.7 firm (55.62) and conditional (413.48-717.31; 369.60-629.67; 43.88-87.64) savings. The order totals in 9.1 also check: TinyTronics EUR 168/226, reichelt EUR 38.70, ALLNET $266.74, Adafruit $63.45, Botland EUR 96.63, Nooelec $199.75, Crowd Supply $267. Most EUR/GBP conversions at 1.1241/1.3318 are right. The problems found are basis mixing in ranges, conversions at undisclosed rates, one stale v1 order total, landed figures without UHF, and a few step-number and composition contradictions. No file was edited. Files used: /home/user/lizbeth307/sat-receiver-audit/STACK.md, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/STACK_v1_backup.md, and analogs_G1-G6, reaudit_B, final_world_sourcing.json and operator_notes.md in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final.
+
 ## edit:08_open_bench:b1 (run `wf_b682bee1-8a4`)
 
 - **Section:** 08_open_bench
