@@ -25636,6 +25636,58 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Heads-up for batch 3: idx 60-63, 69, 73 and 74 replace whole rows. They would drop reaudit content added here unless merged, notably the DPS-150 power-on overshoot test (32), the hub STT/power rules (28), the ISDT BLE rules (29) and the LBE-1420 notes (31).
 
+## edit:03a_lab_core_ext_hf:b3 (run `wf_63edf951-e40`)
+
+- **Section:** 03a_lab_core_ext_hf
+- **Applied:**
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+  - 58
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  - 64
+  - 65
+  - 66
+  - 67
+  - 68
+  - 69
+  - 70
+  - 71
+  - 72
+  - 73
+  - 74
+  - 75
+  - 76
+- **Skipped:** []
+- **Notes:** All 25 changes (idx 52-76) are applied in place in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/03a_lab_core_ext_hf.md. Every table row still has 7 columns (checked). Most anchors were v1 text that earlier batches had already changed. In those rows I merged the new text with what was there and did not overwrite it.
+  
+  Merges and conflicts:
+  - 52: The RF accessories row already had the VAT-30W2+ / 245.86 correction (idx 17/18). I added the price breakdown, the seller "Mini-Circuits напряму / DigiKey DE / Mouser EU", the status date, the EU landed-cost text, typical attenuation, the ANNE-50+ bias warning and the trade-offs. I kept the F-F offset-delay text.
+  - 53: Merged with the re-audit brass-jack and Zeenko torque text. The 8 mm hold spanner may be the same item as "ключ 8 мм" in the tools row, so the row now says to buy only one.
+  - 57: The instruction's "осцилограф $76-90 + LA $8-12" does not add up to 89-102. The price cell now uses the G5 landed scope figures, $81-90 (DE $81.0, other EU ≈$83-90), so the parts add up to 89-102. The no-shipping prices $75.73 and $77.0 are in the note. I kept all re-audit OpenHantek and sigrok text, plus "знято з продажу в The Debug Store".
+  - 58: The replacement row dropped "debugprobe v2.3.1, OpenOCD 0.12.0, picocom 3.1" (re-audit idx 24). That is still valid, so I kept it.
+  - 59, 61, 63: Kept the re-audit facts: IronOS settings, Power pulse and EPR; Anker port and IP2368 rules; ISDT COCP, BLE, firmware and USB-C rules.
+  - 60 vs 74 (G5 vs G6): G5 said to check the mat folding "в Pelican 1450". G6 decides the case (B&W 4000 RPD, with Peli 1450 as fallback), so G6 won. The text now reads "в кейсі стенду (B&W 4000 RPD або запасний Peli 1450)".
+  - 62 vs 69 (G5 vs G6): The G6 Pro Stick note said to buy it in one Pi Hut order "з MTT-хабом". G5 decides the hub: Waveshare direct is the default and the name "MTT" is wrong (Waveshare says STT). So G5 won, and the Pro Stick note now says "і зі стендовим хабом, якщо його беруть у Pi Hut за умовою рядка «Стендовий хаб»". The new row "Дріт живлення хаба" is added and is not in the subtotal.
+  - 69 vs 35 (G6 vs G1): The G6 instruction replaces the whole note. I folded the G1 "$29.95, лише Read more" observation into G6's "rtl-sdr.com немає в наявності". I also kept "лише ADS-B, заміною V4L не є" and the Uputronics "ПДВ у кошику" wording.
+  - 71 vs 36 (G6 vs G1): G6 specifies its own 2-layer sled PCB. It won over G1's "можна на запасній PCB із замовлення плати інжекторів", which I removed. All re-audit B technical text is kept: no HF spec below 100 MHz, isolation acceptance 37-40 / <37 dB, chip marking, the 1 MHz-2 GHz sweep, the leak rule and the PE4312 specs.
+  - 72: Kept the Nooelec URL and SKU in the fallback seller cell.
+  - 73: Kept the re-audit power-on overshoot test (Hantek). Added that a Botland cart will exist if the Hantek is bought there; this is a cross-reference only, with no new number.
+  - 65: "G3 nickel check" is written as a check of the pack's nickel strip. The same wording is used in 02c and in 10_sources (LaskaKit 8x0.15 mm).
+  
+  Subtotals recomputed and checked arithmetically:
+  - Core: 1,536.56-1,767.80 (≈1,537-1,768). The high end only matches idx 66 with VAT-inclusive LiteVNA $210.88 and tinySA $247.18. With the booked LiteVNA and tinySA lows it is 1,571.94-1,767.80. Against v1: +61.98 low / −42.09 high.
+  - Extended: 570.25-629.73 (≈570-630), or up to ≈730.50 with Peli 1450.
+  - Budget minimum: core ≈$1,419-1,439 (1,536.56 − 64.55...84.55 − 33.39), extended ≈$286 (285.78).
+  - HF chain total (469.71-546.74): unchanged, because this batch did not touch it.
+
 ## edit:11f_changes_operator_totals:b1 (run `wf_64e39fc3-0f9`)
 
 - **Section:** 11f_changes_operator_totals (11.6. Нотатки оператора і рішення користувача; batch 1 of 2) — /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/11f_changes_operator_totals.md
@@ -54490,6 +54542,77 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - The file has no subtotal, so there was nothing to recompute.
   - All 40 rows have 8 cells.
   - No hard rule is affected.
+
+## edit:11a_changes_analogs:b3 (run `wf_d69008e8-cbb`)
+
+- **Section:** 11a_changes_analogs (11.1 Заміни і зміни продавця (P5)), batch 3: rows 41-60
+- **Applied:**
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+  - 58
+  - 59
+- **Skipped:** []
+- **Notes:** I added rows 41-60 to the end of the 11.1 table in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/11a_changes_analogs.md, one row per P5 decision. Rows 1-40 from earlier batches are unchanged. A script check confirmed every table line has 8 cells and the rows are numbered 1-60 in order.
+  
+  The fields in the changes JSON were cut off (about 200-400 characters each). I took the full text from the P5 source files in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/: analogs_G4_mechanical_field.json (decisions 0-5, idx 40-45) and analogs_G5_lab_bench.json (decisions 0-13, idx 46-59). Each part name matched its idx. The v1 values in the "було (v1)" column come from STACK_v1_backup.md (BOM rows 221-223, 274-276 and 341-354).
+  
+  Rows added:
+  - 41 mechanical set
+  - 42 chassis
+  - 43 weather kit
+  - 44 mast
+  - 45 tripod
+  - 46 bags
+  - 47 LiteVNA
+  - 48 tinySA
+  - 49 noise source
+  - 50 RF accessories
+  - 51 torque wrench
+  - 52 spare LNA V2
+  - 53 FNB58
+  - 54 DMM AN8009
+  - 55 Hantek 6022BE
+  - 56 Debug Probe
+  - 57 Pinecil
+  - 58 anti-static mat
+  - 59 Anker 737
+  - 60 bench hub
+  
+  Conflicts and how I resolved them:
+  1. Idx 40: the G4 file says the GP-Ultimate pads go in the same QuietPC order as the Noctua NF-A4x10. Row 13 (the G2 decision for the fan's own seller) buys the NF-A4x10 from Alternate.de in the EU, and that decision is about the part itself, so it stands. Row 41 names QuietPC NL for the pads only and does not claim a shared order.
+  2. Idx 42: the G4 weather kit lists the cap for GX12/M8. Row 24 (P5 G3) changes GX12 to GX16 everywhere, so row 43 says GX16 and notes that the P5 file still says GX12/M8.
+  3. Idx 45: the bags record works out the load with a 1.17-1.35 kg tripod (from reaudit_C). Row 45 (idx 44, the tripod decision) gives 1.14 kg for the 2026 Rollei. Row 46 keeps the file's numbers and adds the 1.14 kg cross-reference; I did not invent a new total.
+  4. Idx 58: P5 corrects reaudit_D. Reaudit_D says the Anker 737 is DRP on both ports; P5 says only USB-C1 is DRP and USB-C2 is output-only per Anker's spec. P5 ranks above P4, so the correction goes in, with the bench check on C2 kept as P5 asks.
+  5. Idx 49: P5's VAT-30W2+ choice matches reaudit_D, so there is nothing to resolve. The v1 price of $212.68 is corrected to $245.86 and marked as a price correction, not an analog effect.
+  
+  Merges with existing rows (cross-references, not repeated text):
+  - Rows 51 and 56 reuse existing orders: the pigtail set already in row 6 is the reason row 51 takes the RG402 set, and the reichelt cart from rows 6, 23 and 39 is the one row 56 adds the Debug Probe to.
+  - Rows 55 and 59 point to row 40 (the IKEA charger) for its G4 ripple test and as the one-way PD charger.
+  - Row 53 points to row 54 for the DMM, since the AN8009 is a conditional pick that may fall back to the AN8008.
+  
+  Rules applied in the new rows:
+  - Receive-only and conducted-only notes are in rows 47-49 and 55, including the tinySA kit antenna rule: the generator is never on while an antenna is connected.
+  - No loops or H-field probes appear anywhere.
+  - Prices are in USD, with EUR incl. VAT for EU sellers and landed cost per notes 34-35 for sellers outside the EU.
+  - Wording is gender-neutral.
+  
+  This file has no subtotal, so nothing needed recomputing. Some subtotals named in the P5 files live in other section files and were not touched: group 2.9 (178-313 becomes about 249-371), the foldable tier, and the core total.
 
 ## edit:08c_new_gates_analogs:b1 (run `wf_d86c28f4-677`)
 
