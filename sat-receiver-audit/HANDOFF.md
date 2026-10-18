@@ -1,6 +1,6 @@
 # HANDOFF: супутниковий приймач лише на прийом + портативна радіолабораторія
 
-Стан на 2026-10-18 21:28 UTC. Цей файл — повна передача роботи іншій моделі/людині. Читати повністю перед продовженням.
+Стан на 2026-10-18 21:29 UTC. Цей файл — повна передача роботи іншій моделі/людині. Читати повністю перед продовженням.
 
 ## 0. Критерії завершення проєкту (Definition of Done) — проєкт закінчено, коли виконано ВСЕ:
 1. sat-receiver-audit/build/ містить усі 19 файлів зі списку в §7 п.1, кожен SVG — валідний SVG 1.1 (блок назви «v2, 18.10.2026» і «теоретичний проєкт — перевірити на стенді»), 10-bom.csv читається як CSV.
@@ -33,9 +33,9 @@
 | Далі | відкриті питання STACK §8 (за запитом користувача, якщо лишиться ліміт) | не почато |
 
 
-### Зроблені пакети виправлень P6: fix:A:b1, fix:A:b2, fix:A:b3, fix:B:b1, fix:B:b2, fix:B:b3, fix:B:b4
-### Готові автори P7: write:software+assembly
-### Файли в build/: 01-blok-skhema.svg, 02-zhyvlennia.md, 02-zhyvlennia.svg, 03-rf-trakt.svg, 04-header-40pin.svg, 04-pidkliuchennia-pinout.md, 05-mekhanika.md, 05-roztashuvannia-front.svg, 05-roztashuvannia-section.svg, 06-anteny.md, 07-pz-vstanovlennia.md, 08-zbyrannia.md, 10-bom.csv, 10-bom.md
+### Зроблені пакети виправлень P6: fix:A:b1, fix:A:b2, fix:A:b3, fix:A:b4, fix:B:b1, fix:B:b2, fix:B:b3, fix:B:b4
+### Готові автори P7: write:power+wiring, write:software+assembly
+### Файли в build/: 01-blok-skhema.md, 01-blok-skhema.svg, 02-zhyvlennia.md, 02-zhyvlennia.svg, 03-rf-trakt.svg, 04-header-40pin.svg, 04-pidkliuchennia-pinout.md, 05-mekhanika.md, 05-roztashuvannia-front.svg, 05-roztashuvannia-section.svg, 06-anteny.md, 07-pz-vstanovlennia.md, 08-zbyrannia.md, 10-bom.csv, 10-bom.md
 
 
 ## 4. Файли (у репозиторії, гілка ccr-1537979d-cj7q9t; і в цьому архіві)
@@ -71,93 +71,8 @@ D19 Bench case: B&W outdoor.case Type 4000 RPD (conditional: eyelets locked when
 
 
 
-## 5a. Ще не виправлені проблеми STACK.md (34 шт.; якщо список порожній — усе виправлено)
+## 5a. Ще не виправлені проблеми STACK.md (17 шт.; якщо список порожній — усе виправлено)
 Кожна: де, що не так, як виправити, доказ. Виправляти прямо в STACK.md, перевіряючи за джерелами з final/.
-
-- [A51 | contradiction | reaudit_AB] ДЕ: 1.2 #102 «RG6 з компресійними F-роз'ємами»; 9.1 step 11 «деталі F/75 Ohm, RG6 з компресійними F, LC»; 11.4 row 20 «(RG6 з компресійними F-роз'ємами)»
-  ПРОБЛЕМА: The chosen LNB lead is the Goobay 58814 (75 Ohm, moulded F on both ends, class A+, 5.4 mm) in 2.10, 5.3 and the 9.1 Reichelt order. These rows still specify an RG6 lead with compression F connectors, a different and thicker part.
-  ВИПРАВЛЕННЯ: Replace «RG6 з компресійними F-роз'ємами» with «Goobay 58814 (75 Ohm, F-F, клас A+, 1 м; 2.10)» in 1.2 #102, 9.1 step 11 and 11.4 row 20.
-  ДОКАЗ: analogs_G1_receivers_rf.json cable-set decision (Goobay 58814 picked; the RG6-class 'Good Connections' candidate rejected). reaudit_B_receivers_rf.json results[3].corrections[9]: 'Keep double-shielded 75 Ohm coax and tight F connectors' (no RG6). v2_edit_notes 05b b2: 'RG6 with compression F part on
-
-- [A52 | contradiction | reaudit_AB] ДЕ: 1.1 C24 «(Lime залишено, QO-100 куплено)»; 5.3 «QO-100 NB (Європа, кут місця 12-46°; LNB куплено)»; 6.2 «надбудову QO-100 куплено»; 8 «Додаток QO-100 (куплено) і Lime уже входять у збірку»; 11 intro «QO-100 куплено»; 11.4 row 18; 11.6 row 39
-  ПРОБЛЕМА: BOM 2.4 and 2.11.2 say «Європа: купується», and 9.1 step 11 still schedules the purchase (2× Bullseye BE01 from Passion Radio). Other sections say the add-on is already bought.
-  ВИПРАВЛЕННЯ: Use «купується (входить у збірку)» in all listed places. Or, if it really has been bought, drop it from 9.1 step 11 and mark the BOM rows as bought. The files support «купується».
-  ДОКАЗ: final/user_requirements.md line 49: 'the QO-100 add-on ... is bought' (a consequence of region Europe). STACK 9.1 step 11. v2_edit_notes 04 b2 (kept «купується») vs 05b b2 («куплено»).
-
-- [A53 | contradiction | reaudit_AB] ДЕ: 4.1 row S-band, decoder cell «SatDump лише з цивільними й аматорськими конвеєрами з алоу-листа»
-  ПРОБЛЕМА: The Europe SatDump pipeline allowlist (1.2 #30, 5.4) has only Meteor-M, MetOp, AWS, FengYun-2 and Elektro_Arktika JSONs, none of them S-band. So no SatDump decoder exists for Black Kite or PHASMA.
-  ВИПРАВЛЕННЯ: Decoder cell: «SatDump — S-band конвеєра в європейському алоу-листі немає / gr-satellites (розбір кадрів не перевірено)».
-  ДОКАЗ: STACK 1.2 #30 and 5.4 pipeline allowlist. v2_edit_notes 04 b2: 'That leaves no SatDump pipeline for the S-band Black Kite/PHASMA rows'.
-
-- [A54 | contradiction | reaudit_AB] ДЕ: 4.1 row «GNSS L1 + regional SBAS»
-  ПРОБЛЕМА: Region Europe sets SBAS = EGNOS, and 11.6 row 43 says «regional SBAS» was replaced by «EGNOS», but the 4.1 target name still says regional SBAS.
-  ВИПРАВЛЕННЯ: Rename the row to «GNSS L1 + SBAS (EGNOS)».
-  ДОКАЗ: final/user_requirements.md line 49 'SBAS = EGNOS'. STACK 11.6 row 43. v2_edit_notes 04 b1: 'The GNSS target cell still says regional SBAS'.
-
-- [A55 | contradiction | reaudit_CD] ДЕ: 1.1 C24 «близько 1.72-1.94 kg»; 2.12 «плюс 0.15 kg за Lime = 1.72-1.94 kg»; 1.1 D14 «на спині 6.8-8.2 і 7.7-9.4 kg»; 2.5 Сумки «вміст 5.54-6.92 kg без КХ»; 11.4 рядок 34 «близько 5.2-7.1 kg без КХ і щогли»; 5.8 «вміст **5.60-7.01 kg**»
-  ПРОБЛЕМА: The device and backpack weights with Lime disagree across sections. 5.8 adds up its own mass table: parts 1.58-1.81 kg (battery row 0.33-0.34 kg, HF+ shield +0.05-0.07), so 1.73-1.96 kg with Lime. Backpack contents are 5.60-7.01 / 6.50-8.26 kg, and on the back 6.85-8.26 / 7.75-9.51 kg. C24 and 2.12 still give parts 1.57-1.79 / 1.72-1.94 kg. C24, D14, 2.12, 2.5 and 11.1 still give G4's backpack figures (5.54-6.92 / 6.44-8.17; 6.8-8.2 / 7.7-9.4), which G4 computed with a 1.67-1.87 kg device. 11.4 row 34 still gives the pre-Lime 5.2-7.1 / 6.1-8.4 kg and says 2.12 and D14 carry the same figures, w
-  ВИПРАВЛЕННЯ: Use the 5.8 sum everywhere. In C24 and 2.12: device with Lime 1.73-1.96 kg (parts 1.58-1.81 kg), without Lime 1.58-1.81 kg. In C24, D14, 2.12, 2.5 «Сумки», 11.1 (G4 rows) and 11.4 row 34: backpack contents 5.60-7.01 kg without HF and mast and 6.50-8.26 kg full, on the back 6.85-8.26 / 7.75-9.51 kg. Keep 5.54-6.92 / 6.44-8.17 only as «G4, пристрій 1.67-1.87 kg». Delete 5.2-7.1 / 6.1-8.4 from 11.4 row 34. Either recompute with the Rollei 1.14 kg (calculation from the 5.8 rows: 5.57-6.80 / 6.47-8.05 kg, on the back 6.82-8.05 / 7.72-9.30 kg) or state that 1.17-1.35 kg is a conservative tripod value.
-  ДОКАЗ: STACK 5.8 mass table (rows sum to 1.58-1.81 kg); reaudit_D_power_mech_display_lab.json results[3].corrections[16] (battery 0.33-0.34 kg); reaudit_C_antennas_targets.json results[1].corrections[15]; analogs_G4_mechanical_field.json decisions[4] (Rollei 1.14 kg) and decisions[5] (backpack computed wit
-
-- [A56 | contradiction | reaudit_CD] ДЕ: 4.1 Metop-B/C «далі Lime ≥6 Msps ci16 (гелікон + SAWbird+ GOES → Lime RX)»; 4.1 AWS «після приходу Lime — Lime ≥6 Msps ci16; Airspy Mini»; 5.3 «також для Metop/AWS на ≥6 Msps ci16»; 1.2 #91 «на цьому тракті. 6 Msps; продавець і ціна»; 9.1 «захоплення без втрат на ≥6 Msps на тракті гелікон»; 11.4 рядок 26 «Lime ≥6 Msps ci16, Airspy Mini — лише запасний за воротами»
-  ПРОБЛЕМА: The Lime sample rate for Metop/AWS conflicts between sections. 2.11.1, 2.11.3, 5.7, 8 (L-3) and 8.1 all state a hard 7 Msps floor and say «reaudit C називав 6 Msps, але швидкості Lime нижче 7 Msps заблоковано». The 9.1 Airspy condition defines an acceptance capture at a blocked rate. 1.2 #91 also has a stray fragment «. 6 Msps;» left over from an edit.
-  ВИПРАВЛЕННЯ: Replace «≥6 Msps» with «7 Msps ci16 (нижня межа профілів Lime; L-3 у 8.1)» in the 4.1 Metop and AWS rows, the 5.3 «Лише з Lime» row, 9.1 and 11.4 row 26. In 1.2 #91, delete the fragment «6 Msps;» and change «Lime на ≥6 Msps прибирає 82 %» to «Lime на 7 Msps прибирає 82 %». In 9.1, make the Airspy condition «15-хв захоплення без втрат на 7 Msps».
-  ДОКАЗ: reaudit_B_receivers_rf.json Lime sample rates ('Allowed: 7-61.44 Msps ... Block anything below 7 Msps'; 'the 7 Msps floor stays'); analogs_G6_extended_optional.json decisions[12].conditions_or_tests ('15-minute zero-drop 7 Msps capture'); reaudit_C results[2].corrections[11] (the 6 Msps that was ove
-
-- [A57 | contradiction | reaudit_CD] ДЕ: 1.2 #91 «лише після воріт «горб на одній спіралі» і тесту V4L 2.88 Msps і лише якщо Lime не пройшов»; 2.11.3 «Airspy Mini купувати лише якщо ворота (a)/(b) провалені І Lime не пройшов»; 9.1 «і лише якщо Lime не пройде 15-хв захоплення без втрат на ≥6 Msps»
-  ПРОБЛЕМА: The Airspy Mini purchase gate is inconsistent. In 4.1, 8 and 8.2 the gate follows G6 #12: buy if (a) 15 min of rtl_test at 2.88 Msps fails, OR (b) the Metop hump is seen but the V4L cannot decode. The Lime condition there is an optional scope choice for the user. 1.2 #91, 2.11.3 and 9.1 instead require a gate AND a failed Lime capture, which turns the Lime condition into a mandatory one.
-  ВИПРАВЛЕННЯ: In 1.2 #91, 2.11.3 «Швидкий L-band SDR» and 9.1, use the G6 wording already in 4.1 and 8: «купувати лише якщо (a) 15 хв rtl_test 2.88 Msps на синьому порту не проходять без втрат АБО (b) горб Metop видно, а V4L не декодує; опційно не купувати, якщо Lime уже пройшов 15-хв захоплення без втрат на 7 Msps на тракті гелікон + SAWbird+ GOES — вибір обсягу (компроміс такту й живлення), вирішуєте ви».
-  ДОКАЗ: analogs_G6_extended_optional.json decisions[12].conditions_or_tests ('Buy only if gate (a) fails ... or gate (b) shows the Metop hump but the V4L cannot decode. Optionally ... That is a scope choice, and it must be told to the user')
-
-- [A58 | contradiction | reaudit_CD] ДЕ: 4.1, рядок «S-band | ті самі | складаний + Lime», декодер «SatDump лише з цивільними й аматорськими конвеєрами з алоу-листа»
-  ПРОБЛЕМА: The S-band decoder cell names SatDump pipelines, but the v2 package ships only Meteor-M, MetOp, AWS, FengYun-2 and Elektro_Arktika (1.2 #30, 5.4, 11.4 row 30). No SatDump pipeline exists for Black Kite or PHASMA. An editor flagged this and it is still open.
-  ВИПРАВЛЕННЯ: Change the decoder cell to «gr-satellites (розбір кадрів не перевірено); конвеєра SatDump для Black Kite/PHASMA у пакеті немає (лише Meteor-M, MetOp, AWS, FengYun-2, Elektro_Arktika)».
-  ДОКАЗ: reaudit_C results[2].corrections[0] action (package only Meteor-M.json, MetOp.json, AWS.json, FengYun-2.json, Elektro_Arktika.json); edit notes 04_capabilities b2 ('Possible inconsistency ... S-band Black Kite/PHASMA rows')
-
-- [A59 | contradiction | reaudit_CD] ДЕ: 1.2 #7 «SHM 0 refid NMEA noselect + PPS lock NMEA prefer»; 11.5 рядок 47 «KERNELS=="998000.serial" → /dev/gnss0»; 11.2 рядок 15 «refclock PPS /dev/pps0 lock NMEA refid PPS prefer» … «узгоджується при зведенні»
-  ПРОБЛЕМА: GNSS timing and device names conflict with the body text. 5.4, C13 and 11.5 row 31 set PPS to /dev/pps-gnss with noselect, enabled by the gate through chronyc selectopts. 5.2 and 5.4 use /dev/lab/gnss, and 6.2 lists /dev/gnss0 as removed. 5.4 has already chosen GPSD_OPTIONS -n -b. #7 still says PPS 'prefer', 11.5 row 47 says /dev/gnss0, and 11.2 row 15 says /dev/pps0 'prefer' and calls the gpsd options unresolved.
-  ВИПРАВЛЕННЯ: 1.2 #7: «chrony 4.5: refclock SHM 0 refid NMEA offset <виміряна медіана> delay 0.2 noselect + refclock PPS /dev/pps-gnss lock NMEA refid PPS noselect; ворота вмикають PPS через chronyc selectopts PPS -noselect». 11.5 row 47: change «→ /dev/gnss0» to «→ /dev/lab/gnss (ім'я — за повторним аудитом A; /dev/gnss0 прибрано, 6.2)». 11.2 row 15: replace «/dev/pps0 … prefer» with «/dev/pps-gnss … noselect (повторний аудит D)» and «узгоджується при зведенні» with «обрано -n -b -s 115200 (5.4)».
-  ДОКАЗ: reaudit_D results[1].corrections[5] (chrony action), corrections[11] (/dev/pps-gnss), corrections[12] (-b); STACK 5.4 gpsd/chrony row and 6.2 («/dev/gnss0 як ім'я GNSS»)
-
-- [A60 | contradiction | rules] ДЕ: 1.2 #31 (line 126): «явний алоу-лист channelrx: AM/NFM/SSB/WFM, ADS-B (лише з нашими правилами показу dbFlags &1/&4/&8, інакше вимкнено), AIS (лише з придушенням type-35, інакше вимкнено)»; 11.6 row 35 (line 2396), same text; 11.6 row 27 (line 2388): «ADS-B у SDRangel — лише з цими правилами показу»
-  ПРОБЛЕМА: These rows list SDRangel ADS-B and AIS as allowed when the filters apply. Elsewhere the stack says SDRangel demodadsb/demodais are never built, because the military, PIA and LADD dbFlags filters and the type-35 suppression exist only in readsb and AIS-catcher, and the SDRangel plugins bypass them: 4.3 line 603, 5.4 lines 854/867/871, 6.1 line 1126, 8 line 1464 (CI fails on demodadsb/demodais), 11.2 row 33 line 2147. A builder following 1.2 #31 or 11.6 could ship a path that shows PIA/LADD and military tracks (operator note 25).
-  ВИПРАВЛЕННЯ: Line 126 and line 2396: replace the ADS-B/AIS items with «ADS-B і AIS — не в SDRangel (demodadsb/demodais не збираються); лише readsb і AIS-catcher з dbFlags &1/&4/&8 і придушенням типу 35». Line 2388: replace «ADS-B у SDRangel — лише з цими правилами показу» with «ADS-B — лише readsb з цими правилами; demodadsb у SDRangel не збирається (5.4, 6.1)».
-  ДОКАЗ: operator_notes.md item 25 (PIA &4 / LADD &8 not shown or logged). STACK.md line 867 («ADS-B і AIS — лише в readsb і AIS-catcher … бо ці фільтри є лише там») and line 1126 («demodadsb/demodais обходять фільтри dbFlags readsb і ship-type 35 AIS»).
-
-- [A61 | contradiction | structure] ДЕ: 1.1, L49: «Ці рішення заморожені для v1 і переважають усе, що суперечить їм в інших файлах.»
-  ПРОБЛЕМА: This v1 sentence was carried over unchanged. It contradicts the v2 source order in the header (user decisions > operator rules > P5 > P4 > v1 text). In v2, C1, C2, C4, C23, D8 and others were rewritten by those higher sources.
-  ВИПРАВЛЕННЯ: Replace with «Рішення заморожено у v1; у v2 їх змінено лише там, де цього вимагають рішення користувача 18.10.2026, правила нотаток оператора, рішення аналогів P5 або повторний аудит P4 (порядок — у шапці; кожна зміна — у розділі 11).»
-  ДОКАЗ: STACK.md line 49 vs line 13 («Пріоритет джерел у v2») and section 11 rows
-
-- [A62 | contradiction | structure] ДЕ: 2 (intro), L183: «ціни й продавці — з final_world_sourcing.json»
-  ПРОБЛЕМА: Stale v1 claim. In v2, part, seller and price are decided by the P5 analog decisions (header L13, 11.1). final_world_sourcing.json no longer sets prices or sellers.
-  ВИПРАВЛЕННЯ: Change to «ціни й продавці — з рішень аналогів P5 (final/analogs_G1-G6; див. 11.1), а де P5 нічого не змінив — з final_world_sourcing.json».
-  ДОКАЗ: STACK.md line 183 vs line 13 and 11.1 intro (line 2026)
-
-- [A63 | contradiction | structure] ДЕ: 1.2, row «Варіант Lime з GNSS (#83)», L157: «Лише якщо Lime залишено.»
-  ПРОБЛЕМА: A stale v1 condition. Lime is kept (user decision 18.10.2026), so the consequence column still reads as if Lime were optional.
-  ВИПРАВЛЕННЯ: Replace with «Lime залишено (рішення 18.10.2026): варіант з GNSS не брати.»
-  ДОКАЗ: STACK.md line 157 vs line 53 (C1) and line 319
-
-- [A64 | contradiction | structure] ДЕ: 4.1, L554: «Elektro-L5/FY-2H: Берлін 7.6/5.8°, Рим 10.8/8.5°, Варшава 12.0/10.3°, Атени 20.6/18.2°»; 1.2 L170 «Лісабон −4.9/−7.3°, Лондон −0.1/−2.1°, Париж +1.9/−0.1°…»; 11.4 L2270
-  ПРОБЛЕМА: Per-city elevation angles were added back. The same document states that city-specific angles were removed by rule: 1.2 #6 L106 «кути для конкретних міст прибрано» and 6.1 L1116 «константи поля і кути наведення для конкретних міст».
-  ВИПРАВЛЕННЯ: Replace the city lists with regional bands, as 11.6 L2382 already does: «Elektro-L5/FY-2H: нижче або біля горизонту в Іберії, Ірландії й Великій Британії, близько 6-12° у центральній Європі, близько 18-21° на південному сході (модель)». Keep city fixes only as CI test coordinates (8, L1489).
-  ДОКАЗ: STACK.md lines 106, 170, 554, 1116, 2270, 2382; final/user_requirements.md lines 13, 39, 49 («no city tables»)
-
-- [A65 | contradiction | structure] ДЕ: 3.1, row «Банк живлення», L411, status: «перевірено через агрегатор (сторінки магазинів — 403)»
-  ПРОБЛЕМА: The document's legend says (перевірено) means seen at the primary source. Here the price comes from an aggregator (billiger.de) and the shop pages returned 403. By the document's own definition the status is not «перевірено».
-  ВИПРАВЛЕННЯ: Status: «не перевірено (ціна з агрегатора billiger.de; сторінки MediaMarkt/Saturn — 403)».
-  ДОКАЗ: STACK.md line 411 (status cell) vs line 9 («(перевірено) — … побачені на першоджерелі»)
-
-- [A66 | missing | analogs_G1_G3] ДЕ: 2.6 «Логіка інтерфейсу»: «5× AOS AO3400A (вентилятор Q6A, повітродувка, котушки G6K K1 і K2, запасний шлях вентилятора)»; 2.1 «Охолодження»: «вентилятор шляху 1 — ключ з боку плюса (P-MOSFET або 5 V load switch) з діодом»
-  ПРОБЛЕМА: G2 #1 says the 3-wire tach fan on path 1 must be switched high-side by a P-MOSFET plus driver, or by a 5 V load switch. No BOM row lists or prices that P-MOSFET or load switch. The interface-logic set (G2 #10) has only the N-channel AO3400A for «вентилятор Q6A», and on its own that is a low-side switch.
-  ВИПРАВЛЕННЯ: Add to 2.6 «Логіка інтерфейсу» (or the 2.1 cooling row) an unpriced item «P-MOSFET верхнього ключа вентилятора шляху 1 (або ключ навантаження 5 V) + діод зворотного ходу — деталь не обрано, модель (G2 #1, п. 3); AO3400A «вентилятор Q6A» — його драйвер затвора».
-  ДОКАЗ: analogs_G2_display_hmi_storage.json decisions[1].stack_changes 3 («switch path-1 high-side (P-MOSFET plus a small driver, or a 5 V load switch)»); decisions[10].chosen (AO3400A list)
-
-- [A67 | missing | analogs_G4_G6] ДЕ: 1.1 D2: «Проводка AWG 18-20 у колі батареї.»; 5.1: «Проводка в колі батареї — AWG 18-20.»; 3.1 «Інструменти»: «Jokari 20050 +$28.63 (якщо тракт батареї 18 AWG)»
-  ПРОБЛЕМА: G5 #15 stack_changes requires stating one gauge, 20 AWG or 18 AWG, for the battery path, because 18 AWG needs the second stripper (Jokari 20050). v2 still says 18-20 AWG, so the tools line cannot be closed. The same stack already uses an 18 AWG silicone XT30 service lead and a 16 AWG XT60-XT30 lead (2.7 «Збирання батареї»), which falls inside the 18 AWG branch.
-  ВИПРАВЛЕННЯ: Fix one gauge in D2 and 5.1. If it is 18 AWG (or if the 18 AWG service lead and the 16 AWG XT60-XT30 lead are counted), move Jokari 20050 (+$28.63, TME) from «Опції» into the tools set. If it is 20 AWG, write «20 AWG — лише Jokari 40026» and keep the 8.x stripper test.
-  ДОКАЗ: analogs_G5_lab_bench.json decisions[15].stack_changes («Wire gauge: state 20 AWG or 18 AWG for the battery path, since 18 AWG needs a second stripper») and conditions_or_tests 4. STACK 2.7 «Збирання батареї» (18 AWG silicone; XT60-XT30 16 AWG).
 
 - [A68 | missing | analogs_G4_G6] ДЕ: 3.1, row «Інструменти»: «набір запчастин $57-78 (лише те, чого немає в інших рядках; 2 запасні MHF4L-SMA лишаються ...)»
   ПРОБЛЕМА: G5 #15 corrects the spares kit in two ways. v2 carries only the MHF4L one. The TVS correction (spares use SMBJ13A and SMBJ17A, not SMBJ14A) is not stated anywhere for the spares kit.
