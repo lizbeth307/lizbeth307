@@ -1192,5 +1192,165 @@ _Run `wf_88090a59-878`_
 
 ## Адверсаріальна перевірка (`verify`)
 
+_Run `wf_88090a59-878`_
+
+- **Component:** Compute board (NPU): Radxa Dragon Q6A (Qualcomm QCS6490) vs. alternatives, October 2026
+- **Recommendation holds:** так
+- **Issues:**
+  1.
+    - **Claim:** Plan v3: Q6A 16 GB costs ~$124 on AliExpress. Researcher: buy 12 GB from Allnet; no cheaper in-stock source exists.
+    - **Problem:** The $124 16 GB price is gone. Every Arace variant is sold out (4/6/8/12/16 GB at $95/115/139/169/119.50), and Ameridroid is sold out ($169.95/$249.95). Allnet China has the 6 GB ($149.99, listed as 'WiFi5') and 12 GB ($189.99) in stock; its 8 GB ($159.99) is sold out. The research also missed an EU seller with stock.
+    - **Correction:** TinyTronics (Eindhoven, NL) lists the Q6A 8 GB at EUR 121 including NL VAT (EUR 100 excluding VAT), with 20+ units in stock. That is the cheapest in-stock source I found, and an EU seller makes shipping and RMA from Ukraine easier. No Prom.ua listing exists. I could not check AliExpress prices: the listing returned an empty page.
+    - **Source:** https://arace.tech/products/radxa-dragon-q6a.js ; https://shop.allnetchina.cn/products/radxa-dragon-q6a.js ; https://www.tinytronics.nl/en/development-boards/single-board-computers/radxa-dragon-q6a-qcs6490-8gb ; https://ameridroid.com/products/radxa-dragon-q6a.js
+  2.
+    - **Claim:** Researcher: use the Radxa 256 GB Kioxia UFS module (557 MB/s write); skip the 128 GB module.
+    - **Problem:** The 256 GB module is sold out everywhere I checked: Arace ($49) and Allnet ($75.90). Arace's 64, 128 and 512 GB modules are sold out too. Allnet has only the 128 GB in stock ($65.90). Radxa's 388 MB/s (128 GB Samsung) and 557 MB/s (256 GB Kioxia) write figures are dd results that may only reflect the write cache. A 128 GB module holds only about 8.7 minutes of 61.44 Msps cs16 (246 MB/s), less the OS.
+    - **Correction:** Buy the 128 GB module ($65.90, Allnet) for the OS and short IQ bursts. For long raw-IQ recordings, use a USB 3 NVMe enclosure (1-2 TB) on the Q6A's USB 3.1 Gen1 port, and confirm it sustains well over 250 MB/s with fio first. The Kioxia kernel fix (radxa/kernel PR #551, merged 11 May 2026) is only needed if you find a 256 GB module.
+    - **Source:** https://arace.tech/products/radxa-ufs-module.js ; https://shop.allnetchina.cn/products/high-performance-ufs-3-1-module.js ; https://docs.radxa.com/en/dragon/q6a/hardware-use/ufs-emmc-com ; https://github.com/radxa/kernel/pull/551
+  3.
+    - **Claim:** Researcher: the board takes 12 V only; 5 V or 9 V USB-C sources will not start it.
+    - **Problem:** Wrong. Radxa staff (BigfootACA, 2 Mar 2026) say the 12 V pin accepts 3.6-16 V (5, 9 or 12 V recommended) into an SY81012 buck to 4.2 V, and USB-C accepts 12 V PD or 5 V/3 A. However, 5 V/3 A is only 15 W, which is too little once the ~4 W SDR is added. A full 4S pack (16.8 V) is over the 16 V limit.
+    - **Correction:** Feed the 3-pin header from a regulated 9 V or 12 V buck (at least 3 A) on the 4S pack, and never power the USB-C port at the same time. A 9 V or 7.5 V buck stays regulated across the whole 4S voltage range.
+    - **Source:** https://forum.radxa.com/t/30400 ; https://dl.radxa.com/q6a/docs/radxa_dragon_q6a_product_brief.pdf
+  4.
+    - **Claim:** Researcher: the 4-lane MIPI DSI drives a DSI panel directly; HDMI 2.0 handles 4K for bench use. The user wants a sunlight-readable panel above Full HD.
+    - **Problem:** The product brief limits DSI to 'FHD+', and third-party DSI panels are unproven on this board. The HDMI port is a Radxa RA620 DP-to-HDMI bridge fed by only 2 DP lanes (data-lanes = <0 1>). The msm DP driver caps the link at HBR2 when the DT gives no link-frequencies, which allows roughly 360 MHz pixel clock. 2560x1600@60 reduced-blanking (268.5 MHz) and 3840x2160@30 work; 4K60 is impossible. Mainline's Q6A DTS has no HDMI node at all, so HDMI needs the Radxa kernel or Armbian-edge DP/DPU patches.
+    - **Correction:** For the display, plan on HDMI at no more than 2560x1600@60 (1920x1200 is safest). Check the panel's EDID on the Q6A before buying.
+    - **Source:** https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts ; https://github.com/torvalds/linux/blob/v6.18/drivers/gpu/drm/msm/dp/dp_panel.c ; https://raw.githubusercontent.com/torvalds/linux/master/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts ; https://dl.radxa.com/q6a/docs/radxa_dragon_q6a_product_brief.pdf
+  5.
+    - **Claim:** Fixes agent: the onboard 2.5GbE (RTL8125BG on pcie0) can be looped to an M.2 RTL8125B card, with a pass mark of 2.3 Gb/s or more in each direction.
+    - **Problem:** The onboard NIC is a 1 GbE RTL8111 (sbc-bench shows it on PCIe at 2.5GT/s x1; the brief says 10/100/1000). About 940 Mb/s per direction is the ceiling, so the pass criterion cannot be met and the test never reaches the 246 MB/s the SDR needs.
+    - **Correction:** Use a USB 3 2.5GbE adapter (RTL8156B) on the Q6A's USB 3.1 port as the far end of the link. That also measures USB 3 throughput. Otherwise skip Stage B and go straight from NVMe riser qualification to the LimeSDR.
+    - **Source:** https://raw.githubusercontent.com/ThomasKaiser/sbc-bench/master/results/KBw_.txt
+  6.
+    - **Claim:** Fixes agent: force the HDMI mode with drm.edid_firmware=DP-1:edid/panel.bin video=DP-1:2560x1600@60e.
+    - **Problem:** The RA620 is handled by drm simple-bridge with connector_type DRM_MODE_CONNECTOR_HDMIA, so the DRM connector is HDMI-A-1, not DP-1. Geerling's GravityMark run also reported HDMI-1. The parameters as written would probably be ignored.
+    - **Correction:** Use drm.edid_firmware=HDMI-A-1:edid/panel.bin video=HDMI-A-1:2560x1600@60e, after confirming the name with ls /sys/class/drm.
+    - **Source:** https://github.com/torvalds/linux/blob/v6.18/drivers/gpu/drm/bridge/simple-bridge.c ; https://github.com/geerlingguy/sbc-reviews/issues/85
+  7.
+    - **Claim:** Fixes agent: move the RTL-SDR to the single USB 3.1 port so it avoids the USB 2.0 hub it would share with Wi-Fi.
+    - **Problem:** That uses up the only SuperSpeed port, which is USB 3.1 Gen1, 5 Gbps, on 2 PHY lanes because the other 2 drive DP to HDMI. That port is the best route for long IQ recordings now that the 256 GB UFS is unavailable. The RTL-SDR at 2.4-3.2 Msps needs at most 6.4 MB/s, which the FE1.1s high-speed hub easily carries once Wi-Fi is off. An active USB 3 link also radiates broadband noise around 2.4 GHz, near the S-band and L-band chain.
+    - **Correction:** Leave the RTL-SDR on a hub port and turn Wi-Fi off during passes. Put the NVMe enclosure on the USB 3.1 port, use a shielded short cable, and keep it away from the L/S-band LNA.
+    - **Source:** https://dl.radxa.com/q6a/hw/datasheets/80-23889-1_REV_AW_QCS6490_and_QCS5430_Data_Sheet.pdf ; https://raw.githubusercontent.com/torvalds/linux/master/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts ; https://www.usb.org/sites/default/files/327216.pdf
+  8.
+    - **Claim:** Fixes agent: use a Pololu D36V50F12 (cited as pololu.com/product/4093) plus an SMBJ13A TVS and fuse to protect the header.
+    - **Problem:** Product #4093 is the D36V50F7 (7.5 V output, 8.3-50 V input). The D36V50F12 is #4095 (13.3-50 V input, $39.95). An SMBJ13A clamps near 21 V at its rated peak pulse current, so it cannot hold the input under 16 V. It only works as a crude crowbar that eventually blows the fuse.
+    - **Correction:** Use the D36V50F9 or D36V50F7 (or any buck of 3 A or more with output over-voltage protection) so the output stays regulated across 12.0-16.8 V of pack voltage. If you want a hard limit, add an OVP eFuse set near 13.5 V instead of relying on the TVS. Keep the fuse and reverse-polarity protection.
+    - **Source:** https://www.pololu.com/product/4093 ; https://www.pololu.com/product/4095
+  9.
+    - **Claim:** Plan v3: LimeSDR Micro M.2 costs $199 and deliveries start around 30 Sept 2026.
+    - **Problem:** Crowd Supply now lists the M.2 2280 Basic at $249 (GNSS version $299), and 'orders placed now ship Dec 15, 2026'. The card is M.2 B+M key and has a nonstandard top-side component height of about 4 mm.
+    - **Correction:** The Q6A-plus-SDR gating test cannot happen before about January 2027. Buy the Q6A now while stock exists and qualify the riser beforehand. Plan the riser and case for the 4 mm top-side height.
+    - **Source:** https://www.crowdsupply.com/lime-micro/limesdr-micro
+  10.
+    - **Claim:** Researcher: no cheaper board with an NPU and a PCIe Gen3 M.2 slot exists.
+    - **Problem:** Not quite. The Orange Pi 4 Pro (Allwinner A733) has an M.2 M-key PCIe 3.0 x1 slot, measures 89x56 mm, has a 3 TOPS NPU (INT8/INT16/FP16) and costs about $48-71 for 4-12 GB (2026 reports; about $125 for 12 GB on Amazon). The Radxa Cubie A7A (A733, PCIe 3.0 x1 over FPC) is $50/65/75 at Arace and in stock.
+    - **Correction:** These are cheaper but not better. The CPU is 2x A76 at 2.0 GHz plus 6x A55, too weak for a 56 MHz FFT plus HRPT decoding. They run BSP kernels 5.15/6.6, the NPU SDK is undocumented, and the Orange Pi 4 Pro takes only 5 V/3 A. Keep the Q6A.
+    - **Source:** https://www.cnx-software.com/?p=158727 ; https://boilingsteam.com/orange-pi-4-pro-review/ ; https://arace.tech/products/radxa-cubie-a7a.js
+  11.
+    - **Claim:** Researcher: choose 12-16 GB so 160 Msps bursts land in RAM (about 15 s).
+    - **Problem:** RAM is not what limits this. The LimeSDR Micro driver's RX DMA ring is about 2 MB, which is roughly 3 ms at 160 Msps I16. Sustained 160 Msps capture on this host is unproven no matter how much RAM there is.
+    - **Correction:** 12 GB is still worth $40 over 6 GB for SatDump, SDR++, GNU Radio, the classifier and a 2-4 GB IQ ring all at once. 8 GB is adequate. Treat 160 Msps as an experiment, not a requirement.
+    - **Source:** https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro/drivers/linux/la9310_limesdr/la9310_pci.c
+  12.
+    - **Claim:** Researcher: Radxa sells no official cooler.
+    - **Problem:** Out of date. The Radxa Armor Case 7056A is listed in stock at Arace ($4.99) and Allnet ($9.90). Forum users report about 40 °C idle with it.
+    - **Correction:** Use the Armor Case 7056A or a copper heatsink with a 5 V fan on the 40-pin header. Active cooling is mandatory.
+    - **Source:** https://arace.tech/products/radxa-armor-case-7056a.js ; https://forum.radxa.com/t/best-heatsink-cooling-solutions-for-dragon-q6a/30123
+- **Forum and fix assessment:** The forum findings check out wherever I could verify them:
+  - Staff confirm the 12 V header accepts 3.6-16 V and USB-C accepts 5 V/3 A (topic 30400).
+  - The Kioxia UFS fault is real. PR #551 (PA_TACTIVATE quirk) was merged into radxa linux-6.18.2 on 11 May 2026, and mainline ufshcd.c still lacks it.
+  - The INT8-only HTP v68 report (topic 31217) is real, and Qualcomm's HTP doc says quantized 8- and 16-bit networks run on all SoCs.
+  - sbc-bench shows full clocks and 8.4 GB/s memcpy.
+  - The USB 2.0 hub (1a40:0101) with the Wi-Fi on port 4 is in the mainline DT.
+  - Ubuntu 26.04 / Armbian-edge 7.2.9 community images exist.
+  
+  None of this overturns the Q6A choice. It does make the software stack demanding: pin the kernel and the NPU stack, and do the bring-up yourself.
+  
+  The fixes agent's work is unusually solid. I confirmed in source:
+  - Kernel v6.18 pbus_size_mem() skips classless devices via pdev_resources_assignable(); v6.17 did not.
+  - The LimeSDR driver's FixBARResources() comment says the LA9310 ROM reports class 00.
+  - The Radxa DT maps every PCIe1 requester ID to SMMU 0x1c80.
+  - pcie1 has num-lanes 2, is dma-coherent, and its 32-bit window is 0x40300000 + 0x1fd00000.
+  - The M.2 3.3 V rail is a dedicated ETA3521 (U20) with a 1 µH 4 A inductor and a 91k/20k divider, fed from VCC_5V_PERI.
+  - HDMI is RA620 on 2 DP lanes capped at HBR2.
+  
+  So the class-code quirk for the LimeSDR on 6.18 kernels is a credible, well-founded fix, although no one has observed the failure on hardware yet.
+  
+  Errors in the fixes:
+  - The onboard Ethernet is 1 GbE RTL8111, not 2.5GbE, so the Stage-B pass mark is unreachable.
+  - The EDID override uses connector DP-1; it should be HDMI-A-1.
+  - Putting the RTL-SDR on the USB 3.1 port wastes the only SuperSpeed port.
+  - The Pololu product link is wrong (#4093 is the 7.5 V model), and the TVS crowbar does not clamp below 16 V.
+  - The plan assumes the 256 GB UFS module, which is sold out everywhere checked.
+  
+  The A16W8 quantization fallback, the CDSP watchdog and the QAIRT version-pinning advice are sound.
+- **Final recommendation:**
+  - **Name:** Keep the Radxa Dragon Q6A, 12 GB version, with a Radxa 128 GB UFS module (OS and short bursts), a USB 3 NVMe enclosure for long IQ recordings, active cooling, and Radxa OS r2 pinned to kernel 6.18.2-x-qcom
+  - **Price:** Q6A 12 GB: $189.99 at Allnet China (in stock, 18 Oct 2026). 128 GB UFS: $65.90 at Allnet (in stock). Armor Case 7056A: $9.90. Total about $266 before shipping and Ukrainian import VAT. Arace sells the 12 GB at $169 when in stock (sold out now). The $124 16 GB price no longer exists.
+  - **Why:** Under the hard constraints (Linux-usable NPU, a free PCIe Gen3 M.2 slot, palm size of 85x56 mm, about 3-10 W board power), nothing checked in October 2026 beats it.
+  - RUBIK Pi 3: same chip, $299 for 8 GB, 100x75 mm.
+  - Dragon Q8B: 100x75 mm, 20-43 W, BIOS still unfinished, ships 15 Nov.
+  - RK3588 boards: about $225+ for 8 GB, mostly sold out.
+  - Jetson Orin Nano Super: $399.
+  - A733 boards: cheaper, but weak CPU and BSP-only software.
+  
+  The Q6A's HTP does work from Linux with QAIRT once versions are pinned. Its M.2 slot is Gen3 x2 with a dedicated 4 A 3.3 V regulator, and the 12 V header takes 3.6-16 V, which suits a battery build.
+  
+  12 GB gives headroom for SatDump, SDR++, GNU Radio, the classifier and a RAM IQ ring together, for $40 more than the 6 GB. RAM cannot be upgraded later.
+  
+  Conditions:
+  - Display: HDMI tops out at 2560x1600@60 or 4K30.
+  - The LimeSDR Micro on kernel 6.18 may need a PCI class-code quirk.
+  - The LimeSDR does not ship until 15 Dec 2026, so the SDR gating test comes in about January 2027.
+  - **Sources:**
+    - https://shop.allnetchina.cn/products/radxa-dragon-q6a
+    - https://shop.allnetchina.cn/products/high-performance-ufs-3-1-module
+    - https://arace.tech/products/radxa-dragon-q6a
+    - https://dl.radxa.com/q6a/docs/radxa_dragon_q6a_product_brief.pdf
+    - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+    - https://forum.radxa.com/t/30400
+    - https://raw.githubusercontent.com/ThomasKaiser/sbc-bench/master/results/KBw_.txt
+    - https://github.com/geerlingguy/sbc-reviews/issues/85
+    - https://www.thundercomm.com/product/rubik-pi/
+    - https://www.cnx-software.com/2026/07/22/nvidia-increases-the-price-of-jetson-modules-and-devkits-by-up-to-101/
+- **Final budget option:**
+  - **Name:** Radxa Dragon Q6A 8 GB from TinyTronics (Netherlands)
+  - **Price:** EUR 121 including NL VAT (EUR 100 excluding VAT for non-EU export, if the seller deducts it), 20+ in stock. About $116-140 depending on the exchange rate, plus EU shipping and any Ukrainian import VAT. Fallback: Allnet 6 GB at $149.99, listed as Wi-Fi 5.
+  - **Why:** It is the same SoC, NPU, M.2 slot and software as the main pick, so nothing in the design changes. It is the cheapest Q6A in stock anywhere I checked.
+  
+  An EU seller also means faster delivery to Ukraine and a far easier RMA. That matters because the forum shows recurring DDR-training and boot-loop dead boards, and one AliExpress buyer got store points instead of a replacement.
+  
+  8 GB runs the whole SDR stack. You give up some RAM ring-buffer length.
+- **Known problems and fixes to apply:**
+  - On arrival, test the board fully inside the return window because DDR/boot-loop dead boards recur. Do a 12 h stressapptest and 50-100 cold boots, connect a UART on pins 8/10/14 at 115200 baud, and back up the SPI NOR (cdt/ddr partitions) with edl-ng before any firmware change.
+  - Firmware and OS: use SPI BIOS 6.0.260120 (flat_build_260120) and the Radxa OS r2 noble image. Then pin the kernel and NPU packages: apt-mark hold linux-image-6.18.2-4-qcom fastrpc libcdsprpc1 radxa-firmware-qcs6490. Kernel 7.0.x broke HDMI, audio and FastRPC for some users. Community Ubuntu 26.04 images on Armbian-edge 7.2.9 are the fallback.
+  - Power: feed the 3-pin header (pin 1 = 12 V, pin 2 = GND, pin 3 = PWR key) from a fused, reverse-protected buck on the 4S pack. Use a 9 V or 7.5 V output so it stays regulated from 12.0 to 16.8 V (the header accepts 3.6-16 V), rated for at least 3 A (24 W or more). Solder twisted 20 AWG to J21. Never plug in USB-C at the same time: the Q5 P-FET back-feeds. Never apply the raw 16.8 V pack.
+  - Cooling is mandatory. Without it the board throttles at about 90-91 °C (Tj limit 95 °C). Fit the Radxa Armor Case 7056A or a copper heatsink with a 30-40 mm 5 V fan on the 40-pin 5V/GND pins, paste on the SoC and a pad on the LPDDR5. Log temperatures during the combined SDR, NPU and storage soak.
+  - LimeSDR Micro on kernel 6.18 or later: the LA9310 ROM reports PCI class 0, and v6.18 pbus_size_mem() skips classless devices, so the root-port window may never be sized and the driver can fail with 'Failed to assign BAR resources'. If that happens, rebuild the Radxa 6.18.2 kernel with DECLARE_PCI_FIXUP_CLASS_EARLY entries for 1957:1c10, 1957:1c12 and 2058:001d that set class 0x118000. Build LimeSuiteNG from the limesdr-micro branch.
+  - M.2 riser: the slot is 2230 on the top, under the 40-pin header, so a 2280 card would overhang the USB-C and 12 V header edge. Use a short shielded flex riser rated PCIe 4.0 (10 cm or less) or a rigid extender. Qualify it with an NVMe drive (30 min of fio, then check lspci LnkSta/CESta). Disable ASPM on the SDR link (pcie_aspm=off). If you see AER errors, force Gen2 (5 GT/s is enough for one 61.44 Msps RX).
+  - Riser test with a non-storage device: the onboard Ethernet is only 1 GbE. Pair the M.2 RTL8125B card with a USB 3 RTL8156B 2.5GbE adapter on the Q6A's USB 3.1 port to push 2.3 Gb/s or more and test DMA/MSI and USB 3 throughput together.
+  - Storage: the 256 GB Kioxia UFS module is sold out, so use the 128 GB UFS ($65.90) for the OS. Record long IQ to an NVMe in a USB 3 enclosure on the USB 3.1 Gen1 port, after checking it sustains well over 250 MB/s with fio. Use an mlock'd 2-4 GB ring plus an O_DIRECT writer. If you do get a Kioxia module, stay on the Radxa kernel (PR #551), or add the PA_TACTIVATE quirk on mainline.
+  - USB plan: the RTL-SDR goes on a USB 2.0 hub port, which it shares with the AIC8800 Wi-Fi. Run 'nmcli radio wifi off' during passes. Keep the USB 3 device and cable away from the 1.7 and 2.2 GHz LNA, because USB 3 radiates broadband noise near 2.4 GHz.
+  - Display: HDMI goes through the RA620 bridge on 2-lane HBR2, so the limit is 2560x1600@60 or 4K30. Pick a panel at 2560x1600 or lower (1920x1200 is safest) and read its EDID on the Q6A before buying. If EDID or hotplug is flaky, use drm.edid_firmware=HDMI-A-1:edid/panel.bin video=HDMI-A-1:<mode>e in the systemd-boot entry. DSI is FHD+ only and third-party DSI panels are unproven.
+  - NPU: on r2, check that fastrpc_test -a v68 passes. If you see 0x80000600, restore fastrpc_shell_3 from radxa-firmware-qcs6490 and apply the community DT overlay (memory-region / shared-dma-pool). For NVMe or UFS boot, add an initramfs hook for adsp.mbn and cdsp.mbn. Compile models with the same QAIRT version as the DSP runtime (2.42 on stock r2; test 2.46). Design the classifier for INT8, with A16W8 as the fallback (no FP16 on v68), keep VTCM use at 2 MB or less, and run one long-lived daemon with a CDSP-restart watchdog and a CPU (ONNX Runtime/XNNPACK) fallback.
+  - CPU budget: pin the Lime RX thread to CPU7 (2.7 GHz, chrt -f 10) and run SatDump/SDR++ on CPU4-6. Use LMS7002M decimation or I12 instead of demodulating 61 MHz streams. Benchmark the SatDump real-time factor on recorded basebands.
+  - Buying: avoid AliExpress third-party sellers (an RMA ended in store points). The board is not sold in Ukraine. Budget a spare board if field reliability matters.
+- **Missed better options:**
+  - Not a different board: the same Q6A 8 GB is in stock in the EU at TinyTronics NL (EUR 121 incl. VAT / EUR 100 ex VAT, 20+ units). That is cheaper than any Asian listing and easier for shipping and RMA from Ukraine.
+  - Orange Pi 4 Pro (Allwinner A733): M.2 M-key PCIe 3.0 x1, 89x56 mm, 3 TOPS NPU with INT8/INT16/FP16, about $48-71 for 4-12 GB (2026 reports; ~$125 for 12 GB on Amazon). Much cheaper, but 2x A76 at 2.0 GHz plus 6x A55, a BSP 5.15 kernel, an undocumented NPU SDK and 5 V/3 A input. Not better for 56 MHz DSP.
+  - Radxa Cubie A7A (A733): PCIe 3.0 x1 over an FPC that needs an M.2 adapter. $50/65/75 for 4/6/8 GB at Arace, in stock. Same weaknesses as the Orange Pi 4 Pro.
+  - RUBIK Pi 3 has USB-C DisplayPort up to 4K60, a better path for a high-resolution panel than the Q6A's 2-lane HDMI (4K30), but costs $299 for 8 GB and measures 100x75 mm. Not worth it unless you need more than 2560x1600@60.
+  - No strictly better palm-sized NPU board with Gen3 M.2 turned up in October 2026. I found no RK3688/RK3668 board shipping. NVIDIA announced the Jetson Orin Nano 2 on 25 Aug 2026 for H1 2027, and the current Orin Nano Super costs $399.
+- **Remaining uncertainties:**
+  - Whether the LimeSDR Micro (LA9310) actually enumerates, gets BARs and streams 61.44 Msps over the Q6A's pcie1 through a riser. The class-0 BAR-sizing failure on kernel 6.18 or later is inferred from source and has not been seen on hardware. The card does not ship until 15 Dec 2026.
+  - Sustained USB 3.1 Gen1 throughput on the Q6A (no community measurement exists). It is needed if IQ recording moves to a USB NVMe enclosure.
+  - Sustained write speed of the 128 GB UFS module beyond its write cache (only Radxa's dd figure of 388 MB/s exists), and which chip Allnet's 128 GB module actually uses.
+  - AliExpress prices for the Q6A in October 2026 (page did not load). Allnet China shipping cost to Ukraine. Whether TinyTronics ships to Ukraine and removes NL VAT. The current Ukrainian import VAT threshold for parcels.
+  - Which QAIRT version the stock r2 DSP firmware really accepts (2.42 vs 2.46 reports conflict), and INT8/A16W8 accuracy for an IQ modulation classifier on HTP v68.
+  - Whether a chosen 1000-nit HDMI panel reads its EDID correctly through the RA620 bridge.
+  - Whether the Armor Case 7056A cools well enough with an SDR riser and a sealed handheld case.
+- **Confidence:** medium
+
 _Агент цього етапу ще працює (run `wf_88090a59-878`)._
 
