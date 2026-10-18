@@ -18087,6 +18087,723 @@
   - Does the Wisecoco touch controller work with touch-capable gloves and in rain, and can the RP2040 co-processor take 3 buttons or an encoder without firmware conflicts?
 - **Confidence:** medium
 
+## extract:analogs_G5 (run `wf_62cf5948-d44`)
+
+- **Source:** analogs_G5
+- **Changes:**
+  1.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** LiteVNA 64 (Zeenko)
+    - **Anchor:** | VNA | LiteVNA 64 (Zeenko) | 1 |
+    - **Instruction:** Keep the part and the BOOKED seller Passion Radio (FR, SKU NANO-LITEVNA64-2730, HW 3.1, 5 шт.); price cell unchanged «175.73 без ПДВ (експорт) / 210.88 з ПДВ FR» (EUR 156.33 / 187.60 = база EUR 182.50 мінус знижка EUR 26.17 без дати завершення); status перевірено (18.10.2026). Add to the note: «Доставка Passion Radio — 'to be determined'. Умовна зміна продавця (той самий прилад): Eleshop (eleshop.eu/litevna-5341.html, ELE005341; у списку tinySA.org) $162.53 без ПДВ (EUR 144.59) / близько $195.04 з 20% ПДВ (близько EUR 173.51, розрахунок) — не перевірено (лише знімки пошуку, Cloudflare 403); економія $13.20 без ПДВ ($15.84 з ПДВ) до доставки, може зникнути. Лише якщо в той самий день виконано умови з розділу 8; інакше — Passion Radio (останні 5 шт.). Резерв зі списку tinySA.org: GOTRONIK (PL) $179.85 без ПДВ (EUR 160.00), Neven (CZ) $179.13 без ПДВ (EUR 159.36; заявляє HW 0.3.3, у полі виробника — NANOLAB) — лише після перевірки «виробник Zeenko» в GPSR. DR за ревізією: HW 3.1 — >90 dB нижче 3 GHz (IFBW 90 Hz) і >50 dB від 3 GHz; v0.3.3 — >70 dB від 3 GHz; S11 <−50 dB / <−40 dB.» Replace «Бюджет: Lab401 $215.83 (EUR 192; не обрано).» with «Lab401 (вендор DeepElec, EUR 192) не дешевший за жодного прочитання ПДВ ($215.83 або $179.86) — не бюджетний варіант.»
+    - **Reason:** P5 G5 decision replace_conditionally: identical product, cheaper EU listed seller possible but price unverifiable; booked line stays Passion Radio until checks pass. Lab401 rejected as not cheaper and non-Zeenko vendor.
+    - **Sources:** analogs_G5 decision 0; https://www.passion-radio.com/analyzer-spectrum/lite-vna64-2730.html; https://eleshop.eu/litevna-5341.html; http://nanovna.com/wp-content/uploads/2021/11/LiteVNA_User-Guide.pdf; https://tinysa.org/wiki/pmwiki.php?n=Main.Buying; https://lab401.com/products/litevna.json
+    - **Saving usd:** 13.20 ex VAT (15.84 incl. VAT), conditional and unverified
+  2.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** tinySA Ultra+ ZS407
+    - **Anchor:** | Аналізатор спектра | tinySA Ultra+ ZS407 | 1 |
+    - **Instruction:** Part unchanged. Seller cell: «Astroradio (ES, у списку tinySA.org) — за замовчуванням; умовно GOTRONIK (PL), Eleshop або Elektor (NL)». Price cell stays «204.28 без ПДВ / 247.18 з ПДВ (EUR 219.89; EUR 215.50 переказом)». Add to note: «$247.18 — ціна з доставкою лише для материкової Іспанії. В інші країни кошик Astroradio додає GLS, фіксований збір Insurance EUR 5.92 і 21% ES ПДВ на доставку: PT EUR 227.89 ($256.17); DE, FR EUR 244.81 ($275.19); NL, IT, AT, BE EUR 247.89 ($278.65); PL, CZ EUR 249.93 ($280.95). Продавця вирішити за 3 робочі дні (від ZS407 залежить A/B регулятора 12 V), інакше Astroradio. Адреса в Польщі: GOTRONIK (SKU TINYSA-ULTRA-ZS407, EAN 5902186301931) PLN 899.00 з ПДВ / PLN 730.89 без ПДВ = $231.25 / $188.01 (4.37 PLN/EUR), InPost PLN 0, у наявності; доставка лише по Польщі. Інша адреса ЄС: спершу Eleshop (у списку) — лише ZS-407 (не ZS-406) і з доставкою не дорожче за Elektor; далі Elektor (SKU 21021) EUR 196.02 з ПДВ = $220.35 (без ПДВ EUR 162.00 = $182.10, розрахунок) + фіксована доставка EUR 7.95 NL/DE, EUR 9.95 FR/AT/BE, EUR 12.95 ES/IT/PL/CZ (= $229.28 / $231.53 / $234.90) — лише за умов із розділу 8. Комплект Elektor/GOTRONIK має SMA-антену — лише для прийому; генератор tinySA ніколи не вмикається з під'єднаною антеною. Клон тестом не виявити (tinySA.org) — справжність доводить лише ланцюжок постачання.» Delete «Бюджет: Mirfield $252.98 (GBP 189.95).» (UK import makes it no budget option for an EU buyer).
+    - **Reason:** P5 G5 decision replace_conditionally (same SKU, cheaper channel); Astroradio price is landed only for Spain; Mirfield not a budget option for EU (operator notes 34-35).
+    - **Sources:** analogs_G5 decision 1; https://www.astroradio.com/wp-json/wc/store/v1/cart/update-customer; https://www.gotronik.pl/tinysa-ultra-analizator-widma-100khz-7-3ghz-zs407-zeenko-p-13267.html; https://www.elektor.com/products/tinysa-ultra-zs407-spectrum-analyzer.js; https://www.elektor.com/cart/shipping_rates.json; https://tinysa.org/wiki/pmwiki.php?n=Main.Buying
+    - **Saving usd:** Elektor vs Astroradio landed: ES 12.28, FR 43.66, IT 43.75, DE 45.91, PL/CZ 46.04, AT/BE 47.12, NL 49.37 (22.18 ex VAT); GOTRONIK (PL only) 49.70 landed / 16.27 ex VAT; conditional
+  3.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** replace_part
+    - **Part:** Noise source amplifier ZFL-500+ / ZFL-500LN+
+    - **Anchor:** | Шумове джерело | Mini-Circuits ZFL-500LN+ (або ZFL-500+)
+    - **Instruction:** Model cell: «Mini-Circuits ZFL-500+ (SMA, Y460, rev F) — лише після передкупівельних S2P (умова A, розділ 8), інакше ZFL-500LN+; саморобне джерело типу N8DMT + корпус». Price cell: «104.55-109.55 (ZFL-500+ $99.55 + корпус $5-10), якщо умова виконана; інакше 121.81-126.81 (ZFL-500LN+ $116.81 + корпус); без ПДВ». Seller: «Mini-Circuits напряму (US), у тому самому замовленні, що й інші деталі Mini-Circuits (крок 8)». Status: «перевірено (ціни обох SKU, >100 шт., 18.10.2026); умова A відкрита». Note: «Лише BENCH, від AUX12 через NOISE EN, постійний вихідний атенюатор 10 dB; 12.00 V ±0.05 V (з ZFL-500+ похибка ENR від пульсацій близько ±0.015 dB замість ±0.06 dB). Модель ENR (G + NF − 10 dB): ZFL-500+ 18.2-18.5 dB у смузі; ZFL-500LN+ 17.4-19.8 dB (S2P при 12 V: 26.2-26.8 dB проти 24.3-24.9 dB даташита) — модель; ціль ≥15 dB; таблиця N8DMT — лише орієнтир. ZFL-500+ гірший у гарантованих мінімумах (підсилення ≥20 dB проти 24 dB, рівномірність ±1.0 проти ±0.5 dB) і не має даних понад 1 GHz; 30-денне повернення Mini-Circuits компонентів не покриває. Струм: ZFL-500+ до 80 mA при 15 V (LN+ 60 mA; S2P LN+ — 37 mA при 12 V), очікувати +20-40 mA (+0.25-0.5 W, оцінка); попередній бюджет 0.15 A лишається, PTC/TPS2553 — від виміру (запис у parts.yaml). Вхід закривати ANNE-50+ (SMA-M напряму), не відкритим атенюатором 5 dB: закріпити одну з трьох ANNE-50+ або докупити четверту ($14.84). З 21% імпортним ПДВ підсилювач близько $120.46 (ZFL-500+) / $141.34 (LN+), розрахунок; DigiKey AT дорожчий (EUR 107.80 / EUR 129.36 з ПДВ, немає в наявності; не перевірено повторно).» Replace «Бюджет: б/в ZFL-500 $20-40.» with «Б/в ZFL-500 $20-40 — лише явний компроміс за вашим рішенням (ціна не перевірена, без гарантії, ревізія невідома), не еквівалент.»
+    - **Reason:** P5 G5 decision replace_conditionally: ZFL-500+ is $17.26 cheaper and equal or better on typical data, but unproven at L/S-band and not refundable, so gated on pre-purchase S2P data.
+    - **Sources:** analogs_G5 decision 2; https://www.minicircuits.com/pdfs/ZFL-500+.pdf; https://www.minicircuits.com/pdfs/ZFL-500LN+.pdf; https://www.minicircuits.com/pages/s-params/ZFL-500+_S2P.zip; https://www.minicircuits.com/pages/s-params/ZFL-500LN+_S2P.zip; https://www.minicircuits.com/pcn/PCN16-075.pdf; https://www.minicircuits.com/terms/viewterm.html
+    - **Saving usd:** 17.26 ex VAT (about 20.88 incl. 21% VAT), conditional; 0 against the v1 low end 104.55
+  4.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** correction
+    - **Part:** RF accessory set (Nooelec kit, VAT-30W2+, BLK-89-S+, ANNE-50+, 086-6SM+)
+    - **Anchor:** | РЧ-аксесуари | Набір атенюаторів Nooelec, 2× 30 dB
+    - **Instruction:** Model cell: «Набір атенюаторів Nooelec 100815, 2× Mini-Circuits VAT-30W2+ (30 dB), 2× BLK-89-S+, 3× ANNE-50+, 3× 086-6SM+». Price 212.68 → 245.86 (47.95 + 2×31.43 + 2×20.26 + 3×14.84 + 3×16.67; без доставки, імпортного ПДВ, мита і UHF). Seller: «Nooelec + Mini-Circuits напряму (або авторизовані DigiKey DE / Mouser EU)» — remove Passion Radio. Status перевірено (18.10.2026). Replace «Бюджет: VAT-30W2+ $31.43 за атенюатор 30 dB.» with: «VAT-30W2+ ($31.43; DC-6 GHz, 30 ±0.3 dB, 2 W, −45...+100 °C, >1000 шт.) — базова деталь, не бюджетна. 30 dB Passion Radio (RF KONNECT, EUR 18.20 = $20.46, без допуску і КСХ, під замовлення) прибрано; ціна v1 212.68 рахувала варіант −3 dB (EUR 13.20). Mini-Circuits їде з США: 4 тарифні рядки, близько $198 > EUR 150 — звичайне мито + імпортний ПДВ + збір кур'єра + EUR 2/рядок UHF (з близько 1.11.2026); DigiKey DE — ціни з ПДВ, але BLK/ANNE/086 без наявності до 27.10 / 27.11; порівняти обидва підсумки при замовленні. Лише Mini-Circuits напряму, DigiKey, Mouser, Nooelec напряму — жодних «Mini-Circuits» з маркетплейсів. Типове ослаблення VAT-30W2+: 29.72 dB @1 GHz, 28.80 dB @3 GHz, 27.69 dB @6 GHz; набір і VAT-30W2+ — лише до 6.0 GHz. Три ANNE-50+ промаркувати, ніколи на лінії зі зміщенням (спершу DC-блок: 13.2 V дали б близько 3.5 W у навантаження 1 W). Явні компроміси (не прийнято): 2× ANNE-50L+ як паркувальні навантаження −$10.86 (RL 26/21 проти 30/27 dB); загальні 30 dB — до близько −$50 лише з поштучним прийманням.» Keep «Female OSL = комплектний male OSL + F-F ($0)» and «один 086 — на E-field зонди».
+    - **Reason:** P5 G5 decision keep with corrected price (v1 212.68 priced the wrong Passion Radio variant); VAT-30W2+ is the specified in-stock baseline; operator notes 34-35 landed-cost rule.
+    - **Sources:** analogs_G5 decision 3; https://www.minicircuits.com/WebStore/dashboard.html?model=VAT-30W2%2B; https://www.minicircuits.com/pdfs/VAT-30W2+.pdf; https://www.minicircuits.com/pdfs/BLK-89-S+.pdf; https://www.minicircuits.com/pdfs/ANNE-50+.pdf; https://www.nooelec.com/store/sdr/sdr-addons/attenuators/attenuator-bundle.html; reaudit_D_power_mech_display_lab.json
+    - **Saving usd:** 0.00 (keep); line rises +33.18 vs v1 (price correction)
+  5.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** keep_with_note
+    - **Part:** SMA torque wrench 0.9 N·m + adapter set
+    - **Anchor:** | Динамометричний ключ і перехідники | SMA 0.9 N·m + набір перехідників |
+    - **Instruction:** Model cell: «TOJOIN SMA 0.9 N·m (8 мм / 5/16 in, break-over) + набір RTL-SDR Blog Semi-Rigid RG402 (10 шт.)». Price stays 50.84-62.84 (список): ключ $35.89 (eBay 354598266754, TOJOIN Official Store, США; ціна з давніх фрагментів, eBay 403) + RG402 $26.95 (рекомендовано: розвантаження натягу і обидві статі; 4 шт.) або Straight $14.95 (6 шт., 9 шт. у наявності) як нижня межа. Status лишається не перевірено (ключ). Replace the note «Ключ бачено лише у фрагменті — підтвердити лістинг. Бюджет: AliExpress ratcheting $51.49.» with: «Перед купівлею відкрити лістинг вручну (0.9 N·m / 8 мм у назві, ціна, чи ціна ЄС з ПДВ). Якщо лістинг мертвий — TekBox TBTWR-05NM на 0.9 N·m під замовлення (близько $54+), не інструмент AliExpress без заявленого моменту. У ЄС з доставкою (оцінка): ключ близько $49 (21% ПДВ IOSS + EUR 3 мита + EUR 2 UHF), Straight-набір близько $24 + доставка (разом близько $73); набори RTL-SDR Blog у ЄС — лише через офіційний eBay/AliExpress. Додати: 8 мм утримувальний ключ (близько $5, не перевірено), барель SMA F-F для thru SOLT і SMA connector savers (ціни немає). Ключ 0.9 N·m ніколи не на латунних гніздах плат (LiteVNA, tinySA, SAWbird, LNA V2, V4L): пальцями + connector savers, доки Zeenko не підтвердить момент портів. Опційне доповнення, не заміна: TekBox TBTWR-05NM 0.5 N·m ±0.05 N·m — Electrokit SE 529 SEK з ПДВ (4 шт.) або Lieske EUR 49.17 з ПДВ. Набір пігтейлів ($18.95) у рядку кабелів уже має ті самі типи кінців.» (AliExpress ratcheting is dearer and click-type, so the budget note goes.)
+    - **Reason:** P5 G5 decision keep: no cheaper analog proves the 0.9 N·m preset; adds missing small parts, brass-jack rule, EU landed estimate and fallback.
+    - **Sources:** analogs_G5 decision 4; https://www.rtl-sdr.com/product/rtl-sdr-blog-semi-rigid-rg402-sma-antenna-adapter-set/; https://www.rtl-sdr.com/product/rtl-sdr-blog-sma-straight-antenna-adapter-set/; https://www.meilhaus.de/cosmoshop/default/articleMedia/tbtwr/en/Datasheet_Tekbox_TBTWR-05NM_en.pdf; https://www.electrokit.com/en/momentnyckel-for-sma-kontakter-0.5nm; https://www.ebay.com/itm/354598266754 (403)
+    - **Saving usd:** 0
+  6.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** RTL-SDR Blog Wideband LNA V2 (spare)
+    - **Anchor:** | Запасний LNA | RTL-SDR Blog Wideband LNA V2 | 1 | 19.95 |
+    - **Instruction:** Price cell 19.95 → «32.36-34.61 (з доставкою в ЄС)». Seller cell → «RTL-SDR Blog, офіційний AliExpress (лістинг 33011424874, магазин 4523039)». Status перевірено. Note → «QPL9547, 100 MHz-6 GHz. EUR 25.79 з 19% ПДВ DE ($28.99), безкоштовна доставка з КНР; + EUR 3 мита, якщо не включене в кошику ($32.36 = EUR 28.79); + EUR 2 UHF з близько 1.11.2026 ($34.61 = EUR 30.79). $19.95 — ціна webstore rtl-sdr.com для країн поза ЄС (у ЄС webstore не відправляє). Запас зі складу ЄС: Passion Radio (FR) EUR 29.78 з 20% ПДВ + EUR 10.82 доставки = EUR 40.60 (близько $45.64; 23 шт., гарантія ЄС). Струм — за виміром на прибутті (rtl-sdr.com 90 mA; чип 65 mA; Passion Radio «150 mA max»): трійник запасного V4L лише при ≤90 mA і з токеном labd; TCBT ch4 — ≤150 mA. Також LNA опційного тракту WIDE (Flamingo+ #2 → LNA V2 → ch4 → RTL-A T3), ніколи перед FM-фільтром.» (+$12.41...+$14.66 against v1.)
+    - **Reason:** P5 G5 decision keep (no cheaper not-worse analog); EU buyer cannot pay $19.95, so the EU-landed official route replaces it (operator notes 34-35).
+    - **Sources:** analogs_G5 decision 5; https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/; https://www.aliexpress.com/item/33011424874.html; https://www.passion-radio.com/sdr-accessory/lna-rtlsdr-764.html; https://www.rfmw.com/ProductDetail/QPL9547-Qorvo/675339
+    - **Saving usd:** 0 (part kept); line +12.41 to +14.66 vs v1; official AliExpress saves EUR 9.81-11.81 (about 11.0-13.3) vs Passion Radio
+  7.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** FNIRSI FNB58 Std
+    - **Anchor:** | USB-тестер | FNIRSI FNB58 Std (без радіо) | 1 | 53.99 | fnirsi.com |
+    - **Instruction:** Price cell → «50.18 (EUR 44.59 з 19% ПДВ DE; умовно) / запас 58.57 (EUR 52.05, fnirsi.com ЄС) або 53.99 (fnirsi.com USD, без податку)». Seller cell → «офіційний магазин FNIRSI на AliExpress (ЄС, лот 1005004665244812, лише SKU Std) — умовно; запас BerryBase DE або fnirsi.com». Status → «перевірено (ціни 18.10.2026); магазин AliExpress і SKU не перевірено». Note → «Той самий прилад: HID 2E3C:5558, те саме правило udev і патчений логер baryluk (refresh 0.003, без dev.reset, злив при виході), stall-детекція labd. Купувати на AliExpress лише за 4 умов із розділу 8, інакше BerryBase EUR 49.90 з ПДВ ($56.15; розпродано 18.10.2026), якщо повернеться і дешевше разом, інакше fnirsi.com (EUR 52.05 для ЄС — чи з ПДВ, не перевірено; FNIRSI має «duty payment service» для ЄС до $150). 2-річна гарантія FNIRSI — лише для замовлень з fnirsi.com. Варіант BT заборонено (правило QUIET). Курс ECB 1.1253.» Keep «Вимірює кожне USB-навантаження і кваліфікує PD-джерела.»
+    - **Reason:** P5 G5 decision replace_conditionally: identical part via cheaper channel, gated on store identity, Std SKU, checkout total and accepted warranty loss.
+    - **Sources:** analogs_G5 decision 6; https://www.fnirsi.com/products/fnb58.json; https://www.fnirsi.com/pages/warranty-policy; https://de.aliexpress.com/w/wholesale-fnirsi-fnb58.html; https://www.berrybase.de/fnirsi-fnb58-usb-tester-4-28-v-0-7a-140w-schwarz
+    - **Saving usd:** about 8.39 (EUR 7.46) landed vs fnirsi.com EU if EUR 52.05 includes VAT; about 5.0 if EUR 3 duty applies; up to about 19.5 if fnirsi.com adds VAT; 11.82 vs 53.99 ex-VAT; 0 if a condition fails
+  8.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** replace_part
+    - **Part:** Pocket DMM ANENG AN8009 (fallback AN8008)
+    - **Anchor:** | Мультиметр | ANENG AN8008/9 | 1 | 26-53 |
+    - **Instruction:** Model cell «ANENG AN8008/9» → «ANENG AN8009 (K-type зонд, якщо в комплекті); запас — AN8008 + окремий K-термометр». Price 26-53 → «24.35-26.19 (без ПДВ і мита)». Seller → «AliExpress: лот 3256806808156150 ($26.19, 1,000+ продажів, 4.9) або 3256810125666852 ($24.35 — ціна нового покупця, 900+, 4.7)». Status → «не перевірено (ціни зі сторінок пошуку 18.10.2026; продавець і кошик не перевірені)». Note: «Ризик сірих копій; уникати лістингів «AN8008/AN8009 ... Rm 409b». З доставкою в ЄС: ціна + імпортний ПДВ 19-27% + EUR 3 за тарифний рядок + EUR 2 UHF (з близько 1.11.2026). Купувати лише за умови з розділу 8 (специфікація 99.99 uA / 0.01 uA і 9.999 mV / 0.001 mV на зображенні лістингу, письмово від продавця або K-зонд у комплекті); інакше AN8008 (звичайна ціна $33.43, лот 3256808311369414; $28.52 і $29.12 — ціни нового покупця) + K-термометр (ціну не перевірено). AN8009 краще: 99.99 MOhm, частотомір 6.6 MHz, K-type, підсвітка 120 с; немає виходу меандру (у стеку не використовується). Діапазон 10 nA на AN8009 — висновок з тієї самої архітектури (шунт 100 Ohm), перевірити на прибутті. Струми пакета 5-10 A — лише FNB58/INA228 (дрейф діапазону 10 A). CAT-рейтинги фіктивні — лише малі енергії. Запасні запобіжники 3.6×10 мм 0.2 A і 10 A.»
+    - **Reason:** P5 G5 decision replace_conditionally: AN8009 is $4-9 cheaper, same case/shunt family and adds the K-type input the procedures already use; its 10 nA range is inferred, so it is gated.
+    - **Sources:** analogs_G5 decision 7; https://lygte-info.dk/review/DMMAnengAN8009%20UK.html; https://lygte-info.dk/review/DMMAnengAN8008%20UK.html; https://www.aliexpress.com/w/wholesale-aneng-an8009.html; http://www.szzotek.com/en/col.jsp?id=144
+    - **Saving usd:** 4-9 before VAT (about 5-11 incl. 19-27% VAT, calculation), conditional
+  9.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** Hantek 6022BE + fx2lafw LA
+    - **Anchor:** | Осцилограф і LA | Hantek 6022BE + аналізатор fx2lafw | 1 набір | 141-172 |
+    - **Instruction:** Price 141-172 → «89-102 (осцилограф з доставкою в ЄС $76-90 + LA $8-12)». Seller → «Botland: botland.de (DE) або botland.com.pl (PL/ЄС), SKU UPM-06716; не botland.store (лише B2B); імпортер BOTLAND B. DERKACZ SP. K., Gola 25A, Bralin, PL». Status → «перевірено (структуровані дані сторінок 18.10.2026; повідомлення про наявність суперечливі)». Note → «botland.de EUR 67.30 з 19% ПДВ (EUR 56.55 без ПДВ) = $75.73, + GLS EUR 4.69 = $81.0 до DE; botland.com.pl PLN 299.00 з 23% ПДВ (PLN 243.09) = $77.0; інші країни ЄС: EUR 56.55 + ПДВ країни (17-27%) + GLS від EUR 8.07 ≈ $83-90 (модель). Курс ECB 16.10.2026 (1.1253 USD/EUR, 4.37 PLN/EUR). Умова: приватний покупець, у кошику в наявності і ≤ EUR 80 з доставкою; 24 міс. гарантії + 30 днів на відмову. Поле GPSR «виробник» — SHEN ZHEN YOU MAI KE TECHNOLOGY CO LTD (не Qingdao Hantek), тому розбір і перевірки на прибутті (розділ 8); при провалі — повернення і запас The Debug Store (UK) GBP 100 без ПДВ / GBP 120 з ПДВ ($133-160) + імпортний ПДВ, мито, UHF і збір кур'єра (URL зараз 404 — перевірити). LA — загальний CY7C68013A 8 каналів 24 MS/s fx2lafw, від продавця ЄС, де можливо; з AliExpress + ПДВ IOSS + EUR 3 + EUR 2 (близько $12-18). Для будь-якого 6022BE: потоково 30 MS/s лише CH1 і 15 MS/s на 2 каналах; апаратні діапазони 5/2.5/1/0.5 V (20 і 50 mV/div — цифровий зум); вхід лише DC (для пульсацій — BNC DC-блок, апаратна AC-модифікація OpenHantek або режим CHx AC math; DC-блок не вибрано і не оцінено).» Replace «Бюджет: 6022BL на AliExpress $84-102 (магазин не підтверджено).» with «6022BL відкинуто: працює або як осцилограф, або як LA, не обидва одночасно (ламає профіль Bench).»
+    - **Reason:** P5 G5 decision replace_conditionally: same model from an EU importer, about $52-70 cheaper and no UK import charges; genuineness unprovable before purchase, so arrival teardown gate.
+    - **Sources:** analogs_G5 decision 8; https://botland.de/oszilloskope/6716-hantek-6022be-usb-pc-20mhz-oszilloskop-2-kanale-5904422359867.html; https://botland.com.pl/oscyloskopy/6716-oscyloskop-hantek-6022be-usb-pc-20mhz-2-kanaly-5904422359867.html; https://sigrok.org/wiki/Hantek_6022BE; https://raw.githubusercontent.com/OpenHantek/OpenHantek6022/main/docs/limitations.md
+    - **Saving usd:** about 52-70 like-for-like (39-83 extreme) vs list; larger vs UK landed
+  10.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** Raspberry Pi Debug Probe SC0889
+    - **Anchor:** | Відлагоджувач | Raspberry Pi Debug Probe | 1 | 12.00 | Adafruit |
+    - **Instruction:** Replace the row with: «| Відлагоджувач | Raspberry Pi Debug Probe SC0889 (EAN 5056561803265) | 1 | 10.86 без ПДВ (EUR 9.66, розрахунок) / 12.93 з 19% ПДВ DE (EUR 11.50) | reichelt (DE, Approved Reseller; «RPI DEBUG PROBE») | перевірено | SWD (CMSIS-DAP v2, мультидроп RP2040) і UART 3.3 V для Pico, RP2040-Zero паку і консолі Q6A. Лише в кошику reichelt, що вже є для інших деталей v2; інакше DigiKey DE 2648-SC0889-ND у замовленні кроку 7 ($11.85 без ПДВ / EUR 12.54 з ПДВ = $14.10); welectron EUR 11.90 або BerryBase EUR 12.20 — лише якщо там уже є замовлення; ніколи окремим замовленням (reichelt окремо EUR 17.45 = $19.62 з DHL EUR 5.95). Adafruit 5699 $12.00 — лише для збірки поза ЄС (у ЄС модель: від $14.28; близько $18.29 з EUR 3 мита; близько $20.54 з EUR 2 UHF). Виробництво щонайменше до січня 2030. Піна reset немає: RP2040-Zero паку — ручний reset або виведений RUN; у системі RUN — пін 38 Q6A. Аварійний запас (не BOM): Pico з debugprobe_on_pico, у польовий чохол без корпусу не класти. |» FX 1.1241.
+    - **Reason:** P5 G5 decision replace_conditionally (seller only): identical SKU from an approved EU reseller on an existing cart removes US import VAT, EUR 3 duty and UHF.
+    - **Sources:** analogs_G5 decision 9; https://www.reichelt.com/de/en/shop/product/raspberry_pi_debug_probe-343288; https://www.digikey.de/en/products/result?keywords=SC0889; https://www.raspberrypi.com/resellers/; https://www.raspberrypi.com/products/debug-probe/; https://datasheets.raspberrypi.com/debug/raspberry-pi-debug-probe-schematics.pdf
+    - **Saving usd:** 1.14 ex VAT; landed DE at least 1.35; about 5.4-7.6 vs Adafruit with EUR 3 duty and EUR 2 UHF; 0 or negative as a dedicated order
+  11.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** keep_with_note
+    - **Part:** Pinecil V2 (PINECIL-BB2)
+    - **Anchor:** | Паяльник | Pinecil V2 (IronOS Bluetooth Off) | 1 | 25.99 |
+    - **Instruction:** Model cell → «Pinecil V2 (PINECIL-BB2; IronOS ≥2.23: Bluetooth Off, PD Mode No Dynamic, ліміт 60 W)». Price 25.99 unchanged; seller «PINE64 (pine64.com, відправка CN/HK)»; status не перевірено → перевірено (18.10.2026: community price, роздріб $35.99, у наявності, жало ST-B2 у комплекті). Note → «Ціна без доставки, імпортного ПДВ (стягується при ввезенні), EUR 3 мита за тарифний рядок (пошта) і EUR 2 UHF (з близько 1.11.2026). Склади ЄС: PINE64 EU EUR 67.50 з ПДВ (немає в наявності), Blinkyparts EUR 58.99 + доставка, Keycapsss EUR 56.00 (недоступно). Лише PINE64 або перелічені реселери, ніколи AliExpress (за вікі PINE64 — підробки). Живлення: Anker 737 20 V/≤3 A кабелем без EPR (60 W; 64 W — модель з жалом 6.2 Ohm); запас — DC5525 від сервісного порту вузла N із запобіжником 5 A (4S, відсічка IronOS 3.3 V/ел.; пік 13.6/6.2 = 2.2 A ... 16.4/6.2 = 2.65 A).»
+    - **Reason:** P5 G5 decision keep: no cheaper candidate keeps the DC5525 barrel, 5 A fuse compatibility, per-cell cutoff and heavy TS tips; price re-verified; landed-cost rule.
+    - **Sources:** analogs_G5 decision 10; https://pine64.com/product/pinecil-smart-mini-portable-soldering-iron/; https://pine64.com/shipping/; https://wiki.pine64.org/wiki/Pinecil; https://pine64eu.com/product/pinecil-smart-mini-portable-soldering-iron/; https://raw.githubusercontent.com/Ralim/IronOS/dev/README.md
+    - **Saving usd:** 0.00
+  12.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** iFixit Portable Anti-Static Mat IF145-202-5
+    - **Anchor:** | Антистатичний килимок | iFixit portable anti-static mat |
+    - **Instruction:** Replace the row with: «| Антистатичний килимок | iFixit Portable Anti-Static Mat IF145-202-5 | 1 | 33.67 (EUR 29.95; $33.70 за ECB 1.1253) | iFixit EU (DE) | перевірено (US $34.95, EU EUR 29.95, UK GBP 27.99 — 18.10.2026) | 60×60 см, 10^7-10^9 Ohm, ремінець з затискачем і шнур заземлення 1.8 м, 25 років гарантії виробника (ЄС). Чи ціна з ПДВ — підтвердити в кошику. Доставка EUR 4.90 DE / EUR 8.90 інші ЄС, якщо кошик iFixit < EUR 65 (разом близько $39.22 DE / $43.72 інші); з iFixit Mako (EUR 39.95, рядок інструментів) кошик EUR 69.90 ≥ EUR 65 (мій розрахунок). Термостійкість не вказана (матеріал і «Polyester», і «Rubber & Nylon»): паяльник лише в підставці, гарячі роботи — на окремій силіконовій підкладці. Вага і розмір у складеному стані не опубліковані — перевірка складання в Pelican 1450 на прибутті. |»
+    - **Reason:** P5 G5 decision keep (same SKU, seller iFixit EU); status now verified; landed-cost rule favours the EU store.
+    - **Sources:** analogs_G5 decision 11; https://www.ifixit.com/en-eu/products/portable-anti-static-mat; https://www.ifixit.com/products/portable-anti-static-mat; https://www.ifixit.com/Info/EU_Shipping_Destinations_and_Options
+    - **Saving usd:** 1.25 on label (34.95 → 33.70; 1.28 at stack FX 1.1241); landed saving vs a US order not quantified
+  13.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** Anker 737 Power Bank A1289
+    - **Anchor:** | Банк живлення | Anker 737 (PDO 20 V/5 A, ≤100 Wh) |
+    - **Instruction:** Replace the row with: «| Банк живлення | Anker 737 PowerCore 24K A1289 (EAN 0194644098728; 140 W, 24,000 mAh, 86.4 Wh) | 1 | 93.29 (EUR 82.99 з 19% ПДВ DE) | MediaMarkt.de / Saturn.de (через billiger.de, жовтень 2026) | перевірено через агрегатор (сторінки магазинів — 403) | Доставка безкоштовна, лише по DE; поза DE — місцевий MediaMarkt або Amazon.de B09VPHVT2Z (ціна не перевірена; мінімум за 6 міс. EUR 73.17). Запас: playox EUR 83.69 + 5.99, anker.com/de EUR 109.99 з ПДВ ($123.64), Anker US $109.99. Перевірити A1289/EAN (не A1695 і не 26K). Порти: USB-C1 — вхід і вихід (DRP), USB-C2 — лише вихід (за Anker; підтвердити FNB58), USB-A 5V3A; при навантаженому USB-A обидва C — до 65 W. Виміряно 77.21 Wh при 20 V/3 A (techtest). Ручна поклажа (<100 Wh). Потрібен кабель C-C 5 A з e-marker; плюс один кабель 240 W EPR для перевірки 28 V/ISDT (ціну не перевірено; для Pinecil — лише кабель без EPR). |»
+    - **Reason:** P5 G5 decision keep (same SKU) with a cheaper authorised EU retailer; corrects the DRP assumption (C2 output-only).
+    - **Sources:** analogs_G5 decision 12; https://www.billiger.de/pricelist/3996283292-anker-737-power-bank-24000-mah-schwarz; https://www.anker.com/products/a1289; https://www.anker.com/de/products/a1289; https://techtest.org/die-anker-737-powercore-24k-powerbank-im-test-mit-140w-usb-c-port-zur-besten-powerbank/
+    - **Saving usd:** 16.70 vs 109.99; EUR 27.00 (about 30.35) vs anker.com/de
+  14.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** replace_part
+    - **Part:** Bench USB 2.0 hub Waveshare USB-HUB-2IN-4OUT-NP
+    - **Anchor:** | Стендовий хаб | Waveshare MTT bench hub (живлення від банку) |
+    - **Instruction:** Replace the row with: «| Стендовий хаб | Waveshare USB-HUB-2IN-4OUT-NP (SKU 23062, без БЖ), STT за Waveshare; живлення від Anker 737 через DC 5V | 1 | 14.99 (без податку і доставки; $14.59 при 2 шт.) | Waveshare напряму, у замовленні кроку 7 | перевірено (18.10.2026) | За LAB-портом. Waveshare не збирає ПДВ ЄС (без IOSS), доставку рахує вручну: з доставкою в ЄС оцінка близько $23.8 ($14.99 × 1.21 = $18.14 + EUR 3 мита близько $3.37 + EUR 2 UHF близько $2.25). Умова: лише в спільній посилці кроку 7 (до оплати запитати котирування з хабом); якщо окрема доставка з'їдає економію — Pi Hut WAV-21686 (GBP 18.50 з UK ПДВ = $24.64; GBP 15.42 = $20.54 без ПДВ; у ЄС лише DHL Express GBP 30) лише в спільній посилці Pi Hut, інакше Waveshare. Альтернатива з EU-БЖ — SKU 21605, $16.99. 4× USB-A, 1.2 A на порт із засувкою КЗ, OVP/OCP/OTP/UVLO, 8 kV ESD, −40...85 °C, метал 86×47.8×27.6 мм, 0.147 kg; 2 кабелі USB-A→C 1 м у комплекті. Не заряджати LiteVNA і tinySA через нього одночасно. |» Then add a new row right after it: «| Дріт живлення хаба | 5 V від Anker 737 (USB-A або USB-C) до гнізда DC 5V хаба (розмір не вказано, імовірно 5.5×2.1 — підтвердити) | 1 | кілька $ (ціну не перевірено) | — | не перевірено | Потрібен у ЄС і для Pi Hut-хаба (UK-БЖ непридатний). |»
+    - **Reason:** P5 G5 decision replace_conditionally: same hardware without the unusable UK PSU, direct from the maker inside an existing order; v1 'MTT' naming is wrong (Waveshare says STT).
+    - **Sources:** analogs_G5 decision 13; https://www.waveshare.com/usb-hub-2in-4out.htm?sku=23062; https://www.waveshare.com/wiki/USB-HUB-2IN-4OUT; https://www.waveshare.com/shipping; https://thepihut.com/products/industrial-grade-dual-host-usb-hub-4x-usb-2-0.json
+    - **Saving usd:** 9.65 vs stack line (UK-VAT-incl vs ex-tax); 5.55 like-for-like before VAT; about 6.7 EU landed; conditional
+  15.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** ISDT 608PD balance charger
+    - **Anchor:** | Балансувальний зарядник | ISDT 608PD | 1 | 32.99-42.99 |
+    - **Instruction:** Replace the row with: «| Балансувальний зарядник | ISDT 608PD | 1 | 39.33 (EUR 34.99 з 20% ПДВ AT; без ПДВ EUR 29.16 = $32.78) | Modellbau Lindinger (AT, дилер зі списку isdt.co/buy; № 9798048) | перевірено (18.10.2026; у наявності, 1-3 роб. дні) | Доставка EUR 5.99 AT/DE (разом EUR 40.98 = $46.07), EUR 12.99 інші ЄС (EUR 47.98 = $53.93); безкоштовно від EUR 89 (AT) / EUR 99 (DE); ПДВ для покупців поза AT (OSS) не підтверджено. Світовий запас — офіційний isdtshop.com (FBM-608PD-CN) $33.00 + $4.99, ПДВ ЄС у кошику (близько $45.21 у DE), 7-20 роб. днів. Щомісячний баланс LiPo 4S 4.20 V/ел. через сервісний порт вузла N (XT30, 5 A, після шунта INA228) і JST-XH 5-pin, головний вимикач вимкнено; заряд 2.5 A, ніколи понад 3 A. Має BLE (ISD Link): калібрування напруги — в ISD Link, сполучення лише вдома з вимкненим приймачем; прошивка — лише ISD Go для Windows. Екран 0.01 V/ел. (ворота ±10 mV читати на DMM); режиму зберігання немає; пресету Li-ion 4.10 V немає (LiPo 4.20 V); порт USB-C двонапрямлений. |»
+    - **Reason:** P5 G5 decision keep (same part) with an ISDT-listed EU dealer; v1 price was unverified; adds BLE, calibration and storage-mode facts.
+    - **Sources:** analogs_G5 decision 14; https://www.lindinger.at/de/RC-Elektronik/Ladegeraete-Netzgeraete/Ladegeraete/Ladegeraete-DC-12-50V/ISDT-608PD-Smart-Charger-DC-240W-10A-USB-C-140W-5A-1-6S-Lipo/9798048; https://www.isdt.co/buy; https://www.isdt.co/608pd.html; https://isdtshop.com/products/isdt-608pd; https://oscarliang.com/isdt-608pd-charger/
+    - **Saving usd:** 10.66 vs re-audit 49.99 (17.21 ex VAT); 11.03 vs FPV24 landed DE
+  16.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** replace_part
+    - **Part:** Tools, spares, notebook, build tools (named set)
+    - **Anchor:** | Інструменти | Запасні частини, журнал, інструменти для збирання
+    - **Instruction:** Replace the cost-model row with a named set (status per item): «| Інструменти | Збирання: штангенциркуль Goobay 77001 0-150 мм (reichelt, $21.35 = EUR 18.99; умова — приймальний тест, запас SCALA 230.207-X з TME +$22.49), ножиці Stanley 2-14-556 MaxSteel прямі 250 мм (TME, $17.96), зенківка-зачищувач (reichelt: C.K T2281 / Gedore 8730 / RUTHEX; $15.73-22.47; тип леза не перевірено), мітчик Völkel 90530 M5×0.8 HSS-E ISO2/6H наскрізний ($5.02), плашка Völkel 27434 M5×0.8 HSS DIN 223 6g 20×7 ($7.53), плашкотримач Völkel 15003 ($5.74), вороток Völkel 14010 DIN 1814 сталь ($15.10), термофен Steinel HL 1821 S (термозапобіжник, 3 роки гарантії; $39.56) — TME. Рулон: iFixit Mako 64 біти (iFixit EU, $44.91 = EUR 39.95), бокорізи Knipex 78 61 125 ($26.37), стрипер Jokari 40026 (0.3-1.0 мм; $29.17) — TME, ESD-пінцет Bernstein 5-089-13 або Knipex 92 78 77 ESD (reichelt, $19.10-22.82), спаджер і ключ 8 мм ($5-10, не перевірено). Інше: нотатник Rite in the Rain No. 373 у реселера ЄС + наклейки ($15-25; ціна ЄС не перевірена), органайзер ($10-20; не перевірено), набір запчастин $57-78 (лише те, чого немає в інших рядках; 2 запасні MHF4L-SMA лишаються, бо Lime залишено і його 2 пігтейли встановлені) | 1 набір | 335-391 (з 19% ПДВ DE; без доставки двох посилок TME + reichelt) | TME + reichelt + iFixit EU | перевірено (ціни 18.10.2026) / не перевірено (зачищувач, спаджер, ключ, нотатник, органайзер) | Курс 1.1241; ціни TME — як нетто. Опції: HL 1920 E +$40.14 (якщо тест термоусадки не пройде), Jokari 20050 +$28.63 (якщо тракт батареї 18 AWG). Позичені інструменти — лише ваш вибір для разового нарізання M5. Термофен лише на стенді від мережі; колекторний двигун — вимкнений під час кондуктивних РЧ-вимірів. |» (Removes «Бюджет: позичити / мейкерспейс.»)
+    - **Reason:** P5 G5 decision replace_conditionally: the 245-400 model named no SKUs and its low end is unreachable with documented-spec tools incl. EU VAT; EU stock avoids EUR 3 duty and UHF.
+    - **Sources:** analogs_G5 decision 15; https://www.reichelt.de/de/de/shop/produkt/messschieber_analog_digital_150_mm-16976; https://www.tme.eu/en/details/stl-2-14-556/shears-scissors-knives/stanley/2-14-556/; https://www.tme.eu/en/details/volkel-90530/threading-dies-and-taps/volkel/90530/; https://www.tme.eu/en/details/hl1821s/hot-air-guns-and-accessories/steinel/hl-1821-s/; https://www.ifixit.com/en-eu/products/mako-driver-kit-64-precision-bits; https://www.tme.eu/en/details/jokari-40026/strippers-for-wire-cable/jokari/40026/
+    - **Saving usd:** no net saving (335-391 sits in the upper half of 245-400); spares de-dup saves 23-52; Goobay vs SCALA 22.49 conditional
+  17.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** other
+    - **Part:** Micrometer SCALA 533.501 (new gap item)
+    - **Anchor:** | Інструменти | Запасні частини, журнал, інструменти для збирання
+    - **Instruction:** Add a NEW row after the tools row: «| Мікрометр | SCALA 533.501 0-25 мм, 0.01 мм, тверді губки, тріскачка | 1 | 41.66 (з 19% ПДВ) | TME | перевірено (запас низький, 4 шт.) | Потрібен для перевірки нікелю G3 (0.15 ±0.01 мм) і як еталон для приймання штангенциркуля. Альтернатива: G3 прибирає крок мікрометра і спирається на тест mV/100 мм. |»
+    - **Reason:** P5 G5 decision 15 knock-on: only listed tool that resolves the G3 nickel check.
+    - **Sources:** analogs_G5 decision 15; https://www.tme.eu/en/details/sc533501/; analogs_G3_power_gnss_imu.json
+    - **Saving usd:** n/a (+41.66)
+  18.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** other
+    - **Part:** Lab core subtotal
+    - **Anchor:** | **Підсумок core** | | | **1,474.58-1,809.89 (≈1,475-1,810)** |
+    - **Instruction:** Recompute the core subtotal from the final rows. My recalculation from the G5 rows (model, mixed base as in v1): 1,536.56-1,767.80 (≈1,537-1,768) with the lowest conditional picks (LiteVNA Eleshop 162.53 ex VAT; tinySA Elektor 182.10 ex VAT; noise 104.55-126.81; RF 245.86; torque 50.84-62.84; LNA V2 32.36-34.61; FNB58 50.18-58.57; AN8009 24.35-26.19; Hantek set 89-102; Debug Probe 10.86-12.93; Pinecil 25.99; mat 33.67; Anker 93.29; hub 14.99; ISDT 39.33; tools 335-391; micrometer 41.66); with the booked LiteVNA (Passion Radio 175.73) and tinySA (Astroradio 204.28) lows: 1,571.94-1,767.80. Not included: hub 5 V lead, 8 mm hold spanner (about $5), F-F barrel, connector savers, 240 W EPR cable, shipping, and non-EU landed extras beyond those stated per row.
+    - **Reason:** All 16 core bench rows are re-priced by G5; total must follow the rows.
+    - **Sources:** analogs_G5 decisions 0-15; STACK v1 03a rows
+    - **Saving usd:** low +61.98 (booked VNA/SA lows: +97.36), high −42.09 vs v1
+  19.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** other
+    - **Part:** Lab budget minimum
+    - **Anchor:** **Бюджетний мінімум лабораторії (мій розрахунок, оцінка):**
+    - **Instruction:** Rewrite the core part of the sentence (keep the extended part for its own source): «core — б/в ZFL-500 ($20-40 замість $104.55) лише як явний неперевірений компроміс (без гарантії, ревізія невідома); Hantek 6022BL прибрано (або осцилограф, або LA) — його роль бере основний рядок Botland 6022BE + LA ($89-102); позичати можна лише інструменти для разового нарізання M5 (мітчик, плашка, тримач, вороток: $33.39), бо штангенциркуль, мікрометр, запчастини і нотатник потрібні постійно. Разом ≈$1,419-1,439 (мій розрахунок від нової нижньої межі core $1,536.56: −$64.55...−$84.55 за ZFL-500, −$33.39 за M5).» Recompute if the core low changes after other sources.
+    - **Reason:** G5 rejects 6022BL (simultaneity), relabels used ZFL-500 as a trade and limits borrowing to one-off M5 threading.
+    - **Sources:** analogs_G5 decisions 2, 8, 15
+    - **Saving usd:** n/a
+  20.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** correction
+    - **Part:** DMM AN8009 and Hantek specs in capabilities
+    - **Anchor:** AN8008, FNB58 Std, Hantek 6022BE, fx2lafw, Debug Probe, sigrok/OpenHantek
+    - **Instruction:** Replace with «AN8009 (або AN8008 + K-термометр), FNB58 Std, Hantek 6022BE (вхід лише DC; потоково 15 MS/s на 2 каналах, 30 MS/s лише CH1), fx2lafw, Debug Probe, sigrok/OpenHantek».
+    - **Reason:** G5 DMM change (STACK v1 line 407) and 6022BE spec corrections.
+    - **Sources:** analogs_G5 decisions 7, 8
+    - **Saving usd:** n/a
+  21.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** bench_test
+    - **Part:** P1 VNA calibration and passive acceptance
+    - **Anchor:** | P1 | Калібрування VNA і приймання пасивних деталей (кондуктивно) |
+    - **Instruction:** Append to the correction cell: «S21 кожного атенюатора — таблиця на атенюатор і частоту до 6.0 GHz (VAT-30W2+ і набір Nooelec — лише до 6 GHz); понад 3 GHz усереднювати (HW 3.1 — близько 50 dB DR). Кожен перехідник — ≤0.3 dB на 2.3 GHz. BLK-89-S+ — S21 від 50 kHz. Якщо прийде LiteVNA v0.3.3 — стеля режекції понад 3 GHz з близько 45 dB до близько 65 dB; інакше план HW 3.1 (90/50 dB). Динамометричний ключ — лише після приймального тесту, не на латунних гніздах приладів.»
+    - **Reason:** G5 decisions 0, 3, 4 tests for the lab procedures.
+    - **Sources:** analogs_G5 decisions 0, 3, 4
+    - **Saving usd:** n/a
+  22.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** bench_test
+    - **Part:** P8 Y-factor noise source
+    - **Anchor:** | P8 | NF за Y-фактором (кондуктивно, ніколи через ефір) |
+    - **Instruction:** Append: «Вхід шумового джерела закрито ANNE-50+; приймання ENR за розділом 8 (ZFL-500+ / LN+); після NOISE EN дрейф ENR ≤0.1 dB між 10 і 120 с; вихід близько −60 dBm сумарно до 2.4 GHz — нижче межі −40 dBm у тракти.»
+    - **Reason:** G5 decision 2 termination rule and acceptance limits.
+    - **Sources:** analogs_G5 decision 2
+    - **Saving usd:** n/a
+  23.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** bench_test
+    - **Part:** P16 power and USB checks
+    - **Anchor:** | P16 | Перевірки живлення, USB і «першого вмикання» |
+    - **Instruction:** Append: «Приймання FNB58 (2e3c:5558, 0.000 V на незаживленому порту, звірка з DMM і DPS-150); PDO Anker 737 на C1 і C2 і DRP-матриця через USB-C2; стендовий хаб: <50 mA на LAB-порту і 0 mA зворотного струму, лише один рівень хабів.»
+    - **Reason:** G5 decisions 6, 12, 13 tests.
+    - **Sources:** analogs_G5 decisions 6, 12, 13
+    - **Saving usd:** n/a
+  24.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** bench_test
+    - **Part:** P17 logic and console
+    - **Anchor:** | P17 | Логіка, GNSS/PPS, I2C і консоль |
+    - **Instruction:** Append: «Debug Probe: openocd -f interface/cmsis-dap.cfg -f target/rp2040.cfg (мультидроп, обидва ядра) на Pico-супервізорі і RP2040-Zero паку; picocom 115200 на пінах 8/10 Q6A — 10 хв без помилок кадру. Hantek 6022BE: розбір PCB, FW0210 в OpenHantek і sigrok, DC ±3%, 10 хв потоку 15 MS/s без втрат разом з LA 24 MS/s.»
+    - **Reason:** G5 decisions 8, 9 acceptance tests.
+    - **Sources:** analogs_G5 decisions 8, 9
+    - **Saving usd:** n/a
+  25.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** bench_test
+    - **Part:** P19 field soldering and connector care
+    - **Anchor:** | P19 | Польова пайка і догляд за роз'ємами | Pinecil від PD-банку. |
+    - **Instruction:** Replace the correction cell with: «Pinecil від Anker 737 (C1) кабелем без EPR: IronOS ≥2.23, BT Off, PD Mode No Dynamic, 60 W; Authenticity Checker; опір жало–земля через гвинт M2x4 до кнопки килимка (записати). SMA: 0.9 N·m лише на нержавіючих SMA; латунні гнізда приладів — пальцями + connector savers.»
+    - **Reason:** G5 decisions 4, 10.
+    - **Sources:** analogs_G5 decisions 4, 10
+    - **Saving usd:** n/a
+  26.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** other
+    - **Part:** Lab totals 3.6
+    - **Anchor:** | Лабораторія core (bench) | **1,475-1,810** |
+    - **Instruction:** Update to the recomputed core subtotal from 3.1 (my calculation ≈1,537-1,768, model; ≈1,572-1,768 with booked LiteVNA/tinySA lows) and recompute the dependent rows «core + extended», «Пристрій + обидва рівні антен + bench» and «Усе, крім опційного» once the other sections are final.
+    - **Reason:** Core bench rows re-priced by G5.
+    - **Sources:** analogs_G5 decisions 0-15
+    - **Saving usd:** see 03a subtotal
+  27.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** other
+    - **Part:** Totals: bench tier
+    - **Anchor:** | bench (лабораторія, core) | прилади й інструменти | **1,475-1,810** | 1,474.58-1,809.89 |
+    - **Instruction:** Replace with the recomputed bench core (my recalculation of the G5 rows: 1,536.56-1,767.80; with booked LiteVNA/tinySA lows 1,571.94-1,767.80) and recompute «+ лабораторія (bench)», «Усе, крім опційного» and the sentence on lower bounds (1,758 + 176 + 351 + 1,475 = 3,760) after all sections are final.
+    - **Reason:** Bench tier total follows the re-priced lab rows.
+    - **Sources:** analogs_G5 decisions 0-15
+    - **Saving usd:** see 03a subtotal
+  28.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** other
+    - **Part:** XT60-to-XT30 charge lead (battery kit)
+    - **Anchor:** JST-XH 5-pin, сервісний дріт XT30
+    - **Instruction:** Add to the battery-assembly kit: «, зарядний дріт XT60-XT30 (16 AWG, короткий; статі — під вихід XT60 ISDT 608PD і сервісний порт вузла N; полярність перевірити перед першим використанням)». Price not given in the source; keep the row status модель.
+    - **Reason:** G5 decision 14: the 608PD output is XT60, the service port is XT30.
+    - **Sources:** analogs_G5 decision 14
+    - **Saving usd:** n/a
+  29.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** new_risk
+    - **Part:** PD charger / Anker 737 as field source
+    - **Anchor:** Бюджет: Anker 737 (стенд).
+    - **Instruction:** Replace with «Anker 737 як джерело — лише через USB-C2 (лише вихід) і лише після DRP-матриці (розділ 8); доти — односпрямований PD-адаптер.»
+    - **Reason:** G5 decision 12 port roles; field charging from a DRP port is unproven.
+    - **Sources:** analogs_G5 decision 12; reaudit_D
+    - **Saving usd:** n/a
+  30.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** D7 Pinecil and Anker port routing
+    - **Anchor:** Pinecil живиться від PD-банку на 20 V (близько 64 W).
+    - **Instruction:** Replace with «Pinecil живиться від Anker 737 (USB-C1; Pinecil — лише споживач) на 20 V/≤3 A кабелем без EPR: IronOS ≥2.23, PD Mode No Dynamic, ліміт 60 W (64 W — модель з жалом 6.2 Ohm). IP2368 приймача і ISDT 608PD — від USB-C2 737 (лише вихід за Anker). На запасному шляху DC5525 пік 13.6/6.2 = 2.2 A ... 16.4/6.2 = 2.65 A — нижче запобіжника 5 A.»
+    - **Reason:** G5 decisions 10 and 12.
+    - **Sources:** analogs_G5 decisions 10, 12; https://wiki.pine64.org/wiki/Pinecil; https://www.anker.com/products/a1289
+    - **Saving usd:** n/a
+  31.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** Attenuation rule uses measured pad S21
+    - **Anchor:** від 30 dB вище 800 MHz
+    - **Instruction:** Replace with «від 30 dB вище 800 MHz за виміряним S21 кожного атенюатора, не за номіналом (VAT-30W2+ типово 28.80 dB на 3 GHz і 27.69 dB на 6 GHz; вище близько 1 GHz додавати 3 dB з набору або знижувати рівень на виміряний недобір)».
+    - **Reason:** G5 decision 3: the labd '-40 dBm into paths' guard must use measured attenuation.
+    - **Sources:** analogs_G5 decision 3; https://www.minicircuits.com/pdfs/VAT-30W2+.pdf
+    - **Saving usd:** n/a
+  32.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** QUIET mode and bank-powered bench instruments; ISDT BLE
+    - **Anchor:** LAB VBUS і AUX вимкнені
+    - **Instruction:** Append after this phrase: «(стендові прилади живляться від банку через хаб, тож вимкнення LAB VBUS їх не знеструмлює — у QUIET від'єднати дріт банку або прилади); ISDT 608PD має BLE — лише вдома, сполучення ISD Link з вимкненим приймачем».
+    - **Reason:** G5 decisions 13 and 14.
+    - **Sources:** analogs_G5 decisions 13, 14
+    - **Saving usd:** n/a
+  33.
+    - **Section:** 01b_decisions_register
+    - **Kind:** other
+    - **Part:** Lab instruments register (#130-#139)
+    - **Anchor:** шумове джерело DIY ZFL-500 (N8DMT) лише BENCH
+    - **Instruction:** Replace with «шумове джерело DIY за схемою N8DMT на ZFL-500+ (умовно, після S2P) або ZFL-500LN+, лише BENCH, вхід на ANNE-50+».
+    - **Reason:** G5 decision 2.
+    - **Sources:** analogs_G5 decision 2
+    - **Saving usd:** n/a
+  34.
+    - **Section:** 01b_decisions_register
+    - **Kind:** architecture
+    - **Part:** Lab software: Debug Probe and Hantek udev
+    - **Anchor:** | ПЗ керування приладами (#34) |
+    - **Instruction:** In the decision cell, after «picocom; OpenOCD.» add: «Debug Probe: прошивка debugprobe v2.3.1 UF2; доступ без root через 60-openocd.rules з OpenOCD 0.12.0 (ATTRS{product}==*CMSIS-DAP*; перевірити, що пакет noble його встановлює) і користувача labd у plugdev (uaccess — лише для локального місця); UART — cdc_acm /dev/ttyACM*, ім'я /dev/lab за 2e8a:000c + номер інтерфейсу. Hantek: 60-openhantek.rules має покривати і 04b5:6022. Пульсації — режим CHx AC math OpenHantek або BNC DC-блок (вхід лише DC).»
+    - **Reason:** G5 decisions 8, 9 software notes.
+    - **Sources:** analogs_G5 decisions 8, 9; https://raw.githubusercontent.com/openocd-org/openocd/v0.12.0/contrib/60-openocd.rules; https://sigrok.org/wiki/Hantek_6022BE
+    - **Saving usd:** n/a
+  35.
+    - **Section:** 05a_arch_power
+    - **Kind:** architecture
+    - **Part:** Anker 737 port routing and load split; ISDT settings
+    - **Anchor:** Джерело — PD від 60 W, кожне кваліфікувати FNB58
+    - **Instruction:** After this sentence add: «Anker 737: USB-C2 (лише вихід за Anker; підтвердити FNB58) → USB-C IP2368 приймача і ISDT 608PD; USB-C1 (DRP) → заряд самого банку (PD 3.1, 140 W) і Pinecil; USB-A 5V/3A → стендовий хаб. При навантаженому USB-A обидва C — до 65 W: Pinecil 60 W і IP2368 близько 52 W вкладаються; Pinecil + заряд приймача + хаб разом — не понад 140 W. Польовий заряд від банку доведено лише після тестів C2; доти — односпрямований PD-адаптер.» In the same paragraph extend «Баланс — ISDT 608PD на 4.20 V раз на місяць» with «(заряд 2.5 A, не понад 3 A; режиму зберігання немає)».
+    - **Reason:** G5 decisions 12 and 14; corrects re-audit 'Anker 737 is DRP'.
+    - **Sources:** analogs_G5 decisions 12, 14
+    - **Saving usd:** n/a
+  36.
+    - **Section:** 05a_arch_power
+    - **Kind:** new_risk
+    - **Part:** Noise source current with ZFL-500+
+    - **Anchor:** | F стенд від батареї: V4L + AUX sled + шумове джерело + 1 прилад LAB |
+    - **Instruction:** Add a note under the runtime table: «З ZFL-500+ шумове джерело може брати на 20-40 mA більше (+0.25-0.5 W, оцінка) — лише під час Y-фактора; перерахувати після виміру.»
+    - **Reason:** G5 decision 2 current estimate.
+    - **Sources:** analogs_G5 decision 2
+    - **Saving usd:** n/a
+  37.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** Bench hub is STT
+    - **Anchor:** на стенді — MTT-хаб від банку
+    - **Instruction:** Replace with «на стенді — стендовий хаб Waveshare (STT) від банку через DC 5V». After «Глибина хабів до стендового приладу — 3 при межі 5.» add «Стендовий хаб STT допустимий: жоден стендовий прилад не є повношвидкісним ізохронним (Hantek і FX2 LA — high-speed); хаб додає рівно один рівень (root → FE1.1s → CH334F → хаб). Внутрішній Adafruit CH334F лишається MTT.»
+    - **Reason:** G5 decision 13: Waveshare states STT; v1 MTT label wrong.
+    - **Sources:** analogs_G5 decision 13; https://www.waveshare.com/usb-hub-2in-4out.htm
+    - **Saving usd:** n/a
+  38.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** other
+    - **Part:** Bench kit contents
+    - **Anchor:** Anker 737, MTT-хаб, ISDT 608PD, інструменти.
+    - **Instruction:** Replace with «Anker 737, стендовий хаб (STT) з дротом 5 V, ISDT 608PD із зарядним дротом XT60-XT30, інструменти (названий набір і мікрометр).» Also replace «динамометричний ключ, перехідники і запасний LNA V2» with «динамометричний ключ, утримувальний ключ 8 мм, перехідники RG402, барель F-F і connector savers, запасний LNA V2».
+    - **Reason:** G5 decisions 4, 13, 14, 15.
+    - **Sources:** analogs_G5 decisions 4, 13, 14, 15
+    - **Saving usd:** n/a
+  39.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** other
+    - **Part:** Battery storage without a charger storage mode
+    - **Anchor:** зберігання при близько 50% SoC (3.6-3.8 V/ел.)
+    - **Instruction:** Append «(ISDT 608PD режиму зберігання не має — до 50% розряджати приймачем, доки стендовий тест на поточній прошивці не покаже кінцеву напругу розряду USB-C 3.8 V)».
+    - **Reason:** G5 decision 14 (lowest settable end voltage 4.15 V as of July 2024; 3.7 V after an update unverified).
+    - **Sources:** analogs_G5 decision 14; https://oscarliang.com/isdt-608pd-charger/
+    - **Saving usd:** n/a
+  40.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** LiteVNA 64 seller check and arrival
+    - **Anchor:** | Ціни: переоцінити кожен неперевірений рядок (P5)
+    - **Instruction:** Add a row before this one: «| LiteVNA 64: Eleshop лише в той самий день у звичайному браузері — (1) eleshop.eu/litevna-5341.html показує LiteVNA 64 (не 62) за ≤ EUR 144.59 без ПДВ і в наявності; (2) товар + доставка до вашої країни нижче EUR 156.33 + доставка Passion Radio на тій самій базі ПДВ; (3) GPSR або лист: виробник Zeenko, HW ≥ v0.3.1 (краще v0.3.3), male OSL + SMA F-F + 2× 30 см M-M, без Wi-Fi/BT. На прибутті (14 днів відмови ЄС): CONFIG > VERSION; lsusb 04b4:0008; NanoVNA-Saver @3445a0a і scikit-rf NanoVNAv2 роблять розгортку на Q6A через labd /dev/lab/litevna; після SOL + thru з ANNE-50+ на обох портах S21 ≤ −90 dB нижче 3 GHz (IFBW 90 Hz на v0.3.1, 225 Hz на v0.3.2+) і ≤ −50 dB на 3-6.3 GHz (≤ −70 dB для v0.3.3); S11 з навантаженням ≤ −50 dB нижче 3 GHz і ≤ −40 dB вище; рівні потужності 1-3 через регістри 0x41/0x42; заряд ≤5 V і ≤1 A, батарея тримає заряд. Провал — повернення | Інакше Passion Radio (5 шт.) | Крок 8 закупівлі, на прибутті |»
+    - **Reason:** G5 decision 0 conditions and acceptance tests.
+    - **Sources:** analogs_G5 decision 0
+    - **Saving usd:** n/a
+  41.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** tinySA ZS407 seller conditions and arrival checks
+    - **Anchor:** | Ціни: переоцінити кожен неперевірений рядок (P5)
+    - **Instruction:** Add a row: «| tinySA ZS407: продавця вирішити за 3 робочі дні (інакше Astroradio). PL — GOTRONIK (PLN 899 з ПДВ; наявність у кошику). Інша адреса ЄС — спершу Eleshop (саме ZS-407, з доставкою ≤ Elektor); Elektor лише якщо: (a) письмове підтвердження Zeenko (mail@zeenko.tech) або tinySA.org, що одиниці Elektor — від Zeenko (заява лише Elektor — тільки з ланцюжком інвойсів до Zeenko чи переліченого дистриб'ютора); (b) Elektor підтверджує фізичну наявність і дату відвантаження (Shopify не веде залишків); (c) сума кошика з ПДВ країни призначення щонайменше на $20 нижча за Astroradio до тієї самої адреси (для Іспанії — Astroradio). На прибутті (не доводить справжності): CONFIG > VERSION — HW V0.5.3 або новіша і мітка ZS407; прошивка tinySA4_v1.4-252-g2b4aa51 і selftest; LDS близько −102 dBm на 30 MHz, RBW 30 kHz, 50 Ohm, LNA вимкнено; шум LNA увімк./вимк. до 6 GHz; рівень внутрішнього калібрувального виходу через атенюатор з виміром VNA; udev labd на CDC interface 00 і QtTinySA на Ubuntu 24.04 arm64 — у вікні повернення | Порушення умов — Astroradio | Тиждень 1 |»
+    - **Reason:** G5 decision 1 conditions and arrival function checks.
+    - **Sources:** analogs_G5 decision 1; https://tinysa.org/wiki/pmwiki.php?n=Main.Buying
+    - **Saving usd:** n/a
+  42.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** ZFL-500+ pre-purchase S2P gate and arrival tests
+    - **Anchor:** | Ціни: переоцінити кожен неперевірений рядок (P5)
+    - **Instruction:** Add a row: «| Шумове джерело. A (до кроку 8): запросити в Mini-Circuits S-параметри серійних SMA ZFL-500+ при 12 V щонайменше до 2.5 GHz; приймати лише якщо кожна одиниця має S21 ≥ найгірший S2P LN+ мінус 1.0 dB: 1090 MHz ≥22.6 dB; 1300 MHz ≥20.7 dB; 1420 MHz ≥19.3 dB; 1541-1575 MHz ≥17.2 dB; 1691-1704 MHz ≥15.4 dB; 2200-2290 MHz ≥16.4 dB; 2400 MHz ≥16.3 dB; і без резонансів (відхилення ≤1 dB від гладкої апроксимації в ±100 MHz від кожної робочої точки). Без даних або провал — ZFL-500LN+. B (на прибутті): S21 на LiteVNA при 12.00 V з атенюацією ≥ підсилення + 3 dB — ≥23.7 dB і рівномірність ±0.5 dB на 28-500 MHz; струм при 12.00 V ≤75 mA; ENR tinySA з атенюатором 10 dB (EXT GAIN 0, атенюація ≥10 dB): ≥17.2 dB на 28-440 MHz, ≥16 dB на 1090-1296 MHz, ≥10 dB на 1420-1704 MHz, ≥8.4 dB на 2200-2400 MHz; нахил між 11.5 і 12.5 V ≤0.5 dB/V; без спурів 0.1-2400 MHz із закритим входом; дрейф ENR ≤0.1 dB між 10 і 120 с після NOISE EN. Провал у смузі — RMA за гарантією; поза смугою повернення немає | A — ворота покупки | До кроку 8 / на прибутті |»
+    - **Reason:** G5 decision 2 conditions_or_tests.
+    - **Sources:** analogs_G5 decision 2; https://www.minicircuits.com/pages/s-params/ZFL-500LN+_S2P.zip
+    - **Saving usd:** n/a
+  43.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** RF accessories: pads, DC block LF, loads, landed compare
+    - **Anchor:** | Ціни: переоцінити кожен неперевірений рядок (P5)
+    - **Instruction:** Add a row: «| РЧ-аксесуари: S21 кожного атенюатора до 6.0 GHz у таблицю labd (не 30 dB номіналу; понад 3 GHz усереднювати); BLK-89-S+ (специфікований лише від 0.1 MHz) — S21 від 50 kHz і A/B SNR DCF77/MSF на HF+ з блоком і без; якщо втрати є — LF-тракт HF+ без блоку після підтвердження 0 V DC на порту; 3 ANNE-50+ промарковані, ніколи на лінії зі зміщенням; при замовленні порівняти підсумок Mini-Circuits (США, >EUR 150: мито + ПДВ + збір + UHF) і DigiKey DE | LiteVNA, HF+ | Крок 5 і 9 запуску |»
+    - **Reason:** G5 decision 3 conditions.
+    - **Sources:** analogs_G5 decision 3
+    - **Saving usd:** n/a
+  44.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Torque wrench listing check and dead-weight acceptance
+    - **Anchor:** лістинг динамометричного ключа
+    - **Instruction:** Replace with «лістинг динамометричного ключа (eBay 354598266754 відкрити вручну: живий, ціна, 0.9 N·m / 8 мм у назві, ПДВ для ЄС; мертвий — TekBox 0.9 N·m під замовлення). Приймання ключа (і TOJOIN): затиснути нержавіючий барель SMA, ручка горизонтально; пляшка з водою на нитці на радіусі r до зриву: момент = m·9.81·r (0.917 kg на 100 мм або 0.765 kg на 120 мм для 0.9 N·m); 10 зривів у кожен бік; середнє 0.81-0.99 N·m, розкид ≤±5%; щороку і після падіння; до проходження — не на калібрувальних з'єднаннях VNA. Кожен перехідник — на LiteVNA, ≤0.3 dB на 2.3 GHz».
+    - **Reason:** G5 decision 4 conditions_or_tests.
+    - **Sources:** analogs_G5 decision 4; https://www.eevblog.com/forum/rf-microwave/sma-torque-wrench/
+    - **Saving usd:** n/a
+  45.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** LNA V2 arrival checks
+    - **Anchor:** | Ціни: переоцінити кожен неперевірений рядок (P5)
+    - **Instruction:** Add a row: «| LNA V2 (AliExpress 33011424874 — давній лістинг V1 з новою назвою): корпус або мітка V2, QPL9547, 100 MHz-6 GHz (V1 — SPF5189Z, 50 MHz-4 GHz); продавець RTLSDRBlog Store 4523039; рядок мита EUR 3 у кошику. Струм при 4.5 V (FNB58/DPS-150): ≤90 mA для трійника запасного V4L, ≤150 mA для ch4/TCBT. Кондуктивно: S21/S11 на LiteVNA через атенюатор 30-40 dB на 145, 437, 740, 1700 і 2250 MHz — ≥15 dB скрізь. A/B шумовим джерелом проти тракту SAWbird+ (лише відносний NF) | LiteVNA, FNB58 | На прибутті |»
+    - **Reason:** G5 decision 5 conditions_or_tests.
+    - **Sources:** analogs_G5 decision 5
+    - **Saving usd:** n/a
+  46.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** FNB58 channel conditions and goods-in
+    - **Anchor:** | Ціни: переоцінити кожен неперевірений рядок (P5)
+    - **Instruction:** Add a row: «| FNB58 з AliExpress ЄС лише якщо: (1) продавець — офіційний магазин FNIRSI; (2) явно вибрано SKU Std без Bluetooth; (3) сума кошика для адреси ЄС з ПДВ і можливим EUR 3 ≤ EUR 47 і нижча за fnirsi.com для того самого Std; (4) ви погоджуєтесь втратити 2-річну гарантію FNIRSI. Інакше BerryBase (якщо є і дешевше), інакше fnirsi.com. На прибутті: lsusb 2e3c:5558; без логотипа BT і пункту Bluetooth; знак CE; записати версію прошивки, не оновлювати; патчений логер baryluk 100 sps 8 год без зависання (або спрацьовує і відновлюється «meter stalled» labd); живлення від ПК — 0.000 V на незаживленому порту; звірка з DMM і DPS-150 на 5, 12, 20 V і 0.5, 2, 4 A у межах допуску DMM — до використання як еталона SHUNT_CAL INA228; PD-читання Anker 737 показує PDO 20 V | Повернення у вікні AliExpress | Тиждень 1 |»
+    - **Reason:** G5 decision 6 conditions and acceptance.
+    - **Sources:** analogs_G5 decision 6; https://raw.githubusercontent.com/baryluk/fnirsi-usb-power-data-logger/master/fnirsi_logger.py
+    - **Saving usd:** n/a
+  47.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** DMM AN8009 pre-order and arrival
+    - **Anchor:** | Ціни: переоцінити кожен неперевірений рядок (P5)
+    - **Instruction:** Add a row: «| DMM AN8009 — перед замовленням (досить одного): зображення специфікації лістингу показує DC uA «99.99uA 0.01uA» і DC mV «9.999mV 0.001mV»; або письмово від продавця; або K-зонд у комплекті; інакше AN8008. На прибутті: у положенні uA кнопка RANGE дає xx.xx uA, у mV DC — x.xxx mV; 10 uA і 90 uA від DPS-150 через резистор 0.1% (1.000 V на 100.0 kOhm = 10.00 uA; допуск ±0.11 uA) — показ і падіння напруги; відкрити корпус: F1 10 A/250 V і F2 200 mA/250 V (3.6×10 мм), R23/R24 = 99 + 1 Ohm; K-type у крижаній воді близько 0 °C (точність не опублікована — лише так/ні: 45 °C елемент, 70 °C KSD9700). Перевірка SHUNT_CAL INA228 — методом зовнішнього шунта на діапазонах 9.999/99.99 mV, не діапазоном 10 A; ціль очікування 1.0 mA — на верху діапазону 999.9 uA. Тест re-audit «PCB з маркуванням ZT109 / DM1106EN» для AN8009 не застосовувати (кристал під епоксидом) | Провал — повернення | Тиждень 1 |»
+    - **Reason:** G5 decision 7 conditions and stack_changes.
+    - **Sources:** analogs_G5 decision 7; https://lygte-info.dk/pic/Aneng/AN8009/DSC_3997.jpg
+    - **Saving usd:** n/a
+  48.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Hantek 6022BE pre-order and arrival; ripple test coupling
+    - **Anchor:** Осцилограф + tinySA | Стенд силової плати |
+    - **Instruction:** In this row (LT3045 ripple/PSRR) change the gate cell to «Осцилограф (вхід лише DC — потрібен BNC DC-блок, AC-модифікація OpenHantek або режим CHx AC math; на DC 20 V пульсацій 33 mV rms не розрізнити) + tinySA». Then add a new row: «| Hantek 6022BE з Botland: приватний покупець botland.de / botland.com.pl (не botland.store), у кошику в наявності і ≤ EUR 80 з доставкою; LA — від продавця ЄС або AliExpress з ПДВ IOSS + EUR 3 + EUR 2. На прибутті (30 днів): мітка Hantek, модель/серійний номер, CE; PCB як у розборі sigrok (AD9288, 4× AD8065, Mornsun A0505S-2WR2, CY7C68013A-100AXC, 2× 74HC4051, 24LC02, кварц 24 MHz) — заміна = можливий клон, повернення; lsusb 04b4:6022 (або 04b5:6022) до завантаження прошивки; OpenHantek6022 3.4.1-rc2 завантажує FW0210, sigrok hantek-6xxx після переп'єднання; калібрування зміщення із закороченими входами; чистий меандр 1 kHz з пробником x10; смуга кондуктивно (генератор tinySA малого рівня в прохідне навантаження 50 Ohm, режим Bench, жодної антени): CH1 30 MS/s, ±0.5 V — −3 dB на ≥8 MHz відносно 100 kHz (поріг — оцінка); DC ±3% проти DMM на 5 V (x1) і 13 V (x10); шум відкритого входу на 20 mV/div ≤ близько 10 mVpp (форум, не перевірено) — записати як базу; струм ≤0.5 A при 5 V на FNB58; 10 хв потоку 15 MS/s 2 канали через стендовий хаб без втрат разом з LA 24 MS/s | Провал — повернення і The Debug Store | На прибутті |»
+    - **Reason:** G5 decision 8 conditions and the DC-coupling knock-on for the ripple test.
+    - **Sources:** analogs_G5 decision 8; https://sigrok.org/wiki/Hantek_6022BE; https://raw.githubusercontent.com/OpenHantek/OpenHantek6022/main/docs/limitations.md
+    - **Saving usd:** n/a
+  49.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** Debug Probe seller condition and acceptance
+    - **Anchor:** | Ціни: переоцінити кожен неперевірений рядок (P5)
+    - **Instruction:** Add a row: «| Debug Probe: reichelt лише в кошику, що вже існує для інших деталей v2 (перевірити після P6); інакше DigiKey DE у замовленні кроку 7 (у кошику перевірити EUR 3 мита і UHF; краще UPS/FedEx DDP — DHL є CPT); ніколи окремим замовленням; замовлення тижня 1, щоб пробник прийшов до запуску Pico-супервізора; якщо консоль UART потрібна на першому завантаженні Q6A — TinyTronics у замовленні кроку 1 (EUR 14.50). Приймання (близько 15 хв): мітка SC0889/EAN, корпус, 3 кабелі + USB; lsusb 2e8a:000c «Debug Probe (CMSIS-DAP)»; прошити debugprobe v2.3.1 UF2; на Q6A `openocd -f interface/cmsis-dap.cfg -f target/rp2040.cfg -c 'adapter speed 5000'` — підключає обидва ядра RP2040 (мультидроп) на Pico-супервізорі і RP2040-Zero паку, програмує і перевіряє образ на кожному; picocom 115200 на пінах 8/10 Q6A — 10 хв без помилок кадру; доступ без root (60-openocd.rules або plugdev) | — | Тиждень 1 / до запуску Pico |»
+    - **Reason:** G5 decision 9 conditions_or_tests.
+    - **Sources:** analogs_G5 decision 9
+    - **Saving usd:** n/a
+  50.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Pinecil arrival and settings checks
+    - **Anchor:** | Ціни: переоцінити кожен неперевірений рядок (P5)
+    - **Instruction:** Add a row: «| Pinecil V2: біла коробка, чорна ручка з зеленим гріпом, BL706; IronOS ≥2.23 і Authenticity Checker pinecil.pine64.org у межах 30-денної гарантії; перше ввімкнення — Bluetooth Off, PD Mode = No Dynamic явно (README IronOS dev каже, що 28 V EPR вимкнено за замовчуванням, re-audit читав інакше — явне налаштування покриває обидва), ліміт 60 W, Power pulse, якщо 737 засинає; на 737 з кабелем без EPR FNB58 показує 20 V і ≤3 A, ніколи 28 V; шлях D7: DC5525 від сервісного порту 13.6-16.4 V з відсічкою 3.3 V/ел., пік ≤2.7 A, запобіжник 5 A не згоряє під час нагріву; опір жало–земля через гвинт M2x4 до кнопки килимка (DMM; записати, ціль — кілька Ohm або менше); tinySA 2.4 GHz (лише прийом) з увімкненим паяльником — без BLE | — | На прибутті |»
+    - **Reason:** G5 decision 10 conditions_or_tests.
+    - **Sources:** analogs_G5 decision 10; https://raw.githubusercontent.com/Ralim/IronOS/dev/README.md
+    - **Saving usd:** n/a
+  51.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Anti-static mat acceptance
+    - **Anchor:** | Ціни: переоцінити кожен неперевірений рядок (P5)
+    - **Instruction:** Add a row: «| Килимок iFixit (14 днів відмови ЄС, кондуктивно, без РЧ): ремінець кнопка–затискач близько 1 MOhm (0.8-1.2 MOhm; обрив або <0.5 MOhm — брак); шнур заземлення — неперервність і чи є послідовний резистор; опційно (не метод S4.1): DPS-150 10-20 V з обмеженням струму послідовно з DMM на діапазоні uA/nA між двома металевими вантажами за близько 25 см — R = V/I 1e6-1e9 Ohm (близько 20 nA-20 uA при 20 V); складання разом з ремінцем і шнуром у Pelican 1450 (близько 37×26×15 см) без заломів; яке закінчення заземлення в одиниці ЄС (затискач чи штекер) — для точки на середній пластині потрібен затискач або шпилька 4/10 мм | Провал складання — повернення | На прибутті |»
+    - **Reason:** G5 decision 11 conditions_or_tests.
+    - **Sources:** analogs_G5 decision 11
+    - **Saving usd:** n/a
+  52.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Anker 737 goods-in and DRP matrix via USB-C2
+    - **Anchor:** | Ціни: переоцінити кожен неперевірений рядок (P5)
+    - **Instruction:** Add a row: «| Anker 737: при оплаті — A1289 / EAN 194644098728; на прибутті — мітка з Wh ≤100 (86.4 Wh), маса близько 630 g; дисплей Battery Cycle 0 і Health 100%; PDO на C1 і C2 (FNB58): 5/9/15/20 V при 3-5 A + 28V5A з кабелем 240 W e-marker; розряд 20 V/3 A ≥ близько 75 Wh (techtest 77.2); пульсації на 20 V/3 A і 5 V/3 A (опублікованих даних немає). DRP-матриця, 10 підключень кожна, з напрямком FNB58: 737 USB-C2 → USB-C приймача (через TPS259470A) з платою IP2368 COUT — плата має споживати, без зворотного VBUS; 737 USB-C2 → ISDT 608PD; те саме на C1 для запису. Польовий заряд від банку — лише після проходження тестів C2 | До того — односпрямований PD-адаптер | Крок 8 запуску |»
+    - **Reason:** G5 decision 12 conditions_or_tests; supersedes re-audit D's 'both ports DRP' test design.
+    - **Sources:** analogs_G5 decision 12; reaudit_D_power_mech_display_lab.json
+    - **Saving usd:** n/a
+  53.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Bench hub acceptance
+    - **Anchor:** | Ціни: переоцінити кожен неперевірений рядок (P5)
+    - **Instruction:** Add a row: «| Стендовий хаб Waveshare: до оплати — котирування доставки з хабом у замовленні кроку 7; перевірити EUR 3 мита (IOSS/пошта) і дату старту UHF. На прибутті: 2× кабелі USB-A→C у коробці; lsusb -v bDeviceProtocol (очікується 1 = STT); lsusb -t — рівно один додатковий рівень (root → FE1.1s → CH334F → хаб); з банком на DC 5V FNB58 на LAB-порту <50 mA і 0 mA зворотного струму при знеструмленому хості (VBUS близько 0 V на DMM); хаб не бере струм з VBUS IN1 при живленому DC-гнізді; перевантаження 1.2 A на порт спрацьовує і тримається; розмір DC-гнізда для дроту від банку | — | Крок 9 запуску |»
+    - **Reason:** G5 decision 13 conditions_or_tests.
+    - **Sources:** analogs_G5 decision 13
+    - **Saving usd:** n/a
+  54.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** ISDT 608PD goods-in
+    - **Anchor:** | Ціни: переоцінити кожен неперевірений рядок (P5)
+    - **Instruction:** Add a row: «| ISDT 608PD: лише продавець зі списку isdt.co/buy; версія прошивки через ISD Go для Windows, без оновлення з телефона; кожен елемент проти DMM на JST-XH — при розбіжності >5 mV «Voltage Calibration» в ISD Link (BLE, вдома, приймач вимкнений); після балансу LiPo 4.20 V кожен елемент на DMM 4.190-4.200 V, жоден понад 4.200 V (Daly OVP може спрацювати на 4.20 V); налаштування 2.5 A, ніколи понад 3 A, LiPo 4S, баланс; tinySA 2400-2485 MHz лише прийом, max-hold — простій, заряд, екран сполучення; FNB58 — PD від односпрямованого адаптера; тест 737 → 608PD лишається відкритим (USB-C 608PD двонапрямлений); кінцева напруга розряду USB-C на поточній прошивці (у липні 2024 — найнижче 4.15 V; 3.7 V після оновлення — не перевірено) | Доки 3.8 V не показано — 50% розрядом приймачем | На прибутті |»
+    - **Reason:** G5 decision 14 conditions_or_tests.
+    - **Sources:** analogs_G5 decision 14; https://oscarliang.com/isdt-608pd-charger/
+    - **Saving usd:** n/a
+  55.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Tools acceptance, wire gauge, TME checks
+    - **Anchor:** | Ціни: переоцінити кожен неперевірений рядок (P5)
+    - **Instruction:** Add a row: «| Інструменти: штангенциркуль Goobay проти мікрометра SCALA 533.501 — 3 загартовані круглі деталі (близько 3, 5, 10 мм) і одна 20-25 мм: ±0.02 мм, повернення до 0.00 після 10 закривань, дрейф ≤0.01 мм за 30 хв (провал — SCALA 230.207-X, +$22.49); термофен HL 1821 S на 300 °C з редуктором: 3:1 клейова термоусадка на RG174 і PTFE-коаксіалі поряд зі зразками PETG і ASA — без пошкоджень (провал — HL 1920 E, +$40.14); різьба: підтвердити M5×0.8 дипольного набору, нарізати на 5 мм латуні/алюмінію — гайка M5 рукою без люфту; мітчик лише для наскрізних отворів (муфти — наскрізні втулки; глухі отвори потребують мітчика bottoming, не оцінено); перетин тракту батареї — 20 AWG чи 18 AWG (у v1 18-20 AWG; 18 AWG — +Jokari 20050 $28.63); Jokari 40026 на 20 AWG силіконі і 28 AWG без надрізів жил, чи 0.3-1.0 мм — провідник чи зовнішній діаметр; ножиці лише прямі (тісні криві — компаундні ножиці, не оцінено, або надрізи); TME — ціна за 1 шт. і наявність у кошику (сторінки показують 0, дані — наявність; Stanley 2, плашка 4, тримач 6, вороток 6, мікрометр 4); доставка двох посилок не врахована; запчастини йдуть за рішеннями батьківських рядків, аркуш обліку в нотатнику | Провал — повернення (14 днів) | На прибутті |»
+    - **Reason:** G5 decision 15 conditions_or_tests.
+    - **Sources:** analogs_G5 decision 15
+    - **Saving usd:** n/a
+  56.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Currents row: noise source and LNA V2 limits
+    - **Anchor:** шумове джерело ZFL-500 (12 V)
+    - **Instruction:** Replace with «шумове джерело ZFL-500+ / ZFL-500LN+ (12.00 V; ZFL-500+ — ≤75 mA, LN+ S2P — 37 mA)» and, in the gate cell after «шумове джерело 0.15 A)», add «; LNA V2: ≤90 mA — трійник запасного V4L, ≤150 mA — TCBT ch4».
+    - **Reason:** G5 decisions 2 and 5.
+    - **Sources:** analogs_G5 decisions 2, 5
+    - **Saving usd:** n/a
+  57.
+    - **Section:** 08_open_bench
+    - **Kind:** other
+    - **Part:** Prices row: what remains unverified after G5
+    - **Anchor:** | Ціни: переоцінити кожен неперевірений рядок (P5)
+    - **Instruction:** In this row's first cell add: «після P5 G5 неперевіреними лишаються: лістинг TOJOIN, ціни Eleshop (LiteVNA, tinySA), магазин FNIRSI на AliExpress і SKU, продавець і кошик AN8009, котирування доставки Waveshare, ПДВ OSS у Lindinger, Amazon.de для Anker поза DE, зачищувач, спаджер, ключ 8 мм, нотатник ЄС, органайзер, дріт 5 V хаба, дріт XT60-XT30, кабель 240 W EPR, connector savers».
+    - **Reason:** G5 records list these as unverified.
+    - **Sources:** analogs_G5 decisions 0-15
+    - **Saving usd:** n/a
+  58.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 2: Adafruit launch order and RTL-SDR Blog EU route
+    - **Anchor:** Одне замовлення Adafruit для запуску (близько $105 — $104.95 за цінами BOM
+    - **Instruction:** Remove «Debug Probe» from the Adafruit list and reduce that order by $12.00 (from $104.95 to $92.95 at BOM prices, unless other sources move more items). At the end of the step add: «ЄС: запасний LNA V2 — офіційний AliExpress 33011424874 (EUR 25.79 з ПДВ); підсумок замовлення RTL-SDR Blog рахувати з доставкою в ЄС: EUR 3 мита за кожен окремий тарифний рядок, поки посилка ≤ EUR 150 і йде IOSS/поштою, + EUR 2 UHF за рядок з близько 1.11.2026.»
+    - **Reason:** G5 decisions 5 and 9; operator note 35.
+    - **Sources:** analogs_G5 decisions 5, 9; operator_notes items 34-35
+    - **Saving usd:** 12.00 removed from the Adafruit order (probe re-sourced at 10.86 ex VAT)
+  59.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 5: deciding instruments
+    - **Anchor:** tinySA ZS407 (Astroradio або інший продавець зі списку tinySA.org), FNB58 Std, DMM
+    - **Instruction:** Replace with «tinySA ZS407 — продавця вирішити за 3 робочі дні: PL — GOTRONIK; інша адреса ЄС — Eleshop, потім Elektor лише за умов розділу 8; інакше Astroradio. FNB58 Std — офіційний магазин FNIRSI на AliExpress ЄС за умов розділу 8, інакше BerryBase / fnirsi.com. DMM — AN8009 (умови розділу 8), інакше AN8008 + K-термометр. Debug Probe — у кошику reichelt (або DigiKey кроку 7)».
+    - **Reason:** G5 decisions 1, 6, 7, 9.
+    - **Sources:** analogs_G5 decisions 1, 6, 7, 9
+    - **Saving usd:** n/a
+  60.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 7: Waveshare, DigiKey, reichelt, TME, iFixit EU orders
+    - **Anchor:** Waveshare (LC76G, RP2040-Zero для паку, L1+L5 антена)
+    - **Instruction:** Change to «Waveshare (LC76G, RP2040-Zero для паку, L1+L5 антена, стендовий хаб USB-HUB-2IN-4OUT-NP SKU 23062 — котирування доставки з хабом до оплати)»; after the DigiKey item add «(+ Debug Probe 2648-SC0889-ND, якщо немає кошика reichelt)». Also add to this step: «кошик reichelt (Debug Probe, Goobay 77001, зачищувач, ESD-пінцет); замовлення TME (Stanley 2-14-556, Völkel 90530/27434/15003/14010, Steinel HL 1821 S, Knipex 78 61 125, Jokari 40026, SCALA 533.501 — ціна і наявність у кошику); iFixit EU (килимок + Mako = EUR 69.90, поріг безкоштовної доставки EUR 65 — мій розрахунок)».
+    - **Reason:** G5 decisions 9, 11, 13, 15: consolidate into existing EU/maker orders to avoid separate shipping, duty and UHF.
+    - **Sources:** analogs_G5 decisions 9, 11, 13, 15
+    - **Saving usd:** n/a
+  61.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 8: lab core order
+    - **Anchor:** | 8 | Тиждень 2-3 | Лабораторія core:
+    - **Instruction:** Rewrite the 'what and where' cell: «Лабораторія core: LiteVNA 64 — Passion Radio (5 шт.) або Eleshop лише після перевірок того самого дня; Mini-Circuits (2× VAT-30W2+, 2× BLK-89-S+, 3× ANNE-50+, 3× 086-6SM+; ZFL-500+ лише після S2P за умовою A, інакше ZFL-500LN+; посилка >EUR 150 — мито, ПДВ, збір, UHF; порівняти з DigiKey DE); набір Nooelec — Nooelec напряму; Anker 737 — MediaMarkt.de/Saturn.de (EUR 82.99); Pinecil V2 — лише PINE64; Hantek 6022BE — Botland (приватний покупець) + LA; ISDT 608PD — Modellbau Lindinger (EUR 34.99; до порогу безкоштовної доставки EUR 89/99 можна додати інші стендові позиції); динамометричний ключ (після перевірки лістингу; інакше TekBox 0.9 N·m) + набір RG402 через офіційний канал RTL-SDR Blog.» Remove «MTT-хаб» and «килимок iFixit» from this step (moved to step 7).
+    - **Reason:** G5 decisions 0, 2, 3, 4, 8, 10, 12, 13, 14.
+    - **Sources:** analogs_G5
+    - **Saving usd:** n/a
+  62.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Customs paragraph: landed specifics for lab sellers
+    - **Anchor:** **Митниця і ПДВ (регіон невідомий — перевірити).**
+    - **Instruction:** Add (keeping whatever the landed-cost rule rewrite produces): «Лабораторія: Mini-Circuits (США) — одна посилка понад EUR 150, тому звичайне мито + імпортний ПДВ + збір кур'єра + EUR 2/рядок UHF; Waveshare не збирає ПДВ ЄС (без IOSS) і рахує доставку вручну; PINE64 (CN/HK) — ПДВ і мито при ввезенні; isdtshop.com додає ПДВ ЄС у кошику; TOJOIN (США) — близько $49 з доставкою (оцінка); Astroradio поза Іспанією додає GLS, EUR 5.92 страховки і 21% ES ПДВ на доставку.»
+    - **Reason:** Operator notes 34-35 applied per G5 records.
+    - **Sources:** analogs_G5 decisions 1, 3, 4, 10, 13, 14; operator_notes items 34-35
+    - **Saving usd:** n/a
+  63.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** rule
+    - **Part:** Authenticity rules for lab instruments
+    - **Anchor:** tinySA і LiteVNA (високий): лише продавці зі списку tinySA.org або Passion Radio
+    - **Instruction:** Replace with «tinySA і LiteVNA (високий): лише продавці зі списку tinySA.org або Passion Radio; для LiteVNA запасні Eleshop, Neven і GOTRONIK — лише після перевірки в GPSR «виробник Zeenko» (у Neven — NANOLAB, у Lab401 — DeepElec); Elektor для tinySA — лише задокументований виняток з письмовим підтвердженням ланцюжка від Zeenko або tinySA.org (клон тестом не виявити)». Also replace «Hantek, ANENG і загальні HMC7992 з маркетплейсів — ризик сірих копій.» with «Hantek — Botland лише після розбору на прибутті (GPSR називає шеньчженську торгову компанію, не Qingdao Hantek); ANENG — уникати змішаних лістингів «Rm 409b»; FNB58 — лише офіційний магазин FNIRSI і SKU Std; Pinecil — лише PINE64 і перелічені реселери, ніколи AliExpress; ISDT — лише isdt.co/buy; Raspberry Pi Debug Probe — Approved Resellers; деталі Mini-Circuits — лише Mini-Circuits, DigiKey, Mouser; загальні HMC7992 з маркетплейсів — ризик сірих копій.»
+    - **Reason:** G5 decisions 0, 1, 3, 6, 7, 8, 9, 10, 14.
+    - **Sources:** analogs_G5; https://tinysa.org/wiki/pmwiki.php?n=Main.Buying; https://www.isdt.co/buy; https://www.raspberrypi.com/resellers/; https://wiki.pine64.org/wiki/Pinecil
+    - **Saving usd:** n/a
+  64.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Bring-up step 9: lab core acceptance
+    - **Anchor:** Pinecil, килимок, Anker 737, MTT-хаб, Hantek з LA, ключ (після підтвердження лістингу); процедури P0-P3, P16-P17.
+    - **Instruction:** Replace «MTT-хаб» with «стендовий хаб (STT)» and append «; приймальні перевірки розділу 8 для кожного приладу в межах вікна повернення: LiteVNA, tinySA, шумове джерело (B), атенюатори і BLK-89-S+ нижче 100 kHz, тест ключа вантажем, LNA V2, FNB58, DMM, Hantek (розбір), Debug Probe (openocd мультидроп), Pinecil, килимок, Anker 737 (PDO і DRP-матриця через C2), хаб, ISDT 608PD, інструменти (штангенциркуль, термофен, різьба)». In step 5 («5. **РЧ-деталі (тиждень 1-2):**») add «BLK-89-S+ від 50 kHz і A/B DCF77/MSF на HF+».
+    - **Reason:** G5 stack_changes ask to add the acceptance lists to the bench bring-up.
+    - **Sources:** analogs_G5 decisions 0-15
+    - **Saving usd:** n/a
+  65.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** Corrections from P5 G5 (lab bench)
+    - **Anchor:** 36. wideband_sdr:
+    - **Instruction:** After item 36 add short items: «37. РЧ-аксесуари: $212.68 рахувало варіант −3 dB Passion Radio (EUR 13.20); правильно $245.86 з 2× VAT-30W2+. 38. «Eleshop — магазин Elektor» — хибно (elektor.com не має LiteVNA). 39. GOTRONIK: «Chwilowo niedostępny» і «+ kaucja» — приховані елементи сторінки; tinySA в наявності, доставка лише по Польщі. 40. Astroradio $247.18 — з доставкою лише для материкової Іспанії. 41. Passion Radio LNA V2 EUR 29.78 — з ПДВ (не без ПДВ; rf_frontend і пошук B). 42. FNB58 «$37 AliExpress» — ціна нового покупця в US-вітрині; ціна fnirsi.com для ЄС — EUR 52.05, не $53.99. 43. Anker 737: DRP лише USB-C1, USB-C2 — лише вихід (re-audit D: «737 — DRP»). 44. Стендовий хаб Waveshare — STT за Waveshare (Pi Hut пише і STT, і MTT). 45. BLK-89-S+: мінімальні RL 20 dB на 0.1-100 MHz і 25 dB на 100-1000 MHz («25 dB від 0.1 MHz» — хибно); ANNE-50L+ — 26/21/18 dB. 46. ZFL-500LN+: модель ENR 17.4-19.8 dB (S2P 26.2-26.8 dB при 12 V), не 17-18 dB; «стара ревізія ZFL-500 на 1 dB слабша» — сумнівно (PCN16-075: застарілий даташит). 47. Hantek 6022BE: потоково 30 MS/s лише CH1 / 15 MS/s 2 канали; апаратні діапазони 5/2.5/1/0.5 V; вхід лише DC. 48. Debug Probe: виробництво щонайменше до січня 2030 (не 2028). 49. ISDT 608PD: має BLE; калібрування напруги є (ISD Link); екран 0.01 V; режиму зберігання і пресету Li-ion 4.10 V немає. 50. Запчастини: SMBJ14A у прикладі пошуку A — хибно (SMBJ13A/SMBJ17A); пошук B помилково прибрав 2 запасні MHF4L-SMA; плашка EXACT SE M5 — HSS (пошук B хибно). 51. LiteVNA 64 Passion Radio — HW 3.1, найнижча ревізія таблиці посібника.»
+    - **Reason:** G5 records state these as corrections to stack or research records.
+    - **Sources:** analogs_G5 decisions 0-15
+    - **Saving usd:** n/a
+  66.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** Lab items removed by G5
+    - **Anchor:** | Відвід XT30 до шунта | D7. |
+    - **Instruction:** Add rows to table 6.2 after this row: «| 30 dB Passion Radio RF KONNECT (без допуску/КСХ, під замовлення) | VAT-30W2+ — базова деталь (P5 G5). |» «| Бюджетні примітки Mirfield (tinySA) і Lab401 (LiteVNA) | Не дешевші з доставкою в ЄС (P5 G5). |» «| Hantek 6022BL з AliExpress у бюджетному мінімумі; The Debug Store як основний продавець | 6022BL — або осцилограф, або LA; Botland 6022BE (P5 G5). |» «| Позначка «MTT» стендового хаба; UK-БЖ хаба | Waveshare вказує STT; UK 3-pin у ЄС непридатний (P5 G5). |» «| Debug Probe у замовленні Adafruit | reichelt/DigiKey DE (P5 G5). |» «| Б/в ZFL-500 як еквівалент; позичені інструменти як бюджет | Лише явні компроміси (P5 G5). |» «| Модель вартості інструментів 245-400 без SKU | Названий набір (P5 G5). |»
+    - **Reason:** G5 removals and superseded items.
+    - **Sources:** analogs_G5 decisions 0, 1, 2, 3, 8, 9, 13, 15
+    - **Saving usd:** n/a
+  67.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Lab sources from P5 G5
+    - **Anchor:** - tinySA Ultra специфікація:
+    - **Instruction:** Under «Лабораторія» add: LiteVNA User Guide http://nanovna.com/wp-content/uploads/2021/11/LiteVNA_User-Guide.pdf ; tinySA.org продавці https://tinysa.org/wiki/pmwiki.php?n=Main.Buying ; Eleshop LiteVNA https://eleshop.eu/litevna-5341.html ; GOTRONIK LiteVNA 64 https://www.gotronik.pl/litevna-64-analizator-sieci-wektorowej-50khz-6-3ghz-kartapdf-10197.html ; GOTRONIK tinySA https://www.gotronik.pl/tinysa-ultra-analizator-widma-100khz-7-3ghz-zs407-zeenko-p-13267.html ; Elektor tinySA https://www.elektor.com/products/tinysa-ultra-zs407-spectrum-analyzer ; Mini-Circuits ZFL-500+ https://www.minicircuits.com/pdfs/ZFL-500+.pdf і S2P https://www.minicircuits.com/pages/s-params/ZFL-500+_S2P.zip ; ZFL-500LN+ S2P https://www.minicircuits.com/pages/s-params/ZFL-500LN+_S2P.zip ; PCN16-075 https://www.minicircuits.com/pcn/PCN16-075.pdf ; VAT-30W2+ https://www.minicircuits.com/pdfs/VAT-30W2+.pdf ; BLK-89-S+ https://www.minicircuits.com/pdfs/BLK-89-S+.pdf ; Nooelec 100815 https://www.nooelec.com/store/sdr/sdr-addons/attenuators/attenuator-bundle.html ; TekBox TBTWR-05NM https://www.meilhaus.de/cosmoshop/default/articleMedia/tbtwr/en/Datasheet_Tekbox_TBTWR-05NM_en.pdf ; RTL-SDR Blog RG402 https://www.rtl-sdr.com/product/rtl-sdr-blog-semi-rigid-rg402-sma-antenna-adapter-set/ ; LNA V2 AliExpress https://www.aliexpress.com/item/33011424874.html ; FNIRSI FNB58 https://www.fnirsi.com/products/fnb58.json і гарантія https://www.fnirsi.com/pages/warranty-policy ; логер baryluk https://raw.githubusercontent.com/baryluk/fnirsi-usb-power-data-logger/master/fnirsi_logger.py ; огляд AN8009 https://lygte-info.dk/review/DMMAnengAN8009%20UK.html ; Botland 6022BE https://botland.de/oszilloskope/6716-hantek-6022be-usb-pc-20mhz-oszilloskop-2-kanale-5904422359867.html ; sigrok Hantek 6022BE https://sigrok.org/wiki/Hantek_6022BE ; OpenHantek limitations https://raw.githubusercontent.com/OpenHantek/OpenHantek6022/main/docs/limitations.md ; reichelt Debug Probe https://www.reichelt.com/de/en/shop/product/raspberry_pi_debug_probe-343288 ; Raspberry Pi resellers https://www.raspberrypi.com/resellers/ ; OpenOCD udev https://raw.githubusercontent.com/openocd-org/openocd/v0.12.0/contrib/60-openocd.rules ; PINE64 Pinecil https://pine64.com/product/pinecil-smart-mini-portable-soldering-iron/ і вікі https://wiki.pine64.org/wiki/Pinecil ; iFixit EU килимок https://www.ifixit.com/en-eu/products/portable-anti-static-mat ; Anker 737 billiger.de https://www.billiger.de/pricelist/3996283292-anker-737-power-bank-24000-mah-schwarz і техтест https://techtest.org/die-anker-737-powercore-24k-powerbank-im-test-mit-140w-usb-c-port-zur-besten-powerbank/ ; Waveshare хаб https://www.waveshare.com/usb-hub-2in-4out.htm ; ISDT дилери https://www.isdt.co/buy ; Lindinger 608PD https://www.lindinger.at/de/RC-Elektronik/Ladegeraete-Netzgeraete/Ladegeraete/Ladegeraete-DC-12-50V/ISDT-608PD-Smart-Charger-DC-240W-10A-USB-C-140W-5A-1-6S-Lipo/9798048 ; TME SCALA 533.501 https://www.tme.eu/en/details/sc533501/ ; Steinel HL 1821 S https://www.tme.eu/en/details/hl1821s/hot-air-guns-and-accessories/steinel/hl-1821-s/ .
+    - **Reason:** Key URLs behind the G5 decisions.
+    - **Sources:** analogs_G5 sources lists
+    - **Saving usd:** n/a
+  68.
+    - **Section:** 00_header_toc
+    - **Kind:** other
+    - **Part:** Header note on LiteVNA/tinySA lower bounds
+    - **Anchor:** нижні межі LiteVNA ($175.73) і tinySA ($204.28) — без ПДВ (експорт)
+    - **Instruction:** Make this phrase match the final 03a rows: «нижні межі LiteVNA і tinySA — без ПДВ (експорт): LiteVNA $175.73 Passion Radio (умовно Eleshop $162.53), tinySA $204.28 Astroradio (умовно Elektor $182.10, у PL GOTRONIK $188.01); для покупця в ЄС ціни з ПДВ і доставкою — у рядках».
+    - **Reason:** G5 decisions 0 and 1 add conditional lower prices; header must not contradict the BOM.
+    - **Sources:** analogs_G5 decisions 0, 1
+    - **Saving usd:** n/a
+- **Already in v1:**
+  - LiteVNA 64 booked at Passion Radio (FR) at 175.73 ex VAT / 210.88 incl. FR VAT, 5 units, kit 2x 30 cm cables + male OSL + F-F, conducted only, LNA tests behind a 30-40 dB pad (03a row; re-verified by G5)
+  - tinySA and LiteVNA only from tinySA.org-listed sellers or Passion Radio; reject unconfirmed AliExpress 'Zeenko', Banggood, TinyRFEquip, TinyRFLab and ZS406 (09 authenticity paragraph)
+  - tinySA generator never on while an antenna is connected; generator and VNA port 1 only in Bench mode (03a lab rule)
+  - tinySA ZS407 order early because it decides the 12 V regulator A/B (03a note)
+  - Noise source BENCH-only, fed from AUX through NOISE EN; NF blocked below 13.6 V on battery; preliminary 0.15 A budget; PTC/TPS2553 at 1.5-2x measured (03a, 05a, 08)
+  - N8DMT ENR table as reference (03a); relative NF only
+  - E-field near-field probes cut from one 086-6SM+; no H-field probes (03a)
+  - Female OSL = bundled male OSL + F-F (03a)
+  - LNA V2 is the bench spare and the optional WIDE-path LNA; TCBT only on channels <=150 mA; V4L spare tee only for LNA <=90 mA with a labd token (01a C9, 05b)
+  - RTL-SDR Blog webstore does not ship to the EU; use the official eBay or AliExpress store 4523039 (09 step 2 and customs paragraph)
+  - FNB58 Std (no radio) and Pinecil Bluetooth Off under the QUIET rule (01b #8)
+  - OpenHantek6022 3.4.1-rc2 arm64, sigrok-cli, PulseView 0.4.2, fx2lafw 0.1.7, picocom, OpenOCD in the lab software list (01b #34)
+  - 6022BL no longer sold by The Debug Store (03a note)
+  - Pinecil V2 from PINE64 at 25.99, fed from the PD bank; D7 service-port fallback with XT30-DC5525 lead and IronOS 4S 3.3 V/cell cutoff (03a, 01a D7)
+  - iFixit EU price EUR 29.95 ($33.67) already noted in the mat row (03a)
+  - Anker 737 under 100 Wh, carry-on baggage; home-built 72 Wh pack never flies (03a, 05d, 01a)
+  - Monthly ISDT 608PD LiPo 4.20 V balance via the fused node-N service port after the INA228 shunt, main switch OFF (01a D7, 05a)
+  - SMBJ13A (J21) and SMBJ17A (node N) instead of SMBJ14A (05a, 06)
+  - Battery path wiring AWG 18-20 stated (01a, 05a) - G5 only asks to fix one value
+  - Hantek, ANENG and marketplace HMC7992 flagged as grey-copy risk (09)
+  - Internal Adafruit CH334F hub is MTT (02c)
+  - Hub depth to a bench instrument 3 of max 5; udev /dev/lab/<name> by serial (05b)
+- **Not applied:**
+  1.
+    - **Item:** LiteVNA 62 (GOTRONIK $137.82 ex, Neven $152.40, Eleshop about $146.13) as a cheaper VNA
+    - **Why:** Smaller 2.8 in 320x240 display and 1300-1500 mAh battery vs 3.95 in 480x320 / 2000 mAh: a trade, not a not-worse analog; only on an explicit user request.
+  2.
+    - **Item:** Grey-market or Zeenko-AliExpress-factory LiteVNA/tinySA, used LiteVNA, used ZS407
+    - **Why:** Genuineness or price unprovable; breaks the tinySA.org-listed-seller authenticity rule; above EUR 150 normal duty applies (operator note 35).
+  3.
+    - **Item:** Elektor tinySA without written Zeenko/tinySA.org supply-chain confirmation; GOTRONIK for non-Polish addresses
+    - **Why:** Elektor is not on the tinySA.org list and clones cannot be detected by test; GOTRONIK delivers only within Poland (regulamin 5.1).
+  4.
+    - **Item:** Selteq (UA) tinySA as a price option
+    - **Why:** Non-EU seller; Ukrainian prices are reference only under the user's rules.
+  5.
+    - **Item:** tinySA ZS406 / ZS405 / Basic, SA6, RF Explorer, Siglent, HackRF as analyzer substitutes
+    - **Why:** Worse range or level accuracy; HackRF can transmit (receive-only rule).
+  6.
+    - **Item:** Used ZFL-500/ZFL-500LN (Surplus Sales $75, eBay ~$20, RF Parts NOS $89.91), ZX60-V63+, LNA-2500, Nooelec LaNA, generic noise modules, changpuak DIY
+    - **Why:** Not provably not-worse (no warranty, unknown revision, no data, wrong band or over the 0.15 A budget); some generic modules are sold as 'interference generators', which conflicts with the conducted-only rule. Used ZFL-500 stays only as an explicit user trade.
+  7.
+    - **Item:** ANNE-50L+ parking loads (-$10.86) and generic 30 dB pads (up to about -$50)
+    - **Why:** Each gives up a guaranteed spec; offered only as explicit user trades, not adopted.
+  8.
+    - **Item:** Second Nooelec kit as composite 30 dB pads, generic DC blocks, Crystek CBLK-300-3, VAT-30+, SAT-30, Amphenol 132360, Tyclon, generic loads
+    - **Why:** Functionally worse or unproven; a failed DC block would put LNB DC into the tinySA.
+  9.
+    - **Item:** TekBox TBTWR-05NM as a replacement wrench; Mxita/ELT0491, AA83, 920L AliExpress wrenches; TOJOIN open-box
+    - **Why:** TekBox is dearer for an EU buyer (kept only as optional 0.5 N·m add-on or as fallback if the TOJOIN listing is dead); the cheap tools do not state a 0.9 N·m preset; open-box is unverifiable.
+  10.
+    - **Item:** Generic QPL9547/TQP3M9037/SPF5189Z boards, LNA V1, LaNA, LNA4ALL, F1OPA, GPIO Labs
+    - **Why:** Unproven or worse (SPF5189Z EOL and banned by stack rule #99).
+  11.
+    - **Item:** PGA-103+ 'EMC field-probe preamp' kits
+    - **Why:** Sold bundled with H-field loop probes, which the no-loops rule bans.
+  12.
+    - **Item:** FNB58 BT variants (Elektor EUR 49.95, BerryBase EUR 54.90, fnirsi.com $58.99), FNB-C2, FNB48P, POWER-Z KT002/C240/KM003C, AVHzY CT-3, WITRN, TC66C, '$37 AliExpress' price
+    - **Why:** BT breaks the QUIET/no-radio rule; others fail ports, Linux logging, ranges or price; the $37 is a new-shopper US price.
+  13.
+    - **Item:** ZOYI ZT109 listings, AN8002, AN870, UT61E, INA228 as uA meter
+    - **Why:** Unverifiable variants, no K-type input, or worse burden/resolution; not cheaper at regular prices.
+  14.
+    - **Item:** Hantek 6022BL, OWON VDS1022, SainSmart DDS120, Joy-IT Scope Mega50, Pico DIY LA, unnamed AliExpress 6022BE stores
+    - **Why:** 6022BL cannot run scope and LA together (labd Bench profile); others are unsupported by the pinned tooling, unverifiable or not cheaper.
+  15.
+    - **Item:** Pico/Pico 2 with debugprobe firmware, ST-LINK, WCH-LinkE, generic DAPLink as the BOM debug probe
+    - **Why:** Raw I/O without the probe's series resistors and Schmitt buffers, or no RP2040 multidrop support; Pico kept only as an uncased emergency spare.
+  16.
+    - **Item:** SEQURE S60P/SI012/S99, FNIRSI HS-01/HS-02, AliExpress 'Pinecils', used Pinecil
+    - **Why:** No DC5525 barrel or over the 5 A fuse, no per-cell cutoff, counterfeit risk, or not cheaper.
+  17.
+    - **Item:** Cheaper mats (Adafruit 4405, Botland rubber mat, kaputt.de, AliExpress kits, Velostat/pink poly)
+    - **Why:** Smaller, undocumented resistance, not foldable or not dissipative.
+  18.
+    - **Item:** UGREEN, INIU, Anker A1695, CUKTECH, Baseus, VOLTCRAFT and other power banks; DIY 6x21700 bank
+    - **Why:** No source-only 20V5A port, lower input power or no cycle/health readout; the DIY bank has no UN 38.3 test (cannot fly).
+  19.
+    - **Item:** Olimex USB-NeoHub, Raspberry Pi USB 3 Hub, Waveshare HUB HAT (B), 8086 Mini hub, USB-HUB-7U/4U
+    - **Why:** Back-feed power path, no per-port protection or ruggedness, or dearer without proven topology.
+  20.
+    - **Item:** ToolkitRC M4/M7/M8P, SkyRC B6neo series, ISDT PD60/Q6 Nano, iMAX B6 clones, DPS-150 + Daly balancing
+    - **Why:** Lower balance current, no PD input or counterfeit; ISDT 608PD from Unmanned Tech, Pyrodrone, FPV24 or unidentified AliExpress costs more landed.
+  21.
+    - **Item:** Goobay 77822/77823/77821 heat guns, EXACT Windeisen 1, iFixit Moray, single 24 AWG strippers, Knipex MultiStrip, HAZET die holder, WISS snips, borrowed tools as a budget
+    - **Why:** Missing safety spec or worse build/coverage, or dearer; borrowing only as the user's own choice for one-off M5 threading.
+  22.
+    - **Item:** Rite in the Rain notebook from riteintherain.com
+    - **Why:** Maker ships only within the contiguous US; buy from an EU reseller.
+  23.
+    - **Item:** Wording 'dish gore templates' in the G5 snips condition
+    - **Why:** No dishes rule: carry only a generic 'templates with tight curves' wording, never a dish item.
+  24.
+    - **Item:** Re-audit D 'Anker 737 is DRP' test design and ISDT price $49.99 (DarwinFPV)
+    - **Why:** Superseded by the higher-precedence P5 G5 decisions (C2 output-only; Lindinger EUR 34.99).
+  25.
+    - **Item:** Re-audit D DMM test 'PCB marked ZT109 / DM1106EN'
+    - **Why:** Does not apply to the AN8009 (chip-on-board under epoxy); replaced by functional checks.
+- **Notes:** Source analogs_G5_lab_bench.json has 16 decision records, all read in full (0 LiteVNA, 1 tinySA, 2 noise source, 3 RF accessories, 4 torque wrench, 5 LNA V2, 6 FNB58, 7 DMM, 8 Hantek, 9 Debug Probe, 10 Pinecil, 11 mat, 12 Anker 737, 13 bench hub, 14 ISDT 608PD, 15 tools). Together they cover all 16 rows of the 3.1 core-bench table, so the core subtotal, 3.6 totals, 2.12 bench tier and the budget-minimum sentence must be recomputed; my row-based recalculation (model, mixed base like v1) is 1,536.56-1,767.80 with the lowest conditional picks, or 1,571.94-1,767.80 with the booked LiteVNA/tinySA lows, plus the micrometer gap item. FX: several G5 records use ECB 16 Oct 2026 (1.1253 USD/EUR, 4.37 PLN/EUR, GBP/USD 1.3335) while the stack keeps 1.1241; I kept each record's USD figure and named the rate where it differs (for the mat I used the stack-rate 33.67 already in v1). All G5 records note that the WebSearch budget was exhausted; prices come from store APIs and primary pages fetched 18 Oct 2026, and Eleshop, AliExpress item pages, eBay and some shops were unreadable, so those values stay marked as not verified. Hard rules are unaffected: every item is passive or conducted-only, the ZFL-500+ swap keeps the BENCH-only noise source, no loop or H-field items enter, and the one 'dish' word in the tools record is not carried. The DMM change means G5 tests that say 'AN8008' (FNB58 cross-check, ISDT cell check, Pinecil tip-to-earth, mat test, Hantek DC check) should read 'DMM (AN8009)'. Several changes depend on other sources: the reichelt cart exists only if the G1/G2/G3 decisions survive P6; the Pi Hut order disappears only if the Pro Stick Plus also moves (extended/G6); the micrometer stays only if G3 keeps its nickel step. No file was edited.
+
 ## stack:draft (run `wf_63d37cf4-10a`)
 
 I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 328 KB and 1,257 lines. A script check found every Markdown table consistent.
