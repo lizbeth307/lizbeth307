@@ -23042,6 +23042,335 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   None of this touches the hard rules. These are passive or DC protection parts; nothing radiates or loops.
 
+## searchA:custom_2_layer_pcbs_power_board_5_channe (run `wf_a268b76e-da0`)
+
+- **Part:** Custom 2-layer PCBs: power board + 5-channel injector board (ch1 VHF-137, ch2 UHF 435-438, ch3 L-band 1525-1710, ch4 WIDE/2 m optional, ch5 LNB IF 739.5 MHz; the injector board also carries the HMC7992LP3DE SP4T sections per analogs G1). Chokes >=0.5 A per band, LNB choke >=1 A, C0G DC blocks. Tier core, Power, 1 set.
+- **Current price usd:** 10-30 (STACK v1 estimate, model, not verified. STACK names no fab, finish, laminate, choke part number, SRF, DCR or C0G voltage.)
+- **Critical specs:**
+  - Laminate: 2-layer FR-4, 1.6 mm +/-10%, with a stated Er (about 4.5) so the 50 Ohm GCPW (model: 1.0-1.2 mm trace, 0.2 mm gap, solid bottom ground) can be computed for 137 MHz to 1.71 GHz (L-band and the Lime RX1 path) and for the 739.5 MHz LNB IF. Thru-line coupon on the panel for LiteVNA qualification.
+  - Fab features: trace/space <=0.15 mm; plated vias of about 0.3 mm for via fences and at least 5 EPAD vias per HMC7992; shield-can footprint; 100% electrical test; UL 94V-0 listing; Tg >=130 C (the LDO junction model is 79-94 C with the regulators bonded to the plate).
+  - Copper: at least 1 oz (35 um) on both sides. Power-board paths sized by IPC-2221 (model, 10 C rise: the 7.5 A fused battery path needs about 4.9 mm at 1 oz or 2.4 mm at 2 oz; the 4 A J21 feed about 2.0 mm at 1 oz). Otherwise 2 oz on the power board.
+  - Surface finish: ENIG, for flat pads under the 0.5 mm-pitch QFN/DFN parts with exposed pads (HMC7992LP3DE 3x3, TPS7A4701 RGW, INA3221 RGV, LT3045). HASL only as a fallback.
+  - Band chokes ch1-ch4: rated current >=0.5 A, above the TPS2553 trip of 262-342 mA (RILIM 88.7 kOhm). Reactance >= about 200-250 Ohm in band, which keeps the shunt loss <=0.05-0.08 dB (model). SRF above the top of the band with margin. DCR <=1 Ohm (<=0.2 V drop at the 170-180 mA SAWbird+ load).
+  - LNB choke ch5: rated current >=1 A (eFuse limit 0.405-0.499 A, Bullseye about 0.2-0.3 A). High impedance at 739.5 MHz in a 75 Ohm F path. Sits on the 13.2 V rail.
+  - DC blocks: C0G/NP0 0402 (not X7R), 50 V on the LNB channel (13.2 V plus transients), 100 pF-1 nF chosen per band. A DC block sits before every SDR and instrument (tinySA +/-5 V DC limit).
+  - Per-channel acceptance: S21 loss and S11 measured conducted on the LiteVNA (proposed pass: <=0.3 dB, S11 <=-15 dB in band). DC-sense and isolation checks. Bench only; never an on-air antenna sweep.
+  - Parts traceable to the maker (franchised or maker-authenticated). EU landed cost stated (VAT; since 1 July 2026 a flat customs duty on parcels from outside the EU, amount unverified).
+  - Size: the injector board must fit the RF bay along the top edge; the HMC7992 sections add about 2 x 15x20 mm (model).
+  - Hard rules: passive RF hardware only. Receive-only is unaffected. Chip inductors are not loop antennas or H-field probes. Signal sources are used only conducted, for VNA qualification.
+- **Candidates:**
+  1.
+    - **Name:** Current pick: custom power board + 5-channel injector board from an unnamed fab, with generic >=0.5 A band chokes, >=1 A LNB choke footprint and C0G blocks (STACK v1)
+    - **Kind:** current_part
+    - **Price usd:** 10-30 (estimate, model)
+    - **Spec comparison:** Reference only. STACK states current ratings (>=0.5 A, >=1 A) and C0G, nothing else.
+    - **Worse in:** n/a. Under-specified: no laminate or Er, finish, copper weight, choke part numbers, SRF, DCR or capacitor voltage.
+    - **Compatibility:** As designed (passive; no driver; rails LNA4V5 4.5 V and LNB13V2).
+    - **Risks:** With no part numbers, someone could fit a cheap low-current choke (see the LQW18AN_00 trap below).
+    - **Seller url:** 
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md lines 45, 257, 559-560, 680-692
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_B_receivers_rf.json (corrected RF front end v1.1)
+  2.
+    - **Name:** Murata LQW chokes + Murata GRM C0G blocks from LCSC: ch1 LQW2UASR27J00L (C703705), ch2 LQW2UASR12J00L (C2044072), ch3 LQW18AN33NJ80D (C3221306), ch5 LNB LQW2UAS68NG00L (C703709), ch4 2 m-only use LQW2UASR27J00L; DC blocks GRM1555C1H102JA01D 1 nF (C76947) and GRM1555C1H101JA01D 100 pF (C77177), both C0G 50 V 0402
+    - **Kind:** other_brand
+    - **Price usd:** About 3.50 for 5 of each choke plus 50 of each capacitor. Unit prices from the LCSC/JLC catalogue, 18 Oct 2026: 0.1413, 0.1148, 0.0945 (LCSC page: $0.0945 at 5+, MOQ 5, 945 in stock), 0.1686, 0.0097, 0.0092. Ex VAT, shipping and duty; capacitor MOQ not checked. That is about $0.10-0.17 per channel, versus $11.31 for one TCBT-2R5G+.
+    - **Spec comparison:** ch1 270 nH: 500 mA, DCR 0.91 Ohm max, SRF >=600 MHz (Murata catalog O05E); X 233 Ohm at 137.5 MHz, shunt loss about 0.05 dB (model). ch2 120 nH: 650 mA, 0.63 Ohm, SRF >=950 MHz; X 329 Ohm at 437 MHz, about 0.025 dB. ch3 33 nH LQW18AN_80: 1100 mA, 0.11 Ohm, SRF >=3150 MHz (spec JELF243A_0102J-01); X 316-355 Ohm at 1525-1710 MHz, about 0.02-0.03 dB. ch5 68 nH: 1000 mA, 0.20 Ohm, SRF >=1300 MHz; X 316 Ohm at 739.5 MHz, about 0.03 dB in 50 Ohm and 0.06 dB in 75 Ohm. 2 m (ch4): X 246 Ohm at 145 MHz. All meet >=0.5 A / >=1 A, have SRF above the band, and the C0G blocks are 50 V.
+    - **Worse in:** Never silent: (1) ch1 (500 mA) and ch5 (1.0 A) sit exactly at the stack thresholds. Murata rates current at 40 C self-heating (LQW18AN_80 spec), Coilcraft at 15 C, so the real margin is thinner. By I^2 scaling (model): ch1 rises about 19 C at the 342 mA worst-case trip and about 5 C at 180 mA. (2) ch1 DCR 0.91 Ohm drops 0.16 V at 180 mA, against 0.077 V for Coilcraft 0805HP-221; the SAWbird+ still gets >4.2 V, inside its 3.3-5.5 V range. (3) The ch5 68 nH part suits only the QO-100 739.5 MHz IF. Its SRF of >=1.3 GHz rules out a 950-2150 MHz TV-LNB IF; for that, add LQW18AN33NJ80D in series and check on the VNA. (4) Unlike a TCBT, a chip choke is not a characterised bias tee, so S21/S11 must be measured (STACK already requires LiteVNA qualification). (5) No single chip covers ch4 WIDE 24-1766 MHz.
+    - **Compatibility:** Same footprints class (0603/1008), same rails, no driver. Fits the injector PCB. Passive, receive-only.
+    - **Risks:** The LCSC page says '100% Authentic' but does not state that LCSC is a franchised Murata distributor. For traceability, buy the same MPNs from DigiKey DE or Mouser inside the existing DigiKey order (prices there unverified). TME lists LQW18AN33NJ80D only on request. Trap: the cheaper LQW18AN_00 (non-80) parts are only 360-440 mA at 27-56 nH, and 120 mA for R22, so they would violate the >=0.5 A rule.
+    - **Seller url:** https://www.lcsc.com/product-detail/power-inductors_murata-electronics-lqw18an33nj80d_C3221306.html
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/power-inductors_murata-electronics-lqw18an33nj80d_C3221306.html
+      - https://www.lcsc.com/product-detail/power-inductors_murata-electronics-lqw2uasr27j00l_C703705.html
+      - https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2311301508_Murata-Electronics-LQW18AN33NJ80D_C3221306.pdf (Murata LQW18AN_80 spec JELF243A_0102J-01)
+      - https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Murata-Electronics-LQW2UASR27J00L_C703705.pdf (Murata catalog O05E, LQW2UAS table)
+      - JLCPCB/LCSC parts catalogue API, 18 Oct 2026, codes C703705 C2044072 C3221306 C703709 C76947 C77177
+      - https://www.tme.eu/en/details/lqw18an33nj80d/inductors/murata/
+  3.
+    - **Name:** Coilcraft chokes (premium option): ch1 0805HP-221XGRC, ch2 0805HP-121XGRC, ch3 0805HP-33NXGRC, ch5 1008HQ-68NXGLC
+    - **Kind:** other_brand
+    - **Price usd:** About 6.25 for one of each from LCSC (1.3044, 1.2783, 2.3688, 1.3012; stock 38/668/10/33). Not the cheapest, but still below one TCBT.
+    - **Spec comparison:** ch1: 220 nH, Irms 0.50 A at 15 C rise, DCR 426 mOhm, SRF typ 930 MHz; X 190 Ohm at 137.5 MHz, about 0.075 dB (model). ch2: 120 nH, 0.62 A, 293 mOhm, SRF typ 1265 MHz. ch3: 33 nH, 1.1 A, 87 mOhm, SRF typ 2410 MHz. ch5: 68 nH, 1.1 A, 0.13 Ohm, SRF min 1.15 GHz.
+    - **Worse in:** Not worse than the stack spec, and better than Murata on DCR and current margin. Weaker points: 0805HP SRF is quoted typical, not minimum; ch1 220 nH has slightly less reactance than the 270 nH Murata (0.075 vs 0.05 dB, model); price is about 10x Murata. Rejected for this line: 1812CS-102 (1 uH, 480 mA), 1008CS-102 (370 mA) and 0805HP-271 and above (<=0.42 A), all below 0.5 A.
+    - **Compatibility:** 0805/1008 footprints, passive.
+    - **Risks:** Small LCSC stock. LCSC is not confirmed as a franchised Coilcraft channel; Coilcraft direct, DigiKey or Mouser are (prices not fetched).
+    - **Seller url:** https://www.coilcraft.com/
+    - **Sources:**
+      - https://www.coilcraft.com/pdfs/0805hp.pdf
+      - https://www.coilcraft.com/pdfs/1008hq.pdf
+      - https://www.coilcraft.com/pdfs/1008cs.pdf
+      - https://www.coilcraft.com/pdfs/1812cs.pdf
+      - JLCPCB/LCSC parts catalogue API, 18 Oct 2026, codes C40877572 C43831062 C40112851 C22418049
+  4.
+    - **Name:** JLCPCB 2-layer FR-4, 1.6 mm, 1 oz (2 oz on the power board if traces are not widened), ENIG, 5 pcs per design, two designs
+    - **Kind:** other_brand
+    - **Price usd:** From 4.00 for both boards (2 x $2.00/5 pcs; the jlcpcb.com homepage says 'From $2.00 / 5 pcs' without stating the size basis). UNVERIFIED: ENIG surcharge, 2 oz surcharge, shipping to the EU, IOSS VAT and the EU flat duty since 1 July 2026. Quote at cart.jlcpcb.com/quote.
+    - **Spec comparison:** Er 4.5 stated for 2-layer. Thickness +/-10% at >=1.0 mm. Outer copper 1/2/2.5/3.5/4.5 oz. ENIG 1u"/2u", HASL or OSP. Min trace/space 0.10/0.10 mm (we need a 0.2 mm gap). Min hole 0.15 mm / 0.25 mm via (we need about 0.3 mm fence vias). UL E479892. Meets every stated stack spec.
+    - **Worse in:** Nothing proven worse. Unknowns, not trade-offs: no impedance control on 2-layer (true of every 2-layer service checked; STACK qualifies on the LiteVNA with a thru-line coupon); Tg and the e-test policy are not stated on the pages read; laminate brand varies (Nan Ya, KB, Shengyi).
+    - **Compatibility:** Gerber/KiCad standard. Passive board; no software impact.
+    - **Risks:** EU landed cost unknown until quoted: China-origin parcel with VAT and the new flat duty (amount unverified; operator note 34). Ship both boards in one order or parcel to pay one duty and one shipping. The board looks likely to stay inside or below the $10-30 estimate, but that is not verified.
+    - **Seller url:** https://jlcpcb.com/
+    - **Sources:**
+      - https://jlcpcb.com/capabilities/pcb-capabilities
+      - https://jlcpcb.com/
+      - https://jlcpcb.com/pcb-fabrication/fr4-pcb
+      - https://thepihut.com/pages/delivery
+  5.
+    - **Name:** PCBWay 2-layer, 1.6 mm, 10 pcs per design, two designs (ENIG option)
+    - **Kind:** other_brand
+    - **Price usd:** From 10.00 for both boards (2 x $5.00 for 10 pcs, 100x100 mm, 2-layer, 1.6 mm, per the pcbway.com homepage preset). ENIG, shipping to the EU, VAT and duty: UNVERIFIED.
+    - **Spec comparison:** E-test offered (details not on the page). Claims UL and ISO 9001:2008 certificates and a refund for defects. Er, thickness tolerance and laminate were not read on a primary page.
+    - **Worse in:** Not shown worse, but the laminate, Er and tolerance are unverified. More expensive base price than JLCPCB.
+    - **Compatibility:** Standard Gerbers; passive.
+    - **Risks:** Same EU duty and VAT unknowns as JLCPCB.
+    - **Seller url:** https://www.pcbway.com/
+    - **Sources:**
+      - https://www.pcbway.com/
+  6.
+    - **Name:** AISLER (EU-made) 2-layer ENIG Budget, sets of 3
+    - **Kind:** other_brand
+    - **Price usd:** NOT cheaper. Formula: EUR 12.00 job fee + EUR 0.097/cm2 per board, net of VAT, sets of 3, free worldwide shipping per aisler.net. Example (model, two boards of 60 cm2): EUR 29.46 per design, EUR 58.92 net = about $66 net / $79 with 19% DE VAT at 1.1241 USD/EUR.
+    - **Spec comparison:** ENIG, 2-layer 1.6 mm, 'manufactured and delivered from Europe', so no customs duty. Material, Er and tolerances are not on the pages read.
+    - **Worse in:** Price: 2-5x the estimate. The pricing page is inconsistent (its own example uses EUR 0.051/cm2 against EUR 0.067/cm2 in the table).
+    - **Compatibility:** Standard; passive.
+    - **Risks:** Only worth it if the China-origin landed cost (duty + VAT + shipping) turns out higher than expected.
+    - **Seller url:** https://aisler.net/
+    - **Sources:**
+      - https://community.aisler.net/t/our-simple-pricing
+      - https://aisler.net/
+  7.
+    - **Name:** OSH Park 2-layer (ENIG standard), 3 copies
+    - **Kind:** other_brand
+    - **Price usd:** NOT cheaper: $5 per sq in for 3 copies. Example (model, two 9.3 sq in boards): about $93, plus US-to-EU duty and VAT.
+    - **Spec comparison:** Best-documented laminate of the options: Kingboard KB6167F, Tg >=175, Er 4.5 at 10 MHz, 1.6 mm, 1 oz, ENIG to IPC-4552, 6/6 mil, 10 mil drill.
+    - **Worse in:** Price. 1 oz only on this service, so power traces must be widened. US origin means EU duty.
+    - **Compatibility:** Standard; passive.
+    - **Risks:** Ships in 9-12 days plus customs.
+    - **Seller url:** https://oshpark.com/
+    - **Sources:**
+      - https://docs.oshpark.com/services/two-layer/
+  8.
+    - **Name:** Mini-Circuits TCBT-2R5G+ (the budget alternative already in STACK) from LCSC C5189220
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 12.44 (1) / 10.57 each at 10+ on LCSC (113 in stock); $9.05 at qty 10-20 from Mini-Circuits (re-audit B); STACK lists $11.31.
+    - **Spec comparison:** 20-2500 MHz. IL 0.35 typ / 0.8 max dB and VSWR 1.05 / 1.2 at 200-1250 MHz. DC 200 mA, +25 V max. Characterised wideband part.
+    - **Worse in:** 200 mA against the >=0.5 A rule: allowed only on <=150 mA loads behind RILIM 162 kOhm. Unusable on ch1/ch3 (SAWbird+ 170-180 mA) and on the LNB. About 80x the cost of a chip choke per channel. It wins only where a characterised 20-2500 MHz part is needed (ch4 WIDE).
+    - **Compatibility:** SMT, needs an external 0.01 uF capacitor (datasheet).
+    - **Risks:** Keep it only for ch4 if ch4 is fitted for true wideband use.
+    - **Seller url:** https://www.minicircuits.com/WebStore/dashboard.html?model=TCBT-2R5G%2B
+    - **Sources:**
+      - https://www.minicircuits.com/pdfs/TCBT-2R5G+.pdf
+      - JLCPCB/LCSC parts catalogue API, 18 Oct 2026, code C5189220
+  9.
+    - **Name:** Mini-Circuits TCBT-14+ (LCSC C5240847)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 12.12 (1) / 10.42 each at 10+ on LCSC (81 in stock)
+    - **Spec comparison:** 10-10000 MHz. IL 0.35 typ / 0.8 max and VSWR 1.2 / 1.5 at 100-5000 MHz. 200 mA, +25 V.
+    - **Worse in:** VSWR worse than TCBT-2R5G+ (1.2/1.5 against 1.05/1.2). Same 200 mA limit. Not cheaper than chip chokes. Rejected.
+    - **Compatibility:** SMT.
+    - **Risks:** None beyond the current limit.
+    - **Seller url:** https://www.minicircuits.com/WebStore/dashboard.html?model=TCBT-14%2B
+    - **Sources:**
+      - https://www.minicircuits.com/pdfs/TCBT-14+.pdf
+  10.
+    - **Name:** Mini-Circuits ADCH-80A+ wideband RF choke
+    - **Kind:** other_brand
+    - **Price usd:** not fetched
+    - **Spec comparison:** 50-10000 MHz. IL 0.3 typ / 1.0 max (50-8000 MHz). DC current 100 mA (250 mA absolute maximum). Inductance 7.0 uH at 0 mA, 1.0 uH at 100 mA.
+    - **Worse in:** Current 100 mA against >=0.5 A, and its band starts at 50 MHz. Rejected.
+    - **Compatibility:** CD542 SMT.
+    - **Risks:** Would overheat on the SAWbird+ channels.
+    - **Seller url:** https://www.minicircuits.com/
+    - **Sources:**
+      - https://www.minicircuits.com/pdfs/ADCH-80A+.pdf
+- **Notes:** Verdict: keep the custom boards. They are already the cheapest way to get this function. Ready-made bias tees cost $9-112 per channel and are worse in current (TCBT 200 mA, ADCH-80A+ 100 mA).
+  
+  The real saving and the real quality gain is to give the line part numbers that are not worse than the stack spec:
+  - Fab: JLCPCB (or PCBWay), 2-layer FR-4 1.6 mm, ENIG, 1 oz (2 oz or widened traces on the power board), 100% e-test. One order, so one parcel.
+  - Chokes (Murata, about $0.10-0.17 each): ch1 LQW2UASR27J00L, ch2 LQW2UASR12J00L, ch3 LQW18AN33NJ80D, ch5 LQW2UAS68NG00L (bought with the QO-100 kit; the footprint is built now).
+  - DC blocks: GRM1555C1H102/101 C0G 50 V.
+  - ch4: for 2 m only, LQW2UASR27J00L. For true 24-1766 MHz wideband, keep TCBT-2R5G+ (RILIM 162 kOhm).
+  
+  Expected cost: parts about $3.50 (verified LCSC prices, ex VAT) plus boards from $4 (base price verified; ENIG, shipping and EU duty unverified). That is probably inside or below the $10-30 estimate, but the EU landed figure needs a real quote.
+  
+  Trade-offs stated openly:
+  - Murata ch1 and ch5 sit exactly at the 0.5 A / 1 A thresholds, rated at 40 C self-heating.
+  - ch1 DCR is 0.91 Ohm.
+  - The ch5 68 nH part covers only the 739.5 MHz QO-100 IF.
+  - Coilcraft 0805HP-221/121/33N and 1008HQ-68N (about $6.25 a set) give more DCR and current margin.
+  
+  Every channel still needs the conducted LiteVNA S21/S11 check through a thru-line coupon. Shunt losses above are models computed from X = 2*pi*f*L.
+  
+  Rejected traps:
+  - LQW18AN_00 (non-80) parts: 120-440 mA.
+  - Coilcraft 1812CS-102 and 1008CS-102: below 0.5 A.
+  
+  Unverified:
+  - ENIG and 2 oz surcharges at JLCPCB and PCBWay.
+  - EU shipping, IOSS VAT and the amount of the EU flat customs duty in force since 1 July 2026 (The Pi Hut confirms the duty exists but gives no amount).
+  - Whether LCSC is a franchised distributor for Murata or Coilcraft. For traceability, buy the same MPNs at DigiKey DE or Mouser in the existing DigiKey order; those prices were not fetched.
+  - Board sizes in the Aisler and OSH Park examples are models.
+  
+  Method: the session's WebSearch budget was used up (shared 200-call limit), so I made no new web searches and worked only from primary pages and datasheets (jlcpcb.com, pcbway.com, aisler, docs.oshpark.com, coilcraft.com PDFs, minicircuits.com PDFs, Murata specs via LCSC, LCSC product pages, the JLC/LCSC parts catalogue). Downloaded datasheets are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/g_pcb_dl/ and the query scripts in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/g_pcb_scripts/.
+
+## searchB:custom_2_layer_pcbs_power_board_5_channe (run `wf_a268b76e-da0`)
+
+- **Part:** Custom 2-layer PCB set (bare boards from a PCB fab): power board (D36V50F12 SYS12, D36V28F5 LAB5, 2x TPS7A4701, 2x LT3045, TPS2553 x4, TPS259630 eFuse, INA3221/INA228, #2813, supervisor) + 5-channel injector board (ch1-ch4 chokes >=0.5 A, LNB choke footprint >=1 A, C0G DC blocks). Per the G1 re-audit it also carries 2 HMC7992 SP4T GCPW sections, plus a third with the Lime.
+- **Current price usd:** 10-30 for the set (STACK.md line 257: "модель", fab not named, unverified). The row does not say whether chokes and C0G parts are inside this figure.
+- **Critical specs:**
+  - Substrate: 2-layer FR-4, 1.6 mm, solid bottom ground, with a published er so the 50 Ohm GCPW (about 1.2 mm trace / 0.2 mm gap, G1 model) can be drawn without controlled impedance. My conformal-mapping model: over h 1.44-1.76 mm, er 4.3-4.7 and gap 0.15-0.25 mm, Z0 stays at 45.5-55.8 Ohm, so line RL is at least 25 dB. lambda_g at 1.7 GHz is about 105 mm, so the lines are electrically short.
+  - Injector RF, per channel, measured conducted on LiteVNA. Targets: IL <=0.3 dB, RL >=20 dB (VSWR <=1.2), DC-port-to-RF isolation >=40 dB, channel-to-channel isolation >=40 dB (my targets). Mini-Circuits TCBT-2R5G+ is the reference: 0.35/0.8 dB IL and VSWR 1.2 max at 200-1250 MHz.
+  - Channel bands the board must cover: ch1 137-138 MHz; ch2 435-438 MHz; ch3 1525-1710 MHz (1537-1545 scan, 1691, 1698-1707 HRPT); ch4 WIDE about 100-1766 MHz (LNA V2 path, V4L range); LNB IF about 735-750 MHz (QO-100 NB 739.5 MHz, WB 741-749 MHz).
+  - Chokes: DC rating >=0.5 A on ch1-ch4 and >=1 A on the LNB, below saturation. |Z| >=250-500 Ohm across each channel's band, with SRF above the band top. My model: 500 Ohm shunt costs 0.011 dB with RL 26 dB; 250 Ohm costs 0.043 dB with RL 20 dB. Low DCR: drop under about 50 mV at 180 mA, so SAWbird+ and Uputronics see >=3.5 V from the 4.5 V bus, and under about 0.1 V at 0.45 A on the LNB.
+  - DC blocks: C0G/NP0, >=50 V (LNB 13.2 V; TCBT is only 25 V). Value per band, e.g. 1 nF at 137 MHz (1.16 Ohm); 100 pF only at >=400 MHz.
+  - HMC7992 sections (G1): GCPW 50 Ohm with a via fence; >=5 EPAD vias; C0G blocks on RFC and RF1-RF4; 49.9 Ohm 0402 park on RF1; shield-can footprint; thru-line coupon on the panel.
+  - Power-board copper: >=1 oz (35 um). The SYS12 path carries 4.2-4.6 A, which needs about 2.5 mm of external pour at 10 C rise on 1 oz (IPC-2221, my model), or 2 oz copper. Also the LAB5 3 A fuse path and the LNA bus at about 1 A.
+  - Thermal: EPAD thermal vias for the TPS7A4701 RGW, LT3045 and INA3221, out to bottom copper bonded to the plate. Enclosure is 45-50 C, so FR-4 Tg >=130 C.
+  - Finish and features: HASL lead-free is acceptable; ENIG is preferred for the 0.5 mm-pitch QFN/DFN parts (HMC7992 LP3, LT3045 DD, INA3221 RGV). Trace/space <=0.15 mm; vias 0.2-0.3 mm. RoHS.
+  - Build quality: legitimate fab, every board electrically tested for opens and shorts, spare boards for the extended sled switch.
+  - Rules: receive-path injection and DC only; no TX path; qualification conducted-only into loads on LiteVNA; no loop or H-field probe footprints.
+  - Landed EU cost: fab + shipping + the EU flat customs duty on low-value imports (in force since 1 Jul 2026) + import VAT.
+- **Candidates:**
+  1.
+    - **Name:** SAME DESIGN at JLCPCB standard 2-layer: FR-4 TG130, 1.6 mm, 1 oz, HASL-LF (or ENIG), 5 pcs per design, two separate designs each <=100x100 mm
+    - **Kind:** diy
+    - **Price usd:** Fab fee $4.00 for both designs ('From $2.00 / 5 pcs', JLCPCB home page, 18 Oct 2026). JLCPCB news of 22 Aug 2026: '$2 PCBs & exclusive shipping rates now available only on JLCONE Desktop', so the order must go through that app. Not priced or verified here: shipping to the EU, ENIG, 2 oz, and size above 100x100 mm. JLCPCB's shipping page says duties, VAT and import taxes are the buyer's responsibility. The EU flat duty is not verified; my unverified recollection is about EUR 3 per item. Landed total is unverified: probably inside, and possibly below, the $10-30 estimate once shipping is known.
+    - **Spec comparison:** Checked against the JLCPCB capabilities and base-material pages:
+  - Dk 4.5 for 2-layer boards. 1.6 mm +/-10%. Copper 1 oz or 2 oz (up to 4.5 oz).
+  - Minimum trace/space 0.10/0.10 mm at 1 oz (0.16/0.16 mm at 2 oz). Drill 0.15 mm; via 0.25 mm diameter (0.2 mm hole preferred).
+  - Finishes: HASL leaded or lead-free, ENIG, OSP. Standard FR-4 is TG130; TG155 is offered only for multilayer.
+  
+  Equal or better than the stack's requirements on every substrate and feature spec listed. Controlled impedance is offered only on 4+ layers (+/-10%), but my GCPW tolerance model keeps Z0 at 45.5-55.8 Ohm (RL >=25 dB) at <=1.71 GHz, so the stack does not need it. RF channel performance comes from the design, chokes and C0G parts, not the fab, so it is the same as the current pick.
+    - **Worse in:** Nothing is proven worse, but evidence is thin:
+  - No independent measurement of JLCPCB 2-layer GCPW was found or fetched in this pass, because the WebSearch budget was exhausted.
+  - Equality therefore rests on my model plus the stack's own thru-coupon and LiteVNA gate. The current pick is equally unmeasured.
+  - Shipping from China adds EU duty, VAT and shipping.
+  - The $2 price requires the JLCONE Desktop app.
+  - E-test policy for 2-layer was not read on these pages.
+    - **Compatibility:** Same Gerbers, so there is no change to interfaces, power rails, RF bay size or software. The JLCPCB parts catalogue (LCSC) already supplies stack parts (e.g. TPS7A4701MRGWREP). Combined shipping with an LCSC order was not verified.
+    - **Risks:** Reject boards that fail the coupon: S11 <= -20 dB and IL within the model on the panel thru-line, measured conducted on LiteVNA. Do not merge both designs into one panel: that pushes it past the 100x100 mm price class and adds a multi-design fee. Order 2 oz only if the 2.5 mm SYS12 pour cannot be routed.
+    - **Seller url:** https://jlcpcb.com/
+    - **Sources:**
+      - https://jlcpcb.com/ (fetched 18 Oct 2026: 'From $2.00 / 5 pcs'; JLCONE Desktop news 22 Aug 2026)
+      - https://jlcpcb.com/capabilities/pcb-capabilities (Dk 4.5 for 2-layer, +/-10%, 1/2 oz, 0.10/0.10 mm, impedance control 4+ layers only)
+      - https://jlcpcb.com/help/article/jlcpcb-base-material (standard FR-4 TG130; TG155 multilayer only)
+      - https://jlcpcb.com/help/article/Shipping-Methods-and-Delivery-Time (duties and VAT are the buyer's responsibility)
+      - My GCPW model: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pcbB_calc/gcpw.py
+  2.
+    - **Name:** SAME DESIGN at PCBWay 1-2 layer prototype, 10 pcs per design
+    - **Kind:** diy
+    - **Price usd:** Fab fee $10.00 for both designs ('$5.00 10 pcs 1-2 layer', PCBWay home page, 18 Oct 2026). Shipping, EU duty and VAT are not verified.
+    - **Spec comparison:** The capabilities page was not fetched. FR-4 1.6 mm, 1 oz and HASL are assumed as the standard options (unverified). Electrical performance is design-determined, the same as above.
+    - **Worse in:** More expensive than JLCPCB. Specs are unverified in this pass. No independent RF measurement was found. Advantage: 10 pcs give spares for the sled switch board.
+    - **Compatibility:** Same Gerbers.
+    - **Risks:** Same coupon gate. Check the stated Dk and thickness tolerance before drawing the GCPW.
+    - **Seller url:** https://www.pcbway.com/
+    - **Sources:**
+      - https://www.pcbway.com/ (fetched 18 Oct 2026)
+  3.
+    - **Name:** SAME DESIGN at AISLER (made in Germany), 2-layer 1.6 mm HASL Budget, sets of 3
+    - **Kind:** diy
+    - **Price usd:** Net formula: EUR 12.00 job fee + EUR 0.067/cm2 x 3 boards; ENIG Budget is EUR 0.097/cm2. For an ASSUMED 50 cm2 injector + 80 cm2 power board: EUR 50.13 net as two jobs, or EUR 38.13 net as one combined job = $42.86, about $51.00 with 19% VAT (1.1241 USD/EUR). The shipping primer says standard Deutsche Post shipping is free (untracked). No customs duty, as it is shipped within the EU.
+    - **Spec comparison:** 2-layer 1.6 mm FR-4, HASL or ENIG; the page says every board is electrically tested. At least equal on every listed spec.
+    - **Worse in:** Not cheaper: roughly $43-56 net, against $10-30 and the JLCPCB fab fee of $4. Board areas are my assumption. The page's worked example uses EUR 0.051/cm2 while its table lists EUR 0.067/cm2.
+    - **Compatibility:** Same Gerbers.
+    - **Risks:** Rejected on price only. It stays as the EU no-duty fallback if JLCPCB's landed cost exceeds about $45.
+    - **Seller url:** https://aisler.net/en/products/boards
+    - **Sources:**
+      - https://community.aisler.net/t/our-simple-pricing (fetched 18 Oct 2026)
+      - https://community.aisler.net/t/a-quick-primer-about-shipping-at-aisler/672
+      - https://aisler.net/en/products/boards
+  4.
+    - **Name:** Generic '10 MHz-6 GHz' SMA bias-tee modules (AliExpress/Amazon), one per channel, replacing the injector board
+    - **Kind:** generic_or_clone
+    - **Price usd:** About EUR 7 each (earlier stack research, rf_frontend.json; not re-verified), so about $40 for 5. The power and switch PCB is still needed.
+    - **Spec comparison:** Only measured evidence: one Amazon review cited in earlier stack research (antennas.json; review URL not recorded, not re-fetched) reports -3 dB at 200 MHz, -7 dB at 100 MHz and -15 dB at 30 MHz. No rated DC current, unknown capacitor dielectric, unshielded.
+    - **Worse in:** IL at 137-146 MHz is several dB, against <=0.3 dB. No >=0.5 A or >=1 A rating. No C0G guarantee. Adds 2 SMA interfaces per channel and takes more RF-bay volume. Not cheaper.
+    - **Compatibility:** Fits SMA, but the TPS2553/INA3221/HMC7992 board must still be built.
+    - **Risks:** REJECTED: worse in IL and current rating, and unproven.
+    - **Seller url:** not verified (no primary listing fetched)
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/antennas.json (Amazon-review measurement, secondary)
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+  5.
+    - **Name:** Mini-Circuits TCBT-2R5G+ SMD bias tee placed on the same PCB for ch2/ch4 (the budget alternative already noted)
+    - **Kind:** other_brand
+    - **Price usd:** $9.05 each at qty 10 (Mini-Circuits webstore, 18 Oct 2026); $11.31 at qty 1 per STACK.md.
+    - **Spec comparison:** Datasheet Rev G:
+  - 20-2500 MHz.
+  - IL 0.35 typ / 0.8 max dB at 200-1250 MHz; 0.7 / 1.2 dB at 1250-2500 MHz.
+  - RF-to-DC isolation 25 min / 44 typ dB at 200-1250 MHz; 20 / 40 dB at 1250-2500 MHz.
+  - VSWR 1.2 max at 200-1250 MHz; 1.25 max at 1250-2500 MHz.
+  - +25 V and 200 mA maximum; needs an external 0.01 uF; -40 to +85 C.
+    - **Worse in:** 200 mA is below the >=0.5 A choke spec, and 25 V is below the >=50 V block spec. L-band IL is 0.7 dB typ, against about 0.05 dB modelled for a discrete choke. It adds cost rather than saving it.
+    - **Compatibility:** Footprint fits the injector PCB (GU1604, 3.81 mm).
+    - **Risks:** REJECTED as an analog: it trades away current rating. It is acceptable only as the already-flagged option on <=150 mA channels, and that is a declared spec trade.
+    - **Seller url:** https://www.minicircuits.com/WebStore/dashboard.html?model=TCBT-2R5G%2B
+    - **Sources:**
+      - https://www.minicircuits.com/pdfs/TCBT-2R5G+.pdf (Rev G, read 18 Oct 2026)
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=TCBT-2R5G%2B
+  6.
+    - **Name:** Used connectorized lab bias tees (e.g. Mini-Circuits ZFBT-4R2GW+ class) from eBay or classifieds
+    - **Kind:** used
+    - **Price usd:** No listing checked (search budget exhausted). New ZFBT-4R2GW+ is $111.57 (STACK.md). To beat $30 for 5 channels a used unit would need to cost under about $6, and the power and switch board is still needed.
+    - **Spec comparison:** Datasheet-class RF performance, but there is no per-unit measurement and wear or abuse history is unknown.
+    - **Worse in:** Price, size (5 connectorized bodies in the RF bay), and no measured evidence for the individual unit.
+    - **Compatibility:** SMA; does not remove the PCB.
+    - **Risks:** REJECTED.
+    - **Seller url:** not verified
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md (C9 row, ZFBT-4R2GW+ $111.57)
+  7.
+    - **Name:** Generic modules wired together instead of the custom power board (AliExpress LT3045 LDO boards, CJMCU-type INA3221 boards, etc.)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not verified (no listing fetched). Modules duplicate chips that are already on the BOM, so the set costs more than the $10-30 PCB.
+    - **Spec comparison:** No independent measurement of the specific modules was fetched. Counterfeit-chip risk on marketplace LT3045 boards. No module exists for the TPS259630 eFuse, the latch-off TPS2553 channels with MCP EN/FAULT, or the GCPW switch sections.
+    - **Worse in:** Wiring and EMI (more loops of DC wiring in the RF bay), size, reliability (headers and jumpers), provenance, and price.
+    - **Compatibility:** Poor: it breaks the bonded-plate thermal path for the TPS7A4701/LT3045.
+    - **Risks:** REJECTED.
+    - **Seller url:** not verified
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json (power board contents)
+  8.
+    - **Name:** Home-made board (toner transfer, or CNC-milled copper-clad FR-4)
+    - **Kind:** diy
+    - **Price usd:** Copper-clad cost only (not priced).
+    - **Spec comparison:** No plated vias, so there is no via fence and no EPAD thermal or ground vias. GCPW ground stitching would be by hand. No solder mask for 0.5 mm QFN. No measured evidence.
+    - **Worse in:** GCPW ground continuity, EPAD thermal path, switch isolation, fine-pitch assembly, repeatability.
+    - **Compatibility:** Same schematic, worse realisation.
+    - **Risks:** REJECTED.
+    - **Seller url:** n/a
+    - **Sources:** []
+  9.
+    - **Name:** Current pick: custom 2-layer PCB set, fab unnamed
+    - **Kind:** current_part
+    - **Price usd:** 10-30 (estimate)
+    - **Spec comparison:** Reference. Unmeasured until the coupon and LiteVNA qualification.
+    - **Worse in:** n/a
+    - **Compatibility:** Stack baseline.
+    - **Risks:** None new.
+    - **Seller url:** n/a
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md line 257 and C9 row
+- **Notes:** Verdict from angle B (generic, clone, DIY, used): no generic module, clone or used unit is not-worse. Every one is worse in VHF IL or current rating, or has no measured evidence, and none removes the need for the custom boards.
+  
+  The only cheaper not-worse route is the same Gerbers at a low-cost fab. JLCPCB standard 2-layer has a fab fee of $4.00 for both designs (via JLCONE Desktop). It matches every substrate spec this stack needs at <=1.71 GHz:
+  - Dk 4.5, 1.6 mm +/-10%, 1/2 oz, 0.10/0.10 mm features, HASL-LF/ENIG.
+  - No controlled impedance is needed: my tolerance model gives Z0 45.5-55.8 Ohm and RL >=25 dB.
+  
+  Recommendation: name JLCPCB as the fab, with PCBWay ($10 for 10+10 pcs) as fallback and AISLER as the EU no-duty fallback (about $43-51 for assumed sizes, so not cheaper).
+  - Order two separate designs, each <=100x100 mm. Do not merge them.
+  - 1.6 mm, 1 oz (2 oz only if the 2.5 mm SYS12 pour cannot be routed). HASL-LF baseline; ENIG optional for 0.5 mm QFN.
+  - Keep the panel thru-coupon. Acceptance: S11 <= -20 dB and per-channel IL/RL/isolation measured conducted on LiteVNA into loads, the same gate the current pick needs.
+  - Keep the price row as an estimate until a checkout quote. Landed EU cost is unverified: shipping is unknown; the EU flat duty since 1 Jul 2026 is confirmed to exist by The Pi Hut but its amount is not verified (my unverified recollection is about EUR 3 per item); VAT is the buyer's responsibility per JLCPCB.
+  
+  Chokes and C0G parts: these specs are design-determined. Generic LCSC chokes without published S-parameters are acceptable only after the same LiteVNA measurement (|Z| >=250-500 Ohm in band, SRF above band, DC rating >=0.5 A or >=1 A).
+  
+  All hard rules are kept: receive-only injection, conducted-only qualification, no loop footprints.
+  
+  Limits: the WebSearch budget was already exhausted when I started (shared limit), so this pass used WebFetch and curl on primary pages only. No independent published measurement of JLCPCB 2-layer RF boards, generic bias tees or used units could be searched for. The Amazon-review measurement of generic bias tees is secondary (from earlier stack research).
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
