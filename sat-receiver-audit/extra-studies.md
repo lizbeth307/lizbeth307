@@ -728,6 +728,249 @@
   
   **Search budget:** 16 web searches used.
 
+## fold:qo100 (run `wf_4a343103-e9e`)
+
+- **Band group:** QO-100 downlink 10.489-10.499 GHz through the Bullseye TCXO LNB (narrowband IF about 739.5-740 MHz, wideband IF about 741-749 MHz). Narrowband is vertical (13 V), wideband/DATV is horizontal (18 V) or the LNB is rotated 90°.
+- **Options:**
+  1.
+    - **Band:** QO-100 narrowband downlink 10489.5-10490 MHz. Either polarisation by rotating the LNB; the wideband band is covered but gain is far too low for DATV.
+    - **Name:** Modular flat-pack conical horn made of gores: inner section about 21 dBi, plus an outer ring for about 23 dBi
+    - **Type:** diy
+    - **Fold method:** Two cone sections laid out as flat annular-sector gores. W1GHZ: a conical-horn template is 'just two concentric sections of a circle'. Cut from 0.3 mm aluminium flashing or 0.2 mm brass shim, with the same 13.8° half-angle as the current 23 dBi pick. Inner section (40 to 127 mm diameter): 3 gores, slant radii 84-267 mm, 28.6° each, plus a 10 mm overlap flap. Outer ring (127 to 180 mm): 3 gores, radii about 255-378 mm (12 mm overlap onto the inner section), 28.6° each. Overlap seams by at least 10 mm and press them flat with mini binder clips every 4-5 cm (gap under about 0.2 mm), or tape them with aluminium tape. A printed collar clamp (ID 40.2 mm, thumb screw, no tools) fits the LNB's 40 mm collar. Printed 127 mm joint ring and 180 mm mouth ring keep it round.
+    - **Packed size cm:** Inner gores 14.2 x 18.5; outer gores 19.7 x 12.0. Whole kit is a flat stack of about 20 x 19 x 1.5 (rings lie flat; the 18 cm mouth ring is the widest part). Meets the <=20 cm ultra-compact tier.
+    - **Deployed size cm:** 21 dBi: mouth Ø12.7 x 17.7 long. 23 dBi: Ø18 x 28.5 long. Both in front of the LNB.
+    - **Weight g:** About 150-200 (0.3 mm Al sheet about 82 g plus overlaps, clips and 3 printed rings; estimate; brass is about 2.5x heavier)
+    - **Setup time:** About 1.5-2 min for the 21 dBi inner section, 2-4 min for 23 dBi (estimate, untested)
+    - **Gain:** Inner section alone about 21.0 dBi; full horn about 23.0 dBi. MODEL: optimum-cone / King phase-error formula at 10.4895 GHz. Allow -0.2 to -0.5 dB for clipped seams (unverified).
+    - **Gain vs current pick db:** Inner section: +1.0 vs the 20 dBi rigid horn (it is longer than the 12 cm optimum horn). Full horn: 0 to -0.5 vs the 23 dBi rigid horn.
+    - **Price:** About $10-20 in materials (sheet, clips, filament; estimate). The LNB (Bullseye $29.95) is already in the plan.
+    - **Availability:** DIY. Lay out with W1GHZ HDL_ANT or a compass. Sheet from hardware or craft stores; rings print on any 200 mm bed.
+    - **Durability notes:** Thin aluminium creases if folded, so store the gores flat between two pieces of card; brass shim is springier and survives more cycles. Clips get lost: carry spares. Horn walls are tolerant (W1GHZ: dishes 'have more critical dimensions than horns and lenses'), so a 1-2 mm kink is harmless but an open seam is not. Check beacon C/N after every assembly.
+    - **Evidence:** Same cone geometry as the verified rigid pick. W1GHZ says home-built horns 'almost always' match prediction 'with no tuning adjustments required'. A folded-film X-band horn (PolyU, ICMMT 2024, 8.2-12.4 GHz, 10/15/20 dBi; the abstract does not say whether these are measured) shows foldable horns work in this band. No QO-100 horn report exists anywhere. Validate with the A/B test: horn minus bare LNB should be +8 to +12 dB for 20 dBi and +11 to +15 dB for 23 dBi.
+    - **Sources:**
+      - http://www.w1ghz.org/antbook/chap2.pdf
+      - http://www.w1ghz.org/antbook/chap4.pdf
+      - https://research.polyu.edu.hk/en/publications/origami-horn-antenna-with-adjustable-gain-based-on-graphene-assem/
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/qo_calc/horns2.py
+  2.
+    - **Band:** QO-100 narrowband downlink 10489.5-10490 MHz. The square section passes both polarisations (rotate the LNB).
+    - **Name:** Flat-pack 4-plate square pyramidal horn, hinged so it flattens like a carton
+    - **Type:** diy
+    - **Fold method:** Four identical trapezoids of 0.5 mm aluminium (or brass). Three corners are hinged with conductive aluminium or copper foil tape on the outside, so the horn folds flat like a carton. The fourth corner is closed by an aluminium angle strip and 3 binder clips. A printed adapter with a square socket fits the 40 mm LNB collar (thumb screw). Corner joints must conduct, because wall current crosses the corners.
+    - **Packed size cm:** 20 cm plates: 12.4 x 19.7 x about 0.6 (meets the <=20 cm tier). 30 cm plates: 15.2 x 29.7 x 0.6 (meets the 30-35 cm tier).
+    - **Deployed size cm:** 12.4 x 12.4 mouth x about 19 long, or 15.2 x 15.2 x about 29
+    - **Weight g:** About 120 with 20 cm plates (about 77 g of aluminium plus adapter, tape and clips); about 180-200 with 30 cm plates (estimate)
+    - **Setup time:** Under 1 min: unfold, clip one corner, push onto the adapter (estimate)
+    - **Gain:** About 20.5-21.5 dBi (124 mm mouth, 19.7 cm plates) or about 22.5-23 dBi (152 mm mouth, 29.7 cm plates). MODEL: Balanis pyramidal-horn directivity, ideal walls. Allow -0.3 to -1 dB for corner joints and the round-to-square throat transition (unverified).
+    - **Gain vs current pick db:** +0.5 to +1.5 vs the 20 dBi rigid horn (20 cm plates); -0.5 to 0 vs the 23 dBi rigid horn (30 cm plates)
+    - **Price:** About $10-15 in materials (estimate)
+    - **Availability:** DIY. HDL_ANT prints pyramidal templates.
+    - **Durability notes:** The most robust and fastest foldable option. Plates do not crease. Tape hinges wear out after many cycles but are cheap to replace. Keep plates from bowing more than 1-2 mm. The round-to-square throat is an untested adaptation, so A/B-test it against the bare LNB.
+    - **Evidence:** W1GHZ: HDL_ANT pyramidal templates are meant to 'fold on the dotted lines' and be soldered together; pyramidal horns are the standard home-built 10 GHz antenna. The hinged flat-fold and the 40 mm round-to-square adapter are my own adaptation. No QO-100 report.
+    - **Sources:**
+      - http://www.w1ghz.org/antbook/chap2.pdf
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/qo_calc/horns2.py
+  3.
+    - **Band:** QO-100 narrowband downlink 10489.5-10490 MHz
+    - **Name:** One-piece roll-up 20 dBi cone: the current handheld horn made from one flat sheet
+    - **Type:** diy
+    - **Fold method:** One annular sector (slant radii 59.5-188 mm, 122°) of 0.3 mm aluminium or brass. One overlap seam held by 3-4 clips, plus the printed 40 mm collar clamp and a 127 mm mouth ring. It can be cut into 2 gores to reach the 20 cm tier.
+    - **Packed size cm:** Flat sheet 33.8 x 15.9 x 0.3 (30-35 cm tier), or 2 gores of 20.0 x 13.7 (<=20 cm tier)
+    - **Deployed size cm:** Ø12.7 x 12.1 long, in front of the LNB
+    - **Weight g:** About 50-80 (estimate)
+    - **Setup time:** 30-60 s (estimate)
+    - **Gain:** About 20.1 dBi (MODEL; same design as the current pick), with -0.1 to -0.3 dB seam allowance
+    - **Gain vs current pick db:** 0 to -0.3 vs the 20 dBi rigid horn; about -3 vs the 23 dBi rigid horn
+    - **Price:** About $5-10 in materials (estimate)
+    - **Availability:** DIY
+    - **Durability notes:** Only one seam, so it is the simplest build. The single sheet is wider than 30 cm unless it is cut into 2 gores.
+    - **Evidence:** Same W1GHZ optimum-cone design as the current pick (127 mm mouth, 188 mm slant). The flat-sheet form is the W1GHZ template itself.
+    - **Sources:**
+      - http://www.w1ghz.org/antbook/chap2.pdf
+  4.
+    - **Band:** QO-100 narrowband downlink 10489.5-10490 MHz
+    - **Name:** Small rigid 18 dBi 'cup' horn: the small-horn option, needs no folding
+    - **Type:** diy
+    - **Fold method:** None. A rigid cone with a 100 mm mouth, 63 mm long from the 40 mm collar (84 mm from a 20 mm throat). It can stay mounted on the LNB, and it doubles as the feed for the lens (option 7).
+    - **Packed size cm:** Ø10 x 6.3; adds about 6 cm to the LNB
+    - **Deployed size cm:** Ø10 x 6.3
+    - **Weight g:** About 25-50 (estimate)
+    - **Setup time:** 0-10 s
+    - **Gain:** About 18.0 dBi (MODEL). W1GHZ's comparable 10 GHz Gunnplexer horn measured 17.5 dBi.
+    - **Gain vs current pick db:** -2.1 vs the 20 dBi rigid horn; -5.1 vs the 23 dBi rigid horn
+    - **Price:** About $3-5 in materials (estimate)
+    - **Availability:** DIY (rolled sheet or 3D-printed and copper-taped)
+    - **Durability notes:** Robust and nothing to assemble. A 10 cm rigid cup clearly passes the pack rule.
+    - **Evidence:** W1GHZ Table 3-1: 17.5 dBi horn measured at 10.368 GHz.
+    - **Sources:**
+      - http://www.w1ghz.org/antbook/chap3.pdf
+  5.
+    - **Band:** QO-100 narrowband downlink 10489.5-10490 MHz
+    - **Name:** Bare Bullseye TCXO LNB with no horn
+    - **Type:** buy
+    - **Fold method:** None; the LNB only.
+    - **Packed size cm:** LNB only (the Bullseye's dimensions are not published; measure yours)
+    - **Deployed size cm:** LNB only
+    - **Weight g:** LNB only (not published)
+    - **Setup time:** About 1 min to aim (about 40° beam)
+    - **Gain:** About 9-12 dBi (estimate from the input files; built-in dish feed)
+    - **Gain vs current pick db:** -8 to -11 vs the 20 dBi rigid horn; -11 to -14 vs the 23 dBi rigid horn
+    - **Price:** $29.95
+    - **Availability:** RTL-SDR store showed 70 in stock on 18 Oct 2026.
+    - **Durability notes:** Nothing to break. Also useful as a wide-beam finder before fitting a horn.
+    - **Evidence:** Field reports exist: OK1DX copied the CW beacon; RigExpert TBR-AN-1 decoded FT8 at -11 to -15 dB with an LNB alone (GPSDO-locked LNB, aimed within ±20°); a Passion Radio buyer received QO-100 'without using the dish'.
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+      - https://rigexpert.com/files/product_documentation/gpsdo/TBR-AN-1.pdf
+      - https://www.passion-radio.com/satellite-qo-100/converter-432-936.html
+  6.
+    - **Band:** QO-100 narrowband downlink 10489.5-10490 MHz
+    - **Name:** Nesting rigid 23 dBi cone in 3 sections that stack inside each other
+    - **Type:** diy
+    - **Fold method:** Three rigid frusta, each about 95 mm long axially (40 to 87, 87 to 133 and 133 to 180 mm), all at the 13.8° half-angle, so the smaller ones nest inside the largest. Friction or twist-lock joints with at least 10 mm overlap. Made from 3D-printed PETG/ASA lined with copper foil tape, or rolled aluminium.
+    - **Packed size cm:** Ø18.5 x about 10.5-11 as a nested stack (about 2.8 L bounding volume)
+    - **Deployed size cm:** Ø18 x 28.5 long
+    - **Weight g:** About 250-450 printed (estimate)
+    - **Setup time:** 30-60 s
+    - **Gain:** About 23 dBi (MODEL), with -0.3 to -0.8 dB allowance for two joints and the tape lining (unverified)
+    - **Gain vs current pick db:** 0 to -0.8 vs the 23 dBi rigid horn; +2.2 to +3 vs the 20 dBi horn
+    - **Price:** About $10-20 (filament and copper tape; estimate)
+    - **Availability:** DIY
+    - **Durability notes:** Rigid and robust, but bulky (small-saucepan size, not 'a few cm thick'). Copper tape can lift at the joints.
+    - **Evidence:** ITU: a PLA X-band horn coated with copper tape showed good matching and gain over 8-12 GHz. UCT printed X-band horns metallised with paint or plating. Abraxas3d keeps a GitHub repo of 3D-printed ham microwave horns, including 10 GHz. No QO-100 use found.
+    - **Sources:**
+      - https://research.itu.edu.tr/en/publications/a-rapid-prototyping-approach-for-3d-printed-horn-antennas-in-x-ba/
+      - https://open.uct.ac.za/items/9f9c05e8-2c66-452a-b1bd-35fababc44c1/full
+      - https://github.com/Abraxas3d/3D-printed-horn-antennas
+  7.
+    - **Band:** QO-100 narrowband downlink, vertical. The lens is polarisation-specific: rotate it with the LNB.
+    - **Name:** Flat-pack W1GHZ metal-plate lens, 300 mm, fed by the 18 dBi cup horn on a telescopic boom
+    - **Type:** diy
+    - **Fold method:** 15-16 parallel aluminium plates (foil on 2 mm Correx, or 0.3 mm aluminium) with the curved edges computed by HDL_ANT, slotted into two printed combs at 19.05 mm pitch. The lens is held about 53 cm in front of the horn on a collapsible rod or tripod arm. Plates run parallel to the E-field. W1GHZ's original is a glued foam block (about 30 x 30 x 7 cm, rigid); the slotted flat-pack version is my adaptation.
+    - **Packed size cm:** Plate stack about 30 x 7 x 2, plus two 30 cm combs and a rod collapsed to about 30 cm (30-35 cm tier; not ultra-compact)
+    - **Deployed size cm:** 30 x 30 lens about 53 cm from the horn; about 65 cm overall
+    - **Weight g:** About 250-400 plus the rod (estimate)
+    - **Setup time:** 5-10 min, including focusing on the beacon (estimate)
+    - **Gain:** 27.4 dBi measured by W1GHZ at 10.368 GHz (foam-block lens, 17.5 dBi horn, about 21 in focus, about 50% efficiency). The 10.489 GHz redesign and the slotted version are unverified.
+    - **Gain vs current pick db:** +7.3 vs the 20 dBi rigid horn; +4.4 vs the 23 dBi rigid horn
+    - **Price:** About $10-25 in materials (estimate from the prior study)
+    - **Availability:** DIY
+    - **Durability notes:** Plate spacing is the critical dimension (W1GHZ). An error of ±0.5 mm moves the index from 0.661 to 0.635-0.684, about ±7% in focal length, so refocus on the beacon. The beam is about 7°, so a tripod is mandatory; it is also wind-sensitive.
+    - **Evidence:** W1GHZ Table 3-1 (horn 17.5, +150 mm lens 20.9, +300 mm lens 27.4 dBi, all measured). It was used portable in contests with a 'light weight' lens. No QO-100 use found.
+    - **Sources:**
+      - http://www.w1ghz.org/antbook/chap3.pdf
+  8.
+    - **Band:** QO-100 narrowband downlink (zone rings are polarisation-independent)
+    - **Name:** Folding reflective phase-reversal Fresnel zone plate, 40 cm, fed by the bare LNB (experimental)
+    - **Type:** diy
+    - **Fold method:** Four 20 x 20 cm tiles of about 7 mm foam board (λ/4 = 7.1 mm), hinged with tape. Aluminium foil on the back; aluminium-tape rings for alternate Fresnel zones (F about 24 cm) on the front. The bare LNB sits on a 25-30 cm arm at the focus; F/D about 0.6 suits a TV-LNB feed.
+    - **Packed size cm:** 20 x 20 x about 3, plus the arm
+    - **Deployed size cm:** 40 x 40 plate with the LNB 24 cm in front
+    - **Weight g:** About 200-350 plus the arm (estimate)
+    - **Setup time:** 3-5 min (estimate)
+    - **Gain:** About 25-27 dBi. MODEL: 40 cm aperture 32.9 dBi x 2-level phase efficiency 0.405 x 0.5-0.6 illumination. No 10 GHz or QO-100 build was found.
+    - **Gain vs current pick db:** +5 to +7 vs the 20 dBi rigid horn; +2 to +4 vs the 23 dBi rigid horn
+    - **Price:** About $10-20 (estimate)
+    - **Availability:** DIY
+    - **Durability notes:** Tiles must stay flat to about ±1.5 mm across the hinges, and the spacer must be 7 ±1 mm. Foam dents easily. The beam is about 5°, so a tripod is needed. In practice this is a folding flat dish, with feed blockage. A 60 cm, 9-tile version (packs to 20 x 20 x about 6.5) models about 29-30 dBi, close to the dropped 35 cm dish.
+    - **Evidence:** Theory only. The SETI League zone-plate article is a 1.42 GHz simulation, not a measurement. The prior study estimated that a transmissive zone plate needs 40-50 cm to beat a 23 dBi horn. A transmissive amplitude plate of 30 cm models only about 17 dBi, worse than the horn, which is why only the reflective phase-reversal type is listed.
+    - **Sources:**
+      - https://setileague.org/articles/fresnel.htm
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/qo_calc/horns2.py
+- **Recommended:** The modular flat-pack conical horn (option 1) on the Bullseye LNB. Its 3 inner gores make a horn of about 21 dBi for handheld use; adding the 3 outer-ring gores gives about 23 dBi on a tripod. All six gores are at most 20 x 19 cm, the kit weighs about 150-200 g and assembles in 2-4 minutes without tools (estimates). It keeps the RF design of the current rigid pick: the same 13.8° cone and the same 40 mm collar clamp. It therefore keeps everything the rigid 20/23 dBi horns keep, minus a modelled 0.2-0.5 dB for the clipped seams. Two alternatives: if setup under a minute matters more than design certainty, use the 4-plate square horn (option 2, about 20.5-21.5 dBi from 20 cm plates). If SSB copy matters and you accept a tripod, 5-10 minutes of setup and 30 cm plates, add the flat-pack 300 mm metal-plate lens (option 7, +4.4 dB over 23 dBi, measured by W1GHZ at 10.368 GHz).
+- **Ultra compact:** The inner section of option 1 on its own: 3 gores of 14.2 x 18.5 cm, the collar clamp and a 127 mm ring, about 60-90 g. It gives about 21 dBi (model), about 1 dB more than the current 20 dBi handheld horn. If you want nothing to assemble, use the rigid 18 dBi cup (Ø10 x 6.3 cm, stays on the LNB), which is 2.1 dB below the 20 dBi horn. The absolute minimum is the bare LNB (8-11 dB below the 20 dBi horn). It keeps the CW beacon and strong FT8 signals, but under the conservative model it loses the PSK beacon (Eb/N0 about -3 dB) and all SSB.
+- **Losses:**
+  1.
+    - **Target:** CW beacon 10489.500 MHz (pointing, beacon-lock drift correction)
+    - **With foldable kit:** kept
+    - **Margin change db:** 0 to -0.5 vs the rigid 20/23 dBi horns (seam allowance, model). Ultra-compact: inner section +1 vs 20 dBi; 18 dBi cup -2.1; bare LNB -10.
+    - **What we lose:** Nothing practical. Conservative model (EA4GPZ anchor): about 17 dB in 50 Hz at 21 dBi and about 19 dB at 23 dBi; the optimistic model is about 15 dB higher. With the bare LNB it is still about 6 dB in 50 Hz (OK1DX copied it).
+    - **Workaround:** None needed.
+  2.
+    - **Target:** PSK 400 bit/s beacon 10489.750 MHz
+    - **With foldable kit:** kept
+    - **Margin change db:** 0 to -0.5 vs rigid. 18 dBi cup -2.1; bare LNB -10.
+    - **What we lose:** Nothing with the foldable horn: Eb/N0 about 8 dB (21 dBi) or 10 dB (23 dBi) in the conservative model. The 18 dBi cup gives about 5 dB (marginal). The bare LNB gives about -3 dB, so the beacon is lost in the conservative model but about +12 dB in the optimistic one.
+    - **Workaround:** Use at least the 18 dBi cup if you rely on PSK decoding.
+  3.
+    - **Target:** FT8 and CW user stations
+    - **With foldable kit:** kept
+    - **Margin change db:** 0 to -0.5 vs rigid
+    - **What we lose:** Nothing new. The weakest FT8 signals stay marginal, as with the rigid horn. FT8 was decoded at -11 to -15 dB even with a bare LNB (RigExpert, GPSDO-locked LNB).
+    - **Workaround:** Beacon-lock software is required for the Bullseye's ±10-30 kHz drift.
+  4.
+    - **Target:** SSB stations at beacon level
+    - **With foldable kit:** degraded
+    - **Margin change db:** 0 to -0.5 vs rigid; lens +4.4 vs 23 dBi
+    - **What we lose:** The same as with the rigid pick. Conservative model: about 0 dB (21 dBi) to +2 dB (23 dBi) SNR in 2.5 kHz, which is hard copy. Optimistic model: +15 to +17 dB.
+    - **Workaround:** Flat-pack 300 mm lens (about +6 dB in 2.5 kHz in the conservative model) or the zone plate (+2 to +4 dB, model only), both on a tripod.
+  5.
+    - **Target:** Typical SSB stations 5-15 dB below the beacon
+    - **With foldable kit:** lost
+    - **Margin change db:** 0 to -0.5 vs rigid; still 3-13 dB short at 23 dBi in the conservative model
+    - **What we lose:** In the conservative model they were already lost with the rigid horn (-3 to -13 dB in 2.5 kHz at 23 dBi). In the optimistic model they are degraded but mostly readable (+2 to +12 dB). Folding changes neither case.
+    - **Workaround:** The lens brings them to about -9 to +1 dB in the conservative model. Comfortable copy needs about 27-30 dBi or more, i.e. a 60 cm folding zone plate (model) or a dish.
+  6.
+    - **Target:** Weak / QRP SSB stations
+    - **With foldable kit:** lost
+    - **Margin change db:** Needs 33 dBi or more; the foldable kit is about 10 dB short
+    - **What we lose:** Same as the rigid pick: not receivable.
+    - **Workaround:** None without dish-class aperture.
+  7.
+    - **Target:** Wideband DATV beacon 10491.5 MHz (1.5 MS/s DVB-S2)
+    - **With foldable kit:** lost
+    - **Margin change db:** Needs about 31-32 dBi (BATC MER data). 23 dBi foldable horn: 8-9 dB short. Lens: about 4 dB short. 60 cm zone plate: about 1-3 dB short (model).
+    - **What we lose:** Already lost with the rigid pick. The horizontal (18 V) polarisation is irrelevant without the gain.
+    - **Workaround:** Only an aperture of about 45 cm or more (dish-sized), or a WebSDR when online.
+  8.
+    - **Target:** DATV user stations
+    - **With foldable kit:** lost
+    - **Margin change db:** BATC recommends a dish of 90 cm or more
+    - **What we lose:** Same as the rigid pick.
+    - **Workaround:** None that fits a backpack.
+  9.
+    - **Target:** Setup time and handling
+    - **With foldable kit:** degraded
+    - **Margin change db:** n/a
+    - **What we lose:** Assembly adds about 1.5-4 min (gores) or under 1 min (4-plate horn) compared with a push-on rigid horn. Pointing is unchanged: about 15° beam at 21 dBi (handheld OK), about 10° at 23 dBi (tripod).
+    - **Workaround:** Leave the 18 dBi cup on the LNB for quick looks; assemble the gores only for longer sessions.
+  10.
+    - **Target:** Decode repeatability
+    - **With foldable kit:** degraded
+    - **Margin change db:** -0.2 to -0.5 dB typical (model); several dB if a seam is left open
+    - **What we lose:** Each assembly can leave a gap or an out-of-round mouth.
+    - **Workaround:** After assembly, log beacon C/N for 1 minute and compare with the first A/B measurement. Re-clip if it is more than 1 dB down.
+  11.
+    - **Target:** Ultra-compact tier only (inner section; 23 dBi ring left at home)
+    - **With foldable kit:** degraded
+    - **Margin change db:** -2.0 vs the 23 dBi rigid horn; +1.0 vs the 20 dBi horn
+    - **What we lose:** The 23 dBi tripod mode: in the conservative model, SSB at beacon level drops from about +2 to about 0 dB in 2.5 kHz.
+    - **Workaround:** The outer ring adds only about 40-50 g and 20 x 12 cm of flat sheet, so carry it.
+- **Other ways out:**
+  - Drop QO-100 entirely. We lose all 10 GHz reception: CW and PSK beacons, FT8/CW, beacon-level SSB, and the only geostationary target. We save the Bullseye ($29.95), the 13/18 V injector and RG6/F-SMA (about $20, estimate), the horn materials (about $10-20), about 0.3-0.5 kg and one SDR input. Nothing else in the kit depends on QO-100.
+  - Bare LNB only. Zero extra pack size. Keeps the CW beacon and strong FT8 (field-proven). In the conservative model it loses the PSK beacon and all SSB.
+  - Keep a rigid 23 dBi horn (or a dish) at a home or vehicle station and carry only the flat-pack kit in the backpack.
+  - When internet is available, use a WebSDR (e.g. the Goonhilly QO-100 WebSDR) for SSB and DATV. It is not standalone, so it does not meet the handheld goal.
+  - DATV needs an aperture of at least about 45 cm (31-32 dBi) for the beacon and a dish of 90 cm or more for user signals. The closest packable approach, a folding 60 cm zone plate (model about 29-30 dBi), is still short. DATV is therefore out for any backpack kit.
+  - The QRO.cz 0.2 ppm TCXO LNB (about €120 delivered) helps only if SSB tuning drift becomes the limit. It adds no gain.
+- **Notes:** Pack-size verdict for rigid horns. The 18 dBi horn (Ø10 x 6.3-8.4 cm) already meets even the 20 cm tier and needs no folding. The 20 dBi horn (Ø12.7 x 12-15 cm, about 1.5 L bounding volume) fits under 20 cm in every dimension but is not 'a few cm thick'. Flat gores cost nothing (0 to -0.3 dB), so it should be built flat. The 23 dBi horn (Ø18 x 28.5-33 cm) fails the rule and must fold. The LNB itself is rigid; its size is not published.
+  
+  Link-model conflict found in the inputs. antennas.json uses C/N0 of about G+13 dB-Hz, anchored to EA4GPZ, who measured 'a CN0 of around 45dB-Hz' on a 95 cm off-focus dish 'comparable to a 60cm dish', in 2 kHz with noise taken 3 kHz below the beacon (https://destevez.net/2019/03/qo-100-beacons-power/). dish_replacement.json and the digest's final pick use about G+28 dB-Hz, anchored to a BATC '>30 dB' figure of unknown bandwidth, which its own verify step flagged. That is a 15 dB difference: for a 20 dBi horn, beacon-level SSB is -1 dB or +14 dB in 2.5 kHz. If the BATC figure was read in a 50-100 Hz FFT bin, the two models roughly agree (my reconciliation, not verified). I therefore use the EA4GPZ model as the planning baseline; EA4GPZ later reported the beacons about 3 dB stronger. The gain differences between options do not depend on the anchor. Settle it with the bare-LNB vs horn A/B measurement.
+  
+  Status of the gain figures. Every gain here is a model (scripts in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/qo_calc/horns2.py) except: W1GHZ's measured 17.5 dBi horn and 20.9/27.4 dBi lenses (at 10.368 GHz), and the bare-LNB field reports. Two more searches today found no published QO-100 reception with a horn, lens, zone plate or flat-pack antenna.
+  
+  Excluded options:
+  - Selfsat flat panels. H10D is about 47.5 x 26 x 7.4 cm (forum data, unverified). H21D is 475 x 258 x 74 mm. H30D1 is 51.7 x 27.7 x 5.8 cm, 4.0 kg, 33.7 dBi at 12.75 GHz, specified for 10.7-12.75 GHz, with no LO stability published (https://www.b2b.satking.de/en/selfsat-h30d1-flat-antenna-single). They are rigid, longer than 35 cm and heavy, so they fail the hard requirement, and their gain and LNB drift at 10.489 GHz are unknown.
+  - Kathrein BAS panels (DD1US got the CW beacon to S4-5 on a resealed panel). Discontinued and large.
+  - 10 GHz patch or slot arrays. They need an SMA-input 10 GHz LNA and mixer, and no hobby product exists. An 8x8 Rogers array (about 17 x 17 cm) models about 22-24 dBi before feed loss, which is no gain over a 21 dBi horn.
+  - 3D-printed dielectric lens. Loughborough measured 18 dBi directivity; the lens is rigid and heavy.
+  - Transmissive amplitude zone plate. A 30 cm plate models only about 17 dBi.
+  - WR90/WR75 standard-gain horns. $220 or more, rigid, and they need a waveguide or SMA LNB.
+  
+  Polarisation. The cone and the square horn are rotationally symmetric, so rotate the LNB to pick the polarisation (Bullseye: 13 V vertical for narrowband, 18 V horizontal). The lens must rotate with the LNB. The zone-plate rings are polarisation-independent.
+  
+  Seams. Keep the overlap tight (gap under about 0.2 mm) or tape it. A loose overlap of about 10 mm is not a reliable RF short at 10.5 GHz.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
