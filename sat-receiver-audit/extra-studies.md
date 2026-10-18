@@ -1983,6 +1983,129 @@
   
   Hard rules: all parts are passive HMI parts with no RF, TX, loop or source implications.
 
+## searchB:bourns_pec11r_4215f_s0024_x3_c_k_ksc641j (run `wf_071e1025-145`)
+
+- **Part:** HMI control set: Bourns PEC11R-4215F-S0024 encoders x3 (2 fitted, 1 spare), C&K KSC641J LFS IP67 tact keys x10, Adafruit 2055 35 mm scrubber knobs x2
+- **Current price usd:** 17.75 (re-checked 18 Oct 2026: DigiKey PEC11R-4215F-S0024 is $2.95 at qty 1, so 3 x 2.95 = 8.85, with 13,117 in stock and Active. DigiKey KSC641J LFS is $0.70 at qty 10, so 10 x 0.70 = 7.00, with 30,086 in stock and Active. Adafruit 2055 is $0.95, so 2 x 0.95 = 1.90, in stock. Shipping, EU VAT and duty are not included. Note that PEC11R at qty 5 costs $2.536 each = $12.68, so buying 5 does not save money.)
+- **Critical specs:**
+  - Encoder resolution: 24 PPR with 24 detents (S0024 + detent code 2). This is required by the Pico quadrature_encoder.pio setup at 4 counts per detent. A 30-detent/15-pulse part gives 2 counts per detent and different tuning steps.
+  - Encoder push switch: momentary SPST, life 20,000 cycles min, 610 +/- 306 gf, 0.5 mm travel (Bourns datasheet REV 04/26).
+  - Encoder rotational life: 30,000 cycles min. Operating speed 60 RPM max.
+  - Encoder contact bounce: 2.0 ms max at 15 RPM with the 10k/10k/10 nF filter. The stack uses this exact filter per channel.
+  - Encoder detent torque 30-90 gf-cm and running torque 10-70 gf-cm. This sets how it feels with gloves on.
+  - Encoder mechanics: metal 6.0 mm flatted shaft, 15 mm long (flat 7 mm), metal M7x0.75 bushing with nut and washer, 'PC pin horizontal / rear facing' terminal style (code 4) on the HMI daughterboard, side load 2.04 kgf, shock 100 G, vibration 10-55 Hz at 1.5 mm.
+  - Encoder environment: operating -30 to +70 C, storage -40 to +85 C. Rated IP40, so it needs a panel O-ring or boot. Electrical rating 10 mA at 5 VDC, which is fine for 3.3 V Pico pull-ups.
+  - Keys: IP67 sealed, 340 gf actuation (gloves, and it resists accidental presses), 0.40 mm travel, 300,000 cycles mechanical life, -40 to +85 C, 6.2 x 6.2 mm SMT, 7.7 mm actuator height to sit under a silicone keypad or boots. Read through a TCA9555/PCA9555 expander, so any SPST-NO key works electrically.
+  - Knob: about 35 mm diameter (34.7 mm) scrubber style with a finger dimple, for one-hand, gloved, fast tuning. It must hold securely on a 6 mm D (flatted) shaft. The snap-on fit on the PEC11R shaft is still unverified.
+  - Sourcing: genuine parts from an authorized distributor (no marketplace copies sold under Alps/Bourns/C&K part numbers). This part has no RF, driver or Ubuntu dependencies. Mechanical fit is set by the 38-42 mm HMI column and 13 mm key pitch (STACK D15 and the face layout).
+- **Candidates:**
+  1.
+    - **Name:** SAME PARTS from TME (EU authorized distributor, Poland): Bourns PEC11R-4215F-S0024 x3 + C&K KSC641J LFS x10 (knobs still Adafruit 2055)
+    - **Kind:** current_part
+    - **Price usd:** about 12.56 or less, net and ex-VAT, for encoders + keys: PEC11R 3 x 1.72 = 5.16 plus KSC641J 10 x 0.74 or less = 7.40 or less. Adding Adafruit knobs ($1.90) gives about 14.46 or less. UNVERIFIED: the TME pages show no price table ('Total: no-prices'). Only the JSON-LD AggregateOffer is readable: PEC11R USD 1.27-1.72, KSC641J USD 0.44-0.74. I am assuming the high value is the qty-1 price. EU VAT (destination rate) and TME shipping come on top.
+    - **Spec comparison:** Identical part numbers, so every spec is equal. TME lists the same values: PEC11R 24 pulses, 24 positions, 30,000 cycles, -30 to 70 C, 6 mm D shaft, 15 mm long, 0.5 mm key stroke. KSC641J 3.4 N, 300,000 cycles, IP67, -40 to 85 C, 6.2 x 6.2 mm, 7.7 mm height.
+    - **Worse in:** Nothing in specs. Purchase risks only: stock on the page conflicts (visible '0 in TME stock' vs JSON-LD inventoryLevel 779 for PEC11R and 575 for KSC641J). Tiers are not visible. VAT and shipping can cancel the roughly $3-5 saving unless consolidated with other TME lines. The KSC641J is reel-packed (reel = 200), and cut quantities were not confirmed.
+    - **Compatibility:** Drop-in. Same footprint, firmware and filter.
+    - **Risks:** Prices are unverified until the cart shows tiers. Bourns says 'use within 6 months' of delivery (storage/solderability), so do not stockpile.
+    - **Seller url:** https://www.tme.eu/en/details/pec11r-4215f-s0024/encoders/bourns/
+    - **Sources:**
+      - https://www.tme.eu/en/details/pec11r-4215f-s0024/encoders/bourns/
+      - https://www.tme.eu/en/details/ksc641jlfs/microswitches-tact/c-k/
+      - https://www.digikey.com/en/products/result?keywords=PEC11R-4215F-S0024
+      - https://www.digikey.com/en/products/result?keywords=KSC641J%20LFS
+  2.
+    - **Name:** Generic unbranded 'EC11 encoder with push button switch, 30 position, 15 mm half shaft' (AliExpress) x3 (this is the STACK 'EC11 + O-ring boot' budget alternative)
+    - **Kind:** generic_or_clone
+    - **Price usd:** about 3.12-3.27 for 3 ($1.09 for 1, $1.04 each for 2 or more, per the search listing; shipping/IOSS VAT extra)
+    - **Spec comparison:** Detents: 30 (pulse count not stated, typically 15) vs 24/24. Shaft: 15 mm half (D) shaft, material not stated vs metal. Rotational life, switch life, bounce, detent torque and temperature range are not stated anywhere vs 30k / 20k / 2 ms / 30-90 gf-cm / -30 to +70 C. No IP rating vs IP40. I found no independent measurement of this or any named EC11 clone. The only measured data I found (best-microcontroller-projects) shows an unnamed cheaper encoder producing about 9-13 spurious state codes per detent move vs about 3 for a better encoder.
+    - **Worse in:** Unproven on every spec that matters (life, bounce, torque, temperature). Different detent and pulse ratio, so the firmware changes to 2 counts per detent and tuning steps change. Shaft material is unknown. Fails angle B: no measured evidence of equality.
+    - **Compatibility:** Electrically compatible (5-pin A/B/C + switch, EC11 footprint), but the EC11 footprint and pin layout differ from the PEC11R-4xxx rear-facing pins, so the daughterboard PCB needs a change.
+    - **Risks:** Batch-to-batch variation, unknown origin. REJECTED.
+    - **Seller url:** https://www.aliexpress.us/item/3256810214445426.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-EC11-encoder-24-detent-switch.html
+      - https://www.best-microcontroller-projects.com/rotary-encoder.html
+  3.
+    - **Name:** 'EC11E15244G1' sold as 1 pc on AliExpress (Alps part number, non-authorized marketplace seller)
+    - **Kind:** generic_or_clone
+    - **Price usd:** about 5.43 for 3 ($1.81 each, per the search listing)
+    - **Spec comparison:** The listing gives 30 detents / 15 pulses with push switch vs 24/24. Nothing else is stated. If genuine, it is an Alps EC11E with a different detent and pulse ratio. Genuine status cannot be verified.
+    - **Worse in:** Detent and pulse ratio differs (2 counts per detent, 30 steps per turn). Genuineness is unverifiable, and no measurements exist.
+    - **Compatibility:** EC11 footprint, so the PCB needs a change from the PEC11R-4xxx layout.
+    - **Risks:** Counterfeit risk: a brand part number from an unauthorized seller breaks the 'legally sold, not counterfeit' rule. Genuine Alps from an authorized distributor belongs to the other-brand angle. REJECTED.
+    - **Seller url:** https://www.aliexpress.us/item/3256807756958688.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-EC11-encoder-24-detent-switch.html
+  4.
+    - **Name:** Generic 'EC11 half/plum axis rotary encoder, 15/20 mm, plastic' 5-pack (AliExpress)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 1.09 per 5-pack (search listing)
+    - **Spec comparison:** Plastic shaft vs metal shaft and bushing. Detents and pulses not stated. No life, bounce, temperature or IP data. No measurements.
+    - **Worse in:** Shaft material is worse (plastic). Everything else is unproven.
+    - **Compatibility:** EC11 footprint, so the PCB needs a change.
+    - **Risks:** REJECTED.
+    - **Seller url:** https://www.aliexpress.us/item/3256808756436391.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-EC11-encoder-24-detent-switch.html
+  5.
+    - **Name:** Generic '50 pcs IP67 washable tactile switch 6.2x6.2 mm SMD' (KSC6-style clones, AliExpress, unbranded)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 7.82 per 50-pack (item 3256805761364830) or 11.53 per 50-pack (item 2255800048933875). For the 10 keys needed, the total spend is higher than DigiKey's $7.00 for 10 genuine KSC641J.
+    - **Spec comparison:** Size 6.2 x 6.2 mm SMD and an IP67 claim match. Actuation force, travel, life, temperature and actuator height are all not stated vs 340 gf / 0.40 mm / 300,000 cycles / -40 to +85 C / 7.7 mm. No independent test of sealing or life.
+    - **Worse in:** Not cheaper at this quantity (minimum pack 50). Every rated spec is unknown, and the IP67 claim is unverified.
+    - **Compatibility:** Footprint likely matches. Actuator height is unknown, so the silicone keypad fit is unknown.
+    - **Risks:** REJECTED: not cheaper and no measured evidence.
+    - **Seller url:** https://www.aliexpress.us/item/3256805761364830.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-IP67-tactile-switch-6.2mm.html
+      - https://www.digikey.com/en/products/result?keywords=KSC641J%20LFS
+  6.
+    - **Name:** Generic '30 pcs silicone gel tact switch 6.2x6.2 mm, H=3.1/3.5/4.3/5.0 mm' (AliExpress)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 1.09 per 30-pack (search listing)
+    - **Spec comparison:** Not IP-rated vs IP67. Height 3.1-5.0 mm vs 7.7 mm. Force, life and temperature not stated.
+    - **Worse in:** No sealing rating and a lower actuator. Everything else unknown.
+    - **Compatibility:** Needs keypad redesign for the height.
+    - **Risks:** REJECTED: the sealing requirement is not met.
+    - **Seller url:** https://www.aliexpress.us/item/3256808139893877.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-IP67-tactile-switch-6.2mm.html
+  7.
+    - **Name:** Generic knobs: '35 mm aluminium alloy knob, 6 mm shaft hole' x2, or '11x29 mm plastic D-shaft knob' 2-pack (AliExpress)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 35 mm aluminium: 2 x 1.09 = 2.18. 29 mm plastic: 1.09 per 2-pack.
+    - **Spec comparison:** The 35 mm aluminium knob matches the diameter but costs more than Adafruit 2055 ($0.95 each). Its bore is listed only as a '6 mm shaft hole' (D-flat not confirmed), fixing method not stated, no finger dimple stated. The 29 mm plastic knob is cheaper but 29 mm vs 34.7 mm, with no scrubber dimple stated.
+    - **Worse in:** Aluminium: not cheaper. Plastic 29 mm: smaller grip diameter and no confirmed spin dimple, which is worse for gloved, one-hand tuning.
+    - **Compatibility:** 6 mm D shaft (plastic) or unconfirmed (aluminium).
+    - **Risks:** REJECTED. Keep Adafruit 2055, but its snap fit on the PEC11R flatted shaft is still unverified (Adafruit only states it fits its own encoder 377, which ships with a 6 mm D-shaft knob).
+    - **Seller url:** https://www.aliexpress.us/item/3256807139058891.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-35mm-knob-6mm-d-shaft-encoder.html
+      - https://www.adafruit.com/product/2055
+      - https://www.adafruit.com/product/377
+  8.
+    - **Name:** DIY contactless encoder (AS5600-class magnetic angle sensor + diametric magnet + printed detent ring + separate sealed push key)
+    - **Kind:** diy
+    - **Price usd:** not priced (not verified)
+    - **Spec comparison:** No contact bounce and no wear on the sensing path. But there are no detents unless a printed spring detent is added (no measured life or torque data for such a build), and no integrated push switch. It needs I2C or analog wiring and new firmware instead of quadrature PIO.
+    - **Worse in:** Detent feel and push function are missing or unproven, which matters for gloves. More parts and mechanical work. No independent measurement of a DIY detent's life.
+    - **Compatibility:** Would need another I2C device on the Pico bus or ADC pins (only GP22 is free per the re-audit), so the pin map changes.
+    - **Risks:** REJECTED: fails 'not worse' on detent and switch and has no measured evidence.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.best-microcontroller-projects.com/rotary-encoder.html
+- **Notes:** Verdict for angle B (generic, clone, DIY, used): KEEP the current parts. No generic encoder, generic sealed key or generic knob has independent measured evidence of being equal to the PEC11R-4215F-S0024 or KSC641J LFS. For the keys and knobs, generics are not even cheaper at these quantities: the generic IP67 key minimum pack of 50 costs $7.82 vs $7.00 for 10 genuine, and the 35 mm generic knob is $1.09 vs $0.95. The cheapest generic EC11 (about $3.1 for 3, saving about $5.7) is unproven on life, bounce, torque, temperature and shaft material. It also changes the detent ratio from 24/24 to 30/15 and needs a different PCB footprint, so it fails the rule. Marketplace parts carrying Alps part numbers are rejected as a counterfeit risk.
+  
+  The only cheaper path that keeps every spec is the identical genuine parts from TME (EU authorized distributor). Its JSON-LD shows PEC11R at USD 1.27-1.72 and KSC641J at USD 0.44-0.74, but the visible price table and stock are blank or conflicting, so this is UNVERIFIED. It may save about $3-5 net, and EU VAT and TME shipping are added for the European user. It is worth it only if consolidated with other TME lines; confirm tiers in the cart. Buying Adafruit 2055 from the US to Europe means shipping costs far above the $1.90 part cost, so source it with another Adafruit/EU-reseller order (not checked).
+  
+  Verified spec baseline (Bourns PEC11R datasheet REV 04/26, read directly): 24 PPR / 24 detents, 2.0 ms max bounce at 15 RPM, 60 RPM max, 30,000 rotations, switch 20,000 cycles at 610 +/- 306 gf, detent 30-90 gf-cm, -30 to +70 C, IP40, M7x0.75 metal bushing, 6 mm flatted metal shaft 15 mm, 'use within 6 months of delivery'. KSC641J LFS (DigiKey + TME listing): 340 gf (3.4 N), 0.40 mm travel, 300,000 cycles, IP67, -40 to +85 C, 6.2 x 6.2 mm, 7.7 mm actuator. I could not read the C&K/Littelfuse KSC6 datasheet (HTTP 403).
+  
+  Open item kept from the re-audit: Adafruit 2055 is 'snap-on' and Adafruit says it fits its encoder 377. Its fit on the PEC11R 6 mm flatted shaft with the 7 mm flat is unverified, so test one before the bezel CAD.
+  
+  Used units were not considered viable: encoders and keys are wear parts, there is no measured remaining life, and new genuine parts cost $0.70-2.95.
+  
+  Method limits: the shared WebSearch budget was already exhausted at my first search call (one call, returned no results). All findings come from WebFetch on DigiKey, TME, Adafruit, the Bourns PDF and AliExpress search pages. AliExpress item pages redirected to login, so per-item specs beyond the search-result titles were not read. More searching, for example for any published bench test of a named EC11 clone, would need a follow-up run.
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
