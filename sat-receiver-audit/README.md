@@ -46,6 +46,7 @@
 | [Mechanical thermal](components/mechanical_thermal.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_e6b8e5e2-124` |
 | [Molicel inr21700 p50b](components/molicel_inr21700_p50b.md) | · research · forums · fixes ✅ verify | `—` |
 | [Narrowband sdr](components/narrowband_sdr.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_eb446444-464` |
+| [Noise source mini circuits zfl 500ln or](components/noise_source_mini_circuits_zfl_500ln_or.md) | · research · forums · fixes ✅ verify | `—` |
 | [Nooelec flamingo fm v2 100813](components/nooelec_flamingo_fm_v2_100813.md) | · research · forums · fixes ✅ verify | `—` |
 | [Nooelec sawbird goes cased 100792](components/nooelec_sawbird_goes_cased_100792.md) | · research · forums · fixes ✅ verify | `—` |
 | [Nooelec sawbird noaa cased 100800](components/nooelec_sawbird_noaa_cased_100800.md) | · research · forums · fixes ✅ verify | `—` |

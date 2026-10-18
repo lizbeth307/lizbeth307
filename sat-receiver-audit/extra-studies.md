@@ -29906,6 +29906,125 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Search budget: about 11 WebSearch calls used. The rest of the checks used direct fetches and curl.
 
+## searchB:qo_100_add_on_othernet_bullseye_tcxo_lnb (run `wf_c3ba734e-52b`)
+
+- **Part:** QO-100 add-on (Europe, bought): Othernet Bullseye BE01 TCXO LNB plus the F/75-ohm parts. The cone and horn are antennas and out of scope.
+- **Current price usd:** Whole set (STACK line 295): $47.95-75.00. LNB alone: $29.95 at rtl-sdr.com ('70 in stock', checked 18 Oct 2026). That excludes shipping (not verified), import VAT, the EUR 3/item duty and the EUR 2/item UHF (from about 1 Nov 2026), so the EU landed cost is about $41.6 plus shipping (model, 20% VAT, 1 EUR = 1.1241 USD). EU stock: Passion Radio (FR) QO100-LNB-BULLSEYE-978 at EUR 29.94 ex VAT, 'In stock'. That is EUR 35.93 with 20% FR VAT, about $40.39, before EU shipping. The F/75-ohm parts are not itemised in STACK ('locally'). The 1 m F-F lead already chosen in the G1 cable set is the Goobay 58814 at EUR 2.60 incl. 19% DE VAT, about $2.92 (Reichelt).
+- **Critical specs:**
+  - LNB RF input specified down to 10489-10490 MHz (QO-100 NB downlink and beacons at 10489.500 and 10489.750). The Bullseye is rated from 10489 MHz. Mainstream LNBs are rated only from 10.7 GHz, and G3YGF measured Octagon NF degrading below the band: about 1.2-1.5 dB at 10.73 GHz, 1.2-2.9 dB at 10.368 GHz.
+  - LO 9750 MHz selected at 13.2 V with no 22 kHz tone, giving IF 739.5-740 MHz. It must stay inside RTL-B's 1.766 GHz range and pass through HMC7992-B RF3.
+  - LO accuracy and stability (the deciding spec for CW, BPSK400 and SSB). Bullseye spec: +/-10 kHz at 23 C, +/-30 kHz over -20..60 C, factory calibration within 1 kHz. Independent F4DAV measurement: +/-600 Hz (60 ppb) over 24 h at 8-16 C outdoors, worst error 6.8 kHz, about 30x more stable than a mainstream PLL LNB. Aging: 1 ppm/yr in the Passion Radio budget (about 9.75 kHz/yr at the LO).
+  - Phase noise low enough for BPSK400 and SSB. The reference noise is multiplied about 390x by the PLL. Not measured for the Bullseye.
+  - Noise figure at 10.49 GHz. Spec 0.5 dB, not independently measured. It matters more than usual because the stack has no dish (bare LNB, cone or horn).
+  - Conversion gain 50-66 dB. This sets the 15/20 dB pad and the RTL gain plan (target noise rise 10-15 dB). Flatness 0.25 dB over 30 MHz. IF return loss 8 dB.
+  - Supply: vertical polarisation at 11.5-14 V on the 13.2 V +/-0.33 V rail, never at or above the 16 V horizontal threshold. Current must sit well inside the eFuse window (RILM 2.05k = 0.405-0.499 A). Bullseye 'about 1 W' (F4DAV statement, not measured, about 75 mA at 13.2 V). The draw must be measured at 13.2 V before RILM is finalised.
+  - Mechanics: 40 mm neck/collar and 60-64 mm cap, so the existing cone and horn designs fit unchanged. Single output, 75 ohm F female, sealed housing, -20..60 C rating, low mass for the backpack kit.
+  - Reference port: 25 MHz output on the red F connector (unbuffered, heavily attenuated). Spur risk on the HF+ and V4L; terminate only if it reads 0 V DC, otherwise fit a dust cap. Dropping this port is acceptable; it is not a required spec.
+  - F/75-ohm parts: 75 ohm, SAT-rated to 2150 MHz or more (IF 740 MHz). DC pass for 13.2 V up to the 0.5 A eFuse limit. Shielding Class A (85 dB) or better, A+ 95 dB preferred, against 733-758 MHz SDL/PMSE and DVB-T ingress. Insertion loss at most 0.1 dB and S11 at or below -20 dB per adapter at 740 MHz. Fits the cable OD (Goobay 58814 is 5.4 mm). Corrosion-resistant plating and a weather boot or self-amalgamating tape on the outdoor F joint. The 75/50 ohm transition costs about 0.18 dB mismatch loss, which is irrelevant ahead of the 15/20 dB pad.
+  - Hard rules: the LNB is a passive receive converter; the receive-only rule holds; CE-marked genuine retail part; no loop parts. The horn and cone are antennas, out of scope.
+- **Candidates:**
+  1.
+    - **Name:** Othernet Bullseye BE01 TCXO LNB (current pick; buy from EU stock or rtl-sdr.com)
+    - **Kind:** current_part
+    - **Price usd:** $29.95 at rtl-sdr.com (70 in stock, 18 Oct 2026), EU landed about $41.6 plus shipping (model). EU: Passion Radio EUR 29.94 ex VAT / EUR 35.93 incl. 20% VAT, about $40.39, 'In stock'.
+    - **Spec comparison:** Baseline. Input 10489-12750 MHz. LO 9750/10600 MHz. 2 ppm TCXO in the PLL, +/-10 kHz at 23 C / +/-30 kHz over -20..60 C. Measured (F4DAV): +/-600 Hz over 24 h, max error 6.8 kHz. Gain 50-66 dB. NF 0.5 dB (spec). IF RL 8 dB. Rafael Micro RT320M. 40 mm neck, 60 mm cap. 25 MHz reference out on the red F port. About 1 W (statement).
+    - **Worse in:** Nothing; this is the reference. Open points: NF and current draw are not independently measured, and the 25 MHz port is a spur risk.
+    - **Compatibility:** Fits the P4 chain exactly: 13.2 V vertical, IF 739.5 MHz to RTL-B, 40 mm collar for the cone and horn.
+    - **Risks:** EU landed price from rtl-sdr.com and from Passion Radio are about equal (about $40-42). The EU seller avoids the EUR 3 duty and EUR 2 UHF per item. Technofix is out of stock. Elektor's EUR 24.95 listing is gone (the product URL redirects to a search page with no LNB, 18 Oct 2026). Do not wait long.
+    - **Seller url:** https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+      - http://www.pabr.org/radio/otherlnb/otherlnb.en.html
+      - https://www.passion-radio.com/lnb-pll/universal-goobay-1154.html
+      - https://www.elektor.com/products/bullseye-10-khz-tcxo-lnb-for-qo-100
+  2.
+    - **Name:** Generic mainstream PLL LNB, unmodified (Goobay 67269 single as the example; Opticum LSP-02G, McLean, SR-320 class)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Goobay 67269: EUR 12.72 ex VAT (about $14.30), but Passion Radio says it is 'no longer available'. Other generic PLL LNB prices were not verified.
+    - **Spec comparison:** Goobay datasheet: PLL +/-300 kHz (vs +/-10/30 kHz), gain 42 dB (vs 50-66), NF '0.1 dB' (marketing, unmeasured), input rated 10.7-12.75 GHz (QO-100 at 10.49 GHz is out of spec), 25 MHz crystal (no TCXO), 167 mA, 40 mm collar, vertical 11.5-14 V. Measured evidence against: F4DAV found a mainstream PLL LNB about 30x less accurate and less stable than the BE01 in the same conditions. G3YGF measured Octagon PLL LNB NF at about 1.2-2.9 dB at 10.368 GHz.
+    - **Worse in:** LO stability about 10-30x worse (spec and measured). Gain 8-24 dB lower. Not specified at 10.49 GHz. No reference port. Twice the current.
+    - **Compatibility:** Mechanically and electrically compatible (40 mm, F, 13.2 V vertical), but the narrowband beacon tracking would chase hundreds of kHz of drift.
+    - **Risks:** Rejected: worse on the deciding spec, and the cited unit is discontinued.
+    - **Seller url:** https://www.passion-radio.com/lnb-pll/universal-goobay-1154.html
+    - **Sources:**
+      - https://www.passion-radio.com/lnb-pll/universal-goobay-1154.html
+      - http://www.pabr.org/radio/otherlnb/otherlnb.en.html
+      - https://wiki.batc.org.uk/Es'hail-2_LNBs_and_Antennaes
+  3.
+    - **Name:** Octagon OTLSO 1609 twin PLL LNB (same Rafael Micro RT320M as the Bullseye), unmodified
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not verified (no EU listing read).
+    - **Spec comparison:** Same RT320M PLL/mixer IC as the BE01 (F4DAV teardown catalogue), but with a plain 25 MHz crystal (25.000H629), no TCXO, no calibration and no reference port. Rated NF '0.1 dB' (marketing). No independent drift or NF measurement found for this revision. BATC says Octagon PLL units 'do suffer some temperature drift'.
+    - **Worse in:** LO stability (crystal vs TCXO, uncalibrated). Twin output (bigger and heavier). No measured evidence of equal NF.
+    - **Compatibility:** 40 mm Octagon collar, F outputs, 13.2 V vertical. Compatible except for stability.
+    - **Risks:** Rejected: the shared chip does not make the reference stable; no measurements.
+    - **Seller url:** 
+    - **Sources:**
+      - http://www.pabr.org/radio/lnblineup/lnblineup.en.html
+      - https://wiki.batc.org.uk/Es'hail-2_LNBs_and_Antennaes
+  4.
+    - **Name:** DIY: generic PLL LNB (Opticum LSP-02G or Octagon/Goobay) with its 25 MHz crystal replaced by a soldered TCXO (DL9SEC LSP-02G write-up; Goobay mod thread on the AMSAT-DL forum)
+    - **Kind:** diy
+    - **Price usd:** Not verified. Model: about $10-20 (LNB) plus a 25 MHz TCXO of a few dollars. Even at the low end it is only about $10-25 below the Bullseye's EU landed price.
+    - **Spec comparison:** Could in principle reach or beat 2 ppm if a 0.5 ppm or better TCXO is used (0.5 ppm x 9750 MHz = +/-4.9 kHz, my arithmetic). But no independent measurement of drift, offset or phase noise for any such mod was found. The DL9SEC PDFs (LSP-02G TCXO and ExtRef) returned HTTP 503 and could not be read. NF and gain stay those of the generic LNB: rated only from 10.7 GHz, Goobay gain 42 dB.
+    - **Worse in:** No factory calibration (1 kHz on the Bullseye). The housing is opened, so sealing and long-term reliability fall below a factory-sealed unit. Gain is lower (Goobay). Not specified at 10.49 GHz. Stability is unproven.
+    - **Compatibility:** Same mechanics and supply. Needs SMD rework and re-sealing with neutral-cure silicone.
+    - **Risks:** Rejected under angle B: no measured evidence that it equals the Bullseye; build quality is worse; the saving is small.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.dl9sec.de/download/LSP-02G_TCXO_Modification_1V0.pdf
+      - https://www.passion-radio.com/lnb-pll/universal-goobay-1154.html
+      - https://wiki.batc.org.uk/Es'hail-2_LNBs_and_Antennaes
+  5.
+    - **Name:** DIY: PLL LNB locked to an external 25 MHz reference over the coax (G8GKQ Octagon OQSLG mod; AMSAT-BB 'GPS referenced LNB'), reference from the LBE-1420 GPSDO
+    - **Kind:** diy
+    - **Price usd:** Not verified. LNB about $10-20, plus filter and diplexer parts. The LBE-1420 is an extended-tier item, not core.
+    - **Spec comparison:** Long-term accuracy would beat the TCXO while locked. Measured downsides (BATC wiki, G8GKQ): it needs about +6 dBm of reference; 1 MS DVB-S MER was 21 dB with the external reference vs 24 dB on the stock crystal, so phase noise got worse. Another user reported no detectable degradation, so results conflict. The modified LNB 'will not now operate without a reference signal'.
+    - **Worse in:** Phase noise (3 dB MER loss in the one measured case). Dead without the GPSDO, so it fails the core kit standalone. It puts a +6 dBm 25 MHz carrier on the IF coax, a new spur source for the HF+ and V4L. Opened housing. Not specified at 10.49 GHz.
+    - **Compatibility:** Needs a reference diplexer on the P4 injector and the GPSDO powered for every session. Changes the core power and RF plan.
+    - **Risks:** Rejected: worse in phase noise (measured), standalone operation and build quality.
+    - **Seller url:** 
+    - **Sources:**
+      - https://wiki.batc.org.uk/Es'hail-2_LNBs_and_Antennaes
+      - https://forum.batc.org.uk/viewtopic.php?p=18420
+      - https://mail.amsat.org/archives/pipermail/amsat-bb/2019-March/072088.html
+  6.
+    - **Name:** Used genuine Othernet Bullseye BE01 (eBay / Kleinanzeigen / ham flea markets)
+    - **Kind:** used
+    - **Price usd:** Unverified: no listing could be read (eBay.de returned HTTP 403; search found none).
+    - **Spec comparison:** Same hardware and specs as the current part if genuine. Accuracy may have aged: 1 ppm/yr budget, so a 5-year-old unit could be off by tens of kHz. That is correctable through beacon tracking or the carrier-offset programmer, but it is worse than a fresh factory calibration within 1 kHz.
+    - **Worse in:** Unknown moisture and sun history, aged calibration, no warranty. Measured equality would need the buyer's own 24 h beacon test.
+    - **Compatibility:** Identical to the current part.
+    - **Risks:** Not acceptable under angle B until a specific unit has documented measurements (beacon offset and 24 h drift, current at 13.2 V). A price saving is unproven. Conditional at best.
+    - **Seller url:** 
+    - **Sources:**
+      - http://www.pabr.org/radio/otherlnb/otherlnb.en.html
+  7.
+    - **Name:** Generic F/75-ohm parts (AliExpress-class F-F bulkhead, F-female to SMA-male adapter, F plugs, 75 ohm F terminator) in place of SAT-rated branded parts
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not verified (AliExpress listings could not be read). Possible saving: a few dollars at most.
+    - **Spec comparison:** No independent measurement of any specific generic F or F-SMA part was found. The only evidence is an anecdotal forum report that budget adapters lose under 0.1 dB below 1 GHz (no model or instrument named). The vendor claim of VSWR 1.1 and 0.15 dB at 3 GHz is marketing. Shielding class, DC current rating and plating are usually unstated.
+    - **Worse in:** Shielding class and DC rating not proven, so 733-758 MHz SDL/PMSE ingress and 0.5 A DC pass are unverified. Plating and corrosion quality unknown.
+    - **Compatibility:** Mechanically compatible with P4 and the injector.
+    - **Risks:** Rejected under angle B: no measured evidence. If ever used, the LiteVNA gate would apply first: S11 at or below -20 dB and S21 loss at or below 0.1 dB at 740 MHz, a DC test at 0.5 A, and the 733-758 MHz ingress A/B. Keep the SAT-rated parts. The 1 m lead is already the Goobay 58814 (declared Class A+ 95 dB, EUR 2.60, chosen in G1).
+    - **Seller url:** 
+    - **Sources:**
+      - https://lr.psf.lt/r/HamRadio/comments/1k9jdld/technology/mpsmovm/?context=3
+      - https://vetco.net/products/f-male-to-sma-female-adapter
+- **Notes:** VERDICT (angle B: generics, clones, DIY, used): nothing cheaper is proven not-worse, so keep the Othernet Bullseye BE01. It is the only affordable factory TCXO LNB with an independent measurement: F4DAV, +/-600 Hz over 24 h, max error 6.8 kHz, about 30x better than a mainstream PLL LNB. Every cheaper generic is worse on the deciding spec (LO stability). Goobay 67269: +/-300 kHz, 42 dB gain, rated only from 10.7 GHz, discontinued at Passion Radio. Neither the DIY TCXO mod nor the GPSDO-lock mod has measured equality: the DL9SEC PDFs could not be read (HTTP 503), and the one measured GPSDO-lock case lost 3 dB of MER and stops working without the reference. No used Bullseye listing could be read.
+  
+  SOURCING: for this Europe-based user, buy from EU stock. Passion Radio sells it at EUR 29.94 ex VAT (EUR 35.93 incl. 20% FR VAT, about $40.39), which lands about the same as rtl-sdr.com's $29.95 once VAT, the EUR 3/item duty and the EUR 2 UHF from about 1 Nov 2026 are added (about $41.6 plus shipping, model). Elektor's EUR 24.95 listing has been removed (the URL redirects to a search page), and Technofix is out of stock, so do not delay.
+  
+  FOR THE STACK: F4DAV puts the Bullseye at 'about 1 W' (a statement, not a measurement). That is about 75 mA at 13.2 V, against 167 mA on the Goobay datasheet, so the eFuse RILM will likely end up well below 2.05 kOhm's 0.405-0.499 A. Measure first, as the bench test already requires.
+  
+  Mechanical interface for the out-of-scope horn and cone: 40 mm neck, 60 mm cap (F4DAV); Passion Radio lists 64 mm. The 25 MHz red port is unbuffered and heavily attenuated, so keep the DC check, then fit a terminator or dust cap.
+  
+  F/75-ohm parts: keep SAT-rated parts. No generic part has measured evidence, and the possible saving is a few dollars. Watch for double counting: the F-F bulkhead, internal 75 ohm lead and 1 m Goobay 58814 are already in the G1 cable set, so the QO-100 set should hold only the adapter, terminator or dust cap, weather boot and any spare plugs. The injector choke and horn materials were outside this step.
+  
+  UPGRADE PATH, not cheaper: QRO.cz LNB at EUR 52.03 incl. VAT (hamparts.shop) or EUR 65.00 (WiMo); 0.2 ppm TCXO or 10 MHz external reference; NF and gain not stated on WiMo.
+  
+  Search budget: about 13 WebSearch calls used. AliExpress, eBay, the AMSAT-UK shop, dl9sec.de and archive.org could not be read, so every price from those sources is marked unverified.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
