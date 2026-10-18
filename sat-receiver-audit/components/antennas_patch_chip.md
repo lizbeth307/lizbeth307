@@ -201,3 +201,268 @@ _Run `wf_d3593e9c-5ce`_
   
   Unverified: L-band patch LNA gain, NF, SAW edges and housing connector gender; the '2 m' USB 3 jamming distance; the ANN-MB5 minimum supply voltage. Downloads are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pa_dl/.
 
+## Адверсаріальна перевірка (`verify`)
+
+_Run `wf_d3593e9c-5ce`_
+
+- **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and optional GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 3, adversarial verification
+- **Verdict:** The patch/chip tier survives with corrections. No part has to be swapped, but six stage 1-2 findings are refuted or partly refuted, and there are three new wiring or usage risks.
+  
+  **Re-confirmed on primary sources, 18 Oct 2026:**
+  - RTL-SDR Blog L-band patch v2: $59.95; RHCP; 175x175 mm; LNA then SAW; 3.3-5 V; 15-20 mA; 2 m RG174; not for HRPT or GOES.
+  - Waveshare 25346 at $16.99.
+  - LC76G is L1-only (Quectel spec V1.1).
+  - u-blox ANN-MB5 datasheet R03 (mass production); SparkFun $42.50, in stock.
+  - Uputronics 440 MHz CubeSAT preamp: GBP 51.59, available; FPA datasheet Rev 3.0.
+  - Diamond SRH-701 at WiMo: EUR 16.90, in stock.
+  - Johanson 0433AT62A0020002U Rev 4.0.
+  - W9MDB columns.
+  - ARISS Series 34: 22-25 Oct 2026 on 437.55 MHz.
+  - Inmarsat-C network renewed to keep it running to 2040.
+  
+  **What changes:**
+  1. The LC76G board is wired with VCC from the 3.3 V header pin (gnss_imu.json). That puts its RT9193-33 LDO in dropout. Modelled antenna bias is 2.91-3.04 V at 20 mA, against the 3.0 V minimum of both GNSS antennas. Feed the board's VCC from 5 V instead; Waveshare's own wiring tables do this.
+  2. Any external bias on P7 needs a DC block between the bias tee and the board's IPEX connector. The board's 68 nH + 10 ohm network ties the antenna line to VCC_RF.
+  3. The "no GLONASS" claim for the 25346 is only half true. The text list omits GLONASS, but the vendor's own S21 plot shows 39 dB at 1.602 GHz.
+  4. The 70 cm default becomes the dipole kit's short elements, fully extended. It reuses kit #1, not kit #2, because RTL-A is time-shared between LRPT and UHF while kit #2 runs AIS at the same time. Stage 2's 16.3 cm per-side tape length cannot be reached with these elements.
+  5. The cheaper Uputronics 434 MHz variant is unsuitable: the vendor plot shows about 4 dB down at 437.7 MHz. The 440 MHz passband is about 427-452 MHz at -3.4 dB, not "30 MHz".
+  6. Stage 2 misattributed the Honeywell source. Honeywell describes FCC-authorised terrestrial L-band networks overlapping the Inmarsat receive band (US Band 24, 1526-1536 MHz), not EU SDL.
+  
+  Web search budget ran out on the first call in this stage. Every check above uses curl or WebFetch on primary pages.
+- **Confirmed:**
+  - RTL-SDR Blog Active L-Band 1525-1660 MHz Patch Antenna Set, version two (gray): $59.95 on https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/ (add-to-cart=35592; AliExpress item 4000311955837). The set is 'Active RHCP L-Band Patch Antenna ... in Weather Proof Enclosure, 1x 2 meter RG174 extension cable, 1x Flexible Tripod Mount, 1x Suction Cup Mount'. It needs 3.3-5 V at 20 mA bias. Amazon USA and Chinese worldwide warehouses both show 'in stock' (18 Oct 2026).
+  - The release post confirms the 175 x 175 mm patch, 'SAW filter after the LNA', 3.3-5 V bias, and 'you cannot use it for weak signals that require a dish like HRPT or GOES'. In the comments the vendor answers 'RHCP', '20mA' maximum and '15 – 20 mA'. It adds: 'should be used with one meter or more of coax ... may perform poorly if the RTL-SDR is placed right at the antenna due to interference.' https://www.rtl-sdr.com/preorder-sale-active-l-band-1525-1660-inmarsat-and-iridium-patch-back-in-stock-for-44-95/
+  - 4.5 V from ch3 is inside the patch's 3.3-5 V range. DC-sense must accept 15-20 mA as a valid active antenna.
+  - Community STD-C reception with this patch exists: TechMinds with Scytale-C; Bert: 'The standard patch 600 bps and 1200 bps signal are received good'. Use it as RF evidence only; those decoders stay banned and egc-gate stays the only path. https://www.rtl-sdr.com/techminds-reviews-our-rtl-sdr-blog-l-band-patch-antenna-horn-dish-mod/
+  - Pointing matters. The vendor says 'Angling it towards the satellite will yield significantly higher gain'. Bert reports that a 5 degree turn moved SNR between 2 and 10 dB. The TechMinds post's 'Inmarsat signals are LHCP' contradicts the vendor's own RHCP product statement and must not be copied.
+  - Inmarsat-C continues (Riviera, 20 May 2025, Peter Broadhurst, Inmarsat Maritime): 'renewing all the hardware required to keep that network going out to 2040'; about 130,000 terminals; I-8 satellites planned for 2028. https://www.rivieramm.com/news-content-hub/technology-advances-gmdss-for-safety-data-and-communications-84881
+  - The sigidwiki NCS TDM list (AOR-W 1537.70, IOR 1537.10, AOR-E and POR 1541.45 MHz; page last modified 16 Apr 2022) lies inside the 1537-1545 MHz power-only scan. Keep the scan and do not ship a fixed table. https://sigidwiki.com/wiki/Inmarsat-C_TDM
+  - Waveshare 25346 'GPS External Antenna (D)': $16.99 (tiers $16.59/$16.39/$16.31). RHCP, 2 dBi, LNA 28±2 dB, NF ≤2 dB, VSWR ≤2.0, DC 3.0-18.0 V, ≤20 mA, fixed 3 m RG174, SMA-J, 50x50x19.1 mm, 0.102 kg, magnetic base or double-sided tape, -40 to 85 C. Listed bands: BDS B1I/B1C/B2a, GPS L1/L1C/L5C, Galileo E1/E5a, QZSS L5, IRNSS S-L5. https://www.waveshare.com/gps-external-antenna-d.htm
+  - The LC76G is L1-only: GPS L1 C/A, GLONASS L1, Galileo E1, BDS B1I/B1C, QZSS L1 C/A (Quectel LC76G Series GNSS Specification V1.1). The L5 half of the 25346 is unused by every receiver in the stack. https://quectel.com/content/uploads/2024/03/Quectel_LC76G_Series_GNSS_Specification_V1.1-1-1.pdf
+  - Waveshare LC76G schematic: RT9193-33 LDO feeds VCC; module pin 14 VCC_RF goes through R5 10R, C4 100 pF / C5 100 nF and L1 68 nH onto the IPEX DATA line; RF_IN goes through C6 100 pF and R7 0R. So active-antenna bias is present on the IPEX connector. https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf
+  - u-blox ANN-MB5 datasheet UBX-22038811 R03 (6 Nov 2023, Mass production): L1 1559-1608 MHz; L5/E5a/B2a/NavIC 1164-1186 MHz; 4.5 dBic at zenith on a 12 cm ground plane; axial ratio 3.2 dB; LNA 15±3 dB; NF 2.0 dB including the SAW pre-filter; RG174 3 m loss 3.6 dB at L1; supply 3.0-5.0 V, 17 mA; out-of-band rejection 45 dB below 1459 MHz and 35 dB above 1708 MHz; not protected against overvoltage or reverse voltage. SparkFun GPS-25071: $42.50, 'In stock'. https://cdn.sparkfun.com/assets/0/b/a/5/2/ANN-MB5_Datasheet.pdf
+  - RG174 loss: u-blox's measured 3.6 dB per 3 m at L1 (1.2 dB/m) replaces stage 1's 0.98 dB/m. Model: 2 m at 1541 MHz is about 2.4 dB (up to 3.6 dB for copper-clad-steel RG174); 3 m at L1 is 3.6 dB; 0.6 m at 437.5 MHz is 0.38-0.57 dB.
+  - Uputronics FPA datasheet Rev 3.0 (18/10/2024): bias-tee input 3.5-5.5 V ('Exceeding 5.5V will cause permanent damage'); about 50 mA; NF average 0.75 dB; 440 MHz gain at least 19 dB; LNA before the SAW; 'Antenna Connector DC Blocked (No Bias-tee passthrough)'; Skyworks limiter; HPF below 100 MHz; V3 enclosure 69x40x12 mm; SMA female in and out; 'If the unit is not powered there is no passthrough of signal'. Shopify .js shows 440MHz CubeSAT at GBP 51.59, available=True (product updated 2026-10-18). https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808
+  - Diamond SRH-701 at WiMo (SKU 17039): EUR 16.90 incl. VAT (+EUR 14.20 shipping), 'In stock, shipped in 1 to 2 days', SMA male, 19 cm, 26 g, vendor 0 dBi at 144 MHz and 3 dBi at 432 MHz, no reviews. That is about $19.00 at STACK's implied EUR rate. https://www.wimo.com/en/srh-701
+  - W9MDB v1.2 (15 Oct 2013): the #111 numbers come from the 146 MHz column. The 435 MHz column is labelled 'not calibrated so can only rely on relative values and not even dB intervals for sure'. A-V85 reads -21.8 against NA-771 -13.1, and NA-701 reads -25.6/-23.5. The SRH-701 was not tested. The test was a 2 mi terrestrial HT link, not a satellite geometry. https://www.miklor.com/COM/pdf/AntennaTestingW9MDB.pdf
+  - RTL-SDR Blog dipole kit: $17.95. Contents: base with 60 cm RG174 and an SMA male connector, 'decoupled from the base elements with a ferrite choke'; 2x 23 cm-1 m and 2x 5-13 cm telescopic elements (M5 thread); 3 m RG174 extension; tripod; suction cup. Cheat sheet: 'Small Antenna, 4 Sections, 14cm + 2cm is resonant @ ~445 MHz'. The admin quotes a '~1.7% defect rate'. 'Designed for portable and temporary outside usage.' https://www.rtl-sdr.com/using-our-new-dipole-antenna-kit/
+  - Johanson 0433AT62A0020002U, Revision 4.0 (legacy P/N 0433AT62A0020E-AEC; 25x5x1.2 mm; AEC-Q200): passband 423-443 MHz; peak gain -4.0 / -6.8 dBi and average gain -4.0 / -7.2 dBi (mounting configurations 1 and 2) on Johanson evaluation boards. Chips stay out of the 70 cm chain. https://johansontechnology.com/docs/4353/0433AT62A0020002U.pdf
+  - The physics in #112 recomputes (model): a half-wave patch at 137.9 MHz is 51.8 cm (er 4.4) or 24.3 cm (er 20); the aperture limit at 1.70 GHz is 7.65 dBi for 12x12 cm and 12.09 dBi for 20x20 cm.
+  - ARISS: Series 34 'ARISS Hardware' runs 22-25 Oct 2026, times TBD, '437.55 MHz (+/- Doppler shift), decode with Robot 36 mode, transmission 36 seconds on, two minutes off'. Series 31 was announced at 10 W. Model: Doppler is about ±10.2-10.5 kHz, and an FM filter without tracking costs about 3.8 dB. https://www.ariss.org/upcoming-sstv-events.html
+  - USB 3 '2 m' is a community rule of thumb, not a measurement. OpenMarine: Didier B, 'moving from 0m90 to 1m80 was a significant relief'; 'Connecting my SSD to an USB2 port solved immediately the case'; shielding the USB3 bridge took him from 'no fix' to 'instantaneous Fix'. Another user got perfect reception at about 1.5 m. No C/N0 numbers are given. https://forum.openmarine.net/printthread.php?tid=3062
+  - Magnet distance: on the ArduPilot forum (8 Jun 2024) the compass problem appeared at 9 cm from magnets and disappeared at 15 cm (6 in). Keep the 25346 magnet at least 30 cm from the BNO085 pack, or use the tape mount. https://discuss.ardupilot.org/t/compass-variance-and-mag-field/119041
+  - GNSS-SDR on an RTL-SDR with the RTL-SDR Blog L-band patch has produced a 'live GPS position' (DragonOS write-up). It remains a bring-up test only. https://rtl-sdr.com/dragonos-running-gnss-sdr-and-obtaining-a-gps-position-with-an-rtl-sdr-and-patch-antenna
+  - The 2.4 subtotal arithmetic reproduces: 2x17.95 + (3-25) + 59.95 + (10-20) + 49.95 + 16.99 = 175.79-207.79.
+- **Corrections:**
+  1.
+    - **Claim in stack:** 2.8 / gnss_imu.json wiring: the LC76G board's VCC comes from the 40-pin 3V3 pin (pin 1/17). 2.4 / 5.3: P7 is '3.3 V from LC76G'.
+    - **Finding:** The Waveshare board regulates its own 3.3 V with an RT9193-33. Datasheet DS9193-18: VIN 2.5-5.5 V; ±2 %; dropout 170 mV at 200 mA and 220-300 mV at 300 mA. The board's VCC pin is rated '3.3V/5V', and Waveshare's own wiring tables use 5 V. Fed from 3.3 V, the LDO sits in dropout. The antenna feed then drops a further 10 ohm (R5) plus 68 nH, and the 3 m RG174. Model, with the LC76G at 36 mA: at 20 mA the antenna sees 3.04 V nominal and 2.91 V worst case (3.3 V header -3 %). At 15 mA it is 3.10 / 2.97 V. Fed from 5 V, it is 3.08 / 3.00 V at 20 mA and 3.14 / 3.06 V at 15 mA. The 25346 and the ANN-MB5 both specify a 3.0 V minimum.
+    - **Verdict:** corrected
+    - **Action:** Wire the LC76G board's VCC to 40-pin 5 V (pin 2 or 4) instead of 3V3. UART and PPS stay at 3.3 V logic, because the module runs from the LDO. Bench-measure DC at P7 under a 20 mA load, accepting at least 3.05 V. If it fails, use the external-bias fallback (see the next correction). Never bridge R5.
+    - **Impact:** Removes a probable out-of-spec LNA supply for the GNSS antenna. $0.
+    - **Sources:**
+      - https://www.richtek.com/assets/product_file/RT9193/DS9193-18.pdf
+      - https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf
+      - https://www.waveshare.com/wiki/LC76G_GNSS_Module
+      - https://www.waveshare.com/LC76G-GNSS-Module.htm
+  2.
+    - **Claim in stack:** Stage 1/2 fallback: bias P7 from the 4.5 V injector 'with a DC block toward the LC76G RF_IN'.
+    - **Finding:** The module's RF_IN already has a 100 pF DC block (C6). The hazard is elsewhere: the board's L1 68 nH + R5 10 ohm network ties the IPEX line to VCC_RF = 3.3 V. If 4.5 V is injected on the antenna side without a block ahead of the IPEX, about 117 mA (model) back-drives into VCC_RF and the LDO output.
+    - **Verdict:** corrected
+    - **Action:** If external bias is ever needed, do it this way: TPS2553 channel, then bias tee at P7, then an inline SMA DC block placed between the bias tee and the IPX pigtail of the board. With external bias, LC76G antenna-status reporting is no longer meaningful.
+    - **Impact:** Prevents a 4.5 V-to-3.3 V back-feed. About $5-10 for an SMA DC block, only if the fallback is used.
+    - **Sources:**
+      - https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf
+  3.
+    - **Claim in stack:** 2.4: 'GNSS L1+L5 (25346)'; 'lead 1-3 m'. Stage 1/2: 'no GLONASS'.
+    - **Finding:** The vendor page confirms a fixed 3 m RG174 lead ('supports mass customization' only on bulk orders); that is about 3.6 dB at L1, covered by the 28 dB LNA. The text band list omits GLONASS. However, the vendor's own detail image GPS-External-Antenna-D-details-7.jpg (an S21 plot) has a marker at 1.602 GHz reading 39.09 dB, next to 1.5754 GHz at 37.93 dB. So the LNA chain passes GLONASS G1. Two inconsistencies: the plot's 37-41 dB conflicts with the text's 28±2 dB, and its markers at 1.227/1.268 GHz suggest a generic LNA plot. The patch element's response at G1 is unpublished.
+    - **Verdict:** corrected
+    - **Action:** Describe it as 'L1 antenna, L5 unused; 3 m RG174 fixed; GLONASS not listed but the LNA plot covers 1.602 GHz; confirm by LC76G GLONASS C/N0'. Coil the excess lead away from the USB 3, HDMI and DC-DC edge. Use 28 dB in budgets.
+    - **Impact:** Wording, plus one receive-only bench check. The ANN-MB5 is no longer needed just for GLONASS.
+    - **Sources:**
+      - https://www.waveshare.com/gps-external-antenna-d.htm
+      - https://www.waveshare.com/img/devkit/accessories/GPS-External-Antenna-D/GPS-External-Antenna-D-details-7.jpg
+  4.
+    - **Claim in stack:** 2.4 'Budget alternative: u-blox ANN-MB5 $42.50 (more expensive)'.
+    - **Finding:** It is not a budget item. With an LNA of only 15±3 dB, the model system NF is 2.3-3.0 dB, against about 2.0 dB for the 25346 (LC76G NF assumed at 3-5 dB). The ANN-MB5's 4.5 dBic is measured on a 12 cm ground plane, while the 25346's '2 dBi' has no condition stated. The net advantage is about +2 dB (model, low confidence). Its real advantages are SAW filtering ahead of the LNA (45 dB below 1459 MHz, 35-45 dB at cellular bands) and a specified 1559-1608 MHz L1 band. It has the same 3.0 V minimum and no reverse or overvoltage protection.
+    - **Verdict:** corrected
+    - **Action:** Relabel it 'robustness option (pre-LNA SAW, specified GLONASS), +$25.51'. Use it with a ground plane of at least 10-12 cm and the same P7 bias check.
+    - **Impact:** Optional +$25.51. No sensitivity case for it.
+    - **Sources:**
+      - https://cdn.sparkfun.com/assets/0/b/a/5/2/ANN-MB5_Datasheet.pdf
+      - https://www.sparkfun.com/u-blox-multi-band-active-gnss-antenna-l1-l5-ann-mb5.html
+  5.
+    - **Claim in stack:** #111: W9MDB at 146 MHz (A-V85 -0.8 dB etc.) justifies the A-V85/SRH-701 as the 70 cm whip.
+    - **Finding:** The wrong column is used for a 70 cm claim. The 435 MHz column (uncalibrated) puts the A-V85 about 8.7 dB and the NA-701 about 10.4-12.5 dB below the NA-771. The test is a terrestrial HT link held near the face, which says nothing about satellite reception. The SRH-701 was never measured.
+    - **Verdict:** corrected
+    - **Action:** In #111, quote the 435 MHz column with its caveat, or drop W9MDB as 70 cm evidence. No source gives a measured gain for any small 70 cm whip on a handheld.
+    - **Impact:** The tilted-whip CubeSat margins (-5.3 to +5.3 dB) are unsupported by measurement. This is the case for the dipole default.
+    - **Sources:**
+      - https://www.miklor.com/COM/pdf/AntennaTestingW9MDB.pdf
+  6.
+    - **Claim in stack:** 2.4 / 5.3 / 4.1: 70 cm antenna = DIY 17 cm, Diamond SRH-701 or Baofeng A-V85, screwed onto the Uputronics 440 on P2; 'needs your confirmation'.
+    - **Finding:** New default: the dipole kit's short elements fully extended, about 14 + 2 cm per side, resonant near 445 MHz per the vendor. The base lead is 60 cm RG174, SMA male, with a ferrite choke, and plugs straight into the Uputronics ANT port (SMA female). Model at 437.5 MHz: mismatch 0.22-0.32 dB (Q 6-10), lead 0.38-0.57 dB, so net +1.3 to +1.5 dB over a 0 dBi whip. The whip's gain is itself unmeasured. The kit is telescopic (folding), so it is rule-compliant and needs no user confirmation. RTL-A serves both VHF-137 and UHF through one SP4T, so LRPT and 70 cm never run at once; kit #2, by contrast, sits on HF+ for AIS, which can run concurrently. Kit #1's base is therefore the one to reuse. The A-V85 is likely SMA female (Baofeng convention), has no current listing found, and measured poorly at UHF.
+    - **Verdict:** corrected
+    - **Action:** Patch-tier 70 cm default: kit #1's base re-fitted with its short elements, fully extended, straight (180°), broadside to the pass, lead into the Uputronics 440. Doppler tracking on. Optional third kit (+$17.95) to avoid swapping elements between LRPT and UHF passes. Fallback: SRH-701 (about $19.00) or a DIY 17.1 cm whip on SMA-M. Delete the A-V85 from 2.4, 4.1 and the 5.3 2 m row (keep the SRH-701 there). Do not hang the Uputronics plus whip off the P2 bulkhead; use a short SMA M-F jumper or a bracket. Open question 3 then shrinks to the whip and the helix.
+    - **Impact:** Subtotal 175.79-201.79 (A-V85 dropped; the whip row becomes DIY $3 to SRH-701 $19.00). +$17.95 if a third kit is bought. Margin about +1.3-1.5 dB (model). The antenna also moves 60 cm away from the device's own noise.
+    - **Sources:**
+      - https://www.rtl-sdr.com/using-our-new-dipole-antenna-kit/
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+      - https://www.wimo.com/en/srh-701
+      - https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808
+  7.
+    - **Claim in stack:** D8 / 5.3: 'Uputronics 440 MHz CubeSAT filtered preamp (LNA, then SAW 30 MHz)'.
+    - **Finding:** The vendor's 440 MHz plot (marked UNCAL) reads 19.63 dB at 440 MHz, with markers at 427.33 MHz (16.27 dB) and 452.0 MHz (16.17 dB). That is about 25 MHz between the -3.4 dB points, flat across 435-438 MHz. The 434 MHz variant reads 20.25 dB at 434 MHz and 16.08 dB at 437.67 MHz (-4.2 dB), so it is too narrow for 437.55-437.825.
+    - **Verdict:** corrected
+    - **Action:** Write 'SAW passband about 427-452 MHz (-3.4 dB, vendor plot)'. Never substitute the GBP 41.99 434 MHz variant.
+    - **Impact:** Wording only. Blocks a false economy.
+    - **Sources:**
+      - https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808
+      - https://store.uputronics.com/products/uputronics-filtered-preamps
+  8.
+    - **Claim in stack:** #82: 'USB 3 jams GNSS within about 2 m'.
+    - **Finding:** Supported only by community anecdote (OpenMarine 2020-21: trouble at 0.9 m, relief at 1.8 m, a fix at 1.5 m; USB 2 mode or shielding cured it). No C/N0 data exist.
+    - **Verdict:** corrected
+    - **Action:** Label the 2 m figure as 'community rule of thumb (OpenMarine 2020-21)'. Keep the C/N0 on/off acceptance at ≤1 dB-Hz. If it fails, run storage at USB 2 speed during GNSS-critical work, or shield the drive and its cable.
+    - **Impact:** Evidence wording only. Adds a free fallback.
+    - **Sources:**
+      - https://forum.openmarine.net/printthread.php?tid=3062
+  9.
+    - **Claim in stack:** 4.1 Inmarsat-C row: 'RF covered (rtl-sdr.com reports decoding with the patch)'.
+    - **Finding:** Several community STD-C receptions exist (TechMinds, Bert, DK8OK per stage 2). The vendor publishes no LNA gain or NF. The vendor requires at least 1 m of coax between the patch and the SDR.
+    - **Verdict:** corrected
+    - **Action:** Reword to 'community decodes (TechMinds 2019, blog comments); vendor gain/NF unpublished'. Run the patch on its 2 m lead at least 1 m from the device. Add a pointing step before demodulation: IMU az/el, then a hand sweep of tilt and rotation on the live power-only NCS C/N0, then lock the tripod.
+    - **Impact:** Wording, plus a cheap operating step that can decide a marginal decode.
+    - **Sources:**
+      - https://www.rtl-sdr.com/techminds-reviews-our-rtl-sdr-blog-l-band-patch-antenna-horn-dish-mod/
+      - https://www.rtl-sdr.com/preorder-sale-active-l-band-1525-1660-inmarsat-and-iridium-patch-back-in-stock-for-44-95/
+  10.
+    - **Claim in stack:** (new option) Passive gain for the patch tier on Inmarsat-C.
+    - **Finding:** One user (Bert) put a horn made from half a foil-lined 1 L drink box, plus a back-plate reflector, over the patch. AERO 10500 SNR rose from 8-9 dB to 12-14 dB, about +4-5 dB. This is anecdotal and from one user; the AERO reading is RF evidence only. A folding aluminium shroud (pieces ≤20 cm) is not a dish, and STACK already accepts segment horns.
+    - **Verdict:** new_option
+    - **Action:** Optional DIY item, under $5: 4 flat sheets of about 10 x 15 cm plus a back plate. Put it on the user-confirmation list. Accept it only after a receive-only before/after test on NCS C/N0.
+    - **Impact:** Possible +4 dB (anecdotal).
+    - **Sources:**
+      - https://www.rtl-sdr.com/techminds-reviews-our-rtl-sdr-blog-l-band-patch-antenna-horn-dish-mod/
+- **New risks:**
+  - The LC76G board is fed 3.3 V on VCC, so its RT9193 is in dropout. The model puts the GNSS antenna LNA at 2.91-3.04 V at 20 mA, below its 3.0 V minimum (cold starts and low C/N0 likely at the margin). Fix: VCC from 5 V. See corrections.
+  - External bias on P7 without a DC block between the bias tee and the board's IPEX would back-feed about 117 mA into VCC_RF (model). A short at the IPEX through R5 would draw about 0.32 A and dissipate about 1 W in R5, which would likely fail open. The RT9193 limit is 360-400 mA, so R5 is not the only current limit, but bridging R5 is still forbidden.
+  - In-band uplinks: the patch's SAW passband (1525-1660 MHz) contains the Iridium (1616-1626.5 MHz) and Inmarsat terminal uplink (1626.5-1660.5 MHz) bands. A transmitting ship, aircraft or BGAN terminal nearby is unfiltered and can saturate the patch LNA or the 8-bit RTL-B. Magnitude unverified; this matters most at sea or near terminals.
+  - Adjacent and in-band terrestrial networks. EU LTE Band 75 SDL is 1432-1517 MHz (deployments on Band 32 in IT, UK, DE and LV per Wikipedia); Japan Bands 11/21 reach 1510.9 MHz; US Band 74 downlink is 1475-1518 MHz. All of these reach the patch's LNA ahead of its SAW. US Band 24 (1526-1536 MHz, Ligado) is in-band and cannot be filtered at all. Ligado's 2026 deployment status is unverified. Log 1.43-1.52 GHz and 1.616-1.66 GHz power next to NCS C/N0 and relocate if the floor rises. https://en.wikipedia.org/wiki/LTE_frequency_bands
+  - The Uputronics 440 passes no signal when unpowered. A DC-sense fault or a bias-token refusal on ch2 therefore looks like 'dead band'. The UI must say so.
+  - Dipole kit QC: about 1.7 % defect rate (vendor), including damaged M5 threads and braid strands touching the other element (a center-shield short). Commenters also say the ferrite choke sits too far down the lead. Check on arrival.
+  - The 25346 magnet near the BNO085 pack: problem seen at 9 cm and gone at 15 cm (ArduPilot). Keep the puck at least 30 cm away or use tape.
+  - Unverified: RTL-SDR Blog patch LNA gain, NF, SAW edges and housing connector gender; the 25346's patch response at GLONASS G1 and its out-of-band rejection; any measured gain for any small 70 cm whip on a handheld; A-V85 availability; whether the dipole kit's Amazon USA line ('out in stock') means in stock.
+- **Refuted findings:**
+  1.
+    - **Finding:** Stage 2: 'Honeywell says terrestrial 5G/LTE networks in this spectrum (CEPT SDL 1452-1492 MHz) can cause interference to Inmarsat L-band receivers.'
+    - **Why:** The Honeywell Type J page says the FCC authorised spectrum previously used for satcom for terrestrial ATC/5G, and that it 'overlaps the receive band of the Inmarsat L-Band spectrum'. That is the US in-band case (Band 24, downlink restricted to 1526-1536 MHz), and the page names no SDL frequencies. The EU risk is adjacent SDL: Band 75 at 1432-1517 MHz, the closer edge, rather than 1452-1492. Re-attributed under new_risks.
+  2.
+    - **Finding:** Stage 2: 'R5 is the only current limit on the antenna feed.'
+    - **Why:** The RT9193 datasheet gives a 360-400 mA current limit. R5 restricts a short to about 0.32 A but would dissipate about 1 W. The conclusion (do not bridge R5) survives; the reasoning does not.
+  3.
+    - **Finding:** Stage 1/2: 'The 25346 band list does not include GLONASS' (taken as no GLONASS coverage).
+    - **Why:** Only the text list omits it. The vendor's own S21 image marks 1.602 GHz at 39.09 dB, so the LNA passband covers G1. The patch-element response is unknown, so the result is downgraded to 'verify by C/N0'.
+  4.
+    - **Finding:** Stage 2: 'Set the 70 cm dipole length by tape: about 16.3 cm per side including the 2 cm inside the base.'
+    - **Why:** That needs about 14.3 cm of extension, but the kit's short elements reach 13 cm per the listing or 14 cm per the cheat sheet (445 MHz). The only achievable setting is fully extended. The model mismatch at 437.5 MHz is then only 0.22-0.32 dB.
+  5.
+    - **Finding:** Stage 1: 'Reuse kit #2 between AIS sessions' for 70 cm.
+    - **Why:** Kit #2 feeds HF+ for AIS, which STACK runs at the same time as RTL-A. Kit #1 (LRPT) shares RTL-A with the UHF port through the SP4T, so it is never in use during a UHF pass. Reuse kit #1.
+  6.
+    - **Finding:** Stage 1: 'The Uputronics 434 MHz HABAmp/CubeSAT/ISM variant (GBP 41.99) is cheaper'; its bandwidth was unchecked.
+    - **Why:** The vendor plot shows 437.67 MHz at 16.08 dB against 20.25 dB at 434 MHz, which is -4.2 dB at the ISS, CubeSat and APRS channels. Unsuitable.
+  7.
+    - **Finding:** Stage 1: 'Uputronics page says bias-tee input is 5 V' (possible conflict with 4.5 V).
+    - **Why:** Datasheet Rev 3.0 gives 3.5-5.5 V. 4.5 V on ch2 is in range.
+  8.
+    - **Finding:** Stage 1: an aggregator says the ANN-MB5 is 'obsolete'.
+    - **Why:** Datasheet R03 says 'Mass production', and SparkFun shows 'In stock' at $42.50 on 18 Oct 2026.
+  9.
+    - **Finding:** Stage 1 'reliable' ISS SSTV on the whip; stage 1/2 dipole '+1 to +2 dB'.
+    - **Why:** Both are models. The dipole delta is trimmed to +1.3-1.5 dB, relative to a whip gain no source has measured. 'Reliable' stays labelled as a model until a Series 34 pass is decoded with Doppler tracking on.
+- **Corrected spec:** ## Patch/chip tier antennas (v1, corrected 18 Oct 2026)
+  
+  ### 1. GNSS (P7)
+  - **Antenna:** Waveshare 25346 'GPS External Antenna (D)', $16.99.
+    - RHCP, 2 dBi, LNA 28±2 dB, NF ≤2 dB.
+    - 3.0-18 V, ≤20 mA.
+    - Fixed 3 m RG174 (about 3.6 dB at L1, model from u-blox's measured RG174 loss).
+    - SMA-J plug.
+  - **Chain:** P7 is an SMA-K (female) bulkhead, then an IPX pigtail to the Waveshare LC76G 24370 IPEX connector.
+  - **Use:** L1 only. The LC76G tracks GPS L1 C/A, GLONASS L1, Galileo E1, BDS B1I/B1C and QZSS; L5 is unused. GLONASS is not listed on the antenna, but the vendor's LNA plot covers 1.602 GHz; confirm by C/N0.
+  - **Board supply:** LC76G board VCC from 40-pin **5 V** (not 3V3), so the RT9193-33 regulates. Expected antenna bias is 3.06-3.19 V at 10-20 mA (model). Bench acceptance: at least 3.05 V at P7 under a 20 mA load.
+  - **Fallback bias:** TPS2553 channel, then bias tee at P7, then an inline SMA DC block between the bias tee and the board's IPX pigtail. Never bridge R5. Never connect a DC-shorted antenna.
+  - **Placement:**
+    - Tape mount, or magnet at least 30 cm from the BNO085 pack.
+    - About 1-2 m from USB 3, HDMI and DC-DC (community rule of thumb).
+    - Acceptance: C/N0 on/off at ≤1 dB-Hz.
+    - The LC76G's included active ceramic antenna goes on the lid only after it passes the same test.
+  - **Option:** u-blox ANN-MB5-00 (SparkFun GPS-25071, $42.50, +$25.51).
+    - Bands: L1 1559-1608 MHz and L5 1164-1186 MHz.
+    - SAW ahead of the LNA: 45 dB below 1459 MHz, 35 dB above 1708 MHz.
+    - LNA 15±3 dB, NF 2.0 dB; 3.0-5.0 V, 17 mA; no reverse or overvoltage protection.
+    - 4.5 dBic on a 12 cm ground plane, so it needs a ground plate of at least 10-12 cm.
+    - Choose it for robustness, not sensitivity (model system NF 2.3-3.0 dB, against about 2.0 dB for the 25346).
+  
+  ### 2. L-band (P3, ch3 at 4.5 V after DC-sense, which accepts 15-20 mA)
+  - **Antenna:** RTL-SDR Blog Active L-Band 1525-1660 MHz Patch Antenna Set, v2 (gray), $59.95 (buy page add-to-cart 35592; AliExpress 4000311955837).
+    - RHCP; 175x175 mm patch; LNA then SAW.
+    - 3.3-5 V, 15-20 mA (20 mA maximum).
+    - 2 m RG174 extension: 2.4 dB at 1541 MHz (model), up to 3.6 dB for the copper-clad-steel type.
+    - Tripod (preferred) and suction cup.
+  - **Siting:** keep at least 1 m of coax between the patch and the device (vendor).
+  - **Pointing:** IMU az/el, then a hand sweep of tilt and rotation on the live power-only NCS C/N0, then lock the tripod.
+  - **Uses:**
+    - Inmarsat-C EGC SafetyNET via labd egc-gate only, with a power-only scan of 1537-1545 MHz and no fixed channel table.
+    - GNSS-SDR on RTL-B as a bring-up test only.
+  - **Excluded:**
+    - HRPT and GOES (vendor).
+    - AERO, Iridium and full STD-C decoders.
+  - **Logging:** record 1.43-1.52 GHz and 1.616-1.66 GHz power alongside NCS C/N0 (adjacent SDL and in-band uplink blockers).
+  - **Optional, user confirmation needed:** folding aluminium shroud plus back plate (pieces ≤20 cm), anecdotal +4-5 dB.
+  
+  ### 3. 70 cm (P2, ch2 at 4.5 V after DC-sense, which accepts about 50 mA)
+  - **Preamp:** Uputronics Filtered Preamp, 440 MHz CubeSAT variant, GBP 51.59 (about $68.71).
+    - 3.5-5.5 V, about 50 mA; NF 0.75 dB; gain at least 19 dB.
+    - Passband about 427-452 MHz at -3.4 dB (vendor plot).
+    - LNA before the SAW; limiter; HPF below 100 MHz.
+    - ANT port DC-blocked; no passthrough when unpowered.
+    - SMA-F both ports; 69x40x12 mm.
+    - Mount on a short SMA M-F jumper or bracket, not cantilevered on P2.
+    - Never substitute the 434 MHz variant.
+  - **Default antenna:** RTL-SDR Blog dipole kit #1's base (reused, $0; RTL-A is time-shared).
+    - The two 5-13 cm elements fully extended (about 14 + 2 cm per side, about 445 MHz resonance).
+    - Straight 180°, broadside to the pass.
+    - 60 cm RG174 lead (SMA-M, ferrite choke) straight into the ANT port.
+    - Model: mismatch 0.22-0.32 dB, lead 0.38-0.57 dB, net about +1.3-1.5 dB over a 0 dBi whip.
+    - Optional third kit: +$17.95.
+  - **Fallback antennas:** Diamond SRH-701 (WiMo SKU 17039, EUR 16.90, about $19.00; SMA-M, 19 cm, 26 g; vendor 3 dBi at 432 MHz, unmeasured) or a DIY 17.1 cm λ/4 whip on SMA-M.
+  - **A-V85:** removed everywhere (SMA-F, no listing found, poor UHF result).
+  - **ISS SSTV (437.55 MHz, Robot 36):** Doppler tracking required. Without it the filter must be about 36 kHz wide, which costs about 3.8 dB (model).
+  
+  ### 4. Chips and physics limits
+  - No chip in any VHF or UHF chain. Johanson 0433AT62A0020002U Rev 4.0 is -4.0 / -6.8 dBi.
+  - Patch and chip antennas cannot serve 137-146 MHz or HRPT. A half-wave patch at 137.9 MHz is 51.8 cm (er 4.4) or 24.3 cm (er 20). The aperture limit at 1.70 GHz is 7.65 dBi for 12 cm and 12.09 dBi for 20 cm.
+  
+  ### 5. Group subtotal
+  - 175.79-201.79 USD with the A-V85 dropped (whip row $3-19.00).
+  - +$17.95 with a third dipole kit.
+  - +$25.51 with the ANN-MB5.
+  
+  ### 6. Rule status
+  - The L-band patch, GNSS puck, LC76G ceramic antenna and dipole kit (telescopic) are compliant; none is a loop and none is a dish.
+  - Only the rigid SRH-701 or 17 cm whip, the 4-turn helix (not assessed here) and the optional shroud stay on the user-confirmation list.
+- **Bench tests:**
+  - P7 DC margin. With the LC76G VCC on 3V3, then on 5 V, put a 150 ohm DC load (about 20 mA at 3.0 V) on P7 and read the volts; then repeat with the 25346 connected through an SMA DC-pass tee. Accept at least 3.05 V. Also read LC76G VCC at the module, expecting 3.26 V on 3V3 and 3.30 V on 5 V. DC only, nothing radiated.
+  - GNSS C/N0 acceptance (receive-only, LC76G GSV, open sky, 10 min each). Step 1: 25346 against the LC76G's included ceramic antenna, and against the ANN-MB5 if bought. Step 2: USB 3 SSD idle versus streaming, and HDMI or display off versus on. Accept ≤1 dB-Hz loss. If it fails, repeat with the drive in USB 2 mode or shielded. Record per-constellation C/N0, including GLONASS, to settle the 25346 G1 question.
+  - Magnet check: BNO085 heading change with the 25346 puck at 10, 20 and 30 cm in four orientations. Accept less than 1°, otherwise use the tape mount.
+  - L-band patch on arrival: inspect the case seal and screw bosses and record the connector gender. With ch3 at 4.5 V, check that DC-sense reads 15-20 mA.
+  - L-band patch noise-floor step on RTL-B T1 (receive-only): first a 50 ohm load at P3, then the patch powered and aimed at clear sky away from the GEO arc, on the 2 m lead at least 1 m from the device. A step of 8 dB or more shows the patch LNA dominates the chain NF.
+  - Inmarsat-C acquisition (receive-only, power-only). Run the 1537-1545 MHz scan with IMU az/el, then sweep tilt and rotation by hand and lock at peak NCS C/N0. Log NCS C/N0 together with 1.43-1.52 GHz and 1.616-1.66 GHz band power. Repeat at a second site near an LTE/NR SDL cell if one is known. Demodulate only through egc-gate after its mixed-recording test.
+  - Dipole kit on arrival (DC ohmmeter, no RF). Centre to shield must read open (>1 MΩ), each element must have continuity to its own conductor, and the M5 threads must engage cleanly.
+  - Uputronics 440, conducted bench only. Check that DC-sense reads about 50 mA at 4.5 V. Use the tinySA as a source at ≤ -40 dBm into the ANT port (Bench mode, 50 ohm terminations, conducted) to check gain of at least 19 dB at 437.5 MHz and the -3 dB edges near 427/452 MHz. Check that unpowered, the path is heavily attenuated.
+  - 70 cm A/B (receive-only, on air) during ISS SSTV Series 34, 22-25 Oct 2026, 437.55 MHz, Doppler tracking on. Alternate the kit #1 short-element dipole and the SRH-701 on the Uputronics on successive passes, or on beacons in the same pass, and log carrier SNR at matched elevation. Adopt the dipole as default if it is at least 0 dB better; record the decoded image as the first field confirmation of 'reliable'.
+  - Optional shroud (only if the user approves it): NCS C/N0 before and after fitting, same pointing procedure; keep it only if the gain is at least 2 dB.
+- **Confidence:** medium
+

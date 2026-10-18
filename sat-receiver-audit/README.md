@@ -12,7 +12,7 @@
 |---|---|---|
 | [Antennas](components/antennas.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_6b9836f8-796` |
 | [Antennas foldable](components/antennas_foldable.md) | ✅ research · forums · fixes · verify | `—` |
-| [Antennas patch chip](components/antennas_patch_chip.md) | ✅ research · forums · fixes · verify | `—` |
+| [Antennas patch chip](components/antennas_patch_chip.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Compute](components/compute.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_88090a59-878` |
 | [Compute os](components/compute_os.md) | ✅ research · forums · fixes · verify | `—` |
 | [Dish replacement](components/dish_replacement.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_5a66d65f-c3f` |
@@ -21,6 +21,7 @@
 | [Gnss imu](components/gnss_imu.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_45d278c2-004` |
 | [Gnss imu location](components/gnss_imu_location.md) | ✅ research · forums · fixes · verify | `—` |
 | [Hf receiver](components/hf_receiver.md) | ✅ research · forums · fixes · verify | `—` |
+| [Lab ui](components/lab_ui.md) | ✅ research · forums · fixes · verify | `—` |
 | [Mech thermal storage](components/mech_thermal_storage.md) | ✅ research · forums · fixes · verify | `—` |
 | [Mechanical thermal](components/mechanical_thermal.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_e6b8e5e2-124` |
 | [Narrowband sdr](components/narrowband_sdr.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_eb446444-464` |
