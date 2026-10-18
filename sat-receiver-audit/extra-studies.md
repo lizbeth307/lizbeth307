@@ -1,5 +1,140 @@
 # Додаткові дослідження: повні відповіді субагентів
 
+## searchB:radxa_ufs_3_1_128_gb_ra022_b10j0u2 (run `wf_071e1025-145`)
+
+- **Part:** Radxa UFS 3.1 Module 128 GB, RA022-B10J0U2 (Samsung KLUDG4UHDC-B0E1, ID 0x01CE). Boot and A/B root drive in the Q6A eMMC/UFS combo connector.
+- **Current price usd:** 65.90 at ALLNET China (checked today: Shopify variant RA022-B10J0U2 shows available=true; price excludes EU import VAT, so about $79.7 landed in the EU at 21% VAT, before shipping and handling). Stack low price: TinyTronics EUR 58.00 incl. VAT = $65.20 (EUR 47.93 = $53.88 ex VAT), not in stock, 2-4 weeks.
+- **Critical specs:**
+  - Connector and pinout: Radxa dual B2B plug pair GB042-30P-H10 (signals: 2 RX lanes, 2 TX lanes, REF_CLK, RESET, 3V3/1V8/1V2 rails, UFS_DET/EMMC_DET) plus GB042-34P-H10 (mounting only). It must mate with the Q6A eMMC/UFS combo socket. The module must be on Radxa's Q6A compatibility list: the Radxa Q6A docs say 'Do not use untested third-party UFS or eMMC modules... may short the SBC and cause permanent hardware damage'.
+  - Interface: UFS 3.1 (JESD220E), 2-lane HS-Gear4, with WriteBooster.
+  - Speed measured on the Q6A (Radxa dd, Radxa OS): at least 1703 MB/s sequential read and 388 MB/s sequential write. Both figures are inside the WriteBooster cache (about 4 GiB). Sustained write after the cache is unmeasured. Floor: the 13.3 MB/s worst-case stream without Lime, plus decimated L/S-band and GNSS products with Lime.
+  - Capacity: at least 128 GB (about 119 GiB usable). Layout: ESP 1 GiB + root A 22 GiB + root B 22 GiB + /data about 74 GiB (about 46 GiB of recordings with a 30 GiB raw cap, and the 20 GB NPU dataset quota).
+  - Flash vendor and model: must run on the held linux-image-6.18.2-4-qcom with no quirk. Samsung 0x01CE qualifies. Kioxia 0x0198 THGJFGT1E45BAILB needs a self-built 6.18.2-4+lab1 kernel, so it is worse for this stack. Check the read ID on arrival.
+  - Boot chain: Radxa OS r2 output_4096 (4 KiB-sector) UFS image, SPI BIOS 6.0.260120, systemd-boot A/B with boot counting, EDL/firehose UFS provisioning (edl-ng).
+  - Thermal: standard grade 0-70 °C (an industrial -25 to +85 °C version exists). In this build it runs at about 60 °C, pressed against the case boss through a pad, and the ufs-thermal zone is monitored. Cold rule: rated from 0 °C.
+  - Health and endurance: the UFS health descriptor (life-time estimate A/B, pre-EOL) must be readable. Radxa publishes no TBW.
+  - Mechanical: 30 x 22 x 5 mm, 1 g, clamp-in. Power: active about 420 mA at 2.5 V plus 600 mA at 1.2 V, idle under 1 mA (Evelta listing, not checked against a datasheet).
+  - Provenance: genuine Radxa part (not a counterfeit or a relabel). Radxa guarantees availability until at least Sep 2035.
+- **Candidates:**
+  1.
+    - **Name:** Same part RA022-B10J0U2 from Arace (Radxa's official distributor)
+    - **Kind:** current_part
+    - **Price usd:** 49.00 ex VAT (Shopify JSON checked today). SOLD OUT (available=false). EU landed cost is about $59.3 plus shipping at 21% import VAT.
+    - **Spec comparison:** Same SKU, so every spec is equal: UFS 3.1 2L HS-G4, 1703/388 MB/s on the Q6A, 128 GB, 0-70 °C, same connector.
+    - **Worse in:** Nothing in specs. Not buyable today. The chip is still not guaranteed by SKU (Radxa does not publish a SKU-to-chip map), so the 0x01CE check on arrival still applies.
+    - **Compatibility:** On the Radxa Q6A compatibility list. Fully compatible.
+    - **Risks:** Out of stock with no restock date. Import VAT and handling on arrival in the EU.
+    - **Seller url:** https://arace.tech/products/radxa-ufs-module
+    - **Sources:**
+      - https://arace.tech/products/radxa-ufs-module.js
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/ufs-emmc-com
+  2.
+    - **Name:** Same part RA022-B10J0U2 from TinyTronics (NL, EU seller)
+    - **Kind:** current_part
+    - **Price usd:** 65.20 incl. 21% VAT (EUR 58.00). 53.88 ex VAT (EUR 47.93). Not in stock, 2-4 weeks (product page fetched today; a search snippet showing EUR 60 in stock is older and conflicts with it).
+    - **Spec comparison:** Same SKU, so every spec is equal.
+    - **Worse in:** Nothing in specs. Lead time of 2-4 weeks: boot from microSD until it arrives.
+    - **Compatibility:** Fully compatible.
+    - **Risks:** Lead time. For an EU buyer this is the cheapest landed option that can actually be ordered: about $14.5 cheaper than ALLNET once import VAT is added, and $0.70 cheaper even against ALLNET's ex-VAT price.
+    - **Seller url:** https://www.tinytronics.nl/en/data-storage/modules/radxa-ufs-module-128gb
+    - **Sources:**
+      - https://www.tinytronics.nl/en/data-storage/modules/radxa-ufs-module-128gb
+  3.
+    - **Name:** Same part RA022-B10J0U2 from Hubtronics (India)
+    - **Kind:** current_part
+    - **Price usd:** about 32 (INR 2,815 incl. 18% GST = INR 2,385.59 + GST; the INR-to-USD rate of about 88 is my assumption). UNVERIFIED: the page returned 403 and the price comes from search snippets only.
+    - **Spec comparison:** Same SKU, so every spec is equal.
+    - **Worse in:** Nothing in specs. Search snippets show 0 in stock. Shipping to Europe is not shown.
+    - **Compatibility:** Fully compatible.
+    - **Risks:** Stock 0. Probably sells domestically only. India-to-EU shipping, customs and VAT would remove most of the gap. The price was not seen on the primary page.
+    - **Seller url:** https://hubtronics.in/radxa-128gb-ufs-module
+    - **Sources:**
+      - https://hubtronics.in/radxa-128gb-ufs-module
+  4.
+    - **Name:** AliExpress resellers listing 'Radxa UFS Module' (for example 'Radxa UFS Module, Up to 256G, Pluggable', $57.99)
+    - **Kind:** current_part
+    - **Price usd:** 57.99 for the cheapest listing. UNVERIFIED: the capacity behind that price and the store identity were not shown. Other listings are $97-$194.
+    - **Spec comparison:** Presented as genuine Radxa modules. There is no chip ID, no measurements and no proof the seller is Radxa official.
+    - **Worse in:** Provenance unproven: possible grey-market, relabelled or wrong-chip module. Chip vendor unknown, and a Kioxia chip would need the quirk kernel. No measured evidence.
+    - **Compatibility:** Unknown until it arrives and the ID is read. Radxa warns against untested modules.
+    - **Risks:** Counterfeit or relabel risk. Under Angle B this is rejected: no independent measurement exists.
+    - **Seller url:** https://www.aliexpress.com/w/wholesale-radxa-ufs-module.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-radxa-ufs-module.html
+  5.
+    - **Name:** Radxa UFS Module 64 GB RA022-B10J0U1
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 19.00 at ALLNET and Arace, both SOLD OUT (Shopify JSON checked today)
+    - **Spec comparison:** Same interface and connector. Not measured on the Q6A. Chip unknown.
+    - **Worse in:** Capacity: 64 GB (about 59 GiB) cannot hold ESP 1 + 2 x 22 GiB roots + about 74 GiB /data. Speed on the Q6A is unmeasured, and smaller UFS parts usually write slower.
+    - **Compatibility:** On the compatibility list by family, but it fails the storage layout.
+    - **Risks:** REJECTED as worse in capacity.
+    - **Seller url:** https://shop.allnetchina.cn/products/high-performance-ufs-3-1-module
+    - **Sources:**
+      - https://shop.allnetchina.cn/products/high-performance-ufs-3-1-module.js
+      - https://arace.tech/products/radxa-ufs-module.js
+  6.
+    - **Name:** Radxa eMMC Module 128 GB (eMMC 5.1, same GB042 connector pair)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** not verified (no price on the Radxa page)
+    - **Spec comparison:** Radxa's measured table for 128 GB (Toshiba): 217 MB/s read and 143 MB/s write, against 1703/388 MB/s for the UFS on the Q6A.
+    - **Worse in:** About 7.8x slower read and about 2.7x slower write. Not listed or measured for the Q6A. eMMC rather than UFS (no WriteBooster, lower link rate).
+    - **Compatibility:** The Q6A docs say the socket accepts eMMC modules, but the eMMC page does not list the Q6A and no Q6A speed is published.
+    - **Risks:** REJECTED as worse in performance.
+    - **Seller url:** https://radxa.com/products/accessories/emmc-module
+    - **Sources:**
+      - https://docs.radxa.com/en/accessories/storage/emmc_module
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/ufs-emmc-com
+  7.
+    - **Name:** Generic or clone third-party UFS module for the Radxa GB042 B2B socket
+    - **Kind:** generic_or_clone
+    - **Price usd:** none found
+    - **Spec comparison:** No non-Radxa UFS module for this connector was found from any vendor (searches by connector part number GB042-30S/30P-H10, AliExpress, Orange Pi, Hardkernel, FriendlyElec, Pine64). No Q6A forum report of a third-party module was found either.
+    - **Worse in:** No product and no measured evidence.
+    - **Compatibility:** Radxa explicitly warns that untested third-party modules can short the board.
+    - **Risks:** REJECTED: nothing exists with measurements, and the warning means board-damage risk.
+    - **Seller url:** 
+    - **Sources:**
+      - https://dl.radxa.com/accessories/ufs-module/rad-doc-0154_radxa_ufs_module_product_brief__revision_1.2_g69c4d5d.pdf
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/ufs-emmc-com
+  8.
+    - **Name:** DIY module: own PCB with a GB042-30P/34P plug pair plus a BGA153 UFS 3.1 chip (for example Samsung KLUDG4UHDC-B0E1)
+    - **Kind:** diy
+    - **Price usd:** not costed (chip and connector prices not checked)
+    - **Spec comparison:** Pinout is public (Radxa brief rev 1.2). Matching performance would need 2 lanes at HS-G4 (11.6 Gb/s per lane) with impedance-controlled routing, a clean REF_CLK, and 3V3/1V8/1V2 rails.
+    - **Worse in:** No measured evidence. Needs BGA reflow and controlled-impedance PCB fab. Signal integrity, reliability and provenance of single-unit UFS chips are all unproven.
+    - **Compatibility:** Unproven. Exactly the 'untested third-party module' Radxa warns can damage the board.
+    - **Risks:** REJECTED under Angle B (no measurements). Also not cheaper once a PCB run and assembly are counted, and the chip source is a counterfeit risk.
+    - **Seller url:** 
+    - **Sources:**
+      - https://dl.radxa.com/accessories/ufs-module/rad-doc-0154_radxa_ufs_module_product_brief__revision_1.2_g69c4d5d.pdf
+  9.
+    - **Name:** Used Radxa UFS 128 GB module
+    - **Kind:** used
+    - **Price usd:** none found
+    - **Spec comparison:** None found in search. eBay returned 403 to direct fetch, so no listing could be checked.
+    - **Worse in:** No listing. A used module would also have unknown flash wear (it would need a health-descriptor read before trust).
+    - **Compatibility:** It would be the same part if found.
+    - **Risks:** None available. Wear and erase-count risk if one appears.
+    - **Seller url:** 
+    - **Sources:** []
+- **Notes:** VERDICT (Angle B): no generic, clone, DIY or used analog exists that is proven not worse. Keep the current part, Radxa RA022-B10J0U2. The only savings come from buying the same genuine SKU from a cheaper seller:
+  (1) Arace $49.00, sold out.
+  (2) TinyTronics EUR 58 incl. VAT ($65.20; $53.88 ex VAT), 2-4 weeks. For an EU buyer this is the cheapest landed option that can be ordered, about $14.5 below ALLNET once import VAT is added.
+  (3) Hubtronics about $32, unverified and stock 0.
+  ALLNET at $65.90 is the only seller seen in stock today.
+  
+  Other notes:
+  - Arace also lists 256 GB as RA022-B60J0U4 at $49.00 (sold out). That is the same price, not cheaper, and an unfamiliar SKU suffix (ALLNET's 256 GB is RA022-B10J0U4 at $75.90, sold out). Its chip is unknown. If it is Kioxia 0x0198 it needs the self-built quirk kernel, so it is worse on compatibility with held 6.18.2-4. Do not buy it unless the seller confirms a Samsung chip.
+  - Outside this angle and also rejected: a 2230 NVMe in M.2 is incompatible because the LimeSDR Micro takes the slot (user decision 18 Oct). microSD or a USB SSD as root is worse in speed, and the design rule says the A/B root lives on UFS.
+  - Arrival checks are unchanged:
+    - wManufacturerID 0x01CE and model KLUDG4UHDC;
+    - 10 min of fio, then a long fill to about 70% to measure post-WriteBooster sustained write;
+    - health descriptor read.
+  - What was checked today: Arace and ALLNET prices and stock (Shopify .js variant data), the TinyTronics page, Radxa Q6A UFS docs, Radxa UFS product brief rev 1.2 (connector pinout, 0-70 °C / -25 to +85 °C option, availability to 2035), and the Radxa eMMC speed table.
+  - Not checked: Hubtronics (403), Amazon B0GX92F11S (captcha; price not seen), AliExpress capacity and store identity, eBay (403).
+  - Exchange rates: EUR 1 = USD 1.1241 per STACK. The INR rate is my assumption.
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
@@ -24709,6 +24844,173 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - Every rejected candidate is receive-only, so no hard rule is affected.
   
   Effort: 9 of the 15 allowed WebSearch calls were used, plus WebFetch on primary pages (Uputronics datasheet Rev 3.0, Mini-Circuits PSA4-5043+ Rev D, the Kubii variant refresh endpoint, the LNA4ALL blog, DigiKey, Tindie, SatNOGS wiki and libre.space).
+
+## searchA:generic_hmc7992_sp4t_boards_rtl_a_and_rt (run `wf_e32114dd-52d`)
+
+- **Part:** Generic HMC7992 SP4T boards (RTL-A and RTL-B input selectors), qty 2, behind the bias injectors; RF1 = 50 Ohm park (A=B=Low at power-up, per reaudit B correction), C0G DC blocks on all five RF pins
+- **Current price usd:** 30-40 for 2 (STACK, marketplace, unverified). Only reference listing: Walmart.ca 'HMC7992 Non-Reflective SP4T RF Switch Module', sold by Joystore (third-party), CA$20.49 each, about $14.7 each or about $29-30 for 2 at an assumed 0.72 USD/CAD. Page now shows a bot check, so I could not re-verify it. It probably does not ship to the EU.
+- **Critical specs:**
+  - Frequency coverage that is guaranteed, not just usable: 137-146 MHz and 437 MHz (RTL-A), 1.5-1.7 GHz L-band and 950-2150 MHz LNB IF (RTL-B). HMC7992 is specified 0.1-6 GHz. The datasheet says it 'operates well down to 10 kHz' (P1dB 21 dBm, IIP3 37 dBm at 1 MHz), so the sub-100 MHz BENCH throw stays unspecified.
+  - Insertion loss at 0.1-2 GHz: HMC7992 0.6 dB typ / 0.9 dB max.
+  - Isolation RFC to RF1-RF4, worst case, 0.1-2 GHz: chip 40 dB min / 45 dB typ. The board must pass at least 30 dB conducted on the LiteVNA, and the stack expects 30-37 dB.
+  - Non-reflective (absorptive) 50 Ohm termination of the unselected throws, so idle LNA outputs and injectors stay loaded. Off-state return loss: 7 dB at 0.1-2 GHz, 15 dB at 0.4-1 GHz, 20 dB at 1-6 GHz. On-state return loss 25 dB typ.
+  - Linearity: P0.1dB 31 dBm / P1dB 33 dBm and IIP3 56 dBm at VDD 3.3 V. This is far beyond what a receiver needs, but an analog must not be worse.
+  - Supply: single +3.0 to 5.4 V (3.3 V rail), IDD 0.16 mA typ. No internal negative-voltage charge pump, so no switch-generated spurs into the receivers.
+  - Control: 2-line A/B decoder, VIH 1.15 V at VDD 3.3 V (MCP23017 at 3.3 V), control input current under 1 uA. Defined power-up state is A=B=Low, which selects RF1 (the 50 Ohm park). Sequence must be VDD before control lines.
+  - RF pins are DC-coupled: the board must have, or accept, C0G blocking caps on RFC and RF1-RF4, because bias tees sit upstream.
+  - Power handling: through 32 dBm, terminated 27 dBm at 25 C, hot-switch 27 dBm. Only matters for BENCH/conducted-source safety.
+  - ESD 2 kV HBM / 1.25 kV CDM. Case temperature -40 to +105 C for field use.
+  - Board level: SMA connectors, ground stitching, decoupling, a footprint that fits the RF bay (2 boards side by side), shield option.
+  - A genuine ADI die (grey/remarked chip risk is flagged in STACK authenticity notes). Switching time is not critical: 150 ns typ, and anything in the microsecond class is fine.
+- **Candidates:**
+  1.
+    - **Name:** Generic HMC7992 SP4T board, Walmart.ca / Joystore (current reference pick)
+    - **Kind:** current_part
+    - **Price usd:** about 14.7 each (CA$20.49), about 29-30 for 2. Unverified now (bot wall), EU shipping unlikely.
+    - **Spec comparison:** Claims 0.1-6 GHz, 45 dB isolation, 0.6 dB IL, 58 dBm IIP3, 3-5 V. These are copied from the ADI datasheet typical values; nothing on the board has been measured.
+    - **Worse in:** Reference. Board-level isolation, DC blocks and chip provenance are all unverified.
+    - **Compatibility:** 3.3 V logic and VDD OK. Park load on RF1. Fit external C0G blocks if the board lacks them.
+    - **Risks:** Grey/clone chip risk (STACK authenticity list). Third-party seller. CAD listing only.
+    - **Seller url:** https://www.walmart.ca/en/ip/HMC7992-Non-Reflective-SP4T-RF-Switch-Module-PCB-Material-0-1-6GHz-Frequency-Range-3V-5V-Power-Supply-45dB-Isolation-0-6dB-Insertion-Loss-58dBm-IIP3/4LT6JIAL4ULJ
+    - **Sources:**
+      - https://www.farnell.com/datasheets/2283884.pdf
+      - https://www.walmart.ca/en/ip/HMC7992-Non-Reflective-SP4T-RF-Switch-Module-PCB-Material-0-1-6GHz-Frequency-Range-3V-5V-Power-Supply-45dB-Isolation-0-6dB-Insertion-Loss-58dBm-IIP3/4LT6JIAL4ULJ
+  2.
+    - **Name:** Same generic HMC7992 SP4T board, cheaper AliExpress listing: 'HMC7992 RF Single-Pole Switch Module 4 Throw Non-Reflective ... 0.1-6GHz' (item 3256809527409961)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 6.55 each, 6.22 each for 2+, so about 12.4 for 2. US-site search-result snapshot of 18 Oct 2026: 243 sold, 4.8 stars. Dynamic price; the item page would not load. Unverified. EU checkout adds VAT (IOSS, about 19-27%), so roughly 15-16 for 2 incl. VAT (estimate).
+    - **Spec comparison:** Same chip claimed, so the same datasheet numbers (IL 0.6/0.9 dB, isolation 40/45 dB, IIP3 56-58 dBm, 3.3-5 V, A/B decode, absorptive). On paper it equals the current pick on every critical spec.
+    - **Worse in:** Nothing on paper. In practice provenance is weaker: 6.55 for a whole board is below the authorized single-chip price (Farnell EUR 9.78 ex VAT, DigiKey $13.10), which suggests salvaged or remarked dies. DC blocks, layout and isolation are unknown until measured. A second fetch showed a near-identical title (item 3256813177312266) at $37.59.
+    - **Compatibility:** Same as the current pick: 3.3 V VDD and logic, SMA, park on RF1, external C0G blocks if missing.
+    - **Risks:** Highest clone/remark risk of the HMC7992 options. Accept only after incoming LiteVNA qualification: IL ≤0.9 dB at 0.1-2.2 GHz, isolation ≥30 dB conducted on every throw pair, on-state RL ≥15 dB, A=B=Low gives RF1, works at 3.3 V. Order 3 to get 2 good.
+    - **Seller url:** https://www.aliexpress.us/item/3256809527409961.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-hmc7992.html
+      - https://www.farnell.com/datasheets/2283884.pdf
+  3.
+    - **Name:** Same generic HMC7992 SP4T board, AliExpress listing '0.1~6Ghz HMC7992 SP4T Switch RF Single Pole Four Throw ... 433M 915M 1090M 2.4G 5.8G' (item 3256808774768321)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 16.40 each, 15.58 each for 2+, so about 31.2 for 2 (121 sold, 4.9 stars, search snapshot 18 Oct 2026, unverified). About 37-39 for 2 incl. EU VAT (estimate).
+    - **Spec comparison:** Same chip claimed, so the same datasheet specs as the current pick.
+    - **Worse in:** Nothing on paper. Barely cheaper than the current $30-40 range, and not cheaper at all once EU VAT is added. Board build unverified.
+    - **Compatibility:** Same as the current pick.
+    - **Risks:** Same grey-chip risk, though the price sits above the chip's distributor cost, so a genuine die is more plausible than at $6.55. Same incoming qualification.
+    - **Seller url:** https://www.aliexpress.us/item/3256808774768321.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-hmc7992-sp4t.html
+  4.
+    - **Name:** Same generic HMC7992 SP4T board, AliExpress listing '100MHz to 6GHz HMC7992 SP4T Switch Module ... High Low Signal Control' (item 3256808728006825)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 13.78-20.89 each. The price moved between three fetches on 18 Oct 2026; 23 sold. Unverified.
+    - **Spec comparison:** Same chip claimed, so the same datasheet specs.
+    - **Worse in:** Nothing on paper. Small sales history, and the price is unstable.
+    - **Compatibility:** Same as the current pick.
+    - **Risks:** Same grey-chip risk, same qualification.
+    - **Seller url:** https://www.aliexpress.us/item/3256808728006825.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-hmc7992-module.html
+      - https://www.aliexpress.com/w/wholesale-sp4t-rf-switch-module.html
+  5.
+    - **Name:** Genuine HMC7992LP3DE from an authorized distributor (DigiKey $13.10; Farnell EU EUR 9.78 at qty 1) on our own 2-layer CPWG PCB with 5 SMA connectors and C0G blocks
+    - **Kind:** diy
+    - **Price usd:** Chips: DigiKey 2 x 13.10 = 26.20 (reaudit B: Active, 4,655 in stock), or Farnell LT 2 x EUR 9.78 = EUR 19.56 ex VAT, about $22 ex VAT or $26.6 incl. 21% VAT at 1.124 USD/EUR. The EUR 9.78 is a search snippet; the page returned 503. Total with PCB, about 10 SMA connectors, passives and PCB shipping: about 41-60 for 2 (my estimate, not priced). Not cheaper.
+    - **Spec comparison:** Identical die and datasheet. The board can be designed with a guaranteed C0G block on every RF pin, a defined RF1 park, ground stitching and a shield can, so build quality can be equal or better.
+    - **Worse in:** Not cheaper than $30-40. Costs layout and assembly time (3x3 mm LFCSP with exposed pad: needs hot air or reflow). RF layout risk until swept.
+    - **Compatibility:** Exactly the same electrical interface. The footprint is pin-compatible with HMC241ALP3E.
+    - **Risks:** Lowest counterfeit risk, since it comes through franchised distribution. Only pays off if the third (Lime) and sled switches are built on the same panel: 4+ boards share one PCB order, and the chips can ride the existing DigiKey order.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=HMC7992LP3DE
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=HMC7992LP3DE
+      - https://lt.farnell.com/analog-devices/hmc7992lp3de/rf-switch-sp4t-silicon-6ghz-lfcsp/dp/4030607
+      - https://www.farnell.com/datasheets/2283884.pdf
+  6.
+    - **Name:** HMC241 SP4T 'DC-3.5GHz' board, AliExpress (item 3256806687753951)
+    - **Kind:** other_brand
+    - **Price usd:** 6.23 each (152 sold, 5.0 stars, search snapshot, unverified)
+    - **Spec comparison:** Current ADI HMC241ALP3E (via ADI page summary): 100 MHz-4 GHz, IL 0.7 dB at 2 GHz vs 0.6, isolation 43 dB typ vs 45, IIP3 47 dBm vs 56-58, P1dB 29 dBm vs 33-35, 3-5 V. The 'DC-3.5GHz' claim matches the older HMC241 (QS16, GaAs), which earlier research found listed as discontinued on ADI JP. I did not verify those older-part specs.
+    - **Worse in:** IIP3 (about 9-11 dB lower), P1dB, insertion loss, isolation typ. Probably an EOL or old-stock die.
+    - **Compatibility:** Old GaAs HMC241 boards are typically 5 V supply and logic (radio_lab: 'need 5 V and external DC blocks'), so they do not drop onto the 3.3 V MCP rail.
+    - **Risks:** Clone or old-stock risk, EOL part. Rejected: worse on several specs.
+    - **Seller url:** https://www.aliexpress.us/item/3256806687753951.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-sp4t-rf-switch-module.html
+      - https://www.analog.com/en/products/hmc241alp3e.html
+  7.
+    - **Name:** ARW3433 0.1-6 GHz SP4T board, AliExpress (item 3256812139800248)
+    - **Kind:** other_brand
+    - **Price usd:** 12.83 each (23 sold, search snapshot, unverified)
+    - **Spec comparison:** Chip datasheet (Chinese, 'Pre_v0.1_Doc20240422', manufacturer not named): 0.1-8 GHz. IL 1.00/1.05/1.10 dB at 0.1/1/2 GHz vs HMC7992 0.6 typ. Isolation RFC-RFx 77/79/73 dB vs 45 (better). IIP3 59 dBm at 900 MHz (equal or better). P0.1dB 37.5 dBm, but it degrades below 300 MHz. VDD 3-5 V; VSS -2.5 V external or internal negative-voltage generator; switching rate max 25 kHz with the internal generator.
+    - **Worse in:** Insertion loss is 0.4-0.5 dB worse at every band used. It has an internal negative-voltage charge pump (spur risk in receive). The datasheet is preliminary and the maker is unidentified, so it is not an established brand.
+    - **Compatibility:** 3.3 V logic (VIH 1.2 V) OK. Power-up default state and park throw not verified.
+    - **Risks:** Rejected: worse in IL, unknown vendor, preliminary specs.
+    - **Seller url:** https://www.aliexpress.us/item/3256812139800248.html
+    - **Sources:**
+      - https://atta.szlcsc.com/upload/public/pdf/source/20250805/48267CB37161A4F4FBD9A299E680AE8C.pdf
+      - https://www.aliexpress.com/w/wholesale-sp4t-rf-switch-module.html
+  8.
+    - **Name:** pSemi PE42540 SP4T board ('10Hz~8Ghz PE42540 SP4T RF Switch', AliExpress item 3256808942436121)
+    - **Kind:** other_brand
+    - **Price usd:** 23.67 each, 22.49 each for 2+, so about 45 for 2 (91 sold, 5.0 stars, unverified). Not cheaper.
+    - **Spec comparison:** pSemi datasheet DOC-77985-6.01 (07/2026): 10 Hz-8 GHz (better range, covers HF BENCH). Isolation 40 min / 45 typ at 3 GHz (equal). IIP3 58 dBm (equal). P1dB 31 min / 33 typ (equal). IL 0.7 dB at 10 Hz-9 kHz and 0.8 typ / 1.1 max at 3 GHz, vs HMC7992 0.6/0.9 at 0.1-2 GHz. No DC blocks needed at 0 VDC. Internal negative-voltage generator with -159 dBm/Hz spurious (needs external -3.3 V to remove).
+    - **Worse in:** Price (higher), insertion loss about 0.2 dB, charge-pump spurs, VDD max 3.55 V.
+    - **Compatibility:** 3.3 V supply and logic OK.
+    - **Risks:** Not cheaper. Rejected.
+    - **Seller url:** https://www.aliexpress.us/item/3256808942436121.html
+    - **Sources:**
+      - https://www.psemi.com/pdf/datasheets/pe42540ds.pdf
+      - https://www.aliexpress.com/w/wholesale-sp4t-rf-switch-module.html
+  9.
+    - **Name:** pSemi PE42441 SP4T (chip, own PCB)
+    - **Kind:** other_brand
+    - **Price usd:** Not verified. The DigiKey search page would not render; no retail board found.
+    - **Spec comparison:** Datasheet DOC-87416-5.02 (07/2026): 10 MHz-8 GHz absorptive. Isolation 40 min / 45 typ at 10 MHz-3 GHz (equal). IIP3 58 dBm (equal). P0.1dB 31 dBm (equal). IL 0.8 typ / 1.1 max at 10-3000 MHz (worse than 0.6/0.9). Terminated-port power +20 dBm vs +27 dBm. Switching 5 us, max rate 25 kHz. VDD 3.0-3.55 V, IDD 90 uA, VIH 1.2 V. No blocking caps needed at 0 VDC.
+    - **Worse in:** Insertion loss (+0.2 dB), terminated power handling. It also needs a custom 5x5 mm LGA PCB, so it is not cheaper in practice.
+    - **Compatibility:** 3.3 V logic and supply OK.
+    - **Risks:** Rejected: worse IL, DIY only.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.psemi.com/pdf/datasheets/pe42441ds.pdf
+  10.
+    - **Name:** Mini-Circuits HSWA4-63DR+ SP4T absorptive MMIC (chip, own PCB)
+    - **Kind:** other_brand
+    - **Price usd:** About 5.81-6.24 at qty 1 from the broker Dasenic (not authorized, unverified). DigiKey regional pages conflict (Discontinued vs Active, 14-16 weeks lead time).
+    - **Spec comparison:** Datasheet via search summary: 30 MHz-6 GHz. Isolation 61 dB at 0.9 GHz (better) and 32 dB at 6 GHz. IIP3 +58 dBm (equal). IL 0.9 dB at 0.9 GHz (worse than 0.6). Switching 255 ns.
+    - **Worse in:** Insertion loss (+0.3 dB at 0.9 GHz). Availability unclear. Broker-only price. Needs a custom 4x4 QFN PCB.
+    - **Compatibility:** Logic and supply not checked.
+    - **Risks:** Rejected: worse IL, grey-broker pricing.
+    - **Seller url:** https://www.minicircuits.com/pdfs/HSWA4-63DR+.pdf
+    - **Sources:**
+      - https://www.minicircuits.com/pdfs/HSWA4-63DR+.pdf
+      - https://dasenic.com/product/mini-circuits-hswa4-63dr-7123319
+      - https://www.digikey.cn/en/products/detail/mini-circuits/HSWA4-63DR/13928004
+  11.
+    - **Name:** ADI EV1HMC7992LP3D evaluation board / Mini-Circuits ZSWA4-63DR+ (official, connectorized)
+    - **Kind:** other_brand
+    - **Price usd:** EV1HMC7992LP3D 319.28 (earlier research), or CHF 249.15 at Farnell CH. ZSWA4-63DR+ 307.32. Both per unit.
+    - **Spec comparison:** Genuine and characterized. ZSWA4 isolation about 58 dB (better).
+    - **Worse in:** Price is about 10x. Size and weight too large for the handheld RF bay.
+    - **Compatibility:** Logic levels not checked here.
+    - **Risks:** Not cheaper. Rejected on cost.
+    - **Seller url:** https://ch.farnell.com/analog-devices/ev1hmc7992lp3d/evaluationsboard-hf-sp4t-schalter/dp/4033134
+    - **Sources:**
+      - https://ch.farnell.com/analog-devices/ev1hmc7992lp3d/evaluationsboard-hf-sp4t-schalter/dp/4033134
+- **Notes:** Verdict (Angle A): no other-brand chip or board I found is not-worse. Each one is worse in insertion loss (PE42441, PE42540, HSWA4-63DR+, ARW3433: +0.2 to +0.5 dB), in linearity (HMC241: IIP3 about 47 vs 56-58 dBm), or it brings a negative-voltage charge pump (PE42540, ARW3433, a spur risk), or it costs more. So the chip stays HMC7992.
+  
+  The only cheaper path is the same part from a cheaper listing:
+  - AliExpress HMC7992 boards cost about $6.2-16 each (search snapshots, 18 Oct 2026, unverified). The $6.22-6.55 listing (243 sold) saves about $15-25 on two boards, before EU VAT (about +19-27% via IOSS).
+  - That price is below the authorized single-chip price, so the die may be grey, salvaged or remarked.
+  - On paper it is not-worse. It counts as not-worse only after incoming LiteVNA qualification: IL ≤0.9 dB from 0.1 to 2.2 GHz, ≥30 dB conducted isolation on all throw pairs, on-state RL ≥15 dB, A=B=Low selects RF1, and correct operation at VDD 3.3 V with logic applied after VDD. I would also check the marking (H7992) and whether DC blocks are fitted.
+  - Practical recommendation: order 3 from the highest-volume listing and keep 2 that pass. If one fails, fall back to the current pick or the DIY route.
+  
+  For a guaranteed genuine part, the DIY route is better: genuine HMC7992LP3DE from DigiKey at $13.10 (Active, 4,655 in stock) or Farnell EU at EUR 9.78 ex VAT (search snippet). It is not cheaper for qty 2 (about $41-60, my estimate). It only pays off if the third (Lime) switch and the sled switch go on the same PCB panel; the user kept the Lime, so 4 switches are needed in total.
+  
+  Not candidates:
+  - Manual 'connect X' prompt: it loses one-touch switching and the 50 Ohm park.
+  - EV1HMC7992LP3D and ZSWA4-63DR+: about 10x the price.
+  
+  Unverified: every marketplace price (AliExpress item pages and Walmart.ca sit behind bot walls; prices taken from search-result pages), the Farnell EUR price (page returned 503), and whether any generic board includes C0G blocks. No published bench measurements of generic HMC7992 boards were found, so the stack's expected 30-37 dB isolation is still a model.
+  
+  Stack correction to carry: the 50 Ohm park goes on RF1, not T4/RF4 (datasheet Table 6, reaudit B).
 
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
