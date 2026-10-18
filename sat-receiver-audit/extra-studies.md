@@ -4155,6 +4155,641 @@
   - Carry spares: a telescopic pair, 2 x 70 cm elements, a petal plus clips, binder clips, aluminium tape and a spare tape spool.
 - **Confidence:** medium
 
+## npu:models_datasets (run `wf_62c18130-b0d`)
+
+- **Area:** Models, datasets and the training pipeline for detecting and classifying signals on the waterfall (spectrogram) on the Radxa Dragon Q6A (QCS6490, Hexagon v68 HTP, INT8 first, QAIRT 2.42.0.251225 on the device). The primary task is wideband detection: boxes in time x frequency plus a class. Classifying IQ snippets is the second stage.
+- **Findings:**
+  1.
+    - **Name:** Spectrogram front end and tiling budget (computed here)
+    - **Role:** Turns the SDR span into fixed-size uint8 tiles for the NPU detector. One rule sets the NPU load.
+    - **Details:** Each pixel covers K*N samples in time and fs/N Hz in frequency. A gap-free stream of 512x512 tiles therefore needs fs/(K*512^2) inferences per second, whatever the FFT size N. Results: 56 Msps gives 213.6/K tiles/s, 61.44 Msps gives 234.4/K, and the V4L at 2.56 Msps gives 9.8/K. Example: 56 Msps, N=4096, K=8 gives 13.67 kHz x 0.585 ms pixels, so one tile covers 7 MHz x 0.30 s. Eight tiles span 56 MHz, at 26.7 tiles/s. Pixel sizes for nominal signal parameters (calc script /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/calc/pixels.py):
+  - 56 Msps, N=1024 (54.7 kHz bins): only signals of about 1 MHz or wider are at least 8 bins wide (HRPT about 46, DVB-S2 at 1.5 Msym about 37, LTE-10 about 165, Wi-Fi-20 about 330, ADS-B about 37).
+  - 56 Msps, N=8192 (6.8 kHz bins): broadcast FM about 29, Meteor LRPT about 20, GSM about 29.
+  - V4L 2.56 Msps, N=1024 (2.5 kHz bins): GMSK 9k6 about 8, LRPT about 56, AFSK/NFM about 5.
+  - A 250 kHz DDC with N=1024 (244 Hz bins) is needed for AFSK/APRS (about 49), AIS (about 61), RS41 (about 41), BPSK-1200 (about 10) and NFM/SSTV (about 49).
+  - CW needs about 23 Hz bins (48 kHz DDC, N=2048).
+  So no single FFT size works. Use a resolution pyramid: W1 (N=1024) and W2 (N=8192) on the Lime at 56 Msps, the V4L span at 2.56 Msps, and software DDC zooms. Short bursts (ADS-B 120 us, BT slot 366 us, Wi-Fi frame of about 0.3 ms, GSM 577 us) fill under one row at K>=4. Label them as activity regions, or use max-hold per pixel (see the WRIST finding). CPU STFT cost at 56 Msps is 5*fs*log2N, about 2.8-3.6 GFLOPS for N=1024-8192, which matches the audit's 3.6 GFLOPS figure. A 1-channel uint8 waterfall costs fs/K bytes/s: 7 MB/s (25 GB/h) at 56 Msps with K=8, and 2.56 MB/s (9.2 GB/h) for the V4L at K=1.
+    - **Versions and platform:** FFT on the CPU (VOLK/FFTW) or the GPU. The Lime's minimum hardware rate is 7 Msps (audit), so narrowband zooms are software DDCs. V4L: 2.56 Msps stable, 3.2 Msps with drops (audit).
+    - **Limits and risks:** The signal bandwidths and burst lengths are nominal values, not measured on this hardware. YOLO-class detectors need objects about 8 px or larger (stride-8 head), so signals narrower than 8 bins are missed. Doppler at 437 MHz smears narrowband satellites diagonally across rows, which is fine for boxes but widens them.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/calc/tiles.py
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/narrowband_sdr.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/software.json
+  2.
+    - **Name:** Pixel encoding: WRIST 'RF-centric compression' (max/min/mean dB above the noise floor mapped to RGB)
+    - **Role:** How a waterfall becomes NPU input, so that bursts survive time averaging and a fixed INT8 input scale works
+    - **Details:** WRIST maps A = dB re the noise floor N0 to pixels through p = gamma*(clip(A, Amin, Amax) - Amin), with gamma = 255/(Amax-Amin). For the online model it averages FFT chunks in two stages (M1, then M2). Per frequency bin it sets R = max, G = min and B = mean energy over the M2 group, each in dB re N0. Final settings: M1=3, M2=4, 512x512 images. The max channel keeps short bursts (Wi-Fi ACKs, ZigBee) that plain averaging loses. The authors rejected sample dropping because short transmissions are missed. Proposed for this device (design, not published for these SDRs): the same 3-channel max/min/mean encoding over the K FFTs of each row, with a per-bin noise floor from a running median over time. The floor-relative scale also flattens the RTL IF ripple, the LMS7002M DC/IQ residue and differences between SDRs. Map -5 to +46 dB re floor at 0.2 dB/LSB to uint8. The input is then exactly representable in INT8 and needs no input calibration.
+    - **Versions and platform:** Published with a USRP X310 at 100 MHz and a GTX 1080. The encoding is plain NumPy/VOLK and portable to the A78 cores.
+    - **Limits and risks:** Phase is discarded, so fine modulation (BPSK vs QPSK) has to come from the stage-2 IQ classifier. The floor estimate breaks when wideband carriers fill the band (LTE, Wi-Fi, DVB-S2 transponders). Use a low percentile rather than the median, and exclude bins already under detected boxes.
+    - **Sources:**
+      - https://arxiv.org/abs/2107.05114
+  3.
+    - **Name:** WidebandSig53 benchmark (TorchSig authors): detectors on 512x512 complex spectrograms
+    - **Role:** Best published comparison of YOLO, DETR and segmentation for finding signals and classifying their family on spectrograms
+    - **Details:** Setup: 262,144-sample examples, 512-pt FFT, no overlap, giving a (2,512,512) real/imag input. Each example holds 1-6 signals out of 53 classes. Impaired split: 0-30 dB Es/N0. About 550k examples with about 2M signals. Detection (one 'signal' class), mAP / AP50 / params:
+  - YOLOv5-pico: 73.03 / 87.00 / 0.32M
+  - YOLOv5-nano: 73.82 / 86.99 / 1.8M
+  - YOLOv5-small: 73.64 / 86.98 / 7.0M
+  - DETR-B0-Nano: 85.49 / 97.93 / 8.2M
+  - DETR-B4-Nano: 86.98 / 98.92 / 21.9M
+  - PSPNet-B0: 68.52 / 92.65 / 4.1M
+  - Mask2Former-B4: 81.05 / 94.31 / 36.3M
+  Recognition of 6 families (ASK/FSK/OFDM/PAM/PSK/QAM), mAP:
+  - YOLOv5-pico 39.46, YOLOv5-nano 57.02, YOLOv5-small 58.50
+  - DETR-B0-Nano 76.52
+  - PSPNet-B0 27.30
+  - Mask2Former-B0 14.78
+  Throughput on a V100 (samples/s): YOLOv5-pico 1335M, nano 796M, DETR-B0 161M, Mask2Former about 17-19M. Main lesson: a small YOLO finds signals well but classifies families poorly on a wideband tile. So detect on the wideband view and classify each crop in a second stage.
+    - **Versions and platform:** Results date from TorchSig v0.x (2022). The TorchSig 2.2.0 code no longer contains Sig53/WBSig53 dataset classes (checked by grepping the 2.2.0 sdist). The data must be regenerated with the 2.x API.
+    - **Limits and risks:** Fully synthetic, impairments applied to the whole example, Es/N0 0-30 dB. No real-capture results. DETR's lead relies on transformer blocks that are risky on an INT8-only v68 (see the transformer finding).
+    - **Sources:**
+      - https://arxiv.org/abs/2211.10335
+      - https://github.com/TorchDSP/torchsig
+  4.
+    - **Name:** WRIST/SPREAD: YOLO-style detector on real over-the-air captures, and an iterative auto-labelling loop
+    - **Role:** Real-data evidence for the domain gap, and a template for 'teach it by marking the waterfall'
+    - **Details:** Iterative loop: (1) record a small set of individual emissions; (2) build synthetic images by shifting them in time and frequency and changing SNR; (3) train an 'offline' model; (4) use it to auto-annotate large over-the-air recordings, then fix boxes by hand; (5) make collisions by adding IQ recordings together in the time domain; (6) train the 'online' model. Final set: 528,758 compressed 512x512 images. SPREAD holds nearly 1M labelled emissions (Wi-Fi, Bluetooth, ZigBee, Lightbridge, XPD) recorded at 100 MHz in the 2.4 GHz ISM band, 1.4 TB. Results at IoU 0.25/0.5/0.75:
+  - test set: 99.27/98.70/92.21 mAP
+  - congested anechoic chamber (90,426 emissions): 96.95/94.63/88.42
+  - in the wild (1,093 emissions): 89.78/85.97/78.89
+  A GTX 1080 sustained 130.8 Msps (detection was the bottleneck). The FFT ran on the CPU. ZeroMQ + Protobuf carried data between the FFT stage and the detector.
+    - **Versions and platform:** Darknet YOLOv3/v4 derivatives ('SYL-3/SYL-4') with K-means 'RF-centric' anchors, starting from ImageNet-pretrained layers
+    - **Limits and risks:** Only 5 ISM-band classes. The licence of the SPREAD dataset is not stated in the paper (unverified). The model is larger than what fits the v68 HTP budget. Between the test set and in-the-wild data, mAP@0.75 fell by 13.3 points.
+    - **Sources:**
+      - https://arxiv.org/abs/2107.05114
+  5.
+    - **Name:** YOLOv8n-based narrowband-in-wideband detector (DFN-YOLO, Sensors 2025)
+    - **Role:** Accuracy-vs-SNR figures for a small YOLO on 640x640 spectrograms
+    - **Details:** STFT: Hamming window of 256, step 128, 20 MHz span, 0.04 s frames, 640x640 RGB. Synthetic wideband scenes built from HisarMod2019.1 (26 modulations, 5 channel types), 6 signals per image, SNR -8 to +6 dB, 4,000 images. Baseline YOLOv8n reached mAP50 0.917 and mAP50-95 0.807. DFN-YOLO reached 0.931 / 0.850 with 3.08M params, 8.2 GFLOPs and 1.89 ms per image on the authors' GPU. The paper reports mAP50-95 above 0.9 at SNR >= 0 dB and about 0.6 at -8 dB. It argues that tiles smaller than 640 px lose frequency resolution.
+    - **Versions and platform:** Ultralytics YOLOv8 base (AGPL-3.0)
+    - **Limits and risks:** Synthetic data only, small dataset. The paper gives inconsistent sample counts (4,000 vs 24,000). No edge or INT8 results.
+    - **Sources:**
+      - https://pmc.ncbi.nlm.nih.gov/articles/PMC12252476/
+  6.
+    - **Name:** Detector models that fit QCS6490 HTP INT8: YOLOX (Apache-2.0) vs Ultralytics YOLOv8n (AGPL-3.0)
+    - **Role:** The stage-1 detector run on spectrogram tiles
+    - **Details:** Qualcomm AI Hub QCS6490 NPU results at 640x640 (QAIRT 2.50):
+  - YOLOv8n (3.18M params): w8a8 4.013 ms QNN_DLC, 3.625 ms TFLite, 4.709 ms ONNX; w8a16 10.458 ms QNN_DLC, 18.671 ms ONNX. AI Hub cannot distribute YOLOv8 assets 'due to licensing restrictions'.
+  - Yolo-X (8.98M params, YOLOX-S class): w8a8 7.087 ms QNN_DLC, 7.972 ms TFLite, 12.16 ms ONNX; w8a16 17.449 ms; Apache-2.0.
+  YOLOX repo: Apache-2.0. YOLOX-Nano is 0.91M params and 1.08 GFLOPs at 416. YOLOX-Tiny is 5.06M and 6.45 GFLOPs at 416. ONNX export is supported. Q6A field results (audit): YOLOv8n about 10 ms (Frigate, QAIRT 2.46), official binary 10-12 ms, custom context binary about 20 ms. Planning value for one 512x512 tile on the Q6A is about 6.4-12.8 ms (field 10-20 ms x 0.64 pixel ratio; estimate). That is roughly 75-155 tiles/s at 100% duty. AI Hub also lists RTMDet, YOLOv10/11/26, RF-DETR and DETR for QCS6490.
+    - **Versions and platform:** qai-hub-models 0.64.0 (BSD-3 code; each model keeps its own licence). The AI Hub figures use QAIRT 2.50. The device runs 2.42.0.251225.
+    - **Limits and risks:** Known INT8 failures on this SoC (audit):
+  - YOLOv8n outputs mostly zeros after QAIRT 2.49 quantization.
+  - Garbage output when boxes and scores share one output scale. Fix: split the head outputs before quantization, dequantize each separately, use NCHW, and clear value_info instead of running onnxsim.
+  The AI Hub latencies assume Qualcomm's firmware and VTCM. Only about 2 MB of the 8 MB VTCM is usable on the Q6A, and its effect on detector latency is unmeasured. Ultralytics (PyPI 8.4.181) is AGPL-3.0, which brings source-disclosure obligations if the model or code is shipped.
+    - **Sources:**
+      - https://huggingface.co/qualcomm/YOLOv8-Detection
+      - https://huggingface.co/qualcomm/Yolo-X
+      - https://github.com/quic/ai-hub-models
+      - https://github.com/Megvii-BaseDetection/YOLOX
+      - https://pypi.org/project/ultralytics/
+      - https://forum.radxa.com/t/yolov8n-context-binary-generation-for-q6a/30899
+      - https://forum.radxa.com/t/issues-running-yolov8n-with-qairt-sdk-2-49-on-radxa-dragon-q6a-qcs6490/31462
+      - https://forum.radxa.com/t/running-custom-frigate-with-full-npu-support-dragon-q6a/31047
+  7.
+    - **Name:** Segmentation alternative: tiny U-Net/PSPNet giving a signal mask, with boxes extracted on the CPU
+    - **Role:** Second stage-1 candidate; handles long carriers and signals that cross tile edges
+    - **Details:** WBSig53: PSPNet-B0 (4.1M) reached AP50 92.65, higher than YOLOv5 at 86.99, but mAP 68.52 because the boxes are loose. Family-recognition mAP is weak (27.3-51.8). For this device: a small encoder-decoder (Conv/ReLU/Upsample/Concat only, all INT8-friendly) with one 'signal' mask channel plus a few family channels. Connected components and box merging across tile edges run on the CPU. The output has a single-range tensor, which avoids YOLO's multi-scale output-scale pitfalls.
+    - **Versions and platform:** Custom PyTorch, ONNX opset with static NCHW. Licence is your own (no third-party weights).
+    - **Limits and risks:** No QCS6490 latency has been published for a custom tiny U-Net (unverified). Mask-to-box conversion inflates boxes. Close parallel signals merge unless a boundary channel is added.
+    - **Sources:**
+      - https://arxiv.org/abs/2211.10335
+  8.
+    - **Name:** Stage-2 classifiers: spectrogram-crop 2D CNN and 1D IQ CNNs (ULCNN, MCLDNN, PET-CGDNN, ResNet1D)
+    - **Role:** Fine class per detected box, run on a zoomed crop or DDC'd IQ
+    - **Details:** ULCNN: 9,751 params. It combines complex-valued conv, separable conv, channel attention and channel shuffle. Average accuracy 62.47% on RML2016.10a over all SNRs, above 92% at SNR >= 6 dB (MCLDNN gives similar figures). It runs at 0.775 ms per sample on a Raspberry Pi 4B (TF 1.14). MCLDNN is CNN+LSTM with 406,199 params. PET-CGDNN uses a GRU and has 71,487 params. Sig53 (53 classes, 4096 IQ, -2 to 30 dB Es/N0): EfficientNet-B0 62.75% (3.9M, 0.53 GFLOPs), B4 67.46%, XCiT-Nano 67.97% (3.1M, 5.0 GFLOPs), XCiT-Tiny12 70.22%. AI Hub MobileNet-v2 at 224 on QCS6490: w8a8 1.064 ms (ONNX), 1.087 ms (TFLite); w8a16 1.811 ms (ONNX), 2.385 ms (QNN_DLC); Apache-2.0. Per-box cost is therefore about 1-2 ms on the NPU, or a few ms for a ULCNN-size net on one A78 core.
+    - **Versions and platform:** Conv(1xK)+BN-folded+ReLU+GAP, static [1,1,2,1024] or [B,2,1024] (audit plan). ULCNN code is on GitHub (BeechburgPieStar, per the paper).
+    - **Limits and risks:** No published INT8 PTQ accuracy for AMC CNNs on HTP. The search found none, so the INT8 drop must be measured. RML2016.10a accuracy figures are synthetic and include SNRs down to -20 dB. Recurrent layers (MCLDNN, PET-CGDNN) do not suit static INT8 HTP graphs (audit). Channel-shuffle and complex-conv ops must be checked against QNN op support after export.
+    - **Sources:**
+      - https://arxiv.org/abs/2208.04659
+      - https://arxiv.org/abs/2207.09918
+      - https://huggingface.co/qualcomm/MobileNet-v2
+  9.
+    - **Name:** Small transformers (XCiT, DETR-Nano)
+    - **Role:** Most accurate in the benchmarks. Proposed use: offline teacher and auto-labeller on a PC, not the on-device model.
+    - **Details:** Sig53: transformers beat ConvNets (XCiT-Nano 67.97% vs EfficientNet-B0 62.75%) at about 10x the FLOPs. WBSig53: DETR-B0-Nano beats YOLOv5-nano by about 11.7 detection mAP and about 19.5 family mAP. Proposed use: run DETR/XCiT on the PC GPU to pre-label recordings, then distil into the INT8 CNN for the device.
+    - **Versions and platform:** PyTorch on an x86 GPU
+    - **Limits and risks:** On this SoC, CLIP embeddings collapsed in INT8 and HTP v68 rejects FP16 (audit). LayerNorm and softmax ranges need A16 at about 2.5x latency, unverified for these models. 8-22M params.
+    - **Sources:**
+      - https://arxiv.org/abs/2207.09918
+      - https://arxiv.org/abs/2211.10335
+      - https://forum.radxa.com/t/dragon-q6a-qnn-htp-pipeline-working-but-int8-only-firmware-blocks-real-ml-workloads/31217
+  10.
+    - **Name:** Open-set / novelty detection
+    - **Role:** Flag unknown signals instead of forcing a known label. Feeds the labelling inbox.
+    - **Details:** Proposed design:
+  - A class-agnostic 'signal' objectness from stage 1. Any energetic region gets a box even when no class fits.
+  - The energy score (Liu et al.) on the stage-2 logits. It cut average FPR@95%TPR by 18.03% vs softmax confidence on CIFAR-10, and needs no retraining.
+  - Prototype (class-mean embedding) distance with per-class thresholds.
+  RF benchmarks for open-set modulation recognition (AMOSR) compare OpenMax, CROSR and CGDL across SNR and openness, holding out modulation types as unknown (arXiv 2312.13023).
+    - **Versions and platform:** Thresholds computed on the CPU from INT8 NPU logits/embeddings. No extra NPU ops.
+    - **Limits and risks:** Published AMOSR results are synthetic and narrowband. No figures exist for spectrogram detectors on real SDR data. Thresholds drift with gain, antenna and site and must be recalibrated per deployment profile.
+    - **Sources:**
+      - https://arxiv.org/abs/2010.03759
+      - https://arxiv.org/abs/2312.13023
+  11.
+    - **Name:** TorchSig 2.2.0 (synthetic generation)
+    - **Role:** Synthetic pretraining data for the wideband detector and the family classifiers
+    - **Details:** Latest release 2.2.0 (PyPI, 31 Aug 2026; 2.1.1 on 27 Apr 2026). MIT licence. Python >= 3.10. Depends on torch, lightning, numpy>=2, numba>=0.60 and opencv. Signal list: 69 classes in 19 families, including OOK/ASK, 2-16 (G)FSK/(G)MSK, BPSK-64PSK, 16-1024QAM, APSK, OFDM-64..2048, FM, AM-DSB/SSB, LFM, chirp-SS, tone, ADS-B long/short, BTLE, GSM, DVB-S2, DMR, P25, LoRa, 802.11a and ZigBee. Defaults: 262,144 IQ, fft_size 512, stride 512, 10 Msps, SNR 0-50 dB. num_signals_max>1 gives detection data. A YOLOLabel transform outputs (cid, cx, cy, w, h), with x = time and y = 1 - normalised frequency, origin top-left. Impairments level 0 (clean), 1 (TX impairments), 2 (TX + channel models). Includes a SigMF reader (IQ only, it does not parse annotations) and GNU Radio example generators. README prerequisites: Ubuntu >= 22.04, >= 1 TB storage, >= 4 cores, GPU >= 16 GB recommended.
+    - **Versions and platform:** torchsig 2.2.0. Pure Python with numba, so it should run on aarch64, but this is untested on the Q6A. Large-scale generation belongs on the PC.
+    - **Limits and risks:** The FM builder uses a Gaussian-noise message, so NFM voice, AFSK/APRS and SSTV textures are not realistic. No LRPT, HRPT, AIS, RS41 or LTE builders. It contains 'lfm-radar', which should be excluded from the class set under the project rules. The data is synthetic and needs real noise-floor/RFI injection and real fine-tuning.
+    - **Sources:**
+      - https://pypi.org/project/torchsig/
+      - https://github.com/TorchDSP/torchsig
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_torchsig/torchsig-2.2.0/torchsig/signals/signal_lists.py
+  12.
+    - **Name:** GNU Radio synthetic generation for lab-specific classes
+    - **Role:** Fills gaps in TorchSig: AFSK1200 over NBFM, SSTV over NBFM, AIS 9k6 GMSK with HDLC framing, split-phase-BPSK HRPT, keyed CW, RS41-like GFSK 4800, LRPT QPSK at 72 ksym/s
+    - **Details:** GNU Radio 3.10.9.2 is in noble apt (audit). Its gr-channels models (channel_model, fading and dynamic-channel models, CFO/SRO) are generally available; not re-verified here. Output goes straight to SigMF files with exact annotations, since the generator knows each burst's sample_start and edges. Generation is file-only and digital, so nothing is transmitted (receive-only rule; keep the Lime TX disabled). Scholl's ablation (HF, 20 classes) ranks which impairments to model: frequency offset gives the largest gain; an RX filter of varying bandwidth helps at low SNR; fading gives a clear gain; phase offset has negligible effect; sample-rate offset is minor.
+    - **Versions and platform:** GNU Radio 3.10.9.2 (noble), Python sigmf 1.13.0 (LGPL-3.0)
+    - **Limits and risks:** Synthetic textures miss real artefacts: RTL 8-bit overload and intermod, LMS7002M DC/IQ image and fixed spurs (an audit report shows spurs at about +/-15/31/46 MHz on an XTRX). Model these as explicit 'artefact' classes.
+    - **Sources:**
+      - https://arxiv.org/abs/2206.12967
+      - https://pypi.org/project/sigmf/
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/wideband_sdr.json
+  13.
+    - **Name:** Public datasets and their licences
+    - **Role:** Pretraining and benchmarks (narrowband IQ, mostly synthetic) plus real satellite data
+    - **Details:** - DeepSig RadioML 2016.04C, 2016.10A and 2018.01A (24 classes, 1024 samples, 2M examples, synthetic with simulated channels): CC BY-NC-SA 4.0. DeepSig calls them historical and unsupported.
+  - HisarMod2019.1: 26 classes in 5 families, 1024 IQ per signal, SNR -20 to 18 dB, 780k signals, 5 channel types, 5.13 GB. Open access on IEEE DataPort with a free account. No licence on the page, so treat it as research use with citation only.
+  - CSPB.ML.2018/2022: 8 classes, 112k signals per dataset, synthetic. IEEE DataPort 'Standard Dataset' (subscription), also on the CSP Blog. No licence stated.
+  - SatNOGS Network: real satellite observations (waterfalls, audio, demodulated data). The API docs say 'All API data are freely distributed under the CC BY-SA license'. HDF5 raw-waterfall artifacts are opt-in per station.
+  - SPREAD (WRIST): real ISM-band recordings, licence not stated.
+  - TorchSig: MIT code; generated data belongs to whoever generates it.
+    - **Versions and platform:** File formats: RadioML pickle/HDF5, HisarMod zip, CSPB .tim+.txt, SatNOGS PNG/OGG/HDF5
+    - **Limits and risks:** Apart from SatNOGS and SPREAD, all of these are narrowband IQ classification sets, not spectrogram box sets. Their timing, bandwidth and SNR definitions differ. The NC/SA terms of RadioML may carry over to weights you redistribute, which is a legal-interpretation question. SatNOGS waterfalls are colour-mapped PNGs with unknown dB scaling.
+    - **Sources:**
+      - https://www.deepsig.ai/datasets/
+      - https://ieee-dataport.org/node/1785
+      - https://arxiv.org/abs/1911.04970
+      - https://ieee-dataport.org/documents/cspbml2018-and-cspbml2022
+      - https://docs.satnogs.org/projects/satnogs-network/en/latest/api.html
+      - https://arxiv.org/abs/2107.05114
+  14.
+    - **Name:** Real-vs-synthetic domain gap: published figures
+    - **Role:** Sets expectations and the data strategy
+    - **Details:** - Scholl 2022: a CNN trained only on carefully designed synthetic HF data reached up to 95% on real-world signals at high SNR (20 classes). Clean-only training reached above 40%.
+  - WRIST: real data with an iterative loop. mAP@0.5 went from 98.70 (test) to 94.63 (anechoic) to 85.97 (in the wild).
+  - WBSig53: no real-capture evaluation.
+  - A secondary search snippet (ITC 2025, Kulhandjian et al.) cites 97% in simulation vs 72-91% over the air. Not fetched; unverified.
+  No published figure exists for a synthetic-trained spectrogram detector tested on RTL-SDR or LMS7002M captures.
+    - **Versions and platform:** n/a
+    - **Limits and risks:** All gap figures come from other bands, hardware and classes. The gap must be measured on the lab's own held-out sessions.
+    - **Sources:**
+      - https://arxiv.org/abs/2206.12967
+      - https://arxiv.org/abs/2107.05114
+      - https://arxiv.org/abs/2211.10335
+  15.
+    - **Name:** SigMF annotations for boxes on the waterfall
+    - **Role:** Storage format for labels made by users, models and decoders
+    - **Details:** SigMF schema v1.2.6, annotation fields:
+  - core:sample_start (required) and core:sample_count, which give the start and duration;
+  - core:freq_lower_edge and core:freq_upper_edge, in Hz at RF when the capture frequency is known, and only as a pair;
+  - core:label (20 characters or fewer recommended, for GUI use), core:comment, core:generator, core:uuid.
+  Annotations must be sorted by sample_start, and additional properties are allowed. The global object has core:license, core:collection, core:metadata_only and core:extensions, where each extension entry has name, version and optional. Proposed mapping: one box becomes one annotation. Add a declared 'rflab' extension for confidence, source (human/model/decoder), model_version, decoder_crc_ok, verified, fft_size, K and the floor reference. Use metadata_only=true when only the waterfall is kept and the IQ is discarded, with the waterfall .npy referenced by an rflab key. Converting a box to a tile label: t = sample index/fs, f = edge - capture frequency, then TorchSig-style YOLO (cid, cx, cy, w, h).
+    - **Versions and platform:** Python sigmf 1.13.0 (LGPL-3.0, PyPI 19 Aug 2026). limeTRX writes SigMF captures (audit).
+    - **Limits and risks:** SigMF has no standard field for spectrogram tiles or confidence, so a custom namespace is required. Per the audit, limeTRX silently ignores failed file opens; check every write.
+    - **Sources:**
+      - https://raw.githubusercontent.com/sigmf/SigMF/main/sigmf-schema.json
+      - https://pypi.org/project/sigmf/
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/storage.json
+  16.
+    - **Name:** Quantize / convert / deploy toolchain options for the 2.42 runtime
+    - **Role:** Gets a trained model onto the HTP without runtime version mismatch
+    - **Details:** (a) Local QAIRT 2.42.0.251225. Radxa states a 64-bit x86 host, Ubuntu 22.04 and Python 3.10. It also offers an ARM64 Docker image radxazifeng278/qairt-npu-v68:v1.2 'for using the QAIRT SDK on the board', but its contents are not documented.
+  (b) ONNX Runtime QNN EP on the device. Radxa's onnxruntime_qnn-1.23.2 cp312 aarch64 wheel targets qairt 2.42.0.251225, and their example runs an AI Hub w8a8 (QDQ) ONNX on the HTP. The ORT docs list ep.context_enable, ep.context_embed_mode and ep.context_file_path for caching the compiled context, plus vtcm_mb, htp_performance_mode and soc_model. Per the docs, the ORT QNN quantization utilities (qnn_preprocess_model, get_qnn_qdq_config) are 'only supported on x86_64 due to issues installing the onnx package on ARM64'. onnx 1.23.2 now ships aarch64 wheels, so on-device PTQ may work (unverified).
+  (c) AI Hub cloud quantization. submit_quantize_job takes FP ONNX and returns QDQ-style ONNX. Weights are int8; activations are int8 or int16 for QNN/ONNX; mixed precision is not supported; 500-1000 calibration samples are recommended. The qai-hub 0.56.0 client is pure Python, so the device itself can submit jobs. Compile jobs take --qairt_version. Whether 2.42 is still offered is not verified; the model cards show 2.50.
+  (d) AIMET for QAT: aimet-torch 2.41.0 is a pure-Python wheel, while aimet-onnx is x86_64 only.
+    - **Versions and platform:** Device: QAIRT 2.42.0.251225, onnxruntime-qnn 1.23.2 (Radxa fork), Python 3.12. CPU fallback: onnxruntime 1.31.0 (aarch64 wheels, MIT). Training: torch 2.14.1 (aarch64 wheels exist). Do not use onnxruntime-qnn 2.x (audit).
+    - **Limits and risks:** AI Hub context binaries built with 2.45 fail on the 2.42 runtime (err 0x1388). An unanswered forum report describes a segfault loading a precompiled QNN ONNX with ORT 1.23.2 + QAIRT 2.42. HTP hangs after about 1 h have been reported, so run it under a watchdog with a CPU fallback (audit).
+    - **Sources:**
+      - https://docs.radxa.com/en/dragon/q6a/app-dev/npu-dev/qairt-install
+      - https://docs.radxa.com/en/dragon/q6a/app-dev/npu-dev/qnn-onnxrt-execution-provider
+      - https://onnxruntime.ai/docs/execution-providers/QNN-ExecutionProvider.html
+      - https://workbench.aihub.qualcomm.com/docs/hub/quantize_examples.html
+      - https://workbench.aihub.qualcomm.com/docs/hub/frameworks.html
+      - https://pypi.org/project/qai-hub/
+      - https://pypi.org/project/onnx/
+      - https://pypi.org/project/torch/
+      - https://forum.radxa.com/t/qcs6490-radxa-q6a-qairt-sdk-version-mismatch-ai-hub-artifacts-2-45-x-incompatible-with-runtime-2-42-0-251225/30908
+      - https://forum.radxa.com/t/npu-htp-usage-in-radxa-dragon-q6a/29949
+    - **Cost:** $0 software. QAIRT and AI Hub need a Qualcomm account. A PC with an NVIDIA GPU is needed for full detector training (TorchSig recommends a GPU with 16 GB or more).
+  17.
+    - **Name:** Decoder-confirmed auto-labelling (weak supervision)
+    - **Role:** Produces large real labelled sets with little manual work and closes the domain gap
+    - **Details:** Proposed method (not a published system for this lab): a successful CRC/FEC lock from an existing receive-only decoder confirms the class of the box over that time-frequency region. Candidate decoders:
+  - gr-satellites 5.5.0 (apt): GMSK/FSK/BPSK CubeSat telemetry and AFSK.
+  - SatDump: LRPT and HRPT.
+  - dump1090/readsb: ADS-B.
+  - AIS-catcher: AIS.
+  - Direwolf: APRS AX.25 FCS.
+  - radiosonde_auto_rx: RS41.
+  The last four are well-known OSS; versions not checked in this pass. This follows WRIST's loop: model pre-labels, a human corrects. Store only the label and box, not the payload.
+    - **Versions and platform:** Each decoder runs as a separate process (its GPL licences do not affect the model weights)
+    - **Limits and risks:** Decoder success is biased toward high SNR. Weak-signal examples still need human labels or SNR-degraded copies made by adding recorded noise.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/software.json
+      - https://arxiv.org/abs/2107.05114
+- **Recommendations:**
+  - Use two stages and several resolutions. Stage 1 runs on the NPU on spectrogram tiles: a class-agnostic 'signal' output plus about 15-20 coarse classes, as boxes. Stage 2 classifies each box: a crop CNN (MobileNetV2-size, about 1-2 ms on the NPU) or a 1D IQ CNN (ULCNN/ResNet1D size, Conv1xK, BN folded) on DDC'd IQ. Reason: WBSig53 shows small YOLOs detect well (mAP about 74, AP50 about 87) but classify families poorly (mAP about 57).
+  - Tiling plan, 512x512 uint8 tiles, about 50% time overlap optional:
+  - Lime W1: 56 Msps, N=1024, K=16 (54.7 kHz x 0.29 ms), for wideband classes and burst activity.
+  - Lime W2: 56 Msps, N=8192, K=16 (6.8 kHz x 2.34 ms), for 100-200 kHz classes.
+  - V4L Z: 2.56 Msps, N=1024, K=1 (2.5 kHz x 0.4 ms), gap-free at 9.8 tiles/s.
+  - On-demand DDC zooms: 250 kHz with N=1024 (244 Hz) for AFSK/AIS/RS41/NFM/SSTV/BPSK-1200, and 48 kHz with N=2048 for CW.
+  Total about 37 tiles/s. Target NPU duty of 30% or less. If the measured latency is higher, raise K or send only tiles whose energy has changed.
+  - Input encoding (WRIST style): 3 channels holding max, min and mean over the K FFTs of each row, in dB re a per-bin noise floor (running low percentile over time, excluding boxed bins). Fixed scale -5 to +46 dB at 0.2 dB/LSB. Keep the I/O in uint8 (AI Hub --quantize_io, or a uint8 input for the QNN EP), so the input needs no calibration and both SDRs share one domain.
+  - Detector choice: start with YOLOX-Nano/Tiny (Apache-2.0) at 512x512. Export the raw per-level head tensors (no decode/concat in the graph) and decode plus NMS on the CPU. Benchmark against Ultralytics YOLOv8n if AGPL-3.0 is acceptable, and against a tiny custom U-Net mask net. Pick by per-class mAP50 on held-out real sessions and by measured HTP latency with vtcm_mb=2.
+  - Quantization and acceptance: PTQ w8a8 with per-channel weights where supported. Calibrate on 500-1000 real tiles covering all bands, gains and SNRs. Accept the model only if, per class, mAP50 is within 2 points of FP32 and recall at SNR >= 3 dB is within 2 points. Otherwise try A16W8: the AI Hub QCS6490 rows show w8a16 running at about 2.5x the w8a8 latency, but this is unverified on 2.42. Failing that, use QAT (AIMET or PyTorch fake-quant) or move that model to the ORT CPU or GPU.
+  - Deploy path: train in PyTorch, export static-shape ONNX, quantize to QDQ ONNX (locally with ORT or QAIRT 2.42 on an x86 Ubuntu 22.04 host, or with AI Hub submit_quantize_job). On the device, run the Radxa onnxruntime-qnn 1.23.2 QNN EP and let it compile with the local 2.42 libraries, using ep.context_enable=1 to cache the context. This avoids QAIRT version mismatch. Do not deploy AI Hub DLC or context binaries unless they were built for exactly 2.42. Package the 8 frequency tiles of one time slice as batch 8 to spread the per-call FastRPC overhead (the gain is unmeasured).
+  - Training data strategy:
+  1. Pretrain stage 1 on TorchSig 2.2.0 wideband scenes plus GNU Radio scenes for lab classes (AFSK/NFM, SSTV, AIS, HRPT, CW, RS41, LRPT). Generate them at the exact FFT/K settings above, with real noise floors recorded on the device (terminated input and quiet bands), plus RTL/LMS artefacts.
+  2. Fine-tune on real captures labelled by hand and by decoders (CRC/FEC-confirmed boxes).
+  3. Iterate as in WRIST: the model pre-labels, the user corrects, you add IQ-sum collisions, then retrain.
+  4. Split train and test by session, pass or day, never by random tile, because adjacent tiles leak.
+  - Labelling UX on the 7 in touch waterfall:
+  - Pause and scrub the waterfall, drag a box, then let the box snap to the energy contour (CFAR/threshold on the CPU).
+  - Choose from a class picker, with 'unknown' as the default.
+  - An inbox of model and decoder proposals to accept or fix in one tap.
+  - Each box is written as a SigMF annotation (sample_start/count and freq edges at RF, label of 20 characters or fewer, plus rflab:confidence, source, model_version, verified).
+  - Keep IQ snippets only for public broadcast/telemetry classes. Keep magnitude-only waterfalls for NFM voice, GSM/LTE, Wi-Fi and BT, and never demodulate them.
+  - Adding new classes over time:
+  (1) Instant: add a prototype (mean embedding of 5-20 user boxes) to the stage-2 embedding head, run on the CPU.
+  (2) Consolidate: retrain stage 2 on the device CPU (small nets: minutes to hours, estimate) or on the PC. Use a replay buffer of about 200-500 crops per old class and distil from the previous model to limit forgetting.
+  (3) Retrain the stage-1 family head only when the new class has a new spectral shape.
+  Keep a versioned model registry (weights, class map, preprocessing hash, QAIRT version, calibration-set hash). Run the new model in shadow mode next to the old one before switching. Promote it only with no per-class regression on a frozen golden test set.
+  - Open set: report 'unknown' when the stage-1 objectness is high but the stage-2 energy score or prototype distance is above a threshold. Calibrate the threshold to 95% TPR on validation for each SDR and gain profile. Route unknowns to the labelling inbox.
+  - Evaluation on the device:
+  - per-class AP50 and AP50-95 on real held-out sessions;
+  - recall vs estimated in-box SNR;
+  - false alarms per hour per MHz on noise-only captures;
+  - INT8 vs FP32 deltas;
+  - HTP latency p50/p99 over 10^5 inferences;
+  - a 6-hour soak with HTP-hang count, watchdog restarts and CPU-fallback time.
+  - Overlay: publish boxes in absolute coordinates (UTC ns, RF Hz) with track IDs over shared memory or ZeroMQ (the WRIST pattern), and draw them on the live waterfall at the display FFT size. Merge boxes across tile edges. Expect latency of tile fill time plus inference: about 0.2-0.6 s with the plan above, halved with 50% overlapping tiles.
+  - Licences: train the redistributable weights only on TorchSig/GNU Radio data (yours), your own recordings (set core:license), and SatNOGS-derived data (CC BY-SA, so attribute it and share derived data alike). Use RadioML (CC BY-NC-SA 4.0), HisarMod and CSPB.ML (no stated licence) for benchmarking only, and never redistribute them.
+  - Scope rules: exclude TorchSig 'lfm-radar' and any radar or emitter-fingerprinting classes or datasets. Interference classes (LTE, GSM, Wi-Fi, BT, broadcast FM) are labelled as occupancy only.
+- **Numbers:**
+  - Gap-free tile rate = fs/(K*512^2): 213.6/K tiles/s at 56 Msps, 234.4/K at 61.44 Msps, 9.8/K at 2.56 Msps (does not depend on FFT size)
+  - 56 Msps, N=4096, K=8: 13.67 kHz x 0.585 ms pixels; a 512x512 tile covers 7.0 MHz x 0.30 s; 26.7 tiles/s gap-free
+  - uint8 waterfall storage = fs/K bytes/s per channel: 7 MB/s (25.2 GB/h) at 56 Msps with K=8; 2.56 MB/s (9.2 GB/h) for the V4L at K=1
+  - STFT CPU load at 56 Msps: about 2.8 / 3.4 / 3.6 GFLOPS for N = 1024 / 4096 / 8192
+  - AI Hub QCS6490 (QAIRT 2.50), YOLOv8n 640: w8a8 4.013 ms QNN_DLC, 3.625 ms TFLite, 4.709 ms ONNX; w8a16 10.458 ms QNN_DLC; 3.18M params
+  - AI Hub QCS6490, Yolo-X (8.98M params) 640: w8a8 7.087 ms QNN_DLC, 12.16 ms ONNX; w8a16 17.449 ms
+  - AI Hub QCS6490, MobileNet-v2 224: w8a8 1.064 ms ONNX; w8a16 1.811 ms ONNX
+  - Q6A field results: YOLOv8n about 10 ms (Frigate), 10-12 ms official binary, about 20 ms custom. A 512^2 tile is estimated at 6.4-12.8 ms
+  - YOLOX-Nano: 0.91M params, 1.08 GFLOPs at 416. YOLOX-Tiny: 5.06M params, 6.45 GFLOPs at 416 (Apache-2.0)
+  - WBSig53 detection mAP: YOLOv5-pico 73.03 (0.32M), YOLOv5-nano 73.82 (1.8M), DETR-B0-Nano 85.49 (8.2M), PSPNet-B0 68.52 with AP50 92.65
+  - WBSig53 6-family recognition mAP: YOLOv5-nano 57.02, YOLOv5-small 58.50, DETR-B0-Nano 76.52, Mask2Former-B0 14.78
+  - WRIST mAP@0.5: 98.70 on the test set, 94.63 in a congested anechoic chamber, 85.97 in the wild (@0.75: 92.21 / 88.42 / 78.89); 528,758 training images of 512x512
+  - Scholl 2022: synthetic-only training reached up to 95% on real HF signals (20 classes); clean-only training reached above 40%
+  - ULCNN: 9,751 params; 62.47% average on RML2016.10a; above 92% at SNR >= 6 dB; 0.775 ms per sample on a Pi 4B. MCLDNN: 406,199 params. PET-CGDNN: 71,487 params
+  - Sig53 accuracy: EfficientNet-B0 62.75% (3.9M), EfficientNet-B4 67.46%, XCiT-Nano 67.97% (3.1M), XCiT-Tiny12 70.22%
+  - DFN-YOLO: YOLOv8n baseline mAP50 0.917 / mAP50-95 0.807; mAP50-95 above 0.9 at SNR >= 0 dB and about 0.6 at -8 dB; 3.08M params, 8.2 GFLOPs
+  - TorchSig 2.2.0: 69 signal classes, 19 families; defaults 262,144 IQ, 512-pt FFT, 10 Msps; impairment levels 0-2
+  - AI Hub quantize job: weights int8, activations int8 or int16; 500-1000 calibration samples recommended
+  - HisarMod2019.1: 26 classes, 1024 IQ, SNR -20 to 18 dB, 780k signals, 5.13 GB. CSPB.ML: 8 classes, 112k signals per dataset
+  - Usable VTCM on the Q6A is about 2 MB of 8 MB (audit). Set vtcm_mb=2
+- **Rejected:**
+  1.
+    - **Name:** DETR/XCiT/other transformers as the on-device detector or classifier
+    - **Why:** They lead the benchmarks (DETR-B0 +11.7 detection mAP over YOLOv5-nano), but they use softmax and LayerNorm, the v68 HTP is INT8-only with no FP16, CLIP collapsed in INT8 on this SoC, and they have 8-22M params. Use them only as offline teachers and auto-labellers on the PC.
+  2.
+    - **Name:** Mask2Former
+    - **Why:** 16.9-19.3 M samples/s vs 432-1335 M for YOLOv5 on a V100, and the worst family mAP (14.8-27.0) on WBSig53.
+  3.
+    - **Name:** MCLDNN, PET-CGDNN and other LSTM/GRU AMC nets on the HTP
+    - **Why:** Recurrent layers do not suit static INT8 HTP graphs (audit). ULCNN-class CNNs give similar accuracy with 9.8k params.
+  4.
+    - **Name:** A single FFT size and a single model for the whole 56 MHz span
+    - **Why:** At 54.7 kHz bins every narrowband target (CW, AFSK, GMSK 9k6, AIS, RS41, NFM, LRPT) is under 3 bins wide, and at fine resolution wideband signals overflow tiles. A resolution pyramid and DDC zooms are needed.
+  5.
+    - **Name:** Training the deployed model on RadioML only
+    - **Why:** The licence is CC BY-NC-SA 4.0, the data is synthetic narrowband IQ (128/1024 samples) rather than spectrogram boxes, and DeepSig calls the sets historical and unsupported. Use them for benchmarks only.
+  6.
+    - **Name:** Redistributing models trained on HisarMod2019.1 or CSPB.ML.2018/2022
+    - **Why:** No licence is stated on the IEEE DataPort pages, and CSPB needs a subscription. Keep them for research benchmarks.
+  7.
+    - **Name:** AI Hub DLC/context-binary artifacts as the deploy format
+    - **Why:** Context binaries built with 2.45 fail on the Q6A's 2.42 runtime (err 0x1388). AI Hub model cards now show QAIRT 2.50, and whether 2.42 can still be selected is not verified. Deploy QDQ ONNX compiled on the device instead.
+  8.
+    - **Name:** onnxruntime-qnn 2.x wheels
+    - **Why:** They need a newer QAIRT than the v68 firmware set accepts (audit).
+  9.
+    - **Name:** Full detector training on the Q6A CPU as the main path
+    - **Why:** TorchSig recommends a GPU with 16 GB or more and 1 TB or more of storage, and detector training on 4x A78 is estimated to take many hours per run (not measured). Keep only fine-tuning heads and prototypes on the device.
+  10.
+    - **Name:** Ultralytics YOLOv8/11/26 as the default if code or weights will be redistributed closed-source
+    - **Why:** AGPL-3.0 (PyPI ultralytics 8.4.181), and AI Hub cannot distribute its assets. YOLOX (Apache-2.0) covers the same role. YOLOv8n stays a benchmark candidate.
+  11.
+    - **Name:** TorchSig 'lfm-radar' class, radar datasets, and RF fingerprinting / emitter-ID datasets
+    - **Why:** Out of scope under the project rules: no military-emitter or individual-transmitter identification.
+  12.
+    - **Name:** Plain time-averaged (mean-only) waterfall input
+    - **Why:** It dilutes 0.1-0.6 ms bursts (ADS-B, BT, Wi-Fi, GSM) below visibility. WRIST's max/min/mean channels keep them.
+- **Open questions:**
+  - Actual HTP latency on the Q6A of YOLOX-Nano/Tiny, YOLOv8n and a tiny U-Net at 512x512 under QAIRT 2.42 with only about 2 MB VTCM. Does batch-8 tiling help?
+  - Does the Q6A firmware/runtime set (CDSP c4-00004, QAIRT 2.42) accept A16W8 graphs? The AI Hub QCS6490 w8a16 rows say yes on 2.50, but one forum report says U16 is unsupported.
+  - Do ORT QNN quantization utilities, or qairt-converter/quantizer inside Radxa's qairt-npu-v68 Docker image, work on the Q6A itself? That would make the training loop fully standalone. The ORT docs still say x86_64 only.
+  - Does ORT QNN EP 1.23.2 on 2.42 reliably compile QDQ YOLO-style graphs and reload cached EP contexts? There is an unanswered segfault report for precompiled QNN ONNX.
+  - Which QAIRT versions does AI Hub currently offer through --qairt_version? Is 2.42 still selectable?
+  - The INT8 vs FP32 per-class mAP drop for spectrogram detectors with this 3-channel dB encoding. No published AMC or spectrogram INT8 PTQ figures were found.
+  - The size of the domain gap between TorchSig/GNU Radio synthetic data and real V4L/LimeSDR captures for each lab class, and how many real boxes per class are needed to close it.
+  - The licence of the SPREAD (WRIST) dataset, and whether it can be downloaded today.
+  - Wall-clock time for on-device PyTorch 2.14.1 CPU fine-tuning of stage-2 heads and of a 0.3-1M-parameter detector. Also, is GPU (Adreno 643, Turnip) training or FP16 inference via ncnn-Vulkan practical? Both unverified.
+  - The best per-bin noise-floor estimator when wide carriers (LTE, DVB-S2, Wi-Fi) occupy most of a tile.
+  - Long-run HTP stability with about 37 inferences/s alongside a 56 Msps PCIe stream: HTP hangs after about 1 h have been reported.
+- **Notes:** I used 10 WebSearch calls. Numbers checked against primary sources:
+  - TorchSig 2.2.0: PyPI metadata plus the source sdist (class list, YOLOLabel, defaults, SigMF reader, licence).
+  - WBSig53, Sig53, ULCNN, Scholl and WRIST: tables read from the arXiv PDFs.
+  - AI Hub QCS6490 latencies and licences: the Hugging Face model cards (QAIRT 2.50).
+  - YOLOX: its GitHub README.
+  - SigMF fields: the v1.2.6 JSON schema.
+  - Radxa ORT QNN EP and QAIRT install pages; the ORT QNN EP docs; the AI Hub frameworks and quantize docs.
+  - DeepSig, IEEE DataPort and SatNOGS licence statements.
+  - Package versions and wheels from PyPI: torch 2.14.1 aarch64, onnxruntime 1.31.0, onnx 1.23.2 aarch64, qai-hub 0.56.0, ultralytics AGPL-3.0, sigmf LGPL-3.0.
+  
+  Computed here: the tiling, pixel-size, storage and FFT-cost tables. Scripts are /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/calc/tiles.py and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/calc/pixels.py. Signal bandwidths and burst lengths in them are nominal.
+  
+  Unverified or estimated: on-Q6A detector latency (scaled from forum and AI Hub numbers), A16W8 support on 2.42, on-device quantization, CPU training times, decoder tool versions (except gr-satellites and SatDump, from the audit), and the Kulhandjian 97% vs 72-91% figure (search snippet only).
+  
+  Q6A field facts (INT8-only, 2 MB VTCM, HTP hangs, version mismatches, YOLO output-scale fix) come from the audit files in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/. GitHub API access was blocked in this session, so repository release tags were taken from PyPI instead.
+
+## npu:npu_toolchain (run `wf_62c18130-b0d`)
+
+- **Area:** QNN/QAIRT toolchain for the QCS6490 Hexagon v68 HTP on the Radxa Dragon Q6A: op and precision support for spectrogram detectors and IQ classifiers, PTQ/QAT, host platforms, AI Hub, device runtimes, VTCM and context limits, measured latencies, stability and recovery
+- **Findings:**
+  1.
+    - **Name:** Precision support on HTP v68 (QCS6490)
+    - **Role:** Sets the numeric format every spectrogram detector and IQ classifier must use
+    - **Details:** Qualcomm HTP doc: 'QNN HTP supports running quantized 8-bit and quantized 16-bit networks on all Qualcomm SoCs'. Float16 runs only on 'select' SoCs, and float32 math is not supported. On the Q6A the firmware rejects FP graphs ('The SocModel doesn't support FP16'). The AI Hub FAQ cites FP16 on v68 as a feature of the automotive SA8295P only. The HtpOpDefSupplement INT16 configuration is uint16 activations with uint8 weights (A16W8). It says '16bit Activation and 16bit Weight require minimum arch V73', so A16W16 is not available on v68. LayerNorm with a 16-bit input and 16-bit gamma also needs v73. 4-bit weights need minimum arch v68. Evidence that A16W8 runs on QCS6490: AI Hub publishes w8a16 latencies for the RB3 Gen 2 (QCS6490), and a Q6A port (PrismPhi, Sep 2026) shipped a W8A16 PTQ vision encoder on QAIRT 2.47. Qualcomm's guidance is to try A8 first, then A16, and to use symmetric weights with asymmetric activations.
+    - **Versions and platform:** Current QAIRT docs (published Sep 2026, covering 2.5x). Device runtime 2.42.0.251225 (confirmed from libQnnHtpPrepare.so strings: v2.42.0.251225135753_193295). A16W8 has a public Q6A success only on the QAIRT 2.47 runtime; it is untested publicly on 2.42.
+    - **Limits and risks:** The op table is not split per HTP arch. Read every v73+ note in HtpOpDefSupplement before using an op. A16 doubles VTCM use per activation. INT8 has collapsed accuracy for some models on Q6A (ArcFace 51%, CLIP).
+    - **Sources:**
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/htp_backend.md
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/HtpOpDefSupplement.md
+      - https://workbench.aihub.qualcomm.com/docs/hub/faq.html
+      - https://huggingface.co/qualcomm/MobileNet-v2
+      - https://raw.githubusercontent.com/PrismPhi/radxa-dragon-q6a-qwen3.5-0.8b-qcs6490-qnn-npu/main/docs/en/rebuilding.md
+      - https://forum.radxa.com/t/dragon-q6a-qnn-htp-pipeline-working-but-int8-only-firmware-blocks-real-ml-workloads/31217
+    - **Cost:** $0
+  2.
+    - **Name:** Op support for 2D/1D CNNs, depthwise, GRU/LSTM, attention and detection heads
+    - **Role:** Decides which layer types a spectrogram detector (YOLO-style or segmentation) or an IQ second-stage classifier can use
+    - **Details:** From SupportedOps (HTP INT8 / INT16 columns): YES for Conv2d, DepthWiseConv2d (ONNX Conv with group == channels), TransposeConv2d, FullyConnected, MatMul, Batchnorm, LayerNorm, InstanceNorm, Relu, ReluMinMax (Clip), Prelu/LeakyRelu, HardSwish, Sigmoid, Tanh, Gelu, Softmax, LogSoftmax, PoolAvg2d/PoolMax2d (including global), ReduceMean, Resize/ResizeNearestNeighbor/ResizeBilinear, Concat, Split, StridedSlice, Reshape, Transpose, DepthToSpace/SpaceToDepth, Pad, ArgMax, TopK, NonMaxSuppression, Gru and Lstm. Conv1d, DepthWiseConv1d and TransposeConv1d are NO on HTP, so write 1D convolutions as Conv2d with 1xK kernels. Constraints: GRU INT8/INT16 takes a rank-3 input, forward direction only. LSTM takes rank <= 3, with no LayerNorm-LSTM on 3D inputs. Softmax works on the last axis only. MatMul rank is <= 5. ORT QNN EP's documented ONNX op list has Conv, ConvTranspose, Resize, Softmax, LayerNormalization, MatMul, TopK, HardSwish and Sigmoid, but no LSTM, GRU or NonMaxSuppression. MaskedSoftmax and native KV-cache features 'cannot support v68 targets or lower'. uint16 GroupQueryAttention only arrived in 2.49.
+    - **Versions and platform:** Tables are from the current docs. Changes since 2.42: GRU/LSTM unrolling passes added in 2.45; a GRU quantization-encoding fix in 2.46; a Softmax cDSP crash fix in 2.47. 2.42 itself added 3D LSTM input and monolithic LSTM.
+    - **Limits and risks:** Attention is costly on v68. AI Hub measures ViT-224 at 56 ms (w8a8) and 30 ms (w8a16) on QCS6490. A Q6A port reports a dynamic uint16 x uint16 MatMul 'silently lowered a right operand'. On 2.42, recurrent layers carry known converter quantization bugs.
+    - **Sources:**
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/SupportedOps.md
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/HtpOpDefSupplement.md
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/general_revision_history.md
+      - https://onnxruntime.ai/docs/execution-providers/QNN-ExecutionProvider.html
+      - https://huggingface.co/qualcomm/VIT
+      - https://raw.githubusercontent.com/PrismPhi/radxa-dragon-q6a-qwen3.5-0.8b-qcs6490-qnn-npu/main/docs/en/porting.md
+    - **Cost:** $0
+  3.
+    - **Name:** HTP network-design rules applied to spectrogram tiles
+    - **Role:** Shapes the detector backbone and input tiling so it maps efficiently onto HMX/VTCM
+    - **Details:** Qualcomm rules: round channels to multiples of 32. Low-depth activations (1-16 channels) run inefficiently, and a 1-channel dB spectrogram is exactly that case, so use a space-to-depth stem, as the docs recommend (for example 4x4 turns 512x512x1 into 128x128x16, then a conv to 32+ channels). Activation width is rounded to 8 (u8) or 4 (u16), height to 8, depth to 32. ReLU, ReLUX and ReLUMinMax are the preferred fused activations for A8/A16. PReLU, LeakyReLU and HardSwish also fuse. Swish/SiLU is not on the fused list, and YOLOv8 uses it. Weights also occupy TCM. TCM fit rule for a convolution: in_w*in_d*fh*8 + fw*fh*fd*32 + out_w*8 <= TCM/2. My computation for a 3x3 conv with 2 MB usable VTCM (budget 1 MB): W=512, D=32 needs 0.39 MB at A8 and 0.78 MB at A16, both fit. W=1024, D=32 needs 0.77 MB at A8 (fits) and 1.53 MB at A16 (does not). W=2048, D=32 needs 1.52 MB at A8 (does not fit). W=4096 needs 3.04 MB. The deeper layers fit when W*D is about 32k (512x64, 256x128, 128x256) at A8 only. NMS 'needs all the data to fit in <= TCM_SIZE/2'.
+    - **Versions and platform:** Design guidelines published Sep 2026. The rules are generic HTP, not v68-specific.
+    - **Limits and risks:** The fit rule is approximate, per Qualcomm. Validate each graph with qnn-context-binary-generator plus an on-device run, because graphs that compile can still fail on the board at 2 MB.
+    - **Sources:**
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/htp_guidelines_tcm_requirements.md
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/htp_guidelines_low_depth_activations.md
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/htp_guidelines_space_to_depth.md
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/htp_guidelines_activation_functions.md
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/htp_guidelines_channels.md
+    - **Cost:** $0
+  4.
+    - **Name:** VTCM limit on the Q6A
+    - **Role:** Hard memory ceiling for every compiled graph
+    - **Details:** The QNN graph-config default VTCM request is 4 MB, and 0 means the SoC maximum. On the Q6A, a QAIRT 2.42 YOLO context binary (dsp_arch v68, soc_id 35) failed with 'Request feature vtcm size with value 4194304 unsupported ... err 0x138d'. The DLC path for the same model crashed the CDSP during 'Finalizing Graphs' (forum 31208, 20 Jul 2026). The same user later reported 'only able to pass 2MB ... even though the SRAM has 8MB' (31078, 22 Jul). The PrismPhi Q6A port built every context with vtcm_mb=2 and reports that '4K failed at 2 MB VTCM ... increasing the VTCM option alone compiled a graph that still failed on the board'. Knobs: the 2.42 device qnn-context-binary-generator has --vtcm_override <MB> (0 = SoC max), ORT QNN EP has provider option vtcm_mb, and the HTP backend extension JSON has graphs.vtcm_mb. Byte-granularity requests exist only on v81+, and must be multiples of 64 KB.
+    - **Versions and platform:** Q6A on Radxa OS r2, kernel 6.18.2-3/-4, CDSP c4-00004. The true VTCM size of QCS6490 is unverified (the '8 MB' figure is a user claim).
+    - **Limits and risks:** Why only about 2 MB is grantable is undiagnosed: a firmware partition, another client, or the PD type. Any graph compiled with the default 4 MB will fail to load.
+    - **Sources:**
+      - https://forum.radxa.com/t/31208
+      - https://forum.radxa.com/t/dragon-q6a-fastrpc-npu-fails-fastrpc-ioctl-init-create-returns-0x80000600-on-cdsp/31078
+      - https://raw.githubusercontent.com/PrismPhi/radxa-dragon-q6a-qwen3.5-0.8b-qcs6490-qnn-npu/main/docs/en/porting.md
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/htp_backend.md
+    - **Cost:** $0
+  5.
+    - **Name:** Host platforms: qairt-converter / qairt-quantizer / qnn-context-binary-generator
+    - **Role:** Determines whether training-to-deployment can happen on the Q6A or needs a PC
+    - **Details:** QAIRT revision history, 2.47.0 (May 2026): 'Added ARM-Linux as a supported development host environment with Ubuntu 24.04 and Python 3.12 across qairt-* tools, including conversion, quantization, compilation, and accuracy-debugger'. The same release added Ubuntu 24.04 and Python 3.12 on x86. The current Linux setup page warns that on arm-linux 'only Onnx is confirmed' for conversion. For the pinned 2.42 release, Radxa documents host requirements of 64-bit x86, Ubuntu 22.04 and Python 3.10, so the 2.42 Python converter and quantizer are x86-64 only. The device package qcom-qnn-sdk-v68 0.1.0-2 (44.2 MB deb; I listed it and checked the binaries) ships aarch64 builds of qnn-context-binary-generator (options include --dlc_path, --vtcm_override, --htp_socs, --soc_model, --output_dlc), qnn-net-run, qnn-throughput-net-run, qtld-net-run, qnn-profile-viewer, qnn-platform-validator, libQnnHtpPrepare.so (87 MB, the on-device graph compiler), libQnnModelDlc.so, libQnnHtpV68Skel.so, libQnnTFLiteDelegate.so and libQnnGpu.so. It ships no qairt-converter or qairt-quantizer.
+    - **Versions and platform:** 2.42: converter and quantizer on x86-64 Ubuntu 22.04 / Py3.10; context binaries generated on the device (aarch64). 2.47+: ARM-Linux host on Ubuntu 24.04 / Py3.12, which matches Radxa OS r2, but this is untested on the Q6A.
+    - **Limits and risks:** DLCs and context binaries run only on the same or a newer runtime, so 2.47 host tools cannot feed a 2.42 runtime. Community reports segfaults and missing-symbol errors at the context-binary step (forum 31368). Radxa's ARM64 Docker image radxazifeng278/qairt-npu-v68 (v1.2, 3.9 GB) exists, but I could not inspect its contents (registry rate limit).
+    - **Sources:**
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/general_revision_history.md
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/linux_setup.md
+      - https://docs.radxa.com/en/dragon/q6a/app-dev/npu-dev/qairt-install
+      - https://radxa-repo.github.io/qcs6490-noble/pool/main/q/qcom-qairt/qcom-qnn-sdk-v68_0.1.0-2_all.deb
+      - https://hub.docker.com/r/radxazifeng278/qairt-npu-v68
+    - **Cost:** $0 (free Qualcomm account)
+  6.
+    - **Name:** On-device runtimes: qnn-net-run, QNN TFLite delegate, Radxa onnxruntime-qnn 1.23.2 fork, official onnxruntime-qnn 2.x
+    - **Role:** Execute and (for ORT/TFLite) compile the detector on the device
+    - **Details:** (a) qnn-net-run / qnn-throughput-net-run with libQnnHtp.so and --retrieve_context model.bin, plus profiling via qnn-profile-viewer. (b) The QNN TFLite delegate (libQnnTFLiteDelegate.so 2.42). Option keys found in the .so: backend_type, htp_performance_mode, htp_precision, cache_dir, model_token, skel_library_dir, htp_use_conv_hmx. Radxa's Inception-v3 INT8 demo runs with qtld-net-run --backend htp. LiteRT runtime: ai-edge-litert 2.3.0 has manylinux aarch64 wheels. (c) Radxa's ORT fork: onnxruntime_qnn-1.23.2-cp312-cp312-linux_aarch64.whl from github.com/ZIFENG278/onnxruntime, built with QNN_ARCH_ABI aarch64-oe-linux-gcc11.2 against QAIRT 2.42.0.251225. It runs AI Hub w8a8 QDQ ONNX on HTP and compiles the graph on the device. ORT options: backend_path, htp_arch, soc_model, vtcm_mb, htp_performance_mode, htp_graph_finalization_optimization_mode, offload_graph_io_quantization, enable_htp_shared_memory_allocator. Session keys: session.disable_cpu_ep_fallback, ep.context_enable / ep.context_embed_mode / ep.context_file_path, which dump a context-binary cache. (d) Official onnxruntime-qnn has manylinux_2_34_aarch64 wheels since 2.1.0 (Apr 2026). The latest is 2.7.0 (13 Oct 2026, built for QAIRT 2.51). 2.3.0 (22 Jun 2026) targets QAIRT 2.47.0. (e) qai_appbuilder 2.48.40 bundles its own runtime.
+    - **Versions and platform:** Python 3.12 aarch64 (Ubuntu 24.04). SoC-model ids: the current table lists 778G/SM7325 = 35 and QCM6490 = 93, both V68. The community uses 35 for QCS6490.
+    - **Limits and risks:** Forum 31046 reports a segfault loading a precompiled QNN ONNX on 1.23.2 + 2.42 (unanswered). The TFLite delegate hung after about 1 h (forum 29949). The ORT docs say the quantization utilities are 'only supported on x86_64'; that note is about Windows ARM64, and Linux aarch64 is untested. A single user claims per-channel INT8 needs ORT 1.24+ (unverified).
+    - **Sources:**
+      - https://docs.radxa.com/en/dragon/q6a/app-dev/npu-dev/qnn-onnxrt-execution-provider
+      - https://docs.radxa.com/en/dragon/q6a/app-dev/npu-dev/tflite-delegate-demo
+      - https://docs.radxa.com/en/dragon/q6a/app-dev/npu-dev/qai-appbuilder
+      - https://onnxruntime.ai/docs/execution-providers/QNN-ExecutionProvider.html
+      - https://pypi.org/project/onnxruntime-qnn/
+      - https://github.com/onnxruntime/onnxruntime-qnn/releases/tag/v2.3.0
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/QNN_general_overview.md
+      - https://forum.radxa.com/t/31046
+    - **Cost:** $0
+  7.
+    - **Name:** Community-proven newer runtime set on the Q6A: ORT 1.27.0 + onnxruntime-qnn 2.3.0 (QAIRT 2.47.0.260601114230)
+    - **Role:** A possible second pinned runtime that would unlock per-channel and W8A16 quantization and a 2.47+ on-device toolchain
+    - **Details:** PrismPhi (forum 31448, 13 Sep 2026; GitHub repo) runs Qwen3.5-0.8B text and vision fully on the Q6A HTP with CPU fallback disabled. Tested system: Q6A, Ubuntu 24.04.4, kernel 6.18.2-3-qcom, the board's own CDSP firmware, Python 3.12.3, and official pip wheels onnxruntime==1.27.0 and onnxruntime-qnn==2.3.0. Contexts were built on Windows x64 with htp_arch=68, vtcm_mb=2, graph-I/O quantization offload disabled and CPU fallback disabled. W8A16 PTQ was used, and per-channel support was 'proven by a representative device graph'. Device-measured channel-wise zero-input output offsets in fully connected layers needed 50 int32 bias corrections. The same offsets reproduced bit-exactly on SM8350 (also v68) with QNN EP 2.3 / QAIRT 2.47. The installer pins SHA-256 hashes of ORT, the QNN backend, and the v68 stub and skel.
+    - **Versions and platform:** Q6A with kernel 6.18.2-3 and stock firmware. This contradicts Dual-O's report that QAIRT 2.46+ fails with QNN_DEVICE_ERROR_INVALID_CONFIG on CDSP c4-00004.
+    - **Limits and risks:** One user and one board, with no multi-hour soak data published. Whether 2.48-2.51 (onnxruntime-qnn 2.4-2.7) also work is unknown. v68 numerical offsets mean CPU QDQ simulation does not predict HTP output.
+    - **Sources:**
+      - https://forum.radxa.com/t/31448
+      - https://github.com/PrismPhi/radxa-dragon-q6a-qwen3.5-0.8b-qcs6490-qnn-npu
+      - https://raw.githubusercontent.com/PrismPhi/radxa-dragon-q6a-qwen3.5-0.8b-qcs6490-qnn-npu/main/requirements-device.txt
+      - https://raw.githubusercontent.com/PrismPhi/radxa-dragon-q6a-qwen3.5-0.8b-qcs6490-qnn-npu/main/docs/en/porting.md
+      - https://raw.githubusercontent.com/PrismPhi/radxa-dragon-q6a-qwen3.5-0.8b-qcs6490-qnn-npu/main/docs/en/quickstart.md
+    - **Cost:** $0
+  8.
+    - **Name:** Qualcomm AI Hub Workbench (cloud compile, quantize, profile)
+    - **Role:** Optional home-base service for quantization, runtime-neutral compilation and reference profiling on a real QCS6490
+    - **Details:** --qairt_version takes only major.minor, 'default' or 'latest'; the list comes from get_frameworks(). 'QNN context binaries and QAIRT DLCs are compatible with the QAIRT version with which they were produced and newer versions.' Version history from the release notes: 26 Jan 2026, 2.42 default and latest, and the QCS6490 (Proxy) removed in favour of the real 'Dragonwing RB3 Gen 2 Vision Kit (QCS6490)', available since Nov 2025. 14 Apr 2026: 2.42, 2.43, 2.45. 22 Jun 2026: 2.45, 2.46, 2.47, so 2.42 was gone. 14 Sep 2026: 2.50 added, 2.47 removed, and the qnn_context_binary target removed (use compile + link). 28 Sep 2026: ORT 1.30 with QNN EP 2.50; profile jobs merged into inference jobs (100 iterations). Targets: tflite, qnn_dlc, onnx, and precompiled_qnn_onnx (deprecated). Quantize jobs use AIMET (2.36/2.37 in Aug 2026, GPU-backed) and output 'fake-quant' QDQ ONNX; 500-1000 calibration samples are recommended. The service is free, and uploads are private and wiped from devices after jobs.
+    - **Versions and platform:** Cloud, so it needs internet and an API token (qai-hub client 0.56.0, pure Python). The device that runs on-target jobs is the RB3 Gen 2 under Qualcomm Linux, not the Q6A firmware.
+    - **Limits and risks:** It cannot produce QNN DLCs or context binaries loadable by the 2.42 runtime anymore. Forum 30908 shows 2.45 artifacts failing with 'Using newer context binary on old SDK ... 0x1388'. Proxy-to-real deployment of QNN formats is 'not a documented guarantee'. Only ONNX QDQ and TFLite outputs are runtime-neutral.
+    - **Sources:**
+      - https://workbench.aihub.qualcomm.com/docs/hub/api.html
+      - https://workbench.aihub.qualcomm.com/docs/hub/release_notes.html
+      - https://workbench.aihub.qualcomm.com/docs/hub/faq.html
+      - https://workbench.aihub.qualcomm.com/docs/hub/quantize_examples.html
+      - https://forum.radxa.com/t/qcs6490-radxa-q6a-qairt-sdk-version-mismatch-ai-hub-artifacts-2-45-x-incompatible-with-runtime-2-42-0-251225/30908
+    - **Cost:** Free (currently)
+  9.
+    - **Name:** Measured latencies on QCS6490 / Q6A
+    - **Role:** Basis for the NPU frames-per-second budget for spectrogram tiles
+    - **Details:** AI Hub Models v0.64.0 cards (assets built with QAIRT 2.50, run on 'Dragonwing QCS6490' / RB3 Gen 2). MobileNet-v2 224, w8a8: 1.06 ms (ONNX), 1.33 ms (DLC), 1.09 ms (TFLite); w8a16: 1.81 ms (ONNX). ResNet18 w8a8: 1.48-1.89 ms. YOLOv8-Detection, 640x640, 3.18 M params (YOLOv8n size): w8a8 3.6 ms (TFLite), 4.0 ms (DLC), 4.7 ms (ONNX); w8a16 10.5 ms (DLC), 18.7 ms (ONNX). YOLO-X 640 w8a8: 7.1-12.2 ms. YOLOv7 640 w8a8: 7.0-7.4 ms. MobileViT w8a16: 9.7 ms. EfficientViT-b2 w8a16: 11.0 ms. ViT-224: w8a8 56 ms, w8a16 30 ms. RTMDet 640 w8a16: 53 ms. UNet-Segmentation 640x1280 w8a8: about 243 ms. FFNet-40S 2048x1024 w8a8: 33-49 ms. Q6A community numbers: YOLOv8n INT8 about 10 ms per inference in Frigate (QAIRT 2.46); the official YOLOv8n context binary 10-12 ms vs about 20 ms self-built (forum 30899); Qwen3.5-0.8B decode 7.4 tok/s on QNN EP 2.3.
+    - **Versions and platform:** AI Hub: RB3 Gen 2, QAIRT 2.50. Q6A: QAIRT 2.42-2.47 depending on report.
+    - **Limits and risks:** AI Hub times cover the NPU only, steady state over 100 iterations, with no pre/post-processing or FastRPC transfers. Q6A end-to-end times run about 2-3x the AI Hub YOLOv8n figure. No public latency exists for a tiny 1D IQ CNN on v68, so the fixed per-call FastRPC overhead is unmeasured.
+    - **Sources:**
+      - https://huggingface.co/qualcomm/MobileNet-v2
+      - https://huggingface.co/qualcomm/YOLOv8-Detection
+      - https://huggingface.co/qualcomm/Yolo-X
+      - https://huggingface.co/qualcomm/Yolo-v7
+      - https://huggingface.co/qualcomm/VIT
+      - https://huggingface.co/qualcomm/Unet-Segmentation
+      - https://huggingface.co/qualcomm/FFNet-40S
+      - https://forum.radxa.com/t/running-custom-frigate-with-full-npu-support-dragon-q6a/31047
+      - https://forum.radxa.com/t/yolov8n-context-binary-generation-for-q6a/30899
+    - **Cost:** $0
+  10.
+    - **Name:** Quantisation tooling: PTQ vs QAT
+    - **Role:** Turns the trained FP32 detector or classifier into an HTP-runnable integer model
+    - **Details:** PTQ options. (1) qairt-quantizer on x86 for 2.42, producing a DLC. Check flags with --help: per-channel weights, act_bw 8/16, --restrict_quantization_steps needed only for A16W16. (2) onnxruntime.quantization get_qnn_qdq_config + qnn_preprocess_model, producing QDQ ONNX. The docs show QuantType.QUInt16 activations with QUInt8 weights, and per-tensor overrides for mixed 8/16-bit regions. QNN MatMul supports (u8,u8), (u8,u16) and (u16,u8). (3) AI Hub quantize job (AIMET). QAT: Qualcomm recommends quantization-aware training 'as much as possible' because it may remove the need for 16-bit activations. aimet-torch 2.41.0 (5 Oct 2026, BSD-3-Clause) is a py310-none-any wheel. aimet_torch.onnx.export(model, args, f, export_int32_bias=True, prequantize_constants=False, force_activation_as='unsigned') writes ONNX with QuantizeLinear/DequantizeLinear embedded; the example uses opset 21. aimet-onnx 2.41.0 ships x86_64 wheels only. PyTorch 2.14.1 has CPU aarch64 wheels, so training or fine-tuning can also run on the Q6A A78 cores.
+    - **Versions and platform:** x86-64 PC or the Q6A (aimet-torch on aarch64 is plausible but unverified).
+    - **Limits and risks:** Compatibility of AIMET opset-21 QDQ with the ORT 1.23.2 QNN EP is unverified. Q6A users found CPU-side QDQ accuracy does not predict HTP output (v68 offsets), so judge accuracy on the device.
+    - **Sources:**
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/htp_backend.md
+      - https://onnxruntime.ai/docs/execution-providers/QNN-ExecutionProvider.html
+      - https://quic.github.io/aimet-pages/releases/latest/apiref/torch/onnx.html
+      - https://pypi.org/project/aimet-torch/
+      - https://pypi.org/project/aimet-onnx/
+      - https://pypi.org/project/torch/
+      - https://workbench.aihub.qualcomm.com/docs/hub/quantize_examples.html
+    - **Cost:** $0
+  11.
+    - **Name:** Detector-head quantisation pitfalls seen on the Q6A
+    - **Role:** Directly affects YOLO-style spectrogram box detection
+    - **Details:** Forum 31368 (Aug 2026) describes a 3-class YOLO-style detector on the Q6A. Through AI Hub, box-regression and class-confidence outputs were 'forced onto a shared per-tensor INT8 quantization scale', which destroyed the smaller-range output. Splitting box and confidence into separate outputs fixed that, but two of three per-class channels then came back as literal zero after quantization (with both Split and Slice). The local 2.42 toolchain segfaulted at the context-binary step. Forum 30899 (YOLOv8n) fixes: NCHW input, dequantize each output with its own scale and offset, and match the graph name. Engineering blog note: INT8 YOLOv7 outputs were corrupted by mixed coordinate and score ranges.
+    - **Versions and platform:** QAIRT 2.42 local flow and AI Hub (2.45+).
+    - **Limits and risks:** No posted fix for the zeroed class channels. The likely cause is calibration or encoding of near-constant class maps (unverified).
+    - **Sources:**
+      - https://forum.radxa.com/t/31368
+      - https://forum.radxa.com/t/yolov8n-context-binary-generation-for-q6a/30899
+      - https://www.cloudflight.io/en/blog/quantized-yolo-for-edge-solutions/
+    - **Cost:** $0
+  12.
+    - **Name:** Known stability issues in and after QAIRT 2.42, and QNN SSR
+    - **Role:** Inputs to the watchdog and recovery design
+    - **Details:** Q6A field reports: HTP inference via the TFLite delegate hangs after about 1 h ('htp initialized' and nothing more; 29949). A CDSP fatal error during DLC finalize, which the kernel auto-recovers ('recovering cdsp'; 31208). A kernel panic during NPU buffer allocation (29959). A segfault in ORT 1.23.2 + 2.42 (31046). Segfaults in qnn-context-binary-generator (31368). Qualcomm fixes that came after 2.42, so 2.42 lacks them: 2.44 a timeout from a resource hang during cooperative pre-emption; 2.45 a rare process hang during HTP device cleanup after a DSP subsystem error; 2.46 GRU quantization encodings; 2.47 an indefinite hang when two DLCs initialise in parallel, and a cDSP crash in the Softmax op; 2.48 a CDSP crash under heavy concurrent multi-threaded inference, and the SSR recovery wait raised from 5 s to 11 s. QNN SSR: after a CDSP crash, QNN reconnects and returns QNN_COMMON_ERR_SYSTEM_COMMUNICATION. The backend and device handles stay valid; contexts, graphs, mem handles and power configs must be re-created (QnnContext_free, then createFromBinary, QnnGraph_retrieve, re-register memory, re-apply power config).
+    - **Versions and platform:** Runtime 2.42.0.251225 on kernel 6.18.2 with CDSP c4-00004.
+    - **Limits and risks:** ORT and TFLite do not expose SSR handling cleanly, so process restart is the safe recovery. No soak test has been published for any runtime on the Q6A.
+    - **Sources:**
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/general_revision_history.md
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/htp_ssr.md
+      - https://forum.radxa.com/t/npu-htp-usage-in-radxa-dragon-q6a/29949
+      - https://forum.radxa.com/t/31208
+      - https://forum.radxa.com/t/report-dragon-q6a-experience-npu-kernel-panics-with-llms-aic8800-driver-instability/29959
+    - **Cost:** $0
+  13.
+    - **Name:** Licences relevant to the toolchain, models and datasets
+    - **Role:** Distribution and use constraints for the training workflow
+    - **Details:** The QAIRT runtime in the Radxa deb is under Qualcomm's 'AI Stack License'. It grants use for developing your applications and lets you distribute object code only as part of your application, not standalone. It forbids reverse engineering. It lists high-risk and prohibited uses (biometrics, law enforcement and others). Its export clause names embargoed regions, including Crimea and the so-called DNR/LNR regions of Ukraine, and prohibits military end uses under EAR Part 744. The Radxa packaging is GPL-3+. AI Hub: Workbench is free; output assets carry your model's licence. Model licences: YOLOv8/YOLOv11 AGPL-3.0; YOLOv6/YOLOv7 GPL-3.0; YOLOX, RTMDet and MobileNet-v2 Apache-2.0; ViT, MobileViT and FFNet BSD-3. Datasets: all DeepSig RadioML sets (2016.04C, 2016.10A, 2018.01A) are CC BY-NC-SA 4.0, non-commercial, with known errata. TorchSig code is MIT (v2.2.0); the licence of generated datasets is not stated. The sigmf Python library 1.13.0 is LGPL-3.0. AIMET is BSD-3-Clause. ONNX Runtime and onnxruntime-qnn are MIT.
+    - **Versions and platform:** As of Oct 2026.
+    - **Limits and risks:** Shipping a public image with QAIRT libraries bundled standalone conflicts with the AI Stack License, so install it from Radxa or Qualcomm on each device. The receive-only, non-military scope of the project fits these terms.
+    - **Sources:**
+      - https://radxa-repo.github.io/qcs6490-noble/pool/main/q/qcom-qairt/qcom-qnn-sdk-v68_0.1.0-2_all.deb
+      - https://workbench.aihub.qualcomm.com/docs/hub/faq.html
+      - https://huggingface.co/qualcomm/YOLOv8-Detection
+      - https://huggingface.co/qualcomm/Yolo-X
+      - https://www.deepsig.ai/datasets/
+      - https://github.com/TorchDSP/torchsig
+      - https://pypi.org/project/sigmf/
+    - **Cost:** $0
+- **Recommendations:**
+  - Detector architecture for HTP v68. Use a conv-only, anchor-free, single-scale (stride 8) detector in the CenterNet/FCOS/YOLOX style; write your own or start from Apache-2.0 YOLOX, avoiding AGPL Ultralytics. Input is a static NCHW [B,1,H,W] dB spectrogram tile. Stem: space-to-depth 4x4 then Conv2d to >= 32 channels. All channel counts multiples of 32. ReLU or ReLU6 (HardSwish is acceptable) instead of SiLU. BatchNorm folded. No LSTM, GRU or attention in v1. If context is needed, add one depthwise/dilated conv block or a LayerNorm-free attention variant later, and only after profiling.
+  - Output contract. Emit raw logits and regressions as SEPARATE output tensors: an objectness/heatmap tensor, a box tensor (dt_start, dt_stop, df_low, df_high), and class logits, each with its own quantization encoding. Do NOT put Sigmoid, Softmax, decode, TopK or NMS inside the HTP graph: the 2.42 runtime lacks the Softmax cDSP crash fix (2.47), and NMS needs all data in TCM/2. Run decode and NMS on the CPU (NumPy or C++, under 1 ms for a few hundred candidates).
+  - Tile geometry from the VTCM rule at a 2 MB budget: A8 tiles up to 1024 frequency bins wide (512 if A16) by 256-512 time rows, with about 64 bins of frequency overlap and about 25% time overlap. Never feed a full 4096/8192-bin row as one tile. Normalise dB to a fixed range (for example a noise-floor-relative clamp of 0-80 dB mapped to 0-1) so one static input scale is valid across gains and SDRs.
+  - Compile every graph with VTCM = 2 MB: ORT provider option vtcm_mb='2', qnn-context-binary-generator --vtcm_override 2, or backend-extension graphs.vtcm_mb=2. Set htp_arch=68. Test soc_model 35 vs 93. Set session.disable_cpu_ep_fallback=1 so partial offload fails loudly. Leave the default (4 MB) nowhere.
+  - Pin two complete runtime sets and choose by golden test plus an 8 h soak. Set A, documented by Radxa: QAIRT 2.42.0.251225 (qcom-qnn-sdk-v68 0.1.0-2) + Radxa onnxruntime_qnn 1.23.2 cp312 + x86-64 Ubuntu 22.04 / Py3.10 host for qairt-converter/quantizer. Set B, community-proven: onnxruntime 1.27.0 + onnxruntime-qnn 2.3.0 (bundled QAIRT 2.47.0), which adds per-channel and W8A16 and makes the official ARM-Linux 2.47 host tools usable on the Q6A itself. Install each set in its own venv with its own ADSP_LIBRARY_PATH. Record SHA-256 of libQnnHtp, the V68 stub and skel, and every context binary, as PrismPhi does.
+  - Primary training-to-deploy path (no x86 needed per new class): train or fine-tune in PyTorch (home-base GPU for full training; Q6A CPU for head fine-tuning). Export ONNX opset 17-21 with static shapes. Quantize to QDQ with onnxruntime.quantization get_qnn_qdq_config (QUInt8 activations, symmetric int8 weights; QUInt16 activation overrides only where needed), or AIMET-torch QAT with aimet_torch.onnx.export(prequantize_constants=True). Load with ORT QNN EP on the Q6A with ep.context_enable=1 to cache the compiled context. Evaluate, then promote. Secondary path for Set A: an x86 host with QAIRT 2.42 converter/quantizer produces a DLC, then the on-device qnn-context-binary-generator --dlc_path ... --vtcm_override 2 produces the context, run with qnn-net-run.
+  - Quantisation policy: start with PTQ w8a8 on 500-1000 calibration tiles that span all SDRs, gains, RBWs, empty-band noise and every class. If per-class AP@0.5 on device falls more than 2-3 points below FP32, try A16W8 (on Set B, with tile width <= 512), then QAT. Always judge on HTP outputs, not CPU QDQ simulation: v68 shows device-specific output offsets. Keep a per-class confusion and IoU report for FP32-CPU, QDQ-CPU and HTP.
+  - Use AI Hub only from the home base and only for runtime-neutral outputs: submit_quantize_job (AIMET, GPU) to get QDQ ONNX, compile to ONNX/TFLite, and profile on the RB3 Gen 2 Vision Kit as a reference latency. Do not use its qnn_dlc or context artifacts with Set A (no QAIRT 2.42 on AI Hub since about 22 Jun 2026; DLC and context are only forward-compatible). Upload only spectrogram tiles or synthetic data, never demodulated content.
+  - NPU budget: plan on about 10 ms per 512-640 px YOLOv8n-size tile on the Q6A end to end (AI Hub NPU-only: 3.6-4.7 ms at 640). Size the detector to about a third or a half of YOLOv8n FLOPs for 56 Msps spans, which need about 40-85 tiles/s at 4096-8192 FFT with 8-16x averaging. Run the NPU at <= 50% duty and update overlay boxes at 2-10 Hz with tracking or interpolation on the 20-30 fps waterfall. RTL-SDR spans (2.4 Msps, 3 tiles across) need only about 9 tiles/s. Measure the real per-call overhead with qnn-net-run --profiling_level basic and qnn-throughput-net-run before fixing tile and batch sizes. Batch tiles (prepare batch 4-8, or variable batch once verified on the pinned runtime).
+  - IQ second stage: keep the small Conv2d(1xK) classifier on the CPU (ORT CPU) by default. Move it to HTP only if batching 32-64 detected boxes per call, because a 2-channel IQ input is a low-depth activation and per-call FastRPC overhead dominates. If it goes to HTP, make the stem output >= 32 channels and keep fixed window lengths.
+  - Recovery plan: (1) Run the NPU worker as a separate process that owns the FastRPC session. Tiles arrive over a shared-memory ring, results go back over a Unix socket, with a heartbeat per inference. (2) Watchdog: kill and restart the worker if one inference exceeds max(500 ms, 5x p99), or on any QNN_COMMON_ERR_SYSTEM_COMMUNICATION or crash. Allow >= 15 s after a CDSP crash (SSR wait is 5 s in <= 2.47 and 11 s in 2.48+; the kernel auto-recovers the cdsp remoteproc). (3) After 3 restarts in 60 s, restart the CDSP via /sys/class/remoteproc/*/state and cdsprpcd, then switch to the ORT-CPU copy of the same QDQ model at a reduced tile rate, and flag it in the UI. (4) At boot and after every recovery, run a golden tile and compare outputs against stored references within tolerance. (5) Never run two HTP contexts in parallel or multi-threaded on 2.42; recording never depends on the NPU process.
+  - Versioned class growth: give each model release a manifest holding the class list, training-data SigMF annotation hashes, calibration-set hash, runtime-set id and hashes, and the context binary. To add a class, retrain (head-only fine-tune first, full retrain if recall on old classes drops), re-quantize with a calibration set that includes the new class, recompile, and gate promotion on the regression set for all old classes plus the golden test. Keep the previous model for one-tap rollback.
+- **Numbers:**
+  - Device QAIRT runtime: 2.42.0.251225 (libQnnHtpPrepare.so build string v2.42.0.251225135753_193295); qcom-qnn-sdk-v68 0.1.0-2 deb = 44,221,844 bytes, installed 168,655 KB; libQnnHtpPrepare.so = 87.3 MB (aarch64)
+  - QAIRT release months: 2.42 Dec 2025, 2.45 Mar 2026, 2.47 May 2026 (ARM-Linux host: Ubuntu 24.04 + Python 3.12), 2.48 Jun 2026, 2.49 Jul 2026, 2.50 Aug 2026; onnxruntime-qnn 2.7.0 (13 Oct 2026) targets QAIRT 2.51
+  - AI Hub QAIRT availability: 2.42 default+latest (26 Jan 2026); 2.42/2.43/2.45 (14 Apr 2026); 2.45/2.46/2.47 (22 Jun 2026); 2.50 added and 2.47 removed (14 Sep 2026); qnn_context_binary target removed 14 Sep 2026; QCS6490 (Proxy) removed 26 Jan 2026 in favour of the real RB3 Gen 2 Vision Kit
+  - SoC ids (current QNN table): SM7325/778G = 35 (V68), QCM6490 = 93 (V68), SM8350 = 30 (V68)
+  - VTCM: QNN default graph request 4 MB (0 = SoC max); Q6A rejects a 4,194,304-byte request (err 0x138d); about 2 MB usable per users; byte-granularity requests only on v81+, in multiples of 64 KB
+  - TCM conv-fit (3x3, A8): W=512 D=32 needs 0.39 MB; W=1024 D=32 needs 0.77 MB; W=2048 D=32 needs 1.52 MB; W=4096 D=32 needs 3.04 MB; at A16 the needs double (W=1024 D=32 is 1.53 MB). Budget is TCM/2 = 1 MB at 2 MB VTCM
+  - HTP layout granularity: channels rounded to 32, width to 8 (u8) or 4 (u16), height to 8; INT16 weights limited to 0x8000..0x7F7F (A16W16, v73+ only)
+  - AI Hub QCS6490 latencies (QAIRT 2.50 assets): MobileNet-v2 224 w8a8 1.06-1.33 ms, w8a16 1.81 ms; ResNet18 w8a8 1.48-1.89 ms; YOLOv8n-size 640 w8a8 3.6-4.7 ms, w8a16 10.5-18.7 ms; YOLO-X 640 w8a8 7.1-12.2 ms; YOLOv7 640 w8a8 7.0-7.4 ms; ViT-224 w8a8 56 ms, w8a16 30 ms; MobileViT w8a16 9.7 ms; UNet 640x1280 w8a8 about 243 ms; FFNet-40S 2048x1024 w8a8 33-49 ms
+  - Q6A community latencies: YOLOv8n INT8 about 10 ms (Frigate, QAIRT 2.46); official YOLOv8n context 10-12 ms vs about 20 ms self-built; Qwen3.5-0.8B decode about 7.4 tok/s (QNN EP 2.3 / QAIRT 2.47, vtcm_mb=2)
+  - Spectrogram geometry at 56 Msps: NFFT 4096 gives 13.67 kHz bins and 73.1 us per frame (27,344 frames/s at 50% overlap); NFFT 8192 gives 6.84 kHz and 146 us. At 2.4 Msps, NFFT 1024 gives 2.34 kHz bins
+  - Estimated tile load (512x512 tiles, 64-bin frequency overlap, 25% time overlap, 50% FFT overlap): 2.4 Msps/1024/avg4: about 9 tiles/s; 20 Msps/4096/avg8: about 29 tiles/s; 56 Msps/4096/avg16: about 40 tiles/s; 56 Msps/8192/avg8: about 85 tiles/s (my calculation)
+  - QNN SSR recovery wait: 5 s up to 2.47, 11 s from 2.48
+  - Calibration size: AI Hub recommends 500-1000 samples; the audit plan used 200-500 windows
+  - Package versions (Oct 2026): aimet-torch 2.41.0 (py310-none-any, BSD-3); aimet-onnx 2.41.0 (x86_64 only); qai-hub 0.56.0; onnxruntime 1.31.0 (aarch64 wheels); onnxruntime-qnn aarch64 wheels since 2.1.0 (Apr 2026); torch 2.14.1 (aarch64 wheels); ai-edge-litert 2.3.0 (aarch64); TorchSig 2.2.0 (MIT); sigmf 1.13.0 (LGPL-3.0)
+- **Rejected:**
+  1.
+    - **Name:** AI Hub qnn_dlc / context-binary artifacts for the 2.42 runtime
+    - **Why:** AI Hub has not offered QAIRT 2.42 since about 22 Jun 2026. As of 14 Sep 2026 the versions are about 2.48-2.50. DLC and context binaries only run on the same or a newer runtime, and Q6A users get 'Using newer context binary on old SDK' (0x1388).
+  2.
+    - **Name:** Running qairt-converter/qairt-quantizer 2.42 on the Q6A
+    - **Why:** ARM-Linux host support was added only in QAIRT 2.47, and Radxa documents x86-64 Ubuntu 22.04 for 2.42. Using 2.47 host tools produces artifacts the 2.42 runtime cannot load.
+  3.
+    - **Name:** FP16 / FP32 graphs on the HTP
+    - **Why:** The QCS6490 v68 firmware rejects them ('SocModel doesn't support FP16'). FP16 on v68 is an automotive SA8295P feature.
+  4.
+    - **Name:** A16W16 quantisation
+    - **Why:** 16-bit activations with 16-bit weights require minimum arch V73.
+  5.
+    - **Name:** Default 4 MB VTCM compilation
+    - **Why:** Rejected on the Q6A ('vtcm size 4194304 unsupported'). Only about 2 MB is usable.
+  6.
+    - **Name:** Full-span tiles (4096-8192 bins wide) in one inference
+    - **Why:** The TCM conv-fit rule exceeds the 2 MB VTCM budget (3.0 MB or more at A8 for a 32-channel stem).
+  7.
+    - **Name:** GRU/LSTM-based detectors or classifiers on 2.42
+    - **Why:** Forward-only and rank-3 limits; converter quantization bugs fixed only in 2.46; unrolling passes only from 2.45; not in ORT QNN EP's documented op list.
+  8.
+    - **Name:** Transformer/DETR-style or full-resolution UNet detectors
+    - **Why:** ViT-224 costs 56 ms (w8a8) and UNet 640x1280 costs about 243 ms on QCS6490. A dynamic uint16 MatMul mis-lowering was seen on v68. MaskedSoftmax and KV features are unsupported on v68.
+  9.
+    - **Name:** Softmax, Sigmoid decode, TopK or NMS inside the HTP graph
+    - **Why:** 2.42 lacks the Softmax cDSP crash fix (2.47). NMS needs all data in TCM/2. Separate quantized outputs are needed anyway to avoid the shared-scale collapse.
+  10.
+    - **Name:** Ultralytics YOLOv8/YOLOv11 as the shipped detector
+    - **Why:** AGPL-3.0 licence, and its SiLU activations are not in the HTP fused-activation list. Use an Apache-2.0 YOLOX-style or self-written conv detector.
+  11.
+    - **Name:** onnxruntime-qnn 2.7.0 (QAIRT 2.51) or qai_appbuilder 2.48.40 as the default runtime
+    - **Why:** Not tested on the Q6A. Reports conflict on 2.46+ with CDSP c4-00004. Only 2.3.0 (QAIRT 2.47) has a public Q6A success. Keep these as experiments behind the golden test.
+  12.
+    - **Name:** sigqnn (PyPI)
+    - **Why:** A placeholder package, self-described as 'NOT FUNCTIONAL'.
+  13.
+    - **Name:** Concurrent multi-threaded or multi-context HTP inference on 2.42
+    - **Why:** Hang and crash fixes for parallel DLC init (2.47) and heavy concurrent inference (2.48) are missing from 2.42.
+- **Open questions:**
+  - What is QCS6490's physical VTCM size, and why is only about 2 MB grantable on the Q6A (firmware partition, PD type, another client)? Query it with QnnDevice_getPlatformInfo (on-chip device info includes VTCM MB) or qnn-platform-validator.
+  - Does the QAIRT 2.47 set (ORT 1.27.0 + onnxruntime-qnn 2.3.0) survive an 8 h soak on kernel 6.18.2-4 with the golden firmware? Do 2.48-2.51 load at all (needed to reuse AI Hub artifacts)? Reports conflict (Dual-O vs PrismPhi).
+  - Do the official QAIRT 2.47+ ARM-Linux host tools (qairt-converter, quantizer, context generation) actually install and run on the Q6A under Ubuntu 24.04 / Py3.12, and how much RAM and time do they need for a 1-3 M-parameter detector?
+  - Which soc_model value does each pinned runtime expect for QCS6490: 35 (SM7325) as used by the community, or 93 (QCM6490 in current docs)? Does a mismatch change performance or prepare behaviour?
+  - Is the variable-batch feature (execute with n x prepared batch) present in 2.42, and what is the per-call FastRPC overhead for small graphs on the Q6A? This sets the tile batching strategy.
+  - Does on-device online prepare by the ORT QNN EP 1.23.2 (libQnnHtpPrepare) compile a detector reliably, given the segfault reports (forum 31046) and context-generator crashes (31368)?
+  - Does the ORT 1.23.2 QNN EP accept per-channel int8 weights and AIMET opset-21 QDQ exports? One user claims per-channel needs ORT 1.24+.
+  - Do v68 channel-wise zero-input output offsets (seen in FC layers by PrismPhi) also affect conv detection heads, and what is the scale per class?
+  - What causes the zeroed class channels after quantizing a multi-class YOLO head on the Q6A (forum 31368)? Calibration coverage, near-constant maps, or a converter bug?
+  - Is A16W8 usable on the 2.42 runtime, or only on 2.47+? There is no public 2.42 test.
+  - What does the Radxa ARM64 Docker image radxazifeng278/qairt-npu-v68:v1.2 contain (QAIRT version, converter tools)? Not inspected because of the Docker Hub rate limit.
+- **Notes:** I used 6 WebSearch calls. Most evidence comes from primary pages I downloaded and parsed: Qualcomm QAIRT docs (published Sep 2026, so they describe 2.5x, not 2.42), the AI Hub docs and release notes, Radxa's docs, the Radxa qcom-qnn-sdk-v68 deb (I listed its contents and checked the binaries' architecture, version strings and CLI options), PyPI metadata, Hugging Face Qualcomm model cards, and Radxa forum JSON.
+  
+  The op-support tables do not carry per-arch columns, so v68 limits come from the 'minimum arch' notes in HtpOpDefSupplement.
+  
+  The most important new finding beyond the earlier audit is PrismPhi's Sep 2026 Q6A port. It ran the official onnxruntime-qnn 2.3.0 (QAIRT 2.47) on stock firmware with W8A16 and vtcm_mb=2. That contradicts the 'QAIRT 2.46+ fails' report. Combined with 2.47's official ARM-Linux host support, it suggests a fully on-device toolchain may be possible, but it is unverified beyond one user.
+  
+  The second key finding is that AI Hub can no longer target QAIRT 2.42, so its QNN outputs are unusable with the Radxa-pinned runtime.
+  
+  The tile and NPU-budget figures are my own calculations from Qualcomm's TCM rule and AI Hub latencies. They are estimates to validate with qnn-net-run profiling on the device.
+  
+  Files I downloaded for verification are under /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad (dl_htp, dl_aihub, dl_radxa, dl_deb, dl_ort, dl_perf, dl_forum, dl_prism). The calculation scripts are /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/scripts/budget.py and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/scripts/ops.py.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
