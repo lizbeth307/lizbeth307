@@ -585,3 +585,10 @@ P4, підтвердження і нове:
 - ПІДТВЕРДЖЕНО (C, індекс конвеєрів SatDump): Cosmos.json має конвеєр cosmos_2558_dump на 2284 MHz, DMSP.json — dmsp_rtd на 2252.5 MHz. Отже, DMSP справді є в SatDump, і з Lime обидва конвеєри технічно досяжні. Тому дозволений список конвеєрів SatDump у v2 обов'язковий (operator_notes №1 оновлено, позначку «ймовірно» знято). Джерело: github.com/SatDump/SatDump, pipelines/Cosmos.json і pipelines/DMSP.json.
 - B/D (живлення Lime): на форумі Lime (тема від 18.08.2026 про плату-носій) пишуть, що за схемою LimeSDR Micro M.2 v1.1 вхід може споживати до 2.5 A при 3.3 V, тобто близько 8.3 W піку. Райзер і стабілізатор 3.3 V на M.2 треба розраховувати на 2.5 A із запасом, а не на типове споживання. Наш приймальний поріг VCC_5V_PERI ≤14 W лишається, а пік Lime треба врахувати окремо в бюджеті SYS12/J21. Джерело: myriadrf.org, LimeSDR-Micro_M.2_v1.1_diagrams_r0_power.png, і тема на форумі Lime (за агентом D).
 
+## 2026-10-18 09:07 UTC
+
+P4, нове:
+- C (правила, SatDump): в індексі конвеєрів, крім Cosmos і DMSP, є ще syracuse3_tlm (телеметрія французького військового зв'язкового супутника Syracuse 3), wsf_m_db (метеосупутник Космічних сил США WSF-M), angels_l_band (дослідницький супутник ВПС США) і yunhai_ahrpt. Тому в v2 має бути саме ДОЗВОЛЕНИЙ список (цивільні метео, наукові й аматорські конвеєри поіменно), а не список заборон. Додав у operator_notes, пункт №14.
+- A (пакети): Radxa OS r2 підключає PPA ubuntu-qcom-iot/qcom-ppa. У ньому вже лежать libqnn1, libqnn-dev і qairt-dsp-binaries версії 2.49.0, а також linux-firmware-dragonwing 20260825. Без закріплення apt підтягне QNN 2.49, на якій, за темою 31462, на QCS6490 ламається квантизація. У v2 для цих пакетів треба поставити Pin-Priority −1, а QAIRT лишити на 2.42.0.251225. Додав у operator_notes, пункт №15.
+Джерела: SatDump pipelines/*.json (за агентом C); RadxaOS-SDK rsdk socs.json; launchpad.net/~ubuntu-qcom-iot/+archive/ubuntu/qcom-ppa (за агентом A).
+
