@@ -24555,6 +24555,161 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   The part meets the hard rules: it is receive-only with no TX path, there is no loop, and it never puts DC on the antenna. A 12.5 V P5 must never mate with it, because it is damaged above 5.5 V.
 
+## searchB:uputronics_440_mhz_cubesat_filtered_prea (run `wf_e32114dd-52d`)
+
+- **Part:** Uputronics 440 MHz CubeSAT filtered preamp (HAB-FPA440), the first part after the 70 cm antenna on P2 / RTL-A
+- **Current price usd:** 68.71 in STACK v1 (GBP 51.59 incl. UK VAT). Re-audit B corrected this to 59.52 (EUR 52.95 on the Uputronics EU storefront, VAT added at checkout). With 19-21 % VAT the EU landed cost is about 71-72; the US store price is 62.00. Rate used here: 1 EUR = 1.1241 USD, as in the stack.
+- **Critical specs:**
+  - Passband must cover 435.0-438.0 MHz (ISS 437.550/437.800/437.825, CubeSats 435-438) with flat gain. Current part: about 427-452 MHz between the -3.4 dB points; 19.63 dB at 440 MHz, 16.27 dB at 427.3 MHz, 16.17 dB at 452.0 MHz (vendor Rigol plot marked UNCAL, datasheet Rev 3.0 p.10)
+  - System noise figure, LNA placed before the SAW: 0.75 dB average (vendor). The MMIC datasheet gives 0.66 dB at 0.5 GHz and 3 V. No independent NF measurement of the 440 unit was found
+  - Gain of at least 19 dB (datasheet table), so the RTL-A tuner's NF is masked
+  - Out-of-band rejection after the LNA, read off the vendor plot: S21 about -36 dB (about 55 dB below the passband) from 100 to 410 MHz, which covers 2 m, FM broadcast and TETRA 380-400. About -22 dB at 470 MHz, the start of DVB-T channel 21 (about 42 dB rejection). About -30 to -38 dB at 790-960 MHz (LTE B20, GSM900). An HPF below 100 MHz is fitted. The in-band PMR446 and LPD433 signals in Europe cannot be filtered by any 70 cm preamp
+  - Linearity: not published for the module. The reseller Kubii says the LNA is a Mini-Circuits PSA4-5043+. Its datasheet at 3 V and 0.5 GHz gives OIP3 +28 dBm and OP1dB +16.5 dBm, so IIP3 is about +7 dBm and IP1dB about -4 dBm (model). Absolute maximum input to the MMIC is +23 dBm
+  - Input protection: a Skyworks limiter on the antenna input, plus Class 1B ESD protection on the MMIC die
+  - Power: bias-tee on the RX coax at 3.5-5.5 V; the stack feeds 4.5 V on ch2. Draws about 50 mA, which fits the TPS2553 limit of 144-192 mA, the 200 mA TCBT and the 180 mA tee on the V4L. Can also run from USB-C. No signal passes when unpowered
+  - Antenna port is DC-blocked (no bias passthrough). The dipole kit and the Yagi hairpin are DC shorts
+  - SMA-F in and out. V3 enclosure in extruded aluminium, 69 x 40 x 12 mm, which shields it next to the Q6A and USB 3 noise. Rated -40 to +85 C. Not IP rated (needs a rain cover)
+  - Legality and build: CE DoC (EN 55032 Class B, EN 55035), UKCA and RoHS; bought genuine from the maker. It is a receive-only part with no TX path
+- **Candidates:**
+  1.
+    - **Name:** LNA4ALL (9A4QV), assembled, 2x SMA, bias-T 4.5 V mod
+    - **Kind:** other_brand
+    - **Price usd:** about 37.10 (EUR 23 with SMA + EUR 3 bias-T mod + EUR 7 tracked shipping from Croatia = EUR 33; blog prices, confirm by email before ordering)
+    - **Spec comparison:** Same PSA4-5043+ MMIC. NF: datasheet 0.65 dB at 0.5 GHz and 5 V; the author measured 0.70-0.76 dB for two units in series at 1420 MHz. Equal or slightly better than 0.75 dB. Gain: datasheet 22.1 dB at 0.5 GHz (5 V). One libre.space VNA reading gave 17.2 dB at 437 MHz, but with a non-standard setup. Linearity: the author measured an average TOI of 34.75 dBm, better than the module. Current about 47 mA at 4.5 V, equal. Frequency range is wideband (28 MHz-2.5 GHz)
+    - **Worse in:** No filter at all: 0 dB out-of-band rejection, against 42-55 dB for the current part. In Europe that sends DVB-T at 470+ MHz, TETRA 380-400, LTE800, GSM900 and FM straight into the R828D tuner of RTL-A. Also missing: an input limiter (the optional BAV99 mod degrades NF and S11 and can add IMD), the <100 MHz HPF, and an enclosure (bare PCB with SMA). The bias-T is a DIY mod, and no CE DoC was found. Making it not-worse needs a measured 70 cm SAW or cavity filter plus an enclosure. No cheap filter with measured data was found, and the Mini-Circuits ZVBP-435-S+ cavity filter would cost more than the savings (its price was not checked). REJECTED: not not-worse
+    - **Compatibility:** 4.5 V bias-T mode is supported (about 47 mA) and fits ch2. SMA. Needs a case and a rain cover. Arm64 drivers not applicable
+    - **Risks:** Hand-built small-maker unit. The author warns that a damaged unit can draw more than 250 mA and recommends a 100-160 mA PTC in bias-T modes. Prices were last updated on an old blog
+    - **Seller url:** https://lna4all.blogspot.com/
+    - **Sources:**
+      - https://lna4all.blogspot.com/
+      - https://www.rtl-sdr.com/some-tests-on-the-lna4all/
+      - https://community.libre.space/t/measure-the-gain-of-lna4all/262
+      - https://www.minicircuits.com/pdfs/PSA4-5043+.pdf
+  2.
+    - **Name:** Generic SPF5189Z 50-4000 MHz LNA board (eBay/AliExpress)
+    - **Kind:** generic_or_clone
+    - **Price usd:** a few EUR (SatNOGS wiki); exact price UNVERIFIED
+    - **Spec comparison:** SatNOGS wiki VNA measurement: gain about 1 dB below the SPF5189Z datasheet, with a wideband matching compromise between the 900 and 1900 MHz designs. Draws 90 mA at 5 V. No NF was measured at 435 MHz; the datasheet gives 0.6 dB, but at 900 MHz
+    - **Worse in:** Unfiltered, so 0 dB rejection against 42-55 dB. No measured NF at 70 cm. No limiter or HPF. Draws 90 mA, about twice the current part. Usually a 5 V header input, not a bias-tee input. Qorvo has announced EOL for the SPF5189Z (PCN 21-0060), so the chips on cheap boards are of uncertain origin (counterfeit or remarked risk). REJECTED: no measured evidence of equal NF, and worse selectivity and protection
+    - **Compatibility:** 5 V supply is not the 4.5 V ch2 bias-tee rail without modification; 90 mA still fits the limits
+    - **Risks:** Counterfeit MMIC, unknown matching, possible oscillation, no CE DoC
+    - **Seller url:** 
+    - **Sources:**
+      - https://wiki.satnogs.org/SPF5189_LNA_measurements
+      - https://community.libre.space/t/ebay-spf5189z-lna-gain-measurements/3774
+      - https://store.qorvo.com/ProductDetail/SPF5189Z-Qorvo/347384/
+  3.
+    - **Name:** Generic AliExpress 'full band' LNA (item 1005005576142216)
+    - **Kind:** generic_or_clone
+    - **Price usd:** about CHF 6-7 (inferred from listing URL parameters; UNVERIFIED)
+    - **Spec comparison:** No measurements exist. In the libre.space thread the only observation is by eye from SatNOGS waterfalls, and the gain of about 20 dB is a guess. Chip unknown
+    - **Worse in:** Unfiltered, with no measured NF, gain, linearity or current. REJECTED: no measured evidence
+    - **Compatibility:** 5 V USB-powered in the thread; bias-tee input unknown
+    - **Risks:** Unknown design and parts, no CE DoC
+    - **Seller url:** https://www.aliexpress.com/item/1005005576142216.html
+    - **Sources:**
+      - https://community.libre.space/t/lna-aliexpress-full-band-lna/13291
+  4.
+    - **Name:** Janilab (Janielectronics, Hungary) 70 cm LNA with SAW filter
+    - **Kind:** other_brand
+    - **Price usd:** about 30-38 (eBay snapshot USD 29.98, undated; an eBay.de '70cm LNA with saw filter' listing at EUR 33.98 with the seller not confirmed; UNVERIFIED)
+    - **Spec comparison:** SAW-filtered, 430-446 MHz, which covers 435-438. +5 V supply, also over coax. Gain 18 dB, NF 1.8 dB (review and vendor figures, not independent measurements)
+    - **Worse in:** NF 1.8 dB against 0.75 dB (+1.05 dB, about 0.7-1 dB worse system sensitivity on CubeSat links with -5 to +5 dB margin). Gain 18 dB against at least 19 dB. Rejection and linearity unpublished. REJECTED: worse in NF and gain
+    - **Compatibility:** 5 V over coax; whether 4.5 V on ch2 is enough is unknown
+    - **Risks:** Small-maker unit, no measurement plots, no CE DoC found
+    - **Seller url:** https://www.ebay.com/usr/janilab
+    - **Sources:**
+      - https://cq.sk/en/lna-diplexer-filter-janielectronics/
+      - https://www.ebay.com/usr/janilab
+      - https://www.ebay.de/itm/336155896362
+  5.
+    - **Name:** GPIO Labs 433 MHz Filtered LNA, 20 dB version (Tindie)
+    - **Kind:** other_brand
+    - **Price usd:** 57.00 + shipping from Canada + EU import VAT (landed above the current part)
+    - **Spec comparison:** Gain 20 dB at 430-436 MHz. NF under 1 dB (claimed). Rejection below -20 dB at 50-400 MHz and below -15 dB at 480-1000 MHz. Maximum input -10 or -15 dBm (the page contradicts itself). Has an ESD diode. No plots
+    - **Worse in:** Passband stops at 436 MHz, so it misses ISS 437.550/437.800/437.825. NF up to 1 dB against 0.75. Rejection is about 16-20 dB weaker than the current part's S21 of about -36 dB. Bias-tee needs a 10 uH inductor soldered by the user. Connectors and size not stated. Not cheaper once landed. The 40 dB version is USD 96. REJECTED
+    - **Compatibility:** Bias-tee only after the solder mod; voltage and current unspecified
+    - **Risks:** No measurements published
+    - **Seller url:** https://www.tindie.com/products/gpio/433-mhz-filtered-low-noise-amplifier-lna-20-db/
+    - **Sources:**
+      - https://www.tindie.com/products/gpio/433-mhz-filtered-low-noise-amplifier-lna-20-db/
+      - https://www.tindie.com/products/gpio/433-mhz-filtered-low-noise-amplifier-lna-g40db/
+  6.
+    - **Name:** DIY clone: PSA4-5043+ + Akoustis/RFMi SF2446E SAW (435 MHz, 23 MHz BW, 1.9 dB IL) + limiter + HPF in an aluminium box
+    - **Kind:** diy
+    - **Price usd:** about 20-35 BOM (estimate; SF2446E USD 1.65 at DigiKey with 427 in stock; PCB, box, SMA and limiter not costed)
+    - **Spec comparison:** Same MMIC as the current part. The SAW centre (435 MHz, 23 MHz BW) covers 435-438. Filter IL 1.9 dB against about 2.3 dB in the current part. On paper NF could be equal or better
+    - **Worse in:** No measured evidence: the stopband rejection of the SF2446E was not read from its datasheet, and layout, shielding and stability are unproven. The stack's own noise source has no calibrated ENR, so NF of 0.75 dB or better cannot be proven on the bench. No CE DoC. REJECTED under this angle's rule: no measured evidence
+    - **Compatibility:** Could be designed for 4.5 V bias-tee at about 35-50 mA, SMA, about 70 x 40 mm
+    - **Risks:** Build time, unverifiable NF, possible oscillation, solder quality
+    - **Seller url:** https://www.digikey.com/en/products/detail/akoustis-rfmi/SF2446E/25677067
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/akoustis-rfmi/SF2446E/25677067
+      - https://www.minicircuits.com/pdfs/PSA4-5043+.pdf
+  7.
+    - **Name:** vhfdesign LNA-70cm-ATF531-SAW-N-female
+    - **Kind:** other_brand
+    - **Price usd:** not listed (UNVERIFIED)
+    - **Spec comparison:** NF under 0.4 dB at 432 MHz, gain over 22 dB, OIP3 37 dBm, maximum input 24 dBm, -3 dB bandwidth under 20 MHz. Better in RF specs. For 70 cm, NF was checked only by sun-noise and cold-sky comparison; no NF-meter plot is published for 70 cm
+    - **Worse in:** Needs 12 V at 140 mA (8-12 V range). It does not run on ch2 at 4.5 V and would need a new rail. Draws about 3x the current. N-female (SMA on request, with a longer lead time). 72 x 43 x 20 mm, 150 g. Price unknown, likely above the current part. REJECTED: not compatible with the power rails, and not shown to be cheaper
+    - **Compatibility:** Incompatible with the 4.5 V LNA bias bus
+    - **Risks:** Lead time; price unknown
+    - **Seller url:** https://vhfdesign.com/lnas/lna-eme-atf531-for-2m-and-70cm-bands.html
+    - **Sources:**
+      - https://vhfdesign.com/lnas/lna-eme-atf531-for-2m-and-70cm-bands.html
+      - https://community.libre.space/t/rx-only-filtered-lnas-for-vhf-and-uhf-where-to-find/6897
+  8.
+    - **Name:** Uputronics 434 MHz HAB/CubeSAT variant (same family)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** GBP 41.99 (per re-audit C)
+    - **Spec comparison:** Same LNA, limiter and enclosure. 20.25 dB at 434 MHz, 15 MHz SAW
+    - **Worse in:** Only 16.08 dB at 437.67 MHz (-4.2 dB), so it is too narrow for 437.55-437.825. REJECTED (re-audit C already blocks this false economy)
+    - **Compatibility:** Identical
+    - **Risks:** none
+    - **Seller url:** https://store.uputronics.com/products/uputronics-filtered-preamps
+    - **Sources:**
+      - https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808
+  9.
+    - **Name:** Same part (HAB-FPA440, sold as 'Cubesat 435 MHz') from the EU reseller Kubii
+    - **Kind:** current_part
+    - **Price usd:** 74.13 incl. 20 % VAT (EUR 65.95; ex-VAT about 61.78). The EUR 47.64 headline on the page applies to other variants only
+    - **Spec comparison:** Identical part. Kubii's page confirms the 440 MHz SAW with 30 MHz BW, about 2.3 dB IL, NF 0.75 dB, at least 19 dB gain, and the PSA4-5043+ MMIC
+    - **Worse in:** Not cheaper than buying direct. Pre-order only: 'Supplier stock, available within 15 days', back in stock estimated 23 Oct 2026. REJECTED on price
+    - **Compatibility:** Identical
+    - **Risks:** Backorder
+    - **Seller url:** https://www.kubii.com/en/network-modules/3349-lna-amplifier-modules-with-saw-filter-and-single-frequency-3272496306646.html
+    - **Sources:**
+      - https://www.kubii.com/en/network-modules/3349-lna-amplifier-modules-with-saw-filter-and-single-frequency-3272496306646.html
+  10.
+    - **Name:** Used Uputronics 440 unit
+    - **Kind:** used
+    - **Price usd:** none found
+    - **Spec comparison:** No used 440 MHz listing was found. The only eBay hit was an 868 MHz unit at about GBP 25, which is the wrong band
+    - **Worse in:** Not available
+    - **Compatibility:** n/a
+    - **Risks:** n/a
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.ebay.de/itm/116787627464
+- **Notes:** KEEP THE CURRENT PART. Buy it direct from store.uputronics.com (EU storefront, EUR 52.95 + checkout VAT, about USD 59.52 ex-VAT / about 71-72 landed). From angle B (generic, clone, DIY or used, with measured proof), nothing cheaper is not-worse.
+  
+  - **LNA4ALL (about USD 37):** the only cheaper part with independently measured NF. It uses the same PSA4-5043+ MMIC and is better in linearity. But it has no SAW filter, limiter, HPF or enclosure, which costs 42-55 dB of out-of-band rejection in a European RF environment (DVB-T 470+, TETRA 380-400, LTE800/GSM900, FM). No cheap measured 70 cm filter was found to close that gap.
+  - **SPF5189Z and AliExpress 'full band' boards:** no measured NF at 70 cm and unfiltered; the SPF5189Z is EOL, so counterfeit risk.
+  - **Janilab:** NF 1.8 dB.
+  - **GPIO Labs:** passband ends at 436 MHz and is not cheaper once landed.
+  - **DIY PSA4-5043+ + SF2446E:** cannot be proven to NF 0.75 dB without a calibrated ENR source.
+  - **vhfdesign:** needs 12 V at 140 mA.
+  - **Uputronics 434 variant:** too narrow.
+  - **Kubii (same 440 part):** EUR 65.95 incl. VAT, pre-order, not cheaper.
+  - **Used 440 units:** none found.
+  
+  Stack notes:
+  - The module's P1dB and IIP3 are unpublished. The figures above (about -4 dBm IP1dB, +7 dBm IIP3) are a model from the MMIC datasheet at 3 V, assuming the PSA4-5043+ identity stated by Kubii. Measure gain, passband edges and current conducted on the bench as re-audit C already specifies.
+  - The 'budget alternative' LNA V2 + Ham Filter Bank (USD 66.95) costs more than the corrected USD 59.52 price, so it is not a saving either.
+  - Every rejected candidate is receive-only, so no hard rule is affected.
+  
+  Effort: 9 of the 15 allowed WebSearch calls were used, plus WebFetch on primary pages (Uputronics datasheet Rev 3.0, Mini-Circuits PSA4-5043+ Rev D, the Kubii variant refresh endpoint, the LNA4ALL blog, DigiKey, Tindie, SatNOGS wiki and libre.space).
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
