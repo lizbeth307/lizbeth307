@@ -147,7 +147,7 @@
 <text x="26.0" y="569.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">25 MHz → AXING CFA 11-00</text>
 <rect x="325.0" y="503.0" width="140.0" height="58.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
 <text x="331.0" y="521.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">P4 LNB</text>
-<text x="331.0" y="539.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">F, 13.2 V</text>
+<text x="331.0" y="539.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">F, 13.2 / 12.5 V</text>
 <text x="331.0" y="554.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">75 Ohm (SAT)</text>
 <rect x="480.0" y="503.0" width="300.0" height="73.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
 <text x="486.0" y="521.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Усередині: 75 Ohm</text>

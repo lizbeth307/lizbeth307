@@ -61,7 +61,7 @@
 <text x="406.0" y="250.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SMA, 4.5 V назовні</text>
 <rect x="400.0" y="271.0" width="170.0" height="43.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
 <text x="406.0" y="289.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">P4 LNB (ПЧ)</text>
-<text x="406.0" y="307.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">F, 13.2 V</text>
+<text x="406.0" y="307.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">F, 13.2 / 12.5 V</text>
 <rect x="400.0" y="328.0" width="170.0" height="43.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
 <text x="406.0" y="346.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">P8 WIDE/2 m</text>
 <text x="406.0" y="364.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SMA (опційно)</text>
@@ -102,7 +102,7 @@
 <text x="616.0" y="279.0" font-size="13" font-weight="bold" text-anchor="start" fill="#111">Плата інжекторів, 5 каналів + 3× HMC7992 (§2.3, §2.7)</text>
 <text x="616.0" y="297.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">ch1 VHF, ch2 UHF, ch3 L-band: TPS2553DBVR-1, 88.7k</text>
 <text x="616.0" y="312.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">ch4 WIDE: TCBT-2R5G+, RILIM 162k (144-192 mA)</text>
-<text x="616.0" y="327.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">ch5 LNB: 13.2 V від LNB13V2, DC-блок 100 pF C0G</text>
+<text x="616.0" y="327.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">ch5 LNB13V2: 13.2 V (12.5 V з QRO.cz), 100 pF C0G</text>
 <text x="616.0" y="342.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">DC-sense перед кожним увімкненням зміщення</text>
 <text x="616.0" y="357.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">HMC7992-A → RTL-A: RF1 50 Ohm, RF2 VHF-137,</text>
 <text x="616.0" y="372.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">    RF3 UHF, RF4 WIDE/2 m</text>

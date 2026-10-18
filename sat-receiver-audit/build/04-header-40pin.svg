@@ -3,7 +3,7 @@
 <title>04-header-40pin — 40-pin хедер Q6A, v2, 18.10.2026</title>
 <rect x="0" y="0" width="1500" height="1158" fill="#ffffff"/>
 <text x="20" y="32" font-size="16" font-weight="bold" text-anchor="start" fill="#111">P7 · 04 · 40-pin хедер Radxa Dragon Q6A — карта сигналів (кольором — функція)</text>
-<text x="20" y="52" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Джерело: STACK.md v2 §5.2 «40-pin хедер», «Розширювачі», «Pico»; рішення D12. Напрям — з боку Q6A; логіка хедера 3.3 V, транслятор рівня — у дужках.</text>
+<text x="20" y="52" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Джерело: STACK.md v2 §5.2 «40-pin хедер», «Розширювачі», «Pico»; §1.1 C6, D13. Напрям — з боку Q6A; логіка хедера 3.3 V, транслятор рівня — у дужках.</text>
 <rect x="683" y="88" width="94" height="766" rx="6" fill="#212529" stroke="#000"/>
 <text x="730" y="80" font-size="12" font-weight="bold" text-anchor="middle" fill="#111">40-pin Q6A (вид зверху)</text>
 <rect x="691" y="96" width="28" height="28" fill="#f4a261" stroke="#fff" stroke-width="1.5"/>
@@ -30,7 +30,7 @@
 <text x="705" y="190" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">5</text>
 <line x1="689" y1="186" x2="679" y2="186" stroke="#9b5de5" stroke-width="2"/>
 <text x="675" y="183" font-size="13" font-weight="bold" text-anchor="end" fill="#111">GPIO25 (UM3204H) ← INT MCP23017</text>
-<text x="675" y="198" font-size="12" font-weight="normal" text-anchor="end" fill="#333">INTA/INTB віддзеркалені, відкритий стік</text>
+<text x="675" y="198" font-size="12" font-weight="normal" text-anchor="end" fill="#333">INTA/B MCP #3 і #4 — спільна лінія, відкритий стік</text>
 <circle cx="755" cy="186" r="14" fill="#495057" stroke="#fff" stroke-width="1.5"/>
 <text x="755" y="190" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">6</text>
 <line x1="771" y1="186" x2="781" y2="186" stroke="#495057" stroke-width="2"/>
@@ -140,7 +140,7 @@
 <text x="705" y="608" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">27</text>
 <line x1="689" y1="604" x2="679" y2="604" stroke="#4895ef" stroke-width="2"/>
 <text x="675" y="601" font-size="13" font-weight="bold" text-anchor="end" fill="#111">I2C2 (UM3204H), 100 kHz</text>
-<text x="675" y="616" font-size="12" font-weight="normal" text-anchor="end" fill="#333">MCP #1 0x20, #3 0x22, #4 0x23 (призначити)</text>
+<text x="675" y="616" font-size="12" font-weight="normal" text-anchor="end" fill="#333">MCP #1 0x20, #3 0x22, #4 0x23 (призначено)</text>
 <circle cx="755" cy="604" r="14" fill="#4895ef" stroke="#fff" stroke-width="1.5"/>
 <text x="755" y="608" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">28</text>
 <line x1="771" y1="604" x2="781" y2="604" stroke="#4895ef" stroke-width="2"/>
