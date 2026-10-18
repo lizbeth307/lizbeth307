@@ -2722,6 +2722,119 @@
   
   No candidate affects the hard rules: a USB hub is passive with respect to RF, and nothing here transmits.
 
+## searchA:adafruit_mcp23017_5346_0x20_outputs_0x22 (run `wf_071e1025-145`)
+
+- **Part:** Adafruit MCP23017 I2C GPIO Expander Breakout, STEMMA QT (Adafruit 5346), qty 2. #1 at 0x20 drives all outputs; #3 at 0x22 handles inputs plus 2 output-only pins (GPA7/GPB7). Both on Q6A I2C2 (pins 27/28, 100 kHz, behind UM3204H), powered from Q6A 3.3 V, with 100k pull-downs on every line. labd drives them from userspace via smbus2 because PINCTRL_MCP23S08 is not built. INTA/INTB are mirrored, open-drain, and go to header pin 5.
+- **Current price usd:** 11.90 (2 x $5.95 at Adafruit, in stock, verified 18 Oct 2026; Adafruit tiers $5.36 at 10-99, $4.76 at 100+). Adafruit does not include import VAT or shipping to the EU; this assumes the parts ride in the planned single Adafruit order.
+- **Critical specs:**
+  - 16 GPIO per chip; D13 needs about 18 outputs and 12 inputs across 2 chips. On MCP23017, GPA7/GPB7 are output-only (datasheet DS20001952D), which D13 already allows for.
+  - I2C address selectable in 0x20-0x27 so the chips can sit at 0x20 and 0x22. Must not collide with 0x21 (sled MCP23017), 0x48 (ADS1115) or 0x30 (RP2040) on I2C2.
+  - Runs from 3.3 V (Q6A rail). MCP23017 is specified from 1.8 V to 5.5 V; at 3.3 V it is rated -40 to +85 C. The E-grade +125 C rating applies only at 4.5-5.5 V.
+  - Power-on state (safety-critical): all pins high-impedance inputs with internal pull-ups OFF (MCP23017: IODIR=0xFF, GPPU=0), so the 100k pull-downs keep every enable (LNB, bias, AUX12, VBUS, relays) OFF at boot and while Q6A is off.
+  - No internal pull-ups enabled at POR. TCA9555, PCA9555 and PCF8575 fail this because their pins idle high.
+  - Interrupt output: open-drain capable, wire-ORed to header pin 5. Must be latched until read (MCP23017 INTF/INTCAP) so short FAULT/PG pulses from the load switches are not lost.
+  - Input thresholds and limits: Schmitt-trigger inputs (VIH 0.8 VDD, VIL 0.2 VDD). MCP23017 inputs are limited to VDD+0.6 V, so every FAULT/PG pull-up must go to 3.3 V.
+  - Output drive: logic-level enables into load switches, FET gates and relay drivers. MCP23017 limits are 25 mA per pin (abs max), 125 mA into VDD and 150 mA out of VSS.
+  - ESD rating: MCP23017 is 4 kV HBM / 400 V MM.
+  - I2C at 100 kHz. Each board has 10k SDA/SCL pull-ups, so two boards give about 5k effective; this matches the current stack.
+  - Software: the MCP23017 register map, driven from userspace via smbus2 in labd. A different chip means rewriting labd's expander layer. GPIO_PCA953X is built into the held kernel, which helps PCA953x-family parts.
+  - Optional external RESET (exposed on Adafruit 5346, unused in stack v1). Form factor: 43 x 18 mm with 2x STEMMA QT and 0.1 in header.
+  - Genuine silicon from an authorized channel. MCP23017 is AEC-Q100 qualified. Low idle current (MCP23017 standby max 1 uA).
+- **Candidates:**
+  1.
+    - **Name:** Microchip MCP23017T-E/SS (bare chip, SSOP-28, cut tape) x2, placed on the planned custom 2-layer power PCB
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** about 3.4 for 2 (DigiKey $1.69 each at qty 1, $1.40 at 25; 27,989 in stock 18 Oct 2026). Add about $0.10 of passives (2x 100 nF plus address straps). The tube SKU MCP23017-E/SS is 0 in stock until 26 Oct 2026. If it rides the DigiKey order already in the stack (HMC7992), it adds no shipping. EU VAT is added at DigiKey checkout (not verified for this order).
+    - **Spec comparison:** Same silicon as the Adafruit board, so every chip spec is identical: 16 I/O (GPA7/GPB7 output-only), 0x20-0x27, 1.8-5.5 V, POR all inputs with pull-ups off, INTA/INTB open-drain with INTCAP/INTF latching, 4 kV HBM ESD, 25 mA per pin, AEC-Q100. Same register map, so labd needs no change. The designer picks the I2C pull-up values (can keep >=10k). RESET can be routed to the Pico or watchdog if wanted.
+    - **Worse in:** No chip spec is worse. It is a design and assembly change rather than a module: two SSOP-28 footprints (0.65 mm pitch) must be added to the custom power PCB, which is still at model status. It needs fab assembly or good hand soldering. It cannot be swapped in the field like a breakout, and the I2C pull-up/decoupling design becomes our responsibility. It is not-worse only if the power PCB is fab-assembled and bench-tested. Upside: the chips sit next to the load switches, so 16+ flying enable wires go away.
+    - **Compatibility:** Same I2C2 bus, addresses, 3.3 V rail and smbus2 code. Ubuntu 24.04 arm64 is unaffected because it is userspace. It needs a PCB layout revision (adds about 2 x 10.2 x 7.8 mm footprint area). It keeps receive-only and the power-on all-off behavior.
+    - **Risks:** PCB revision and schedule risk. Hand-soldering SSOP-28 is moderately hard. Buy only from authorized distributors (DigiKey, Mouser, Microchip Direct) to avoid counterfeits.
+    - **Seller url:** https://www.digikey.com/en/products/detail/microchip-technology/MCP23017-E-SS/894273
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/microchip-technology/MCP23017-E-SS/894273
+      - https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf
+  2.
+    - **Name:** Waveshare MCP23017 IO Expansion Board (SKU 15391) x2
+    - **Kind:** other_brand
+    - **Price usd:** 10.78 for 2 ($5.39 each at the qty-2 tier on waveshare.com; $5.99 single; $5.09 at 3, $4.97 at 4+; page schema says InStock). Shipping is extra from Waveshare and the saving is only $1.12, so it pays off only when bundled with a Waveshare order the stack already places (e.g. Waveshare 25346 GNSS antenna). EU distributor price not verified.
+    - **Spec comparison:** Same MCP23017 chip, so chip specs are identical: power-on hi-Z inputs, INTCAP latching, 4 kV ESD, same register map. Board details from the Waveshare schematic: 10k SDA/SCL pull-ups (same as Adafruit's 10k); A0-A2 have 10k pull-ups to VCC with solder jumpers to GND (default 0x27; 0x20 means shorting all 3 jumpers, 0x22 means shorting A0 and A2); RESET has an onboard 10k/100nF RC; power LED through 10k (about 0.13 mA); INTA/INTB on the 6-pin PH2.0 connector (VCC, GND, SDA, SCL, INTA, INTB). Size 38 x 23 mm with 2.0 mm mounting holes. A PH2.0 cable is included.
+    - **Worse in:** 1) RESET is not broken out (RC only). It is unused in stack v1 but is lost as an option. 2) Extra quiescent current from the address pull-ups: about 1.0 mA on #1 (0x20, 3 jumpers) and about 0.66 mA on #3 (0x22, 2 jumpers) at 3.3 V, about 5 mW total. Choosing 0x27/0x25 instead would cut this, but that changes the address map. 3) The board is 5 mm wider (23 vs 18 mm). 4) No STEMMA QT, so it needs PH2.0 or soldered wiring. 5) The chip grade is not stated; at 3.3 V both I and E grades are rated to 85 C, so this makes no practical difference. 6) The product page claims an 'onboard voltage translator', but the schematic shows none, so I/O swings at VCC exactly as on the Adafruit board. Strictly, it is NOT 'not-worse' because of items 1-2, though both are minor.
+    - **Compatibility:** Same register map, addresses and 3.3 V supply. No change to labd or the kernel. It needs jumper soldering and PH2.0 or header wiring. Fit in the enclosure is not checked against the +5 mm width.
+    - **Risks:** Waveshare is an established brand; I found no independent measurements. Shipping cost can cancel the $1.12 saving. The qty tier pricing should be confirmed in the cart.
+    - **Seller url:** https://www.waveshare.com/mcp23017-io-expansion-board.htm
+    - **Sources:**
+      - https://www.waveshare.com/mcp23017-io-expansion-board.htm
+      - https://www.waveshare.com/wiki/MCP23017_IO_Expansion_Board
+      - https://www.waveshare.com/w/upload/5/54/MCP23017-IO-Expansion-Board-Schematic.pdf
+  3.
+    - **Name:** NXP PCAL9535A (PCAL9535APW,118 TSSOP-24 or PCAL9535AHF,128 HWQFN-24) x2 on the custom power PCB
+    - **Kind:** other_brand
+    - **Price usd:** 5.02-5.32 for 2 (DigiKey qty-1 prices: $2.51 HWQFN, 5,648 in stock; $2.66 TSSOP, 8,593 in stock) plus passives. This is more than option 1 (bare MCP23017 at about $3.4), which it does not beat.
+    - **Spec comparison:** Better on several points: all 16 I/O bidirectional (no GPA7/GPB7 limit), 5 V tolerant I/O, single INT always open-drain, interrupts masked at POR. Equal: POR all inputs; pull-up/pull-down enable registers default 00h (disabled) so the 100k pull-downs work; input-latch registers keep changes until read (comparable to INTCAP); interrupt status and mask registers; hardware RESET pin; 25 mA sink; VDD 1.65-5.5 V; 400 kHz; addresses 0x20-0x27; -40 to +85 C (same as MCP23017 at 3.3 V). Kernel gpio-pca953x (built in) supports nxp,pcal9535 as an option.
+    - **Worse in:** ESD is 2000 V HBM / 1000 V CDM, versus 4 kV HBM for MCP23017. The register map is different, so labd's expander layer must be rewritten and retested. It is a bare chip with the same PCB caveats as option 1. The datasheet I read is Rev. 2 (Jan 2015); lifecycle status not checked.
+    - **Compatibility:** Same bus and addresses, 3.3 V. Works from userspace smbus2 or the built-in gpio-pca953x driver (only one of the two may own the device). Needs a PCB layout change.
+    - **Risks:** ESD is lower on paper; lines that leave the enclosure (e.g. sled presence) would need a series R or TVS. Software port effort.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=PCAL9535A
+    - **Sources:**
+      - https://www.nxp.com/docs/en/data-sheet/PCAL9535A.pdf
+      - https://www.digikey.com/en/products/result?keywords=PCAL9535A
+  4.
+    - **Name:** TI TCA9535PWR (bare chip, TSSOP-24) x2 on the custom power PCB (the budget alternative already in STACK D13)
+    - **Kind:** other_brand
+    - **Price usd:** 4.00 for 2 at qty 1 ($2.00 each; $1.469 at qty 10; DigiKey 296-25129-1-ND, 36,887 in stock). That is MORE than bare MCP23017T-E/SS ($1.69).
+    - **Spec comparison:** POR all inputs; no internal pull-ups (unlike TCA9555); 5 V tolerant I/O; all 16 pins bidirectional; open-drain INT; VCC 1.65-5.5 V; 400 kHz; addresses 0x20-0x27; IOL 25 mA at Tj<=65 C; IOH -10 mA; VOH 2.6 V min at 3 V and -8 mA. Datasheet SCPS201F (Sep 2026) lists TA -40 to 125 C, while the TI product page still says -40 to 85 C. Supported by the built-in gpio-pca953x.
+    - **Worse in:** 1) The interrupt is NOT latched: the TI datasheet says INT resets 'when data on the port is changed to the original setting', so a FAULT/PG pulse that ends before labd reads it is lost. MCP23017 holds INTF/INTCAP until read. 2) No RESET pin. 3) ESD is +/-2000 V HBM and +/-1000 V CDM, versus 4 kV HBM. 4) The register map is different (labd rewrite). 5) It is a bare chip (PCB change). So it is WORSE and stays budget-only. It is also not cheaper than bare MCP23017.
+    - **Compatibility:** Same bus and addresses, 3.3 V; kernel driver built in. Needs a labd change and a PCB layout change.
+    - **Risks:** Lost fault events; lower ESD.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=TCA9535PWR
+    - **Sources:**
+      - https://www.ti.com/product/TCA9535
+      - https://www.ti.com/lit/ds/symlink/tca9535.pdf
+      - https://www.digikey.com/en/products/result?keywords=TCA9535PWR
+  5.
+    - **Name:** Adafruit AW9523 GPIO Expander and LED Driver Breakout, STEMMA QT (Adafruit 4886) x2
+    - **Kind:** other_brand
+    - **Price usd:** 9.90 for 2 ($4.95 each, in stock at Adafruit)
+    - **Spec comparison:** 16 I/O, STEMMA QT, VDD 2.5-5.5 V, addresses 0x58-0x5B (no collision), low-active IRQ with 8 us deglitch, 10k-pulled RST pin, no internal pull-ups, constant-current LED mode (not needed). 38 x 17.8 mm.
+    - **Worse in:** Fails the power-on safety spec. Adafruit states 'The default setup is all pins output and set to LOW' and that the I2C address sets the initial boot state, so the second chip at a different address may boot differently (not verified). Outputs driven at POR contend with push-pull PG/FAULT inputs on the input chip until labd reconfigures it. Port 0 is open-drain by default. Adafruit publishes no per-pin current spec. There is no INTCAP-style latch, and the register map is different. Rejected.
+    - **Compatibility:** Userspace only (pinctrl-aw9523 is not confirmed in the held kernel). Needs a labd rewrite.
+    - **Risks:** Boot-state ambiguity; thinner documentation (Awinic).
+    - **Seller url:** https://www.adafruit.com/product/4886
+    - **Sources:**
+      - https://www.adafruit.com/product/4886
+      - https://learn.adafruit.com/adafruit-aw9523-gpio-expander-and-led-driver/pinouts
+  6.
+    - **Name:** Adafruit 5346 (same part) from EU sellers: Berrybase ADA5346 / Botland ADA-21037
+    - **Kind:** current_part
+    - **Price usd:** Berrybase EUR 5.90 incl. 19% DE VAT (EUR 4.96 net), currently not available. Botland EUR 7.99 incl. VAT (EUR 6.72 net), currently unavailable. In USD neither beats $5.95, but Berrybase undercuts Adafruit once EU import VAT and shipping are added (exchange rate not verified).
+    - **Spec comparison:** Identical part.
+    - **Worse in:** Nothing in specs. Both are out of stock as of 18 Oct 2026.
+    - **Compatibility:** Identical.
+    - **Risks:** Stock.
+    - **Seller url:** https://www.berrybase.de/en/adafruit-mcp23017-i2c-gpio-expander-breakout
+    - **Sources:**
+      - https://www.berrybase.de/en/adafruit-mcp23017-i2c-gpio-expander-breakout
+      - https://botland.store/expanders-extension-modules/21037-mcp23017-module-gpio-pin-expander-16-channel-i2c-stemma-qt-qwiic-adafruit-5346.html
+- **Notes:** VERDICT: no cheaper ready-made module is strictly not-worse.
+  - The cheapest option with no spec loss is the same silicon as a bare chip: Microchip MCP23017T-E/SS x2 (about $3.4 + passives vs $11.90, saving about $8.4) on the custom power PCB. It is not-worse only if that PCB is fab-assembled and bench-tested. The upside is that the 16+ enable lines go away as flying wires.
+  - If the user wants modules (no PCB change), KEEP Adafruit 5346.
+  - The Waveshare 15391 saves only $1.12 for 2 and is marginally worse: RESET is not broken out, and its address pull-ups draw about 1.7 mA extra at 0x20/0x22. Use it only when bundled with an existing Waveshare order, and only if the user accepts those two deltas.
+  - PCAL9535A matches or beats MCP23017 functionally (all 16 pins bidirectional, 5 V tolerant, latched inputs, RESET, built-in kernel driver). It is worse in ESD rating (2 kV vs 4 kV HBM) and costs more than bare MCP23017.
+  - TCA9535 (the STACK D13 budget alternative) is WORSE, not equivalent: its interrupt is non-latched (short FAULT pulses lost), it has no RESET, and ESD is 2 kV. Keep it labelled budget-only. It is also not cheaper than bare MCP23017.
+  
+  Rejected, not cheaper or worse:
+  - Adafruit PCF8575 5611: same $5.95. Quasi-bidirectional; TI says 'At power on, the I/Os are high', which fights the 100k pull-downs, so enables could come up ON.
+  - Adafruit 732 (MCP23017 DIP): $6.95, dearer than the breakout.
+  - SparkFun Qwiic GPIO DEV-17047 (TCA9534): $6.75 for only 8 I/O.
+  - Any TCA9555/PCA9555 (internal 100k pull-ups at POR).
+  - Kiwi Electronics lists a bare MCP23017 DIP at EUR 2.49 ex VAT, out of stock. Usable only on a PCB, not hand-wired perfboard.
+  
+  Verification limits:
+  - The tool reported the WebSearch budget used up on my first call, so I made 0 successful web searches. Coverage of TME, Farnell, Mouser (HTTP 503), LCSC (page did not render), Pimoroni, The Pi Hut and Electrokit is missing, as are the prices of DFRobot DFR0626 and SparkFun SX1509. All prices above come from WebFetch of the seller pages on 18 Oct 2026.
+  - Datasheets read: MCP23017 DS20001952D, TCA9535 SCPS201F, PCAL9535A Rev. 2, plus the Waveshare schematic.
+  - No independent bench measurements exist for any of these boards. That matters little for a digital expander; the datasheets govern.
+  - Software note: any non-MCP23017 chip needs a labd port and a re-test of the power-on all-off behavior.
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
