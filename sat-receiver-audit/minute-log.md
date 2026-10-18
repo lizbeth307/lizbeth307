@@ -821,3 +821,31 @@ P4, A (правило «без приватного змісту», SDRangel): S
 - потужність каналу.
 Heat map вимкнено (правило «без геолокації»). Записав як пункт №33 в operator_notes. Джерело: SDRangel, plugins/channelrx/CMakeLists.txt (за агентом A).
 
+## 2026-10-18 10:30 UTC
+
+**P4: група A (обчислення, ПЗ, меню, NPU) ЗАВЕРШЕНА.** 12 агентів, впевненість medium. Результат: final/reaudit_A_compute_software.json. Маркер «password» трапився двічі, але це рекомендація «admin password set» для OpenWebRX+, тобто безпечно. Головне:
+- **Q6A, ОС**
+  - 6.18.2-4 лежить лише в GitHub-релізі; deb ядра побайтово збігається з офіційним. Твердження «6.18.2-4 більше не можна завантажити» спростовано: з релізу можна. Але в apt його немає, тож архівувати обов'язково (пункт №29 у силі). NPU-успіхи спільноти є лише на 6.18.2-3, тому 6.18.2-3 теж архівувати.
+  - Перепрошивка BIOS (setup.sh update_spinor) стирає весь /dev/mtd0 і пише загальний CDT, тож дані конкретної плати губляться. Повний дамп SPI перед будь-яким прошиванням ОБОВ'ЯЗКОВИЙ. edk2 0.1.0-5 з r2 уже містить 260120, оновлювати BIOS не треба.
+  - Пакет radxa-system-config-kernel-cmdline-ttymsm0 0.7.4 у postinst дописує clk_ignore_unused і перезапускає kernel-install. Тому всі radxa-system-config-* утримувати на 0.6.30.
+  - Інші шляхи неконтрольованого оновлення: qcom-iot-defaults → dragonwing-defaults; firmware-qcom-hlosfw; qcom-qnn-sdk-v68 залежить від fastrpc-dev без версії.
+  - Watchdog Gunyah можна зібрати поза деревом ядра одним модулем, бо символи експортовано. Це спростовує етап 1 і мій пункт №3: Pico лишається запасом, а не єдиним watchdog.
+  - Ядро не знижує частоту NPU: у термозон NSP/DDR є лише «hot» 90 °C і «critical» 110 °C. Стежити за ними має застосунок.
+  - embloader не рахує спроби завантаження (підтверджено). systemd-boot 255 не має ключа devicetree-overlay.
+- **ПЗ**
+  - Плагіни SatDump sdr_sources і apps вмикаються за замовчуванням, поза PLUGINS_ALL. Серед них TX-стоки HackRF/BladeRF, webhook, remote_sdr, sdrpp_server, spyserver, rtltcp.
+  - REST/WebSocket SDRangel (порт 8091) за замовчуванням слухає на всіх інтерфейсах, без автентифікації.
+  - SDRangel за замовчуванням вмикає demodm17/freedv, chirpchat (LoRa), demoddsc (усі виклики з MMSI), demodadsb/ais без наших фільтрів, feature/sid (VLF флоту), samplemimo/audiocatsiso (TX через звукову карту з CAT PTT).
+  - OpenWebRX+ 1.2.123+ має Whisper (мова → текст), експорт по MQTT з GPS і ADS-B без військового фільтра. Вимикати режими через конфіг у 1.2.126 НЕ МОЖНА: режим з'являється, щойно є його залежність. Тому дозволений список означає не ставити залежності, а мої пункти №31–33 треба посилити.
+  - У readsb --db-file за замовчуванням не задано, тоді dbFlags=0, і фільтр військових мовчки не працює. Потрібен --db-file і net-bind на localhost.
+- **Меню**
+  - greetd завершується, якщо сесія за замовчуванням вийшла, а StartLimitBurst=5 за 30 с дає чорний екран при циклі падінь. Потрібна обгортка з перезапуском усередині.
+  - DevicePolicy=closed блокує /dev/dri/renderD128, тож для GUI-юнітів його треба явно дозволити.
+- **NPU**
+  - Набір DSP брати з radxa-firmware-qcs6490, а не з hexagon-dsp-binaries.
+  - vtcm_mb=2 ставити явно, інакше помилка 0x138d.
+  - soc_model 35 (а не 93).
+  - Повторної квантизації на пристрої немає (T2b переходить на домашній ПК).
+  - AIMET, TorchSig і конвертер QAIRT тримати в окремих середовищах (numpy 1.26 проти ≥2).
+Джерела: див. final/reaudit_A_compute_software.json (radxa-pkg, dl.radxa.com, apt-індекси Radxa, radxa/kernel 6.18.2, forum.radxa.com ~35 тем, SatDump, SDRangel, OpenWebRX+, readsb, labwc, greetd, systemd, QAIRT 2.42 SDK).
+
