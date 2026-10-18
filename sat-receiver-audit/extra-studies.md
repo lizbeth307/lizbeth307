@@ -25974,6 +25974,130 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - The travel sentence «Pelican можна здати в багаж» is still in the file. I left it for change 121 (G6), even though the bench case is now named B&W.
   - Several batch-3 anchors have moved because of these edits (changes 87, 88, 89, 95, 97, 103, 104, 106, 120, 121, 122). Those changes will have to find their place by part name.
 
+## edit:11f_changes_operator_totals:b2 (run `wf_64e39fc3-0f9`)
+
+- **Section:** 11f_changes_operator_totals: 11.6 Нотатки оператора і рішення користувача (merge of batch 2) + new 11.7 Підсумок економії
+- **Applied:**
+  - 93
+  - 94
+  - 95
+  - 96
+  - 97
+  - 98
+  - 99
+  - 100
+  - 101
+  - 102
+  - 103
+  - 104
+  - 105
+  - 106
+  - 107
+  - 108
+  - 109
+  - 110
+  - 111
+  - 112
+  - 113
+  - 114
+  - 115
+  - 116
+  - 117
+  - 118
+  - 119
+  - 120
+  - 121
+  - 122
+  - 123
+  - 124
+  - 125
+  - 126
+  - 127
+  - 128
+  - 129
+  - 130
+  - 131
+  - 132
+  - 133
+  - 134
+  - 135
+  - 136
+  - 137
+  - 138
+  - 139
+  - 140
+  - 141
+  - 142
+  - 143
+  - 144
+  - 145
+  - 146
+  - 147
+  - 148
+  - 149
+  - 150
+  - 151
+  - 152
+  - 153
+  - 154
+  - 155
+  - 156
+  - 157
+  - 158
+  - 159
+  - 160
+  - 161
+  - 162
+  - 163
+  - 164
+  - 165
+  - 166
+  - 167
+  - 168
+  - 169
+  - 170
+  - 171
+  - 172
+  - 173
+  - 174
+  - 175
+  - 176
+  - 177
+  - 178
+  - 179
+  - 180
+  - 181
+  - 182
+  - 183
+  - 184
+- **Skipped:** []
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/11f_changes_operator_totals.md, using Edit, and kept all of batch 1's rows.
+  
+  **How the merge worked.** Each change was treated as an entry, not an edit to the part files. I added it to the 11.6 row of the note or user decision it comes from (Р1-Р11 for the decisions). Two things went into each row:
+  - The section where v2 now shows the change: 5.2, 5.3, 5.4, 5.5, 5.7, 5.8, 6.1, 6.2, 7 (by item number), 8, 9.1/9.2 (by step) and 10. I checked every reference by grepping the current part files; all 92 changes are present there.
+  - Any detail the row was missing. Examples: the exact SatDump allowlist from re-audit C (Meteor-M/MetOp/AWS/FengYun-2/Elektro_Arktika, no GOES/GK-2A/FY-4 in the Europe build); the decoder-isolation paragraph and the FileReceiver CI test; the T7 taking no ring overflow while deauthorized; the Lime EN 100k pull-down and PCIe rescan; the Europe L-band A/B order (Elektro-L3 at 14.5W, FY-2H/L5 only east of about 13E); the USB-map default column and CH334F #2 at H1; the cmdline, IQ-ring, J21 and weight defaults; the 8 answers to Q1, Q4 and Q9; the 9.1/9.2 step changes.
+  
+  Changes that said the same thing were merged into one entry rather than repeated. For example, 94, 113 and 137-139 all go into the note 7 row; 102, 130 and 160 into the 12/12b/12c rows; 110/116/115/161 into note 27.
+  
+  **Conflict.** In idx 169, the UK formula for Leo Bodnar (above EUR 150: normal duty, import VAT and UHF) conflicts with the P5 G6 #0 decision. Under the brief's precedence, P5 decides the seller, so P5 won. The note 35 row now says to order in the "European Union" region, shipped from France with duty and taxes paid (EUR 171.76 in DE = $193.08). The UK formula applies only to a UK order. The rest of idx 169 (The Pi Hut ships to the EU by DHL Express only) was applied.
+  
+  **Small differences.**
+  - idx 160: section 8 uses re-audit B's longer retune sequence (7 → 137.1 → 145.8 → 437.55 → 1090 → 7 MHz). Both sequences are now in the note 12c row.
+  - idx 151: section 7 numbers its new corrections 37-59 differently from the change text, so the rows cite the real numbers: 37, 41, 42, 47, 50-53, 58, 59. Note 22 has no correction item in section 7; it is in 6.2.
+  
+  **11.7 (new).** Computed from saving_usd and decision in final/analogs_G1-G6.json: 78 decisions, 43 keep and 35 replace_conditionally, no unconditional replacements.
+  - **Firm saving ≈$55.62:** device $37.67, lab $17.95. It covers 8 items; the biggest are D36V50F12 at Botland $20.82, Anker 737 at MediaMarkt $16.70 and D36V28F5 at Botland $6.82.
+  - **Not in the firm total:**
+    - $23.91 saved against P4 prices rather than v1: G3 #9 $6.10, G3 #10 $0.60, G5 #14 $17.21.
+    - The G6 #1 $39.95 landed saving only exists if the Pro Stick Plus shares a Pi Hut order. Under G2 #5 and G5 #13 the Pico and the bench hub are no longer bought at the Pi Hut, so it probably does not apply in v2 (marked as my inference).
+  - **UFS (G2 #0) is counted as conditional, 0-12.02,** not firm. 9.1 has the UFS out of stock and possibly shipping as a separate parcel, which can cancel the saving.
+  - **Conditional saving ≈$413-717** (413.48-717.31, 38 items). Without the optional/gated items (Airspy Mini, D36V28F5 #2, AD8318: 43.88-87.64) it is ≈$370-630 (369.60-629.67): device 158.71-322.68, lab 210.89-306.99.
+  - A table lists the 21 biggest conditional items (≈359-645); the other 17 come to 54.36-72.34.
+  - A paragraph lists the price rises, which are not savings (G5 #3, G6 #0, G6 #9, G5 #5, G4 #2, G3 #15, G3 #13, G4 #5; the G1 #3 drop is only a change of price basis).
+  - It ends by pointing to 2.12 (device) and 3.6 (lab) for the totals. Those totals are built from rows that already carry the P5 prices, so the 11.7 amounts are not subtracted from them a second time.
+  
+  All 11.7 sums are mine and marked as estimates; I checked them with a script. The table column counts in the file are consistent.
+
 ## edit:02c_bom_display_power_gnss:b1 (run `wf_85b20a83-f63`)
 
 - **Section:** 02c_bom_display_power_gnss
