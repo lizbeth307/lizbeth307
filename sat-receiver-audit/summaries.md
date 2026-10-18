@@ -6283,3 +6283,14 @@ P6 перейшла до правки розділів. З 11 джерел зі�
 
 ---
 
+### 🧑 Повідомлення користувача — 2026-10-18 22:01:22 UTC
+
+> Stop hook feedback:
+> [~/.claude/stop-hook-git-check.sh]: There are uncommitted changes in the repository. Please commit and push these changes to the remote branch.
+
+### 🤖 Зведення #249 — 2026-10-18 22:01:31 UTC
+
+Поточні правки агентів закомічено й запушено (коміт cb3ff0a), робоче дерево чисте. Агенти ще редагують STACK.md, тож нові зміни з'являтимуться, і я комічу їх на кожному тіку.
+
+---
+
