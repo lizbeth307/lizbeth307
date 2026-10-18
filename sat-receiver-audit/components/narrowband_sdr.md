@@ -204,6 +204,223 @@ _Run `wf_eb446444-464`_
   - The RTL-SDR Blog V3 dipole kit ($44.95-49.95) bundles the V-dipole antenna listed in the antenna BOM. If you buy the V4L dongle-only, buy the $17.95 dipole kit separately.
 - **Confidence:** high
 
+_Run `wf_feb0e95a-cfc`_
+
+- **Subsystem:** narrowband_sdr (RTL-SDR Blog V4L x2 + spare: RTL-A VHF/UHF, RTL-B L-band/LNB IF, spare on LAB USB)
+- **Findings:**
+  1.
+    - **Claim in stack:** Part/model: RTL-SDR Blog V4L (R828S + RTL2832U, 1 ppm TCXO), 3 units (RTL-A, RTL-B, spare); 500 kHz-1.766 GHz; 2.56 Msps stable; 250-270 mA (~1.3 W); bias tee 4.5 V/180 mA; RX-only
+    - **Finding:** Datasheet V1.0 (PDF created 2026-08-11) lists: R828S, RTL2832U 8-bit, 500 kHz-1.766 GHz, '2.56 MHz stable (up to 3.2 MHz with drops)', 250-270 mA, HF upconverter with 28.8 MHz LO, 1 PPM TCXO, bias tee 4.5 V/180 mA (software switchable), aluminium case with thermal pad, diplexer front end, 'Transmit Capability: None'. The 1.3 W figure is derived: 5 V x 0.25-0.27 A = 1.25-1.35 W. The hardware cannot transmit, so the RX-only rule is met. The datasheet has a typo ('better sensitivity than the V4L' should read V4).
+    - **Verdict:** confirmed
+    - **Action:** Keep the part and the specs as written.
+    - **Impact:** Basis of the whole VHF/UHF/L-band receive chain.
+    - **Sources:**
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-v4l-lite-r828s-rtl2832u-1ppm-tcxo-sma-software-defined-radio-dongle-only/
+  2.
+    - **Claim in stack:** Price $37.95 each, $113.85 for 3; '455 in stock' at the official store; R828S out of production, so buy now
+    - **Finding:** Live product page on 2026-10-18: 'USD $37.95', '455 in stock'. A search-engine snapshot from an earlier date showed '105 in stock', so the count moves between batches. The launch post says the V4L is 'a limited edition product', relies on 'a large stockpile of a chip that is no longer in production', and the stockpile should 'last about one year' (from about Aug 2026). First batches ship only from the China warehouse. The V4 is EOL: the R828D stockpile is gone and the last chips were faulty. A V5 is in early design, with no news expected until 2027.
+    - **Verdict:** confirmed
+    - **Action:** Order all 3 now. Totals exclude shipping, VAT and US tariffs.
+    - **Impact:** After about mid/late 2027 the only like-for-like replacement is the V3, until a V5 exists.
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-v4l-lite-r828s-rtl2832u-1ppm-tcxo-sma-software-defined-radio-dongle-only/
+      - https://www.rtl-sdr.com/rtl-sdr-blog-v4l-lite-now-available-for-purchase/
+      - https://www.rtl-sdr.com/rtl-sdr-blog-v4-end-of-line/
+  3.
+    - **Claim in stack:** Channels: official store (not EU); EU buyers use official eBay or AliExpress 4523039; US buyers should prefer 'RTL-SDR Blog on Amazon USA' (customs section, line 1132)
+    - **Finding:** The store does not ship to the EU (VAT compliance) and excludes RU/BY/IR/KP. The official channels are eBay 'rtl-sdr-blog' and AliExpress 'RTLSDRBlog Store' No. 4523039 (alt. No. 1101427871). For the V4L, the store page says 'Amazon USA warehouse not stocked yet'; the kit is 'expected in 2-3 months'. I could not verify the eBay and AliExpress V4L prices (eBay showed a bot wall; the AliExpress page came back empty), so the earlier '$34.20 on AliExpress' is unverified. sdrstore.eu asks EUR 83.44 and is out of stock.
+    - **Verdict:** corrected
+    - **Action:** Line 1132: the V4L is not on Amazon USA yet. US buyers order from the store (China warehouse) and check tariff and de minimis rules. EU buyers keep using eBay or AliExpress 4523039/1101427871. Recheck Amazon US before ordering.
+    - **Impact:** Changes US lead time and duties only.
+    - **Sources:**
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+      - https://www.rtl-sdr.com/GENUINE
+      - https://www.sdrstore.eu/software-defined-radio/instruments/rtl-sdr/rtl-sdr-blog-v4l-lite-r828s-sdr-dongle-500khz1-766ghz/
+  4.
+    - **Claim in stack:** Counterfeit risk high: official channels only; no blue cases, no 'Pro', no 'V4' copies; the driver prints 'RTL-SDR Blog V4 Lite Detected' as the W1-2 check
+    - **Finding:** The official guidance confirms this. Blue or green cases, square silver 4-screw cases and 'Pro' listings are fakes. Cloned black cases have horizontal side screws; genuine ones have diagonal screws. V4 fakes are a V3-clone board in a copied case. Detection in osmocom is purely string-based: strcmp on the EEPROM strings 'RTLSDRBlog'/'Blog V4L', after the R828S answers as an R820T. A clone with copied EEPROM strings would therefore also print 'V4 Lite Detected'.
+    - **Verdict:** confirmed
+    - **Action:** Add an incoming genuineness test. With direct sampling OFF, a genuine V4L hears HF broadcast or time signals at 5-15 MHz through its upconverter; a V3-clone board cannot. Also check the screw orientation.
+    - **Impact:** Stops a fake unit from entering the build.
+    - **Sources:**
+      - https://www.rtl-sdr.com/GENUINE
+      - https://www.rtl-sdr.com/rtl-sdr-blog-v4-end-of-line/
+      - https://github.com/osmocom/rtl-sdr/commit/0204c9cfb1c5ff7bd64f466ce5b8fe53b40a636a
+  5.
+    - **Claim in stack:** Gain/overload: the V4L desense threshold is -20...-40 dBm at 300-1600 MHz (95 MHz blocker), so the filter goes first on VHF (C10) and a 15/20 dB attenuator on the LNB IF; RTL gain about 10-25 dB behind the SAWbird+ NOAA
+    - **Finding:** Read from the datasheet two-tone chart for a 95 MHz blocker. V3 and V4L are identical: -12 dBm at 50-160 MHz, -20 at 300, -24 at 400-600, -27 at 800, -28 at 1000, -30 at 1200 and -40 dBm at 1600 MHz. The V4 is -7 dBm at 50-160 MHz and +8 dBm at 300-1400 MHz. At the 739.5 MHz LNB IF the V4L threshold is about -26 dBm. The R828S has no open_d pin, so there is no FM notch. MDS from the chart (500 Hz): about -140.7 dBm at 100-550 MHz, about -133 at 1.0-1.5 GHz, about -130 at 1.7 GHz. Implied NF (model, 3 dB MDS): about 3.3 dB at VHF/UHF and about 14 dB at 1.7 GHz, which a 30-40 dB LNA in front makes negligible. Comparing a single-CW-blocker chart with broadband LNB noise is a model, not a measurement.
+    - **Verdict:** confirmed
+    - **Action:** Keep C10 and the LNB attenuator. Record the -12 dBm figure for the 137 MHz path in the gain plan.
+    - **Impact:** Confirms the filter-first topology.
+    - **Sources:**
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+      - https://www.rtl-sdr.com/rtl-sdr-blog-v4l-lite-now-available-for-purchase/
+  6.
+    - **Claim in stack:** Spare V4L on LAB USB with bare whiskers for radiosondes (17.7 cm, 400-406 MHz) and ADS-B (6.5 cm), with no filter named in that path
+    - **Finding:** The V4L has no FM/AM/DAB notches and no VHF/UHF triplexer. With a 95 MHz blocker, 3 dB desense starts at about -24 dBm at 400 MHz and about -29 dBm near 1090 MHz. A handheld whip near a high-power FM site can reach those levels. Neither the spare-on-LAB-USB rows nor the C10 decision (filter first on VHF-137 and on P8 WIDE only) put an FM filter in this path.
+    - **Verdict:** new_risk
+    - **Action:** Add an inline FM band-stop to the spare V4L kit: the RTL-SDR Blog FM band-stop ($16.95, in stock) or Flamingo+ #2. The spare's tee is off, so the band-stop's missing DC rating does not matter.
+    - **Impact:** Moderate near FM transmitters, otherwise low.
+    - **Sources:**
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+      - https://www.rtl-sdr.com/store/
+  7.
+    - **Claim in stack:** C11 driver: rebuild noble 2.0.1-2build1 with commits 0204c9c (R828S) and 65f0658 (USB hang), fix the zerocopy typo, keep SONAME .so.2 with apt-mark hold; blacklist dvb_usb_rtl28xxu; W1-2 must show 'RTL-SDR Blog V4 Lite Detected'
+    - **Finding:** Both commits exist in osmocom/rtl-sdr: 0204c9c (2026-05-01, 'Add RTL-SDR Blog V4L Support') and 65f0658 (2026-01-10, 'Fix application hang on USB transfer errors'). I cherry-picked both onto tag v2.0.1 without conflicts and built librtlsdr.so.2.0.1 with SONAME librtlsdr.so.2 (amd64 only; arm64 not built). The exact log string is 'RTL-SDR Blog V4 Lite Detected', printed after 'Found Rafael Micro R820T tuner'. The zerocopy typo is real: noble's debian/rules (2.0.1-2build1 tarball) and Debian 2.0.3-1 both pass -DENABLE_ZEROCOPY=$DEB_ZEROCOPY_OPTION. Make expands that to 'EB_ZEROCOPY_OPTION' (I reproduced it), which CMake treats as true. Keeping .so.2 is required: the OpenWebRX+ noble repo packages rtl-connector 0.6.5, rtl-433 25.12-1, dump1090-fa-minimal 8.2-1, acarsdec, dumpvdl2 and nrsc5 all Depend on librtlsdr2 (>= 2.0.1). The packaging already ships the dvb_usb_rtl28xxu/rtl2832/e4000 blacklist and plugdev udev rules.
+    - **Verdict:** confirmed
+    - **Action:** Keep C11, with the bias-patch correction in the next finding. Use $(DEB_ZEROCOPY_OPTION), or pass OFF explicitly. Run the arm64 build in W1-2.
+    - **Impact:** The core driver path works; an upstream librtlsdr0 install would remove the OpenWebRX+/rtl-433/dump1090 packages.
+    - **Sources:**
+      - https://github.com/osmocom/rtl-sdr/commit/0204c9cfb1c5ff7bd64f466ce5b8fe53b40a636a
+      - https://github.com/osmocom/rtl-sdr/commit/65f06585ea46160cd2d7bee8b3f641c14771c2ee
+      - http://archive.ubuntu.com/ubuntu/pool/universe/r/rtl-sdr/rtl-sdr_2.0.1-2build1.debian.tar.xz
+      - https://sources.debian.org/data/main/r/rtl-sdr/2.0.3-1/debian/rules
+      - https://luarvique.github.io/ppa/noble/Packages
+  8.
+    - **Claim in stack:** C11 bias-tee token: 'rtlsdr_set_bias_tee() and rtlsdr_set_bias_tee_gpio() refuse "on" unless LAB_BIAS_OK equals the device serial'
+    - **Finding:** As written, this breaks VHF/UHF on the V4L, and on the V4. On every HF to VHF/UHF band change, r82xx_set_freq() calls rtlsdr_set_bias_tee_gpio(priv->rtl_dev, 5, !cable_1_in), i.e. GPIO 5 'on'; GPIO 5 is the upconverter switch ('newer batches'). The bias tee itself is GPIO 0. If that call returns <0, the code jumps to err after priv->input = band has already been set. The input-select registers are never written, and later tunes in the same band skip the switch. Result: 'r82xx_set_freq: failed' and a receiver that is deaf above 28.8 MHz. Also, the core V4Ls sit behind DC blocks (C9/line 692), so their tee cannot reach an antenna anyway; the token really matters only for the spare.
+    - **Verdict:** corrected
+    - **Action:** Gate only gpio==0 (rtlsdr_set_bias_tee and rtlsdr_set_bias_tee_gpio with gpio 0) and pass every other GPIO through unchanged. CI test with LAB_BIAS_OK unset: tune 137.9 -> 1700 -> 7 -> 437 MHz, require no 'r82xx_set_freq: failed', require signal at 437 MHz, require that a bias-on request is refused.
+    - **Impact:** High. The patch as specified would make both core receivers deaf on VHF/UHF/L-band.
+    - **Sources:**
+      - https://github.com/osmocom/rtl-sdr/blob/v2.0.3/src/tuner_r82xx.c
+      - https://github.com/osmocom/rtl-sdr/blob/v2.0.3/src/librtlsdr.c
+      - https://github.com/osmocom/rtl-sdr/commit/0204c9cfb1c5ff7bd64f466ce5b8fe53b40a636a
+  9.
+    - **Claim in stack:** C11 base version: noble 2.0.1 plus two cherry-picks
+    - **Finding:** osmocom v2.0.3 was released 2026-08-12 and contains 0204c9c, 65f0658, the r82xx tuning-speed commits (2acb75c, 0b64f07, f5978e8) and the gain-rounding fix d81ef9a. Reverting 7ebcb04 ('set SOVERSION back to 0') makes 2.0.3 build librtlsdr.so.2; I built it and it exports the same 37 rtlsdr_* symbols as the patched 2.0.1, with no header/API change between 2.0.1 and 2.0.3. 0204c9c was written on top of the fast-retune code. 2.0.3 is therefore the combination upstream and RTL-SDR Blog actually ship; 2.0.1 plus cherry-picks is an untested mix. The fast retune also helps labrx sweeps.
+    - **Verdict:** new_option
+    - **Action:** Prefer building librtlsdr2 '2.0.3-0+lab1' from upstream v2.0.3, with the SOVERSION revert, the noble debian/ packaging, zerocopy OFF and the corrected GPIO0-only token patch. Keep 2.0.1 plus cherry-picks as the fallback.
+    - **Impact:** Less custom patching, faster sweeps, a configuration upstream has tested.
+    - **Sources:**
+      - https://github.com/osmocom/rtl-sdr/releases/tag/v2.0.3
+      - https://github.com/osmocom/rtl-sdr/commit/7ebcb041f2ce887ef4d1a64607558889a86ff169
+      - https://sources.debian.org/data/main/r/rtl-sdr/2.0.3-1/debian/changelog
+  10.
+    - **Claim in stack:** EEPROM bias default off; never 'rtl_eeprom -b 1'
+    - **Finding:** osmocom rtl_eeprom has no -b option, and the osmocom library never reads an EEPROM force-bias flag. Only the rtlsdrblog fork (and the Windows DLLs built from it) does: at open it forces bias ON when EEPROM byte 7 bit 0x02 is 0. That is the same IR-endpoint bit that osmocom's 'rtl_eeprom -i 0' clears. The fork also maps rtlsdr_set_offset_tuning() to the bias tee; osmocom does not. 'rtl_eeprom -g ...' overwrites the 'RTLSDRBlog'/'Blog V4L' strings, after which the V4L gets no signal.
+    - **Verdict:** corrected
+    - **Action:** Self-test reads the EEPROM and asserts the IR bit = 1 (no forced bias) and intact strings. Forbid rtl_eeprom -g, -w and -i 0. Restore with rtl_eeprom -m "RTLSDRBlog" -p "Blog V4L". Never ship the rtlsdrblog fork on the device.
+    - **Impact:** Closes a bias path that the token does not cover (blog-fork drivers, Windows host).
+    - **Sources:**
+      - https://github.com/osmocom/rtl-sdr/blob/v2.0.3/src/rtl_eeprom.c
+      - https://github.com/rtlsdrblog/rtl-sdr-blog/blob/master/src/librtlsdr.c
+      - https://www.rtl-sdr.com/V4L
+  11.
+    - **Claim in stack:** 'Unique serial numbers in EEPROM' (row 183, C21); udev /dev/lab/<name> by serial
+    - **Finding:** Unique serials are not a factory property. Users report that RTL-SDR Blog V4 units ship as serial 00000001, and the RTL-SDR Blog pages say nothing about serials. SatDump opens devices with rtlsdr_get_index_by_serial(), so two dongles with the same serial collide.
+    - **Verdict:** corrected
+    - **Action:** Programming serials is an assembly step. With one dongle attached: rtl_eeprom -r backup.bin, then rtl_eeprom -s LAB-RTLA (and so on), then replug and verify. Do it before any 2-dongle test.
+    - **Impact:** Without it, udev naming and SatDump device selection fail.
+    - **Sources:**
+      - https://forum.sdr-radio.com/viewtopic.php?p=11166
+      - https://discussions.flightaware.com/t/how-to-change-serial-number-of-dongle-adsb-1090-uat-978-dongles-plugged-into-same-pi/31980
+      - https://github.com/SatDump/SatDump/blob/master/plugins/sdr_sources/rtlsdr_sdr_support/rtlsdr_dev.cpp
+  12.
+    - **Claim in stack:** Software compatibility: SoapyRTLSDR 0.3.3 (noble) and SDRangel/OpenWebRX+/SatDump/SDR++ work with the V4L once librtlsdr is updated; budget HF = second V4L in upconverter mode
+    - **Finding:** SoapyRTLSDR 0.3.3 (noble 0.3.3-1build1) and the new upstream 0.3.4 (tagged 2026-10-10, build changes only) advertise 0-1764 MHz only for tuner R828D plus product 'Blog V4'. The V4L reports tuner R820T and product 'Blog V4L', so Soapy apps get a 24 MHz minimum. SDRangel's native RTL-SDR plugin (master 2026-10-17) does the same (m_frequencyHighRangeMin = 0 only for 'Blog V4'). SDR++ does not clamp, and labrx calls librtlsdr directly. SatDump links the system librtlsdr. On the RTL-SDR Blog V4L guide, the 'not supported' entries for SDR++ and SDRangel are for Android.
+    - **Verdict:** new_risk
+    - **Action:** If the budget V4L-HF path is ever used, add one-line patches matching 'Blog V4L' in SoapyRTLSDR and SDRangel, or use SDR++/labrx for V4L HF. Force direct_samp=0 in every config.
+    - **Impact:** Low for the main build (HF is on the HF+); blocks HF in Soapy/SDRangel on the V4L.
+    - **Sources:**
+      - https://github.com/pothosware/SoapyRTLSDR/blob/master/Settings.cpp
+      - https://launchpad.net/ubuntu/+source/soapyrtlsdr
+      - https://github.com/f4exb/sdrangel/blob/master/plugins/samplesource/rtlsdr/rtlsdrinput.cpp
+      - https://www.rtl-sdr.com/V4L
+  13.
+    - **Claim in stack:** HF mode: V4L HF via the 28.8 MHz upconverter; budget HF = second V4L 'without LW'; V4L is not the main HF receiver
+    - **Finding:** The driver adds 28.8 MHz automatically below 28.8 MHz and switches the input. Since 0204c9c it also bypasses the tracking filter on HF. Direct sampling yields nothing on V4/V4L. The 500 kHz lower limit means no LW/LF (DCF77, MSF, WWVB, JJY, TDF stay on the HF+). Chart MDS is about -133 to -135 dBm (500 Hz) at 3-28 MHz, about -129 dBm at 1 MHz, with a spike near 28.8 MHz.
+    - **Verdict:** confirmed
+    - **Action:** No change. Keep the HF+ as the HF receiver.
+    - **Impact:** Confirms C21 and the budget note.
+    - **Sources:**
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+      - https://github.com/osmocom/rtl-sdr/commit/0204c9cfb1c5ff7bd64f466ce5b8fe53b40a636a
+      - https://www.rtl-sdr.com/V4L
+  14.
+    - **Claim in stack:** Cooling: V4L inside the closed RF bay on 15 cm shielded extensions; aluminium case with thermal pad; RTL-B serves Meteor HRPT 1700, Metop 1701.3 and AWS 1707 MHz
+    - **Finding:** The datasheet confirms the thermal pad to the aluminium enclosure and 'slightly less heat' than the V3; no operating temperature is published. R820T-family tuners lose PLL lock at L-band as the chip heats, with unit-to-unit variation (rtl-sdr.com measurements on R820T/R820T2 above 1.4-1.5 GHz). The R828S answers as an R820T. Here it runs within 59-66 MHz of its 1.766 GHz ceiling, beside a second 1.3 W dongle in a closed bay. Not measured for the R828S.
+    - **Verdict:** new_risk
+    - **Action:** Add a W1-2/thermal gate: 60 min at 1707 MHz and 1700 MHz, closed case, worst-case ambient; grep for '[R82XX] PLL not locked!' and watch for dropouts. Bond the dongle cases to the plate or airflow with a thermal pad.
+    - **Impact:** Could cost HRPT/AHRPT passes in summer heat.
+    - **Sources:**
+      - https://www.rtl-sdr.com/?p=9747
+      - https://rtl-sdr.com/beta-testing-a-modified-rtl-sdr-driver-for-l-band-heat-issues/
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+  15.
+    - **Claim in stack:** USB: 5.12 MB/s per V4L at 2.56 Msps (18.4 GB/h); RTL-A on the blue USB 3.1 port running as USB 2 HS; FE1.1s tree at 13.3 MB/s or less
+    - **Finding:** The arithmetic holds: 2.56 Msps x 2 B = 5.12 MB/s = 18.4 GB/h. HF+ at 768 ksps x 4 B = 3.07 MB/s. Current is 250-270 mA plus up to 180 mA of tee, under the 500 mA USB 2 limit. Radxa documents 3 black USB 2.0 ports plus 1 blue USB 3.1 port 'OTG and HOST' and a 30.8/25.8 MB/s flash-drive dd result (port not stated). The blue port's default role (host or device) is not documented.
+    - **Verdict:** unverified
+    - **Action:** Keep the existing W1-2 gate: lsusb -t shows the V4L at 480M on the blue port, plus the 15-min rtl_test at 2.4/2.56/2.88 Msps. Force host role in the DT if needed.
+    - **Impact:** Low. A gate already exists.
+    - **Sources:**
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/usb
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+  16.
+    - **Claim in stack:** Own spurs: 1699.2 MHz (28.8 x 59) in Meteor HRPT; 403.2 MHz ignored by auto_rx; 144.000/432.000 MHz harmonics
+    - **Finding:** Calculation: 28.8 x 59 = 1699.2 MHz, 0.8 MHz from the 1700 MHz HRPT centre. x14 = 403.2, x5 = 144.0, x15 = 432.0. No 28.8 MHz harmonic falls in LRPT 137.1-137.9, AIS, ADS-B 1088-1092, LNB IF 738.5-740.5, Inmarsat-C 1537-1545, H1 1419-1422, L1, Metop 1699.55-1703.05 or AWS 1705.8-1708.2 MHz. The 1704.0 MHz spur is not a 28.8 MHz harmonic; it belongs to another subsystem.
+    - **Verdict:** confirmed
+    - **Action:** Keep the spur-mask entries.
+    - **Impact:** None.
+    - **Sources:**
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+  17.
+    - **Claim in stack:** Metop/AWS gate (a): 15 min rtl_test at 2.88 Msps; SatDump #727 cited for the V4 at 2.88 Msps
+    - **Finding:** The datasheet's 2.56 stable / 3.2 with drops makes 2.88 Msps a legitimate gate value. SatDump #727 ('MetOp NOSYNC', closed 2024-06-13) is a V4 report: the user fixed it with 2.88 plus DC block plus AGC, and a maintainer called RTL defaults 'on the edge'. It is not V4L evidence.
+    - **Verdict:** confirmed
+    - **Action:** Keep the gate. Label #727 as V4 evidence.
+    - **Impact:** None.
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/issues/727
+  18.
+    - **Claim in stack:** Alternatives (note only): V3 as budget; Airspy Mini as the >2.56 Msps fallback for Metop/AWS
+    - **Finding:** V3 R860: $34.95-39.95, in stock at Amazon USA and China (USB-A and USB-C), works with stock noble librtlsdr2. Per the V4L chart it is about 2 dB worse at 137 MHz, about 2-3 dB worse at 400-600 MHz and about 3 dB worse at 1.7 GHz, has the same two-tone behaviour, and its direct-sampling HF is poor (about -115 to -122 dBm). Airspy Mini and Airspy R2 official pages both state '24-1700 MHz native RX range', so Metop 1701.3 and AWS 1707 MHz are above spec (whether they work in practice was not checked). A V4L USB-C version is mentioned only in a reply on the blog launch post (unverified). V5 not before 2027.
+    - **Verdict:** new_risk
+    - **Action:** Keep the V3 as the budget/after-stockpile replacement. Mark the Airspy Mini AHRPT fallback as out of spec and confirm with an owner report before buying.
+    - **Impact:** Affects only the conditional Airspy purchase.
+    - **Sources:**
+      - https://www.rtl-sdr.com/store/
+      - https://airspy.com/airspy-mini/
+      - https://airspy.com/airspy-r2/
+      - https://www.rtl-sdr.com/rtl-sdr-blog-v4l-lite-now-available-for-purchase/
+- **Current status oct 2026:** Status on 2026-10-18.
+  
+  Hardware:
+  - RTL-SDR Blog V4L is on sale at USD 37.95, with 455 in stock at the official store (China warehouse). It is not yet at Amazon USA; the kit is expected in 2-3 months.
+  - It is officially a limited edition. The R828S stockpile is expected to last about one year from launch (Aug 2026).
+  - The datasheet is V1.0 (2026-08-11). No new revision, EOL notice or USB-C V4L has been announced (USB-C appears only in a reply on the blog launch post).
+  - V4 is EOL. A V5 is not expected before 2027. The V3 stays in production at $34.95-39.95.
+  
+  Drivers and software:
+  - osmocom rtl-sdr v2.0.3 was released 2026-08-12. It is the first release with V4L support (0204c9c) and the USB-hang fix (65f0658). There are no post-release commits and I found no 2.0.3 bug reports.
+  - Debian 2.0.3-1 (librtlsdr0) entered unstable 2026-09-06 and testing 2026-09-12. Ubuntu 26.10 ships 2.0.3-1. Ubuntu 26.04 (2.0.2-2build1) and noble 24.04 (2.0.1-2build1) have no V4L support, so the Q6A still needs the lab rebuild. The zerocopy typo persists in noble and Debian 2.0.3-1.
+  - The rtlsdrblog fork added the V4L in March 2026 (tag V1.4.0); Windows DLL V1.4.0 and ExtIO v2026-08-10.
+  - SoapyRTLSDR 0.3.4 was tagged 2026-10-10 (noble has 0.3.3-1build1). Neither version recognises 'Blog V4L' for the HF range, and neither does SDRangel master (2026-10-17).
+  - OpenWebRX+ noble packages (openwebrx 1.2.126, rtl-connector 0.6.5) depend on librtlsdr2 (>= 2.0.1).
+  
+  Sourcing: EU buyers use eBay 'rtl-sdr-blog' or AliExpress 4523039/1101427871, since the store does not ship to the EU. Live eBay and AliExpress V4L prices could not be verified.
+- **Notes:** How this was checked:
+  - I read the V4L datasheet PDF, including its MDS and two-tone charts (rendered to images and read at chart resolution, so values are about ±0.5 dB), and fetched the live store, user-guide, launch, EOL and genuine-unit pages.
+  - I cloned osmocom/rtl-sdr (GitHub and gitea), rtlsdrblog/rtl-sdr-blog, SoapyRTLSDR, and sparse checkouts of SDRangel, SDR++ and SatDump.
+  - I pulled the noble 2.0.1-2build1 debian tarball from archive.ubuntu.com, the Debian 2.0.3-1 packaging and the OpenWebRX+ noble Packages index.
+  - I built both librtlsdr variants on amd64; arm64 was not built. No hardware tests were done.
+  - Working copies are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/nb_git and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/nb_dl.
+  
+  Most important result: the bias-tee token patch in C11, as written (refuse 'on' in rtlsdr_set_bias_tee_gpio for any GPIO), would make both core V4Ls deaf above 28.8 MHz, because the tuner driver uses GPIO 5 through that same function as the upconverter band switch. Gate GPIO 0 only.
+  
+  Cross-subsystem observation (software): the OpenWebRX+ 'openwebrx' package Recommends wsjtx, js8call and direwolf, which are banned TX-capable tools. apt installs Recommends by default, so install it with --no-install-recommends and keep the CI ban list.
+  
+  Unverified items:
+  - eBay and AliExpress V4L prices.
+  - The default role of the Q6A blue port.
+  - R828S PLL lock behaviour at 1.70-1.707 GHz when hot.
+  - Airspy Mini or R2 operation above their 1700 MHz spec.
+  - The V4L USB-C version.
+  - Factory serials on the V4L specifically (00000001 is reported for V4 units).
+  
+  Model numbers, labelled as models in the findings: the implied NF from MDS, the about -26 dBm threshold at 739.5 MHz (interpolated), and power derived from the datasheet current.
+
 ## Форуми та досвід спільноти (`forums`)
 
 _Run `wf_eb446444-464`_

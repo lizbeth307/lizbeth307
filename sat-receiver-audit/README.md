@@ -11,6 +11,7 @@
 | Компонент | Етапи (✅ готово, ⏳ працює) | Поточний run |
 |---|---|---|
 | [Antennas](components/antennas.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_6b9836f8-796` |
+| [Antennas foldable](components/antennas_foldable.md) | ✅ research · forums · fixes · verify | `—` |
 | [Antennas patch chip](components/antennas_patch_chip.md) | ✅ research · forums · fixes · verify | `—` |
 | [Compute](components/compute.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_88090a59-878` |
 | [Dish replacement](components/dish_replacement.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_5a66d65f-c3f` |
