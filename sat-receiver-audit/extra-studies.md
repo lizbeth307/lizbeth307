@@ -37623,6 +37623,105 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
       - https://www.minicircuits.com/pdfs/086-6SM+.pdf
 - **Notes:** Bottom line, angle B: the only cheaper part with independent measured evidence is a generic 30 dB SMA pad (AliExpress 3256805879252327; EEVblog, Randy222, 19 Dec 2023). Its measured VSWR is below 1.25 from 0 to 6 GHz, which beats the VAT-30W2+ datasheet maximum. Two specs are NOT shown: its power rating, and its attenuation accuracy above 1 GHz. Its current price (about $3 in 2023) and the listing could not be re-verified. Verdict: PLAUSIBLE, not confirmed. If adopted, buy 3-4 units, keep only those that pass a LiteVNA incoming test (S21 30 +/-0.3 dB at 10/137/437/740/1700/2200/3000 MHz; S11 and S22 <= -20 dB to 3 GHz), use at <= +20 dBm, and keep a DC block first on any biased line. Possible saving is about $35 vs the corrected Passion Radio line ($223.92) or about $57 vs VAT-30W2+ ($245.86), both unverified. The current Passion Radio 30 dB pad is itself an unbranded generic with no published data, so the measured generic is no weaker in evidence. VAT-30W2+ remains the only 30 dB option with a full datasheet. KEEP BLK-89-S+, ANNE-50+, 086-6SM+ and the Nooelec kit: no generic, DIY or used alternative has measurements, and the used ones found are dearer (BLK-89 $24.99 used) or worse in range (SAT-30, DC-1000 MHz). Incidental other-brand finds are both pricier: Nooelec DC block $24.95 (50 kHz-8 GHz, IL <0.3 dB below 6 GHz, 50 V, 2 W; https://www.nooelec.com/store/dc-block.html) and Gquipment DC block EUR 61.95 ex VAT (20 kHz-6 GHz; https://www.gquipment.com/dc-blocks/49-dc-block-20-khz-6-ghz-aluminum-enclosure.html). Do not buy 'Mini-Circuits'-branded parts from non-authorised marketplace sellers (counterfeit risk); use minicircuits.com or Mouser/DigiKey EU. Unverified: all current AliExpress and eBay prices (both sites blocked fetches); Mini-Circuits shipping and import VAT to the EU. Hard rules unaffected: all passive; probes stay open-ended stubs (no loops, no H-field); signal sources stay conducted-only. Datasheet texts extracted to /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/padsB_dl/ (c_BLK-89-S+.txt, anne50.txt, c_086-6SM+.txt, c_VAT-30W2+.txt); EEVblog plots in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/padsB_dl/eev/ and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/padsB_dl/eev2/10db.jpg.
 
+## searchA:sma_torque_wrench_0_9_n_m_adapter_set (run `wf_e5582d4c-0a2`)
+
+- **Part:** SMA torque wrench 0.9 N·m (8 mm / 5/16 in, break-over) + SMA adapter set. Bench tier, RF accessories, qty 1 set. Current pick: TOJOIN 5/16" SMA torque wrench 0.9 N·m 8 mm (eBay, TOJOIN Official Store) + RTL-SDR Blog SMA adapter set (Straight $14.95 to Semi-Rigid RG402 $26.95).
+- **Current price usd:** 50.84-62.84 = wrench $35.89 + adapter set $14.95-26.95. Wrench: $35.89 from eBay search snippets on 18 Oct 2026 for item 354598266754 (ebay.com/.ca/.com.au/.de/.at/.es; seller "TOJOIN Official Store", 478 feedback, ships from Texas, free shipping; about EUR 31 shown on eBay.de, about $34.85 at 1.1241). I could not open the listing page itself (HTTP 403), so "confirm listing live" is only partly closed: it shows as active on several regional eBay sites. Adapter set, verified 18 Oct 2026 on the official store: RTL-SDR Blog SMA Straight Antenna Adapter Set $14.95 ("9 in stock", 6 adapters) and Semi-Rigid RG402 SMA Antenna Adapter Set $26.95 ("4 in stock", 10 adapters).
+- **Critical specs:**
+  - Set torque 0.9 N·m (8 in-lb) for stainless SMA, 3.5 mm and 2.92 mm parts. Mini-Circuits gives 8 in-lb max for its SMA parts (086-6SM+, pads, BLK-89-S+); the LiteVNA/tinySA cables also need it.
+  - A brass setting of about 0.5-0.56 N·m (5 in-lb) for brass SMA: cheap adapters and the PCB-mount jacks on the LiteVNA, tinySA, SAWbird and LNA. reaudit_D flags this gap. The current TOJOIN is fixed at 0.9 N·m and cannot do it.
+  - Torque accuracy/tolerance: target ±0.1 N·m or better. For the TOJOIN-type tool only reseller claims exist (0.9 ±0.1 N·m, '3% error'); there is no datasheet.
+  - Mechanism: break-over (cam-over/pivot) so the joint cannot be over-torqued, not click-type. Bidirectional is a plus.
+  - Head: 8 mm (5/16 in) open end, thin enough for SMA coupling nuts. Used with an 8 mm hold spanner on the body (turn only the nut).
+  - Build and repeatability: hardened alloy-steel head, a spring that holds its setting, calibration traceability (none on budget tools). A published datasheet is preferred over listing claims.
+  - Legit seller and not a counterfeit. 'Compatible with 8710-1765 / 74_Z-0-0-21' is a compatibility claim, not Keysight or Huber+Suhner branding. EU: a GPSR responsible person is a plus.
+  - Adapter set: 50 ohm SMA; covers the stack's types (SMA to BNC-F, N-F, UHF-F for HF, F-F for the 75 ohm LNB IF, SMA M-M); gold-plated pins and PTFE dielectric; insertion loss 0.3 dB or less at 2.3 GHz (the stack's VNA screen threshold); no RP-SMA mixed in.
+  - Adapter set mechanics: strain relief, so no rigid N/UHF/BNC body levers on PCB-mount SMA jacks (analogs_G1 finding); male and female options on the far end.
+  - Hard rules: passive hand tools and adapters only, nothing radiates. No loops or H-field probes involved.
+- **Candidates:**
+  1.
+    - **Name:** CURRENT: TOJOIN 5/16" SMA torque wrench 0.9 N·m 8 mm (eBay item 354598266754) + RTL-SDR Blog SMA adapter set (Straight $14.95 or Semi-Rigid RG402 $26.95)
+    - **Kind:** current_part
+    - **Price usd:** 35.89 + 14.95-26.95 = 50.84-62.84 (wrench price from eBay search snippets, listing page HTTP 403; adapter sets verified on rtl-sdr.com 18 Oct 2026)
+    - **Spec comparison:** Wrench: 0.9 N·m fixed, 8 mm (5/16 in) opening, alloy steel, break-over/pivot type (per stack research; the listing body was not readable). Tolerance 0.9 ±0.1 N·m and '3% error' come only from reseller pages for what looks like the same generic blue tool (bigamart, VXB); unverified, no datasheet. Adapter set: Straight = 5x SMA to N-F / UHF-F / BNC-F / PAL-F / F-F + 1x SMA M-M. RG402 = 10x 20 cm semi-rigid RG402, SMA male to SMA/BNC/N/F/UHF in male and female versions. Neither set publishes VSWR or loss.
+    - **Worse in:** Reference line. Known gaps: no 0.5 N·m brass setting, no published accuracy, no calibration certificate.
+    - **Compatibility:** Fits all SMA/3.5/2.92 mm stainless joints on the bench. Use finger-tight or a lower-torque wrench on brass parts.
+    - **Risks:** Wrench listing not opened directly (eBay 403). Accuracy is unverified: check once against a known reference, or by feel against a Mini-Circuits part, before trusting it for VNA calibration.
+    - **Seller url:** https://www.ebay.com/itm/354598266754 ; https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+    - **Sources:**
+      - https://www.ebay.de/itm/354598266754
+      - https://www.ebay.ca/itm/354598266754
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-sma-straight-antenna-adapter-set/
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-semi-rigid-rg402-sma-antenna-adapter-set/
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+      - https://vxb.com/products/pro-grade-sma-torque-wrench-set-for-rf-connectors
+  2.
+    - **Name:** TekBox TBTWR-05NM SMA torque wrench (break-over, 0.5 N·m default, 0.9 N·m version or adjustable)
+    - **Kind:** other_brand
+    - **Price usd:** NOT cheaper for an EU buyer. EUR 47.60 incl. 19% DE VAT = EUR 40.00 net at Meilhaus (about $53.51 / $44.96; verified 18 Oct 2026, page says 'currently not on stock'). EUR 49.17 incl. VAT / EUR 41.32 net at Lieske industry-electronics (about $55.27 / $46.45). US: TEquipment $36.00, or $43.20 with a 'supplier surcharge due to tariffs' (search snippet only; the page is bot-blocked, unverified). Either way it is $0.11 or more above the TOJOIN's $35.89.
+    - **Spec comparison:** Torque: 0.9 N·m available (equal). Accuracy ±0.05 N·m published in the TekBox datasheet V1.1, against the TOJOIN's reseller claim of ±0.1 N·m: better. Brass: factory default 0.5 N·m, and the datasheet lists 0.5 N·m for brass SMA and 0.56 N·m for 3.5/2.92-to-SMA, so it closes the reaudit_D brass gap; TOJOIN cannot. Mechanism: break-over, bidirectional (equal or better). Head: 5/16 in (8 mm) SMA opening (equal). The torque is set by an internal spring preload set screw. Maker: TekBox (VN); EU responsible person is Meilhaus (DE).
+    - **Worse in:** Price: +$0.11 (US, unverified) up to about +$18.7 (EU incl. VAT) against the TOJOIN. Stock: out of stock at Meilhaus on 18 Oct 2026. The default ships at 0.5 N·m, so the 0.9 N·m version must be ordered explicitly; re-adjusting the set screw without a torque reference loses the factory setting. One wrench cannot serve 0.5 and 0.9 N·m without re-adjustment.
+    - **Compatibility:** Same 8 mm SMA head; a passive hand tool. No electrical interface and no rule impact.
+    - **Risks:** TEquipment price unverified (page blocked). EU stock unknown at Lieske and out of stock at Meilhaus. Body material is not stated in the datasheet.
+    - **Seller url:** https://meilhaus.de/en/tbtwr.htm
+    - **Sources:**
+      - https://www.meilhaus.de/cosmoshop/default/articleMedia/tbtwr/en/Datasheet_Tekbox_TBTWR-05NM_en.pdf
+      - https://meilhaus.de/en/tbtwr.htm
+      - https://industry-electronics.com/tekbox/tbtwr-05nm-sma-torque-wrench-printview-2113408.htm
+      - https://www.tequipment.net/TekBox/TBTWR-05NM/Wrenches-&-Wrench-Sets
+      - https://eleshop.eu/tekbox-tbtwr-05nm-sma-torque-wrench.html
+  3.
+    - **Name:** TOJOIN 0.9 N·m SMA wrench, eBay open-box unit
+    - **Kind:** used
+    - **Price usd:** 30.71 (search-result price recorded in the stack's radio_lab research; NOT re-verified 18 Oct 2026)
+    - **Spec comparison:** Same tool as the current pick: 0.9 N·m, 8 mm, break-over, same unverified ±0.1 N·m tolerance.
+    - **Worse in:** Unknown handling history: a dropped break-over wrench can drift, and there is no calibration record. Return terms may differ. The saving is about $5.
+    - **Compatibility:** Same as the current wrench.
+    - **Risks:** Listing not verified live, and the price could not be re-checked (eBay HTTP 403, search budget exhausted). It is not-worse only if its break torque is checked against a reference on arrival.
+    - **Seller url:** https://www.ebay.com/itm/354284038356
+    - **Sources:**
+      - https://www.ebay.com/itm/354284038356
+  4.
+    - **Name:** RTL-SDR Blog SMA Straight Antenna Adapter Set (as the cheaper SKU against the RG402 set)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 14.95 (verified 18 Oct 2026, 9 in stock); saves $12.00 against the RG402 set at $26.95
+    - **Spec comparison:** 6 adapters (SMA to N-F, UHF-F, BNC-F, PAL-F, F-F, plus SMA M-M) against 10 RG402 semi-rigid 20 cm adapters with male and female far ends. Same vendor, same connector families. Neither publishes loss or VSWR, but the vendor says the straight set has 'less loss than the pigtail adapters'.
+    - **Worse in:** Strain relief: rigid N/UHF/BNC bodies lever on the PCB-mount SMA jacks of the LiteVNA, tinySA and dongles (the same finding that rejected it in the cable line of analogs_G1). Fewer pieces (6 against 10). No male-gender BNC/N/F/UHF options. If the RG402 set is the actual pick, this is worse and must not replace it. If the straight set is the actual pick, it already is the floor of this line.
+    - **Compatibility:** SMA-male side plugs into SMA-female instrument and dongle jacks. F-F is 75 ohm for the LNB IF, as in the stack.
+    - **Risks:** No VSWR or loss data: VNA-screen each adapter (0.3 dB or less at 2.3 GHz) per the stack procedure.
+    - **Seller url:** https://www.rtl-sdr.com/product/rtl-sdr-blog-sma-straight-antenna-adapter-set/
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-sma-straight-antenna-adapter-set/
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+- **Notes:** VERDICT (angle A): I found no cheaper analog that is also not worse. Keep the TOJOIN 0.9 N·m wrench ($35.89) and the RTL-SDR Blog adapter set from the official RTL-SDR Blog store. The line stays at $50.84-62.84.
+  
+  UPGRADE AT NEAR PARITY, NOT A SAVING: the TekBox TBTWR-05NM.
+  - Its datasheet gives ±0.05 N·m, break-over action, an 8 mm head, and 0.9 N·m or 0.5 N·m settings.
+  - On paper it beats the TOJOIN, which has no datasheet; the ±0.1 N·m figure comes only from resellers.
+  - It also closes the brass-jack gap that reaudit_D raised.
+  - The US price is $36.00 (snippet, unverified; $43.20 with a tariff surcharge). In the EU it is EUR 40 net / EUR 47.60 incl. VAT at Meilhaus, out of stock.
+  - The user's rule allows it only if they accept paying more, so it is not a cheaper candidate. It is the best option if a single 0.5 N·m brass wrench is added later (about EUR 40 net).
+  
+  CHECKED AND REJECTED (not cheaper, or worse):
+  - Keonn ADTL-TW-SMA-09 (Barcelona): break-over, 0.9 N·m preset, but the datasheet allows min 0.79 / max 1.13 N·m, a wider tolerance than the TOJOIN claim. No price is published (request-info only).
+  - Telegaertner 100025826: 0.9 N·m, AF 8, ships with a calibration certificate. The page returned 403 and the price is unknown; likely far above $36.
+  - VXB 2-pack: the same generic blue alloy-steel wrench, 0.9 ±0.1 N·m. Listed at $132.95 regular with a contradictory $294 'sale' price.
+  - Bigamart TOJOIN: $128.99.
+  - Copper Mountain TW-SMA: $205, 'not available for sale'.
+  - Pasternack PE5011-1: $393.99, click type, closeout, 0 stock.
+  - L-com LC-TWC08516: NZ$643.51, click type, 16-week lead time.
+  - Fairview ST-SMA8: $689-853.66 on DigiKey.
+  - AliExpress ratcheting: $51.49, already noted, and dearer.
+  - sdrstore.eu (EU reseller of the RTL-SDR Blog sets): EUR 43.19 for the pigtail set and EUR 53.01 for the RG402 set, far above the official $18.95 / $26.95.
+  - Nooelec single adapters: $5.95 each (as low as $3.95 in quantity), so 6 cost $24-36, which is not cheaper than the RTL-SDR sets.
+  
+  STACK FLAGS:
+  (1) Possible overlap: the cable line (analogs_G1, decision 5) already keeps the RTL-SDR Blog SMA Pigtail Adapter Set ($18.95), which has the same 5 far-end types plus SMA M-M. A second RTL-SDR set here mostly duplicates those types. The radio_lab 'purpose-picked' list asks for different parts: SMA F-F barrels (the VNA thru), right-angles, SMA-N in both genders, BNC in both genders, an MMCX pigtail and connector savers. Decide which set this line is actually for before buying.
+  (2) The 8 mm hold spanner (about $5, unverified) is in radio_lab but not in this line's price.
+  (3) The VAT status of the eBay.de EUR 31 TOJOIN price was not visible. eBay normally collects import VAT on consignments of EUR 150 or less.
+  
+  LIMITS: eBay, AliExpress, TEquipment and Telegaertner pages were blocked (403, empty pages or bot walls). The shared WebSearch budget ran out after 7 searches, so AliExpress official-store and Amazon prices for the TOJOIN and RTL-SDR sets were not checked. Prices marked 'snippet' or 'unverified' need a manual check. FX: 1.1241 USD/EUR.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
