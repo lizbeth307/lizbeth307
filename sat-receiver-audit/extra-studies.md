@@ -19217,6 +19217,137 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Limits of this pass: WebSearch was refused on the first call because the shared per-turn search budget was already used up. This research used only WebFetch on primary and distributor pages plus cached retailer JSON from this session (scratchpad src_cmp, 18 Oct 2026) and the cached TI datasheet. EU prices with VAT are verified only for The Pi Hut (UK): ADA5832 GBP 14.40 inc VAT, in stock. DigiKey EU and other EU distributor prices are not verified. INA226 and INA238 spec numbers are partly from memory and marked as such. A follow-up with more search budget could check Mouser, Farnell, LCSC and Berrybase stock of INA228AIDGSR and the electrical tables of the -Q1 datasheet.
 
+## searchA:ti_tps7a4701_ldo_lnb_13_2_v_boni_12_5_v (run `wf_a268b76e-da0`)
+
+- **Part:** TI TPS7A4701 LDO, qty 2 (LNB13V2 rail for the Bullseye LNB; Boni rail at 12.5 V in STACK v1, which reaudit_B renames BONI13V8 at 13.8 V). Fed from battery node SW (12.8-16.4 V, 16.8 V at the service balance) through an LC filter. ANY-OUT pin-programmed output, EN from MCP23017 #1. There is no PG pin; a TLV3011 comparator watches the rail. reaudit_B adds a TPS25963 eFuse after each LDO.
+- **Current price usd:** Verified 18 Oct 2026, all USD ex VAT. In stock now: TPS7A4701MRGWREP (EP) is $11.01 each at LCSC (C2872670, 110 pcs, $9.55 at 10+) and $11.54 each at TI.com (1-99, TI inventory 49,362). That makes $22.02-23.08 for 2. The commercial TPS7A4701RGWR is $13.29 at LCSC (C90084) and out of stock. On TI.com it lists at $5.089 for 1-99 ($2.766 per 1ku), also out of stock (inventory 0). The STACK figure of '10-20 (unverified)' is replaced by these numbers.
+- **Critical specs:**
+  - Input voltage: runs from 12.8-16.4 V, with 16.8 V during the service balance. Abs max must be at least 30 V because the SMBJ17A clamps at 27.6 V (VC). Current part: 3-35 V operating, 36 V abs max.
+  - Output: 12.5 / 13.2 / 13.8 V set by ANY-OUT pins (the 1.4-20.5 V range). Accuracy: nominal ±1% at 25 C and overall ±2.5% over -40..125 C (SBVS204G). Overall accuracy holds only for VIN >= VO+1 V. The acceptance window is ±0.33-0.35 V at the connector.
+  - Output current: rated 1 A, current limit 1.0 A min / 1.26 A typ. The Bullseye LNB current is unpublished; the eFuse limit is 0.405-0.499 A. The Boni draws 65 mA typ (vendor).
+  - Dropout: 216 mV typ at 0.5 A; 307 mV typ / 450 mV max at 1 A. This matters because the rails run in dropout below about a 14.0 V pack. PSRR in dropout is given in datasheet Figs 5-14 to 5-16.
+  - Output noise (10 Hz-100 kHz): 4.17 uVrms at 1.4 V, 4.67 at 5 V, 7.25 at 10 V, 12.28 at 15 V. This matters for the Boni-Whip LF/HF rail.
+  - PSRR: 82 dB at 100 Hz, 78 dB at 1 kHz (15 V, 0.5 A), 60 dB at 100 kHz, at least 55 dB from 10 Hz to 10 MHz (TI product page). It has to reject buck harmonics: D36V50F12, and the LM61460 fallback at 1.8-2.1 MHz.
+  - Enable: VIH 2.0 V min, VIL 0.4 V max, which works with a 3.3 V MCP23017 drive. Shutdown current 3.04 uA typ / 60 uA max at 35 V.
+  - Quiescent current 0.58 mA typ / 1.0 mA max; ground current 6.1 mA at 1 A.
+  - Protection: internal current limit and thermal shutdown (170 C trip, 150 C reset). Stable with ceramic capacitors of 10 uF or more; CNR at least 10 nF.
+  - Thermal: RthetaJA 32.5 C/W, RthetaJC(bot) 1.7 C/W. Worst case is about (16.4-12.5) V x 0.5 A, roughly 2 W, so the part is heat-sunk to the mid-plate.
+  - Package: VQFN-20 RGW 5x5 mm with the ANY-OUT pinout (the PCB footprint is fixed). TJ -40..125 C.
+  - Genuine supply only: TI.com or a franchised distributor. LCSC is the stack's current source. No software or driver dependency on Ubuntu 24.04 arm64.
+- **Candidates:**
+  1.
+    - **Name:** TPS7A4701RGWR, the same commercial SKU, bought from the TI.com store
+    - **Kind:** current_part
+    - **Price usd:** $5.089 each at 1-99 ($10.18 for 2), ex VAT. Out of stock at TI on 18 Oct 2026 (TI inventory API: 0). Also 0 at TME (USD 3.58-5.44 range shown) and at LCSC ($13.29). Restock date unknown.
+    - **Spec comparison:** Identical part and datasheet (SBVS204G, May 2026): 36 V abs max, 1 A, ILIM 1.0 min, dropout 307/450 mV at 1 A, 4.17-12.28 uVrms, PSRR 82 dB at 100 Hz / 60 dB at 100 kHz, ±2.5% overall, VQFN-20 RGW.
+    - **Worse in:** No spec is worse. The only drawback is availability: none in stock today.
+    - **Compatibility:** Drop-in. Same footprint, ANY-OUT strapping, EN and thermal design.
+    - **Risks:** TI.com VAT and shipping terms for EU orders were not verified. Buy only from TI.com or a franchised distributor (Mouser, DigiKey, Farnell, TME), never a broker. Mouser, DigiKey, Farnell and Arrow returned 503/403, so their price and stock are unverified.
+    - **Seller url:** https://www.ti.com/product/TPS7A47
+    - **Sources:**
+      - https://www.ti.com/product/TPS7A47
+      - https://www.ti.com/storeservices/cart/opninventory?opn=TPS7A4701RGWR
+      - https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+      - https://www.tme.eu/en/details/tps7a4701rgwr/
+      - https://www.lcsc.com/product-detail/C90084.html
+  2.
+    - **Name:** TI TPS7A4700RGWR (the ANY-OUT-only sibling)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $5.089 each at 1-99 on TI.com, the same price as the 4701. TME shows a USD 3.47-5.26 range, slightly below the 4701's 3.58-5.44, tiers and VAT basis unstated. Out of stock at both TI and TME on 18 Oct 2026.
+    - **Spec comparison:** Same datasheet and EC table as the TPS7A4701: 36 V abs max, 1 A, 307/450 mV dropout, same noise and PSRR, ±2.5% overall, same RGW pinout. ANY-OUT range 1.4-20.5 V covers 12.5, 13.2 and 13.8 V with the same pin strapping.
+    - **Worse in:** No adjustable feedback-resistor mode (the 4701 can go to 34 V). The stack does not use it, so nothing is lost for these rails. Not actually cheaper than the 4701 at TI.
+    - **Compatibility:** Pin-for-pin drop-in, with the same ANY-OUT strapping (13.2 V: 6P4V1, 3P2V, 1P6V, 0P4V, 0P2V to GND).
+    - **Risks:** Out of stock now. Its value is a second orderable to watch for restock, which doubles the chance of getting a $5 part.
+    - **Seller url:** https://www.ti.com/product/TPS7A47
+    - **Sources:**
+      - https://www.ti.com/product/TPS7A47
+      - https://www.ti.com/storeservices/cart/opninventory?opn=TPS7A4700RGWR
+      - https://www.tme.eu/en/details/tps7a4700rgwr/
+      - https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+  3.
+    - **Name:** TI TPS7A4701RGWRG4 / TPS7A4701RGWT (alternate orderables of the same die)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** TI.com at 1-99: RGWRG4 $5.853, RGWT $6.107 (250-pc reel). RGWT is $12.64 at LCSC (C68214) and USD 5-6.99 at TME. All out of stock on 18 Oct 2026.
+    - **Spec comparison:** Same datasheet (SBVS204G), so every spec is identical.
+    - **Worse in:** No spec is worse. Not in stock.
+    - **Compatibility:** Drop-in.
+    - **Risks:** Out of stock.
+    - **Seller url:** https://www.ti.com/product/TPS7A47
+    - **Sources:**
+      - https://www.ti.com/product/TPS7A47
+      - https://www.ti.com/storeservices/cart/opninventory?opn=TPS7A4701RGWT
+      - https://www.lcsc.com/product-detail/C68214.html
+      - https://www.tme.eu/en/details/tps7a4701rgwt/
+  4.
+    - **Name:** TI TPS7A4701MRGWREP (Enhanced Product, the in-stock buy that reaudit_D recommends)
+    - **Kind:** current_part
+    - **Price usd:** $11.01 each at LCSC (C2872670, 110 pcs) or $11.54 each at TI.com (1-99, 49,362 in stock). $22.02-23.08 for 2, ex VAT.
+    - **Spec comparison:** From the EP datasheet SLVSDQ3 (Feb 2017). Same: 36 V abs max, 3-35 V, 1 A, ILIM 1.0 min / 1.26 typ, dropout 216 / 307 / 450 mV, noise 4.17 / 4.67 uVrms, PSRR 78 dB at 1 kHz, Iq 0.58 / 1.0 mA, EN 2.0 V, nominal accuracy ±1% at 25 C, RthetaJA 32.5 C/W, same pinout. Better: TJ -55..125 C, controlled baseline, one assembly/test site.
+    - **Worse in:** Overall accuracy is specified at ±3.5% (over -55..125 C), against ±2.5% for the commercial part (over -40..125 C). At 13.2 V that is ±0.46 V, wider than the ±0.33/0.35 V acceptance window. TI does not specify a -40..125 C figure for the EP, so 'same function' is not 'same published accuracy'.
+    - **Compatibility:** Pin-for-pin drop-in (TI).
+    - **Risks:** Each unit must pass the measured acceptance at the connector. The ±1% at 25 C helps, but the worst-case accuracy over temperature is not guaranteed to fit the window.
+    - **Seller url:** https://www.lcsc.com/product-detail/C2872670.html
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/C2872670.html
+      - https://www.ti.com/product/TPS7A4701-EP
+      - https://www.ti.com/lit/ds/symlink/tps7a4701-ep.pdf
+  5.
+    - **Name:** TI TPS7A4701QRGWTQ1 / TPS7A4701QRGWRQ1 (automotive grade)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** QRGWTQ1 is $31.32 at LCSC (C2865069), 0 stock. QRGWRQ1 is USD 5.71 at TME, but only in a 3000-pc MOQ, out of stock.
+    - **Spec comparison:** Not re-checked: the Q1 datasheet was not fetched in this pass. It is the same family and package.
+    - **Worse in:** Not cheaper at qty 2 (the cheap TME price needs 3000 pcs). Specs unverified.
+    - **Compatibility:** Same RGW footprint (assumed from the LCSC listing VQFN-20-EP 5x5).
+    - **Risks:** MOQ and price rule it out.
+    - **Seller url:** https://www.tme.eu/en/details/tps7a4701qrgwrq1/
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/C90084.html
+      - https://www.tme.eu/en/details/tps7a4701qrgwrq1/
+  6.
+    - **Name:** GONGMOSEMI GM1415ACPZ-R7 (Gongmo Semiconductor, Suzhou; pin-compatible TPS7A47-type)
+    - **Kind:** other_brand
+    - **Price usd:** $3.49 each at LCSC (C53430773, 1,277 in stock); $6.99 for 2, ex VAT.
+    - **Spec comparison:** Datasheet Rev.0, Nov 2025. Pinout is identical to the TPS7A47 RGW (checked pin by pin: OUT 1/20, SENSE 3, 6P4V2 4, 6P4V1 5, 3P2V 6, GND 7 ... IN 15/16), with the same ANY-OUT network. Better: VIN 2.1-40 V (42 V abs max) against 35 / 36 V; ILIM 1.6 min / 2.1 typ A against 1.0 / 1.26; PSRR 88 dB at 100 Hz and 75 dB at 100 kHz (1 A, 1 V headroom) against 82 / 60 dB; dropout 276 typ against 307 mV at 1 A; noise 3 uVrms at 1.4 V against 4.17; shutdown current 0.9 uA; RthetaJA 32 C/W. Worse: noise 7.4 against 4.67 uVrms at 5 V and 13.5 against 12.28 uVrms at 15 V (so worse at the 12.5-13.8 V outputs); accuracy -2/+3% against ±2.5%; max dropout 500 against 450 mV at 1 A (its dropout test condition, VIN 3.3 V / VFB 0.5 V-3%, looks copied from another part); Iq 1.0 typ / 1.7 max against 0.58 / 1.0 mA; IGND at 1 A 6.8 / 10 against 6.1 mA; thermal shutdown 155 against 170 C; EN thresholds 1.01 / 1.24 V typical only, no min/max.
+    - **Worse in:** Output noise at the voltages this stack uses, the upper accuracy limit, max dropout, Iq and ground current. Maturity is also worse: Rev.0 datasheet, Chinese-language only, no reliability report, no PSRR-in-dropout data, no independent measurements found. This is not a 'not worse' part.
+    - **Compatibility:** Footprint- and strap-compatible drop-in, including EN from 3.3 V.
+    - **Risks:** New part from a small vendor with no Western franchised channel. Specs are datasheet typicals under a single test condition each. Bench verification would be required (noise at 13.2 V, PSRR in dropout, accuracy). Rejected under the user's rule.
+    - **Seller url:** https://www.lcsc.com/product-detail/C53430773.html
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/C53430773.html
+      - https://datasheet.lcsc.com/datasheet/pdf/cd5e67c8e3650ce93fa86b135e448881.pdf?productCode=C53430773
+  7.
+    - **Name:** Analog Devices LT3045EDD (established-brand ultra-low-noise LDO)
+    - **Kind:** other_brand
+    - **Price usd:** About $8.63 each at LCSC, per the stack's own LNA-rail entry. Not re-checked in this pass.
+    - **Spec comparison:** From the ADI datasheet as known; analog.com returned 503 today, so this was not re-fetched. VIN 1.8-20 V, 500 mA, 0.8 uVrms that does not scale with VOUT (much better than 12 uVrms), PSRR about 76 dB at 1 MHz (better), dropout about 260 mV at 500 mA.
+    - **Worse in:** Input rating of 20 V is below the 27.6 V TVS clamp and the at-least-30 V requirement. Output current 0.5 A against 1 A. Different package (DFN-12 / MSOP-12), so the PCB changes. Rejected.
+    - **Compatibility:** Not pin-compatible. It would need a pre-regulator or a TVS change and a new layout.
+    - **Risks:** An input transient above 20 V destroys it. Specs unverified this pass.
+    - **Sources:**
+      - https://www.analog.com/en/products/lt3045.html
+- **Notes:** VERDICT: keep the TPS7A47 family. No other brand found is not-worse on every spec this stack needs. The only cheaper not-worse option is the same chip (TPS7A4701RGWR, or TPS7A4700RGWR, which is identical in ANY-OUT mode) bought from TI.com at $5.089 each ($10.18 for 2, ex VAT) instead of $11.01-13.29. That saves about $12 for the pair, but TI, TME and LCSC all show 0 stock on 18 Oct 2026, so it applies only when stock returns. Restock can be polled with https://www.ti.com/storeservices/cart/opninventory?opn=TPS7A4701RGWR (and the same with TPS7A4700RGWR).
+  
+  IMPORTANT FINDING FOR THE PARENT: the in-stock buy that reaudit_D recommends, TPS7A4701MRGWREP, has a wider published overall accuracy: ±3.5% over -55..125 C (SLVSDQ3), against ±2.5% for the commercial part (SBVS204G). At 13.2 V that is ±0.46 V, outside the ±0.33-0.35 V acceptance window. 'Pin-for-pin with the same function' does not mean 'same published accuracy'. Options:
+  (a) Buy the commercial RGWR or 4700RGWR when it restocks.
+  (b) Keep the EP, but make the per-unit connector measurement the gate. The ±1% at 25 C is the same for both parts; the tolerance over temperature is not guaranteed.
+  (c) Widen the window, but only if the LNB (11.5-14 V selects vertical) and the Boni (12-15 V at the barrel) still sit inside it at ±0.46 V. For 13.2 V and 13.8 V that holds on paper. Not changed silently here; the user should decide.
+  
+  EU angle: TME (Poland, EU warehouse) lists all four orderables but has 0 stock; its USD ranges have no VAT basis stated. TI.com is billed in USD; EU VAT and shipping handling was not verified. LCSC prices are ex VAT; EU VAT is collected at checkout under IOSS (not verified this pass).
+  
+  GM1415ACPZ-R7 ($3.49) is a real pin-compatible TPS7A47-type second source. It beats the TI part on input rating, current limit and on-paper PSRR, but loses on noise at 5-15 V output, the +3% accuracy limit, 500 mV max dropout, Iq and maturity (Rev.0, Nov 2025). Rejected under 'never trade away a spec silently'.
+  
+  Other established-brand classes were rejected from known datasheet limits, not re-fetched in this pass, so treat them as unverified:
+  - LT3045 / LT3042 and TI LP38798: VIN 20 V max, 0.2-0.8 A.
+  - ADP7142 and LT3065: 40-45 V input, but only 0.2-0.5 A.
+  - LT3080, LT3081, LT3086, LT3088: 36-40 V input and 0.8-2.1 A, but in the tens of uVrms noise class.
+  - TPS7A4501: 20 V.
+  - TPS7A16 and TPS7A4101: 200 mA or less.
+  None is not-worse at 30 V or more, 1 A and about 4-12 uVrms.
+  
+  The 'TPS7A4700 audio LDO module boards' budget alternative belongs to the generic/clone angle and was not assessed here. Its counterfeit and remarking risk is high, and a module would also change the mechanical and thermal design.
+  
+  Limits of this pass: WebSearch was not available (the shared budget was already used up; 0 searches made). Mouser, DigiKey, Farnell, Arrow, reichelt and analog.com returned 503/403/404, so their prices are unverified. Everything above comes from TI.com page data and its inventory API, the TI datasheets SBVS204G and SLVSDQ3, LCSC product pages, the GM1415 datasheet and TME pages. A follow-up with search budget could check Mouser and DigiKey stock for RGWR / 4700RGWR.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
