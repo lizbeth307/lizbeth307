@@ -12317,6 +12317,45 @@
   - Does the Wisecoco touch controller work with touch-capable gloves and in rain, and can the RP2040 co-processor take 3 buttons or an encoder without firmware conflicts?
 - **Confidence:** medium
 
+## stack:draft (run `wf_63d37cf4-10a`)
+
+I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 328 KB and 1,257 lines. A script check found every Markdown table consistent.
+
+**Sections:** header with the status line (checked on paper, not built, what to measure), then 1 Decisions, 2 BOM, 3 Lab, 4 Capabilities, 5 Architecture, 6 What was removed, 7 Corrections, 8 Open questions and bench measurements, 9 Purchase and bring-up order, 10 Sources.
+- Section 1 covers all 41 integration decisions (C1–C25, D1–D16) and the register decisions that are not duplicates.
+- Section 7 lists all 36 corrections from the register.
+
+**Device totals (USD, before shipping, VAT and duty):**
+
+| Configuration | Main | Budget (my estimate) |
+|---|---|---|
+| Handheld core | $1,758–2,253 | about $1,739; about $1,647 with manual antenna switching |
+| + patch antennas | $1,934–2,461 | — |
+| + both antenna tiers | $2,285–3,086 | about $2,116 |
+| Everything except optional | $4,257–5,603 | — |
+| Optional / gated (not counted) | $933–1,157 | — |
+
+- The Lime set alone (board, parts, T7) is about $596–681.
+- My line-by-line recount of the core gives $1,759.40–2,252.77. The $1 gap to the verifier's $1,758 looks like rounding.
+- The budget figures are my arithmetic from the budget alternatives the files list, and are labelled as such. The $1,739 figure relies on an unverified cell price.
+
+**Lab totals:**
+- Lab core: $1,475–1,810 (budget minimum about $1,088–1,126).
+- Lab extended: $498–708 (about $207 without the GPSDO and RF sled).
+- Core plus extended: $1,973–2,518.
+- HF chain: $440–589, already included in the core and foldable tiers.
+
+**Not resolved, or resolved by me:**
+- **Possibly missing from the BOM:** the sealed power key, the XT30 travel plug, the 3.5 mm panel extension and headphones, and the BNC-SMA lead for the Boni-Whip. They are listed but not added to the totals.
+- **RTL-B selector port T3:** the integration file leaves it unassigned. I marked it as unassigned.
+- **Three streams vs 25 MB/s:** the RF noise plan still says "three continuous streams" on the hub, while decision C5 replaces that with a 25 MB/s cap. I used C5.
+- **Yagi driven element:** I specified a straight split element plus hairpin in both builds, to avoid a folded-dipole or loop edge case.
+- **NPU APRS class:** direwolf is banned, so I replaced it as the label source with the SDRangel receive-only packet demodulator. This still needs to be checked on the device.
+- **Iridium and Orbcomm:** I treated them as unnamed survey occupancy only, following the newer completeness decision rather than the register's "carrier and Doppler" wording.
+- **Power subsystem cost:** the verifier's $250–345 figure has no stated breakdown, so I quoted it without one.
+- **Outside this task:** the errata blocks in summaries.md and minute-log.md are not written.
+- **Still open:** the questions for you (region, HF loop removal, small rigid antennas, whether to keep the Lime by 1 Dec 2026, a home PC, the US Coast Guard-run weather fax stations) and all the bench measurements are listed in section 8.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
