@@ -9365,6 +9365,1091 @@
   
   9. All bench tests are conducted-only or receive-only. No antenna sweeps, loops or H-field probes are introduced.
 
+## extract:analogs_G2 (run `wf_2f4f3ad2-91a`)
+
+- **Source:** analogs_G2
+- **Changes:**
+  1.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** seller_or_price
+    - **Part:** Radxa UFS 3.1 128 GB RA022-B10J0U2
+    - **Anchor:** | Сховище | Radxa UFS 3.1 128 GB RA022-B10J0U2 |
+    - **Instruction:** Keep the model. Rewrite the price/source/status/note cells: ціна USD «65.20 (EUR 58.00 з 21% ПДВ NL) / 53.88 без ПДВ (EUR 47.93); запас 65.90 без ПДВ (ALLNET)»; джерело «TinyTronics NL — основне для ЄС (немає на складі, 2-4 тижні) / ALLNET China — є на складі, запас / Arace $49.00 без ПДВ — лише якщо поновлено і з доставкою та ПДВ дешевше за TinyTronics»; статус «перевірено (18.10.2026)». Note: keep «A/B-корінь; прочитати ID (0x01CE = Samsung). Модуль 256 GB Kioxia не брати.» and add: «0x0198 (Kioxia) — тест B13 і ядро +lab1. ALLNET у ЄС за правилом вартості з доставкою: $78.42-79.74 при ПДВ 19-21% + доставка (не опублікована) + EUR 3 мита (1 тарифна лінія, посилка ≤ EUR 150 через IOSS/пошту) + EUR 2 UHF (з близько 1.11.2026) + збір перевізника; брати ALLNET лише якщо UFS потрібна раніше за 2-4 тижні або Q6A теж купується в ALLNET (поза ЄС). Доставка TinyTronics: NL EUR 2.95-6.95, інші країни ЄС EUR 7.29-25.54 без ПДВ (DE 8.35-8.49, PL 15.05). Економія від зміни продавця: $12.02 без ПДВ ($14.30-14.54 з ПДВ 19-21%) мінус доставка окремої посилки (модель: близько $3.3-7.8 у NL, $10-34 в інші ЄС). Відкинуто: 64 GB RA022-B10J0U1 (59.6 GiB не вміщує розмітку), 512 GB RA022-B10J0U8 ($79-89.90, розпродано, чип невідомий), eMMC 128 GB (217/143 MB/s), AliExpress «Radxa UFS» (походження не доведено).»
+    - **Reason:** P5 G2 record 0 keeps the identical SKU; TinyTronics (Radxa-listed EU distributor) becomes the primary EU source, ALLNET the in-stock fallback, Arace only if restocked; landed cost rule for CN/HK sellers.
+    - **Sources:** analogs_G2 #0; tinytronics.nl radxa-ufs-module-128gb; shop.allnetchina.cn high-performance-ufs-3-1-module.js; arace.tech radxa-ufs-module.js; operator_notes 34-35
+    - **Saving usd:** 0 on the part; 12.02 ex VAT (14.30-14.54 landed) from the seller switch, minus separate-parcel shipping
+  2.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** Radxa UFS 3.1 128 GB operating range
+    - **Anchor:** Робоча 0-70 °C.
+    - **Instruction:** Replace «Робоча 0-70 °C.» with «Робочий діапазон 0-70 °C не підтверджено: бриф Radxa UFS rev 1.2 називає лише опційну промислову версію −25...+85 °C — визначити з ufs-hwmon temp1_crit/lcrit на прибутті.» After «модуль 256 GB Kioxia уникати.» add «(підтверджено комітом radxa/kernel 559f4f9: квірк PA_TACTIVATE для THGJFGT1E45BAILB є лише на HEAD гілки, не в 6.18.2-4; 512 GB RA022-B10J0U8 теж відкинуто — розпродано, чип невідомий)». In the «наслідки» cell append «; дескриптор здоров'я (life_time_estimation_a/b, wb_life_time_est) і межі ufs-hwmon — у межах 14 днів відмови ЄС».
+    - **Reason:** Record 0 equivalence_proof: brief rev 1.2 states no standard-grade range; Kioxia rule verified.
+    - **Sources:** dl.radxa.com rad-doc-0154 UFS product brief rev 1.2; github.com/radxa/kernel/commit/559f4f9
+    - **Saving usd:** 
+  3.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** UFS low-temperature rating
+    - **Anchor:** UFS і T7 розраховані від 0 °C.
+    - **Instruction:** Replace with «T7 розрахований від 0 °C; нижню межу UFS Radxa не публікує (бриф rev 1.2 — лише опційна промислова −25...+85 °C), тож прочитати temp1_lcrit з ufs-hwmon на прибутті; до того планувати від 0 °C (модель).»
+    - **Reason:** Record 0: the 0-70 °C figure is unverified for every source.
+    - **Sources:** analogs_G2 #0; Radxa UFS brief rev 1.2
+    - **Saving usd:** 
+  4.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** bench_test
+    - **Part:** UFS sustained write after WriteBooster
+    - **Anchor:** тривала швидкість після кешу невідома.
+    - **Instruction:** Append: «Виміряти на прибутті UFS заповненням до близько 70%; поріг проходження — набагато вище за 13.3 MB/s і децимовані потоки Lime.»
+    - **Reason:** Record 0 condition 5 (pass floor for the post-WriteBooster fill).
+    - **Sources:** analogs_G2 #0
+    - **Saving usd:** 
+  5.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step-1 orders: UFS split, Armor 7056A, Reichelt rescue cards, ALLNET order
+    - **Anchor:** ЄС: одне замовлення TinyTronics з ПДВ (плата EUR 148 + UFS EUR 58 + Daly BMS EUR 8 = EUR 214 = $240.56
+    - **Instruction:** Rewrite the step-1 «що і де» cell up to «Перевірити наявність при оплаті.» as: «ЄС: (а) замовлення TinyTronics з ПДВ, що їде одразу: плата EUR 148 + Daly BMS EUR 8 + Radxa Armor 7056A (SKU 007949) EUR 12.00 = EUR 168 = $188.85 (розрахунок; TinyTronics бере доставку за посилку до 23 kg); (б) UFS 128 GB EUR 58.00 ($65.20; немає на складі, 2-4 тижні) — ОКРЕМИМ замовленням або в тому самому лише з письмово підтвердженою частковою відправкою, щоб не тримати плату і BMS для воріт W1-2; доставку другої посилки враховати (NL EUR 2.95-6.95, інші ЄС EUR 7.29-25.54 без ПДВ); перед оплатою перевірити Arace RA022-B10J0U2 — брати лише якщо поновлено і з доставкою та ПДВ дешевше за TinyTronics; (в) Reichelt сьогодні: 2× Verbatim 47042 + Goobay 95717 = EUR 27.20 з ПДВ ($30.58), доставка від EUR 5.95 (DE; інші ЄС не перевірено) — ці карти потрібні для завантаження з microSD до приходу UFS. Інші країни: одне замовлення ALLNET (плата $189.99, UFS $65.90, Armor 7056A $9.90, батарейка RTC $0.95 = $266.74; microSD 64 GB прибрано). Перевірити наявність при оплаті (Armor у TinyTronics — 6 шт., карти в Reichelt — «limited stock»).» In «чому першим» add «UFS у TinyTronics — під замовлення 2-4 тижні, тому окремо від плати». If G3 changes the Daly BMS line, update order (а) accordingly.
+    - **Reason:** Records 0 (separate UFS order, Arace checkout rule, boot card must be ordered), 1 (Armor inside the TinyTronics board order for Europe; ALLNET only non-EU), 11 (rescue cards and A-A cable from Reichelt; microSD removed from the ALLNET order).
+    - **Sources:** analogs_G2 #0, #1, #11; tinytronics.nl delivery-information; reichelt.com product pages
+    - **Saving usd:** ALLNET order 283.73 -> 266.74
+  6.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** UFS chip ID moved out of the W1-2 gate
+    - **Anchor:** резервна копія SPI NOR (edl-ng); ID чипа UFS.
+    - **Instruction:** Delete «ID чипа UFS.» from the W1-2 board gate (keep «резервна копія SPI NOR (edl-ng);»). Add a bring-up step after step 1: «**На прибутті UFS (близько W3-5), у межах 14 днів відмови ЄС:** wManufacturerID і модель (0x01CE / KLUDG4UHDC — лишити 6.18.2-4; 0x0198 — тест B13 і ядро +lab1); 10 хв fio; заповнення до близько 70% (тривалий запис після WriteBooster); дескриптор здоров'я (life_time_estimation_a/b, wb_life_time_est); ufs-hwmon temp1_crit/lcrit. До того — завантаження з рятувальної microSD.»
+    - **Reason:** Record 0 stack_changes: move 'UFS chip ID' from the W1-2 gate to 'on UFS arrival' because of the 2-4 week lead time.
+    - **Sources:** analogs_G2 #0
+    - **Saving usd:** 
+  7.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** UFS on-arrival tests
+    - **Anchor:** Сховище: тривалий запис UFS після кешу WriteBooster; ID чипа; 10 хв fio; заповнення до близько 70%
+    - **Instruction:** Extend the row. What: add «; wManufacturerID і модель (0x01CE — 6.18.2-4; 0x0198 — B13 і +lab1); дескриптор здоров'я (life_time_estimation_a/b, wb_life_time_est); ufs-hwmon temp1_crit/lcrit (робочий діапазон не опубліковано)». Gate: «C18; тривалий запис набагато вище 13.3 MB/s і децимованих потоків Lime». When: «На прибутті UFS (близько W3-5), у межах 14 днів відмови ЄС; якщо роз'єм UFS Q6A вперше перевіряється після 14-денного вікна плати — 2-річна гарантія ЄС, або, якщо вікно повернення Q6A важливіше за економію, брати UFS ALLNET з наявності».
+    - **Reason:** Record 0 conditions 5-6.
+    - **Sources:** analogs_G2 #0
+    - **Saving usd:** 
+  8.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** UFS sources
+    - **Anchor:** - ALLNET UFS 3.1: https://shop.allnetchina.cn/products/high-performance-ufs-3-1-module
+    - **Instruction:** Add after this line: «- TinyTronics UFS 128 GB: https://www.tinytronics.nl/en/data-storage/modules/radxa-ufs-module-128gb ; доставка: https://www.tinytronics.nl/en/delivery-information», «- Radxa дистриб'ютори: https://radxa.com/distributors/», «- Radxa Q6A UFS/eMMC: https://docs.radxa.com/en/dragon/q6a/hardware-use/ufs-emmc-com», «- Бриф Radxa UFS rev 1.2: https://dl.radxa.com/accessories/ufs-module/rad-doc-0154_radxa_ufs_module_product_brief__revision_1.2_g69c4d5d.pdf», «- radxa/kernel 559f4f9 (квірк Kioxia): https://github.com/radxa/kernel/commit/559f4f921a01e5358602153364c618fe2a3e431e», «- Arace UFS: https://arace.tech/products/radxa-ufs-module».
+    - **Reason:** Key URLs of record 0.
+    - **Sources:** analogs_G2 #0 sources
+    - **Saving usd:** 
+  9.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** replace_part
+    - **Part:** Q6A cooling set (Armor 7056A + Noctua NF-A4x10 5V + blower)
+    - **Anchor:** | Охолодження | Radxa Armor 7056A або ступінчастий Cu-блок + Adafruit 6101 вентилятор 40 мм 5 V
+    - **Instruction:** Replace the row with: «| Охолодження | Radxa Armor 7056A (AE036; лише верхня кришка) або ступінчастий Cu-блок (опція A за продуктивністю) + Noctua NF-A4x10 5V non-PWM (3-pin з тахо, шлях 1) + повітродувка 5 V каналу дисплея (модель не обрано) + Adafruit 6101 — лише запасний | 1 набір | 36.36-41.36 ЄС з ПДВ (Armor $13.49 = EUR 12.00 + NF-A4x10 $17.87 = EUR 15.90 + повітродувка 5-10 модель); +$8.98 (EUR 7.99) доставки, якщо вентилятор їде окремо; +$4.95 запасний 6101. Поза ЄС: 33.47-38.47 (ALLNET $9.90 + QuietPC GBP 13.96 = $18.57 + повітродувка) | TinyTronics 007949 (у замовленні кроку 1) + Alternate.de (або QuietPC .co.nl EUR 13.80 — UK, ПДВ і доставка не перевірені); поза ЄС — ALLNET; 6101 — Adafruit | перевірено (Armor, NF-A4x10) / модель (повітродувка) | Увімк./вимк. постійним струмом від Pico, без PWM; шлях 1 — верхнім ключем через тахо (C6). Вентилятор: ≥8.2 м³/год, ≥1.78 mmH2O, ≤17.9 dB(A), ≤0.25 W / 0.05 A, тахо, 40x40x10 мм; L.N.A. з комплекту не ставити. Повітродувка: брендова 5 V 5015 з даташитом і 70 °C — $8.38-12.28 (Same Sky CBM-5015CF/BF, DigiKey); обрати після тесту потоку каналу. Cu-блок (AliExpress 1005010333340740): ціна не перевірена ($17-30 раніше), дорожче за Armor. TinyTronics пише «Cubie Q6A» — помилка назви; ПДВ для країни ЄС поза NL може відрізнятися. Було: Adafruit 6101 як вентилятор шляху 1 (близько 1 W, без тахо); «Бюджет: Arace $4.99» видалено — у ЄС з доставкою близько $30.93-32.66 (DDU). |»
+    - **Reason:** Record 1 keeps the governing re-audit D set (Noctua path-1 fan, 6101 spare) and fixes the real EU sources/prices; the Arace saving is refuted for Europe.
+    - **Sources:** analogs_G2 #1; tinytronics.nl radxa-metal-case-7056a; alternate.de NF-A4x10-5V 1232067; arace.tech shipping rates
+    - **Saving usd:** 0 (Arace -4.91 refuted: +17-19 landed)
+  10.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** Fan switching with a 3-wire tach fan (C6)
+    - **Anchor:** Обидва вентилятори — 2-провідні 5 V, вмикаються постійним струмом через FET від Pico
+    - **Instruction:** Replace this clause with: «Вентилятор шляху 1 — Noctua NF-A4x10 5V non-PWM, 3-провідний з тахо: вмикається постійним струмом ВЕРХНІМ ключем (P-MOSFET + малий драйвер AO3400A або ключ навантаження 5 V; діод зворотного ходу лишається), бо нижній ключ при вимкненні відриває землю вентилятора — тахо стає недійсним і може зворотно живити 3.3 V пін Pico; тахо — відкритий колектор, підтягування близько 10 kOhm до 3.3 V (ніколи 5 V), послідовно близько 1-4.7 kOhm у вільний GPIO Pico (GP22); прошивка ігнорує тахо, поки вентилятор вимкнений, і близько 2 с після ввімкнення, тривога зупинки — немає імпульсів понад 2 с (2 імпульси на оберт). Повітродувка (модель не обрано) — нижній ключ AO3400A, якщо 2-провідна; якщо обрана з тахо — те саме правило верхнього ключа». Keep the rest (60/50 °C, NTC, 100% on heartbeat loss). Mark as an engineering note (P5 G2), to confirm on the P7 schematic.
+    - **Reason:** Record 1 stack_changes item 3 (wiring knock-on of the tach fan); reconciled with record 10 (AO3400A on fan paths) — my reconciliation, flagged.
+    - **Sources:** analogs_G2 #1, #10
+    - **Saving usd:** 
+  11.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** Pico GP18/GP19 fan drivers
+    - **Anchor:** | GP18 / GP19 | FET вентилятора Q6A / FET повітродувки |
+    - **Instruction:** Replace with «| GP18 / GP19 | верхній ключ вентилятора Q6A (P-MOSFET + драйвер AO3400A або ключ навантаження 5 V; діод зворотного ходу) / AO3400A повітродувки (нижній ключ, якщо 2-провідна) |». GP22 (tach input) is set in the GP20/GP21/GP22 row change (record 7).
+    - **Reason:** Record 1 (high-side path 1) and record 10 (AO3400A instead of 2N7002 for fans).
+    - **Sources:** analogs_G2 #1, #10
+    - **Saving usd:** 
+  12.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** keep_with_note
+    - **Part:** Air path 1 fan and cooling gates
+    - **Anchor:** з вентилятором 40 мм 5 V → викид ззаду зверху
+    - **Instruction:** Replace with «з вентилятором Noctua NF-A4x10 5V (40 мм, тахо; L.N.A. не ставити) → викид ззаду зверху». At the end of the «Повітря» bullet add: «Ворота: окремі контакти SoC (паста або PTM7950) і LPDDR5 (прокладка 0.5-1 мм); SoC-до-забору ≤3.5 K/W при близько 10 W stress-ng 10 хв без пасивного відключення; щонайменше 2.7 м³/год на шлях крізь сітку і піну; посадка верхньої кришки Armor на стійках M2.5 за STEP v1.21.»
+    - **Reason:** Record 1 bench gates (unchanged by P5, now written into the architecture).
+    - **Sources:** analogs_G2 #1
+    - **Saving usd:** 
+  13.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step-7 purchases: Noctua NF-A4x10 5V and Diamox AR1617
+    - **Anchor:** ASA, вставки CNC Kitchen, прокладки, ремінь.
+    - **Instruction:** Append to the row-7 cell: «Noctua NF-A4x10 5V non-PWM — Alternate.de EUR 15.90 з ПДВ + EUR 7.99 доставки (або QuietPC разом з прокладками Gelid: EUR 13.80 на .co.nl — продавець з UK, ПДВ, доставка і мито ЄС не перевірені). AR-плівка Diamox AR1617 (лист 250x250 мм) — Diamond Coatings UK, GBP 11.11 без ПДВ + доставка + ПДВ + EUR 3 мита і EUR 2 UHF за правилом вартості; купити разом з панеллю, бо тести плівки потребують панелі (моя примітка).»
+    - **Reason:** Records 1 (fan EU sources) and 4 (film SKU).
+    - **Sources:** analogs_G2 #1, #4
+    - **Saving usd:** 
+  14.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** removal
+    - **Part:** Budget variant: Armor from Arace
+    - **Anchor:** корпус Armor 7056A з Arace ($4.99 замість $9.90, −$4.91)
+    - **Instruction:** Delete this item from the budget-variant sentence (for Europe Arace lands at about $30.93-32.66, DDU, against $13.49 at TinyTronics). Recompute «≈$1,739»: with the Arace and FPC items removed it is 1,759.40 − 12.01 (NKON, if G3 keeps it) = ≈$1,747 before other P5 changes; final value after all P5 changes.
+    - **Reason:** Record 1: the '-4.91 Arace saving' is refuted for Europe.
+    - **Sources:** analogs_G2 #1
+    - **Saving usd:** -4.91 removed
+  15.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** Adafruit 6101 as path-1 fan; Arace Armor budget note
+    - **Anchor:** ### 6.2. Прибрано як технічно замінене
+    - **Instruction:** Add a row to 6.2: «| Adafruit 6101 як вентилятор шляху 1 (близько 1 W, без тахо; лишається запасним); «Бюджет: Armor 7056A з Arace $4.99» | Повторний аудит D (NF-A4x10 5V) і P5 G2: Arace відвантажує DDU, у ЄС близько $30.93 (DE) / $32.66 (NL) до збору перевізника проти $13.49 у TinyTronics. |»
+    - **Reason:** Record 1.
+    - **Sources:** analogs_G2 #1
+    - **Saving usd:** 
+  16.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** Arace Armor saving; Noctua EU price
+    - **Anchor:** 36. wideband_sdr:
+    - **Instruction:** Add a new numbered item after the last one: «Економія «−$4.91 Arace» на корпусі Armor 7056A спростована для ЄС: доставка $21 (DE) / $22 (NL), DDU, з 19% ПДВ близько $30.93 до збору перевізника; TinyTronics 007949 EUR 12.00 з ПДВ ($13.49) — найдешевше реальне джерело. NF-A4x10 5V «$18.57» (QuietPC GBP 13.96) — не перевірена ціна ЄС; перевірено Alternate.de EUR 15.90 + EUR 7.99 доставки.»
+    - **Reason:** Record 1 saving_usd and chosen_price_usd.
+    - **Sources:** analogs_G2 #1
+    - **Saving usd:** 
+  17.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Cooling set tests and near-miss fan question
+    - **Anchor:** 
+    - **Instruction:** Add a row: «| Охолодження: на прибутті — ідентичність Radxa 7056A/AE036 і комплект (2 прокладки, 4 гвинти); посадка верхньої кришки на M2.5 (STEP v1.21); окремі контакти SoC/LPDDR5; SoC-до-забору ≤3.5 K/W (близько 10 W stress-ng 10 хв, без пасивного відключення); ≥2.7 м³/год на шлях крізь сітку і піну; A/B фону HF+/RTL з вентилятором і повітродувкою увімк./вимк. (EMI моторів не опубліковано); читання тахо і тривога зупинки | Приймання D6 | Після друку корпусу |». Add to «Питання до вас»: «20-мм вентилятор Sunon MF40200V3-1000U-G99 або Same Sky CFM-4020V-050-165-20 замість Noctua: дешевше на близько $5-16 (ціна ЄС і ПДВ — модель), але +0.13-0.19 W і +10 мм глибини шляху 1 — лише за вашою явною згодою, з перевіркою глибини корпусу і тими самими тестами потоку й EMI.»
+    - **Reason:** Record 1 conditions_or_tests (bench gates and near-miss).
+    - **Sources:** analogs_G2 #1
+    - **Saving usd:** 
+  18.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Cooling sources
+    - **Anchor:** - Форум: охолодження: https://forum.radxa.com/t/best-heatsink-cooling-solutions-for-dragon-q6a/30123
+    - **Instruction:** Add after: «- Radxa Armor 7056A: https://radxa.com/products/accessories/armor-case-7056a/ ; TinyTronics 007949: https://www.tinytronics.nl/en/tools-and-mounting/enclosures/others/radxa-metal-case-7056a-for-rock-5a-5c-and-cubie-q6a-a7a», «- Noctua NF-A4x10 5V (Alternate.de): https://www.alternate.de/Noctua/NF-A4x10-5V-Geh%C3%A4usel%C3%BCfter/html/product/1232067 ; QuietPC: https://quietpc.co.nl/nf-a4x10-flx-5v», «- Same Sky CBM-5015 (DigiKey): https://www.digikey.com/en/products/result?keywords=CBM-5015», «- Arace політика доставки (DDU): https://arace.tech/policies/shipping-policy».
+    - **Reason:** Key URLs of record 1.
+    - **Sources:** analogs_G2 #1 sources
+    - **Saving usd:** 
+  19.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** keep_with_note
+    - **Part:** Wisecoco SKU 4681 display
+    - **Anchor:** | Екран | Wisecoco 7" (6.97") 1920x1080 2000+ nit
+    - **Instruction:** Keep model, qty, price 132.00 and seller. Status: «перевірено 18.10.2026 (SKU 4681, $132.00 / список $135.00, InStock, dateModified 2026-09-17, 0 відгуків; специфікації ні)». Add to the note: «На сторінці досі немає доставки, ПДВ, гарантії, бондування й AR. У ЄС за правилом вартості: близько $157-160 при ПДВ 19-21% до доставки (не показана) + EUR 3 мита (1 тарифна лінія, якщо ≤ EUR 150 і IOSS/пошта) + EUR 2 UHF (з близько 1.11.2026) + збір перевізника. Запас 4D — явне зниження, записане в журнал (1000 cd/m2, 1280x800 = 216 PPI проти 315, 800:1, без AR стандартно), не рівноцінний аналог.»
+    - **Reason:** Record 2 keeps the Wisecoco (no cheaper candidate proven not-worse) and re-verifies its listing; landed cost rule for a non-EU direct seller.
+    - **Sources:** analogs_G2 #2; wisecocodisplay.com product page; 4DHDMI datasheet R1.5
+    - **Saving usd:** 0
+  20.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** condition
+    - **Part:** D5 written questions to Wisecoco
+    - **Anchor:** Перед оплатою надіслати Wisecoco письмові питання: VID:PID USB-HID; бондування і AR;
+    - **Instruction:** Extend the D5 question list so it reads: «VID:PID USB-HID при розімкненому VBUS; бондування, AR і товщина лінзи; деталь скалера/моста і тактові частоти; вхідна напруга і струм 12 V при 25/50/100%; дамп EDID і чи приймаються 151.50 і 127.90 MHz; режим DSI і швидкість ліній моста; драйвер підсвітки, його частота і метод димінгу; аудіопідсилювач; вісь поляризатора; режим для рукавиць; робоча температура; комплект». After the 4D fallback sentence add «(явне, записане в журнал зниження в нітах, PPI і контрасті, а не тихе)».
+    - **Reason:** Record 2 conditions_or_tests (D5 written answers list).
+    - **Sources:** analogs_G2 #2
+    - **Saving usd:** 
+  21.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** 4D fallback and Newhaven data; rejected display candidates
+    - **Anchor:** Перевірений запасний — 4D 4DHDMI-70-1280-800-CT-EAR-1000 (1000 ніт, бондований,
+    - **Instruction:** After «(1000 ніт, бондований,» insert «800:1, 1280x800 = 216 PPI, без AR стандартно; за даташитом R1.5 1000 cd/m2 — максимум для 7", 1100 cd/m2 має лише 15.6" 4DHDMI-156-1920-1080-*-1100,». After «Newhaven NHD-7.0-HDMI-HR-RSXP-CTU (940 ніт, $120.20» insert «з податком, мало на складі; 1024x600 ≈ 169.5 PPI, живлення 5.0 V замість DISP12, бондування не вказано — гірше, не аналог». In the «чому» cell append: «P5: дешевшого і доведено не гіршого кандидата немає; відкинуто SURENOO SUR12001080H070K (близько $106 лише з фрагмента, без даташиту, «1200*1080»), Kimmybow B0H7BQDZR9 ($168.50, Amazon US; вхід і сенсор не названі), Lincoln LCDK132 (близько $420, −10...50 °C, 11.4-12.6 V), Feelworld LUT7 (близько EUR 318, сенсор без USB-HID).»
+    - **Reason:** Record 2 stack_changes 2-4 and rejected list.
+    - **Sources:** analogs_G2 #2; 4DHDMI_Datasheet_R_1_5.pdf; newhavendisplay.com nhd70hdmihrrsxpctu; amazon.com/dp/B0H7BQDZR9
+    - **Saving usd:** 
+  22.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Display acceptance additions and SURENOO re-open condition
+    - **Anchor:** | Плата дисплея: діапазон входу і струм при 25/50/100%;
+    - **Instruction:** Extend the row. What: add «; тест тиші BLE 2400-2483.5 MHz; робочий шлях димінгу (DDC/CI, потім емуляція KEY, потім власний CC-драйвер)». Gate: «у межах 30 днів: ≥1800 cd/m2 на повному білому вимірювачем яскравості; ≤14 W при 100% і ≤7.5 W при 50% при 11.0 V; сенсор у 20/20 холодних завантажень». When: append «Без чіткої відповіді близько 7 днів або при провалі приймання — 4D ($128.95 DigiKey) як записане зниження. SURENOO SUR12001080H070K переглядається лише з письмовим підтвердженням (нативні 1920x1080 альбомно; ≥1800 cd/m2; оптичне бондування; USB-HID з VID:PID; плата приймає польові EDID; вхід 12 V і потужність при 25/50/100%; −20...70 °C), якщо ціна ЄС з доставкою перевірено нижча за Wisecoco, і після тих самих тестів; рішення — до заморожування CAD корпусу.»
+    - **Reason:** Record 2 conditions_or_tests.
+    - **Sources:** analogs_G2 #2
+    - **Saving usd:** 
+  23.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** condition
+    - **Part:** Step 3 Wisecoco questions
+    - **Anchor:** Письмові питання до Wisecoco (VID:PID HID, бондування/AR, вхід V/I, EDID, режими 151.50/127.90 MHz, режим DSI, рукавиці, комплект).
+    - **Instruction:** Replace with «Письмові питання до Wisecoco (VID:PID HID при розімкненому VBUS, бондування/AR і товщина лінзи, скалер/міст і частоти, вхід V/I і струм 12 V при 25/50/100%, дамп EDID, режими 151.50/127.90 MHz, режим DSI, драйвер і частота підсвітки та метод димінгу, аудіопідсилювач, вісь поляризатора, рукавиці, комплект).» Keep the 4D fallback sentence and add «(записане зниження)».
+    - **Reason:** Record 2 conditions.
+    - **Sources:** analogs_G2 #2
+    - **Saving usd:** 
+  24.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Display sources
+    - **Anchor:** - 4D Systems 4DHDMI даташит: https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_0.pdf
+    - **Instruction:** Replace the URL with https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_5.pdf (Rev 1.5). Add: «- 4D на DigiKey: https://www.digikey.com/en/products/result?keywords=4DHDMI-70-1280-800-CT-EAR-1000», «- Newhaven NHD-7.0-HDMI-HR-RSXP-CTU: https://www.newhavendisplay.com/nhd70hdmihrrsxpctu-p-9649.html».
+    - **Reason:** Record 2 read datasheet R1.5 (the line maximum correction comes from it).
+    - **Sources:** analogs_G2 #2 sources
+    - **Saving usd:** 
+  25.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** replace_part
+    - **Part:** Shielded HDMI lead ferrites: Fair-Rite 0431164281
+    - **Anchor:** | HDMI-кабель | Adafruit 2420 (короткий екранований) + 2× Wurth 74271140 |
+    - **Instruction:** Replace the row with: «| HDMI-кабель | Adafruit 2420 (екранований, 457 мм) + 2× Fair-Rite 0431164281 (Mix 31 Round Cable Snap-It, DigiKey 1934-1464-ND) | 1 набір | 15.65 (9.95 + 2× 2.85; без ПДВ) | Adafruit + DigiKey (у вже запланованих замовленнях) | перевірено (18.10.2026; Fair-Rite 103,515 шт., Active) | Умовно: оболонку нарощено до близько 6.1-6.3 мм під кожним феритом (близько 4 витки стрічки 0.11 мм або тонка термоусадка), кожен закритий ферит зафіксовано стяжкою або термоусадкою; тести посадки, фіксації і −20/+70 °C (розділ 8). Запас: 2420 + 2× Wurth 74271112 ($4.38; $18.71 за набір). Було: 2× Wurth 74271140 — діапазон кабелю 2.0-3.0 мм проти OD 2420 5.2 ±0.15 мм, набір не збирається; економія $2.12 від $17.77 або $3.06 від придатного $18.71. Довжина 457 мм проти вимоги 10-15 см (відкрито): надлишок — пласка S-складка, ніколи котушкою, подалі від РЧ-відсіку і фідера GNSS; брендового круглого A-A 10-15 см не знайдено. FPC-набір Adafruit (3548 + 3560) $14.50 — лише запас трасування з заземленою обмоткою мідною стрічкою (менш міцний і не екранований). ПДВ ЄС — за ставкою країни. |». Add a new row after it: «| Ферит дроту сенсора | Wurth 74271140 на дроті USB сенсора 2-3 мм (лише D+/D−/GND) | 1 | 3.91 | DigiKey | не перевірено (ціна з v1) | За повторним аудитом D; потрібен за будь-якого варіанта HDMI. |»
+    - **Reason:** Record 3: the listed set cannot be built; Fair-Rite Mix 31 core meets or beats the fitting 74271112 on impedance; conditional on fit/retention/temperature tests.
+    - **Sources:** analogs_G2 #3; Fair-Rite 431164281 datasheet; WE 74271140/74271112 datasheets; Adafruit CHDMI-AM-AM-457 drawing
+    - **Saving usd:** 2.12 vs listed 17.77 (3.06 vs fitting 18.71)
+  26.
+    - **Section:** 02d_bom_case_cables
+    - **Kind:** keep_with_note
+    - **Part:** Cable kit: HDMI lead and touch-USB lead
+    - **Anchor:** екранований HDMI 10-15 см з Mix 31/61
+    - **Instruction:** Replace with «екранований HDMI Adafruit 2420 457 мм (пласка S-складка; вимога 10-15 см відкрита) з 2× Fair-Rite 0431164281 (Mix 31)». Also replace «дріт сенсора з перерізаним VBUS» with «дріт сенсора з перерізаним VBUS і феритом Wurth 74271140».
+    - **Reason:** Record 3 stack_changes.
+    - **Sources:** analogs_G2 #3
+    - **Saving usd:** 
+  27.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** HDMI lead in the display EMI section
+    - **Anchor:** Екранований HDMI 10-15 см з феритами Mix-31/61
+    - **Instruction:** Replace with «Екранований HDMI Adafruit 2420 (457 мм; вимога 10-15 см відкрита — надлишок пласкою S-складкою, ніколи котушкою, подалі від РЧ-відсіку і фідера GNSS) з 2× Fair-Rite 0431164281 (Mix 31: типово 104/170/315 Ohm на 10/25/100 MHz; нижче 25 MHz вище, ніж 74271112; вище близько 500 MHz даних немає ні в кого — на L-band працює екран)».
+    - **Reason:** Record 3 equivalence_proof and stack_changes.
+    - **Sources:** analogs_G2 #3
+    - **Saving usd:** 
+  28.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** Case pockets for HDMI cores
+    - **Anchor:** Дисплей: скло, панель, HDMI-плата; канал повітря 4-6 мм з повітродувкою
+    - **Instruction:** After «HDMI-плата;» insert «уздовж траси HDMI — дві кишені під ферити близько 40x20x20 мм;».
+    - **Reason:** Record 3: reserve two core pockets (Fair-Rite 39.5 x 20 x ~19.6 mm).
+    - **Sources:** analogs_G2 #3
+    - **Saving usd:** 
+  29.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** removal
+    - **Part:** Budget variant: FPC kit instead of the HDMI lead
+    - **Anchor:** FPC-набір замість HDMI-кабелю з феритами (−$3.27)
+    - **Instruction:** Delete this item from the budget variant: Adafruit states the FPC kits are not as durable or shielded as ready-made cables, so it removes function; it stays only as a routing fallback. Recompute the budget variant after all P5 changes (see the Arace item).
+    - **Reason:** Record 3 rejected list (FPC kit worse in the main job).
+    - **Sources:** analogs_G2 #3
+    - **Saving usd:** -3.27 removed
+  30.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** Wurth 74271140 on the HDMI lead; FPC as budget
+    - **Anchor:** ### 6.2. Прибрано як технічно замінене
+    - **Instruction:** Add a row to 6.2: «| 2× Wurth 74271140 на HDMI 2420; FPC-набір як бюджетна заміна HDMI | 74271140: діапазон кабелю 2.0-3.0 мм проти OD 5.2 мм (не закривається), NiZn 4W620, а не Mix 31/61 — замінено на Fair-Rite 0431164281 (запас 74271112); один 74271140 лишається на дроті сенсора. FPC — лише запас трасування (не екранований). |»
+    - **Reason:** Record 3.
+    - **Sources:** analogs_G2 #3
+    - **Saving usd:** 
+  31.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** HDMI ferrite set could not be built
+    - **Anchor:** 36. wideband_sdr:
+    - **Instruction:** Add a new numbered item: «HDMI-набір v1 (2420 + 2× 74271140) не збирався: даташит WE дає 74271140 діапазон кабелю 2.0-3.0 мм, креслення CHDMI-AM-AM-457 — OD 2420 5.2 ±0.15 мм; 74271140 — NiZn 4W620, а не Mix 31/61, як писав текст.»
+    - **Reason:** Record 3 current_pick analysis.
+    - **Sources:** analogs_G2 #3
+    - **Saving usd:** 
+  32.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HDMI ferrite tests
+    - **Anchor:** 
+    - **Instruction:** Add a row: «| HDMI-ферити Fair-Rite 0431164281: (1) посадка — половинки закриваються без видимого зазору, ферит не зсувається при тязі близько 5 N; (2) фіксація стяжкою або термоусадкою (замість ключа WE-STAR-KEY); (3) один ферит на кабелі: 2 год −20 °C, потім згин і постукування — засувка тримає, корпус не тріснув; 2 год +70 °C — без деформації; (4) A/B HDMI увімк./вимк. у режимах 151.50 і 127.90 MHz лише E-зондом: жодної лінії ≥3 dB над фоном, підйом ≤0.5 dB, GNSS ≤1 dB-Hz; A/B HF+ з лінком увімк./вимк. (Mix 31 не гірше нижче 25 MHz); (5) рядок DigiKey — Fair-Rite 0431164281 / 1934-1464-ND | При провалі 1-3 — 2420 + 2× Wurth 74271112 ($18.71) | Збирання корпусу; A/B-матриця |»
+    - **Reason:** Record 3 conditions_or_tests.
+    - **Sources:** analogs_G2 #3
+    - **Saving usd:** 
+  33.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** HDMI lead and ferrite sources
+    - **Anchor:** - Adafruit MCP23017: https://www.adafruit.com/product/5346
+    - **Instruction:** Add before or after this line: «- Adafruit 2420 HDMI 457 мм: https://www.adafruit.com/product/2420 ; креслення: https://cdn-shop.adafruit.com/product-files/2420/C3242-002_CHDMI-AM-AM-457.pdf», «- Fair-Rite 0431164281: https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/9036/431164281.pdf ; DigiKey: https://www.digikey.com/en/products/result?keywords=0431164281», «- Wurth 74271112 / 74271140: https://www.we-online.com/components/products/datasheet/74271112.pdf ; https://www.we-online.com/components/products/datasheet/74271140.pdf».
+    - **Reason:** Key URLs of record 3.
+    - **Sources:** analogs_G2 #3 sources
+    - **Saving usd:** 
+  34.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** keep_with_note
+    - **Part:** Display sun kit (hood + Diamox AR1617 + VEML7700 4162)
+    - **Anchor:** | Козирок і датчик світла | Друкований шарнірний козирок 30 мм + AR-плівка 7" + VEML7700 |
+    - **Instruction:** Replace the row with: «| Козирок і датчик світла | Друкований шарнірний козирок 30 мм (світло-сірий ASA з котушки корпусу, матово-чорне нутро — фарба або флок) + AR-плівка Diamox AR1617 (лист 250x250 мм = 2 шматки; провізорно) + Adafruit 4162 VEML7700 (STEMMA QT) + кабель | 1 набір | близько 23-26 + доставка плівки і ПДВ (козирок близько $2 філаменту; VEML7700 $4.95 Adafruit або EUR 4.35 без ПДВ / EUR 5.18 з ПДВ у DigiKey DE + кабель $0.95; Diamox GBP 11.11 без ПДВ ≈ $14.8) | DIY + DigiKey + Diamond Coatings (UK) | модель (перевірено: VEML7700, Diamox) | Датчик — на зовнішній верхній грані безеля, поза козирком; перед встановленням перерізати перемичку світлодіода «on». Diamox: 0.74% світлового відбиття проти цілі 0.7% (модель: 6.0:1 замість 6.2:1 при 2000 ніт і 100 klx, 3.5:1 замість 3.6:1 при 1000 ніт), мокре нанесення; приймається лише після тестів поляризованих окулярів і сенсора; шукати далі плівку ≤0.7% з малим двозаломленням (TAC або super-retarder PET). Diamox з UK — за правилом вартості: + доставка + імпортний ПДВ + EUR 3 мита (≤ EUR 150, IOSS/пошта) + EUR 2 UHF. Adafruit 5378 (кутовий) — рівноцінна заміна за ту саму ціну, якщо вікно потребує бічного огляду. Було: «15-25» (занизько) і «Бюджет: лише козирок» — видалено. |»
+    - **Reason:** Record 4 keeps the set, fills the empty film SKU, corrects the price estimate and drops the 'hood only' budget (worse).
+    - **Sources:** analogs_G2 #4; Diamox AR1617 datasheet v2.1; vishay.com VEML7700 Rev 1.8; digikey.de 4162
+    - **Saving usd:** 0
+  35.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** keep_with_note
+    - **Part:** Sun contrast with the real AR film
+    - **Anchor:** 6.2:1 з бондуванням і AR при 100 klx
+    - **Instruction:** Append after it: «(при цілі 0.7%; з Diamox AR1617 0.74% — близько 6.0:1, модель)».
+    - **Reason:** Record 4 sun contrast model.
+    - **Sources:** analogs_G2 #4
+    - **Saving usd:** 
+  36.
+    - **Section:** 02d_bom_case_cables
+    - **Kind:** keep_with_note
+    - **Part:** Hood printed from the case ASA
+    - **Anchor:** | Корпус | ASA 1 kg, вставки й гвинти M3 CNC Kitchen
+    - **Instruction:** Append to the note: «Козирок дисплея друкується з цієї ж світло-сірої котушки ASA (близько 50 g), не з окремої чорної.»
+    - **Reason:** Record 4: a new black spool costs more and breaks the light-exterior spec.
+    - **Sources:** analogs_G2 #4
+    - **Saving usd:** 
+  37.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** Sun kit budget 'hood only'
+    - **Anchor:** ### 6.2. Прибрано як технічно замінене
+    - **Instruction:** Add a row to 6.2: «| «Бюджет: лише козирок» (без AR-плівки і датчика) | P5 G2: бондоване скло без AR — близько 4.5% відбиття, близько 1.7:1 при 1000 ніт проти 3.6:1; втрачає авто-яскравість, теми Day/Night/Red і перевірку L = E/pi. |»
+    - **Reason:** Record 4 rejected list.
+    - **Sources:** analogs_G2 #4
+    - **Saving usd:** 
+  38.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** Sun kit price estimate
+    - **Anchor:** 36. wideband_sdr:
+    - **Instruction:** Add a new numbered item: «Оцінка набору козирка «15-25» занизька, коли плівка реальна: близько $23-26 + доставка плівки з UK і ПДВ (Diamox AR1617 GBP 11.11 без ПДВ).»
+    - **Reason:** Record 4 stack_changes 2.
+    - **Sources:** analogs_G2 #4
+    - **Saving usd:** 
+  39.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** AR film, VEML7700 and hood tests
+    - **Anchor:** 
+    - **Instruction:** Add a row: «| AR-плівка Diamox AR1617 (провізорно): (a) поляризовані окуляри 0/45/90° в альбомній орієнтації — без райдужного муару (PET 100 um без специфікації ретардації; муар — провал, шукати далі); (b) дзеркальний A/B: ліхтар під близько 15°, VEML7700 під дзеркальним кутом, бондоване скло проти скла з плівкою — відношення близько 0.2 або менше узгоджується з близько 0.7-0.9% (метод, не доказ); (c) сенсор крізь плівку голою рукою і в рукавиці після висихання 24-48 год; (d) 45 хв полуденного прогону з козирком: без відшарування, бульбашок, помутніння, пожовтіння, скло ≤65 °C; (e) помутніння на 316 PPI на око. VEML7700 4162: перемичку LED «on» перерізано (у 5378 перевірити те саме); регістр 0x07 = 0xC481; пряме сонце при gain 1/8 і IT 25 ms нижче повної шкали; сумарне підтягування SDA/SCL (4.7k на 4162 паралельно з платою розширювача) у класі 2.2-4.7k, інакше зняти один набір. Козирок: CAD лише після приймання панелі; нічого провідного; перевірка циклів шарніра | D5 / D6 | Після приймання панелі |»
+    - **Reason:** Record 4 conditions_or_tests.
+    - **Sources:** analogs_G2 #4
+    - **Saving usd:** 
+  40.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Assembly steps (records 3, 4, 6, 7)
+    - **Anchor:** **Корпус:** CAD з Radxa STEP v1.21, виміряної панелі і батареї;
+    - **Instruction:** Append to bring-up step 8: «Кроки збирання: оболонку HDMI 2420 нарастити до близько 6.1-6.3 мм під кожним Fair-Rite і зафіксувати стяжкою, надлишок — S-складкою; перерізати перемичку LED «on» на VEML7700 4162; вал PEC11R-4220F вкоротити в лещатах до встановлення енкодера (T ≤ 10 − d, стружку не пускати в корпус, зняти задирки), перевірити утримання ручки 2055 щипком і обертанням у рукавиці; LED стану — за матовим герметичним вікном або світловодом, над портом п'єзо — акустичний ePTFE-клапан.»
+    - **Reason:** Records 3, 4, 6, 7 assembly conditions.
+    - **Sources:** analogs_G2 #3, #4, #6, #7
+    - **Saving usd:** 
+  41.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Sun kit sources
+    - **Anchor:** - Wisecoco 7" FHD:
+    - **Instruction:** Add after the Wisecoco line: «- Vishay VEML7700 (Rev 1.8): https://www.vishay.com/docs/84286/veml7700.pdf ; Adafruit 4162: https://www.adafruit.com/product/4162 ; DigiKey DE: https://www.digikey.de/en/products/detail/adafruit-industries-llc/4162/9997696», «- Diamox AR1617 даташит: https://diamondcoatings.com/wp-content/uploads/2020/09/Diamond-AR1617-Film-Datasheet-v2.1.pdf ; магазин: https://diamondcoatings.co.uk/product/diamox-ar1617-anti-reflective-film-sheet/».
+    - **Reason:** Key URLs of record 4.
+    - **Sources:** analogs_G2 #4 sources
+    - **Saving usd:** 
+  42.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** seller_or_price
+    - **Part:** Raspberry Pi Pico SC0915
+    - **Anchor:** | MCU HMI і супервізора | Raspberry Pi Pico (RP2040) | 2 (1 запасний) | 10.12 (2 x GBP 3.80) | The Pi Hut | не перевірено |
+    - **Instruction:** Replace with «| MCU HMI і супервізора | Raspberry Pi Pico SC0915 (RP2040; лише non-wireless — ніколи W, WH, Pico 2 W) | 2 (1 запасний) | 9.18 без ПДВ (2× 4.59, DigiKey US); DigiKey DE EUR 8.06 без ПДВ / EUR 9.59 з 19% ПДВ за 2 ($9.06 / $10.78) | DigiKey 2648-SC0915CT-ND | перевірено (18.10.2026; 40,279 шт., Active) |» and note «На комутованій LAB5; 26 GPIO. Бюджет: Berrybase RPI-PICO або Welectron RP1-709150 (офіційні реселери) — EUR 3.45 без ПДВ / EUR 4.10 з 19% ПДВ DE кожен ($7.76 / $9.22 за 2), лише у спільному кошику цього магазину (окремо дорожче: доставка EUR 4.95 DE / EUR 9.90-14.90 в ЄС); Kiwi KW-2772 EUR 3.49 без ПДВ. Було: The Pi Hut GBP 3.80 × 2 = $10.12 з UK ПДВ — для ЄС лише DHL Express GBP 30 ($39.95) + мито ЄС; економія $0.94 (вже врахована повторним аудитом A). В обігу GTIN 0617588405587 і 5056561801445.»
+    - **Reason:** Record 5 keeps the genuine Pico; DigiKey default, EU approved resellers only on shared baskets, Pi Hut unusable for EU delivery.
+    - **Sources:** analogs_G2 #5; digikey.de SC0915; berrybase.de; welectron.com; thepihut.com/pages/delivery
+    - **Saving usd:** 0.94 vs v1 (already booked by re-audit A); +1.30 only on a shared Berrybase/Welectron basket
+  43.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** shopping
+    - **Part:** D12 Pico purchase
+    - **Anchor:** Купити 2 Pico (один запасний).
+    - **Instruction:** Replace with «Купити 2 Pico SC0915 (non-wireless; один запасний) у кошику DigiKey в тиждень 1.»
+    - **Reason:** Record 5.
+    - **Sources:** analogs_G2 #5
+    - **Saving usd:** 
+  44.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** Pico firmware rules (GP23 A/B, expander re-init, tach)
+    - **Anchor:** TX-піни Pico у високому імпедансі, поки немає 3.3 V Q6A.
+    - **Instruction:** Insert after this sentence: «GP23 (режим RT6150 PSM/PWM) обирається A/B на запуску, а не «завжди high»: шум живлення 1.0 mV RMS у PSM проти 1.3 mV у примусовому PWM, вхідний шум 0.97 проти 1.36 LSB RMS, ENOB 8.92 проти 8.84 (вимір Mark Omo); PWM лишити, лише якщо його фіксована частота краща для РЧ-плану; точність — від LM4040 і перехресного калібрування з INA228. Розширювач кнопок (обидва чипи): при старті і після будь-якого NACK або тайм-ауту I2C — 9 тактів відновлення шини і STOP, запис регістрів 2-7, читання портів 0/1 для скидання INT; щосекунди — читання регістрів 2-7 і перезапис при розбіжності; INT дублюється опитуванням портів кожні 20-50 ms (фронт на такті ACK може загубитися). Тахо шляху 1 (GP22): ігнорувати, поки вентилятор вимкнений, і близько 2 с після ввімкнення; тривога зупинки — немає імпульсів понад 2 с при ввімкненому.»
+    - **Reason:** Records 5 (GP23 A/B replaces 'drive GP23 high'), 7 (expander firmware), 1 (tach firmware).
+    - **Sources:** analogs_G2 #1, #5, #7; pico-adc.markomo.me
+    - **Saving usd:** 
+  45.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** DigiKey basket (records 3-10) moved into week 1
+    - **Anchor:** 2 плати IP2368 (як у BOM; третя — за потреби, поза підсумком); 2 Pico.
+    - **Instruction:** Replace «2 Pico.» with: «Одне замовлення DigiKey (тиждень 1): 2× Pico SC0915; PEC11R-4220F-S0024 ×3; TL3145BF350QJ ×12 (10 + 2 для тестів; KSC641J LFS ×10 — лише якщо TL3145 не пройде ворота, з наступним кошиком); 2× Fair-Rite 0431164281 + 1× Wurth 74271140; PI4IOE5V9555LEX ×2 (або 1 + запасний TCA9555PWR) + CPT-1207-3TH + WP7113LSECK/J3 + пасивні (зокрема 8× 2.2 kOhm 0603); Adafruit 4162 VEML7700; MCP23017-E/SO ×2 (+1 запасний; +1 MCP23017-E/SP DIP для labd — опційно; лише якщо силову плату ще не замовлено); логіка інтерфейсу (TCA9517DR, SN74LVC1G17DBVR, 3× 2N7002,215, 5× AO3400A, 5× BAT54C,215); опційно 2× CH334F 1528-5997-ND замість Adafruit. DigiKey DE: безкоштовна доставка від EUR 75, нижче — EUR 25 ($28.10); кошик HMI близько EUR 27 без ПДВ, тож консолідувати рядки DigiKey (запас 4D, деталі sled Lime) або закласти EUR 25. DigiKey відвантажує зі США з ПДВ на касі — чи застосовуються EUR 3 мита і EUR 2 UHF на тарифну лінію, перевірити при оплаті.» In «чому першим» add «Pico потрібен для воріт W1-2 (тест імпульсу J21 B11, завантаження з Pico у reset)».
+    - **Reason:** Records 5 (pull the DigiKey basket into week 1, EUR 75 threshold), 3, 4, 6, 7, 8, 9, 10 (all ride the existing DigiKey order).
+    - **Sources:** analogs_G2 #3-#10
+    - **Saving usd:** 
+  46.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Row 7 DigiKey entry removed
+    - **Anchor:** DigiKey (PEC11R ×3, KSC641J ×10, ферити)
+    - **Instruction:** Delete this DigiKey entry from row 7 (the whole DigiKey order now sits in week 1, row 6).
+    - **Reason:** Record 5: the DigiKey basket is pulled into week 1.
+    - **Sources:** analogs_G2 #5
+    - **Saving usd:** 
+  47.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** correction
+    - **Part:** Customs paragraph: UK rule, Pi Hut, QuietPC, landed cost formula
+    - **Anchor:** UK: продавці збирають ПДВ до GBP 135; понад — ПДВ і збір кур'єра (Pi Hut, Uputronics, Leo Bodnar, Mirfield, Moonraker).
+    - **Instruction:** Replace with: «UK: «продавці збирають ПДВ до GBP 135» — правило для покупців у UK, не для вас у ЄС. Для доставки в ЄС: The Pi Hut — лише DHL Express GBP 30 ($39.95) і обов'язкове мито ЄС з 1.07.2026, ПДВ через IOSS до EUR 150; QuietPC — продавець з UK (ПДВ, доставка і мито в ЄС не перевірені). Для кожного продавця поза ЄС (Pi Hut, QuietPC, Diamond Coatings, Uputronics UK, Adafruit, Pololu, LCSC, Waveshare, AliExpress, Nooelec, Wisecoco, ALLNET, Arace) вартість з доставкою = ціна + доставка + імпортний ПДВ + EUR 3 × тарифні лінії (посилка ≤ EUR 150 через IOSS або пошту; інакше звичайне мито) + EUR 2 × тарифні лінії UHF (посилки з близько 1.11.2026) + збір перевізника.» In the same paragraph remove «QuietPC» from the in-EU VAT list «(TinyTronics, Passion Radio, Astroradio, WiMo, iFixit EU, CNC Kitchen, QuietPC)» and add «Reichelt, Alternate.de, Berrybase, Welectron, Kiwi».
+    - **Reason:** Records 5 (Pi Hut EU terms; UK GBP 135 rule is for UK buyers) and 1 (QuietPC is a UK seller); amounts from operator notes 34-35 (rule items).
+    - **Sources:** analogs_G2 #1, #5; thepihut.com/pages/delivery; operator_notes 34-35
+    - **Saving usd:** 
+  48.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** rule
+    - **Part:** Authenticity rules for G2 parts
+    - **Anchor:** **Справжність.**
+    - **Instruction:** Append to the paragraph: «Pico — лише SC0915 non-wireless від офіційних реселерів (DigiKey, Berrybase, Welectron, Kiwi). UFS — лише партнери з radxa.com/distributors (TinyTronics, ALLNET, Arace); лістинги AliExpress «Radxa UFS» відкинуто. MCP23017, PI4IOE5V9555, TL3145, Fair-Rite — DigiKey (авторизований); TI і AOS з LCSC — лише як опція з вхідним тестом AO3400A. microSD — бренд з EAN у великого дистриб'ютора (Reichelt); no-name і вживані — ні.»
+    - **Reason:** Records 0, 5, 9, 10, 11 (genuine, traceable source rule).
+    - **Sources:** analogs_G2 #0, #5, #9, #10, #11
+    - **Saving usd:** 
+  49.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** keep_with_note
+    - **Part:** The Pi Hut lines for an EU buyer (MTT bench hub, Pro Stick Plus)
+    - **Anchor:** | Стендовий хаб | Waveshare MTT bench hub (живлення від банку) | 1 | 24.64 (GBP 18.50) | The Pi Hut |
+    - **Instruction:** Add to the note of this row and of the row «| ADS-B приймач | FlightAware Pro Stick Plus |»: «Для ЄС: Pi Hut відвантажує лише DHL Express GBP 30 ($39.95) + EUR 3 мита і EUR 2 UHF на тарифну лінію + ПДВ — переоцінити за правилом вартості з доставкою або перенести до продавця з ЄС (якщо рішення G5/G6 цього ще не зробило).»
+    - **Reason:** Record 5 stack_changes item 4 (re-cost the remaining Pi Hut lines).
+    - **Sources:** analogs_G2 #5; thepihut.com/pages/delivery
+    - **Saving usd:** 
+  50.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Pico incoming inspection and GP23 A/B
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX
+    - **Instruction:** Add a row before it: «| Pico SC0915: вхідний огляд (RP2040 RP2-B2, Winbond W25Q16JV, Abracon 12 MHz, шовкографія і логотип Raspberry Pi Pico, R7 0603 на місці); RPI-RP2 у BOOTSEL; JEDEC ID флеш EF4015 — для обох GTIN. A/B GP23 low/high: шум ADC на дільнику SW 1:6 і спури RT6150 у гармонічному скані КХ/VHF | Чинні виправлення повторного аудиту: Шоткі LAB5→VSYS, дільник від SW, прошивка лише з увімкненим головним вимикачем або від'єднаною LAB5, TX у високому імпедансі без 3.3 V Q6A, B11 (імпульс J21 20/20) | На прибутті; W1-2 |»
+    - **Reason:** Record 5 conditions_or_tests.
+    - **Sources:** analogs_G2 #5
+    - **Saving usd:** 
+  51.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** The Pi Hut as Pico source for EU
+    - **Anchor:** ### 6.2. Прибрано як технічно замінене
+    - **Instruction:** Add a row to 6.2: «| The Pi Hut як джерело Pico (і інших дрібних рядків) для доставки в ЄС | P5 G2: лише DHL Express GBP 30 + мито ЄС з 1.07.2026 — найдорожче з доставкою; Pico — DigiKey 2648-SC0915CT-ND. |»
+    - **Reason:** Record 5.
+    - **Sources:** analogs_G2 #5
+    - **Saving usd:** 
+  52.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Pico sources
+    - **Anchor:** - Adafruit INA228: https://www.adafruit.com/product/5832
+    - **Instruction:** Add after: «- Raspberry Pi Pico SC0915 (DigiKey DE): https://www.digikey.de/en/products/detail/raspberry-pi/SC0915/13684020 ; Berrybase: https://www.berrybase.de/en/raspberry-pi-pico-rp2040-mikrocontroller-board ; Welectron: https://www.welectron.com/Raspberry-Pi-Pico_1», «- Реселери Raspberry Pi: https://www.raspberrypi.com/resellers/», «- Даташит Pico RP-008307-DS-2: https://pip-assets.raspberrypi.com/categories/610-raspberry-pi-pico/documents/RP-008307-DS-2-pico-datasheet.pdf», «- Шум ADC Pico (PSM/PWM): https://pico-adc.markomo.me/», «- The Pi Hut доставка: https://thepihut.com/pages/delivery».
+    - **Reason:** Key URLs of record 5.
+    - **Sources:** analogs_G2 #5 sources
+    - **Saving usd:** 
+  53.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** replace_part
+    - **Part:** HMI set: PEC11R-4220F + TL3145BF350QJ + Adafruit 2055
+    - **Anchor:** | Енкодери, кнопки, ручки | Bourns PEC11R-4215F-S0024 ×3, C&K KSC641J IP67 ×10, Adafruit 2055 ×2 |
+    - **Instruction:** Replace the row with «| Енкодери, кнопки, ручки | Bourns PEC11R-4220F-S0024 ×3 (DigiKey PEC11R-4220F-S0024-ND) + E-Switch TL3145BF350QJ ×10 (DigiKey 141-TL3145BF350QJCT-ND; ×12 з 2 для тестів) + Adafruit 2055 ×2 | 1 набір | 13.64 без ПДВ (8.07 + 3.67 + 1.90); 14.37 з 12 кнопками | DigiKey + Adafruit (США) або Kiwi Electronics NL (ручка EUR 0.95 без ПДВ; DigiKey її не має) | перевірено (18.10.2026: PEC11R-4220F $2.69, 9,155 шт.; TL3145 $0.367 при 10, 5,989 шт.; ручка $0.95) | Енкодер — безумовно: той самий даташит, різьба втулки 7 мм замість 5 мм (стек стінка + шайба + гайка 4.9-5.5 мм + O-ring близько 1 мм не вміщався в 4215F). Кнопки — умовно, до заморожування розкладки клавіатури P7 (ворота: брязкіт, пайка оплавленням, рукавиці — розділ 8); запас KSC641J LFS ×10 ($7.00, 108-KSC641JLFSCT-ND, 6.2 мм). ПДВ ЄС 19-27% на касі. Було: PEC11R-4215F ×3 $8.85 + KSC641J ×10 $7.00 + 2055 ×2 $1.90 = $17.75; економія $4.11 (23%) без ПДВ (близько $4.89-5.22 з ПДВ), $0.78 якщо TL3145 не пройде. «Бюджет: EC11 з ущільнювальним кільцем» видалено (Alps EC11E15244G1: 15,000 обертів проти 30,000, 15 імпульсів / 30 фіксацій). |»
+    - **Reason:** Record 6: encoder swap is unconditional (better thread length, same specs, cheaper); key swap conditional on bounce/reflow/glove gate; knob kept.
+    - **Sources:** analogs_G2 #6; Bourns PEC11R REV.D04/26; E-Switch TL3145 datasheet 4.2.2024; DigiKey listings
+    - **Saving usd:** 4.11 ex VAT (0.78 if TL3145 fails)
+  54.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** Keypad stack and encoder bosses
+    - **Anchor:** 2x3 герметичні кнопки (HOME, BACK, REC, MARK, FN, LOCK) з кроком 13 мм
+    - **Instruction:** Append after this phrase: «(кнопки TL3145BF350QJ: висота штовхача 5.2 мм замість 7.7 мм KSC641J — плунжери силіконової клавіатури на 2.5 мм довші або плата клавіатури на 2.5 мм ближче до панелі; посадкове місце за даташитом E-Switch, корпус 6.45 мм J-lead; форми ковпачків і крок — без змін (крок 19-21 мм за повторним аудитом A)). Бобишки енкодерів — під різьбу 7 мм PEC11R-4220F: O-ring + стінка 2.4-3 мм + шайба 0.5 мм + гайка 2.0 мм ≤6.5 мм, щоб лишалося ≥0.5 мм різьби; вал вкоротити на T ≤ 10 − d (d — довжина D-ключа ручки 2055, виміряти на першому зразку), щоб спідниця ручки була ≥0.5 мм над гайкою».
+    - **Reason:** Record 6 stack_changes 2-3 and encoder CAD steps.
+    - **Sources:** analogs_G2 #6
+    - **Saving usd:** 
+  55.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** EC11 budget, PEC11R-4215F, KSC641J as primary key
+    - **Anchor:** ### 6.2. Прибрано як технічно замінене
+    - **Instruction:** Add a row to 6.2: «| «Бюджет: EC11 з ущільнювальним кільцем» (Alps EC11E15244G1); PEC11R-4215F-S0024; KSC641J LFS як основна кнопка | EC11: 15,000 обертів і 15/30 — гірше; 4215F: різьба 5 мм не вміщує стек стінки, шайби, гайки й O-ring — замінено на PEC11R-4220F; KSC641J — запас, якщо TL3145BF350QJ не пройде ворота. |»
+    - **Reason:** Record 6.
+    - **Sources:** analogs_G2 #6
+    - **Saving usd:** 
+  56.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** PEC11R-4215F thread too short
+    - **Anchor:** 36. wideband_sdr:
+    - **Instruction:** Add a new numbered item: «PEC11R-4215F-S0024 (різьба втулки 5 мм) не проходить крізь стінку: стінка 2.4-3 мм + шайба 0.5 мм + гайка 2.0 мм = 4.9-5.5 мм до O-ring близько 1 мм; потрібна PEC11R-4220F (7 мм) — той самий даташит, дешевша.»
+    - **Reason:** Record 6 equivalence_proof.
+    - **Sources:** analogs_G2 #6
+    - **Saving usd:** 
+  57.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** TL3145 key gate and encoder checks
+    - **Anchor:** 
+    - **Instruction:** Add a row: «| Кнопки TL3145BF350QJ (до заморожування розкладки P7): (a) брязкіт — GPIO Pico ≥100 kHz з підтягуванням 2.2k, 50 натискань при кімнатній і 50 після 1 год при −20 °C, останній фронт у межах 1 ms і завжди в межах вікна антибрязкоту прошивки; (b) зразок через той самий процес оплавлення, що й плата клавіатури: спрацьовує, контакт ≤100 mOhm (падіння при 10 mA), занурення 30 хв на 15 см, ізоляція ≥10 MOhm; (c) 50 натискань на кнопку в зимових рукавицях крізь силіконову клавіатуру — нуль пропусків і нуль випадкових спрацювань за 10 хв тренування. Енкодер: стек ≤6.5 мм у CAD, глибина посадки і D-ключ ручки 2055 на першому зразку, утримання ручки | При провалі — KSC641J LFS ($7.00, 6.2 мм); економія падає до $0.78 | До P7 |»
+    - **Reason:** Record 6 conditions_or_tests.
+    - **Sources:** analogs_G2 #6
+    - **Saving usd:** 
+  58.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** HMI set sources
+    - **Anchor:** - Adafruit CH334F: https://www.adafruit.com/product/5997
+    - **Instruction:** Add before this line: «- Bourns PEC11R: https://www.bourns.com/docs/Product-Datasheets/PEC11R.pdf ; DigiKey PEC11R-4220F-S0024: https://www.digikey.com/en/products/result?keywords=PEC11R-4220F-S0024», «- E-Switch TL3145: https://configured-product-images.s3.amazonaws.com/Datasheets/TL3145.pdf ; DigiKey: https://www.digikey.com/en/products/result?keywords=TL3145BF350QJ», «- Ручка Adafruit 2055: https://www.adafruit.com/product/2055 ; Kiwi: https://www.kiwi-electronics.com/en/scrubber-knob-for-rotary-encoder-35mm-1812».
+    - **Reason:** Key URLs of record 6.
+    - **Sources:** analogs_G2 #6 sources
+    - **Saving usd:** 
+  59.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** replace_part
+    - **Part:** HMI key-expander set: PI4IOE5V9555LEX + CPT-1207-3TH + WP7113LSECK/J3
+    - **Anchor:** | Розширювач кнопок | PCA9555, п'єзо, світлодіод стану | 1 набір | 5-10 | — | модель |
+    - **Instruction:** Replace with «| Розширювач кнопок | Diodes PI4IOE5V9555LEX (TSSOP-24, 0x20; запас TCA9555PWR на тому самому посадковому місці) + п'єзо Same Sky CPT-1207-3TH (зовнішнє збудження, 75 dB мін. на 10 см, −40...+85 °C, 12.5 мм, 7.5 мм посаджений) + LED Kingbright WP7113LSECK/J3 (5 мм, 625 nm, ≥400 mcd при 2 mA) за матовим герметичним вікном або світловодом + пасивні (8× 2.2 kOhm) | 1 набір | близько 2.9 (деталі $2.62: 1.48 + 0.61 + 0.53, DigiKey при 1); digikey.de EUR 2.31 без ПДВ / EUR 2.75 з 19% ПДВ | DigiKey (у замовленні HMI) | перевірено (18.10.2026) / модель (пасивні) | 6 кнопок + 2 натискання енкодерів з INT на I2C Pico; зовнішні 2.2 kOhm до 3.3 V на 8 лініях. Умова: стендовий тест просідання LAB5 до закриття корпусу; при провалі — TCA9555PWR (+$0.46; $1.94 / EUR 1.70). Купити 2 PI4IOE (заводський термін 52 тижні) або тримати запасний TCA9555PWR. Тон — близько 4.209 kHz після A/B (4.000 kHz б'є 60 і 40 kHz). Було: «PCA9555, п'єзо, LED» без SKU, 5-10 (модель); економія $0.46 проти перевіреної бази TCA9555 ($3.08), падіння з 5-10 до близько 2.9 — виправлення оцінки. |»
+    - **Reason:** Record 7 (expander drop-in with same pinout and register map; first verified SKUs for piezo and LED) plus record 6 (external 2.2k pull-ups for 1 mA silver contacts).
+    - **Sources:** analogs_G2 #6, #7; Diodes DS41303; TI SCPS200E; Same Sky CPT-1207-3TH; Kingbright DSAN8286
+    - **Saving usd:** 0.46 per set vs TCA9555 baseline
+  60.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** D12 key expander
+    - **Anchor:** 6 кнопок і 2 натискання енкодерів — на PCA9555 по I2C Pico з INT.
+    - **Instruction:** Replace with «6 кнопок і 2 натискання енкодерів — на Diodes PI4IOE5V9555LEX (0x20; запас TCA9555PWR на тому самому посадковому місці) по I2C Pico з INT; зовнішні підтягування 2.2 kOhm до 3.3 V на 8 лініях (мінімальний струм срібних контактів 1 mA; внутрішні 100k дають десятки мкА).»
+    - **Reason:** Records 7 and 6.
+    - **Sources:** analogs_G2 #6, #7
+    - **Saving usd:** 
+  61.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** Pico GP4/5 and GP20/21/22 rows (records 1, 6, 7)
+    - **Anchor:** | GP4/5 | I2C0: VEML7700 (0x10) і PCA9555 (0x20) з 6 кнопками і 2 натисканнями енкодерів |
+    - **Instruction:** Replace with «| GP4/5 | I2C0: VEML7700 (0x10) і PI4IOE5V9555 (0x20; запас TCA9555PWR; A0-A2 на GND; 100 nF на VCC; INT через 10 kOhm до 3V3) з 6 кнопками і 2 натисканнями енкодерів; на 8 лініях — зовнішні 2.2 kOhm до 3.3 V (1.5 mA при натисканні, 0 у спокої) |». Also replace the row «| GP20 / GP21 / GP22 | п'єзо / світлодіод стану / резерв |» with «| GP20 / GP21 / GP22 | п'єзо CPT-1207-3TH через 100-220 Ohm (тон близько 4.209 kHz, TOP+1 = 29698 при 125 MHz, якщо втрата ≤2 dB SPL) / LED WP7113LSECK/J3 через 680-750 Ohm (близько 2 mA; 330 Ohm і сила 8 mA, якщо не видно на сонці) / тахо вентилятора шляху 1 (запис 1; останній вільний GPIO — підтвердити в P7) |». The address map stays (0x10 and 0x20 on the Pico bus).
+    - **Reason:** Record 7 (pin map text PCA9555 -> PI4IOE5V9555, piezo/LED), record 6 (2.2k pull-ups), record 1 (tach needs a spare Pico GPIO; GP22 is the only one left).
+    - **Sources:** analogs_G2 #1, #6, #7
+    - **Saving usd:** 
+  62.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** new_risk
+    - **Part:** Piezo 4.000 kHz harmonics on LF time signals
+    - **Anchor:** | 144.000 / 432.000 / 1704.0 | 12 MHz (хаб, RP2040) | 2 m / 70 см / Metop |
+    - **Instruction:** Add a row after it: «| 0.060 / 0.040 | п'єзо 4.000 kHz × 15 / × 10 (A/B тону близько 4.209 kHz: непарні гармоніки щонайменше на 2.1 kHz від 40, 60, 77.5 і 162 kHz) | MSF/WWVB/JJY 60 kHz, JJY 40 kHz |».
+    - **Reason:** Record 7 condition 6 (LF spur check).
+    - **Sources:** analogs_G2 #7
+    - **Saving usd:** 
+  63.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** rule
+    - **Part:** LF Quiet: piezo and status LED
+    - **Anchor:** Профіль LF Quiet: зарядник від'єднано, стрімить лише HF+,
+    - **Instruction:** Insert after this phrase: «п'єзо — лише критичні сигнали (тон близько 4.209 kHz або без звуку), LED стану — лише DC без PWM,».
+    - **Reason:** Record 7: labd mutes non-Critical beeps and holds the LED at DC during LF time-signal sessions.
+    - **Sources:** analogs_G2 #7
+    - **Saving usd:** 
+  64.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** labinput/labd: tach and LF-session rules
+    - **Anchor:** | labinput | — | Кадровий протокол UART7 з Pico: кнопки, енкодери, кадри IMU, heartbeat, команди вентиляторів, підсвітки і шини дисплея. |
+    - **Instruction:** Append inside the cell: «; тахо вентилятора шляху 1 і тривога зупинки (немає імпульсів понад 2 с при ввімкненому); у сесіях ДХ-сигналів часу labd вимикає некритичні звуки (тон близько 4.209 kHz або без звуку), LED стану — лише DC».
+    - **Reason:** Records 1 and 7.
+    - **Sources:** analogs_G2 #1, #7
+    - **Saving usd:** 
+  65.
+    - **Section:** 02d_bom_case_cables
+    - **Kind:** keep_with_note
+    - **Part:** Weather protection: piezo vent and LED window
+    - **Anchor:** ePTFE-клапани, заглушки портів
+    - **Instruction:** Replace with «ePTFE-клапани (зокрема акустичний ePTFE-клапан над портом п'єзо), матове герметичне вікно або світловод для LED стану (лінза 20° сама не дає 60°), заглушки портів».
+    - **Reason:** Record 7 stack_changes (case).
+    - **Sources:** analogs_G2 #7
+    - **Saving usd:** 
+  66.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** Unspecified PCA9555 line
+    - **Anchor:** ### 6.2. Прибрано як технічно замінене
+    - **Instruction:** Add a row to 6.2: «| «PCA9555, п'єзо, світлодіод стану» без SKU; диференційне керування п'єзо на GP20+GP22; WS2812B/SK6812 на GP21 | PI4IOE5V9555LEX (запас TCA9555PWR) + CPT-1207-3TH + WP7113LSECK/J3; WS2812 — внутрішній PWM 430 Hz / 1.1 kHz у звуковій смузі, 5 V і перетворювач рівня. |»
+    - **Reason:** Record 7 rejected list.
+    - **Sources:** analogs_G2 #7
+    - **Saving usd:** 
+  67.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Expander brown-out, piezo, LED and LF spur tests
+    - **Anchor:** 
+    - **Instruction:** Add a row: «| Розширювач кнопок PI4IOE5V9555 (до закриття корпусу): LAB5 вимкнути на 10, 30, 100, 300, 1000 і 3000 ms по 10 циклів (60), потім повільно VSYS 0→5 V близько 1 V/s; якщо є програмоване джерело — провал 3V3 до 2.0 V і 1.0 V на 10 ms; пройдено — після кожної події всі 8 перемикачів читаються вірно, INT встановлюється і скидається, SDA не залипає, зворотне читання збігається, запасні виходи вимкнені. П'єзо: висота 7.5 мм у стеку клавіатури, ePTFE-клапан, SPL на 10 см при 3.3 V GPIO з 100-220 Ohm. LED: видимість на повному сонці (близько 100 klx на VEML7700) з 680-750 Ohm, інакше 330 Ohm і 8 mA. A/B тону 4.000 проти близько 4.209 kHz на 40/60/77.5/162 kHz | При провалі просідання — TCA9555PWR (+$0.46, те саме посадкове місце); тон 4.209 kHz — якщо втрата ≤2 dB SPL | Стенд силової плати; A/B-матриця |»
+    - **Reason:** Record 7 conditions_or_tests.
+    - **Sources:** analogs_G2 #7
+    - **Saving usd:** 
+  68.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Expander set sources
+    - **Anchor:** - Adafruit CH334F: https://www.adafruit.com/product/5997
+    - **Instruction:** Add after this line (keep it): «- Diodes PI4IOE5V9555: https://www.diodes.com/assets/Datasheets/PI4IOE5V9555.pdf ; TI TCA9555: https://www.ti.com/lit/ds/symlink/tca9555.pdf», «- Same Sky CPT-1207-3TH: https://www.sameskydevices.com/product/resource/cpt-1207-3th.pdf», «- Kingbright WP7113LSECK/J3: https://www.kingbrightusa.com/images/catalog/SPEC/WP7113LSECK-J3.pdf».
+    - **Reason:** Key URLs of record 7.
+    - **Sources:** analogs_G2 #7 sources
+    - **Saving usd:** 
+  69.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** keep_with_note
+    - **Part:** Adafruit CH334F 5997 hub
+    - **Anchor:** | USB-хаб | Adafruit CH334F MTT 5997 |
+    - **Instruction:** Keep model, qty 2, $9.90, Adafruit, перевірено. Append to the note: «Пін JP5 «5V» — спільна мережа VBUS (пад 1 усіх 4 портів по 100 мкФ і через PTC2 5V/2A на V5 чипа): на H3, H4 і H2 (з Lime) пад 1 не з'єднувати, VBUS — лише від свого ключа. EU-джерело тієї самої деталі: DigiKey DE 1528-5997-ND, EUR 4.35 без ПДВ / EUR 5.18 з 19% ПДВ (829 шт.), якщо їде з замовленням DigiKey; Pimoroni GBP 4.15 з ПДВ, коли є; Pi Hut GBP 4.80 з UK ПДВ ($5.33 без ПДВ) — не дешевше. LED можна прибрати, перерізавши SJ1.»
+    - **Reason:** Record 8: keep; sourcing note and schematic-rev-C wiring finding.
+    - **Sources:** analogs_G2 #8; Adafruit 5997 schematic rev C; digikey.de 1528-5997-ND
+    - **Saving usd:** 0 (DigiKey DE at most 0.11 for 2)
+  70.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** USB map H2/H3/H4 VBUS sources
+    - **Anchor:** | CH334F H2 | LAB5 | резерв | RTL-A |
+    - **Instruction:** Replace with «| CH334F H2 | LAB5 без Lime; з Lime — лише через ключ відсічення MCP #1 GPA2, пад 1 хаба не з'єднано | резерв | RTL-A (VBUS через GPA2, інакше відсічення watchdog labrx нічого не робить) |». In rows «| CH334F H3 | TPS2553 0.75 A, MCP #1 GPA0 |» and «| CH334F H4 | ключ навантаження (MCP #1 GPA4) + LC + Mix-31 |» append to the VBUS cell «; пад 1 хаба не з'єднано». Add a sentence under the table: «На 5997 пін JP5 «5V» — спільна мережа VBUS: пад 1 усіх чотирьох портів (по 100 мкФ, C3-C6) і через PTC2 (5V/2A) на V5 чипа; якщо брати VBUS пігтейла з пада 1, LAB5 обходить TPS2553, ключ HF+ і GPA2.»
+    - **Reason:** Record 8 stack_changes 2-3 (verified on schematic rev C).
+    - **Sources:** analogs_G2 #8
+    - **Saving usd:** 
+  71.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** C5 hub VBUS pads
+    - **Anchor:** H2 — резерв (RTL-A з Lime); H3 — LAB USB-A за TPS2553 0.75 A; H4 — HF+ за ключем навантаження від MCP, LC і Mix-31.
+    - **Instruction:** Append: «Пад 1 (VBUS) хаба на H2 (з Lime), H3 і H4 не з'єднується: VBUS кожного пігтейла — лише від його ключа (GPA2, TPS2553, ключ HF+), бо JP5 «5V» на 5997 — спільна мережа VBUS усіх портів.»
+    - **Reason:** Record 8.
+    - **Sources:** analogs_G2 #8
+    - **Saving usd:** 
+  72.
+    - **Section:** 05a_arch_power
+    - **Kind:** rule
+    - **Part:** Back-feed rules: hub pads and expander pull-ups
+    - **Anchor:** Хаб: D+, D− і GND лише від Q6A, його 5V — від LAB5.
+    - **Instruction:** Append: «Пад 1 портів CH334F на H2 (з Lime), H3 і H4 не з'єднано — VBUS лише з виходу відповідного ключа. Підтягування FAULT/PG до розширювачів — лише до 3V3_Q6A (при вимкненій Q6A на 3V3_Q6A немає напруги).»
+    - **Reason:** Records 8 (hub pad wiring) and 9 (no back-power test vii).
+    - **Sources:** analogs_G2 #8, #9
+    - **Saving usd:** 
+  73.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** CH334F VBUS pad wiring
+    - **Anchor:** 36. wideband_sdr:
+    - **Instruction:** Add a new numbered item: «Карта USB (H2 «LAB5», пігтейли H3/H4) не враховувала, що на Adafruit 5997 пін JP5 «5V» — спільна мережа VBUS на пад 1 усіх портів і через PTC2 на V5; VBUS H3/H4 (і H2 з Lime) береться лише з ключів, пад 1 не з'єднується.»
+    - **Reason:** Record 8.
+    - **Sources:** analogs_G2 #8
+    - **Saving usd:** 
+  74.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** CH334F bring-up checks
+    - **Anchor:** | Зворотне живлення: 0 V на VBUS Q6A і HDMI +5 V при вимкненій Q6A і ввімкненій LAB5;
+    - **Instruction:** Add a row after it: «| Хаб CH334F 5997: `lsusb -v` показує bDeviceProtocol 2 (TT на порт); 30 хв прогону + 50 циклів старт/стоп з HF+ (3.1-3.7 MB/s), RTL-A (5.12 MB/s) і одним пристроєм LAB — нуль втрат; A/B спурів з SJ1 цілою і перерізаною (перерізати, якщо LED світять або дають спури біля HF+); пусковий струм на LAB5 (4 × 100 мкФ + 10 мкФ) — осцилограф на LAB5 і запобіжнику 3 A; продзвонка: пад 1 на H3 і H4 не з'єднаний з VBUS пігтейла | FNB58, осцилограф | Крок 3 і W1-2 |»
+    - **Reason:** Record 8 conditions_or_tests.
+    - **Sources:** analogs_G2 #8
+    - **Saving usd:** 
+  75.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** CH334F sources
+    - **Anchor:** - Adafruit CH334F: https://www.adafruit.com/product/5997
+    - **Instruction:** Extend this line: «; схема rev C: https://cdn-learn.adafruit.com/assets/assets/000/131/436/original/components_schem.png ; даташит WCH CH334: https://cdn-learn.adafruit.com/assets/assets/000/131/435/original/CH334DS1.PDF ; DigiKey DE: https://www.digikey.de/en/products/result?keywords=1528-5997-ND».
+    - **Reason:** Key URLs of record 8.
+    - **Sources:** analogs_G2 #8 sources
+    - **Saving usd:** 
+  76.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** replace_part
+    - **Part:** GPIO expanders: MCP23017-E/SO bare chips on the power PCB
+    - **Anchor:** | Розширювачі GPIO | Adafruit MCP23017 5346 (0x20 виходи, 0x22 входи) | 2 | 11.90 | Adafruit | перевірено |
+    - **Instruction:** Replace with «| Розширювачі GPIO | Microchip MCP23017-E/SO (SOIC-28W) на силовій платі (0x20 виходи, 0x22 входи) | 2 | близько 3.6-3.9 (чипи 2× $1.62 = $3.24 + пасивні $0.4-0.6, оцінка; без ПДВ, ПДВ ЄС на касі DigiKey) | DigiKey MCP23017-E/SO-ND (авторизований; у вже запланованому замовленні) | перевірено (чипи, 18.10.2026: 13,353 шт., Active) / модель (пасивні) |» and note «Умова: силову плату ще не замовлено, і на першій збірці пройдено тести (iii)-(vii) та ≤75 °C біля чипів (розділ 8); інакше — Adafruit 5346 ×2 ($11.90, перевірено). Живлення лише від 3.3 V хедера Q6A; 100k до землі. Опційно +1 запасний ($1.62) і MCP23017-E/SP DIP ($1.69, 8,127 шт.) для розробки labd на макетці. Економія близько $8.0-8.3 без ПДВ (близько $9.6-10 з ПДВ 19-21%), $4.7-6.6 із запасним і DIP. TCA9535 — не бюджетна альтернатива, а компроміс специфікації (INT без засувки, без RESET, ±2 kV HBM).»
+    - **Reason:** Record 9: same die and datasheet; better (no hard-wired 10k I2C pull-ups, lower idle current, fewer flying wires); conditional on the power PCB still being unordered and bench tests.
+    - **Sources:** analogs_G2 #9; digikey.com MCP23017-E-SO/894271; Microchip DS20001952D
+    - **Saving usd:** about 8.0-8.3 ex VAT (4.7-6.6 with spare and DIP)
+  77.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** architecture
+    - **Part:** Power PCB carries the expanders
+    - **Anchor:** | Власні PCB | Двошарові: силова плата + 5-канальна плата інжекторів
+    - **Instruction:** Append to the note: «Силова плата також несе 2× MCP23017-E/SO (близько 18x12 мм кожен з падами), 2× 100 nF, 2× 10 мкФ, 2× 10k на RESET, DNP-пару 10k SDA/SCL і 5-контактний вхід (3V3_Q6A, GND, SDA, SCL, INT); площа +6-8 см² (оцінка) — лише якщо плату ще не замовлено; опційно пади 0.1" під Adafruit 5346 як запас.»
+    - **Reason:** Record 9 stack_changes (power PCB).
+    - **Sources:** analogs_G2 #9
+    - **Saving usd:** 
+  78.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** D13 expanders and TCA9535 label
+    - **Anchor:** Обидва — Adafruit 5346 ($5.95, перевірено)
+    - **Instruction:** Replace with «Обидва — голі Microchip MCP23017-E/SO (SOIC-28W, DigiKey $1.62) на силовій платі, якщо її ще не замовлено і пройдено стендові тести (iii)-(vii); інакше — Adafruit 5346 ($5.95, перевірено)». Also replace «TCA9535 — бюджетна альтернатива.» with «TCA9535 — компроміс специфікації, а не рівноцінна заміна: INT без засувки (короткі FAULT/PG губляться), без RESET, ESD ±2 kV HBM, і дорожча ($2.00 проти $1.62).»
+    - **Reason:** Record 9.
+    - **Sources:** analogs_G2 #9; TI SCPS201F
+    - **Saving usd:** 
+  79.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** Header-side I2C pull-up rule with 5346 boards
+    - **Anchor:** На стороні хедера немає підтягувань нижче 10k; 4.7k на стороні sled
+    - **Instruction:** Append: «(з двома модулями 5346 правило порушується: їхні 10k паралельно дають 5k плюс власні 10k UM3204H; голі MCP23017 — лише DNP-пара 10k, ставиться тільки якщо тест фронту ≤1000 ns не пройде; для запасного варіанта 5346 розв'язати в P7)».
+    - **Reason:** Record 9 side finding.
+    - **Sources:** analogs_G2 #9
+    - **Saving usd:** 
+  80.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** Bare MCP23017 wiring
+    - **Anchor:** **Розширювачі** (labd; живлення від 3.3 V Q6A: Q6A вимкнена — усі enable вимкнені; підтягування 100k до землі)
+    - **Instruction:** Add after the heading line: «Голі MCP23017-E/SO на силовій платі (умовно): A2..A0 жорстко (000 = 0x20, 010 = 0x22, без резисторів); RESET через 10k на 3V3_Q6A (опційно від Pico через відкритий стік, щоб супервізор міг вимкнути всі enable при зависанні labd — потребує вільного GPIO, якого за картою вже немає); 100 nF + 10 мкФ на чип; VDD лише від мережі 3.3 V хедера, ніколи від локальних 3.3 V; INTA/INTB віддзеркалені, відкритий стік на пін 5; доріжки до ключів навантаження замість близько 18 дротів enable; один 5-жильний джгут від пінів 1/17, 27/28, 5 і GND. Біля HMC7992 — послідовні 1 kOhm і 100 pF на силовій платі або 3V3_Q6A до плат перемикачів (повторний аудит B). Карта регістрів і адреси без змін (smbus2).»
+    - **Reason:** Record 9 chosen and stack_changes.
+    - **Sources:** analogs_G2 #9
+    - **Saving usd:** 
+  81.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** Expander placement on the power PCB
+    - **Anchor:** Силова плата (D36V50F12, D36V28F5, 2× TPS7A4701, 2× LT3045, INA228, #2813, AON LDO, супервізор)
+    - **Instruction:** Replace with «Силова плата (D36V50F12, D36V28F5, 2× TPS7A4701, 2× LT3045, INA228, #2813, AON LDO, супервізор, 2× MCP23017-E/SO щонайменше 15-20 мм від TPS7A4701, PTC і дроселів buck; доріжки I2C подалі від вузлів перемикання)».
+    - **Reason:** Record 9 condition (ii).
+    - **Sources:** analogs_G2 #9
+    - **Saving usd:** 
+  82.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step-2 Adafruit order contents and landed cost
+    - **Anchor:** 2× CH334F, 2× MCP23017, INA228, BNO085, вентилятор, HDMI 2420, ручки.
+    - **Instruction:** Replace with «2× CH334F (або в DigiKey DE), 2× MCP23017 — лише якщо силову плату вже заморожено (інакше без них: близько $93.05 замість $104.95), INA228, BNO085, вентилятор 6101 (лише запасний), HDMI 2420, ручки 2055 (або Kiwi NL). Adafruit (США) — за правилом вартості з доставкою: + доставка + імпортний ПДВ + EUR 3 × тарифні лінії (≤ EUR 150, IOSS/пошта) + EUR 2 × тарифні лінії UHF (з близько 1.11.2026).» Also correct the leading «близько $105 — $104.95 за цінами BOM; «$99» ... двох)» to note the conditional $93.05.
+    - **Reason:** Records 9 (drop 2x MCP23017), 1 (6101 spare), 3 (2420 stays), 6 (knob source), 8 (CH334F optional DigiKey DE); landed rule (operator notes 34-35).
+    - **Sources:** analogs_G2 #1, #3, #6, #8, #9
+    - **Saving usd:** 11.90 (Adafruit order 104.95 -> 93.05, conditional)
+  83.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** Adafruit 5346 as primary; TCA9535 budget
+    - **Anchor:** ### 6.2. Прибрано як технічно замінене
+    - **Instruction:** Add a row to 6.2: «| Adafruit MCP23017 5346 ×2 як основний варіант (лишається запасом); «Бюджет: TCA9535»; TCA9555/PCA9555/PCF857x/AW9523/MCP23018 для enable | Голі MCP23017-E/SO на силовій платі (умовно). TCA9535: INT без засувки, без RESET; TCA/PCA9555 — внутрішні 100k підтягування проти 100k до землі тримають enable біля VCC/2 до старту labd; PCF857x вмикає входи високими при ввімкненні. |»
+    - **Reason:** Record 9 rejected list (safety rule).
+    - **Sources:** analogs_G2 #9
+    - **Saving usd:** 
+  84.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** Expander pull-ups and TCA9535 label
+    - **Anchor:** 36. wideband_sdr:
+    - **Instruction:** Add a new numbered item: «Два модулі Adafruit 5346 ставлять жорсткі 10k на SDA/SCL (разом 5k) плюс 10k UM3204H — це порушувало власне правило стека «на стороні хедера немає підтягувань нижче 10k»; TCA9535 як «бюджетна альтернатива» — неправильно: INT скидається, коли порт повертається до вихідного стану (короткі FAULT/PG губляться), RESET немає, ESD ±2 kV HBM, ціна $2.00 вища за $1.62 MCP23017-E/SO.»
+    - **Reason:** Record 9.
+    - **Sources:** analogs_G2 #9
+    - **Saving usd:** 
+  85.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Bare MCP23017 tests (iii)-(vii)
+    - **Anchor:** 
+    - **Instruction:** Add a row: «| MCP23017-E/SO на силовій платі (перша збірка): (ii) у тепловому тесті закритого корпусу ≤75 °C біля чипів; (iii) Q6A вимкнена при живих LAB5/SYS12/батареї, потім 20 теплих + 20 холодних завантажень — кожен enable (LNB, Boni, AUX12, VBUS ×4, LNA ch1-4, реле, HMC7992 A/B) нижче 0.4 V на осцилографі без викидів; (iv) I2C2 100 kHz на чипах: фронт ≤1000 ns, VOL ≤0.4 V, потім 1e6 читань/порівнянь без помилок під навантаженням LNB 13.2 V, AUX12 і LAB5 (пару 10k ставити лише при провалі фронту); (v) імпульс FAULT 10 мкс на вході 0x22 встановлює пін 5 і тримається до читання INTCAP; (vi) юніт-тести розширювачів labd без змін; (vii) без зворотного живлення: при вимкненій Q6A на 3V3_Q6A немає напруги від підтягувань FAULT/PG | При провалі або замовленій платі — Adafruit 5346 ×2 ($11.90) | Стенд силової плати |»
+    - **Reason:** Record 9 conditions_or_tests.
+    - **Sources:** analogs_G2 #9
+    - **Saving usd:** 
+  86.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** MCP23017 sources
+    - **Anchor:** - Adafruit MCP23017: https://www.adafruit.com/product/5346
+    - **Instruction:** Extend this line: «(запас); MCP23017-E/SO DigiKey: https://www.digikey.com/en/products/detail/microchip-technology/MCP23017-E-SO/894271 ; -E/SP: https://www.digikey.com/en/products/detail/microchip-technology/MCP23017-E-SP/894272 ; даташит DS20001952: https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf».
+    - **Reason:** Key URLs of record 9.
+    - **Sources:** analogs_G2 #9 sources
+    - **Saving usd:** 
+  87.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** replace_part
+    - **Part:** Interface logic set (TCA9517DR, discrete relay driver, BAT54C)
+    - **Anchor:** | Логіка інтерфейсу | TCA9517, 74LVC1G17, 2N7002/AO3400, драйвер реле, BAT54 | 1 набір | 5-10 | — | модель | — |
+    - **Instruction:** Replace with «| Логіка інтерфейсу | TI TCA9517DR (SOIC-8) + TI SN74LVC1G17DBVR + 3× Nexperia 2N7002,215 (затвор AUX12, J21 пін 3, RESET LC76G) + 5× AOS AO3400A (вентилятор Q6A, повітродувка, котушки G6K K1 і K2, запасний шлях вентилятора) + 5× Nexperia BAT54C,215; драйвер реле — дискретний (2× AO3400A, 1× BAT54C, 2× 100k, 2× 100 Ohm), без ІС | 1 набір | 5.51 без ПДВ (1.47 + 0.15 + 3×0.18 + 5×0.52 + 5×0.15); до близько +0.40, якщо 4 резистори не зі стенда | DigiKey (франчайзі TI і Nexperia; AOS — у списку aosmd.com), у замовленні тижня 1 | перевірено (DigiKey 18.10.2026) | Умовно: тести A-F (розділ 8). Опція LCSC близько $2.60 без ПДВ (C182421, C7836 ×5, 2N7002BK,215 C282405 ×10, AO3400A C20917 ×5, BAT54,215 C85084 ×20) — до доставки LCSC і мита ЄС, лише з вибірковим тестом AO3400A (LCSC не франчайзі TI/AOS). ПДВ ЄС 19-27%. Було: «5-10» (модель; перерахунок $6.04-6.13 з TCA9517DGKR і TBD62003AFNG); економія $0.53-0.62 (близько $2 від середини $7.5). |»
+    - **Reason:** Record 10: same silicon families plus a discrete relay driver (1 mV drop vs 24 mV / 0.9-1.1 V Darlington), AO3400A on the spare fan path, BAT54C pairs.
+    - **Sources:** analogs_G2 #10; TI SCPS242D; AOS AO3400A Rev 3.1; Nexperia BAT54C v.6; Omron/Aratas G6K-2F-RF
+    - **Saving usd:** 0.53-0.62 vs 6.04-6.13 recount
+  88.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** keep_with_note
+    - **Part:** HF+ input switch driver board
+    - **Anchor:** 2× Omron G6K-2F-RF 5 V послідовно-паралельно + плата драйвера
+    - **Instruction:** Replace with «2× Omron G6K-2F-RF 5 V послідовно-паралельно + плата-носій G6K (драйвер — дискретний, по AO3400A на котушку; рахується в рядку «Логіка інтерфейсу» 2.6)». In the price cell replace «решта — плата драйвера, оцінка верифікатора» with «решта — плата-носій G6K, оцінка верифікатора». Relay price itself is left to the G1/operator-note changes.
+    - **Reason:** Record 10: the driver is no longer counted in both lines.
+    - **Sources:** analogs_G2 #10
+    - **Saving usd:** 
+  89.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** keep_with_note
+    - **Part:** HF chain switch driver
+    - **Anchor:** | Перемикач входу | 2× Omron G6K-2F-RF + драйвер |
+    - **Instruction:** Replace with «| Перемикач входу | 2× Omron G6K-2F-RF + плата-носій (дискретний драйвер AO3400A — у рядку 2.6 «Логіка інтерфейсу») |».
+    - **Reason:** Record 10.
+    - **Sources:** analogs_G2 #10
+    - **Saving usd:** 
+  90.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** G6K coil power (C17)
+    - **Anchor:** живиться лише одна котушка (близько 0.12-0.15 W)
+    - **Instruction:** Replace with «живиться лише одна котушка (близько 105 mW: 21.1 mA при 5 V, Omron)».
+    - **Reason:** Record 10 stack_changes 5 (Omron coil data).
+    - **Sources:** analogs_G2 #10
+    - **Saving usd:** 
+  91.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** HF+ relay coil power and discrete driver
+    - **Anchor:** Одночасно живиться лише одна котушка (близько 0.12-0.15 W).
+    - **Instruction:** Replace with «Одночасно живиться лише одна котушка (близько 105 mW: 21.1 mA, 237 Ohm при 5 V; спрацювання ≤4.0 V при 23 °C, близько 4.6 V на котушці 60 °C — модель). Драйвер на платі G6K у банці HF+: на кожну котушку AO3400A нижнім ключем, 100 Ohm послідовно в затвор, 100k затвор-витік біля FET (опційно 1 nF), один BAT54C на обидві котушки (піни 1/2 на стоки, пін 3 на +5 V); полярність котушки (+ на 5 V); жодної ІС ULN/TBD/TPL. MCP #1 GPB2/GPB3 high = котушка ввімкнена; поки MCP не живлений або в третьому стані, 100k тримає котушки знеструмленими — HF+ на 50 Ohm.»
+    - **Reason:** Record 10 stack_changes 1 and equivalence_proof.
+    - **Sources:** analogs_G2 #10
+    - **Saving usd:** 
+  92.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** replace_part
+    - **Part:** Spare fan path FET on header pin 33
+    - **Anchor:** резерв (запасне керування вентилятором лише через 74LVC1G17 + 2N7002)
+    - **Instruction:** Replace with «резерв (запасне керування вентилятором лише через 74LVC1G17 + AO3400A; при верхньому ключі шляху 1 — паралельно до драйвера Pico на тому самому затворі P-MOSFET, перевірити на схемі P7)».
+    - **Reason:** Record 10 (2N7002 cannot guarantee fan current at 3.3 V gate) reconciled with record 1 (high-side path 1).
+    - **Sources:** analogs_G2 #1, #10
+    - **Saving usd:** 
+  93.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** TCA9517 package
+    - **Anchor:** TCA9517: порт A до хедера, порт B до кабелю;
+    - **Instruction:** Replace with «TCA9517DR (SOIC-8; той самий порядок пінів VCCA 1 ... VCCB 8): порт A до хедера, порт B до кабелю;».
+    - **Reason:** Record 10 stack_changes 4.
+    - **Sources:** analogs_G2 #10
+    - **Saving usd:** 
+  94.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** Relay driver IC, 2N7002 fan path, TCA9517DGKR, single BAT54
+    - **Anchor:** ### 6.2. Прибрано як технічно замінене
+    - **Instruction:** Add a row to 6.2: «| ІС драйвера реле (ULN2003, TBD62003AFNG, TPL7407L); 2N7002 у запасному шляху вентилятора; TCA9517DGKR; поодинокі BAT54 | Дискретний драйвер AO3400A (падіння близько 1 mV проти ≤24 mV TBD і 0.9-1.1 V Darlington при спрацюванні 4.0 V); AO3400A специфіковано при 2.5 V на затворі; TCA9517DR — той самий кристал у SOIC-8; BAT54C — спільний катод у кожній групі. |»
+    - **Reason:** Record 10.
+    - **Sources:** analogs_G2 #10
+    - **Saving usd:** 
+  95.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** G6K coil power; 2N7002 at 3.3 V
+    - **Anchor:** 36. wideband_sdr:
+    - **Instruction:** Add a new numbered item: «Котушка G6K-2F-RF DC5 — 21.1 mA, 237 Ohm, близько 105 mW (Omron), а не 0.12-0.15 W; спрацювання ≤4.0 V при 23 °C, тож драйвер Дарлінгтона (падіння 0.9-1.1 V) може не ввімкнути реле. 2N7002 не має RDS(on) нижче 4.5 V і VGS(th) до 2.5 V — з 3.3 V не гарантує струм вентилятора.»
+    - **Reason:** Record 10.
+    - **Sources:** analogs_G2 #10
+    - **Saving usd:** 
+  96.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Interface logic tests A-F
+    - **Anchor:** | РЧ-деталі: розв'язка, втрати, логічні рівні і таблиця істинності HMC7992
+    - **Instruction:** Add a row after it: «| Логіка інтерфейсу: (A) драйвер реле на платі G6K, джерело 4.75 V — напруга котушки ≥4.70 V на кожній; чисте спрацювання і відпускання при реле близько 60 °C; затискання стоку ≤6 V при вимкненні (осцилограф); обидві котушки знеструмлені (HF+ на 50 Ohm) у 20 холодних стартах при MCP #1 без живлення і в третьому стані; LiteVNA: ≥35 dB на 162-260 MHz і ≤0.3 dB 10 kHz-260 MHz; (B) пін 33 high при Pico у reset — вентилятор на повну, VDS AO3400A < 50 mV; (C) TCA9517DR: 1e6 читань при 100 kHz без помилок зі sled на кабелі і гаряче підключення невживленого sled; (D) огляд схеми: кожна пара BAT54C зі спільним катодом (вузол кнопки, OFF #2813, +5 V); (E) лише для LCSC: на смугу один AO3400A — VGS(th) при 250 мкА 0.65-1.45 V, VDS при 1 A і VGS 2.5 V ≤48 mV; (F) лише в запланованому замовленні DigiKey/LCSC | При провалі — відкласти смугу/повернути ІС-драйвер не можна (Darlington не тримає 4.0 V); перевірити схему | Стенд силової плати; крок 10 |»
+    - **Reason:** Record 10 conditions_or_tests.
+    - **Sources:** analogs_G2 #10
+    - **Saving usd:** 
+  97.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Interface logic sources
+    - **Anchor:** - Omron G6K-2F-RF (RS UK):
+    - **Instruction:** Add after this line: «- TI TCA9517: https://www.ti.com/lit/ds/symlink/tca9517.pdf ; SN74LVC1G17: https://www.ti.com/lit/ds/symlink/sn74lvc1g17.pdf», «- AOS AO3400A: https://www.aosmd.com/res/datasheets/AO3400A.pdf», «- Nexperia BAT54C,215 (DigiKey): https://www.digikey.com/en/products/result?keywords=BAT54C%2C215».
+    - **Reason:** Key URLs of record 10.
+    - **Sources:** analogs_G2 #10 sources
+    - **Saving usd:** 
+  98.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** replace_part
+    - **Part:** Recovery set: 2× Verbatim 47042 + Goobay 95717 (Reichelt)
+    - **Anchor:** | Відновлення | ALLNET microSD 64 GB + Adafruit 5212 зчитувач + Adafruit 6324 кабель + кабель USB3 A-A для EDL |
+    - **Instruction:** Replace with «| Відновлення | 2× Verbatim Pro U3 microSDXC 64 GB 47042 (EAN 0023942470427) + Goobay 95717 USB 3.0 A-A 1.0 м (28 AWG, 3x екранований) + Adafruit 5212 зчитувач + Adafruit 6324 кабель | 1 набір | 35.60 без ПДВ (2× 11.29 + 3.12 + 6.95 + 2.95); Reichelt-частина EUR 27.20 з 19% ПДВ DE = $30.58 (карта EUR 11.95 = $13.43; кабель EUR 3.30 = $3.71) | Reichelt (DE; доставка від EUR 5.95 = $6.69, інші ЄС не перевірено) + Adafruit | перевірено (18.10.2026; карти — «limited stock») |» and note «Умова: на прибутті кожна карта проходить f3, SDR104, fio і ворота 4K QD1 ≥1500/500 IOPS; якщо Verbatim не пройде — 2× PNY Pro Elite 64 GB P-SDU64GV31100PRO-GE (Reichelt EUR 13.50 = $15.18 з ПДВ / $12.75 без; набір $38.52). Рятувальна карта зберігається поза корпусом (порядок завантаження USB > SD > NVMe > eMMC > UFS). Дефект: 5212 (вилка USB-C) і 6324 (C-вилка на A-вилку) не з'єднуються, 5212 не вставляється в жоден порт пристрою, а слот microSD Q6A не має прорізу — польове відновлення через USB-A-зчитувач на синьому USB-A або з відкритим корпусом; задокументувати реального користувача 6324 або взяти опційну заміну Transcend TS-RDF5K (Reichelt EUR 7.95 = $7.51 без ПДВ, ще −$2.39) за умов (a)-(c). Радxa RA019 розпродано — прошивати через EDL або з microSD. Було: ALLNET ALN-TFUHS1-64 $16.99 (×2 за повторним аудитом D) + кабель A-A без моделі $5.00; набір $48.88 → $35.60, економія $13.28 без ПДВ до доставки, близько $7.66 після окремої посилки Reichelt ($5.62 без ПДВ). |» (fix the typo: «Radxa RA019»).
+    - **Reason:** Record 11: Verbatim matches or beats every published ALLNET spec (U3/V30, traceable EAN, 2-year warranty), A-A cable gets a real SKU; reader and C-A cable kept; conditional on the random-I/O gate.
+    - **Sources:** analogs_G2 #11; reichelt.com Verbatim/PNY/Goobay pages; verbatim-europe.com 47042
+    - **Saving usd:** 13.28 ex VAT before shipping (about 7.66 after a separate Reichelt parcel)
+  99.
+    - **Section:** 02d_bom_case_cables
+    - **Kind:** keep_with_note
+    - **Part:** A-A cable not double-bought
+    - **Anchor:** перехідники SMA M-M, F-SMA, барели; кабель USB3 A-A.
+    - **Instruction:** Replace with «перехідники SMA M-M, F-SMA, барели; кабель USB3 A-A (це Goobay 95717 з рядка «Відновлення» 2.1 — не купувати вдруге).»
+    - **Reason:** Record 11 stack_changes 2.
+    - **Sources:** analogs_G2 #11
+    - **Saving usd:** 
+  100.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** rule
+    - **Part:** Rescue boot port in the service hatch
+    - **Anchor:** сервісний лючок (консоль UART, доступ до синього USB-A для EDL кабелем A-A)
+    - **Instruction:** Append after the closing parenthesis: «; рятувальне USB-завантаження — з USB-A-зчитувача на синьому USB-A в лючку (у збірці з Lime T7 від'єднати), не з LAB USB-A (його TPS2553 EN від MCP #1 GPA0 у час UEFI не перевірено); слот microSD Q6A прорізу не має; EDL з ноутбука лише з USB-C потребує OTG-перехідника C-на-A (Rd) плюс кабель A-A (моє інженерне прочитання специфікації Type-C)».
+    - **Reason:** Record 11 stack_changes 3-4.
+    - **Sources:** analogs_G2 #11
+    - **Saving usd:** 
+  101.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** ALLNET rescue card and A-A placeholder
+    - **Anchor:** ### 6.2. Прибрано як технічно замінене
+    - **Instruction:** Add a row to 6.2: «| ALLNET microSD 64 GB ALN-TFUHS1-64 (рятувальна, ×1-2); кабель USB3 A-A без моделі ($5.00); microSD у замовленні ALLNET | 2× Verbatim 47042 (запас PNY Pro Elite) і Goobay 95717 з Reichelt: невідомий OEM без класу і гарантії проти U3/V30 з EAN і гарантією 2 роки. |»
+    - **Reason:** Record 11.
+    - **Sources:** analogs_G2 #11
+    - **Saving usd:** 
+  102.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** Recovery set defect
+    - **Anchor:** 36. wideband_sdr:
+    - **Instruction:** Add a new numbered item: «Набір відновлення v1 мав дефект: Adafruit 5212 має вилку USB-C, а 6324 — C-вилку на A-вилку, тож їх не з'єднати; 5212 не вставляється в жоден порт пристрою (LAB USB-A, синій USB-A), а слот microSD Q6A не має прорізу — польове відновлення потребує USB-A-зчитувача для USB-завантаження або відкритого корпусу.»
+    - **Reason:** Record 11 stack_changes 3.
+    - **Sources:** analogs_G2 #11
+    - **Saving usd:** 
+  103.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Rescue card and EDL cable tests
+    - **Anchor:** 
+    - **Instruction:** Add a row: «| Рятувальні карти (кожна): f3write/f3read на всю карту, записати реальну кількість байтів проти 59.5 GB ALLNET — рятувальний набір (_512, образ _4096 для UFS, zip BIOS 260120, edl-ng, 2× дампи SPI 32 MiB, списки SHA-256) з запасом ≥2x; у слоті Q6A debugfs sdhci-msm «ios» показує SDR104 при 1.8 V; fio 1M послідовно: читання до межі слоту (близько 70+ MB/s), запис ≥42 MB/s; fio 4K random QD1 ≥1500 читань і ≥500 записів IOPS (поріг A1), інакше PNY; 20 холодних завантажень зі слоту + оновлення образу dd з SHA-256 через 5212. Кабель A-A: продзвонити D+ 2-2, D− 3-3, GND, записати, чи з'єднано VBUS, заклеїти пін VBUS з боку ПК; EDL лише з живленням J21 — 05c6:9008; два повні читання edl-ng (33,554,432 B) з однаковим SHA-256. Опційна заміна TS-RDF5K лише якщо (a) ПК має USB-A, (b) 6324 не має іншого користувача, (c) ви приймаєте втрату вилки USB-C; тоді ≥20 USB-завантажень через RDF5 на синьому USB-A, lsusb -t показує uas/usb-storage, поза сесіями L-band/GNSS | Ворота W1-2 | На прибутті карт |»
+    - **Reason:** Record 11 conditions_or_tests.
+    - **Sources:** analogs_G2 #11
+    - **Saving usd:** 
+  104.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Recovery set sources
+    - **Anchor:** - Adafruit INA228: https://www.adafruit.com/product/5832
+    - **Instruction:** Add before this line: «- Verbatim 47042 (Reichelt): https://www.reichelt.com/de/en/shop/product/microsdxc-card_64gb_-_verbatim_-_class_10_-_u3-182524 ; виробник: https://www.verbatim-europe.com/en/prod/pro-u3-microsdxc-card-64gb-47042/», «- PNY Pro Elite 64 GB (Reichelt): https://www.reichelt.com/de/en/shop/product/microsdxc_memory_card_64gb_pro_elite-426301», «- Goobay 95717 (Reichelt): https://www.reichelt.com/de/en/shop/product/usb_3_0_cable_a_plug_to_a_plug_1_0_m-249385», «- Transcend TS-RDF5: https://cdn-reichelt.de/documents/datenblatt/E200/TRANSCEND_TS-RDF5R_DB-EN.pdf», «- Radxa Q6A EDL: https://docs.radxa.com/en/dragon/q6a/low-level-dev/edl-mode».
+    - **Reason:** Key URLs of record 11.
+    - **Sources:** analogs_G2 #11 sources
+    - **Saving usd:** 
+  105.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Power-board bench additions (records 7, 8, 9, 10)
+    - **Anchor:** 3. **Силова плата на стенді**
+    - **Instruction:** Append to bring-up step 3: «тести голих MCP23017 (iii)-(vii): 20 теплих + 20 холодних завантажень без викидів enable, фронт I2C ≤1000 ns і VOL ≤0.4 V, 1e6 читань під навантаженням, засувка FAULT 10 мкс, без зворотного живлення; пусковий струм хаба CH334F (4 × 100 мкФ + 10 мкФ) на LAB5 і запобіжнику 3 A; продзвонка пада 1 на H3/H4; тест просідання LAB5 для PI4IOE5V9555 (60 подій + повільне наростання VSYS); драйвер реле G6K при 4.75 V (котушка ≥4.70 V, затискання ≤6 V, 20 холодних стартів на 50 Ohm).»
+    - **Reason:** Records 7, 8, 9, 10 bench tests placed in the bring-up order.
+    - **Sources:** analogs_G2 #7-#10
+    - **Saving usd:** 
+  106.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Narrowband A/B additions (records 5, 7, 8)
+    - **Anchor:** 4. **Вузькосмуговий A/B ДХ/КХ/VHF**
+    - **Instruction:** Append to bring-up step 4: «Також: A/B GP23 Pico (PSM проти PWM) — шум ADC і спури RT6150; тон п'єзо 4.000 проти близько 4.209 kHz на 40/60/77.5/162 kHz; SJ1 хаба цілий проти перерізаного; вентилятор і повітродувка увімк./вимк.»
+    - **Reason:** Records 5, 7, 8, 1.
+    - **Sources:** analogs_G2 #1, #5, #7, #8
+    - **Saving usd:** 
+  107.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Display acceptance additions
+    - **Anchor:** 7. **Приймання дисплея на прибутті:**
+    - **Instruction:** Append to bring-up step 7: «вимірювач яскравості на повному білому (≥1800 cd/m2); тест тиші BLE 2400-2483.5 MHz; робочий шлях димінгу (DDC/CI, потім емуляція KEY, потім власний CC-драйвер); усе — у межах 30 днів; при провалі — 4D як записане зниження.»
+    - **Reason:** Record 2 conditions.
+    - **Sources:** analogs_G2 #2
+    - **Saving usd:** 
+  108.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Rescue cards in the W1-2 gate
+    - **Anchor:** 1. **Ворота плати W1-2 (19.10-1.11.2026)**
+    - **Instruction:** Append to the step-1 gate text: «Рятувальні карти Verbatim: f3, SDR104 у debugfs, fio, 4K QD1 ≥1500/500 IOPS (інакше PNY), 20 холодних завантажень зі слоту; кабель A-A: продзвонка, EDL 05c6:9008 лише з живленням J21, два читання edl-ng з однаковим SHA-256.»
+    - **Reason:** Record 11 conditions (the board boots from microSD until the UFS arrives).
+    - **Sources:** analogs_G2 #0, #11
+    - **Saving usd:** 
+  109.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** other
+    - **Part:** Group 2.1 subtotal
+    - **Anchor:** | **Підсумок групи** | | | **283.31-312.63** | | | |
+    - **Instruction:** Recompute after all edits. From this source only: cooling 19.85-24.85 → 36.36-41.36 (EU) and recovery 31.89 → 35.60 give **303.53-332.85** (розрахунок; +$8.98, якщо вентилятор Alternate їде окремо; з базою поза ЄС для охолодження 33.47-38.47 — 300.64-329.96). Adjust again if other sources change rows of 2.1.
+    - **Reason:** Records 1 and 11 change two rows of 2.1.
+    - **Sources:** analogs_G2 #1, #11
+    - **Saving usd:** +20.22 / +20.22 vs v1 group
+  110.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** other
+    - **Part:** Group 2.6 subtotal
+    - **Anchor:** | **Підсумок групи** | | | **221.39-244.44** | | | Нижня межа рахує 4D ($128.95). |
+    - **Instruction:** Recompute after all edits. From this source with the chosen parts: 128.95/132 + 15.65 + 3.91 (ферит сенсора) + 23-26 + 9.18 + 13.64 + 2.9 + 9.90 + 3.6-3.9 + 5.51 = **216.24-222.59** (розрахунок; оцінки позначено); з усіма запасними варіантами умовних замін (74271112, KSC641J, Adafruit 5346, TCA9555) верхня межа до 237.48. Keep the note «Нижня межа рахує 4D ($128.95).»
+    - **Reason:** Records 2-10 change rows of 2.6.
+    - **Sources:** analogs_G2 #2-#10
+    - **Saving usd:** -5.15 / -21.85 vs v1 group (chosen parts)
+  111.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** other
+    - **Part:** Core tier recount
+    - **Anchor:** | core | пристрій з внутрішнім РЧ, HF+ і перемикачем
+    - **Instruction:** Recompute the core tier and the summary rows after all P5 changes. Delta from this source only: 2.1 +20.22/+20.22, 2.6 −5.15/−21.85 → core +15.07 (нижня межа) / −1.63 (верхня межа) relative to 1,759.40-2,252.77 (розрахунок). Mark the base as mixed (EU incl. VAT for TinyTronics, Alternate, Reichelt incl. column; ex VAT for DigiKey, Adafruit, Wisecoco).
+    - **Reason:** Group subtotals changed by this source.
+    - **Sources:** analogs_G2 #1-#11
+    - **Saving usd:** core +15.07 / -1.63
+  112.
+    - **Section:** 00_header_toc
+    - **Kind:** other
+    - **Part:** Mixed price base note
+    - **Anchor:** База змішана: ціни магазинів ЄС/UK наведено як продаються (з ПДВ)
+    - **Instruction:** In the parenthesised list of incl.-VAT prices add «Armor 7056A у TinyTronics EUR 12.00, NF-A4x10 5V в Alternate.de EUR 15.90»; add after the sentence: «Для ЄС діє правило вартості з доставкою (продавці поза ЄС: + доставка + ПДВ + EUR 3 мита і EUR 2 UHF на тарифну лінію); DigiKey DE — EUR з 19% ПДВ DE, де наведено.»
+    - **Reason:** New incl.-VAT EU prices from records 1 and 11; landed cost rule (operator notes 34-35).
+    - **Sources:** analogs_G2 #1, #11; operator_notes 34-35
+    - **Saving usd:** 
+- **Already in v1:**
+  - UFS RA022-B10J0U2 itself, with ALLNET $65.90 and TinyTronics EUR 58 ($65.20, 2-4 weeks) both listed (02a, 09 step 1)
+  - 'Модуль 256 GB Kioxia не брати/уникати' and the 0x01CE/0x0198 ID rule (02a, 01b #18)
+  - Boot from microSD until the UFS arrives (09 step 1)
+  - UFS on-arrival tests: ID read, 10 min fio, fill to about 70% (08 'На прибутті UFS')
+  - Active cooling mandatory: Armor 7056A or stepped Cu block in the 32x31 mm zone with a 40 mm 5 V fan (02a, 01b #16, 05d)
+  - Fans DC on/off from the Pico, no PWM; Q6A fan on 60 / off 50 C; blower by panel NTC; 100% on heartbeat loss (C6, 05d)
+  - Fans on/off as a state in the A/B matrix (05d 5.7 #1)
+  - Wisecoco SKU 4681 at $132 behind the D5 written-answer gate, PayPal, 4D 4DHDMI-70-1280-800-CT-EAR-1000 $128.95 DigiKey fallback after about 7 days (02c, D5, 09 step 3)
+  - Display acceptance >=1800 nits, <=14 W / <=7.5 W, USB-HID, 151.50/127.90 MHz, SYS12 = 11.0 V, 20 cold boots (02c, D4, 08)
+  - Bezel CAD only after panel acceptance (D5)
+  - Newhaven NHD-7.0-HDMI-HR-RSXP-CTU at $120.20 and 940 nits (01b #74-76)
+  - HDMI A/B with an E-field probe only and pass criteria (no line >=3 dB, <=0.5 dB rise, <=1 dB-Hz GNSS) (05d 5.7 #1)
+  - Adafruit 2420 at $9.95 from Adafruit (02c)
+  - VEML7700 on the outer top face of the bezel, outside the hinged 30 mm hood that folds flat as a lid (02c, D5, 05d 5.8)
+  - Light-grey ASA case (01b #70, 05d 5.8)
+  - Pico on switched LAB5 via VSYS, qty 2 (1 spare), 26 GPIO, TX pins high-Z until Q6A 3.3 V (02c, 05b, D3)
+  - VEML7700 at 0x10 and the key expander at 0x20 on Pico I2C0 GP4/5, INT on GP10, piezo GP20, LED GP21, encoders on PIO (05b)
+  - Adafruit CH334F 5997 qty 2 at $9.90 from Adafruit; hub 5V from LAB5, Q6A VBUS not connected, solder-pad ports needing pigtails (02c, C5, 05a)
+  - 12 MHz hub crystal harmonics at 144.000/432.000 MHz in the known-lines table (05d 5.7)
+  - MCP23017 #1 0x20 outputs and #3 0x22 inputs plus GPA7/GPB7 outputs on I2C2 pins 27/28 at 100 kHz, INT mirrored open-drain to pin 5, 100k pull-downs, Q6A 3.3 V supply, labd via smbus2 (D13, 05b, 05c)
+  - Rule 'no pull-ups below 10k on the header side' (05b)
+  - TCA9517 port A to header, port B to cable, 100 kHz, 1e6-read test (05b)
+  - Spare fan control on header pin 33 via 74LVC1G17 (05b); only the FET type changes
+  - G6K series-parallel: de-energised -> HF+ on 50 Ohm, both antenna ports terminated; acceptance >=35 dB at 162-260 MHz and <=0.3 dB 10 kHz-260 MHz (C17, 05b, 02a)
+  - Rescue card stored outside the case; boot order USB > SD > NVMe > eMMC > UFS; Radxa RA019 reader sold out (02a)
+  - Q6A USB-C has no case opening; service hatch gives access to the blue USB-A for EDL with an A-A cable (05d 5.8, D15)
+  - USB3 A-A cable listed in the cable kit composition (02d)
+- **Not applied:**
+  1.
+    - **Item:** Record 7: 'Keys to GND need no external pull-ups'
+    - **Why:** Superseded by record 6 of the same file: C&K silver contacts need 1 mA minimum switching current and the expander's weak 100k pull-ups give only tens of uA, so 2.2 kOhm external pull-ups are added on all 8 lines (applied in 02c, D12, 05b).
+  2.
+    - **Item:** Record 7: 'GP22 stays spare'
+    - **Why:** Record 1 needs a spare Pico GPIO for the path-1 tach input and GP22 is the only free edge GPIO in the 05b map; tach assigned to GP22, flagged for P7 confirmation. Record 9's optional MCP23017 RESET-from-Pico line would also need a GPIO (noted as needing one).
+  3.
+    - **Item:** Record 2: replace the line 'the whole 4DHDMI line tops out at 1000'
+    - **Why:** No such line exists in STACK v1; the corrected fact (7in max 1000 cd/m2, line max 1100 cd/m2 on 15.6in) is added to the 01b display row and the datasheet link is updated to R1.5.
+  4.
+    - **Item:** Record 8: replace 'Budget alternative: Pi Hut GBP 4.80'
+    - **Why:** STACK v1's hub row has no such note; the EU-source note (DigiKey DE 1528-5997-ND, Pi Hut not cheaper) is added instead.
+  5.
+    - **Item:** Record 8: ECB FX rates of 16 Oct 2026 (1 EUR = 1.1253 USD, 0.84385 GBP)
+    - **Why:** The stack keeps 1 EUR = 1.1241 USD and 1 GBP = 1.3318 USD, which records 1, 5 and 11 also use; record 8 itself says no conclusion changes. Switching only some conversions would make the document inconsistent.
+  6.
+    - **Item:** Record 5: 'mandatory flat-rate EU customs duty (amount not stated / to be verified)'
+    - **Why:** Superseded by operator note 35 (rule item, higher precedence): EUR 3 per tariff line for consignments up to EUR 150 via IOSS or post, normal duty above, plus EUR 2 Union handling fee per line from about 1 Nov 2026; these amounts are used instead.
+  7.
+    - **Item:** Record 1: 20 mm near-miss fans Sunon MF40200V3-1000U-G99 / Same Sky CFM-4020V-050-165-20
+    - **Why:** Record 1 says they need an explicit user decision (+0.13-0.19 W, +10 mm depth); not adopted, only listed as a question in 08.
+  8.
+    - **Item:** Record 11: Transcend TS-RDF5K replacing 5212 + 6324
+    - **Why:** Optional only under conditions (a)-(c); costs more than the 5212 alone and loses the USB-C plug; recorded as a conditional option, not the default.
+  9.
+    - **Item:** Record 10: LCSC route ($2.60) as default
+    - **Why:** LCSC is not franchised for TI/AOS and AO3400 is heavily cloned; kept only as an option with an incoming test; DigiKey route is the default.
+  10.
+    - **Item:** Record 4: DIY VEML7700-TT tab
+    - **Why:** The $1-3 saving is real only if it rides the custom-PCB order free and is reflowed properly; neither is shown.
+  11.
+    - **Item:** Record 3: Lindy 36960 cable (+ Fair-Rite or Laird cores), Delock 83352, StarTech, Waveshare FFC, generic AliExpress leads
+    - **Why:** Trades or unproven (6.0-7.3 mm OD, 48 mm bend radius, no per-pair foil data, Laird case UL94 V-2, EU price unverified); not adopted.
+  12.
+    - **Item:** Record 0: Arace RA022-B10J0U2 at $49 as the purchase; AliExpress 'Radxa UFS' listings
+    - **Why:** Arace shows available=false today, so it is only a checkout-time rule; AliExpress provenance is unproven.
+  13.
+    - **Item:** Record 6: correction of the searcher's 'after trimming 3-4 mm the flat is still >=7 mm'
+    - **Why:** That claim is not in STACK v1; the correct rule (T <= 10 - d) is written into 05d instead.
+  14.
+    - **Item:** Record 5: re-audit fixes (Schottky LAB5 to VSYS, divider taps SW, flash only with the main switch ON, B11)
+    - **Why:** These belong to the re-audit A/D extraction; only referenced in the 08 Pico row so they are not lost.
+- **Notes:** Source /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G2_display_hmi_storage.json read in full (12 records: 4 keep with seller/price/data fixes, 8 replace_conditionally incl. 'keep' records with stack_changes). All anchors were checked with grep -F: each occurs exactly once in its section file. Section 11 (change log) is not in the output enum; the assembler should build it from these changes. Conflicts resolved inside this file: (1) record 7 'no external key pull-ups' vs record 6 '2.2 kOhm pull-ups' -> record 6 applied; (2) record 1 high-side switching of the 3-wire tach fan vs record 10 AO3400A low-side on 'Q6A fan' -> the AO3400A becomes the gate driver of a high-side P-MOSFET (or a 5 V load switch), the pin-33 spare path drives the same gate; this reconciliation is mine and flagged for the P7 schematic (no P-MOSFET part is named in any file); (3) tach takes GP22, the last free Pico edge GPIO, so record 9's optional RESET-from-Pico line has no pin left. Several changes overlap with re-audit D/A items (Noctua fan, touch-USB 74271140 line, 19-21 mm key pitch, GP23); the instructions cite them so the reaudit extractor and this one stay consistent. Computed figures marked 'розрахунок' come only from file numbers: TinyTronics order (а) EUR 168 = $188.85, ALLNET order $266.74, group 2.1 303.53-332.85, group 2.6 216.24-222.59 (237.48 with all fallbacks), core delta +15.07 / -1.63. The Daly BMS line in step 1 belongs to G3. DigiKey's EU duty/UHF exposure (US shipment) is flagged as to verify at checkout, per record 10. No file was edited.
+
 ## searchA:asa_1_kg_cnc_kitchen_m3_inserts_and_scre (run `wf_37583a7b-1a8`)
 
 - **Part:** Mechanical set (core, qty 1 set): ASA 1 kg filament + CNC Kitchen M3 heat-set inserts and M3 screws + Gelid thermal pads (x2) + hand strap and neck strap
