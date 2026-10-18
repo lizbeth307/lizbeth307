@@ -1853,3 +1853,279 @@
   - No listing title mentions USB-HID touch, 12 V input or optical bonding.
   - So the open points from the audit remain: touch interface (USB HID vs I2C), board input voltage and current, EDID and orientation, and lamination. Get them in writing from the seller.
 
+## dispmkt:sunlight_tech (run `wf_a429c611-ea2`)
+
+- **Angle:** Sunlight readability per watt: transflective and reflective LCDs, optical bonding with AR/AG, circular polarizers versus polarized sunglasses, sun hoods, e-paper, and backlight overdrive. Concrete buyable 5-8 in HDMI + USB-touch products that use these techniques, with a quantified ambient-contrast model at 100 klx.
+- **Candidates:**
+  1.
+    - **Name:** 4D Systems 4DHDMI-70-1280-800-CT-EAR-1000 (7in IPS, optically bonded capacitive glass, HDMI + USB-C touch)
+    - **Size in:** 7
+    - **H res:** 1280
+    - **V res:** 800
+    - **Ppi:** 215.6
+    - **Brightness nits:** 1000
+    - **Brightness evidence:** 4D Systems 4DHDMI datasheet R1.0, model table and section 4.24: 1000 cd/m2 typical, 800:1 contrast, adjustable via OSD. The Ukrainian Prom.ua listing also says 1000 cd/m2. Not independently measured. The mechanical drawing shares one sheet with the 500-nit version: 36 LEDs, 6S6P, If 180 mA, Vf 18 V, which is about 3.2 W of backlight (my calculation).
+    - **Host interface:** Mini-HDMI (HDMI 1.4). The panel is natively 800x1280 portrait (drawing: '7.0in 800*1280 TFT', driver IC JD9365). The board has an OSD and audio out, so it is probably a scaler board; this is my inference.
+    - **Touch to host:** Goodix GT928 capacitive, delivered to the computer over the board's USB-C 'Power and Touch Interface'. The datasheet does not state the USB class; HID is likely but unconfirmed.
+    - **Optical bonding and coating:** Datasheet: 'Capacitive Touch, Glass 1:1 size of LCD. Optical Bonded to LCD.' G+F+F stack, 1.1 mm cover glass, transmittance at least 85%. 'As a standard option, the displays do not have any Cover Glass Treatments'. AR, AG and AF are a custom order. Planar's numbers put a bonded plain-glass front at about 4.4%. Adding a 0.7% AR film should bring it to about 1.2% (my calculation).
+    - **Power w:** Datasheet: 12 V barrel jack 540 mA typical (about 6.5 W), or 5 V USB-C 1300 mA typical (about 6.5 W). RS lists 790 mA, which conflicts. About 154 nits per watt (my calculation).
+    - **Supply:** 12 V DC, 5.5 mm barrel jack, centre positive. It runs straight from the existing 12 V rail with no extra buck. 5 V via USB-C is the alternative, but a Q6A USB port is not enough.
+    - **Dimensions weight:** Outline about 100.2 x 164.7 mm (BL/CTP outer dimension), total thickness 15.98 mm including the board, from the datasheet drawing. Weight not stated.
+    - **Operating temp:** -20 to +70 C operating, -30 to +80 C storage (datasheet)
+    - **Price:** 9,520 UAH (about $229 at 41.5 UAH/USD) from neostore.in.ua on Prom.ua. No international price was verified; RS UK showed it temporarily out of stock (search snippet).
+    - **Availability:** In stock in Ukraine: Prom.ua seller neostore.in.ua, 12-month warranty, Nova Poshta delivery, cash on delivery.
+    - **Ukraine availability:** Yes, in stock at 9,520 UAH (neostore.in.ua via Prom.ua, checked 18 Oct 2026).
+    - **Q6a compatibility:** Good. 1280 or 800 px wide is far below the sc7280 2400 px SSPP limit. A 1280x800@60 mode is about 71-84 MHz, which is about 1.7-2.0 Gbps of the 8.64 Gbps 2-lane HBR2 budget (my calculation). The EDID is unknown, so check edid-decode for portrait-only or landscape modes and confirm VBP+VSW+VFP is at least 24 lines. Power it from the 12 V rail. Pass only the USB data lines to the Q6A if the board back-feeds VBUS. Brightness is changed through the OSD from an optional button board; auto-dimming means emulating the buttons from GPIO/RP2040, or asking 4D for the DDC/CI firmware the datasheet says 'may be implemented'.
+    - **Rf notes:** No EMI data. The board carries a scaler and an LED boost converter. If the EDID uses CVT-RB 71.0 MHz, the 2nd harmonic lands at 142 MHz (2 MHz below 2 m) and the 24th at 1704 MHz, inside 1690-1710 (my calculation). A custom EDID with a pixel clock of 77.8-80.4 MHz (e.g. 79.0 MHz) avoids every band except S-band, which it reaches only at harmonic 28 and above (my calculation). Shield the boost converter and filter the 12 V feed.
+    - **Community reports:** None found in this pass. This is a new product line: datasheet drawings are dated Dec 2024 and datasheet R1.2 is dated 2026.
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_0.pdf
+      - https://prom.ua/ua/p3231815115-komplektuyuschie-dlya-matrits.html
+      - https://uk.rs-online.com/web/p/lcd-colour-displays/0721600
+  2.
+    - **Name:** 4D Systems 4DHDMI-80-1280-800-CT-EAR-1000 (8in IPS, optically bonded capacitive glass, HDMI + USB-C touch)
+    - **Size in:** 8
+    - **H res:** 1280
+    - **V res:** 800
+    - **Ppi:** 188.7
+    - **Brightness nits:** 1000
+    - **Brightness evidence:** 4D Systems datasheet R1.0, section 4.28: 1000 cd/m2 typical, adjustable via OSD; the Prom.ua listing says the same. The drawing shows 42 LEDs, 6S7P, If 210 mA, Vf 18 V, about 3.8 W of backlight (my calculation). Not independently measured.
+    - **Host interface:** Mini-HDMI (HDMI 1.4). The panel is natively 800x1280 portrait with a JD9365 driver, the same driver family as Radxa's Display 8 HD (jadard-jd9365da).
+    - **Touch to host:** Goodix GT928 over the board's USB-C power-and-touch port. USB class not stated (HID likely).
+    - **Optical bonding and coating:** Datasheet: 'Optical Bonded to LCD', 1.1 mm cover glass. No AR/AG as standard; available as a custom order.
+    - **Power w:** Datasheet: 12 V 580 mA typical (about 7 W), or 5 V 1500 mA typical. About 144 nits per watt (my calculation).
+    - **Supply:** 12 V barrel jack (5.5 mm) or 5 V USB-C
+    - **Dimensions weight:** About 122.6 x 198.6 mm outline, 15.98 mm total thickness (datasheet drawing). Weight not stated.
+    - **Operating temp:** -20 to +70 C (datasheet)
+    - **Price:** 10,060 UAH (about $242) from neostore.in.ua on Prom.ua
+    - **Availability:** In stock in Ukraine (Prom.ua, neostore.in.ua)
+    - **Ukraine availability:** Yes, in stock at 10,060 UAH
+    - **Q6a compatibility:** Good. Same notes as the 7in 1280x800 model: low pixel clock, 1280 px or less wide, 12 V input, check the EDID and the 24-line vertical blanking requirement.
+    - **Rf notes:** Same as the 7in model. Pick an EDID pixel clock of 77.8-80.4 MHz to keep harmonics out of the 137-1710 MHz bands (my calculation).
+    - **Community reports:** None found.
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_0.pdf
+      - https://prom.ua/ua/m-4515543037690202415-displej-tft-systems.html
+  3.
+    - **Name:** 4D Systems 4DHDMI-70-1024-600-CT-EAR-1000 (7in IPS BOE panel, optically bonded, lowest-power 1000-nit option)
+    - **Size in:** 7
+    - **H res:** 1024
+    - **V res:** 600
+    - **Ppi:** 169.5
+    - **Brightness nits:** 1000
+    - **Brightness evidence:** 4D datasheet R1.0, section 4.20: 1000 cd/m2 typical, 800:1 contrast. The drawing shows the 1000-nit backlight at Vf 19.2 V and If 180 mA (about 3.5 W), against 9.3 V and 180 mA for the 500-nit version. Prom.ua (Zirka) listing title says 1000 cd/m2.
+    - **Host interface:** Mini-HDMI (HDMI 1.4). BOE 7.0in panel with a JD9165A-A3 driver.
+    - **Touch to host:** GT1151QM capacitive over one of two USB-C '5V power and USB touch' ports. USB class not stated.
+    - **Optical bonding and coating:** Datasheet: 'Optical Bonded to LCD', 1.1 mm cover glass plus ITO film. No AR/AG as standard.
+    - **Power w:** Datasheet: 5 V 790 mA typical, about 4.0 W total, or about 253 nits per watt (my calculation). This is the best nits per watt among the plug-and-play modules found.
+    - **Supply:** 5 V USB-C only (no barrel jack listed). Needs its own 5 V buck of 1 A or more.
+    - **Dimensions weight:** About 165 x 100 mm outline, about 13 mm total thickness (read from the low-resolution datasheet drawing, approximate). Weight not stated.
+    - **Operating temp:** -20 to +70 C (datasheet)
+    - **Price:** 8,140 UAH (about $196) from neostore.in.ua; 10,227 UAH at Zirka (unavailable)
+    - **Availability:** Prom.ua: neostore.in.ua in stock; Zirka out of stock
+    - **Ukraine availability:** Yes (neostore.in.ua via Prom.ua)
+    - **Q6a compatibility:** Good, with the Radxa FAQ fix video=HDMI-A-1:1024x600@60 if the EDID default is wrong. Brightness is a push button on the PCBA that steps through levels (no OSD), so auto-dimming means wiring a GPIO to the button.
+    - **Rf notes:** Unknown EDID clock. A 1024x600@60 timing at 51.9-52.7 MHz is clean in every band except high-order (43rd and above) S-band harmonics (my calculation).
+    - **Community reports:** None found.
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_0.pdf
+      - https://prom.ua/ua/search?search_term=%D0%B4%D0%B8%D1%81%D0%BF%D0%BB%D0%B5%D0%B9%207%20hdmi%201000%20nit
+  4.
+    - **Name:** Newhaven NHD-7.0-HDMI-HR-RSXP-CTU (7in IPS 940-nit HDMI module, USB-HID PCAP)
+    - **Size in:** 7
+    - **H res:** 1024
+    - **V res:** 600
+    - **Ppi:** 169.5
+    - **Brightness nits:** 940
+    - **Brightness evidence:** Newhaven product page and datasheet: 'Normally Black, Transmissive, 940cd/m2', marketed as 'IPS, Sunlight Readable'. Vendor figure, not independently measured.
+    - **Host interface:** HDMI through a TI TFP401A DVI/HDMI receiver. There is no scaler, so the host must send the native timing. The datasheet EDID DTD is 1024x600, 62.00 MHz, htotal 1344, vtotal 635 = 72.6 Hz, vertical blanking 35 lines (VFP 12 / VSW 10 / VBP 13), all decoded by me from the EDID array.
+    - **Touch to host:** FT5426G PCAP; the datasheet table says 'PCAP (USB-HID)'. It works with hid-multitouch without a driver.
+    - **Optical bonding and coating:** Cover glass is included. Optical bonding and AR/AG are not stated, so assume air-gap or plain glass until confirmed.
+    - **Power w:** Datasheet: VDD 5.0-7.0 V. At 5 V, 1.2 A typical and 1.5 A max (6-7.5 W). At 7 V, 0.9 A typical (about 6.3 W). About 157 nits per watt (my calculation).
+    - **Supply:** 5-7 V DC; needs its own buck converter
+    - **Dimensions weight:** 189.68 x 106.7 x 27.8 mm including a steel mounting bracket. Weight not stated.
+    - **Operating temp:** -20 to +70 C operating, -30 to +80 C storage
+    - **Price:** $120.20 (Newhaven web store)
+    - **Availability:** Product page shows 'IN STOCK' with a low-stock notice; one search snippet called the listing retired. Ships from the US. Shipping to Ukraine not checked.
+    - **Ukraine availability:** Not found locally; import only
+    - **Q6a compatibility:** Good. The 35-line vertical blanking meets the sc7280 DP requirement of 24 lines or more. 62 MHz is trivial for the link. The TFP401A has no scaler, so keep exactly 1024x600. The Radxa FAQ video=HDMI-A-1:1024x600@60 fix applies. The EDID asks for 72.6 Hz, and a 60 Hz custom EDID should also work but is unverified.
+    - **Rf notes:** The vendor states an 'upgraded EMI-shielded FPC'. With the stock EDID at 62.00 MHz, the 12th harmonic is 744.0 MHz (inside the 739-750 MHz QO-100 IF) and the 7th is 434.0 MHz (1 MHz below 435). A replacement EDID at 52.0 MHz (htotal 1344 x vtotal 645 = 60.0 Hz) is clean except S-band orders 43 and above (my calculation).
+    - **Community reports:** Two reviews on the vendor page, both about support, not sunlight performance.
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.newhavendisplay.com/nhd70hdmihrrsxpctu-p-9649.html
+      - https://newhavendisplay.com/content/specs/NHD-7.0-HDMI-HR-RSXP-CTU.pdf
+  5.
+    - **Name:** CarTFT CTFHD840-SH (8.4in transflective HDMI monitor, USB touchscreen)
+    - **Size in:** 8.4
+    - **H res:** 800
+    - **V res:** 600
+    - **Ppi:** 119
+    - **Brightness nits:** 450
+    - **Brightness evidence:** CarTFT product page: 450 cd/m2 with a transflective panel; a 1000-nit 'Ultra' version is available on request. The page gives no reflectance figure, so the transflective claim is vendor marketing.
+    - **Host interface:** HDMI (accepts 640x480 up to 1600x1024 and scales to 800x600)
+    - **Touch to host:** USB touchscreen; the technology (resistive or capacitive) is not stated
+    - **Optical bonding and coating:** Anti-glare surface and AR coating are stated; bonding is not mentioned
+    - **Power w:** Max 10 W
+    - **Supply:** 12 V DC (12/24 V for project customers)
+    - **Dimensions weight:** Case 232 x 162 x 36 mm; weight not stated
+    - **Operating temp:** -30 to +85 C
+    - **Price:** EUR 729 including 19% VAT, plus shipping
+    - **Availability:** In stock (27 pcs) at cartft.com (Germany)
+    - **Ukraine availability:** Not checked; EU shipping only
+    - **Q6a compatibility:** Works as an HDMI and USB touch monitor through its scaler, but it is far below the resolution and quality the user asked for.
+    - **Rf notes:** Unknown. A scaled 800x600 mode allows any clean input clock.
+    - **Community reports:** None found.
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://cartft.com/catalog/il/2008
+  6.
+    - **Name:** CarTFT CTFHD800-WMS (8in 'transflective' 1000-nit HDMI open-frame, USB touch)
+    - **Size in:** 8
+    - **H res:** 1024
+    - **V res:** 600
+    - **Ppi:** 148.4
+    - **Brightness nits:** 1000
+    - **Brightness evidence:** CarTFT page: 1000 nits, 300:1 contrast, 104% NTSC. The page's 'dot resolution 2400x480' contradicts its stated 1024x600 physical resolution, so the panel may really be 800x480. A transflective panel with 104% NTSC is unusual. Treat both claims as unverified.
+    - **Host interface:** HDMI plus 2x composite
+    - **Touch to host:** USB touchscreen (technology not stated); RS232 option
+    - **Optical bonding and coating:** AG touch surface with AR coating; bonding not mentioned
+    - **Power w:** Max 10 W
+    - **Supply:** 9-36 V DC (works directly from a 4S pack)
+    - **Dimensions weight:** 195.4 x 119.5 x 32.6 mm; weight not stated
+    - **Operating temp:** -30 to +85 C
+    - **Price:** EUR 529 including 19% VAT
+    - **Availability:** On request, 6 weeks
+    - **Ukraine availability:** Not checked
+    - **Q6a compatibility:** HDMI and USB touch through a scaler; low resolution
+    - **Rf notes:** Unknown
+    - **Community reports:** None found.
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.cartft.com/catalog/il/2021
+- **Best above fhd:** This angle turned up no new above-FHD candidate. I found no transflective, reflective, bonded-AR or other sun-optimized 5-8 in module above FHD that has HDMI and USB touch. Small transflective parts are WVGA to 1024x600 class: Ortustech COM70H7M24ULC 800x480, and CarTFT's 800x600 and 1024x600 units. Reflective LCD (RLCD) HDMI monitors exist only at 24-32 in (Eazeye 24in, SDC 32in), or as 4.2in SPI modules (Waveshare RLCD). The best above-FHD option is still the already-evaluated Midas MDT0700F1IHHC (7.02in 1200x1920, 2500 nits). It has an AR cover lens and in-cell touch, so it has no air gap and is the only bright above-FHD panel with low reflectance. It still needs custom drive electronics and has no timing table.
+- **Best overall:** Keep the Wisecoco 7in 2000-nit FHD only if the seller confirms in writing, with a photo, that the touch glass is optically bonded. Then add an AR film of about 0.7% and a hood with a matte-black interior. If it is air-gapped or the seller cannot answer, buy the 4D Systems 4DHDMI-70-1280-800-CT-EAR-1000 instead: datasheet-confirmed optical bonding, 1000 nits, 12 V input, USB touch, in stock in Ukraine at 9,520 UAH. Use it with the same AR film and hood. The 4DHDMI-70-1024-600-CT-EAR-1000 (about 4 W, bonded) is the per-watt budget variant. My calculation at 100 klx: Wisecoco 2000 nits gives 1.5:1 air-gapped, 2.4:1 bonded with plain glass, and 6.2:1 bonded with AR film. The 4D at 1000 nits gives 1.7:1 bonded with plain glass and 3.6:1 bonded with AR film. In a hood (about 20 klx on the screen) the 4D with AR film reaches about 14:1. So bonding, AR and shading are worth more than another 1000 nits.
+- **Wisecoco 7in open questions resolved:** Not resolved. I re-read the product page on 18 Oct 2026. It still shows:
+  - $132 (was $135), 'Capacitive touch', and a field 'Interface Type: I2C'.
+  - 2000+ cd/m2 typical in the table against 2500 in the title.
+  - 1000:1 contrast and LTPS, MIPI 4-lane panel.
+  - Conflicting active-area figures and 0 reviews.
+  - No input voltage, power, driver chip, bonding or AR/AG statement.
+  
+  New point from this angle: whether the touch glass is optically bonded matters more than any of the open questions. At 100 klx, 2000 nits gives 1.5:1 with an air gap and no AR, 2.4:1 bonded with plain glass, 6.2:1 bonded with a 0.7% AR film, and 9.9:1 with factory bonding plus AR (my calculation, using Planar's reflectance values). An air-gapped 2000-nit Wisecoco is no better in direct sun than a bonded 1000-nit module.
+  
+  Add these to the seller questions:
+  1. 'Is the CTP optically bonded (OCA/OCR) or air-gap/frame-taped?'
+  2. 'Is the cover glass AR- or AG-treated?'
+  3. 'What is the polarizer transmission axis angle?' This decides the polarized-sunglasses behaviour.
+  
+  Check it yourself on arrival: at a grazing angle, a pen tip on the glass shows a doubled reflection if there is an air gap.
+- **Notes:** METHOD
+  - I used 11 WebSearch calls plus WebFetch on primary pages and datasheets.
+  - PDFs were parsed locally: 4D Systems 4DHDMI datasheet R1.0, Newhaven datasheet, Planar white paper.
+  - Every number marked 'calc' is my own Python calculation.
+  
+  1) AMBIENT CONTRAST MODEL (calc)
+  Formula: ACR = (L + R*E/pi) / (L/1000 + R*E/pi). Native contrast is 1000:1, and R*E/pi is the worst case where the screen mirrors a sunlit, near-white scene.
+  
+  Reflectance values from Planar's optical-bonding primer:
+  - air gap, no AR: 3.9% + 4.4% + 4.4% = 12.7%; at 10,000 fc this gives 4251 nits of glare;
+  - bonded + AR: 0.2% + 0.5% = 0.7%, which gives 239 nits of glare;
+  - Planar's rule of thumb is that legibility needs at least 7:1, and it says the air-gap case would need about 26,000 nits.
+  Values I derived from Planar's per-interface numbers (calc): bonded with a plain glass front is about 4.4%; air gap with AR only on the outer face is about 9%. That matches a patent's finding that a single AR film cuts reflection to only about 2/3.
+  
+  ACR at 100 klx (E/pi = 31,831 cd/m2) for 1000 / 2000 / 3000 nits:
+  - bonded + AR 0.7%: 5.5 / 9.9 / 14.3
+  - bonded + AR film (~1.2%): 3.6 / 6.2 / 8.8
+  - bonded, plain glass (4.4%): 1.7 / 2.4 / 3.1
+  - air gap + AR outer face (9%): 1.3 / 1.7 / 2.0
+  - air gap, no AR (12.7%): 1.2 / 1.5 / 1.7
+  
+  Nits needed for 5:1 at 100 klx: 896 (0.7%), 1536 (1.2%), 5630 (4.4%), 16,251 (12.7%).
+  So going from air gap to bonded + AR is worth about 18x the backlight luminance, and from bonded plain glass to AR about 6x. A 0.7% AR retrofit film exists: TELESIN advertises 0.7% against 4-5% for standard protectors (vendor claim).
+  
+  Real-world caveat: most of the 4% glass reflection is specular. Its luminance is R x (luminance of whatever the screen mirrors):
+  - a sunlit white shirt is about 25,000 cd/m2 (calc, 0.8 x E/pi), which gives about 1000 nits of glare at 4%;
+  - a matte-black hood interior or dark clothing cuts this by an order of magnitude.
+  
+  2) SUN HOOD
+  Wikipedia lists direct sun at 32-100 klx against 10-25 klx for 'full daylight, not direct sun'. Shading the screen face therefore cuts E by about 4-10x (calc).
+  
+  At 20 klx, ACR for 1000 nits: 22.9 with bonded + AR, 13.9 with AR film, 4.6 with bonded plain glass, 2.2 with an air gap.
+  
+  A 25-35 mm hood, lined matte black, tilted so the screen mirrors the hood interior and not the sky or your chest, is the cheapest and largest single gain, and it costs 0 W.
+  
+  3) TRANSFLECTIVE AND REFLECTIVE
+  In reflective mode the reflected luminance scales with the sun, so ACR is independent of E. My model (calc, assumed values): reflectance 10-30% with an intrinsic reflective contrast of 15-20 gives an ACR of about 9-15 with an AR front, but only about 3-6 with a 4.5% glass front. Colour and resolution are poor.
+  
+  Market status, October 2026:
+  - Ortustech/Toppan Blanview: COM70H7M24ULC is 7in 800x480 transflective, 400 nits, LVDS, -30 to 85 C (eeNews 2019). Toppan Display Solutions is ending LCD production (Embedded Computing Design, 3 Aug 2026, seen as a search snippet; the page returned 403). Not a viable new design.
+  - CarTFT 7in CTFHD400-SH, transflective HDMI with USB touch: 'currently not available'.
+  - Kyocera: I found only a 2012 note on 'Inner Touch' glass-glass bonding that reduces reflections (2.16 W backlight). I verified no current Kyocera 5-8 in transflective part with an HDMI board.
+  - Sharp and JDI reflective (memory-in-pixel) panels: no 5-8 in HDMI product found. Pixel Qi is defunct (my own knowledge).
+  - RLCD HDMI monitors: Eazeye 24in FHD about 4 W average for about $999, and SDC 32in at $1549. Both are far too large.
+  Conclusion: transflective gives the best physics per watt, but no buyable 5-8 in part is anywhere near 'high quality'.
+  
+  4) POLARIZERS AND SUNGLASSES
+  - LCD output is linearly polarized, so polarized sunglasses pass cos^2 of the angle between the axes: 0-100% depending on orientation.
+  - Laminating a quarter-wave retarder on top of the LCD's front polarizer makes the output circular, so about 50% passes at any rotation (calc). Relec and Digiwise sell TFTs with this film; I found no verified DIY sheet vendor.
+  - The circular polarizer on AMOLED is a different thing: an anti-reflection device. AMOLED HDMI kits are only about 310 nits, so they are not useful here.
+  - Sunglasses do not change the screen's ACR. They cut some s-polarized glare at oblique angles and ease eye adaptation.
+  - Practical fix: before fixing the panel in the case, find the orientation where the axis is near vertical, or ask the seller for the polarizer axis.
+  
+  5) E-PAPER (not for waterfalls)
+  Waveshare 7.8in (1872x1404) data:
+  - 450 ms full refresh, 2-16 grey levels, 0-50 C operating;
+  - colour cast when refreshing cold; ghosting builds up after repeated partial refreshes and needs full refreshes;
+  - 1.2 W during refresh.
+  A scrolling 10-30 line/s waterfall needs continuous partial updates, so it smears, ghosts, has no colour map and slows further in the cold. Only usable for a static pass-schedule or status pane.
+  
+  6) OVERDRIVING THE BACKLIGHT
+  Datasheet data points:
+  - Midas: luminance is linear at 200-500 mA (1000-2500 nits), but the 2500-nit point is footnoted 'stable at room temperature, open air';
+  - 4D 7in 1024x600: the 1000-nit version uses twice the series LEDs (Vf 19.2 V) at the same 180 mA, rather than overdriving.
+  Safe practice:
+  - stay at or below the panel datasheet's LED current;
+  - use DC/analog dimming at 20-25 kHz, not burst PWM, for RF;
+  - derate on an NTC (50% above 60 C);
+  - remember sun adds about 13 W to a 7in face (from the earlier audit), so overdrive and solar load add up toward the LC clearing point;
+  - expect diminishing returns from LED droop.
+  Reflectance reduction is the cheaper 'nits'.
+  
+  7) BEST SUN-READABILITY PER WATT (conclusion)
+  In order of value:
+  1. Matte-black hood: 0 W, about 5x effective.
+  2. Optically bonded touch glass: no power cost, about 3x over an air gap.
+  3. AR front surface (film or treated glass): about 4x over bonded plain glass.
+  4. A 1000-1500 nit backlight, run at about 30-50% via a lux sensor most of the time, with a time-limited, temperature-derated boost to full when the sun is behind you.
+  
+  Example: 4D 7in bonded with AR film in a hood is about 14:1 at about 6.5 W (datasheet total). A 2000-nit air-gapped panel unhooded is about 1.5:1 at about 7 W.
+  
+  Nits per watt from datasheet totals (calc): 4D 7in 1024x600 253, Newhaven 157, 4D 7in 1280x800 154, 4D 8in 144. Wisecoco is estimated at about 286, unverified.
+  
+  OTHER FINDS, NOT VIABLE
+  - Litemax EUD0705-TIB-Q11: 7in 1280x800, '1000' or '1600' nits (the page contradicts itself), HDMI, no touch, out of stock, NT$12,458.
+  - Waveshare 7in/8in 1280x800 optically bonded HDMI: about 350 nits.
+  
+  KEY SOURCES
+  - https://www.planar.com/media/98794/planar-optical-bonding-achieving-greater-legibility.pdf
+  - https://en.wikipedia.org/wiki/Lux
+  - https://www.telesinstore.com/products/anti-reflection-screen-protector-for-pocket-3
+  - https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/9557448
+  - https://www.epdtonthenet.net/article/177664/Polarised-sunglasses-friendly-TFT-solutions-from-Relec.aspx (403; search snippet)
+  - https://www.waveshare.com/wiki/7.8inch_e-Paper_HAT
+  - https://www.eenewseurope.com/en/robust-sunlight-readable-7-inch-tft-blanview-display/
+  - https://embeddedcomputing.com/application/industrial/industrial-computing/data-modul-supports-customers-as-toppan-display-solutions-ends-industrial-lcd-display-production (403; snippet)
+  - https://www.eenewseurope.com/en/7-tft-display-with-optimized-readability-for-difficult-lighting-conditions/
+  - https://cartft.com/catalog/il/2629
+  - https://itc.ua/en/news/e-ink-alternative-this-1000-lcd-uses-ambient-light-and-consumes-up-to-7-watts
+  - https://www.e-ink-info.com/sdc-32-inch-color-rlcd-monitor
+  - https://docs.waveshare.com/ESP32-Peripheral-Tutorials/Display/RLCD
+  - https://eshop.litemax.com/product/1
+  - https://www.farnell.com/datasheets/3984938.pdf
+  
+  Scratch calculations are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/acr2.py and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/harm.py.
+
