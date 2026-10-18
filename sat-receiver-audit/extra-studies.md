@@ -51757,6 +51757,51 @@ I wrote all four files for the "block+rf" group. Both SVGs pass the XML check yo
   
   Search budget used: 9 WebSearch calls.
 
+## p7:rules-validity-fix (run `wf_ca872011-28e`)
+
+I found no hard-rule violations in the build files, and the documents are complete against their briefs. I fixed four missing or garbled safety and wording points and a set of layout and readability problems in the SVGs. All 8 SVGs still parse as valid SVG 1.1 and `10-bom.csv` still parses (145 rows, 16 columns). The other agent's edits were left in place, and all my edits are in the latest commit (ebc10c7).
+
+**How I checked:** I rendered every SVG with cairosvg (installed for this). A script measured where each text line sits, to catch text off the page, text overlapping other text, text running outside its box, and boxes overlapping each other. Every finding was confirmed by looking at cropped renders.
+
+**Hard rules — nothing to fix:**
+- No loop antennas or H-field probes; the only mentions say they are excluded. The "петля" hits are a UART loopback and a cable strain-relief loop.
+- No S11 or VNA sweep into an antenna. Every signal source is cable-connected only (BENCH, ≤ −40 dBm).
+- Lime TX goes into an ANNE-50+ load and is blocked in software; TX-capable programs are on the forbidden list.
+- Wi-Fi/BT is cut in the field profile (rfkill, authorized=0, gpio-hog).
+- No private-content or military targets: ADS-B/AIS privacy filters per D11, egc-gate on Inmarsat-C, USCG WEFAX excluded per D10.
+- No city tables, only GNSS-based angles and regional bands.
+- Bias-token path (D3) and serial names (D2) are consistent everywhere.
+
+**Fixed:**
+1. `02-zhyvlennia.svg`: the "Час роботи…" heading overlapped the "Відсічки" heading; I shortened it. The LC box text ran past its box edge; I split it over two lines. A first try of widening that box made it collide with the ch4 box, so I put the width back.
+2. `03-rf-trakt.svg`: four DC-block part numbers (GRM1555C1H10xJA01D) touched the right edge of their boxes; moved them 3 px left.
+3. Small text: the brief asks for 12–14 px, but 05-panel, 05-section, 05-front and 06 had about 250 lines at 10–11 px. I raised them to 12 px. A few stay at 11 px:
+   - `05-roztashuvannia-front.svg`: the HOME/BACK/MARK/LOCK labels, because the keys are drawn to scale.
+   - `05-roztashuvannia-section.svg`: the "UFS" and "вікно / 26x20" labels inside tight drawing areas.
+   - `05-roztashuvannia-panel.svg`: the "сітка 316 + піна 36.4" label, which I moved below its to-scale intake box.
+4. Labels that collided after that change or before it:
+   - `05-roztashuvannia-panel.svg`: the "20" dimension sat on the left-wall outline; moved it beside the dimension line.
+   - `05-roztashuvannia-section.svg`: "Noctua 40" ran into a neighbouring part; moved it left.
+   - `06-anteny-komplekty.svg`:
+     - Panel 3: the "прямий 180°, бортом до проходу" label sat across the cable line; split it into two lines beside the cable.
+     - Panel 6: the "магнітна основа або стрічка" label crossed the cable line; moved it down.
+     - Panel 7: "AXING на червоний порт" crossed the horn outline; it now reads "AXING → червоний порт".
+     - Panel 12: "Boni ≈17 см" collided with the "РОБОЧИЙ" header, and the whip's dashed line crossed the subtitle; both shortened or moved.
+     - Panel 13: the tripod label crossed the mast; moved it left.
+5. `09-testy.md`: added rule 10 (lithium cells and pack test safety from STACK §5.8 «Безпека батареї»): supervised tests on a non-flammable surface or in a 23x30 cm fireproof bag, thermal cutouts stay active, swollen cells scrapped, storage at about 50 % charge with the 7.5 A fuse out.
+6. `09-testy.md`, test Ж-07: "після підтвердження власників LNA" ("after the LNA owners confirm") was a mistranslation; it now says "за даташитами LNA" (per the LNA datasheets), as STACK.md has it.
+7. `09-testy.md`, P20: "fldigi → канали SDRangel" could be read as fldigi feeding SDRangel. It now says the fldigi steps are replaced by SDRangel channels and fldigi is forbidden because it can transmit.
+8. `06-anteny.md`, §2.7: added the missing LNB rule from STACK §5.3: switch off the LNB rail before connecting or disconnecting the LNB, and never put 13.2 V into an ANNE-50+ load or into an instrument without a DC block. I also replaced "за рішенням власника живлення" (a gendered "power owner") with "ваше рішення, STACK.md §8 «Рішення про шину LNB»".
+9. `README.md`: the status line said "теоретично перевірений проєкт" ("theoretically verified"); it now uses the standard phrase «теоретичний проєкт — перевірити на стенді».
+
+**Left open (not fixed):**
+- STACK.md has its own decision codes (§1.1 D6, D15) that clash with the orchestrator's D1–D19. Examples: "TBD (D15)" in `05-roztashuvannia-section.svg`, the D6/D15 references in `08-zbyrannia.md` steps 2 and 15, and its header listing both sets. A reader can't tell which D15 is meant. This is a consistency issue, so I left it to the other agent.
+- `02-zhyvlennia.svg` shows "RILIM TBD" on the K_HF, K_RTLA and K_RTLB channels, while D14 fixes 88.7k only for the LNA channels. This looks consistent but needs confirming by the other agent.
+- `04-pidkliuchennia-pinout.md` says CH334F #2 is "куплено" (bought); STACK.md uses both "куплено як запасний" and "купується". Minor.
+- A few labels still cross drawing lines but stay readable: 06 panel 11 ("коаксіал 5-10 м → P5" over the counterpoise line) and 05-section ("Noctua 40" under the Lime pointer arrow).
+
+My check scripts and renders are in `/tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/qa7/`.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
