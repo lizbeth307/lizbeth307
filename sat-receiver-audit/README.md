@@ -54,6 +54,7 @@
 | [Pololu d36v50f12 sys12](components/pololu_d36v50f12_sys12.md) | · research · forums · fixes ✅ verify | `—` |
 | [Power](components/power.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_f924b2ab-5ad` |
 | [Printed 30 mm hinged hood 7in ar film ve](components/printed_30_mm_hinged_hood_7in_ar_film_ve.md) | · research · forums · fixes ✅ verify | `—` |
+| [Protection filter set 7 5 a pack 4 a j21](components/protection_filter_set_7_5_a_pack_4_a_j21.md) | · research · forums · fixes ✅ verify | `—` |
 | [Radxa armor 7056a heatsink or stepped cu](components/radxa_armor_7056a_heatsink_or_stepped_cu.md) | · research · forums · fixes ✅ verify | `—` |
 | [Radxa ufs 3 1 128 gb ra022 b10j0u2](components/radxa_ufs_3_1_128_gb_ra022_b10j0u2.md) | · research · forums · fixes ✅ verify | `—` |
 | [Raspberry pi pico rp2040 hmi supervisor](components/raspberry_pi_pico_rp2040_hmi_supervisor.md) | · research · forums · fixes ✅ verify | `—` |
