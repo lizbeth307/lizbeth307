@@ -630,3 +630,9 @@ P4, A (ядро і NPU, не перевірено):
 - У репозиторії Radxa є метапакет task-qualcomm-npu (джерело qualcomm-profiles 0.1.0-14), який тягне стек NPU, а також fastrpc 1.0.7-3; fastrpc замінює qcom-fastrpc1 і конфліктує з ним. Отже, NPU на образі ставиться одним метапакетом. У v2 цей метапакет і його залежності треба закріпити разом із QAIRT 2.42, щоб не підтягнулися пакети QNN 2.49 з qcom-ppa (operator_notes, пункт №15).
 Джерела: forum.radxa.com, тема 31304; apt-репозиторій Radxa (task-qualcomm-npu, fastrpc).
 
+## 2026-10-18 09:16 UTC
+
+P4, нове:
+- C (SatDump): зависання декодера Meteor LRPT 80k (issue #1195) виправлено комітом 7bcd5318 «Fix METEOR LRPT 80k decoder hang» від 15.09.2026, і він уже в master. Отже, закріплений коміт SatDump має бути не старішим за 7bcd531. Питання #1212 (нестабільність LRPT залежно від pll_bw) ще відкрите, тому регресійний тест на записаних базових файлах лишається. Джерело: github.com/SatDump/SatDump, коміт 7bcd5318.
+- A (прошивка DSP): у репозиторії прошивок Radxa змінювали cdsp.mbn для qcs6490 двічі: 11.03.2026 («chore: update QCS6490 firmware arrangement», 86d5efe) і 17.09.2026 («fix: update qcs6490 dsp firmware», b3d3840). Наш «золотий набір» FastRPC (CDSP c4-00004) треба звірити з версією після b3d3840. Якщо він старіший, на тесті W1 перевірити обидві версії. Джерело: репозиторій прошивок Radxa на GitHub (історія файлу cdsp.mbn).
+
