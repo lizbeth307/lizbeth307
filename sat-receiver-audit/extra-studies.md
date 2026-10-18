@@ -30417,6 +30417,175 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - The WebSearch budget for this turn was already used up by other agents (0 of about 15 searches available). Every result above comes from WebFetch on primary retailer pages (Reichelt, Berrybase, Alternate, TME), the Kingston datasheet PDF and one measured review.
   - These manufacturer sites returned 403/404/503: Samsung, SanDisk (JavaScript-only page), Kingston web page, ADATA, Kioxia, Transcend, WD Purple. So Lexar High-Endurance, WD Purple QD101, Transcend 350V and official AliExpress store listings were not checked; a follow-up search could cover them.
 
+## searchB:v30_endurance_microsd_128_256_gb (run `wf_c3ba734e-52b`)
+
+- **Part:** V30 endurance microSD, 128-256 GB (optional / gated, qty 1). Role: overflow for raw recordings plus a second snapshot copy. Since the 18 Oct decision to keep the Lime, the with-Lime build is the default and the T7 1 TB holds raw data and captures, so this card is "optional overflow only" (reaudit_D). STACK names no SKU. The $25-82 range traces to Samsung PRO Endurance prices, so the reference part is the Samsung PRO Endurance (2022), MB-MJ128KA/EU or MB-MJ256KA/EU.
+- **Current price usd:** The STACK figure of $25-82 is stale. reaudit_D found that its source does not support it. Checked 18 Oct 2026 (1 EUR = 1.1241 USD):
+  - Samsung PRO Endurance 128 GB: Reichelt DE EUR 64.95 incl. 19% VAT = $73.01 (ex-VAT $61.35), "currently unavailable". Samsung US $76.99, out of stock.
+  - 256 GB: Reichelt EUR 129.00 = $145.01 (ex-VAT $121.85), unavailable. Samsung US $153.99.
+  - Reichelt shipping from EUR 5.95.
+  Realistic range today: about $73-77 for 128 GB and $145-154 for 256 GB, with no EU stock seen.
+- **Critical specs:**
+  - Bus and form: microSDXC UHS-I (SDR104). The Q6A slot does UHS-I at 1.8 V (vqmmc l6c 1.65-3.544 V). Measured slot ceiling: about 73.7 MB/s read and 61.45 MB/s write (1M sequential, Samsung PRO Plus 32 GB, Geerling sbc-reviews #85). UHS-II and Express add nothing.
+  - Guaranteed sustained sequential write of at least 30 MB/s (U3/V30) across the whole card, with no cliff after the cache. Need at least about 2x the 16.4 MB/s ring (about 33 MB/s) and more than the 13.3 MB/s worst stream. Reference: 40 MB/s max write.
+  - Read speed: at least about 70 MB/s for offload (the slot caps it). Reference: 100 MB/s.
+  - Rated endurance for continuous recording, plus a warranty that covers continuous recording or data logging. Reference: family figure 'up to 140,160 h / 16 years' (Samsung, Reichelt), and a 5-year limited warranty for both 128 and 256 GB (Samsung warranty page). Rated hours are only comparable within one vendor; the bitrate basis differs.
+  - Capacity: 128-256 GB.
+  - Operating temperature: -25 to +85 C (reference). Covers field use near 0 C and the case interior near the UFS (about 60 C).
+  - Mechanical robustness: reference is 'six-proof' (water, temperature, wear, shock, X-ray, magnet).
+  - Power-loss tolerance on a battery device: not specified for the reference. A candidate must not be worse; verify with a power-cut drill.
+  - Genuine part from an authorized EU seller, with an f3-style full-capacity write-verify on arrival. Fakes are common.
+  - Ubuntu 24.04 arm64: standard SD protocol, no driver needed. The data card must carry no ESP or boot image, because the boot order is USB > microSD > NVMe > eMMC > UFS. Use only sequential preallocated files; no database or journald on the SD.
+  - 4K random I/O (A1/A2) is not critical for this sequential-only role.
+- **Candidates:**
+  1.
+    - **Name:** Samsung PRO Endurance (2022) MB-MJ128KA/EU / MB-MJ256KA/EU (reference)
+    - **Kind:** current_part
+    - **Price usd:** 128 GB: $73.01 (Reichelt EUR 64.95 incl. VAT, unavailable); $76.99 Samsung US (out of stock). 256 GB: $145.01 (Reichelt EUR 129.00, unavailable); $153.99 Samsung US.
+    - **Spec comparison:** U3/V30, 100 MB/s read and 40 MB/s write, -25 to +85 C, six-proof. Endurance: 'up to 140,160 h' family figure (Samsung US says 'up to 140k hours'); no per-capacity split was seen on a primary page. Warranty: 5 years for 128 and 256 GB.
+    - **Worse in:** Nothing (this is the reference). Neither capacity was in stock at the EU or US source on 18 Oct.
+    - **Compatibility:** Fully compatible: UHS-I card in the Q6A slot, no driver needed. Rules: data card without an ESP, sequential files only.
+    - **Risks:** Fakes on marketplaces. Buy from Reichelt or another authorized EU distributor and run f3 on arrival.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/microsdxc_memory_card_128gb_samsung_pro_endurance-336143
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/product/microsdxc_memory_card_128gb_samsung_pro_endurance-336143
+      - https://www.reichelt.com/de/en/shop/product/microsdxc_memory_card_256gb_samsung_pro_endurance-336144
+      - https://www.samsung.com/us/computing/memory-storage/memory-cards/pro-endurance-adapter-microsdxc-128gb-mb-mj128ka-am/
+      - https://semiconductor.samsung.com/consumer-storage/support/warranty/
+  2.
+    - **Name:** Samsung PRO Plus MB-MD128SA / MB-MD256SA, used as a plain consumer card for overflow (the card family measured on the Q6A)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 128 GB: $47.16 (Reichelt EUR 41.95 incl. VAT, limited stock). 256 GB: $78.63 (EUR 69.95).
+    - **Spec comparison:** Better on speed: U3/V30/A2, 180/130 MB/s rated, slot-capped. Independent Q6A measurement (PRO Plus 32 GB, Geerling): 61.45 MB/s write and 73.70 MB/s read, versus the reference's 40 MB/s rated write. Same -25 to +85 C. Same capacity.
+    - **Worse in:** Endurance and warranty. No endurance rating exists. Samsung's warranty says it 'does not extend to any use ... with continuous recording instruments ... continuous data logging devices', so for this role it has effectively no warranty, against 5 years for the reference. Also, the measurement was on the 32 GB card, not 128/256 GB. REJECT.
+    - **Compatibility:** Electrically and software compatible (the family was measured in this exact slot).
+    - **Risks:** Warranty void for this use. Wear life unknown.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/search/samsung%20pro%20plus%20microsd
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/search/samsung%20pro%20plus%20microsd
+      - https://semiconductor.samsung.com/consumer-storage/support/warranty/
+      - https://github.com/geerlingguy/sbc-reviews/issues/85
+  3.
+    - **Name:** Hiksemi (Hikvision storage brand) GUARD PRO HS-TF-P1, 128/256 GB
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not verified (no EU listing checked; WebSearch budget exhausted).
+    - **Spec comparison:** U3/V30. Read up to 100 MB/s. Write 45 MB/s (128 GB) or 88 MB/s (256 GB), above the reference's 40. TLC NAND. Operating -25 to +85 C, same as the reference. A S.M.A.R.T. health interface exists, but only 'for specific compatible cameras'.
+    - **Worse in:** Warranty is 2 years versus 5. No endurance hours or TBW published on the product page; the datasheet PDF returned 403. No independent measurement found. Linux access to the health interface is unproven. REJECT under the measured-evidence rule.
+    - **Compatibility:** Standard UHS-I microSDXC; should work in the slot, but this is not measured on the Q6A.
+    - **Risks:** OEM brand. Grey-market fakes are possible. Endurance is unverifiable.
+    - **Seller url:** https://www.hiksemitech.com/en/hiksemi/all-products/memory-card/micro-sd/hs-tf-guard-pro.html
+    - **Sources:**
+      - https://www.hiksemitech.com/en/hiksemi/all-products/memory-card/micro-sd/hs-tf-guard-pro.html
+  4.
+    - **Name:** Hiksemi GUARD HS-TF-L2 and CITY HS-TF-D1
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not verified.
+    - **Spec comparison:** L2: SDR104 write 40 MB/s (128 GB) or 50 MB/s (256 GB), read 95 MB/s, U1/U3, 2-year warranty. D1: 'Class 10, V30, U1', write 50/55 MB/s, 7-year warranty.
+    - **Worse in:** Operating temperature for both is 0 to 70 C, versus -25 to +85 C. No endurance rating. No independent measurement. L2 also has a 2-year warranty. REJECT.
+    - **Compatibility:** Standard UHS-I microSDXC.
+    - **Risks:** Fails cold-field use below 0 C.
+    - **Seller url:** https://www.hiksemitech.com/en/hiksemi/all-products/memory-card/micro-sd/hs-tf-guard.html
+    - **Sources:**
+      - https://www.hiksemitech.com/en/hiksemi/all-products/memory-card/micro-sd/hs-tf-guard.html
+      - https://www.hiksemitech.com/en/hiksemi/all-products/memory-card/micro-sd/hs-tf-d1.html
+  5.
+    - **Name:** Unbranded or marketplace 'PRO/High Endurance' lookalikes (AliExpress, Amazon marketplace)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not quoted (not verified).
+    - **Spec comparison:** No datasheet and no independent measurement.
+    - **Worse in:** Everything is unproven. The fake-capacity and counterfeit risk breaks the 'legally sold, not counterfeit' rule. REJECT.
+    - **Compatibility:** Unknown.
+    - **Risks:** Fake capacity, silent data loss.
+    - **Seller url:** 
+    - **Sources:** []
+  6.
+    - **Name:** Used or pulled Samsung PRO Endurance / SanDisk Max Endurance (eBay, Kleinanzeigen)
+    - **Kind:** used
+    - **Price usd:** Not checked.
+    - **Spec comparison:** Same model specs on paper.
+    - **Worse in:** Remaining endurance is unknown: no wear telemetry is readable on these cards in Linux. The warranty needs the original proof of purchase. Counterfeit risk. No measurement is possible before purchase. REJECT.
+    - **Compatibility:** Same as the reference.
+    - **Risks:** Already-worn or fake cards.
+    - **Seller url:** 
+    - **Sources:**
+      - https://semiconductor.samsung.com/consumer-storage/support/warranty/
+  7.
+    - **Name:** DIY: no card. Put overflow and the second snapshot copy on the T7 1 TB (already in the default with-Lime build) plus the UFS. This is the noted budget alternative 'UFS only'.
+    - **Kind:** diy
+    - **Price usd:** $0 incremental.
+    - **Spec comparison:** Better: capacity 1 TB versus 128-256 GB. Speed about 614 MB/s average over 100 GB (ssd-tester T7 1 TB), with a 395 MB/s port limit on the Q6A.
+    - **Worse in:** - Operating temperature: the T7 is rated 0 to 60 C (STACK), versus -25 to +85 C.
+  - Availability during RF-sensitive sessions: SuperSpeed noise means labd must deauthorize the T7 during L-band, S-band and GNSS sessions (operator note 7), so it cannot take overflow then.
+  - Media independence: the second snapshot copy loses its separate medium, because the T7 already holds one copy.
+  - Mounting: the T7 sits outside the case on the bottom edge.
+  NOT not-worse. This is an explicit trade-off for the user, never a silent swap.
+    - **Compatibility:** Already in the build.
+    - **Risks:** Cold sessions and RF sessions have no overflow target except the UFS.
+    - **Seller url:** 
+    - **Sources:**
+      - https://ssd-tester.com/samsung_portable_ssd_t7_1tb.html
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md
+  8.
+    - **Name:** DIY: reuse the 64 GB rescue card (Verbatim Pro U3 64 GB or ALLNET 64 GB) as the overflow card
+    - **Kind:** diy
+    - **Price usd:** $0 incremental (already in the recovery kit).
+    - **Spec comparison:** U3 (Verbatim), about 45 MB/s max write.
+    - **Worse in:** - Capacity: 64 GB, below the 128 GB minimum.
+  - No endurance rating.
+  - Boot hijack: a bootable rescue card left in the slot takes over boot (USB > SD > ... > UFS), and STACK keeps the rescue card outside the case.
+  REJECT.
+    - **Compatibility:** It conflicts with the rule that data cards carry no ESP.
+    - **Risks:** Boot hijack and loss of the rescue medium.
+    - **Seller url:** 
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md
+  9.
+    - **Name:** Lead outside angle B: SanDisk High Endurance SDSQQNR-128G-GN6IA / -256G
+    - **Kind:** other_brand
+    - **Price usd:** 128 GB: $43.78 (Reichelt EUR 38.95, unavailable). 256 GB: $86.50 (EUR 76.95, unavailable).
+    - **Spec comparison:** U3/V30, 100/40 MB/s, -25 to +85 C.
+    - **Worse in:** Rated 10,000 h (128 GB) or 20,000 h (256 GB). Warranty is 2 years versus 5. REJECT.
+    - **Compatibility:** Standard UHS-I.
+    - **Risks:** Reichelt titles this SKU 'Max Endurance'; the part number shows it is High Endurance.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/microsdhc_memory_card_128_gb_sandisk_max_endurance-298158
+    - **Sources:**
+      - https://www.sandisk.com/products/memory-cards/microsd-cards/sandisk-high-endurance-uhs-i-microsd
+      - https://www.reichelt.com/de/en/shop/product/microsdhc_memory_card_128_gb_sandisk_max_endurance-298158
+  10.
+    - **Name:** Lead outside angle B: Kingston High Endurance SDCE/128GB, SDCE/256GB
+    - **Kind:** other_brand
+    - **Price usd:** 128 GB: $23.55 (Reichelt EUR 20.95, currently unavailable; the price may be stale). 256 GB: $123.60 (EUR 109.95, limited stock).
+    - **Spec comparison:** 95/45 MB/s, -25 to +85 C.
+    - **Worse in:** Family figure is only 'up to 20,000 hours' Full HD. Reichelt lists only 'Class 10 - UHS I' (no U3/V30 shown). Warranty not verified (kingston.com returned 403). Treat as worse until angle A verifies it.
+    - **Compatibility:** Standard UHS-I.
+    - **Risks:** Unverified speed class and warranty.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/microsdxc_memory_card_128_gb_high_endurance-272312
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/product/microsdxc_memory_card_128_gb_high_endurance-272312
+      - https://www.reichelt.com/de/en/shop/product/microsdxc_memory_card_256_gb_high_endurance-399039
+- **Notes:** VERDICT (angle B): keep the current part. No generic, clone, DIY build or used unit was found that is cheaper and proven not-worse by measurements. Endurance is the spec that decides it, and none of these has a rated or measured endurance with a warranty that covers continuous recording.
+  
+  What failed and why:
+  - Cheaper Samsung PRO Plus: the only option with a real Q6A measurement, and faster. It fails on endurance and warranty; Samsung's warranty explicitly excludes continuous recording and data logging.
+  - Hiksemi (GUARD PRO, GUARD, CITY): 2-year warranty, or 0-70 C operating range, and no endurance rating.
+  - Used units and marketplace clones: rejected outright.
+  
+  Other findings:
+  - Industrial pSLC cards (Kingston Industrial SDCIT2) are not cheaper: 64 GB maximum, EUR 109-141.
+  - Lexar's Americas microSD page no longer lists a High-Endurance card.
+  - SanDisk Max Endurance 128 GB (SDSQQVR-128G-GN6IA) is better on paper (60,000 h, 10-year warranty, -25 to +85 C), but at Reichelt it costs more ($80.88 / EUR 71.95, limited stock) than PRO Endurance 128 GB. The 256 GB version (120,000 h, 15-year warranty) had no EU price checked.
+  
+  Actions for v2:
+  1. Correct the BOM price. $25-82 is unsupported. It is now about $73-77 for 128 GB and $145-154 for 256 GB, out of stock at both Reichelt and Samsung US.
+  2. With the Lime kept, the card stays optional or deferred. Dropping it in favour of T7 plus UFS is a stated trade-off, not an equal swap: cold range 0-60 C, T7 deauthorized during L-band, S-band and GNSS sessions, no separate snapshot medium.
+  3. If bought, buy only from an authorized EU distributor and run f3 on arrival. Keep no ESP on the card, and do a power-cut drill.
+  
+  Limits of this check:
+  - The shared WebSearch budget was already used up when this step started (0 searches were available). All data comes from WebFetch or curl on primary pages: Reichelt product and catalog pages, Samsung US, the Samsung warranty page, SanDisk, Hiksemi and Lexar.
+  - I could not find independent write-until-failure surveys of generic cards without search, so generics were rejected for lack of measured evidence, not because they were measured worse.
+  - Not verified: Samsung's per-capacity hours split, Kingston HE warranty and speed class, Hiksemi EU prices, and Netac (its site lists products dynamically).
+  - Raw downloads are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/msd_b.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
