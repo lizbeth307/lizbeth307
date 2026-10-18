@@ -25541,6 +25541,86 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Left for later batches (not in this batch's scope): 'T7 (лише з Lime)' in 5.6 'Інше' (idx 52) and the Lime-optional wording in the panels line (idx 69/70).
 
+## edit:05d_arch_thermal_emi_mech:b2 (run `wf_64e39fc3-0f9`)
+
+- **Section:** 05d_arch_thermal_emi_mech
+- **Applied:**
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+  - 58
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  - 64
+  - 65
+  - 66
+  - 67
+  - 68
+  - 69
+  - 70
+  - 71
+  - 72
+  - 73
+  - 74
+  - 75
+  - 76
+  - 77
+  - 78
+  - 79
+  - 80
+  - 81
+  - 82
+  - 83
+- **Skipped:** []
+- **Notes:** I edited one file: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/05d_arch_thermal_emi_mech.md. I applied all of changes 42-83 and skipped none. Where an anchor no longer matched (because batch 1 had already edited that text) or a change repeated text already in the file, I merged the new content into what was there.
+  
+  Merges against existing text:
+  - 51 (SoC): the old anchor was gone because batch 1 had already put in the kernel thresholds. I added only what was new: no cooling on NSP/DDR, the vkmark shutdown at about 105 °C, and that a board without cooling throttles at about 90-91 °C at 7.8 W (forum). The labd 85 °C stop for NPU/HTP was already in the ladder, so I did not repeat it.
+  - 64 (T7 cable): the old anchor «T7 ніколи не пише…» was gone after batch 1. I inserted the text after «(labrx децимує їх до ≤1 Msps і пише на UFS)».
+  - 56: the T7 «за замовчуванням» wording was already there from batch 1. I changed only the IMU pack state.
+  - 63: «≥30 см від GNSS-антени» was already in item 9 (the magnet base of antenna 25346 at least 30 cm from the BNO085 pack), so I did not add it again. I added only the clk_sys 125 MHz rule.
+  - 57: I merged the new 200 MHz × 8 source into the existing 1600.0 / 1597.44 row instead of adding a duplicate 1600.0 row. The new RP2040, TMDS and 162.000 rows are added and marked as model.
+  - 47: I folded the «≤5 Pa» limit into the existing «Забори» sentence rather than repeating the inlets.
+  - 50 and 66: in 5.6 I explained the 80 °C storage risk and pointed to 5.8. In 5.8 I wrote only the label and closing the hood, pointing back to 5.6.
+  - 60: I merged «CEA VIC прибрано» into «без CTA». I kept «148.5 MHz — лише запуск; 128.70 MHz заборонено». «правило палітри» now points to «правило палітри UI в C12» (from the 11e change log) and to the TMDS row in item 2.
+  - 69, 70 and 82: one combined edit of the panels paragraph. The top edge is P1-P8 + RX1, the left side wall carries RX2 and REF IN, the port types and holes follow, and the bottom edge now has the T7 cable gland.
+  - 75: I kept «≤100 Wh» next to the new 86.4 Wh so the airline rule still reads correctly.
+  - 79 (analogs_G1, higher precedence) merged with batch-1 change 27: rain cover (not IP-rated), short SMA M-F jumper or bracket, never cantilevered on P2.
+  - 80: I kept the existing fact from section 2.11 that the third HMC7992 of the Lime build also sits on the injector board, next to G1's two sections.
+  - 83: I merged the damped-LC wording from batch 1 with the G1 parts list.
+  
+  Changes that pointed to analog decisions (analog files win over the re-audit):
+  - 74 and 77: I named the bench case from analogs_G6, which is a conditional replacement: B&W outdoor.case Type 4000 RPD, provided both eyelets are locked whenever it is carried, otherwise the Peli 1450 stays. Apache 3800 is removed. In row 77 the B&W figures are 16.6 L, 53% full, 2.3-2.95 kg, and 8.2-9.1 kg stays marked model. Peli 1450 is listed as the fallback with the corrected figures (15.0 L, 2.5/2.9 kg, 59%) from the G6 datasheet and reaudit_D.
+  - 62: I filled in «обмеження за analogs G3» from the G3 stack_changes: sync clock at most about 1.0 MHz, inductor sized for that frequency, reverse-polarity stage, new EN divider at 1.263 V.
+  - 61: Adafruit 2420 per G2.
+  - 65: color and seller per G4.
+  
+  Recomputed subtotals:
+  - Thermal table (45): the exit-rise column now holds the D15 figures 9.8 / 12.7 / 20.7 / 17.3 / 30.5 K for modes B / D / G / H / I. The average-rise column has no D15 figures, so it is labeled as coming from the old 210x135x52 mm box.
+  - Device mass (76): the battery row is now 0.33-0.34. The sum of parts is 1.53-1.74 kg, or 1.68-1.89 kg with Lime.
+  - Field backpack: without Lime it stays about 5.2-7.1 kg and 6.1-8.4 kg after rounding (exact 5.18-7.14 and 6.08-8.44). With Lime, recomputed from the file base (4.4-6.0 and 5.3-7.3, plus 0.6-1.0 kg tripod), it is 5.33-7.29 kg and 6.23-8.59 kg. I checked these sums with python.
+  
+  For batch 3:
+  - Change 85 asks for a device sum of 1.57-1.79 based on the old 1.52-1.72. It must now be recomputed from 1.53-1.74, which gives 1.58-1.81, or 1.73-1.96 with Lime.
+  - The travel sentence «Pelican можна здати в багаж» is still in the file. I left it for change 121 (G6), even though the bench case is now named B&W.
+  - Several batch-3 anchors have moved because of these edits (changes 87, 88, 89, 95, 97, 103, 104, 106, 120, 121, 122). Those changes will have to find their place by part name.
+
 ## edit:02c_bom_display_power_gnss:b1 (run `wf_85b20a83-f63`)
 
 - **Section:** 02c_bom_display_power_gnss
@@ -32270,6 +32350,117 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - idx 39 (header HF chain). The anchor had already changed in batch 1, which used reaudit_B's Boni-Whip lower bound of $167.49 from the Bonito shop. No analog file decides the Boni-Whip, so reaudit_B's price stands. G1's changes to the relay, shield and choke rows (−13.73 / −42.43) were applied on top, giving $469.71-546.74. The extractor's $480.95-546.74, which uses WiMo as the lower bound, is added as an alternative. The foldable-tier figure is unchanged because no change asked for it.
   - idx 44 (2.1 subtotal). Set to 303.53-332.85. The plate and UFS use TinyTronics prices with NL VAT, and cooling uses the EU price with VAT. The note adds +$8.98 if the fan ships separately and gives 300.64-329.96 with cooling priced outside the EU.
   - The 2.2 subtotal stays 282.85 because its USD prices did not change.
+
+## edit:11d_changes_reaudit_C:b2 (run `wf_a1f0ee5f-4e1`)
+
+- **Section:** 11d_changes_reaudit_C
+- **Applied:**
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  - 64
+  - 65
+  - 66
+  - 67
+  - 68
+  - 69
+  - 70
+  - 71
+  - 72
+  - 73
+  - 74
+  - 75
+  - 76
+  - 77
+  - 78
+  - 79
+  - 80
+  - 81
+  - 82
+  - 83
+  - 84
+  - 85
+  - 86
+  - 87
+  - 88
+  - 89
+  - 90
+  - 91
+  - 92
+  - 93
+  - 94
+  - 95
+  - 96
+  - 97
+  - 98
+  - 99
+  - 100
+  - 101
+  - 102
+  - 103
+  - 104
+  - 105
+  - 106
+  - 107
+  - 108
+  - 109
+  - 110
+  - 111
+  - 112
+  - 113
+  - 114
+  - 115
+  - 116
+- **Skipped:** []
+- **Notes:** Batch 2 is done in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/11d_changes_reaudit_C.md. All 58 changes (idx 59-116) were applied and none were skipped. The table had rows 1-34 from batch 1 and now has 48, under the limit of about 60. A script check shows every row has 4 columns and the numbering runs 1-48 with no gaps. The routed changes were cut off at 220 characters, so I took the full instruction text from /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/v2_extract/reaudit_C.json. All 58 matched an entry there.
+  
+  Changes that repeat a topic already in the table were merged into the existing row: I added the new section refs (1.2 register row numbers, 5.4, 5.7, 5.8, 8) and short clauses, and kept batch 1's text.
+  - Row 1: V-dipole pass card, plus the numbers that rule out lowering the dipole (idx 79, 95).
+  - Row 2: free-space figure 2.8 dBi (idx 79).
+  - Row 3: N2-5 in 2027 or later (idx 84).
+  - Row 6: GLONASS wording, «obsolete» refuted (idx 116).
+  - Row 7: gpsd security pin and CVEs, LC76G config re-sent at every boot, SBAS labels (idx 63, 65, 89, 90).
+  - Row 8: PPS wiring (idx 67).
+  - Row 11: helicon aperture limit and the t0nito petal options (idx 81, 104).
+  - Row 13: known lines 1700/1699.2/1704.0 MHz (idx 108-110).
+  - Rows 14-15: section refs only (idx 80, 102).
+  - Row 17: Uputronics 50 mA alarm baseline and the bench test in section 8 (idx 112).
+  - Row 18: QO-100 constant in #107, LNB skew from the fix (idx 72, 73, 96).
+  - Row 19: section refs (idx 73, 82).
+  - Row 20: RG6 with compression F connectors (idx 71).
+  - Row 25: Metop section ref (idx 85).
+  - Row 28: Cospas-Sarsat in #1/#2, «return link 1544.9» label dropped (idx 60, 61).
+  - Row 29: SatNOGS importer allow-list plus the second ban layer and the «review» list (idx 87).
+  - Row 30: SatDump section refs (idx 66).
+  - Row 31: S-band helix A/B, LNA not yet named (idx 69, 104).
+  - Row 32: TDF mask (idx 62).
+  - Row 33: open question 3 (idx 76, 113).
+  - Row 34: tripod and weight (idx 99-101).
+  
+  New rows:
+  - 35: egc-gate descriptor parsing (idx 59, 97).
+  - 36: 145.800 MHz voice mask (idx 86, 98).
+  - 37: gr-satellites packaging and sandbox (idx 64, 91, 92, 93).
+  - 38: SatDump build and pass unit (idx 66, 91, 93, 94).
+  - 39: GNSS antenna placement and USB 3 rule (idx 68, 106, 107).
+  - 40: QRO.cz upgrade path (idx 70).
+  - 41: horn and cone fabrication (idx 82, 105).
+  - 42: GEO visibility in Europe, menus and labels (idx 74, 83, 88, 95).
+  - 43: W9MDB figures and 70 cm mounting (idx 75, 76, 78).
+  - 44: Johanson chip (idx 77).
+  - 45: Yagi tape lengths and acceptance check (idx 80, 102, 103).
+  - 46: new L-band patch interference risk (idx 111).
+  - 47: section 6.2 removals (idx 114).
+  - 48: section 7, item 26 rewritten and items 37-50 added (idx 115, 116).
+  
+  Subtotal recomputed (row 34): the tripod adds 0.6-1.0 kg. The field backpack goes from 4.6-6.1 to 5.2-7.1 kg without HF and mast, and from 5.5-7.4 to 6.1-8.4 kg in full (model).
+  
+  Conflicts and precedence:
+  - idx 101 against batch 1 idx 56 (D14): idx 56 kept the old 5.5-7.4 kg with a note, while idx 101 pushes the same delta into D14 and 2.12. Both come from re-audit C, so this is not a real conflict. Row 34 now gives the recomputed values, so idx 101 won.
+  - idx 70 (QRO.cz, EUR 52.03 incl. VAT = $58.55, hamparts.shop): this agrees with analog G6, which keeps it as the upgrade path only. Row 40 credits G6 for the seller and price.
+  - No change broke a hard rule. Row 42 leaves out per-city tables (devices use the GNSS fix) and has no Kyiv angle. I rewrote the TLE condition «|n − 1.00274| < 0.0005» as «1.00274 ± 0.0005», because the pipe signs would break the markdown table.
 
 ## searchA:adafruit_bno085_4754_rp2040_zero_metal_p (run `wf_a268b76e-da0`)
 
@@ -39558,6 +39749,91 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
     - In item 50, pagers are noted as off because they are private communications (hard rule).
   
   Not changed: item 23 still says "близько $555-780 без H-зондів", which assumes the extended total includes H-field probes. That clashes with the hard rule against H-field loop probes. None of my changes covered it; the lab totals owner should check it.
+
+## edit:08_open_bench:b2 (run `wf_b682bee1-8a4`)
+
+- **Section:** 08_open_bench
+- **Applied:**
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+  - 58
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  - 64
+  - 65
+  - 66
+  - 67
+  - 68
+  - 69
+  - 70
+  - 71
+  - 72
+  - 73
+  - 74
+  - 75
+  - 76
+  - 77
+  - 78
+  - 79
+- **Skipped:**
+  1.
+    - **Idx:** 77 (tripod part only)
+    - **Why:** The tripod creep test (helicone and horn + LNB at 30°, 1.1-1.3 m, about 20 km/h wind, ≤2° in 10 min) is already item (4) of the Rollei tripod row in 8.2 (08c, analog P5, higher precedence). It is not repeated. The Axotron row was added and points to that row.
+  2.
+    - **Idx:** 78 (one list item)
+    - **Why:** I left 'наявність A-V85' out of the 'Не перевірено' list. A-V85 is removed from the stack (06_removed; idx 59 removes it from Q3), so checking its availability no longer matters. The other two new rows and the rest of the list were added.
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/08_open_bench.md, building on the batch-1 edits. The table now has 77 rows and every row has exactly 3 cells (checked). This file has no subtotals, so there was nothing to recompute.
+  
+  Conflicts and which source won:
+  (1) Lime capture rate. idx 54, 73 and 79 (reaudit C) say 6 Msps. reaudit B (L-3 and its rate correction: Lime blocked below 7 Msps because of the VSPA-DMA hang risk) and analog G6 #12 (7 Msps capture) disagree. The analog has higher precedence, so 7 Msps won. The text says so.
+  (2) Airspy Mini. idx 55 (reaudit C) says buy only if the Lime fails, i.e. drop it. Analog G6 #12 keeps its purchase gate unchanged: (a) the 15-min rtl_test fails or (b) the Metop hump is seen but the V4L cannot decode. G6 won. The Lime-pass rule is written as an optional scope choice for the user (clock and power trade), as G6 itself allows. idx 48's note about the Mini's official range ending at 1700 MHz and the 30-day acceptance test was added to the same cell.
+  (3) TPS2553 trip window. idx 51 (reaudit B) gives 262-342 mA; analog G3 #11 gives 265-339 mA. G3 won. The 162 kOhm TCBT window 144-192 mA was kept.
+  (4) LNB rail. idx 78 (reaudit C) asks for 12.5 V ±0.2 V; reaudit B says TPS7A47 accuracy is ±2.5% (±0.33 V at 13.2 V). Both are the same precedence level, so both are kept: ±0.2 V is a measured gate per unit, ±2.5% is the design accuracy.
+  
+  Merges of changes at the same level:
+  - idx 44 and 52 both replaced the Uputronics sentence in the currents row. They became one sentence: Rev 3.0, 3.5-5.5 V, about 50 mA baseline on ch2. idx 44 also brought RILM eFuse instead of PTC, the HF+ ≥0.75 A bring-up and Boni 13.8 V. The HF+ idle/streaming currents point to HF-2 in 8.1.
+  - idx 40 and 56 became one 70 cm series-34 row (labrx → snd-aloop → slowrxd decoding to PNG, OpenWebRX+ cross-check, ARISS page check on 20-21.10). I kept the tilted vs vertical whip A/B, because reaudit C targets bench test 3 still has it, although the 56 text dropped it.
+  - The Bullseye current at 12.5/13.2 V is written once, in the new 'Шина LNB і поляризація' row; the LNB row (idx 53) points to it.
+  - The 15-min Lime capture is written once, in the Lime row (idx 54). The Metop row (idx 73), the on-air row and the FE1.1s gate cell (idx 79) point to it.
+  - idx 66 (Uputronics conducted test) also takes the analog G1 #3 test points: 435.0, 437.55 and 437.825 MHz; rejection at 470 and 800-960 MHz recorded in parts.yaml; V3 case and Rev 3.0 board; never more than 5.5 V on P2.
+  - idx 55 kept batch 1's Elektro-L3 at 14.5° W and European NCS wording, and added GGAK 1693 then LRIT 1691 at 1 Msps, eastern/central Europe only (about east of 13° E), and the FY-2H order.
+  - idx 49 already uses the G1 #5 cable-set wording, so the later analog change on the same phrase (idx 102) is already covered.
+  
+  Placement:
+  - idx 58: the egc-gate unit tests, the SatNOGS importer test and the 'no carrier at or above 1544.0 MHz' check went into the compliance row. The SatDump arm64 packaging audit went into the existing SatDump audit row, and the extra gr-satellites file names ('/etc/x', 'a/b', no unhandled crash) went into Збірки +lab (c), so nothing is repeated.
+  - idx 60-78: the anchor 'Q6A: TX UART6…' no longer exists (batch 1 rewrote that row), so I placed the new rows by topic:
+    - SatDump CLI and network rows after the SatDump audit row;
+    - ALS162 after the LNB/HF row;
+    - Metop/AWS, helicone, HRPT, HRPT spur gate, GEO visibility and the L-band patch/Inmarsat-C/shroud rows after the on-air row;
+    - dipole kit, Uputronics, V-dipole, Meteor N2-4 vs N2-3, Yagi, the three QO-100 rows and Axotron after the 70 cm antennas row;
+    - P7 DC margin, magnet and SBAS after the GNSS row;
+    - the LNB rail decision, QRO.cz POTY and 'Не перевірено' rows before the small-items row.
+  - idx 47 points to L-0...L-12 in 8.1. idx 45, 46, 51 and 53 point to RF-0/RF-1, HF-1/HF-9/HF-12, RF-2 and RF-8 in 8.1.
+  
+  Phrases later batches anchor on still exist: 'Струми холодними і гарячими при робочій напрузі:', 'шумове джерело ZFL-500 (12 V)', 'Дерево FE1.1s: 30 хв без втрат', 'Пара LT3045 на 4.5 V від LAB5 біля просідання:', 'GNSS: TTFF LC76G;', 'поведінка регіонального блокування Quectel (невідомо)', 'діаметр шийки і хвилеводу до рупора', 'T7 і microSD — за поточними цінами;', 'лістинг динамометричного ключа; IP2368 BZ; LCSC-рядки', 'Можливо не враховані в BOM дрібниці:'.
+  
+  The HMC7992 open-item text, the 'дріт BNC-SMA для Boni-Whip' phrase and the old Uputronics sentence are gone: they are now resolved or merged.
+  
+  I fixed one mistranslation from the instruction: 'redrawn clamp bases' is 'перероблені', not 'перекреслені' ('crossed out').
 
 ## edit:11e_changes_reaudit_D:b1 (run `wf_b7e15d24-3c6`)
 
