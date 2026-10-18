@@ -14298,6 +14298,379 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Downloaded reference copies (untrusted data, not executed) are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/labui2_dl/ (forum JSON, labwc sources, greetd 0.9.0 source, systemd v255 logind, qt6-wayland debian dir, aic8800 sources, Pico/RP2040 datasheets). The dump helper script is /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/labui2_scripts/dump.py. No user data was sent in any request.
 
+## searchA:adafruit_bno085_4754_rp2040_zero_metal_p (run `wf_a268b76e-da0`)
+
+- **Part:** IMU pack: Adafruit BNO085 (4754) on SPI0 of a Waveshare RP2040-Zero (20187), in a metal puck bonded to the cable braid; GX12 4-pin pair; 1.5-2 m shielded 4-core lead; TVS. Framed UART at 115200 with CRC to Pico UART1, never USB.
+- **Current price usd:** 64.49-89.49 (Adafruit 4754 $29.50 verified 18 Oct 2026 + RP2040-Zero $4.99 + puck/connector/cable/TVS $30-55 estimate). Waveshare lists the RP2040-Zero at $3.99, so the verified floor is $63.49.
+- **Critical specs:**
+  - Fusion and calibration on the chip, with published accuracy: Game RV static 1.5 deg, dynamic 2.5 deg, heading drift 0.5 deg/min; Rotation Vector 2.0 deg static, 3.5 deg dynamic; gravity 1.5 deg; magnetometer 1.4 uT (CEVA datasheet as listed by SparkFun). The pointing code (elevation from gravity, azimuth from a sun sighting plus Game RV, re-sight every 15-20 min) depends on these numbers.
+  - External 32.768 kHz crystal on the board. The datasheet accuracy figures assume one; Adafruit 4754 has it.
+  - SPI broken out with INT, RST, PS0/WAKE and PS1 (SPI max 3 MHz; the stack runs 1 MHz, SPI_MODE3). Avoids the BNO08x I2C clock-stretch and repeated-start problems.
+  - Proven firmware path on the RP2040: Adafruit_BNO08x 1.2.7 / sh2 1.4.0 / arduino-pico 6.3.0, clock set explicitly to 125 MHz (200 MHz puts its 8th harmonic in GLONASS G1).
+  - Genuine CEVA part from an authorised channel. Stack rule: BNO08x only from Adafruit or SparkFun, and a branded RP2040-Zero.
+  - Pack MCU: RP2040 with SPI0, UART1 and at least 6 free GPIO; an LDO rather than a switching regulator (no switcher spurs); 5 V input behind a Schottky (VBUS is tied to 5 V); small board (about 23.5 x 18 mm).
+  - Enclosure: non-magnetic metal (aluminium), RF-tight, braid bonded 360 deg, at least IPX4/IP54 (IP66 better), room for both boards, brass or nylon screws, at least 30 cm from active elements and the GNSS antenna.
+  - Connector: 4 pins (5V, TX, RX, GND), metal shell bonded to the braid, locking, rated at least 0.5 A, field temperature range, sealed or capped (the re-audit target is IP67 M8 or a capped GX12 that passes the spray test).
+  - Lead: 4-core with a braided screen, 1.5-2 m, OD that fits the connector clamp and gland, flexible down to European winter temperatures.
+  - TVS on TX, RX and 5 V: VRWM at least 5 V, low capacitance on the UART lines (a few pF or less), IEC 61000-4-2 at least 8 kV contact.
+  - Rules: the sensor is passive (receive-only rule unaffected); heading is shown live and never logged; no loop antennas or H-field probes; no USB on the pack.
+- **Candidates:**
+  1.
+    - **Name:** Adafruit 4754 BNO085 (same SKU) from BerryBase (DE), an Adafruit-listed EU distributor
+    - **Kind:** current_part
+    - **Price usd:** 30.86 incl. 19% VAT (EUR 27.45); 25.93 ex VAT (EUR 23.07) at 1.1241 USD/EUR. Shipping not included.
+    - **Spec comparison:** Identical part: same board, same crystal, same SPI pinout, same firmware.
+    - **Worse in:** Nothing. Shipped from Adafruit in the US, $29.50 plus international shipping plus EU import VAT costs an EU buyer more, so BerryBase is the cheapest in-stock option found for an EU buyer.
+    - **Compatibility:** Identical to the current pick.
+    - **Risks:** Low: Adafruit lists BerryBase as a distributor. 35 pieces in stock on 18 Oct 2026 (1-3 days). Re-check price at order.
+    - **Seller url:** https://www.berrybase.de/en/search?search=BNO085
+    - **Sources:**
+      - https://www.berrybase.de/en/search?search=BNO085
+      - https://www.adafruit.com/product/4754
+  2.
+    - **Name:** Adafruit 4754 BNO085 from Kiwi Electronics (NL) or BOTLAND (PL)
+    - **Kind:** current_part
+    - **Price usd:** Kiwi: EUR 26.99 = 30.34 (shown as 'Ex Tax'; the VAT basis is unclear), out of stock. BOTLAND: EUR 30.26 incl. VAT = 34.02 (EUR 25.43 ex VAT = 28.59), currently unavailable.
+    - **Spec comparison:** Identical part.
+    - **Worse in:** Nothing in specs; both are out of stock, and BOTLAND costs more than BerryBase.
+    - **Compatibility:** Identical.
+    - **Risks:** Kiwi's VAT basis is unverified. Use only as a backup if BerryBase sells out.
+    - **Seller url:** https://www.kiwi-electronics.com/en/search?search=BNO085
+    - **Sources:**
+      - https://www.kiwi-electronics.com/en/search?search=BNO085
+      - https://botland.store/search?s=BNO085
+  3.
+    - **Name:** Waveshare RP2040-Zero 20187 (same SKU, without header): Waveshare direct, or BerryBase WS-20187
+    - **Kind:** current_part
+    - **Price usd:** Waveshare direct: 3.99 (shipping extra). BerryBase: EUR 4.90 incl. VAT = 5.51 (4.63 ex VAT), 94 in stock.
+    - **Spec comparison:** Identical: RP2040, 2 MB W25Q16JV, ME6217C33 LDO (800 mA), 20 edge GPIO plus pads.
+    - **Worse in:** Nothing. Buy it at BerryBase in the same order as the BNO085 to avoid a second shipment. The BOM's $4.99 can drop to $3.99 if bought direct.
+    - **Compatibility:** Identical. The 5 V input still needs its own Schottky because VBUS is tied to 5 V.
+    - **Risks:** Low. Branded Waveshare, as the stack requires. Waveshare's direct stock was not shown.
+    - **Seller url:** https://www.berrybase.de/en/search?search=RP2040-Zero
+    - **Sources:**
+      - https://www.waveshare.com/rp2040-zero.htm?sku=20187
+      - https://www.berrybase.de/en/search?search=RP2040-Zero
+  4.
+    - **Name:** Hammond 1550WA die-cast aluminium enclosure (unpainted), as the metal puck
+    - **Kind:** other_brand
+    - **Price usd:** 10.02 (DigiKey HM1206-ND, qty 1; 4 in stock, 26 at the factory, 4-week lead time). TME (EU) lists 5.45-7.01 in its structured data; the qty-1 price there is unverified.
+    - **Spec comparison:** Datasheet: 89.0 x 35.0 x 30.1 mm, 1.5 mm wall, aluminium (non-magnetic), IP66, 'watertight'. That is better than the IPX4/IP54 case target, and a concrete rated part instead of the unpriced 'metal puck' in the $30-55 estimate. Inside is about 32 mm wide by model, which fits the 25.6 x 22.7 mm BNO085 and the 23.5 x 18 mm RP2040-Zero end to end (about 55 mm of the roughly 86 mm length).
+    - **Worse in:** It is a rectangular box, not a round puck, and longer (89 mm) than a minimal puck. Gasket and lid-screw material were not verified: if the screws are steel or magnetic stainless, replace them with brass, as the stack requires. Holes must be drilled for the gland.
+    - **Compatibility:** Fits both boards (model; check against the Hammond drawing). Mount it with brass or nylon hardware, at least 15-20 cm from steel and at least 30 cm behind active elements. Keep it at least 30 cm from the GNSS magnet.
+    - **Risks:** Low: an established brand, sold through authorised distributors. The internal dimensions come from my model, not the Hammond drawing; the hammfg.com page returned 403 to me.
+    - **Seller url:** https://www.digikey.com/en/products/detail/hammond-manufacturing/1550WA/2211556
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/hammond-manufacturing/1550WA/2211556
+      - https://www.tme.eu/en/details/hm-1550wa/multipurpose-enclosures/hammond/1550wa/
+  5.
+    - **Name:** LAPP SKINTOP MS-SC-M12 (53112610) EMC cable gland for the 360 deg braid bond at the puck end
+    - **Kind:** other_brand
+    - **Price usd:** 3.14-3.89 (TME structured-data range; the qty-1 price is unverified)
+    - **Spec comparison:** M12x1.5, takes 3.5-7 mm cable (fits the 5 mm LiYCY), IP68, nickel-plated brass, 'with earthing, for shielded cables'. It turns the generic 'braid bonded to the puck' into a rated 360 deg bond.
+    - **Worse in:** The nickel plating is weakly ferromagnetic. Put the gland at the end of the box away from the BNO085, and run the hard-iron calibration with it fitted.
+    - **Compatibility:** An M12 hole fits the 30 mm end wall of the 1550WA (model).
+    - **Risks:** Low. The EMC contact method is not detailed on the TME page; check the LAPP datasheet.
+    - **Seller url:** https://www.tme.eu/en/details/ms-sc-m12/glands/lapp/53112610/
+    - **Sources:**
+      - https://www.tme.eu/en/details/ms-sc-m12/glands/lapp/53112610/
+  6.
+    - **Name:** LAPP UNITRONIC LiYCY 4x0.25 (0034404), shielded 4-core lead, 2 m
+    - **Kind:** other_brand
+    - **Price usd:** About 1.90-3.16 for 2 m, if TME's 0.95-1.58 USD structured-data range is per metre (the unit is unverified)
+    - **Spec comparison:** 4 x 0.25 mm2 stranded Cu, tinned copper braid screen, OD 5 mm, -40 to +80 C (TME). It is a named, rated cable instead of a generic 'shielded 4-core'. 0.25 mm2 is ample for the pack's tens of mA (model) and for 115200 baud over 2 m.
+    - **Worse in:** The insulation is PVC (TME), and the jacket material is not stated. PVC cable usually has a narrower flexing range than its fixed range (not shown on TME), so it can stiffen in winter. A PUR-jacketed screened cable would beat it for cold flexing, at an unknown price. The cores are not twisted pairs; that is fine at 115200 over 2 m, and RS-485 stays the fallback.
+    - **Compatibility:** 5 mm OD suits the M12 gland. Whether it fits the GX12 plug clamp is unverified.
+    - **Risks:** Low (an established brand). TME stock is ambiguous (0 shown on the page, 1867 in the structured data).
+    - **Seller url:** https://www.tme.eu/en/details/liycy-4x0.25/multicore-cables/lapp/0034404/
+    - **Sources:**
+      - https://www.tme.eu/en/details/liycy-4x0.25/multicore-cables/lapp/0034404/
+  7.
+    - **Name:** Olimex CONNECTOR-GX12-4 (plug and panel socket sold as a set)
+    - **Kind:** current_part
+    - **Price usd:** 1.74 (EUR 1.55; VAT basis not checked). Out of stock on 18 Oct 2026.
+    - **Spec comparison:** 5 A, 250 VAC / 300 VDC, zinc nickel-plated metal shell (bonds the braid), -50 to +70 C. No IP rating published.
+    - **Worse in:** No published IP rating: it meets the case rule only with a tethered cap and a passed IPX4 spray test, as the re-audit says. The plated zinc shell sits on the main case, not near the sensor, so magnetism does not matter there.
+    - **Compatibility:** Same part family as the current pick (a GX12 pair).
+    - **Risks:** Out of stock. Other GX12 sellers are unbranded marketplace parts and were not verified.
+    - **Seller url:** https://olimex.com/Products/Components/Connectors/CONNECTOR-GX12-4
+    - **Sources:**
+      - https://olimex.com/Products/Components/Connectors/CONNECTOR-GX12-4
+  8.
+    - **Name:** TI TPD4E05U06, 4-channel ESD array (one part covers TX, RX and 5 V)
+    - **Kind:** other_brand
+    - **Price usd:** Not checked (no price on the TI page)
+    - **Spec comparison:** VRWM 5.5 V, IO capacitance 0.42-0.5 pF, IEC 61000-4-2 +/-12 kV contact and +/-15 kV air, clamp 10 V, USON-10 2.5 x 1 mm. Meets the TVS spec with very low capacitance on the UART lines.
+    - **Worse in:** USON-10 is hard to hand-solder; it needs a small adapter or the custom PCB. It is an ESD part, not a surge part: if surge on the 5 V line matters, add an SMAJ/SMF 5.0A (not priced).
+    - **Compatibility:** 3.3 V UART lines and a 5 V rail are within VRWM.
+    - **Risks:** Low (TI, authorised distributors).
+    - **Seller url:** https://www.ti.com/product/TPD4E05U06
+    - **Sources:**
+      - https://www.ti.com/product/TPD4E05U06
+  9.
+    - **Name:** SparkFun VR IMU Breakout BNO086 (SEN-22857), the STACK's 'budget' option
+    - **Kind:** other_brand
+    - **Price usd:** 34.95 (SparkFun, in stock). EU: BerryBase EUR 41.90 = 47.10 (not available); Electrokit SEK 549 incl. VAT (out of stock until 2026-11-06).
+    - **Spec comparison:** Published specs match the BNO085 (RV 2.0/3.5 deg, Game RV 1.5/2.5 deg and 0.5 deg/min, gravity 1.5 deg, mag 1.4 uT). SPI up to 3 MHz, UART 3 Mbps. The BNO086 returns zero-length packets instead of clock-stretching, which only helps on I2C.
+    - **Worse in:** Price: it costs $5.45 more than the Adafruit 4754 in the US and about EUR 14 more in the EU, so the STACK's 'Budget: SparkFun BNO086 $34.95' is wrong. It is a second source, not a budget part. The board is larger (25.4 x 30.5 mm). The SparkFun page does not say whether an external crystal is fitted.
+    - **Compatibility:** Pin- and software-compatible on SPI (SparkFun or sh2 library). Protocol is set by solder jumpers.
+    - **Risks:** Low (authorised).
+    - **Seller url:** https://www.sparkfun.com/sparkfun-vr-imu-breakout-bno086-qwiic.html
+    - **Sources:**
+      - https://www.sparkfun.com/sparkfun-vr-imu-breakout-bno086-qwiic.html
+      - https://www.berrybase.de/en/search?search=BNO085
+      - https://www.electrokit.com/en/rorelsegivare-vr-imu-bno086
+  10.
+    - **Name:** Adafruit 4517 LSM6DSOX + LIS3MDL 9-DoF (fusion done on the host)
+    - **Kind:** other_brand
+    - **Price usd:** 19.95 (in stock)
+    - **Spec comparison:** Cheaper by $9.55. It has the sensors (accelerometer, gyroscope, magnetometer) but no on-chip fusion or calibration: orientation would come from AHRS code on the RP2040, and Adafruit publishes no orientation accuracy or drift for it.
+    - **Worse in:** No on-chip fusion or dynamic calibration. No published Game RV, RV or gravity accuracy or drift, so the 0.5 deg/min re-sight model and the 2.0-3.5 deg pointing budget are lost. Only I2C is exposed. Magnetometer calibration would need its own firmware and validation. Rejected as worse.
+    - **Compatibility:** Would work on RP2040 I2C (no clock stretching) but needs new firmware.
+    - **Risks:** Low (authorised), but high engineering risk.
+    - **Seller url:** https://www.adafruit.com/product/4517
+    - **Sources:**
+      - https://www.adafruit.com/product/4517
+  11.
+    - **Name:** SparkFun 6DoF LSM6DSV16X (SEN-21325)
+    - **Kind:** other_brand
+    - **Price usd:** 24.54 (in stock)
+    - **Spec comparison:** It has an embedded low-power fusion algorithm, but there is no magnetometer, and the page lists no fused-accuracy or gyro bias/noise figures.
+    - **Worse in:** No magnetometer, so no Rotation Vector and no magnetic-field report. Adding an external magnetometer pushes the total above $29.50, and fused accuracy is unpublished. Rejected.
+    - **Compatibility:** Would need a new driver and a separate magnetometer.
+    - **Risks:** Low (authorised).
+    - **Seller url:** https://www.sparkfun.com/sparkfun-6dof-imu-breakout-lsm6dsv16x-qwiic.html
+    - **Sources:**
+      - https://www.sparkfun.com/sparkfun-6dof-imu-breakout-lsm6dsv16x-qwiic.html
+  12.
+    - **Name:** 7Semi BNO086 Qwiic breakout (Hubtronics, India)
+    - **Kind:** other_brand
+    - **Price usd:** INR 2,499 incl. 18% GST (INR 2,117.80 ex GST); not converted, as the stack has no INR rate. Shipping from India not included.
+    - **Spec comparison:** Same chip family; I2C, SPI (up to 3 MHz) and UART. Crystal and regulator not verified.
+    - **Worse in:** It breaks the stack's sourcing rule (BNO08x only from Adafruit or SparkFun). It is not an EU seller, and import adds shipping and VAT, so it is not cheaper landed in the EU (model). Rejected.
+    - **Compatibility:** Probably the same SPI wiring (unverified).
+    - **Risks:** Medium: an unknown brand for the EU and an authenticity chain that cannot be checked.
+    - **Seller url:** https://hubtronics.in/bno086-9dof-imu-breakout
+    - **Sources:**
+      - https://hubtronics.in/bno086-9dof-imu-breakout
+  13.
+    - **Name:** WEIPU SF12 4-pin (SF1210/S4I cable plug), IP67 upgrade over GX12
+    - **Kind:** other_brand
+    - **Price usd:** 8.64-12.91 for the plug alone (TME structured-data range); the panel half is not priced, so a pair costs more than a GX12 pair
+    - **Spec comparison:** IP67, 5 A / 200 V, cable 4-6.5 mm. Sealing is better than the GX12 (which has no published IP rating) and meets the re-audit's IP67 target. Shell material is not stated on TME.
+    - **Worse in:** Not cheaper: it costs more than the GX12 ($1.74 a pair). Listed only as the sealed upgrade path, not as a cheaper analog.
+    - **Compatibility:** 4 pins match. Whether the shell is metal (needed for the braid bond) is unverified.
+    - **Risks:** Low to medium: WEIPU is an established brand, but TME stock is ambiguous.
+    - **Seller url:** https://www.tme.eu/en/details/sf1210_s4/weipu-connectors/weipu/sf1210-s4i/
+    - **Sources:**
+      - https://www.tme.eu/en/details/sf1210_s4/weipu-connectors/weipu/sf1210-s4i/
+  14.
+    - **Name:** WEIPU SP13 4-pin panel socket (SP1312/S4)
+    - **Kind:** other_brand
+    - **Price usd:** 2.95-4.41 (TME structured-data range; qty-1 price unverified)
+    - **Spec comparison:** IP68, 5 A / 200 V, 4 pins. Sealing is better than the GX12.
+    - **Worse in:** Shell material is not listed on TME. If the shell is plastic (SP series generally PA66, unverified), it cannot bond the braid 360 deg; all 4 pins are used, so the shield would need a 5th pin or a pigtail. That is worse shielding than the GX12's metal shell. Rejected unless a metal shell is confirmed.
+    - **Compatibility:** 4 pins match.
+    - **Risks:** Medium (shield continuity).
+    - **Seller url:** https://www.tme.eu/en/details/sp1312_s4/weipu-connectors/weipu/sp1312-s4-n/
+    - **Sources:**
+      - https://www.tme.eu/en/details/sp1312_s4/weipu-connectors/weipu/sp1312-s4-n/
+- **Notes:** Verdict (angle A):
+  - No cheaper part is as good as the BNO085 or the RP2040-Zero, so keep both.
+  - The savings come from the sellers and from replacing the $30-55 estimate with named, rated parts.
+  
+  Cheapest set that is not worse, EU buyer, one-off order:
+  | Item | Source | Price |
+  |---|---|---|
+  | BNO085 | BerryBase | $30.86 incl. VAT ($25.93 ex) |
+  | RP2040-Zero | BerryBase | $5.51 incl. VAT ($4.63 ex) |
+  | Hammond 1550WA enclosure | DigiKey | $10.02 |
+  | GX12-4 pair | Olimex | $1.74 (out of stock) |
+  | LAPP LiYCY 4x0.25, 2 m | TME | about $1.90-3.16 (per-metre unit unverified) |
+  | LAPP SKINTOP MS-SC-M12 gland | TME | $3.14-3.89 (range) |
+  | TPD4E05U06 | — | not priced |
+  
+  - Total of the priced items: about $53.2-55.2 (BerryBase lines incl. VAT), or $47.4-49.4 on an ex-VAT basis.
+  - Not included: TVS, ferrite, brass screws, and shipping (DigiKey and TME shipping and minimum orders matter).
+  - Current line: $64.49-89.49, so the itemised build is roughly $10-35 cheaper, with no spec traded away.
+  
+  Problems found in STACK:
+  - (1) STACK calls the SparkFun BNO086 at $34.95 the 'budget' option. It costs $5.45 more than the Adafruit 4754 ($29.50), and in the EU it is EUR 41.90 against EUR 27.45. Relabel it 'second source', not budget.
+  - (2) The BOM's RP2040-Zero $4.99 can drop to $3.99 if bought direct from Waveshare. For an EU buyer, the BerryBase line costs about the same once shipping is avoided.
+  
+  Unverified:
+  - Hammond 1550WA gasket, lid-screw material and internal dimensions (hammfg.com returned 403 to me).
+  - TME qty-1 prices (only structured-data ranges were seen) and TME stock (conflicting).
+  - GX12 clamp fit for a 5 mm OD cable.
+  - WEIPU SF12 and SP13 shell material.
+  - Whether the SparkFun BNO086 has an external crystal.
+  - Mouser and Pimoroni prices (503 and 429 errors).
+  
+  Outside my angle:
+  - The bare CEVA BNO085 chip is $12.29 at DigiKey (DIY, custom PCB).
+  - Generic AliExpress BNO085 boards were not evaluated (high counterfeit risk, and against the stack rule).
+  
+  Rules: every candidate is a passive sensor, enclosure, connector, cable or ESD part. Nothing transmits, nothing is a loop or an H-field probe, the pack stays off USB, and heading is shown live only.
+  
+  FX used: 1 EUR = 1.1241 USD (the stack's rate).
+
+## searchB:adafruit_bno085_4754_rp2040_zero_metal_p (run `wf_a268b76e-da0`)
+
+- **Part:** IMU pack: Adafruit BNO085 4754 + Waveshare RP2040-Zero 20187 + metal puck, GX12 4-pin pair, 1.5-2 m shielded 4-core lead, TVS (UART relay to the Pico UART1, never USB)
+- **Current price usd:** 64.49-89.49 (STACK: 29.50 + 4.99 + 30-55 estimate). Live 18 Oct 2026: Adafruit 4754 $29.50 at Adafruit and DigiKey (DigiKey 6,879 in stock, Active). In the EU, Opencircuit NL charges EUR 42.50 incl. VAT (EUR 35.15 excl.). Waveshare RP2040-Zero 20187 is $3.99 at the Waveshare store, not $4.99. The puck, connector, cable and TVS were only estimated, never priced.
+- **Critical specs:**
+  - On-chip SH-2 fusion outputs that the firmware uses: Game Rotation Vector quaternion, Gravity, Rotation Vector and calibrated magnetic field (Adafruit_BNO08x 1.2.7 on arduino-pico 6.3.0).
+  - Accuracy from the CEVA BNO08x datasheet. These figures assume an external 32.768 kHz crystal: Rotation Vector 2.0 deg static / 3.5 deg dynamic, gravity 1.5 deg, Game RV drift 0.5 deg/min. The drift figure sets the 15-20 min sun re-sight interval.
+  - On-chip dynamic magnetometer calibration. Magnetic heading is used only away from steel.
+  - Host interface SPI0 at 1 MHz: SCK, MOSI, MISO, CS, INT, RST and P0/WAKE, with P1 strapped, 3.3 V logic. I2C would work on the RP2040 because it supports clock stretching, but it is a downgrade from the SPI design the stack chose.
+  - The chip must be a genuine CEVA BNO085/BNO086 from a known seller. SlimeVR warns of 'Very misleading AliExpress listings' for the BNO085.
+  - Clean 3.3 V supply. The pack takes 5 V from LAB5 through a Schottky.
+  - Fits the puck stacked with the RP2040-Zero. Adafruit board 25.6 x 22.7 x 4.6 mm.
+  - RP2040-Zero: genuine RP2040; ME6217 LDO (no DC-DC switching noise on the boom); 12 MHz crystal (144/432 MHz harmonics already masked); run at 125 MHz set explicitly (not 200 MHz, whose 8th harmonic lands in GLONASS); SPI0 and UART1 on edge pins; W25Q16JV flash; USB only for flashing.
+  - Puck: non-ferromagnetic metal (aluminium), bonded to the cable braid, IPX4/IP54 or better, brass or nylon screws, at least 30 cm from active elements and the GNSS antenna.
+  - Connector: 4 pins (5 V, TX, RX, GND), locking, metal shell bonded to the braid, at least IP54 when mated and capped when open, clamp range that fits the cable OD. The re-audit prefers an IP67 M8 or a capped GX12 that passes a spray test.
+  - Lead: 4-core with a braid shield (not foil only), 1.5-2 m, 0.14-0.25 mm2, flexible at field temperatures, OD that fits the connector clamp.
+  - TVS: IEC 61000-4-2 rated, VRWM at least 5 V on the 5 V line and 3.3-5.5 V on TX/RX, branded part.
+  - Link and rules: 115200 framed UART with CRC that passes the 1e6-frame test; no wireless or BLE IMU modules (receive-only, no added emitters); never on USB.
+- **Candidates:**
+  1.
+    - **Name:** Adafruit 4754 BNO085 (keep) + Waveshare RP2040-Zero 20187 (keep)
+    - **Kind:** current_part
+    - **Price usd:** 29.50 + 3.99 = 33.49 (EU: Opencircuit EUR 42.50 incl. VAT for the 4754)
+    - **Spec comparison:** Reference part. Genuine CEVA BNO085 with the 32.768 kHz crystal on board (Adafruit product page), regulator and level shifting, SPI/I2C/UART-RVC. Adafruit's measured library path on the RP2040. RP2040-Zero: ME6217 LDO, W25Q16JV, 20 edge GPIO.
+    - **Worse in:** Nothing. The STACK RP2040-Zero price of $4.99 is high; the Waveshare store lists $3.99.
+    - **Compatibility:** As designed (SPI0, UART1 relay to the Pico).
+    - **Risks:** Adafruit ships from the US, so EU import VAT applies; buying via DigiKey EU or an EU reseller avoids that.
+    - **Seller url:** https://www.adafruit.com/product/4754
+    - **Sources:**
+      - https://www.adafruit.com/product/4754
+      - https://www.digikey.com/en/products/detail/adafruit-industries-llc/4754/13426653
+      - https://opencircuit.shop/product/adafruit-9-dof-orientation-imu-fusion-breakout
+      - https://www.waveshare.com/rp2040-zero.htm?sku=20187
+  2.
+    - **Name:** Priced spec-compliant puck/lead set (replaces the $30-55 estimate): Hammond 1550Z101 die-cast aluminium box + Olimex CONNECTOR-GX12-4 set + LAPP UNITRONIC LiYCY 4x0.25 (0034404), 2 m + TI TPD4E05U06DQAR
+    - **Kind:** diy
+    - **Price usd:** about 10-13 + shipping: Hammond 5.45-7.01 (TME structured-data range, net/gross basis not shown) + GX12 set EUR 1.55 (~1.80; Olimex out of stock, also listed at DigiKey) + LiYCY 2 x 0.95-1.58 (TME, MOQ 1 m) + TI TVS 0.86 (DigiKey). Not priced yet: EMC or nylon cable gland, 5 V-line TVS, brass screws (estimate +2-4).
+    - **Spec comparison:** Box: 50 x 45 x 30 mm aluminium (non-magnetic), IP66 per TME/Hammond; the boards fit stacked (my estimate). Lead: tinned-copper braid, 5 mm OD, -40...80 C, flex class 5. GX12: 4 pins, 5 A, zinc nickel-plated shell; retailers give a 4-6 mm cable clamp. TVS: TI 4-channel, VWM 5.5 V. Meets every puck/lead spec in STACK D12 and section 9.
+    - **Worse in:** Not worse than the unspecified current pick, but three things remain unverified: (1) No manufacturer IP rating for the GX12 (only a retailer claim of IP65), so a cap and the spray test are still needed, or use an IP67 M8 per the re-audit. (2) LiYCY has a PVC sheath; its flexing range in the cold is not stated on the page (typically narrower than the fixed rating), so use PUR if winter use matters. (3) Hammond lids ship with steel or stainless screws (not verified); swap them for brass per STACK. A nickel-plated EMC gland is mildly ferromagnetic; mount it at the far end from the BNO085, or use a nylon gland with an internal braid lug.
+    - **Compatibility:** Mechanical only. 5 mm cable into a 4-6 mm GX12 clamp (retailer figure).
+    - **Risks:** Prices partly come from TME structured data (net/gross unclear) and the Olimex item is out of stock. No independent measurements exist for these passive parts, only manufacturer ratings.
+    - **Seller url:** https://www.tme.eu/en/details/hm-1550z101/multipurpose-enclosures/hammond/1550z101/
+    - **Sources:**
+      - https://www.tme.eu/en/details/hm-1550z101/multipurpose-enclosures/hammond/1550z101/
+      - https://olimex.com/Products/Components/Connectors/CONNECTOR-GX12-4
+      - https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/5560/Olimex%20-%20CONNECTOR-GX12-4.pdf
+      - https://www.tme.eu/en/details/liycy-4x0.25/multicore-cables-shielded/lapp/0034404/
+      - https://www.reichelt.com/de/en/shop/search/liycy%204x0.25
+      - https://www.digikey.com/en/products/result?keywords=TPD4E05U06DQAR
+  3.
+    - **Name:** DIY BNO085 board: bare CEVA BNO085 (28-LGA 5.2x3.8) + 32.768 kHz crystal on a puck PCB copied from Adafruit's open EAGLE files (CC BY-SA); can merge with an RP2040 on the same PCB
+    - **Kind:** diy
+    - **Price usd:** chip 12.29 (DigiKey, qty 1, Active, 0 in stock, 3,369 due 26-Oct-2026; SlimeVR shop lists the bare chip at EUR 9.00, stock not verified) + crystal, passives and PCB share (not priced; my estimate 2-6) = about 15-19
+    - **Spec comparison:** Same chip and the same reference circuit as the 4754, so the same datasheet outputs and accuracy if the external crystal is fitted. SPI kept.
+    - **Worse in:** Not proven equal per unit. LGA-28 reflow quality and the magnetometer's surroundings depend on the build, and no independent measurement of such a DIY board exists. Build quality and reliability are unknown until X-ray or acceptance tests pass: SH-2 product IDs, calibration status 3, 30 min Game RV drift at or below 0.5 deg/min, gravity against a level, 1e6-frame UART test.
+    - **Compatibility:** Same firmware and pins. Only worth it if the stack's own PCB order already exists and a PCBA house or a stencil plus hotplate is available.
+    - **Risks:** Saves about $10-15 at the cost of assembly risk. A failed reflow can waste the chip. LCSC lists the chip but is not a franchised CEVA source (C5189642, $21.55 at qty 1, out of stock).
+    - **Seller url:** https://www.digikey.com/en/products/detail/ceva-technologies-inc/BNO085/9445940
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/ceva-technologies-inc/BNO085/9445940
+      - https://github.com/adafruit/Adafruit-BNO08x-PCB
+      - https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf
+      - https://fat.lcsc.com/product-image/C5189642.html
+      - https://shop.slimevr.dev/products/ceva-bno085-9dof-inertial-measurement-unit
+  4.
+    - **Name:** SlimeVR IMU Module BNO085 (official SlimeVR shop module)
+    - **Kind:** generic_or_clone
+    - **Price usd:** EUR 12.00 (~14) per search snippet; shown as sold out; page returned HTTP 429, so not verified live
+    - **Spec comparison:** BNO085 chip from an established vendor, so the same fusion outputs. 26 x 15.5 mm, 0.8 mm PCB, castellated edge.
+    - **Worse in:** I2C only, with no SPI pads, which loses the stack's SPI0 design (I2C on the RP2040 is workable but the stack chose SPI as more robust). External crystal unverified (the datasheet accuracy depends on it). Thin 0.8 mm PCB. Out of stock.
+    - **Compatibility:** Needs I2C wiring and firmware changes. Whether INT and RST are exposed is unverified.
+    - **Risks:** Not checked: genuine-chip sourcing, crystal, stock. Only about $15 cheaper than the 4754 and fails the SPI spec, so reject unless the stack accepts I2C.
+    - **Seller url:** https://shop.slimevr.dev/products/slimevr-imu-module-bno085
+    - **Sources:**
+      - https://shop.slimevr.dev/products/slimevr-imu-module-bno085
+  5.
+    - **Name:** Unbranded 'BNO085/BNO080' 9DOF modules (AliExpress, Fruugo, Amazon; e.g. GY-BNO08X style)
+    - **Kind:** generic_or_clone
+    - **Price usd:** not verified (marketplace listings; no price taken)
+    - **Spec comparison:** Listings name the chip but are often labelled 'BNO080/BNO085' (or 080/085/086 together) and repeat datasheet marketing figures. No independent measurement found.
+    - **Worse in:** Unproven: chip genuineness or variant, crystal, and regulator are unknown. SlimeVR docs list 'Very misleading AliExpress listings' for the BNO085, and a Reddit report says there is no way to know which chip arrives. Breaks the STACK rule of Adafruit/SparkFun BNO08x only.
+    - **Compatibility:** Pinout varies by listing.
+    - **Risks:** Counterfeit or relabelled BNO080 (EOL). REJECT: no measured evidence.
+    - **Seller url:** https://www.fruugo.fr/bno085-ar-vr-imu-module-de-capteur-ahrs-haute-precision-a-neuf-9-dof-bno085-bno080/p-410426690
+    - **Sources:**
+      - https://docs.slimevr.dev/diy/imu-comparison.html
+      - https://www.fruugo.fr/bno085-ar-vr-imu-module-de-capteur-ahrs-haute-precision-a-neuf-9-dof-bno085-bno080/p-410426690
+      - https://learn.sparkfun.com/tutorials/qwiic-vr-imu-bno080-hookup-guide/all
+  6.
+    - **Name:** LSM6DSV (or ICM-45686) + QMC6309 SlimeVR-format module with host fusion (VQF) on the RP2040
+    - **Kind:** diy
+    - **Price usd:** ~5.80 (LSM6DSV) / ~6.70 (ICM-45686): typical prices per the SlimeVR docs; no specific seller verified
+    - **Spec comparison:** Community side-by-side tests (SlimeVR, 6-DOF, no magnetometer): ICM-45686 'Superior', yaw reset time 45-60 min; LSM6DSV 'Superior', 45-50 min; BNO085 45-60 min with build quality 'Excellent'. So yaw drift is about equal for ICM-45686 and slightly shorter for LSM6DSV.
+    - **Worse in:** The evidence covers only 6-DOF relative yaw. No measured absolute heading, gravity or tilt accuracy, and no on-chip mag calibration (SlimeVR does not use the QMC6309). It needs new fusion and mag-calibration firmware, replacing the proven Adafruit_BNO08x path. 'Reset time' does not map to the 0.5 deg/min spec. Not proven not-worse for RV, gravity or mag heading.
+    - **Compatibility:** Works with the RP2040 (I2C/SPI), but the pack firmware must be rewritten.
+    - **Risks:** REJECT as a replacement. Fine only as a documented fallback (gnss_imu.json already lists LSM6DSV16X + MMC5983MA).
+    - **Seller url:** 
+    - **Sources:**
+      - https://docs.slimevr.dev/diy/imu-comparison.html
+  7.
+    - **Name:** Generic GY-BNO055 / ICM-20948 / MPU9250 9-DOF modules
+    - **Kind:** generic_or_clone
+    - **Price usd:** ~38 (BNO055), ~15 (ICM-20948), ~7 (MPU9250): typical prices per the SlimeVR docs
+    - **Spec comparison:** SlimeVR yaw reset: BNO055 1-10 min (Poor), ICM-20948 15-60 min (Poor), MPU9250 10-40 min (Avoid). ICM-20948 and MPU9250 are 'Sensitive to bad magnetic environments'. MPU9250 has many counterfeits.
+    - **Worse in:** Drift and robustness are worse than the BNO085. Bosch has also announced BNO055 end-of-life.
+    - **Compatibility:** I2C; needs other firmware.
+    - **Risks:** REJECT.
+    - **Seller url:** 
+    - **Sources:**
+      - https://docs.slimevr.dev/diy/imu-comparison.html
+      - https://community.bosch-sensortec.com/mems-sensors-forum-jrmujtaw/post/bno055-end-of-life-and-recommended-replacement-with-sensor-fusion-vVOu7Ox3CLelBEA
+  8.
+    - **Name:** Used Adafruit 4754 (eBay)
+    - **Kind:** used
+    - **Price usd:** no used unit found. eBay 316656490138 is New at $49.50 + $66.41 shipping. Other search snippets showed $25.97-34.99 with condition not stated (unverified).
+    - **Spec comparison:** Would be identical if genuine and undamaged.
+    - **Worse in:** No verified used listing. Unknown ESD or handling history. Shipping cancels out the saving.
+    - **Compatibility:** Identical.
+    - **Risks:** REJECT for now. Only take one with photos showing the 4754 PCB and a seller return policy, then run the same acceptance tests as the DIY board.
+    - **Seller url:** https://www.ebay.com/itm/316656490138
+    - **Sources:**
+      - https://www.ebay.com/itm/316656490138
+  9.
+    - **Name:** Generic RP2040-Zero clones (non-Waveshare)
+    - **Kind:** generic_or_clone
+    - **Price usd:** not verified
+    - **Spec comparison:** Search found no measurements of clone regulator, flash or crystal. Waveshare's board uses the ME6217 LDO and W25Q16JV flash.
+    - **Worse in:** The regulator, its noise and the flash on clone boards are unknown. Saves at most about $1-2 against the $3.99 original.
+    - **Compatibility:** Usually the same pinout (unverified).
+    - **Risks:** REJECT: no measured evidence, and it breaks the STACK rule of branded RP2040-Zero only.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.waveshare.com/rp2040-zero.htm?sku=20187
+  10.
+    - **Name:** Second-source TVS 'TPD4E05U06DQAR' by GOODWORK (DigiKey marketplace listing)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 0.037
+    - **Spec comparison:** VWM 5 V and Vc 15 V against TI's 5.5 V and 14 V. No IEC 61000-4-2 test data shown.
+    - **Worse in:** Slightly lower VWM, higher clamping voltage, and no measured ESD data.
+    - **Compatibility:** Same USON-10 footprint.
+    - **Risks:** REJECT: the TI original costs only $0.86.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=TPD4E05U06DQAR
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=TPD4E05U06DQAR
+  11.
+    - **Name:** BNO085 in UART-RVC mode wired straight to the Pico (drop the RP2040-Zero)
+    - **Kind:** diy
+    - **Price usd:** saves 3.99
+    - **Spec comparison:** RVC outputs only yaw/pitch/roll plus acceleration at 100 Hz, one-way, with no commands.
+    - **Worse in:** No magnetometer calibration in RVC (datasheet). No Gravity, Rotation Vector or magnetic-field reports, no CRC framing, no tare or reset control.
+    - **Compatibility:** 115200 UART.
+    - **Risks:** REJECT: it gives up specs the stack uses.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf
+- **Notes:** VERDICT (angle B): no generic, clone or used IMU board is proven equal by independent measurements. Keep the genuine Adafruit 4754 BNO085 ($29.50) and the Waveshare RP2040-Zero ($3.99; STACK's $4.99 is high). The real saving is on the pack hardware, which STACK only estimated at $30-55. A priced, spec-compliant set costs about $10-13 plus shipping and $2-4 of unpriced items: Hammond 1550Z101 IP66 die-cast aluminium box, Olimex GX12-4 set, LAPP LiYCY 4x0.25 braid-shielded lead (2 m), TI TPD4E05U06 TVS, and a gland, 5 V-line TVS and brass screws still to price. That brings the line to about $45-50 against $64.49-89.49 without trading a spec. Open checks on that set: no GX12 IP rating (cap it and spray-test, or use an IP67 M8 per the re-audit); PVC LiYCY cold-flex (use PUR for winter); Hammond screws and a nickel-plated gland should be non-magnetic or placed away from the BNO085. The only cheaper genuine-chip route is the DIY BNO085 board (DigiKey chip $12.29, Active, 0 stock, restock 26 Oct 2026; Adafruit CC BY-SA EAGLE files). It is conditional on PCBA or stencil reflow plus acceptance tests (SH-2 ID, calibration status 3, 30 min Game RV drift at or below 0.5 deg/min, gravity against a level, 1e6-frame UART test), saves about $10-15, and is not recommended over the 4754 unless the stack's own PCB run is already happening. The SlimeVR BNO085 module (EUR 12) is I2C-only (no SPI), its crystal is unverified and it is sold out, so it is worse in interface. LSM6DSV and ICM-45686 modules match the BNO085's yaw drift only in SlimeVR 6-DOF community tests, with no measured absolute heading, gravity or mag-calibration data; reject them as replacements. Conflict: SlimeVR docs call the BNO085 'discontinued', but DigiKey shows it Active with restocks scheduled and Adafruit and DigiKey hold thousands of 4754 boards. Flag for STACK: the 'budget alternative SparkFun BNO086 $34.95' costs more than the 4754's $29.50, so it is not a budget option (price not re-checked here). EU buying: the 4754 via DigiKey EU or an EU reseller avoids import VAT on Adafruit US orders (Opencircuit NL EUR 42.50 incl. VAT is dearer). Searches used: 9 WebSearch calls. The SlimeVR shop returned HTTP 429, so its figures come from search snippets and are unverified.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
