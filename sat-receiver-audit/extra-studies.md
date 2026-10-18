@@ -32017,6 +32017,167 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Budget used: 14 WebSearch calls; most other data came from vendor Shopify JSON and cart shipping-rate endpoints, fetched 18 Oct 2026.
 
+## searchB:flightaware_pro_stick_plus (run `wf_c3ba734e-52b`)
+
+- **Part:** FlightAware Pro Stick Plus (RTL2832U + R820T2, built-in 19 dB LNA, then a 1075-1105 MHz SAW filter, 0.5 ppm TCXO). Role: continuous 1090 MHz ADS-B receiver on LAB USB. Lab extended tier, qty 1. Having it means the third V4L stays a true spare.
+- **Current price usd:** 69.92 (GBP 52.50 incl. UK VAT, The Pi Hut SKU 103075, available=true; re-checked 18 Oct 2026 from thepihut.com/products/flightaware-pro-stick-plus-usb-sdr-ads-b-receiver.js). For this Europe-based user the landed price is higher. The Pi Hut ships to the EU only by DHL Express (operator note 34). On top come import VAT and the EUR 3 per tariff line duty, plus the EUR 2 handling fee from about 1 Nov 2026 (note 35). I have not verified the landed amount.
+- **Critical specs:**
+  - Frequency and role: 1090 MHz Mode S/ADS-B only. Europe has no UAT 978. Any ppm drift and 2.4 Msps 8-bit sampling are both fine for readsb.
+  - System sensitivity at 1090 MHz: front-end noise figure and the gain in front of the tuner. Pro Stick Plus: LNA NF 0.4 dB, 19 dB gain (FlightAware datasheet claims; no independent NF measurement found). The 2.3 dB SAW sits after the LNA. My cascade model, assuming a 3.5 dB tuner NF, gives about 0.54 dB system NF.
+  - Out-of-band rejection before the tuner: SAW passband 1075-1105 MHz with 30 dB rejection (vendor). In Europe the threats are FM, DVB-T, LTE800, GSM900, GSM1800 and DECT. The stack's whip/dipole elements are not band-limited.
+  - Strong-signal handling: LNA OIP3 +39 dBm (vendor). The LNA comes before the filter, so it can overload on very strong out-of-band signals. rtl-sdr.com showed severe desense with a discone. The current part already has this weakness.
+  - Independent on-air performance against peers: Akos's 19-dongle ADS-B test and rtl-sdr.com's Pro Stick vs Pro Stick Plus review. These are the yardstick any candidate must equal.
+  - Tuner and driver: R820T2 + RTL2832U on stock librtlsdr. Works with the stack's lab librtlsdr build and readsb v3.16.17 on Ubuntu 24.04 arm64. No vendor driver.
+  - Clock: 0.5 ppm TCXO. Not critical for ADS-B (1 ppm = 1.09 kHz at 1090 MHz, far inside the Mode S tolerance), but listed so no change goes unnoticed.
+  - Power: 5 V, 300 mA from its own USB port, within the TPS2553 0.75 A LAB-port limit. No bias tee, so it never touches the LAB_BIAS_OK token gate.
+  - Continuous-duty thermal stability: Akos found heat lowers 1090 MHz performance on RTL dongles.
+  - Mechanics and interface: one USB-A dongle with an SMA female port. No extra SMA joints or modules in the LAB bag.
+  - Stack role: must not use up the spare V4L. final_integration.json says continuous ADS-B runs on the Pro Stick Plus and the spare V4L stays a spare; no 4th V4L.
+  - Rules and sourcing: receive-only (RTL2832U has no TX path), genuine CE-marked part from an authorised seller, not a counterfeit.
+- **Candidates:**
+  1.
+    - **Name:** Used FlightAware Pro Stick Plus (eBay.de / Kleinanzeigen)
+    - **Kind:** used
+    - **Price usd:** UNVERIFIED. eBay.de and kleinanzeigen.de returned HTTP 403 to every fetch, and no current used price showed up in search. I cannot claim it is cheaper.
+    - **Spec comparison:** Same design, so the datasheet specs match: 19 dB, 0.4 dB NF LNA, 1075-1105 MHz SAW with 30 dB rejection, 0.5 ppm TCXO, 300 mA. No independent data exists for any individual used unit.
+    - **Worse in:** Unknown unit condition. A front-end LNA hurt by ESD or overload loses sensitivity without obvious symptoms. No warranty. Price and availability unverified.
+    - **Compatibility:** Identical to the current part: USB-A, SMA, librtlsdr R820T2, 300 mA on LAB USB.
+    - **Risks:** Could be ESD-damaged or a relabelled plain Pro Stick, which has no filter. Accept only with a conducted check on arrival: noise source on/off Y-factor at 1090 MHz via rtl_power, and S21-style out-of-band rejection with the tinySA tracking output through pads into the dongle (conducted only), compared with the datasheet. As it stands it is rejected: no verified price and no measurement of the unit.
+    - **Seller url:** https://www.ebay.de/sch/i.html?_nkw=flightaware+pro+stick+plus
+    - **Sources:**
+      - https://www.flightaware.com/adsb/prostick/
+  2.
+    - **Name:** DIY: spare RTL-SDR Blog V4L + Uputronics FPA 1090 MHz ADS-B filtered preamp (Gen3 aluminium case)
+    - **Kind:** diy
+    - **Price usd:** 50.53 (EUR 44.95 on the Uputronics EU storefront, VAT added at checkout; from reaudit_B, verified 18 Oct 2026) if the spare V4L is used. UK GBP 44.39 = $59.12 (re-checked today via the .js variant list, available=true). With a 4th V4L ($37.95) it costs $88.48, more than the current part.
+    - **Spec comparison:** Gain: about 16 dB (Kubii table in radio_lab.json) against 19 dB. NF: 0.75 dB with the SAW included (Uputronics) against 0.4 dB LNA. Cascade model, same 3.5 dB tuner assumption: about 0.86 dB against about 0.54 dB system NF. Topology is the same as the Pro Stick Plus (LNA, then SAW). Datasheet Rev 3.0 also lists an antenna-port DC block, a Skyworks limiter and an HPF below 100 MHz, which are protection extras the Pro Stick Plus does not list. Tuner: R828S, which at 1090 MHz gives about 1 dB better MDS than a V3 per the vendor chart. Its two-tone limit is about -29 dBm at 1090 MHz. TCXO 1 ppm against 0.5 ppm (not critical). Aluminium cases on both modules.
+    - **Worse in:** About 3 dB lower front-end gain and about 0.3 dB worse system NF (vendor numbers plus my model). It also uses up the spare V4L, against the stack's 'keeps the spare a spare' role. It adds a second module, an SMA coupler and a bias or USB-C power path. Independent head-to-head evidence leans the other way: a forum report (seen only in a search summary, thread not re-read) had the Pro Stick Plus with 16% more positions than a V3 with the Uputronics 1090. No V4L-specific measurement exists. Not proven not-worse.
+    - **Compatibility:** The V4L bias tee gives 4.5 V, inside the FPA's 3.5-5.5 V range, but it needs the LAB_BIAS_OK token held for the whole continuous session. Alternatively power the FPA from USB-C on another LAB hub port. About 250-270 mA plus about 50 mA, within the 0.75 A LAB limit.
+    - **Risks:** Rejected as worse in gain and NF, and it violates the spare-V4L role. It remains the documented budget fallback (already in STACK) for a user who accepts losing the spare.
+    - **Seller url:** https://store.uputronics.com/products/uputronics-filtered-preamps
+    - **Sources:**
+      - https://store.uputronics.com/products/uputronics-filtered-preamps.js
+      - https://discussions.flightaware.com/t/preamp/48514
+      - https://discussions.flightaware.com/t/rtl-sdr-vs-pro-stick-plus/73232
+  3.
+    - **Name:** DIY: V4L + generic eBay/AliExpress '1090 MHz active SAW filter + LNA' module (unbranded)
+    - **Kind:** diy
+    - **Price usd:** About $18-19 for the module (EUR 16.45-15.98 on ended eBay.de listings, from a search summary; UNVERIFIED) + $37.95 for a 4th V4L = about $56 (model). About $18 if the spare V4L is used.
+    - **Spec comparison:** No datasheet with traceable NF, gain, rejection or P1dB. LNA and SAW part numbers vary by listing. I found no independent measurement in rtl-sdr.com, the FlightAware forum or any review.
+    - **Worse in:** Unknown on every critical spec: NF, gain, out-of-band rejection and linearity are all unproven. Using the spare V4L breaks the spare role.
+    - **Compatibility:** Would need bias or 5 V and SMA joints, like the Uputronics option.
+    - **Risks:** Rejected: no measured evidence, as angle B requires. It could only be reconsidered after the lab's own conducted measurements (LiteVNA S21/S11 through pads, Y-factor NF with the noise source, and a two-tone test with the tinySA), and only if those results meet or beat 19 dB / 0.54 dB / 30 dB.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.rtl-sdr.com/akos-ads-b-comparison-of-19-different-rtl-sdr-dongles/
+  4.
+    - **Name:** Generic AliExpress 'ADS-B 1090 MHz RTL2832U+R820T2 dongle with LNA + SAW + TCXO' clones
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not priced. No listing tied to measured data, so I did not chase prices.
+    - **Spec comparison:** Marketing claims only. No independent measurement found in two targeted searches (rtl-sdr.com, discussions.flightaware.com).
+    - **Worse in:** Unproven on every spec. Forum users warn it is hard to tell which cheap units carry the stated chips (FlightAware forum thread 98418, 2025).
+    - **Compatibility:** Probably librtlsdr-compatible if it really carries an R820T2. Unverified.
+    - **Risks:** Rejected: no measurements, real risk of chip substitution or counterfeits, and an AliExpress order adds the EUR 3 per line duty plus the EUR 2 handling fee.
+    - **Seller url:** 
+    - **Sources:**
+      - https://discussions.flightaware.com/t/cheapest-possible-sdr-for-receiving-ads-b/98418?page=2
+  5.
+    - **Name:** AirNav RadarBox FlightStick (green; built-in LNA about 20.5 dB and 1090 MHz filter)
+    - **Kind:** other_brand
+    - **Price usd:** Not checked. It was rejected on measurement first.
+    - **Spec comparison:** Simultaneous test by nu3e on 18 Jan 2019: two identical antennas 60 cm apart, matched gain. With no external filter on either stick, the Pro Stick Plus received 'many more aircraft'. Results were 'virtually identical' only when the FlightStick had an extra FlightAware external 1090 filter. The tester concluded it behaves like the unfiltered orange Pro Stick.
+    - **Worse in:** Measured worse on aircraft count without an extra filter. Matching the Pro Stick Plus needs a $19.95-class external filter and its insertion loss. The cheaper black 'Micro' is a relabelled generic stick.
+    - **Compatibility:** RTL2832U/R820T2 class, USB, SMA.
+    - **Risks:** Rejected: measured worse.
+    - **Seller url:** 
+    - **Sources:**
+      - https://discussions.flightaware.com/t/radarbox-flightstick-vs-flightaware-pro-stick-plus/44824
+  6.
+    - **Name:** FlightAware Pro Stick (orange, no built-in filter)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 60.33 (GBP 45.30, The Pi Hut SKU 103074, available=true, re-checked 18 Oct 2026). Same Pi Hut EU shipping and duty burden.
+    - **Spec comparison:** Same 19 dB / 0.4 dB NF / OIP3 +39 dBm LNA, 0.5 ppm TCXO and R820T2. No SAW filter: 0 dB out-of-band rejection against 30 dB. Draws 330 mA against 300 mA. rtl-sdr.com, same splitter: the Pro Stick Plus edged ahead even of the Pro Stick plus external filter with the FA antenna. Akos measured 18.45% more positions and 5.4% more range for the Pro Stick Plus.
+    - **Worse in:** Out-of-band rejection (none). Measured fewer positions and less range. 30 mA more current. Adding the FA external filter ($19.95) puts 1.65 dB loss ahead of the LNA and costs more than the Pro Stick Plus in total.
+    - **Compatibility:** Same as the current part.
+    - **Risks:** Rejected: worse.
+    - **Seller url:** https://thepihut.com/products/flightaware-pro-stick-usb-sdr-ads-b-receiver
+    - **Sources:**
+      - https://thepihut.com/products/flightaware-pro-stick-usb-sdr-ads-b-receiver.js
+      - https://www.rtl-sdr.com/flightaware-prostick-vs-flightaware-prostick-plus-review/
+      - https://www.rtl-sdr.com/tag/prostick/
+  7.
+    - **Name:** RTL-SDR Blog 1090 MHz ADS-B LNA (HPF, LNA, SAW, LNA, SAW; 27 dB, NF about 1 dB, more than 60 dB out-of-band) + V4L
+    - **Kind:** other_brand
+    - **Price usd:** Not orderable. Launch price was $24.95 incl. shipping, but the admin says it will not return because its LNA chip was discontinued, and today's rtl-sdr.com store page does not list it.
+    - **Spec comparison:** Better out-of-band rejection (more than 60-80 dB against 30 dB) and more gain (27 against 19 dB). Worse NF (about 1 dB against 0.4 dB). The only head-to-head against the Pro Stick Plus (most packets in a strong-out-of-band site) was run by the vendor itself, so it is not independent.
+    - **Worse in:** NF. It is also unavailable, and as a V4L add-on it would need the spare V4L or a 4th one.
+    - **Compatibility:** Bias-tee only (3.3-5 V, 150 mA), so it would need the token held continuously.
+    - **Risks:** Rejected: discontinued, with no independent measurement.
+    - **Seller url:** https://www.rtl-sdr.com/store/
+    - **Sources:**
+      - https://rtl-sdr.com/new-product-rtl-sdr-blog-1090-mhz-ads-b-lna/
+      - https://www.rtl-sdr.com/store/
+  8.
+    - **Name:** DIY: V4L + RTL-SDR Blog Wideband LNA V2 (bias-tee powered, 100 MHz-6 GHz)
+    - **Kind:** diy
+    - **Price usd:** 19.95 + 37.95 (4th V4L) = 57.90, or 19.95 using the spare V4L (rtl-sdr.com store, Chinese warehouse in stock). Shipped from China, so the EUR 3 + EUR 2 per line charges apply.
+    - **Spec comparison:** Wideband gain with no 1090 SAW: 0 dB out-of-band rejection against 30 dB. It amplifies FM, DVB-T and GSM straight into the R828S, whose two-tone limit is about -29 dBm at 1090 MHz. No independent ADS-B comparison against the Pro Stick Plus.
+    - **Worse in:** Out-of-band rejection and overload margin. Unproven sensitivity. Uses up the spare V4L.
+    - **Compatibility:** Bias-tee powered, so it needs the token held continuously.
+    - **Risks:** Rejected: worse and unmeasured.
+    - **Seller url:** https://www.rtl-sdr.com/store/
+    - **Sources:**
+      - https://www.rtl-sdr.com/store/
+  9.
+    - **Name:** Plain RTL2832U/R820T2 dongles without LNA (Nooelec NESDR Mini/SMArt, V3-class, generic)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Cheaper on paper. Not priced, since rejected on measurement.
+    - **Spec comparison:** Akos's 19-dongle ADS-B test: FlightAware dongles got the best reception thanks to the built-in LNA's much lower NF. Nano-size dongles were worst, and heat lowered performance. G4FRO, on the FlightAware forum (Feb 2021, sequential test): going from a NESDR SMArt v4 to the Pro Stick Plus roughly doubled average and tripled peak tracked aircraft.
+    - **Worse in:** System NF (no LNA) and out-of-band rejection (no filter). Measured worse.
+    - **Compatibility:** librtlsdr-compatible.
+    - **Risks:** Rejected: worse.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.rtl-sdr.com/akos-ads-b-comparison-of-19-different-rtl-sdr-dongles/
+      - https://discussions.flightaware.com/t/rtl-sdr-vs-pro-stick-plus/73232
+  10.
+    - **Name:** KEEP: FlightAware Pro Stick Plus (current part)
+    - **Kind:** current_part
+    - **Price usd:** 69.92 (GBP 52.50, The Pi Hut, available=true 18 Oct 2026)
+    - **Spec comparison:** Reference values: 19 dB / 0.4 dB NF LNA (OIP3 +39 dBm), then a 1075-1105 MHz SAW (2.3 dB loss, 30 dB rejection), R820T2, 0.5 ppm TCXO, 5 V / 300 mA, SMA, no bias tee.
+    - **Worse in:** Nothing within this search. Known weakness: the LNA sits before the filter, so it overloads near very strong out-of-band signals or with wideband antennas. Use the narrow 6.5-7 cm elements and keep the gain below maximum.
+    - **Compatibility:** LAB USB 300 mA (TPS2553 0.75 A), librtlsdr +lab, readsb on noble arm64. Never touches the bias token.
+    - **Risks:** Moonraker's EU page reportedly labels it 'DISCONTINUED' (search snippet only; the page returned 403 to my fetch), so EU availability may shrink. The Pi Hut route carries DHL Express, import VAT and the EUR 3 (later also EUR 2) per line charges for an EU address.
+    - **Seller url:** https://thepihut.com/products/flightaware-pro-stick-plus-usb-sdr-ads-b-receiver
+    - **Sources:**
+      - https://thepihut.com/products/flightaware-pro-stick-plus-usb-sdr-ads-b-receiver.js
+      - https://www.flightaware.com/adsb/prostick/
+      - https://www.rtl-sdr.com/flightaware-release-their-prostick-plus-ads-b-optimized-rtl-sdr-with-lna-and-filter-built-in/
+- **Notes:** VERDICT (angle B: generic, clone, DIY, used): keep the FlightAware Pro Stick Plus. No cheaper option from this angle is proven not-worse by independent measurements.
+  
+  Why each option fails:
+  - Generic or clone LNA+SAW dongles and modules: no independent measurement exists, so they are rejected.
+  - RadarBox FlightStick, plain R820T2 dongles and the unfiltered orange Pro Stick: measured worse.
+  - RTL-SDR Blog ADS-B LNA: discontinued.
+  - Spare V4L + Uputronics 1090 ($50.53 EU storefront): cheaper only because it uses up the spare V4L. It is about 3 dB lower in gain and about 0.3 dB worse in system NF (vendor numbers plus my model). It stays the documented budget fallback, not a not-worse analog.
+  - Used Pro Stick Plus: same design, but I could not verify a used price (eBay and Kleinanzeigen returned 403 to every fetch), and an unknown unit needs a conducted acceptance test. Not adopted.
+  
+  What I verified today (18 Oct 2026):
+  - The Pi Hut .js: Pro Stick Plus GBP 52.50 and Pro Stick GBP 45.30, both available.
+  - Uputronics .js: 1090 variant GBP 44.39, available; Gen3 aluminium case; 5 V bias or USB-C power; LNA before the SAW.
+  
+  Not verified:
+  - Moonraker's 'DISCONTINUED' label (snippet only).
+  - The 16%-more-positions Uputronics-vs-Pro Stick Plus figure (seen only in a search summary).
+  - The eBay generic module prices (ended listings, from a search summary).
+  - The system-NF numbers. These are my model with a 3.5 dB tuner NF assumption. FlightAware's 0.4 dB LNA NF is a vendor claim; I found no independent NF measurement.
+  
+  Advice for the EU purchase (outside this angle): look for the same Pro Stick Plus from an EU-stock seller to avoid the Pi Hut DHL Express charge and the EUR 3 + EUR 2 per line charges. I found no EU EUR listing in one search.
+  
+  Rules: every candidate is receive-only, uses no loop antenna and no conducted source, and none touches the Q6A or the antennas.
+  
+  WebSearch calls used: 11.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
