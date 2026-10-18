@@ -236,6 +236,8 @@ _Run `wf_45d278c2-004`_
   - The GNSS backup cell keeps ephemeris and time for hot starts, and GNSS time can stand in for an RTC when booting offline. I did not verify whether the Q6A has an RTC battery fitted.
 - **Confidence:** medium
 
+_Агент цього етапу ще працює (run `wf_45d278c2-004`)._
+
 ## Форуми та досвід спільноти (`forums`)
 
 _Run `wf_45d278c2-004`_
@@ -1337,5 +1339,251 @@ _Run `wf_45d278c2-004`_
 
 ## Адверсаріальна перевірка (`verify`)
 
-_Агент цього етапу ще працює (run `wf_45d278c2-004`)._
+_Run `wf_45d278c2-004`_
+
+- **Component:** GNSS receiver + IMU/compass (location, time/PPS, on-screen antenna pointing) for the Radxa Dragon Q6A handheld
+- **Recommendation holds:** так
+- **Issues:**
+  1.
+    - **Claim:** Route A user-space PPS daemon: off = -f if f < 0.5 else 1 - f, sent as sock_sample.offset with pulse=1 to chrony
+    - **Problem:** The sign is inverted. For pulse samples, chrony 4.5 and master call RCL_AddPulse(instance, &sys_ts, sample.offset). RCL_AddCookedPulse then computes offset = -second. The native PPS driver passes +1e-9*ts.tv_nsec, which is the system timestamp's own fractional second. The struct comment ('true minus system') only holds for pulse=0 samples. With the daemon as written, chrony would steer away from the edge until the 'lock NMEA' consistency check drops every pulse.
+    - **Correction:** Send the signed fractional second of the system timestamp: off = f if f < 0.5 else f - 1 (or simply ns/1e9, which chrony normalises to +/-0.5 s).
+  - Check that chronyc sourcestats converges to a few us std-dev.
+  - Keep the socket under /run/chrony.*.sock, the only pattern Ubuntu's chronyd AppArmor profile allows.
+  - Alternative: on the Radxa 7.0.11 kernel (CONFIG_PPS_CLIENT_GPIO=m), use pps-gpio with an overlay and 'refclock PPS /dev/pps0 lock NMEA' (the profile already allows /dev/pps*).
+    - **Source:** https://gitlab.com/chrony/chrony/-/raw/master/refclock_sock.c ; https://gitlab.com/chrony/chrony/-/raw/master/refclock.c ; https://gitlab.com/chrony/chrony/-/raw/master/refclock_pps.c ; https://salsa.debian.org/debian/chrony/-/raw/debian/latest/debian/usr.sbin.chronyd
+  2.
+    - **Claim:** LC76G is in stock at Prom.ua sellers (RoboTrade, kabelok, bazarok) for 1,044-1,421 UAH
+    - **Problem:** On 18 Oct 2026 Prom.ua has only three Waveshare 24370 listings, all 'pid zamovlennia' (made to order): kabelok 1,343.85 and 1,381.05 UAH, RoboTrade 1,501.95 UAH. None is ready to ship.
+    - **Correction:** Budget about 1,350-1,500 UAH (~$30-33 at the NBU rate of 44.86) and expect a lead time. Alternatively order direct from Waveshare ($14.99; the page shows no stock text) or from AliExpress.
+    - **Source:** https://prom.ua/ua/search?search_term=LC76G ; https://www.waveshare.com/LC76G-GNSS-Module.htm ; https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?valcode=USD&json
+  3.
+    - **Claim:** The gnss-gate 'no EW flags' rule uses LC76G $PAIRSPF / $PQTMJAMMINGSTATUS as spoofing/EW protection
+    - **Problem:** The LC26G/LC76G/LC86G protocol spec v1.4 documents jamming detection only: PAIR391 enables PAIRSPF status 0-3, plus PQTMJAMMINGSTATUS and the JAM_IND pin. Spoofing is not mentioned anywhere in the spec. Under Ukrainian GPS spoofing the LC76G raises no flag, so only the plausibility gates (RTC, saved QTH, TLE window) protect you.
+    - **Correction:** Treat LC76G EW status as jamming-only. If you want spoofing flags, use a u-blox M10 (UBX-NAV-STATUS spoofDetState, MON-RF jammingState), for example the Uputronics MAX-M10S breakout. Keep the time, position and RTC gates in every case.
+    - **Source:** https://forums.quectel.com/uploads/short-url/rUEismNTHFHWMMyJR1WxrcTaRB7.pdf (Protocol Spec v1.4, sections 2.3.14, 2.4.35, 2.4.81)
+  4.
+    - **Claim:** Choose the BNO086 if its price is close to the BNO085; Prom.ua BNO086 3,595-4,060 UAH
+    - **Problem:** In Ukraine the prices are not close. Only one BNO086 listing is in stock (SparkFun SEN-22857, 4,060 UAH, LUXOR.uno); the 2,835 UAH listings are unavailable. BNO085 boards are in stock or ready to ship at 2,121 UAH (GY-BNO085), 2,480 UAH (LUXOR) and 3,401 UAH (LeChat).
+    - **Correction:** Buy a BNO085 locally from a seller that accepts returns, and run the field-magnitude test on arrival. Or import a SparkFun BNO086 ($34.95, in stock) or an Adafruit BNO085 ($29.50, in stock). Both CEVA parts are listed as active by distributors.
+    - **Source:** https://prom.ua/ua/search?search_term=BNO086 ; https://prom.ua/ua/search?search_term=BNO085 ; https://www.sparkfun.com/sparkfun-vr-imu-breakout-bno086-qwiic.html ; https://www.adafruit.com/product/4754 ; https://www.mouser.com/en/ProductDetail/CEVA/BNO086?qs=ulEaXIWI0c%2FqTo1scjodAw%3D%3D
+  5.
+    - **Claim:** Plain i2cdetect silently skips 0x03-0x2F, 0x38-0x4F and 0x60-0x77 on GENI I2C, which probably explains radxa-overlays issue #552
+    - **Problem:** The skipped ranges are correct: i2c-qcom-geni.c returns I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK. But the skip is not silent; i2cdetect prints 'Warning: Can't use SMBus Quick Write command, will skip some addresses'. Issue #552 never mentions i2cdetect. The reporter enabled the Argon kernel PWM driver (CONFIG_PWM_ARGON_FAN_HAT=y) and saw the fan speed not change. A kernel driver does not probe with SMBus Quick, so this quirk cannot explain it.
+    - **Correction:** Keep the 'i2cdetect -y -r N' advice, but treat #552 as an open problem with no known cause. Note that the mainline DTS already sets i2c0 (pins 13/15), i2c2 (27/28) and i2c6 (3/5) to okay. It also sets spi14 (pins 22/33/36/37) to okay, so pin 37 is not free for PPS.
+    - **Source:** https://raw.githubusercontent.com/torvalds/linux/master/drivers/i2c/busses/i2c-qcom-geni.c ; https://git.kernel.org/pub/scm/utils/i2c-tools/i2c-tools.git/plain/tools/i2cdetect.c ; https://github.com/radxa-pkg/radxa-overlays/issues/552 ; https://raw.githubusercontent.com/torvalds/linux/master/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+  6.
+    - **Claim:** QO-100 dish: ~5.7 deg beamwidth; peak on the beacon; move the puck if the dish is steel; steel camping dishes distort the field
+    - **Problem:** The user has dropped dish antennas, so this guidance is obsolete.
+    - **Correction:** For the non-dish 10 GHz antenna (horn, patch array or helix) and the L/S-band helices:
+  - Set elevation from gravity (1.5 deg static spec).
+  - Set azimuth by sun-sight or compass. Geostationary QO-100 needs this only once.
+  - Then peak on the beacon or the signal.
+  - Calibrate per antenna to cover the steel tape elements, the LNB body and brackets.
+    - **Source:** Task update (1); https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf (sec. 6.7)
+  7.
+    - **Claim:** Budget option: ICM-20948 directly on the Q6A I2C bus, with imufusion on the host
+    - **Problem:** This contradicts the core advice to mount the magnetometer on the antenna boom:
+  - A sensor in the case sees fields from the cells, the fan and the backlight current.
+  - I2C over a 1-2 m cable is unreliable; SARCNET says it 'does not work much over 1 metre of unshielded cable'.
+  - TDK's product page marks the ICM-20948 EOL.
+  - SlimeVR calls it sensitive to bad magnetic environments.
+  - Only one cheap Prom.ua seller has it in stock (616.62 UAH).
+    - **Correction:** Put the ICM-20948 in the same RP2040-Zero USB puck (clones 109-130 UAH, in stock). Run x-io Fusion on the RP2040, or stream raw data and run imufusion on the Q6A. Price the budget option at about 1,200-1,350 UAH.
+    - **Source:** https://invensense.tdk.com/products/motion-tracking/9-axis/icm-20948/ ; https://www.sarcnet.org/sarctrac-mk2.html ; https://docs.slimevr.dev/diy/imu-comparison.html ; https://prom.ua/ua/search?search_term=ICM-20948 ; https://prom.ua/ua/search?search_term=RP2040-Zero
+  8.
+    - **Claim:** Calibrate once per antenna and keep one DCD per antenna
+    - **Problem:** The BNO08x stores a single DCD internally, and the stock Adafruit/SparkFun examples cannot swap DCDs. Swapping is only possible through the SH-2 FRS API: sh2_getFrs/sh2_setFrs on record 0x1F1F (DYNAMIC_CALIBRATION), followed by a reset. That is untested custom firmware work.
+    - **Correction:** Do one of these:
+  - Implement FRS 0x1F1F save/restore in the puck firmware and store one blob per antenna on the Q6A.
+  - Re-run the rotation calibration after every antenna swap (status 3, plus the |B| and dip checks).
+  - Build one puck per antenna (~2,300-2,600 UAH each).
+    - **Source:** https://raw.githubusercontent.com/adafruit/Adafruit_BNO08x/master/src/sh2.h ; https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf (sec. 3.4)
+  9.
+    - **Claim:** Mount the 25x25 mm active patch on the top of the case over a >=50x50 mm ground plane, at least 5 cm from the SoC, LimeSDR and DC-DC converters
+    - **Problem:** A palm-sized case around an 85x65 mm board cannot give 5 cm clearance plus the ~12 cm ground plane that fixed a SAM-M10Q. The new high-resolution, high-brightness HDMI display adds a multi-Gbit/s TMDS cable and a high-current backlight boost converter inside the case. Community reports show USB 3 jamming GNSS within ~2 m.
+    - **Correction:** Use an external active GNSS antenna on a 1-3 m lead, or put the GNSS in the boom puck (see missed options). If the patch stays on the lid, put a solid copper or aluminium ground plane under it that also shields the HDMI cable and the backlight converter. Route HDMI and USB3 cables away from the coax.
+    - **Source:** https://community.sparkfun.com/t/sam-m10q-breakout-cannot-acquire-fix/67651 ; https://forum.openmarine.net/showthread.php?pid=19200
+  10.
+    - **Claim:** The RP2040 + BNO08x puck mounted on the antenna boom (RFI covered only by the general SARCNET notes)
+    - **Problem:** The puck sits next to the 137/145/435 MHz driven elements and the LNA. RP2040 clocks have harmonics close to these bands: the 12 MHz crystal and the 48 MHz USB PLL both produce 144 MHz and 432 MHz. Full-speed USB data on the cable is broadband. Nobody has measured the effect.
+    - **Correction:** Shield the puck with copper tape bonded to ground and mount it behind the reflector. Clamp a ferrite on each end of the USB cable. Compare the SDR++ noise floor with the puck on and off at 137.1/137.9, 145.8 and 435-438 MHz before trusting it. Pick an RP2040 system clock whose harmonics avoid those bands.
+    - **Source:** https://www.sarcnet.org/sarctrac-mk2.html (RFI from the Pi and 5 V lines); harmonic arithmetic is my own
+  11.
+    - **Claim:** LimeSDR Micro firmware (commit of 9 Oct 2026) has no NMEA forwarding and no GPSDO; the GNSS variant is redundant
+    - **Problem:** The conclusion is correct but the details are off:
+  - LimeSDR-Micro_FW HEAD is 13628a9, dated 29 Sep 2026.
+  - vPhyTimerPPSINHandler is a weak stub, and vPhyTimerPPSINEnable is never called.
+  - GNSS appears only as the GNSS_FIX expander input.
+  - The LimeSuiteNG limesdr-micro branch (80ffad5, 1 Oct 2026) has no GNSS code for the Micro; it exposes only 'VCTCXO DAC (volatile)' and the EEPROM region 'XO_DAC' at 0xFFFE.
+  - Crowd Supply says the GNSS 'may be used for location, time of day, and generating a VCTCXO DAC value', but no public code backs this.
+  - Confirmed: $249 basic / $299 GNSS, new orders ship 15 Dec 2026.
+    - **Correction:** Keep the advice to skip the +$50 GNSS variant and keep a separate GNSS module.
+    - **Source:** https://github.com/myriadrf/LimeSDR-Micro_FW ; https://github.com/myriadrf/LimeSuiteNG/tree/limesdr-micro ; https://www.crowdsupply.com/lime-micro/limesdr-micro
+  12.
+    - **Claim:** Not verified whether the Q6A has an RTC battery fitted
+    - **Problem:** Now resolved:
+  - The Q6A has an RS4C411 RTC (DT 'st,m41t11' on i2c10 @0x68, rtc-ds1307 driver, /dev/rtc0).
+  - It has a 2-pin 1.25 mm connector for a CR2032 (3.3 V).
+  - The cell has to be bought separately.
+    - **Correction:** Fit a Radxa 2-pin RTC battery (or a CR2032 on a 1.25 mm lead; watch the polarity). Check with 'hwclock -r -f /dev/rtc0' after 10+ minutes unpowered. Then use it as the time anchor in the spoofing gate.
+    - **Source:** https://docs.radxa.com/en/dragon/q6a/hardware-use/rtc ; https://raw.githubusercontent.com/torvalds/linux/master/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+  13.
+    - **Claim:** ATGM336H boards have a PPS pin; Prom.ua 491-520 UAH
+    - **Problem:** The prices are confirmed (491-597 UAH, ready to ship), but none of the Prom.ua listings mentions a PPS pin, and many ATGM336H boards break out only VCC/GND/TX/RX. The PPS quality evidence (time-nuts: 10-39 ns offsets, up to 20 ns periodic variation) applies only if the pin is broken out.
+    - **Correction:** Before buying, check the photo for a fifth 'PPS' pad. Without one, treat the board as NMEA-only (10-100 ms), which is still fine for passes. gpsd >= 3.26 adds CASIC decoding, but NMEA works on 3.25.
+    - **Source:** https://prom.ua/ua/search?search_term=ATGM336H ; https://febo.com/pipermail/time-nuts_lists.febo.com/2022-May/105808.html ; https://gitlab.com/gpsd/gpsd/-/raw/master/NEWS
+- **Forum and fix assessment:** Overall, the forum evidence is accurate and supports the plan: a UART GNSS with PPS, plus a BNO08x in a boom puck behind an MCU bridge. Most of the fixes are technically sound. I checked them independently.
+  
+  LC76G configuration (Quectel protocol spec v1.4):
+  - PAIR752 PPSType: 0 = off, 1 = after first fix, 2 = 3D only, 3 = 2D/3D, 4 = always. Choosing 2 over 'always' is correct.
+  - PAIR753 defines only modes 0, 2 (survey-in), 3 (position-hold) and 4 (delay). The forum's $PAIR753,1 is not in the spec, so skip it.
+  - PAIR066 reboots the module.
+  - Every proposed NMEA checksum is correct (PAIR752,2,100*39; PAIR066...*3A; PAIR391,1*2C; PAIR513*3D; PQTMVERNO*58; PQTMSAVEPAR*5A; PAIR496,0*2D; PQTMCFGMSGRATE...*11).
+  
+  Q6A pins, device tree and kernel:
+  - The Radxa docs confirm the pin map: pin 7 = GPIO96, 13/15 = I2C0, 16/18 = UART6, 32/29 = UART7 TX/RX, and 8/10 = the UART5 debug console.
+  - Mainline DTS enables i2c0, i2c2 and i2c6. It also enables spi14 on pins 22/33/36/37, so moving PPS off pin 37 is right. GPIO96 is unclaimed in mainline.
+  - GENI I2C has a 1 s XFER_TIMEOUT and no SMBus Quick.
+  - Radxa linux-7.0.11 has PPS_CLIENT_GPIO=m and PPS_CLIENT_LDISC=m. The 6.18.2 qcom fragment lacks both. Both kernels have USB_ACM, FTDI_SIO, CH341, CP210X, RTC_DRV_DS1307 and IIO_ST_LSM6DSX.
+  
+  Ubuntu noble packages: gpsd 3.25, chrony 4.5, python3-libgpiod 1.6.3.
+  
+  chrony: 'maxchange 5 1 -1' has the right semantics. The SOCK struct ('qqdiiii', 40 bytes, magic 0x534F434B) matches aarch64.
+  
+  BNO08x datasheet:
+  - It clock-stretches when polled with no data and does not support repeated start.
+  - Magnetometer calibration is off in UART-RVC mode.
+  - The 2.0/3.5 deg accuracy figures assume an external crystal.
+  - The ARVR-stabilised rotation vector and 'use Game RV in unstable magnetic fields' are CEVA's own recommendations.
+  
+  Errors and overreaches:
+  - The user-space PPS daemon sends the chrony SOCK pulse offset with the wrong sign. This would break Route A.
+  - Issue #552 is a kernel PWM-driver problem, not an i2cdetect artefact, and i2cdetect warns rather than skipping silently.
+  - 'One DCD per antenna' needs FRS 0x1F1F save/restore code that nobody has written.
+  - The dish advice is obsolete.
+  - The budget option's host-side I2C IMU conflicts with mounting it on the boom.
+  - Antenna placement in a palm-sized case is optimistic, given the new HDMI display and its backlight.
+  - The LC76G's EW reporting covers jamming only.
+  
+  Still unproven: Q6A UART6 TX. Gate it with a loopback test and the $PQTMVERNO reply, and keep the FT232RL USB fallback.
+- **Final recommendation:**
+  - **Name:** Quectel LC76G (Waveshare 24370) on Q6A UART6 (/dev/ttyHS1), with optional PPS on pin 7 (GPIO96), plus a BNO085 (Adafruit 4754 or a local in-stock board; SparkFun BNO086 if imported) in an RP2040-Zero USB-CDC puck on the antenna boom, plus a CR2032 on the Q6A RTC header
+  - **Price:** Buying direct: about $50-55 plus shipping (LC76G $14.99; Adafruit BNO085 $29.50 or SparkFun BNO086 $34.95; RP2040-Zero ~$3; RTC cell lead ~$2-3, unverified).
+  Ukraine (Prom.ua, 18 Oct 2026): about 3,600-4,100 UAH (~$80-92 at 44.86 UAH/USD). LC76G 1,344-1,502 UAH (made to order), BNO085 2,121-2,480 UAH (in stock), RP2040-Zero 109-130 UAH.
+  - **Why:** GNSS:
+  - The LC76G has a confirmed timing-grade PPS (<100 ns RMS in a community stratum-1 build).
+  - The board includes an active antenna and an MS621FE backup cell, and NMEA works with gpsd 3.25 + chrony.
+  - It costs a third of the cheapest u-blox breakout with PPS.
+  - Use UART only. I2C is a clock-stretching mailbox protocol that gpsd cannot use.
+  - PPS is optional: SDR buffers are host-stamped at ms level, so NMEA time (10-100 ms) already covers pass prediction and Doppler. Add PPS as a second stage, through pps-gpio on the 7.0.11 kernel or the corrected SOCK daemon.
+  - Skip the LimeSDR Micro GNSS variant: neither its firmware nor LimeSuiteNG exposes position or PPS to the host.
+  
+  IMU:
+  - The BNO08x does fusion and calibration on-chip (Rotation Vector 2.0 deg static / 3.5 deg dynamic; gravity 1.5 deg). That is ample for helix and Yagi beamwidths and for coarse pointing of a horn at QO-100.
+  - Boom mounting keeps the magnetometer away from the 21700 cans, the fan and the backlight/DC currents.
+  - The RP2040 bridge avoids the documented BNO08x I2C failures on Linux hosts and the untested GENI clock-stretching behaviour.
+  - Use ARVR-RV plus Game RV with disturbance gating and a sun-sight offset; expect about +/-3-5 deg in practice.
+  
+  The Q6A's own RTC (CR2032) anchors the spoofing gate.
+  
+  EW hedge: if spoofing flags matter, swap the LC76G for the Uputronics MAX-M10S breakout (from GBP 28.80, ~$38). It brings the native gpsd UBX driver, spoofDetState and no Quectel regional-lock question.
+  - **Sources:**
+    - https://www.waveshare.com/LC76G-GNSS-Module.htm
+    - https://prom.ua/ua/search?search_term=LC76G
+    - https://forums.quectel.com/uploads/short-url/rUEismNTHFHWMMyJR1WxrcTaRB7.pdf
+    - https://forums.quectel.com/t/significant-periodic-1pps-noise-with-lc76g-module/57109
+    - https://www.adafruit.com/product/4754
+    - https://www.sparkfun.com/sparkfun-vr-imu-breakout-bno086-qwiic.html
+    - https://prom.ua/ua/search?search_term=BNO085
+    - https://prom.ua/ua/search?search_term=RP2040-Zero
+    - https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf
+    - https://docs.radxa.com/en/dragon/q6a/hardware-use/pin-gpio
+    - https://docs.radxa.com/en/dragon/q6a/hardware-use/rtc
+    - https://raw.githubusercontent.com/torvalds/linux/master/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+    - https://raw.githubusercontent.com/radxa/kernel/linux-7.0.11/arch/arm64/configs/radxa_qcom_7_0_defconfig
+    - https://gitlab.com/chrony/chrony/-/raw/master/refclock_sock.c
+    - https://github.com/myriadrf/LimeSDR-Micro_FW
+    - https://www.crowdsupply.com/lime-micro/limesdr-micro
+    - https://thepihut.com/collections/new-products-maker/products/ublox-max-m8q-breakout-for-active-antennas
+    - https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?valcode=USD&json
+- **Final budget option:**
+  - **Name:** ATGM336H-5N31 board with a PPS pad (otherwise NMEA-only), plus a generic ICM-20948 in an RP2040-Zero USB puck running x-io Fusion on the RP2040
+  - **Price:** About 1,200-1,350 UAH (~$27-30) on Prom.ua: ATGM336H 491-597 UAH (ready to ship), ICM-20948 616.62 UAH (only one cheap in-stock seller), RP2040-Zero clone 109-130 UAH.
+  - **Why:** This is the cheapest working set that is in stock in Ukraine:
+  - The ATGM336H is GPS+BDS only, but gpsd reads its NMEA fine.
+  - Time-nuts measurements show its PPS within tens of ns, if the board breaks the pin out.
+  - The ICM-20948 is plain I2C with no clock stretching, and x-io Fusion adds magnetic rejection and a transparent ellipsoid calibration.
+  - Putting it in the boom puck, not on the Q6A bus, keeps the magnetometer away from the battery, fan and backlight, and avoids long I2C runs.
+  
+  Trade-offs:
+  - The ICM-20948 is EOL at TDK and has a weak magnetometer, so expect worse heading than the BNO085 and rely more on the sun-sight plus Game-RV mode.
+  - The ATGM336H has no jamming or spoofing reporting.
+  - If no PPS pad is available, the SpeedyBee BZ-181 (genuine u-blox M10, ~560 UAH, no PPS) is the NMEA-only alternative with better gpsd support.
+- **Known problems and fixes to apply:**
+  - Bring up UART6 first:
+  - Enable the overlay with rsetup (it disables i2c6/spi6); the port appears as /dev/ttyHS1, not ttyS6.
+  - Add a udev symlink: KERNELS=="998000.serial" -> /dev/gnss0.
+  - Loop pin 16 to pin 18 and test, then send $PQTMVERNO*58 and confirm the reply, which proves TX works.
+  - If TX fails, measure the idle-high on pin 16 (UM3204H high is a weak 10 kOhm pull-up) and add a 74LVC1G125/1G17 buffer, or fall back to an FT232RL USB-UART with PPS on DCD (~1 ms).
+  - Prefer FTDI: ftdi_sio is in both kernels; DCD-change support on CP210x/CH340 is unverified.
+  - Never wire the GNSS to pins 8/10 (UART5 debug console and embloader input).
+  - LC76G one-time setup at 115200 baud:
+  - $PAIR752,2,100*39 (PPS only with a 3D fix, so a free-running PPS cannot lock chrony).
+  - $PAIR066,1,1,1,1,0,0*3A (the module reboots).
+  - $PAIR391,1*2C (jamming detection only; re-send at every boot from ExecStartPre).
+  - $PAIR513*3D and $PQTMSAVEPAR*5A to save.
+  - Do NOT send $PAIR753,1: it is not in the spec, and modes 2/3 assume a static antenna.
+  - Leave EPOC on unless you are chasing sub-us PPS noise.
+  - Never use the I2C interface.
+  - gpsd: DEVICES="/dev/gnss0", GPSD_OPTIONS="-n -p -s 115200", USBAUTO="false". Run one consumer only. Confirm gpspipe -w shows the NMEA0183 driver, not MTK.
+  - chrony:
+  - 'refclock SHM 0 refid NMEA offset <calibrated ~0.05-0.15> delay 0.2 noselect'.
+  - PPS on pin 7 (GPIO96, gpiochip4 line 96), not pin 37 (spi14 is enabled on it).
+  - Route B: pps-gpio overlay on kernel 7.0.11 and 'refclock PPS /dev/pps0 lock NMEA'.
+  - Route A: the SOCK daemon, but send offset = +fractional second of the system timestamp (f, or f-1 if f >= 0.5), not -f; socket path /run/chrony.*.sock for AppArmor.
+  - Confirm that the NPU/FastRPC demo still works after any kernel change.
+  - Spoofing/EW gate:
+  - Fit the CR2032 on the Q6A RTC header (2-pin 1.25 mm) and set rtcsync.
+  - Add 'maxchange 5 1 -1' to chrony.
+  - Hold PPS/QTH unless time is within +/-120 s of the RTC, the date falls inside the TLE window, the position is within 100 km of the saved QTH, and the fix is 3D with >= 6 satellites.
+  - Add NTP pool servers when Wi-Fi is up.
+  - Remember that the LC76G reports jamming only, never spoofing.
+  - Build the IMU puck:
+  - BNO085/086 in SPI mode (or I2C with INT and RST wired) on an RP2040-Zero.
+  - Use the Adafruit_BNO08x or SparkFun SH-2 C library, not CircuitPython (issue #49 is unresolved).
+  - Power it from clean 3.3 V and re-enable reports on every reset.
+  - Enable ARVR-RV (0x28), Game RV (0x08) and calibrated magnetic field (0x03) at 20-50 Hz.
+  - Calibration and heading filter:
+  - Rotate until the magnetometer status reads 3 and the RV accuracy is < 0.06 rad. Check |B| within +/-2.5 uT of WMM F (~51 uT, Kyiv) and dip within +/-3 deg of I (~67.6 deg).
+  - Then call sh2_saveDcdNow, sh2_setCalConfig(ACCEL|GYRO) and sh2_setDcdAutoSave(false).
+  - Display yaw_game + a gated offset + WMM declination (~+8.5 deg in Kyiv), with outlier rejection over 15 deg.
+  - Provide a sun-sight 'set north' button and re-sight every 20-30 min.
+  - Mounting:
+  - Keep the puck 15-20 cm or more from the steel tape elements, LNA/LNB, battery and power leads, and use brass or nylon screws.
+  - Run all DC as twisted pairs, with no chassis returns.
+  - Calibrate with the antenna attached.
+  - After swapping antennas, recalibrate, or implement FRS 0x1F1F DCD save/restore, or keep one puck per antenna.
+  - Puck RFI: shield the puck, put ferrites on both ends of the USB cable and mount it behind the reflector. Measure the SDR++ noise floor with the puck on and off at 137.1/137.9, 145.8 and 435-438 MHz. RP2040 harmonics fall at 144 and 432 MHz.
+  - GNSS antenna: prefer an external active antenna on a 1-3 m lead, or a patch on a lid ground plane that also shields the HDMI cable and backlight converter. Keep HDMI, USB3 and DC-DC wiring away from the patch and its coax.
+  - USB port budget: the RTL-SDR, the boom puck and the HDMI touch panel's USB use all three USB 2.0 ports. Keeping the GNSS on UART6 saves a port; the FT232RL fallback needs the USB 3.1 port or a hub.
+  - Test incoming BNO and magnetometer boards before building them in: |B| should stay constant within a few % while rotating, and the axes should match the datasheet frame. Faulty BNO086 and MMC5983MA units have been reported, and Prom.ua GY-BNO085 clones are unverified.
+  - Skip the LimeSDR Micro GNSS variant. For frequency accuracy, calibrate the VCTCXO DAC (LimeSuiteNG custom parameter 0, EEPROM 'XO_DAC' at 0xFFFE) against the PPS-disciplined host clock or a known LTE/GSM carrier. Use J4 only after firmware fix 1f70189 is merged.
+- **Missed better options:**
+  - Uputronics MAX-M10S Breakout for Active Antennas (sold by The Pi Hut from GBP 28.80, ~$38; VAT treatment unclear; stock was low). It has SMA, a PPS LED and pad, a supercap, and 3 V or 5 V versions. This is the cheapest genuine u-blox M10 with PPS I found, below SparkFun's $45.95 (whose stock status is contradictory). It gives the native gpsd UBX driver, spoofDetState/jammingState and no Quectel regional-lock question. You need an active antenna. Shipping to Ukraine is unverified. The supercap or BBR keeps config only for a limited time, so re-send it with ubxtool at every gpsd start.
+  - A single USB 'sensor puck': put the GNSS (LC76G or ATGM336H UART) and the BNO085 on the same RP2040-Zero, exposed as two USB-CDC ports (TinyUSB composite). One cable and one USB port then carry location, ms-level time and attitude. The GNSS antenna gets open sky away from the HDMI, LimeSDR and DC-DC noise. This avoids the unproven Q6A UART6 TX, overlay and pps-gpio path entirely. The cost is losing us-level PPS on the host, which this project does not strictly need.
+  - Use the Q6A's on-board RTC (RS4C411 with a CR2032 on a 2-pin 1.25 mm connector) as the anti-spoofing time anchor instead of relying on the GNSS backup cell. It costs a few dollars and is already on the board.
+  - Checked and rejected: the QCS6490's integrated GNSS is not exposed on the Q6A, whose docs list only Wi-Fi/BT plus two reserved antenna interfaces. WitMotion WT901C enclosed AHRS units (~$40) are MPU9250-based, an EOL TDK part, so they are no better than the BNO085.
+- **Remaining uncertainties:**
+  - Whether Q6A UART6 TX works on the current Radxa image. Forum reports of RX-only operation and rsetup pin-state errors are unresolved. The UM3204H/CJ3134K/UM3304 assignments match the schematic v1.21 text but have not been continuity-checked.
+  - Whether GPIO96 (pin 7) is free in Radxa's vendor device tree, rather than only in mainline. Check with gpioinfo.
+  - Quectel regional restriction: staff said an LC86G 'will not be working in Russia' (May 2026) without explaining how. It is unknown whether the LC76G shares this, or whether spoofed Russian coordinates or use near the border could kill fixes. It fails safe through the gate, but the GNSS would then be useless.
+  - How the LC76G jamming flag and the u-blox spoofing flag actually behave under Ukrainian EW is undocumented.
+  - The SOCK pulse sign comes from my reading of chrony source (4.5 and master have identical code). Confirm it on hardware with chronyc sourcestats.
+  - How much RFI the RP2040/BNO puck and its USB cable add at 137/145/435 MHz is unmeasured.
+  - Achievable heading on the steel tape-measure Yagi. SARCNET reports +/-5 deg at best for boom-mounted sensors.
+  - Stock is uncertain: the Waveshare page shows no stock text, Prom.ua LC76G is made-to-order only, there is a single cheap in-stock ICM-20948 seller, and the Pi Hut/Uputronics shipping to Ukraine and the FT232RL price are unverified.
+  - Authenticity of Prom.ua/AliExpress GY-BNO085 clones, and whether a given ATGM336H board breaks out PPS.
+  - Kernel choice: the 7.0.11 kernel provides pps-gpio, but both the 6.18 and 7.0 kernels have reported FastRPC/NPU issues. Route A is kernel-agnostic, but its PyPI gpiod 2.x build on aarch64 is untested.
+- **Confidence:** medium
 

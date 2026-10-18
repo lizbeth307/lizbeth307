@@ -728,3 +728,274 @@
   
   **Search budget:** 16 web searches used.
 
+## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
+
+- **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
+- **Candidates:**
+  1.
+    - **Name:** Xenarc 702GSH 7in sunlight-readable, optically bonded PCAP monitor
+    - **Size in:** 7
+    - **H res:** 1024
+    - **V res:** 600
+    - **Ppi:** 169.5
+    - **Brightness nits:** 1000
+    - **Brightness evidence:** Manufacturer spec page (1,000 cd/m2, 700:1 contrast); same on XenarcDirect. No independent measurement found.
+    - **Panel tech:** TFT LCD 16:9 with scaler (accepts input up to 1920x1080 per listing)
+    - **Host interface:** HDMI x1 (HDCP), VGA, DVI via adapter, 2x composite
+    - **Touch to host:** Projected-capacitive multi-touch over USB (manufacturer page); a commercial USB touchscreen, expected to be standard HID
+    - **Optical bonding and coating:** Touch panel optically bonded to the LCD (no air gap); anti-reflective plus anti-fingerprint coating
+    - **Power w:** under 10 W (manufacturer)
+    - **Supply:** DC 12 V nominal, 10-35 V operating range, so it runs straight from the 4S pack (12.8-16.8 V)
+    - **Dimensions weight:** 196 x 121.5 x 35 mm; 1.54 lb, about 0.70 kg (my conversion)
+    - **Operating temp:** -20 to 70 C
+    - **Price:** $429 base at XenarcDirect, listed In Stock (Oct 2026 fetch)
+    - **Availability:** XenarcDirect (US). International shipping is not stated on the page.
+    - **Ukraine availability:** No Ukrainian reseller found; import from the US
+    - **Q6a compatibility:** Good for video and touch: HDMI plus a USB-HID touch on one Q6A USB 2.0 port. Force the native mode (video=HDMI-A-1:1024x600@60) because the scaler also advertises 1080p and would downscale. Use standard CVT, not reduced blanking, for 1024x600. My calculation: CVT-RB gives only 19 vertical blanking lines, below the sc7280 DP minimum of 24, while standard CVT (about 49 MHz, vtotal 624) gives exactly 24.
+    - **Rf notes:** My calculation: a 49.0-49.1 MHz CVT clock puts its 3rd harmonic at about 147.0-147.4 MHz, only about 1-1.4 MHz above the 2 m band edge. Its only other band hits are the 45th/46th harmonics in S-band. The internal scaler-to-panel clock is unknown and cannot be chosen from the host, and the backlight boost runs from 10-35 V. Budget filtering and shielding.
+    - **Community reports:** None found for this model. LinuxCNC users report that similar USB-touch industrial monitors work driver-free (from the earlier audit).
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.xenarc.com/702GSH.html
+      - https://www.xenarcdirect.com/702GSH.html
+      - https://www.xenarc.com/all-lcd-small-form-factor-display-monitors/
+  2.
+    - **Name:** Xenarc 892GFC (and 892CFH) 8in IP65-front sunlight-readable PCAP monitor
+    - **Size in:** 8
+    - **H res:** 1280
+    - **V res:** 720
+    - **Ppi:** 183.6
+    - **Brightness nits:** 1000
+    - **Brightness evidence:** Manufacturer spec page (1,000 cd/m2, 1000:1)
+    - **Panel tech:** TFT LCD 16:9 with scaler (accepts 640x480 to 1920x1080)
+    - **Host interface:** 2x HDMI plus 1x USB-C 3.1 Gen 2 that 'can handle both the display and touchscreen' (implies DP Alt Mode input, not stated explicitly). The Q6A has no verified DP Alt Mode output, so use HDMI. The 892CFH variant has 2x HDMI and no USB-C.
+    - **Touch to host:** Projected-capacitive multi-touch over USB, via USB-C (manufacturer page)
+    - **Optical bonding and coating:** Optically bonded; anti-reflective plus anti-fingerprint
+    - **Power w:** 20 W or less (manufacturer)
+    - **Supply:** DC 9-36 V (12 V nominal); USB-C bidirectional PD
+    - **Dimensions weight:** 220.7 x 142.7 x 33 mm; 1.89 lb, about 0.86 kg (my conversion)
+    - **Operating temp:** -35 to 85 C; IP65/NEMA4 front
+    - **Price:** Not listed on the manufacturer page (sold via XenarcDirect)
+    - **Availability:** XenarcDirect (US)
+    - **Ukraine availability:** None found
+    - **Q6a compatibility:** HDMI plus USB touch works in principle. Avoid CEA 720p (74.25 MHz) for RF reasons. Plain CVT-RB 1280x720 has 21 blanking lines (fewer than 24), so use standard CVT or send 1080p and let the scaler downscale.
+    - **Rf notes:** My calculation: 720p CEA 74.25 MHz x10 = 742.5 MHz, and CVT 74.5-74.7 MHz x10 = 745-747 MHz, both inside the QO-100 IF. CVT 1280x720 at 56.5 Hz (about 70.3 MHz) leaves only the 32nd harmonic, at about 2250 MHz.
+    - **Community reports:** None found
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.xenarc.com/892GFC.html
+      - https://www.xenarc.com/all-lcd-small-form-factor-display-monitors/
+  3.
+    - **Name:** Lilliput 819H/T 8in 1000-nit IP65 industrial touch monitor
+    - **Size in:** 8
+    - **H res:** 1024
+    - **V res:** 768
+    - **Ppi:** 160
+    - **Brightness nits:** 1000
+    - **Brightness evidence:** Reseller listing (Markertek) and the Lilliput Touch Monitor index title ('8 inch 1000 nits IP65'). Resolution is inconsistent on the listing: 1024x768 in the features vs 1280x768 in the spec table.
+    - **Panel tech:** 8in 4:3 LCD, 170/170 viewing angle, 800:1
+    - **Host interface:** HDMI x1, VGA x1
+    - **Touch to host:** 10-point PCAP over USB-A ('for touch only'); a USB-A-to-C cable is included
+    - **Optical bonding and coating:** Optically bonded, anti-glare, anti-fingerprint (listing)
+    - **Power w:** 11 W or less at 12 V
+    - **Supply:** DC 9-36 V (12 V/2 A adapter included), so it runs straight from the 4S pack
+    - **Dimensions weight:** Listing gives 12x9x6 in and 5 lb, which look like shipping-box figures; the real unit size is not stated
+    - **Operating temp:** -25 to 75 C; IP65
+    - **Price:** $359 (list $399) at Markertek, out of stock, 'usually ships in 5-14 days'
+    - **Availability:** Markertek (US); Lilliput distributors in the EU (Syntex carries the 719 line)
+    - **Ukraine availability:** Not found on prom.ua (a Lilliput 719 search returned nothing)
+    - **Q6a compatibility:** HDMI plus USB-HID touch. Force the native 4:3 mode. Standard-CVT 1024x768 is a normal VESA mode, so EDID trouble is unlikely.
+    - **Rf notes:** Fixed internal scaler and panel clocks. The host mode can be chosen from a harmonic check (for example, 1024x768 at a non-60 Hz rate).
+    - **Community reports:** Lilliput USB touch works driver-free on Linux (LinuxCNC forum, from the earlier audit)
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.markertek.com/product/lil-819h-t/lilliput-819h-t-8-inch-1000-nits-ip65-industrial-touchscreen-monitor-ip65-unit-with-hdmi
+      - https://www.lilliput.com/touch-montior/
+  4.
+    - **Name:** Litemax Durapixel 0708-T (DLF0708-T panel / DLH0708-T / DLD0708-T) 7in 1600-nit
+    - **Size in:** 7
+    - **H res:** 1280
+    - **V res:** 800
+    - **Ppi:** 215
+    - **Brightness nits:** 1600
+    - **Brightness evidence:** Manufacturer product page spec table (1600 cd/m2, 1000:1, 55% NTSC). The features text is generic.
+    - **Panel tech:** 7in TFT, 176/176 viewing angle, 35 ms
+    - **Host interface:** Variants: LVDS (bare panel) or VGA/DVI-D/HDMI (kit or monitor). The page does not say which model number has which interface.
+    - **Touch to host:** Not stated on the page. Ask Litemax whether a USB PCAP option exists.
+    - **Optical bonding and coating:** Not stated
+    - **Power w:** 5.5 W (one variant, probably the bare panel) or 8.9 W (another variant); the mapping is not given
+    - **Supply:** DC 12 V
+    - **Dimensions weight:** 161 x 107 x 6.22 mm, 0.12 kg (panel variant) or 171.3 x 117.8 x 42 mm, 1 kg (enclosed variant)
+    - **Operating temp:** -20 to 70 C
+    - **Price:** Not listed (quote)
+    - **Availability:** Litemax direct or distributors (quote-based)
+    - **Ukraine availability:** None found
+    - **Q6a compatibility:** If the HDMI A/D-board variant is used: native 1280x800 over HDMI. Standard CVT 1280x800 (83.5 MHz) has 31 blanking lines, fine for the DP minimum of 24. Touch is unconfirmed, which disqualifies it unless Litemax supplies USB PCAP.
+    - **Rf notes:** My calculation: 1280x800 CVT at about 83.5-83.8 MHz has only its 27th harmonic in band (about 2254-2262 MHz). That makes it the RF-friendliest of the low-resolution modes.
+    - **Community reports:** None found
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.litemax.com/product-detail/0708-T-durapixel-industrial-display/
+  5.
+    - **Name:** Faytech FT07TMIP65HBHDMI 7in high-brightness IP65 HDMI touch monitor
+    - **Size in:** 7
+    - **H res:** 1024
+    - **V res:** 600
+    - **Ppi:** 169.5
+    - **Brightness nits:** 1000
+    - **Brightness evidence:** Manufacturer page ('1000+ cd/m2'). 1920x1080 is the maximum input resolution, not the native one.
+    - **Panel tech:** TFT LCD with scaler
+    - **Host interface:** HDMI or VGA
+    - **Touch to host:** 4-wire resistive over USB (not capacitive)
+    - **Optical bonding and coating:** Not stated
+    - **Power w:** 10 W
+    - **Supply:** 8-36 V DC
+    - **Dimensions weight:** 214 x 134 x 38.5 mm; 1.1 kg
+    - **Operating temp:** -25 to 75 C; IP65
+    - **Price:** $530.60 (3-4 week lead time if not stocked). The 8in sibling FT08TMIP65HDMI is $539.43, also resistive.
+    - **Availability:** Faytech North America / Faytech EU
+    - **Ukraine availability:** None found
+    - **Q6a compatibility:** HDMI plus USB touch works, but resistive touch has no multitouch and poor optics.
+    - **Rf notes:** Same as the other 1024x600 scaler monitors
+    - **Community reports:** None found
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.faytech.us/product/ft07tmip65hbhdmi7-7-inch-high-brightness-ip65-hdmi-touchscreen-monitor/
+      - https://www.faytech.us/touchscreen-monitor/high-brightness/sunlight-readable/
+  6.
+    - **Name:** Youritech ET070WU01-HLT 7in 1200x1920 2000-nit in-cell-touch MIPI panel (bare, B2B)
+    - **Size in:** 7
+    - **H res:** 1200
+    - **V res:** 1920
+    - **Ppi:** 323.5
+    - **Brightness nits:** 2000
+    - **Brightness evidence:** Manufacturer product page spec table (2000 cd/m2 typ.). No datasheet; quote only.
+    - **Panel tech:** Transmissive TFT (IPS-class, 80/80/80/80 viewing angle), portrait-native
+    - **Host interface:** MIPI DSI only (lane count not stated). Needs a third-party HDMI-to-MIPI bridge (for example LT6911-class) flashed for this panel; none is listed.
+    - **Touch to host:** In-cell touch on the panel; the touch IC is not stated (I2C). It reaches the host only through a bridge MCU that converts I2C to USB HID.
+    - **Optical bonding and coating:** In-cell touch means no separate touch layer or air gap. Cover glass and AR are not stated (the vendor offers optical bonding as customization).
+    - **Power w:** Not stated. My estimate scaled from the Midas 7in datasheet: about 6.4 W backlight at 2000 nits, plus the board.
+    - **Supply:** Panel rails plus an LED boost; depends on the bridge board
+    - **Dimensions weight:** Outline 105.46 x 162.82 mm; active area 94.5 x 151.2 mm; thickness not stated
+    - **Operating temp:** -20 to 70 C
+    - **Price:** Not listed ('Get a quote'); MOQ unknown
+    - **Availability:** Youritech (Shenzhen) B2B
+    - **Ukraine availability:** None; direct import
+    - **Q6a compatibility:** In principle the best above-FHD bright option over HDMI. It is portrait-native at 1200 px wide, under the sc7280 2400 px DPU line limit, so no virtual planes are needed. My calculation: 1200x1920@60 CVT-RB is about 161 MHz and 3.86 Gbps, inside the 2-lane HBR2 8.64 Gbps budget, with 55 blanking lines (24 or more needed). Rotate in the compositor. Practically unverifiable: no timings, no bridge board, no touch-IC data. DSI direct on the Q6A is unproven for third-party panels.
+    - **Rf notes:** My calculation: 161 MHz (CVT-RB 60 Hz) hits 14x = 2254 MHz in S-band. The same totals at 58 Hz (about 155.8 MHz) are clean in all six bands (1 MHz guard).
+    - **Community reports:** None found
+    - **Verdict vs current pick:** unverifiable
+    - **Sources:**
+      - https://www.youritech.com/products/7-inch-tft-lcd-display-1200x1920-high-brightness-2000nits-mipi-lcd-display-with-in-cell-touch.html
+      - https://www.youritech.com/size/7-inch/
+  7.
+    - **Name:** Youritech ET070FH01-HTT 7in 1920x1080 4500-nit in-cell-touch MIPI panel (EV-charger grade, bare)
+    - **Size in:** 7
+    - **H res:** 1920
+    - **V res:** 1080
+    - **Ppi:** 314.7
+    - **Brightness nits:** 4500
+    - **Brightness evidence:** Manufacturer product page spec table (4500 cd/m2 typ.). The sibling ET070FH01-HT is listed at 2000 cd/m2.
+    - **Panel tech:** Transmissive IPS TFT, 85/85/85/85 viewing angle, landscape
+    - **Host interface:** MIPI only. The page says no HDMI board is offered for this model.
+    - **Touch to host:** In-cell touch (IC not stated); needs a bridge MCU for USB HID
+    - **Optical bonding and coating:** Not stated for this model; the vendor generally offers AG/anti-scratch cover glass and optical bonding
+    - **Power w:** Not stated. My estimate: well over 10 W of backlight at full 4500 nits, scaling the Midas figure of about 3.2 W per 1000 nits. It would have to be run dimmed on a handheld.
+    - **Supply:** Board-dependent
+    - **Dimensions weight:** Outline 164.19 x 97.87 mm, the same as the Wisecoco 7in kit (164.2 x 98.0); active area 154.368 x 85.92 mm
+    - **Operating temp:** -20 to 70 C
+    - **Price:** Quote only
+    - **Availability:** Youritech B2B
+    - **Ukraine availability:** None; direct import
+    - **Q6a compatibility:** Identical outline, resolution, viewing angle and temperature range to the Wisecoco 7in panel. If the FPC pinout also matches (unverified), it could fit the Wisecoco HDMI board as a brighter-backlight swap, provided that board's LED driver can supply the higher current. Q6A side: identical to the current pick (1080p, 1920 px wide).
+    - **Rf notes:** Same as the current pick: avoid CEA 148.5 MHz. Clean options (my calculation) are 1080p at 52 Hz (128.7 MHz) or CVT-RB totals at 58.75 Hz (about 135.8 MHz). A higher-current LED boost adds switching noise.
+    - **Community reports:** None found
+    - **Verdict vs current pick:** unverifiable
+    - **Sources:**
+      - https://www.youritech.com/products/7-inch-tft-lcd-display-1920x1080-high-brightness-4500nits-mipi-lcd-display-with-in-cell-touch-for-ev-charger.html
+      - https://www.youritech.com/products/7-inch-tft-lcd-display-1920x1080-mipi-2000nits-high-brightness-lcd-display-with-in-cell-touch-for-healthcare-medical-display-solution.html
+  8.
+    - **Name:** AliExpress '2000nit High Brightness Incell Touch CTP 7in FHD HDMI-Compatible IPS LCD Module' (alternative source for the current-pick class)
+    - **Size in:** 7
+    - **H res:** 1920
+    - **V res:** 1080
+    - **Ppi:** 314.7
+    - **Brightness nits:** 2000
+    - **Brightness evidence:** Listing title only, seen in a search snippet. The title literally says '1200*1080', which is probably a typo for 1920x1080. The page could not be read (empty response).
+    - **Panel tech:** IPS, in-cell CTP (per title)
+    - **Host interface:** HDMI (per title, via a driver board)
+    - **Touch to host:** Not verifiable; probably the same CH57x USB-HID bridge class seen on Wisecoco boards
+    - **Optical bonding and coating:** In-cell touch per title; cover glass unknown
+    - **Price:** $106.09 (search snippet, Oct 2026), versus $132 for the Wisecoco site kit. A separate MIPI-only 2000-nit 7in FHD in-cell listing (item 3256805881153921) was $160.32.
+    - **Availability:** AliExpress (store not identified)
+    - **Ukraine availability:** AliExpress normally ships to Ukraine; not verified for this item
+    - **Q6a compatibility:** Same as the current pick, if it is the same glass and board
+    - **Rf notes:** Same as the current pick
+    - **Community reports:** None found
+    - **Verdict vs current pick:** comparable
+    - **Sources:**
+      - https://www.aliexpress.us/item/3256805990594653.html
+      - https://www.aliexpress.us/item/3256805881153921.html
+      - https://www.alibaba.com/product-detail/7-Inch-1920-1080-FHD-IPS_10000041147858.html
+- **Best above fhd:** I found no new plug-and-play option that is above FHD and at least 1000 nits in 5.5-8in with HDMI and USB touch.
+  - Industrial and rugged vendors top out at 1280x800 (Litemax 1600 nits, Lilliput 719/T 1000 nits) or 1280x720 (Xenarc 892GFC) in this size.
+  - Above-FHD HDMI kits are dim: an eBay 7in 1200x1920 HDMI touch kit is listed at 500 cd/m2 ($100.09 + $35 shipping, snippet only, eBay returned 403), and the Densitron DMT070F3NHCMU-1A 7in 1200x1920 HDMI is 550 cd/m2 (snippet only).
+  - The best new above-FHD part is the Youritech ET070WU01-HLT: 7in 1200x1920, 2000 cd/m2, in-cell touch, MIPI, -20 to 70 C, quote only. It is in the same class as the Midas MDT0700F1IHHC (2500 nits) but has no published timings, touch IC or bridge board.
+  - It would fit the Q6A well over an HDMI-to-MIPI bridge: 1200 px wide, about 161 MHz and 3.86 Gbps at 60 Hz CVT-RB, or harmonic-clean at 58 Hz / about 155.8 MHz (my calculation).
+  - Treat it as a bring-up project, not a purchase.
+- **Best overall:** The current pick stands: the Wisecoco 7in 1920x1080 2000-nit LTPS/IPS kit with HDMI board and USB-HID touch.
+  - No industrial or rugged maker checked (Lilliput, Xenarc, Faytech, Litemax, Geekland, Beetronics, Eagle Touch; Winmate and Kontron via search) sells a 7-8in FHD or WUXGA sunlight-readable monitor with host touch. Their 7-8in units are 800x480 to 1280x800 at 1000-1600 nits, weigh 0.4-1.1 kg, are 33-42 mm deep and draw 7-20 W.
+  - No drone ground-station monitor or field/director monitor found passes touch to the host. Examples: DJI High-Bright Remote Monitor (7in 1920x1200, 2000 cd/m2 on the listing, EUR 1,459); Feelworld P7 (7in 1920x1200, 2200 nits, no touch); Portkeys LH7/LH7H/LH7P and SmallHD Indie 7 on prom.ua, all with menu-only touch.
+  
+  If a finished, verified, rugged host-touch unit is required despite the low resolution, the best-optics fallback is the Xenarc 702GSH:
+  - 1000 nits, optically bonded, AR + anti-fingerprint coating, USB PCAP.
+  - 10-35 V straight from the 4S pack, under 10 W, 0.70 kg, -20 to 70 C.
+  - $429, in stock at XenarcDirect.
+  
+  The Lilliput 719/T (1280x800, 1000 nits, USB-C touch, 9-36 V, 8.5 W or less) stays the cheaper, sharper fallback; Markertek now lists it at $259.
+  
+  A cheaper source for the current-pick class may exist on AliExpress: a 2000-nit in-cell 7in FHD HDMI module at $106.09 (title only, unverified).
+- **Wisecoco 7in open questions resolved:** Partly resolved, by inference, not confirmation.
+  - Youritech, a Shenzhen panel maker, lists the ET070FH01-HT: 7in 1920x1080 IPS, 2000 cd/m2 typ., in-cell PCAP touch, MIPI, outline 164.19 x 97.87 mm, 85/85/85/85 viewing angle, -20 to 70 C. These match the Wisecoco 7in figures (outline 164.2 x 98.0 mm, 85/85/85/85, -20 to 70 C, 2000+ typ.) almost exactly. The two very likely share the same panel glass.
+  - This explains why Wisecoco lists touch as 'Interface Type: I2C': the touch is in-cell, its IC speaks I2C on the panel FPC, and USB-HID to the host depends entirely on the HDMI board's MCU. The Raspberry Pi forum report of a Wisecoco 7in touch enumerating as WCH CH57x (1a86:e5e3, hid-multitouch) fits that design.
+  - In-cell touch also means no separate touch sensor and no air gap. That is good for sunlight contrast, but the cover glass and AR coating are still unknown.
+  - The same outline also exists as a 4500-nit variant (ET070FH01-HTT). The 2000/2400/2500-nit spread across Wisecoco listings is therefore plausibly backlight binning or drive current, not different glass.
+  - Still unresolved: the HDMI board chip and its EDID (landscape or portrait, vertical blanking of at least 24 lines), board input voltage and current, real power at 2000 nits (my estimate is still 6-8 W), cover glass/AR, October 2026 price and stock, and shipping to Ukraine.
+  - An AliExpress title ('2000nit High Brightness Incell Touch CTP 7in FHD HDMI-Compatible', $106.09) independently describes the same in-cell + HDMI configuration, but the page could not be read.
+- **Notes:** Method and budget: all 12 WebSearch calls were used. AliExpress item pages came back empty, and eBay (176622684637) and Densitron product pages returned 403 or only navigation, so their figures are from search snippets only and are marked as such. Newhaven's sunlight-readable HDMI page returned 404. The search snippet shows it as NHD-7.0-HDMI-N-RSXN-CTU, 800x480 with USB-HID capacitive touch, so it is too low resolution anyway.
+  
+  Viable host-touch units that are clearly worse (not listed as candidates):
+  - Beetronics 7TS7M: 1280x800, 250 nits, USB-HID PCAP, 9-36 V, 7 W, about 0.68 kg, $389.
+  - Waveshare 8DP-CAPLCD: 8in 1280x800, only 400 cd/m2 per its wiki, optically bonded, USB-C touch, 5 V/0.8 A (4 W), 406 g, $73.99. Its wiki says brightness is settable over DDC/CI with ddcutil setvcp 10; that is the only DDC-dimmable bonded HDMI touch panel found, which is useful for auto-dimming.
+  - Lilliput TK701/T: 800x480, 1000 nits.
+  - Geekland GKTK701TC: 800x480, 1000 nits, 12-24 V, 8.5 W or less, 710 g, touch interface unclear.
+  - Xenarc 709CNH/709GNK: IP65/IP67, 1024x600, 1000 nits, USB PCAP; 709CNH is $517.44 at TouchWindow.
+  - Xenarc RT71-FHD: a 7in FHD 2600-nit rugged tablet PC, not a monitor, so it cannot take the Q6A's HDMI.
+  - Eagle Touch: configurable 700/1000/1200/1500-nit PCAP monitors from 7in up, with USB touch and 9-36 V options, but no 7in FHD model is confirmed. Contact info@eagle-touch.com if you want a custom quote.
+  
+  Bare-panel note: the Youritech ET070WU01-R is 7in 1920x1200, 1500 cd/m2, 2.41 mm thick, -20 to 80 C, with no touch. It is bright and thin, but would need a separate touch sensor.
+  
+  Ukraine:
+  - prom.ua has no Lilliput 719 listing (the search returned nothing).
+  - A prom.ua search for 7in 1000-nit touch monitors returned only field monitors with menu-only touch: Portkeys LH7 at 21,363 UAH in stock, LH7H from 17,400 UAH and LH7P from 23,300 UAH made to order, and SmallHD Indie 7 (1920x1200, 1000 nits) from 95,100 UAH.
+  - So every industrial host-touch option would be imported, from Xenarc in the US, Faytech US/EU, Syntex CZ for Lilliput, or Litemax/Youritech by quote.
+  
+  Q6A notes for scaler-based industrial monitors:
+  - They accept standard VESA/CEA modes and rescale, so EDID and portrait problems mostly disappear.
+  - But they advertise up to 1080p, so force the native mode with video=HDMI-A-1:<native>@60.
+  - Avoid CVT-RB at low resolutions. My calculation: 1024x600 RB has 19 and 1280x720 RB 21 vertical blanking lines, below the DP minimum of 24. Standard CVT gives 24 (1024x600) and 31 (1280x800).
+  - The host timing sets only the HDMI/TMDS clock. The scaler's own panel clock and backlight boost are fixed, so these monitors are less controllable for RF than an HDMI-to-MIPI kit whose EDID you can override.
+  
+  RF calculations (Python, this session; harmonics up to 2.31 GHz with a 1 MHz guard):
+  - 720p CEA 74.25 MHz x10 = 742.5 MHz and CVT 74.5 MHz x10 = 745 MHz both fall in the QO-100 IF.
+  - 1280x800 CVT 83.5 MHz has only its 27th harmonic in band (about 2254-2262 MHz).
+  - 1024x600 CVT at about 49 MHz has its 3rd harmonic about 1-1.4 MHz above the 2 m band edge.
+  - 1920x1200 CVT-RB at 154 MHz hits 11x = 1694 MHz; clean alternatives are 59.75 Hz (153.5 MHz) or 52.75 Hz (135.5 MHz).
+  - 1200x1920 RB at 60 Hz (161 MHz) hits 14x = 2254 MHz; 58 Hz (155.8 MHz) is clean.
+  - 1920x1080 RB at 58.75 Hz (135.8 MHz) or 52 Hz (128.7 MHz) is clean.
+  - Any clock below 100 MHz always has some high-order harmonic in the 100 MHz-wide 2200-2300 band, so the harmonic order (higher means weaker) is what matters there.
+  
+  Power and weight for handheld use: the finished industrial units cost 7-20 W, 0.4-1.1 kg and 33-42 mm of depth, against an estimated 6-8 W for the Wisecoco kit, which is about 5 mm thick plus its board. The Wisecoco kit is better on brightness, PPI, weight and probably power. The industrial units win only on verified USB touch, wide-input supplies (9-36 V straight from the 4S pack) and documented specs.
+  
+  Also mentioned in search results but not verified: a VIEWE UEDX6911 HDMI-to-MIPI board 'up to 1200x1920' with 'native USB touch transmission'. Its page came back empty. If it is real, it is a candidate bridge for the Youritech or Midas 1200x1920 panels.
+
