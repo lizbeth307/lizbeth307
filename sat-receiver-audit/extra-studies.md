@@ -8543,6 +8543,190 @@
   
   FX uses the stack's rates: EUR 1 = $1.124, GBP 1 = $1.332. All mechanical items are neutral to the receive-only, conducted-only and no-loop rules. Avoid carbon-fibre and glitter 'Galaxy' ASA grades near the antennas.
 
+## searchB:asa_1_kg_cnc_kitchen_m3_inserts_and_scre (run `wf_37583a7b-1a8`)
+
+- **Part:** Mechanical set: Polymaker ASA 1 kg light grey; CNC Kitchen M3x5.7 heat-set inserts (TC-M3x5.7) and CNC Kitchen M3 ISO 14580 A2-70 TX10 screws; Gelid GP-Extreme pads (0.5-1.5 mm); hand strap + neck strap (Peak Design Leash is the only priced official option)
+- **Current price usd:** 98-133 for the set (stack split: ASA 26 + inserts/screws 46 + Gelid pads 11 + strap 15-50). Checked 18 Oct 2026: Polymaker ASA Grey 1 kg $26.99 (shop.polymaker.com, US, before tax and shipping). CNC Kitchen M3x5.7 inserts EUR 9.40 per 100 ($10.57). CNC Kitchen M3 screws EUR 5.80-6.60 per 25. Peak Design Leash $49.95. Gelid price not checked. USD/EUR 1.124, the rate implied by the stack's own conversions (EUR 156.33 = $175.73).
+- **Critical specs:**
+  - ASA heat resistance: Polymaker TDS gives HDT 100 C at 1.8 MPa and Prusa says 'up to 93 C'. In the independent My Tech Fun loaded-heat test Polymaker reached only 86 C, so a substitute must reach 86 C or more in that same test.
+  - ASA mechanics, measured in My Tech Fun's 10-brand test (Polymaker = the bar). Tensile 62.2 (4x4 mm bar, MTF units). Layer adhesion 38.95. Creep 6.31% over 6 days. Bending 2.31 mm at 5 kg (ISO 178 setup, 64 mm span). Impact 72.5 kJ/m2. Warp score 3.1/5.
+  - ASA must be UV and weather resistant (real ASA, not relabelled ABS), light grey or white for solar load, and free of carbon or metal fillers so Wi-Fi and GNSS still work through the shell. 1.75 mm filament, enclosed printing.
+  - Inserts: M3, 5.7 mm long, lead- and cadmium-free brass, diagonal or opposed knurl. Pull-out in the Ruthex class (181 kg in Prusament PLA, CNC Kitchen test). Torque-out 3 Nm or more. Must not spin in ASA. CNC Kitchen hole spec about 4.0 mm.
+  - Screws: M3 ISO 14580 low cheese head, TX10, stainless A2-70 (austenitic A2/A4 near the BNO085 IMU), lengths M3x4 to M3x16.
+  - Thermal pads: real measured conductivity. The stack asks for a pad of at least 6 W/mK on the Lime pedestal (10 W design). Thicknesses 0.5-1 mm (LPDDR5 step) and 1-1.5 mm (UFS boss). Soft enough for the UFS, which is held only by B2B connectors (GP-Extreme is 65 Shore OO). Electrically non-conductive. Stable to SoC and Lime temperatures.
+  - Strap: rated load far above 3x the device weight (1.35-1.6 kg device; Peak Design anchors are rated 90 kg each). Quick-release connector with a wear indicator. Fits 2-4 printed lugs. Adjustable length. Genuine, not a clone.
+- **Candidates:**
+  1.
+    - **Name:** Polymaker ASA 1 kg (same part), bought from 3DJake.de (EU, authorised retailer)
+    - **Kind:** current_part
+    - **Price usd:** 28.09 incl. 19% DE VAT (EUR 24.99), about 23.60 ex VAT, against the 26.99 US basis before tax and shipping. Grey was out of stock and White in stock on 18 Oct 2026, both at EUR 24.99. TME lists Grey PF01003 at EUR 30.91 net (search snippet only).
+    - **Spec comparison:** Same product and TDS (PolyLite ASA). Grey is identical to the current pick. White is the same material in another colour: it absorbs less sun, which is not worse thermally.
+    - **Worse in:** Nothing if Grey is bought. White changes only the colour (possible glare next to the display, which is a judgement call). This is a cheaper seller, not a cheaper part.
+    - **Compatibility:** Identical. 3DJake also stocks CNC Kitchen ISO 14580 M3 screws (M3x4 25 pcs EUR 6.09), so one EU order can pass the EUR 52.90 free-shipping threshold for Germany.
+    - **Risks:** Grey is out of stock, so the order may wait. The EUR 24.99 is a sale price and can change.
+    - **Seller url:** https://www.3djake.de/polymaker/polymaker-asa-grau
+    - **Sources:**
+      - https://www.3djake.de/polymaker/polymaker-asa-grau
+      - https://www.3djake.de/polymaker/polymaker-asa-weiss
+      - https://shop.polymaker.com/products/asa.json
+      - https://www.tme.eu/dk/en/details/pf01003/3d-printers-and-accessories/polymaker/
+  2.
+    - **Name:** 3DO ASA (plain, not CF/GF)
+    - **Kind:** other_brand
+    - **Price usd:** UNVERIFIED. The 3DO shop was unreachable (DNS and proxy 502). Only 3DO ASA-CF and ASA-GF were seen, at $44.99 on Fabreeko. Not shown to be cheaper.
+    - **Spec comparison:** My Tech Fun 10-brand test, 3DO vs Polymaker: tensile 66.85 vs 62.2; layer adhesion 41.8 vs 38.95; creep 6.28% vs 6.31%; heat 92 vs 86 C; bending 2.23 vs 2.31 mm; impact 75.4 vs 72.5 kJ/m2; warp 4.1 vs 3.1. It is equal or better on all 7 measured metrics and ranked first overall.
+    - **Worse in:** Nothing measured. Not tested: UV resistance, and the colour of the tested spool. Single spool from one reviewer.
+    - **Compatibility:** Same print profile class as ASA. Filament diameter and colour availability (light grey?) not verified.
+    - **Risks:** Price and EU availability unknown. My Tech Fun results are from one spool, and ASA quality varies from spool to spool. Use only if a verified price beats EUR 24.99.
+    - **Seller url:** https://fabreeko.com/products/3do-asa-cf-1kg-carbon-fiber-purple-1kg
+    - **Sources:**
+      - https://mytechfun.com/video/398
+      - https://mytechfun.com/download/398/asa-10x.xlsx
+  3.
+    - **Name:** Sunlu ASA 1 kg
+    - **Kind:** generic_or_clone
+    - **Price usd:** 23.99-25.99 (US listing quoted by makers101, 2026-10-15). EU price not verified.
+    - **Spec comparison:** My Tech Fun, Sunlu vs Polymaker: tensile 66.8 vs 62.2 (better); layer adhesion 39.9 vs 38.95 (better); heat 94 vs 86 C (better); impact 89.8 vs 72.5 kJ/m2 (better); bending 2.34 vs 2.31 mm (worse); creep 10.6% vs 6.3% (worse); warp 1 (failed below 50% on an open printer) vs 3.1.
+    - **Worse in:** Creep is 1.7x higher, which matters for screw bosses and the strap and tripod loads in a hot case. Warping is worse. Bending stiffness is slightly worse. REJECT.
+    - **Compatibility:** Printable in an enclosure only.
+    - **Risks:** Measured worse on creep and warping, and barely cheaper.
+    - **Seller url:** https://makers101.com/best-asa-filament/
+    - **Sources:**
+      - https://mytechfun.com/download/398/asa-10x.xlsx
+      - https://makers101.com/best-asa-filament/
+  4.
+    - **Name:** AzureFilm ASA 1 kg (also measured, and REJECTED: eSun eASA, Qidi, Flashforge, Bambu Lab, Prusament, FormFutura)
+    - **Kind:** other_brand
+    - **Price usd:** 21.56 (3DJake listing for Black, shown in USD). The other brands are the same price or dearer, or were not priced.
+    - **Spec comparison:** AzureFilm vs Polymaker: tensile 75.4 (better), heat 92 C (better), warp 5 (better); layer adhesion 31.05 vs 38.95 (worse); impact 18.75 vs 72.5 kJ/m2 (worse); creep 8.3% vs 6.3% (worse). The others: eSun is worse on tensile (59.1), layer adhesion and creep (9.1%). Qidi is worse on tensile (60.8) and creep (7.2%). Flashforge is worse on impact (32.3) and warp. Bambu is worse on layer adhesion (33.6) and warp (1.1), and costs EUR 26.99 ex VAT anyway. Prusament is worse on heat (86 C, equal), layer adhesion, creep and impact (24.4).
+    - **Worse in:** Each one is measured worse on at least one stack-relevant metric. REJECT them all.
+    - **Compatibility:** Same filament class.
+    - **Risks:** Silent loss of impact or creep performance.
+    - **Seller url:** https://www.3djake.com/filament/asa-filament
+    - **Sources:**
+      - https://mytechfun.com/download/398/asa-10x.xlsx
+      - https://www.3djake.com/filament/asa-filament
+      - https://makerpoint.nl/en-gb/3d-printing/consumables/filament/bambu-lab-asa-grey-1-75mm-1kg-with-spool-210000005748
+  5.
+    - **Name:** Unmeasured cheap ASA: Elegoo ASA, 3DJAKE own-brand ASA Light Grey, The Filament Refill ASA
+    - **Kind:** generic_or_clone
+    - **Price usd:** 15.93 (Elegoo and The Filament refill; 3DJake listing in USD). 3DJAKE ASA Hellgrau is EUR 24.99, no cheaper than Polymaker.
+    - **Spec comparison:** No independent measurements found. Heat figures are vendor claims only (Elegoo 'up to 99 C' on an affiliate page).
+    - **Worse in:** Not shown to be equal. REJECT under Angle B (no measured evidence).
+    - **Compatibility:** Same filament class.
+    - **Risks:** makers101 notes that some 'ASA' may not be real ASA.
+    - **Seller url:** https://www.3djake.com/filament/asa-filament
+    - **Sources:**
+      - https://www.3djake.com/filament/asa-filament
+      - https://www.3djake.de/3djake/asa-hellgrau
+  6.
+    - **Name:** Cheap injection-moulded, vertical-knurl M3 brass inserts (AliExpress/Amazon), and shallow-knurl 'eBay' inserts
+    - **Kind:** generic_or_clone
+    - **Price usd:** About 0.03 each (CNC Kitchen's 2019 figure, about $3 per 100). Current price not verified.
+    - **Spec comparison:** CNC Kitchen test (Prusament PLA, M3): cheap vertical-knurl insert pull-out 39 kg vs Ruthex 181 kg vs eBay 157 kg. Torque-out about 3-4 Nm for all (the bolt head sheared). In softer ASA the shallow-knurl eBay insert started to rotate.
+    - **Worse in:** Pull-out is 78% lower, and the eBay type spins in ASA. REJECT.
+    - **Compatibility:** Needs a 4.5 mm hole instead of 4.0 mm.
+    - **Risks:** Bosses pull out under strap or drop loads.
+    - **Seller url:** https://www.cnckitchen.com/blog/threaded-inserts-for-3d-prints-cheap-vs-expensive
+    - **Sources:**
+      - https://www.cnckitchen.com/blog/threaded-inserts-for-3d-prints-cheap-vs-expensive
+  7.
+    - **Name:** DIY captive M3 hex nuts (DIN 934 A2) in printed pockets instead of inserts
+    - **Kind:** diy
+    - **Price usd:** No saving found. CNC Kitchen DIN 934 A2 M2 nuts are EUR 4.49 per 50 (about 0.10 each) at 3DJake; the M3 price was not verified. The CNC Kitchen insert costs EUR 0.094 each.
+    - **Spec comparison:** CNC Kitchen test in PETG, figures taken from search summaries of the blog (page not fetched). Pull-out: bottom-pocket nut 166 kg, side-pocket nut 86 kg, heat-set insert 119 kg. Torque-out: nut 2 Nm vs insert 3 Nm.
+    - **Worse in:** Torque-out is 33% lower. Side-pocket pull-out is 28% lower. Nuts need access from the far side (pockets break IP54 walls), fall out during assembly and are harder to service. REJECT.
+    - **Compatibility:** Needs a redesign of the shell's screw bosses.
+    - **Risks:** Worse in torque and serviceability, and no money saved.
+    - **Seller url:** https://www.cnckitchen.com/blog/helicoils-threaded-insets-and-embedded-nuts-in-3d-prints-strength-amp-strength-assessment
+    - **Sources:**
+      - https://www.cnckitchen.com/blog/helicoils-threaded-insets-and-embedded-nuts-in-3d-prints-strength-amp-strength-assessment
+      - https://www.3djake.de/suche?keyword=M3%20Schrauben
+  8.
+    - **Name:** CNC Kitchen M3x5.7 inserts resold by Prusa
+    - **Kind:** current_part
+    - **Price usd:** 10.99 per 100
+    - **Spec comparison:** Same insert (Prusa credits 'Threaded inserts by CNC Kitchen'; M3x5.7, lead- and cadmium-free brass).
+    - **Worse in:** Nothing, but it is not cheaper than EUR 9.40 ($10.57) direct.
+    - **Compatibility:** Identical.
+    - **Risks:** None. Not a saving.
+    - **Seller url:** https://www.prusa3d.com/product/heat-set-inserts-m3-standard-100-pcs/
+    - **Sources:**
+      - https://www.prusa3d.com/product/heat-set-inserts-m3-standard-100-pcs/
+      - https://cnckitchen.store/products/heat-set-insert-m3-x-5-7-100-pieces
+  9.
+    - **Name:** Generic ISO 14580 or ISO 7380 A2-70 M3 TX10 screws from fastener wholesalers (e.g. Owlett-Jaton, Lemu; 1000-piece packs)
+    - **Kind:** generic_or_clone
+    - **Price usd:** UNVERIFIED. No price was shown on the listings found. The current CNC Kitchen screws are about EUR 0.23-0.26 each.
+    - **Spec comparison:** Equal on paper if they are ISO 14580 (same low head), ISO 3506-1 A2-70 and TX10. ISO 7380 is a different (button) head, so it is not identical. No independent measurement was read. The evidence path is an EN 10204 3.1 inspection certificate from the distributor.
+    - **Worse in:** Unproven. AliExpress '304' assortments are REJECTED: no measured evidence, and 200-series or magnetic steel near the IMU is possible (risk not verified).
+    - **Compatibility:** Same thread. Head height and drive must match the printed counterbores.
+    - **Risks:** Possible saving of only about $10-15 for the whole set. Not recommended until a priced, certified ISO 14580 A2-70 listing is found.
+    - **Seller url:** https://www.owlett-jaton.com/stainless-steel/socket-screws/a2-socket-screws/a2-socket-button-iso-7380/m3-a2-iso-7380
+    - **Sources:**
+      - https://www.owlett-jaton.com/stainless-steel/socket-screws/a2-socket-screws/a2-socket-button-iso-7380/m3-a2-iso-7380
+      - https://www.lemu.dk/en/product/iso-7380-1-a2-m-3x8-8-tx10-id-2984803008
+      - https://cnckitchen.store/products.json?limit=250
+  10.
+    - **Name:** Thermal pads: generic '12-15 W/mK' pads (AliExpress), Arctic TP-3, Jaden EC360 Silver
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not verified.
+    - **Spec comparison:** Generic high-W/mK pads have no independent measurement and are REJECTED. EC360 Silver: Igor's Lab estimates at most 8 W/mK against the printed 12 (search snippet). Arctic TP-3: Igor's Lab tested it, but the results page returned 403 and Arctic publishes no W/mK, so it is UNVERIFIED.
+    - **Worse in:** Not shown to be equal to or better than the current pad. Hardness is unknown for the generic pads.
+    - **Compatibility:** Same thicknesses are available.
+    - **Risks:** Marketing W/mK figures are routinely inflated, as Igor's Lab found for both the Gelid and EC360 pads.
+    - **Seller url:** https://www.igorslab.de/en/arctic-tp-3-vs-arctic-apt2560-in-the-test-if-it-has-to-be-a-thermal-pad/
+    - **Sources:**
+      - https://www.igorslab.de/en/waermeleitpads-with-12-w-mk-in-labortest-gelid-gp-extreme-thermal-pad-and-ec360-silver-against-the-japan-reference/4/
+      - https://www.igorslab.de/en/arctic-tp-3-vs-arctic-apt2560-in-the-test-if-it-has-to-be-a-thermal-pad/
+      - https://gelidsolutions.com/product/accessories-gp-extreme/
+  11.
+    - **Name:** Used Peak Design Leash (genuine), with replacement anchors if worn
+    - **Kind:** used
+    - **Price usd:** Used price UNVERIFIED (eBay returned 403). New Leash is $49.95. AL-4 replacement anchors cost $19.95-29.95 at US retailers; EU price not verified.
+    - **Spec comparison:** Same product as new. V4 anchors are rated 90 kg (200 lb) each, per retailer listings. The anchor cord has a 3-layer black/yellow/red sheath that serves as a measurable wear indicator.
+    - **Worse in:** Unknown wear: accept only if no yellow or red shows, or replace the anchors. Warranty transfer to a second owner is unverified.
+    - **Compatibility:** Anchors loop through the printed strap lugs; also fits Peak Design Cuff/Slide. The hand strap is a separate item.
+    - **Risks:** Fakes on marketplaces: buy only with traceable origin. If the anchors need replacing, the saving may be small.
+    - **Seller url:** https://www.peakdesign.com/products/leash
+    - **Sources:**
+      - https://www.peakdesign.com/products/leash
+      - https://artscameras.com/products/peak-design-anchor-links
+      - https://www.camerax.com/product/peak-design-anchor-connector-4-pack-kelp/
+  12.
+    - **Name:** Clone 'anchor link' quick-release straps (AliExpress)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not checked.
+    - **Spec comparison:** No load rating or independent load test found.
+    - **Worse in:** Unproven strength and no wear indicator. REJECT (no measured evidence).
+    - **Compatibility:** Same lug style.
+    - **Risks:** Strap failure means a dropped device.
+    - **Seller url:** 
+    - **Sources:** []
+- **Notes:** Verdict: only one saving is verified, and it is a cheaper seller for the same ASA, not a different part. Keep every part.
+  
+  What to buy:
+  - ASA: Polymaker ASA from 3DJake.de at EUR 24.99 incl. VAT (about $23.60 ex VAT, against the $26.99 basis). Grey was out of stock on 18 Oct 2026; White was in stock.
+  - Inserts: CNC Kitchen M3x5.7 at EUR 9.40 per 100. Measured-cheaper inserts are much worse on pull-out (39 vs 181 kg). Captive nuts give lower torque-out (2 vs 3 Nm) and save nothing.
+  - Screws: CNC Kitchen ISO 14580 A2-70. No priced, certified equal was found.
+  - Pads: Gelid. No cheaper pad with independent measurements I could read.
+  - Strap: Peak Design Leash new at $49.95, or a used genuine one if the anchor wear indicator shows black only (used price not verified).
+  - 3DO ASA measured equal or better than Polymaker on all 7 My Tech Fun metrics, but its price could not be checked, so it is not a confirmed saving.
+  
+  Flags for the stack (not silent trades):
+  1. Polymaker ASA reached only 86 C in My Tech Fun's loaded-heat test (rank 8/10). That is below the '93 C' (Prusa) and 'HDT 100 C' (TDS) figures. Use 86 C as the conservative case limit; the methods differ.
+  2. Gelid now publishes no W/mK at all; its FAQ says 'We don't use the W/mK rating'. Its hardness is 65 Shore OO.
+  3. Igor's Lab found GP-Extreme below its former 12 W/mK claim. I read this through search snippets only, because the site returned 403 via Cloudflare and the archive was unreachable.
+  4. Points 2 and 3 mean the stack's 'pad of at least 6 W/mK' on the Lime pedestal is not shown by the current part. A pad with an ASTM D5470 datasheet is needed there; that is outside Angle B.
+  5. 65 Shore OO is fairly firm for the UFS module, which is held only by B2B connectors. Check the compression force.
+  
+  Limits of the evidence:
+  - The My Tech Fun ASA data is one spool per brand. Colours were not stated, and UV was not tested.
+  - The CNC Kitchen insert test is from 2019 and was done in PLA, with ASA used only for torque.
+  - The captive-nut numbers (PETG) come from search summaries of the CNC Kitchen blog.
+  
+  Hard rules are unaffected (mechanical parts only). I used 14 WebSearch calls. The My Tech Fun spreadsheet is saved at /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/angleB_mech/dl_mtf/asa-10x.xlsx.
+
 ## small:lband_sband (run `wf_41027870-8e7`)
 
 - **Band group:** L-band 1.5-1.7 GHz and S-band 2.2-2.4 GHz with antennas of at most 12 cm (STRICT) or 20 cm (SMALL). Dishes and anything tens of cm deployed are EXCLUDED, including the foldable helicones, the 11-turn helix and the 2x2 helix arrays. Rule interpretation as given: STRICT means the largest deployed dimension is about 12 cm or less; SMALL means about 20 cm or less; foldable or telescopic antennas that are larger when deployed are excluded and appear only in the borderline note.
