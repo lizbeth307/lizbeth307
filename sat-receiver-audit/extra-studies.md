@@ -23716,6 +23716,242 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Limits: the WebSearch budget was already exhausted when I started (shared limit), so this pass used WebFetch and curl on primary pages only. No independent published measurement of JLCPCB 2-layer RF boards, generic bias tees or used units could be searched for. The Amazon-review measurement of generic bias tees is secondary (from earlier stack research).
 
+## searchA:pack_sundries_nickel_fish_paper_kapton_j (run `wf_a268b76e-da0`)
+
+- **Part:** Battery pack sundries set: pure-nickel strip 0.15x8 mm, fish-paper rings, Kapton, JST-XH 5-pin balance lead, XT30 service lead (Amass, to DC5525 for Pinecil), spot-weld service, 1 mm FR-4/mica barrier, 3 mm closed-cell foam + reflective film, fire bag. Used for the 4S1P Molicel P50B pack (2x2, bare envelope 46x25x150 mm, compartment about 54x33x158 mm), Daly 4S BMS, 4.63 A peak, 7.5 A fuse, 3 A charge.
+- **Current price usd:** 50-110 for the set (estimate from STACK.md / final_integration.json; never itemised or verified). My verified EU line items below, plus 3-4 shipments, the weld service and foam, come to about $80-120 (model), so the $50 low end looks optimistic.
+- **Critical specs:**
+  - Nickel: pure nickel (Ni200/201 class, not nickel-plated steel), 0.15 x 8 mm (1.2 mm2). Loop resistance about 0.07-0.08 ohm/m at 20 C (model, from Ni201/Ni200 resistivity 8.5-9.5 uOhm.cm); plated steel is about 0.12-0.14 ohm/m. Carries 4.63 A peak and 7.5 A fuse current with negligible heating over the short 2x2 links. Weldable to P50B cans.
+  - Fish-paper rings: 21700 size, at least 0.2 mm thick, self-adhesive, insulates the + cap from the can shoulder where the nickel crosses it.
+  - Kapton: real polyimide film (about 25-50 um film, 55-70 um total), silicone adhesive, rated about 250-260 C continuous, about 6-7 kV. The same roll also serves the Q6A mid-plate insulation and the NTC/Lime sensor taping elsewhere in the stack.
+  - JST-XH 5-pin balance lead: genuine JST XH (XHP-5 housing + SXH-001T-P0.6 contacts, 3 A / 250 V, 22-28 AWG). 22 AWG preferred for ISDT 608PD balancing. Correct 4S order B-, B1, B2, B3, B+.
+  - XT30 service lead: genuine Amass XT30U (15 A, 500 V, gold-plated brass, PA UL94 V-0, -20 to 120 C; STACK requires original Amass). 16-18 AWG silicone wire. DC5525 plug for the Pinecil behind the 5 A service fuse.
+  - Spot welding: repeatable welds on 0.15 mm Ni to 21700 cans with a capacitive or transistor welder, 2+ spots per joint, pull-tested. Cell IR and capacity checked before welding. No soldering to cells, no spring holders.
+  - Barrier: 1.0 mm (the space budget is about 4 mm per side including foam), FR-4 UL94 V-0 or mica (500 C class), non-conductive faces, at least about 54 x 158 mm in one piece, with a vent path.
+  - Foam: 3 mm closed-cell (EPDM/PE/neoprene), self-extinguishing, service temperature 80 C or higher, low water uptake. Reflective layer: aluminium foil or aluminised film, low emissivity, 100 C or higher, adhesive-backed.
+  - Fire bag: flame-retardant fibreglass/silicone fabric, fits the pack (at least 150 mm long inside; 158 mm with the compartment), closable. No bag contains smoke, so supervised charging on a non-flammable surface stays.
+  - Sourcing: EU-stock sellers, to avoid the post-1 Jul 2026 flat EU import duty on UK/US parcels (operator note 34). Genuine Amass and JST, no counterfeits. No effect on the RF hard rules (receive-only, no loops); these are passive pack parts.
+- **Candidates:**
+  1.
+    - **Name:** Current pick: sundries set as specified (nickel, fish paper, Kapton, JST-XH 5-pin, Amass XT30 lead, shop spot-weld, FR-4/mica, foam + film, fire bag)
+    - **Kind:** current_part
+    - **Price usd:** 50-110 (estimate, unverified, not itemised)
+    - **Spec comparison:** Reference. STACK.md line 258; final_integration.json Battery row; final_completeness.json pack-build gap ($70-105 estimate for the pack-build items).
+    - **Worse in:** Nothing (reference). The price has never been checked against real listings.
+    - **Compatibility:** As designed (D6 thermal plan, D7 service port, battery-safety section).
+    - **Risks:** Budget low end probably too low once shipping and the weld service are counted (model).
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md
+  2.
+    - **Name:** LaskaKit (CZ) 'Niklový propojovací pásek 8x0,15mm 10m', material 'Čistý Nikl' (pure nickel)
+    - **Kind:** other_brand
+    - **Price usd:** 17.49 incl. 21% CZ VAT (378 CZK; 14.45 ex VAT) for 10 m; + GLS to DE 6.38 (EUR 5.67), FR 10.05, ES 10.26. ECB 16 Oct 2026: 1 EUR = 1.1253 USD = 24.323 CZK
+    - **Spec comparison:** Same size, 0.15 x 8 mm. Stated pure nickel, no purity %. Listed weight 0.105 kg for 10 m fits nickel (12 cm3 x 8.9 g/cm3 = 107 g; plated steel would be about 94 g) — this is an inference, not proof. 9 in stock.
+    - **Worse in:** Nothing on paper. Purity not certified (no Ni %). 10 m is about 20x what one pack needs.
+    - **Compatibility:** Drop-in for the welded 2x2 4S1P. One EU shipment.
+    - **Risks:** Possibly plated steel sold as pure nickel. Acceptance test: 4-wire resistance of 1 m at 20 C, about 0.07-0.08 ohm/m means nickel, 0.11 ohm/m or more means steel (model thresholds). A magnet test does not tell them apart. 6-month warranty.
+    - **Seller url:** https://www.laskakit.cz/niklovy-propojovaci-pasek-pro-propojovani-baterii--8x0-15mm-10m/
+    - **Sources:**
+      - https://www.laskakit.cz/niklovy-propojovaci-pasek-pro-propojovani-baterii--8x0-15mm-10m/
+      - https://www.laskakit.cz/doprava-a-platba/
+      - https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml
+  3.
+    - **Name:** LaskaKit 'Propojovací pásek 8x0,15mm 10m' (poniklovaný = nickel-plated steel)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 5.46 incl. VAT (118 CZK); restock about 15 Nov
+    - **Spec comparison:** Same dimensions, but nickel-plated steel.
+    - **Worse in:** REJECT. About 1.5-2x the resistance of pure Ni (steel resistivity, model), different weld behaviour, and corrosion at cut edges. Fails 'not worse'.
+    - **Compatibility:** Mechanically fits; electrically worse.
+    - **Risks:** This is exactly the substitution to guard against.
+    - **Seller url:** https://www.laskakit.cz/niklovy-propojovaci-pasek-pro-propojovani-baterii--8x0-15mm/
+    - **Sources:**
+      - https://www.laskakit.cz/vyhledavani/?string=niklov%C3%BD+p%C3%A1sek
+  4.
+    - **Name:** Botland 'The tape for welding cells 0.12 x 8mm - 10m' (NSZ-09462)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 8.99 incl. VAT (EUR 7.99; 6.72 net)
+    - **Spec comparison:** 0.12 x 8 mm, material not stated.
+    - **Worse in:** REJECT. 20% less cross-section than 0.15 x 8 mm, and pure Ni vs plated steel is unknown.
+    - **Compatibility:** Fits mechanically.
+    - **Risks:** Unknown material.
+    - **Seller url:** https://botland.store/tapes/9462-the-tape-for-welding-cells-012-x-8mm-10m-5904422338152.html
+    - **Sources:**
+      - https://botland.store/search?s=nickel+tape
+  5.
+    - **Name:** LaskaKit 'Samolepící izolační kroužek 21700, arch 72ks' (self-adhesive insulating rings)
+    - **Kind:** other_brand
+    - **Price usd:** 1.30 incl. VAT (28 CZK; 1.07 ex VAT) for 72 pcs; 29 in stock
+    - **Spec comparison:** 21700 size, 0.2 mm 'izolační papír' (insulating paper), one side adhesive. Same function and thickness as typical fish/barley-paper rings.
+    - **Worse in:** Paper type (fish vs barley) not stated. No dielectric or temperature rating given. Not shown worse than the unspecified current ring.
+    - **Compatibility:** Fits P50B + caps under the nickel.
+    - **Risks:** Low. Check that the ring ID clears the + cap weld area on arrival.
+    - **Seller url:** https://www.laskakit.cz/samolepici-izolacni-krouzek-21700--arch-72ks/
+    - **Sources:**
+      - https://www.laskakit.cz/samolepici-izolacni-krouzek-21700--arch-72ks/
+  6.
+    - **Name:** LaskaKit 'Kaptonová páska, tepelně odolná' 5/10/50 mm (house brand, unbranded polyimide-type)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 2.22 (5 mm, 48 CZK, in stock) / 3.33 (10 mm, 72 CZK, restock about 15 Nov) / 11.47 (50 mm, 248 CZK) incl. VAT
+    - **Spec comparison:** 10 mm listing: 0.055 mm total, silicone adhesive, about 33 m, 6 kV, 180 C continuous / 220 C short-term. Film material is not stated as polyimide. The 5 and 50 mm widths are assumed to be the same series.
+    - **Worse in:** REJECT under the rule. 180 C continuous vs about 260 C for real polyimide tape (Cellcon/BLT below). Unbranded, film not stated.
+    - **Compatibility:** Dimensionally fine.
+    - **Risks:** Possibly not polyimide.
+    - **Seller url:** https://www.laskakit.cz/kaptonova-paska--tepelne-odolna--jantarova-10-mm/
+    - **Sources:**
+      - https://www.laskakit.cz/kaptonova-paska--tepelne-odolna--jantarova-10-mm/
+      - https://www.laskakit.cz/vyhledavani/?string=kapton
+  7.
+    - **Name:** CELLCON PMB 8-33 polyimide film tape 8 mm x 33 m (reichelt; 18 mm = PMB 18-33)
+    - **Kind:** other_brand
+    - **Price usd:** 19.07 incl. 19% DE VAT (EUR 16.95); 18 mm 32.52 (EUR 28.90); in stock; plus reichelt shipping (unverified)
+    - **Spec comparison:** Polyimide film 0.050 mm, silicone adhesive, -73 to +260 C (315 C short), UL file E175868, flame-retardant. Listed for battery-pack assembly. Meets the polyimide spec.
+    - **Worse in:** Breakdown voltage not stated. Not shown cheaper than the current Kapton line, so it is a spec-equal reference, not a saving.
+    - **Compatibility:** 8 mm suits cell ends and NTC taping. The same roll covers the stack's other Kapton uses.
+    - **Risks:** None significant. The TME alternative, BLT PolyHT 20 mm (63.5 um, -70 to 250 C, 6500 V test), is USD 18.11-20.92 net.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/polyimide_film_tape_one-sided_8_mm_33_m-152966
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/product/polyimide_film_tape_one-sided_8_mm_33_m-152966
+      - https://www.reichelt.com/de/en/shop/product/polyimide_film_tape_one-sided_18_mm_33_m-152967
+      - https://www.tme.eu/en/details/polyht-20mm/high-temperature-resistant-tapes/blt/31803-20-tasma-kapton-20/
+  8.
+    - **Name:** Genuine JST XH parts from TME: XHP-5 housing + 5x SXH-001T-P0.6 contacts per end (self-crimped 22 AWG lead)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** about 0.12-0.23 per 5-pin end (XHP-5 0.034-0.057, SXH 0.018-0.034 each; TME structured-data USD, probably net); plus 22 AWG silicone wire. A crimper is needed if the user has none (e.g. Robbe crimp pliers for JST-XH 0.08-0.5 mm2, EUR 26.99 = 30.37 at Lindinger)
+    - **Spec comparison:** Genuine JST: 3 A, 250 V, -25 to 85 C, 28-22 AWG. Equal to the current part, or better than unbranded leads.
+    - **Worse in:** Nothing in spec. Cheaper only if a crimper is already at hand; otherwise the tool cost cancels the saving.
+    - **Compatibility:** Mates with ISDT 608PD XH balance port and Daly BMS sense taps via the internal service connector.
+    - **Risks:** TME pages show conflicting stock ('0 in TME stock' vs structured inventory 20,174 / 357,166). Confirm at checkout.
+    - **Seller url:** https://www.tme.eu/en/details/xhp-5/connectors-raster-2-50mm/jst/
+    - **Sources:**
+      - https://www.tme.eu/en/details/xhp-5/connectors-raster-2-50mm/jst/
+      - https://www.tme.eu/en/details/sxh-001t-p0.6/connectors-raster-2-50mm/jst/
+      - https://www.lindinger.at/en/SUPPLIES-MISC/TOOLS/Hand-Tools/Robbe-Modellsport-Crimp-Zange-JR-Futaba-JST-XH-SM....-0.08-0.5mm2/9792109
+  9.
+    - **Name:** Robbe Modellsport XH balancer cable 4S battery side 100 mm 22 AWG (#46175), Lindinger AT
+    - **Kind:** other_brand
+    - **Price usd:** 3.36 incl. VAT (EUR 2.99); OUT OF STOCK at Lindinger on 18 Oct 2026
+    - **Spec comparison:** 5-pin XH (4S), 22 AWG / 0.32 mm2. Matches the gauge target.
+    - **Worse in:** Not known to use genuine JST housings. Out of stock.
+    - **Compatibility:** Drop-in balance lead.
+    - **Risks:** Availability.
+    - **Seller url:** https://www.lindinger.at/en/BATTERIES/CHARGERS-POWER-SUPPLIES/Charging-Accessories/Balancer-Equalizer/Robbe-Modellsport-XH-BALANCER-CABLE-4S-BATTERY-SIDE-100MM-22AWG-0-32MM2-1PCS/9762228
+    - **Sources:**
+      - https://www.lindinger.at/en/search?search=balancer&order=price-asc&limit=48
+  10.
+    - **Name:** LaskaKit JST-XH-5 2.5 mm 5-pin lead, 20 cm (house brand)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 0.46 incl. VAT (10 CZK); 13 in stock
+    - **Spec comparison:** 26 AWG (0.129 mm2); a user comment says PVC; not stated as genuine JST.
+    - **Worse in:** REJECT. 26 AWG vs 22 AWG target, PVC vs silicone, unknown housing/contact origin.
+    - **Compatibility:** Mates mechanically.
+    - **Risks:** Clone XH contacts, thin wire for balance current.
+    - **Seller url:** https://www.laskakit.cz/jst-xh-5-2-54mm-5pin-konektor-s-20cm-vodici/
+    - **Sources:**
+      - https://www.laskakit.cz/jst-xh-5-2-54mm-5pin-konektor-s-20cm-vodici/
+  11.
+    - **Name:** Amass XT30U-M / XT30U-F from TME (authorised distributor stock line)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** XT30U-M 0.43-1.12, XT30U-F 0.28-0.99 each (TME structured data, USD, probably net); OUT OF STOCK (0) on 18 Oct 2026
+    - **Spec comparison:** Identical part: 15 A, 500 V, gold-flash brass, PA UL94 V-0, -20 to 120 C.
+    - **Worse in:** Nothing. Availability only.
+    - **Compatibility:** Same connector as STACK (service port and XT30 transport fuse link).
+    - **Risks:** Stock. TME also lists KLS XT30U clones (USD 0.19-0.27) with no published ratings — rejected, not Amass.
+    - **Seller url:** https://www.tme.eu/en/details/xt30u-m/dc-power-connectors/amass/
+    - **Sources:**
+      - https://www.tme.eu/en/details/xt30u-m/dc-power-connectors/amass/
+      - https://www.tme.eu/en/details/xt30u-f/dc-power-connectors/amass/
+      - https://www.tme.eu/en/details/l-kls1-xt30u-m-8/dc-power-connectors/ningbo-kls-electronic-co-ltd/
+  12.
+    - **Name:** MULDENTAL XT-30 plug / socket loose (81217 / 81218), Lindinger
+    - **Kind:** other_brand
+    - **Price usd:** 0.90 each incl. VAT (EUR 0.80); in stock
+    - **Spec comparison:** No ratings published; brand Muldental, not stated as Amass-made.
+    - **Worse in:** REJECT under STACK authenticity rule (original Amass XT30 only). Ratings unknown.
+    - **Compatibility:** Mates with XT30.
+    - **Risks:** Clone status unknown.
+    - **Seller url:** https://www.lindinger.at/en/RC-ELECTRONICS/CABLES-CONNECTORS/Connectors-for-Batteries-ESCs/MULDENTAL-XT-30-plug-loose-1pc./9788890
+    - **Sources:**
+      - https://www.lindinger.at/en/search?search=xt30&order=price-asc&limit=48
+  13.
+    - **Name:** Solder Peak LAM100X160E1 FR-4 laminate 1.0 mm, 100 x 160 mm, 35 um Cu one side (TME), used as the barrier
+    - **Kind:** other_brand
+    - **Price usd:** 1.46-1.99 each (TME structured data, USD), MOQ 5, so 7.30-9.95 net plus VAT
+    - **Spec comparison:** FR-4, 1.0 mm: same thickness and material. 160 mm length covers the about 158 mm compartment in one piece.
+    - **Worse in:** One copper face (conductive, spreads heat sideways). Etch it off (sodium persulfate/ferric chloride), or face it away from the cells and cover it with polyimide. Flammability class not stated on the page (FR-4 is normally V-0; unverified). Mica (better above 300 C) not found at any EU seller I could fetch.
+    - **Compatibility:** Fits the D6 barrier role. The spare sheets can be used elsewhere in the stack.
+    - **Risks:** Stock display conflicting (0 visible vs 114 structured). LaskaKit FR4 70x100 double-sided (28 CZK) rejected: too short for one piece, and copper on both faces.
+    - **Seller url:** https://www.tme.eu/en/details/lam100x160e1/one-layer-laminates/solder-peak/
+    - **Sources:**
+      - https://www.tme.eu/en/details/lam100x160e1/one-layer-laminates/solder-peak/
+      - https://www.tme.eu/en/katalog/?search=FR4+laminate
+      - https://www.laskakit.cz/cuprextitova-deska-fr4-70x100mm--oboustranna/
+  14.
+    - **Name:** Robbe Modellsport LiPo Bag 23 x 30 cm (#90340069), Lindinger AT
+    - **Kind:** other_brand
+    - **Price usd:** 7.30 incl. VAT (EUR 6.49); in stock; plus Lindinger shipping (unverified)
+    - **Spec comparison:** Fire-retardant special fabric, Velcro closure, 23 x 30 cm flat: the 150-158 mm pack fits. Same class as any fibreglass LiPo bag.
+    - **Worse in:** No published containment test (none of the bags have one). Robbe states it does not stop smoke or hold heat for long. Equal to the unspecified current bag, not better.
+    - **Compatibility:** Fits pack plus BMS for supervised charging and storage.
+    - **Risks:** Single-use after any event. Alternatives checked: Absima 9000008 EUR 8.95 (fibreglass, inside 170x70x70 mm), Jamara LiPo Guard XL 30x23 cm at reichelt EUR 10.50, Robbe Lipoguard M EUR 16.99 (155 mm inside, too short for the 158 mm compartment).
+    - **Seller url:** https://www.lindinger.at/en/RC-Electronics/Drive-Set/Batteries/Robbe-Modellsport-Lipo-Bag-protective-case-ROBBE-23x30cm/9787514
+    - **Sources:**
+      - https://www.lindinger.at/en/RC-Electronics/Drive-Set/Batteries/Robbe-Modellsport-Lipo-Bag-protective-case-ROBBE-23x30cm/9787514
+      - https://www.lindinger.at/en/RC-Electronics/Drive-Set/Batteries/ABSIMA-LIPO-LOADING-AND-TRANSPORT-BAG/9774651
+      - https://www.reichelt.com/de/en/shop/product/lipo_fire_protection_bag-207644
+      - https://www.lindinger.at/en/RC-Electronics/Drive-Set/Batteries/Robbe-Modellsport-Lipoguard-M-approx.-155x90x115mm-High-quality-design/9811106
+  15.
+    - **Name:** tesa 56223 aluminium tape 50 mm x 10 m (reichelt), used as the reflective layer
+    - **Kind:** other_brand
+    - **Price usd:** 10.07 incl. VAT (EUR 8.95); in stock
+    - **Spec comparison:** Aluminium foil, self-adhesive, -40 to +140 C. A bare Al foil face is at least as reflective as aluminised film (general property; no emissivity is published).
+    - **Worse in:** Foil thickness and adhesive type not stated. Conductive surface: keep it on the foam's outer face, never against the nickel or BMS.
+    - **Compatibility:** Laminates onto the 3 mm foam.
+    - **Risks:** Not shown cheaper than the unpriced current film.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/tesa_aluminium_tape-65551
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/product/tesa_aluminium_tape-65551
+  16.
+    - **Name:** Spot welding: keep the battery-shop service (current budget path)
+    - **Kind:** current_part
+    - **Price usd:** unverified (no shop price fetched)
+    - **Spec comparison:** A shop capacitive or transistor welder gives controlled, repeatable welds on 0.15 mm Ni. Buying a welder for one pack costs more, and cheap welders give weaker or inconsistent welds on 0.15 mm Ni.
+    - **Worse in:** No cheaper not-worse alternative found.
+    - **Compatibility:** Bring the tested cells, the nickel and the rings to the shop.
+    - **Risks:** Ask for a pull test and confirm no soldering to cells.
+    - **Sources:** []
+  17.
+    - **Name:** 3 mm closed-cell foam: no verified analog found — keep current
+    - **Kind:** current_part
+    - **Price usd:** unverified
+    - **Spec comparison:** LaskaKit, Botland and reichelt searches returned no 3 mm closed-cell foam sheet with published material or fire data.
+    - **Worse in:** Not applicable.
+    - **Compatibility:** As designed.
+    - **Risks:** Choose an EPDM/PE/neoprene sheet with a stated self-extinguishing rating and 80 C or higher service temperature.
+    - **Sources:**
+      - https://botland.store/search?s=foam+tape
+- **Notes:** Verdict: no cheaper-and-not-worse replacement is proven for the whole set, so keep the current pick and replace the estimate with verified EU line items. For each item, the cheapest option that keeps every spec:
+  - Nickel: LaskaKit pure Ni 0.15x8, 10 m, $17.49. Run the resistance test on arrival.
+  - Rings: LaskaKit 21700 rings, $1.30.
+  - Kapton: CELLCON PMB 8-33, $19.07, or TME BLT polyimide, $18-21 net. The cheaper LaskaKit tape is rated only 180 C, so it is rejected.
+  - JST-XH: genuine JST XHP-5 + SXH-001T-P0.6 from TME, about $0.2. This is only cheaper if a crimper is on hand; the Robbe 22 AWG 4S lead ($3.36) is out of stock.
+  - XT30: genuine Amass XT30U from TME, $0.3-1.1, but out of stock today. Muldental/KLS are rejected (not Amass, no ratings).
+  - Barrier: TME 1.0 mm FR-4, 5 sheets for $7.30-9.95 net. It has copper on one face: etch it off or cover it.
+  - Fire bag: Robbe 23x30 cm, $7.30.
+  - Reflective layer: tesa 56223, $10.07.
+  - Spot weld and foam: keep the current path (no verified analog).
+  
+  Totals: verified goods come to about $71 (incl. VAT; TME items +VAT est.) + LaskaKit GLS shipping (EUR 5.67-12.23 by country) + about 3 more shipments (unverified) + weld service + foam. That is inside the $50-110 band but above its low end, so budget about $80-120 (model).
+  
+  Fewest orders: LaskaKit (nickel, rings) + TME (JST, Amass, FR-4, BLT polyimide) + Lindinger (bag) covers everything except the foil and foam.
+  
+  All sellers are EU-stock (CZ/AT/DE/PL), which avoids the flat duty on UK/US parcels. Conversions use the ECB rate of 16 Oct 2026 (1 EUR = 1.1253 USD = 24.323 CZK). TME USD figures are structured-data price ranges, probably net of VAT. Several TME pages show conflicting stock, so confirm at checkout.
+  
+  Not covered here: the glass-fibre tape (склострічка) from the STACK line. No candidate was found.
+  
+  Method limits: the shared WebSearch budget was already used up on my first call, so I made no searches. All data comes from direct fetches of seller pages (WebFetch/curl). NKON, TinyTronics and Conrad returned 403, Freakware 418, and LCSC's API was blocked, so those sellers are not compared. NKON in particular may be cheaper for nickel and rings (unverified). A follow-up run with search budget should check NKON nickel/fish paper, an EU mica sheet, a 3 mm FR closed-cell foam sheet, and local battery-shop weld prices.
+  
+  The pass/fail resistance thresholds for nickel and the plated-steel comparisons are textbook-resistivity models, not measurements. No part here touches the RF hard rules.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
