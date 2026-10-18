@@ -18983,6 +18983,51 @@
 - **Totals changed:** No main subtotal or total changed (2.x price columns, 2.12, 3.6, 9 and 11.7 sums are unchanged). Only notes and alternative figures changed: 2.2 group EU-landed note 347.6-352.1 -> 347.6-352.2 (3x V4L 141.1-145.7). 2.1 alternative with the non-EU cooling base 300.64-329.96 -> 300.66-329.98 (base 33.49-38.49). 2.9 weather set note now reads about 115.5-167.7, and the price column stays 116-168 as its rounding. idx 7 was fixed by naming the conversion rate (ECB 1.1253 or G6 about 1.124/1.125) in the tripod, case, DPS-150 and H1 rows and in Позначки, the alternative the problem itself offers, so the folding 542.26-612.99 and extended 570.25-629.73 subtotals and the totals above them are unchanged. idx 9 and 10 change only landed text: Pro Stick Plus about $74.95 in the joint parcel / $114.90 alone, HF+ from the CN warehouse at least $210.48, LA landed variant $93-108; the 69.92 and 89-102 price columns stay. 11.7: the mat saving stays 1.25 (G5 saving_usd) with a note that it is 1.28 at 1.1241, so the firm saving is still ≈$55.62.
 - **Summary uk:** Виправлено всі 17 проблем (idx 0-16) у /home/user/lizbeth307/sat-receiver-audit/STACK.md, жодну не відхилено. Lime більше ніде не подано як необов'язковий, формулювання в заголовку гендерно нейтральне. Таблиці кутів для міст замінено регіональними діапазонами з нотатки 19 (рядки 1.2 #109, 4.1, 11.x); фікси міст лишилися лише як тестові координати CI у розділі 8. Станції WEFAX NWS під керуванням USCG виключено правилом P2, питання до вас видалено, решту питань перенумеровано (посилання на них оновлено). Перераховано ціни: економія TinyTronics $62.48-63.52; шасі, KSD9700 і Silmid — за курсом 1.1241; QRO.cz, килимок, Robbe, QuietPC, Passion Radio — уточнено; Pro Stick Plus і HF+ — з EUR 2 UHF; округлення V4L. У рядках штатива, кейса, DPS-150 і H1 назвали курс (ECB 1.1253 / G6 ≈1.124-1.125) замість перерахунку, тому основні підсумки 2.12, 3.6, 9 і 11.7 не змінилися. Ліміт Lime скрізь ≥7 Msps (нижче заблоковано), ворота Airspy Mini — за рішенням D7. TPS2553 скрізь 265/299/339 mA. Маса: 1.73-1.96 kg з Lime, рюкзак 6.85-8.26 / 7.75-9.51 kg. Роз'єм IMU — GX16-4 з ковпачком на ланцюжку.
 
+## fix:B:b2 (run `wf_588afa12-702`)
+
+- **Applied:**
+  - 20
+  - 21 (per D1: 5.4 plugin list now METEOR, NOAA_METOP, AWS, ELEKTRO_ARKTIKA, XRIT, FY2 + NET_SOURCE_SDR_SUPPORT only; 1.2 #30/#11, C7, 5.4, 6.2, 8, 11.2 #29, 11.4 #38, 11.6 #25 aligned; live net_source path kept on 127.0.0.1)
+  - 22
+  - 23 (per D13: RTL-B VBUS path LAB5 -> TPS2553DBVR-1 (MCP #1 GPA3) -> split-VBUS lead added to 5.2 USB map, 5.1 LAB5 load list and C5)
+  - 24
+  - 26 (Boni current window: lower bound 30 mA, upper bound set from measurement and kept below the 113 mA eFuse ILIM minimum; applied in C17, 5.1, 5.3 P5 row and interlock paragraph, 8.1 HF-9/HF-10, 11.3)
+  - 27 (5.8 figures 1.73-1.96 / 5.60-7.01 / 6.50-8.26 / 6.85-8.26 / 7.75-9.51 kg now used in D14, 2.5, 11.1 #46, 11.4 #34; C24 and 2.12 already had them)
+  - 28
+  - 29
+  - 30
+  - 31 (2.6 expander note; 9.1 step 6 and 11.1 #69 were already fixed)
+  - 32
+  - 34
+  - 35
+  - 38 (partial: urgency note under the 9.1 heading, and step 11 'коли' set to today with steps 1-4; no renumbering)
+  - 39 (LiteVNA moved into 9.1 step 5, week 1; step 8 points to it)
+- **Rejected:**
+  1.
+    - **Idx:** 21 (part)
+    - **Why:** Removing the live SatDump path (net_source, satdump live test, IPAddressDeny live mode) contradicts orchestrator decision D1, which keeps live net_source on 127.0.0.1 next to the default file decode. Only the plugin list and the wording were aligned.
+  2.
+    - **Idx:** 25
+    - **Why:** Already fixed: section 8 item (b) says the Boni rail is decided (BONI13V8, eFuse TPS259630DDAR, no PTC, MF-MSMF030-2 not bought). 9.1 step 6 no longer has the conditional MF-MSMF030-2, and 11.1 #37 says 'v2 обрав BONI13V8 ... без PTC' (D15).
+  3.
+    - **Idx:** 33
+    - **Why:** Already fixed: 11.3 #21 and #23 already give 265/299/339 mA (G3 #11) and note that re-audit B's 262-342 mA was replaced.
+  4.
+    - **Idx:** 36
+    - **Why:** Already fixed: 9.1 step 13, 11.4 #26, 4.1 and 1.2 already say ≥7 Msps (D6). The only 6 Msps left is the Airspy Mini's own rate, which D6 allows.
+  5.
+    - **Idx:** 37
+    - **Why:** Already fixed: the 9.1 step 6 cart already lists 3 PEC11R-4220F, 12 TL3145BF350QJ, 2 Pico and 2 PI4IOE5V9555LEX plus piezo and LED, and marks EUR 27 as the G2 #5 estimate for the old parts.
+  6.
+    - **Idx:** 38 (part)
+    - **Why:** Renumbering 9.1 was not done. D8 fixes QO-100 as 'step 11 of 9.1', and many sections cite step numbers while another fixer edits the file at the same time. The urgency problem is solved instead by the new note under the 9.1 heading and the new 'коли' for step 11.
+- **Totals changed:** none (no price changed; the RTL-B TPS2553 position was already among the 10 counted in 2.7; the TPS259470ARPWR DigiKey $2.06 from G3 #13 was added only to the section 8 'Ціни' row)
+- **Summary uk:** У STACK.md виправлено 16 проблем (idx 20-39), ще 4 уже були виправлені раніше. Ціни й підсумки не змінилися.
+  SatDump: усюди однаковий список плагінів за D1 (METEOR, NOAA_METOP, AWS, ELEKTRO_ARKTIKA, XRIT, FY2 + net_source лише на 127.0.0.1; за замовчуванням декодування файлів).
+  Живлення: VBUS RTL-B іде з LAB5 через TPS2553DBVR-1 на GPA3 (D13); TCBT лише на ch4, сума ≈1.06 A; ворота LNB при IN ≥14.2 V; вікно струму Boni нижче ILIM eFuse 113 mA.
+  Вагу 5.8 (1.73-1.96 kg, рюкзак 5.60-7.01 / 6.50-8.26 kg) тепер подано всюди однаково. Також виправлено: chrony noselect і /dev/lab/gnss, шлях /run/labd/bias, відкат A/B маршрутом A, сторожовий таймер Pico, вступ 11.7.
+  9.1: LiteVNA перенесено в крок 5 (тиждень 1); Bullseye — замовити сьогодні; нумерацію кроків не змінено через D8.
+
 ## extract:operator_notes (run `wf_5ed966cd-eee`)
 
 - **Source:** operator_notes
