@@ -4,7 +4,7 @@
 <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#333"/></marker></defs>
 <rect x="0" y="0" width="2100" height="1669" fill="#ffffff"/>
 <text x="20" y="32" font-size="16" font-weight="bold" text-anchor="start" fill="#111">P7 · 02 · Живлення: принципова схема шин (збірка з LimeSDR Micro M.2 — за замовчуванням)</text>
-<text x="20" y="50" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Джерело: STACK.md v2 §5.1 (топологія, таблиця шин, захист, зворотне живлення, відсічки, заряд, час роботи), §2.7 (BOM живлення), §5.2 (EN-лінії), рішення D12-D15. Мережі (net) — червоні прапорці; однакова назва = одна мережа.</text>
+<text x="20" y="50" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Джерело: STACK.md v2 §5.1 (топологія, таблиця шин, захист, зворотне живлення, відсічки, заряд, час роботи), §2.7 (BOM живлення), §5.2 (EN-лінії), §8 (шина LNB, ключ LIME3V3). D1-D3 — позиції TVS, не коди рішень. Мережі (net) — червоні прапорці; однакова назва = одна мережа.</text>
 <text x="20" y="72" font-size="14" font-weight="bold" text-anchor="start" fill="#111">Ланцюг батареї (§5.1 «Топологія»; дроти кола батареї AWG 18-20)</text>
 <rect x="20" y="84" width="250" height="70" rx="4" ry="4" fill="#fde2e2" stroke="#333" stroke-width="1.2"/>
 <text x="26" y="102" font-size="12" font-weight="bold" text-anchor="start" fill="#111">BAT1 4S1P Molicel INR21700-P50B</text>
@@ -121,16 +121,16 @@
 <rect x="1580" y="329" width="500" height="70" rx="4" ry="4" fill="#e4f4f4" stroke="#333" stroke-width="1.2"/>
 <text x="1586" y="347" font-size="12" font-weight="bold" text-anchor="start" fill="#111">VCC_5V_PERI: SGM40666AS (4.5 A) → SY7120, 5 V (≈17 W)</text>
 <text x="1586" y="362" font-size="12" font-weight="normal" text-anchor="start" fill="#111">WS4612 ≈2.1 A на пару портів J5 (U35, ISET 3.24 kΩ)</text>
-<text x="1586" y="377" font-size="12" font-weight="normal" text-anchor="start" fill="#111">J5 нижній: T7 (власний VBUS U35); сенсор (лише D+/D−/GND),</text>
-<text x="1586" y="392" font-size="12" font-weight="normal" text-anchor="start" fill="#111">GNSS LC76G VCC (5 V, пін 2/4), Wi-Fi, M.2; ворота ≤14 W</text>
+<text x="1586" y="377" font-size="12" font-weight="normal" text-anchor="start" fill="#111">J5 нижній: T7 (власний VBUS U35); сенсор (D+/D−/GND);</text>
+<text x="1586" y="392" font-size="12" font-weight="normal" text-anchor="start" fill="#111">GNSS LC76G VCC (5 V), Wi-Fi, M.2; ворота ≤14 W; RTL-A/B — від LAB5</text>
 <rect x="1580" y="411" width="500" height="70" rx="4" ry="4" fill="#e4f4f4" stroke="#333" stroke-width="1.2"/>
 <text x="1586" y="429" font-size="12" font-weight="bold" text-anchor="start" fill="#111">3V3_Q6A (хедер піни 1/17; лише при ввімкненій L18B)</text>
 <text x="1586" y="444" font-size="12" font-weight="normal" text-anchor="start" fill="#111">живить MCP23017 #1/#3/#4, TLV3011 ×2, підтягування</text>
 <text x="1586" y="459" font-size="12" font-weight="normal" text-anchor="start" fill="#111">FAULT/FLT/PG, ALERT INA228, детектор GP14 Pico (10k)</text>
 <text x="1586" y="474" font-size="12" font-weight="normal" text-anchor="start" fill="#111">після poweroff має зникнути — підтвердити на стенді</text>
 <rect x="1580" y="493" width="500" height="85" rx="4" ry="4" fill="#fff4c2" stroke="#333" stroke-width="1.2"/>
-<text x="1586" y="511" font-size="12" font-weight="bold" text-anchor="start" fill="#111">LIME3V3: M.2 3.3 V Q6A → ключ навантаження Q_LIME</text>
-<text x="1586" y="526" font-size="12" font-weight="normal" text-anchor="start" fill="#111">деталь і межа струму — TBD (STACK.md §8, P5 G3 (a))</text>
+<text x="1586" y="511" font-size="12" font-weight="bold" text-anchor="start" fill="#111">LIME3V3: M.2 3.3 V Q6A → U_LIME TPS259470ARPWR (4-й)</text>
+<text x="1586" y="526" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RILM 1.65 kΩ (старт): ILIM 1.80-2.20 A; FLT → MCP #4 GPB3</text>
 <text x="1586" y="541" font-size="12" font-weight="normal" text-anchor="start" fill="#111">EN ← MCP #4 GPA0, 100k → GND: за замовч. вимкн.</text>
 <text x="1586" y="556" font-size="12" font-weight="normal" text-anchor="start" fill="#111">→ riser R44SF → LimeSDR Micro M.2 (≈4 W, модель)</text>
 <text x="1586" y="571" font-size="12" font-weight="normal" text-anchor="start" fill="#111">вимикати лише після розбору PCIe-лінку</text>
@@ -232,7 +232,7 @@
 <text x="441" y="1120" font-size="12" font-weight="bold" text-anchor="start" fill="#111">K_RTLA TPS2553DBVR-1, RILIM TBD; EN ← MCP #1 GPA2</text>
 <text x="441" y="1135" font-size="12" font-weight="normal" text-anchor="start" fill="#111">→ CH334F H2 → RTL-A (пад 1 н/з); FAULT → MCP #4 GPB2</text>
 <rect x="435" y="1154" width="400" height="55" rx="4" ry="4" fill="#e3f1ff" stroke="#333" stroke-width="1.2"/>
-<text x="441" y="1172" font-size="12" font-weight="bold" text-anchor="start" fill="#111">K_RTLB TPS2553DBVR-1 (D13), EN ← MCP #1 GPA3</text>
+<text x="441" y="1172" font-size="12" font-weight="bold" text-anchor="start" fill="#111">K_RTLB TPS2553DBVR-1 (§5.1, §5.2), EN ← MCP #1 GPA3</text>
 <text x="441" y="1187" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RILIM 1.5-2× виміряного I (TBD); FAULT → MCP #4 GPB0</text>
 <text x="441" y="1202" font-size="12" font-weight="normal" text-anchor="start" fill="#111">→ розділений дріт VBUS → RTL-B (J5 верхній, пін 1 н/з)</text>
 <text x="435" y="1233" font-size="12" font-weight="normal" text-anchor="start" fill="#111">→ LAB5 також живить шину LNA (колонка праворуч)</text>
@@ -267,7 +267,7 @@
 <text x="856" y="1090" font-size="12" font-weight="normal" text-anchor="start" fill="#111">144/166/192 mA (модель); EN ← MCP #3 GPA7</text>
 <text x="856" y="1105" font-size="12" font-weight="normal" text-anchor="start" fill="#111">→ INA3221 0.2 Ω → TCBT-2R5G+ (лише ch4) → P8</text>
 <rect x="850" y="1122" width="400" height="70" rx="4" ry="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
-<text x="856" y="1140" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Бюджет labd (D14): LAB-порт + LNA ≤ 1.5 A; LNA ≤ 1.0 A</text>
+<text x="856" y="1140" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Бюджет labd (§5.1): LAB-порт + LNA ≤ 1.5 A; LNA ≤ 1.0 A</text>
 <text x="856" y="1155" font-size="12" font-weight="normal" text-anchor="start" fill="#111">3 × 299 + 166 mA ≈ 1.06 A (модель) &gt; ≈1 A пари LT3045</text>
 <text x="856" y="1170" font-size="12" font-weight="normal" text-anchor="start" fill="#111">тривога INA3221: &gt; базової лінії каналу на 20%</text>
 <text x="856" y="1185" font-size="12" font-weight="normal" text-anchor="start" fill="#111">DC-sense перед кожним увімкненням зміщення</text>
@@ -298,9 +298,9 @@
 <text x="1271" y="1025" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Контроль: FLT → MCP #3 (підтяг. до 3V3_Q6A)</text>
 <text x="1271" y="1040" font-size="12" font-weight="normal" text-anchor="start" fill="#111">rail-good: дільник ≈90% → TLV3011 → MCP #3</text>
 <text x="1271" y="1055" font-size="12" font-weight="normal" text-anchor="start" fill="#111">вмикати лише поки RTL-B на RF3 (ПЧ LNB)</text>
-<text x="1271" y="1070" font-size="12" font-weight="normal" text-anchor="start" fill="#111">IC ±0.33 V; приймання ±0.35 V на F при IN LDO ≥14.2 V</text>
-<text x="1271" y="1085" font-size="12" font-weight="normal" text-anchor="start" fill="#111">вікно ±0.35 V чи 11.5-14 V (Bullseye) — TBD,</text>
-<text x="1271" y="1100" font-size="12" font-weight="normal" text-anchor="start" fill="#111">вирішуєте ви</text>
+<text x="1271" y="1070" font-size="12" font-weight="normal" text-anchor="start" fill="#111">IC ±0.33 V (12.87-13.53 V) при IN LDO ≥14.2 V;</text>
+<text x="1271" y="1085" font-size="12" font-weight="normal" text-anchor="start" fill="#111">приймання: Bullseye 11.5-14 V на F, кожен екз.;</text>
+<text x="1271" y="1100" font-size="12" font-weight="normal" text-anchor="start" fill="#111">з QRO.cz — ANY-OUT 12.5 V для обох LNB (§8)</text>
 <text x="1271" y="1115" font-size="12" font-weight="normal" text-anchor="start" fill="#111">0.96 W при 0.3 A і 16.4 V; 1.44 W при 0.45 A</text>
 <path d="M1680,723 h23 l10,11 l-10,11 h-23 z" fill="#ffffff" stroke="#b00020" stroke-width="1.4"/>
 <text x="1686" y="738" font-size="12" font-weight="bold" text-anchor="start" fill="#b00020">SW</text>
@@ -312,7 +312,7 @@
 <text x="1746" y="775" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Schottky OUT→GND; EN ← GPB1</text>
 <rect x="1680" y="798" width="400" height="55" rx="4" ry="4" fill="#fff4c2" stroke="#333" stroke-width="1.2"/>
 <text x="1686" y="816" font-size="12" font-weight="bold" text-anchor="start" fill="#111">U10 eFuse TPS259630DDAR (EN ← MCP #1 GPB1)</text>
-<text x="1686" y="831" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RILM 7.87 kΩ: 0.113-0.139 A; без PTC (D15)</text>
+<text x="1686" y="831" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RILM 7.87 kΩ: 0.113-0.139 A; без PTC (§8)</text>
 <text x="1686" y="846" font-size="12" font-weight="normal" text-anchor="start" fill="#111">OVLO — перерахувати для 13.8 V: TBD (§5.1)</text>
 <line x1="1880" y1="853" x2="1880" y2="867" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
 <rect x="1680" y="869" width="400" height="40" rx="4" ry="4" fill="#efe6ff" stroke="#333" stroke-width="1.2"/>
@@ -329,7 +329,7 @@
 <text x="1686" y="1025" font-size="12" font-weight="normal" text-anchor="start" fill="#111">потім вікно струму 2 с: від 30 mA</text>
 <text x="1686" y="1040" font-size="12" font-weight="normal" text-anchor="start" fill="#111">до межі з виміру (нижче 113 mA)</text>
 <text x="1686" y="1055" font-size="12" font-weight="normal" text-anchor="start" fill="#111">±0.345 V лише при IN ≥14.8 V (батарея ≈15.0 V+)</text>
-<text x="1686" y="1070" font-size="12" font-weight="normal" text-anchor="start" fill="#111">ворота: ≥12.0 V на барелі при батареї 13.2 V</text>
+<text x="1686" y="1070" font-size="12" font-weight="normal" text-anchor="start" fill="#111">≥12.0 V на барелі при 13.2 V; вікно 12-15 V</text>
 <text x="20" y="1408" font-size="14" font-weight="bold" text-anchor="start" fill="#111">Час роботи (модель; §5.1; 58 Wh тепло / 50 Wh холод)</text>
 <rect x="14" y="1414" width="520" height="212" fill="#fafafa" stroke="#999"/>
 <text x="20" y="1428" font-size="12" font-weight="bold" text-anchor="start" fill="#111">режим</text>
@@ -394,7 +394,7 @@
 <text x="1110" y="1408" font-size="14" font-weight="bold" text-anchor="start" fill="#111">Зворотне живлення — правила проводки (§5.1)</text>
 <text x="1110" y="1428" font-size="12" font-weight="normal" text-anchor="start" fill="#111">1 LAB5 → VSYS Pico лише через Schottky</text>
 <text x="1110" y="1445" font-size="12" font-weight="normal" text-anchor="start" fill="#111">2 вхід 5 V паку IMU — через Schottky</text>
-<text x="1110" y="1462" font-size="12" font-weight="normal" text-anchor="start" fill="#111">3 SMBJ17A на вузлі SW (D2)</text>
+<text x="1110" y="1462" font-size="12" font-weight="normal" text-anchor="start" fill="#111">3 SMBJ17A на вузлі SW (позиція D2)</text>
 <text x="1110" y="1479" font-size="12" font-weight="normal" text-anchor="start" fill="#111">4 прошивати MCU лише з S1 увімкн. або від'єднаним від LAB5</text>
 <text x="1110" y="1496" font-size="12" font-weight="normal" text-anchor="start" fill="#111">5 ALERT INA228 — підтяжка до 3.3 V хедера Q6A, не до AON</text>
 <text x="1110" y="1513" font-size="12" font-weight="normal" text-anchor="start" fill="#111">6 дільник батареї Pico 1:6 — від SW, не від N</text>
@@ -408,7 +408,7 @@
 <text x="1650" y="1460" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Портативний приймач (лише прийом) + лабораторія</text>
 <text x="1650" y="1484" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Версія: v2, 18.10.2026 (STACK.md v2)</text>
 <text x="1650" y="1508" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Одиниці: V, A, mA, мкА, W, Wh, Ω/kΩ/MΩ, мкФ, nH</text>
-<text x="1650" y="1532" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Джерела: §5.1, §2.7, §5.2, §8; рішення D12-D15</text>
+<text x="1650" y="1532" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Джерела: §5.1, §2.7, §2.11.1, §5.2, §8</text>
 <text x="1650" y="1556" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Позначки: «модель» — оцінка; TBD — відкрито в STACK.md</text>
 <text x="1650" y="1580" font-size="14" font-weight="bold" text-anchor="start" fill="#b00020">теоретичний проєкт — перевірити на стенді</text>
 </svg>

@@ -2,7 +2,7 @@
 
 **Документ:** 07-pz-vstanovlennia · **версія:** v2, 18.10.2026 · **одиниці:** V, A, MHz, Msps, MiB/GiB, °C
 **Статус:** теоретичний проєкт — перевірити на стенді.
-**Джерело істини:** STACK.md v2, розділи 1.1 (C5, C7, C11, C13, C16, C22), 5.2, 5.3, 5.4, 5.5, 8.1, 9.2; рішення D1-D5 і D11 файлу рішень v2. Де STACK.md залишає значення відкритим — «TBD (STACK.md §x)».
+**Джерело істини:** STACK.md v2, розділи 1.1 (C5, C7, C11, C13, C16, C22), 2.11.1, 5.2, 5.3, 5.4, 5.5, 8, 8.1, 9.2, 11.1. Де STACK.md залишає значення відкритим — «TBD (STACK.md §x)».
 
 Правила, що діють на кожному кроці: пристрій лише приймає; жодного ПЗ, здатного передавати; Lime TX заблоковано і навантажено на ANNE-50+; приватний вміст не декодується (лише алоу-листи); місце — лише з GNSS-фіксу, таблиць міст немає; рамкових антен і H-зондів немає.
 
@@ -26,7 +26,7 @@
 ### 0.1. День 1: SPI і BIOS (9.2 крок 1)
 
 1. До будь-чого іншого — два повні сирі дампи SPI; обидва мають однаковий SHA-256 і розмір 33,554,432 B.
-2. Ніколи не прошивати через rsetup/setup.sh. Перепрошивати лише якщо BIOS старіший за 20251230 або це 260916 — через EDL образом 260120 (edl-ng 1.4.1, два читання з однаковим SHA-256).
+2. Ніколи не прошивати через rsetup/setup.sh. Перепрошивати лише якщо BIOS старіший за 20251230 або це 260916 — через EDL образом 260120 — із сервісного ПК окремою збіркою **edl-ng v1.6.0** (edl-ng-dist-v1.6.0.zip з архіву відновлення; не deb edl-ng 1.4.1, утриманий на платі), два повні читання (33,554,432 B) з однаковим SHA-256 (STACK.md 1.2, 5.4).
 3. Цільова прошивка: SPI BIOS 6.0.260120; пакети edk2-qcs6490 і edk2-radxa-dragon-q6a 0.1.0-5 (sha256 deb `2a311f20d32ab814b6e624b304011cca822d1bbf3ece0a5904f8b43b3de951ae`), 0.1.0-7 — лише в архіві (5.4).
 
 ---
@@ -62,13 +62,13 @@ sudo apt-mark hold linux-image-6.18.2-4-qcom linux-headers-6.18.2-4-qcom
 
 | група | пакети і версії (5.4) |
 |---|---|
-| BIOS/відновлення | edk2-qcs6490, edk2-radxa-dragon-q6a 0.1.0-5; edl-ng 1.4.1; rsetup, rsetup-config-first-boot 0.4.26 |
+| BIOS/відновлення | edk2-qcs6490, edk2-radxa-dragon-q6a 0.1.0-5; edl-ng 1.4.1 (deb Radxa на платі; EDL-читання і прошивання — лише із сервісного ПК збіркою edl-ng v1.6.0, edl-ng-dist-v1.6.0.zip в архіві відновлення); rsetup, rsetup-config-first-boot 0.4.26 |
 | завантажувач | embloader (маршрут B — 0.4; маршрут A — ще й −1); systemd-boot і systemd-boot-efi на одній віддзеркаленій версії (255.4-1ubuntu8.18 з noble-security або 8.12 з r2); u-boot-menu 4.2.3ubuntu1; radxa-overlays-dkms 0.2.18 |
 | прошивки | radxa-firmware і radxa-firmware-qcs6490 0.2.29 (якщо Phase 0 не обере 0.2.42); linux-firmware 20240318.git3b128b60-0ubuntu2.23; linux-firmware-dragonwing 1.0.0+20251203; qcom-iot-defaults 1.19 |
 | системна конфігурація | radxa-system-config-* 0.6.30 (у 0.7.4 postinst дописує clk_ignore_unused); task-qcs6490, task-qualcomm, task-qualcomm-npu, task-qualcomm-gstreamer 0.1.0-7; task-radxa-dragon-q6a 0.4.42; alsa-ucm-conf 1.2.14-1radxa2; aic8800-usb-dkms, aic8800-firmware 4.0+git20250410.b99ca8b6-5 |
 | QNN | qcom-qnn-sdk-v68 0.1.0-2, radxa-qcom-qairt 0.1.0-2 (QAIRT 2.42.0.251225) |
 | графіка | Mesa 25.2.8-0ubuntu0.24.04.4; libdrm2 2.4.125-1ubuntu0.1~24.04.2; labwc 0.7.4+lab1 (відкат 0.7.1-1build1); XWayland 2:23.2.6; wlroots (noble libwlroots 0.17.1-2.1build1); qt6 6.4.2; pipewire |
-| радіо | librtlsdr2 2.0.3-0+lab1; libairspyhf1 1.6.8-4build1 (D4); gpsd 3.25-3ubuntu3.2; chrony 4.5-1ubuntu4.2 |
+| радіо | librtlsdr2 2.0.3-0+lab1; libairspyhf1 1.6.8-4build1; libairspy0 1.0.10-3build1 (лише якщо куплено Airspy Mini за воротами G6 #12; відкриває лише labrx); gpsd 3.25-3ubuntu3.2; chrony 4.5-1ubuntu4.2 |
 | FastRPC | набір, обраний матрицею Phase 0 — TBD (STACK.md 5.4, Phase 0) |
 
 Після утримання: `unattended-upgrades` прибрати; таймери apt і fwupd замаскувати; brltty видалити; ModemManager замаскувати (5.4).
@@ -234,7 +234,7 @@ i2cdetect -y -r N0 ; i2cdetect -y -r N2                                 # адр
 
 ---
 
-## 7. librtlsdr2 2.0.3-0+lab1 і ворота bias (STACK.md 5.4, 5.3; C11; D2, D3)
+## 7. librtlsdr2 2.0.3-0+lab1 і ворота bias (STACK.md 5.4, 5.3; C11, C21)
 
 ### 7.1. Рецепт збірки
 
@@ -255,7 +255,7 @@ if (gpio == 0 && on && access("/run/labd/bias/<serial>", F_OK) != 0) return -1;
 /* GPIO5 (перемикач входів V4L вище 28.8 MHz) і кожен запит «off» проходять без воріт */
 ```
 
-- Токен — наявність файлу **/run/labd/bias/<serial>** у власності root, який пише лише labd (D3); ніколи не змінна оточення. Це ворота політики, не межа безпеки; шаром безпеки лишаються апаратні DC-sense і eFuse.
+- Токен — наявність файлу **/run/labd/bias/<serial>** у власності root, який пише лише labd (STACK.md 5.4); ніколи не змінна оточення. Це ворота політики, не межа безпеки; шаром безпеки лишаються апаратні DC-sense і eFuse.
 
 ```sh
 cat >/etc/modprobe.d/lab-rtl-blacklist.conf <<'EOF'
@@ -267,7 +267,7 @@ EOF
 sudo dpkg-divert --local --rename --add /usr/bin/rtl_biast
 ```
 
-### 7.2. Серійні номери (D2, 8.1 V4L-4)
+### 7.2. Серійні номери (STACK.md C21, 8.1 V4L-4)
 
 | SDR | серійний номер | порт |
 |---|---|---|
@@ -288,7 +288,7 @@ rtl_test -d LABRXB               # з трьома підключеними ві
 | журнал збірки | містить «zero-copy support disabled» |
 | `strings librtlsdr.so.2 \| grep -c zero-copy` | 0 |
 | `objdump -p` / `nm -D` | SONAME librtlsdr.so.2 / 37 експортів rtlsdr_* |
-| `ldd` кожного споживача RTL (rtl_connector, SatDump, SDR++, SDRangel тощо) | веде до лабораторної .so.2 |
+| `ldd` кожного споживача RTL (rtl_connector, labrx, SDR++, SDRangel тощо; SatDump RTL не відкриває — лише net_source з labrx) | веде до лабораторної .so.2 |
 | stderr самотесту | ніколи «Allocating 15 zero-copy buffers» |
 | без токена: 7 → 137.1 → 145.8 → 437.55 → 1090 → 7 MHz; 100/400/1090 MHz; offset tuning | rc==0, входи перемикаються, пін bias < 0.1 V (шина bias 0 V) |
 | при підключенні без токена | 0 V на bias; `lsmod \| grep rtl28` порожній |
@@ -299,12 +299,13 @@ rtl_test -d LABRXB               # з трьома підключеними ві
 
 ---
 
-## 8. libairspyhf і HF+ (STACK.md 5.4 «Інше з apt»; D4)
+## 8. libairspyhf і HF+ (STACK.md 5.4 «Інше з apt»)
 
 - За замовчуванням: **noble libairspyhf1 / airspyhf / libairspyhf-dev 1.6.8-4build1** (справжня 1.6.8, soname 1), hold, дзеркало 990.
 - Опція (не за замовчуванням): бекпорт Debian 1.6.8-5 (87cf12a) = upstream 1.8.1 як 1.6.8-5~lab1 — лише разом з перезбіркою airspyhf tools, SoapyAirspyHF, SDR++, SDRangel, SatDump, AIS-catcher і labrx у тому самому знімку; символи API bias-tee є лише в збірці 1.8.1; `airspyhf_set_bias_tee` — лише в тестах.
 - Ніколи upstream `make install` (SOVERSION 0); ніколи коміт з вікна e1dcc17..0130450^.
 - udev: `ATTR{idVendor}=="03eb", ATTR{idProduct}=="800c", GROUP="plugdev", TAG+="uaccess"`; labrx і sdrangel — у plugdev.
+- Airspy Mini (лише за воротами G6 #12, STACK.md 2.11.3): libairspy0 1.0.10-3build1 (noble arm64), відкриває лише labrx (libairspy додано до labrx); SatDump отримує cf32 через net_source на 127.0.0.1, плагін airspy SatDump не збирається; bias-T Mini вимкнено (airspy_set_rf_bias — лише за токеном labd); soapysdr0.8-module-airspy не потрібен (STACK.md 11.1).
 - Корекції ppm у labrx немає: ppb з флешу застосовує libairspyhf. labd пише LOppmTenths = round(ppb/100) у пресети AirspyHF SDRangel через REST і зчитує назад; частоту 256000 в OpenWebRX+ заборонено.
 
 ---
@@ -336,13 +337,16 @@ cmake -B build -DBUILD_PLUGINS_AMARISOFT=OFF -DBUILD_GUI=OFF
 - la9310_limesdr 0.2.1 + la9310_uart_module 1.0.0 — локальний DKMS +lab, зібраний GCC проти linux-headers-6.18.2-4-qcom; вантажиться при завантаженні (modalias).
 - /lib/firmware: limesdr-micro-m4.bin і limesdr-micro-iqplayer.eld — у пакеті +lab з перевіркою хешів; limesdr-micro-eeprom.bin — ніколи. Хеші — TBD (STACK.md 5.4: «закріплені», значень не наведено).
 - У полі — жодних записів EEPROM/завантажувача чи limeFLASH; заборонені limeSPI, limeI2C, limeCSR, limeOEM, limeFLASH, limeVSPA, limePPSDO, limeGUI, limeTRX --input/--repeater.
-- labd після кожного configure/calibrate повторно задає `--txen=0` і зчитує регістр 0x0020; не вмикає живлення/потік нижче 0 °C за TMP1075; частоти дискретизації нижче **7 Msps** відхиляються (D6); перед від'єднанням — внутрішня опорна.
+- labd після кожного configure/calibrate повторно задає `--txen=0` і зчитує регістр 0x0020; не вмикає живлення/потік нижче 0 °C за TMP1075; частоти дискретизації нижче **7 Msps** відхиляються (профілів Lime нижче 7 Msps немає; STACK.md 2.11.1, 5.3); перед від'єднанням — внутрішня опорна.
+- Живлення Lime — шина LIME3V3 через ключ TI TPS259470ARPWR (EN — MCP23017 #4 GPA0, FLT — MCP #4 GPB3, адреса 0x23; STACK.md 2.11.1, 5.2). Після завантаження EN низький (100k до землі): Lime знеструмлена, labd вмикає її і пересканує PCIe. Відновлення після зависання (sysclk нижче 30 MHz може завісити DMA VSPA): labd спершу розриває PCIe-лінк, потім перемикає LIME3V3; VCC_3V3_MKEY слота Q6A не перемикати. Приймання: примусове зависання → відновлення перемиканням живлення; FLT не спрацьовує на 20 ввімкненнях.
 - Райзер — Gen2; Gen3 — лише після 60-хв приймального тесту без помилок AER. L-4/P7 — лише з прошивкою ≥1f70189.
 - CI падає на будь-якому amarisoft .so.
 
 ---
 
-## 11. SatDump за D1 (STACK.md 5.4 «Дозволені декодери», «Доступ до SDR»)
+## 11. SatDump (STACK.md 5.4 «Дозволені декодери», «Доступ до SDR»)
+
+SatDump не відкриває жодного SDR: його зібрано без апаратних джерел SDR і без мережевих SDR-серверів, єдиний живий вхід — net_source з labrx (за замовчуванням — декодування записаного файлу labrx).
 
 ```sh
 git clone <SatDump> && cd SatDump
@@ -362,7 +366,7 @@ cmake -B build -DPLUGINS_ALL=OFF \
 | sdr_sources | усі апаратні PLUGIN_*_SDR_SUPPORT, Soapy, LimeSuiteNG, SPYSERVER, RTLTCP, SDRPP_SERVER, REMOTE_SDR |
 | застосунки | EXPERIMENTAL_DEVICES, WEBHOOK_APP, TOOLS_APP, WIPSETTINGS_EDITOR_APP; без autotrack і satdump_sdr_server; `*_sdr_sink` і audio sink |
 
-- Алоу-лист конвеєрів поіменно: лише Meteor-M.json, MetOp.json, AWS.json, FengYun-2.json і Elektro_Arktika.json (з вилученим elektro_ggak_mqtt); жодних інших JSON чи .json.inc. Приховано: Cosmos-2558 dump, DMSP RTD, Yunhai AHRPT, syracuse3_tlm, wsf_m_db, angels_l_band і все військове або шифроване.
+- Алоу-лист конвеєрів поіменно: лише Meteor-M.json, MetOp.json, AWS.json, FengYun-2.json і Elektro_Arktika.json (з вилученим elektro_ggak_mqtt); конвеєри GOES, GK-2A і FY-4 у європейську збірку не входять; жодних інших JSON чи .json.inc. Приховано: Cosmos-2558 dump, DMSP RTD, Yunhai AHRPT, syracuse3_tlm, wsf_m_db, angels_l_band і все військове або шифроване.
 - Вхід: за замовчуванням — декодування записаного файлу labrx; наживо — net_source слухає **лише 127.0.0.1** і отримує cf32 UDP від labrx після масок (8-байтові відліки блоками по 8192; застаріла CLI `satdump live`). Точні аргументи CLI живого режиму — TBD (STACK.md 5.4 їх не наводить); CLI завжди «--key=value».
 - satdump_cfg.json: `kepler_update_interval` = «Never»; TLE/OMM постачає labd (CSV на 17 стовпців або JSON); запис вимкнено (record off).
 - Unit проходу: один обмежений у часі `systemd-run` на прохід, окремий користувач без HOME-конфігу, порожній WorkingDirectory у власності root, ProtectHome=yes, LC_ALL=C.UTF-8, PrivateNetwork=yes для файлу (наживо — IPAddressDeny=any з входом лише UDP з localhost), провал unit при «CALCEPH ERROR».
@@ -399,7 +403,8 @@ cmake -B build -DPLUGINS_ALL=OFF \
 | samplesource | rtlsdr, airspyhf, soapysdrinput (лише з пропатченим модулем LimeSuiteNG), fileinput, sigmffileinput, testsource |
 | feature | satellitetracker, startracker, skymap, freqdisplay, antennatools, demodanalyzer, denoiser, morsedecoder |
 
-- Явно відсутні: усе channeltx, channelmimo, samplesink, samplemimo (пакування видаляє кожен .so, зокрема testmi, testmosync); feature/sid, demoddsc (крім лабораторного патчу, що пройде свій тест, — тоді лише в sdrangelsrv), **demodadsb, demodais, feature ais (D11)**, audiocatsiso, remotetcpsink, udpsink, localsink, rigctlserver, ambe, demodm17, demodfreedv, demodchirpchat, demodendoftrain, demodpager, demodmesh*, demoddsd, demodinmarsat, heatmap, filesink, sigmffilesink, remotesink, kiwisdr/remotetcpinput/aaroniartsainput, remotecontrol, pertester, simpleptt, limerfe; MIMO doa2, interferometer, beamsteeringcwmod.
+- Явно відсутні: усе channeltx, channelmimo, samplesink, samplemimo (пакування видаляє кожен .so, зокрема testmi, testmosync); feature/sid, demoddsc (крім лабораторного патчу, що пройде свій тест, — тоді лише в sdrangelsrv), **demodadsb, demodais, feature ais (ADS-B і AIS — лише readsb і AIS-catcher, розділ 16)**, audiocatsiso, remotetcpsink, udpsink, localsink, rigctlserver, ambe, demodm17, demodfreedv, demodchirpchat, demodendoftrain, demodpager, demodmesh*, demoddsd, demodinmarsat, heatmap, filesink, sigmffilesink, remotesink, kiwisdr/remotetcpinput/aaroniartsainput, remotecontrol, pertester, simpleptt, limerfe; MIMO doa2, interferometer, beamsteeringcwmod.
+- APT, радіозонди і DAB з алоу-листа нотаток у збірку SDRangel не входять (радіозонди — auto_rx, DAB — welle-cli). DSC — лише через demoddsc з лабораторним патчем, що відкидає формати 120/123/114 до декодування адрес (протестованим), і лише в sdrangelsrv; без патча demoddsc не збирається. APRS/AX.25 — лише через demodpacket SDRangel (лише APRS): режиму packet в OpenWebRX+ немає, direwolf заборонено. Текстові декодери (RTTY, NAVTEX, packet) — лише в sdrangelsrv на частотах, заданих labd.
 - Запуск: `sdrangelsrv -a 127.0.0.1 -w /var/lib/lab/fftw/sdrangel.wisdom` (інакше REST слухає всі інтерфейси на 8091). Мудрість FFTW — на Q6A (`fftwf-wisdom` з libfftw3-bin).
 - Аудит під час роботи хешує кожен файл у `<prefix>/lib/sdrangel/*` і `<prefix>/bin/lib/*` за підписаним маніфестом.
 
@@ -407,12 +412,12 @@ cmake -B build -DPLUGINS_ALL=OFF \
 
 - Перепакування з пропатченим `owrx/modes.py`; встановлення `--no-install-recommends`; unit IPAddressAllow=localhost; PATH unit обмежено.
 - Лишаються лише: nfm, wfm, am, sam, lsb, usb, cw, usbd, drm (лише з пропатченою RX-only Dream), dab, bpsk31/63, rtty170/450/85, sitorb, navtex, ft8, ft4, jt9, wspr, sstv, fax, sonde-*, meteor-lrpt, elektro-lrit.
-- Вилучено: dsc, page, selcall, zvei, eas, tetra, p25, dmr, dstar, nxdn, ysf, m17, freedv, radel/radeu, ism, wmbus, lora-*, meshtastic, meshcore, meshcom, speech, hfdl, vdl2, acars, **adsb, uat, ais (D11)**.
+- Вилучено: dsc, page, selcall, zvei, eas, tetra, p25, dmr, dstar, nxdn, ysf, m17, freedv, radel/radeu, ism, wmbus, lora-*, meshtastic, meshcore, meshcom, speech, hfdl, vdl2, acars, **adsb, uat, ais** (STACK.md 5.4).
 - Заблоковані налаштування: `allow_center_freq_changes=false`, `allow_audio_recording=false`, `allow_chat=false`, `speech_url=''`, MQTT вимкнено, керування радіо вимкнено, PSKReporter/WSPRnet у полі вимкнено, пароль адміністратора задано; без ключів direct_sampling/direct_samp.
 - Дзеркало: owrx-connector/rtl-connector/rtl-tcp-connector/soapy-connector 0.6.5, csdr/libcsdr0/python3-csdr 0.18.40, redsea 1.3.1. WSJT: заглушка `/usr/bin/wsjtx_app_version`, що друкує «WSJT-X 2.7.0».
 - CI опитує запущений список функцій і режимів і падає на будь-якому режимі поза списком (найважливіше — TETRA).
 
-## 16. ADS-B і AIS з фільтрами приватності (STACK.md 5.4; D11)
+## 16. ADS-B і AIS з фільтрами приватності (STACK.md 5.4)
 
 | рушій | версія і запуск | фільтри |
 |---|---|---|
@@ -422,7 +427,7 @@ cmake -B build -DPLUGINS_ALL=OFF \
 
 Заборонені: dump978-fa, skyaware978, повний dump1090-fa, piaware; без журналів пеленгів.
 
-## 17. Інші дозволені декодери (STACK.md 5.4; D5)
+## 17. Інші дозволені декодери (STACK.md 5.4)
 
 | інструмент | версія / джерело |
 |---|---|
@@ -502,7 +507,7 @@ $PAIR411*3E                        (читання)
 
 | unit | ключові налаштування |
 |---|---|
-| labd (Python, D-Bus) | I2C2 (MCP #1/#3/#4, TCA9517), оренди, перемикачі, токени `/run/labd/bias/<serial>`, політики (маски 3-30 kHz, 225-400 MHz, 1544.0-1545.0 MHz — лише потужність; TDF 162 kHz у вівторок 06:00-12:00 UTC; Artemis-стоп; egc-gate), засувки FAULT кожного TPS2553DBVR-1, тривога INA3221 >20 % над базовим; OOMScoreAdjust −1000; CLI labctl |
+| labd (Python, D-Bus) | I2C2 (MCP #1/#3/#4, TCA9517), оренди, перемикачі, токени `/run/labd/bias/<serial>`, політики (маски 3-30 kHz, 225-400 MHz, 1544.0-1545.0 MHz — лише потужність; TDF 162 kHz у вівторок 06:00-12:00 UTC; Artemis-стоп; egc-gate), засувки FAULT кожного TPS2553DBVR-1 (FAULT VBUS RTL-B / HF+ / RTL-A — MCP #4 GPB0-GPB2), ключ LIME3V3 (EN — MCP #4 GPA0, FLT — GPB3), RESET LC76G (MCP #4 GPA1), тривога INA3221 >20 % над базовим; OOMScoreAdjust −1000; CLI labctl |
 | labrx (C++) | єдиний відкривач SDR у режимі labrx; LimitMEMLOCK=infinity, OOMScoreAdjust −900; кільце 4 GiB (з Lime) або 1.5 GiB (без Lime); маски до запису; FFTW (VkFFT — лише після воріт) |
 | labclassify / inferd-htp | WatchdogSec=5, MemoryMax=1G, CPUAffinity 0-3, User=labnpu, SupplementaryGroups=fastrpc, `Environment=ADSP_LIBRARY_PATH=/opt/lab/npu/2.42/dsp;/usr/lib/dsp/cdsp`, LD_LIBRARY_PATH=/opt/lab/npu/2.42/lib, DevicePolicy=closed + DeviceAllow /dev/fastrpc-cdsp rw, /dev/fastrpc-cdsp-secure rw, /dev/dma_heap/system rw; Requires/After=fastrpc.service cdsprpcd.service |
 | labtrain | тимчасовий unit: A78, SCHED_IDLE, nice 19, MemoryMax 2G |
@@ -526,7 +531,7 @@ wsjtx GUI і пакет wsjtx, fldigi, QSSTV, direwolf, SoapyRemote, URH, gr-iri
 | 1 | пошук заборонених пакетів і файлів (розділ 22) у `dpkg -l` і в ФС | жодного збігу | 5.4 |
 | 2 | SDRangel: жодного .so channeltx/samplesink/samplemimo/channelmimo, DSD, Inmarsat, Heat Map, demodadsb/demodais, FileSink/SigMF sink; хеші за підписаним маніфестом | 0 зайвих; хеші збігаються | 5.4 |
 | 3 | SDR++: відсутні iq_exporter.so, recorder.so, network_sink.so, pager_decoder.so | 0 | 5.4 |
-| 4 | SatDump: лише дозволені плагіни; жодного `*_sdr_sink`, апаратного sdr_source; лише 5 конвеєрів; декодування базового файлу на кожен | так | 5.4, D1 |
+| 4 | SatDump: лише дозволені плагіни; жодного `*_sdr_sink`, апаратного чи мережевого sdr_source (єдиний живий вхід — net_source з labrx на 127.0.0.1); лише 5 конвеєрів (без GOES, GK-2A, FY-4); декодування базового файлу на кожен | так | 5.4, 8 |
 | 5 | OpenWebRX+: живий список режимів ⊆ алоу-листа; заблоковані налаштування | так (TETRA відсутня) | 5.4 |
 | 6 | `SoapySDRUtil --info` | лише rtlsdr, airspyhf, пропатчений LimeSuiteNG | 5.4 |
 | 7 | будь-який amarisoft .so | відсутній | 5.4 |
