@@ -30134,6 +30134,118 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - Budget for import VAT at the EU destination: about $59-61 landed (model).
   - Never power it over 5 V on P3.
 
+## searchB:nooelec_sawbird_io_cased_100788 (run `wf_c3ba734e-52b`)
+
+- **Part:** Nooelec SAWbird+ iO cased (SKU 100788): an L-band LNA with a SAW filter centred on 1542 MHz, for Inmarsat-C EGC SafetyNET at the helicone feed. P3 goes to RTL-B T1. It is optional and is bought only after the egc-gate passes.
+- **Current price usd:** 49.95 (Nooelec store, Add to Cart, checked 18 Oct 2026; https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-io-303.html). Ships from the US. No EU distributor price could be verified: the Passion Radio page went into a redirect loop. EU import VAT is due unless it is collected at checkout (unverified for Nooelec).
+- **Critical specs:**
+  - Passband: must cover 1525-1559 MHz, at least the European NCS scan window of 1537-1545 MHz. Vendor figure: centre 1542 MHz, 60 MHz bandpass, so about 1512-1572 MHz.
+  - Gain: at least 30 dB across the passband (vendor 'minimum 30 dB'). This is needed to bury the RTL-B noise figure at L-band (MDS about -133.7 dBm at 1.1-1.5 GHz per reaudit_B, implied NF well above 10 dB) plus cable and switch loss.
+  - Noise figure: about 1 dB or better. Nooelec does not publish a figure for the + iO. The page has no datasheet and https://www.nooelec.com/datasheets/100788 returns 404.
+  - Out-of-band rejection of local blockers: LTE 1.5 GHz SDL 1452-1492 MHz (EU bands 32/75, where deployed), GSM/LTE 1800 downlink 1805-1880 MHz, 2.1 GHz LTE, and Wi-Fi. RTL-B desenses at about -35 dBm (1.4 GHz) and about -40 dBm (1.6 GHz) per reaudit_B. Nooelec states only 'very high attenuation', with no number.
+  - Linearity and input survival: OP1dB and maximum input are not published for the iO. The sibling SAWbird+ GOES/NOAA datasheets give OP1dB +20 dBm and maximum input 0 dBm.
+  - Power: 3-5 V bias through the SMA output (or micro-USB / 0.1-inch header), 180 mA nominal. This sets the injector channel's current limit and the battery budget, so lower current is better.
+  - Overvoltage tolerance: up to 12 V DC does not damage the unit, per Nooelec. This matters for the rule that the P5 12.5 V rail must never mate with an SMA LNA.
+  - Mechanics: SMA female in and out, an aluminium enclosure, and EMI shields on each LNA. The stack rule allows Barebones only inside a shielded housing. The unit mounts at the helicone feed, so it must be robust and small.
+  - Reliability and support: 1-year Nooelec warranty (the cased page now says 1 year, not 2). Made in the USA; a genuine part from the official store.
+  - Rules: a passive receive-only amplifier with no TX path. It does not change the egc-gate or the header-level discard rule.
+- **Candidates:**
+  1.
+    - **Name:** Nooelec SAWbird+ iO Barebones (SKU 100787)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 44.95 (Nooelec page, Add to Cart, 18 Oct 2026)
+    - **Spec comparison:** The vendor page gives the same electrical figures as the cased unit: centre 1542 MHz, 60 MHz bandpass, minimum 30 dB gain, 180 mA nominal, 3-5 V via the SMA output or 3.3-5.5 V via micro-USB/header, overvoltage protection up to 12 V, and EMI shields on each LNA. Warranty is 1 year, the same as the cased unit's page states today. Like the cased unit, it has no published NF, OP1dB or rejection figures.
+    - **Worse in:** It has no aluminium enclosure. Under the stack rule (Barebones only inside a shielded housing, and the unit sits at an outdoor helicone feed) it needs a separate shielded box, which cancels most of the $5 saving. I could not verify a box price, so this is not counted as a saving. No independent measurement shows it equals the cased unit, which fails this angle's evidence bar; the equivalence rests on the vendor's word only.
+    - **Compatibility:** Identical interfaces and bias scheme. Needs an enclosure plus SMA bulkheads or mounting.
+    - **Risks:** Exposed PCB, more ESD and handling exposure at the feed.
+    - **Seller url:** https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-io.html
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-io.html
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird.html
+  2.
+    - **Name:** Nooelec SAWbird iO, non-plus (SKU 100782), aluminium enclosure included
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 44.95 (Nooelec page, Add to Cart, 18 Oct 2026)
+    - **Spec comparison:** Dual-stage LNA with a SAW filter, centre 1.542 GHz. Passband about 80 MHz at -6 dB, 'intended for 1.50-1.58 GHz', against 60 MHz for the + version. NF 1 dB nominal (not published for the + version). Draws 35 mA minimum from the bias tee at 3.0-5.5 V, against 180 mA for the + version, which is better for the battery and injector budget. Gain is not stated (the + version promises at least 30 dB). Aluminium enclosure, SMA female in and out, 1-year warranty, made in the USA. The only response data is a 2016 vendor sweep (Rigol, noise-source method, unspecified setup). Read off that plot: -6 dB points about 1506 and 1577 MHz, roughly 16 dB down at 1490 MHz, roughly 28 dB down at 1442 MHz, and roughly 25 dB down at 1640 MHz.
+    - **Worse in:** Gain is unpublished and may be below 30 dB. The passband is wider (about 80 vs 60 MHz), so rejection of LTE 1.5 GHz SDL at 1452-1492 MHz is likely weaker. GNSS L1 1575 MHz also falls inside its passband. There is no independent measurement. It does not pass as not-worse.
+    - **Compatibility:** Same SMA and bias-tee scheme. The lower current eases the TPS2553 limit. Fits the helicone feed.
+    - **Risks:** The specs are older and incomplete; the plot is a vendor plot, not an independent one.
+    - **Seller url:** https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-io.html
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-io.html
+      - https://www.nooelec.com/store/downloads/dl/file/id/64/product/300/x.png
+  3.
+    - **Name:** Used Nooelec SAWbird+ iO cased (100788) or Barebones (100787), secondary market
+    - **Kind:** used
+    - **Price usd:** UNVERIFIED: eBay returned 403 to the fetch, so no listing or price was confirmed
+    - **Spec comparison:** Same design as the current part if it is undamaged. That can be shown on arrival with the stack's own instruments: S21 and S11 on the LiteVNA 64 (at least 30 dB gain flat across 1525-1559 MHz, 60 MHz passband, rejection at 1490 and 1805 MHz measured against a new unit), and a rough Y-factor NF check with the lab noise source and the tinySA Ultra+.
+    - **Worse in:** No warranty. An ESD-damaged first stage raises NF without changing S21 much, and only the noise-source test catches it. A US-to-EU shipment adds VAT and customs. It is worse unless it passes acceptance testing, and no measured evidence exists before purchase.
+    - **Compatibility:** Identical.
+    - **Risks:** Unverified price and availability. Return terms on marketplaces. The ESD history is unknown.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.ebay.com/sch/i.html?_nkw=sawbird+io (HTTP 403, not readable)
+  4.
+    - **Name:** RTL-SDR Blog Wideband LNA V2 (bias-tee powered)
+    - **Kind:** other_brand
+    - **Price usd:** 19.95 (rtl-sdr.com buy page)
+    - **Spec comparison:** Covers 100 MHz-6 GHz. NF under 1 dB (vendor claim). 3-5 V bias tee at 90 mA, which is better than 180 mA. SMA connectors in a metal enclosure. Gain at 1.5 GHz is not published on the buy page. The measurement article could not be fetched (404).
+    - **Worse in:** It has no SAW filter or any band-pass, so it gives no rejection of LTE 1.5 GHz SDL, GSM/LTE 1800, 2.1 GHz LTE or Wi-Fi. It is a single stage, so gain is very likely well below 30 dB (unverified). For the RTL-B, with its -35 to -40 dBm desense point at L-band, that is a real regression. Rejected.
+    - **Compatibility:** Bias-tee and SMA compatible. Adding a separate 1542 MHz SAW filter would be needed, and no verified generic filter was found.
+    - **Risks:** Selectivity loss and overload near cellular sites.
+    - **Seller url:** https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+    - **Sources:**
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+  5.
+    - **Name:** LNA4ALL by 9A4QV (Croatia, EU small maker)
+    - **Kind:** generic_or_clone
+    - **Price usd:** About 35-38 (EUR 20-23 assembled, plus EUR 3 for the 3.3-5 V bias-T mod, plus EUR 7 tracked shipping, per the maker's blog; the blog price list may be outdated, so unverified as current)
+    - **Spec comparison:** Independent measurements are published. Average IP3 is 34.75 dBm over 10 MHz-3.5 GHz (DG1TRF), with S21 plots and NF plots at 1420 MHz. Two units in series measured 31.35 dB at 1420 MHz, so one unit gives about 16 dB. The MMIC datasheet gives NF 0.75 dB at 1 GHz and 0.98 dB at 2 GHz. Draw is 55-65 mA at 6-9 V, or about 47 mA at 4.5 V with the mod.
+    - **Worse in:** Unfiltered, so there is no rejection of L-band and cellular blockers. Gain is about 16 dB against at least 30 dB. Bias-tee operation needs a modification. Rejected. Two in series reach about 31 dB but cost about $70 and are still unfiltered.
+    - **Compatibility:** SMA. Needs the bias-T mod to run from the injector at 3.3-5 V.
+    - **Risks:** Maker-dependent supply, and the prices may be stale.
+    - **Seller url:** https://lna4all.blogspot.com/
+    - **Sources:**
+      - https://lna4all.blogspot.com/
+  6.
+    - **Name:** DIY two-stage L-band LNA with a 1542 MHz SAW filter on a custom PCB
+    - **Kind:** diy
+    - **Price usd:** Not costed (no specific parts verified)
+    - **Spec comparison:** No measured build was found, so equivalence cannot be shown.
+    - **Worse in:** No independent measurement exists, which fails this angle's evidence bar. At quantity 1, a PCB plus a SAW filter, MMICs, an enclosure and tuning time are unlikely to cost less than $49.95. Rejected.
+    - **Compatibility:** Unknown until built and measured.
+    - **Risks:** Stability and oscillation risk, SAW sourcing at 1542 MHz, ESD.
+    - **Seller url:** 
+    - **Sources:** []
+  7.
+    - **Name:** KEEP: Nooelec SAWbird+ iO cased (100788)
+    - **Kind:** current_part
+    - **Price usd:** 49.95
+    - **Spec comparison:** Reference part: 1542 MHz, 60 MHz passband, at least 30 dB gain, 180 mA, 3-5 V via SMA, tolerates 12 V, aluminium case, 1-year warranty, from the official store.
+    - **Worse in:** Nothing, as the reference. Its own NF, OP1dB and rejection figures are unpublished, so an acceptance sweep with the LiteVNA and the noise source is recommended at purchase.
+    - **Compatibility:** As specified in STACK.md: helicone feed, then P3 to RTL-B T1, bought after the egc-gate.
+    - **Risks:** 180 mA draw. Not weatherproof.
+    - **Seller url:** https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-io-303.html
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-io-303.html
+- **Notes:** Verdict from Angle B (generic, clone, DIY, used): no cheaper candidate is proven not-worse, so keep the SAWbird+ iO cased at $49.95.
+  
+  Why each option fails:
+  - The only measured generics are the LNA4ALL (independent IP3 and NF data) and the RTL-SDR Blog Wideband LNA V2 (vendor NF claim only). Both are unfiltered and have far less gain, so they fail on selectivity and gain.
+  - Two AliExpress catalogue searches found no generic 1.5 GHz Inmarsat LNA+SAW module. The only L-band LNA+SAW hit was the RTL-SDR Blog active patch, which the stack already has.
+  - Used units could not be priced because eBay returned 403. A used unit is acceptable only after a LiteVNA S21/S11 sweep and a noise-source NF check, and only if it lands below about $35 delivered to the EU.
+  - The two cheaper same-vendor SKUs ($44.95 each) both trade something away. The + Barebones loses the enclosure, which the stack's shielded-housing rule then requires, and nobody has measured it independently. The non-plus iO has unstated gain and a wider passband of about 80 MHz (likely weaker rejection of LTE 1.5 GHz SDL), though it draws 35 mA instead of 180 mA and comes with a case.
+  
+  Spec corrections against STACK.md:
+  - The cased iO page now says a 1-year warranty, not 2 years. Nooelec publishes no datasheet for the iO: the page has no download link and /datasheets/100788 returns 404. NF, OP1dB, maximum input and numeric rejection are therefore unknown for the current part itself.
+  - The only response data found is a 2016 vendor sweep of the earlier Inmarsat amp/SAW module (Nooelec download id 64).
+  
+  $0 option: the stack's own budget alternative is the core RTL-SDR Blog active L-band patch, which already has an LNA and a SAW filter (1525-1660 MHz, 20 mA). If the egc-gate passes on patch recordings and the helicone path is not needed, the iO can stay unbought.
+  
+  Coverage limit: the web search budget ran out after 3 searches, and eBay, Newegg and Ubuy returned 403. Other used and generic listings may exist that I could not see. A follow-up run could check eBay or Kleinanzeigen manually.
+  
+  Rules: every candidate is a receive-only passive amplifier, with no TX, no loops and no change to the egc-gate or header-level discard.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
