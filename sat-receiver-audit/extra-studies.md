@@ -411,6 +411,576 @@
   
   Unverified or gaps: tinySA size and weight; LiteVNA stimulus level and weight; whether LimeSuiteNG can select the Micro's external reference; whether J3 clock-out is on by default; AliExpress prices for noise sources, probe sets, pads and loads; whether the Mini keeps its settings after power-off; Eleshop LiteVNA prices (seen only in a search snippet, page returned 403). Prices are as fetched 18 Oct 2026; UAH conversions use 44.86 UAH/USD from the input files. All 12 WebSearch calls in the budget were used; several primary pages (Eleshop, ImmersionRC, analog.com, Tekbox, Switch Science) were unreachable (403/404/429/503).
 
+## lab:rf_accessories (run `wf_1dd437c5-0cf`)
+
+- **Area:** RF bench accessories for the portable receive-only lab: antenna/front-end switch matrix, programmable and fixed attenuators, filter bank, LNA bank, bias-tee/DC-block kit, terminations, splitter, cables/adapters/tools, RF protection, and calibration standards. All prices were checked on 18 Oct 2026 unless marked otherwise.
+- **Items:**
+  1.
+    - **Name:** Mini-Circuits ZSWA4-63DR+ SP4T absorptive solid-state switch (GPIO-controlled), first stage of the switch matrix
+    - **Category:** RF switch matrix
+    - **Purpose in lab:** Software selection between front-end chains on one Lime RX port (e.g. RX-L: 70 cm chain / QO-100 LNB IF / bench input / 50 ohm reference load) with no re-mating of the 30-cycle MHF4 connectors. It also gives an always-available terminated port for noise-floor checks and lets you run time-multiplexed A/B tests.
+    - **Key specs:** 1-6000 MHz, absorptive (unselected ports are terminated in 50 ohm). Insertion loss 1.3 dB typical / 2.0 dB max (1-2700 MHz), 1.7 dB (2.7-5 GHz). Isolation from COM to a terminated port: 80 dB typical (55 min) at 1-1000 MHz, 58 dB (44 min) at 1-2.7 GHz. Port-to-port isolation 73 / 57 dB. VSWR 1.25. P0.1dB +35 dBm at 900 MHz; IP3 +58 dBm; switching 320 ns. Absolute maximums: RF +34 dBm, DC at RF ports 8 V, ESD 4 kV HBM on RF ports.
+    - **Size weight power:** 2.00 x 1.5 x 0.6 in (51 x 38 x 15 mm), aluminium case, 5x SMA-F plus a DB-9 for power and control. Vdd 2.3-3.6 V at 0.1 mA typical (up to 3 mA at startup), so it draws effectively nothing. The datasheet text does not give the weight.
+    - **Interface and linux:** 2-pin logic (V1, V2; V3 open or grounded) or 3-pin logic for an all-off state. Low is at most 0.2xVDD; high is at least 0.8xVDD (2.64 V at 3.3 V) and at most 5.5 V. Control current 0.015 mA per pin. Truth table (V3 V2 V1): 000=RF4, 001=RF1, 010=RF2, 011=RF3, 101/110=all off, 111 unsupported. All control pins have internal 100 kOhm pull-downs, so with undriven pins the switch sits on RF4. Linux: two lines from the Q6A 40-pin header (3.3 V) or from an I2C expander, driven with libgpiod (gpioinfo to find the lines; v2 syntax: gpioset -c gpiochipN -z A=1 B=0) or python gpiod. Wrap it in a small 'rfsel <chain>' script that the pass scheduler calls before SatDump/SDR++ starts.
+    - **Price:** $307.32 (qty 1-9, Mini-Circuits web store, USD, before shipping and VAT)
+    - **Availability:** Mini-Circuits showed 0 units in stock on 18 Oct 2026 and says to contact sales@minicircuits.com. Lead time unknown.
+    - **Tier:** extended
+    - **Integration notes:** Port plan for SW-A (Lime RX-L): RF1 = 70 cm chain (Uputronics 435 or LNA V2, then its bias-tee injector); RF2 = QO-100 IF (LNB, then a 13/18 V injector with the DC-blocked RF port toward the switch, then VLF-1000+); RF3 = bench-input SMA bulkhead with a permanent VLM-33-S+ limiter and 20 dB pad; RF4 = ANNE-50+ load, which is the power-on default. COM goes to the 10 dB pad, then the MHF4L pigtail, then the Lime. Put the switch after every LNA and after every injector. The datasheet allows 8 V DC at most on the RF ports and does not say the ports are DC-blocked. My inference is that LNA bias reaching an OFF (terminated) port would be dumped into the internal load, so keep every port DC-free and keep 13/18 V LNB power out of it. Supply Vdd from the header's 3.3 V pin. Do not use header pins 7 (PPS), 8/10 (debug UART), 13/15 (I2C0), 16/18 (GNSS UART6) or 22/33/36/37 (spi14, enabled by default). Mount it on the aluminium mid-plate. The Lime's own SKY13414 still selects its internal L/W/H path through LimeSuiteNG; this switch selects the external chain.
+    - **Cheaper alternative:** An HMC7992-based 0.1-6 GHz SP4T SMA board from AliExpress or Amazon. Sellers claim 0.6 dB insertion loss, 45 dB isolation and a 3-5 V supply. Price not verified (the listing pages would not load). Qualify one with Procedure 2 before building it in.
+    - **Safety notes:** Receive-path device only. Keep total input under +24 dBm into an OFF port; this lab never gets near that.
+    - **Sources:**
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=ZSWA4-63DR%2B
+      - https://www.minicircuits.com/pdfs/ZSWA4-63DR+.pdf
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+  2.
+    - **Name:** Generic HMC7992 SP4T switch board (cheaper first stage, or a second stage for the Lime RX-W / RTL input)
+    - **Category:** RF switch matrix
+    - **Purpose in lab:** Low-cost second switch: Lime RX-W choice between L-band GOES chain / S-band chain / bench / load, or an RTL-SDR input selector. Together with the ZSWA4 it makes a 2 x SP4T matrix.
+    - **Key specs:** Seller claims only: 0.1-6 GHz SP4T non-reflective, about 0.6 dB insertion loss, about 45 dB isolation, 3-5 V supply. The ADI datasheet could not be fetched (analog.com returned 503), so logic levels and DC-block capacitors are unverified. 0.1 GHz does not reach the RTL's HF range.
+    - **Size weight power:** Small SMA board or metal box. Size, weight and current not verified.
+    - **Interface and linux:** Presumably 2 logic lines (decoder), driven from the header GPIO or an I2C expander through libgpiod. Confirm the logic thresholds against 3.3 V before use.
+    - **Price:** Not verified. AliExpress and Amazon pages for HMC7992/HMC349/HMC849 boards were found but would not load.
+    - **Availability:** Several AliExpress and Amazon listings (Oct 2026).
+    - **Tier:** optional
+    - **Integration notes:** Same rules as the ZSWA4: place it after the LNAs and injectors and keep its ports DC-free. Accept it only if Procedure 2 measures insertion loss of 1.5 dB or less, isolation of at least 40 dB below 1 GHz, and at least 30 dB at 1.7-2.3 GHz. Avoid HMC241 boards (see rejected).
+    - **Cheaper alternative:** No switch: swap chains by hand at the SMA bulkheads, never at the MHF4 connectors.
+    - **Safety notes:** An unknown clone may have poor isolation, which lets strong off-air signals from an unselected antenna leak in. Measure before trusting it.
+    - **Sources:**
+      - https://www.aliexpress.us/item/3256808840783740.html
+      - https://www.amazon.com/clp/B0F63XF4K6
+      - https://www.amazon.com/Switch-Communication-Electronic-Component-Portable/dp/B0D4YNYYKC
+  3.
+    - **Name:** I2C GPIO expander for RF control (PCF8574- or MCP23017-class breakout) plus a 74LVC/74HC buffer
+    - **Category:** Control interface
+    - **Purpose in lab:** Gives push-pull control lines for the switches (2-3 each), the PE4302 attenuator (6 lines) and the LNA load-switch enables and FAULT inputs (TPS2553), without using up the few free header pins.
+    - **Key specs:** 8 lines (PCF8574) or 16 lines (MCP23017); 3.3 V. Silicon Chip used a PCF8574 piggyback plus a 74HC367 buffer for exactly this PE4302 module.
+    - **Size weight power:** A small breakout board using milliwatts. Price, size and current not verified.
+    - **Interface and linux:** The mainline kernel drivers gpio-pcf857x and pinctrl-mcp23s08, bound through a device-tree overlay, expose a gpiochip, so the same libgpiod and rfsel scripts work. Put it on a different I2C bus from the BNO085, which clock-stretches (mainline DTS enables i2c0, i2c2 and i2c6).
+    - **Price:** Not verified (commodity breakout).
+    - **Availability:** Commodity part.
+    - **Tier:** extended
+    - **Integration notes:** The Q6A header GPIOs pass through weak auto-direction 1.8-to-3.3 V translators (UM3204H/UM3304, schematic v1.21). The PE4302 module's 10 kOhm pull-downs load its control pins, so drive them from the expander or a buffer, not straight from the header.
+    - **Cheaper alternative:** Direct header GPIOs for the switch only; the ZSWA4's 100 kOhm pull-downs are a light load.
+    - **Safety notes:** None.
+    - **Sources:**
+      - https://siliconchip.com.au/Issue/2018/June/El+Cheapo+Modules+17%3A+4GHz+digital+attenuator
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+  4.
+    - **Name:** PE4302 digital step attenuator module (0-31.5 dB, 0.5 dB steps)
+    - **Category:** Programmable attenuator
+    - **Purpose in lab:** Scriptable attenuation for the 3 dB overload test with no re-cabling, gain-staging sweeps, and conducted MDS/sensitivity tests (Procedure 7).
+    - **Key specs:** 1 MHz-4 GHz, 6-bit, 0-31.5 dB in 0.5 dB steps, 50 ohm. Silicon Chip measurements: 0 dB-setting loss about 1-1.5 dB below 2.5 GHz and about 3.5 dB at 4 GHz; accuracy good to about 1.5 GHz and worse above. The module is hard-wired for parallel control (serial disabled). The PE4302 chip is obsolete; the PE4312 is its pin-compatible replacement.
+    - **Size weight power:** PCB 33 x 24.5 mm with edge SMA connectors. Silicon Chip's module runs from 3.3 V; some listings say DC 5 V, so check your board. Current draw not verified.
+    - **Interface and linux:** 6 parallel lines with 10 kOhm pull-downs. Drive them through the I2C expander and buffer; set with gpioset or python gpiod.
+    - **Price:** About $11.49 + $6.84 shipping (eBay seller in Shenzhen; listing last updated July 2025); $27.14 (Newegg, shipped from China); about $11 (Banggood, 2018 article).
+    - **Availability:** eBay, Newegg, AliExpress (clone boards).
+    - **Tier:** extended
+    - **Integration notes:** Put it after the LNA (after 38-41 dB of gain its loss barely affects NF) and before the switch or SDR. Fit an earthed metal shield over the chip, which Silicon Chip found improves high-frequency accuracy. Characterise every setting you use with the VNA (Procedure 1); do not trust the nominal values above 1.5 GHz.
+    - **Cheaper alternative:** Nooelec fixed attenuator kit combinations (manual).
+    - **Safety notes:** Not a protection device. EEVblog members advise against relying on a step attenuator to protect an input; use fixed pads and a limiter for that.
+    - **Sources:**
+      - https://siliconchip.com.au/Issue/2018/June/El+Cheapo+Modules+17%3A+4GHz+digital+attenuator
+      - https://www.ebay.com/itm/265899138812
+      - https://www.newegg.com/p/2S7-090G-01GH3
+      - https://eevblog.com/forum/rf-microwave/digital-step-attenuator-pe4302-anybody
+  5.
+    - **Name:** Fixed attenuator set: Nooelec SMA Attenuator Kit (1, 2, 3, 6, 10, 20 dB) plus 2x Mini-Circuits VAT-10W2+
+    - **Category:** Attenuators
+    - **Purpose in lab:** Gain staging, the 3 dB pad test, the 10-12 dB protective pads after each 38-41 dB SAWbird on the Lime ports (from the rf_frontend audit), and 40-60 dB of padding in front of any LNA during conducted tests.
+    - **Key specs:** Nooelec: DC-6 GHz, +/-0.1 dB (DC-3 GHz), +/-0.4 dB (DC-6 GHz), 2 W; the six pads give 1-42 dB in 1 dB steps (connector genders not stated). VAT-10W2+: 10 dB, DC-6000 MHz, SMA (power rating not on the store page).
+    - **Size weight power:** Passive inline SMA barrels; no power.
+    - **Interface and linux:** None.
+    - **Price:** Nooelec kit $47.95; VAT-10W2+ $31.43 each (qty 1-4).
+    - **Availability:** Nooelec ships in 1 business day (no stock count shown). Mini-Circuits lists over 1,000 VAT-10W2+; DigiKey 165.
+    - **Tier:** core
+    - **Integration notes:** Keep the two VAT-10W2+ permanently on the Lime ports. The Nooelec six-pack is the bench set. Label every pad with its measured S21 at band centres (Procedure 1).
+    - **Cheaper alternative:** Generic AliExpress 2 W 6 GHz SMA pads (price not verified). Accept them only after a VNA check.
+    - **Safety notes:** Two or more pads in series in front of an LNA are mandatory whenever an instrument generator is used (conducted tests only).
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/attenuator-bundle.html
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=VAT-10W2%2B
+  6.
+    - **Name:** DC-block kit: 2x Mini-Circuits BLK-89-S+ (or Nooelec SMA In-Line DC Block)
+    - **Category:** Bias-tee and DC-block kit
+    - **Purpose in lab:** Keeps SAWbird USB or header power and LNB 13/18 V off SDR inputs, instrument ports and switch ports. Also protects VNA and tinySA ports during LNA measurements.
+    - **Key specs:** BLK-89-S+: 0.1-8000 MHz, +50 V DC maximum, 4 W RF maximum at 25 C, SMA-F to SMA-M. Nooelec: 50 kHz-8 GHz, 50 V, 2 W, loss under 0.3 dB below 6 GHz (under 0.8 dB below 8 GHz), VSWR under 1.2 below 6 GHz.
+    - **Size weight power:** BLK-89-S+ is a barrel about 30 mm long (datasheet outline 1.18 in); passive.
+    - **Interface and linux:** None.
+    - **Price:** BLK-89-S+ $20.26 (qty 1-4); Nooelec $24.95.
+    - **Availability:** Mini-Circuits lists over 1,000 (DigiKey showed 0); Nooelec ships in 1 business day.
+    - **Tier:** core
+    - **Integration notes:** The rf_frontend audit already uses the bias-tee injector's RF port as the DC block in each chain. These two are for the bench: one permanently on the VNA or tinySA port, one spare. Use the Nooelec one (50 kHz) below 100 kHz.
+    - **Cheaper alternative:** Generic SMA DC blocks (price not verified); VNA-check them at 137 MHz, where cheap blocks can be lossy.
+    - **Safety notes:** Lime RX ports already have 510 pF DC blocks and ESD8472 TVS diodes (5.3 V stand-off, 7-12 V breakdown), so they tolerate 5 V but conduct above about 7 V. Never let 13/18 V reach them.
+    - **Sources:**
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=BLK-89-S%2B
+      - https://www.minicircuits.com/pdfs/BLK-89-S+.pdf
+      - https://www.nooelec.com/store/sdr/sdr-addons/dc-block.html
+  7.
+    - **Name:** Bias-tee kit: 3x generic 10 MHz-6 GHz SMA bias tees plus 1x Mini-Circuits ZFBT-4R2GW+ reference/LNB injector
+    - **Category:** Bias-tee and DC-block kit
+    - **Purpose in lab:** GPIO-switched 5 V into each LNA on the Lime side (the Lime has no bias tee) and 13.4/18.2 V into the QO-100 LNB. The ZFBT also serves as the known-good reference when qualifying the cheap tees.
+    - **Key specs:** ZFBT-4R2GW+: 0.1-4200 MHz; insertion loss 0.6 dB typical / 1.2 dB max (1-2100 MHz); RF-to-DC isolation 40 dB typical; DC resistance 4.5 ohm; specs guaranteed to +20 dBm RF and 200 mA. Absolute maximums: 30 V and 500 mA at the DC port, +30 dBm input. Ports: RF SMA-F (DC-blocked), RF&DC SMA-M, DC SMA-F. Generic tees: the rf_frontend audit found 3-7 dB loss at 100-200 MHz, so use them only at 740 MHz and above after a VNA sweep.
+    - **Size weight power:** Passive. The DC feed comes from a TPS2553 load switch with a polyfuse (from the rf_frontend design).
+    - **Interface and linux:** Bias on/off through the TPS2553 EN (GPIO); FAULT goes to a GPIO input (libgpiod).
+    - **Price:** ZFBT-4R2GW+ $111.57 (qty 1-4). Generic tees about $5-10 each (rf_frontend figure, not re-verified).
+    - **Availability:** Mini-Circuits lists over 100 ZFBT (DigiKey showed 0).
+    - **Tier:** core
+    - **Integration notes:** Use the ZFBT as the LNB injector: LNB on the RF&DC port through an F-SMA adapter, 13.4/18.2 V regulated supply on the DC port (30 V maximum is fine), RF port toward the VLF-1000+, switch and Lime. VHF chains keep using the RTL's own 4.5 V/180 mA tee or the Flamingo+ pass-through.
+    - **Cheaper alternative:** Generic tees for every position, including the LNB, after a VNA check at 740 MHz.
+    - **Safety notes:** Never leave bias on into a 50 ohm load or a shorted antenna: 4.5 V into 50 ohm is 90 mA and 0.4 W.
+    - **Sources:**
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=ZFBT-4R2GW%2B
+      - https://www.minicircuits.com/pdfs/ZFBT-4R2GW+.pdf
+  8.
+    - **Name:** 50 ohm terminations: 3x Mini-Circuits ANNE-50+
+    - **Category:** Terminations / dummy loads
+    - **Purpose in lab:** Reference port on each switch (RF4, the power-on default), terminated-floor measurements on the RTL and the Lime, a 290 K source for Procedure 7, and terminating unused splitter or filter ports.
+    - **Key specs:** SMA-M, 50 ohm, DC-18 GHz. Power rating not on the store page.
+    - **Size weight power:** Small SMA cap; passive.
+    - **Interface and linux:** None.
+    - **Price:** $14.84 each (qty 1-4).
+    - **Availability:** Mini-Circuits lists over 1,000 (DigiKey showed 0).
+    - **Tier:** core
+    - **Integration notes:** Not a calibration standard (its return loss is not characterised here); use the OSL kit loads for VNA calibration.
+    - **Cheaper alternative:** The load from a generic NanoVNA OSL kit.
+    - **Safety notes:** Turn the bias tee off before terminating a bias-fed input (power rating unverified).
+    - **Sources:**
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=ANNE-50%2B
+  9.
+    - **Name:** Filter bank, core part (already in the stack): Nooelec Flamingo+ FM, RTL-SDR Blog FM bandstop, SAWbird+ NOAA (137 MHz), SAWbird+ GOES (1688 MHz), Uputronics 435 MHz CubeSat SAW preamp
+    - **Category:** Filter bank
+    - **Purpose in lab:** Per-band preselection. The Lime has no preselection and shows FM and LTE images, and the V4L has no built-in notch. These parts are the lab's swap-in filters for overload diagnosis (Procedure 4).
+    - **Key specs:** Flamingo+ FM: 0.5 dB typical / 1.2 dB max passband loss, passes 250 mA DC or more, +18 dBm max input. RTL-SDR Blog FM bandstop: more than 50 dB rejection, under 0.5 dB loss below 1 GHz, DC pass confirmed at 80 mA or more. SAWbird+ NOAA: 41 dB, 2.6 MHz 3 dB bandwidth, NF 1.1 dB, 170 mA. SAWbird+ GOES: 38 dB, 70 MHz 3 dB bandwidth, NF 1.2 dB, 140 mA, 0 dBm max input. Uputronics 435: 19 dB or more, about 0.75 dB NF, 30 MHz SAW centred at 440 MHz.
+    - **Size weight power:** Inline metal-cased modules. LNA currents as listed.
+    - **Interface and linux:** LNA bias switched by GPIO through TPS2553 (see the bias-tee item).
+    - **Price:** Flamingo+ FM $24.95; RTL-SDR Blog FM bandstop $16.95; SAWbird+ NOAA $44.95 barebones / $49.95 enclosed; SAWbird+ GOES $44.95 barebones / $49.95 enclosed; Uputronics 435 EUR 47.64 incl. VAT (Kubii, stock uncertain).
+    - **Availability:** Prices as given in the rf_frontend audit and on the Nooelec listing pages, Oct 2026.
+    - **Tier:** core
+    - **Integration notes:** Use Flamingo+ as a plug-in pre-filter in front of any LNA at strong-FM sites. The rf_frontend audit notes that LTE Band 3 uplink (1710+ MHz) falls inside the SAWbird GOES passband; it cannot be filtered out, so rely on the 10 dB pad and low gain.
+    - **Cheaper alternative:** Nooelec Distill:FM Barebones broadcast-FM bandstop, $17.95.
+    - **Safety notes:** None.
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/flamingo-plus-fm.html
+      - https://www.nooelec.com/store/sdr/sdr-addons/distill-fm-broadcast-fm-filter.html
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird-plus-goes.html
+      - https://www.rtl-sdr.com/new-products-in-our-store-wideband-lna-spare-metal-v3-enclosures/
+      - https://kubii.com/en/network-modules/3349-lna-amplifier-modules-with-saw-filter-and-single-frequency-3272496306646.html
+  10.
+    - **Name:** sysmocom cf2235-kt30 S-band cavity band-pass filter (2170-2300 MHz)
+    - **Category:** Filter bank
+    - **Purpose in lab:** S-band (2.2-2.3 GHz) preselection on the Lime RX-W. Rejects the 2.1 GHz cellular downlink and helps against 2.4 GHz Wi-Fi.
+    - **Key specs:** Passband 2170-2300 MHz; insertion loss 1.0 dB or less; at least 30 dB rejection below 2160 MHz.
+    - **Size weight power:** 124 x 47 x 33 mm, 186 g, indoor-rated; passive.
+    - **Interface and linux:** None.
+    - **Price:** EUR 65.45 (VAT status unclear).
+    - **Availability:** sysmocom ships by UPS only, weekly. Check that your destination is served.
+    - **Tier:** extended
+    - **Integration notes:** Mount it after the LNA V2 in the S-band chain (move it in front only if a site survey shows LNA overload). Too big for the case interior; carry it on the antenna boom or in the kit pouch.
+    - **Cheaper alternative:** None verified that is narrow enough. Mini-Circuits ZX75BP-2250-S+ is rejected as too wide.
+    - **Safety notes:** None.
+    - **Sources:**
+      - https://shop.sysmocom.de/S-Band-cavity-filter-2170-2300-MHz/cf2235-kt30
+      - https://www.sysmocom.de/downloads/rf_filter_cf2235-kt30.pdf
+  11.
+    - **Name:** Mini-Circuits VLF-1000+ LTCC low-pass filter (DC-1000 MHz)
+    - **Category:** Filter bank
+    - **Purpose in lab:** Removes 1.8/2.1 GHz LTE, 2.4 GHz Wi-Fi and USB 3 noise from the Lime RX-L when it handles 435 MHz or the 740 MHz QO-100 IF. Also serves as a general-purpose roofing filter for bench tests below 1 GHz.
+    - **Key specs:** DC-1000 MHz LTCC low-pass, 50 ohm, SMA, case style FF704. The store page does not give loss or rejection figures, so read the datasheet and S-parameters.
+    - **Size weight power:** FF704 case: the same body style as the VLM-33-S+, about 36 mm long. Passive.
+    - **Interface and linux:** None.
+    - **Price:** $33.81 (qty 1-4).
+    - **Availability:** Mini-Circuits lists over 1,000; DigiKey 50.
+    - **Tier:** extended
+    - **Integration notes:** Sweep it to the VNA's upper limit. LTCC filters can have spurious passbands far above cutoff (general behaviour, not checked for this part).
+    - **Cheaper alternative:** The SAW in the Uputronics 435 preamp already band-limits the 70 cm path; skip the LPF there.
+    - **Safety notes:** None.
+    - **Sources:**
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=VLF-1000%2B
+  12.
+    - **Name:** Nooelec Ham Filter Bank Barebones (2 m / 1.25 m / 70 cm / 33 cm / 23 cm band-pass plus pass-through)
+    - **Category:** Filter bank
+    - **Purpose in lab:** Swap-in VHF/UHF preselector for the unfiltered Lime or for bench comparisons at 2 m and 70 cm. It does not cover 137 MHz.
+    - **Key specs:** Passbands 144-148, 220-225, 420-450, 902-928 and 1240-1300 MHz plus pass-through. Nooelec's page does not state how the filter is selected, the insertion loss, the rejection or the size.
+    - **Size weight power:** Powered: 3-5 V over the SMA output (bias tee) or 3.3-5.5 V on micro-USB or a barrel connector (adapter included). A pushbutton enables 4.5 V bias at the input SMA. Current not stated.
+    - **Interface and linux:** No host control documented.
+    - **Price:** $66.95
+    - **Availability:** Nooelec; ships in 1 business day (no stock count shown).
+    - **Tier:** optional
+    - **Integration notes:** Characterise insertion loss and rejection with the VNA before use. Disable the input bias pushbutton unless an LNA is connected there.
+    - **Cheaper alternative:** Uputronics 435 (70 cm) plus the FM bandstop (2 m), both already owned.
+    - **Safety notes:** Its input bias feature can push 4.5 V into an antenna; keep it off with DC-shorted antennas.
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/ham-filter-bank.html
+  13.
+    - **Name:** LNA bank (already in the stack) plus 1 spare RTL-SDR Blog Wideband LNA V2
+    - **Category:** LNA bank
+    - **Purpose in lab:** Substitution tests (LNA A vs B with Procedure 5), the S-band chain LNA, and a known-good spare for field failures caused by ESD.
+    - **Key specs:** Existing: SAWbird+ NOAA, SAWbird+ GOES, 2x LNA V2, Uputronics 435 (see the filter bank item). Spare LNA V2: Qorvo QPL9547, 100 MHz-6 GHz, NF under 1 dB, 3-5 V bias. Board-level P1dB not published.
+    - **Size weight power:** Small metal enclosure; about 150 mA or less (measure the real draw, per the rf_frontend audit).
+    - **Interface and linux:** Bias switched by GPIO through TPS2553.
+    - **Price:** $19.95 (spare)
+    - **Availability:** RTL-SDR Blog store (208 in stock when the rf_frontend audit checked).
+    - **Tier:** core
+    - **Integration notes:** Measure its gain once with Procedure 7 (conducted, low level), since no board-level curve is published.
+    - **Cheaper alternative:** None; this is already the cheapest verified part.
+    - **Safety notes:** Discharge antennas before connecting. Put a 100-160 mA polyfuse in each bias feed.
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-wideband-lna-bias-tee-powered/
+      - https://www.rtl-sdr.com/new-products-in-our-store-wideband-lna-spare-metal-v3-enclosures/
+  14.
+    - **Name:** Hydrogen-line add-on: Nooelec SAWbird+ H1 plus Mini-Circuits VBFZ-1400-S+
+    - **Category:** LNA bank / filter bank
+    - **Purpose in lab:** Adds 1420 MHz neutral-hydrogen radio astronomy (passive reception). Detectability with antennas inside the 35 cm rule is unverified.
+    - **Key specs:** SAWbird+ H1: 1420 MHz, 65 MHz band-pass region, at least 40 dB gain, NF about 0.8 dB, 120 mA nominal, 3-5.5 V (bias tee, micro-USB or header). VBFZ-1400-S+: 1350-1450 MHz band-pass, SMA; loss not on the page.
+    - **Size weight power:** SAWbird metal case at 120 mA; the VBFZ is passive.
+    - **Interface and linux:** Bias by GPIO. Software: SDR++ or GNU Radio spectral integration.
+    - **Price:** SAWbird+ H1 $49.95; VBFZ-1400-S+ $54.13.
+    - **Availability:** Nooelec (ships in 1 business day); Mini-Circuits lists over 100 VBFZ.
+    - **Tier:** optional
+    - **Integration notes:** The VBFZ goes after the LNA as a second stage when 1.4 GHz interference is present. Feed it through an injector with the RF port toward the SDR (the SAWbird puts DC on its output when externally powered).
+    - **Cheaper alternative:** SAWbird+ H1 alone.
+    - **Safety notes:** None.
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird-h1.html
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=VBFZ-1400-S%2B
+  15.
+    - **Name:** Mini-Circuits ZFRSC-42-S+ 2-way resistive splitter (DC-4200 MHz)
+    - **Category:** Splitter
+    - **Purpose in lab:** Same-antenna A/B tests (RTL vs Lime, or two decoders), as the rf_frontend audit requires before moving 137/145.8 MHz to the Lime.
+    - **Key specs:** DC-4200 MHz, 2-way resistive, 50 ohm, SMA. Loss and isolation are not on the store page (a resistive 2-way splitter is about 6 dB per path by design). DC pass not stated.
+    - **Size weight power:** Passive SMA block.
+    - **Interface and linux:** None.
+    - **Price:** $78.86
+    - **Availability:** Mini-Circuits lists over 100 (DigiKey showed 0).
+    - **Tier:** optional
+    - **Integration notes:** Always put it after at least 20 dB of LNA gain. Never split before the LNA.
+    - **Cheaper alternative:** Time-multiplexed A/B through the SP4T (Procedure 5), at no extra cost.
+    - **Safety notes:** Do not pass bias through it.
+    - **Sources:**
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=ZFRSC-42-S%2B
+  16.
+    - **Name:** Mini-Circuits VLM-33-S+ limiter (30-3000 MHz)
+    - **Category:** RF protection
+    - **Purpose in lab:** Permanent insurance on the bench-input port and in front of the Lime whenever an unknown conducted source or test chain is attached.
+    - **Key specs:** 30-3000 MHz; 0.23 dB typical loss (0.7 dB max) below +5 dBm; VSWR 1.05; limits over +12 to +30 dBm input; +11.5 dBm typical output while limiting; 2 ns response; 2 W absolute maximum input; SMA-F in, SMA-M out.
+    - **Size weight power:** FF704 barrel, about 36 mm long; passive.
+    - **Interface and linux:** None.
+    - **Price:** $69.60 (rf_frontend audit, Mini-Circuits).
+    - **Availability:** Mini-Circuits.
+    - **Tier:** extended
+    - **Integration notes:** Its leakage (+11.5 dBm) is above the Lime's +10 dBm maximum, so always follow it with a pad of 3 dB or more. On the bench port: limiter, then 20 dB, then the switch. The datasheet gives no DC rating; keep it on the DC-free side.
+    - **Cheaper alternative:** The 10-12 dB pads alone (the rf_frontend audit's choice for normal operation).
+    - **Safety notes:** Not lightning protection.
+    - **Sources:**
+      - https://www.minicircuits.com/pdfs/VLM-33-S+.pdf
+  17.
+    - **Name:** Gas-discharge (GDT) coaxial arrestor, DC-pass: ProXicast ANT-241-002 (or Sectron AO-LA-SMA)
+    - **Category:** RF protection
+    - **Purpose in lab:** Surge protection only for an antenna left mounted outdoors (for example a fixed base antenna feeding the portable lab).
+    - **Key specs:** ANT-241-002: 0-6 GHz; SMA-F to SMA-F bulkhead; DC pass-through; 230 V DC discharge; loss under 0.2 dB; VSWR under 1.2; 200 W. Sectron: 0-6 GHz, SMA-m/SMA-f, 230 V +/-20% DC breakdown, 700 V or less impulse, loss figure 0.5 dB; DC pass not stated.
+    - **Size weight power:** ANT-241-002: 61 x 31 mm, 113 g. Sectron: 52.2 x 23 mm.
+    - **Interface and linux:** None.
+    - **Price:** ANT-241-002 $19.95 (MSRP $31.95); Sectron EUR 16.84 ex VAT / EUR 20.38 incl. 21% VAT.
+    - **Availability:** ProXicast: 93 in stock. Sectron: in stock (EU).
+    - **Tier:** optional
+    - **Integration notes:** Useful only when bonded to a real earth at the cable entry. It passes LNA bias (ANT-241-002), so it can sit ahead of a bias-fed LNA. Not needed for handheld use.
+    - **Cheaper alternative:** For handheld use, none: discharge the antenna before connecting (rf_frontend audit) and do not operate in thunderstorms.
+    - **Safety notes:** A 230 V GDT does nothing against the few-volt ESD that kills LNAs; that protection comes from diodes or TVS parts (BAV99 at the LNA input, ESD8472 on the Lime). Follow local electrical or earthing codes when installing.
+    - **Sources:**
+      - https://www.proxicast.com/shopping/ANT-241-002
+      - https://eshop.sectron.eu/en/bleskojistka-sma-m-sma-f/p-1371/
+  18.
+    - **Name:** SMA OSL calibration standards, both genders (Chelegance-type SMA-M OSL plus a generic female set)
+    - **Category:** Calibration standards
+    - **Purpose in lab:** VNA calibration at the end of the test cables (the reference plane) for all conducted characterisation in Procedure 1.
+    - **Key specs:** Chelegance OSL SMA-M: DC-6 GHz; the listing claims load VSWR below 1.025. Generic NanoVNA SMA OSL kits: DC-6 GHz, uncharacterised.
+    - **Size weight power:** Small SMA caps; passive.
+    - **Interface and linux:** Used with whichever VNA the instruments area picks (e.g. LiteVNA 64, NanoVNA). NanoVNA-Saver and the device firmware handle SOL(T).
+    - **Price:** Chelegance about 250 SEK (Limmared; seen in a search result, page not re-fetched). Generic kit about $10 + shipping (eBay; search result).
+    - **Availability:** Limmared (EU), eBay.
+    - **Tier:** core
+    - **Integration notes:** Buy standards of the opposite gender to your cable ends. Cables ending in SMA-M need SMA-F standards. Add an SMA-F to SMA-F barrel as the 'through'.
+    - **Cheaper alternative:** The OSL set that ships with most NanoVNA-class instruments.
+    - **Safety notes:** The VNA is a signal source. Use it only into cables, standards, pads, filters and LNAs, never into an antenna, at its lowest output setting.
+    - **Sources:**
+      - https://butik.limmared.nu/en/antenna-analysis/2099-chelegance-osl-calibration-kit-smam-50-ohm.html
+      - https://www.ebay.de/itm/283649921796
+  19.
+    - **Name:** Short characterised cable kit: 4x Mini-Circuits 086-6SM+ hand-flex (15 cm) plus 2x CBL-1FT-SMSM+ precision test cables (0.3 m)
+    - **Category:** Cables
+    - **Purpose in lab:** Repeatable inter-module jumpers inside the case (switch to pad to pigtail) and stable VNA port cables. Each cable's measured loss goes into the lab's parts table.
+    - **Key specs:** 086-6SM+: 0.086 in hand-formable cable, 6.0 in, rated to 18 GHz, SMA. CBL-1FT-SMSM+: precision test cable, 1.0 ft (0.3 m), 18 GHz, SMA.
+    - **Size weight power:** Passive.
+    - **Interface and linux:** Store measured S21 per cable (e.g. /etc/rflab/parts.yaml) for use by the measurement scripts.
+    - **Price:** 086-6SM+ $16.67 each; CBL-1FT-SMSM+ $82.05 each.
+    - **Availability:** Mini-Circuits lists over 1,000 (086-6SM+) and over 100 (CBL-1FT; DigiKey 50).
+    - **Tier:** core
+    - **Integration notes:** The 086-6SM+ are core. The CBL-1FT pair is extended (VNA port cables only). Hand-flex is for fixed routing: bend it once, not repeatedly. Lime-side MHF4L-SMA bulkhead pigtails stay as already planned (Lime $6 + $18 shipping, or Taoglas CAB.S225); buy 2 spares.
+    - **Cheaper alternative:** RG316 SMA jumpers (AliExpress, price not verified), each one VNA-measured and labelled.
+    - **Safety notes:** None.
+    - **Sources:**
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=086-6SM%2B
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=CBL-1FT-SMSM%2B
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro
+  20.
+    - **Name:** SMA torque wrench, 8 mm (5/16 in), 0.9 N·m break-over (TOJOIN-type), plus an 8 mm open-end spanner
+    - **Category:** Tools
+    - **Purpose in lab:** Repeatable SMA mating for measurement-grade results; prevents over-torquing PCB-mount SMA jacks on the SAWbirds, LNAs and switch.
+    - **Key specs:** 0.9 N·m (8 in-lb), 8 mm opening, break-over type. The Amazon appliedEM listing quotes +/-0.25 in-lb accuracy.
+    - **Size weight power:** Hand tool, about 17 cm.
+    - **Interface and linux:** None.
+    - **Price:** $35.89 on eBay (TOJOIN, 66 sold); open-box $30.71; other listings about $43-53 (search-result prices).
+    - **Availability:** eBay, Amazon.
+    - **Tier:** core
+    - **Integration notes:** 0.9 N·m is for stainless connectors. A NanoVNA-users thread notes the original MIL figure for brass SMA was about 3 in-lb, and that a 0.59 N·m preset wrench sits just below the brass upper limit. For brass parts (cheap adapters, many PCB jacks) use a lower-set or adjustable wrench, or finger-tight. Turn only the coupling nut and hold the body with the spanner.
+    - **Cheaper alternative:** Finger-tight plus careful practice. Not recommended for measurements.
+    - **Safety notes:** None.
+    - **Sources:**
+      - https://www.ebay.com/itm/354284038356
+      - https://www.amazon.com/SMA-Torque-Wrench-%C2%B7lbs-0-9/dp/B08B548833
+      - https://groups.io/g/nanovna-users/topic/sma_torque_wrench/75689254
+  21.
+    - **Name:** I-PEX 90435-001 MHF 4 mating/unmating tool (and 90609-0001 for MHF 4L)
+    - **Category:** Tools
+    - **Purpose in lab:** Safe extraction and insertion of the Lime's MHF4 RX/TX leads (rated for only about 30 mating cycles, per the antennas audit).
+    - **Key specs:** I-PEX's MHF 4 'Pushing & Pulling JIG'. The I-PEX manual says to lift it vertically from the PCB; angled pulls are prohibited. 90609-0001 is DigiKey's 'MHF 4L Mating/Unmating Tool' (price not checked).
+    - **Size weight power:** Stainless-steel hand tool.
+    - **Interface and linux:** None.
+    - **Price:** $18.10 (DigiKey, 474 in stock); EUR 15.89 (DigiKey EU, antennas audit).
+    - **Availability:** DigiKey; Future Electronics quotes about 12 weeks factory lead time.
+    - **Tier:** core
+    - **Integration notes:** Mate each pigtail once, strain-relieve it, and terminate it on a fixed SMA bulkhead. All lab re-cabling then happens at SMA. Keep a mating-cycle log per Lime port.
+    - **Cheaper alternative:** None advisable. Tweezers damage MHF4 plugs.
+    - **Safety notes:** None.
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/i-pex/90435-001/25819261
+      - https://www.i-pex.com/sites/default/files/downloads/pdf/MANUAL_MHF_4_HIM-10003-08EN.pdf
+      - https://www.i-pex.com/sites/default/files/downloads/pdf/MANUAL_MHF_4L_HIM-12012-08EN.pdf
+  22.
+    - **Name:** Purpose-picked adapter set (SMA/N/BNC/F/MMCX), not a 'universal' kit
+    - **Category:** Adapters
+    - **Purpose in lab:** Connect instruments, the LNB IF (F), any N-type field antenna or BNC gear without stacking adapters.
+    - **Key specs:** Suggested set: 2x SMA-M/M and 2x SMA-F/F barrels (one used as the VNA 'through'), 2x SMA right-angle, SMA-F/N-M and SMA-M/N-F, SMA-F/BNC-M and BNC-F/SMA-M, 2x F-F/SMA-M (75 ohm LNB IF; the mismatch is negligible at 740 MHz), 1x MMCX-SMA pigtail, plus 'connector savers' (sacrificial SMA barrels) on frequently used ports. Keep RP-SMA parts in a separate bag; they look the same and do not mate correctly with SMA.
+    - **Size weight power:** Passive, about 100-200 g (estimate).
+    - **Interface and linux:** None.
+    - **Price:** Not verified. The Amazon listings found (e.g. onelinkmore 20-type SMA kit, ConnectoRF 40-piece) showed no prices in the results.
+    - **Availability:** Amazon, AliExpress, EU shops.
+    - **Tier:** core
+    - **Integration notes:** VNA-check one of each type (Procedure 1) and discard any with more than 0.3 dB loss at 2.3 GHz (my threshold). If any module uses U.FL (MHF1), its extraction tool is a different part (not verified here).
+    - **Cheaper alternative:** Buy only the SMA barrels and F-SMA adapters now; add N and BNC when needed.
+    - **Safety notes:** None.
+    - **Sources:**
+      - https://www.amazon.com/SMA-Type-Connectors-Kits-Adapter/dp/B06Y5PDJYY
+      - https://www.amazon.com/Universal-Coaxial-Connector-Mini-UHF-Adapters/dp/B079K3HQZ8
+- **Capabilities added:**
+  - Software-selected antenna and front-end routing on each Lime RX port (SP4T, 3.3 V GPIO, about 0.3 mW), scriptable from the pass scheduler, so lab work no longer wears out the 30-cycle MHF4 connectors.
+  - An always-available 50 ohm reference port (switch RF4, the power-on default) for terminated-floor and self-noise/EMI surveys before every session (Wi-Fi, HDMI pixel clock, PCIe, USB 3 spurs).
+  - Overload and intermod diagnosis with the 3 dB pad test, and gain staging using calibrated pads or a scriptable 0.5 dB step attenuator.
+  - Time-multiplexed A/B comparison of antennas or LNAs on the same live pass (receive-only), plus same-antenna RTL-vs-Lime comparison through a resistive splitter.
+  - Conducted bench characterisation of every filter, LNA, bias tee, DC block, pad, switch and cable (S21/S11 tables), with a VNA from the instruments area. Generators are conducted only, behind 40-60 dB of pads, never into an antenna.
+  - Conducted MDS/sensitivity and approximate system noise-figure measurement against a 290 K termination using a low-level CW source and known attenuation.
+  - Per-band preselection for the unfiltered Lime: FM stop, 2 m/70 cm/23 cm bank, 1 GHz low-pass, L-band SAW, S-band cavity, optional 1.4 GHz band-pass.
+  - Controlled DC management: GPIO-switched 5 V LNA bias and 13.4/18.2 V LNB bias injected on the antenna side, with DC kept off switches, instruments and the Lime (whose ESD8472 TVS conducts above about 7 V).
+  - Input protection: a limiter plus pad on the bench port and the Lime, and an optional GDT surge arrestor for a fixed outdoor antenna.
+  - Measurement repeatability: torque-controlled SMA mating, OSL calibration at the cable ends, characterised and labelled cables, a mating-cycle log for MHF4.
+  - Optional 1420 MHz hydrogen-line radio astronomy chain (detectability with antennas under 35 cm unverified).
+- **Procedures:**
+  1.
+    - **Name:** P1. Accessory acceptance and cable characterisation (conducted VNA sweep)
+    - **Steps:**
+      - Disconnect every antenna. Under the receive-only rule the VNA is never connected to an antenna. Warm the VNA up for about 20 minutes and set the lowest output power that gives clean traces.
+      - Fit the CBL-1FT-SMSM+ port cables with a DC block on port 1 and torque them (0.9 N·m for stainless; lower for brass). Do a SOLT calibration at the cable ends using OSL standards of the opposite gender plus an SMA-F/F through. Save the calibration.
+      - Sweep 50 MHz to the VNA's upper limit. Record S21 and S11 at 137.5, 145.8, 436, 740, 1420, 1700 and 2250 MHz for every pad, DC block, bias tee (RF port to RF&DC port), filter, switch path (each RFx to COM, plus isolation to every other port), splitter path, cable, pigtail and adapter.
+      - Acceptance (my thresholds): pads within spec (+/-0.1 dB to 3 GHz for the Nooelec set) plus about 0.2 dB VNA uncertainty. DC blocks and the ZFBT under 0.6-1 dB in use. Generic bias tees rejected for any band where loss exceeds 1 dB (the audit saw 3-7 dB at 100-200 MHz). Switch insertion loss 1.5 dB or less; isolation at least 40 dB below 1 GHz and at least 30 dB at 1.7-2.3 GHz. Filters: record rejection at 88-108, 791-960, 1805-1880, 2110-2170 and 2400-2483 MHz; check the VLF-1000+ far stopband.
+      - Check bias tees and the GDT with a multimeter: DC continuity from the DC port to the RF&DC port, and an open circuit from the DC port to the RF port.
+      - Label each part with an ID and its measured loss, store the table (e.g. /etc/rflab/parts.yaml under git), and re-measure cables after any damage or every few months.
+    - **Needs:**
+      - VNA from the instruments area (LiteVNA 64 or NanoVNA class)
+      - SMA OSL calibration standards (both genders)
+      - CBL-1FT-SMSM+ test cables
+      - SMA torque wrench
+      - DC-block kit
+      - All passives under test
+  2.
+    - **Name:** P2. Switch-matrix bring-up and Linux control
+    - **Steps:**
+      - With the switch unpowered, measure resistance COM-RFx and RFx-GND. Treat every port as DC-free whatever the result.
+      - Wire the DB-9: Vdd to the header 3.3 V pin, GND, and V1/V2 (plus V3 if you want all-off) to free GPIO lines or I2C-expander lines. Do not use header pins 7, 8/10, 13/15, 16/18 or 22/33/36/37. Find the chip and line names with gpioinfo.
+      - Connect the chains: RF1 = 70 cm (LNA, then injector), RF2 = QO-100 IF (LNB, then ZFBT injector, then VLF-1000+), RF3 = bench port (VLM-33-S+, then 20 dB pad), RF4 = ANNE-50+ load. COM goes to the 10 dB pad, then the MHF4L pigtail, then the Lime RX-L.
+      - Write 'rfsel' to map names to bits (load=00, 70cm: V1=1 V2=0, qo100: V1=0 V2=1, bench=11), held by one long-running gpiod process. With libgpiod v2: gpioset -c gpiochipN -z V1=1 V2=0. Kill the holder before changing state. Log every change with a timestamp next to the IQ recording.
+      - Confirm that a reboot or a crash returns the switch to RF4 (the internal 100 kOhm pull-downs), which leaves the Lime safely on the load.
+      - Run the P1 switch sweep, or with the antennas still disconnected, inject a conducted low-level tone into each RFx through 40 dB of pads and read it on the Lime with each other port selected, to get the isolation table. Accept or reject against the P1 thresholds.
+    - **Needs:**
+      - Mini-Circuits ZSWA4-63DR+ (or an HMC7992 board)
+      - DB-9 lead
+      - ANNE-50+
+      - Bias-tee injectors
+      - VAT-10W2+ pads
+      - VLM-33-S+
+      - I2C GPIO expander (optional)
+      - libgpiod / python3 gpiod
+      - Multimeter
+  3.
+    - **Name:** P3. Terminated-floor and self-noise survey (before each session or after any hardware change)
+    - **Steps:**
+      - Turn every bias tee off (4.5 V into 50 ohm is 0.4 W). Select RF4 (load) on the Lime switches; put an ANNE-50+ on the RTL input.
+      - At fixed gain and sample rate, record 30 s at 137.1, 145.8, 436, 740, 1420, 1700 and 2250 MHz.
+      - Repeat with Wi-Fi off (nmcli radio wifi off), the HDMI mode changed, the USB 3 NVMe idle vs writing, and the Lime streaming vs idle. Note which spurs move or disappear.
+      - Save a per-band spur mask. Spurs that are present with the input terminated are self-generated, not satellite or interference signals.
+      - Switch to the antenna chain with its LNA on. The noise floor must rise 6-10 dB above the terminated floor (rf_frontend gain-staging rule); if not, raise the SDR gain or move the LNA to the feed.
+    - **Needs:**
+      - ANNE-50+ terminations
+      - Switch matrix
+      - SDR++ or SatDump baseband recorder
+  4.
+    - **Name:** P4. Gain staging and the 3 dB pad overload test (site survey)
+    - **Steps:**
+      - With antenna and LNA connected, set the SDR gain so the floor sits 6-10 dB above the terminated floor and the strongest carriers stay below about -10 dBFS.
+      - Insert 3 dB between the LNA and the SDR (Nooelec 3 dB pad, or set the PE4302 to 3.0 dB).
+      - Real signals drop by about 3 dB. Spurs that drop by clearly more than 3 dB are intermod or overload products generated inside the chain.
+      - Fix in this order: FM bandstop in front of the LNA (Flamingo+), band filter (Ham Filter Bank 70 cm, VLF-1000+, cavity), keep the 10 dB Lime pad, lower the SDR gain. Repeat steps 2-3.
+      - Record the final chain (filters, pads, gain) per site and per band in the lab log.
+    - **Needs:**
+      - Nooelec attenuator kit or PE4302
+      - Filter bank
+      - FM bandstop filters
+  5.
+    - **Name:** P5. Time-multiplexed A/B comparison of two antennas or LNAs on a live pass (receive-only)
+    - **Steps:**
+      - Put chain A on switch RF1 and chain B on RF2, each after its own LNA and injector and with the same pad toward the SDR. Take the port-to-port loss difference from P1.
+      - Before the pass, record the terminated floor on RF4 and on each chain with its antenna pointed at the sky, away from the satellite.
+      - During the pass, record baseband continuously and toggle RF1/RF2 every 5-10 s with rfsel, logging the timestamps.
+      - Afterwards, compute carrier or beacon power over floor for each segment, pair segments at matching elevation, and correct for the P1 loss difference. The result is the relative performance in dB.
+      - Repeat over 2-3 passes and report the mean and spread. For decode-quality comparisons, which need an uninterrupted signal, use P6 instead.
+    - **Needs:**
+      - Switch matrix
+      - Two receive chains
+      - SDR++ or SatDump baseband recording
+      - Python/NumPy analysis script
+  6.
+    - **Name:** P6. Same-antenna RTL-SDR vs Lime comparison with the resistive splitter
+    - **Steps:**
+      - Antenna to LNA (20 dB or more) to injector to ZFRSC-42-S+; one output to the RTL-SDR, the other through the 10 dB pad to the Lime. Terminate any unused port.
+      - Equalise or record the path losses from P1.
+      - Record the same pass on both SDRs at the rates SatDump uses for that satellite.
+      - Compare decoded SNR, frame counts and Viterbi/BER statistics. The rf_frontend audit's rule: move 137/145.8 MHz to the Lime only if it is within 1-2 dB of the RTL.
+    - **Needs:**
+      - ZFRSC-42-S+
+      - ANNE-50+
+      - Attenuators
+      - RTL-SDR V4L and LimeSDR Micro
+  7.
+    - **Name:** P7. Conducted MDS / approximate noise-figure test with a low-level CW source
+    - **Steps:**
+      - Disconnect every antenna and switch all unused ports to their loads. Nothing in the setup may be connected to an antenna.
+      - Generator (instruments area, lowest output setting) to at least 50 dB of fixed pads (Nooelec 20+10+6 plus 2x VAT-10W2+) to the PE4302 to a DC block to the LNA input. The LNA is powered through its injector on the output side. Then the SDR.
+      - From the P1 values, work out the level at the LNA input (Pgen minus all attenuation) and start below -60 dBm, far under the SAWbird+ GOES 0 dBm maximum input.
+      - In SDR++ with a fixed FFT, raise the level in 0.5 dB steps until the tone sits 3 dB above the floor (S = N). Record P_MDS in dBm.
+      - Approximate NF = P_MDS + 174 - 10*log10(ENBW in Hz). The pads present a 290 K source, so the estimate is valid; its accuracy is limited by pad tolerances and the ENBW estimate.
+      - Repeat with the LNA bypassed (SDR alone) and at several gain settings. Disconnect the generator first when finished.
+    - **Needs:**
+      - Low-level signal generator (conducted only)
+      - Nooelec attenuator kit plus VAT-10W2+
+      - PE4302
+      - DC block
+      - ANNE-50+
+      - Parts table from P1
+  8.
+    - **Name:** P8. Connector care: torque, MHF4 handling, mating-cycle log
+    - **Steps:**
+      - Inspect the connector faces and pins; reject bent pins and debris.
+      - Align the connectors and thread the nut by finger. Hold the body with the 8 mm spanner and turn only the nut. Finish with the torque wrench (0.9 N·m stainless, lower for brass).
+      - Put connector-saver barrels on frequently used ports (instrument ports, bench bulkhead) and replace them when they wear.
+      - MHF4: slide the I-PEX 90435-001 jig on from the cable side up to its stop and lift vertically, never at an angle. Note each mating in the port log, since MHF4 is rated for about 30 cycles.
+      - Never re-cable at an MHF4 for a test; use the switch or the SMA bulkheads.
+    - **Needs:**
+      - SMA torque wrench
+      - 8 mm spanner
+      - I-PEX 90435-001 / 90609-0001
+      - Adapter set (barrels)
+  9.
+    - **Name:** P9. Optional: surge protection for a fixed outdoor antenna
+    - **Steps:**
+      - Fit the ANT-241-002 GDT where the coax enters the building or shelter, and bond it with a short heavy conductor to an earth that meets the local electrical code.
+      - Check DC pass: measure LNA current through the arrestor with bias on.
+      - Check its loss with the VNA (spec under 0.2 dB) at the band in use.
+      - Keep the BAV99 or TVS protection at the LNA input; the GDT does not stop ESD.
+      - Disconnect and stow antennas before thunderstorms, and replace the GDT after any strike.
+    - **Needs:**
+      - ProXicast ANT-241-002 or Sectron AO-LA-SMA
+      - Earthing hardware
+      - Multimeter
+      - VNA
+- **Rejected:**
+  1.
+    - **Name:** Mini-Circuits USB-SP4T-63 (USB-controlled SP4T, 1-6000 MHz)
+    - **Why:** $602.65 with 0 in stock. It would take one of the Q6A's few USB ports (the three USB 2.0 ports share a hub with Wi-Fi). It has good Linux support (Mini-Circuits API for Linux, 30-80 mA from USB, built-in DC blocking), but the GPIO-driven ZSWA4-63DR+ covers the same range for half the price and no USB port. Fine for a home bench PC.
+  2.
+    - **Name:** Mini-Circuits ZFSWA2-63DR+ SPDT
+    - **Why:** 500-6000 MHz only, so it misses 137, 145.8 and 435 MHz. $159.81.
+  3.
+    - **Name:** HMC241-based SP4T boards
+    - **Why:** ADI's Japanese product page lists HMC241 as discontinued (search result; the English page returned 503). AliExpress boards are unmeasured clones or old stock, need 5 V and external DC blocks. Use the ZSWA4 or a qualified HMC7992 board instead.
+  4.
+    - **Name:** Surplus electromechanical SMA coaxial relays (e.g. Radiall R514373427 SP4T DC-6 GHz on eBay, sold out)
+    - **Why:** Surplus only. Coil voltage and current not verified (typically higher-voltage coils), heavy, and shock-sensitive in a handheld. Fine for a fixed bench.
+  5.
+    - **Name:** Mini-Circuits ZVBP-435-S+ cavity band-pass (425-445 MHz, 0.9 dB, 80 dB rejection)
+    - **Why:** $802.45 and too large. The Uputronics 435 SAW preamp plus the VLF-1000+ does the job.
+  6.
+    - **Name:** Mini-Circuits ZX75BP-2250-S+ (2000-2500 MHz ceramic band-pass, $121.88)
+    - **Why:** Too wide: it passes the 2110-2170 MHz cellular downlink and 2.4 GHz Wi-Fi. The sysmocom cf2235-kt30 is narrower and cheaper.
+  7.
+    - **Name:** Dedicated SMA 'LTE notch' filter
+    - **Why:** No verified SMA notch found for the bands that matter. LTE Band 3 uplink (1710-1785 MHz) sits directly above the 1698-1707 MHz HRPT band, so a notch would also cut the wanted signal. Elsewhere, band-pass parts (cavity, SAW, LPF) give the rejection. TV-antenna '5G/LTE' F-type low-pass filters are a cheap category but were not verified here.
+  8.
+    - **Name:** Nooelec SAWbird+ iO / IR and the Inmarsat / Iridium antenna bundles
+    - **Why:** Built for commercial satellite communications services, which are out of scope under the project rules.
+  9.
+    - **Name:** Nooelec LaNA Barebones (20 MHz-4 GHz, $32.95)
+    - **Why:** Pre-order, and it duplicates the role of the RTL-SDR Blog LNA V2 already in the stack.
+  10.
+    - **Name:** Name-brand SMA torque wrenches (Fairview ST-SMA8 $689-854 on DigiKey; L-com LC-TWC08516 NZ$643.51)
+    - **Why:** About 20 times the price of a break-over 0.9 N·m wrench, with no benefit at this lab's accuracy level.
+  11.
+    - **Name:** Professional calibration kits (Megiq SMA-CAL-6F about GBP 555 ex VAT; Tekbox TBVC-SM6 EUR 475 ex VAT)
+    - **Why:** Their accuracy exceeds what NanoVNA/LiteVNA-class instruments can use. Reconsider only if a better VNA is bought.
+  12.
+    - **Name:** LibreCAL 4-port eCal (9 kHz-6 GHz)
+    - **Why:** Documented support is LibreVNA-GUI and SCPI scripts only; price and availability not verified.
+  13.
+    - **Name:** 'Universal' 40-piece interchangeable-centre adapter kits (e.g. ConnectoRF on Amazon)
+    - **Why:** Mostly irrelevant types (UHF, mini-UHF, RCA), price not shown, and stacked adapters add loss and mismatch. Buy direct SMA adapters.
+  14.
+    - **Name:** VLM-33-S+ as the only protection on the Lime
+    - **Why:** Its +11.5 dBm leakage is above the Lime's +10 dBm maximum, so it must always be followed by a pad.
+  15.
+    - **Name:** Using the LimeSDR Micro TX port as a test-signal source
+    - **Why:** It is a transmitter, and the lab is receive-only. If a test signal is needed, use a low-output instrument generator, conducted only, behind 50 dB or more of pads.
+- **Notes:** RULES APPLIED: Nothing in this kit transmits. The VNA and signal generator come from the instruments area and are used only for conducted tests into cables, pads, filters, LNAs and loads: lowest output setting, 40-60 dB of pads in front of any LNA, all antennas disconnected and every switch port parked on a load. Never connect a VNA or generator to an antenna (that includes antenna SWR sweeps). Legal: reception and use of received data, surge-arrestor installation (electrical and earthing codes) and import of RF parts all depend on the country. Check local rules; no country-specific claims are made. Commercial satellite communications (Inmarsat, Iridium) are deliberately excluded.
+  
+  COST (USD, Mini-Circuits and Nooelec store prices on 18 Oct 2026, before shipping and VAT):
+  - Core new purchases about $284 (Nooelec attenuator kit 47.95, 2x BLK-89-S+ 40.52, 3x ANNE-50+ 44.52, 4x 086-6SM+ 66.68, torque wrench 35.89, I-PEX 90435-001 18.10, spare LNA V2 19.95, generic OSL kit about 10). Add the Chelegance OSL kit (about 250 SEK) and the adapter set (price not verified). Generic bias tees are already counted in the rf_frontend small-parts budget.
+  - Extended about $768 plus EUR 65.45: ZSWA4-63DR+ 307.32, PE4302 about 18.33 delivered, ZFBT-4R2GW+ 111.57, VLF-1000+ 33.81, VLM-33-S+ 69.60, 2x CBL-1FT-SMSM+ 164.10, 2x VAT-10W2+ 62.86, sysmocom cavity EUR 65.45; I2C expander price not verified.
+  - Optional about $270: ZFRSC-42-S+ 78.86, Ham Filter Bank 66.95, SAWbird+ H1 49.95, VBFZ-1400-S+ 54.13, ANT-241-002 19.95; a second HMC7992 switch, price not verified.
+  DigiKey often showed 0 stock when the Mini-Circuits store had stock. The ZSWA4-63DR+ itself showed 0 stock, so ask Mini-Circuits for a lead time or start with an HMC7992 board.
+  
+  FIT, POWER, THERMAL: Only the switch (51x38x15 mm), PE4302 (33x24.5 mm PCB), the permanent pads and the DC blocks go inside the ASA case, on the aluminium mid-plate. Everything else lives in a kit pouch; its weight is not estimated, since most item weights are unpublished. Added power is negligible (ZSWA4 0.1 mA at 3.3 V). LNA currents are unchanged from the rf_frontend budget. No new heat source.
+  
+  GPIO BUDGET: Each switch needs 2-3 lines and the PE4302 needs 6; add the LNA TPS2553 enables and FAULT lines. That is more than the free header pins once pins 7, 8/10, 13/15, 16/18 and 22/33/36/37 are excluded, hence the I2C expander, on a bus other than the BNO085's. The header's weak auto-direction translators are another reason to buffer the PE4302's 10 kOhm pull-downs.
+  
+  UNVERIFIED (check on arrival):
+  - AliExpress and Amazon HMC7992 board prices and specs (pages blocked); HMC7992 logic levels (ADI site returned 503).
+  - PE4302 board supply voltage (3.3 V vs 5 V variants).
+  - Ham Filter Bank selection method, insertion loss and size.
+  - Power ratings of the ANNE-50+ and VAT-10W2+.
+  - DC pass of the ZFRSC-42-S+ and of the Sectron GDT; DC handling of the VLM-33-S+.
+  - Adapter-kit and generic bias-tee prices.
+  - Chelegance and eBay cal-kit prices (seen only in search results).
+  - MHF4L-plug to MHF4-jack compatibility (antennas audit flag).
+  About 11 WebSearch calls were used; the remaining facts come from WebFetch of manufacturer pages and datasheets, plus the audited input files (rf_frontend, compute, gnss_imu, antennas).
+
 ## small:lband_sband (run `wf_41027870-8e7`)
 
 - **Band group:** L-band 1.5-1.7 GHz and S-band 2.2-2.4 GHz with antennas of at most 12 cm (STRICT) or 20 cm (SMALL). Dishes and anything tens of cm deployed are EXCLUDED, including the foldable helicones, the 11-turn helix and the 2x2 helix arrays. Rule interpretation as given: STRICT means the largest deployed dimension is about 12 cm or less; SMALL means about 20 cm or less; foldable or telescopic antennas that are larger when deployed are excluded and appear only in the borderline note.
