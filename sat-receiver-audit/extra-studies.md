@@ -9768,3 +9768,480 @@
     - The RP2040 planned for display dimming can double as the USB-HID knob and HOME/BACK buttons. A knob that sends ShuttleXpress-style keys can drive SDRangel's Jogdial plugin, but only while that plugin has focus.
     - Weston 13 (noble) kiosk-shell is another cage-like option I did not evaluate.
 
+## labui:ux_requirements (run `wf_fceb75d0-87e`)
+
+- **Area:** Menu-driven field UI and system shell for the handheld receive-only radio lab (Radxa Dragon Q6A, Ubuntu 24.04 arm64, held kernel). Covers information architecture, glove/sunlight/one-hand interaction, hardware controls, status bar, pass notifications, SDR arbitration, systemd supervision, crash recovery, low-battery shutdown, SigMF recording, offline help, settings and updates. The HF receiver is included with whip, wire-on-winder and miniwhip-type antennas only. Per the user's change, there are no loop antennas, loop amplifiers, loop frames or loop chokes.
+- **Options:**
+  1.
+    - **Name:** Lab Shell: custom Qt 6.4 QML home screen + 'labd' supervisor/arbiter daemon (RECOMMENDED UI layer)
+    - **What it is:** A purpose-built full-screen shell that is the device's only home screen, plus one system daemon (labd) on D-Bus that owns SDR leases, status, the pass scheduler, the recorder, power and input routing. Each lab function is a 'mode card' that bundles: engine (SatDump, SDR++, GNU Radio/gr-satellites, an RX-only SDRangel subset, ADS-B/AIS/sonde decoders, tinySA/NanoVNA tools) + SDR + antenna/front-end path + bias-T/LNB state + recording policy + help page. labd starts each mode as a systemd unit. I found no existing open project that covers the whole lab, so this is new glue code over the engines already chosen.
+    - **Key specs:** - Toolkit: Qt 6.4.2 QML / Qt Quick Controls with a custom style; QtDBus; qt6-virtualkeyboard 6.4.2 for text entry; native Wayland touch.
+  - Layout in millimetres from the EDID physical size. 7in 1920x1080 is about 155x87 mm, 12.4 px/mm, so 15 mm = 186 px and 20 mm = 248 px. The 1280x800 fallback is 8.5 px/mm, so 15 mm = 127 px.
+  - Home: a 3x3 grid of hubs (about 41x24 mm tiles, 3 mm gaps), a 7 mm status bar, and a 22 mm soft-key column on the user's handed side (tinySA/FieldFox pattern).
+  - Hubs: Satellites, HF, VHF/UHF Live, Spectrum, Radio Astronomy, Instruments, Signals AI, Recordings, System. Maximum depth Home > Hub > Mode; per-mode settings sit on soft-keys.
+  - Themes: Day (dark on light, at least 7:1), Night (light on dark) and Red (keeps dark adaptation). The VEML7700 lux reading switches them automatically, with hysteresis.
+  - labd D-Bus interfaces: Arbiter, Status, Scheduler, Recorder, Power, Input.
+    - **Linux arm64 support:** Every dependency is in Ubuntu noble for arm64: qt6-base-dev 6.4.2+dfsg-21.1build5 and qt6-virtualkeyboard 6.4.2+dfsg-4build2. The shell runs entirely in user space, so it is independent of the held 6.18.2 kernel. Qt 6.4 has no Qt Location (my recollection: it returned in 6.5; verify), so draw ADS-B/AIS maps with an own offline tile layer or use the engine's own view.
+    - **Price:** $0 in software (Qt is LGPL). The real cost is engineering time: about 4-8 weeks part-time for v1 (my estimate).
+    - **Pros:** - The only option that meets every requirement together: glove-size targets everywhere, one Home/Back/encoder model across all functions, a persistent status bar, one owner per SDR, pass alerts, SigMF, offline help, and updates that respect the kernel holds.
+  - Keeps the already-validated engines unchanged and drives them through their control interfaces: SDR++ rigctl_server, SatDump CLI/autotrack, SDRangel REST/RigCtl.
+  - Qt handles touch natively, and QtDBus talks to both systemd and labd.
+    - **Cons:** - New code to write and maintain.
+  - GLFW engines (SDR++, SatDump) keep their small desktop widgets when opened. Mitigation: drive them from the shell and open their native UI only in an 'Expert' view.
+  - Live NPU labels need the shell's own waterfall (Qt Quick scene graph, GL ES) or a custom SDR++ module. The frequency_manager module drawing bookmarks on the waterfall suggests a module can do this (unverified).
+  - Qt 6.4.2 is an older Qt.
+    - **Community reports:** I found no published shell of this kind for any SDR handheld. The nearest patterns:
+  - An element14 Raspberry Pi CM5 SDR++ touchscreen build added a rotary encoder and push buttons through an ATtiny85 interface (search snippet only; the page returned 403).
+  - Raspberry Pi OS on labwc added long-press as right-click and double-tap as double-click for touch.
+    - **Size weight power:** Software only. The Qt Quick idle load is unmeasured. Pin all UI units to CPUs 0-6 so CPU7 stays isolated for lime:Rx0, as in the software plan.
+    - **Sources:**
+      - https://packages.ubuntu.com/noble/qt6-base-dev
+      - https://packages.ubuntu.com/search?keywords=qt6-virtualkeyboard&searchon=names&suite=noble&section=all
+      - https://github.com/portapack-mayhem/mayhem-firmware/wiki/Title-Bar
+      - https://tinysa.org/wiki/pmwiki.php?n=TinySA4.MenuTree
+      - https://community.element14.com/products/roadtest/b/blog/posts/raspberry-pi-cm5-roadtest---sdr
+      - https://www.raspberrypi.com/news/a-new-release-of-raspberry-pi-os/
+  2.
+    - **Name:** labwc 0.7.1 compositor (noble) in place of a plain cage kiosk (RECOMMENDED compositor)
+    - **What it is:** A lightweight wlroots stacking compositor. Raspberry Pi OS made it its default desktop compositor in the 28 Oct 2024 release. Here it hosts the shell, the status bar and the third-party apps at the same time.
+    - **Key specs:** - Noble package 0.7.1-1build1 for arm64, about 481 kB installed.
+  - Layer-shell panels reserve space; the usable area excludes exclusive zones.
+  - <touch mapToOutput>, keybinds (no key chains), window rules by identifier (Wayland app_id or X11 WM_CLASS), and XWayland with an xwaylandPersistence option.
+  - Panels and launchers are left to clients.
+    - **Linux arm64 support:** Packaged for noble arm64. Still untested on the Q6A msm DRM + RA620 HDMI path, so test it in week 1. GLFW apps run under XWayland, which gives them pointer emulation from touch. Force X11 with XDG_SESSION_TYPE=x11, as the display plan notes.
+    - **Price:** $0
+    - **Pros:** - A persistent status bar can sit over SDR++ and SatDump.
+  - Compositor-level HOME/BACK keybinds work even while a GLFW app has focus.
+  - Several apps can stay alive at once (shell, SDR++, SatDump) and hand over without restarting.
+  - Same wlroots family as cage, so it is light.
+  - Proven touch-first defaults on Raspberry Pi OS.
+    - **Cons:** - Noble's 0.7.1 is old (wlroots 0.17). Newer touch, OSD and window-query features would need a source build with a newer wlroots.
+  - The root menu and decorations must be stripped to keep a kiosk feel.
+  - How to raise the shell from a key (Iconify the focused app, or activate via foreign-toplevel) must be verified on 0.7.1.
+  - Output rotation goes through wlr-randr; test it.
+    - **Community reports:** Raspberry Pi gave its reasons for the switch: labwc desktops 'run just as fast as X on older Raspberry Pi models', touch support improved, and Squeekboard was integrated. There are no Q6A reports.
+    - **Size weight power:** About 481 kB installed. Runtime overhead should be in the same class as cage (not measured).
+    - **Sources:**
+      - https://packages.ubuntu.com/noble/labwc
+      - https://labwc.github.io/labwc-config.5.html
+      - https://labwc.github.io/
+      - https://www.raspberrypi.com/news/a-new-release-of-raspberry-pi-os/
+  3.
+    - **Name:** cage 0.1.5 single-app kiosk (noble) - fallback and recovery mode only
+    - **What it is:** A wlroots kiosk that 'runs a single, maximized application'. The software plan already lists it.
+    - **Key specs:** - Noble package 0.1.5+20240127-2build1 (universe, arm64).
+  - XWayland support is compile-time.
+  - Output rotation was removed in 0.1.5.
+  - 0.3.0 (11 Apr) moved to wlroots 0.20 and added wlr-foreign-toplevel-management 'to control windows from an external program'. 0.3.1 (30 Jun) is the latest release.
+    - **Linux arm64 support:** 0.1.5 is packaged for noble arm64. 0.3.x needs wlroots 0.20, which noble does not have, so it means a source build of both.
+    - **Price:** $0
+    - **Pros:** - Smallest and simplest option.
+  - Good as a 'safe mode' session that boots straight into the shell, or for a single-purpose appliance build.
+    - **Cons:** - One maximized app at a time, so there is no status bar visible over SDR++ or SatDump. Layer-shell support is not advertised (unverified).
+  - The noble build cannot switch windows from the shell, so returning Home means killing the foreground app.
+  - No rotation.
+    - **Community reports:** No Q6A field reports. The software plan recommended 'cage or weston' before the persistent status bar and multi-app hand-off became requirements.
+    - **Size weight power:** About 80 kB installed.
+    - **Sources:**
+      - https://github.com/cage-kiosk/cage
+      - https://github.com/cage-kiosk/cage/releases
+      - https://packages.ubuntu.com/noble/cage
+  4.
+    - **Name:** Persistent status bar: waybar 0.9.24 (layer-shell), or a small GTK3 + gtk-layer-shell 0.8.2 app, fed by labd
+    - **What it is:** A top bar that stays visible over every app and shows labd data. Qt6 cannot be a layer-shell client on noble, because layer-shell-qt there is 5.27 (Qt5 only), so the bar is a separate GTK client.
+    - **Key specs:** - waybar 0.9.24-1build3 (noble arm64), or gtk-layer-shell 0.8.2 with gir1.2-gtklayershell-0.1 for a roughly 200-line Python bar.
+  - 7 mm tall at 1080p (about 87 px). Each chip is at least 15 mm wide and tapping it opens that subsystem's detail page (Mayhem title-bar pattern).
+  - Chips, left to right: UTC time + time source (PPS/GNSS/RTC/none) | GNSS fix (2D/3D, satellites) | next pass (name, T-mm:ss, max elevation) | SDR owners (RTL: mode / LIME: mode / HF path) | REC dot + elapsed + minutes left on the target volume | NPU (HTP/CPU/OFF/FAULT + windows per second) | temperatures (SoC max, battery NTC) | storage (UFS/T7 free) | battery (% from the coulomb counter, W, time to empty) | alert count.
+    - **Linux arm64 support:** Both are in noble for arm64. waybar's custom-module JSON and touch on-click were not checked in this pass; verify both.
+    - **Price:** $0
+    - **Pros:** - One bar for the shell and all third-party apps.
+  - Read-only, so a bar crash cannot affect RX.
+  - CSS styling allows large bold fonts for sunlight.
+    - **Cons:** - A second UI technology (GTK) besides Qt.
+  - Space on a 1280x800 fallback panel is tight; drop chips by priority.
+    - **Community reports:** Standard panel role on wlroots desktops. No SDR-specific reports.
+    - **Size weight power:** Negligible.
+    - **Sources:**
+      - https://packages.ubuntu.com/search?keywords=waybar&searchon=names&suite=noble&section=all
+      - https://packages.ubuntu.com/search?keywords=gtk-layer-shell&searchon=sourcenames&suite=noble&section=all
+      - https://packages.ubuntu.com/search?keywords=layer-shell-qt&searchon=names&suite=noble&section=all
+      - https://github.com/portapack-mayhem/mayhem-firmware/wiki/Title-Bar
+  5.
+    - **Name:** HMI and power-supervisor MCU: one RP2040, merged with the RP2040 already planned for display dimming (RECOMMENDED hardware controls)
+    - **What it is:** One RP2040-Zero-class board that does several jobs:
+  - Reads a large push encoder and 6 keys: HOME, BACK, REC, MARK, FN, LOCK (touch lock or screen off).
+  - Drives an RGB status LED and a piezo.
+  - Reads the VEML7700 lux sensor and the battery/display NTC, and dims the HDMI board by PWM or button emulation, as the display plan says.
+  - Pulses the Q6A J21 power-button pin.
+  It connects to the Q6A as a USB composite device (HID + CDC), or over UART on the 40-pin header to save a USB port.
+    - **Key specs:** - HOME and BACK are sent as HID keys (F13-F24 range), bound in labwc, so they work even if labd is down.
+  - Encoder and function keys go over CDC to labd, which routes them by focus: to the shell, to SDR++ via rigctl_server (frequency set), or to SDRangel via REST/RigCtl.
+  - If labd's heartbeat stops for about 3 s, the MCU falls back to HID wheel/arrow events.
+  - Controls must be usable with gloves: a 30-35 mm knob, keys at least 12 mm with 13 mm or more pitch (DTIC gloved-spacing result).
+    - **Linux arm64 support:** Uses the stock usbhid/hid-generic and cdc_acm drivers, or a UART tty. No device-tree overlay and no kernel module are needed, so it is unaffected by the kernel hold.
+    - **Price:** About $5-15 in parts (unverified): RP2040-Zero about $3 (109-130 UAH, per the GNSS plan), an EC11 encoder, tactile switches, a knob and an LED.
+    - **Pros:** - Independent of the kernel and the device tree.
+  - One MCU for dimming, input, LED and power button, so no extra USB port when merged.
+  - Works with the screen off, and with thick gloves or rain, where touch fails.
+  - Can force a last-resort power-off if the host hangs during a low-battery shutdown.
+    - **Cons:** - Custom firmware (TinyUSB composite).
+  - On USB it shares the single FE1.1s 480 Mb/s hub with the Wi-Fi module and the USB-A ports (compute plan). Prefer UART if a header UART is free.
+  - Needs sealed switches.
+    - **Community reports:** - Malahit DSP2: two push-encoders, with pressing cycling volume/ATT/filter and choosing the tuning step.
+  - Mayhem: the encoder changes frequency by the current step, and a long press on select toggles digit mode.
+  - SDRangel ships a Jogdial Controller for 'any keyboard-emulating device'.
+  - element14 CM5 SDR++ build: encoder + buttons (snippet only).
+    - **Size weight power:** RP2040-Zero board is small (about 23x18 mm, unverified). Draw is about 0.1 W (estimate). EC11 body about 12 mm.
+    - **Sources:**
+      - https://swling.com/blog/2021/07/guest-post-and-review-test-driving-the-russia-made-malahit-dsp-2
+      - https://github.com/portapack-mayhem/mayhem-firmware/wiki/Main-Controls
+      - https://github.com/f4exb/sdrangel/wiki/Feature-plugins
+      - https://apps.dtic.mil/sti/pdfs/ADA256894.pdf
+      - https://github.com/AlexandreRouma/SDRPlusPlus
+  6.
+    - **Name:** Adafruit MacroPad RP2040 Starter Kit (PID 5128) - desk prototyping of the input map only
+    - **What it is:** An off-the-shelf RP2040 keypad with a rotary encoder and OLED.
+    - **Key specs:** 12 Kailh linear keys with NeoPixels, a 20-detent encoder with push switch, and a 128x64 SH1106 OLED.
+    - **Linux arm64 support:** Shows up as a USB HID/CDC device with CircuitPython; works with stock drivers.
+    - **Price:** $49.95 (out of stock on the Adafruit page)
+    - **Pros:** Lets you test key and encoder semantics with the shell before the custom MCU board exists.
+    - **Cons:** Too bulky to build into a handheld. Uses a scarce USB port. Not sealed.
+    - **Community reports:** None specific to SDR.
+    - **Size weight power:** Dimensions are not listed by Adafruit.
+    - **Sources:**
+      - https://www.adafruit.com/product/5128
+  7.
+    - **Name:** SDRangel 7.27.2 as a multi-function RX engine under the shell (build from source, RX-only plugin set)
+    - **What it is:** A Qt SDR frontend with many RX channel and feature plugins, a headless server flavour and a REST API (the wiki has 'SDRangel server' and 'Web (http) REST API' pages).
+    - **Key specs:** - 7.27.2, 19 Aug ('Ubuntu 26.04 release').
+  - Release assets: Windows exe, x86_64 flatpak, amd64 snap, Ubuntu 22.04/24.04/26.04 amd64 debs, macOS arm64/x86_64 DMGs. No Linux arm64 package.
+  - Useful RX plugins: ADS-B, AIS, APT, Inmarsat C, Navtex, DSC, Radiosonde (RS41), Radioastronomy, Noise figure (Y-factor), DRM, WEFAX, RTTY, PSK31, SSB/AM/NFM, Radio clock, VOR, ILS, Frequency Scanner, Heat Map, and a SigMF file sink (GCC builds only).
+  - Useful features: Map, Satellite Tracker (Doppler, AOS actions), Star Tracker, SID, Rotator Controller, RigCtl Server, Jogdial Controller, Frequency Display (large text).
+    - **Linux arm64 support:** No official arm64 Linux build, so it must be built on the Q6A from source (README: Qt5 / OpenGL 3.0+). Its LimeSDR device support through LimeSuiteNG/Soapy on the Micro is unverified. The RTL-SDR path is standard.
+    - **Price:** $0
+    - **Pros:** - One supervised process covers many lab functions, including several HF modes for the new HF receiver: DRM, WEFAX, Navtex, SSB.
+  - Radio astronomy and noise figure fit the planned noise source; Inmarsat C covers SafetyNET; the SigMF sink fits the recording plan.
+  - REST/RigCtl lets the shell drive it without exposing its dense GUI.
+    - **Cons:** - The desktop GUI is far too dense for gloves.
+  - Heavy source build.
+  - Ships TX and transmit-adjacent plugins (Tx channels, Simple PTT, the LimeRFE PA controller) and private-communications decoders (Pager, DSD, DJI DroneID, IEEE 802.15.4). All must be left out of the build or the package.
+  - Inmarsat C must be filtered to EGC SafetyNET only.
+  - A second big framework to maintain.
+    - **Community reports:** No Q6A or QCS6490 reports found.
+    - **Size weight power:** Large install. CPU load depends on the plugin; not measured on the Q6A.
+    - **Sources:**
+      - https://github.com/f4exb/sdrangel
+      - https://github.com/f4exb/sdrangel/releases
+      - https://github.com/f4exb/sdrangel/releases/expanded_assets/v7.27.2
+      - https://github.com/f4exb/sdrangel/wiki/Channel-Rx-plugins
+      - https://github.com/f4exb/sdrangel/wiki/Feature-plugins
+      - https://github.com/f4exb/sdrangel/wiki
+  8.
+    - **Name:** OpenWebRX+ (web SDR receiver) with a local kiosk browser - not recommended as the shell; possible HF/VHF listening engine
+    - **What it is:** The 'improved version' of OpenWebRX (AGPL-3.0): a browser-based receiver with built-in decoders and background SSTV/FAX decoding with an image browser.
+    - **Key specs:** - Decoders: AIS, SSTV, FAX, FLEX, POCSAG, HFDL, VDL2, ADSB, ACARS, ISM, RDS, SAM, SITOR-B, RTTY, CW, and SELCALL variants.
+  - Original OpenWebRX states that 'Multiple SDR devices can be used simultaneously'.
+    - **Linux arm64 support:** The package repo has Ubuntu 24.04 noble for amd64/arm64/armhf, labelled an 'experimental OpenWebRX+ build'. Debian bookworm/trixie have arm64 too.
+    - **Price:** $0
+    - **Pros:** - Touch-friendlier than desktop SDR apps.
+  - Background decoding and image galleries.
+  - Strong at HF listening.
+    - **Cons:** - Needs a full browser on the device (RAM/GPU) and is designed as a network server.
+  - Must have pager, ACARS/VDL2/HFDL and ISM decoders disabled.
+  - Takes SDRs itself, outside the arbiter.
+  - No satellite pipelines, instruments or NPU, so it cannot be the lab menu.
+    - **Community reports:** Widely used on Raspberry Pi servers. No handheld-kiosk reports found.
+    - **Size weight power:** Browser plus server; heavier than a native shell (not measured).
+    - **Sources:**
+      - https://github.com/luarvique/openwebrx
+      - https://luarvique.github.io/ppa/
+  9.
+    - **Name:** Phosh 0.38 mobile shell (noble) as an off-the-shelf launcher
+    - **What it is:** A GNOME-based phone shell with app grid, notifications and lock screen.
+    - **Key specs:** Noble package 0.38.0-1 (universe, arm64).
+    - **Linux arm64 support:** Packaged for arm64. Squeekboard is not in noble, so the on-screen keyboard path is unclear; wvkbd 0.14.3 exists.
+    - **Price:** $0
+    - **Pros:** A ready touch shell with notifications.
+    - **Cons:** - Phone-size targets, not glove-size.
+  - Cannot show the lab status: the INA228 is not a power_supply device, so UPower cannot see the battery.
+  - No SDR arbitration.
+  - GNOME stack; the software plan already avoids GDM on the Q6A.
+    - **Community reports:** Used on Linux phones. Nothing for SDR use.
+    - **Size weight power:** Heavier than labwc + shell (not measured).
+    - **Sources:**
+      - https://packages.ubuntu.com/noble/phosh
+      - https://packages.ubuntu.com/search?keywords=wvkbd&searchon=names&suite=noble&section=all
+  10.
+    - **Name:** LVGL (lv_port_linux) or Slint as alternative shell toolkits
+    - **What it is:** Embedded UI toolkits that could replace Qt for the shell.
+    - **Key specs:** - LVGL lv_port_linux backends: SDL2, Wayland, X11, GLFW/OpenGL, DRM/KMS, fbdev; input via evdev only; tracks LVGL master.
+  - Slint backends: qt, winit, linuxkms. Renderers: software, FemtoVG (OpenGL/wgpu), Skia, and Vello (experimental).
+    - **Linux arm64 support:** Both build from source on arm64. I did not find apt packages for the shell libraries in this pass. Slint licence terms not checked.
+    - **Price:** $0 (licence check pending for Slint)
+    - **Pros:** - Small and fast.
+  - DRM/KMS mode could serve as a compositor-less recovery UI.
+    - **Cons:** - Fewer ready-made parts than Qt: no virtual keyboard, Markdown or D-Bus in the box (LVGL).
+  - DRM-direct mode cannot share the screen with XWayland apps, so a compositor is still needed for SDR++/SatDump.
+    - **Community reports:** None for SDR handhelds found.
+    - **Size weight power:** Smaller than Qt (not measured).
+    - **Sources:**
+      - https://github.com/lvgl/lv_port_linux
+      - https://docs.slint.dev/latest/docs/slint/guide/backends-and-renderers/backends_and_renderers/
+- **Recommendation:** VERDICT: no existing system fits, so build the shell and reuse the engines. Nothing found gives a glove-friendly, menu-driven, receive-only lab UI on Linux arm64:
+  - SDRangel has the functions but a desktop UI.
+  - OpenWebRX+ is a web receiver with unwanted decoders.
+  - PortaPack Mayhem has the right menu pattern but is HackRF firmware with TX.
+  - uConsole/DragonOS is a desktop on a handheld.
+  
+  STACK: Radxa OS r2 + held kernel -> labwc 0.7.1 (XWayland on) -> waybar or a gtk-layer-shell status bar -> Lab Shell (Qt 6.4.2 QML) -> labd (system daemon, D-Bus) -> engines as systemd units. Input comes from the RP2040 HMI MCU, merged with the dimming MCU.
+  
+  INFORMATION ARCHITECTURE: 9 hubs on a 3x3 Home grid. Depth is at most Home > Hub > Mode, and mode settings sit on a soft-key column (tinySA groups: FREQUENCY/LEVEL/DISPLAY/MARKER/MEASURE/STORAGE).
+  1. SATELLITES: pass list (max elevation, SDR needed, conflicts), auto-track on/off, Meteor LRPT (RTL), HRPT (Lime), ISS SSTV/APRS, CubeSats (gr-satellites, OMM IDs), QO-100 receive via LNB, Inmarsat-C EGC SafetyNET only, GNSS/EGNOS monitor, pointing aid (BNO085 arrows + audio pitch for error), TLE/OMM age and update.
+  2. HF: Listen (AM/SAM/SSB/CW/DRM); Utility (WEFAX, NAVTEX 518/490 kHz, time signals); Amateur decode-only (CW, RTTY, PSK31, FT8/FT4/WSPR); IBP beacons; band survey.
+     - Antenna profiles: telescopic whip, wire on winder + matching transformer, miniwhip-type active E-field antenna. Bias-T needs a confirmation and a 'DC-safe' antenna profile. There are no loop profiles.
+     - Front-end: attenuator, HF filter bank.
+     - The V4L upconverter (0.5-28.8 MHz) is the HF path, and the Lime starts at 30 MHz, so HF competes with the RTL's VHF modes unless a dedicated HF SDR is added.
+  3. VHF/UHF LIVE: general receiver (SDR++), ADS-B, AIS, radiosondes, APRS, broadcast FM/RDS.
+  4. SPECTRUM: live waterfall (Lime wide / RTL), survey with occupancy log and GNSS-tagged heat map, marker/measure presets (channel power, occupied bandwidth, SNR), interference hunt (S-meter + tone), NPU overlay toggle.
+  5. RADIO ASTRONOMY: H-line 1420.406 MHz integrating spectrometer, solar/total-power drift scans, Y-factor calibration with the noise source, star-tracker pointing, observation log.
+  6. INSTRUMENTS: tinySA (QtTinySA or own panel), NanoVNA (NanoVNA-Saver), power meter, noise source, GPSDO lock, RF switch and filter/LNA bank path view. Instruments are detected by USB VID:PID.
+     - Any signal-generating function shows a 'CONDUCTED ONLY - DUT/attenuator, never an antenna' interlock, and the RF switch parks the antennas while it is active.
+  7. SIGNALS AI: live labels, detection log, label-and-collect (writes SigMF annotations), models (CPU/NPU, version, INT8 accuracy check, health), dataset export for PC training.
+  8. RECORDINGS: SigMF browser (filter by date/mode/satellite/label), replay into a decoder, decoded products, export (.sigmf tar to T7/USB), storage (UFS/T7/RAM ring), retention rules.
+  9. SYSTEM: a detail page for each status chip, power (battery, W, time to empty, per-mode log), GNSS and time (chrony source, RTC), settings, updates, logs and self-test, help and legal, restart/shutdown.
+  
+  INTERACTION RULES:
+  - Targets: at least 15 mm (about 186 px at 1080p) with at least 3 mm gaps; primary actions at least 20 mm.
+  - Text: primary readouts at least 6 mm, labels at least 3 mm cap height. A 1.5 mm encoder focus ring is always visible.
+  - No action needs a gesture. Pinch and swipe are optional extras only.
+  - Waterfall tap snaps to the nearest detected signal (peak or NPU detection). The encoder fine-tunes; FN + encoder changes the step (Mayhem pattern).
+  - Destructive actions need an 0.8 s hold-to-confirm, not a dialog. Bias-T/LNB on needs a confirmation (Mayhem).
+  - Touch is mildly insensitive by design (Malahit lesson). LOCK key turns touch off for rain or the bag; the encoder stays live.
+  - Handedness flips the soft-key column and keeps the encoder and 4 keys under the holding thumb. Critical content goes centre-screen, never dangerous actions in corners (Hoober).
+  - State is never shown by colour alone.
+  - Themes switch automatically from VEML7700 lux with hysteresis: Day (positive polarity, at least 7:1), Night, and Red.
+  - Content colour saves no power on an LCD. Only backlight dimming or screen-off during unattended passes saves real power: about 6-8 W at 2000 nits (display plan estimate).
+  
+  NOTIFICATIONS:
+  - Pass banners at T-10 and T-2 min with [Start] [Skip] [Use other SDR]. They never steal focus, and they also show by LED + tone when the screen is off.
+  - Severities: Info, Pass, Warning (TLE stale, storage 85%, GNSS lost, hot), Critical (battery, overheat, SDR fault), with an alerts inbox. Do-not-disturb during recording, except Critical.
+  
+  SDR ARBITRATION (labd):
+  - Resources are keyed by serial (set an RTL EEPROM serial; the Lime by PCIe address). udev TAG+=systemd + SYSTEMD_ALIAS, so mode units BindsTo the device and stop cleanly on unplug.
+  - A lease covers the SDR and its front-end path (RF switch, filter, LNA bias, LNB voltage).
+  - Priority: starred scheduled pass > interactive foreground > background logger > survey. Preempting an interactive session asks the user, with a countdown and a configurable default.
+  - Hand-off: systemctl stop (SIGTERM, TimeoutStopSec 8 s, then SIGKILL) -> confirm the device is closed -> start the new unit. For a wedged RTL, use usbreset as a fallback.
+  - Never unload/reload la9310_limesdr in the field (order-10 allocations, per the software plan).
+  - Time-share or move a function to the other SDR when two functions collide.
+  
+  SUPERVISION AND RECOVERY:
+  - Daemons (labd, scheduler, recorder, classifier, power, gpsd/chrony) are system units with Restart=on-failure, StartLimitBurst=3 per 60 s, WatchdogSec with sd_notify, MemoryMax and CPUAffinity=0-6. The classifier stays out of the RX data path, as in the software plan.
+  - GUI engines are user units under graphical-session.target. When a unit hits its start limit, the shell shows 'failed 3x: log / restart / fallback'.
+  - Enable RuntimeWatchdogSec only if /dev/watchdog exists on the Radxa kernel.
+  - Persistent journald is size-capped. Shell state is written atomically (write temp, then rename) and restored after a crash.
+  
+  POWER:
+  - The INA228 is on an always-on supply. Read VBUS/CURRENT/POWER/CHARGE from user space; the hwmon driver exposes no charge attribute.
+  - Thresholds (my proposal):
+    - Warn at 20%.
+    - Refuse a new long job if the predicted energy (average W x duration) exceeds what is left.
+    - Graceful shutdown at 8% or 13.2 V loaded for 10 s, which stays above the planned ~12.8 V hardware EN cutoff.
+  - Shutdown sequence: 30 s banner (cancellable on a charger) -> stop the scheduler -> finalise recordings -> stop engines -> cut bias-T/LNB rails -> sync -> poweroff. The RP2040 forces power-off if the host has not halted within 60 s.
+  
+  RECORDING (SigMF v1.2.6):
+  - At start, write .sigmf-data plus a provisional meta file with datatype (cu8 for RTL, ci16_le for Lime), sample_rate, hw, recorder, a GeoJSON geolocation from gpsd, antenna:model, and captures (frequency, datetime in UTC 'Z').
+  - At stop, finalise the meta. A boot oneshot repairs files left partial by a crash: it derives the sample count from file size and adds a 'recovered' annotation.
+  - NPU detections become annotations: generator = model version, label of at most 20 characters, frequency edges. User MARKs become annotations too.
+  - MARK also saves the last N seconds from the RAM ring (pre-trigger).
+  - Narrowband goes to UFS and wideband to the T7. The status bar shows minutes left at the current rate.
+  
+  HELP AND SETTINGS:
+  - Per-mode offline Markdown help, rendered with Qt's Markdown text: antenna deployment, expected signal, troubleshooting, legal note.
+  - The Artemis database (500+ signals, GPL-3) is linked from NPU labels.
+  - Settings: handedness, theme/brightness, touch mode, UTC/local, station position (GNSS or manual), pass thresholds, storage retention, SDR defaults and PPM, antenna profiles.
+  - Launch SatDump with LC_NUMERIC=C, because the uk_UA locale uses a comma decimal separator.
+  
+  UPDATES:
+  - Keep apt-mark hold, plus an apt preferences pin at -1 for other linux-image packages, and an unattended-upgrades blacklist for kernel/firmware/fastrpc/QNN.
+  - The System > Updates flow:
+    1. Require a charger or at least 50% battery.
+    2. Take a snapshot: a rootfs image or Timeshift backup to the T7.
+    3. Simulate with apt-get -s; refuse if a held or blacklisted package would change.
+    4. Apply.
+    5. Run the self-test: SDRs enumerate, HDMI, NPU golden-set checksum.
+    6. Offer rollback.
+  - Package the source-built SDR stack as local .debs in a local apt repo so it can be rolled back.
+  - Try new kernels only as a second systemd-boot entry.
+  
+  BUILD ORDER:
+  - P0 (RTL only, before the Lime ships on 15 Dec 2026): labwc, shell skeleton, status bar, labd (power, GNSS, storage, arbiter), RTL modes including HF, SigMF recorder, help.
+  - P1: Lime modes (HRPT, wide survey) and the RAM ring.
+  - P2: NPU overlay and labelling, instruments, radio astronomy, update UI.
+- **Requirements or findings:**
+  - No existing turnkey system fits. Each candidate has a gap: SDRangel (functions, desktop UI), OpenWebRX+ (web receiver), PortaPack Mayhem (pattern only, HackRF firmware, has TX), uConsole + DragonOS (desktop SDR apps on a keyboard handheld). Sources: https://github.com/f4exb/sdrangel , https://github.com/luarvique/openwebrx , https://github.com/portapack-mayhem/mayhem-firmware/wiki , https://www.rtl-sdr.com/talking-sasquach-reviews-the-uconsole-and-rtl-sdr-antenna-board-expansion/
+  - PortaPack Mayhem prior art (receive side only):
+  - Wiki groups apps into Receivers / Transmitters / Transceivers / Utilities / Settings; there are 42 receiver apps, which shows a flat list does not scale (page edited 23 Mar 2026).
+  - A 16 px title bar is always visible: back arrow and app name (tap = back) plus status icons that open detail pages (battery, SD, clock source).
+  - Quick toggles include bias-T, which asks for confirmation. An App Manager hides apps.
+  Sources: https://github.com/portapack-mayhem/mayhem-firmware/wiki , https://github.com/portapack-mayhem/mayhem-firmware/wiki/Title-Bar
+  - tinySA Ultra prior art:
+  - The signal generator is a separate top-level mode from the analyser.
+  - Function-group menus: PRESET, FREQUENCY, LEVEL, TRACE, DISPLAY, MARKER, MEASURE, STORAGE, CONFIG.
+  - Numbered preset slots, settings auto-saved at power-down, SAVE AS PNG, and one-tap MEASURE presets.
+  Source: https://tinysa.org/wiki/pmwiki.php?n=TinySA4.MenuTree
+  - Malahit DSP2 prior art (2021 review):
+  - Two push-encoders (volume press cycles volume/ATT/filter; tuning press chooses the step) and bottom icons HARD/AUDIO/VISUAL/NR/MODE/BAND.
+  - Touch is deliberately insensitive, so a press of about 0.5-1 s is needed.
+  - The voltage-based battery icon still read about 50% when the set shut down at about 3.7 V. Use coulomb counting.
+  - The panoramic display caused interference.
+  - Price was about $263 delivered in July 2021; the current price is unverified.
+  Source: https://swling.com/blog/2021/07/guest-post-and-review-test-driving-the-russia-made-malahit-dsp-2
+  - Field-instrument and rugged-tablet prior art:
+  - FieldFox: 'large front panel keys' usable 'even when wearing gloves', and a low-reflection display readable in sun; touch is pitched mainly for file management.
+  - Dell rugged: user-selectable Finger, Water and Glove touch modes in the eGalax utility.
+  - Getac ZX70: 7 in, 580 nits, touch/rain and glove/pen modes, designed for one-handed use.
+  Sources: https://www.farnell.com/datasheets/3191447.pdf , https://www.dell.com/support/kbdoc/it-it/000175242/rugged-laptop-und-tablet-touchmodus?lang=en , https://www.tdworld.com/test-and-measurement/article/20969921/getac-rugged-tablet-for-one-handed-operation
+  - Glove touch is a touch-controller firmware feature, not a Linux feature.
+  - Cypress TrueTouch CYTMA445 tracks 10 fingers through about 1 mm gloves and 2 fingers through about 5 mm gloves, with automatic mode switching.
+  - Schurter's USB EETI kit has glove support, palm rejection and water handling.
+  - Add 'glove/water mode, controller part' to the seller questions for the Wisecoco panel, next to the USB-HID VID:PID and optical-bonding checks.
+  Sources: https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/768/CTYMA445_Summary_RevD_2-18-16.pdf , https://www.allaboutcircuits.com/new-industry-products/schurter-touchkit-with-pcap-touchscreen-new-product-brief/
+  - Target-size evidence:
+  - WCAG 2.5.5 (AAA): at least 44x44 CSS px.
+  - Fighter-cockpit study: 12.7 mm buttons with 2.54 mm spacing optimal, and noted that gloves change the optimum.
+  - DTIC gloved study: 13 mm spacing adequate.
+  - My synthesis for this device: at least 15 mm targets with at least 3 mm gaps, and at least 20 mm for primary actions.
+  Sources: https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced.html , https://avesis.metu.edu.tr/yayin/c60b4bad-da02-42d7-9afe-2de50afe3a68/optimal-touchscreen-button-size-and-button-spacing-for-next-generation-fighter-aircrafts , https://apps.dtic.mil/sti/pdfs/ADA256894.pdf
+  - One-hand use (Hoober):
+  - 49% one-handed, 36% cradled, 15% two-handed, and people change grip constantly.
+  - The author retracted his thumb-zone drawings; later work found centre touches faster and more accurate than edge touches.
+  - Do not put dangerous functions in corners, and support left-handers (20-30%).
+  Source: https://www.uxmatters.com/mt/archives/2013/02/how-do-users-really-hold-mobile-devices.php
+  - Polarity:
+  - Dark text on a light background has a well-researched legibility advantage.
+  - Dark mode does better in low light, which supports red/dark night themes for radio astronomy.
+  - I found no study run in direct sunlight.
+  Source: https://arxiv.org/pdf/2203.16546
+  - On an LCD the backlight sets the power draw, not the content (power plan), so a dark theme saves nothing. Auto-dim and screen-off during unattended passes are the real savings: about 6-8 W at 2000 nits (display plan estimate).
+  - GLFW has no touch API (GLFW forum). SDR++ and SatDump must run under XWayland with pointer emulation, forced via XDG_SESSION_TYPE=x11 (display plan). Do tuning through control interfaces, not touch or the scroll wheel. Source: https://discourse.glfw.org/t/complex-touchpad-gestures/2974
+  - SDR++ module status: rigctl_server, recorder, frequency_manager and iq_exporter are Working; scanner is Beta; scheduler and rigctl_client are Unfinished. -r selects the config root, so each mode can have its own profile directory. Source: https://github.com/AlexandreRouma/SDRPlusPlus
+  - SatDump:
+  - Documented CLI: 'satdump legacy live <pipeline> <out>', 'satdump legacy record', 'satdump pipeline ...', 'satdump sdr_probe'.
+  - Autotrack (scheduler + tracker + recorder) works in both GUI and CLI. 1.1.4 added Multi Mode and showed the schedule in autotrack's web interface.
+  - Whether autotrack and the web interface still work the same in 2.0-alpha is unverified.
+  Sources: https://docs.satdump.org/ , https://github.com/SatDump/SatDump , https://satdump.org/posts/1.1.4-release , https://docs.satdump.org/autotrack.html
+  - SDRangel 7.27.2 (19 Aug):
+  - No Linux arm64 asset, so build from source.
+  - Contains lab-useful RX plugins (Inmarsat C, Navtex, DRM, WEFAX, Radioastronomy, Noise figure, Radiosonde, ADS-B, AIS, SigMF sink, GCC builds only) and features (Satellite/Star Tracker, Map, RigCtl Server, Jogdial).
+  - Also contains Pager, DSD, DJI DroneID and Tx plugins, which must be excluded.
+  Sources: https://github.com/f4exb/sdrangel/releases/expanded_assets/v7.27.2 , https://github.com/f4exb/sdrangel/wiki/Channel-Rx-plugins , https://github.com/f4exb/sdrangel/wiki/Feature-plugins
+  - Compositor facts:
+  - cage: one maximized app; rotation removed in 0.1.5; noble ships 0.1.5. Window control (foreign-toplevel) arrived only in 0.3.0, which needs wlroots 0.20.
+  - labwc 0.7.1 in noble: layer-shell panels reserve space, touch mapToOutput, keybinds, XWayland.
+  - Raspberry Pi OS moved to labwc on 28 Oct 2024.
+  Sources: https://github.com/cage-kiosk/cage/releases , https://packages.ubuntu.com/noble/cage , https://packages.ubuntu.com/noble/labwc , https://labwc.github.io/labwc-config.5.html , https://www.raspberrypi.com/news/a-new-release-of-raspberry-pi-os/
+  - Noble package availability (arm64):
+  - Available: Qt 6.4.2 base, qt6-virtualkeyboard 6.4.2, waybar 0.9.24, gtk-layer-shell 0.8.2, wvkbd 0.14.3, phosh 0.38.0.
+  - layer-shell-qt is 5.27 (Qt5 only), so a Qt6 shell cannot draw the overlay bar itself.
+  - Squeekboard is not in noble.
+  Sources: https://packages.ubuntu.com/noble/qt6-base-dev , https://packages.ubuntu.com/search?keywords=layer-shell-qt&searchon=names&suite=noble&section=all , https://packages.ubuntu.com/search?keywords=wvkbd&searchon=names&suite=noble&section=all
+  - INA228:
+  - The mainline ina238 hwmon driver supports the INA228 (power, current; no charge attribute).
+  - The power plan found ina238.ko in Radxa 7.0.11-7; for 6.18.2-4 it is unverified.
+  - Read CHARGE from user space over i2c-dev, and keep the INA228 on an always-on supply, or charge added while the device is off goes uncounted.
+  Source: https://docs.kernel.org/hwmon/ina238.html
+  - systemd semantics:
+  - A WatchdogSec expiry puts the unit in failed state and sends SIGABRT (or WatchdogSignal).
+  - Restart=on-failure covers non-zero exit, signals, timeouts and watchdog expiry.
+  - TimeoutStopSec ends in SIGKILL.
+  - Use these for clean SDR hand-off and crash recovery.
+  Source: https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html
+  - SigMF v1.2.6 fields used by the recorder:
+  - Global: core:datatype (e.g. ci16_le), sample_rate, hw, recorder, geolocation (GeoJSON).
+  - Captures: frequency, datetime (RFC 3339 with Z).
+  - Annotations: sample_start, sample_count, freq_lower_edge + freq_upper_edge (both or neither), label (at most 20 characters recommended), generator.
+  - antenna extension: antenna:model, gain, hagl.
+  - File names: .sigmf-meta, .sigmf-data, .sigmf tar archive.
+  Source: https://sigmf.org/
+  - USB is scarce. The three USB-A ports and the Wi-Fi module share one FE1.1s 480 Mb/s hub (compute plan). So the controls go on the already-planned RP2040 (or UART), the USB-HID touch must not add a hub, and instruments are plug-when-used.
+  - HF:
+  - The RTL-SDR V4L upconverter covers 0.5-28.8 MHz and the Lime starts at 30 MHz (narrowband plan), so HF modes contend with RTL VHF modes and the arbiter must show this.
+  - Antenna profiles: telescopic whip, wire on winder with matching transformer, miniwhip-type active E-field antenna (bias-T profile only). No loop items.
+  - Instrument tooling: QtTinySA (PySide6 + pyqtgraph, Linux-first) and NanoVNA-Saver (PySide6; NanoVNA, -H, -H4, -F, LiteVNA; can read tinySA data) can be launched from the Instruments hub. arm64 PySide6 install still to be checked. Sources: https://github.com/g4ixt/QtTinySA , https://github.com/NanoVNA-Saver/nanovna-saver
+  - Offline signal identification: Artemis has a community database of 'over 500 recognized signals', is GPL-3, and has a credited ARM port for Pi 3B+/4B. Source: https://github.com/AresValley/Artemis
+  - Portable SDR builds on Pi touchscreens (RasPad 3 at 10.1 in, SunFounder TS7-Pro at 7 in 1024x600, $79.99-89.99) ran SDR++/GQRX on DragonOS; LCD interference was not a problem on the RasPad. A uConsole AIO board (RTL-SDR + LoRa + GNSS + RTC + hub) launched at $78.99; V2 is about $92 excluding shipping (forum directory). Sources: https://www.rtl-sdr.com/raspad-3-0-review-building-a-portable-raspberry-pi-4-tablet-with-built-in-rtl-sdr/ , https://www.rtl-sdr.com/sunfounder-ts7-pro-touch-screen-review-building-a-portable-rtl-sdr-pi-4-system/ , https://www.rtl-sdr.com/an-rtl-sdr-lora-gps-rtc-usb-hub-extension-board-for-the-uconsole/ , https://forum.clockworkpi.com/t/uconsole-extension-board-directory/22474
+- **Rejected:**
+  1.
+    - **Name:** GNOME Shell + GDM as the field UI
+    - **Why:** Phone/desktop-size targets, no lab status, and GLFW apps get no Wayland touch. The software plan already prefers a kiosk compositor over GDM on the Q6A, and upgrades there have broken HDMI.
+  2.
+    - **Name:** Weston kiosk-shell
+    - **Why:** Makes every window fullscreen and assigns apps to outputs by app-id. The docs do not say which window wins on a single output or how dialogs behave, and Weston offers no wlr-layer-shell for an overlay status bar. labwc covers the same need better.
+  3.
+    - **Name:** cage 0.3.x built from source
+    - **Why:** Needs wlroots 0.20, which noble does not have. It still shows a single maximized app with no persistent bar, and it gains window control only.
+  4.
+    - **Name:** Qt5 shell + layer-shell-qt 5.27 (to put the bar inside Qt)
+    - **Why:** Ties new code to Qt5. Qt6 layer-shell-qt is not in noble. A separate GTK layer-shell bar is simpler.
+  5.
+    - **Name:** Squeekboard on-screen keyboard
+    - **Why:** Not in noble. Use Qt Virtual Keyboard 6.4.2 inside the shell and wvkbd 0.14.3 for third-party apps.
+  6.
+    - **Name:** Whole shell as a web UI in a Chromium/WebKit kiosk
+    - **Why:** Browser RAM, CPU and GPU overhead on a device already tight on CPU for DSP. Also more update surface and harder D-Bus/systemd integration.
+  7.
+    - **Name:** GPIO rotary-encoder + gpio-keys device-tree overlay as the primary input
+    - **Why:** Depends on the vendor kernel config and on overlays (the rsetup overlay bug is noted in the software plan) on a frozen kernel. Kept only as a fallback; the RP2040 HID/CDC route is kernel-independent.
+  8.
+    - **Name:** Contour ShuttleXpress/ShuttlePro jog dial (supported by SDRangel's Jogdial Controller)
+    - **Why:** A desk accessory: bulky, unsealed, and needs a USB port. It cannot be built into a handheld.
+  9.
+    - **Name:** DragonOS or another SDR desktop distro as the base
+    - **Why:** A desktop with no menu shell. The device must stay on Radxa OS r2 with the held 6.18.2 kernel for UFS, HDMI, DKMS and NPU.
+  10.
+    - **Name:** PortaPack Mayhem / HackRF as the lab UI
+    - **Why:** Firmware for different hardware, and it includes transmit apps. Used here only as a design pattern (title bar, app manager, bias-T confirmation).
+  11.
+    - **Name:** Gpredict as the field pass UI
+    - **Why:** Small GTK desktop widgets, and it needs the alias bridge for 6-digit NORAD IDs. Use labd's Skyfield/OMM scheduler in the shell; keep Gpredict for desk use.
+  12.
+    - **Name:** Decoders aimed at private or military communications
+    - **Why:** Excluded by the project rules: POCSAG/FLEX pagers, DSD (DMR/dPMR/NXDN voice), TETRA, ACARS/VDL2/HFDL message content, DJI DroneID, TPMS/ERT/WMBus/BLE/NRF/sub-GHz device decoders, and Inmarsat-C traffic other than EGC SafetyNET. They are removed from builds (SDRangel, OpenWebRX+) and never shown in menus.
+  13.
+    - **Name:** Any transmit or radiating function in the menu
+    - **Why:** Receive-only rule. Leave out SDRangel Tx plugins, Simple PTT and the LimeRFE PA controller. Terminate the LimeSDR TX ports with 50-ohm loads. tinySA generator and NanoVNA port output are allowed only as conducted bench functions behind an interlock that parks the antennas.
+  14.
+    - **Name:** Loop-antenna menu items, loop amplifier bias profiles, loop frames or chokes
+    - **Why:** Removed at the user's request. HF uses a telescopic whip, a wire on a winder with a matching transformer, or a miniwhip-type active E-field antenna.
+  15.
+    - **Name:** Encoder as mouse-wheel emulation for SDR++ tuning (primary path)
+    - **Why:** Wheel events go to whatever is under the last touch point, so tuning is unreliable. Use rigctl_server via labd; keep wheel emulation as the HID fallback.
+  16.
+    - **Name:** Voltage-based battery percentage
+    - **Why:** The Malahit icon read about 50% at shutdown, and the power plan found uConsole/Tachyon voltage gauges off by 20-90%. Use INA228 coulomb counting.
+  17.
+    - **Name:** OpenWebRX+ or Phosh as the main shell
+    - **Why:** Neither covers satellites, instruments, NPU, arbitration or lab status. Their targets are not glove-size, and OpenWebRX+ ships unwanted decoders.
+- **Notes:** Unverified items to test or confirm early, in order:
+  1. labwc 0.7.1 + XWayland + USB-HID touch on the Q6A msm DRM / RA620 HDMI path. Check that SDR++/SatDump receive touch as pointer events with XDG_SESSION_TYPE=x11, and how to raise the shell from a key on 0.7.1 (Iconify action, or foreign-toplevel via a helper such as wlrctl).
+  2. Ask the Wisecoco seller for the touch-controller part and whether it has glove/water modes, together with the already-required USB-HID VID:PID and optical-bonding confirmation.
+  3. Whether the INA228 hwmon driver is in 6.18.2-4. It does not matter if CHARGE is read from user space, but do not bind the kernel driver and i2c-dev users at the same time.
+  4. Whether /dev/watchdog exists on the Radxa kernel before enabling RuntimeWatchdogSec.
+  5. SatDump 2.0-alpha: does CLI autotrack and its web schedule still exist? The docs URL now returns 404; the evidence comes from 1.1.4.
+  6. SDR++ rigctl_server behaviour for frequency/mode set from labd; its keyboard shortcuts are undocumented.
+  7. SDRangel arm64 build on noble, and its LimeSDR Micro access through LimeSuiteNG/Soapy.
+  8. waybar 0.9.24 custom-module JSON and touch on-click (not fetched).
+  9. Qt 6.4 lacks Qt Location (my recollection).
+  10. PySide6 wheels on aarch64 for QtTinySA and NanoVNA-Saver.
+  11. Part prices for the EC11 encoder, switches and knob, and the RP2040-Zero size.
+  12. Pages I could not read: the element14 CM5 SDR++ encoder build (403), the RadioDDity Malahit review (429) and satdump.org posts (bot wall). Their claims come from search snippets only.
+  13. My own numbers, not measured: the 4-8 week effort estimate and the 15/20 mm target and threshold values.
+  
+  Power and battery thresholds assume the 4S P50B pack and the planned ~12.8 V hardware EN cutoff. Tune them against real INA228 discharge logs, aiming for a runtime prediction within 10%, as the power plan suggests.
+  
+  All time in logs and SigMF is UTC. The UI can also show local time. Translate UI strings with Qt Linguist (the uk_UA locale is likely), but keep LC_NUMERIC=C for SatDump.
+  
+  Network services such as OpenWebRX, SDRangel REST and SatDump web bind to localhost by default, because the device is standalone.
+  
+  Legal: the device is receive-only by design. Listening and decoding rules differ by country, so the help pages should carry a local-law note per mode.
+
