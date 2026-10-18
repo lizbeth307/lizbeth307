@@ -42600,6 +42600,146 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Hard rules: not affected (passive accessory, no RF, no loop or probe).
 
+## searchA:anker_737_power_bank_20_v_5_a_pdo_100_wh (run `wf_e5582d4c-0a2`)
+
+- **Part:** Anker 737 Power Bank (PowerCore 24K, A1289): USB-C PD 3.1 bench/carry-on power bank. Tier bench, group Bench electronics, qty 1. Role: PD source of at least 60 W at 20 V for the receiver's IP2368 4S charger (about 49-52 W), the ISDT 608PD and the Pinecil (20 V/3 A); its USB-A 5 V/3 A feeds the Waveshare bench hub; it goes in cabin baggage.
+- **Current price usd:** 109.99 (Anker US official store, read 18 Oct 2026, in stock, no strike-through price; the 94.99 bulk price needs 10+ units). EU: EUR 109.99 at anker.com/de (VAT not stated on the page; EU consumer prices are VAT-inclusive by law). anker.com/eu-en shows it sold out. Amazon US (B09VPHVT2Z) showed no buy box: only "See All Buying Options" and a "High price" badge, so no cheaper verified listing.
+- **Critical specs:**
+  - 1. USB-C PD fixed 20 V/5 A (100 W) PDO. The stack's floor is a 60 W-class 20 V source for the IP2368 at 4S/3 A, the Pinecil at 20 V/3 A and the ISDT 608PD; the current part gives 20 V/5 A on both USB-C ports.
+  - 2. A source-only (output-only) USB-C port that carries the 20 V/5 A PDO. Anker's spec table lists only USB-C1 as an input, so USB-C2 is output-only (published spec). This matters because reaudit D flagged that a COUT IP2368 board (Try.SRC) and the bidirectional ISDT 608PD USB-C port may flap or fail on a DRP bank port. A candidate whose only 20 V/5 A ports are DRP is worse here.
+  - 3. 28 V/5 A EPR (140 W) output, used by the ISDT 608PD's 140 W input. This is secondary, but losing it must be stated.
+  - 4. Energy at least 86.4 Wh nominal (24,000 mAh) and at most 100 Wh, so it can go in cabin baggage without airline approval. The label must state Wh.
+  - 5. Simultaneous output: 140 W total, including 5 V/3 A on USB-A for the hub while a USB-C port delivers 60 W or more.
+  - 6. Recharge input: 140 W (28 V/5 A) on USB-C1.
+  - 7. A live display of input/output W, cycle count and battery health (a bench sanity check; the FNB58 stays the reference).
+  - 8. Mass at most 630 g; size 155.7 x 54.6 x 49.5 mm (Pelican bench kit or backpack).
+  - 9. Build and safety: established brand, genuine stock from the official store, CE and UN 38.3, no recall (reaudit D: the 737 is not recalled), EU warranty of at least 2 years.
+  - 10. Output ripple and PD compliance: no published data for the 737 or any candidate. Every unit has to be qualified with the FNB58 (PDO list, ripple at 20 V/3 A, delivered Wh), so this does not separate the candidates on paper.
+- **Candidates:**
+  1.
+    - **Name:** Anker 737 Power Bank (PowerCore 24K), A1289 - current part
+    - **Kind:** current_part
+    - **Price usd:** 109.99 (Anker US). EU: EUR 109.99 at anker.com/de, presumably VAT-inclusive; sold out at anker.com/eu-en.
+    - **Spec comparison:** Baseline. 24,000 mAh (86.4 Wh nominal, per the stack model; Anker's page gives no Wh figure). USB-C1 input/output: 5V3A, 9V3A, 15V3A, 20V5A, 28V5A. USB-C2 output-only, same PDOs. USB-A: 5V3A, 9V2A, 12V1.5A. 140 W total. Input up to 28 V/5 A (140 W). Smart display. 630 g; 155.7 x 54.6 x 49.5 mm.
+    - **Worse in:** Baseline. Delivered Wh and ripple are not measured here; FNB58 goods-in test needed.
+    - **Compatibility:** Meets every stack rail. Use USB-C2 (output-only) for the IP2368 receiver input and for the ISDT 608PD. This should avoid the DRP/Try.SRC risk in reaudit D, but bench-confirm with the FNB58: the board must sink from C2 and VBUS must never reverse.
+    - **Risks:** No cheaper verified offer for the same SKU at official sellers. Amazon US had no buy box.
+    - **Seller url:** https://www.anker.com/products/a1289
+    - **Sources:**
+      - https://www.anker.com/products/a1289
+      - https://www.anker.com/de/products/a1289
+      - https://www.anker.com/eu-en/products/a1289
+      - https://www.amazon.com/dp/B09VPHVT2Z
+  2.
+    - **Name:** UGREEN Nexode Power Bank 25000mAh 200W with Smart Digital Display (SKU 35525)
+    - **Kind:** other_brand
+    - **Price usd:** 89.99 at us.ugreen.com with code UL35525 (list 129.99). EU: EUR 76.99 at de.ugreen.com (list EUR 109.99), EUR 79.99 at eu.ugreen.com (list EUR 129.99); EU consumer prices presumed VAT-inclusive. All in stock 18 Oct 2026.
+    - **Spec comparison:** Capacity 25,000 mAh / 90 Wh vs 86.4 Wh (better, still under 100 Wh). USB-C1 out: 5V3A, 9V3A, 12V3A, 15V3A, 20V5A, 28V5A, 140 W (equal). USB-C2 out: up to 20V5A, 100 W (equal at 20 V; no 28 V). USB-A: 5V3A, 9V2A, 12V1.5A (equal). Total 200 W vs 140 W (better). Output protocols include PPS. Input: 65 W max on USB-C1 and on USB-C2 vs 140 W (worse). TFT display shows V, A, in/out (equal or better). 609 g vs 630 g (better); 155 x 54 x 51 mm (same size).
+    - **Worse in:** (a) Recharge input is 65 W per port vs 140 W, so a full recharge takes roughly twice as long. (b) Both USB-C ports are listed as input and output (DRP); there is no output-only 20 V port, which brings back the reaudit-D DRP vs IP2368 Try.SRC risk that the 737's C2 avoids. (c) 28 V EPR only on C1. Not 'not worse'.
+    - **Compatibility:** Electrically meets rails 1, 4, 5 and 8. Rail 2 (source-only 20 V port) is not met; it would need the bench test the reaudit already asks for (IP2368 COUT board and ISDT 608PD on a DRP port).
+    - **Risks:** Measured capacity and ripple not verified (no review data reachable this run). Buy only from the official ugreen.com stores. The discount is code-based and time-limited.
+    - **Seller url:** https://de.ugreen.com/products/ugreen-nexode-powerbank-200w-25000mah
+    - **Sources:**
+      - https://us.ugreen.com/products/ugreen-nexode-power-bank-25000mah-200w-with-smart-digital-display
+      - https://de.ugreen.com/products/ugreen-nexode-powerbank-200w-25000mah
+      - https://eu.ugreen.com/products/ugreen-nexode-power-bank-200w-25000mah
+  3.
+    - **Name:** UGREEN Nexode Power Bank 25000mAh 145W, 3-port (SKU 90597A)
+    - **Kind:** other_brand
+    - **Price usd:** 79.99 at us.ugreen.com with code UL90597A (list 99.99). EU: EUR 69.99 at eu.ugreen.com (list EUR 89.99); de.ugreen.com shows EUR 99.99.
+    - **Spec comparison:** 25,000 mAh / 3.6 V / 90 Wh (better). USB-C1 140 W max (input and output). USB-C2 65 W max. USB-A 22.5 W max. Total 145 W (equal or better). Per-voltage PDO table not published, so 20V/5A on C1 is inferred from the 140 W PD 3.0/3.1 rating, not stated. Input: USB-C1 65 W max (worse). LED percentage display only (worse). 513 g (better); 160 x 80 x 26 mm (different shape).
+    - **Worse in:** Input 65 W vs 140 W. The likely output-only port (C2) is only 65 W, so no 20 V/5 A on a source-only port. The UGREEN pages conflict on whether C2 also accepts input (US page 'Input: USB-C1/C2', EU page 'Input: USB-C1'). PDOs not published. Simpler display. USB-A 5 V/3 A not explicitly stated. Not 'not worse'.
+    - **Compatibility:** The 65 W C2 would cover the IP2368's 49-52 W only if it offers 20 V at 3.25 A or more (unverified). The hub needs 5 V/3 A on USB-A (unverified).
+    - **Risks:** PDO list unverified; FNB58 check required before use.
+    - **Seller url:** https://eu.ugreen.com/products/ugreen-145w-power-bank-for-laptop
+    - **Sources:**
+      - https://us.ugreen.com/products/ugreen-145w-power-bank-for-laptop
+      - https://eu.ugreen.com/products/ugreen-145w-power-bank-for-laptop
+  4.
+    - **Name:** UGREEN Nexode Powerbank 25000mAh 165W, 2 built-in USB-C cables (SKU 55995)
+    - **Kind:** other_brand
+    - **Price usd:** No US price checked. EU: EUR 63.99 at de.ugreen.com (list EUR 79.99), in stock.
+    - **Spec comparison:** 90 Wh (better). Built-in cables rated 140 W and 65 W, plus a USB-C port and a USB-A port; 165 W total. Per-port PDO table, input wattage and mass were not readable on the pages.
+    - **Worse in:** Built-in cables are a wear and repair weakness on a bench, and you cannot swap in a certified 5 A e-marked cable. PDO table, input and DRP roles unverified. Cannot be judged 'not worse'.
+    - **Compatibility:** Unverified until the PDO list is known.
+    - **Risks:** Specs incomplete; the cable is not replaceable.
+    - **Seller url:** https://de.ugreen.com/products/nexode-powerbank-25000mah-165w-integrierte-kabel
+    - **Sources:**
+      - https://de.ugreen.com/products/nexode-powerbank-25000mah-165w-integrierte-kabel
+      - https://eu.ugreen.com/products/nexode-power-bank-25000mah-165w-4-ports-built-in-cables
+  5.
+    - **Name:** INIU Cougar P63-E1 25000mAh 100W
+    - **Kind:** other_brand
+    - **Price usd:** 66.99-69.99 at iniushop.com depending on colour (list 75.99). EU: EUR 66.99 at eu.iniushop.com (black with cable in stock).
+    - **Spec comparison:** 25,000 mAh; Wh not stated, roughly 90-92 Wh assuming 3.6-3.7 V (unverified). OUT1 (input and output): 5V3A, 9V3A, 12V3A, 15V3A, 20V5A, 100 W (equal at 20 V). OUT2: up to 15V3A, 45 W. OUT3 (USB-A): 5V3A, 9V2A, 12V1.5A, 18 W. Totals: C1+C2 110 W, all three ports 80 W (worse than 140 W). Input 65 W (worse). No 28 V. LED display. 392 g (better). 3-year warranty (better).
+    - **Worse in:** No 28 V EPR. The only output-only USB-C port is 45 W with no 20 V. Total drops to 80 W with three ports. Input 65 W vs 140 W. Wh not printed on the page. Not 'not worse'.
+    - **Compatibility:** 20 V/5 A only on the DRP port (OUT1), so the reaudit-D DRP risk remains. USB-A 5 V/3 A covers the hub.
+    - **Risks:** Smaller brand (Amazon-centric); measured capacity and ripple not verified.
+    - **Seller url:** https://eu.iniushop.com/products/iniu-p63-e1-power-bank-smallest-100w-25000mah
+    - **Sources:**
+      - https://iniushop.com/products/iniu-p63-e1-power-bank-smallest-100w-25000mah
+      - https://eu.iniushop.com/products/iniu-p63-e1-power-bank-smallest-100w-25000mah
+  6.
+    - **Name:** INIU B64 27,000mAh 140W
+    - **Kind:** other_brand
+    - **Price usd:** No US price checked. EU: EUR 79.99 at eu.iniushop.com (compare EUR 106.94), in stock.
+    - **Spec comparison:** 27,000 mAh, about 97-100 Wh assuming 3.6-3.7 V (unverified, close to the 100 Wh cabin limit). One PD 3.1 140 W USB-C input/output port, one 45 W USB-C port, one USB-A port. Per-voltage PDOs, input wattage and mass not published on the store JSON. LED display.
+    - **Worse in:** The second (presumably output-only) USB-C port is 45 W with no 20 V, so 20 V/5 A is only on the DRP port. PDOs, input and the printed Wh are unverified. Possible 100 Wh-limit margin issue.
+    - **Compatibility:** DRP-only for 20 V. The cabin limit must be checked on the label.
+    - **Risks:** Specs incomplete.
+    - **Seller url:** https://eu.iniushop.com/products/iniu-b64-140w-27-000mah-fast-charge-1-000-devices-140w-max-output-from-one-port
+    - **Sources:**
+      - https://eu.iniushop.com/products/iniu-b64-140w-27-000mah-fast-charge-1-000-devices-140w-max-output-from-one-port
+  7.
+    - **Name:** Baseus EnerFill FC41 Power Bank with Cables 25000mAh 145W (E0028H03)
+    - **Kind:** other_brand
+    - **Price usd:** 79.99 at baseus.com (67.99 with code FC41), in stock. EU: EUR 89.99 at eu.baseus.com.
+    - **Spec comparison:** 25,000 mAh, 91.25 Wh (better). 140 W on USB-C1 (PD 3.1), a second built-in cable described only as 'standard', plus USB-A; 145 W total. Input 65 W (worse). About 517 g (better). Smart display.
+    - **Worse in:** Input 65 W vs 140 W. Built-in cables. No per-voltage PDO table; 20V/5A and the output-only port are unverified. The page's FAQ itself notes reduced performance with multiple ports. Not 'not worse'.
+    - **Compatibility:** Unverified for 20 V/5 A on a source-only port.
+    - **Risks:** Store FAQ text looks auto-generated (low-confidence spec source); cables not replaceable.
+    - **Seller url:** https://www.baseus.com/products/enerfill-fc41-power-bank-with-cables-25000mah-145w
+    - **Sources:**
+      - https://www.baseus.com/products/enerfill-fc41-power-bank-with-cables-25000mah-145w
+      - https://eu.baseus.com/products/enerfill-fc41-power-bank-with-cables-25000mah-145w
+  8.
+    - **Name:** CUKTECH 20 Power Bank 25000mAh 210W (P23)
+    - **Kind:** other_brand
+    - **Price usd:** Unverified. The official cuktech.com store shows only a 999.00 placeholder (not sold direct); no other seller checked.
+    - **Spec comparison:** Cell 88/90 Wh (better); rated output capacity 13,500 mAh at 5 V/6 A. OUT1 Type-C1: 5V3A, 9V3A, 12V3A, 15V3A, 20V5A, 28V5A, 140 W (equal). OUT2 Type-C2: up to 20V3A, 60 W. USB-A up to 30 W, 5V3A. 210 W total (better). Input: C1 100 W (worse than 140 W); C2 45 W.
+    - **Worse in:** Input 100 W vs 140 W. The second port is 60 W, so 20 V/5 A and 28 V are only on C1, which is an input port (DRP). Price unverified.
+    - **Compatibility:** DRP-only for 20 V/5 A.
+    - **Risks:** No verified official-seller price; check for gray imports.
+    - **Seller url:** https://cuktech.com/products/p23-cuktech-p-series-25000mah-210w-power-bank
+    - **Sources:**
+      - https://cuktech.com/products/p23-cuktech-p-series-25000mah-210w-power-bank
+  9.
+    - **Name:** Anker Laptop Power Bank (25K, 165W, Built-In and Retractable Cables), A1695
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 119.99 at the Anker US store (NOT cheaper).
+    - **Spec comparison:** 25,000 mAh / 90 Wh (better). PDOs: 3-11V3A PPS, 5V3A, 9V3A, 10V2.25A, 12V3A, 15V3A, 20V5A. 100 W per port, 165 W total. No 28 V. All USB-C ports and cables are input and output. Input 100 W. 595 g. Display.
+    - **Worse in:** More expensive. No 28 V EPR. No output-only USB-C port. Input 100 W vs 140 W.
+    - **Compatibility:** DRP-only.
+    - **Risks:** Rejected: not cheaper and worse.
+    - **Seller url:** https://www.anker.com/products/a1695-anker-power-bank-25000mah-165w
+    - **Sources:**
+      - https://www.anker.com/products/a1695-anker-power-bank-25000mah-165w
+- **Notes:** VERDICT: keep the Anker 737. None of the cheaper candidates I found is not-worse. Each loses on at least one of two specs that matter in this stack:
+  (1) A source-only USB-C port with 20 V/5 A. On the 737, USB-C2 is output-only per Anker's own spec table.
+  (2) 140 W recharge input. Every cheaper 25K bank found takes 65-100 W.
+  
+  The closest is the UGREEN Nexode 25000mAh 200W (SKU 35525): USD 89.99 with a code in the US, EUR 76.99 at de.ugreen.com versus EUR 109.99 for the 737. It is equal or better in Wh, 20 V/5 A, 28 V on C1, total output, USB-A and mass. It is worse in recharge (65 W per port) and has no output-only USB-C port. It becomes acceptable only if the user explicitly accepts those two losses, and only after the IP2368/ISDT bench test on a DRP port passes.
+  
+  CORRECTION for v2: reaudit D calls the 737 a DRP bank. Anker's spec table lists only USB-C1 as an input; USB-C2 is output-only, with the full 20V5A and 28V5A PDO set. So v2 should route the IP2368 receiver input and the ISDT 608PD to USB-C2. That should remove the Try.SRC/DRP flapping risk for the bank. It still needs a bench check with the FNB58: on C2 the board must sink, there must be no reverse VBUS, and a sink on the port must see the PDO list. Only after that should field charging from the 737 count as proven.
+  
+  Unverified or not checked:
+  - WebSearch was unavailable (the shared per-turn search budget was already used up; both of my calls were refused), so I found no third-party measurements (delivered Wh, ripple) for the 737 or any candidate. All candidate specs are manufacturer or official-store data. A FNB58 discharge and ripple test at 20 V/3 A is needed on goods-in for whichever bank is used.
+  - Amazon US/DE pages returned captchas or no buy box, so Amazon prices are unverified.
+  - Not checked: Anker official refurbished, TME/reichelt, and an exact USD/EUR rate (EUR prices are given as listed, presumed VAT-inclusive EU consumer prices).
+  - Also seen but specs not readable: INIU Cougar P64-E1 25000mAh 140W, EUR 89.99 at eu.iniushop.com, 495.5 g, port split unverified; UGREEN Nexode Pro 25000mAh 200W with integrated cables (75702/PB728), EUR 89.99 DE / USD 99.99 US, 631 g.
+  
+  Hard rules: power banks have no RF function, so receive-only, conducted-only and no-loop rules are unaffected. The 100 Wh cabin limit is kept by every candidate except possibly the INIU B64 (27 Ah, check the printed Wh).
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
