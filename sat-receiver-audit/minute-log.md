@@ -737,3 +737,11 @@ P4, нове (не перевірено):
 
 P4, B (Lime, правило «без ПЗ з передачею»): пакування LimeSuiteNG для Debian збирає liblimesuiteng, legacyapi, cli, gui, udev, limepcie-dkms, gr-limesuiteng і soapysdr. Встановлювати лише liblimesuiteng (з нашим патчем, що блокує TX), legacyapi (потрібен SatDump), soapysdr, udev і limepcie-dkms. limesuiteng-gui і gr-limesuiteng (мають елементи керування передачею або блоки TX) не ставити. limesuiteng-cli — лише якщо з нього вирізано всі TX-підкоманди (limeTRX тощо), інакше не ставити і користуватися пропатченою діагностикою тільки на прийом. Записав у operator_notes, пункт №28. Також підтверджено межі перемикання входів V4L: HF ≤28.8 MHz, VHF 28.8–250 MHz, UHF >250 MHz, через GPIO5 (до пункту №12c). Джерела: пакування LimeSuiteNG (debian/control, *.install, за агентом B); rtl-sdr-blog, src/tuner_r82xx.c.
 
+## 2026-10-18 09:59 UTC
+
+P4, A — ВАЖЛИВО (доступність утримуваного ядра; ще не перевірено верифікатором): в apt-репозиторії Radxa dists/qcs6490-noble (InRelease від 24.09.2026) тепер лежать linux-image і linux-headers 7.0.11-7-qcom, і метапакет linux-image-radxa-dragon-q6a вказує на них. Пакети ядра 6.18.2-4 і 6.18.2-3 у pool повертають 404. В образі r2 саме ядро 6.18.2-3. Отже, «утримувати 6.18.2-4» через apt уже не вийде. Що робити у v2:
+(а) у перший же день завантажити deb-пакети 6.18.2-4 з GitHub-релізу radxa-pkg/linux-qcom «Release 6.18.2-4» (16 файлів), перевірити контрольні суми і тримати їх у локальному apt-архіві на пристрої та поза ним;
+(б) DKMS pps-gpio і оверлей збирати проти цих заголовків;
+(в) 7.0.11-7 — єдиний шлях, який далі підтримує Radxa. Переходити на нього лише після тестів HDMI (тема 31304), FastRPC/NPU, PPS (там CONFIG_PPS_CLIENT_GPIO=m, DKMS не потрібен) і EDID.
+Записав у operator_notes, пункт №29. Рішення від користувача не потрібне. Джерела: радxa-repo (dists/qcs6490-noble/main/binary-arm64/Packages, перевірка за агентом A), github.com/radxa-pkg/linux-qcom/releases.
+
