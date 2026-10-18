@@ -14926,6 +14926,171 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - Any measured whip or dipole gain on a handheld at 437 MHz.
   - No community decode of a 437.550 MHz SSTV event with a handheld whip found.
 
+## community:antennas_foldable (run `wf_d3593e9c-5ce`)
+
+- **Subsystem:** antennas_foldable (stage 2, community experience): telescopic V-dipole for Meteor LRPT; foldable crossed 2 m/70 cm Yagi (WB2HOL tapes on Axotron spools plus N2SPI 6-el); L-band petal helicone and shared helix with SAWbird+ GOES; QO-100 bare Bullseye LNB, 11 cm clamp cone and 6-gore horn; QRO.cz upgrade path
+- **Findings:**
+  1.
+    - **Claim in stack:** V-dipole: 'NEC 3.0 dBi at zenith', mounted 1-1.1 m above ground (stage 1 corrected this to an over-ground pattern plus a per-pass height rule)
+    - **Finding:** Community reports back up the stage-1 correction. In the libre.space thread of 30 May 2026, user bali runs a fixed Meteor-M V-dipole station at about 55 cm and reports that it is 'only good for high pass'. The paper author (uzzam) answers that in his Fig. 3, h=0.5 m gave the best results for high-elevation passes and h=1 m for low-elevation passes; he recommends 1.087 m, with the lobe peak near 29.5 deg. My recomputed MODEL (horizontal half-wave dipole times the Fresnel ground factor, eps 13, 5 mS/m; first number dBi, second relative to zenith after 830 km slant-range loss) gives: at 0.55 m, 10 deg -3.4/-12.7, 45 deg +5.8/+3.2, 90 deg +6.0/+6.0; at 1.087 m, 10 deg +2.1/-7.2, 30 deg +7.0/+2.2, 90 deg -5.1/-5.1. These match the stage-1 figures and the field report: a low mount favours high passes, a 1.1 m mount favours low and mid passes and has a partial null at zenith.
+    - **Verdict:** corrected
+    - **Action:** Apply the stage-1 change. Replace '3.0 dBi at zenith' with the over-ground pattern (model). Add the height rule: 1.0-1.1 m for passes peaking below about 50 deg; 0.5-0.75 m for passes peaking above about 60 deg, which covers most M2-3 passes the STACK counts as usable. Verify with receive-only A/B passes.
+    - **Impact:** A field report now backs the height rule. It costs nothing: only the tripod height changes.
+    - **Sources:**
+      - https://community.libre.space/t/mathematical-modeling-and-physical-optimization-of-v-dipole-antennas-for-vhf-imaging-satellite-reception/14844
+      - https://community.libre.space/t/mathematical-modeling-and-physical-optimization-of-v-dipole-antennas-for-vhf-imaging-satellite-reception/14844.json
+  2.
+    - **Claim in stack:** V-dipole LRPT = RTL-SDR Blog multipurpose dipole kit #1, $17.95, 357 in stock, 23 cm collapsed; arms 53.4 cm at 120 deg, N-S; spare telescopic pair in kit
+    - **Finding:** The vendor page re-fetched on 18 Oct 2026 still shows USD 17.95, '357 in stock', SKU 3. Durability is the main community complaint. An Amazon review quoted on a reseller page (desertcart; not first-hand, unverified) says 'the antenna tubes get loose ... the arm holders on the dipole base get floppy'. RTL-SDR Blog itself warns that 'dirt and grime could gum up the collapsing mechanism' and that the kit is not meant for permanent outdoor mounting. If the base arms are floppy, the 120 deg V and the 53.4 cm extension drift between passes. Community printed holders exist: Thingiverse thing:3421430 (holds 120 deg, needs cable ties) and MakerWorld model 1127183 by Denis ('simply slides in place'; the page returned 403 to me, so unverified).
+    - **Verdict:** new_risk
+    - **Action:** Add a printed 120 deg holder that clamps both telescopics, PETG/ASA, to build/ (Thingiverse 3421430 or MakerWorld 1127183 after checking the license). Mark the 53.4 cm extension (about 2.5 sections) with tape or paint. Pack the elements collapsed in the element tube, away from grit. Keep the spare telescopic pair (already in the STACK).
+    - **Impact:** Keeps the V geometry repeatable in a backpack build at about $0-2 of filament. Part, price and stock are unchanged.
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-multipurpose-dipole-antenna-kit/
+      - https://www.rtl-sdr.com/tag/v-dipole/
+      - https://www.thingiverse.com/thing:3421430
+      - https://makerworld.com/models/1127183
+      - https://www.desertcart.uy/products/56715887
+  3.
+    - **Claim in stack:** 2 m half: WB2HOL steel-tape elements on Axotron v3 spools, re-marked for 137.5 MHz (R 111.4 cm); 'planes orthogonal within +/-5 deg'; optional for LRPT at about 7.7 dBi
+    - **Finding:** Field reports on tape and telescopic Yagis repeat the same problems. An element14 builder of a tape-measure Yagi found 'droopy elements' that were 'very susceptible to wind'; the main lobe shifted between measurement runs, and the fix (PVC supports under each element) made folding harder. A radioreference builder expects field use to leave the tape 'crimped or broken' and used Velcro and zip ties instead of drilling the tape. Axotron's own v3 notes describe element kinking, fixed by extending the clamps. The OARC 2m0iig dual-band telescopic Yagi (K6ARK-derived, page dated 8 Dec 2022) reports M3 wingnuts loosening so the elements rotate, bent telescopics going out of plane, and first satellite reception only from about 40-45 deg elevation, with UHF 'noticeably weaker' (that design has no reflector). The re-marked 137.5 MHz reflector (111.4 cm) is the longest and droopiest tape in this kit.
+    - **Verdict:** new_risk
+    - **Action:** Build notes: (1) keyed boom joints, no wingnuts, so the planes hold +/-5 deg; (2) extended clamps on R/DE/D as in Axotron v3; (3) Velcro or elastic retainers for folded tapes, never drill through the tape; (4) one spare tape spool (already listed); (5) use the 137.5 MHz marks only in calm air and treat the 7.7 dBi figure as a calm-air model. Keep the N2SPI 6-el with its reflector for 70 cm; the reflectorless telescopic design reports weak UHF.
+    - **Impact:** Mechanical stability, not the electrical design, sets real gain for the hand-held 2 m half. Without these steps, expect lobe wander and a few dB of pass-to-pass scatter (qualitative; not measured).
+    - **Sources:**
+      - https://community.element14.com/challenges-projects/project14/rf/b/blog/posts/antenna-radiation---phase-2
+      - https://forums.radioreference.com/threads/my-take-on-the-wb2hol-tape-measure-yagi.308728
+      - https://axotron.se/blog/?p=1619
+      - https://wiki.oarc.uk/2m0iig-satellite-yagi
+  4.
+    - **Claim in stack:** Ultracompact crossed Yagi: parasitic tape halves 'electrically connected'; Axotron v3 3MF files used on a 20x20 mm boom
+    - **Finding:** Re-fetched Axotron v3 page: 16 mm OD PVC conduit boom (rear 347 mm, front 279 mm), CX2041ANLT balun ('I have not checked if there is an actual difference in performance'), no spool capacity stated, and no reader comments or third-party build reports. This confirms the stage-1 mismatch with the STACK's 20x20 mm square boom and hairpin. A related community technique: alpha_adhito (libre.space, 24 Feb 2026) built a disassemblable crossband satellite Yagi (Thingiverse 'Crossband Yagi for satellite (3x6 V/U)', derived from YD1BDE). He uses 'solder wick to connect between the two side of the parasitic element so it can fold', assembles it in '1-2 min', and calls it 'not the most sturdy but it works'. His folding VHF halves are about 0.5 m, which breaks the 35 cm piece rule, so only the braid-bridge technique carries over.
+    - **Verdict:** new_option
+    - **Action:** Keep the stage-1 action (redraw the clamps for the 20x20 boom, or use a 16 mm round boom with keyed joints). For each parasitic tape, bridge the two halves at the clamp with a short tinned braid (solder wick) strap so they stay electrically continuous when folded. Use the Axotron and alpha_adhito files for personal builds only (licenses not checked).
+    - **Impact:** A field-used way to keep parasitic halves continuous without a rigid one-piece element. Costs about $1.
+    - **Sources:**
+      - https://axotron.se/blog/?p=1619
+      - https://community.libre.space/t/collapsible-yagi-antennas/14441
+  5.
+    - **Claim in stack:** 70 cm half = N2SPI 6-el (WA5VJB electrical design), 11.0 dBi, straight split DE '0.95 x 13 in' with hairpin instead of the folded DE
+    - **Finding:** No community build or measurement of the straight split DE with hairpin variant was found. Community descriptions call the WA5VJB 'Cheap Yagi' 'easily constructed and forgiving', and dual-band 'arrow'-style builds with 2 m and 70 cm at 90 deg exist (libre.space antenna-information thread; amateurradio.com blog), but none reports gain, C/N or ISS SSTV results. Dimensions stay as verified in stage 1.
+    - **Verdict:** unverified
+    - **Action:** Keep. Label 11.0-11.2 dBi as NEC. Accept the hairpin DE only after a receive-only A/B (ISS SSTV 437.550 MHz Series 34, 22-25 Oct 2026, or CubeSat beacons) against the stock 17 cm whip or a folded-DE copy if one is built.
+    - **Impact:** The gain basis is unchanged; the only open item is whether the hairpin modification matches the folded DE.
+    - **Sources:**
+      - https://community.libre.space/t/satellite-antenna-information/6517
+      - https://www.amateurradio.com/on-to-something-new-2/
+      - https://wa5vjb.com/yagi-pdf/cheapyagi.pdf
+  6.
+    - **Claim in stack:** Petal helicone with 4-turn helix: 15.7 dBic (model); Meteor HRPT 'reliable (model)' at +8.9...+9.4 dB average; Metop/AWS 'marginal' at -1.5...0 dB
+    - **Finding:** The only community comparison is from pe2bz on libre.space (28 Feb 2024; SatNOGS fixed stations, HackRF, t0nito 1.7 GHz helicone). The helicone added 'some 20 seconds more observation and (roughly guesstimated on the waterfall) about 3 dB of signal with the satellite passing overhead' over his bare helical setup. Rotating the cone 90 deg made no difference ('quite symmetrical'). The project's own model puts a 4-turn helix on its disc at 9.7-10.9 dBic (small_antenna_stack), so a +3 dB step implies roughly 13-14 dBic in practice for the t0nito geometry, against a model of 14.8-15.3 dBic for a t0nito-like cone and 15.7 dBic for the STACK's deeper cone. My arithmetic: at 13-14 dBic the HRPT margin becomes about +6.2...+7.7 dB (still adequate) and Metop/AWS about -4.2...-1.7 dB.
+    - **Verdict:** corrected
+    - **Action:** Budget 13-15.7 dBic (stage 1 said 14-15.7). Keep HRPT 'reliable (model)'. Downgrade Metop-B AHRPT and AWS from 'marginal (experiment)' to 'experiment, probably not reachable except on the best high passes' until the receive-only NCS/GNSS C/N0 A/B (helicone vs 4-turn helix) shows more than +4 dB. Keep tabs for both the t0nito angle (29.7 deg) and the deeper cone.
+    - **Impact:** The marginal L-band targets (Metop, AWS) move down by about 1.7-2.7 dB. Meteor HRPT keeps a positive margin.
+    - **Sources:**
+      - https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309
+      - https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309.json
+  7.
+    - **Claim in stack:** 'No documented dishless hand-held HRPT decode' (STACK 4.1 Meteor HRPT row)
+    - **Finding:** There is now a first-hand video report. RTL-SDR Blog covers Saveitforparts (Gabe) testing the t0nito helicone (Thingiverse 6436342) with 'image reception from NOAA HRPT satellites, using hand tracking' on 'a phone running an RTL-SDR and SatDump'. No LNA is named, there are no SNR numbers, and the post is undated on the page. Build quirk: the printed scaffold legs warped and needed extra centre supports. The pe2bz post (Jan 2024) relays Meteor HRPT images from the Facebook group, 'usually hand tracking', with a Nooelec GOES preamp. Failure reports reached me only as search snippets from a Reddit mirror (unverified): one builder saw a strong 1.7 GHz carrier on an M2-3 pass but no decode, and suspected a 5 m cable or coarse mesh; another got noisy first images hand-held from indoors.
+    - **Verdict:** corrected
+    - **Action:** Reword to: 'documented hand-tracked HRPT with a helicone plus RTL plus SatDump (NOAA, video; Meteor, second-hand); no measured gain'. Keep the SAWbird+ GOES at the feed (no long coax before the LNA) and run first tests outdoors, away from buildings. Print the cone tabs with supports as Saveitforparts did.
+    - **Impact:** Raises confidence in the foldable HRPT path. The failure snippets point to cable loss before the LNA and indoor RFI, both of which the STACK topology already avoids.
+    - **Sources:**
+      - https://www.rtl-sdr.com/saveitforparts-testing-a-3d-printable-satellite-antenna-for-noaa-meteor-and-other-polar-orbiting-l-band-satellites/
+      - https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309
+      - https://r.datuan.dev/r/amateursatellites
+  8.
+    - **Claim in stack:** SAWbird+ GOES (100792) at the helix feed, coax-powered from injector ch3
+    - **Finding:** Nooelec page re-fetched on 18 Oct 2026: SKU 100792, US$49.95, 'Orders usually shipped in 1 business day'. My searches found no community reports of oscillation, bias failures or overload for this part in HRPT use. The community HRPT helicone reports above use a Nooelec GOES preamp.
+    - **Verdict:** confirmed
+    - **Action:** Keep it as specified.
+    - **Impact:** None.
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-goes-302.html
+  9.
+    - **Claim in stack:** Othernet Bullseye TCXO LNB $29.95 (70 in stock); +/-10 kHz at 23 C, +/-30 kHz over -20..60 C; buy only after the region gate
+    - **Finding:** Reconfirmed on 18 Oct 2026: RTL-SDR Blog USD 29.95, '70 in stock', SKU 20. Passion Radio: EUR 29.94 ex tax, 'In stock, More than 10 Items, Warning: Last items in stock!'. All 2023-2026 Passion Radio reviews are positive (e.g. Pa1ant 19/09/2026: 'works perfect with qo-100. Very stable'). One review warns 'most company's have run out of stock' (Alan-Blackpool, 24/03/2026). Passion Radio also gives a stability budget that differs from the RTL-SDR Blog spec: 'initial offset of 2 ppm', temperature 'additional 2 ppm', and 'additional 1 ppm offset per year' of ageing. At the 9750 MHz LO that is about 19.5/19.5/9.75 kHz (arithmetic). The STACK's beacon tracker acquires over +/-800 kHz, so it covers this. No community failure, drift or physical-defect reports were found; one LNB died only after a storm brought the dish down.
+    - **Verdict:** new_risk
+    - **Action:** Keep the part. Record the ageing (about 10 kHz per year) next to the +/-10/30 kHz figures. Because few shops still stock it, buy within days of the region gate passing. Listed sources: RTL-SDR Blog (70) and Passion Radio (last items).
+    - **Impact:** Supply risk, not a performance risk. The ageing is absorbed by the existing tracker window.
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+      - https://www.passion-radio.com/lnb-pll/lnb-othernet-978.html
+  10.
+    - **Claim in stack:** QO-100 bare Bullseye LNB: CW beacon about +6...+9 dB in 50 Hz (model; stage 1 derated to +2...+6); FT8 = experiment
+    - **Finding:** There is a documented bare-LNB QO-100 narrowband receive. RigExpert application note TBR-AN-1 (12 Jul 2022) lists 'Satellite dish - you do not need it!' and shows WSJT-X decoding QO-100 FT8 with a bare linear LNB locked to a GPSDO 25 MHz reference. Pointing only needs to be within about +/-20 deg 'since the LNB itself has a wide beam'. A SARTS (Singapore) 2025 presentation says operators 'Can work some FT8/JT65 with bare LNB for RX'. Neither gives a beacon C/N0 or SNR, so the stage-1 EA4GPZ-based derate (G + 11...16 dB-Hz) remains the only quantitative point.
+    - **Verdict:** confirmed
+    - **Action:** Keep the 'FT8 experiment' and 'CW beacon marginal-to-probable' ratings, using decode-only jt9 (no WSJT-X GUI, as the rules require). In the A/B, log the bare-LNB beacon C/N0 so the project has its own number. Lock frequency to the beacon in software, since the RigExpert decodes used a GPSDO-locked LNB.
+    - **Impact:** A first-party document shows bare-LNB narrowband reception works. This raises confidence in the region-gated patch-tier QO-100 item but sets no margin.
+    - **Sources:**
+      - https://rigexpert.com/files/product_documentation/gpsdo/TBR-AN-1.pdf
+      - https://www.sarts.org.sg/wp/wp-content/uploads/2025/09/QO-100-Presentation-1.pdf
+      - https://destevez.net/2019/03/qo-100-beacons-power/
+  11.
+    - **Claim in stack:** Upgrade path 'QRO.cz 0.2 ppm' (stage 1 added a new_risk: '12 V hor / 15 V vert', so 13.2 V would pick horizontal and the LNB must be rotated)
+    - **Finding:** The manufacturer's own shop (hamparts.shop, run by QRO.cz) contradicts the WiMo reseller listing. It says 'Voltage supply +12V for V-pol, +15V for H-pol' and '+12 V for Vertical polarisation (NB) +15 V for Horizontal (WB)', and adds 'NEW IF IC in LNB needs +18V to switch to H-pol'. WiMo's 'Technical Data' table says '12 V: hor, 15 V: vert. Pol.', which is probably transposed. Stability on the manufacturer page: '1 ppm temperature stability TCXO', '2 ppm production frequency tolerance', a per-unit offset of '0 to about 20 kHz', and 'Stability with TCXO 0.5 ppm (X 390)'. WiMo's 0.2 ppm applies to the TCXO in the external-reference bias-T version. Other manufacturer data: DC current 'typ. 180 mA'; 'SDR LO 9750' version with 739 MHz IF at EUR 52.03 incl. VAT (EUR 43.00 ex VAT), 'in stock, shipped in 2-3 days'. WiMo charges EUR 65 plus EUR 54.62 shipping. The LNB DUAL LO REF (EUR 240.79) uses standard 12/18 V switching but draws 'Typ. 400 mA', which is close to the STACK's preliminary 0.45 A PTC.
+    - **Verdict:** corrected
+    - **Action:** Withdraw the stage-1 'rotate 90 deg / add 15 V boost' action. At 13.2 V the QRO.cz basic LNB selects vertical (NB). If upgrading, buy the 'SDR LO 9750' version from hamparts.shop and ask for the new IF IC (18 V for H). The old IC's switching threshold between 12 and 15 V is unpublished, so check polarization with a receive-only beacon test at 13.2 V. Change the BOM text from '0.2 ppm' to '1 ppm temperature / 2 ppm initial (0-20 kHz offset); 0.2 ppm only with the external-reference bias-T'. Do not plan on the DUAL LO REF on the 13.2 V/PTC bus.
+    - **Impact:** The upgrade becomes a drop-in at about EUR 52 instead of a polarization hazard. The STACK's 0.2 ppm figure was too optimistic for the basic version.
+    - **Sources:**
+      - https://hamparts.shop/10-ghz-lnb-with-pll-and-tcxo.html
+      - https://hamparts.shop/lnb-dual-lo-ref.html
+      - https://www.wimo.com/en/qo-100-10ghz-lnb-qro-cz
+  12.
+    - **Claim in stack:** Gore horn: 3 inner gores about 21 dBi, 6 gores about 23 dBi (model); seams of aluminium tape, gap <0.2 mm (stage 1: allow -0.2 to -0.5 dB, unverified)
+    - **Finding:** No community measurement of a gore or sheet-metal horn on a bare LNB for QO-100 was found; searches for printed QO-100 horns returned only helix feeds (DX-Patrol) and dish feeds. The closest measured data is a UCT MSc thesis (Gao, 2019) on 3D-printed horns. A Ku-band conical horn measured 12.0 dBi with conductive paint and 16.6 dBi when copper-plated at 15 GHz. Pyramidal horns measured 17.5 dBi (paint) and 17.7 dBi (plated). So wall and seam conductivity can cost several dB in conical horns specifically. The STACK's solid 0.3-0.5 mm Al gores avoid the paint problem. The taped longitudinal seams, which cut circumferential TE11 wall currents (engineering reasoning), remain the risk.
+    - **Verdict:** new_risk
+    - **Action:** Build: overlap gore seams by at least 5 mm (fold tabs or rivets), with conductive-adhesive aluminium tape on top, rather than butt joints. In the A/B, repeat one 6-gore run after re-taping the seams. If the result moves more than 1 dB, the seams are lossy. Keep the -0.2 to -0.5 dB allowance as unverified, with a stated worst case of a few dB.
+    - **Impact:** The 21/23 dBi figures depend on seam quality, which no community build has measured.
+    - **Sources:**
+      - https://open.uct.ac.za/items/9f9c05e8-2c66-452a-b1bd-35fababc44c1/full
+      - https://shop.amsat-uk.org/details/p3815740_17349465.aspx
+  13.
+    - **Claim in stack:** Cone or horn starts at a printed 40.2 mm clamp on the LNB neck (stage 1 corrected: move the throat to the feed aperture behind the 64 mm red cover; measure first)
+    - **Finding:** BATC forum snippets (unverified; the site served a JS challenge to fetch and curl) say 'the hardest thing was getting the red cap off the LNB', that feeding a Bullseye 'probably requires a 40mm to 22mm adapter', and that 22 mm copper pipe is the usual circular waveguide. The QRO.cz POTY adapter on the manufacturer's page confirms the 22 mm Cu-pipe practice ('22 mm Cu tube diameter POTY pipe WG'). MODEL: 20 mm ID pipe has a TE11 cutoff of 8.79 GHz and TM01 of 11.47 GHz, so it is single-mode at 10.49 GHz, inside the STACK's 16.8-21.9 mm window.
+    - **Verdict:** confirmed
+    - **Action:** Keep the stage-1 correction. Do not force or cut off the Bullseye red cap. Measure the cap OD (64 mm per Passion Radio), its protrusion and the visible aperture. Put the throat ring at the cap plane, on a printed adapter onto the 40 mm neck, and recompute R_in = r_throat / sin(13.8 deg). If a non-Bullseye LNB or a bare waveguide is ever used, a 22 mm Cu pipe throat is the community-standard interface.
+    - **Impact:** Avoids damaging the only LNB and gives a known-good fallback interface.
+    - **Sources:**
+      - https://www.passion-radio.com/lnb-pll/lnb-othernet-978.html
+      - https://hamparts.shop/10-ghz-lnb-with-pll-and-tcxo.html
+      - https://forum.batc.org.uk/viewtopic.php?p=27885
+  14.
+    - **Claim in stack:** IF chain: 15/20 dB pad after the LNB; target 10-15 dB noise rise; bench item 'IF level with 15 and 20 dB attenuators'
+    - **Finding:** A search snippet from cq.sk (OK1PHU) says the LNB output is often too strong for SDRs and suggests about 30 dB of attenuation in front. The page returned 404 when fetched, so this is unverified, and it refers to dish systems. The Bullseye's 50-66 dB gain (vendor) makes the top of this range plausible even with no dish, because wideband noise power dominates.
+    - **Verdict:** unverified
+    - **Action:** Add a 30 dB step (15+15 or 20+10) to the bench IF-level measurement. Pick the pad from the measured noise rise and the V4L desensitisation threshold, not from the nominal 15/20 dB.
+    - **Impact:** Minor. Prevents RTL front-end compression masking the bare-LNB beacon.
+    - **Sources:**
+      - https://cq.sk/it/qo-100-ok1phu/
+      - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+  15.
+    - **Claim in stack:** Meteor-M N2-4 LRPT 137.9/137.1 MHz reliable; M2-3 marginal (only high passes)
+    - **Finding:** No new community failure reports for 2026 were found. WMO OSCAR describes Meteor-M N2-3 as operational 'working with limitations' (X-band link failure; entry updated June 2025). The stage-1 SatNOGS observations of 17-18 Oct 2026 stand. The libre.space 2026 thread reports high-quality Meteor-M images from a fixed V-dipole.
+    - **Verdict:** confirmed
+    - **Action:** Keep both the 72k and 80k SatDump profiles. Pair M2-3 attempts with the low-mount (0.5-0.75 m) height rule.
+    - **Impact:** The target list for this tier is unchanged.
+    - **Sources:**
+      - https://space.oscar.wmo.int/satellites/view/meteor_m_n2_3
+      - https://db.satnogs.org/satellite/57166
+      - https://community.libre.space/t/mathematical-modeling-and-physical-optimization-of-v-dipole-antennas-for-vhf-imaging-satellite-reception/14844
+- **Current status oct 2026:** As of 18 Oct 2026, prices and stock reconfirmed on the vendor pages: RTL-SDR Blog dipole kit USD 17.95, 357 in stock; Bullseye BE01 USD 29.95, 70 in stock at RTL-SDR Blog, EUR 29.94 ex tax 'last items' at Passion Radio (reviews to 24/09/2026 positive; one warns that most shops have run out); Nooelec SAWbird+ GOES US$49.95. QRO.cz basic 10 GHz LNB 'SDR LO 9750' (739 MHz IF) is EUR 52.03 incl. VAT and in stock at the manufacturer (hamparts.shop). The manufacturer says 12 V = vertical (NB), 15 V or, with the new IF IC, 18 V = horizontal, 180 mA typical, 1 ppm TCXO. WiMo's reversed polarity line and its 0.2 ppm figure do not match the manufacturer (0.2 ppm applies only to the external-reference version). Community evidence in 2024-2026 supports: the V-dipole height and elevation trade-off (libre.space, May 2026); hand-tracked HRPT with a t0nito helicone plus RTL plus SatDump (NOAA, video; Meteor, second-hand); a helicone gain over a bare helix of only about 3 dB (waterfall estimate, Feb 2024); and bare-LNB QO-100 FT8 reception (RigExpert, 2022). There is still no measured gain for any helicone, gore horn or bare Bullseye, and no community build of the hairpin-DE N2SPI or the Axotron v3 spools. No Q6A/QCS6490 or Ubuntu 24.04 arm64 items apply to these passive antennas.
+- **Notes:** Method: about 19 WebSearch calls; the session search budget then ran out, so a planned Metop/AWS-with-helicone search was not run. Reddit (blocked to the search tool and to curl) and the BATC forum (JS challenge) could not be read directly; anything from them is labelled as a snippet and unverified. SatDump GitHub issues could not be checked because the repo is not attached to this session, so arm64 SatDump behaviour is not assessed here. Primary pages fetched or curled: the RTL-SDR Blog product pages, Nooelec, Passion Radio (including its reviews), hamparts.shop (the QRO.cz shop: LNB and DUAL LO REF pages), WiMo, the Axotron v3 post, libre.space topics 11309, 14441 and 14844 (Discourse JSON), the OARC 2m0iig wiki, the RigExpert TBR-AN-1 PDF, the SARTS 2025 PDF and the UCT horn thesis.
+  
+  Saved files: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_comm/ (hamparts and libre.space JSON), /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_rigexp/tbr.pdf, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_sarts/sarts.pdf. Model script: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/calc_s2/vdip.py.
+  
+  MODEL numbers (mine): the V-dipole over-ground pattern at 0.55, 0.75 and 1.087 m (Fresnel, average ground); the helicone budget of 13-14 dBic, inferred from the pe2bz '+3 dB' estimate plus the project's 9.7-10.9 dBic helix model, which gives HRPT +6.2...+7.7 dB and Metop/AWS -4.2...-1.7 dB; the 22 mm pipe waveguide cutoffs (TE11 8.79 GHz, TM01 11.47 GHz); the Bullseye ageing of about 10 kHz per year (1 ppm at 9.75 GHz).
+  
+  Changes to stage 1:
+  (a) The QRO.cz new_risk is reversed. Per the manufacturer it is vertical at 12-13.2 V, so no rotation or boost is needed, but '0.2 ppm' must change to 1 ppm.
+  (b) The helicone budget is lowered from 14-15.7 to 13-15.7 dBic, and Metop/AWS are downgraded.
+  (c) The V-dipole height rule is confirmed by a field report.
+  
+  New risks: the dipole kit's loose base arms and telescopics (add a printed 120 deg holder); tape-element droop, wind flutter and wingnut loosening (keyed joints, extended clamps, Velcro retainers); horn seam conductivity (overlap seams); Bullseye supply (buy right after the region gate).
+  
+  Still unverified: the hairpin DE on the N2SPI, Axotron spool capacity for the 137.5 MHz marks, the gore horn and cone gains, the bare-LNB beacon C/N0, the OK1PHU 30 dB pad advice, and MakerWorld holder 1127183 (page 403).
+
 ## report:compute_software_ai (run `wf_df1900ef-872`)
 
 - **Scope:** This audit covers the Q6A compute board, kernel/OS pinning, the full software stack, the NPU (QAIRT 2.42, INT8), the spectrum-based NPU training system and the lab menu/UI. Read in full or near full: final/compute.json, software.json, npu_training.json, lab_ui_hf.json and user_requirements.md (governing). Also read the whole of minute-log.md, the newest summaries.md entries plus keyword greps across summaries.md and extra-studies.md, and the parts of small_antenna_stack.json, radio_lab.json, display_market.json, foldable_antennas.json and wideband_sdr.json that touch this scope. All 18 named final/*.json files exist (plus foldable_partial.json and digest.md). final/report_research.json from P1b does not exist yet. I did not read wideband_sdr, narrowband_sdr, display, storage, rf_frontend, gnss_imu, power, mechanical_thermal, antennas or dish_replacement beyond targeted greps, because they are outside this scope. components/compute.md and software.md were spot-checked and match the JSON. I used 7 web lookups to settle disputes: ISS frequencies, SatDump version, the QAIRT 0x1388 error, VTCM size and noble libgpiod.
