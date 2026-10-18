@@ -40628,6 +40628,128 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - The Zotek OEM site returned 503 and eBay.de returned 403.
   - I found no EU seller listing the AN8008/9 or ZT109. Botland lists only the AN870, at EUR 35.92 incl. VAT, unavailable.
 
+## searchA:hantek_6022be_fx2lafw_la (run `wf_e5582d4c-0a2`)
+
+- **Part:** Bench oscilloscope + logic analyser set: Hantek 6022BE (2 ch, 20 MHz, 8 bit, USB, OpenHantek6022) + generic CY7C68013A 8-ch fx2lafw LA (Tier bench, group Bench electronics, qty 1 set)
+- **Current price usd:** 141-172 for the set: The Debug Store (UK) 6022BE GBP 100 ex VAT / GBP 120 inc VAT ($133.18 / $159.82) plus generic FX2 LA $8-12 (reaudit_D). For an EU buyer the UK seller ships ex-VAT and destination import VAT plus a courier clearance fee is added, so expect the top of the range or slightly above (my estimate).
+- **Critical specs:**
+  - Scope analog channels: 2 (CH1+CH2), ground-referenced, DC coupled (AC only via the documented mod or a BNC DC-block; same on every 6022 variant)
+  - Analog bandwidth >= 20 MHz (-3 dB), rise time <= 17.5 ns (Hantek 6022BL page); 2x x1/x10 probes included
+  - ADC 8 bit (AD9288-class dual ADC, 4x AD8065 front end per sigrok teardown); OpenHantek oversampling gives >11 effective bits below 1 MS/s
+  - Usable streaming rate: 30 MS/s CH1 only, 15 MS/s for 2 channels (OpenHantek limitations doc; 48 MS/s not usable). The stack needs >= 1 MS/s (DPS-150 overshoot test), <= 4 MS/s in QUIET, <= 5 MS/s x2 in the capped Bench USB profile
+  - Input: 1 MOhm || 25 pF; full scale +/-5 V at x1 (clipped outside), 20 mV/div-5 V/div; max input 35 Vpp (Botland listing); DC accuracy +/-3 %; timebase +/-50 ppm
+  - Interface: USB 2.0 high-speed bulk, bus-powered (about 2.5 W or less), VID:PID 04b4:6022 then OpenHantek FW0210, firmware loaded at every plug-in; works behind the bench hub at 3 hub tiers
+  - Software on Ubuntu 24.04 arm64: OpenHantek6022 3.4.1-rc2 arm64 .deb (60-openhantek.rules) plus sigrok hantek-6xxx; no Windows-only driver
+  - LA: 8 channels at up to 24 MS/s with fx2lafw 0.1.7 + PulseView 0.4.2 / sigrok-cli 0.7.2 (noble); 3.3 V/5 V logic; small separate dongle that fits the internal LAB USB port (TPS2553 0.75 A limit)
+  - Scope and LA usable at the same time (separate devices) at low rates, as the labd Bench profile assumes
+  - Size and weight for the Pelican 1450 centre compartment: about 205 x 120 x 35 mm, about 0.3-0.4 kg
+  - Genuine Hantek unit (not a clone), legal EU sale with VAT invoice, CE/GPSR data; return window long enough to run the arm64 OpenHantek test
+  - Hard rules: a passive measuring instrument only. The only output is the probe-compensation square wave (conducted). No loop or H-field probes.
+- **Candidates:**
+  1.
+    - **Name:** Hantek 6022BE + generic CY7C68013A 8-ch LA from The Debug Store (current pick)
+    - **Kind:** current_part
+    - **Price usd:** 141-172 set ($133.18 ex / $159.82 inc VAT for the scope + $8-12 LA)
+    - **Spec comparison:** Baseline: 2 ch, 20 MHz, 48 MS/s nominal (30/15 MS/s usable), 8 bit, 1 MOhm||25 pF, +/-5 V, OpenHantek arm64 + sigrok; separate 8-ch 24 MS/s fx2lafw LA.
+    - **Worse in:** Nothing (baseline). UK seller: EU import VAT and clearance fee come on top of GBP 100 ex VAT.
+    - **Compatibility:** Verified in reaudit_D (OpenHantek 3.4.1-rc2 arm64 .deb, FW0210, fx2lafw 0.1.7 in noble).
+    - **Risks:** Post-Brexit import handling for an EU address; the 6022BL URL at the same store is 404.
+    - **Seller url:** https://www.thedebugstore.com (6022BE listing verified in reaudit_D; the product URL I tried returned 404 today)
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json
+      - https://sigrok.org/wiki/Hantek_6022BE
+      - https://raw.githubusercontent.com/OpenHantek/OpenHantek6022/main/docs/limitations.md
+  2.
+    - **Name:** SAME Hantek 6022BE from Botland (Poland, EU retailer) + the same generic CY7C68013A 8-ch LA
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** Scope: botland.com.pl PLN 299.00 gross (incl. 23 % PL VAT; PLN 243.09 net), 'Dostępne od ręki' (in stock), about $79 gross / $64 net at an assumed 4.26 PLN/EUR (the PLN rate is my assumption, unverified). botland.store EUR 67.30 ($75.65; EUR 56.55 net = $63.57), but that site says it sells only to businesses with a VAT ID, and its stock box conflicts ('In stock' vs 'currently unavailable'). Set with the LA ($8-12): about $84-91, which saves about $50-88.
+    - **Spec comparison:** Identical SKU, so every spec is equal. Listing: 2 ch, 20 MHz, 48 MS/s, 8 bit, 1 MOhm/25 pF, 10 mV-5 V, DC accuracy +/-3 %, max input 35 Vpp, USB 2.0 bus-powered, 205 x 120 x 35 mm, 380 g, two x1/x10 probes + USB cable + manual. The LA part is unchanged.
+    - **Worse in:** Nothing in specs if the unit is genuine. Purchase-side only: the GPSR block names 'Shenzhen You Mai Ke Technology Co., Ltd.' as manufacturer, not Qingdao Hantek (likely the export agent, unverified). Whether a private buyer outside Poland can order from botland.com.pl, and the destination-VAT price, are unverified.
+    - **Compatibility:** Same hardware, so it uses the same OpenHantek6022 arm64 .deb, sigrok hantek-6xxx and udev rule. No change to rails, USB budget or case layout.
+    - **Risks:** Clone or grey-market risk (the stack already flags Hantek units from marketplaces). On arrival, before the 14-day EU withdrawal window ends, check: Hantek case label and PCB silkscreen; AD9288 ADC + 4x AD8065 per the sigrok teardown; USB 04b4:6022 before firmware; OpenHantek loads FW0210; the 1 kHz probe-comp check; a 10 MHz sine from the tinySA generator through a pad and 50 Ohm, read with the x10 probe, to confirm bandwidth.
+    - **Seller url:** https://botland.com.pl/oscyloskopy/6716-oscyloskop-hantek-6022be-usb-pc-20mhz-2-kanaly-5904422359867.html
+    - **Sources:**
+      - https://botland.com.pl/szukaj?s=hantek+6022
+      - https://botland.store/oscilloscopes/6716-oscilloscope-hantek-6022be-usb-pc-20mhz-2-channels-5904422359867.html
+      - https://www.hantek.com/products/detail/31
+      - https://sigrok.org/wiki/Hantek_6022BE
+  3.
+    - **Name:** SAME Hantek 6022BE from AliExpress listings titled 'Hantek Official Store' / 'Hantek Official Shop' + the same generic LA
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $87.12 ('Hantek Official Store' in the title, 2 sold) and $92.62 ('Hantek Official Shop', 34 sold), shown as US-region prices. The EU price with IOSS VAT was not retrieved. Set about $95-105.
+    - **Spec comparison:** Identical SKU, so every spec is equal if the unit is genuine.
+    - **Worse in:** Specs: nothing. The price is higher than Botland, and the store's identity could not be confirmed: the item pages return no content or captcha redirects to the fetcher, so 'official' appears only in the listing titles.
+    - **Compatibility:** Same as the current part.
+    - **Risks:** Store identity unverified (it is only in the listing titles). Clone risk. Delivery time from China. Dispute handling instead of EU withdrawal rights. Use only if the store is confirmed as Hantek's own (store ID linked from hantek.com; hantek.com links only an Amazon official store).
+    - **Seller url:** https://www.aliexpress.us/item/3256811611249830.html ; https://www.aliexpress.us/item/2251832607116871.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-hantek-6022be.html
+      - https://www.hantek.com/products/detail?id=9163
+  4.
+    - **Name:** Hantek 6022BE from unnamed AliExpress stores (cheapest listings)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $59.99-74.69 (US region; listings 3256813171116361 at $59.99, 3256801578530981 at $65.99 with 113 sold, 3256807879609250 at $66.99). Set about $68-87.
+    - **Spec comparison:** Nominally the identical SKU. Any unit in hand would need the teardown check, because clones exist.
+    - **Worse in:** No store attribution, so the genuineness and build-quality rule cannot be met before purchase. Not acceptable under the counterfeit rule unless the store is verified.
+    - **Compatibility:** Same as the current part, if genuine.
+    - **Risks:** High counterfeit and grey-market risk. The stack's authenticity rule restricts Hantek to verified sellers.
+    - **Seller url:** https://www.aliexpress.us/item/3256813171116361.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-hantek-6022be.html
+  5.
+    - **Name:** Hantek 6022BL (same vendor: 6022BE scope + 16-ch LA in one box), replacing both the 6022BE and the generic LA
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** AliExpress listings titled '6022BE ... 6022BL + 16-Channels Logic Analyzer' at $65.99-81.06 (US region; the price of the BL variant cannot be separated, store unattributed). The stack note says $84-102 (store unconfirmed). No EU retailer price was found (Botland lists only the BE).
+    - **Spec comparison:** Scope: same front end. Per hantek.com: 20 MHz, 48 MS/s, 8 bit, 1 MOhm/25 pF, rise time 17.5 ns, 1M memory, timebase +/-50 ppm, DC +/-3 %, 2x PP80B 80 MHz probes. OpenHantek supports the scope mode. LA: 16 ch in hardware behind an SN74LVC16245A buffer, 0-5.5 V input, 1 MOhm/7.5 pF. This is better input protection than a bare generic FX2 board. sigrok uses only 8 ch at 24 MS/s, the same as the generic LA.
+    - **Worse in:** Scope OR LA, never both: the H/P button selects the mode at plug-in, so simultaneous low-rate scope + LA captures are lost. OpenHantek does not support its LA. The LA becomes a 200 x 100 x 35 mm, 0.3 kg box instead of a dongle on the internal LAB USB port. One device is a single point of failure for both functions. Not cheaper than the Botland 6022BE + generic LA.
+    - **Compatibility:** Scope: OpenHantek arm64 and the sigrok hantek-6xxx driver (fx2lafw-hantek-6022bl.fw ships in noble). LA: fx2lafw 8 ch. Same USB budget, but it cannot fill both roles at once.
+    - **Risks:** Store unconfirmed; clone risk; worse in simultaneity, so the rule rejects it.
+    - **Seller url:** https://www.aliexpress.us/item/3256807881562521.html
+    - **Sources:**
+      - https://www.hantek.com/products/detail/153
+      - https://sigrok.org/wiki/Hantek_6022BL
+      - https://raw.githubusercontent.com/OpenHantek/OpenHantek6022/main/README.md
+  6.
+    - **Name:** SainSmart DDS120 (other brand, FX2 USB scope, rebadge of the Rocktech BM102)
+    - **Kind:** other_brand
+    - **Price usd:** Unverified: the SainSmart store returned HTTP 429, and no current EU listing was found
+    - **Spec comparison:** 2 ch, 20 MHz, 50 MS/s, 8 bit (MXT2088 on newer hardware), 1 MOhm||25 pF, software trigger. Equal on paper.
+    - **Worse in:** OpenHantek README: a different analog front end with a modified firmware and 'some limitations' compared with the Hantek units. The sigrok page was last edited in 2018, so current availability and build quality are unverified. Cannot be shown not-worse.
+    - **Compatibility:** sigrok hantek-6xxx (fx2lafw >= 0.1.4); OpenHantek with limitations.
+    - **Risks:** Availability and price unverified; documented limitations.
+    - **Seller url:** 
+    - **Sources:**
+      - https://sigrok.org/wiki/SainSmart_DDS120
+      - https://raw.githubusercontent.com/OpenHantek/OpenHantek6022/main/README.md
+  7.
+    - **Name:** OWON VDS1022 / VDS1022I (other established brand, USB PC scope)
+    - **Kind:** other_brand
+    - **Price usd:** Unverified: the OWON site returned 503, no EU retailer listing was found (none at Botland), and no web search was available
+    - **Spec comparison:** Verified: max input 40 V (VDS1022) or 400 V (VDS1022I, isolated). The community florentbr app ships Linux amd64/arm64/armhf native libraries and a Python 'vds1022' module. From memory, not re-verified: 25 MHz, 100 MS/s, 5k record length, hardware trigger.
+    - **Worse in:** Record length is likely much shorter than OpenHantek host streaming (unverified). It is not supported by OpenHantek or sigrok, so labd and the procedures would need a new Java/Python driver. Price not shown to be cheaper than the Botland 6022BE. Rejected unless someone verifies it is cheaper and not worse.
+    - **Compatibility:** Possible on arm64 through the community package (untested on the Q6A); it breaks the pinned OpenHantek/sigrok tooling.
+    - **Risks:** Unverified price and specs; a community-maintained driver.
+    - **Seller url:** 
+    - **Sources:**
+      - https://github.com/florentbr/OWON-VDS1022
+      - https://github.com/florentbr/OWON-VDS1022/tree/master/lib/linux
+- **Notes:** VERDICT (angle A): keep the part and change the seller. The cheapest option that is not worse is the identical Hantek 6022BE from Botland, an EU retailer. botland.com.pl lists it at PLN 299.00 incl. 23 % VAT, in stock (about $79; the PLN/EUR rate of 4.26 is my assumption). botland.store lists EUR 67.30 / $75.65 but is B2B-only. With the same generic CY7C68013A 8-ch fx2lafw LA ($8-12), the set is about $84-91 instead of $141-172, a saving of about $50-88. Because the hardware is identical, nothing changes in specs, software (OpenHantek6022 3.4.1-rc2 arm64, sigrok hantek-6xxx, fx2lafw 0.1.7), USB budget, rails or case layout.
+  
+  Before buying, confirm:
+  (a) that a private buyer in the user's EU country can order from botland.com.pl, and the destination-VAT price;
+  (b) the Botland GPSR entry, which names 'Shenzhen You Mai Ke Technology Co., Ltd.' rather than Qingdao Hantek. Do the genuineness checks inside the 14-day EU withdrawal window: PCB, AD9288 + AD8065, 04b4:6022, FW0210, and a 10 MHz conducted bandwidth check through a pad.
+  
+  If Botland cannot ship, the next option is an AliExpress listing titled 'Hantek Official Store' ($87.12 US-region, set about $95-99). Its store identity is unverified and needs confirming. Unnamed AliExpress stores ($59.99-74.69) fail the counterfeit rule.
+  
+  Rejected:
+  - Hantek 6022BL: scope OR LA, never both; the LA moves into a large box; OpenHantek has no LA support. Its LA inputs are better buffered (SN74LVC16245A), but it is worse in simultaneity and form factor, and not cheaper than the Botland BE + LA.
+  - SainSmart DDS120 and OWON VDS1022: not shown not-worse, prices unverified.
+  - Voltcraft DSO-2020 (6022BE rebrand per the OpenHantek README): the Conrad listing was blocked (403), price unverified.
+  
+  LA: no cheaper candidate that is not worse. The generic FX2 board at $8-12 is already the floor, so keep it.
+  
+  Method limits: the shared WebSearch budget was already used up when this step started, so 0 searches ran. All findings come from WebFetch of primary pages: hantek.com, sigrok wiki, OpenHantek README and limitations doc, Botland, AliExpress search. Pages that failed: Amazon.de (503), Conrad and eBay.de (403), the OWON site (503), the SainSmart site (429), and the AliExpress item pages (empty or captcha). AliExpress prices are US-region USD without EU VAT. A follow-up search pass could confirm Amazon.de and the Hantek official-store EU prices and the VDS1022 price.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
