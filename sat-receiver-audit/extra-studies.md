@@ -50996,6 +50996,39 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
 - **Notes:** Record keys used in 'sources': r0 = narrowband_sdr (V4L, librtlsdr), r1 = hf_receiver (HF+, Boni-Whip, HF software), r2 = wideband_sdr (LimeSDR Micro), r3 = rf_frontend (LNAs, bias, LNB/BONI rails, switches). The source has no analog decisions or stack_changes fields; it is a P4 re-audit, so analog decisions from G1/G3/G5/G6 were used to override part/seller/price where they cover the same item. 
   Points for the orchestrator: (1) Conflicts inside re-audit B, resolved here: DVB initramfs step (r0 wins, operator note 12b supports it), Boni voltage 13.8 V (r1, adopted by G3 #9/G1 #9) over r3's 12.5/13.0 V, eFuse over PTC (r3, matching the G3 #9 chain). (2) New design gap that no file resolves: r3's OVLO divider 110k/10.0k (trip 13.91-14.77 V) was sized for <=13.53 V rails and overlaps the 13.8 V BONI band (G3 #9: +/-0.345 V), so the BONI OVLO must be re-derived; I did not invent a value. (3) Operator note 30 asks for a labd-controlled load switch on the M.2 3.3 V for Lime power-cycling, and its 7.5 Msps figure uses another formula; re-audit B (higher precedence than non-rule operator notes) says never switch VCC_3V3_MKEY at runtime and gives a 7 Msps floor (fs x 4 x 2 = 56 MHz). I applied the re-audit rule and the 7 Msps floor; the riser load-switch question needs a decision (G6 #6 mentions the note-30 switch as 'unchanged rails', but P5 analogs do not decide architecture). (4) The user decision requires a DVB-T/LTE B28 IF ingress check; I kept that check and re-aimed it at the real EU occupants (733-758 MHz) instead of removing it. (5) The lab librtlsdr patch was compiled only on amd64 (scratchpad s3nb paths in r0 bench [0]); nothing was tested on arm64 or hardware. (6) Numbers marked 'derived' are simple arithmetic on file figures (e.g. 394.44, 483.44, 97 C, 11.24); EUR values are given only where a file states them. (7) Many changes overlap with the G1/G3/G6 workers (HMC7992, G6K, TPS2553, Lime cables, T7, H1, Bullseye terminator); my instructions defer to those analog decisions so the edits stay consistent.
 
+## edit:08c_new_gates_analogs:b1 (run `wf_d86c28f4-677`)
+
+- **Section:** 08c_new_gates_analogs
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+- **Skipped:** []
+- **Notes:** Batch 1 created /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/08c_new_gates_analogs.md with the Write tool. It has the heading "### 8.2. Приймальні тести й умови аналогів (P5) і нотатки оператора", a one-line intro and a 3-column table (| що треба виміряти або підтвердити | ворота / тест | коли |) with 17 rows. There is one row per change for idx 0-16, in idx order, and all rows have well-formed pipes.
+  
+  - **Merging:** none was needed. Every change is about a different part or test. idx 0 (fan/cooling gate, G2) and idx 15 (intake pressure drop through the 316 mesh and Qualtek foam, G4) are related, but they cover different parts, so they stay separate rows.
+  - **Fan question (idx 0):** the extra «Питання до вас» item could not go into 08_open_bench.md, because that is not my file. It is also not routed to any other change file. So I added a block «**Питання до вас (аналоги P5):**» below the table, with item 1: the Sunon MF40200V3-1000U-G99 / Same Sky CFM-4020V-050-165-20 near-miss.
+    - I dropped the "20-мм" qualifier because the analogs_G2 source states only "+10 mm depth".
+    - From the source I added "проти Noctua з Alternate, у замовленні DigiKey" to the saving.
+  - **Reasons folded into rows:** I added the source reasons to idx 9 (the listing gives no tolerance, reset, shell or approvals), idx 11 (a nut loaded from inside takes fewer threads with a short screw) and idx 14 (whether the cap shorts the centre pin is not published).
+  - **Number check:** I compared key numbers with analogs_G2/G4 in the data dir and found them all ($18.71, KSC641J $7.00, $0.78, +$0.46, $11.90, 59.5 GB, 0xC481, 1934-1464, 3.5 K/W, 2.7 m3/h, EUR 3.46/6.52, G104MF +85 g, 12.5 L, 5 Pa, 222 W/mK, 11.3 mm, 233x160, 50 mOhm). The Gelid fallback pads have only EUR prices in the source, so no USD was invented.
+  - **Rules and precedence:** nothing conflicts with the hard rules. The HDMI A/B uses only an E-probe, with no loop or H-field probe. There were no precedence conflicts.
+  - **Subtotals:** none exist in this file.
+
 ## community:power (run `wf_d9388111-e66`)
 
 - **Subsystem:** power
