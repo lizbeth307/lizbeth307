@@ -29184,6 +29184,170 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Hard rules: all parts are passive (no emitter, no loop antenna, no H-field probe), so none are affected.
 
+## searchB:tinplate_hf_can_lc_mix_31_on_vbus (run `wf_e32114dd-52d`)
+
+- **Part:** HF+ shield assembly: tinplate can around the Airspy HF+ Discovery, plus an LC filter (about 100 uH / 100 uF, corner about 1.6 kHz, damped) and a Mix-31 ferrite on the HF+ VBUS/USB pigtail (CH334F H4 behind the TPS2553 load switch). Tier core, group HF, qty 1.
+- **Current price usd:** 8-15 (STACK.md estimate, DIY, 'model'; exact parts not named)
+- **Critical specs:**
+  - Shield material and thickness: a ferrous tinplate (tin-coated cold-rolled steel) wall. It is needed for near-field H-field absorption at 40-518 kHz (JJY 40, MSF 60, DCF77 77.5, TDF 162, NAVTEX 490/518 kHz) and at the 250-500 kHz buck/charger fundamentals (IP2368 250 kHz, D36V50F12 about 500 kHz). Thicker is better. Copper or aluminium foil-class walls are much weaker here.
+  - Shield SE at HF/VHF (0.5 kHz-31 MHz and 64-260 MHz HF+ ranges): continuous soldered seams (stack rule: seams 7 mm or less), lid contact, and only small apertures for the coax and the USB/VBUS entry.
+  - Fit: inner space at least about 62x47x12 mm for the 45x60x10 mm HF+ Discovery (it ships in a plastic case; fit it bare or check the case size), plus the cable entries. Mass inside the 0.1 kg budget for 'HF+, shield and switch'. Placed in the corner farthest from the bucks.
+  - Thermal: a closed can must keep the HF+ inside its -45..+85 C rating. HF+ dissipation is not measured yet (FNB58 measurement pending).
+  - LC: L about 100 uH and C about 100 uF (corner about 1.59 kHz). It must be damped (series R-C or a lossy electrolytic) so it does not ring at switch-on. Inductor Isat at least 1.5x the measured streaming current and above the TPS2553 trip current. DCR low enough to keep at least 4.75 V at the HF+. Magnetically shielded inductor, so it does not radiate into the HF+. Know the SRF; the ferrite covers HF above it.
+  - Mix-31 ferrite: genuine Fair-Rite #31 material. Impedance at 1-30 MHz first, then 64-260 MHz. The ID must fit the micro-USB pigtail. Low mass. No counterfeit or unknown-mix cores.
+  - Rules: all parts passive; no loop antenna or H-field probe involved (a ferrite core on a cable is not a loop); receive-only is unaffected.
+- **Candidates:**
+  1.
+    - **Name:** Current pick: DIY tinplate can + LC + Mix-31 (parts not specified)
+    - **Kind:** current_part
+    - **Price usd:** 8-15 (estimate)
+    - **Spec comparison:** Baseline. Material is tinplate (ferrous, good LF H-field absorption). The LC corner of about 1.6 kHz and the #31 bead are as in reaudit_B; no part numbers are set.
+    - **Worse in:** Nothing to compare against yet. The parts are unspecified, so its specs and price are a model.
+    - **Compatibility:** Fits the stack as designed (CH334F H4 -> TPS2553 -> LC -> Mix-31 -> HF+).
+    - **Risks:** An undamped LC rings and overshoots the 10 uF USB inrush norm unless the switch limits current (reaudit_B). Inductor rating depends on the unmeasured HF+ current.
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_B_receivers_rf.json
+  2.
+    - **Name:** Concrete DIY build (ACCEPT, conditional on the stack's own HF+ A/B and LC S21/ripple bench tests): Otto Schubert tinplate box Art. 5B 74x55x20 mm, 0.5 mm + Fair-Rite 2631480002 #31 solid sleeve + Bourns SRR1260-101M 100 uH shielded + 100 uF 16 V electrolytic (Panasonic EEU-FR1C101) + R-C damper; optional Schubert D1000 1000 pF feedthrough for VBUS
+    - **Kind:** diy
+    - **Price usd:** about 5.7-5.9 ex VAT, about 6.9-7.1 incl. EU VAT (model sum, shipping excluded). Box EUR 3.15 incl. 19% VAT = $3.54 ($2.98 ex VAT at 1.1241). Sleeve $0.98, inductor $1.11, cap $0.41 (DigiKey qty 1, 18 Oct 2026). Damper about $0.2-0.4 (unverified). Optional D1000 EUR 0.68 incl. VAT.
+    - **Spec comparison:** Shield: 0.5 mm tinplate, 'gut lötbar', 'HF-DICHT' (Schubert). Outer size 74x55x20 mm, inside 2 mm less (72x53x18), so the 45x60x10 HF+ fits. Same material class as the current pick; 0.5 mm is at the thick end of DIY tinplate. Measured evidence for the material: Adamczyk & Spence (In Compliance, Apr 2018) measured H-field near a 118 kHz buck from 100 kHz to 1 MHz. A 15-mil cold-rolled steel shield 'dramatically outperforms' 15-mil phosphor-bronze; modelled absorption is about 15 dB higher at 100 kHz and about 38 dB higher at 500 kHz.
+  Ferrite: Fair-Rite 2631480002, 31 material, 12.3 OD x 4.95 ID x 25.4 mm. Typical Z: 37/34 ohm at 1 MHz, 104/88 at 5 MHz, 129/115 at 10 MHz, 192/175 at 25 MHz, 318/295 at 100 MHz, 356/267 at 250 MHz. The same-vendor snap-on for this cable size, Fair-Rite 0431164281 (6.3 mm ID, 26 g, $2.85), gives 20-28/75-83/104-105/170-180/310-315/380-240 ohm. So the sleeve is better at 1-25 MHz and equal at 100-250 MHz within the 20% catalogue tolerance. This matches K9YC's measured data: 'cylindrical cores perform much better in the lower HF spectrum than equivalent Snap-On cores, but only about 10% better at VHF. The Snap-On cores are also nearly double the cost.' Mass is about 12 g (model from dimensions) vs 26 g.
+  Inductor: SRR1260-101M, 100 uH +/-20%, Isat 1.7 A, Irms 1.7 A, DCR 180 mOhm max (about 54 mV drop at 0.3 A, model), shielded, SRF 6.07 MHz, 12.5x12.5x6.5 mm. Isat is well above any USB-2 device current and above the TPS2553 trip.
+  C: 100 uF/16 V gives the 1.59 kHz corner. Damping per reaudit_B: Z0 = sqrt(L/C) = 1 ohm, so a series about 1 ohm + at least 220 uF damper, or a lossy electrolytic (ESR of the FR part not verified).
+  The optional 1000 pF feedthrough keeps the VBUS entry from acting as a leaky aperture (an improvement).
+    - **Worse in:** No spec is traded.
+  - The sleeve cannot be removed or added later without cutting the lead. Thread it onto the pigtail before soldering the CH334F-pad end; the micro-USB plug will not pass a 4.95 mm ID.
+  - Schubert has a EUR 20 minimum order (incl. VAT), shipping quoted case by case, and prepayment or direct debit only. Meet the minimum by adding spare boxes, partitions or feedthroughs for other DIY RF cans.
+  - The site does not say whether lids (Deckel) come with the box. Ask before ordering.
+    - **Compatibility:** Passive parts, no driver impact. Fits the 0.1 kg mass line and the far corner. 5 V rail drop is negligible. Electrically the same topology as STACK 5.2/5.7.6. Schubert is in Germany (EU, VAT included). DigiKey ships to the EU; VAT and shipping depend on the combined order. TME lists 2631480002 only at MOQ 1504 and out of stock, so use DigiKey.
+    - **Risks:** The box SE in dB is not published; acceptance is the stack's own A/B: RBW 1 Hz at 40/60/77.5/162/490/518/4209.5 kHz and 1/7/14 MHz, with and without the can. HF+ current is not measured yet. Confirm Isat margin and thermal rise in the closed can after 60 min. Check LC ringing and ripple 1 kHz-30 MHz at the HF+ VBUS pin, and S21 on the LiteVNA (conducted only).
+    - **Seller url:** https://www.schubert-gehaeuse.de/weissblechgehaeuse.html
+    - **Sources:**
+      - https://www.schubert-gehaeuse.de/weissblechgehaeuse.html
+      - https://www.schubert-gehaeuse.de/versand.html
+      - https://www.schubert-gehaeuse.de/weissblechgehaeuse_zubehoer.html
+      - https://fair-rite.com/product/round-cable-emi-suppression-cores-2631480002/
+      - https://www.fair-rite.com/catalog_pdfs/0431164281.pdf
+      - https://www.digikey.com/en/products/result?keywords=2631480002
+      - https://www.digikey.com/en/products/result?keywords=0431164281
+      - https://www.digikey.com/en/products/result?keywords=SRR1260-101M
+      - https://www.digikey.com/en/products/result?keywords=EEU-FR1C101
+      - http://k9yc.com/RFI-Ham.pdf
+      - https://incompliancemag.com/near-field-shield-effectiveness-evaluation-using-h-field-probe/
+      - https://www.tme.eu/en/details/2631480002/ferrite-cores/fair-rite/
+      - https://airspy.com/airspy-hf-discovery/
+  3.
+    - **Name:** Sub-swap only: Fair-Rite 2631480002 #31 solid sleeve instead of a #31 snap-on (Fair-Rite 0431164281) on the HF+ pigtail
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 0.98 vs 2.85 (DigiKey qty 1, 18 Oct 2026; ex VAT)
+    - **Spec comparison:** Same #31 material and same vendor. Impedance is higher at 1-25 MHz: 37 vs 20-28 ohm at 1 MHz, 129 vs 104 at 10 MHz, 192 vs 170-180 at 25 MHz. At 100-250 MHz it is equal within the 20% tolerance (295-318 vs 310-315 at 100 MHz). Lighter: about 12 g (model) vs 26 g. K9YC's independent measurements show cylindrical cores beat snap-ons at low HF and are about 10% better at VHF.
+    - **Worse in:** Not field-removable; must be threaded before the lead is terminated. ID 4.95-5.08 mm limits it to one pass of a cable up to about 4.8 mm OD (the 6.6 mm snap-on is not much better for extra turns).
+    - **Compatibility:** Pigtail from the CH334F solder pads makes threading possible. No electrical change.
+    - **Risks:** Check the pigtail OD before ordering. Snap-on Fair-Rite listings from marketplace sellers can be fakes; buy from DigiKey/Mouser only.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=2631480002
+    - **Sources:**
+      - https://fair-rite.com/product/round-cable-emi-suppression-cores-2631480002/
+      - https://www.fair-rite.com/catalog_pdfs/0431164281.pdf
+      - https://www.digikey.com/en/products/result?keywords=2631480002
+      - https://www.digikey.com/en/products/result?keywords=0431164281
+      - http://k9yc.com/RFI-Ham.pdf
+  4.
+    - **Name:** REJECTED: copper-clad FR4 sub-compartment (offcut of the RF-compartment FR4) instead of the tinplate can
+    - **Kind:** diy
+    - **Price usd:** about 0-2 (offcut; not priced)
+    - **Spec comparison:** 35 um copper is non-ferrous and far thinner than 0.5 mm steel. Measured trend (Adamczyk & Spence, 100 kHz-1 MHz near-field H): ferrous cold-rolled steel 'dramatically outperforms' non-ferrous foil of the same thickness. My model (Ott formulas, steel mu_r 100, sigma_r 0.106 as in that article): absorption at 100 kHz is about 1.5 dB for 35 um Cu vs about 68 dB for 0.5 mm tinplate; at 10 kHz about 0.5 dB vs about 21 dB. At 10 MHz and above both are many skin depths thick, so HF/VHF is roughly equal.
+    - **Worse in:** LF/MF H-field shielding (DCF77/MSF/TDF/NAVTEX bands and the 250-500 kHz buck fundamentals): much worse, measured trend plus model.
+    - **Compatibility:** Mechanically fine.
+    - **Risks:** It would silently trade away the LF shielding the HF+ role needs.
+    - **Sources:**
+      - https://incompliancemag.com/near-field-shield-effectiveness-evaluation-using-h-field-probe/
+  5.
+    - **Name:** REJECTED: repurposed mint tin (Altoids-type, used or generic)
+    - **Kind:** used
+    - **Price usd:** about 0-3 (not verified)
+    - **Spec comparison:** Tinplate steel, but wall thickness unknown and printed or lacquered. The hinged lid leaves a seam gap all round. Adamczyk & Spence show apertures cut SE. No measurement of such a tin was found.
+    - **Worse in:** Seams and lid contact (no continuous solder seam without stripping the lacquer); unknown thickness; no measured evidence.
+    - **Compatibility:** Size may fit; mounting and bonding are ad hoc.
+    - **Risks:** Unmeasured; hinge and lacquer give poor bonding to the mid plate.
+    - **Sources:**
+      - https://incompliancemag.com/near-field-shield-effectiveness-evaluation-using-h-field-probe/
+  6.
+    - **Name:** REJECTED: Nobu aftermarket machined aluminium enclosure for the HF+ Discovery (Amazon Japan)
+    - **Kind:** other_brand
+    - **Price usd:** not stated (unverified); Amazon Japan only, may need a buying agency
+    - **Spec comparison:** rtl-sdr.com says the HF+ Discovery 'does not need a metal enclosure' for PCB noise rejection, and the Airspy author expects little change in shielding (main benefit is heat). No measurements were published. Aluminium is non-ferrous, so LF H-field shielding depends on wall thickness and is unmeasured.
+    - **Worse in:** No measured evidence. Not an EU source. It does not include the LC or the ferrite, so it is unlikely to be cheaper.
+    - **Compatibility:** Encloses the HF+ only; mounting and bonding are unknown.
+    - **Risks:** An anodised (non-conductive) surface can give poor grounding; rtl-sdr.com reports this on an RTL-SDR case.
+    - **Sources:**
+      - https://www.rtl-sdr.com/a-new-aftermarket-airspy-hf-discovery-aluminum-enclosure-for-sale/
+  7.
+    - **Name:** REJECTED (conditional only): no external can, relying on the HF+ Discovery's internal can + absorber (it ships in a plastic case)
+    - **Kind:** diy
+    - **Price usd:** 0 for the can (LC + ferrite still needed)
+    - **Spec comparison:** The Airspy author says the shielding is 'a small anechoic chamber made from the PCB itself, the metal can, and some EMI absorbing material'. That is a vendor statement, not a measurement made inside a handheld with buck converters a few cm away.
+    - **Worse in:** Unproven at LF/MF in this enclosure. The stack's A/B has not been run.
+    - **Compatibility:** Fine.
+    - **Risks:** Becomes acceptable only if the stack's own HF+ A/B (with vs without the tin can) shows no line at or above 3 dB over the local floor in every working window, every operating state.
+    - **Sources:**
+      - https://www.rtl-sdr.com/a-new-aftermarket-airspy-hf-discovery-aluminum-enclosure-for-sale/
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_B_receivers_rf.json
+  8.
+    - **Name:** REJECTED: generic unbranded clip-on ferrites (AliExpress/eBay, unknown mix) instead of Fair-Rite #31
+    - **Kind:** generic_or_clone
+    - **Price usd:** about 0.1-0.5 each (not verified)
+    - **Spec comparison:** Material and impedance curve unknown. No independent measurement of such clamps against #31 was found (searches of owenduffy.net and the general web came up empty). K9YC's guidance and data are for Fair-Rite #31/#43 only.
+    - **Worse in:** No evidence at 1-30 MHz, where #31 matters most; likely higher-frequency mixes.
+    - **Compatibility:** Mechanically fine.
+    - **Risks:** Marketplace listings using the 'Fair-Rite' name may be fakes.
+    - **Sources:**
+      - http://k9yc.com/RFI-Ham.pdf
+  9.
+    - **Name:** REJECTED: generic AliExpress 'LC filter' boards or USB 'noise filter' dongles instead of the discrete LC; and an LCSC Sunlord SWPA 100 uH inductor
+    - **Kind:** generic_or_clone
+    - **Price usd:** not verified (LCSC page did not render)
+    - **Spec comparison:** No measured S21, ripple or Isat data found for the generic modules. The Sunlord part is a real manufacturer part, but its specs and price were not verified this session. The Bourns SRR1260-101M at $1.11 is already cheap and fully specified.
+    - **Worse in:** No measured evidence (the angle B rule). Unknown damping and current rating.
+    - **Compatibility:** Would work electrically if specs held.
+    - **Risks:** Unknown ringing, Isat or counterfeit risk. Could be reconsidered only after the stack's own LiteVNA S21 and ripple test.
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=SRR1260-101M
+  10.
+    - **Name:** NOT CHEAPER (spec reference): Wurth WE-PD 7447709101 100 uH
+    - **Kind:** other_brand
+    - **Price usd:** 2.57 (DigiKey qty 1)
+    - **Spec comparison:** Better DCR (110 mOhm) and Isat (3.1 A), Irms 2.5 A, shielded, SRF 4.3 MHz, 12x12x10 mm.
+    - **Worse in:** Price is higher; it is taller (10 mm) with a lower SRF than SRR1260-101M.
+    - **Compatibility:** Drop-in.
+    - **Risks:** None; listed only to show the Bourns part is not a downgrade for this load.
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=7447709101
+- **Notes:** Verdict (angle B): nothing cheaper is proven equal unless it keeps a ferrous tinplate can, a damped LC and genuine #31 ferrite. The cheapest version that is not worse is a concrete DIY build of the current design:
+  - Schubert 5B tinplate box, 74x55x20 mm, 0.5 mm.
+  - Fair-Rite 2631480002 #31 solid sleeve, instead of a snap-on.
+  - Bourns SRR1260-101M shielded 100 uH (Isat 1.7 A).
+  - 100 uF capacitor with an R-C damper (about 1 ohm + at least 220 uF).
+  - Optional 1000 pF feedthrough on VBUS.
+  It costs about $5.7-5.9 ex VAT, or about $6.9-7.1 incl. EU VAT (model, before shipping), vs the $8-15 estimate. No spec is traded: the sleeve is better than a #31 snap-on at 1-25 MHz and equal at VHF, per Fair-Rite data and K9YC's measurements, and at half the price.
+  
+  Rejected:
+  - Copper-clad FR4 can: much worse LF/MF H-field shielding (measured steel vs non-ferrous trend, Adamczyk & Spence 2018; my model figures are marked).
+  - Mint tin: unmeasured, with seam apertures.
+  - Nobu aluminium case: no measurements, Amazon Japan only.
+  - Unbranded ferrites and AliExpress LC/USB filter modules: no measured data.
+  - No external can: acceptable only if the stack's own A/B passes.
+  
+  Open items:
+  - Ask Schubert whether lids come with the box.
+  - Schubert minimum order is EUR 20 incl. VAT, shipping is quoted per order, payment is prepay or direct debit.
+  - HF+ current is unmeasured; size the TPS2553 limit at 1.5-2x the FNB58 streaming figure. The SRR1260's 1.7 A Isat covers any USB-2 load.
+  - Thermal rise in the closed can.
+  - LC ringing and ripple at the HF+ VBUS pin, measured conducted on the LiteVNA.
+  
+  Prices: DigiKey USD qty 1 ex VAT, fetched 18 Oct 2026. Schubert EUR incl. VAT, converted at the stack rate 1 EUR = 1.1241 USD. The HF+ Discovery ships in a plastic case (rtl-sdr.com); confirm the can fit with or without it.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
