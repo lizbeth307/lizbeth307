@@ -535,3 +535,10 @@ P4, A (завантаження A/B; ще не перевірено):
 - Lime додано в пошук аналогів P5 (група G6) з жорсткими критеріями «не гірше»: 0.3–3.8 GHz разом із S-band, смуга 56 MHz, 12 біт, M.2 або USB 3, драйвер arm64, TX можна заблокувати.
 - Оновлено: user_requirements.md і REQUIREMENTS.md (розділ «User decisions»), analog_groups у launch_state, operator_notes (№10), скрипти P6 і P7 (там тепер «Lime kept», регіон Європа).
 
+## 2026-10-18 08:52 UTC
+
+P4, нове:
+- A (embloader) — ПІДТВЕРДЖЕНО маніфестом образу Radxa OS r2. В образі є embloader 0.4 і sdboot-is-embloader 0.4; у репозиторії вже вийшла 0.7. sdboot-is-embloader залежить і від embloader, і від systemd-boot. Отже, на Q6A завантаженням справді керує embloader від Radxa. Пункт operator_notes №9 підтверджується: лічильник спроб A/B треба перевірити саме в embloader. У тому ж маніфесті стоять edk2-radxa-dragon-q6a 0.1.0-5, fastrpc 1.0.3-1 і linux-image 6.18.2-3; у репозиторії новіші — fastrpc 1.0.7-3 і 6.18.2-4. Джерело: r2_manifest (RadxaOS-SDK, реліз r2) і apt-репозиторій Radxa (pool/main/e/embloader).
+- D (живлення): у конфігурації ядра немає CONFIG_PM_SLEEP. Отже, сну в RAM на Q6A немає. Режим «простій» — це ввімкнена система з мінімальним навантаженням, що збігається з моделлю (6.9–7.1 год). Для довгого зберігання — лише повне вимкнення через labpowerd і Pico. Відповідно, CONFIG_POWER_RESET_GPIO теж немає.
+- B (Lime, нам тепер важливо): у прошивці LimeSDR-Micro_FW відкриті issue #1 («Reference clock frequency can be set only once per power cycle»; 13.09.2025, виправлено комітом 16.10.2026 — див. запис про #6) і #4 («Bootloader: implement link down handler» для PCIe; 30.06.2026). Ризик для M.2 через riser: якщо PCIe-лінк упаде, без перезапуску живлення карта може не відновитися. У приймальний тест Lime додати гарячий перезапуск labrx після 60 хв роботи. Джерело: github.com/myriadrf/LimeSDR-Micro_FW/issues/1, /issues/4.
+
