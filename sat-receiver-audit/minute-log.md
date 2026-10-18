@@ -800,3 +800,10 @@ P4, A (FastRPC; не перевірено): у qualcomm/fastrpc відкрито
 
 P4, A (правило «без приватного змісту»; прогалина в списку закріплень): у PPA OpenWebRX+ є ще кілька пакетів, яких немає в нашому списку з пріоритетом −1: dxlaprs-tetra (декодер TETRA), codecserver-driver-ambe3k і codecserver-driver-all (кодеки цифрового голосу), libacars-tools, а також dream (має режим передавача DRM — так встановив верифікатор B). Стек закріплює на −1 лише js8call, rtl-433, digiham, codecserver, acarsdec, dumphfdl і dumpvdl2. У v2 треба додати перелічені пакети, а dump978-fa* дозволити лише в профілі США. Найкраще закріплювати за шаблоном (codecserver*, digiham*, dxlaprs-tetra* …), щоб нові драйвери кодеків теж лишалися заблокованими. Записав у operator_notes, пункт №31. Джерело: індекс пакетів PPA OpenWebRX+ (за агентом A).
 
+## 2026-10-18 10:24 UTC
+
+P4, A (правило «без приватного змісту», OpenWebRX+): у поточному OpenWebRX+ є режими page (POCSAG), selcall, wmbus (дані розумних лічильників через wireless M-Bus), ism (датчики на кшталт rtl_433), lora-wan, а також meshcore і meshcom (повідомлення в LoRa-мережах). У стеку вимкнено лише pager і selcall. Але wmbus, LoRa-mesh, LoRaWAN і датчики ISM відкривають приватні повідомлення або побутові дані. Тому у v2 OpenWebRX+ треба перевести на ДОЗВОЛЕНИЙ список режимів:
+- аналогові: AM, FM, SSB, CW, SAM;
+- дозволені цифрові: NAVTEX/SITOR-B на каналах MSI, цивільний WEFAX, FT8/FT4/WSPR (лише декодування через jt9/wsprd), SSTV (лише декодування), аматорський APRS/AX.25, AIS, ADS-B за нашими правилами показу.
+Пакети, які потрібні решті режимів, не встановлювати. Записав як пункт №32 в operator_notes. Джерело: OpenWebRX+, owrx/modes.py і вимоги функцій (за агентом A).
+
