@@ -8340,6 +8340,1031 @@
   - Do local rules (country unknown) permit low-power antenna S11 test emissions? The default is no.
 - **Confidence:** medium
 
+## extract:analogs_G1 (run `wf_2f4f3ad2-91a`)
+
+- **Source:** analogs_G1
+- **Changes:**
+  1.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** seller_or_price
+    - **Part:** RTL-SDR Blog V4L x3 (RTL-A, RTL-B, запасний)
+    - **Anchor:** | RTL-A, RTL-B, запасний | RTL-SDR Blog V4L
+    - **Instruction:** Keep the part and USD base. Price cell: «113.85 (37.95 кожен; без ПДВ і доставки, офіційний магазин, 18.10.2026)». Status: «перевірено (USD) / модель (ЄС landed)». Append to the note after «455 шт. на складі;»: «магазин RTL-SDR Blog у ЄС не відправляє; V4L лише на складі в КНР (склад Amazon USA ще не має) — замовити всі 3 зараз (лімітована серія, запас R828S близько року). ЄС: офіційний AliExpress 4523039 / 1101427871 або eBay rtl-sdr-blog — близько $45.16-46.68 за шт., $135.5-140.0 за 3 з ПДВ 19-23% (модель; сторінки маркетплейсів не прочиталися); за правилом landed cost для посилки ≤ EUR 150 через IOSS ще EUR 3 мита + EUR 2 UHF (з близько 1.11.2026) за тарифну лінію, тобто близько $141.1-145.6 за 3 (модель). Перевірений запасний продавець ЄС: Passion Radio (FR) EUR 41.60 без ПДВ / EUR 49.92 з 20% ПДВ = $56.11 за шт. (EUR 149.76 = $168.33 за 3) — лише після письмового підтвердження SKU R828S V4L (H1 сторінки досі «V4 ... R828D»).» Replace «Бюджет: V3 як запасний варіант.» with «Бюджет: дешевшого рівноцінного немає. V3 R860 ($34.95) — лише задокументоване пониження після вичерпання запасу: MDS гірший на 1-3 dB на 137-1766 MHz (графік виробника), у цьому стеку без КХ (direct sampling заборонено), 2.4 Msps стабільно за даташитом, 270-280 mA.»
+    - **Reason:** P5 decision keep; adds verified EU fallback, EU landed model per landed-cost rule, stock/warehouse facts, and makes the V3 fallback an explicit downgrade.
+    - **Sources:** analogs_G1 decisions[0] (rtl-sdr.com product page re-fetched 18.10.2026; V4L datasheet MDS chart; V3 datasheet; passion-radio.com r828s-v4l-3214); operator_notes items 34-35
+    - **Saving usd:** 0.00
+  2.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** RTL-SDR Blog V4L (C21)
+    - **Anchor:** У ЄС купувати через офіційний eBay або AliExpress-магазин 4523039.
+    - **Instruction:** Replace with: «У ЄС — офіційний eBay rtl-sdr-blog або AliExpress-магазин 4523039 / 1101427871 (магазин RTL-SDR Blog у ЄС не відправляє; V4L лише зі складу КНР; ціна з ПДВ — модель, див. 2.2); запасний перевірений продавець ЄС — Passion Radio, лише після письмового підтвердження SKU R828S V4L. V3 R860 — пониження (MDS на 1-3 dB гірший, без КХ у цьому стеку), не рівноцінна заміна.»
+    - **Reason:** P5 keep decision with EU sourcing route and downgrade wording.
+    - **Sources:** analogs_G1 decisions[0]
+    - **Saving usd:** 0.00
+  3.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** RTL-SDR Blog V4L x3
+    - **Anchor:** Плюс з офіційного каналу RTL-SDR Blog: 3× V4L ($113.85)
+    - **Instruction:** After «3× V4L ($113.85)» insert: «(без ПДВ; лише склад КНР — замовити всі 3 одразу)». In the same cell replace «ЄС: офіційний eBay або AliExpress 4523039.» with «ЄС: офіційний eBay rtl-sdr-blog або AliExpress 4523039 / 1101427871 — на оплаті перевірити, що лістинг відправляє у вашу країну, і записати реальну ціну з ПДВ (близько $135.5-140.0 за 3 — модель; за правилом landed cost ≤ EUR 150 через IOSS ще EUR 3 мита + EUR 2 UHF за тарифну лінію). Запас: Passion Radio EUR 149.76 з ПДВ за 3 ($168.33) — лише з письмовим підтвердженням SKU R828S.»
+    - **Reason:** EU checkout condition (c) and fallback (d) of the keep decision; landed-cost rule.
+    - **Sources:** analogs_G1 decisions[0]; operator_notes item 35
+    - **Saving usd:** 0.00
+  4.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** rule
+    - **Part:** RTL-SDR authenticity
+    - **Anchor:** лише офіційний магазин, eBay rtl-sdr-blog, AliExpress 4523039 або перелічений реселер
+    - **Instruction:** Append after this phrase: « (AliExpress також 1101427871; Passion Radio — лише після письмового підтвердження SKU R828S V4L, бо сторінка називає V4/R828D; лістинги «V4»/«V4 Pro» від неофіційних продавців — копії: корпус V4 зі схемою клону V3)».
+    - **Reason:** Rejected-candidate evidence: marketplace V4/V4 Pro are counterfeit; Passion Radio page H1 ambiguity.
+    - **Sources:** analogs_G1 decisions[0] (rtl-sdr.com clone and V4 end-of-line pages)
+    - **Saving usd:** 0.00
+  5.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** RTL-SDR Blog V4L x3
+    - **Anchor:** | Повна вузькосмугова A/B-матриця для кожного стану
+    - **Instruction:** Insert a new row before this row: «| RTL-SDR Blog V4L (кожен із 3): справжність — діагональні гвинти корпусу; `rtl_eeprom` лише на читання показує «RTLSDRBlog»/«Blog V4L» і IR-біт = 1; у лозі «RTL-SDR Blog V4 Lite Detected»; кондуктивні CW-тони tinySA через пад 30 dB на 10.000, 137.500, 437.000 і 1700.000 MHz на рівні близько −90 dBm — усі видно. Базова лінія D10: MDS і двотоновий тест на 137.5/437/1700 MHz (усі РЧ-цифри V4L — лише від виробника; будь-яку майбутню заміну «не гіршу» доводити на тому самому стенді). ЄС: офіційний AliExpress/eBay відправляє у вашу країну, реальна ціна з ПДВ записана; Passion Radio — лише з письмовим підтвердженням SKU R828S | Кондуктивно; провал — повернення продавцю | На прибутті |»
+    - **Reason:** Carried-over gates (a)-(d) of the keep decision.
+    - **Sources:** analogs_G1 decisions[0].conditions_or_tests
+    - **Saving usd:** 0.00
+  6.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** keep_with_note
+    - **Part:** FlightAware Pro Stick Plus (extended ADS-B)
+    - **Anchor:** | ADS-B приймач | FlightAware Pro Stick Plus
+    - **Instruction:** Append to the note: «rtl-sdr.com показує Pro Stick Plus за $29.95 лише з «Read more», без кнопки кошика (не перевірено) — перед покупкою перевірити наявність і ціну обох продавців. SAW 1075-1105 MHz, поза смугою −30 dB (flightaware.com) — лише ADS-B, заміною V4L не є.»
+    - **Reason:** Side observation in the V4L analog record for the extended ADS-B row.
+    - **Sources:** analogs_G1 decisions[0].stack_changes item 4; https://www.flightaware.com/adsb/prostick/
+    - **Saving usd:** 0.00
+  7.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** RTL-SDR Blog V4L / V3
+    - **Anchor:** - RTL-SDR Blog V4L: https://www.rtl-sdr.com/product/
+    - **Instruction:** After the V4L line add: «- RTL-SDR Blog V3 даташит: https://www.rtl-sdr.com/wp-content/uploads/2018/02/RTL-SDR-Blog-V3-Datasheet.pdf ; сторінка покупки: https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/ ; підробки V3: https://www.rtl-sdr.com/avoiding-fake-rtl-sdr-blog-v3-clones-2021-supply-chain-updates/ ; кінець V4: https://www.rtl-sdr.com/rtl-sdr-blog-v4-end-of-line/» and «- Passion Radio V4L (запас ЄС): https://www.passion-radio.com/rtl-sdr-stick/r828s-v4l-3214.html ; AliExpress RTLSDRBlog Store: https://www.aliexpress.com/store/1101427871 (сторінка лише JS, ціна не прочитана); eBay: https://www.ebay.com/str/rtlsdrblog (заблоковано перевіркою безпеки)».
+    - **Reason:** Key URLs of the V4L decision.
+    - **Sources:** analogs_G1 decisions[0].sources
+    - **Saving usd:** 0.00
+  8.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** keep_with_note
+    - **Part:** Nooelec SAWbird+ NOAA cased 100800
+    - **Anchor:** | LNA+SAW 137 MHz | Nooelec SAWbird+ NOAA cased (100800)
+    - **Instruction:** Keep part, price 49.95, status перевірено. Price cell: «49.95 (без ПДВ; у ЄС близько $59.9-60.4 з 20-21% імпортного ПДВ)». Source cell: «Nooelec (відправка зі США USPS/UPS; понад $100 — безкоштовна доставка у світ)». Replace the note text «41 dB, NF 1.1 dB, 170 mA.» with «Даташит Rev 1: 41 dB тип. (сторінка обіцяє лише ≥30 dB), смуга 2.6 MHz на 3 dB / 3 MHz на 10 dB (не «5 MHz» сторінки), NF 1.1 dB, OP1dB +20 dBm, макс. вхід 0 dBm; 170 mA через bias-tee (175 mA USB, 180 mA номінально на сторінці); живлення лише через вихідний SMA; гарантія 2 роки. Вибірковість (графік даташита): близько 65 dB нижче смуги на 110-133 MHz, близько 45-50 dB на 144-146 MHz, але лише близько 20-25 dB на 140-142 MHz. Замовлення Nooelec > EUR 150 — без IOSS: ПДВ, мито (ставку не перевірено), EUR 2 UHF за лінію з близько 1.11.2026 і збір кур'єра (не перевірено).» Replace «Бюджет: SAWbird NOAA без «+» (80 mA).» with «Лише за вашої явної згоди (обмін, не еквівалент): SAWbird+ NOAA Barebones 100799 $44.95 — та сама електроніка, гарантія 1 рік, без корпусу (потрібні стійки M3 в екранованому РЧ-відсіку). Без «+» (100852) — ті самі $49.95 і ≥20 dB, не бюджет.»
+    - **Reason:** P5 keep; budget note was wrong (non-plus costs the same and has less gain); datasheet values and weak 140-142 MHz rejection; sourcing/landed cost.
+    - **Sources:** analogs_G1 decisions[1] (Nooelec 100800/100799/100852 pages, datasheet Rev 1, shipping page); operator_notes item 35
+    - **Saving usd:** 0
+  9.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** SAWbird+ NOAA (#96)
+    - **Anchor:** | Тракт 137 MHz (#96) | SAWbird+ NOAA: 41 dB
+    - **Instruction:** In the decision cell after «OP1dB +20 dBm;» insert: «макс. вхід 0 dBm; S11 −9 dB, S22 −9.5 dB; вибірковість: близько 65 dB нижче смуги на 110-133 MHz, близько 45-50 dB на 144-146 MHz, лише близько 20-25 dB на 140-142 MHz (слабке місце); 170 mA bias-tee / 175 mA USB / 180 mA номінально на сторінці; гарантія 2 роки (cased 100800).» In the «чому» cell keep «Даташит Nooelec rev 1.» and add «(41 dB і 2.6 MHz — з даташита, не «30 dB min / 5 MHz» зі сторінки)».
+    - **Reason:** Record 1 stack_changes (b): cite datasheet values and the 140-142 MHz weak rejection.
+    - **Sources:** analogs_G1 decisions[1].equivalence_proof
+    - **Saving usd:** 0
+  10.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** SAWbird+ NOAA 100800
+    - **Anchor:** | Повна вузькосмугова A/B-матриця для кожного стану
+    - **Instruction:** Insert a new row before this row: «| SAWbird+ NOAA 100800 (приймання, кондуктивно): S21 на LiteVNA з ≥40 dB атенюації перед входом (вхід далеко нижче 0 dBm макс.) — близько 41 dB на 136.5-138 MHz, близько 45-50 dB режекції на 144-146 MHz, ≥ близько 60 dB на 110-133 MHz і лише близько 20-25 dB на 140-142 MHz; NF за Y-фактором на 137.5 MHz (шумове джерело + tinySA Ultra+) — близько 1.1 dB у межах точності методу; струм ch1 при 4.5 V — 170-180 mA, нижче порогу TPS2553, зберегти як базову лінію labd; живлення лише через вихідний SMA (USB і хедер без живлення) | LiteVNA, шумове джерело (лише BENCH) | На прибутті |»
+    - **Reason:** Optional acceptance checks of the keep decision.
+    - **Sources:** analogs_G1 decisions[1].conditions_or_tests
+    - **Saving usd:** 0
+  11.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Nooelec order (SAWbird+ NOAA, SAWbird+ GOES, Flamingo+)
+    - **Anchor:** Nooelec (NOAA+, GOES+, Flamingo+, Balun One Nine v2, набір атенюаторів — $199.75, безкоштовна доставка)
+    - **Instruction:** Append after this phrase: «; відправка зі США (USPS/UPS), безкоштовна доставка понад $100; сторінка доставки не згадує ПДВ, мита чи IOSS. $199.75 ≈ EUR 177.70 > EUR 150, тож IOSS не діє: за правилом landed cost — імпортний ПДВ (SAWbird+ близько $59.9-60.4, Flamingo+ близько $29.7-30.2 за шт. при 19-21%), звичайне мито (ставку не перевірено), EUR 2 UHF за тарифну лінію (з близько 1.11.2026) і збір кур'єра (не перевірено). Запас ЄС для Flamingo+: Passion Radio EUR 33.90 з ПДВ (є в наявності). Лише справжні корпусні 100800/100792 від Nooelec або авторизованого реселера (Amazon DE/FR/IT/ES/UK під Nooelec, Passion Radio, Neven CZ, Antratek); дешевших продавців у ЄС не перевірено.»
+    - **Reason:** Sourcing notes of records 1, 2 and 10; landed-cost rule for consignments above EUR 150.
+    - **Sources:** analogs_G1 decisions[1], [2], [10]; operator_notes items 34-35
+    - **Saving usd:** 0
+  12.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Nooelec SAWbird+ NOAA / GOES / Flamingo+
+    - **Anchor:** - Nooelec SAWbird+ NOAA даташит:
+    - **Instruction:** Before this line add: «- Nooelec SAWbird+ NOAA cased 100800: https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-noaa-308.html ; Barebones 100799: https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-noaa.html ; доставка Nooelec: https://www.nooelec.com/store/shipping-delivery-info/» After the GOES line add: «- Nooelec SAWbird+ GOES даташит Rev 1: https://www.nooelec.com/store/downloads/dl/file/id/108/product/296/sawbird_goes_datasheet_revision_1.pdf». After the Flamingo+ line add: «- Flamingo+ FM даташит Rev 1 (вкладення Passion Radio): https://www.passion-radio.com/index.php?controller=attachment&id_attachment=1206 ; Passion Radio Flamingo+ v2: https://www.passion-radio.com/sdr-accessory/flamingo-v2-2539.html ; RTL-SDR Blog band-stop (компроміс, не заміна): https://www.rtl-sdr.com/product/rtl-sdr-blog-broadcast-fm-band-stop-filter/».
+    - **Reason:** Key URLs of records 1, 2, 10.
+    - **Sources:** analogs_G1 decisions[1], [2], [10] sources
+    - **Saving usd:** 0
+  13.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** keep_with_note
+    - **Part:** Nooelec Flamingo+ FM v2 100813
+    - **Anchor:** | FM-режектор | Nooelec Flamingo+ FM v2 (100813)
+    - **Instruction:** Keep part, price 24.95, status перевірено (повторно 18.10.2026, відвантаження за 1 день). Price cell: «24.95 (без ПДВ; у ЄС близько $29.7-30.2 з 19-21% ПДВ)». Replace «>60 dB режекції, 0.5 dB тип. / 1.2 dB макс.; DC-прохід 250 mA. Бюджет: RTL-SDR Blog band-stop $16.95 (без рейтингу DC).» with «Причини вибору: глибша середня і серединна режекція (близько 63.6 dB у середньому на 88-108 MHz, 70-77 dB на 90-102 MHz — графік даташита Rev 1, один екземпляр, ±1 dB), РЧ ESD-діод на вході, вхід до +18 dBm, опубліковані втрати 0.5 dB тип. / 1.2 dB макс., гарантія 2 роки. Краї смуги — не «глибоко в смузі загородження»: близько 47 dB на 87.5 MHz, 50 dB на 88 MHz, 37 dB на 107 MHz, 32 dB на 108 MHz. Запас ЄС: Passion Radio EUR 33.90 з ПДВ ($38.1), є в наявності. Бюджет: RTL-SDR Blog $16.95 — компроміс специфікацій: краще на 108 MHz (45-50 dB), але на 15-20 dB мілкіше в середині смуги, без ESD-діода і рейтингу входу, напряму в ЄС не продається (лістинг Elektor зник).» The same applies to unit #2 on P8 (row in 2.11 unchanged).
+    - **Reason:** P5 keep; DC pass is not a selection reason on P1 (no DC there); corrected band-edge values from the datasheet plot.
+    - **Sources:** analogs_G1 decisions[2] (Flamingo+ datasheet Rev 1 via Passion Radio attachment; nooelec.com page; rtl-sdr.com band-stop page)
+    - **Saving usd:** 0
+  14.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** Flamingo+ (C10) rejected alternative
+    - **Anchor:** Відкинуто: фільтр з боку SDR, режектор RTL-SDR Blog (без рейтингу DC), фільтр на кожному фідері обох рівнів.
+    - **Instruction:** Replace «режектор RTL-SDR Blog (без рейтингу DC)» with «режектор RTL-SDR Blog $16.95 (компроміс: краще на 108 MHz — 45-50 dB проти близько 32 dB, але на 15-20 dB мілкіше в середині смуги, без ESD-діода і рейтингу входу, напряму в ЄС не продається)».
+    - **Reason:** Wrong rejection reason: bias never crosses the filter on P1.
+    - **Sources:** analogs_G1 decisions[2].stack_changes item 1, 4
+    - **Saving usd:** 0
+  15.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** Flamingo+ (C10) rejection figures
+    - **Anchor:** Зміщення входить на виході LNA, DC через фільтр не йде.
+    - **Instruction:** Append: « За графіком даташита Rev 1 (один екземпляр, ±1 dB): близько 63.6 dB у середньому на 88-108 MHz і 70-77 dB на 90-102 MHz, але лише близько 47 dB на 87.5 MHz, 37 dB на 107 MHz і 32 dB на 108 MHz — бюджет інтермодуляції SAWbird+ NOAA і V4L рахувати з S21 на частотах реальних станцій, а не з плоских 60 dB. Причини вибору: РЧ ESD-діод на вході, +18 dBm, втрати 0.5/1.2 dB, гарантія 2 роки.»
+    - **Reason:** Corrects the 'band-edge stations deep inside the stopband' assumption.
+    - **Sources:** analogs_G1 decisions[2].equivalence_proof, stack_changes item 2
+    - **Saving usd:** 0
+  16.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Flamingo+ FM v2 (#1 and #2)
+    - **Anchor:** | Повна вузькосмугова A/B-матриця для кожного стану
+    - **Instruction:** Insert a new row before this row: «| Flamingo+ FM v2 (обидва екземпляри), приймання на LiteVNA: середнє S21 на 88-108 MHz ≤ −60 dB (графік — близько −63.6 dB); точкові межі ≤ −45 dB на 87.5-88 MHz, ≤ −65 dB на 92-100 MHz, ≤ −28 dB на 107.9 MHz; |S21| ≤1.2 dB на 137.1 і 137.9 MHz (для #2 також на 144-146 MHz); S11 ≤ −15 dB на 137 MHz (графік — близько −25 dB). Місце роботи: з HF+ на порту AIS/FM скласти список найсильніших FM-станцій і рахувати запас інтермодуляції SAWbird+ NOAA і V4L з виміряного S21 на частоті кожної станції (на 104-108 MHz лише близько 32-54 dB); якщо станція на краю смуги ламає запас — додатковий фільтр як нове рішення, не заміна | LiteVNA кондуктивно; огляд станцій — лише прийом | На прибутті; на кожному новому місці |»
+    - **Reason:** Tightened intake test with datasheet-derived limits and site check.
+    - **Sources:** analogs_G1 decisions[2].conditions_or_tests
+    - **Saving usd:** 0
+  17.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** seller_or_price
+    - **Part:** Uputronics 440 MHz CubeSAT FPA (HAB-FPA440)
+    - **Anchor:** | Передпідсилювач 70 см | Uputronics 440 MHz CubeSAT filtered preamp
+    - **Instruction:** Model cell: «Uputronics 440 MHz CubeSAT filtered preamp HAB-FPA440, корпус V3 / плата Rev 3.0 (обмежувач → HPF нижче 100 MHz → PSA4-5043+ → SAW 440 MHz)». Price: «59.52 (EUR 52.95 без ПДВ)». Source: «Uputronics, EU-вітрина store.uputronics.com (DE/FR/NL; ПДВ і доставка — на оплаті)». Status: «перевірено (available=true, 18.10.2026)». Note: replace «Вхід зміщення залежить від ревізії (плати з березня 2020 — 5-26 V; поточні — «5V max», реєстр #98); живиться від шини LNA 4.5 V через ch2 (на передпідсилювачі трохи менше після TPS2553 і дроселя) — роботу при 4.5 V не перевірено. Виміряти струм і підсилення/NF на ch2.» with «Rev 3.0: 3.5-5.5 V, понад 5.5 V — незворотне пошкодження, близько 50 mA; на передпідсилювачі близько 4.4 V після TPS2553 і дроселя (модель) — у межах. NF у середньому 0.75 dB, підсилення ≥19 dB (19.63 dB на 440 MHz), смуга близько 427-452 MHz на −3.4 dB (некалібрований графік виробника); без живлення — сильне ослаблення. Не IP-захищений — дощовий чохол; кріпити на перемичці SMA M-F або кронштейні, не консоллю на P2. Виміряти струм ch2 (базова лінія близько 50 mA). ЄС landed близько $70.8-72.0 (EUR 63.0-64.1) при 19-21% ПДВ плюс доставка (модель, доставку не перевірено); якщо відправка з UK через IOSS — за правилом landed cost ще EUR 3 мита + EUR 2 UHF. UK — GBP 51.59 з ПДВ ($68.71); США — $62.00. Не Kubii (передзамовлення EUR 65.95 з ПДВ, опис старої плати 5-26 V). Стара база 68.71 (UK з ПДВ): −9.19 у рядку — лише зміна бази, не економія.» Replace «Варіант 434 MHz ($55.92 = GBP 41.99) — вузький ISM SAW, не брати.» with «Варіант 434 MHz (EUR 42.95 = $48.28 без ПДВ) — ніколи: 16.08 dB на 437.67 MHz, на 4.2 dB нижче піку; 437.550/437.825 на схилі SAW.» Keep the budget note.
+    - **Reason:** P5 keep; price basis moves to the EU storefront ex VAT (operator note 34 prefers the Uputronics EU storefront); register #98 bias issue closed on paper by datasheet Rev 3.0.
+    - **Sources:** analogs_G1 decisions[3] (Uputronics .js for DE/FR/NL/GB/US; HAB-FPA_Series.pdf Rev 3.0; Kubii variant endpoint); operator_notes items 34-35
+    - **Saving usd:** 0.00 real (−9.19 only from price-basis change)
+  18.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** Uputronics 440 (D8)
+    - **Anchor:** Uputronics 440 MHz CubeSAT filtered preamp (LNA, потім SAW 30 MHz; GBP 51.59, є в наявності)
+    - **Instruction:** Replace with: «Uputronics 440 MHz CubeSAT filtered preamp, Rev 3.0 (обмежувач → HPF нижче 100 MHz → LNA → SAW 440 MHz, смуга близько 427-452 MHz на −3.4 dB за некаліброваним графіком виробника; 3.5-5.5 V, близько 50 mA; EUR 52.95 без ПДВ з EU-вітрини Uputronics, є в наявності)».
+    - **Reason:** Record 3 stack_changes: 'SAW 30 MHz' wording and price basis.
+    - **Sources:** analogs_G1 decisions[3]
+    - **Saving usd:** 0.00
+  19.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** Uputronics 440 mounting (D8)
+    - **Anchor:** на патч-рівні прикручується до роз'єму
+    - **Instruction:** Replace with: «на патч-рівні — на перемичці SMA M-F або кронштейні біля роз'єму (не консоллю на P2; не IP-захищений — дощовий чохол)».
+    - **Reason:** Record 3: mount on an SMA M-F jumper or bracket, not cantilevered on P2; not IP rated.
+    - **Sources:** analogs_G1 decisions[3].stack_changes (Unchanged list), datasheet 'not IP rated'
+    - **Saving usd:** 0.00
+  20.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** P2 UHF port / Uputronics 440
+    - **Anchor:** інжектор ch2 → RTL-A T2. Uputronics 440 (LNA → SAW 30 MHz)
+    - **Instruction:** Replace «Uputronics 440 (LNA → SAW 30 MHz)» with «Uputronics 440 Rev 3.0 (обмежувач → HPF <100 MHz → LNA → SAW 440 MHz, близько 427-452 MHz на −3.4 dB; 3.5-5.5 V, близько 50 mA)», and replace «на патч-рівні прикручується до P2» in the same cell with «на патч-рівні — на перемичці SMA M-F або кронштейні біля P2, не консоллю». Append to the cell: «Ніколи понад 5.5 V на P2: джерело 12.5 V (Boni) чи 13.2 V (LNB) не повинно фізично стикуватися з P2. Без живлення ch2 тракт сильно ослаблений — UI показує «ch2 off = no UHF».» (Throw label T2 is remapped in a separate change.)
+    - **Reason:** Datasheet: >5.5 V permanent damage; unpowered heavy attenuation; mounting rule.
+    - **Sources:** analogs_G1 decisions[3].conditions_or_tests 4-5
+    - **Saving usd:** 0.00
+  21.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** correction
+    - **Part:** 70 cm whip on Uputronics 440
+    - **Anchor:** Накручується на Uputronics 440 на P2
+    - **Instruction:** Replace with: «Накручується на Uputronics 440, що стоїть на перемичці SMA M-F або кронштейні біля P2 (не консоллю на P2)».
+    - **Reason:** Mounting rule from record 3.
+    - **Sources:** analogs_G1 decisions[3].stack_changes
+    - **Saving usd:** 0.00
+  22.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Uputronics 440 in patch case
+    - **Anchor:** Uputronics 440 (коли не на P2)
+    - **Instruction:** Replace with: «Uputronics 440 з дощовим чохлом (не IP-захищений) і перемичкою SMA M-F (коли не біля P2)».
+    - **Reason:** Datasheet: not IP rated; mounting rule.
+    - **Sources:** analogs_G1 decisions[3]
+    - **Saving usd:** 0.00
+  23.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Uputronics 440 Rev 3.0
+    - **Anchor:** Uputronics 440: підсилення і NF при фактичній напрузі ch2 (нижче 4.5 V); якщо ревізія потребує 5 V — окремий канал 5.0 V або явне прийняття 4.5 V.
+    - **Instruction:** Replace with: «Uputronics 440 (Rev 3.0, 3.5-5.5 V): на прибутті підтвердити корпус V3 і плату Rev 3.0; струм ch2 при фактичній напрузі (близько 4.4 V на передпідсилювачі, модель) — близько 50 mA, базова лінія тривоги labd; у Bench з навантаженнями 50 Ohm і tinySA ≤ −40 dBm на ANT: підсилення ≥19 dB на 435.0, 437.55 і 437.825 MHz, краї −3 dB біля 427 і 452 MHz, режекцію на 470 і 800-960 MHz записати в parts.yaml; без живлення тракт сильно ослаблений (UI «ch2 off = no UHF»); ніколи понад 5.5 V на P2; на оплаті — ПДВ збирається при продажу (IOSS) і вартість доставки (адреса в UK — GBP 51.59 з ПДВ).» Keep the rest of the row.
+    - **Reason:** Acceptance tests of the kept part; the 5 V revision question is closed on paper by datasheet Rev 3.0.
+    - **Sources:** analogs_G1 decisions[3].conditions_or_tests
+    - **Saving usd:** 0.00
+  24.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Uputronics 440, HMC7992, G6K (step 7)
+    - **Anchor:** Uputronics 440 ($68.71 = GBP 51.59 з ПДВ); плата інжекторів; плати HMC7992; G6K (RS UK)
+    - **Instruction:** Replace with: «Uputronics 440 з EU-вітрини store.uputronics.com (EUR 52.95 = $59.52 без ПДВ; ПДВ і доставка на оплаті — перевірити IOSS і вартість доставки; плата V3/Rev 3.0; не Kubii); плата інжекторів з двома секціями HMC7992 (мінімум виготовлювача 5 шт. — запасні PCB для запасної окремої плати перемикачів і для sled); HMC7992LP3DE і G6K-2F-RF-S — у замовленні DigiKey (див. нижче)».
+    - **Reason:** Seller changes from records 3, 4, 7.
+    - **Sources:** analogs_G1 decisions[3], [4], [7]
+    - **Saving usd:** see BOM rows
+  25.
+    - **Section:** 00_header_toc
+    - **Kind:** correction
+    - **Part:** Price basis note (Uputronics)
+    - **Anchor:** Uputronics GBP 51.59, 
+    - **Instruction:** Remove «Uputronics GBP 51.59, » from the list of incl-VAT store prices, and add to the ex-VAT examples: «Uputronics 440 — EUR 52.95 без ПДВ (EU-вітрина)».
+    - **Reason:** Uputronics BOM price now on EU ex-VAT basis.
+    - **Sources:** analogs_G1 decisions[3].chosen_price_usd
+    - **Saving usd:** 0.00
+  26.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Uputronics 440
+    - **Anchor:** - Uputronics filtered preamps: https://store.uputronics.com/products/uputronics-filtered-preamps
+    - **Instruction:** Append to this line: « ; EU-вітрина: https://store.uputronics.com/products/uputronics-filtered-preamps?country=DE ; даташит HAB-FPA Rev 3.0: https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808».
+    - **Reason:** Key URLs of record 3.
+    - **Sources:** analogs_G1 decisions[3].sources
+    - **Saving usd:** 0.00
+  27.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** replace_part
+    - **Part:** RTL-A/RTL-B input selectors: HMC7992 SP4T x2
+    - **Anchor:** | Перемикачі входів RTL | Загальні плати HMC7992 SP4T
+    - **Instruction:** Replace the whole row with: «| Перемикачі входів RTL | ADI HMC7992LP3DE (справжній чип, DigiKey 505-HMC7992LP3DE-ND) — дві секції SP4T 50 Ohm GCPW на 5-канальній платі інжекторів | 2 | 26.85-27.85 (чипи 2 × EUR 11.50 без ПДВ = EUR 23.00 = $25.85; з 19% ПДВ DE 2 × EUR 13.685 = EUR 27.37 = $30.77; + пасивні 0402 C0G і 49.9 Ohm $1-2, модель; 2-3 крайові SMA/U.FL не оцінено; PCB — у рядку «Власні PCB» 2.7) | DigiKey DE (Active, 4,655 шт.; наступний поріг EUR 9.05 від 10 шт.) | перевірено (чипи, 18.10.2026) / модель (пасивні) | За інжекторами; C0G DC-блоки на RFC і RF1-RF4 (1 nF C0G 0402 ≥50 V на всіх виводах RTL-A і RFC-B; 100 pF або 1 nF на L-band і ПЧ; 10 nF 0603 на RF4/RFC RTL-B лише якщо BENCH має йти на КХ; не копіювати 100 pF з eval BOM ADI на VHF); паркування — 49.9 Ohm 0402 1% на RF1 за власним C0G (A=B=Low вибирає RF1), SMA-термінатори не потрібні; A/B з MCP23017 #1 зі 100k до землі і 100 pF; VDD від тієї самої шини 3.3 V, що й MCP23017 (порядок GND → VDD → керування). Умова: приймання секцій на платі (розділ 8); при провалі після доопрацювання — окрема плата із запасної PCB того самого замовлення; лише в крайньому разі — загальні плати з тими самими перевірками і перевіркою маркування. Стара позиція: загальні маркетплейсові плати HMC7992 ×2, $30-40 (не перевірено; шовкографія ADI на платі, якої ADI не випускає, ціна нижче авторизованого чипа) — економія близько $4-14 на чипах, $0-12 з пасивними і роз'ємами (модель); прибирає 10 SMA-гнізд, близько 4-6 внутрішніх перемичок і 2 SMA-термінатори. Бюджет: ручне «під'єднайте X». |»
+    - **Reason:** P5 replace_conditionally: provably genuine franchised part and a defined board; generic boards fail the not-counterfeit rule and cannot be cleared by a LiteVNA test (remarked HMC241 would pass).
+    - **Sources:** analogs_G1 decisions[4] (DigiKey DE HMC7992LP3DE page 18.10.2026; HMC7992 Rev 0 datasheet; AliExpress listing photos); reaudit B ('prefer chips on the custom injector PCB', park on RF1)
+    - **Saving usd:** 4-14 (chips, ex VAT); 0-12 incl. passives and jacks (model); roughly break-even incl. VAT
+  28.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** architecture
+    - **Part:** Custom PCBs: 5-channel injector PCB with two SP4T sections
+    - **Anchor:** | Власні PCB | Двошарові: силова плата + 5-канальна плата інжекторів
+    - **Instruction:** In the model cell after «C0G-блоки» add: «; дві секції SP4T на HMC7992LP3DE: 50 Ohm GCPW на 2-шаровому FR4 з суцільною нижньою землею (приклад для 1.6 мм FR4 — доріжка близько 1.0-1.2 мм, зазор 0.2 мм; модель, рахувати калькулятором виготовлювача), паркан перехідних отворів, ≥5 перехідних отворів в EPAD, посадка екранної кришки над секціями, купон наскрізної лінії на панелі; з Lime — третій HMC7992 на тій самій платі». Price unchanged (10-30, модель). Note: append «Мінімум виготовлювача 5 шт. — запасні PCB для запасної окремої плати перемикачів і для sled. Монтаж EPAD — оплавлення або гаряча плита + фен з пастою.»
+    - **Reason:** Record 4 stack_changes items 2, 8 and conditions 1, 9.
+    - **Sources:** analogs_G1 decisions[4].stack_changes
+    - **Saving usd:** 0 (PCB cost class unchanged)
+  29.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** seller_or_price
+    - **Part:** Lime parts: third HMC7992
+    - **Anchor:** | Деталі Lime | ADT-Link R44SF 5 см
+    - **Instruction:** In the model cell replace «третій HMC7992» with «третій HMC7992LP3DE (чип на платі інжекторів, DigiKey DE EUR 11.50 без ПДВ / EUR 13.685 з ПДВ; 3-4 чипи разом — нижче порогу 10 шт.)». Line price unchanged (87-127). Note: the Lime is kept by the user decision of 18.10.2026, so this chip is bought by default.
+    - **Reason:** Record 4 item 8 (Lime kept).
+    - **Sources:** analogs_G1 decisions[4].stack_changes item 8; user_requirements.md (Lime kept)
+    - **Saving usd:** 0
+  30.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** RTL-A/RTL-B switch mapping (D8)
+    - **Anchor:** Перемикачі: плати HMC7992 SP4T за інжекторами. RTL-A: T1 VHF-137, T2 UHF, T3 WIDE/2 m (опційно), T4 50 Ohm. RTL-B: T1 L-band, T2 ПЧ LNB, T4 50 Ohm.
+    - **Instruction:** Replace with: «Перемикачі: дві секції ADI HMC7992LP3DE на платі інжекторів (справжні чипи з DigiKey; за умовою приймання, розділ 8). RTL-A: RF1 50 Ohm (паркування, A=B=Low), RF2 VHF-137, RF3 UHF, RF4 WIDE/2 m (опційно). RTL-B: RF1 50 Ohm, RF2 L-band, RF3 ПЧ LNB (після DC-блоку LNB і атенюатора 15/20 dB), RF4 BENCH/sled.» Keep «При ввімкненні — 50 Ohm.»
+    - **Reason:** Truth table: A=B=Low selects RF1, so the park belongs on RF1, not T4.
+    - **Sources:** analogs_G1 decisions[4].stack_changes item 3; HMC7992 Rev 0 datasheet
+    - **Saving usd:** 0
+  31.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** Third HMC7992 (C1 consequences)
+    - **Anchor:** третій HMC7992 і атенюатори 10 dB
+    - **Instruction:** Replace with «третій HMC7992 (чип на платі інжекторів) і атенюатори 10 dB».
+    - **Reason:** Record 4 item 8.
+    - **Sources:** analogs_G1 decisions[4].stack_changes item 8
+    - **Saving usd:** 0
+  32.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** MCP23017 #1 switch control lines
+    - **Anchor:** Для тієї самої деталі в sled записано V1-V3
+    - **Instruction:** Replace the sentence starting «Для тієї самої деталі в sled записано V1-V3, а логіку HMC7992 не перевірено (сайт ADI дав 503)…» through «…Якщо ліній три — потрібні ще два виходи MCP.» with: «Таблиця істинності HMC7992 (даташит Rev 0): дві лінії A/B, A=B=Low вибирає RF1, тож паркування 50 Ohm — на RF1; VIH 1.15 V при VDD 3.3 V, вхідний струм менше 1 uA. Лінії мають 100k до землі і 100 pF; VDD перемикачів — від тієї самої шини 3.3 V, що й MCP23017 (VDD до логіки; керування до VDD може відкрити внутрішні ESD-діоди); навантаження 0.32-0.40 mA разом.»
+    - **Reason:** Datasheet read in P5 resolves the open truth-table question.
+    - **Sources:** analogs_G1 decisions[4].equivalence_proof, stack_changes item 5
+    - **Saving usd:** 0
+  33.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** Sled MCP23017 #2 HMC7992 control
+    - **Anchor:** - **MCP23017 #2 у sled (0x21):** HMC7992 V1-V3
+    - **Instruction:** Replace «HMC7992 V1-V3 (кількість ліній — за таблицею істинності, як і для #1)» with «HMC7992 A/B (дві лінії, як і для #1; RF1 — паркування)».
+    - **Reason:** HMC7992 uses two control lines per datasheet truth table.
+    - **Sources:** analogs_G1 decisions[4] (HMC7992 Rev 0 datasheet)
+    - **Saving usd:** 0
+  34.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** Switch paragraph (HMC7992 + G6K)
+    - **Anchor:** **Перемикачі.** RTL-A і RTL-B — по загальній платі HMC7992 SP4T
+    - **Instruction:** Replace the whole paragraph with: «**Перемикачі.** RTL-A і RTL-B — дві секції ADI HMC7992LP3DE (справжні чипи, DigiKey) на 5-канальній платі інжекторів, 50 Ohm GCPW; C0G DC-блоки на RFC і RF1-RF4; керування A/B (A=B=Low → RF1). RF1 — паркування 49.9 Ohm 0402 за власним C0G; при ввімкненні (MCP23017 у скиданні, 100k до землі) RFC бачить RF1. RTL-A: RF1 50 Ohm, RF2 VHF-137, RF3 UHF, RF4 WIDE/2 m (опційно). RTL-B: RF1 50 Ohm, RF2 L-band, RF3 ПЧ LNB, RF4 BENCH/sled. Даташит: IL 0.6/0.9 dB, розв'язка 40 dB мін. / 45 dB тип., RL увімкненого стану 25 dB на 0.1-2 GHz; IIP3 56 dBm, P1dB 33 dBm при 3.3 V; без генератора від'ємної напруги (без спурів перемикача); нижче 100 MHz IL і розв'язку не табульовано. Приймання на платі — ≥40 dB розв'язки (розділ 8). HF+: два Aratas (раніше Omron) G6K-2F-RF-S DC5 послідовно-паралельно (запасний — G6K-2F-RF DC5); знеструмлено — HF+ на 50 Ohm і обидва антенні порти навантажені; приймання ≥35 dB на 162-260 MHz, ≤0.3 dB від 10 kHz до 260 MHz, RL ≥21 dB, плюс LF/HF-ворота (розділ 8). Одночасно живиться лише одна котушка (близько 0.105 W = 5 V × 21.1 mA).»
+    - **Reason:** Records 4 and 7: chosen parts, park on RF1, datasheet figures, corrected coil power.
+    - **Sources:** analogs_G1 decisions[4], [7]
+    - **Saving usd:** see BOM rows
+  35.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** Throw labels in port and target tables (park on RF1)
+    - **Anchor:** → DC-блок → RTL-A T1 |
+    - **Instruction:** Remap every throw label in 5.3 (RF1 = паркування 50 Ohm on both switches). Port table: P1 «→ DC-блок → RTL-A T1» → «→ DC-блок → RTL-A RF2»; P2 «інжектор ch2 → RTL-A T2» → «інжектор ch2 → RTL-A RF3»; P3 «інжектор ch3 → RTL-B T1» → «інжектор ch3 → RTL-B RF2»; P4 «→ RTL-B T2; EN LNB лише коли перемикач RTL-B на T2» → «→ RTL-B RF3; EN LNB лише коли перемикач RTL-B на RF3»; P8 «→ ch4 → RTL-A T3» → «→ ch4 → RTL-A RF4». Target table: «P1 → RTL-A T1» → «P1 → RTL-A RF2»; «P2 → RTL-A T2» → «P2 → RTL-A RF3»; «P8 → RTL-A T3» → «P8 → RTL-A RF4»; all three «P3 → RTL-B T1» → «P3 → RTL-B RF2»; «P4 → RTL-B T2» → «P4 → RTL-B RF3».
+    - **Reason:** A=B=Low selects RF1; record 4 mapping RTL-A RF1 park/RF2 VHF-137/RF3 UHF/RF4 WIDE, RTL-B RF1 park/RF2 L-band/RF3 LNB IF/RF4 BENCH.
+    - **Sources:** analogs_G1 decisions[4].stack_changes item 3
+    - **Saving usd:** 0
+  36.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** Third HMC7992 (Lime row)
+    - **Anchor:** третій HMC7992 направляє L-band ch3
+    - **Instruction:** Replace «третій HMC7992 направляє» with «третій HMC7992 (чип на платі інжекторів) направляє».
+    - **Reason:** Record 4 item 8.
+    - **Sources:** analogs_G1 decisions[4].stack_changes item 8
+    - **Saving usd:** 0
+  37.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** correction
+    - **Part:** RF sled switch
+    - **Anchor:** | RF sled | HMC7992 SP4T + PE4302
+    - **Instruction:** In the model cell replace «HMC7992 SP4T» with «HMC7992LP3DE (справжній чип з DigiKey; можна на запасній PCB із замовлення плати інжекторів)». In the note replace «RF1 тракт A, RF2 тракт B, RF3 BENCH, RF4 50 Ohm (за замовчуванням)» with «RF1 — 50 Ohm (за замовчуванням, A=B=Low), тракти A, B і BENCH — на RF2-RF4 (порядок — у таблиці labd)»; replace «очікувана розв'язка 30-37 dB (не 45 dB продавця)» with «приймання розв'язки ≥40 dB на власній платі (30-37 dB — очікування для загальних плат, не 45 dB продавця)». Keep price and the rest.
+    - **Reason:** Park must sit on RF1; sled switch can use a genuine chip on a spare PCB.
+    - **Sources:** analogs_G1 decisions[4].stack_changes items 3, 8
+    - **Saving usd:** not priced
+  38.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** bench_test
+    - **Part:** P2 procedure: injector board with switch sections
+    - **Anchor:** | P2 | Характеризація фільтрів і bias-tee
+    - **Instruction:** In the corrections cell append: «Секції HMC7992 на платі — де-ембединг купоном наскрізної лінії; IL, розв'язка, RL і паркування при ввімкненні за розділом 8; S-параметри в parts.yaml.»
+    - **Reason:** Record 4 conditions 1-5.
+    - **Sources:** analogs_G1 decisions[4].conditions_or_tests
+    - **Saving usd:** 0
+  39.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** labd truth tables and baselines
+    - **Anchor:** | labd | Python, D-Bus | I2C2 через smbus2
+    - **Instruction:** Append to the labd description cell: «Таблиці істинності перемикачів RTL-A/RTL-B: A=B=Low → RF1 (паркування 50 Ohm); RF2-RF4 — за 5.3 (RTL-A: VHF-137, UHF, WIDE; RTL-B: L-band, ПЧ LNB, BENCH/sled). Базові струми для тривог: ch1 SAWbird+ NOAA 170-180 mA, ch2 Uputronics 440 близько 50 mA, ch3 SAWbird+ GOES 120-160 mA (бюджет 180 mA). Сторінка RF path показує «ch2 off = no UHF». parts.yaml зберігає S11/S21 кожного панельного пігтейла і дроту F, режекцію Uputronics на 470 і 800-960 MHz і S21 Flamingo+ на частотах місцевих станцій.»
+    - **Reason:** Records 1, 3, 4, 5, 10: remapped truth tables and stored baselines; no other software change.
+    - **Sources:** analogs_G1 decisions[1], [3], [4], [5], [10]
+    - **Saving usd:** 0
+  40.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** RF bay layout: switches on injector PCB; HF+ can footprint
+    - **Anchor:** плата інжекторів, 2× HMC7992, інжектор LNB з атенюатором. Екран HF+ угорі праворуч разом із bias-tee Boni і платою G6K.
+    - **Instruction:** Replace with: «плата інжекторів із двома секціями HMC7992 (плата більша на близько 2 × 15x20 мм, модель; опція екранної стінки чи кришки над секціями; місце двох окремих плат звільнено), інжектор LNB з атенюатором. Екран HF+ (Schubert Art. 6B, габарит з бортами кришок близько 112x56x21 мм — 74 мм ширини більше не потрібно) угорі праворуч; bias-tee Boni і плата G6K — поруч, поза екраном (посадка G6K-2F-RF-S на 2.7 мм коротша).»
+    - **Reason:** Records 4 item 7, 7 (case/placement), 8 (case and CAD).
+    - **Sources:** analogs_G1 decisions[4], [7], [8] stack_changes
+    - **Saving usd:** 0
+  41.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** Replaced or rejected items from P5 G1
+    - **Anchor:** | Вивантаження (SondeHub, WSPRnet, PSK Reporter, агрегатори ADS-B, SatNOGS) за замовчуванням |
+    - **Instruction:** After this row (end of the 6.2 table) add rows: «| Загальні маркетплейсові плати HMC7992 SP4T | Шовкографія ADI на платі, якої ADI не випускає; ціна нижче авторизованого чипа; лінійність (IIP3 56 dBm) нашою лабораторією не перевірити — замінено справжніми HMC7992LP3DE на платі інжекторів (загальні — лише крайній запас з повними перевірками). |», «| G6K з RS UK | DigiKey (авторизований) дешевший; G6K-2F-RF замінено на G6K-2F-RF-S DC5 за умовою LF/HF-воріт, стандартний — запасний. |», «| Неназваний DIY-екран HF+ і один snap-on Mix-31 | Конкретна збірка: Schubert 6B + SRR1260-101M + EEU-FR1C101 + демпфер + 2× Fair-Rite 2631480002. |», «| FT-240-31 у КХ-ступені синфазного дроселя (як основний) | Fair-Rite 2631102002 (9-11 витків) за умовою воріт; FT-240-31 — запасний. |», «| Kubii як джерело Uputronics 440; варіант 434 MHz | Kubii — передзамовлення, дорожче, опис старої плати; 434 MHz — 437.55/437.825 на схилі SAW. |», «| GPIO Labs 1685 MHz BPF у тракті HRPT | Смуга 1675-1695 MHz виключає 1700-1704.5 MHz, DC на портах ≤3 V. |», «| HDMI-кабель у наборі кабелів | Подвійний облік — він у рядку 2.6. |», «| Загальні USB-подовжувачі 15 см, загальний 75 Ohm F-дріт, окремі панельні прохідники + перемички на P1-P3, P6, P8 | Lindy 36700 0.2 м, Goobay 58814, цільні пігтейли з ущільнювальним кільцем — за умовою тестів. |»
+    - **Reason:** Parts replaced or ruled out by the G1 analog decisions.
+    - **Sources:** analogs_G1 decisions[3], [4], [5], [7], [8], [9], [10]
+    - **Saving usd:** see BOM rows
+  42.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HMC7992LP3DE switch sections on injector PCB
+    - **Anchor:** розв'язка, втрати, логічні рівні і таблиця істинності HMC7992 (кількість ліній керування; який вивід вибирає стан «усі низькі» — туди 50 Ohm)
+    - **Instruction:** Replace this phrase with «ворота HMC7992 на платі інжекторів (окремий рядок нижче)» and insert a new row after the «РЧ-деталі» row: «| HMC7992LP3DE на платі інжекторів (обидві секції): (1) купон наскрізної лінії тієї самої довжини на панелі, де-ембединг; (2) IL ≤0.9 dB на 0.1-2.2 GHz для кожного використаного виводу; (3) розв'язка RFC → кожен вимкнений вивід ≥40 dB на 0.1-1.7 GHz, між виводами RTL-A ≥40 dB на 137-437 MHz (37-40 dB — прийняти із записом виправлення розводки; нижче 37 dB — паркан перехідних отворів або екранна кришка і повторний вимір); (4) RL увімкненого стану ≥20 dB на 137, 437, 739.5 і 1530-1710 MHz, вимкнені виводи — навантаження, не обрив; (5) паркування при ввімкненні: MCP23017 у скиданні (виходи Hi-Z, 100k до землі) — RFC бачить RF1 49.9 Ohm, RL ≥20 dB; (6) спури: з живленням перемикача і без — RTL + tinySA на 137/437/739.5/1540-1710 MHz без нових ліній; (7) якщо BENCH RTL-B має йти на КХ — 10 nF C0G там і на RFC-B, вибірково IL і розв'язка на 1-30 MHz (нижче 100 MHz даташит їх не табулює); (8) маркування чипа «7992» над 4-символьним кодом партії (не «H7992»), зберегти пакувальний лист і CoC DigiKey, MSL3 — прогріти, якщо пакет відкритий понад 168 год до оплавлення; (9) монтаж — оплавлення або гаряча плита + фен з пастою на EPAD. Провал після доопрацювання — окрема плата із запасної PCB; загальні плати — лише в крайньому разі з (1)-(8) і перевіркою маркування | LiteVNA кондуктивно в навантаження/DUT, без розгорток в ефір | Крок 5 запуску |»
+    - **Reason:** Acceptance condition of the conditional HMC7992 replacement.
+    - **Sources:** analogs_G1 decisions[4].conditions_or_tests
+    - **Saving usd:** 0
+  43.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** DigiKey order and new small vendors (G1)
+    - **Anchor:** DigiKey (PEC11R ×3, KSC641J ×10, ферити)
+    - **Instruction:** Replace with: «DigiKey (PEC11R ×3, KSC641J ×10, ферити; 2× HMC7992LP3DE + 1 для Lime (3 разом — нижче порогу 10 шт.), зберегти пакувальний лист і CoC; 2× G6K-2F-RF-S DC5 (Z2828-ND); Fair-Rite 5977003801 + 2631102002 (2631803802 — лише якщо ворота втулки не пройдено); 2× Fair-Rite 2631480002 (1934-1377-ND), Bourns SRR1260-101M, Panasonic EEU-FR1C101; DigiKey DE — безкоштовна доставка від EUR 75, інакше EUR 25). Нові дрібні замовлення: Schubert (DE; e-mail, мінімум EUR 20 з ПДВ, передоплата або SEPA; Art. 6B + запасний 6B + прохідні D1000 1 nF по EUR 0.68 + лист WB1); Reichelt (Goobay 58814); 2× Lindy 36700 — з EU-магазину Lindy або дистриб'ютора ЄС (ціну ЄС перевірити; з UK — поза ЄС, за правилом landed cost); AliExpress — 10 пігтейлів RG316 SMA з ущільнювальним кільцем ($22.29; якщо в магазину немає історії — лістинг #5, $4.15 за шт., 147 продажів, рейтинг 5) — поза ЄС: ПДВ + EUR 3 мита + EUR 2 UHF за тарифну лінію».
+    - **Reason:** Seller moves from records 4, 5, 7, 8, 9; landed-cost rule for non-EU sellers.
+    - **Sources:** analogs_G1 decisions[4], [5], [7], [8], [9]; operator_notes items 34-35
+    - **Saving usd:** see BOM rows
+  44.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** rule
+    - **Part:** Authenticity: HMC7992, G6K, Fair-Rite
+    - **Anchor:** Hantek, ANENG і загальні HMC7992 з маркетплейсів — ризик сірих копій.
+    - **Instruction:** Replace with: «Hantek і ANENG — ризик сірих копій. HMC7992 — лише з франчайзингової дистрибуції (DigiKey/Mouser/Farnell); маркетплейсові плати мають шовкографію з логотипом ADI і ціну нижче собівартості чипа. G6K — лише з авторизованого дистриб'ютора (франчайзинг Omron/Aratas у LCSC не підтверджено). Fair-Rite — лише з авторизованого дистриб'ютора (осердя без марки і Palomar без названого виробника — ні).»
+    - **Reason:** Record 4 stack_changes item 9; records 7 and 9 provenance findings.
+    - **Sources:** analogs_G1 decisions[4], [7], [9]
+    - **Saving usd:** 0
+  45.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** HMC7992, G6K-2F-RF-S, DigiKey parts
+    - **Anchor:** - Omron G6K-2F-RF (RS UK): https://uk.rs-online.com/web/p/hf-rf-relays/0492917?gb=s
+    - **Instruction:** Replace with: «- Aratas (Omron) G6K-2F-RF-S DC5 (DigiKey): https://www.digikey.com/en/products/detail/aratas-formerly-omron-components/G6K-2F-RF-S-DC5/1936449 ; DigiKey DE: https://www.digikey.de/en/products/detail/aratas-formerly-omron-components/G6K-2F-RF-S-DC5/1936449 ; запасний G6K-2F-RF DC5: https://www.digikey.com/en/products/detail/aratas-formerly-omron-components/G6K-2F-RF-DC5/503107 ; даташит K242-E1-07: https://omronfs.omron.com/en_US/ecb/products/pdf/en-g6k_2f_rf.pdf ; RS UK (третє джерело): https://uk.rs-online.com/web/p/hf-rf-relays/0492917?gb=s» and add «- ADI HMC7992LP3DE (DigiKey DE): https://www.digikey.de/en/products/detail/analog-devices-inc/HMC7992LP3DE/5873027 ; даташит Rev 0: https://www.farnell.com/datasheets/2283884.pdf».
+    - **Reason:** Key URLs of records 4 and 7.
+    - **Sources:** analogs_G1 decisions[4], [7] sources
+    - **Saving usd:** 0
+  46.
+    - **Section:** 02d_bom_case_cables
+    - **Kind:** replace_part
+    - **Part:** Cable/bulkhead set (conditional line replacements)
+    - **Anchor:** | Кабелі й роз'єми | 7 SMA + 1 F роз'єми на панель
+    - **Instruction:** Replace the whole row with: «| Кабелі й роз'єми | Панель: 6 SMA (P1-P3, P6, P7, опційно P8), 1 BNC (P5), 1 F (P4). P1-P3, P6, P8 — цільні пігтейли RG316 20 см: гніздо SMA на панель з ущільнювальним кільцем → кутовий штекер SMA (10 шт.; 4-5 у роботі, решта — на відбраковування; кожен замінює прохідник + перемичку панель-плата); перемички плата-плата RG316 і 4 польові перемички RG316 1-2 м — без змін; P5: перемичка BNC-прохідник → SMA RG316 + дріт BNC M-M для Boni-Whip; P7: пігтейл IPX-SMA (опційно Taoglas CAB.011 $4.44 — лише якщо в LC76G роз'єм MHF1); P4: прохідник F-F (SAT) + внутрішній 75 Ohm дріт; до LNB — Goobay 58814 (75 Ohm, F-штекер на обох кінцях, клас A+ 95 dB, потрійне екранування, 5.4 мм, 1 м); 2× Lindy 36700 (USB 2.0 A-M → A-F, 0.2 м) з Würth 74271112 на шарі термоусадки; набір пігтейлів RTL-SDR Blog; 4 пігтейли CH334F; дріт сенсора з перерізаним VBUS; перехідники; кабель USB3 A-A | 1 набір | 75-145 (модель; змінені рядки $30.62 перевірено = $22.29 + 2 × $2.70 + $2.92) | RTL-SDR Blog ($18.95) + AliExpress (пігтейли $22.29) + Lindy (UK GBP 2.03 з ПДВ UK = $2.70 за шт.; ціну ЄС не прочитано) + Reichelt (Goobay EUR 2.60 з 19% ПДВ = $2.92) + Würth (близько $8.30 за 2, цифра Mouser, не перевірено) + загальне | модель (перевірено: $18.95 і $30.62) | Умови (розділ 8): пігтейли — справжній SMA, FEP 2.5 ±0.1 мм, S11/S21 до і після 10 циклів; непрохідний порт — брендова деталь (Lighthorse CBD-SAF3GT-SAMGT-6IN $15.23 або Amphenol 135110-01-06.00 $23.58; RG316-DS 135110-03-06.00 $30.15 — лише якщо не пройде фон); Lindy — підйом фону менше 0.5 dB; Goobay — без нових несучих (запасний Goobay 66620 5.0 мм або поточний дріт). HDMI-кабель — у рядку 2.6, тут не рахувати; Lime RX1/RX2/REF IN — у рядку Lime. Якщо HMC7992 на платі інжекторів пройдуть приймання — мінус близько 4-6 внутрішніх перемичок і 10 SMA-гнізд, плюс 2-3 крайові SMA/U.FL (RFC-A, RFC-B, вхід BENCH/sled RTL-B). Атенюатори — зі стендового набору. Старий склад: 7 SMA + 1 F, загальні подовжувачі 15 см ($90-170, модель) — економія близько $5-25 (модель, не перевіряється). Бюджет: загальний RG316 з перевіркою на VNA. |»
+    - **Reason:** P5 replace_conditionally for three lines; set contents updated (P5 BNC per re-audit B), HDMI de-duplicated.
+    - **Sources:** analogs_G1 decisions[5] (RTL-SDR Blog store; Lindy UK page; Reichelt Goobay pages; Würth/Fair-Rite datasheets; Taoglas datasheet; AliExpress search); reaudit_B (P5 BNC bulkhead)
+    - **Saving usd:** 5-25 (model, unverifiable); HDMI 14.50-25 re-allocated, not a saving
+  47.
+    - **Section:** 02d_bom_case_cables
+    - **Kind:** other
+    - **Part:** Group 2.10 subtotal
+    - **Anchor:** | **Підсумок групи** | | | **90-170** |
+    - **Instruction:** Change to «| **Підсумок групи** | | | **75-145** (модель) |».
+    - **Reason:** New set estimate from record 5.
+    - **Sources:** analogs_G1 decisions[5].chosen_price_usd
+    - **Saving usd:** 15-25 (model)
+  48.
+    - **Section:** 02d_bom_case_cables
+    - **Kind:** correction
+    - **Part:** Cable set composition paragraph
+    - **Anchor:** Склад набору кабелів (графік з перевірки повноти)
+    - **Instruction:** Rewrite the composition sentence: «6 внутрішніх перемичок RG316 SMA» → «внутрішні перемички плата-плата RG316 SMA (мінус близько 4-6, якщо HMC7992 стоять на платі інжекторів); цільні панельні пігтейли з ущільнювальним кільцем на P1-P3, P6, P8»; «2 USB-подовжувачі V4L з феритами» → «2× Lindy 36700 0.2 м з Würth 74271112 на термоусадці»; delete «екранований HDMI 10-15 см з Mix 31/61» (він у рядку 2.6); «1 м тонкий 75 Ohm F-F» → «Goobay 58814 1 м (F-F, клас A+)»; add «перемичка BNC-прохідник P5 → SMA RG316 і дріт BNC M-M для Boni-Whip». In the «Можливо не враховано» list delete «дріт BNC-SMA для Boni-Whip ($5-10)» (тепер у наборі).
+    - **Reason:** Record 5 stack_changes (BOM bullets) and interplay with record 4.
+    - **Sources:** analogs_G1 decisions[5], [4]
+    - **Saving usd:** 0
+  49.
+    - **Section:** 02d_bom_case_cables
+    - **Kind:** correction
+    - **Part:** HF+ USB connector type
+    - **Anchor:** Тип USB-роз'єму HF+ записати на прибутті.
+    - **Instruction:** Replace with «HF+ — micro-USB B (короткий екранований micro-USB пігтейл від CH334F H4; підтвердити на прибутті).»
+    - **Reason:** Records 6 and 8 name the HF+ connector as micro-USB B.
+    - **Sources:** analogs_G1 decisions[6].stack_changes, [8].part
+    - **Saving usd:** 0
+  50.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** V4L USB extensions (USB map)
+    - **Anchor:** RTL-A на екранованому подовжувачі 15 см з феритом; працює лише як USB 2 HS
+    - **Instruction:** Replace «на екранованому подовжувачі 15 см з феритом» with «на Lindy 36700 (USB 2.0, 0.2 м) з Würth 74271112 на шарі термоусадки (за умовою тесту фону; запасний — загальний екранований 15 см)». In the next row «| J5 верхній = FE1.1s P1 | U35 | RTL-B (подовжувач + ферит)» write «RTL-B (Lindy 36700 0.2 м + Würth 74271112)».
+    - **Reason:** Record 5 conditional USB extension replacement.
+    - **Sources:** analogs_G1 decisions[5]
+    - **Saving usd:** 1-7 (model)
+  51.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** V4L USB extension (C5)
+    - **Anchor:** RTL-A на екранованому подовжувачі 15 см з феритом (з Lime — T7)
+    - **Instruction:** Replace with «RTL-A на екранованому подовжувачі Lindy 36700 0.2 м з феритом Würth 74271112 (за умовою тесту фону; запасний — загальний 15 см) (з Lime — T7)».
+    - **Reason:** Record 5.
+    - **Sources:** analogs_G1 decisions[5]
+    - **Saving usd:** 1-7 (model)
+  52.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** V4L extensions and panel pigtail routing
+    - **Anchor:** V4L — усередині відсіку на екранованих подовжувачах 15 см з феритами
+    - **Instruction:** Replace with «V4L — усередині відсіку на Lindy 36700 0.2 м (на 5 см більше запасу) з Würth 74271112 на шарі термоусадки (ферит розрахований на 4.5-6 мм, кабель 4.4 мм)». After this sentence add: «Цільні пігтейли 20 см з кутовими штекерами до плат — уздовж пластини, подалі від HDMI і понижувачів, радіус згину ≥15 мм.»
+    - **Reason:** Record 5 stack_changes (routing, heat-shrink build-up).
+    - **Sources:** analogs_G1 decisions[5]
+    - **Saving usd:** 0
+  53.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** Panel holes for O-ring bulkhead pigtails
+    - **Anchor:** **Панелі і прорізи (11-14).** Верх: P1-P7
+    - **Instruction:** After «Верх: P1-P7 (опційно P8; з Lime — RX1, RX2, REF IN).» insert: «Типи: 6 SMA (P1-P3, P6, P7, P8), BNC на P5, F на P4. Отвори P1-P3, P6, P8 — під цільні прохідники з ущільнювальним кільцем (1/4-36 UNS, близько 6.4 мм, з лискою, якщо деталь її має); стінка 4-5 мм (ASA + 2 мм Al) з кільцем, стопорною шайбою і гайкою має лишати ≥3 повні витки різьби для стикування; потрібна лиска або інший захист від провертання.»
+    - **Reason:** Record 5 conditions A (mechanical) and stack_changes (drill holes).
+    - **Sources:** analogs_G1 decisions[5]; reaudit_B (P5 BNC)
+    - **Saving usd:** 0
+  54.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** P5 port row (BNC bulkhead, choke parts)
+    - **Anchor:** | P5 HF + стійка заземлення/противаги | SMA, допускає DC
+    - **Instruction:** Replace type «SMA, допускає DC» with «BNC-прохідник (ключ проти SMA-LNA; за re-audit B), допускає DC». In the chain cell prepend «перемичка BNC → SMA RG316 →» and replace «двоступеневий синфазний дросель — на коаксіалі одразу за P5» with «двоступеневий синфазний дросель (Fair-Rite 5977003801 FT-240-77 + Fair-Rite 2631102002, 9-11 витків RG316; запасний КХ-ступінь — FT-240-31) — на коаксіалі одразу за P5; Boni-Whip — дротом BNC M-M».
+    - **Reason:** Record 5 set contents (P5 BNC, BNC-SMA RG316 jumper, BNC M-M lead) and record 9 choke parts.
+    - **Sources:** analogs_G1 decisions[5], [9]; reaudit_B_receivers_rf.json (P5 BNC)
+    - **Saving usd:** 0
+  55.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** LNB 75 ohm lead
+    - **Anchor:** Подвійно екранований 75 Ohm дріт, щільні F-роз'єми
+    - **Instruction:** Replace with «Дріт до LNB — Goobay 58814 (75 Ohm, 1 м, F-штекер на обох кінцях, потрійне екранування, клас A+ 95 dB, 5.4 мм, центральна жила CCS 0.5 мм; петля DC близько 0.3 Ohm, падіння менше 0.1 V при 0.3 A — модель; запасний — Goobay 66620 5.0 мм клас A 85 dB), щільні F-роз'єми».
+    - **Reason:** Record 5 conditional replacement of the LNB lead.
+    - **Sources:** analogs_G1 decisions[5] (Reichelt pages)
+    - **Saving usd:** 0-5 (model)
+  56.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Cable set acceptance (pigtails, Lindy 36700, Goobay 58814, Taoglas)
+    - **Anchor:** | Повна вузькосмугова A/B-матриця для кожного стану
+    - **Instruction:** Insert a new row before this row: «| Набір кабелів (кондуктивно, без розгорток антен). Пігтейли — кожен до того, як торкнеться V4L, LiteVNA чи Lime: справжній SMA (гніздо прохідника — із сокетом, не RP-SMA), FEP коричневий/бежевий 2.5 ±0.1 мм (чорний PVC близько 2.8 мм — RG174, відкинути), центральний штир не виступає за опорну площину; LiteVNA з навантаженим кінцем: S11 ≤ −20 dB на 0.1-2.3 GHz, |S21| ≤0.3 dB до 1.7 GHz і ≤0.45 dB на 2.3 GHz; потім 10 циклів з'єднання, тест на відрив і 10 згинів — та сама розгортка; S11/S21 у parts.yaml; порт без прохідного екземпляра — брендова деталь. Lindy 36700: 0.2 м вміщується в CAD; DC-неперервність корпусів; A/B фону з навантаженням на кожному V4L напряму і через подовжувач — підйом менше 0.5 dB; ціну ЄС перевірити перед замовленням. Goobay 58814: на прибутті — обидва кінці F-штекери; S11/S21 з урахуванням 50/75 Ohm; A/B проникнення (лише прийом) проти еталонного дроту класу A на 470-800 MHz, зокрема 733-758 MHz, з LNB без живлення і з живленням — без нових несучих; падіння DC під навантаженням LNB ≤0.1 V. Taoglas CAB.011 (опційно): лише якщо роз'єм LC76G — MHF1/U.FL (близько 3 мм; MHF4 — близько 2 мм), додати ущільнювальне кільце | LiteVNA, DMM, SDR — кондуктивно і лише прийом | На прибутті, до монтажу |»
+    - **Reason:** Acceptance conditions of the conditional cable-line replacements.
+    - **Sources:** analogs_G1 decisions[5].conditions_or_tests
+    - **Saving usd:** 0
+  57.
+    - **Section:** 08_open_bench
+    - **Kind:** correction
+    - **Part:** Possibly-uncounted small items: BNC-SMA lead
+    - **Anchor:** дріт BNC-SMA для Boni-Whip
+    - **Instruction:** Replace «дріт BNC-SMA для Boni-Whip» with «(перемичка BNC-прохідник → SMA і дріт BNC M-M для Boni-Whip — тепер у наборі кабелів 2.10)».
+    - **Reason:** Record 5 adds these to the cable set.
+    - **Sources:** analogs_G1 decisions[5].stack_changes
+    - **Saving usd:** 0
+  58.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** other
+    - **Part:** HF chain total (3.3)
+    - **Anchor:** | **Разом КХ-тракт** | | | **439.90-589.17**
+    - **Instruction:** Change the total to «**426.17-546.74** + частка LDO» (мій перерахунок: HF+ 169 + перемикач 44-50 + екран 8.56-8.86 + дросель 18.71-23.71 + дріт 46.95-66.44 + Boni-Whip 123.95-178.73 + щогла 15-50). In the note replace «КХ-тракт дорожчає на близько $77-110 через перемикач і дросель» with «КХ-тракт дорожчає на близько $62.71-73.71 через перемикач і дросель», and replace «Дріт BNC-SMA ($5-10) окремо не враховано.» with «Перемичка BNC-прохідник → SMA і дріт BNC M-M для Boni-Whip — у наборі кабелів 2.10.»
+    - **Reason:** Line changes from records 5, 7, 8, 9.
+    - **Sources:** analogs_G1 decisions[5], [7], [8], [9]
+    - **Saving usd:** 13.73-42.43 on the HF chain
+  59.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** seller_or_price
+    - **Part:** Airspy HF+ Discovery
+    - **Anchor:** | КХ/ДХ і другий VHF | Airspy HF+ Discovery | 1 | 169.00 |
+    - **Instruction:** Model: «Airspy HF+ Discovery (новий, SKU IM190522001EU)». Price: «169.00 без ПДВ (з ПДВ і DHL зі складу DE: $206.52 у DE, $214.91 у FR; ES +$35.49 ПДВ)». Source: «ITEAD, склад DE (офіційний партнер; 310 шт.)». Status: «перевірено (API магазину і гостьовий кошик, 18.10.2026; нічого не замовлено)». Append to the note: «Гарантія ITEAD — 2 роки на дефекти + 30 днів повернення (доставку не повертають). Вікно купівлі: якщо розпродаж Airspy Black Friday 2026 повториться (близько 27.11-1.12.2026; ще не оголошено) — $135.20 (−20%) або $126.75 (−25%) без ПДВ, близько $166.30 / $156.24 з ПДВ і доставкою в DE; без розпродажу до близько 2.12.2026 — за $169. Склад КНР (IM190522001) не дешевший: $169 + $5.98, товар близько EUR 150.3 — понад поріг EUR 150, тож ПДВ, можливе мито і збір при доставці, щонайменше $208.23. Інші дилери ЄС дорожчі (WiMo EUR 232 з ПДВ, HamShop NL EUR 239, AstroRadio EUR 214.17 з 21% IVA, Moonraker EUR 231.99) — лише якщо ITEAD без наявності. Airspy: другий тюнер на 174-260 MHz (Band III) — зі зниженою продуктивністю.» Keep the rest of the note and the budget alternative.
+    - **Reason:** P5 keep; price is ex VAT, landed EU prices, EU SKU, warranty correction, conditional timing saving.
+    - **Sources:** analogs_G1 decisions[6] (itead.cc store API and guest cart; airspy.com; rtl-sdr.com sale posts)
+    - **Saving usd:** 0.00 confirmed; 33.80-42.25 ex VAT (40.22-50.28 landed DE) only if the Black Friday 2026 sale repeats
+  60.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** Airspy HF+ Discovery (3.3 summary)
+    - **Anchor:** | Приймач | Airspy HF+ Discovery | 1 | 169.00 | ITEAD
+    - **Instruction:** Change price cell to «169.00 без ПДВ ($206.52 з ПДВ і доставкою в DE)» and source to «ITEAD, склад DE (IM190522001EU)».
+    - **Reason:** Record 6 price basis and SKU.
+    - **Sources:** analogs_G1 decisions[6]
+    - **Saving usd:** 0.00
+  61.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** Airspy HF+ Discovery (#92)
+    - **Anchor:** | Airspy HF+ Discovery (#92) |
+    - **Instruction:** Append to the decision cell: «Ціна $169.00 без ПДВ (ITEAD DE, SKU IM190522001EU; з ПДВ і DHL $206.52 DE / $214.91 FR); гарантія ITEAD 2 роки. Незалежний вимір SM5BSZ (7.2 MHz, відносно Perseus): HF+ Discovery −3 dB, HF+ Dual −10, AFEDRI −15, Airspy+SpyVerter −18, RSP1 −23 dB. Airspy: другий тюнер Band III (174-260 MHz) — зі зниженою продуктивністю; AIS 162, LRPT 137, МКС 145.8 і FM-RDS — нижче 174 MHz, але DAB (Band III) — ні (див. 4.2).» Replace consequences «Виміряти струм.» with «Виміряти струм FNB58 на 768 і 912 ksps (до того — 0.3 A); перевірки на прибутті — розділ 8.»
+    - **Reason:** Record 6 stack_changes (1)-(5) and the DAB caveat (record's 'all roles below 174 MHz' omits DAB).
+    - **Sources:** analogs_G1 decisions[6] (airspy.com Discovery page; rtl-sdr.com SM5BSZ comparison)
+    - **Saving usd:** 0.00
+  62.
+    - **Section:** 04_capabilities
+    - **Kind:** keep_with_note
+    - **Part:** DAB+ on HF+ (Band III)
+    - **Anchor:** | FM-RDS / DAB+ | 87.5-108 MHz / Band III
+    - **Instruction:** Append to the notes cell: «DAB+ (Band III) на HF+ лежить у смузі 174-260 MHz, яку Airspy позначає як зі зниженою продуктивністю; для DAB+ віддавати перевагу запасному V4L або спершу порівняти A/B (лише прийом).»
+    - **Reason:** Record 6 says no stack VHF role is above 174 MHz, but v1 routes DAB (Band III) to the HF+.
+    - **Sources:** analogs_G1 decisions[6].stack_changes (5); airspy.com/airspy-hf-discovery
+    - **Saving usd:** 0
+  63.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** keep_with_note
+    - **Part:** FM-RDS / DAB route
+    - **Anchor:** | P6 → HF+ (або запасний V4L) | redsea, welle-cli |
+    - **Instruction:** Change to «| P6 → HF+ для FM-RDS; DAB+ (Band III, 174-260 MHz — знижена продуктивність HF+ за Airspy) — краще запасний V4L | redsea, welle-cli |».
+    - **Reason:** Same caveat as in 4.2.
+    - **Sources:** analogs_G1 decisions[6]
+    - **Saving usd:** 0
+  64.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Airspy HF+ Discovery purchase rule and arrival tests
+    - **Anchor:** | Повна вузькосмугова A/B-матриця для кожного стану
+    - **Instruction:** Insert a new row before this row: «| Airspy HF+ Discovery: правило купівлі — стежити за itead.cc (EU SKU IM190522001EU), airspy.com і rtl-sdr.com на розпродаж Black Friday 2026 (перевірено: Black Friday 2025 −25% = $126.75; літо 2026 −20% = $135.20, 27.06-4.07; Black Friday 2022-2024 −20%); без розпродажу до близько 2.12.2026 — купити за $169 + ПДВ; лише ITEAD або дилер з airspy.com/purchase. На прибутті, у межах 30-денного повернення ITEAD (тести з re-audit B): airspyhf_info — S/N, прошивка, список частот; lsusb показує 03eb:800c; прошивка до R5.0.1, якщо старіша за R4.0.7; airspyhf_calibrate від 10 MHz із GNSS-прив'язкою через ≥40 dB; струм FNB58 на 768 і 912 ksps; пульсації на LC-фільтрі VBUS; 60 хв прогону на H4. Вживаний — лише за живим лістингом, помітно дешевшим за нову ціну на розпродажі, і після повного кондуктивного списку (airspyhf_info, фон і MDS у межах 2 dB, блокування нижче +10 dBm, ppm проти GNSS, 60 хв на H4) — не рекомендовано | Кондуктивно | Після купівлі |»
+    - **Reason:** Purchase rule and carried-over arrival tests of the keep decision.
+    - **Sources:** analogs_G1 decisions[6].conditions_or_tests; reaudit_B (bring-up tests)
+    - **Saving usd:** conditional 33.80-42.25 ex VAT
+  65.
+    - **Section:** 08_open_bench
+    - **Kind:** correction
+    - **Part:** HF+ USB connector (open item)
+    - **Anchor:** тип USB-роз'єму HF+
+    - **Instruction:** Replace with «тип USB-роз'єму HF+ (за P5 — micro-USB B; підтвердити)».
+    - **Reason:** Records 6 and 8 name micro-USB B.
+    - **Sources:** analogs_G1 decisions[6], [8]
+    - **Saving usd:** 0
+  66.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Airspy HF+ Discovery (step 5)
+    - **Anchor:** Airspy HF+ (ITEAD, найближчий склад)
+    - **Instruction:** Replace with: «Airspy HF+ — ITEAD, склад DE (SKU IM190522001EU; $169 без ПДВ, з ПДВ і DHL $206.52 DE / $214.91 FR). Правило купівлі: якщо розпродаж Airspy Black Friday 2026 (близько 27.11-1.12.2026; не оголошено) буде — купити тоді ($135.20-126.75 без ПДВ); без розпродажу до близько 2.12.2026 — за $169. Увага: A/B регулятора (ворота C4), струми HF+ і LF/HF-ворота G6K потребують HF+; якщо ці ворота мають пройти раніше — купити зараз за $169 (умовна економія $33.80-42.25 без ПДВ втрачається).»
+    - **Reason:** Record 6 purchase window; flags the dependency of v1 gate C4 and bring-up step 4 on an early HF+.
+    - **Sources:** analogs_G1 decisions[6].conditions_or_tests; v1 C4 / bring-up step 4
+    - **Saving usd:** conditional 33.80-42.25 ex VAT
+  67.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** rule
+    - **Part:** Airspy authenticity
+    - **Anchor:** Airspy (середній): лише дилери з airspy.com/purchase.
+    - **Instruction:** Append: « ITEAD — склад DE, SKU IM190522001EU; сторонній лістинг eBay «For Airspy HF+ Discovery» (не з дилерського списку) — ні; клони Airspy R2 і RSP1 — ні.»
+    - **Reason:** Rejected candidates in record 6 (non-dealer listing, clones).
+    - **Sources:** analogs_G1 decisions[6].rejected
+    - **Saving usd:** 0
+  68.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Airspy HF+ Discovery
+    - **Anchor:** - Airspy HF+ Discovery: https://airspy.com/airspy-hf-discovery/ ; ITEAD: https://itead.cc/product/airspy-hf-discovery/
+    - **Instruction:** Append: « ; ITEAD EU (склад DE): https://itead.cc/product/airspy-hf-discovery-eu/ ; дилери: https://airspy.com/purchase/ ; порівняння SM5BSZ: https://www.rtl-sdr.com/leif-continues-his-comparisons-of-the-airspy-hf-discovery-rsp1-perseus-and-more-sdrs/ ; розпродажі: https://www.rtl-sdr.com/airspy-2026-summer-sale-20-off-all-airspy-products/ , https://www.rtl-sdr.com/an-overview-of-2025-sdr-black-friday-deals/».
+    - **Reason:** Key URLs of record 6.
+    - **Sources:** analogs_G1 decisions[6].sources
+    - **Saving usd:** 0
+  69.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** replace_part
+    - **Part:** HF+ input selector: G6K-2F-RF-S DC5 x2
+    - **Anchor:** | Перемикач входу HF+ | 2× Omron G6K-2F-RF 5 V
+    - **Instruction:** Replace the whole row with: «| Перемикач входу HF+ | 2× Aratas (раніше Omron) G6K-2F-RF-S DC5 послідовно-паралельно + плата драйвера (FET, MCP23017 #1 GPB2/GPB3, LAB5) | 1 набір | 44-50 (реле $39.38 = 2 × $19.69, DigiKey US Z2828-ND; DigiKey DE EUR 17.29 без ПДВ / EUR 20.58 з ПДВ за шт. = EUR 34.58 / EUR 41.15 за два; плата драйвера — оцінка) | DigiKey (авторизований; DE — безкоштовна доставка від EUR 75, разом з іншими рядками DigiKey) | перевірено (реле, 18.10.2026; 2,027 шт., фабричний термін 26 тижнів) / модель (плата) | Знеструмлено — 50 Ohm на HF+ і навантаження на обох антенних портах; приймання від 35 dB на 162-260 MHz, до 0.3 dB 10 kHz-260 MHz, RL ≥21 dB. Та сама гарантована таблиця, що й у G6K-2F-RF (20/30 dB мін. на 1 GHz, IL ≤0.2 dB, VSWR ≤1.2); котушка 5 V, 237 Ohm, 21.1 mA (близько 0.105 W). Посадка -S: 8.8 x 7.5 мм, 6 виводів землі на RF-землю перехідними отворами; полярність котушки (+ пін 1, − пін 8), діод і нижній FET лишаються. Умова: LF/HF-ворота на першій зібраній парі (розв'язка ≥75 dB до 2 MHz, ≥60 dB до 20 MHz, ≥55 dB на 20-30 MHz); інакше — запасний G6K-2F-RF DC5 (DigiKey Z2037-ND, $25.06 за шт.; DigiKey DE EUR 22.00 без ПДВ / EUR 26.18 з ПДВ; власна посадка) або ваше явне прийняття виміру. Стара позиція: 2× G6K-2F-RF DC5 з RS UK, $62-80 за набір — економія $10.74 на реле проти тієї самої деталі в DigiKey ($50.12; у DigiKey DE EUR 9.42 без ПДВ), $17.89-29.87 проти RS UK. Бюджет: ручне перемикання P5/P6. |»
+    - **Reason:** P5 replace_conditionally: same datasheet and guarantee table, equal or better average curves at 30-300 MHz; the one weaker published figure (isolation below about 25 MHz) is gated on the bench.
+    - **Sources:** analogs_G1 decisions[7] (DigiKey US/DE pages 18.10.2026; Omron K242-E1-07 digitised curves)
+    - **Saving usd:** 10.74 per set vs DigiKey current part; 17.89-29.87 vs RS UK; EUR 9.42 ex VAT in EU
+  70.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** replace_part
+    - **Part:** HF+ input selector (3.3 summary)
+    - **Anchor:** | Перемикач входу | 2× Omron G6K-2F-RF + драйвер
+    - **Instruction:** Change model to «2× Aratas (Omron) G6K-2F-RF-S DC5 + драйвер (запасний — G6K-2F-RF DC5)», price to «44-50 (реле $39.38)», source to «DigiKey», status to «перевірено (реле) / модель (плата)».
+    - **Reason:** Record 7.
+    - **Sources:** analogs_G1 decisions[7]
+    - **Saving usd:** see 2.3 row
+  71.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** HF+ selector relays (C17)
+    - **Anchor:** **Перемикач HF+:** два Omron G6K-2F-RF послідовно-паралельно
+    - **Instruction:** Replace «два Omron G6K-2F-RF послідовно-паралельно» with «два Aratas (раніше Omron) G6K-2F-RF-S DC5 (DigiKey Z2828-ND) послідовно-паралельно — за умовою LF/HF-воріт; запасний — G6K-2F-RF DC5 (Z2037-ND)». After «втрати до 0.3 dB від 10 kHz до 260 MHz» add «, RL ≥21 dB; LF/HF-ворота: ≥75 dB до 2 MHz, ≥60 dB до 20 MHz, ≥55 dB на 20-30 MHz. Розв'язка одного розімкненого контакту за усередненими кривими Omron — близько 43/41/39 dB на 162/200/260 MHz (оцифровано), тож запас над 35 dB на 260 MHz до шунтуючого полюса — лише близько 4 dB; виміряне приймання обов'язкове».
+    - **Reason:** Record 7 chosen part, condition and corrected isolation basis.
+    - **Sources:** analogs_G1 decisions[7]
+    - **Saving usd:** 10.74
+  72.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** seller_or_price
+    - **Part:** G6K price (C17 'чому')
+    - **Anchor:** Пара G6K коштує близько $57-69 (GBP 43-52, RS UK)
+    - **Instruction:** Replace with «Пара G6K-2F-RF-S коштує $39.38 (DigiKey US; EUR 34.58 без ПДВ / EUR 41.15 з ПДВ у DigiKey DE)».
+    - **Reason:** Record 7 price/seller.
+    - **Sources:** analogs_G1 decisions[7]
+    - **Saving usd:** 17.89-29.87 vs RS UK
+  73.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** G6K coil power (C17)
+    - **Anchor:** живиться лише одна котушка (близько 0.12-0.15 W)
+    - **Instruction:** Replace «(близько 0.12-0.15 W)» with «(близько 0.105 W = 5 V × 21.1 mA)».
+    - **Reason:** Omron datasheet coil data.
+    - **Sources:** analogs_G1 decisions[7].stack_changes (Rails)
+    - **Saving usd:** 0
+  74.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** G6K-2F-RF-S DC5 pair gate
+    - **Anchor:** розв'язка G6K на 162-260 MHz і втрати 10 kHz-260 MHz
+    - **Instruction:** Replace with «G6K-2F-RF-S — ворота (окремий рядок нижче)» and insert a new row after the «РЧ-деталі» row: «| G6K-2F-RF-S DC5 (перша зібрана пара; LiteVNA порт 1 або генератор tinySA ≤ −40 dBm, усі антенні порти навантажені): (a) ≥35 dB на 162-260 MHz (P6→HF+ при K1 і P5→HF+ при K2), ≤0.3 dB від 10 kHz (або найнижчої частоти джерела) до 260 MHz, RL ≥21 dB до 260 MHz, без живлення — HF+ на 50 Ohm і обидва порти навантажені; (b) нові LF/HF-ворота: P5→HF+ з K2 під струмом і з усіма котушками вимкненими, P6→HF+ з K1; детектор — HF+ (MDS близько −140 dBm) відносно рівня з вибраним портом; приймати ≥75 dB від найнижчої частоти джерела (≤100 kHz; нижні межі LiteVNA/tinySA не перевірено) до 2 MHz, ≥60 dB до 20 MHz, ≥55 dB на 20-30 MHz; якщо не пройдено лише (b) — запасний G6K-2F-RF DC5 (власна посадка) або ваше явне прийняття виміру; (c) на прибутті: маркування Aratas/Omron і код дати, спрацювання ≤4.0 V і відпускання ≥0.5 V на кожній котушці; (d) вологочутливість: паяти протягом близько тижня після відкриття (≤30 °C/60% RH), запасні — у герметичний пакет | Кондуктивно | Крок 10 запуску |»
+    - **Reason:** Condition of the conditional G6K replacement.
+    - **Sources:** analogs_G1 decisions[7].conditions_or_tests
+    - **Saving usd:** 0
+  75.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Bring-up step 10: choke sleeve gate and G6K LF/HF gate
+    - **Anchor:** 10. **З 20.11.2026:** Boni-Whip, вимір імпедансу синфазного дроселя
+    - **Instruction:** After «вимір імпедансу синфазного дроселя» insert « (ворота втулки 2631102002, 9-11 витків — розділ 8)»; after «розв'язка перемикача HF+» add « і LF/HF-ворота пари G6K-2F-RF-S (детектор — HF+)».
+    - **Reason:** Records 7 and 9 bench gates.
+    - **Sources:** analogs_G1 decisions[7], [9]
+    - **Saving usd:** 0
+  76.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** replace_part
+    - **Part:** HF+ shield assembly
+    - **Anchor:** | Екран HF+ | Жерстяний екран + LC + Mix-31 на VBUS
+    - **Instruction:** Replace the whole row with: «| Екран HF+ | Otto Schubert Art. 6B (жерсть 0.5 мм, 111x55x20 мм зовні, 109x53x18 мм всередині, дві L-стінки і дві насувні кришки) + Bourns SRR1260-101M (100 uH) + Panasonic EEU-FR1C101 (100 uF/16 V) + R-C демпфер близько 1 Ohm / 220 uF + 2× Fair-Rite 2631480002 (суцільна втулка #31) на екранованому micro-USB пігтейлі від CH334F H4 | 1 | 8.56-8.86 (корпус EUR 4.25 з ПДВ DE = $4.78 + $1.11 + $0.41 + демпфер $0.3-0.6 + 2 × $0.98); 7.79-8.09 без ПДВ | Schubert (DE; замовлення e-mail, мінімум EUR 20 з ПДВ = $22.48 без доставки, передоплата або SEPA) + DigiKey | перевірено (корпус, LC, ферити) / не перевірено (демпфер) | Найдалі від понижувачів. Дві втулки дають на +87...+270% (таблиця 1) і +90...+143% (таблиця 2) більше імпедансу, ніж одна 0431164281, на 1-250 MHz. Умови: пігтейл ≤4.9 мм (отвір 4.95 мм), втулки надіти до пайки на CH334F, ≥55 мм прямого дроту — інакше 0431164281 ($2.85) зі стяжкою; HF+ (45x60x10 мм) + прямий штекер + LC мають влізти в 53x109x18 мм, SMA крізь торцеву стінку з гайкою — інакше Art. 6 (111x55x30 мм, та сама ціна); Art. 9 — лише якщо bias-tee Boni або плата G6K підуть усередину; наявність обох кришок — підтвердити в листі. Демпфер — не більше 220 uF (inrush, розділ 5.7). Мінімум Schubert — заповнити корисним (запасний 6B, прохідні D1000 1 nF по EUR 0.68, лист WB1). Стара позиція: неназваний DIY 8-15 (модель); економія близько $2.38 ($2.15 без ПДВ) проти перевіреної еталонної збірки Art. 9 + 0431164281 ($10.94-11.24), реальна лише якщо мінімум замовлення заповнено потрібним; близько 38 g легше (модель). |»
+    - **Reason:** P5 replace_conditionally: concrete build of the same design; same tinplate family; ferrite pair better at every listed frequency.
+    - **Sources:** analogs_G1 decisions[8] (schubert-gehaeuse.de pages; Fair-Rite product pages; DigiKey search pages)
+    - **Saving usd:** about 2.38 per unit vs verified reference build (2.15 net)
+  77.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** replace_part
+    - **Part:** HF+ shield (3.3 summary)
+    - **Anchor:** | Екран HF+ | жерстяний + LC + Mix-31
+    - **Instruction:** Change model to «Schubert Art. 6B + SRR1260-101M + EEU-FR1C101 + демпфер 1 Ohm / 220 uF + 2× Fair-Rite 2631480002», price to «8.56-8.86», source to «Schubert + DigiKey», status to «перевірено / не перевірено (демпфер)».
+    - **Reason:** Record 8.
+    - **Sources:** analogs_G1 decisions[8]
+    - **Saving usd:** about 2.38
+  78.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** HF+ VBUS filter and inrush limit
+    - **Anchor:** VBUS HF+ — LC + Mix-31.
+    - **Instruction:** Replace with «VBUS HF+ — LC (Bourns SRR1260-101M 100 uH, Isat 1.7 A, DCR ≤180 mOhm, SRF 6.07 MHz + Panasonic EEU-FR1C101 100 uF + R-C демпфер близько 1 Ohm / 220 uF) + 2× Fair-Rite 2631480002 (#31) на micro-USB пігтейлі (струм VBUS і повернення в одному кабелі — осердя без підмагнічування). Демпфер не більше 220 uF: 100 + 220 uF при 0.3 A заряджаються близько 5.3 ms проти 7.5 ms типової затримки TPS2553; 470 uF (близько 9.5 ms) могли б защіпнути варіант -1 — перевірити, що FAULT чистий при ввімкненні.»
+    - **Reason:** Record 8 chosen build and inrush knock-on (item 5).
+    - **Sources:** analogs_G1 decisions[8].equivalence_proof, conditions_or_tests 5
+    - **Saving usd:** 0
+  79.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** HF+ can placement
+    - **Anchor:** HF+ у жерстяному екрані в дальньому від понижувачів куті.
+    - **Instruction:** Replace with «HF+ у жерстяному корпусі Schubert Art. 6B (0.5 мм, 111x55x20 мм; TE101 близько 3.1 GHz — модель) у дальньому від понижувачів куті; SMA HF+ затиснута гайкою на торцевій стінці, кришка з'єднана з середньою пластиною; bias-tee Boni і плата G6K — поруч, поза корпусом.»
+    - **Reason:** Record 8 assembly notes and case/CAD.
+    - **Sources:** analogs_G1 decisions[8].stack_changes
+    - **Saving usd:** 0
+  80.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** CH334F H4 (HF+ VBUS)
+    - **Anchor:** | CH334F H4 | ключ навантаження (MCP #1 GPA4) + LC + Mix-31
+    - **Instruction:** Replace «+ LC + Mix-31» with «+ LC (SRR1260-101M + EEU-FR1C101 + демпфер 1 Ohm / 220 uF) + 2× Fair-Rite 2631480002 (#31)» and «Airspy HF+ у своєму екрані» with «Airspy HF+ (micro-USB B) у корпусі Schubert 6B».
+    - **Reason:** Record 8.
+    - **Sources:** analogs_G1 decisions[8]
+    - **Saving usd:** 0
+  81.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** CH334F H4 (C5)
+    - **Anchor:** H4 — HF+ за ключем навантаження від MCP, LC і Mix-31.
+    - **Instruction:** Replace with «H4 — HF+ за ключем навантаження від MCP, LC (SRR1260-101M + EEU-FR1C101 + демпфер ≤220 uF) і 2× Fair-Rite 2631480002 (#31).»
+    - **Reason:** Record 8.
+    - **Sources:** analogs_G1 decisions[8]
+    - **Saving usd:** 0
+  82.
+    - **Section:** 05a_arch_power
+    - **Kind:** architecture
+    - **Part:** LAB5 load: HF+ switch + LC
+    - **Anchor:** HF+ (ключ + LC + Mix-31)
+    - **Instruction:** Replace with «HF+ (ключ + LC з демпфером ≤220 uF + 2× ферит #31; inrush у межах затримки TPS2553)».
+    - **Reason:** Record 8 inrush note.
+    - **Sources:** analogs_G1 decisions[8].conditions_or_tests 5
+    - **Saving usd:** 0
+  83.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Mass model: HF+, shield and switch
+    - **Anchor:** | HF+, екран і перемикач | 0.1 |
+    - **Instruction:** Change to «| HF+, екран і перемикач | 0.15-0.17 (модель: HF+ 32 g, корпус 6B 87 g, ферити 24 g, LC близько 5 g, плата G6K близько 15 g) |». In the device total row «| **пристрій** | **1.52-1.72 …» change the sum to «1.57-1.79» (+0.05-0.07 kg за екран HF+; КХ-ступінь дроселя легший на 63 g, у таблиці окремо не виділено).
+    - **Reason:** The 0.1 kg line was under-modelled; a 0.5 mm tinplate can alone is about 87 g.
+    - **Sources:** analogs_G1 decisions[8].stack_changes (Mass); [9] (63 g lighter HF stage)
+    - **Saving usd:** 0
+  84.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** correction
+    - **Part:** Device weight (2.12)
+    - **Anchor:** **Вага (модель):** пристрій близько 1.5-1.7 kg
+    - **Instruction:** Replace «пристрій близько 1.5-1.7 kg без Lime (сума частин у 5.8 — 1.52-1.72 kg; +0.15 kg з Lime)» with «пристрій близько 1.6-1.8 kg без Lime (сума частин у 5.8 — 1.57-1.79 kg після +0.05-0.07 kg за екран HF+; +0.15 kg з Lime)».
+    - **Reason:** Record 8 mass correction.
+    - **Sources:** analogs_G1 decisions[8]
+    - **Saving usd:** 0
+  85.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** other
+    - **Part:** C24 cost and weight
+    - **Anchor:** core-пристрій $1,758-2,253
+    - **Instruction:** Keep the verifier figures but add after them: «(після P5 G1 мій перерахунок рядків core — дельта −$41.07 нижньої і −$88.77 верхньої межі: Uputronics −9.19 (лише база), HMC7992 −3.15/−12.15, G6K −18/−30, екран HF+ +0.56/−6.14, дросель +3.71/−6.29, кабелі −15/−25)». In the weight part replace «(сума частин 1.52-1.72 kg» with «(сума частин 1.57-1.79 kg після +0.05-0.07 kg за екран HF+».
+    - **Reason:** Aggregated effect of the G1 line changes on core totals and weight.
+    - **Sources:** analogs_G1 decisions[3], [4], [5], [7], [8], [9]
+    - **Saving usd:** 41.07-88.77 on the core recount
+  86.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HF+ shield build checks
+    - **Anchor:** | Повна вузькосмугова A/B-матриця для кожного стану
+    - **Instruction:** Insert a new row before this row: «| Екран HF+ (Schubert 6B): виміряти OD micro-USB пігтейла (≤4.9 мм; інакше 0431164281 зі стяжкою); після приходу HF+ — довжина з SMA і посадка HF+ + прямий штекер + LC у 53x109x18 мм (інакше Art. 6); кришки — підтвердити в листі замовлення; A/B HF+ з корпусом і без (RBW 1 Hz на 40/60/77.5/162/490/518/4209.5 kHz і 1/7/14 MHz); пульсації VBUS 1 kHz-30 MHz на виводі HF+ і дзвін при ввімкненні; 60 хв у закритому корпусі — температура і струм HF+; імпеданс пари втулок на тестовому дроті LiteVNA проти цифр 0431164281 на 1-250 MHz; FAULT TPS2553 чистий при ввімкненні з демпфером 220 uF | Кондуктивно; LiteVNA лише на тестовому дроті | Після приходу HF+ |»
+    - **Reason:** Conditions 1-5 of the conditional shield replacement.
+    - **Sources:** analogs_G1 decisions[8].conditions_or_tests
+    - **Saving usd:** 0
+  87.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** replace_part
+    - **Part:** HF common-mode choke: HF stage
+    - **Anchor:** | Синфазний дросель КХ | FT-240-77 + FT-240-31
+    - **Instruction:** Replace the whole row with: «| Синфазний дросель КХ | Fair-Rite 5977003801 (FT-240-77, ДХ/СХ, без змін) + Fair-Rite 2631102002 (#31, втулка 25.9 x 12.8 x 28.6 мм, 55 g, 9-11 витків RG316), кронштейн до пластини | 1 | 18.71-23.71 (осердя $13.71 = $10.77 + $2.94, DigiKey US; DigiKey DE близько EUR 12.04 без ПДВ: 2631102002 EUR 2.58 без ПДВ / EUR 3.07 з ПДВ, 5977003801 EUR 9.46 без ПДВ — цифра пошуку, не перевірено; RG316, 2 SMA і кронштейн $5-10 — оцінка) | DigiKey | перевірено (осердя, 18.10.2026) / модель (решта) | Цілі: ≥1 kOhm на 60 kHz, ≥2 kOhm на 1-30 MHz без провалу передачі на 0.3-3 MHz; ступінь-втулка сама ≥2.3 kOhm на 1 MHz; виміряти на LiteVNA кондуктивно. Намотувати вільно (радіус згину ≥10 мм; мінімум Belden — 25 мм), послідовні проходи, вхід і вихід з протилежних кінців; не менше 9 витків. Умова: якщо жодна кількість 9-11 витків не проходить — запасний 2631803802 (FT-240-31, $9.35 / EUR 8.21 без ПДВ), намотаний як раніше. КХ-ступінь легший на 63 g (55 проти 118 g); колиска з силіконовою чи пінною прокладкою і стяжками, без металевих хомутів на фериті. Стара позиція: FT-240-77 + FT-240-31 ($15-30; осердя $20.12) — економія $6.41 (DigiKey US), EUR 5.63 без ПДВ / EUR 6.70 з ПДВ (DigiKey DE). Бюджет: кліпсові ферити (недостатньо нижче кількох MHz). |»
+    - **Reason:** P5 replace_conditionally: same #31 material, about 2.4-2.6x impedance per turn squared; 9 turns is the minimum not-worse count; winding capacitance unproven, hence the bench gate.
+    - **Sources:** analogs_G1 decisions[9] (Fair-Rite product pages; DigiKey US/DE; K9YC Choke Cookbook 2018; Belden 83284)
+    - **Saving usd:** 6.41 (DigiKey US); EUR 5.63 ex VAT / EUR 6.70 incl. VAT (DigiKey DE)
+  88.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** replace_part
+    - **Part:** HF common-mode choke (3.3 summary)
+    - **Anchor:** | Синфазний дросель | FT-240-77 + FT-240-31
+    - **Instruction:** Change model to «FT-240-77 (5977003801) + Fair-Rite 2631102002 (9-11 витків; запасний FT-240-31)», price to «18.71-23.71», source to «DigiKey», status to «перевірено (осердя) / модель (решта)».
+    - **Reason:** Record 9.
+    - **Sources:** analogs_G1 decisions[9]
+    - **Saving usd:** 6.41
+  89.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** HF choke parts (C17)
+    - **Anchor:** FT-240-77 для ДХ/СХ, FT-240-31 для КХ
+    - **Instruction:** Replace with «FT-240-77 (Fair-Rite 5977003801) для ДХ/СХ і Fair-Rite 2631102002 (#31, втулка, 9-11 витків RG316) для КХ — за умовою воріт; запасний КХ-ступінь — FT-240-31 (2631803802)».
+    - **Reason:** Record 9.
+    - **Sources:** analogs_G1 decisions[9]
+    - **Saving usd:** 6.41
+  90.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** other
+    - **Part:** HF chain cost added (C17)
+    - **Anchor:** Додає близько $77-110 до КХ-тракту.
+    - **Instruction:** Replace with «Додає близько $63-74 до КХ-тракту (перемикач $44-50 + дросель $18.71-23.71; мій перерахунок).»
+    - **Reason:** Records 7 and 9 line prices.
+    - **Sources:** analogs_G1 decisions[7], [9]
+    - **Saving usd:** 14-36
+  91.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** HF choke (EMI item 7)
+    - **Anchor:** Двоступеневий синфазний дросель біля КХ-роз'єму (77-mix для ДХ/СХ, 31-mix для КХ
+    - **Instruction:** Replace «(77-mix для ДХ/СХ, 31-mix для КХ;» with «(FT-240-77 / Fair-Rite 5977003801 для ДХ/СХ; Fair-Rite 2631102002, втулка #31, 9-11 витків RG316 для КХ — запасний FT-240-31; намотування вільне, радіус ≥10 мм, вхід і вихід з протилежних кінців; колиска з прокладкою і стяжками, без металевих хомутів;». Keep the targets and add «без провалу передачі на 0.3-3 MHz».
+    - **Reason:** Record 9 build and mechanics notes.
+    - **Sources:** analogs_G1 decisions[9].stack_changes
+    - **Saving usd:** 0
+  92.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HF choke sleeve gate
+    - **Anchor:** імпеданс синфазного дроселя на 60 kHz і 1-30 MHz
+    - **Instruction:** Replace with «дросель — ворота втулки (окремий рядок нижче)» and insert a new row after the «РЧ-деталі» row: «| Синфазний дросель (втулка 2631102002 + FT-240-77), LiteVNA кондуктивно: 9 витків RG316, вільні петлі (радіус ≥10 мм), послідовні проходи, вхід і вихід з протилежних кінців; виміряти саму втулку, потім увесь дросель на кронштейні в остаточному положенні біля пластини; CM |Z|, Rs і Xs на 40, 60, 77.5, 162, 490, 518 kHz і 1, 1.8, 3, 5, 7, 10, 14, 21, 25, 30 MHz. Пройдено: разом ≥1 kOhm на 60 kHz; разом ≥2 kOhm на кожній точці 1-30 MHz без провалу на 0.3-3 MHz (точки 490/518 kHz не нижче 162 kHz понад індуктивний тренд); втулка сама ≥2.3 kOhm на 1 MHz; Rs ≥|Xs| на 1-30 MHz, де можливо. Якщо 14-30 MHz низько через ємність — підібрати 9-11 витків (ніколи менше 9); якщо жодна кількість не проходить — запасний 2631803802 ($9.35). Після 10 термоциклів (або −20/+60 °C): без порізів оболонки на краях отвору, ізоляція центр-оплітка і DC-опір петлі без змін | LiteVNA кондуктивно; не антена і не H-field зонд | Крок 10 запуску |»
+    - **Reason:** Acceptance gate of the conditional choke replacement.
+    - **Sources:** analogs_G1 decisions[9].conditions_or_tests
+    - **Saving usd:** 0
+  93.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** HF+ shield, ferrites, choke, cables
+    - **Anchor:** - PA3FWM tn07 (активні E-field антени):
+    - **Instruction:** Before this line add: «- Schubert жерстяні корпуси: https://www.schubert-gehaeuse.de/weissblechgehaeuse.html ; доставка і мінімум: https://www.schubert-gehaeuse.de/versand.html ; приладдя: https://www.schubert-gehaeuse.de/weissblechgehaeuse_zubehoer.html», «- Fair-Rite 2631480002: https://fair-rite.com/product/round-cable-emi-suppression-cores-2631480002/ ; 0431164281: https://fair-rite.com/product/round-cable-snap-its-431164281/ ; 2631102002: https://fair-rite.com/product/round-cable-emi-suppression-cores-2631102002/ ; 2631803802: https://fair-rite.com/product/round-cable-emi-suppression-cores-2631803802/ ; 5977003801: https://fair-rite.com/product/toroids-5977003801/», «- K9YC RFI: http://k9yc.com/RFI-Ham.pdf ; K9YC Choke Cookbook 2018: https://www.hellschreiber.com/radio/pdf-ant/2018Cookbook.pdf ; Belden 83284 (RG316): https://catalog.belden.com/index.cfm?event=pd&p=PF_83284», «- Lindy 36700: https://www.lindy.co.uk/cables-adapters-c1/usb-c449/0-2m-usb-2-0-type-a-extension-cable-anthra-line-p11311 ; Goobay F-дроти (Reichelt): https://www.reichelt.com/de/en/shop/product/connection_cable_f_class_a_connector_socket_1_m-303277 , https://www.reichelt.com/de/en/shop/product/connection_cable_f_class_a_connector_socket_1_m-303289 ; Würth 74271112: https://www.we-online.com/components/products/datasheet/74271112.pdf ; Taoglas CAB.011: https://cdn.taoglas.com/datasheets/CAB.011.pdf». Do not add the incompliancemag H-field probe article.
+    - **Reason:** Key URLs of records 5, 8, 9.
+    - **Sources:** analogs_G1 decisions[5], [8], [9] sources
+    - **Saving usd:** 0
+  94.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** keep_with_note
+    - **Part:** Nooelec SAWbird+ GOES cased 100792
+    - **Anchor:** Бюджет: Barebones $44.95 — лише в екранованому корпусі.
+    - **Instruction:** Before this phrase insert: «Гарантія 1 рік (не 2, як у NOAA cased). Даташит Rev 1: 38 dB на f0 (стовпець Max; сторінка гарантує ≥30 dB), смуга 70 MHz на 3 dB / 80 MHz на 10 dB з центром 1688 MHz, NF 1.2 dB тип., 120/140/160 mA (бюджет 180 mA). У замовленні Nooelec > EUR 150 — ПДВ 19-27%, мито і UHF за правилом landed cost. Ніколи не додавати GPIO Labs 1685 MHz BPF (смуга 1675-1695 MHz, DC ≤3 V).» Replace the budget phrase with «Бюджет: Barebones 100791 $44.95 — лише якщо в наборі вже є герметична металева коробка: SMA входу прямо крізь стінку, без перехідника чи прохідника перед першим LNA, петля для крапель і розвантаження обох коаксіалів; якщо коробку треба купувати — корпусний (окремого корпусу Nooelec не продає; найдешевший набір $7.95-9.95 — для іншого виробу).»
+    - **Reason:** P5 keep; warranty note, GPIO BPF ban, barebones condition.
+    - **Sources:** analogs_G1 decisions[10] (Nooelec 100792/100791/100786 pages; datasheet Rev 1 and plot; gpio.com product JSON)
+    - **Saving usd:** 0.00 (barebones saves 5 only if a sealed box is already on hand)
+  95.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** SAWbird+ GOES (#97)
+    - **Anchor:** | L-band LNA (#97) |
+    - **Instruction:** In the decision cell replace «38 dB» with «38 dB на f0 (стовпець Max; гарантовано ≥30 dB)» and «смуга 1648-1728 MHz; uplink LTE B3 1710-1730 MHz у смузі» with «смуга 70 MHz на 3 dB / 80 MHz на 10 dB з центром 1688 MHz (1648-1728 MHz — смуга на 10 dB; плоско 37-39 dB на близько 1655-1720 MHz); режекція за графіком: близько 35-40 dB на 1525-1610 MHz, 43-55 dB на 1805-1880 MHz, близько 43 dB на 2.1-2.7 GHz; верхній схил — близько 25 dB підсилення на 1730 MHz і 10 dB на 1750 MHz, тож uplink LTE B3 у смузі; гарантія 1 рік». Replace consequences «Корпусний варіант біля живлення; Barebones лише в екранованому корпусі.» with «Корпусний варіант біля живлення; Barebones 100791 — лише якщо в наборі вже є герметична металева коробка (SMA прямо крізь стінку, без перехідника перед першим LNA). GPIO Labs 1685 MHz BPF — ніколи в тракті HRPT (1675-1695 MHz, DC ≤3 V). Процедура HRPT «телефони ≥5 м» (re-audit B) лишається.»
+    - **Reason:** Record 10 documentation notes (1)-(3) and datasheet values.
+    - **Sources:** analogs_G1 decisions[10]; reaudit_B (phones ≥5 m procedure)
+    - **Saving usd:** 0.00
+  96.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** SAWbird+ GOES 100792 incoming check
+    - **Anchor:** | Повна вузькосмугова A/B-матриця для кожного стану
+    - **Instruction:** Insert a new row before this row: «| SAWbird+ GOES 100792 (приймання, кондуктивно): S21 LiteVNA на 1.6-1.8 GHz з падом 30-40 dB на виході — ≥36 dB на 1687-1705 MHz; S11 ≤ −10 dB; струм 120-160 mA при 4.5 V через інжектор ch3 (базова лінія labd — 180 mA); NF за Y-фактором як перевірка з лабораторним шумовим джерелом. Barebones 100791 — лише з уже наявною герметичною металевою коробкою і тим самим приманням. Купувати лише в Nooelec або авторизованого реселера (Amazon DE/FR/IT/ES/UK під Nooelec, Passion Radio, Neven CZ, Antratek) | LiteVNA, шумове джерело (BENCH) | На прибутті |»
+    - **Reason:** Incoming check and conditional saving of the keep decision.
+    - **Sources:** analogs_G1 decisions[10].conditions_or_tests
+    - **Saving usd:** 0.00
+  97.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** other
+    - **Part:** Group 2.3 subtotal
+    - **Anchor:** | **Підсумок групи** | | | **258.61-308.61** |
+    - **Instruction:** Change to «| **Підсумок групи** | | | **232.54-244.84** |» (мій перерахунок: 49.95 + 24.95 + 59.52 + 26.85-27.85 + 44-50 + 8.56-8.86 + 18.71-23.71; крайові SMA/U.FL перемикачів не оцінено). Keep the note about the injector board in 2.7.
+    - **Reason:** Line changes from records 3, 4, 7, 8, 9.
+    - **Sources:** analogs_G1 decisions[3], [4], [7], [8], [9]
+    - **Saving usd:** 26.07-63.77 on the group (incl. 9.19 basis change, not a real saving)
+  98.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** other
+    - **Part:** Header example (HF chain with WiMo)
+    - **Anchor:** КХ-тракт — $494.68-589.17
+    - **Instruction:** Change to «КХ-тракт — $480.95-546.74» (новий КХ-тракт 426.17-546.74 з перевіреною WiMo замість Moonraker у нижній межі).
+    - **Reason:** HF chain recount after records 7, 8, 9.
+    - **Sources:** analogs_G1 decisions[7], [8], [9]
+    - **Saving usd:** 13.73-42.43
+  99.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** other
+    - **Part:** Totals and budget variant (2.12)
+    - **Anchor:** | core | пристрій з внутрішнім РЧ
+    - **Instruction:** In «мій перерахунок рядків» apply this source's delta: 1,759.40-2,252.77 → 1,718.33-2,164.00 (−41.07 / −88.77: Uputronics −9.19 лише база, HMC7992 −3.15/−12.15, G6K −18/−30, екран HF+ +0.56/−6.14, дросель +3.71/−6.29, кабелі −15/−25), and apply the same delta to every summary row that includes core (also in 3.6). In the budget paragraph: «— виходить **≈$1,739**» → «**≈$1,698**»; «З ручним перемиканням антен замість двох HMC7992 (−$30) і G6K (−$62) — **≈$1,647**» → «(−$26.85) і G6K (−$44) — **≈$1,627**»; «Бюджет «пристрій + обидва рівні антен» — ≈$2,116 (≈$2,024 з ручним перемиканням)» → «≈$2,075 (≈$2,004 з ручним перемиканням)». These values assume no other source changes the same lines; recombine if they do.
+    - **Reason:** Aggregate of the G1 line changes.
+    - **Sources:** analogs_G1 decisions[3], [4], [5], [7], [8], [9]
+    - **Saving usd:** 41.07-88.77 on the core recount
+  100.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** other
+    - **Part:** HF chain total (3.6)
+    - **Anchor:** | КХ-тракт (уже в core і складаному рівні) | 439.90-589.17
+    - **Instruction:** Change to «426.17-546.74 + частка LDO». In «| Пристрій + обидва рівні антен + bench |» and «Усе, крім опційного» apply the core delta −41.07 / −88.77 from this source.
+    - **Reason:** Records 5, 7, 8, 9.
+    - **Sources:** analogs_G1 decisions[5], [7], [8], [9]
+    - **Saving usd:** 13.73-42.43 on the HF chain
+  101.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Bring-up step 5: RF intake tests
+    - **Anchor:** 5. **РЧ-деталі (тиждень 1-2):**
+    - **Instruction:** Append to step 5: «Справжність і базова лінія кожного V4L; приймання SAWbird+ NOAA, Flamingo+ (точкові межі і S11), Uputronics 440 (Rev 3.0, ≈50 mA на ch2) і SAWbird+ GOES; ворота секцій HMC7992 на платі інжекторів (купон, IL, розв'язка ≥40 dB, RL, паркування при ввімкненні, спури, маркування «7992»); приймання панельних пігтейлів, Lindy 36700 і Goobay 58814 — усе за розділом 8, кондуктивно.»
+    - **Reason:** Bench tests of records 0-5 and 10.
+    - **Sources:** analogs_G1 decisions[0]-[5], [10]
+    - **Saving usd:** 0
+  102.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** rule
+    - **Part:** Customs/VAT for G1 sellers
+    - **Anchor:** **Митниця і ПДВ (регіон невідомий — перевірити).**
+    - **Instruction:** Append a sentence for the G1 sellers: «Для РЧ-деталей (P5 G1): склад ЄС або ціна з ПДВ ЄС — ITEAD DE (HF+), DigiKey DE (HMC7992, G6K, ферити), Reichelt (Goobay), Schubert (DE), Passion Radio (FR), EU-вітрина Uputronics (ПДВ на оплаті; перевірити IOSS); поза ЄС — Nooelec (США; замовлення $199.75 > EUR 150 — ПДВ, звичайне мито, UHF EUR 2 за лінію і збір кур'єра), AliExpress (IOSS ≤ EUR 150: ПДВ + EUR 3 мита + EUR 2 UHF за тарифну лінію), Lindy UK, ITEAD КНР (не дешевший: щонайменше $208.23 проти $206.52 зі складу DE); магазин RTL-SDR Blog у ЄС не відправляє.»
+    - **Reason:** Landed-cost rule applied to the G1 sellers.
+    - **Sources:** analogs_G1 decisions[0]-[10]; operator_notes items 34-35
+    - **Saving usd:** 0
+  103.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** Corrections from P5 G1 (receivers and RF)
+    - **Anchor:** 36. wideband_sdr:
+    - **Instruction:** After item 36 append: «37. RTL-SDR Blog V3 як «бюджет» — не рівноцінний: MDS на 1-3 dB гірший на 137-1766 MHz, у цьому стеку без КХ (direct sampling заборонено), 2.4 Msps стабільно за даташитом, 270-280 mA; лише задокументоване пониження.» «38. «Бюджет: SAWbird NOAA без «+» (80 mA)» — хибно: 100852 коштує ті самі $49.95 і має ≥20 dB проти 41 dB. Ціни angle B Uputronics GBP 44.39 і Kubii EUR 47.64 належать іншим варіантам; 137.5 MHz NOAA в Uputronics — GBP 59.99.» «39. Flamingo+: «DC-прохід 250 mA» як причина вибору і «без рейтингу DC» як причина відмови від RTL-SDR Blog — хибні (на P1 DC немає); краї FM-смуги не «глибоко в смузі загородження» — близько 47 dB на 87.5 MHz і 32 dB на 108 MHz (графік даташита).» «40. Uputronics 440: $68.71 — UK-ціна з ПДВ; база ЄС — EUR 52.95 без ПДВ ($59.52), −$9.19 у рядку — зміна бази, не економія; «SAW 30 MHz» → смуга близько 427-452 MHz на −3.4 dB (некалібрований графік виробника).» «41. HMC7992: паркування 50 Ohm — на RF1, не T4 (A=B=Low вибирає RF1); маркування чипа — «7992» з кодом партії, не «H7992»; загальні маркетплейсові плати мають шовкографію ADI на платі, якої ADI не випускає.» «42. G6K: котушка — близько 0.105 W (5 V × 21.1 mA), не 0.12-0.15 W; розв'язка розімкненого контакту за кривими Omron — близько 43/41/39 dB на 162/200/260 MHz, а не 46/41 і 44/39 dB з пошуку; RS UK дорожчий за DigiKey на близько $7-19.» «43. Airspy HF+: $169.00 — без ПДВ; гарантія ITEAD — 2 роки, не 1.» «44. Würth 74271112: «773 Ohm» з angle A — хибно; даташит — 175/316 Ohm на 25/100 MHz.» «45. Маса «HF+, екран і перемикач 0.1 kg» занижена: корпус із жерсті 0.5 мм сам близько 87 g (6B); рядок — 0.15-0.17 kg (модель).» «46. Набір кабелів: HDMI-кабель рахувався і там, і в рядку дисплея — лишити лише в 2.6.» «47. SAWbird+ GOES: гарантія корпусного 100792 — 1 рік; 1648-1728 MHz — смуга на 10 dB, на 3 dB — 70 MHz з центром 1688 MHz.» Also replace item 26 with: «26. Передпідсилювач Uputronics 440 MHz CubeSAT, даташит Rev 3.0 (18.10.2024): 3.5-5.5 V, понад 5.5 V — незворотне пошкодження, близько 50 mA (стара примітка «з березня 2020 — 5-26 V; поточні — 5V max» замінена).»
+    - **Reason:** Errors in v1 found by the G1 analog checks.
+    - **Sources:** analogs_G1 decisions[0]-[10]
+    - **Saving usd:** 0
+- **Already in v1:**
+  - V4L stays the receiver at $113.85 (37.95 each), 455 in stock, R828S discontinued so buy now, official channels only, unique EEPROM serials, 2.56 Msps stable and 250-270 mA (02a, C21)
+  - V4L software and power context unchanged: TPS2553 0.75 A LAB port, EEPROM bias default off, the 'RTL-SDR Blog V4 Lite Detected' bring-up check (C11, 9.2 step 1), 1699.2 MHz V4L spur in the known-lines table (05d)
+  - SAWbird+ NOAA cased 100800 at $49.95 inside the RF bay after Flamingo+, ch1 4.5 V via TPS2553 300 mA nominal; 41 dB / 2.6 MHz / 3 MHz / NF 1.1 dB already cited from the datasheet in register #96
+  - Flamingo+ FM v2 $24.95 as the first part on P1, passband IL 0.5/1.2 dB, bias enters at the SAWbird+ output (C10); second unit on P8 in 2.11 unchanged
+  - Uputronics 440 is always the first part after the UHF antenna on ch2; LNA V2 + Ham Filter Bank rejected (D8); 434 MHz variant not to buy
+  - HMC7992 switches behind the injectors with DC blocks on all pins, MCP23017 #1 GPB4-7 control, 50 ohm at power-up, manual 'connect X' as budget fallback
+  - Cable set items kept: RTL-SDR Blog SMA pigtail adapter set $18.95, 4 RG316 field jumpers of 1-2 m, IPX-SMA pigtail on P7, F-F bulkhead plus internal 75 ohm lead, 4 CH334F pigtails, touch lead with VBUS cut, USB3 A-A cable; attenuators from the bench kit
+  - Airspy HF+ Discovery $169 from ITEAD, airspy.com dealers only, CH334F H4, own tin shield, G6K selector, budget second V4L in upconverter mode; HF+ current placeholder 0.3 A until measured (08); spec figures in register #92
+  - G6K selector topology (series-shunt, de-energised 50 ohm on HF+ and terminated ports), acceptance >=35 dB at 162-260 MHz and <=0.3 dB 10 kHz-260 MHz, MCP #1 GPB2/GPB3 drive and LAB5 rail
+  - HF+ shield concept: tinplate can, LC + #31 ferrite on VBUS, placed farthest from the bucks
+  - Two-stage choke on the coax right behind P5 with targets >=1 kOhm at 60 kHz and 2-5 kOhm at 1-30 MHz, LiteVNA conducted measurement, bracket bonded to the plate; FT-240-77 LF stage unchanged
+  - SAWbird+ GOES cased 100792 at $49.95 on ch3 4.5 V via TPS2553 with 180 mA budget, never powered from a V4L tee, coax-fed not micro-USB (05d), LTE B3 uplink in band (#97), correction #6 ($44.95 is the barebones SKU)
+- **Not applied:**
+  1.
+    - **Item:** RTL-SDR Blog V3 R860, FlightAware Pro Stick Plus, Nooelec XTR/SMArt/Nano family, V4 R828D, clones, MSI.SDR and DIY RTL2832U boards as V4L replacements
+    - **Why:** Rejected by the P5 decision (worse MDS, HF, rate or current; SAW-limited; counterfeit; not cheaper). The V3 stays only as the documented downgrade.
+  2.
+    - **Item:** Passion Radio V4L as the default EU seller
+    - **Why:** Dearer than the official route and the page H1 still names V4/R828D; fallback only after written SKU confirmation.
+  3.
+    - **Item:** SAWbird+ NOAA Barebones 100799 as the default
+    - **Why:** Worse warranty (1 year) and no enclosure; allowed only as an opt-in trade with the user's explicit acceptance.
+  4.
+    - **Item:** Other 137 MHz LNAs (Uputronics 137.5 MHz, LNA V2, LNA4ALL with or without LC filter, SPF5189Z, DIY PGA-103+/TB1103A/HDF137T, used units, Kuhne/SSB/WiMo)
+    - **Why:** Not cheaper and not worse failed in gain, selectivity, passband, authenticity or evidence.
+  5.
+    - **Item:** RTL-SDR Blog band-stop, Flamingo FM v1, Distill:FM, Tindie Maker go, generic modules, TV traps, GPIO Labs FM notch, Mini-Circuits NSBP-108+, DIY traps, cascades
+    - **Why:** Each is worse in a spec that matters on P1 or not cheaper; the RTL-SDR Blog filter is a spec trade (better only at 108 MHz).
+  6.
+    - **Item:** Uputronics 434 MHz or wideband FPA, Kubii, US storefront/Wegmatt, LNA4ALL, LNA V2 + filter bank, GPIO Labs 433 MHz, Janilab, Spacewalker, vhfdesign ATF531 (12 V), SPF5189Z, DIY PSA4-5043+ + SAW
+    - **Why:** Rejected by the P5 decision: worse passband or selectivity, not purchasable, dearer, or incompatible with the 4.5 V ch2 bus.
+  7.
+    - **Item:** AliExpress HMC7992 boards, Mini-Circuits HSWA4-63DR+, HMC241, ARW3433, pSemi PE42540/PE42441, ADI/Mini-Circuits eval boxes
+    - **Why:** Counterfeit-price or ADI-logo boards, worse IL/RL/linearity, charge-pump spurs, or about 10x price.
+  8.
+    - **Item:** Cable alternatives: RTL-SDR Blog straight adapter set, Fair-Rite 0431164281 instead of Wurth 74271112, Delock 82457, Good Connections lead, branded jumpers as default, Taoglas CAB.011 as a saving, generic field jumpers, DIY crimped RG316, used branded jumpers, generic clip ferrites
+    - **Why:** Worse strain relief, unproven cold rating (Fair-Rite 0 to +85 C listed), unpublished shielding, not cheaper, or unproven; branded jumpers stay as the fallback for failed pigtails.
+  9.
+    - **Item:** HF+ alternatives: SDRplay RSP1B, Airspy Mini + SpyVerter, used HF+ Discovery or HF+ Dual, Airspy/RSP clones, RX-888 MkII, second V4L as HF receiver, non-dealer eBay listing, ITEAD CN SKU, other EU dealers, RSPdx-R2/RSPduo/Perseus/ELAD etc.
+    - **Why:** Measured or specified worse, needs USB 3 (excluded), no LF, not genuine, or not cheaper; other EU dealers only if ITEAD is out of stock.
+  10.
+    - **Item:** G6K-2F-RF-S from LCSC ($12.00 each, saves a further $15.38)
+    - **Why:** Franchise status unverified and reel/moisture packing questions; needs the user's explicit OK plus marking/date-code check and the same bench gate.
+  11.
+    - **Item:** G6K-2F-RF-S DC4.5 with 22 ohm series resistor (saves a further $11.94)
+    - **Why:** About 10% higher coil power per energised coil and an extra part; optional trade only with the user's OK.
+  12.
+    - **Item:** TE HF3, non-RF G6K, reed relays, TE IM03GR, Hongfa HFD48, solid-state switches, surplus coax relays, Panasonic ARA200A05, latching G6KU and -T variant, manual coax swap as default
+    - **Why:** SPDT or SPST-NO, no RF guarantee, worse isolation or coil power, no unpowered 50 ohm state, dearer, or loses the fail-safe state.
+  13.
+    - **Item:** Shield alternatives: Fair-Rite 0431164951 snap-it, a single 2631480002 sleeve, Schubert Art. 5/5B, Art. 9 as default, Wurth inductors, generic LC/USB filter modules, unbranded ferrites, folded WB1 sheet, industriegehaeuse.de, Perancea, Teko, copper-clad FR4, aluminium/diecast/Nobu cases, mint tin, no external can
+    - **Why:** Not proven not-worse (second table lower, VHF trade), fit not shown, dearer or heavier, no data, discontinued, or non-ferrous with weak LF H-field absorption.
+  14.
+    - **Item:** Choke alternatives: TDK B64290L0659X830 N30 LF stage, stacked FT-140 #78 or #77 pairs, 2x 2631803802, cheaper sellers of the current cores, Wurth WE-TOF, Palomar FT240-3I, unbranded cores, slip-on beads and ready-made line isolators
+    - **Why:** Material data unavailable, not orderable or out of turn headroom, AL not guaranteed for #31, prices not real at qty 1, traceability, or no useful impedance below 1.8 MHz.
+  15.
+    - **Item:** GOES alternatives: Barebones 100791 by default, non-plus 100786/100785, LNA V2 or PGA-103+ with the GPIO Labs 1685 MHz BPF, LNA4ALL, used units, DIY, VXB module, AliExpress LNAs, Uputronics
+    - **Why:** Lower gain/higher NF, the BPF passband misses 1700-1704.5 MHz and limits DC to 3 V, no filter, unverified, or no 1.7 GHz variant; barebones only with an existing sealed box.
+  16.
+    - **Item:** incompliancemag.com 'near-field shield effectiveness ... H-field probe' article as a STACK source
+    - **Why:** Hard rule: no H-field loop probes; the shielding argument stands on the material data, so the URL is not cited.
+  17.
+    - **Item:** Record 0 context items 'lab librtlsdr 2.0.3 build with the gpio==0-only bias gate' and 'aluminium case bonded to the plate'
+    - **Why:** Listed as unchanged context, not decisions of this source; v1 C11 currently specifies a 2.0.1 rebuild, and any librtlsdr change belongs to the re-audit/compute extractors.
+  18.
+    - **Item:** TPS2553 trip 262-342 mA at RILIM 88.7 kOhm and INA3221 channel shunts mentioned in records 1 and 3
+    - **Why:** Re-audit figures quoted as context; applied only by the re-audit extractor. This source's tests reference them without changing the power architecture.
+  19.
+    - **Item:** Record 1 advice 'one Nooelec order of Flamingo+ and SAWbird+ GOES = $124.85'
+    - **Why:** v1 already has a larger single Nooelec order ($199.75), acknowledged by record 2; the order stays and the above-EUR 150 landed-cost treatment is applied instead.
+  20.
+    - **Item:** Record 6 statement that no change is needed because every stack VHF role is below 174 MHz
+    - **Why:** v1 routes DAB (Band III, 174-240 MHz) to the HF+ on P6; a caveat was added in 4.2 and 5.3 instead of 'no change'.
+- **Notes:** The source has 11 records: keep for V4L, SAWbird+ NOAA, Flamingo+, Uputronics 440, HF+ Discovery and SAWbird+ GOES; replace_conditionally for the HMC7992 selectors, the cable set, the G6K selector, the HF+ shield and the HF choke HF stage. I read every record in full.
+  
+  1. Section 11. The section enum has no 11_changes_v1_v2, so I could not emit change-log entries. The assembler should derive them from the replace_part, seller_or_price and correction changes above.
+  
+  2. Records 4 and 5 interact. If the on-PCB HMC7992 sections pass the gate, the cable set loses about 4-6 internal jumpers and 10 board SMA jacks, and gains 2-3 edge SMA/U.FL. If they fail and the separate-board fallback is built, those jumpers come back.
+  
+  3. P5 is BNC in record 5's set contents. That comes from re-audit B. I put it in the 05b P5 row and the 05d panel text with that attribution. The re-audit extractor may emit the same change.
+  
+  4. The Lime is kept (user decision of 18 Oct 2026), so the third HMC7992 chip on the injector PCB is a default buy. The C1 rewrite itself belongs to the user-decision extractor.
+  
+  5. HF+ purchase timing. Record 6 says to wait for Black Friday (about 27 Nov-1 Dec 2026). v1 needs the HF+ early for the C4 regulator A/B, bring-up step 4 and the G6K LF/HF gate. The 09 change flags that trade-off without inventing numbers.
+  
+  6. Totals. The 2.3 subtotal (232.54-244.84), the HF chain (426.17-546.74), the core delta (-41.07/-88.77) and the budget variants (1,698 / 1,627 / 2,075 / 2,004) are my arithmetic on the file prices. They assume no other source changes the same lines. The Uputronics -9.19 is a price-basis change, not a saving.
+  
+  7. Landed EU figures. The V4L landed figure plus EUR 3 duty and EUR 2 UHF (about $141.1-145.6 for 3) and Nooelec $199.75 = about EUR 177.70 > EUR 150 come from applying the operator-note 35 rule with FX 1.1241. They are marked as models.
+  
+  8. Weights. The mass increase (+0.05-0.07 kg) comes from record 8. The 63 g choke saving is not itemised in the v1 mass table.
+  
+  9. All bench tests are conducted-only or receive-only. No antenna sweeps, loops or H-field probes are introduced.
+
 ## searchA:asa_1_kg_cnc_kitchen_m3_inserts_and_scre (run `wf_37583a7b-1a8`)
 
 - **Part:** Mechanical set (core, qty 1 set): ASA 1 kg filament + CNC Kitchen M3 heat-set inserts and M3 screws + Gelid thermal pads (x2) + hand strap and neck strap
