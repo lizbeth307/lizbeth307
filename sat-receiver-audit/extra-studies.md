@@ -2106,6 +2106,353 @@
   
   Method limits: the shared WebSearch budget was already exhausted at my first search call (one call, returned no results). All findings come from WebFetch on DigiKey, TME, Adafruit, the Bourns PDF and AliExpress search pages. AliExpress item pages redirected to login, so per-item specs beyond the search-result titles were not read. More searching, for example for any published bench test of a named EC11 clone, would need a follow-up run.
 
+## searchB:pca9555_key_expander_piezo_status_led (run `wf_071e1025-145`)
+
+- **Part:** HMI key expander set: PCA9555 (now TI TCA9555 per re-audit A) for 6 keys + 2 encoder pushes with INT on the Pico I2C0 (GP4/5, GP10 INT), piezo on GP20, status LED on GP21
+- **Current price usd:** STACK lists 5-10 as an estimate. Checked on 18 Oct 2026, the genuine parts from DigiKey add up to about $4.64 before the adapter PCB and passives (another ~$1.5-2.5, not checked), so roughly $6-7 in all: TI TCA9555PWR $1.94 (qty 1), TDK PS1240P02BT $0.73, and as an LED reference Kingbright WP154A4SUREQBFZGW RGB $1.97. EU (TME): TCA9555PWR shows USD 0.83-1.22 ex VAT but had 0 stock on 18 Oct 2026; VAT of 19-25% is added at checkout.
+- **Critical specs:**
+  - Expander I/O count: at least 8 inputs (6 keys + 2 encoder pushes) plus spare lines. The current 16-bit part leaves 8 spare, which can also take RGB LED colour lines or extra keys.
+  - Expander supply 1.65-5.5 V, running at the Pico 3.3 V; P-port 5 V-tolerant (VIH max 5.5 V).
+  - Internal I/O pull-ups (TCA9555: about 100 kOhm, IIL at most 100 uA at VI=GND), so keys to GND need no external resistors.
+  - Open-drain active-low INT to GP10: interrupt on any input edge, tiv/tir at most 4 us, cleared by reading the port.
+  - I2C Fast-mode 400 kHz; 7-bit address 0x20-0x27 set by A0-A2; must not collide with the VEML7700 at 0x10 on the same Pico bus.
+  - Power-on reset (VPORR 1.2-1.5 V rising) with I/Os powered up as inputs: no output glitch while the Pico/LAB5 rail ramps.
+  - ESD of at least 2 kV HBM and 1 kV CDM, latch-up of at least 100 mA (JESD78), since the keys sit on the panel.
+  - Operating -40 to +85 C (field use in a European winter).
+  - Standby at most 3.5 uA. This is minor, because the Pico sits on the switched LAB5 rail.
+  - Hand-solderable package (TSSOP-24/SSOP-24); genuine silicon from an authorised distributor; firmware is the Pico SDK over I2C, so no Linux or Ubuntu driver is involved.
+  - Piezo: passive, externally driven, fed by Pico PWM at 4 kHz. At least 70 dB(A)/10 cm at a 3 V0-P square wave. No coil, so no magnetic field or back-EMF and only a few mA from a GPIO.
+  - Piezo operating temperature. The TDK PS12/PS14 range is -10 to +70 C, a weak point for winter use whatever part is chosen. Also size 12-14 mm and sealing to the case IPX4/IP54 target (membrane or vent).
+  - Status LED: driven from one Pico pin (GP21); sunlight-visible (hundreds of mcd per colour); dimmable for night mode; blue/green Vf of about 3.3 V typical must suit the 3.3/5 V rails.
+  - Status LED drive must not put spurs into the audio path (no audio-band PWM) or into the LF time-signal bands (60/77.5/162 kHz); DC or a carefully chosen PWM frequency.
+- **Candidates:**
+  1.
+    - **Name:** TI TCA9555PWR (genuine, TSSOP-24) as the PCA9555 replacement - verified price of the current part
+    - **Kind:** current_part
+    - **Price usd:** 1.94 (DigiKey, qty 1, 18 Oct 2026); TME EU USD 0.83-1.22 ex VAT, but out of stock
+    - **Spec comparison:** Per TI SCPS200E (Apr 2019): 1.65-5.5 V; 16 push-pull I/O with 100 kOhm pull-ups (IIL at most -100 uA); INT open-drain, tiv/tir 4 us; 400 kHz; A0-A2 give 0x20-0x27; POR 1.2-1.5 V rising, I/Os power up as inputs; ESD 2 kV HBM / 1 kV CDM; latch-up over 100 mA; IOL 25 mA at Tj up to 65 C; standby 1.0-1.8 uA at 3.6 V; -40 to +85 C. TI calls it the drop-in replacement for the PCA9555 with POR added.
+    - **Worse in:** Nothing. It equals or beats the PCA9555.
+    - **Compatibility:** Pin- and register-compatible with the PCA9555; same 0x20 address; Pico SDK I2C; 3.3 V.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=TCA9555PWR
+    - **Sources:**
+      - https://www.ti.com/product/TCA9555
+      - https://www.ti.com/lit/ds/symlink/tca9555.pdf
+      - https://www.digikey.com/en/products/result?keywords=TCA9555PWR
+      - https://www.tme.eu/en/details/tca9555pwr/i-o-expanders/texas-instruments/
+    - **Risks:** Buy only from authorised distributors (DigiKey, TME, Mouser, Farnell). TME tier prices were not readable, and its stock was 0 on 18 Oct 2026.
+  2.
+    - **Name:** TDK PS1240P02BT piezo bought from DigiKey instead of Adafruit #160 (the same TDK PS1240)
+    - **Kind:** current_part
+    - **Price usd:** 0.73 (DigiKey 445-2525-1-ND, qty 1; $0.546 at qty 10) vs 1.50 at Adafruit #160
+    - **Spec comparison:** Same part: Adafruit #160 hosts the TDK PS-series datasheet. TDK datasheet (2022-02-22): 70 dB(A)/10 cm min at 4 kHz and 3 V0-P square wave; 30 V0-P max; -10 to +70 C; 12.2 mm diameter x 6.5 mm.
+    - **Worse in:** Nothing compared with the Adafruit unit; it is the same TDK part from a cheaper seller.
+    - **Compatibility:** Driven directly by Pico GP20 PWM; 5 mm pitch through-hole.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=PS1240P02BT
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=PS1240P02BT
+      - https://www.adafruit.com/product/160
+      - https://cdn-shop.adafruit.com/product-files/160/160_ds.pdf
+    - **Risks:** DigiKey's parametric table says 60 dB @ 3 V/10 cm, but the TDK datasheet gives 70 dB(A) min; 60 dB is the thin PS1240P02CT3. Order the BT suffix. The -10 C lower limit applies to the whole TDK PS series.
+  3.
+    - **Name:** UMW TCA9555PWR (Chinese second-source clone)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 2.21 (DigiKey qty 1; 1.632 at qty 10)
+    - **Spec comparison:** UMW datasheet: 1.6-5.5 V; claims 1 MHz I2C; standby 0.5 uA; ESD +/-2 kV HBM; latch-up Class IA +/-200 mA; -40 to +85 C; P-port IOL given as min 8 mA at VOL 0.5 V and 10 mA at 0.7 V. That is a different spec format from TI's 25 mA recommended maximum, so not directly comparable.
+    - **Worse in:** Costs more than TI at qty 1 ($2.21 vs $1.94). I found no independent measurements, and its LED-sink drive is specified differently and lower on paper.
+    - **Compatibility:** Pin-compatible TSSOP-24; register-compatible according to its own datasheet.
+    - **Seller url:** https://www.digikey.com/en/products/detail/umw/TCA9555PWR/29800045
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/umw/TCA9555PWR/29800045
+      - https://www.umw-ic.com/static/pdf/0995f6b3049043568fc58630057cfef1.pdf
+    - **Risks:** No measured evidence, so it is rejected under angle B. It is legally sold through DigiKey.
+  4.
+    - **Name:** UMW PCA9555PW (clone)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 1.97 (DigiKey qty 1)
+    - **Spec comparison:** Clone of the PCA9555, which has no POR feature. TI PCA9555PW was not available at DigiKey.
+    - **Worse in:** Not cheaper than the genuine TI TCA9555 ($1.94), lacks the TCA9555 upgrades, and has no measured evidence.
+    - **Compatibility:** Pin-compatible.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=PCA9555PW
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=PCA9555PW
+    - **Risks:** Rejected.
+  5.
+    - **Name:** XINLUDA XL9555 (PCA9555/TCA9555 pin-compatible clone)
+    - **Kind:** generic_or_clone
+    - **Price usd:** unverified (LCSC returned 403; search budget exhausted)
+    - **Spec comparison:** Not verified. The Espressif esp_io_expander_tca95xx_16bit component lists only TCA9539/TCA9555, not the XL9555.
+    - **Worse in:** No datasheet values and no independent measurements could be checked.
+    - **Compatibility:** Claimed pin-compatible (unverified).
+    - **Sources:**
+      - https://components.espressif.com/components/espressif/esp_io_expander_tca95xx_16bit
+    - **Risks:** Rejected under angle B: no measured evidence. Savings would be at most about $1.5.
+  6.
+    - **Name:** Generic AliExpress PCA9555 breakout module
+    - **Kind:** generic_or_clone
+    - **Price usd:** unverified
+    - **Spec comparison:** Chip origin unknown (remarked or clone silicon is possible); pull-ups and decoupling unknown.
+    - **Worse in:** No provenance and no measurements.
+    - **Compatibility:** Pin header with I2C; would need mounting in the HMI column.
+    - **Risks:** Counterfeit risk. Rejected.
+  7.
+    - **Name:** TI TCA9554APWR / TCA9554PWR (8-bit, genuine)
+    - **Kind:** other_brand
+    - **Price usd:** 1.51 / 1.71 (DigiKey qty 1; TCA9554PWR 17,733 in stock)
+    - **Spec comparison:** Same TI family, INT and I2C, TSSOP-16.
+    - **Worse in:** Only 8 I/O, exactly the 8 switches, with zero spare: no RGB colour lines and no room for another key. Whether it has internal pull-ups was not checked. Saves only $0.23-0.43.
+    - **Compatibility:** Different package and address range (TCA9554A is 0x38-0x3F); firmware change.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=TCA9554PWR
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=TCA9554PWR
+    - **Risks:** Rejected: trades away I/O count.
+  8.
+    - **Name:** TI PCF8574PWR (8-bit quasi-bidirectional)
+    - **Kind:** other_brand
+    - **Price usd:** 1.82 (DigiKey qty 1, 2,197 in stock)
+    - **Spec comparison:** 8 I/O with weak current-source pull-ups; has INT.
+    - **Worse in:** 8 I/O instead of 16; quasi-bidirectional pins with no configuration or polarity registers; saves only $0.12.
+    - **Compatibility:** I2C 0x20-0x27, TSSOP-20.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=PCF8574PWR
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=PCF8574PWR
+    - **Risks:** Rejected.
+  9.
+    - **Name:** Adafruit AW9523 GPIO expander + LED driver breakout #4886
+    - **Kind:** other_brand
+    - **Price usd:** 4.95 (qty 1; in stock)
+    - **Spec comparison:** 16 I/O, each usable as a constant-current LED driver with 256-step dimming (could run the RGB LED without the Pico PWM); IRQ with 8 us deglitch; 2.5-5.5 V; addresses 0x58-0x5B.
+    - **Worse in:** No internal pull-ups (8 external resistors needed). Default power-up is all pins output LOW. About 2.5x the price of the bare TCA9555. No independent measurements.
+    - **Compatibility:** STEMMA QT module; new firmware; no address clash.
+    - **Seller url:** https://www.adafruit.com/product/4886
+    - **Sources:**
+      - https://www.adafruit.com/product/4886
+    - **Risks:** Rejected: not cheaper than the genuine bare chip, and worse in pull-ups and power-up state.
+  10.
+    - **Name:** Generic WS2812B / SK6812 single-wire RGB LED on GP21
+    - **Kind:** generic_or_clone
+    - **Price usd:** unverified
+    - **Spec comparison:** Gives RGB on one pin. Measured by cpldcpu: internal PWM of 430 Hz (WS2812) and 1.1 kHz (SK6812).
+    - **Worse in:** Audio-band internal PWM current ripple, which risks the 3.5 mm audio path and the noise floor. Needs a 5 V supply and a level shifter for 3.3 V data (the 0.7 x VDD threshold; datasheet, not measured here). Draws quiescent current when dark.
+    - **Compatibility:** Needs 5 V from LAB5 plus a 74AHCT1G125-class buffer.
+    - **Sources:**
+      - https://cpldcpu.com/2016/03/09/the-sk6812-another-intelligent-rgb-led/
+    - **Risks:** Rejected: worse in spurs and rail compatibility.
+- **Notes:** VERDICT (angle B): I found no cheaper part that is not worse and has measured evidence. Keep the set as genuine TI TCA9555PWR ($1.94 DigiKey; it replaces the PCA9555, as re-audit A already decided) plus the current piezo and LED. The only saving is sourcing: buy TDK PS1240P02BT from DigiKey ($0.73) instead of Adafruit #160 ($1.50), saving $0.77 on the same TDK part. With parts checked on 18 Oct 2026 the set costs about $4.64 before the adapter and passives, so the STACK estimate of 5-10 can drop to about 6-7.
+  
+  WHAT IS REJECTED AND WHY:
+  - Clone chips (UMW TCA9555/PCA9555, XL9555) and generic AliExpress modules have no independent measurements. The UMW parts are also not cheaper at DigiKey.
+  - 8-bit parts (TCA9554/A, PCF8574) save only $0.12-0.43 and leave zero spare I/O.
+  - A 74HC165 shift register (DIY) gives no INT and needs 3 Pico GPIO; price not checked.
+  - A resistor ladder is impossible because all 3 Pico ADC inputs are in use.
+  - Removing the expander is impossible: the role needs 30-33 lines against the Pico's 26.
+  - Used units do not apply to a part this cheap.
+  
+  FLAGS FOR INTEGRATION:
+  1. The piezo is rated -10 to +70 C (TDK, whole PS series); the encoders are rated -30 C. For a European winter this needs a cold test or a wider-range piezo; no part was checked here. PS1440P02BT gives 75 dB(A) min for $0.98 at the same temperature range, if more volume is wanted.
+  2. DigiKey's 60 dB figure for PS1240P02BT conflicts with TDK's 70 dB(A) minimum; 60 dB is the CT3 thin variant. Order the BT suffix.
+  3. One status LED pin (GP21) and an 'RGB LED' do not fit together without an addressable LED. A free DIY option (design suggestion, not measured): use a common-anode RGB LED, sink R/G/B on three spare TCA9555 outputs (IOL 25 mA at Tj up to 65 C), and put PWM from GP21 on the common anode through a small PNP or P-FET. This keeps night dimming on one pin and avoids WS2812-type internal PWM. It relies on the 16-bit part's spare lines, which is another reason not to downgrade to 8-bit. Choose the LED PWM frequency so its harmonics avoid 60/77.5/162 kHz, or drive DC.
+  4. The Kingbright WP154A4SUREQBFZGW reference has green/blue Vf of 3.3 V typical: from 3.3 V the anode should come from 5 V (TCA9555 pins are 5 V-tolerant), or pick a lower-Vf LED. A cheaper genuine RGB LED was not checked from this angle.
+  
+  METHOD LIMITS: WebSearch was not available (the turn-wide search budget was used up), so only WebFetch on primary pages was used. LCSC returned 403 and Mouser and Farnell returned 503, so LCSC clone prices and XL9555 data remain unverified. TCA9555 specs come from the TI SCPS200E PDF, PS1240 specs from the TDK PDF (both text-extracted), and UMW specs from the UMW PDF. Local copies are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/tca9555ds/ds.txt, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ps1240ds/ds.txt and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/umwds/ds.txt. Hard rules are unaffected: the set is passive HMI with no RF emitter and no loop.
+
+## searchA:pca9555_key_expander_piezo_status_led (run `wf_071e1025-145`)
+
+- **Part:** HMI key-expander set: 16-bit I2C expander (PCA9555 class) for 6 keys + 2 encoder pushes with INT to Pico GP10 (I2C0 GP4/5, addr 0x20, alongside VEML7700 0x10), piezo on GP20, status LED on GP21
+- **Current price usd:** 5-10 for the set (STACK.md model estimate; no SKUs named). Verified component prices, DigiKey qty 1, 18 Oct 2026: TI PCA9555PWR $2.38. TI TCA9555PWR $1.94 (EUR 1.70 on digikey.de). The re-audit (reaudit_A) replaces the PCA9555 with the TCA9555, so the TCA9555 is the real baseline. Piezo and LED have no SKU yet. A set built from verified parts costs about $3.1 (TCA9555PWR $1.94 + piezo $0.61 + LED $0.53, plus about $0.3 of passives).
+- **Critical specs:**
+  - EXPANDER: 16 I/O. 8 are used now; the 8 spares can sink a common-anode RGB status LED if one is used. An 8-bit part counts as worse.
+  - EXPANDER: PCA9555-identical register map (command bytes 0-7: input, output, polarity, configuration) and a 0100 A2A1A0 address strapped to 0x20, so the Pico firmware stays unchanged and there is no clash with the VEML7700 at 0x10.
+  - EXPANDER: works at 3.3 V from the Pico 3V3. I2C at 400 kHz with an SCL/SDA noise filter.
+  - EXPANDER: internal weak pull-up of about 100 kOhm on every I/O, because the keys switch to GND. A TCA9535/PCA9535-type part without pull-ups counts as worse unless 8 resistors are added.
+  - EXPANDER: open-drain, active-low INT on any input change (to GP10), cleared when the input port is read.
+  - EXPANDER: power-on default is all inputs, with a specified POR threshold.
+  - EXPANDER: ESD of at least 2 kV HBM and 1 kV CDM, since the keys are touched by the user.
+  - EXPANDER: -40 to +85 C. Standby current of a few uA or less (not critical: the Pico runs on switched LAB5).
+  - EXPANDER: TSSOP-24 for hand assembly. It sits on the keypad PCB, which must exist anyway because the KSC641J keys are SMD. Active lifecycle, bought from an authorised distributor.
+  - EXPANDER: no Ubuntu 24.04 driver is needed because it lives on the Pico I2C bus; the firmware does raw register access.
+  - PIEZO: externally driven piezo transducer: no internal oscillator and no magnetic coil (no magnetic buzzer near the HF+).
+  - PIEZO: about 4 kHz resonance. At least 75 dB SPL at 10 cm at 3 Vp-p or less (direct drive from a 3.3 V GPIO). Current 3-5 mA or less.
+  - PIEZO: at least -30 to +70 C, matching the PEC11R encoder rating. Diameter 13 mm or less and height 8 mm or less for the 38-42 mm HMI column. Top port behind an acoustic vent membrane to keep IP54.
+  - STATUS LED: sunlight-visible (about 400 mcd or more) at 10 mA or less from a GPIO, and dimmable by PWM for the Night/Red themes.
+  - STATUS LED: Vf of about 2.2 V or less for a single-colour LED, so a 3.3 V GPIO gives a controlled current. The blue/green die of an RGB LED (about 2.9 V typ) leaves only about 0.4 V for the resistor at 3.3 V.
+  - STATUS LED: line count. GP21 is one line, enough for a single-colour LED only. An RGB LED needs 3 lines (the expander spares).
+  - STATUS LED: wide viewing angle (60 deg or more, or a diffuser or light pipe), at least -30 to +70 C, sealed behind a panel lens or light pipe.
+- **Candidates:**
+  1.
+    - **Name:** TI TCA9555PWR (re-audit pick; drop-in for PCA9555)
+    - **Kind:** current_part
+    - **Price usd:** 1.94 qty1 / 1.424 qty10 (DigiKey, 42,238 in stock, Active, 20 wk lead); EUR 1.70 on digikey.de (VAT not shown on the listing); TME 0 in stock
+    - **Spec comparison:** 16 I/O, 1.65-5.5 V, 400 kHz, internal pull-ups (the only difference from the TCA9535), open-drain active-low INT, POR with VPORR 1.2-1.5 V and VPORF 0.75-1.0 V, ESD 2 kV HBM / 1 kV CDM, standby 3.5 uA max, -40 to +85 C, recommended P-port IOL 18 mA at Tj up to 85 C
+    - **Worse in:** Baseline. Compared with TI PCA9555: the recommended P-port IOL is 18 mA (PCA9555: 25 mA). That only matters if LEDs are sunk from the expander.
+    - **Compatibility:** Register and pin compatible with the PCA9555 at address 0x20; the Pico firmware is unchanged.
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/texas-instruments/TCA9555PWR/2094642
+      - https://www.ti.com/product/TCA9555
+      - https://www.ti.com/lit/ds/symlink/tca9555.pdf
+      - https://www.digikey.de/en/products/result?keywords=TCA9555PWR
+      - https://www.tme.eu/en/details/tca9555pwr/
+    - **Seller url:** https://www.digikey.com/en/products/detail/texas-instruments/TCA9555PWR/2094642
+    - **Risks:** None significant.
+  2.
+    - **Name:** TI PCA9555PWR (the part named in STACK v1)
+    - **Kind:** current_part
+    - **Price usd:** 2.38 qty1 (DigiKey)
+    - **Spec comparison:** 16 I/O, 2.3-5.5 V, 400 kHz, weak internal pull-ups, open-drain INT, ESD 2 kV HBM / 1 kV CDM, standby 1 uA max, -40 to +85 C, recommended P-port IOL 25 mA
+    - **Worse in:** TI recommends the TCA9555 as its drop-in replacement, with improved POR and interrupt. It also costs more.
+    - **Compatibility:** Drop-in.
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=PCA9555PWR
+      - https://www.ti.com/product/PCA9555
+      - https://www.ti.com/lit/ds/symlink/pca9555.pdf
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=PCA9555PWR
+    - **Risks:** None. It is just the more expensive choice.
+  3.
+    - **Name:** Diodes Inc. PI4IOE5V9555LEX (TSSOP-24)
+    - **Kind:** other_brand
+    - **Price usd:** 1.48 qty1 / 1.071 qty10 (DigiKey, 3,021 in stock, Active); EUR 1.30 ex VAT / EUR 1.547 incl. VAT qty1, EUR 0.94 qty10 (digikey.de)
+    - **Spec comparison:** Same 16 I/O and the same command bytes 0-7 (input, output, polarity, configuration), address 0100 A2A1A0. 2.3-5.5 V, 0-400 kHz with a noise filter on SCL/SDA, weak pull-up on every I/O (input-low leakage 100 uA max at 5.5 V, so at least 55 kOhm), 5 V-tolerant I/O. Open-drain active-low INT. Inputs have fixed thresholds: VIH 1.8 V min, VIL 0.81 V max. ESD 4 kV HBM / 1 kV CDM, which beats TI's 2 kV HBM. Latch-up tested above 100 mA. Standby 1 uA max with inputs high (TCA9555: 3.5 uA). -40 to +85 C. IOL 8 mA min at VOL 0.5 V, 25 mA per pin absolute.
+    - **Worse in:** (1) Minimum VCC is 2.3 V instead of 1.65 V. That is irrelevant at 3.3 V but counts as a paper spec loss. (2) The POR is the older PCA9555 style: VPOR 1.16 typ / 1.41 max, and VCC must fall to 0.2 V for 20 us or more to reset. TCA9555's improved POR has VPORF 0.75-1.0 V. Mitigation: the Pico firmware rewrites registers 2-7 at every boot and after any I2C NACK, then reads ports 0/1 to clear INT. (3) The manufacturer lead time is 52 weeks (TI: 20 weeks), though DigiKey holds 3,021 in stock. Nothing else is worse.
+    - **Compatibility:** Register-compatible with the PCA9555/TCA9555, so the Pico firmware is unchanged. TSSOP-24 on the keypad PCB at address 0x20. The Ubuntu kernel driver is not needed. Whether gpio-pca953x has a dedicated compatible for this part is unverified; that only matters if the chip ever moves to the Q6A bus.
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=PI4IOE5V9555LEX
+      - https://www.digikey.de/en/products/result?keywords=PI4IOE5V9555LEX
+      - https://www.diodes.com/assets/Datasheets/PI4IOE5V9555.pdf
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=PI4IOE5V9555LEX
+    - **Risks:** POR behaviour is weaker on paper; covered by re-initialising in firmware. A bring-up test is needed: 20 power cycles of the Pico 3V3, keys and INT must work each time. Long factory lead time if DigiKey stock runs out.
+  4.
+    - **Name:** onsemi CAT9555YI-T2 (TSSOP-24)
+    - **Kind:** other_brand
+    - **Price usd:** 1.52 qty1 / 1.111 qty10 (DigiKey; no stock quantity shown, 41 wk lead)
+    - **Spec comparison:** PCA9555-compatible 16 I/O, 2.3-5.5 V, 400 kHz, 100 ns noise filter on SDA/SCL, weak pull-up of 100 kOhm typ, 5 V-tolerant I/O, active-low INT, POR. ESD 2000 V (JESD22), latch-up 100 mA. -40 to +85 C. IOL 8-20 mA at VOL 0.5 V.
+    - **Worse in:** It costs more than the PI4IOE5V9555 and has lower ESD (2 kV against 4 kV HBM). Its POR is not as well characterised as the TCA9555's. Availability is uncertain: DigiKey shows no stock, and onsemi discontinued several CAT9555 orderable part numbers in Rev 12-13 (Sep-Oct 2025). The -YI-T2 itself is still Active.
+    - **Compatibility:** Register-compatible; address prefix 0100.
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=CAT9555YI-T2
+      - https://www.onsemi.com/pdf/datasheet/cat9555-d.pdf
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=CAT9555YI-T2
+    - **Risks:** Lifecycle and stock risk. Not recommended over the PI4IOE5V9555 or the TCA9555.
+  5.
+    - **Name:** NXP PCAL9555APW,118 (Agile I/O)
+    - **Kind:** other_brand
+    - **Price usd:** 1.95 qty1 / 1.433 qty10 (DigiKey, 3,130 in stock, Active, 30 wk lead)
+    - **Spec comparison:** 16 I/O, 1.65-5.5 V, 400 kHz (DigiKey attribute), output current 10 mA source / 25 mA sink, open-drain or push-pull outputs, INT, POR, -40 to +85 C. The Agile I/O extras (programmable pull-up/down, input latch, interrupt mask/status) are recalled from memory and unverified: the NXP datasheet returned 404/403.
+    - **Worse in:** Not cheaper than the TCA9555 (+$0.01), though $0.43 cheaper than the PCA9555PWR. If its pull-ups default to disabled at power-up (unverified), it is not a firmware drop-in and the inputs float until configured.
+    - **Compatibility:** Base registers 0-7 are PCA9555-compatible; the extended registers are optional.
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=PCAL9555APW%2C118
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=PCAL9555APW%2C118
+    - **Risks:** Datasheet not read. Verify the pull-up default and the ESD rating before choosing it.
+  6.
+    - **Name:** Diodes PI4IOE5V9554LEX (8-bit sibling)
+    - **Kind:** other_brand
+    - **Price usd:** EUR 1.26 qty1 (digikey.de; VAT status and stock not shown)
+    - **Spec comparison:** 8-bit version of the same family.
+    - **Worse in:** 8 I/O instead of 16: no spare lines (no RGB LED or future keys) and it would need firmware changes. It is barely cheaper than the 16-bit part. REJECTED.
+    - **Compatibility:** Different register width.
+    - **Sources:**
+      - https://www.digikey.de/en/products/result?keywords=PI4IOE5V9555LEX
+    - **Seller url:** https://www.digikey.de/en/products/result?keywords=PI4IOE5V9554LEX
+    - **Risks:** Spec trade (I/O count). Not acceptable under the not-worse rule.
+  7.
+    - **Name:** Same Sky (ex-CUI) CPT-1207-3TH piezo transducer
+    - **Kind:** other_brand
+    - **Price usd:** 0.61 qty1 / 0.458 qty10 (DigiKey, 2,174 in stock, Active, 16 wk lead)
+    - **Spec comparison:** Externally driven piezo (no driver, no coil). Rated 3 Vp-p, 30 Vp-p max, 4,000 Hz, 75 dB at 10 cm at rated voltage with a 1/2-duty square wave, 3 mA. 12,000 pF typ. Diameter 12.5 x 7.0 mm, 0.8 g, top port, -40 to +85 C. Not washable.
+    - **Worse in:** Nothing against the critical specs. Like every cheap transducer it is not sealed, so the case needs a hydrophobic acoustic vent over the port. A plain 3.3 Vp-p single-ended drive from GP20 gives about the rated SPL. For about +6 dB, drive it differentially from GP20 and GP22 (GP22 is the reserve pin).
+    - **Compatibility:** Through-hole on the keypad PCB. Drive with a 100-220 Ohm series resistor from GP20 by PWM at 4 kHz.
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=CPT-1207-3TH
+      - https://www.sameskydevices.com/product/resource/cpt-1207-3th.pdf
+      - https://www.digikey.com/en/products/result?keywords=piezo%20transducer%203V%204kHz%20externally%20driven
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=CPT-1207-3TH
+    - **Risks:** None significant. Through-hole: check the keypad PCB height stack.
+  8.
+    - **Name:** Raltron RDT-4.000-1212-NS1 SMD piezo
+    - **Kind:** other_brand
+    - **Price usd:** 1.16 qty1 (DigiKey, 238 in stock, Active)
+    - **Spec comparison:** Externally driven piezo, 4 kHz, 75 dB at 3 V / 10 cm, -40 to +105 C, 12 x 12 x 3.3 mm SMD
+    - **Worse in:** Costs more than the CPT-1207-3TH. Only worth it if the keypad PCB is SMD-only or height-limited (3.3 mm against 7.0 mm). Low stock.
+    - **Compatibility:** SMD reflow on the keypad PCB.
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=piezo%20transducer%203V%204kHz%20externally%20driven
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=RDT-4.000-1212-NS1
+    - **Risks:** Datasheet not opened; specs come from the DigiKey parametric table only.
+  9.
+    - **Name:** Same Sky CPT-2212-3TH (louder option)
+    - **Kind:** other_brand
+    - **Price usd:** 1.19 qty1 (DigiKey, 1,423 in stock, Active)
+    - **Spec comparison:** Externally driven piezo, 4 kHz, 90 dB at 3 V / 10 cm (+15 dB over the CPT-1207), -35 to +80 C
+    - **Worse in:** Size: 22 x 11 mm, which may not fit the 38-42 mm HMI column next to the encoders. Costs more than the CPT-1207-3TH.
+    - **Compatibility:** Through-hole. Same drive as above.
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=piezo%20transducer%203V%204kHz%20externally%20driven
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=CPT-2212-3TH
+    - **Risks:** Mechanical fit.
+  10.
+    - **Name:** TDK PS1240P02BT piezo (the common default)
+    - **Kind:** other_brand
+    - **Price usd:** 0.73 qty1 / 0.546 qty10 (DigiKey, 36,785 in stock)
+    - **Spec comparison:** Externally driven, 4 kHz, 60 dB at 3 V / 10 cm, -10 to +70 C, diameter 12.2 x 7.8 mm
+    - **Worse in:** 15 dB quieter than the CPT-1207-3TH and only rated to -10 C. It is also more expensive. REJECTED.
+    - **Compatibility:** Through-hole.
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=PS1240P02BT
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=PS1240P02BT
+    - **Risks:** Spec trade (SPL, cold rating).
+  11.
+    - **Name:** Kingbright WP7113LSECK/J3 5 mm red LED (single-colour status on GP21)
+    - **Kind:** other_brand
+    - **Price usd:** 0.53 qty1 / 0.368 qty10 (DigiKey, 28,134 in stock, Active)
+    - **Spec comparison:** Red, 625 nm dominant, 550 mcd (DigiKey lists the test current as 2 mA; verify in the Kingbright datasheet), Vf 1.8 V typ, so 3.3 V GPIO drive with a resistor is well controlled. Clear lens, 20 deg.
+    - **Worse in:** The 20 deg clear lens is narrow for a status light; it needs a diffusing panel lens or light pipe for off-axis viewing. It is single-colour, which matches the single GP21 line but not the RGB LED in final_completeness. Temperature range not listed on the page (unverified).
+    - **Compatibility:** GP21 with a 220-470 Ohm series resistor. Red suits the Night/Red theme.
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=WP7113LSECK%2FJ3
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=WP7113LSECK%2FJ3
+    - **Risks:** Unverified intensity test condition and temperature range.
+  12.
+    - **Name:** Broadcom ASMB-LTD3-0C3F3 RGB LED, common anode, PLCC-4 2.1 mm
+    - **Kind:** other_brand
+    - **Price usd:** 0.61 qty1 (DigiKey, 7,990 in stock, Active)
+    - **Spec comparison:** R/G/B: 410 mcd at 15 mA / 950 mcd at 10 mA / 190 mcd at 10 mA. Vf 2.1 / 2.9 / 2.9 V typ. 110 deg viewing angle.
+    - **Worse in:** Needs 3 sink lines (expander spare P1 pins), not GP21. With the anode on 3.3 V the green and blue channels have only about 0.4 V of headroom, so brightness is poorly controlled. A 5 V anode works only by switching the 5 V-tolerant expander pin between input and output-low instead of driving it high. Operating temperature not listed (unverified).
+    - **Compatibility:** Only if the RGB requirement is kept. Then it goes on the expander, which is another reason to keep a 16-bit part.
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=RGB%20LED%20common%20anode%20diffused%20PLCC-4
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=ASMB-LTD3-0C3F3
+    - **Risks:** The drive circuit must be designed for it; temperature unverified.
+- **Notes:** VERDICT (angle A):
+  - The set has no SKUs, so its $5-10 is only a model estimate.
+  - Cheapest not-worse set with verified parts (DigiKey qty 1, ex VAT): PI4IOE5V9555LEX $1.48 + CPT-1207-3TH $0.61 + WP7113LSECK/J3 $0.53, plus about $0.3 of passives. Total about $2.9.
+  - The same set built on the re-audit's TCA9555PWR costs about $3.4. The expander swap saves $0.46.
+  
+  Why the swap is allowed: the PI4IOE5V9555 is register- and pin-compatible, has better ESD (4 kV against 2 kV HBM) and lower standby current. It is worse only in:
+  - minimum VCC (2.3 V against 1.65 V), which does not matter at 3.3 V;
+  - POR characterisation, which needs firmware re-init and a bring-up test;
+  - 52-week factory lead time, though DigiKey holds 3,021 in stock.
+  
+  If the POR caveat is unacceptable, keep the TCA9555PWR ($1.94). It is the safe choice, and nothing cheaper is strictly better on every line.
+  
+  EU buying:
+  - digikey.de quotes EUR 1.30 ex VAT (EUR 1.547 incl.) for the PI4IOE5V9555 and EUR 1.70 for the TCA9555. Add your country's VAT.
+  - Bundle these into the existing DigiKey HMI order (Pico SC0915, PEC11R, KSC641J) so shipping is shared.
+  - TME shows the TCA9555PWR out of stock. Its NXP PCA9555PW listing shows only a structured-data range of $1.39-2.41, which is unverified.
+  
+  Rejected:
+  - NXP PCA9555PW,118: $2.47, costs more.
+  - UMW TCA9555PWR on DigiKey: $2.21. A Chinese second-source copy, and not cheaper.
+  - MaxLinear XRA1201: obsolete, and not register-compatible.
+  - Murata PKM13EPYH4000-A0: Last Time Buy (31 Mar 2027).
+  - Adafruit breakouts: AW9523 #4886 $4.95, PCF8574 #5545 $4.95, PCF8575 #5611 $5.95, MCP23017 #5346 $5.95, TCA8418 #4918 $5.95. All cost more, and all but the MCP23017 have a different register model. They are also unnecessary, because the SMD KSC641J keys already need a keypad PCB that can carry a TSSOP chip.
+  - XINLUDA XL9555 and other LCSC clones: not checked. The LCSC pages and API were blocked, and clones belong to another angle anyway.
+  
+  Integration findings to carry into v2:
+  1. STACK.md section 5.2 gives the status LED one pin (GP21), but final_completeness and lab_ui_hf call for an RGB LED. Either use a single colour (red suits the Night theme), or put a common-anode RGB on 3 spare expander P1 pins. An 8-bit expander would rule that out.
+  2. Use an externally driven piezo, not a magnetic buzzer or a self-oscillating active buzzer. It has no coil and makes sound only while the PWM runs. The cheap parts are not sealed, so the IP54 target needs an acoustic vent membrane.
+  3. Mark the BOM row "verified SKUs, about $2.9-3.4" in place of "5-10 (model)".
+  
+  Method limits: the WebSearch budget for this turn was already used up after my first query, so I worked only from WebFetch on primary pages (TI, Diodes, onsemi, Same Sky, DigiKey US/DE, TME, Adafruit). Mouser returned 503, the LCSC pages and API were blocked, the NXP datasheet returned 404/403, and Reichelt returned 404.
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
