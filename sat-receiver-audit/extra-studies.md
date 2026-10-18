@@ -15783,6 +15783,233 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   All USD conversions use the stack's implied rate of 1.124 USD/EUR (an assumption). Search budget used: 11 WebSearch calls.
 
+## searchA:molicel_inr21700_p50b (run `wf_a268b76e-da0`)
+
+- **Part:** Molicel INR21700-P50B Li-ion cell, 4S1P pack (qty 5 = 4 + 1 spare), Power group, core tier
+- **Current price usd:** 49.95 for 5 ($9.99 each, sale price; regular $11.99) at 18650 Battery Store (US). Re-checked 18 Oct 2026: in stock, flat top, 71 g max, AC 6.5 mOhm / DC 12.8 mOhm typical, 4850 mAh min. US seller, ships lithium cells by ground inside the US only, so a European buyer can't actually order from it.
+- **Critical specs:**
+  - Form factor: 21700, flat top, unprotected, steel can. P50B maximums are 21.55 mm diameter and 70.15 mm height. The 4 cells sit 2x2 end to end in a 46x25x150 mm pack inside a 54x33x158 mm compartment, and the top must be spot-weldable.
+  - Capacity: 5.0 Ah / 18.0 Wh typical, 4850 mAh / 17.5 Wh minimum. Goods-in test is at least 4.85 Ah. This gives a 72 Wh nominal pack; the plan uses 58 Wh warm and 50 Wh at 0 C or after about 300 cycles.
+  - Internal resistance: AC 6.5 mOhm typical at 30% SOC, DC 12.8 mOhm typical at 50% SOC. This sets voltage sag at the 4.6 A peak (with Lime) against the 13.2 V Linux cut-off, and how the pack behaves at 0 C.
+  - Continuous discharge: 60 A with 80 C cut-off. The stack needs only 0.6 A typical, 3.4 A peak (4.6 A with Lime), with a 7.5 A fuse, a 15 A BMS and a 40+/-10 A BMS DOCP. Any rating of 15 A or more has margin, but I still note when a candidate's rating is lower.
+  - Charging: standard 5 A, maximum 25 A. The charge temperature range is -20 to 60 C ambient. The stack charges at up to 3 A through the IP2368, to 4.10 V/cell daily and 4.20 V monthly, with an NTC window of 0-45 C. So the cell must accept 3 A across the whole 0-45 C range.
+  - Low-temperature discharge: capacity and power at 0 C and -10 C (handheld use outdoors).
+  - Cycle life at gentle rates and the 4.10 V cap: Molicel quotes 700 cycles, and up to 1400 at +1C charge / -100 W discharge.
+  - Mass: 71 g maximum, 68-71 g at goods-in, 284 g for the 4 pack cells (handheld weight).
+  - Storage and self-discharge (stored at about 50% SoC; long standby while off).
+  - Legitimacy and safety: a genuine cell from an established seller, legally sold in the EU, with UL1642 / IEC 62133-2 / UN38.3. Ships by ground as UN3480. Cells must be matched for a 4S1P pack (spread of capacity and IR).
+- **Candidates:**
+  1.
+    - **Name:** Molicel INR21700-P50B (current pick) at 18650 Battery Store
+    - **Kind:** current_part
+    - **Price usd:** 9.99 each, 49.95 for 5 (10+: $8.50 each)
+    - **Spec comparison:** Reference. Molicel datasheet v1.1: 5000/4850 mAh, 3.6 V, 60 A continuous (80 C cut-off), charge 5 A standard / 25 A maximum, charge -20 to 60 C and discharge -40 to 60 C ambient, AC 6.5 / DC 12.8 mOhm, 21.55 x 70.15 mm max, 71 g max.
+    - **Worse in:** Nothing (this is the reference). Its practical problem is that a European buyer can't order it: the US seller ships cells by ground inside the US only.
+    - **Compatibility:** Baseline; already designed in.
+    - **Risks:** US-only ground shipping for UN3480.
+    - **Seller url:** https://www.18650batterystore.com/products/molicel-21700-p50b-5000mah-50a-battery
+    - **Sources:**
+      - https://www.fsaeonline.com/content/Molicel-TDS--INR-21700-P50B-80122.pdf
+      - https://www.molicel.com/product/inr-21700-p50b/
+      - https://www.18650batterystore.com/products/molicel-21700-p50b-5000mah-50a-battery
+  2.
+    - **Name:** Molicel INR21700-P50B (identical cell) at NKON, Netherlands, an established EU cell retailer
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** EUR 6.75 incl. NL VAT (EUR 5.58 ex VAT) = about $7.59 each. 5 cells = EUR 33.75, about $37.94, plus shipping. 10+ is EUR 5.92 each incl. VAT. I used EUR 1 = $1.124, the rate STACK.md uses.
+    - **Spec comparison:** Same Molicel part and datasheet, so every spec is equal. NKON's page lists 4850 mAh minimum / 5000 typical, flat top, in stock. Its own spec table is inconsistent (50 A vs 60 A, 68 g vs 70 g); the Molicel datasheet governs.
+    - **Worse in:** Nothing in specs. Shipping is extra: NKON calculates it in the cart and only quotes a general EUR 3-50 range.
+    - **Compatibility:** Drop-in, same cell.
+    - **Risks:** I could not confirm that NKON is an authorized Molicel distributor. NKON blocks direct fetches, so I read its pages through a reader proxy; re-check price and stock at checkout. VAT shown is the Dutch 21%; your country's rate may apply at checkout (not verified). At goods-in, check the date code and run the normal tests: at least 4.85 Ah, IR, 68-71 g.
+    - **Seller url:** https://www.nkon.nl/en/molicel-inr21700-p50b-5000mah-50a.html
+    - **Sources:**
+      - https://www.nkon.nl/en/molicel-inr21700-p50b-5000mah-50a.html
+      - https://www.nkon.nl/en/ordering-and-shipping
+  3.
+    - **Name:** Molicel INR21700-P50B (identical cell) at akkuteile.de, Germany
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** EUR 8.90 incl. VAT (1 pc), EUR 8.60 at 4+ = about $9.67 each. 5 cells = EUR 43.00, about $48.33. Shipping EUR 5.90 in Germany, EUR 13.90 international DHL.
+    - **Spec comparison:** Same Molicel part, all specs equal. Ships in 1-2 days. Names Onni-Tec GmbH as the EU responsible party.
+    - **Worse in:** Nothing in specs. Only about $1.60 cheaper than the reference before shipping, and more expensive than NKON.
+    - **Compatibility:** Drop-in, same cell.
+    - **Risks:** Does not claim to be an authorized Molicel distributor. The page has a typo ('4500mAh' in the scope-of-delivery section).
+    - **Seller url:** https://akkuteile.de/en/lithium-ionen-battery/size-21700/molicel/molicel-inr21700-p50b-5000mah-60a-3-6-3-7v-li-ion-battery_100638_3507
+    - **Sources:**
+      - https://akkuteile.de/en/lithium-ionen-battery/size-21700/molicel/molicel-inr21700-p50b-5000mah-60a-3-6-3-7v-li-ion-battery_100638_3507
+  4.
+    - **Name:** Molicel/NPE INR-21700-P50B at Liion Wholesale (US)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 8.99 each, 44.95 for 5 (from the site's search result only; product page blocked, unverified)
+    - **Spec comparison:** Same Molicel part. Listed as 'Authorized Distributor'.
+    - **Worse in:** Nothing in specs, but it is a US ground-only seller, so it doesn't apply to the European buyer.
+    - **Compatibility:** Drop-in, same cell.
+    - **Risks:** Price unverified (product page returned 403). US-only shipping.
+    - **Seller url:** https://liionwholesale.com/search?q=p50b
+    - **Sources:**
+      - https://liionwholesale.com/search?q=p50b
+  5.
+    - **Name:** Ampace INR21700-JP50 (model JP50P1), tabless, at NKON
+    - **Kind:** other_brand
+    - **Price usd:** EUR 3.95 incl. VAT = about $4.44 each. 5 cells = EUR 19.75, about $22.20. Pre-order, estimated shipping 30 Oct 2026. 18650 Battery Store: $5.99, sold out.
+    - **Spec comparison:** Ampace datasheet (PS-GC-JP50P1, 2025-07) vs P50B:
+  - Minimum capacity 4900 vs 4850 mAh: better.
+  - Mean capacity 5000 mAh, 3.58 V, 17.9 Wh: equal.
+  - AC IR 4 mOhm max vs 6.5 typical: better. No DC figure given.
+  - Continuous discharge 40 A (no cut-off) / 60 A (80 C cut-off) vs 60 A (80 C): equal. 180 A pulse for 5 s.
+  - Size 21.35 x 70.45 mm max vs 21.55 x 70.15: fits.
+  - Weight 72 g max vs 71 g max (NKON lists 72 g vs 68-70 g for P50B): worse.
+  - Charge -10 to 60 C vs -20 to 60 C: narrower, but the stack charges only at 0-45 C.
+  - Charge current by temperature: 2.5 A CC at 0-10 C, 8 A at 10-25 C, 15 A at 25-60 C.
+  - Relative capacity at 30 A: 92% at 0 C, 90% at -10 C, 85% at -20 C.
+  - Cycle life: at least 60% after 600 cycles at 15 A charge / 30 A discharge. This is a much harsher test than Molicel's, so the two can't be compared directly.
+  - Self-discharge: at least 98% of Cmin left after 28 days.
+  - Listed certifications: IEC 62133-2, IEC 62619, UL1642, UN38.3, EU Battery Directive / RoHS / REACH.
+    - **Worse in:** - Mass up to 1 g more per cell by the datasheet maximums (about 2-4 g per cell by listed weights, roughly 8-16 g per pack).
+  - At 0-10 C the cell allows only 2.5 A charge, while the stack's IP2368 can push up to 3 A. To keep it, either set the IP2368 charge current to 2.5 A or move the NTC lower limit to 10 C; both trade away part of the charging spec.
+  - No independent capacity, IR or cycle measurements found.
+  - Its cycle-life claim can't be compared with the P50B's.
+  - Currently pre-order only.
+    - **Compatibility:** Fits mechanically and electrically: same 21700 flat top, 2.5-4.2 V, works with the Daly 4S BMS thresholds. Needs the charger change above if charging below 10 C is kept.
+    - **Risks:** Fairly new cell. No Mooch, lygte-info or other independent bench test found in my searches. Pre-order stock. Must pass goods-in tests (at least 4.85 Ah, IR, mass).
+    - **Seller url:** https://www.nkon.nl/en/ampace-inr21700-jp50-5000mah-60a.html
+    - **Sources:**
+      - https://cdn.shopify.com/s/files/1/0481/9678/0183/files/01_PS-GC-JP50P1-Specification_202507_sent.pdf?v=1766497427
+      - https://www.nkon.nl/en/ampace-inr21700-jp50-5000mah-60a.html
+      - https://18650batterystore.com/products/ampace-jp50-21700-5000mah-60a-battery
+  6.
+    - **Name:** BAK INR21700-50D2 (INR2170-50D2) at NKON
+    - **Kind:** other_brand
+    - **Price usd:** EUR 3.85 incl. VAT = about $4.33 each. 5 cells = EUR 19.25, about $21.64. 10+ is EUR 3.65. In stock.
+    - **Spec comparison:** BAK datasheet (version A/00, first edition, 2026-03-20) vs P50B:
+  - Minimum capacity 4950 vs 4850 mAh: better. Typical 5000 mAh, 17.82-18.0 Wh: equal.
+  - AC impedance 5 mOhm max vs 6.5 typical: better. No DC figure given.
+  - Weight 69 g max vs 71 g: better.
+  - Continuous discharge 60 A with 80 C cut-off: equal. NKON's page also says '15 A max'.
+  - Maximum charge 15 A vs 25 A: lower, irrelevant at 3 A.
+  - Charge temperature 0-45 C vs -20 to 60 C: narrower.
+  - Height 70.75 +/-0.25 mm (up to 71.0) vs 70.15 max: up to 0.85 mm longer; diameter 21.45 +/-0.15 mm.
+  - Capacity at 10 A: at least 90% at 0 C, 85% at -10 C, 80% at -20 C.
+  - Cycle life: at least 60% after 600 cycles at 8 A charge / 40 A discharge (harsh test, not comparable).
+  - Storage at 3.40-3.60 V.
+    - **Worse in:** - Charge temperature range is narrower (0-45 C vs -20 to 60 C). It exactly matches the stack's NTC window with no margin, so the window would need tightening to about 2-43 C for NTC tolerance.
+  - BAK's charge current limits by temperature are 'on request', so 3 A at 0-10 C is unconfirmed.
+  - Up to 0.85 mm longer per cell (up to 1.7 mm per 2-cell row); the compartment needs a check.
+  - Brand-new datasheet, no independent test found.
+  - The datasheet lists test standards (UL1642, IEC 62133, GB31241), not certificate numbers.
+    - **Compatibility:** Electrically drop-in (2.0-2.5 V to 4.2 V, BMS thresholds fine). Mechanically probably fits the 158 mm compartment, but confirm the pack length.
+    - **Risks:** New model with no track record or independent IR/capacity/cycle data. Needs BAK's temperature-dependent charge profile before use.
+    - **Seller url:** https://www.nkon.nl/en/bak-inr21700-50d2-5000mah-60a.html
+    - **Sources:**
+      - https://www.nkon.nl/en/bak-inr21700-50d2-5000mah-60a.html
+      - https://www.nkon.nl/en/amfile/file/download/file/1946/product/6119/
+  7.
+    - **Name:** Tenpower INR21700-60XG 6000 mAh at NKON
+    - **Kind:** other_brand
+    - **Price usd:** EUR 5.45 incl. VAT = about $6.13 each. 5 cells = EUR 27.25, about $30.63. Pre-order, estimated shipping 20 Oct 2026.
+    - **Spec comparison:** Tenpower datasheet (V0.1 draft, 2025-12-09) vs P50B:
+  - Capacity 6000 mAh nominal / 5900 min vs 5000/4850: better, about +20% (pack about 86 Wh vs 72 Wh).
+  - AC IR 5 mOhm max vs 6.5 typical: better.
+  - Continuous discharge 40 A (no cut-off) / 60 A (75 C cut-off) vs 60 A (80 C): about equal.
+  - Maximum charge 16 A vs 25 A: lower, irrelevant here.
+  - Charge 0-45 C ambient vs -20 to 60 C: narrower.
+  - Size 21.50 x 70.50 mm max.
+  - Weight 76 g vs 71 g max: worse.
+  - Capacity at 30 A: 95% at 0 C, 92% at -10 C.
+  - Cycle life: at least 60% after 500 cycles at 6 A charge / 40 A discharge.
+    - **Worse in:** - Mass +5 g per cell, +20 g per pack.
+  - Charge temperature range narrower; no charge limits by temperature given.
+  - The datasheet is a v0.1 draft with contradictions (minimum capacity 5900 vs 4950 mAh in the same section; a page title saying 4000 mAh).
+  - No certifications listed in the document.
+  - No independent tests found. Pre-order.
+    - **Compatibility:** Fits electrically. Diameter and length are within the envelope.
+    - **Risks:** Draft datasheet. Less established brand at this performance level. Extra mass in a handheld.
+    - **Seller url:** https://www.nkon.nl/en/tenpower-inr21700-50xg-6000mah-60a.html
+    - **Sources:**
+      - https://www.nkon.nl/en/tenpower-inr21700-50xg-6000mah-60a.html
+      - https://www.nkon.nl/en/amfile/file/download/file/1843/product/6073/
+  8.
+    - **Name:** Tenpower INR21700-50XG 5000 mAh 40 A at NKON
+    - **Kind:** other_brand
+    - **Price usd:** EUR 4.18 incl. VAT (NKON listing; product page shows EUR 3.45 ex VAT) = about $4.70 each. 5 cells about $23.49. Pre-order, estimated 30 Oct 2026.
+    - **Spec comparison:** From NKON's page:
+  - Capacity 4950 mAh min / 5000 typical: better than 4850 minimum.
+  - Rated 40 A vs 60 A: lower, but still much more than the 4.6 A need.
+  - Size 21.5 x 70.5 mm. Weight 75 g vs 71 g: worse.
+  - No IR or cycle-life data on the page; datasheet not reviewed.
+  - An Endless-Sphere forum user rates the JP50 slightly ahead of the 50XG in power.
+    - **Worse in:** - Mass +4 g per cell.
+  - Rated current lower (40 vs 60 A), not relevant at this load.
+  - IR, cycle life and charge temperatures unverified.
+  - Pre-order.
+    - **Compatibility:** Fits electrically.
+    - **Risks:** Unverified datasheet values; no independent test reviewed.
+    - **Seller url:** https://www.nkon.nl/en/tenpower-inr21700-50xg-5000mah-40a.html
+    - **Sources:**
+      - https://www.nkon.nl/en/tenpower-inr21700-50xg-5000mah-40a.html
+  9.
+    - **Name:** EVE INR21700-50PL 'new version' at NKON
+    - **Kind:** other_brand
+    - **Price usd:** EUR 3.95 incl. VAT = about $4.44 each, about $22.20 for 5. Pre-order, estimated 28 Oct 2026.
+    - **Spec comparison:** - Minimum capacity 4800 mAh vs 4850: worse, and below the stack's 4.85 Ah goods-in minimum.
+  - Typical 5000 mAh.
+  - 72 g vs 71 g: worse.
+  - 21.15 x 70.15 mm.
+  - Rated '125 A'. No IR, charge or cycle data on the page.
+  - NKON calls it the version 'with no voltage drop issues', which implies the earlier batch had a defect.
+    - **Worse in:** Minimum capacity (fails the 4.85 Ah goods-in test) and mass; earlier-batch voltage-drop issue. Rejected.
+    - **Compatibility:** Fits mechanically, but fails the capacity rule.
+    - **Risks:** Earlier batch had a voltage-drop issue; pre-order.
+    - **Seller url:** https://www.nkon.nl/en/eve-inr21700-50pl-5000mah-125a.html
+    - **Sources:**
+      - https://www.nkon.nl/en/eve-inr21700-50pl-5000mah-125a.html
+  10.
+    - **Name:** Samsung INR21700-50S at NKON
+    - **Kind:** other_brand
+    - **Price usd:** EUR 3.75 incl. VAT = about $4.22 each, about $21.08 for 5. In stock.
+    - **Spec comparison:** - Minimum capacity 4800 mAh vs 4850: worse. Mooch measured 5117 and 5122 mAh.
+  - 72-72.7 g vs 71 g: worse.
+  - 21.25 x 70.62 mm.
+  - Samsung rates it 25 A continuous (NKON says 35 A). Mooch rates it 20 A continuous; it neared 90 C at 25 A and 'runs hotter' than the P42A, which points to higher IR than the P50B.
+    - **Worse in:** Minimum capacity, mass, rated current, and heating/IR. Rejected under the not-worse rule.
+    - **Compatibility:** Fits.
+    - **Risks:** Samsung cells are often counterfeited (buy only from an established seller).
+    - **Seller url:** https://www.nkon.nl/en/samsung-inr21700-50s-5000mah-35a.html
+    - **Sources:**
+      - https://www.nkon.nl/en/samsung-inr21700-50s-5000mah-35a.html
+      - https://forum.esk8.news/t/mooch-s-bench-test-results-samsung-50s-25a-5000mah-21700-a-great-performer-but-ran-a-little-hot/56544
+  11.
+    - **Name:** Molicel INR21700-P50B 'grade B / reduced cycle life' at NKON
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** EUR 4.95 incl. VAT = about $5.56 each, about $27.82 for 5 (from a search snippet only; the product page now returns 404)
+    - **Spec comparison:** Same cell type, but NKON says the manufacturer qualifies these as reduced-quality cells whose capacity falls quickly after about 500 cycles.
+    - **Worse in:** Cycle life. Rejected. Also appears to be no longer listed.
+    - **Compatibility:** Fits.
+    - **Risks:** Grade-B cells; listing gone (404).
+    - **Seller url:** https://www.nkon.nl/en/molicel-inr21700-p50b-5000mah-50a-grade-b.html
+    - **Sources:**
+      - https://www.nkon.nl/en/molicel-inr21700-p50b-5000mah-50a-grade-b.html
+- **Notes:** The cheapest option that is strictly not worse is the same Molicel P50B bought from NKON in the Netherlands. It costs EUR 6.75 incl. Dutch VAT, about $7.59 each, so 5 cells come to about $37.94 plus shipping (NKON only quotes EUR 3-50 for shipping and calculates it in the cart). That is about $12 (24%) less than the $49.95 pick, and NKON shows it in stock. It also fixes the real problem: the current US seller can't ship Li-ion cells to Europe. The stack, the runtime model and the goods-in tests stay unchanged.
+  
+  Prices: I used EUR 1 = $1.124, the rate STACK.md already uses (EUR 6.75 = $7.59). NKON's prices are with Dutch 21% VAT; your country's rate may apply at checkout (not verified).
+  
+  Two cheaper cells from other makers beat the P50B on paper but are not strictly not-worse:
+  - **Ampace JP50:** EUR 3.95, about $22.20 for 5, pre-order. It has higher minimum capacity (4900 vs 4850 mAh) and lower AC IR (4 vs 6.5 mOhm). But it is up to 1 g heavier per cell. At 0-10 C it allows only 2.5 A charge, while the stack's IP2368 can push 3 A. Its cycle-life figure was measured under a much harsher test, so it can't be compared, and I found no independent test.
+  - **BAK 50D2:** EUR 3.85, about $21.64 for 5, in stock. It has 4950 mAh minimum, AC IR of 5 mOhm or less, and weighs 69 g. But its charge temperature range is 0-45 C, which equals the stack's NTC window with no margin. Its charge limits by temperature are 'on request' from BAK. It can be up to 0.85 mm longer per cell. The datasheet is a first edition from March 2026, and I found no independent measurements.
+  
+  Either would need a stated trade (charger current set to 2.5 A or a narrower NTC window) plus a goods-in capacity, IR and 0 C test before it could replace the P50B. I would not swap silently.
+  
+  Rejected:
+  - Tenpower 60XG and 50XG: 75-76 g, draft or unverified datasheets, pre-order.
+  - EVE 50PL: 4800 mAh minimum.
+  - Samsung 50S: 4800 mAh minimum, 72 g, runs hot.
+  - P50B grade B: shorter cycle life, listing gone.
+  - Molicel M65A at NKON: EUR 9.75, about $10.96 a cell, more than the P50B at either seller.
+  - Linkdata 60P: EUR 7.45, more than NKON's P50B.
+  - Reliance RS50 (EUR 4.65): lesser-known brand, not researched.
+  
+  How the data was gathered: NKON blocks direct fetches (403), so I read its pages and datasheets through the r.jina.ai reader proxy; re-check price, stock and date code at checkout. lygte-info.dk has no tests of the P50B, JP50, 50PL, 50XG or 50D2, and the Endless-Sphere and Electric Unicycle forum threads were blocked. Independent data for the alternatives is still missing.
+  
+  None of these cells affects the hard rules (receive-only, conducted-only sources, no loops). The 'never flown', containment and 4.10 V daily-charge rules apply to any cell chosen.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
