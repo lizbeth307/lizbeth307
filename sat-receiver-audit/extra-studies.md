@@ -34860,6 +34860,142 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - Every candidate is a signal source and stays under the same conducted-only, Bench-mode-gated rule.
   - Exchange rates: ECB 16 Oct 2026 (PLN 4.37, CZK 24.323); USD at the stack's 1.1241.
 
+## searchB:tinysa_ultra_zs407 (run `wf_e5582d4c-0a2`)
+
+- **Part:** tinySA Ultra+ ZS407 (Zeenko), handheld spectrum analyser, small-signal generator and channel-power meter (bench tier, Lab instruments, qty 1)
+- **Current price usd:** 204.28 ex VAT / 247.18 incl. 21% ES VAT (Astroradio EUR 219.89 incl. VAT, EUR 215.50 by bank transfer, in stock; verified in re-audit D, 18 Oct 2026). Budget alternative already in STACK.md, Mirfield GBP 189.95 incl. UK VAT = $252.98 (GBP 158.29 ex VAT = $210.81, model), is not cheaper for an EU buyer.
+- **Critical specs:**
+  - Frequency range: Normal mode 100 kHz-900 MHz; ULTRA mode up to 7.3 GHz. The stack covers 100 kHz-7.3 GHz independently: HF, L-band 1.5-1.7 GHz, S-band 2.2-2.4 GHz, Ku-LNB IF 0.95-2.15 GHz, 2.4/5.8 GHz Wi-Fi/BLE silence checks (tinySA.org spec page)
+  - Internal LNA usable to 6 GHz on the ZS407 (4 GHz on ZS405/ZS406). NF measured about 4.7-5.8 dB below 2 GHz on a genuine ZS405 (Reeve); used behind a >=20 dB pad
+  - Sensitivity: LDS -102 dBm at 30 MHz, RBW 30 kHz, no LNA; -145 dBm with LNA (spec). Independent DANL on a genuine ZS405: -149 to -155 dBm/Hz LNA off, -168 to -171 dBm/Hz LNA on, within 0.2-3.0 dB of an R&S FPL1003 with LNA/preamp off (Reeve)
+  - RBW 0.2/1/3/10/30/100/300/600/850 kHz; SFDR 70 dB at 30 kHz RBW; phase noise -108 dBc/Hz at 100 kHz and -115 dBc/Hz at 1 MHz offset (at 30 MHz)
+  - Level accuracy: +/-2 dB absolute after calibration; linearity +/-2 dB below 5.3 GHz and +/-5 dB from 5.3 to 6 GHz; 6-7.3 GHz uncharacterised. It is the stack's reference power meter (channel power 'channel [1-3]', attenuation >=10 dB)
+  - Input robustness: +6 dBm absolute max at 0 dB attenuation, +20 dBm short-term peak at 30 dB, +/-5 V DC max; P1dB -1 dBm; IIP3 +15 dBm; 50 Ohm only with >=10 dB attenuation
+  - Generator (conducted only, Bench only): sine -115 to -19 dBm in 1 dB steps to 900 MHz (Ultra+); +/-2 dB only from -72 to -19 dBm up to 800 MHz. Used for dBFS->dBm calibration at -40 dBm plus VNA-measured pads
+  - Built-in NF routine for the ENR table of the ZFL-500 noise source (28-2400 MHz, EXT GAIN 0)
+  - Software compatibility: official tinySA4 firmware v1.4-252-g2b4aa51 (fallback v1.4241), USB CDC text protocol for the labd allow-list driver and QtTinySA (pyside6 6.11.0 venv) on Ubuntu 24.04 arm64; firmware must support 'channel', NF and output-off commands
+  - Own battery (Ultra+ >=3 h, 5000 mAh per GOTRONIK listing), charging <=1 h at >=500 mA over USB-C, 4-inch handheld size, so it measures independently of the device's power tree (it gates the 12 V regulator A/B)
+  - Authenticity: genuine Zeenko unit from a seller on the tinySA.org Buying list. Clones cannot be reliably told apart and the selftest can be patched (tinySA.org)
+  - Hard rules: receive-only on air; generator and output only into a load, pad or DUT, never into an antenna
+- **Candidates:**
+  1.
+    - **Name:** Same genuine tinySA Ultra+ ZS407 from GOTRONIK (Poland, tinySA.org-listed seller), SKU TINYSA-ULTRA-ZS407, EAN 5902186301931
+    - **Kind:** current_part
+    - **Price usd:** 188.01 ex VAT (PLN 730.89 netto) / 231.25 incl. 23% PL VAT (PLN 899.00 brutto). Converted at ECB 16 Oct 2026 4.3700 PLN/EUR and the stack's 1.1241 USD/EUR (model). Page fetched 18 Oct 2026: 'Chwilowo niedostępny' (temporarily unavailable), shipping 24 h once in stock. The page also shows '+ kaucja' (a deposit) with no readable amount
+    - **Spec comparison:** Identical part. Listing: 100 kHz-900 MHz normal, 100 kHz-7.3 GHz Ultra, LNA +20 dB 1 MHz-7.3 GHz, Li-Ion 5000 mAh about 3 h, condition new. The kit adds an antenna, 2x 30 cm SMA cables, an SMA-SMA adapter, a stylus lanyard and a 32 GB card.
+    - **Worse in:** No spec is worse. Availability: out of stock now. Shipping outside Poland and the VAT a non-PL EU consumer pays (destination-country VAT under OSS) are unverified. Saves about $16 incl. VAT ($16.27 ex VAT) vs Astroradio.
+    - **Compatibility:** Same unit, same firmware path, same labd/QtTinySA support. Flash and record v1.4-252-g2b4aa51 on arrival as planned.
+    - **Risks:** Stock may not return before the regulator gate. Check the HW version (>=V0.5.3 = ZS407) and the serial on arrival.
+    - **Seller url:** https://www.gotronik.pl/tinysa-ultra-analizator-widma-100khz-7-3ghz-zs407-zeenko-p-13267.html
+    - **Sources:**
+      - https://www.gotronik.pl/tinysa-ultra-analizator-widma-100khz-7-3ghz-zs407-zeenko-p-13267.html
+      - https://www.gotronik.pl/zeenko-m-164.html
+      - https://tinysa.org/wiki/pmwiki.php?n=Main.Buying
+      - https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml
+  2.
+    - **Name:** Same genuine tinySA Ultra+ ZS407 from Eleshop (NL/DE/EU, tinySA.org-listed seller)
+    - **Kind:** current_part
+    - **Price usd:** UNVERIFIED: 179.25 ex VAT (EUR 159.46); 216.89 incl. 21% NL VAT (EUR 192.95); 213.31 incl. 19% DE VAT (EUR 189.76). These come from search snippets of a search index about 600 days old. Every Eleshop page returned HTTP 403 to fetch, so the current price and stock are unknown
+    - **Spec comparison:** Identical part, if the listing is still the ZS407 ('tinySA ultra+ ZS-407 spectrum analyser'). Eleshop states it sells the original and warns that the ZS-407 input is ESD- and overload-sensitive.
+    - **Worse in:** No spec is worse. Price and stock are unverified. Would save about $25-30 incl. VAT vs Astroradio if the old price still holds.
+    - **Compatibility:** Same unit.
+    - **Risks:** The price may have risen since it was indexed. Confirm the model is ZS-407, not ZS-406 (Eleshop lists both under 'Ultra+').
+    - **Seller url:** https://eleshop.eu/tinysa-ultra-zs-407-spectrum-analyser.html
+    - **Sources:**
+      - https://eleshop.eu/tinysa-ultra-zs-407-spectrum-analyser.html
+      - https://www.eleshop.nl/tinysa-ultra-zs-407-spectrum-analyser.html
+      - https://eleshop.de/tinysa-ultra-zs-407-spektrumanalysator.html
+      - https://tinysa.org/wiki/pmwiki.php?n=Main.Buying
+  3.
+    - **Name:** Used/second-hand genuine tinySA Ultra+ ZS407 (eBay used, Kleinanzeigen, Marktplaats, Wallapop, Amazon open-box)
+    - **Kind:** used
+    - **Price usd:** NOT FOUND: no used or sold-used ZS407 listing could be verified (eBay returns 403 to fetch; searches found only new listings at about $200-263). One AURSINC eBay 'new, open box, may have been used for testing or demo' listing at $249.99 (search snippet) is not cheaper
+    - **Spec comparison:** If genuine and undamaged, the specs are identical to the current part. The only independent measurement evidence is for the genuine ZS405 (Reeve vs R&S FPL1003: DANL within 0.2-3.0 dB LNA off, levels mostly within the +/-2 dB spec). Nothing measures the individual used unit.
+    - **Worse in:** Authenticity can't be proven: tinySA.org says clones cannot be identified ('Simple answer is: You can't!') and some clones patch the firmware to pass the selftest. The front-end may be damaged (the groups.io forum has 'regular inquiries' about damaged front-ends, per Reeve). No warranty. Battery wear unknown.
+    - **Compatibility:** Same as the current part, if genuine.
+    - **Risks:** Counterfeit or damaged front-end. Acceptable only with the original invoice from a tinySA.org-listed seller, HW >=V0.5.3, a reflash to official v1.4-252, and on-arrival checks: selftest, LDS about -102 dBm at 30 MHz / RBW 30 kHz, internal cal level, LNA on/off DANL. Even with all of that it fails the 'proven not counterfeit' rule unless the invoice is genuine. REJECTED unless a verified listing with an invoice turns up below about $180.
+    - **Seller url:** 
+    - **Sources:**
+      - https://tinysa.org/wiki/pmwiki.php?n=Main.Buying
+      - https://reeve.com/Documents/Articles%20Papers/Reeve_TinySA-FPL_Compare.pdf
+      - https://www.ebay.com/itm/287346361663
+  4.
+    - **Name:** Unlisted-seller 'tinySA Ultra / Ultra+ ZS407' clones (eBay generic sellers, Banggood, TinyRFEquip, TinyRFLab, Navplus, tomtop, non-factory AliExpress stores)
+    - **Kind:** generic_or_clone
+    - **Price usd:** about 200-263 for new eBay listings (search snippet, unverified), so not even cheaper; some '100 kHz-5.4 GHz Ultra Plus' listings exist at lower prices (unverified)
+    - **Spec comparison:** No independent measurement shows a clone equal to genuine. tinySA.org says clones 'may use lower quality components with incorrect reverse engineered component values' and 'you may not be able to detect the bad performance of a clone'. A groups.io user reports a clone with a 'noisefloor significantly higher' and 'no shielding' (snippet; the thread is paywalled to fetch).
+    - **Worse in:** Unknown or worse sensitivity, shielding, level accuracy and spurs; no measured evidence; possibly patched firmware; counterfeit trademark.
+    - **Compatibility:** Official firmware may fail or show selftest errors after an upgrade (tinySA.org), which breaks the pinned firmware and the labd driver plan.
+    - **Risks:** Counterfeit (violates the 'not a counterfeit' rule and the stack's clone rule). REJECTED.
+    - **Seller url:** 
+    - **Sources:**
+      - https://tinysa.org/wiki/pmwiki.php?n=Main.Buying
+      - https://groups.io/g/tinysa/topic/what_to_do_when_you_think_you/78923356
+      - https://www.ebay.de/itm/126967659929
+  5.
+    - **Name:** Genuine tinySA Ultra+ ZS-406 (older Ultra+), Neven CZ
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 159.65 ex VAT (CZK 3454.55) / 193.18 incl. 21% CZ VAT (CZK 4180). Converted at ECB 16 Oct 2026 24.323 CZK/EUR and 1.1241 USD/EUR (model). In stock (12 units), fetched 18 Oct 2026
+    - **Spec comparison:** Same: Normal mode 900 MHz, 3 h battery, generator sine 900 MHz, LDS -102 dBm, +/-2 dB accuracy, same firmware family. Worse: ULTRA range to 6 GHz (5.4 GHz per CNX table) vs 7.3 GHz; LNA only to 4 GHz vs 6 GHz; square-wave generator to 4.4 vs 6 GHz; high-accuracy generator mode to 5.4 vs 7.3 GHz.
+    - **Worse in:** Frequency coverage above 6 GHz, and LNA-assisted sensitivity from 4 to 6 GHz, which matters for the 5.8 GHz silence and survey checks. The stack also explicitly rejects ZS406 in place of ZS407.
+    - **Compatibility:** Same USB/firmware stack.
+    - **Risks:** Not a counterfeit, but worse. REJECTED.
+    - **Seller url:** https://www.neven.cz/search?phrase=tinysa
+    - **Sources:**
+      - https://www.neven.cz/search?phrase=tinysa
+      - https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Specification
+      - https://www.cnx-software.com/?p=161678
+  6.
+    - **Name:** Generic SA6 / 'SA6 Plus' / 'SA8' 35-6200 MHz handheld analyser with tracking generator (various brands: Uadme, Risegun, unbranded)
+    - **Kind:** generic_or_clone
+    - **Price usd:** sdrstore.eu shows about EUR 263.47 (rendered as 'EUR 26347', down from 'EUR 29451'), about $296 (model), so not cheaper there; marketplace prices unverified (Fruugo/AliExpress pages return 403)
+    - **Spec comparison:** Lowest frequency 35 MHz vs 100 kHz. Measuring range 35-4500 MHz (display to 6200 MHz) vs 7.3 GHz. Fixed RBW of about 170-200 kHz vs 0.2-850 kHz. Seller noise floor '<-100 dBm' to 3 GHz and '<-90 dBm' at the top. Seller accuracy '2 dB' within a 70-75 dB range. No independent measurements found.
+    - **Worse in:** No HF or low-VHF coverage; no narrow RBW (cannot separate carriers or do channel power properly); no LNA/NF routine; unmeasured accuracy; no documented serial protocol or Linux driver.
+    - **Compatibility:** No labd/QtTinySA support; no known arm64 Linux tool.
+    - **Risks:** Reject per angle rule (no measured evidence) and on specs. REJECTED.
+    - **Seller url:** https://www.sdrstore.eu/test-and-measurement/spectrum-analyzer/sa6-portable-6ghz-spectrum-analyzer-and-signal-generator-to-2g-3g-4g-lte-cdma-dcs-gsm-gprs-glonass/
+    - **Sources:**
+      - https://www.sdrstore.eu/test-and-measurement/spectrum-analyzer/sa6-portable-6ghz-spectrum-analyzer-and-signal-generator-to-2g-3g-4g-lte-cdma-dcs-gsm-gprs-glonass/
+      - https://www.sdrstore.eu/best-portable-spectrum-analyzer-2026-tinysa-sa6-sa8/
+  7.
+    - **Name:** Genuine tinySA Basic (original tinySA), Neven CZ
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 62.64 ex VAT (CZK 1355.37) / 75.79 incl. VAT (CZK 1640). ECB-converted (model); in stock (16 units)
+    - **Spec comparison:** 100 kHz-350 MHz low input and 240-960 MHz high input vs 100 kHz-7.3 GHz; RBW 3-600 kHz vs 0.2-850 kHz.
+    - **Worse in:** No coverage of L-band, S-band, Ku-IF or 2.4/5.8 GHz; coarser RBW; no LNA to 6 GHz.
+    - **Compatibility:** Same firmware family, older protocol.
+    - **Risks:** REJECTED on frequency range.
+    - **Seller url:** https://www.neven.cz/search?phrase=tinysa
+    - **Sources:**
+      - https://www.neven.cz/search?phrase=tinysa
+      - https://www.sdrstore.eu/best-portable-spectrum-analyzer-2026-tinysa-sa6-sa8/
+  8.
+    - **Name:** DIY/SDR substitute: the stack's own RTL-SDR Blog V4L / Airspy HF+ sweeps (labrx sweep, rtl_power), or a HackRF/PortaPack
+    - **Kind:** diy
+    - **Price usd:** n/a (V4L/HF+ already in the BOM; HackRF not priced)
+    - **Spec comparison:** V4L: 24-1766 MHz, 8-bit ADC, no absolute level calibration (L-band dBFS->dBm is 'relative, about +/-3 dB' in the stack), no generator. HackRF: 8-bit, uncalibrated. Neither has a published measurement showing +/-2 dB absolute accuracy, an NF routine or 7.3 GHz coverage.
+    - **Worse in:** Absolute level accuracy, dynamic range, frequency coverage (V4L) and independence from the device's own power tree. The tinySA is the instrument that calibrates these SDRs, so it cannot be replaced by them.
+    - **Compatibility:** HackRF/PortaPack is TX-capable hardware with TX apps, which conflicts with the stack's receive-only and no-TX-software rules.
+    - **Risks:** REJECTED.
+    - **Seller url:** 
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md
+- **Notes:** VERDICT (angle B): no generic module, clone, DIY build or used unit is proven not worse. Keep the tinySA Ultra+ ZS407.
+  - The only independent bench evidence is Reeve's ZS405-vs-R&S FPL1003 comparison: DANL within 0.2-3.0 dB with LNA/preamp off from 1 MHz to 2 GHz, power readings 'mostly within the accuracy bounds', repeatability about +/-0.5 dB. It covers genuine hardware only and says nothing about clones, the SA6 class or ZS407 behaviour above 6 GHz.
+  - Clones are rejected for lack of measured equality and as counterfeits. tinySA.org says they can't be identified and that the selftest can be patched.
+  - The SA6/SA8 class and the tinySA Basic are worse on range and RBW. The ZS406 is worse above 4-6 GHz.
+  - A used ZS407 can only qualify with an original invoice from a listed seller plus on-arrival checks, and no used price could be verified.
+  
+  REAL SAVING (same part, outside angle B; flagged for the A agent): buy the identical genuine ZS407 from a cheaper tinySA.org-listed EU seller.
+  - GOTRONIK PL, verified 18 Oct 2026: PLN 899.00 brutto = $231.25 incl. 23% VAT; PLN 730.89 netto = $188.01. About $16 cheaper than Astroradio, but out of stock now.
+  - Eleshop: EUR 159.46 ex VAT = $179.25; EUR 192.95 incl. NL VAT = $216.89. Unverified: old search index, pages return 403.
+  - Because the ZS407 gates the 12 V regulator decision, do not wait long for stock. If GOTRONIK or Eleshop can't confirm stock and EU shipping within days, keep the Astroradio order at $247.18 incl. VAT.
+  - VAT note: for an EU consumer, a cross-border seller may charge the destination country's VAT, so incl.-VAT figures can shift by a few percent.
+  
+  FX: PLN and CZK converted at ECB reference rates of 16 Oct 2026 (4.3700 PLN/EUR, 24.323 CZK/EUR) and the stack's 1.1241 USD/EUR (ECB shows 1.1253).
+  
+  Searches used: 8 WebSearch calls.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
