@@ -1136,7 +1136,7 @@ P5: G3 (живлення, GNSS, IMU) завершено, 17 рішень, піс
 - AON: TPS70933 залишається. Компаратор TLV3012A замінюється на Microchip MCP65R41T-1202E/CHY (push-pull, 1.21 V, той самий порядок виводів); нижній резистор дільника 336 кОм замість 346 кОм. Умовно, економія ≈$2.
 - Захист і фільтри: KEEP. Набір конкретизовано (Littelfuse MINI 297 .WXNV тощо); реально ≈$28, вище за кошторис $15–25.
 - Власні PCB: KEEP (JLCPCB від $2 за 5 шт.; ENIG і доставку не враховано).
-- Сундуки для пакета акумуляторів: KEEP. Нікель LaskaKit LA123130 (чистий Ni), Kapton з reichelt, вогнетривкий мішок Jamara LiPo Guard XL €10.50. Реально ≈$82–86, вище за кошторис.
+- Дрібниці для збирання акумуляторного пакета: KEEP. Нікель LaskaKit LA123130 (чистий Ni), Kapton з reichelt, вогнетривкий мішок Jamara LiPo Guard XL €10.50. Реально ≈$82–86, вище за кошторис.
 - Зарядний пристрій: IKEA SJÖSS 65 W (E2502-EU, €12.99) + кабель IKEA RUNDHULT 100 W/5 A (€9.99) = $25.83. Умовно, після перевірки FNB58 (PDO ≥60 W). Резерв — Xiaomi AD65GEU. Економія ≈$22.
 Джерела: berrybase.de, botland.de/botland.store (API), pololu.com/distributors, nkon.nl, tinytronics.nl, digikey.de, lcsc.com, ikea.com/de, tme.eu, laskakit.cz, reichelt.com, jlcpcb.com.
 
