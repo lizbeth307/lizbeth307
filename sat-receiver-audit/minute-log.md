@@ -1140,3 +1140,7 @@ P5: G3 (живлення, GNSS, IMU) завершено, 17 рішень, піс
 - Зарядний пристрій: IKEA SJÖSS 65 W (E2502-EU, €12.99) + кабель IKEA RUNDHULT 100 W/5 A (€9.99) = $25.83. Умовно, після перевірки FNB58 (PDO ≥60 W). Резерв — Xiaomi AD65GEU. Економія ≈$22.
 Джерела: berrybase.de, botland.de/botland.store (API), pololu.com/distributors, nkon.nl, tinytronics.nl, digikey.de, lcsc.com, ikea.com/de, tme.eu, laskakit.cz, reichelt.com, jlcpcb.com.
 
+## 2026-10-18 15:00 UTC
+
+P5 (проміжне): G5 — ISDT 608PD у німецькому магазині: €43.90 з ПДВ (≈$49), 10 шт., відправлення наступного робочого дня; доставку не враховано. В іншому магазині (Shopify) — 42.99, «In stock». У стеку було $32.99–42.99 (не перевірено), тож реальна EU-ціна вища. Рішення буде після верифікації. Джерела: сторінки продавців ISDT 608PD (DE), isdt.co (специфікація 608PD).
+
