@@ -1244,5 +1244,216 @@ _Run `wf_30889068-251`_
 
 ## Адверсаріальна перевірка (`verify`)
 
+_Run `wf_30889068-251`_
+
+- **Component:** RF front-end (LNAs, filters, bias tees, LNB power, antenna sharing, protection)
+- **Recommendation holds:** так
+- **Issues:**
+  1.
+    - **Claim:** Recommended chain (e) for QO-100 is 'dish + Bullseye LNB -> 13/18 V injector'.
+    - **Problem:** This contradicts the update that the user has abandoned dishes.
+    - **Correction:** QO-100 still needs an LNB, because nothing in the stack tunes 10.489 GHz, so the 13.4/18 V injector chain is unchanged. The LNB goes on whatever non-dish 10 GHz antenna the antenna component picks (horn, patch, or the bare LNB feed). The Bullseye is $29.95 with 70 in stock. Its 50-66 dB gain means no extra LNA is ever needed. The weaker no-dish signal is the antenna component's problem, not a front-end one.
+    - **Source:** https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+  2.
+    - **Claim:** The RTL-SDR V4 tops out at 1.766 GHz with 2.56 MHz of bandwidth, so it is 'marginal or unusable for HRPT'.
+    - **Problem:** This is wrong for Meteor-M HRPT. OK9SGC's HRPT guide says RTL-SDRs have 'no trouble recording and decoding POES and Meteor-M'. MetOp works at 2.56 Msps with reduced performance. Only FengYun-3 needs a wider SDR.
+    - **Correction:** Phase 1 (now, before the Lime ships): helix -> SAWbird+ GOES -> RTL-SDR V4/V4L at 2.4-2.56 Msps for Meteor HRPT. Use the Lime later for MetOp and FY-3.
+    - **Source:** https://sgcderek.github.io/blog/beginner-hrpt-guide.html
+  3.
+    - **Claim:** SAWbird+ GOES: 'at least 30 dB, 180 mA, too much for the V4 bias tee'. SAWbird+ NOAA: '5 MHz SAW passband'.
+    - **Problem:** Nooelec's own datasheets are more precise and partly contradict the product pages. The two are inconsistent on current.
+    - **Correction:** Datasheet values:
+  - GOES+: LNA -> SAW -> LNA; 38 dB gain; 70 MHz 3 dB bandwidth; NF 1.2 dB; 140 mA typical (120-160 mA); OP1dB +20 dBm; maximum input 0 dBm. The product page still says 180 mA nominal.
+  - NOAA+: 41 dB gain; 2.6 MHz 3 dB / 3 MHz 10 dB bandwidth; NF 1.1 dB; 170 mA over bias tee; OP1dB +20 dBm.
+  The GOES+ therefore fits under the V4/V4L's 180 mA, but only just: soak-test it. The NOAA+ at 170 mA is too close to the limit, so power it separately.
+    - **Source:** https://www.nooelec.com/store/downloads/dl/file/id/108/product/296/sawbird_goes_datasheet_revision_1.pdf ; https://www.nooelec.com/store/downloads/dl/file/id/112/product/301/sawbird_noaa_datasheet_revision_1.pdf
+  4.
+    - **Claim:** Recommended chain (a): power the SAWbird+ NOAA from micro-USB on a clean 5 V rail and connect it straight to the RTL-SDR.
+    - **Problem:** The SAWbird's RF output is also its DC input ('RF Output + DC Power'). Powered from USB or the header, it puts 5 V on the SDR input. Nooelec warns this trips some SDRs' ESD diodes and calls for a DC block.
+    - **Correction:** Feed it through an SMA bias-tee injector placed at the SDR input: DC port from a GPIO-switched 5 V, RF port toward the SDR. The injector both powers the LNA and blocks DC. Keep the SDR's own bias tee off. Do the same on every Lime port.
+    - **Source:** https://www.nooelec.com/store/sawbird-plus-goes.html
+  5.
+    - **Claim:** Own-fix: delete the FM filter from the 137 MHz chain because the SAWbird+ NOAA rejects FM by about 65 dB.
+    - **Problem:** The datasheet schematic shows an LNA BEFORE the SAW. The first MMIC sees FM, pagers and land-mobile signals unfiltered. Intermod products it creates can land in-band, where the SAW cannot remove them. The 65 dB is a small-signal S21 figure, not a large-signal rejection figure. The plot also shows weak rejection just above the passband: roughly +15 dB of gain at 140 MHz and 0 dB at 145 MHz, against +41 dB in-band.
+    - **Correction:** Keep the Flamingo+ FM ($24.95; 0.5 dB typical / 1.2 dB maximum passband loss; passes 250 mA of DC) as a plug-in pre-filter in front of the SAWbird at strong-FM or urban sites. At VHF, sky noise makes its loss irrelevant.
+    - **Source:** https://www.nooelec.com/store/downloads/dl/file/id/96/product/320/flamingo_fm_filter_datasheet_revision_1.pdf
+  6.
+    - **Claim:** Research: 'No 435 MHz or 1.7 GHz Uputronics versions were found', and no purchasable filtered 70 cm LNA exists.
+    - **Problem:** Missed product. Uputronics makes a 435 MHz CubeSat filtered preamp:
+  - PSA4-5043+ LNA, at least 19 dB gain, about 0.75 dB NF.
+  - 440 MHz SAW with 30 MHz bandwidth (about 425-455 MHz), so 435-438 MHz is inside.
+  - Metal case, SMA-F connectors, powered by USB or bias tee.
+    - **Correction:** Make it the preferred 70 cm front-end, at EUR 47.64 incl. VAT from Kubii (stock not confirmed; the page shows 'last items' and a stock alert form). This matters most on the Lime, which has no preselection. Kubii says the bias-tee input is 5-26 V, but other Uputronics listings say 5 V maximum and the RTL gives only 4.5 V, so verify before relying on the RTL bias tee. Fallback: RTL-SDR Blog LNA V2 ($19.95).
+    - **Source:** https://kubii.com/en/network-modules/3349-lna-amplifier-modules-with-saw-filter-and-single-frequency-3272496306646.html
+  7.
+    - **Claim:** Own-fix: a Mini-Circuits VLM-33-S+ limiter plus a 3 dB pad is mandatory overload protection for the Lime.
+    - **Problem:** The VLM-33-S+ costs $69.60 each (Mini-Circuits web store), which is overkill for a hobby handheld. A 3 dB pad after a +20-22 dBm OP1dB LNA does not keep the Lime under +10 dBm on its own.
+    - **Correction:** Fit a 10-12 dB SMA attenuator after each 38-41 dB SAWbird on the Lime ports. With 38 dB of gain ahead of it, a 10 dB pad changes system NF by less than 0.05 dB. It also caps a saturated LNA output (about +21 dBm) near the Lime's +10 dBm limit and trims excess gain. Buy a limiter only for use near transmitters.
+    - **Source:** https://www.minicircuits.com/WebStore/dashboard.html?model=VLM-33-S%2B ; https://myriadrf.org/projects/limesdr-micro/user/M.2/setup.html
+  8.
+    - **Claim:** Own-fix: 'The V4L bias-tee current rating appears only on a third-party listing (180 mA).'
+    - **Problem:** This is wrong.
+    - **Correction:** The official rtl-sdr.com/v4l page states a 4.5 V bias tee that 'can continuously pull up to 180 mA'. The V4L also lists at $37.95 with 455 in stock, but it is a limited edition: R828S stock is expected to last about one year, so buy a spare.
+    - **Source:** https://www.rtl-sdr.com/v4l/ ; https://www.rtl-sdr.com/rtl-sdr-blog-v4l-lite-now-available-for-purchase/
+  9.
+    - **Claim:** Forum: 'The V4L has no notch filters, so the FM bandstop becomes mandatory.'
+    - **Problem:** Overstated. RTL-SDR Blog says the V4's notch filters 'only attenuate by a few dB'. The V4L's diplexer also removes some filter loss.
+    - **Correction:** External FM filtering was needed in Ukrainian cities with either dongle. The V4L is not materially worse at the antenna port.
+    - **Source:** https://www.rtl-sdr.com/rtl-sdr-blog-v4-dongle-initial-release/
+  10.
+    - **Claim:** Stack: LimeSDR Micro at $199, delivering from about Sept 30, 2026.
+    - **Problem:** Outdated.
+    - **Correction:** Crowd Supply now lists the M.2 2280 Basic at $249 + $18 worldwide shipping (GNSS variant $299), pre-order, shipping Dec 15, 2026. None of the Lime-side front-end can be built or tested in October 2026.
+    - **Source:** https://www.crowdsupply.com/lime-micro/limesdr-micro
+  11.
+    - **Claim:** Own-fix: build the LNB supply around the TI TPS65233.
+    - **Problem:** The part exists and is active (4.5-20 V in, 13.4/18.6 V out, I2C, up to 1 A limit). But it comes only in a 3x3 mm WQFN-16, which is hard to hand-solder, and TI shows its EVM as both 'in stock' and 'not available'.
+    - **Correction:** For a hobbyist, use an MT3608 or XL6009 boost module from 5 V set to 13.4 V, switch in a second feedback resistor from a GPIO for 18.2 V, and add an LC filter, a 300 mA polyfuse and an optional INA219. Keep the TPS65233 for a custom PCB later.
+    - **Source:** https://www.ti.com/product/TPS65233
+  12.
+    - **Claim:** Buy locally via Prom.ua or Ukrainian stores.
+    - **Problem:** Prom.ua (seller Robika) lists:
+  - SAWbird+ NOAA: 4,692.78 UAH (about 2.5x the US price), made to order.
+  - Both SAWbird+ GOES listings: unavailable.
+    - **Correction:** Order directly from Nooelec. It advertises free worldwide shipping on orders over $100, and SAWbird+ NOAA + SAWbird+ GOES + Flamingo+ = $114.85, about EUR 100. That stays under Ukraine's EUR 150 duty-free parcel limit, which is still in force in October 2026 (abolition is pending and targeted for 2027 at the earliest). Buy RTL-SDR Blog items through their official AliExpress store; RTL-SDR Blog says AliExpress delivery to Ukraine works.
+    - **Source:** https://prom.ua/search?search_term=sawbird ; https://www.nooelec.com/store/sawbird-plus-goes.html ; https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/ ; https://dev.ua/en/news/rada-provalyla-holosuvannia-pro-skasuvannia-limitu-na-bezmytni-posylky-z-za-kordonu-1779802509
+  13.
+    - **Claim:** Own-fix: sysmocom cf2235-kt30 S-band cavity, EUR 65.45, ships by UPS.
+    - **Problem:** The price and specs are confirmed (EUR 65.45 incl. VAT, 2170-2300 MHz, at most 1.0 dB loss, 30 dB rejection below 2160 MHz). But sysmocom ships only by UPS, and UPS still lists all service to Ukraine as suspended. The filter is also 124x47x33 mm and 186 g, IP50, indoor-rated.
+    - **Correction:** Treat S-band as a later phase that needs a forwarder (an EU address, then Nova Poshta or Meest). Mount the filter at the antenna in a cover, not in the palm-sized case. A compact alternative to evaluate is the Mini-Circuits BFCN-2275+ LTCC filter (2170-2380 MHz, 3.2x1.6 mm), which needs a small SMA PCB; price not verified.
+    - **Source:** https://shop.sysmocom.de/S-Band-cavity-filter-2170-2300-MHz/cf2235-kt30 ; https://shop.sysmocom.de/Information/Payment-Shipping/
+  14.
+    - **Claim:** Research: 'Bias tee into DC-shorted antennas (hairpin WB2HOL) shorts the supply.'
+    - **Problem:** This applies only when the antenna connects directly to a biased SDR port. With an LNA at the antenna, the bias feeds the LNA output, and the antenna's DC short sits on the LNA's DC-blocked input.
+    - **Correction:** Keep the bias tee off whenever an antenna connects to the SDR without an LNA in between. Never use rtl_eeprom -b 1 (bias always on). RTL-SDR Blog warns that days of shorting can kill the LDO or fuse.
+    - **Source:** https://www.rtl-sdr.com/v4/
+- **Forum and fix assessment:** Mostly sound, and better than the original research on four points:
+  - the DC-leak and DC-block issue;
+  - using the SAWbird datasheets (140 mA, 38/41 dB gain, NF 1.2/1.1 dB, OP1dB +20 dBm);
+  - gain staging with the 3 dB pad test;
+  - the Q6A USB analysis. I checked it against the Radxa v1.21 schematic: a WS4612 switch with Rset 3.24 kOhm, 'Ilim (A)=6800/Rset' (about 2.1 A), an FE1.1S hub, and the FCU760K Wi-Fi on that hub. So a dongle plus a 170 mA LNA on one USB 2.0 port is not a problem.
+  
+  Confirmed:
+  - SPF5189Z discontinued (Qorvo PCN 21-0060; QPL9547 recommended).
+  - LNA V2: $19.95, QPL9547, 100 MHz-6 GHz, NF under 1 dB, 3-5 V bias.
+  - Flamingo+ passes at least 250 mA of DC.
+  - RTL-SDR FM bandstop: $16.95, DC pass not stated.
+  - Lime: no bias tee documented, +10 dBm maximum input, needs 10 W of cooling.
+  - Lime staff (13 Oct 2026) say there are no coverage gaps below 300 MHz, but give no data.
+  
+  Corrections to the fixes:
+  1. 'Delete the FM filter on 137 MHz' is unsafe at strong-FM sites. Both SAWbird+ models are LNA -> SAW -> LNA, so the first MMIC is unprotected. Keep the Flamingo+ as a plug-in pre-filter.
+  2. The VLM-33-S+ limiter costs $69.60. A 10-12 dB pad after the 38-41 dB SAWbirds gives the same Lime protection for a few dollars, with no measurable NF cost.
+  3. The TPS65233 is a 3x3 mm WQFN with uncertain EVM availability. A boost module is the hobby path.
+  4. The V4L 180 mA rating is on the official page, not only on a third-party listing.
+  5. sysmocom (UPS only) cannot currently ship straight to Ukraine.
+  6. The research's claim that the RTL-SDR is unusable for HRPT is wrong for Meteor-M. Phase-1 HRPT can start on the RTL-SDR before the Lime ships on Dec 15, 2026.
+  7. Missed product: the Uputronics 435 MHz CubeSat filtered preamp (30 MHz SAW centred at 440 MHz) fills the '70 cm filtered LNA not purchasable' gap.
+  
+  The PCIe 17th-harmonic (1691.5-1700 MHz) and HDMI 742.5 MHz spur predictions are plausible but untested. The user's planned higher-than-FHD HDMI mode changes the pixel clock, so run the terminated-input survey again after choosing the display mode.
+- **Final recommendation:**
+  - **Name:** Per-band filtered chain: Nooelec SAWbird+ NOAA (137) + Flamingo+ FM; RTL-SDR Blog Wideband LNA V2 (QPL9547) for 145.8 and 435 MHz, upgraded to the Uputronics 435 MHz CubeSat filtered preamp for the Lime; Nooelec SAWbird+ GOES at the helix feed (HRPT); SMA bias-tee injectors as DC blocks; 10 dB pads before the Lime; switchable 13.4/18.2 V supply for the QO-100 LNB on a non-dish antenna
+  - **Price:** Core about $155: SAWbird+ NOAA 44.95 + SAWbird+ GOES 44.95 + Flamingo+ 24.95 (Nooelec subtotal 114.85, qualifies for free worldwide shipping) + 2x LNA V2 39.90.
+  Small parts about $30-50 (prices unverified): 3x generic 10 MHz-6 GHz SMA bias tees, 2x 10 dB SMA pads, 2x TPS2553 load switches, polyfuses, an MT3608 or XL6009 boost module, an F-SMA adapter, and MHF4L-SMA pigtails at $6 each.
+  Total about $185-205 before shipping. Optional: Uputronics 435 CubeSat preamp EUR 47.64; S-band later with sysmocom cf2235-kt30 EUR 65.45 + forwarding.
+  - **Why:** Each chain is listed antenna to SDR.
+  
+  (a) 137 MHz Meteor LRPT: V-dipole -> [Flamingo+ only at strong-FM sites] -> SAWbird+ NOAA at the feed -> 1-2 m coax -> SMA bias tee at the RTL input -> RTL-SDR V4/V4L.
+  - SAWbird+ NOAA: 41 dB gain, 2.6 MHz bandwidth, NF 1.1 dB, 170 mA.
+  - The bias tee's DC port takes GPIO-switched 5 V through a TPS2553. The RTL's own bias tee stays off.
+  - Run the RTL at low gain (about 10-25 dB), because 41 dB of LNA gain is a lot.
+  
+  (b) 145.8 MHz ISS: WB2HOL Yagi -> Flamingo+ -> RTL-SDR.
+  - The ISS is loud, so the LNA is optional.
+  - If you add the LNA V2, put it at the feed and power it from the RTL's 4.5 V bias tee through the Flamingo+, which passes 250 mA of DC.
+  
+  (c) 435-438 MHz: 70 cm Yagi -> LNA V2 at the feed (RTL bias tee) -> RTL-SDR in phase 1.
+  - On the Lime, use the Uputronics 435 CubeSat SAW preamp (or LNA V2 + filter) -> injector -> 10 dB pad if needed -> Lime RX (L path).
+  - Avoid 433.92 MHz ISM SAWs.
+  
+  (d) 1.7 GHz HRPT: 11-turn RHCP helix -> SAWbird+ GOES screwed onto the feed -> 1-2 m coax.
+  - SAWbird+ GOES: 38 dB gain, NF 1.2 dB, 140 mA typical.
+  - Phase 1 (now): RTL-SDR at 2.4-2.56 Msps, powered from its bias tee after a 2-hour soak test, for Meteor HRPT.
+  - Phase 2 (Lime, from Dec 2026 or later): injector -> 10 dB pad -> Lime RX (W path) at 6-8 Msps for MetOp and FY-3.
+  
+  (e) QO-100: Bullseye TCXO LNB ($29.95; 50-66 dB gain; 11.5-14 V vertical, 16-19 V horizontal) on the non-dish 10 GHz antenna -> SMA bias tee fed by a regulated, current-limited 13.4 V supply, GPIO-switchable to 18.2 V -> RTL or Lime at the 739.5 MHz IF.
+  - No LNA. Add a 6-10 dB pad if the 3 dB pad test shows intermod.
+  - Never feed the raw 4S pack (12.0-16.8 V) to the LNB: at full charge it would select horizontal polarisation.
+  
+  (f) S-band (later): LNA V2 -> S-band bandpass filter -> injector -> Lime RX (W path).
+  
+  Why this beats the original picks:
+  - It drops the end-of-life, often-counterfeit SPF5189Z.
+  - Every band with known interference gets a SAW or bandstop filter.
+  - All DC injection doubles as DC blocking for the SDR inputs.
+  - It uses parts with published datasheets that a Ukrainian buyer can import under the EUR 150 duty-free limit.
+  - **Sources:**
+    - https://www.nooelec.com/store/sawbird-plus-noaa.html
+    - https://www.nooelec.com/store/downloads/dl/file/id/112/product/301/sawbird_noaa_datasheet_revision_1.pdf
+    - https://www.nooelec.com/store/sawbird-plus-goes.html
+    - https://www.nooelec.com/store/downloads/dl/file/id/108/product/296/sawbird_goes_datasheet_revision_1.pdf
+    - https://www.nooelec.com/store/flamingo-plus-fm.html
+    - https://www.rtl-sdr.com/product/rtl-sdr-blog-wideband-lna-bias-tee-powered/
+    - https://www.rtl-sdr.com/v4l/
+    - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+    - https://kubii.com/en/network-modules/3349-lna-amplifier-modules-with-saw-filter-and-single-frequency-3272496306646.html
+    - https://sgcderek.github.io/blog/beginner-hrpt-guide.html
+    - https://myriadrf.org/projects/limesdr-micro/user/M.2/setup.html
+    - https://www.crowdsupply.com/lime-micro/limesdr-micro
+    - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+- **Final budget option:**
+  - **Name:** RTL-SDR Blog FM bandstop + one RTL-SDR Blog Wideband LNA V2 (moved between antennas) + Nooelec SAWbird GOES (non-plus) for HRPT + one generic SMA bias tee + boost module for the LNB
+  - **Price:** About $85-95 plus shipping: $16.95 + $19.95 + $39.95 + about $5-10 bias tee + about $3-5 boost module and polyfuse (the last two unverified AliExpress prices). The Nooelec part alone is under the $100 free-shipping line, so expect a shipping charge.
+  - **Why:** Everything runs from the RTL-SDR V4/V4L's 4.5 V / 180 mA bias tee:
+  - The LNA V2 sits behind the FM bandstop at VHF (filter first at strong-FM sites). The RTL-SDR Blog says the filter is safe to pass 80 mA, so measure the LNA V2's draw first.
+  - The SAWbird GOES draws 30 mA, has at least 20 dB of gain and an LNA-SAW-LNA 1650-1720 MHz filter. OK9SGC recommends it for short coax.
+  
+  It still does Meteor LRPT, ISS, 70 cm CubeSats and Meteor HRPT on the RTL-SDR now, with no injectors or DC blocks needed while everything stays on the RTL.
+  
+  You give up:
+  - SAW selectivity at 137 MHz (pager and land-mobile intermod risk);
+  - about 18 dB of HRPT gain and published NF data;
+  - 70 cm filtering.
+  
+  Later additions: 10 dB pads and injectors for the Lime ports, and the 13.4/18.2 V LNB supply when QO-100 starts.
+- **Known problems and fixes to apply:**
+  - Install a V4/V4L-capable driver. Ubuntu 24.04's stock librtlsdr does not support the V4 or V4L (the V4L gives no signal at all). Purge the apt package, build rtlsdrblog/rtl-sdr-blog, check that 'SoapySDRUtil --probe=driver=rtlsdr' prints the V4 detection line, and rebuild SatDump, SDR++ and GNU Radio against that driver.
+  - Bias tee silently switched off. Set it explicitly in every application: SoapyRTLSDR biastee=true (a bool, not 1), the SDR++ Bias-T checkbox, the SatDump RTL source option, or rtl_biast -b 1. Confirm with the V4 LED or by measuring about 4.5 V at the LNA. Never use rtl_eeprom -b 1.
+  - SAWbird DC on its RF output. When a SAWbird is powered from USB, the header or an external rail, it puts 5 V on its output. Always feed it through an SMA bias-tee injector at the SDR input (RF port toward the SDR), or add a DC block. Never connect it straight to a bare Lime MHF4 port. Check with a meter that the SDR side reads 0 V DC.
+  - Lime has no bias tee and a +10 dBm absolute maximum input. Use one injector per Lime RX port, a GPIO-switched TPS2553 load switch (limit about 250 mA, FAULT line to a GPIO), and a 10-12 dB SMA pad after each 38-41 dB SAWbird. The pad costs less than 0.05 dB of system NF.
+  - SAWbird+ NOAA current (170 mA typical) versus the RTL bias tee's 180 mA limit. Do not run it from the dongle in a warm case; use the external 5 V injector. For the SAWbird+ GOES (140 mA typical, 160 mA maximum per the datasheet, 180 mA per the product page), do a 2-hour soak test inside the closed case at 45-50 C and log the LNA voltage (it must stay at or above 4.3 V) before relying on the dongle's bias tee.
+  - Strong FM in front of the SAWbirds. Both SAWbird+ models put an LNA ahead of the SAW. At urban or strong-FM sites, keep the Flamingo+ FM (0.5 dB typical loss, passes 250 mA of DC, +18 dBm maximum input) in front of the SAWbird+ NOAA and in front of any unfiltered LNA V2 at VHF. Run the 3 dB pad test: a spur that drops by more than 3 dB is intermod made in the receiver.
+  - Lime has no preselection. LMS7002M boards show FM and LTE images. Put a band filter on every Lime port (SAWbird GOES at L-band, Uputronics 435 SAW at 70 cm, a cavity or LTCC filter at S-band). Keep 137 and 145.8 MHz on the RTL-SDR until a split-antenna A/B test shows the Lime within 1-2 dB.
+  - LTE Band 3 uplink (1710-1730 MHz) is inside the SAWbird GOES passband: about 37 dB of gain at 1720 MHz and about 28 dB at 1730 MHz. Filtering cannot remove it. Keep the 10 dB pad, use low SDR gain, avoid crowds, and prefer Meteor at 1700 MHz. Add a second 1695-1712 MHz filter after the LNA only if a survey shows clipping.
+  - LNB supply. Never put the raw 4S pack (12.0-16.8 V) on the LNB: it can flip polarisation, and the Q6A header also tolerates only 16 V. Use a boost or buck-boost regulator set to 13.4 V, GPIO-switchable to 18.2 V, with an LC filter, a ferrite and a 300 mA polyfuse. Measure the Bullseye's current at 13 V and 18 V (not published) and set the limit to 1.5-2x that value. Sweep cheap injectors at 730-750 MHz; generic '10 MHz-6 GHz' tees lose 3-7 dB at 100-200 MHz, so use them only at 740 MHz and above.
+  - ESD and handling. Discharge each antenna before connecting it. Prefer metal-cased LNAs (SAWbird, LNA V2 enclosure, Uputronics) to bare boards in 3D-printed plastic. Put a 100-160 mA polyfuse in each bias feed. Keep the bias off when no LNA sits between the antenna and the SDR.
+  - Host self-noise. Plug the RTL-SDR into the J5 lower USB 2.0 port (U35 switch) with a 20-30 cm shielded extension and ferrites. Disable Wi-Fi/BT (FCU760K on the same USB hub) during L-band and S-band captures. Shield the M.2 extension and the Lime (which needs at least 10 W of cooling). Run a terminated-input sweep for PCIe 100 MHz harmonics (17th = 1691.5-1700 MHz with spread-spectrum clocking) and HDMI pixel-clock harmonics after choosing the final higher-than-FHD HDMI mode.
+  - Gain staging. After adding any LNA, raise SDR gain only until the noise floor sits 6-10 dB above the terminated floor, and keep carriers below about -10 dBFS. At 41 dB the SAWbird+ NOAA needs low RTL gain, and the LNA V2 user review warns it can saturate the SDR.
+  - Supply chain.
+  - Order the Nooelec parts in one order of at least $100 for free worldwide shipping, and check that Ukraine is accepted at checkout.
+  - Buy RTL-SDR Blog parts from their official AliExpress store (RTL-SDR Blog confirms AliExpress delivery to Ukraine works).
+  - Keep each parcel under EUR 150 while the duty-free limit lasts.
+  - Buy a spare V4L now, because R828S stock is expected to last only about a year.
+  - Use an EU-address forwarder for UPS-only shops such as sysmocom.
+- **Missed better options:**
+  - Uputronics 435 MHz CubeSat filtered preamp: at least 19 dB gain, about 0.75 dB NF, 30 MHz SAW centred at 440 MHz, metal case, SMA-F, USB or bias-tee power. EUR 47.64 incl. VAT at Kubii, stock uncertain. It is a purchasable filtered 70 cm CubeSat LNA, which the research said did not exist (the Spacewalker 434 is still 'launching soon').
+  - Run Meteor HRPT on the RTL-SDR V4/V4L now with the SAWbird+ GOES. OK9SGC's guide confirms the RTL-SDR decodes Meteor-M HRPT and MetOp (reduced) at 2.56 Msps. There is no need to wait for the Lime (ships Dec 15, 2026, $249).
+  - A 10-12 dB SMA attenuator after each high-gain SAWbird replaces the $69.60 VLM-33-S+ limiter. It trims gain and protects the Lime's +10 dBm input with no measurable NF penalty.
+  - The SMA bias-tee injector at the SDR end does three jobs at once: it powers the LNA, blocks DC from the SDR input, and lets the GPIO switch the bias. That removes separate DC blocks (a Mini-Circuits BLK-89-S+ costs about $15-25).
+  - Nooelec SAWbird NOAA (non-plus): $49.95, about 0.7 dB NF, at least 20 dB gain, about 80 mA. It runs straight from the V4L bias tee with no injector, at the cost of unpublished selectivity data. It is a simpler 137 MHz alternative if wiring count matters more than documented FM rejection.
+  - Mini-Circuits BFCN-2275+ LTCC bandpass filter (2170-2380 MHz, 3.2x1.6 mm) on a small SMA board: a palm-sized alternative to the 186 g sysmocom cavity for later S-band work. Price and Ukraine sourcing not verified.
+  - VHFDesign: a 2 m / 70 cm LNA maker whose team's callsigns are Ukrainian (US4ICI, UR3IQO and others). Products include ATF-53189 and SAV-541 SAW LNAs, 0.3-0.4 dB NF, 12 V on the feeder. They are possibly domestic, but use N connectors, prices are hidden, and the 70 cm SAW is specified only as under 20 MHz wide and characterised at 432 MHz. Ask by email for S21 at 435-438 MHz before buying.
+- **Remaining uncertainties:**
+  - LimeSDR Micro: there is no public RX schematic (whether DC blocks are fitted is unknown), no sensitivity data below 300 MHz, and the Dec 15, 2026 ship date may slip.
+  - Uputronics 435 CubeSat preamp: current stock is unclear, and the bias-tee voltage range conflicts between listings (Kubii says 5-26 V, other listings say 5 V maximum). Whether it runs from the RTL's 4.5 V bias tee is unverified.
+  - The RTL-SDR V4L's upper frequency limit (R828S) is not stated on the official pages. It is assumed to match the V4's 1.766 GHz; confirm before relying on it for 1.7 GHz HRPT.
+  - The board-level gain curve and P1dB of the RTL-SDR Blog LNA V2 are unpublished, and there are no long-term field reports.
+  - Bullseye LNB current draw is unpublished. The helix-only HRPT link margin and the no-dish QO-100 antenna are unproven (antenna component).
+  - Not verified for October 2026: Nooelec shipping to Ukraine (USPS or UPS); prices of generic SMA bias tees, pads, the MT3608/XL6009, TPS2553 and BFCN-2275+; the RF Konnect injector, shown out of stock at Passion Radio; and VHFDesign prices.
+  - SAWbird rejection values were read by eye from Nooelec's Rev 1 plots (about +/-3 dB). Unit-to-unit spread is unknown, and the product pages and datasheets disagree on current (180 mA vs 140 or 170 mA).
+  - The PCIe, HDMI and VCTCXO spur predictions are hypotheses until the terminated-input survey is run on the real Q6A with the final display mode.
+  - The Ukrainian parcel VAT reform (abolishing the EUR 150 limit) is pending second reading and targeted for 2027 at the earliest. The timing could change.
+- **Confidence:** medium
+
 _Агент цього етапу ще працює (run `wf_30889068-251`)._
 
