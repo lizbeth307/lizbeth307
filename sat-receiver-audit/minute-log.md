@@ -982,3 +982,7 @@ P5 G1 (приймачі та RF) ЗАВЕРШЕНО: 33 агенти, без п�
   • набір кабелів — одноцільні пігтейли RG316 з роз'ємом на панель (10 шт. $22.29) і Lindy 36700 USB 0.2 м; економія ≈$5–25 (модель).
 Джерела: rtl-sdr.com (V4L datasheet V1.0, MDS-графік), nooelec.com, store.uputronics.com (HAB-FPA Rev 3.0), digikey.de/digikey.com (505-HMC7992LP3DE-ND, Z2828-ND, 2631102002, 5977003801), itead.cc (IM190522001EU), airspy.com, funkamateur/Schubert-магазин (Art. 6B), lindy.co.uk (36700), flightaware.com.
 
+## 2026-10-18 12:37 UTC
+
+P5: запущено G4 (механіка й польове спорядження, 6 позицій, wf_37583a7b-1a8) і G5 (лабораторія й стенд, 16 позицій, wf_e5582d4c-0a2). Разом працюють G2, G3, G4, G5; G6 (розширення з LimeSDR) — наступним.
+
