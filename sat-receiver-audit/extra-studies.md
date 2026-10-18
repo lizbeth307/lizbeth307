@@ -10047,6 +10047,290 @@
   
   Hard rules: a passive mechanical support does not affect receive-only, conducted-only sources or the no-loop rule. The ball head with panorama lock was already accepted in reaudit_C for the GEO horn and the static V. Check horn and helicone balance at 30 deg elevation, and use the column hook with ballast in wind.
 
+## searchA:padded_antenna_roll_element_tube_15_20_l (run `wf_37583a7b-1a8`)
+
+- **Part:** Field carry set (antenna-foldable tier, group Bags, qty 1 set): padded antenna roll + element tube + 15-20 L daypack
+- **Current price usd:** 80-155, a model estimate. No product or seller is named in STACK.md 2.5 or final_integration.json, and the budget alternative is "-". That is about EUR 71-138 at the stack's rate of 1.1241 USD/EUR (TinyTronics EUR 148 = USD 166.37).
+- **Critical specs:**
+  - DAYPACK volume: 15-20 L per D14. The stack's own volume table gives about 12-14 L packed: handheld 220-225x135-140x55-60 mm (about 1.9 L), patch extras 0.8 L, foldable kit 6-6.5 L, HF kit 0.8 L, field pouch 2 L, with the tripod and mast in side pockets. 20-24 L is acceptable if the empty pack weighs 1.2 kg or less.
+  - DAYPACK rated carry load (the spec that decides this part): the field load is 4.4-6.0 kg without the HF kit and mast, and 5.3-7.3 kg fully loaded (model). With the re-audit's tripod weight of 1.2-1.4 kg instead of 0.3-0.6 kg (reaudit_C, backpack +0.6-1.0 kg), that becomes about 5.0-7.0 kg and 5.9-8.3 kg. So the pack needs a published rating of at least 6 kg for the kit without HF and mast, and at least 8 kg for the full kit.
+  - DAYPACK load transfer: a frame sheet or spring-steel frame, a padded hip belt or hip fins, and a sternum strap. A sling or frameless pack was already rejected (D14).
+  - DAYPACK geometry: inner height of at least 40 cm, so the 35 cm mast segments and the 31.5-32 cm folded tripod (Rollei/Manfrotto) fit upright. Side pockets or compression straps for the tripod and mast. A back-panel or hydration sleeve for the handheld (about 1.5-1.75 kg).
+  - DAYPACK weather: rain cover included, or a PU-coated body. The LNB, LNAs, jumpers and field-pouch instruments ride in it, and the handheld itself only targets IPX4.
+  - DAYPACK build: body fabric of at least 140-210D nylon or polyester with a heavier base (600D or more), bar-tacked load points, a brand warranty of at least the EU 2 years, and empty weight of about 1.25 kg or less.
+  - DAYPACK colour (secondary): light colours are preferred. mechanical_thermal.json records 67 C heat soak inside a backpack, and the pack's charge window is 0-45 C.
+  - ANTENNA ROLL: pockets for pieces up to 23 cm (petals 17.7, disc 18, gores 18.7 or less, rings 18, helices 17.2/22.8, 70 cm halves 17, boom 16 or less, dipole kit 23 cm). It must fit inside the pack (45-48 cm long or less).
+  - ANTENNA ROLL protection: padded, abrasion- and cut-resistant shell (600D nylon or Cordura class) against the sharp 0.3-0.5 mm edges of the petals and gores (edges taped as the re-audit says). Zip or buckle closure; no magnet closure near the IMU and magnetometer. About 0.45 kg or less.
+  - ELEMENT TUBE: rigid and crush-resistant (ABS/PP/PVC/aluminium) with a positive end cap. Inner length at least 24 cm, or at least 36 cm if the mast segments go in. Inner diameter about 40-50 mm or more for the telescopic dipole elements, rods and 16 mm boom pieces. About 0.3 kg or less.
+  - All parts: legally sold by an established retailer, EU stock preferred (prices with VAT noted). No RF function, so the receive-only, conducted-only and no-loop rules are not affected; nothing in the set may be a loop or a transmitter.
+- **Candidates:**
+  1.
+    - **Name:** Reference: the STACK model estimate (unnamed padded roll + element tube + 15-20 L daypack)
+    - **Kind:** current_part
+    - **Price usd:** 80-155 (model, no seller)
+    - **Spec comparison:** No load rating, frame, fabric or rain-cover spec is defined. The field load (5.3-7.3 kg, and 5.9-8.3 kg with the corrected tripod) is above the 3-6 kg rating Deuter publishes for every 21-30 L AC Lite and Futura 23 pack checked. So a typical 15-20 L daypack would carry the full kit over its rated load.
+    - **Worse in:** Undefined spec; probably under-rated for the full kit.
+    - **Compatibility:** Generic.
+    - **Risks:** There is no measured or priced baseline, so any 'cheaper' verdict is relative to a range, not to a real offer.
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md (2.5 Bags row; D14; 5.8 weights)
+  2.
+    - **Name:** Deuter AC Lite 23 (product no. 3420324) daypack
+    - **Kind:** other_brand
+    - **Price usd:** 92.70 incl. DE VAT (EUR 82.46 'ab', Bergfreunde, list EUR 109.95); 77.90 ex VAT. Deuter direct EUR 110 = 123.65
+    - **Seller url:** https://www.bergfreunde.de/deuter-ac-lite-23-wanderrucksack/
+    - **Spec comparison:** Volume 23 L (spec 15-20; slightly larger). Weight 890 g. 52x32x25 cm, so inner height is above 40 cm. Aircomfort ventilated back (the AC Lite 24 and 30 pages state a spring-steel frame; the AC Lite 23 page says 'ultra-light system with ventilation'). Padded hip fins, 2-way sternum strap, removable rain cover included. 600D recycled PES + 210D recycled PA. Hydration up to 2 L. Rated load 3-6 kg (deuter.com). 2-year warranty. Colours: Atlantic/Ink, Black, Cherry/Masala.
+    - **Worse in:** Rated load is 3-6 kg. That is enough for the kit without HF and mast (4.4-6.0 kg, or about 5.0-7.0 kg with the 1.2-1.4 kg tripod) only if the light tripod is used. The full kit (5.3-8.3 kg) is over its rating. Only dark colours are listed (heat soak). Mesh side pockets are not confirmed on the page.
+    - **Compatibility:** Fits the handheld, a 45 cm roll, the 31.5-32 cm tripod and the 35 cm mast segments upright. Shipping from Germany; for EU delivery outside DE the destination VAT applies.
+    - **Risks:** The 'ab' price may apply to one colour only, and the sale is time-limited. The rated load is the maker's comfort rating, not a breaking load.
+    - **Sources:**
+      - https://www.bergfreunde.de/deuter-ac-lite-23-wanderrucksack/
+      - https://www.deuter.com/de-en/ac-lite-23/4046051171630
+  3.
+    - **Name:** Deuter Futura 23 (old SKU 3400121, graphite-shale) daypack
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 114.10 incl. VAT (EUR 101.50, -30% from EUR 145, deuter.com, 'in stock, 2-3 days'); 95.88 ex VAT. Bergfreunde EUR 115.96 = 130.35 for the current model
+    - **Seller url:** https://www.deuter.com/de-en/futura-23/4046051112022
+    - **Spec comparison:** 23 L, 1200 g, 52x28x18 cm. Aircomfort trampoline mesh with a flexi spring-steel frame (the best back ventilation of the options checked, which helps with heat). Padded hip fins with pull-forward adjustment, one-hand sternum buckle, rain cover included. 210D recycled PA + 600D PES with thick PU coating. Rated load 3-6 kg. 2-year warranty.
+    - **Worse in:** Same 3-6 kg rating as the AC Lite 23, but costs about $21 more and weighs 310 g more. Dominated unless back ventilation is the priority.
+    - **Compatibility:** As for the AC Lite 23.
+    - **Risks:** Clearance SKU, one colour only.
+    - **Sources:**
+      - https://www.deuter.com/de-en/futura-23/4046051112022
+      - https://www.deuter.com/de-en/futura-23/3400126
+      - https://www.bergfreunde.de/deuter-futura-23-wanderrucksack/
+  4.
+    - **Name:** Deuter Futura 27 (3400326) daypack: the only checked pack rated for the full kit
+    - **Kind:** other_brand
+    - **Price usd:** 139.35 incl. VAT (EUR 123.96 'ab', Bergfreunde, list EUR 154.95); 117.10 ex VAT. deuter.com EUR 155 = 174.24
+    - **Seller url:** https://www.bergfreunde.de/deuter-futura-27-wanderrucksack/
+    - **Spec comparison:** Rated load 4-8 kg (deuter.com), which covers the full 5.3-7.3 kg model load and almost all of the corrected 5.9-8.3 kg. 27 L, 1250 g, 52x28x23 cm. Spring-steel Aircomfort frame, padded hip fins, rain cover, 210D recycled PA X-Grid.
+    - **Worse in:** Not cheaper: the pack alone is about $139 against the $80-155 set estimate, so the set comes to about $160-175. 27 L and 1250 g are above the 15-20 L spec (bigger and about 0.35 kg heavier than the AC Lite 23).
+    - **Compatibility:** Fits everything.
+    - **Risks:** None beyond sale-price volatility.
+    - **Sources:**
+      - https://www.bergfreunde.de/deuter-futura-27-wanderrucksack/
+      - https://www.deuter.com/de-en/futura-27/4046051185187
+  5.
+    - **Name:** Deuter Speed Lite 21 (3410225) daypack
+    - **Kind:** other_brand
+    - **Price usd:** 89.93 incl. VAT (EUR 80, deuter.com, no discount)
+    - **Seller url:** https://www.deuter.com/de-en/speed-lite-21/4046051170121
+    - **Spec comparison:** 21 L, 470 g, 46x28x18 cm, Lite back, detachable waist belt with supple fins, two mesh side pockets, 140D recycled PA ripstop.
+    - **Worse in:** REJECTED. Rated load 2-5 kg (below even the no-HF kit), no rain cover listed, lighter fabric, no frame stated. It also costs about $3 less only at Deuter's list price; it is pricier than the AC Lite 23 on sale.
+    - **Compatibility:** Inner height is enough for 35 cm pieces, but a 45 cm stick bag is marginal.
+    - **Risks:** Overloaded.
+    - **Sources:**
+      - https://www.deuter.com/de-en/speed-lite-21/4046051170121
+  6.
+    - **Name:** Deuter AC Lite 30 (3421024)
+    - **Kind:** other_brand
+    - **Price usd:** 107.87 incl. VAT (EUR 95.96, Bergfreunde); deuter.com EUR 120
+    - **Seller url:** https://www.bergfreunde.de/deuter-ac-lite-30-wanderrucksack/
+    - **Spec comparison:** 30 L, 980 g, 59x32x25 cm, spring-steel round-profile frame, padded hip fins, rain cover.
+    - **Worse in:** REJECTED. Same 3-6 kg rating as the AC Lite 23, so the extra volume brings no load gain, and it costs more and is larger.
+    - **Compatibility:** Fits.
+    - **Risks:** -
+    - **Sources:**
+      - https://www.deuter.com/de-en/ac-lite-30/4046051171722
+      - https://www.bergfreunde.de/deuter-ac-lite-30-wanderrucksack/
+  7.
+    - **Name:** Osprey Talon 22 / Osprey Stratos 24
+    - **Kind:** other_brand
+    - **Price usd:** Talon 22: 136.87 (EUR 121.76, Bergfreunde). Stratos 24: 175.99 (EUR 156.56)
+    - **Seller url:** https://www.bergfreunde.de/osprey-talon-22-wanderrucksack/
+    - **Spec comparison:** Talon 22: 22 L, 1080 g, hip belt with pocket, padded straps; no rain cover listed; no load rating on the page. Stratos 24: 24 L, 1340 g, mesh back, padded hip belt, rain cover.
+    - **Worse in:** REJECTED. Both cost more than the AC Lite 23 and the Futura 23 sale. The Talon has no rain cover, and neither page states a load rating (the Osprey site returned 403, so no rating could be checked).
+    - **Compatibility:** Fits.
+    - **Risks:** Load rating unknown.
+    - **Sources:**
+      - https://www.bergfreunde.de/osprey-talon-22-wanderrucksack/
+      - https://www.bergfreunde.de/osprey-stratos-24-wanderrucksack/
+  8.
+    - **Name:** Millenium Classic Stick Bag (Thomann art. 101124) as the padded antenna roll
+    - **Kind:** other_brand
+    - **Price usd:** 11.13 incl. VAT (EUR 9.90, Thomann, in stock); 9.35 ex VAT
+    - **Seller url:** https://www.thomann.de/de/millenium_msb20bk_stick_bag.htm
+    - **Spec comparison:** Cordura shell, padded, accessory compartments, shoulder strap. A reviewer mentions a zip closure. Drum-stick bags hold 40-41 cm sticks, so all foldable pieces up to 23 cm fit with room to spare.
+    - **Worse in:** Dimensions and weight are not listed (probably about 45 cm long, typical for the class; UNVERIFIED). No cut-resistant lining is stated. It is Thomann's house brand (budget). The 18 cm disc may not fit inside an 18-19 cm-wide bag and would ride in the pack's back sleeve. It is not a roll format: items stand in pockets.
+    - **Compatibility:** Fits upright in a 52 cm-tall pack (AC Lite 23, Futura 23 or 27); marginal in a 46 cm pack.
+    - **Risks:** Unknown dimensions; tape the petal and gore edges as the re-audit requires.
+    - **Sources:**
+      - https://www.thomann.de/de/millenium_msb20bk_stick_bag.htm
+      - https://www.thomannmusic.com/drumstick_bags.html
+  9.
+    - **Name:** Gator GP-007A stick bag (Thomann art. 251190) as the antenna roll
+    - **Kind:** other_brand
+    - **Price usd:** 19.11 incl. VAT (EUR 17, Thomann, in stock); 16.06 ex VAT
+    - **Seller url:** https://www.thomann.de/de/gator_stickbag_gp_007a.htm
+    - **Spec comparison:** Published size 45.5 x 18.5 x 2.5 cm, 0.45 kg, nylon, zip (per review), carry handle. Gator is an established case brand.
+    - **Worse in:** Padding is not specified. The outer width of 18.5 cm will not take the 18 cm disc. It costs about $8 more than the Millenium. Spec says no accessory compartments, though reviews mention a front pocket.
+    - **Compatibility:** Fits a 52 cm-tall pack.
+    - **Risks:** Padding unverified.
+    - **Sources:**
+      - https://www.thomann.de/de/gator_stickbag_gp_007a.htm
+  10.
+    - **Name:** Zildjian Mini Drumstick Bag (Thomann art. 590201) as the antenna roll
+    - **Kind:** other_brand
+    - **Price usd:** 21.25 incl. VAT (EUR 18.90, Thomann, in stock)
+    - **Seller url:** https://www.thomann.de/de/zildjian_mini_drumstick_bag_orange.htm
+    - **Spec comparison:** Padded, water-resistant 600D nylon shell, nylon-lined inner pockets, elastic daisy chain, large accessory compartment, holds 5 pairs. This is the best published protection spec of the three stick bags.
+    - **Worse in:** Dimensions and weight are not listed. Capacity is lower (5 pairs, so maybe not all petals plus elements). About $10 more than the Millenium. Orange/purple colours only were seen.
+    - **Compatibility:** As above.
+    - **Risks:** Capacity unverified.
+    - **Sources:**
+      - https://www.thomann.de/de/zildjian_mini_drumstick_bag_orange.htm
+  11.
+    - **Name:** Element tube: no verified commercial analog found from this angle
+    - **Kind:** current_part
+    - **Price usd:** about 5-15 (estimate, UNVERIFIED)
+    - **Spec comparison:** Checked: conductor baton cases (Rohema Baton Case, 2 batons up to 45 cm, 280 g; Protec Baton Double Case, up to 40.65 cm, 1680D ballistic nylon; prices not shown in the search view). Both are too narrow for the bundle of 16 mm boom pieces plus telescopic elements, and the Protec one is soft. Telescopic ABS drawing tubes usually have a minimum length of 40-60 cm or more and could not be priced (art-store pages 404).
+    - **Worse in:** -
+    - **Compatibility:** Keep the generic rigid tube (ID 40-50 mm or more, inner length at least 24-36 cm, screw or press cap). The DIY PVC/ABS route belongs to another angle.
+    - **Risks:** Unpriced.
+    - **Sources:**
+      - https://www.thomann.de/de/search_dir.html?sw=Taktstock%20Etui
+- **Notes:** VERDICT (Angle A): the cheapest verified set is the Deuter AC Lite 23 (EUR 82.46) + Millenium Classic Stick Bag (EUR 9.90) + a generic rigid tube (EUR 5-15, unverified). That is about EUR 97-107, or USD 110-121 including DE VAT (about USD 92-102 ex VAT). It sits inside the 80-155 model range, and it beats the range midpoint only against an estimate, not a real offer. It counts as NOT WORSE only for the kit WITHOUT the HF kit and mast, and only with the light tripod (Deuter rating 3-6 kg).
+  
+  KEY FINDING, an issue in the stack itself, not in the candidates: every 21-30 L Deuter AC Lite and Futura 23 pack checked is rated 3-6 kg, and the Speed Lite 21 is rated 2-5 kg. The stack's full field load is 5.3-7.3 kg. With the re-audit's 1.2-1.4 kg tripod (reaudit_C) it becomes about 5.9-8.3 kg. The only checked pack rated for that is the Deuter Futura 27 (4-8 kg; EUR 123.96 = USD 139.35 at Bergfreunde). That brings the set to about USD 160-175, so it is NOT cheaper than the estimate.
+  
+  Recommendation for the next step: rewrite the Bags line as two options and price it accordingly.
+  - (a) AC Lite 23 set, about $110-121, for the patch plus foldable kit only (HF kit and mast carried separately or left at a base).
+  - (b) Futura 27 set, about $160-175, for the full kit within rating.
+  Either way, change the volume spec from "15-20 L" to "23-27 L". The stack's own volume table already sums to about 12-14 L before padding and roll.
+  
+  No candidate trades away a spec silently. Each listing above names what it is worse in.
+  
+  Coverage limits: the WebSearch budget for this turn was already used up by other agents (the first call was refused), so all evidence comes from WebFetch on primary pages: deuter.com, bergfreunde.de and thomann.de. Some sites could not be reached: Decathlon (403/429 on .de/.fr/.co.uk/.com), Osprey (403), Vaude (404), Knipex (403), Knivesandtools (404), idealo (blocked) and Gerstaecker (404). So these were NOT checked:
+  - Decathlon Quechua/Forclaz 20-22 L packs, often much cheaper, with a 10-year warranty on backpacks (from memory, unverified);
+  - chef knife rolls and tool rolls, which suit sharp edges better than stick bags;
+  - drawing and arrow tubes.
+  They may be cheaper not-worse options; a follow-up run with search budget should check them, especially the Decathlon load ratings and rain covers.
+  
+  Prices are incl. 19% DE VAT unless stated; buyers in other EU countries pay their own VAT rate via OSS. All conversions use 1.1241 USD/EUR. Bergfreunde 'ab' prices may apply to one colour only.
+
+## searchB:padded_antenna_roll_element_tube_15_20_l (run `wf_37583a7b-1a8`)
+
+- **Part:** Bags set (antenna-foldable tier): padded antenna roll + element tube + 15-20 L daypack, qty 1 set
+- **Current price usd:** 80-155 (model estimate only; final_integration.json integrated_bom[56] names no product and gives no per-item split, so no baseline product exists to compare against. Earlier completeness estimate for roll + tube + 10-12 L sling: 50-95; the sling was rejected in D14.)
+- **Critical specs:**
+  - Daypack volume 15-20 L (D14). It must hold: the handheld (case plan 220-225 x 135-140 x 55-60 mm, 1.5-1.7 kg), the foldable kit (6-6.5 L), the HF kit (0.8 L), the field pouch (2 L), patch-tier extras (0.8 L), the tripod (Rollei Compact Traveler No.1, 31.5 cm folded, 1.17 kg, from reaudit C), the mast (7 x 35 cm), plus the roll and the tube.
+  - Daypack inside height at least 38-40 cm, for 35 cm parts, the 34.7 cm Yagi boom piece and the tube. Otherwise it needs side compression straps for carrying them outside.
+  - Carried load 6.1-8.4 kg (model): STACK's 5.5-7.4 kg full load plus the reaudit-C tripod correction of +0.6-1.0 kg. So the maker's rated or recommended maximum load should be at least 8.5 kg, with a hip belt, a sternum strap and a framesheet or stiff padded back panel that protects the handheld and the wearer's back from hard parts.
+  - Daypack build: body at least 210D nylon (or equivalent abrasion resistance), base at least 420D, bartacked stress points, good zips, at least the EU 2-year legal warranty. The kit has sharp 0.3-0.5 mm aluminium petal and gore edges.
+  - Weather: water-repellent fabric plus a rain cover, because the pack carries the IPX4/IP54 handheld and the instruments.
+  - Daypack's own mass about 0.6 kg or less, since the load is already at the comfort limit.
+  - Padded roll, flat pocket at least 20 x 20 cm: the 8 helicone petals are 16.8/6.9 cm chord trapezoids, 17.0 cm high, with 1 cm tabs. The outer horn gores are about 18.7 x 13.1 cm and the inner ones about 13.2 x 13.5 cm (my calculation from the reaudit-C geometry: 28.6 deg sectors at R 255-378 mm and 134-267 mm).
+  - Padded roll, long slots at least 36 cm, for the 347/279 mm boom pieces and the #8 AWG (3.26 mm) aluminium rod segments.
+  - Padded roll, build: closed-cell padding of 5 mm or more, a cut- and abrasion-resistant face (Cordura or 600D class), a closure that stops parts sliding, and about 0.3-0.4 kg or less.
+  - Element tube: rigid and crush-resistant, inside length at least 36 cm, inside diameter at least 40 mm (16 mm boom + rods + a spare tape set), caps that stay on, about 0.25-0.3 kg or less.
+  - Sold legally in the EU (EU stock preferred under operator note 34's flat-duty rule), not counterfeit, from an authorised dealer.
+  - Hard rules: all passive bags, with no effect on receive-only, conducted-only or no-loop. Nothing conductive is needed.
+- **Candidates:**
+  1.
+    - **Name:** DIY element tube DN50: Ostendorf-type dBlue PP-MD sound-insulating HT pipe DN50 x 500 mm with socket + 2x dBlue Muffenstopfen DN50 + Marley Ueberschiebemuffe 50 mm (the slip coupling closes the plain end with the second plug)
+    - **Kind:** diy
+    - **Price usd:** 17.38 (EUR 15.46 incl. DE VAT at toom: pipe 5.29 + plugs 2 x 4.29 + coupling 1.59; converted at 1.124 USD/EUR, the rate STACK uses. Parcel shipping is free only from EUR 59; otherwise collect in store. The same EN 1451 HT parts are sold at every EU DIY store; other stores' prices not verified.)
+    - **Spec comparison:** Listing data, from a third-party-certified standard part: EN 1451-1 / DIN 4109, wall 1.8 mm, so ID about 46.4 mm (meets the 40 mm or more spec). Length 551 mm with socket, cut to 40-45 cm (meets 36 cm or more). Pipe 168 g, plug 26 g each; the coupling was not weighed. Set about 0.24-0.26 kg (meets about 0.3 kg or less). Ring stiffness (model, not measured): E*t^3/(12*Dm^3) is about 5.6-8.7 kN/m2 for E 1.3-2.0 GPa. That is far stiffer than a card poster tube and enough for pack compression. The push-fit plug with its lip seal stays on and is splash-proof.
+    - **Worse in:** Possibly mass: about 0.25 kg against an unspecified commercial tube, which may be lighter. It has no padding inside, so wrap the rod ends in tape or foam. The plain end needs the coupling + plug (or tape). The crush figure is modelled, not measured.
+    - **Compatibility:** Holds the 347/279 mm 16 mm OD boom pieces, the 3.26 mm aluminium rod segments and a spare tape set. Too narrow for a bundle of seven 35 cm mast sections (the mast is a separate line). Fits upright in an 18-20 L pack.
+    - **Risks:** Cut square and deburr. The dBlue lip-seal plug can be stiff; a drop of silicone grease helps. Check the actual parts at the store.
+    - **Seller url:** https://toom.de/p/schalldaemmrohr-dblue-mit-steckmuffe-dn-50-500-mm/10444490
+    - **Sources:**
+      - https://toom.de/p/schalldaemmrohr-dblue-mit-steckmuffe-dn-50-500-mm/10444490
+      - https://toom.de/p/muffenstopfen-dblue-dn-50/10444707
+      - https://toom.de/p/ueberschiebemuffe-50-mm/5650689
+  2.
+    - **Name:** DIY element tube DN75: Marley HTEM pipe DN75 x 500 mm with socket + 2x Marley Muffenstopfen 75 mm + Marley Ueberschiebemuffe 75 mm
+    - **Kind:** diy
+    - **Price usd:** 8.27 (EUR 7.36 incl. DE VAT at toom: 2.79 + 2 x 1.09 + 2.39)
+    - **Spec comparison:** PP to DIN EN 1451-1, 500 mm long. The listing gives no wall: EN 1451 HT DN75 is nominally about 1.9 mm (not verified here), so ID about 71 mm. Meets length and ID; it also takes the mast-section bundle. Ring stiffness (model) about 1.9 kN/m2 at E 1.3 GPa, about 3x lower than the DN50. Mass not listed; about 0.3 kg (model).
+    - **Worse in:** Bulk: about 2 L inside an 18-20 L pack, against about 0.85 L for the DN50. Lower ring stiffness. Mass not measured and probably over 0.3 kg. Choose it only if the mast must ride in the tube.
+    - **Compatibility:** As DN50, and it also carries the 7 x 35 cm shock-corded mast. Takes more of the 15-20 L volume budget.
+    - **Risks:** Wall thickness and mass unverified from the listing; weigh at the store.
+    - **Seller url:** https://toom.de/p/htem-rohr-mit-steckmuffe-dn-75-500-mm/5650117
+    - **Sources:**
+      - https://toom.de/p/htem-rohr-mit-steckmuffe-dn-75-500-mm/5650117
+      - https://toom.de/p/muffenstopfen-75-mm/5650744
+      - https://toom.de/p/ueberschiebemuffe-75-mm/5650690
+  3.
+    - **Name:** Millenium Classic Stick Bag (Thomann house brand), as the padded roll
+    - **Kind:** generic_or_clone
+    - **Price usd:** 11.13 (EUR 9.90 incl. DE VAT, Thomann DE, in stock 18 Oct 2026; free shipping from EUR 29; EU warehouse, 3-year Thomann warranty)
+    - **Spec comparison:** Vendor: padded, Cordura face, shoulder strap, accessory pocket, tie cords. 4.3/5 from 339 buyer reviews. No dimensions published. It is made for 16-17 in (about 41-43 cm) drumsticks, so the length probably clears the 36 cm slot spec (inferred, not measured). Padding thickness and inner width not stated.
+    - **Worse in:** Fails the angle-B evidence bar: no independent measurement and no published dimensions. Its pockets are sized for sticks, so the flat 20 x 20 cm pocket for 17 x 17 cm petals (plus tabs) is very unlikely. Cut resistance of the lining is unknown.
+    - **Compatibility:** Usable only as a rod and boom sleeve: aluminium rods, 16 mm boom pieces, telescopics. Petals and gores would need a separate padded flat sleeve.
+    - **Risks:** Fit is unverified. The sibling Eco Stick Bag (EUR 5.90) is not listed as padded and one review calls its fabric thin, so it is rejected.
+    - **Seller url:** https://www.thomann.de/de/millenium_msb20bk_stick_bag.htm
+    - **Sources:**
+      - https://www.thomann.de/de/millenium_msb20bk_stick_bag.htm
+      - https://www.thomann.de/de/millenium_eco_stick_bag.htm
+  4.
+    - **Name:** Gator Stickbag GP-007A, as the padded roll
+    - **Kind:** other_brand
+    - **Price usd:** 19.11 (EUR 17 incl. DE VAT, Thomann DE, in stock)
+    - **Spec comparison:** Vendor: outer 45.5 x 18.5 x 2.5 cm, 0.45 kg, nylon, carry handle, tie cords. 4.8/5 from 67 reviews. Length meets the 36 cm slot spec. Thickness of 2.5 cm is fine for 8 stacked petals.
+    - **Worse in:** Inner width is under 18.5 cm, so the 16.8-17 cm petals plus 1 cm tabs fit tightly or not at all; the gores fit only turned (13.1 cm side across). At 0.45 kg it is heavier than the 0.3-0.4 kg target. Padding and lining not specified. No independent measurement.
+    - **Compatibility:** Long parts fit. Flat sheet parts are marginal.
+    - **Risks:** Unmeasured fit for the petals: check with a card template first, since Thomann gives 30 days money-back.
+    - **Seller url:** https://www.thomann.de/de/gator_stickbag_gp_007a.htm
+    - **Sources:**
+      - https://www.thomann.de/de/gator_stickbag_gp_007a.htm
+  5.
+    - **Name:** Rockbag Travelling Stick Bag, as the padded roll
+    - **Kind:** other_brand
+    - **Price usd:** 39.34 (EUR 35 incl. DE VAT, Thomann DE, 2-5 days)
+    - **Spec comparison:** Vendor: 87 x 56 cm unfolded, water-repellent RokTex outer, nylon lining, 10 mm zip, 16 inner pockets, 2 large Velcro outer pockets, removable 50 mm padded strap. 4.3/5 from 80 reviews. Big enough that the flat petal and gore pockets are plausible.
+    - **Worse in:** Buyers note its weight and size; the mass is not published. The folded size is not given, so its share of the pack volume is unknown. It is not clearly cheaper than a purpose-made roll. No independent measurement.
+    - **Compatibility:** Probably holds all the roll contents. Bulk inside a 15-20 L pack is unverified.
+    - **Risks:** Mass and folded size unknown.
+    - **Seller url:** https://www.thomann.de/de/rockbag_travelling_stick_bag.htm
+    - **Sources:**
+      - https://www.thomann.de/de/rockbag_travelling_stick_bag.htm
+  6.
+    - **Name:** Gregory Nano 18 daypack (new; the same model bought used would be the angle-B variant, used price not verified)
+    - **Kind:** other_brand
+    - **Price usd:** 63.52 (EUR 56.51 incl. VAT at Bergfreunde DE, RRP EUR 64.95)
+    - **Spec comparison:** Independent: OutdoorGearLab measured 17.5 oz (about 496 g), with a 210D body and 420D bottom that 'stood out' for durability, 3/4 in webbing hip belt and perforated foam back. Vendor (Bergfreunde): 18 L, 454 g, 210D Honeycomb CryptoRip nylon, 420D high-density nylon base, sternum strap, 15 in laptop sleeve, maximum recommended load 6.8 kg. Meets volume, fabric and mass.
+    - **Worse in:** LOAD: the 6.8 kg maximum is below the 6.1-8.4 kg packed load (model). It has only a webbing hip belt, no framesheet and no rain cover. Fails the not-worse test.
+    - **Compatibility:** 18 L is at the low end. Inside height not published.
+    - **Risks:** Overload at the full kit.
+    - **Seller url:** https://www.bergfreunde.de/gregory-nano-18-daypack/
+    - **Sources:**
+      - https://www.bergfreunde.de/gregory-nano-18-daypack/
+      - https://www.outdoorgearlab.com/reviews/camping-and-hiking/daypack/osprey-daylite-plus
+  7.
+    - **Name:** Osprey Daylite Plus 20 daypack (new; the same model bought used would be the angle-B variant, used price not verified)
+    - **Kind:** other_brand
+    - **Price usd:** 78.19 (from EUR 69.56 incl. VAT at Bergfreunde DE, RRP EUR 79.95)
+    - **Spec comparison:** Vendor (Bergfreunde): 20 L, 590 g, current version 150D recycled PET packcloth, padded shoulder straps, sternum strap, removable hip belt, AirScape back panel, compression straps. Independent: OutdoorGearLab measured 20.6 oz but tested an older 300D polyester / 600D base version, scoring it 62/100 with no durability finding and no load figure.
+    - **Worse in:** No load rating found against the 8.5 kg spec. Webbing hip belt only, no framesheet. The current 150D fabric is lighter than both the tested version and the 210D/420D target. No rain cover. Not proven not-worse.
+    - **Compatibility:** Volume fits the kit. Inside height not published.
+    - **Risks:** Tested and current versions differ; an older used unit (300D/600D) is sturdier but its price is unverified.
+    - **Seller url:** https://www.bergfreunde.de/osprey-daylite-plus-20-daypack/
+    - **Sources:**
+      - https://www.bergfreunde.de/osprey-daylite-plus-20-daypack/
+      - https://www.outdoorgearlab.com/reviews/camping-and-hiking/daypack/osprey-daylite-plus
+      - https://www.outdoorgearlab.com/topics/camping-and-hiking/best-daypack
+- **Notes:** Verdict by item, angle B (generic, clone, DIY, used). The baseline line names no product, so "not worse" is judged against the critical specs above.
+  
+  1) Element tube: ADOPT the DIY DN50 tube ($17.38, or $8.27 for DN75 if the mast rides in it). It uses standardised parts to EN 1451-1, with wall 1.8 mm and mass on the listing. The crush figure is my model, not a measurement.
+  
+  2) Padded roll: NO not-worse generic found. Drum stick bags ($11-39, EU stock at Thomann) fit the long parts, but none publishes padding or inner width, and stick pockets will not take the 17 x 17 cm petals plus tabs. Under the angle-B evidence rule they stay rejected for the full roll role. The Millenium Classic ($11.13) is acceptable only as a rod/boom sleeve if the petals and gores get their own padded flat sleeve; I did not find or price a verified one.
+  
+  3) Daypack: NO cheaper not-worse candidate verified. The reaudit-C tripod (1.17-1.35 kg) pushes the packed load to about 6.1-8.4 kg (model). Gregory Nano 18 is rated 6.8 kg maximum, so it is worse. Osprey Daylite Plus has no load rating and a webbing belt. Keep the current daypack line, but add these specs to it: rated load at least 8.5 kg, framesheet, padded hip belt, 18-20 L, 210D/420D or better, rain cover.
+  
+  Cheapest verified combination: Millenium $11.13 + DN75 tube $8.27 + Nano 18 $63.52 = $82.92. It is not not-worse, so do not adopt it.
+  
+  Rejected without measured evidence: AliExpress/Naturehike-type daypack clones and the Millenium Eco Stick Bag (not listed as padded). Decathlon house-brand packs could not be checked (decathlon.* returned 403); they are a lead for angle A or the merge.
+  
+  Used branded packs (Osprey/Gregory/Deuter on Kleinanzeigen or Vinted) were not priced, because those need marketplace searches. Whether Osprey's All Mighty Guarantee covers used units is also unverified (osprey.com returned 403).
+  
+  Process notes:
+  - WebSearch was unavailable: the shared turn budget was already used up at my first query. All data comes from direct fetches of retailer and review pages: Thomann, toom, Bergfreunde, OutdoorGearLab.
+  - USD at 1.124 per EUR, the rate STACK uses (EUR 159 = $178.73). All EU prices include German VAT; other EU countries' VAT applies at checkout.
+  - Hard rules are unaffected: everything here is passive.
+
 ## small:lband_sband (run `wf_41027870-8e7`)
 
 - **Band group:** L-band 1.5-1.7 GHz and S-band 2.2-2.4 GHz with antennas of at most 12 cm (STRICT) or 20 cm (SMALL). Dishes and anything tens of cm deployed are EXCLUDED, including the foldable helicones, the 11-turn helix and the 2x2 helix arrays. Rule interpretation as given: STRICT means the largest deployed dimension is about 12 cm or less; SMALL means about 20 cm or less; foldable or telescopic antennas that are larger when deployed are excluded and appear only in the borderline note.
@@ -39542,6 +39826,152 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   UNVERIFIED: the QPL9547 datasheet (OIP3, maximum input, test conditions); Qorvo returned HTTP 429. DigiKey gives 19.5 dB, NF 0.3 dB, P1dB 22.7 dBm, 3.15-5.25 V, 65 mA. Used-market prices could not be read (eBay HTTP 403).
   
   LIMITS: the shared WebSearch budget ran out at my first query, so this pass used direct fetches of primary pages (rtl-sdr.com, DigiKey DE, AliExpress search JSON in US and DE locales, Passion Radio, lna4all). Forum measurements of AliExpress TQP3M9037 or QPL9547 boards may exist that I could not reach. A follow-up with search budget could look for them. Until then, these boards stay rejected for lack of measured evidence. All candidates are receive-only accessories. The PGA-103+ 'EMC probe' kits include H-field loop probes, which the stack bans; this is another reason not to buy them.
+
+## searchA:fnirsi_fnb58_std_no_radio (run `wf_e5582d4c-0a2`)
+
+- **Part:** FNIRSI FNB58 Std (no Bluetooth). USB/USB-C PD tester and logger. Bench tier, qty 1.
+- **Current price usd:** 53.99 at fnirsi.com, SKU FNB58 "FNB58 Std.", compare-at 88.99. I re-checked the product JSON on 18 Oct 2026. https://www.fnirsi.com/products/fnb58. The BT variant is 58.99 and is excluded by the QUIET rule. For EU delivery, FNIRSI's shipping policy says it offers a "duty payment service" on orders under $150. Whether EU VAT is inside the $53.99 or added at checkout is not verified.
+- **Critical specs:**
+  - VBUS range must reach at least 28 V. The meter qualifies 20 V PD sources for the IP2368, and the Anker 737/Pinecil test is '20 V and <=3 A, never 28 V', so the meter has to survive and read 28 V. FNB58: 4-28 V. When the meter is powered from its PC port it also reads down to 0 V (Elektor review), which the 0 V backfeed checks need.
+  - Current range: at least 5 A continuous. The stack uses a 5 A C-C cable and calibrates the INA228 at 0.5, 2 and 4 A. FNB58: 0-7 A, 0-140 W.
+  - Low-current resolution and accuracy. Needed for the V4L LNA (90 mA or less), HF+ idle versus streaming, and the INA228 calibration. FNB58: external 16-bit ADC, 5-digit display. FNIRSI's page does not publish an accuracy figure for the FNB58 (not verified).
+  - Shows current direction (bidirectional). The DRP charging matrix logs which side sources.
+  - PD functions: read PDOs, trigger 20 V (PD2.0/3.0, QC and others), PD listener, e-marker reading, cable resistance (differential-voltage method).
+  - On-device ripple capture up to 4 Msps, for the IP2368 at 250 kHz and the converters at about 1 MHz. Low-speed waveform 2-100 sps.
+  - Ports: USB-A male in and USB-A out, USB-C, micro-USB. It must sit inline at the Q6A and LAB USB-A ports for the V4L, scope, LA, IMU and TC001 without adapters, and also inline on USB-C PD.
+  - Linux arm64 logging over USB HID at 100 sps with the existing open-source logger (baryluk, patched: refresh 0.003, plus udev rule). labd has 'meter stalled' detection. Nothing Windows-only for daily use.
+  - No radio (no Bluetooth), per the QUIET-mode rule.
+  - Genuine unit from an official channel, CE marked, metal or sturdy housing. Warranty: FNIRSI gives 2 years only on fnirsi.com orders.
+- **Candidates:**
+  1.
+    - **Name:** FNIRSI FNB58 Std (same part) from AliExpress
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 37.00-46.45. AliExpress US-storefront search snapshot, 18 Oct 2026. Cheapest single-model listing: $37.00 (item 3256804478930060, '1,000+ sold'). Then $38.72, $40.14, $41.32, $41.40, $44.27, $46.45. Store name, Std vs BT variant, shipping and EU VAT are all NOT verified: the item pages would not load. EU landed price with VAT is unknown.
+    - **Spec comparison:** Same model, so identical published specs if genuine and Std: 4-28 V (0 V when PC-powered), 0-7 A, 16-bit ADC, ripple up to 4 Msps, USB-A/C/micro, PD trigger and listener, e-marker. Linux: same VID:PID 2e3c:5558, so the same patched logger works.
+    - **Worse in:** No spec loss if it is a genuine Std unit. After-sales is worse: FNIRSI states its 2-year warranty applies only to fnirsi.com orders, and EU consumer-law recourse against a non-EU marketplace seller is weaker. Firmware version unknown; V0.68 needs the refresh=0.003 logger patch.
+    - **Compatibility:** Identical to the current part.
+    - **Risks:** Some listings may be the BT variant; check that the label and the menu have no Bluetooth. A third-party store could ship a refurbished or clone unit; buy only from FNIRSI's official AliExpress store, which I could not confirm. Prices are in the US storefront without EU VAT; under IOSS, EU checkout adds about 19-21%, which could bring $37 to about $44-45 landed (model). Accept only if the landed EU price including VAT is below fnirsi.com's landed price.
+    - **Seller url:** https://www.aliexpress.us/item/3256804478930060.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-fnirsi-fnb58.html
+      - https://www.fnirsi.com/products/fnb58
+      - https://www.fnirsi.com/policies/shipping-policy
+  2.
+    - **Name:** FNIRSI FNB58 Std at BerryBase (EU seller, same part)
+    - **Kind:** current_part
+    - **Price usd:** EUR 49.90 including German VAT, shipping extra. About $56.09 at 1.1241 USD/EUR. OUT OF STOCK ('Artikel aktuell nicht lieferbar') on 18 Oct 2026.
+    - **Spec comparison:** Identical: listed as 4-28 V, 0-7 A, 140 W.
+    - **Worse in:** Not cheaper and not in stock. Better only on EU legal warranty and VAT certainty.
+    - **Compatibility:** Identical.
+    - **Risks:** Stock. Elektor (EU) lists only the FNB58 WITH Bluetooth, which the rule excludes.
+    - **Seller url:** https://www.berrybase.de/fnirsi-fnb58-usb-tester-4-28-v-0-7a-140w-schwarz
+    - **Sources:**
+      - https://www.berrybase.de/search?search=fnb58
+      - https://www.elektor.com/products/fnirsi-fnb58-usb-tester-with-bluetooth
+  3.
+    - **Name:** FNIRSI FNB-C2 USB PD3.1 Type-C tester
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 38.99 at fnirsi.com (compare-at 52.99), available, single SKU.
+    - **Spec comparison:** Better: 4-50 V vs 4-28 V. 20-bit ADC vs 16-bit. Accuracy is published: V ±(0.2‰+2), I ±(0.5‰+2), against none published for the FNB58. PD3.1 EPR. PD packet capture. Low-speed waveform 2 sps-1 ksps vs 2-100 sps. Reads CC1/CC2. Bidirectional. Firmware update via USB-disk mode, so no Windows needed. No Bluetooth mentioned. Worse: current 0-6.5 A vs 0-7 A, still above the stack's 5 A. High-speed ripple 20 ksps-2 Msps vs 4 Msps. Display 1.54 in vs 2.0 in.
+    - **Worse in:** Ports and Linux, both critical. It has ONLY a USB-C male and a USB-C female port: no USB-A and no micro-USB. Measuring the V4L, scope, LA, IMU and TC001 at the Q6A USB-A ports would need A-to-C adapters, which are non-compliant and add contact resistance. No Linux logger exists: neither baryluk's logger nor blakelton's web server lists it, and its VID:PID and protocol are unknown. That breaks the labd logging, the 8 h log run and the INA228/B10 procedures. Also lower ripple sample rate and current ceiling. I found no independent measurements (new product).
+    - **Compatibility:** PD-source qualification on USB-C only. Not a drop-in for the USB-A inline and Linux logging roles.
+    - **Risks:** Unverified: whether it reads below 4 V when PC-powered (the packing-list image shows 0.574 V, but that is a marketing photo). The PC software is Windows/Mac.
+    - **Seller url:** https://www.fnirsi.com/products/fnb-c2
+    - **Sources:**
+      - https://www.fnirsi.com/collections/usb-tester/products.json
+      - https://www.fnirsi.com/products/fnb-c2
+      - https://github.com/blakelton/FNIRSI-FNB-Web-Server
+      - https://github.com/baryluk/fnirsi-usb-power-data-logger
+  4.
+    - **Name:** FNIRSI FNB48P Std
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 35.99 at fnirsi.com (compare-at 73.79). The BT version is 40.99 and is excluded.
+    - **Spec comparison:** Same: 16-bit ADC, USB-A/micro-USB/Type-C ports, PD trigger and detection, built-in PD listener, e-marker and DASH reading, cable resistance, ripple and 9 h curves, metal (CNC) shell. On Linux, blakelton's README gives VID:PID 2e3c:0049, shared with the FNB48S, which baryluk's logger handles ('should work', not tested). Worse: the back label in FNIRSI's own product image reads '3.8-24V 0-6.5A' and '0-24V PC link mode', against 4-28 V and 7 A. Display 1.77 in vs 2.0 in. PD3.0 only. Ripple sample rate not published.
+    - **Worse in:** VBUS limit of 24 V is below the 28 V the stack must survive and read on the Anker 737/Pinecil check. 6.5 A vs 7 A. Smaller display. Ripple rate unspecified.
+    - **Compatibility:** Ports and Linux logging are compatible (logger support claimed by a third party, not verified on hardware). Fails the 28 V requirement.
+    - **Risks:** Specs come from the product-image label and a buyer review; the page text gives no ranges.
+    - **Seller url:** https://www.fnirsi.com/products/fnb48p
+    - **Sources:**
+      - https://www.fnirsi.com/products/fnb48p
+      - https://cdn.shopify.com/s/files/1/0694/8310/2426/files/FNIRSI_FNB48P_USB_Fast_Charge_Tester_02.webp?v=1792229145
+      - https://github.com/blakelton/FNIRSI-FNB-Web-Server
+  5.
+    - **Name:** ChargerLAB POWER-Z KT002
+    - **Kind:** other_brand
+    - **Price usd:** 49.99 at power-z.com (USD).
+    - **Spec comparison:** Published: 2x USB-A and 2x USB-C, 1.8 in LCD, PD3.0/2.0, PPS (fixed and PPS trigger), QC/FCP/SCP/AFC/VOOC and more, e-marker reading, A-C and C-C cable resistance, V/I curves, HID port with Windows software. NOT published: voltage and current ranges, resolution, accuracy, sample rate or ripple, PD sniffing, Bluetooth, bidirectional current.
+    - **Worse in:** Cannot be shown not-worse: the critical ranges and accuracy are unpublished. No Linux logger is known. The mainline hwmon 'powerz' driver lists only KM002C (5FC9:0061) and KM003C (5FC9:0063). It saves only $4.
+    - **Compatibility:** Ports fit. Linux logging is unknown, which counts as a gap.
+    - **Risks:** Unverified specs; Windows-only software.
+    - **Seller url:** https://www.power-z.com/products/chargerlab-power-z-kt002
+    - **Sources:**
+      - https://www.power-z.com/products/chargerlab-power-z-kt002
+      - kbuild/radxa-6.18.2/drivers/hwmon/powerz.c (local Radxa 6.18.2 source)
+  6.
+    - **Name:** ChargerLAB POWER-Z C240
+    - **Kind:** other_brand
+    - **Price usd:** 29.99 at power-z.com.
+    - **Spec comparison:** Published: 240 W, USB 2.0, 1.14 in screen showing V, I, P, direction, energy, D+/D-, CC. Bidirectional. Metal shell. USB-C in and out only. No PD trigger, e-marker, PC link or logging is stated. Range and accuracy are not published; the vendor itself points to the KM003C for accuracy.
+    - **Worse in:** No PD trigger or PDO read, no logging, no USB-A, no ripple. Far below the FNB58 in function.
+    - **Compatibility:** Not a replacement.
+    - **Risks:** -
+    - **Seller url:** https://www.power-z.com/products/chargerlab-power-z-c240
+    - **Sources:**
+      - https://www.power-z.com/products/chargerlab-power-z-c240
+  7.
+    - **Name:** ChargerLAB POWER-Z KM003C
+    - **Kind:** other_brand
+    - **Price usd:** 109.99 at power-z.com. NOT cheaper.
+    - **Spec comparison:** Up to 50 V and 6 A (PD 240 W), 20-bit ADC, PD protocol analyzer, PD3.2, e-marker and PDO tests, PC capture of 10M points. Linux: in-kernel hwmon driver 'powerz' (VBUS/IBUS signed/VCC1/VCC2/VDP/VDM/temp), built as =m in the Radxa qcom_module_defconfig of the local 6.18.2 tree. No Bluetooth mentioned. USB-C only, plus a USB-C HID port.
+    - **Worse in:** Price is about 2x. No USB-A port. 6 A vs 7 A.
+    - **Compatibility:** Good Linux support, but ports are USB-C only.
+    - **Risks:** Out of scope under the cheaper-only rule. Listed only as the reference upgrade.
+    - **Seller url:** https://www.power-z.com/products/chargerlab-power-z-km003c
+    - **Sources:**
+      - https://www.power-z.com/products/chargerlab-power-z-km003c
+      - kbuild/radxa-6.18.2/Documentation/hwmon/powerz.rst
+  8.
+    - **Name:** AVHzY CT-3
+    - **Kind:** other_brand
+    - **Price usd:** Unverified. The official page gives no price and links to Amazon and AliExpress, which I could not check.
+    - **Spec comparison:** 0-29 V, 0-6 A, 4.5 digits, '0.1% maximum gain error' on V and I, ripple at 3.2 Msps, offline logging 100 sps, PC logging up to 1000 sps. PD/PPS/QC trigger, PD listener in the PC software, e-marker. USB-C and USB-A pass-through, micro-USB PC port. No Bluetooth mentioned.
+    - **Worse in:** 6 A vs 7 A. Ripple 3.2 Msps vs 4 Msps. Linux logging not verified. Price unknown, so it is not shown to be cheaper. AVHzY also lists a second CT-3 variant at 26 V, so the exact SKU matters.
+    - **Compatibility:** Ports fit. Linux is unknown.
+    - **Risks:** Price and Linux tool unverified.
+    - **Seller url:** https://www.avhzy.com/html/product-detail/avhzy-ct-3-usb-power-meter-load-tester-voltage-detector
+    - **Sources:**
+      - https://www.avhzy.com/
+      - https://www.avhzy.com/html/product-detail/avhzy-ct-3-usb-power-meter-load-tester-voltage-detector
+- **Notes:** VERDICT (Angle A): keep the FNIRSI FNB58 Std. None of the cheaper different models is not-worse.
+  - FNB-C2 ($38.99) is better in V range (50 V), ADC (20-bit) and published accuracy. It loses USB-A, micro-USB and Linux logging (critical), plus ripple rate (2 vs 4 Msps) and current (6.5 vs 7 A).
+  - FNB48P ($35.99) is capped at 24 V and 6.5 A.
+  - POWER-Z KT002 ($49.99) has unpublished ranges and no Linux tool.
+  - C240 lacks PD and logging.
+  - KM003C is better but $109.99.
+  - The AVHzY CT-3 price is unverified, and it is 6 A.
+  
+  The only cheaper not-worse path is the SAME FNB58 Std from another channel. AliExpress listings run $37.00-46.45 in the US storefront, ex EU VAT; the store and variant are unverified. Accept one only if all of these hold:
+  (1) the seller is FNIRSI's official AliExpress store;
+  (2) the variant is Std (no BT logo, no Bluetooth menu);
+  (3) the landed EU price including VAT is below fnirsi.com's landed price;
+  (4) on arrival it enumerates as 2e3c:5558, and the firmware version is recorded and not updated.
+  
+  Trade-off: FNIRSI's 2-year warranty covers fnirsi.com orders only.
+  
+  EU reference: BerryBase EUR 49.90 including VAT (about $56.09), out of stock. Elektor stocks only the BT version.
+  
+  Facts I verified that matter for the stack:
+  - The FNB58 reads down to 0 V when powered from its PC port (Elektor review). Needed for the backfeed checks.
+  - The baryluk logger matches FNB58 2e3c:5558 and FNB48S 2e3c:0049, and defaults to refresh 1.0 s for those, so the 0.003 patch stays.
+  - The mainline hwmon 'powerz' driver (KM002C/KM003C) is =m in the Radxa qcom_module_defconfig. The local built .config has it unset, so verify with modinfo on the device if a POWER-Z is ever added.
+  
+  Limits:
+  - The WebSearch budget for this turn was already used up at my first call, so I worked only from primary pages with WebFetch and curl.
+  - AliExpress item pages, Amazon.de and witrn.com could not be fetched.
+  - WITRN (C4/C5/U3), UNI-T UT658 and RD TC66C were not verified.
+  - FNIRSI publishes no accuracy figure for the FNB58.
+  
+  Working files are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/fnb_a/: coll.json (FNIRSI prices and specs) and img/ (FNB48P label, FNB-C2 ports).
 
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
