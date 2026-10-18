@@ -1447,5 +1447,182 @@ _Run `wf_0e70c405-a03`_
 
 ## Адверсаріальна перевірка (`verify`)
 
-_Агент цього етапу ще працює (run `wf_0e70c405-a03`)._
+_Run `wf_0e70c405-a03`_
+
+- **Component:** Display: very bright (ideally 1000 nits or more), ideally above Full HD, capacitive touch, 5.5-8 in, for the Radxa Dragon Q6A handheld
+- **Recommendation holds:** так
+- **Issues:**
+  1.
+    - **Claim:** Own-fix: run 'a 7.2.y stable kernel that contains 96379c2dec72 and 4483604a4fd6' (or any kernel at 7.2.9 or later) to get reliable above-FHD HDMI.
+    - **Problem:** Mainline is now v7.3-rc7 and its qcs6490-radxa-dragon-q6a.dts still has no display nodes at all: no mdss, no DP controller, no HDMI bridge. A vanilla or stable kernel therefore gives no HDMI on the Q6A. HDMI works only on Radxa's vendor 6.18.2 tree (Armbian 'current' builds from radxa/kernel.git linux-6.18.2) or on community kernels that add out-of-tree DP/DPU/DT patches. Armbian main 'edge' is still tag v7.2.3, the version rafaelwms found produced a sheared HDMI image.
+    - **Correction:** Use Radxa's 6.18.2-x kernel (a Radxa developer wrote '6.18 preferred for full feature support') or the rafaelwms Ubuntu 26.04.1 v1.3.0 image (7.2.9 plus Armbian DP/DPU patches, tested on one board). Hold the kernel packages after that. Do not expect vanilla stable kernels to drive the screen.
+    - **Source:** https://raw.githubusercontent.com/torvalds/linux/master/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts ; https://raw.githubusercontent.com/armbian/build/main/config/sources/families/qcs6490.conf ; https://raw.githubusercontent.com/rafaelwms/ubuntu-26.04.1-dragon-q6a/main/docs/pesquisa.md
+  2.
+    - **Claim:** Recommended Wisecoco 7in 1920x1080 2000-2500 nit kit has capacitive touch that reaches the host; $132 for the kit.
+    - **Problem:** The product page (verified) lists $132 'with HDMI in board' and a capacitive touch panel, but gives 'Interface Type: I2C'. It names no USB touch, no board chip, no input voltage, no power figure and no thickness. Brightness is 2000+ cd/m2 typical in the table against 2500 in the title, the active-area figures are swapped between sections, and there are zero reviews. $132 may cover only the panel and HDMI board. The $177.64 eBay kit with touch could not be re-verified (eBay 403).
+    - **Correction:** Keep it as the primary pick but treat it as unvalidated. Before paying, get written confirmation that touch is USB-HID (Wisecoco 7in touch boards seen on the Pi forums enumerate as WCH CH57x, 1a86:e5e3, using hid-multitouch), plus the EDID mode list, input voltage and current, and lamination. Budget for a possible separate touch bridge.
+    - **Source:** https://www.wisecocodisplay.com/product/7-inch-1920x1080-high-brightness-2500nits-lcd-panel-with-hdmi-in-board-ips-mipi-interface-tft-lcd-screen/ ; https://forums.raspberrypi.com/viewtopic.php?t=368455
+  3.
+    - **Claim:** Budget Waveshare 5DP-CAPLCD-B costs about $63 and draws 2-3 W (research); 'optically bonded' (implied for the product generally).
+    - **Problem:** Waveshare's own store lists the product at $46.99-54.99, with no per-variant price shown. The wiki states 4.2 W and at least 850 mA, or it fails to start. Only the -B (wide bezel) variant is optically bonded; -H is air-bonded and -G is resistive.
+    - **Correction:** Order specifically 5DP-CAPLCD-B from Waveshare (about $47-55). Budget 4.2 W on its own 5 V rail of at least 1 A.
+    - **Source:** https://www.waveshare.com/5dp-caplcd.htm ; https://www.waveshare.com/wiki/5DP-CAPLCD
+  4.
+    - **Claim:** Forum finding: field monitors cannot show their above-FHD panels natively because their HDMI input accepts only broadcast formats.
+    - **Problem:** Confirmed for the LUT7: its formats are 4K24/30, 1080p up to 60, 1080i, 720p and SD at 20 W, so its 1920x1200 panel always shows scaled 1080p. But the LUT5 and F6 PLUSX are native 1920x1080, so 1080p60 from the Q6A is pixel-exact on them. Their real blockers are no host touch, 9-20 W draw, and weight.
+    - **Correction:** Downgrade field monitors for lack of touch and high power, not for scaling. The LUT5 (3000 nits) remains the brightest no-touch fallback if you pair it with an encoder.
+    - **Source:** https://kounio.gr/katastima/video-2/monitors/feelworld-lut7-7-3d-lut-4k-hdmi-monitor/
+  5.
+    - **Claim:** Own-fix RF: a pixel clock of about 127.5-129.2 MHz (1080p at 52 Hz, 128.7 MHz) is 'clean at every harmonic up to 2.3 GHz'.
+    - **Problem:** My harmonic check confirms the arithmetic: 148.5 MHz hits 742.5 MHz in the QO-100 wideband IF and 2227.5 MHz in S-band, and its fundamental sits only 2.5 MHz above the 2 m band; 128.7 MHz has no hits. But this covers only discrete clock harmonics. TMDS data (10x the pixel clock, about 1.3-1.5 Gbps per lane), the bridge's DSI lanes (about 3x pclk) and the DP HBR2 link (2.7 GHz fundamental with spread spectrum) radiate broadband noise that no choice of clock removes. QO-100 now uses a non-dish antenna, so the signal margin is smaller and this matters more.
+    - **Correction:** Use the clean-clock EDID only as an extra measure. Shielding, a filtered display rail and a short shielded HDMI cable with ferrites stay mandatory. Do A/B noise-floor sweeps with the display on and off at 137, 145, 435, 740 and 1700 MHz.
+    - **Source:** Own calculation (Python harmonic check this session); https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/msm/dp/dp_link.h
+  6.
+    - **Claim:** GLFW touch fallback: 'log into a GNOME/KDE X11 session'.
+    - **Problem:** Ubuntu 25.10 and later, including the 26.04 community image, ship GNOME without an Xorg session; GNOME removed X11 sessions. This is from my own knowledge and was not re-verified this session. The GLFW 3.4 logic itself is verified: it follows XDG_SESSION_TYPE=x11 only if DISPLAY is set, which XWayland provides.
+    - **Correction:** On a 26.04 or GNOME image, rely on the XWayland trick: Exec=env XDG_SESSION_TYPE=x11 sdrpp. Radxa's 24.04 image (GNOME 46) still has an Xorg session.
+    - **Source:** https://raw.githubusercontent.com/glfw/glfw/3.4/src/platform.c ; https://github.com/AlexandreRouma/SDRPlusPlus/issues/1569
+  7.
+    - **Claim:** Midas MDT0700F1IHHC upgrade path: its trivial 2-command init makes a panel-simple-style DSI driver, or a vendor-flashed HDMI bridge, feasible.
+    - **Problem:** The datasheet (verified) confirms 2500 nits, an AR cover lens, in-cell FT7250 touch, IOVCC 1.8 V, VSP/VSN about +/-5.5 V, and LED Vf 16 V typical (19.2 V max) at 200/300/400/500 mA for 1000/1500/2000/2500 nits. But its LCD timing section says only 'Refer to Focal Tech FT7250', so no porch timings are given. Neither a DSI driver nor bridge firmware can be written without FocalTech data. The 2500-nit mode is footnoted 'stable at room temperature, open air', which is unrealistic in a sunlit handheld. The Farnell price (about EUR 324) and lead time could not be re-verified (HTTP 503).
+    - **Correction:** Keep Midas as a lab experiment only. Plan at most about 2000 nits (400 mA, 6.4 W backlight), and get the timing table from Midas before buying.
+    - **Source:** https://www.farnell.com/datasheets/3984938.pdf
+  8.
+    - **Claim:** Common fix: force the EDID timing exactly as a cheap HDMI-to-MIPI board reports it.
+    - **Problem:** Missed Q6A-specific trap. On sc7280 the DP interface needs prog_fetch_lines_worst_case = 24 lines of VBP+VSW+VFP. Wisecoco-style EDIDs have tiny vertical blanking (the 5.5in board's EDID is VFP 8 / VS 2 / VBP 4 = 14 lines), which triggers the DPU 'low vbp+vfp may lead to perf issues' path. That is the same warning seen with the sheared image on 7.2.3.
+    - **Correction:** My own fix, untested: if dmesg shows this warning or the image shears or underruns, load an edited EDID with drm.edid_firmware=HDMI-A-1:edid/x.bin. Raise VBP so that VBP+VS is at least 24 (for example VBP 22), keep 60 Hz (pclk rises about 1%), and check that the bridge and panel accept it.
+    - **Source:** https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c ; https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_2_sc7280.h ; https://forums.raspberrypi.com/viewtopic.php?t=373978
+  9.
+    - **Claim:** Lilliput 719/T has an 'IP65 frame'.
+    - **Problem:** Syntex lists the standard 719/T (1280x800, 1000 nits, USB-C video plus touch, 9-36 V, 8.5 W or less, 410 g, 184.5x118.8x32 mm) without an IP rating, at EUR 289 'on request'. The IP65 frame is a separate version.
+    - **Correction:** If IP65 matters, order the IP65-frame version (719H/T per Markertek, out of stock there).
+    - **Source:** https://syntex.tv/lilliput-719-t
+  10.
+    - **Claim:** Community findings: 'Radxa staff (chenchongbiao)' posted the clk_ignore_unused fix; 'Mr Dragon' reported HDMI fixed in thread 31304.
+    - **Problem:** Thread 31288 does not mark chenchongbiao as staff, and the OP never confirmed the fix. In thread 31304 the poster was 'drake' (9 Sep 2026, no kernel version given), and clk_ignore_unused was never discussed there. No Radxa reply appears in 31304.
+    - **Correction:** Treat clk_ignore_unused as an unconfirmed workaround. Holding the kernel is the real protection.
+    - **Source:** https://forum.radxa.com/t/latest-q6a-update-to-linux-7-0-no-hdmi/31288 ; https://forum.radxa.com/t/linux-7-0-hdmi-not-working/31304
+- **Forum and fix assessment:** Note: the shared WebSearch budget was already used up on my first query, so every check below was done with WebFetch on primary pages and kernel source. I could not run a broad new-product search.
+  
+  What I verified:
+  - Radxa docs say HDMI goes 'up to 4K@30Hz'. Only Radxa's 10FHD and 8HD DSI panels are supported, the connector is 39-pin 0.3 mm, and third-party panels 'cannot be guaranteed'.
+  - Radxa's FAQ gives the video=HDMI-A-1:1024x600@60 plus kernel-install fix.
+  - In the msm DPU source: sc7280 max_linewidth = 2400, has_3d_merge, MAX_HDISPLAY_SPLIT = 1080, the UBWC multirect max_linewidth/2 check and its -E2BIG 'can't use split source' error, and dpu_use_virtual_planes = true in master. DP_TRAIN_LEVEL_MAX is still 3 in master, so the RA620 swing patch is not merged.
+  - GLFW 3.4 follows XDG_SESSION_TYPE.
+  - The SDR++ maintainer refused touch fixes (#1569).
+  - The SDRIAK touch releases exist (v1.4.0-beta2, 8 Sep). ARM64 builds are not listed.
+  - Pi forum: Wisecoco 7in touch enumerates as USB HID CH57x. The 5.5in Wisecoco EDID is portrait 1080x1920 at 134.49 MHz.
+  - The 7.0.x HDMI regression threads and the community 26.04.1/7.2.9 image are real.
+  
+  Two real errors:
+  1. Mainline (v7.3-rc7) has no Q6A display DT, so 'use a stable 7.2.y kernel' does not give HDMI. Only the vendor 6.18.2 tree or patched community kernels work.
+  2. The GNOME Xorg-session fallback is gone on Ubuntu 25.10+/26.04 (from my knowledge).
+  
+  Gap I found myself: the DPU's 24-line programmable-fetch requirement against the tiny vertical blanking in cheap bridge-board EDIDs.
+  
+  Overall: the fixes for kernel hold, mode forcing, touch mapping, XWayland, lux/PWM co-processor, thermal hood and RF hygiene are technically sound. The 'clean pixel clock' RF fix is correct arithmetic but addresses only discrete spurs, not broadband TMDS/DSI/DP noise. The Midas route is less feasible than claimed, because the datasheet has no timing table.
+  
+  Net effect: brightness-first, 7in FHD over HDMI stays the right call. Above-FHD stays optional, which the user's 'можливо' ('maybe') allows.
+- **Final recommendation:**
+  - **Name:** Wisecoco 7in 1920x1080 LTPS IPS sunlight-readable panel with HDMI-in board and capacitive touch (2000+ nits typical, title says 2500), run at native 1080p60 from the Q6A HDMI port with USB-HID touch, on the held Radxa 6.18.2 kernel (or the community 26.04.1/7.2.9 image)
+  - **Price:** $132 list on wisecocodisplay.com (panel + HDMI-in board; touch inclusion and touch interface must be confirmed). Shipping to Ukraine, current stock and AliExpress price not verified. Add about $15-30 for a 5 V or 12 V buck rail, short shielded HDMI cable and ferrites, and about $5 for an RP2040 + VEML7700 + NTC dimming co-processor.
+  - **Why:** Brightness matters far more than resolution in the sun. At about 100 klx, 2000 nits gives roughly 7:1 contrast versus about 2:1 for 350-500 nit 2.5K panels, and 7in FHD is 315 PPI, already above about 250 PPI eye acuity at 35 cm. 1080p60 (1920 wide = 2x960 per mixer) never hits the sc7280 2400-px SSPP or UBWC split-source limits, and it is the best-tested Q6A HDMI mode. DSI is not viable: Radxa officially supports only its own panels, and Q6A DSI is unproven. Field monitors at the same brightness (LUT5/LUT7/Desview/Portkeys) cost $230-550, draw 9-20 W and give no touch to the host. No verified plug-and-play module above FHD, at 1000 nits or more and 5.5-8 in with HDMI and USB touch exists. The only bright above-FHD parts are bare panels: Midas 7in 1200x1920 2500 nits (no timing data) and Wisecoco 8.4in 1600x2560 2000 nits (dual-port 8-lane MIPI, -10 to 50 C, no touch). Conditions: buy only after written confirmation of USB-HID touch VID:PID, EDID modes, input voltage/current and optical lamination. Then run the acceptance tests (contact-lux reading of 5600 or more, 10-point evtest, 20 cold boots, 9 W or less, 30-minute full-white soak) before designing the case. Validated fallbacks: Lilliput 719/T (1000 nits, USB touch, 1280x800, 9-36 V, 8.5 W or less, EUR 289 on request) if driver-free touch matters more than resolution, or FEELWORLD LUT5 (3000 nits, native 1080p, no host touch) with an encoder. If strict palm size matters more than 7in, note that Wisecoco also lists a 5.5in 1920x1080 1200-1500 nit MIPI panel ($119, touch optional) with no HDMI board listed; it would need a third-party HDMI-to-MIPI board.
+  - **Sources:**
+    - https://www.wisecocodisplay.com/product/7-inch-1920x1080-high-brightness-2500nits-lcd-panel-with-hdmi-in-board-ips-mipi-interface-tft-lcd-screen/
+    - http://www.wisecocodisplay.com/product-category/high-brightness-display/
+    - https://forums.raspberrypi.com/viewtopic.php?t=368455
+    - https://docs.radxa.com/en/dragon/q6a
+    - https://docs.radxa.com/en/dragon/q6a/hardware-use/mipi-dsi
+    - https://docs.radxa.com/en/dragon/q6a/faq
+    - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_2_sc7280.h
+    - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+    - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+    - https://www.farnell.com/datasheets/3984938.pdf
+    - https://www.wisecocodisplay.com/product/8-4-inch-ips-tft-lcd-display-1600x2560-2000nits-high-brightness-screen-with-mipi-interface/
+    - https://www.wisecocodisplay.com/product/5-5-inch-1920x1080-fhd-ips-high-brightness-display/
+    - https://syntex.tv/lilliput-719-t
+    - https://kounio.gr/katastima/video-2/monitors/feelworld-lut7-7-3d-lut-4k-hdmi-monitor/
+- **Final budget option:**
+  - **Name:** Waveshare 5DP-CAPLCD-B (5in 1024x600 IPS, 800 cd/m2, optically bonded toughened glass, 5-point USB capacitive touch, HDMI). Step-up: Orient Display AFY1024600A2-7.0INTH-C-HDMI (7in 1024x600, 900 nits, PCAP, 12 V, not optically bonded).
+  - **Price:** $46.99-54.99 from Waveshare's own store (per-variant price not shown; EU resellers about EUR 65). Orient Display 7in: $107.88, 14 in stock, ships from Seattle.
+  - **Why:** Cheapest semi-sunlight-readable option with known driver-free USB-HID touch on Linux. Only the -B variant is optically bonded, which cuts reflections; -H is air-bonded. Draw is 4.2 W (not 2-3 W) and it needs at least 850 mA from its own 5 V rail. It works on the Q6A after video=HDMI-A-1:1024x600@60, exactly the case Radxa's FAQ documents. Trade-off: 800 nits is below the user's 1000-nit target, and 237 PPI at 1024x600 is low-res, so pair it with a 25-35 mm sun hood.
+- **Known problems and fixes to apply:**
+  - Kernel/HDMI regressions (7.0.x black screen, DP AUX IRQ storm, dead hotplug; 7.2.3 sheared image).
+  - Stay on Radxa 6.18.2-x, or the rafaelwms 26.04.1 v1.3.0 image (7.2.9 + Armbian DP/DPU patches).
+  - Run: sudo apt-mark hold <kernel, dtb and loader packages>, and blacklist them in unattended-upgrades.
+  - Keep the old boot entry and a dd+zstd golden image.
+  - Keep a USB-UART cable; measure the logic level first, it may be 1.8 V.
+  - Vanilla mainline (v7.3-rc7) has no Q6A display DT, so it gives no HDMI at all.
+  - On 7.0.x, the unconfirmed workaround is clk_ignore_unused in /etc/kernel/cmdline, then kernel-install add.
+  - After poweroff, a long press of the power button.
+  - Wrong or garbled default mode (Q6A defaults to 1080p).
+  - Check the panel: sudo edid-decode /sys/class/drm/card1-HDMI-A-1/edid
+  - Force the mode: echo "$(cat /etc/kernel/cmdline) video=HDMI-A-1:WxH@60" | sudo tee /etc/kernel/cmdline
+  - Then: sudo kernel-install add $(uname -r) /boot/vmlinuz-$(uname -r), reboot, and re-plug HDMI if needed (Radxa FAQ).
+  - Bridge-board EDIDs.
+  - They are often portrait-only (e.g. 1080x1920, 134.49 MHz) with tiny vertical blanking: VFP 8 + VS 2 + VBP 4 = 14 lines.
+  - The sc7280 DP interface wants 24 prefetch lines and warns 'low vbp+vfp may lead to perf issues'.
+  - If you see that warning, shearing or underruns: edit the EDID so VBP+VS is at least 24 (keep 60 Hz), fix the checksum, put it in /lib/firmware/edid, add drm.edid_firmware=HDMI-A-1:edid/panel.bin, and add the file to the initramfs (my own fix, untested on Q6A).
+  - Modes wider than 2400 px (2560x1440/1600 landscape) need DPU virtual planes.
+  - They are on by default in mainline master and in newer Radxa images.
+  - On older kernels, add msm.dpu_use_virtual_planes=1.
+  - Prefer 1080- or 1200-px-wide (portrait-native) modes, and reduced-blanking timings of about 330 MHz or less. Avoid 348.5 MHz CVT 2560x1600.
+  - Touch power and data.
+  - A 2000-nit kit's '5V + Touch' Type-C needs about 1.5 A or more, more than a Q6A USB 2.0 port should supply.
+  - Feed the board VBUS from a dedicated buck converter and pass only D+/D-/GND to the Q6A; do not back-feed the Q6A's VBUS.
+  - Power the display before or together with the Q6A so the EDID can be read at boot.
+  - Touch in SDR++/SatDump/SDRIAK under Wayland is dead, because GLFW has no wl_touch support.
+  - Launch with Exec=env XDG_SESSION_TYPE=x11 sdrpp (and the same for satdump-ui) so they run under XWayland with pointer emulation.
+  - Ubuntu 26.04 GNOME has no Xorg session to fall back to.
+  - Map the touchscreen with: gsettings set org.gnome.desktop.peripherals.touchscreen:/org/gnome/desktop/peripherals/touchscreens/<vid>:<pid>/ output "['VEN','Product','Serial']"
+  - Under Wayland, rotation follows the output automatically.
+  - Brightness control.
+  - DDC/CI rarely works on cheap boards; test with ddcutil detect and look for address 0x37.
+  - Otherwise fit an RP2040 co-processor: 20-25 kHz PWM into the backlight IC's dimming input, with a pull-up so the screen fails bright.
+  - It reads a VEML7700 lux sensor and an NTC on the backlight frame (derate to 50% above 60 C, 20% above 68 C).
+  - It also acts as a USB-HID encoder for tuning.
+  - Double duty: the same RP2040 (3.3 V) can host the BNO085 and bridge the GNSS UART over USB-CDC, avoiding the Q6A header's undocumented 1.8 V/3.3 V level.
+  - RF.
+  - 1080p60 CEA (148.5 MHz) puts its fundamental 2.5 MHz above the 2 m band, its 5th harmonic at 742.5 MHz (QO-100 wideband IF) and its 15th at 2227.5 MHz (S-band).
+  - If the board accepts it, use an EDID with 1080p at 52 Hz (128.7 MHz), which has no harmonic collisions up to 2.3 GHz.
+  - Shielding and filtering are still required:
+    - a separate buck converter plus damped pi filter and ferrite for the display rail
+    - a shield can over the backlight boost converter
+    - a 10-15 cm shielded HDMI cable with mix 31 and mix 61 ferrites
+    - a grounded 1 mm aluminium plate between the display and the SDR
+  - Verify with rtl_power A/B sweeps and u-blox UBX-MON-RF, display on and off.
+  - Thermal and solar clearing.
+  - Direct sun adds about 13 W to the 7in glass.
+  - Use a white or light ASA case and a 25-35 mm hinged hood.
+  - Have the fan pull air through a 4-6 mm gap behind the backlight frame.
+  - The panel is rated to 70 C (the Wisecoco 8.4in only to 50 C).
+  - Field-test at noon for 45 minutes and log temperatures.
+  - Test the screen orientation with polarized sunglasses at 0, 45 and 90 degrees before fixing the panel in the case.
+  - Field monitors (if used as a fallback).
+  - The LUT7 accepts only broadcast formats, so feed 1080p60.
+  - There is no host touch, so add an encoder.
+  - Budget 15-20 W, about 2.5 h on a 49 Wh battery for the LUT5.
+  - Budget Waveshare 5DP-CAPLCD.
+  - Use the -B variant (optically bonded).
+  - Its 5 V rail must supply at least 850 mA; it draws 4.2 W.
+  - Set video=HDMI-A-1:1024x600@60.
+  - Brightness is OSD-only unless you do the PWM mod.
+  - Midas 1200x1920 2500-nit panel.
+  - Experimental only.
+  - Get the FT7250 video timings from Midas first; the datasheet has none.
+  - Plan for 400 mA total (about 2000 nits, 6.4 W).
+  - Prefer an HDMI-to-MIPI bridge flashed by its vendor over Q6A DSI.
+  - Gate test: first get an image from an official Radxa DSI panel.
+- **Remaining uncertainties:**
+  - Wisecoco 7in: what the $132 includes, whether touch reaches the host as USB-HID or bare I2C, the real brightness (2000 vs 2500 nits), the board chip, input voltage, power draw, lamination, EDID (landscape vs portrait), stock, and shipping to Ukraine. There are zero reviews and no datasheet.
+  - No community report of any Wisecoco 2000-nit panel on a Q6A, or of any above-1080p display that works stably on Q6A HDMI. The XV272U and G80SD reports are unresolved.
+  - Midas price and lead time (about EUR 324, about 12 weeks) were not re-verified (Farnell HTTP 503). Whether FT7250 in-cell touch works with mainline edt-ft5x06, or needs FocalTech host firmware download, is unknown.
+  - The RA620's HDMI 2.0 scrambling, DDC/CI passthrough and HBR3 support are undocumented. The swing-level-2 patch is not in mainline master.
+  - Whether bridge boards accept edited EDIDs (larger VBP, 52 Hz clean-clock mode).
+  - Q6A 40-pin header logic level (1.8 V vs 3.3 V) is undocumented by Radxa.
+  - Package names for apt-mark hold, and whether the Q6A loader supports systemd-boot boot counting.
+  - The Ubuntu 25.10+/26.04 removal of the GNOME Xorg session is from my own knowledge, not re-verified this session.
+  - I could not run a broad market search for 2026 newcomers, because the shared WebSearch budget was exhausted. A better bright, above-FHD, USB-touch 5.5-8in module may exist and should be searched for in a follow-up.
+  - Brightness and power figures for the Wisecoco kit (6-8 W at full) are estimates scaled from the Midas datasheet.
+- **Confidence:** medium
 
