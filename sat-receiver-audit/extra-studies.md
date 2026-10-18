@@ -2839,6 +2839,353 @@
   
   Budget used: 11 WebSearch calls. Sites that blocked or failed: digilent.com (403), pelican.com (403), topdon.com and infiray.com (JS-only or 503), miniware.com.cn (503), fnirsi.com (429 except for the FNB58 page).
 
+## lab:integrate (run `wf_1dd437c5-0cf`)
+
+- **Core kit:**
+  - CORE = what makes the receiver a working portable lab. Prices in USD before shipping and VAT unless stated; EUR/GBP conversions are approximate. Items marked 'unverified' were not price-checked this session.
+  - LiteVNA 64 (Zeenko), 50 kHz-6.3 GHz 2-port VNA with TDR; 140x75x20 mm, 2000 mAh internal cell, USB-C serial. Price: EUR 144.59 ex VAT at Eleshop (search snippet only) or about $223 incl. VAT at Selteq; buy only from the Zeenko store, Eleshop or Lab401. Role: S11/S21 of pigtails, cables, pads, filters, bias tees and powered LNAs. Lives in the lab case. CONDUCTED ONLY: port 1 is a signal source, so it never connects to an antenna.
+  - tinySA Ultra+ ZS407, 100 kHz-7.3 GHz level-calibrated spectrum analyzer with a low-level generator (-115 to -19 dBm sine). Price: about $199-225 from the official seller list only (clone risk). Role: self-EMI hunting, site overload surveys, NF/ENR menu, tracking source. Use it on its own battery. Always fit a DC block and a 20-30 dB pad after an LNA (max input +6 dBm; SAWbird+ output can reach about +14 dBm). Generator is conducted only.
+  - Leo Bodnar Mini Precision GPS Reference Clock: GBP 132, in stock. Output 400 Hz-810 MHz, 3.3 V CMOS square wave into 50 ohm; drive 8/16/24/32 mA gives about +6.4/+9.0/+9.9/+10.3 dBm at 10 MHz. Power 5 V at up to 250 mA over mini-USB; 70x41x15 mm. Verified on leobodnar.com: it ships with an active GPS antenna (magnetic base, 5 m cable) and stores all settings in flash, which settles two 'unverified' points in the sweep (https://www.leobodnar.com/shop/index.php?main_page=product_info&products_id=301). Linux setup: lbgpsdo. It is the strongest emitter in the kit, so run it conducted only, behind 62-82 dB of pads plus a DC block, with the output disabled when idle.
+  - Uncalibrated broadband noise source: DIY Mini-Circuits ZFL-500-class amplifier source (N8DMT design, about $20 used) with a 6-10 dB output pad, about $20-40 total. Characterise its ENR with the tinySA NF menu at 137/435/740/1700/2200 MHz. Power: 12 V from the handheld's switched AUX 12 V. Conducted only; a noise source on an antenna is a wideband jammer.
+  - Near-field probes: DIY semi-rigid-coax probes or a cheap generic set ($0-30, generic set unverified), used with the tinySA for relative before/after EMI work. If the user's 'no loops of any kind' rule also covers test probes, use E-field (stub) probes only. See conflicts.
+  - SDRs as spectrum analysers (rtl_power, soapy_power, own lab-sweep, SDR++, GNU Radio): $0. Always take a 50-ohm-terminated baseline first.
+  - RF bench set (about $400-420): Nooelec SMA attenuator kit 1/2/3/6/10/20 dB, DC-6 GHz, 2 W, $47.95. 2x Mini-Circuits VAT-20W2+ (DC-6 GHz) at $37.51 each, over 1,000 in stock (verified, https://www.minicircuits.com/WebStore/dashboard.html?model=VAT-20W2%2B); with the kit this gives up to 82 dB for the GPSDO tone. 2x BLK-89-S+ DC blocks at $20.26. 3x ANNE-50+ 50-ohm loads at $14.84. Generic SMA OSL kit (about $10) plus Chelegance SMA-M OSL (about 250 SEK), so both genders are covered. 4x 086-6SM+ 15 cm hand-flex jumpers at $16.67. 0.9 N·m SMA torque wrench at $35.89 plus an 8 mm spanner. A purpose-picked SMA/N/BNC/F adapter set (about $30-50, unverified). One spare RTL-SDR Blog LNA V2 at $19.95. The I-PEX 90435-001 MHF4 tool is already in the mechanical BOM.
+  - Existing filters and LNAs serve as the lab's swap-in filter and LNA bank at no new cost: Flamingo+ FM, RTL-SDR Blog FM bandstop, SAWbird+ NOAA, SAWbird+ GOES, Uputronics 435, LNA V2.
+  - General bench tools (about $580-780): ANENG AN8008/AN8009 DMM (about $20-35, unverified) plus mini-grabbers. FNIRSI FNB58 Std (no Bluetooth) at $58.99. Hantek 6022BL scope/LA at GBP 110 ex VAT or about $126-145. fx2lafw 24 MHz 8-channel LA (about $10). Raspberry Pi Debug Probe at $12. Pinecil V2 at $25.99, plus tips/solder/flux ($15-30) and a home-made fused XT30-to-DC5525 lead. iFixit portable ESD mat with wrist strap at $34.95. iFixit Mako 64-bit driver kit at $39.95, plus cutters/stripper/tweezers/spudger ($20-35). Spares kit ($80-130; includes 2 spare MHF4L-SMA pigtails and fuses). Field notebook and cable labels ($10-25). Soft tool organiser ($15-35).
+  - Separate instrument energy: a PD power bank of at least 65 W with a 20 V/3 A PDO, for example the Anker 737 (88.8 Wh, 140 W PD 3.1, 155.7x54.6x49.5 mm, 630 g, $95-120). It feeds the bench hub, the Pinecil and the receiver's IP2368 charge port, so instruments never drain the 72 Wh receiver pack.
+  - Bench powered USB 2.0 hub: 4 ports with a separate 5 V input and back-power protection, about $10-25 (model unverified). It is fed from the power bank and plugs into the handheld's LAB USB port, so 3-4 instruments can run at once.
+  - Handheld lab interface (new internal hardware, about $55-65):
+  - Adafruit CH334F Mini 4-Port USB Hub: MTT (one transaction translator per port), 31.6x20.4x4.8 mm, 2.9 g, $4.95 (https://www.adafruit.com/product/5997).
+  - Adafruit MCP23017 I2C GPIO expander (STEMMA QT): $5.95, in stock, outputs up to 25 mA (https://www.adafruit.com/product/5346).
+  - Pololu D36V28F5 5 V/3.2 A buck: $23.95, 5.3-50 V in, EN pin, 17.8x20.3x8.8 mm (https://www.pololu.com/product/3782); a Mini560 5 V at about $3 (unverified) is the cheap alternative.
+  - TI TPS2553 load switch on a small carrier: current limit adjustable 75-1700 mA, active-high EN, FAULT output, reverse-voltage protection (https://www.ti.com/product/TPS2553).
+  - Panel-mount USB-A host port with a cap.
+  - 6-pin locking 'LAB BUS' connector with a PCA9306/TCA9517-class I2C buffer and ESD diodes.
+  - AO3401 + 2N7002 AUX 12 V switch with a 0.5 A PTC (connector and small parts about $10-15, unverified).
+- **Extended kit:**
+  - RF lab front-end SLED: a separate aluminium box, about 110x70x30 mm and about 250 g (estimate), bolted to the 1/4"-20 or a tripod and linked by the LAB BUS cable. Contents:
+  - SP4T switch: Mini-Circuits ZSWA4-63DR+ ($307.32; 0 in stock on 18 Oct 2026, so ask Mini-Circuits for a lead time), or a generic HMC7992 SP4T board (price unverified) accepted only if P2 measures IL of 1.5 dB or less and isolation of at least 40 dB below 1 GHz and at least 30 dB at 1.7-2.3 GHz.
+  - PE4302 0-31.5 dB step attenuator (about $11.49 + $6.84 shipping on eBay), under an earthed shield, with a VNA correction table.
+  - VLM-33-S+ limiter ($69.60) followed by a 20 dB pad on the BENCH port.
+  - 4th ANNE-50+ ($14.84) on RF4.
+  - ZFBT-4R2GW+ ($111.57) as the LNB injector, fed 12 V from AUX.
+  - VLF-1000+ ($33.81) on the QO-100 IF path.
+  - 2 generic 10 MHz-6 GHz bias tees, fed from TPS2553 5 V switches.
+  - Second MCP23017 at 0x21 ($5.95), plus a 3.3 V LDO and a 5 V buck inside.
+  Sled total: about $650 with the ZSWA4, or about $370-400 with an HMC7992 board.
+  - 2x Mini-Circuits VAT-10W2+ ($31.43 each). Buy only if the rf_frontend 10-12 dB Lime-port pads are not already ordered.
+  - 2x Mini-Circuits CBL-1FT-SMSM+ precision VNA port cables, $82.05 each.
+  - AD8318 log-detector power meter (1 MHz-8 GHz, accurate from -5 to -60 dBm; $16.50-39) with an ADS1115-class ADC at 0x48 and a 9 V regulator in a small box on the LAB BUS (I2C plus AUX 12 V). About $25-60. Used for level checks before an SDR input and as an optional overload alarm.
+  - Calibrated 346-class noise head (used surplus, or a quote-only Pasternack/NoiseWave unit; price unverified), with a 28 V boost module at the head fed from AUX 12 V and switched by sled GPA5. Only needed for absolute NF numbers.
+  - Com-Power PS-500 near-field probe set (9 kHz-5 GHz), $109.
+  - Airspy HF+ Discovery: 0.5 kHz-31 MHz plus 64-260 MHz, 110 dB HF blocking dynamic range, 60x45x10 mm, 32 g. $169 list, or EUR 232 incl. VAT at WiMo (in stock). It runs on the LAB USB port with the NON-loop foldable HF wire antenna. The YouLoop is excluded by the user's rule.
+  - Second RTL-SDR Blog V4L ($37.95; already budgeted as the spare) used as a parallel ADS-B, AIS or radiosonde monitor on the LAB port. Give it a unique serial with rtl_eeprom.
+  - Uputronics-design SAW-filtered preamps for 1090 MHz and 403 MHz, EUR 47.64 each incl. VAT (Kubii). Check that they work from the V4L's 4.5 V bias tee (sources conflict on the supply limit).
+  - Nooelec SAWbird+ H1 for 1420 MHz ($49.95; count it once, since two sweeps list it). Use it with the existing helicone/helix for hydrogen-line and Sun-noise work.
+  - sysmocom cf2235-kt30 S-band cavity filter (2170-2300 MHz, 124x47x33 mm, 186 g), EUR 65.45.
+  - RTL-SDR Blog broadcast AM high-pass filter, $16.95, for city HF use. It probably blocks DC, so keep the bias tee off.
+  - TOPDON TC001 (the original single-lens model, UVC 256x192) at about GBP 260, or an InfiRay P2 Pro. Use PyThermalCamera on Linux; UVC support in the Radxa 6.18 kernel is unverified.
+  - FNIRSI DPS-150 current-limited 0-30 V/0-5 A supply, EUR 64.95 (Elektor). For first power-up of modules and LNB tests.
+  - Hard lab case: Pelican 1450 (interior 37.1x25.8x15.2 cm, 2.5-2.9 kg empty) at $106-169, or the Apache 3800 at about $30-35 (US only).
+  - Extra software: Gqrx, CyberEther, satnogs-decoders, libairspyhf. See the software list.
+- **Optional:**
+  - RP2040-Zero PPS-gated counter / software GPSDO ($3-5, plus a $6 MHF4 pigtail and your own firmware). It counts Lime J3 clock-out (3.3 V CMOS) between LC76G PPS edges, sits on CH334F port H4 inside, and steers the VCTCXO DAC. Unverified as a whole. Gate it with the GNSS time and spoofing checks.
+  - Leo Bodnar LBE-1421 dual-output GPSDO (EUR 225 net / EUR 267.75 incl. VAT, Batronix). Only if the Mini proves limiting.
+  - Second HMC7992 SP4T (in the sled) for Lime RX-W or the RTL input. Price unverified.
+  - Mini-Circuits ZFRSC-42-S+ resistive splitter, $78.86, for same-antenna RTL-vs-Lime A/B tests. Always place it after at least 20 dB of LNA gain.
+  - Nooelec Ham Filter Bank Barebones, $66.95. VNA-check it first and keep its input bias button off.
+  - Mini-Circuits VBFZ-1400-S+ 1350-1450 MHz band-pass, $54.13, as a second stage for the hydrogen-line chain.
+  - ProXicast ANT-241-002 GDT arrestor, $19.95. Only for a fixed outdoor antenna bonded to a real earth.
+  - DIY hinged flat-pack 1420 MHz pyramidal horn (every panel 35 cm or less), $15-30 in materials. Untested adaptation of a rigid 18.5 dBi design. It is not a dish, so it is allowed.
+  - Uputronics 162 MHz AIS preamp, EUR 47.64. Coastal use only.
+  - SparkFun AS3935 lightning detector (SEN-15441), $34.95, on SPI plus an IRQ line. Its 500 kHz antenna is a small on-board ferrite coil: treated here as a chip antenna, but flagged against the no-loop rule.
+  - Digilent Analog Discovery 3 ($303-379). arm64 WaveForms is unconfirmed. Its AWG (about +24 dBm into 50 ohm) is conducted only and needs at least 40 dB of pads.
+  - MLX90640 thermal breakout ($74.95, out of stock) or a P-touch label maker ($25-60).
+  - SatNOGS client 2.1.4 (Docker arm64), only when parked online. Check that its librtlsdr supports the V4L.
+  - Bench-only LF time-signal and VLF listening with the HF+ Discovery on the non-loop wire. Unverified at handheld noise levels. It replaces the CANADUINO module, which is excluded because its 60 mm ferrite loopstick is a magnetic loop antenna.
+- **Connections:**
+  - USB 3.1 port (blue, usb_1: its own HS link plus SS) -> Samsung T7 for wideband IQ only. Nothing else goes on this port. Run a terminated-floor test at 1.7/2.2 GHz with the T7 on and off; if it hurts, record at 7 Msps or less to UFS through the RAM ring instead.
+  - FE1.1s hub port P1 -> RTL-SDR V4L, the primary receiver (compute-verifier decision; Wi-Fi off during passes). Its GPIO VBUS-cut pigtail is driven from MCP23017 #1 GPA2, not header pin 7.
+  - FE1.1s hub port P2 -> display USB-HID touch (internal).
+  - FE1.1s hub port P3 -> internal Adafruit CH334F MTT hub. Cut the upstream VBUS on this board and power its 5 V net from LAB 5 V. Downstream ports:
+  - H1: display co-processor RP2040 (dimming plus HID knob).
+  - H2: boom IMU puck (RP2040 + BNO085), through its sealed boom connector.
+  - H3: LAB USB-A host port on the case edge, VBUS from LAB 5 V through a TPS2553 set to about 1 A (EN = MCP23017 #1 GPA0, FAULT -> GPA3).
+  - H4: internal spare, or the optional RP2040 counter.
+  - FE1.1s hub port P4 -> onboard AIC8800 Wi-Fi/BT (fixed).
+  - Field mode: ONE instrument plugs straight into LAB USB (Bodnar Mini, LA, Debug Probe, FNB58, second V4L or HF+), drawing 1 A or less from the pack. Bench mode: LAB USB -> bench powered hub fed from the power bank -> LiteVNA, tinySA, Bodnar Mini, Hantek/LA, TC001, HF+, second V4L. Instruments that have batteries charge only from the bank.
+  - I2C0 (header pins 13/15) -> INA228 battery gauge (power design). I2C2 (pins 27/28) -> MCP23017 #1 at 0x20 inside the handheld, then a PCA9306/TCA9517-class buffer and ESD diodes, then the LAB BUS connector -> sled MCP23017 #2 at 0x21 and the ADS1115 at 0x48. 100 kHz, cable 1 m or less. Bind both expanders with the kernel pinctrl-mcp23s08 driver through a DT overlay so they appear as gpiochips for libgpiod.
+  - MCP23017 #1 pin map:
+  - GPA0: LAB VBUS EN
+  - GPA1: AUX 12 V EN
+  - GPA2: RTL VBUS-cut
+  - GPA3: LAB FAULT (input)
+  - GPA4-GPA6: optionally take over the Lime-port bias TPS2553 EN lines from the crowded header
+  - GPB0-GPB1: their FAULT inputs
+  - GPA7 and GPB7: outputs only (later Microchip datasheet revision; from memory, verify)
+  At power-up every pin is high-Z, so pull-downs hold every supply and generator OFF.
+  - Sled MCP23017 #2 pin map:
+  - GPA0-GPA2: ZSWA4 V1/V2/V3. With undriven pins the internal 100 kOhm pull-downs select RF4, the load (safe default).
+  - GPA3-GPA4: optional second switch.
+  - GPA5: NOISE 12 V output (to the noise source or the 28 V boost).
+  - GPA6: LNB 12 V into the ZFBT.
+  - GPB0-GPB5: PE4302 D0-D5. MCP23017 push-pull outputs drive the module's 10 kOhm pull-downs directly, so no 74HC buffer and no PCF8574.
+  - GPB6: LNA bias EN.
+  - Sled RF plan:
+  - RF1: 70 cm chain (LNA at the antenna, then a bias tee).
+  - RF2: QO-100 (LNB, then ZFBT, then VLF-1000+).
+  - RF3: BENCH (VLM-33-S+, then 20 dB).
+  - RF4: ANNE-50+ load.
+  - COM: PE4302 (optional), then a 15 cm 086-6SM+, then the handheld's RX-A bulkhead, the internal 10 dB pad and the Lime RX.
+  Every sled port is DC-free. Without the sled, chains are swapped by hand at the SMA bulkheads, never at the MHF4 connectors.
+  - Reference clock, default route: Bodnar Mini tone at 8 mA drive -> 20+20+20+20 dB (kit plus 2x VAT-20W2+) -> DC block -> an SDR RX port. Then set the VCTCXO DAC and write it to EEPROM XO_DAC, measure the RTL ppm, and set the tinySA correction. Disconnect the GPSDO for passes.
+  - Reference clock, experimental route: Bodnar Mini -> short double-shielded SMA cable -> optional 40-50 MHz low-pass -> REF IN bulkhead -> MHF4L pigtail -> Lime J4 (10-52 MHz, 1.8-3.3 V; Lime's clock page gives no impedance or termination and documents no software selection: https://myriadrf.org/projects/limesdr-micro/user/M.2/clock.html). Use 30.72 MHz if lbgpsdo shows it is exactly reachable, not 10 MHz. Fit the bulkhead only after external-reference selection is confirmed on the delivered board.
+  - Optional counter: Lime J3 clock-out (3.3 V CMOS on MHF4) -> 5-10 cm shielded pigtail -> RP2040 GPIO. Tee the PPS from header pin 7 (GPIO96) into another RP2040 GPIO. The RP2040 talks USB-CDC on CH334F H4.
+  - LAB 5 V rail: Pololu D36V28F5, fed from the switched pack node after the #2813 switch, through a 2 A fuse and a pi-filter. It feeds the CH334F, boom puck, display RP2040 and the LAB port TPS2553. This moves those loads off the Q6A's roughly 17 W VCC_5V_PERI.
+  - AUX 12 V rail: taken from the 12 V rail (D36V50F12) or, if J21 is fed at 9 V, from the LNB 12 V branch. Path: AO3401 P-FET with a 2N7002 driver (gate pulled to OFF), then a 0.5 A PTC, then LAB BUS pins. It feeds the sled, the noise source (or sled NOISE output), the AD8318 box through a 9 V regulator, and the 28 V boost.
+  - Power bank: C1 -> receiver IP2368 USB-C, for charging and use-while-charging. USB-A or C2 -> bench hub. C2 -> Pinecil at 20 V, only with the receiver off. Never connect anything to the Q6A's own USB-C (it back-feeds the 12 V input). The XT30 service lead can feed the Pinecil only through its 5 A fused DC5525 lead, with IronOS set to 4S cutoff at 3.4 V/cell.
+  - Conducted test chains (no generator ever reaches an antenna):
+  - VNA LNA test: DC block on port 1, 20-30 dB pad before port 2.
+  - tinySA after an LNA: DC block plus 20-30 dB.
+  - Noise source: 6-10 dB pad, then the DUT, then the SDR at fixed gain.
+  - GPSDO: 62-82 dB plus a DC block.
+  - AD8318: input +5 dBm or less.
+  - Debug Probe -> Q6A header pins 8/10/14 (console at 115200). From a second computer at home base, or from LAB USB in the field for GNSS/SWD work. LA harness: D0 = PPS (pin 7), D1/D2 = UART6 (pins 16/18), D3/D4 = I2C2 (pins 27/28), GND. Fan control stays on pin 33 (see conflicts).
+  - Antennas:
+  - HF: the non-loop foldable wire antenna from the lab_ui_hf study -> RTL bulkhead with the bias tee OFF, or -> HF+ Discovery; AM high-pass inline in cities.
+  - VHF/UHF monitor bands: the existing telescopic dipole kit.
+  - 1420 MHz: the existing helicone/helix with the SAWbird+ H1.
+  - GPSDO: its own included active antenna, which also serves as the active L1 antenna for GNSS-SDR ppm calibration. Check its voltage rating before powering it from the RTL's 4.5 V bias tee.
+- **Usb budget:** PORTS:
+  The Q6A has 4 host ports:
+  - 1x USB 3.1 (usb_1, its own HS plus SS).
+  - 3x USB 2.0 Type-A on the single Terminus FE1.1s hub (usb_2, 480 Mb/s shared). Wi-Fi sits on that hub's internal 4th port.
+  
+  The base stack already has 5 USB devices for 4 ports: RTL-SDR V4L, Samsung T7, display touch (HID), boom IMU puck (RP2040 CDC) and the display co-processor RP2040 (HID/CDC). That is before any lab gear. So an internal hub is mandatory, not optional.
+  
+  FINAL MAP:
+  - USB 3.1: T7 only. The SS link is needed at about 395 MB/s.
+  - FE1.1s P1: RTL-SDR V4L, about 38 Mb/s at 2.4 Msps 8-bit IQ.
+  - FE1.1s P2: touch (HID, under 0.1 Mb/s).
+  - FE1.1s P3: CH334F MTT 4-port hub. H1 = display RP2040. H2 = boom puck (CDC, under 1 Mb/s). H3 = LAB USB-A. H4 = spare or RP2040 counter.
+  - FE1.1s P4: Wi-Fi (off during passes and lab streaming).
+  
+  BANDWIDTH on the shared 480 Mb/s tree (practical HS throughput about 35-40 MB/s; FS instruments get their own TT on the MTT CH334F; the FE1.1s itself is single-TT):
+  - 2nd V4L: about 38 Mb/s.
+  - HF+ Discovery: about 25 Mb/s at 768 ksps (estimate).
+  - TC001 (256x384 YUYV at 25 Hz): about 39 Mb/s.
+  - fx2lafw LA: 32 Mb/s at 4 MS/s, up to 192 Mb/s at 24 MS/s.
+  - Hantek 6022BL streaming: up to 240 Mb/s at 30 MS/s.
+  - VNA, tinySA, GPSDO (HID) and FNB58: each under 1-2 Mb/s.
+  
+  RULES:
+  1. During any recording: Wi-Fi off, and no scope or LA capture above 4 MS/s.
+  2. At most 3 continuous streams at once (RTL plus 2 more of: 2nd V4L, HF+, TC001).
+  3. Lab instruments are unplugged, or their LAB VBUS is switched off, during passes ('Quiet mode').
+  4. Hub tiers: root -> FE1.1s -> CH334F -> bench hub -> instrument = 3 hubs, well inside the USB limit of 5.
+  
+  POWER on USB:
+  - The '500 mA' port labels are trace annotations. Each WS4612 limits at about 2.1 A, but the real ceiling is VCC_5V_PERI at about 17 W (3.5 A at 5 V), shared with the LimeSDR (up to 8.25 W), RTL (1.3 W plus up to 0.8 W bias-tee LNA), fan and Wi-Fi.
+  - So the lab draws only data from the Q6A. The CH334F tree and the LAB port get VBUS from the separate LAB 5 V buck on the pack.
+  - The LAB port is capped at about 1 A by the TPS2553 (EN default off).
+  - Battery instruments (tinySA charges in about 1 h from a port of 500 mA or more; LiteVNA 2000 mAh) charge only from the bank-powered bench hub, never from the handheld.
+  - Verify each new device and the bench hub with the FNB58: under 50 mA drawn from the LAB port, and zero reverse current.
+- **Power budget:** BASELINE (power.json and mechanical audit):
+  - Receiver typical draw at the pack: about 25-28 W. Peak: about 45-52 W.
+  - Pack: 72 Wh 4S1P P50B, about 62-65 Wh usable down to the 13.6 V Linux cutoff (estimate).
+  - Typical runtime: about 2.2-2.6 h.
+  
+  NEW HANDHELD LOADS (idle, always on), about +0.3-0.4 W, or about 1% runtime:
+  - CH334F hub: about 0.1-0.25 W (unverified).
+  - D36V28F5 quiescent: 2-3 mA at 15 V.
+  - 2x MCP23017: about 1 mA at 3.3 V.
+  - ZSWA4: 0.1 mA at 3.3 V. PE4302: mW class.
+  The boom puck and display RP2040 move from VCC_5V_PERI to LAB 5 V, so their draw is unchanged but relieves the Q6A's 17 W rail.
+  
+  SCENARIOS (estimates; confirm with INA228 logs):
+  - S1, field pass, lab idle: 25.3-28.4 W, about 2.2-2.6 h.
+  - S2, field calibration (Lime streaming, display dimmed, Bodnar Mini on LAB port at 1.25 W or less): about 23.5-26.5 W, about 2.3-2.8 h.
+  - S3, bench NF/filter work on the pack:
+    - Lime idle, RTL running, display dimmed: about 15-18 W.
+    - Plus noise source about 1 W at 50% duty (ZFL-500 current unverified).
+    - Plus AD8318 0.6 W.
+    - Plus 2nd V4L 1.3 W and up to 0.8 W LNA.
+    - Total about 19-22 W, about 2.8-3.4 h.
+  - S4, bench on the bank: Anker 737 (88.8 Wh, about 75 Wh delivered) runs the receiver through the IP2368 (about 28 W plus about 10% charger loss) plus the hub instruments (tinySA and VNA charging about 2.5 W each, Hantek up to about 2.5 W, GPSDO 1.25 W, TC001 0.35 W; about 5-10 W). That is about 35-42 W, so about 1.8-2.1 h from the bank, then about 2.2-2.6 h from the pack: about 4-4.7 h total.
+  - Soldering: Pinecil 30-43 W from the pack (4S 13.6-16.4 V into 6.2 ohm), or about 64 W from 20 V PD, with the receiver OFF. 10 minutes at about 20 W average costs about 3-4 Wh.
+  
+  EXTRA RAILS:
+  1. LAB 5 V: Pololu D36V28F5 (5 V/3.2 A, $23.95, EN) after the #2813 master switch, with a 2 A fuse and pi-filter. Budget 2 A: hub 0.05 + puck 0.1 + display RP2040 0.05 + LAB port up to 1 A (estimates). It uses a power-save mode at light load (Pololu), so if its wandering spurs show in the terminated-floor A/B, add a 20-30 mA bleed or switch to a forced-PWM buck.
+  2. AUX 12 V: switched branch of the existing 12 V rail with a 0.5 A PTC, default OFF. It feeds the sled (LNB about 200-300 mA, LNA bias up to about 340 mA through the sled's 5 V buck), noise source, AD8318 (through a 9 V regulator) and 28 V boost. Keep sled plus LNB under 0.5 A, or feed the sled from the DPS-150 on the bench.
+  3. 28 V for a calibrated noise head: a boost module at the head from AUX 12 V (28 V x 25 mA, about 0.8 W in), switched by sled GPA5. It stays outside the case, away from the RF bay.
+  4. 9 V for the AD8318: a regulator inside its box (78L05 dissipation at 12 V in is too high).
+  
+  No new heat source inside the case: added internal dissipation is about 0.5 W or less. Every instrument and the sled run outside, on their own batteries, AUX or the bank.
+- **Internal vs external:** INSIDE THE HANDHELD (about 15-20 cm3, about 50 g, about 0.5 W or less):
+  - CH334F hub, mounted on the digital side of the mid-plate, away from the RF bay, under copper tape bonded to the plate.
+  - MCP23017 #1 and the I2C buffer/ESD parts.
+  - D36V28F5 LAB 5 V buck plus its pi-filter, beside the existing bucks.
+  - TPS2553 LAB-port switch.
+  - AUX 12 V P-FET and PTC.
+  - Edge connectors: panel-mount capped USB-A 'LAB USB' and the 6-pin locking 'LAB BUS', both on the bottom/noisy edge with USB-C charge and HDMI, away from the antenna-side SMA panel.
+  - Optional REF IN SMA bulkhead plus an MHF4L pigtail to Lime J4, fitted only after external-reference selection is confirmed.
+  - Optional RP2040 counter on H4 with a J3 pigtail.
+  - Unchanged: the existing RF bay, the permanent 10 dB Lime-port pads, the 50-ohm load on Lime TX, and the internal LNB bias tee.
+  
+  OUTSIDE, ON THE BODY OR TRIPOD:
+  - Antennas (HF wire on a reel, telescopic dipole kit, helicone/helix, QO-100 feed), LNAs at the antennas, and the boom IMU puck.
+  - Optional RF SLED on the 1/4\"-20 or the tripod: switch matrix, step attenuator, limiter, injectors and noise-source switching. It keeps the PE4302 control wiring and bench-level parts out of the sealed RF bay and the heat/volume budget, and gives software-selected chains and A/B passes when attached.
+  
+  FIELD POUCH:
+  - tinySA, DMM, FNB58, Debug Probe, 3 pads, 1 DC block, 2 loads.
+  - Short jumpers, spare pigtail and fuses, I-PEX tool.
+  
+  LAB CASE (bench and travel):
+  - LiteVNA and cal kits, Bodnar Mini plus its antenna, noise source, probes, full RF accessory roll, torque wrench.
+  - Hantek and LA, Pinecil kit, ESD mat, tools, spares, notebook.
+  - Power bank and bench hub.
+  - Extended items: TC001, DPS-150, sled, AD8318 box, HF+, 2nd V4L, preamps, H1, cavity filter, precision cables, PS-500, calibrated head.
+  
+  WHY NOTHING ELSE GOES INSIDE: each instrument has its own switching supply, oscillators and USB activity next to the SDRs. The case has no spare volume (about 205-215x130-140x50-55 mm, 25-35 W internal heat). The audits also say instruments should be separable and unplugged during passes.
+- **Packing and case:** TWO-TIER PACKING.
+  
+  Tier 1, field sling or backpack, always carried (about 3.0-3.3 kg):
+  - The handheld (1.2-1.4 kg).
+  - Folded antennas, every piece 35 cm or less (about 0.6-1.0 kg): dipole kit 23x8x5 cm; helicone stack 19x19x4 cm plus a 23 cm helix bundle; HF wire reel; Bodnar antenna with its 5 m lead.
+  - A 2 L field pouch (about 0.8 kg): tinySA, DMM, FNB58, Debug Probe, pads, DC block, loads, jumpers, MHF4 tool, spare pigtail and fuses.
+  - Optionally the sled (about 0.25 kg).
+  
+  Tier 2, lab case: Pelican 1450 (interior 37.1x25.8x15.2 cm, about 14.5 L; 2.5-2.9 kg empty) or the Apache 3800 (US). Use padded dividers or soft pouches rather than pick foam, to save space:
+  - Left: LiteVNA plus cal kits, Bodnar Mini, noise source, probes, RF accessory roll with the torque wrench.
+  - Centre: Hantek plus probes and LA, Pinecil kit in a heat-safe sleeve, folded ESD mat on top, notebook.
+  - Right: Mako and tool roll, spares box, power bank (strapped, master path unpressable), bench hub and USB cables.
+  - Lid: OSL cards and labels.
+  - Extended items fill the remaining space: TC001, DPS-150, AD8318 box, HF+, 2nd V4L, preamps, H1, cavity filter, CBL-1FT pair.
+  - Core lab objects about 5.5 L plus extended about 2.5 L fit in 14.5 L.
+  - When travelling with everything, the handheld (about 1.5 L) and antennas fit along the 37.1 cm length, but it is tight. Expect to move the tinySA pouch or the cavity filter to the sling.
+  
+  The DIY hinged 1420 MHz horn (flat pack about 35x35x3 cm) does not fit the 25.8 cm width. Carry it in a backpack laptop sleeve.
+  
+  Transport rules:
+  - Li-ion: receiver 72 Wh and bank 88.8 Wh are both under the common 100 Wh limit. Carry both in cabin baggage, together with the instruments' internal cells.
+  - The 1450's exterior (about 41x33x17 cm, from memory, unverified) fits many cabin limits, but the packed weight (about 8-9 kg) may exceed some airlines' cabin weight limits.
+  - Pack so the #2813 master switch and the bank button cannot be pressed.
+  - Thermal imagers can be export-controlled in some countries; check before shipping one across borders.
+- **Cost weight volume:** COST (USD before shipping and VAT; EUR/GBP converted approximately; many accessory prices unverified):
+  
+  CORE about $1,600-1,950:
+  - Instruments $550-700: LiteVNA $160-225, tinySA $199-225, Bodnar Mini GBP 132 (about $170-180), noise source $20-40, probes $0-30.
+  - RF bench set $400-420.
+  - General tools $580-780: includes the $95-120 power bank and the $10-25 bench hub.
+  - Handheld lab interface $55-65.
+  
+  EXTENDED about $1,870-2,000 with the ZSWA4 sled, or about $1,590-1,740 with an HMC7992 sled, plus an unpriced calibrated noise head:
+  - Sled about $650 (or $370-400).
+  - CBL-1FT pair $164.10.
+  - AD8318 box $25-60.
+  - PS-500 $109.
+  - HF+ Discovery $169.
+  - Uputronics 1090 + 403 about $103-110.
+  - SAWbird+ H1 $49.95.
+  - Cavity filter about $70-76.
+  - AM high-pass $16.95.
+  - TC001 about $335-350.
+  - DPS-150 about $70-75.
+  - Pelican $106-169.
+  - 2nd V4L $0 new (already the spare).
+  
+  OPTIONAL about $950-1,100 if all bought: LBE-1421 about $290, AD3 $303-379, ZFRSC $78.86, Ham Filter Bank $66.95, VBFZ $54.13, AS3935 $34.95, GDT $19.95, AIS preamp about $52, RP2040 counter about $10, horn $15-30, MLX90640 $74.95.
+  
+  WHOLE LAB on top of the receiver: about $3.5-4.0k (core plus extended), or about $1.6-1.95k for core only. The later cheapest-analog phase should attack the VAT-20W2+ pair (generic pads), the bank (generic 65 W PD), the TC001 (P2 Pro or MLX90640) and the ZSWA4 (HMC7992).
+  
+  WEIGHT (estimates; most instrument weights are unpublished):
+  - Handheld 1.2-1.4 kg, plus about 50 g of new internal parts.
+  - Antennas 0.6-1.0 kg.
+  - Core lab 4.6 kg ±25%.
+  - Extended 1.6 kg.
+  - Pelican 1450 2.9 kg with foam.
+  - Totals: about 3.0-3.3 kg field sling; about 6-7 kg core lab in a soft organiser; about 9.5-10.5 kg fully loaded including the hard case.
+  
+  VOLUME:
+  - Handheld about 1.5 L, plus about 15-20 cm3 inside it.
+  - Antennas packed about 2.5-3 L.
+  - Core lab objects about 5.5 L; extended about 2.5 L.
+  - Lab case 14.5 L interior.
+  - Field pouch about 2 L.
+- **Conflicts and fixes:**
+  - USB port deficit: the base stack already has 5 USB devices for 4 ports. FIX: internal Adafruit CH334F MTT hub ($4.95) on FE1.1s P3, self-powered from LAB 5 V. The T7 keeps the blue USB 3.1 port (it needs SS). The RTL takes FE1.1s P1, which follows the compute verifier and overrides narrowband_sdr's 'RTL on blue'; the RTL's isolation is achieved by turning Wi-Fi off. Fallback: if rtl_test drops samples on P1, move the RTL to blue and plug the T7 only for wideband captures.
+  - Shared 480 Mb/s FE1.1s tree with Wi-Fi. FIX: a 'Quiet mode' in the menu turns Wi-Fi off (nmcli radio wifi off), cuts LAB VBUS and AUX, disables the GPSDO output (lbgpsdo), and bans scope/LA streaming above 4 MS/s during recordings. At most 3 continuous streams at once.
+  - 500 mA per port and the roughly 17 W VCC_5V_PERI. FIX: the lab takes only data from the Q6A. LAB 5 V comes from a separate Pololu D36V28F5. The LAB port is limited to about 1 A by a TPS2553 (reverse-voltage protection, FAULT output). Instruments with batteries charge only from the bank-powered bench hub.
+  - Back-feed risks: the Q6A USB-C port is hard-wired to the 12 V input, and a bench hub can back-power its upstream port. FIX: cover the Q6A USB-C. The LAB host port is USB-A, so a charger cannot be plugged in by mistake. Use the TPS2553's reverse-voltage protection. Confirm 0 mA reverse current with the FNB58. With the Anker 737, use a charge-only (BZ) IP2368 or verify the current direction.
+  - 40-pin header is full: about 12-13 existing GPIO demands (PPS, LNB EN, CHG_INHIBIT, Pololu OFF, 2x bias EN/FAULT, encoder, buttons, fan) for about 13 free lines. FIX: every lab control line goes on MCP23017 expanders over I2C2 (pins 27/28). The INA228 stays on I2C0. Addresses 0x20/0x21/0x48 do not clash with the INA228 at 0x40.
+  - Pin 7 is claimed twice: GNSS PPS (gnss_imu) and the RTL VBUS-cut example (narrowband). FIX: PPS keeps pin 7; the VBUS-cut moves to MCP23017 #1 GPA2. The expander's power-up high-Z state leaves the dongle ON, which matches the original design.
+  - Fan PWM on pin 16 (Calin23 script) and the LA tach on pin 18 collide with UART6 (GNSS). FIX: drive the fan with the PoE-HAT pwm-gpio overlay on pin 33 (GPIO56). That needs spi14 disabled, which also frees pins 22/36/37.
+  - PE4302 10 kOhm pull-downs against the header's weak auto-direction translators. FIX: drive it from MCP23017 push-pull outputs (25 mA), not header pins and not a PCF8574. Use MCP23017 GPA7/GPB7 as outputs only.
+  - I2C leaving the case over a cable through an unknown header translator. FIX: a PCA9306/TCA9517-class buffer plus ESD diodes at the LAB BUS connector, 100 kHz, 1 m or less. Test with a million-read i2cget loop before trusting the sled.
+  - Internal volume and heat budget. FIX: the switch matrix, PE4302, limiter and injectors go in an external sled. Internal additions are about 20 cm3, about 50 g and about 0.5 W or less. The sled is extended-tier; the handheld works without it, using manual swaps at the SMA bulkheads.
+  - ZSWA4-63DR+ showed 0 stock. FIX: order with a lead time, or accept a generic HMC7992 board only if it passes P2 (IL 1.5 dB or less; isolation at least 40 dB below 1 GHz and at least 30 dB at 1.7-2.3 GHz). Its logic levels are unverified (analog.com returned 503).
+  - Hub RFI: the CH334F's 12 MHz clock (like the FE1.1s and the RP2040s) puts harmonics at 144.000 MHz (1.8 MHz from 145.8), 432.000 MHz and 1704.000 MHz (inside the 1698-1707 MHz HRPT band; FY-3 is at 1704.5). FIX: mount the hub on the digital side under bonded copper, put ferrites on the LAB and puck cables, and run the terminated-floor A/B with the hub on and off at 145.8/435/1700 MHz before trusting HRPT results.
+  - GPSDO harmonics: a 10 MHz square wave puts its 74th harmonic at 740.000 MHz (top edge of the QO-100 NB IF, 739.5-740.0 MHz with the 9750 MHz LO) and its 170th at 1700.000 MHz (Meteor HRPT centre). FIX: use 30.72 MHz, whose harmonics coincide with the Lime's own VCTCXO spurs, or calibrate the DAC and then disconnect. Use double-shielded cable, 62-82 dB of pads, the output disabled when idle, and an optional 40-50 MHz low-pass at REF IN.
+  - LimeSDR Micro external reference: J4 accepts 10-52 MHz at 1.8-3.3 V, but Lime's clock page gives no impedance and no software selection, and warns that improper clocks can damage the board. FIX: the dependable route is GPSDO tone into an RX port, then VCTCXO DAC, then EEPROM. Fit the REF IN bulkhead only after LimeSuiteNG exposes reference selection on the shipped board (Dec 2026). Keep the Bodnar at 8 mA drive.
+  - Receive-only rule against signal sources (VNA port 1, tinySA generator, GPSDO, noise sources, AD3 AWG). FIX:
+  - Conducted only, behind pads and DC blocks.
+  - AUX/NOISE outputs default OFF: pull-downs, plus the expander's high-Z power-up.
+  - The software guard enables NOISE only in a BENCH profile, after setting the switch to RF3 (BENCH) or RF4 (LOAD), and logs it.
+  - No antenna S11 sweeps.
+  - The sweeps' 'VNA S11 trim of the 1420 MHz helicone and dipole lengths' would radiate the stimulus. FIX: dropped by default. Use receive-only checks instead: Sun noise / sky-ground Y-factor, HI-line SNR, GNSS C/N0 deltas and calculated element lengths. Antenna S11 only where local rules explicitly allow low-power test emissions.
+  - Receiver LO leakage: every receiver, including the tinySA used for site surveys, leaks a little LO out of its input. FIX: survey through the LNA (its reverse isolation) plus a pad, not straight off the antenna. Treat it as incidental emission, not a test signal.
+  - Instrument input limits: the SAWbird+ can reach about +14 dBm against the tinySA's +6 dBm maximum; LNB 13/18 V and bias-tee 4.5 V lines; Lime ESD8472 diodes conduct above about 7 V; the VLM-33-S+ leaks +11.5 dBm against the Lime's +10 dBm maximum. FIX: 20-30 dB pad plus DC block before any instrument; every sled port DC-free; always a pad after the limiter.
+  - User's no-loop rule (verify): MLA-30+, YouLoop and the CANADUINO 60 mm ferrite loopstick are EXCLUDED, and dcf77pi with them. HF uses the non-loop foldable wire antenna from the lab_ui_hf study, so the HF+ Discovery is kept for dynamic range and bench LF. The AS3935's SMD coil antenna is treated as a chip antenna but flagged. If the rule is meant literally for test probes too, use E-field near-field probes only instead of H-loop probes.
+  - Two 9 V vs 12 V J21 feed decisions exist (power.json: D36V50F12; mechanical/compute: 9 V buck). FIX for the lab: AUX 12 V comes from the 12 V rail if one is built, otherwise from the LNB 12 V branch. The QO-100 LNB injector in the sled runs at 12 V, which selects vertical polarisation and is correct for NB.
+  - T7 USB 3 noise near 2.4 GHz against S-band/HRPT reception (mechanical audit: 'leave USB 3 empty during L/S'). FIX: short shielded cable, measure the floor with the T7 on and off; if it degrades, use 7 Msps or less to UFS through the RAM ring during L/S passes.
+  - Pinecil: its BLE radio and heater PWM are noise sources, the 5521-vs-5525 plug can damage its jack, and the LAB/AUX connectors must not mate with its lead. FIX: no soldering while recording. AUX uses the 6-pin LAB BUS connector, not a DC barrel. The fused XT30-to-DC5525 lead is used only with the receiver off.
+  - Hantek ground is the handheld ground through USB. FIX: clip the probe ground only to device GND (mid-plate or header GND), never to the INA228 high side, pack + or a charger output.
+  - Exclusive SDR access (rtl_power, SDR++, SatDump, SatNOGS, auto_rx). FIX: lab-sched takes a per-device lock (flock /run/lock/sdr-<serial>), and every SDR is opened by serial. Give the 2nd V4L a unique serial with rtl_eeprom.
+  - Docker images (SatNOGS, auto_rx) bundle an old librtlsdr that is deaf on the V4L. FIX: build natively, or layer in the patched librtlsdr2, and check with ldd and rtl_test.
+  - Unverified arm64 GUIs (NanoVNA-Saver/PySide6, QtTinySA, OpenHantek .deb, WaveForms, the TC001 UVC path). FIX: every instrument also works standalone (microSD .s2p / screenshots). Keep pyserial/hidapi scripts as the Q6A fallback, and test each one in the return window.
+  - The GNSS-SDR ppm method needs a second active L1 antenna. FIX: reuse the Bodnar Mini's included active antenna. Check its voltage rating before using the RTL's 4.5 V bias tee; otherwise use a 3.3 V injector.
+  - Weight and size: a fully loaded lab is about 9.5-10.5 kg. FIX: two-tier packing (about 3 kg field sling plus the lab case); airline Li-ion goes in the cabin.
+- **Software list:**
+  - Base (from the audits; versions pinned):
+  - Radxa OS r2 (noble) on held kernel 6.18.2-4-qcom.
+  - librtlsdr2 rebuilt with V4L commit 0204c9c (rtl_power, rtl_eeprom, rtl_test).
+  - LimeSuiteNG limesdr-micro-staging @37cb183, built with -DBUILD_PLUGINS_AMARISOFT=OFF (VCTCXO DAC and EEPROM XO_DAC, SoapySDR driver=limesuiteng).
+  - SoapySDR 0.8.1 / SoapyRTLSDR.
+  - SDR++ (source; Soapy source ON).
+  - SatDump 2.0 (source).
+  - GNU Radio 3.10.9.2, gr-soapy, gr-satellites 5.5.0.
+  - Gpredict 2.3 / Hamlib 4.5.5.
+  - Spectrum survey: rtl_power plus heatmap.py; own lab-sweep (SoapySDR sweeper, rtl_power-compatible CSV/Parquet, GNSS-tagged); soapy_power 1.6.1 as the interim tool (pip --no-deps, numpy<2).
+  - Instrument control on the Q6A:
+  - NanoVNA-Saver (pipx, Python >=3.10, PySide6; arm64 unverified) for the LiteVNA.
+  - QtTinySA, or own pyserial scripts, for the tinySA.
+  - lbgpsdo (python-hidapi, udev 99-lbgpsdo.rules) for the Bodnar Mini and the LBE-1421.
+  - baryluk fnirsi-usb-power-data-logger (pyusb, udev rule) for the FNB58.
+  - OpenHantek6022 (arm64 .deb from CI) for the 6022BL scope mode.
+  - PulseView 0.4.2, sigrok-cli and sigrok-firmware-fx2lafw 0.1.7 (noble arm64) for the LA.
+  - picocom/minicom and OpenOCD for the Debug Probe.
+  - PyThermalCamera for the TC001 (extended).
+  - Lab hardware control (own code):
+  - DT overlay binding both MCP23017s with pinctrl-mcp23s08 on I2C2.
+  - libgpiod v2 tools plus python3 gpiod; i2c-tools; smbus2 for the ADS1115.
+  - 'rflab' daemon with CLI verbs rfsel <chain>, attn <dB>, aux on/off, noise on/off (BENCH profile only), labusb on/off, quiet on/off.
+  - The pass scheduler calls rfsel/quiet before recording and logs every state change with UTC.
+  - Measurement and calibration (own code): lab-cal (ppm from the GPSDO tone, GNSS-SDR user_clk_drift_ppm or the PPS sample-count fit; Y-factor NF with second-stage correction; sky/ground and Sun Tsys; GNSS C/N0 antenna patterns with the IMU), lab-rec (SoapySDR RAM-ring recorder to SigMF), and an AD8318 volts-to-dBm table tool.
+  - Analysis: inspectrum 0.3.1; JupyterLab 4.6.4 + numpy 1.26 / SciPy 1.11 (apt; numpy<2 pinned in a --system-site-packages venv); Skyfield 1.55 + sgp4 2.27; DuckDB 1.5.6; PyArrow 26; papermill 2.7; sigmf 1.13.0 (sigmf_convert, sigmf_validate) plus libsigmf.
+  - Offline signal ID: Artemis 4.2.0 (Flathub com.aresvalley.artemis, aarch64; download its database while online). Not the apt 'artemis' package, which is a genome browser.
+  - Frequency/time: gpsd 3.25, chrony 4.5, pps-tools; GNSS-SDR 0.0.19 apt, or 0.0.22 from source if user_clk_drift_ppm is missing.
+  - Extra receive capabilities:
+  - wsjtx 2.7.0~rc3; fldigi 4.2.03 (WEFAX, NAVTEX/SITOR-B, RTTY + SYNOP); multimon-ng with the EAS decoder only.
+  - readsb + tar1090; dump978-fa (US only); AIS-catcher.
+  - radiosonde_auto_rx built natively with uploaders off, plus chasemapper with offline tiles.
+  - welle.io / welle-cli; redsea; nrsc5 (US).
+  - Virgo (astro-virgo) for the hydrogen line; libairspyhf for the HF+.
+  - PipeWire null-sink audio routing.
+  - Automation and data: lab-sched (Skyfield OMM passes, systemd-run timers, health gates, per-SDR flock), plus fio, mbuffer, smartmontools, restic 0.16.4 and sqlite3/DuckDB catalog.
+  - Safety: receive-only guard. It lints .grc/.py for sink blocks and SOAPY_SDR_TX, bans limeTRX TX flags, runs URH with no Lime backend, and refuses NOISE/AUX in non-BENCH profiles. All results go to the journal.
+  - UI hooks: every function above becomes a tile in the touch lab menu (lab_ui_hf study): Survey, Calibrate, NF, VNA import, EMI A/B, Quiet mode, Instruments status.
+  - Extended/optional: Gqrx 2.17.4 (apt) or 2.17.7 (source); CyberEther 1.15.0 (pin one version); satnogs-decoders 1.131.0; rx_tools; SoapyRemote 0.5.2 (LAN only); SatNOGS client 2.1.4 Docker (with the V4L librtlsdr checked); URH 2.10.0 for offline analysis only (archived; no TX functions); AS3935 spidev library; WaveForms (arm64 unconfirmed); ptouch-print. dcf77pi is dropped because the loopstick is excluded.
+
 ## small:lband_sband (run `wf_41027870-8e7`)
 
 - **Band group:** L-band 1.5-1.7 GHz and S-band 2.2-2.4 GHz with antennas of at most 12 cm (STRICT) or 20 cm (SMALL). Dishes and anything tens of cm deployed are EXCLUDED, including the foldable helicones, the 11-turn helix and the 2x2 helix arrays. Rule interpretation as given: STRICT means the largest deployed dimension is about 12 cm or less; SMALL means about 20 cm or less; foldable or telescopic antennas that are larger when deployed are excluded and appear only in the borderline note.
