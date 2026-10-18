@@ -39737,6 +39737,158 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Subtotals I recomputed: TinyTronics split EUR 156 = $175.36 plus EUR 58 (overall EUR 214 = $240.56, unchanged); RTL-SDR Blog order $263.55, or $280.50 with the optional band-stop. The ALLNET order stays at $283.73 = EUR 252.41.
 
+## edit:11e_changes_reaudit_D:b2 (run `wf_b7e15d24-3c6`)
+
+- **Section:** 11e_changes_reaudit_D (11.5. Виправлення P4: живлення, механіка, дисплей, лабораторія (повторний аудит D)), batch 2 of 2
+- **Applied:**
+  - 84
+  - 85
+  - 86
+  - 87
+  - 88
+  - 89
+  - 90
+  - 91
+  - 92
+  - 93
+  - 94
+  - 95
+  - 96
+  - 97
+  - 98
+  - 99
+  - 100
+  - 101
+  - 102
+  - 103
+  - 104
+  - 105
+  - 106
+  - 107
+  - 108
+  - 109
+  - 110
+  - 111
+  - 112
+  - 113
+  - 114
+  - 115
+  - 116
+  - 117
+  - 118
+  - 119
+  - 120
+  - 121
+  - 122
+  - 123
+  - 124
+  - 125
+  - 126
+  - 127
+  - 128
+  - 129
+  - 130
+  - 131
+  - 132
+  - 133
+  - 134
+  - 135
+  - 136
+  - 137
+  - 138
+  - 139
+  - 140
+  - 141
+  - 142
+  - 143
+  - 144
+  - 145
+  - 146
+  - 147
+  - 148
+  - 149
+  - 150
+  - 151
+  - 152
+  - 153
+  - 154
+  - 155
+  - 156
+  - 157
+  - 158
+  - 159
+  - 160
+  - 161
+  - 162
+  - 163
+  - 164
+  - 165
+  - 166
+  - 167
+- **Skipped:** []
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/11e_changes_reaudit_D.md, using Edit. The file now has 56 rows. Rows 1-36 are from batch 1 and rows 37-56 are new. A check found every row has 4 cells and the numbering is continuous.
+  
+  The extractor cut each change's "what" text at 220 characters. For the full instruction text I used the matching records in the per-section change JSONs in v2_changes.
+  
+  **Changes merged into batch 1 rows** (I added the section refs and only the new facts):
+  - Row 1 (P50B): 157, 160. In 5.8 the bay sits bottom-left and the mass line becomes 0.33-0.34 kg.
+  - Row 2 (IP2368): 84 (1.2 #63) and 164 (re-pricing in section 8; TPS259470A and comparator prices per G3).
+  - Row 5 (#2813): 85, plus "4.5-32 V рекомендовано".
+  - Row 6 (INA228): 117, 119, 132. Adds blacklist ina238, no ti,ina228 node in DT, i2cdetect shows the address not UU, and the ALERT pull-up never goes to AON.
+  - Row 7: 162 (pull the fuse for storage).
+  - Row 8: 162 (Daly wiring order, heatsink rule).
+  - Row 9: 120.
+  - Row 10: 88.
+  - Row 15: 121, 123.
+  - Row 18: 147, plus the labpowerd thermal zones from 132.
+  - Row 19: 86.
+  - Row 21: 153 (HDMI cable part).
+  - Row 23: 122, 145, 153 (dimming part).
+  - Row 24: 128, 133 (refs).
+  - Row 26: 138, 139, 151.
+  - Row 27: 140, 148, plus the UFS pad from 157.
+  - Row 28: 113, 126, 127. GLONASS is still unverified and is settled by the gpsd SKY bench test.
+  - Row 29: 131 (time window).
+  - Row 30: 130.
+  - Row 31: 129 (ref).
+  - Row 32: 134, 135.
+  - Row 33: 102, 112.
+  - Row 34: 106, 158, 159, 161.
+  - Row 35: 89, 137.
+  
+  **New rows:**
+  - 37: 87, 114, 150 (touch sensor, 2.4 GHz bridge).
+  - 38: 90, 97 (E-field probes, F-F barrel).
+  - 39: 92, 98, 110 (LNA tests).
+  - 40: 93, 94, 165 (LiteVNA and tinySA sellers, HW revision).
+  - 41: 95, 107 (tinySA).
+  - 42: 96, 108, 111 (noise source).
+  - 43: 89, 91, 99, 136 (instrument software, device ownership).
+  - 44: 100, 101, 109 (DMM, Hantek, LA).
+  - 45: 103, 105 (Anker 737, ISDT 608PD).
+  - 46: 104, 115 (bench hub, hub depth).
+  - 47: 118, 129 (UART6, gpsd).
+  - 48: 124, 125, 154 (RP2040 clocks, IMU pack).
+  - 49: 152, 128, 133 (field EDID, compositor).
+  - 50: 131, 163 (soft indicators, Quectel regional lock).
+  - 51: 116, 141, 142, 155 (T7, SatDump).
+  - 52: 143, 144 (D15 thermal model).
+  - 53: 146, 156 (storage in sun, polariser, hood).
+  - 54: 149 (known lines).
+  - 55: 166 (6.2).
+  - 56: 167 (7, items 37-53).
+  
+  **Conflicts and how they were settled:**
+  - 106/158/161: the bench case follows analog G6, which is higher precedence. I checked the exact name in analogs_G6: "B&W outdoor.case Type 4000 RPD". The Peli 1450 corrections (15.0 L, 2.9 kg, 59%) are recorded only for the case where Peli stays as fallback.
+  - 93: I left out the "Lab401 EUR 192" figure. The price comes from analog G5, and the USD-base rule applies. I kept the re-audit's correction that the difference is about $5, not $40.
+  - 96, 100, 101, 103, 104, 105, 98: the part, seller and price stay with G5. 125: connector, lead and TVS parts stay with G3. Only the technical part is logged.
+  - 89/137: the pin mismatch with re-audit A (PySide6 6.12.0, NanoVNA-Saver v0.7.3) is between two sources at the same precedence level, so neither wins. Row 35 already records it as something to close on the first lab-venv build.
+  
+  **Other notes:**
+  - No change was skipped.
+  - This file holds no subtotal that needed recomputing. Row 20's 2.11 delta and row 22's 2.12 delta are unaffected.
+  - No hard rule was touched: the probes are E-field only with no loops, and the BLE and 2.4 GHz checks are receive-only scans.
+
 ## extract:analogs_G4 (run `wf_be383e11-6dc`)
 
 - **Source:** analogs_G4
@@ -53680,6 +53832,68 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - **Question added:** "Питання до вас" item 2, the fibreglass Quechua mast trade. It costs about $25.8 plus a stake and saves about $42.6, but adds 0.1-0.13 kg and is less durable. It needs your explicit consent and the same tests. The mast row points to it.
   - **Wording fix:** "пласкій рукав" is now "плаский рукав".
   - **Other checks:** no conflicts between changes, nothing ran against a hard rule (all tests are conducted or receive-only), and this file has no subtotals.
+
+## edit:04_capabilities:b2 (run `wf_d86c28f4-677`)
+
+- **Section:** 04_capabilities
+- **Applied:**
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+  - 58
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  - 64
+  - 65
+  - 66
+  - 67
+  - 68
+  - 69
+  - 70
+  - 71
+  - 72
+  - 73
+  - 74
+- **Skipped:** []
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/04_capabilities.md, in place, building on the batch-1 edits. The file has no subtotals, so nothing needed recomputing. All 37 changes were applied. Several were merged or applied only in part; the conflicts and how I settled them:
+  
+  - idx 56/57 (Airspy Mini gate): analogs_G6 wins over reaudit_C. G6 says the purchase gate is unchanged: buy only if gate (a) fails, or gate (b) shows the hump and the V4L cannot decode. reaudit_C's Lime-only condition ("only if the Lime fails the 15-min lossless capture") is noted as a scope choice for the user, as G6 asks. The V4L→Lime ≥6 Msps ci16 SDR path and the AWS gate results / OSCAR text from reaudit_C were applied. The batch-1 G6 #12 acceptance test and above-spec notes were kept.
+  - idx 58 vs batch-1 idx 3 (operator_notes items 16/19, which are not rule items): reaudit_C wins.
+    - Elektro-L3 status is now «невідомо». The TLE drift facts, «confirm before first light» and «best Elektro target if stationary at 14.5W» were kept; reaudit_C supports them.
+    - GOES-East is now «не в збірці для Європи», not «на межі на крайньому заході». It was merged into the FY-2G/GK-2A/FY-4B row, keeping the PLUGIN_GOES note.
+    - The old «близько 3 dB нижче тарілки 65 см» LRIT basis was replaced by the Elektro-L5 LRIT anchor.
+    - The GEO intro paragraph cannot sit inside a markdown table. So 4.1 is split: the table ends after FY-3, the paragraph follows, then the table restarts with the same header and columns and holds the GEO rows and the remaining 4.1 rows.
+  - idx 59 (Inmarsat-C frequency cell): the user decision wins over reaudit_C. user_requirements.md fixes the power-only NCS scan at 1537-1545 MHz, so the narrowing to 1537.0-1543.9 MHz was not applied. Applied: demodulation masked from 1544.0 MHz, and 1544.0-1545.0 MHz without demodulation, stored as «no data» for all satellites. The batch-1 operator-rule text for 1544-1545 MHz was kept.
+  - idx 62 (QO-100 CW): reaudit_C's «LNB куплено» was not applied. I kept the batch-1 / user-decision wording «LNB купується»; the user decision says the add-on «is bought», which reads as a purchase decision, not a finished purchase. The batch-1 elevation-from-fix text was merged rather than duplicated.
+  - idx 71 (DAB+ on the HF+, analogs_G1): only the factual note from G1 stack_changes (5) was applied: Airspy rates the HF+ Band III tuner (174-260 MHz) as reduced-performance. The extractor's «or compare A/B on the HF+» was not applied. reaudit_B (batch-1 idx 34) shows DAB cannot run on the HF+ at all (912 ksps max, welle.io does not support it), and the G1 record itself does not propose an A/B.
+  - idx 38 vs idx 66 (TDF maintenance): merged. The time-signal row keeps reaudit_B's «Tuesday 08:00-12:00, time zone not given». The mask is reaudit_C's Tuesday 06:00-12:00 UTC (the union of both readings), cross-referenced to the SID row. The Boni-Whip seller follows reaudit_B (Bonito in stock, WiMo second source from 20.11.2026); no analog decision conflicts with it.
+  - idx 41 and 53: I kept «КСХ 1.47» and «від 50 см». No source says either is wrong.
+  - idx 48: applied to both CubeSat decoder cells, merged with the batch-1 pinned-build text (fixed file receiver, submit_tlm = no), and noted that plain 5.9.0 is also excluded.
+  - idx 69: merged into the existing SatDump-pipelines row from batch 1 instead of adding a duplicate row.
+  - idx 39: the pipes in |f_abs| are escaped (\|) so the survey table does not break.
+  - Possible inconsistency for other sections: idx 69 limits the SatDump package to Meteor-M/MetOp/AWS/FengYun-2/Elektro_Arktika pipelines. That leaves no SatDump pipeline for the S-band Black Kite/PHASMA rows, whose decoder cell still names SatDump allow-listed pipelines alongside gr-satellites.
+  
+  I checked every table row: each has a consistent column count.
 
 ## community:power (run `wf_d9388111-e66`)
 
