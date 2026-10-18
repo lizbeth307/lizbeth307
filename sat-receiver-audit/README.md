@@ -21,6 +21,7 @@
 | [Antennas](components/antennas.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_6b9836f8-796` |
 | [Antennas foldable](components/antennas_foldable.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Antennas patch chip](components/antennas_patch_chip.md) | ✅ research · forums · fixes ✅ verify | `—` |
+| [Aon 3 3 v ldo tps709 class micropower uv](components/aon_3_3_v_ldo_tps709_class_micropower_uv.md) | · research · forums · fixes ✅ verify | `—` |
 | [Asa 1 kg cnc kitchen m3 inserts and scre](components/asa_1_kg_cnc_kitchen_m3_inserts_and_scre.md) | · research · forums · fixes ✅ verify | `—` |
 | [Bourns pec11r 4215f s0024 x3 c k ksc641j](components/bourns_pec11r_4215f_s0024_x3_c_k_ksc641j.md) | · research · forums · fixes ✅ verify | `—` |
 | [Cable bulkhead set 7 sma 1 f bulkheads r](components/cable_bulkhead_set_7_sma_1_f_bulkheads_r.md) | · research · forums · fixes ✅ verify | `—` |
