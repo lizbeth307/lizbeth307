@@ -218,3 +218,10 @@
 
 - P1b (report:rf_receive): звіряє спірні факти — ARISS SSTV серія 34 на 437.550 МГц, графік відвантаження LimeSDR Micro M.2, прийом Elektro-L N5 LRIT 1691 МГц.
 
+## 2026-10-18 03:50 UTC
+
+- P1b: перші 2 з 5 читачів звіту готові. compute_software_ai: 51 пункт (19 verified, 13 conflict, 4 violates_requirements); rf_receive: 54 пункти (12 verified, 17 conflict, 3 violates_requirements).
+  - Порушення вимог: ціни в гривнях як основа (має бути світова); голосові IQ-фрагменти можна демодулювати пізніше (вимога — лише спектрограма); у дизайні Inmarsat-C користувацький трафік декодується в пам'яті перед відкиданням (має бути лише EGC SafetyNET, без декодування приватного); Iridium ring-alert / Orbcomm-кадри ще в одній таблиці small_antenna_stack; налаштування антен VNA (S11) ще в кроках збирання — випромінює, суперечить «лише прийом»; ще є залишки рамок (20 см тюнінгова рамка в small_antenna_stack); бракує правила Artemis і rfkill BT в UI-профілі.
+  - Конфлікти: 12 ГБ vs 8 ГБ ОЗП (кільця IQ 6–8 ГіБ + inferd + trainer ≈ 9.4 ГіБ при ~11 ГіБ видимих — перевантаження); 4 різні карти USB-портів; 3S vs 4S (з 3S неможлива шина 12.0 В для Boni-Whip і AUX); три різні номінали запобіжника LNB; чи лишається LimeSDR Micro; ядра CPU для тренера (A55 vs A78); WSJT-X/fldigi вміють передавати.
+  - Усе це піде у P2 як conflicts_for_final_checks.
+
