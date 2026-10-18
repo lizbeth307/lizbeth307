@@ -2,7 +2,7 @@
 
 Звіт оновлюється автоматично під час аудиту. Тут зібрано всі повні відповіді субагентів і всі зведення.
 
-- [Хронологія всіх зведень](summaries.md) — 201 записів
+- [Хронологія всіх зведень](summaries.md) — 202 записів
 - Повні відповіді субагентів по кожному компоненту — посилання в таблиці нижче
 - [Фінальні перевірки](final-checks.md)
 - [Щохвилинний журнал аудиту](minute-log.md)
@@ -13,6 +13,7 @@
 | [2 m wide path second flamingo fm uses th](components/2_m_wide_path_second_flamingo_fm_uses_th.md) | · research · forums · fixes ✅ verify | `—` |
 | [2 mm al mid plate copper clad fr4 rf bay](components/2_mm_al_mid_plate_copper_clad_fr4_rf_bay.md) | · research · forums · fixes ✅ verify | `—` |
 | [65 100 w usb c pd charger 5 a c c cable](components/65_100_w_usb_c_pd_charger_5_a_c_c_cable.md) | · research · forums · fixes ✅ verify | `—` |
+| [Ad8318 class log detector power meter](components/ad8318_class_log_detector_power_meter.md) | · research · forums · fixes ✅ verify | `—` |
 | [Adafruit bno085 4754 rp2040 zero metal p](components/adafruit_bno085_4754_rp2040_zero_metal_p.md) | · research · forums · fixes ✅ verify | `—` |
 | [Adafruit ch334f mtt hub 5997](components/adafruit_ch334f_mtt_hub_5997.md) | · research · forums · fixes ✅ verify | `—` |
 | [Adafruit ina228 5832](components/adafruit_ina228_5832.md) | · research · forums · fixes ✅ verify | `—` |
@@ -52,6 +53,7 @@
 | [Lab instruments](components/lab_instruments.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Lab ui](components/lab_ui.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Leo bodnar lbe 1420 gpsdo](components/leo_bodnar_lbe_1420_gpsdo.md) | · research · forums · fixes ✅ verify | `—` |
+| [Lime parts adt link r44sf i pex 90435 00](components/lime_parts_adt_link_r44sf_i_pex_90435_00.md) | · research · forums · fixes ✅ verify | `—` |
 | [Limesdr micro m 2 basic 18 shipping 2x m](components/limesdr_micro_m_2_basic_18_shipping_2x_m.md) | · research · forums · fixes ✅ verify | `—` |
 | [Litevna 64](components/litevna_64.md) | · research · forums · fixes ✅ verify | `—` |
 | [Mech thermal storage](components/mech_thermal_storage.md) | ✅ research · forums · fixes ✅ verify | `—` |
@@ -78,6 +80,7 @@
 | [Power](components/power.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_f924b2ab-5ad` |
 | [Printed 30 mm hinged hood 7in ar film ve](components/printed_30_mm_hinged_hood_7in_ar_film_ve.md) | · research · forums · fixes ✅ verify | `—` |
 | [Protection filter set 7 5 a pack 4 a j21](components/protection_filter_set_7_5_a_pack_4_a_j21.md) | · research · forums · fixes ✅ verify | `—` |
+| [Qo 100 add on othernet bullseye tcxo lnb](components/qo_100_add_on_othernet_bullseye_tcxo_lnb.md) | · research · forums · fixes ✅ verify | `—` |
 | [Radxa armor 7056a heatsink or stepped cu](components/radxa_armor_7056a_heatsink_or_stepped_cu.md) | · research · forums · fixes ✅ verify | `—` |
 | [Radxa ufs 3 1 128 gb ra022 b10j0u2](components/radxa_ufs_3_1_128_gb_ra022_b10j0u2.md) | · research · forums · fixes ✅ verify | `—` |
 | [Raspberry pi debug probe](components/raspberry_pi_debug_probe.md) | · research · forums · fixes ✅ verify | `—` |
