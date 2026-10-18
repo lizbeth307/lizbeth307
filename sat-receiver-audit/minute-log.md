@@ -1262,3 +1262,20 @@ P5 (проміжне): G6 — Airspy Mini підтверджено в ITEAD, EU-
   - Умова: замовлення в DigiKey DE має бути від €75, щоб доставка була безкоштовною.
 - **Джерела:** crowdsupply.com (limesdr-micro, taoglas/coaxial-cables), digikey.de (931-CAB.01075-ND), ettus.com.
 
+## 2026-10-18 18:01 UTC
+
+**G6, носії даних (10/16 готово):**
+- **microSD V30 endurance:** залишаємо, тепер із конкретним SKU Samsung PRO Endurance 128 GB MB-MJ128KA/EU.
+  - Ціни з ПДВ: €63,85 (arvutitark.ee), €64,95 у Reichelt (коли буде в наявності), €77,90 в Alternate. Діапазон $25–82 у STACK джерелами не підтверджено; реально $72–88.
+  - SanDisk High Endurance (€37,90) відхилено: ресурс 10 000 год проти 70 080 год і гарантія 2 роки проти 5.
+  - Kingston відхилено: клас U1, без V30.
+  - PRO Plus відхилено: гарантія не діє при безперервному записі.
+  - Джерела: даташит Samsung PRO Endurance v1.1, reichelt.de, alternate.de, berrybase.de.
+- **Samsung T7 1 TB:** залишаємо той самий SKU MU-PC1T0T/WW у Reichelt за €205,90 з ПДВ (в Alternate €224,90, економія ≈$21).
+  - Kioxia G2 відхилено: витримує падіння лише з 122 см.
+  - SanDisk Extreme V2 відхилено: робоча температура 0–45 °C, корпус на 15 мм довший, була історія з відкликанням прошивки.
+  - Kingston XS2000 відхилено: 0–40 °C.
+  - Crucial X9 відхилено: після заповнення кешу ≈40 МБ/с.
+  - Вживаний T7 відхилено: гарантія не переходить до нового власника.
+  - Джерела: даташит T7 Rev 2.0, smartmontools drivedb, reichelt.de, alternate.de, ssd-tester.
+
