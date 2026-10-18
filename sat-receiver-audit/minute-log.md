@@ -579,3 +579,9 @@ P4, нове (не перевірено):
 - D: SlimeVR пише, що BNO085 зняли з продажу в їхньому магазині. Там же згадано «stomp bug» і підробки. Це підтверджує ризик із постачанням IMU.
 Джерела: issue до librtlsdr про offset tuning і bias tee (за агентом B), github.com/SatDump/SatDump/issues/1030, docs.slimevr.dev (сторінка про IMU).
 
+## 2026-10-18 09:06 UTC
+
+P4, підтвердження і нове:
+- ПІДТВЕРДЖЕНО (C, індекс конвеєрів SatDump): Cosmos.json має конвеєр cosmos_2558_dump на 2284 MHz, DMSP.json — dmsp_rtd на 2252.5 MHz. Отже, DMSP справді є в SatDump, і з Lime обидва конвеєри технічно досяжні. Тому дозволений список конвеєрів SatDump у v2 обов'язковий (operator_notes №1 оновлено, позначку «ймовірно» знято). Джерело: github.com/SatDump/SatDump, pipelines/Cosmos.json і pipelines/DMSP.json.
+- B/D (живлення Lime): на форумі Lime (тема від 18.08.2026 про плату-носій) пишуть, що за схемою LimeSDR Micro M.2 v1.1 вхід може споживати до 2.5 A при 3.3 V, тобто близько 8.3 W піку. Райзер і стабілізатор 3.3 V на M.2 треба розраховувати на 2.5 A із запасом, а не на типове споживання. Наш приймальний поріг VCC_5V_PERI ≤14 W лишається, а пік Lime треба врахувати окремо в бюджеті SYS12/J21. Джерело: myriadrf.org, LimeSDR-Micro_M.2_v1.1_diagrams_r0_power.png, і тема на форумі Lime (за агентом D).
+
