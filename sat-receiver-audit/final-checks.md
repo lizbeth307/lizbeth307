@@ -2538,6 +2538,3013 @@
   
   Sources: https://shop.allnetchina.cn/products/radxa-dragon-q6a.js ; https://www.tinytronics.nl/en/development-boards/single-board-computers/radxa-dragon-q6a-qcs6490-12gb ; https://raw.githubusercontent.com/ThomasKaiser/sbc-bench/master/results/KBw_.txt ; https://github.com/geerlingguy/sbc-reviews/issues/85 ; https://www.pcworld.com/article/3158933/samsung-fast-t7-portable-ssd-finally-drops-in-price-190-was-285.html ; https://camelcamelcamel.com/product/B0D61Z8R1W ; https://slickdeals.net/f/17754051-samsung-pro-endurance-256gb-microsdxc-memory-card-with-adapter-25-54-via-amazon
 
+## integration:verify (run `wf_221684d9-b6c`)
+
+- **Verdict:** The stack can be built as one handheld without the LimeSDR. On paper it works: every named target has an RTL-SDR V4L or Airspy HF+ receive chain, a rail with power and protection, one owning process, and a bench gate before it is trusted.
+  
+  Review outcome:
+  - **Blocker (1, decided):** the files give three incompatible ways of opening the SDRs. This is resolved by one labd lease model: labrx mode by default, plus engine-exclusive leases enforced by cgroup DeviceAllow.
+  - **Confirmed and merged:** 30 major and 27 minor issues across the four reviewers.
+  - **Refuted or superseded:** 27 claims.
+  - **Fixes the reviewers missed:**
+    - The D36V50F12 EN divider set at 12.8 V would only wake again at about 14.4 V, which blocks a restart between 13.6 and 14.4 V. Its ratio changes to about 0.10.
+    - The LT3045 (20 V absolute maximum) is replaced by the TPS7A4701 (36 V, verified on ti.com) on the pack-fed LNB and Boni-Whip rails.
+    - The Pico replaces the RP2040-Zero as the HMI MCU because more GPIO is needed.
+    - In my own harmonic scan, 151.50 MHz sits centred in a 148.11-153.27 MHz clean window. 127.90 MHz sits only 0.14 MHz below the top of its window.
+  
+  Frozen design:
+  - **Pack:** 4S1P P50B, charged to 4.10 V/cell. Usable energy is 58 Wh warm and 50 Wh cold or aged (model).
+  - **Main 12 V:** D36V50F12 into J21 (buy 2). It is kept only if the narrow-RBW LF/HF spur A/B and a sealed-case current test pass.
+  - **LAB 5 V:** D36V28F5 with a 3 A fuse.
+  - **Pack-fed LDOs:** two TPS7A4701, for the LNB (13.2 V) and the Boni-Whip (12.5 V).
+  - **LNA rail:** 2x LT3045 in parallel at 4.5 V, with one TPS2553 at 300 mA per channel.
+  - **Control:** every enable sits on an MCP23017 powered from the Q6A. One Pico (HMI and supervisor) runs on the switched rail, and a micropower UV supervisor trips at 12.8 V and releases at 13.6 V.
+  - **Front end:** at VHF the filter comes before the LNA; at UHF and L-band the LNA sits at the antenna. Separate HMC7992 selectors serve RTL-A and RTL-B, and two Omron G6K relays select the HF+ input.
+  - **Display and RF hygiene:** the field EDID uses 151.50 MHz first and 127.90 MHz second. pcie0 (Ethernet) is off in the field, and fans run DC with no PWM.
+  - **Storage and RAM:** A/B root on UFS; 1.5 GiB IQ ring.
+  
+  Runtime (model):
+  - LEO pass: 3.3 h.
+  - Survey with two RTLs and the HF+: 2.5 h.
+  - Idle or LF Quiet: 6.9-7.1 h.
+  - With the Lime, typical: 1.9 h.
+  
+  Cost (USD, before shipping, VAT and duty; partly estimated):
+  - Handheld core: $1,758-2,253.
+  - Plus both antenna tiers: $2,285-3,086.
+  - Plus the bench lab: $3,759-4,896.
+  - Everything except the optional items: $4,257-5,603.
+  
+  Where physics and evidence override the wishes:
+  - Sustained 2000 nits in 35 C noon sun is thermally impossible. Expect about 1000 nits sustained, with 2000 as a burst.
+  - Patch and chip antennas cannot serve 137-146 MHz.
+  - QO-100 DATV and typical SSB need a dish.
+  - Without loops, HF is limited by local noise.
+  - One-hand use applies to the controls, not to holding a 1.35-1.6 kg device.
+  
+  Confidence is medium: every runtime, thermal, RAM, CPU and harmonic figure is a model until the W1-2 bench gates are run.
+- **Decisions:**
+  1.
+    - **Question:** C1 LimeSDR Micro: keep or drop, and what depends on it
+    - **Decision:** Make it a gated optional and build v1 without it. If it is wanted, hold a refundable Crowd Supply store pre-order ($249 + $18 shipping). Make the keep/cancel decision by 1 Dec 2026, before it ships on 15 Dec.
+  
+  Keep it only if both hold:
+  1. The user confirms that S-band, 3.3-3.8 GHz or the 56 MHz wideband NPU survey is wanted.
+  2. No-Lime bench data by then show VkFFT N=65536 at 854 FFT/s or more on Turnip, and a measured VCC_5V_PERI of 5 W or less.
+  
+  If the user does not answer, cancel. If it is kept, run the acceptance tests inside the 30-day guarantee:
+  - riser link at 8 GT/s x1;
+  - 50 warm and 20 cold boots;
+  - zero AER errors over 60 min;
+  - zero limeTRX losses during an LRPT plus HRPT pass;
+  - VCC_5V_PERI measured at 14 W or less.
+  
+  The mid-plate is cut with the pedestal and riser holes either way.
+    - **Reason:** No core target depends on it, and S-band is not in the user's named target list. It costs about $596-681 with its parts and the T7. It cuts a typical session from 3.3 h to 1.9 h (30.8 W vs 17.6 W, model). Its arm64 driver is unvalidated. Crowd Supply refunds in full only before shipment (verified by the sourcing lens), so 31 Jan 2027 is not a free date.
+    - **Consequences:** Without the Lime:
+  - ring 1.5 GiB; CPU7 back in the pool;
+  - RTL-A on the blue port;
+  - NPU profiles RTL-F, RTL-C and HF-F only;
+  - no DKMS, class fixup or J21 desolder.
+  
+  With the Lime:
+  - T7 outside the case on its own VBUS (behind the 14 W gate);
+  - RTL-A on CH334F H2;
+  - CPU7 isolated; ring 4 GiB plus a 3 GiB Burst segment;
+  - J21 desoldered only after burn-in;
+  - top-edge strip reprinted; a third HMC7992 and 10 dB pads.
+    - **Alternatives rejected:** Deciding on 31 Jan 2027 (costs at least $20 restocking, plus return shipping and import VAT). Making it core now. A Pluto in parallel (TX-capable, duplicates the Lime).
+  2.
+    - **Question:** C2 Q6A RAM tier
+    - **Decision:** Buy the 12 GB board now. EU: TinyTronics, EUR 148 incl. VAT, 10+ in stock. Elsewhere: Allnet, $189.99, available. Both were verified on 18 Oct.
+  
+  Burn it in on arrival: 12 h stressapptest plus memtester, and 50-100 cold boots. Allnet takes returns only within 7 days and unused, so treat a failure as a warranty claim and keep the UART logs.
+    - **Reason:** RAM cannot be added later. Allnet's 8 GB is sold out, and TinyTronics' 8 GB saves only about EUR 22-27. In the model, an 8 GB board is overcommitted by -0.2 to +2.2 GiB in no-Lime training mode.
+    - **Consequences:** Delete the small_antenna_stack 8 GB downgrade. Measure MemTotal and the RSS of each app in the W1-2 gates.
+    - **Alternatives rejected:** 8 GB board; Arace (sold out); Ameridroid (not a listed distributor).
+  3.
+    - **Question:** C3 Pack 3S vs 4S
+    - **Decision:** 4S1P Molicel P50B, 72 Wh nominal. Buy 5 cells ($9.99 each at 18650 Battery Store, verified, or an established local retailer). Charge daily to 4.10 V/cell (16.4 V); balance monthly at 4.20 V with the ISDT 608PD and the master switch off. Plan on 58 Wh usable (25 C, new) and 50 Wh (0 C, or after about 300 cycles).
+    - **Reason:** Physics: the LNB (13.2 V), Boni-Whip (12.5 V), AUX 12 V and the noise-source ENR all need more than 12.9 V. On 4S they become quiet LDOs off the pack; on 3S each would need a boost converter, adding new spur sources. 4S also keeps the pack current under 4.6 A even at the Lime peak.
+    - **Consequences:** About +$45 and +75 g over 3S. All runtimes come from the per-mode table. The home-built pack is never flown.
+    - **Alternatives rejected:** 3S direct into J21 (needs 3-4 boost converters, about 46 Wh). Charging to 4.20 V every day (about 8% more energy, faster ageing).
+  4.
+    - **Question:** C4 12 V regulator for J21
+    - **Decision:** Pololu D36V50F12 ($39.95; buy 2 because stock is 'Rationed'), bonded to the plate. Accept its dropout region below about 13.3 V of pack. It stays only if two gates pass:
+  1. The narrow-RBW HF+ A/B, run terminated and then on the antenna, with SYS12 and LAB5 loads stepped from 0.3 to 3 A and the charger on and off. No line may sit 3 dB or more above the floor within ±5 kHz of 40, 60, 77.5, 162, 490, 518 or 4209.5 kHz, or inside an in-scope decode passband.
+  2. A sealed-case run at 3.5 A for 60 min, at 14.0 V and at 16.4 V input.
+  
+  If either gate fails, replace it with a forced-PWM synchronous buck at a fixed frequency set by RT/SYNC. Choose that frequency from a harmonic scan, preferring 1 MHz or more; pick the part in P5. No buck-boost.
+    - **Reason:** It is the only verified, branded 12 V module of 4.5 A or more. Above the 13.2 V cutoff a buck is enough. Its dropout region is harmless: J21 accepts 4.5-16 V (forum) and the SY81012 runs from 2.7 to 16 V. Its roughly 500 kHz fundamental and power-save mode are exactly what the NAVTEX and LF-carrier gate tests.
+    - **Consequences:** Below about 13.3 V of pack, SYS12 sags to about 11.5-12 V. labd blocks noise-source NF measurements below a pack voltage of 13.6 V. The display must stay stable at SYS12 = 11.0 V (acceptance test).
+    - **Alternatives rejected:** A forced-PWM buck-boost as the default (none buyable from a reputable vendor; not needed). An EN hardware cut at 13.4 V or higher (wastes about 5 Wh). 9 V into J21. An LTC3780 module.
+  5.
+    - **Question:** C5 USB port map
+    - **Decision:** One Lime-agnostic map:
+  - Blue USB 3.1 (J5 bottom, USB0, also the EDL port): RTL-A on a 15 cm shielded extension with a ferrite. With the Lime it becomes the T7.
+  - FE1.1s P1: RTL-B.
+  - P2: touch USB-HID.
+  - P3: Adafruit CH334F #1. D+, D- and GND come from the Q6A; the hub's 5V pin comes from LAB5 only; Q6A VBUS is left unconnected.
+  - H1: spare; it takes the Pico's native USB only if UART7 fails.
+  - H2: spare; RTL-A goes here with the Lime.
+  - H3: LAB USB-A behind a TPS2553 at 0.75 A.
+  - H4: HF+ behind an MCP-switched load switch with LC and Mix-31.
+  - P4 (Wi-Fi/BT): rfkill plus USB de-authorisation in every field profile.
+  
+  The IMU puck never uses USB. CH334F #2 is bought ($4.95) but fitted only if the Lime is kept and UART7 also fails, or if a fifth internal device appears. The aggregate cap on the FE1.1s tree is 25 MB/s.
+    - **Reason:** This map has a free port in all four cases (Lime yes or no, UART7 working or not). The FE1.1s tree carries 13.3 MB/s or less against 35-40 MB/s practical. Leaving the second hub unfitted removes a 12 MHz clock (harmonics at 144.000 and 432.000 MHz) and saves 0.1-0.25 W.
+    - **Consequences:** udev names every device /dev/lab/<name> by serial. The '3 continuous streams' rule is replaced by the 25 MB/s cap. A 30-minute zero-drop test runs with RTL-B, the HF+ and one LAB device.
+    - **Alternatives rejected:** IMU as a USB-CDC device (sourcing lens). HF+ on Q6A VBUS (lab_ui_hf). A hub powered from both sides. Both CH334Fs fitted. Time-sharing the blue port between the T7 and instruments.
+  6.
+    - **Question:** C6 40-pin header, buses, IMU interface and fan control
+    - **Decision:** Header:
+  - pin 7 (GPIO96): PPS;
+  - pins 8/10: console;
+  - I2C0 (13/15): INA228 only;
+  - UART6 (16/18): LC76G;
+  - I2C2 (27/28): MCP23017 #1 (0x20, outputs) and #3 (0x22, inputs), plus a TCA9517 to the LAB BUS;
+  - UART7 (32/29): the Pico;
+  - pin 3: INA228 ALERT; pin 5: expander INT;
+  - pins 12/35/38: Pico SWD; pin 40: safe-boot.
+  
+  No safety enable sits on a header GPIO. The IMU is relayed by the Pico over its UART1. Both fans are 2-wire 5 V units switched on and off in DC by the Pico through FETs:
+  - the Q6A fan comes on at 60 C and goes off at 50 C, on labd's command;
+  - the blower follows the panel NTC;
+  - both go to 100% if the heartbeat is lost.
+  
+  Pin 33 (GPIO56, which is the same pin as FP_SPI_MISO) stays spare. One combined lab-q6a.dtso is built from Radxa's uart6, uart7, i2c0 and i2c2 overlays.
+    - **Reason:** Pin 7 and pins 11-40 sit behind TXB-type UM3304 buffers (4 kOhm, 50 pF or less, state undefined during boot), which cannot drive gates or coils. DC fan switching has no PWM comb at all; 1, 20 and 30 kHz PWM land exactly on the LF carriers.
+    - **Consequences:** The register's 'GPIO56 vs pin 33' conflict is closed: it is the same pin. The power.json i2c6 placement is deleted. pinmux-pins must show one owner per pin.
+    - **Alternatives rejected:** pwm-gpio at 1 kHz (PoE-HAT overlay). A 24/25 kHz fan PWM. Header GPIOs for bias, LNB or relays. The BNO085 on I2C2. An IMU on USB-CDC.
+  7.
+    - **Question:** C7 Hardware ownership and the SDR access model
+    - **Decision:** One owner per resource:
+  - **labd:** I2C2, every enable, the selectors, SDR leases and modes, the scheduler, profiles, policy, rfkill and USB de-authorisation, and instruments. radio_lab's rflab and lab-sched become labd modules, with labctl as their CLI.
+  - **labrx:** the only SDR opener in labrx mode. It holds the single RAM ring, the SigMF recorder, the FFT tiles and the NPU tap, and fans out to decoders.
+  - **labclassify:** inference.
+  - **labtrain:** a transient unit started by labd.
+  - **labpowerd:** I2C0/INA228, KEY_POWER and the cutoff table.
+  - **labinput:** UART7.
+  - **gpsd:** UART6.
+  - **kernel pps-gpio:** GPIO96.
+  
+  There are two lease modes:
+  1. labrx mode, the default for passes, survey, NPU teaching and MARK. Passes are recorded and then decoded by SatDump from the baseband file; live piping is used only if the 2.0-alpha supports it.
+  2. Engine-exclusive mode, for readsb, AIS-catcher, auto_rx, OpenWebRX+, sdrangelsrv and the Expert GUIs. The engine opens the device itself with ai_tap=false, and the lease is enforced by a transient DevicePolicy=closed plus DeviceAllow on that USB node.
+    - **Reason:** This removes the double-open blocker, the second ring and recorder, and the advisory flocks. auto_rx and some monitor engines need direct device access, so 'labrx always' is too strong.
+    - **Consequences:** The npu_training daemons are renamed into labrx and labclassify, under one namespace: lab.target, /run/lab, /opt/lab and the SigMF extension 'lab'. NPU teaching runs only on labrx-mode devices.
+    - **Alternatives rejected:** sdr-ingestd as the permanent opener. Engines always opening devices themselves. Per-SDR flocks. A separate rflab daemon as a second I2C2 owner.
+  8.
+    - **Question:** C8 LNB supply
+    - **Decision:** TPS7A4701 LDO (36 V input, 1 A, 307 mV dropout at 1 A; ti.com, fetched 18 Oct) set to 13.2 V. It is fed from the switched pack node through an LC filter and bonded to the plate.
+  - EN from MCP #1 GPB0, low at power-up, which gives a true 0 V at the port.
+  - Enabled only while the RTL-B selector is on the LNB port.
+  - One current limit: a PTC whose hold current at 60 C is 1.5-2x the measured Bullseye current (provisionally 0.45 A), backed by the LDO's internal limit and thermal shutdown. PG goes to MCP #3.
+  - Injection through a choke rated 1 A or more on the antenna side of a DC block, then a 15 dB pad (20 dB if the measured LNB gain is above 60 dB).
+  - No 18 V anywhere.
+  
+  Acceptance: 0 V when off; 13.2 V ±0.2 V at the F port under load with the pack at 13.8 V or more.
+    - **Reason:** On 4S the pack stays between 13.2 and 16.4 V across the whole usable window. The LDO holds 13.2 V down to about 13.5 V of pack and still gives about 12.9 V at cutoff (Bullseye vertical range 11.5-14 V). It adds no switching spurs near the 739.5 MHz IF. Worst-case dissipation is 0.96 W, about +29 K at θJA 30.5 C/W. Its 36 V absolute maximum stays above the SMBJ17A clamp on node N; the LT3045's 20 V does not.
+    - **Consequences:** Delete the TPS65233 line, the 13.4/18.2 V menu and arbiter entries, the boost and SEPIC lines, and power.json's '12 V rail suits LNB'. The rail is built in every unit even though the LNB purchase waits for the region.
+    - **Alternatives rejected:** LT3045 (20 V absolute maximum). S18V20AHV SEPIC plus a second #2813. MT3608/XL6009 boost. TPS65233. The 12 V rail through a tee (10.6-11.4 V at the LNB).
+  9.
+    - **Question:** C9 LNA bias rule and injectors
+    - **Decision:** LNA rail: LAB5 → LC → 2x LT3045 in parallel at 4.5 V (about 1 A).
+  - Each channel gets a TPS2553 set to 300 mA nominal (240 mA or more at the low tolerance edge), with EN on MCP #1 and FAULT on MCP #3.
+  - Injectors sit on one internal PCB with per-band chokes rated 0.5 A or more and C0G blocks, qualified conducted on the LiteVNA. The TCBT-2R5G+ (200 mA maximum) is used only on channels whose LNA draws 150 mA or less.
+  - DC-sense runs before every bias enable, and bias is locked off on DC-short profiles.
+  - The V4L internal tees stay off in core. The spare V4L's tee may feed an LNA of 90 mA or less, and only with the labd token.
+  - labd enforces a budget of LAB port plus LNA current of 1.5 A or less.
+    - **Reason:** SAWbird+ parts draw 170-180 mA. A TPS2553 at 250 mA leaves too little margin at its low edge. A 250 mA PTC derates to about 180-190 mA at 60 C. The TCBT is rated 200 mA (Mini-Circuits datasheet, sourcing lens). An LT3045 at 5 V fed from 12 V would dissipate 2.45 W.
+    - **Consequences:** Delete:
+  - the rf_frontend 100-160 mA polyfuse;
+  - 'GOES+ on the tee after soak' and 'LNA V2 on the tee';
+  - the radio_lab H1-on-tee line;
+  - foldable step 3's micro-USB feed.
+  
+  The LAB5 fuse goes from 2 A to 3 A.
+    - **Alternatives rejected:** PTCs in the feeds. GOES+ on the V4L tee. TCBT-2R5G+ on SAWbird+ channels at a 300 mA limit. ZFBT-4R2GW+ at $111.57 each (bench only). A single 0.5 A LT3045.
+  10.
+    - **Question:** C10 FM band-stop filter and its position
+    - **Decision:** Nooelec Flamingo+ FM v2 ($24.95). It sits on the antenna side of the first VHF LNA: VHF-137 bulkhead, then Flamingo+, then SAWbird+ NOAA inside the case. The optional 2 m/WIDE port gets a second Flamingo+ ahead of its LNA V2. The AIS/FM port into the HF+ stays unfiltered, because FM broadcast is a target there.
+    - **Reason:** Physics: the SAWbird+ NOAA (LNA, SAW, LNA) and the LNA V2 have an unfiltered first gain stage, and intermodulation created there cannot be removed downstream. At VHF sky temperatures the filter costs 0.06-0.45 dB (model). Bias enters at the LNA output, so no DC ever crosses the filter.
+    - **Consequences:** Overrides the power lens's 'SDR side of the injector', rf_frontend chain (b), and the antennas file's 'after the LNA'.
+    - **Alternatives rejected:** Filter on the SDR side. RTL-SDR Blog band-stop (no DC rating). A filter at every feed in both tiers.
+  11.
+    - **Question:** C11 librtlsdr
+    - **Decision:** Rebuild noble's 2.0.1-2build1 with 0204c9c (R828S) and 65f0658 (USB hang), plus the zerocopy typo fix and a bias-tee token patch. rtlsdr_set_bias_tee() and rtlsdr_set_bias_tee_gpio() refuse 'on' unless LAB_BIAS_OK equals the device serial, and labd sets it only in DC-safe units.
+  - Keep the .so.2 SONAME and hold it with apt-mark.
+  - Divert rtl_biast.
+  - Blacklist dvb_usb_rtl28xxu.
+  - Keep the EEPROM bias default off.
+    - **Reason:** Rule line 44 requires the token gate. The rebuild keeps every librtlsdr2 consumer working, and it closes the software bypass of the DC-short interlock.
+    - **Consequences:** Build first on the Q6A in W1-2 and confirm 'RTL-SDR Blog V4 Lite Detected'. Delete the 2.0.3 .so.0 recipe and the purge-and-fork recipe, including in npu_training.
+    - **Alternatives rejected:** 2.0.3 .so.0. Purge and build the fork. An unrestricted bias-tee API.
+  12.
+    - **Question:** C12 Display field-mode pixel clock
+    - **Decision:** The field EDID carries two DTDs, tried in order:
+  1. 151.50 MHz, 1920x1080, totals 2200x1148 (88/44/148 and 27/5/36), 59.99 Hz.
+  2. 127.90 MHz, 2200x1125, 51.68 Hz.
+  
+  Other rules:
+  - Strip the CEA VICs.
+  - 148.5 MHz is for bring-up only; 128.70 MHz is banned.
+  - Load it with drm.edid_firmware=HDMI-A-1:edid/field.bin from the initramfs, set video=...@60 or @52, and pin the mode in the labwc output config.
+  - Confirm the delivered clock with modetest and debugfs, then near-field E-probe the predicted harmonic line.
+  - Ask Wisecoco for the bridge's DSI mode and lane rate.
+    - **Reason:** My scan covered 17 used windows with a 0.5 MHz guard and n up to 40:
+  - 151.5 MHz sits centred in a clean window of 148.11-153.27 MHz, robust to ±1% drift or SSC. It runs at 60 Hz, and its line rate of 68.86 kHz is at least 8.6 kHz from every LF carrier.
+  - 127.9 MHz is clean from 123.62 to 128.04 MHz, only 0.14 MHz below the top edge. Its line rate of 58.14 kHz is 1.86 kHz from 60 kHz.
+  - 128.70 MHz x12 = 1544.4 MHz (Inmarsat-C).
+  - With 0.5% SSC, 148.5 MHz x5 smears over the QO-100 IF.
+  - 151.5 MHz x15 = 2272.5 MHz falls in the 2200-2300 MHz allocation, but 13.5 MHz from Black Kite (Lime only), which is acceptable.
+    - **Consequences:** Update display_market, display, small_antenna_stack, the lab_ui_hf UI tests and the kernel cmdline together. If the panel rejects both modes, fall back to 148.5 MHz with full shielding and ask the user.
+    - **Alternatives rejected:** 127.9 MHz first (the register). 164.4-168.4 MHz (fundamental at the edge of the AIS SAW; 166.0 MHz fails with SSC). 128.70 MHz. Native 1080p60 in the field.
+  13.
+    - **Question:** C13 PPS on the held kernel
+    - **Decision:** Build pps-gpio out of tree as a +labN DKMS package for 6.18.2-4 (CONFIG_PPS=y), on GPIO96 with the lab overlay node. chrony uses 'refclock PPS /dev/pps0 lock NMEA'.
+  
+  The Route A fallback is written in C on the GPIO v2 ioctl with EVENT_CLOCK_REALTIME, never alongside pps-gpio. The FT232RL/pps-ldisc path is not bought.
+    - **Reason:** This keeps the HDMI and NPU kernel hold. libgpiod 1.6.3 (v1 uAPI) gives monotonic timestamps.
+    - **Consequences:** Confirm with chronyc sourcestats in W1-2.
+    - **Alternatives rejected:** Route B on kernel 7.0.11. A fallback on libgpiod v1.
+  14.
+    - **Question:** C14 INA228
+    - **Decision:** Adafruit #5832 with its 15 mOhm shunt in the pack lead (ADCRANGE 0, ±10.9 A), so it counts charge and discharge.
+  - VS comes from the always-on 3.3 V LDO.
+  - Breakout pull-ups are removed.
+  - It is read on I2C0 through user-space i2c-dev with no DT binding; labpowerd is the only owner; ALERT goes to header pin 3.
+  - The Pico reads the pack through its own 1:6 divider for failsafe logic.
+  - No second INA: NPU power is the A/B delta at the pack.
+    - **Reason:** A bound ina238 driver blocks CHARGE access. A second I2C master on I2C0 would conflict.
+    - **Consequences:** Fix npu_training ('on the J21 rail') and power.json (i2c6, hwmon).
+    - **Alternatives rejected:** ina238 hwmon. I2C6 (shares SE6 with UART6). A second INA.
+  15.
+    - **Question:** C15 Antenna tiers
+    - **Decision:** Two tiers built on shared parts:
+  - **Patch / always carried:**
+    - dipole kit #1 as the V-dipole (the LRPT default; 23 cm collapsed);
+    - dipole kit #2 for AIS/FM;
+    - 17 cm whip, or A-V85/SRH-701;
+    - Uputronics 440 preamp;
+    - RTL-SDR Blog L-band patch (Inmarsat-C, GNSS-SDR);
+    - 4-turn helix on one shared 18 cm disc with SAWbird+ GOES;
+    - GNSS antenna.
+  - **Foldable backpack:**
+    - crossed Yagi, ultra-compact build by default;
+    - petal helicone (reuses the same disc, helix and SAWbird+ GOES);
+    - gore horn (region-dependent);
+    - HF wire and 9:1 balun;
+    - Boni-Whip with its mast.
+  
+  No loops. Every small_antenna_stack removal is re-decided: Lime gated, T7 only with the Lime, 12 GB kept, foldables restored.
+    - **Reason:** User rule lines 10-11. Shared parts cut weight and cost and let results carry over between tiers. Physics: patch and chip antennas cannot serve 137-146 MHz.
+    - **Consequences:** The patch-tier helix loses an estimated 0.3-0.5 dB on 18 cm instead of 20 cm (model; rerun NEC). The 20 cm helical whip stays an experiment. The 2-turn helix and the SAWbird+ IR are dropped. The small rigid whips and helices need the user's confirmation.
+    - **Alternatives rejected:** Two independent kits. A helical whip as the LRPT default. The single-tier rule.
+  16.
+    - **Question:** C16 Receive-only and policy leftovers
+    - **Decision:** Strike every item on the register's list before STACK.md, plus:
+  - **Remove TX-capable software:** QSSTV, fldigi and direwolf, which can transmit. Replace them with slowrx built from source, OpenWebRX+ SSTV, and SDRangel's RX-only packet demodulator for APRS (verify on the device).
+  - **Add an operational loop definition** with a grep check: QFH, eggbeater, quad, delta, biquad, halo, big wheel, loopstick, H-probes.
+  - **Inmarsat-C:** remove SatDump inmarsat_support and SDRangel demodinmarsat. Add a labd egc-gate that discards at header level and must pass a mixed-recording test; until it does, the profile ships disabled.
+  - **Other filters:**
+    - Artemis matches show only 'out of scope';
+    - Bluetooth: rfkill plus USB de-authorisation;
+    - band mask: 3-30 kHz and 225-400 MHz stored as 'no data';
+    - DSC: distress, urgency and safety only;
+    - SITOR and skimmers: on allow-listed frequencies only;
+    - WEFAX: civil met services only (Northwood excluded, the USCG-run NWS stations excluded by default);
+    - ADS-B tracks with dbFlags&1 and AIS type 35 are not shown or logged;
+    - no voice IQ is kept;
+    - no bearing logs.
+  - **No antenna S11 steps anywhere;** the SWR page opens only in Bench mode with a load or DUT on the port.
+    - **Reason:** Hard rules 1-2 and delegated rule lines 31-46. Line 44 forbids TX-capable software, so direwolf cannot stay even with an audited config.
+    - **Consequences:** The radio_lab P20 fldigi steps move to SDRangel channels. A CI and self-test audit covers the banned list. The SAWbird+ iO purchase waits for the egc-gate.
+    - **Alternatives rejected:** Keeping direwolf or QSSTV 'unconfigured'. Filtering Inmarsat-C after decoding. Brief indoor antenna sweeps.
+  17.
+    - **Question:** C17 HF antenna chain and the HF+ input selector
+    - **Decision:** - **Boni-Whip:** fed 12.5 V ±0.25 V from a TPS7A4701 (EN on MCP #1 GPB1, DC-sense first, PTC holding 0.2 A at 60 C, provisional) through its own bias tee, which is mounted inside next to the HF+ can, so DC goes up the HF coax.
+  - **Common-mode choke:** two-stage, on the coax at the HF bulkhead (FT-240-77 for LF/MF, FT-240-31 for HF; targets 1 kOhm or more at 60 kHz and 2-5 kOhm at 1-30 MHz, measured conducted on the LiteVNA). The bulkhead is bonded to the plate, with a ground stake or counterpoise at the antenna.
+  - **Antennas:** the 9:1 wire is for HF only; LF time signals use the Boni-Whip on a mast of 2 m or more.
+  - **HF+ selector:** two Omron G6K-2F-RF relays in series-shunt. De-energised, the HF+ sits on 50 ohm and both antenna ports are terminated. Acceptance: 35 dB or more of conducted isolation at 162-260 MHz, and 0.3 dB or less of loss from 10 kHz to 260 MHz.
+  - **Ask the user** to confirm the HF-loop removal.
+    - **Reason:** 12.5 V sits inside both published supply ranges (9-15 V and 12-15 V). Clip-on ferrites give little common-mode impedance below a few MHz, and an E-field whip receives shield common-mode noise directly. The G6K pair costs about GBP 43-52 (RS UK); the ARJ22A03 costs $114-332 and coax relays $242 or more. Non-latching relays fail safe to 50 ohm, and only one coil (about 0.12-0.15 W) is ever energised.
+    - **Consequences:** Adds about $77-110 to the HF chain. The external ANT PWR jack is dropped. The labd DC-sense locks the Boni rail if the 9:1 balun (a DC short) is on the port.
+    - **Alternatives rejected:** A 10.0 V or 12.0 V Boni rail. Clip-on ferrites only. Latching relays with zero hold current. ARJ22A03. HMC241 (its DC blocks hurt LF).
+  18.
+    - **Question:** C18 Storage, rollback and retention
+    - **Decision:** Every variant gets an A/B root on the UFS: ESP 1 GiB, root A 22 GiB, root B 22 GiB, with systemd-boot boot counting and a rescue entry. /data is about 74 GiB, of which about 46 GiB are for recordings, with a 30 GiB rolling raw cap.
+  - Products are kept by default; raw only when pinned.
+  - The HF+ is recorded as ci16.
+  - Without the Lime: a V30 endurance microSD (128-256 GB) is added when NAND prices allow.
+  - With the Lime: T7 1 TB on the blue port, mounted outside on the bottom edge. It never writes during L-band, S-band or GNSS sessions; those are decimated to 1 Msps or less and written to UFS.
+  - Updates come as GPG-signed bundles from a USB stick on LAB USB.
+  - Data media carry no ESP.
+    - **Reason:** Self-test plus rollback is a design rule and must not depend on an optional drive. The worst no-Lime stream is 13.3 MB/s, well inside UFS and microSD write speeds. USB 3 near the GNSS and L-band chains is a known jammer.
+    - **Consequences:** lab-snap and the update path move off the T7. Recording space is about 40 min of two RTLs plus the HF+ raw, or about 50 min of two RTLs. The 'about 5 h on UFS' claim is deleted.
+    - **Alternatives rejected:** One root plus a 6 GB rescue rootfs (interface lens: rollback would depend on removable media). The T7 without the Lime. HF+ recorded as cf32.
+  19.
+    - **Question:** C19 CPU allocation and RT priorities
+    - **Decision:** - **CPU0-3 (A55):** UI, daemons, labclassify, and the ORT CPU fallback (CPUQuota 100%).
+  - **CPU4-6, plus CPU7 without the Lime (A78):** labrx and the engines. RTL and HF+ ingest run at SCHED_OTHER nice -5.
+  - **Trainer:** AllowedCPUs on the A78 cores at SCHED_IDLE, nice 19, MemoryMax 2G. It runs only between passes, with the SoC below 75 C and the battery above 25% or on a charger.
+  - **With the Lime:** CPU7 is isolated (isolcpus, nohz_full and rcu_nocbs on 7, irqaffinity=0-6, Lime MSI moved off CPU7).
+    - lime:Rx0 runs at SCHED_OTHER nice -20 if it busy-polls, or SCHED_FIFO 10 if it blocks; choose with the limeTRX loss counters.
+    - labd pauses the loggers during Lime passes.
+    - **Reason:** On an isolated core, SCHED_OTHER avoids the 950 ms/s RT throttle, which would leave gaps about as deep as the LA9310's 50 ms FIFO. The A78 pool is the scarce resource once CPU7 is isolated, and the trainer on the A55 cores would take about 2.5x longer.
+    - **Consequences:** Fix lab_ui_hf (trainer on the A55 cores, CPU7 always isolated), npu_training (FIFO 50) and compute (chrt -f 10/50).
+    - **Alternatives rejected:** FIFO 50 or 70 for ingest. CPU7 always isolated. The trainer on the A55 cores.
+  20.
+    - **Question:** C20 UI and NPU roadmaps
+    - **Decision:** Merge into one plan:
+  - NPU Phase 0 runs inside the W1-2 gates (19 Oct-1 Nov 2026). A minimal labeller and the 1.5 GiB ring move into P0b (Nov-Dec).
+  - The HF-F and second-RTL profiles ship before any HF class appears in the UI.
+  - **CPU-mode schedule (about 5 tiles/s):** RTL-C on both RTLs plus RTL-F at K=4 on the SDR with the active pass. HF-F runs only when the RTLs are idle, and a 'reduced coverage' chip shows in the UI.
+  - **HTP promotion gate**, scaled to the SDR set: p99 of 28 ms or less at 50% duty without the Lime (16.6-17.6 tiles/s); 11.7 ms or less, or 41 tiles/s or fewer, with it. Plus an 8 h soak with fault injection.
+  - **Phase-0 power tasks in the W1-2 gates:** INA228 logs per mode, the LF/HF regulator A/B, and the sealed-case test.
+    - **Reason:** CPU mode (4-6 tiles/s) cannot cover 14.6-17.6 tiles/s. Every runtime and thermal number is a model until measured.
+    - **Consequences:** The model rows in STACK.md are replaced by measurements.
+    - **Alternatives rejected:** One fixed 11.7 ms gate. A labeller in Feb-Apr 2027. Measuring after assembly.
+  21.
+    - **Question:** C21 V4L count and continuous monitors
+    - **Decision:** Buy 3 now from official channels ($113.85): RTL-A and RTL-B in service, plus 1 spare.
+  - AIS runs on the HF+ VHF port.
+  - Continuous ADS-B uses the FlightAware Pro Stick Plus (extended) on LAB USB.
+  - Occasional sonde or ADS-B runs use the spare V4L on LAB USB.
+  - No 4th V4L.
+    - **Reason:** The R828S is end of life, and a spare that is always in service is not a spare. A purpose-built ADS-B receiver beats a V4L on dipole arms.
+    - **Consequences:** Each V4L gets a unique EEPROM serial, with udev naming by serial. In the EU, buy through the official eBay or AliExpress 4523039 store.
+    - **Alternatives rejected:** One V4L plus a spare. A 4th V4L for a 24/7 monitor.
+  22.
+    - **Question:** C22 Software recipes and pinning
+    - **Decision:** Use the register recipes:
+  - one venv per tool (NanoVNA-Saver via pipx, QtTinySA with PySide6 6.12, Skyfield 1.55 and sgp4 2.27, lab venv with numpy<2);
+  - libgpiod v1 in labd;
+  - SatDump 2.0-alpha, SDR++ and SDRangel 7.27.2 (RX-only) built from source as +labN debs;
+  - OpenWebRX+ 1.2.126 with --no-install-recommends and exact-name pins.
+  
+  Add to them:
+  - hold Mesa 25.2.8-0ubuntu0.24.04.4 with libdrm 2.4.125;
+  - mirror every third-party .deb (OpenWebRX+, linux-headers 6.18.2-4, radxa firmware, qcom-qnn-sdk-v68) into the signed aptly repo and pin those sources to 100;
+  - purge brltty and mask ModemManager;
+  - mask the apt and fwupd timers;
+  - build slowrx from source.
+    - **Reason:** This resolves every recipe conflict and the Mesa ambiguity, protects against repositories drifting, and stops serial-port hijacking of the instruments and the Pico.
+    - **Consequences:** Each tool is tested on the Q6A inside the return window.
+    - **Alternatives rejected:** apt nanovna-saver 0.6.3. Skyfield 1.48. Unmirrored PPA installs. Mesa 24.0.5.
+  23.
+    - **Question:** C23 Region unknown
+    - **Decision:** Build the LNB rail, the F port and the selector throw in every unit. Hold these purchases:
+  - **Until the user is confirmed inside the Es'hail-2 footprint:** the Bullseye, the horn materials and the LNB injector choke.
+  - **Until the egc-gate passes on L-band patch recordings:** the SAWbird+ iO. This is a compliance gate, not a region gate.
+  - **Until the region is known:** the choice between the LC76G and the MAX-M10S.
+  
+  labd computes 'visible from here' flags for GEO targets from the GNSS fix, and enables UAT, HD Radio and NOAA SAME only in the matching region profile. EGNOS becomes 'regional SBAS'.
+    - **Reason:** The rail costs about $10-20. The LNB is useless outside the QO-100 footprint, and Inmarsat-C is legal only with header-level discard.
+    - **Consequences:** Ask the user for the region at the phase end, and check LNB IF ingress (DVB-T 734-742 MHz, the LTE B28 uplink) once it is known.
+    - **Alternatives rejected:** Buying everything now. Buying for Europe by default.
+  24.
+    - **Question:** C24 Costs and weights
+    - **Decision:** Adopt the integrated BOM (USD, before shipping, import VAT and duty):
+  - core handheld $1,758-2,253;
+  - antenna-patch $176-208;
+  - antenna-foldable $351-625;
+  - bench $1,475-1,810;
+  - extended $498-708;
+  - optional/gated $933-1,157, excluded from the roll-ups.
+  
+  Weights (model):
+  - handheld 1.35-1.6 kg without the Lime;
+  - field daypack 4.4-6.0 kg, or 5.3-7.3 kg with the HF kit and mast;
+  - Pelican bench case 8.2-9.1 kg.
+    - **Reason:** The old totals used the superseded antenna tier, Ukrainian price bases, and left out the selectors, chokes, cable set, pack build, weather kit, supports and charger.
+    - **Consequences:** P5 re-prices every unverified line, and flash prices are treated as volatile.
+    - **Alternatives rejected:** radio_lab's 3.0-3.6 kg sling. UAH price bases.
+  25.
+    - **Question:** C25 P1b completion
+    - **Decision:** Closed: final/report_research.json exists (576,735 bytes). Still to do before STACK.md: the errata blocks in summaries.md and minute-log.md, including the stale power, interface, display-clock, ISS-frequency and sourcing lines listed in confirmed_issues.
+    - **Reason:** The file is present and was read in full.
+    - **Consequences:** None.
+    - **Alternatives rejected:** None.
+  26.
+    - **Question:** D1 Battery cutoff and threshold table (4S)
+    - **Decision:** - **Economy:** at 20% SoC, or V_N below 14.0 V loaded for 30 s.
+  - **NPU:** no training below 25%; NPU off below 15%.
+  - **Linux poweroff:** at 3% SoC, or V_N at or below 13.2 V loaded for 10 s. Show a 30 s banner, finalise SigMF, turn off bias, LNB, Boni and AUX, then poweroff (never halt).
+  - **Pico failsafe:** if the divider reads 12.9 V or less for 5 s with no heartbeat, pulse #2813 OFF.
+  - **Hardware supervisor on the always-on rail:** trips at 12.8 V and holds #2813 OFF; releases at 13.6 V at rest.
+  - **D36V50F12 EN backstop:** divider ratio about 0.10, so it sleeps at about 12.0 V and wakes at about 13.5 V (Pololu EN thresholds 1.2/1.35 V).
+  - **BMS:** 2.5-2.8 V/cell.
+  - **Restart:** button only, with the pack at 13.6 V or more at rest.
+  - **Temperatures:**
+    - charging only with the cell NTC between 0 and 45 C;
+    - shutdown above 60 C at the cell;
+    - SoC shedding at 80 and 85 C;
+    - panel derating to 50% above 60 C and 20% above 68 C.
+  - **Gauge resync:** at 16.35 V with under 0.1 A, or at 16.3 V or more at rest at boot.
+    - **Reason:** This recovers about 5 Wh against a 13.6 V cut and avoids BMS lock-out. The power lens's EN divider at 12.8 V would wake only at about 14.4 V and block restarts between 13.6 and 14.4 V.
+    - **Consequences:** The register's 13.4 V hardware cut and the 13.6 V Linux cut are rejected. Bench-test whether holding OFF blocks the A-pin button; if it does not, gate the button line with the supervisor.
+    - **Alternatives rejected:** A 13.6 V Linux cut. A 13.4 V hardware cut. A cut by the EN divider alone. Relying on the BMS alone.
+  27.
+    - **Question:** D2 Pack fuse
+    - **Decision:** One value in both builds: a 7.5 A automotive mini blade fuse at the pack. Plus a 4 A blade on the J21 branch and a 3 A fuse on LAB5. Spares kit: 7.5 A, 4 A, 3 A and a 5 A service-lead fuse.
+    - **Reason:** Peaks at the 13.2 V cutoff are 3.4 A without the Lime and 4.6 A with it, and charging runs up to 3 A. A 5 A fuse is marginal at 60 C (about 3.3 A continuous after derating). The #2813 (6 A at 55 C) and the BMS (15 A) sit above it.
+    - **Consequences:** Wiring is AWG 18-20 in the pack path.
+    - **Alternatives rejected:** 5 A without the Lime and 7.5 A with it (completeness lens).
+  28.
+    - **Question:** D3 Always-on rail scope, HMI/supervisor MCU placement and the power key
+    - **Decision:** - **Always on:** only the AON 3.3 V LDO (TPS709 class, 30 V input, µA quiescent; verify), the INA228 and the UV supervisor. That is about 13-14 mW, or about 170-185 days of standby.
+  - **The Pico runs on the switched LAB5 rail:**
+    - It boots when the #2813 turns on.
+    - If the Q6A's 40-pin 3.3 V has not appeared after 1-2 s, it pulls J21 pin 3 low for 0.8-1.0 s, never more than 2 s.
+    - It sends a 6 s hold as a hard cut.
+    - It opens the #2813 3 s after the Q6A's 3.3 V drops.
+    - It tri-states its TX while the 3.3 V is low.
+  - **Case button (sealed momentary, to GND):** reaches the #2813 A input (on-only), J21 pin 3 (wired-OR with the Pico's open drain) and a Pico sense pin, each through its own BAT54.
+  - **Shutdown requests** go over UART7 to labinput and then labpowerd, with HandlePowerKey=ignore.
+    - **Reason:** The #2813 switches the Pico on at the button press, so the boot pulse and hard cut do not need an always-on MCU. The supervisor covers undervoltage with no firmware. The board's own boot pulse (SGM811, about 0.2-0.6 s) is shorter than the 400 ms the UEFI wants.
+    - **Consequences:** Standby carries no MCU drain and no TX back-feed into the UM3304. The display rail and all MCP enables are off whenever the Q6A is off.
+    - **Alternatives rejected:** An always-on RP2040 (interface lens). Gating LAB5 on the Q6A's on-state (it would kill the boot pulse). The button straight to J21 pin 3 only.
+  29.
+    - **Question:** D4 Display power budget, acceptance and rail
+    - **Decision:** - **Budget (model):** 3, 6 and 13 W at 25, 50 and 100%.
+  - **Acceptance:** at least 1800 nits at full white; 14 W or less at 100% and 7.5 W or less at 50%, measured at the board input; stable with SYS12 at 11.0 V; 20 cold boots; USB-HID touch.
+  - **Rail:** SYS12 → LC → 1.5 A eFuse (EN from the Pico). If the board is 5 V only, use a dedicated D36V28F5 #2 from SW, never LAB5 or a Q6A port.
+  - **Dimming:** analog/DC preferred; 24.0 kHz only if the board requires PWM.
+  - **Wiring:** no VBUS link to the Q6A; HDMI pin 18 cut or diode-blocked.
+    - **Reason:** Comparable panels draw 6.5 W (4D, 1000 nits) and 10-18 W (2000-nit monitors). The Midas datasheet (6.4 W of LEDs at 2000 nits) shows that 9 W or less is possible, but it is not guaranteed.
+    - **Consequences:** At 100% the runtime is about 1.3 h at peak load. Sustained 2000 nits in hot sun is a burst mode only (see the thermal plan).
+    - **Alternatives rejected:** 9 W or less at full white as a hard limit (could reject a normal 2000-nit panel). The LAB5 or a Q6A port for a 5 V panel.
+  30.
+    - **Question:** D5 Panel choice deadline and case sequencing
+    - **Decision:** Before paying, send Wisecoco written questions:
+  - USB-HID VID:PID;
+  - bonding and AR treatment;
+  - input voltage and current;
+  - an EDID dump;
+  - whether the 151.50 MHz and 127.90 MHz modes are accepted;
+  - the bridge's DSI mode and lane rate;
+  - glove mode;
+  - operating temperature;
+  - package contents.
+  
+  Pay by PayPal only after satisfactory answers. With no clear answer in about 7 days, order the 4D 4DHDMI-70-1280-800-CT-EAR-1000 at DigiKey ($128.95, 13 in stock), together with labd's per-profile modeset table.
+  
+  Bezel and front-case CAD start only after the panel passes acceptance. The hood is 30 mm deep, hinged, and folds flat as a lid, with the VEML7700 outside it.
+    - **Reason:** In sun, bonding sets contrast more than nits do (1.5:1 with an air gap against 6.2:1 bonded with AR at 100 klx). The listing still says 'I2C touch'. The case front depends on the real glass outline.
+    - **Consequences:** The case design waits about 2-4 weeks for the panel.
+    - **Alternatives rejected:** Designing for the inferred 164.2x98 mm outline now. Buying the Wisecoco unconditionally.
+  31.
+    - **Question:** D6 Thermal layout and pack placement
+    - **Decision:** - **Pack:** in an insulated compartment along the bottom-left intake side, behind 3 mm closed-cell foam, reflective film and a 1 mm FR-4 or mica barrier with a vent path to outside. The NTC goes on the middle cell.
+  - **Charger:** IP2368 pad-mounted to the case wall at least 10 mm from the cells, with a 70 C KSD9700. No charging in HF/LF Quiet.
+  - **Two separate airflow paths:** the Q6A copper block with its 40 mm fan to a rear exhaust; and the display channel with its blower over the plate fins. Display air never pre-heats the Q6A fins.
+  - **Bonded to the plate:** the D36V50F12 and both TPS7A4701.
+  - **T7 (Lime only):** outside the case.
+  - **Acceptance:** a 45 min noon soak with the hood, in modes B, D and G: frame 60 C or less, glass 65 C or less, cells 45 C or less.
+    - **Reason:** In the model, cells downstream of the board reach 45-55 C at 35 C ambient. That blocks charging (the IP2368's 45 C NTC limit) and ages the cells.
+    - **Consequences:** The case layout changes before the drawing.
+    - **Alternatives rejected:** A 2x2 cell block under the board. One shared airflow path.
+  32.
+    - **Question:** D7 Pinecil, balance charging and the service port
+    - **Decision:** - Run the Pinecil from the PD bank at 20 V (about 64 W).
+  - A fused 5 A node-N service port sits downstream of the INA228 shunt. It is used for the ISDT 608PD monthly balance charge (master off) and, only if no bank is available, for the Pinecil with the receiver off and IronOS set to 4S, 3.3 V/cell.
+  - Never tap the raw pack upstream of the shunt.
+    - **Reason:** This keeps the coulomb count correct and the pack energy for receiving.
+    - **Consequences:** The XT30-to-DC5525 lead is fitted to the service port.
+    - **Alternatives rejected:** An XT30 tap upstream of the shunt.
+  33.
+    - **Question:** D8 VHF/UHF/L-band front-end topology across both antenna tiers
+    - **Decision:** - **VHF-137 port:** unpowered external lead → Flamingo+ → SAWbird+ NOAA inside the case, in both tiers.
+  - **UHF port:** the Uputronics 440 MHz CubeSAT filtered preamp (LNA, then 30 MHz SAW; GBP 51.59, in stock) is always the first part after the antenna. In the patch tier it screws onto the bulkhead; in the foldable tier it sits at the Yagi feed. Bias goes up the coax after DC-sense.
+  - **L-band:** the LNA at the feed (SAWbird+ GOES, H1 or iO), or the active L-band patch.
+  - **Selectors:** HMC7992 SP4T boards behind the injectors.
+    - RTL-A: T1 VHF-137, T2 UHF, T3 WIDE/2 m (optional), T4 50 ohm.
+    - RTL-B: T1 L-band, T2 LNB IF, T4 50 ohm.
+    - The power-up default is 50 ohm.
+    - **Reason:** At 137 MHz, 1-1.5 m of RG316 ahead of the LNA costs only 0.06-0.36 dB. At 437 MHz the same lead costs about 0.7-1 dB on CubeSat links with -5 to +5 dB margin. The Uputronics part closes the 'no buyable 70 cm filter' gap and follows the LNA-first rule at UHF.
+    - **Consequences:** One SAWbird+ NOAA and one Flamingo+ serve both tiers. The Ham Filter Bank and the in-service LNA V2 drop out; the LNA V2 becomes the bench spare and the optional WIDE-path LNA.
+    - **Alternatives rejected:** A 430-440 MHz BPF ahead of the LNA (kills 2 m and costs 0.75-2.84 dB at UHF). The 70 cm LNA inside the case. A SAWbird+ at the dipole feed. Manual 'connect X' as the default.
+  34.
+    - **Question:** D9 Ethernet on pcie0 in the field
+    - **Decision:** The field DT overlay disables pcie0. It stays enabled only on home and bench boots. Add 'pcie0 on/off' to the A/B at 1700.000, 1575.000, 1600.0 and 400.000 MHz. If the 25 MHz NIC crystal still shows a line 3 dB or more above the floor, copper-tape the PHY to the mid-plate.
+    - **Reason:** The schematic shows an RTL8125BG/RTL8111K footprint with a 25 MHz crystal on PCIE0. 25 MHz x68 and 100 MHz x17 both give 1700.000 MHz, the Meteor HRPT centre. 25 MHz x63 gives 1575.000 MHz, 0.42 MHz from L1.
+    - **Consequences:** No wired Ethernet in the field; Wi-Fi only at home.
+    - **Alternatives rejected:** Leaving pcie0 on and masking the HRPT centre line.
+  35.
+    - **Question:** D10 Noise-floor A/B method and spur mask
+    - **Decision:** One A/B matrix replaces P4, the display A/B, the HF A/B and the small-stack tests:
+  - **Method:** per used window, 60 s of IQ at 2.4 Msps, a 2^20 FFT (2.3 Hz bins) with Welch averaging. HF+: 1 Hz RBW at the LF and NAVTEX carriers. GNSS: mean C/N0 of the top 8 satellites from GSV, plus GNSS-SDR.
+  - **States:** each toggled alone (see the RF noise plan).
+  - **Conditions:** lid closed after a 30-minute warm soak.
+  - **Pass:** no line 3 dB or more above the floor inside a used window; broadband rise of 0.5 dB or less; GNSS change of 1 dB-Hz or less.
+  - **Output:** a versioned spur-mask file read by labrx, the SatDump wrapper, auto_rx, the NPU labeller and the UI.
+    - **Reason:** At NF 5 dB the floor is -119 dBm in a 100 kHz bin against -165 dBm in 2.3 Hz. Lines that cost about 1 dB on CW, 1200 sym/s or H1 targets are invisible in rtl_power bins.
+    - **Consequences:** About 4-5 h per full run and 30 min for the regression subset. It decides the 12 V regulator, the display mode and the pcie0 overlay.
+    - **Alternatives rejected:** rtl_power at 100 kHz bins. A pass mark of a 1-2 dB broadband rise. u-blox UBX-MON-RF (the LC76G has none).
+  36.
+    - **Question:** D11 LAB 5 V, LAB port and LNA rail values
+    - **Decision:** - **LAB5:** D36V28F5 (3.2 A) with a 3 A fuse.
+  - **LAB USB-A:** a TPS2553 at 0.75 A, one setting for field and bench. The bench hub is bank-powered.
+  - **LNA rail:** 2x LT3045 in parallel at 4.5 V.
+  - **labd budget:** LAB port plus LNA current 1.5 A or less.
+  - **Lime build:** if RTL-A on H2 together with a heavy LAB load pushes LAB5 above 2.5 A, switch the LAB port off during Lime recording, or upgrade to a D36V50F5 (price unverified).
+    - **Reason:** The worst-case sum is about 2.0 A without the Lime and 2.3 A with it, against the old 2 A fuse. The largest field instrument draws about 0.45 A.
+    - **Consequences:** Check the D36V28F5 temperature in the sealed case.
+    - **Alternatives rejected:** A 2 A fuse. A 1 A LAB port (power lens). 0.6 A (interface lens). A single 0.5 A LT3045.
+  37.
+    - **Question:** D12 IMU interface and the HMI MCU
+    - **Decision:** - **IMU puck:** RP2040-Zero plus Adafruit BNO085 in a metal shell bonded to the cable shield. It sends framed UART (115200, CRC) over a 1.5-2 m shielded 4-core lead with a GX12 4-pin locking socket and TVS, to the Pico's UART1. RS-485 only if the 1e6-frame test shows errors. The puck mounts 30 cm or more behind the driven elements, with a 31/43-mix ferrite.
+  - **HMI MCU:** a Raspberry Pi Pico (26 GPIO). The 6 keys and 2 encoder pushes go on a PCA9555 on the Pico's I2C with INT.
+    - **Reason:** The relay goes through the Pico's own UART, so it works whether or not UART7 does. The merged HMI and supervisor role needs 26-33 GPIO; the RP2040-Zero exposes 20 on its edge.
+    - **Consequences:** Buy 2 Picos (one spare). The puck takes no USB port and puts no USB edges on the boom.
+    - **Alternatives rejected:** A USB-CDC puck on CH334F H2 (sourcing lens). An RP2040-Zero as the HMI MCU. An RP2350B board. A 2x3 key matrix (still short of GPIO).
+  38.
+    - **Question:** D13 Expanders
+    - **Decision:** MCP23017 #1 at 0x20 for all outputs, and MCP23017 #3 at 0x22 for inputs, with two output pins. Both are Adafruit 5346 ($5.95, verified in stock), powered from the Q6A's 3.3 V with 100k pull-downs, and driven by labd through smbus2. Their INTA/INTB outputs are mirrored, open drain, to header pin 5. The sled keeps MCP23017 #2 at 0x21 and the ADS1115 at 0x48.
+    - **Reason:** About 18 outputs and 12 inputs are needed. GPA7 and GPB7 are output-only on current silicon. Power-up high-Z plus pull-downs means everything is off at power-up, and everything is off when the Q6A is off.
+    - **Consequences:** The TCA9535 is the budget alternative.
+    - **Alternatives rejected:** A single MCP23017. Header GPIOs. pinctrl-mcp23s08 (driver not built).
+  39.
+    - **Question:** D14 Field kit, packing and travel
+    - **Decision:** - **Field:** a 15-20 L daypack carrying the handheld, the patch pouch, the foldable kit, the HF kit, the mast, the tripod and the field pouch.
+  - **Bench:** a Pelican 1450 or Apache 3800 for the bench kit only.
+  - **Travel:** the 72 Wh home-built pack is never flown; it travels by ground or stays home. The Anker 737 and the instruments with Li cells go in the cabin bag. The Pelican may be checked.
+    - **Reason:** The model puts the field load at 5.3-7.3 kg full. A Pelican with the handheld would be 72% full and over cabin weight limits.
+    - **Consequences:** The packing and weight tables in radio_lab are rewritten.
+    - **Alternatives rejected:** A 10-12 L sling. The handheld inside the Pelican.
+  40.
+    - **Question:** D15 Case envelope and connector panel
+    - **Decision:** Plan 220-225 x 135-140 x 55-60 mm with a right-hand HMI column 38-42 mm wide. Draw the CAD from Radxa STEP v1.21, the measured panel and the 46x25x150 mm pack.
+  - **Top edge:** RF ports P1-P7 at a 20 mm pitch (optional P8; Lime RX1, RX2 and REF IN).
+  - **Bottom edge:** IP2368 USB-C (the only power input), capped LAB USB-A, a 6-pin locking LAB BUS, 3.5 mm audio, the T7 exit (Lime).
+  - **Back:** a captured 1/4-20 nut or press-in steel insert in a boss of 6 mm or more, strap lugs, the GX12 IMU socket, and a service hatch (console, blue-port EDL).
+  - **Weather:** IPX4/IP54 target.
+    - **Reason:** The old 205-215 x 130-140 x 50-55 mm footprint predates the HF+ can, the selectors, the LAB interface, the second V4L and the HMI. In the model, parts fill 58-75% of the old interior.
+    - **Consequences:** The left-hand variant is a mirrored reprint. The Q6A USB-C has no case opening. IP67 is not reachable with forced-air cooling (physics).
+    - **Alternatives rejected:** An HMI row below the display (162-166 mm tall). HMI on both sides (about 260 mm wide).
+  41.
+    - **Question:** D16 Physics and evidence that override the wishes
+    - **Decision:** State these plainly in STACK.md:
+  - Sustained brightness in 35 C noon sun is about 1000 nits; 2000 nits is a burst mode.
+  - One-hand use means input, not holding; use the strap and the 1/4-20 tripod.
+  - Patch and chip antennas cannot serve 137-146 MHz or HRPT.
+  - QO-100 DATV and typical SSB need dish-class gain (26 and 31-32 dBi).
+  - Without loops, HF is limited by local noise; the remote feed and the common-mode choke are the closest compliant option.
+  - The 9:1 balun is rated from 0.125 MHz, so LF time signals rely on the active whip.
+  - Inmarsat-C bits must be demodulated before any header filter can act.
+  - Any antenna S11 sweep radiates.
+  - Capacitive touch fails through gloves, so the keys and encoders must cover every capture-critical action.
+    - **Reason:** Model: the panel reaches about 71 C at 35 C ambient in full sun at 100%, above its 70 C rating. The other items come from measurements, published ratings or link budgets in the register.
+    - **Consequences:** Acceptance tests and menu labels reflect these limits.
+    - **Alternatives rejected:** Promising sustained 2000 nits. Treating the whips as patch antennas.
+- **Confirmed issues:**
+  1.
+    - **Area:** Software / SDR access model
+    - **Components:**
+      - npu_training sdr-ingestd/recorderd
+      - lab_ui_hf labd leases + engine units
+      - radio_lab lab-sched/lab-rec/rflab
+      - SatDump
+    - **Problem:** Three designs each claim to open the SDRs:
+  - npu_training: sdr-ingestd is the only opener;
+  - lab_ui_hf: the engines open the devices under leases;
+  - radio_lab: advisory flocks plus its own SoapySDR recorder.
+  
+  A USB SDR accepts one opener, so the second open fails. The result would be two RAM rings, two recorders and advisory locks. During a live SatDump pass the NPU tap and the MARK pre-trigger ring would get no IQ.
+    - **Severity:** blocker
+    - **Fix:** Decision C7: one labd lease model with two modes.
+  - labrx mode is the default: labrx is the sole opener, holds the ring and recorder, and fans out. Passes are recorded and then decoded by SatDump.
+  - Engine-exclusive lease: the engine opens the device itself, with ai_tap=false and cgroup DeviceAllow.
+  
+  Delete the flocks and the 'only opener' rule, and rename the daemons into labrx and labclassify.
+    - **Evidence:** npu_training final.architecture P1; lab_ui_hf resource_arbitration sections 5 and 7; radio_lab final.software; register #51; final_completeness dismissed gap (auto_rx needs direct access).
+    - **Fix cost:** $0 hardware; about 1-2 person-weeks of re-specification (estimate)
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  2.
+    - **Area:** Power budget / runtime
+    - **Components:**
+      - 4S1P P50B
+      - IP2368 4.10 V/cell
+      - labpowerd
+    - **Problem:** Every file assumes 61-65 Wh usable and leaves loads out (HF+, LNB, Boni-Whip, fans, LAB port, converter losses), and under-counts the display.
+  
+  Usable energy is 58 Wh warm and new, and 50 Wh at 0 C or aged, once these are counted:
+  - charging stops at 4.10 V/cell, which is 93% SoC on the OCV model;
+  - the 13.2 V loaded cutoff.
+  
+  Runtimes (model):
+  - LEO pass: 3.3 h, not 3.7-5.3 h;
+  - Lime typical: 1.9 h, not 2.2-2.6 h.
+    - **Severity:** major
+    - **Fix:** Publish the per-mode table (power section) and plan on 58/50 Wh. Replace the model rows with INA228 logs at first power-up.
+    - **Evidence:** p2_power/model.py (generic NMC/Si OCV curve, not a Molicel curve); my modes2.py; register #68.
+    - **Fix cost:** $0
+    - **Sources:**
+      - https://www.molicel.com/inr-21700-p50b/
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/p2_final/modes2.py
+  3.
+    - **Area:** Battery cutoffs and the EN backstop
+    - **Components:**
+      - labpowerd
+      - D36V50F12 EN
+      - Pololu #2813
+      - UV supervisor
+      - BMS
+    - **Problem:** Four cutoff sets conflict: 13.6 V, 13.2 V, a 12.8 V hardware cut, and 'a hardware cut at 13.4 V or above'. A 13.4-13.6 V cut wastes about 5 Wh, although J21 tolerates the regulator's dropout.
+  
+  The power lens's EN divider at 12.8 V has a fault. Pololu's EN sleeps below 1.2 V and wakes above 1.35 V, so that divider would wake only at about 14.4 V, and a restart between 13.6 and 14.4 V at rest would fail.
+  
+  A cut by EN alone leaves LAB5 and the MCU draining the pack.
+    - **Severity:** major
+    - **Fix:** Decision D1:
+  - Linux poweroff at 3% SoC or 13.2 V loaded for 10 s.
+  - A supervisor on the always-on rail trips at 12.8 V and holds #2813 OFF, releasing at 13.6 V.
+  - EN divider ratio about 0.10: sleep at about 12.0 V, wake at about 13.5 V.
+  - BMS at 2.5-2.8 V/cell.
+  - Restart by button only.
+    - **Evidence:** Register #61, #67; power.json; lab_ui_hf process_supervision; Pololu 4095 EN thresholds (power lens fetch).
+    - **Fix cost:** About $2-4
+    - **Sources:**
+      - https://www.pololu.com/product/4095
+  4.
+    - **Area:** Display power and input
+    - **Components:**
+      - Wisecoco 7in FHD 2000 nit
+      - DISP12
+    - **Problem:** The display is budgeted at 3.6-4.8 W at 60% and 6-8 W at full, with an acceptance limit of 9 W or less at full white. Comparable panels draw 6.5 W (4D, 1000 nits) and 10-18 W (2000-nit monitors). The board's input voltage and current are unknown; if it is 5 V only, it would need about 2.6 A, which neither LAB5 nor a Q6A port can supply.
+    - **Severity:** major
+    - **Fix:** Decision D4:
+  - Budget 3/6/13 W.
+  - Acceptance: at least 1800 nits; 14 W or less at 100%; 7.5 W or less at 50%.
+  - Feed: SYS12 → LC → 1.5 A eFuse, or a D36V28F5 #2 if the board is 5 V only.
+  - Dimming: DC.
+  - Get the input range in writing.
+    - **Evidence:** small_antenna_stack display impact; display_market acceptance; 4D datasheet (12 V, 540 mA); Midas datasheet (2000 nits, 6.4 W of LEDs).
+    - **Fix cost:** $0, or $23.95 if the board is 5 V only
+    - **Sources:**
+      - https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_0.pdf
+      - https://www.farnell.com/datasheets/3984938.pdf
+  5.
+    - **Area:** LNB supply
+    - **Components:**
+      - Othernet Bullseye
+      - LNB regulator
+      - labd arbiter
+    - **Problem:** Five incompatible LNB feeds appear across the files:
+  - a TPS65233 at 13.4/18.2 V (radio_lab);
+  - a switchable 13.4/18.2 V boost (rf_frontend, lab_ui_hf);
+  - an MT3608/XL6009 behind a TPS2553, which is rated only 2.5-6.5 V and has no output disconnect (small stack);
+  - the 12 V rail, which gives 10.6-11.4 V at the LNB (power.json);
+  - an S18V20AHV SEPIC plus a second #2813 (sourcing).
+  
+  On 4S the pack stays at 13.2 V or more throughout, so no switcher is needed.
+    - **Severity:** major
+    - **Fix:** Decision C8:
+  - TPS7A4701 at 13.2 V from the switched node through LC.
+  - EN from MCP #1, enabled only while the RTL-B selector is on the LNB port.
+  - PTC at 1.5-2x the measured current at 60 C; PG to MCP #3.
+  - Delete every 18 V entry.
+  - Acceptance: 0 V when off; 13.2 ±0.2 V under load.
+    - **Evidence:** Register #102-105; TI TPS7A47 page (fetched 18 Oct 2026: 3-36 V in, adjustable to 34 V, 1 A, 307 mV dropout, θJA 30.5 C/W, fixed internal limit).
+    - **Fix cost:** About $10-20
+    - **Sources:**
+      - https://www.ti.com/product/TPS7A47
+  6.
+    - **Area:** LNA rail and LAB 5 V budget
+    - **Components:**
+      - LT3045 LNA LDO
+      - TPS2553
+      - LAB 5 V D36V28F5
+      - CH334F
+      - HF+
+    - **Problem:** Three problems with the LNA feed and LAB 5 V:
+  - No file says what feeds the 'LT3045-class 5 V LNA LDO'. Fed from 12 V it would dissipate 2.45 W.
+  - The LAB5 rail carries the hub, HF+, puck, Pico, the LAB port at 1 A and the LNA feeds, behind a 2 A fuse, while the sum of the limits is 2.0-2.4 A.
+  - A single LT3045 (0.5 A) is below the sum of the feed limits.
+    - **Severity:** major
+    - **Fix:** Decision D11:
+  - LNA rail: LAB5 → LC → 2x LT3045 in parallel at 4.5 V, with a TPS2553 at 300 mA per channel.
+  - LAB5 fuse at 3 A; LAB port at 0.75 A.
+  - labd budget: LAB port plus LNA current 1.5 A or less.
+    - **Evidence:** power.json integration notes; register #62/#63; TI TPS2553 range (interface lens fetch).
+    - **Fix cost:** About $5-15
+    - **Sources:**
+      - https://www.ti.com/product/TPS2553
+  7.
+    - **Area:** Bias rules and injector ratings
+    - **Components:**
+      - V4L tee
+      - SAWbird+ NOAA/GOES/H1
+      - TCBT-2R5G+
+      - PTC
+    - **Problem:** Final texts still break the bias rule:
+  - rf_frontend: GOES+ on the V4L tee 'after a soak', and the LNA V2 on the tee;
+  - radio_lab: H1 on the tee at 120 mA;
+  - foldable step 3: a micro-USB feed at the antenna;
+  - a 100-160 mA polyfuse that trips under 170-180 mA.
+  
+  Ratings that do not fit:
+  - The TCBT-2R5G+ is rated 200 mA DC maximum, below a 250-300 mA limit.
+  - A PTC sold as 250 mA hold derates to about 180-190 mA at 60 C.
+    - **Severity:** major
+    - **Fix:** Decision C9:
+  - A TPS2553 at 300 mA nominal per channel.
+  - Injector chokes rated 0.5 A or more; the TCBT only on channels drawing 150 mA or less.
+  - V4L tees off in core; the spare's tee only for LNAs of 90 mA or less, with the token.
+  - No micro-USB feeds; delete the polyfuse rule.
+    - **Evidence:** rf_frontend verify; radio_lab sweeps; foldable build step 3; Mini-Circuits TCBT-2R5G+ datasheet (sourcing lens).
+    - **Fix cost:** $0 text; the injector PCB is in the BOM
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/final_world_sourcing.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+  8.
+    - **Area:** Back-feed paths and off-state draw
+    - **Components:**
+      - Adafruit CH334F
+      - LAB 5 V
+      - Q6A VBUS/WS4612
+      - display board VBUS and HDMI pin 18
+      - touch bridge
+      - Q6A USB-C
+    - **Problem:** Several paths can back-feed or drain the pack:
+  - If LAB5 powers the CH334F while the Q6A port's VBUS is also wired to it, two 5 V sources run in parallel and back-feed VCC_5V_PERI.
+  - The display board can back-feed through USB VBUS or HDMI pin 18.
+  - With the Q6A off, the touch bridge's D+ pull-up back-drives FE1.1s P2.
+  - A charger on the Q6A USB-C while J21 is live back-feeds through Q5.
+  - LAB5 and the display keep draining after poweroff.
+    - **Severity:** major
+    - **Fix:** Wiring rules:
+  - Hub: D+, D- and GND only from the Q6A; its 5V pin from LAB5.
+  - No VBUS link to the display board; HDMI pin 18 cut or diode-blocked.
+  - The display rail eFuse is off while the Q6A is off.
+  - All enables sit on expanders powered from the Q6A.
+  - The Pico opens the #2813 3 s after the Q6A's 3.3 V drops.
+  - The Q6A USB-C has no case opening.
+  
+  Acceptance with the FNB58: 0 V on Q6A VBUS and HDMI +5 V with the Q6A off and LAB5 on.
+    - **Evidence:** Adafruit CH334F guide (power lens); register #62/#69/#129; power.json verify (Q5).
+    - **Fix cost:** $0-2
+    - **Sources:**
+      - https://learn.adafruit.com/adafruit-ch334f-mini-4-port-usb-hub-breakout?view=all
+  9.
+    - **Area:** Q6A 5 V rail with the Lime
+    - **Components:**
+      - SGM40666AS/SY7120 VCC_5V_PERI
+      - LimeSDR Micro
+      - T7
+    - **Problem:** With the Lime and the T7 on VCC_5V_PERI, the load is 15.4-20.6 W at spec allowances, against a limit of about 17 W. The overload would come exactly during wideband recordings. Typical draw is 9-12 W, and without the Lime it is 4-5 W.
+    - **Severity:** major
+    - **Fix:** A Lime gate: the measured VCC_5V_PERI must be 14 W or less in a 60-minute soak at 56 Msps with the T7 writing and RTL-B running. If it fails, give the T7 its VBUS from LAB5 through a split lead, and switch the LAB port off during Lime recording or upgrade LAB5.
+    - **Evidence:** Register #63 (about 17 W); storage.json T7 budget; modes.py.
+    - **Fix cost:** $0, or $5-40 if the gate fails
+    - **Sources:**
+      - https://www.sg-micro.com/product/SGM40666A
+  10.
+    - **Area:** LF/MF/HF spur sources
+    - **Components:**
+      - D36V50F12
+      - D36V28F5
+      - IP2368
+      - fan PWM
+      - backlight PWM
+      - USB SOF
+      - display line rate
+    - **Problem:** These spur sources are uncontrolled:
+  - the D36V50F12 runs at about 500 kHz under heavy load and enters a power-save mode above 20 kHz at light load, near NAVTEX 490/518 kHz and across the 40-162 kHz carriers;
+  - the IP2368's 250 kHz has its 2nd harmonic at 500 kHz;
+  - 1, 20 and 30 kHz PWM put harmonics exactly on 40/60 kHz;
+  - USB frames at 1 and 8 kHz give exact lines;
+  - the display line rate at 127.9 MHz is 58.14 kHz, 1.86 kHz from 60 kHz.
+  
+  No plan tests below 500 kHz.
+    - **Severity:** major
+    - **Fix:** Run the regulator A/B gate (decision C4). Fans in DC with no PWM; backlight DC (24.0 kHz only if PWM is unavoidable); a 151.50 MHz field clock (line rate 68.86 kHz). In the LF Quiet profile: charger unplugged, only the HF+ streaming, pcie0 off, Wi-Fi de-authorised. The SID baseline is taken on a terminated input in the same profile.
+    - **Evidence:** Pololu 4095 (power lens fetch); rfcx/lf.py; my pclk.py.
+    - **Fix cost:** $0 for the test; about $10-30 per regulator swap if it fails
+    - **Sources:**
+      - https://www.pololu.com/product/4095
+  11.
+    - **Area:** Thermal inside the case
+    - **Components:**
+      - P50B pack
+      - IP2368
+      - panel
+      - Q6A
+      - T7
+    - **Problem:** Model results:
+  - internal heat is 8-36 W without the Lime and 30-53 W with it;
+  - at 35 C ambient, cells downstream of the board reach 45-55 C, so the 45 C charge NTC blocks charging;
+  - the panel at 100% in full sun reaches about 71 C, above its 70 C rating;
+  - the SoC reaches 85-100 C at peak and throttles;
+  - the T7 (Lime only) sits near its 60 C limit inside.
+    - **Severity:** major
+    - **Fix:** Decision D6:
+  - insulated pack compartment on the intake side;
+  - IP2368 at least 10 mm from the cells, with a KSD9700;
+  - two separate airflow paths;
+  - panel derating ladder;
+  - training gated on SoC below 75 C;
+  - T7 outside the case;
+  - 45 min noon soak acceptance.
+    - **Evidence:** p2_power/thermal.py; register #17/#18; panel rated -20 to 70 C (Youritech page, power lens).
+    - **Fix cost:** About $5-10
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/p2_power/thermal.py
+  12.
+    - **Area:** Header GPIO safe state
+    - **Components:**
+      - UM3304 TXB buffers
+      - 40-pin header
+      - bias/LNB/relay enables
+    - **Problem:** lab_ui_hf drives the RF switches, relays, LNA, LNB, 12 V and VBUS-cut lines from header GPIOs. Pin 7 and pins 11-40 sit behind UM3304 TXB-type buffers (4 kOhm, 50 pF or less, pulls must be over 50 kOhm). Their state follows the SoC during UEFI and boot, so 'pull-downs keep every supply off' cannot work on them. The LNB or a bias feed could switch on into a DC short during boot, and these lines cannot drive coils or MOSFET gates.
+    - **Severity:** major
+    - **Fix:** Move every enable to the MCP23017s (decision D13). They power up high-Z with 100k pull-downs and are powered from the Q6A's 3.3 V. Header GPIOs carry only PPS, the UARTs, I2C, open-drain INT/ALERT, SWD and safe-boot.
+    - **Evidence:** gnss_imu own fix (UM3304 TXB-type); q6a_sch.txt translator blocks (grep confirms UM3304/UM3204H/CJ3134K).
+    - **Fix cost:** About $6-12
+    - **Sources:**
+      - https://www.union-ic.com/upload/Datasheet/Datasheet_UM3304_Rev16.pdf
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_sch/q6a_sch.txt
+  13.
+    - **Area:** HMI / power-supervisor MCU role
+    - **Components:**
+      - display RP2040
+      - HMI RP2040
+      - power MCU
+      - NPU buttons
+    - **Problem:** Each file gives the RP2040 a different role and link:
+  - radio_lab: on CH334F H1, powered from LAB5;
+  - lab_ui_hf: merged HMI on UART7;
+  - power.json: an always-on MCU;
+  - the register: on both H1 and UART7.
+  
+  It is also unclear how the cold-boot pulse works. The board's own SGM811 pulse (about 0.2-0.6 s) is shorter than the 400 ms the UEFI wants.
+    - **Severity:** major
+    - **Fix:** Decision D3: one Pico on the switched LAB5 rail.
+  - Boot pulse on J21 pin 3 for 0.8-1.0 s when the Q6A's 3.3 V is absent.
+  - 6 s hard cut.
+  - Opens the #2813 after poweroff; tri-states its TX while the Q6A is off.
+  - UART7 is the main link, with native USB on H1 as a fallback.
+  
+  The always-on rail powers only the INA228 and the UV supervisor.
+    - **Evidence:** power.json SGM811 analysis; Pololu #2813 page (fetched 18 Oct: on-only wiring by putting the switch between A and ground; ON/OFF high pulse above 1 V).
+    - **Fix cost:** $0-5
+    - **Sources:**
+      - https://www.pololu.com/product/2813
+  14.
+    - **Area:** Bias-tee interlock in software
+    - **Components:**
+      - librtlsdr rtlsdr_set_bias_tee
+      - engines
+      - rtl_biast
+    - **Problem:** Any process that opens a V4L can switch its bias tee on, including SatDump, readsb, OpenWebRX+ and rtl_biast. That bypasses labd's interlock on DC-short antennas (the 9:1 balun and hairpin feeds). Rule line 44 requires a labd token.
+    - **Severity:** major
+    - **Fix:** Add a token patch to the .so.2 rebuild (bias refused unless LAB_BIAS_OK equals the device serial), divert rtl_biast, keep the EEPROM bias off, and audit engine configs for bias options.
+    - **Evidence:** user_requirements.md line 44; register #102.
+    - **Fix cost:** $0 (about 20 lines of C plus a test)
+    - **Sources:**
+      - https://github.com/osmocom/rtl-sdr
+  15.
+    - **Area:** USB port map overflow and the IMU interface
+    - **Components:**
+      - blue USB 3.1
+      - FE1.1s
+      - CH334F
+      - IMU puck
+      - T7
+    - **Problem:** Four maps exist, and the register's map fills all four CH334F ports. With the Lime and T7 kept, RTL-A has nowhere to go. If the IMU is a USB-CDC device (gnss_imu, radio_lab, sourcing) or UART7 fails, a fifth port is needed. lab_ui_hf time-shares the only SuperSpeed port. The '3 continuous streams' rule blocks the monitor configuration.
+    - **Severity:** major
+    - **Fix:** Decision C5: the IMU always goes over UART to the Pico; RTL-A moves to H2 with the Lime; a second CH334F is bought but fitted only when needed; an aggregate cap of 25 MB/s replaces the stream rule.
+    - **Evidence:** Register #130; gnss_imu final; sourcing decision 6.
+    - **Fix cost:** $4.95
+    - **Sources:**
+      - https://www.adafruit.com/product/5997
+  16.
+    - **Area:** NPU CPU-mode coverage
+    - **Components:**
+      - inferd-cpu
+      - fusiond
+      - RTL-F/RTL-C/HF-F profiles
+    - **Problem:** Until the HTP gate passes, inference runs on the CPU at 4-6 tiles/s, while demand is 14.6 tiles/s for two V4Ls (verified) and about 16.6-17.6 with HF-F (model). The broker would silently drop about two thirds of the tiles.
+    - **Severity:** major
+    - **Fix:** Decision C20: an explicit CPU-mode schedule of about 5 tiles/s, a 'reduced coverage' chip in the UI, and an HTP gate scaled to the SDR set (28 ms or less without the Lime, 11.7 ms or less with it).
+    - **Evidence:** npu_training budgets; register #42.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+  17.
+    - **Area:** RAM ring over-commit
+    - **Components:**
+      - labrx ring
+      - labclassify
+      - trainer
+      - engines
+    - **Problem:** Four ring sizes appear: npu_training 6/8 GiB, storage 8 GiB mlocked, the register 4/1.5 GiB, and lab_ui_hf about 4 GiB. With a 6 GiB ring in training mode, the 12 GB board (about 11.3 GiB visible) has -1.2 to +1.1 GiB free (model), so the OOM killer would take SatDump or the Shell.
+    - **Severity:** major
+    - **Fix:** Size the ring once at boot: 1.5 GiB without the Lime; 4 GiB with it, plus a 3 GiB Burst segment only in an exclusive profile. Delete the 6 and 8 GiB values, and apply the OOM and memlock policy.
+    - **Evidence:** lens_rlm/calc/budgets.py; sbc-bench KBw_ (6 GB board shows 5609 MB); Geerling #85 (8 GB board shows 7604 MiB).
+    - **Fix cost:** $0
+    - **Sources:**
+      - https://github.com/geerlingguy/sbc-reviews/issues/85
+      - https://raw.githubusercontent.com/ThomasKaiser/sbc-bench/master/results/KBw_.txt
+  18.
+    - **Area:** CPU allocation and RT priorities
+    - **Components:**
+      - lime:Rx0
+      - labrx ingest
+      - trainer
+      - CPU7
+    - **Problem:** The files give four core plans and four RT settings:
+  - compute: chrt -f 10;
+  - npu_training: FIFO 50 on CPU7;
+  - wideband verify: FIFO 70 on CPU4-6;
+  - lab_ui_hf: CPU7 always isolated and the trainer on the A55 cores.
+  
+  If lime:Rx0 busy-polls, RT throttling leaves gaps about as deep as the LA9310's 50 ms FIFO.
+    - **Severity:** major
+    - **Fix:** Decision C19.
+    - **Evidence:** compute, npu_training, wideband_sdr, lab_ui_hf; register #20.
+    - **Fix cost:** $0; about 1 day of bench time
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/compute.json
+  19.
+    - **Area:** Noise-floor A/B method
+    - **Components:**
+      - radio_lab P4
+      - display A/B
+      - HF A/B
+      - LC76G
+    - **Problem:** Every coexistence decision depends on an A/B test that cannot see narrowband spurs. rtl_power at 100 kHz bins has a floor of -119 dBm, while a line at -158 dBm already costs about 1 dB on a CW, 1200 sym/s or H1 target.
+  
+  Other gaps:
+  - four separate band lists;
+  - no LF carriers or NAVTEX in the plan;
+  - a GNSS pass mark that needs UBX-MON-RF, which the LC76G does not have;
+  - no states for the pcie0, HDMI or rails.
+    - **Severity:** major
+    - **Fix:** Decision D10: one narrow-RBW A/B matrix plus a spur-mask file.
+    - **Evidence:** radio_lab procedures[4]; display_market acceptance; rfcx/stage.py.
+    - **Fix cost:** $0; about 4-5 h per run
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfcx/stage.py
+  20.
+    - **Area:** Board clocks: onboard Ethernet on pcie0
+    - **Components:**
+      - RTL8125BG/RTL8111K
+      - 25 MHz crystal
+      - pcie0 refclk
+    - **Problem:** The 1700.000 MHz line was credited only to the Lime. The Q6A's own NIC sits on PCIE0 with a 25 MHz crystal (schematic: '25MHz_12PF_10ppm').
+  - 25 MHz x68 and 100 MHz x17 both give 1700.000 MHz (the HRPT centre).
+  - 25 MHz x63 gives 1575.000 MHz.
+  - There are further lines at 1600.0 and 400.000 MHz.
+  - The Bullseye's 25 MHz reference adds the same lines.
+    - **Severity:** major
+    - **Fix:** Decision D9 (pcie0 off in the field), an LNB EN interlock, and copper tape if the crystal still radiates.
+    - **Evidence:** q6a_sch.txt PCIE0 and RTL8125BG/RTL8111K blocks (grep confirmed); rfcx/harm.py.
+    - **Fix cost:** $0-2
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_sch/q6a_sch.txt
+  21.
+    - **Area:** FM band-stop placement
+    - **Components:**
+      - Flamingo+ FM
+      - SAWbird+ NOAA
+      - LNA V2
+    - **Problem:** The power lens puts the Flamingo+ on the SDR side of the injector, which is after the LNA, and rf_frontend chain (b) does the same. The first MMIC of the SAWbird+ NOAA, and of the LNA V2, then sees the whole FM band unfiltered.
+    - **Severity:** major
+    - **Fix:** Decision C10: filter first at VHF. Bias enters at the LNA output, so no DC crosses the filter.
+    - **Evidence:** rf_frontend verify issues[4]; Nooelec Flamingo+ page (RF lens fetch: -3 dB at 75/120 MHz, more than 60 dB rejection, 250 mA DC pass).
+    - **Fix cost:** $0
+    - **Sources:**
+      - https://www.nooelec.com/store/flamingo-plus-fm.html
+  22.
+    - **Area:** HF/LF common-mode path
+    - **Components:**
+      - HF+ Discovery
+      - Boni-Whip
+      - 9:1 balun
+      - feed coax
+    - **Problem:** The remote feed point helps only if the coax shield does not carry the handheld's common-mode noise out to the antenna. Clip-on ferrites give little impedance below a few MHz. For an E-field whip, the shield's common-mode noise is received directly (PA3FWM tn07).
+    - **Severity:** major
+    - **Fix:** Decision C17: a two-stage common-mode choke with a measured impedance, the bulkhead bonded to the plate, and a ground stake.
+    - **Evidence:** lab_ui_hf hf_antenna setup[3]; PA3FWM tn07.
+    - **Fix cost:** About $15-30 (unverified)
+    - **Sources:**
+      - https://www.pa3fwm.nl/technotes/tn07.html
+  23.
+    - **Area:** HF+ input selector
+    - **Components:**
+      - Airspy HF+ (single SMA)
+      - selector relays
+    - **Problem:** No part is named, yet the AIS-on-HF+ default and the terminated-floor state both depend on it. Coax relays cost $242 or more, and the ARJ22A03 costs $114-332 and is NRND at one distributor.
+    - **Severity:** major
+    - **Fix:** Decision C17: two Omron G6K-2F-RF relays in series-shunt, defaulting to 50 ohm, with an isolation and loss acceptance test.
+    - **Evidence:** Register #94; RF lens RS listings (about GBP 21-26 each, ex VAT).
+    - **Fix cost:** About $62-80
+    - **Sources:**
+      - https://uk.rs-online.com/web/p/hf-rf-relays/0492917?gb=s
+  24.
+    - **Area:** VHF/UHF front-end topology and the 70 cm part
+    - **Components:**
+      - 70 cm whip/Yagi
+      - LNA V2
+      - 70 cm BPF
+      - SAWbird+ NOAA
+      - two antenna tiers
+    - **Problem:** A single 2 m/70 cm input with a 430-440 MHz BPF ahead of the LNA kills 2 m. At UHF it costs 0.75-2.84 dB (model) on CubeSat links with only -5.3 to +5.3 dB of margin. No 70 cm filter part was named, and the two tiers ask for opposite topologies on RTL-A. Each RTL also has one SMA but 2-4 antenna sources.
+    - **Severity:** major
+    - **Fix:** Decision D8:
+  - Uputronics 440 MHz CubeSAT filtered preamp at the antenna end.
+  - The 137 MHz chain inside the case.
+  - Separate ports, with an HMC7992 SP4T selector per RTL.
+    - **Evidence:** rfcx/stage.py; final_world_sourcing (Uputronics GBP 51.59, available); final_completeness missing parts.
+    - **Fix cost:** $68.71 plus about $30-40 for the selectors
+    - **Sources:**
+      - https://store.uputronics.com/products/uputronics-filtered-preamps
+  25.
+    - **Area:** Display field clock
+    - **Components:**
+      - Wisecoco HDMI-MIPI board
+      - EDID override
+      - RA620
+    - **Problem:** 128.70 MHz is still in display_market, small_antenna_stack and the lab_ui_hf tests; its 12th harmonic (1544.4 MHz) falls in Inmarsat-C.
+  - The register's 127.9 MHz sits only 0.14 MHz below the top of its clean window (my scan).
+  - The CEA VIC list still lets the compositor fall back to 148.5 MHz.
+  - The DSI clock is 3x the pixel clock only in non-burst mode.
+    - **Severity:** major
+    - **Fix:** Decision C12: 151.50 MHz first and 127.90 MHz second, CEA VICs stripped, and the delivered clock verified.
+    - **Evidence:** p2_final/pclk.py (clean intervals 148.11-153.27 and 123.62-128.04 MHz without the Lime); register #78.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/p2_final/pclk.py
+  26.
+    - **Area:** Storage rollback
+    - **Components:**
+      - UFS
+      - T7 lab-snap
+      - offline update bundle
+    - **Problem:** The rollback snapshots and the offline update path both live on the T7, which is bought only if the Lime is kept. A no-Lime build would have no rollback, although self-test plus rollback is a design rule.
+    - **Severity:** major
+    - **Fix:** Decision C18: an A/B root on UFS, and update bundles from a USB stick on LAB USB.
+    - **Evidence:** lab_ui_hf packaging_and_updates; register #36.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  27.
+    - **Area:** Case envelope
+    - **Components:**
+      - ASA shell
+      - HMI
+      - HF+ can
+      - selectors
+      - pack
+    - **Problem:** The 205-215 x 130-140 x 50-55 mm, 1.2-1.4 kg envelope predates the HF+ and its can, the selectors, the LAB interface, the second V4L and the HMI column. In the model, parts fill 58-75% of that interior. Pack geometry also conflicts between files (86x71x22 vs 46x25x150 mm).
+    - **Severity:** major
+    - **Fix:** Decision D15: 220-225 x 135-140 x 55-60 mm, 1.35-1.6 kg, CAD drawn from the STEP file and the measured panel.
+    - **Evidence:** mechanical_thermal verify; lens_rlm/calc/mech.py.
+    - **Fix cost:** $0 design; about $10-27 for a reprint
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/mechanical_thermal.json
+  28.
+    - **Area:** Connector panel
+    - **Components:**
+      - RF bulkheads
+      - F port
+      - HF post
+      - LAB BUS
+      - IMU socket
+    - **Problem:** No file has a single connector list. The IMU puck has no case socket, and the HF+ 'VHF bus' has no source. There are 11-14 case penetrations with no IP target.
+    - **Severity:** major
+    - **Fix:** Decision D15 panel (P1-P7 at a 20 mm pitch) plus the IPX4/IP54 weather kit.
+    - **Evidence:** radio_lab internal_vs_external; final_completeness gaps.
+    - **Fix cost:** About $15-30
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/final_completeness.json
+  29.
+    - **Area:** Packing, carried weight and supports
+    - **Components:**
+      - sling
+      - foldable kit
+      - mast
+      - tripod
+      - Pelican
+    - **Problem:** radio_lab still uses the superseded antenna tier (sling 3.0-3.6 kg). The foldable kit alone is 6-6.5 L and 1.3-1.8 kg. The mast and tripod are not counted anywhere. A Pelican holding the handheld as well would be over cabin weight limits.
+    - **Severity:** major
+    - **Fix:** Decision D14: a 15-20 L daypack (5.3-7.3 kg full), the Pelican for the bench kit only, and the supports added to the BOM.
+    - **Evidence:** foldable_antennas totals; mech.py.
+    - **Fix cost:** About $135-305 (bags and supports, estimate)
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+  30.
+    - **Area:** Display bonding, outline and touch unknown
+    - **Components:**
+      - Wisecoco
+      - 4D fallback
+    - **Problem:** Bonding, the glass outline (164.2x98 mm is inferred), the touch path and the input supply are all unconfirmed, and the listing still says I2C touch. An air-gapped 2000-nit panel (1.5:1 in sun) is worse than the bonded 1000-nit 4D (1.7:1).
+    - **Severity:** major
+    - **Fix:** Decision D5: written answers within about 7 days, or buy the 4D at DigiKey for $128.95. The bezel CAD starts only after acceptance.
+    - **Evidence:** display_market; final_world_sourcing (listing text and 4D price verified).
+    - **Fix cost:** $0
+    - **Sources:**
+      - https://www.wisecocodisplay.com/product/7-inch-1920x1080-high-brightness-2500nits-lcd-panel-with-hdmi-in-board-ips-mipi-interface-tft-lcd-screen/
+  31.
+    - **Area:** TX-capable software
+    - **Components:**
+      - QSSTV 9.5.8
+      - direwolf
+      - fldigi in radio_lab procedures
+    - **Problem:** lab_ui_hf installs QSSTV, which can transmit with PTT. direwolf is a TNC that can beacon and digipeat. The radio_lab procedures depend on fldigi. Rule line 44 forbids TX-capable software on the device.
+    - **Severity:** major
+    - **Fix:** Remove all three. Use slowrx, OpenWebRX+ SSTV and the SDRangel RX-only packet demodulator, and move the fldigi procedures to SDRangel channels. Add the CI and self-test audit.
+    - **Evidence:** lab_ui_hf tech_stack; radio_lab procedures; user_requirements.md line 44.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+  32.
+    - **Area:** 12 V regulator capacity and stock
+    - **Components:**
+      - D36V50F12
+    - **Problem:** At the Lime peak the output reaches about 3.6-4.1 A, against 4.5 A typical (limited by heat) in a sealed 45-50 C case. Stock is 'Rationed'.
+    - **Severity:** minor
+    - **Fix:** Bond it to the plate and run the 3.5 A, 60-minute sealed test. Buy 2. If the Lime is kept and the test fails, AUX must be off during Lime peaks.
+    - **Evidence:** Pololu 4095 (power lens).
+    - **Fix cost:** $39.95 for the spare
+    - **Sources:**
+      - https://www.pololu.com/product/4095
+  33.
+    - **Area:** TVS values
+    - **Components:**
+      - SMBJ14A at J21
+      - node N
+    - **Problem:** The SMBJ14A's breakdown voltage can reach 17.2 V, above the 16 V input capacitors. Node N has no TVS.
+    - **Severity:** minor
+    - **Fix:** SMBJ13A at J21 (VRWM 13 V, breakdown 14.4-15.9 V); SMBJ17A at node N. Balance-charge with the master switch off.
+    - **Evidence:** Standard SMBJ catalogue values (not re-fetched).
+    - **Fix cost:** About $0.5
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_sch/q6a_sch.txt
+  34.
+    - **Area:** Gauge integrity
+    - **Components:**
+      - Pinecil
+      - ISDT 608PD
+      - INA228
+    - **Problem:** The Pinecil (about 43 W) and the 4.20 V balance charge connect through the pack's XT30, which may sit upstream of the shunt. The coulomb count then drifts without the gauge knowing.
+    - **Severity:** minor
+    - **Fix:** Decision D7: a fused node-N service port downstream of the shunt, and the Pinecil on the PD bank.
+    - **Evidence:** radio_lab lab_bom; register #66.
+    - **Fix cost:** $0
+    - **Sources:**
+      - https://ralim.github.io/IronOS/Settings/
+  35.
+    - **Area:** Charger source qualification
+    - **Components:**
+      - IP2368 BZ
+      - PD sources
+    - **Problem:** At 3 A the charger draws about 49-52 W. A 45 W source may be overloaded (behaviour unverified). Charging while running mode B takes about 2.5 h.
+    - **Severity:** minor
+    - **Fix:** Qualify each PD source with the FNB58. For 45 W sources use the input-power mode (bench-verify the RISET value). The UI shows 'charging paused (cell hot)'.
+    - **Evidence:** IP2368 datasheet V1.41 (power verify).
+    - **Fix cost:** $0
+    - **Sources:**
+      - https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+  36.
+    - **Area:** Unpublished currents
+    - **Components:**
+      - HF+
+      - Boni-Whip
+      - Bullseye
+      - Uputronics 440
+      - LNA V2
+      - ZFL-500
+    - **Problem:** There are no published currents for these parts, so every rail limit is provisional.
+    - **Severity:** minor
+    - **Fix:** Provisional budgets: HF+ 0.3 A at 5 V; Boni-Whip 0.1 A at 12.5 V; LNB 0.3 A at 13.2 V; Uputronics and LNA V2 0.1 A; noise source 0.15 A. Measure each on arrival, cold and hot, then set the PTC and TPS2553 values.
+    - **Evidence:** Register open question 15; rtl-sdr.com power article (figures only in a video).
+    - **Fix cost:** $0
+    - **Sources:**
+      - https://www.rtl-sdr.com/measuring-the-usb-power-consumption-of-various-software-defined-radios/
+  37.
+    - **Area:** Fan control
+    - **Components:**
+      - header pin 33 / GPIO56
+      - AO3400
+      - PoE-HAT overlay
+    - **Problem:** Pin 33 sits behind a UM3304 (50 pF or less), which cannot drive an AO3400 gate. The PoE-HAT overlay's 1 kHz PWM puts harmonics on 40/60/162/490/518 kHz. The register's 'GPIO56 vs pin 33' conflict is about one physical pin.
+    - **Severity:** minor
+    - **Fix:** DC on/off from the Pico, failing safe to on (decision C6). Pin 33 stays spare.
+    - **Evidence:** q6a_sch.txt (GPIO_56 = FP_SPI_MISO = pin 33, interface lens).
+    - **Fix cost:** About $0.5
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_sch/q6a_sch.txt
+  38.
+    - **Area:** Bus electrical details
+    - **Components:**
+      - UART7 (UM3304)
+      - I2C2 (UM3204H)
+      - TCA9517
+      - MCP23017 GPA7/GPB7
+      - display I2C-touch fallback
+    - **Problem:** Several bus details are unresolved:
+  - The UART7 overlay exists upstream, but the held image may not ship it, and the UM3304's 50 pF limit restricts wire length.
+  - The UM3204H (TXS-type with 10k pull-ups) is sensitive to extra low-value pull-ups and to the orientation of the TCA9517.
+  - GPA7 and GPB7 are output-only on current MCP23017 silicon.
+  - The display I2C-touch fallback collides with UART6 (SE6), PPS (GPIO96) and the SWD pins.
+    - **Severity:** minor
+    - **Fix:** - Compile the uart7 overlay if needed; keep wires to 20 cm or less, or add a 74LVC2T45.
+  - TCA9517: port A to the header, port B to the cable; 4.7k on the sled side; 100 kHz; PCA9615 for runs over 1 m.
+  - Pass 1e6 reads with zero errors (i2cdetect -r).
+  - Use GPA7 and GPB7 as outputs.
+  - Accept only USB-HID touch panels.
+    - **Evidence:** radxa-overlays uart7.dtso (interface lens fetch); gnss_imu; MCP23017 rev D/E.
+    - **Fix cost:** $0-2
+    - **Sources:**
+      - https://raw.githubusercontent.com/radxa-pkg/radxa-overlays/main/arch/arm64/boot/dts/qcom/overlays/qcs6490-radxa-dragon-q6a-uart7.dtso
+  39.
+    - **Area:** HMI MCU GPIO budget
+    - **Components:**
+      - RP2040-Zero
+      - HMI firmware
+    - **Problem:** The merged HMI and supervisor role needs 30-33 lines (encoders, keys, two UARTs, I2C, backlight, display rail, fans, piezo, LED, button, J21 pin 3, OFF, Q6A sense, safe-boot, 3 ADC). The RP2040-Zero exposes 20 GPIO on its edge.
+    - **Severity:** minor
+    - **Fix:** Decision D12: a Pico with 26 GPIO, plus a PCA9555 for the 8 switches.
+    - **Evidence:** lab_ui_hf HMI row; interface lens count.
+    - **Fix cost:** About $5-10
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  40.
+    - **Area:** Power key wiring
+    - **Components:**
+      - case button
+      - J21 pin 3
+      - #2813
+      - Pico
+    - **Problem:** power.json wires the button straight to pin 3, and lab_ui_hf has the MCU pulse pin 3. Neither says how they coexist with the #2813 button input, whose A-B wiring toggles power, so a press would cut power hard.
+    - **Severity:** minor
+    - **Fix:** Decision D3: the button goes to GND and reaches the #2813 A input (on-only), pin 3 and the Pico through BAT54s. The pulse never exceeds 2 s.
+    - **Evidence:** Pololu #2813 page (fetched 18 Oct).
+    - **Fix cost:** About $1
+    - **Sources:**
+      - https://www.pololu.com/product/2813
+  41.
+    - **Area:** Hard-cut sensing and the INA228 owner
+    - **Components:**
+      - INA228
+      - Pico ADC
+      - labpowerd
+    - **Problem:** The MCU hard cut needs a pack voltage reading. The INA228 is owned by labpowerd, and a second I2C master would conflict.
+    - **Severity:** minor
+    - **Fix:** The Pico gets its own 1:6 divider for the failsafe; the UV supervisor provides the hardware cut. INA228 ALERT goes to pin 3.
+    - **Evidence:** Register #66.
+    - **Fix cost:** About $0.1
+    - **Sources:**
+      - https://www.adafruit.com/product/5832
+  42.
+    - **Area:** OS and USB hygiene
+    - **Components:**
+      - FCU760K Wi-Fi/BT
+      - ModemManager
+      - brltty
+      - Mesa
+      - PPA/Radxa repo
+    - **Problem:** Several OS defaults put the lab devices or the build at risk:
+  - rfkill leaves the Wi-Fi/BT module enumerated on the hub shared with RTL-B and the HF+.
+  - ModemManager and brltty probe CDC and FTDI ports, which disturbs the instruments and the Pico.
+  - The Mesa version is unresolved (24.0.5 vs 25.2.8).
+  - The PPA and the Radxa index drift (only 7.0.11-7 is listed now).
+    - **Severity:** minor
+    - **Fix:** - Wi-Fi/BT: rfkill plus USB authorized=0 in field profiles.
+  - Purge brltty and mask ModemManager.
+  - Name devices in udev by serial.
+  - Hold Mesa 25.2.8 and libdrm 2.4.125.
+  - Mirror third-party debs into aptly.
+    - **Evidence:** compute.json; register #25; lab_ui_hf tech_stack.
+    - **Fix cost:** $0
+    - **Sources:**
+      - https://docs.radxa.com/en/dragon/q6a/system-config/vulkan
+  43.
+    - **Area:** Lease enforcement and naming
+    - **Components:**
+      - engine units (user labrx)
+      - rflab namespace
+      - duplicate waterfall
+    - **Problem:** All engines run as the same user with udev access to every SDR, so leases are not enforced between engines. 'rflab' names different things in two files. npu_training adds a second waterfall renderer.
+    - **Severity:** minor
+    - **Fix:** Transient DevicePolicy=closed plus DeviceAllow drop-ins per lease; one 'lab' namespace; the waterfall drawn only in Lab Shell.
+    - **Evidence:** lab_ui_hf resource_arbitration; npu_training architecture.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  44.
+    - **Area:** PPS fallback timestamps
+    - **Components:**
+      - Route A daemon
+      - libgpiod 1.6.3
+    - **Problem:** libgpiod 1.6.3 uses the v1 uAPI, which gives monotonic edge timestamps, so a fallback written on it would carry the wrong timescale.
+    - **Severity:** minor
+    - **Fix:** Decision C13: write the fallback on the GPIO v2 ioctl with EVENT_CLOCK_REALTIME, and never run it alongside pps-gpio.
+    - **Evidence:** Register #28; gnss_imu own fix.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/gnss_imu.json
+  45.
+    - **Area:** LimeSuiteNG packaging (Lime only)
+    - **Components:**
+      - LimeSuiteNG 37cb183
+      - la9310_limesdr DKMS
+      - Amarisoft plugin
+    - **Problem:** At the pinned commit the packaging builds limepcie-dkms but no la9310_limesdr DKMS package. The CMake default for BUILD_PLUGINS_AMARISOFT is ON.
+    - **Severity:** minor
+    - **Fix:** Only if the Lime is kept: a la9310-limesdr-dkms +lab package for 6.18.2-4, always building with -DBUILD_PLUGINS_AMARISOFT=OFF, and CI failing on any amarisoft .so.
+    - **Evidence:** git show 37cb183 (interface lens).
+    - **Fix cost:** $0
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSuiteNG/tree/limesdr-micro-staging
+  46.
+    - **Area:** Known lines and the LNB path
+    - **Components:**
+      - GPSDO 10 MHz
+      - SoC 76.8/19.2 MHz
+      - V4L 28.8 MHz
+      - 12 MHz hub/RP2040
+      - Bullseye
+      - IF pad
+    - **Problem:** The P4 line list misses these exact harmonics in used windows:
+  - 1420.000 MHz (H1), 1090.000 (ADS-B), 1540.000 (Inmarsat-C) and 740.000 (QO-100 IF), from the GPSDO;
+  - 1420.8, 1574.4 and 403.2 MHz;
+  - 1597.44 MHz (Lime);
+  - 1560.0 MHz (12 MHz x130).
+  
+  On the LNB path:
+  - The LNB stays powered while RTL-B listens to L-band.
+  - A 10 dB pad leaves about -32 dBm at the V4L.
+  - The 739.5 MHz IF is exposed to DVB-T and LTE B28 ingress.
+    - **Severity:** minor
+    - **Fix:** Add the lines to the spur mask. Keep the GPSDO off for H1, ADS-B and Inmarsat-C sessions. auto_rx ignores 400.000 and 403.2 MHz. LNB EN only when it is selected; a 15/20 dB pad; a double-shielded IF lead.
+    - **Evidence:** rfcx/harm.py; q6a_sch.txt (76.8 MHz XO); register #106.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfcx/harm.py
+  47.
+    - **Area:** IMU puck near the Yagi feeds
+    - **Components:**
+      - RP2040-Zero 12 MHz
+      - puck lead
+    - **Problem:** The puck's 12 MHz crystal has harmonics at 144.000 and 432.000 MHz near the feeds, and a USB lead would run past the driven elements.
+    - **Severity:** minor
+    - **Fix:** Metal puck bonded to the shield, a ferrite at the puck, mounted 30 cm or more behind the elements, UART instead of USB, and an on/off A/B at 145.9 and 437 MHz.
+    - **Evidence:** Register #82.
+    - **Fix cost:** $0-5
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/gnss_imu.json
+  48.
+    - **Area:** AIS and broadcast on the HF+ VHF input
+    - **Components:**
+      - HF+ VHF mode
+      - dipole kit
+    - **Problem:** The 'VHF bus' has no antenna. The only dipole kit is set for LRPT, so LRPT and continuous AIS cannot run together.
+    - **Severity:** minor
+    - **Fix:** A second dipole kit ($17.95) on a dedicated VHF2/AIS port into relay K2.
+    - **Evidence:** lab_ui_hf hf_receiver; register #116.
+    - **Fix cost:** $17.95
+    - **Sources:**
+      - https://www.rtl-sdr.com/DIPOLE
+  49.
+    - **Area:** Sled LNA bias
+    - **Components:**
+      - sled 5 V buck
+      - TPS2553
+    - **Problem:** The sled makes its LNA bias with a switching buck and no post-regulator, so ripple goes straight up the coax to the LNA outputs.
+    - **Severity:** minor
+    - **Fix:** Buck to about 6 V, then LC, then a low-noise LDO at 4.5-5 V, then the TPS2553s, with a shield wall inside the sled box.
+    - **Evidence:** radio_lab sled build parts.
+    - **Fix cost:** About $5-10
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  50.
+    - **Area:** Lime-only coexistence and the T7
+    - **Components:**
+      - T7 USB 3
+      - Lime spurs
+      - RF bay
+    - **Problem:** T7 SuperSpeed traffic is broadband near 2.4 GHz and raises the L1 floor. An internal T7 would sit in 25-35 W of heat. The Lime adds spurs at 737.28, 1597.44, 1689.6 and 1720.32 MHz.
+    - **Severity:** minor
+    - **Fix:** The T7 mounts outside on the bottom edge and never writes during L-band, S-band or GNSS sessions. Add the Lime lines to the mask and give the Lime build its own A/B run.
+    - **Evidence:** Register #70/#73; storage.json (T7 rated 0-60 C).
+    - **Fix cost:** $0-10
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/storage.json
+  51.
+    - **Area:** Storage retention, format and boot media
+    - **Components:**
+      - UFS
+      - HF+ recorder
+      - microSD
+      - boot order
+    - **Problem:** Storage gaps:
+  - No combined partition or rolling-cap plan.
+  - HF+ recorded as cf32 (6.1 MB/s) doubles the writes of its int16 stream.
+  - small_antenna_stack's 'about 5 h on UFS' is a factor-2 error.
+  - The firmware boot order is USB > SD > NVMe > UFS, so a data card carrying an ESP would boot instead of UFS.
+    - **Severity:** minor
+    - **Fix:** Decision C18 table:
+  - HF+ recorded as ci16;
+  - 30 GiB raw cap;
+  - products kept by default;
+  - data media without an ESP;
+  - 20 cold boots with the card inserted.
+    - **Evidence:** Register #74; storage.json boot order.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/storage.json
+  52.
+    - **Area:** Sun hood and lux sensor
+    - **Components:**
+      - VEML7700
+      - hood
+    - **Problem:** The lux sensor faces the same way as the screen, so it sits inside the hood and would dim the panel in full sun. The files also disagree on hood depth (15-25 mm vs 25-35 mm).
+    - **Severity:** minor
+    - **Fix:** Mount the sensor on the outer top face of the bezel. Hood: 30 mm, hinged.
+    - **Evidence:** display_market sunlight_measures; display.json.
+    - **Fix cost:** $1-3
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/display_market.json
+  53.
+    - **Area:** Lime mechanical order and refund timing
+    - **Components:**
+      - J21
+      - R44SF
+      - mid-plate
+      - Crowd Supply order
+    - **Problem:** Desoldering J21 cannot be undone and complicates an RMA during burn-in. The files do not order these steps. Crowd Supply refunds only before shipment (15 Dec).
+    - **Severity:** minor
+    - **Fix:** Order of work:
+  1. Burn-in.
+  2. Lime decision by 1 Dec.
+  3. Delivery tests.
+  4. Desolder J21 only if the Lime is kept.
+  
+  The mid-plate is cut once with the Lime holes.
+    - **Evidence:** mechanical_thermal; final_world_sourcing (refund policy).
+    - **Fix cost:** $0
+    - **Sources:**
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro
+  54.
+    - **Area:** Field ergonomics and setup time
+    - **Components:**
+      - handheld
+      - pass scheduler
+      - foldable kit
+    - **Problem:** A 1.35-1.6 kg device cannot be held one-handed through a pass. Setup times are not in the profiles, and the pass scheduler warns only at T-10 and T-2 min. Register #85's 'one operator cannot run LRPT and HRPT together' is too strict.
+    - **Severity:** minor
+    - **Fix:** - Strap plus a 1/4-20 tripod.
+  - setup_min per profile, with a warning at T-(setup+5).
+  - Allow a dual pass with the V-dipole fixed and the helicone hand-tracked.
+    - **Evidence:** foldable build steps; lab_ui_hf design rules.
+    - **Fix cost:** $10-25
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+  55.
+    - **Area:** Memory policy
+    - **Components:**
+      - systemd OOM
+      - mlock
+      - swap
+    - **Problem:** No file sets LimitMEMLOCK, an OOM order or a swap policy. systemd-oomd could kill the Shell's cgroup.
+    - **Severity:** minor
+    - **Fix:** - labrx: LimitMEMLOCK=infinity, OOMScoreAdjust -900.
+  - labd and labpowerd: -1000; trainer 900; Expert GUIs 700; OpenWebRX+ 500; inferd 300.
+  - zram 1 GiB, no disk swap.
+  - oomd off, or limited to the trainer and Expert slices.
+    - **Evidence:** npu_training budgets; storage verify.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+  56.
+    - **Area:** Price basis
+    - **Components:**
+      - T7
+      - microSD
+      - NVMe
+      - UAH lines
+    - **Problem:** Flash prices swung sharply in 2026: T7 $190-275, microSD about 3-4x its 2024 price. Several lines still use UAH or an FX rate of 1.16.
+    - **Severity:** minor
+    - **Fix:** Re-price at order time and treat flash as volatile. Use the world-sourcing FX rates (EUR 1.1241, GBP 1.3318).
+    - **Evidence:** final_world_sourcing; resource lens.
+    - **Fix cost:** $0
+    - **Sources:**
+      - https://www.pcworld.com/article/3158933/samsung-fast-t7-portable-ssd-finally-drops-in-price-190-was-285.html
+  57.
+    - **Area:** Stale values across files (errata)
+    - **Components:**
+      - radio_lab
+      - lab_ui_hf
+      - power.json
+      - npu_training
+      - small_antenna_stack
+      - display_market
+    - **Problem:** Superseded values are still in the files:
+  - AUX '0.5 A PTC' and the Boni-Whip '10.0 V LDO' (radio_lab item 49, P20);
+  - lab_ui_hf: 'a 5 V boost good for about 7 A' and the HF+ on Q6A VBUS;
+  - power.json: 'a 7-24 V display from the pack' and i2c6/hwmon;
+  - npu_training: 'INA228 on the J21 rail', librtlsdr 2.0.3 and Set B;
+  - radio_lab integ: pinctrl-mcp23s08, the LNB on the sled, 'USB 3.1: T7 only';
+  - P17: a BNO085 on I2C2;
+  - ISS SSTV at 145.800 MHz;
+  - the 8 GB downgrade;
+  - 128.70 MHz;
+  - '18.4 GB/h for two dongles'.
+    - **Severity:** minor
+    - **Fix:** STACK.md uses only the frozen tables, plus an errata block in summaries.md and minute-log.md.
+    - **Evidence:** Register corrections_to_my_report; all four lenses.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/report_research.json
+  58.
+    - **Area:** Shared L-band parts
+    - **Components:**
+      - 4-turn helix
+      - 20 cm disc
+      - 18 cm helicone disc
+    - **Problem:** The patch tier uses a 20 cm disc and the helicone an 18 cm disc, which means two discs and two gain sets for the same helix.
+    - **Severity:** minor
+    - **Fix:** One 18 cm, 1.5 mm Al disc for both tiers. It costs an estimated 0.3-0.5 dB (model; rerun NEC).
+    - **Evidence:** foldable_antennas; register #118.
+    - **Fix cost:** Saves about $5-10 and 100-150 g
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+- **Refuted issues:**
+  1.
+    - **Problem:** Interface lens: the HMI/supervisor RP2040 must sit on an always-on rail, because a LAB-5 V device is unpowered exactly when the boot pulse and hard cut are needed.
+    - **Why refuted:** The case button turns the #2813 on through its on-only A-to-GND input (Pololu page, fetched today). That powers LAB5 and the Pico before the Q6A boots, so the Pico can make the 0.8-1.0 s J21 pin 3 pulse. Undervoltage cuts are done by a micropower supervisor with no firmware. An always-on MCU would add standby drain and a TX back-feed path.
+  2.
+    - **Problem:** Interface lens C4: a forced-PWM buck-boost of 5 A or more is preferred, and the D36V50F12 is allowed only with an EN hardware cut at 13.4 V or above.
+    - **Why refuted:** No buck-boost from a reputable module vendor was found (sourcing lens). Above the 13.2 V cutoff a buck is enough. J21 accepts 4.5-16 V and the SY81012 2.7-16 V, so the dropout region below about 13.3 V is harmless. A 13.4 V cut throws away about 5 Wh (model).
+  3.
+    - **Problem:** Interface lens: keep direwolf on the device with an audited config (no PTT, no beacon or digipeat lines).
+    - **Why refuted:** User rule line 44 forbids TX-capable software on the device. direwolf is a TX-capable TNC. APRS decoding moves to SDRangel's RX-only packet demodulator or OpenWebRX+.
+  4.
+    - **Problem:** Interface lens: use one root plus a 6 GB rescue rootfs on UFS, reject an A/B root, and put snapshots on microSD.
+    - **Why refuted:** Self-test plus rollback is a design rule and must not depend on removable media, which the no-Lime build does not even buy yet (NAND prices). The A/B root costs about 22 GiB, about 35 min of dual-RTL raw IQ. Products are kept by default, so that cost is acceptable.
+  5.
+    - **Problem:** Interface lens: enable LAB 5 V only while the Q6A is on.
+    - **Why refuted:** The Pico, which makes the boot pulse, runs on LAB5, so this would block cold boots. Every load that must be off with the Q6A off is switched by an MCP23017 that is itself powered from the Q6A's 3.3 V.
+  6.
+    - **Problem:** RF lens and interface lens: fan control by 24/25 kHz PWM.
+    - **Why refuted:** It is not needed. 2-wire fans switched on and off in DC have no comb at all, and on/off at 60/50 C is enough for the copper-block thermal mass. The Pico fails safe to 100% when the heartbeat is lost.
+  7.
+    - **Problem:** Register conflict 6/#18: fan pin 'GPIO56 (PoE-HAT overlay) vs header pin 33'.
+    - **Why refuted:** The schematic shows GPIO56 is FP_SPI_MISO, which is header pin 33, so there is no conflict. The pin stays spare, because fan control moves to the Pico.
+  8.
+    - **Problem:** Power lens C10: put the Flamingo+ FM on the SDR side of the injector, to keep bias current out of its 250 mA DC path.
+    - **Why refuted:** That leaves the first LNA stage unfiltered against the FM band; intermodulation created there cannot be removed downstream. With the filter on the antenna side, bias enters at the LNA output and no DC crosses the filter anyway (RF lens physics, register #86).
+  9.
+    - **Problem:** Power and RF lenses: an LT3045 as the LNB (13.2 V) and Boni-Whip (12.5 V) regulator.
+    - **Why refuted:** The topology (an LDO from the pack) is kept, but the part is not. The LT3045's 20 V absolute maximum sits below the SMBJ17A clamp voltage on node N during transients, for example when the BMS opens. The TPS7A4701 (36 V in, 1 A, verified on ti.com) takes that role. The LT3045 stays only on the 4.5 V LNA rail, which is fed from 5 V.
+  10.
+    - **Problem:** Sourcing lens C8: feed the LNB from an S18V20AHV SEPIC plus a second #2813 for true off.
+    - **Why refuted:** On 4S the pack stays at 13.2 V or more over the whole usable window, so a switcher is not needed. An LDO adds no switching spurs near the 739.5 MHz IF or onto the LNB's LO supply. The LDO's EN gives a true 0 V. It is also cheaper.
+  11.
+    - **Problem:** Sourcing lens C6: make the IMU a USB-CDC puck on CH334F H2, because UART7 is unverified.
+    - **Why refuted:** The puck relays through the Pico's own UART1. The Pico reaches the Q6A over UART7, or over its native USB on H1 if UART7 fails. Either way the IMU never needs its own USB port, and no USB edges run past the antenna elements.
+  12.
+    - **Problem:** Completeness lens: a 5 A pack fuse without the Lime and 7.5 A with it.
+    - **Why refuted:** The no-Lime peak at the 13.2 V cutoff is 3.4 A (model), and a 5 A blade derated at 60 C carries about 3.3 A continuous. One 7.5 A value covers both builds with a single spare. The BMS (15 A) and the #2813 (6 A at 55 C) remain the upstream and downstream limits.
+  13.
+    - **Problem:** Register #99 and the completeness BOM: a Nooelec Ham Filter Bank (or an unnamed 430-440 MHz BPF) as the core 70 cm filter, ahead of the LNA.
+    - **Why refuted:** Superseded. The Uputronics 440 MHz CubeSAT filtered preamp (LNA, then SAW; GBP 51.59, available, 5 V bias) is in stock and follows the UHF LNA-first rule. A BPF first costs 0.75-2.84 dB (model), and the filter bank's bias button can put 4.5 V on a hairpin.
+  14.
+    - **Problem:** Register #61/#67: a hardware cut at 13.4 V or above with the D36V50F12, and Linux poweroff at 13.6 V.
+    - **Why refuted:** It wastes about 5 Wh (7%) for no benefit, because the regulator's dropout does not harm J21. Replaced by Linux at 13.2 V loaded, a supervisor at 12.8 V, and an EN backstop at about 12.0 V.
+  15.
+    - **Problem:** Power lens: set the D36V50F12 EN divider to 12.8 V as the hardware backstop.
+    - **Why refuted:** With Pololu's EN thresholds (sleep below 1.2 V, wake above 1.35 V), a 12.8 V sleep point means a wake point of about 14.4 V. Pressing the button with the pack at 13.6-14.4 V at rest would then give no 12 V output. Corrected to a ratio of about 0.10 (sleep about 12.0 V, wake about 13.5 V), with the supervisor as the real 12.8 V cut.
+  16.
+    - **Problem:** Register #78 and display_market: 127.9 MHz as the primary field pixel clock.
+    - **Why refuted:** Refined, not rejected. 127.9 MHz is clean (my scan), but it sits 0.14 MHz below the top of its clean window (123.62-128.04 MHz), and its line rate is 1.86 kHz from 60 kHz. 151.50 MHz is centred in 148.11-153.27 MHz at 60 Hz, so it goes first and 127.90 MHz second.
+  17.
+    - **Problem:** RF lens: 127.9 MHz has only a ±0.1% SSC-proof window (127.79-128.04 MHz).
+    - **Why refuted:** Partly refuted. Against the 17 core windows, the clean range extends down to 123.62 MHz, so 127.9 MHz survives a 0.5% down-spread. It is fragile only against upward drift, or when Lime S-band windows are included (then 127.81-128.04 MHz).
+  18.
+    - **Problem:** RF lens: 151.5 MHz is clean in all used windows, S-band included.
+    - **Why refuted:** Partly refuted. Its 15th harmonic is 2272.5 MHz, inside the 2200-2300 MHz allocation, though 13.5 MHz from Black Kite (2286/2288 MHz) and clear of PHASMA. That is acceptable for the narrowband carriers and matters only with the Lime.
+  19.
+    - **Problem:** RF lens: the LF Quiet profile must always switch the HDMI link off.
+    - **Why refuted:** With the 151.50 MHz field mode the line rate is 68.86 kHz, at least 8.6 kHz from every LF carrier. HDMI-off becomes conditional on the narrow-RBW A/B instead of mandatory, which keeps the LF waterfall usable.
+  20.
+    - **Problem:** Resource lens: always fit a second CH334F behind H3.
+    - **Why refuted:** With the IMU on the UART relay and the Pico on UART7, one hub has a free port in all four configurations. A second hub adds a 12 MHz clock (harmonics at 144/432 MHz) and 0.1-0.25 W. It is bought as a spare and fitted only if needed.
+  21.
+    - **Problem:** Resource lens C10b: one internal VHF/UHF front end with the 70 cm LNA inside the case, and the external leads always unpowered.
+    - **Why refuted:** Partly refuted. At 137 MHz the lead loss costs 0.06-0.36 dB, so the internal SAWbird+ NOAA is adopted. At 437 MHz, 1-2 m of RG316 ahead of the LNA costs about 0.7-1 dB on CubeSat links with -5 to +5 dB of margin, so the Uputronics 440 goes at the antenna end. The DC-sense interlock makes bias up the lead safe.
+  22.
+    - **Problem:** Resource and completeness lenses: 1/4-20 thread tapped into the 2 mm plate (1.57 threads) as an open defect.
+    - **Why refuted:** Already resolved. Register #71 chose a captured nut, and the completeness lens dismissed the tapped-plate alternative. It stays only as a 'never' rule plus a pull test at 3x the device weight.
+  23.
+    - **Problem:** All lenses: the Lime keep/cancel decision on 31 Jan 2027, or on delivery, is free.
+    - **Why refuted:** Crowd Supply refunds in full only before shipment, which is 15 Dec 2026 (verified by the sourcing lens). After delivery the 30-day guarantee carries a restocking fee of at least $20, plus return shipping and non-recoverable import VAT. The decision moves to 1 Dec 2026.
+  24.
+    - **Problem:** Power lens: the cells have no world price.
+    - **Why refuted:** Resolved by final_world_sourcing: P50B at $9.99 each at 18650 Battery Store (verified live), and RaceDayQuads $18.49 per 2. The NKON EUR 6.75 figure stays unverified.
+  25.
+    - **Problem:** Power lens: the AO3401A AUX switch exceeds its ±12 V gate limit (a new defect).
+    - **Why refuted:** Already handled: register #62 specifies the 10k/10k gate clamp, which gives about -6 V. A ±20 V V_GS P-FET is still preferred in the BOM for margin, but this was not an open design error.
+  26.
+    - **Problem:** Power lens: the HF+ selector should be a latching relay with zero hold current.
+    - **Why refuted:** Non-latching G6K-2F-RF relays fail safe to 50 ohm at power loss, which is what the terminated-floor and boot states need. Only one coil (about 0.12-0.15 W) is ever energised, about 1% of a pass budget.
+  27.
+    - **Problem:** Completeness and sourcing: the V4L tee may power LNAs of 80 mA or less (or 90 mA) such as the LNA V2, as part of the core chains.
+    - **Why refuted:** Moot in core. Every core LNA is fed from the internal TPS2553 injector board and the V4L tees stay off (token gate). The tee rule, set at 90 mA or 50% of its rating, applies only to the spare V4L on LAB USB.
+- **Power architecture and budget:** All figures are MODEL unless marked verified or measured.
+  
+  **Topology**
+  
+  4S1P Molicel P50B → Daly 4S 15 A BMS → 7.5 A blade fuse → INA228 15 mOhm shunt → node N → Pololu #2813 HP master switch → switched node SW. SW then feeds:
+  - D36V50F12 → SYS12, which supplies J21, DISP12 and AUX12;
+  - D36V28F5 → LAB5;
+  - TPS7A4701 → LNB 13.2 V;
+  - TPS7A4701 → BONI 12.5 V.
+  
+  Node N also carries the IP2368 BZ charger, the always-on (AON) LDO, the fused node-N service port and an SMBJ17A.
+  
+  **RAIL TABLE**
+  
+  | Rail | Source → regulator | Setpoint | Limit / protection | Switch (default) | Loads | I typ / max |
+  |---|---|---|---|---|---|---|
+  | PACK / N | 4S1P P50B + Daly BMS + 7.5 A blade + INA228 shunt | 13.2-16.4 V; 16.8 V only during the monthly balance with the master OFF | SMBJ17A | always | IP2368, AON, #2813, service port | 0.6 / 3.4 A without Lime; 4.6 A at Lime peak |
+  | AON 3V3 | N → TPS709-class LDO (30 V, µA Iq; verify) | 3.3 V | - | always | INA228, UV supervisor (12.8 V trip / 13.6 V release) | about 0.7 mA |
+  | SW | N → #2813 HP (6 A at 55 C; off-state below 0.2 µA, verified) | pack voltage | - | button on-only (A to GND), Pico OFF pulse, supervisor OFF | everything below | - |
+  | SYS12 | SW → D36V50F12 (12 V ±4%; about 500 kHz at heavy load; power-save at light load) | 12.0 V; tracks the pack minus dropout below about 13.3 V | internal OCP/OTP, PG; EN backstop (ratio about 0.10: sleep about 12.0 V, wake about 13.5 V) | with SW | J21, DISP12, AUX12 | 1.0 / 2.9 A without Lime; about 4 A at Lime peak |
+  | J21 | SYS12 → 4 A blade → pi-filter → SMBJ13A + 220 µF/25 V → keyed, latched header (Lime: 20 AWG twisted pair from the bottom pads) | 11.5-12.5 V | Q6A accepts 4.5-16 V (forum); SY81012 2.7-16 V | - | Q6A, plus everything on VCC_5V_PERI | 0.35-1.3 A; 2.5 A at Lime peak |
+  | DISP12 | SYS12 → LC → 1.5 A eFuse | 12 V | eFuse | Pico; OFF when the Q6A is off | Wisecoco board (if it is 5 V only: a D36V28F5 #2 from SW) | 0.25 / 1.1 A |
+  | AUX12 | SYS12 → P-FET rated ±20 V V_GS + 10k/10k gate divider + 2N7002 | 12 V | 0.75 A-hold PTC (about 0.55 A at 60 C) | MCP #1 GPA1; OFF; BENCH only, antenna paths terminated | sled, noise source, 28 V boost | 0 / 0.42 A |
+  | LAB5 | SW → D36V28F5 (3.2 A) → 3 A fuse | 5.0 V | fuse | with SW | Pico, CH334F, IMU puck, both fans, HF+ (load switch + LC + Mix-31), LAB USB-A (TPS2553 0.75 A), LNA rail | 0.6 / 2.0 A; 2.3 A with RTL-A on the hub (Lime) |
+  | LNA4V5 | LAB5 → LC → 2x LT3045 in parallel | 4.5 V | TPS2553 per channel at 300 mA nominal (240 mA or more at minimum), FAULT to MCP #3 | MCP #1, OFF | ch1 SAWbird+ NOAA, ch2 UHF Uputronics 440, ch3 L-band (SAWbird+ GOES / H1 / iO, or the L-band patch), ch4 WIDE (optional) | 0.17 / 0.6 A; labd budget: LAB port + LNA ≤ 1.5 A |
+  | LNB13V2 | SW → LC → TPS7A4701 (3-36 V in, 1 A, 307 mV dropout at 1 A; ti.com verified) | 13.2 V ±0.2 V at the F port | PTC hold = 1.5-2x the measured current at 60 C (provisionally 0.45 A); internal limit and OTP; PG to MCP #3 | MCP #1 GPB0, OFF; only while the RTL-B selector is on the LNB port | Bullseye | 0.2-0.3 A (unpublished); dissipation 0.96 W at 16.4 V |
+  | BONI12V5 | SW → LC → TPS7A4701 | 12.5 V ±0.25 V | PTC 0.2 A hold at 60 C (provisional); PG; DC-sense first | MCP #1 GPB1, OFF | Boni-Whip, through its bias tee inside the case | 0.05-0.1 A (unpublished) |
+  | VCC_5V_PERI | inside the Q6A: SGM40666AS (4.5 A) → SY7120 | 5 V | about 17 W; WS4612 about 2.1 A per port pair | - | RTL-A (blue port), RTL-B, touch, GNSS, Wi-Fi, M.2 | 4-5 W without Lime; about 11.8 W Lime typical; Lime gate ≤ 14 W measured |
+  
+  **PROTECTION AGAINST REAL CURRENTS**
+  - **Pack:** the 7.5 A fuse sees 3.4 A (no Lime) or 4.6 A (Lime) at the 13.2 V cutoff, or 3 A of charging; current never adds across charge and discharge. One value for both builds. A 5 A fuse is rejected (about 3.3 A continuous at 60 C).
+  - **Master switch:** #2813 rated 6 A at 55 C, against 4.6 A or less.
+  - **J21 branch:** 4 A fuse against 1.3 A (2.5 A Lime).
+  - **LAB5:** 3 A fuse against 2.0-2.3 A. The old 2 A was too small.
+  - **LAB port:** 0.75 A.
+  - **SAWbird+ channels:** TPS2553 at 300 mA nominal against 170-180 mA. A 250 mA setting is too tight, and PTCs are rejected.
+  - **AUX:** PTC 0.75 A hold against 0.42 A.
+  - **Display eFuse:** 1.5 A against 1.1 A.
+  - **J21 TVS:** SMBJ13A (VRWM 13 V, above the 12.48 V maximum output; breakdown 14.4-15.9 V, below the Q6A's 16 V capacitors). The SMBJ14A is rejected because its breakdown can reach 17.2 V.
+  - **Node N TVS:** SMBJ17A (VRWM 17 V, above 16.8 V).
+  
+  **CUTOFF TABLE (labpowerd + Pico + hardware)**
+  - **Economy:** SoC 20%, or V_N below 14.0 V loaded for 30 s → dim to 30%, loggers off, Lime parked.
+  - **NPU:** no training below 25% (the training gate also needs the SoC below 75 C); NPU off below 15%.
+  - **Shutdown:** SoC 3%, or V_N ≤ 13.2 V loaded for 10 s → 30 s banner, finalise SigMF, turn off bias, LNB, Boni and AUX, then poweroff (never halt; halt still draws 1.9-2.5 W). The Pico opens the #2813 3 s after the Q6A's 3.3 V drops.
+  - **Pico failsafe:** pack divider ≤ 12.9 V for 5 s with no heartbeat → #2813 OFF.
+  - **Hardware supervisor (always-on rail):** trips at 12.8 V and holds OFF; releases at 13.6 V at rest.
+  - **EN backstop:** about 12.0 V.
+  - **BMS:** 2.5-2.8 V/cell.
+  - **Restart:** button only, with the pack at 13.6 V or more at rest.
+  - **Noise-source NF:** blocked below V_N 13.6 V.
+  - **Temperatures:** charging only with the cell NTC between 0 and 45 C; shutdown above 60 C at the cell.
+  - **Gauge resync:** 16.35 V with under 0.1 A, or 16.3 V or more at rest at boot.
+  
+  **CHARGING**
+  - **Board settings:** IP2368 BZ charge-only; RVSET 5.1k (4.10 V/cell); RISET 15k (3 A, about 49-52 W drawn); 10k B3380 NTC.
+  - **Source:** a PD source of 60 W or more, each one qualified with the FNB58. 45 W sources must use input-power mode (bench-verify RISET).
+  - **Times (model):** about 1.4 h CC plus 0.3-0.5 h CV from idle; about 2.5 h while running mode B.
+  - **Restrictions:** no charging in HF/LF Quiet (the charger switches at 250 kHz). The Pinecil runs from the PD bank.
+  - **Balance:** the ISDT 608PD charges at 4.20 V monthly through the node-N service port, with the master switch OFF.
+  
+  **PER-MODE PACK POWER AND RUNTIME**
+  
+  Model inputs: usable 58 Wh warm and new, 50 Wh at 0 C or about 300 cycles; Q6A 2.9 / 9.3 / 10.1 W (measured, Geerling); V4L 1.3 W (datasheet); SAWbird+ 170-180 mA (vendor); display 3 / 6 / 13 W at 25 / 50 / 100%. Efficiencies: D36V50F12 92%, D36V28F5 88%, Q6A internal 85%, LDO = Vout/Vin.
+  
+  | Mode | W at pack | Warm | Cold |
+  |---|---|---|---|
+  | A idle / menu, display 25% | 8.4 | 6.9 h | 5.9 h |
+  | B LEO pass (LRPT or ISS): 1 V4L + LNA, NPU, display 50% | 17.6 | 3.3 h | 2.8 h |
+  | C QO-100 NB: RTL-B + LNB | 19.2 | 3.0 h | 2.6 h |
+  | D survey: 2 V4L + HF+ + NPU | 22.9 | 2.5 h | 2.2 h |
+  | E LF/HF Quiet: HF+ + Boni-Whip, display off | 8.2 | 7.1 h | 6.1 h |
+  | E2 HF with display 25% | 12.0 | 4.8 h | 4.2 h |
+  | F bench on pack: V4L + AUX sled + noise source + 1 LAB instrument | 18.9 | 3.1 h | 2.6 h |
+  | G peak, no Lime: display 100%, all rails, LAB port 0.75 A, NPU + trainer | 45.0 | 1.3 h | 1.1 h |
+  | H Lime typical: 56 Msps + T7 + RTL-B | 30.8 | 1.9 h | 1.6 h |
+  | I Lime peak | 61.1 | 0.9 h | 0.8 h |
+  | OFF: INA228 + IP2368 standby + BMS + supervisor | about 0.013-0.014 | about 170-185 days | - |
+  
+  The files' figures of 3.7-5.3 h (no Lime) and 2.2-2.6 h (Lime) are superseded. Measure every mode with the INA228 at first power-up and replace the model rows.
+  
+  Power subsystem cost: about $250-345, including the spare D36V50F12 and #2813 (BOM rows).
+- **Port bus and pin allocation:** **USB MAP** (schematic v1.21; Lime-agnostic)
+  
+  | Port | VBUS source | No Lime | Lime kept |
+  |---|---|---|---|
+  | J5 bottom: blue USB 3.1 (USB0, HS+SS; also the EDL port) | U35 WS4612 (about 2.1 A, shared with J5 top) | RTL-A, on a 15 cm shielded extension with a ferrite. It runs at USB 2 HS only, so there is no SuperSpeed noise. | T7 on its own VBUS, mounted outside on the bottom edge. VBUS is split from LAB5 only if the 14 W gate fails. |
+  | J5 top = FE1.1s P1 | U35 | RTL-B (extension + ferrite) | RTL-B |
+  | J2a = FE1.1s P2 | U33 | Touch USB-HID from the display board; board VBUS not linked | same |
+  | J2b = FE1.1s P3 | D+/D-/GND only; Q6A VBUS left unconnected | CH334F #1, its 5V pin fed from LAB5 | same |
+  | CH334F H1 | LAB5 | spare (Pico native USB only if UART7 fails) | same |
+  | CH334F H2 | LAB5 | spare | RTL-A |
+  | CH334F H3 | TPS2553 0.75 A, MCP #1 GPA0 | LAB USB-A: one field device (Pro Stick Plus, spare V4L or an instrument); on the bench, a bank-powered MTT hub | same |
+  | CH334F H4 | load switch (MCP #1 GPA4) + LC + Mix-31 | Airspy HF+ in its can | same |
+  | FE1.1s P4 | WIFI_PWR_EN | FCU760K Wi-Fi/BT: rfkill plus USB authorized=0 in every field and QUIET profile | same |
+  | CH334F #2 | bought as a spare | Fitted behind H1 only if the Lime is kept AND UART7 fails, or if a 5th internal device appears | - |
+  
+  - **Off USB:** GNSS on UART6; the Pico on UART7; the IMU puck on a UART to the Pico; the INA228 on I2C0; the expanders on I2C2.
+  - **Bandwidth (MB/s):** the FE1.1s tree carries RTL-B 5.12 + HF+ 3.07 + one LAB-port device ≤5.12 + touch <0.1, i.e. ≤13.3. Aggregate cap 25 (practical 35-40). The blue port carries RTL-A 5.12, or the T7 at 224 against 395 measured.
+  - **Hub depth to a bench instrument:** 3 hubs, against a limit of 5.
+  
+  **40-PIN HEADER** (level translator in brackets)
+  
+  | Pin | Signal | Use | Owner |
+  |---|---|---|---|
+  | 7 | GPIO96 (UM3304) | PPS in, wire ≤20 cm | kernel pps-gpio |
+  | 8/10 | debug UART (UM3204H) | console, reserved | - |
+  | 13/15 | I2C0 (CJ3134K) | INA228 at 0x40, breakout pull-ups removed | labpowerd |
+  | 16/18 | UART6 (UM3204H) | LC76G (/dev/ttyHS1 → /dev/gnss0) | gpsd |
+  | 27/28 | I2C2 (UM3204H), 100 kHz | MCP23017 #1 0x20 and #3 0x22; TCA9517 A side to the LAB BUS (sled MCP23017 #2 0x21, ADS1115 0x48, RP2040 counter 0x30 only with the Lime). No pull-ups below 10k on the header side; 4.7k on the sled side. | labd |
+  | 32/29 | UART7 TX/RX (UM3304) | Pico UART0, 2-wire, ≤20 cm or via a 74LVC2T45 | labinput |
+  | 3 | GPIO24 (UM3204H) | INA228 ALERT (open drain) | labpowerd |
+  | 5 | GPIO25 (UM3204H) | MCP #3 INTA/B, mirrored, open drain | labd |
+  | 12/35/38 | UM3304 | Pico SWCLK / SWDIO / RUN, service only | OpenOCD |
+  | 40 | UM3304 | safe-boot flag from the Pico | early unit |
+  | 33 | GPIO56 = FP_SPI_MISO (UM3304) | spare (fan fallback only via a 74LVC1G17 + 2N7002) | - |
+  | 1/17, 2/4 | 3.3 V / 5 V | 3.3 V powers MCP #1/#3 and the Pico's Q6A-on sense | - |
+  
+  No safety enable sits on a header GPIO. Verify with debugfs pinmux-pins that every pin has a single owner: check UART6 against GPIO24/25, and that the UART7 overlay is on the held image.
+  
+  **EXPANDERS** (labd; powered from the Q6A's 3.3 V, so the Q6A off means every enable is off; 100k pull-downs)
+  - **MCP23017 #1 (0x20), outputs:**
+    - GPA0 LAB port EN; GPA1 AUX12 EN (BENCH only);
+    - GPA2/GPA3 RTL-A / RTL-B VBUS cuts; GPA4 HF+ VBUS;
+    - GPA5/6/7 LNA ch1 (VHF-137), ch2 (UHF), ch3 (L-band);
+    - GPB0 LNB EN; GPB1 Boni EN;
+    - GPB2 HF+ relay K1 (HF); GPB3 HF+ relay K2 (VHF2);
+    - GPB4/5 RTL-A selector V1/V2; GPB6/7 RTL-B selector V1/V2 (00 = 50 ohm on both).
+  - **MCP23017 #3 (0x22), inputs:** FAULT for the LAB port and ch1-ch4; LNB PG; Boni PG; DC-sense on UHF, L-band and HF; AUX PTC sense; sled present.
+  - **MCP23017 #3, outputs:** GPA7 LNA ch4 EN (WIDE, optional) and GPB7 T7 VBUS (Lime only). GPA7 and GPB7 are output-only on current silicon.
+  - **Sled MCP23017 #2 (0x21):** HMC7992 V1-V3; PE4302 D0-D5; NOISE EN (BENCH); LNA EN.
+  
+  **PICO** (RP2040, 26 GPIO; powered from LAB5 via VSYS)
+  - **Links:** GP0/1 UART0 to and from Q6A UART7; GP8/9 UART1 to and from the IMU puck (115200, framed, CRC).
+  - **HMI:** GP2/3 encoder 1 A/B; GP6/7 encoder 2 A/B; GP4/5 I2C0 to the VEML7700 (0x10) and a PCA9555 (0x20) carrying the 6 keys and 2 encoder pushes; GP10 key INT.
+  - **Power and boot:** GP11 power-button sense (via BAT54); GP12 J21 pin 3, open drain via 2N7002; GP13 #2813 OFF pulse; GP14 Q6A-on sense (header 3.3 V via 10k); GP15 safe-boot to pin 40.
+  - **Display and thermal:** GP16 DISP12 eFuse EN; GP17 backlight dimming (PWM through an RC to analog; direct 24.0 kHz only if the board needs PWM); GP18 Q6A fan FET; GP19 blower FET.
+  - **Other:** GP20 piezo; GP21 status LED; GP22 spare; GP26-28 ADC (panel NTC, pack divider 1:6, case NTC); GP24 internal VBUS sense for the H1 fallback.
+  - **TX pins** are tri-stated while the Q6A's 3.3 V is low.
+  - **Power button** (sealed 12-16 mm momentary, to GND): BAT54 diodes to the #2813 A input (on-only), to J21 pin 3 (the PMIC key, wired-OR with GP12) and to GP11. The supervisor output and GP13 are diode-ORed onto the #2813 OFF input.
+  
+  **OTHER BUSES**
+  - **LAB BUS** (6-pin locking): I2C-B, AUX 12 V, GND.
+  - **IMU puck:** GX12 4-pin socket (3.3/5 V, TX, RX, GND, with TVS) and 1.5-2 m shielded 4-core lead.
+  - **I2C address map:** no collisions. 0x40 on I2C0. 0x20, 0x21, 0x22, 0x48 and 0x30 on I2C2. 0x10 and 0x20 on the Pico's own bus.
+- **Rf chain and switching:** **CASE RF PORTS** (top edge, 20 mm pitch; 7 ports without the Lime = 140 mm)
+  - **P1 VHF-137 SMA** (no DC): Flamingo+ FM #1, then SAWbird+ NOAA (inside, in the RF bay), then injector ch1 (TPS2553 300 mA; bias enters on the SAWbird's output), then a DC block, then RTL-A selector throw T1.
+  - **P2 UHF SMA** (4.5 V bias out on ch2, after DC-sense): injector ch2, then RTL-A T2. The Uputronics 440 MHz CubeSAT filtered preamp (LNA, then a 30 MHz SAW) is always the first part after the antenna. In the patch tier it screws onto P2; in the foldable tier it sits at the Yagi's 70 cm feed.
+  - **P3 L-BAND SMA** (4.5 V bias out on ch3, after DC-sense): injector ch3, then RTL-B T1. Either an LNA at the feed (SAWbird+ GOES, H1 or iO) or the RTL-SDR Blog active L-band patch (20 mA).
+  - **P4 LNB F** (13.2 V): LNB injector (choke rated 1 A or more, DC block), then a 15 dB pad (20 dB if the measured LNB gain is above 60 dB), then RTL-B T2. LNB EN only while the RTL-B selector is on T2.
+  - **P5 HF SMA plus ground/counterpoise post** (DC-capable; 12.5 V goes up the coax only in the Boni profile): Boni-Whip bias tee (inside, by the HF+ can), then HF+ relay K1. The two-stage CM choke sits on the coax just outside P5.
+  - **P6 VHF2/AIS SMA** (no DC): HF+ relay K2. The HF+ covers 64-260 MHz (AIS, FM-RDS, DAB).
+  - **P7 GNSS SMA** (3.3 V from the LC76G): to the LC76G.
+  - **Optional P8 WIDE/2 m SMA:** Flamingo+ #2, then the bench-spare LNA V2, then ch4, then RTL-A T3.
+  - **Lime only:** LIME RX1, LIME RX2 and REF IN SMA. A third HMC7992 routes the ch3 L-band chain to RTL-B or to Lime RX1 through a 10 dB pad. S-band: a 7-turn helix in the cone, an S-band LNA (still unnamed) and a cf2235-kt30 cavity, on RX2.
+  
+  **SELECTORS**
+  - RTL-A and RTL-B each use a generic HMC7992 SP4T board placed behind the injectors. The throws are DC-free; T4 is 50 ohm and is also the 00 power-up default. Isolation must measure 30 dB or more, conducted.
+  - The HF+ uses two Omron G6K-2F-RF relays in series-shunt. De-energised, the HF+ sits on 50 ohm and both antenna ports are terminated. Acceptance: 35 dB or more of isolation at 162-260 MHz, and 0.3 dB or less of loss from 10 kHz to 260 MHz.
+  
+  **BIAS AND INTERLOCKS** (labd)
+  - **V4L tees** stay off in core: librtlsdr token gate, EEPROM bias off. The spare V4L's tee may feed LNAs of 90 mA or less, and only with the token.
+  - **SAWbird+ feeds:** every SAWbird+ runs through a TPS2553 at 300 mA nominal, on an injector rated 0.5 A or more. The TCBT-2R5G+ (200 mA) is used only on channels drawing 150 mA or less.
+  - **DC protection:** DC-sense runs before every bias enable. Bias is locked off on DC-short profiles: the 9:1 balun, and the hairpin Yagi feeds when no LNA is fitted. No micro-USB power at any feed.
+  - **LNB:** EN is interlocked with the RTL-B selector.
+  - **Signal sources:** the GPSDO and the noise source run only in BENCH, with every selector on 50 ohm and conducted at -40 dBm or less.
+  
+  **FRONT-END ORDER RULE**
+  - **VHF (137/145 MHz):** filter first, then LNA. The sky is 1000-3000 K, so the Flamingo+ costs only 0.06-0.45 dB.
+  - **UHF and L-band:** LNA first, at the antenna, then the filter. At 437 MHz a 1-2 dB BPF first costs 0.75-2.84 dB, and 1-2 m of RG316 ahead of the LNA costs about 0.7-1 dB.
+  - **137 MHz:** the LNA sits inside the case in both tiers; 1-1.5 m of RG316 ahead of it costs 0.06-0.36 dB (model).
+  
+  **PER-TARGET CHAINS** (no Lime; patch tier = always carried)
+  
+  | Target | Patch tier | Foldable tier | Port → SDR | Notes |
+  |---|---|---|---|---|
+  | Meteor LRPT 137.1/137.9 MHz | Dipole kit #1 as a V (53.4 cm arms, 120°, N-S, 1-1.1 m), on 1-1.5 m RG316 | Same; optional re-marked Yagi tapes (about 7.7 dBi) | P1 → RTL-A T1, about 1 Msps, gain 10-25 dB | Recorded, then decoded by SatDump |
+  | ISS SSTV 437.550, APRS 437.825, FM 437.800; CubeSats 435-438 MHz | 17 cm whip, or A-V85/SRH-701, on the Uputronics 440 on P2, tilted broadside | Crossed Yagi 70 cm (ultra-compact) with the Uputronics 440 at the feed | P2 → RTL-A T2 | slowrx / OpenWebRX+ SSTV; APRS through the SDRangel RX-only packet demodulator (verify) |
+  | 2 m 145.8-146 MHz (optional) | A-V85/SRH-701 | Yagi 2 m half (hairpin: no bias) | P8 → RTL-A T3 | Filter first |
+  | Meteor HRPT 1700 MHz | 4-turn helix on the shared 18 cm disc, SAWbird+ GOES at the feed | Petal helicone with the same SAWbird+ GOES | P3 → RTL-B T1, 2.4-2.56 Msps | pcie0 off, LNB off. Helix marginal above 25-30° (model); helicone +8.9 to +9.4 dB (model) |
+  | Inmarsat-C EGC SafetyNET | RTL-SDR Blog L-band patch | Helicone + SAWbird+ iO (held until the egc-gate passes) | P3 → RTL-B T1 | Header-level discard; LES channels never tuned |
+  | H1 1420.4 MHz (extended) | Helix + SAWbird+ H1 | Helicone + H1 | P3 → RTL-B T1 | GPSDO off |
+  | GNSS L1 / regional SBAS | Waveshare L1+L5 active antenna | Same | P7 → LC76G. Optional GNSS-SDR: L-band patch → RTL-B | PPS on pin 7 |
+  | QO-100 NB (region-held) | Bare Bullseye + 11 cm cone | 6-gore horn on a tripod | P4 → RTL-B T2 | CW beacon with the bare LNB; PSK with the cone or horn; DATV and typical SSB not feasible without a dish |
+  | ADS-B 1090 MHz | Pro Stick Plus (extended), or spare V4L with 6.5 cm arms, on LAB USB | Same | H3 | readsb lease; tracks with dbFlags&1 suppressed |
+  | AIS 162 MHz | Dipole kit #2, vertical, 44 cm arms | Same | P6 → HF+ K2 | AIS-catcher; type 35 suppressed |
+  | FM-RDS / DAB | Dipole kit #2 | Same | P6 → HF+ (or the spare V4L) | redsea, welle-cli |
+  | Radiosondes 400-406 MHz | Spare V4L with 17.7 cm arms on LAB USB (or P8 WIDE) | Same | H3 | auto_rx 400.0-405.9 MHz; 400.000 and 403.2 MHz ignored |
+  | HF 0.15-31 MHz | - | 7-15 m wire + 9:1 balun 5-10 m away, counterpoise | P5 → HF+ K1 | Bias locked off (DC short) |
+  | LF time signals (DCF77, MSF/WWVB, JJY, TDF), NAVTEX 490/518 kHz | - | Boni-Whip on a mast of 2 m or more, ground stake | P5 → HF+ K1, 12.5 V | LF Quiet profile; SID amplitude-only on civil LF carriers |
+  | Spectrum survey | any port | any port | HF+ 0.5 kHz-31 MHz and 64-260 MHz; V4L 24-1766 MHz | Occupancy only; 3-30 kHz and 225-400 MHz stored as 'no data' |
+  | Calibration | 50 ohm throws on every selector | Same | - | tinySA ≤ -40 dBm, conducted; noise source BENCH only |
+  
+  **SIMULTANEOUS USE:** RTL-A (VHF/UHF), RTL-B (L-band/LNB), the HF+ (HF/LF or AIS) and one LAB-port receiver can run together. A single operator may run the V-dipole fixed on its stand on RTL-A while hand-tracking the helicone on RTL-B.
+- **Thermal plan:** All figures are MODEL (case 210x135x52 mm, two fan paths about 5.4 m3/h, h about 10 W/m2K, 35 C ambient), to be replaced by the noon-soak measurements.
+  
+  **INTERNAL HEAT AND AIR TEMPERATURE RISE**
+  
+  | Mode | Internal heat | Mean air rise, shade / sun | Outlet rise | Note |
+  |---|---|---|---|---|
+  | B LEO pass | 17 W | +6 / +9 K | +10-14 K | - |
+  | D survey | 22 W | +8 / +10.5 K | +13-17 K | - |
+  | G peak, no Lime | 36 W | +13 / +16 K | +21-25 K | SoC throttles |
+  | H Lime typical | 30 W | +11 / +13 K | +17-21 K | - |
+  | I Lime peak | 53 W | +19 / +22 K | +31-35 K | not sustainable |
+  
+  About half of the 13.5-17 W solar load on the face is assumed to reach the internal air. Charging adds about 2.6 W of IP2368 loss inside the case.
+  
+  **AIRFLOW**
+  - **Path 1:** rear intake, stepped copper block (32x31 mm keep-in) with a 40 mm 5 V fan, rear-top exhaust.
+  - **Path 2:** bottom intake, the 4-6 mm channel behind the display with a 5 V blower, the mid-plate fins, side exhaust.
+  - Display air never pre-heats the Q6A fins.
+  - **Fan control:** both fans switch on and off in DC from the Pico. The Q6A fan is on at a SoC of 60 C and off at 50 C (commanded by labd). The blower follows the panel NTC (on at 45 C, off at 40 C). Both go to 100% if the heartbeat is lost.
+  - Intakes have stainless mesh and hydrophobic foam, with ePTFE vents (IPX4/IP54).
+  
+  **PACK**
+  - A separate insulated compartment along the bottom-left intake side, so the cells see near-ambient air.
+  - Behind 3 mm closed-cell foam, reflective film and a 1 mm FR-4 or mica barrier, with a vent path to outside.
+  - The NTC sits on the middle cell. The IP2368 window is 0-45 C; labpowerd shuts down above 60 C at the cell.
+  - Without this, cells downstream of the board would reach 45-55 C at 35 C ambient, block charging and age faster.
+  
+  **CHARGER:** the IP2368 is pad-mounted to the case wall at the bottom edge, at least 10 mm from the cells, with a 70 C KSD9700 in its input. No charging in HF/LF Quiet.
+  
+  **REGULATORS:** the D36V50F12 and both TPS7A4701 are bonded to the mid-plate. The LNB LDO dissipates 0.96 W or less at θJA 30.5 C/W, about +29 K (about 79 C junction at 50 C internal). The D36V28F5 sits near the bottom intake. Sealed-case test: 3.5 A for 60 min at 14.0 V and 16.4 V input, output within 4%, no thermal cut.
+  
+  **DISPLAY**
+  - Bonded panel, light bezel, 30 mm hinged hood, IR film.
+  - NTC derating: above 60 C → 50%; above 68 C → 20%.
+  - Panel temperature (model, backlight 11 / 5.5 / 2.8 W at 100 / 50 / 25%):
+    - 25 C ambient, full sun, 100%: about 61 C.
+    - 35 C ambient, full sun, 100%: about 71 C, above the 70 C rating.
+    - 35 C ambient, full sun, 50%: about 62 C.
+    - 35 C ambient, 50% with the hood: about 53 C.
+  - Physics over the wish: sustained brightness in hot noon sun is about 1000 nits; 2000 nits is a burst.
+  
+  **SoC**
+  - Tj maximum 95 C; throttling at about 90-91 C. Expected about 85 C typical and 90-100 C at G-mode peaks in 35 C sun.
+  - Shedding ladder at 80 and 85 C.
+  - Training only with the SoC below 75 C and the battery above 25%, or on a charger.
+  
+  **Other parts**
+  - **UFS:** padded to a case boss (about 60 C).
+  - **T7 (Lime only):** outside on the bottom edge (rated 0-60 C).
+  - **Lime (if kept):** a 10 W conduction path through the pedestal and a pad of 6 W/mK or more to the plate.
+  
+  **COLD:** no charging below 0 C. UFS and T7 are rated from 0 C. Plan on 50 Wh usable.
+  
+  **ACCEPTANCE:** a 45-min noon soak with the hood fitted, in modes B, D and G, with internal air, cells, SoC, panel and charger temperatures all logged:
+  - frame 60 C or less;
+  - glass 65 C or less;
+  - cells 45 C or less;
+  - no thermal shutdown.
+- **Rf noise plan:** **1. A/B METHOD** (one matrix replaces P4, the display A/B, the HF A/B and the small-stack tests)
+  - **Per used window:** 60 s of IQ at 2.4 Msps, a 2^20-point FFT (2.3 Hz bins) with Welch averaging.
+  - **HF+:** 1 Hz RBW at 40, 60, 77.5, 162, 490, 518 and 4209.5 kHz, and at 1, 7 and 14 MHz.
+  - **GNSS:** mean C/N0 of the 8 strongest satellites from GSV, plus GNSS-SDR on a V4L.
+  - **Why:** at NF 5 dB the floor is -119 dBm in a 100 kHz rtl_power bin against -165 dBm in a 2.3 Hz bin (model). A line that costs about 1 dB on CW, 1200 sym/s or H1 targets is invisible in the old bins.
+  - **States (each toggled alone):**
+    - HDMI link on/off; backlight 0/50/100% and the dimming method; field mode 151.50 vs 127.90 MHz;
+    - pcie0 on/off; Wi-Fi/BT de-authorised; fans on/off;
+    - LAB5 loads; the CH334F; the charger on/off and each PD source;
+    - SYS12 and LAB5 electronic-load steps from 0.3 to 3 A;
+    - LNB on/off with its IF terminated at the LNB; the LNA rails; the Boni rail;
+    - the IMU puck; a V4L streaming on the shared hub; the T7 (Lime build).
+  - **Conditions:** terminated at the SDR, then at the LNA input, then on the antenna; lid closed after a 30-min warm soak.
+  - **Pass:** no line 3 dB or more above the local floor inside a used window; broadband rise of 0.5 dB or less inside the windows; GNSS change of 1 dB-Hz or less.
+  - **Output:** a versioned spur-mask file (frequency, width, source) read by labrx, the SatDump wrapper, auto_rx, the NPU labeller and the UI.
+  - **Effort:** about 4-5 h per full run, 30 min for the regression subset.
+  
+  **2. KNOWN LINES** (exact harmonics in used windows; amplitude unknown)
+  
+  | MHz | Source | Target |
+  |---|---|---|
+  | 1700.000 | 25 MHz x68 (NIC, LNB reference), 100 MHz x17 (pcie0/Lime), 10 MHz x170 (GPSDO) | Meteor HRPT |
+  | 1699.2 | V4L 28.8 MHz x59 | Meteor HRPT |
+  | 1575.000 | 25 MHz x63 | L1 |
+  | 1574.4 | 19.2 MHz x82 | E1 lower lobe |
+  | 1600.0 / 1597.44 | 100 MHz x16, 25 MHz x64 / Lime x52 | GLONASS G1 |
+  | 1560.0 | 12 MHz x130 | BDS B1I |
+  | 1544.4 | 128.70 MHz x12 (pixel-clock mode, banned) | Inmarsat-C |
+  | 1540.0 | GPSDO x154 | Inmarsat-C |
+  | 1420.000 / 1420.8 | GPSDO x142 / 19.2 MHz x74 | H1 |
+  | 1090.000 | GPSDO x109 | ADS-B |
+  | 1689.6 | 76.8 MHz x22, Lime x55 | FY-2H / Elektro window |
+  | 740.000 / 737.28 | GPSDO x74 / Lime x24 | QO-100 IF |
+  | 403.2 / 400.000 | 28.8 MHz x14, 19.2 MHz x21 / 25 MHz x16, 100 MHz x4, 10 MHz x40 | radiosondes |
+  | 144.000 / 432.000 / 1704.0 | 12 MHz (hub, RP2040) | 2 m / 70 cm / Metop |
+  
+  **3. BOARD-LEVEL CONTROLS**
+  - The field DT overlay disables pcie0; Ethernet runs only on home and bench boots. If the NIC crystal still radiates, copper-tape the PHY to the plate.
+  - Wi-Fi/BT: rfkill plus USB authorized=0 in every field and QUIET profile. The self-test confirms the module is absent from lsusb and that 2.4 GHz is silent.
+  - The GPSDO stays off and disconnected for H1, ADS-B and Inmarsat-C sessions.
+  - In field mode only three continuous streams run on the FE1.1s.
+  
+  **4. DISPLAY**
+  - Field EDID: DTD1 at 151.50 MHz (2200x1148, 59.99 Hz). My scan puts it in a clean window of 148.11-153.27 MHz; its line rate of 68.86 kHz is at least 8.6 kHz from every LF carrier. DTD2 at 127.90 MHz (51.68 Hz; clean 123.62-128.04 MHz).
+  - Strip the CEA VICs. 148.5 MHz is for bring-up only. 128.70 MHz is banned.
+  - Verify the delivered clock with modetest and debugfs, then near-field E-probe the predicted harmonic line.
+  - Shielded 10-15 cm HDMI lead with Mix-31/61 ferrites; LC-filtered DISP12; backlight dimmed in analog/DC (24.0 kHz only if PWM is unavoidable).
+  
+  **5. LF/MF COMBS**
+  - Fans run on DC, with no PWM.
+  - The D36V50F12 (about 500 kHz, with a power-save mode at light load) is gated by the A/B. If it fails, replace it with a fixed-frequency forced-PWM synchronous buck whose frequency comes from a harmonic scan.
+  - The IP2368's 250 kHz has its 2nd harmonic 10 kHz from NAVTEX 490 kHz, so there is no charging in HF/LF Quiet.
+  - USB frame lines at 1 and 8 kHz: only the HF+ streams in LF Quiet.
+  - SID logs subtract a terminated-input baseline taken in the same profile.
+  
+  **6. RAILS:** the LNB, Boni-Whip and LNA rails are all LDO-fed, so there is no switcher near the 739.5 MHz IF or the HF feed. Every rail leaving the power board has an LC pi-filter. The HF+ VBUS gets LC plus Mix-31.
+  
+  **7. HF**
+  - A two-stage CM choke at the HF bulkhead: 77-mix for LF/MF and 31-mix for HF. Targets are 1 kOhm or more at 60 kHz and 2-5 kOhm at 1-30 MHz, measured conducted on the LiteVNA.
+  - The bulkhead is bonded to the mid-plate, with a ground stake or counterpoise at the antenna and the feed point 5-10 m away.
+  - The HF+ sits in a tinplate can at the far end from the bucks.
+  
+  **8. LAYOUT**
+  - An RF bay of soldered copper-clad FR4 along the top edge, with seams of 7 mm or less.
+  - The V4Ls sit inside the bay on 15 cm shielded extensions with ferrites, away from the HDMI/J5 edge.
+  - The GNSS antenna is external on a 1-3 m lead. A lid patch is allowed only if it passes the C/N0 on/off test.
+  
+  **9. LNB PATH**
+  - EN only while it is selected; injection on the antenna side of the DC-free selector.
+  - 15/20 dB pad. Padding costs no SNR because LNB noise dominates, and it keeps the V4L below its -20 to -40 dBm desense range.
+  - Double-shielded 75 ohm lead and tight F connectors. Check DVB-T and LTE B28 ingress once the region is known.
+  
+  **10. IMU PUCK:** metal shell bonded to the cable shield, a 31/43-mix ferrite at the puck, mounted 30 cm or more behind the driven elements, connected over UART rather than USB. A/B at 145.9 and 437 MHz.
+  
+  **11. LIME (if kept)**
+  - The T7 never writes during L-band, S-band or GNSS sessions; labrx decimates those to 1 Msps or less and writes them to UFS.
+  - Shielded riser; 10-12 dB pads after the SAWbirds; TX port terminated with 50 ohm.
+  - The Lime build gets its own A/B run.
+  
+  **12. POLICY:** the 3-30 kHz and 225-400 MHz bins are masked to 'no data' before storage. Uploaders are off.
+- **Software and process architecture:** **BASE SYSTEM**
+  - Radxa OS r2 (noble) on SPI BIOS 6.0.260120, with linux-image-6.18.2-4-qcom held.
+  - A/B root on UFS with systemd-boot boot counting and a rescue entry.
+  - Kernel command line via /etc/kernel/cmdline and kernel-install: preempt=full, drm.edid_firmware=HDMI-A-1:edid/field.bin (EDID in the initramfs) and video=HDMI-A-1:1920x1080@60 (or @52). With the Lime only: pcie_aspm=off isolcpus=nohz,domain,managed_irq,7 nohz_full=7 rcu_nocbs=7 irqaffinity=0-6.
+  - lab-q6a.dtso combines uart6, uart7, i2c0 and i2c2 with a pps-gpio node on GPIO96. The field variant disables pcie0.
+  - FastRPC golden set (CDSP c4-00004, ADSP c9-00028, a shared-dma-pool overlay), with QAIRT 2.42.0.251225 from qcom-qnn-sdk-v68.
+  
+  **PROCESSES (one owner per resource)**
+  - **labd** (Python): owns I2C2 through smbus2 (MCP #1 outputs, MCP #3 inputs, the sled through the TCA9517). It also owns every enable, the selectors, SDR leases and modes, the pass scheduler, profiles and instrument serial drivers, plus rfkill and USB de-authorisation.
+    - Policy it enforces:
+      - the egc-gate (header-level discard; the profile stays disabled until the mixed-recording test passes);
+      - the band mask; the Artemis 'out of scope' stop;
+      - DSC distress/urgency/safety only; SITOR, skimmer and WEFAX allow-lists;
+      - ADS-B dbFlags&1 and AIS type 35 suppression;
+      - no bearing logs.
+    - For each lease it writes transient DevicePolicy=closed and DeviceAllow drop-ins.
+    - rflab and lab-sched become labd modules; the CLI is labctl.
+  - **labrx** (C++):
+    - The only SDR opener in labrx mode, using librtlsdr .so.2+lab, libairspyhf and LimeSuiteNG if kept.
+    - Holds the single mlocked RAM ring, sized at boot.
+    - Writes SigMF: V4L as cu8, HF+ as ci16, Lime as ci16.
+    - Makes FFT tiles with VkFFT on Turnip, falling back to FFTW.
+    - Applies the spur mask and band mask before storage, and keeps no voice IQ.
+    - Fans out over shm, UDP or FIFO to gr-satellites, SatDump (file or pipe), the SDR++ network source and slowrx.
+    - Provides the NPU tap and the MARK pre-trigger.
+  - **labclassify:** inferd-htp (sandboxed: WatchdogSec=5, MemoryMax=1G, CPUAffinity 0-3, one execute thread, 500 ms deadline broker, CDSP restart ladder), inferd-cpu (ONNX Runtime 1.31), fusiond, annotd and npu-health.
+  - **labtrain:** a transient unit started by labd between passes: A78 cores, SCHED_IDLE, nice 19, MemoryMax 2G.
+  - **labpowerd** (Python): owns the INA228 on I2C0 through i2c-dev, KEY_POWER through evdev, the cutoff table and the shed commands to labd. Restart=always, logind HandlePowerKey=ignore, poweroff and never halt.
+  - **labinput:** the framed UART7 protocol with the Pico: keys, encoders, IMU frames, heartbeat, and fan, backlight and display-rail commands.
+  - **gpsd 3.25** on UART6, with **chrony 4.5** (refclock PPS /dev/pps0 lock NMEA; maxchange 5 1 -1; rtcsync). pps-gpio is an out-of-tree DKMS module; the Route A fallback runs on the GPIO v2 ioctl with REALTIME timestamps.
+  - **The location service** gates each fix:
+    - 3D fix with 6 or more satellites;
+    - time within 120 s of the RTC;
+    - a jump over 100 km needs confirmation.
+  
+    It computes WMM2025 at the fix. Fallbacks are the last good fix with its age, or manual lat/lon or Maidenhead entry; there is no city table. A first-boot bootstrap accepts a fix that has been stable for N minutes with 8 or more satellites.
+  
+  **SDR ACCESS**
+  - **Mode 1, labrx (default):** passes, survey, NPU teaching and MARK. Passes are recorded and then decoded by SatDump 2.0-alpha from the baseband file; a live pipe is used only if the alpha supports it.
+  - **Mode 2, engine-exclusive lease:** readsb, AIS-catcher, radiosonde_auto_rx (uploaders off), OpenWebRX+ 1.2.126, sdrangelsrv (NAVTEX, RTTY, WEFAX, Radio Clock) and the SDR++/SDRangel Expert GUIs. The engine opens the device itself, with ai_tap=false and REC limited to products.
+  - **Hand-off sequence:** stop → release → re-enumeration check → start.
+  
+  **UI:** Lab Shell (Qt 6.4.2 QML) on labwc 0.7.1 with XWayland, labbar (GTK3 + gtk-layer-shell), greetd with a crash counter, and cage as safe mode. One waterfall renderer: a QQuickItem in the Shell, fed from labrx shared memory. Every capture-critical leaf works from the keys and encoders alone, and a CI menu test checks every leaf with and without the Lime and T7.
+  
+  **ALLOWED DECODERS:**
+  - satellites: SatDump (inmarsat_support not built), gr-satellites 5.5;
+  - amateur and SSTV: jt9/wsprd only, slowrx (from source), SDRangel 7.27.2 RX-only (no TX/DSD plugins, demodinmarsat removed);
+  - monitors: OpenWebRX+ (pinned), readsb/tar1090 with cached tiles, AIS-catcher, auto_rx;
+  - broadcast: welle-cli, redsea;
+  - science and navigation: Virgo, GNSS-SDR;
+  - multimon-ng with EAS only, and only in the US profile.
+  
+  **BANNED** (CI and device self-test policy audit): the wsjtx GUI, fldigi, QSSTV, direwolf, SoapyRemote, URH, gr-iridium, gr-gsm, kalibrate, pager and trunking decoders, the LimeSuiteNG Amarisoft plugin, SDRangel TX and DSD .so files, and bias options in engine configs.
+  
+  **PACKAGING**
+  - **Repository and pins:**
+    - signed aptly repo of +labN debs built from tagged commits on an arm64 builder;
+    - third-party debs mirrored into it: OpenWebRX+ 1.2.126, linux-headers 6.18.2-4, the radxa firmware, qcom-qnn-sdk-v68;
+    - holds: the kernel and its meta-packages, the firmware and NPU set, Mesa 25.2.8-0ubuntu0.24.04.4 with libdrm 2.4.125, xwayland/wlroots/labwc/qt6, systemd-boot and pipewire;
+    - a -1 pin list; unattended-upgrades removed; the apt and fwupd timers masked.
+  - **Device hygiene:** brltty purged; ModemManager masked; udev names /dev/lab/<name> by serial.
+  - **librtlsdr:** noble 2.0.1 rebuilt with 0204c9c, 65f0658, the zerocopy fix and the bias-tee token patch; rtl_biast diverted; dvb_usb_rtl28xxu blacklisted.
+  - **Python tools:** one venv per tool (NanoVNA-Saver via pipx; QtTinySA with PySide6 6.12; Skyfield 1.55 and sgp4 2.27; the lab venv on numpy<2).
+  - **Lime only:** la9310-limesdr-dkms+lab, built with -DBUILD_PLUGINS_AMARISOFT=OFF.
+  
+  **UPDATES:** a GPG-signed offline bundle from a USB stick on LAB USB. It needs 50% battery or more, installs into the inactive root, refuses to proceed if a held package would change, then runs the self-test and blesses the new root; otherwise boot counting rolls back.
+  
+  **MEMORY POLICY**
+  - labrx: LimitMEMLOCK=infinity, OOMScoreAdjust -900.
+  - labd and labpowerd: -1000. Trainer 900, Expert GUIs 700, OpenWebRX+ 500, inferd 300.
+  - No disk swap; zram 1 GiB at low priority. systemd-oomd off, or limited to the trainer and Expert slices.
+  
+  **ROADMAP**
+  - W1-2 gates (19 Oct-1 Nov 2026): board, kernel, buses, NPU Phase 0, power logs, A/B.
+  - P0a/P0b (Nov-Dec): the 1.5 GiB ring and a minimal labeller.
+  - The HF-F and second-RTL profiles ship before any HF class appears in the UI.
+  - Lime work only if the Lime is kept on 1 Dec.
+- **Ram cpu storage budget:** **RAM** (12 GB board; about 11.3 GiB visible, extrapolated from measured boards: 6 GB shows 5609 MB, 8 GB shows 7604 MiB; app RSS figures are MODEL)
+  
+  | Consumer | GiB |
+  |---|---|
+  | OS | 0.45-0.7 |
+  | labwc + Xwayland + labbar | 0.15-0.3 |
+  | Lab Shell | 0.3-0.9 |
+  | labd, labpowerd, labinput | 0.12-0.25 |
+  | labrx, without the ring | 0.15-0.35 (+ shm) |
+  | labclassify (inferd-htp MemoryMax 1 GiB) | 0.6-1.35 |
+  | SatDump, post-pass | 0.4-1.2 |
+  | SDRangel | 0.2-0.5 |
+  | OpenWebRX+ | 0.2-0.5 |
+  | readsb, AIS-catcher, auto_rx | 0.25-0.5 |
+  | Expert GUI | 0.25-0.5 |
+  | trainer (MemoryMax, between passes only) | up to 2.0 |
+  | headroom | 1.0 or more |
+  
+  IQ ring, mlocked and sized once at boot by labrx from the SDR set present:
+  - **No Lime:** 1.5 GiB, about 98 s of 2 RTL + HF+ at 16.4 MB/s.
+  - **Lime:** 4 GiB, 19.2 s at 56 Msps ci16.
+  - **Burst profile:** +3 GiB, only when the trainer, OpenWebRX+, SDRangel and the Expert GUIs are stopped. The 7 GiB total gives about 30 s of 160 Msps while draining to the T7.
+  - The 6 and 8 GiB figures are deleted.
+  
+  Free RAM (model): no Lime, pass 4.6-7.4 GiB; no Lime, training 3.3-5.6; Lime, pass 2.1-4.9; Lime, training 0.8-3.1. The 8 GB board would sit at -0.2 to +2.2 in no-Lime training, so it is rejected.
+  
+  **CPU** (MODEL)
+  - **CPU0-3 (A55, 1.9 GHz):**
+    - Shell, labwc and labbar: 0.4-0.8 core.
+    - Daemons, gpsd and chrony: 0.1-0.2.
+    - labclassify host, fusion and stage-2: 0.3-0.5.
+    - ORT CPU detector: up to 1.0 (CPUQuota 100%).
+    - Total: 0.8-1.5 typical, 1.8-2.5 in CPU-fallback mode.
+  - **CPU4-6 (A78, 2.4 GHz), plus CPU7 (2.7 GHz) without the Lime:**
+    - labrx ingest, FFT and tiles for 2 RTL + HF+: 0.3-0.5 core, at SCHED_OTHER nice -5.
+    - SatDump: LRPT 0.3-0.5, HRPT 1-1.5 per instance.
+    - SDRangel HF 0.3-0.6; readsb 0.3-0.5; OpenWebRX+ 0.5-1.
+    - Trainer T2: 3 cores at SCHED_IDLE nice 19, between passes only (4.5-10.8 min per run, or 1-3 min with frozen layers).
+    - An LRPT + HRPT pass with the loggers needs 2.8-4.5 cores. That fits 4 cores without the Lime; with the Lime, labd pauses the loggers during Lime passes.
+    - If VkFFT fails on the Adreno 643, the LIME-W CPU fallback needs about 2 more A78 cores.
+  - **CPU7, Lime only:** isolated, with the Lime MSI moved off it. lime:Rx0 runs at SCHED_OTHER nice -20 if it busy-polls, or SCHED_FIFO 10 if it blocks; decide with the limeTRX loss counters.
+  - **GPU:** VkFFT needs about 7.8 GFLOPS of the 808 GFLOPS FP32 measured by Radxa on Mesa 25.2.8.
+  - **NPU tile load:**
+    - 2x V4L: 14.6 tiles/s (verified).
+    - Adding HF-F: 16.6-17.6 tiles/s (model), so the HTP gate is p99 of 28 ms or less at 50% duty.
+    - Lime + RTL: 42.5 tiles/s (verified), so the gate is p99 of 11.7 ms or less, or 41 tiles/s or fewer.
+    - CPU mode reaches 4-6 tiles/s, so it runs the schedule of about 5 tiles/s.
+  
+  **STORAGE**
+  
+  UFS 128 GB (about 119 GiB) layout:
+  
+  | Partition | Size | Note |
+  |---|---|---|
+  | ESP | 1 GiB | - |
+  | root A | 22 GiB | systemd-boot boot counting, rescue entry |
+  | root B | 22 GiB | - |
+  | /data | about 74 GiB | NPU dataset quota 20 GB (18.6 GiB), apt mirror 4, map tiles 4, models and golden set 0.3, logs 0.5 (journald 200M) |
+  | of which recordings | about 46 GiB | including a 30 GiB rolling raw cap |
+  
+  Write speed is 388 MB/s inside the about 4 GiB WriteBooster cache; the sustained speed after the cache fills is unknown. Read the chip ID on arrival (0x01CE means Samsung).
+  
+  Recording rates:
+  
+  | Stream | Rate |
+  |---|---|
+  | 1 V4L, cu8 at 2.56 Msps | 5.12 MB/s = 18.4 GB/h |
+  | 2 V4L | 36.9 GB/h |
+  | HF+, ci16 at 768 ksps | 3.07 MB/s = 11 GB/h (cf32 only for derived products) |
+  | 2 RTL + HF+ | 13.3 MB/s = 48 GB/h; the 30 GiB cap lasts about 40 min |
+  | One 15-min HRPT pass | 4.6 GB |
+  | Lime, 56 Msps ci16 | 224 MB/s, T7 only, about 74 min per TB |
+  
+  - **Retention:** products are kept by default; raw only when pinned. Unpinned raw is deleted after the decoder oracle runs. labrx refuses to start a raw recording that its cap cannot hold.
+  - **Secondary storage, no Lime:** a V30 endurance microSD of 128-256 GB, bought when NAND prices allow (the 61 MB/s measured class is 3.7x the worst stream). It takes raw overflow and a second snapshot copy.
+  - **Secondary storage, Lime:** a T7 1 TB on the blue port (port limit 395 MB/s, 1.76x 224 MB/s): NPU raw 400 GB for 14 days, captures and bursts 300 GB, a 64 GiB exFAT exchange area and a snapshot copy.
+  - **Boot safety:** data media carry no ESP, because the boot order is USB > SD > NVMe > eMMC > UFS. Acceptance: 20 cold boots with the data card and a LAB stick inserted all land on UFS. The 64 GB rescue card is kept outside the case.
+- **Mechanical layout and kit:** **HANDHELD**
+  
+  Landscape, planned at 220-225 x 135-140 x 55-60 mm. Parametric light-grey ASA shell (PETG rejected: it softens at 75-80 C). A 2 mm aluminium mid-plate serves as chassis, ground, shield and heat spreader.
+  
+  **Front:**
+  - The bonded 7in panel on the left (glass about 164.2x98 mm, inferred; the bezel is drawn only after the panel passes acceptance).
+  - A right-hand HMI column 38-42 mm wide:
+    - a 30-35 mm main push-encoder;
+    - a volume push-encoder;
+    - 2x3 sealed keys (HOME, BACK, REC, MARK, FN, LOCK) at a 13 mm pitch;
+    - the VEML7700 on the outer top face of the bezel, outside the 30 mm hinged hood, which folds flat as a lid.
+  - A left-hand version is a mirrored reprint, not soft keys.
+  
+  **Inside, front to back:**
+  - **Display:** glass, panel and HDMI board; a 4-6 mm display air channel with a 5 V blower; then the mid-plate fins.
+  - **Q6A:** 85x56 mm, drawn from Radxa STEP v1.21. Stepped copper block in the 32x31 mm keep-in, with a 40 mm fan to a rear vent.
+  - **RF bay** (soldered copper-clad FR4) along the top edge behind the antenna bulkheads: 2x V4L on 15 cm shielded extensions, the Flamingo+, the SAWbird+ NOAA, the injector board, 2x HMC7992 and the LNB injector with its pad.
+  - **HF+ can** (tinplate) at the top right, as far as possible from the bucks, together with the Boni bias tee and the G6K selector board.
+  - **Power board** (D36V50F12, D36V28F5, 2x TPS7A4701, 2x LT3045, INA228, #2813, AON LDO, supervisor) at the bottom right, with the regulators bonded to the plate.
+  - **IP2368:** pad-mounted to the case wall at least 10 mm from the cells.
+  - **Pack** (46x25x150 mm) in an insulated compartment along the bottom-left intake side, with a barrier and a vent path.
+  - **UFS:** padded to a case boss.
+  
+  **Airflow:** two separate paths. Intakes at the bottom and rear behind mesh and foam; exhausts at the rear top. The weather target is IPX4/IP54; IP67 is impossible with forced air.
+  
+  **Panels and penetrations (11-14 in total):**
+  - **Top edge:** P1 VHF-137, P2 UHF, P3 L-BAND, P4 LNB F, P5 HF with a ground post, P6 VHF2/AIS, P7 GNSS; optional P8 WIDE; with the Lime, LIME RX1, RX2 and REF IN.
+  - **Bottom edge:** the IP2368 USB-C (the only power input), a capped LAB USB-A, a 6-pin locking LAB BUS, 3.5 mm audio, and the T7 lead exit (Lime).
+  - **Back:**
+    - a captured 1/4-20 nut, or a press-in steel insert in a boss of 6 mm or more (never a thread tapped in the 2 mm plate; pull-test at 3x the device weight);
+    - 2-4 strap lugs for the hand and neck straps;
+    - the GX12 4-pin IMU socket;
+    - a service hatch with the console UART and access to the blue USB-A for EDL with an A-to-A cable.
+  - The Q6A USB-C has no case opening.
+  
+  **Lime provisions:** cut the mid-plate once with the pedestal and riser-clamp holes. Desolder J21 only after burn-in, and only if the Lime is kept; then wire J21 from the bottom pads with a 20 AWG twisted pair. Print the no-Lime shell first; reprint only the top-edge strip if the Lime is kept.
+  
+  **KITS**
+  - **Patch / always-carried pouch:**
+    - dipole kit #1 (the V-dipole for LRPT) and dipole kit #2 (AIS/FM);
+    - a 17 cm whip, or an A-V85/SRH-701;
+    - the Uputronics 440, when it is not on P2;
+    - the RTL-SDR Blog L-band patch;
+    - the 4-turn helix on the 18 cm disc with the SAWbird+ GOES;
+    - the GNSS antenna;
+    - 1-2 m RG316 jumpers.
+  
+    Region-dependent: the bare Bullseye with its 11 cm cone.
+  - **Foldable backpack kit** (every piece 35 cm or less; the ultra-compact Yagi has pieces of 17 cm or less), in a 15-20 L daypack:
+    - the crossed Yagi;
+    - the petal helicone (shares the disc, helix and SAWbird+ GOES);
+    - the gore horn (region-dependent);
+    - the HF wire reel, 9:1 balun, 5-10 m of coax and counterpoise;
+    - the Boni-Whip with a shock-corded 7x35 cm mast, guys and a stake;
+    - a travel tripod 35 cm or less folded, with pan-tilt;
+    - an antenna roll and element tube;
+    - a field pouch: tinySA, FNB58, DMM, pads, loads, Debug Probe.
+  - **Bench kit** (Pelican 1450 / Apache 3800, bench only):
+    - LiteVNA 64 and the noise source;
+    - the pad kit, 30 dB pads, BLK-89-S+, ANNE-50+, 086-6SM+;
+    - torque wrench, adapters and the spare LNA V2;
+    - Hantek 6022BE with an LA, Pinecil and ESD mat;
+    - Anker 737, MTT hub, ISDT 608PD and tools.
+  
+    The extended kit adds the LBE-1420, the sled, the Pro Stick Plus, the DPS-150 and the SAWbird+ H1.
+  - **Travel:** the home-built 72 Wh pack is never flown. The Anker 737 (100 Wh or less) and instruments with Li cells go in the cabin bag; the Pelican may be checked.
+- **Size weight estimate:** All figures are MODEL estimates, to be re-derived from the CAD once the panel and pack are in hand.
+  
+  **Handheld**
+  - Size: 220-225 x 135-140 x 55-60 mm, plus about 5 mm for the folded hood. Interior fill 48-63%.
+  - Weight: 1.35-1.6 kg without the Lime, +0.15 kg with it.
+  
+  | Part | kg |
+  |---|---|
+  | shell | 0.26-0.33 |
+  | mid-plate | 0.14 |
+  | display module | 0.12-0.18 |
+  | pack, BMS and barrier | 0.32 |
+  | Q6A and cooler | 0.09 |
+  | RF bay contents | 0.2-0.25 |
+  | HF+, can and selector | 0.1 |
+  | power board | 0.05-0.07 |
+  | bulkheads and cables | 0.14 |
+  | HMI and hood | 0.1 |
+  
+  **Carried kit**
+  
+  | Item | Weight | Volume |
+  |---|---|---|
+  | Patch-tier extras | 0.25-0.4 kg | about 0.8 L |
+  | Foldable kit (with LNB, LNAs, jumpers) | 1.3-1.8 kg | 6-6.5 L |
+  | HF kit (wire, balun, coax) | 0.4-0.5 kg | 0.8 L |
+  | Boni-Whip and mast | 0.5-0.75 kg | - |
+  | Tripod | 0.3-0.6 kg | - |
+  | Field pouch | 0.8 kg | 2 L |
+  
+  **Field daypack (15-20 L):** 4.4-6.0 kg without the HF kit and mast; 5.3-7.3 kg fully loaded. A sling is not enough.
+  
+  **Bench case:** a Pelican 1450 (14.5 L interior) holds about 8.8 L (61%) and weighs 8.2-9.1 kg loaded. The Pelican figures are unverified because pelican.com returned 403.
+  
+  **Setup times (targets, unmeasured)**
+  - Boot to Shell: 60 s or less. GNSS 3D fix: 60 s or less (LC76G TTFF unverified). IMU sun-sight north: about 1 min.
+  - Patch tier: whip 0.5 min; helix on the mini tripod 2 min; LNB with cone, pointed, 2-3 min.
+  - Foldable: dipole 2 min, Yagi 4 min (8-9 min ultra-compact), helicone 3 min, horn 4 min; all of it 13 min (17-18 min with the ultra-compact Yagi).
+  - HF wire 8-12 min; Boni-Whip on its mast 5-8 min; bench 10-15 min.
+  - Arrival to the first LEO pass with one antenna: 6-10 min. Full camp including HF: 25-35 min.
+  - Pass cards warn at T-(setup+5) min.
+- **Integrated bom:**
+  1.
+    - **Group:** Compute
+    - **Item:** Radxa Dragon Q6A 12 GB (QCS6490)
+    - **Qty:** 1
+    - **Tier:** core
+    - **Price usd:** 166.37 (TinyTronics EUR 148 incl. VAT, EU, verified) / 189.99 (Allnet, verified)
+    - **Budget alternative:** None (8 GB rejected)
+    - **Notes:** Burn-in on arrival. Allnet returns are 7 days, unused only.
+  2.
+    - **Group:** Compute
+    - **Item:** Radxa UFS 3.1 128 GB RA022-B10J0U2
+    - **Qty:** 1
+    - **Tier:** core
+    - **Price usd:** 65.90 (Allnet, verified)
+    - **Budget alternative:** TinyTronics EUR 58 (2-4 weeks)
+    - **Notes:** A/B root; read ID 0x01CE
+  3.
+    - **Group:** Cooling
+    - **Item:** Radxa Armor 7056A heatsink or stepped Cu block + Adafruit 6101 40 mm 5 V fan + 5 V display-channel blower
+    - **Qty:** 1 set
+    - **Tier:** core
+    - **Price usd:** 19.85-24.85 (blower estimated)
+    - **Budget alternative:** Arace case $4.99
+    - **Notes:** DC on/off from the Pico, no PWM
+  4.
+    - **Group:** Display
+    - **Item:** Wisecoco 7in 1920x1080 2000+ nit HDMI kit (gated on written answers)
+    - **Qty:** 1
+    - **Tier:** core
+    - **Price usd:** 132.00 (verified)
+    - **Budget alternative:** 4D 4DHDMI-70-1280-800-CT-EAR-1000 $128.95 DigiKey (verified)
+    - **Notes:** Accept: ≥1800 nits; ≤14 W at 100%, ≤7.5 W at 50%; USB-HID; 151.50/127.90 MHz modes
+  5.
+    - **Group:** Display
+    - **Item:** Shielded HDMI lead Adafruit 2420 + 2x Wurth 74271140 ferrites
+    - **Qty:** 1 set
+    - **Tier:** core
+    - **Price usd:** 17.77
+    - **Budget alternative:** Adafruit FPC kit $14.50
+    - **Notes:** -
+  6.
+    - **Group:** Display
+    - **Item:** Printed 30 mm hinged hood + 7in AR film + VEML7700 breakout
+    - **Qty:** 1 set
+    - **Tier:** core
+    - **Price usd:** 15-25 (estimate)
+    - **Budget alternative:** Hood only
+    - **Notes:** Lux sensor outside the hood
+  7.
+    - **Group:** HMI
+    - **Item:** Raspberry Pi Pico (RP2040), HMI + supervisor MCU
+    - **Qty:** 2 (1 spare)
+    - **Tier:** core
+    - **Price usd:** 10.12 (2 x GBP 3.80)
+    - **Budget alternative:** -
+    - **Notes:** On switched LAB5; 26 GPIO
+  8.
+    - **Group:** HMI
+    - **Item:** Bourns PEC11R-4215F-S0024 x3, C&K KSC641J IP67 keys x10, Adafruit 2055 knobs x2
+    - **Qty:** 1 set
+    - **Tier:** core
+    - **Price usd:** 17.75 (DigiKey lines not re-checked)
+    - **Budget alternative:** EC11 + O-ring boot
+    - **Notes:** -
+  9.
+    - **Group:** HMI
+    - **Item:** PCA9555 key expander, piezo, status LED
+    - **Qty:** 1 set
+    - **Tier:** core
+    - **Price usd:** 5-10 (estimate)
+    - **Budget alternative:** -
+    - **Notes:** 8 switches with INT on the Pico I2C
+  10.
+    - **Group:** IMU
+    - **Item:** Adafruit BNO085 4754 + RP2040-Zero + metal puck, GX12 4-pin pair, 1.5-2 m shielded 4-core lead, TVS
+    - **Qty:** 1 set
+    - **Tier:** core
+    - **Price usd:** 64.49-89.49 (29.50 + 4.99 + 30-55 estimate)
+    - **Budget alternative:** SparkFun BNO086 $34.95
+    - **Notes:** UART relay to the Pico; never USB
+  11.
+    - **Group:** GNSS
+    - **Item:** Waveshare LC76G 24370 + RTC CR2032 cell
+    - **Qty:** 1
+    - **Tier:** core
+    - **Price usd:** 15.94 (verified)
+    - **Budget alternative:** Uputronics MAX-M10S if spoof flags are needed
+    - **Notes:** UART6; PPS on pin 7
+  12.
+    - **Group:** Interface
+    - **Item:** Adafruit CH334F MTT hub 5997
+    - **Qty:** 2 (1 fitted, 1 spare)
+    - **Tier:** core
+    - **Price usd:** 9.90 (verified)
+    - **Budget alternative:** Pi Hut GBP 4.80
+    - **Notes:** 5V pin from LAB5; Q6A VBUS unconnected
+  13.
+    - **Group:** Interface
+    - **Item:** Adafruit MCP23017 5346 (0x20 outputs, 0x22 inputs)
+    - **Qty:** 2
+    - **Tier:** core
+    - **Price usd:** 11.90 (verified)
+    - **Budget alternative:** TCA9535
+    - **Notes:** Powered from Q6A 3.3 V; 100k pull-downs
+  14.
+    - **Group:** Interface
+    - **Item:** TCA9517 buffer, 74LVC1G17, 2N7002/AO3400 FETs, relay driver, BAT54 diodes
+    - **Qty:** 1 set
+    - **Tier:** core
+    - **Price usd:** 5-10 (estimate)
+    - **Budget alternative:** -
+    - **Notes:** -
+  15.
+    - **Group:** Recovery
+    - **Item:** ALLNET 64 GB microSD + Adafruit 5212 reader + 6324 cable + USB3 A-A EDL cable
+    - **Qty:** 1 set
+    - **Tier:** core
+    - **Price usd:** 31.89
+    - **Budget alternative:** -
+    - **Notes:** Rescue card kept outside the case
+  16.
+    - **Group:** Power
+    - **Item:** Molicel INR21700-P50B
+    - **Qty:** 5 (4 + spare)
+    - **Tier:** core
+    - **Price usd:** 49.95 (9.99 each, 18650 Battery Store, verified)
+    - **Budget alternative:** Local established retailer; NKON EUR 6.75 (unverified)
+    - **Notes:** Test ≥4.85 Ah, IR, 68-70 g
+  17.
+    - **Group:** Power
+    - **Item:** Daly 4S 15 A common-port balancing BMS
+    - **Qty:** 1
+    - **Tier:** core
+    - **Price usd:** 9.00 (TinyTronics)
+    - **Budget alternative:** Other 4S 15-20 A
+    - **Notes:** Charger wake test 3/3
+  18.
+    - **Group:** Power
+    - **Item:** IP2368 4S 100 W PD board, charge-only BZ (RVSET 5.1k, RISET 15k)
+    - **Qty:** 2
+    - **Tier:** core
+    - **Price usd:** 25-49 (unverified)
+    - **Budget alternative:** -
+    - **Notes:** Burn in; 10k B3380 NTC; KSD9700
+  19.
+    - **Group:** Power
+    - **Item:** Pololu D36V50F12 (SYS12)
+    - **Qty:** 2 (1 spare)
+    - **Tier:** core
+    - **Price usd:** 79.90 (verified, Rationed)
+    - **Budget alternative:** Fixed-frequency forced-PWM sync buck (P5) if the A/B fails
+    - **Notes:** Plate-bonded
+  20.
+    - **Group:** Power
+    - **Item:** Pololu D36V28F5 (LAB5)
+    - **Qty:** 1
+    - **Tier:** core
+    - **Price usd:** 23.95
+    - **Budget alternative:** -
+    - **Notes:** 3 A fuse
+  21.
+    - **Group:** Power
+    - **Item:** Pololu #2813 HP pushbutton power switch
+    - **Qty:** 2 (1 spare)
+    - **Tier:** core
+    - **Price usd:** 17.90 (8.95 each, verified)
+    - **Budget alternative:** -
+    - **Notes:** Button wired on-only (A to GND)
+  22.
+    - **Group:** Power
+    - **Item:** Adafruit INA228 5832
+    - **Qty:** 1
+    - **Tier:** core
+    - **Price usd:** 14.95 (verified)
+    - **Budget alternative:** -
+    - **Notes:** Shunt in the pack lead; AON 3.3 V; pull-ups removed
+  23.
+    - **Group:** Power
+    - **Item:** TI TPS7A4701 LDO (LNB 13.2 V, Boni 12.5 V)
+    - **Qty:** 2
+    - **Tier:** core
+    - **Price usd:** 10-20 (unverified)
+    - **Budget alternative:** TPS7A4700 audio LDO module boards
+    - **Notes:** 36 V in, 1 A (ti.com verified); PG to MCP #3
+  24.
+    - **Group:** Power
+    - **Item:** ADI LT3045 (paralleled 4.5 V LNA rail)
+    - **Qty:** 2
+    - **Tier:** core
+    - **Price usd:** 16.66 (LCSC 8.33 each)
+    - **Budget alternative:** -
+    - **Notes:** LCSC is not ADI-franchised
+  25.
+    - **Group:** Power
+    - **Item:** TI TPS2553 (LAB port 0.75 A; LNA ch1-4 300 mA; HF+ and RTL VBUS)
+    - **Qty:** 10
+    - **Tier:** core
+    - **Price usd:** 5.50
+    - **Budget alternative:** -
+    - **Notes:** -
+  26.
+    - **Group:** Power
+    - **Item:** AON 3.3 V LDO (TPS709 class) + micropower UV supervisor 12.8/13.6 V
+    - **Qty:** 1 set
+    - **Tier:** core
+    - **Price usd:** 2-4 (estimate)
+    - **Budget alternative:** -
+    - **Notes:** Parts verified in P5
+  27.
+    - **Group:** Power
+    - **Item:** Protection/filter set: 7.5 A pack, 4 A J21 and 3 A LAB5 blade fuses + holders; SMBJ17A; SMBJ13A; 220 µF/25 V; PTCs (0.75 A AUX, 0.2 A Boni, LNB sized after measurement); ±20 V V_GS P-FET; 1.5 A eFuse; LC parts; Mix-31 ferrites; XT30
+    - **Qty:** 1 set
+    - **Tier:** core
+    - **Price usd:** 15-25 (estimate)
+    - **Budget alternative:** -
+    - **Notes:** -
+  28.
+    - **Group:** Power
+    - **Item:** Custom 2-layer PCBs: power board + 5-channel injector board (chokes ≥0.5 A, LNB choke ≥1 A, C0G blocks)
+    - **Qty:** 1 set
+    - **Tier:** core
+    - **Price usd:** 10-30 (estimate)
+    - **Budget alternative:** Mini-Circuits TCBT-2R5G+ $11.31 on ≤150 mA channels
+    - **Notes:** VNA-qualify, conducted
+  29.
+    - **Group:** Battery
+    - **Item:** Pack sundries (nickel, fish paper, Kapton, JST-XH 5-pin, XT30 service lead), spot-weld service, FR-4/mica barrier, foam + reflective film, fire bag
+    - **Qty:** 1 set
+    - **Tier:** core
+    - **Price usd:** 50-110 (estimate)
+    - **Budget alternative:** Weld at a battery shop
+    - **Notes:** Never flown
+  30.
+    - **Group:** Charging
+    - **Item:** 65-100 W USB-C PD charger + 5 A C-C cable
+    - **Qty:** 1
+    - **Tier:** core
+    - **Price usd:** 35-60 (estimate)
+    - **Budget alternative:** Anker 737 (bench row)
+    - **Notes:** PDO ≥60 W; FNB58-qualify
+  31.
+    - **Group:** Mechanical
+    - **Item:** ASA 1 kg, CNC Kitchen M3 inserts and screws, Gelid pads, hand + neck strap
+    - **Qty:** 1 set
+    - **Tier:** core
+    - **Price usd:** 98-133
+    - **Budget alternative:** Print service
+    - **Notes:** Inserts verified EUR 9.40
+  32.
+    - **Group:** Mechanical
+    - **Item:** 2 mm Al mid-plate, copper-clad FR4 RF bay, steel 1/4-20 insert, KSD9700
+    - **Qty:** 1 set
+    - **Tier:** core
+    - **Price usd:** 35-70 (estimate)
+    - **Budget alternative:** -
+    - **Notes:** Pull test at 3x weight
+  33.
+    - **Group:** Mechanical
+    - **Item:** Weather kit IPX4/IP54 (mesh + foam, ePTFE vents, port caps, rain sleeve, silica gel)
+    - **Qty:** 1 set
+    - **Tier:** core
+    - **Price usd:** 45-110 (estimate)
+    - **Budget alternative:** Caps + rain sleeve
+    - **Notes:** -
+  34.
+    - **Group:** SDR
+    - **Item:** RTL-SDR Blog V4L (R828S)
+    - **Qty:** 3 (RTL-A, RTL-B, spare)
+    - **Tier:** core
+    - **Price usd:** 113.85 (37.95 each, verified)
+    - **Budget alternative:** V3 fallback
+    - **Notes:** Official channels only; EU via eBay/AliExpress 4523039
+  35.
+    - **Group:** RF
+    - **Item:** Nooelec SAWbird+ NOAA cased (100800)
+    - **Qty:** 1
+    - **Tier:** core
+    - **Price usd:** 49.95 (verified)
+    - **Budget alternative:** Non-plus SAWbird NOAA (80 mA)
+    - **Notes:** Inside, behind P1
+  36.
+    - **Group:** RF
+    - **Item:** Nooelec Flamingo+ FM v2 (100813)
+    - **Qty:** 1
+    - **Tier:** core
+    - **Price usd:** 24.95 (verified)
+    - **Budget alternative:** RTL-SDR Blog band-stop $16.95 (no DC rating)
+    - **Notes:** Filter first at VHF
+  37.
+    - **Group:** RF
+    - **Item:** Uputronics 440 MHz CubeSAT filtered preamp
+    - **Qty:** 1
+    - **Tier:** core
+    - **Price usd:** 68.71 (GBP 51.59 incl. VAT, verified available)
+    - **Budget alternative:** LNA V2 + Nooelec Ham Filter Bank $66.95
+    - **Notes:** Always at the antenna end; measure current
+  38.
+    - **Group:** RF
+    - **Item:** Generic HMC7992 SP4T boards (RTL-A and RTL-B selectors)
+    - **Qty:** 2
+    - **Tier:** core
+    - **Price usd:** 30-40 (marketplace, unverified)
+    - **Budget alternative:** Manual 'connect X' prompt
+    - **Notes:** Default 50 ohm; qualify ≥30 dB isolation
+  39.
+    - **Group:** RF
+    - **Item:** Cable/bulkhead set: 7 SMA + 1 F bulkheads, RG316 jumpers, 2x shielded 15 cm USB extensions + ferrites, pigtails, 75 ohm F lead
+    - **Qty:** 1 set
+    - **Tier:** core
+    - **Price usd:** 90-170 (estimate)
+    - **Budget alternative:** VNA-screened generic RG316
+    - **Notes:** Pads come from the bench kit
+  40.
+    - **Group:** HF
+    - **Item:** Airspy HF+ Discovery
+    - **Qty:** 1
+    - **Tier:** core
+    - **Price usd:** 169.00 (ITEAD, verified)
+    - **Budget alternative:** 2nd V4L in upconverter mode (no LF)
+    - **Notes:** CH334F H4; in its own can
+  41.
+    - **Group:** HF
+    - **Item:** HF+ selector: 2x Omron G6K-2F-RF 5 V (series-shunt) + driver PCB
+    - **Qty:** 1 set
+    - **Tier:** core
+    - **Price usd:** 62-80 (RS UK, GBP 43-52 for two, ex VAT)
+    - **Budget alternative:** Manual swap at P5/P6
+    - **Notes:** De-energised = 50 ohm; ≥35 dB at 162-260 MHz
+  42.
+    - **Group:** HF
+    - **Item:** Tinplate HF+ can + LC + Mix-31 on VBUS
+    - **Qty:** 1
+    - **Tier:** core
+    - **Price usd:** 8-15 (estimate)
+    - **Budget alternative:** -
+    - **Notes:** -
+  43.
+    - **Group:** HF
+    - **Item:** Two-stage coax CM choke (FT-240-77 + FT-240-31, RG316, bonded bracket)
+    - **Qty:** 1
+    - **Tier:** core
+    - **Price usd:** 15-30 (unverified)
+    - **Budget alternative:** Clip-on ferrites (inadequate below a few MHz)
+    - **Notes:** Measure CM impedance on the LiteVNA
+  44.
+    - **Group:** Antennas
+    - **Item:** RTL-SDR Blog multipurpose dipole kit #1 (V-dipole, LRPT default)
+    - **Qty:** 1
+    - **Tier:** antenna-patch
+    - **Price usd:** 17.95 (verified)
+    - **Budget alternative:** 2-3 piece rods
+    - **Notes:** 23 cm collapsed
+  45.
+    - **Group:** Antennas
+    - **Item:** RTL-SDR Blog dipole kit #2 (AIS/FM/DAB on the HF+, spare elements)
+    - **Qty:** 1
+    - **Tier:** antenna-patch
+    - **Price usd:** 17.95 (verified)
+    - **Budget alternative:** Spare elements only
+    - **Notes:** -
+  46.
+    - **Group:** Antennas
+    - **Item:** 70 cm whip: DIY 17 cm, or Diamond SRH-701 / Baofeng A-V85
+    - **Qty:** 1
+    - **Tier:** antenna-patch
+    - **Price usd:** 3-25 (estimate)
+    - **Budget alternative:** DIY 17 cm
+    - **Notes:** Tilt broadside
+  47.
+    - **Group:** Antennas
+    - **Item:** RTL-SDR Blog active L-band patch (1525-1660 MHz, 20 mA)
+    - **Qty:** 1
+    - **Tier:** antenna-patch
+    - **Price usd:** 59.95 (verified)
+    - **Budget alternative:** 2-turn helix + SAWbird+ iO
+    - **Notes:** Inmarsat-C and GNSS-SDR
+  48.
+    - **Group:** Antennas
+    - **Item:** 4-turn RHCP helix on a shared 18 cm 1.5 mm Al disc (DIY)
+    - **Qty:** 1
+    - **Tier:** antenna-patch
+    - **Price usd:** 10-20 (estimate)
+    - **Budget alternative:** -
+    - **Notes:** Same disc as the helicone
+  49.
+    - **Group:** Antennas
+    - **Item:** Nooelec SAWbird+ GOES cased (100792)
+    - **Qty:** 1
+    - **Tier:** antenna-patch
+    - **Price usd:** 49.95 (verified)
+    - **Budget alternative:** Barebones $44.95 (only inside a shielded case)
+    - **Notes:** Serves both tiers
+  50.
+    - **Group:** Antennas
+    - **Item:** Waveshare GNSS L1+L5 active antenna (25346)
+    - **Qty:** 1
+    - **Tier:** antenna-patch
+    - **Price usd:** 16.99 (verified)
+    - **Budget alternative:** u-blox ANN-MB5 $42.50
+    - **Notes:** -
+  51.
+    - **Group:** Antennas
+    - **Item:** Crossed 2 m / 70 cm Yagi, ultra-compact (WB2HOL + N2SPI, DIY)
+    - **Qty:** 1
+    - **Tier:** antenna-foldable
+    - **Price usd:** 25-40 (estimate)
+    - **Budget alternative:** Standard build (35 cm pieces)
+    - **Notes:** Tune receive-only
+  52.
+    - **Group:** Antennas
+    - **Item:** Petal helicone (18 cm disc + 8 petals, DIY)
+    - **Qty:** 1
+    - **Tier:** antenna-foldable
+    - **Price usd:** 20-35 (estimate)
+    - **Budget alternative:** -
+    - **Notes:** Shares the helix and SAWbird+ GOES
+  53.
+    - **Group:** Antennas
+    - **Item:** HF wire kit: Nooelec Balun One Nine v2 + 7-15 m wire on a winder (or Tecsun AN-05) + 5-10 m thin coax + counterpoise
+    - **Qty:** 1 set
+    - **Tier:** antenna-foldable
+    - **Price usd:** 46.95-66.44
+    - **Budget alternative:** DIY wire only
+    - **Notes:** HF only; bias locked off
+  54.
+    - **Group:** Antennas
+    - **Item:** Bonito Boni-Whip (bias tee included)
+    - **Qty:** 1
+    - **Tier:** antenna-foldable
+    - **Price usd:** 178.73 (WiMo EUR 159, from 20 Nov 2026) / 123.95 (Moonraker, unverified)
+    - **Budget alternative:** PA0RDT miniwhip clone EUR 25.90
+    - **Notes:** 12.5 V; at least 2 m up
+  55.
+    - **Group:** Supports
+    - **Item:** Shock-corded mast (7 x 35 cm, about 2.4 m) + guys + stake
+    - **Qty:** 1 set
+    - **Tier:** antenna-foldable
+    - **Price usd:** 15-50 (estimate)
+    - **Budget alternative:** Tree or fence mount
+    - **Notes:** -
+  56.
+    - **Group:** Supports
+    - **Item:** Travel tripod ≤35 cm folded, 1.2 m or more, pan-tilt, 1/4-20
+    - **Qty:** 1
+    - **Tier:** antenna-foldable
+    - **Price usd:** 40-100 (estimate)
+    - **Budget alternative:** Dipole kit's mini tripod
+    - **Notes:** Horn, helicone, V-dipole
+  57.
+    - **Group:** Bags
+    - **Item:** Padded antenna roll + element tube + 15-20 L daypack
+    - **Qty:** 1 set
+    - **Tier:** antenna-foldable
+    - **Price usd:** 80-155 (estimate)
+    - **Budget alternative:** -
+    - **Notes:** -
+  58.
+    - **Group:** Lab instruments
+    - **Item:** LiteVNA 64
+    - **Qty:** 1
+    - **Tier:** bench
+    - **Price usd:** 175.73 ex VAT export / 210.88 incl. FR VAT (Passion Radio)
+    - **Budget alternative:** Lab401 EUR 192 (not chosen)
+    - **Notes:** Conducted use only
+  59.
+    - **Group:** Lab instruments
+    - **Item:** tinySA Ultra+ ZS407
+    - **Qty:** 1
+    - **Tier:** bench
+    - **Price usd:** 204.28 ex VAT / 247.18 incl. VAT (Astroradio, verified)
+    - **Budget alternative:** Mirfield GBP 189.95
+    - **Notes:** Order early: it gates the regulator decision
+  60.
+    - **Group:** Lab instruments
+    - **Item:** Noise source: Mini-Circuits ZFL-500LN+ (or ZFL-500+) in a DIY N8DMT-type source + box
+    - **Qty:** 1
+    - **Tier:** bench
+    - **Price usd:** 104.55-126.81
+    - **Budget alternative:** Used ZFL-500 $20-40
+    - **Notes:** BENCH only via AUX; ENR at regulated 12 V
+  61.
+    - **Group:** RF accessories
+    - **Item:** Nooelec pad kit, 2x 30 dB pads, 2x BLK-89-S+, 3x ANNE-50+, 3x 086-6SM+
+    - **Qty:** 1 set
+    - **Tier:** bench
+    - **Price usd:** 212.68
+    - **Budget alternative:** VAT-30W2+ $31.43 per 30 dB pad
+    - **Notes:** One 086 cut into E-field probes
+  62.
+    - **Group:** RF accessories
+    - **Item:** SMA torque wrench 0.9 N·m + adapter set
+    - **Qty:** 1 set
+    - **Tier:** bench
+    - **Price usd:** 50.84-62.84
+    - **Budget alternative:** AliExpress ratcheting $51.49
+    - **Notes:** Confirm listing live
+  63.
+    - **Group:** RF accessories
+    - **Item:** Spare RTL-SDR Blog Wideband LNA V2
+    - **Qty:** 1
+    - **Tier:** bench
+    - **Price usd:** 19.95 (verified)
+    - **Budget alternative:** -
+    - **Notes:** Also the optional WIDE-path LNA
+  64.
+    - **Group:** Bench electronics
+    - **Item:** FNIRSI FNB58 Std (no radio)
+    - **Qty:** 1
+    - **Tier:** bench
+    - **Price usd:** 53.99 (verified)
+    - **Budget alternative:** -
+    - **Notes:** Measures every USB load
+  65.
+    - **Group:** Bench electronics
+    - **Item:** ANENG AN8008/9 DMM
+    - **Qty:** 1
+    - **Tier:** bench
+    - **Price usd:** 26-53
+    - **Budget alternative:** -
+    - **Notes:** Store unconfirmed
+  66.
+    - **Group:** Bench electronics
+    - **Item:** Hantek 6022BE + fx2lafw LA
+    - **Qty:** 1 set
+    - **Tier:** bench
+    - **Price usd:** 141-172
+    - **Budget alternative:** 6022BL on AliExpress $84-102 (store unconfirmed)
+    - **Notes:** -
+  67.
+    - **Group:** Bench electronics
+    - **Item:** Raspberry Pi Debug Probe
+    - **Qty:** 1
+    - **Tier:** bench
+    - **Price usd:** 12.00 (verified)
+    - **Budget alternative:** -
+    - **Notes:** Pico SWD
+  68.
+    - **Group:** Bench electronics
+    - **Item:** Pinecil V2 (IronOS Bluetooth off)
+    - **Qty:** 1
+    - **Tier:** bench
+    - **Price usd:** 25.99
+    - **Budget alternative:** -
+    - **Notes:** Powered from the PD bank
+  69.
+    - **Group:** Bench electronics
+    - **Item:** iFixit portable anti-static mat
+    - **Qty:** 1
+    - **Tier:** bench
+    - **Price usd:** 34.95
+    - **Budget alternative:** iFixit EU EUR 29.95
+    - **Notes:** -
+  70.
+    - **Group:** Bench electronics
+    - **Item:** Anker 737 power bank (20 V/5 A PDO, ≤100 Wh)
+    - **Qty:** 1
+    - **Tier:** bench
+    - **Price usd:** 109.99 (verified)
+    - **Budget alternative:** Existing ≥60 W bank
+    - **Notes:** Cabin baggage
+  71.
+    - **Group:** Bench electronics
+    - **Item:** Waveshare MTT bench hub (bank-powered)
+    - **Qty:** 1
+    - **Tier:** bench
+    - **Price usd:** 24.64 (verified)
+    - **Budget alternative:** -
+    - **Notes:** Behind the LAB port on the bench
+  72.
+    - **Group:** Bench electronics
+    - **Item:** ISDT 608PD balance charger
+    - **Qty:** 1
+    - **Tier:** bench
+    - **Price usd:** 32.99-42.99 (unverified)
+    - **Budget alternative:** -
+    - **Notes:** Monthly 4.20 V balance via the node-N port
+  73.
+    - **Group:** Tools
+    - **Item:** Tools, spares, notebook, build tools (calipers, snips, M5 tap/die, heat gun)
+    - **Qty:** 1 set
+    - **Tier:** bench
+    - **Price usd:** 245-400 (estimate)
+    - **Budget alternative:** Borrow / makerspace
+    - **Notes:** -
+  74.
+    - **Group:** Lab extended
+    - **Item:** Leo Bodnar LBE-1420 GPSDO
+    - **Qty:** 1
+    - **Tier:** extended
+    - **Price usd:** 175.80 (GBP 132, verified)
+    - **Budget alternative:** PPS count + GNSS-SDR ppm (core, free)
+    - **Notes:** Conducted, 80 dB pads + DC block
+  75.
+    - **Group:** Lab extended
+    - **Item:** FlightAware Pro Stick Plus
+    - **Qty:** 1
+    - **Tier:** extended
+    - **Price usd:** 69.92 (GBP 52.50, verified)
+    - **Budget alternative:** Uputronics 1090 preamp on the spare V4L
+    - **Notes:** Continuous ADS-B on LAB USB
+  76.
+    - **Group:** Lab extended
+    - **Item:** RF sled: HMC7992 SP4T + PE4302 + MCP23017 #2 + ADS1115 + buck→LC→LDO bias + box
+    - **Qty:** 1
+    - **Tier:** extended
+    - **Price usd:** 104-168 (unverified)
+    - **Budget alternative:** Manual SMA swaps
+    - **Notes:** Qualify isolation conducted
+  77.
+    - **Group:** Lab extended
+    - **Item:** Nooelec SAWbird+ H1
+    - **Qty:** 1
+    - **Tier:** extended
+    - **Price usd:** 45-50
+    - **Budget alternative:** Reuse helix/helicone with GOES (no)
+    - **Notes:** 120 mA via TPS2553
+  78.
+    - **Group:** Lab extended
+    - **Item:** FNIRSI DPS-150 bench supply
+    - **Qty:** 1
+    - **Tier:** extended
+    - **Price usd:** 73-75
+    - **Budget alternative:** -
+    - **Notes:** -
+  79.
+    - **Group:** Lab extended
+    - **Item:** Pelican 1450 / Apache 3800 case with dividers
+    - **Qty:** 1
+    - **Tier:** extended
+    - **Price usd:** 30-169
+    - **Budget alternative:** Apache 3800
+    - **Notes:** Bench kit only
+  80.
+    - **Group:** Optional / gated
+    - **Item:** LimeSDR Micro M.2 Basic + $18 shipping + 2x MHF4L-SMA
+    - **Qty:** 1
+    - **Tier:** optional
+    - **Price usd:** 279 (verified)
+    - **Budget alternative:** Airspy Mini for AHRPT rates only
+    - **Notes:** Keep/cancel by 1 Dec 2026
+  81.
+    - **Group:** Optional / gated
+    - **Item:** Lime parts: ADT-Link R44SF, I-PEX 90435-001 tool, pedestal + pad + fins, DC blocks/pads, 3rd HMC7992
+    - **Qty:** 1 set
+    - **Tier:** optional
+    - **Price usd:** 87-127
+    - **Budget alternative:** -
+    - **Notes:** Only if the Lime is kept
+  82.
+    - **Group:** Optional / gated
+    - **Item:** Samsung T7 1 TB
+    - **Qty:** 1
+    - **Tier:** optional
+    - **Price usd:** 229.99-274.99 (snippets)
+    - **Budget alternative:** None needed without the Lime
+    - **Notes:** Outside, bottom edge; Lime only
+  83.
+    - **Group:** Optional / gated
+    - **Item:** QO-100 add-on: Othernet Bullseye TCXO LNB + F/75 ohm parts + cone/horn materials
+    - **Qty:** 1 set
+    - **Tier:** optional
+    - **Price usd:** 47.95-75.00
+    - **Budget alternative:** QRO.cz LNB as an upgrade
+    - **Notes:** Held until region known; LNB rail already in core
+  84.
+    - **Group:** Optional / gated
+    - **Item:** Nooelec SAWbird+ iO cased (100788)
+    - **Qty:** 1
+    - **Tier:** optional
+    - **Price usd:** 49.95 (verified)
+    - **Budget alternative:** L-band patch (core)
+    - **Notes:** Only after the egc-gate passes
+  85.
+    - **Group:** Optional / gated
+    - **Item:** V30 endurance microSD 128-256 GB
+    - **Qty:** 1
+    - **Tier:** optional
+    - **Price usd:** 25-82 (volatile)
+    - **Budget alternative:** UFS only
+    - **Notes:** Raw overflow; buy when prices allow
+  86.
+    - **Group:** Optional / gated
+    - **Item:** Airspy Mini
+    - **Qty:** 1
+    - **Tier:** optional
+    - **Price usd:** about 140-160 (GBP ~110, unverified)
+    - **Budget alternative:** Spare V4L at 2.88 Msps
+    - **Notes:** Only after Metop hump + 2.88 Msps tests
+  87.
+    - **Group:** Optional / gated
+    - **Item:** 2 m/WIDE path: second Flamingo+ FM (uses the bench LNA V2)
+    - **Qty:** 1
+    - **Tier:** optional
+    - **Price usd:** 24.95
+    - **Budget alternative:** -
+    - **Notes:** Port P8
+  88.
+    - **Group:** Optional / gated
+    - **Item:** Pololu D36V28F5 #2 for a 5 V-only display board
+    - **Qty:** 1
+    - **Tier:** optional
+    - **Price usd:** 23.95
+    - **Budget alternative:** -
+    - **Notes:** Only if Wisecoco confirms 5 V input
+  89.
+    - **Group:** Optional / gated
+    - **Item:** AD8318-class log detector power meter
+    - **Qty:** 1
+    - **Tier:** optional
+    - **Price usd:** 25-60
+    - **Budget alternative:** tinySA channel power (core)
+    - **Notes:** Delegated: optional extended
+- **Total cost:** USD before shipping, import VAT and duty. Low ends use EU-optimised or verified-cheapest prices; about 60-70% of the low total was re-seen live on 18 Oct 2026, and the rest are marked estimates. FX: 1 EUR = 1.1241 USD, 1 GBP = 1.3318 USD.
+  
+  Per tier:
+  
+  | Tier | Contents | USD |
+  |---|---|---|
+  | core | handheld incl. internal RF, HF+ and selector, power, mechanics, weather kit, cable set, pack build, charger | 1,758-2,253 |
+  | antenna-patch | always-carried antennas | 176-208 |
+  | antenna-foldable | Yagi, helicone, HF wire, Boni-Whip, mast, tripod, bags | 351-625 |
+  | bench | lab core instruments and tools | 1,475-1,810 |
+  | extended | GPSDO, Pro Stick Plus, sled, H1, DPS-150, case | 498-708 |
+  | optional / gated | not in the roll-ups | 933-1,157 |
+  
+  The optional tier breaks down as:
+  - Lime set (Lime + parts + T7): about $596-681.
+  - QO-100 add-on: $48-75.
+  - SAWbird+ iO: $49.95.
+  - microSD: $25-82.
+  - Airspy Mini: about $140-160.
+  
+  Roll-ups:
+  - Handheld + patch antennas: $1,934-2,461.
+  - Handheld + both antenna tiers: $2,285-3,086.
+  - Plus the bench lab: $3,759-4,896.
+  - Everything except optional: $4,257-5,603.
+  
+  Compared with the world-sourcing totals (core device $1,138-1,278 + HF chain $368-463), the core rises by about $250-510. The increase comes from parts that were missing: weather kit, cable set, pack build, PD charger, custom PCBs, selectors, CM choke, IMU puck kit and display hood.
+- **Build order:**
+  - 1. Today (18-20 Oct 2026), stock-risk items first: order the Q6A 12 GB and the UFS 128 GB (EU: one TinyTronics order; elsewhere: Allnet with the case, RTC cell and 64 GB SD). Re-check stock at checkout.
+  - 2. Today: one Adafruit bring-up order (Debug Probe, 2x CH334F, 2x MCP23017, INA228, BNO085, fan, HDMI lead, reader, cable, knobs). Plus 3x V4L, 2 dipole kits, the L-band patch, the pigtail and adapter sets and the spare LNA V2 from the official RTL-SDR Blog channel.
+  - 3. Today: send Wisecoco the written questions (HID VID:PID, bonding/AR, input V/I, EDID, 151.50/127.90 MHz modes, DSI mode, glove mode, contents). If there is no clear answer in about 7 days, order the 4D from DigiKey ($128.95).
+  - 4. Week 1, instruments that gate decisions: tinySA ZS407 (official-list seller), FNB58 Std, a DMM and the Airspy HF+ (ITEAD). The HF+ is needed for the LF/HF regulator A/B and for its own current measurement.
+  - 5. Week 1, power parts: one Pololu order (2x D36V50F12, D36V28F5, 2x #2813) because stock is Rationed. One LCSC order (2x TPS7A4701, 2x LT3045, 10x TPS2553, SMBJ13A/17A, fuses, PTCs, AON LDO, supervisor). 5x P50B from a local retailer, the Daly BMS, 2-3 IP2368 boards and 2 Picos.
+  - 6. W1-2 board gates (19 Oct-1 Nov), with the board on a current-limited 12 V bench supply into J21:
+  - 12 h stressapptest plus memtester; 50-100 cold boots with UART logs; SPI NOR backup; UFS chip ID.
+  - Build librtlsdr .so.2 and confirm 'V4 Lite Detected'.
+  - HDMI at 148.5 MHz, then the field EDIDs.
+  - UART6 TX loopback, PPS on GPIO96, the UART7 overlay, I2C0/I2C2 with 1e6 reads each; pinmux-pins audit.
+  - NPU Phase 0 (fastrpc_test 3/3, QAIRT 2.42, SpecDet p99, A16W8, VTCM).
+  - VkFFT at N=4096 and 65536; MemTotal and app RSS.
+  - FE1.1s 30-min zero-drop test.
+  - 7. Early on-air checks as parts arrive: ISS SSTV Series 34 (22-25 Oct, 437.550 MHz) if a V4L and dipole arrive in time; Meteor LRPT on the V-dipole once the SAWbird+ NOAA and Flamingo+ arrive.
+  - 8. Power board bring-up on the bench, with a current-limited supply and an electronic load:
+  - every rail and the TVSs;
+  - the supervisor at 12.8/13.6 V, the EN backstop at 12.0/13.5 V, and whether a held OFF blocks the A-pin button;
+  - the eFuses;
+  - back-feed with the FNB58 (0 V on Q6A VBUS and HDMI +5 V with the Q6A off);
+  - standby drain.
+  - 9. Narrow-RBW LF/HF/VHF A/B of the D36V50F12, D36V28F5 and IP2368: HF+ terminated, then on the wire or whip, with load steps from 0.3 to 3 A. Then the 60-min sealed-case test at 3.5 A at 14.0 V and 16.4 V. Decide whether to keep the D36V50F12 or pick the replacement buck in P5.
+  - 10. RF parts (week 1-2): the Nooelec order (NOAA+, GOES+, Flamingo+, Balun, pad kit; free shipping), the Uputronics 440, the injector PCB, the HMC7992 boards and the G6K selector. Measure the HF+, Uputronics and LNA V2 currents; VNA-qualify the injectors, selectors and pads, conducted.
+  - 11. Pack build (spot-weld service), BMS wake 3/3, IP2368 NTC inhibit, a 2 h burn-in at 3 A on 2-3 boards, and qualification of each PD source.
+  - 12. Display acceptance on arrival: nits; power at 50% and 100%; USB-HID; both EDID modes; 20 cold boots; display states in the A/B; stability at SYS12 = 11.0 V.
+  - 13. Case CAD from Radxa STEP v1.21, the measured panel and the pack. Print, integrate, run the 45-min noon soak in modes B, D and G, then the full A/B matrix with the lid closed. Publish spur mask v1.
+  - 14. Lab core instruments (week 2-3): LiteVNA, Mini-Circuits parts, the noise-source amplifier, Pinecil, mat, Anker 737, MTT hub, Hantek with LA, torque wrench (after confirming the listing).
+  - 15. From 20 Nov 2026: the Boni-Whip, CM-choke impedance measurement, LF Quiet tests and the isolation of the HF+ selector.
+  - 16. 1 Dec 2026: Lime keep/cancel by rule C1. If kept: R44SF, the I-PEX tool, a re-priced T7, and the post-delivery acceptance inside the 30-day guarantee.
+  - 17. Once the user's region is confirmed inside the Es'hail-2 footprint: buy the Bullseye and the horn materials, measure the LNB current at 13.2 V, then set the PTC and the pad.
+  - 18. Once the egc-gate passes on L-band patch recordings: buy the SAWbird+ iO. Otherwise drop the Inmarsat-C profile.
+  - 19. Last: the extended lab (LBE-1420, Pro Stick Plus, qualified sled, SAWbird+ H1, DPS-150, case). Deferred: the microSD (NAND prices), the T7 (only with the Lime), and the Airspy Mini (only after the Metop hump and the V4L 2.88 Msps tests).
+- **Open items:**
+  - Currents, cold and hot, at the operating voltage: HF+ Discovery (5 V), Boni-Whip (12.5 V), Bullseye (13.2 V), Uputronics 440, LNA V2 and the ZFL-500 noise source (12 V). Then set the PTC and TPS2553 limits at 1.5-2x the measured value.
+  - Display board: input voltage range and current at 25/50/100%; luminance at full white; whether 2200x1148@59.99 (151.50 MHz) and 2200x1125@51.68 (127.90 MHz) are accepted; the delivered clock and its harmonic line on a near-field E-probe; the DSI mode and lane rate; stability at SYS12 = 11.0 V; the touch VID:PID.
+  - D36V50F12: fundamental frequency against load and input voltage; the light-load (PSM) threshold; spurs within ±5 kHz of 40, 60, 77.5, 162, 490, 518 and 4209.5 kHz; dropout curve for 13.0-13.6 V in; 3.5 A for 60 min in the sealed case at 14.0 and 16.4 V. Repeat for the D36V28F5 and the IP2368.
+  - Per-mode pack power and usable energy from the INA228 logs, replacing modes2.py. Also standby drain; BMS wake from the charger; IP2368 NTC inhibit and behaviour with a 45 W source.
+  - #2813: does a held OFF input from the supervisor block the A-pin button? Does the BAT54-diode button network meet the A-pin threshold? Does the cold-boot pulse (0.8-1.0 s on J21 pin 3) boot the board reliably?
+  - Back-feed: 0 V on Q6A VBUS and HDMI +5 V with the Q6A off and LAB5 on; zero reverse current on every Q6A USB port; touch-bridge back-drive.
+  - LT3045 pair at 4.5 V from LAB5 near dropout: ripple and PSRR at the LNA ports. Also the TPS2553 trip point at the 300 mA setting, and the dissipation of the TPS7A4701 LNB LDO on the plate.
+  - Thermal: the 45-min noon soak with the hood fitted (frame ≤60 C, glass ≤65 C, cells ≤45 C); SoC temperature in modes B/D/G; the panel NTC derating points; charger temperature against the pack.
+  - pcie0 disabled: does the 25 MHz NIC crystal still radiate at 1700.000/1575.000 MHz?
+  - RF parts: isolation, loss and logic levels of the HMC7992 boards; G6K pair isolation at 162-260 MHz and loss from 10 kHz to 260 MHz; CM-choke impedance at 60 kHz and 1-30 MHz; injector loss and return loss per band; DC pass of the Flamingo+ (only if any bias ever crosses it).
+  - The full narrow-RBW A/B matrix for every state, with the GNSS C/N0 delta per state, published as spur mask v1.
+  - FE1.1s tree: a 30-min zero-drop test with RTL-B, HF+ and one LAB device (and with 4 streams); the effect of de-authorising Wi-Fi.
+  - Q6A bring-up: UART6 TX; GPIO96 free; the UART7 overlay on the held image; GPIO24/25 usable with UART6 enabled; the pps-gpio DKMS module; the watchdog DT node; which package provides systemd-bless-boot; whether UEFI variables persist.
+  - NPU and compute: MemTotal and app RSS; VkFFT on the Adreno 643 (N=4096 and 65536); HTP p99 for SpecDet-S/M/G; A16W8 on 2.42; VTCM size; soc_model 35 vs 93; CPU load of SatDump, SDRangel and OpenWebRX+.
+  - Storage: sustained UFS write after the WriteBooster cache, and the chip ID.
+  - LNB: IF level with 15 and 20 dB pads (desense check), LNB gain, neck diameter and waveguide ID before building the horn. HF: HF+ ppm; Boni-Whip housing length; balun DCR and S21 at 40-500 kHz.
+  - Compliance: the egc-gate mixed-recording test (header-level discard), and the DSC, SITOR and WEFAX allow-list tests on mixed recordings.
+  - Lime, if kept: riser link at 8 GT/s x1 with zero AER errors over 60 min; zero limeTRX losses during an LRPT+HRPT pass; measured VCC_5V_PERI ≤14 W; T7 floor rise at 1.7/2.2 GHz ≤1 dB; FIFO 10 vs SCHED_OTHER nice -20 for lime:Rx0.
+  - Questions for the user at the phase end: the region; confirmation of the HF-loop removal; acceptance of the small rigid whips and helices; whether the Lime (S-band, 56 MHz NPU survey) is wanted by 1 Dec; whether a home-base x86 PC with a GPU exists; whether the USCG-run NWS WEFAX stations are allowed.
+- **Confidence:** medium
+
 ## completeness:lens2 (run `wf_6ce87eb1-883`)
 
 - **Lens:** MISSING PARTS: cables and adapters, RF switching and its drive, bias tees, DC blocks, pads, loads, filters, fuses, PTCs and TVS, connectors and DC jacks, power key, charger input, fasteners, thermal parts, fan, sun hood, strap and tripod mount, weather protection, bags, spares, tools, flashing media, and the home-base PC for QAIRT 2.42.
