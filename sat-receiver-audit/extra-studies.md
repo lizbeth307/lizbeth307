@@ -28332,6 +28332,121 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - **Hard rules:** none affected. It is a DC supply with no RF output and no loops.
   - **Budget:** I used about 12 WebSearch calls. The eBay pages (403) and the AliExpress store were not readable, so those prices are unverified.
 
+## searchA:fnirsi_dps_150_bench_supply (run `wf_c3ba734e-52b`)
+
+- **Part:** FNIRSI DPS-150 bench supply (lab extended, qty 1): a current-limited, USB-PD-powered, PC-scriptable buck supply for module bring-up, LNA bias at 4.5 V (pass if 90 mA or less), LNB tests at 13.0-13.4 V, supervisor and EN sweeps (11-14 V), the Q6A 12 V gate, the 5.1 V / 50 mA back-feed test and the C4 power-board gate (4.2 A at 14.0 and 16.4 V for 60 min)
+- **Current price usd:** STACK v1 says $73-75. Re-audit and today's check: EUR 59.00 incl. VAT at Elektor (Shopify feed: SKU 21002, price 5900, available=true, ships from EU stock) = $66.32 at the stack's 1.1241 USD/EUR.
+- **Critical specs:**
+  - Output range covers 0 to at least 16.4 V and at least 4.6 A continuous (C4 gate 4.2 A at 16.4 V, about 69 W, for 60 min), powered from a 20 V / 5 A PD input. It is buck-only: with a 30 V input one user got 28.6 V out, so about 18.6 V from 20 V PD (model). That is enough.
+  - Input: USB-C PD/QC plus DC 5-32 V. It runs from the Anker 737 or a PD charger, so no mains is needed. Users report PD tops out at 20 V on the DPS-150 (PD3.0, no 28 V EPR).
+  - CC limit with 1 mA set resolution, usable at 50 mA (back-feed test), 90 mA (LNA V2 rule) and 120 mA (SAWbird H1).
+  - Voltage set resolution 10 mV. Accuracy good enough for 13.2 V LNB and 12.00 V +/-0.05 V work. The DPS-150 has no published setting-accuracy spec; one user found the readings match a DMM to the last digit.
+  - Output ripple/noise. Claimed <20 mV. Forum measurement (EEVblog msg6048545, linear source, 50 Ohm): 0.9 mVrms at 8 V / 1 A CV, 6 mV in CC at 20 mA. Main spur about 380 kHz, which lands in LF/MF: keep the supply off during the 40/60/77.5/162/490/518 kHz A/B tests.
+  - Output-enable overshoot: the stack's own gate is 13.6 V peak or less at a 13.2 V setpoint into 100 Ohm. No negative spikes on output-off, which matters for LNA and LNB safety.
+  - Protections: OVP, OCP, OPP, OTP, UVP, reverse input, reverse output, short circuit.
+  - Back-feed: a DUT with its own source can drive the USB-C PD input when the PD source drops (EEVblog msg6151223). Keep the input powered or add a diode during the LAB5 back-feed test.
+  - PC control on Ubuntu 24.04 arm64 with no proprietary driver, so labd can script the sweeps. DPS-150: USB serial with open-source pydps150 (gitlab.com/fanfanlab/pydps150) and dps150tool.
+  - No radio: no Bluetooth or Wi-Fi emitter on the RF bench.
+  - Size and weight for the Pelican bench kit: 106x76x28 mm, 178 g.
+  - Readability: 2.8 in 320x240 IPS flip screen with curve view and 6 presets.
+  - Build quality and support: genuine unit from an authorised EU seller with an EU warranty and CE marking. Isolated forum reports of a bricked unit and of back-feed damage.
+- **Candidates:**
+  1.
+    - **Name:** FNIRSI DPS-150 (current pick) from Elektor, EU stock
+    - **Kind:** current_part
+    - **Price usd:** $66.32 (EUR 59.00 incl. VAT), available
+    - **Spec comparison:** Reference. Published: 0-30 V / 0-5 A / 150 W; input 5-32 V DC via USB-C PD/QC or DC jack; 10 mV / 1 mA; load regulation 0.49 %; efficiency 96.3 %; ripple <20 mV (claimed); 8 protections; 2.8 in 320x240; 106x76x28 mm, 178 g; box has a micro-USB cable and clips, no adapter. Measured: 0.9 mVrms CV at 8 V / 1 A; about 380 kHz switching; PD input maxes at 20 V.
+    - **Worse in:** Nothing (reference). Known weak points: no published setting-accuracy spec; overshoot not measured by anyone; no output-to-input back-feed isolation; one bricked-unit report.
+    - **Compatibility:** Fits every critical spec. Linux control through pydps150 / dps150tool. No radio. EU seller with no import charges.
+    - **Risks:** Run the stack's overshoot gate (13.6 V peak or less at 13.2 V) and an LF/MF spur check (380 kHz) on arrival. Do not let a DUT back-feed the USB-C input.
+    - **Seller url:** https://www.elektor.com/products/fnirsi-dps150-dc-power-supply-150-w
+    - **Sources:**
+      - https://www.elektor.com/products/fnirsi-dps150-dc-power-supply-150-w.js
+      - https://www.eevblog.com/forum/testgear/new-miniature-programmable-dc-power-supply-fnirsi-dps-150/125/
+      - https://www.eevblog.com/forum/testgear/new-miniature-programmable-dc-power-supply-fnirsi-dps-150/100/
+      - https://www.eevblog.com/forum/testgear/new-miniature-programmable-dc-power-supply-fnirsi-dps-150/25/
+      - https://gitlab.com/fanfanlab/pydps150
+  2.
+    - **Name:** FNIRSI DPS-150 Std / Without Adapter (SKU DPS-150-BU), bought direct from the FNIRSI official store
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $57.99 list (US view; compare-at $96.43). The DE storefront shows EUR 55.68 = $62.59. Landed in the EU (model): $62.6 if VAT and the new EUR 3 duty are included at checkout; $68.2 with EUR 3 duty + EUR 2 UHF added; up to about $80 if VAT (19-27 %) is also added. VAT basis at checkout not verified.
+    - **Spec comparison:** Same unit and same box as at Elektor, so every spec is equal.
+    - **Worse in:** Not the part itself, but the purchase. Ships from China in 15-25 business days. Customs and import taxes are the buyer's unless covered by FNIRSI's 'duty payment service' for EU orders under $150, whose scope is unverified. Warranty and returns go through FNIRSI China, not an EU seller. Best-case saving is $3.7 vs Elektor; after the EUR 3 duty + EUR 2 UHF (from about 1 Nov 2026) it is more expensive.
+    - **Compatibility:** Identical to the current part.
+    - **Risks:** Real landed price must be checked at checkout. Free shipping is advertised only over $30. FNIRSI support is criticised on EEVblog. Net effect: no real saving, so not recommended over Elektor.
+    - **Seller url:** https://www.fnirsi.com/products/dps-150
+    - **Sources:**
+      - https://www.fnirsi.com/products/dps-150.js
+      - https://www.fnirsi.com/de/products/dps-150.js
+      - https://www.fnirsi.com/policies/shipping-policy
+  3.
+    - **Name:** FNIRSI DPS-150 on eBay.de (various sellers, e.g. item 316627962995)
+    - **Kind:** current_part
+    - **Price usd:** UNVERIFIED: search snippets show about EUR 52.67 (US $61.09, 'limited-time', was $64.99) for one listing; a DE business seller at EUR 68.99 incl. VAT plus shipping. eBay returned HTTP 403, so seller, location, VAT and whether the listing is still live could not be checked.
+    - **Spec comparison:** Same part if genuine, so specs equal.
+    - **Worse in:** Provenance and warranty unknown. A USD-priced listing is probably a non-EU seller, which adds EUR 3 duty + EUR 2 UHF and possibly VAT, wiping out the about $7 saving.
+    - **Compatibility:** Identical if genuine.
+    - **Risks:** Unverified price and seller. Grey or return stock is possible. Only consider an EU business seller with VAT invoice and a price below EUR 59 delivered.
+    - **Seller url:** https://www.ebay.de/itm/316627962995
+    - **Sources:**
+      - https://www.ebay.de/itm/316627962995
+      - https://www.ebay.de/itm/365521593088
+  4.
+    - **Name:** ALIENTEK DP100 (30 V / 5 A / 100 W USB-PD supply)
+    - **Kind:** other_brand
+    - **Price usd:** EU stock is not cheaper: openelab.io EUR 80.44 = $90.42; openelab.com $89; gotronik.pl 325 PLN gross (about EUR 76, my conversion; data from Apr 2025). LCSC lists $59.63 for a bundle with a 65 W GaN charger (search snippet, plus EU VAT and duty). AliExpress about $45-52 in 2023-24 forum reports ($48 incl. 25 % EU VAT and delivery on a Jan 2024 sale); current AliExpress price UNVERIFIED, and since July 2026 add EUR 3 duty + EUR 2 UHF.
+    - **Spec comparison:** Published (Switch Science / Alientek): input 5-32 V via USB-C only (DC barrel through an adapter cable); output 0-30 V, 0-5 A, 100 W max. Set resolution 10 mV / 1 mA (equal). Set accuracy V 0.1 %+5 mV, I 0.1 %+3 mA; readback V 0.1 %+10 mV, I 0.1 %+5 mA (DPS-150 publishes none). Ripple 2 mVrms / 10 mVp-p (better on paper than the DPS-150's <20 mV claim). Protections OVP/OCP/OPP/OTP/reverse (DPS-150 also lists UVP, reverse output, short circuit). 10 presets (vs 6). 0.96 in 160x80 LCD (vs 2.8 in 320x240). 100x62x17 mm, 95 g (smaller). PD3.0, 20 V max (same as the DPS-150 in practice). Linux: palzhj/pydp100 over hidapi with a udev rule; WebHID webdp100.
+    - **Worse in:** (1) Max power 100 W vs 150 W. In this stack's 20 V PD setup both deliver about 95-100 W, but from a 32 V DC adapter the DPS-150 does 150 W. (2) Display much smaller and lower resolution. (3) Measured output-off transients: about -8 V spikes at light load with AC PD wall chargers (Dexter2, EEVblog); +0.4 V on/off overshoot at 15 V from an Anker 737 (DaneLaw). That scales to about 13.55 V at a 13.2 V setpoint (model), at the edge of the stack's 13.6 V gate, and a negative spike is a direct LNA/LNB hazard. (4) Reliability reports: one unit 'busted in flames' at 20 V / 3 A with 1000 uF; EEVblog 1606 has a 'MAGIC SMOKE!' chapter, cause not read. (5) Fewer listed protections. (6) Not cheaper from any EU-stock seller found.
+    - **Compatibility:** USB-C PD input works with the Anker 737 (20 V). Linux control is possible (hidapi, udev rule; pydp100 untested on arm64). No radio.
+    - **Risks:** Cheaper only via AliExpress, and that price is unverified. The output-off spike issue would need a fix (an MLCC across the output cut it to about 200 mVpp in one test) and re-qualification. Verdict: WORSE, not a not-worse analog.
+    - **Seller url:** https://openelab.io/products/alientek-dp100-digital-power-supply
+    - **Sources:**
+      - https://www.switch-science.com/products/9414
+      - https://eevblog.com/forum/testgear/dp100-mini-power-supply-(0-30v-0-5a)/msg5418107
+      - https://www.eevblog.com/forum/blog/eevblog-1606-$45-alientek-dp100-100w-usb-c-psu-review
+      - https://github.com/palzhj/pydp100
+      - https://openelab.io/products/alientek-dp100-digital-power-supply.js
+      - https://openelab.com/products/alientek-dp100-digital-power-supply
+      - https://www.lcsc.com/category/1392.html
+      - https://www.gotronik.pl/dp100-mini-zasilacz-regulowany-30v-5a-100w-alientek-kartapdf-11891.html
+  5.
+    - **Name:** Riden (RuiDeng) RD6006 module (60 V / 6 A)
+    - **Kind:** other_brand
+    - **Price usd:** UNVERIFIED (no current EU or official-store price found; a 2020 EEVblog post gives about EUR 110). The module needs a separate input supply and a case on top.
+    - **Spec comparison:** Higher V/I range (60 V / 6 A). Accuracy V 0.3 %+3 digits, I 0.5 %+5 digits (retailer listing). Ripple about 100 mVpp typical (retailer listing and EEVblog), about 5x the DPS-150's claim and far above its 0.9 mVrms measured. No USB-C PD input (needs a DC supply or a PD trigger cable), bare module, much larger front panel. The RD6006P successor claims about 20 mVpp but costs more.
+    - **Worse in:** Ripple and noise (about 100 mVpp), portability and PD/battery operation, size, build (needs DIY case and supply), and not shown to be cheaper. Avoid the 'W' (Wi-Fi) variants under the no-radio criterion.
+    - **Compatibility:** Would need an extra PD trigger or a mains SMPS. Linux support through Modbus-over-USB tools; the sigrok rdtech-dps driver is not verified in this pass.
+    - **Risks:** Worse in a spec that matters, so rejected.
+    - **Seller url:** https://makerlab-electronics.com/products/riden-ruiden-rd6006-rd6006p-w-digital-control-switch-adjustable-power-supply-dc-stabilized-power-a
+    - **Sources:**
+      - https://makerlab-electronics.com/products/riden-ruiden-rd6006-rd6006p-w-digital-control-switch-adjustable-power-supply-dc-stabilized-power-a
+      - https://www.eevblog.com/forum/testgear/ruideng-riden-rd6006-dc-power-supply/msg2936786/
+- **Notes:** VERDICT (angle A): no cheaper analog that is not worse was found. KEEP the FNIRSI DPS-150 from Elektor at EUR 59.00 incl. VAT ($66.32), EU stock, available today. That is the re-audit price and lower than STACK v1's $73-75 (extended total about -$7 to -$9).
+  
+  Same part elsewhere:
+  - FNIRSI direct: $57.99 (US view) or EUR 55.68 (DE storefront), shipped from China. It only beats Elektor if VAT and the new EUR 3 duty are already included, and then by at most $3.7. With the EUR 2 UHF from about 1 Nov 2026 it is more expensive.
+  - Not cheaper: Rotorama EUR 61.49 incl., in stock ($69.12); Berrybase EUR 68.90 (search snippet, unverified); eBay.de DE seller EUR 68.99; Elektor DPS150PD bundle with a 100 W GaN adapter EUR 95 ($106.79); Voelkner bundle EUR 120.
+  - eBay listings near EUR 52.67 could not be verified (HTTP 403).
+  - AliExpress FNIRSI official-store price could not be read (anti-bot page): UNVERIFIED.
+  
+  Same vendor, better but not cheaper: FNIRSI DPS-150P at $69.99 direct (+$12 over the DPS-150 at the same store; no EU price checked). It adds a published 10 mVpp ripple at full load, setting accuracy (V 0.1 %+5 mV, I 0.1 %+3 mA), uA readback (0.2 %+5 uA below 500 uA) and PD3.1 input, which allows 28 V EPR from the Anker 737. Worth it only if the user wants those upgrades; it is not a cost cut.
+  
+  Rejected:
+  - Alientek DP100: worse in max power, display and measured output-off spikes and overshoot; not cheaper from EU stock.
+  - Riden RD6006: about 100 mVpp ripple, no PD input, needs a case and a supply.
+  - Mains-powered cheap bench supplies (Longwei, Wanptek, Korad and similar): no PD/battery operation for the portable lab, and usually no open PC control. Not priced in this pass.
+  - DIY or generic buck modules: outside angle A.
+  
+  Rule check: a bench DC supply is not a signal source and has no radio. All candidates comply with receive-only and no-loop, provided Wi-Fi variants (Riden W) are avoided.
+  
+  Stack actions for the kept part:
+  1. Run the overshoot gate (13.6 V peak or less at a 13.2 V setpoint into 100 Ohm, Hantek at 1 MS/s) before any LNA or LNB.
+  2. Add an output-off negative-spike check at light load (about 10 kOhm) with the 20 V PD source.
+  3. Note the measured about 380 kHz switching spur. Keep the DPS-150 off or unplugged during the LF/MF A/B tests (40-518 kHz) and NAVTEX sessions.
+  4. The DPS-150 does not isolate its output from its USB-C input. During the LAB5 back-feed test, keep the PD source connected or put a Schottky or ideal diode in series.
+  5. PD input is 20 V max (user reports), so the usable output is about 18.6 V max (model). That is enough for 16.4 V.
+  6. Pin the pydps150 / dps150tool version in labd and record the firmware version.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
@@ -42271,6 +42386,108 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - A follow-up with search budget could check Conrad Toolcraft, Antistat, StaticTec and Warmbier field kits.
   
   STACK NOTE (no spec traded): the iFixit polyester mat has no published heat rating. With the Pinecil, keep the iron in its stand and use a separate silicone pad for the hot tip. The mat's grounding should go to the bench or device common point in the field. Check which EU earth plug or clip ships with the EU unit.
+
+## searchB:ifixit_portable_anti_static_mat (run `wf_e5582d4c-0a2`)
+
+- **Part:** iFixit Portable Anti-Static Mat (IF145-202-5), bench tier, Bench electronics, qty 1
+- **Current price usd:** 34.95 (iFixit US, "Ready to ship", verified 18 Oct 2026 at https://www.ifixit.com/products/portable-anti-static-mat). The same SKU is EUR 29.95 at iFixit EU (about $33.67 at the STACK rate), ships from Germany, verified at https://www.ifixit.com/en-eu/products/portable-anti-static-mat. That page does not say whether VAT is included.
+- **Critical specs:**
+  - Work-surface resistance in the dissipative range. iFixit states 10^7-10^9 Ohm surface resistivity and says the mat is 'designed to meet' ANSI/ESD S4.1 and S20.20. Iron-clad needs: Rtt/Rtg 10^6-10^9 Ohm, so the mat is neither conductive (fast discharge, CDM risk to the LimeSDR Micro, Q6A and LNA front ends) nor insulating.
+  - Mat area of at least 60 x 60 cm (0.36 m2), enough for the open case, the Q6A, the Lime riser and tools.
+  - Portability: thin and foldable. It folds into the centre bay of the Pelican 1450 lab case (interior about 37 x 26 cm), so a stiff 2 mm rubber slab that must be rolled is worse.
+  - Bonding hardware for field use with no earth: a 10 mm snap plus a ground cord with an alligator clip, so the mat, the wrist strap and the device's aluminium mid-plate share one equipotential point (radio_lab.json integration note).
+  - Wrist strap with a 1 MOhm series resistor (iFixit: 1.8 m cord, band adjusts to XL). This resistor can be checked at home with the AN8008 DMM.
+  - Build: durable surface and cord. Heat resistance is not listed for the iFixit polyester mat, so do not put the Pinecil tip down on it. A heat-resistant surface would be a bonus, not a requirement.
+  - Legally sold genuine product with a stated resistance spec. Measured evidence is needed for any analog. Note that the AN8008 resistance ranges top out around 40 MOhm (from memory; check the meter's datasheet), so the user cannot check the upper 10^8-10^9 Ohm range at home without a surface-resistance meter.
+  - Hard rules: none affected. It is a passive bench accessory with no RF function, no loop or probe, and no TX.
+- **Candidates:**
+  1.
+    - **Name:** iFixit Portable Anti-Static Mat IF145-202-5 (current pick, iFixit US)
+    - **Kind:** current_part
+    - **Price usd:** 34.95
+    - **Spec comparison:** 60 x 60 cm polyester mat; surface resistivity 10^7-10^9 Ohm; one 10 mm grounding snap; ground cord with clip; 1.8 m 1 MOhm wrist strap adjustable to XL; 'designed to meet ESD S4.1 / S20.20'. iFixit publishes no independent test report.
+    - **Worse in:** Baseline. Heat resistance not stated (polyester). Only one snap.
+    - **Compatibility:** Fits the stack: folds into the Pelican 1450 centre bay, and the 10 mm snap plus clip covers mat, strap and mid-plate bonding.
+    - **Risks:** Ordering from iFixit US to the EU adds shipping plus import VAT and customs handling. Buy the EU listing instead.
+    - **Seller url:** https://www.ifixit.com/products/portable-anti-static-mat
+    - **Sources:**
+      - https://www.ifixit.com/products/portable-anti-static-mat
+  2.
+    - **Name:** Same SKU from the iFixit EU store (ships from Germany)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** about 33.67 (EUR 29.95; VAT inclusion not stated on the page, normally included for EU consumer sales, so check at checkout)
+    - **Spec comparison:** Identical product: 60 x 60 cm, 10^7-10^9 Ohm, 1.8 m cord with 10 mm snap, adjustable wrist strap with alligator clip. All specs equal.
+    - **Worse in:** Nothing. Same item, about $1.28 cheaper on list price, and it avoids US-to-EU shipping, import VAT and customs. It is the effective cheapest not-worse option for a European buyer.
+    - **Compatibility:** Identical to the current part.
+    - **Risks:** VAT status and shipping cost must be confirmed at checkout. iFixit EU says 'Shipping within 24 hours, except weekends and holidays'.
+    - **Seller url:** https://www.ifixit.com/en-eu/products/portable-anti-static-mat
+    - **Sources:**
+      - https://www.ifixit.com/en-eu/products/portable-anti-static-mat
+  3.
+    - **Name:** OEM (TME, Lodz) two-layer rubber ESD table mat 600 x 400 x 2 mm, beige, sold by Botland, plus a separate generic wrist strap and ground cord
+    - **Kind:** generic_or_clone
+    - **Price usd:** about 27.9 for the mat alone (EUR 24.79, structured data, VAT status unclear; the net field did not load). A strap and cord are extra: about $2 for a generic AliExpress strap (unverified), so the total is about $30 or more.
+    - **Spec comparison:** Surface and ground resistance 5-500 MOhm (5x10^6-5x10^8, page notation 'mω'). That is inside or slightly below the iFixit 10^7-10^9 range and still dissipative, so equal. Two layers of rubber (dissipative over conductive), PVC-free, oil and chemical resistant: better durability. Two 10 mm male snaps against one: better. '440 C operating temperature' as listed is implausible and unverified. No wrist strap or ground cord included.
+    - **Worse in:** Area 0.24 m2 against 0.36 m2 (33% smaller). A 2 mm rubber slab does not fold into the Pelican 1450 centre bay, and a 40 cm roll exceeds the 37.5 cm interior length (case dimension from memory). Heavier. Strap and cord must be bought separately, with no verified resistor. No independent measurement and no test report, only a supplier RoHS declaration. Rejected under Angle B.
+    - **Compatibility:** Its 10 mm snaps work with standard cords. Physically incompatible with the lab-case packing plan.
+    - **Risks:** Resistance spec not independently measured. The temperature claim is likely a typo. The total once the strap is added is no meaningful saving over iFixit EU.
+    - **Seller url:** https://botland.store/soldering-mats/7913-esd-table-mat-600x400mm-beige-5903351249645.html
+    - **Sources:**
+      - https://botland.store/soldering-mats/7913-esd-table-mat-600x400mm-beige-5903351249645.html
+      - https://botland.store/search?s=esd+mat
+  4.
+    - **Name:** AliExpress generic ESD mat kits (e.g. 61 x 41 cm 'double-layer rubber' kit $25.39; 30 x 40 cm green mat with cord and strap $24.88; '$1.09-1.51' mat-plus-strap kits)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 1.09-25.39 (listing prices seen 18 Oct 2026; item pages need a login, so contents and real prices are unverified)
+    - **Spec comparison:** No surface-resistance value stated on any listing. Sizes 30 x 40 cm to 61 x 41 cm, all smaller than 60 x 60 cm. No test reports, no independent measurements found. The page's generic comparison table claims 10^9-10^11 Ohm, which would be insulative, not dissipative, but it is not tied to any listing.
+    - **Worse in:** Smaller area. Resistance unknown and possibly outside the dissipative range. No measured evidence. Wrist-strap resistor unverified, though the user can check that with the AN8008. Rejected under Angle B.
+    - **Compatibility:** Unknown snap size and cord terminations.
+    - **Risks:** Mislabelled 'anti-static' products that are really insulative (e.g. silicone repair mats) or conductive are a known category risk. The sub-$2 kits are almost certainly not equivalent (unverified).
+    - **Seller url:** https://www.aliexpress.com/w/wholesale-esd-mat-wrist-strap.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-esd-mat-wrist-strap.html
+  5.
+    - **Name:** Used Desco / SCS (ex-3M 8501/8505) portable field service kits on eBay
+    - **Kind:** used
+    - **Price usd:** unverified (eBay returned HTTP 403, no listing or price could be checked)
+    - **Spec comparison:** Branded new kits carry datasheet resistance specs, but a used unit's present surface and ground resistance is unknown. Contamination and wear raise resistance. No measured data for any specific used unit.
+    - **Worse in:** Condition and resistance unproven. The user cannot verify 10^8-10^9 Ohm with the AN8008, which would need an extra surface-resistance meter that wipes out the saving. Rejected under Angle B.
+    - **Compatibility:** Usually a 10 mm snap plus a clip cord. Usually fine if genuine.
+    - **Risks:** Unknown history, counterfeit or mismatched cords, no return or warranty.
+    - **Seller url:** https://www.ebay.com/sch/i.html?_nkw=desco+portable+field+service+kit
+    - **Sources:** []
+  6.
+    - **Name:** DIY surface from carbon-loaded film (Velostat) or pink antistatic poly sheet, with a home-made 1 MOhm cord
+    - **Kind:** diy
+    - **Price usd:** about 5-15 (unverified estimate; no listing checked in this step)
+    - **Spec comparison:** From general knowledge, not fetched in this step: carbon-loaded film is conductive (roughly 10^3-10^5 Ohm/sq), below the 10^6 lower bound. Pink amine poly is antistatic or near-insulative (roughly 10^9-10^11 Ohm/sq). Neither matches a dissipative 10^7-10^9 work surface.
+    - **Worse in:** Resistance class (too conductive or too insulative). Durability. No standards basis. Rejected.
+    - **Compatibility:** Bonding is possible with a DIY snap or clip, but the surface itself is not equivalent.
+    - **Risks:** Fast discharge through a conductive sheet (CDM damage), or static build-up on an insulative one.
+    - **Seller url:** 
+    - **Sources:** []
+  7.
+    - **Name:** Reichelt EU branded mats (STAT-X ESD ARBEITSMATTE, Bernstein 9-366-0 61 x 45 cm, Weller sets)
+    - **Kind:** other_brand
+    - **Price usd:** about 43.8 or more (cheapest is STAT-X at EUR 38.99 incl. VAT; Bernstein 61 x 45 cm EUR 60.99; Weller set EUR 84.39)
+    - **Spec comparison:** Branded, with stated 10-100 MOhm (Bernstein, STAT-X) or 10^6-10^7 Ohm resistance. Listed for completeness; this is Angle A territory.
+    - **Worse in:** Not cheaper than the current part, so out of scope for this step.
+    - **Compatibility:** Standard snaps. Larger mats are less portable.
+    - **Risks:** None material. Simply more expensive.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/search/esd%20mat
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/search/esd%20mat
+- **Notes:** VERDICT (Angle B): no generic, clone, DIY or used analog has independent measurements showing it is not worse, so keep the iFixit IF145-202-5 and buy it from iFixit EU at EUR 29.95 (about $33.67). That is the cheapest not-worse option, and for a European buyer it also avoids US shipping, import VAT and customs. Every cheaper generic I found is worse in at least one spec that matters (smaller area, not foldable, no stated or measured resistance, no strap included), or has no evidence at all. None was traded in.
+  
+  LIMITS OF THIS PASS: the shared WebSearch budget was already used up when this agent started, so zero searches ran. I could not look for forum or EEVblog measurements of cheap mats. Amazon (503), eBay (403), Conrad (403), Farnell (503), Antistat UK (403) and AliExpress item pages (login redirect) could not be read. Facts here come only from the iFixit US and EU pages, Botland and the Reichelt and AliExpress listing pages.
+  
+  STACK.md lists this line as 'не перевірено' (not verified). The iFixit US price $34.95 and stock are now verified, and the EU price EUR 29.95 is verified on the page. iFixit's resistance figure is a 'designed to meet S4.1/S20.20' claim, not an independent test either.
+  
+  The wrist strap's 1 MOhm resistor can be checked with the AN8008 DMM. The mat's 10^7-10^9 Ohm range cannot, so do not accept used or unbranded mats on the hope of testing them at home.
+  
+  Do not use the polyester mat as a soldering surface for the Pinecil; its heat resistance is not stated.
+  
+  Hard rules: not affected (passive accessory, no RF, no loop or probe).
 
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
