@@ -16472,6 +16472,65 @@
   
   Open point: per idx 46 the input-files list now names analogs_G4_mechanical_field.json, but analogs_G1/G2/G3/G5/G6 and reaudit_A-D are still not listed. None of my changes asked to add them, so I left them out.
 
+## edit:02e_bom_optional_totals:b2 (run `wf_47c804ff-504`)
+
+- **Section:** 02e_bom_optional_totals
+- **Applied:**
+  - 24
+  - 25
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+- **Skipped:**
+  1.
+    - **Idx:** 26
+    - **Why:** Conflicts with idx 44 (analog G6, the decision for this optional line, which matches re-audit D): the D36V28F5 #2 row stays deleted, so its price was not changed in place. idx 44 won. The Botland data from idx 26 (EUR 15.22 net / EUR 18.11 incl. VAT = $17.13 / $20.38, fallback sellers TME POLOLU-3782 or Pololu direct) went into the 5 V-only contingency note under the 2.11.3 subtotal, outside the totals.
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/02e_bom_optional_totals.md and built on the batch 1 edits.
+  
+  Merges and conflicts:
+  - idx 24: the FPC kit was already removed from the budget variant in batch 1. I confirmed it and recomputed the budget figures.
+  - idx 27 vs idx 39 (the choke): G3 decision 14 decides the choke part, so idx 27 won. The choke text is out of the QO-100 model cell and out of the tier-table row. The note now says the choke (LQW2UAS68NG00L, EUR 0.19) moved to core and is ordered from DigiKey DE. The kit price range is unchanged.
+  - idx 36: I did not add back «Бюджет: Airspy Mini лише для швидкостей AHRPT.». Re-audit C (P4, technical role) had already replaced it with «Airspy Mini — лише запасний за воротами». I moved the "$18 fee charged once" check onto the board row. The board price cell lists the EU charges in words. I kept batch 1's EU landed estimate in the set subtotal.
+  - idx 37: the Lime parts price is now 89.65-91.65, matching G6's own sum (batch 1 had 90.65-91.65). The Lime set is therefore 606.46-608.46, about $697-699 landed in the EU.
+  - idx 38 and 42: G6 additions were merged into the existing notes. The re-audit D mounting text and the re-audit C Lime/Airspy gate text stay as they were.
+  
+  Recomputed subtotals:
+  - 2.11.3: 296.74-344.97, without the Lime and QO-100 sets. With them it is G6's 1,000.61-1,099.25.
+  - Core without Lime: 1,914.65-2,233.12, the sum of the group subtotals as they now stand. That is 2.1 303.53-332.85, 2.2 282.85, 2.3 249.49-261.79, 2.6 221.24-237.59, 2.7 400.87-495.07, 2.8 69.67-71.67, 2.9 312.00-406.30 and 2.10 75-145. I checked 2.7 at 400.87-495.07 in 02c.
+  - Core without Lime differs from the extractor's G1+G2+G3+G4 deltas alone (1,883.62-2,192.09) by +31.03 / +41.03. That gap is new rows from the re-audits that already sit in the group files: the spare-V4L FM band-stop $16.95, the button overlay $5-15, and eFuse + INA3221 $9.08.
+  - Core with Lime: 2,521.11-2,841.58.
+  - Foldable tier: 542.26-612.99, from the 02b 2.5 subtotal without the horn materials.
+  - Bench: G5's 1,536.56-1,767.80, with the 1,571.94 low end noted.
+  - Extended: G6's 570.25-629.73.
+  - Summary rows: about 2,521-2,842 / 1,915-2,233 / 2,794-3,168 / 3,337-3,781 / 4,873-5,549 / 5,443-6,178.
+  - Core with Lime landed in the EU: at least about $2,611-2,932.
+  
+  Budget variant:
+  - NKON removed; it is now the core default.
+  - Core: $1,915, or $1,844 with manual antenna switching. With Lime: $2,521, or $2,450.
+  - Foldable: about $277 (542.26 − 138.38 PA0RDT clone against the $167.49 Boni-Whip − 57.33 tripod − 70 mast). The G4 trades (Quechua mast, Deuter AC Lite 23) are listed as flagged trades only.
+  - Device with Lime + both antenna tiers + QO-100: about $3,071, or $3,000 with manual switching. Without Lime: about $2,464, or $2,394.
+  
+  Not done because it is outside this file: idx 34's sentence on lower bounds (1,758 + 176 + 351 + 1,475 = 3,760) lives in 3.6 (03b), not here.
+
 ## fold:vhf_uhf (run `wf_4a343103-e9e`)
 
 - **Band group:** VHF/UHF: 137 MHz Meteor-M LRPT, 145.8 MHz ISS SSTV, 435-438 MHz CubeSats (RTL-SDR V4L for 137/145.8 MHz, LimeSDR Micro for 435 MHz). Targets unchanged. Packing targets unchanged: recommended tier has no piece longer than about 35 cm; ultra-compact tier no piece longer than about 20 cm.
@@ -25959,6 +26018,75 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - idx 46 says to keep "Роз'єм RTC звірити з аркушем 18 схеми", but idx 31 (re-audit D) replaced that sentence because the RTC is on PDF page 16 (J11), not sheet 18. The line now reads "RTC: RS4C411ZAE на платі Q6A (схема v1.21, PDF стор. 16, роз'єм J11 — не аркуш 18; …)". G3's own point (c) also uses PDF page 16.
   - The model-cell text "батарейка CR2032 для RTC" is unchanged and still there for idx 46.
 
+## edit:02c_bom_display_power_gnss:b3 (run `wf_85b20a83-f63`)
+
+- **Section:** 02c_bom_display_power_gnss
+- **Applied:**
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+  - 58
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  - 64
+  - 65
+  - 66
+  - 67
+  - 68
+- **Skipped:**
+  1.
+    - **Idx:** 46 (part)
+    - **Why:** I did not put back 'Роз'єм RTC звірити з аркушем 18 схеми'. Re-audit D (earlier batch, idx 31) had already corrected it to 'схема v1.21, PDF стор. 16, роз'єм J11 — не аркуш 18'. Re-audit technical corrections outrank v1 text, and idx 46(c) itself points to J11 on PDF p.16. Part (d): the 'Бюджет: Uputronics MAX-M10S…' anchor was already replaced by an earlier batch, so I changed the wording in place to 'Опційна надбудова з прапорцями підміни' with the BBR/TX UART6 reason, instead of adding a second copy.
+  2.
+    - **Idx:** 49 (part)
+    - **Why:** Conflicted with idx 64 on the KSD9700 text. idx 49 (G3) said keep 'KSD9700 на 70 °C'; idx 64 (G4 decisions[1]) replaces it with the NO / single chassis line in 2.9 / CHG_INHIBIT wiring text. Both are P5 analog decisions. idx 64 won because it is the specific decision on that part (it removes the double count and matches power.json). The G3 'keep' only carried the old text over. I also moved Newegg $15.79 into the 'Було' note when the source changed to AliExpress (IOSS).
+  3.
+    - **Idx:** 58 (part)
+    - **Why:** I did not add Bourns MF-MSMF030-2 (Boni PTC). The analog makes it conditional ('only if v2 keeps a PTC there'), and re-audit B already replaced the Boni and LNB PTCs with the TPS259630DDAR eFuse. AUX12 2N7002: the 2.6 'Логіка інтерфейсу' row already counts 3× 2N7002,215, one of them for the AUX12 gate. I merged instead of buying it twice: the 2N7002 is still named, with a note to buy it once. The set price stays 31-40 as given.
+  4.
+    - **Idx:** 61/66 (anchor)
+    - **Why:** The anchor 'Бюджет: Anker 737 (стенд).' no longer exists; an earlier batch (idx 21) removed it. I merged instead. The existing one-way-PD-adapter sentence stays, and I added that Anker 737 is not a substitute (it stays in the bench kit) and can be a source only via USB-C2 after the DRP matrix (розділ 8). idx 61 and 66 do not conflict.
+  5.
+    - **Idx:** 68 (anchor)
+    - **Why:** The anchor 'У лістингу досі «I2C Capacitive Touch», немає вхідної напруги і комплекту.' was already rewritten by an earlier batch (idx 22) into the listing-image description. I merged the new facts into that text instead of replacing it: «DC(5-24V)» label, «100 35V» input capacitor (read by G6 from the image), page text gives no input voltage, both Type-C ports only «5V 2A» = 10 W (below the D4 14 W limit), no kit, power from DISP12 12 V into the DC jack.
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/02c_bom_display_power_gnss.md, in place with Edit. Every table row still has 7 columns (8 pipes). Where a part was replaced or its seller changed, the old seller, price and saving are in a 'Було' note.
+  
+  Rows changed in 2.7:
+  - Cells: NKON, $37.94 + shipping; akkuteile is the fallback; old 18650 Battery Store $49.95, saving $12.01.
+  - BMS: TinyTronics SKU 005102 and the datasheet A0 details.
+  - IP2368: COUT board described, AliExpress (IOSS), landed EU rule, goods-in checks; KSD9700 now points to 2.9.
+  - SYS12: Botland, $59.08; old $79.90, saving $20.82; LM61460 fallback details.
+  - LAB5: Botland, $17.13; TPSM63604 fallback.
+  - #2813: Botland, $15.12; HP vs MP #2812 goods-in check.
+  - INA228: shunt part and EU DigiKey source.
+  - TPS7A4701RGWT: DigiKey DE, $15.92.
+  - LT3045EMSE#PBF: LCSC C580012, $16.67.
+  - TPS2553DBVR-1: LCSC details, CHZ marking check, C55266 for one channel.
+  - AON set: MCP65R41 (conditional), 1.2-2.4.
+  - Protection set: all parts named, 31-40.
+  - PCB set: JLCONE source, stackup, Murata chokes and C0G blocks; the LNB choke now goes in the DigiKey DE order. GCPW width narrowed from G1's 1.0-1.2 mm to G3's 1.1-1.2 mm, which lies inside G1's range. Added the sled v2 PCB and the Lime PL-586/YAT-10A+ footprint and 22 pF cap.
+  - Battery sundries: 9 items listed, 110-150, plus the XT60-XT30 charge lead (no price in the source).
+  - PD charger: IKEA SJÖSS + RUNDHULT, $25.83, conditional on gates G0-G7; Xiaomi and UGREEN fallbacks.
+  
+  Rows changed in 2.6 and 2.8: the Wisecoco note (idx 68), and in 2.8 the GNSS/RTC row (cell wording, Electrokit EU fallback, Botland same-SKU option, Waveshare-direct landed cost, J11 checks).
+  
+  Subtotals:
+  - 2.7 is now 400.87-495.07. This includes the eFuse TPS259630 (2.14) and INA3221 (6.94) rows that are in this file. G3's own figure, 391.79-485.99, leaves those two rows out; the note gives both figures. The note also says the base is mixed: NKON, TinyTronics and IKEA rows include VAT, Botland and DigiKey rows do not, and shipping and EU fees are not included. Old figure 371.34-522.34; the verifier estimate sentence is kept.
+  - 2.8 stays 69.67-71.67. The EU path without an ALLNET order is +2.28 (71.95-73.95); old figure 80.43-105.43.
+  - 2.6 is unchanged at 221.24-237.59, because no batch-3 change touched a 2.6 price.
+
 ## community:compute_os (run `wf_9603e249-d87`)
 
 - **Subsystem:** compute_os (Radxa Dragon Q6A, which stays): stage 2 check against community reports. Covers RAM tier, BIOS/SPI, the held 6.18.2-4 kernel and apt holds, DT overlays, USB/VBUS, M.2, cooling, NPU firmware, QAIRT 2.42 and FastRPC.
@@ -32319,6 +32447,72 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
     - "Декодери WSJT-X — лише jt9/wsprd (dpkg-divert…)" (idx 80): replaced by the idx 35 wording.
     - "Tj 95 °C…" (idx 138): replaced by the idx 43 wording.
     - The whole SatDump #30 decision cell (idx 110): idx 26 added the pipeline allowlist sentence at the end of that cell. That sentence should be kept when idx 110 replaces the cell.
+
+## edit:01b_decisions_register:b2 (run `wf_9ce86e94-763`)
+
+- **Section:** 01b_decisions_register
+- **Applied:**
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+  - 58
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  - 64
+  - 65
+  - 66
+  - 67
+  - 68
+  - 69
+  - 70
+  - 71
+  - 72
+  - 73
+  - 74
+  - 75
+  - 76
+  - 77
+  - 78
+  - 79
+  - 80
+  - 81
+  - 82
+  - 83
+  - 84
+  - 85
+  - 86
+  - 87
+  - 88
+  - 89
+- **Skipped:** []
+- **Notes:** I applied all 45 changes (idx 45-89) to /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/01b_decisions_register.md using Edit. I kept the batch-1 edits and built on them. Every table row still has 4 columns. Pipes inside cells are escaped (|f_abs|, «find | head -n 1»). This file has no subtotals, so nothing needed recomputing.
+  
+  Conflicts and how I resolved them:
+  - idx 56 against idx 85, both re-audit (same precedence level). idx 56 (re-audit A) won: SatDump gets no hardware or network SDR sources, so no Lime source is built. I chose A because this is A's software domain, it matches the batch-1 text in #11 ("SatDump більше не відкриває SDR") and re-audit C (idx 110), and it leaves fewer code paths that can transmit. From idx 85 I kept the facts: the stock limesdrng_sdr_support has TX modes, calls LMS_Calibrate(LMS_CH_TX) and offers 1-80 Msps. These now explain why the plugin is not built, plus a CI grep check. Its patched-source option is dropped.
+  - idx 46 and idx 82, both re-audit, both on the #21 Gen2 anchor. Merged without conflict. Gen2 is the default through the riser, with B's throughput limit and UI note. Gen3 comes only after the 60-min zero-AER test. The row start now reads «Lime залишено (18.10.2026; збірка за замовчуванням)».
+  - idx 82 "never switch VCC_3V3_MKEY at runtime" sits alongside the batch-1 labd load switch on the riser's separate 3.3 V rail. They do not conflict: one is the board rail, the other the riser rail.
+  - idx 58 and idx 86 were merged for SoapyAirspyHF: 0.2.1 (0b3daf0) built +lab against libairspyhf1 1.6.8-5~lab1.
+  - idx 53 and idx 84 were merged into the kernel-config lists. idx 53's anchor «сторожовий таймер — QCOM_WDT.» had already been rewritten by batch 1, so I added the confirmations to the existing Pico watchdog text.
+  - idx 54: the gr-satellites part was already present from batch 1, so I merged it and did not repeat it. Only Gpredict 1d80049b and the alias bridge are new.
+  - idx 80: B calls the package «wsjtx-decoders+lab», but the file already uses re-audit A's name «lab-wsjt-decoders». I kept A's name and added B's details.
+  - idx 88 and idx 89 follow analogs G6 #7/#3, which outrank the re-audit: I-PEX 90609-0001 at DigiKey DE EUR 16.08 ex VAT = $18.08 (EUR 19.14 incl. VAT). RX1 DC block uses the HMC7992 C0G caps + 22 pF, with YAT-10A+. I wrote G6's condition (LiteVNA 10 ±0.5 dB, return loss ≥20 dB, DC <10 mV) and its fallback (YAT-0A+ in the same footprint, back to inline VAT-10A+). I added ANNE-50+ on X1, and the about $36.79 saving goes in the consequences cell.
+  
+  Flags for later batches:
+  - idx 106 (re-audit C) gives the TDF maintenance mask as Tuesday 06:00-12:00 UTC. idx 79 (re-audit B), applied here, says Tuesday 08:00-12:00 from a secondary source, with no time zone. Batch 3 should reconcile the two.
+  - idx 110, 111, 136, 154 and 176 have anchors on text this batch changed (SatDump decision cell, LC76G «udev /dev/gnss0», NanoVNA-Saver, MHF4 tool / DC blocks). They will need the current wording.
 
 ## edit:02a_bom_compute_receivers_rf:b1 (run `wf_a1f0ee5f-4e1`)
 
@@ -40316,6 +40510,89 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - No change was skipped.
   - This file holds no subtotal that needed recomputing. Row 20's 2.11 delta and row 22's 2.12 delta are unaffected.
   - No hard rule was touched: the probes are E-field only with no loops, and the BLE and 2.4 GHz checks are receive-only scans.
+
+## edit:09_shopping_bringup:b2 (run `wf_b7e15d24-3c6`)
+
+- **Section:** 09_shopping_bringup
+- **Applied:**
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+  - 58
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  - 64
+  - 65
+  - 66
+  - 67
+  - 68
+  - 69
+  - 70
+  - 71
+  - 72
+  - 73
+  - 74
+  - 75
+  - 76
+  - 77
+  - 78
+  - 79
+  - 80
+  - 81
+- **Skipped:** []
+- **Notes:** All 41 changes (idx 41-81) applied. The only file edited was /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/09_shopping_bringup.md. The batch-1 edits were kept, and all 15 table rows still have 5 pipes each.
+  
+  Many anchors were v1 text that batch 1 had already rewritten. For those, I found the spot by part name and merged.
+  
+  Conflicts and how I settled them:
+  - PTC vs eFuse on the LNB rail (42 vs 49 and 46). Both are P4 re-audits. reaudit_B r3 says "No PG and no PTC" on P4 LNB and puts the eFuse RILM in its place. reaudit_C repeats the v1 "PTC" wording. reaudit_B won, so PTC is dropped from shopping step 11 and bring-up step 12. Everything else from 49 and 46 was merged in: 12.5 and 13.2 V cold/hot, 15/20/30 dB, RF-4/8/9, skew, IF ingress 730-750 MHz, cap measurement, horn A/B, terminator, RG6, pads, QRO.cz option, supply-risk reason.
+  - Step 11 timing (46). reaudit_C says "Зараз"; the operator-note timing from batch 1 says "Тиждень 1-2". Merged as "Зараз, не пізніше тижня 1-2". Bullseye seller, price and quantity are left "за аналогом G6" for batch-3 idx 117. The $29.95 RTL-SDR Blog price is kept.
+  - Wisecoco questions (53 vs 78). G2 is higher than reaudit_D, so G2's list is the base, with the D5 items from 53 merged in. "вхід V/I" is kept so batch-3 idx 120 (G6) can refine it.
+  - LiteVNA sellers (55). G5 is higher: Lab401 stays, as reaudit_D says, but only after the GPSR "виробник Zeenko" check, because G5 found DeepElec in Lab401's GPSR.
+  - UV comparator (52). reaudit_D names TLV3012; G3 #12 replaces it with MCP65R41T-1202E/CHY, so G3 won. Sellers follow G3:
+    - DigiKey DE: TPS259470A, MCP65R41, TLV3011.
+    - LCSC: TPS70933DBVR, SMBJ17A ×2.
+    - The Schottkys and 0.1 % resistors have no seller in the files, and the text says so.
+    - "супервізор" was removed from the LCSC list.
+  - SRH-701 (45 vs 48). reaudit_C contradicts itself: 45 calls the SRH-701 a fallback only, but 48 and its own bench test need it for the series-34 A/B. The text now says to have it by 22.10.2026 (WiMo, EUR 16.90, about $19.00, shipping EUR 14.20). It stays as the 70 cm antenna only if the A/B does not favour the dipole.
+  - GNSS antenna (45). Written as "антена 25346 — L1+L5, використовується лише L1", to match BOM 2.4.
+  - SAWbird+ landed range (66). G1's file gives $59.9-60.4 at 20-21 % VAT, not the 19-21 % in the change text; I used the file.
+  
+  Merges into the current structure:
+  - 68 and 81: since batch 1 / G2 #5 there is no DigiKey order in step 7. All of G1's DigiKey items went into the week-1 DigiKey DE order in step 6, and step 7 now says so explicitly. That makes 81 an "already reflected" merge.
+  - 68: the new small vendors (Schubert, Reichelt Goobay 58814, Lindy 36700, AliExpress RG316 pigtails) went into step 7. I added G1's prices for Goobay (EUR 2.60 = $2.92) and Lindy (GBP 1.69 ex VAT = $2.25).
+  - 80: G2's HMI basket replaced the earlier HMI list. Step 6's Daly BMS now points to the TinyTronics order in step 1.
+  - 76: added as a nested sub-item "1а" under bring-up step 1, so that step numbering and cross-references stay the same (e.g. "крок 4 запуску", C4). The UFS LOG-SEC 4096 check from 56 moved into 1а. "cat /sys/kernel/security/lsm" was already in step 1, so it was not repeated.
+  - 56: "EDL лише з живленням J21" was clarified as the A-A cable, with no USB-C while J21 is wired (reaudit_D risk 3).
+  - 77: USD values added at the file rate of EUR 1 = USD 1.1241 (G2 gives $17.87 and $8.98, and about $14.8 for GBP 11.11). The extractor's "(моя примітка)" became "(примітка укладача)".
+  
+  Subtotals recomputed:
+  - Step 1, TinyTronics order (а): EUR 168 = $188.85.
+  - Step 1, (а) + UFS: EUR 226 = $254.05.
+  - Step 1, ALLNET fallback: $283.73 → $266.74 = EUR 237.29, $317.42-322.76 with 19-21 % VAT, UHF for 4 lines = EUR 8 ($8.99). The board saving of $59.72-63.52 is unchanged.
+  - Step 2: with the third dipole kit $281.50; with the third kit and the FM filter $298.45.
+  
+  For batch 3:
+  - G1 (68) buys 3× HMC7992LP3DE now, including 1 for Lime. G6 idx 115 also puts HMC7992LP3DE on the 1.12 Lime DigiKey order; avoid buying it twice.
+  - idx 117 still says "деталі F/LC/PTC", which contradicts the reaudit_B correction applied here.
+  - idx 84 handles the Adafruit MCP23017; G2 makes the DigiKey MCP23017-E/SO conditional on the power board not being ordered yet.
 
 ## extract:analogs_G4 (run `wf_be383e11-6dc`)
 
