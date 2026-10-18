@@ -99,3 +99,7 @@
 - Навчання NPU: агент читає примітки до релізів QNN TFLite Delegate (остання v2.50.0 від 31.08.2026) — потрібна версія, сумісна з QAIRT 2.42 на пристрої. Джерело: docs.qualcomm.com.
 - Радіолабораторія: soapy_power використовує спрощений модуль SimpleSpectral (pyFFTW → scipy → numpy). Джерело: github.com/xmikos/simplespectral.
 
+## 2026-10-18 02:18 UTC
+
+- Користувач пішов спати й делегував усі рішення («будь об'єктивним і зважуй мої бажання»). Зведені вимоги записано у final/user_requirements.md і sat-receiver-audit/REQUIREMENTS.md; вони — головний вхід для всіх наступних фаз.
+
