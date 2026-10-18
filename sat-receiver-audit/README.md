@@ -2,7 +2,7 @@
 
 Звіт оновлюється автоматично під час аудиту. Тут зібрано всі повні відповіді субагентів і всі зведення.
 
-- [Хронологія всіх зведень](summaries.md) — 98 записів
+- [Хронологія всіх зведень](summaries.md) — 99 записів
 - Повні відповіді субагентів по кожному компоненту — посилання в таблиці нижче
 - [Додаткові дослідження (складні антени тощо)](extra-studies.md)
 
@@ -17,7 +17,7 @@
 | [Narrowband sdr](components/narrowband_sdr.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_eb446444-464` |
 | [Power](components/power.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_f924b2ab-5ad` |
 | [Rf frontend](components/rf_frontend.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_30889068-251` |
-| [Software](components/software.md) | ✅ research ✅ forums ⏳ fixes · verify | `wf_e49d4f53-8d4` |
+| [Software](components/software.md) | ✅ research ✅ forums ✅ fixes ⏳ verify | `wf_e49d4f53-8d4` |
 | [Storage](components/storage.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_3e735695-e00` |
 | [Wideband sdr](components/wideband_sdr.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_e64436d6-ae7` |
 

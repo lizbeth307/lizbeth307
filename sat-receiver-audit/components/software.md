@@ -942,5 +942,258 @@ _Run `wf_e49d4f53-8d4`_
 
 ## Власні виправлення (`fixes`)
 
+_Run `wf_e49d4f53-8d4`_
+
+- **Component:** Software stack on Radxa Dragon Q6A (QCS6490): kernel/OS pinning, LimeSDR Micro la9310_limesdr driver, DSP real-time budget, UFS recording, HDMI display path, NPU classifier, decoders and trackers
+- **Fixes:**
+  1.
+    - **Problem:** No one has published the LimeSDR Micro (la9310_limesdr) running on a Qualcomm host. The research also claimed the driver needs exactly 8 MSI vectors.
+    - **Proposed fix:** I read the limesdr-micro-staging driver source (commit 37cb183, 16 Oct 2026) and the Radxa vendor device tree. The Q6A meets what the driver actually requires. The real risk is host scheduling latency, not MSI or SMMU. The facts behind this: (a) The probe requests ONE plain MSI: la9310_pci.c line 311 calls PCI_INT_MODE_MSI, and the 8-vector MULTIPLE_MSI path is unused, so the '8 MSI' risk is wrong. (b) The driver sets a 64-bit DMA mask and uses two 4 MiB kzalloc buffers with dma_map_single, then dma_mmap_coherent. That works through dma-iommu, and the vendor pcie1 node is dma-coherent. So the driver's two cache-sync bugs are harmless on Q6A: the SYNC_FOR_DEVICE ioctl breaks before syncing (la9310_ioctl.c lines 196-200), and the code returns a positive EINVAL. (c) BAR0 is 256 MB. It fits pcie1's 509 MB 32-bit window (0x40300000-0x5FFFFFFF), whose one 256 MB-aligned slot is at 0x50000000. (d) The DWC iMSI-RX catches MSI writes before the SMMU, and the LA9310 programs a 64-bit outbound iATU. So the Pi 5/XTRX MSI-address failure does not apply. (e) pcie-qcom (ops_1_9_0, also in Radxa 6.18.2) force-enables ALL ASPM states, including L1 substates, on every endpoint. Turn that off for the SDR. (f) The bottleneck: the RX DMA ring is only 16 x 16 KiB = 256 KiB (LA9310_TRX.cpp lines 383 and 397; the firmware TCD FIFO MFIFO_SIZE is 32). That is 1.17 ms at 56 Msps, so the 'lime:Rx0' thread must run at least every ~1 ms. Give it an isolated core.
+    - **Steps:**
+      - Kernel command line: append to the 'options' line of the active systemd-boot entry in /boot/efi/loader/entries/: pcie_aspm=off isolcpus=nohz,domain,managed_irq,7 nohz_full=7 rcu_nocbs=7 irqaffinity=0-6 preempt=full. CPU7 is the 2.7 GHz A78 (its own freq domain 2). 6.18.2-4 is PREEMPT_DYNAMIC with voluntary preemption by default, so preempt=full is accepted.
+      - Build LimeSuiteNG pinned to a known commit: git clone -b limesdr-micro-staging https://github.com/myriadrf/LimeSuiteNG && git -C LimeSuiteNG checkout 37cb183. Then run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_GUI=OFF -DBUILD_DRIVERS_LIMEPCIE=OFF -DBUILD_DRIVERS_LA9310=ON -DBUILD_LEGACYAPI=ON -DBUILD_PLUGINS=ON && cmake --build build -j6 && sudo cmake --install build. Apply the DKMS fix from the DKMS item before the first kernel update.
+      - Bring-up checks: lspci -nn -s 0001:01:00.0 should show 1957:1c10/1c12 or 2058:001d. In dmesg | grep -i -E 'la9310|smmu|AER', expect 'BAR:0 ... len:0x10000000', 'using 64bit DMA mask' and 'MSI:ATU', and no 'Unhandled context fault' or 'Cannot complete request'. Then run limeDevice --full.
+      - If lspci shows the device but ASPM is still on, disable it per device: for f in l0s_aspm l1_aspm l1_1_aspm l1_2_aspm l1_1_pcipm l1_2_pcipm; do echo 0 | sudo tee /sys/bus/pci/devices/0001:01:00.0/link/$f; done
+      - Before streaming, set the A78 clusters to the performance governor (the kernel default is ondemand): echo performance | sudo tee /sys/devices/system/cpu/cpufreq/policy4/scaling_governor /sys/devices/system/cpu/cpufreq/policy7/scaling_governor. Pin the RX thread: for t in /proc/$(pgrep -n sdrpp)/task/*; do grep -q 'lime:Rx' $t/comm && sudo taskset -pc 7 ${t##*/}; done
+      - Ask applications for CS16 output where possible (GNU Radio soapy source 'sc16', SatDump cs16). For CF32 the library does the I16-to-float conversion in a per-sample loop on the same latency-critical RX thread (LA9310_TRX.cpp lines 660-667).
+      - If overruns remain, try two experimental patches. First, raise SubdivideBuffer(rx_lane_dma_mem[l], dmaBatchSize, 16) to 31 blocks, which stays under the firmware FIFO of 32 and doubles the slack to ~2.3 ms. Second, switch the driver's kzalloc + dma_map_single to dma_alloc_coherent. Under the SMMU that removes the order-10 (4 MiB, the kernel MAX_ORDER) contiguous allocation. Until the second patch exists, only (re)load the module after: echo 1 | sudo tee /proc/sys/vm/compact_memory.
+      - If it still fails, open a LimeSuiteNG issue with full dmesg and lspci -vvv output. In the meantime, use the RTL-SDR for the narrow targets and keep 56 MHz live view as a deferred feature.
+    - **How to verify:** Run a 30-minute continuous RX at 56 Msps: limeTRX --time 1800000 --linkFormat I16 with stats, or SoapySDRUtil --args='driver=<from SoapySDRUtil --find>' --rate=56e6 --direction=RX. The Rx stats line must show o:0 and l:0, and the MB/s figure must stay at ~224 MB/s. Check scheduling latency with sudo cyclictest -m -p 90 -a 7 -t 1 -i 200 -D 10m: max should be < 200 us. Expect no SMMU or AER lines in dmesg, and lspci -vvv should report 'ASPM Disabled' and 'Speed 8GT/s, Width x1'.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/drivers/linux/la9310_limesdr/la9310_pci.c
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/drivers/linux/la9310_limesdr/la9310_base.c
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/drivers/linux/la9310_limesdr/la9310_ioctl.c
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/boards/LimeSDR_Micro/LA9310_TRX.cpp
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/chips/LA9310/firmware/dma_tcd_fifo.h
+      - https://github.com/radxa/kernel/blob/linux-6.18.2/arch/arm64/boot/dts/qcom/sc7280.dtsi
+      - https://github.com/radxa/kernel/blob/linux-6.18.2/drivers/pci/controller/dwc/pcie-qcom.c
+      - https://github.com/torvalds/linux/blob/master/drivers/pci/controller/dwc/pcie-designware-host.c
+      - https://github.com/nxp-qoriq/la931x_iqplayer/blob/main/doc/iqplayer_porting_guide_LimeSDR-Micro.rst
+  2.
+    - **Problem:** PCIe/SMMU behaviour depends on the device tree. On the mainline DTB, NVMe ran ~30x slower and arm-smmu probe failed with -110. The vendor DT's pcie1 settings had not been checked.
+    - **Proposed fix:** Checked: the Radxa vendor DT (linux-6.18.2 sc7280.dtsi plus the Q6A dts; 7.0.11 kodiak.dtsi is the same) gives pcie1 the following: msi0-msi7 plus a 'global' link-up IRQ, so late link-up gets re-enumerated; dma-coherent; interconnect votes (pcie-mem and cpu-pcie); a 0x1fd00000 non-prefetchable window; and an iommu-map that sends every RID from 0x0 to 0x600 to SID 0x1c80. Radxa lists a dGPU and a Chelsio NIC as tested on this slot. The failing arm-smmu@3da0000 in the slowdown thread is the GPU SMMU, not apps_smmu, and that thread's fix was simply the vendor DTB. Rule: always boot the vendor DTB (or the one UEFI provides), never a mainline DTB. Keep SMMU translation on: the driver uses the DMA API correctly. iommu.passthrough=1 is global (it also affects UFS, USB and display), so use it only as a one-off diagnostic.
+    - **Steps:**
+      - Confirm the running DT: ls /proc/device-tree/soc@0/pcie@1c08000/dma-coherent, then tr '\0' ' ' < /proc/device-tree/soc@0/pcie@1c08000/interrupt-names, which should list msi0..msi7 and global.
+      - Confirm DMA translation: cat /sys/bus/pci/devices/0001:01:00.0/iommu_group/type should read DMA or DMA-FQ. dmesg should show the driver's 'using 64bit DMA mask'.
+      - Optional throughput tweak for UFS and USB, not the SDR: the kernel defaults to IOMMU_DEFAULT_DMA_STRICT. Try iommu.strict=0 and compare fio results before and after; keep it only if faster and stable.
+      - If DMA faults appear (rare), run one A/B boot with iommu.passthrough=1 to tell an SMMU problem from a firmware problem. Report the result; do not ship with it.
+    - **How to verify:** After a 30-minute 56 Msps stream (first item): no 'arm-smmu ... Unhandled context fault' in dmesg, IQ looks sane (a test tone's frequency and amplitude are stable in the waterfall), and fio sequential UFS write runs at the vendor-DTB figure (hundreds of MB/s, not ~27 MiB/s).
+    - **Confidence:** high
+    - **Sources:**
+      - https://github.com/radxa/kernel/blob/linux-6.18.2/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://github.com/radxa/kernel/blob/linux-6.18.2/arch/arm64/boot/dts/qcom/sc7280.dtsi
+      - https://forum.radxa.com/t/catastrophic-i-o-slowdown-on-mainline-dtbs-on-6-19/30440
+  3.
+    - **Problem:** The NPU is INT8-only, and the firmware caps QNN at interface 2.32 (QAIRT 2.42). onnxruntime-qnn 2.x and other new runtimes therefore fail.
+    - **Proposed fix:** Treat the HTP as a fixed v68 INT8/INT16 integer target and pin the whole toolchain to the exact runtime Radxa ships. I confirmed that the qcom-qnn-sdk-v68 0.1.0-2 package's libQnnHtp.so and libQnnHtpV68Skel.so are v2.42.0.251225135753. FP16 on HTP fails with 'The SocModel doesn't support FP16', and Qualcomm's docs say quantized 8-bit and 16-bit networks run on all SoCs. So use INT8 weights, and 16-bit activations (A16W8) if INT8 accuracy is poor. Do not use onnxruntime-qnn 2.x or the qai_appbuilder 2.48.40 wheel (it bundles its own 2.48 runtime) unless they pass the golden test on your exact firmware set. Users report QAIRT 2.46+ failing with QNN_DEVICE_ERROR_INVALID_CONFIG on CDSP c4-00004. If INT8 is not accurate enough, the same package also ships libQnnGpu.so: a QNN GPU backend that runs FP16 on the Adreno via qcom-adreno-opencl (untested on Q6A). The CPU (ONNX Runtime) stays the default.
+    - **Steps:**
+      - Make the model INT8-friendly. Use Conv(1xK) + ReLU (or ReLU6) + global average pooling + FC, with no LSTM. Fold BatchNorm into the convolutions before export: the reported ArcFace INT8 collapse to 51% was blamed on unfolded pre-activation BN. Normalize each IQ window to unit RMS so one static input scale works. Export ONNX with a fixed shape, for example [1,1,2,1024].
+      - On an x86-64 Ubuntu 22.04 host with QAIRT exactly 2.42.0.251225, convert with qairt-converter. Then run qairt-quantizer with per-channel weight quantization, calibrating on 300-500 windows that cover the whole SNR range. First try 8-bit activations, then 16-bit activations with 8-bit weights. Confirm flag names with qairt-quantizer --help in 2.42.
+      - Build the context binary for v68 (soc_model 35), either on the host or on the device. The device can do it: the package ships qnn-context-binary-generator and libQnnModelDlc.so.
+      - On the device, run qnn-net-run --backend libQnnHtp.so --retrieve_context model.bin --input_list list.txt --perf_profile sustained_high_performance. Compare outputs with the FP32 ONNX outputs on the same windows.
+      - Acceptance rule: at SNR >= 0 dB, the INT8 (or A16W8) model must be within 2 percentage points of FP32 per class. If not, use quantization-aware training, or move inference to the CPU (ONNX Runtime) or to the QNN GPU backend in FP16.
+    - **How to verify:** Run the same held-out RadioML-style set plus your own recordings through three paths: ONNX Runtime CPU (FP32), qnn-net-run on HTP, and optionally QNN GPU. Plot per-SNR accuracy. Check that HTP latency per window is stable over 10^5 inferences, and that the library strings show the 2.42.0.251225 build: strings /usr/lib/aarch64-linux-gnu/libQnnHtp.so | grep 2.42.0.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://radxa-repo.github.io/qcs6490-noble/pool/main/q/qcom-qairt/qcom-qnn-sdk-v68_0.1.0-2_all.deb
+      - https://forum.radxa.com/t/dragon-q6a-qnn-htp-pipeline-working-but-int8-only-firmware-blocks-real-ml-workloads/31217
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/htp_backend.md
+      - https://docs.radxa.com/en/dragon/q6a/app-dev/npu-dev/qai-appbuilder
+      - https://forum.radxa.com/t/running-custom-frigate-with-full-npu-support-dragon-q6a/31047
+  4.
+    - **Problem:** Long-run NPU stability is unknown: HTP hangs after ~1 hour, board hangs, kernel panics, and only ~2 MB of VTCM usable.
+    - **Proposed fix:** Design the system so an NPU hang cannot stop SDR capture. Run the classifier as a separate, sandboxed and supervised process with a watchdog, a CPU fallback and automatic CDSP recovery. Keep the NPU load light: a 10k-200k-parameter CNN at 1-10 windows/s needs well under 2 MB of VTCM, so request vtcm 2 MB, the amount users report as usable. Recordings go to disk through a different process, so the worst case (a classifier hang) loses only labels.
+    - **Steps:**
+      - Classifier daemon: a systemd service with Restart=always, WatchdogSec=10 and MemoryMax=1G. It calls sd_notify('WATCHDOG=1') after every successful inference and gets IQ snapshots from the SDR process over a ring buffer in shared memory (/dev/shm). It must never sit in the SDR data path.
+      - Failover: if 3 restarts happen within 60 s, or one inference takes longer than 500 ms, switch the daemon to the ONNX Runtime CPU model on the A55 cores (taskset -c 0-3) and flag the NPU as failed in the UI.
+      - CDSP recovery script: find the remoteproc whose name file reads cdsp or a300000.remoteproc, then: echo stop | sudo tee /sys/class/remoteproc/remoteprocN/state; echo start | sudo tee .../state; sudo systemctl restart cdsprpcd. Check that /sys/class/remoteproc/remoteprocN/recovery reads enabled.
+      - Use --perf_profile sustained_high_performance or balanced, not burst, to limit heat next to the SDR.
+      - Before field use, run a soak test: 8 hours with a 56 Msps RX stream, continuous fio writes at 250 MB/s and classification at 10 Hz. Log journalctl -k -f | grep -E 'fastrpc|remoteproc|smmu|watchdog'.
+    - **How to verify:** The 8-hour soak must give zero board hangs, at most a few automatic CDSP restarts (all logged), zero SDR overruns, and a p99 inference latency recorded each hour. Then deliberately kill cdsprpcd mid-run: the daemon must fail over to the CPU within 10 s while recording continues.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://forum.radxa.com/t/npu-htp-usage-in-radxa-dragon-q6a/29949
+      - https://forum.radxa.com/t/non-functional-npu-support-on-dragon-q6a-qcs6490-under-ubuntu-24-04-noble/30699
+      - https://forum.radxa.com/t/report-dragon-q6a-experience-npu-kernel-panics-with-llms-aic8800-driver-instability/29959
+      - https://github.com/torvalds/linux/blob/master/drivers/misc/fastrpc.c
+  5.
+    - **Problem:** On Radxa kernel 7.0.11 with firmware 0.2.41, the CDSP fails with 'remotectl1 domains not supported' / 0x80000600, and no matched firmware/fastrpc pair has been published.
+    - **Proposed fix:** Pin and checksum one 'golden' NPU set and treat it as a single unit. That set is kernel 6.18.2, CDSP CDSP.HT.2.5.c4-00004 and ADSP c9-00028 from the Radxa OS r2 rootfs, the matching fastrpc_shell_unsigned_3 and /usr/lib/dsp/cdsp tree, libcdsprpc and cdsprpcd, and QAIRT 2.42.0.251225. A community kit (vladisUl/npu_runtime_armbian) built from exactly these files ran a ResNet50 context binary on kernel 6.18.2. It publishes 64-hex digests (likely SHA-256): cdsp.mbn a9645c94...1d56, adsp.mbn 01fea794...f3a5f3. The 'no reserved DMA memory for FASTRPC' message is informational: the mainline fastrpc driver continues without a memory-region, so the DT overlay alone is not the fix. Test 7.0.11 only with the same golden userspace and firmware moved over.
+    - **Steps:**
+      - On a fresh r2 image (kernel 6.18.2-4), before any apt upgrade: sha256sum /lib/firmware/qcom/qcs6490/radxa/dragon-q6a/*.mbn, then strings cdsp.mbn | grep -m1 QC_IMAGE_VERSION_STRING, then strings /usr/lib/dsp/cdsp/fastrpc_shell_unsigned_3 | grep -m1 CDSP.HT. Save these together with dpkg -l | grep -E 'fastrpc|cdsprpc|qnn|radxa-firmware' in a manifest.
+      - tar the set (/lib/firmware/qcom/qcs6490/radxa/dragon-q6a, /usr/lib/dsp, the libcdsprpc* and libadsprpc* files, /usr/bin/*dsprpcd, /usr/lib/udev/rules.d/*fastrpc*) and keep the tarball offline.
+      - Hold the packages: sudo apt-mark hold radxa-firmware-qcs6490 fastrpc libcdsprpc1 libadsprpc1 libcdsp-default-listener1 libadsp-default-listener1 qcom-qnn-sdk-v68 task-qualcomm-npu.
+      - Add a systemd ExecCondition unit that checks the digests against the manifest at boot and disables the NPU service, not the device, if they differ.
+      - To evaluate 7.0.11-7: install it as a second boot entry, restore the golden tarball, reboot, and run fastrpc_test -a v68 and the qnn-net-run golden model. If both pass, the 7.0.11 path is usable; if not, stay on 6.18.2.
+    - **How to verify:** fastrpc_test -a v68 passes all 3 tests, and journalctl -u cdsprpcd shows no 0x80000600. The golden context binary gives the same output tensor as the stored reference after every boot and kernel change.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://forum.radxa.com/t/cdsp-fastrpc-session-still-fails-0x80000600-remotectl1-domains-not-supported-after-fixing-the-missing-memory-region-r2-ubuntu-24-04-kernel-7-0-11-5/31391
+      - https://github.com/vladisUl/npu_runtime_armbian
+      - https://forum.radxa.com/t/non-functional-npu-support-on-dragon-q6a-qcs6490-under-ubuntu-24-04-noble/30699
+      - https://github.com/torvalds/linux/blob/master/drivers/misc/fastrpc.c
+  6.
+    - **Problem:** The Kioxia UFS PA_TACTIVATE quirk is confirmed only in the 6.18.2 source, and sustained IQ writes at ~246 MB/s alongside PCIe DMA have never been shown.
+    - **Proposed fix:** I checked the shipped kernel images. The OFFICIAL 6.18.2-4 deb (built 30 Mar 2026) does NOT contain the THGJFGT1E45BAILB quirk; the string search found other UFS quirk models but not this one. The 7.0.11-7 image (17 Sep 2026) does contain it, and mainline (Oct 2026) does not. Radxa's linux-6.18.2 git branch has it (PR #551), but no 6.18.2-5 was released. The quirk only sets local PA_TACTIVATE (0x15A8) to 10, i.e. 1 ms. So on the HDMI- and NPU-safe 6.18.2-4 kernel, use one of these: (a) the Samsung UFS module, which is not affected; (b) a self-built 6.18.2 deb from radxa/kernel linux-6.18.2 head, built with the same Debian 12 gcc-12 cross compiler so DKMS stays consistent; or (c) for Kioxia on stock 6.18.2-4, the sysfs settings that stop the link idling into hibern8, which do what Radxa's keepalive script does. Also plan around capacity: 56 Msps cs16 is 224 MB/s, 13.4 GB per minute.
+    - **Steps:**
+      - Identify the module: cat /sys/class/scsi_device/*/device/model. If it says THGJFGT1E45BAILB, uname -r says 6.18.2-4-qcom, and you cannot rebuild the kernel, use the workaround below.
+      - Workaround, run at boot from a systemd oneshot: echo 0 > /sys/devices/platform/soc@0/1d84000.ufshc/auto_hibern8; echo 0 > .../rpm_lvl; echo 1 > .../wb_on (WriteBooster). Keep Radxa's ufs_keepalive.sh as a second line of defence. It needs TARGET_FILE and INTERVAL_MS set; the posted version leaves them unset.
+      - Self-build option: build radxa-pkg/linux-qcom with the src submodule on radxa/kernel linux-6.18.2, giving 6.18.2-x with the quirk, in the Debian bookworm devcontainer (aarch64-linux-gnu-gcc 12.2.0). Install it as an additional systemd-boot entry.
+      - Sustained-write test: fio --name=iq --filename=/data/iq.bin --rw=write --bs=1M --size=40G --ioengine=libaio --iodepth=8 --direct=1 --time_based --runtime=600 --write_bw_log=bw --log_avg_msec=1000. Run it alone, then together with a 56 Msps LimeSDR stream and the classifier.
+      - Recording policy: about 8 minutes of 56 Msps cs16 fits on a 128 GB module and about 17 minutes on 256 GB. Use cs8 or SatDump ZIQ, or record decode-bandwidth basebands (8 Msps cs8 = 16 MB/s). For 160 Msps bursts (640 MB/s), record to a RAM ring (12 GB holds about 18 s) and flush afterwards. Alternative: a USB 3 SSD on the USB 3.1 port as an exchangeable IQ drive (throughput not verified on Q6A).
+    - **How to verify:** In the 10-minute fio bandwidth log, the minimum 1-second write must be >= 300 MB/s (35% margin over 224 MB/s), including when the SDR is streaming. dmesg must stay free of 'ufshcd' errors and OCS/hibern8 messages over a 24-hour idle and busy cycle. Pass recordings must have no sample gaps: the LimeSuiteNG Rx stats should show l:0.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/radxa-pkg/linux-qcom/releases/tag/6.18.2-4
+      - https://radxa-repo.github.io/qcs6490-noble/pool/main/l/linux-upstream/linux-image-7.0.11-7-qcom_7.0.11-7_arm64.deb
+      - https://github.com/radxa/kernel/blob/linux-6.18.2/drivers/ufs/host/ufs-qcom.c
+      - https://github.com/radxa/kernel/blob/linux-7.0.11/drivers/ufs/host/ufs-qcom.c
+      - https://github.com/torvalds/linux/blob/master/drivers/ufs/core/ufshcd.c
+      - https://github.com/torvalds/linux/blob/master/drivers/ufs/core/ufs-sysfs.c
+      - https://forum.radxa.com/t/ufs-random-reboots/30630?page=2
+  7.
+    - **Problem:** No one has benchmarked live 56 Msps DSP on 4x A78 + 4x A55. SatDump real-time decoding with LimeSuiteNG at high rates dropped packets even on x86.
+    - **Proposed fix:** Split the device into two modes and use the LA9310's own decimation. (1) Wide-survey mode at 56 Msps: only FFT/waterfall and optional burst recording, no demodulation. The FFT load is small: a 30 fps x 16-average waterfall of 8192-point FFTs is ~480 FFT/s, about 0.26 GFLOPS, a fraction of one A78. A gap-free 'every sample' spectrum would be ~6,800 FFT/s, about 3.6 GFLOPS: 1-2 A78 cores, or the GPU. (2) Decode mode at 7-10 Msps. LimeSDR_Micro.cpp automatically uses LA9310 4x oversampling (hardware decimation) for rates <= 20 Msps, with a 7 Msps minimum. HRPT/AHRPT and S-band telemetry then cost 28-40 MB/s instead of 224 MB/s. Anything above ~10 Msps, or any X-band baseband, is record-then-decode. In #1034 offline post-processing worked when live decoding did not. Assign cores: CPU7 for the RX thread; CPU4-6 for DSP/SatDump; CPU0-3 for UI, classifier, gpsd/IMU and IRQs.
+    - **Steps:**
+      - Benchmark offline first. Record a real pass at 8 Msps: satdump legacy record /data/hrpt --source limesdr --samplerate 8e6 --frequency 1701.3e6 --baseband_format cs16 --timeout 900. Then time the decode: /usr/bin/time -v satdump pipeline meteor_hrpt baseband /data/hrpt.cs16 /data/out --samplerate 8e6 --baseband_format cs16. Real-time factor = wall time / 900 s.
+      - Use live decode for a pipeline only if its real-time factor is < 0.5 with the UI running. Otherwise record, then decode right after the pass.
+      - GNU Radio: run volk_profile once; decimate with cascaded halfband or pfb_decimator_ccf blocks, never one long FIR at the full rate. Pin the flowgraph with taskset -c 4-6.
+      - Wide view: SDR++ (or CyberEther) with FFT rate 20-30 fps, and no VFO demodulators active at 56 Msps.
+    - **How to verify:** For each pipeline, log: real-time factor, overruns in the LimeSuiteNG stats, CPU use per core (mpstat -P ALL 1), and SoC temperature (/sys/class/thermal/thermal_zone*/temp) over a full 15-minute pass. Live mode passes only with 0 overruns and decoded frames matching the offline decode of the same baseband.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp
+      - https://github.com/SatDump/SatDump/blob/master/README.md
+      - https://github.com/SatDump/SatDump/issues/1034
+      - https://discourse.myriadrf.org/t/optimizing-for-max-sample-rate-out-of-xtrx-gnuradio/13054
+  8.
+    - **Problem:** SatDump and Gpredict cannot handle Alpha-5 / 6-digit NORAD numbers (the catalog passed 99999 on 11 Jul 2026). SatDump master also clamps synthesized TLE IDs to 99999 and rejects 19-column SupGP CSV.
+    - **Proposed fix:** Write a small OMM bridge that makes CelesTrak GP data (JSON/CSV) the single source of truth. (1) The on-screen pointing aid uses Skyfield's EarthSatellite.from_omm, whose JSON/CSV path has no catalog-number limit; sgp4 2.27 also parses Alpha-5 (up to 339999). (2) For Gpredict and SatDump, the bridge writes TLE lines (sgp4.exporter.export_tle) and a 17-column GP CSV. In these it replaces each NORAD ID > 99999 with a free 5-digit local alias that the script checks against the loaded groups, and keeps alias-to-real mappings in a JSON file. SGP4 output does not depend on the catalog number, so predictions are identical.
+    - **Steps:**
+      - pip install sgp4==2.27 skyfield. Download (whenever Wi-Fi is available) https://celestrak.org/NORAD/elements/gp.php?GROUP=amateur&FORMAT=json, plus GROUP=weather, cubesat and stations, into /var/lib/omm/.
+      - bridge.py: for each OMM record, satrec via sgp4.omm.initialize; give an alias if NORAD_CAT_ID > 99999 (collision-checked); write /var/lib/omm/local.tle and local_gp.csv (17 columns); write alias_map.json.
+      - Gpredict: Edit > Update TLE data > From local files > /var/lib/omm. SatDump 2.0: serve the files with python3 -m http.server --bind 127.0.0.1 8765 and point SatDump's TLE/OMM source URL at http://127.0.0.1:8765/local_gp.csv.
+      - The pointing UI and the logs show real NORAD IDs (looked up through alias_map.json).
+    - **How to verify:** For three objects with IDs > 99999 and one ISS reference, compare azimuth and elevation over 24 hours from Skyfield-on-OMM, Gpredict-on-alias-TLE and SatDump: they should differ by < 0.1 degree. Confirm the objects appear in Gpredict, where without the bridge they decode as ID 0.
+    - **Confidence:** high
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/issues/1221
+      - https://github.com/csete/gpredict/pull/412
+      - https://rhodesmill.org/skyfield/earth-satellites.html
+      - https://pypi.org/project/sgp4/
+  9.
+    - **Problem:** The HDMI path to a panel above 1080p is fragile: EDID falls back to 1024x768 on a 4K monitor, GDM freezes, and HDMI broke on kernels 7.0.11-4 and 7.2.3.
+    - **Proposed fix:** The HDMI output is QCS6490 DisplayPort feeding a 'radxa,ra620' bridge, handled by the plain simple-bridge driver with no mode filtering. The DP side uses data-lanes <0 1> and the Q6A DT has no link-frequencies, so the msm DP driver caps the link at HBR2 (dp_link.c). Its mode check (lanes x rate x 8 >= pclk x bpp) then allows at most ~360 MHz pixel clock at 24 bpp. That means 2560x1600@60 (CVT-RB ~268.5 MHz), 2560x1440@60 (241.5 MHz) and 3840x2160@30 (297 MHz) are fine, but 4K@60 can never work (533-594 MHz). This explains the 4K fallback: the user got 4K by forcing it. So: (1) choose a panel whose native timing is <= 360 MHz; a 1000+ nit 1920x1200 or 2560x1600 panel is the sensible target at 7-8 inches. (2) Stay on 6.18.2-4, where HDMI works and rolling back fixed the 7.0 black screen. (3) Override a bad EDID. (4) Use a kiosk compositor instead of GNOME/GDM. Experimental option: a DT overlay adding HBR3 link-frequencies on &mdss_dp_out, as mainline already does for the same SoC on RUBIK Pi 3 and the Thundercomm mini-PC (2-lane, up to 8.1 Gbps). That raises the cap to ~540 MHz. It is unverified whether the RA620 and the board traces handle HBR3; if link training fails, msm DP drops the rate.
+    - **Steps:**
+      - Read the panel EDID: sudo cat /sys/class/drm/card*-HDMI-A-1/edid > panel.bin; edid-decode panel.bin. Check the preferred detailed timing's pixel clock against 360 MHz.
+      - If the EDID is wrong or missing, make a correct one (for example with edid-generator from a 'cvt -r 2560 1600 60' modeline) and save it as /usr/lib/firmware/edid/panel.bin. On 6.18.2-4, DRM_MSM is built in (=y), so the file must also be in the initramfs: add a hook in /etc/initramfs-tools/hooks that calls copy_file, then run update-initramfs -u.
+      - Kernel command line: drm.edid_firmware=HDMI-A-1:edid/panel.bin video=HDMI-A-1:2560x1600@60 (CONFIG_DRM_LOAD_EDID_FIRMWARE=y in both 6.18.2-4 and 7.0.11-7).
+      - Desktop: boot to a kiosk such as cage, or labwc, running SDR++/CyberEther and the pointing UI. Set or confirm the mode with wlr-randr. Disable gdm3.
+      - Optional HBR3 test: compile a /plugin/ overlay with &mdss_dp_out { link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>; } using dtc -@. Install it in /boot/efi/RadxaOS/<kernel>/dtbo/ and add a 'devicetree-overlay' line to the loader entry. Boot with drm.debug=0x4 and check the trained link rate in dmesg.
+      - Freeze the display stack: sudo apt-mark hold linux-image-radxa-dragon-q6a linux-headers-radxa-dragon-q6a.
+    - **How to verify:** cat /sys/class/drm/card*-HDMI-A-1/modes lists the native mode. wlr-randr shows it active at 60 Hz. The output survives 20 cold boots and 20 replugs. A 4-hour run of SDR++ at full screen shows no blanking or GPU hang.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/radxa/kernel/blob/linux-6.18.2/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://github.com/radxa/kernel/blob/linux-6.18.2/drivers/gpu/drm/bridge/simple-bridge.c
+      - https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/msm/dp/dp_link.c
+      - https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/msm/dp/dp_display.c
+      - https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/qcom/qcs6490-thundercomm-rubikpi3.dts
+      - https://forum.radxa.com/t/linux-7-0-hdmi-not-working/31304
+      - https://forum.radxa.com/t/samsung-g80sd-can-not-negotiate-resolution-refresh-rate/31118
+      - https://evelta.com/radxa-rock-5-itx-8k-arm-personal-computer/
+  10.
+    - **Problem:** Firmware and OS have forked: BIOS 260916 is 'Not compatible with Radxa OS (Ubuntu 24)' and targets an unreleased Ubuntu 26 image. Mainline still lacks Q6A UFS and HDMI.
+    - **Proposed fix:** Treat 'BIOS 260120 + Radxa OS r2 noble + kernel 6.18.2-4 + golden NPU set' as a frozen, versioned platform, and migrate only after a scripted re-validation. One trap I checked: the Radxa apt index now carries only kernel 7.0.11-7, and the linux-image-radxa-dragon-q6a meta package depends on it. A plain apt upgrade on r2 therefore jumps to 7.0.x. The 6.18.2-4 image and header debs are still on GitHub releases.
+    - **Steps:**
+      - Keep dragon-q6a_flat_build_wp_260120.zip, EDL-NG v1.6.0 and the r2 UFS image (output_4096) offline. BIOS can always be reflashed over EDL.
+      - Hold the kernel and firmware: sudo apt-mark hold linux-image-radxa-dragon-q6a linux-headers-radxa-dragon-q6a linux-image-6.18.2-4-qcom radxa-firmware-qcs6490 radxa-overlays-dkms. Optionally add an apt preferences pin with Pin-Priority -1 for linux-image-7*.
+      - Get matching headers: wget https://github.com/radxa-pkg/linux-qcom/releases/download/6.18.2-4/linux-headers-6.18.2-4-qcom_6.18.2-4_arm64.deb && sudo apt install ./linux-headers-6.18.2-4-qcom_6.18.2-4_arm64.deb
+      - Take a golden backup: from a microSD or USB-booted system, sudo dd if=<UFS disk> bs=16M status=progress | zstd -T0 > q6a-golden.img.zst
+      - Write a re-validation script to run on any new BIOS/OS/kernel candidate, booted from a spare module or USB, never the field UFS: HDMI native mode; UFS fio test; LimeSDR 30-minute 56 Msps test; fastrpc_test plus the golden QNN model; RTL-SDR, GNSS and IMU. Migrate only when all of them pass.
+    - **How to verify:** After apt update && apt upgrade -s, no kernel, firmware or fastrpc package appears in the simulated actions. dmidecode -s bios-version still contains 260120. The re-validation script produces a pass/fail report you can store with each image.
+    - **Confidence:** high
+    - **Sources:**
+      - https://dl.radxa.com/dragon/q6a/images/dragon-q6a-bios-changelog.md
+      - https://docs.radxa.com/en/dragon/q6a/download
+      - https://radxa-repo.github.io/qcs6490-noble/dists/qcs6490-noble/main/binary-arm64/Packages.gz
+      - https://github.com/radxa-pkg/linux-qcom/releases/tag/6.18.2-4
+      - https://forum.radxa.com/t/uki-boot-on-20250120-firmware/30896
+  11.
+    - **Problem:** It was unknown whether the la9310_limesdr DKMS build hits the aic8800 compiler-mismatch trap, so a kernel update could silently leave the SDR without a driver.
+    - **Proposed fix:** I checked two concrete failure modes. (1) Compiler: the 6.18.2-4 and 7.0.11-7 headers record CONFIG_CC_VERSION_TEXT 'aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0', built in a Debian bookworm devcontainer. Ubuntu 24.04 compiles DKMS modules with gcc 13. That is 'older kernel compiler, newer system compiler', which normally gives only a warning. The Armbian aic8800 failure was the reverse (kernel gcc 14, system gcc 13: '-fmin-function-alignment=8' unrecognized), and it can happen here if Radxa moves to a gcc-14 container. (2) A real bug in the LimeSuiteNG packaging: the generated module Makefile uses KERNEL_DIR ?= /lib/modules/`uname -r`/build, and dkms.conf has MAKE[0]="make". When apt installs a new kernel, DKMS therefore builds against the RUNNING kernel's headers and installs a module with the wrong vermagic into the new kernel. Fix both by pinning the compiler and passing DKMS's kernel_source_dir explicitly.
+    - **Steps:**
+      - sudo apt install gcc-12 dkms (noble ships gcc-12 12.3).
+      - Edit /usr/src/la9310_limesdr-0.2.1/dkms.conf: MAKE[0]="make KERNEL_DIR=${kernel_source_dir} CC=gcc-12" and CLEAN="make KERNEL_DIR=${kernel_source_dir} clean". Keep the edit as a patch to dkms.conf.in in your LimeSuiteNG fork.
+      - sudo dkms remove la9310_limesdr/0.2.1 --all; sudo dkms install la9310_limesdr/0.2.1 -k 6.18.2-4-qcom
+      - Add a post-kernel-install check, /etc/kernel/postinst.d/zz-la9310-check: compare CONFIG_CC_VERSION_TEXT in /usr/src/linux-headers-$1/include/config/auto.conf with the installed gcc-N; if they differ, install gcc-N and rerun dkms autoinstall -k $1.
+      - Add a boot guard unit: if modinfo -F vermagic la9310_limesdr does not start with $(uname -r), run dkms autoinstall -k $(uname -r) and show a UI warning.
+    - **How to verify:** Install a second kernel (for example 7.0.11-7) without booting it. Then modinfo -k 7.0.11-7-qcom -F vermagic la9310_limesdr must start with 7.0.11-7-qcom, and /var/lib/dkms/la9310_limesdr/0.2.1/7.0.11-7-qcom/aarch64/log/make.log must show the 7.0.11 headers path. After booting either kernel, lsmod | grep la9310 shows the module and limeDevice finds the board.
+    - **Confidence:** high
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/drivers/linux/la9310_limesdr/cmake/add_kernel_module.cmake
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/drivers/linux/la9310_limesdr/dkms.conf.in
+      - https://github.com/radxa-pkg/linux-qcom/blob/main/.devcontainer/devcontainer.json
+      - https://radxa-repo.github.io/qcs6490-noble/pool/main/l/linux-upstream/linux-headers-7.0.11-7-qcom_7.0.11-7_arm64.deb
+      - https://forum.armbian.com/topic/60133-wifi-gone-on-current-version/
+  12.
+    - **Problem:** CyberEther and other Vulkan waterfalls are unverified on Turnip/Adreno 643. Radxa staff said the Q6A does not support Vulkan as a GPU backend, and the only aarch64 CyberEther bug failed at swapchain creation.
+    - **Proposed fix:** These are separate problems, and none blocks the design. Turnip Vulkan compute works on Q6A: Radxa's vkpeak run reports 'Turnip Adreno (TM) 643', 808 GFLOPS FP32 and 1581 GFLOPS FP16. The Radxa remark was about llama.cpp's Vulkan backend. The Pi 4 CyberEther failure was X11 presentation ('No DRI3 support detected'), not the GPU. Run the UI under a Wayland kiosk compositor (cage), with Xwayland for apps built only for X11. The GPU is optional anyway: from the 56 Msps DSP item, a 56 MHz waterfall costs a fraction of one A78 on the CPU, so SDR++'s OpenGL waterfall (freedreno GL) is a complete fallback.
+    - **Steps:**
+      - sudo apt install mesa-vulkan-drivers vulkan-tools; vulkaninfo --summary should show driverName turnip and Adreno 643.
+      - Inside cage: run vkcube (Wayland WSI), then JST_DEBUG=3 ./CyberEther-aarch64 and keep the log.
+      - CyberEther flowgraph: Soapy source (CS16 if offered), then FFT, waterfall and spectrum. Optionally use the ONNX Runtime CPU Infer block for the classifier display.
+      - Fallback: SDR++ rebuilt with -DOPT_BUILD_SOAPY_SOURCE=ON, FFT size 32768-65536, FFT rate 20-30 fps.
+    - **How to verify:** A 1-hour 56 Msps session in CyberEther (or SDR++) at the panel's native mode: 0 SDR overruns, GPU or CPU use measured, no Vulkan device-lost errors in the log, and frame rate >= 20 fps.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://docs.radxa.com/en/dragon/q6a/system-config/vulkan
+      - https://github.com/luigifcruz/CyberEther/issues/81
+      - https://github.com/luigifcruz/CyberEther
+      - https://forum.radxa.com/t/vulkan-crashes-and-npu-setup-for-llm-inference-on-dragon-q6a-need-guidance/30264
+  13.
+    - **Problem:** No one has reported a 2230-to-2280 M.2 extension carrying a PCIe Gen3 endpoint on the Q6A, and the LimeSDR Micro's component height is non-standard.
+    - **Proposed fix:** Measure the link instead of guessing. The vendor kernel has CONFIG_PCIEAER=y and CONFIG_PCIE_DW_DEBUGFS=y, so the root port's AER counters and DWC debugfs are available: ltssm_status always, plus RAS DES receiver_err/lcrc_err/replay counters if the IP exposes them. Prefer a short (<= 10 cm) shielded M-key-to-M-key FPC extension rated PCIe 4.0 over a long ribbon (price and model not verified). The bandwidth margin decides the fallback: the link is x1 (LimeSDR is x1, the Q6A slot x2). 61.44 Msps with forced I16 needs 246 MB/s, which Gen2 x1 (500 MB/s raw) still covers. 160 Msps bursts (640 MB/s) need Gen3. So a Gen2 cap is acceptable except for 160 Msps.
+    - **Steps:**
+      - Check the link: sudo lspci -vvv -s 0001:01:00.0 | grep -E 'LnkCap|LnkSta' and expect 'Speed 8GT/s, Width x1'.
+      - Error counters before and after a 1-hour 56 Msps stream: cat /sys/bus/pci/devices/0001:01:00.0/aer_dev_correctable; cat /sys/kernel/debug/dwc_pcie_1c08000.pcie/ltssm_status; if present, echo 1 > .../rasdes_event_counter/receiver_err/counter_enable and later read counter_value. Do the same for lcrc_err and replay_timeout.
+      - If correctable errors grow or the link retrains, cap the link at Gen2 with an overlay: &pcie1 { max-link-speed = <2>; }. The DWC driver honours max-link-speed. Then retest.
+      - Mechanics: check the card's clearance in the 3D-printed case, with a thermal pad from the LA9310 and LMS7002M to the case or heatsink. Measure M.2 3.3 V current with the SDR streaming; the slot is fed from VCC_3V3 through a load switch (rail VCC_3V3_MKEY).
+    - **How to verify:** 1 hour at 56 Msps with the correctable AER count unchanged (or growing < 1 per minute), no 'link down' or retrain events, and 0 overruns. Repeat after mechanical flexing and at operating temperature.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/torvalds/linux/blob/master/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+      - https://github.com/torvalds/linux/blob/master/drivers/pci/controller/dwc/pcie-designware.c
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://www.cnx-software.com/2026/04/15/limesdr-micro-m-2-2280-sdr-card-pairs-nxp-la9310-baseband-processor-with-lms7002m-rf-transceiver/
+  14.
+    - **Problem:** The SatDump live pipeline freezes after hours with a remote SDR server (#1166), and the Meteor HRPT live-decode crash (#1134) is still open.
+    - **Proposed fix:** Both failures sit in paths the handheld can avoid. #1166 hangs in TCPClient/RemoteSource after 4-14 hours: never use satdump_sdr_server; open the RTL-SDR and LimeSDR locally. #1134's log stops in the product stage ('Filtering timestamps...') after decoding. Make every pass a short-lived, time-boxed process that keeps intermediate data, so a crash costs only a reprocess.
+    - **Steps:**
+      - Per-pass launch, from the pass scheduler or Gpredict hook: systemd-run --unit=pass-$(date +%s) -p RuntimeMaxSec=1200 satdump legacy live meteor_hrpt /data/passes/<id> --source <rtlsdr|limesdr> --samplerate <rate> --frequency 1700e6 --timeout 900
+      - External watchdog: if the .cadu or baseband file in the pass directory stops growing for 60 s during the pass window, kill the unit and restart it once.
+      - For HRPT on the LimeSDR, prefer 'satdump legacy record' (cs8 or ZIQ), then run 'satdump pipeline <id> baseband ...' after the pass. If live products crash, rerun the pipeline offline from the saved baseband or CADU.
+      - Run current 2.0 master or nightly, built from source; the maintainer says 1.2.x is unsupported.
+    - **How to verify:** Run 50 scheduled passes (LRPT on the RTL-SDR, HRPT on the LimeSDR). Every pass leaves either products or a recoverable baseband/CADU, no process outlives RuntimeMaxSec, and offline reprocessing gives the same products.
+    - **Confidence:** high
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/issues/1166
+      - https://github.com/SatDump/SatDump/issues/1134
+      - https://github.com/SatDump/SatDump/blob/master/README.md
+      - https://github.com/SatDump/SatDump/issues/1221
+- **Residual risks:**
+  - No real hardware test has been run: every LimeSDR-on-Q6A conclusion comes from reading source and device trees. The LA9310 firmware or host API on the unmerged limesdr-micro(-staging) branches can still change; pin commit 37cb183 and the matching firmware.
+  - The 16 x 16 KiB RX DMA ring (1.17 ms at 56 Msps) is a design limit of the current host code and firmware. Even with an isolated core, rare kernel or firmware stalls (UFS error handling, thermal events, SMMU TLB syncs) could cause occasional overruns. Raising the block count above 31 needs firmware changes.
+  - Kernel trade-off: 6.18.2-4 is the kernel with working HDMI and a known-good NPU set, but it lacks the Kioxia UFS quirk. 7.0.11-7 has the quirk but has HDMI and CDSP regression reports. Until one kernel is proven for all three, pick a Samsung UFS module or build 6.18.2 yourself.
+  - Whether the RA620 and the Q6A board handle HBR3 is unknown, so above about 2560x1600@60 the display is limited by the hardware link, and 4K@60 may never work.
+  - NPU version lock-in: the CDSP firmware tuple fixes the QAIRT 2.42 toolchain. Radxa docs now point to qai_appbuilder 2.48.40 while users report 2.46+ failing. Any firmware or package change means re-running the golden test, and the QNN GPU backend (FP16) is untested on Q6A.
+  - Storage capacity, not only speed, limits full-rate IQ: 56 Msps cs16 fills 128 GB in about 8 minutes. Long wideband passes need reduced rate, 8-bit or compressed formats, or an external USB 3 SSD (Q6A USB 3 throughput not verified).
+  - Thermal throttling under a sustained 2.7 GHz polling core, SDR DMA and UFS writes was not analysed here; it belongs to the mechanical/thermal component and must be part of the 8-hour soak.
+  - The LimeSDR Micro Basic is now $249 and new orders ship 15 Dec 2026, so until then the RTL-SDR-only budget path is the actual platform.
+  - Community firmware and runtime kits (npu_runtime_armbian, Radxa test kernels) are third-party binaries. Verify digests and keep the provenance.
+
+## Адверсаріальна перевірка (`verify`)
+
 _Агент цього етапу ще працює (run `wf_e49d4f53-8d4`)._
 
