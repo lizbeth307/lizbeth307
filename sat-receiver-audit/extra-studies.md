@@ -42868,6 +42868,195 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Hard rules: power banks have no RF function, so receive-only, conducted-only and no-loop rules are unaffected. The 100 Wh cabin limit is kept by every candidate except possibly the INIU B64 (27 Ah, check the printed Wh).
 
+## searchB:anker_737_power_bank_20_v_5_a_pdo_100_wh (run `wf_e5582d4c-0a2`)
+
+- **Part:** Anker 737 Power Bank (PowerCore 24K), model A1289 / A1289011. Bench power source for the Pinecil V2 (20 V/3 A at the 60 W limit), the bench USB hub (5 V/3 A), instrument top-ups and bench tests of charging the receiver/ISDT over USB-C. Carry-on travel bank (≤100 Wh).
+- **Current price usd:** 109.99 at anker.com US (verified 18 Oct 2026, in stock, $94.99 each for 10+). EU: anker.com/de lists EUR 109.99 incl. VAT (≈ $123.64 at the stack's 1 EUR = 1.1241 USD). The stock flag is unclear: the schema says InStock but the page shows 'Ausverkauft' labels. anker.com/eu-en shows Sold Out. Amazon.de ASIN B09VPHVT2Z is the same Model Number A1289, now titled 'Anker Prime Power Bank, 24000 mAh 140 W', but its price was not visible from the fetch location.
+- **Critical specs:**
+  - Fixed USB-PD 20 V/5 A PDO on the main USB-C port, plus sustained 20 V/3 A (60 W) for the Pinecil V2 with no dropouts. 737: 5/9/15 V 3 A, 20 V 5 A, 28 V 5 A on BOTH C ports, 140 W total (anker.com, techtest). 28 V/EPR is not used in this stack: the Pinecil runs on a non-EPR cable at 20 V.
+  - Simultaneous outputs: Pinecil about 60 W, plus 5 V/3 A for the bench hub, plus optionally about 70 W into the receiver (the TPS259470A ILIM of about 3.5 A at 20 V). 737: both C ports are 140 W-class with 140 W shared. With the USB-A port in use, both C ports are capped at 65 W, which still covers 60 W (techtest).
+  - Usable energy at 20 V, measured: 77.2 Wh at 20 V/3 A and 74.9 Wh at 20 V/5 A; 72.2 Wh at 9 V/2 A; 65.2 Wh at 5 V/2 A (techtest; rated 86.4 Wh).
+  - Rated ≤100 Wh and a UN 38.3-tested type, so it can go in cabin baggage without airline approval. 737: 86.4 Wh (24,000 mAh × 3.6 V). A DIY pack fails this.
+  - Recharge time and input power: 0-100 % in about 48 min on a 140 W charger and about 55 min on 100 W, with a peak input of about 126 W (techtest).
+  - Stable output under step loads and idle. A USB-PD soldering iron must not trip the bank's protection. Low-current mode and auto-sleep must work with the IronOS 'Power pulse' keep-alive.
+  - On-board diagnostics: the display shows per-port W, cell temperature, battery health %, cycle count and Wh in/out, so the lab can track bank wear and verify a used unit without extra instruments.
+  - PPS 3.3-21 V/5 A on both C ports (techtest). Secondary: the stack sets the Pinecil to PD Mode = No Dynamic.
+  - Output ripple/noise at 5 V and 20 V (it feeds the hub for the Hantek/LA/FNB58). Not measured for the 737 or for any candidate: unverified on both sides.
+  - Build and safety: genuine product, not on the recall list (A1289 is not on Anker's June 2025 recall page per reaudit_D), temperature monitoring. 630 g, 155.7 × 54.6 × 49.5 mm, fits the Pelican 1450 bench kit.
+  - Behaviour when two dual-role (DRP) USB-C ports are connected. The 737 C ports are DRP, so charging the IP2368 COUT receiver or the ISDT 608PD from it is unproven (reaudit_D). Any candidate needs the same FNB58 bench test; a source-only port would be an advantage.
+- **Candidates:**
+  1.
+    - **Name:** Anker 737 PowerCore 24K A1289 (current part, new)
+    - **Kind:** current_part
+    - **Price usd:** 109.99 (anker.com US, verified); EUR 109.99 incl. VAT at anker.com/de ≈ $123.64
+    - **Spec comparison:** Reference. Measured by techtest (mid-2022 test, updated Apr 2023): 77.21 Wh at 20 V/3 A, 74.89 Wh at 20 V/5 A. 140 W on either C port; PPS 3.3-21 V/5 A on both. Recharge in 48-55 min (about 126 W peak). Full diagnostic display. The author reports sustained 100 W output.
+    - **Worse in:** n/a. Known limits: heavy (632 g); C ports capped at 65 W when USB-A is in use; pass-through charging only about 50 W.
+    - **Compatibility:** Proven in the stack plan: Pinecil at 20 V/≤3 A, hub at 5 V/3 A, carry-on at 86.4 Wh. The DRP charging matrix is still to be bench-tested.
+    - **Risks:** EU stock is patchy (eu-en sold out). Some resellers sell it as 'Anker Prime Power Bank 24000 mAh 140 W'; check for Model Number A1289 on the label.
+    - **Seller url:** https://www.anker.com/products/a1289
+    - **Sources:**
+      - https://www.anker.com/products/a1289
+      - https://www.anker.com/de/products/a1289
+      - https://techtest.org/die-anker-737-powercore-24k-powerbank-im-test-mit-140w-usb-c-port-zur-besten-powerbank/
+  2.
+    - **Name:** Used / open-box / refurbished Anker 737 A1289 (same model)
+    - **Kind:** used
+    - **Price usd:** UNVERIFIED: eBay.com, eBay.de, Back Market and Geizhals returned HTTP 403 and Amazon.com returned a captcha, so no used price was obtained. Worth it only if clearly below the new price.
+    - **Spec comparison:** Identical hardware, so every PDO, port, recharge and display spec is equal. Capacity equals a new unit only if it passes on receipt: the display shows health ≥95 % and a low cycle count, and an FNB58 discharge at 20 V/3 A gives ≥ about 75 Wh (new unit measured 77.2 Wh).
+    - **Worse in:** Cell wear and remaining cycle life are unknown until measured. Warranty is usually not transferable. Not proven equal until the acceptance test passes.
+    - **Compatibility:** Same as the current part.
+    - **Risks:** Counterfeit '737' banks exist on marketplaces. Check the A1289 label, weight of about 630 g, PD 3.1 28 V/5 A detection on the FNB58, and that the display shows health and cycles. Reject any unit with swelling, a health reading below 95 % or a failed 20 V/5 A test.
+    - **Seller url:** 
+    - **Sources:**
+      - https://techtest.org/die-anker-737-powercore-24k-powerbank-im-test-mit-140w-usb-c-port-zur-besten-powerbank/
+  3.
+    - **Name:** INIU Cougar / PowerNova BI-B64 (B64) 27,000 mAh 140 W
+    - **Kind:** other_brand
+    - **Price usd:** 79.99 list on the INIU US store (compare-at $106.94), OUT OF STOCK on 18 Oct 2026. Techtest comparison (Jul 2026): about EUR 70 (≈ $78.69); EUR 79.99 at the Oct 2024 test. Current EU price not verified.
+    - **Spec comparison:** Better energy: 87.0 Wh at 20 V/3 A (737: 77.2) and 86.0 Wh at 20 V/5 A (737: 74.9). C1: 5/9/15 V 3 A, 20 V 5 A, 28 V 5 A, PPS 3.3-21 V/5 A, constant 140 W. Rated 99.9 Wh, so still ≤100 Wh. 598 g, 185 × 89 × 27 mm.
+    - **Worse in:** Recharge takes 1:25-1:30 h versus 48-55 min. The second C port is only 45 W (20 V/3 A, PPS to 11 V) versus 140 W-class. With USB-A in use the split is 100 + 12 + 12 W. The display shows %, W and time but no health %, cycle count or cell temperature. The included cable is limited to about 60-65 W. Reader report (unverified): it shut off about 1 s after a 100 W USB-C soldering iron was connected, while the Anker 737 did not. That bears directly on the Pinecil role. NOT not-worse.
+    - **Compatibility:** PD/arm64-agnostic; would cover the Pinecil on C1. The hub on C2 at 5 V/3 A would work. Receiver charging at about 70 W plus the Pinecil at the same time is not possible: C2 is only 45 W.
+    - **Risks:** Out of stock at INIU; possible soldering-iron trip; housing scratches easily (techtest).
+    - **Seller url:** https://iniushop.com/products/iniu-b64-140w-27-000mah-fast-charge-1-000-devices-140w-max-output-from-one-port
+    - **Sources:**
+      - https://techtest.org/iniu-power-bank-27000mah-140w-im-test-inius-erste-echte-flaggschiff-powerbank/
+      - https://techtest.org/die-besten-powerbanks-2019-bestenliste-vergleich-und-uebersicht/
+      - https://iniushop.com/products.json?limit=250
+  4.
+    - **Name:** VOLTCRAFT VC-C909 27,000 mAh 140 W (Conrad house brand, EU seller)
+    - **Kind:** other_brand
+    - **Price usd:** Under EUR 70 at the Mar 2025 test (≈ under $78.69); current Conrad price UNVERIFIED (conrad.de returned 403)
+    - **Spec comparison:** C1: 5/9/12/15 V 3 A, 20 V 5 A, 28 V 5 A, 140 W sustained to about 5 %. Energy 79.6 Wh at 20 V/5 A (better) and 85.5 Wh at 20 V/1 A. Aluminium housing. Display shows %, cell voltage, temperature and per-port V/A/W.
+    - **Worse in:** The second C port is only 20 W (5 V/2.4 A, 9 V/2.22 A). PPS is limited to 3 A. Energy at 28 V/5 A is 73.0 Wh. Recharge takes 1:52 h (132 W peak) versus 48-55 min. Heavier at 655 g. No health or cycle readout reported. NOT not-worse.
+    - **Compatibility:** The Pinecil works on C1, but the second C port cannot charge the receiver at the same time.
+    - **Risks:** Single test; OEM and cells not disclosed.
+    - **Seller url:** https://www.conrad.de/de/search.html?search=VC-C909
+    - **Sources:**
+      - https://techtest.org/voltcraft-vc-c909-test-140w-27-000-mah-powerbank-zum-kampfpreis-lohnt-sich-der-kauf/
+  5.
+    - **Name:** KOOSEED 983SP-145W 27,000 mAh (generic OEM design per the tester)
+    - **Kind:** generic_or_clone
+    - **Price usd:** UNVERIFIED. A reader paid about EUR 50 (≈ $56.21) with Amazon.de coupons; the test gives no fixed price.
+    - **Spec comparison:** Energy 91.3 Wh at 20 V/3 A (better) and 79.8 Wh at 20 V/5 A (better; a reader measured 88-89 Wh). Both C ports 100 W (20 V/5 A) with PPS 3.3-20 V/5 A. USB-A up to 60 W. 538 g.
+    - **Worse in:** No 28 V/140 W. 100 W is not sustained: it drops at about 25 % charge. C1 + C2 together are limited to 100 + 45 W. Pass-through output is limited to 45 W. Recharge takes 1:38 h, with input falling to about 65 W after 40 min. The display shows V/A/% but no W, health or cycles. Generic OEM. NOT not-worse.
+    - **Compatibility:** The Pinecil at 60 W and the hub would work.
+    - **Risks:** Generic brand with an unknown cell source; a single measurement set.
+    - **Seller url:** 
+    - **Sources:**
+      - https://techtest.org/kooseed-145w-power-bank-test-ausfuehrliche-analyse-von-kapazitaet-leistung-und-ladeverhalten/
+  6.
+    - **Name:** AsperX AX2410 '145 W' 24,000 mAh
+    - **Kind:** other_brand
+    - **Price usd:** EUR 59.99-69 on Amazon.de at the Dec 2024 test (≈ $67.43-77.56); current price UNVERIFIED
+    - **Spec comparison:** C1: 20 V/5 A, PPS 3.3-21 V/5 A. Display with per-port W. 477 g.
+    - **Worse in:** Lower energy: 76.4 Wh at 20 V/3 A versus 77.2, and 5 V energy of 68.6 Wh. No 28 V. C2 is 45 W (20 V/2.2 A). 100 W is not sustained. Recharge takes 1:39 h. Reader report (unverified): no overcurrent protection on USB-A, which delivered more than 5.5 A while sagging to 3.5 V. That is a safety red flag. NOT not-worse.
+    - **Compatibility:** The Pinecil would work on C1.
+    - **Risks:** Possible missing USB-A OCP.
+    - **Seller url:** https://asperxtech.com
+    - **Sources:**
+      - https://techtest.org/die-asperx-145-w-powerbank-mit-24-000-mah-im-test-eine-gute-alternative-zu-iniu/
+  7.
+    - **Name:** CUKTECH 20 (No.20) 25,000 mAh 140 W
+    - **Kind:** other_brand
+    - **Price usd:** UNVERIFIED (the techtest article gives no price)
+    - **Spec comparison:** Energy 78.6 Wh at 20 V/3 A (about equal) and 79.5 Wh at 20 V/5 A (better). C1: 28 V/5 A 140 W PD, 20 V/6 A only with Xiaomi, PPS 5-20 V/6 A. USB-A 30 W. 633 g.
+    - **Worse in:** C2 is only 45 W (20 V/2.25 A). Recharge takes 1:50 h: about 90 W for 25 min, then 50-60 W. Thermal throttle to about 60 W after about 22 min at 130 W. Brief output interruptions were seen with one laptop. Plastic housing with imperfect seams. NOT not-worse.
+    - **Compatibility:** The Pinecil at 60 W would likely be fine; simultaneous receiver charging is limited by the 45 W C2.
+    - **Risks:** Output interruptions seen with one load; throttling.
+    - **Seller url:** 
+    - **Sources:**
+      - https://techtest.org/eine-der-besten-powerbanks-cuktech-20-im-test-25-000-mah-und-140w-usb-c/
+  8.
+    - **Name:** SHARGE HyperTower 170 25,000 mAh
+    - **Kind:** other_brand
+    - **Price usd:** About EUR 59.99 implied (EUR 84.99 minus a EUR 25 reduction on the Jun 2026 test page) ≈ $67.43; UNVERIFIED as a current price
+    - **Spec comparison:** Both C ports 100 W (20 V/5 A) with PPS 5-21 V/5 A. Display shows W, V, A, cycles, temperature and Wh in/out (equal diagnostics). Holds 100 W for about 38 min. Integrated cables.
+    - **Worse in:** Energy 75.7 Wh at 20 V/3 A versus 77.2. No 28 V/140 W. Drops to 60 W at about 20 % charge. Recharge takes 1:17 h versus 48-55 min. Heavier at 688 g. NOT not-worse.
+    - **Compatibility:** The Pinecil and hub would work; both C ports can deliver 20 V.
+    - **Risks:** The integrated cables are a wear item.
+    - **Seller url:** 
+    - **Sources:**
+      - https://techtest.org/sharge-hypertower-170-im-test-25-000-mah-170-w-und-120-w-xiaomi-hypercharge/
+  9.
+    - **Name:** INIU Cougar P63-E1 25,000 mAh 100 W
+    - **Kind:** other_brand
+    - **Price usd:** 66.99-69.99 on the INIU US store (in stock, 18 Oct 2026; UK/EU variants out of stock); EUR 66.99 on Amazon at the Nov 2024 test
+    - **Spec comparison:** C1: 20 V/5 A, PPS 3.3-20 V/5 A. Small and light: 397 g, 110 × 71 × 36 mm.
+    - **Worse in:** Energy 74.4 Wh at 20 V/3 A and 66.9 Wh at 20 V/5 A. C2 has no 20 V (PDOs to 15 V/3 A). Throttles 100 W to 65 W at about 30 %. Recharge takes 1:41 h at about 64 W. Display shows charge level only. NOT not-worse.
+    - **Compatibility:** The Pinecil works on C1 only.
+    - **Risks:** Throttling under sustained load.
+    - **Seller url:** https://iniushop.com/products/iniu-p63-e1-power-bank-smallest-100w-25000mah
+    - **Sources:**
+      - https://techtest.org/iniu-p63-e1-powerbank-mit-tinycells-im-test-25-000-mah-100-w/
+      - https://iniushop.com/products.json?limit=250
+  10.
+    - **Name:** UGREEN Nexode PB205 145 W 25,000 mAh
+    - **Kind:** other_brand
+    - **Price usd:** UNVERIFIED as a current price; about EUR 120 at the Jun 2023 test (≈ $134.89, not cheaper)
+    - **Spec comparison:** C1: 20 V/5 A. Both C ports can run together at 100 + 45 W. 508 g, good build. Energy 79.6 Wh at 20 V/3 A.
+    - **Worse in:** No PPS. C2 is 45 W. The 100 W port resets briefly and drops to 65 W at about 29 % charge. Recharge takes about 2 h at 65.8 W. The display shows battery level only. NOT not-worse.
+    - **Compatibility:** The Pinecil works on C1.
+    - **Risks:** Output reset under load.
+    - **Seller url:** 
+    - **Sources:**
+      - https://techtest.org/die-beste-powerbank-von-ugreen-die-ugreen-145w-powerbank-mit-25000mah-im-test/
+  11.
+    - **Name:** Sandberg All-in1 Powerbank 27000 PD 240W
+    - **Kind:** other_brand
+    - **Price usd:** UNVERIFIED (not in the test; the sandberg.world search found nothing)
+    - **Spec comparison:** Energy 88.8 Wh at 20 V/5 A and 90.9 Wh at 20 V/1 A (better). Two 20 V/5 A outputs: a tethered 140 W cable (28 V/5 A, PPS 5-21 V/5 A) and a 100 W C port. Display shows cycles, temperature and Wh in/out. 619 g.
+    - **Worse in:** Recharge takes 1:47 h versus 48-55 min. 140 W is not sustained (falls to 100 W at about 50 %). The main 140 W output is a captive cable, a wear item that cannot be swapped like a port. Price unknown. NOT proven not-worse.
+    - **Compatibility:** The Pinecil and the receiver could both be fed at 20 V.
+    - **Risks:** Captive-cable wear; no verified price.
+    - **Seller url:** 
+    - **Sources:**
+      - https://techtest.org/usb-pd-3-2-140-w-27-000-mah-die-all-in-1-powerbank-27000-pd-240w-von-sandberg-im-test/
+  12.
+    - **Name:** DIY USB-PD bank: SW6306/IP5389-class 100 W module + 6× 21700 cells
+    - **Kind:** diy
+    - **Price usd:** Not priced (rejected on rules before pricing)
+    - **Spec comparison:** Could reach 20 V/5 A on paper, but no independent measurement shows equal stability, ripple or protection.
+    - **Worse in:** No UN 38.3 type test, so it cannot be carried in cabin baggage: the stack itself says the home-built pack never flies. The stack's power.json documents SW62xx/SW6306 banks with output resets, about 100 °C MOSFETs and faulty balancers. No display health or cycle data. REJECTED.
+    - **Compatibility:** Breaks the cabin-baggage role.
+    - **Risks:** Fire and safety risk; airline rule.
+    - **Seller url:** 
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/power.json
+      - https://goughlui.com/2021/09/03/note-potential-issues-of-using-a-usb-powerbank-as-a-ups/
+  13.
+    - **Name:** Existing ≥60 W power bank already owned (stack budget note)
+    - **Kind:** used
+    - **Price usd:** 0 incremental
+    - **Spec comparison:** Unknown until measured. Acceptable only if the FNB58 shows a 20 V/5 A PDO, a sustained 60 W at 20 V without dropouts, ≥77 Wh at 20 V/3 A, and a rating ≤100 Wh.
+    - **Worse in:** A '≥60 W' bank typically lacks the 20 V/5 A PDO and a second high-power port, and its energy and recharge time are unknown. Worse until proven.
+    - **Compatibility:** Pinecil at a 60 W limit possible; receiver charging likely limited.
+    - **Risks:** Unknown age and condition.
+    - **Seller url:** 
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md
+- **Notes:** VERDICT (angle B): keep the Anker 737 A1289. No cheaper generic, clone or DIY bank found is not-worse on every critical spec in independent measurements. The only path with no spec trade is the same A1289 bought used or open-box, and only after an acceptance test on receipt: display health ≥95 %, low cycle count, FNB58 20 V/3 A discharge ≥ about 75 Wh, A1289 label, 28 V/5 A PD 3.1 detected. Its price could not be verified.
+  
+  Pattern in the measured data (all from techtest.org, one tester with one method):
+  - Cheaper 140 W banks (INIU BI-B64, VOLTCRAFT VC-C909, KOOSEED, CUKTECH 20, Sandberg 27000) often deliver MORE Wh at 20 V than the 737 (79-91 Wh against 74.9-77.2 Wh).
+  - But every one is worse in at least one stack-relevant spec: about 2× slower recharge (1:25-1:52 h against 48-55 min), a weak second C port (20-45 W against 140 W-class), less diagnostic display data, or throttling.
+  - The best value (INIU BI-B64) also has an unverified reader report of shutting off with a 100 W USB-C soldering iron where the 737 did not. That bears directly on the Pinecil role.
+  - If the user decides that recharge speed and the second high-power C port do not matter on the bench, INIU BI-B64 (about $80/EUR 70, but out of stock at INIU) would be the measured-best trade. That would be a spec trade and must be stated as such, not done silently.
+  
+  Rejected outright:
+  - Over the 100 Wh cabin limit: Sandberg 38400, QOOVI 50,000 (AliExpress), AMEGAT 27,600 mAh (about 102 Wh).
+  - DIY packs: no UN 38.3, plus the stack's own SW6306 evidence.
+  
+  Unverified or limits:
+  - Ripple/noise was not measured for any bank, including the 737.
+  - The 737 data is from a mid-2022 test (updated Apr 2023); current production was not re-measured.
+  - Techtest prices are from each article's date, not current.
+  - eBay, Back Market, Geizhals and conrad.de returned HTTP 403, and Amazon.com returned a captcha, so used and EU street prices are missing.
+  - The session-wide WebSearch budget was exhausted on the first query, so second-source measurements (ChargerLAB etc.) were not checked. All findings come from direct WebFetch of primary pages.
+  
+  Currency: the stack's 1 EUR = 1.1241 USD; EU prices include VAT where stated.
+  
+  Downloaded working data: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pb_dl/iniu_products.json and the anker_*.html files in the same folder.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
