@@ -628,6 +628,738 @@
   
   All 25 conflicts_for_final_checks items are resolved in proposed_decisions as C1-C25. P1-P6 are additional power decisions.
 
+## integration:lens2 (run `wf_221684d9-b6c`)
+
+- **Lens:** Interfaces + buses + software: one USB port map, 40-pin header and bus map, GPIO/expander ownership, IMU/HMI MCU interface, kernel and package pinning, single process architecture (labd/labrx/labclassify), NPU and recorder services, TX-capable package exclusion.
+- **Issues:**
+  1.
+    - **Area:** Process architecture / SDR ownership
+    - **Components:**
+      - npu_training sdr-ingestd/spectrumd/recorderd
+      - lab_ui_hf labd + labrx@ + engine units
+      - radio_lab lab-sched/lab-rec/rflab
+    - **Problem:** Three designs each claim to open the SDRs. npu_training says sdr-ingestd is the only process that opens them. lab_ui_hf lets the engines (sdrangelsrv, satdump-pass@, openwebrx, readsb, ais-catcher, auto-rx) open the device directly under a lease. radio_lab adds lab-sched with advisory flocks and its own lab-rec SoapySDR recorder. A USB SDR accepts one opener at a time (librtlsdr claims interface 0; libairspyhf is exclusive), so whichever process opens second fails. Built as written, the NPU capture and the pass engines cannot run together. There would also be two RAM rings and two recorders.
+    - **Severity:** blocker
+    - **Fix:** Adopt one model with two lease modes, both owned by labd. (1) labrx mode, the default: labrx (merging sdr-ingestd, spectrumd, recorderd, lab-rec and lab-sweep) is the only opener. It feeds the single RAM ring, the recorder, the NPU tap, gr-satellites, direwolf and SDR++ (network source). Satellite passes are recorded, then decoded by SatDump from the baseband file. (2) Engine-exclusive mode: readsb, AIS-catcher, auto_rx, OpenWebRX+, sdrangelsrv and Expert GUIs get the device itself, with ai_tap=false and REC limited to products. labd switches modes through its hand-off sequence. Delete the lab-sched flocks and the npu 'only opener' rule.
+    - **Evidence:** npu_training.json final.architecture 'P1 sdr-ingestd ... the only process that opens the SDRs'; lab_ui_hf.json final.ui_system.resource_arbitration sections 5 and 7 (engine units BindsTo dev-lab-<sdr>.device) and capability flags; radio_lab.json final.software (lab-sched per-SDR flock, lab-rec); report_research register decision 50.
+    - **Fix cost:** $0 hardware; about 1-2 person-weeks of re-specification inside the already planned labrx/labd work (estimate).
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  2.
+    - **Area:** HMI / power-supervisor MCU
+    - **Components:**
+      - display RP2040 (radio_lab)
+      - HMI RP2040 (lab_ui_hf)
+      - power-controller MCU (power.json)
+      - NPU buttons (npu_training)
+    - **Problem:** The RP2040 has a different role and link in each file. radio_lab puts a 'display RP2040' on CH334F H1, powered by LAB 5 V after the master switch. lab_ui_hf merges HMI, dimming, IMU relay, heartbeat, hard-cut and safe-boot into one RP2040 on UART7. power.json wants an always-on MCU that pulses J21 pin 3. The register map lists the RP2040 on both H1 and UART7. Power-key boot pulses and hard-cut need an MCU that is powered while the Q6A is off. A USB-H1 device fed from LAB 5 V is unpowered exactly when those functions are needed.
+    - **Severity:** major
+    - **Fix:** Use one RP2040 (HMI and supervisor) on the always-on 3.3 V rail. It covers encoders, keys, VEML7700, NTCs, backlight PWM, piezo/LED, IMU relay on UART1, heartbeat watchdog, an open-drain J21 pin 3 pulse, the hard-cut output, the safe-boot line and optionally a 25 kHz fan PWM. Host link: UART7 (pins 32/29) primary. Wire its native USB to CH334F H1 as a fallback, and enable the D+ pull-up only when H1 VBUS is present.
+    - **Evidence:** radio_lab.json final.usb_power_case_plan 'H1: display RP2040' and integ.connections; lab_ui_hf.json final.stack_changes 'HMI RP2040: merged with the dimming MCU and wired to UART7'; power.json 'small power-controller MCU that also handles shutdown'; npu_training.json final.hardware_needs item 4; register decisions 56 and 129.
+    - **Fix cost:** Saves one RP2040 board; about $0-5 net.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/power.json
+  3.
+    - **Area:** GPIO / safe power-up state
+    - **Components:**
+      - 40-pin header
+      - UM3304 TXB-type translators
+      - bias, LNB, Boni-Whip, VBUS-cut, noise-source enables
+    - **Problem:** lab_ui_hf drives these from header GPIOs held by labd: RF switches, the HF+ selector relay, LNA 5 V, LNB, the 12 V active-antenna rail, DC-sense, VBUS-cut pigtails and the noise-source switch. On schematic v1.21 almost every free header GPIO (pin 7, 11, 12, 19-26, 29-40) sits behind a UM3304. That is a TXB-type auto-direction buffer: 4 kOhm output drivers, at most 50 pF, and any pull resistor must be over 50 kOhm. Its state follows whatever the SoC presents during UEFI and boot, so the 'pull-downs keep every supply OFF' rule cannot work on these lines. A relay coil or MOSFET gate cannot be driven from them either. An LNB or bias rail could therefore turn on during boot, into a DC-short antenna.
+    - **Severity:** major
+    - **Fix:** Move every power, bias, RF-switch, relay and source enable to MCP23017 outputs. They power up high-Z, so 100 kOhm pull-downs hold everything OFF. Power the MCPs from Q6A VCC_3V3, so that Q6A off means everything off. Drive relay coils through a driver IC. Use header GPIOs only for PPS, the UARTs, I2C, open-drain INT/ALERT on UM3204H pins 3/5, SWD and safe-boot to the RP2040, and the buffered fan line.
+    - **Evidence:** lab_ui_hf.json final.ui_system.architecture section 2; schematic text /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_sch/q6a_sch.txt lines 3720-3940 (U16/U51-U54 UM3304, U47/U48 UM3204H, Q12/Q13 CJ3134K); gnss_imu.json own fix ('UM3304 (TXB-type, 4 kOhm output buffers, max 50 pF load, needs pull resistors >50 kOhm)'); radio_lab.json integ.connections MCP #1 note.
+    - **Fix cost:** About $3-6 for a second expander and a relay driver.
+    - **Sources:**
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://www.union-ic.com/upload/Datasheet/Datasheet_UM3304_Rev16.pdf
+  4.
+    - **Area:** Bias-tee interlock
+    - **Components:**
+      - RTL-SDR Blog V4L internal tee
+      - librtlsdr2 +lab
+      - labd DC-sense interlock
+    - **Problem:** labd is meant to own every bias source and lock bias off on DC-short antennas (the 9:1 balun, hairpin-matched Yagis). But librtlsdr's rtlsdr_set_bias_tee() is open to any process that opens the dongle. That includes SatDump, readsb, SDRangel, OpenWebRX+, rtl_biast and SDR++ configs. In engine-exclusive leases the interlock can therefore be bypassed in software. RTL-SDR Blog warns that prolonged shorting can kill the LDO or fuse.
+    - **Severity:** major
+    - **Fix:** Add a third patch to the planned librtlsdr 2.0.1 .so.2 rebuild. rtlsdr_set_bias_tee() and rtlsdr_set_bias_tee_gpio() refuse 'on' unless the environment variable LAB_BIAS_OK equals the device serial. labd sets that variable only in the units of DC-safe profiles. The policy audit also flags bias options in generated engine configs.
+    - **Evidence:** lab_ui_hf.json final.ui_system.architecture ('V4L tee via its driver'); register decision 101 (bias onto DC-shorted antennas, never 'rtl_eeprom -b 1'); register decision 28 (librtlsdr rebuild).
+    - **Fix cost:** $0; about 20 lines of C plus a test.
+    - **Sources:**
+      - https://github.com/osmocom/rtl-sdr
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+  5.
+    - **Area:** USB port map
+    - **Components:**
+      - blue USB 3.1
+      - FE1.1s P1-P3
+      - CH334F H1-H4
+      - IMU puck
+      - T7
+    - **Problem:** The register's Lime-agnostic map fills all four CH334F ports: H1 HMI RP2040, H2 IMU puck 'if not on UART', H3 LAB, H4 HF+. When the Lime and T7 are kept, the T7 takes the blue port and RTL-A must move to the hub. If the IMU is on USB-CDC (as in gnss_imu final and radio_lab H2), or if UART7 fails, a fifth port is needed. lab_ui_hf also time-shares the blue port between the T7 and an instrument hub, which means re-plugging the only SuperSpeed port.
+    - **Severity:** major
+    - **Fix:** The IMU puck never uses USB. Its MCU sends framed UART (115200 baud, CRC) over a 4-core shielded lead of 1.5 m or less to HMI RP2040 UART1. Add RS-485 transceivers only if the 1e6-frame test shows errors. The resulting map fits all four configurations (budget table): RTL-A on blue without the Lime, or on H2 with it; H1 only for the HMI RP2040 if UART7 fails; instruments only on LAB USB (H3).
+    - **Evidence:** report_research register decision 129 and conflict 5; gnss_imu.json final ('RP2040-Zero ... sends quaternion and accuracy over USB-CDC'); radio_lab.json final.usb_power_case_plan (H2 boom IMU puck); lab_ui_hf.json resource_arbitration ('Instrument port: the blue USB 3.1 port, time-shared with the T7').
+    - **Fix cost:** $0-4 (connector; optional 2x RS-485 transceivers).
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/gnss_imu.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  6.
+    - **Area:** VBUS / LAB 5 V budget
+    - **Components:**
+      - Pololu D36V28F5 LAB 5 V
+      - TPS2553 LAB port and LNA injectors
+      - CH334F
+      - Airspy HF+
+      - LNA LDO
+    - **Problem:** The register moves the HF+, CH334F, puck, RP2040, bias injectors and LAB port onto LAB 5 V, which has a 2 A fuse. The sum of the current limits is about 2.2-2.4 A: CH334F 0.1 A, HF+ 0.3 A (unpublished), LAB-port TPS2553 at 1 A (up to 1.075 A per TI), and three LNA feeds at 0.25-0.3 A each. Typical draw is only about 1.0 A (model), but a worst case blows the fuse and takes down the hub, HF+ and RTL-A (Lime case) mid-pass. The 'LT3045-class' LNA LDO (0.5 A) is also below the 0.9 A sum of the three feed limits.
+    - **Severity:** major
+    - **Fix:** Set the LAB-port TPS2553 to about 0.6 A in field mode (the largest field instrument is about 0.45 A; the bench hub is bank-powered). Fit a 3 A LAB 5 V fuse; the files rate the D36V28F5 at 3.2 A, so check its temperature in the sealed case. Feed the LNAs from a 1 A low-noise rail (two paralleled LT3045, or a 1-2 A LDO; part to be verified). Enable LAB 5 V only while the Q6A is on.
+    - **Evidence:** register decision 62; radio_lab.json integ.power_budget ('Budget 2 A'); TI TPS2553 page (75-1700 mA adjustable, 1 A setting 925-1075 mA); rf_frontend SAWbird+ currents (NOAA 170 mA, GOES 180 mA budget); model in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/iface/budget.py.
+    - **Fix cost:** About $3-8 (fuse, RILIM change, second LDO or larger LDO).
+    - **Sources:**
+      - https://www.ti.com/product/TPS2553
+      - https://rigpix.com/miscrx/airspy_hfplusdiscovery.htm
+  7.
+    - **Area:** NPU services / CPU-first MVP
+    - **Components:**
+      - labclassify inferd-cpu
+      - fusiond
+      - RTL-F/RTL-C/HF-F profiles
+    - **Problem:** Until the Phase-0 HTP gate passes, the MVP runs on the CPU, and CPU mode handles 4-6 tiles/s. Without the Lime the demand is about 14.6 tiles/s for 2x V4L (verified), plus about 2 tiles/s for an HF-F profile at 768 ksps (my model), about 16.6 tiles/s in total. The broker would therefore drop about two thirds of the tiles. The UI and labeller would see silent coverage gaps.
+    - **Severity:** major
+    - **Fix:** Add an explicit CPU-mode schedule: RTL-C on both RTLs (1.6 tiles/s) plus RTL-F at K=4 only on the SDR with the active pass (about 3.5 tiles/s), about 5 tiles/s in total. Run HF-F only when the RTLs are idle. Show 'reduced coverage' in the status chip. Scale the HTP promotion gate to the SDR set actually present: p99 of 11.7 ms or less with the Lime, about 28 ms or less without it (50% duty at about 17.6 tiles/s).
+    - **Evidence:** npu_training.json final.budgets ('CPU mode: 4-6 tiles/s'); register decision 41 ('2x V4L only: about 14.6 tiles/s'); register decision 43 (add HF-F); my calculation in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/iface/budget.py (model).
+    - **Fix cost:** $0.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+  8.
+    - **Area:** RAM / ring buffer
+    - **Components:**
+      - labrx RAM ring
+      - labclassify
+      - trainer
+      - engines
+    - **Problem:** npu_training still sizes the IQ ring at 6 GiB with training and 8 GiB without. The register says 4/6 GiB with the Lime and 1.5 GiB or less without; lab_ui_hf says about 4 GiB. My estimate of non-ring use is 3.0-7.2 GiB, plus up to 2 GiB for the trainer. Against about 11 GiB visible (unverified), an 8 GiB ring cannot coexist with the shell, engines and labclassify.
+    - **Severity:** major
+    - **Fix:** Make ring size one boot-time parameter of labrx, derived from the SDR set: 1.5 GiB without the Lime (about 2 min of 2 RTLs + HF+); 4 GiB with the Lime and training allowed; 6 GiB with the Lime and training disabled. Delete the 8 GiB value. The scheduler starts the trainer only when no engine using more than 0.5 GiB is running.
+    - **Evidence:** npu_training.json final.budgets RAM; register decision 46; lab_ui_hf integration_table labrx ('RAM ring of about 4 GiB').
+    - **Fix cost:** $0.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+  9.
+    - **Area:** Fan control pin
+    - **Components:**
+      - header pin 33 / GPIO56
+      - pwm-gpio
+      - AO3400/2N7002
+      - NF-A4x10 5V PWM
+    - **Problem:** The register's 'GPIO56 (PoE-HAT overlay) vs header pin 33' conflict is false: the schematic shows GPIO56 is FP_SPI_MISO, which is header pin 33 (QUP1 SE6, spi14). The real problem is the drive. Pin 33 is behind UM3304 U54 (TXB-type, 50 pF or less), and the register drives an AO3400 gate directly; AO3400 gate capacitance is in the hundreds of pF (from memory), which is far beyond that limit. Also, the 1 kHz pwm-gpio comb lands exactly on 40 and 60 kHz (JJY, MSF/WWVB) and ticks audibly.
+    - **Severity:** minor
+    - **Fix:** Preferred: a 25 kHz hardware PWM from the HMI RP2040 into the fan's PWM input through a 2N7002, going to 100% when the heartbeat is lost. Its harmonics fall at 50, 75 and 100 kHz, off the LF carriers. Fallback: pin 33 through a 74LVC1G17 buffer and a 2N7002, using kernel pwm-fan from a fixed copy of the PoE-HAT overlay (spi14 disabled).
+    - **Evidence:** q6a_sch.txt lines 274-286 (GPIO_56 = FP_SPI_MISO) and 3665 (FP_SPI_MISO_3V3 = pin 33); mechanical_thermal.json ('pwm-gpio on tlmm GPIO 56 (header pin 33)'); register decision 17.
+    - **Fix cost:** About $0.5.
+    - **Sources:**
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+  10.
+    - **Area:** UART7 availability and wiring
+    - **Components:**
+      - UART7 pins 32/29
+      - UM3304 U16
+      - HMI RP2040
+    - **Problem:** Register decision 56 calls UART7 availability unverified. The overlay does exist in radxa-overlays main: qcs6490-radxa-dragon-q6a-uart7.dtso. It drives TX on pin 32 and RX on pin 29, disables spi7 and i2c7, and lists spi7, uart7, i2c7, gpio30 and gpio31 as exclusive. The remaining risks are whether the package on the held image ships it, and the UM3304 limit of 50 pF or less, which constrains how far the RP2040 can sit from the header.
+    - **Severity:** minor
+    - **Fix:** Install or compile the overlay from radxa-overlays main if the held image lacks it. Keep the UART7 wires 20 cm or shorter, or buffer them with a 74LVC2T45. Use 2-wire mode and leave pins 31/11 (CTS/RTS) free. Keep the H1 USB fallback wired.
+    - **Evidence:** Web fetch of the radxa-overlays directory and of the uart7 .dtso (18 Oct 2026); gnss_imu.json ('UM3304 ... max 50 pF'; 'Keep header wires under about 20 cm').
+    - **Fix cost:** $0-1.
+    - **Sources:**
+      - https://github.com/radxa-pkg/radxa-overlays/tree/main/arch/arm64/boot/dts/qcom/overlays
+      - https://raw.githubusercontent.com/radxa-pkg/radxa-overlays/main/arch/arm64/boot/dts/qcom/overlays/qcs6490-radxa-dragon-q6a-uart7.dtso
+  11.
+    - **Area:** I2C2 LAB BUS electrical rules
+    - **Components:**
+      - I2C2 pins 27/28 (UM3204H U47)
+      - TCA9517
+      - sled MCP23017 #2
+      - ADS1115
+    - **Problem:** I2C2 passes through a UM3204H. That is a TXS-type part with internal 10 kOhm pull-ups and one-shot accelerators. It is I2C-capable but sensitive to extra low-value pull-ups and capacitance. The TCA9517's B port has a static offset, so it must not face the translator or another offset buffer. No file states the orientation or the pull-up values.
+    - **Severity:** minor
+    - **Fix:** Connect TCA9517 port A to the header side and port B to the LAB BUS cable. Add no pull-ups below 10 kOhm on the header segment. Fit 4.7 kOhm on the sled side, run at 100 kHz, never chain B to B, and use PCA9615 for cables over 1 m. Test with i2cdetect -y -r 2 (GENI has no SMBus Quick) and 1,000,000 reads with zero errors per address.
+    - **Evidence:** q6a_sch.txt U47 block (QUPSE2_I2C to UM3204H); gnss_imu.json own fix (U47 UM3204H pins 8/10/27/28; i2cdetect -r); radio_lab.json conflicts note on the PCA9306.
+    - **Fix cost:** $0.
+    - **Sources:**
+      - https://www.union-ic.com/upload/Datasheet/Datasheet_UM3204_Rev16.pdf
+  12.
+    - **Area:** I/O expanders
+    - **Components:**
+      - MCP23017 #1 0x20
+      - second in-case expander
+      - MCP23017 #2 sled
+    - **Problem:** radio_lab's MCP #1 map uses about 9 lines. The merged design needs at least 14 outputs: LAB EN, AUX EN, 3 VBUS-cuts, 3 LNA feeds, LNB, Boni-Whip, 2 selector relays, sled power and spare. It also needs about 10 inputs: 6 FAULTs, DC-sense and selector readback. And on current MCP23017 silicon, GPA7 and GPB7 are output-only (datasheet rev D/E).
+    - **Severity:** minor
+    - **Fix:** Use MCP #1 (0x20, outputs only; GPA7/GPB7 used as outputs). Add a TCA9535 at 0x24 for all inputs, driven by the built-in pca953x driver as a gpiochip, with its open-drain INT on pin 5 (UM3204H). labd owns both. The sled keeps MCP #2 (0x21) and the ADS1115 (0x48).
+    - **Evidence:** radio_lab.json integ.connections ('MCP23017 #1 pin map ... GPA7 and GPB7: outputs only (... from memory, verify)'); MCP23017 change confirmed by web search (Hackaday, Tasmota docs, DS20001952 rev E listing); kernel config GPIO_PCA953X=y (register decision 26).
+    - **Fix cost:** About $2-3.
+    - **Sources:**
+      - https://hackaday.com/tag/debugging-hell/
+      - https://tasmota.github.io/docs/MCP230xx/
+      - https://www.farnell.com/datasheets/4797368.pdf
+  13.
+    - **Area:** Stale interface leftovers
+    - **Components:**
+      - radio_lab integ
+      - radio_lab P17
+      - npu_training software list
+    - **Problem:** Superseded items remain in radio_lab integ.connections:
+  - Binding both expanders with pinctrl-mcp23s08 (the driver is absent).
+  - The RP2040 counter on USB-CDC H4 (the final puts it on I2C 0x30).
+  - The LNB on sled GPA6 into a ZFBT and sled RF2 (the final says the LNB never goes on the sled).
+  - A 0.5 A AUX PTC (the final uses 0.75 A).
+  - 'USB 3.1: T7 only; RTL on FE1.1s P1'.
+  P17 also captures a BNO085 on I2C2. npu_training still lists librtlsdr 2.0.3 and Set B.
+    - **Severity:** minor
+    - **Fix:** Strike these lines before STACK.md. Re-point P17 to capture the puck UART at the HMI RP2040. Keep only the .so.2 recipe.
+    - **Evidence:** radio_lab.json integ.connections and final.procedures P17; npu_training.json final.software; register decisions 28, 38 and 56.
+    - **Fix cost:** $0.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  14.
+    - **Area:** Display touch fallback
+    - **Components:**
+      - display.json I2C touch fallback
+      - UART6
+      - PPS GPIO96
+    - **Problem:** display.json's I2C-touch fallback has three collisions:
+  - It uses I2C6 on pins 3/5, which share QUP0 SE6 with UART6 (GNSS), so I2C6 is unavailable once UART6 is enabled.
+  - It puts INT on pin 7, which is GPIO96, the PPS line.
+  - It puts RST on pin 12, which this map gives to the RP2040 SWD.
+    - **Severity:** minor
+    - **Fix:** If a panel turns out to be I2C-only, put it on I2C0 next to the INA228. Move INT to pin 36 through a 74LVC1G17 buffer and RST to pin 37. Otherwise accept only USB-HID touch panels (the Wisecoco purchase condition).
+    - **Evidence:** display.json fallback text ('pins 1/6/3/5 (I2C6), INT to pin 7 (GPIO_96) and RST to pin 12'); gnss_imu.json ('UART6 (pins 16/18) and I2C6 (pins 3/5) share QUP SE6').
+    - **Fix cost:** About $0.5.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/display.json
+  15.
+    - **Area:** TX-capable packages
+    - **Components:**
+      - QSSTV 9.5.8
+      - direwolf 1.7
+      - fldigi in radio_lab procedures
+    - **Problem:** The register keeps wsjtx (GUI) and fldigi off the device, but lab_ui_hf installs QSSTV as an 'RX-only fallback'. QSSTV transmits SSTV with PTT. direwolf is a TX-capable TNC that can beacon and digipeat. radio_lab procedures still depend on fldigi for WEFAX, DWD RTTY/SYNOP, NAVTEX, ppm measurement and CW spot checks, so deleting fldigi breaks those procedures.
+    - **Severity:** minor
+    - **Fix:** Remove QSSTV; use the OpenWebRX+ SSTV decoder, or an RX-only decoder fed from labrx audio. Keep direwolf with an audited config: input-only audio device, no PTT, and no PBEACON, DIGIPEAT or IGTXVIA lines. Add both to the CI and self-test policy audit. Re-point the radio_lab P20 steps to the SDRangel WEFAX, RTTY and NAVTEX channels and to the labrx carrier-offset ppm measurement.
+    - **Evidence:** lab_ui_hf.json tech_stack ('qsstv 9.5.8 ... RX-only fallbacks') and integration_table (direwolf 'No PTT device configured'); radio_lab.json final.procedures (fldigi WEFAX/RTTY/NAVTEX steps); register decision 10.
+    - **Fix cost:** $0.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  16.
+    - **Area:** Lease enforcement
+    - **Components:**
+      - labd Arbiter
+      - engine units run as user labrx
+      - udev group labrx
+    - **Problem:** Every headless engine runs as the same user labrx, and udev gives that group access to every SDR and instrument node. Leases are therefore enforced only against the GUI user, not between engines. A mis-generated config, or opening a device by index, can grab a leased SDR.
+    - **Severity:** minor
+    - **Fix:** At lease time labd writes a transient drop-in for the engine unit: DevicePolicy=closed plus DeviceAllow on the leased /dev/bus/usb/BBB/DDD node (rw), or on /dev/limeX. Leases are then cgroup-enforced.
+    - **Evidence:** lab_ui_hf.json resource_arbitration section 1 (ENFORCEMENT).
+    - **Fix cost:** $0.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  17.
+    - **Area:** Wi-Fi/BT on the shared hub
+    - **Components:**
+      - FCU760K (AIC8800D80) on FE1.1s P4
+      - QUIET profile
+    - **Problem:** QUIET relies on rfkill. The Wi-Fi/BT module stays enumerated on the same FE1.1s that carries RTL-B and the HF+. Whether the vendor AIC8800 driver honours rfkill without background USB traffic or 2.4 GHz emissions is unverified.
+    - **Severity:** minor
+    - **Fix:** QUIET runs rfkill block wlan and bluetooth, and also unbinds the Wi-Fi USB device (port 1-1.4), or switches WIFI_PWR_EN off if it is exposed. Accept it when usbmon shows no frames from that device and the tinySA shows no 2.4 GHz activity.
+    - **Evidence:** q6a_sch.txt (USBDEV4 to the WIFI page, FCU760K); compute.json (FCU760K, AIC8800 a69c:8d80); register decision 8.
+    - **Fix cost:** $0.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/compute.json
+  18.
+    - **Area:** Instrument USB identity
+    - **Components:**
+      - tinySA
+      - LiteVNA
+      - FT232RL fallback
+      - HMI/IMU CDC
+      - ModemManager/brltty
+    - **Problem:** NanoVNA-family and tinySA instruments commonly enumerate as the same STM32 virtual COM port (0483:5740; check each unit on arrival). Ubuntu's ModemManager probes new ttyACM ports, and brltty claims some FTDI and CH34x serial IDs. Either can disturb labd's instrument drivers, the FT232RL GNSS fallback and the RP2040 CDC ports. No file mentions this.
+    - **Severity:** minor
+    - **Fix:** Purge brltty and mask ModemManager, or set ID_MM_DEVICE_IGNORE on all lab devices. Name devices through udev by iSerial or product string, with a labd identify query, as /dev/lab/<name>.
+    - **Evidence:** lab_ui_hf.json integration_table (NanoVNA-Saver, QtTinySA, 'labd serial drivers'); gnss_imu FT232RL fallback; general Ubuntu behaviour (unverified on the Radxa OS r2 image).
+    - **Fix cost:** $0.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  19.
+    - **Area:** Package pinning
+    - **Components:**
+      - Mesa
+      - luarvique PPA
+      - Radxa repo
+      - GitHub release debs
+    - **Problem:** lab_ui_hf says to 'hold the validated Mesa set: noble 24.0.5 versus noble-updates 25.2.8' without choosing one. Radxa's Vulkan numbers and the npu_training VkFFT plan are on Mesa 25.2.8. Third-party sources can also drift or vanish: the PPA may drop 1.2.126, and the Radxa index now carries only 7.0.11-7.
+    - **Severity:** minor
+    - **Fix:** Hold mesa-* 25.2.8-0ubuntu0.24.04.4 with libdrm 2.4.125. Mirror every third-party .deb into the signed aptly repo: OpenWebRX+ 1.2.126, linux-headers 6.18.2-4 from GitHub, OpenHantek, the radxa-firmware set and qcom-qnn-sdk-v68. Then disable the PPA and Radxa sources, or pin them at 100.
+    - **Evidence:** lab_ui_hf.json tech_stack; software.json ('Mesa 25.2.8 Turnip/freedreno from noble-updates works: Radxa measured 808 GFLOPS'); npu_training.json software; register decisions 24 and 35.
+    - **Fix cost:** $0.
+    - **Sources:**
+      - https://docs.radxa.com/en/dragon/q6a/system-config/vulkan
+  20.
+    - **Area:** Real-time priorities
+    - **Components:**
+      - lime:Rx0
+      - RTL/HF+ ingest
+      - CPU7 isolation
+    - **Problem:** Four RT settings conflict: compute uses chrt -f 10 (Lime warns that RT throttling drops packets); npu_training's sdr-ingestd uses FIFO 50 on CPU7; the wideband verify uses FIFO 70 on cpu4-6; lab_ui_hf uses FIFO 50 on isolated CPU7.
+    - **Severity:** minor
+    - **Fix:** lime:Rx0 at SCHED_FIFO 10 on isolated CPU7 (Lime only). RTL and HF+ ingest at SCHED_OTHER nice -5 on CPU4-6; USB bulk reads are light. Decide between cpu7 and cpu4-6 with the limeTRX loss counters.
+    - **Evidence:** compute.json CPU budget; npu_training.json architecture P1; register decision 19.
+    - **Fix cost:** $0.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/compute.json
+  21.
+    - **Area:** Recorder format
+    - **Components:**
+      - labrx SigMF writer
+      - HF+
+    - **Problem:** HF+ recordings are specified as cf32_le at 6.1 MB/s (22 GB/h). The device's native stream is int16 IQ at 3.07 MB/s, so the format doubles UFS writes and storage for no gain.
+    - **Severity:** minor
+    - **Fix:** Record the HF+ as ci16_le (lossless, 11 GB/h). Use cf32 only for derived products.
+    - **Evidence:** lab_ui_hf.json resource_arbitration (HF+ cf32_le about 6.1 MB/s) and integration_table; register decision 73.
+    - **Fix cost:** $0.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  22.
+    - **Area:** UFS partitioning vs raw-IQ space
+    - **Components:**
+      - 128 GB UFS
+      - A/B root
+      - lab-snap
+      - encrypted data
+      - 20 GB NPU dataset quota
+    - **Problem:** The register suggests an A/B root on UFS when there is no T7. npu_training adds encrypted data partitions and a 20 GB dataset quota. Together these cut the about 92-100 GB 'free after OS' to about 50-58 GB of raw-IQ space, about 1.1 h of 2 RTLs + HF+.
+    - **Severity:** minor
+    - **Fix:** Use one root plus a 6 GB rescue rootfs on UFS, leaving about 66-74 GB for IQ. Put snapshots and offline update bundles on a V30/A2 microSD (61 MB/s write measured), which also takes raw-IQ overflow, or on a USB stick via the LAB port. Use the T7 only with the Lime.
+    - **Evidence:** register decisions 35, 72 and 73; npu_training.json architecture ('Data partitions are encrypted at rest'); storage.json (microSD 61 MB/s).
+    - **Fix cost:** microSD about $15-25 (price unverified).
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/storage.json
+  23.
+    - **Area:** PPS fallback vs libgpiod
+    - **Components:**
+      - gnss Route A daemon
+      - libgpiod 1.6.3
+      - pps-gpio
+    - **Problem:** Route A, the PPS fallback, needs REALTIME edge timestamps. Those exist only in the GPIO v2 uAPI (5.11+). libgpiod 1.6.3 on noble uses the v1 uAPI, whose timestamps are monotonic (as I recall). Written against noble's libgpiod, the fallback would carry the wrong timescale.
+    - **Severity:** minor
+    - **Fix:** Write the fallback in C directly on the v2 ioctl with the EVENT_CLOCK_REALTIME flag, or vendor libgpiod 2.x into that daemon only. Never run pps-gpio and Route A on GPIO96 at the same time.
+    - **Evidence:** register decisions 27 and 32; gnss_imu.json own fix ('GPIO character device v2 API ... CLOCK_REALTIME').
+    - **Fix cost:** $0.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/gnss_imu.json
+  24.
+    - **Area:** Power key / J21 pin 3
+    - **Components:**
+      - case power button
+      - RP2040 open-drain
+      - labpowerd KEY_POWER
+    - **Problem:** power.json wires the case button straight to J21 pin 3. lab_ui_hf and the power verify have the RP2040 pulse pin 3 open-drain after a BMS cut or charge. Neither says how the two coexist, or how long the RP2040 may hold the pin before the PMIC's long-press reset acts (timer unverified).
+    - **Severity:** minor
+    - **Fix:** Wire the button and the RP2040 output as a wired-OR, both open-drain to GND. The RP2040 senses the button and pulses for 0.5-1.5 s, never more than 2 s. Shutdown requests go over the UART to labinput, then labpowerd, not as pin-3 pulses.
+    - **Evidence:** power.json ('wire J21 pin 3 (PWR) to a case push-button'; SGM811 fake-press fix); lab_ui_hf.json process_supervision.
+    - **Fix cost:** $0.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/power.json
+  25.
+    - **Area:** Hard-cut sensing and INA228 ownership
+    - **Components:**
+      - RP2040 critical-voltage input
+      - INA228 on I2C0
+      - labpowerd
+    - **Problem:** The RP2040 hard cut needs a 'critical voltage' input, but the only gauge is the INA228, read by labpowerd over i2c-dev. A second I2C master on I2C0 would conflict.
+    - **Severity:** minor
+    - **Fix:** Give the RP2040 its own ADC divider on the pack (about 1:6, accurate to about 2%) for the hard-cut condition. The INA228 stays owned by labpowerd alone, with ALERT to header pin 3 (UM3204H, open-drain compatible). Remove the breakout pull-ups.
+    - **Evidence:** register decisions 65 and 66; q6a_sch.txt Q12/Q13 CJ3134K shifter on I2C0.
+    - **Fix cost:** About $0.1.
+    - **Sources:**
+      - https://www.adafruit.com/product/5832
+  26.
+    - **Area:** Back-drive and off-state draw
+    - **Components:**
+      - display board rail
+      - touch USB bridge
+      - LAB 5 V tree
+      - HMI RP2040 USB
+    - **Problem:** The display board, and its USB touch bridge, have their own rail from 12 V. LAB 5 V (CH334F, HF+) also stays up after poweroff while the master switch is on. With the Q6A off, the touch bridge's D+ pull-up back-drives FE1.1s P2, and the backlight and HF+ keep draining the pack.
+    - **Severity:** minor
+    - **Fix:** Gate the display rail and LAB 5 V EN on the Q6A on-state (VCC5V_HDMI_TX0 or VCC_3V3 sense, or RP2040 control). Firmware enables the RP2040 USB only when H1 VBUS is present.
+    - **Evidence:** register decision 68 ('board's VBUS comes from its own regulator'); radio_lab LAB 5 V after #2813; q6a_sch.txt VCC5V_HDMI_TX0.
+    - **Fix cost:** About $1-2 (load switch).
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/display_market.json
+  27.
+    - **Area:** HMI MCU GPIO budget
+    - **Components:**
+      - RP2040 (30 GPIO)
+    - **Problem:** After the merge, the RP2040 needs about 30 GPIO without the fan and 31 with it, against 30 available. The lines are: 2 encoders (6), 6 keys, I2C (2), 2 UARTs (4), backlight, piezo, WS2812, power-button sense, J21 pin 3, hard cut, safe-boot, H1 VBUS sense and 3 ADC inputs.
+    - **Severity:** minor
+    - **Fix:** Use a 2x3 key matrix (saves 1-3 GPIO), or a 48-GPIO RP2350B board.
+    - **Evidence:** lab_ui_hf.json HMI RP2040 firmware row; this audit's count.
+    - **Fix cost:** $0-3.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  28.
+    - **Area:** Naming collisions
+    - **Components:**
+      - radio_lab 'rflab daemon'
+      - npu_training rflab.target, /run/rflab, /opt/rflab, SigMF 'rflab' extension, rflabd.py
+    - **Problem:** 'rflab' names the MCP23017 owner in radio_lab, and also the NPU target, its IPC sockets and its SigMF namespace in npu_training. The npu 'ui (P7)' also has its own waterfall renderer, duplicating the Lab Shell QQuickItem waterfall.
+    - **Severity:** minor
+    - **Fix:** Use one namespace: lab.target, /run/lab, /opt/lab and the SigMF extension 'lab'. Make rflab a labd module, labctl the CLI for it, and draw the waterfall only in Lab Shell from labrx shared memory.
+    - **Evidence:** npu_training.json final.architecture; radio_lab.json final.software; register decision 50.
+    - **Fix cost:** $0.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+  29.
+    - **Area:** LimeSuiteNG packaging (Lime only)
+    - **Components:**
+      - LimeSuiteNG limesdr-micro-staging 37cb183
+      - la9310_limesdr DKMS
+      - Amarisoft plugin
+    - **Problem:** At the pinned commit 37cb183 (16 Oct 2026), debian/control builds limepcie-dkms but no la9310_limesdr DKMS package, although the Micro needs la9310_limesdr. plugins/CMakeLists.txt defaults BUILD_PLUGINS_AMARISOFT to ON on UNIX. Only debian/rules sets it to FALSE.
+    - **Severity:** minor
+    - **Fix:** If the Lime is kept, add a la9310-limesdr-dkms +lab package for the held 6.18.2-4 headers, always pass -DBUILD_PLUGINS_AMARISOFT=OFF, and have CI fail if any amarisoft plugin .so is present.
+    - **Evidence:** git show 37cb183:debian/rules, :debian/control and :plugins/CMakeLists.txt in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/src/limeng.
+    - **Fix cost:** $0.
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSuiteNG/tree/limesdr-micro-staging
+- **Proposed decisions:**
+  1.
+    - **Question:** C1 (register conflict 1): LimeSDR Micro keep or drop, and its interface dependents?
+    - **Decision:** Make the Lime a gated optional. Keep the cancellable pre-order and decide on 31 Jan 2027 or on delivery. No core function depends on it. Prepare two variants of the USB map, overlays, kernel cmdline (CPU7 isolation, pcie_aspm=off), RAM ring and DKMS set. Select the variant with one labd/labrx config switch.
+    - **Reason:** The core targets run on 2x V4L plus the HF+. The USB map below works in both variants, and the driver is still unvalidated on arm64 or Qualcomm.
+    - **Consequences:** With the Lime: T7 on the blue port, RTL-A on CH334F H2, CPU7 isolated, 4/6 GiB ring, la9310 DKMS, guard covers limeTRX. Without it, all of that is deleted.
+    - **Alternatives rejected:** Making it core now: unvalidated driver, about $267, +20 W peak. Dropping it now: loses a cancellable, zero-cost option on S-band and wideband NPU.
+  2.
+    - **Question:** C2: Q6A RAM tier?
+    - **Decision:** Buy the 12 GB board now.
+    - **Reason:** RAM table (model): non-ring use is 3.0-7.2 GiB, plus 2 GiB for the trainer, plus the ring. An 8 GB board cannot run on-device T2 training alongside the shell, engines and labclassify, and RAM cannot be added later.
+    - **Consequences:** Ring is 1.5 GiB without the Lime and 4 or 6 GiB with it. Measure visible RAM after carve-outs in the W1-2 gates.
+    - **Alternatives rejected:** 8 GB (saves about $65-75, loses on-device training and the Lime path).
+  3.
+    - **Question:** C3: Pack 3S or 4S?
+    - **Decision:** 4S1P P50B (72 Wh) with a regulated 12 V rail into J21.
+    - **Reason:** Physics: the 13.2 V LNB, the 12.5 V Boni-Whip LDO and AUX 12 V need input above about 12.9 V. 3S would need boosts and their spurs. Outside this lens; I agree with the register.
+    - **Consequences:** labpowerd, the RP2040 hard cut and the TPS2553/eFuse ratings use one 4S threshold table. The SMBJ14A goes after the regulator.
+    - **Alternatives rejected:** 3S (budget only).
+  4.
+    - **Question:** C4: 12 V regulator for J21?
+    - **Decision:** A forced-PWM buck-boost rated 5 A or more is preferred. The D36V50F12 is allowed only with its EN hardware cut at 13.4 V or above. Make the final choice after the terminated-floor A/B and the sealed-case current test.
+    - **Reason:** The D36V50F12 drops out below 13.3 V and uses light-load PFM. Interface point: its EN must be driven by the always-on RP2040 or BMS logic, never by a Q6A GPIO.
+    - **Consequences:** The part number is set in sourcing (P2/P5).
+    - **Alternatives rejected:** 9 V into J21 (the TVS reading behind it was wrong).
+  5.
+    - **Question:** C5: Final USB port map, including the IMU and HMI interfaces?
+    - **Decision:** J5 bottom (blue, USB0): RTL-A without the Lime, T7 with it. J5 top (FE1.1s P1): RTL-B. J2a (P2): touch HID. J2b (P3): Adafruit CH334F MTT, powered from LAB 5 V with upstream VBUS used only for sensing. Its ports: H1 for the HMI RP2040 only if UART7 fails (otherwise spare, or the FT232RL GNSS fallback); H2 for RTL-A with the Lime (otherwise spare, or a 4th V4L); H3 for LAB USB-A through a TPS2553 at 0.6 A in field mode; H4 for the HF+ behind an MCP-switched VBUS-cut. FE1.1s P4 stays the Wi-Fi/BT module, unbound in QUIET. Off USB: the IMU puck uses UART to the HMI RP2040, the HMI RP2040 uses UART7 (official overlay, pins 32/29), the GNSS uses UART6, the INA228 uses I2C0 and the expanders use I2C2.
+    - **Reason:** It fits all four combinations (Lime yes/no x UART7 ok/fail) with zero overflow. Load is about 8-13 MB/s on the FE1.1s uplink against 35-40 MB/s practical. Each pair of ports shares a 2.1 A WS4612 with ample margin. No USB full-speed edges sit at the antenna boom.
+    - **Consequences:** The IMU firmware relays through the HMI MCU. udev names devices by port path plus serial.
+    - **Alternatives rejected:** IMU puck as USB-CDC (needs a 5th port in the worst case; USB edges at the antenna). T7/instrument time-sharing of the blue port (lab_ui_hf; means re-plugging the only SuperSpeed port). A 7-port hub (more clocks and power for no need). Display RP2040 on H1 as the only link (unpowered while the Q6A is off).
+  6.
+    - **Question:** C6: 40-pin header and bus map, including fan control?
+    - **Decision:** Use the header table in budget_tables:
+  - PPS: pin 7 (GPIO96, UM3304, bias-disable).
+  - Console: pins 8/10.
+  - I2C0 13/15: INA228.
+  - UART6 16/18: LC76G.
+  - I2C2 27/28: MCP #1 0x20, TCA9535 0x24, TCA9517 to the LAB BUS (sled MCP #2 0x21, ADS1115 0x48, optional RP2040 counter 0x30).
+  - UART7 32/29: HMI RP2040.
+  - Pin 3: INA228 ALERT. Pin 5: TCA9535 INT.
+  - Pins 12/35/38: RP2040 SWCLK/SWDIO/RUN. Pin 40: safe-boot.
+  - No safety enables on any header pin.
+  Fan: 25 kHz PWM from the HMI RP2040, going to 100% when the heartbeat is lost. Fallback: pin 33 (GPIO56, the same pin as the PoE-HAT overlay) through a 74LVC1G17 and a 2N7002, with spi14 disabled. Build one combined lab-q6a.dtso on top of Radxa's uart6, uart7, i2c0 and i2c2 overlays, and check debugfs pinmux-pins shows one owner per pin.
+    - **Reason:** Each function is matched to the translator type behind its pin. Open-drain lines go to UM3204H or CJ3134K pins; push-pull and short lines to UM3304 pins. A 1 kHz fan comb would hit 40 and 60 kHz exactly; 25 kHz does not.
+    - **Consequences:** Register decision 17's 'fan pin conflict' is closed as a false conflict. power.json's i2c6 placement is deleted.
+    - **Alternatives rejected:** Header GPIOs for bias, LNB or relays (undefined power-up state behind UM3304). The BNO085 directly on I2C2. pwm-gpio at 1 kHz.
+  7.
+    - **Question:** C7: Hardware ownership and process architecture (rflab, lab-sched and the npu daemons)?
+    - **Decision:** One owner per resource:
+  - labd: I2C2 (MCP #1, TCA9535, sled), all enables (bias, LNB, Boni-Whip, AUX, LAB VBUS, VBUS-cuts, HF+ selector, noise source in BENCH), SDR leases and modes, scheduler, profiles, policy, rfkill/unbind, instruments. radio_lab's rflab and lab-sched become labd modules, with labctl as their CLI.
+  - labrx: the only SDR opener in labrx mode (sdr-ingestd, spectrumd, recorderd, lab-rec and lab-sweep merged in). It holds the single RAM ring, the recorder, FFT/tiles and the NPU tap.
+  - labclassify: inferd-htp, inferd-cpu, fusiond, annotd and npu-health. modeld/trainer run as a transient unit started by labd between passes.
+  - labpowerd: I2C0/INA228 and KEY_POWER.
+  - labinput: UART7.
+  - gpsd: UART6. Kernel: pps-gpio on GPIO96 and the fan fallback.
+  Engine-exclusive leases run with per-unit DeviceAllow.
+    - **Reason:** Removes the double-open blocker, the two rings, the two recorders and the advisory flocks. Gives cgroup-enforced leases.
+    - **Consequences:** Passes are record-then-decode by default; live SatDump only as Expert. NPU teaching works on labrx-mode SDRs only.
+    - **Alternatives rejected:** sdr-ingestd as permanent owner (readsb, auto_rx and OpenWebRX+ open devices themselves). Per-SDR flocks (advisory). A separate Python rflab daemon (second owner of I2C2).
+  8.
+    - **Question:** C8: LNB supply?
+    - **Decision:** A dedicated 13.2 V ±0.2 V with true output disconnect, switched by a part rated 20 V or more. EN from MCP #1 GPB0, fault into the TCA9535. One current limit, set at 1.5-2x the measured Bullseye draw. No 18 V branch.
+    - **Reason:** The QO-100 NB downlink is vertical. The TPS2553 is rated only 2.5-6.5 V, per TI.
+    - **Consequences:** The lab_ui_hf arbiter resource 'LNB 13.4/18.2 V' becomes 'LNB 13.2 V'. The rf_frontend, foldable and power.json leftovers are deleted.
+    - **Alternatives rejected:** A switchable 13.4/18.2 V boost. A 12 V rail through a tee (10.6-11.4 V at the LNB).
+  9.
+    - **Question:** C9: LNA bias rule?
+    - **Decision:** Each SAWbird+ gets its own TPS2553 at 250-300 mA, fed from a 1 A low-noise LNA rail, with EN on MCP #1 and FAULT on the TCA9535. The V4L tee is used only for LNAs of 80 mA or less, and only through the librtlsdr LAB_BIAS_OK gate.
+    - **Reason:** SAWbird+ parts draw 170-180 mA. A software path to the tee must not bypass the DC-safety interlock.
+    - **Consequences:** The rf_frontend 100-160 mA PTC rule and the 'GOES+ on the tee' allowance are deleted.
+    - **Alternatives rejected:** A polyfuse in each feed (nuisance trips). Unrestricted rtlsdr_set_bias_tee.
+  10.
+    - **Question:** C10: FM filter?
+    - **Decision:** Nooelec Flamingo+ FM, fitted permanently in the 137/145 MHz path.
+    - **Reason:** Its 250 mA DC pass is published, so the LNA injector topology still works. Outside this lens; I agree with the register.
+    - **Consequences:** Measure DC pass on arrival.
+    - **Alternatives rejected:** RTL-SDR Blog band-stop (no published DC rating).
+  11.
+    - **Question:** C11: librtlsdr build?
+    - **Decision:** Rebuild noble 2.0.1-2build1 with 0204c9c (R828S) and 65f0658 (USB hang), plus the zerocopy typo fix and a new bias-tee gate patch. Keep the .so.2 SONAME, apt-mark hold it, and blacklist dvb_usb_rtl28xxu. Delete Recipe 2 (purge plus fork) and Recipe 3 (2.0.3 .so.0), including npu_training's 2.0.3.
+    - **Reason:** Keeps every librtlsdr2 consumer working and closes the bias interlock gap.
+    - **Consequences:** First arm64 build on the Q6A in the W1-2 gates.
+    - **Alternatives rejected:** The 2.0.3 .so.0 recipe (breaks apt consumers). The destructive purge recipe.
+  12.
+    - **Question:** C12: Display field mode at the kernel and UI interface?
+    - **Decision:** Field EDID: 1920x1080 at about 127.9 MHz (2200x1125 totals, 51.7 Hz), loaded with drm.edid_firmware=HDMI-A-1:edid/field.bin from the initramfs, with video=HDMI-A-1:1920x1080@52. Run all UI tests in that mode. Bring-up only at 148.5 MHz. A 1280x800 per-profile modeset, done by labsession on a labd request, only if the 4D panel is bought.
+    - **Reason:** 128.70 MHz puts its 12th harmonic at 1544.4 MHz, inside Inmarsat-C.
+    - **Consequences:** labbar restarts on DRM hotplug after every modeset.
+    - **Alternatives rejected:** 128.70 MHz. Native 1080p60 in the field.
+  13.
+    - **Question:** C13: Kernel hold vs PPS?
+    - **Decision:** Build pps-gpio out of tree as a +labN DKMS deb for 6.18.2-4 (CONFIG_PPS=y), using the lab overlay node on GPIO96. Drop Route B. The Route A fallback is written on the GPIO v2 ioctl with realtime timestamps. Build pps-ldisc only if the FT232RL fallback is used.
+    - **Reason:** Keeps the HDMI/NPU kernel hold. libgpiod 1.6.3 cannot request realtime event timestamps.
+    - **Consequences:** Confirm with chronyc sourcestats in W1-2.
+    - **Alternatives rejected:** Kernel 7.0.11 for PPS.
+  14.
+    - **Question:** C14: INA228 bus and driver?
+    - **Decision:** I2C0 (pins 13/15, MOSFET shifter), user-space i2c-dev with no DT binding. labpowerd is its only owner. Shunt in the pack lead. ALERT to pin 3. Breakout pull-ups removed. The RP2040 measures pack voltage on its own ADC.
+    - **Reason:** A bound ina238 driver would block CHARGE access. This also avoids multi-master on I2C0.
+    - **Consequences:** Fix power.json (i2c6) and npu_training ('on the J21 rail').
+    - **Alternatives rejected:** I2C6 (shares SE6 with UART6). The hwmon driver.
+  15.
+    - **Question:** C15: Antenna tiers?
+    - **Decision:** Two tiers: always-carried patch/chip/small antennas, plus a foldable backpack kit. The LRPT default is the V-dipole; the crossed Yagi defaults to the ultra-compact build; strike every loop. Outside this lens; I agree with the register.
+    - **Reason:** user_requirements.md lines 10-11.
+    - **Consequences:** labd profiles carry a DC-safety flag per antenna: 9:1 balun and hairpin = DC short, bias locked off.
+    - **Alternatives rejected:** The small_antenna_stack single-tier rule (superseded).
+  16.
+    - **Question:** C16: Receive-only and policy leftovers?
+    - **Decision:** Strike every item listed in register conflict 16. Also remove QSSTV, audit the direwolf config, implement the Artemis stop and the Bluetooth rfkill/unbind in labd and labclassify, and extend the policy audit to qsstv, direwolf TX directives, amarisoft plugin .so files and bias options in engine configs.
+    - **Reason:** Hard rules 1-2 and delegated decisions in user_requirements.md lines 31-37.
+    - **Consequences:** radio_lab P20 fldigi steps move to SDRangel channels.
+    - **Alternatives rejected:** Keeping TX-capable apps 'unconfigured'.
+  17.
+    - **Question:** C17: HF antenna chain and HF+ input selector?
+    - **Decision:** Boni-Whip at 12.5 V from an LDO on 4S, EN on MCP #1 GPB1. The 9:1 wire is for HF only; LF time signals use the active whip. The HF+ selector is two latching, DC-capable signal relays (HF bulkhead, VHF bus, 50 ohm) driven from MCP #1 through a driver, with state read back on the TCA9535. Part TBD; budget about $15-30 (unverified). Ask the user to confirm the HF-loop removal.
+    - **Reason:** The AIS-on-HF+ default depends on the selector, and relay coils cannot hang off the header.
+    - **Consequences:** Add the selector to the HF BOM and lab totals.
+    - **Alternatives rejected:** HMC241 (its DC blocks hurt LF). 'Connect X' prompts as the default.
+  18.
+    - **Question:** C18: Storage without the T7?
+    - **Decision:** T7 only with the Lime, on the blue port. Otherwise UFS with one root plus a 6 GB rescue rootfs (about 66-74 GB left for IQ), and a V30/A2 microSD for snapshots, offline bundles and raw overflow. Retention: products by default, raw only when pinned. HF+ recorded as ci16.
+    - **Reason:** No-Lime streams top out at 13.3 MB/s, far below UFS and microSD write speeds. An A/B root would halve raw-IQ space.
+    - **Consequences:** lab-snap and update bundles move off the T7.
+    - **Alternatives rejected:** A/B root on 128 GB UFS. Buying the T7 regardless.
+  19.
+    - **Question:** C19: CPU allocation and RT priorities?
+    - **Decision:** CPU0-3 (A55): UI, daemons, labclassify (HTP host and CPU fallback). CPU4-6 (A78), plus CPU7 when there is no Lime: labrx and engines; the trainer runs as a transient unit (AllowedCPUs=4-6, nice 19, CPUQuota=250%) between passes only. With the Lime: CPU7 isolated (isolcpus/nohz_full/rcu_nocbs=7, irqaffinity=0-6), lime:Rx0 at FIFO 10.
+    - **Reason:** Matches the verified training estimate (4.5-10.8 min on the A78 cores) and Lime's warning about RT throttling.
+    - **Consequences:** Fix the lab_ui_hf trainer-on-A55 text and npu_training's FIFO 50.
+    - **Alternatives rejected:** FIFO 50/70 for ingest. The trainer on the A55 cores.
+  20.
+    - **Question:** C20: UI and NPU roadmaps?
+    - **Decision:** NPU Phase 0 runs inside the W1-2 gates (19 Oct-1 Nov 2026). A minimal labeller moves into P0b. Add the HF-F and second-RTL profiles before exposing HF classes. Ship the CPU-mode tile schedule (about 5 tiles/s). The HTP gate scales with the SDR set: p99 of 11.7 ms or less with the Lime, about 28 ms or less without.
+    - **Reason:** CPU mode (4-6 tiles/s) cannot cover 14.6-17.6 tiles/s without the Lime.
+    - **Consequences:** The UI shows reduced coverage until the HTP is promoted.
+    - **Alternatives rejected:** One fixed 11.7 ms gate regardless of load.
+  21.
+    - **Question:** C21: V4L count?
+    - **Decision:** Buy 3: RTL-A and RTL-B in service plus 1 spare. Continuous ADS-B/AIS/sonde monitoring time-shares (AIS on the HF+). A 4th V4L only if the user wants 24/7 monitors; it fits on CH334F H2 (no Lime) or the LAB port.
+    - **Reason:** USB slots exist without the Lime; the stock of R828S units is finite.
+    - **Consequences:** Unique EEPROM serials; udev by serial.
+    - **Alternatives rejected:** A single V4L (the lab_ui_hf count).
+  22.
+    - **Question:** C22: Software recipes and pinning?
+    - **Decision:** One venv per tool:
+  - NanoVNA-Saver via pipx; QtTinySA with PySide6 6.12; lab venv on numpy<2.
+  - libgpiod v1 API in labd; Skyfield 1.55 and sgp4 2.27 from pip.
+  - SatDump 2.0-alpha and SDR++/SDRangel from source as +labN debs.
+  - OpenWebRX+ 1.2.126 with --no-install-recommends, exact-name -1 pins, mirrored into aptly.
+  - Hold Mesa 25.2.8-0ubuntu0.24.04.4 and libdrm 2.4.125 plus the register hold list.
+  - Purge brltty, mask ModemManager, mask apt and fwupd timers.
+    - **Reason:** Resolves every recipe conflict and the Mesa ambiguity, and removes serial-port hijackers.
+    - **Consequences:** Each tool is tested on the Q6A within the return window.
+    - **Alternatives rejected:** apt nanovna-saver 0.6.3. Skyfield 1.48 from apt. Unmirrored PPA installs.
+  23.
+    - **Question:** C23: Region unknown?
+    - **Decision:** Hold the region-dependent purchases (LNB, horn, SAWbird+ iO, LC76G vs MAX-M10S). labd computes GEO 'visible from here' flags from the GNSS fix and gates dump978, nrsc5 and EAS per region profile. Outside this lens; I agree with the register.
+    - **Reason:** Visibility and legality depend on the region.
+    - **Consequences:** Ask the user at the phase end.
+    - **Alternatives rejected:** Buying for Europe by default.
+  24.
+    - **Question:** C24: Costs and weights?
+    - **Decision:** Recompute with the corrected lines and add an internal-interface delta, an estimate of about $12-25:
+  - TCA9535;
+  - 2x 74LVC1G17;
+  - a relay driver;
+  - a 1 A LNA LDO;
+  - 2 load switches for display and LAB EN;
+  - optional RS-485 pair.
+    - **Reason:** These parts come out of this lens; their prices are unverified.
+    - **Consequences:** Fed into P5 (cheapest analogs).
+    - **Alternatives rejected:** None.
+  25.
+    - **Question:** C25: P1b completion?
+    - **Decision:** Closed. final/report_research.json exists (minute-log 04:52). STACK.md and build/ do not exist yet, which I checked; P2 is running.
+    - **Reason:** File present and read in this step.
+    - **Consequences:** Only the summaries.md and minute-log.md errata blocks remain.
+    - **Alternatives rejected:** None.
+- **Checks passed:**
+  - Schematic v1.21 (local text): FE1.1s U23 sits on the SoC's USB1 (HS only). P1 goes to J5 top, P2/P3 to the J2 dual USB 2.0 stack, P4 to the FCU760K Wi-Fi/BT. The blue USB 3.1 is J5 bottom on USB0 (HS plus SS). This settles the J5 labelling: rf_frontend's 'J5 lower USB 2.0' is wrong, and narrowband's reading is right.
+  - VBUS: U35 WS4612 feeds both J5 ports; U33 feeds both J2 ports. Each limits at about 2.1 A (Ilim = 6800/3.24 kOhm), and each limit is shared by two ports. No-Lime USB load is about 0.54 A on U35 and about 0.1 A on U33.
+  - The FCU760K is the module and the AIC8800D80 (a69c:8d80) the chipset inside, so both names in the files are right.
+  - USB bandwidth: the FE1.1s uplink carries 8.2 MB/s without the Lime (12.2 with the LA at 4 MS/s) and 13.3 MB/s with it (17.3), against 35-40 MB/s practical. The T7 at 224 MB/s uses about 57% of the 395 MB/s measured on the blue port.
+  - Hub depth: root, FE1.1s, CH334F, bench hub is 3 hubs, within the USB 2.0 limit of 5. The CH334F is MTT, so full-speed instruments get their own TT; Adafruit 5997 costs $4.95 and is in stock.
+  - VCC_5V_PERI (about 17 W): about 4.2 W without the Lime. With the Lime it is about 10 W typical, and about 16.5 W worst case at the 8.25 W M.2 spec limit, which is within the limit but tight.
+  - Header translators: I2C0 (13/15) uses CJ3134K MOSFET shifters, correct for I2C. I2C2 (27/28) and the console share U47, a UM3204H (TXS-type, I2C-capable). UART6 and I2C6 use U48 (UM3204H). PPS pin 7, UART7, SPI12/14 and MI2S use UM3304 (TXB-type). This is consistent with gnss_imu.
+  - UART6 and I2C6 share QUP0 SE6 (GPIO24-27), so I2C6 is unusable once UART6 is on; the register's correction of power.json holds.
+  - The UART7 overlay exists upstream: qcs6490-radxa-dragon-q6a-uart7.dtso, TX on pin 32 and RX on pin 29, exclusive spi7/uart7/i2c7/gpio30/31. Upstream also has i2c0, i2c2, uart6, poe-hat and spi14 overlays.
+  - GPIO56 is FP_SPI_MISO, which is header pin 33 (QUP1 SE6, spi14). The fan-pin conflict in the register is the same physical pin.
+  - Kernel 6.18.2-4 (local config): CONFIG_PPS=y; PPS_CLIENT_GPIO and PPS_CLIENT_LDISC not set; PINCTRL_MCP23S08 not set; GPIO_PCA953X=y; I2C_CHARDEV=y; HIDRAW=y; PWM_GPIO=m; ina238.ko carries the ina228 alias. All register statements agree.
+  - LimeSuiteNG 37cb183 (16 Oct 2026, limesdr-micro-staging) contains limeConfig --refclk and --refclk_source (cli/limeConfig.cpp lines 28-29, 98-99), which closes the radio_lab open question 'is 37cb183 new enough'. Its debian/rules sets BUILD_PLUGINS_AMARISOFT=FALSE, while the CMake default is ON, so source builds must pass the flag.
+  - TPS2553 (TI): 2.5-6.5 V input, 75-1700 mA adjustable limit, 925-1075 mA at the 1 A setting. Suitable for the 250-300 mA LNA feeds and the LAB port; unsuitable for the LNB or 12 V rails, which confirms the register.
+  - MCP23017 GPA7/GPB7 are output-only in current datasheet revisions (D/E), which confirms radio_lab's from-memory note.
+  - I2C address plan has no collisions: INA228 0x40 on I2C0; MCP #1 0x20, MCP #2 0x21, TCA9535 0x24, ADS1115 0x48 and RP2040 counter 0x30 on I2C2. The VEML7700 (0x10) sits on the RP2040's own bus.
+  - NPU duty without the Lime: about 17.6 tiles/s x 11.7 ms = 21%, under the 50% cap. With the Lime, 42.5 tiles/s holds at the 11.7 ms gate (verified).
+  - Receive-only guard elements are consistent across lab_ui_hf, radio_lab and the register: Amarisoft plugin off, Lime TX terminated, sink-block and SOAPY_SDR_TX lint, SDRangel TX/DSD audit, jt9/wsprd only, the -1 pin list, URH rejected.
+  - labclassify CPUAffinity=0-3 in lab_ui_hf final; the earlier 4-6 contradiction is already fixed there.
+  - The Q6A USB-C stays blocked (Q5 back-feed), and the IP2368 USB-C is the only external power input; all files agree.
+- **Budget tables:**
+  - USB PORT MAP (schematic v1.21)
+  | Port | VBUS | No Lime | Lime + T7 |
+  |---|---|---|---|
+  | J5 bottom, blue USB0 (HS+SS) | U35 2.1 A, shared with J5 top | RTL-A | T7 |
+  | J5 top = FE1.1s P1 | U35 | RTL-B | RTL-B |
+  | J2a = P2 | U33 2.1 A, shared with J2b | touch HID | touch HID |
+  | J2b = P3 | U33 (CH334F senses VBUS only) | CH334F MTT | CH334F |
+  | H1 | LAB 5 V | spare (HMI RP2040 if UART7 fails) | same |
+  | H2 | LAB 5 V | spare / 4th V4L | RTL-A |
+  | H3 | TPS2553 0.6 A | LAB USB-A | LAB USB-A |
+  | H4 | VBUS-cut | Airspy HF+ | HF+ |
+  | P4 internal | WIFI_PWR_EN | FCU760K, unbound in QUIET | same |
+  | Off USB | - | GNSS UART6; HMI UART7; IMU UART to HMI; INA228 I2C0; expanders I2C2 | same |
+  - USB BANDWIDTH (MB/s)
+  | Link | No Lime | Lime + T7 | Capacity |
+  |---|---|---|---|
+  | USB0 blue | RTL-A 5.12 | T7 224 (56 Msps ci16) | 395 measured |
+  | FE1.1s uplink | RTL-B 5.12 + HF+ 3.07 = 8.2 (12.2 with LA at 4 MS/s) | 2 RTL + HF+ = 13.3 (17.3) | 35-40 practical |
+  | Rule | Wi-Fi unbound during jobs; at most 3 continuous streams | same | - |
+  - 5 V / VBUS CURRENT (estimates; HF+ unpublished)
+  | Rail | Loads | Typical | Worst at the limits | Limit |
+  |---|---|---|---|---|
+  | U35 (J5 pair) | 2x V4L 0.27 A (+ tee 0.18 A each, normally off) | 0.54 A | 0.9 A | 2.1 A |
+  | U33 (J2 pair) | touch about 0.1 A | 0.1 A | 0.2 A | 2.1 A |
+  | VCC_5V_PERI, no Lime | USB, fan, HDMI, misc | 4.2 W | 5.5 W | about 17 W |
+  | VCC_5V_PERI, Lime | + T7 0.9 A, Lime 4 W (spec 8.25 W) | about 10 W | about 16.5 W | about 17 W |
+  | LAB 5 V | CH334F 0.08, HF+ 0.15-0.3, 3 LNAs 0.41, LAB instrument 0.3 | about 1.0 A | 2.2-2.4 A (register settings) | fuse 2 A, change to 3 A |
+  | LNA rail | NOAA 0.17 + GOES 0.18 + LNA V2 about 0.06 A | 0.41 A | 0.9 A | LT3045 0.5 A, change to a 1 A part |
+  - 40-PIN HEADER MAP
+  | Pin | Signal (translator) | Use | Owner |
+  |---|---|---|---|
+  | 7 | GPIO96 (UM3304) | PPS in, wire 20 cm or less | kernel pps-gpio |
+  | 8/10 | debug UART (UM3204H) | console | reserved |
+  | 13/15 | I2C0 (CJ3134K) | INA228 0x40 | labpowerd |
+  | 16/18 | UART6 (UM3204H) | LC76G | gpsd |
+  | 27/28 | I2C2 (UM3204H) | MCP #1, TCA9535, TCA9517 to LAB BUS | labd |
+  | 32/29 | UART7 TX/RX (UM3304) | HMI RP2040, 20 cm or less | labinput |
+  | 3 | GPIO24 (UM3204H) | INA228 ALERT | labpowerd |
+  | 5 | GPIO25 (UM3204H) | TCA9535 INT | labd |
+  | 12/35/38 | UM3304 | RP2040 SWCLK/SWDIO/RUN | OpenOCD (service only) |
+  | 40 | UM3304 | safe-boot from RP2040 | early unit |
+  | 33 | GPIO56 (UM3304) | fan fallback via 74LVC1G17 + 2N7002 | kernel pwm-fan |
+  | 11, 31, 19-26, 22, 36, 37 | UM3304 | spare (spi12/spi14 disabled) | - |
+  - EXPANDER LINES (labd)
+  | Device | Lines |
+  |---|---|
+  | MCP23017 #1 0x20, outputs only (Q6A 3.3 V; power-up high-Z, 100k pull-downs) | GPA0 LAB EN, GPA1 AUX EN, GPA2 RTL-A cut, GPA3 RTL-B cut, GPA4 HF+ cut, GPA5-7 LNA VHF/UHF/L EN; GPB0 LNB EN, GPB1 Boni EN, GPB2-3 selector relays, GPB4 sled power, GPB5-7 spare |
+  | TCA9535 0x24, inputs (pca953x) | 4x TPS2553 FAULT, LNB fault, Boni fault, 2x DC-sense, 2x selector readback, sled present (11 of 16) |
+  | Sled MCP23017 #2 0x21 | switch V1-V3, PE4302 D0-D5, NOISE EN (BENCH), LNA EN |
+  - HMI RP2040 GPIO (30 available)
+  | Function | GPIO |
+  |---|---|
+  | 2 push-encoders | 6 |
+  | 6 keys | 6 |
+  | I2C (VEML7700) | 2 |
+  | UART0 to Q6A, UART1 to puck | 4 |
+  | backlight PWM, piezo, WS2812 | 3 |
+  | power button, J21 pin 3, hard cut, safe-boot, H1 VBUS sense | 5 |
+  | ADC: backlight NTC, pack divider, case NTC | 3 |
+  | fan PWM | 1 |
+  | Total | 30 (31 with fan); use a key matrix or RP2350B |
+  - RAM, 12 GB board (about 11 GiB visible, unverified; model)
+  | Consumer | GiB |
+  |---|---|
+  | OS, labwc, XWayland, labbar | 0.8 |
+  | Lab Shell + QtWebEngine | 0.4-0.9 |
+  | labd, labpowerd, labinput | 0.15-0.25 |
+  | labrx without ring | 0.1-0.2 |
+  | engines (SatDump post-pass, sdrangelsrv, OWRX+, readsb/AIS/auto_rx) | 1.0-2.6 |
+  | labclassify (HTP 1.0 max, CPU 0.3, fusion 0.2) | 1.5 |
+  | headroom | at least 1.0 |
+  | Subtotal without trainer | 5.0-7.2 |
+  | trainer (between passes only) | up to 2.0 |
+  | Ring | 1.5 no Lime; 4 Lime with trainer; 6 Lime without trainer |
+  - CPU (estimates; unmeasured)
+  | Cores | Load |
+  |---|---|
+  | CPU0-3 A55 | UI 0.5-1 core; daemons 0.2; stage-2 0.3-0.5; CPU-mode detector about 1-2 cores at 5 tiles/s |
+  | CPU4-6 A78 (+CPU7 without Lime) | labrx ingest/FFT for 2 RTL + HF+ under 0.3 core; SatDump LRPT 0.3-0.5, HRPT 1-1.5; SDRangel HF 0.3-0.6; readsb 0.3-0.5; OWRX+ 0.5-1; trainer T2 3 cores between passes |
+  | CPU7 (Lime only) | isolated, lime:Rx0 at FIFO 10 |
+  | GPU | VkFFT about 7.8 GFLOPS, about 1% of 808 |
+  - STORAGE (MB/s and GB/h)
+  | Stream | Rate |
+  |---|---|
+  | V4L cu8 2.56 Msps | 5.12 MB/s = 18.4 GB/h |
+  | HF+ ci16 768 ksps | 3.07 MB/s = 11 GB/h (cf32 6.14 MB/s = 22 GB/h) |
+  | 2 RTL + HF+ ci16 | 13.3 MB/s = 48 GB/h |
+  | Lime 56 Msps ci16 | 224 MB/s, T7 only (about 74 min per TB) |
+  | UFS left for IQ: one root + 6 GB rescue + 20 GB dataset | about 66-74 GB, about 1.4-1.5 h worst case |
+  | With A/B root | about 50-58 GB (rejected) |
+  - NPU TILE LOAD
+  | SDR set | Tiles/s | HTP gate (50% duty) | CPU mode |
+  |---|---|---|---|
+  | Lime + RTL | 42.5 (verified) | p99 of 11.7 ms or less | far short |
+  | 2x V4L | 14.6 (verified) | about 34 ms | about 5 tiles/s with schedule |
+  | 2x V4L + HF-F | about 16.6-17.6 (model) | about 28 ms | about 5 tiles/s with schedule |
+  - RESOURCE OWNERS
+  | Resource | Single owner |
+  |---|---|
+  | SDR open (labrx mode) | labrx |
+  | SDR open (engine-exclusive lease) | that engine unit, with DeviceAllow |
+  | Leases, scheduler, all enables, I2C2, rfkill/unbind | labd |
+  | I2C0 INA228, KEY_POWER | labpowerd |
+  | UART7 (keys, encoders, IMU relay, heartbeat) | labinput |
+  | UART6 GNSS | gpsd |
+  | GPIO96 PPS | kernel pps-gpio |
+  | HTP/CPU inference | labclassify |
+  | RAM ring, recorder, FFT tiles | labrx |
+- **Notes:** The stack can work as one device. Before STACK.md, these cross-file decisions have to be frozen: one SDR-opening model, one RP2040 for HMI and supervisor, all safety enables on I2C expanders (not header GPIO), a librtlsdr bias-tee gate, the IMU always on UART to the HMI MCU, the LAB 5 V budget, a CPU-mode NPU schedule, and one RAM ring table. One blocker: the SDR double-open conflict between npu_training's sdr-ingestd, the lab_ui_hf engine leases and the radio_lab flocks. All 25 register conflicts get a decision (C1-C25). Out-of-lens items (pack, FM filter, antenna tiers, region) follow the register, with their interface consequences added.
+  
+  Two local findings settle register items:
+  - The 'fan pin GPIO56 vs pin 33' conflict is the same physical pin.
+  - The audited LimeSuiteNG pin 37cb183 already has limeConfig --refclk.
+  
+  Web use: 3 WebSearch, 6 WebFetch (one returned 403).
+  - Verified: the radxa-overlays listing (uart7, i2c0, i2c2, poe-hat overlays exist) and the uart7 .dtso pins; TI TPS2553 range and accuracy; the MCP23017 GPA7/GPB7 output-only change; Adafruit CH334F basics (no per-port power information).
+  - Not found: HF+ Discovery current (RigPix lists it as unknown; the rtl-sdr.com table is only in a video).
+  
+  Model or unverified numbers: RAM and CPU budgets, LAB 5 V typical draw, HF-F tile rate, UFS free space and the interface parts cost; the UM3304/UM3204H types come from gnss_imu's datasheet reading and my schematic parse; ModemManager/brltty presence on Radxa OS r2, 0483:5740 on the LiteVNA, AO3400 gate capacitance, libgpiod v1 timestamp clock, PMIC long-press timer and the D36V28F5 3.2 A rating.
+  
+  Files: calculations in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/iface/budget.py; decision dumps in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/iface/decisions.txt and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/iface/verdict.txt; schematic text at /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_sch/q6a_sch.txt (USB sheet lines 4330-4610, header lines 3600-3940).
+
 ## completeness:lens2 (run `wf_6ce87eb1-883`)
 
 - **Lens:** MISSING PARTS: cables and adapters, RF switching and its drive, bias tees, DC blocks, pads, loads, filters, fuses, PTCs and TVS, connectors and DC jacks, power key, charger input, fasteners, thermal parts, fan, sun hood, strap and tripod mount, weather protection, bags, spares, tools, flashing media, and the home-base PC for QAIRT 2.42.
