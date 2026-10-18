@@ -1,6 +1,6 @@
 # HANDOFF: супутниковий приймач лише на прийом + портативна радіолабораторія
 
-Стан на 2026-10-18 21:29 UTC. Цей файл — повна передача роботи іншій моделі/людині. Читати повністю перед продовженням.
+Стан на 2026-10-18 21:30 UTC. Цей файл — повна передача роботи іншій моделі/людині. Читати повністю перед продовженням.
 
 ## 0. Критерії завершення проєкту (Definition of Done) — проєкт закінчено, коли виконано ВСЕ:
 1. sat-receiver-audit/build/ містить усі 19 файлів зі списку в §7 п.1, кожен SVG — валідний SVG 1.1 (блок назви «v2, 18.10.2026» і «теоретичний проєкт — перевірити на стенді»), 10-bom.csv читається як CSV.
@@ -33,7 +33,7 @@
 | Далі | відкриті питання STACK §8 (за запитом користувача, якщо лишиться ліміт) | не почато |
 
 
-### Зроблені пакети виправлень P6: fix:A:b1, fix:A:b2, fix:A:b3, fix:A:b4, fix:B:b1, fix:B:b2, fix:B:b3, fix:B:b4
+### Зроблені пакети виправлень P6: fix:A:b1, fix:A:b2, fix:A:b3, fix:A:b4, fix:A:b5, fix:B:b1, fix:B:b2, fix:B:b3, fix:B:b4
 ### Готові автори P7: write:power+wiring, write:software+assembly
 ### Файли в build/: 01-blok-skhema.md, 01-blok-skhema.svg, 02-zhyvlennia.md, 02-zhyvlennia.svg, 03-rf-trakt.svg, 04-header-40pin.svg, 04-pidkliuchennia-pinout.md, 05-mekhanika.md, 05-roztashuvannia-front.svg, 05-roztashuvannia-section.svg, 06-anteny.md, 07-pz-vstanovlennia.md, 08-zbyrannia.md, 10-bom.csv, 10-bom.md
 
@@ -71,93 +71,8 @@ D19 Bench case: B&W outdoor.case Type 4000 RPD (conditional: eyelets locked when
 
 
 
-## 5a. Ще не виправлені проблеми STACK.md (17 шт.; якщо список порожній — усе виправлено)
+## 5a. Ще не виправлені проблеми STACK.md (0 шт.; якщо список порожній — усе виправлено)
 Кожна: де, що не так, як виправити, доказ. Виправляти прямо в STACK.md, перевіряючи за джерелами з final/.
-
-- [A68 | missing | analogs_G4_G6] ДЕ: 3.1, row «Інструменти»: «набір запчастин $57-78 (лише те, чого немає в інших рядках; 2 запасні MHF4L-SMA лишаються ...)»
-  ПРОБЛЕМА: G5 #15 corrects the spares kit in two ways. v2 carries only the MHF4L one. The TVS correction (spares use SMBJ13A and SMBJ17A, not SMBJ14A) is not stated anywhere for the spares kit.
-  ВИПРАВЛЕННЯ: Add to the spares note: «TVS у запасі — SMBJ13A і SMBJ17A (не SMBJ14A)».
-  ДОКАЗ: analogs_G5_lab_bench.json decisions[15].chosen (OTHER, spares kit: «It uses SMBJ13A and SMBJ17A, not SMBJ14A») and stack_changes («SMBJ14A becomes SMBJ13A and SMBJ17A»).
-
-- [A69 | missing | consistency] ДЕ: 1.1 C6: «уже зайняті 0x20, 0x21, 0x22, 0x30, 0x48»
-  ПРОБЛЕМА: The list of addresses already taken on I2C2 leaves out 0x49 (the ADS1115 of the AD8318 box). 5.2 and D13 list 0x49 on I2C2.
-  ВИПРАВЛЕННЯ: Change to «уже зайняті 0x20, 0x21, 0x22, 0x30, 0x48, 0x49».
-  ДОКАЗ: STACK.md line 58 (C6) vs 723 and 766 (5.2), 90 (D13), 346 (2.11.3 AD8318 «ADS1115 коробки на 0x49»)
-
-- [A70 | missing | numbers] ДЕ: 3.6: «рядки DigiKey DE, Mouser, Botland, ITEAD DE, Eleshop/Elektor, sled і плата Lime — без ПДВ»; 2.12: «у пристрої — Nooelec, RTL-SDR Blog, Adafruit, Wisecoco, LCSC, AliExpress, Waveshare, JLCPCB»
-  ПРОБЛЕМА: The basis descriptions are wrong or incomplete. Botland's Hantek is incl. VAT and GLS shipping ($81.0). The Eleshop DPS-150 fallback in the extended upper bound is incl. VAT ($66.38). The bench LNA V2 ($32.36-34.61) includes EUR 3 duty and UHF. LBE-1420 ($193.08) includes VAT and shipping (DDP). The 2.12 list of non-EU device sellers whose surcharges are not summed leaves out Diamond Coatings (Diamox, 2.6) and the US-only Polymaker ($25.99) and Peak Design ($49.95) prices in the 2.9 case base.
-  ВИПРАВЛЕННЯ: In 3.6 and 2.12 add: «Botland — без ПДВ у 2.7, з ПДВ і доставкою для Hantek (3.1); Eleshop — без ПДВ для LiteVNA, з ПДВ для DPS-150 (запасний); LNA V2 — з ПДВ, EUR 3 мита і UHF; LBE-1420 — з ПДВ і доставкою (DDP)». Add Diamond Coatings, Polymaker US and Peak Design (US) to the 2.12 non-EU list.
-  ДОКАЗ: STACK 3.1 rows «Осцилограф і LA» and «Запасний LNA»; 3.2 rows «GPSDO» and «Лабораторне джерело»; 2.6 «Козирок»; 2.9 «Корпус»
-
-- [A71 | style | analogs_G1_G3] ДЕ: 2.1 «Відновлення»: «Transcend TS-RDF5K (Reichelt EUR 7.95 = $7.51 без ПДВ, ще −$2.39)»
-  ПРОБЛЕМА: EUR 7.95 is the Reichelt price including 19 % VAT, and $7.51 is the ex-VAT price. Equating them under «без ПДВ» mislabels the EUR figure.
-  ВИПРАВЛЕННЯ: Write «Reichelt EUR 7.95 з ПДВ = $7.51 без ПДВ».
-  ДОКАЗ: analogs_G2_display_hmi_storage.json decisions[11].rejected[0].name («Reichelt EUR 7.95 incl. = $7.51 ex»)
-
-- [A72 | style | numbers] ДЕ: 2.1 row «Плата»: «166.37 (EUR 148.00 з ПДВ NL …) / запас 189.99 без ПДВ ЄС»; row «Сховище»: «65.20 (EUR 58.00 з 21% ПДВ NL) / … запас 65.90 без ПДВ»; subtotal «303.53-332.85»
-  ПРОБЛЕМА: One range mixes incl.-VAT EU prices (lower bound) with ex-VAT non-EU prices (upper bound). For an EU buyer the ALLNET upper bound is really at least $226.09 / $78.42 before shipping, duty and UHF. The note discloses this but gives no same-basis subtotal.
-  ВИПРАВЛЕННЯ: Add same-basis figures to the 2.1 subtotal note: ex VAT for the plate and UFS (137.49-189.99, 53.88-65.90) gives 263.33-332.85; EU incl. VAT (ALLNET + 19% import VAT, before shipping, duty and UHF) gives 303.53-381.47.
-  ДОКАЗ: STACK 2.1 rows and subtotal note; recomputation
-
-- [A73 | style | numbers] ДЕ: 2.3 «Підсумок групи»: «у ЄС — плюс ПДВ і для Nooelec, RTL-SDR Blog, Uputronics UK і Mini-Circuits — мито/UHF»
-  ПРОБЛЕМА: No 2.3 row is bought from Mini-Circuits. The Uputronics row uses the EU storefront (EUR 52.95 ex VAT), not the UK store.
-  ВИПРАВЛЕННЯ: «у ЄС — плюс ПДВ, а для Nooelec, RTL-SDR Blog і Uputronics (якщо EU-вітрина відвантажує з UK через IOSS) — мито/UHF за правилом вартості ввезення (у рядках)».
-  ДОКАЗ: STACK 2.3 rows «Передпідсилювач 70 см» and the other 2.3 sellers
-
-- [A74 | style | reaudit_CD] ДЕ: 2.9 «непровідні заглушки F, USB-C, USB-A, 3.5 мм, LAB BUS, GX12/M8 |»; 8.2 IPX4 «без води біля GX12/M8»
-  ПРОБЛЕМА: Two places still name the IMU connector as GX12/M8 after G3 changed it to an Olimex GX16-4 with a tethered cap. 2.8, 5.2 and 5.8 already use GX16-4, and 5.8 notes «analogs G4 називав GX12/M8; роз'єм змінено на GX16-4 за G3».
-  ВИПРАВЛЕННЯ: 2.9: replace «GX12/M8» in the cap list with «GX16-4 (власний ковпачок на ланцюжку, 2.8)», or drop that cap. 8.2: change «без води біля GX12/M8» to «без води біля GX16-4 паку IMU».
-  ДОКАЗ: analogs_G3_power_gnss_imu.json decisions[0] (GX16-4); reaudit_D results[3].corrections[21] (GX12 has no IP rating)
-
-- [A75 | style | reaudit_CD] ДЕ: 2.4 GNSS-антена «інакше окремий bias-tee 5 V з DC-блоком» (також 11.5 рядок 28)
-  ПРОБЛЕМА: The P7 fallback bias is described vaguely and differs from 5.3. Re-audit C requires a TPS2553 channel (the 4.5 V LNA rail), then a bias tee at P7, then an inline SMA DC block between the bias tee and the board's IPX pigtail. Without the block, about 117 mA back-feeds into VCC_RF. A '5 V bias-tee with a DC block' does not say where the block goes.
-  ВИПРАВЛЕННЯ: In 2.4 and 11.5 row 28, write «інакше запасне зовнішнє зміщення: канал TPS2553 → bias-tee на P7 → SMA DC-блок між bias-tee і IPX-пігтейлом плати (5.3; без блока ≈117 mA зворотного живлення у VCC_RF, модель); R5 ніколи не перемикати».
-  ДОКАЗ: reaudit_C results[0].corrections[1] action and corrected_spec 'Fallback bias'; STACK 5.3 P7 row
-
-- [A76 | style | rules] ДЕ: Header «Що це» (line 3): «Цей компроміс користувач прийняв разом із доплатою за Lime-набір»
-  ПРОБЛЕМА: «користувач прийняв» uses masculine past-tense agreement, which genders the user. The rest of the stack addresses the user as «ви» or uses «рішення користувача».
-  ВИПРАВЛЕННЯ: «Цей компроміс ви прийняли (рішення Р7) разом із доплатою за Lime-набір» or «Цей компроміс прийнято рішенням користувача (Р7) разом із доплатою за Lime-набір».
-  ДОКАЗ: v2_brief.md hard rules: 'gender-neutral wording'.
-
-- [A77 | style | rules] ДЕ: 1.1 (line 69): «Питання наприкінці фази: чи захочете колись повернути КХ-рамку»; 1.2 «Рамкові антени: залишки» (line 105): «Якщо колись захочете КХ-рамку назад — скажіть прямо»; 6.1 (line 1106): «КХ-рамка повертається лише на ваше пряме прохання»; section 8 question 2 (line 1541): «Якщо колись захочете КХ-рамку назад — скажіть прямо: біля шумного пристрою фізика на боці рамки»
-  ПРОБЛЕМА: No loop is included, but the stack reopens a settled decision four times and argues for the loop. The user has already accepted the local-noise trade-off of HF+ on a wire, so the open question in section 8 contradicts the recorded decision.
-  ВИПРАВЛЕННЯ: Keep only the ban: at lines 69, 105 and 1106 replace the offer with «Компроміс шуму КХ прийнято (user_requirements: no loops; trade-off accepted)», and delete question 2 in section 8 (renumber it, and fix the «питання 2» reference at line 1696).
-  ДОКАЗ: final/user_requirements.md line 11 ('NO loop antennas of any kind … removed by the user') and line 31 ('Trade-off accepted: the Airspy HF+ with a wire … will often be limited by local noise').
-
-- [A78 | style | structure] ДЕ: BOM/lab status cells: 3.3 L446 «перевірено (Robens, Forclaz) / оцінка (кілок)»; 2.5 L241 «кілок — оцінка $2-6»; 2.7 L280 «ціни перевірено 18.10.2026; стендові ворота — очікують»; 2.7 L284 «ціну перевірено 18.10.2026; умовно — ворота G0-G7»; 2.9 L303 «частково перевірено (SKU закріплено)»; 2.2 L199 «перевірено (USD) / модель (ЄС landed)»
-  ПРОБЛЕМА: Status labels fall outside the three allowed values (перевірено / модель / не перевірено). «оцінка» and «частково перевірено» are not statuses, and gate information is mixed into the status column. In prose, «(оцінка)» (17 times) and «(розрахунок)» (6 times) are used for what the legend calls «(модель)».
-  ВИПРАВЛЕННЯ: Use only the three statuses plus a short qualifier in brackets: «перевірено (Robens, Forclaz) / модель (кілок)», «перевірено (18.10.2026)» with the gate text moved to «примітка», «перевірено (SKU) / не перевірено (ціна)», «перевірено (USD) / модель (вартість з доставкою в ЄС)». In prose, change «(оцінка)» / «(розрахунок)» to «(модель)».
-  ДОКАЗ: STACK.md status column of the rows at lines 199, 241, 280, 284, 303, 446; legend line 9; brief style: «statuses перевірено / модель / не перевірено»
-
-- [A79 | style | structure] ДЕ: Зміст, L31-32: «8.1. Нові виміри і ворота (P4)» / «8.2. Приймальні тести аналогів (P5)»
-  ПРОБЛЕМА: The TOC entries do not match the headings. L1553 reads «### 8.1. Нові виміри і ворота з повторного аудиту (P4)». L1672 reads «### 8.2. Приймальні тести й умови аналогів (P5) і нотатки оператора». The TOC drops the operator-notes part of 8.2.
-  ВИПРАВЛЕННЯ: Set the TOC lines to «8.1. Нові виміри і ворота з повторного аудиту (P4)» and «8.2. Приймальні тести й умови аналогів (P5) і нотатки оператора».
-  ДОКАЗ: STACK.md lines 31-32 vs 1553 and 1672
-
-- [A80 | style | structure] ДЕ: Throughout, e.g. 1.1 L54 «з landed-вартістю за 2.1», 1.1 L73 «правило EU landed cost», 9.1 L1735 «Митниця і ПДВ (регіон — Європа; правило landed cost)», 11.1 L2077 «landed $229.28-234.90»
-  ПРОБЛЕМА: The English term «landed» / «EU landed» / «landed cost» appears 147 times in Ukrainian prose (0 times in v1). The header defines the Ukrainian term «вартість з доставкою в ЄС» and «правило вартості з доставкою в ЄС».
-  ВИПРАВЛЕННЯ: Replace «EU landed» / «landed» with «вартість з доставкою в ЄС» and «правило landed cost» with «правило вартості з доставкою в ЄС». Keep «(landed)» at most once as a gloss in the header.
-  ДОКАЗ: STACK.md lines 11, 54, 73, 1735, 2077 (grep -c -w landed = 147; v1 = 0)
-
-- [A81 | style | structure] ДЕ: e.g. 4.1 L567 «— re-audit C, модель»; 5.4 L824 «(re-audit D)»; 11.6 L2358 «> re-audit P4 >»; 11.6 L2370 «Re-audit A не знайшов»; 11.1 L2046 «P4 (reaudit_A)»
-  ПРОБЛЕМА: The English «re-audit» (72 times) and file stems «reaudit_X» (38 times) appear in Ukrainian prose. Other places use «повторний аудит X» (164 times), so the terminology is inconsistent.
-  ВИПРАВЛЕННЯ: Replace «re-audit X» / «Re-audit X» / «reaudit_X» in prose with «повторний аудит X». Keep file names only in source citations.
-  ДОКАЗ: STACK.md (grep: «re-audit [A-D]» 72, «reaudit_» 38, «повторний аудит» 164)
-
-- [A82 | style | structure] ДЕ: 1.1 C8 L60 «рішення ваше або власника живлення»; 5.8 L1086 «12.5 V за рішенням власника живлення»; 8 L1526 «Рішення власника живлення і ваше»; 8 L1438 «після підтвердження власників LNA»; 11.4 L2251 «PPS-проводку підтверджує власник GNSS»
-  ПРОБЛЕМА: These are calques of audit-team roles («power owner», «LNA owner», «GNSS owner»). They introduce undefined third parties into a single-user document, and the masculine noun «власник» refers to a person.
-  ВИПРАВЛЕННЯ: Replace with neutral, defined wording: «ваше рішення (8, «Рішення про шину LNB»)», «після підтвердження за даташитами LNA», «PPS-проводку підтвердити за схемою Waveshare».
-  ДОКАЗ: STACK.md lines 60, 1086, 1438, 1526, 2251, 2284
-
-- [A83 | style | structure] ДЕ: 3.5, L477: «| процедура | суть | виправлення для v1 |»; 7, L1256: «## 7. Виправлені помилки (corrections_to_my_report, коротко)»
-  ПРОБЛЕМА: Both headers are stale. The 3.5 column now also holds v2 corrections (sled v2, bvernoux/lbe-142x, LMS7002M, IronOS ≥2.23). Section 7 now holds items 37-136 from P4, P5 and operator notes (L1295 «Нові виправлення v2»), not only corrections_to_my_report.
-  ВИПРАВЛЕННЯ: Rename the 3.5 column to «виправлення (v1 і v2)». Rename section 7 to «## 7. Виправлені помилки (v1 — corrections_to_my_report; v2 — P4, P5, нотатки оператора)» and update the TOC entry to match.
-  ДОКАЗ: STACK.md lines 477-499, 1256, 1295
-
-- [A84 | style | structure] ДЕ: e.g. 1.1 D9 L69 «ніколи не повинен з'єднатися з P5, що несе DC» (port); 3.5 L484 «| P5 | Калібрування частоти» (procedure); 1.1 L76 «Економія P5 (11.7)» (analog phase)
-  ПРОБЛЕМА: The label «P5» (likewise P4) now means three different things: antenna port P5, lab procedure P5 and the analog phase P5 (about 260 uses). v2 added the heavy phase usage on top of the v1 port and procedure labels, so many sentences are ambiguous.
-  ВИПРАВЛЕННЯ: Always qualify the label: «порт P5», «процедура P5», and «аналоги P5» / «етап P5» (likewise «повторний аудит P4» vs «порт P4» / «процедура P4»). Or note the three meanings once in «Позначки».
-  ДОКАЗ: STACK.md lines 69, 76, 212, 313, 484, 778, 810 (grep -c «\bP5\b» about 260)
 
 
 ## 6. P7: пакет збирання (що має бути в sat-receiver-audit/build/)
