@@ -43158,6 +43158,166 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Downloaded working data: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pb_dl/iniu_products.json and the anker_*.html files in the same folder.
 
+## searchA:waveshare_mtt_bench_hub_bank_powered (run `wf_e5582d4c-0a2`)
+
+- **Part:** Bench USB 2.0 hub behind the handheld's LAB USB-A port, powered from the Anker 737 bank. Current pick: Waveshare USB-HUB-2IN-4OUT "Industrial Grade Dual-Host USB Hub (4x USB 2.0)", sold by The Pi Hut as SKU WAV-21686. The stack calls it the "Waveshare MTT bench hub".
+- **Current price usd:** 24.64 = GBP 18.50 including 20% UK VAT (The Pi Hut live Shopify JSON and suggest endpoint, 18 Oct 2026, listed as available). Without UK VAT it is GBP 15.42, about $20.54. For an EU buyer the Pi Hut ships by DHL Express only (GBP 30) and charges EU VAT plus the EUR 3 per tariff-line duty and, from about 1 Nov 2026, the EUR 2 handling fee, so the real landed cost is much higher unless this line ships with other Pi Hut lines. Waveshare's own list price for the same hub is $16.99 with a PSU, or $14.99 without one.
+- **Critical specs:**
+  - USB 2.0 High-Speed upstream at 480 Mb/s, with at least 4 USB-A downstream ports for the bench instruments (LiteVNA 64, tinySA, Hantek 6022BE / fx2lafw LA, FNB58, Debug Probe; LBE-1420 in the extended kit).
+  - Transaction translator. Waveshare's own product page and wiki say STT for USB-HUB-2IN-4OUT. The Pi Hut copy says both STT and MTT. The re-audit accepts STT because no bench instrument is full-speed isochronous. MTT counts as better. Check bDeviceProtocol with lsusb -v on arrival.
+  - Self-powered from the bank: 5 V in through the DC jack or a USB-C power input. Instrument current must never come through the LAB port (TPS2553 at 0.75 A; target under 50 mA drawn from the LAB port and 0 mA reverse current, checked with the FNB58).
+  - Per-port output of 5 V up to 1.2 A with short-circuit cut-off, plus over-voltage, over-current, over-temperature, reverse-current and under-voltage lockout protection.
+  - 8 kV ESD protection and filtering on every port.
+  - Operating temperature -40 to +85 C.
+  - Metal case with mounting holes; size and weight must suit the Pelican 1450 bench case (current NP SKU: 0.147 kg).
+  - Standard USB hub class, so no driver is needed on Ubuntu 24.04 arm64. It adds one hub tier (root, FE1.1s, CH334F, bench hub = 3 of the 5 allowed).
+  - Upstream cable that suits the USB-A LAB port. The current hub has USB-C upstream inputs and ships with 2 USB-A to USB-C 1 m cables.
+  - A genuine Waveshare part from Waveshare or an authorised reseller.
+  - Landed EU cost: price plus VAT, the EUR 3 per tariff-line duty, the EUR 2 handling fee from about 1 Nov 2026, and shipping.
+- **Candidates:**
+  1.
+    - **Name:** Waveshare USB-HUB-2IN-4OUT-NP (Waveshare SKU 23062, 'Without Power Supply'), bought from waveshare.com
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 14.99 for 1 ($14.59 each for 2), before tax, live 18 Oct 2026. VAT, duty and the handling fee are added at EU import. Waveshare quotes shipping by hand and says duties are the buyer's responsibility. Estimate before shipping: about $18.1 with 21% VAT, plus EUR 3 (about $3.4) plus EUR 2 (about $2.2) = about $23.8. Shipping is close to zero extra if it joins the Waveshare order already planned in shopping step 7 (LC76G, RP2040-Zero, L1+L5 antenna).
+    - **Spec comparison:** Same product, same hardware, same spec block:
+  - USB 2.0 HS 480 Mb/s, 4x USB-A, 5V@Imax 1.2 A per port.
+  - Dual USB-C host inputs ('standalone power supply, no crossed power'); DC 5 V via DC jack or USB-C.
+  - OVP, OCP, short-circuit, OTP, reverse-current and UVLO protection; 8 kV ESD; -40 to 85 C; metal case.
+  - STT per Waveshare's page.
+  - Package still includes the 2x USB-A to USB-C ~1 m cables. Only the 5V 2A adapter is left out (0.147 kg vs 0.227 kg).
+    - **Worse in:** No spec that matters for the stack. It leaves out the 5V 2A PSU, which the bank-powered stack does not use; the Pi Hut unit's PSU is UK 3-pin and useless in the EU anyway. The seller is outside the EU, so there is no IOSS collection, a possible carrier handling fee, and Waveshare's own return policy instead of EU withdrawal rights. Stock is not shown on the page, but the SKU is marked unsaleable=false (orderable).
+    - **Compatibility:** Identical to the current pick: same connectors, cables, power path, protections and driver-free hub class. Bank power goes through the DC jack (USB-to-DC5521 lead) or the USB-C power input, as planned for the current pick.
+    - **Risks:** Shipping cost and import handling are not quoted (they depend on the order). The STT/MTT contradiction applies equally to both SKUs; the manufacturer page says STT. Check bDeviceProtocol and LAB-port draw on arrival.
+    - **Seller url:** https://www.waveshare.com/usb-hub-2in-4out.htm?sku=23062
+    - **Sources:**
+      - https://www.waveshare.com/usb-hub-2in-4out.htm?sku=23062
+      - https://www.waveshare.com/usb-hub-2in-4out.htm
+      - https://www.waveshare.com/wiki/USB-HUB-2IN-4OUT
+      - https://www.waveshare.com/shipping
+      - https://thepihut.com/products/industrial-grade-dual-host-usb-hub-4x-usb-2-0.json
+  2.
+    - **Name:** Waveshare USB-HUB-2IN-4OUT-EU (Waveshare SKU 21605, with EU-plug 5V 2A PSU), bought from waveshare.com
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 16.99 for 1 ($16.59 each for 2), before tax, live 18 Oct 2026. EU VAT, duty, handling fee and shipping are extra, as for SKU 23062.
+    - **Spec comparison:** Same hardware and package as the Pi Hut unit (hub plus 2x USB-A to USB-C cables plus a 5V 2A PSU), but with an EU plug instead of a UK 3-pin plug. Weight 0.227 kg.
+    - **Worse in:** Nothing. It is $2 dearer than the NP SKU and adds only a mains PSU that the stack does not need. Same non-EU import caveats as SKU 23062.
+    - **Compatibility:** Identical to the current pick, and the EU-plug PSU actually works as a mains fallback in Europe.
+    - **Risks:** Same as SKU 23062.
+    - **Seller url:** https://www.waveshare.com/usb-hub-2in-4out.htm?sku=21605
+    - **Sources:**
+      - https://www.waveshare.com/usb-hub-2in-4out.htm?sku=21605
+  3.
+    - **Name:** Waveshare USB-HUB-7U-NP (Waveshare SKU 23063, 7x USB 2.0, without PSU)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 18.99 for 1 ($18.39 each for 2), before tax. The EU-PSU SKU 23077 is $23.99. Import costs extra.
+    - **Spec comparison:** Better:
+  - MTT per Waveshare's page and wiki, against STT for the current part.
+  - 7 ports instead of 4.
+  Same:
+  - 1.2 A per port with short-circuit cut-off.
+  - OVP/OCP/OTP/reverse-current/UVLO protection, 8 kV ESD, -40 to 85 C, metal case, driver-free.
+    - **Worse in:** - Upstream is USB-B (a 1.2 m cable is included), not USB-C.
+  - External power is DC jack only, so a USB-to-DC 5.5x2.1 lead from the bank is needed and not included.
+  - 0.3 kg and larger, which takes more case space.
+  - Waveshare recommends a supply of 5V 4A or more for higher loads, while the Anker 737 USB-C gives 5V/3A.
+  - No dual-host switch (not used in the stack).
+  - Internal hub topology is not published: if it is two cascaded chips, it adds a 4th hub tier (still within the limit of 5).
+    - **Compatibility:** Works behind the USB-A LAB port with an A-to-B cable. It is bank-powered only through the extra DC lead. Check the tier depth with lsusb -t.
+    - **Risks:** The internal chip and topology are unverified. It is cheaper than the current pick but $4 dearer than SKU 23062, so choose it only if MTT or more than 4 ports is really wanted.
+    - **Seller url:** https://www.waveshare.com/usb-hub-7u.htm?sku=23063
+    - **Sources:**
+      - https://www.waveshare.com/usb-hub-7u.htm
+      - https://www.waveshare.com/usb-hub-7u.htm?sku=23063
+      - https://www.waveshare.com/wiki/USB-HUB-7U
+  4.
+    - **Name:** Waveshare USB-HUB-4U-NP (Waveshare SKU 23061, single-host 4x USB 2.0)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 14.99 (Waveshare page range $14.99-16.99; the NP SKU is assumed to be the $14.99 point by analogy with the other NP SKUs; not fetched separately). Import costs extra.
+    - **Spec comparison:** Same chip class (STT per Waveshare), the same 1.2 A per-port limit, the same protection list, 8 kV ESD, -40 to 85 C and a metal case.
+    - **Worse in:** - Upstream is USB-B.
+  - External power is DC jack only (5.5x2.1), with no USB-C power input.
+  - No dual-host switch.
+  It is no cheaper than SKU 23062, so there is no reason to pick it.
+    - **Compatibility:** Works with an A-to-B cable and a USB-to-DC lead from the bank.
+    - **Risks:** The NP price was not confirmed on its own variant page.
+    - **Seller url:** https://www.waveshare.com/usb-hub-4u.htm
+    - **Sources:**
+      - https://www.waveshare.com/usb-hub-4u.htm
+      - https://www.waveshare.com/wiki/USB-HUB-4U
+  5.
+    - **Name:** Olimex USB-NeoHub (WCH CH334S, open-source hardware)
+    - **Kind:** other_brand
+    - **Price usd:** About 8.99: EUR 8.00 at olimex.com (EU seller, Bulgaria, in stock; VAT basis not verified). Also GBP 6.00 (about $7.99 including UK VAT) at The Pi Hut.
+    - **Spec comparison:** Better: CH334S is MTT (WCH CH334/335 datasheet V2.5 lists every variant as MTT, as verified in the G2 analog pass).
+  Same: -40 to +85 C.
+  Other: 4x USB-A, USB-C upstream, 46x34 mm.
+    - **Worse in:** - Bus-powered only. The schematic shows +5V_USB taken from the USB-C upstream, with no separate 5 V input, so all instrument current would come through the LAB port's 0.75 A TPS2553. That breaks the bank-powered rule.
+  - One ganged current-limit switch (Iset 1.7-2.3 A) for all 4 ports instead of 1.2 A per port.
+  - No published OVP, reverse-current or ESD rating.
+  - Bare PCB; the BOXED variant's price was not verified.
+    - **Compatibility:** Fails the power-path requirement unless it is modified, and a modification is not allowed as an equivalent.
+    - **Risks:** REJECT: worse on power path and protections.
+    - **Seller url:** https://www.olimex.com/Products/Retro-Computers/Neo6502/USB-NeoHub/
+    - **Sources:**
+      - https://www.olimex.com/Products/Retro-Computers/Neo6502/USB-NeoHub/
+      - https://www.olimex.com/Products/RaspberryPi/PICO/USB-NeoHub/resources/USB-NeoHub-user-manual.pdf
+      - https://github.com/OLIMEX/USB-NeoHub/blob/main/HARDWARE/USB-NeoHub-Rev.A/USB-NeoHUB_Rev_A.pdf
+      - https://thepihut.com/products/olimex-usb-neohub
+  6.
+    - **Name:** Raspberry Pi USB 3 Hub (SC1636)
+    - **Kind:** other_brand
+    - **Price usd:** About 12.33 ex VAT / 14.67 incl.: EUR 10.97 net / EUR 13.05 incl. VAT at Botland (EU stock, PL). Also GBP 11.50 incl. UK VAT (about $15.32) at The Pi Hut.
+    - **Spec comparison:** Same: 4 downstream ports; an optional USB-C 5V/3A input, so it can run from the bank.
+  Better on paper only: USB 3 at 5 Gb/s, which brings no benefit behind the USB 2 LAB port.
+  Production guaranteed to at least Jan 2030.
+    - **Worse in:** Raspberry Pi's documentation does not state:
+  - the hub chip or TT type;
+  - per-port over-current protection;
+  - back-power/reverse-current protection;
+  - an ESD rating;
+  - an operating temperature range.
+  Also: the case is plastic, the upstream is an 8 cm captive cable, and in bus-powered mode it takes up to 900 mA from upstream, which is above the LAB port's 0.75 A. Whether it still draws from upstream when the USB-C supply is connected is not stated.
+    - **Compatibility:** Driver-free and USB-A upstream. It cannot be shown to keep the LAB-port under-50-mA and zero-reverse-current rules.
+    - **Risks:** REJECT: not shown to be not-worse on protections, temperature or build.
+    - **Seller url:** https://botland.store/search?s=USB-HUB-4U
+    - **Sources:**
+      - https://www.raspberrypi.com/documentation/accessories/usb-3-hub.html
+      - https://thepihut.com/products/raspberry-pi-usb-3-hub
+      - https://botland.store/search?s=USB-HUB-4U
+  7.
+    - **Name:** Waveshare USB HUB HAT (B) (SKU 20317)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 6.99 at waveshare.com; EUR 6.58 incl. / EUR 5.53 net (about $7.40 / $6.22) at Botland, EU.
+    - **Spec comparison:** 4x USB 2.0 and a USB upstream connector (or pogo pins for a Pi Zero).
+    - **Worse in:** - No external 5 V input, so it is bus-powered and breaks the bank-powered rule.
+  - No published per-port current limit, OVP, reverse-current or ESD protection, and no temperature rating.
+  - Bare HAT PCB with no metal case.
+    - **Compatibility:** Fails the power-path requirement.
+    - **Risks:** REJECT.
+    - **Seller url:** https://www.waveshare.com/usb-hub-hat-b.htm
+    - **Sources:**
+      - https://www.waveshare.com/usb-hub-hat-b.htm
+      - https://botland.store/search?s=USB-HUB-4U
+- **Notes:** RESULT: replace the Pi Hut purchase with the same hub bought as a cheaper SKU. Buy Waveshare USB-HUB-2IN-4OUT-NP (SKU 23062) at $14.99 from waveshare.com and add it to the Waveshare order already in shopping step 7 (LC76G, RP2040-Zero, L1+L5 antenna) so it shares shipping.
+  - It is the identical hardware with the same 2 cables; only the UK PSU is left out, and the stack is bank-powered.
+  - Saving: $9.65 against the stack's $24.64 including UK VAT, or $5.55 against the Pi Hut's ex-VAT $20.54. The landed saving for an EU buyer is larger still, because the Pi Hut ships to the EU by DHL Express only (GBP 30).
+  - If a mains fallback with an EU plug is wanted, buy SKU 21605 at $16.99 instead.
+  - No cheaper part from another brand is not-worse. Every cheaper hub found is either bus-powered, which breaks the rule that the bench hub is bank-powered with under 50 mA from the LAB port, or publishes no per-port OCP, reverse-current, ESD or temperature specs.
+  
+  CORRECTION FOR STACK v2: the "MTT" label is wrong as far as the manufacturer is concerned. Waveshare's own product page and wiki for USB-HUB-2IN-4OUT say "STT technology" twice. Only The Pi Hut's copy also says MTT.
+  - Rename the line "Waveshare USB-HUB-2IN-4OUT bench hub (STT per Waveshare)".
+  - Keep the re-audit rule: STT is acceptable because no bench instrument is full-speed isochronous. Confirm bDeviceProtocol with lsusb -v.
+  - If MTT is actually wanted, the cheapest Waveshare MTT option is the USB-HUB-7U-NP at $18.99, still below $24.64. It brings a USB-B upstream, DC-jack-only power (an extra USB-to-DC5521 lead), 0.3 kg, and an internal topology that is not published.
+  
+  LIMITS OF THIS PASS:
+  - The WebSearch budget for this turn was already used up when I started (0 searches returned results). Everything above comes from fetching primary pages directly: Waveshare product, variant, wiki and shipping pages, Pi Hut Shopify JSON and suggest endpoint, Olimex page, manual and schematic, Raspberry Pi documentation, the StarTech page and the Botland listing.
+  - I found no EU-stock reseller of the 2IN-4OUT. Botland, Kiwi, Eckstein, Welectron and BerryBase searches showed no match. TinyTronics and Kamami returned 403, DigiKey 403 and Amazon.de 503, so those three remain unchecked.
+  - Waveshare's shipping cost to the EU and its import handling are not quoted (the shipping cost is quoted by hand per order; duties are on the buyer). The EUR 3 duty applies per tariff line to IOSS or postal consignments up to EUR 150, and the EUR 2 handling fee from about 1 Nov 2026 (operator note 35); re-check both before ordering.
+  - FX rates used: GBP 1.3319 and EUR 1.124 USD, matching the stack.
+  - Established industrial-hub brands are dearer, not cheaper. For example, StarTech ST4200USBM is $83.99 and is also worse at 0-55 C (FE2.1, 8 kV air / 4 kV contact ESD); https://www.startech.com/en-us/usb-hubs/st4200usbm.
+  
+  ON-ARRIVAL CHECKS (any SKU): lsusb -v bDeviceProtocol (1 = STT, 2 = MTT); lsusb -t tier depth; FNB58 draw from the LAB port under 50 mA with the bank connected, and zero reverse current; per-instrument draw against the 1.2 A per-port limit, with no simultaneous LiteVNA plus tinySA charging.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
