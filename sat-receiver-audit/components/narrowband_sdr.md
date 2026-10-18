@@ -830,5 +830,204 @@ _Run `wf_eb446444-464`_
 
 ## Власні виправлення (`fixes`)
 
+_Run `wf_eb446444-464`_
+
+- **Component:** Second / narrowband SDR: RTL-SDR Blog V4L on the Radxa Dragon Q6A, alongside the LimeSDR Micro
+- **Fixes:**
+  1.
+    - **Problem:** Nobody has published a working or failed USB-SDR build on the Dragon Q6A or any QCS6490 board. Sample loss, conducted noise and heat on this board are all untested.
+    - **Proposed fix:** Run a one-evening bench acceptance test before trusting the board in the field. Use the hub-free blue USB 3.1 port (see the USB topology fix) and the patched librtlsdr2 (see the packaging fix). The test has fixed pass/fail criteria for enumeration, sample loss under full system load, zero-copy state, conducted/radiated noise and a real decode. Note on the stock library: Ubuntu's librtlsdr2 2.0.1-2build1 has zero-copy (usbfs mmap) buffers enabled on arm64, even though Debian bug #1041701 meant to disable it. The cause is a Makefile typo in debian/rules: -DENABLE_ZEROCOPY=$DEB_ZEROCOPY_OPTION expands to the literal string 'EB_ZEROCOPY_OPTION', which CMake treats as TRUE. I reproduced this on Ubuntu 24.04: the compile line shows -DENABLE_ZEROCOPY=1. The same typo is still in Debian 2.0.3-1. That bug caused silent all-zero samples and lost bytes on another arm64 board (Odroid N2+), so treat it as a prime suspect for sample loss on the Q6A's SMMU-backed xHCI.
+    - **Steps:**
+      - Plug the V4L into the BLUE USB 3.1 port. Run 'lsusb -t' and expect the dongle under Bus 002 at 480M, not behind the 1a40:0101 hub on Bus 001.
+      - Run 'readlink -f /sys/bus/usb/devices/2-1' to note which DWC3 controller it uses. I expect a600000.usb from the SC7280 device tree, but this is unverified on the Q6A.
+      - Run 'rtl_test -s 2400000 2>&1 | head'. You must see 'RTL-SDR Blog V4 Lite Detected'. With the stock or unpatched package you will also see 'Allocating 15 zero-copy buffers'; after the rules fix that line must be gone.
+      - Stress test: run 'timeout 900 rtl_test -s 2400000 | tee rtltest.log' while running 'stress-ng --cpu 8 --io 2 --timeout 900', a Wi-Fi 'iperf3 -c <host> -t 900', the HDMI display at full brightness and an NPU benchmark. Then grep for 'lost at least'. Repeat at 2.56 MS/s and 3.2 MS/s to find the margin.
+      - Noise survey: put a 50-ohm SMA terminator on the V4L input. Run 'rtl_power -f 24M:1766M:100k -g 40 -i 10 -e 120 term_X.csv' three times: Q6A on a lab/linear supply, Q6A on the 4S pack with the buck converters, and a third run on the 4S pack with the LimeSDR and display active. Compare with Debian's heatmap.py or a short numpy diff, looking for buck-harmonic spur combs at 130-150, 430-440 and 735-745 MHz.
+      - If buck spurs show up: feed the dongle from its own filtered 5 V (ferrite bead about 600 ohm at 100 MHz plus 220-470 uF low-ESR plus 100 nF, using the VBUS-cut pigtail from the 'stuck noisy' fix). Put a clip-on ferrite on the USB extension and keep the dongle 10 cm or more from the Q6A SoC and buck inductors.
+      - Thermal: after 30 minutes at 2.4 MS/s inside the closed case, measure the dongle case temperature with a thermocouple. Also run 'rtl_test -p 600' and the drift must stay within about 1 ppm. Use 1.024 MS/s for LRPT to cut heat and USB load.
+      - Real-signal acceptance: decode one Meteor-M LRPT pass with SatDump at 1.024 MS/s on 137.9 or 137.1 MHz, while the NPU and display are loaded.
+    - **How to verify:** Pass criteria: (1) zero 'lost at least' lines in 15 minutes at 2.4 MS/s under full load; (2) no zero-copy line from the patched library; (3) the terminated noise floor differs by 1 dB or less, with no new spurs more than 3 dB above the floor in the satellite bands, between the bench supply and battery runs; (4) PPM drift of 1 ppm or less after warm-up; (5) an LRPT image is decoded. Post the results on the Radxa forum, since this would be the first public report.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1041701
+      - https://launchpad.net/ubuntu/+source/rtl-sdr/2.0.1-2build1
+      - https://sources.debian.org/data/main/r/rtl-sdr/2.0.3-1/debian/rules
+      - https://github.com/osmocom/rtl-sdr/blob/v2.0.1/src/librtlsdr.c
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/usb
+      - https://community.libre.space/t/observation-12326506-weird-waterfall/13732
+  2.
+    - **Problem:** The Q6A's USB 2.0 topology and per-port power are undocumented. A shared hub, Wi-Fi traffic or a brown-out could cause dropped samples.
+    - **Proposed fix:** Resolved from Radxa's own schematic (V1.21, sheet 'USB'). U23 is a Terminus FE1.1s 4-port hub on the SoC's USB1 high-speed-only controller. Its port 1 goes to the top socket of the J5 stack, ports 2 and 3 go to the dual USB 2.0 stack J2, and port 4 goes to the onboard AIC8800D80 Wi-Fi/BT module (USB2_WLAN). So ALL three black USB 2.0 ports share one 480 Mb/s hub (a single transaction translator) with Wi-Fi. The BLUE USB 3.1 port (bottom of J5) connects directly to the SoC's USB0 controller, with its own high-speed root hub (Bus 002). Because the LimeSDR sits on PCIe, that port is free, so put the V4L there. Power is not a constraint. VBUS for J2 comes from U33 and VBUS for J5 from U35. Both are WS4612 current-limited switches with Rset = 3.24 kOhm (Ilim = 6800/Rset, about 2.1 A per switch). EN is hard-tied high through 100 kOhm, and the FE1.1s PWRJ pin is not connected. The V4L plus bias tee needs at most about 270 + 180 = 450 mA, well inside that limit. The flip side is that NO port's VBUS can be switched in software: uhubctl or sysfs port 'disable' only drop the data connection, which matters for the 'stuck noisy' recovery.
+    - **Steps:**
+      - Use the blue USB 3.1 port for the V4L. Put GNSS and IMU on UART/I2C on the 40-pin header rather than USB, or if they must use USB, on the black ports.
+      - If the black ports must carry a high-rate device such as an Airspy at 10 MS/s, turn off Wi-Fi during passes with 'nmcli radio wifi off' or rfkill, to free hub bandwidth.
+      - Disable USB autosuspend for the dongle with a udev rule: ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="0bda", ATTR{idProduct}=="2838", ATTR{power/control}="on".
+      - Keep the bias-tee load at 180 mA or less. With the LNA powered, check the actual draw with an inline USB meter.
+      - Note the trade-off: the blue port is the only USB 3 port. If you ever need USB 3 storage, move the V4L to a black port and accept sharing with Wi-Fi (about 5 MB/s at 2.4 MS/s is still small).
+    - **How to verify:** 'lsusb -t' shows the V4L alone on Bus 002 at 480M. A USB meter shows at most 450 mA with the bias tee on. The 15-minute 'rtl_test -s 2400000' run shows no lost bytes while an iperf3 Wi-Fi load runs (which proves isolation from the hub).
+    - **Confidence:** high
+    - **Sources:**
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/usb
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+  3.
+    - **Problem:** Nobody has reported the V4L working with SatDump, GNU Radio or gr-satellites on Linux arm64, and there is no clean Ubuntu package path. Purging librtlsdr removes the apt SDR stack, and the SDR++/SoapyRTLSDR/gr-osmosdr builds for noble link librtlsdr.so.2.
+    - **Proposed fix:** Don't purge anything. Rebuild Ubuntu noble's own rtl-sdr source package (2.0.1-2build1) with two upstream commits added as quilt patches: 0204c9c (RTL-SDR Blog V4L support, May 2026) and 65f0658 (fix for an application hang on USB transfer errors, Jan 2026). Also fix the zero-copy typo. The result is a drop-in 'librtlsdr2 2.0.1-2build1+v4l1' with the same SONAME (librtlsdr.so.2), so every noble package that uses it gains V4L support without a rebuild: soapysdr0.8-module-rtlsdr, libgnuradio-osmosdr0.2.0t64 (gr-osmosdr), gqrx-sdr, rtl-433, and SDR++'s sdrpp_ubuntu_noble_aarch64.deb, whose rtl_sdr_source.so needs librtlsdr.so.2. This is safe because include/rtl-sdr.h has no changes between v2.0.1 and v2.0.3, and upstream v2.0.2 only reverted the SONAME. I verified the full recipe in an Ubuntu 24.04 container: both patches apply cleanly with offsets only, dpkg-buildpackage succeeds, and the output carries SONAME librtlsdr.so.2. The build ran on amd64; arm64 is the same recipe but untested. SatDump has no usable arm64 package for noble: the rpi64 .deb needs libvolk.so.2.5 and librtlsdr.so.0, while noble ships libvolk3.1t64. Build SatDump master from source; it then links the patched library.
+    - **Steps:**
+      - Enable source repositories: sudo sed -i 's/^Types: deb$/Types: deb deb-src/' /etc/apt/sources.list.d/ubuntu.sources && sudo apt update && sudo apt install -y build-essential devscripts quilt && sudo apt build-dep -y rtl-sdr
+      - Get the source: mkdir -p ~/pkg && cd ~/pkg && apt-get source rtl-sdr && cd rtl-sdr-2.0.1 && mkdir -p debian/patches
+      - Add the patches: curl -L https://github.com/osmocom/rtl-sdr/commit/0204c9cfb1c5ff7bd64f466ce5b8fe53b40a636a.patch -o debian/patches/0001-v4l.patch ; curl -L https://github.com/osmocom/rtl-sdr/commit/65f06585ea46160cd2d7bee8b3f641c14771c2ee.patch -o debian/patches/0002-usb-hang.patch ; printf '0001-v4l.patch\n0002-usb-hang.patch\n' > debian/patches/series
+      - Fix the zero-copy typo: sed -i 's/\$DEB_ZEROCOPY_OPTION/$(DEB_ZEROCOPY_OPTION)/' debian/rules. I checked with 'make -n' that arm64 now gets OFF.
+      - Build: dch --local +v4l 'V4L support, USB hang fix, zerocopy off on arm64' && dpkg-buildpackage -b -us -uc -j6
+      - Install and pin: sudo apt install ../librtlsdr2_*+v4l1_arm64.deb ../librtlsdr-dev_*+v4l1_arm64.deb ../rtl-sdr_*+v4l1_arm64.deb && sudo apt-mark hold librtlsdr2 librtlsdr-dev rtl-sdr. The hold is required, because a future 2.0.1-2build2 would sort higher than +v4l1.
+      - Blacklist the DVB drivers yourself, since the package ships /etc/modprobe.d empty: printf 'blacklist dvb_usb_rtl28xxu\nblacklist rtl2832\nblacklist r820t\n' | sudo tee /etc/modprobe.d/rtl-sdr-blacklist.conf ; then sudo usermod -aG plugdev $USER and reboot.
+      - Install the stack from apt: sudo apt install soapysdr-tools soapysdr0.8-module-rtlsdr gr-osmosdr gnuradio gr-satellites gqrx-sdr. Then install SDR++ from the nightly sdrpp_ubuntu_noble_aarch64.deb.
+      - Build SatDump master from source: follow its README apt list (libvolk-dev, libnng-dev, libzstd-dev, libhdf5-dev, libglfw3-dev, librtlsdr-dev and so on), then cmake -DCMAKE_BUILD_TYPE=Release .. && make -j6 on UFS with 4-8 GB zram, then sudo make install. Build LimeSuiteNG (limesdr-micro branch) BEFORE SatDump so that its limesdrng plugin gets built.
+      - Never use AppImages or Flatpaks that bundle their own librtlsdr for the V4L.
+    - **How to verify:** 'objdump -p /usr/lib/aarch64-linux-gnu/librtlsdr.so.2 | grep SONAME' prints librtlsdr.so.2, and 'dpkg -l librtlsdr2' shows +v4l1. 'rtl_test' prints 'RTL-SDR Blog V4 Lite Detected'. 'SoapySDRUtil --find' lists the dongle. In SDR++, broadcast FM shows at about 100 MHz (the old library gives no signal). 'ldd' on SDR++'s rtl_sdr_source.so and on SatDump's librtlsdr_sdr_support.so both resolve to the patched file. A GNU Radio osmocom source with args 'rtl=0' shows signals. Finally, decode a Meteor LRPT pass with 'satdump live'.
+    - **Confidence:** high
+    - **Sources:**
+      - https://github.com/osmocom/rtl-sdr/commit/0204c9cfb1c5ff7bd64f466ce5b8fe53b40a636a
+      - https://github.com/osmocom/rtl-sdr/commit/65f06585ea46160cd2d7bee8b3f641c14771c2ee
+      - https://github.com/osmocom/rtl-sdr/tags
+      - https://packages.ubuntu.com/source/noble/rtl-sdr
+      - https://launchpad.net/ubuntu/+source/rtl-sdr
+      - https://tracker.debian.org/pkg/rtl-sdr
+      - https://sources.debian.org/data/main/r/rtl-sdr/2.0.3-1/debian/rules
+      - https://github.com/AlexandreRouma/SDRPlusPlus/releases/tag/nightly
+      - https://github.com/SatDump/SatDump/releases/tag/nightly
+      - https://github.com/SatDump/SatDump/blob/master/README.md
+  4.
+    - **Problem:** The V4L lacks the V4's triplexer and notch filters, so a broadband LNA near FM, DVB-T2 or other strong transmitters can desensitise 137, 145 and 435 MHz reception. Nobody has measured this in the field.
+    - **Proposed fix:** Put the filter BEFORE any gain, and give each band its own front end instead of one broadband SPF5189Z or QPL9547 LNA. Why it matters, using free-space estimates (assumptions: 10 kW ERP FM, dipole, line of sight): a mast at 2 km delivers about -4 dBm, and at 10 km about -18 dBm. The V4L datasheet's two-tone test (95 MHz blocker) shows 3 dB desense at about -12 dBm for low-VHF targets and -20 to -40 dBm for 300-1600 MHz targets. So an unfiltered 20 dB LNA puts about +16 dBm of FM into the dongle, which is badly overloaded. An RTL-SDR Blog FM bandstop (more than 50 dB rejection, less than 0.5 dB insertion loss) placed BEFORE that LNA brings it to about -29 dBm at 2 km or -43 dBm at 10 km, which is marginal or OK for 435 MHz. SAW-filtered preamps add a further 30-50 dB. Per-band chains: (a) 137 MHz LRPT: Nooelec SAWbird(+) NOAA, $49.95, at least 20 dB gain, NF about 0.7 dB, 3-5 V at about 80 mA, so the V4L's 4.5 V/180 mA bias tee can power it. An alternative is the Uputronics 137.5 MHz filtered preamp (7.6 MHz SAW with a high-pass filter before the LNA). (b) 145.8 MHz ISS SSTV: usually strong, so use NO LNA, just the RTL-SDR Blog FM bandstop. At high-RF sites add a Mini-Circuits SBP-150+ (140-160 MHz, about EUR 67 at DigiKey with long lead time; Mouser had stock). (c) 435-438 MHz CubeSats: Uputronics '435 MHz CubeSat' filtered preamp (440 MHz SAW with 30 MHz bandwidth, at least 19 dB gain, NF 0.75 dB, about EUR 48 at Kubii, stock uncertain). Its regulator wants 5-26 V, so power it from the main 5 V buck through USB-mini or an external bias tee, NOT from the 4.5 V V4L tee (uncertain whether it works at 4.5 V). Keep the broadband QPL9547 LNA only for the L-band/IF chains of the other components, always behind a band filter.
+    - **Steps:**
+      - Order: antenna -> band filter or SAW-LNA (whose first stage is a filter) -> coax -> FM bandstop at the dongle (optional extra) -> V4L. Never put a broadband LNA ahead of the FM bandstop.
+      - Use manual gain: SatDump '--gain <dB>' without agc, and SDR++ with AGC off. Start with no LNA at 30-35 dB tuner gain and with a SAW-LNA at about 20-30 dB.
+      - Overload check on every new site: insert a 6 dB SMA attenuator in front of the V4L. If the target SNR on the Meteor carrier or a 70 cm beacon stays the same or improves, the chain is overloaded, so lower the gain or add filtering until 6 dB of attenuation costs about 1-2 dB of SNR.
+      - Spur check: with the antenna connected, scan 136-139, 144-147 and 434-439 MHz for FM-audio-modulated or wide 'smear' products that move when you retune by 100 kHz. Those are mixing products, not real signals.
+      - Measure each filter's S21 with a NanoVNA (about $50-70, which also tunes the Yagis and helix): check at least 40 dB rejection at 88-108 MHz on the 137 and 145 chains, and at 470-790 MHz (DVB-T2) on the 435 chain.
+      - Bias-tee safety: the WB2HOL tape-measure Yagi's hairpin match is a DC short. Enable '--bias' only when a bias-powered LNA sits between the dongle and the antenna, or add a DC block.
+    - **How to verify:** Near the strongest FM site you use, record the same Meteor pass or 70 cm beacon twice, with and without the filtered chain. The filtered chain must show higher SNR in SatDump's constellation/SNR plot and no new spurs. The 6 dB attenuator test must show a small SNR drop, not an improvement. The NanoVNA plots must confirm the filter rejection figures.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-broadcast-fm-band-stop-filter/
+      - https://www.rtl-sdr.com/?p=17883
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-noaa.html
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird.html
+      - https://kubii.com/en/network-modules/3349-lna-amplifier-modules-with-saw-filter-and-single-frequency-3272496306646.html
+      - https://www.digikey.be/en/products/detail/mini-circuits/SBP-150/25963569
+      - https://www.mouser.kr/c/passive-components/filters/?series=SBP
+  5.
+    - **Problem:** V4L long-term reliability and supply are unknown. The R828S is end-of-life (stock expected to last about one year), there is no field thermal data in a closed printed case, and the USB-A plug needs strain relief.
+    - **Proposed fix:** Treat the V4L as a consumable. Buy two now and protect their EEPROMs. V4L detection in librtlsdr depends ONLY on the EEPROM strings 'RTLSDRBlog' / 'Blog V4L' (the R828S identifies itself as an R820T). A corrupted EEPROM silently turns the dongle back into a 'no signal' generic device, so back up the EEPROM image. Handle heat and mechanics in the case design. Keep the RTL-SDR Blog V3 (in stable production, same software stack) as the supply fallback, and the Airspy Mini as the performance upgrade.
+    - **Steps:**
+      - Buy 2 x V4L from the official RTLSDRBlog AliExpress store (no. 4523039), about $34-38 each. Keep the spare sealed in an ESD bag.
+      - On arrival, back up each EEPROM: 'rtl_eeprom -d 0 -r v4l_A_eeprom.bin'. Then set a unique serial only: 'rtl_eeprom -d 0 -s 00000137'. Re-check that 'rtl_test' still prints 'RTL-SDR Blog V4 Lite Detected'. If it ever stops, restore with 'rtl_eeprom -w v4l_A_eeprom.bin'.
+      - Mechanics: mount the dongle in a printed cradle with a cable-tied 10-15 cm USB-A extension and a strain-relief loop. Clamp the aluminium case to a vented wall or to a small aluminium plate. Print the case in PETG or ASA, not PLA, which softens at about 55-60 C.
+      - Thermal: put the dongle in its own vented bay, upstream of or away from the Q6A heatsink exhaust. Use 1.024 MS/s for LRPT. Log case temperature and 'rtl_test -p' drift during a 30-minute soak.
+      - Fallbacks: the RTL-SDR Blog V3 ($34.95-39.95) works with the same patched library and all the apps; you lose only HF quality. The Airspy Mini ($99 list, often on sale) is the 12-bit upgrade. Re-check RTL-SDR Blog V5 news in 2027.
+    - **How to verify:** Both units pass the bench acceptance test from the first fix. Both EEPROM backups exist and the readback after setting the serial still detects V4L. After a 30-minute soak at 2.4 MS/s in the closed case, the PPM drift is about 1 ppm or less and the case temperature is stable and below about 55 C (target; no vendor limit is published). A tug test on the cable does not interrupt streaming.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/osmocom/rtl-sdr/commit/0204c9cfb1c5ff7bd64f466ce5b8fe53b40a636a
+      - https://www.rtl-sdr.com/rtl-sdr-blog-v4l-lite-now-available-for-purchase/
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+      - https://community.libre.space/t/observation-12326506-weird-waterfall/13732
+  6.
+    - **Problem:** The RTL-SDR 'stuck noisy until replugged' fault has no known root cause. PE0SAT and others report that only removing power from the dongle clears it.
+    - **Proposed fix:** You can't fix the root cause, but you can detect the fault automatically and recover from it in the field. The Q6A cannot cut VBUS in software (the WS4612 EN pins are hard-wired and the FE1.1s PWRJ pin is not connected), so add a GPIO-controlled VBUS-cut pigtail that is ON by default, plus a pre-pass health check with an escalating recovery ladder. The patched library's USB-hang fix (65f0658) makes apps exit cleanly on USB errors instead of freezing, so systemd can restart them. Pigtail circuit, fed from the main 5 V buck rather than the Q6A port: 5 V_buck -> 0.5 A PTC -> ferrite bead -> Q1 AO3401A P-MOSFET (source on the 5 V side, drain to the dongle VBUS). R1 = 100 kOhm gate-to-GND, so Q1 is ON by default. Q2 is an MMBT3906 PNP: emitter to 5 V, collector to the gate, R3 = 47 kOhm base-emitter, R2 = 10 kOhm base to the collector of Q3. Q3 is an MMBT3904 NPN: emitter to GND, R4 = 10 kOhm from the Q6A GPIO to its base, R5 = 100 kOhm base-to-GND. GPIO high turns Q3 and Q2 on, pulls the gate up to 5 V and turns the dongle OFF. This works whether the header is 1.8 V or 3.3 V logic (unconfirmed for the Q6A). Add 22 uF + 100 nF at the dongle VBUS. Build it into a USB-A extension: cut and insulate the host-side VBUS wire, pass D+, D-, GND and the shield straight through.
+    - **Steps:**
+      - Before each pass (T-3 min): 'timeout 10 rtl_sdr -d 00000137 -f <quiet freq near target> -s 2048000 -g 30 -n 4096000 /dev/shm/hc.u8 2> /dev/shm/hc.log'. Then a numpy script computes the mean power in dBFS, the DC offset, the fraction of 0/255 samples and the spectral flatness, and compares them with the median of the last 20 good checks.
+      - Fail the check if: rtl_sdr fails or times out; 'PLL not locked' appears in the log; the power is more than 6 dB from the baseline; or more than 1e-4 of samples are clipped.
+      - Recovery ladder: (1) re-run, which reopens the device and fully re-initialises the R82xx; (2) 'usbreset 0bda:2838' (usbreset ships in noble's usbutils 1:017); (3) 'echo 1 > /sys/bus/usb/devices/2-0:1.0/usb2-port1/disable; sleep 2; echo 0 > ...' to force re-enumeration (data only, VBUS stays on); (4) hardware power cut with 'gpioset --mode=time --sec=3 gpiochip4 96=1' (libgpiod 1.6.3 syntax on noble; Radxa's example maps GPIO_96 = gpiochip4 line 96 on pin 7; confirm with 'gpioinfo gpiochip4'), then wait 3 s for enumeration and re-check.
+      - Run decoders as systemd units with Restart=on-failure, so a USB error now exits the process instead of hanging it.
+      - Log every recovery with a timestamp, temperature and sample rate, so the root cause (thermal, USB or power) can be correlated over months.
+    - **How to verify:** Bench: with the GPIO held high, 'lsusb' no longer lists 0bda:2838 and a meter on VBUS reads under 0.1 V. Releasing the GPIO re-enumerates the dongle within 3 s. Fault injection: wiggle the USB plug or briefly short the input to provoke a bad state, and confirm the health check flags it and the ladder restores the baseline power within 1 dB. Over a month of scheduled passes, the log should show zero failed passes caused by the dongle.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://community.libre.space/t/observation-12326506-weird-waterfall/13732
+      - https://community.libre.space/t/observation-13477706-acs3-59588-eggbeater-not-a-valid-pass-what-what-could-cause-it/14461
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://github.com/osmocom/rtl-sdr/commit/65f06585ea46160cd2d7bee8b3f641c14771c2ee
+      - https://raw.githubusercontent.com/torvalds/linux/master/Documentation/ABI/testing/sysfs-bus-usb
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/pin-gpio
+  7.
+    - **Problem:** Running SatDump on two sources at once (V4L plus LimeSDR Micro through LimeSuiteNG) is undocumented, and issue #1177 shows SatDump instances interfering with each other's devices.
+    - **Proposed fix:** From the SatDump source: 'satdump live' and 'satdump record' call dsp::getAllAvailableSources(), which runs every plugin's enumerator. The Lime enumerator calls LMS_Open() and LMS_Close() on every Lime device. So a second SatDump process can open the LimeSDR that the first process is streaming from; that is a plausible cause of #1177-type conflicts, although this is not confirmed for the Micro. The RTL enumerator only reads USB strings, which is harmless. The fix is plugin isolation, plus two CLI instances bound by --source_id, and no satdump_sdr_server. Use SatDump master (2.0 alpha): only master has the 'limesdrng' plugin built against LimeSuiteNG's limesuiteng-legacyapi. SatDump 1.2.2 knows only legacy LimeSuite, and SDR++'s limesdr_source links legacy libLimeSuite as well. The LimeSuiteNG limesdr-micro branch (last commit Oct 1, 2026) builds the legacy API (BUILD_LEGACYAPI=ON), the SoapyLMS plugin, gr-limesuiteng and the la9310_limesdr kernel module.
+    - **Steps:**
+      - Build LimeSuiteNG from branch limesdr-micro (cmake defaults keep BUILD_LEGACYAPI=ON), run sudo make install and ldconfig. Then build SatDump master, and check that liblimesdrng_sdr_support.so was produced.
+      - Isolate the Lime plugin: sudo mkdir -p /opt/satdump-lime/plugins && sudo mv $(find /usr -name liblimesdrng_sdr_support.so) /opt/satdump-lime/plugins/. SatDump loads ./plugins from the current directory first, then the system directory, so only processes started from /opt/satdump-lime will see the Lime.
+      - Find the device IDs: 'satdump sdr_probe'. The rtlsdr unique_id is the EEPROM serial; the limesdrng ID is the device index '0'.
+      - RTL instance (any working directory except /opt/satdump-lime): satdump live meteor_m2-x_lrpt /data/lrpt_$(date +%F_%H%M) --source rtlsdr --source_id 00000137 --samplerate 1.024e6 --frequency 137.9e6 --gain 30 --bias --timeout 900
+      - Lime instance: cd /opt/satdump-lime && satdump live meteor_hrpt /data/hrpt_$(date +%F_%H%M) --source limesdrng --source_id 0 --samplerate 8e6 --frequency 1700e6 --path_id 3 --lna_gain 30 --tia_gain 12 --pga_gain 10 --timeout 900. Here path_id 3 = LNAW (0.7-2.6 GHz) and 2 = LNAL. Stay at 7 MS/s or above: the Micro driver says lower rates without decimation add noise. Check pipeline IDs and gain keys against your build's 'satdump live' help and pipeline list.
+      - CPU: check the core layout with 'lscpu -e'. Run both, monitor with 'pidstat -u 5' and watch the logs for overflow warnings. If HRPT drops data, pin it to the A78 cores (taskset -c 4-7) and LRPT to the A55 cores (0-3).
+      - Fallback if live decoding overruns: record HRPT baseband with 'satdump record' (cs16, about 32 MB/s at 8 MS/s, well within UFS write speed) and decode right after the pass.
+    - **How to verify:** 'satdump sdr_probe' run from the RTL working directory does NOT list a LimeSDR; run from /opt/satdump-lime it lists both. One Meteor-M pass yields both an LRPT and an HRPT product from the two processes. Starting and stopping the RTL instance during an HRPT capture causes no glitch in the HRPT SNR trace. Combined CPU stays below about 70% of the A78 cores.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/issues/1177
+      - https://github.com/SatDump/SatDump/blob/master/src-cli/legacy/live.cpp
+      - https://github.com/SatDump/SatDump/blob/master/src-core/core/plugin.cpp
+      - https://github.com/SatDump/SatDump/blob/master/plugins/sdr_sources/limesdr_sdr_support/lime_sdr.cpp
+      - https://github.com/SatDump/SatDump/blob/master/plugins/sdr_sources/limesdr_sdr_support/CMakeLists.txt
+      - https://github.com/SatDump/SatDump/blob/1.2.2/plugins/sdr_sources/limesdr_sdr_support/CMakeLists.txt
+      - https://github.com/myriadrf/LimeSuiteNG/tree/limesdr-micro
+  8.
+    - **Problem:** LimeSDR Micro performance at 137-146 MHz is unmeasured.
+    - **Proposed fix:** The LimeSuiteNG Micro driver confirms the concern: its RX path ranges are LNAH 3.3-3.8 GHz, LNAL 0.3-2.2 GHz and LNAW 0.7-2.6 GHz, so 137 and 145.8 MHz fall below every matched path, and the minimum sample rate without decimation is 7 MS/s. Plan on the V4L as the PRIMARY VHF receiver. Measure the Lime once with a same-signal A/B test before giving it any VHF job.
+    - **Steps:**
+      - Feed one antenna, plus the SAWbird NOAA if used, into a 2-way 50-ohm splitter (for example Mini-Circuits ZFSC-2-1 class or a cheap Wilkinson), with one output to the V4L and one to the Lime RX on LNAL (path_id 2).
+      - Record the same Meteor LRPT pass on both. SatDump: V4L at 1.024 MS/s; Lime at 8 MS/s with LNAL, LNA gain at maximum and TIA/PGA adjusted.
+      - Compare SatDump's SNR and Viterbi BER traces and the number of decoded lines. Repeat on 145.8 MHz during an ISS SSTV event and on a 435 MHz CubeSat.
+      - Optional lab test: a signal generator (or an ADF4351 board plus at least 90 dB of step attenuation, with careful shielding) to find each radio's MDS at 137 MHz; or a noise source and attenuator to compare relative noise rise (a relative noise-figure comparison).
+    - **How to verify:** If the Lime's LRPT SNR is within 1 dB of the V4L chain on two passes, the Lime may take VHF jobs. Otherwise, keep VHF on the V4L permanently and use the Lime only for 700 MHz and above (QO-100 IF, L- and S-band).
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp
+      - https://github.com/myriadrf/LimeSuiteNG/tree/limesdr-micro
+  9.
+    - **Problem:** HydraSDR and Airspy alternatives have open Linux gaps: a SatDump Airspy Stop deadlock (PR #1172 unmerged), no ppm correction in SoapyAirspy, unimplemented SoapyHydraSDR bandwidth queries, and HydraSDR alias folding (issue #25).
+    - **Proposed fix:** These matter only if you upgrade to a 12-bit dongle. Workarounds: (1) We build SatDump from source anyway, so apply PR #1172 locally. It is a one-file change in airspy_sdr.cpp that calls output_stream->stopWriter() before airspy_stop_rx(). (2) ppm correction isn't needed: the Airspy Mini's 0.5 ppm clock is about ±220 Hz at 437 MHz and ±850 Hz at 1.7 GHz, far inside the carrier-recovery range of LRPT, HRPT and GMSK demodulators and smaller than the Doppler shift. If needed, offset --frequency instead. (3) HydraSDR: use the native SatDump hydrasdr plugin and SDR++'s mainline hydrasdr_source (now in the noble aarch64 nightly, so no fork is needed) instead of Soapy. Keep targets in the central about 8.5 MHz of the 10 MS/s span, since issue #25 shows strong signals just outside the window folding inside its edges.
+    - **Steps:**
+      - In the SatDump source tree: curl -L https://github.com/SatDump/SatDump/pull/1172.patch | git am, then rebuild.
+      - For Airspy or HydraSDR in SDR++ or SatDump, tune so the satellite sits within ±4 MHz of the center at 10 MS/s, or use 6 MS/s.
+      - Skip the SoapyAirspy and SoapyHydraSDR modules for decoding and use the native plugins.
+    - **How to verify:** Ten Start/Stop cycles of an Airspy source in the SatDump GUI produce no freeze. A known strong out-of-span carrier, such as a local repeater, does not appear inside the used central span.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/pull/1172
+      - https://github.com/hydrasdr/rfone_host/issues/25
+      - https://github.com/AlexandreRouma/SDRPlusPlus/releases/tag/nightly
+      - https://airspy.com/airspy-mini/
+  10.
+    - **Problem:** The landed price and shipping to Ukraine for an official V4L are unverified, and buying locally carries counterfeit risk.
+    - **Proposed fix:** Order from the official RTLSDRBlog AliExpress store. RTL-SDR Blog itself says delivery to Ukraine through AliExpress is operational. Combine two V4L units and, if wanted, the FM bandstop into one order kept under EUR 150. Under current Ukrainian rules, international parcels up to EUR 150 pay no import VAT or duty. A law adopted on 15 Oct 2026 adds 20% VAT from the first euro, but it takes effect no earlier than July 2027, so buy spares now. The official Ukrainian reseller listed by RTL-SDR Blog, sdr.in.ua, shows 'online store temporarily not working' (Oct 2026). It lists V4 at 2,950 UAH and V3 at 2,500 UAH, and has no V4L. Treat Prom.ua and Rozetka 'V4' listings as probable fakes.
+    - **Steps:**
+      - Order from the AliExpress store no. 4523039 'RTLSDRBlog Store': 2 x V4L dongle-only (about $34.20 each on AliExpress, $37.95 list). Optionally add the FM bandstop. Keep the total under EUR 150.
+      - On arrival, check genuineness: diagonal side screws and the QC batch sticker, then 'rtl_test' printing 'RTL-SDR Blog V4 Lite Detected', which reads the factory EEPROM strings.
+      - Re-check sdr.in.ua before ordering, in case it reopens with V4L stock and Nova Poshta delivery.
+    - **How to verify:** The AliExpress checkout shows the shipping cost to your Ukrainian address before you pay (record the final landed price). Both units pass the genuineness and acceptance checks.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+      - https://www.rtl-sdr.com/GENUINE
+      - https://unn.ua/en/news/the-rada-introduced-a-tax-on-parcels-worth-up-to-euro150-what-is-changing-and-what-the-partners-money-has-to-do-with-it
+      - https://sdr.in.ua/
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-v4l-lite-r828s-rtl2832u-1ppm-tcxo-sma-software-defined-radio-dongle-only/
+- **Residual risks:**
+  - The patched librtlsdr2 recipe was built and checked only on Ubuntu 24.04 amd64 in a container. The arm64 build on the Q6A, and V4L reception with it, are untested; the first real test is rtl_test on the board.
+  - Whether zero-copy actually corrupts data on the Q6A's SMMU and DWC3 is unknown. Disabling it is a safe default that costs a little CPU at about 5 MB/s.
+  - The controller mapping (Bus 002 = USB0 at a600000.usb) comes from the schematic and the SC7280 device tree. Confirm it with lsusb -t and readlink on the board.
+  - The logic level of the 40-pin GPIO header (1.8 V or 3.3 V) is undocumented. The transistor VBUS-cut circuit works with either, but check the GPIO line number with gpioinfo.
+  - SatDump master is a 2.0 alpha, and its CLI flags, pipeline IDs and Lime gain keys may change. The LimeSuiteNG legacy API with the LimeSDR Micro, and the interference from LMS_Open during enumeration, are inferred from source code and not tested on hardware.
+  - The Uputronics preamps need 5-26 V and may not run from the V4L's 4.5 V bias tee. Stock of the 435 MHz CubeSat variant at Kubii looked uncertain. SBP-150+ lead times are long at DigiKey.
+  - FM blocker levels are free-space estimates. Real levels depend on the antenna pattern and terrain, so measure with the attenuator test at each site.
+  - R828S supply ends in about a year and the V5 is only in scoping, so plan for the V3 or Airspy Mini as the long-term fallback.
+  - AliExpress shipping cost and transit time to Ukraine were not verified. Ukrainian parcel tax rules change from July 2027 at the earliest. sdr.in.ua may reopen.
+
+## Адверсаріальна перевірка (`verify`)
+
 _Агент цього етапу ще працює (run `wf_eb446444-464`)._
 

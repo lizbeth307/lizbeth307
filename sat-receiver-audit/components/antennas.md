@@ -920,5 +920,208 @@ _Run `wf_6b9836f8-796`_
 
 ## Власні виправлення (`fixes`)
 
+_Run `wf_6b9836f8-796`_
+
+- **Component:** Antennas and cabling (137 MHz V-dipole, crossed 2 m/70 cm handheld Yagi, dish-free 1.7/2.2 GHz helix or helicone, dish-free QO-100 LNB horn, LNA/bias/DC-block/cable chain) for the Radxa Dragon Q6A + LimeSDR Micro M.2 + RTL-SDR V4L handheld
+- **Fixes:**
+  1.
+    - **Problem:** QO-100 reception without a dish is barely documented (no measured horn or patch SNR), and the user has abandoned dishes.
+    - **Proposed fix:** I quantified it myself with a G/T model. It uses DH2VA's QO-100 chart (Tsys 150 K: the narrowband transponder noise sits about 5 dB above ground noise with a 1 m dish, about 0.8 dB with 0.3 m), anchored to EA4GPZ's measurement of the BPSK beacon at about 45 dB-Hz C/N0 on a dish equivalent to about 60 cm. The model predicts that a conical horn of 20-23 dBi on the Bullseye, with no dish, makes the CW beacon clearly visible and the 400 bps PSK beacon decodable. That is enough for antenna pointing, beacon-lock drift correction and CW. SSB stations at beacon level stay unreadable or barely readable: about -1 dB (20 dBi horn) to +2 dB (23 dBi) SNR in 2.5 kHz, versus about +8 dB with a 35 cm dish and +11 dB with 60 cm. Wideband DATV cannot be received without a dish. Recommendation: build the 20 dBi horn as the dish-free QO-100 antenna and treat it as 'beacon + CW only'. If listening to SSB QSOs is a hard goal, the only fix is a 35-40 cm reflector or a flat panel of at least about 30 dBi. Selfsat-class flat panels (H10D/H21D, about 47.5x26 cm) are specified for 10.7-12.75 GHz with integrated LNBs of unknown stability, so they are an unverified gamble at 10.489 GHz. Model output: bare LNB (about 10 dBi) gives CW about 6 dB in a 50 Hz bin, which matches the Passion Radio 'received without a dish' testimonial. A 20 dBi horn gives CW about 16 dB in 50 Hz and PSK Eb/N0 about 7 dB. A 23 dBi horn gives CW about 19 dB and SSB about 2 dB in 2.5 kHz. A 25 dBi horn gives about 4 dB in 2.5 kHz.
+    - **Steps:**
+      - Design numbers for an optimum conical horn (lambda = 28.6 mm at 10.4895 GHz, efficiency about 0.51). 20 dBi: aperture 127 mm, slant length 189 mm, half-angle about 19.6 deg; starting from a 40 mm throat it is only about 122 mm long. 23 dBi: aperture 180 mm, half-angle about 13.8 deg, about 286 mm long from a 40 mm throat. 25 dBi: aperture 227 mm, about 600 mm slant, which is not handheld.
+      - Build: roll 0.3-0.5 mm aluminium flashing into the cone, overlap the seam by at least 10 mm, pop-rivet it and cover the seam with aluminium tape. Print a PETG or ASA clamp ring (inner diameter 40.2 mm, M4 pinch bolt) that slides over the Bullseye's 40 mm collar and holds the cone coaxial with the LNB feed. Keep the LNB's own plastic cap on for weather protection.
+      - Power: feed the Bullseye at 13 V (narrowband downlink is vertical per AMSAT-UK) from an injector whose SDR-side port is DC-blocked. Take the IF (about 739.55 MHz for the CW beacon) to the RTL-SDR V4L (500 kHz-1.766 GHz), not the Lime: the Lime's 30.72 MHz reference has a 24th harmonic at 737.28 MHz, 2.2 MHz from the narrowband IF (see the Q6A/Lime self-noise fix).
+      - Pointing: Kyiv about 186 deg azimuth / 32 deg elevation (from the findings). Pre-aim with the BNO085, then peak on the CW beacon in SDR++ with an FFT bin of 50 Hz or less. Rotate the horn+LNB around its axis for maximum beacon (polarisation skew). Beamwidth is about 15-18 deg, so a small camera tripod is enough.
+      - Run beacon-lock software (see the Bullseye-clock fix) so the ±10-30 kHz LNB drift is removed before CW decoding.
+      - Optional dish-free upgrade path: a 23 dBi horn (+3 dB) is the practical ceiling for a handheld. Anything better is dish-sized, whatever its shape (lens, panel or reflector).
+    - **How to verify:** 1) With the bare Bullseye (no horn) on a tripod, record the CW beacon SNR in a 50 Hz bin (SDR++ waterfall, or rtl_power -f 739.4M:739.7M:50 -i 10). 2) Fit the horn and re-measure: expect +8 to +10 dB (20 dBi horn). 3) Feed the PSK beacon (upper beacon) to any AO-40/P3 400 bps BPSK decoder: frames should decode at an Eb/N0 of about 7 dB. 4) If the measured gain is more than 3 dB below the model, check horn-to-feed alignment and seam continuity. The absolute numbers carry about ±3 dB uncertainty because the anchor is a 2019 measurement. EA4GPZ later reported the beacons about 3 dB stronger after maintenance, so reality may be better.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://www.darc.de/fileadmin/filemounts/distrikte/p/Distrikt_P/VUS/Engen_2023/06_Dreil%C3%A4ndereck-Sysop-Treffen-2023_QO-100-How_to_become_QRV_on_the_NB_transponder__DD1US.pdf
+      - https://destevez.net/2019/03/qo-100-beacons-power/
+      - https://destevez.net/2019/03/weekend-maintenance-to-qo-100-nb-beacons/
+      - https://amsat-uk.org/satellites/geo/eshail-2/
+      - https://www.passion-radio.com/satellite-qo-100/converter-432-936.html
+      - https://forum.batc.org.uk/viewtopic.php?p=39245
+      - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+      - https://www.ecoustics.com/electronics/forum/home-video/518092.html
+      - https://www.tvtechnology.com/news/flat-antenna-replaces-dbs-dishes
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+  2.
+    - **Problem:** The recommended and budget kits still include dishes, so the L-band HRPT plan has to stand on a helix alone, and hand-tracked HRPT success with an 11-turn helix is undocumented.
+    - **Proposed fix:** I removed the dishes and optimised the dish-free L-band antenna by NEC2 simulation (PyNEC, copper wire, ideal geometry). The helix in the findings (C = 1.0 lambda, 56 mm diameter, 44 mm / 14 deg pitch, 11 turns, 484 mm) simulates at only 11.8 dBic. With the circumference raised to 1.1 lambda and the pitch reduced to 12.5 deg, the same 11 turns give 13.5 dBic (D 61.7 mm, S 43.0 mm, length 473 mm; 13.0-13.6 dBic on a 10-20 cm square ground plate; HPBW about 33 deg). A helicone does better still: 6-8 turns of the same helix (258-344 mm long) inside a 40 cm rim-diameter, 15 cm deep cone with an 18 cm flat base gives 14.7 dBic with an HPBW of about 24-32 deg. A 16-turn plain helix (688 mm) gives 14.5 dBic. Compared with a 70 cm dish (about 19 dBi linear, about 16 dBic equivalent), the gap is about 1.3 dB for the helicone, about 2.5 dB for the improved 11-turn helix and about 4.2 dB for the original design, consistent with Meti's reported 3-5 dB. The beams remain 24-34 deg wide, so hand-tracking with the IMU aid stays easy. For S-band, a separate 11-turn helix with C = 0.9 lambda at 1.7 GHz (D 50.5 mm, S 35.2 mm, 387 mm) gives 11.75 dBic at 1.7 GHz and 13.2-13.5 dBic at 2.2-2.25 GHz, so the findings' 'dual-band' idea works but costs about 1.7 dB at L-band. Choose per goal: helicone for HRPT-first, C = 0.9 helix for HRPT+S-band. Dish-free kit: RTL-SDR Blog dipole kit as V-dipole ($17.95) + crossed 2 m/70 cm DIY Yagi + helicone or 11-turn C = 1.1 helix with SAWbird+ GOES ($44.95) bolted to the feed + Bullseye ($29.95) with a DIY horn. I could not verify the Meteor/Metop EIRP; the budget above is relative to a dish.
+    - **Steps:**
+      - Wire: 2.0-2.5 mm bare or enamelled copper. Do NOT wind directly on solid PVC pipe: dielectric loading detunes the helix and adds loss. Use a 20-25 mm PVC or GRP centre rod with 3D-printed PETG/ASA 'spider' spacers every half turn, holding the wire on a 61.7 mm mean diameter. Wind it like a standard right-hand screw thread (RHCP for direct reception; the simulated right-handed helix gave RHCP 13.5 dBic and LHCP about -3 dBic).
+      - Ground: a 20x20 cm aluminium plate (1-1.5 mm) or 1.6 mm FR4 PCB copper, at least 10 cm square. Feed with an SMA bulkhead at 30.9 mm off-centre, and start the wire 3-4 mm above the plate.
+      - Matching: NEC gives about 135-180 Ω. Flatten the first quarter turn so it rises gradually from about 2 mm to 8 mm above the plate (the classic Kraus method), or fit a quarter-wave 84 Ω section. Trim for S11 better than -10 dB across 1690-1710 MHz.
+      - Helicone option: make the 40 cm / 15 cm deep cone from 8 aluminium-flashing petals or PETG petals covered in aluminium tape, riveted to an 18 cm flat base. Use 6-8 turns of the same C = 1.1 lambda helix. The 30 cm/12 cm cone simulated only 11.8-12.6 dBic, so do not shrink it.
+      - Put the SAWbird+ GOES directly on the feed SMA (zero cable). Power it with 5 V over a separate thin DC lead to its micro-USB, or with an external bias tee (see the SAWbird current fix), then run 1-2 m of LMR-200/240-class coax to the Lime X2 through a DC block.
+      - Targets: Meteor-M N2-4 AHRPT at 1700/1705 MHz, RHCP, 665.4 kbps (WMO OSCAR, operational, updated 2026-01-23) first. Metop and FY-3 AHRPT run several times that bit rate and need correspondingly more C/N0, so expect success only on high passes.
+    - **How to verify:** 1) VNA S11 better than -10 dB from 1690 to 1710 MHz. 2) Gain A/B on a steady geostationary source: Elektro-L N3 LRIT at about 1691 MHz from 76E, if still transmitting (status unverified); this is the source Meti used with an 11-turn helix at 1.5 dB SNR. Compare SatDump SNR for the original helix, the improved helix and the helicone. Expect about +1.7 dB and +2.9 dB respectively, ±1 dB. 3) Sun-noise check at 1.7 GHz (receive-only): point at the Sun, then at cold sky, with rx_power averaging. Expect roughly 0.5-1 dB of Sun noise for 13-15 dBic. 4) Field: three Meteor-M N2-4 passes above 40 deg; SatDump should keep frame sync from about 20-25 deg elevation upward. Log it.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://pypi.org/project/PyNEC/
+      - https://space.oscar.wmo.int/satellites/view/meteor_m_n2_4
+      - https://www.rtl-sdr.com/saveitforparts-testing-a-3d-printable-satellite-antenna-for-noaa-meteor-and-other-polar-orbiting-l-band-satellites/
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-goes.html
+      - https://www.crowdsupply.com/krakenrf/discovery-dish
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+  3.
+    - **Problem:** No reports exist of the Radxa Dragon Q6A or any QCS6490 board as an SDR host, and its RF self-noise is unknown (Pi 4 analogues show about 10 dB noise-floor rise, USB 3 noise and HDMI pixel-clock leakage).
+    - **Proposed fix:** I computed which on-board clocks land in the receive bands, then designed a measurement matrix and a ranked list of mitigations. Clock harmonics in band: HDMI 1080p60/50 CEA (148.5 MHz) is 2.7 MHz above ISS 145.8 MHz and its 5th harmonic is 742.5 MHz, inside the QO-100 IF window. 1080p60 CVT-RB (138.5 MHz) falls inside the 137 MHz LRPT capture window. 1920x1200@60 RB (154 MHz) has its 11th harmonic at 1694 MHz, next to HRPT. 2560x1600@60 RB (268.5), 2560x1440@60 CVT-RB (241.5) and 3840x2160@30/60 (297/594 MHz) are clear in all six bands, so the high-resolution display mode the user wants is also the RF-quiet choice. Other suspects: PCIe 100 MHz refclk x17 = 1700.000 MHz exactly (Meteor HRPT centre) and x22 = 2200 MHz (only if spread-spectrum clocking is off; a hypothesis to test). Lime 30.72 MHz VCTCXO harmonics at 737.28, 1689.6, 1720.32, 2211.84, 2242.56 and 2273.28 MHz (122.88 MHz LA9310 clock x6 = 737.28 too). RTL 28.8 MHz harmonics at 144.0 MHz and 1699.2 MHz. Wi-Fi 6 transmissions can desense the wideband LNAs. The PD buck and the 1000-nit backlight boost converter add broadband switching noise.
+    - **Steps:**
+      - Tools: build rtl-sdr-blog drivers recent enough for the R828S (older drivers do not work with the V4L, per SDRstore), LimeSuiteNG limesdr-micro branch with its SoapySDR module (driver=limesuiteng), and rx_tools (rx_power works like rtl_power for SoapySDR).
+      - Reference state A: the same SDR, antenna and position, hosted on a battery laptop, with the Q6A switched off and more than 10 m away. Q6A states: B = idle, Wi-Fi/BT off (nmcli radio all off; rfkill block all), no display. C = B + HDMI at each candidate mode (check the actual pixel clock with modetest -M msm -c). D = C + Lime streaming at 61.44 Msps (limeTRX -o /dev/null --time 120000) + UFS write (fio --name=w --rw=write --bs=1M --size=8G --direct=1). E = D + stress-ng --cpu 8 + NPU job + fan at maximum. F = E + Wi-Fi on (iperf3) + PD charging.
+      - Measure each state for 2 minutes per band. RTL: rtl_power -f 136.3M:138.7M:1k -g 40 -i 10 -e 2m A_137.csv (then 144.6M:147.0M and 734M:745M). Lime: rx_power -d driver=limesuiteng -f 1690M:1715M:10k -g 40 -i 10 -e 2m A_1700.csv (then 2195M:2295M and 430M:440M). Repeat each with a 50 Ω terminator on the SDR input to separate conducted/in-box noise from radiated noise picked up by the antenna.
+      - Mitigations, in order, re-measuring after each. 1) Set HDMI to 2560x1600@60 RB / 2560x1440@60 / 4K30 using a cvt -r modeline plus xrandr --newmode/--addmode, or kernel video=HDMI-A-1:2560x1600@60. Whether the Q6A's HDMI path supports these modes is unverified. 2) Wi-Fi/BT off during passes. 3) LNA at every antenna, so in-box pickup is 20+ dB down relative to the signal. 4) 1.5-2 m of coax and hold the box behind the antenna's back lobe: Yagi F/B 18-25 dB (NEC), helix back lobe about -15 dB. 5) Mix-31 snap-on ferrites on the coax at both ends and on the HDMI and USB-C PD cables. 6) Copper-foil-lined case bonded to ground, with the M.2/Lime area as a separate shielded compartment. 7) Tune 1-3 MHz away from the clock harmonics listed above and let SatDump/SDR++ use an offset.
+      - For the PCIe hypothesis: put a 50 Ω terminator on Lime X2, tune to 1700.000 and 2200.000 MHz, and look for a discrete line. If one is present and it changes when the host is idle or loaded, shield the M.2 area. As a fallback, receive Meteor HRPT on the RTL V4L, but first check the RTL's own 1699.2 MHz line in the same way.
+    - **How to verify:** Pass criteria per band, versus reference A: median noise floor rise of 1 dB or less with the antenna connected, and no discrete spur more than 3 dB above the floor within ±1.5 MHz of 137.1/137.9/145.8/435-438/739.5/1700/1705 MHz. Record the before/after table for each mitigation. A real pass (Meteor LRPT, ISS SSTV) must decode with the screen at full brightness and the Lime streaming.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/clock.html
+      - https://github.com/myriadrf/LimeSDR-Micro
+      - https://github.com/myriadrf/LimeSuiteNG/tree/limesdr-micro
+      - https://www.sdrstore.eu/software-defined-radio/instruments/rtl-sdr/rtl-sdr-blog-v4l-lite-r828s-sdr-dongle-500khz1-766ghz/
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+  4.
+    - **Problem:** Whether the LimeSDR Micro tolerates DC on its RX ports, and what ESD protection it has, is undocumented.
+    - **Proposed fix:** Resolved from the published M.2 v1.2 schematic, BOM and pick-and-place files (github.com/myriadrf/LimeSDR-Micro, hardware/M.2/1v2). Every RF MHF4 port (X1 TX, X2 RX-A, X4 RX-B) has an onsemi ESD8472MUT5G TVS from signal to ground right at the connector (ESD2 is 1.85 mm from X2). Behind the TVS is a series 510 pF / 50 V C0G DC-block capacitor (C40 for X2, C41 for X4), and then the SKY13414-485LF SP4T band switch. ESD8472 datasheet: 5.3 V stand-off, 7.0-12 V breakdown at 1 mA, leakage below 1 nA at 5.3 V, 0.2 pF, ±20 kV IEC 61000-4-2, 2.4 A peak pulse. Consequences: ESD robustness is good. DC up to 5 V on the RX connector is tolerated (no conduction). Anything above about 7 V (13/18 V LNB power, or a 12 V-tolerant LNA supply) makes the TVS conduct continuously from a supply that can deliver amps, which will destroy it, likely shorted, and can kill the input. Docs note: the setup page calls RX-B 'X3', but the board's BOM and silkscreen designator is X4. RX-input absolute maximum is +10 dBm.
+    - **Steps:**
+      - Rule: no port of the Lime ever sees more than 5 V DC. Put an SMA DC block (rated 10 MHz-6 GHz or wider, at least 50 V) on every Lime path that has a powered device upstream: the SAWbird when USB- or bias-tee-powered, and any injector. This is mandatory on any path that could ever carry LNB voltage.
+      - The LNB (13/18 V) path goes only to the RTL V4L, through an injector whose receiver-side port is DC-blocked. Label it 'LNB 13/18V - NEVER to Lime'. Use F connectors on that path only, so it physically cannot mate with the SMA pigtails.
+      - Before connecting any cable to the Lime bulkhead, measure DC on the centre pin with a multimeter (expect below 0.1 V), and touch the centre pin to the shell through a 1 kΩ resistor to discharge cable or antenna static.
+      - Strain relief: MHF4 pigtails at most 15 cm, glued and strapped to SMA bulkheads on the case. Never mate or unmate MHF4 in the field. Mark the pigtails X2/X4 to match the board silkscreen.
+      - Optional extra protection on exposed SMA bulkheads: a second 0.2 pF RF TVS (e.g. ESD8472 or Infineon ESD0P2RF class) on a small SMA-SMA board. Pick a part with stand-off of 5 V or more and capacitance of 0.3 pF or less so L/S-band loss stays below about 0.1 dB.
+    - **How to verify:** 1) Before first use, record a per-port baseline: a cheap broadband noise source through a 30 dB attenuator into X2 and X4, fixed gain, note the noise level at 435, 740 and 1700 MHz. Keep the total input far below +10 dBm. 2) Repeat after any suspected ESD or DC event. A drop of more than 3 dB on one port means a damaged TVS or switch (the LimeSDR RX1_L '35 dB deaf' failure mode). Do not use limeOEM --test for this: in the limesdr-micro source its RX test expects a factory test signal at 1.202 GHz and another test enables TX.
+    - **Confidence:** high
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSDR-Micro
+      - https://myriadrf.org/projects/limesdr-micro/user/M.2/setup.html
+      - https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/rfcontrol.html
+      - https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/overview.html
+      - https://www.onsemi.com/pdf/datasheet/esd8472-d.pdf
+      - https://github.com/myriadrf/LimeSuiteNG/tree/limesdr-micro
+  5.
+    - **Problem:** Using the Bullseye's red F port as a shared 25 MHz reference clock is unsupported (it doubles as a 0/+15 V serial calibration port).
+    - **Proposed fix:** Drop the shared-clock idea. It would not help: the IF error is the LNB LO error (9750 MHz x delta) plus the SDR LO error (740 MHz x delta), and locking both to the same TCXO does not cancel them. It could also put +15 V serial levels onto the Lime's CLK_IN J4, which has the same 5.3 V ESD8472 TVS and accepts only 10-52 MHz at 1.8-3.3 V CMOS. Better fixes: (1) Remove the static LNB offset once with G4EML's Bullseye-Calibrator, which uses the red port: 9600 baud, 0/+15 V levels, an 18-30 V supply, TCXO steps of about 200 Hz at 10 GHz. It voids the warranty. (2) Remove the remaining ±10-30 kHz thermal drift with software beacon lock. (3) Only if narrowband work becomes central, switch to the qro.cz LNB (0.2 ppm, or a 10 MHz external-reference version) or an LNB locked to a GPSDO.
+    - **Steps:**
+      - Leave the red F port unconnected in the field. Fit an F terminator or cap so nobody plugs a cable into it by mistake.
+      - Optional one-time trim at home: build or buy the G4EML calibrator (Arduino + level shifter; also sold as a Tindie kit). Power the LNB normally through the green port, warm it up for 30 min, and trim until the CW beacon reads 10489.550 MHz on an SDR whose own offset you have calibrated (Lime: see the clock-stability fix).
+      - Beacon lock on Linux. Option A: SDRangel's Frequency Tracker channel on the CW or PSK beacon, plus its freqtracking.py REST script to retune your demodulator channels. PLL mode for PSK, FLL for CW; corrections only act beyond ±1/1000 of the channel rate. Option B: a GNU Radio flowgraph: Xlating FIR to the beacon, decimate to about 2 kHz, PLL Freq Det, low-pass filter, then a Python block that updates the main channel's Frequency Xlating centre every 0.5 s.
+      - Keep the LNB in shade or under a small foam hood in the field. Thermal drift is the dominant error (±30 kHz over -20 to 60 C).
+    - **How to verify:** Log the beacon frequency every 10 s for 1 h outdoors with and without beacon lock. With lock, the residual error on a CW signal should stay below about ±20 Hz; without it, expect kHz-level wander. After the static trim, the cold-start offset should be within about ±1 kHz.
+    - **Confidence:** high
+    - **Sources:**
+      - https://github.com/g4eml/Bullseye-Calibrator
+      - https://www.tindie.com/products/jasonkits_qrp/bullseye-lnb-calibrator/
+      - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+      - https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/clock.html
+      - https://github.com/f4exb/sdrangel/blob/master/plugins/channelrx/freqtracker/readme.md
+      - https://www.wimo.com/en/qo-100-10ghz-lnb-qro-cz
+  6.
+    - **Problem:** The SAWbird+ GOES draws about 180 mA, exactly the RTL-SDR V4/V4L bias-tee limit (4.5 V, 180 mA).
+    - **Proposed fix:** Never run the SAWbird+ GOES from the RTL bias tee. On the RTL path, use the plain SAWbird GOES (about 30 mA, $39.95; bias-tee input 3-5 V). On the Lime path (no bias tee), power the SAWbird+ GOES ($44.95) from the device's 5 V rail over a separate DC lead to its micro-USB or 0.1 in header (Nooelec: 3.3-5.5 V recommended; use only one power input). Run that lead through a current-limited load switch set to about 300 mA, and put a DC block before the Lime. This removes the bias tee from the RF path entirely.
+    - **Steps:**
+      - 5 V source: from the 4S pack's 5 V buck, through a current-limited switch (e.g. TI TPS2553 class, set to about 300 mA) or at least a 250-300 mA polyfuse, into a USB-A socket on the case.
+      - 1-2 m thin USB-A to micro-USB cable to the SAWbird at the antenna, with a Mix-31 ferrite at each end. It can run alongside the coax in the same sleeve.
+      - SAWbird SMA output, then LMR-200/240-class coax, then the DC block, then the Lime X2 bulkhead.
+      - If you must use bias-tee power instead: an external bias tee fed from the same limited 5 V, with its RF port facing the SDR. Verify it with a VNA (see the cable-quality fix).
+    - **How to verify:** Measure the actual current with a USB power meter: about 180 mA (SAWbird+) or about 30 mA (SAWbird), stable for a 15-minute pass. Check that the SAWbird's case temperature stays below about 50 C in sun. DC at the Lime-side SMA should read below 0.1 V. HRPT SNR should match the SAWbird-on-RTL-bias-tee baseline or be better, with no dropouts.
+    - **Confidence:** high
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-goes.html
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+      - https://www.rtl-sdr.com/wp-content/uploads/2024/12/RTLSDR_V4_Datasheet_V_1_0.pdf
+  7.
+    - **Problem:** Interaction in a crossed 2 m/70 cm DIY Yagi is unmeasured (2 m elements resonate near 3x145 MHz).
+    - **Proposed fix:** Simulated in NEC2 (PyNEC) using the published dimensions. WB2HOL 2 m: reflector 41-3/8 in, driven element 2x17-3/4 in with a 1 in gap, director 35-1/8 in, about 0.20 m and 0.31 m spacing, 1 in tape modelled as an equivalent 6.35 mm-radius wire. N2SPI/WA5VJB 70 cm: 6 elements (7 boom holes because the half-folded driven element uses two); reflector 13-3/8 in, DE 13 in, D1 12-3/8 in, D2/D3 12 in, D4 11 in; positions 0 / 2.5 / 5.5 / 11.25 / 17.5 / 24.0 in from the reflector; #8 AWG. Results: alone, 2 m = 7.9 dBi (F/B 17.7 dB) and 70 cm = 11.0 dBi (F/B 24.9 dB; WA5VJB predicts 11.2). Interleaved on one about 0.67 m boom with the 70 cm elements perpendicular to the 2 m elements (crossed), both patterns are unchanged. With 5 deg orthogonality error, the 70 cm gain is 10.98 dBi, F/B 23.2 dB and feed-to-feed coupling -26 dB. With 10 deg: 10.82 dBi, F/B 20.2 dB, coupling -20 dB. With 20 deg: 10.21 dBi, F/B 14.9 dB, coupling -14.5 dB. If the same elements are mounted co-planar, the 70 cm Yagi collapses to 3.6 dBi with 1.2 dB F/B and -4.4 dB coupling. The 2 m half is unaffected in every case (7.9 dBi). So crossed mounting is mandatory, and it works if orthogonality is kept within ±5 deg.
+    - **Steps:**
+      - Boom: about 0.70 m of 20x20 mm hardwood or 20 mm PVC/GRP tube (non-conductive; avoid running carbon fibre through element holes). Element positions along the boom: 2 m reflector 0, driven element 0.200 m, director 0.510 m (horizontal). 70 cm reflector 0.030, DE 0.094, D1 0.170, D2 0.316, D3 0.475, D4 0.640 m (vertical). That keeps every element at least 3 cm from the nearest element of the other band.
+      - Use printed PETG/ASA clips with a 90 deg key so the two planes cannot rotate relative to each other (±5 deg target).
+      - Two separate feeds, receive-only, no duplexer: 2 m to the RTL V4L, 70 cm to the Lime X4 (through a DC block if an LNA is used). Route both coax runs straight back along the boom axis, which is orthogonal to both element planes, then down the handle.
+      - Polarisation fading on tumbling CubeSats: twist the handle during the pass, or tilt the whole antenna 45 deg so both bands see a mixed plane.
+    - **How to verify:** Fully assembled, with the coax runs in their final positions: VNA S11 on each port, under 1.5:1 SWR from 144-146 MHz and from 435-438 MHz. Re-tune the 2 m hairpin/driven-element gap and the 70 cm half-folded driven element if needed (the NEC model used straight driven elements, so its impedances are not representative). Port-to-port S21 at 436 MHz should be -20 dB or better (simulation predicts -26 dB at 5 deg error). Receive-only pattern check: put a 433.92 MHz ISM key fob or weather sensor 20-30 m away and compare front versus back level in SDR++. Expect about 20 dB or more.
+    - **Confidence:** high
+    - **Sources:**
+      - https://www.w9rh.org/wp-content/uploads/2024/01/2m-tape-measure-yagi-instructions.pdf
+      - https://www.amsat.org/articles/n2spi/JulAug06AmsatJournal.pdf
+      - https://wa5vjb.com/yagi-pdf/cheapyagi.pdf
+      - https://pypi.org/project/PyNEC/
+      - https://tysonpower.de/blog/carbon-arrow-yagi-antenna
+  8.
+    - **Problem:** The quality of AliExpress coax (LMR-240 clones, RG316 jumpers), cheap bias tees and MHF4 pigtails is unmeasured; one generic bias tee lost 3-15 dB below 200 MHz, and bad pigtails have damaged a LimeSDR.
+    - **Proposed fix:** Design out the riskiest parts, then accept everything else only after a VNA measurement. (1) No bias tees in the VHF path: power LNAs over a separate DC lead (or the RTL's own bias tee for 30 mA-class LNAs). In the L-band path, power the SAWbird over micro-USB. The only remaining injector is the LNB one, which is checked at 740 MHz. (2) Accept every cable, DC block and injector only after it passes a VNA test at the frequencies actually used. (3) MHF4 pigtails: use 1.13 mm-cable 'MHF4L'-type plugs if your supplier confirms they mate with MHF4 jacks (lower loss than 0.81 mm; compatibility unverified). Mate them once, glue and strap them, and terminate on SMA bulkheads.
+    - **Steps:**
+      - Buy a VNA that covers at least 3 GHz (LiteVNA or NanoVNA V2 class; price unverified). A NanoVNA-H4 stops around 1.5 GHz.
+      - SOLT-calibrate at the cable end, then measure S21 and S11 at 137, 146, 436, 740, 1700 and 2250 MHz. Accept: LMR-200/240-class loss within 30% of its datasheet (LMR-240 about 0.33 dB/m at 1.5 GHz, 0.42 dB/m at 2.5 GHz; LMR-200 about 0.54 dB/m at 2.4 GHz); S11 better than -15 dB; MHF4 pigtail of 15 cm or less with S21 above -0.5 dB at 1.7 GHz; DC block S21 above -0.3 dB at every used frequency.
+      - Injector test: S21 RF-in to RF-out above -0.5 dB at 740 MHz with the DC port loaded by a 13 V supply. Isolation from the DC port to RF above 20 dB.
+      - DIY fallback if purchases fail: L-band-only DC block = 100 pF C0G 0603 in series (about 0.9 Ω at 1.7 GHz); VHF DC block = 1-10 nF. LNB injector = 100 µH power choke in series with a 33 nH RF choke to the centre conductor, and 1 nF to the SDR side.
+      - Flex test: bend each cable through 90 deg at both connectors while watching S21 live. More than 0.2 dB of jitter means a bad crimp: reject it.
+    - **How to verify:** Keep a spreadsheet of measured S21/S11 per item; anything outside the limits is not used. The end-to-end check is that the per-band noise-source baseline (see the Lime DC/ESD fix) changes by less than 0.5 dB when you swap in the field cable set.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://www.fairviewmicrowave.com/content/dam/infinite-electronics/product-assets/fairview-microwave/product-datasheets/LMR-240-FT.pdf
+      - https://www.raveon.com/data_radio_info/?p=1036
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-goes.html
+      - https://myriadrf.org/projects/limesdr-micro/user/M.2/setup.html
+  9.
+    - **Problem:** LimeSDR Micro internal clock stability for narrowband QO-100 and LRPT is unknown (the LimeSDR Mini TCXO drifted on warm-up).
+    - **Proposed fix:** Largely resolved from the documentation and BOM. The Micro M.2 uses a Rakon E6245LF 30.72 MHz VCTCXO, rated ±50 ppb over -40 to 85 C, ±1 ppm calibration at 25 C, ±1.5-2 ppm first-year ageing and ±5 ppm pull range (7.5 ppm/V, 0.5-2.5 V). It is tuned by a 16-bit AD5693 DAC whose value LimeSuiteNG stores in EEPROM at 0xFFFE ('XO_DAC'). Thermal drift is therefore at most about ±37 Hz at 740 MHz and ±85 Hz at 1.7 GHz, negligible next to the Bullseye's ±10-30 kHz. Only a one-time static trim (±1 ppm, about 0.7-1.7 kHz) is needed. The board also has an onboard GNSS module (Antenova M10578-A3, active-antenna MHF4 X5), an ADF4002 phase detector (J6), CLK_IN J4 (10-52 MHz) and a 1PPS input J5. However, LimeSuiteNG's limePPSDO tool supports only the XTRX and the Mini V2, and I found no GPSDO loop for the Micro on the limesdr-micro branch (commit 80ffad5, 1 Oct 2026). Treat GPSDO operation as future firmware, not a current feature.
+    - **Steps:**
+      - Static trim: tune the Lime to a strong, accurate reference. Easiest is a local LTE/UMTS downlink carrier (network clocks are typically accurate to ±0.05 ppm; assumption). Measure the offset in ppm, then change the DAC through LimeSuiteNG's custom parameter 'VCTCXO DAC (volatile)' (LimeSuiteNG GUI board panel), or programmatically with the legacy API LMS_VCTCXOWrite(dev, value). That call also writes the EEPROM value, so the trim survives reboots. Iterate in steps of about 100-1000 LSB (default 0xA1B8).
+      - Leave SatDump's own carrier tracking to absorb LRPT/HRPT Doppler (±3.3 kHz at 137 MHz, about ±40 kHz at 1.7 GHz). The Lime adds no meaningful error.
+      - For QO-100 narrowband, rely on beacon lock (see the Bullseye fix). It also absorbs any residual Lime offset.
+      - Optional external reference: limeConfig --refclk 10e6 --refclk_source external with a 3.3 V CMOS 10-52 MHz source on J4. Never use the Bullseye red port for this.
+    - **How to verify:** Log the frequency of a fixed carrier (an LTE downlink, or the QO-100 beacon via the RTL as a cross-check) over 30 min from a cold start inside the closed, fan-cooled case. Expect drift within about ±0.1 ppm after the trim. Re-check the trim every few months for ageing.
+    - **Confidence:** high
+    - **Sources:**
+      - https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/clock.html
+      - https://myriadrf.org/projects/limesdr-micro/user/M.2/clock.html
+      - https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/overview.html
+      - https://github.com/myriadrf/LimeSDR-Micro
+      - https://github.com/myriadrf/LimeSuiteNG/tree/limesdr-micro
+  10.
+    - **Problem:** The legal and practical status of pointing receive-only antennas in public under Ukrainian martial law is undocumented.
+    - **Proposed fix:** This cannot be fixed by engineering. Minimise the risk and get a written answer. The only source I found is RTL-SDR.com's warning of 24 Feb 2022: amateur transmitting must cease, and stop public-facing reception (ADS-B and WebSDR feeds). It does not endorse private listening. My Ukrainian-language search found no current regulator or league rule.
+    - **Steps:**
+      - Ask in writing before outdoor use: Ліга радіоаматорів України (LRU) and the Ukrainian State Centre of Radio Frequencies (UCRF) / NKEK. Ask whether receive-only reception of the listed civil and amateur satellite downlinks is permitted under martial law, and carry their reply.
+      - Operate from private property (a yard, balcony or dacha), away from infrastructure, checkpoints and military sites. No drone-like hardware in sight.
+      - Receive-only: the LimeSDR TX port X1 stays capped or terminated, and the software never enables TX. Disable streaming or remote-access services; no public feeds.
+      - Do not publish live or geotagged photos of the setup, or any intercepted non-satellite signals. Delay sharing satellite images until after the pass. Art. 114-2 of the Criminal Code (unauthorised dissemination of information about Armed Forces movements; cited from memory, verify) is the main exposure.
+      - Carry a one-page Ukrainian-language explanation (hobby, satellite names, receive-only, links to SatNOGS/WMO) and your ID.
+    - **How to verify:** A written reply from LRU or the regulator. Until then, treat outdoor public operation as unverified.
+    - **Confidence:** low
+    - **Sources:**
+      - https://www.rtl-sdr.com/russian-bomber-hf-activity-amateur-radio-banned-in-ukraine-sdr-hobbyist-warning-again/
+  11.
+    - **Problem:** Long-term outdoor durability of DIY handheld antennas (foam-board N2SPI, tape-Yagi hairpin, printed helix scaffolds) is unproven.
+    - **Proposed fix:** Specify weather-tolerant materials and joints up front, and add a seasonal acceptance test. Use PETG for parts out of direct sun and ASA for parts exposed to sun (PLA softens at about 60 C, which a dark part in Ukrainian summer sun can reach). Hardwood or GRP/PVC booms instead of foam board. Sealed and strain-relieved feed points.
+    - **Steps:**
+      - 70 cm Yagi: replace the foam board with a 20x20 mm beech batten, sealed with two coats of exterior varnish. Use #8 aluminium or 3 mm brass elements in tight-drilled holes with a drop of epoxy, and a stainless clamp at the driven element.
+      - Tape Yagi: spray the steel tape with clear lacquer (against rust). Put 3:1 adhesive-lined heat-shrink over the hairpin and the coax-to-tape joints. Use stainless hose clamps and PVC fittings without glue so it can be taken apart.
+      - Helix/helicone: PETG or ASA spacers; tin the copper or use enamelled wire. Seal the feed SMA and the SAWbird with self-amalgamating tape. Rivet the cone petals and put plastic edge-guard on them.
+      - LNB horn: aluminium cone with an ASA clamp. Keep the LNB cap on, and drill a 2 mm drain hole at the bottom of the cone.
+      - Cable ends: fit SMA dust caps on every unused port, keep the cables in a dry bag with silica gel, and give the Lime bulkhead a strain-relief loop.
+      - Twice a year (before winter and summer): re-run the VNA S11 check and the noise-source baseline, and re-tighten the clamps.
+    - **How to verify:** After a soak test (24 h outdoors, rain plus sun) and after each season: S11 within 1 dB of the build values, no visible warping of printed parts, and no rust on the tape elements.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://www.amsat.org/articles/n2spi/JulAug06AmsatJournal.pdf
+      - https://www.w9rh.org/wp-content/uploads/2024/01/2m-tape-measure-yagi-instructions.pdf
+      - https://www.rtl-sdr.com/saveitforparts-testing-a-3d-printable-satellite-antenna-for-noaa-meteor-and-other-polar-orbiting-l-band-satellites/
+- **Residual risks:**
+  - The QO-100 dish-free budget rests on a 2019 single-station anchor (EA4GPZ, BPSK beacon about 45 dB-Hz on a dish equivalent to about 60 cm) and on DH2VA's Tsys 150 K chart. Absolute SNRs are ±3 dB. Even if they come out 3 dB better, beacon-level SSB on a handheld horn stays marginal, and DATV is impossible without a reflector.
+  - All antenna gains here are NEC2 idealisations. Perfect geometry; copper loss only; no dielectric spacers; the cone was modelled as a coarse wire grid and the results were not monotonic with cone size (30 cm cone worse than 40 cm). Real builds may land 1-2 dB lower until tuned. Nothing has been range-measured.
+  - Meteor-M, Metop and FY-3 L-band EIRPs are not published in WMO OSCAR, so HRPT success is estimated relative to dish users. Low-elevation passes, and higher-rate Metop/FY AHRPT, may not decode on a hand-tracked helix. The satellite fleet and its modes may change with little notice.
+  - The LimeSDR Micro onboard GNSS and 1PPS GPSDO have no host-software support in LimeSuiteNG limesdr-micro (commit 80ffad5, 1 Oct 2026). Whether the onboard GNSS NMEA reaches the host, and whether X5 supplies active-antenna bias (inferred from the schematic: ferrite + 47 nH), are unverified. Keep the separate u-blox M10.
+  - The Q6A's RF self-noise remains unknown until measured. The 1700.000 MHz PCIe-refclk spur is a hypothesis. Whether the Q6A HDMI path supports 2560x1600@60 or 4K30 timings is unverified.
+  - The docs disagree with the hardware: RX-B is labelled X3 on the setup page but X4 on the board, and the VCTCXO part is named both E6245LF and E7355LF. Follow the board silkscreen and the BOM.
+  - Using the G4EML Bullseye calibrator voids the LNB warranty. A wrong voltage on the red port can damage the LNB.
+  - Prices for DIY materials, DC blocks, ferrites, current-limit ICs, a ≥3 GHz VNA, the noise source and the injectors were not verified (search budget); only the Nooelec SAWbird ($39.95/$44.95), the RTL-SDR dipole kit ($17.95) and the Bullseye ($29.95) prices are sourced.
+  - The Ukrainian martial-law position on public receive-only operation is unverified. Operating outdoors carries non-technical risk until LRU or the regulator replies.
+  - The RTL V4L needs updated rtl-sdr-blog drivers for the R828S. SatDump/SDR++ builds that bundle older librtlsdr may show no signal until they are rebuilt.
+
+## Адверсаріальна перевірка (`verify`)
+
 _Агент цього етапу ще працює (run `wf_6b9836f8-796`)._
 
