@@ -24507,6 +24507,95 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   My raw downloads are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/g3sB/dl. USD uses the stack rates: 1 EUR = 1.1241 USD, 1 GBP = 1.3318 USD. EU prices include VAT where stated. UK and US sellers add the post-July-2026 EU flat duty plus import VAT (operator note 34).
 
+## searchA:65_100_w_usb_c_pd_charger_5_a_c_c_cable (run `wf_a268b76e-da0`)
+
+- **Part:** 65-100 W USB-C PD wall charger + 5 A C-C cable (Charging group, core tier, qty 1). It feeds the IP2368 4S charge port, which is COUT/Try.SRC and has a TPS259470A eFuse with about 22 V OVLO. It also feeds bench loads (ISDT 608PD balance, DPS-150) at home.
+- **Current price usd:** 35-60 (STACK estimate, no specific model and not verified). FX for every price below: 1 EUR = 1.1241 USD, 1 GBP = 1.3318 USD (the stack's 18 Oct 2026 rate). EU prices include VAT unless marked ex VAT.
+- **Critical specs:**
+  - Source-only (non-DRP) USB-C port. The IP2368 retail boards are COUT/Try.SRC, so a DRP partner such as the Anker 737 bank will probably flap or fail (reaudit D). Every wall charger below is source-only.
+  - Fixed 20 V PDO of at least 3.0 A (60 W or more, STACK rule). With RISET 15k the IP2368 draws about 49-52 W, about 2.5-2.6 A at 20 V. A lower PDO only slows charging (auto-derate). No PDO or PPS above about 21 V (TPS259470A OVLO about 22 V). EPR is not needed.
+  - OCP/foldback margin above about 2.6 A at 20 V. Sustained load of about 50 W for 1.7-2.5 h (charging while running mode B) without thermal foldback. Measured case/component temperatures if available.
+  - Output ripple/noise and conducted/radiated EMI. Charging is allowed during non-HF receive modes, and the HF/LF Quiet ban covers only the IP2368 itself. Reference on HKJ's bench: Apple 61W, 15 mV RMS / 166 mVpp at 20 V 2 A. Needs a common-mode choke, X2/Y caps and CE (EN 55032 Class B).
+  - Mains safety: IEC 62368-1, CE/UKCA, isolation (HKJ hipot at 2830/4242 V where measured), input fuse, MOV and NTC inrush limiter. Must come from an official seller, not a counterfeit.
+  - Single port, or a port guaranteed 60 W or more, so that plugging in a second device does not reset VBUS.
+  - Input 100-240 V with an EU Type C/F plug. Size and weight for the field kit (field charging is only from a one-way wall adapter until the DRP test passes).
+  - Published operating-temperature range (field mains charging in cold rooms).
+  - Cable: USB-C to C, rated 5 A / 100 W (e-marker needed above 3 A), at most about 1.5-2 m to limit IR drop, non-EPR is fine (Pinecil note), from an official seller.
+  - Warranty/returns and price with EU VAT (USD base).
+- **Candidates:**
+  1.
+    - **Name:** Reference class (current pick): generic branded 65-100 W single-port PD GaN charger + 5 A cable
+    - **Kind:** current_part
+    - **Price usd:** 35-60 (estimate, not verified)
+    - **Spec comparison:** STACK defines it only as PDO of at least 60 W, qualified with the FNB58. No model, ripple, thermal or EMI figures are set.
+    - **Worse in:** Baseline. There is no measured spec to compare against, so the comparison below uses the stack's rules plus the HKJ Apple 61W ripple reference.
+    - **Compatibility:** Any one-way PD wall source of 60 W or more fits the IP2368 + TPS259470A path.
+    - **Risks:** Undefined model, so quality depends on which brand is bought.
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md (row 259, rows 131 and 584)
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json
+  2.
+    - **Name:** IKEA SJÖSS 65W 1-port USB-C charger (art. 006.097.43, DE/FR/NL/SE/ES; teardown unit model E2502-CN) + IKEA RUNDHULT USB-C to USB-C 1.5 m, 100 W / 5 A (art. 606.209.26 or 206.177.04)
+    - **Kind:** other_brand
+    - **Price usd:** Set: EUR 22.98 incl. 19% DE VAT = $25.83 ($21.71 ex VAT). Charger EUR 12.99 DE/FR/ES = $14.60; EUR 11.99 NL = $13.48; GBP 9.00 UK = $11.99; US $24.99. RUNDHULT cable EUR 9.99 = $11.23. Verified on ikea.com, 18 Oct 2026; store stock varies.
+    - **Spec comparison:** PDOs: 5/9/12/15 V at 3 A and 20 V at 3.25 A (65 W), PPS 5-16 V 3 A, PD3.0 + QC3 (ChargerLAB POWER-Z on the CN unit). The 65 W / 3.25 A rating is confirmed on ikea.com. Single port, source-only. Input 100-240 V, 1.6 A max. Internals (ChargerLAB teardown, 10 Oct 2026): Infineon IGD70R140D2S CoolGaN 700 V; Injoinic IP2006 flyback and IP2723T protocol chip; DK5V100R10VL synchronous rectifier; bifilar common-mode choke, 0.15 uF X2, two Y caps; T3.15 A fuse, 10D681K MOV, NTC inrush limiter, VBUS MOSFET; PCBA fully potted in thermal compound. 65.4x48.3x32.1 mm, 152.5 g. Cable: 100 W, 5 A rated, 480 Mbps, textile sheath, CE (ikea.com). Both have a 365-day IKEA return policy.
+    - **Worse in:** No published measurements of ripple, efficiency, thermals or EMI, so ripple vs the reference is UNKNOWN, not shown equal. Published operating range is 5-35 °C (none was published for the baseline). 152.5 g, heavier than the Anker 715 (about 112 g). 65 W, not 100 W (meets the 60 W rule). The teardown is the CCC/CN variant; that the EU unit has the same internals is unverified. RUNDHULT e-marker is not stated: without one the link reads as 3 A, which is still enough for the 2.6 A IP2368 draw.
+    - **Compatibility:** Meets every stack rule on paper: 20 V/3.25 A at 60 W or more, no PDO above 20 V, source-only, single port, EU plug. Goods-in gates (all mandatory): (1) FNB58 PDO dump and IP2368 charge at 3 A for 2.5 h, logging temperature and any foldback; (2) receiver noise-floor A/B (HF+, Lime, tinySA) with the charger plugged in vs on battery, in VHF/UHF/L-band modes; (3) check for the CE mark on the EU unit.
+    - **Risks:** Unmeasured EMI/ripple is the main risk, mitigated by the A/B test. Cheap enough to buy two and keep the quieter one. Not for use below 5 °C.
+    - **Sources:**
+      - https://www.chargerlab.com/teardown-of-the-ikea-sj%C3%B6ss-65w-1-port-usb-charger/
+      - https://www.ikea.com/de/de/p/sjoess-ladegeraet-mit-1-usb-ausgang-65-w-00609743/
+      - https://www.ikea.com/nl/nl/p/sjoss-usb-oplader-65w-1-poort-00609743/
+      - https://www.ikea.com/gb/en/p/sjoess-65w-1-port-usb-charger-10618450/
+      - https://www.ikea.com/us/en/p/sjoess-65w-1-port-usb-charger-60618462/
+      - https://www.ikea.com/de/de/p/rundhult-usb-c-auf-usb-c-schwarz-weiss-60620926/
+  3.
+    - **Name:** Xiaomi Mi 65W Fast Charger with GaN Tech (EU, mi.com DE; HKJ tested the CDQ07ZM) + UGREEN USB-C to C 100 W 5 A braided 1 m (SKU 70427)
+    - **Kind:** other_brand
+    - **Price usd:** Set EUR 40.98 = $46.07 incl. VAT ($38.71 ex VAT). Charger EUR 29.99 = $33.71 (price in the mi.com/de page script). Cable EUR 10.99 = $12.35 (eu.ugreen.com). Verified 18 Oct 2026.
+    - **Spec comparison:** Measured by HKJ: PDOs 5/9/12/15 V at 3 A and 20 V at 3.25 A, plus QC3. OCP at about 3.1 A on 20 V with the supplied 3 A cable, about 3.3 A with a 5 A cable. Idle 0.08 W. Noise 33 mV RMS / 414 mVpp at 20 V 2 A. Ran 1 h at 20 V 3.25 A 'fine', hottest point 72 °C (output transistor). Hipot 2830 V and 4242 V passed, mains spacing 'good'. 115 g, 61x57x28 mm.
+    - **Worse in:** Ripple is about 2.2x RMS and 2.5x p-p the Apple 61W reference on the same bench, so measurably noisier than a top-quality adapter. Thin OCP margin, about 3.1 A with a 3 A cable: fine for the IP2368 at 2.6 A, marginal for a 60 W Pinecil at about 3 A. Not cheaper than IKEA, only below the upper estimate. The EU retail unit vs the tested CDQ07ZM (AliExpress, CN) is not verified.
+    - **Compatibility:** 20 V/3.25 A, source-only, single USB-C, EU plug. Same goods-in gates as above.
+    - **Risks:** Higher conducted ripple. Counterfeits are common on marketplaces, so buy only from mi.com or an authorised EU retailer.
+    - **Sources:**
+      - https://lygte-info.dk/review/USBpower%20Xiaomi%20Mi%2065W%20USB-C%20charger%20CDQ07ZM%20UK.html
+      - https://lygte-info.dk/review/USBpower%20Apple%2061W%20USB-C%20Power%20Adapter%20UK.html
+      - https://www.mi.com/de/product/mi-65w-fast-charger-with-gan-tech/
+      - https://eu.ugreen.com/products/ugreen-usb-c-to-usb-c-100w-5a-charger-cable-nylon-braided
+  4.
+    - **Name:** UGREEN Nexode Air USB-C Charger 65W GaN (single port, 'comes with cable') + UGREEN 100 W 5 A braided cable
+    - **Kind:** other_brand
+    - **Price usd:** Charger EUR 27.99 (Halloween sale) / EUR 34.99 regular = $31.46 / $39.33. With the 5 A cable EUR 38.98-45.98 = $43.82-51.69 incl. VAT (eu.ugreen.com, 18 Oct 2026). UK GBP 24.98 (UK plug).
+    - **Spec comparison:** Single port, 65 W, GaN, 2-year warranty (eu.ugreen.com). PDOs, PPS range, included-cable rating and certifications are only in page images, so they are UNVERIFIED. No measurements found.
+    - **Worse in:** Specs unverified and no ripple/thermal data. More expensive than IKEA. Cannot be called not-worse until the PDO list is confirmed.
+    - **Compatibility:** Probably 20 V/3.25 A (unverified). Source-only wall charger.
+    - **Risks:** Unverified spec. The included cable may be 3 A only.
+    - **Sources:**
+      - https://eu.ugreen.com/products/nexode-air-usb-c-charger-65w-gan
+      - https://uk.ugreen.com/products/nexode-air-usb-c-charger-65w-gan-foldable-plug
+  5.
+    - **Name:** Anker 715 Charger (Nano II 65W), model A2663 + 5 A cable
+    - **Kind:** other_brand
+    - **Price usd:** US anker.com $29.99 (in stock; $25.98 each for 10+). EU anker.com EUR 42.99 = $48.33. Plus the UGREEN 5 A cable EUR 10.99 ($12.35): about $42 in the US, $60.68 incl. VAT in the EU.
+    - **Spec comparison:** PDOs 5 V 3 A, 9 V 3 A, 15 V 3 A, 20 V 3.25 A (65 W max). Single USB-C, input 100-240 V 2.1 A, IEC 62368-1 (TÜV NRTL in image text). 1.65x1.42x1.74 in, 3.96 oz (about 112 g), lighter than IKEA. DoC A2663 dated 2023-03-28.
+    - **Worse in:** No ripple/thermal measurements found. No 12 V PDO (irrelevant here). In the EU it is no cheaper than the top of the estimate, so it is a candidate only if bought in the US.
+    - **Compatibility:** 20 V/3.25 A, source-only, single port. Same goods-in gates.
+    - **Risks:** Older 2023 design. Only one data point on EU price.
+    - **Sources:**
+      - https://www.anker.com/products/a2663
+      - https://www.anker.com/eu-en/products/a2663
+  6.
+    - **Name:** Anker 737 PowerCore 24K power bank (the 'budget alternative' noted in STACK)
+    - **Kind:** other_brand
+    - **Price usd:** $109.99 (verified earlier in the stack)
+    - **Spec comparison:** PDOs 20 V/5 A and 28 V/5 A, 140 W total, 86.4 Wh.
+    - **Worse in:** It is DRP, and reaudit D finds that charging the COUT/Try.SRC IP2368 from it is unproven, likely to flap. Not cheaper.
+    - **Compatibility:** Only after the DRP bench matrix passes. Stays as the bench/instrument bank, not as a replacement for this part.
+    - **Risks:** Field charging may fail.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json
+- **Notes:** Verdict (angle A): the cheapest candidate that is not worse on every published spec is the IKEA SJÖSS 65W + RUNDHULT 5 A set, at $25.83 incl. DE VAT ($21.71 ex VAT) against the $35-60 estimate. It meets every stack rule: 20 V at 3.25 A, source-only, single port, nothing above 20 V, EU plug. Its internals are solid (Infineon CoolGaN, Injoinic controllers, common-mode choke, X2/Y caps, fuse/MOV/NTC, full potting). But nobody has published its ripple, EMI or thermals, and its 5-35 °C operating range is narrower than ideal. So 'not worse' is CONDITIONAL on goods-in tests: (1) FNB58 PDO dump plus 2.5 h IP2368 charging at 3 A without foldback; (2) receiver noise-floor A/B with the charger plugged in. If it fails, the next cheapest with real measurements is the Xiaomi 65W GaN + UGREEN 5 A cable ($46.07 incl. VAT). It is measured, but its ripple is about 2.2-2.5x the Apple 61W reference and its OCP margin is about 3.1 A, so it is worse in ripple; that is stated, not hidden. Anker 715 qualifies only at the US price ($29.99). The EU price of EUR 42.99 brings the set to about $60.68. The UGREEN Nexode Air 65W specs could not be verified (they are only in images). A 65 W charger meets the stack's 60 W PDO rule. A 100 W unit only matters if the user wants headroom for 20 V/5 A loads such as a full-power DPS-150 at the same time; none of the 65 W candidates gives that. Limits of this pass: the shared WebSearch budget was used up before this agent started, so no WebSearch was run. All data comes from WebFetch/curl on primary pages: ikea.com product pages and its own search API, eu/uk.ugreen.com store JSON, anker.com, mi.com/de, lygte-info.dk, and one ChargerLAB teardown. Not checked: Lenovo 65W USB-C (GX20P92529), Baseus, Cuktech, Lidl/Tronic, any Mouser/DigiKey/TME listing, and the RUNDHULT e-marker. No hard rule is affected: these are mains-to-USB sources only, with no RF emission path beyond normal SMPS EMI.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
