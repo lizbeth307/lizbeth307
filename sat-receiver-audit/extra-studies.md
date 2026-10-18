@@ -8329,6 +8329,397 @@
   
   Web search budget used: 5 searches.
 
+## npu:runtime_integration (run `wf_62c18130-b0d`)
+
+- **Area:** Runtime integration on the Dragon Q6A, spectrum first. The path is SDR stream -> one large FFT (CPU NEON, optional Vulkan) -> multi-resolution spectrogram tiles -> INT8 YOLO-style detector on the HTP in a sandboxed process with a watchdog and an ONNX Runtime CPU fallback -> fusion and tracking -> labelled boxes on the live waterfall and SigMF annotations. This area also covers the throughput and power budget, the model registry, A/B evaluation and rollback, confidence thresholds with an 'unknown' class, testing, and a concrete process layout and IPC choice.
+- **Findings:**
+  1.
+    - **Name:** Process layout: 9 supervised processes; capture never depends on inference
+    - **Role:** The skeleton everything else plugs into. Isolation is designed so that an HTP hang can cost labels, but never IQ, the waterfall or recordings.
+    - **Details:** P1 sdr-ingestd (C++, SoapySDR/LimeSuiteNG + librtlsdr): the only process that opens the SDRs. Its RX thread runs on CPU7 at SCHED_FIFO 50 (audit core plan). It writes CS16 IQ into one shared-memory ring per SDR, with per-block headers: 64-bit sample counter, CLOCK_REALTIME ns, fc, fs, gain, overflow flag. It also has a file-replay source (SigMF cs16) for tests. It re-exports a decimated sub-band over TCP to SDR++ network_source and to GNU Radio when the user wants to listen to or decode a detected box.
+  P2 recorderd (CPU4): writes the IQ ring to the USB SSD or UFS with O_DIRECT as SigMF .sigmf-data. It also handles 'save last N s' (the pre-trigger ring dump) when the user marks a signal; this is the training-data capture path.
+  P3 spectrumd (C++, FFTW/NEON or VkFFT; CPU5-6): computes one FFT and from it produces (a) waterfall rows for display, (b) detector tiles for each view, and (c) a CFAR occupancy map. The map feeds the tile scheduler and the energy-detector 'unknown' boxes.
+  P4a inferd-htp (C++ on the QNN C API, libQnnHtp.so from QAIRT 2.42.0.251225, context binary): runs the detector graph plus a small box-embedding/IQ classifier graph. It is sandboxed and watchdogged.
+  P4b inferd-cpu (ONNX Runtime CPU EP, same model as an FP32 or QDQ-INT8 ONNX): a hot standby. It is loaded but idle until needed.
+  P5 fusiond (Python is fine at fewer than 1k msgs/s): NMS across tile overlaps, merging across views, an IoU tracker, calibration, thresholds and the unknown logic, an optional band-plan prior, few-shot prototype matching, and the inference broker with deadline-based failover.
+  P6 annotd (Python + sigmf-python): keeps an append-only JSONL annotation journal and finalises a sorted .sigmf-meta file. It also holds the label and dataset store.
+  P7 ui: our own waterfall renderer with box overlays and touch labelling.
+  P8 modeld: the model registry, golden-set gate, A/B tests, promote and rollback.
+  P9 npu-health (timer and on-demand): fastrpc_test -a v68, a golden-tile self-test, and CDSP remoteproc recovery (the audit's script).
+  All of these sit under one systemd rflab.target. sdr-ingestd, recorderd and spectrumd have no Requires= on any inference unit.
+    - **Versions and platform:** Radxa OS r2 (Ubuntu 24.04), kernel 6.18.2-4-qcom held, golden NPU set and QAIRT 2.42.0.251225 (audit). Cores: CPU7 RX; CPU4-6 FFT, recorder and decoders; CPU0-3 (A55) UI, fusion, annotd, the inferd host threads and IRQs (audit cmdline: isolcpus=...7, irqaffinity=0-6).
+    - **Limits and risks:** The process split adds IPC code and makes timestamp alignment between processes something to test. The core plan assumes survey mode (56 Msps, no demodulation) and decode mode (7-10 Msps, SatDump) are not run at full load together (audit mode split). The LimeSDR Micro on the Q6A is itself still unproven (audit).
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/software.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/digest.md
+      - https://github.com/AlexandreRouma/SDRPlusPlus/blob/master/source_modules/network_source/src/main.cpp
+    - **Cost:** $0 (own code; open-source libraries)
+  2.
+    - **Name:** IPC choice: POSIX shared-memory rings for bulk data, ZeroMQ ipc:// for events and control, gRPC only off-device
+    - **Role:** Moves IQ (up to 224 MB/s), tiles and detections between processes without copies and without coupling their lifetimes.
+    - **Details:** Bulk data uses memfd/shm_open rings under /dev/shm/rflab, each with a single writer and many readers, and seqlock-style sequence numbers. A reader copies or uses a slot, then re-checks the sequence number to detect an overwrite. Readers can never block the writer.
+  Rings: iq.<sdr> (2 s at 56 Msps cs16 = 214 MiB, plus an optional 10 s pre-trigger of 1.04 GiB in RAM); rows.<view> for the display; tiles (64 slots x 256-512 KiB = 16-32 MiB).
+  Events use ZeroMQ over path-based ipc:///run/rflab/*.sock. Abstract sockets are avoided so that the PrivateNetwork=yes sandbox still reaches them.
+  - PUSH/PULL tile_ready{slot,seq,view,deadline} from spectrumd to inferd. A copy goes to fusiond for deadline tracking.
+  - PUB det{tile_seq, boxes, scores, embeddings, model_id, backend, t_exec} from inferd to fusiond.
+  - PUB tracks from fusiond to ui and annotd.
+  - ROUTER/DEALER ctl for retune, view config, model switch and label commands.
+  - PUB health.
+  Messages are msgpack. Small SNDHWM values make slow subscribers drop messages rather than stall.
+  gRPC, or plain HTTPS/rsync, is reserved for the home-base link (model push, dataset sync, telemetry).
+    - **Versions and platform:** pyzmq 27.2.0 (PyPI, Oct 2026); libzmq is MPL-2.0. ZeroMQ is already in the GNU Radio stack (gr-zeromq), so flowgraphs can subscribe to decimated sub-band IQ, which is at most about 16 MB/s.
+    - **Limits and risks:** Custom shm rings need careful memory ordering (atomics with acquire/release) and a crash-safe header. Sending 224 MB/s IQ through ZeroMQ would add copies and CPU load, so ZeroMQ is not used for bulk IQ. Path sockets in /run/rflab need a matching group and mode for the sandboxed users.
+    - **Sources:**
+      - https://pypi.org/project/pyzmq/
+      - https://github.com/zeromq/libzmq/blob/master/LICENSE
+      - http://api.zeromq.org/master:zmq-ipc
+      - https://www.freedesktop.org/software/systemd/man/latest/systemd.exec.html
+    - **Cost:** $0
+  3.
+    - **Name:** Spectrogram front end: one large FFT feeds the display and every detector view
+    - **Role:** Turns IQ into fixed-geometry INT8-friendly tiles at resolutions matched to the target signals, with no duplicated FFT work.
+    - **Details:** Tiles are 512 freq bins x 512 time rows, uint8. This matches TorchSig defaults (fft_size 512, 262144 = 512^2 IQ per sample) and WBSig53 (512-pt FFT, no overlap, Blackman-Harris, 512x512).
+  LimeSDR survey mode (56 Msps, about 87.5% usable span): a single N=65536 FFT with no overlap and a Blackman-Harris window, giving 854 FFT/s and about 4.5 GFLOPS (5N log2 N).
+  - Fine view: raw bins, 854 Hz x 1.17 ms rows. One tile is 437 kHz x 0.6 s. This is identical to a 512-pt FFT of a 437.5 kHz channel, so TorchSig synthesis at that rate matches it exactly.
+  - Coarse view: 16-bin power aggregation, 13.67 kHz x 1.17 ms. 8 tiles cover the span every 0.6 s, which is 13.4 tiles/s.
+  - Burst view: a separate N=1024 FFT on snapshots only, 54.7 kHz x 9.1 us rows, 4.7 ms per tile, for ADS-B, Bluetooth and Wi-Fi bursts. At 4 snapshots/s x 2 tiles that is 8 tiles/s.
+  RTL-SDR at 2.4 Msps: N=16384 with hop 8192 (0.34 GFLOPS). Fine view 146 Hz x 3.41 ms (29 tiles per 1.75 s, 16.6 tiles/s); coarse view (8-bin aggregation) 1.17 kHz (2.3 tiles/s).
+  CW zoom: DDC to 48 kHz, N=4096, 11.7 Hz bins, 21.8 s tiles.
+  Detectability rule: a box needs at least about 8 px per side (stride-8 head). That gives a minimum bandwidth and duration per view: coarse 109 kHz / 9.4 ms; fine 6.8 kHz / 9.4 ms; RTL fine 1.2 kHz / 27 ms; burst 437 kHz / 73 us.
+  Scheduler: full fine coverage of 56 MHz would be about 200 tiles/s, so spectrumd sends at most 16 fine tiles per 0.6 s, chosen from band-plan regions (137-138, 144-146, 156-163, 400-406, 435-438 MHz), user-pinned regions and CFAR-active regions.
+  dB scaling: 10log10 of the aggregated power. A per-tile noise floor (20th percentile) is mapped so that [floor-5 dB, floor+55 dB] becomes 0..255 (0.235 dB/LSB). floor_dB and scale go into the tile header, so SNR can be reported.
+  Optional second channel: per-cell peak dB alongside mean dB. This makes bursty and continuous signals separable at coarse time resolution.
+  Display rows come from the coarse rows: max-pooled to panel width, at 30 rows/s.
+  The same C++ tiler is wrapped for Python and used for training (via pybind), so training and serving tiles cannot drift apart.
+    - **Versions and platform:** FFTW3 single precision (NEON) or VkFFT (MIT) on Turnip Vulkan (Adreno 643). The audit found Turnip compute working (vkpeak 808 GFLOPS FP32). TorchSig 2.2.0 (MIT) is used only to synthesise IQ plus truth.
+    - **Limits and risks:** FFT throughput on A78 for N=65536 is NOT benchmarked. 4.5 GFLOPS plus window, power and convert work is my estimate of about 2 A78 cores. Move to VkFFT if it exceeds 60%. Without overlap, the window attenuates bursts at frame edges. In fine-view rows, ADS-B (about 120 us) is smeared, so it relies on the burst view or on readsb. Min/max aggregation differs statistically from true averaging, so retrain whenever the preprocessing version changes.
+    - **Sources:**
+      - https://ar5iv.labs.arxiv.org/html/2211.10335
+      - https://github.com/TorchDSP/torchsig/blob/main/torchsig/utils/defaults.py
+      - https://pypi.org/project/torchsig/
+      - https://github.com/DTolm/VkFFT
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/calc/budget.py
+    - **Cost:** $0
+  4.
+    - **Name:** Detector on HTP v68: anchor-free YOLO-style, w8a8, split outputs, NMS on the CPU
+    - **Role:** Finds boxes (start/stop time, low/high frequency) and gives the first class guess on each tile.
+    - **Details:** Evidence on the same SoC: AI Hub perf.yaml for the 'Dragonwing RB3 Gen 2 Vision Kit' (QCS6490, HTP v68) at 640x640x3 with QAIRT 2.50.0.260828221209, all layers on the NPU:
+  - YOLOv8n w8a8: 4.013 ms (QNN DLC), 3.625 ms (TFLite), 4.709 ms (ONNX). w8a16: 10.458 ms (DLC).
+  - YOLOX-s w8a8: 7.087 ms (DLC). w8a16: 17.449 ms.
+  - YOLO11n w8a8: 4.098 ms (TFLite).
+  - RTMDet w8a16: 53.185 ms (ONNX).
+  - Peak memory 1-8 MB.
+  Scaled to 512x512 (0.64x pixels), plan on about 2.5-4 ms per tile for a nano/tiny model.
+  Accuracy evidence: on WBSig53 (V100), YOLOv5-nano gets 73.82 mAP / 86.99 AP50 at 796 samples/s, and pico 73.03 mAP at 1335 SPS. For 6-family recognition the gap is large (nano 57.02 vs pico 39.46 mAP). So keep the detector small and put fine classification in a second stage.
+  Recommended design: YOLOX-Nano/Tiny-style (Apache-2.0), with a 1-2 channel uint8 input of [1,C,512,512] and a static shape. Boxes and scores are separate outputs, because concatenated heads collapse under INT8 (audit; AI Hub's yolov8_det also returns boxes and scores separately). BatchNorm is folded, activations are ReLU or ReLU6, and there is no attention. NMS and decoding run in fusiond. Class set (civilian/lab only): meteor_lrpt, hrpt, afsk_aprs, gmsk_fsk_tlm, bpsk_tlm, cw, nfm_voice, sstv, adsb, ais, radiosonde, dvbs2, lte, gsm, wifi, bluetooth, wfm_bcast, spur_selfrfi, other. 'unknown' is assigned at runtime, not trained.
+    - **Versions and platform:** Device runtime QAIRT 2.42.0.251225, context binary built for v68 (soc_model 35, audit). AI Hub rule: 'QNN context binaries and QAIRT DLCs are compatible with the QAIRT version with which they were produced and newer versions'. So artefacts compiled with 2.50 will not load on 2.42; compile with 2.42 on the x86-64 Ubuntu 22.04 host, or on the device with qnn-context-binary-generator. AI Hub accepts --qairt_version major.minor; whether 2.42 is still offered must be checked with get_frameworks().
+    - **Limits and risks:** AI Hub timings were measured with QAIRT 2.50 on RB3 Gen 2 firmware, not with 2.42 on Radxa firmware (UNVERIFIED on the Q6A). The w8a16 jobs passing on QCS6490 with 2.50 suggest A16W8 works on v68, but this is unproven on 2.42 and the golden NPU set. Ultralytics YOLOv8/11/26 code is AGPL-3.0, so use it only as a benchmark baseline unless AGPL is acceptable.
+    - **Sources:**
+      - https://github.com/quic/ai-hub-models/blob/main/src/qai_hub_models/models/yolov8_det/perf.yaml
+      - https://github.com/quic/ai-hub-models/blob/main/src/qai_hub_models/models/yolox/perf.yaml
+      - https://github.com/quic/ai-hub-models/blob/main/src/qai_hub_models/models/rtmdet/perf.yaml
+      - https://github.com/quic/ai-hub-models/blob/main/src/qai_hub_models/models/templates/yolo/model.py
+      - https://workbench.aihub.qualcomm.com/docs/hub/api.html
+      - https://ar5iv.labs.arxiv.org/html/2211.10335
+      - https://github.com/Megvii-BaseDetection/YOLOX
+      - https://github.com/ultralytics/ultralytics/blob/main/LICENSE
+    - **Cost:** $0 (AI Hub needs a free Qualcomm account)
+  5.
+    - **Name:** QNN HTP runtime configuration inside inferd-htp
+    - **Role:** Concrete settings for running the context binary safely next to a heavy SDR DMA load.
+    - **Details:** Load the context with QnnContext_createFromBinary.
+  Set VTCM explicitly with QNN_HTP_GRAPH_CONFIG_OPTION_VTCM_SIZE_IN_MB = 2. The documented default is 4 MB, but about 2 MB is usable on the Q6A (audit). Test 1 and 2.
+  The power config exposes rpcPollingTime (0-10000 us) and rpcControlLatency (under 200 us for latency-critical apps). At about 70 tiles/s, use no polling or a short poll so the A55 cores do not spin.
+  Use a sustained or balanced perf profile, not burst (audit, for heat).
+  For input, feed uint8 tensors directly, with the quantisation scale fixed by the dB mapping, as in Radxa's uint8 ResNet50 QNN example.
+  Zero-copy shared buffers exist (rpcmem_alloc + rpcmem_to_fd + QnnMem_register), but Qualcomm's guideline says ION is Android-only. Tiles are only 256-512 KiB (about 16-32 MB/s), so a plain memcpy is acceptable and zero-copy is an optimisation, not a requirement.
+  Run batch 1 first, then try a batch-4 context binary to amortise FastRPC overhead.
+  Alternative path: Radxa documents an onnxruntime_qnn-1.23.2 cp312 aarch64 wheel (ZIFENG278 fork) built for QAIRT 2.42.0.251225, with provider_options backend_path=libQnnHtp.so and an optional disable_cpu_ep_fallback.
+    - **Versions and platform:** Device nodes: /dev/fastrpc-adsp, /dev/fastrpc-cdsp, /dev/fastrpc-cdsp-secure, plus /usr/lib/dsp. Check with fastrpc_test -a v68 (3 of 3 PASS). QAIRT host requirements: x86-64, Ubuntu 22.04, Python 3.10.
+    - **Limits and risks:** Per-call FastRPC overhead on the Q6A is unknown. Whether VTCM for several contexts (detector + embedder + A/B challenger) fits in about 2 MB at the same time is unknown. The ORT-QNN fork is a third-party binary, so it must pass the golden test. Weight sharing across graphs needs v73+, so v68 cannot use it.
+    - **Sources:**
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/htp_backend.md
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/htp_shared_buffer_tutorial.md
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/api_usage_guidelines.md
+      - https://docs.radxa.com/en/dragon/q6a/app-dev/npu-dev/qnn-onnxrt-execution-provider
+      - https://docs.radxa.com/en/dragon/q6a/app-dev/npu-dev/qairt-install
+      - https://docs.radxa.com/en/dragon/q6a/app-dev/npu-dev/fastrpc-setup
+    - **Cost:** $0
+  6.
+    - **Name:** Sandbox, watchdog, failover and recovery
+    - **Role:** Implements the audit's rule that an NPU hang cannot stop SDR capture.
+    - **Details:** systemd unit for inferd-htp:
+  - User rfnpu, with a udev group on /dev/fastrpc-cdsp.
+  - DevicePolicy=closed; DeviceAllow=/dev/fastrpc-cdsp rw (plus a dma_heap node only if rpcmem needs it).
+  - PrivateNetwork=yes, RestrictAddressFamilies=AF_UNIX.
+  - ProtectSystem=strict, ProtectHome=yes, PrivateTmp=yes, NoNewPrivileges=yes.
+  - ReadOnlyPaths=/opt/rflab/models; ReadWritePaths=/dev/shm/rflab /run/rflab.
+  - MemoryMax=1G, TasksMax=64, CPUAffinity=0-3.
+  - Type=notify, WatchdogSec=5, Restart=always, RestartSec=1, StartLimitIntervalSec=60, StartLimitBurst=3.
+  Watchdog semantics: the process sends WATCHDOG=1 only if the execute thread is not stuck. A heartbeat thread checks an in_execute_since timestamp and stops pinging if any execute has run longer than 2 s.
+  Broker (fusiond): each tile has a deadline (500 ms, as in the audit). On a miss, it re-dispatches the tile to the warm inferd-cpu. After 3 misses or restarts within 60 s it switches to CPU mode, shows NPU DEGRADED in the UI, and triggers npu-health. npu-health runs CDSP remoteproc stop/start and restarts cdsprpcd (audit script).
+  Return to the HTP happens only after a golden-tile self-test (output within the tolerance stored in the manifest) and 10 min of hysteresis.
+  Board-level backstop: systemd RuntimeWatchdogSec on the SoC hardware watchdog, if /dev/watchdog0 exists. annotd flushes its journal every 1 s and recorderd syncs each segment, so a board hang loses only seconds.
+    - **Versions and platform:** systemd 255 (Ubuntu 24.04). Kernel and firmware pinned as in the audit golden NPU set.
+    - **Limits and risks:** A thread blocked inside a FastRPC ioctl can sit in uninterruptible sleep, where systemd cannot kill it until the CDSP is restarted. Whether remoteproc stop unblocks it is UNVERIFIED and must be fault-injected in the soak test. A seccomp SystemCallFilter may break FastRPC ioctls, so start without one and tighten later. Whether /dev/watchdog exists on the Q6A image is unverified.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/software.json
+      - https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html
+      - https://www.freedesktop.org/software/systemd/man/latest/sd_notify.html
+      - https://forum.radxa.com/t/npu-htp-usage-in-radxa-dragon-q6a/29949
+    - **Cost:** $0
+  7.
+    - **Name:** ONNX Runtime CPU fallback with a degraded tile schedule
+    - **Role:** Keeps detection alive when the HTP is down, or before HTP artefacts are validated on a new platform fingerprint.
+    - **Details:** The fallback uses the same ONNX graph: FP32, or QDQ-INT8, which uses the A78 dot-product kernels. YOLOX-Nano scaled to 512^2 is about 1.64 GFLOPs per tile (1.08 GFLOPs at 416^2, from the YOLOX table). The full survey schedule of about 67 tiles/s would need about 110 GFLOP/s, which the CPU cannot deliver.
+  In CPU mode fusiond therefore switches to: coarse views only, plus round-robin fine tiles from CFAR-active regions. Target 4-6 tiles/s (estimate). It uses CPU0-3, or also CPU4 when no decoder runs.
+  The second-stage classifier stays on the CPU in this mode; it is cheap.
+    - **Versions and platform:** onnxruntime 1.31.0 on PyPI has manylinux_2_28 aarch64 wheels for cp311-cp314 (cp312 matches Ubuntu 24.04). Use the C++ API in inferd-cpu.
+    - **Limits and risks:** CPU latency per tile on A55/A78 is not measured. Benchmark with onnxruntime_perf_test on the device. CPU-mode detection quality is lower in time coverage: bursts can be missed.
+    - **Sources:**
+      - https://pypi.org/project/onnxruntime/
+      - https://github.com/Megvii-BaseDetection/YOLOX
+    - **Cost:** $0
+  8.
+    - **Name:** Second stage: box crop / IQ classifier plus a few-shot prototype bank
+    - **Role:** Fine classification on detected boxes, and immediate use of new user-taught classes without retraining the detector.
+    - **Details:** For each confirmed track, fusiond requests (a) a 64x64 or 128x128 spectrogram crop and/or (b) IQ from the iq ring for the box's sample range. The IQ is mixed down to the box centre, decimated to about 2x the box bandwidth, cut to 1024-4096 samples and normalised to unit RMS (audit CNN design: Conv 1xK, folded BN, ReLU, GAP, no LSTM).
+  The network outputs class logits plus a 128-d embedding. It runs as a second graph in inferd-htp, batched 8 crops per call, or on the CPU.
+  Few-shot: a prototype bank per class (mean of the embeddings of user-labelled examples) lives in the registry next to the model. Cosine distance above a per-class radius gives 'unknown'. The user can add a class on the device; the home-base retrain later folds it into the detector.
+    - **Versions and platform:** Same QAIRT 2.42 v68 context, or ONNX Runtime CPU.
+    - **Limits and risks:** Embeddings quantised to INT8 lose some metric quality, so compare FP32 against HTP distances on the golden set. IQ for a box must still be in the ring, so the ring must hold at least the tile time plus latency (2 s planned).
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/software.json
+    - **Cost:** $0
+  9.
+    - **Name:** Fusion, tracking, confidence thresholds and the 'unknown' class
+    - **Role:** Turns per-tile boxes into stable, labelled signals with honest uncertainty.
+    - **Details:** Steps:
+  - NMS within each tile, then merging across 32-bin tile overlaps.
+  - Mapping to absolute coordinates: f = fc + (bin - N/2)*fs/N; sample = tile_sample0 + row*hop*K.
+  - An IoU tracker in time and frequency extends one track across consecutive tiles.
+  - A track is confirmed after M=2-3 of N=5 tiles (initial values).
+  - The track class is an EMA of calibrated probabilities. Calibration is temperature scaling fitted on the home-base validation set and stored in the manifest.
+  - Per-class thresholds are chosen for a precision of at least 0.9 on validation (stored in the manifest; adjustable in the UI per session).
+  Unknown rules: objectness above tau_obj but max class probability below tau_cls; or a CFAR energy box with no NN match ('unknown/energy'); or an embedding outside every prototype radius (energy-score OOD as an option).
+  An optional band-plan prior multiplies class probabilities by p(class | frequency) and is shown separately, so the model is not trained to rely on frequency. Unknown boxes are drawn grey and go to the labelling queue (active learning).
+    - **Versions and platform:** Python 3.12 in fusiond.
+    - **Limits and risks:** The thresholds above are starting values, not validated. Long continuous carriers (FM broadcast, DVB-S2) are cut into tiles, so evaluation must be done at track level.
+    - **Sources:**
+      - https://arxiv.org/abs/1706.04599
+      - https://arxiv.org/abs/2010.03759
+    - **Cost:** $0
+  10.
+    - **Name:** SigMF annotation logging
+    - **Role:** Every detection and every user label is stored as standard SigMF, so recordings, live sessions and training sets share one format.
+    - **Details:** Schema v1.2.6 rules that apply:
+  - annotations MUST be sorted by core:sample_start.
+  - core:sample_start is required.
+  - core:sample_count may be omitted only if the annotation runs to the end of the capture.
+  - core:freq_lower_edge and core:freq_upper_edge must both be present or both absent, and are at RF when the frequency is known.
+  - core:label is recommended at 20 characters or fewer.
+  - core:comment, core:generator and core:uuid are also available.
+  - global has core:metadata_only and core:extensions.
+  Live sessions without IQ become metadata-only files, with sample indices taken from sdr-ingestd's sample counter. Every retune starts a new captures segment (core:frequency, core:datetime). Annotations are journaled as JSONL, then sorted and written to .sigmf-meta at rotation or close.
+  A custom namespace 'rflab' (declared in core:extensions) carries confidence, class_id, model (name@semver+sha256), backend (htp|cpu|energy|user), view, snr_db, track_id and verified.
+  The signal extension v1.0.0 signal:detail records the modulation family (analog/digital, mod_class, order). The signal:emitter fields (MAC, serial, ID) are deliberately never filled: no emitter identification.
+    - **Versions and platform:** sigmf-python 1.13.0 (LGPL-3.0, Python 3.10 or later) for validation and writing. The SigMF spec is CC BY-SA 4.0.
+    - **Limits and risks:** The sort-order rule means annotations cannot simply be appended to a live .sigmf-meta; the journal plus finalise step is required. The 20-character label recommendation forces short class names.
+    - **Sources:**
+      - https://raw.githubusercontent.com/sigmf/SigMF/main/sigmf-schema.json
+      - https://github.com/sigmf/SigMF/blob/main/extensions/signal.sigmf-ext.md
+      - https://github.com/sigmf/SigMF/blob/main/LICENSE.md
+      - https://pypi.org/project/sigmf/
+    - **Cost:** $0
+  11.
+    - **Name:** Waterfall overlay and labelling UI
+    - **Role:** Draws labelled boxes on the live waterfall and lets the user teach by marking signals.
+    - **Details:** The UI renders the waterfall itself: rows.<view> from shm are uploaded as a GL ES or Vulkan texture ring. Track rectangles are mapped by sample index to row timestamps and drawn with colour by class (unknown = grey) and a label plus confidence.
+  Touch: tap a box to confirm, relabel or mark 'not a signal'. Drag draws a new box. 'Save last N s' dumps the IQ pre-trigger plus annotations to the dataset store, with core:generator='user' and rflab:verified=true.
+  SDR++ stays available as a listener: it gets a sub-band from sdr-ingestd through its network_source (TCP client or UDP; int16/float32).
+  Hand-off hooks for public and amateur signals only (SatDump, gr-satellites, AIS/ADS-B/radiosonde decoders) start from a box's IQ. LTE, GSM, Wi-Fi and Bluetooth are labelled as occupancy or interference only and never demodulated.
+    - **Versions and platform:** SDR++ master: waterfall.h exposes onFFTRedraw (FFTRedrawArgs covers the FFT area only) and onInputProcess, which has waterfallRectMin/Max. The README marks soapy_source 'Deprecated'.
+    - **Limits and risks:** An SDR++ plugin could draw on the FFT pane but has no supported waterfall-draw hook, so the overlay must be our own renderer. The UI framework depends on the menu-system area; the overlay only needs a textured quad plus rectangles.
+    - **Sources:**
+      - https://github.com/AlexandreRouma/SDRPlusPlus/blob/master/core/src/gui/widgets/waterfall.h
+      - https://github.com/AlexandreRouma/SDRPlusPlus/blob/master/misc_modules/frequency_manager/src/main.cpp
+      - https://github.com/AlexandreRouma/SDRPlusPlus/blob/master/readme.md
+    - **Cost:** $0
+  12.
+    - **Name:** Throughput and power budget, survey mode
+    - **Role:** Shows that the plan fits the CPU, NPU and power envelope, and what to measure.
+    - **Details:** Tiles per second:
+  - LimeSDR: coarse 13.4 + fine (scheduled, at most 16 per 0.6 s) 26.7 + burst 8.
+  - RTL-SDR: fine 16.6 + coarse 2.3.
+  - Total about 67 tiles/s.
+  HTP duty: about 20% at 3 ms per tile; about 47% if a YOLOX-s-class model at about 7.1 ms is used.
+  Latency: a box appears about 0.6-0.7 s after the signal (tile length plus at most 10 ms inference), and is confirmed at about 1.2-1.8 s.
+  CPU: 4.5 GFLOPS of FFT (estimated 2 A78 cores) plus the RX thread on CPU7; fusion and UI on the A55 cores.
+  RAM: IQ ring 214 MiB, pre-trigger 1.04 GiB, tiles 16-32 MiB (fits the 12 GB board).
+  Power: the board measured 2.9 W idle, 9.3 W under stress-ng and 10.1 W under HPL (audit, Geerling). Survey-mode compute is estimated at +3-4.5 W over idle. Incremental NPU power is unknown. Measure all of it with the INA228 on J21 (power design).
+  The NPU path saves CPU load: the same detection on the CPU would need about 110 GFLOP/s.
+    - **Versions and platform:** Q6A 12 GB, active cooling mandatory (throttling at 90-95 °C).
+    - **Limits and risks:** Every per-tile and FFT figure is estimated from AI Hub (QAIRT 2.50, RB3 Gen 2) and FLOP counts; none was measured on the Q6A.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/calc/budget.py
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/power.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/compute.json
+      - https://github.com/quic/ai-hub-models/blob/main/src/qai_hub_models/models/yolov8_det/perf.yaml
+    - **Cost:** $0
+  13.
+    - **Name:** Model registry, versioning, A/B evaluation and rollback
+    - **Role:** Lets the user add classes over time without breaking the device, and undo a bad model in one tap.
+    - **Details:** Layout: /opt/rflab/models/<role>/<semver>/ for detector and iqclass, containing:
+  - model.onnx (FP32) and model_qdq.onnx (CPU INT8);
+  - model.v68.qairt2.42.bin (context binary);
+  - prototypes.npz;
+  - manifest.json: sha256 of every file, the QAIRT build string, soc_model, preproc_version (tile geometry, views, dB mapping), the class registry version, per-class thresholds, temperature, the golden-tile reference output, dataset hash and licence list, golden metrics (FP32 vs CPU-INT8 vs HTP, latency p50/p99) and the parent version;
+  - an optional ed25519 signature from the home base.
+  Class IDs are immutable and append-only; a retired ID is never reused.
+  Semver: MAJOR for a preprocessing, tile or ID-incompatible change; MINOR for new classes; PATCH for a retrain or recalibration.
+  The current and previous symlinks are switched atomically with rename(2). inferd loads the new version in the background, runs the golden-tile self-test and only then swaps.
+  HTP artefacts are bound to the platform fingerprint (kernel, CDSP firmware hashes, libQnnHtp version). If the fingerprint changes, the system runs on the CPU until npu-health revalidates.
+  A/B in two phases. Offline gate: golden replay; no class may lose more than 2 pp recall at fixed precision; mAP50 at least the champion's minus 0.5 pp; INT8 within 2 pp of FP32 (audit rule); p99 latency within budget. Online shadow: the challenger runs on every 4th tile, or on the CPU at low rate, and is logged but not shown; the UI shows agreement and disagreement and user labels decide.
+  Promotion is manual. Automatic rollback to the previous version happens on HTP errors, a latency regression or a false-alarm spike on noise. The last 5 versions are kept.
+    - **Versions and platform:** On the device: plain files plus a small Python CLI. On the home base: DVC or MLflow can track datasets and runs (optional; versions not checked).
+    - **Limits and risks:** Shadow mode on the HTP costs VTCM and duty cycle. With two contexts the 2 MB VTCM may force CPU-only shadowing.
+    - **Sources:**
+      - https://workbench.aihub.qualcomm.com/docs/hub/api.html
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/software.json
+    - **Cost:** $0
+  14.
+    - **Name:** Testing: golden recordings, parity tests, replay regression and soak
+    - **Role:** Proves each release and model version before field use.
+    - **Details:** (1) Tiler parity. The C++ tiler on the device and the Python training tiler must produce tiles within 1 LSB of each other on the same SigMF input. Box to (sample, Hz) round-trip unit tests. Every emitted .sigmf-meta must validate against schema v1.2.6.
+  (2) Numerics. Per model version, HTP outputs on 100 golden tiles must match the stored reference, and INT8 vs FP32 is checked per class.
+  (3) End-to-end replay. sdr-ingestd file-source plays the golden SigMF set: every class, both SDRs, several SNRs and gains, plus negatives (50-ohm terminated, the USB 3 SSD running, display and DC-DC spurs, strong FM intermod). The resulting tracks are compared with the truth (AP50, P/R at the manifest thresholds, confusion matrix, false alarms per hour on noise) and diffed against the previous release.
+  (4) Performance. Tiles/s, p99 latency, CPU load per core, temperature and power.
+  (5) Soak and fault injection (audit, 8 h). 56 Msps plus fio at 250 MB/s plus detection. Kill cdsprpcd, SIGSTOP inferd-htp, fill the disk, unplug the RTL. Pass criteria: no SDR overruns, CPU failover within 10 s, no annotation loss beyond 1 s.
+  The CPU-path tests run in CI on the x86 home-base PC; device-in-the-loop runs happen when the device is docked.
+    - **Versions and platform:** pytest; TorchMetrics MeanAveragePrecision (as used by WBSig53) or pycocotools on the home base; sigmf-python validator.
+    - **Limits and risks:** Golden truth needs careful manual boxes. Synthetic TorchSig data cannot replace real over-the-air negatives.
+    - **Sources:**
+      - https://ar5iv.labs.arxiv.org/html/2211.10335
+      - https://pypi.org/project/sigmf/
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/software.json
+    - **Cost:** $0 (golden recordings are the user's own)
+  15.
+    - **Name:** Licences of datasets, models and libraries in the runtime path
+    - **Role:** Keeps the trained models and logs legally clean.
+    - **Details:** Datasets:
+  - DeepSig RadioML 2016.10A, 2016.04C and 2018.01A: CC BY-NC-SA 4.0 (non-commercial, share-alike). DeepSig also warns of known errata.
+  - TorchSig code is MIT. Synthetic data generated with it has no separate stated licence; treat it as your own.
+  - WBSig53 (arXiv 2211.10335): the paper is CC BY 4.0, but the dataset licence is not stated; it is generated with TorchSig.
+  - WRIST/SPREAD (arXiv 2107.05114): dataset licence not stated, so do not use it until clarified.
+  - The user's own recordings: the user's. Keep only signal-type labels and never content.
+  Model code: Ultralytics AGPL-3.0; YOLOX and MMDetection/RTMDet Apache-2.0; AI Hub models repo BSD-3-Clause style.
+  Libraries: VkFFT MIT; libzmq MPL-2.0; sigmf-python LGPL-3.0; SigMF spec CC BY-SA 4.0.
+    - **Versions and platform:** As of Oct 2026.
+    - **Limits and risks:** Whether a model trained on CC BY-NC-SA data inherits the NC/SA terms is legally unsettled. Keep RadioML-trained weights for private use, or retrain on TorchSig and own data only.
+    - **Sources:**
+      - https://www.deepsig.ai/datasets/
+      - https://github.com/TorchDSP/torchsig
+      - https://arxiv.org/abs/2211.10335
+      - https://arxiv.org/abs/2107.05114
+      - https://github.com/ultralytics/ultralytics/blob/main/LICENSE
+      - https://github.com/Megvii-BaseDetection/YOLOX
+      - https://github.com/quic/ai-hub-models/blob/main/LICENSE
+      - https://github.com/sigmf/SigMF/blob/main/LICENSE.md
+    - **Cost:** $0
+- **Recommendations:**
+  - Build the 9-process layout under one systemd target. sdr-ingestd, recorderd and spectrumd must not depend on any inference unit, and only sdr-ingestd may open the SDRs.
+  - Use POSIX shm/memfd seqlock rings for IQ, rows and tiles, and ZeroMQ over path-based ipc:///run/rflab sockets (msgpack) for tile_ready, detections, tracks, control and health. Keep gRPC or HTTPS for the home-base link only.
+  - Compute one FFT per SDR and derive every view from it. LimeSDR at 56 Msps: N=65536 with no overlap; fine view 854 Hz x 1.17 ms, coarse view by 16-bin aggregation, plus a snapshot burst view with N=1024. RTL-SDR: N=16384 with hop 8192. All tiles are 512x512 uint8, with a per-tile noise floor mapped over a 60 dB range.
+  - Schedule fine tiles from CFAR occupancy, the band plan and user pins: at most 16 per 0.6 s on the LimeSDR. That keeps the total at about 67 tiles/s, about 20% HTP duty at 3 ms per tile.
+  - Detector: YOLOX-Nano/Tiny-style (Apache-2.0), w8a8, static input [1,1-2,512,512], separate box and score outputs, folded BN, ReLU. Run NMS and decoding on the CPU. Benchmark YOLOv8n (AGPL) only as a reference. Try A16W8 only if INT8 fails the 2 pp rule.
+  - Compile context binaries with exactly QAIRT 2.42.0.251225 (artefacts are only forward-compatible). Store the QAIRT string and the platform fingerprint in the manifest, and refuse HTP artefacts whose fingerprint does not match.
+  - Set QNN_HTP_GRAPH_CONFIG_OPTION_VTCM_SIZE_IN_MB=2 explicitly, use no or short RPC polling and a sustained or balanced perf profile, and start with batch 1. Do not depend on zero-copy rpcmem.
+  - Sandbox inferd-htp: DevicePolicy=closed, DeviceAllow=/dev/fastrpc-cdsp, PrivateNetwork=yes, ProtectSystem=strict, MemoryMax=1G, CPUAffinity=0-3, Type=notify, WatchdogSec=5. Send WATCHDOG=1 only when no execute is stuck.
+  - Fail over in the fusiond broker, not only through systemd: re-dispatch on a 500 ms deadline miss to a warm ORT CPU standby; enter CPU mode after 3 misses or restarts in 60 s; return to the HTP only after a golden-tile self-test and 10 min of hysteresis.
+  - In CPU mode, cut the schedule to coarse views plus round-robin CFAR-active fine tiles (target 4-6 tiles/s) and show 'NPU degraded' on screen.
+  - Add a second-stage crop/IQ classifier with a 128-d embedding and an on-device prototype bank, so a newly taught class works at once and the detector is retrained later at the home base.
+  - Assign 'unknown' when objectness is high but the calibrated class probability is below its threshold, when a CFAR box has no NN match, or when an embedding falls outside every prototype radius. Draw unknowns grey and feed them to the labelling queue.
+  - Log SigMF v1.2.6: journal JSONL, then write a sorted .sigmf-meta (sorting by sample_start is mandatory). Use core:metadata_only for live sessions, an 'rflab' namespace for confidence, model and backend, and signal:detail for the modulation family. Never fill signal:emitter identity fields.
+  - Render the waterfall and overlays in our own UI. SDR++ exposes overlay hooks only for the FFT pane; use it as a listener through network_source.
+  - Registry: immutable class IDs, semver tied to preproc_version, atomic current/previous symlinks, a background load with self-test, an offline golden gate plus online shadow A/B, manual promote and automatic rollback.
+  - Before field use: tiler-parity tests, HTP-vs-reference numerics per model, golden SigMF replay with track-level AP50/P/R and false alarms per hour, and the 8 h soak with fault injection (kill cdsprpcd, SIGSTOP inferd, disk full, RTL unplug).
+  - Measure the real HTP per-tile latency on 2.42, N=65536 FFT throughput on the A78, ORT CPU latency and NPU incremental power (INA228 on J21) before freezing view rates.
+- **Numbers:**
+  - AI Hub, QCS6490 RB3 Gen 2, 640x640x3, QAIRT 2.50: YOLOv8n w8a8 4.013 ms (QNN DLC) / 3.625 ms (TFLite) / 4.709 ms (ONNX); w8a16 10.458 ms (DLC); YOLOX-s w8a8 7.087 ms / w8a16 17.449 ms (DLC); YOLO11n w8a8 4.098 ms (TFLite); RTMDet w8a16 53.185 ms (ONNX); peak memory 1-8 MB
+  - WBSig53: 550k samples, about 2M signals, 53 classes, 512x512 tiles (512-pt FFT, no overlap, Blackman-Harris). Detection: YOLOv5-nano 73.82 mAP / 86.99 AP50 at 796 SPS, pico 73.03 mAP at 1335 SPS, DETR-B0-nano 85.49 mAP at 161 SPS (V100). 6-family recognition: nano 57.02 vs pico 39.46 mAP
+  - YOLOX table: Nano 0.91 M params, 1.08 GFLOPs at 416; Tiny 5.06 M, 6.45 GFLOPs at 416; s 9.0 M, 26.8 GFLOPs at 640. Nano scaled to 512^2 is about 1.64 GFLOPs per tile
+  - LimeSDR survey FFT: N=65536 with no overlap = 854.5 FFT/s = 4.48 GFLOPS (estimated 2 A78 cores, unbenchmarked)
+  - Lime coarse view: 13.67 kHz x 1.17 ms, 8 tiles per 0.6 s = 13.4 tiles/s, min box 109 kHz / 9.4 ms
+  - Lime fine view: 854 Hz x 1.17 ms, about 119 possible tiles per 0.6 s; scheduled at most 16 per 0.6 s = 26.7 tiles/s
+  - Lime burst view: N=1024, 54.7 kHz x 9.1 us rows, 4.7 ms tile, min box 437 kHz / 73 us; 8 tiles/s duty-cycled
+  - RTL 2.4 Msps: N=16384, hop 8192; fine 146 Hz x 3.41 ms (16.6 tiles/s, min box 1.17 kHz / 27 ms); coarse 1.17 kHz (2.3 tiles/s); FFT 0.34 GFLOPS
+  - CW zoom: 48 kHz DDC, N=4096, 11.7 Hz bins, 21.8 s tiles
+  - Total about 67 tiles/s -> HTP duty about 20% at 3 ms per tile, about 47% at 7.1 ms; on the CPU it would need about 110 GFLOP/s (not feasible), so CPU-mode target is 4-6 tiles/s (estimate)
+  - dB mapping: 60 dB range in uint8 = 0.235 dB/LSB; tile 256 KiB (1 channel) or 512 KiB (2 channels); about 16-32 MB/s of tiles
+  - IQ: 56 Msps cs16 = 112 MB/s (2 s ring 214 MiB; 10 s pre-trigger 1.04 GiB); cs32/CF16-equivalent 4 B/sample = 224 MB/s; RTL 2.4 Msps cs16 = 4.8 MB/s
+  - Failover thresholds: per-tile deadline 500 ms; 3 misses or restarts in 60 s -> CPU mode; WatchdogSec=5; failover target under 10 s (audit soak criterion)
+  - Q6A power (audit): 2.9 W idle, 9.3 W stress-ng, 10.1 W HPL; survey-mode compute estimated +3-4.5 W (unverified); NPU incremental power unknown
+  - Versions: QAIRT 2.42.0.251225 (device and host, x86-64 Ubuntu 22.04, Python 3.10); onnxruntime 1.31.0 aarch64 cp311-cp314; Radxa onnxruntime_qnn 1.23.2 cp312 fork for 2.42; TorchSig 2.2.0; sigmf-python 1.13.0; SigMF schema v1.2.6; signal extension v1.0.0; pyzmq 27.2.0
+  - QNN HTP VTCM default 4 MB (doc) vs about 2 MB usable on Q6A (audit); rpcPollingTime 0-10000 us; rpcControlLatency under 200 us for latency-critical apps
+  - Box latency: about 0.6-0.7 s to first box on 0.6 s tiles; confirmation after 2-3 tiles is about 1.2-1.8 s
+- **Rejected:**
+  1.
+    - **Name:** gRPC (or D-Bus) on the device hot path
+    - **Why:** Protobuf, HTTP/2 framing and copies add CPU load and latency for local IPC with no benefit. D-Bus is not made for high-rate data. gRPC is kept only for the home-base link.
+  2.
+    - **Name:** ZeroMQ for bulk IQ at 56 Msps
+    - **Why:** Each hop copies 112-224 MB/s on a CPU budget that is already tight. ZeroMQ is used only for events, control and decimated sub-band IQ of at most about 16 MB/s.
+  3.
+    - **Name:** Running inference inside the SDR, recorder or UI process (or inside SDR++)
+    - **Why:** An HTP or FastRPC hang (reported after about 1 h, plus board hangs) would take capture, recording or the display down with it. Isolation in a separate process is mandatory.
+  4.
+    - **Name:** DETR or other transformer detectors on the device
+    - **Why:** They have the best WBSig53 mAP (85-87) but are 5-8x slower than YOLOv5-nano/pico on a V100, and attention, softmax and LayerNorm are hard to run well in INT8 on v68. They can serve as a home-base teacher for pseudo-labels.
+  5.
+    - **Name:** Mask2Former or PSPNet segmentation as the main detector
+    - **Why:** Mask2Former runs at 17-19 SPS on a V100, and segmentation needs CPU connected-component post-processing to make boxes. PSPNet's recognition mAP is poor (27-52). Box output maps directly to SigMF.
+  6.
+    - **Name:** RTMDet on HTP
+    - **Why:** 53 ms (w8a16, ONNX) on QCS6490 in AI Hub, about 5-13x slower than YOLOv8n/YOLOX for this budget.
+  7.
+    - **Name:** FP16 on HTP, or relying on onnxruntime-qnn 2.x / QAIRT 2.46+
+    - **Why:** v68 rejects FP16, and newer runtimes fail with the Radxa CDSP firmware (audit). Artefacts are only forward-compatible.
+  8.
+    - **Name:** SDR++ as the labelled-waterfall UI
+    - **Why:** Its module hooks draw only on the FFT pane (FFTRedrawArgs); the waterfall has no draw event; and its Soapy source is marked deprecated. It is kept as a listening client through network_source.
+  9.
+    - **Name:** Separate FFTs for display and detection, or a gap-free fine search over all 56 MHz
+    - **Why:** This would double the FFT load, and full fine coverage needs about 200 tiles/s. One FFT with derived views plus CFAR scheduling covers the same targets.
+  10.
+    - **Name:** Zero-copy rpcmem/QnnMem_register as a requirement
+    - **Why:** Qualcomm's guideline describes ION as Android-only and it is unproven on Linux on the Q6A. Tiles are small, so memcpy costs under 32 MB/s.
+  11.
+    - **Name:** iceoryx2 or another zero-copy middleware
+    - **Why:** It adds a dependency and more machinery than 3-4 fixed rings need. Reconsider if consumers multiply.
+  12.
+    - **Name:** Training on WRIST/SPREAD data, or using signal:emitter identity fields
+    - **Why:** The SPREAD licence is not stated. Emitter identity (MAC, serial) conflicts with the privacy rules; the classes stay signal types only.
+- **Open questions:**
+  - What is the real per-tile HTP latency and FastRPC call overhead for a 512x512 1-2 channel YOLOX-Nano/Tiny with QAIRT 2.42.0.251225 on the Radxa golden firmware? The AI Hub figures are QAIRT 2.50 on RB3 Gen 2.
+  - Does w8a16 (A16W8) run on the Q6A with 2.42? AI Hub shows w8a16 passing on QCS6490 only with 2.50.
+  - Does AI Hub still offer QAIRT 2.42 for compile jobs (get_frameworks())? If not, only local conversion on the x86-64 Ubuntu 22.04 host remains.
+  - Can detector, embedder and A/B challenger contexts coexist in about 2 MB of VTCM on v68, or must the challenger run on the CPU?
+  - Does a CDSP remoteproc stop/start unblock a thread stuck in a FastRPC ioctl (D state), so that systemd can restart inferd-htp? This needs fault injection.
+  - What is the N=65536 FFT throughput on A78 with FFTW NEON (is Ubuntu's libfftw3 built with NEON?), and on VkFFT/Turnip? This decides whether survey mode needs the GPU.
+  - What latency does ONNX Runtime 1.31 CPU deliver per tile on A55 and A78, with QDQ-INT8 vs FP32?
+  - How much power does the NPU add at 20-50% duty, and what does the whole survey mode draw? Measure with the INA228 on J21.
+  - Does /dev/watchdog exist on the Radxa 6.18.2-4 image, for a board-level backstop?
+  - Does rpcmem/dma-buf zero-copy work on Linux on the Q6A? The Radxa ORT log shows 'dummy rpcmem init/deinit'.
+  - Is 1.17 ms row time plus mean/peak channels enough to separate AIS, APRS and radiosonde bursts in the fine view, or is a dedicated narrow burst view needed?
+  - Legal status of model weights trained on CC BY-NC-SA RadioML data for anything beyond private use.
+- **Notes:** I used 3 of the shared ~12 WebSearch calls (wideband YOLO spectrogram papers, the QNN shared buffer, and one more). Primary sources were fetched or curled: the QNN HTP backend doc, AI Hub API/compile docs, AI Hub perf.yaml files from the quic/ai-hub-models repo (RB3 Gen 2 = QCS6490 timings; the YOLO template input is 640), Radxa Q6A NPU docs (qairt-install, the QNN EP page, fastrpc-setup, qai-appbuilder), the SigMF schema v1.2.6 JSON, the signal extension and LICENSE.md, the TorchSig README and defaults.py, the DeepSig datasets page, arXiv 2211.10335 (via ar5iv) and 2107.05114, SDR++ waterfall.h, frequency_manager, network_source and readme, the YOLOX README, and the LICENSE files of Ultralytics, YOLOX, MMDetection, ai-hub-models, VkFFT and libzmq. PyPI versions came from the PyPI JSON API on 18 Oct 2026.
+  
+  Estimates, not measurements: all tiling, FFT and NPU-duty figures come from /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/calc/budget.py and from scaling the AI Hub numbers. The systemd, sd_notify and zmq_ipc pages are cited as standard references and were not re-fetched in this run. The YOLOv8n figure of 8.7 GFLOPs at 640 is Ultralytics' published value and was not re-fetched, so the YOLOX table is the FLOP basis used here.
+  
+  Audit facts reused (QAIRT pin, INT8-only, ~2 MB VTCM, the FastRPC/CDSP recovery script, the 500 ms failover, the 8 h soak, the core plan, the power measurements) come from /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/software.json, compute.json, power.json and digest.md.
+  
+  Policy: the class set is civilian and lab only. Interference classes (LTE, GSM, Wi-Fi, Bluetooth) are occupancy labels and are never demodulated, and no emitter-identity fields are logged.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
