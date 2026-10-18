@@ -35,3 +35,10 @@
 - КХ і меню: кандидати на КХ — RX-888 MkII (потребує USB 3.0), Airspy HF+ Discovery з міні-штирем (перевіряється перевантаження від мовних станцій), антена-котушка Tecsun AN-03L (7 м дроту на мотовилі — підходить під «складається в малий розмір»). SDRangel має 27 модулів джерел (airspy, airspyhf, bladerf, hackrf, …). Джерела: github.com/f4exb/sdrangel/tree/master/plugins/samplesource, swling.com.
 - Навчання NPU: ще один звіт з форуму Radxa (20.07.2026): на офіційному образі R2 з ядром 6.18.2-3 інференс на NPU валить CDSP ("no reserved DMA memory for FASTRPC") — підтверджує потребу в оверлеї memory-region і «золотому» наборі. Джерело: forum.radxa.com (тема 31208).
 
+## 2026-10-18 02:08 UTC
+
+- Малі антени («стек»): агент рахує зміну параметрів стеку після прибирання великих антен (уривок: 1602–1849 → 957–1168, з 4S1P 1003–1228; одиниці в уривку не вказані, схоже на масу в г).
+- Радіолабораторія: для радіоастрономії — спектрометр/радіометр Virgo (Python + GNU Radio); лінія водню з малим рупором без тарілки і SAWbird+ H1. Агент також дивиться рамку MLA-30+ — але рамку користувач прибрав, у фінал не брати. Джерела: github.com/0xCoto/Virgo, nooelec.com.
+- Навчання NPU: Qualcomm AI Hub має submit_quantize_job (ONNX + калібрувальні дані → квантована ONNX з заданими типами ваг/активацій). Джерело: app.aihub.qualcomm.com/docs.
+- КХ і меню: в Ubuntu 24.04 є пакети labwc, cage, phosh, wvkbd, sxmo-utils, plasma-mobile (squeekboard і cog — не знайдено в цьому пошуку). Джерело: packages.ubuntu.com.
+
