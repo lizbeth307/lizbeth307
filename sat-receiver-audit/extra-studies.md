@@ -3692,3 +3692,61 @@
   - https://www.surenoo.com/ (403 Access Denied to fetch)
   - Calculation scripts: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/calc/t.py and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/calc/m.py
 
+## dispmkt:check3 (run `wf_a429c611-ea2`)
+
+- **Name:** Youritech ET070WU10-TT / ET070WU15-TT, 7.02in 1200x1920 MIPI, 1500 cd/m2 typ., CTP optional (HDMI board only "by quote")
+- **Exists and orderable:** ні
+- **Confirmed specs:** Two Youritech product pages exist with the same specs. ET070WU10-TT (page slug 7-02-inch-...-1500nits-lcd-module) and ET070WU15-TT (its page sits under a wrong 4-inch ILI9806E slug) both list: 7" 1200x1920, "Panel Interface: MIPI" (lane count not stated), Transmissive, outline 114.04x178.25 mm (with touch), active area 94.5x151.2 mm, viewing angle 85/85/85/85, "Brightness (cd/m2): 1500(Typ.)", operation -20~70 C / storage -30~80 C, "Touch: yes". On the ET070WU10-TT page, the reference table has a 1200x1920 row: HX8279 driver, bare LCM 105.18x163.34x3.65 mm, the same 94.5x151.2 mm active area, "MIPI 4 LANE", reference brightness 1600, no CTP. That is probably the bare glass under the TT part, but the page does not tie the row to the TT part. The page also has generic marketing copy ("Brightness from 0-3000", "100% NTSC", "Touch Screens are Available and Optional", "Driver board/adapter board ... DEMO board, H-DMI board", "H-DMI display solution"). These are not specs of this part. Calculated: diagonal 7.02", 322.5 PPI. 1200x1920 (WUXGA) has 11% more pixels than FHD. The only purchase action is "Get a quote". Vendor: Youritech, Dalang, Longhua, Shenzhen.
+- **Refuted or doubtful:**
+  - The candidate's second source URL (...1500nits-ips-1200x1920-mipi-tft-lcd-display-2.html) is a different part: ET070WU18-OT, 'Touch: no', -10~60 C, 80/80/80/80, outline 113.89x176.6 mm. It does not support the touch claim.
+  - The quoted 'ET070WU15-TT reference line ... CTP' is not in the page's reference table. The table's 7in 1200x1920 HX8279 row says 1600 nits, 105.18x163.34 mm, no CTP. The ET070WU15-TT specs are on its own (wrongly slugged) product page.
+  - Brightness: '1500(Typ.)' is a vendor spec-table value on the product page. No datasheet, no minimum value and no independent measurement. Youritech's own figures disagree: the reference table says 1600 for the bare LCM, and sister parts with the same active area (ET070WU01-TT 1300 typ., ET070WU12-O 1500 typ., no touch) differ.
+  - 'Customizable 0-3000 nits' is generic marketing copy, not a spec for this part.
+  - Touch: the controller IC, the interface (I2C vs USB) and VID:PID are all unstated. No Youritech page shows a 7in 1200x1920 HDMI kit. The only Youritech HDMI kit that documents touch is a 4in 720x720 one ('USB touch', FT6336U), which suggests USB touch is possible but proves nothing for this part.
+  - The HDMI board is not a product. There is no chip, EDID, input timing, power input or price. Youritech's 4in kit describes its board as 'HDMI1.4 to Dual-port MIPI DSI/CSI/LVDS with Audio', which looks like a Lontium LT6911C-class bridge (my inference, not stated).
+  - Not orderable now: quote only, no price, MOQ or lead time, and no Alibaba/AliExpress listing found.
+  - No datasheet, power figure, contrast ratio, surface treatment or optical-bonding statement.
+  - No community reports found for Youritech parts.
+  - The candidate's 'clean at 51.3-51.8 Hz (128-129 MHz)' only holds for ~1280x1950 totals. With an HX8279-7in-style native timing (1340x1946 totals), 51.5 Hz = 134.3 MHz, whose 17th harmonic is 2283 MHz (in band), and 52 Hz = 135.6 MHz, which is 1.4 MHz from 137 MHz (calculated).
+- **Touch reaches host as usb hid:** unknown
+- **Q6a mode line and link check:** The Youritech panel's own timing is unpublished. As a proxy I used the mainline Linux panel-himax-hx8279 driver's timing for the Startek KD070FHFID078, a 7in 1200x1920 HX8279 panel of 95x151 mm: 156.458 MHz, H 1200/1250/1274/1340, V 1920/1934/1936/1946, 60.0 Hz. As a modeline: 156.458 1200 1250 1274 1340 1920 1934 1936 1946. Checks (calculated):
+  (a) Width 1200 px is under the sc7280 DPU 2400-px max_linewidth, so no virtual planes are needed. Landscape use needs compositor rotation.
+  (b) V blanking is VFP 14 + VSW 2 + VBP 10 = 26 lines. That passes the 24-line rule, with little margin.
+  (c) Link: 156.458 MHz x 24 bpp = 3.755 Gbit/s, which is 43% of 2-lane HBR2 (8.64) and also fits 2-lane HBR (4.32), but not RBR (2.59). The pixel clock is far below the 268.5/330 MHz ceilings.
+  (d) Generic CVT timings: CVT-RB v1 1200x1920@60 = 1360x1975, 161.00 MHz. CVT-RB v2 = 1280x1975, 151.68 MHz. Both pass the link and blanking rules but are RF-bad (see RF check).
+  The real constraint is the HDMI-to-MIPI board's EDID/firmware. It must present a mode the panel accepts, and the panel's legal porch and pixel-clock range is unknown. Direct MIPI-DSI to the Q6A is unproven: mainline has an HX8279 driver, but the init sequence for this glass is unknown.
+- **Power and thermal:** No power, backlight or supply figures are published. Estimates (calculated, not vendor data): backlight about 4-5 W at 1500 nits for 7" (a 7" panel at ~450 nits is typically ~1-1.3 W), LCD and driver IC 0.3-0.5 W, and an HDMI-to-MIPI bridge board plus USB-touch MCU 0.5-1 W. Total about 5-7 W, roughly 0.45-0.6 A from the 12 V rail through the separate buck. The Q6A's 500 mA USB-A ports cannot power it. Board input voltage is unknown.
+  Sun load: about 20 W of sunlight falls on the 114x178 mm face at 1000 W/m2 (calculated), on top of the backlight heat. Rated operation tops out at 70 C, and the LC clearing point is not stated. In a Ukrainian summer the panel can approach that limit, so plan a metal backplate heat path, PWM/auto-dimming and thermal derating.
+- **Rf harmonics check:** Pixel-clock harmonics against 137-138, 144-146, 435-438, 739-750, 1690-1710 and 2200-2300 MHz (calculated):
+  - HX8279-7in native-style 156.458 MHz @60: no harmonic in any band. Nearest is 14x = 2190.4 MHz (9.6 MHz below 2200); others are 11x = 1721 and 15x = 2347. GOOD.
+  - CVT-RB v1 161.00 MHz: 14x = 2254.0 (in band). BAD.
+  - CVT-RB v2 151.68 MHz: 15x = 2275.2 (in band). BAD.
+  - Candidate's 149.8 MHz: 5x = 749.0 (QO-100 IF) and 15x = 2247. BAD.
+  - With 1340x1946 totals, the windows with at least 3 MHz margin to all bands are 59.75-60.15 Hz (155.8-156.85 MHz) and 49.10-49.55 Hz (128.0-129.2 MHz). 51.5 Hz (134.3 MHz) hits 2283 MHz, and 52 Hz (135.6 MHz) sits 1.4 MHz from 137.
+  - Bridge-side DSI, if 4 lanes at 6x pclk (938.8 Mbit/s, 469.4 MHz clock at 60 Hz): odd harmonics 1408 and 2347 MHz are clean. The bridge's real DSI lane rate is unknown and must be asked; at a 151.68 MHz pclk the DSI clock's 5th harmonic would be 2275 MHz.
+- **Sunlight readability estimate:** Estimate (calculated, assuming 1500 cd/m2, CR 1000:1). Unbonded panel with an air-gap CTP and anti-glare polarizer, about 2% diffuse reflectance: ambient contrast about 3.4 at 100 klx (sun on the screen) and 5.7 at 50 klx. The air gap also adds about 8% specular reflection, so a 6000 cd/m2 sky adds about 480 cd/m2 of glare unless the screen is tilted. If Youritech optically bonds the CTP with an AR cover (about 1% diffuse), contrast rises to about 5.7 at 100 klx and 10 at 50 klx. Verdict: readable but marginal in full direct sun unless it is bonded with AR/AG. Bonding is not stated on any page.
+- **Real price and shipping to ukraine:** Unknown. Every ET070WU page offers only 'Get a quote', and no Alibaba or AliExpress listing or Ukrainian seller was found. Shipping must be quoted by Youritech (express from Shenzhen). Budget for Ukrainian import VAT and duty if the parcel is over the current duty-free threshold.
+- **Keep:** ні
+- **Reason:** The panel and part numbers exist, and the technical fit looks good on paper. Portrait 1200 px avoids the DPU 2400-px limit. A native-style 156.46 MHz @60 mode uses 43% of 2-lane HBR2, has 26 lines of V blank, and is RF-clean, while generic CVT-RB EDIDs land at 2254 or 2275 MHz. But it fails the 'orderable and verifiable' test. The brightness comes only from a vendor spec table, with conflicting 1300/1500/1600 figures across sister parts. There is no datasheet or power data. Touch is 'optional' with no controller, interface or USB-HID evidence. The HDMI board exists only as a generic 'H-DMI board' offer, with no chip, EDID, power or price. The second source URL is a non-touch part. Quote only, with no community reports. I'd park it as an RFQ-only backup and revive it only if Youritech returns a datasheet, a concrete HDMI board with USB-HID touch (VID:PID) and an EDID dump, plus a price.
+- **Sources:**
+  - https://www.youritech.com/products/7-02-inch-tft-lcd-display-1200x1920-mipi-high-brightness-1500nits-lcd-module.html
+  - https://www.youritech.com/products/4-inch-ips-lcd-display-paypal-mipi-interface-ili9806e-driver-ic-with-back-light-for-3d-printing-ar-vr-application.html
+  - https://www.youritech.com/products/7-inch-high-brightness-display-1500nits-ips-1200x1920-mipi-tft-lcd-display-2.html
+  - https://www.youritech.com/products/7-inch-high-brightness-display-1500nits-ips-1200x1920-mipi-tft-lcd-display.html
+  - https://www.youritech.com/products/7-inch-high-brightness-display-1300nits-ips-1200x1920-mipi-tft-lcd-display.html
+  - https://www.youritech.com/products/5-2-7-inch-displays/
+  - https://www.youritech.com/products/4-inch-720x720-tft-lcd-display-mipi-dsi-lcd-module-with-hdmi-driver-board.html
+  - https://www.youritech.com/products/hdmi-raspberry-solutions/
+  - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/panel/panel-himax-hx8279.c
+  - https://unisystem.com/product/displays-lcd-tft/wf70c6tyab5mnn0-winstar-7-1200x1920-lcd-tft-display
+- **Questions for seller:**
+  - Which exact part, ET070WU10-TT or ET070WU15-TT, and what is the difference? Please send the full datasheet: panel OEM, glass part number, driver IC (HX8279?), DSI lanes, timing table with min/typ/max pixel clock, porches and refresh range.
+  - Is 1500 cd/m2 typical or minimum, and measured with or without the CTP? Please send a luminance test report and backlight specs: LED strings, Vf, If, LED driver, power at full brightness, PWM dimming range and frequency.
+  - Is the CTP optically bonded? Cover-glass thickness, AR/AG coating and reflectance? Can you bond it with an AR glass?
+  - Touch controller IC (GT911/FT5x?) and interface. Can the HDMI board give native USB HID multitouch (Windows/Linux hid-multitouch, no driver)? Please send the USB VID:PID and the lsusb -v / HID descriptor.
+  - Which bridge chip is on the HDMI board (LT6911C?), with which firmware? Please send the EDID dump. Can you program a custom EDID: 1200x1920, 156.458 MHz, H 1200/1250/1274/1340, V 1920/1934/1936/1946 (VBP+VSW+VFP 24 lines or more), and optionally ~49.3 Hz / 128.5 MHz? Do you accept portrait-native 1200x1920 HDMI input without scaling?
+  - What DSI lane rate does the bridge use for this panel (fixed or derived from pclk)?
+  - HDMI board input voltage and current (5 V or 12 V), total power at full brightness, connector type, and board size?
+  - Clearing point and max operating temperature under sun load. Is there a thermal or metal-frame recommendation?
+  - Price for 1-2 samples (panel + CTP + HDMI board + cables), lead time, and an express quote to Ukraine (DDP if possible).
+
