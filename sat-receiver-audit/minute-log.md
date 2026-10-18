@@ -54,3 +54,9 @@
 - КХ і меню: агент перевіряє форк SDR++ «brown» (sdrpp-brown.san.systems) і образи uConsole AIO (SDR + GPS + LoRa) як готові прикладі меню-запускачів. Джерело: github (SDRPlusPlus fork), sdrpp-brown.san.systems.
 - Радіолабораторія: soapy_power (MIT) виводить спектр у форматі rtl_power та інших, працює з RTL-SDR, Airspy, SDRplay, HackRF, bladeRF, USRP, LimeSDR. Джерело: github.com/xmikos/soapy_power.
 
+## 2026-10-18 02:11 UTC
+
+- Малі антени («стек»): маса після змін — 3S: 930–1134 г, 4S: 976–1194 г; економія 672–716 г проти 1602–1849 г раніше (розрахунок агента).
+- Радіолабораторія: ДВ-сигнали часу — модуль CANADUINO 60 кГц (WWVB/MSF/JJY60, є варіант DCF77); фільтровані підсилювачі Uputronics для AIS 162, радіозондів 403 і ADS-B 1090 МГц; КХ-режими публічних служб: WEFAX і NAVTEX (SITOR-B). Джерела: universal-solder.com, store.uputronics.com.
+- КХ і меню: у SDRangel є issue #2741 про помилку збирання на Raspberry Pi 5 (Debian trixie) — збирання на ARM64 можливе, але з проблемами; перевірити на Q6A. Джерело: github.com/f4exb/sdrangel/issues/2741.
+
