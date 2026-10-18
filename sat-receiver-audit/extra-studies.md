@@ -19115,6 +19115,23 @@ The 172 mm helix length is my own arithmetic (4 turns × 43 mm pitch) and is lab
   idx 8: в 11.3 #44 DSC тепер можливий лише з лабораторним патчем demoddsc, який відкидає формати 120/123/114. Без патча demoddsc не збирається.
   idx 9: в 11.6 #34 APRS/AX.25 тепер іде не через OpenWebRX+ (режиму packet в modes.py немає, direwolf заборонено), а через demodpacket SDRangel, лише APRS.
 
+## fix:C1:b1 (run `wf_54a5171c-9f1`)
+
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+- **Rejected:** []
+- **Totals changed:** idx 0, the full fix: the Tools line in 3.1 now has a low end of 363.17. That is the row's own item sum, 334.54 + Jokari 20050 28.63, instead of G5's rounded "about 335". Every low bound it feeds drops by 0.46; upper bounds stay the same. Bench core: 1,638.02 → 1,637.56; with Passion Radio/Astroradio 1,680.69 → 1,680.23; without VAT 1,565.19 → 1,564.73; before Jokari 1,609.39 → 1,608.93; change from v1 +163.44 → +162.98 (+206.11 → +205.65 with the reserved sellers). Core+extended: 2,220.25 → 2,219.79 (+247.95 → +247.49). Device + both antenna tiers + bench: 4,976.49 → 4,976.03 with Lime, 4,370.03 → 4,369.57 without Lime. Everything except optional: 5,558.72 → 5,558.26 (rounded ≈5,559 → ≈5,558); without Lime 4,952.26 → 4,951.80; same composition as v1 4,854.85 → 4,854.39 (+596.46 → +596.00); same-composition bench 4,272.62 → 4,272.16 (+511.95 → +511.49). EU lower landed estimates: 5,066.58 → 5,066.12 (≈5,067 → ≈5,066) and 5,648.81 → 5,648.35 (≈5,649 → ≈5,648). These were updated in 1.1 C24, 2.12 (bench row, summary table, landed row, same-composition paragraph, EU landed paragraph), 3.1 (Tools row, core subtotal, lab budget), 3.6 (core, core+extended, combined, landed rows and the no-VAT bullet), 11.1 row 62 and 11.7 (lab row, everything-except-optional row, landed sentence). Section 9 has no bench totals, so it did not change.
+- **Summary uk:** Виправлено всі п'ять проблем (idx 0-4) у /home/user/lizbeth307/sat-receiver-audit/STACK.md.
+  idx 0: нижня межа «Інструментів» — 363.17 (сума позицій рядка 334.54 + Jokari 28.63). Нижні межі стенду і похідних сум у 1.1 C24, 2.12, 3.1, 3.6, 11.1 і 11.7 знижено на $0.46. Через це «усе, крім опційного» тепер ≈5,558, а оцінки з доставкою в ЄС — ≥≈5,066 і ≥≈5,648.
+  idx 1: у 11.3 №46 записано, що limesdrng_sdr_support не збирається: LIMESDR вимкнено, Lime відкриває лише labrx, а CI grep падає, якщо цей код потрапить у збірку.
+  idx 2: у 11.1 №75 плагін airspy SatDump (PR #1172) прибрано, драйвер — libairspy0. До рядка labrx у 5.4 додано libairspy, лише якщо Airspy Mini куплено. soapysdr0.8-module-airspy не потрібен, бо CI-перевірка Soapy-модулів у 5.4 його не допускає.
+  idx 3: у C5 відкривачем названо labrx, бо SatDump SDR не відкриває (C7).
+  idx 4: у 11.6 №1 лишився тільки європейський список із п'яти JSON; CubeSat і МКС ідуть через gr-satellites, дубль списку видалено. Посилання в тексті — на 1.1 C7 і 1.2 #30, а не на «D1»: у STACK D1 означає відсічки батареї.
+
 ## fix:B:b1 (run `wf_588afa12-702`)
 
 - **Applied:**
@@ -27440,6 +27457,18 @@ I wrote all four files for the "block+rf" group. Both SVGs pass the XML check yo
   Калібр тракту батареї: 18 AWG — це мій вибір у межах 18-20 AWG із повторного аудиту D, у файлах його немає. Обґрунтування: запобіжник 7.5 A, а сервісний дріт XT30 уже 18 AWG. Через це Jokari 20050 (+$28.63) перейшов з опцій у набір інструментів, і підсумки лабораторії та зведень у 2.12, 3.6 і 11.7 зросли на $28.63.
   Проблеми 53, 54, 58, 59, 63 і 64 уже виправили попередні пакети.
   Поза моїм пакетом (не змінював): у 11.1 рядок 75 досі згадує «плагін airspy SatDump з виправленням PR #1172», а це суперечить D1.
+
+## fix:D1:b1 (run `wf_852c45d5-ef0`)
+
+- **Applied:**
+  - 0
+  - 1
+  - 2
+- **Rejected:** []
+- **Totals changed:** none (no price changed; 2.x, 2.12, 3.6, 9 and 11.7 untouched)
+- **Summary uk:** idx 0: у 2.3 (рядок HMC7992) правило DC-блоків тепер збігається з 5.3 і 2.7 за G3: 1 nF GRM1555C1H102JA01D на всіх виводах RTL-A, включно з RFC-A; 100 pF GRM1555C1H101JA01D на всіх виводах RTL-B, включно з RFC-B (старе «1 nF на RFC-B» з G1 позначено як замінене); правило 10 nF лишилося тим самим. Поясненню G3 (100 pF резонує близько 740 MHz, тобто на ПЧ) даташит не суперечить.
+  idx 1: у 5.1 RTL-B прибрано з навантажень VCC_5V_PERI і записано шлях VBUS RTL-B: LAB5 → TPS2553DBVR-1 (EN GPA3) → розділений дріт (D13, 5.2). Синій порт описано так: T7 у збірці з Lime, RTL-A у збірці без Lime. До навантажень LAB5 додано RTL-A на H2 через ключ GPA2. Оцінки 11.8 W і 4-5 W позначено як модель із запасом, бо в них ще рахувався RTL-B; ворота 14 W визначає вимір.
+  idx 2: формулювання «призначити на схемі» для MCP23017 #4 прибрано з 1.1 (C6, D13), 11.1 і 11.6 #32. Тепер там адреса 0x23 (A2 на GND, A1/A0 на 3V3_Q6A) і лінії за 5.2: GPA0 EN LIME3V3, GPA1 RESET LC76G, GPB0-2 FAULT ключів VBUS RTL-B/HF+/RTL-A, GPB3 FLT LIME3V3, INT спільно з MCP #3 на пін 5. У 9.1 (крок 6) старого формулювання не було, тож туди лише додано адреси; GPA1 і 0x23 додано також в 11.5 #28. Ціни й підсумки не змінювалися.
 
 ## edit:02c_bom_display_power_gnss:b1 (run `wf_85b20a83-f63`)
 
