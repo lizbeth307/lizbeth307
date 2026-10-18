@@ -27,6 +27,7 @@
 | [Software](components/software.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_e49d4f53-8d4` |
 | [Software stack](components/software_stack.md) | ✅ research · forums · fixes · verify | `—` |
 | [Storage](components/storage.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_3e735695-e00` |
+| [Targets link budgets](components/targets_link_budgets.md) | ✅ research · forums · fixes · verify | `—` |
 | [Wideband sdr](components/wideband_sdr.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_e64436d6-ae7` |
 
 Етапи: research — дослідження; forums — відгуки з форумів; fixes — власні виправлення (лише якщо на форумах не знайшлося рішення); verify — адверсаріальна перевірка.
