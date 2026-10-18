@@ -10,6 +10,7 @@
 
 | Компонент | Етапи (✅ готово, ⏳ працює) | Поточний run |
 |---|---|---|
+| [2 mm al mid plate copper clad fr4 rf bay](components/2_mm_al_mid_plate_copper_clad_fr4_rf_bay.md) | · research · forums · fixes ✅ verify | `—` |
 | [Adafruit bno085 4754 rp2040 zero metal p](components/adafruit_bno085_4754_rp2040_zero_metal_p.md) | · research · forums · fixes ✅ verify | `—` |
 | [Adafruit ch334f mtt hub 5997](components/adafruit_ch334f_mtt_hub_5997.md) | · research · forums · fixes ✅ verify | `—` |
 | [Adafruit mcp23017 5346 0x20 outputs 0x22](components/adafruit_mcp23017_5346_0x20_outputs_0x22.md) | · research · forums · fixes ✅ verify | `—` |
@@ -18,6 +19,7 @@
 | [Antennas](components/antennas.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_6b9836f8-796` |
 | [Antennas foldable](components/antennas_foldable.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Antennas patch chip](components/antennas_patch_chip.md) | ✅ research · forums · fixes ✅ verify | `—` |
+| [Asa 1 kg cnc kitchen m3 inserts and scre](components/asa_1_kg_cnc_kitchen_m3_inserts_and_scre.md) | · research · forums · fixes ✅ verify | `—` |
 | [Bourns pec11r 4215f s0024 x3 c k ksc641j](components/bourns_pec11r_4215f_s0024_x3_c_k_ksc641j.md) | · research · forums · fixes ✅ verify | `—` |
 | [Cable bulkhead set 7 sma 1 f bulkheads r](components/cable_bulkhead_set_7_sma_1_f_bulkheads_r.md) | · research · forums · fixes ✅ verify | `—` |
 | [Compute](components/compute.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_88090a59-878` |
