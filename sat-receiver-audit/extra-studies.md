@@ -72323,6 +72323,94 @@ Files 02, 03, 04, 08, 09 and 10 still show these as TBD or with old values:
 
 Edited file: /home/user/lizbeth307/sat-receiver-audit/STACK.md
 
+## openq:8.1-8.2 (run `wf_e7454e89-9a0`)
+
+I worked through the open items in 8.1, 8.2 and sections 2, 3, 5 and 9. All edits are small and made in place in `/home/user/lizbeth307/sat-receiver-audit/STACK.md`. No row price, group subtotal or core total changed. Two re-priced sums still round to the old row values:
+- **Weather protection row:** the foam re-price moves the sum to ≈115.9-168.1, which still rounds to the row's 116-168.
+- **HF+ shield row:** the damper is now priced, and the row range and totals stay as they were.
+
+No hard rule is broken: all new tests are conducted-only or receive-only.
+
+The parallel agent had already copied the MCP #4 assignment into 1.1, 1.2 and 11. It also added GPB3 (FLT of the LIME3V3 eFuse) to 5.2, and I aligned the 2.6 BOM row and the 8.2 row to it. No «призначити на схемі» marker is left anywhere in the file. The QO-100 POTY item in 2.11 had already been resolved by the other agent, so I left it alone.
+
+**Resolved from data or web**
+1. **MCP23017 #4 address and lines (2.6, 2.8, 5.2, 8.2):** resolved from the 5.2 I2C2 address map; no web source.
+   - Address 0x23 (A2 to GND, A1/A0 to 3V3_Q6A) is free; 0x24-0x27 are also free.
+   - Lines: GPA0 = EN LIME3V3, GPA1 = RESET LC76G (through 2N7002).
+   - GPB0/GPB1/GPB2 = FAULT of the RTL-B / HF+ / RTL-A VBUS switches. These had no line on MCP #3, which is full. GPB3 = FLT of LIME3V3.
+   - INT is shared with MCP #3 on pin 5. The RTL-B FAULT in the USB map now points to MCP #4 GPB0.
+   - The 8.2 gate now asks for an i2cdetect check with no address collisions and a FAULT latch test on every GPB line.
+2. **Würth 74271140 (2.6):** confirmed at $3.91 (DigiKey 732-74271140-ND). DigiKey shows no stock for it, but substitute 74271140S has 541 in stock.
+3. **Fair-Rite 5977003801 at DigiKey DE (2.3):** confirmed at EUR 9.46 without VAT / EUR 11.26 with VAT (1934-1130-ND, 417 in stock).
+4. **Würth 74271112 (2.10):** $4.38 each, so $8.76 for two at DigiKey US. The old figure was about $8.30 from Mouser.
+5. **Fair-Rite 0431164281 (8.2):** confirmed as 1934-1464-ND at $2.85, 103,515 in stock.
+6. **D36V50F5 (5.1):** BerryBase POL4091 EUR 34.95 with VAT ($39.29), 16 in stock. Pololu $39.95, listed as "Rationed".
+7. **YAT-0A+ (9.1):** DigiKey DE EUR 3.93 / EUR 4.68 with VAT, 39,097 in stock.
+8. **TinyTronics shipping (2.1):** ships to all 26 other EU countries, EUR 7.29-25.54 without VAT depending on country (tinytronics.nl delivery-information page). VAT for buyers outside NL is still a checkout check.
+9. **Reichelt shipping (2.1, 9.1):** per-country rates up to 10 kg, VAT included: AT/NL/BE EUR 6.95, FR/PL 7.90, IT/ES/IE/DK 9.95, PT 12.95, SE/FI 14.95 (reichelt.com/<country>/de/versandkosten).
+10. **Balun One Nine v2 (2.5, 3.3):** SKU is Nooelec 100806, UPC 0616469146502 (nooelec.com). This replaces the guessed "WB9-1". Status is now verified for the balun, model for the rest of the kit.
+11. **Mast (2.5, 8.2):**
+    - Kärkkäinen delivers only to FI and SE, from EUR 4.95. For other EU countries the fallback is Barrabes ES at EUR 44.60 without tax.
+    - The Forclaz guy rope is 100% polyamide (Decathlon CY 8527882). Added an arrival test: DMM shows OL on 1 m of dry cord.
+12. **FM band-stop (2.2):** $16.95 confirmed on rtl-sdr.com/store. EU buyers go through the official AliExpress/eBay stores; the EU price is still a model.
+13. **Uputronics MAX-M10S 3V (2.8):** EU storefront EUR 29.95 without VAT ($33.67). UK storefront GBP 28.79, which includes 20% UK VAT.
+14. **Lime cables and gate questions (2.11, 8.1 L-12):**
+    - Crowd Supply charges international shipping as a flat fee per product, so the $20.82 / $23.64 saving figures stand.
+    - From myriadrf M.2 v1.2: RX connectors are X2 and X4 (X3 was removed in v1.1), and the VCTCXO is the Rakon E6245LF (the "E7355LF" in one table caption is a document error).
+    - There are three board versions; the v1.2 default boot source is EEPROM; there is no industrial-temperature variant.
+    - Still open for an email to Lime / ADT-Link: which revision ships, whether IC21 is fitted on Basic, and the R44SF variant.
+15. **Weather protection, SMA caps (2.9, 5.8, 8.2):** TME lists a chain for GCT RFCT-SMA-CAP-GS-1, but DigiKey lists the chain only for GS-3. New condition: confirm the GS-1 chain before ordering, otherwise buy 11× GS-3 (about +EUR 8.97 without VAT).
+16. **Weather protection, foam (2.9):** Qualtek 09150-M/30 is $1.50 each, 3× = $4.50 (DigiKey). This is the re-price noted at the top.
+17. **Weather protection, Gainta and Molykote (8.2):**
+    - Gainta's page gives no inner dimensions and no UV stabilisation, so the fit and UV checks stay.
+    - The DuPont Molykote 4 page says it is compatible with rubber and plastic O-rings but has no silicone data. The rule is now permanent: never use it on the silicone valve O-rings.
+18. **HF+ damper (2.3, 3.3):** priced as Panasonic EEU-FR1C221 plus Yageo RC1206FR-071RL = $0.61 (DigiKey). This is $0.01 above the model's upper bound, so the row range and totals are unchanged.
+19. **FNB58 and DPS-150 (3.1, 3.2, 8.2):** both are in fnirsi.com's "In stock at EU warehouse" collection, at EUR 52.05 and EUR 55.68 (fnirsi.com product JSON). The pages carry no "tax included" label, so VAT stays a cart check.
+20. **Anker 737 and 240 W cable (3.1):**
+    - billiger.de rechecked: from EUR 82.99 with VAT, 14 offers. Status is now "модель", because the MediaMarkt and Saturn pages return 403.
+    - 240 W EPR cable modelled at about $22.47: Belkin CAB015bt1MBK, EUR 19.99, currently out of stock.
+21. **Hub power lead (3.1):** goobay 55157 from BerryBase, EUR 0.71 = $0.80. The jack size is unpublished, so an arrival fit check was added, plus VBUS ≥4.75 V under load.
+22. **TSA locks (3.2, 9.1):** concrete candidate is the Burg-Wächter TSA 74 30 SB with a 4 mm shackle (toom.de). The price comes only from search snippets (EUR 8.47-14.12), so it stays unverified.
+23. **Bench items, smaller fixes:**
+    - Spudger: iFixit IF145-002-4, EUR 3.95.
+    - ZFL-500+ at DigiKey AT: rechecked, 0 in stock, 10 expected 24 Nov 2026.
+    - Moonraker: listed as "DISCONTINUED" (search snapshot).
+    - LBE-1420 exchange rate: ECB 16 Oct 2026 is 1.1253, a +$0.21 difference; totals kept.
+24. **Flamingo+ second unit (2.11):** Passion Radio NOO-100813 confirmed at EUR 33.90 with VAT / EUR 28.25 without, 8 in stock.
+25. **Sled v2 (8.2):**
+    - Hammond 1590B: EUR 10.22 without VAT / EUR 12.16 with VAT.
+    - TPS2553 is in stock.
+    - D36V6F6: quiescent current ≤0.1 mA, fixed 2.1 MHz switching. Efficiency is only published as a graph, so test (6) still decides it.
+26. **Bring-up conditions (8.1):** TPS259630DDAR is in stock at DigiKey DE: 487 pieces, EUR 0.94, 12-week factory lead time.
+27. **Authenticity rule (9.1), a correction:** TI's distributor list names Arrow, DigiKey and Mouser only. Farnell, TME and LCSC are not authorized for TI parts, and the text now says so.
+28. **LC76G time to first fix (5.8):** Quectel spec V1.1 gives 28 s cold / 25 s warm / 1 s hot without AGNSS. Added a test: 10 cold starts, all must reach 3D fix in ≤60 s.
+29. **microSD IDs (8.2):** manfid 0x1b / oemid 0x534d confirmed as Samsung IDs. ProGrade shares them and CID can be rewritten, so this is a necessary check only, not proof.
+30. **Optional GPU (5.4):** RTX 3060 12 GB is now a model price, EUR 333.64-434.61 (June-August 2026 sources).
+31. **Peak Design Leash (2.9):** $49.95 verified. The EU price and the 90 kg anchor rating come only from retailer snippets, so the 3x pull test stays the gate.
+
+**Decided by rules**
+32. **The two "Питання до вас" in 8.2 (fan, fiberglass mast):** settled by the P5 rule that an analog must not be worse. Noctua and the aluminium Robens stay; the cheaper options only come back if you ask.
+
+**Bench tests and gates**
+33. **Airspy Mini USB current (8.2 (d)):** pass if 1.5× the measured current is ≤ 685 mA, i.e. current ≤456 mA on the LAB port; on the blue port the J5 sum must stay below 1.5 A.
+34. The bench tests added with items 11, 21 and 28 are listed there.
+
+**Left as checkout or vendor checks (sites blocked or the answer depends on your country)**
+- V4L marketplace prices in the EU.
+- Nooelec duty rate above EUR 150 and the courier fee.
+- Uputronics shipping cost and time; L-band patch shipping.
+- NKON shipping (403).
+- IP2368 and AN8009 prices (AliExpress captcha).
+- JLCPCB ENIG / 2 oz surcharge.
+- TME single-piece prices and BerryBase shipping for the IMU pack.
+- RS PRO nut (403); Lindy EU price.
+- 4D OSD board (price on request); Eleshop LiteVNA (403).
+- TOJOIN wrench (search snapshot still $35.89) and the 8 mm wrench.
+- ISDT and Rollei VAT for countries outside DE/AT; AstroRadio VAT basis.
+- Deuter SKU 3400321 (Bergfreunde 404); SAWbird+ iO EU dealers.
+
+Sources used: DigiKey US/DE/AT, BerryBase, Pololu, Crowd Supply guide and listing, myriadrf M.2 v1.2 reference, tinytronics.nl, reichelt versandkosten pages, nooelec.com, karkkainen.com, barrabespro.com, decathlon.com.cy, rtl-sdr.com/store, store.uputronics.com, fnirsi.com, billiger.de, belkin.com, toom.de, ifixit.com, passion-radio.com, DuPont Molykote 4 page, gainta.com, TME, ti.com/distributors, the Quectel LC76G spec PDF and the ECB eurofxref feed.
+
 ## write:tests+bom (run `wf_fa12e9b4-a87`)
 
 I wrote the three "tests+bom" files to `/home/user/lizbeth307/sat-receiver-audit/build/`, all in Ukrainian. The CSV passes the csv.reader check (146 rows, 16 columns each). A script that sums the CSV rows reproduces every group and tier subtotal in STACK.md §2.12 and §3.6 to the cent. Both .md files have consistent table column counts. There are no SVGs in this group.
