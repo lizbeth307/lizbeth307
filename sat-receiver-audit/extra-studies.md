@@ -33299,6 +33299,107 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
       - https://slickdeals.net/f/19280394-apache-3800-weatherproof-protective-case-large-black-harbor-freight-members-only-price-24-99
 - **Notes:** RECOMMENDATION (angle A): replace the Pelican/Peli 1450 with dividers (EU about EUR 209 with foam, about EUR 300 with genuine dividers) by the B&W outdoor.case Type 4000 RPD at about EUR 113 incl. VAT (about $110 ex VAT). That saves about EUR 100-190 and includes the padded dividers. On every load-bearing spec it is equal or better: larger interior (385 x 265 x 165 vs 374 x 260 x 154 mm), IP67, automatic valve, DEF STAN 81-41 / STANAG 4280 / ATA 300 / MIL-STD-810G report, about 2.3 kg, padded dividers included, long warranty. Disclosed downgrades, which I judge not load-bearing for a bench kit (the contents' own limits are tighter): temperature range -30 to +80 C vs -40 to +98.9 C, and a 7 mm vs 7.9 mm padlock eyelet. Unverified: hinge-pin material, the lid/base split (measure base depth of at least 111 mm on arrival, and return within 14 days if smaller), the 30-year warranty (US-distributor claim), and the 2.25-2.95 kg weight conflict. If the orchestrator treats temperature range as a hard spec, no candidate passes and the Peli 1450 stays. The runner-up, MAX380H160 + INT380H160CAM (about EUR 155, prices unverified), has nylon hinge pins. Explorer 3818 is rejected (manual valve). Nanuk 920 is rejected (not cheaper, base 104 mm). B&W Type 3000 is rejected (too small). Apache 3800 should be removed from the EU stack (US in-store only, IP65). STACK corrections: the Peli 1450 interior per the Peli EU datasheet (05-09-25) is 37.4 x 26.0 x 15.4 cm, 15 L (not 37.1 x 25.8 x 15.2 / 14.5 L), 2.5 kg empty / 2.9 kg with foam. The EU current price is about EUR 209+ incl. VAT, not $106-169. Method limits: RS, Sonovente, Adorama, Wex and Pelican pages returned 403, so those prices are search snippets only. USD conversions assume about 1.16 USD/EUR; that rate is not verified for October 2026. The case is passive, so none of the hard rules (receive-only, conducted sources, no loops) apply. The D14 travel rules still apply: Li-ion items go in the cabin, not in a checked case.
 
+## searchB:pelican_1450_apache_3800_case_with_divid (run `wf_c3ba734e-52b`)
+
+- **Part:** Bench/lab hard case: Pelican (EU: Peli) 1450 with padded dividers (1454 config) or 1450 + soft pouches; Apache 3800 budget alternative. Tier extended, group Lab extended, qty 1.
+- **Current price usd:** STACK: $30-169 (unverified). reaudit_D correction: Pelican 1450 with foam $169.95 (Glazer's, US, ex-tax), and the Apache 3800 is dropped (Harbor Freight $39.99, in-store only, US only, IP65). EU new, with foam: Peli 1450 EUR 213 incl. VAT at Thomann.gr (Greek 24% VAT), which is $239.69, and EUR 203.98 at military.eu, which is $229.54 (VAT status not stated). The EU price of the 1454 (padded dividers) and of the 1455 divider set was not found: peli.com EU gives no prices. FX: ECB 16 Oct 2026, 1 EUR = 1.1253 USD.
+- **Critical specs:**
+  - Interior at least 37.4 x 26 x 15.4 cm and 15.0 L (Peli 1450EU datasheet; lid 4.4 cm, base 11.1 cm). Contents are about 8.8 L (59%) in a left/centre/right layout, and the ESD-mat fold test is defined against this interior. Length and width bind more than volume.
+  - Interior organisation: padded hook-and-loop dividers or soft pouches, not pick foam (radio_lab layout).
+  - Watertight IP67: 1 m for 30 min, O-ring lid seal.
+  - Automatic pressure-equalisation valve: the case may travel as checked air baggage (Peli: ABS body, 3 micron hydrophobic vent).
+  - Structural/impact proof: Peli 1450EU cites MIL C-4150J and Def Stan 81-41, crushproof, solid-wall PP. An analog needs equivalent certified tests (e.g. Def Stan 81-41, STANAG 4280, MIL-STD-810).
+  - Empty mass at most 2.5 kg (2.9 kg with foam). The bench kit is 8.2-9.1 kg in total, near checked-bag limits.
+  - Exterior about 40.9 x 33.1 x 17.5 cm or smaller (storage and checked bag). A soft limit.
+  - Hardware: double-throw latches, stainless pins, 2 padlock protectors (5/16 in hole), over-moulded handle.
+  - Temperature range -40 to +87.8 C (datasheet). Not binding in practice: the Li-ion contents have narrower limits.
+  - Guarantee: Peli lifetime guarantee on injection-moulded cases. It covers the body, not foam or contents, and is void if the case is altered or drilled.
+  - Authenticity: a genuine case from a traceable seller (knock-off Pelicans exist and carry no guarantee).
+  - Stack compatibility: passive item, so no interfaces, drivers or power rails are involved. It must hold the bench kit with no spare Li cells or power banks when checked (reaudit_D). No hard-rule impact.
+- **Candidates:**
+  1.
+    - **Name:** Used genuine Peli/Pelican 1450, no insert or with foam, private EU marketplaces (Marktplaats NL, eBay.de private), used with the stack's soft pouches
+    - **Kind:** used
+    - **Price usd:** $73.14-123.78 asking (EUR 65 no insert; EUR 99.90 'ex US Army', untested by seller; EUR 110 'foam unused'), plus shipping. These prices come from search-result snippets only: the eBay and Kleinanzeigen pages returned 403, so they are UNVERIFIED.
+    - **Spec comparison:** Identical moulding and model, so every spec is equal by identity: interior 37.4x26x15.4 cm / 15.0 L, IP67, automatic purge valve, MIL C-4150J and Def Stan 81-41 design, 2.5 kg empty, -40/+87.8 C, stainless hardware. The evidence is the Peli datasheet for the model, plus the buyer's own acceptance test (below). No generic 'equal by measurement' claim is needed.
+    - **Worse in:** Condition is unknown until arrival: O-ring wear, latch and hinge-pin wear, missing or damaged purge valve, drilled holes or rivets (common on ex-military units; this voids IP67 and the guarantee). Peli's EU guarantee section for injection-moulded cases does not restrict cover to the original purchaser, but it does not confirm second-hand cover either. Private sales have no EU 14-day withdrawal right. The EUR 65 unit has no dividers: it relies on soft pouches, which the stack allows ('padded dividers or soft pouches rather than pick foam'). UK listings (GBP 40-100) add import VAT and possibly duty after Brexit.
+    - **Compatibility:** Same part, so the layout, the ESD-mat fold test and the travel rules are unchanged. Acceptance test on arrival: (1) moulded Peli/Pelican logo and '1450' inside, origin mark (Made in USA or Germany); (2) no holes, cracks or rivets, both hinge pins present; (3) latches snap shut and purge valve fitted; (4) O-ring supple, not flattened (else fit a genuine 1453 replacement O-ring, price not verified); (5) dry paper towel inside, case weighted underwater for 30 min, towel must stay dry. Reject the unit if any check fails.
+    - **Risks:** Counterfeit Pelican-branded cases exist (Peli UK blog), so check the moulded markings. Ex-military cases may carry stencils or modifications. Prices are asking, not sold. Total may exceed the low end once shipping (NL to buyer) and an O-ring are added.
+    - **Seller url:** https://www.marktplaats.nl/q/peli+case/f/gebruikt/32/
+    - **Sources:**
+      - https://www.marktplaats.nl/q/peli+koffer/f/gebruikt/32/
+      - https://www.ebay.de/itm/197911489426
+      - https://www.peli.com/support/guarantee-of-excellence/?region=eu&language=en
+      - https://docs.rs-online.com/330f/A700000016088780.pdf
+      - https://peliproducts.co.uk/blogs/news/risks-buying-knock-off-peli-case
+  2.
+    - **Name:** Used genuine Peli 1450 from a dealer with warranty (eBay.de commercial seller graded 'Sehr Gut'; MPB used dealer, 12-month warranty, currently out of stock)
+    - **Kind:** used
+    - **Price usd:** $153.04 (EUR 136 eBay.de dealer listing 'Peli 1450 Cinema EOS System', from a search snippet, UNVERIFIED). MPB: no price, out of stock, alert available.
+    - **Spec comparison:** Identical product, so all specs are equal (see the datasheet values above). A dealer sale adds a grading, EU consumer rights (14-day return for distance sales) and, at MPB, a 12-month warranty.
+    - **Worse in:** Same condition and guarantee-transfer caveats as the private listing, though returnable. Barely cheaper than a new EU unit (EUR 203.98) and more expensive than the US new price ($169.95 before VAT and duty). The 'Cinema EOS' unit may have model-specific cut foam, which would need replacing with dividers or pouches (cost not verified).
+    - **Compatibility:** Same part. Run the same arrival acceptance test inside the return window.
+    - **Risks:** Listing not opened (eBay 403). MPB stock is intermittent.
+    - **Seller url:** https://www.mpb.com/en-ie/product/peli-1450-case
+    - **Sources:**
+      - https://www.mpb.com/en-ie/product/peli-1450-case
+  3.
+    - **Name:** B&W Outdoor.Case Type 4000 RPD (padded hook-and-loop dividers, egg-crate lid foam), B&W International GmbH, Ibbenbueren DE. Outside angle B (a named brand), listed because it is the strongest verified cheaper option.
+    - **Kind:** other_brand
+    - **Price usd:** $122.66 (EUR 109 incl. 19% VAT = EUR 91.60 ex VAT = $103.08) at Calumet.de, with dividers, 'back in stock soon, 1-3 weeks'. In stock at Foto Erhardt: empty case EUR 80.99 + RPD divider set EUR 31.19 = EUR 112.18 = $126.24 (coupon KOFFER10 -10%, valid 16-18 Oct 2026 only, would make it EUR 100.96 = $113.61). Astroshop.eu lists the RPD version at 140 (currency shown as '$', unclear).
+    - **Spec comparison:** Interior 38.5x26.5x16.5 cm / 16.6 L against 37.4x26x15.4 / 15.0 L: equal or better in all three dimensions (lid 45 mm, base 120 mm against 44/111 mm). Padded dividers included: matches the 'with dividers' role, where the Peli 1450 ships with pick foam. IP67: equal. Automatic pressure-equalisation valve: equal. Certifications per retailers: STANAG 4280, DEF STAN 81-41, ATA 300, MIL-STD-810(G) test report downloadable (Astroshop; I did not read it), UN approval on request. Equal-class proof to Peli's Def Stan 81-41 / MIL C-4150J. Mass 2.3 kg (Astroshop, Calumet) against Peli 2.5 kg empty / 2.9 kg with foam: lighter, but Foto Erhardt also states 2.95 kg, so the figure conflicts. Max load 20 kg. PP shell, padlock eyelets.
+    - **Worse in:** On paper: temperature range -30/+80 C against -40/+87.8 C (not binding for Li-ion contents, but worse). Exterior 42x32.5x18 cm against 40.9x33.1x17.5 cm (+11 mm long, +5 mm tall). Guarantee 30 years (per retailer snippets, not read on a primary page) against Peli lifetime. Not verified: latch type and stainless hardware. Weight figure conflicts between retailers (2.3 kg vs 2.95 kg).
+    - **Compatibility:** Passive, so no rails or drivers. The interior is larger in every axis, so the existing left/centre/right layout and the ESD-mat fold test carry over. Checked-bag use is OK (automatic valve). Arrival checks: weigh it empty, run the same 30-min towel submersion test, confirm the RPD divider height clears the Hantek and the LiteVNA.
+    - **Risks:** Calumet stock delayed 1-3 weeks. The B&W manufacturer site returned 403, so the specs come from three EU retailers (Astroshop, Foto Erhardt, Calumet). The warranty term and test-report contents are unverified.
+    - **Seller url:** https://www.calumet.de/product/b-w-outdoor-case-type-4000-mit-facheinteilung
+    - **Sources:**
+      - https://www.calumet.de/product/b-w-outdoor-case-type-4000-mit-facheinteilung
+      - https://www.foto-erhardt.com/bags/photo-cases/b-w-case-type-4000-black.html
+      - https://www.astroshop.eu/multi-purpose-cases/b-w-type-4000-case-black-compartment-divisions/p,55933
+  4.
+    - **Name:** Explorer Cases 3818HL.B (GT Line, 'Made in EU'). Outside angle B, listed for completeness.
+    - **Kind:** other_brand
+    - **Price usd:** $138.41 (EUR 123 incl. VAT, Thomann.pt, in stock). A search snippet showed EUR 106; the fetched page shows EUR 123.
+    - **Spec comparison:** Interior 38x27x18 cm / 18.5 L: better. IP67: equal. Mass 2.66 kg with foam against 2.9 kg: better. Temperature -33/+90 C: max better, min worse. Rubberised handle.
+    - **Worse in:** MANUALLY adjustable pressure valve, against Peli's automatic one (worse for checked air travel). Pick foam only, no dividers (a divider kit price was not found). Exterior 42x34x20.2 cm: bigger in every axis, +2.7 cm tall. Thomann lists no structural certification (any Def Stan/STANAG claims are unverified). Latch type not stated.
+    - **Compatibility:** Fits the layout (larger interior). It needs a divider kit or soft pouches, and someone to remember to operate the valve before and after flights.
+    - **Risks:** Not not-worse: fails on the automatic valve and on unverified certifications. Not recommended.
+    - **Seller url:** https://www.thomann.pt/explorer_cases_3818hl.b.htm
+    - **Sources:**
+      - https://www.thomann.pt/explorer_cases_3818hl.b.htm
+  5.
+    - **Name:** Calumet Hartschalenkoffer 3618 (Calumet house brand, rebadged generic; EAN 5903175626387, GS1 Poland prefix; maker and origin not stated)
+    - **Kind:** generic_or_clone
+    - **Price usd:** $112.42 (EUR 99.90 incl. VAT, Calumet.de, in stock, pick foam included)
+    - **Spec comparison:** Interior 36.3x27.3x18 cm / 17.8 L: volume, width and depth better, but LENGTH 36.3 cm against 37.4 cm (-11 mm). IP67 claimed; IK08 impact claimed; automatic valve: equal on paper. Temperature -25/+90 C (briefly -40/+110). PP, locking latches. Exterior 40.7x34.2x19.3 cm (taller, +18 mm).
+    - **Worse in:** No independent or certified structural test (no Def Stan/MIL/STANAG, only an IK08 claim), so it fails angle B's measured-evidence rule. Guarantee is 3 years (GARAN, registration may be needed) against lifetime. Interior length is 11 mm shorter, so the ESD-mat fold test and the Hantek/probe bay need re-checking. Weight not published. Foam only, no dividers.
+    - **Compatibility:** Passive. Probably fits the kit, but that is unproven because of the shorter length. Divider kit or pouches needed.
+    - **Risks:** REJECTED: no measured evidence, and worse in certification, guarantee and interior length.
+    - **Seller url:** https://www.calumet.de/product/calumet-hartschalenkoffer-3618
+    - **Sources:**
+      - https://www.calumet.de/product/calumet-hartschalenkoffer-3618
+      - https://www.calumet.de/product/calumet-hartschalenkoffer-4321
+- **Notes:** Verdict (angle B: generic, clone, DIY, used, only with measured evidence):
+  1. The only angle-B candidate proven equal is a USED GENUINE Peli 1450. It is equal by identity, not by a generic test, and it passes only if it clears the arrival acceptance test: moulded markings, no holes, latches, valve, O-ring, 30-min towel submersion. EU asking prices are EUR 65-160 ($73-180). The cheapest is EUR 65 for a unit with no insert, used with the stack's soft pouches. All used prices come from search snippets only (eBay, Kleinanzeigen and Marktplaats pages blocked with 403), so they are UNVERIFIED.
+  2. Generic and clone options are all rejected:
+     - Calumet house-brand 3618: no independent tests, interior 11 mm shorter, 3-year guarantee, foam only.
+     - Apache 3800: US in-store only per reaudit_D, and IP65 instead of IP67.
+     - AliExpress IP67 cases: no traceable test report found (the SGS search returned nothing for the case).
+  3. DIY (toolbox plus foam or seals) is rejected: there is no IP67 or purge-valve evidence and no structural certification.
+  4. Outside my angle: B&W Outdoor.Case Type 4000 RPD, at EUR 109 incl. VAT ($122.66) with padded dividers, is the best new option.
+     - Equal or better on interior (all axes), IP67, automatic valve, structural test class (STANAG 4280, DEF STAN 81-41, ATA 300, MIL-STD-810G report) and probably mass.
+     - Worse on paper in temperature range (-30/+80 against -40/+87.8 C), guarantee term (30 years against lifetime, unverified) and exterior (+11 mm length, +5 mm height).
+     - The parent must flag these, not trade them silently. If the user accepts that temperature range is non-binding (the Li-ion contents are narrower), it is the cheapest new not-worse case with dividers.
+  5. Current price context:
+     - The US $169.95 is ex-tax. EU new costs EUR 204-213 incl. VAT ($229.54-239.69), so for this Europe-based user the EU price is the real baseline.
+     - The 1454 (dividers) EU price was not found.
+     - Not fetched: Thomann.de (German VAT is lower than the Greek page fetched) and the US new eBay listing at $133.99 (snippet only).
+  6. Peli EU guarantee (primary page): it covers injection-moulded cases for breakage and defects and guarantees watertightness at 1 m for 30 min with an undamaged O-ring. It excludes foam and contents, and any case altered or physically changed. The injection-moulded section does not require proof of purchase or the original purchaser, but it does not explicitly confirm cover for second-hand cases.
+  7. Datasheet facts (Peli 1450EU sheet via RS, created 19 Aug 2026): interior 37.4x26x15.4 cm, 15.0 L; exterior 40.9x33.1x17.5 cm; 2.5 kg empty, 2.9 kg with foam; -40/+87.8 C; IP67, MIL C-4150J, Def Stan 81-41; Made in Germany; configurations 1450NF (no foam), 1454 (padded dividers), accessory 1455 (divider set).
+  8. Hard rules: unaffected. The case is passive, with no RF function and no loops. Keep the reaudit rule that no spare Li cells or power banks go in the checked case.
+  9. Budget: 15 WebSearch calls used.
+  10. Unverified items: all used prices; B&W warranty term and test-report contents; B&W weight conflict (2.3 vs 2.95 kg); Peli 1454/1455 EU prices.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
