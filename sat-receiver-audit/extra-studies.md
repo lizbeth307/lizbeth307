@@ -12826,6 +12826,294 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   Moxon виключено консервативно; заборона рамок записана як обов'язкова. Ціни подано в USD першими, базу ПДВ позначено як змішану.
   Не вигадував: тепло режиму H і тепловий корпус лише позначено для перерахунку; кількість ліній HMC7992 беремо з даташиту.
 
+## community:compute_os (run `wf_9603e249-d87`)
+
+- **Subsystem:** compute_os (Radxa Dragon Q6A, which stays): stage 2 check against community reports. Covers RAM tier, BIOS/SPI, the held 6.18.2-4 kernel and apt holds, DT overlays, USB/VBUS, M.2, cooling, NPU firmware, QAIRT 2.42 and FastRPC.
+- **Findings:**
+  1.
+    - **Claim in stack:** #23/#25, 5.4: A/B root on 'systemd-boot with boot counting (/etc/kernel/tries), systemd-bless-boot and a rescue entry'. Stage 1 said 'keep systemd-boot (held) for boot counting'.
+    - **Finding:** On r2, systemd-boot does not run at boot. The r2 manifest lists embloader 0.4 and sdboot-is-embloader 0.4. The Packages description of sdboot-is-embloader says it 'diverts the systemd-boot EFI binaries to use embloader instead' (its postinst runs dpkg-divert on /usr/lib/systemd/boot/efi/systemd-bootaa64.efi). Boot logs in forum 30063 and 30925 (r2 on BIOS 260120) show embloader loading the BLS entries and applying the dtbo files itself. A user's apt full-upgrade log (forum 31304) moved embloader from 0.6 to 0.7.
+  
+  What the embloader source shows:
+  - Tags 0.1 to 0.7 contain no boot-counting code (no tries/+N-M handling, no LoaderBootCountPath).
+  - The boot-loader-interface variables (LoaderEntryOneShot, LoaderEntryDefault, @saved) arrived only in commit 37bc5b9 on 2 Aug 2026, after the last tag (0.7, 16 Jul 2026). So r2 (0.4) and apt (0.7) support only the 'default' line in loader.conf.
+  - rsetup's update_entry_overlays writes loader entries named '+$tries', which means nothing to embloader.
+  
+  The obvious workaround has its own problem. Real systemd-boot 255 lacks devicetree-overlay: v255 src/boot/efi/boot.c handles 'devicetree' but has no overlay code (NEWS for v244 only documents the key in the spec). Radxa staff (forum 30704) call embloader 'the only EFI bootloader I know that supports DTB overlay'. A user reports real systemd-boot and GRUB boot fine on 260120 (forum 30896).
+    - **Verdict:** new_risk
+    - **Action:** Do not count on /etc/kernel/tries or systemd-bless-boot with embloader. Choose in W1-2 and prove it with a deliberately broken entry.
+  (a) Preferred: purge sdboot-is-embloader, which restores the .distrib systemd-boot 255.4. Ship one DTB per kernel, merged at build time with fdtoverlay (base 6.18.2-4 DTB + lab-q6a.dtbo + any FastRPC fragment) and referenced by 'devicetree'. Then use tries=3 + boot-complete.target + one-shot trial boots; EFI variables persist on 260120.
+  (b) If (a) fails: keep embloader 0.4 held and make A/B fallback manual (rescue microSD, boot order USB > SD) or Pico-driven. Re-evaluate once Radxa ships embloader newer than 0.7 with one-shot support.
+  Either way, add embloader and sdboot-is-embloader to the hold list.
+    - **Impact:** As designed, a bad root or kernel loops on the Pico watchdog forever instead of falling back to the other root.
+    - **Sources:**
+      - https://github.com/radxa-build/radxa-dragon-q6a/releases/download/rsdk-r2/radxa-dragon-q6a_noble_gnome_r2.manifest
+      - https://radxa-repo.github.io/noble/dists/noble/main/binary-arm64/Packages
+      - https://github.com/BigfootACA/embloader/commit/37bc5b9
+      - https://github.com/BigfootACA/embloader/tags
+      - https://forum.radxa.com/t/30704
+      - https://forum.radxa.com/t/30063
+      - https://forum.radxa.com/t/31304
+      - https://forum.radxa.com/t/30896
+      - https://raw.githubusercontent.com/systemd/systemd/v255/src/boot/efi/boot.c
+      - https://github.com/radxa-pkg/rsetup/blob/main/src/usr/lib/rsetup/cli/edk2-menu.sh
+  2.
+    - **Claim in stack:** #24/C22: one hold list plus a signed aptly mirror; 'PPA without mirror' rejected. Stage 1 added edk2, rsetup, overlays, fastrpc libraries, linux-firmware-dragonwing and others.
+    - **Finding:** Radxa's image builder adds Qualcomm's PPA to every Qualcomm image. RadxaOS-SDK/rsdk socs.json gives the qualcomm family extra_ppa 'ubuntu-qcom-iot/qcom-ppa' (commit 42b9c78, 22 Aug 2025), and since 15 Sep 2026 (b17a31b) also 'kisak/turtle' for Mesa 26.1 or newer. r2 already carries packages from that PPA: qcom-iot-defaults 1.19 and linux-firmware-dragonwing 1.0.0+20251203.
+  
+  The noble PPA now publishes:
+  - qairt-sdk / libqnn1 / libqnn-dev 2.49.0-0ubuntu1~bpo24.04.2 (16 Oct 2026). Community reports say this cannot run on the Q6A DSP firmware.
+  - linux-firmware-dragonwing 20260825 (57 MB deb). It installs to /usr/lib/firmware/updates/qcom/qcs6490/{adsp,cdsp}.mbn and qcom/vpu*, a path the kernel searches before /lib/firmware, and it depends on linux-firmware >= 20240318.git3b128b60-0ubuntu2.27 (r2 has ubuntu2.23). I listed the deb: it ships no qcom/qcs6490/radxa/dragon-q6a or a660 files, so it does not directly override the Q6A DSP or GPU paths.
+  - qcom-fastrpc 1.0.15 and qcom-adreno 1.855.3 (proprietary GL/CL).
+  Radxa's fastrpc 1.0.7-3 'Replaces/Provides qcom-fastrpc1 (= 99:0.0.1-1)', so the two FastRPC stacks are deliberately exclusive.
+  
+  Community evidence that unplanned upgrades break things: 'rsetup system update' or 'apt upgrade' left r1/r2 unbootable (forum 30368, Feb 2026; sbc-reviews #85, 13 May 2026), an apt upgrade replaced a hand-installed kernel (forum 30630 #46), and aic8800-usb-dkms broke apt upgrade (forum 29959).
+    - **Verdict:** corrected
+    - **Action:** In the golden image, remove the qcom-ppa, kisak and mozillateam sources. Mirror into aptly only what r2 needs: linux-firmware-dragonwing 1.0.0+20251203, qcom-iot-defaults 1.19, linux-firmware 0ubuntu2.23, firefox-esr if kept.
+  Add to the hold list: embloader, sdboot-is-embloader, aic8800-usb-dkms, aic8800-firmware, all radxa-system-config-*, task-qualcomm*, task-qcs6490, task-radxa-dragon-q6a, alsa-ucm-conf (1.2.14-1radxa2, needed for audio on 260120), linux-firmware-dragonwing and qcom-iot-defaults.
+  Add to the −1 pin list: qairt-sdk, qairt-libs, qairt-headers, libqnn1, libqnn-dev, qcom-fastrpc*, qcom-adreno*, mesa from kisak.
+  CI check: 'apt-cache policy' shows no launchpad origin; 'dpkg -S' and SHA-256 checks on /lib/firmware/updates/qcom/qcs6490/* return empty.
+    - **Impact:** Closes a drift path the current list leaves open. Without it, one upgrade can bring in QAIRT 2.49 libraries and override firmware.
+    - **Sources:**
+      - https://github.com/RadxaOS-SDK/rsdk/blob/main/src/share/rsdk/configs/socs.json
+      - https://launchpad.net/~ubuntu-qcom-iot/+archive/ubuntu/qcom-ppa
+      - https://ppa.launchpadcontent.net/ubuntu-qcom-iot/qcom-ppa/ubuntu/dists/noble/main/binary-arm64/Packages.gz
+      - https://ppa.launchpadcontent.net/ubuntu-qcom-iot/qcom-ppa/ubuntu/pool/main/l/linux-firmware-dragonwing/linux-firmware-dragonwing_20260825_arm64.deb
+      - https://radxa-repo.github.io/qcs6490-noble/dists/qcs6490-noble/main/binary-arm64/Packages
+      - https://forum.radxa.com/t/30368
+      - https://forum.radxa.com/t/29959
+      - https://forum.radxa.com/t/30630
+      - https://github.com/geerlingguy/sbc-reviews/issues/85
+  3.
+    - **Claim in stack:** #22/C2: burn-in inside the return window (12 h stressapptest + memtester, 50-100 cold boots), SPI backup before any firmware change, avoid AliExpress. Known failures: RCW_TRAINING_FAIL, DRAM_DCC_FAIL, ONLY_RANK_1.
+    - **Finding:** The community record is worse and broader than the stack implies. About 13 boards failed in at least 8 Radxa-forum threads between Dec 2025 and Oct 2026 (29863, 30749, 30841, 31080, 31450, 31509, 29959, 30202).
+  - Failure types: DDR training (NO_MEMORY_DEVICE_DETECTED, RCW_TRAINING_FAIL, ONLY_RANK_1 after the first shutdown), reset loops every 10-20 s even in EDL mode, and a cold boot that never reaches UEFI while EDL still works.
+  - It is not only the 12 GB tier: affected boards include 12 GB v1.214, v1.216 and v1.21 (one with CXMT DRAM) and a 6 GB board.
+  - Several failures followed a flash of 260120 or older SPI firmware. Others came after weeks or 3-4 months in service. One board failed again weeks after an RMA had found it 'fine'.
+  - Another 'NPU kernel panic' (mm/slub.c virt_to_cache) turned out to be defective RAM, which CPU stress tests had not shown (forum 29959).
+  - Radxa treats these as hardware RMAs. AliExpress RMAs ended in store points instead of a replacement (30749). Arace RMAs dragged on with 'vendor keeps going back to Radxa'.
+  - sbc-reviews #85 (strongtz, Dec 2025): retail boards shipped with firmware 251013, and r2 needs 20251230 or newer, so a first-day SPI flash is likely. The DRAM is rated only 5500 MT/s, and chip vendors vary (Samsung or CXMT).
+    - **Verdict:** corrected
+    - **Action:** Day 1, inside the return window: UART log at 115200; read 'dmidecode -s bios-version'; take a full 32 MiB SPI dump with SHA-256; flash 260120 only if the board is older than 20251230. Then start the burn-in at once.
+  Add a 1-2 h NPU-heavy run to the burn-in (an HTP loop with large DMA buffers alongside memtester) and log 'PM: Reset' and DDR lines from the console.
+  Buy only from a Radxa-listed distributor with a real return path (TinyTronics under EU law, or Allnet), never AliExpress.
+  Optional: a second Q6A of the same SKU as a cold spare. It is not an alternative board; the golden image and SPI dump make it a 30-minute swap.
+    - **Impact:** Moves DDR or boot-path failures into the DOA window and makes field recovery a board swap.
+    - **Sources:**
+      - https://forum.radxa.com/t/29863
+      - https://forum.radxa.com/t/30749
+      - https://forum.radxa.com/t/30841
+      - https://forum.radxa.com/t/31080
+      - https://forum.radxa.com/t/31450
+      - https://forum.radxa.com/t/31509
+      - https://forum.radxa.com/t/29959
+      - https://forum.radxa.com/t/30202
+      - https://github.com/geerlingguy/sbc-reviews/issues/85
+  4.
+    - **Claim in stack:** #36 (stage 1 corrected): freeze on radxa-firmware-qcs6490 0.2.29 by hash, a shared-dma-pool overlay on the fastrpc nodes, your own initramfs hook, fastrpc pinned to the Phase-0 version (1.0.4-1 has a pass), a udev rule.
+    - **Finding:** The community agrees on the matched set, but four points correct or extend stage 1.
+  (1) The overlay is not the root cause. Radxa staff (strongtz, forum 30699 #20, 6 Aug 2026): 'fastrpc on cdsp doesn't need reserved DMA memory... the no reserved DMA memory for FASTRPC error is misleading'; pd-mapper is the in-kernel qcom_pd_mapper; 'it could be an unnecessary package replacing the actually required firmware'. In forum 31078 the pass came only after restoring the pristine 0.2.29 DSP payload: 'dpkg -V' had flagged fastrpc_shell_3/unsigned_3. In forum 31391 the overlay alone did not help.
+  (2) fastrpc 1.0.7-1 + firmware 0.2.41 (on 7.0.11-5) fails with 'remotectl1 domains not supported' (31391), which supports keeping 1.0.4-1. Armbian runs the r2 set (CDSP c4-00004, ADSP c9-00028, shell and full /usr/lib/dsp/cdsp tree) on 6.18.2 (30699 #13).
+  (3) On r2 the DSPs do not auto-boot (request_firmware -2; 30288, 30699 #16, 31078). Radxa offered two fixes: exclude remoteproc from the initramfs (30288), or the 0.2.30+ hook, which copies /lib/firmware/qcom/qcs6490/radxa/* into the initramfs (I checked the 0.2.42 deb).
+  (4) Further findings:
+  - Leaving the DSPs running 'hung the board twice, once requiring fsck' (30699 #16).
+  - Genie and QNN dlopen the unversioned libcdsprpc.so, which users had to symlink (31144).
+  - rsetup's update_entry_overlays can pick the wrong DTB (for example bstc1200-...) when get_product_id is empty (31391; the find '*${product}.dtb' | head -n1 code is confirmed in rsetup).
+  - radxa-pkg/fastrpc #18 and qualcomm/fastrpc #371 are still open.
+    - **Verdict:** corrected
+    - **Action:** Phase 0 should first hash-verify the payload ('dpkg -V radxa-firmware-qcs6490' clean, cdsp/adsp/shell SHA-256), then test fastrpc_test with and without the DMA-pool fragment, and ship the fragment only if it changes the result.
+  Use exactly one DSP-boot method: our initramfs copy hook with an update-initramfs trigger, and a check that no remoteproc '-2' appears in dmesg.
+  Install fastrpc-dev 1.0.4-1, or ship the libcdsprpc.so symlink.
+  Never use rsetup for overlays; write loader entries with our own kernel-install plugin.
+  The Pico watchdog plus a read-only A/B root stay mandatory, and the 8 h NPU soak must include CDSP restarts.
+    - **Impact:** Prevents a silent 0x80000600 and DSP-induced hangs in the field.
+    - **Sources:**
+      - https://forum.radxa.com/t/30699
+      - https://forum.radxa.com/t/31078
+      - https://forum.radxa.com/t/31391
+      - https://forum.radxa.com/t/30288
+      - https://forum.radxa.com/t/31144
+      - https://forum.radxa.com/t/31234
+      - https://github.com/radxa-pkg/fastrpc/issues/18
+      - https://github.com/qualcomm/fastrpc/issues/371
+      - https://radxa-repo.github.io/noble/pool/main/r/radxa-firmware/radxa-firmware-qcs6490_0.2.42_all.deb
+  5.
+    - **Claim in stack:** #37/#40: QAIRT 2.42.0.251225, never AI Hub; INT8 w8a8 with per-channel weights; VTCM 2 MB; soc_model 35 until checked.
+    - **Finding:** Users confirm the pin. Dual-O (forum 31217, 31234): the newest Q6A DSP firmware, CDSP.HT.2.5.c4-00004-KODIAK-1, 'only supports QNN interface 2.32.0 (QAIRT 2.42)'. QAIRT 2.46+ fails with QNN_DEVICE_ERROR_INVALID_CONFIG or 0x80000600 at FASTRPC_IOCTL_INIT_CREATE (Mylab_Radxa: QNN 2.46 + fastrpc 1.0.4-1 on 6.18.2-4). onnxruntime-qnn 2.4.0 needs QAIRT 2.48.40.
+  The HTP is INT8-only ('The SocModel doesn't support FP16'). Pure-INT8 CNNs with BatchNorm collapsed (ArcFace dropped to 51% on LFW), and YOLO heads collapsed under QAIRT 2.49 (31462).
+  VTCM: users can pass only about 2 MB (31078 #9).
+  The claim that per-channel INT8 needs QAIRT 2.45+ refers to the ORT-QNN path; it was not checked for the native qairt-quantizer in 2.42.
+  No community data on soc_model 35 vs 93.
+    - **Verdict:** confirmed
+    - **Action:** Keep 2.42 everywhere, and block the PPA's qairt-sdk 2.49 (see the hold finding).
+  Add two Phase-0 checks:
+  - the per-channel (axis) conv-weight encoding compiles and runs on v68 under 2.42 (qnn-context-binary-generator, then qnn-net-run on the device);
+  - accuracy of INT8 SpecDet vs FP32 on the CPU, with BatchNorm folded before quantization, for each class family.
+    - **Impact:** Confirms the frozen runtime. It adds a quantization-accuracy gate.
+    - **Sources:**
+      - https://forum.radxa.com/t/31217
+      - https://forum.radxa.com/t/31234
+      - https://forum.radxa.com/t/31462
+      - https://forum.radxa.com/t/31078
+      - https://forum.radxa.com/t/30699
+  6.
+    - **Claim in stack:** #23: Path B (7.0.11-7 + clk_ignore_unused) only for a Kioxia UFS. Stage 1: 6.18.2-4 is the last 6.18 release and Radxa fixes land only on 7.0.
+    - **Finding:** There is a narrower fix. The radxa/kernel linux-6.18.2 branch HEAD is 559f4f9 (11 May 2026): 'ufs: qcom: add PA_TACTIVATE quirk for Kioxia THGJFGT1E45BAILB'. radxa-pkg/linux-qcom tag 6.18.2-4 points its src submodule at 5bed5a3, so HEAD differs from 6.18.2-4 by only two commits: that UFS quirk and 8c2757b, a Radxa ZERO DTS change.
+  Two users ran Radxa's test build with the quirk on Kioxia 256 GB: hdparm 1199-1298 MB/s, fio sequential read 1005 MiB/s, 'no UFS errors... no freezes' after a day (forum 30630 #36-#39). That build reused the version string 6.18.2-4, and a later apt upgrade replaced it (#46). Radxa (#47): no new 6.18 release; fixes go to 7.0.
+  For Path B, the community confirms the 7.0.11-4 regressions: HDMI black after msm_dpu binds ('Unexpected DP AUX IRQ', connector 'disconnected'), phantom 50-60% load on CPU0, and lost audio (31304, 31288). A community Ubuntu 26.04 image needed Armbian edge 7.2.9 plus DP patches for HDMI (31574).
+    - **Verdict:** new_option
+    - **Action:** Replace Path B with a self-built 'linux-image-6.18.2-4+lab1': linux-6.18.2 at 559f4f9 with the 6.18.2-4 config, a distinct version string, mirrored and held in aptly.
+  Use it if the UFS ID read on day 1 is Kioxia, or by default if the A/B build test passes. Drop clk_ignore_unused and 7.0.11 from v1.
+    - **Impact:** Keeps HDMI, audio and the NPU set on 6.18 while covering a Kioxia batch of the UFS module.
+    - **Sources:**
+      - https://forum.radxa.com/t/30630
+      - https://github.com/radxa/kernel/commit/559f4f921a01e5358602153364c618fe2a3e431e
+      - https://github.com/radxa-pkg/linux-qcom/tree/6.18.2-4
+      - https://forum.radxa.com/t/31304
+      - https://forum.radxa.com/t/31288
+      - https://forum.radxa.com/t/31574
+  7.
+    - **Claim in stack:** C6/#79: UART6 (LC76G, /dev/ttyHS1) and UART7 (Pico) from the Radxa uart6/uart7 overlays; 'TX of UART6 on the image not proven'.
+    - **Finding:** Community reports back up the doubt.
+  - Forum 30063 (Jan 2026, kernel 6.17.1): UART6 worked as ttyHS1 in both directions only after the user fixed 'an error in the uart6.dtbo'. The fix was never published, and someone asked again in Sep 2026.
+  - Forum 31422 (Sep 2026, unresolved): RX works but TX does not.
+  - The radxa-overlays git shows the uart6 body unchanged since 04a4bec (Oct 2025); fb9653b (20 Apr 2026) only added gpio26/27 to 'exclusive'. uart7 arrived in fe1235a (14 Apr 2026).
+  - Radxa staff (forum 29642, Jan 2026) say QUP serial-engine modes are set in UEFI: 'Radxa Platform Configuration -> GPIO -> QUPV3_xxx Mode'. The 260120 notes list 'GPIO configuration in UEFI'.
+  - In Radxa 6.18.2 qcom_geni_serial.c, an SE preloaded with another protocol fails probe with 'Invalid FW loaded, proto: %d' (-ENXIO); only an empty SE gets UART firmware loaded from Linux.
+  - Staff also say all 40-pin GPIOs belong to one TLMM gpiochip (pin 3 = GPIO_24) and that the UM3304 buffers limit SPI to about 30 MHz.
+    - **Verdict:** new_risk
+    - **Action:** W1-2, before wiring the LC76G or the Pico:
+  - In the UEFI GPIO page, read and set the QUPV3 modes so SE0/SE2 = I2C and SE6/SE7 = UART (or 'not loaded'); store the setting in the SPI dump notes.
+  - Check that dmesg has no 'Invalid FW loaded' or 'UART firmware load failed' lines.
+  - Do a TX-to-RX jumper loopback at 115200 and 921600 on both ports, and keep a hand-written fallback overlay.
+  Address libgpiod lines by the TLMM chip label, not 'gpiochip4'.
+  Keep the Pico's native USB (H1) as the fallback link if UART7 TX fails.
+    - **Impact:** Without this, GNSS configuration ($PAIR) and the Pico heartbeat/watchdog could fail silently.
+    - **Sources:**
+      - https://forum.radxa.com/t/30063
+      - https://forum.radxa.com/t/31422
+      - https://forum.radxa.com/t/29642
+      - https://forum.radxa.com/t/28886
+      - https://github.com/radxa-pkg/radxa-overlays/commit/fb9653b
+      - https://github.com/radxa-pkg/radxa-overlays/commit/fe1235a
+      - https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/drivers/tty/serial/qcom_geni_serial.c
+  8.
+    - **Claim in stack:** #15/C4/5.1: J21 fed with regulated 12 V (not raw 4S), TVS + reverse protection, never at the same time as USB-C. The Pico pulses J21 pin 3 if the Q6A 3.3 V does not appear within 1-2 s. Q6A input 4.5-16 V (forum).
+    - **Finding:** Radxa staff confirm the input range more than once.
+  - strongtz (forum 30233, Jan 2026; forum 31611, 15 Oct 2026, in reply to a 4S 12-16.8 V question): 'The 12V header pins can only handle 4.5V to 16V'.
+  - BigfootACA (forum 30400, Mar 2026): 3.6-16 V, with 5, 9 or 12 V recommended; stepped down to 4.2 V by an SY81012; 'Direct 12V power is also technically possible, but not recommended'; the header was meant for the PoE HAT; PWR = the power key; 'Do not use the USB Type-C interface if you are supplying 12V power externally'; the 40-pin 3.3 V comes from an ETA3521 (theoretically 4 A), so use an external regulator for real loads.
+  - Auto power-on varies: one user on the 12 V header has to press the key, while others boot as soon as power is applied (forum 30852).
+  - The rear '+ / − / TS' pads cannot be used: 'fake battery' PMIC mode, R24 not fitted, VPH_PWR ≤ 4.5 V, no charging (29650, 30090).
+    - **Verdict:** confirmed
+    - **Action:** Keep regulated 12 V (a raw 4S at 16.4-16.8 V would exceed 16 V) and keep the Pico pin-3 pulse; it is needed, not optional.
+  Power the Pico and the sensors from LAB5 and the AON LDO, not from the 40-pin 3.3 V.
+    - **Impact:** None. Confirms the power interface to the board.
+    - **Sources:**
+      - https://forum.radxa.com/t/31611
+      - https://forum.radxa.com/t/30233
+      - https://forum.radxa.com/t/30400
+      - https://forum.radxa.com/t/30852
+      - https://forum.radxa.com/t/29650
+      - https://forum.radxa.com/t/30090
+  9.
+    - **Claim in stack:** #16/5.6: active cooling required (copper block + 40 mm 5 V fan; Armor 7056A only if it fits). Kernel passive trips at 90/95 °C; app ladder at 80/85 °C.
+    - **Finding:** User reports match.
+  - Passive home-made heatsink: 'repeatedly hits 90 degrees and throttles' (30413).
+  - Armor 7056A: 40 °C idle at 23 °C room. At 35-40 °C ambient under sustained CPU+GPU load the Armor alone ran above 90 °C and throttled until a 5 V fan was added (30413, 30123).
+  - AliExpress copper active cooler: 55 °C under stress (30123).
+  - About 35x35 mm is the largest heatsink that fits (30737).
+  - A Noctua 40x10 mm 5 V fan was the quiet option; stock fans were loud (30123).
+  - There is no fan header; fans run from the 5 V pins (30737).
+  No community data in handheld or sealed enclosures.
+    - **Verdict:** confirmed
+    - **Action:** No change: a copper block of 35x35 mm or less with a 40 mm 5 V fan, switched on and off by the Pico FET. The noon enclosure test remains the real gate.
+    - **Impact:** None.
+    - **Sources:**
+      - https://forum.radxa.com/t/30413
+      - https://forum.radxa.com/t/30123
+      - https://forum.radxa.com/t/30737
+  10.
+    - **Claim in stack:** 5.4: kernel command line via kernel-install; one golden image; BIOS 260120 held (stage 1: 260916 not compatible with Ubuntu 24).
+    - **Finding:** Two new boot-path facts.
+  (1) On 260120, a UKI built with systemd-stub (systemd 260) reboots silently after about 10-15 s, even with only kernel and cmdline inside. Radxa reproduced it as a firmware bug (strongtz, forum 30896, 11 Jun 2026). The fix is in a newer BIOS, and on 14 Oct 2026 staff pointed the user to dragon-q6a_flat_build_wp_260916.zip, the build whose changelog says 'Not compatible with Radxa OS (Ubuntu 24)'.
+  (2) Radxa's 260120 notes: the firmware 'will try to detect the Linux kernel version and load an appropriate DTB if one is not provided by the bootloader' (6.17 and 6.18 only), so a missing 'devicetree' line silently falls back to the firmware's DTB.
+  Also: the r2 GNOME image suspends when idle, which users mistook for hangs or reboots (forum 30452).
+    - **Verdict:** new_risk
+    - **Action:** Never switch kernel-install to layout=uki or use ukify; keep BLS type #1 entries.
+  Every entry must carry an explicit 'devicetree'. A CI check confirms that /sys/firmware/devicetree/base contains the lab-q6a fragments.
+  Do not take 260916 from forum links.
+  Mask sleep.target, suspend.target, hibernate.target and hybrid-sleep.target, set IdleAction=ignore, and remove GDM's idle suspend.
+    - **Impact:** Prevents a silent no-boot after a 'modern' boot change, a firmware-DTB fallback without the overlays, and field 'hangs' that are really suspends.
+    - **Sources:**
+      - https://forum.radxa.com/t/30896
+      - https://dl.radxa.com/dragon/q6a/images/dragon-q6a-bios-changelog.md
+      - https://forum.radxa.com/t/28886
+      - https://forum.radxa.com/t/30452
+  11.
+    - **Claim in stack:** 5.5: about 11.3 GiB visible on 12 GB. Stage 1 noted a possible 0.5 GB loss with the 260120 'wp' firmware.
+    - **Finding:** No community MemTotal for a 12 GB board was found. sbc-reviews #85 still shows only the 8 GB board (7604 MiB; GravityMark 7.43 GB), and two 12 GB owners there posted no numbers. The '0.5 GB loss' is an unanswered user question (forum 28886 #29), not a measurement. The 6.18.2 kernel history includes 'WIP: change reserved mem layout for WP' (b486ae6), so a layout change is real, but nobody has published its size.
+    - **Verdict:** unverified
+    - **Action:** Keep the W1-2 MemTotal measurement on 260120 + 6.18.2-4 and the up-to-0.5 GiB margin in the RAM model.
+    - **Impact:** Small. Only the with-Lime training case is tight.
+    - **Sources:**
+      - https://github.com/geerlingguy/sbc-reviews/issues/85
+      - https://forum.radxa.com/t/28886
+      - https://github.com/radxa/kernel/commit/b486ae6
+  12.
+    - **Claim in stack:** #21/#69 (Lime only): M.2 2230 Gen3 x2 through a riser; stage 1 proposed Gen2 by default.
+    - **Finding:** Community reports on the slot:
+  - A Samsung 980 enumerated as Gen3 x2 at about 1.3 GB/s (26723).
+  - An ARES 2230 Gen3x4 SSD did not appear in the UEFI shell on 260120 (31195).
+  - One slot failed, attributed to dust and sent to RMA (30807).
+  - An NVMe slowdown on mainline 6.19 DTBs (30440) does not apply to 6.18.2-4.
+  No community riser reports.
+    - **Verdict:** confirmed
+    - **Action:** No change: Gen2 default via the riser, Gen3 only after the AER test, and test the slot inside the return window.
+    - **Impact:** Only matters if Lime is kept.
+    - **Sources:**
+      - https://forum.radxa.com/t/26723
+      - https://forum.radxa.com/t/31195
+      - https://forum.radxa.com/t/30807
+      - https://forum.radxa.com/t/30440
+  13.
+    - **Claim in stack:** C5: FE1.1s tree limit 25 MB/s; RTL-B, HID touch and CH334F behind it.
+    - **Finding:** The only community USB-topology report (forum 31352, Aug 2026): 'only two cameras per USB 2.0 bus work reliably' because each UVC camera reserves 3060 bytes per microframe of periodic (isochronous) bandwidth. RTL-SDR and Airspy HF+ use bulk transfers and the touch panel uses small interrupt transfers, so this limit does not hit the planned devices. No community reports on VBUS limits or backfeed.
+    - **Verdict:** confirmed
+    - **Action:** Keep isochronous devices (UVC cameras, USB audio) off the FE1.1s tree, or allow at most one. Keep the FNB58 VBUS checks.
+    - **Impact:** None for the planned BOM.
+    - **Sources:**
+      - https://forum.radxa.com/t/31352
+- **Current status oct 2026:** Community picture as of 18 Oct 2026, from Radxa forum threads, GitHub issues and the Launchpad PPA:
+  - **Boot chain.** RadxaOS r2 boots through embloader (0.4 in r2, 0.7 in apt). It stands in for systemd-boot through sdboot-is-embloader and applies the DT overlays. It has no boot counting. One-shot and default EFI variables exist only in unreleased git (since 2 Aug 2026).
+  - **Repos.** r2 enables Qualcomm's ubuntu-qcom-iot PPA. As of 16 Oct 2026 it publishes qairt-sdk 2.49 and linux-firmware-dragonwing 20260825. Radxa's build system added the kisak Mesa PPA on 15 Sep 2026 for future images.
+  - **Firmware.** BIOS 260120 stays the docs build. Radxa staff now hand out 260916 on the forum (UKI fix), but its changelog says it is not compatible with Ubuntu 24.
+  - **NPU.** It works only with the matched r2 set: CDSP c4-00004 / ADSP c9-00028 with the r2/0.2.29 shell, QAIRT 2.42 or older, INT8 only, about 2 MB VTCM. QAIRT 2.46-2.49 fails. fastrpc 1.0.7-1 fails with 'remotectl1 domains not supported'. Radxa staff say the reserved-DMA warning is misleading. radxa-pkg/fastrpc #18 and qualcomm/fastrpc #371 are open.
+  - **Kernel.** The 7.0.11 regressions (HDMI black, phantom CPU0 load, no audio) are confirmed by several users. The Kioxia UFS fix exists only on radxa/kernel linux-6.18.2 HEAD (559f4f9), which is 6.18.2-4 plus that quirk; no 6.18 package has been released with it. Community Ubuntu 26.04 images use Armbian edge 7.2.9 for working HDMI.
+  - **Hardware failures.** About 13 boards (6 GB and 12 GB) with DDR-training or boot-path failures were reported between Dec 2025 and Oct 2026, some after SPI updates and some after months in service. RMAs are slow, and worst through AliExpress.
+  - **Power and cooling.** The 12 V header range is 4.5-16 V per staff (3.6-16 V per another staff post). Some boards need the PWR key to start. Throttling at 90 °C without a fan is reproduced by users. No Q6A hardware revision or EOL notice is known.
+- **Notes:** **Method.** I read 40+ Radxa forum threads through Discourse JSON (scripts in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/s2_scripts, downloads in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/s2_compute). I also used:
+  - GitHub issue pages through WebFetch: geerlingguy/sbc-reviews #85, radxa-pkg/fastrpc #18, qualcomm/fastrpc #371;
+  - git clones of radxa-pkg/radxa-overlays, radxa-pkg/linux-qcom (tags), radxa/kernel linux-6.18.2 (shallow), BigfootACA/embloader (all tags), radxa-pkg/rsetup and RadxaOS-SDK/rsdk;
+  - the r2 manifest and the Radxa apt Packages/Contents indexes;
+  - the Launchpad API and Packages index for ubuntu-qcom-iot/qcom-ppa, plus a content listing of linux-firmware-dragonwing_20260825_arm64.deb (listed only, nothing installed or run);
+  - systemd v255 NEWS and src/boot/efi/boot.c.
+  
+  **Search limit.** The shared WebSearch budget ran out after my first query, so Reddit, Discord/Matrix, YouTube and the Armbian forum were not searched. The CNX Software search showed only two news posts, with no review data. All findings come from the forum, git and primary indexes above.
+  
+  **No models.** I made no models in this stage. All numbers are as quoted from users or staff: temperatures, MB/s, failure counts. The board count ('about 13 in at least 8 threads') is my own tally of distinct posters who reported failures, not a failure rate.
+  
+  **Not verified:**
+  - the exact UEFI QUPV3 menu entries and their defaults on 260120;
+  - whether real systemd-boot 255 with a merged DTB boots r2 cleanly (one user reports systemd-boot working with Gentoo on 260120);
+  - the root cause of the UART TX reports;
+  - the 0.5 GB 'wp' memory loss;
+  - PPS on GPIO96 (no community reports at all);
+  - the Gunyah watchdog (no community reports; the stage-1 Pico watchdog stands);
+  - per-channel quantization under native QAIRT 2.42;
+  - soc_model 35 vs 93.
+  
+  **Rule compliance.** No alternative boards; the spare is the same Q6A SKU. Everything here is software, firmware, packaging or accessory work, and receive-only on air.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
