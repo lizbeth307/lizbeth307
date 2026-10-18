@@ -24138,6 +24138,266 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   About 14 web searches used.
 
+## searchA:nooelec_flamingo_fm_v2_100813 (run `wf_e32114dd-52d`)
+
+- **Part:** Nooelec Flamingo+ FM v2 (SKU 100813), FM broadcast band-stop filter. In this stack it is the first part after the antenna at P1 VHF-137 (Flamingo+ -> SAWbird+ NOAA), and an optional second unit sits on P8 WIDE/2 m before the LNA V2.
+- **Current price usd:** 24.95 (Nooelec store, ex-VAT, verified 18 Oct 2026; 2 units if P8 is fitted). For an EU buyer, import VAT of about 19-21% comes on top, which gives about $29.7-30.2 landed before shipping. That figure is my estimate; I did not verify whether Nooelec collects VAT at checkout (IOSS). Shipping is free when it goes in the existing >$100 Nooelec order.
+- **Critical specs:**
+  - Stopband rejection across the European FM band 87.5-108 MHz: Flamingo+ >60 dB typical average and >70 dB typical maximum. Datasheet Rev 1 stopband is 80.5-114.8 MHz. The stack's bring-up test requires >=60 dB average over 88-108 MHz.
+  - Band-edge rejection at 87.5 and 108 MHz, where strong European band-edge stations sit: Flamingo+ -10 dB points are at 80 and 116 MHz, so both edges are deep inside the stopband.
+  - Passband insertion loss at 137.1-137.9 MHz (Meteor LRPT) and 144-146 MHz (P8): 0.5 dB typical, 1.2 dB maximum. The upper -3 dB point is 120 MHz. The filter comes before the LNA, so this loss adds straight to system NF (the stack models a 0.06-0.45 dB penalty).
+  - Out-of-band loss elsewhere: <0.25 dB per the vendor page. This matters on the P8 WIDE port.
+  - Maximum input +18 dBm (5 Vp-p).
+  - RF ESD diode on the input. The re-audit counts on it as P1 protection, because this is the first part after an exposed antenna connector.
+  - Build: anodised aluminium EMI-shielded case, SMA, 50 ohm, small enough for the RF compartment, 2-year warranty, genuine brand.
+  - DC pass 250 mA minimum: published, but NOT used in this stack. P1 is a no-DC port, and bias enters at the SAWbird+ or LNA V2 output. A missing DC rating does not disqualify a candidate here.
+  - Passive part: no driver or power rail, so Ubuntu 24.04 arm64 compatibility does not apply.
+- **Candidates:**
+  1.
+    - **Name:** Nooelec Flamingo+ FM v2 (100813), current part, bought direct from Nooelec
+    - **Kind:** current_part
+    - **Price usd:** 24.95 ex-VAT (verified). EU landed price about $29.7-30.2 incl. import VAT (my estimate).
+    - **Spec comparison:** Baseline: >60 dB average / >70 dB maximum stopband; -3 dB at 75/120 MHz; -10 dB at 80/116 MHz; passband IL 0.5 dB typical / 1.2 dB maximum; out-of-band loss <0.25 dB; +18 dBm maximum input; RF ESD diode; DC pass 250 mA; shielded aluminium case; 2-year warranty.
+    - **Worse in:** Nothing. This is the reference.
+    - **Compatibility:** Already integrated at P1 and P8.
+    - **Risks:** Specs are vendor and datasheet figures with no independent measurement. The stack's LiteVNA intake test (S21 <=1.2 dB at 137.1/137.9 MHz; >=60 dB average over 88-108 MHz) covers this.
+    - **Seller url:** https://www.nooelec.com/store/flamingo-plus-fm.html
+    - **Sources:**
+      - https://www.nooelec.com/store/flamingo-plus-fm.html
+      - https://www.nooelec.com/store/catalogsearch/result/?q=flamingo
+  2.
+    - **Name:** Nooelec Flamingo FM (v1, SKU 100780)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 22.95 (Nooelec store, verified)
+    - **Spec comparison:** Stopband >40 dB typical vs >60 dB. -3 dB points at 80/115 MHz vs 75/120 MHz, so the stopband is narrower and the airband edge is slightly easier. No numeric insertion-loss figure ('minimal'). Same: +18 dBm maximum, RF ESD diode, DC pass, shielded aluminium case, 2-year warranty.
+    - **Worse in:** About 20 dB less FM rejection. That fails the >=60 dB stack requirement, and Nooelec itself recommends v1 only for sites without strong FM transmitters. Its passband insertion loss is not published, while the Flamingo+ figure is 0.5/1.2 dB.
+    - **Compatibility:** Mechanically and electrically a drop-in (SMA, passive).
+    - **Risks:** None beyond the lower rejection.
+    - **Seller url:** https://www.nooelec.com/store/flamingo-fm.html
+    - **Sources:**
+      - https://www.nooelec.com/store/flamingo-fm.html
+  3.
+    - **Name:** Nooelec Distill:FM Barebones (SKU 100758)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 17.95 (Nooelec store, verified)
+    - **Spec comparison:** Stopband >40 dB typical vs >60 dB. -3 dB at 80/115 MHz. DC 250 mA, ESD diode and +18 dBm maximum are the same as the Flamingo+. Construction: PCB with an EMI frame and mounting holes, with an SMA nut and washer for panel mounting. The page does not say whether there is an aluminium case. No warranty is stated on the page (Flamingo+: 2 years).
+    - **Worse in:** About 20 dB less FM rejection (fails >=60 dB). Shielding is a board-level EMI frame rather than the confirmed aluminium case. No published insertion loss. No stated warranty.
+    - **Compatibility:** Could be panel-mounted inside the RF compartment, but it fails on rejection.
+    - **Risks:** Electrically it is the v1 class of performance.
+    - **Seller url:** https://www.nooelec.com/store/distill-fm-broadcast-fm-filter.html
+    - **Sources:**
+      - https://www.nooelec.com/store/distill-fm-broadcast-fm-filter.html
+      - https://www.nooelec.com/store/catalogsearch/result/?q=distill
+  4.
+    - **Name:** RTL-SDR Blog Broadcast FM Band-Stop Filter (88-108 MHz)
+    - **Kind:** other_brand
+    - **Price usd:** 16.95 at the rtl-sdr.com store (verified, 131 in stock). That store does not ship direct to the EU. EU routes: eBay at US$17.95 (2025 listing, unverified today); AliExpress RTLSDRBlog store (price not verified); Elektor at about EUR 24.95 incl. VAT, about $28 (from a search snippet; the page returned HTTP 429, so unverified).
+    - **Spec comparison:** Design: 7th-order Chebyshev. Stopband: '>50 dB' spec vs >60 dB average. The vendor's release post gives nearly 60 dB at 88 MHz and 45-50 dB at 108 MHz. A third-party VNA sweep on RadioReference (search snippet; the thread returned HTTP 503 every time) gives about 47 dB at 88 MHz, 55 at 95 and 60 at 107. Upper transition: -3 dB at 122 MHz vs 120. Measured 11.5 dB at 119 MHz, about 3 dB at 125 MHz and <1 dB at 144 MHz. Loss at 137 MHz is not published; it is probably around 1 dB, which is my interpolation and unverified (Flamingo+: 0.5 dB typical). Out-of-band: <0.5 dB from 0-1 GHz, mostly <1.5 dB from 1-3 GHz. Build: 28x28x13 mm aluminium case, SMA-F both ends. ESD protection: not published. DC: the designer says about 80 mA, possibly 200 mA (not needed here). Maximum input: not rated (RX only; users report 5 W survived).
+    - **Worse in:** FM rejection is about 10 dB lower in spec, and 45-50 dB at the 108 MHz band edge is below the stack's >=60 dB average. It also lacks the published input ESD diode the re-audit relies on at P1. Loss at 137 MHz is probably higher (unverified). No published maximum-input or DC rating.
+    - **Compatibility:** Mechanically and electrically compatible (SMA, passive, small). As a straight swap it fails the not-worse rule.
+    - **Risks:** EU buyers must use eBay, AliExpress or resellers; low-feedback marketplace sellers can be fakes, as rtl-sdr.com itself warns. Bringing back the P1 ESD protection would need the optional ~470 nH shunt, an extra part.
+    - **Seller url:** https://www.rtl-sdr.com/product/rtl-sdr-blog-broadcast-fm-band-stop-filter/
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-broadcast-fm-band-stop-filter/
+      - https://www.rtl-sdr.com/rtl-sdr-com-broadcast-fm-band-stop-filter-88-108-mhz-reject-now-for-sale/
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+      - https://www.rtl-sdr.com/does-the-rtl-sdr-com-fm-bandstop-filter-withstand-tx-power/
+      - https://forums.radioreference.com/threads/fm-bandstop-filter-comparison.394943
+      - https://elektor.com/products/rtl-sdr-broadcast-fm-band-stop-filter-88-108-mhz-reject
+  5.
+    - **Name:** Nooelec Flamingo+ FM v2 (same part) from EU reseller Passion Radio (France), listed as 'Flamingo v2 FM'
+    - **Kind:** other_brand
+    - **Price usd:** About 37.8 (EUR 33.60 incl. 20% French VAT, about EUR 28.00 / $31.5 ex-VAT). Price from a search snippet only; the product page fell into a redirect loop, so unverified.
+    - **Spec comparison:** Identical part.
+    - **Worse in:** Not cheaper: about $6.5 more ex-VAT than Nooelec direct.
+    - **Compatibility:** Identical.
+    - **Risks:** None technically. The only gain is EU shipping with VAT already handled.
+    - **Seller url:** https://www.passion-radio.com/sat-accessory/flamingo-v2-2539.html
+    - **Sources:**
+      - https://www.passion-radio.com/sat-accessory/flamingo-v2-2539.html
+      - https://www.passion-radio.com/suppliers/nooelec-17
+  6.
+    - **Name:** GPIO Labs FM Notch Filter 88-108 MHz (Tindie, Toronto): 9th-order SMA-M/F; 'airband' version; enclosed version
+    - **Kind:** other_brand
+    - **Price usd:** 30.00 (SMA-M/F), 30.00 (airband), 42.00 (plastic enclosure). All verified on Tindie.
+    - **Spec comparison:** Standard version: 60 dB at 88 MHz, 85 at 98 MHz, only 25 dB at 108 MHz; 0.8 dB at 150 MHz; +30 dBm maximum. Airband version: 25 dB at 88, 75 at 98, 14 at 108; 1.3 dB at 138 MHz. ESD and DC not stated. The enclosed version uses a plastic case.
+    - **Worse in:** Not cheaper. Band-edge rejection at 108 MHz is far worse (14-25 dB vs >60 dB average). The airband version also has more loss at 138 MHz (1.3 dB). No ESD protection. The enclosed version is not shielded metal.
+    - **Compatibility:** SMA, passive.
+    - **Risks:** Small maker with low stock (3-9 units shown).
+    - **Seller url:** https://www.tindie.com/products/gpio/fm-notch-filter-88-108mhz-sma-m-sma-f/
+    - **Sources:**
+      - https://www.tindie.com/products/gpio/fm-notch-filter-88-108mhz-sma-m-sma-f/
+      - https://tindie.com/products/gpio/fm-notch-filter-88-108mhz-airband-applications
+      - https://www.tindie.com/products/gpio/fm-notch-filter-88-108-mhz-with-60-db-rejection/
+  7.
+    - **Name:** Mini-Circuits NSBP-108+ (connectorised band-stop filter, 88-108 MHz)
+    - **Kind:** other_brand
+    - **Price usd:** Not verified (not found in this search).
+    - **Spec comparison:** Datasheet Rev D: >20 dB over 88-108 MHz, >35 dB over 89-105 MHz. Typical 37 dB at 88 MHz, 57 dB at 90 MHz, 26 dB at 108 MHz. Insertion loss 1.00 dB at 140 MHz and 0.76 dB at 150 MHz; <1 dB from 140-1000 MHz. 0.5 W input. N-type connectors, 61.7 mm long, 73 g.
+    - **Worse in:** Far less rejection (26-57 dB vs >60 dB average). About 1.0 dB at 137-140 MHz vs 0.5 dB typical. N-type connectors and 73 g do not suit the handheld RF compartment. No ESD protection.
+    - **Compatibility:** Poor: N-type, too large.
+    - **Risks:** Excellent build quality, but the wrong part for this job.
+    - **Seller url:** https://www.minicircuits.com/pdfs/NSBP-108+.pdf
+    - **Sources:**
+      - https://www.minicircuits.com/pdfs/NSBP-108+.pdf
+  8.
+    - **Name:** Tindie seller 'adz1122' (Maker go, Shenzhen) Broadcast FM Band Stop Filter 88-108 MHz
+    - **Kind:** generic_or_clone
+    - **Price usd:** 11.90 plus shipping from China (verified on Tindie)
+    - **Spec comparison:** The listing copies the RTL-SDR Blog spec text word for word: >50 dB, -3 dB at 76/122 MHz, <0.5 dB to 1 GHz. It does not mention ESD protection or a maximum-input rating.
+    - **Worse in:** Everything listed against the RTL-SDR Blog filter, plus an unknown origin.
+    - **Compatibility:** SMA, passive.
+    - **Risks:** Probably a clone or unauthorised copy, which fails the not-counterfeit rule. No independent measurements.
+    - **Seller url:** https://www.tindie.com/products/adz1122/broadcast-fm-band-stop-filter-88-108-mhz-fm-trap/
+    - **Sources:**
+      - https://www.tindie.com/products/adz1122/broadcast-fm-band-stop-filter-88-108-mhz-fm-trap/
+- **Notes:** VERDICT: KEEP the Nooelec Flamingo+ FM v2 (100813) at $24.95. No cheaper filter is not-worse. Every cheaper option found falls short on the spec that is the reason this part exists, FM rejection. The Nooelec Flamingo FM v1 ($22.95) and Distill:FM Barebones ($17.95) are rated >40 dB. The RTL-SDR Blog filter ($16.95) is rated >50 dB, with 45-50 dB at 108 MHz in the vendor's own post and about 47 dB at 88 MHz in a third-party VNA sweep. The Flamingo+ is rated >60 dB average, and the stack's acceptance test requires >=60 dB. None of the cheaper options from other brands publishes the input ESD diode that P1 relies on. Options from other brands with equal or deeper notches (GPIO Labs $30-42) are not cheaper and have only 14-25 dB at the 108 MHz band edge. Mini-Circuits NSBP-108+ is worse and is N-type.
+  
+  The cheapest legitimate source is Nooelec direct, inside the existing >$100 order with free shipping. The EU reseller Passion Radio (EUR 33.60 incl. VAT, unverified) costs more.
+  
+  Correction for STACK.md: C10 rejects the RTL-SDR Blog filter for having 'no DC rating'. That reason does not hold in this stack, because P1 is a no-DC port and bias enters at the LNA output, and the designer states about 80 mA DC pass anyway. The valid reasons to reject it are the ~10 dB lower FM rejection (45-50 dB at the 108 MHz edge), no published ESD protection, a wider upper transition (11.5 dB measured at 119 MHz) and no published 137 MHz loss.
+  
+  Not verified: the RadioReference VNA numbers (seen only in a search snippet; the thread returned HTTP 503 each time), the Elektor and Passion Radio EUR prices (HTTP 429 and a redirect loop), and the price of the Flamingo+ on Amazon or an official Nooelec AliExpress store (none found).
+  
+  Budget fallback only if the user explicitly accepts a spec trade: the RTL-SDR Blog filter saves $8 per unit ($16 with both units), at the cost of about 10 dB of FM rejection and the input ESD diode, and its 137 MHz loss would need to be checked on the LiteVNA. This is not recommended under the not-worse rule.
+
+## searchB:nooelec_flamingo_fm_v2_100813 (run `wf_e32114dd-52d`)
+
+- **Part:** Nooelec Flamingo+ FM v2 (SKU 100813), broadcast-FM band-stop, first part on P1 VHF-137 (V-dipole -> Flamingo+ -> SAWbird+ NOAA). Qty 1 core. A second unit sits on optional P8 (2 m/WIDE), which is a separate BOM row.
+- **Current price usd:** 24.95 (Nooelec store, re-checked 18 Oct 2026; 2-year warranty). In EUR that is about 22.20 ex VAT at 1.1241, or about 26.4-26.9 with 19-21 % import VAT (my calculation). It ships inside the USD 199.75 Nooelec order, which is above EUR 150, so expect import VAT plus courier handling. Dropping it would still leave the order above the USD 100 free-shipping threshold.
+- **Critical specs:**
+  - Stopband rejection over the European FM band 87.5-108 MHz: >60 dB typical average, >70 dB typical maximum (vendor page). Datasheet Rev 1 stopband is 80.5-114.8 MHz. Stack intake test: >=60 dB average over 88-108 MHz on the LiteVNA. This is the spec the part exists for, because the SAWbird+ NOAA first LNA stage is unfiltered and the V4L two-tone limit at 50-160 MHz is about -12 dBm.
+  - Passband insertion loss at 137.1-137.9 MHz (Meteor LRPT): 0.5 dB typ / 1.2 dB max (datasheet). The filter sits ahead of the LNA, so this loss adds straight to system NF. Modelled cost against a 1000-3000 K sky is 0.06-0.45 dB.
+  - Transition edges: -3 dB at 75/120 MHz and -10 dB at 80/116 MHz. 137 MHz must sit well clear of the upper edge.
+  - Out-of-band insertion loss: <0.25 dB (vendor). This matters for the 144-146 MHz and WIDE use of unit #2 on P8, up to about 1.7 GHz.
+  - Maximum input +18 dBm (5 Vp-p): survives strong FM near transmitters.
+  - Passive LC with no active stage, so no added NF or intermodulation. An RF-grade ESD diode on the input (vendor claim) protects P1, the first part after a bare V-dipole.
+  - Passband return loss at 137 MHz for matching into the SAWbird+ input: not published; measure at intake.
+  - DC pass 250 mA minimum. In the v1.1 topology no DC crosses it (bias enters at the SAWbird+ output, and P1 is 'SMA, no DC'), so this is margin only, not a gating spec.
+  - EMI-shielded anodized aluminium enclosure, so FM cannot leak around the filter inside the RF compartment. SMA female both ends, 50 Ohm, small enough for the RF compartment.
+  - Build and support: designed and made by Nooelec in North America, 2-year warranty, genuine-vendor sourcing.
+- **Candidates:**
+  1.
+    - **Name:** Nooelec Flamingo+ FM v2 (100813), current part
+    - **Kind:** current_part
+    - **Price usd:** 24.95 (verified 18 Oct 2026); about EUR 26.4-26.9 with EU import VAT (calculated)
+    - **Spec comparison:** Baseline: >60 dB average / >70 dB maximum rejection; 0.5/1.2 dB loss at 137 MHz; -3 dB at 75/120 MHz; <0.25 dB out-of-band loss; +18 dBm; ESD diode; 250 mA DC; shielded aluminium case; 2-year warranty.
+    - **Worse in:** Baseline. No independent measurement of the Flamingo+ FM was found; the figures are vendor and datasheet data, and the stack's LiteVNA intake test is the check.
+    - **Compatibility:** Already integrated on P1 (and P8 #2). Passive, so it needs no driver or power rail.
+    - **Risks:** Vendor-only figures until the intake sweep is done.
+    - **Seller url:** https://www.nooelec.com/store/flamingo-plus-fm.html
+    - **Sources:**
+      - https://www.nooelec.com/store/flamingo-plus-fm.html
+      - https://www.nooelec.com/store/catalogsearch/result/?q=flamingo
+  2.
+    - **Name:** RTL-SDR Blog Broadcast FM Band-Stop Filter (88-108 MHz)
+    - **Kind:** other_brand
+    - **Price usd:** 16.95 at the rtl-sdr.com store (re-checked today; ships from China, and per the stack's sourcing audit the webstore does not ship to the EU). EU: Elektor EUR 24.95 incl. VAT, about USD 28.05 (from a search snippet; the fetch was rate-limited, so unverified today), which is about USD 23.2 ex VAT.
+    - **Spec comparison:** Stopband: vendor says almost 60 dB at 88 MHz and 45-50 dB at 108 MHz ('over 50 dB'). Independent buyer measurements (eBay reviews): 53.4 dB at 88 MHz and 56.4 dB at 108 MHz on a network analyser; another buyer saw a minimum of 50 dB over 87.9-108.1 MHz with a tracking generator. Flamingo+ claims >60 dB average. The -3 dB points are 76/122 MHz, similar to the Flamingo+ 75/120 MHz. Insertion loss is <0.5 dB from 0-1 GHz and <1.5 dB from 1-3 GHz; the loss at 137 MHz itself is not published. It is a 7th-order Chebyshev in an aluminium box, 2.8 x 2.8 x 1.3 cm, SMA female. DC: 'negligible DC resistance', 80 mA safe, no published rating. No ESD diode claimed.
+    - **Worse in:** Stopband rejection is about 5-15 dB lower across the band (45-56 dB measured against >60 dB average). It has no published DC rating (irrelevant in this topology), no ESD-diode claim, and no published loss at 137 MHz; one buyer reports some loss at 118-124 MHz. Not equal, so rejected.
+    - **Compatibility:** SMA, passive, fits mechanically. In the EU it must come through the official eBay or AliExpress store or Elektor/Electrokit.
+    - **Risks:** Clone listings exist; buy only from the official RTL-SDR Blog store or its resellers.
+    - **Seller url:** https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+    - **Sources:**
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+      - https://www.rtl-sdr.com/rtl-sdr-com-broadcast-fm-band-stop-filter-88-108-mhz-reject-now-for-sale/
+      - https://www.ebay.de/itm/146949589034
+      - https://elektor.com/products/rtl-sdr-broadcast-fm-band-stop-filter-88-108-mhz-reject
+  3.
+    - **Name:** Nooelec Flamingo FM (non-plus), SKU 100780
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 22.95 (Nooelec store, today)
+    - **Spec comparison:** Rejection >40 dB typical, against >60 dB. -3 dB points 80/115 MHz. Same +18 dBm, 250 mA DC, ESD diode, shielded aluminium case and 2-year warranty. Out-of-band loss is described only as 'minimal'.
+    - **Worse in:** About 20 dB less stopband rejection, and no numeric out-of-band loss. Rejected.
+    - **Compatibility:** Same form factor and connectors.
+    - **Risks:** None beyond its lower performance.
+    - **Seller url:** https://www.nooelec.com/store/flamingo-fm.html
+    - **Sources:**
+      - https://www.nooelec.com/store/flamingo-fm.html
+  4.
+    - **Name:** Generic AliExpress / eBay China 88-108 MHz SMA band-stop modules (e.g. AliExpress items 3256809302911809 and 3256806639725241, 'NWDZ BS' filter, unbranded eBay.de listings)
+    - **Kind:** generic_or_clone
+    - **Price usd:** About EUR 11 on eBay.de per a search snippet (unverified; the listing pages returned 403/503)
+    - **Spec comparison:** No independent S21 measurements found. Listing specs ('50 dB+') are seller or AI-generated text. The only user report, for the NWDZ BS, is 25-30 dB of FM reduction, an anecdote rather than a sweep. Loss at 137 MHz, DC handling and ESD protection are all unknown.
+    - **Worse in:** No measured evidence. The one data point (25-30 dB) is far below >60 dB. Rejected under the angle-B rule.
+    - **Compatibility:** SMA, passive. Some listings are actually band-pass filters or bulky 5-15 cm boxes.
+    - **Risks:** Counterfeit or copied RTL-SDR Blog designs, wrong filter type, inconsistent units, no warranty.
+    - **Seller url:** https://www.aliexpress.us/item/3256809302911809.html
+    - **Sources:**
+      - https://www.aliexpress.us/item/3256809302911809.html
+      - https://www.aliexpress.com/i/3256806639725241.html
+      - https://www.aliexpress.com/s/wiki-ssr/article/nwdz-bs-filter
+  5.
+    - **Name:** Cheap TV-type FM trap (about USD 5, F-connector, 75 Ohm)
+    - **Kind:** generic_or_clone
+    - **Price usd:** About 5 (per rtl-sdr.com; no current listing verified)
+    - **Spec comparison:** rtl-sdr.com's network-analyser comparison: stopband 'attenuated by significantly less' and 'much much larger' insertion loss elsewhere. No numbers in the text; the result is shown in the plots.
+    - **Worse in:** Lower rejection, much higher passband loss, and 75 Ohm F connectors that would need adapters. Rejected.
+    - **Compatibility:** Poor: 75 Ohm F-type in a 50 Ohm SMA chain.
+    - **Risks:** Uncontrolled TV-accessory quality.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.rtl-sdr.com/rtl-sdr-com-broadcast-fm-band-stop-filter-88-108-mhz-reject-now-for-sale/
+  6.
+    - **Name:** DIY 9A4QV SMD FM trap (2x 56 pF, 22 pF, 2x 45 nH, 126 nH air-wound, 2-layer board)
+    - **Kind:** diy
+    - **Price usd:** A few dollars in parts plus PCB (estimate, unverified)
+    - **Spec comparison:** Write-up claims >30 dB over 88-108 MHz and <1 dB loss up to 1.7 GHz.
+    - **Worse in:** About 30 dB less rejection. No enclosure or shielding, no ESD protection, hand-wound coils with unit-to-unit spread. Rejected.
+    - **Compatibility:** Would need its own shielded box and SMA connectors.
+    - **Risks:** Build variance; needs a LiteVNA sweep on every unit.
+    - **Seller url:** 
+    - **Sources:**
+      - https://vu3dxr.in/?p=435
+  7.
+    - **Name:** DIY adaeuper ukw_bandstop (5th-order Legendre, 0603 SMD, open-source PCB)
+    - **Kind:** diy
+    - **Price usd:** PCB plus parts, cost not stated (unverified)
+    - **Spec comparison:** Measured on a Siglent SSA3021X: 'corner frequencies at 73 and 140 MHz'. FM-band attenuation appears only in a screenshot, not in the text.
+    - **Worse in:** An upper corner at 140 MHz puts 137 MHz on the skirt, so passband loss there is far above 0.5-1.2 dB. Only 5th order, and the rejection figure is not stated. Rejected.
+    - **Compatibility:** SMA, passive; would need shielding.
+    - **Risks:** Unverified rejection; loss at 137 MHz.
+    - **Seller url:** 
+    - **Sources:**
+      - https://github.com/adaeuper/ukw_bandstop
+  8.
+    - **Name:** DIY stripline Chebyshev type-2 FM band-stop (experimental-engineering.co.uk)
+    - **Kind:** diy
+    - **Price usd:** PCB plus SMA, cost not stated
+    - **Spec comparison:** NanoVNA V2 measurement: about -52 dB in the FM band, -3 dB points at about 91 and 141 MHz. The author's own commercial reference unit measured -82 dB.
+    - **Worse in:** About 10 dB less rejection. The lower edge at 91 MHz leaves 87.5-91 MHz under-attenuated in Europe. The upper -3 dB at 141 MHz means about 3 dB of loss at 137 MHz. Rejected.
+    - **Compatibility:** SMA; needs an enclosure.
+    - **Risks:** Detuned prototype.
+    - **Seller url:** 
+    - **Sources:**
+      - https://experimental-engineering.co.uk/?p=8750
+  9.
+    - **Name:** Used Nooelec Flamingo+ FM v2 (same part, second-hand)
+    - **Kind:** used
+    - **Price usd:** Unknown: no used listing found (eBay search pages returned 403; searches found no used or 'gebraucht' offers)
+    - **Spec comparison:** Identical part. A passive filter does not wear out, so specs should match new if the unit is undamaged.
+    - **Worse in:** Warranty probably does not transfer (unverified). The ESD diode may already be stressed, which S21 alone may not show. No listing or price can be verified, so this is not a candidate today.
+    - **Compatibility:** Identical.
+    - **Risks:** Accept only if all of these hold: SKU 100813 / v2 label; total landed cost below USD 24.95 including VAT and shipping; and it passes the stack intake sweep on the LiteVNA (S21 <=1.2 dB at 137.1/137.9 MHz, >=60 dB average over 88-108 MHz, plus S11 at 137 MHz). Otherwise buy new.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.nooelec.com/store/flamingo-plus-fm.html
+- **Notes:** VERDICT: keep the Nooelec Flamingo+ FM v2 (USD 24.95). Nothing cheaper was shown to be at least as good. Every cheaper option has lower measured or stated stopband rejection, or no measured evidence at all.
+  - RTL-SDR Blog filter: 45-56 dB, independently measured.
+  - Flamingo FM (non-plus): >40 dB.
+  - Generics: no sweeps; the one report is 25-30 dB.
+  - DIY designs: 30-52 dB, and their upper edges at 140-141 MHz eat into 137 MHz.
+  
+  Observations for the integrator:
+  (1) The 250 mA DC rating that was the stated reason to prefer the Flamingo+ over the RTL-SDR Blog filter is not used in the v1.1 topology. Bias enters at the SAWbird+ output, and P1 is 'SMA, no DC'. The real reason to keep the Flamingo+ is stopband depth (>60 dB average against about 45-56 dB) plus the ESD diode and the warranty, so STACK.md's reason should be reworded.
+  (2) For the spare-V4L whisker kit (a different role, suggested in the re-audit), the USD 16.95 RTL-SDR Blog filter remains a stated trade-off (about 10 dB less rejection), not a not-worse analog.
+  (3) The same conclusion applies to Flamingo+ #2 on P8.
+  (4) Not-cheaper references found, for context only: GPIO Labs 9th-order FM notch on Tindie (from USD 54; vendor says 60 dB at 88 MHz and 85 dB at 98 MHz; https://www.tindie.com/products/gpio/fm-notch-filter-88-108-mhz-for-sdr-85-db-rejection/) and Mini-Circuits NSBP-108+ (USD 184.22, N-type, 89-105 MHz; https://www.minicircuits.com/WebStore/dashboard.html?model=NSBP-108%2B).
+  (5) A DIY 7th/9th-order elliptic on the custom injector PCB is physically feasible, but I found no published, measured design meeting >60 dB average with <=0.5 dB loss at 137 MHz. Under the angle-B evidence rule it is rejected.
+  (6) No independent measurement of the Flamingo+ FM itself was found. Its numbers are vendor and datasheet figures, so the LiteVNA intake test (S21 <=1.2 dB at 137.1/137.9 MHz; >=60 dB average over 88-108 MHz) stays mandatory.
+  
+  Unverified items: Elektor EUR 24.95 (search snippet, fetch rate-limited), eBay.de generics at about EUR 11 (snippet), DIY parts costs, and used-market prices. Hard rules: every candidate is a passive receive filter, so all are receive-only and none is a loop.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
