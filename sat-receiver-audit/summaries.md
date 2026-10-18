@@ -4485,3 +4485,16 @@ Launching the study requested: drop everything that needs dishes or antennas ten
 
 ---
 
+### 🤖 Зведення #158 — 2026-10-18 01:57:29 UTC
+
+**Зведення (тік, коміт da44234).** Етап 1: чекаю на чотири дослідження (малі антени, радіолабораторія, навчання NPU, КХ і меню).
+
+- **КХ і рамка:** на сайті LZ1AQ (active-antenna.eu) є набір підсилювача для малих широкосмугових активних антен, «Active Antenna Amplifier Ham Kit». Це основний кандидат для рамки, що складається. Моделі AAA-1/AAA-2 на сторінці прямо не названі, агент це уточнює. Параметри Wellbrook FLX1530LN агент шукає через інші джерела, бо офіційний домен перехоплено.
+- **Навчання NPU:** Qualcomm AI Hub підтримує кілька версій QAIRT для компіляції, і список можна отримати командою `qai-hub list-frameworks`. Чи там ще є 2.42, яка потрібна Q6A, агент перевіряє.
+
+Джерела:
+- [LZ1AQ active antennas](https://active-antenna.eu/)
+- [Qualcomm AI Hub docs](https://app.aihub.qualcomm.com/docs/)
+
+---
+
