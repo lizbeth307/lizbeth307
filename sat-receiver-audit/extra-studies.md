@@ -27094,6 +27094,61 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   Outside this file:
   - 97: the case drawing in build/ also has to change from GX12 to GX16 (16 мм hole). I noted this in the text but did not touch build/.
 
+## fix:A:b3 (run `wf_7444ffc9-4aa`)
+
+- **Applied:**
+  - 39
+  - 40
+  - 41
+- **Rejected:**
+  1.
+    - **Idx:** 34
+    - **Why:** Already fixed: the 2.9 weather row says 'на GX16-4 IMU — власний ковпачок на ланцюжку (пара Olimex)' and the 8.2 IPX4 row says 'без води біля GX16-4'. GX12/M8 now appears only as a historical note in 5.8 and 11.1 #43.
+  2.
+    - **Idx:** 35
+    - **Why:** Already fixed: the 4.1 S-band decoder cell reads 'gr-satellites (розбір кадрів не перевірено); SatDump-конвеєра S-band в алоу-листі немає (алоу-лист — лише Meteor-M, MetOp, AWS, FengYun-2, Elektro_Arktika ...)'.
+  3.
+    - **Idx:** 36
+    - **Why:** Already fixed: the 4.1 target is named 'GNSS L1 + SBAS (EGNOS)'.
+  4.
+    - **Idx:** 37
+    - **Why:** Already fixed: 2.6 reads 'зайнято 24 GPIO + 3 ADC (GP22 — тахо вентилятора шляху 1, C6), вільних GPIO немає'.
+  5.
+    - **Idx:** 38
+    - **Why:** Already fixed: the 3.1 spare LNA row reads 'Flamingo+ #2 → LNA V2 → ch4 → RTL-A RF4'.
+  6.
+    - **Idx:** 42
+    - **Why:** Already fixed: 3.1 Debug Probe, 11.1 #56 and #65 all say DigiKey DE step 6 ('кроку 6' / '(крок 6)'). The only 'крок 7' left in section 8 is the Waveshare hub, which really is in step 7.
+  7.
+    - **Idx:** 43
+    - **Why:** Already fixed: 1.2 #30 and 5.4 'Доступ до SDR' both read '(ProtectHome=yes, окремий користувач без HOME-конфігу; нотатка 8)'. No ProtectHome=read-only is left.
+  8.
+    - **Idx:** 44
+    - **Why:** Already fixed per decision D2: C5, C21, 8.1 V4L-4 and 11.3 row 13 use LABRXA/LABRXB/LABRXC and 'rtl_test -d LABRXB'. LAB-RTL* appears only in 2.2 and 11.3 as the rejected scheme.
+  9.
+    - **Idx:** 45
+    - **Why:** Already fixed per decision D1: C7, 1.2 #30, 5.4, 6.2, 8, 11.2 and 11.4 all keep NET_SOURCE (127.0.0.1, cf32 from labrx, file decode by default). The plugin list is METEOR, NOAA_METOP, AWS, ELEKTRO_ARKTIKA, XRIT, FY2 and NET_SOURCE_SDR_SUPPORT, with no METOPSG/FY3/GK2A.
+  10.
+    - **Idx:** 46
+    - **Why:** Already fixed per decision D4: 1.2 #31, 6.2 and C22 use noble 1.6.8-4build1 with the backport only as an option. B12 shows libairspyhf1 as noble, not +lab/1001. 2.2 and 11.2 row 19 say 'лише у збірці 1.8.1 ... у типовій noble 1.6.8-4build1 цих символів немає'.
+  11.
+    - **Idx:** 47
+    - **Why:** Already fixed per decision D5: 'wsjtx-decoders' occurs 0 times. lab-wsjt-decoders is used everywhere.
+  12.
+    - **Idx:** 48
+    - **Why:** Already fixed: 1.2 #7 has 'PPS /dev/pps-gnss lock NMEA noselect; ворота selectopts при прийнятті (5.4, re-audit D; замінює prefer)'. 11.2 row 15 says '-n -b -s 115200' was chosen and the PPS line uses noselect. 11.5 row 47 uses /dev/lab/gnss.
+  13.
+    - **Idx:** 49
+    - **Why:** Already fixed: 3.1 has 'ch4 → RTL-A RF4' and 8 has 'Крок фону L-band патча на RTL-B RF2'.
+  14.
+    - **Idx:** 50
+    - **Why:** Already fixed: 1.2 #102, the section 8 LNB row and 11.6 row 39 all use 'DVB-T/LTE B28 (вимога користувача; у ЄС — скан 733-758 MHz SDL/PMSE/PPDR плюс край B28 uplink 703-733 MHz; DVB-T у смузі 700 MHz більше немає)'.
+- **Totals changed:** The 3.1, 3.2, 2.12 and 3.6 totals were already on one VAT basis; I checked every row sum and they add up. I brought the places still showing the old figures into line with them. C24: bench ≈$1,537-1,768 → ≈$1,609-1,768 (1,609.39-1,767.80); extended 570.25 → 582.23-629.73; with-Lime summary + bench ≈$4,875 → ≈$4,948-5,551; everything except optional ≈$5,445 → ≈$5,530-6,180; without Lime ≈$4,269 → ≈$4,341-4,942 and ≈$4,839 → ≈$4,924-5,572. 11.7 table: lab core/extended 1,609.39-1,767.80 / 582.23-629.73 (change +134.81 / −42.09; +84.51 / −77.99); everything except optional 5,530.09-6,180.25 with Lime, 4,923.63-5,571.79 without Lime, 4,826.22-5,447.33 with the v1 parts list (+567.83 / −156.01). 11.7 EU landed lower bound for everything except optional ≥≈$5,535 → ≥≈$5,620-6,270. Section 7 item 23: extended ≈$570 → ≈$582-630. Header line 9: the LiteVNA, tinySA and Debug Probe bench bounds are now stated incl. VAT on both sides, with ex-VAT figures for comparison only. No upper bounds changed.
+- **Summary uk:** Пакет 3 ланцюжка A (idx 34-50): більшість проблем уже виправили попередні пакети, тож idx 34-38 і 42-50 відхилено як уже виправлені. Кожну перевірено пошуком у STACK.md.
+  idx 39 і 40: у 3.1, 3.2, 2.12 і 3.6 підсумки стенда і розширення вже стоять на одній базі ПДВ, усі суми рядків я перерахував. Застарілі числа виправлено в C24, у п. 23 розділу 7, у таблиці 11.7 і в позначках заголовка: стенд 1,609.39-1,767.80, розширення 582.23-629.73, «усе, крім опційного» 5,530.09-6,180.25.
+  idx 41: у 3.1 «Інструменти» і в 11.1 замість «ціни TME — нетто» тепер «брутто, з 19% ПДВ DE». Підтвердження — числа G5: плашкотримач $5.74 = $4.82 × 1.19, SCALA $43.84 і HL 1920 E $79.69 — брутто.
+  Верхні межі не змінилися. Нижні межі тепер на одній базі в усіх розділах.
+
 ## edit:02c_bom_display_power_gnss:b1 (run `wf_85b20a83-f63`)
 
 - **Section:** 02c_bom_display_power_gnss
