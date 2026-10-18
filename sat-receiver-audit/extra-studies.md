@@ -3186,6 +3186,125 @@
   - UI hooks: every function above becomes a tile in the touch lab menu (lab_ui_hf study): Survey, Calibrate, NF, VNA import, EMI A/B, Quiet mode, Instruments status.
   - Extended/optional: Gqrx 2.17.4 (apt) or 2.17.7 (source); CyberEther 1.15.0 (pin one version); satnogs-decoders 1.131.0; rx_tools; SoapyRemote 0.5.2 (LAN only); SatNOGS client 2.1.4 Docker (with the V4L librtlsdr checked); URH 2.10.0 for offline analysis only (archived; no TX functions); AS3935 spidev library; WaveForms (arm64 unconfirmed); ptouch-print. dcf77pi is dropped because the loopstick is excluded.
 
+## lab:verify_value_safety (run `wf_1dd437c5-0cf`)
+
+- **Lens:** VALUE AND SAFETY: is each item worth its money and weight, is there a cheaper item with equal capability, are the prices real, and does every signal source stay conducted-only at low output. Also checked that nothing targets private or military communications and that legal notes stay generic. Used 8 WebSearch calls plus WebFetch on primary pages, 18 Oct 2026.
+- **Refuted:**
+  1.
+    - **Claim:** RF accessories sweep: ANNE-50+ 'Power rating not on the store page' and 'Not a calibration standard (its return loss is not characterised here)'; 'Turn the bias tee off before terminating a bias-fed input (power rating unverified)'.
+    - **Why:** Datasheet rev H: DC-18 GHz, power rating 1 W at 50 C, derated linearly to 350 mW at 100 C. Return loss is at least 30 dB (minimum) from DC to 4 GHz; typical values are 46.6 dB at 596 MHz, 39 dB at 2024 MHz and 35 dB at 4000 MHz.
+    - **Correction:** 4.5 V bias into an ANNE-50+ is 0.4 W, which is within its rating at room temperature. 13/18 V LNB power is 3.4-6.5 W and would destroy it, so keeping every sled port DC-free is mandatory, not just advisable. Below 4 GHz the ANNE-50+ is good enough to serve as the LOAD standard for a LiteVNA-class instrument, so it covers the 'need a better load' argument for buying extra OSL kits.
+    - **Source:** https://www.minicircuits.com/pdfs/ANNE-50+.pdf
+  2.
+    - **Claim:** Integration core RF bench set: 'Generic SMA OSL kit (about $10) plus Chelegance SMA-M OSL (about 250 SEK), so both genders are covered'. Extended kit: '2x Mini-Circuits CBL-1FT-SMSM+ precision VNA port cables, $82.05 each'.
+    - **Why:** The LiteVNA 64 already ships with 2x 30 cm SMA male-to-male SS405 cables, SMA-male OPEN, SHORT and LOAD standards, and an SMA female-to-female adapter (Limmared listing; Lab401 and Passion Radio list the same set). The Chelegance kit is SMA-male, the same gender as the bundled kit, so it does not add the missing gender.
+    - **Correction:** Drop the Chelegance kit (about 250 SEK). Drop the generic kit too, unless you buy an SMA-female O/S/L set (about $10, unverified). Move the CBL-1FT pair ($164.10) to optional: buy it only if the bundled SS405 cables fail a P1 repeatability check. Savings are about $190-200.
+    - **Source:** https://butik.limmared.nu/en/antenna-analysis/7430-litevna-64-vector-network-analyser-50khz-63ghz-.html
+  3.
+    - **Claim:** Instruments sweep, tinySA cheaper alternative: 'tinySA Ultra ZS405 or Ultra+ ZS406 (ULTRA mode to 5.3 GHz, level-calibrated to 6 GHz...); price not verified'. Also 'square wave up to 6.3 GHz'.
+    - **Why:** Switch Science (search snippet) lists the original Ultra ZS405 as discontinued at JPY 29,800 and the ZS407 at JPY 33,800 (sold out). That is only about 12% apart, and the ZS405 is being replaced. The official spec page gives the ZS407 square-wave output up to 6 GHz (zeenko says 6.3 GHz) and the standard Ultra+ up to 4.4 GHz. It publishes no output level above 800 MHz in either mode.
+    - **Correction:** No cheaper tinySA has equal capability that you can still reliably buy. The ZS407 at about $199-225 from the official sellers is the right buy; eBay $210.99 comes from an unknown seller with clone risk. For conducted tests use only the sine mode below 800/900 MHz (-19 dBm maximum, ±2 dB). Treat the modes above 800 MHz as unknown level, put at least 30 dB of pad on them, and never use them for anything except a cable into a load or filter.
+    - **Source:** https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Specification ; https://www.switch-science.com/products/9482 ; https://www.switch-science.com/products/11120
+  4.
+    - **Claim:** Instruments sweep, rejected list: 'Leo Bodnar LBE-1420 ... lbgpsdo does not support it on Linux (only a separate project is acknowledged)', which implies it cannot be configured on Linux.
+    - **Why:** simontheu/lbe-1420 is a Linux hidraw command-line tool that sets the output frequency (example: ./lbe-142x /dev/hidraw1 --f1 10000000). The page does not say whether it can save to flash or set drive level. leobodnar.com's Mini GPSDO page now recommends the LBE-1420 for new purchases. lbgpsdo itself supports the Classic GPSDO, the 'Classic Leo Bodnar GPSDO mini' and the LBE-1421 only.
+    - **Correction:** The LBE-1420 (EUR 155 net) does have basic Linux frequency setting through simontheu/lbe-1420; flash save and drive level are unverified. The Mini (GBP 132, in stock) is still the best-supported choice on Linux, but the vendor is steering buyers to the LBE-1420, so expect the Mini to be phased out.
+    - **Source:** https://github.com/hamarituc/lbgpsdo ; https://github.com/simontheu/lbe-1420 ; https://www.leobodnar.com/shop/index.php?main_page=product_info&products_id=301
+  5.
+    - **Claim:** General tools sweep, Pinecil: 'Has BLE (app needs IronOS 2.21+)' and 'pause SDR recordings while soldering, because the heater PWM and the BLE radio are noise sources'. This assumes the BLE radio stays on.
+    - **Why:** IronOS has a 'Bluetooth' setting with three values: Off, + (full access) and R (read-only).
+    - **Correction:** Set IronOS Bluetooth = Off on the Pinecil V2. The lab then has no intentional on-air transmitter in the soldering kit, and one noise source is gone. Pausing recordings because of the heater PWM still applies.
+    - **Source:** https://ralim.github.io/IronOS/Settings/
+  6.
+    - **Claim:** Instruments sweep: 'Uncalibrated broadband noise source (DIY ... or a generic SMA noise generator module)': generic modules 'ranges, ENR, flatness and prices NOT verified'. Integration: near-field probes 'cheap generic set ($0-30, generic set unverified)'.
+    - **Why:** Prices found: generic 0.001-3000 MHz diode/zener-plus-amplifier noise and tracking sources are about $29 (EDN, eBay) to $39.99 (Newegg LBEC). Some are sold literally as a 'Noise Source Interference Generator' (Fruugo). No listing or article publishes an absolute output level; EDN shows only a relative plot. A generic PCB near-field probe set (9 kHz-3 GHz, SMA) was about EUR 47 (ManoMano). Com-Power PS-500 is $109 (The EMC Shop).
+    - **Correction:** Generic noise modules cost about $30-40, not $0-20, and their level is unknown. Keep the DIY ZFL-500 source with an ENR table as the default. If you buy a generic module, pad it by at least 20-30 dB, conducted only, and never buy anything marketed as an 'interference generator' or jammer. Budget about EUR 45-50 for a generic probe set; only DIY semi-rigid probes are $0-10.
+    - **Source:** https://www.ednasia.com/?p=10202 ; https://www.newegg.com/p/2VH-00P9-002M2 ; https://www.fruugosaudiarabia.com/dc-12v-noise-source-interference-generator-external-spectrum-tracking-signal-source-for-testing-and-diagnostics/p-432685191-908547290 ; https://www.manomano.fr/p/5-antennes-de-champ-magnetique-sonde-de-champ-proche-cememi-correction-de-conduction-et-de-rayonnement-sonde-de-champ-magnetique-kns-223514532 ; https://theemcshop.com/test-equipment/near-field-probes-e-h/emc-probes/kits/
+  7.
+    - **Claim:** Integration core kit: Leo Bodnar Mini GPSDO is CORE (GBP 132, about $170-180) and is 'the strongest emitter in the kit'.
+    - **Why:** Value: the software stack already gives GNSS-traceable ppm for $0, through GNSS-SDR user_clk_drift_ppm and the PPS sample-count fit (software sweep P2). GNSS-SDR needs only an active L1 patch. The Mini must be disconnected for passes. Its J4 external-reference route is undocumented by Lime. Safety: even its lowest drive is +6.4 dBm, the highest source level in the kit, which contradicts 'prefer models whose output level is low'.
+    - **Correction:** Move the Mini to extended. Core frequency calibration becomes GNSS-SDR plus the LC76G PPS method, with a separate active L1 patch (price unverified, roughly $10-15). Buy the Mini only if you need a GPS-locked conducted tone to correct the tinySA, or for later J4 experiments. That takes about $175 off core.
+    - **Source:** https://www.leobodnar.com/shop/index.php?main_page=product_info&products_id=301 ; https://gnss-sdr.org/docs/sp-blocks/pvt/
+  8.
+    - **Claim:** Integration extended sled: 'Mini-Circuits ZSWA4-63DR+ ($307.32; 0 in stock ...)'. RF accessories sweep: a generic HMC7992 board is accepted only if it measures 'isolation of at least 40 dB below 1 GHz'. Seller claims '45 dB isolation'.
+    - **Why:** A generic HMC7992 SP4T module was listed at CA$20.49 (Walmart.ca third-party seller; SMA connectors not confirmed). Distributor listings for the HMC7992LP3DE chip summarise isolation as only about 30-37 dB, so the 45 dB seller claim and the 40 dB acceptance threshold may not be met. The ADI datasheet was unreachable (503).
+    - **Correction:** A $307 switch with zero stock is poor value for a hobby receive lab. Default to manual swaps at the SMA bulkheads (free) plus a terminated reference port. If you want software switching, try an HMC7992 board (about $15-25), expect roughly 30-37 dB isolation, and buy the ZSWA4 only if measured isolation proves it is needed. That saves about $280.
+    - **Source:** https://www.walmart.ca/en/ip/HMC7992-Non-Reflective-SP4T-RF-Switch-Module-PCB-Material-0-1-6GHz-Frequency-Range-3V-5V-Power-Supply-45dB-Isolation-0-6dB-Insertion-Loss-58dBm-IIP3/4LT6JIAL4ULJ ; https://origin-www.findchips.com/detail/hmc7992lp3de/Analog-Devices-Inc
+  9.
+    - **Claim:** Integration extended sled: 'ZFBT-4R2GW+ ($111.57) as the LNB injector, fed 12 V from AUX'.
+    - **Why:** The handheld already has an internal LNB bias tee, and the sled already carries 2 generic 10 MHz-6 GHz tees. The generic-tee loss problem (3-7 dB) is at 100-200 MHz, not at the 739 MHz QO-100 IF. The commodity Inverto 5-2400 MHz F-type inserter is EUR 28.90 with its PSU, but it outputs a fixed 17-18 V (horizontal polarisation), so it is not a drop-in for 12-13 V.
+    - **Correction:** Use one of the sled's generic tees, VNA-checked at 740 MHz and with a DC rating of at least 18 V (rating unverified), fed from AUX 12 V. Keep the ZFBT as an optional reference part only. That saves about $100.
+    - **Source:** https://www.satking.de/en/inverto-unicable-ii-power-inserter-5-2400mhz-incl.-power-supply ; https://inverto.tv/accessories/410/unicable-ii-power-inserter-5-2400mhz
+  10.
+    - **Claim:** Integration extended: 'AD8318 log-detector power meter ... Used for level checks before an SDR input'. Instruments sweep capability: 'Absolute RF power checks (-60 to -5 dBm accurate)'.
+    - **Why:** The sweep's own procedure calibrates the AD8318 against the tinySA, which is ±2 dB (spec page). The AD8318 therefore cannot be more accurate in absolute terms than the tinySA it duplicates. Its only unique use is the live overload alarm, and that needs a directional coupler that is never specified.
+    - **Correction:** Drop the AD8318 from extended; it saves $25-60. Make it optional only once a specific coupler is chosen. The tinySA level readout is the lab's absolute power reference.
+    - **Source:** https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Specification
+  11.
+    - **Claim:** Software sweep and integration: 'Universal Radio Hacker (URH) 2.10.0, offline analysis only' (optional).
+    - **Why:** The repository was archived (read-only) on 29 Mar 2026. Its page advertises a fuzzing component, a simulation environment for stateful attacks, and 'Record and send signals'. It links articles titled 'Attacking Wireless Keyboards' and 'Attacking Logitech Wireless Presenters'. That is aimed at third-party private devices, which the rules forbid, and the project gets no more fixes.
+    - **Correction:** Reject URH outright. inspectrum 0.3.1 plus Jupyter/numpy cover the offline burst analysis, with no TX features at all.
+    - **Source:** https://github.com/jopohl/urh
+  12.
+    - **Claim:** Integration extended: Uputronics SAW-filtered 1090 MHz preamp (EUR 47.64) plus the 2nd V4L for ADS-B. Narrowband sweep: 'cheaper alternative ... No preamp'.
+    - **Why:** The FlightAware Pro Stick Plus is an R820T2 RTL-SDR with a 19 dB LNA and a 1075-1105 MHz SAW filter built in. It cost $20.95 at launch on Amazon, $24.95 shipped (rtl-sdr.com) or $29.95 outside the US; these prices are dated and the current price is unverified. It works with stock librtlsdr, so it needs no V4L patch.
+    - **Correction:** For ADS-B only, one Pro Stick Plus (about $21-30, unverified) is cheaper than the EUR 47.64 preamp, and the 2nd V4L stays free for AIS or radiosondes. The 403 MHz preamp is also low value: the auto_rx wiki says a quarter-wave is usually enough for sondes. Make it optional.
+    - **Source:** https://www.rtl-sdr.com/flightaware-release-their-prostick-plus-ads-b-optimized-rtl-sdr-with-lna-and-filter-built-in/ ; https://www.rtl-sdr.com/flightaware-prostick-vs-flightaware-prostick-plus-review/
+  13.
+    - **Claim:** Integration extended: 'Airspy HF+ Discovery ... It runs on the LAB USB port with the NON-loop foldable HF wire antenna. The YouLoop is excluded'.
+    - **Why:** The HF+'s main advantages are 110 dB blocking dynamic range and coverage from 0.5 kHz. Without its matched low-noise passive loop, and with a short wire metres from a handheld full of switching converters, local noise will usually set the floor. The receive sweep itself marks LF/VLF at handheld scale as unverified. The airspy.com page gives no price; WiMo lists EUR 232.
+    - **Correction:** Move the HF+ to optional ($169-250 saved). If the no-loop rule is not actually a user rule (see missing), the MLA-30+ on the V4L (about $38-44 delivered on eBay) is the better-value HF upgrade.
+    - **Source:** https://airspy.com/airspy-hf-discovery/ ; https://www.wimo.com/de/airspy-discovery
+  14.
+    - **Claim:** Integration GPSDO route: 'Bodnar Mini tone at 8 mA drive -> 20+20+20+20 dB (kit plus 2x VAT-20W2+)', with the VAT-20W2+ pair at $37.51 each in core.
+    - **Why:** Arithmetic and kit content: the Nooelec kit has one 20 dB pad, so with 2x VAT-20W2+ there are three 20 dB pads. The fourth 20 dB has to be 10+6+3+1, a chain of 7 pads plus a DC block. For a frequency-calibration tone the level accuracy does not matter, so precision pads add no value here.
+    - **Correction:** Use 3x20 + 10+6+3+1 = 80 dB, or 2 generic 30 dB pads (price unverified) plus the kit. Replace the $75 VAT-20W2+ pair with generic pads after a VNA check, and keep the DC block. (If the Mini moves to extended, this whole chain becomes extended.)
+    - **Source:** https://www.nooelec.com/store/sdr/sdr-addons/attenuator-bundle.html
+- **Confirmed:**
+  - Leo Bodnar Mini GPSDO: GBP 132 and in stock. Ships with an active GPS antenna (magnetic base, 5 m cable). Settings are kept when powered off (memory type not named). Output 400 Hz-810 MHz, 3.3 V CMOS square wave into 50 ohm; +6.4/+9.0/+9.9/+10.3 dBm at 8/16/24/32 mA drive (at 10 MHz). 5 V at up to 250 mA over mini-USB; the antenna port supplies 3.3 V at up to 30 mA. 70x41x15 mm. The vendor page lists Windows and macOS tools only; Linux works through lbgpsdo. https://www.leobodnar.com/shop/index.php?main_page=product_info&products_id=301
+  - lbgpsdo supports the Classic GPSDO and the 'Classic Leo Bodnar GPSDO mini' (lbgpsdo.py) and the LBE-1421 (lbe142x.py). https://github.com/hamarituc/lbgpsdo
+  - tinySA Ultra/Ultra+ generator: sine 100 kHz-800 MHz (900 MHz on Ultra+), -115 to -19 dBm in 1 dB steps, ±2 dB from -72 to -19 dBm up to 800 MHz. Reference output is a -35.6 dBm square wave. Analyzer absolute maximum is +6 dBm at 0 dB attenuation (+20 dBm short peak at 30 dB), ±5 V DC; best measurements below -25 dBm input. This supports the 20-30 dB pad plus DC block rule after an LNA, and the use of the low sine mode for safe conducted tests. https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Specification
+  - LiteVNA 64: SEK 2,195 incl. VAT at Limmared (out of stock), about $205-225 equivalent. Includes a 2000 mAh battery, 2x 30 cm SS405 SMA M-M cables, SMA-male OSL and an SMA F-F adapter. The stimulus level is published on neither zeenko.tech nor the reseller pages, so it is still unverified. https://www.zeenko.tech/litevna
+  - RTL-SDR Blog store prices confirmed: V4L $37.95, Wideband LNA V2 $19.95, AM high-pass $16.95, FM band-stop $16.95, dipole kit $17.95, YouLoop $39.95. The store sells no ADS-B LNA and no noise source. https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+  - Com-Power PS-500 near-field set: $109, 9 kHz-5 GHz H-field (from a search snippet of https://theemcshop.com/test-equipment/near-field-probes-e-h/emc-probes/kits/).
+  - Airspy HF+ Discovery: 0.5 kHz-31 MHz plus 64-260 MHz, 45x60x10 mm. airspy.com shows no price and sends buyers to dealers. https://airspy.com/airspy-hf-discovery/
+  - IronOS battery settings are confirmed: Power source cutoff (DC=10 V, or S=3.3 V/cell) and Minimum voltage per cell (4-6S: 2.4-3.7 V). The planned 4S at 3.4 V/cell (13.6 V) cutoff is valid. https://ralim.github.io/IronOS/Settings/
+  - URH repository archived on 29 Mar 2026 (read-only). https://github.com/jopohl/urh
+  - Safety: in all sweeps and the integration, every signal source (VNA port 1, tinySA generator, GPSDO, noise sources, AD3 AWG) is restricted to conducted use into cables, pads, filters, LNAs or loads. The integration correctly drops antenna S11 sweeps (helicone at 1420 MHz, dipole lengths) and replaces them with receive-only Sun, sky/ground and C/N0 checks. The LimeSDR TX port is terminated and fenced by a software guard (AMARISOFT plugin off, no limeTRX TX flags, sink-block lint). Noise and AUX outputs default OFF through pull-downs and the expander's high-Z power-up state.
+  - Scope: Inmarsat/Iridium (SAWbird+ iO/IR), ACARS/VDL2/HFDL, pagers, DMR/TETRA/trunking, rtl_433, gr-gsm/kalibrate and GRAVES (military radar) are all excluded. multimon-ng is limited to EAS. Legal notes in every sweep are generic and not tied to any country.
+  - Value: these core picks are justified with no cheaper equal-capability item found: LiteVNA 64 (the NanoVNA-H4 is limited to about 1.5 GHz; NanoVNA-F V3 and V2 Plus4 cost more), tinySA Ultra+ ZS407, the DIY noise source, Nooelec pad kit, BLK-89-S+ DC blocks, ANNE-50+ loads, $12 Debug Probe, $25.99 Pinecil, $58.99 FNB58 Std (no Bluetooth), $10 fx2lafw logic analyzer, and the $0 software stack.
+- **Missing:**
+  - The 'no loops' antenna rule the integration applies (marked 'verify') is NOT in the antenna rule given for this task: patch and chip antennas, fold or collapse to 35 cm or less, no dishes. Confirm with the user. It decides between the MLA-30+ (about $38-44, best-value HF), the YouLoop, the CANADUINO loopstick, the AS3935 coil and H-field near-field probes, and therefore whether the HF+ Discovery is worth buying.
+  - On-air transmitters remain in the kit: the Q6A's AIC8800 Wi-Fi/BT and the Pinecil V2 BLE. 'Quiet mode' uses nmcli radio wifi off, which leaves Bluetooth on. Use 'rfkill block wlan bluetooth' (or 'rfkill block all') in field and receive-only mode, and set the Pinecil's IronOS Bluetooth = Off. Generic legal note: these are licence-exempt consumer radios, but they are the lab's only intentional emitters, so keep them off unless docked.
+  - Sled leakage rule: when any source (tinySA generator, VNA, GPSDO, noise) is on the BENCH port (RF3), the antenna chains on RF1/RF2 see it through the switch's port-to-port isolation (ZSWA4 57 dB typical at 1-2.7 GHz; an HMC7992 board possibly only about 30-37 dB) and then the LNA's reverse isolation. Add a guard rule: during conducted tests, replace RF1/RF2 antenna feeds with loads (or disconnect the antennas), keep any source at RF3 at about -40 dBm or less, and feed the GPSDO only through the full 80 dB pad stack, never through the BENCH port's 20 dB pad alone.
+  - The tinySA output level above 800 MHz (square-wave and high-accuracy modes) is unpublished. Treat it as unknown and pad it by 30 dB or more, conducted only. The LiteVNA stimulus level is still unpublished. If a guaranteed lower-output VNA is required, the LiteVNA 67 (EUR 239 ex VAT, Eleshop search snippet; page returned 403) advertises a built-in source attenuator. Otherwise rely on the pads already in P1-P3.
+  - Artemis / sigidwiki includes a Military category with 120+ entries (Link-11, STANAG 4197, HFGCS, Milstar, 'The Buzzer', OTH radars). Add a lab rule: identification only. If a peak matches a military or government entry, log it as out of scope and do not record, analyse, annotate or decode it further. https://www.sigidwiki.com/wiki/Category:Military
+  - Tier changes are needed (estimates, many accessory prices unverified):
+  - Core: Bodnar Mini moves from core to extended; drop Chelegance and the duplicate OSL kit; generic pads instead of the VAT-20W2+ pair; near-field set re-budgeted to about EUR 45-50 or DIY. Core comes to roughly $1,330-1,700 instead of $1,600-1,950.
+  - Extended: ZSWA4 replaced by HMC7992 or manual swaps; ZFBT replaced by a generic tee; CBL-1FT, HF+ and TC001 move to optional; AD8318 dropped. Extended falls from about $1,870-2,000 to roughly $880-1,030, including the Mini.
+  - Extended or optional items that are fine but low value: TC001 (about GBP 260). The procedures' pass/fail criteria (CPU thermal zones, LMS7002M at 75 C or less, KSD9700 trip, cell temperature 45 C) use internal sensors or a thermocouple, and the AN8009's K-type covers spot checks, so make the TC001 optional. VLM-33-S+ limiter ($69.60): it duplicates the BENCH pad when every source in the lab is controlled and padded. LBE-1421 and AD3 are correctly kept optional; the AD3 should be rejected outright, since its AWG level into 50 ohm is unverified and arm64 WaveForms is unconfirmed.
+  - Still unverified: current Pro Stick Plus price; HMC7992 board SMA connectors and logic levels; DC voltage ratings of generic bias tees (need 18 V or more for LNB use); generic SMA pad and probe-set prices on AliExpress; LiteVNA 62 price (Eleshop snippet only).
+- **Notes:** Overall: on safety the plan is sound. Every signal source is conducted-only, antenna S11 sweeps are gone, Lime TX is fenced in hardware and software, and private, commercial-satcom and military targets are excluded. The legal notes are generic.
+  
+  Remaining safety gaps:
+  1. Q6A Bluetooth and Pinecil BLE are left on. Fix with 'rfkill block wlan bluetooth' and IronOS Bluetooth = Off.
+  2. Sources on the sled's BENCH port can leak to the antenna ports through switch isolation. Load or disconnect RF1/RF2 during conducted tests, and keep any source at RF3 at -40 dBm or less.
+  3. URH is archived and explicitly attack-oriented (fuzzing, record-and-send, articles on attacking wireless keyboards and presenters). Reject it.
+  4. The Artemis database contains military signals. Use it for identification only.
+  5. Generic noise modules sold as 'interference generators' must never be bought.
+  
+  The value problems are bigger than the safety problems. Several precision parts duplicate what is already in the box or in software:
+  - The LiteVNA bundle already includes cables and an OSL kit. The ANNE-50+ (verified 1 W, return loss of at least 30 dB to 4 GHz) works as a load standard.
+  - GNSS-SDR and the PPS method give free GNSS-traceable ppm, so the Mini GPSDO belongs in extended. It is also the highest-output source in the kit (+6.4 dBm at its lowest drive). Leo Bodnar now recommends the LBE-1420 for new purchases, and simontheu/lbe-1420 does give basic Linux frequency control, contrary to the rejection note.
+  - The $307 ZSWA4 (out of stock) and the $111 ZFBT are poor value next to an HMC7992 board, the generic tees and the existing internal LNB bias tee.
+  - The AD8318 cannot beat the tinySA it is calibrated against.
+  - For ADS-B alone, a Pro Stick Plus (about $21-30, dated price) is cheaper than the EUR 47.64 preamp.
+  - The ZS405 is no real saving over the ZS407 (discontinued at Switch Science; only about 12% cheaper).
+  
+  Prices confirmed: RTL-SDR Blog store, Bodnar Mini, Limmared LiteVNA 64, Com-Power PS-500.
+  
+  Sources fetched: tinysa.org spec page, zeenko.tech, leobodnar.com, Mini-Circuits ANNE-50+ datasheet (saved to /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/vs_pdf/anne50.pdf), ralim.github.io/IronOS, github.com/jopohl/urh, github.com/hamarituc/lbgpsdo, github.com/simontheu/lbe-1420, rtl-sdr.com buy page, airspy.com, sigidwiki. Blocked: analog.com (503), Eleshop (403), Lab401 (429). WebSearch calls used: 8.
+
 ## small:lband_sband (run `wf_41027870-8e7`)
 
 - **Band group:** L-band 1.5-1.7 GHz and S-band 2.2-2.4 GHz with antennas of at most 12 cm (STRICT) or 20 cm (SMALL). Dishes and anything tens of cm deployed are EXCLUDED, including the foldable helicones, the 11-turn helix and the 2x2 helix arrays. Rule interpretation as given: STRICT means the largest deployed dimension is about 12 cm or less; SMALL means about 20 cm or less; foldable or telescopic antennas that are larger when deployed are excluded and appear only in the borderline note.
@@ -9682,6 +9801,146 @@
   - Is variable batch supported in 2.42?
   Each one is a Phase 0/3 test item. The design works without them, through the home-base x86 path.
   - SCOPE AND DUAL USE. Generic detectors can be retrained on any signal. Mitigation: a taxonomy CI blocklist (radar, drones, EW, military, emitter ID, private content), receive-only hardware configuration with no TX path in sdr-ingestd, and this policy documented in the bundle manifest.
+
+## npu:verify_practical_responsible (run `wf_62c18130-b0d`)
+
+- **Lens:** Practical and responsible use: can one hobbyist run this in the field and at home; storage, battery and heat; dataset and toolchain licences; whether the classes and features stay within receive-only lab use (no military-emitter targeting, no private-content extraction); and whether the NPU can fail without stopping capture.
+- **Refuted:**
+  1.
+    - **Claim:** Risks list: 'kernel panic during NPU allocation (29959)' is cited as evidence of HTP instability on the 2.42 stack.
+    - **Why:** In the same thread the reporter later wrote 'It is a Hardware Failure (Defective RAM module)' (27 Dec 2025). That kernel was 6.17.1-4, not the pinned 6.18.2-4. The report is not evidence of an NPU or software fault.
+    - **Correction:** Remove 29959 from the HTP-stability evidence. The remaining evidence is 29949, where the TFLite delegate gets stuck at init after about 1 h and no fix was posted, plus 31208, 31046 and 31368. Separately, add a RAM stress test (for example memtester) to Phase 0 acceptance, because one board has already been reported with defective soldered RAM.
+    - **Source:** https://forum.radxa.com/t/29959.json ; https://forum.radxa.com/t/29949.json
+  2.
+    - **Claim:** 'HisarMod2019.1 and CSPB.ML: no stated licence, so benchmark only.'
+    - **Why:** The HisarMod page has no licence field, but the IEEE DataPort Terms of Service, section 2(g), say: 'Except as otherwise specifically permitted by IEEE ... Content will be made available subject to the terms of the Creative Commons Attribution (CC-BY) License'. The link points to CC BY 3.0 US. The DataPort FAQ says the same and also requires citation.
+    - **Correction:** HisarMod2019.1 (Open Access, free IEEE account) can be treated as CC BY with attribution and citation, so it may be used for redistributable weights. CSPB.ML on DataPort is a subscription 'Standard' dataset: the same terms apply but access is paid. The terms of the copies on the CSP Blog are unverified. Record 'CC BY (DataPort ToS 2(g))' in the per-record licence field.
+    - **Source:** https://ieee-dataport.org/terms-service ; https://ieee-dataport.org/faq/who-owns-datasets-ieee-dataport ; https://ieee-dataport.org/open-access/hisarmod-new-challenging-modulated-signals-dataset
+  3.
+    - **Claim:** 'QAIRT runtime: Qualcomm AI Stack License ... The licence prohibits military end use, which is consistent with this project.'
+    - **Why:** The licence text in the Radxa deb does not ban military use in general. It forbids end uses or end users 'that would violate the controls in Part 744 of the EAR', including 'missile or unmanned aerial vehicle ("UAV") technology' and 'any prohibited military end use or end user'. It names embargoed regions (Cuba, Iran, North Korea, Syria, Crimea, the so-called DNR and LNR). It classes 'critical infrastructure' and law enforcement as High-Risk Applications, which it advises against. It also lets QTI 'at any time terminate this Agreement, without cause, upon notice'.
+    - **Correction:** Quote the licence accurately. The explicit UAV-technology clause is one more reason to keep drone-link classes out. Treat the HTP path as dependent on a revocable proprietary licence, and keep the MIT-licensed ORT CPU path first-class. The device must never be exported to or operated for parties in the embargoed regions.
+    - **Source:** /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_deb/lic.txt (from the qcom-qnn-sdk-v68 0.1.0-2 deb)
+  4.
+    - **Claim:** Budgets: '72 Wh ... System typical 25-28 W at the pack ... so about 2.5-2.9 h typical.'
+    - **Why:** 72/25 and 72/28 give 2.88 h and 2.57 h, which assumes 100% of nameplate capacity. The audit's own runtime figure assumes 85% usable capacity and gives about 2.2-2.4 h typical for this configuration (small_antenna_stack.json, 'Before'). At the 45-52 W peak that is about 1.2-1.4 h. Training and CPU-fallback load are not included.
+    - **Correction:** Plan for about 2.2-2.4 h typical and 1.2-1.4 h at peak with a 72 Wh pack. Less in cold weather (amount unverified).
+    - **Source:** /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json ; /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/power.json (my arithmetic)
+  5.
+    - **Claim:** Waterfall archive: '56 Msps LIME-W at 1.17 ms rows is about 3.5 MB/s for 2 x 3584 bins.'
+    - **Why:** 65536/56e6 gives 854.5 rows/s. 2 channels x 3584 B x 854.5 = 6.1 MB/s, or 22 GB/h. 3.5 MB/s is the rate for 1 channel x 4096 bins.
+    - **Correction:** Budget about 6.1 MB/s (22 GB/h) for the 2-channel archive. That would fill the 20 GB UFS dataset quota in under 1 h. Write .rfwf files to the T7, only during sessions that are gated or pinned, with the retention cap. Optionally keep only the max channel at decimated row rates for long sessions.
+    - **Source:** my calculation from the design's LIME-W profile
+  6.
+    - **Claim:** Storage: 'Labelled dataset quota 20 GB: a 2-channel context tile is 0.5 MiB ... plus a ci16 snippet of 1-1000 kB per box, so about 50k boxes.'
+    - **Why:** A 2x512x512 uint8 tile is 524,288 B, so 20 GB holds at most 38.1k tiles with no snippets. With 50-250 kB snippets the figure is about 26-35k boxes.
+    - **Correction:** State about 25-35k boxes per 20 GB, or reach 50k with 1-channel tiles, crops of about 128x128 instead of full tiles, or zstd compression. Measure the compression ratio on real tiles.
+    - **Source:** my calculation
+  7.
+    - **Claim:** IPC: tile_ready over ZeroMQ PUSH/PULL from spectrumd to inferd, with 'Small SNDHWM values make slow subscribers drop messages rather than stall', so an NPU hang cannot stall the front end.
+    - **Why:** Only PUB drops at the high-water mark. The libzmq docs say a PUSH socket in mute state makes zmq_send 'block until the mute state ends ... messages are not discarded', and 'Messages are round-robined to all connected downstream nodes'. If inferd-htp hangs and stops reading, spectrumd's send loop, which also produces display rows and the CFAR map, can block. If the warm-standby inferd-cpu connects to the same PUSH endpoint, it receives about half the tiles: load sharing, not failover.
+    - **Correction:** Make spectrumd PUB tile_ready, or send with ZMQ_DONTWAIT and count drops. Let the fusiond broker dispatch to one backend over separate endpoints. Add a test that SIGSTOPs inferd-htp and asserts that the display rows and CFAR output keep their rate.
+    - **Source:** https://libzmq.readthedocs.io/en/latest/zmq_socket.html
+  8.
+    - **Claim:** 'Capture never depends on inference' / 'Recording and the waterfall keep running throughout; only labels may pause.'
+    - **Why:** Survey (gated) mode 'commits only segments that contain detections'. In NPU failure or CPU mode, coverage falls from about 42.5 to 4-6 tiles/s, so gated recording silently drops. The waterfall also depends on spectrumd, which prefers VkFFT on the same Turnip GPU that the UI uses, and that path has no watchdog. Board-level faults, such as CDSP fatal errors and hangs, cannot be contained by process isolation.
+    - **Correction:** Gate survey commits on CFAR energy OR NN detections, and in degraded mode use CFAR alone. Give spectrumd's GPU FFT path the same deadline watchdog and automatic FFTW fallback. State that process isolation covers HTP userspace hangs only, not kernel or board faults; journal flush and segment fsync bound that loss.
+    - **Source:** design text (pipeline step 8, UI flows); /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_forum/t31208.json
+  9.
+    - **Claim:** Privacy: decoders are yes/no oracles and 'ICAO addresses and positions are discarded' and 'MMSI and positions are discarded', while the live box card offers 'Listen/Decode ... for public classes (LRPT, HRPT, APRS, CubeSat, ADS-B, AIS, sonde)'.
+    - **Why:** These conflict: Listen/Decode shows the user exactly the ADS-B/AIS identities and positions that the oracle discards. In Ukraine, where the audit places the user (import costs, the 'user's region' notes), the Lviv, Kyiv, Dnipro, Simferopol and Odesa FIRs are closed to civil flights (EASA CZIB-2022-01R14, NOTAM A0021/26). Any received ADS-B is therefore mostly non-civil or cross-border traffic. Criminal Code Art. 114-2 (added 24 Mar 2022) penalises unauthorised dissemination of information on the movement or location of military formations. In the Black Sea and Danube, AIS is similarly sensitive.
+    - **Correction:** Add a region profile. In Ukraine, ADS-B and AIS are occupancy-only: no Listen/Decode, no decoder oracle by default (label from the 1090 MHz pulse shape and 162 MHz GMSK burst shape), no IQ snippets, and raw Snap IQ covering 1090 MHz and 161.975/162.025 MHz is deleted once labelling ends. Never export any of it.
+    - **Source:** https://www.easa.europa.eu/en/domains/air-operations/czibs/czib-2022-01r08 (series page; R14 per EASA listing) ; https://i.factor.ua/law-455/section-1525/article-33548/ (Art. 114-2)
+  10.
+    - **Claim:** Receive-only is guaranteed by 'receive-only hardware configuration with no TX path in sdr-ingestd' and 'the LimeSDR TX path is never opened'.
+    - **Why:** The LimeSDR Micro is a '1T2R' LMS7002M board with one transmit channel (Crowd Supply). Receive-only is therefore a software policy, not a hardware property. Ukraine's Law 'On the legal regime of martial law', Art. 8(1) item 11, lets authorities ban 'роботи приймально-передавальних радіостанцій особистого і колективного користування' (operation of personal and collective receive-transmit radio stations). A device with a transceiver module may fall under that wording regardless of software (my interpretation, unverified).
+    - **Correction:** Fit a 50-ohm terminator or no connector on the TX port. Check once with the V4L that no LO leakage or emission comes out of the TX port. Document it in the build. Check locally (regional military administration or the frequency regulator) whether a 1T2R module counts as a 'приймально-передавальна радіостанція'. If it does, use a receive-only wideband SDR in Ukraine.
+    - **Source:** https://www.crowdsupply.com/lime-micro/limesdr-micro ; https://kodeksy.com.ua/pro_pravovij_rezhim_voyennogo_stanu/8.htm (found via search; official zakon.rada.gov.ua blocked from here)
+  11.
+    - **Claim:** 'EXCLUDED BY POLICY and enforced by a taxonomy CI check' (radar, drone/FPV links, EW, military emitters, emitter ID).
+    - **Why:** The check is name-based and runs only in home-base CI. The on-device T0/T1 'Teach a new class' flow creates a live class in seconds with no check. The optional 'lora' class and the F9 css_chirp family will also fire on drone RC links: ExpressLRS 'uses LoRa' at 2.4 GHz and 900 MHz. In Ukraine those links are predominantly military FPV. TorchSig's 'lfm-radar' sits in its 'chirp' family, so excluding the data does not stop a chirp-shape detector responding to LFM radars.
+    - **Correction:** Run the same blocklist plus a parent-family allowlist on the device when a class is created. Restrict 'lora' to downlinks that match a SatNOGS-predicted transmitter, and otherwise report css_chirp in 860-930 MHz and 2.4 GHz as unnamed other_signal occupancy. State and enforce: no per-class alerts or alarms, no direction finding or AoA with the two coherent Lime RX channels, no emitter track history or geolocation, no 5.8 GHz or drone-link classes.
+    - **Source:** https://www.expresslrs.org/info/signal-health/ ; /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_torchsig/torchsig-2.2.0/torchsig/signals/signal_lists.py
+  12.
+    - **Claim:** Export privacy: 'Exports round [location] to about 0.1 degree or a 4-character Maidenhead locator'.
+    - **Why:** Exported annotations also carry rflab:doppler (the fitted fc(t) polynomial), UTC ns timestamps and norad_id. Given public orbits, a satellite Doppler curve fixes the observer's position to within kilometres (the principle Argos-style Doppler positioning uses), even with a free frequency offset. This is my analysis; no source checked. Rounding the stated location therefore does not hide the station.
+    - **Correction:** In privacy-filtered exports, drop rflab:doppler, coarsen timestamps to about 1 s and the capture start to the minute, and omit core:author, core:recorder and hardware serials. For Ukraine, consider not exporting satellite-pass recordings at all.
+    - **Source:** SigMF schema (core:author, core:recorder exist): /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_sigmf/schema.json
+- **Confirmed:**
+  - DeepSig RadioML 2016.04C, 2016.10A and 2018.01A are CC BY-NC-SA 4.0. DeepSig says they have 'several known errata', are 'NOT currently used within DeepSig products', and come with no support (https://www.deepsig.ai/datasets/). The design's benchmark and private-pretraining-only rule is right.
+  - SatNOGS DB: 'All data are public and freely distributed under the Creative Commons Atribution-Share Alike v4.0 license' (https://db.satnogs.org/about/). SatNOGS Network observation data is 'CC BY-SA' with no version stated (https://network.satnogs.org/about/).
+  - TorchSig 2.2.0 is MIT. The README asks for >= 1 TB disk, >= 4 cores and a GPU with >= 16 GB (recommended). It says nothing about the licence of generated data, so 'generated data is yours' is an assumption, though a reasonable one. The 2.2.0 signal list does contain 'lfm-radar' (chirp family) and 'dmr'/'p25' (lmr), so the design's exclusion and mapping is needed and correct.
+  - Decoder licences verified from the LICENSE files: dump1090-fa GPL v2 or later; AIS-catcher GPL-3.0; radiosonde_auto_rx GPL-3.0; gr-satellites GPL-3.0; SatDump GPL-3.0; Direwolf GPL-2.0. Running them as separate processes keeps the model and weights licence-clean.
+  - Library and model licences verified: YOLOX Apache-2.0; aimet-torch 2.41.0 BSD-3-Clause (PyPI); IQEngine MIT; sigmf-python 1.13.0 LGPLv3+ (PyPI classifier); SigMF spec CC BY-SA 4.0 (LICENSE.md).
+  - The QAIRT AI Stack License (text from the Radxa deb) allows distribution 'solely in object code format and as incorporated in Your software application', 'nothing herein grants You a license to distribute ... on a standalone basis', and forbids reverse engineering. The design's 'install QAIRT on each device from Radxa/Qualcomm, never redistribute standalone' is correct.
+  - The QAIRT 2.42.0.251225 SDK zip that Set A needs is still downloadable without login on 18 Oct 2026 from the Radxa-documented URL https://softwarecenter.qualcomm.com/api/download/software/sdks/Qualcomm_AI_Runtime_Community/All/2.42.0.251225/v2.42.0.251225.zip. A range GET returned 206, total size 1,543,955,191 bytes, Last-Modified 7 Jan 2026. A HEAD request returns 403, so check with GET. Host requirements per Radxa: x86-64, Ubuntu 22.04, Python 3.10.
+  - Storage arithmetic checks out: 56 Msps ci16 = 806 GB/h and ci8 = 403 GB/h; a 4 s ci8 Snap = 448 MB; an 8 GiB ring = 38.3 s at ci16; 12 Snaps/h is about 5.4 GB/h; the exemplar bank is 200x128 float16 = 51.2 kB per class; 4S1P Molicel P50B = 4 x 3.6 V x 5 Ah = 72 Wh.
+  - Forum 29949 (Dec 2025): with the QNN TFLite delegate, all scripts, including the official qai-appbuilder samples, get stuck after about 1 h at 'htp initialized'. The thread is unresolved. This supports the separate sandboxed worker, the CPU fallback and the CDSP-restart ladder, since restarting the process alone may not recover.
+  - SigMF schema v1.2.6 has core:license, core:sha512, core:geolocation, core:metadata_only and core:extensions in global, and recommends core:label of 20 characters or fewer. The per-record licence and provenance plan maps onto standard fields.
+  - The Fraunhofer 'Spectrogram Data Set for Deep-Learning-Based RF Frame Detection' (DOI 10.3390/data7120168) is CC BY 4.0 per Crossref. That is the article licence; the dataset host's licence is still unverified, as the design says.
+  - ZeroMQ PUB never blocks and drops messages per subscriber at the high-water mark, so the design's PUB choice for det, tracks and health events is sound.
+  - Keeping stage 2 and new classes FP32 on the CPU, so that teaching a class needs no re-quantisation, PC or cloud, is the right practical choice for one hobbyist in the field.
+  - The training guards (no pass in the next 15 min, battery above 40% or charging, SoC below 80 C, cgroup CPU and memory limits) are appropriate, and the per-run energy estimate is consistent (3 W x 1 min = 0.05 Wh; 6 W x 12 min = 1.2 Wh).
+- **Missing:**
+  - OOM policy. 8 GiB of the 12 GB is mlocked for the IQ ring, alongside inferd-htp (up to 1 GiB), inferd-cpu, Python daemons, the UI and possibly SatDump. Set OOMScoreAdjust=-1000 for sdr-ingestd and recorderd and positive values for inferd-*, fusiond and the trainer, so the kernel kills inference before capture. Shrinking the ring for Train mode means restarting the shm ring, which causes a capture gap; size it once instead.
+  - Load-shedding order for heat and battery. Nothing reduces NPU duty when the SoC heats up, and RX on CPU7 throttles at about 90-95 C. Add a ladder: above about 80 C, drop scheduled fine tiles and burst snapshots; above about 85 C, stop NN detection (CFAR only); RX and recording last. Low battery (for example 15%): stop NPU and training, finalise .sigmf-meta, keep recording to a safe-shutdown reserve. The power and heat of CPU-fallback mode are not budgeted.
+  - Encryption at rest. Raw Snaps and passes on the T7 (kept 14 days) hold third-party transmissions in full IQ, including voice, plus an exact GNSS track history. A handheld can be lost or seized. Use LUKS or fscrypt on the T7 and the UFS data partition. Measure the CPU cost at 224 MB/s writes; whether the A78 crypto extensions or UFS inline crypto are available on the Q6A is unverified.
+  - Raw retention undermines the per-class privacy rules. 'nfm_voice IQ <= 0.25 s' and 'no ADS-B/AIS payloads' are meaningless while 4-10 s full-band Snaps stay 14 days. After labelling, zero the FFT bins under voice, ADS-B and AIS boxes (spectral masking), or delete the raw file. Keep only snippets and tiles, and never export raw IQ.
+  - Ukraine legal profile (unresearched in the design):
+  - Martial-law Art. 8(1)(11) on receive-transmit stations.
+  - Criminal Code Art. 114-2 on dissemination.
+  - The 24 Feb 2022 decree banning amateur transmitters (ARRL); current status unverified.
+  - Civil airspace closed (EASA CZIB R14).
+  Consequences: terrestrial APRS, amateur NFM and CW, and ADS-B will be sparse or sensitive, so those classes mainly come from ISS and satellite downlinks. Carry documentation of the receive-only purpose, avoid operating near military or critical sites, and never publish geotagged occupancy maps (cellular, ADS-B, AIS) from Ukraine.
+  - Cloud upload policy. 'Upload only spectrogram tiles' is too loose for a user in Ukraine. Tiles with timestamps, frequencies and occupancy from local captures can be sensitive. Send only synthetic or satellite-only data to AI Hub or Colab, and quantise and calibrate locally on the x86 Set A host.
+  - Hobbyist workload reality check. 24 classes x 300 verified boxes is about 7,200 boxes. At 6-20 s each that is about 12-40 h, or about 240 five-minute inbox sessions, before counting rare-class waiting (ARISS SSTV events, HRPT and QO-100 need the antenna or LNB kit, not handheld). Phase 1 (sdr-ingestd, recorderd, spectrumd with a pybind tiler, a custom GL ES labeller, CFAR, a synthetic-trained SpecDet, watchdog, registry, rollback and stage 2 in about 6 weeks) does not look credible for one person.
+  Propose a minimal profile: one Python daemon merging fusiond, annotd and modeld; a content-addressed directory plus a JSONL manifest instead of DVC; SHA-256 manifests without ed25519 for a single-owner device; no Set B; ORT CPU only until Phase 0 passes.
+  - Physical controls. The chosen 7 in panel uses capacitive touch (audit). Capacitive touch generally does not register through ordinary gloves and false-triggers with rain. 112 px (9 mm) is a bare-finger size. Put SNAP (pre-trigger), mode (Survey/Pass/Train) and 'NPU off' on hardware buttons or an encoder, so capture-critical actions never depend on the touch panel.
+  - Archive the toolchain locally. Keep the 1.54 GB QAIRT 2.42.0.251225 zip and the qcom-qnn-sdk-v68 0.1.0-2 deb (44,221,844 B) with SHA-256 on the home-base PC and the T7. Qualcomm can delist builds, and the licence permits copies for your own development but not redistribution. QTI may also terminate the licence without cause, so the CPU path must stay able to carry the MVP.
+  - Decoder sandbox outputs. SatDump and gr-satellites write products (images, telemetry, KISS files). Run them with a tmpfs output directory that is destroyed after the wrapper extracts {ok, n_frames, crc_rate, snr, ppm}, so decoded content never reaches disk.
+  - Offline field operation. OMM/TLE and SatNOGS transmitter caches go stale while the device is offline for days. Show the data age, warn on stale predictions, and widen the Doppler-fit gate with age.
+  - Explicit exclusion of direction finding, AoA, polarisation-based bearing, emitter tracking over time and per-class alerting. The LimeSDR Micro's two coherent RX channels and GNSS make these easy to add, and together with 2.4 GHz and 868-928 MHz burst and chirp detection that would turn the lab into a drone-link detector.
+- **Notes:** I used 5 WebSearch calls; everything else came from WebFetch or curl on primary pages and from local copies in the scratchpad.
+  
+  **Verified directly**
+  - QAIRT AI Stack License text: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_deb/lic.txt.
+  - Dataset and tool licences: DeepSig, SatNOGS DB and Network, IEEE DataPort ToS/FAQ, TorchSig, and the decoder and library LICENSE files. These were fetched to /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/verif_resp.
+  - PyPI licence metadata for sigmf and aimet-torch.
+  - QAIRT 2.42 SDK still downloadable.
+  - Forums 29959 and 29949.
+  - LimeSDR Micro is 1T2R.
+  - ExpressLRS uses LoRa.
+  - libzmq PUSH and PUB semantics.
+  - EASA CZIB status (via search summary).
+  - Ukrainian martial-law Art. 8(1)(11) and Criminal Code Art. 114-2. Both came via search results from secondary legal sites, because zakon.rada.gov.ua was unreachable from here. Check them against the official text.
+  
+  **Not verified**
+  - Current status of the 2022 Ukrainian amateur-transmitter ban.
+  - How Art. 8(1)(11) is applied to a receive-only build of a 1T2R module.
+  - Glove behaviour of the specific touch controller.
+  - Encryption throughput on the QCS6490.
+  - The location leak via Doppler in exports is my own physics reasoning; no source checked.
+  
+  **My own arithmetic** (all reproducible from the design's figures)
+  - Battery runtime at 85% usable (the audit's assumption): about 2.2-2.4 h typical, 1.2-1.4 h at peak.
+  - Waterfall archive: 6.1 MB/s, 22 GB/h.
+  - UFS quota: about 25-38k boxes per 20 GB.
+  - Labelling effort: about 7,200 boxes, 12-40 h.
+  
+  **Overall verdict for this lens**
+  - Isolation, the CPU fallback and keeping new classes on the CPU are sound.
+  - The biggest practical defects are:
+    - PUSH/PULL can block spectrumd when inference hangs;
+    - detector-gated survey recording makes capture depend on inference;
+    - the GPU FFT path has no watchdog;
+    - there is no OOM, thermal or battery shedding order.
+  - The biggest responsible-use defects are:
+    - ADS-B/AIS Listen/Decode, which contradicts the privacy rules and is risky in Ukraine;
+    - raw IQ retention without encryption or masking;
+    - an on-device class-teaching path that bypasses the policy blocklist, combined with a lora/chirp class that matches ExpressLRS drone RC links;
+    - 'receive-only' resting on software only, on transceiver hardware.
+  
+  **Licence posture** is mostly correct. One fix: HisarMod is CC BY via the DataPort ToS, not unlicensed. The QAIRT licence wording should match its actual EAR 744 and UAV clauses rather than claim a blanket military ban.
 
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
