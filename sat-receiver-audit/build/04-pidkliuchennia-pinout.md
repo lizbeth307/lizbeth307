@@ -23,7 +23,7 @@
 | 13, 15 | I2C0 (CJ3134K) | INA228 на 0x40 (ADDR на GND) або 0x45 (перемички A0+A1); на платі зняти R6 і R7, адресу задати обов'язково; i2cdetect показує адресу, не UU | двонапр. (SDA/SCL — за схемою v1.21, **TBD**) | 3.3 V | Adafruit INA228 5832 | labpowerd |
 | 16, 18 | UART6 (UM3204H) | LC76G: /dev/ttyHS1, alias serial1 = .../serial@998000 у lab-q6a.dtso; udev KERNELS=="998000.serial" → /dev/lab/gnss; у конфігураціях ніколи жорстко ttyHS1; blacklist gnss-usb, gnss-ubx, gnss-mtk, gnss-sirf, gnss-serial | TX/RX — за схемою v1.21, **TBD** | 3.3 V | Quectel LC76G (плата) | gpsd (-b, лише читання) |
 | 17 | 3.3 V | див. пін 1 | вихід живлення | 3.3 V | 5-жильний джгут | — |
-| 27, 28 | I2C2 (UM3204H), 100 kHz | MCP23017 #1 0x20, #3 0x22, #4 0x23 (призначити на схемі); 2× INA3221 0x41, 0x43; сторона A TCA9517 до LAB BUS. На стороні хедера немає підтягувань нижче 10k; 4.7k — на стороні sled | двонапр. (SDA/SCL — за схемою v1.21, **TBD**) | 3.3 V | силова плата, TCA9517DR | labd |
+| 27, 28 | I2C2 (UM3204H), 100 kHz | MCP23017 #1 0x20, #3 0x22, #4 0x23 (A2..A0 = 011, §5.2); 2× INA3221 0x41, 0x43; сторона A TCA9517 до LAB BUS. На стороні хедера немає підтягувань нижче 10k; 4.7k — на стороні sled | двонапр. (SDA/SCL — за схемою v1.21, **TBD**) | 3.3 V | силова плата, TCA9517DR | labd |
 | 29 | UART7 RX (UM3304) | від TX Pico (UART0 GP0) | вхід | 3.3 V | Pico GP0 | labinput |
 | 32 | UART7 TX (UM3304) | до RX Pico (UART0 GP1); 2 дроти ≤20 см або через 74LVC2T45; alias serial2 = .../serial@99c000 → /dev/lab/pico | вихід | 3.3 V | Pico GP1 | labinput |
 | 33 | GPIO56 = FP_SPI_MISO (UM3304) | резерв (запасне керування вентилятором лише через 74LVC1G17 + AO3400A, перевірити на схемі P7) | — | 3.3 V | — | — |
@@ -121,7 +121,7 @@
 | контроль PTC AUX | AUX12 | — |
 | наявність sled | LAB BUS | — |
 
-FAULT ключів VBUS RTL-B, HF+ і RTL-A на MCP #3 не йдуть (#3 зайнятий 16/16): вони на MCP #4 GPB0/GPB1/GPB2 (§5.2, таблиця 4.3), скидання — тим самим перемиканням EN, як і сторожовий VBUS-цикл GPA2/GPA3/GPA4.
+FAULT ключів VBUS RTL-B, HF+ і RTL-A на MCP #3 не йдуть (#3 зайнятий 16/16): вони на MCP #4 GPB0/GPB1/GPB2 (§5.2, таблиця 4.3), скидання — тим самим перемиканням EN (MCP #1 GPA3, GPA4, GPA2).
 
 ### 4.3. MCP23017 #4 (новий, D12) — MCP23017-E/SO, I2C2 0x23 (A2..A0 = 011: A2 на GND, A1/A0 на 3V3_Q6A; §5.2)
 
