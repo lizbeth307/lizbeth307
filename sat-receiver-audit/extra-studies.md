@@ -25685,6 +25685,132 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Rules: all candidates are passive receive-path parts. Qualification is conducted only (LiteVNA into a load or DUT). No loops are involved.
 
+## searchA:cable_bulkhead_set_7_sma_1_f_bulkheads_r (run `wf_e32114dd-52d`)
+
+- **Part:** Cable/bulkhead set (core, RF group, qty 1 set): panel bulkheads (STACK: 7 SMA + 1 F; per reaudit_B P5 is now a BNC bulkhead, so 6 SMA + 1 BNC + 1 F), 6 internal RG316 bulkhead jumpers, 4 RG316 feed jumpers 1-2 m, IPX(U.FL)-SMA bulkhead pigtail for P7 GNSS, F-F bulkhead + internal 75 ohm lead, 1 m thin 75 ohm F-F (LNB), 2x shielded 15 cm USB 2.0 extensions + ferrites (V4L), 4 CH334F USB pigtails, touch lead with VBUS cut, SMA M-M / F-SMA / barrel adapters, USB3 A-A (EDL)
+- **Current price usd:** 90-170 (estimate, not itemised). Only verified line: RTL-SDR Blog SMA Pigtail Antenna Adapter Set $18.95 (rtl-sdr.com buy page, Oct 2026). Do not double count: the 10-15 cm HDMI is priced in the display line (reaudit_D, $14.50-25), and the Lime MHF4L-SMA bulkheads in the Lime line (4x Taoglas $6).
+- **Critical specs:**
+  - Panel connector types: standard SMA (not RP-SMA) 50 ohm female bulkheads on P1-P3, P6-P8; BNC female bulkhead on P5 (reaudit_B correction, keys the 12.5 V Boni rail against SMA LNAs); F female 75 ohm on P4. Bulkhead mounting: front nut + lock washer + D-flat, bonded to the 2 mm aluminium plate. O-ring preferred for outdoor handheld use.
+  - SMA RF rating: at least 3 GHz with VSWR <= 1.3 (the stack covers 137 MHz-1.7 GHz on the RTL paths, GNSS 1.17-1.61 GHz, L-band 1.525-1.66 GHz, possible S-band 2.2-2.3 GHz). Gold-plated contacts, PTFE dielectric, >= 500 mating cycles.
+  - DC through the coax: P2/P3 4.5 V bias out (TPS2553 300 mA); P4 13.2/18 V LNB with an injector choke rated >= 1 A, so the F bulkhead and 75 ohm lead must carry >= 1 A; P5 12.5 V at 0.11-0.14 A; P1/P6 carry no DC.
+  - RG316 jumpers: 50 ohm, PTFE, silver-plated Cu braid >= 95% coverage. Loss no worse than the RG316 datasheet typical: about 8.3/17.5/29/53.6 dB per 100 ft at 0.1/0.4/1/3 GHz, i.e. about 0.27/0.57/0.95/1.76 dB/m, and about 1.2 dB/m at 1.5 GHz. Shielding >= the single-braid baseline; RG316-DS (85 dB) is preferable inside the case near the HDMI TMDS combs and the bucks. Factory crimp, VNA-screened (S11 and S21 recorded in parts.yaml), bend radius <= about 10.5 mm at 2.5 mm OD.
+  - Pre-LNA loss on P1: 1-1.5 m RG316 before the in-case 137 MHz LNA costs 0.06-0.36 dB (STACK model), so the feed jumpers' loss at 137 MHz matters. On UHF and L-band the LNA sits at the antenna, so loss there is post-LNA.
+  - 75 ohm F parts: SAT-rated (950-2150 MHz class; the IF is about 739.5 MHz). Shielding >= 85 dB (EN 50117 Class A or better), because the stack has a DVB-T 470-694 MHz and LTE B20/B28 IF-penetration check right at the LNB IF. DC >= 1 A. Low loss over 1 m, thin and flexible for carrying.
+  - IPX pigtail: the plug must match the LC76G board connector (U.FL/MHF1 vs MHF4, to be checked on the board). 1.13 mm cable, >= 6 GHz rating, front-nut SMA jack bulkhead, length that reaches P7. The active antenna's 3.3 V bias passes on the centre pin.
+  - USB extensions: USB 2.0 High-Speed 480 Mbit/s (V4L is USB 2.0), A-male to A-female, 15 cm (<= 20 cm). Foil + braid shield with 360-degree shell contact. Power pair AWG <= 28, giving tens of mV drop at about 0.3 A. Ferrite: Mix 31 class (HF-VHF) sized to the cable OD; Wurth 74271112 is spec'd for 4.5-6 mm.
+  - CH334F pigtails and touch lead: 4-wire USB 2.0 HS, twisted D+/D-, shield or drain to GND; the touch lead has VBUS cut (reaudit_D).
+  - Bought from authorised distributors or official stores (no counterfeit), RoHS. No item enables TX or an on-air signal source: these are passive cables only, so the receive-only rule holds.
+- **Candidates:**
+  1.
+    - **Name:** RTL-SDR Blog SMA Straight Antenna Adapter Set (6 pcs: SMA-M to N-F, UHF-F, BNC-F, PAL-F, F-F, plus SMA M-M)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 14.95 (vs 18.95 for the Pigtail Set in the current pick; saves $4.00)
+    - **Spec comparison:** Same six connector transitions as the Pigtail Set. The vendor says it has less loss: it drops the 20 cm RG316 tails, which saves about 0.11 dB at 400 MHz and about 0.24 dB at 1.5 GHz (derived from RG316 typical 0.57 dB/m and about 1.2 dB/m). Same vendor, same connector families.
+    - **Worse in:** Mechanical. Rigid adapters lever on the SMA they screw into (panel bulkheads, LNA SMA jacks, V4L SMA), and a heavy N or UHF adapter on a handheld panel is a known way to crack SMA jacks. The Pigtail Set's RG316 tail provides strain relief. So this is NOT not-worse for field or panel use. Neither set publishes VSWR, and the 75 ohm F-F adapter's impedance is unspecified for both.
+    - **Compatibility:** Standard SMA; fits every port. Acceptable as BENCH-only adapters (LiteVNA/tinySA side, on the bench). Keep the Pigtail Set, or a pigtail, for anything that hangs off the handheld panel (Boni BNC, F to SMA).
+    - **Risks:** Prices are from the vendor buy page. Both are generic-made sets sold by RTL-SDR Blog; screen them on the LiteVNA on arrival.
+    - **Seller url:** https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+    - **Sources:**
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+  2.
+    - **Name:** Taoglas CAB.011 U.FL (I-PEX MHF I) right-angle plug to SMA jack bulkhead, 1.13 mm, 95 mm (DigiKey 931-1098-ND)
+    - **Kind:** other_brand
+    - **Price usd:** 4.44 at qty 1, 3.77 each at qty 10 (DigiKey live, Oct 2026). Master Electronics $4.35 at qty 5 (search snippet, unverified live).
+    - **Spec comparison:** Versus the current unbranded IPX-SMA pigtail (no published specs). 50 ohm, max 6 GHz, 1.13 mm shielded coax, SMA jack with front-side panel nut, rated 105 C, established antenna maker, 42,560 in stock. Its loss sits after the active GNSS antenna's LNA, so it is negligible for P7. It is equal or better on every published spec.
+    - **Worse in:** Nothing found, with two caveats. Attenuation and plating are not published on the listing. The length is fixed at 95 mm, so check the reach from the LC76G board to P7 in the layout.
+    - **Compatibility:** Valid only if the LC76G breakout uses U.FL/MHF1. If the board has MHF4, use an MHF4L variant instead (Taoglas, as in the Lime line). DC bias of 3.3 V at about 20 mA passes on the centre pin.
+    - **Risks:** Confirm the board connector generation before ordering. Buy from DigiKey, Mouser or Future (authorised).
+    - **Seller url:** https://www.digikey.com/en/products/detail/taoglas-limited/CAB-011/2332725
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/taoglas-limited/CAB-011/2332725
+      - https://masterelectronics.com/en/productdetail/taoglas/cab011-56119956.html
+  3.
+    - **Name:** Lindy 36700 USB 2.0 Type A extension, 0.2 m, Anthra Line (A-male to A-female)
+    - **Kind:** other_brand
+    - **Price usd:** UNVERIFIED (Cisilion shows 'login for pricing'; no live EU price found). Check Lindy's own EU store before ordering.
+    - **Spec comparison:** Versus 'shielded 15 cm USB extension' (generic): 480 Mbit/s USB 2.0, double shielded, tinned copper AWG 26/28 conductors, Ni/Au contacts, PVC jacket, 4.4 mm OD, UL and REACH, 10-year warranty, established EU brand. Its shielding and conductor specs are published, which the generic's are not, so it is equal or better.
+    - **Worse in:** Length is 0.2 m versus 0.15 m. The extra 5 cm adds routing slack inside the case and a slightly longer common-mode radiator; the ferrite mitigates this. The 4.4 mm OD is just below the 4.5-6 mm range of the Wurth 74271112, so the ferrite fit is slightly loose. Either verify the ferrite on the cable, or pick the Wurth size for 3.5-4.5 mm (part number not verified here).
+    - **Compatibility:** USB-A male to USB-A female; fits the V4L dongles on the CH334F/FE1.1s side. USB 2.0 HS is enough for V4L at 2.56-2.88 Msps.
+    - **Risks:** Price not verified. Confirm that the case has room for 0.2 m. Colour varies by listing (grey or black).
+    - **Seller url:** https://shop.cisilion.com/lindy-0-2m-usb-2-0-type-a-extension-cable-anthra-line-36700.html
+    - **Sources:**
+      - https://shop.cisilion.com/lindy-0-2m-usb-2-0-type-a-extension-cable-anthra-line-36700.html
+  4.
+    - **Name:** Delock 82457 USB 2.0 extension A-A 15 cm male/female
+    - **Kind:** other_brand
+    - **Price usd:** about 4.49 (EUR 3.99 incl. 19% DE VAT at buyzero.de; FX 1.1241, search snippet)
+    - **Spec comparison:** Exact 15 cm length, USB 2.0-A male to female, AWG 28, nickel-plated connectors, established German brand.
+    - **Worse in:** Shielding is NOT stated in the Delock spec sheet (search result). Shielding is a critical spec for this stack (V4L near the RF bay), so it cannot be accepted as not-worse. Reject unless Delock's datasheet or a teardown shows foil + braid.
+    - **Compatibility:** Mechanically the same as the current pick.
+    - **Risks:** Unverified shielding; price from a search snippet.
+    - **Seller url:** https://buyzero.de/en/products/delock-verlangerungskabel-usb-2-0-a-a-15-cm-stecker-buchse
+    - **Sources:**
+      - https://delock.com/produkt/82457/merkmale.html?g=751
+      - https://buyzero.de/en/products/delock-verlangerungskabel-usb-2-0-a-a-15-cm-stecker-buchse
+  5.
+    - **Name:** Fair-Rite 0431164281 Mix 31 snap-on (hinged) ferrite, ID 6.6 mm, L 39.4 mm (instead of Wurth 74271112)
+    - **Kind:** other_brand
+    - **Price usd:** about 3.07 (EUR 2.73 at RS Germany, VAT status unverified) vs Wurth 74271112 $4.15 at Mouser (Burklin 74271112S EUR 5.02 incl. VAT = $5.64)
+    - **Spec comparison:** Mix 31 is the material the stack names (Mix-31 for HF/VHF suppression), rated 1-300 MHz, 310 ohm at 100 MHz (minimum about 20% lower). The Wurth 74271112 is for 4.5-6 mm cable; the sources conflict on its figures (176 ohm, or 321 ohm at 25 MHz and 773 ohm at 100 MHz per the indexed datasheet), all unverified.
+    - **Worse in:** Fit: the 6.6 mm ID is loose on a 4.4-6 mm USB cable, which lowers the effective impedance. At 100 MHz it may also be lower than the Wurth, if the 773 ohm figure is right. Not proven not-worse.
+    - **Compatibility:** Snap-on, no electrical connection. It fits properly only on a cable of about 6-6.6 mm OD.
+    - **Risks:** Impedance comparison unverified. Accept only after a conducted bench comparison of both ferrites on the actual cable (LiteVNA, one-turn fixture, 1-300 MHz).
+    - **Seller url:** https://de.rs-online.com/web/p/ferrit-hullenkern/4669120
+    - **Sources:**
+      - https://de.rs-online.com/web/p/ferrit-hullenkern/4669120
+      - https://e-sonic.com/en/productdetail/fair-rite-products/0431164281-50960652.html
+      - https://www.buerklin.com/en/p/85D1293
+  6.
+    - **Name:** Good Connections SAT antenna cable, F plug both ends, 1 m, Class A+, 3x shielded, 95 dB (for the 1 m LNB F-F lead)
+    - **Kind:** other_brand
+    - **Price usd:** UNVERIFIED (Voelkner page; price not read)
+    - **Spec comparison:** 75 ohm, Class A+ triple shield, 95 dB shielding effectiveness. That is better than a generic thin 75 ohm lead with unspecified shielding, and it directly helps the stack's DVB-T/LTE B20/B28 IF-penetration check at 739.5 MHz. It is SAT TV cable, so it is rated through the 950-2150 MHz SAT IF.
+    - **Worse in:** Probably not 'thin': OD is not stated, and SAT A+ cable is usually RG6-class (assumption, unverified), so it is bulkier and stiffer for carrying. The inner conductor is CCS: higher DC resistance than copper, which is still negligible at 1 m and <= 1 A. Nickel-plated F plugs.
+    - **Compatibility:** F male to F male, fitting the LNB F-female and P4 F-female. Carries 13/18 V LNB DC.
+    - **Risks:** Price, OD and stock unverified; the page was mostly template text in the search.
+    - **Seller url:** https://www.voelkner.de/products/3516138/Good-Connections-SAT-Antennenkabel-F-Stecker-beidseitig-vernickelt-3x-geschirmt-CCS-weiss-1m.html
+    - **Sources:**
+      - https://www.voelkner.de/products/3516138/Good-Connections-SAT-Antennenkabel-F-Stecker-beidseitig-vernickelt-3x-geschirmt-CCS-weiss-1m.html
+      - https://www.electrokit.com/en/antennkabel-sat-1.0m-gt85db-klass-a
+  7.
+    - **Name:** Amphenol RF 135110-01-06.00 (RG316, 6 in, straight SMA bulkhead jack 132119 to straight SMA plug 132114, gold plated), bought from RF Parts instead of DigiKey
+    - **Kind:** other_brand
+    - **Price usd:** 18.90 each at RF Parts (18.07 at qty 10) vs 22.16 at DigiKey; 6 needed = $113.40
+    - **Spec comparison:** Top build quality: factory-terminated Amphenol connectors, gold plated, RG316. Better than or equal to generic VNA-screened RG316 in reliability. Frequency and VSWR are not listed on the RF Parts page.
+    - **Worse in:** Price only. The 6 internal jumpers alone ($113) are above the low end of the whole set's estimate, so this is NOT a cheaper analog. It is listed as the branded upper-bound reference, and RF Parts is about $3.26 cheaper per unit than DigiKey for the same SKU.
+    - **Compatibility:** Drop-in replacement for the internal panel-to-board jumpers (SMA jack bulkhead at the panel).
+    - **Risks:** DigiKey shows a 12-week factory lead time once stock runs out; the BEL 415-0031-MM150 equivalent has a 56-week lead time at Avnet.
+    - **Seller url:** https://www.rfparts.com/135110-01-06.html
+    - **Sources:**
+      - https://www.rfparts.com/135110-01-06.html
+      - https://digikey.cn/en/products/detail/amphenol-rf/135110-01-06-00/2003951
+      - https://www.avnet.com/americas/product/bel/415-0031-mm150/evolve-35863706/
+- **Notes:** VERDICT (angle A): KEEP the current set. No cheaper set from an established brand is not-worse. The cost driver is the 6 internal SMA-bulkhead RG316 jumpers plus the BNC one. Branded factory assemblies cost $17.5-22 each (Amphenol 135110-01-06.00 $18.90 at RF Parts and $22.16 at DigiKey; RS UK GBP 17.54 ex VAT for a listing that may be right-angle; BEL 415-0031-MM150 about $17.96 with a 56-week lead time). So a branded set comes out ABOVE the $90-170 estimate. The estimate is only reachable with the already-noted VNA-screened generic RG316, which is angle B's domain.
+  
+  PIN THESE SKUs inside the set (cheap, branded, not worse than the unspecified generic lines):
+  - Taoglas CAB.011 for the P7 IPX-SMA pigtail ($4.44), conditional on the LC76G board connector being MHF1.
+  - Lindy 36700 for the shielded USB extensions (price unverified, 20 cm).
+  - Keep the Wurth 74271112 ferrites. The Fair-Rite 0431164281 is cheaper but its 6.6 mm ID fits the cable poorly, and its impedance is unverified against the Wurth.
+  - RTL-SDR Blog Straight Adapter Set ($14.95, $4 cheaper) for BENCH-only adapters. Keep the Pigtail Set ($18.95) for anything hanging off the handheld panel, because straight adapters are worse in strain relief.
+  
+  SET-CONTENT CORRECTIONS from the reaudit (not a spec trade):
+  - P5 is a BNC female bulkhead (reaudit_B), so the set needs 1 BNC bulkhead-to-SMA-plug RG316 jumper plus a BNC M-M lead for the Boni-Whip (which has BNC). The old BNC-SMA lead is dropped.
+  - The HDMI is priced in the display line, and the Lime bulkheads in the Lime line.
+  
+  REJECTED or UNVERIFIED:
+  - Delock 12011 (SMA plug to SMA jack bulkhead, RG-316, 75 cm): datasheet gives 50 ohm, 1.2 dB/m at 1.5 GHz (the same sheet also says 1.8 dB/m at 1.8 GHz), 2.5 mm OD, 10.5 mm bend radius, made in China. Wrong length for the internal runs, and no price was found.
+  - Delock has no short standard-SMA RG316 bulkhead jumper (89431 is RP-SMA, and RP-SMA is not allowed).
+  - Pasternack PE9734 F-F bulkhead: VSWR 1.3 is specified only to 250 MHz, which does not cover the 739.5 MHz IF. Use a SAT-rated F-F feedthrough instead (no specific part verified here).
+  - Electrokit 1 m Class A (>85 dB, 2x foil + 96% braid, about 5 mm OD) is F-male to F-female, so it would need an extra barrel; price unverified.
+  - RS PRO 1 m F-F (5.3 mm OD): shielding class not stated.
+  - No thin (<= 4 mm) Class A F-F 1 m lead from a named brand was found. If 'thin' is a hard requirement, keep the current lead and verify its shielding on arrival: conducted A/B with the tinySA against a Class A+ lead, at 470-800 MHz.
+  
+  EU and VAT: buyzero EUR 3.99 and Burklin EUR 5.02 are incl. 19% VAT; RS DE EUR 2.73 is VAT status unverified; FX 1 EUR = 1.1241 USD (final_integration.json).
+  
+  All items are passive cables, and every hard rule holds: receive-only, no loops, conducted-only bench use for VNA screening.
+  
+  Budget used: 15 WebSearch calls. The DigiKey CAB.011 and RF Parts pages were fetched live; the Delock and Passion Radio pages were blocked (HTTP 401 and redirect loops).
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
