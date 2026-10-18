@@ -29,3 +29,9 @@
 - КХ і меню: OpenWebRX+ підтримує LimeSDR через SoapySDR (клас LimeSdrSource, драйвер "lime"); треба перевірити, чи плагін LimeSuiteNG для Micro реєструється під тим самим ім'ям драйвера. Джерело: github.com/luarvique/openwebrx (owrx/source).
 - Малі антени («стек»): агент розглядає ADALM-PLUTO як можливу заміну LimeSDR для S-діапазону і перевіряє ціну/наявність. Джерело: analog.com.
 
+## 2026-10-18 02:07 UTC
+
+- Радіолабораторія: завершено 2-й sweep (2/5), стартував наступний.
+- КХ і меню: кандидати на КХ — RX-888 MkII (потребує USB 3.0), Airspy HF+ Discovery з міні-штирем (перевіряється перевантаження від мовних станцій), антена-котушка Tecsun AN-03L (7 м дроту на мотовилі — підходить під «складається в малий розмір»). SDRangel має 27 модулів джерел (airspy, airspyhf, bladerf, hackrf, …). Джерела: github.com/f4exb/sdrangel/tree/master/plugins/samplesource, swling.com.
+- Навчання NPU: ще один звіт з форуму Radxa (20.07.2026): на офіційному образі R2 з ядром 6.18.2-3 інференс на NPU валить CDSP ("no reserved DMA memory for FASTRPC") — підтверджує потребу в оверлеї memory-region і «золотому» наборі. Джерело: forum.radxa.com (тема 31208).
+
