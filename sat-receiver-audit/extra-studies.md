@@ -8033,3 +8033,457 @@
   
   Extracted text of the V4L datasheet and the WRTH review is in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/hfpdf/.
 
+## labui:existing_software (run `wf_fceb75d0-87e`)
+
+- **Area:** Lab UI software for a receive-only, menu-driven field lab on the Radxa Dragon Q6A (Ubuntu 24.04 noble arm64, 7 in 1920x1080 touch). Covers all-in-one SDR apps (SDRangel, OpenWebRX+, SDR++, SatDump, CyberEther, Gqrx), SDR distributions with menus, and touch or kiosk shells (cage, labwc, Phosh, GNOME, on-screen keyboards, Qt Quick launcher, local web app in a kiosk). Includes the HF receiver's software side. The loop antenna and everything for it were removed at the user's request, so no loop items appear anywhere below.
+- **Options:**
+  1.
+    - **Name:** SDRangel 7.27.2, receive-only source build (core engine)
+    - **What it is:** An all-in-one Qt5/OpenGL SDR receiver and analyzer built from plugins. It is the single existing program that covers the most lab functions. Version 7.27.2 was released 19 Aug 2026; master was at 137c608 on 17 Oct 2026.
+    - **Key specs:** - Receive channel plugins (master): WDSP RX (HF communications receiver), SSB, AM, NFM, WFM, BFM, NAVTEX (518/490/4209.5 kHz), DSC, WEFAX, RTTY, PSK31, FT8 (receive), DRM, DAB, radio clock (MSF, DCF77, TDF, WWVB, JJY), ADS-B, AIS, VOR, ILS, packet/APRS, radiosonde (RS41), Inmarsat C (EGC/SafetyNET, 1537-1541 MHz), APT, heat map, noise figure (Y-factor), radio astronomy (spectrometer, radiometer, Tsys/Jy calibration), channel power, channel analyzer, frequency scanner, frequency tracker, SigMF/file sink, remote TCP sink and UDP sink.
+  - Feature plugins: Map (2D/3D; shows ADS-B, AIS, APRS, satellites, radiosondes, heat maps), Satellite Tracker (on AOS it loads presets, starts or stops acquisition and corrects Doppler), Star Tracker, Sky Map, SID, AIS, APRS, Radiosonde, Frequency Display (large readout), Jogdial Controller, Remote Control (VISA, Home Assistant, Kasa), rigctl server, GS-232 rotator.
+  - On master there is also an MCP server plugin (HTTP, port 8092). Whether it is in a tagged release is not verified.
+  - Devices: native RTL-SDR, Airspy HF+, SDRplay (V3 API plugin 'sdrplayv3'), SoapySDR input, and LimeSDR (legacy LimeSuite only).
+  - Configurations save the whole setup (workspaces, device sets, features, window geometry) in named groups. The REST API (Swagger) loads one with PATCH /sdrangel/configuration and also serves /deviceset/{i}/spectrum/data.
+  - Touch: tap-and-hold acts as right-click (CRightClickEnabler), pinch zoom works on the spectrum and maps (PRs #1539/#1540), and there is an optional tabbed sub-window layout (the default on Android).
+  - Build switches allow a receive-only build: ENABLE_CHANNELTX, ENABLE_FEATURE_SIMPLEPTT, ENABLE_CHANNELMIMO_BEAMSTEERINGCWMOD, ENABLE_CHANNELRX_DEMODDSD, ..._DEMODPAGER and others.
+    - **Linux arm64 support:** - No upstream Linux arm64 binary. The 7.27.2 assets are amd64 .debs for Ubuntu 22.04/24.04/26.04, an amd64 snap, an x86_64 flatpak, Windows and macOS.
+  - The Flathub flatpak is marked end-of-life.
+  - Debian forky/sid ship 7.27.2+dfsg-1+b1 for arm64. Ubuntu has it only in the development series ('stonking'); noble does not.
+  - Upstream's build guide targets Ubuntu 24.04 with Qt 5.15, the same base as Radxa OS r2. Build from source, or backport the Debian sid source package (not tested on Q6A).
+  - On aarch64, use -DENABLE_LIBUNWIND=OFF if the link step fails (issue #2741).
+    - **Price:** $0 (GPL-3.0)
+    - **Pros:** - Covers in one process almost every receive function the lab plans: HF utility and maritime safety, ADS-B, AIS, APRS, radiosondes, SafetyNET, satellite tracking with Doppler, radio astronomy, noise figure and GPS heat maps, all with a shared map.
+  - Can run several SDRs at once as separate device sets (V4L, LimeSDR Micro via Soapy, HF receiver).
+  - Saved Configurations plus the REST API make it scriptable from a touch launcher.
+  - Has real touch handling (long-press, pinch).
+  - Build flags strip transmit.
+    - **Cons:** - Dense desktop-style UI: many small widgets and digit wheels. At 315 PPI it needs about 2x scaling, which leaves roughly 960x540 logical pixels and is cramped.
+  - Jogdial control works only while the plugin has focus.
+  - No Meteor LRPT/HRPT imagery decoder, no SSTV, no CubeSat telemetry framework.
+  - The native LimeSDR plugin uses legacy LimeSuite, so the LimeSDR Micro must go through SoapySDR (LimeSuiteNG registers driver 'limesuiteng').
+  - The 3D map (Cesium; needs your own API key since 2025) and Sky Map (WWT, ESASky, Aladin) need internet. Field use needs a local or offline tile source for the 2D map.
+  - The Heat Map wants NMEA from a serial GPS at 4800 baud.
+  - Sample-sink (TX device) plugins are always built and must be deleted after install.
+  - No published Q6A or A78 CPU benchmarks.
+    - **Community reports:** - GitHub #2741 (closed 22 Jul 2026): aarch64 link error with libunwind on a Pi 5 running Trixie. -DENABLE_LIBUNWIND=OFF builds; upstream CMake fix in e83a546.
+  - GitHub #2246: 3D map blank on Pi 5 under Raspberry Pi OS but fine on Ubuntu 24.04. A Cesium quota problem was found; the fix is your own key (#2446).
+  - GitHub #2526: the ARM flatpak stopped starting after 7.22.9.
+  - I could not reach groups.io (HTTP 402) for touchscreen reports.
+    - **Size weight power:** Software only. The amd64 .deb is about 75 MB. CPU, RAM and power on the Q6A have not been measured.
+    - **Sources:**
+      - https://github.com/f4exb/sdrangel/releases/tag/v7.27.2
+      - https://github.com/f4exb/sdrangel/releases/expanded_assets/v7.27.2
+      - https://packages.debian.org/search?keywords=sdrangel&searchon=names&suite=all&section=all
+      - https://packages.ubuntu.com/search?keywords=sdrangel&searchon=names&suite=all&section=all
+      - https://flathub.org/apps/org.sdrangel.SDRangel
+      - https://github.com/f4exb/sdrangel/blob/master/CMakeLists.txt
+      - https://github.com/f4exb/sdrangel/tree/master/plugins/channelrx
+      - https://github.com/f4exb/sdrangel/tree/master/plugins/feature
+      - https://github.com/f4exb/sdrangel/tree/master/plugins/samplesource
+      - https://github.com/f4exb/sdrangel/blob/master/sdrgui/gui/crightclickenabler.cpp
+      - https://github.com/f4exb/sdrangel/blob/master/sdrgui/configurations.md
+      - https://github.com/f4exb/sdrangel/blob/master/swagger/sdrangel/api/swagger/swagger.yaml
+      - https://github.com/f4exb/sdrangel/blob/master/plugins/channelrx/demodinmarsat/readme.md
+      - https://github.com/f4exb/sdrangel/blob/master/plugins/feature/satellitetracker/readme.md
+      - https://github.com/f4exb/sdrangel/blob/master/plugins/channelrx/heatmap/readme.md
+      - https://github.com/f4exb/sdrangel/blob/master/plugins/feature/jogdialcontroller/readme.md
+      - https://github.com/f4exb/sdrangel/blob/master/plugins/feature/mcpserver/readme.md
+      - https://github.com/f4exb/sdrangel/wiki/Compile-from-source-in-Linux
+      - https://github.com/f4exb/sdrangel/wiki/Quick-start
+      - https://github.com/f4exb/sdrangel/issues/2741
+      - https://github.com/f4exb/sdrangel/issues/2246
+      - https://github.com/f4exb/sdrangel/issues/2526
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/plugins/soapysdr/Registration.cpp
+  2.
+    - **Name:** OpenWebRX+ 1.2.126 (luarvique PPA, noble arm64), shown in a local kiosk view
+    - **What it is:** A browser-based receiver server with built-in and background (scheduled) decoders. It is the most touch-friendly existing HF/VHF receiver UI and is designed to run headless on small ARM boards.
+    - **Key specs:** - PPA lists noble packages for amd64, arm64 and armhf. Current: openwebrx 1.2.126, csdr 0.18.41, dump1090-fa 8.2, sonde-decoders 1.8.1, rtl-433 25.12, dream 2.2, csdr-skimmer 1.12, soapysdr-module-sdrplay3 0.8.11.
+  - Decoders include FT8/FT4/WSPR and other WSJT modes, CW and RTTY skimmers, SSTV, FAX, NAVTEX, SITOR-B, DSC, AIS, ADS-B, APRS (direwolf), radiosondes, DRM, RDS, and SatDump-based weather-satellite background decoding (not real-time).
+  - Scheduler runs background decoding. Map and a scanner are built in.
+  - Touch: waterfall panning and zooming; a long press acts as right-click.
+  - Devices: RTL-SDR v3/v4, Airspy HF+, SDRplay via SoapySDRPlay3, HackRF, Hermes Lite 2 (as a receiver), and SoapySDR devices.
+  - Each mode appears only if its decoder binary is installed (owrx/feature.py). That makes policy filtering a matter of which packages you install.
+  - Docker images exist for ARM64.
+    - **Linux arm64 support:** - Native noble arm64 packages in the PPA.
+  - LimeSDR support hard-codes Soapy driver 'lime' (owrx/source/lime_sdr.py), while LimeSuiteNG registers 'limesuiteng'. The LimeSDR Micro will not appear without a small source-module patch.
+  - RTL-SDR and the planned HF receivers are supported.
+    - **Price:** $0 (AGPL)
+    - **Pros:** - Best touch UX of the existing receivers.
+  - Background decoders keep logging while nobody watches: FT8/WSPR propagation, NAVTEX, FAX, ISS SSTV, APRS, radiosondes.
+  - One web UI can be embedded in the launcher (QtWebEngine) or a Chromium kiosk.
+  - Strong HF coverage for the new HF receiver.
+  - Receive-only by design.
+    - **Cons:** - A web server plus a browser costs CPU and RAM.
+  - Its many optional decoders include ones that must not be installed under the lab rules: digital voice (digiham/codecserver), POCSAG/FLEX pagers, TETRA (dxlaprs-tetra), aviation datalink (acarsdec, dumphfdl, dumpvdl2), LoRa/Meshtastic, and speech-to-text (whisper).
+  - The maps use online tiles.
+  - Weather-satellite support is backup decoding only.
+  - The author says SDRplay is unreliable.
+  - Needs the LimeSDR Micro driver-name patch.
+    - **Community reports:** - The author's documentation calls SDRplay operation unreliable and suggests a powered hub.
+  - The original OpenWebRX wiki says it runs on a Pi 2 and up, and that digital voice needs a Pi 3B+ or better.
+  - I found no published report of OpenWebRX+ as a local touchscreen kiosk on a portable (one search).
+    - **Size weight power:** Software only. No Q6A load data.
+    - **Sources:**
+      - https://luarvique.github.io/ppa/
+      - https://luarvique.github.io/ppa/noble/Packages
+      - https://fms.komkon.org/OWRX/
+      - https://github.com/luarvique/openwebrx/blob/master/owrx/feature.py
+      - https://github.com/luarvique/openwebrx/blob/master/owrx/source/lime_sdr.py
+      - https://www.linuxlinks.com/openwebrx-improved-version/
+      - https://github.com/ha7ilm/openwebrx/wiki/Setting-up-OpenWebRX-on-a-Raspberry-Pi-2
+  3.
+    - **Name:** SatDump (stable 1.2.2; nightly built 30 Sep 2026; master is 2.0 development)
+    - **What it is:** Satellite demodulator, decoder and image processor. It is the lab's engine for Meteor LRPT/HRPT and other imagery, with a GUI, a CLI, and an automatic pass scheduler.
+    - **Key specs:** - Nightly assets include satdump_rpi64_latest_arm64.deb (353 MB), an x86 AppImage and an Android APK. There is no Ubuntu arm64 .deb.
+  - The legacy CLI 'autotrack' has an http_server option serving /status, a polar plot, FFT and the schedule (autotrack_web.cpp). The core includes a scheduler and rotator support.
+  - The Inmarsat plugin contains both STD-C and Aero (ACARS, ADS-C, CPDLC) decoders.
+  - More than 50 pipelines (FengYun, Metop, Meteor and others).
+    - **Linux arm64 support:** - Build master from source against the same librtlsdr and LimeSuiteNG as the other apps.
+  - The rpi64 deb links the Pi's libraries.
+  - The GLFW/ImGui UI gets no native Wayland touch, so run it as an X11 client under XWayland.
+    - **Price:** $0 (GPL-3.0)
+    - **Pros:** - Only practical LRPT/HRPT imagery path.
+  - Headless autotrack with an HTTP status page fits a background 'Satellites' tile in the launcher.
+    - **Cons:** - Touch only through XWayland pointer emulation.
+  - 2.0 is still alpha and had a config-path bug.
+  - Pipelines need whitelisting: hide Aero (aviation datalink) and anything off-mission.
+    - **Community reports:** SatNOGS forum: on Pi CM4/Pi 5 with an RTL-SDR V4, SatDump failed with 'required file not found' (an arm64/armhf mismatch in a container), and default gain gave no Meteor decodes. These come from the project's earlier software audit.
+    - **Size weight power:** Software only. The arm64 deb is about 353 MB.
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/releases
+      - https://github.com/SatDump/SatDump/releases/expanded_assets/nightly
+      - https://github.com/SatDump/SatDump/blob/master/src-cli/legacy/autotrack/autotrack_web.cpp
+      - https://github.com/SatDump/SatDump/tree/master/plugins/inmarsat_support
+      - https://community.libre.space/t/first-waterfall-from-mumbai-india-station-4763-mumbai-rtl-1/14581
+  4.
+    - **Name:** SDR++ (nightly; last tag 1.0.4; master last commit 4 Jul 2026)
+    - **What it is:** A lightweight ImGui/GLFW receiver with a fast OpenGL waterfall. Use it for quick-look spectrum and general listening.
+    - **Key specs:** - Decoder modules: radio, meteor_demodulator, weather_sat_decoder (off by default), kg_sstv (KG-STV only, not ISS PD modes), m17, pager (on by default), dab, atv, vor_receiver, falcon9, ryfi.
+  - Misc modules: frequency_manager, scanner, recorder, iq_exporter, rigctl_server/client, scheduler.
+  - Sources: rtl_sdr, airspyhf, sdrplay (off by default), soapy (off by default), limesdr (legacy, off by default).
+  - CLI: -r/--root sets the config directory, and --autostart.
+    - **Linux arm64 support:** - An official noble aarch64 nightly .deb exists, but it lacks the Soapy source.
+  - Rebuild with -DOPT_BUILD_SOAPY_SOURCE=ON and -DOPT_BUILD_PAGER_DECODER=OFF.
+  - Upstream warns against Ubuntu's own package.
+    - **Price:** $0 (GPL-3.0)
+    - **Pros:** - Fast, low-overhead waterfall.
+  - One config root per lab function (-r) makes it easy to launch from a menu.
+  - The iq_exporter module can feed the NPU classifier.
+    - **Cons:** - No Wayland touch (GLFW). Needs the XWayland trick (XDG_SESSION_TYPE=x11).
+  - No remote API except rigctl.
+  - Ships a pager decoder that must be disabled.
+  - No QO-100 beacon lock.
+    - **Community reports:** - On the ClockworkPi forum, a uConsole owner using the HackerGadgets RTL-SDR board reports the SDR++ Brown fork and tar1090 'working perfectly' on a Bookworm image.
+  - The SDR++ maintainer has declined app-side Wayland touch support; the GLFW issue is still open (per the earlier display audit).
+    - **Size weight power:** Software only.
+    - **Sources:**
+      - https://github.com/AlexandreRouma/SDRPlusPlus
+      - https://github.com/AlexandreRouma/SDRPlusPlus/blob/master/CMakeLists.txt
+      - https://github.com/AlexandreRouma/SDRPlusPlus/blob/master/core/src/command_args.cpp
+      - https://github.com/glfw/glfw/issues/42
+      - https://forum.clockworkpi.com/t/hackergadgets-aio-board-package/17875/823
+  5.
+    - **Name:** CyberEther v1.15.0
+    - **What it is:** A GPU (Vulkan/Metal/WebGPU) flowgraph and visualization framework. Use it as an optional wideband waterfall and classifier-preview page.
+    - **Key specs:** - Linux AppImage and tar.gz builds.
+  - Flowgraph editor, remote interface for headless devices, browser (WebGPU) build.
+  - Per the project's earlier software audit: SoapySDR source and an ONNX Runtime inference block (CPU/CoreML/TensorRT).
+    - **Linux arm64 support:** aarch64 builds are reported (earlier audit). It has not been validated on Turnip/Adreno 643.
+    - **Price:** $0 (MIT)
+    - **Pros:** - Moves the 56-100 MHz-wide waterfall to the GPU.
+  - An ONNX block can preview the NPU classifier.
+    - **Cons:** - A viewer, not a decoder.
+  - No QNN provider.
+  - Touch behaviour is undocumented.
+  - The only aarch64 bug report (Pi 4) failed at swapchain creation.
+    - **Community reports:** GitHub #81: Pi 4 'Can't create swapchain' / 'No DRI3 support', closed without a confirmed fix.
+    - **Size weight power:** Software only.
+    - **Sources:**
+      - https://github.com/luigifcruz/CyberEther
+      - https://github.com/luigifcruz/CyberEther/issues/81
+  6.
+    - **Name:** Gqrx 2.17.4 (noble apt; upstream 2.17.7)
+    - **What it is:** A simple Qt/GNU Radio receiver with a TCP remote-control protocol. Keep it as a fallback listening app.
+    - **Key specs:** - Devices through gr-osmosdr and SoapySDR.
+  - Remote control: frequency, mode, mute, RDS, and (2.17.7) starting or stopping I/Q recording.
+  - The 2.17.5 AppImage added LimeSDR via SoapySDR.
+    - **Linux arm64 support:** noble arm64 package gqrx-sdr 2.17.4-2build3.
+    - **Price:** $0
+    - **Pros:** - Installs with apt.
+  - Qt handles touch as mouse input.
+  - Scriptable over TCP.
+    - **Cons:** - Desktop UI.
+  - No decoders.
+  - Duplicates SDRangel and SDR++.
+    - **Community reports:** The LimeSDR Micro demo on a uConsole (CM5) ran Gqrx at 40 Msps. LimeSuiteNG Soapy issue #127 (Gqrx gets no samples) was fixed by PR #228. Both come from the earlier software audit.
+    - **Size weight power:** Software only.
+    - **Sources:**
+      - https://github.com/gqrx-sdr/gqrx/releases
+      - https://packages.ubuntu.com/noble/gqrx-sdr
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro/updates/thanks-and-uconsole-gqrx-demo
+      - https://github.com/myriadrf/LimeSuiteNG/issues/127
+  7.
+    - **Name:** Custom 'Lab Home' launcher: Qt 6 Quick + Qt Virtual Keyboard, run as the only client of cage (recommended shell; has to be built)
+    - **What it is:** A touch-first home screen with large tiles, one per lab function. It is the missing layer that starts, configures and stops the engines above and shows device status.
+    - **Key specs:** - noble arm64 packages: cage 0.1.5+20240127 (upstream 0.3.0 at master, tag 0.3.1, on wlroots 0.20), qt6-virtualkeyboard-plugin 6.4.2, qml6-module-qtwebengine 6.4.2.
+  - cage runs one maximized app, supports XWayland at build time and the virtual-keyboard-v1 protocol, and has touch input.
+  - cage has no layer-shell or input-method, so an external on-screen keyboard cannot appear. The keyboard must be built into the app.
+    - **Linux arm64 support:** All parts are in noble arm64 apt. A newer cage builds from source.
+    - **Price:** $0 for software. Development effort is the real cost.
+    - **Pros:** - Full control of target size, the function profiles, device ownership, transmit lockout, status bar and the NPU overlay.
+  - Smallest and most robust compositor.
+  - Qt Quick gets native Wayland touch.
+  - Embeds the web UIs (OpenWebRX+, SatDump autotrack /status) in a WebEngineView.
+    - **Cons:** - Must be written.
+  - With cage, a full-screen child app (SDRangel, SDR++) covers the launcher until it exits, so the HOME button must be read outside the compositor (evdev/GPIO daemon) and stop the child.
+  - No window switching.
+  - noble's Qt 6.4.2 is old.
+    - **Community reports:** - I found no existing open-source SDR touch launcher (one search).
+  - The project's earlier software audit already proposes cage, with XWayland for X11-only apps.
+    - **Size weight power:** Small (one Qt process plus cage).
+    - **Sources:**
+      - https://github.com/cage-kiosk/cage
+      - https://packages.ubuntu.com/noble/cage
+      - https://packages.ubuntu.com/noble/qt6-virtualkeyboard-plugin
+      - https://packages.ubuntu.com/noble/qml6-module-qtwebengine
+  8.
+    - **Name:** labwc compositor + on-screen keyboard (multitasking variant of the shell)
+    - **What it is:** A wlroots stacking compositor, used by Raspberry Pi OS since 22 Oct 2024 with squeekboard, as the touch desktop. It lets you switch between running functions instead of closing them.
+    - **Key specs:** - noble: labwc 0.7.1 and wvkbd 0.14.3 (layer-shell plus virtual-keyboard keyboard); squeekboard is not packaged for noble.
+  - Ubuntu 26.04: labwc 0.9.3 and squeekboard 1.43.1.
+  - Upstream labwc 0.20.2 (21 Aug 2026).
+  - <touch mouseEmulation="yes"/> arrived in 0.8.2 (Dec 2024). It turns touch into pointer events (would also fix GLFW apps) but disables multitouch.
+  - Has window rules, keybinds and foreign-toplevel support.
+    - **Linux arm64 support:** In apt for noble and 26.04. Mouse emulation needs 0.8.2 or later, which on noble means building labwc plus a newer wlroots.
+    - **Price:** $0
+    - **Pros:** - Keeps ADS-B or a Meteor pass running while you look at the map or another app.
+  - A proven touch-desktop recipe on ARM.
+  - The keyboard pops up on its own (squeekboard on 26.04).
+    - **Cons:** - More moving parts than cage.
+  - On noble's 0.7.1 there is no touch mouse emulation (use XWayland), and wvkbd behaviour is not verified.
+  - Mouse emulation removes pinch zoom.
+    - **Community reports:** - Raspberry Pi OS 2024-10-22 release notes: labwc is the default and squeekboard is installed. Onboard no longer worked well under labwc.
+  - CNX Software notes that labwc's mouse emulation disables multitouch.
+    - **Size weight power:** Small.
+    - **Sources:**
+      - https://github.com/labwc/labwc/blob/master/NEWS.md
+      - https://github.com/labwc/labwc/blob/master/docs/labwc-config.5.scd
+      - https://packages.ubuntu.com/noble/labwc
+      - https://packages.ubuntu.com/noble/wvkbd
+      - https://packages.ubuntu.com/search?keywords=squeekboard&searchon=names&suite=all&section=all
+      - https://liliputing.com/raspberry-pi-os-improves-touchscreen-support-and-now-uses-wayland-by-default/
+      - https://cnx-software.com/2025/03/12/tips-to-use-a-touchscreen-display-with-raspberry-pi-os-in-2025/
+      - https://itsfoss.com/raspberry-pi-os-onscreen-keyboard/
+  9.
+    - **Name:** Phosh 0.38 (phoc) + phosh-osk-stub, noble
+    - **What it is:** An off-the-shelf mobile shell with app grid, overview, quick settings and on-screen keyboard. Each lab function could be a .desktop tile.
+    - **Key specs:** - noble arm64: phosh 0.38.0-1 and phoc 0.38.0.
+  - Recommends squeekboard ('package not available' on noble) or phosh-osk-stub 0.38.0 (described as experimental).
+    - **Linux arm64 support:** In apt.
+    - **Price:** $0
+    - **Pros:** - Ready-made touch shell: no code for app switching, keyboard or quick settings.
+    - **Cons:** - Phone-oriented. It pulls call/audio-routing and evolution-data-server libraries.
+  - Landscape use on a 7 in panel is untested on the Q6A.
+  - The squeekboard fallback is missing on noble.
+  - No SDR integration, so a custom status/profile layer is still needed.
+    - **Community reports:** None found for SDR use.
+    - **Size weight power:** Moderate (GNOME stack).
+    - **Sources:**
+      - https://packages.ubuntu.com/noble/phosh
+      - https://packages.ubuntu.com/search?keywords=phosh-osk&searchon=names&suite=noble&section=all
+  10.
+    - **Name:** Stock GNOME 46 (Radxa OS r2) with a 'Lab' folder of per-function launchers (zero-work baseline)
+    - **What it is:** Use the image's own GNOME session. Each lab function is a .desktop file that starts the right engine with the right config.
+    - **Key specs:** - GNOME Shell has its own on-screen keyboard and touch gestures.
+  - Radxa's 24.04 image still has an Xorg session.
+  - Wrappers: sdrangel with a saved configuration, sdrpp -r <dir> --autostart, Exec=env XDG_SESSION_TYPE=x11 for GLFW apps.
+  - gnome-kiosk 46 is in noble if a locked-down session is wanted; its keyboard support is not verified.
+    - **Linux arm64 support:** Native.
+    - **Price:** $0
+    - **Pros:** - Works on day one, with nothing to build.
+    - **Cons:** - Desktop chrome and small targets.
+  - No device arbitration, front-end switching or status bar.
+  - Heavier than cage.
+    - **Community reports:** The earlier display audit recommends a kiosk compositor over GDM on the Q6A and notes that HDMI can be fragile.
+    - **Size weight power:** Heaviest of the shells.
+    - **Sources:**
+      - https://docs.radxa.com/en/dragon/q6a/download
+      - https://packages.ubuntu.com/noble/gnome-kiosk
+  11.
+    - **Name:** Local web apps in a kiosk view (QtWebEngine inside the launcher, or Chromium --kiosk)
+    - **What it is:** Shows the web UIs that already exist (OpenWebRX+, SatDump autotrack /status, an ADS-B map such as tar1090) as full-screen pages behind the menu tiles.
+    - **Key specs:** - qml6-module-qtwebengine 6.4.2 and libqt5webengine5 5.15.16 are in noble arm64.
+  - Chromium on Ubuntu is delivered as a snap.
+    - **Linux arm64 support:** Yes.
+    - **Price:** $0
+    - **Pros:** - Browser pages get real touch (pan and zoom in OpenWebRX+).
+  - No GLFW problem.
+  - The same pages work from a second screen.
+    - **Cons:** - A browser engine costs about the same RAM and CPU as a desktop app.
+  - Map pages need offline tiles in the field.
+    - **Community reports:** Raspberry Pi Chromium kiosk guides exist (Deepgram, 2022, Buster era). None is specific to OpenWebRX+.
+    - **Size weight power:** Moderate.
+    - **Sources:**
+      - https://packages.ubuntu.com/noble/qml6-module-qtwebengine
+      - https://blog.deepgram.com/chromium-kiosk-pi
+- **Recommendation:** Nothing that exists today is an ideal menu-driven field lab on this hardware. Build a thin touch launcher ('Lab Home') and keep existing engines underneath it.
+  
+  **Closest existing parts**
+  - SDRangel 7.27.2 is the closest single program. It already covers HF listening (WDSP RX), NAVTEX, DSC, WEFAX, FT8 receive, DRM, LF time signals, SID, ADS-B, AIS, APRS, RS41 radiosondes and Inmarsat-C EGC.
+  - It also has a Satellite Tracker (on AOS it loads presets and corrects Doppler), Star Tracker, Radio Astronomy, Noise Figure, a GPS Heat Map and one shared Map.
+  - It has touch long-press and pinch, and saved 'Configurations' that act as a built-in menu of complete setups. A REST call (PATCH /sdrangel/configuration) switches between them.
+  - OpenWebRX+ has the best touch UI and background decoders.
+  - SatDump is the only imagery engine.
+  - DragonOS Pi64 is only a desktop list of apps, and only for Raspberry Pi.
+  
+  **What is missing**
+  - A touch-first home screen.
+  - Function profiles that set the whole RF chain at once.
+  - One owner per SDR.
+  - Receive-only and policy-safe builds.
+  - Status: GNSS, IMU, battery, thermal.
+  - Offline maps and a TLE cache.
+  - An IMU pointing aid.
+  - An NPU classifier overlay.
+  - QO-100 beacon lock.
+  - An on-screen keyboard that works in a kiosk.
+  - Wayland touch for GLFW apps.
+  
+  **Recommended build**
+  
+  1) Shell
+  - cage running one Qt 6 Quick launcher with Qt Virtual Keyboard built in.
+  - GLFW apps (SDR++, SatDump UI) run with XDG_SESSION_TYPE=x11 under XWayland, which emulates a pointer from touch.
+  - A HOME key (from the RP2040 already planned for dimming, or GPIO) is read by an evdev daemon outside the compositor. It stops the running function and brings the launcher back.
+  - If you want to switch between running functions later, move to labwc: on 26.04 use labwc 0.9.3 with squeekboard 1.43.1; on noble use 0.7.1 with wvkbd.
+  
+  2) Engines
+  - **SDRangel**, built from source on noble/Qt 5.15:
+    - Turn off: ENABLE_CHANNELTX, ENABLE_FEATURE_SIMPLEPTT, ENABLE_CHANNELMIMO_BEAMSTEERINGCWMOD, ENABLE_FEATURE_AMBE, and the DSD, PAGER, CHIRPCHAT, MESHTASTIC, MESHCORE, 802.15.4, DRONEID and M17 receive plugins.
+    - Delete the installed sample-sink plugins.
+    - Add -DENABLE_LIBUNWIND=OFF if the aarch64 link fails.
+    - Devices: LimeSDR Micro through SoapySDR (driver 'limesuiteng'); RTL-SDR V4L native; the HF receiver native (Airspy HF+ or SDRplay V3) or the V4L in HF mode.
+  - **SatDump**, built from source:
+    - autotrack runs headless with http_server, and its status page shows in the launcher.
+    - Pipelines are whitelisted (Meteor LRPT/HRPT and similar), with Aero hidden.
+  - **OpenWebRX+ 1.2.126** from the noble arm64 PPA, for the HF tile, ISS SSTV and FAX background decoding:
+    - Do not install digiham, codecserver, multimon-ng, dxlaprs-tetra, acarsdec, dumphfdl, dumpvdl2, Meshtastic/LoRa or whisper, so those modes never appear.
+    - Add a small source module with driver 'limesuiteng' if the Lime should appear.
+  - **SDR++** rebuilt with Soapy on and the pager decoder off, one -r config root per function, for quick-look spectrum.
+  - **gr-satellites** for CubeSats.
+  - **CyberEther** is optional, for the GPU wideband view.
+  
+  3) What the launcher does
+  - Function profiles: SDR, antenna, RF switch port, filter/LNA, bias-tee, gain, app and config.
+  - A device lock table so each SDR has one owner.
+  - Status bar: gpsd fix and UTC, battery, temperature, UFS space.
+  - Pass list with an IMU pointing arrow.
+  - Offline map tile server and TLE refresh.
+  - Recordings browser (SigMF tagged with GNSS position and heading).
+  - NPU classifier overlay, fed from the SDRangel Remote TCP or UDP sink, or the SDR++ IQ exporter.
+  - Safe shutdown on low battery.
+  - Shows the SafetyNET-only Inmarsat filter.
+  
+  4) Menu (large tiles)
+  - **Satellites**: Meteor LRPT/HRPT (SatDump), ISS SSTV and APRS, CubeSats, QO-100, Inmarsat-C SafetyNET, GNSS/SBAS status.
+  - **HF Receiver**:
+    - Listen: AM/SSB/CW through WDSP RX or OpenWebRX+.
+    - Maritime safety: NAVTEX, DSC, SITOR-B, WEFAX.
+    - Propagation: FT8/WSPR receive.
+    - DRM.
+    - LF time signals.
+    - SID (power measurement only).
+    - The antenna is picked per profile: telescopic whip, wire on a winder with matching transformer, or a miniwhip-type active E-field antenna with its feed power switched on or off. An antenna-versus-terminated noise check is included.
+  - **Air & Sea**: ADS-B, AIS.
+  - **Weather balloons**: RS41.
+  - **Spectrum**: waterfall, scanner, GPS heat map, survey.
+  - **Radio astronomy**: H-line, Star Tracker.
+  - **Instruments**: noise figure, plus the conducted-only VNA, tinySA, power meter and GPSDO pages.
+  - **Signal ID**: NPU classifier.
+  - **Recordings**.
+  - **System**.
+  
+  All of this software is $0. The cost is development time.
+- **Requirements or findings:**
+  - Nothing exists that is touch-first and menu-driven for every lab function on Linux arm64. You have to build a launcher layer; the engines underneath can be existing apps.
+  - SDRangel covers the widest share of the lab's functions in one process, but it has no Linux arm64 binary. Upstream ships amd64 debs and snap, an x86_64 flatpak (end-of-life on Flathub), Windows and macOS. arm64 packages exist only in Debian forky/sid and Ubuntu's development series. Build it from source on noble with Qt 5.15, which is the upstream build target.
+  - SDRangel can be built receive-only with documented CMake switches (ENABLE_CHANNELTX=OFF, ENABLE_FEATURE_SIMPLEPTT=OFF, ENABLE_CHANNELMIMO_BEAMSTEERINGCWMOD=OFF and per-plugin switches). The samplesink (TX device) directory is always built, so delete those plugins after install. The LimeSDR Micro is a transceiver: also terminate its TX ports and ship no GNU Radio sink flowgraphs.
+  - Policy-filtered decoders. SDRangel: drop DSD, pager, ChirpChat, Meshtastic/MeshCore, 802.15.4, DroneID and AMBE. OpenWebRX+: do not install digiham/codecserver, multimon-ng (pager/selcall), dxlaprs-tetra, acarsdec/dumphfdl/dumpvdl2, LoRa/Meshtastic or whisper speech-to-text. OpenWebRX+ hides any mode whose binary is missing. SDR++: OPT_BUILD_PAGER_DECODER=OFF. SatDump: hide Inmarsat Aero (ACARS, ADS-C, CPDLC). Inmarsat-C: show SafetyNET EGC only; whether SDRangel's plugin can filter this is not verified, so the launcher may have to filter.
+  - SDRangel can switch whole setups programmatically. A Configuration stores workspaces, device sets, features and window geometry. REST PATCH /sdrangel/configuration loads one, and /deviceset/{i}/spectrum/data exposes FFT data. Its Satellite Tracker can load presets and start or stop acquisition on AOS. Master also has an MCP server (HTTP, port 8092).
+  - Touch in SDRangel works through Qt gestures: tap-and-hold acts as right-click and pinch zooms spectrum and maps (PRs #1539/#1540). The UI is still dense. At 315 PPI it needs about 2x scaling (QT_AUTO_SCREEN_SCALE_FACTOR, per the SDRangel high-DPI wiki), so keep one or two windows per function and use tabbed sub-windows.
+  - GLFW apps (SDR++, SatDump) get no native Wayland touch. Run them as X11 clients under XWayland (XDG_SESSION_TYPE=x11). labwc 0.8.2 and later can emulate a mouse from touch at the compositor, but that disables multitouch. noble has only labwc 0.7.1.
+  - On-screen keyboard: cage has the virtual-keyboard-v1 protocol but no layer-shell or input-method, so put the keyboard inside the launcher (Qt Virtual Keyboard 6.4.2 is in noble). squeekboard is not packaged for noble (only 22.04, 25.10, 26.04 and later). wvkbd 0.14.3 is. Raspberry Pi OS has used labwc with squeekboard since 2024-10-22.
+  - With cage, the HOME button must be handled outside the compositor (an evdev/GPIO daemon that stops the child app), because a full-screen child covers the launcher and cage cannot switch windows. Use labwc if functions must keep running in the background while you browse other screens.
+  - LimeSDR Micro with existing apps: LimeSuiteNG registers SoapySDR driver 'limesuiteng'. OpenWebRX+ hard-codes 'lime' and needs a patch. SDRangel's native Lime plugin uses legacy LimeSuite, so use its SoapySDR input. SDR++ needs a rebuild with OPT_BUILD_SOAPY_SOURCE=ON.
+  - HF receiver software support: SDRangel has native Airspy HF+, SDRplay V3 and RTL-SDR inputs. OpenWebRX+ supports Airspy HF+, SDRplay via SoapySDRPlay3 0.8.11 in its PPA, and RTL-SDR. SDR++ builds airspyhf by default; sdrplay is off. SDRplay API 3.15 is tested only on Ubuntu LTS up to 24.04; the API page does not state arm64.
+  - The menu needs per-profile bias-tee and antenna control for the HF antennas (telescopic whip, wire on a winder with matching transformer, miniwhip-type active E-field antenna). It also needs a quick check comparing noise with the antenna connected and terminated. SDRangel's Channel Power and Frequency Display plugins can show this in large text.
+  - Several features need internet: SDRangel's 3D map (Cesium; needs your own API key since 2025), Sky Map (WWT, ESASky, Aladin), and the online tile layers in SDRangel and OpenWebRX+ maps. The standalone device needs an offline tile server and cached TLEs and ephemerides.
+  - SDRangel's Heat Map needs NMEA from a serial GPS at 4800 baud. Feed it from the LC76G, either by setting that baud rate or through a gpsd-to-pty bridge (untested).
+  - SDRangel has no SSTV decoder. Get ISS SSTV from OpenWebRX+ (built-in SSTV), since the SDR++ module decodes KG-STV only. Meteor imagery needs SatDump. CubeSats need gr-satellites.
+  - Feeds for the NPU classifier: SDRangel Remote TCP sink, UDP sink or the spectrum REST endpoint, SDR++ iq_exporter, and CyberEther's ONNX block (CPU/CoreML/TensorRT; no QNN). None of the apps has a classifier overlay; the launcher must draw it.
+  - SDR-focused menu distributions: DragonOS Pi64 Beta42 (6 Oct 2025; Beta41 was rebuilt on Raspberry Pi OS Trixie) is Raspberry Pi only and cannot boot on the Q6A. It is useful only as a checklist of apps (SDRangel, SDR++, SatDump). PiSDR has not been updated since Oct 2022.
+  - No Q6A or A78 CPU, RAM or power benchmarks exist for SDRangel, OpenWebRX+ or SatDump. Profile each tile's load and power before fixing the battery budget.
+- **Rejected:**
+  1.
+    - **Name:** SDR++ Brown fork
+    - **Why:** Adds Hermes Lite 2 TX (SSB-oriented) and one-button CQ transmit in CW, FT8 and WSPR, which breaks the receive-only rule. Its last upstream merge was 2025-06-11. Its touch and small-screen sliders are a useful UX reference only.
+  2.
+    - **Name:** piHPSDR and other transceiver front ends
+    - **Why:** Built around transmit (HPSDR transceivers). The SDRangel WDSP receive plugin already brings piHPSDR's WDSP receive DSP into a receive-only app.
+  3.
+    - **Name:** DragonOS Pi64 (Beta42) as the OS
+    - **Why:** Raspberry Pi images only (Pi OS Trixie / Ubuntu bases) with a plain desktop app menu. No Q6A boot support, device arbitration or touch-first design.
+  4.
+    - **Name:** PiSDR image
+    - **Why:** Stale. Last commit 4 Oct 2022 (v7.0.0-alpha2). Raspberry Pi only.
+  5.
+    - **Name:** SDRangel Flatpak or upstream binaries
+    - **Why:** The Flathub listing is marked end-of-life. Release assets have no Linux arm64 package, and issue #2526 reports the ARM flatpak breaking after 7.22.9.
+  6.
+    - **Name:** SDRangelcli as the main UI
+    - **Why:** Last commit Nov 2024. A generic web remote for sdrangelsrv with no touch-field design (not verified hands-on). A custom launcher using the REST API is simpler.
+  7.
+    - **Name:** Plasma Mobile 5.27 (noble), Lomiri 0.2.1, Sxmo 1.12
+    - **Why:** Phone shells that are heavy or modem-centric. noble's Plasma Mobile is the old Plasma 5 line. None of them adds anything SDR-specific beyond what cage or labwc plus a launcher gives.
+  8.
+    - **Name:** squeekboard on Ubuntu 24.04
+    - **Why:** Not packaged for noble. Use Qt Virtual Keyboard in the launcher, wvkbd under labwc, or move to 26.04 (squeekboard 1.43.1).
+  9.
+    - **Name:** OpenWebRX+ and SDRangel private-communications or transmit modules
+    - **Why:** Digital voice (digiham/codecserver/DSD/AMBE), pagers, TETRA, aviation datalink (ACARS/HFDL/VDL2, SatDump Aero), LoRa/Meshtastic/MeshCore/ChirpChat, Zigbee, DroneID and speech-to-text breach the lab rules. Modulators, PTT and TX sample sinks breach receive-only. Do not install or build them.
+  10.
+    - **Name:** uConsole / HackerGadgets AIO images
+    - **Why:** Images for Raspberry Pi CM-based hardware, not the Q6A. Owners report SDR++ Brown and tar1090 working but Meshtastic and GPS not working on one Bookworm image.
+  11.
+    - **Name:** ADS-B Feeder Image (adsb.im) as the lab UI
+    - **Why:** A single-purpose web appliance for feeding aggregators (ADS-B, AIS, sondes, plus ACARS/VDL2/HFDL, which are excluded). Its install script supports ARM64 Debian/Ubuntu, but it assumes networking. Useful only as a model of a web setup menu.
+- **Notes:** - **Prices and country:** all listed software is free worldwide (GPL, AGPL, MIT), and every price is $0. The country is unknown.
+  - **What I verified directly:**
+    - SDRangel plugin lists, CMake switches, touch-gesture code, the Configurations REST endpoint and the MCP plugin, from the GitHub master tree (commit 137c608, 17 Oct 2026).
+    - OpenWebRX+ feature-to-binary map and the hard-coded 'lime' driver, from source (16 Oct 2026).
+    - LimeSuiteNG's 'limesuiteng' Soapy registration, from the limesdr-micro-staging branch.
+    - SatDump autotrack's HTTP status code and its Inmarsat Aero files, from the master tree.
+    - SDR++ module defaults and the -r/--autostart options, from source.
+    - cage virtual-keyboard support and version 0.3.0 at master, from source.
+    - labwc mouseEmulation arriving in 0.8.2, from NEWS.md.
+    - noble and 26.04 package versions, from packages.ubuntu.com.
+    - The OpenWebRX+ noble arm64 PPA contents, from its Packages file.
+  - **Not verified:**
+    - CyberEther's SoapySDR and ONNX blocks and its aarch64 builds (taken from the earlier audit).
+    - Chromium snap kiosk behaviour on the Q6A.
+    - wvkbd under labwc 0.7.1.
+    - Phosh in landscape on a 7 in panel.
+    - gnome-kiosk on-screen keyboard support.
+    - Whether noble's cage 0.1.5 build has XWayland enabled (check before relying on it).
+    - Whether the SDRangel MCP plugin is in a tagged release.
+    - Whether the SDRangel Inmarsat plugin can filter to SafetyNET.
+    - SDRplay arm64 on the API page.
+    - CPU and power load of any engine on the Q6A.
+  - **Search budget:** 6 WebSearch calls used. groups.io returned HTTP 402, so no SDRangel mailing-list touch reports were read.
+  - **Practical tips:**
+    - Launch C++ apps with LC_NUMERIC=C if the system locale uses a comma decimal separator (seen with uk_UA in the earlier audit).
+    - Hold the kernel and Mesa packages, since UI stability depends on the HDMI/Turnip stack.
+    - The RP2040 planned for display dimming can double as the USB-HID knob and HOME/BACK buttons. A knob that sends ShuttleXpress-style keys can drive SDRangel's Jogdial plugin, but only while that plugin has focus.
+    - Weston 13 (noble) kiosk-shell is another cage-like option I did not evaluate.
+
