@@ -28136,6 +28136,119 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Downloaded reference copies (untrusted data, not executed) are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/labui2_dl/ (forum JSON, labwc sources, greetd 0.9.0 source, systemd v255 logind, qt6-wayland debian dir, aic8800 sources, Pico/RP2040 datasheets). The dump helper script is /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/labui2_scripts/dump.py. No user data was sent in any request.
 
+## assemble:totals (run `wf_962413d5-afe`)
+
+- **Groups:**
+  1.
+    - **Group:** 2.1 Обчислення і пам'ять
+    - **V1:** 283.31-312.63
+    - **V2:** 303.53-332.85 (lower bound: TinyTronics prices incl. NL VAT; upper bound: ALLNET fallback ex VAT; recovery kit ex VAT)
+  2.
+    - **Group:** 2.2 Приймачі
+    - **V1:** 282.85
+    - **V2:** 282.85 ex VAT (EU model: about 347.6-352.1)
+  3.
+    - **Group:** 2.3 РЧ-тракт
+    - **V1:** 258.61-308.61
+    - **V2:** 249.49-261.79 (fully ex VAT 248.72-261.02; 232.54-244.84 without the spare-V4L FM band-stop)
+  4.
+    - **Group:** 2.4 Патч-антени
+    - **V1:** 175.79-207.79
+    - **V2:** 255.20-281.20 with the bare QO-100 LNB row; tier without QO-100 175.79-201.79
+  5.
+    - **Group:** 2.5 Складаний рівень
+    - **V1:** 350.90-625.17
+    - **V2:** 560.26-658.04 with the QO-100 horn materials; tier without them 542.26-612.99
+  6.
+    - **Group:** 2.6 Дисплей і керування
+    - **V1:** 221.39-244.44
+    - **V2:** 221.24-237.59 (216.24-222.59 without the key overlay)
+  7.
+    - **Group:** 2.7 Живлення
+    - **V1:** 364.81-515.81
+    - **V2:** 400.87-495.07 (mixed basis)
+  8.
+    - **Group:** 2.8 GNSS/IMU/час
+    - **V1:** 80.43-105.43
+    - **V2:** 69.67-71.67 ex VAT
+  9.
+    - **Group:** 2.9 Корпус і механіка
+    - **V1:** 178-313
+    - **V2:** 312.00-406.30 (314.10-408.40 with the EU ASA price)
+  10.
+    - **Group:** 2.10 Кабелі
+    - **V1:** 90-170 (model)
+    - **V2:** 75-145 (model)
+  11.
+    - **Group:** 2.11.1 Набір Lime (in core)
+    - **V1:** 595.99-680.99 (in optional)
+    - **V2:** 606.46-608.46 (up to 629.82 with the Alternate T7 fallback; EU DE model about 697-699, i.e. +90.09)
+  12.
+    - **Group:** 2.11.2 Набір QO-100
+    - **V1:** 47.95-75.00 (optional)
+    - **V2:** 97.41-124.46 (LNB incl. VAT and shipping to DE)
+  13.
+    - **Group:** 2.11.3 Опційне (not in totals)
+    - **V1:** 288.85-400.85 without the Lime and QO-100 sets (932.79-1,156.84 with them)
+    - **V2:** 272.52-289.58 USD base; 312.24-350.22 EU incl. VAT/shipping where rows give it; 976.39-1,022.50 with the Lime and QO-100 sets
+  14.
+    - **Group:** core without Lime (2.1-2.10)
+    - **V1:** 1,759.40-2,252.77
+    - **V2:** 1,914.65-2,233.12
+  15.
+    - **Group:** Lab core 3.1
+    - **V1:** 1,474.58-1,809.89
+    - **V2:** 1,536.56-1,767.80 (1,571.94 lower bound with the booked Passion Radio/Astroradio prices)
+  16.
+    - **Group:** Lab extended 3.2
+    - **V1:** 497.72-707.72
+    - **V2:** 570.25-629.73 (up to 730.50 with Peli 1450)
+  17.
+    - **Group:** КХ-тракт 3.3
+    - **V1:** 439.90-589.17
+    - **V2:** 524.71-576.74 (was 469.71-546.74 with the stale 15-50 mast)
+  18.
+    - **Group:** Device + both antenna tiers + bench
+    - **V1:** 3,760.67-4,895.62
+    - **V2:** 4,873.13-5,548.62 with Lime and QO-100; 4,266.67-4,940.16 without Lime
+  19.
+    - **Group:** Everything except optional
+    - **V1:** 4,258.39-5,603.34
+    - **V2:** 5,443.38-6,178.35 with Lime; 4,836.92-5,569.89 without Lime; 4,739.51-5,445.43 at v1 composition
+- **Device total v1:** 1,759.40-2,252.77 (verifier 1,758-2,253; core without Lime and without QO-100). v1 core plus the v1 Lime set: 2,355.39-2,933.76.
+- **Device total v2 with lime:** 2,521.11-2,841.58 (≈2,521-2,842) on the USD base (mixed, labelled). EU landed lower estimate: ≥2,611.20-2,931.67 (base + Lime import surcharge, DE 19%). Device + patch tier + QO-100: 2,794.31-3,167.83. + both antenna tiers: 3,336.57-3,780.82. + bench: 4,873.13-5,548.62. Everything except optional: 5,443.38-6,178.35. EU lower estimates: ≥4,963-5,639 and ≥5,533-6,268.
+- **Device total v2 without lime:** 1,914.65-2,233.12 (≈1,915-2,233); +155.25 / −19.65 against v1. + patch tier + QO-100: 2,187.85-2,559.37. + both antenna tiers: 2,730.11-3,172.36. + bench: 4,266.67-4,940.16. Everything except optional: 4,836.92-5,569.89. Budget variant: ≈1,915 (≈1,844 with manual antenna switching). With Lime: ≈2,521 (≈2,450).
+- **Lab total v1:** core 1,474.58-1,809.89 + extended 497.72-707.72 = 1,972.30-2,517.61; HF chain 439.90-589.17
+- **Lab total v2:** core 1,536.56-1,767.80 + extended 570.25-629.73 = 2,106.81-2,397.53 (+134.51 / −120.08 against v1); HF chain 524.71-576.74 plus a share of the LDO/eFuse
+- **Saving firm:** ≈$55.62 (device $37.67, lab $17.95), from the P5 saving_usd fields; the 8 items were re-added and check out
+- **Saving conditional:** ≈$413.48-717.31 over 38 items. Of this, 369.60-629.67 falls inside the totals (device incl. the Lime set 158.71-322.68, lab 210.89-306.99) and 43.88-87.64 is optional/gated. These prices are already in the rows, so the savings must not be subtracted again. The v2 totals still rise against v1 because the Lime and QO-100 sets are now in them (+703.87-732.92) and v1 underestimates were corrected.
+- **Places fixed:**
+  - Header 'Що це' paragraph: Lime-set cost $606-630 → $606-608 (EU DE ≈$697-699, v1 $596-681); added device totals with and without Lime
+  - 1.1 C1: v1-only Lime figure replaced by the v2 606.46-608.46 figure, with the EU and v1 figures alongside
+  - 1.1 C24: the stale intermediate totals (core ≈1,851-2,258, foldable ≈499-613, bench 1,475-1,810, optional ≈1,001-1,099 / 394-469) replaced by the final v2 totals for every tier, with v1 figures, the with/without-Lime summaries and the savings; mechanical-set wording clarified
+  - 2 intro paragraph: stale foldable $394.44-625.17 and HF chain $469.71-546.74 → 542.26-612.99 (560.26-658.04 with the horn) and 524.71-576.74; range convention stated
+  - 2.1/2.2/2.3/2.4/2.5/2.6 subtotal notes: VAT basis of each bound stated, EU figures where rows give them, v1 figures added
+  - 2.7 subtotal note: unverifiable 'Було 371.34-522.34' replaced by v1 364.81-515.81 (+36.06 / −20.74)
+  - 2.9 subtotal: 312-406 → 312.00-406.30; EU ASA variant 314.10-408.40
+  - 2.11.1 Lime subtotal: basis and v1 595.99-680.99 added; wrong 'analog G6: 606-630' attribution corrected
+  - 2.11.2 QO-100 row: basis and v1 47.95-75.00 added
+  - 2.11.3 optional subtotal: 296.74-344.97, which mixed ex-VAT and incl-VAT figures inside one range → base 272.52-289.58 / EU 312.24-350.22; with the Lime and QO-100 sets 1,000.61-1,099.25 → 976.39-1,022.50
+  - 2.12: tier table rebuilt with v1 and v2 columns plus the change (core with Lime = default, without Lime = fallback); summary table rebuilt with v1 / v2 with Lime / v2 without Lime and the EU landed lower estimates; like-for-like comparison and savings paragraph (firm vs conditional) added; basis paragraph corrected (Airspy Mini no longer in the base incl. VAT); EU landed paragraph extended (+90.09 breakdown, ≥4,963-5,639, ≥5,533-6,268); budget variant v1 comparisons added
+  - 3.3: summary mast row 15-50 → 70-80 (as in 2.5/G4); HF chain total 469.71-546.74 → 524.71-576.74, with basis and v1 delta
+  - 3.6: device 2,516.11-2,847.94 (used 2.6 without the overlay and the Alternate T7) → 2,521.11-2,841.58; combined rows 4,868-5,555 / 5,438-6,185 → 4,873-5,549 / 5,443-6,178 (plus without-Lime rows); EU landed 4,921-5,629 / 5,491-6,259 → ≥4,963-5,639 / ≥5,533-6,268; v1 column added
+  - 11.3 row 2: HF chain 483.44-589.17 → 524.71-576.74
+  - 11.5 row 22: stale budget sums ≈$1,739/≈$1,647 → ≈$1,915/≈$1,844 without Lime, ≈$2,521/≈$2,450 with Lime
+  - 11.6 row 39 (QO-100 set location) and row 44 (Lime cost $596-681 v1 → $606-608 v2, EU, device totals)
+  - 11.7: v1 → v2 totals table added, with an explanation of why the total change ≠ the sum of savings
+- **Problems:**
+  - EU landed totals are lower estimates only. They are the USD base plus the modelled DE import surcharge for the Lime set (+$90.09). Not summed: VAT on the ex-VAT rows of EU sellers (DigiKey DE, Botland, ITEAD DE, Uputronics EU, Eleshop/Elektor); import VAT, EUR 3 duty and EUR 2 UHF per line on the other non-EU orders; shipping. The files do not give normal duty rates (e.g. the Lime board, >EUR 150) or most shipping costs. For the without-Lime build, the EU lower estimate equals the USD base.
+  - The bench range keeps the v1 convention: the lower bound uses the conditional Eleshop/Elektor ex-VAT prices, the upper bound uses Passion Radio/Astroradio incl. VAT. This is labelled but not converted to one basis, because several lab rows (Mini-Circuits, Nooelec, AliExpress, PINE64, Waveshare) have no EU landed figure.
+  - 11.7: the 'rest 17 conditional items' figure of 54.36-72.34 is not itemised in the file. Rebuilding it from the P5 saving_usd fields gives about 41-65, depending on which P5 number is taken (e.g. G6 #6: 5.64 vs 23.64). It is consistent with the stated device/lab split, so I left it as stated. The 21 listed items and the firm total were verified.
+  - The 2.9 case row (≈126.6) uses the US-only Polymaker price for ASA ($25.99). I left the row price unchanged and noted the EU variant (+$2.10).
+  - Not a total, left unchanged: 9.1 step 13 says the Lime 15-min lossless capture is at ≥6 Msps, while the rest of the document says ≥7 Msps.
+  - Only STACK.md was edited. The section files in stack_v2_parts still hold the old totals, so re-assembling from them would undo these fixes.
+  - Pre-existing markdown tables with mismatched column counts (probably literal pipes inside cells) at lines 63, 104, 131, 170, 593, 855, 861, 1426, 1444, 1447, 1450, 1584, 1626, 1650, 1661, 2348. Outside the totals, so not touched.
+
 ## extract:reaudit_C (run `wf_9cc6cab3-efa`)
 
 - **Source:** reaudit_C
