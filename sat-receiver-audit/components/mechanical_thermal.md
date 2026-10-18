@@ -830,5 +830,344 @@ _Run `wf_e6b8e5e2-124`_
 
 ## Власні виправлення (`fixes`)
 
+_Run `wf_e6b8e5e2-124`_
+
+- **Component:** Mechanical, thermal and enclosure: M.2 riser, LimeSDR Micro and Q6A cooling, case, RF shielding, power entry, display thermal, pigtails
+- **Fixes:**
+  1.
+    - **Problem:** No public report of a LimeSDR Micro M.2 on a Dragon Q6A or any QCS6490 board, and no measured LimeSDR Micro temperature or idle power. Cooling is currently sized from Lime's '>=10 W' guidance and a '~4 W' forum figure.
+    - **Proposed fix:** Measure on the first unit using sensors the board already has, and build the cooling for 10 W with a 55/45 C fan rule.
+  
+  Facts checked:
+  - The Q6A M.2 slot has its own 3.3 V buck (ETA3521 U20, net VCC_3V3_MKEY, schematic v1.21 sheet 33). The LimeSDR draws all its power from M.2 3.3 V.
+  - Lime's Zack says 2.5 A x 3.3 V = 8.25 W is only the PCIe spec limit; the board 'should consume about 4 W'.
+  - The LimeSuiteNG limesdr-micro branch (commit 80ffad5, 1 Oct 2026) exposes the TMP1075 (IC10) as custom parameter 'Board Temperature' (id 1). `limeDevice --full` prints it next to 'Temperature(LMS7002)'. The SoapySDR plugin exposes the LMS7002M sensor as 'lms7_temp'.
+  - The hot chips are on the card underside, which faces the riser carrier board. Heat must therefore leave through the card PCB to a top-side heatsink, plus forced air on both faces.
+  
+  Rough estimate (my calculation): a bare 22x80 mm card in still air (about 3500 mm2, h about 10 W/m2K) is about 28 K/W, so +110 K at 4 W. A passive card in a closed box will not work. With about 1.5 m/s of forced air it is about 7-9 K/W, or +30-35 K.
+    - **Steps:**
+      - Bench test first, open frame, in a 25 C room. Power the Q6A through J21 (see the power-entry fix) with the LimeSDR on the riser. Build the `limesdr-micro` branch of LimeSuiteNG, including drivers/linux/la9310_limesdr (DKMS), and load the module.
+      - Power: put a DC power meter (or a shunt and DMM) in the 9 V J21 feed. Log five cases: Q6A idle; LimeSDR driver loaded and idle; RX-A at 61.44 Msps; RX-A+B at 30.72 Msps; each again with `stress-ng --cpu 8`. LimeSDR power is roughly the delta x 0.85 (assumed efficiency of the two bucks in the path).
+      - Temperatures: run `limeDevice --full` before and after each run. While streaming, read the sensor from the recording process itself, because a second process cannot open the device: Python `sdr=SoapySDR.Device('driver=limesuiteng'); sdr.readSensor('lms7_temp')` every 10 s, logged next to the IQ file. Add an independent 10k NTC or thermocouple, Kapton-taped to the card top above the LMS7002M/LA9310.
+      - Hardware: cut a cheap M.2 2280 SSD aluminium heatsink so it covers only the top-side area opposite the LMS7002M and LA9310 (check Lime's v1.2 top/bottom placement figures). Use a 1.0-1.5 mm gap pad rated at least 6 W/mK. Keep at least 3 mm clear around the X1/X2/X4 and J3-J6 MHF4 receptacles so the extraction tool fits. Raise the riser carrier on 3-4 mm standoffs inside the fan duct so air passes both faces of the card.
+      - Optional, only after inspecting your riser: if the carrier has no copper under the card beyond the socket area (check against a bright light and with a continuity tester), cut a window about 25x20 mm under the LMS7002M/LA9310. Then stack 1.5 mm gap pad, a copper shim and the aluminium mid-plate.
+      - Fan rule: copy Lime's own LimeSDR Mini 2.0 policy (fan on at 55 C, off at 45 C board temperature). Alarm and log at 70 C board temperature. That limit is my margin; Lime publishes none for the Micro.
+      - Soak: run 60 min at 61.44 Msps in the closed case at about 35 C ambient, then repeat outdoors in sun.
+    - **How to verify:** Pass criteria:
+  - After 60 min at 35 C ambient in the closed case, TMP1075 'Board Temperature' settles at or below 65-70 C and LMS7002M at or below 75 C.
+  - Zero overruns or lost packets reported by LimeSuiteNG.
+  - RX DC/IQ calibration still succeeds after the soak (LimeSDR Mini users saw calibration failures when hot).
+  - Measured LimeSDR power is 3-6 W. If it is above 6 W, enlarge the heatsink or increase airflow toward the 10 W target.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://discourse.myriadrf.org/t/limesdr-micro-m-2-power-consumption/13304
+      - https://myriadrf.org/projects/limesdr-micro/user/M.2/setup.html
+      - https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/overview.html
+      - https://github.com/myriadrf/LimeSuiteNG/tree/limesdr-micro (src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp, cli/limeDevice.cpp, plugins/soapysdr/Settings.cpp)
+      - https://myriadrf.org/projects/limesdr-mini-2-0/reference/v2.4/tempsensor.html
+      - https://discourse.myriadrf.org/t/limesdr-mini-thermal-pad/3132
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+  2.
+    - **Problem:** Nobody has reported using the ADT-Link R44SF M.2-to-M.2 riser on an ARM host. Retention of its male end in the Q6A's 2230-only slot is unverified, and ARM hosts are known to fail enumeration occasionally with adapters.
+    - **Proposed fix:** Fix retention with a printed clamp. Remove known Qualcomm-host risks (ASPM/L1SS, BAR space), then qualify the link with error counters and a boot-loop test. Keep Gen2 as a fallback.
+  
+  Facts checked:
+  - The Q6A has only a 2230 standoff: an SMT nut at about (12.3, 12.2) mm from the left/HDMI-edge corner, per Radxa DXF/STEP v1.21.
+  - The socket (APCI0107) spans x 1.4-23.3 mm and is 5.5 mm tall.
+  - ADT's drawing shows the male end is about 21.2 mm to the cable start, with a 3.8 mm stack (3 mm FR4 pad). So the male board ends about 10 mm short of the nut: no screw retention.
+  - The J21 3-pin header (8.5 mm tall, x 16.4-24.1) and the 4.7 mm standoff sit in the cable path.
+  - In mainline pcie-qcom, sc7280-class controllers (cfg_1_9_0) run qcom_pcie_host_post_init_2_7_0, which enables all ASPM states including L1 substates on downstream devices.
+  - pcie1's 32-bit MMIO window is 0x40300000 + 0x1fd00000 (about 509 MB, kodiak.dtsi). The LA9310 driver says BAR0 defaults to 256 MB, so it fits only at 0x50000000.
+    - **Steps:**
+      - Retention: print an ASA/PETG clamp bar. Fix it with an M2 screw into the 2230 SMT nut, reaching about 12 mm toward the socket, and press the riser's FR4 pad down through 1 mm EPDM or silicone foam. Fold the cable 90 degrees upward at least 5 mm after the FR4 pad so it clears the standoff, D19 and J21. Never put the cable under tension (ADT warning).
+      - Baseline without the riser: plug the LimeSDR straight into J13 with the 2280 tail supported on a block. Power via J21. This separates host or driver problems from riser problems.
+      - For bring-up, add `pcie_aspm=off` to the kernel command line. The kernel's __pci_enable_link_state honours aspm_disabled, so qcom's forced ASPM is skipped. Per-device alternative: write 0 to /sys/bus/pci/devices/<BDF>/link/{l0s_aspm,l1_aspm,l1_1_aspm,l1_2_aspm}.
+      - Enumeration and BAR check:
+  - `lspci -nn -d 1957:` and `lspci -nn -d 2058:`. Driver IDs are 1957:1c10, 1957:1c12 and 2058:001d.
+  - `sudo lspci -vv -s <BDF> | grep -E 'LnkCap|LnkSta|Region'`. Expect LnkSta 8GT/s x1 and Region 0 = 256M assigned.
+  - `dmesg | grep -iE 'BAR|no space|la9310'`.
+      - Error counters: these work even if the AER interrupt is not wired on this DWC host.
+  - Clear: `sudo setpci -s <BDF> ECAP_AER+0x10.L=0xffffffff` and `ECAP_AER+0x04.L=0xffffffff`, on both the endpoint and the root port.
+  - Stream 60 min: `limeConfig --initialize --samplerate 61.44e6 --rxen 1 --rxlo 1700e6 --rxpath LNAW`, then `limeTRX --time 3600000 -o /data/t.iq`.
+  - Re-read `lspci -vvv` CESta/UESta.
+  - If present, check /sys/kernel/debug/pcie@1c08000/link_transition_count.
+      - Boot loop: a systemd oneshot appends `lspci -d 1957: -d 2058:` plus LnkSta to a log, then reboots. Run 50 warm reboots and 20 cold power cycles (switch off the 9 V feed).
+      - If you see errors or failed boots, force Gen2 at runtime on the root port: `setpci -s <RP> CAP_EXP+0x30.w=0x2:0xf; setpci -s <RP> CAP_EXP+0x10.w=0x20:0x20` (sets the target speed, then retrains). Make it permanent with a DT overlay `&pcie1 { max-link-speed = <2>; };`. Gen2 x1 gives about 400 MB/s usable, enough for one RX at 61.44 Msps I16 (246 MB/s).
+      - If the BAR0 'no space' message appears, keep pcie1 for the LimeSDR only (no switch). Shrinking BAR0 to 64 MB is commented out in la9310_pci.c because it can cause 'Imprecise bus access' faults, so treat it as a last resort only.
+    - **How to verify:** Pass criteria:
+  - 70/70 boots enumerate at 8GT/s x1 (or at 5GT/s if you chose Gen2).
+  - CESta/UESta stay all-zero after a 60-min stream on both the root port and the endpoint.
+  - No LimeSuiteNG overruns.
+  - The clamp holds the card with the case shaken.
+  - Running the same test without the riser gives an A/B comparison.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://www.adt.link/product/R44SF.html
+      - http://www.adt.link/Uploads/download/ADT_R44SS%20dimension%2020200326.pdf
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_3d_stp_v1.21.zip
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_2d_dxf_v1.21.zip
+      - https://github.com/torvalds/linux/blob/master/drivers/pci/controller/dwc/pcie-qcom.c
+      - https://github.com/torvalds/linux/blob/master/drivers/pci/pcie/aspm.c
+      - https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/qcom/kodiak.dtsi
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro/drivers/linux/la9310_limesdr/la9310_pci.c
+  3.
+    - **Problem:** Nobody has reported fitting a Q6A copper cooler or the Armor Case with a card or riser in the M.2 slot. The Q6A also has no fan header.
+    - **Proposed fix:** Size the cooler from Radxa's STEP model. The Q6A has no fan header, but Radxa's own PoE-HAT fan overlay gives kernel-controlled fan PWM.
+  
+  Geometry I took from STEP v1.21 (origin at the left corner of the HDMI/USB-C edge):
+  - SoC U1: x 38.9-50.9, y 28.0-42.0 mm.
+  - LPDDR5 U2: x 38.4-53.4, y 14.4-26.8. Both are 1.0 mm tall.
+  - M.2 socket/riser zone: x 1.4-23.3. The gap to the SoC is 15.6 mm.
+  - Tall neighbours: HDMI (x 24.5-39.6, y <=9.7, 6.4 mm), audio jack (x 50-58, y <=11.4, 5.3 mm), 2x2 header (x 59-64, y 43.9-48.9, 7.5 mm), 40-pin header (y >=48.7, 9.65 mm).
+  
+  Result: a heatsink base inside x 26-58, y 12-43 mm (32x31 mm) clears all of these and stays at least 2.7 mm from the riser. A fan above it at 10 mm or more can overhang the riser's 3.8 mm stack.
+  
+  Fan control: the radxa-overlays file qcs6490-radxa-dragon-q6a-poe-hat.dtso defines pwm-gpio on tlmm GPIO 56 (header pin 33), a pwm-fan, and active trips at 60 C on the cpu0 and gpu zones.
+    - **Steps:**
+      - Print the top-layer DXF at 1:1. Lay the cooler (or its drawing) on it. Accept only a base inside the 32x31 mm keep-in; otherwise trim the base on the M.2 side.
+      - For the stepped AliExpress copper cooler: paste on the SoC, the supplied pad on the LPDDR5. Mount with M2.5 screws and springs in the 58x49 mm holes. A forum user found wrong standoff placement leaves the block floating, so check contact with a paste imprint.
+      - Copy the PoE-HAT overlay. Remove the w1 node. Fix the zone names: the file says 'cpu0-thermall' and 'olling-delay-passive', but kodiak.dtsi uses 'cpu0-thermal'. Lower the trips to 50 C. Compile with `dtc -@ -I dts -O dtb` and enable it with rsetup.
+      - Wiring: header pin 33 drives a 2N7002 or AO3400 open-drain that pulls the PWM pin of a 4-pin 5 V fan (Noctua NF-A4x10 5V PWM) low. This stage inverts, which matches the overlay's GPIO_ACTIVE_LOW. Feed the fan from your own 5 V buck, not the header.
+      - Duct order: intake, then the display back channel, then the LimeSDR, then the Q6A fins, then the exhaust. Coolest air goes to the most temperature-sensitive parts.
+    - **How to verify:** 1. Put modelling clay on the riser male end and the SoC area, close the case and measure the imprint: at least 1 mm clearance.
+  2. Run `stress-ng --cpu 8 --timeout 30m` with a LimeSDR stream. Watch `paste <(cat /sys/class/thermal/thermal_zone*/type) <(cat /sys/class/thermal/thermal_zone*/temp)`. CPU zones should stay at or below 80 C at 25 C ambient, with no frequency drop in scaling_cur_freq.
+  3. Check that `cat /sys/class/thermal/cooling_device*/type` lists pwm-fan and that its cur_state rises at the trip.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_3d_stp_v1.21.zip
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_2d_dimensions_v1.21.pdf
+      - https://github.com/radxa-pkg/radxa-overlays/blob/main/arch/arm64/boot/dts/qcom/overlays/qcs6490-radxa-dragon-q6a-poe-hat.dtso
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/pin-gpio
+      - https://forum.radxa.com/t/best-heatsink-cooling-solutions-for-dragon-q6a/30123
+      - https://noctua.at/en/nf-a4x10-5v-pwm/specification
+  4.
+    - **Problem:** No measurements of RF emissions from the Q6A HDMI path or a higher-than-FHD panel near 137/145/435/740/1575/1700/2200 MHz.
+    - **Proposed fix:** Pick a video mode whose pixel-clock harmonics avoid every band, shorten and shield the HDMI run, then measure with your own SDRs.
+  
+  Facts checked:
+  - HDMI comes from a Radxa RA620 DP-to-HDMI bridge fed by 2 DP lanes of the USB-1 QMP combo PHY. The other 2 lanes go to the USB 3 Type-A port (Radxa vendor DTS).
+  - Maximum output is 3840x2160@30 (297 MHz).
+  - A May 2026 kernel patch caps RA620 link training at voltage-swing level 2.
+  
+  My harmonic scan up to 2.4 GHz, against 137-138, 144-146, 435-438, 739-750 (LNB IF), 1565-1586 (GNSS), 1690-1710 and 2200-2290 MHz:
+  - 1920x1080@60 (148.5 MHz) is the worst. 5x = 742.5 is inside the LNB IF and 15x = 2227.5 is inside S-band. The fundamental is 2.5 MHz from the 2 m band and 3x = 445.5 is 7.5 MHz from 438.
+  - 1920x1200@60 CVT-RB (154.0): 11x = 1694 is inside HRPT.
+  - 2560x1440@60 RB (241.5): 7x = 1690.5 is at the HRPT edge.
+  - 2560x1600@60 CVT-RB (268.5): every harmonic is at least 25 MHz clear (nearest 6x = 1611). At 270.5 MHz the clearance is at least 36 MHz.
+  - 4K@30 (297): at least 72 MHz clear, but 30 Hz is sluggish.
+  
+  Broadband TMDS/DP noise cannot be tuned away; only shielding and measurement deal with it.
+    - **Steps:**
+      - Choose a native 2560x1600 panel, or one that accepts that mode. Find the connector name with `ls /sys/class/drm` (probably HDMI-A-1). Force the mode with the kernel argument `video=HDMI-A-1:2560x1600R@60` (R = CVT reduced blanking). Check the clock with `modetest -M msm -c` or /sys/kernel/debug/dri/0/state.
+      - Optional: for 270.5 MHz, make a custom EDID detailed timing, check it with edid-decode, and load it via `drm.edid_firmware=HDMI-A-1:edid/q6a.bin` (include the file in the initramfs).
+      - Never let it fall back to 1080p60. Many HDMI driver boards advertise 1080p as the preferred mode, so pin the mode in the kernel argument.
+      - Hardware: keep the HDMI path as short as possible (rigid coupler or a 10-15 cm shielded cable). Put snap-on ferrites at both ends. Cover the display driver board and cable in copper tape soldered or bonded to the aluminium mid-plate. Route them on the opposite side from the RF bay.
+      - Measure with a 50-ohm load on each SDR input, and then with a short whip inside the case. Example: `rtl_power -f 136M:147M:5k -g 40 -i 10 -e 600 on.csv`, repeated for 430-450 M, 735-755 M and 1.55-1.75 G, display on versus HDMI unplugged. Use LimeSDR+SDR++ (averaging) for 2.2 GHz. Look for lines at n x pclk.
+      - If S-band shows broadband desense from the DP link: by my sinc^2 model, HBR2 (needed for 2560x1600@60) has about 9 dB more noise density at 2245 MHz than HBR. Test a mode that fits 2-lane HBR, for example 1920x1200 at 153 MHz (at least 5 MHz clear), and check in debugfs which link rate the msm DP driver actually trains.
+    - **How to verify:** With the antenna and LNA connected:
+  - Turning the display on or off changes the noise floor by less than 0.5 dB in each band.
+  - No discrete spur inside any band is more than 3 dB above the floor.
+  - The spurs you do see sit at the predicted n x pclk positions, which confirms the source.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/radxa/kernel/blob/linux-6.18.2/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://dl.radxa.com/q6a/docs/rad-doc-0150_radxa_dragon_q6a_product_brief__revision_1.5_gbc16bac.pdf
+      - https://lkml.indiana.edu/2605.2/12737.html
+      - https://www.sigidwiki.com/wiki/HDMI_RFI_Clock
+      - https://www.rtl-sdr.com/using-a-hackrf-to-investigate-why-wifi-on-the-raspberry-pi-4-doesnt-work-when-running-hdmi-at-1440p/
+      - https://www.usb.org/sites/default/files/327216.pdf
+  5.
+    - **Problem:** The effect of the Q6A Wi-Fi 6, USB 3.1 and the SoC on L/S-band reception inside one box is unmeasured.
+    - **Proposed fix:** Put the gain at the antenna, shield the RF bay, turn off the internal emitters while receiving, and quantify the remainder with a noise-floor delta test.
+  
+  Facts checked:
+  - Wi-Fi/BT is an FCU760K module (USB ID a69c:8d80, AIC8800D80) on port 4 of the on-board USB 2.0 hub. The three USB 2.0 Type-A ports, including the RTL-SDR's, share that hub.
+  - USB 3 Type-A shares the QMP combo PHY with the DP lanes that feed HDMI.
+  - Intel measured a 2.4 GHz noise floor raised by nearly 20 dB with a USB 3 HDD attached. Fully shielding the device cut it by about 12 dB.
+  - Slot leakage (my calculation, 20log(lambda/2L)): at 2.25 GHz a 15 mm slot gives only about 13 dB, a 7 mm slot about 20 dB.
+    - **Steps:**
+      - Mount the L/S-band LNAs (25-30 dB gain) at the antenna feed. Internal pickup after the LNA then counts 25-30 dB less, referred to the antenna.
+      - RF bay: a copper-clad FR4 box soldered on all seams around the LimeSDR and the riser's female end. Keep slots and gaps at or below 7 mm, or use spring fingers or overlapped copper tape. Bring the riser cable in through one short slot. Bond the SMA bulkheads to the plate.
+      - Wi-Fi off while receiving: `rfkill block all`, plus a udev rule that deauthorises the module: `ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="a69c", ATTR{authorized}="0"`. Re-enable it between passes if needed, or use Ethernet. If Wi-Fi is never needed, leave its U.FL antennas unplugged.
+      - Leave the USB 3 Type-A port empty (storage is UFS). If something must use it, use a USB 2.0-only cable or hub so the SuperSpeed pairs stay idle.
+      - Test matrix: 50-ohm load on RX, then antenna+LNA pointed at cold sky. Toggle one at a time: Wi-Fi, USB 3 device, HDMI, backlight 10/100%, `stress-ng --cpu 8`, NPU inference, fan, charger. Record 1 MHz-bin averaged PSD at 1690-1710 and 2200-2290 MHz.
+      - Fix whichever source exceeds the limit: add shielding, move it or switch it off. As a last resort change the video mode, per the HDMI fix.
+    - **How to verify:** With the antenna and LNA connected, each source changes the in-band noise floor by less than 0.5 dB. The final check is an end-to-end decode: an HRPT or S-band pass decoded with SatDump reaches the same SNR as with the internal sources off.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/radxa/kernel/blob/linux-6.18.2/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://www.usb.org/sites/default/files/327216.pdf
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://community.libre.space/t/hf-noise-from-raspberypi-4/8302
+  6.
+    - **Problem:** Random reboots and stutter with the Radxa 256 GB Kioxia UFS module (THGJFGT1E45BAILB), noted as unresolved in the research.
+    - **Proposed fix:** This is now fixed in Radxa's kernel.
+  - Radxa PR #551 (merged 11 May 2026 into radxa/kernel linux-6.18.2, commit 559f4f9) adds UFS_DEVICE_QUIRK_PA_TACTIVATE (PA_TACTIVATE = 1 ms) for this Kioxia part.
+  - The cause was failed hibernate (H8) exit at idle, not heat.
+  - Users report no errors after the patch, about 1.0-1.3 GB/s single-stream read, about 1.9 GB/s queued read and about 0.5 GB/s write.
+  - Deepin carries the quirk in core ufs_fixups.
+  - Mainline ufshcd.c (master, checked Oct 2026) does not yet list this model. A non-Radxa kernel needs the one-line quirk.
+    - **Steps:**
+      - Identify the module: `cat /sys/class/scsi_device/*/device/model`.
+      - On Radxa's Ubuntu image: `sudo apt update && sudo apt full-upgrade` to a linux-6.18.2 build dated after 11 May 2026.
+      - On any other kernel, add `{ .wmanufacturerid = UFS_VENDOR_TOSHIBA, .model = "THGJFGT1E45BAILB", .quirk = UFS_DEVICE_QUIRK_PA_TACTIVATE },` to ufs_fixups[] in drivers/ufs/core/ufshcd.c. Kioxia parts use the Toshiba vendor ID there.
+      - Stop-gap only: Radxa's keep-alive (a write to /tmp every 0.1 s) prevents H8. Alternatively buy a Samsung-based module, which Radxa found trouble-free.
+      - Thermal watch: the DTS has a 'ufs-thermal' zone. Log it during long IQ writes so you can tell overheating apart from this bug.
+    - **How to verify:** 1. Leave the system idle for 24 h with occasional bursts. `dmesg | grep -iE 'ufshcd.*(abort|reset|err)'` must stay empty.
+  2. Run a sustained write larger than the SLC cache: `fio --name=iq --rw=write --bs=1M --size=60G --ioengine=libaio --iodepth=8 --direct=1 --filename=/data/fio.bin`. It should hold at least 300 MB/s for 56 MHz IQ (246 MB/s).
+    - **Confidence:** high
+    - **Sources:**
+      - https://forum.radxa.com/t/ufs-random-reboots/30630?page=2
+      - https://github.com/radxa/kernel/pull/551
+      - https://github.com/torvalds/linux/blob/master/drivers/ufs/core/ufshcd.c
+      - https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+  7.
+    - **Problem:** Radxa gives no official input range for J21. A community answer says 3.6-16 V, while a full 4S pack reaches 16.8 V.
+    - **Proposed fix:** The schematic settles it.
+  - Sheet 30 (v1.21): J21 pin 1 (ADP12V_IN) and the USB-C path (CH224D PD sink, CFG1 = 24 kOhm, which requests 12 V) join one ADP12V rail.
+  - That rail has an SMBJ15CA TVS (VRWM 15 V, VBR min 16.7 V, VC 24.4 V), 22 uF/16 V input capacitors, and an SY81012VDC buck (2.7-16 V input) to 4.2 V VPH_PWR.
+  - Practical continuous maximum is therefore about 15 V. 16.8 V from a full 4S pack exceeds the TVS standoff, the 16 V capacitors and the regulator's limit.
+  
+  Fix: feed J21 from a regulated 9 V synchronous buck. 9 V stays in regulation across the whole 12.0-16.8 V pack range; 12 V would sag on an empty pack. The Q6A only needs 3.6-16 V; Radxa recommends at least 24 W for full USB/PCIe load.
+    - **Steps:**
+      - Buck: Pololu D36V50F9 (9 V, 5 A typical, 9.9-50 V input, $39.95, stock 'rationed'), or any sync buck rated at least 4 A.
+      - Protection: a 5 A fuse at the pack and reverse-polarity protection (ideal-diode or P-FET). At J21, 470 uF low-ESR plus 10 uF ceramic, fed by a short twisted pair.
+      - The J21 header is 8.5 mm tall and sits in the riser cable path. Desolder it and solder the wires to the pads from the bottom side, or fit a right-angle header.
+      - Do not use the Q6A USB-C (J8) at all. The riser cable passes over it; cover it so nobody plugs in. Battery charging goes to the pack's own charger.
+      - Double duty: the buck's EN pin is the master off switch (sleep draw about 10-20 uA per volt of VIN). A panel momentary switch between J21 PWR and GND is the Q6A power key.
+    - **How to verify:** 1. With a 16.8 V pack, J21 reads 9.0 V +/-4%.
+  2. Scope J21 during power-on and during load steps (stress-ng plus LimeSDR start): no overshoot above 10 V and ripple below 100 mV p-p.
+  3. With the pack at 12.0 V, J21 is still 9 V.
+  4. Logged input stays at or below about 30 W with no resets.
+    - **Confidence:** high
+    - **Sources:**
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://forum.radxa.com/t/how-to-power-the-dragon-q6a/30400
+      - https://www.diodes.com/part/view/SMBJ15CA
+      - https://dl.radxa.com/q6a/docs/rad-doc-0150_radxa_dragon_q6a_product_brief__revision_1.5_gbc16bac.pdf
+      - https://www.pololu.com/product/4094
+  8.
+    - **Problem:** The Q6A has exposed battery pogo pads (+, -, TS) on its underside, close to where the aluminium mid-plate and the UFS thermal pad will go.
+    - **Proposed fix:** Assume the + pad is live.
+  - Schematic sheet 37 ('PM7250 RESERVED') shows TP64/TP69 (3x6 mm) and TP70 (2x4 mm, BATT_THERM) on the PM7250B battery pins.
+  - R7 (0 ohm, fitted) appears to tie VBATT_PWR to VPH_PWR_IN, the 4.2 V output of the 12 A SY81012 buck. A short to a grounded plate would load the main system rail.
+  - The - pad may reach GND only through an unfitted 2 mOhm sense resistor (R24).
+  - This is my reading of the schematic; measure before relying on it.
+  
+  Other bottom-side keep-outs from the STEP model: a 2-pin RTC-battery connector 3.7 mm deep, inductors L46/L47 2.9 mm deep, and through-hole pins.
+    - **Steps:**
+      - Power the board from J21 and measure + to -, and each pad to GND (J21 GND). Expect about 4.2 V on +.
+      - In the plate, cut a window at least 2 mm larger than the pad group, positioned from the bottom DXF.
+      - Cover the plate with an insulating sheet (0.25-0.4 mm polycarbonate, fish paper or two layers of 50 um Kapton), with windows only for the UFS thermal boss and the standoffs.
+      - Use 6 mm M2.5 standoffs, or recess the plate. Make the UFS heat path an aluminium boss under the module plus a 0.5-1 mm pad, sized from the measured gap.
+      - Bond the plate to GND at one standoff on purpose (chassis and shield). Check that nothing else touches.
+    - **How to verify:** 1. DMM: plate to + pad is open (over 10 MOhm); plate to GND is a short at the intended bond only.
+  2. Idle input current is the same before and after assembly.
+  3. Inspect for pad imprint marks in the insulating sheet after a full tighten.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_3d_stp_v1.21.zip
+      - https://forum.radxa.com/t/question-about-the-three-pogo-pads-ts-on-the-back-of-dragon-q6a/30090
+  9.
+    - **Problem:** The board size is inconsistent: the Radxa drawing says 85x56 mm, while a review and the brief say 85x65 mm.
+    - **Proposed fix:** Use 85.0 x 56.0 mm. Radxa's 2D drawing v1.21 shows it, and the bottom-layer outline in the DXF measures 85.01 x 56.00 mm.
+  
+  Mounting holes: 4x 3.5 mm on a 58 x 49 mm pattern, 3.5 mm from the edges (at x 3.5/61.5, y 3.5/52.5).
+  
+  Envelope from the STEP model:
+  - Footprint about 88.3 x 58.9 mm including connector overhang: RJ45 +3.3 mm; HDMI 2.3 mm, audio 2.6 mm and USB-C 1.2 mm past the bottom edge.
+  - Above the PCB: stacked USB-A 16.3 mm, RJ45 13.6, 40-pin header 9.65, J21 header 8.5, M.2 socket 5.5.
+  - Below the PCB: up to 3.7 mm.
+  - Total about 21.6 mm with the 1.6 mm PCB.
+    - **Steps:**
+      - Import radxa_dragon_q6a_3d_stp_v1.21 into CAD as the master model.
+      - Size the battery bay and riser routing against the 88.3 x 58.9 mm envelope.
+      - Measure the first board with calipers.
+    - **How to verify:** Calipers on the delivered board: 85.0 +/-0.2 by 56.0 +/-0.2 mm, and the hole pitch is 58/49 mm.
+    - **Confidence:** high
+    - **Sources:**
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_2d_dimensions_v1.21.pdf
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_2d_dxf_v1.21.zip
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_3d_stp_v1.21.zip
+  10.
+    - **Problem:** No data on sun load for a display of 1000 nits or more inside a closed printed case. High-brightness monitors have black-screen reports in direct sun.
+    - **Proposed fix:** The blackout is LCD clearing: the liquid crystal turns isotropic when the cell overheats from solar and infrared load.
+  - Vendors and patents say many commercial panels black out from about 60 C. High-temperature panels are rated to about 110 C.
+  - Elo saw an unfilmed panel go black in a 4-hour sun test, and warns that an air gap behind a cover glass acts as a greenhouse.
+  
+  My rough budget for a 7-inch module (about 0.017 m2): about 15 W absorbed at 1000 W/m2 normal incidence, plus 4-6 W of backlight. Front-face cooling only (about 0.2 W/K) gives +75-115 K, which is certain blackout. Adding forced air on the back (about 0.5-0.75 W/K total) gives about +26-39 K, so about 60-75 C at 35 C ambient.
+  
+  The design therefore needs all of: a high-temperature panel, shade, an infrared-reflecting cover, airflow behind the panel, and backlight derating.
+    - **Steps:**
+      - Panel: require an operating spec of at least 70 C (industrial, wide-temperature). Ask the seller for the clearing point (Tni/TNI); reject 0-50 C consumer panels.
+      - Front: an infrared-reflective (not absorptive) film or hot-mirror cover. Either no extra cover glass, or a vented gap; never a sealed air gap.
+      - Shell: light-grey or white bezel. A slide-on hood that shades the panel when not being viewed.
+      - Thermal separation: foam between the panel and the warm mid-plate. A 4-6 mm air channel behind the panel fed first by the fan duct.
+      - Sensor: an NTC or DS18B20 on the panel back. Derate the backlight at 60 C (`ddcutil setvcp 10 <n>` if the board supports DDC/CI, otherwise a PWM pot) and warn on screen at 65 C.
+    - **How to verify:** 1. Indoors: set a 500 W halogen floodlight to 1000 W/m2 with a solar power meter. Halogen is IR-rich, so this is conservative. Run 60 min at full backlight while logging panel-back temperature and watching for darkening.
+  2. Repeat at July noon outdoors.
+  3. Pass: no darkening, and the panel back stays at least 10 K below the panel's rated maximum.
+    - **Confidence:** low
+    - **Sources:**
+      - https://elosupport.elotouch.com/hc/en-us/articles/31648421556247
+      - https://elosupport.elotouch.com/hc/en-us/articles/31648633630743
+      - https://patents.google.com/patent/US6211934B1/en
+      - https://greyarro.ws/t/crystal-sky-monitor-screen-going-black/35877
+  11.
+    - **Problem:** No community insertion-loss or quality data for prom.ua or AliExpress MHF4-to-SMA pigtails. MHF4 is rated for about 30 mating cycles, and a bad plug can damage the SDR's receptacle.
+    - **Proposed fix:** Treat the pigtails as fixed internal wiring and screen every one before it touches the SDR. Keep a known-good reference cable and the right tool.
+  - Reference cable: Lime's own $6 MHF-4L to SMA(f) bulkhead.
+  - Genuine alternative: Taoglas CAB.S225 (MHF4L to SMA(F) bulkhead, 150 mm, 1.13 mm). Avnet shows a 70-week lead time, and RS lists the gender inconsistently, so verify before ordering.
+  - Tool: I-PEX 90435-001 MHF4 mating/unmating tool, EUR 15.89 at DigiKey, in stock.
+    - **Steps:**
+      - Buy about twice as many cheap 1.13 mm cables as you need. Inspect each plug under a 10x loupe: centre contact present, outer ring round, crimp intact. Check the SMA end is plain SMA, not RP-SMA.
+      - NanoVNA open-end S11: round-trip loss should be about 2x (about 0.3 dB cable plus connector) at 2.2 GHz, i.e. about 0.6-1.0 dB. Reject anything over 1.5 dB, or with an impedance bump over 10 ohm in NanoVNA-Saver TDR.
+      - Mate vertically with the tool or a flat pusher until it clicks. Unmate only with the tool, never by pulling the cable.
+      - Strain relief: a printed clip 5-10 mm from each plug. The panel bulkhead nut torque must never reach the MHF4.
+      - Log mating cycles per port. Never use MHF4 as a user connector.
+      - Functional check: a broadband noise source with a 20 dB pad feeds each port, first through the Lime reference cable and then through the cheap one. Compare received power at 435, 1700 and 2250 MHz.
+    - **How to verify:** Each installed cable is within 0.5 dB of the Lime reference cable on the noise-source test, and the plug stays seated after a shake test.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro
+      - https://www.digikey.es/en/products/detail/i-pex/90435-001/25819261
+      - https://www.taoglas.com/product/cab-s225-i-pex-mhf4lhsc-comp-to-150mm-1-13mm-coax-black-cable-smaf-bulkhead-straight/
+      - https://www.avnet.com/americas/product/taoglas/cabs225/evolve-118405069/
+      - https://prom.ua/Ipex-mhf4-gnezdo-sma.html
+      - https://discourse.myriadrf.org/t/plug-in-u-fl-pigtails/2620
+  12.
+    - **Problem:** The BATC forum (Portsdown 4 + LimeSDR Mini thermal and noise experience) was unreachable (HTTP 503 again in Oct 2026).
+    - **Proposed fix:** Use the other sources that are reachable. Their lesson matches this design: a closed SBC+SDR+display box needs active cooling on both the SBC and the SDR.
+  - BATC search snippet (unverified): the Pi 4 running BandViewer passed 75 C with an over-temperature warning after about 5 minutes, and the maintainer advised a heatsink or fan.
+  - LimeSDR Mini thermal-pad thread: about 50 C uncooled, 41.8 C with a copper plate to the lid, 60 to 38 C with a small 5 V fan, and TX calibration failing when hot.
+  - Lime's Mini 2.0 has an on-board fan header with 55/45 C hysteresis.
+  - BATC wiki: Portsdown's Lime issues were mostly USB power and connector strain. Both are avoided here because the Lime sits on PCIe and the SMA panel is strain-relieved.
+    - **Steps:**
+      - Adopt the 55/45 C SDR fan rule and the at least 50 C CPU fan trip from the fixes above.
+      - Retry forum.batc.org.uk viewtopic p=29854 later, or ask on the BATC forum for Portsdown 4 internal temperatures with a fan.
+    - **How to verify:** Your own soak test (first fix) replaces this evidence.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://forum.batc.org.uk/viewtopic.php?p=29854
+      - https://wiki.batc.org.uk/Using_LimeSDR_with_Portsdown
+      - https://discourse.myriadrf.org/t/limesdr-mini-thermal-pad/3132
+      - https://myriadrf.org/projects/limesdr-mini-2-0/reference/v2.4/tempsensor.html
+- **Residual risks:**
+  - LA9310 BAR0 defaults to 256 MB. pcie1's 509 MB window has exactly one aligned slot for it. Adding a PCIe switch or a second device on pcie1 could make BAR assignment fail.
+  - LimeSDR thermal and power figures stay unknown until measured. The riser carrier blocks the bottom-side heat path, and Lime publishes no maximum temperature for the Micro.
+  - The msm DP driver may train at HBR2 regardless of mode. By my model that puts about 9 dB more broadband noise density at 2.2 GHz than HBR. The RA620 bridge also has known link-training quirks (swing level 2), and its emissions are unmeasured.
+  - Radxa's PoE-HAT overlay contains typos ('cpu0-thermall', 'olling-delay-passive') and may change. The header pin 33 = GPIO_56 mapping came from a flattened docs table; check it with gpioinfo.
+  - The Kioxia UFS quirk is only in Radxa's and Deepin's kernels, not mainline. A distro kernel update could drop it.
+  - The J21 limit (about 15 V) and the live pogo '+' pad come from my reading of the schematic, not from a Radxa spec. Measure both before assembly.
+  - The sun-load estimate is accurate to perhaps +/-50%. Panel datasheets rarely state the clearing point, so blackout risk remains until tested at noon.
+  - Supply risk: the Pololu D36V50F9 is 'rationed', Taoglas CAB.S225 shows a 70-week lead time, and ADT-Link stock and shipping to Ukraine are unverified.
+  - Mainline Linux has no HDMI/RA620 description for the Q6A, so display output depends on Radxa's vendor kernel.
+  - The LimeSDR RX-B port is labelled X4 in the v1.2 overview but X3 in the setup table. Check the silkscreen before wiring the SMA panel.
+  - Weight and handling (about 1.0-1.2 kg) and magnetometer bias from the fan and battery currents are not addressed here.
+
+## Адверсаріальна перевірка (`verify`)
+
 _Агент цього етапу ще працює (run `wf_e6b8e5e2-124`)._
 

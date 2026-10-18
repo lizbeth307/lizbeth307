@@ -1039,5 +1039,303 @@ _Run `wf_45d278c2-004`_
 
 ## Власні виправлення (`fixes`)
 
+_Run `wf_45d278c2-004`_
+
+- **Component:** GNSS receiver + IMU/compass (location, time, on-screen antenna pointing) on Radxa Dragon Q6A
+- **Fixes:**
+  1.
+    - **Problem:** Nobody has publicly reported a GNSS module or IMU working on the Dragon Q6A 40-pin header. Reported symptoms: UART TX not working (forum 31422), rsetup pin-state errors (30455 #3), an I2C HAT on pins 27/28 not answering (radxa-overlays #552), and a uart6 dtbo fix that was never published (30063).
+    - **Proposed fix:** Treat the header as a known-electrical, unknown-software interface and bring it up in stages, each with a pass/fail gate. Choose pins by which level translator sits behind them. Schematic v1.21, sheet 26 (my reading):
+  - U48 UM3204H: pins 3/5/16/18. Open-drain/TXS-type with internal 10 kOhm pull-ups and a one-shot edge accelerator. I2C is OK. Outputs are weak when high.
+  - U47 UM3204H: pins 8/10/27/28.
+  - Q12/Q13 CJ3134K MOSFET shifters with 10 kOhm pull-ups (the classic I2C shifter): pins 13/15 (I2C0).
+  - UM3304 (TXB-type, 4 kOhm output buffers, max 50 pF load, needs pull resistors >50 kOhm, not usable for I2C): pin 7 and SPI7/UART7 pins 11/29/31/32, plus SPI12, SPI14 and MI2S pins.
+  
+  Recommended pin plan:
+  - GNSS on UART6: pin 16 TX, pin 18 RX, with the official uart6 overlay.
+  - PPS on pin 7 (GPIO96). It is free in the mainline DT. Pin 37/GPIO58 is NOT free: spi14 is enabled by default on GPIO56-59.
+  - Any direct I2C sensor on I2C0, pins 13/15.
+  - Keep header wires under about 20 cm.
+  
+  Keep a USB fallback ready: an FT232RL module with DCD for the GNSS, and the RP2040 bridge for the IMU. For time-stamping in this project, USB PPS (±1 ms) is still good enough.
+    - **Steps:**
+      - Find which translator each signal uses before wiring. TX through U48 is high only via a 10 kOhm pull-up, so any load below about 100 kOhm, or a second driver on the line (for example an ESP32 RX that is shared with an on-board USB-UART TX, my hypothesis for forum 31422), will break TX. GNSS RX inputs such as the Waveshare LC76G (direct module pin, no pull-ups) are fine.
+      - Enable the UART6 overlay with sudo rsetup → Overlays. It disables i2c6/spi6 and muxes only gpio26/27. Reboot. Confirm with: ls -l /dev/ttyHS*; dmesg | grep -i 998000; cat /proc/device-tree/soc@0/geniqup@9c0000/serial@998000/status (use ls /proc/device-tree/soc@0 to find the node name). Ports appear as ttyHS1/ttyHS2, not ttyS6 (forum 30455).
+      - Create a stable name with /etc/udev/rules.d/60-gnss.rules: SUBSYSTEM=="tty", KERNELS=="998000.serial", SYMLINK+="gnss0". For UART7 use 99c000.serial.
+      - Check the pin mux in debugfs rather than rsetup's pin-state view: sudo cat /sys/kernel/debug/pinctrl/*f100000*/pinmux-pins | grep -E 'gpio(2[4-7]|96) '. gpio26/27 should show function qup06 owned by 998000.serial. Note that mainline gpio-line-names mislabels GPIO27 as "PIN_27"; it is physically pin 18.
+      - Loopback test with nothing else connected: jumper pin 16 to pin 18, run stty -F /dev/gnss0 115200 raw -echo -crtscts; cat /dev/gnss0 & printf 'hello\r\n' > /dev/gnss0. If loopback works but a target does not receive, it is a load problem. Measure the idle-high voltage at pin 16 with the target connected (it should be >2.4 V). The fix is a 74LVC1G125 or 74LVC1G17 buffer powered from header 3V3, between pin 16 and the target (cents in cost).
+      - If loopback fails, copy qcs6490-radxa-dragon-q6a-uart6.dtso from radxa-overlays. Add a pin config: &qup_uart6_tx { drive-strength = <8>; bias-disable; }; &qup_uart6_rx { bias-pull-up; };. Base kodiak.dtsi sets neither for uart6. The qcom,enable-gsi-dma line is a no-op in the 6.18 GENI drivers (grep finds no user), so it is not the cause. Compile with dtc -@ -I dts -O dtb and install with rsetup → Overlays → install 3rd-party overlay. Verify the menu name on your image.
+      - I2C: GENI I2C advertises no SMBus Quick (i2c-qcom-geni.c: I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK). So plain 'i2cdetect -y N' silently skips 0x03-0x2F, 0x38-0x4F and 0x60-0x77, which hides the BNO08x (0x4A/0x4B), ICM-20948 (0x68), LSM6DS (0x6A/0x6B) and the Argon fan HAT (0x1A). Always use 'i2cdetect -y -r N'. This probably explains issue #552.
+      - USB fallback for GNSS: FT232RL module (Prom.ua/AliExpress, price not verified, roughly $3-8). Wire GNSS TX→RXD, RX→TXD and PPS→DCD. Run gpsd on /dev/ttyUSB0. gpsd timestamps DCD edges itself, and pps-ldisc (CONFIG_PPS_CLIENT_LDISC=m) is only in the Radxa 7.0 config. Expect about ±1 ms (full-speed USB).
+      - Fallback for the IMU: RP2040 USB-CDC puck (see the IMU fixes). It needs only a USB 2.0 port and no header at all.
+    - **How to verify:** Gate 1: pin16↔18 loopback echoes at 115200 and at 921600.
+  Gate 2: with the GNSS connected, gpspipe -w shows TPV mode 3, and a configuration command ($PQTMVERNO*58) gets a $PQTMVERNO reply. That proves TX works.
+  Gate 3: 'i2cdetect -y -r 0' shows the sensor address.
+  Gate 4: a 24 h soak with no 'geni' errors in dmesg.
+  Scope or logic-analyzer check: pin 16 idle high ≥3.0 V unloaded, and ≥2.4 V with the target connected.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://www.union-ic.com/upload/Datasheet/Datasheet_UM3204_Rev16.pdf
+      - https://www.union-ic.com/upload/Datasheet/Datasheet_UM3304_Rev16.pdf
+      - https://github.com/radxa-pkg/radxa-overlays/tree/main/arch/arm64/boot/dts/qcom/overlays
+      - https://raw.githubusercontent.com/torvalds/linux/master/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://raw.githubusercontent.com/torvalds/linux/master/arch/arm64/boot/dts/qcom/kodiak.dtsi
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/i2c/busses/i2c-qcom-geni.c
+      - https://git.kernel.org/pub/scm/utils/i2c-tools/i2c-tools.git/plain/tools/i2cdetect.c
+      - https://forum.radxa.com/t/31422
+      - https://forum.radxa.com/t/30455
+      - https://forum.radxa.com/t/30063
+      - https://github.com/radxa-pkg/radxa-overlays/issues/552
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/pin-gpio
+      - https://gpsd.gitlab.io/gpsd/gpsd-time-service-howto.html
+  2.
+    - **Problem:** Nobody has tested the BNO08x on Qualcomm GENI I2C behind the Q6A header translators. The BNO08x needs clock stretching, and the closest analogue (Jetson) fails with Errno 121.
+    - **Proposed fix:** Make the GENI question irrelevant for the main build by running the BNO08x on an RP2040 that talks to the Q6A over USB-CDC. The RP2040 runs the CEVA sh2 driver from the Adafruit or SparkFun library, and its DesignWare I2C supports stretching.
+  
+  If you want a direct Q6A link (bench work, or a case-mounted sensor), the root cause and its fix are in the datasheet:
+  - A polled BNO085 with no data 'will stretch the clock until it has data to send'. GENI aborts a transfer after XFER_TIMEOUT = 1 s.
+  - A polled BNO086 instead returns zero-length packets.
+  - The BNO08x does not support repeated start.
+  
+  So for a direct link: use a BNO086, read only when H_INTN is low, use separate write and read transactions, and put it on I2C0 (pins 13/15), which has the MOSFET shifter. If I2C still fails, use UART-SHTP at 3 Mbaud on UART7. The UM3304 behind it is rated at 24 Mbps push-pull.
+    - **Steps:**
+      - Main path, puck: RP2040-Zero plus BNO086/085. Run the BNO in SPI mode (no stretching at all) or in I2C mode with INT→GP and RST→GP. Use the arduino-pico core and Adafruit_BNO08x.
+      - Puck firmware: enable SH2_ARVR_STABILIZED_RV (0x28), SH2_GAME_ROTATION_VECTOR (0x08) and SH2_MAGNETIC_FIELD_CALIBRATED (0x03) at 20 ms. On bno.wasReset(), re-enable all reports. Print one CSV line per report: sensorId, status, i, j, k, real, accuracy_rad, mag x/y/z. Accept host commands that map to sh2_setCalConfig(), sh2_saveDcdNow(), sh2_setDcdAutoSave() and sh2_setTareNow().
+      - On the Q6A the puck appears as /dev/ttyACM0 (CONFIG_USB_ACM=m is in the 6.18 and 7.0 configs). Add a udev SYMLINK on the RP2040 serial number.
+      - Direct path, pin plan with UART6 used for GNSS: BNO SDA→pin 13, SCL→pin 15 (I2C0, CJ3134K MOSFET shifter, 10 kOhm pull-ups on both sides), H_INTN→pin 3 (GPIO24), NRST→pin 5 (GPIO25). Pins 3/5 go through UM3204H, which tolerates the breakout's pull-ups; UM3304 pins need pulls >50 kOhm. Enable the i2c0 overlay (100 kHz). The BNO allows up to 400 kHz.
+      - Direct-path software: wait for the INT falling edge (libgpiod), then os.read() the 4-byte SHTP header and then the full packet length with plain read()/write() on /dev/i2c-0. Never use I2C_RDWR combined messages, because those use repeated start.
+      - Check timing with a $10 FX2 logic analyser (sigrok/PulseView, 24 MS/s) on the 3.3 V side: record SCL-low stretch durations during a 1 h capture. They must stay well under 1 s.
+      - If I2C still errors: set PS1=1/PS0=0 for UART-SHTP, wire to UART7 (pin 32 TX, pin 29 RX; enable the uart7 overlay), and run at 3,000,000 baud. The datasheet requires the external crystal for UART. Feasibility: 48 MHz = 16×3 Mbaud is a standard GENI SE clock, but this is untested on the Q6A.
+    - **How to verify:** Puck: 24 h stream at 50 Hz with zero sequence gaps (check SHTP sequence numbers) and no unexpected resets.
+  Direct I2C: 24 h soak at 100 kHz and then at 400 kHz with zero -EREMOTEIO/-ETIMEDOUT/'geni' errors in dmesg, and a logic-analyser capture showing stretch at most a few ms.
+  UART-SHTP: product-ID response and a 1 h stream with no checksum errors.
+    - **Confidence:** high
+    - **Sources:**
+      - https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/i2c/busses/i2c-qcom-geni.c
+      - https://raw.githubusercontent.com/adafruit/Adafruit_BNO08x/master/src/sh2.h
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://www.union-ic.com/upload/Datasheet/Datasheet_UM3304_Rev16.pdf
+      - https://raw.githubusercontent.com/radxa/kernel/linux-7.0.11/arch/arm64/configs/radxa_qcom_7_0_defconfig
+  3.
+    - **Problem:** pps-gpio on the Q6A is unverified end to end. There is no overlay, CONFIG_PPS_CLIENT_GPIO=m exists only in the 7.0.11 config, switching kernels may break the NPU (FastRPC), and the latency through the translator is unknown.
+    - **Proposed fix:** Avoid changing kernels.
+  
+  Route A (recommended): a 30-line user-space PPS daemon. It requests GPIO96 (pin 7) with the GPIO character device v2 API, rising edge and CLOCK_REALTIME event timestamps. The kernel stamps the edge in the hard IRQ, the same place pps-gpio does. The daemon sends chrony a SOCK 'pulse' sample. This works on 6.18 and 7.0 and needs no DT change. It also makes gating against spoofing easy.
+  
+  Route B: a DT overlay plus pps-gpio. On 7.0 the module already exists. On 6.18, build drivers/pps/clients/pps-gpio.c out-of-tree; CONFIG_PPS is built in because PTP_1588_CLOCK selects PPS.
+  
+  Translator delay: UM3304/UM3204 push-pull tPLH is about 5-7 ns, which is negligible against 5-20 µs of IRQ latency.
+  
+  Overall requirement: LimeSDR buffers are host-stamped with ms-level jitter anyway, so even NMEA-only time is adequate. PPS matters mainly for the VCTCXO calibration in the LimeSDR fix.
+    - **Steps:**
+      - Wiring: LC76G board pin 5 '1PPS' → Q6A pin 7. The Waveshare schematic shows it is the module's 1PPS pin directly; the LED is driven separately through a 1 kOhm/SI2306. Connect GND to pin 9. Keep the wire under 20 cm because UM3304 is limited to 50 pF.
+      - Find the chip with gpiodetect: it is the TLMM f100000.pinctrl, which Radxa docs show as /dev/gpiochip4. Then run gpiomon or gpioinfo to confirm line 96 is unused.
+      - Route A: python3 -m venv /opt/pps && /opt/pps/bin/pip install gpiod. Use the PyPI 2.x bindings; Ubuntu 24.04's python3-libgpiod is 1.6.3 (v1 API, monotonic stamps only).
+      - Route A daemon core: req = gpiod.request_lines('/dev/gpiochip4', consumer='pps', config={96: gpiod.LineSettings(edge_detection=Edge.RISING, bias=Bias.DISABLED, event_clock=Clock.REALTIME)}). For each event: sec, ns = divmod(ev.timestamp_ns, 10**9); usec = ns // 1000; f = usec / 1e6; off = -f if f < 0.5 else 1 - f. Then sock.sendto(struct.pack('qqdiiii', sec, usec, off, 1, 0, 0, 0x534F434B), '/run/chrony.pps0.sock'). That is a 40-byte struct sock_sample with pulse=1. Send only while the gnss-gate flag is OK (see the spoofing fix). Run it as a root systemd service.
+      - chrony (/etc/chrony/conf.d/gnss.conf): refclock SHM 0 refid NMEA offset 0.1 delay 0.2 noselect, and refclock SOCK /run/chrony.pps0.sock refid PPS lock NMEA precision 1e-6 maxlockage 2.
+      - Route B overlay (pps-pin7.dts): /dts-v1/; /plugin/; &{/} { pps-gnss { compatible = "pps-gpio"; gpios = <&tlmm 96 0>; pinctrl-names = "default"; pinctrl-0 = <&pps_gnss_pin>; }; }; &tlmm { pps_gnss_pin: pps-gnss-pin-state { pins = "gpio96"; function = "gpio"; bias-disable; }; };. Use bias-disable because UM3304 needs pulls >50 kOhm.
+      - Route B on 6.18: apt install linux-headers-$(uname -r) (Radxa repo; package availability not verified). Download pps-gpio.c from the v6.18 tag, add a Makefile containing 'obj-m += pps-gpio.o', run make -C /lib/modules/$(uname -r)/build M=$PWD, install the module and run depmod -a. Then use refclock PPS /dev/ppsN lock NMEA. Check /sys/class/pps/*/name to pick the right N.
+    - **How to verify:** Route A: chronyc sources -v shows PPS as '*' after about 10 min, and chronyc sourcestats shows a PPS std-dev of a few µs to about 20 µs.
+  Route B: ppstest /dev/ppsN prints one assert per second with sequence numbers.
+  All routes: scope pin 7 and confirm a clean 3.3 V edge with rise under 50 ns and no double-triggering. Unplug the antenna and confirm PPS stops (in PAIR752 mode 2) and chrony stops selecting PPS.
+  Run the NPU demo before and after to prove the timing stack does not touch FastRPC.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://gitlab.com/chrony/chrony/-/raw/master/refclock_sock.c
+      - https://chrony-project.org/doc/4.5/chrony.conf.html
+      - https://packages.ubuntu.com/noble/python3-libgpiod
+      - https://raw.githubusercontent.com/radxa/kernel/linux-7.0.11/arch/arm64/configs/radxa_qcom_7_0_defconfig
+      - https://github.com/radxa/kernel/tree/linux-6.18.2
+      - https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf
+      - https://raw.githubusercontent.com/torvalds/linux/master/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://www.union-ic.com/upload/Datasheet/Datasheet_UM3304_Rev16.pdf
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/pin-gpio
+  4.
+    - **Problem:** The LimeSDR Micro GNSS variant gives the host neither position nor PPS. Nobody has tested the J5 PPS input or the J4 external reference input. External-reference select was broken until a fix that is linked but not yet merged.
+    - **Proposed fix:** Buy the basic board ($249); the +$50 GNSS variant adds nothing today. Firmware (commit 13628a9, 9 Oct 2026) confirms this:
+  - vPhyTimerPPSINEnable() is never called, and the PPS_IN handler is an empty stub.
+  - The GNSS pin is read only as GNSS_FIX on the MCP23017.
+  - The VCTCXO DAC (I2C 0x4C) loads from EEPROM 0xFFFE at boot; the default 0xA1B8 is written when unset.
+  
+  For frequency accuracy, calibrate the VCTCXO DAC once against the GNSS-disciplined host clock and store it in EEPROM. LimeSuiteNG exposes custom parameter 0 'VCTCXO DAC (volatile)' and the EEPROM region 'XO_DAC' (0xFFFE, 2 bytes). Use J4 only after commit 1f70189 is merged. The MCP23017 write went to INTCONB (0x09) instead of OLATA (0x14).
+    - **Steps:**
+      - Measure: with chrony locked to GNSS PPS for more than 1 h, run a SoapySDR Python RX stream (driver=limesuiteng, 30.72 Msps) for 30-60 min. For each readStream, log the host clock_gettime(CLOCK_REALTIME) and the buffer timeNs. Hardware time is sample-tick based (getHardwareTime = ticks at the nominal rate), so a linear fit of hw_ns against host_ns gives the fractional frequency error = slope − 1.
+      - Expected precision: about 1 ms host jitter, ~1e5 buffers and 3600 s give a slope σ of about 3e-9. The PPS-disciplined host frequency error should be ≤1e-8. Drop any run with overflow ('O') events.
+      - Find the DAC sensitivity: set DAC = current ±2000 LSB with CustomParameterWrite({{0, value}}) (C++ API or limeGUI board controls; GUI location not verified) and re-measure. The finding implies about ±5 ppm over 16 bits, i.e. about 0.15 ppb/LSB. Measure it instead of assuming.
+      - Pick the DAC value for zero error and persist it: MemoryWrite to EEPROM region 'XO_DAC' (0xFFFE), uint16 little-endian. Power-cycle and confirm the firmware log 'XO_DAC set to (N)'.
+      - Cross-check over the air, optional: run srsRAN 4G cell_search with the Soapy RF (LTE band 3, 1800 MHz). 3GPP wide-area eNB accuracy is ±0.05 ppm. The reported CFO should be within ±100 Hz.
+      - J4: after a firmware build containing 1f70189, run limeConfig --refclk 10e6 --refclk_source external (flags verified in cli/limeConfig.cpp) with a GPSDO's 10 MHz input. Re-run the regression and expect under 0.01 ppm; switching to internal should restore the old offset.
+      - J5/GPSDO: no host-visible use until firmware enables PPS_IN. A DIY loop is possible but unproven: PPS_IN capture → count phytimer ticks per second → PI loop on SetXODAC. Mark it a firmware project. For QO-100, correct the LNB+SDR together on the beacon as usual.
+    - **How to verify:** The residual error after the DAC write is below 0.05 ppm (110 Hz at 2.2 GHz, 37 Hz at a 740 MHz IF), repeatable across cold and warm boots within the Rakon ±50 ppb temperature spec. LTE CFO or a known GSM/LTE carrier agrees within ±0.1 ppm.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSDR-Micro_FW
+      - https://github.com/myriadrf/LimeSDR-Micro_FW/issues/6
+      - https://github.com/myriadrf/LimeSuiteNG/tree/limesdr-micro
+      - https://myriadrf.org/projects/limesdr-micro/user/M.2/clock.html
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro
+  5.
+    - **Problem:** Nobody has documented how hobby GNSS modules behave under Ukrainian EW spoofing. Quectel firmware reportedly will not work in Russia, which could trigger on a spoofed position. A spoofed or locked receiver could feed a wrong QTH or time to chrony, Gpredict and SatDump.
+    - **Proposed fix:** Gate GNSS before it reaches chrony or the apps, and anchor time to an independent source. The Q6A has a discrete RTC: RS4C411 (DT 'st,m41t11' on i2c10 @0x68) with a VBAT input. Fit its backup cell; check the connector on schematic sheet 18.
+  
+  A 'gnss-gate' daemon reads gpsd JSON and opens the PPS path to chrony only when every rule passes. Rules:
+  - time within ±120 s of the RTC;
+  - date inside the window set by the newest TLE epoch (−2 d to +60 d);
+  - position within 100 km of the saved QTH unless the operator confirms a move;
+  - fix mode 3 with ≥6 satellites;
+  - no EW flags.
+  
+  EW flags available:
+  - LC76G: $PAIR391,1*2C enables $PAIRSPF jamming status (1 good, 2 warning, 3 critical); $PQTMJAMMINGSTATUS is also available.
+  - u-blox M10 (SPG 5.10): UBX-NAV-STATUS flags2.spoofDetState (2/3 = spoofing) and UBX-MON-RF jammingState with CFG-ITFM-ENABLE=1.
+  
+  Pass prediction tolerates kilometres of QTH error and about 1 s of time error, so the gate only needs to catch gross spoofing (hours or days, week jumps, positions in another country).
+  
+  A Quectel regional lockout fails safe: no fix means the gate keeps the saved QTH and chrony free-runs on the RTC-seeded clock.
+    - **Steps:**
+      - Fit the RTC backup cell. Enable rtcsync in chrony. Confirm hwclock -r is correct after 24 h unpowered.
+      - chrony: maxchange 5 1 -1 (after the first update, never accept a >5 s correction; -1 means never exit). Keep NMEA as noselect, with PPS fed only by the gated SOCK daemon. Add pool servers for when Wi-Fi is up: with 3 or more NTP sources, chrony rejects a spoofed refclock as a falseticker.
+      - gnss-gate.py: connect to gpsd at localhost:2947 and send ?WATCH={"enable":true,"json":true,"raw":1} (raw mode passes $PAIRSPF through). Apply the rules and write /run/gnss-gate/state (OK/HOLD/EW). Only in the OK state does the PPS daemon forward pulses, and SatDump/Gpredict get a fresh QTH file. Otherwise they keep the last good QTH.
+      - LC76G startup script (ExecStartPre of gpsd, because it is not known whether PAIR391 survives a save): send $PAIR391,1*2C and $PQTMCFGMSGRATE,W,PQTMJAMMINGSTATUS,1,1*11.
+      - u-blox option: ubxtool -z CFG-ITFM-ENABLE,1 -z CFG-MSGOUT-UBX_NAV_STATUS_UART1,1. Parse NAV-STATUS with pyubx2, or forward it through the gpsd raw stream.
+      - Write the last good time and position to /var/lib/gnss-gate on every OK epoch. On boot, refuse GNSS time earlier than the last saved time.
+      - Show the state on screen (green OK, amber HOLD, red EW) and log it with every IQ recording. This doubles as an EW monitor.
+    - **How to verify:** Bench replay without RF transmission (receive-only project): feed gpsd recorded or hand-edited NMEA through a pty (gpsfake) with (a) the date shifted +1024 weeks, (b) the position moved 500 km, (c) $PAIRSPF,3. Each must switch the gate to HOLD/EW, and chronyc tracking must show no step.
+  Field: cover the antenna and confirm the PAIRSPF/NAV-STATUS fields change. Compare GNSS time with RTC and NTP when online.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://forums.quectel.com/uploads/short-url/rUEismNTHFHWMMyJR1WxrcTaRB7.pdf
+      - https://cdn.sparkfun.com/assets/f/1/2/9/e/u-blox-M10-SPG-5.10_InterfaceDescription_UBX-21035062.pdf
+      - https://chrony-project.org/doc/4.5/chrony.conf.html
+      - https://forums.quectel.com/t/57394
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://raw.githubusercontent.com/torvalds/linux/master/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://gpsd.gitlab.io/gpsd/gpsd.html
+  6.
+    - **Problem:** There is no quantified community data on compass error from a battery pack, fan and DC leads inside a handheld enclosure.
+    - **Proposed fix:** Quantify it yourself with the BNO08x's own magnetometer stream and a load-switching protocol, then set placement rules from the numbers.
+  
+  Reference field from WMM (Oct 2026):
+  - Kyiv: H = 19.45 µT, F = 51.05 µT, I = 67.6°, D = +8.5°.
+  - Odesa: H = 21.6 µT.
+  
+  A perpendicular disturbance ΔB gives a heading error of atan(ΔB/H), about 2.95° per µT in Kyiv.
+  
+  Biot-Savart for wires:
+  - A single 4 A wire at 5 cm gives 16 µT (about 40° worst case).
+  - The same current in a 2 mm-spaced pair falls off as 1/r²: 0.64 µT at 5 cm (≈1.9°) and 0.04 µT at 20 cm (≈0.1°).
+  - USB 5 V at 50 mA in a cable 2 mm apart: about 0.2 µT at 1 cm.
+  
+  Rules that follow: keep the magnetometer in the boom puck at least 15-20 cm from cells, fan and LNA. Run all DC as twisted pairs, with no single-wire returns through the chassis. Use coax-only returns for bias-tee current. Use brass or nylon hardware.
+    - **Steps:**
+      - Fix the puck on a non-magnetic jig (wood or plastic). Stream SH2_MAGNETIC_FIELD_UNCALIBRATED (or the RM3100/MMC5983 equivalent) at 50 Hz to a CSV.
+      - Record 60 s per state: (0) puck alone on a power bank; (1) Q6A idle at distance d; (2) LimeSDR at 56 Msps plus NPU stress (maximum battery current); (3) fan on/off; (4) LNA bias-tee on/off; (5) LNB 13 V injector on/off (if used).
+      - Repeat at d = 5, 10, 20 and 40 cm and fit |ΔB|(d) to find the 1/r² or 1/r³ falloff. Compute Δheading = atan2 of the horizontal ΔB component against H = 19.4 µT.
+      - Acceptance: every switching step must give |ΔB_h| < 0.3 µT (<1°), plus any static offset that the calibration can absorb. If a step fails, increase the distance or twist and reroute the leads, then re-test.
+      - Static ferrous parts that move with the antenna (WB2HOL steel tape elements, brackets) are soft or hard iron. Calibrate with the antenna attached, once per antenna, and keep one DCD per antenna.
+    - **How to verify:** After the fixes, heading against a sun-sight reference (skyfield sun azimuth from GNSS time and position) stays within ±3° through the full load cycle. Logged |B| stays within ±2% of 51.0 µT and dip within ±2° of 67.6° (Kyiv).
+    - **Confidence:** high
+    - **Sources:**
+      - https://www.ncei.noaa.gov/products/world-magnetic-model
+      - https://pypi.org/project/pygeomag/
+      - https://ardupilot.org/copter/docs/common-magnetic-interference.html
+      - https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf
+  7.
+    - **Problem:** BNO08x 9-DOF heading can jump tens of degrees while still reporting accuracy 3 (Arduino forum 904696, SparkFun 64830, SparkFun lib #18), and nobody has published a fix.
+    - **Proposed fix:** Do not trust the 2-bit status alone; build a disturbance-aware display from data the BNO already provides.
+  (1) Use the AR/VR-Stabilized Rotation Vector (0x28). CEVA designed it to suppress sudden heading corrections.
+  (2) Gate on the Rotation Vector's own heading accuracy estimate in radians (sh2_RotationVectorWAcc_t.accuracy, SparkFun getQuatRadianAccuracy).
+  (3) Detect magnetic disturbance independently: compare |B| from Magnetic Field Calibrated with WMM F, and the dip angle (between gravity and B) with WMM I.
+  (4) Display Game RV yaw plus a slowly updated offset, learned only during clean epochs. Game RV is gyro-only with 0.5°/min drift spec and cannot jump magnetically.
+  (5) After a good calibration, freeze magnetometer dynamic calibration with sh2_setCalConfig(SH2_CAL_ACCEL|SH2_CAL_GYRO) and sh2_setDcdAutoSave(false) after sh2_saveDcdNow(). CEVA notes that dynamic magnetometer calibration can cause jumps.
+  (6) Offer a sun-sight button that sets the offset from the sun's azimuth, bypassing magnetics completely. Elevation always comes from gravity.
+    - **Steps:**
+      - Puck firmware: report ARVR-RV (0x28), Game RV (0x08) and Magnetic Field Calibrated (0x03) at 50 Hz, including the status and accuracy fields. Report every reset.
+      - Calibration: rotate through all axes until magnetometer status = 3 and the RV accuracy is below 0.06 rad (3.5°). Check |B| = F ±3% and dip = I ±2°. Then call sh2_saveDcdNow(), sh2_setCalConfig(SH2_CAL_ACCEL|SH2_CAL_GYRO) and sh2_setDcdAutoSave(false). Store one DCD per antenna.
+      - Host filter, clean epoch = all of: RV accuracy < 0.087 rad; mag status ≥ 2; ||B| − F| < 2.5 µT; |dip − I| < 3°; gyro rate < 30°/s. Only in clean epochs: offset ← circular low-pass of (yaw_ARVR − yaw_game) with τ = 10-20 s. Otherwise freeze the offset.
+      - Displayed true azimuth = yaw_game + offset + WMM declination (pygeomag at the GNSS fix; +8.5° in Kyiv). Show an amber 'magnetic disturbed' badge when the epoch is not clean.
+      - Outlier guard: if |yaw_ARVR − (yaw_game + offset)| > 15°, never step the display. Require more than 5 s of clean epochs before the offset may move more than 1°/s.
+      - Sun-sight: put a gnomon pin on the puck aligned with the boom. When its shadow vanishes, press 'SUN'. Then offset = az_sun(skyfield, GNSS time and position) − yaw_game. Re-sight every 20-30 min (0.5°/min drift spec).
+      - On a reset event (wasReset or a new product-ID packet): re-enable the reports, re-apply the calibration config, and hold the display until 3 s of clean epochs have passed.
+    - **How to verify:** Tripod with a printed compass rose aligned by sun azimuth. Do 50 slews between 12 azimuths and 3 elevations, then 20 min of handheld motion near the battery pack.
+  Count displayed heading steps >10° (target: 0) and compute RMS error (target ≤3°).
+  Also log raw RV yaw to show the jumps the filter removed.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf
+      - https://raw.githubusercontent.com/adafruit/Adafruit_BNO08x/master/src/sh2.h
+      - https://raw.githubusercontent.com/adafruit/Adafruit_BNO08x/master/src/sh2_SensorValue.h
+      - https://raw.githubusercontent.com/sparkfun/SparkFun_BNO080_Arduino_Library/main/src/SparkFun_BNO080_Arduino_Library.h
+      - https://forum.arduino.cc/t/904696
+      - https://github.com/sparkfun/SparkFun_BNO08x_Arduino_Library/issues/18
+      - https://pypi.org/project/pygeomag/
+  8.
+    - **Problem:** LC76G with gpsd on Linux is untested: gpsd may misidentify it or treat it as MTK, and Waveshare labels the PPS pin a 'status indicator'. Separately, some earlier advice (PPS 'always output', timing mode $PAIR753,1) is questionable.
+    - **Proposed fix:** The Waveshare 24370 schematic shows header P1 pin 5 '1PPS' wired directly to module pin 4 (1PPS). The LED is driven separately through 1 kOhm into an SI2306 gate. TXD/RXD are direct 3.3 V module pins with no pull-ups. So the PPS is a real timing edge.
+  
+  Configure the module with documented PAIR/PQTM commands before starting gpsd. Then run gpsd in passive mode (-p, 'do not autoconfigure') at a fixed 115200 baud so it never sends MTK probes. The LC76G is Airoha-based and answers PMTK with PAIR001.
+  
+  Corrections to the earlier plan:
+  - Use $PAIR752,2,100*39 (PPS only with a 3D fix), not 'Always'. 'Always' free-runs PPS from the RTC with no fix, which chrony would happily lock onto.
+  - Do NOT enable $PAIR753 timing modes. Spec v1.4 defines 0, 2 (survey-in), 3 (position-hold) and 4 (delay); survey-in and position-hold assume a static antenna. The '1' from the forum is not in the spec.
+  - Leave EPOC on for fast TTFF. Disabling it ($PAIR496,0*2D, forum-sourced) only reduces µs-level PPS noise.
+    - **Steps:**
+      - stty -F /dev/gnss0 115200 raw -echo -crtscts. Watch the replies with cat /dev/gnss0 & in a second shell.
+      - Send: $PQTMVERNO*58 (log the firmware); $PAIR752,2,100*39 (PPS 3D-fix only, 100 ms); $PAIR066,1,1,1,1,0,0*3A (GPS+GLONASS+Galileo+BDS); $PAIR391,1*2C (jamming detect). Each PAIR command should be answered with $PAIR001,<cmd>,0.
+      - Save: $PAIR513*3D at 1 Hz. If you raise the rate, follow the PAIR382/PAIR003/PAIR513/PAIR002 sequence from spec §2.4.49. Also send $PQTMSAVEPAR*5A for PQTM settings. Re-send PAIR391 at every boot from the gpsd ExecStartPre.
+      - Debug run: gpsd -N -D 3 -n -p -s 115200 /dev/gnss0. Check gpsd --help on Ubuntu 24.04's gpsd 3.25 to confirm -p is present. Then: gpspipe -w | grep DEVICE should show the NMEA0183 driver and no MTK. cgps shows a 3D fix. ntpshmmon shows NTP0 samples.
+      - Production: /etc/default/gpsd: DEVICES="/dev/gnss0", GPSD_OPTIONS="-n -p -s 115200", USBAUTO="false". Feed PPS by Route A or Route B from the PPS fix.
+      - Calibrate the NMEA offset: after 1 h with PPS selected, read the NMEA refclock offset in chronyc sourcestats/sources (typically 50-150 ms at 115200) and put it into 'refclock SHM 0 ... offset X'.
+    - **How to verify:** PPS present only with a 3D fix (cover the antenna and it stops). Scope at Q6A pin 7 shows a 100 ms-wide 3.3 V pulse whose rising edge coincides with the second. chrony selects PPS with std-dev in the µs range. gpsd stays on the NMEA0183 driver for 24 h, and settings survive a power cycle (backup cell fitted).
+    - **Confidence:** medium
+    - **Sources:**
+      - https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf
+      - https://forums.quectel.com/uploads/short-url/rUEismNTHFHWMMyJR1WxrcTaRB7.pdf
+      - https://forums.quectel.com/t/gnss-lc76g-1-pss-configuration/45880
+      - https://forums.quectel.com/t/significant-periodic-1pps-noise-with-lc76g-module/57109
+      - https://forums.quectel.com/t/module-lc76g-does-not-respond-to-pmtk314-command/27199
+      - https://gpsd.gitlab.io/gpsd/gpsd.html
+      - https://gpsd.gitlab.io/gpsd/gpsd-time-service-howto.html
+  9.
+    - **Problem:** Alternative IMUs have little or no Linux-SBC community data. Radxa configs have no driver for the BNO08x, ICM-20948, MMC5983MA or BMM350, and nobody has answered the LSM6DSV16X SFLP-on-Linux question.
+    - **Proposed fix:** Move sensor fusion into the RP2040 puck so the Linux driver question disappears. Any IMU then appears as one USB-CDC stream of quaternion + accuracy + |B|. Use x-io Fusion (C, magnetic rejection, runs on a Cortex-M0+) for non-BNO sensors.
+  
+  If you want host-side drivers anyway, use what both Radxa kernels actually ship:
+  - CONFIG_IIO_ST_LSM6DSX=m in both 6.18 and 7.0. It supports LSM6DSO/LSM6DSOX/LSM6DS3TR-C/ISM330DHCX/LSM6DSV16X accel+gyro, but not SFLP.
+  - A user-space LIS3MDL. CONFIG_IIO_ST_MAGN_3AXIS is not enabled, though st_lsm6dsx's sensor-hub code supports LIS2MDL/LIS3MDL if wired to the IMU's aux bus.
+  
+  Concrete boards: Pololu MinIMU-9 v6 (LSM6DSO + LIS3MDL), ~1,967 UAH, or Adafruit 5543 (LSM6DS3TR-C + LIS3MDL), ~2,404 UAH. Both are made-to-order on Prom.ua.
+  
+  Keep the BNO086 as first choice. BMI270+BMM350 remains the highest-risk combination.
+    - **Steps:**
+      - Puck firmware for non-BNO sensors: read the IMU at 200 Hz over I2C or SPI and the magnetometer at 50-100 Hz. Run FusionAhrsUpdate with magneticRejection ≈10° and recoveryTriggerPeriod of about 5 s. Calibrate the magnetometer with an ellipsoid fit (hard and soft iron) done on the host from a logged rotation, and flash the coefficients.
+      - Host-side option: overlay node on &i2c0: imu@6b { compatible = "st,lsm6dso"; reg = <0x6b>; }. Then modprobe st_lsm6dsx_i2c and read /sys/bus/iio/devices/iio:deviceN. Read the LIS3MDL at 0x1e with smbus2 in Python and run imufusion (pip) on the host.
+      - Use 'i2cdetect -y -r 0' when probing. 0x1e and 0x6b are in the ranges plain i2cdetect skips on GENI.
+      - Run the same validation as the BNO fixes (|B| and dip checks, sun-sight comparison) so the two sensors can be compared.
+    - **How to verify:** Same tripod and sun-sight test as the BNO fixes, run back to back with the BNO086 puck. Accept the alternative if RMS heading error is ≤3° and there are zero displayed jumps >10°.
+  For the host path: iio_info or cat in_accel_x_raw works after a reboot with the overlay, and a 24 h read loop shows no I2C errors.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://raw.githubusercontent.com/radxa/kernel/linux-7.0.11/arch/arm64/configs/radxa_qcom_7_0_defconfig
+      - https://github.com/radxa/kernel/tree/linux-6.18.2/drivers/iio/imu/st_lsm6dsx
+      - https://github.com/xioTechnologies/Fusion
+      - https://prom.ua/ua/search?search_term=LIS3MDL
+      - https://git.kernel.org/pub/scm/utils/i2c-tools/i2c-tools.git/plain/tools/i2cdetect.c
+- **Residual risks:**
+  - Translator assignments come from my reading of schematic v1.21, sheet 26. Board revisions may differ, so confirm with a continuity meter before wiring.
+  - Nothing here has been run on real Q6A hardware: the user-space PPS daemon, 3 Mbaud UART-SHTP, the out-of-tree pps-gpio build, and the availability of linux-headers for Radxa kernels are all unverified.
+  - The 'rsetup pin-state error' (forum 30455 #3) and the exact content of the unpublished uart6 dtbo fix (30063) are still unknown. The TX-failure explanation (a weak 10 kOhm high from the UM3204H plus contention on the target) is a hypothesis that needs a voltmeter or scope to confirm.
+  - Ubuntu 24.04 apt ships libgpiod 1.6.3. The PyPI gpiod 2.x wheel must build on aarch64, which I have not tested on the Q6A.
+  - LimeSDR Micro: the custom-parameter and EEPROM APIs exist in LimeSuiteNG, but the GUI path, the DAC linearity and slope, and the claim that buffer timeNs is a hardware sample-count stamp all need checking on a real board. External reference works only after commit 1f70189 is merged and flashed. PPS-IN/GPSDO needs firmware development.
+  - The LC76G PAIR391 setting may not persist after PAIR513, so it has to be re-sent at every boot. The jamming flags are vendor heuristics and are not validated against Ukrainian spoofers.
+  - Detection of subtle spoofing (slow time or position drift within the gate limits) is not achievable with these receivers. The gate only catches gross attacks; OSNMA-capable receivers are out of budget.
+  - Even with AR/VR stabilisation and gating, the BNO08x can still drift or jump during long passes. Sun-sight re-referencing every 20-30 min is assumed to be possible, which fails when it is overcast or dark (fall back to a landmark azimuth).
+  - Prom.ua prices and stock (MinIMU-9 v6, Adafruit 5543, made-to-order) were taken from a single search page on 18 Oct 2026. The FT232RL module price was not verified.
+  - The RTC backup-cell connector and its current behaviour on the Q6A have not been physically confirmed. Without a cell, the RTC cross-check against GNSS time is unavailable after power loss.
+
+## Адверсаріальна перевірка (`verify`)
+
 _Агент цього етапу ще працює (run `wf_45d278c2-004`)._
 
