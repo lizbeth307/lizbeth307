@@ -856,3 +856,8 @@ Heat map вимкнено (правило «без геолокації»). За
 - P5 G1: як дешевші аналоги Uputronics 440 MHz перевіряються SPF5189Z і LNA4ALL (виміряний NF на 432–435 MHz).
 Джерела: журнали агентів wf_d9388111-e66 і wf_e32114dd-52d; URL будуть у final/reaudit_D_power_mech_display_lab.json і final/analogs_G1_receivers_rf.json.
 
+## 2026-10-18 10:33 UTC
+
+Проміжне: група D звіряє ПЗ приладів. Остання прошивка Raspberry Pi Debugprobe — v2.3.1 (29 травня, позначена Latest; перед нею v2.3.0 і v2.2.3). QtTinySA: залежності беруться з src/requirements.txt (venv). P5 G1 шукає фільтровані LNA 70 см (зокрема варіант Nooelec SAWbird на 435 MHz) як аналог Uputronics.
+Джерела: github.com/raspberrypi/debugprobe/releases, github.com/g4ixt/QtTinySA (src/requirements.txt).
+
