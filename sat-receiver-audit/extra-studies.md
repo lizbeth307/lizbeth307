@@ -1,5 +1,416 @@
 # Додаткові дослідження: повні відповіді субагентів
 
+## lab:instruments (run `wf_1dd437c5-0cf`)
+
+- **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
+- **Items:**
+  1.
+    - **Name:** LiteVNA 64 (Zeenko), 50 kHz-6.3 GHz handheld VNA
+    - **Category:** Vector network analyzer
+    - **Purpose in lab:** Measures S11/S21 of cables, MHF4-SMA pigtails, adapters, SAW and FM-bandstop filters, bias tees, attenuators and powered LNAs from 137 MHz to 2.4 GHz and beyond. TDR/DTF mode locates bad crimps. The input files already rely on 'screen it with a NanoVNA' for the RF1.13 pigtails, LMR-240/RG316 and cheap bias tees, which lose 3-7 dB at 100-200 MHz. This is that instrument.
+    - **Key specs:** 50 kHz-6.3 GHz. Dynamic range after calibration above 70 dB below 3 GHz and above 50 dB at 3 GHz and up. S11 noise floor below -50 dB under 3 GHz and below -40 dB above. 0.5 ppm frequency stability (0-50 °C). 21-1024 points on the device, up to 65535 over USB. TDR/DTF by IFFT. microSD for Touchstone files and screenshots. Stimulus output level is not published on the pages I read.
+    - **Size weight power:** 140 x 75 x 20 mm (Lab401 listing). Weight not published. 3.95 in 480x320 IPS touchscreen. Internal 2000 mAh Li-ion, charges over USB-C.
+    - **Interface and linux:** USB-C serial. NanoVNA-Saver lists LiteVNA as supported. It is Python >=3.10 with PySide6/numpy/scipy, installed with 'pipx install git+https://github.com/NanoVNA-Saver/nanovna-saver' (the DEB/RPM builds are marked broken). Radxa OS r2 (Ubuntu 24.04, Python 3.12) meets the Python requirement. PySide6 arm64 wheels on the Q6A are NOT verified, so test this first. Fallback: run standalone on its own touchscreen and copy .s2p files from the microSD. A PC is not required.
+    - **Price:** EUR 144.59 ex VAT at Eleshop (seen only in a search snippet; the page returned 403). 9,990 UAH incl. VAT at Selteq, about $223 at 44.86 UAH/USD. Switch Science JPY 23,800, sold out. AliExpress: buy only from the Zeenko factory store (price not verified).
+    - **Tier:** core
+    - **Integration notes:** Bench/pouch instrument, not mounted inside the ASA case. Connect it to a Q6A USB 2.0 port only for data. It is low-bandwidth CDC traffic, so the shared FE1.1s hub is fine. Do not leave it connected during satellite passes (USB noise). Its 6.3 GHz ceiling covers every band in the build except the 10 GHz LNB input; measure the LNB at its 739 MHz IF only. Always put an SMA DC block on any line that carries bias-tee (4.5 V) or LNB (13/18 V) power.
+    - **Sources:**
+      - https://www.zeenko.tech/litevna
+      - https://selteq.com.ua/en/litevna-64/
+      - https://lab401.com/products/litevna
+      - https://eleshop.eu/litevna.html
+      - https://github.com/NanoVNA-Saver/nanovna-saver
+      - https://raw.githubusercontent.com/NanoVNA-Saver/nanovna-saver/main/docs/INSTALLATION.md
+    - **Availability:** Zeenko factory store (AliExpress), Eleshop (EU), Lab401 (EU), Selteq (UA). Switch Science (JP) sold out.
+    - **Cheaper alternative:** LiteVNA 62: same 50 kHz-6.3 GHz RF design, smaller battery (1300 mAh) and screen. About EUR 130 ex VAT at Eleshop (search snippet; which model that price belongs to is not confirmed).
+    - **Safety notes:** Port 1 is a signal generator. Use it only in conducted tests into cables, filters, attenuators, LNAs or 50-ohm loads. An antenna S11/VSWR sweep makes the antenna radiate the sweep, which breaks the receive-only rule. Do not do it unless local rules explicitly allow low-power test emissions; use the receive-only antenna checks instead. On LNA tests, put a 20-30 dB pad after the LNA so port 2 is not overdriven (the VNA's maximum input is not published on the pages I read).
+  2.
+    - **Name:** tinySA Ultra+ ZS407 handheld spectrum analyzer with low-level signal generator
+    - **Category:** Spectrum analyzer
+    - **Purpose in lab:** An independent, level-calibrated analyzer covering 100 kHz-7.3 GHz. It hunts self-interference that the receivers inside the same box cannot measure on themselves: HDMI pixel-clock harmonics, PCIe 100 MHz refclk x17 = 1700 MHz, Lime 30.72 MHz harmonics, buck converters, USB3 near 2.4 GHz. It also surveys sites for overloading signals and acts as the detector for near-field probes. Its built-in noise-figure menu can estimate noise-source ENR and LNA NF, and its generator gives low-level conducted test signals.
+    - **Key specs:** Normal mode 100 kHz-900 MHz. ULTRA mode up to 7.3 GHz, level-calibrated to 7.3 GHz; signals visible up to 12 GHz (uncalibrated). RBW 0.2-850 kHz. DANL -102 dBm at 30 MHz with 30 kHz RBW (no LNA), -145 dBm with 200 Hz RBW and the built-in 20 dB LNA. Internal 0-31 dB attenuator. Absolute maximum input +6 dBm at 0 dB attenuation, +20 dBm short peak at 30 dB attenuation, ±5 V DC. Generator: sine -115 to -19 dBm in 1 dB steps up to 900 MHz, ±2 dB from -72 to -19 dBm up to 800 MHz; square wave up to 6.3 GHz; 'highest accuracy' mode up to 7.3 GHz. 4 in 480x320 resistive touch plus jog switch. microSD.
+    - **Size weight power:** Size and weight not published on the pages read. Internal battery, at least 3 h for Ultra+. Charges in about 1 h from a USB port rated 500 mA or more. USB-C.
+    - **Interface and linux:** USB serial control. QtTinySA (PySide6 + pyqtgraph, GPL-3) is written primarily for Linux and supports the tinySA Ultra; ARM/arm64 is not mentioned, so it is unverified on the Q6A. NanoVNA-Saver can also read tinySA data. A plain pyserial script on the Q6A is the fallback; the command set was not re-read this session. It works fully standalone with no PC.
+    - **Price:** 9,486 UAH incl. VAT at Selteq (official distributor), about $211. eBay US $210.99 (seller unknown, clone risk). eBay.de about EUR 199-225. Official sellers include the Zeenko AliExpress store, R&L Electronics (US), Eleshop (EU), Mirfield (UK), Neven (CEE), GOTRONIK (PL), Switch Science (JP) and Selteq (UA).
+    - **Tier:** core
+    - **Integration notes:** Keep it outside the case and run it on its own battery during EMI hunts, so its supply does not couple into the receiver. When connecting it after an LNA or onto LNB/bias-tee coax, always use a DC block and a 20-30 dB pad: the SAWbird+ output can reach about +14 dBm at strong-signal sites (rf_frontend), which is above its +6 dBm maximum. The generator's low ceiling (-19 dBm sine) suits safe conducted SDR tests. The tinySA wiki warns of bad clones; buy only from the official list.
+    - **Sources:**
+      - https://tinysa.org/wiki/
+      - https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Specification
+      - https://tinysa.org/wiki/pmwiki.php?n=Main.Buying
+      - https://www.zeenko.tech/tinysa
+      - https://selteq.com.ua/en/tinysa-ultra/
+      - https://www.ebay.com/shop/tiny-spectrum-analyzer
+      - https://www.ebay.de/shop/tinysa
+      - https://github.com/g4ixt/QtTinySA
+      - https://qsl.net/n8dmt/test-page/diy-test-equipment/low-cost-diy-noise-source/index.html
+    - **Availability:** In the official channels listed; stock was not shown on the Selteq page.
+    - **Cheaper alternative:** tinySA Ultra ZS405 or Ultra+ ZS406 (ULTRA mode to 5.3 GHz, level-calibrated to 6 GHz, enough for 137 MHz-2.4 GHz); price not verified. Free: use the SDRs as analyzers (next item), accepting uncalibrated levels and self-spurs.
+    - **Safety notes:** The generator output is for conducted use only: cable to an SDR input, a filter, an attenuator or a load. Never connect it to an antenna. Receiving with it on an antenna is fine.
+  3.
+    - **Name:** SDRs as spectrum analyzers (RTL-SDR V4L + LimeSDR Micro with soapy_power / rtl_power / SDR++ / GNU Radio)
+    - **Category:** Spectrum analyzer (software)
+    - **Purpose in lab:** Wide sweeps and long-term spectrum logging from 500 kHz to 3.8 GHz with the radios already in the build: band occupancy, waterfall logs, before/after EMI comparisons, and scalar filter sweeps with a noise source. It complements the tinySA; it does not replace it.
+    - **Key specs:** soapy_power: FFT sweeps on any SoapySDR device (README lists RTL-SDR, Airspy, SDRplay, HackRF, bladeRF, USRP, LimeSDR), with frequency hopping, crop/overlap, averaging, rtl_power-compatible or binary output and Welch windowing. Coverage: RTL-SDR V4L 500 kHz-1.766 GHz, about 2.56 MS/s stable; LimeSDR Micro 30 MHz-3.8 GHz. Levels are in dBFS and gain-dependent, with no absolute calibration. Each radio sees its own spurs (Lime 30.72 MHz harmonics, PCIe refclk, HDMI).
+    - **Size weight power:** No extra hardware. CPU load on the Q6A: pin the sweeps away from the Lime RX thread (CPU7), as compute.json advises.
+    - **Interface and linux:** Runs natively on the Q6A: soapy_power (Python 3 + NumPy + SimpleSoapy/SimpleSpectral; install pyFFTW or SciPy because numpy.fft is slow and memory-hungry), rtl_power from rtl-sdr-blog, SDR++, GNU Radio.
+    - **Price:** $0
+    - **Tier:** core
+    - **Integration notes:** Calibrate dBFS to dBm per gain setting with the GPSDO tone or tinySA generator through the step attenuator (procedure below). Always take a 50-ohm-terminated baseline, so self-noise can be told apart from real signals. Turn Wi-Fi off during sweeps (shared USB hub).
+    - **Sources:**
+      - https://github.com/xmikos/soapy_power
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+    - **Cheaper alternative:** This is already the zero-cost option.
+    - **Safety notes:** Receive-only.
+  4.
+    - **Name:** Leo Bodnar Mini Precision GPS Reference Clock (Mini GPSDO)
+    - **Category:** Frequency reference (GPSDO)
+    - **Purpose in lab:** A GPS-locked frequency reference and known-frequency test tone. Uses: calibrate the LimeSDR Micro VCTCXO DAC (stored in EEPROM XO_DAC); measure RTL-SDR V4L ppm error; correct the tinySA frequency; and, as an experiment, feed the LimeSDR Micro external reference input J4 (10-52 MHz, 1.8-3.3 V).
+    - **Key specs:** 400 Hz-810 MHz programmable. One SMA output, 3.3 V CMOS square wave into 50 ohms, +6.4 dBm (8 mA drive) to +10.3 dBm (32 mA) at 10 MHz. Phase noise at 10 MHz: -125 dBc/Hz at 100 Hz, -145 at 1 kHz, -155 at 1 MHz. Antenna SMA supplies 3.3 V at up to 30 mA (needs an active GNSS antenna). The square-wave odd harmonics give usable markers well above 810 MHz.
+    - **Size weight power:** 70 x 41 x 15 mm including SMAs. Weight not listed. 5 V at up to 250 mA (1.25 W or less) over mini-USB. No OCXO, so it fits the heat budget.
+    - **Interface and linux:** Official configuration tools are Windows (.exe) and macOS (App Store). On Linux the open-source lbgpsdo (Python + hidapi, udev rule 99-lbgpsdo.rules) supports the 'Classic GPSDO mini'. It sets the PLL dividers, drive current and output enable, and does offline frequency-plan analysis, so the Q6A can configure it without a PC. Whether the Mini keeps its settings across power cycles is not verified.
+    - **Price:** GBP 132, in stock at leobodnar.com (VAT treatment not stated). Roughly $170-180 (conversion approximate).
+    - **Tier:** core
+    - **Integration notes:** Plan it as a pouch or bench module powered from a Q6A USB 2.0 port or the pack's 5 V rail, with its own small active GNSS patch. It cannot share the LC76G antenna without a GNSS splitter. Add a case bulkhead 'REF IN' wired to Lime J4 with an MHF4-SMA pigtail. Before driving J4, use lbgpsdo to check that 30.72 MHz (the Lime's native VCTCXO frequency) is exactly reachable; otherwise use 10 MHz. Use the lowest drive (8 mA), keep the cable short, and confirm Lime PLL lock. Selecting the external reference in LimeSuiteNG for the Micro is NOT documented (only 'VCTCXO DAC (volatile)' and EEPROM XO_DAC are exposed), so the DAC-calibration route is the dependable one. The Lime's 1PPS input is not populated (resistor mod) and its firmware PPS handler is a stub.
+    - **Sources:**
+      - https://www.leobodnar.com/shop/index.php?main_page=product_info&products_id=301
+      - https://github.com/hamarituc/lbgpsdo
+      - https://myriadrf.org/projects/limesdr-micro/user/M.2/clock.html
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro
+    - **Availability:** In stock (leobodnar.com, 18 Oct 2026 fetch).
+    - **Cheaper alternative:** A software GPSDO built from the existing LC76G PPS plus an RP2040-Zero counter (optional item below), about $3-5. Free fallback: calibrate against a received carrier of known frequency.
+    - **Safety notes:** This is the strongest emitter in the kit (+6 to +10 dBm square wave with harmonics). Into any SDR, use conducted paths only through 60-70 dB of fixed pads plus a DC block. Never connect it to an antenna. Leave the output disabled when not in use.
+  5.
+    - **Name:** Software GPSDO / PPS-gated frequency counter: RP2040-Zero counting LimeSDR Micro clock-out (J3) against the LC76G PPS
+    - **Category:** Frequency counter / reference disciplining
+    - **Purpose in lab:** Disciplines the LimeSDR Micro from the GNSS already in the build, with no extra GNSS receiver. The RP2040 counts the Lime's 30.72 MHz clock output (J3, 3.3 V CMOS) between LC76G PPS edges; the Q6A then steers the VCTCXO DAC through LimeSuiteNG. The same board works as a general PPS-gated counter for 3.3 V logic clocks up to about 60 MHz.
+    - **Key specs:** LC76G PPS: under 100 ns RMS (gnss_imu). Resolution is 1 count per gate, 33 ppb at a 1 s gate and about 0.3 ppb averaged over 100 s, against the ±50 ppb stock VCTCXO. The RP2040 PWM slice can count edges on its B input up to about sys_clk/2 (about 62 MHz at 125 MHz); this is from the RP2040 datasheet as I recall it and was not re-read this session.
+    - **Size weight power:** About 0.1 W. RP2040-Zero is thumb-sized. Fits inside the case next to the Lime.
+    - **Interface and linux:** USB-CDC to the Q6A, or UART on the 40-pin header. A Python loop on the Q6A writes 'VCTCXO DAC (volatile)' through LimeSuiteNG and the final value to EEPROM XO_DAC.
+    - **Price:** About $3-5 (RP2040-Zero clone 109-130 UAH per gnss_imu) plus an MHF4 pigtail (~$6) and firmware you write yourself.
+    - **Tier:** optional
+    - **Integration notes:** UNVERIFIED as a whole: nobody has published this for the Micro. Not confirmed: whether J3 is enabled by default, and whether the DAC steps are fine enough. Tee the PPS from Q6A pin 7 (GPIO96) to an RP2040 GPIO (both 3.3 V). Keep the J3 cable short and shielded, because 30.72 MHz harmonics (737.28, 1689.6, 1720.32 MHz) are already listed as spur risks. Gate it with the existing GNSS spoofing/time-sanity gates, so a bad fix cannot steer the oscillator.
+    - **Sources:**
+      - https://myriadrf.org/projects/limesdr-micro/user/M.2/clock.html
+    - **Cheaper alternative:** A one-time manual DAC calibration against the GPSDO tone, or against a broadcast carrier known to be GPS-locked; measure only the carrier offset.
+    - **Safety notes:** Receive and measure only; it generates nothing.
+  6.
+    - **Name:** Uncalibrated broadband noise source (DIY Mini-Circuits ZFL-500-class amplifier source per N8DMT, or a generic SMA 'noise generator' module)
+    - **Category:** Noise source
+    - **Purpose in lab:** A wideband stimulus for scalar filter sweeps with the SDRs (passband, rejection, ripple of SAW and bandstop filters), relative LNA comparisons, and the 'hot' source in rough Y-factor tests. Its ENR can be characterized with the tinySA Ultra noise-figure menu.
+    - **Key specs:** N8DMT DIY ZFL-500(LN) source, 12 V, with 5 dB input pad and 10 dB output pads. Measured ENR: 20.5 dB at 28-52 MHz, 21.0 at 146, 20.1 at 440, 17.0 at 902, 16.1 at 1296 and 8.4 dB at 2400 MHz (about 30 dB without the output pads). The tinySA Ultra became unreliable for this above about 4 GHz. Generic AliExpress modules: ranges, ENR, flatness and prices NOT verified this session.
+    - **Size weight power:** Small module. 12 V DC switched on/off (ZFL-500 current not given on the page). Takes 12 V from the pack's 9-12 V rail.
+    - **Interface and linux:** No data interface. Switch it with a MOSFET from a Q6A 40-pin GPIO (libgpiod) for automatic on/off Y-factor runs. Measure with the SDRs (soapy_power / GNU Radio) or the tinySA.
+    - **Price:** About $20 used for a ZFL-500 (N8DMT). Generic modules: price not verified.
+    - **Tier:** core
+    - **Integration notes:** Characterize it once with the tinySA NF menu at 137, 435, 740, 1700 and 2200 MHz and keep the ENR table with the unit. Expect ±1-2 dB uncertainty (my estimate), which is good enough for filter sweeps and comparisons but not for absolute NF claims. Add a 6-10 dB output pad: it improves source match and lowers the level going into the SDR.
+    - **Sources:**
+      - https://qsl.net/n8dmt/test-page/diy-test-equipment/low-cost-diy-noise-source/index.html
+      - https://qsl.net/n8dmt/rf-noise-source-part-1/index.html
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+    - **Cheaper alternative:** No generator at all: sky/ground Y-factor (procedure below) gives system temperature receive-only.
+    - **Safety notes:** Conducted only, into an LNA input, filter, attenuator or SDR. Never connect it to an antenna: a broadband noise source on an antenna is a wideband jammer. Avoid amplified AWGN modules with about -10 dBm total output.
+  7.
+    - **Name:** Calibrated 346-class noise head (used Noisecom NC346/NC3404-class or Agilent/HP 346B, or new Pasternack PE85N1001) with a switched 28 V supply
+    - **Category:** Noise source (calibrated)
+    - **Purpose in lab:** Absolute Y-factor noise figure of the SAWbird+ LNAs and of whole receive chains, plus system noise temperature, with a traceable ENR table.
+    - **Key specs:** Pasternack PE85N1001: 10 kHz-2 GHz, ENR 30 dB minimum, calibrated at 10/100/1000/2000 MHz. PE85N1005: 1-18 GHz, ENR 23 dB, 28 V at 25 mA, SMA female. NoiseWave NW3G-CS: 10 kHz-3 GHz, ±0.25 dB typical flatness, 15 or 30 dB ENR, 28 V. HP application note: 15 dB and 6 dB nominal ENR heads are common, ENR is calibrated at spot frequencies, and a low-ENR head lowers uncertainty when the instrument NF is low. The N8DMT used NC3404T reads 13.0-15.1 dB ENR at 440-2400 MHz through a 20 dB pad.
+    - **Size weight power:** Coaxial head about the size of a thick SMA barrel (not measured here). 28 V at about 20-25 mA, switched on and off. Generate it from the 4S pack (12-16.8 V) with a small boost converter and a GPIO-driven MOSFET.
+    - **Interface and linux:** No data interface. A GPIO-switched supply plus SDR power measurement on the Q6A (GNU Radio or Python), or the tinySA NF menu.
+    - **Price:** New Pasternack/NoiseWave/kTB: price not published (quote only). Used 346-class heads on the surplus market: price not verified. Check that the ENR label or calibration sheet comes with the unit.
+    - **Tier:** extended
+    - **Integration notes:** Buy one only if you need absolute NF numbers. Below 2 GHz the PE85N1001 range covers 137 MHz-1.7 GHz; 2.2 GHz needs a 10 MHz-18 GHz 346-class head. A 30 dB ENR head needs a 15-20 dB pad for low-NF LNAs; add the pad loss to the ENR table carefully.
+    - **Sources:**
+      - https://www.pasternack.com/images/productpdf/PE85N1001.pdf
+      - https://www.everythingrf.com/products/noise-sources/pasternack-enterprises-inc/608-20-pe85n1005
+      - https://www.mwrf.com/markets/article/21840544/noise-source-promises-025-db-flatness-over-10-khz-to-3-ghz
+      - https://www.everythingrf.com/products/noise-sources/ktb-solutions/608-2403-k2218a
+      - https://xdevs.com/doc/HP/pub/5980-0288E.pdf
+      - https://qsl.net/n8dmt/rf-noise-source-part-1/index.html
+    - **Availability:** New units are quote-only; used units depend on the surplus market (not checked).
+    - **Cheaper alternative:** The uncalibrated source with a tinySA-measured ENR table (core item above), or sky/ground Y-factor.
+    - **Safety notes:** Conducted only; never on an antenna. Check the 28 V polarity, and keep the boost converter away from the RF bay (switching noise).
+  8.
+    - **Name:** Bench RF accessory set: fixed SMA attenuators (3/6/10/20/30 dB, DC-6 GHz, 2 W), SMA DC blocks, 50-ohm SMA terminations (dummy loads), adapters and two short low-loss test cables
+    - **Category:** Attenuators, dummy loads, DC protection
+    - **Purpose in lab:** Enables safe conducted testing. The pads drop the GPSDO tone (+6 to +10 dBm) by 60-70 dB to SDR-safe levels and protect the tinySA/VNA after LNAs. DC blocks protect instruments from bias-tee (4.5 V) and LNB (13/18 V) supplies. The terminations give a 'cold' 50-ohm reference for SDR noise floors, terminate unused Lime RX ports, and serve as VNA LOAD standards.
+    - **Key specs:** Choose DC-6 GHz parts so they cover 137 MHz-2.4 GHz with margin. Specs and prices of specific AliExpress or Mini-Circuits parts are NOT verified this session. Verify every pad and DC block with the LiteVNA (S21 and S11) on arrival and label the measured loss at 137/435/740/1700/2200 MHz.
+    - **Size weight power:** Passive. A few grams each.
+    - **Interface and linux:** None.
+    - **Price:** Not verified (generic SMA pads and loads are commonly cheap on AliExpress; budget roughly $40-80 for a set as an estimate).
+    - **Tier:** core
+    - **Integration notes:** The rf_frontend file already calls for a 6 dB pad after the SAWbird+ (Lime maximum input +10 dBm) and a 3-6 dB pad at the SDR if intermodulation shows up. Buy these pads from the same set. Keep at least 2 DC blocks and 3 terminations.
+    - **Sources:**
+      - https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Specification
+      - https://www.leobodnar.com/shop/index.php?main_page=product_info&products_id=301
+    - **Cheaper alternative:** The LOAD standard that comes with the VNA calibration kit can stand in as one termination.
+    - **Safety notes:** Terminations used with generators must be rated for the generator power (the GPSDO at +10 dBm, 10 mW, is far below a 2 W rating).
+  9.
+    - **Name:** Digital step attenuator module, PE4302 (DC-4 GHz) or HMC472 (DC-3.8 GHz), 0-31.5 dB in 0.5 dB steps
+    - **Category:** Step attenuator
+    - **Purpose in lab:** Programmable attenuation for SDR dBFS-to-dBm calibration, gain-linearity and minimum-discernible-signal tests, AGC/overload checks and automated sweeps driven from the Q6A.
+    - **Key specs:** 0-31.5 dB in 0.5 dB steps, 6-bit parallel or serial control. PE4302: DC-4 GHz; the chip has been obsolete since 2018, so modules are remaining stock; the PE4312 is the pin-compatible successor. HMC472 module: DC-3.8 GHz. Insertion loss and step accuracy are not verified, so measure every state with the VNA and keep a correction table.
+    - **Size weight power:** Small PCB module with SMA connectors. Logic-level supply; exact current not verified.
+    - **Interface and linux:** Drive the parallel or serial lines from Q6A 40-pin GPIO (libgpiod, 3.3 V logic; confirm the module's logic level) or from an RP2040. No PC needed.
+    - **Price:** PE4302: EUR 9.88 (~$11.49) + EUR 5.88 shipping on eBay (listing updated July 2025); $27.14 on Newegg; eBay.de $17.97 + $6.90. HMC472: about $30 + $6.70 shipping (Banggood, 2021, dated).
+    - **Tier:** extended
+    - **Integration notes:** Use it only at low levels, after the 60-70 dB fixed pads and never in front of the GPSDO's raw output. Keep it on the bench; its control wiring should not run through the RF bay during passes. Note: the UART6 overlay disables i2c6/spi6 on pins 3/5, so plan the GPIO lines around the GNSS wiring.
+    - **Sources:**
+      - https://www.ebay.com/itm/265899138812
+      - https://siliconchip.com.au/Issue/2018/June/El+Cheapo+Modules+17%3A+4GHz+digital+attenuator
+      - https://siliconchip.com.au/Issue/2021/October/El+Cheapo+Modules%3A+3.8GHz+Digital+Attenuator
+      - https://www.newegg.com/p/2S7-090G-01GH3
+      - https://www.rfmw.com/Products/Detail/PE4312-Peregrine-Semiconductor/472826/?pid=1130
+    - **Cheaper alternative:** Stack fixed pads from the accessory set (1 dB resolution is enough for most checks). Manual 0-90 dB knob step attenuators exist, but none was verified this session.
+    - **Safety notes:** Passive. Keep its input low, because its power rating was not verified.
+  10.
+    - **Name:** AD8318 log-detector power meter module (1 MHz-8 GHz) read by an ADS1115-class I2C ADC on the Q6A
+    - **Category:** RF power meter / detector
+    - **Purpose in lab:** Absolute RF level checks: verify generator and GPSDO-tone levels before they reach an SDR (Lime maximum +10 dBm), measure LNA output levels at strong-signal sites, measure noise-source total power, and optionally run a live 'overload alarm' on a coupler tap after the LNA.
+    - **Key specs:** Module rated -65 to +5 dBm. About 60 dB is accurate (-5 to -60 dBm, ±1 dB agreement between 100 MHz and 4 GHz in Silicon Chip's test). Log conformance 1 MHz-6 GHz, usable to 8 GHz. Vout 0.5-4.6 V with a negative slope, measured -24.33 mV/dB (nominal -25).
+    - **Size weight power:** 33 x 24.5 mm PCB with SMA. Needs 7.5-9 V (78L05 regulator), 68 mA typical, about 0.6 W from the pack's 9 V rail.
+    - **Interface and linux:** Analog output. Read it with an ADS1115 on Q6A i2c0 (pins 13/15) or i2c2 (27/28), not i2c6 (disabled by the UART6 overlay). Vout reaches 4.6 V, so add a resistive divider for a 3.3 V ADC. Python on the Q6A converts volts to dBm using a calibration table.
+    - **Price:** About $16.50 (Silicon Chip, 2018); eBay $39.00. AliExpress price not verified.
+    - **Tier:** extended
+    - **Integration notes:** Calibrate it against the tinySA at 3 levels per band (137/435/740/1700/2200 MHz), because absolute accuracy is not specified. Bench use only, unless you build the optional overload monitor with a directional coupler (coupler not specified here).
+    - **Sources:**
+      - https://www.siliconchip.com.au/Issue/SC/2018/March/El+Cheapo+Modules+14%3A+Logarithmic+RF+Detector
+      - https://www.ebay.com/itm/AD8318-RF-Log-Detector-70dB-RSSI-Measurement-Power-Meter-1-MHz-to-8000-MHz/133029848381
+    - **Cheaper alternative:** The tinySA's own level readout (±2 dB below 800 MHz) covers most needs.
+    - **Safety notes:** Receive and measure only; keep inputs at or below +5 dBm.
+  11.
+    - **Name:** Near-field H/E probe set for EMI hunting (step-up: Com-Power PS-500, 9 kHz-5 GHz)
+    - **Category:** EMI near-field probes
+    - **Purpose in lab:** Locates the noise sources the input files flag inside the handheld: HDMI cable and pixel clock, the RA620 bridge, PCIe riser refclk, USB3 NVMe, SY81012/SY7120 and IP2368 switchers, the display backlight. Use them with the tinySA (independent battery and built-in 20 dB LNA, so no extra preamp) to verify ferrites, shields and filtered rails.
+    - **Key specs:** Com-Power PS-500: 9 kHz-5 GHz, in stock at The EMC Shop. Generic AliExpress H/E-field sets: specs and prices NOT verified this session. DIY: small shielded loops made from semi-rigid coax.
+    - **Size weight power:** Passive, pocket-sized.
+    - **Interface and linux:** SMA to the tinySA, or to an SDR via soapy_power. No software needed.
+    - **Price:** Com-Power PS-500 $109 (The EMC Shop). Langer XF1 (30 MHz-6 GHz) from $275, Keysight N9311X-100 (30 MHz-3 GHz) $325. Generic sets: not verified. DIY loops: about $0-10.
+    - **Tier:** core
+    - **Integration notes:** Start with a cheap or DIY set. Relative readings (before/after a fix) are what matter, and absolute antenna factors are not needed. Probe with the case open on the bench, then repeat the SDR noise-floor A/B tests.
+    - **Sources:**
+      - https://theemcshop.com/test-equipment/near-field-probes-e-h/emc-probes/kits/
+    - **Availability:** Com-Power PS-500 in stock (The EMC Shop).
+    - **Cheaper alternative:** DIY semi-rigid coax loop probe.
+    - **Safety notes:** Passive, receive-only.
+  12.
+    - **Name:** Leo Bodnar LBE-1421 dual-output GPSDO (upgrade path)
+    - **Category:** Frequency reference (GPSDO)
+    - **Purpose in lab:** Two simultaneous GPS-locked outputs: for example 30.72 MHz or 10 MHz into Lime J4 plus a calibration tone or comb into the RTL-SDR or tinySA, with a switchable PPS output on output 1 for timing tests.
+    - **Key specs:** Output 1: 1 Hz-800 MHz. Output 2: 1 Hz-1.4 GHz. Switchable 1-PPS on output 1. PLL or FLL mode. Per-output low/normal drive. Ships with an active GPS antenna on 5 m of cable.
+    - **Size weight power:** Size not stated on the reseller page. Ships with a USB A-to-C cable (USB-C power implied, not confirmed).
+    - **Interface and linux:** Linux configuration through lbgpsdo's lbe142x.py: frequencies, saving to flash, PLL/FLL, output enable, PPS, drive level.
+    - **Price:** EUR 225 net / EUR 267.75 incl. 19% VAT (Batronix, in stock).
+    - **Tier:** optional
+    - **Integration notes:** Only worth it if the Mini proves limiting. The time-nuts list warns that the newer Bodnar PPS outputs are the raw GNSS PPS and fairly jittery.
+    - **Sources:**
+      - https://www.batronix.com/shop/frequency-references/GPSDO/index.html
+      - https://github.com/hamarituc/lbgpsdo
+      - https://febo.com/pipermail/time-nuts_lists.febo.com/2024-November/109355.html
+    - **Availability:** In stock at Batronix (DE).
+    - **Cheaper alternative:** Leo Bodnar Mini (GBP 132) as above.
+    - **Safety notes:** Same as the Mini: conducted only through heavy pads; never connect to an antenna.
+- **Capabilities added:**
+  - Two-port VNA measurement from 50 kHz to 6.3 GHz (S11, S21, S22, S12, TDR/DTF) for cables, MHF4 pigtails, adapters, filters, bias tees, attenuators and powered LNAs, saved as Touchstone files the Q6A can process
+  - Independent level-calibrated spectrum analysis from 100 kHz to 7.3 GHz (visible to 12 GHz), separate from the receivers under test
+  - Self-EMI localisation with near-field probes, plus A/B noise-floor audits with terminated SDR inputs (display, Wi-Fi, USB3, charger and bucks on/off)
+  - GPS-traceable frequency accuracy: Lime VCTCXO DAC calibration to the ppb level, RTL-SDR ppm correction, tinySA frequency correction, and an experimental external reference into Lime J4
+  - Noise measurements: ENR characterisation, approximate or calibrated Y-factor LNA noise figure, SDR noise floor, receive-only sky/ground system temperature
+  - Scalar filter sweeps with a noise source and SDR, and tracking-generator sweeps with the tinySA (conducted)
+  - SDR dBFS-to-dBm calibration, gain linearity and MDS tests with a programmable step attenuator
+  - Absolute RF power checks (-60 to -5 dBm accurate) with an AD8318 detector read by the Q6A, and an optional live LNA-overload monitor
+  - Receive-only site surveys for strong signals that could overload the LNAs or SDRs before a satellite pass
+  - Long-term spectrum logging (rtl_power-format) with soapy_power on the existing SDRs
+- **Procedures:**
+  1.
+    - **Name:** P1. VNA calibration and coax/pigtail screening
+    - **Steps:**
+      - Power the LiteVNA 64 from its own battery and let it warm up about 10 minutes. Choose the lowest stimulus level the firmware offers (the level is not published).
+      - Set 100 MHz-3 GHz (or 50 kHz-6.3 GHz for TDR) and 401 or more points. Calibrate SOLT at the far ends of the two test cables: open, short and load on port 1, thru between the cables, isolation with two loads.
+      - Measure each RF1.13 MHF4-SMA pigtail, LMR-240 and RG316 run. Record S21 loss at 137, 145.8, 435, 740, 1700 and 2200 MHz and S11. My suggested pass mark: S11 at or below -20 dB and loss within about 0.5 dB of the cable datasheet.
+      - Switch to TDR/DTF with the cable velocity factor entered, to find a bad crimp or a damaged MHF4 mating.
+      - Save .s2p files (microSD, or NanoVNA-Saver on the Q6A) and build a per-cable loss table for the link budget.
+    - **Needs:**
+      - LiteVNA 64 (or LiteVNA 62)
+      - SOLT calibration kit and two short test cables
+      - SMA adapters
+      - Optional: NanoVNA-Saver on the Q6A
+  2.
+    - **Name:** P2. Filter and bias-tee characterisation (conducted)
+    - **Steps:**
+      - Calibrate as in P1 over the filter's span plus 2x margin, e.g. 50-300 MHz for the FM bandstop or 1.4-2.5 GHz for an L/S SAW.
+      - Insert the DUT with a DC block on any port that has a DC path. Measure S21 (insertion loss, rejection, ripple) and S11/S22 (match).
+      - For bias tees, measure RF-port S21 at 100-200 MHz and 740 MHz. The input files report 3-7 dB loss at VHF on cheap units, so keep only units that pass at your band.
+      - Cross-check one filter with the tinySA tracking generator (sine at -19 dBm or lower, up to 900 MHz) to confirm the VNA calibration.
+      - Archive the .s2p files, and add the loss to the system noise budget (filter loss in front of an LNA adds directly to NF).
+    - **Needs:**
+      - LiteVNA 64
+      - tinySA Ultra+ (optional cross-check)
+      - DC blocks
+      - SAWbird filters, FM bandstop, bias tees
+  3.
+    - **Name:** P3. Powered LNA gain, match and stability (conducted only)
+    - **Steps:**
+      - Calibrate thru with a 20-30 dB pad already in the port-2 path, so the pad is normalised out and port 2 is never overdriven.
+      - Wire VNA port 1 to the DC block, then the LNA input. Wire the LNA output to the bias-tee RF+DC port, then the bias-tee RF port, the pad and port 2. Feed the bias-tee DC port from the pack's 4.5-5 V supply with a current limit.
+      - At the lowest VNA output, read S21 (gain), S11 (input match), S22 and S12 (reverse isolation) at 137, 435, 740, 1700 and 2200 MHz.
+      - Stability check: terminate the LNA input with 50 ohms, power it, and look at the output with the tinySA (through a pad and DC block) for oscillation tones from 100 kHz to 7 GHz.
+      - Record gain G1 for the Y-factor second-stage correction in P7.
+    - **Needs:**
+      - LiteVNA 64
+      - Bias tee
+      - 20-30 dB pad
+      - DC block
+      - 50-ohm termination
+      - tinySA Ultra+
+  4.
+    - **Name:** P4. GPSDO frequency calibration of Lime VCTCXO, RTL-SDR ppm and tinySA (conducted)
+    - **Steps:**
+      - Connect the Leo Bodnar Mini to the Q6A over USB with its active GNSS patch outdoors or at a window. Use lbgpsdo to set drive to 8 mA (about +6.4 dBm) and a frequency whose odd harmonic lands in the band of interest; check exactness with lbgpsdo's frequency-plan analysis. Wait for lock.
+      - Route the output through 60-70 dB of fixed pads plus a DC block into the SDR input. Never connect it to an antenna. Target about -60 to -100 dBm at the SDR.
+      - On the Lime, record I/Q and measure the tone offset with a long FFT (SDR++ or GNU Radio; sub-Hz bins). Adjust 'VCTCXO DAC (volatile)' in LimeSuiteNG until the offset is under about 1 ppb, then write the value to EEPROM XO_DAC. Re-check after 30 minutes at operating temperature.
+      - On the RTL-SDR V4L, measure the offset at about 137 and 435 MHz, compute ppm, and enter it in the SatDump/SDR++ settings.
+      - Feed the same tone (padded) into the tinySA and set its frequency correction.
+      - Optional: once the Lime is disciplined, receive the QO-100 beacon to log the LNB LO drift against the now-trusted Lime clock.
+    - **Needs:**
+      - Leo Bodnar Mini GPSDO + active GNSS patch
+      - lbgpsdo on the Q6A
+      - Fixed attenuators (30+30+10 dB) and DC block
+      - LimeSuiteNG, SDR++/GNU Radio
+  5.
+    - **Name:** P5. LimeSDR Micro external reference (experimental)
+    - **Steps:**
+      - Fit an MHF4-SMA pigtail from Lime J4 to a case 'REF IN' bulkhead.
+      - Set the GPSDO to 30.72 MHz if lbgpsdo shows it is exactly reachable, otherwise 10 MHz. J4 accepts 10-52 MHz at 1.8-3.3 V. Use the minimum drive and a short cable.
+      - Find and set the external-reference option in LimeSuiteNG for the Micro. This is NOT documented on the pages read, so stop here if it does not exist.
+      - Confirm PLL lock and repeat the P4 tone test. The offset should stay within GPSDO accuracy while the case warms up.
+      - If unstable, revert to the VCTCXO plus the EEPROM DAC value (P4). Lime warns that improper clock signals can damage the device.
+    - **Needs:**
+      - Leo Bodnar Mini or LBE-1421
+      - MHF4-SMA pigtail
+      - LimeSuiteNG
+  6.
+    - **Name:** P6. Self-EMI and noise-floor audit
+    - **Steps:**
+      - Terminate each SDR input with 50 ohms and record the noise floor (dBFS at fixed gain) at 137, 145, 435, 740, 1700 and 2200 MHz with soapy_power. Do it with the display on and off, Wi-Fi on and off (nmcli radio wifi off), the USB3 NVMe on and off, and the charger on and off (the A/B matrix from the input files).
+      - Put the antenna back and repeat, to see what couples in through the antenna and feed.
+      - With the case open on the bench, sweep the tinySA (on battery, LNA on) with an H-field probe over the HDMI cable, RA620 bridge, PCIe riser, buck converters, IP2368 and display backlight. Note peaks at frequencies that matter (e.g. 1700 MHz = PCIe refclk x17, Lime 30.72 MHz harmonics).
+      - Apply fixes (ferrites, shield cans, filtered rails, clean-clock EDID) and repeat steps 1-3. Keep the before/after logs.
+    - **Needs:**
+      - 50-ohm terminations
+      - soapy_power / rtl_power on the Q6A
+      - tinySA Ultra+
+      - Near-field probe set
+  7.
+    - **Name:** P7. Y-factor LNA noise figure (conducted; never radiated)
+    - **Steps:**
+      - Use a noise source with an ENR table: calibrated head, or the uncalibrated source with a tinySA-measured ENR. Add a 6-10 dB pad on its output and correct the ENR for the pad.
+      - Calibration step: connect the noise source directly to the measurement receiver (SDR at fixed gain, AGC off, fixed bandwidth, e.g. 100-500 kHz). Read N_on and N_off and compute the receiver's own F2.
+      - Insert the DUT LNA, powered through its bias tee. Read N_on and N_off again. Y = N_on/N_off (linear), F12 = ENR_lin/(Y-1), assuming the source cold temperature is about 290 K.
+      - Second-stage correction: F1 = F12 - (F2-1)/G1, with G1 from P3. NF = 10*log10(F1). Repeat at 137, 435, 740 and 1700 MHz.
+      - Switch the noise source with a GPIO-driven MOSFET and automate the run on the Q6A. Average enough samples that the N_on/N_off scatter is under about 0.05 dB.
+    - **Needs:**
+      - Calibrated noise head + 28 V switched supply, or uncalibrated source + tinySA ENR table
+      - LNA under test + bias tee
+      - RTL-SDR or Lime as the detector, or the tinySA NF menu
+      - Fixed pads
+  8.
+    - **Name:** P8. Receive-only antenna and system-temperature checks (no generator)
+    - **Steps:**
+      - Sky/ground Y-factor: with the full chain (antenna, LNA, filters, SDR) at fixed gain, measure noise power with the antenna pointed at clear zenith sky away from the sun and the galactic plane (cold sky, a few K to about 10 K at L-band, approximate). Then measure it pointed at the ground, or covered with an absorber at ambient (about 290 K).
+      - Tsys = (T_hot - Y*T_cold)/(Y-1), with Y = P_hot/P_cold. Compare antennas and LNA placements by Tsys (and later G/T) instead of by S11.
+      - Cross-check against real signals: compare SNR on the same satellite passes, the QO-100 beacon via the LNB, or the LC76G's reported C/N0 with different patch placements.
+      - Use VNA S11 on an antenna only where local rules explicitly allow low-power test emissions; by default this lab does not radiate.
+    - **Needs:**
+      - Existing antennas, LNA, SDR
+      - soapy_power or GNU Radio power probe
+      - Optional absorber or ground plane
+  9.
+    - **Name:** P9. SDR level calibration and linearity with the step attenuator
+    - **Steps:**
+      - Source: tinySA generator at -40 dBm (±2 dB below 800 MHz), or the GPSDO tone after 60-70 dB of pads, with its level confirmed on the tinySA or AD8318.
+      - Chain: source, then the digital step attenuator (correction table from the VNA), then the SDR input.
+      - Step 0 to 31.5 dB and log dBFS at each SDR gain setting. Fit the linear range, then find compression at the top and the MDS at the bottom.
+      - Store the dBFS-to-dBm tables per band and gain so soapy_power and SatDump logs can be quoted in dBm.
+    - **Needs:**
+      - tinySA Ultra+ or GPSDO + fixed pads
+      - PE4302/HMC472 step attenuator driven from Q6A GPIO
+      - VNA correction table
+      - soapy_power
+  10.
+    - **Name:** P10. Scalar filter sweep with noise source and SDR (no VNA needed)
+    - **Steps:**
+      - Noise source (padded), then the filter under test, then the SDR. Record an averaged spectrum across the span with soapy_power, using hops wider than the filter.
+      - Repeat with a thru barrel in place of the filter. S21 is approximately sweep(DUT) minus sweep(thru), in dB.
+      - Use this for quick field checks of SAW filters or the FM bandstop when the VNA is not with you.
+    - **Needs:**
+      - Noise source
+      - Thru barrel
+      - RTL-SDR or Lime with soapy_power
+  11.
+    - **Name:** P11. Receive-only site overload survey before a pass
+    - **Steps:**
+      - Connect the antenna and LNA, then a 20-30 dB pad and DC block, to the tinySA (or sweep with soapy_power on the SDR).
+      - Sweep 50 MHz-3 GHz and note the strongest carriers (broadcast FM, cellular, Wi-Fi) and their levels at the LNA output.
+      - If any carrier would put the SAWbird+ output near +14 dBm or the Lime input near +10 dBm, add the 6 dB pad, move the FM bandstop in front of the LNA, or change site (rf_frontend guidance).
+      - Optional: leave an AD8318 on a coupler tap after the LNA as a live overload alarm read by the Q6A.
+    - **Needs:**
+      - tinySA Ultra+ or SDR
+      - Fixed pads, DC block
+      - Optional AD8318 + ADC
+- **Rejected:**
+  1.
+    - **Name:** NanoVNA-H4 (Hugen)
+    - **Why:** Officially effective only to about 1.5 GHz (40 dB dynamic range up to 1.5 GHz, with 'substantial noise floor and other uncertainties above 1.5 GHz'), so it fails the 2.4 GHz requirement. Vendors selling '2.7 GHz NanoVNA Plus' are flagged as usually fake. Price not verified.
+  2.
+    - **Name:** NanoVNA-F V3 as the primary VNA
+    - **Why:** Covers 1 MHz-6 GHz in a 125x75x20 mm metal case with 4500 mAh (about 5 h), but costs 2-3x a LiteVNA 64 (Newegg $479.99, date unclear; Gotronik 1,375 zl, May 2025). Its rated dynamic range is lower (S21 65 dB, S11 50 dB), and NanoVNA-Saver names only 'NanoVNA-F', not the F V3, so Q6A software support is unverified. Acceptable only if you specifically want the metal case and the longer battery life.
+  3.
+    - **Name:** SAA-2N / NanoVNA V2 family (NanoRFE V2 Plus4 / Plus4 Pro)
+    - **Why:** Ceiling is 4-4.4 GHz instead of 6 GHz. The V2 Plus4 was $299 and out of stock; the Plus4 Pro is $399 (nanorfe.com/shop). Good dynamic range (90 dB at 1 GHz, 300 g, NanoVNA-QT on Linux), but more expensive than the LiteVNA for less range. The older third-party 'SAA-2N' units were not verified this session (clone risk).
+  4.
+    - **Name:** tinySA Basic
+    - **Why:** Tops out at 960 MHz (and only 350 MHz on the good input), so it cannot see 1.7/2.2 GHz or the self-spurs at 1.7 GHz.
+  5.
+    - **Name:** ImmersionRC RF Power Meter v2
+    - **Why:** Built for FPV transmitters: -20 to +30 dBm, fixed bands (35/72/433/1200/2400/5600-6000 MHz). The -20 dBm floor is useless for receive-chain levels, and retail prices are $99-239 with patchy stock. The tinySA plus an AD8318 cover the lab's needs.
+  6.
+    - **Name:** Leo Bodnar LBE-1420
+    - **Why:** EUR 155 net / EUR 184.45 gross, 1 Hz-1.1 GHz, single output. lbgpsdo does not support it on Linux (only a separate project is acknowledged), and reports on its PPS output conflict. The cheaper Mini (Linux-supported) or the LBE-1421 (Linux-supported, PPS) fits better.
+  7.
+    - **Name:** LimeSDR Micro GNSS variant or its 1PPS input as the reference
+    - **Why:** Per the input files and Lime docs: no NMEA or PPS reaches the host, there is no GPSDO loop in the firmware (the PPS handler is a stub), and the 1PPS input is 'not populated' without moving resistors. GPSDO support 'is not guaranteed'.
+  8.
+    - **Name:** OCXO-based bench GPSDOs (generic Chinese 10 MHz units)
+    - **Why:** Not verified this session. OCXO warm-up power and size do not fit the Q6A case heat and volume budget, and the USB-powered Bodnar Mini (1.25 W or less) already gives a GPS-locked reference. Bench-only at best.
+  9.
+    - **Name:** Dedicated bench frequency counter
+    - **Why:** Redundant. A GPSDO tone plus a long FFT on the SDRs or tinySA gives Hz or better accuracy at UHF/L-band, and the optional RP2040 PPS-gated counter covers clock-level counting. No specific counter model was verified.
+  10.
+    - **Name:** New calibrated lab noise sources (NoiseWave NW3G-CS, kTB k2218A, Pasternack PE85N1005) as the first purchase
+    - **Why:** Prices not published (quote-only), 28 V supply, and accuracy beyond what a hobby receive chain needs. Consider them only after the uncalibrated source and sky/ground method run out of accuracy.
+  11.
+    - **Name:** Amplified AWGN modules (e.g. Maury NC1113A/B, Pasternack PE85N1012)
+    - **Why:** About -10 dBm total output with ±2-2.5 dB flatness at 15 V and 250-300 mA. Too strong and power-hungry for Y-factor work, and dangerous if ever connected to an antenna (wideband jamming). A low-ENR coaxial head is the right tool.
+  12.
+    - **Name:** Premium near-field sets (Langer XF1 $275+, Keysight N9311X-100 $325, ETS-Lindgren 7405 $1,500)
+    - **Why:** Relative EMI hunting in a hobby handheld does not need calibrated antenna factors. Start cheap or DIY, and step up to the Com-Power PS-500 ($109) if needed.
+  13.
+    - **Name:** Antenna S11/VSWR sweeps on air with the VNA or tinySA generator
+    - **Why:** Feeding a stimulus into an antenna radiates it, which breaks the lab's receive-only rule. Use the receive-only checks (P8) by default. Do S11 on antennas only if local rules explicitly allow low-power test emissions.
+  14.
+    - **Name:** Mounting the VNA, tinySA or power meter inside the ASA case
+    - **Why:** Limited internal volume and heat budget, and their own switching supplies and USB activity would add noise next to the SDRs. Keep them as pouch instruments; only the Mini GPSDO (1.25 W or less) and the RP2040 counter are candidates for internal mounting.
+- **Notes:** CORE KIT (about $620-800 before shipping/VAT; accessory prices are estimates): LiteVNA 64, tinySA Ultra+ ZS407, Leo Bodnar Mini GPSDO, uncalibrated noise source, fixed pads, DC blocks and terminations, a cheap or DIY near-field probe set, plus free SDR-analyzer software. EXTENDED: PE4302/HMC472 step attenuator, AD8318 power meter, calibrated noise head. OPTIONAL: RP2040 software GPSDO/counter, LBE-1421.
+  
+  USB/Q6A: the Q6A has 3x USB 2.0 Type-A on one shared FE1.1s hub (shared with the AIC8800 Wi-Fi) plus 1x USB 3.1 (reserved for the NVMe recorder). The RTL-SDR and the IMU puck already take 2 of the 3 USB 2.0 ports, so bench instruments get 1 port. Use a small USB 2.0 hub powered from the pack's 5 V rail, not from Q6A VBUS. The task says about 500 mA per port; compute.json's schematic reading says the WS4612 switches limit at about 2.1 A, so treat 500 mA as the safe planning figure. All the instruments are low-bandwidth USB serial devices with their own batteries. Unplug them during passes, because USB activity adds noise.
+  
+  Software on the Q6A, unverified on arm64: NanoVNA-Saver (pipx, Python >=3.10, PySide6), QtTinySA (PySide6/pyqtgraph, Linux-first, ARM not mentioned), lbgpsdo (python-hidapi), soapy_power. Every instrument also works standalone on its own screen, so no PC is required.
+  
+  Safety and legal (generic, country unknown): the lab is receive-only on air. The VNA port 1, tinySA generator, GPSDO and noise sources are used only into cables, attenuators, filters, LNAs or 50-ohm loads, never into an antenna. Keep the GPSDO (the strongest emitter, +6 to +10 dBm) behind 60-70 dB of pads, and always put DC blocks on bias-tee and LNB lines (tinySA ±5 V DC maximum, LNB 13/18 V). Rules on reception, test emissions and importing test equipment vary by country, so check national rules yourself. Nothing here is aimed at private or military communications. The only carriers used for calibration are GNSS, satellite beacons, or test tones on cables.
+  
+  Unverified or gaps: tinySA size and weight; LiteVNA stimulus level and weight; whether LimeSuiteNG can select the Micro's external reference; whether J3 clock-out is on by default; AliExpress prices for noise sources, probe sets, pads and loads; whether the Mini keeps its settings after power-off; Eleshop LiteVNA prices (seen only in a search snippet, page returned 403). Prices are as fetched 18 Oct 2026; UAH conversions use 44.86 UAH/USD from the input files. All 12 WebSearch calls in the budget were used; several primary pages (Eleshop, ImmersionRC, analog.com, Tekbox, Switch Science) were unreachable (403/404/429/503).
+
 ## small:lband_sband (run `wf_41027870-8e7`)
 
 - **Band group:** L-band 1.5-1.7 GHz and S-band 2.2-2.4 GHz with antennas of at most 12 cm (STRICT) or 20 cm (SMALL). Dishes and anything tens of cm deployed are EXCLUDED, including the foldable helicones, the 11-turn helix and the 2x2 helix arrays. Rule interpretation as given: STRICT means the largest deployed dimension is about 12 cm or less; SMALL means about 20 cm or less; foldable or telescopic antennas that are larger when deployed are excluded and appear only in the borderline note.
