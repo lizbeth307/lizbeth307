@@ -43960,6 +43960,152 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Limits of this pass: my first WebSearch was refused because the shared search budget was already used up, so I ran no searches. Everything came from direct WebFetch of primary pages plus cached ISDT manuals: the 608PD manual at /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/s3lab/dl/shop/isdt608.pdf, read as page renders, and the Q6 Nano manual at /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/p5chg/q6n/q6nano.pdf, which matches https://www.isdt.co/down/pdf/Q6nano_EN.pdf. I found no independent bench measurements of the 608PD or of any clone (HKJ/lygte-info does not review RC balance chargers). A follow-up with search budget should look for RCGroups or forum DMM comparisons of the 608PD and Q6 Nano and for current used listings.
 
+## searchA:isdt_608pd_balance_charger (run `wf_e5582d4c-0a2`)
+
+- **Part:** ISDT 608PD balance charger (bench tier, qty 1). Role: monthly 4.20 V/cell (LiPo mode) top-up and balance of the 4S1P Molicel P50B pack through the node-N service port (5 A fuse, after the INA228 shunt), main switch OFF. It is also a goods-in check tool (per-cell voltage and IR display). It never connects to the Q6A, so Ubuntu arm64 drivers do not apply.
+- **Current price usd:** $49.99 at DarwinFPV (re-audit 18 Oct 2026, in stock; today's fetch returned HTTP 429, so not re-checked). The STACK.md figure of $32.99-42.99 is out of date. Other sellers of the same SKU found today: Pyrodrone US $42.99, Unmanned Tech UK GBP 28.89 incl. UK VAT ($38.48), FPV24 DE EUR 43.90 incl. 19% VAT ($49.35). Rates used, as in the stack: 1 EUR = 1.1241 USD, 1 GBP = 1.3318 USD.
+- **Critical specs:**
+  - 4S Li-ion balance charge in LiPo mode, CV 4.20 V/cell (P50B maximum), with a cell-count error alarm. 608PD: LiFe/LiPo/LiHV 1-6S (isdt.co). ISDT's preset table (Q6 Nano manual) gives LiPo 4.20 V and LiIon 4.10 V.
+  - Per-cell voltage accuracy at or better than about +/-0.01 V, with user calibration. The Daly OVP is 4.25 +/-0.05 V, so its lowest trip point is 4.20 V and any charger overshoot can trip the BMS. 608PD: cells read within 0.002-0.011 V of a calibrated meter (Oscar Liang test); calibration through the app.
+  - Balance current, 608PD 0.8 A/cell max (published). Balance end accuracy is not published for the 608PD. In this stack a higher balance current only shortens the monthly balance (small drift); a worn cell after about 300 cycles makes it matter more.
+  - Charge current settable from about 0.5 to 3 A. The service-port fuse is 5 A, and the IP2368 already charges at 3 A. 608PD: 0.5-10 A.
+  - Input from the stack's own sources with no extra parts: USB-C PD from the Anker 737 or a 60 W or larger PD adapter (4S at 2.5-3 A needs about 45-55 W), plus a DC XT60 fallback. 608PD: USB-C PD3.1 5-28 V 140 W, DC 5-30 V 240 W; pulled about 60 W from a 65 W adapter (Oscar Liang).
+  - Per-cell voltage and internal-resistance display on a readable screen, for drift and goods-in checks. 608PD: 1.5in IPS with per-cell V and IR.
+  - Storage or discharge to about 3.8 V/cell, a nice-to-have for the stack's 50% storage rule. 608PD: Oscar Liang says it lacks discharge and storage modes; lowest end voltage 4.15 V/cell (July 2024); a commenter says newer firmware allows 3.7 V (unverified).
+  - RF emission: a radio-free charger is better for the quiet lab. The 608PD has Bluetooth for the ISD Link app (FPV24 listing and Oscar Liang), so the existing rule stays: charge at home with the receiver off, and run the tinySA 2.4 GHz scan.
+  - Protections and environment: abnormal-voltage and cell-count alarms, temperature-controlled fan, 0-40 C operating range.
+  - Connectors: XT60 output plus JST-XH balance port. Either way it needs an XT60-to-XT30 lead to the service port and a 5-pin XH lead from the pack.
+  - Firmware update without a phone: 608PD uses ISD Go for Windows over USB.
+  - Genuine unit from an established dealer, CE/UKCA, sold legally in the EU/UK, with warranty. Bench size and weight are not critical (608PD 85 g).
+- **Candidates:**
+  1.
+    - **Name:** ISDT 608PD, same SKU (IS-608PD), Unmanned Tech UK
+    - **Kind:** current_part
+    - **Price usd:** GBP 28.89 incl. UK VAT = $38.48. EU orders: UK VAT is removed (GBP 24.08 = $32.06), then destination VAT (and any duty) is collected at checkout, DDP. UK-to-EU shipping cost not verified.
+    - **Spec comparison:** Identical part: vendor ISDT, same spec text (DC 5-30 V/240 W, USB-C 5-28 V/140 W, 0.5-10 A, 0.8 A/cell balance, 85 g).
+    - **Worse in:** Nothing in the specs. Risks are about the seller: the page shows 'In stock' but also a backorder notice, so stock is unconfirmed. Authorized-dealer status not verified. Seller is in the UK, not the EU (customs step, DDP).
+    - **Compatibility:** Same as the current pick, drop-in.
+    - **Risks:** Shipping UK to EU plus destination VAT may cancel most of the saving. Compare the checkout total with FPV24. Bluetooth is still present, as on every 608PD.
+    - **Seller url:** https://www.unmannedtechshop.co.uk/products/isdt-608pd-240w-dc-battery-charger
+    - **Sources:**
+      - https://www.unmannedtechshop.co.uk/products/isdt-608pd-240w-dc-battery-charger
+      - https://www.unmannedtechshop.co.uk/policies/shipping-policy
+  2.
+    - **Name:** ISDT 608PD, same SKU, Pyrodrone (US)
+    - **Kind:** current_part
+    - **Price usd:** $42.99 (in stock, SKU T3-12597). An EU buyer adds import VAT of about 20% plus shipping (model), which gives more than about $52 landed.
+    - **Spec comparison:** Identical part, same published spec.
+    - **Worse in:** Nothing in the specs. For an EU buyer it is a US import: VAT and customs on arrival, slower warranty path.
+    - **Compatibility:** Same as the current pick.
+    - **Risks:** Landed EU cost is probably above FPV24. Cheapest verified US price.
+    - **Seller url:** https://pyrodrone.com/products/isdt-608pd-dc-240w-10a-lipo-1-6s-usb-c-universal-pocket-charger
+    - **Sources:**
+      - https://pyrodrone.com/products/isdt-608pd-dc-240w-10a-lipo-1-6s-usb-c-universal-pocket-charger
+  3.
+    - **Name:** ISDT 608PD, same SKU, FPV24 (Germany, EU seller)
+    - **Kind:** current_part
+    - **Price usd:** EUR 43.90 incl. 19% VAT = $49.35 (EUR 36.89 = $41.47 ex VAT). Listing shows 10 in stock, next-day dispatch. Shipping cost not verified.
+    - **Spec comparison:** Identical part (EAN 6971337052205). The listing confirms 0.8 A/cell balance and Bluetooth with the iSD Link app.
+    - **Worse in:** Nothing. About the same as DarwinFPV's $49.99, but this price already includes EU VAT, so it is the cheapest verified landed price inside the EU.
+    - **Compatibility:** Same as the current pick.
+    - **Risks:** None beyond the part's own Bluetooth.
+    - **Seller url:** https://www.fpv24.com/de/isdt/isdt-608pd-lipo-ladegeraet-1-6s-240w-10a-usb-c-pd-xt60-smart-charger
+    - **Sources:**
+      - https://www.fpv24.com/de/isdt/isdt-608pd-lipo-ladegeraet-1-6s-240w-10a-usb-c-pd-xt60-smart-charger
+  4.
+    - **Name:** ISDT 608PD, AliExpress listings (sellers not identified)
+    - **Kind:** current_part
+    - **Price usd:** $38.64-60.09. For example $40.30 (600+ sold) and $44.51 (227 sold), as served to a US proxy. Store names, EU VAT and shipping not visible. Unverified.
+    - **Spec comparison:** Claims to be the same part.
+    - **Worse in:** Authenticity cannot be confirmed: no store name was visible, so it cannot be tied to the ISDT official store. Counterfeit or grey-unit risk.
+    - **Compatibility:** Same if genuine.
+    - **Risks:** Counterfeit risk. Use only if the listing is in the ISDT official AliExpress store, which is not verified here.
+    - **Seller url:** https://www.aliexpress.com/w/wholesale-isdt-608pd.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-isdt-608pd.html
+  5.
+    - **Name:** ISDT 608PD used, 'Good' condition, Unmanned Tech
+    - **Kind:** used
+    - **Price usd:** GBP 19.99 = $26.62 (currently NOT available)
+    - **Spec comparison:** Same part, cosmetic scratches.
+    - **Worse in:** Out of stock. Used: unknown history, shorter or no warranty.
+    - **Compatibility:** Same.
+    - **Risks:** Not purchasable today.
+    - **Seller url:** https://www.unmannedtechshop.co.uk/products/isdt-608pd-smart-charger-character-building-scratches-included-good
+    - **Sources:**
+      - https://www.unmannedtechshop.co.uk/search/suggest.json?q=608PD&resources[type]=product
+  6.
+    - **Name:** ToolkitRC M4 Pocket (1-4S, 80 W)
+    - **Kind:** other_brand
+    - **Price usd:** EUR 32.90 incl. VAT at FPV24 = $36.98 (stock not stated). $38.99 at Pyrodrone (in stock). GBP 29.80 = $39.69 at Unmanned Tech (out of stock).
+    - **Spec comparison:** Inputs: XT60 7-25 V and USB-C 5-20 V (Pyrodrone says 7-20 V), QC/PD. 4S covered (1-4S). Charge 0.5-5 A, 80 W max (enough for 4S at 3 A, about 50 W). Balance 400 mA at 4.20 V vs 800 mA. Published balance accuracy below 0.005 V at 4.2 V (608PD publishes none). Has 'LiPo Storage' mode (608PD lacks one, per review). IPS 1.54in 240x240. 75 g. No wireless listed.
+    - **Worse in:** Balance current is half (0.4 vs 0.8 A/cell). Power 80 W vs 140 W USB-C / 240 W DC (not limiting here). Only 1-4S. No IR measurement or discharge published. Fails the strict not-worse rule on balance current.
+    - **Compatibility:** USB-C PD input works with the stack's sources. XT60 output (Unmanned Tech variant lists XT60/XT30). XH balance port.
+    - **Risks:** Radio-free is not stated outright, only absent from the spec. Cell accuracy has no independent measurement in this pass.
+    - **Seller url:** https://www.fpv24.com/de/toolkitrc/toolkitrc-m4-pocket-lipo-1-4s-5a-ladegeraet-dc-7-25v-usb-c
+    - **Sources:**
+      - https://www.toolkitrc.com/m4-pocket/
+      - https://pyrodrone.com/products/toolkitrc-m4-pocket-80w-5a-1-4s-compact-balance-charger-w-built-in-usb-c-input-output
+      - https://www.unmannedtechshop.co.uk/products/toolkitrc-m4-pocket-charger-80w-xt60-xt30
+  7.
+    - **Name:** SkyRC B6neo 2 (SK-100225)
+    - **Kind:** other_brand
+    - **Price usd:** EUR 40.90 incl. VAT at FPV24 = $45.98 (stock not stated). GBP 32.39 = $43.14 at Unmanned Tech (out of stock).
+    - **Spec comparison:** DC 7-28 V 300 W, 0.2-15 A. PD3.0/QC input 12-20 V, 80 W (608PD: PD3.1 140 W). Balance 550 mA vs 800 mA. Has storage mode, discharge 0.1-2.0 A / 24 W, and a digital power supply. 1.77in TN display vs 608PD IPS. 82 g. Firmware via USB-C with Charger Master. No Bluetooth stated.
+    - **Worse in:** Balance current (0.55 vs 0.8 A/cell). Display (TN vs IPS). PD input power (80 vs 140 W; still enough for 4S at 3 A). Voltage accuracy and IR display not published. Fails the strict not-worse rule.
+    - **Compatibility:** USB-C PD input works with the stack's sources. XT60 output, XH balance port.
+    - **Risks:** Only about $3 cheaper than FPV24's 608PD within the EU.
+    - **Seller url:** https://www.fpv24.com/de/skyrc/skyrc-b6neo-2-dc-ladegeraet-grau-lipo-1-6s-15a-300w
+    - **Sources:**
+      - https://www.skyrc.com/b6neo-series
+      - https://www.unmannedtechshop.co.uk/products/skyrc-b6neo-dc-200w-charger
+  8.
+    - **Name:** SkyRC B6neo (original, SK-100198)
+    - **Kind:** other_brand
+    - **Price usd:** GBP 29.95 = $39.89 at Unmanned Tech (out of stock). No EU price verified.
+    - **Spec comparison:** DC 200 W / PD 80 W (12-20 V), 0.2-10 A, balance 500 mA, storage mode, discharge 2 A / 29.5 W, 1.77in TN display.
+    - **Worse in:** Balance current (0.5 vs 0.8 A). TN display. Lower PD power. Accuracy not published. Out of stock.
+    - **Compatibility:** USB-C PD input works with the stack's sources.
+    - **Risks:** Not purchasable at the checked seller.
+    - **Seller url:** https://www.unmannedtechshop.co.uk/products/skyrc-b6-neo-200w-dc-80w-usb-c-pd-portable-smart-battery-charger-1-6s
+    - **Sources:**
+      - https://www.skyrc.com/b6neo-series
+  9.
+    - **Name:** ISDT PD60 (same vendor, smaller SKU)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $26.39 (AliExpress 'ISDT URUAV PD60' listing, seller unverified)
+    - **Spec comparison:** USB-C PD/QC input 5-20 V, 60 W. LiPo/LiHV 1-4S. Charge current in fixed steps of 1/2/3/6 A. Balance 0.5 A/cell. No LCD, LED indicators only. No app or wireless listed (radio-free is better). PC firmware and calibration tool.
+    - **Worse in:** Balance current (0.5 vs 0.8 A). No per-cell voltage or IR display. 60 W ceiling. No storage or discharge listed. Not not-worse.
+    - **Compatibility:** USB-C PD works. 4S at 3 A is near its 60 W limit.
+    - **Risks:** AliExpress seller unverified.
+    - **Seller url:** https://www.aliexpress.com/w/wholesale-isdt-608pd.html
+    - **Sources:**
+      - https://www.isdt.co/pd60.html
+  10.
+    - **Name:** ISDT Q6 Nano (same vendor)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** GBP 30.41 = $40.50 at Unmanned Tech (out of stock)
+    - **Spec comparison:** DC 10-30 V only, 200 W, 0.1-8 A. Balance 0.5 A/cell. Has storage, discharge 1 A / 10 W, DC power, per-cell V and IR display, calibration. 120 g.
+    - **Worse in:** No USB-C PD input, so it needs a PD-trigger lead or a DC supply (an extra part). Balance current 0.5 vs 0.8 A. Not cheaper than the 608PD at the same seller.
+    - **Compatibility:** Not powered directly by the stack's USB-C sources.
+    - **Risks:** Out of stock.
+    - **Seller url:** https://www.unmannedtechshop.co.uk/products/isdt-q6-nano-200w-dc-charger
+    - **Sources:**
+      - https://www.isdt.co/down/pdf/Q6nano_EN.pdf
+- **Notes:** VERDICT: keep the ISDT 608PD. I found no cheaper charger from another brand that is not worse. Every cheaper one I checked balances at a lower current: ToolkitRC M4 Pocket 0.4 A, SkyRC B6neo 0.5 A, B6neo 2 0.55 A, B6neo+ 0.6 A, ISDT PD60 0.5 A, ISDT Q6 Nano 0.5 A (also DC-only), ToolkitRC M7 0.4 A (DC-only), ToolkitRC M4AC 0.2 A. The only models that balance at 0.8 A or more are ToolkitRC M6AC and M8P (1.0 A). Neither has a USB-C PD input, and they are bigger chargers in higher price classes (M8AC is $121.99 at Pyrodrone); I did not get M6AC or M8P prices. Under the strict rule, the saving comes only from buying the same SKU from a cheaper seller.
+  
+  BUY: in the EU, FPV24 DE at EUR 43.90 incl. VAT ($49.35, 10 in stock) is the cheapest verified landed price. Unmanned Tech UK lists it at GBP 28.89 incl. UK VAT ($38.48; GBP 24.08 / $32.06 ex VAT for EU orders, destination VAT collected DDP). Its stock is unclear because the page also shows a backorder notice, and UK-to-EU shipping is not verified, so compare checkout totals. Pyrodrone US at $42.99 is the cheapest verified USD price. Update STACK.md: the $32.99-42.99 range is stale; the current figure is $42.99-49.99 USD, or EUR 43.90 incl. VAT in the EU.
+  
+  SPECS FOUND IN THIS PASS that the stack should carry:
+  (1) The 608PD Bluetooth is now stated by two sources: the FPV24 listing and the Oscar Liang review, where the ISD Link app connects over Bluetooth. Keep the tinySA 2.4 GHz scan and the rule to charge at home with the receiver off.
+  (2) Oscar Liang reports the 608PD has no storage or discharge mode; the lowest end voltage was 4.15 V/cell in July 2024, and a commenter says newer firmware allows 3.7 V (unverified). The 50% storage state therefore cannot rely on this charger. Run the receiver down to it, or verify the newer firmware.
+  (3) Measured cell readings were within 0.002-0.011 V of a calibrated meter, and the app offers voltage calibration. Because the Daly OVP can trip at 4.20 V (4.25 - 0.05), calibrate the charger against the bench DMM before the first 4.20 V balance.
+  (4) The charger has an XT60 output, so add an XT60-to-XT30 lead for the node-N service port.
+  
+  TRADE-OFF OPTION, not a not-worse analog: the ToolkitRC M4 Pocket (EUR 32.90 incl. VAT, $36.98) is better in three ways: it has a storage mode, publishes balance accuracy below 0.005 V, and lists no radio. It is worse in balance current (0.4 vs 0.8 A), power (80 W), and has no IR display listed. Choose it only if the user explicitly accepts the slower balance in exchange for a radio-free unit with a storage mode.
+  
+  METHOD LIMITS: WebSearch returned budget-exhausted on the first call (the limit is shared across agents), so this pass used WebFetch and curl on primary pages and the stores' own product or search endpoints: isdt.co, toolkitrc.com, skyrc.com, Pyrodrone, Unmanned Tech, FPV24, AliExpress, Oscar Liang. DarwinFPV and RaceDayQuads returned HTTP 429. GetFPV and n-factory returned 403. No independent measurements were found for the M4 Pocket or the B6neo-series accuracy. A follow-up with search budget could check the ISDT official AliExpress store price with EU VAT and HOTA models, which I could not reach (hotatech.com is a parked domain).
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
