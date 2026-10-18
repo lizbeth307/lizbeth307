@@ -2453,6 +2453,144 @@
   
   Method limits: the WebSearch budget for this turn was already used up after my first query, so I worked only from WebFetch on primary pages (TI, Diodes, onsemi, Same Sky, DigiKey US/DE, TME, Adafruit). Mouser returned 503, the LCSC pages and API were blocked, the NXP datasheet returned 404/403, and Reichelt returned 404.
 
+## searchA:adafruit_ch334f_mtt_hub_5997 (run `wf_071e1025-145`)
+
+- **Part:** Adafruit CH334F Mini 4-Port USB Hub Breakout (Adafruit PID 5997), the internal USB 2.0 MTT hub behind FE1.1s P3. Qty 2 (1 fitted, 1 spare). In the with-Lime build its ports are: H1 reserve (Pico native USB only if UART7 fails), H2 RTL-A (V4L), H3 LAB USB-A through a TPS2553 0.75 A switch, H4 Airspy HF+ through a load switch, LC filter and Mix-31 ferrite. Its 5V pad is fed from LAB5 and the Q6A VBUS is left unconnected.
+- **Current price usd:** 4.95 each, 9.90 for 2 (adafruit.com, in stock, checked 18 Oct 2026; the 10-99 tier is $4.46, which does not apply to qty 2). DigiKey US 1528-5997-ND is also $4.95 with 829 in stock. DigiKey DE is EUR 4.35 ex VAT, EUR 5.18 incl. 19% DE VAT.
+- **Critical specs:**
+  - USB 2.0 hub: High-Speed 480 Mbit/s upstream; HS, FS and LS downstream (CH334F per the WCH CH334/335 datasheet V2.5)
+  - At least 4 downstream ports. In the with-Lime map 3 are used (RTL-A, LAB USB-A, Airspy HF+) and H1 is the Pico-USB reserve, so a 2-port board fails
+  - MTT, meaning one transaction translator per port. Full-speed devices such as a Pico CDC fallback or an FS instrument on H3 must not share one TT with each other. CH334F is MTT per the datasheet's Table 1-1
+  - Power path: the hub chip runs from an external 5 V pad (LAB5) with upstream VBUS left unconnected, so nothing back-feeds the Q6A. On the 5997 the header 5V pin is the downstream VBUS net, and the chip's V5 is fed through PTC2 (5V/2A). V5 range is 4.5-5.25 V
+  - Hub self-consumption at most about 85 mA with 4 HS downstream ports active (datasheet ICC typ.), which matters for the LAB5 budget and heat
+  - Downstream ports are bare 4-pin solder pads (5V/D+/D-/GND), so per-port VBUS can be taken from the external TPS2553 or load switch on H3/H4 and pigtails fit the case. Bulky USB-A receptacles or cable hubs do not fit
+  - Clock: 12 MHz crystal (on the 5997 schematic) with an internal PLL to 480 MHz. This is the spur set already A/B-tested in the stack plan, so a different clocking scheme would need a new spur A/B
+  - ESD: 6 kV HBM (Class 3A) on the USB pins
+  - Port LEDs can be disabled (cuttable LEDs jumper), which matters for light leaks and EMI in the sealed case
+  - Chip temperature range -40 to 85 C
+  - Size 31.6 x 20.4 x 4.8 mm, 2.9 g, 4 mounting holes
+  - Driver-free: standard USB hub class under usbcore on Ubuntu 24.04 arm64
+  - Genuine WCH silicon from an established vendor (Adafruit), RoHS, available in the EU
+- **Candidates:**
+  1.
+    - **Name:** Same part, Adafruit 5997 via DigiKey US (1528-5997-ND)
+    - **Kind:** current_part
+    - **Price usd:** 4.95 each (9.90 for 2), excl. tax; 829 in stock
+    - **Spec comparison:** Identical part.
+    - **Worse in:** Nothing. It is not cheaper either.
+    - **Compatibility:** Identical
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=adafruit%205997
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=adafruit%205997
+    - **Risks:** None beyond what the current pick already has.
+  2.
+    - **Name:** Same part, Adafruit 5997 via DigiKey DE (EU)
+    - **Kind:** current_part
+    - **Price usd:** EUR 4.35 ex VAT / EUR 5.18 incl. 19% DE VAT each. About 4.89 USD ex VAT at 1.124 USD/EUR, the rate implied by the earlier DigiKey conversions in this audit; the FX rate is NOT verified for Oct 2026
+    - **Spec comparison:** Identical part.
+    - **Worse in:** Nothing. The price is effectively the same as $4.95: the difference is FX noise, not a real saving.
+    - **Compatibility:** Identical
+    - **Seller url:** https://www.digikey.de/en/products/result?keywords=1528-5997-ND
+    - **Sources:**
+      - https://www.digikey.de/en/products/result?keywords=1528-5997-ND
+    - **Risks:** The cost depends on FX. It is only useful when consolidated with the planned DigiKey order (PEC11R, KSC641J, ferrites). The EU free-shipping and DDP threshold was not re-checked in this run.
+  3.
+    - **Name:** Same part, Adafruit 5997 (ADA5997) at BerryBase (DE)
+    - **Kind:** current_part
+    - **Price usd:** EUR 5.45 incl. 19% VAT (about EUR 4.58 net, about 5.15 USD net at 1.124, FX not verified); 6 in stock, shipping extra
+    - **Spec comparison:** Identical part.
+    - **Worse in:** Nothing in specs. It is not cheaper than Adafruit or DigiKey.
+    - **Compatibility:** Identical
+    - **Seller url:** https://www.berrybase.de/en/adafruit-ch334f-mini-4-port-usb-hub-breakout-usb-2.1-mtt-mode-4-pin-ports
+    - **Sources:**
+      - https://www.berrybase.de/en/search?search=CH334F
+    - **Risks:** Low stock (6). Shipping is not included.
+  4.
+    - **Name:** Same part, Adafruit 5997 at The Pi Hut (UK), the 'budget alternative' already noted
+    - **Kind:** current_part
+    - **Price usd:** GBP 4.80 incl. UK VAT (GBP 4.00 net) as recorded in final-checks.md. NOT re-verified in this run (the page returned HTTP 429). In USD that is about 5.3 net, which is not cheaper (GBP FX not verified)
+    - **Spec comparison:** Identical part.
+    - **Worse in:** Nothing in specs. It is not cheaper in USD, and a UK-to-EU order adds import VAT and handling on delivery.
+    - **Compatibility:** Identical
+    - **Seller url:** https://thepihut.com/products/adafruit-ch334f-mini-4-port-usb-hub-breakout
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/final-checks.md (line 4849)
+    - **Risks:** Price and stock unverified. The product URL is my guess and was not confirmed (HTTP 429). There is post-Brexit import friction for an EU buyer.
+  5.
+    - **Name:** Adafruit CH334F Mini 2-Port USB Hub Breakout (PID 5999)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 4.50 at Adafruit and DigiKey (Kiwi Electronics EUR 4.19 ex VAT, in stock; BerryBase EUR 4.50, unavailable)
+    - **Spec comparison:** Same CH334F chip in MTT mode, same 12 MHz crystal and PLL, 6 kV ESD and per-port LEDs. It is 24.0 x 20.1 x 5.0 mm and 2.2 g, which is smaller. It has only 2 usable downstream ports; the page says only 2 of the 4 pad sets are supported.
+    - **Worse in:** Port count: 2 vs 4. The with-Lime map needs H2 RTL-A, H3 LAB USB-A and H4 HF+, plus the H1 reserve. Rejected: it fails a hard functional spec to save $0.45 per board.
+    - **Compatibility:** Same pads and power scheme, but too few ports for the stack.
+    - **Seller url:** https://www.adafruit.com/product/5999
+    - **Sources:**
+      - https://www.adafruit.com/product/5999
+      - https://www.kiwi-electronics.com/en/adafruit-ch334f-mini-2-port-usb-hub-breakout-20627
+    - **Risks:** It would force a second hub tier or dropping a device. Not acceptable.
+  6.
+    - **Name:** Olimex USB-HUB (4x USB-A, USB 2.0, cable input)
+    - **Kind:** other_brand
+    - **Price usd:** EUR 3.50 (about 3.93 USD at 1.124, FX not verified; the page does not say whether VAT is included); in stock
+    - **Spec comparison:** Olimex (Bulgaria, EU) is an established brand. The page states only USB 2.0, a USB-A cable input and four USB-A outputs. It gives no hub chip, no MTT/STT, no crystal, no ESD rating, no dimensions, no mounting holes and no schematic; only EU and UKCA declarations of conformity are linked. The page also warns that it 'will not work correctly with Neo6502'.
+    - **Worse in:** MTT is not published, so the not-worse test cannot be shown. There are no solder pads and no separate 5 V input, so it cannot be fed from LAB5 with Q6A VBUS cut without modification. The USB-A receptacles and cable form are bulkier than 31.6 x 20.4 mm. There is no published spec or schematic. Rejected.
+    - **Compatibility:** Electrically a standard USB hub (driver-free), but it does not fit the pigtail, LAB5-feed and external per-port switch scheme without rework.
+    - **Seller url:** https://www.olimex.com/Products/USB-Modules/Hub/USB-HUB/
+    - **Sources:**
+      - https://www.olimex.com/Products/USB-Modules/
+      - https://www.olimex.com/Products/USB-Modules/Hub/USB-HUB/
+    - **Risks:** Unknown chip, possibly a single-TT hub. The Neo6502 warning hints at compatibility quirks. Modding a consumer hub lowers build quality.
+  7.
+    - **Name:** Olimex USB-C-HUB (USB 3.0, USB-C plug, 4x USB-A)
+    - **Kind:** other_brand
+    - **Price usd:** EUR 3.50 (about 3.93 USD, FX not verified; VAT status not stated); in stock
+    - **Spec comparison:** It is a USB 3.0 cable hub, 84 x 17 mm with a 10 cm cable. The page gives no hub chip, no TT mode, no power input option and no schematic. USB 3.0 adds nothing here because the upstream (FE1.1s P3) is USB 2.0, and the USB 2.0 TT mode of its internal USB2 hub is unpublished.
+    - **Worse in:** MTT is not published. It is about 84 mm long against 31.6 mm, has no pads and no external 5 V feed, and USB 3.0 SuperSpeed lines would be a new broadband noise source if ever linked. Rejected.
+    - **Compatibility:** Does not fit the internal pigtail and LAB5-feed scheme.
+    - **Seller url:** https://www.olimex.com/Products/USB-Modules/Hub/USB-C-HUB/
+    - **Sources:**
+      - https://www.olimex.com/Products/USB-Modules/Hub/USB-C-HUB/
+    - **Risks:** Unknown silicon, size and possible EMI.
+- **Notes:** VERDICT (angle A): KEEP the Adafruit CH334F 5997 at $4.95 each ($9.90 for 2). I found no cheaper part that is not worse.
+  
+  Same part from other sellers:
+  - DigiKey US: $4.95, 829 in stock.
+  - DigiKey DE: EUR 4.35 net, about $4.89 at an unverified FX rate, so the same within FX noise.
+  - BerryBase: EUR 5.45 incl. VAT.
+  - The Pi Hut: GBP 4.80 incl. VAT, not re-verified (HTTP 429).
+  - Pimoroni: pre-order, no price shown.
+  - TME: no listing found.
+  - Mouser: page returned 503, unverified.
+  - None of these is cheaper in USD.
+  - Adafruit's 10+ tier is $4.46, but 10 boards cost $44.60, so it does not help at qty 2.
+  - For an EU buyer the landed cost is close everywhere. Adafruit direct plus about 19-27% import VAT is about $5.9-6.3, against DigiKey DE at EUR 5.18 incl. DE VAT. Buy wherever the rest of the order consolidates: Adafruit or DigiKey EU.
+  
+  Cheaper options that fail:
+  - Adafruit 5999 2-port ($4.50): only 2 ports.
+  - Olimex USB-HUB and USB-C-HUB (EUR 3.50): established EU brand, but no published chip or MTT and no pads or external 5 V feed. They are cable-form consumer hubs.
+  
+  Considered but not cheaper:
+  - Waveshare's cheapest 4-port board (USB HUB HAT (B), $6.31-6.99, chip not stated on the page).
+  - Every other Waveshare hub ($8.31+).
+  - DFRobot has no hub listed, so no candidate there.
+  
+  What I confirmed from primary documents:
+  - WCH CH334/335 datasheet V2.5: every CH334/CH335 variant is MTT. CH334F has gang (not per-port) over-current detection and power control. ICC is about 85 mA typ. with 4 HS downstream ports. V5 range is 4.5-5.25 V, ESD 6 kV HBM, temperature -40 to 85 C. Crystal-free operation is optional per WCH.
+  - Adafruit schematic rev C: 12 MHz crystal fitted. USB-C VBUS goes to the chip V5 and through PTC2 (5V/2A) to the VBUS net. The header 5V pin (JP5-1) and all four downstream port VBUS pads are on that VBUS net, each with a 10 uF cap. The LEDs have a cut jumper.
+  - Integration consequence: LAB5 fed into the header 5V pin also lands directly on all downstream VBUS pads. If H3/H4 VBUS should come only from the TPS2553 or load switch, those pigtails must not use the hub's port 5V pads.
+  
+  Not covered by angle A, and left for the generic/DIY angles:
+  - Bare CH334F or CH334P modules, and an LCSC chip-down design. Any of these must prove the same MTT, external 5V feed, crystal clock (or a re-run spur A/B) and genuine WCH silicon.
+  
+  Limits of this run:
+  - The shared WebSearch budget was used up after 1 call, so my coverage came only from direct WebFetch of primary and distributor pages.
+  - Pages tried but not reachable: Mouser (503), The Pi Hut (429), WCH product pages (JS only).
+  - FX rates (USD/EUR about 1.124, USD/GBP) are assumptions and were not verified.
+  
+  Datasheet and schematic copies: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/hub_ch334_dl/ch334ds1.pdf and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/hub_ch334_dl/schem4_orig.png
+  
+  Sources: https://www.adafruit.com/product/5997 ; https://learn.adafruit.com/adafruit-ch334f-mini-4-port-usb-hub-breakout/pinouts ; https://learn.adafruit.com/adafruit-ch334f-mini-4-port-usb-hub-breakout/downloads ; https://cdn-learn.adafruit.com/assets/assets/000/131/435/original/CH334DS1.PDF ; https://cdn-learn.adafruit.com/assets/assets/000/131/436/original/components_schem.png ; https://www.digikey.com/en/products/result?keywords=adafruit%205997 ; https://www.digikey.de/en/products/result?keywords=1528-5997-ND ; https://www.berrybase.de/en/search?search=CH334F ; https://shop.pimoroni.com/products/adafruit-ch334f-mini-4-port-usb-hub-breakout ; https://www.adafruit.com/product/5999 ; https://www.olimex.com/Products/USB-Modules/ ; https://www.waveshare.com/catalogsearch/result/?q=usb+hub ; https://www.waveshare.com/usb-hub-hat-b.htm
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
@@ -18659,6 +18797,161 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - INA237 offset and gain figures are unverified.
   - EUR/USD conversions use an assumed rate, not a verified one.
   - One correction for the stack text: the Adafruit learn guide gives 0x40 as the default address with A0/A1 open. It also confirms 10k SDA/SCL pull-ups and an 'on' LED, matching the plan to remove R6/R7.
+
+## searchB:pololu_2813_hp_pushbutton_power_switch (run `wf_a268b76e-da0`)
+
+- **Part:** Pololu #2813 Big Pushbutton Power Switch with Reverse Voltage Protection, HP (main switch, node N to SW, 4S Li-ion; qty 2, 1 spare)
+- **Current price usd:** 8.95 each, 17.90 for 2 (8.23 each at 5+, which does not help at qty 2). Pololu direct, stock 'Rationed', backorders allowed, verified on pololu.com 18 Oct 2026. EU distributor prices with VAT were not checked: RobotShop EU returned 403 behind Cloudflare and the WebSearch budget was used up.
+- **Critical specs:**
+  - Voltage: recommended operating range at least 32 V and absolute maximum at least 40 V (#2813: 4.5-32 V recommended, 40 V abs max). The stack needs 13.2-16.4 V in use and 16.8 V on VIN while OFF during the monthly balance, plus surge up to the SMBJ17A clamp on N (about 27-28 V, SMBJ17A class, not re-fetched).
+  - Reverse-voltage protection with back-to-back FETs. STACK J21 row credits the #2813 for reverse polarity.
+  - Conduction loss: combined MOSFET RDS(on) max at most 8.6 mOhm at 10 V gate drive and 13 mOhm at 4.5 V. That gives about 40 mV and 0.18 W at the 4.6 A with-Lime peak. The drop matters because it eats LNB TPS7A4701 headroom near cutoff.
+  - Thermal current: about 6 A heats the MOSFETs to 55 C in 22 C still air, and 16 A to 150 C. The reaudit models 65-70 C MOSFETs at 4.6 A in a 45-50 C enclosure.
+  - Peak current: 90 A maximum, for inrush into the D36V50F12, D36V28F5 and LDO bulk caps.
+  - OFF-state current under 0.2 uA. Standby budget is about 13-14 mW, with a 0.25 mA target when the INA228 is in shutdown.
+  - ON-state self-consumption about 120 uA/V, about 1.8 mA at 14.8 V, mostly the LED. The table's column mapping is inferred. Lower is better.
+  - Control interface: on-only input A (button to GND through BAT54) and an active-high OFF input with a >1 V threshold. OFF is driven by Pico GP13 at 3.3 V and diode-ORed with the TLV3012 push-pull output, and can be held high under UV. ON/CTRL inputs are available. Built-in debounce.
+  - Power-up and noise behaviour: must come up OFF when the pack is connected at 16.8 V. Must never change state during 20 USB-PD plug/unplug cycles (bench test). Must turn off reliably at the top of the voltage range.
+  - RF quietness: a static latch with no oscillator or charge pump, so no spurs against the HF+ LF/NAVTEX narrowband gate (40-4209.5 kHz lines). Pololu does not state this; it is inferred from the design.
+  - Size and mounting: 20.3 x 25.4 x 4.1 mm, 2.7 g, 0.1-inch and 5 mm terminal connections. Fits the power board at the bottom right.
+  - Build quality and legality: genuine Pololu product, documented, patented design (per Pololu). Pololu itself says it is not a safety disconnect; the BMS and the 7.5 A fuse do that job.
+- **Candidates:**
+  1.
+    - **Name:** DIY discrete soft-latch clone on the power PCB with 2x Infineon IPD90P04P4L-04 back-to-back P-FETs (Pololu-style latch, zener gate clamp, BAT54 inputs)
+    - **Kind:** diy
+    - **Price usd:** Not verified. Mouser, TME, LCSC and Arrow all blocked or returned 403/503, so no MOSFET or BOM price was obtained. It may come in under 8.95, but that is unconfirmed.
+    - **Spec comparison:** From the IPD90P04P4L-04 datasheet Rev 1.2:
+  - -40 V VDS: equal to the #2813's 40 V abs max.
+  - RDS(on) max 4.3 mOhm at -10 V and 6.6 mOhm at -4.5 V, so the pair is 8.6 / 13.2 mOhm against 8.6 / 13 mOhm: equal at 10 V, +0.2 mOhm at 4.5 V. The match with Pololu's figures suggests Pololu may use this FET; that is an inference.
+  - 90 A, RthJC 1.2 K/W, AEC-Q101, static drive (no oscillator).
+  - IDSS 0.08 uA typ and 1 uA max at -32 V (25 C), against the Pololu board spec of <0.2 uA.
+  - VGS limit +5/-16 V, below the 16.8 V pack, so a gate zener clamp is mandatory.
+  - Latch behaviour (debounce, power-up OFF at 16.8 V, OFF held against A, PD-plug noise immunity) depends entirely on the DIY design.
+    - **Worse in:** No independent measurement exists for any such build, so it fails the angle-B evidence rule.
+  - Worst-case OFF leakage is 1 uA against <0.2 uA.
+  - RDS(on) at 4.5 V is 13.2 against 13 mOhm.
+  - It needs a gate clamp that Pololu already integrates.
+  - Power-up state, debounce and turn-off reliability at 16.8 V are unproven.
+  - It adds design and bench time and loses a vendor-tested, documented module.
+    - **Compatibility:** Electrically compatible: same high-side placement, same A/OFF semantics if designed that way, sits on the power board already planned for the LCSC order. No software or driver impact. Rejected for now. Valid only as a fallback if #2813 stock (Rationed) fails, and only after bench proof:
+  - Off current 0.2 uA or less at 16.8 V.
+  - Drop 40 mV or less at 4.6 A.
+  - 100 power-ups at 16.8 V all OFF.
+  - OFF held blocks A.
+  - 20 PD cycles with no state change.
+  - No spur in the HF+ narrowband A/B.
+    - **Risks:** Pololu calls the latch a patented design; copying it is fine for a private build but not for sale.
+  - Gate overvoltage if the clamp is missing.
+  - False turn-on during a fast pack connect.
+  - MOSFET price and stock unverified; buy only from authorised distributors (counterfeit DPAKs are common on marketplaces).
+    - **Seller url:** https://www.infineon.com/part/IPD90P04P4L-04
+    - **Sources:**
+      - https://www.infineon.com/part/IPD90P04P4L-04
+      - https://www.infineon.com/assets/row/public/documents/10/49/infineon-ipd90p04p4l-04-datasheet-en.pdf
+      - https://www.pololu.com/product/2813
+  2.
+    - **Name:** DIY: TI LM74502 or LM74502H high-side controller with back-to-back N-FETs plus a separate latch
+    - **Kind:** diy
+    - **Price usd:** Not verified. The TI page shows no price; distributor pages were blocked.
+    - **Spec comparison:** From TI page and datasheet SNOSDE5A:
+  - 3.2-65 V operating and -65 V reverse: better.
+  - RDS(on) set by the chosen N-FETs, so it can be lower: better.
+  - Operating Iq 45 uA typ / 65 uA max: better than the LED-dominated ~1.8 mA.
+  - Shutdown current 0.9 uA typ / 1.5 uA max: worse than <0.2 uA.
+  - Integrated hysteretic charge pump that refreshes VCAP (on at 10.3-13 V, off at 11-13.9 V above VS). Pump frequency is not published.
+  - No pushbutton or latch logic, so a separate latch (AON-powered flip-flop or discrete) is needed.
+    - **Worse in:** OFF current is 4.5-7.5x worse (0.9-1.5 uA against <0.2 uA). The burst charge pump is an unmeasured RF spur risk against the LF/NAVTEX gate. It needs extra latch circuitry. There is no measured evidence for the complete circuit, which fails the angle-B rule.
+    - **Compatibility:** High-side and compatible with the shared ground. EN could take the latch output. Needs about 8 extra parts on the power board. Rejected.
+    - **Risks:** Charge-pump spurs within ±5 kHz of 40/60/77.5/162/490/518/4209.5 kHz would fail C4 gate 1. Design effort.
+    - **Seller url:** https://www.ti.com/product/LM74502
+    - **Sources:**
+      - https://www.ti.com/product/LM74502
+      - https://www.ti.com/lit/ds/symlink/lm74502.pdf
+  3.
+    - **Name:** Adafruit Push-button Power Switch Breakout #1400 (or a DIY copy of its MC14093 + DMG3415U topology)
+    - **Kind:** other_brand
+    - **Price usd:** 5.95 (Adafruit, in stock, verified 18 Oct 2026)
+    - **Spec comparison:** 3-14 V DC (limited by the pass FET) against 4.5-32 V. 3 A, and the FET 'gets a little toasty at continuous 3A', against 6 A to a 55 C MOSFET. Quiescent 0.5 uA against <0.2 uA. KILL (>1 V) holds it off even when the button is pressed, which is good. Reverse protection not mentioned.
+    - **Worse in:** Max voltage is below the 16.4-16.8 V pack. Current is below the 4.6 A peak. Quiescent current is higher. No reverse protection stated. No measured data.
+    - **Compatibility:** Not compatible: it would be over-voltaged on 4S.
+    - **Risks:** FET and CMOS damage at 16.8 V and on TVS transients.
+    - **Seller url:** https://www.adafruit.com/product/1400
+    - **Sources:**
+      - https://www.adafruit.com/product/1400
+  4.
+    - **Name:** SparkFun Soft Power Switch Mk2 PRT-26993 (open hardware); retired SPX-17870
+    - **Kind:** other_brand
+    - **Price usd:** 7.32 (PRT-26993, in stock). 3.95 for SPX-17870, which is retired and out of stock.
+    - **Spec comparison:** PRT-26993: 1.8-5.5 V, 2 A continuous / 4 A peak, SIL2308 P-FET 70 mOhm, <1 uA. SPX-17870: up to 12 V, 4 A, <50 nA.
+    - **Worse in:** Voltage (5.5 V or 12 V max against a 16.8 V pack), current, RDS(on) (70 mOhm against 8.6 mOhm), no reverse protection, no measured data.
+    - **Compatibility:** Not compatible with 4S.
+    - **Risks:** Destroyed by the pack voltage.
+    - **Seller url:** https://www.sparkfun.com/products/26993
+    - **Sources:**
+      - https://www.sparkfun.com/products/26993
+      - https://www.sparkfun.com/products/17870
+  5.
+    - **Name:** Generic AliExpress 'self-locking / bistable MOSFET pushbutton switch module' boards, and any Pololu-switch clones
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not verified. No listing could be located (WebSearch budget used up; AliExpress search not fetched).
+    - **Spec comparison:** No datasheet and no independent measurement of off current, RDS(on), voltage rating, power-up state or reverse protection was found.
+    - **Worse in:** Unproven on every critical spec. It fails the angle-B rule outright (no measured evidence). Any clone of the Pololu design copies what Pololu calls a patented design.
+    - **Compatibility:** Unknown.
+    - **Risks:** Unbranded or counterfeit FETs, no reverse protection, MCU-based variants drawing mA in OFF, false turn-on at 16.8 V, questionable legality for clones.
+    - **Seller url:** 
+    - **Sources:** []
+  6.
+    - **Name:** Used Pololu #2813
+    - **Kind:** used
+    - **Price usd:** Not verified. The eBay listing page returned 403; no used unit was found.
+    - **Spec comparison:** Would be identical if genuine and undamaged.
+    - **Worse in:** Unknown history: earlier over-current or surge damage to the MOSFETs is invisible without a measured RDS(on) and off-leakage check. The saving would be a few dollars at most.
+    - **Compatibility:** Drop-in.
+    - **Risks:** Hidden MOSFET degradation, counterfeit or wrong version (MP #2812 looks the same), no warranty.
+    - **Seller url:** 
+    - **Sources:** []
+  7.
+    - **Name:** Keep: Pololu #2813 HP (current part)
+    - **Kind:** current_part
+    - **Price usd:** 8.95 each / 17.90 for 2
+    - **Spec comparison:** Reference part:
+  - 4.5-32 V recommended, 40 V abs max, built-in reverse protection.
+  - 8.6 mOhm @10 V and 13 mOhm @4.5 V combined max.
+  - 6 A to a 55 C MOSFET, 16 A to 150 C, 90 A max.
+  - Off current <0.2 uA; on ~120 uA/V (column mapping inferred).
+  - A, B, ON, OFF and CTRL inputs with >1 V high thresholds and built-in debounce.
+  - 20.3 x 25.4 x 4.1 mm, 2.7 g.
+    - **Worse in:** Nothing relative to the stack, except the documented limits: not a safety disconnect, holding OFF high may interfere with other inputs (bench test kept), stock is Rationed.
+    - **Compatibility:** Already integrated in the STACK power tree and wiring (A on-only, OFF diode-OR from GP13 and TLV3012).
+    - **Risks:** Rationed stock: order both units in the week-1 Pololu order as planned.
+    - **Seller url:** https://www.pololu.com/product/2813
+    - **Sources:**
+      - https://www.pololu.com/product/2813
+      - https://www.pololu.com/category/121/pololu-power-switches
+- **Notes:** VERDICT (angle B): keep the Pololu #2813 HP at $8.95 each ($17.90 for 2). Nothing from the generic, clone, DIY or used angle has measured evidence that it is not worse on every critical spec.
+  
+  Why each alternative fails:
+  - **Open-hardware designs** (Adafruit #1400 at 3-14 V / 3 A; SparkFun Mk2 at 5.5 V and retired 17870 at 12 V): rated below the 16.8 V pack and the 4.6 A peak.
+  - **LM74502 DIY:** off current 0.9-1.5 uA against <0.2 uA. Its hysteretic charge pump is an unmeasured spur risk for the LF/NAVTEX gate.
+  - **Discrete P-FET DIY with 2x IPD90P04P4L-04:** the closest on paper. It matches 8.6 mOhm at 10 V and 40 V. But it is 13.2 against 13 mOhm at 4.5 V, its datasheet worst-case leakage is 1 uA, it needs a gate clamp (VGS -16 V max), and nothing about it has been measured.
+  - **Generic modules, clones and used units:** none located or verified.
+  
+  Fallback if Pololu stock runs out: the discrete DIY above, but only after the bench proof listed in its compatibility entry.
+  
+  Side observation (inference, not verified): Pololu's combined 8.6 / 13 mOhm figures equal two IPD90P04P4L-04 in series (4.3 / 6.6 mOhm max each).
+  
+  Limits of this pass:
+  - WebSearch was used up for this turn (the budget is shared), so generic AliExpress modules, Pololu clones and used eBay listings could not be found. The eBay page returned 403.
+  - The ADI LTC2955 datasheet was unreachable (503), so an LTC2955-based DIY was not evaluated and no specs are claimed for it.
+  - Distributor prices for the DIY MOSFETs could not be fetched: Mouser and TME returned 403, LCSC denied access, Arrow failed on the connection. Every DIY price is therefore marked not verified.
+  - EU prices for #2813 with VAT were not obtained; RobotShop EU returned 403. USD Pololu-direct remains the base.
+  
+  Corrections versus STACK to carry forward (from reaudit D, confirmed on the Pololu page):
+  - 6 A is the current that heats the MOSFETs to 55 C in 22 C still air, not a rating at 55 C ambient.
+  - Recommended limit is 32 V; 40 V is abs max.
+  - Not a safety disconnect.
+  
+  Source files: /home/user/lizbeth307/sat-receiver-audit/STACK.md and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json. Downloaded datasheet text is in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/p2813/ds/ (ipd90p04.txt, lm74502.txt).
 
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
