@@ -792,3 +792,7 @@ P5 ЗАПУЩЕНО ДОСТРОКОВО для групи G1 (приймачі 
 
 P4, A (NPU на ядрі 7.0; спільнота, не перевірено): тема на форумі Radxa від Frederico_S (31.08–08.09.2026, R2, Ubuntu 24.04, ядро 7.0.11-5): сесія FastRPC на CDSP не створюється навіть після того, як додали відсутній memory-region; помилка 0x80000600 і «remotectl1 domains not supported». Отже, на гілці 7.0.11 NPU теж поки нестабільний. Це ще один аргумент тримати 6.18.2-4 з «золотим набором» FastRPC (пункт №29: deb-пакети 6.18.2-4 зберігаємо з GitHub-релізу) і переходити на 7.0.x лише після тесту NPU Phase 0. Джерело: forum.radxa.com, тема «CDSP FastRPC session still fails (0x80000600 / "remotectl1 domains not supported") after fixing the missing memory-region».
 
+## 2026-10-18 10:12 UTC
+
+P4, A (FastRPC; не перевірено): у qualcomm/fastrpc відкрито issue #371 «Regression with fastrpc 1.0.6 on a few platforms» (05.08.2026, автор Loïc Minier, плата qcs6490); 30.09 бот позначив його як Stale. В образі r2 стоїть fastrpc 1.0.3-1, а в репозиторії Radxa вже 1.0.7-3. Чи виправлено регресію в 1.0.7, невідомо. Тому в «золотому наборі» для NPU Phase 0 треба закріпити версію fastrpc, з якою тест пройде: спочатку 1.0.3-1 з образу, потім, як A/B, 1.0.7-3. Без цього тесту не оновлювати. Джерело: github.com/qualcomm/fastrpc/issues/371; релізи fastrpc (1.0.4-1, 21 файл).
+
