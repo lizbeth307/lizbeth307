@@ -60,7 +60,7 @@
 <text x="323.5" y="477.0" font-size="12" text-anchor="middle" font-weight="normal" fill="#000">Cu ≤35</text>
 <rect x="382.0" y="384.0" width="45.0" height="180.0" fill="#dfe6ee" stroke="#000" stroke-width="1.2"/>
 <circle cx="404.5" cy="474.0" r="18.0" fill="none" stroke="#000" stroke-width="0.8"/>
-<text x="399.0" y="585.0" font-size="12" text-anchor="middle" font-weight="normal" fill="#000">Noctua 40</text>
+<text x="393.0" y="585.0" font-size="12" text-anchor="middle" font-weight="normal" fill="#000">Noctua 40</text>
 <rect x="430.8" y="577.5" width="6.0" height="40.5" fill="#bcd" stroke="#000" stroke-width="1"/>
 <line x1="451.8" y1="595.5" x2="355.0" y2="537.0" stroke="#c40" stroke-width="1.6" marker-end="url(#ar)"/>
 <line x1="350.5" y1="474.0" x2="377.5" y2="474.0" stroke="#c40" stroke-width="1.6" marker-end="url(#ar)"/>
