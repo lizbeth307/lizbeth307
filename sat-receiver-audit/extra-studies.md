@@ -29781,6 +29781,131 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Unverified or gaps: the T7's own post-cache rate is inferred from a 100 GB average and not stated by ssd-tester. The plain T7's bus power was never measured; only T7 Touch and Shield figures exist (AnandTech, from search snippets). The UGREEN CM400 bridge chip is unconfirmed. No October US price was obtained. geizhals, idealo, eBay, Back Market and Samsung.com returned 403, so the EU price rests on Alternate.de plus Kleinanzeigen snapshots. FX is the stack rate, 1 EUR = 1.1241 USD.
 
+## searchA:qo_100_add_on_othernet_bullseye_tcxo_lnb (run `wf_c3ba734e-52b`)
+
+- **Part:** QO-100 add-on, in-scope items only: Othernet Bullseye 10 kHz TCXO LNB (BE01) and the F/75 ohm parts (a 75 ohm F terminator for the red 25 MHz reference port, and the LNB injector choke rated 1 A or more on the custom injector PCB). The cone and horn are antennas and are out of scope. The 1 m 75 ohm F lead (Goobay 58814) belongs to the cable-set line and was already covered in G1.
+- **Current price usd:** 29.95 is the LNB list price at the RTL-SDR Blog webstore. That webstore does NOT ship to the EU: its buy page says 'EU CUSTOMERS: Please order from our official Aliexpress or eBay stores'. The cheapest price an EU buyer can verify is Passion Radio (France): EUR 29.94 ex VAT (sale price, was EUR 32.64). That is USD 33.66 ex VAT, or about USD 40.05 with DE 19% VAT (EUR 35.63) and USD 40.39 with FR 20% VAT (EUR 35.93), plus shipping, which is calculated at checkout and was not verified. The STACK line total of 47.95-75.00 includes the out-of-scope horn and cone materials. Rate used: 1 EUR = 1.1241 USD (18 Oct 2026, as in reaudit_B).
+- **Critical specs:**
+  - RF input coverage must include 10489.5-10490 MHz (QO-100 NB beacons and transponder). This is below the 10.7 GHz start of standard DTH LNB specs. Bullseye specifies 10489-12750 MHz.
+  - LO 9750 MHz, so the IF is 739.500/739.750 MHz. That is inside RTL-B (V4L) range, and the labd beacon tracker and the 15/20 dB pad plan depend on it.
+  - LO accuracy and stability: factory calibration within 1 kHz, +/-10 kHz at 23 C, +/-30 kHz over -20 to +60 C (2 ppm TCXO plus PLL; 1 ppm/year ageing). This matters for the 50 Hz CW and BPSK400 beacon work. Warm-up drift should be minutes only.
+  - LO phase noise: low enough for 50 Hz CW and 400 bit/s BPSK. Not published for the Bullseye; the TCXO plus PLL design is the reference.
+  - Noise figure 0.5 dB (vendor). It sets G/T for the bare-LNB and horn margins (bare CW beacon +3...+8 dB in 50 Hz).
+  - Conversion gain 50-66 dB. The 15/20 dB pad and the V4L desense margin (-20...-40 dBm) assume this range; more gain needs a larger pad.
+  - Output P1dB/IIP3 must not compress under the IF noise plus Ku-band and terrestrial ingress (not published for the Bullseye).
+  - Supply: V-pol must work at 11.5-14 V from the 12.5/13.2 V TPS7A4701 rail (no 18 V on the device; NB downlink is V-pol). Current must stay under the 0.405-0.499 A eFuse limit. The Bullseye's current is unpublished; the stack assumes 0.2-0.3 A. Lower is better for the 4S battery.
+  - Mechanics: 40 mm neck and 64 mm red cap. The horn and cone throat and the printed neck adapter are designed around these dimensions, so another LNB body means redoing the throat.
+  - 25 MHz TCXO reference out on the second (red) F port. It is used to monitor the TCXO and must be terminated or capped.
+  - 75 ohm F-female IF output; IF return loss 8 dB (Bullseye) is the bar.
+  - Operating temperature -20 to +60 C or wider (portable, outdoors).
+  - Genuine unit from Othernet's authorised channel. RTL-SDR Blog warns about low-feedback eBay/AliExpress sellers pricing below market, a counterfeit and scam risk.
+  - Passive receive-only converter (no TX path) and no loop. Holds for every LNB.
+  - F terminator: 75 ohm, F male. DC-decoupled, because DC on the red port is unpublished (the reaudit says measure it first). Return loss of 20 dB or better at 25 MHz.
+  - Injector choke: 1 A or more, low DCR, high impedance across the 739-2150 MHz IF. The stack does not name this part yet.
+- **Candidates:**
+  1.
+    - **Name:** Othernet Bullseye 10 kHz BE01 TCXO LNB from Passion Radio (Paris, France; ships from France; EU stock, ref QO100-LNB-BULLSEYE-978)
+    - **Kind:** current_part
+    - **Price usd:** EUR 29.94 ex VAT (USD 33.66), on sale from EUR 32.64 (-EUR 2.70). About USD 40.05 incl. DE 19% VAT or USD 40.39 incl. FR 20% VAT, plus shipping (calculated in the cart; amount not verified). No customs duty and no EUR 3 / EUR 2 import fees, because this is an intra-EU sale.
+    - **Spec comparison:** Same part, same specs, as published on the Passion Radio page (18 Oct 2026): ref 'Bullseye 10 kHz BE01'; PLL with 2 ppm TCXO 25 MHz; input 10489-12750 MHz; LO 9750/10600; +/-10 kHz at 23 C, +/-30 kHz over -20 to +60 C; gain 50-66 dB; NF 0.5 dB; return loss 8 dB (739-1950 MHz); V 11.5-14 V, H 16-19 V; 40 mm neck, 64 mm red cap; 25 MHz out on the red F port; CE/RoHS/FCC; 2-year warranty. 49 reviews, average 5/5.
+    - **Worse in:** Nothing (identical part). It is not cheaper than USD 29.95 ex VAT, but it is the cheapest verified source an EU buyer can order from, and it is EU stock (cost rule 34).
+    - **Compatibility:** Same as the current part: F-female IF, V-pol on the 12.5/13.2 V rail, 40 mm neck and 64 mm cap for the horn and cone adapters. No driver involved (the IF goes to RTL-B).
+    - **Risks:** Stock shows 'In stock, more than 10 items, Warning: Last items in stock!' and the sale price may end. The RTL-SDR Blog admin said around 2020 that Othernet made a one-off overrun ('nothing new coming'), so supply is finite: buy the spare now. Shipping cost not verified.
+    - **Seller url:** https://www.passion-radio.com/lnb-pll/lnb-othernet-978.html
+    - **Sources:**
+      - https://www.passion-radio.com/lnb-pll/lnb-othernet-978.html
+      - https://www.passion-radio.com/lnb-pll/125
+      - https://www.rtl-sdr.com/33-off-sale-ultra-stable-bullseye-lnb-for-qo-100-eshail-2/
+  2.
+    - **Name:** Othernet Bullseye BE01 from the RTL-SDR Blog official AliExpress store ('RTLSDRBlog Store', store 1101427871, item 4001089711265, linked from the rtl-sdr.com buy page)
+    - **Kind:** current_part
+    - **Price usd:** UNVERIFIED: AliExpress returned a captcha. A search snippet shows USD 40.68 (ship-to country unknown). Model landed cost to the EU if the price matches the USD 29.95 webstore price with free shipping: USD 35.6-35.9 incl. 19-20% VAT, plus EUR 3 customs duty per tariff line (USD 3.37, from 1 Jul 2026), plus the EUR 2 Union handling fee (USD 2.25, expected from about 1 Nov 2026). About USD 39-41.6.
+    - **Spec comparison:** Same part and specs as the current pick: rtl-sdr.com product page, 18 Oct 2026, '70 in stock', ships from the Chinese worldwide warehouse.
+    - **Worse in:** Nothing in specs. Probably not cheaper landed than Passion Radio once EU duty and the handling fee are added, and delivery from China is slower (1-8 weeks economy).
+    - **Compatibility:** Identical part.
+    - **Risks:** Price and stock not verified. Same counterfeit warning as for any non-official listing: order only from the store ID linked on rtl-sdr.com. EU import fees per operator note 35.
+    - **Seller url:** https://www.aliexpress.com/item/4001089711265.html
+    - **Sources:**
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+      - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+      - https://de.aliexpress.com/i/4001089711265.html
+  3.
+    - **Name:** Othernet Bullseye BE01 from the RTL-SDR Blog official eBay account 'rtl-sdr-blog' (item 283900721154)
+    - **Kind:** current_part
+    - **Price usd:** UNVERIFIED: eBay returned 403. A search snippet from a listing last updated in July 2025 shows US $29.97 plus US $10.00 shipping from Shanghai, 'import duties included'. That is about USD 40 before any EU VAT or fee changes made in 2026.
+    - **Spec comparison:** Same part and specs.
+    - **Worse in:** Nothing in specs. Not cheaper than Passion Radio on the old snippet figures, and those figures are stale.
+    - **Compatibility:** Identical part.
+    - **Risks:** Price, stock and the 2026 EUR 3 duty / EUR 2 fee treatment are all unverified. Ships from China.
+    - **Seller url:** https://www.ebay.com/itm/283900721154
+    - **Sources:**
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+      - https://www.ebay.de/itm/283900721154
+  4.
+    - **Name:** Inverto Premium Single 40 mm PLL LNB IDLP-SNL413-PREMU-OPN (item 6518): established DTH brand, cheaper class, not TCXO
+    - **Kind:** other_brand
+    - **Price usd:** UNVERIFIED: no retailer page could be read (satking.de 404, deschotelshop 403). Consumer single PLL LNBs of this class typically sell for about EUR 10-20, but that range is not verified.
+    - **Spec comparison:** Official datasheet V060924:
+  - NF 0.2 dB typ / 0.7 dB max (Bullseye: 0.5 dB claimed).
+  - Gain 57-67 dB (Bullseye: 50-66).
+  - LO initial accuracy +/-500 kHz max (Bullseye: +/-10 kHz, factory calibration within 1 kHz).
+  - LO temperature drift at 60 C: +/-2.0 MHz max (Bullseye: +/-30 kHz).
+  - Phase noise -70/-80/-90/-100 dBc/Hz at 1k/10k/100k/1M (Bullseye: unpublished).
+  - ICP3 +10 dBm min; output P1dB 0 dBm min (Bullseye: unpublished).
+  - V 10-14 V, H 16-20 V; 100 mA max (Bullseye: unpublished).
+  - VSWR 2.0:1 (RL about 9.5 dB; Bullseye: 8 dB).
+  - -30 to +60 C.
+  - Low-band input specified 10.7-11.7 GHz only.
+    - **Worse in:** REJECTED.
+  - LO accuracy is about 50x worse and temperature drift about 67x worse.
+  - No TCXO, no factory calibration.
+  - No 25 MHz reference output.
+  - The 10489.5 MHz QO-100 input is outside its specified range.
+  - Gain can reach 67 dB (1 dB above the pad plan).
+  - Body and cap dimensions differ from the horn throat design.
+  Better only in current (100 mA max), documented IP3/P1dB/phase noise, and claimed NF.
+    - **Compatibility:** F-female, 40 mm neck, and V-pol on the 12.5/13.2 V rail would work electrically. The beacon tracker would need a capture window of up to +/-2.5 MHz instead of +/-800 kHz, and 50 Hz CW work depends on software drift correction.
+    - **Risks:** Using it would quietly trade away LO stability, which is the defining spec of this part. Out-of-band operation at 10.49 GHz is unspecified. Price unverified.
+    - **Seller url:** https://inverto.tv/download/file/66da86eecfc1d-1725597422.pdf
+    - **Sources:**
+      - https://inverto.tv/download/file/66da86eecfc1d-1725597422.pdf
+      - https://www.inverto.tv/download/file/620128fb81845-1644243195.pdf
+  5.
+    - **Name:** TechniSat F termination resistor, DC-decoupled, 75 ohm (art. 0002/3077, EAN 4019588230774; 10-pack 0010/3077) for the Bullseye red 25 MHz port
+    - **Kind:** other_brand
+    - **Price usd:** EUR 3.00 incl. VAT (USD 3.37) at the TechniSat shop, available, 2-3 days. Shipping extra below EUR 29 (amount not verified).
+    - **Spec comparison:** Compared with the stack's unnamed generic '75 ohm F terminator':
+  - 75 ohm, 5-2400 MHz.
+  - Return loss: 22 dB or better at 5-30 MHz (covers 25 MHz), 20 dB or better at 30-65 MHz, 18 dB or better at 65-470 MHz, 16 dB or better at 470-1800 MHz.
+  - DC-decoupled.
+  The current pick has no published specs, so this is equal or better on every listed point.
+    - **Worse in:** Nothing found. Because it is DC-decoupled, it is safe whether or not the red port carries DC. One SKU then covers both branches of the reaudit rule (terminator if 0 V, cap otherwise), and no separate dust cap is needed.
+    - **Compatibility:** F male screw-on cap, passive. No rail, driver or rule impact.
+    - **Risks:** Low. Still measure DC on the red port, and check that 25 MHz spurs on HF+/V4L are not worse with the cap fitted. Shipping makes a single unit cost more than its EUR 3.00 price; add it to another EU order if possible.
+    - **Seller url:** https://www.technisat.de/en/f-connectors-and-adapters/technisat-f-termination-resistor-dc-decoupled-75-ohm-all_verpackungsinhalt-1-stueck-piece-colour-silver
+    - **Sources:**
+      - https://www.technisat.de/en/f-connectors-and-adapters/technisat-f-termination-resistor-dc-decoupled-75-ohm-all_verpackungsinhalt-1-stueck-piece-colour-silver
+      - https://www.televes.com/de/3829-4061-75-ohm-abschlusswiderstand-f-anschluss-mit-dc-block.html
+- **Notes:** VERDICT: keep the Othernet Bullseye BE01. From angle A, nothing cheaper is equal or better: no other SKU of this part and no other established-brand LNB was found that costs less and matches it on every critical spec. Every cheaper LNB found is a standard DTH PLL LNB, and on the Inverto datasheet that class is 50-70x worse in LO accuracy and drift. It also has no TCXO, no factory calibration and no 25 MHz reference, and it does not specify the 10.489 GHz input.
+  
+  CORRECTIONS FOR v2:
+  1. Source of the LNB. The STACK source 'RTL-SDR Blog (Bullseye $29.95, 70 pcs)' cannot be ordered by this Europe-based user from the webstore. The rtl-sdr.com buy page (read 18 Oct 2026) says the webstore no longer ships to EU customers. EU buyers must use the official AliExpress 'RTLSDRBlog Store' (1101427871, item 4001089711265), the eBay account 'rtl-sdr-blog' (item 283900721154), or an EU reseller.
+  2. Cheapest verified EU-legal source: Passion Radio at EUR 29.94 ex VAT (sale), EU stock, 'last items'. Landed price is about USD 40 plus shipping. On a model estimate the AliExpress route lands at about USD 39-41.6, so the two are similar, and Passion Radio wins under cost rule 34 (EU stock, no EUR 3 duty or EUR 2 handling fee). Buy 2 (one spare), as reaudit_C advises.
+  3. Elektor used to list the Bullseye at EUR 24.95 incl. VAT (search snippet). That product URL now redirects to a search page (18 Oct 2026), so it is delisted and not available.
+  4. Technofix UK is out of stock (GBP 31.99, reaudit_C), and as a UK seller it would add import costs anyway.
+  5. The Passion Radio Goobay 67270 and Megasat HD-Profi PLL LNBs are 'no longer available', and they are plain PLL LNBs, so they would be worse in any case.
+  6. The QRO.cz 'SDR LO 9750 classic' (hamparts.shop, EUR 52.03 incl. VAT = USD 58.49; 1 ppm temp, 2 ppm initial, 180 mA typ, +12 V = V) is NOT cheaper. It stays the upgrade path only, as reaudit_C says.
+  7. Inverto lists 100 mA max for its PLL LNBs, but the Bullseye's own current is still unpublished. Keep the bench measurement before setting RILM.
+  8. F/75 ohm parts: the TechniSat 0002/3077 DC-decoupled terminator (EUR 3.00) is the named, specified choice for the red port.
+  9. The injector choke (1 A or more) has no part number in the STACK, so it could not be compared with an analog. v2 should name a part with its rated current, DCR, and SRF/impedance over 739-2150 MHz before an analog search is possible.
+  
+  UNVERIFIED (blocked fetches):
+  - AliExpress (captcha), eBay (403) and Amazon UK/DE/FR (captcha) prices. The Amazon UK/EU reseller link from rtl-sdr.com resolves to amazon.co.uk/dp/B08GJ6B1HB, seller AGX9N6DGNRN2Q.
+  - Passion Radio and TechniSat shipping amounts.
+  - Inverto retail price.
+  
+  Search budget: about 11 WebSearch calls used. The rest of the checks used direct fetches and curl.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
