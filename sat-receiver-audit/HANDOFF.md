@@ -1,6 +1,6 @@
 # HANDOFF: супутниковий приймач лише на прийом + портативна радіолабораторія
 
-Стан на 2026-10-18 21:19 UTC. Цей файл — повна передача роботи іншій моделі/людині. Читати повністю перед продовженням.
+Стан на 2026-10-18 21:20 UTC. Цей файл — повна передача роботи іншій моделі/людині. Читати повністю перед продовженням.
 
 ## 0. Критерії завершення проєкту (Definition of Done) — проєкт закінчено, коли виконано ВСЕ:
 1. sat-receiver-audit/build/ містить усі 19 файлів зі списку в §7 п.1, кожен SVG — валідний SVG 1.1 (блок назви «v2, 18.10.2026» і «теоретичний проєкт — перевірити на стенді»), 10-bom.csv читається як CSV.
@@ -33,9 +33,9 @@
 | Далі | відкриті питання STACK §8 (за запитом користувача, якщо лишиться ліміт) | не почато |
 
 
-### Зроблені пакети виправлень P6: fix:A:b1, fix:A:b2, fix:B:b1, fix:B:b2, fix:B:b3
+### Зроблені пакети виправлень P6: fix:A:b1, fix:A:b2, fix:A:b3, fix:B:b1, fix:B:b2, fix:B:b3
 ### Готові автори P7: ще жоден
-### Файли в build/: 07-pz-vstanovlennia.md
+### Файли в build/: 02-zhyvlennia.svg, 07-pz-vstanovlennia.md
 
 
 ## 4. Файли (у репозиторії, гілка ccr-1537979d-cj7q9t; і в цьому архіві)
@@ -71,93 +71,8 @@ D19 Bench case: B&W outdoor.case Type 4000 RPD (conditional: eyelets locked when
 
 
 
-## 5a. Ще не виправлені проблеми STACK.md (70 шт.; якщо список порожній — усе виправлено)
+## 5a. Ще не виправлені проблеми STACK.md (53 шт.; якщо список порожній — усе виправлено)
 Кожна: де, що не так, як виправити, доказ. Виправляти прямо в STACK.md, перевіряючи за джерелами з final/.
-
-- [A34 | contradiction | consistency] ДЕ: 2.9 «Захист від погоди»: «LAB BUS, GX12/M8»; 8.2 IPX4 row: «без води біля GX12/M8»
-  ПРОБЛЕМА: The weather-kit BOM row and the IPX4 test still name the GX12/M8 IMU connector. 5.2, 5.8, D12, D15 and 2.8 use the Olimex GX16-4, 6.2 lists GX12 as removed, and 11.1 #24 says «GX12 → GX16 скрізь». 11.1 #43 says the weather-kit row was meant to say GX16.
-  ВИПРАВЛЕННЯ: In 2.9 replace «GX12/M8» with «GX16-4 (IMU)», and in 8.2 replace «біля GX12/M8» with «біля GX16-4».
-  ДОКАЗ: STACK.md lines 303 (2.9), 1694 (8.2) vs 89 (D12), 92 (D15), 291 (2.8), 766 (5.2), 1040 (5.8), 1230 (6.2), 2053 and 2072 (11.1 #24, #43)
-
-- [A35 | contradiction | consistency] ДЕ: 4.1 S-band row (Lime), decoder column: «SatDump лише з цивільними й аматорськими конвеєрами з алоу-листа»
-  ПРОБЛЕМА: The SatDump pipeline allowlist (1.2 #30, 4.3, 5.4, 11.4, 11.6) contains only Meteor-M.json, MetOp.json, AWS.json, FengYun-2.json and Elektro_Arktika.json. None of these is an S-band Black Kite or PHASMA pipeline, so the SatDump route named for S-band does not exist.
-  ВИПРАВЛЕННЯ: Change the decoder cell to «gr-satellites (розбір кадрів не перевірено); SatDump-конвеєра S-band в алоу-листі немає». Or add a named civil or amateur S-band pipeline to the allowlist in 1.2 #30 and 5.4 together.
-  ДОКАЗ: STACK.md line 573 (4.1 S-band) vs lines 125, 615, 867, 2273, 2362; v2_edit_notes.md line 1783
-
-- [A36 | contradiction | consistency] ДЕ: 4.1 GNSS row, target name: «GNSS L1 + regional SBAS»
-  ПРОБЛЕМА: The target name keeps the v1 wording. 6.2 removes «регіональний SBAS», and 11.6 says «regional SBAS» was replaced with EGNOS in the 4.1 GNSS row. The same row's own text says SBAS = EGNOS.
-  ВИПРАВЛЕННЯ: Rename the target to «GNSS L1 + SBAS (EGNOS)».
-  ДОКАЗ: STACK.md line 566 vs 1184 (6.2), 2402 (11.6), 804 (5.3 «GNSS L1 / SBAS (EGNOS)»)
-
-- [A37 | contradiction | consistency] ДЕ: 2.6 MCU HMI row: «зайнято 23 GPIO + 3 ADC, вільний лише GP22; прошивка»
-  ПРОБЛЕМА: 2.6 still shows GP22 as free. C6, D12 and 5.2 assign GP22 to the fan tach of path 1 («24 GPIO + 3 ADC і жодного вільного GPIO»).
-  ВИПРАВЛЕННЯ: Change to «зайнято 24 GPIO + 3 ADC (GP22 — тахо вентилятора шляху 1, C6), вільних GPIO немає».
-  ДОКАЗ: STACK.md line 255 (2.6) vs 58 (C6), 89 (D12), 743 and 760 (5.2)
-
-- [A38 | contradiction | consistency] ДЕ: 3.1 «Запасний LNA» row: «ch4 → RTL-A T3»
-  ПРОБЛЕМА: The row still uses the v1 throw name. v2 renamed the switch throws to RF1-RF4: WIDE/2 m is RTL-A RF4 (5.3, D8), and 11.3 maps T3→RF4.
-  ВИПРАВЛЕННЯ: Change «RTL-A T3» to «RTL-A RF4».
-  ДОКАЗ: STACK.md line 404 vs 85 (D8), 781 and 790 (5.3), 2213 (11.3)
-
-- [A39 | contradiction | numbers] ДЕ: 3.1 «Підсумок core»: «Нижня межа — найдешевші умовні варіанти: LiteVNA Eleshop $162.53 без ПДВ, tinySA Elektor $182.10 без ПДВ» … «Верхня межа — LiteVNA $210.88 і tinySA $247.18 з ПДВ»; Debug Probe row «10.86 без ПДВ (EUR 9.66, розрахунок) / 12.93 з 19% ПДВ DE»; the same bench range is repeated in 2.12, 3.6, C24 and the 11.7 v1→v2 table
-  ПРОБЛЕМА: Basis mixing inside one range. For three bench items sold by EU shops (Eleshop/Passion Radio, Elektor/Astroradio, reichelt), the lower bound is the ex-VAT price and the upper bound is the incl.-VAT price. A private EU buyer cannot pay the ex-VAT EU price. About $73 of the $231 bench spread is VAT, not price variation. The Debug Probe bound is the same reichelt item on both sides.
-  ВИПРАВЛЕННЯ: Put each range on one basis. Recommended, to match the other EU bench rows (MediaMarkt, Lindinger, TME, reichelt, iFixit, Botland), incl. VAT: LiteVNA 195.04-210.88, tinySA 220.35-247.18, Debug Probe 12.93. This gives bench 1,609.39-1,767.80 (vs v1 +134.81/−42.09). Knock-on totals: core+extended 2,179.64-2,397.53; device + both antenna tiers + bench, with Lime 4,945.96-5,548.62, without Lime 4,339.50-4,940.16; everything except optional, with Lime 5,516.21-6,178.35, without Lime 4,909.75-5,569.89; same composition as v1 4,242.09-4,815.70 and 4,812.34-5,445.43; EU landed lower bounds 5,036.05-5,638.71 and 5,606.30-6,268.44. The other option is ex VAT on both bounds (175.73, 204.28, 10.86), wh
-  ДОКАЗ: STACK 3.1 rows VNA, Аналізатор спектра, Відлагоджувач; analogs_G5_lab_bench.json #0, #1, #9 chosen_price_usd; recomputation
-
-- [A40 | contradiction | numbers] ДЕ: 3.2 «Підсумок extended»: «H1 $49.95 (Nooelec США, без ПДВ) / $61.93 (Amazon EU)»
-  ПРОБЛЕМА: The lower bound is the ex-VAT US price. The same row says that this route lands in the EU at «≥65.1-66.1 з ПДВ, EUR 3 мита і EUR 2 UHF, плюс доставка», which is more than the incl.-VAT Amazon.nl upper bound. For the EU buyer the range is inverted and mixes bases.
-  ВИПРАВЛЕННЯ: Use the chosen EU channel on both sides: H1 $61.93 (Amazon.nl, EUR 55.10 incl. VAT). The other option is ex VAT on both sides, 49.95-51.18. Extended becomes 582.23-629.73 (vs v1 +84.51/−77.99). Every lower total that includes extended rises by 11.98: core+extended 2,118.79; everything except optional 5,455.36 with Lime and 4,848.90 without; EU landed 5,545.45.
-  ДОКАЗ: STACK 3.2 row «LNA H1»; analogs_G6_extended_optional.json #3 chosen_price_usd (EUR 55.10 incl. 21% NL VAT, about $61.93)
-
-- [A41 | contradiction | numbers] ДЕ: 3.1 row «Інструменти»: «335-391 (з 19% ПДВ DE; без доставки двох посилок TME + reichelt)» vs «Курс 1.1241; ціни TME — як нетто.»
-  ПРОБЛЕМА: The VAT basis contradicts itself. The TME values in the row are gross. Völkel 15003 $5.74 = $4.82 net × 1.19. The HL 1920 E option +$40.14 = $79.69 gross − $39.56. The SCALA fallback +$22.49 = $43.84 gross − $21.35. So «ціни TME — як нетто» is wrong.
-  ВИПРАВЛЕННЯ: Replace «ціни TME — як нетто» with «ціни TME — брутто (з 19% ПДВ DE, структуровані дані TME)».
-  ДОКАЗ: analogs_G5_lab_bench.json #15 rejected («SCALA 230.207-X … $36.84 net, $43.84 gross»; «HL 1920 E (TME $66.97 net, $79.69 gross)»; die stock «$3.70-4.82 net»)
-
-- [A42 | contradiction | numbers] ДЕ: 3.1 «Відлагоджувач»: «DigiKey DE 2648-SC0889-ND у замовленні кроку 7»; 11.1 №56: «у замовленні DigiKey (крок 7)»; 11.1 №65: «в наявному замовленні DigiKey DE (крок 7)»
-  ПРОБЛЕМА: 9.1 places the single consolidated DigiKey DE order in step 6(в). Step 7 says «окремого замовлення DigiKey у цьому кроці немає». Step 5 gives the Debug Probe as «DigiKey DE, крок 6», and step 13 puts the sled chips «у замовленні DigiKey DE кроку 6».
-  ВИПРАВЛЕННЯ: Change «крок 7» to «крок 6» in 3.1, 11.1 №56 and №65 (and in 8, line 1517).
-  ДОКАЗ: STACK 9.1 steps 5, 6(в), 7, 13
-
-- [A43 | contradiction | operator_user] ДЕ: 1.2 #30 (Збірка SatDump) and 5.4 'Доступ до SDR': "(ProtectHome=read-only або користувач без HOME-конфігу)"
-  ПРОБЛЕМА: Note 8 requires ProtectHome=yes for every decoder, SatDump included, and 5.4 'Ізоляція декодерів' says the same. The SatDump pass-unit text in 1.2 #30 and 5.4 still allows the weaker ProtectHome=read-only. The two sandboxing specs for the same unit contradict each other.
-  ВИПРАВЛЕННЯ: In both places, replace "(ProtectHome=read-only або користувач без HOME-конфігу)" with "(ProtectHome=yes, окремий користувач без HOME-конфігу; нотатка 8)". ProtectHome=yes also meets re-audit C's aim of no user pipelines.json.
-  ДОКАЗ: final/operator_notes.md item 8 ("ProtectSystem=strict, ReadWritePaths= only its output directory, ProtectHome=yes ... apply the same hardening to SatDump"); STACK 5.4 line "**Ізоляція декодерів.** ... (gr-satellites, SatDump, ...) ... ProtectHome=yes"
-
-- [A44 | contradiction | reaudit_AB] ДЕ: 1.1 C5 «rtl_eeprom -s LAB-RTLA / LAB-RTLB / LAB-RTLS, перепідключити, rtl_test -d LAB-RTLB»; 1.1 C21 «(LAB-RTLA / LAB-RTLB / LAB-RTLS; заводські не унікальні)»; 8.1 «V4L-4, серійні номери: запрограмувати LAB-RTLA / LAB-RTLB / LAB-RTLS»; 11.3 row 13 «-s LAB-RTLA / LAB-RTLB / LAB-RTLS, перепідключення»
-  ПРОБЛЕМА: There are two serial-name schemes. BOM 2.2 adopts ^LAB[A-Z]{3}$ (LABRXA/LABRXB/LABRXC) and says «Назви LAB-RTLA / LAB-RTLB / LAB-RTLS цей шаблон не проходять». C5, C21, the 8.1 V4L-4 gate and 11.3 still program LAB-RTL*, and V4L-4 opens rtl_test -d LAB-RTLB. udev names, bias tokens and engine configs would not match.
-  ВИПРАВЛЕННЯ: Use LABRXA = RTL-A, LABRXB = RTL-B, LABRXC = spare everywhere. Replace every LAB-RTLA/LAB-RTLB/LAB-RTLS in C5, C21, 8.1 V4L-4 and 11.3 row 13, and write rtl_test -d LABRXB. Note in 11.3 that re-audit A's stricter pattern is used; LABRX* also meets re-audit B's rule (non-numeric, not a prefix or suffix of another serial).
-  ДОКАЗ: reaudit_A_compute_software.json results[1].corrections (claim 'labd selects SDRs by serial'), action: 'Serials must match ^LAB[A-Z]{3}$ (e.g. LABRXA, LABRXB, LABRXC)'. reaudit_B_receivers_rf.json results[0].corrections[6] uses LAB-RTLA/B/S. Both are P4, so precedence does not decide; STACK 2.2 alrea
-
-- [A45 | contradiction | reaudit_AB] ДЕ: 1.2 #30 «тож апаратних і мережевих SDR-джерел немає (ні net_source, ні Soapy, ні LimeSuiteNG; SatDump декодує лише записані файли»; 5.4 «увімкнено лише PLUGIN_METEOR, NOAA_METOP, METOPSG, ELEKTRO_ARKTIKA, FY3, GK2A, XRIT, ANALOG, CUBESAT, RADIOSONDE і NET_SOURCE_SDR_SUPPORT»; 1.1 C7 «живий потік підтримується: net_source UDP cf32 від labrx»; 8 «labrx шле cf32 UDP на 127.0.0.1 у `satdump live meteo
-  ПРОБЛЕМА: SatDump input mode and plugin set contradict each other. 1.2 #30 turns NET_SOURCE off by name and makes SatDump file-only, while C7, 5.4, the section 8 live-path bench test and 11.2 keep the labrx net_source feed, so that test cannot pass on the 1.2 build. There are also two plugin allowlists: 1.2 lists METEOR, NOAA_METOP, AWS, ELEKTRO_ARKTIKA, XRIT, FY2 (Europe pipelines). 5.4 lists A's set, which lacks AWS (AWS.json is in the Europe pipeline allowlist) and adds METOPSG, FY3, GK2A, ANALOG, CUBESAT and RADIOSONDE, which have no Europe pipeline.
-  ВИПРАВЛЕННЯ: Decide once and write it the same way in 1.1 C7, 1.2 #30, 5.4, 8 and 11.2 rows 28/29/58. Option 1, keep the live path (C7, 5.4, 8 and bench A1.b2 assume it): in 1.2 #30 take NET_SOURCE out of the OFF list and write that the only source is NET_SOURCE (UDP from labrx on 127.0.0.1 only, after the masks), with file decode as the default. In 11.2 row 58 write 'усі апаратні та мережеві SDR-джерела, крім NET_SOURCE'. Option 2, file-only: delete the live path from C7, 5.4, 8 and 11.2 rows 28/29. In both cases 5.4 uses the 1.2 #30 plugin list: METEOR, NOAA_METOP, AWS, FY2, ELEKTRO_ARKTIKA, XRIT.
-  ДОКАЗ: reaudit_A_compute_software.json results[1].corrections[3] ('Keep NET_SOURCE_SDR_SUPPORT=ON') and [5] ('labrx converts cu8 to cf32 for the SatDump UDP feed ... Keep decode-from-file as the default'), bench_tests[2]. reaudit_C (all sdr_sources off, Europe pipelines Meteor-M/MetOp/AWS/FengYun-2/Elektro
-
-- [A46 | contradiction | reaudit_AB] ДЕ: 1.2 #31 «збірка +lab проти libairspyhf1 1.6.8-5~lab1»; 8 B12 «`apt-cache policy librtlsdr2 libairspyhf1 gr-satellites gpredict` показує кандидат +lab із пріоритетом 1001»; 6.2 «бекпорт libairspyhf1 1.6.8-5~lab1»; 2.2 КХ/ДХ row and 11.2 row 19 «libairspyhf експортує airspyhf_set_bias_tee і airspyhf_get_bias_tee_count»
-  ПРОБЛЕМА: 1.1 C22 and 5.4 make noble libairspyhf1 1.6.8-4build1 the default and the 1.6.8-5~lab1 backport optional only. Several places still describe the backport as the build base or the replacement, and B12 expects a +lab libairspyhf1 at priority 1001, which does not exist under the default. The bias-tee API exists only in 1.8.1 code; noble 1.6.8 has no such symbols.
-  ВИПРАВЛЕННЯ: 1.2 #31: «збірка +lab проти noble libairspyhf1 1.6.8-4build1 (бекпорт 1.6.8-5~lab1 — лише опція з перезбиранням усіх споживачів)». B12: drop libairspyhf1 from the +lab/1001 list (expect noble 1.6.8-4build1 from the 990 mirror, held). 6.2 reason: replaced by noble 1.6.8-4build1 (soname 1); backport optional. 2.2 and 11.2 row 19: «лише у збірці 1.8.1 (бекпорт 1.6.8-5) libairspyhf експортує …; у noble 1.6.8 цих символів немає».
-  ДОКАЗ: reaudit_B_receivers_rf.json results[1].corrections[1] action 'Default: noble 1.6.8-4build1 ... backport ... If 1.8.1 features are needed'; corrections[20] 'Noble 1.6.8 has none of these symbols'; spec HOST SOFTWARE. v2_edit_notes 01a b2 and 05c b3 (B won over A).
-
-- [A47 | contradiction | reaudit_AB] ДЕ: 1.1 C22 «Декодери WSJT-X — пакет wsjtx-decoders+lab (make jt9 wsprd)» (also C22 pin list, 3.5 P20, 4.2, 6.2, 7 item 23, 11.3 row 43) vs 1.2 #10 «з локального пакета lab-wsjt-decoders» (also 1.2 #29, 5.4, 11.2 row 22)
-  ПРОБЛЕМА: The same decode-only WSJT-X package has two names, so the pin list, CI checks and build recipes name different packages.
-  ВИПРАВЛЕННЯ: Use one name everywhere, for example lab-wsjt-decoders (the name 1.2 and 5.4 use), and replace every wsjtx-decoders+lab, or the other way round.
-  ДОКАЗ: reaudit_A_compute_software.json results[1].corrections[12] 'Build lab-wsjt-decoders'; reaudit_B_receivers_rf.json results[1].corrections[8] 'wsjtx-decoders+lab'. v2_edit_notes 01b b2 and 05c b2: 'I used A's name everywhere for consistency' (not carried into 1.1, 3.5, 4.2, 6.2, 7, 11.3).
-
-- [A48 | contradiction | reaudit_AB] ДЕ: 1.2 #7 «SHM 0 refid NMEA noselect + PPS lock NMEA prefer»; 11.2 row 15 «refclock PPS /dev/pps0 lock NMEA refid PPS prefer» and «різняться — узгоджується при зведенні»; 11.5 row 47 «KERNELS==998000.serial → /dev/gnss0»
-  ПРОБЛЕМА: 1.1 C13 and 5.4 use re-audit D's gated PPS (refclock PPS /dev/pps-gnss … noselect plus selectopts on acceptance), GPSD_OPTIONS -n -b and /dev/lab/gnss. 1.2 #7 still has 'prefer'. 11.2 row 15 calls the gpsd options unresolved and keeps /dev/pps0 prefer. 11.5 row 47 names /dev/gnss0, which re-audit A rejects because the kernel GNSS class can claim it.
-  ВИПРАВЛЕННЯ: 1.2 #7: «PPS /dev/pps-gnss lock NMEA noselect; ворота selectopts при прийнятті (5.4)». 11.2 row 15: say -n -b was chosen (5.4) and the PPS line was replaced by re-audit D's gate. 11.5 row 47: «→ /dev/lab/gnss».
-  ДОКАЗ: reaudit_A_compute_software.json results[1].corrections[16] ('/dev/lab/gnss ... /dev/gnss0 can be claimed by the kernel GNSS class'). v2_edit_notes 05c b2 (idx 45: '-n -b' chosen) and 05c b3 (100: 'D won over A ... /dev/pps-gnss with noselect and a selectopts gate, replacing prefer').
-
-- [A49 | contradiction | reaudit_AB] ДЕ: 3.1 «Flamingo+ #2 → LNA V2 → ch4 → RTL-A T3»; 8 «Крок фону L-band патча на RTL-B T1»
-  ПРОБЛЕМА: Old T1-T4 throw labels remain after the HMC7992 remap (RF1 = 50 Ohm park). WIDE/2 m is RTL-A RF4 and L-band is RTL-B RF2.
-  ВИПРАВЛЕННЯ: «→ ch4 → RTL-A RF4» and «Крок фону L-band патча на RTL-B RF2».
-  ДОКАЗ: reaudit_B_receivers_rf.json results[3].corrections[1]: 'RTL-A: RF1 50 Ohm, RF2 VHF-137, RF3 UHF, RF4 WIDE/2 m. RTL-B: RF1 50 Ohm, RF2 L-band, RF3 LNB IF, RF4 BENCH/sled'. STACK 5.3 ports table (P8 → RTL-A RF4).
-
-- [A50 | contradiction | reaudit_AB] ДЕ: 1.2 #102 «Перевірити проникнення DVB-T (734-742 MHz) і LTE B28 у тракт поблизу ПЧ LNB»; 8 LNB row «проникнення DVB-T (734-742 MHz) і LTE B28 поблизу ПЧ»; 11.6 row 39 «Перевірка проникнення на ПЧ від DVB-T (734-742 MHz) і LTE B28»
-  ПРОБЛЕМА: These rows keep the refuted target. In the EU the 700 MHz band no longer carries DVB-T; the B28 uplink is 703-733 MHz; the 739.5 MHz IF sits in the 733-758 MHz SDL/PMSE/PPDR gap. 1.1 C23, 5.3 and the 8.1 test already use 733-758 MHz.
-  ВИПРАВЛЕННЯ: Keep the user-required DVB-T/LTE B28 check, but replace «DVB-T (734-742 MHz) і LTE B28» with «DVB-T/LTE B28 (вимога користувача; у ЄС — скан 733-758 MHz SDL/PMSE/PPDR плюс край B28 uplink 703-733 MHz; DVB-T у смузі 700 MHz більше немає), LNB вимкнено, потім увімкнено».
-  ДОКАЗ: reaudit_B_receivers_rf.json results[3].corrections[9] and refuted_findings[11]; bench_tests[10] 'Ingress scan 733-758 MHz with the LNB unpowered, then powered'.
 
 - [A51 | contradiction | reaudit_AB] ДЕ: 1.2 #102 «RG6 з компресійними F-роз'ємами»; 9.1 step 11 «деталі F/75 Ohm, RG6 з компресійними F, LC»; 11.4 row 20 «(RG6 з компресійними F-роз'ємами)»
   ПРОБЛЕМА: The chosen LNB lead is the Goobay 58814 (75 Ohm, moulded F on both ends, class A+, 5.4 mm) in 2.10, 5.3 and the 9.1 Reichelt order. These rows still specify an RG6 lead with compression F connectors, a different and thicker part.
