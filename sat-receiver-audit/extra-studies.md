@@ -19028,6 +19028,42 @@
   Вагу 5.8 (1.73-1.96 kg, рюкзак 5.60-7.01 / 6.50-8.26 kg) тепер подано всюди однаково. Також виправлено: chrony noselect і /dev/lab/gnss, шлях /run/labd/bias, відкат A/B маршрутом A, сторожовий таймер Pico, вступ 11.7.
   9.1: LiteVNA перенесено в крок 5 (тиждень 1); Bullseye — замовити сьогодні; нумерацію кроків не змінено через D8.
 
+## fix:A:b2 (run `wf_588afa12-702`)
+
+- **Applied:**
+  - 17
+  - 18
+  - 20
+  - 21
+  - 22
+  - 23
+  - 25
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+- **Rejected:**
+  1.
+    - **Idx:** 19
+    - **Why:** Already fixed by an earlier batch. C9 and 11.3 #21 give IOS 265/299/339 mA (G3 #11). 262-342 mA appears only as a note that the re-audit B window was replaced, and the «Канал 300 mA (262-342 mA)» text is no longer in the file.
+  2.
+    - **Idx:** 24
+    - **Why:** Already fixed. The 2.9 «Захист від погоди» row now says «на GX16-4 IMU — власний ковпачок на ланцюжку (пара Olimex)», and the 8.2 IPX4 row says «без води біля GX16-4». GX12/M8 remains only in the 5.8 and 11.1 #70 notes that record the G4 wording (decision D18 is met).
+  3.
+    - **Idx:** 26
+    - **Why:** Already fixed. D14, 2.12 «Вага (модель)», C24 and 11.1 already give 5.60-7.01 / 6.50-8.26 kg contents and 6.85-8.26 / 7.75-9.51 kg on the back from the 5.8 sum, with the G4 figures labelled as replaced.
+  4.
+    - **Idx:** 27
+    - **Why:** Already fixed. No «≥6 Msps» is left for the Lime. 4.1 Metop/AWS, 5.3, 1.2 #91, 9.1 step 13 and 11.4 all say ≥7 Msps (decision D6). 6 Msps remains only as the Airspy Mini's own rate and in notes that the re-audit called it 6 Msps.
+- **Totals changed:** Applying decision D12 (idx 29) added a third MCP23017-E/SO (#4) to the BOM. 2.6 row «Розширювачі GPIO»: qty 2 → 3, price 3.6-3.9 → 5.5-5.8 (+1.90; the extra passives are an estimate). 2.6 subtotal 221.24-237.59 → 223.14-239.49 (without the button overlay 218.14-224.49; upper bound with all fallbacks 252.44 → 258.39, Adafruit 5346 ×3 at $17.85). 2.12: core without Lime 1,914.65-2,233.12 → 1,916.55-2,235.02 (+157.15 / −17.75 vs v1); core with Lime 2,521.11-2,841.58 → 2,523.01-2,843.48 (+167.62 / −90.28); + patch antennas 2,796.21-3,169.73 / 2,189.75-2,561.27; + both antenna tiers 3,338.47-3,782.72 / 2,732.01-3,174.26; + bench 4,875.03-5,550.52 / 4,268.57-4,942.06; all but optional 5,445.28-6,180.25 / 4,838.82-5,571.79; same composition as v1 2,092.34-2,436.81, 2,634.60-3,049.80, 4,171.16-4,817.60, 4,741.41-5,447.33; EU landed ≥2,613.10-2,933.57, ≥≈4,965-5,641, ≥≈5,535-6,270; budget variant ≈$1,917 / ≈$1,846 without Lime, ≈$2,523 / ≈$2,452 with Lime, ≈$3,073 / ≈$3,002, ≈$2,466 / ≈$2,395, ≈$2,369 / ≈$2,298. The same figures are carried into the header, 1.1 C24, 3.6 (rows and composition), 11.1 #21 and #22, 11.4 #44 and the 11.7 table and EU line. Steps 2 and 6 of 9.1 now list MCP23017-E/SO ×3 (no sums there). Savings (G2 #9, 8.0-8.3) are unchanged: #4 is a new line, not part of the saving. No other price changed.
+- **Summary uk:** У /home/user/lizbeth307/sat-receiver-audit/STACK.md застосовано 13 із 17 проблем. Чотири (19, 24, 26, 27) уже виправили попередні пакети.
+  Розв'язку HMC7992 приведено до воріт G1 #4: ≥40 dB, 37-40 dB — із записом виправлення розводки. Пусковий струм HF+ (100 + 220 мкФ, близько 5.3 мс) тепер скрізь описано як вищий за мінімальний deglitch 5 мс: потрібен тест, а запасний варіант — TPS2553DBVR C55266. Також у 5.1 «розділ 5.7» замінено на «розділ 5.1».
+  Козирок друкується з білої ASA White PF01002. Заряд від Anker 737 дозволено лише з USB-C2 і лише після DRP-матриці. Спільна посилка Pi Hut — лише з хабом за запасним варіантом. Замовлення DigiKey DE — крок 6. Ворота Airspy Mini — за G6 #12, з (a) АБО (b).
+  За рішенням D12 додано MCP23017 #4 (0x23, призначити на схемі) для EN LIME3V3 і RESET LC76G, а в розділ 8 — відкрите питання. Це +$1.90 до 2.6 і всіх підсумків: пристрій з Lime тепер 2,523.01-2,843.48, без Lime — 1,916.55-2,235.02.
+  Ворота шини Boni приведено до G3 #9: ≥12.0 V на барелі при батареї 13.2 V. libairspyhf за замовчуванням — noble 1.6.8-4build1 з дзеркала на 990. Пакет декодерів скрізь називається lab-wsjt-decoders.
+
 ## extract:operator_notes (run `wf_5ed966cd-eee`)
 
 - **Source:** operator_notes
