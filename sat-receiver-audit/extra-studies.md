@@ -3403,6 +3403,205 @@
   
   No hard rule is affected: this is passive glue logic with no RF emission, no driver needs, and receive-only and conducted-only remain intact. Quantities and the TBD62003A as the baseline driver are my assumptions, because STACK names neither.
 
+## searchA:allnet_64_gb_microsd_adafruit_5212_reade (run `wf_071e1025-145`)
+
+- **Part:** Recovery set: ALLNET 64 GB microSD (ALN-TFUHS1-64) + Adafruit 5212 USB-C microSD reader + Adafruit 6324 USB-C-to-A 2 m cable + USB3 A-A cable for EDL (core, group Recovery, 1 set)
+- **Current price usd:** 31.89 = 16.99 (ALLNET card, verified) + 6.95 (5212, verified) + 2.95 (6324, verified) + 5.00 (A-A cable: placeholder, no source found in STACK or sourcing files). These are ex-VAT seller prices; an EU buyer also pays import VAT on the ALLNET and Adafruit items (ALLNET card about 20.22-20.56 with 19-21% VAT). The re-audit D corrected spec calls for TWO rescue cards, which makes the set 48.88.
+- **Critical specs:**
+  - microSD capacity: at least 64 GB nominal (ALLNET gives 59.5 GB usable). It holds the _512 rescue image plus the offline archive: BIOS 260120 zip, edl-ng, the _4096 UFS image, two 32 MiB SPI NOR dumps, and SHA-256 lists.
+  - microSD bus: UHS-I SDXC, working on the Q6A sdhci-msm slot at 1.8 V signalling (vqmmc l6c 1.65-3.544 V). It must also boot through a USB reader, since boot order is USB > SD > NVMe > eMMC > UFS.
+  - microSD sequential speed at least what ALLNET states: 80.6 MB/s read and 42 MB/s write. ALLNET publishes no U, V or A class, so U3/V30 (30 MB/s guaranteed minimum) is better.
+  - microSD random 4K (A1/A2 rating) for booting a rescue OS. ALLNET is unrated, so any A1/A2 rating is better.
+  - microSD reliability: a genuine, traceable brand bought from an authorised or primary seller (counterfeits are common), a warranty, f3 write-verify on arrival, and 20 cold boots. Operating temperature is unpublished for ALLNET.
+  - Reader: USB Mass Storage class with no driver (usb-storage/uas in the Radxa 6.18 arm64 kernel, Ubuntu 24.04). It needs SDXC UHS-I support and USB 2.0 HS at minimum (the 5212 USB version is unpublished). It must enumerate under EDK2 for USB boot.
+  - Reader connector: it must plug into the handheld's exposed USB-A ports (LAB USB-A, 0.75 A TPS2553 behind the FE1.1s USB 2 hub; blue USB 3.1 port in the hatch). The Q6A USB-C has no case opening. The 5212 has a USB-C male plug, and the 6324 is C-male to A-male, so the two cannot be joined, and the 5212 cannot reach the Q6A without an A-plug to C-socket adapter.
+  - Reader current within the 0.75 A LAB port limit. A USB 3 reader should be used on the LAB port (USB 2 hub, no SuperSpeed) or outside L-band and GNSS sessions, because SuperSpeed links radiate (operator note 7).
+  - A-A cable: USB-A male both ends. D+/D- must be wired straight through, because EDL 05c6:9008 enumerates at USB 2 HS. SuperSpeed pairs should be present, in case the Firehose stage runs at USB 3 (unverified). Length about 1 m, shielded. Two hosts' VBUS get tied together: open VBUS or tape the VBUS pin at the PC end (my engineering note, not a source). Check continuity with a meter on arrival.
+  - Legal retail product with an EU source (VAT noted); no receive or transmit implications (passive service kit).
+- **Candidates:**
+  1.
+    - **Name:** Recommended set: Verbatim Pro U3 64 GB (47042) + Transcend RDF5 TS-RDF5K USB 3.0 reader + ALLNET USB 3.0 A-A 1 m (158949)
+    - **Kind:** other_brand
+    - **Price usd:** 22.75 ex VAT for 1 card (11.29 + 7.51 + 3.95), against 31.89 now. 34.04 for the re-audit's 2 cards, against 48.88. Reichelt shipping is from EUR 5.95 (about $6.69) unless combined with other Reichelt items; the A-A cable rides on the existing ALLNET order (Armor and RTC battery).
+    - **Spec comparison:** Card: 90/45 MB/s with U3 and V30, against 80.6/42 MB/s with no class. Reader: USB 3.2 Gen 1 with UHS-I, USB-A, 2-year warranty, against the 5212 (USB version, chipset and warranty unpublished, USB-C plug). Cable: same function, verified $3.95 against an unsourced $5.00.
+    - **Worse in:** No published spec is worse. Unknown on both sides: card A-class, card temperature range, NAND. The reader is bigger (56x24x8.9 mm, 18 g) than the 5212 (23x16x10 mm). The reader has no USB-C plug for a USB-C-only laptop (the 5212 has one).
+    - **Compatibility:** USB-A reader plugs straight into the LAB or blue USB-A port, which fixes the 5212/6324 mismatch. Standard UMS class; datasheet lists Linux 2.6.30+. The card is UHS-I SDXC. Q6A boot from this card, and USB boot through the reader, must be bench-verified (20 cold boots, f3, fio).
+    - **Risks:** No independent measurements gathered: the web-search budget ran out on the first query, so the comparison is datasheet and listing level only. Verbatim card stock at Reichelt shows as 'limited' (in stock, 1-2 days). Drop the 6324 only if it has no other USB-C user in the stack.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/microsdxc-card_64gb_-_verbatim_-_class_10_-_u3-182524
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/product/microsdxc-card_64gb_-_verbatim_-_class_10_-_u3-182524
+      - https://www.reichelt.com/de/en/shop/product/card_reader_external_usb_3_0_sd_microsd-221091
+      - https://shop.allnetchina.cn/products/usb-3-0-male-type-a-to-a-1-5m-for-rock-pi-4
+      - https://shop.allnetchina.cn/products/allnet-micro-sd
+  2.
+    - **Name:** Verbatim Pro U3 microSDXC 64 GB + adapter, part 47042 (EAN 0023942470427)
+    - **Kind:** other_brand
+    - **Price usd:** 11.29 ex VAT (EUR 11.95 incl. 19% DE VAT at Reichelt, $13.43; in stock, 1-2 days). Alternate: EUR 14.29 incl., not in stock, 4-8 working days. Compare ALLNET 16.99 ex VAT, about 20.2-20.6 with EU import VAT.
+    - **Spec comparison:** Read up to 90 MB/s (ALLNET 80.6). Write up to 45 MB/s (ALLNET 42). U3 + V30 (Reichelt) or U3 (Verbatim page), against no class on ALLNET. Class 10 UHS-I. Water- and shock-resistant claim. Up to 10% of capacity used for formatting, which matches ALLNET's 59.5 GB usable.
+    - **Worse in:** Nothing published is worse. Not A1/A2 rated (Verbatim says A2 only for 256 GB and up), but ALLNET is unrated too. Temperature range and warranty terms are not on the pages for either card.
+    - **Compatibility:** Standard UHS-I SDXC, same physical and electrical interface as the ALLNET card. Not Radxa-channel tested; bench-test on the Q6A slot and via USB.
+    - **Risks:** No independent benchmark found in this pass. Buy only from authorised retail (Reichelt or Alternate) and run f3 to rule out counterfeits.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/microsdxc-card_64gb_-_verbatim_-_class_10_-_u3-182524
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/product/microsdxc-card_64gb_-_verbatim_-_class_10_-_u3-182524
+      - https://www.verbatim-europe.com/en/prod/pro-u3-microsdxc-card-64gb-47042/
+      - https://www.alternate.de/Verbatim/Pro-64-GB-microSDXC-Speicherkarte/html/product/1218926
+      - https://www.reichelt.com/de/en/shop/search/microsdxc%2064gb
+  3.
+    - **Name:** PNY Pro Elite microSDXC 64 GB, P-SDU64GV31100PRO-GE (SDU64GV31100PRO)
+    - **Kind:** other_brand
+    - **Price usd:** 12.75 ex VAT (EUR 13.50 incl. 19% VAT at Reichelt, $15.18; in stock, 1-2 days)
+    - **Spec comparison:** Read up to 100 MB/s (ALLNET 80.6). Write up to 90 MB/s (ALLNET 42). U3, V30 and A1 (random IOPS rating, which ALLNET lacks). Class 10 UHS-I. Better on every published spec than both ALLNET and Verbatim; costs $1.46 more than Verbatim.
+    - **Worse in:** Nothing published. Temperature range and warranty not shown at Reichelt (the PNY product page could not be reached).
+    - **Compatibility:** UHS-I SDXC, drop-in. Bench-verify on the Q6A.
+    - **Risks:** No independent measurement found in this pass. Authorised retailer; f3 on arrival.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/microsdxc_memory_card_64gb_pro_elite-426301
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/product/microsdxc_memory_card_64gb_pro_elite-426301
+      - https://www.reichelt.com/de/en/shop/search/microsdxc%2064gb
+  4.
+    - **Name:** Raspberry Pi A2 microSD 64 GB (blank, Adafruit 6011; preloaded SC1629)
+    - **Kind:** other_brand
+    - **Price usd:** 12.79 at Adafruit (out of stock, 18 Oct 2026). In Europe only preloaded or used units: Pi Hut SC1629 GBP 30.60 incl. VAT; BerryBase used unit EUR 33.15. Not cheaper in the EU.
+    - **Spec comparison:** A2, C10, U3, V30, DDR50 and SDR104 with command queueing. Published random 4K: 3,200/1,200 IOPS read/write (Pi 4) and 5,000/2,000 (Pi 5). Shock, X-ray and magnet proof. In production until at least Jan 2028. Better documented than ALLNET.
+    - **Worse in:** Sequential read and write are not published, so 'at least 80.6/42 MB/s' is unverified. Command-queue gains need host support, which is unverified on sdhci-msm.
+    - **Compatibility:** UHS-I SDXC, drop-in.
+    - **Risks:** Stock: Adafruit out of stock; EU sellers carry only the dearer preloaded SKU.
+    - **Seller url:** https://www.adafruit.com/product/6011
+    - **Sources:**
+      - https://www.adafruit.com/product/6011
+      - https://www.raspberrypi.com/products/sd-cards/
+      - https://thepihut.com/products/noobs-preinstalled-sd-card
+      - https://www.berrybase.de/en/search?search=microSD+64GB
+  5.
+    - **Name:** Transcend RDF5 USB 3.0 SD/microSD reader, TS-RDF5K (black); TS-RDF5W white, TS-RDF5R pink
+    - **Kind:** other_brand
+    - **Price usd:** 7.51 ex VAT (EUR 7.95 incl. VAT at Reichelt, $8.94; TS-RDF5K in stock, 1-2 days; pink TS-RDF5R EUR 8.95). Replaces 5212 + 6324 = 9.90.
+    - **Spec comparison:** USB 2.0/3.0 (USB 3.2 Gen 1, 5 Gbit/s) with USB-A plug, against the 5212's unpublished USB version and USB-C plug. Supports microSDHC/SDXC UHS-I (and full-size SD). LED. 2-year limited warranty (datasheet). Linux 2.6.30+ listed.
+    - **Worse in:** Larger (56x24x8.9 mm, 18 g) than the 5212 (23x16x10 mm), which only matters in the service kit. No USB-C plug for a USB-C-only laptop. The datasheet (2013) does not state SDR104 or the chipset, and its operating temperature is not in the extracted text.
+    - **Compatibility:** Plugs directly into the Q6A LAB or blue USB-A (the 5212 cannot without an adapter). UMS class, so no driver. On the LAB port it runs at USB 2 HS behind the FE1.1s hub. EDK2 USB boot through the hub to be bench-verified.
+    - **Risks:** Old design. Use it on the LAB port or outside RF sessions (SuperSpeed RFI). Current draw not published; expected well under the 0.75 A LAB limit, unverified.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/card_reader_external_usb_3_0_sd_microsd-221091
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/product/card_reader_external_usb_3_0_sd_microsd-221091
+      - https://cdn-reichelt.de/documents/datenblatt/E200/TRANSCEND_TS-RDF5R_DB-EN.pdf
+      - https://www.adafruit.com/product/5212
+      - https://www.adafruit.com/product/6324
+  6.
+    - **Name:** Kingston MobileLite Plus microSD reader (MLPM)
+    - **Kind:** other_brand
+    - **Price usd:** 8.78 ex VAT (EUR 9.29 at Alternate, $10.44 incl.; 'newly arrived, available soon', so not yet shippable). Replaces 5212 + 6324 = 9.90.
+    - **Spec comparison:** USB 3.2 Gen 1 with USB-A plug. UHS-II (backward compatible with UHS-I). 36.6x20x7.5 mm, 4.57 g. Operating 0-60 C, storage -20 to 70 C. 2-year warranty. Linux 4.4+ listed. Against the 5212: USB version, temperature and warranty all unpublished.
+    - **Worse in:** Nothing published. No USB-C plug. About $1.27 more than the Transcend.
+    - **Compatibility:** USB-A straight into the LAB or blue port. UMS class.
+    - **Risks:** Stock not confirmed. Same SuperSpeed RFI rule as the Transcend.
+    - **Seller url:** https://www.alternate.de/listing.xhtml?q=microSD+Kartenleser+USB+3.0
+    - **Sources:**
+      - https://www.kingston.com/datasheets/MLPM_en.pdf
+      - https://www.alternate.de/listing.xhtml?q=microSD+Kartenleser+USB+3.0
+  7.
+    - **Name:** LogiLink CR0049 USB 3.2 Gen 1 reader with USB-C and USB-A plugs (microSD + SD)
+    - **Kind:** other_brand
+    - **Price usd:** 9.40 ex VAT (EUR 9.95 incl. at Reichelt, $11.18; in stock)
+    - **Spec comparison:** USB 3.2 Gen 1 with both USB-C and USB-A plugs. It keeps the 5212's USB-C use and adds USB-A, so it replaces the 5212 and the mismatched 6324.
+    - **Worse in:** Unverified: no datasheet read for chipset, UHS mode, temperature or warranty. LogiLink is a budget house brand, so build quality equal to the 5212 is unproven.
+    - **Compatibility:** Fits the Q6A USB-A and USB-C laptops. UMS class.
+    - **Risks:** Specs at listing level only. Saves only $0.50.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/card_reader_external_usb_3_2_gen1_microsd_sd-423355
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/product/card_reader_external_usb_3_2_gen1_microsd_sd-423355
+      - https://www.reichelt.com/de/en/shop/search/microsd%20card%20reader%20usb%203
+  8.
+    - **Name:** LogiLink CR0034A USB 3.0 reader (USB-A, microSD + SD)
+    - **Kind:** other_brand
+    - **Price usd:** 6.56 ex VAT (EUR 6.95 incl. at Reichelt, $7.81; in stock)
+    - **Spec comparison:** USB 3.0 with USB-A plug, against the 5212's unknown USB version and USB-C plug.
+    - **Worse in:** Unverified: chipset, UHS-I mode, temperature and warranty not checked; budget brand. Cannot be called not-worse until a datasheet or measurement is seen.
+    - **Compatibility:** USB-A into the LAB or blue port. UMS class.
+    - **Risks:** Listing-level specs only.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/card_reader_external_usb_3_0_micro_sd_sd-289436
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/product/card_reader_external_usb_3_0_micro_sd_sd-289436
+  9.
+    - **Name:** Goobay 38656 USB 2.0 microSD reader (USB-A)
+    - **Kind:** other_brand
+    - **Price usd:** 4.68 ex VAT (EUR 4.95 incl. at Reichelt, $5.56; in stock)
+    - **Spec comparison:** USB 2.0 with USB-A plug. The 5212's USB version is unpublished (probably USB 2.0, unverified).
+    - **Worse in:** USB 2.0 only: about 35-40 MB/s practical, below the card's 80-100 MB/s read. Not proven not-worse against the 5212, since that reader's speed is unknown. SDXC 64 GB support not checked.
+    - **Compatibility:** USB-A into the LAB or blue port. No SuperSpeed RFI.
+    - **Risks:** Listing-level specs only.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/card_reader_extern_usb_2_0_microsd-247297
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/product/card_reader_extern_usb_2_0_microsd-247297
+  10.
+    - **Name:** The Pi Hut Mini USB 2.0 MicroSD Card Reader (SKU 104583, USB-A)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 2.77 ex VAT (GBP 2.50 incl. UK VAT, $3.33; in stock). UK seller, so EU import VAT and handling may apply.
+    - **Spec comparison:** USB 2.0 with USB-A plug; microSD only.
+    - **Worse in:** Generic seller-branded part. SDXC/64 GB support, chipset, temperature and warranty all unpublished; USB 2.0 speed. Not proven not-worse.
+    - **Compatibility:** USB-A into the LAB or blue port.
+    - **Risks:** Generic part; post-Brexit shipping to the EU.
+    - **Seller url:** https://thepihut.com/products/mini-usb-2-0-microsd-card-reader
+    - **Sources:**
+      - https://thepihut.com/products/mini-usb-2-0-microsd-card-reader
+  11.
+    - **Name:** ALLNET 'USB 3.0 Male Type A to A 1m' (SKU 158949)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 3.95 ex VAT (in stock). Same seller as the ALLNET card and Armor, so no extra shipping. Compare the unsourced 5.00 placeholder.
+    - **Spec comparison:** USB-A male to USB-A male, 1 m, labelled USB 3.0. Sold 'for USB firmware upgrading, USB gadgets and Android ADB debug', which use USB 2 D+/D-, so the USB 2 lines are evidently connected.
+    - **Worse in:** Unverified: whether the SuperSpeed pairs are present and crossed (matters only if the QCS6490 Firehose stage runs at USB 3), shielding, and VBUS wiring. The placeholder had no spec at all, so nothing is known to be worse.
+    - **Compatibility:** Q6A blue USB 3.1 port in the service hatch to the host PC. Radxa EDL procedure: A-A cable, 05c6:9008.
+    - **Risks:** VBUS of two hosts tied together: tape the VBUS pin or confirm it is open (engineering note). Check D+/D- continuity on arrival.
+    - **Seller url:** https://shop.allnetchina.cn/products/usb-3-0-male-type-a-to-a-1-5m-for-rock-pi-4
+    - **Sources:**
+      - https://shop.allnetchina.cn/products/usb-3-0-male-type-a-to-a-1-5m-for-rock-pi-4
+      - https://docs.radxa.com/en/dragon/q6a/low-level-dev/edl-mode
+  12.
+    - **Name:** Digitus USB 2.0 A-A cable, 1 m (Alternate items 100159851 / 100156179)
+    - **Kind:** other_brand
+    - **Price usd:** 0.65-1.41 ex VAT (EUR 0.69 / 1.49 incl. at Alternate; in stock)
+    - **Spec comparison:** USB-A to USB-A, 1 m, USB 2.0 (D+/D- and VBUS). Enough for EDL PBL enumeration at USB 2 HS.
+    - **Worse in:** No SuperSpeed pairs. If the Firehose stage re-enumerates at USB 3 (unverified for QCS6490), full UFS image writes would run at USB 2 speed (about 35-40 MB/s). Not not-worse under the strict rule until EDL is shown to be HS-only.
+    - **Compatibility:** Fits the blue USB-A. EDL works over HS.
+    - **Risks:** Same VBUS-tie caveat.
+    - **Seller url:** https://www.alternate.de/listing.xhtml?q=USB+3.0+Kabel+A-Stecker+auf+A-Stecker
+    - **Sources:**
+      - https://www.alternate.de/listing.xhtml?q=USB+3.0+Kabel+A-Stecker+auf+A-Stecker
+- **Notes:** Method limits: the shared WebSearch budget was already used up when I made my first search, so I found no independent reviews or forum measurements. Every comparison above rests on datasheets, manufacturer pages and distributor listings fetched on 18 Oct 2026. USD = EUR x 1.1241 (the stack's own rate, EUR 148 = $166.37) and GBP x 1.3318 (GBP 132 = $175.80). Ex-VAT values back out 19% German VAT (Reichelt and Alternate) or 20% UK VAT.
+  
+  Findings on the current set:
+  (1) The 5212 is a USB-C male plug reader and the 6324 is a C-male to A-male cable, so they cannot be connected to each other. The Q6A USB-C has no case opening, so as specified the 5212 cannot reach the handheld at all. A USB-A reader fixes this and makes the 6324 redundant in this set; keep the 6324 only if another USB-C device in the stack needs it.
+  (2) The A-A cable's $5.00 has no source.
+  (3) Re-audit D asks for two rescue cards (set price 48.88).
+  (4) The ALLNET card publishes only 80.6/42 MB/s and 59.5 GB usable. It lists no U/V/A class, temperature range or warranty, so established-brand U3/V30 cards are not-worse on every published spec.
+  
+  Cheapest not-worse picks:
+  - Card: Verbatim 47042 at Reichelt, $11.29 ex VAT. PNY Pro Elite at $12.75 adds the A1 rating and 90 MB/s write.
+  - Reader: Transcend TS-RDF5K, $7.51 ex VAT.
+  - A-A cable: ALLNET 158949, $3.95.
+  - Set: $22.75 against $31.89 for one card, or $34.04 against $48.88 for two. Reichelt shipping (from EUR 5.95) eats most of the one-card saving unless the order is combined with other Reichelt items.
+  
+  Checked and NOT cheaper (or worse):
+  - SanDisk Extreme 64 GB: EUR 25.90-27.69.
+  - SanDisk Extreme Pro: EUR 30.90-31.89.
+  - Kingston Canvas Go! Plus: EUR 34.59.
+  - Patriot EP 64 GB: EUR 19.29, which is $18.22 ex VAT, above $16.99.
+  - Kioxia Exceria: EUR 17.95; write speed unpublished.
+  - Philips FM64MP65B: EUR 17.95.
+  - Worse in write (10-30 MB/s): ADATA Premier, MediaRange, Intenso, SanDisk Ultra, Kingston Canvas Select Plus, Verbatim 44084.
+  - SanDisk Nintendo Switch 64 GB (100/60, U3 V30) at EUR 11.79: currently not purchasable; watch item.
+  - Samsung 64 GB: not listed at Alternate (128 GB and up only), and the Samsung US and Kingston pages returned 403. Prices are unverified, so these are not candidates.
+  - Readers: ICY BOX IB-CR203-CU3 (EUR 11.90) and Goobay USB 3.2 A-A 3 m (EUR 5.99 = $5.66 ex VAT) are not cheaper. Adafruit 939 is discontinued (USB 2, 16/6 MB/s, max 64 GB). ALLNET's SSK SCRM331 USB 3.0 reader ($6.99) and its USB-C reader ($3.49) are out of stock.
+  
+  Bench gate for any substitute, as the current plan already requires:
+  - f3write/f3read over the full card;
+  - fio 1M sequential and 4K random on the Q6A slot;
+  - 20 cold boots from the slot and through the reader on the LAB USB-A (EDK2 USB boot via the FE1.1s hub);
+  - the reader runs only on the LAB port or outside L-band and GNSS sessions;
+  - A-A cable: meter check that D+/D- run straight through, and VBUS isolated or taped.
+  
+  Hard rules: all items are passive service-kit parts with no RF or transmit role, and no rule is affected.
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
