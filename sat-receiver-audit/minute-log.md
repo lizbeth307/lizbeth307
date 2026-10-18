@@ -1071,3 +1071,7 @@ P5 (проміжне): G6 — кандидат замість LBE-1420 ($175.80)
 
 P5 (проміжне): G3 — роз'єм GX12 4-pin Olimex CONNECTOR-GX12-4 (пайка під чашку) коштує €1.74 за 1 шт., на складі 2 388. G5 — FNIRSI FNB58 (без BT) у Berrybase за €49.90 з ПДВ, але зараз його немає в наявності. G6 — FlightAware Pro Stick Plus за специфікацією має підсилювач 19 дБ, NF 0.4 дБ, OIP3 +39 дБ (база для порівняння з аналогами). Джерела: digikey/olimex (CONNECTOR-GX12-4), https://www.berrybase.de/fnirsi-fnb58-usb-tester-4-28-v-0-7a-140w-schwarz, flightaware.com/adsb/prostick/.
 
+## 2026-10-18 14:00 UTC
+
+P5 (проміжне): G3 — EU-ціна Molicel INR21700-P50B у akkuteile.de (DE): €8.90 за шт. Розрахунок агента: 5 шт. = €50.02, з доставкою по DE €56.65, міжнародно €65.65. NKON (NL) за 5 шт. ≈€37.94 з ПДВ, економія ≈€12; але сорт лоту NKON (Grade B?) досі не перевірено. Також розглядаються Ampace JP50 і BAK; рішення буде після верифікації (тести Mooch). Джерела: https://www.akkuteile.de/en/lithium-ionen-battery/size-21700/molicel/ , nkon.nl.
+
