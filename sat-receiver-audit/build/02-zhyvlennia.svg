@@ -141,7 +141,7 @@
 <text x="1066" y="322" font-size="12" font-weight="normal" text-anchor="start" fill="#111">GPB0 LNB13V2, GPB1 BONI13V8 (GPB2-7 — реле, RF-перемикачі)</text>
 <text x="1066" y="337" font-size="12" font-weight="normal" text-anchor="start" fill="#111">MCP #3 0x22: GPA7 LNA ch4, GPB7 VBUS T7; решта — входи</text>
 <text x="1066" y="352" font-size="12" font-weight="normal" text-anchor="start" fill="#111">FAULT, FLT, rail-good; MCP #4 0x23: GPA0 EN LIME3V3, GPA1 RESET</text>
-<text x="1066" y="367" font-size="12" font-weight="normal" text-anchor="start" fill="#111">LC76G, GPB0/1/2 FAULT VBUS RTL-B/HF+/RTL-A. Pico: GP13 OFF S1,</text>
+<text x="1066" y="367" font-size="12" font-weight="normal" text-anchor="start" fill="#111">LC76G, GPB0-3 FAULT RTL-B/HF+/RTL-A/LIME3V3. Pico: GP13 OFF S1,</text>
 <text x="1066" y="382" font-size="12" font-weight="normal" text-anchor="start" fill="#111">GP16 DISP12, GP12 → J21 пін 3. Усі EN: 100k → GND; Q6A вимкн. → OFF</text>
 <text x="1060" y="409" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Pico: дільник 1:6 (100k/20k) від SW, не від N;</text>
 <text x="1060" y="425" font-size="12" font-weight="normal" text-anchor="start" fill="#111">аварійно ≤12.9 V 5 с без heartbeat → S1 OFF;</text>

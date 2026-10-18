@@ -263,7 +263,7 @@
 <text x="1896.0" y="633.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">MCP23017 #1 0x20 — виходи, 16/16</text>
 <text x="1896.0" y="648.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">MCP23017 #3 0x22 — входи + GPA7/GPB7, 16/16</text>
 <text x="1896.0" y="663.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">MCP23017 #4 0x23 (D12, §5.2): GPA0 EN LIME3V3,</text>
-<text x="1896.0" y="678.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  GPA1 RESET LC76G, GPB0-2 FAULT VBUS RTL-B/HF+/RTL-A</text>
+<text x="1896.0" y="678.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  GPA1 RESET LC76G, GPB0-3 FAULT RTL-B/HF+/RTL-A/LIME</text>
 <text x="1896.0" y="693.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">2× INA3221 0x41 / 0x43</text>
 <text x="1896.0" y="708.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">TCA9517DR → LAB BUS (I2C-B, AUX 12 V, GND)</text>
 <rect x="1890.0" y="732.0" width="390.0" height="89.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
