@@ -15563,6 +15563,102 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
       - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/src_cmp/shop.allnetchina.cn_p1.json
 - **Notes:** VERDICT (angle B): keep the current part. Nothing cheaper is proven not-worse. Every cheaper generic or clone module is worse on the datasheet in at least one critical spec. ATGM/AT6558/AT6668 and L76K tracking is -162 dBm vs -166. AT6558 parts and the L76K lack Galileo. None documents a jamming-status output, which the labd/chrony gate needs. Some have no PPS or no IPEX. The only spec-identical route is a DIY carrier around a bare LC76GABMD ($5.20 ex VAT at Comet BG). It saves $0 to about $6 at best (my model). No measurements of any DIY LC76G carrier exist, and it loses the included patch antenna, so it fails angle B's evidence rule. No used LC76G units were found. Used u-blox timing boards (M8T class) would be better but are expected to cost more than $14.99; I did not price-check them. For the RTC cell, the ALLNET $0.95 cell is already the cheapest verified pre-wired option. The verified EU alternative (Electrokit, 210 mAh) costs about $3.3, and no-name AliExpress leads have no capacity evidence. EU note: buying the same Waveshare board from an EU stockist (Eckstein DE, EUR 18.94 incl. 19% VAT) costs more than Waveshare direct. Ordering direct from Waveshare to the EU adds import VAT; I did not check whether Waveshare collects VAT through IOSS. Spec discrepancy to record: the Quectel spec V1.1 gives 1PPS accuracy of 30 ns RMS for LC76G(AB), while the Waveshare wiki comparison table says 100 ns. The primary Quectel spec governs. Neither is an independent measurement, and none was found anywhere for the LC76G. All candidates are receive-only GNSS receivers, so the hard rules are not affected. Search budget used: 11 WebSearch calls.
 
+## searchB:molicel_inr21700_p50b (run `wf_a268b76e-da0`)
+
+- **Part:** Molicel INR21700-P50B (4S1P pack cells, qty 5 = 4 + spare)
+- **Current price usd:** 49.95 for 5 ($9.99 each, compare-at $11.99) at 18650 Battery Store (US). I confirmed this from the store's Shopify JSON on 18 Oct 2026. EU price checks: akkuteile.de charges EUR 9.90 each including 19% DE VAT (I verified this from the page's JSON-LD on 18 Oct 2026), which is about $11.13 each at the stack's implied rate of 1.124 USD/EUR (taken from the STACK's own NKON conversion, EUR 6.75 -> $7.59). NKON's Grade A cell shows EUR 6.75 including VAT (EUR 5.58 ex VAT) in a July 2026 search snapshot. Another snapshot shows EUR 4.95. The live NKON page returns HTTP 403 to my tools, so its price is UNVERIFIED. A US seller is impractical for an EU buyer anyway: loose UN3480 cells normally ship by ground and within one country only (STACK row 245).
+- **Critical specs:**
+  - Format and envelope: 21700, unprotected, flat top. Diameter <= 21.55 mm and height <= 70.15 mm, to fit the 46x25x150 mm bare-pack envelope inside the 54x33x158 mm insulated compartment (reaudit D).
+  - Capacity at goods-in: >= 4.85 Ah minimum / 5.0 Ah typical (at 1 A to 2.5 V); 18.0 Wh typical / 17.5 Wh minimum per cell. The pack is 72 Wh nominal, and planning assumes 58 Wh usable new at 25 C and 50 Wh at 0 C or after about 300 cycles.
+  - Energy delivered to the 13.2 V loaded software cutoff (3.30 V/cell under load) at 0.6-3.4 A typical and 4.63 A peak with the Lime. This depends directly on DC IR. P50B: AC 6.5 mOhm typical at 30% SoC (<= 8 mOhm at shipping), DC 12.8 mOhm at 50% SoC. The reaudit modelled about 0.5 V of pack sag at 4.63 A with P50B, and mode I already stops early.
+  - Low-temperature behaviour: the cold runtime model (mode H 1.6 h at 0 C) and the 0 C cold-soak acceptance run. P50B discharge range: -40 to 60 C ambient.
+  - Continuous discharge headroom over the 4.63 A pack peak, and self-heating at 4.6 A inside an enclosure where cells may sit near 45 C. P50B: 60 A continuous with an 80 C cutoff.
+  - Charging: the IP2368 charges at 3 A (0.6C), CV 4.10 V/cell daily, with a monthly 4.20 V balance. This must be at or below the cell's standard (cycle-life-rated) charge current. P50B: 5 A standard, 25 A max.
+  - Charge temperature window covering the stack's NTC window of 0-45 C cell temperature with margin. P50B: -20 to 60 C ambient.
+  - Cycle life at this profile (3 A charge, <= 5 A discharge, 4.10 V cap). P50B: molicel.com lists 1400 cycles, but under a 100 W BBU profile.
+  - Voltage window compatible with the Daly BMS (OVP 4.25 V, UVP 2.70 V) and the IP2368: 4.20 V max, 2.5 V min cutoff, 3.6 V nominal.
+  - Mass <= 71 g per cell (284 g pack model).
+  - Storage and calendar ageing at about 50% SoC (the stack's P2 safety rule).
+  - Genuine Grade A cells from an authorised or established dealer, with cell matching good enough for 4S1P. The Daly balances only 30 mA at >= 4.18 V, so mismatched cells drift.
+- **Candidates:**
+  1.
+    - **Name:** Molicel INR21700-P50B, Grade A, from NKON (NL, EU dealer)
+    - **Kind:** current_part
+    - **Price usd:** about 7.59 each, about 37.95 for 5 (EUR 6.75 incl. NL VAT, EUR 5.58 ex VAT; 10+ tier EUR 5.79 incl.). From a July 2026 search snapshot; the live page returns 403, so UNVERIFIED. Shipping not included.
+    - **Spec comparison:** Same cell, so every spec is identical: 4.85/5.0 Ah, 18.0 Wh, AC 6.5 / DC 12.8 mOhm, 60 A, 5 A standard charge, -20 to 60 C charge, 71 g max.
+    - **Worse in:** Nothing, provided the listing is the Grade A SKU and not the 'lower cycle life' SKU (see the next candidate).
+    - **Compatibility:** Drop-in. No change to BMS, charger, CAD or mass model.
+    - **Risks:** Price and stock are not live-verified, and the snapshots disagree (EUR 6.75 vs EUR 4.95). NKON sells a Grade A and a Grade B P50B side by side, so the SKU must be checked. Keep the goods-in test (>= 4.85 Ah at 1 A, 1 kHz AC IR, 68-71 g). Ground shipping within the EU only.
+    - **Seller url:** https://www.nkon.nl/en/molicel-inr21700-p50b-5000mah-50a.html
+    - **Sources:**
+      - https://www.nkon.nl/en/molicel-inr21700-p50b-5000mah-50a.html
+      - https://www.fsaeonline.com/content/Molicel-TDS--INR-21700-P50B-80122.pdf
+      - https://www.molicel.com/inr-21700-p50b/
+  2.
+    - **Name:** Molicel INR21700-P50B 'lower cycle life' / Grade B (Molicel 'Class A3'), NKON
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** about 5.56 each (EUR 4.95 incl. VAT, EUR 4.09 ex VAT; 10+ EUR 3.93 ex VAT). From a search snapshot; UNVERIFIED.
+    - **Spec comparison:** Nominally the same electrical specs as Grade A. NKON's own text says Molicel graded these cells as reduced quality and that capacity falls quickly after about 500 cycles.
+    - **Worse in:** Cycle life: about 500 cycles before a rapid fade, by the seller's own statement, against the Grade A rating. Grading and QC are also lower. REJECT.
+    - **Compatibility:** Drop-in electrically.
+    - **Risks:** Lower cycle life is a trade the user rule forbids. Grade B cells may also be less well matched for 4S1P.
+    - **Seller url:** https://www.nkon.nl/en/molicel-inr21700-p50b-5000mah-50a-grade-b.html
+    - **Sources:**
+      - https://www.nkon.nl/en/molicel-inr21700-p50b-5000mah-50a-grade-b.html
+      - https://www.nkon.nl/molicel-inr21700-p50b-5000mah-50a-grade-b.html
+  3.
+    - **Name:** EVE INR21700-50E (commodity Chinese OEM bare cell)
+    - **Kind:** other_brand
+    - **Price usd:** 4.99 each at 18650 Battery Store (Shopify JSON, 18 Oct 2026; compare-at 5.99) and 4.15 at DIY500AMP (products.json, 18 Oct 2026); both US. EU: NKON EUR 2.95 incl. VAT (about 3.32; snapshot of 26 Jun 2026, stock unclear, UNVERIFIED) and Rotorama EUR 4.79 (about 5.38; snippet, UNVERIFIED).
+    - **Spec comparison:** Datasheet (via the 18650 Battery Store listing): 5000 typ / 4950 min mAh, better than the P50B's 4850 min. 3.65 V nominal, about 18.25 Wh. AC IR <= 18 mOhm against P50B <= 8 (6.5 typ). Max discharge 15 A 'not for cycle life'; the RS-hosted DS says 10 A continuous. Standard charge 1 A, max 10 A. Charge 0-45 C ambient, discharge -20 to 60 C. Cycle life to 70%: >= 1000 cycles at 0.5C charge and 5 A discharge, >= 500 at 1C charge. 68 +/- 2 g, 21.15 x 70.15 mm. Measured by BatteryRealData, which is run by the seller DIY500AMP, so not independent: 5021 mAh / 18.34 Wh at 1 A and 4933 mAh / 17.48 Wh at 5 A (36.9 C max), tested 14 Jul 2026. On the same lab's P50B run at 5 A: 4703 mAh / 16.61 Wh (22 Jun 2026). Cutoff voltage and sample count were not shown.
+    - **Worse in:** (1) IR: about 2.5x the AC IR. My model, with DC IR assumed at 25-35 mOhm, gives 0.23-0.41 V more pack sag at the 4.63 A Lime peak, so the 13.2 V loaded cutoff arrives earlier, worst when cold. (2) Continuous current: 10-15 A against 60 A; still above the 4.63 A need, but much less margin. (3) Charging: the stack's 3 A is 0.6C, three times the 1 A standard charge and between the 1000-cycle (0.5C) and 500-cycle (1C) test profiles, so cycle life at this stack's profile is likely lower than the P50B's. (4) Charge window 0-45 C against -20 to 60 C; this equals the stack NTC window but leaves no margin. (5) Discharge down to -20 C, against -40 C. Better in: min capacity, mass, price. REJECT: worse on several specs that matter, and the only measured data comes from the seller.
+    - **Compatibility:** Fits the envelope, and the BMS and charger voltages match. The SYS12 heat-soak and cutoff tables would have to be redone for the higher sag.
+    - **Risks:** No independent IR, cold or cycle data was found: HKJ/lygte-info has not tested it, and ChargerLab's article has no measurements. Many 50E listings conflict (one says 4000 mAh / 10 A). Counterfeit and relabel risk exists on marketplaces, so buy from a dealer only.
+    - **Seller url:** https://www.18650batterystore.com/products/eve-50e-21700-5000mah-15a-battery
+    - **Sources:**
+      - https://www.18650batterystore.com/products/eve-50e-21700-5000mah-15a-battery
+      - https://diy500amp.com/products/eve-50e-21700-5000mah-15a-battery
+      - https://www.nkon.nl/en/eve-inr21700-50e-5000mah-15a.html
+      - https://rotorama.com/product/eve-inr21700-50e-5000mah-15a
+      - https://docs.rs-online.com/0e57/A700000015726491.pdf
+      - https://www.chargerlab.com/eve-energy-inr21700-50e-high-power-cylindrical-cells-storm-the-power-bank-market/
+  4.
+    - **Name:** EVE INR21700-50PL (tabless 5 Ah high-power OEM cell, Grade A)
+    - **Kind:** other_brand
+    - **Price usd:** 5.99 at 18650battery.com, 6.49 at DIY500AMP, 6.99 at IMR Batteries (all US, Shopify JSON 18 Oct 2026). EU: NKON lists only Grade B (price not retrieved).
+    - **Spec comparison:** EVE DS PBRI-INR21700/50PL-D06-01 Rev A (29 Nov 2024): 4800 min / 5000 nominal mAh, 3.60 V. AC IR <= 7 mOhm at shipping (at least equal to the P50B's <= 8). 125 A max discharge with a 75-80 C cutoff (P50B: 60 A). Standard charge 2.5 A, max 10 A. Charge 0-45 C ambient, discharge -20 to 60 C. Capacity at 12.5 A, relative to 10 A at 25 C: 0 C >= 80%, -10 C >= 75%, -20 C >= 60%. 72.0 g max. The DS has no cycle-life section; the sellers state '>= 400 cycles'. Measured by BatteryRealData (seller-affiliated): 5135 mAh / 18.48 Wh at 1 A (17 Jun 2026). An endless-sphere forum post, read only through a search snippet because the page is bot-blocked, reports AC IR 2.88 mOhm at 50% SoC and 4750 mAh at 50 A (UNVERIFIED).
+    - **Worse in:** (1) Cycle life: '>= 400 cycles' (seller claim, not in the DS) against the P50B's rating. (2) Min capacity 4800 against 4850 mAh. (3) Standard charge 2.5 A against 5 A; the stack's 3 A charge is above the 50PL's cycle-rated current. (4) Charge window 0-45 C against -20 to 60 C. (5) Discharge down to -20 C, against -40 C. (6) Mass 72 against 71 g max (+4 g per pack). Equal or better in: IR and max current. REJECT: worse on cycle life and charge rate, and no independent cycle-life data exists.
+    - **Compatibility:** Fits the envelope (21.15 x 70.15 mm); BMS and charger voltages match.
+    - **Risks:** Grade B stock is widespread (NKON), and marketplace 'EVE 50PL' listings carry an authenticity risk: one endless-sphere tester posted results with 'we do not know if this is actually the EVE 50PL'. The measured data is seller-affiliated.
+    - **Seller url:** https://imrbatteries.com/products/eve-50pl-21700-5000-mah-125a-battery
+    - **Sources:**
+      - https://eurolamp.ua/shop/wp-content/uploads/eve-inr21700-50pl-datasheet.pdf
+      - https://imrbatteries.com/products/eve-50pl-21700-5000-mah-125a-battery
+      - https://18650battery.com/products/eve-50pl-21700-5000-mah-125a-battery
+      - https://diy500amp.com/products/eve-50pl-21700-battery
+      - https://www.nkon.nl/en/eve-inr21700-50pl-5000mah-125a-1.html
+      - https://endless-sphere.com/sphere/threads/tabless-design-cylindrical-cells-tests.122072/page-15
+- **Notes:** VERDICT (angle B: generic, clone, DIY, used): no generic, clone, used or rewrap cell is not-worse than the P50B with independent measured evidence. Keep the Molicel P50B. The cheapest not-worse option is the same Grade A P50B from an EU dealer. NKON's snapshot price is EUR 6.75 including VAT, about $7.59 each or about $38 for 5 against $49.95; that saves about $12 before shipping, but the price is UNVERIFIED because the live page returns 403. Check that the SKU is Grade A and not 'lower cycle life'. Keep the goods-in test unchanged.
+  
+  Rejected classes, with no concrete priced product:
+  - Used or second-life pulls (e-bike or tool-pack 21700s): goods-in can measure capacity and IR, but not the remaining cycle or calendar life. Those cannot be proven equal, so they fail the rule by construction.
+  - Rewraps (Keeppower KP-P50B at akkuteile.de, Vapcell P50): no rewrap was found cheaper than a genuine P50B. The Vapcell P50 HKJ tested in 2021 claims only 15 A and about 15 mOhm AC, so it is worse.
+  - DIY: not applicable to a cell.
+  
+  Out of my angle, for the other angle to weigh. DIY500AMP products.json, 18 Oct 2026:
+  - Samsung 50E: $3.95. HKJ measured it, but it is rated 9.8 A, 0-45 C charge, 500 cycles to 80%, so it is worse.
+  - Samsung 50S: $5.99.
+  - LG M58T: $6.15. 5.8 Ah, 12.5 A; no measurements on that page.
+  - Molicel M65A: $11.99 at 18650 Battery Store per reaudit D, so not cheaper in the US.
+  
+  Evidence quality:
+  - BatteryRealData is a DIY500AMP project, so its measurements are seller-affiliated, not independent. The full curves and cutoffs sit behind a login, so the P50B (5 A, 22 Jun 2026) and EVE (14 Jul / 17 Jun 2026) runs may not be like-for-like.
+  - HKJ (lygte-info.dk) has not tested the P50B, EVE 50E or EVE 50PL in the index I fetched.
+  - endless-sphere pages are behind an Anubis bot block, so those forum numbers are from search snippets only.
+  - Whether the 50E's higher 5 A energy (17.48 vs 16.61 Wh) survives the stack's 3.30 V/cell loaded cutoff and 0 C operation is unknown. Its higher IR argues against it.
+  
+  All USD conversions use the stack's implied rate of 1.124 USD/EUR (an assumption). Search budget used: 11 WebSearch calls.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
