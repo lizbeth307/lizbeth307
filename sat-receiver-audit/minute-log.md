@@ -413,3 +413,10 @@ P4, нове (ще не перевірено):
 - A (тепло): у DTS Q6A точки спрацювання — passive 90/95 °C, critical 110 °C. Джерело: DTS ядра Radxa.
 - B, C: завершилися ще по одній підсистемі (B — 1/4, C — 2/4).
 
+## 2026-10-18 08:16 UTC
+
+P4, нове (ще не перевірено):
+- D (GNSS/ПЗ): ймовірний ризик з AppArmor. У профілі gpsd (contrib/apparmor/usr.sbin.gpsd) дозволено лише /dev/tty{,S,USB,AMA,ACM}[0-9]* і /dev/pps[0-9]*. У стеку gpsd читає LC76G з /dev/ttyHS1 через udev-посилання /dev/gnss0 (STACK.md, рядки 138 і 630). AppArmor перевіряє справжній шлях, тож ttyHS1 може бути заблоковано, і gpsd не відкриє порт. Агент D це ще перевіряє. Якщо підтвердиться, треба додати локальне правило в /etc/apparmor.d/local/usr.sbin.gpsd: «/dev/ttyHS[0-9]* rw,», а також тест на старті: aa-status і журнал DENIED. Джерело: репозиторій gpsd, contrib/apparmor/usr.sbin.gpsd (gitlab.com/gpsd/gpsd).
+- A (ПЗ, версії станом на жовтень 2026): readsb v3.16.17 (27.09.2026), AIS-catcher v0.70 (19.06.2026), multimon-ng 1.6.2 (26.09.2026). Джерела: GitHub-релізи wiedehopf/readsb, jvde-github/AIS-catcher, EliasOenal/multimon-ng.
+- C (L-band патч): RTL-SDR Blog у коментарях підтверджує, що патч має поляризацію RHCP. Твердження з блогу 2019 року, що Inmarsat — це LHCP, хибне. Джерело: rtl-sdr.com, стаття про L-band патч і коментарі адміністратора.
+
