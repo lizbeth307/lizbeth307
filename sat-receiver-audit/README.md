@@ -2,7 +2,7 @@
 
 Звіт оновлюється автоматично під час аудиту. Тут зібрано всі повні відповіді субагентів і всі зведення.
 
-- [Хронологія всіх зведень](summaries.md) — 195 записів
+- [Хронологія всіх зведень](summaries.md) — 196 записів
 - Повні відповіді субагентів по кожному компоненту — посилання в таблиці нижче
 - [Фінальні перевірки](final-checks.md)
 - [Щохвилинний журнал аудиту](minute-log.md)
@@ -33,6 +33,7 @@
 | [Gnss imu location](components/gnss_imu_location.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Hf receiver](components/hf_receiver.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Hf selector 2x omron g6k 2f rf 5 v serie](components/hf_selector_2x_omron_g6k_2f_rf_5_v_serie.md) | · research · forums · fixes ✅ verify | `—` |
+| [Ip2368 4s 100 w pd board charge only bz](components/ip2368_4s_100_w_pd_board_charge_only_bz.md) | · research · forums · fixes ✅ verify | `—` |
 | [Lab instruments](components/lab_instruments.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Lab ui](components/lab_ui.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Mech thermal storage](components/mech_thermal_storage.md) | ✅ research · forums · fixes ✅ verify | `—` |
