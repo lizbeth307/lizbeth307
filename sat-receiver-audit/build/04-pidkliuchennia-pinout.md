@@ -77,7 +77,7 @@
 | GPA0 | EN LAB-порту | TPS2553DBVR-1 → CH334F H3 (LAB USB-A); перемикається наприкінці оренди | 0 (вимкн.) |
 | GPA1 | EN AUX12 | затвор 2N7002 → AO3407A (лише BENCH) | 0 |
 | GPA2 | відсічення VBUS RTL-A | TPS2553DBVR-1 → H2; watchdog labrx (rtlsdr_read_async = −1 або 2 s без семплів → закрити, зняти VBUS на 1 s, знову відкрити за серійним номером) | 0 |
-| GPA3 | відсічення VBUS RTL-B | TPS2553DBVR-1 → розділений VBUS до RTL-B (D13) | 0 |
+| GPA3 | відсічення VBUS RTL-B | TPS2553DBVR-1 (від LAB5) → розділений VBUS до RTL-B (§5.1, §5.2) | 0 |
 | GPA4 | VBUS HF+ | ключ HF+ з LC → H4 | 0 |
 | GPA5 | LNA ch1 (VHF-137) | TPS2553DBVR-1 ch1 | 0 |
 | GPA6 | LNA ch2 (UHF) | TPS2553DBVR-1 ch2 | 0 |
