@@ -71,6 +71,7 @@
 | [Sma torque wrench 0 9 n m adapter set](components/sma_torque_wrench_0_9_n_m_adapter_set.md) | · research · forums · fixes ✅ verify | `—` |
 | [Software](components/software.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_e49d4f53-8d4` |
 | [Software stack](components/software_stack.md) | ✅ research · forums · fixes ✅ verify | `—` |
+| [Spare rtl sdr blog wideband lna v2](components/spare_rtl_sdr_blog_wideband_lna_v2.md) | · research · forums · fixes ✅ verify | `—` |
 | [Storage](components/storage.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_3e735695-e00` |
 | [Targets link budgets](components/targets_link_budgets.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Tca9517 buffer 74lvc1g17 2n7002 ao3400 f](components/tca9517_buffer_74lvc1g17_2n7002_ao3400_f.md) | · research · forums · fixes ✅ verify | `—` |
