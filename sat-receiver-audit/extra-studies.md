@@ -27205,6 +27205,30 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   Outside this file:
   - 97: the case drawing in build/ also has to change from GX12 to GX16 (16 мм hole). I noted this in the text but did not touch build/.
 
+## write:power+wiring (run `wf_7068b0f5-040`)
+
+Power+wiring group: all four files are written. Both SVGs pass the minidom check and an overlap check for text, boxes, net flags and lines. They have a white background, no scripts, no external references, and a title block with "v2, 18.10.2026", units and «теоретичний проєкт — перевірити на стенді». This group writes no CSV.
+
+**Files** (all in `/home/user/lizbeth307/sat-receiver-audit/build/`):
+- `02-zhyvlennia.svg` (54,391 B): power schematic with net labels. It shows the pack → BMS → 7.5 A fuse → INA228 shunt → node N → #2813 → SW chain, the N domain (charger IP2368 behind TPS259470A, AON TPS70933, MCP65R41 UV supervisor, 5 A service port) and the Q6A domain (VCC_5V_PERI, 3V3_Q6A, LIME3V3). Five columns cover SYS12/J21/DISP12/AUX12, LAB5 with the four TPS2553DBVR-1 keys, LNA4V5 ch1-ch4 at 88.7k/162k (D14), LNB13V2 and BONI13V8 (D15). It also has the EN map, runtime table, cut-off levels and back-feed rules.
+- `02-zhyvlennia.md` (37,770 B): topology, rail table (rail, source, regulator, V, I limit, protection, EN, default, loads), current-protection summary, AON/supervisor details, charger, back-feed rules, cut-off table, power-up and power-down order, runtime per mode, power BOM, TBD list.
+- `04-pidkliuchennia-pinout.md` (37,493 B): 40-pin header map, I2C buses and addresses, UARTs, maps for MCP23017 #1, #3, #4 (D12) and #2 (sled), HMI expander PI4IOE5V9555, USB map with VBUS limits and the RTL-B VBUS path (D13), V4L serial names LABRXA/B/C (D2) and udev names, 30 case-panel connectors, a 30-line cable schedule, Pico GPIO map, TBD list.
+- `04-header-40pin.svg` (25,880 B): the 40 pins colour-coded into 10 function classes, with legend, notes and title block.
+
+**STACK.md sections used:** §5.1, §5.2, §5.3 (case RF ports, switches), §5.8 (panels and openings, interior layout), §2.6 (HDMI cable), §2.7 (all power BOM rows), §2.9, §2.10, §2.11.1 (CAB.01075), §8 (open power decisions, MCP23017 #4 line allocation, HF-7, HF-8, RF-2, TPS2553 tests), §9.2 steps 3 and 11. Decisions D2, D3, D12-D18.
+
+**Marked TBD, and why:**
+- **Unchosen parts or settings** (STACK.md §5.1, §8): the LIME3V3 load-switch part and its current limit (picked on the bench), and RILIM for the VBUS HF+, RTL-A and RTL-B keys (1.5-2× measured current).
+- **To recalculate or measure:** the BONI13V8 OVLO divider ("перерахувати"), the final LNB RILM (after measuring the LNB current) and the DISP12 ILIM of 1.5 A vs about 1.7 A ("розглянути").
+- **No values given:** resistor values for the three TPS259470A (STACK gives only targets), the LC pi-filter and Schottky part numbers, and the channel split between the two INA3221.
+- **Left to you or the bench:** the LNB voltage window (±0.35 V or 11.5-14 V), the TVS from OUT to IN on the USB-C eFuse, 3.3 V on the header after poweroff, the GP17 dimming path and GP22 fan tacho.
+- **Expander lines** (STACK.md §5.2, §8): MCP23017 #4 lines and its 0x23 address ("призначити на схемі"), the line numbers of the 14 MCP #3 inputs, control lines of the third HMC7992, the button and encoder bits on PI4IOE5V9555, and MCP #2 bits.
+- **One conflict, flagged but not resolved:** the USB map and D13 send the RTL-B FAULT to MCP #3, but MCP #3 already uses all 16 lines. The HF+ and RTL-A FAULT lines are not assigned anywhere either.
+- **Header and case details not in STACK.md:**
+  - GND and unused pin numbers on the 40-pin header (I used the standard 40-pin layout, starred, to be checked against the Q6A v1.21 schematic). STACK also does not say which pin of the pairs 8/10, 13/15, 16/18 and 27/28 is SDA/SCL or TX/RX.
+  - Where the power button and the node-N service port sit on the case.
+  - Most internal wire and harness lengths, the LAB BUS cable length, the DISP12 barrel connector type, and whether RTL-A on H2 uses a Lindy 36700 extension.
+
 ## fix:A:b3 (run `wf_7444ffc9-4aa`)
 
 - **Applied:**
@@ -27259,6 +27283,47 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   idx 39 і 40: у 3.1, 3.2, 2.12 і 3.6 підсумки стенда і розширення вже стоять на одній базі ПДВ, усі суми рядків я перерахував. Застарілі числа виправлено в C24, у п. 23 розділу 7, у таблиці 11.7 і в позначках заголовка: стенд 1,609.39-1,767.80, розширення 582.23-629.73, «усе, крім опційного» 5,530.09-6,180.25.
   idx 41: у 3.1 «Інструменти» і в 11.1 замість «ціни TME — нетто» тепер «брутто, з 19% ПДВ DE». Підтвердження — числа G5: плашкотримач $5.74 = $4.82 × 1.19, SCALA $43.84 і HL 1920 E $79.69 — брутто.
   Верхні межі не змінилися. Нижні межі тепер на одній базі в усіх розділах.
+
+## fix:A:b4 (run `wf_7444ffc9-4aa`)
+
+- **Applied:**
+  - 51
+  - 52
+  - 55
+  - 56
+  - 57
+  - 60
+  - 61
+  - 62
+  - 65
+  - 66
+  - 67
+- **Rejected:**
+  1.
+    - **Idx:** 53
+    - **Why:** Already fixed by an earlier batch. The 4.1 S-band decoder cell already reads 'gr-satellites (розбір кадрів не перевірено); SatDump-конвеєра S-band в алоу-листі немає (лише Meteor-M, MetOp, AWS, FengYun-2, Elektro_Arktika)'. For consistency I also updated 1.2 #90, which still said SatDump pipelines decode S-band.
+  2.
+    - **Idx:** 54
+    - **Why:** Already fixed. The 4.1 row is 'GNSS L1 + SBAS (EGNOS)' and 5.3 says 'GNSS L1 / SBAS (EGNOS)'.
+  3.
+    - **Idx:** 58
+    - **Why:** Duplicate of 53, and the 4.1 S-band decoder cell already carries the requested text (already fixed).
+  4.
+    - **Idx:** 59
+    - **Why:** Already fixed. 1.2 #7, 11.2 row 15 and 11.5 already say /dev/lab/gnss, /dev/pps-gnss with noselect and gating through chronyc selectopts, and GPSD_OPTIONS -n -b -s 115200. No /dev/pps0, 'prefer' or 'узгоджується при зведенні' is left.
+  5.
+    - **Idx:** 63
+    - **Why:** Already fixed. 1.2 #83 reads 'Lime залишено (18.10.2026); варіант з GNSS не брати.'
+  6.
+    - **Idx:** 64
+    - **Why:** Already fixed (D9). 4.1, 1.2 and 11.4 now give regional bands (below the horizon in Iberia, Ireland and the UK; about 6-12° in central Europe; about 18-21° in the south-east). No per-city angle lists remain. 'Атени' in 4.1 is the location of a community report, not an angle.
+- **Totals changed:** idx 67: Jokari 20050 (+$28.63, TME) moved from options into the 3.1 tools set (335-391 -> 363.63-419.63). 3.1 lab core: 1,609.39-1,767.80 -> 1,638.02-1,796.43 (≈1,638-1,796). With the Passion Radio/Astroradio reservations: lower bound 1,652.06 -> 1,680.69. Ex-VAT comparison: 1,536.56-1,687.68 -> 1,565.19-1,716.31. Against v1: +134.81/−42.09 -> +163.44/−13.46. 3.2 budget lab: ≈1,491-1,511 -> ≈1,520-1,540. 3.6 core+extended: 2,191.62-2,397.53 -> 2,220.25-2,426.16 (+247.95/−91.45). Device + both antenna tiers + bench: with Lime 4,947.86-5,550.52 -> 4,976.49-5,579.15, without Lime 4,341.40-4,942.06 -> 4,370.03-4,970.69. All except optional: with Lime 5,530.09-6,180.25 -> 5,558.72-6,208.88, without Lime 4,923.63-5,571.79 -> 4,952.26-5,600.42, v1 composition 4,826.22-5,447.33 -> 4,854.85-5,475.96 (+596.46/−127.38). v1-composition bench line: 4,243.99-4,817.60 -> 4,272.62-4,846.23. EU landed lower estimates: device + antennas + bench ≥≈5,038-5,641 -> ≥≈5,067-5,669; all except optional ≥≈5,620-6,270 -> ≥≈5,649-6,299. Updated in C24, 2.12, 3.1, 3.2, 3.6, 9.1 (TME tools order), 11.1 row 62 and 11.7. Device totals (2.1-2.12 core) are unchanged: 66 adds an unpriced item.
+- **Summary uk:** Застосовано 11 із 17 проблем (51-67). Дріт LNB тепер усюди Goobay 58814 замість RG6. Залишок «куплений набір QO-100» замінено на «купується». SDRangel і OpenWebRX+ більше не мають ADS-B/AIS в алоу-листах (лише readsb і AIS-catcher, D11). Ворота купівлі Airspy Mini в 2.11.3 узгоджено з G6 #12.
+  У 3.1 статус банка живлення Anker змінено на «не перевірено» (ціна з агрегатора). Речення про «заморожені рішення v1» і джерело цін у вступі до розділу 2 оновлено під порядок джерел v2. У 5.8 позначено, що штатив 1.17-1.35 kg — консервативне значення, і наведено цифри для Rollei 1.14 kg.
+  У 2.6 додано P-MOSFET верхнього ключа вентилятора шляху 1 як позицію без ціни (модель).
+  Калібр тракту батареї: 18 AWG — це мій вибір у межах 18-20 AWG із повторного аудиту D, у файлах його немає. Обґрунтування: запобіжник 7.5 A, а сервісний дріт XT30 уже 18 AWG. Через це Jokari 20050 (+$28.63) перейшов з опцій у набір інструментів, і підсумки лабораторії та зведень у 2.12, 3.6 і 11.7 зросли на $28.63.
+  Проблеми 53, 54, 58, 59, 63 і 64 уже виправили попередні пакети.
+  Поза моїм пакетом (не змінював): у 11.1 рядок 75 досі згадує «плагін airspy SatDump з виправленням PR #1172», а це суперечить D1.
 
 ## edit:02c_bom_display_power_gnss:b1 (run `wf_85b20a83-f63`)
 
