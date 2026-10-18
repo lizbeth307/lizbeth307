@@ -12511,6 +12511,241 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Confirm these on the actual packages before writing the fixes. The file was not edited.
 
+## stack:check2 (run `wf_63d37cf4-10a`)
+
+- **Lens:** NUMBERS + CONSISTENCY
+- **Problems:**
+  1.
+    - **Where:** 5.8 weight table (lines 904-918); repeated in 2.12 line 327, C24 line 60, D14/5.8 field-pack rows (line 928)
+    - **Problem:** The parts in the handheld weight table add up to 1.52-1.72 kg, but the table total says 1.35-1.6 kg.
+    - **Severity:** wrong_number
+    - **Fix:** Change the handheld weight to about 1.5-1.7 kg without the Lime (+0.15 kg with it) everywhere, and raise the field daypack by about 0.12-0.17 kg (about 4.5-6.2 kg, or 5.4-7.4 kg fully loaded). Or cut a part weight so the sum matches.
+    - **Evidence:** Low: 0.26+0.14+0.12+0.32+0.09+0.20+0.10+0.05+0.14+0.10 = 1.52. High: 0.33+0.14+0.18+0.32+0.09+0.25+0.10+0.07+0.14+0.10 = 1.72. final_integration size_weight_estimate has the same part list and the same wrong 1.35-1.6 total.
+  2.
+    - **Where:** 5.6 Thermal, line 825 (model basis)
+    - **Problem:** The thermal model uses a 210x135x52 mm case. That is the old envelope that D15 replaced; the current case is 220-225 x 135-140 x 55-60 mm.
+    - **Severity:** contradiction
+    - **Fix:** Re-run the thermal model on 220-225 x 135-140 x 55-60 mm, or label the table as 'model on the superseded 210x135x52 envelope; re-derive'.
+    - **Evidence:** D15 line 76 rejects the 205-215 x 130-140 x 50-55 mm envelope. 5.8 line 890 gives the plan 220-225 x 135-140 x 55-60. final_integration thermal_plan carries the same stale 210x135x52.
+  3.
+    - **Where:** 5.5 CPU, line 797
+    - **Problem:** 'An LRPT + HRPT pass with loggers needs 2.8-4.5 cores, which fits the 4 cores without the Lime.' The top of that range is more than the 4 A78 cores available (CPU4-6 + CPU7).
+    - **Severity:** contradiction
+    - **Fix:** Either say the high end does not fit (labd pauses loggers or Expert/OpenWebRX+ during dual passes without the Lime too), or show a budget of 4.0 cores or less.
+    - **Evidence:** 4.5 > 4. Same text in final_integration ram_cpu_storage_budget. C19 (line 55) gives labrx and the engines only CPU4-6 + CPU7.
+  4.
+    - **Where:** 5.5 line 793 (ring) and line 821 (microSD); vs C18 line 54 and the 5.5 rate table line 817
+    - **Problem:** The same 'two RTL + HF+' load is 13.3 MB/s in one place and 16.4 MB/s in another. C18 and the rate table use 13.3 MB/s as the worst no-Lime stream. The 1.5 GiB ring is sized at 16.4 MB/s, which implies HF+ as cf32, a format C18 rejects. The microSD margin '61 MB/s = 3.7x the worst stream' uses 16.4. Also, '61 MB/s class' is a measured speed: the V30 class itself guarantees only 30 MB/s.
+    - **Severity:** contradiction
+    - **Fix:** Use one worst-stream value. If the ring holds HF+ as cf32, say so explicitly ('ring 16.4 MB/s incl. HF+ cf32; disk 13.3 MB/s ci16'). Write the microSD margin as 'V30 = 30 MB/s guaranteed (2.3x of 13.3 MB/s); 61 MB/s measured (4.6x)'.
+    - **Evidence:** 10.24 + 3.07 = 13.3 MB/s (ci16); 10.24 + 6.14 = 16.4 MB/s (cf32). 1.5 GiB / 16.4 MB/s = 98 s, while at 13.3 MB/s it is 121 s. 61/16.4 = 3.7 and 61/13.3 = 4.6. C18: 'HF+ пишеться як ci16 ... Найгірший потік без Lime 13.3 MB/s'.
+  5.
+    - **Where:** 7. Corrections item 13, line 1040
+    - **Problem:** 'UFS 128 GB holds about 2.5 h' contradicts the frozen storage plan. C18 and 5.5 give about 40 min of 2 RTL + HF+ raw, or about 50 min of 2 RTL, under the 30 GiB raw cap, and integration decisions win.
+    - **Severity:** contradiction
+    - **Fix:** Rewrite as: 'two V4L = 36.9 GB/h; under the 30 GiB raw cap about 50 min (about 1.3 h even using all 46 GiB of the recordings area); the "5 h on UFS" claim is deleted'.
+    - **Evidence:** 30 GiB / 10.24 MB/s = 52 min; 46 GiB / 10.24 MB/s = 1.34 h; the whole 74 GiB /data gives only 2.16 h. The 2.5 h figure comes from final_completeness stale item 51, which final_integration C18 supersedes ('about 40 min ... or about 50 min').
+  6.
+    - **Where:** C23 line 59 vs 2.7 'Власні PCB' line 257 and 5.3 P4 line 681
+    - **Problem:** C23 says to hold the LNB injector choke until the region is confirmed. Yet the core BOM's custom injector board (bought now, counted in the core total) already includes the '≥1 A LNB choke', and 5.3 builds the P4 injector in every unit.
+    - **Severity:** contradiction
+    - **Fix:** Pick one. Either move the ≥1 A LNB choke into the 2.11 QO-100 add-on and the 9.1 step 11 list, or delete 'дросель інжектора LNB' from C23's hold list (the rail and F port are built in every unit anyway).
+    - **Evidence:** C23: 'Утримати купівлі ... Bullseye, матеріали рупора, дросель інжектора LNB'. 2.7: '5-канальна плата інжекторів (... дросель LNB ≥1 A ...)' at $10-30 in core. final_integration has the same split (C23 vs BOM row 27).
+  7.
+    - **Where:** 2.3 Uputronics row line 193 vs C9 line 45, 5.1 LNA4V5 line 557, 5.3 P2 line 679, section 8 line 1071
+    - **Problem:** The BOM says the Uputronics 440 has a '5 V bias input', but it is fed from the 4.5 V LNA rail, minus the TPS2553 and choke drops (about 4.3-4.4 V at the preamp). The register says current boards are '5V max' and that operation at 4.5 V is unverified. Section 8 lists only its current, not whether it works at 4.5 V.
+    - **Severity:** contradiction
+    - **Fix:** State the accepted bias range. Add to section 8 'Uputronics 440: gain/NF at 4.3-4.5 V on the ch2 injector'. Plan a 5.0 V channel option, or accept 4.5 V explicitly, if the part needs 5 V.
+    - **Evidence:** report_research decision #98: 'Bias input depends on revision: Mar-2020 boards 5-26 V; current Pi Hut stock "5V max" ... Operation at the V4L's 4.5 V is unverified.' STACK 7.26 repeats the revision note.
+  8.
+    - **Where:** 4.1 AWS row line 480 vs Metop-B rows lines 478-479 and #91 line 145
+    - **Problem:** The sample-rate logic is inconsistent. Metop AHRPT (2.333 Msym/s, about 3.5 MHz wide) is attempted on the V4L at 2.88 Msps. AWS (1.785 Msym/s, about 1.2 dB less bandwidth than Metop) is declared 'unreachable without the option, needs ≥3.6 Msps — Lime or Airspy only'. If 2.88 Msps can work for Metop, it should work at least as well for AWS.
+    - **Severity:** contradiction
+    - **Fix:** Put AWS under the same gate as Metop: 'foldable (helicone) — on the edge (experiment) at 2.88 Msps on the V4L; Airspy Mini only if gate (a) fails'. Or explain why AWS needs ≥3.6 Msps while Metop does not.
+    - **Evidence:** dish_replacement.json: 'AWS PFM ... QPSK at 1.785 Msym/s, about 1.2 dB less bandwidth than Metop'. final_completeness: SatDump #727, a V4 reached sync on Metop at 2.88 Msps.
+  9.
+    - **Where:** 8. Open items, on-air checks row, line 1089
+    - **Problem:** 'Metop-B/C humps at 1701.3/1707 MHz' reads as if Metop-C transmits at 1707 MHz. Both Metop AHRPTs are at 1701.3 MHz; 1707 MHz is AWS (listed separately in the same row).
+    - **Severity:** wrong_number
+    - **Fix:** Write 'Metop-B/C hump at 1701.3 MHz, AWS 1707 MHz'.
+    - **Evidence:** dish_replacement.json: 'SatDump satellite list ... MetOp-C AHRPT at 1701.3 MHz as active'. STACK 4.1 line 479: Metop-B 1701.3 MHz; line 480: AWS 1707 MHz.
+  10.
+    - **Where:** 9.1 step 2, line 1117
+    - **Problem:** The Adafruit first order is given as 'about $99', but the listed items cost $104.95 at the document's own BOM prices. The $99 comes from world sourcing, which counted one MCP23017; the integration later made it two (D13).
+    - **Severity:** wrong_number
+    - **Fix:** Change to 'about $105'.
+    - **Evidence:** Debug Probe 12.00 + 6324 cable 2.95 + 5212 reader 6.95 + 2x CH334F 9.90 + 2x MCP23017 11.90 + INA228 14.95 + BNO085 29.50 + fan 6101 4.95 + HDMI 2420 9.95 + 2x knob 1.90 = 104.95. Minus one MCP23017 (5.95) = 99.00. Source: final_world_sourcing per_item[7] lists 'CH334F 5997 x2 + MCP23017 5346' (single).
+  11.
+    - **Where:** 2.12 roll-up table lines 320-321 and 3.6 lines 450-451
+    - **Problem:** The low ends of two roll-ups are $1-2 below the sum of the tiers, by either the verifier's rounded tiers or the document's own line recount.
+    - **Severity:** wrong_number
+    - **Fix:** '+ bench' should be $3,760-4,896 and 'everything except optional' $4,258-5,603. Or use the line recount: $3,761 and $4,258.
+    - **Evidence:** Rounded tiers: 1,758+176+351+1,475 = 3,760; +498 = 4,258. Line recount: 1,759.40+175.79+350.90+1,474.58 = 3,760.67; +497.72 = 4,258.39. The document shows 3,759 and 4,257 (copied from final_integration total_cost).
+  12.
+    - **Where:** C9 line 45 / 5.1 LNA4V5 row line 557
+    - **Problem:** The LNA rail is 2x LT3045 'about 1 A', but the four channels each have a 300 mA TPS2553 limit, which adds up to 1.2 A nominal (more at the top of the limit tolerance). The labd budget caps only 'LAB port + LNA ≤ 1.5 A', so with the LAB port idle the LNA channels could ask for more than the rail delivers.
+    - **Severity:** contradiction
+    - **Fix:** Add a separate labd LNA cap of 1.0 A or less (or 0.9 A with ch4 fitted), or lower the ch4 WIDE limit to 150 mA (the LNA V2 draws 90 mA).
+    - **Evidence:** 4 x 300 mA = 1.2 A > about 1 A from 2x LT3045 (500 mA each). final_integration issue #5 rejected a single LT3045 because it 'is below the sum of the feed limits'; the same test still fails at 1.2 A.
+  13.
+    - **Where:** C8 line 44, 5.1 LNB13V2 row line 558, 5.6 Regulators line 840
+    - **Problem:** 'Worst-case dissipation 0.96 W' assumes 0.3 A. But the LNB current is unpublished and unmeasured (0.2-0.3 A provisional), and the provisional PTC hold is 0.45 A. At the PTC hold current the LDO dissipates 1.44 W (+44 K), not 0.96 W (+29 K).
+    - **Severity:** wrong_number
+    - **Fix:** Call 0.96 W the value 'at 0.3 A'. State the worst case at the PTC hold (about 1.44 W, about +44 K, about 94 °C junction at 50 °C internal), or require the measured LNB current before the plate-bond design is frozen.
+    - **Evidence:** (16.4-13.2) V x 0.45 A = 1.44 W; x 30.5 °C/W = 43.9 K. final_completeness missing_parts_bom[7] gives 'up to 1.44 W at 0.4 A (model)'.
+  14.
+    - **Where:** D4 line 65 and the 2.6 display row vs 5.1 DISP12 row line 554, mode G line 595, 5.6 Display line 841
+    - **Problem:** The display acceptance limit (up to 14 W at 100%, stable at SYS12 = 11.0 V) does not match the rail table (DISP12 maximum 1.1 A) or mode G (13 W). There is a second mismatch: the thermal model's backlight power (11/5.5/2.8 W at 100/50/25%) against the total display budget (13/6/3 W) implies a board overhead that changes from 2.0 to 0.5 to 0.2 W.
+    - **Severity:** contradiction
+    - **Fix:** Set the DISP12 maximum to about 1.3 A (14 W at 11.0 V), or make the acceptance limit 13 W. Use one constant board overhead in the backlight and total figures.
+    - **Evidence:** 14 W / 12 V = 1.17 A; 14 W / 11.0 V = 1.27 A > 1.1 A. 13-11 = 2.0 W, 6-5.5 = 0.5 W, 3-2.8 = 0.2 W.
+  15.
+    - **Where:** 5.2 MCP23017 #1 line 642 vs sled #2 line 645 and 5.3 Switches line 688
+    - **Problem:** The same HMC7992 SP4T part has two control lines per switch in the handheld (V1/V2, with '00 = 50 Ohm' meaning T4), but three (V1-V3) in the sled. The claim that the all-low power-up state selects the 50 Ohm throw T4 is not backed by a truth table; radio_lab lists the HMC7992 logic as unverified.
+    - **Severity:** contradiction
+    - **Fix:** Take the line count from the HMC7992 datasheet truth table and use it in both places. Wire the 50 Ohm load to whichever throw the pulled-down (all-low) state actually selects, and add this to the 'HMC7992 logic levels' bench item.
+    - **Evidence:** STACK line 642: 'GPB4/5 перемикач RTL-A V1/V2; GPB6/7 ... (00 = 50 Ohm на обох)'. Line 645: 'HMC7992 V1-V3'. radio_lab.json: 'HMC7992 logic levels (ADI site returned 503)' is unverified.
+  16.
+    - **Where:** D3 line 64 (reason column)
+    - **Problem:** 'The board's own pulse (SGM811, about 0.2-0.6 s) is shorter than the 400 ms UEFI wants.' The upper end, 0.6 s, is longer than 400 ms, so the statement is self-contradictory as written.
+    - **Severity:** wrong_number
+    - **Fix:** Write 'typically about 0.3 s (240 ms SGM811 timeout plus about 70 ms RC; the forum UEFI log saw 75 ms), shorter than the 400 ms UEFI wants'.
+    - **Evidence:** power.json: 'reset timeout (240 ms typical, 150-560 ms rated) plus about 70 ms ... roughly 0.2-0.6 s'; UEFI log: 'PwrKey press 75 ms detected is less than expected 400 ms'.
+  17.
+    - **Where:** C6 line 42 (reason) vs 5.2 header table lines 625-635
+    - **Problem:** C6 says 'pin 7 and pins 11-40 sit behind UM3304 buffers'. The header table shows pins 16/18 (UART6) and 27/28 (I2C2) behind UM3204H, and pins 13/15 behind CJ3134K.
+    - **Severity:** contradiction
+    - **Fix:** Write 'pin 7 and the plain GPIO pins in 11-40 (12, 29, 32, 33, 35, 38, 40) sit behind UM3304', or correct the table.
+    - **Evidence:** Table rows: '16/18 | UART6 (UM3204H)', '27/28 | I2C2 (UM3204H)', '13/15 | I2C0 (CJ3134K)'.
+  18.
+    - **Where:** 2. BOM intro line 167 vs 2.5 Boni-Whip row line 220 and subtotal line 224; 3.3 line 385
+    - **Problem:** The intro says the lower bound uses 'the cheapest VERIFIED variant of the row', but the Boni-Whip low end uses Moonraker $123.95, which is marked unverified. The verified price is WiMo $178.73.
+    - **Severity:** contradiction
+    - **Fix:** Either reword the rule to 'cheapest listed variant', or apply it: foldable tier $405.68-625.17 and HF chain $494.68-589.17 (low-end core plus both antenna tiers about $2,341).
+    - **Evidence:** 350.90 - 123.95 + 178.73 = 405.68; 439.90 + 54.78 = 494.68. Row status: '123.95 (Moonraker, не перевірено) / 178.73 (WiMo ...)', status 'перевірено (WiMo)'.
+  19.
+    - **Where:** Header 'Позначки' line 5, 2. BOM intro line 167, 9.1 line 1130 ('Усі підсумки — без доставки, ПДВ і мита')
+    - **Problem:** The stated price basis ('without shipping, VAT and duty') is not applied consistently. Several low-end prices include VAT: Q6A EUR 148 incl. VAT, UFS EUR 58, Daly EUR 8, Uputronics GBP 51.59 incl. VAT, Boni-Whip EUR 159 incl. VAT. Others are ex-VAT: LiteVNA 175.73 and tinySA 204.28. The Lime row includes $18 shipping.
+    - **Severity:** style
+    - **Fix:** Give a mixed-basis note: 'EU/UK shop prices are shown as sold (incl. VAT) where no ex-VAT price was seen; LiteVNA/tinySA low = ex-VAT export; Lime includes shipping'. Or convert every line to one basis.
+    - **Evidence:** Lines 173, 174, 193, 220, 246, 292, 339-340. final_world_sourcing per_item[17]: Uputronics 'GBP 51.59 incl. VAT; about 57.25 ex VAT'.
+  20.
+    - **Where:** 2.3 HF+ selector row line 195 (and 3.3 line 378)
+    - **Problem:** '$62-80 (GBP 43-52 for two, ex VAT)' does not follow from the document's FX rate. GBP 43-52 is $57.27-69.25. The unstated difference ($5-11) would have to be the driver PCB.
+    - **Severity:** wrong_number
+    - **Fix:** Show it as 'relays GBP 43-52 = $57-69 + driver PCB about $5-11 (estimate) = $62-80', or correct the range.
+    - **Evidence:** 43 x 1.3318 = 57.27; 52 x 1.3318 = 69.25. No other final file prices the G6K (only final_integration has it).
+  21.
+    - **Where:** 2.7 IP2368 row line 247 (qty 2) vs 9.1 step 6 line 1121 and 9.2 step 6 line 1141
+    - **Problem:** The BOM buys 2 IP2368 boards ($25-49), but the purchase and bring-up plans say to buy and burn in 2-3 boards.
+    - **Severity:** contradiction
+    - **Fix:** Make the BOM quantity 3 (and re-price), or say '2 boards' in 9.1 and 9.2.
+    - **Evidence:** BOM: '| 2 | 25-49 |'. 9.1: '2-3 плати IP2368'. 9.2: '2-годинний прогін 3 A на 2-3 платах'. Row note: 'Прогін 2-3 плат'.
+  22.
+    - **Where:** 4.1 QO-100 CW-beacon row line 487 and ISS APRS row line 468 vs the status definition, line 457
+    - **Problem:** By the document's own definition, a target that 'depends on a gate' is 'на межі'. QO-100 NB CW beacon (patch) is still marked 'надійно (модель)' although it is region-gated and its LNB is in the optional, not-in-totals tier. ISS APRS is 'надійно (модель)' on an assumed EIRP, a 'still being tested' payload and an RX-only demodulator not yet verified on the device.
+    - **Severity:** contradiction
+    - **Fix:** Mark QO-100 CW 'на межі — за воротами регіону (запас +6...+9 dB)'. Mark ISS APRS 'на межі (модель, EIRP припущено)', or add an exception to the definition.
+    - **Evidence:** Line 457: 'на межі — модель біля порогу, опортуністично або залежить від воріт'. 2.11: QO-100 set held until region known. final_completeness goal_coverage[8]: QO-100 patch 'partial'.
+  23.
+    - **Where:** 4.2 NAVTEX row line 505 and DSC row line 506 vs HF broadcast row line 508
+    - **Problem:** NAVTEX and DSC on the 9:1 wire are rated 'надійно' while the text itself says local noise may limit them. HF broadcast on the same wire is 'на межі' for exactly that reason (no loops, local noise). No model margin or on-air evidence is given for 'надійно'.
+    - **Severity:** contradiction
+    - **Fix:** Rate NAVTEX/DSC 'на межі (локальний шум)', or give the margin or evidence that justifies 'надійно'.
+    - **Evidence:** Line 505: 'надійно | ... локальний шум може обмежувати'. Line 508: 'на межі | Без рамкових антен КХ біля пристрою часто обмежений локальним шумом'. user_requirements line 31: 'the Airspy HF+ with a wire ... will often be limited by local noise'.
+  24.
+    - **Where:** D16 line 77
+    - **Problem:** 'QO-100 DATV and typical SSB need dish-class gain (26 and 31-32 dBi)' pairs the numbers in reverse. Section 4.1 has typical SSB at about 26 dBi and DATV at 31-32 dBi.
+    - **Severity:** contradiction
+    - **Fix:** Write 'типовий SSB і DATV QO-100 потребують ... (26 і 31-32 dBi)'.
+    - **Evidence:** 4.1 line 490: 'читабельний SSB потребує близько 26 dBi'. Line 491: 'Маяк DATV потребує 31-32 dBi'.
+  25.
+    - **Where:** 2.1 recovery row line 176 vs 5.5 storage line 821
+    - **Problem:** The firmware boot order is given two ways: 'USB > SD > NVMe > UFS' and 'USB > SD > NVMe > eMMC > UFS'.
+    - **Severity:** contradiction
+    - **Fix:** Use one order (final_integration storage: USB > SD > NVMe > eMMC > UFS) in both places.
+    - **Evidence:** Line 176 vs line 821. final_integration ram_cpu_storage_budget uses the 5-item order.
+  26.
+    - **Where:** 9.1 step 1 line 1116
+    - **Problem:** The reason column says 'UFS is only at Allnet', but the same row orders the UFS from TinyTronics (EUR 58, 2-4 weeks) for EU buyers.
+    - **Severity:** contradiction
+    - **Fix:** Write 'UFS в наявності лише в Allnet (TinyTronics — 2-4 тижні)'.
+    - **Evidence:** Same row: 'UFS EUR 58 ... UFS — 2-4 тижні'. final_world_sourcing per_item[1]: 'Only in-stock world source'.
+  27.
+    - **Where:** 2.12 comparison paragraph line 325
+    - **Problem:** 'Integration raised the core by about $250-510' compares the integrated core with the old core plus the whole old HF chain ($368-463). That HF chain included the Boni-Whip ($124-179) and the wire, balun and coax, which are now in the foldable tier, not in core. Compared like for like, the core rose by more.
+    - **Severity:** wrong_number
+    - **Fix:** Compare against the old core plus the HF+ and selector only, or state that the old HF chain included the Boni-Whip and wire now counted in the foldable tier.
+    - **Evidence:** final_world_sourcing totals: 'HF CHAIN: $368-463. Covers the HF+ $169, wire, balun, coax, Boni-Whip $124-179 ...'. STACK 2.5 puts the Boni-Whip and HF wire in the foldable tier.
+  28.
+    - **Where:** C12 line 48 (reason)
+    - **Problem:** '151.5 MHz sits in the centre of the clean window 148.11-153.27 MHz' is wrong: the centre is 150.69 MHz. 151.5 MHz is 1.77 MHz (1.17%) below the top edge, so the ±1% robustness claim holds with little margin.
+    - **Severity:** wrong_number
+    - **Fix:** Write 'in the clean window 148.11-153.27 MHz (1.77 MHz = 1.2% below the top edge; ±1% drift/SSC stays inside)'.
+    - **Evidence:** (148.11+153.27)/2 = 150.69. 153.27-151.5 = 1.77 MHz; 1% of 151.5 = 1.515 MHz.
+  29.
+    - **Where:** 5.6 thermal table, mode H line 832 vs 5.1 mode H line 596
+    - **Problem:** Lime typical shows 30 W of internal heat against 30.8 W at the pack, although the T7 is mounted outside the case and the LNA sits at the antenna. Internal heat should be the pack power minus the T7 and external loads (about 26-28 W). Modes G and I do subtract external loads (45 → 36 W, 61.1 → 53 W).
+    - **Severity:** wrong_number
+    - **Fix:** Re-derive mode H internal heat as about 27 W (model), or note what keeps it at 30 W.
+    - **Evidence:** G: 45.0 - 36 = 9 W external. I: 61.1 - 53 = 8.1 W external. H: 30.8 - 30 = 0.8 W external, with the T7 (outside, about 2.5-4 W while writing) in the mode.
+  30.
+    - **Where:** C3 line 39 (reason)
+    - **Problem:** '4S keeps the pack current below 4.6 A even at the Lime peak', yet the Lime peak works out to 4.63 A, and D2 and 5.1 list it as '4.6 A'.
+    - **Severity:** style
+    - **Fix:** Write 'близько 4.6 A навіть на піку з Lime'.
+    - **Evidence:** 61.1 W / 13.2 V = 4.63 A. D2 line 63: 'Піки на відсічці 13.2 V: 3.4 A без Lime і 4.6 A з ним'.
+  31.
+    - **Where:** Header 'Що це' line 3
+    - **Problem:** 'штир 70 см' in the always-carried list reads as a 70 cm long whip, which would break the about 35 cm piece rule. The whip is actually 17 cm (70 cm band).
+    - **Severity:** style
+    - **Fix:** Write 'штир діапазону 70 см (17 см, або A-V85/SRH-701)'.
+    - **Evidence:** 2.4 line 206: 'Штир 70 см | DIY 17 см, або Diamond SRH-701 (19 см) / Baofeng A-V85 (16.8 см)'. Rule: pieces about 20-23 cm, maximum about 35 cm.
+  32.
+    - **Where:** 1.2 #33 line 112
+    - **Problem:** 'NPU FFT about 7.8 GFLOPS' gives the wrong engine. The VkFFT runs on the Adreno GPU (5.5 line 798: 'GPU: VkFFT близько 7.8 GFLOPS'); the NPU only consumes the tiles.
+    - **Severity:** style
+    - **Fix:** Write 'FFT для тайлів NPU (VkFFT на GPU) близько 7.8 GFLOPS'.
+    - **Evidence:** Line 112 vs line 798.
+- **Notes:** I checked every price, total, rail value, cutoff, runtime, data rate, frequency and weight in STACK.md (all 1,257 lines) against the final files. Where the final files disagree, final_integration decides. I did not edit STACK.md.
+  
+  **Arithmetic that checks out:**
+  - **BOM subtotals:** every group subtotal in 2.1-2.11, 3.1, 3.2 and 3.3 recomputes exactly. The core recount of $1,759.40-2,252.77 is right. So are the budget variants ($1,739, $1,647, $201, $2,116 and $2,024) and the lab budget minimums ($1,088-1,126 and $207).
+  - **Currency and orders:** every EUR and GBP conversion at 1.1241 and 1.3318 is right, except the G6K line. The TinyTronics ($240.56), ALLNET ($283.73), RTL-SDR Blog ($263.55) and Nooelec ($199.75) orders are right.
+  - **Power:** all mode runtimes (58 and 50 Wh) are right, as are the 3.4 A and 4.6 A pack peaks at 13.2 V, the SYS12 sums and the EN-divider thresholds. The cutoff ordering, 13.2 > 12.9 > 12.8 > 12.0 V, is consistent.
+  - **Display and spurs:** the EDID timings (59.99 Hz, 51.68 Hz, 68.86 kHz, 58.14 kHz) and every spur harmonic in 5.7, 1.2 #78 and 7.19 are right.
+  - **Storage:** the 13.3 MB/s FE1.1s tree, the recording rates and per-hour volumes, the UFS partition sum, the T7 figures (74 min per TB and 1.76x) and the Lime DMA ring are right.
+  - **NPU and antennas:** the RTL-F and LIME-W tile geometry, the HTP gate arithmetic, the antenna geometry (helix diameters, patch sizes, aperture gain, the horn single-mode range) and the PPI limits are right.
+  - **Cross-checks:** the ISS frequencies (437.550/437.825/437.800) and the HF+ 64-260 MHz range match the source files.
+  
+  **What I could not check:** the RAM free-memory model and the 14.6 tiles/s figure have no derivation in the files.
+  
+  **Rule scan:** I found no Ukrainian prices or Kyiv angles. The rule items I saw stay compliant: no loops, conducted-only sources, and the military band masks.
+  
+  **Most consequential findings:**
+  - the handheld weight total does not match its own parts list (1.52-1.72 kg, not 1.35-1.6 kg);
+  - the thermal model uses the superseded 210x135x52 mm case;
+  - the CPU budget allows 4.5 cores where only 4 exist;
+  - the worst-stream value is 13.3 MB/s in some places and 16.4 MB/s in others, and the "2.5 h on UFS" correction contradicts C18;
+  - the LNB choke is held in C23 but already in the core BOM;
+  - the Uputronics 440 is listed with a 5 V bias input but fed from the 4.5 V rail;
+  - AWS is ruled out on sample rate while Metop is tried on the V4L at 2.88 Msps;
+  - "Metop-C at 1707 MHz" is wrong (both Metop are at 1701.3 MHz; 1707 MHz is AWS);
+  - the Adafruit order is $104.95, not about $99;
+  - two roll-up low ends are off by $1.
+  
+  Several of these errors came over unchanged from final_integration.json; each one's evidence field says so.
+  
+  **Files used:**
+  - /home/user/lizbeth307/sat-receiver-audit/STACK.md
+  - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/final_integration.json
+  - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/final_completeness.json
+  - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/final_world_sourcing.json
+  - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/report_research.json
+  - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/power.json
+  - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/dish_replacement.json
+  - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
