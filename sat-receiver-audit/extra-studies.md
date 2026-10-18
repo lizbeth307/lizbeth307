@@ -17319,6 +17319,81 @@
   - Carry spares: a telescopic pair, 2 x 70 cm elements, a petal plus clips, binder clips, aluminium tape and a spare tape spool.
 - **Confidence:** medium
 
+## edit:01a_decisions_integration:b1 (run `wf_53f2b30c-e42`)
+
+- **Section:** 01a_decisions_integration
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+- **Skipped:** []
+- **Notes:** I applied idx 0-43 to /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/01a_decisions_integration.md with the Edit tool. The file had no earlier edits, so I started from the v1 text. I checked the table after editing: every row has 4 columns, and pipes inside text are escaped (lsmod \| grep).
+  
+  Where two changes overlapped or conflicted, I merged them:
+  - C1 (idx 0, 37, 40). The row is rewritten: Lime kept, with-Lime build is the default, the keep conditions and 'Без відповіді — скасувати' are removed.
+    - Cables: idx 40 (P5 analog G6 #6) wins over the v1 'MHF4L-SMA $6'. The row now has 4× Taoglas CAB.01075 from DigiKey DE, $4.59 each (EUR 4.03 ex VAT / EUR 4.80 with VAT). The old part and the saving are in the consequences column: $291 vs $285.36, saving $5.64, or $23.64 if Crowd Supply bills the cable shipping separately. The note says the saving is lost if the DigiKey DE order is under EUR 75.
+    - Acceptance tests from idx 0 and idx 40 are merged into one list.
+    - The old VkFFT condition (854 FFT/s) is no longer a purchase gate. Per idx 37 it becomes the labrx FFT backend gate: VkFFT only from 1709 FFT/s, otherwise FFTW.
+    - Added the Crowd Supply/Mouser terms and the EU landed cost of the Ham It Down fallback ($89.95).
+  - C5/C18 (idx 1, 11, 12). T7 deauthorization is described in full in C18; C5 refers to it.
+  - C6 (idx 2 + 22). The GPIO96/mi2s0 text is merged and appears once.
+  - C7 (idx 3 + 24). Lease enforcement: system units, EPERM self-test, udev ACL fallback, systemd #23198.
+  - C11 (idx 4 + 26). The token gate applies to GPIO0 only. The re-audit A token file /run/lab/bias/<serial> replaces the v1 LAB_BIAS_OK variable. The blacklist and the tests are merged.
+  - C16 (idx 6 + 28). The ADS-B flags &1/&4/&8 and the 'interesting' (&2) filter (operator note) are combined with the re-audit rules: tar1090 military ranges, aircraft.csv.gz no older than 90 days or the profile refuses, and AIS shown only after a static message with a ship type other than 35. The two do not conflict.
+  - C18 (idx 13 + 31). Real systemd-boot instead of embloader, with the Pico + userspace A/B flag as the fallback if boot counting is unavailable.
+  - C20 (idx 15 + 33). Duplicates, merged: with-Lime gate p99 ≤11.7 ms at 42.5 tiles/s (cap 41) is the default; the 28 ms gate applies only without Lime.
+  - C22 (idx 17 + 34 + 35 + 36). The pin of 100 is replaced by 990 / 1001 / -1; the PPA packages fall under -1.
+  
+  Choices I made so that later batches still find their places:
+  - C24 (idx 19). The v1 tier figures stay but are marked 'більше не чинні'; current figures are referenced in 2.12. This leaves later batches (idx 127, 160, 172) a place to add their deltas. Device weight with Lime is 1.67-1.87 kg, taken from analogs_G4. I left the rucksack figures alone because idx 160 replaces them.
+  - In C13 I kept the anchor phrase '(CONFIG_PPS=y)' unchanged. In D3 and D12 I kept the phrases 'MCU HMI — Raspberry Pi Pico (26 GPIO);' and 'Купити 2 Pico'.
+  - The note that LC76G stays (idx 18) went into C23. I did not add MAX-M10S to the rejected list; idx 97 handles that.
+  
+  Still not consistent: C17 still says Boni-Whip 12.5 V, while C3 now says 13.8 V (idx 41). idx 52 and idx 87 in later batches fix C17.
+  
+  No subtotals live in this file; C24 only points to 2.12.
+
 ## extract:operator_notes (run `wf_5ed966cd-eee`)
 
 - **Source:** operator_notes
@@ -24707,6 +24782,212 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - idx 70 sets the extended budget minimum to ≈$286.
   - idx 66 and idx 76 replace the core and extended subtotals.
 
+## edit:11f_changes_operator_totals:b1 (run `wf_64e39fc3-0f9`)
+
+- **Section:** 11f_changes_operator_totals (11.6. Нотатки оператора і рішення користувача; batch 1 of 2) — /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/11f_changes_operator_totals.md
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+  - 58
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  - 64
+  - 65
+  - 66
+  - 67
+  - 68
+  - 69
+  - 70
+  - 71
+  - 72
+  - 73
+  - 74
+  - 75
+  - 76
+  - 77
+  - 78
+  - 79
+  - 80
+  - 81
+  - 82
+  - 83
+  - 84
+  - 85
+  - 86
+  - 87
+  - 88
+  - 89
+  - 90
+  - 91
+  - 92
+- **Skipped:** []
+- **Notes:** I created the file with Write, as batch 1 should. It starts with "### 11.6. Нотатки оператора і рішення користувача", a one-paragraph intro that states the precedence order, and the 4-column table | № | пункт (номер нотатки або рішення) | що застосовано | чому |. The table has 48 rows, numbered 1-48 in order:
+  - rows 1-37: one row per operator_notes item, in the order 1-12, 12b, 12c, 13-35;
+  - rows 38-48: one row per user decision of 18 Oct 2026, labelled Р1-Р11 (region Europe, QO-100 add-on bought, European NCS, EGNOS, regional profiles, Lime kept with the with-Lime build as default, runtime/cost trade-off, Lime TX blocked, 30-day acceptance tests, Crowd Supply deadlines, Lime in the P5 analog search).
+  
+  All 93 entries (idx 0-92) are merged into these rows as entries, not as edits. Each row lists the v2 places they touch: header, 1.1 C/D, 1.2 #N, 2.x, 3.x, 4.x, 5.1. I checked that every row has exactly 4 cells and the numbering is continuous.
+  
+  Where sources disagreed, the higher-precedence source won:
+  - Note 19 vs re-audit C on elevations: re-audit C won. Elektro-L3 is 8-45 deg (note: 14-45) and QO-100 is 12-46 deg (note: 21-46), in idx 42/57/73/76.
+  - Note 22 vs re-audit D: re-audit D won. PPS is set with $PQTMCFGPPS + $PQTMSAVEPAR and read back, not with $PAIR752 (idx 45).
+  - Note 28 vs re-audit C: re-audit C won. limesuiteng-legacyapi is now conditional, because SatDump no longer opens SDRs (idx 36).
+  - Note 30 vs re-audit B: re-audit B won. The hard floor is >=7 Msps (systemClock 56 MHz) instead of the note's 7.5 Msps example (idx 38).
+  
+  Batch 1 has no entries for notes 2, 6, 13 and 24. Their rows are filled only from data files, so batch 2 can merge into them:
+  - row 2: from idx 51 and the AppArmor check routed to 5.4/8/9.2;
+  - row 6: from P5 G1 #7. G6K-2F-RF-S DC5 at $39.38 per pair; fallback G6K-2F-RF DC5 at $25.06 each = $50.12;
+  - row 13: not applied as the note states it. It uses the re-audit C LRIT basis: helicone 0 to -5 dB vs the dish anchor, expected -2 to +4 dB;
+  - row 24: not applied as a replacement. P5 G3 rejected the M65A.
+  
+  Left for batch 2:
+  - Section 11.7 (savings summary) goes in the last batch. I did not add it, and this file has no subtotals to recompute yet.
+  - The note 12 mention of SatDump #1030 is in no batch-1 entry, so it is not in row 12.
+  - Several rows will need batch-2 entries 93-184 merged in: decoder isolation (note 8), sections 5.2-5.8 and 6-10, shopping order and bring-up.
+  
+  The temporary working file I made in the scratchpad has been deleted.
+
+## edit:05d_arch_thermal_emi_mech:b1 (run `wf_64e39fc3-0f9`)
+
+- **Section:** 05d_arch_thermal_emi_mech
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+- **Skipped:** []
+- **Notes:** File edited in place: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/05d_arch_thermal_emi_mech.md. All 42 changes applied; none skipped.
+  
+  Conflicts and merges:
+  - idx 7 (operator notes 16/19) and idx 36 (reaudit_C) both rewrote L-band A/B step 6. Merged, with idx 36 (P4, higher precedence) winning on structure and wording: GNSS C/N0 plus Sun noise, the European NCS from a power-only scan, FY-2H 1687.5 then 1690.5 MHz, Elektro-L5 GGAK 1693 then LRIT 1691 MHz only in east/central Europe (about east of 13° E, elevation ≥5°), and the >4 dB rule that moves Metop/AWS back. Kept from idx 7: Elektro-L3 at 14.5° W if stationary and transmitting (reaudit_C supports it). Also added a short pointer that 1544-1545 MHz Cospas-Sarsat is masked (rule item 17 says to state this next to the NCS scan).
+  - idx 2 and idx 23 merged into one policy item 11: the 1544.0-1545.0 MHz Cospas-Sarsat mask with its power-only rule, the HF+ |f_abs| < 30 kHz rule, and unit tests at 250/300/380/1544.5 MHz plus a conducted 35 kHz tone at 290 and 330 kHz.
+  - idx 19 and idx 41 changed the same known-lines row (19 the source cell, 41 the target cell). Both applied. Three new rows are marked as model.
+  - idx 8 vs idx 16 / existing text: the fan 60/50 °C and training-below-75 °C rules were already in the file, so they were merged, not repeated. The SoC bullet points to the 'Повітря' fan line. The expectation figures are kept and marked as model. The CPU throttle at about 90-91 °C is kept.
+  - idx 18: the Lime thermal text was replaced as instructed. In 'Холод' the Lime 0 °C rule was appended, and the phrase 'UFS і T7 розраховані від 0 °C' was left as it is, so later changes 53 (reaudit_D) and 87 (analogs_G2, higher precedence, UFS lower limit from ufs-hwmon) still find their anchor.
+  - idx 34: dropped the old 'спершу виміряти ... внутрішній діаметр хвилеводу LNB (одномодовий 16.8-21.9 мм)' and 'хомут 40.2 мм'. They are superseded: per reaudit_C the throat moves to the red-cap plane, the cap is not removed, and the neck adapter is 40 mm.
+  - idx 9: the original Wi-Fi/BT sentence was kept and the hardware layers plus the self-test criterion were added after it.
+  
+  Subtotals recomputed:
+  - Device: the sum of parts checks out at 1.52-1.72 kg. With Lime as the default (idx 6) the device is 1.67-1.87 kg; without Lime (fallback) it is 1.52-1.72 kg.
+  - Backpack: the idx 30 figures (5.2-7.1 / 6.1-8.4 kg, model, device without Lime) were applied. The with-Lime default adds 0.15 kg, giving 5.35-7.25 / 6.25-8.55 kg.
+  - idx 30 also asks for the same change in the 2.12 and D14 weight lines. Those are in other files and were not edited.
+  
+  Prices and parts:
+  - idx 27: the files give no EU price for the optional third dipole kit (+$17.95, rtl-sdr.com, seller outside the EU). The text points to the landed-cost rule instead of inventing a number.
+  - idx 12: KSC641J is named as the current switch. analogs_G2 conditionally replaces it with TL3145BF350QJ (idx 91, later batch).
+  - idx 28/29: tripod model and mass are deferred to analog G4, as the changes say. analogs_G4 (idx 111/113/114, higher precedence) will refine these rows in batch 3.
+  
+  Anchors that later batches will no longer find verbatim (find them by part name):
+  - idx 51: SoC bullet
+  - idx 56: 'T7 (збірка з Lime)'
+  - idx 64: 'T7 ніколи не пише...'
+  - idx 72: J21 sentence
+  - idx 79: 'Uputronics 440 (коли не на P2)'
+  - idx 83: 'VBUS HF+ — LC + Mix-31.'
+  - idx 91: '... з кроком 13 мм'
+  - idx 99: LDO θJA sentence
+  - idx 111: tripod phrase
+  - idx 113: tripod weight row
+  - idx 114: backpack total row
+  
+  Left for later batches (not in this batch's scope): 'T7 (лише з Lime)' in 5.6 'Інше' (idx 52) and the Lime-optional wording in the panels line (idx 69/70).
+
 ## edit:02c_bom_display_power_gnss:b1 (run `wf_85b20a83-f63`)
 
 - **Section:** 02c_bom_display_power_gnss
@@ -31127,6 +31408,81 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   Three more cut-off clauses were finished by inference and not checked against the source: the HF+ "if not 0" clause is written generically, P21's "4-character l…" is read as "4-символьного локатора" (locator), and the rsetup item is completed as "прошивання і записи оверлеїв через rsetup". No numbers were invented: the ORT and deb SHA-256 values are marked "закріплено" and not shortened, and the QAIRT MD5 and SHA-256 are given in full.
   
   Rule checks: wording is gender-neutral ("ваше рішення", "персонал Radxa", "operator_notes п. N" in place of gendered nouns). There are no prices and no Ukrainian prices, and the region is Europe throughout. The file has no subtotals.
+
+## edit:01b_decisions_register:b1 (run `wf_9ce86e94-763`)
+
+- **Section:** 01b_decisions_register
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+- **Skipped:** []
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/01b_decisions_register.md, in place with Edit. All 45 changes (idx 0-44) are applied and none were skipped. Every table row still has 4 cells; I checked this with a script. The file has no subtotals, so nothing needed recomputing.
+  
+  Changes merged because they overlapped (no real conflicts):
+  - idx 4 + idx 31, row #7: one GNSS/chrony phrase. It now says SBAS = EGNOS, gnssid 1, PRN 120-158, then the device /dev/lab/gnss and the chrony SHM/PPS settings, alongside the existing maxchange and rtcsync.
+  - idx 5 + idx 36, row #10: one extended −1 pin list with pattern pins, pointing to the full list in 5.4.
+  - idx 6 + idx 35 (+ idx 7), row #10: the operator-note rule (allowlist of modes, page/selcall/wmbus/ism/lora-wan/meshcore/meshcom off, their packages uninstalled) is combined with the re-audit A mechanism (1.2.126 has no per-mode switch, so 1.2.126+lab1 ships a patched modes.py). multimon-ng: not installed in the Europe build (−1, apt refuses); US only via divert behind -a EAS. The WSJT-X part is replaced by idx 35: lab-wsjt-decoders, the wsjtx_app_version shim, and wsjtx itself on −1.
+  - idx 9 + idx 38, row #11: the LimeSuiteNG build flags, the staging pin 37cb183 and the Debian package set are in one passage. limesuiteng-legacyapi is only "if a consumer still needs it", as the instruction says.
+  - idx 10 + idx 37, row #11: one SatDump/SDRangel sink-audit passage.
+  - idx 21 + idx 29: the qcom-ppa 2.49 pins are written out in row #24; row #37 only points to #24, so the text is not repeated.
+  - idx 11 + idx 12: the M.2 riser 3.3 V load switch is described in row #21; the list of Lime parts in row #69 refers to it.
+  - idx 16 + idx 17, row #80: the jamming/spoofing gate and the Europe C23 resolution are in the same row.
+  
+  Where I followed the higher-precedence source:
+  - idx 18, row #79: I took the re-audit D correction. PPS is now set by one method, $PQTMCFGPPS + $PQTMSAVEPAR with read-back, and it replaces $PAIR752,2,100. Leaving both in would break the "one PPS method only" condition in the instruction. The FAQ claim from operator note 22 is kept only as a cautious supporting reason for re-sending the settings at every power-up; re-audit D backs that, since PAIR settings sit in RTC RAM held only by the backup cell.
+  - idx 15: the elevation figures come from re-audit C (QO-100 12-46°, Elektro-L3 8-45°), not from operator note 19 (21-46° and 14-45°). Re-audit C ranks higher.
+  - idx 11: the Lime rate floor is ≥7 Msps from re-audit B, not ≥7.5 Msps from operator note 30.
+  
+  Points for the later batches (45-177):
+  - Rows #29 and #30 still have v1 text that later changes replace. Until idx 55 runs, row #29 says Hamlib is allowed as a library while row #10 now pins Hamlib to −1. Until idx 56/110 run, row #30 says SatDump is built "з Soapy і legacy API LimeSuiteNG", while row #11 now says SatDump has no SDR sources.
+  - I kept the anchors that later changes use: the gpsd/chrony chain (idx 107), "limeConfig дозволено лише з опціями refclk." (idx 81), the "Waveshare 24370 LC76G на UART6 (/dev/ttyHS1, udev /dev/gnss0)" text (idx 77/111), and the "137 MHz — лише Meteor-M…(72k)" text (idx 130).
+  - My edits have changed or replaced the text these later anchors point to, so those later changes will have to find their spot by part name instead:
+    - "Декодери WSJT-X — лише jt9/wsprd (dpkg-divert…)" (idx 80): replaced by the idx 35 wording.
+    - "Tj 95 °C…" (idx 138): replaced by the idx 43 wording.
+    - The whole SatDump #30 decision cell (idx 110): idx 26 added the pipeline allowlist sentence at the end of that cell. That sentence should be kept when idx 110 replaces the cell.
 
 ## edit:02a_bom_compute_receivers_rf:b1 (run `wf_a1f0ee5f-4e1`)
 
@@ -38666,6 +39022,73 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   6. Seller, SKU and price stay with the analog decisions everywhere (G2, G3, G5, G6); the rows only point to them.
   
   Subtotals: this file has none. The −$23.95 to the optional subtotal (idx 12) and the budget delta of −$1.15 against the G2 HDMI line at $15.65 (idx 13) are noted as text; the actual recomputation belongs in 02e. Every row has four columns.
+
+## edit:09_shopping_bringup:b1 (run `wf_b7e15d24-3c6`)
+
+- **Section:** 09_shopping_bringup
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+- **Skipped:** []
+- **Notes:** File edited: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/09_shopping_bringup.md (it had no earlier edits; this is batch 1). All 41 changes were applied. Some were merged with each other, and a few were changed by a higher-precedence source:
+  
+  - idx 0 vs idx 36: idx 0 is a rule item (operator_notes 34-35), so it wins. The customs paragraph is rewritten as the Europe landed-cost rule. The UK, US and other-country branches are gone, including the UK GBP 135 sentence that idx 36 wanted to edit. What idx 36 adds is kept inside the new text: the V4L is not yet at Amazon USA and ships from the China warehouse only, and EU buyers use the Uputronics EU storefront.
+  - idx 0 and idx 5 vs analog G6 #0: the G6 #0 analog decision outranks operator notes. So Leo Bodnar was left out of the list of UK sellers that carry duty. The LBE-1420 is now shown as leobodnar.com, EU region, shipped from France with duty and tax paid: EUR 171.76 in DE = $193.08. This replaces "normal duty above EUR 150". The Pro Stick Plus entry gets the Pi Hut DHL Express GBP 30 cost, plus EUR 3 duty and EUR 2 UHF per line, plus the G6 #1 EU checkout price (GBP 52.06 = $69.33 in DE).
+  - idx 3: the Pi Hut (Pico) part was dropped, because idx 17 and analog G2 #5 move the Pico to DigiKey. The Pololu and LCSC notes on consolidating orders and EU landed cost were applied, including Pololu $121.75 = about EUR 108.31, with Botland preferred.
+  - idx 17, 18, 30 and 31 were merged into one DigiKey DE order in week 1, in step 6: power parts (TPS7A4701RGWT per G3 #9, TPS259630DDAR, INA3221), the HMI basket (2x Pico SC0915, PEC11R-4220F, TL3145 or KSC641J, PI4IOE5V9555LEX / TCA9555PWR, LM4040, ferrites) and the RF parts (HMC7992LP3DE, G6K-2F-RF-S). The DigiKey entry was taken out of step 7, which now points to step 6.
+  - idx 2 and 29 were merged in the HF+ entry (ITEAD DE warehouse, IM190522001EU, $169 ex VAT, $206.52 landed in DE, Black Friday timing per G1 #6). I added a note that if the purchase is delayed, the regulator A/B in bring-up step 4 waits for the HF+.
+  - idx 1 and 27 were merged in step 2. The Adafruit landed cost is a model ($104.95 = about EUR 93.36; VAT 19-21 % gives $124.89-126.99; up to EUR 50 = $56.21 for 10 lines). The RTL-SDR Blog order subtotal is $263.55, or $280.50 with the optional $16.95 FM band-stop.
+  - idx 7 and 28 were merged in step 4. Lime kept; board only in the cart; 4 cables go to DigiKey DE; EU landed = $267 = EUR 237.52 plus VAT, giving about $317.73-323.07 as a model. I dropped "Нічого лише-для-Lime до того", because step 10 now says the Lime parts are ordered before 1.12.2026.
+  - idx 8 and 33 were merged in step 10: I-PEX 90609-0001, R44SF variant to be confirmed with ADT-Link, T7 per G6 #8 (Reichelt EUR 205.90 = $231.45), and the 4 Taoglas cables.
+  - idx 9 and 34 were merged in step 11: week 1-2 for Europe, PTC dropped, the eFuse RILM formula and the 15/20 dB pad.
+  - idx 15 and 16: step 1 was rewritten. The TinyTronics order is split into board + BMS (EUR 156 = $175.36) and UFS (EUR 58). The overall EUR 214 = $240.56 is unchanged. ALLNET is now the fallback, with the landed figures and the $59.72-63.52 saving on the board.
+  - idx 10, 19, 20, 21, 22, 23 and 38 were merged in bring-up step 1. The librtlsdr line was replaced per idx 38, with the no-token tests from idx 10 and 21 added. The UFS chip ID moved to UFS arrival.
+  - idx 6 and 37 were merged in the authenticity paragraph. The operator note's "R828S tuner string" is written as the files support it: per reaudit_B the log shows "Found Rafael Micro R820T tuner" and then "RTL-SDR Blog V4 Lite Detected", and G1 #0 gives the EEPROM strings "RTLSDRBlog"/"Blog V4L". HMC7992 is to be bought only as chips from franchised distribution.
+  - idx 11 and 25 were merged in bring-up step 11. The rate-floor test is 7 Msps (reaudit_B).
+  - idx 12: the bring-up step 12 header and the DVB-T/LTE B28 check were applied. I left the text "потім PTC і атенюатор" in bring-up step 12 alone, because idx 42 in batch 2 replaces exactly that anchor.
+  - idx 32: Moonraker was dropped, as the replacement row says. The saving of EUR 10 = $11.24 against WiMo is in the note.
+  - idx 35: the Sled v2 parts (G6 #2, about $72-104), the SAWbird+ H1 EU channel (Amazon.nl, EUR 55.10 = $61.93) and the Airspy Mini gate (1701.3/1707 MHz is above its 24-1700 MHz spec) were applied. idx 13 and 14 removed the T7 from both deferred lists.
+  
+  Subtotals I recomputed: TinyTronics split EUR 156 = $175.36 plus EUR 58 (overall EUR 214 = $240.56, unchanged); RTL-SDR Blog order $263.55, or $280.50 with the optional band-stop. The ALLNET order stays at $283.73 = EUR 252.41.
 
 ## extract:analogs_G4 (run `wf_be383e11-6dc`)
 
@@ -52331,6 +52754,81 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   Kept rows (keep decisions) are short. Conditional rows give the condition and the fallback. All tests are written as conducted bench tests. Row 15 states E-field probe only, with no H-field loops.
   
   There is no subtotal in this file, so none was recomputed. I checked the table: every row has exactly 8 cells, and no stray pipe characters are left in the cells (|S21| and |Z| were reworded).
+
+## edit:06_removed:b1 (run `wf_d69008e8-cbb`)
+
+- **Section:** 06_removed
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+- **Skipped:**
+  1.
+    - **Idx:** 6
+    - **Why:** Conflicts with idx 7. Both are P4 re-audits. Re-audit A calls librtlsdr 2.0.3 rebuilt as SOVERSION 2 'an option, not the default'. Re-audit B (r0 corr 1) explicitly makes 2.0.3 built as .so.2 the primary, with noble 2.0.1 plus cherry-picks as the fallback. I followed re-audit B: it is the receiver-chain re-audit that ruled on the C11 base, and sections 01a, 05c, 07, 08b and 09 also follow it. The one compatible fact from idx 6, that include/rtl-sdr.h is unchanged since 2.0.1, is merged into the rewritten librtlsdr row.
+- **Notes:** I edited one file: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/06_removed.md. All rows still have 2 columns, checked with awk. The section has no subtotals to recompute.
+  
+  Where changes duplicated each other, I merged them into one row instead of repeating:
+  - **6.1 SatDump pipelines:** idx 0(1) and the SatDump dmsp/wsf/spacex/bluewalker3 part of idx 4 are one row.
+  - **6.1 OpenWebRX+ modes:** idx 0(2) and idx 4 are one row.
+  - **6.1 private-decoder row:** idx 0(3) (demoddsd, demodpager) and idx 2 (dxlaprs-tetra, codecserver-driver-*, libacars*, pattern pin) were added to the existing row.
+  - **6.1 TX-capable row:** idx 1 was added to the existing row, together with the TX parts of idx 4 (audiocatsiso, rigctlserver, ENABLE_LIMESUITE outputs, HackRF/BladeRF sinks).
+  - **6.1 region row:** idx 0(6) and multimon-ng from idx 4 are one row.
+  - **gr-satellites:** telemetry submit (idx 0(7) and idx 4) is a 6.1 row. The 5.5.0 apt and 5.9.0 items (idx 3(3) and idx 5) are in one 6.2 row.
+  - **Voice IQ:** the 'static-mask-only raw-IQ voice policy' from idx 5 was merged into the existing voice-IQ row.
+  - **SatDump SDR-source plugins:** idx 10, idx 5 and the source part of idx 4 are one 6.2 row.
+  - **librtlsdr row:** rewritten from idx 7. The GPIO0-only gate from idx 3(5) is merged in.
+  - **C17 Boni row:** idx 8 plus the PG/TLV3011 item from idx 11. The reason names BONI13V8 at 13.8 V and the eFuse TPS259630DDAR, both from reaudit_B.
+  - **GNSS row:** the PAIR752/PAIR391 item from idx 3(6) and PAIR513/PQTMCFGPPS from idx 11 are one row.
+  - **Lime sample-rate row:** idx 3(7) and idx 9 are one row. Re-audit B's 7 Msps floor wins over the 7.5 Msps example in operator note 30, which is not a rule item.
+  - **Kernel row:** idx 3(8) (GitHub release debs, operator note 29) is merged into the re-audit A row with the self-built 6.18.2-4+lab1 item.
+  - **HMC7992 / sled row:** idx 9, idx 12 and idx 26 are one row: marketplace boards, PE4302 replaced by PE4312, A/B control lines instead of V1-V3, RF1 park.
+  - **I-PEX:** idx 9 is merged into the idx 28 row.
+  - **Re-audit D duplicates (idx 11)**, each merged into the matching P5 row:
+    - D36V28F5 into idx 29, with the $23.95 saving added
+    - IP2368 BZ into idx 22
+    - Adafruit 6101 into idx 13
+    - Apache 3800 into idx 27
+    - Passion Radio 30 dB into idx 25
+  - **ALLNET:** 'ALLNET as EU default seller' from idx 5 is merged into the idx 21 row.
+  
+  Conflict resolved by precedence:
+  - **PCA9555 (idx 5 vs idx 18):** re-audit A proposed TCA9555. P5 G2 decides the part, so PI4IOE5V9555LEX wins, with TCA9555PWR as the spare. The row records this.
+  
+  Placement:
+  - idx 25 rows go after the XT30 row and idx 10 rows after the NOAA APT row, as their anchors say.
+  - The idx 3(1) and 3(2) user-decision rows go after the 'Рішення щодо Lime 31.01.2027' row.
+  - Everything else is appended at the end of 6.2, grouped by source: operator notes, re-audit A, B, D, then P5 G1 to G6.
+  
+  Additions and checks:
+  - **Prices:** I added the USD price for Peli 1450 ($235.19 = EUR 209 incl. VAT, Thomann DE, from G6) and the EUR price for Rollei (EUR 50.95 incl. 19% DE VAT, from G4). Both are from the files.
+  - **Numbers spot-checked against the data files:** Arace $30.93/$32.66 vs $13.49, TPS7A4701RGWT $15.92, D36V28F5 $23.95, Rollei $57.33, PE4312 in the G6 sled, BONI13V8, TPS7A47 having no PG pin, and the operator note 7 T7 deauthorize step (supported by G6).
 
 ## edit:08c_new_gates_analogs:b1 (run `wf_d86c28f4-677`)
 
