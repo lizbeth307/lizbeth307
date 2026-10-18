@@ -41958,6 +41958,142 @@ I wrote all four files for the "block+rf" group. Both SVGs pass the XML check yo
   - VSDISPLAY (eBay.de 256679793470): what is the board's input (HDMI?), how does touch reach the host, which panel part is it, and is it the same 6.97in glass as Wisecoco?
 - **Confidence:** medium
 
+## check:re_rules_structure (run `wf_a6a8f531-e09`)
+
+- **Lens:** RULES AND STRUCTURE (recheck after the fix pass): hard-rule violations, contradictions with v2_decisions.md D1-D19, broken markdown tables, TOC vs headings
+- **Problems:**
+  1.
+    - **Where:** 11.3, row 46: «SatDump — закріплений master 1aedd60 з limesdrng_sdr_support, пропатченим до MODE_SINGLE_RX і MODE_NORMAL та tx_ch_number=0, з CI-перевіркою grep.»
+    - **Problem:** The change log still says SatDump ships a patched LimeSuiteNG SDR-source plugin. That contradicts D1 (every sdr_sources plugin except NET_SOURCE stays OFF, SatDump never opens an SDR). It also contradicts 1.2 #30, which says the plugin is not built and CI fails if the code gets in.
+    - **Severity:** contradiction
+    - **Fix:** Replace the cell with: «SatDump — закріплений master 1aedd60; limesdrng_sdr_support не збирається (плагін LIMESDR вимкнено, як і всі sdr_sources, крім NET_SOURCE; D1); CI grep падає, якщо цей код потрапить у збірку. Lime відкриває лише labrx.» Keep the «чому» cell (stock code registers TX modes) as the reason it is OFF.
+    - **Evidence:** v2_decisions.md D1; STACK.md 1.2 #30 (line 125: «тому він не збирається (плагін LIMESDR вимкнено)»), 5.4 «Дозволені декодери» (line 869)
+  2.
+    - **Where:** 11.1, row 75 (Airspy Mini), «Без змін» list: «плагін airspy SatDump з виправленням PR #1172; у SoapyAirspy немає корекції ppm — трекінг несучої SatDump»
+    - **Problem:** The row gives SatDump's airspy hardware plugin as the Airspy Mini driver path. D1 and 1.2 #30 switch AIRSPY OFF by name, and SatDump never opens an SDR. The row also leaves the Airspy Mini without a valid capture path, because labrx lists only librtlsdr, libairspyhf and LimeSuiteNG.
+    - **Severity:** contradiction
+    - **Fix:** Replace the clause with: «драйвери (libairspy0 1.0.10-3build1, noble arm64); Airspy Mini відкриває лише labrx (додати libairspy до labrx), а SatDump отримує cf32 через net_source на 127.0.0.1 — плагін airspy SatDump не збирається (D1)». Remove «плагін airspy SatDump з виправленням PR #1172».
+    - **Evidence:** v2_decisions.md D1; STACK.md 1.2 #30 line 125 («кожен інший плагін sdr_sources вимкнено поіменно (AIRSPY, ...)»); 5.4 labrx row line 857
+  3.
+    - **Where:** 1.1 C5, «наслідки» cell: «тоді udev, SatDump (rtlsdr_get_index_by_serial) і auto_rx відкривають не той донгл»
+    - **Problem:** This line says SatDump opens an RTL dongle by serial number. Under D1 SatDump never opens an SDR (C7, 8.1 V4L-4: «SatDump SDR не відкриває — лише NET_SOURCE з 127.0.0.1»).
+    - **Severity:** contradiction
+    - **Fix:** Replace with «тоді udev, labrx і auto_rx відкривають не той донгл (SatDump SDR не відкриває, D1)».
+    - **Evidence:** v2_decisions.md D1; STACK.md 1.1 C7 line 59; 8.1 V4L-4 line 1561
+  4.
+    - **Where:** 11.6, row 1 (Нотатка 1): «Пакуються лише цивільні ... конвеєри, названі поіменно (Meteor-M LRPT/HRPT, Metop AHRPT, FY-3 там, де цивільний, NOAA/GOES/GK-2A/Elektro/FY-2 xRIT/LRIT, аматорські CubeSat, МКС)»
+    - **Problem:** The first sentence says FY-3, GOES, GK-2A and CubeSat/ISS SatDump pipelines are packaged. D1 excludes the GK2A/FY3/FY4/GOES/CUBESAT plugins, and the same row later lists only Meteor-M, MetOp, AWS, FengYun-2 and Elektro_Arktika. CubeSats and the ISS go through gr-satellites (5.4), not SatDump. The row contradicts itself and D1.
+    - **Severity:** contradiction
+    - **Fix:** Replace the parenthesis with «(європейська збірка: лише Meteor-M.json, MetOp.json, AWS.json, FengYun-2.json і Elektro_Arktika.json без elektro_ggak_mqtt; аматорські CubeSat і МКС — через gr-satellites, не SatDump)» and delete the duplicate list later in the cell.
+    - **Evidence:** v2_decisions.md D1; STACK.md 1.2 #30 line 125, 5.4 line 869
+  5.
+    - **Where:** 1.2 #30: «без GOES/GK2A/FY4 (лише опційний профіль подорожей)»; 4.1 row FY-2G/GK-2A/FY-4B/GOES-East: «бюджету у файлах немає; лише опційний профіль подорожей»; 6.2: «GOES-East до 9.9° (модель) — лише опційний профіль подорожей (повторний аудит C)»; 11.4 #38: «без Soapy, inmarsat_support і GOES/GK2A/FY4 (лише опційний профіль подорожей)»; 11.4 #47: «плагіни PLUGIN_GOES/GK2A/FY4 у збірці для Європи (лише опційний профіль подорожей)»
+    - **Problem:** Five places say the GOES/GK2A/FY4 plugins belong to an 'optional travel profile'. That implies a second SatDump build with those plugins, and no such profile is defined anywhere in the stack. D1 says there are no GK2A/FY3/FY4/GOES plugins and must be worded the same way everywhere. 5.4 and 1.2 #30 (its first half) say only «у європейському алоу-листі їхніх конвеєрів немає». 1.2 #30 contradicts itself within one cell.
+    - **Severity:** contradiction
+    - **Fix:** In all five places delete «(лише опційний профіль подорожей)» or «лише опційний профіль подорожей» and write «(не збираються: у європейському алоу-листі їхніх конвеєрів немає)», as in 5.4.
+    - **Evidence:** v2_decisions.md D1; STACK.md 5.4 line 869 («без GK2A, FY3, FY4, GOES, ... (у європейському алоу-листі їхніх конвеєрів немає)»); grep «профіль подорож» finds no definition
+  6.
+    - **Where:** 8.1, L-3: «будь-який тест 3-6 Msps — лише на стенді зі шляхом циклу живлення, як 30-хв прогін із контролем зависання VSPA DMA»
+    - **Problem:** This allows Lime streaming at 3-6 Msps on the bench. D6 sets a 7 Msps floor everywhere, and labrx, the SatDump profiles and Tune UI hard-block anything below 7 Msps (1.2 #43, 6.2, 11.3 #47).
+    - **Severity:** contradiction
+    - **Fix:** Replace with «запити 3-6.99 Msps відхиляються так само чисто, як 2 Msps (жорстка межа 7 Msps у labrx, D6); тестів нижче 7 Msps немає».
+    - **Evidence:** v2_decisions.md D6; STACK.md 6.2 line 1207 («будь-яка частота дискретизації Lime нижче 7 Msps» removed), 11.3 #47 line 2237
+  7.
+    - **Where:** 1.2 #31: «APT, NAVTEX/RTTY на дозволених каналах, FT8 лише декодування, радіозонди, VOR/ILS, мовлення DAB, канальна потужність»; 11.6 #35: «APT, NAVTEX/RTTY на дозволених каналах, FT8 лише декодування, радіозонди, VOR/ILS, DAB, потужність каналу»
+    - **Problem:** The SDRangel channelrx allowlist is stated two ways, and it is the private-content enforcement manifest that CI compares the built plugin set against. 1.2 #31 and 11.6 #35 include APT, radiosonde and DAB demodulators. 5.4 says they are not in the build («APT, радіозонди і DAB з алоу-листа п. 33 нотаток у збірку SDRangel не входять (радіозонди — auto_rx, DAB — welle-cli)»), and the 5.4 enabled list has no such plugins.
+    - **Severity:** contradiction
+    - **Fix:** In 1.2 #31 and 11.6 #35 delete «APT,», «радіозонди,» and «мовлення DAB,»/«DAB,» from the allowlist, and add «(APT, радіозонди і DAB у збірку SDRangel не входять: радіозонди — auto_rx, DAB — welle-cli; 5.4)».
+    - **Evidence:** STACK.md 5.4 «Алоу-лист збірки SDRangel і SDR++» line 873; 8 line 1466 (plugin set must equal the manifest)
+  8.
+    - **Where:** 11.3, row 44: «тож sdrangelsrv 7.27.2 дає NAVTEX, RTTY, FT8, DSC, BFM/RDS, VOR і Radio Clock»
+    - **Problem:** DSC is listed as an unconditional sdrangelsrv capability. Under the DSC rule (distress/urgency/safety only, routine and individual calls dropped before MMSI decode), demoddsc is built only with the tested lab patch. Without the patch it is not built (4.2, 5.4, 11.2 #55, 6.1: «DSC показує MMSI»).
+    - **Severity:** contradiction
+    - **Fix:** Replace with «NAVTEX, RTTY, FT8, BFM/RDS, VOR і Radio Clock (DSC — лише з лабораторним патчем demoddsc, що відкидає формати 120/123/114 до декодування адрес; без патча demoddsc не збирається)».
+    - **Evidence:** user_requirements.md (P2) DSC rule; STACK.md 4.2 DSC row line 587, 5.4 line 873, 11.2 #55 line 2178
+  9.
+    - **Where:** 11.6, row 34 (Нотатка 32): «SSTV лише декодування; аматорські APRS/AX.25. Режими adsb і ais в OpenWebRX+ не збираються»
+    - **Problem:** The row lists APRS/AX.25 in the OpenWebRX+ mode allowlist. 5.4 omits it from the patched modes.py list (no packet mode) and routes APRS through SDRangel demodpacket only. OpenWebRX+ packet decoding needs direwolf, which is banned as TX-capable software.
+    - **Severity:** contradiction
+    - **Fix:** Replace «аматорські APRS/AX.25.» with «аматорські APRS/AX.25 — не в OpenWebRX+ (режиму packet в modes.py немає; direwolf заборонено), а через demodpacket SDRangel (лише APRS; 5.4).».
+    - **Evidence:** STACK.md 5.4 «Дозволені декодери» line 869 (mode list; «аматорські APRS/AX.25 — через demodpacket SDRangel (лише APRS)»), 5.4 «Заборонено» line 871 (direwolf)
+  10.
+    - **Where:** 4.3, row: «Утиліті-трафік RTTY/SITOR поза алоу-листами; WEFAX військових операторів (Northwood) | Правило рядка 42.»
+    - **Problem:** The excluded-by-rule table names only Northwood. Under D10, USCG-run NWS WEFAX stations are excluded by rule as a military operator, and 4.2, 6.1 and 1.1 C16 say so, but 4.3 does not.
+    - **Severity:** missing
+    - **Fix:** Change the target cell to «...; WEFAX військових операторів (Northwood; станції NWS під керуванням USCG)» and the reason to «Правило рядка 42; USCG — збройна служба (P2).».
+    - **Evidence:** v2_decisions.md D10; STACK.md 4.2 HF WEFAX row line 588, 6.1 line 1135
+  11.
+    - **Where:** 8.1, V4L-10: «запасний комплект (whisker kit) біля FM: ... коли через суматор додано кондуктивний тон −20 dBm 98 MHz»
+    - **Problem:** A −20 dBm tone is injected through a combiner into the whisker-kit chain, and the row does not say that the whisker antenna is disconnected and the combiner port terminated. With the whiskers on the other combiner input, the tone would leak out of an antenna in the FM band. That breaks the hard rule (signal sources conducted only into loads or DUTs, never into an antenna). Comparable rows (8.2 Pro Stick Plus «Bench без антени», G6K row «усі антенні порти навантажені») state it explicitly.
+    - **Severity:** missing
+    - **Fix:** Append «(лише Bench: вуса від'єднано, їхній вхід суматора — на 50 Ohm; V4L і фільтр — DUT; генератор ніколи не з'єднаний з антеною; −20 dBm лише в DUT на стенді, не в тракти пристрою)».
+    - **Evidence:** Brief hard rules; user_requirements.md «Signal-generating instruments ... are conducted bench tools only»; STACK.md 3 «Правило лабораторії» line 393; 8.2 line 1699
+  12.
+    - **Where:** 5.1, note under the runtime table: «користувач приймає близько 1.9 год замість 3.3 год режиму B без Lime (рішення 18.10.2026...»; also 5.1 LNB13V2 row: «вирішує користувач»; 11.1 #75: «повідомити користувачу як компроміс тактів і живлення»
+    - **Problem:** These are the D16 pattern («користувач» as the agent who accepts or decides). D16 says to use «ви» or «рішенням 18.10.2026» instead. Elsewhere the stack already uses «вирішуєте ви».
+    - **Severity:** style
+    - **Fix:** «рішенням 18.10.2026 прийнято близько 1.9 год замість 3.3 год режиму B без Lime (модель; ...)»; «вирішуєте ви»; «повідомити вам як компроміс тактів і живлення».
+    - **Evidence:** v2_decisions.md D16; STACK.md lines 693, 644, 2113
+- **Notes:** I checked all of /home/user/lizbeth307/sat-receiver-audit/STACK.md (2486 lines), using grep and full reads of 1.1, 1.2 key rows, 2.4, 2.5, 2.11.3, 3.4, 3.5, 4.1-4.3, 5.4, 6.1, 8 (questions), 9 and all 11.x tables.
+  
+  No problems found in these areas:
+  - Markdown tables: column counts match per GFM, every table has a separator, no unescaped pipes inside code spans, the one code fence (lines 832-838) is closed, and bold/backtick markers are balanced.
+  - TOC matches the headings, and row numbering in 11.1-11.6 and the 1-136 list in section 7 is continuous.
+  - No loop antennas or H-field probes (the CM-choke windings and drip loops are not antennas).
+  - No dishes, and no rigid antenna pieces over about 35 cm.
+  - No city tables or per-city angles (regional bands only; city names appear only as a community-report location), no Ukrainian price base, no martial-law notes.
+  - No gendered past-tense verbs.
+  - Decisions with no remaining problems: D2 (LABRXA/B/C, ^LAB[A-Z]{3}$), D3 (/run/labd/bias/<serial>), D4 (libairspyhf), D5 (lab-wsjt-decoders), D7 (Airspy Mini gate wording everywhere), D8 («купується»), D11 (no SDRangel demodadsb/demodais, no OpenWebRX+ adsb/ais), D12 (MCP23017 #4: BOM count 3, subtotal, 8.2 item), D13 (RTL-B VBUS via GPA3 in 5.1 and 5.2), D14 (265/299/339 mA, TCBT ch4 on 162k, about 1.06 A, 5.3 ms inrush test, C55266 fallback), D15 (BONI13V8 eFuse, no PTC, reflow-only board), D17, D18 (GX16-4), D19 (B&W 4000 RPD, Peli fallback, Apache removed).
+  - Operator notes 25 and 31-33 are applied, apart from the SDRangel APT/radiosonde/DAB, DSC and APRS inconsistencies reported above.
+  
+  Borderline items I did not report:
+  - The ISDT 608PD BLE pairing at home with the receiver off was explicitly allowed by P5 G5.
+  - 11.6 #21 deliberately uses re-audit C angles (12-46°, 8-45°) instead of note 19's numbers and says why; precedence supports that.
+
+## check:re_numbers_consistency (run `wf_a6a8f531-e09`)
+
+- **Lens:** NUMBERS AND CONSISTENCY (recheck after the fix pass): subtotals and totals in sections 2, 3, 9 and 11, USD/EUR/GBP conversions, EU landed-cost math (operator_notes 34-35), and contradictions between sections
+- **Problems:**
+  1.
+    - **Where:** 8 (table row «Проникнення в ПЧ у Європі», line ~1504): "скан 730-750 MHz у полі (DVB-T, LTE B28, SDL)"; 9.2 крок 11: "перевірка проникнення DVB-T/LTE B28 у ПЧ 730-750 MHz"; 11.4 #21: "польова перевірка 730-750 MHz обов'язкова (розділ 8)"
+    - **Problem:** The fix pass corrected the European QO-100 IF-ingress scan in C23, 1.2, 5.3, the 8 rows at lines ~1452/1482, 11.4 and 11.6 note 39. Those places now read: scan 733-758 MHz (SDL/PMSE/PPDR) plus the B28 uplink edge 703-733 MHz, and the 700 MHz band no longer carries DVB-T. C23 even says the v1 targets were wrong for Europe. Three places still give the old 730-750 MHz scan with DVB-T as a target. That range misses 750-758 MHz, which holds the SDL/PPDR part of the 733-758 MHz gap.
+    - **Severity:** contradiction
+    - **Fix:** In all three places, replace "730-750 MHz (DVB-T, LTE B28, SDL)" / "у ПЧ 730-750 MHz" / "730-750 MHz" with "733-758 MHz (SDL/PMSE/PPDR) плюс край B28 uplink 703-733 MHz; DVB-T у смузі 700 MHz більше немає". Keep the pass rule (no carrier above the noise in 739.4-740.1 MHz) unchanged.
+    - **Evidence:** final/reaudit_B_receivers_rf.json finding on 'C23 / 5.3: QO-100 LNB IF-penetration check for DVB-T 734-742 MHz': EU Decision 2016/687 puts the B28 uplink at 703-733 MHz and the downlink at 758-788 MHz, and the IF sits in the 733-758 MHz SDL/PMSE/PPDR gap. final/analogs_G1_receivers_rf.json (Goobay 58814 test, 'including 733-758 MHz'). The older 730-750 wording comes from final/reaudit_C_antennas_targets.json and is superseded by B in STACK C23 (line 75).
+  2.
+    - **Where:** 2.12 «Економія і зміна підсумків»: "з неї в підсумках цього розділу і 3.6 — ≈$370-630 (369.60-629.67: пристрій з набором Lime 158.71-322.68 ...) Ці ціни вже стоять у рядках, тож від підсумків їх не віднімати"; 11.7, last paragraph: "Ціни P5 уже стоять у рядках BOM, з яких зібрано 2.12 і 3.6 ... тож суми 11.7 від тих підсумків окремо не віднімаються"; 1.1 C24 / 11.7 closing line: "(з неї в підсумках ≈$370-630)"
+    - **Problem:** The device share of the conditional saving (158.71-322.68) includes the Airspy HF+ Black Friday saving of 33.80-42.25 (G1 #6, listed in the 11.7 table). The BOM rows do not use the sale price: they price HF+ at $169.00 (2.2, 3.3, 9.1 step 5). So the claim that these savings are already in the row prices is false for this item. If the sale does happen, the 2.2 subtotal and every core total go down. The text says the opposite ("підсумок ... зростає" only if a condition fails).
+    - **Severity:** contradiction
+    - **Fix:** Name HF+ as the exception. In 2.12 write: "з неї вже в рядках ≈$336-587 (335.80-587.42: пристрій з набором Lime 124.91-280.43, лабораторія 210.89-306.99); умовна економія HF+ на розпродажі Black Friday (33.80-42.25, G1 #6) у рядках не врахована — 2.2 рахує $169, і за розпродажу підсумок 2.2 стає 240.60-249.05, а всі підсумки core — на 33.80-42.25 нижчі". Make the same correction in the 11.7 paragraph "без нього ≈$370-630" and its last paragraph, and in C24 / 11.7 "(з неї в підсумках ≈$370-630)". Alternatively, keep 369.60-629.67 and add the HF+ exception sentence in those places.
+    - **Evidence:** STACK.md 2.2 row «КХ/ДХ і другий VHF», price "169.00 без ПДВ". final/analogs_G1_receivers_rf.json decisions[6].saving_usd: "0.00 confirmed. Conditional, only if the Black Friday 2026 sale repeats: 33.80-42.25 ex VAT". STACK 11.7 conditional table row «Airspy HF+ Discovery (G1 #6) | 33.80-42.25». Recomputed: 158.71−33.80=124.91, 322.68−42.25=280.43, 369.60−33.80=335.80, 629.67−42.25=587.42, 282.85−42.25=240.60, 282.85−33.80=249.05.
+  3.
+    - **Where:** 7, item 23 (radio_lab): "слінг зі складаним набором — 3.7-4.4 kg"
+    - **Problem:** This item still gives the v1 corrected value for a sling field kit. v2 rejects the sling (D14: "Відкинуто: слінг 10-12 L"; C24: "Відкинуто: слінг 3.0-3.6 kg з radio_lab") and uses a Deuter Futura 27 backpack. The backpack contents are 5.60-7.01 kg without HF and mast and 6.50-8.26 kg in full, or 6.85-8.26 / 7.75-9.51 kg on the back (C24, D14, 2.5, 2.12, 5.8, 11.4). The same item was updated for Boni-Whip 13.8 V and the extended total, but this weight was left stale.
+    - **Severity:** contradiction
+    - **Fix:** Replace "слінг зі складаним набором — 3.7-4.4 kg" with "слінг відкинуто (D14); польовий рюкзак Deuter Futura 27 — вміст 5.60-7.01 kg без КХ і щогли / 6.50-8.26 kg повністю, на спині 6.85-8.26 / 7.75-9.51 kg без води (модель, 5.8)".
+    - **Evidence:** STACK.md 5.8 row «Польовий рюкзак Deuter Futura 27» and D14 (line 91). The value 3.7-4.4 kg is carried over unchanged from STACK_v1_backup.md line 1052.
+  4.
+    - **Where:** 1.1 D13, rationale column: "Потрібно близько 18 виходів і 12 входів"
+    - **Problem:** The line count conflicts with the expander map in 5.2 and with D13's own text. MCP #1 has 16 outputs. MCP #3 has 14 inputs (FAULT LAB + ch1-ch4 = 5, FLT LNB/Boni = 2, rail-good LNB/Boni = 2, DC-sense UHF/L-band/HF = 3, PTC AUX, sled present) plus 2 outputs (GPA7, GPB7). That fills both chips 16/16 = 18 outputs + 14 inputs. MCP #4 adds 2 more outputs (EN LIME3V3, RESET LC76G). The requirement is therefore 20 outputs and 14 inputs, not 18 and 12.
+    - **Severity:** contradiction
+    - **Fix:** Change it to "Потрібно 20 виходів (16 на #1, 2 на #3, 2 на #4) і 14 входів (#3); #1 і #3 зайняті 16/16".
+    - **Evidence:** STACK.md 5.2 bullets «MCP23017 #1 (0x20), виходи», «MCP23017 #3 (0x22), входи», «MCP23017 #3, виходи» and «MCP23017 #4» (lines ~738-741); D13 text "#1 і #3 зайняті 16/16".
+  5.
+    - **Where:** 3.1 row «Інструменти», price column: "363.63-419.63 (з 19% ПДВ DE; G5 335-391 + Jokari 20050 $28.63"
+    - **Problem:** The lower bound adds Jokari to G5's rounded "about 335". The row's own priced items add up to 363.17, not 363.63 ($0.46 low-bound error): 21.35+17.96+15.73+5.02+7.53+5.74+15.10+39.56 + 44.91+26.37+29.17+28.63+19.10+5 + notebook 15 + organiser 10 + spares 57. The upper bound is exact: 391.00+28.63=419.63. The 0.46 carries into the bench low bound of 1,638.02.
+    - **Severity:** wrong_number
+    - **Fix:** Minimal fix: annotate the low end as G5's rounding, e.g. "363.63-419.63 (… G5 «about 335» (сума позицій 334.54) - 391 + Jokari 20050 $28.63 …)". Full fix: use 363.17 and recompute the bench low bound to 1,637.56, with the same −0.46 in 3.1, 3.6, 2.12 and 11.7 low-bound totals.
+    - **Evidence:** final/analogs_G5_lab_bench.json decisions[15].chosen_price_usd: "Build tools 128.0-134.7 … Roll 124.5-133.3 … Notebook and labels 15-25; organiser 10-20; spares 57-78", which gives 334.5 (items 127.99 + 124.55 + 82 = 334.54) against the stated "About 335-391".
+- **Notes:** I rechecked every group subtotal in section 2 against its rows and found no errors: 2.1 303.53-332.85 (plus the same-base variants 263.33-332.85, 303.53-381.47 and 300.66-329.98), 2.2 282.85, 2.3 249.49-261.79, 2.4 255.20-281.20 / 175.79-201.79, 2.5 560.26-658.04 / 542.26-612.99, 2.6 223.14-239.49 (fallback upper 258.39 / 252.44), 2.7 400.87-495.07 / 391.79-485.99, 2.8 69.67-71.67, 2.9 312.00-406.30, 2.11.1 606.46-608.46 (629.82; EU 696.55 ≈ 697-699, +90.09 = 52.98 + 3.22 + 33.89), 2.11.2 97.41-124.46 and 2.11.3 272.52-289.58 (EU 312.24-350.22; 976.39-1,022.50; 1,043.86). The 2.12 core build-up 1,916.55-2,235.02 / 2,523.01-2,843.48 is correct, as are all roll-ups, the EU lower bounds (2,613.10-2,933.57, 5,066.58-5,669.24, 5,648.81-6,298.97), the same-composition comparisons, the G1/G2/G3/G4 deltas (they sum to +157.15/−17.75), the budget variant (1,846; 2,452; 276.55; 3,072.76; 2,368.89) and the weights.
+  
+  Section 3 also checks out: 3.1 1,638.02-1,796.43 (1,680.69; 1,565.19-1,716.31; 1,609.39-1,767.80), 3.2 582.23-629.73 (730.50), 3.3 524.71-576.74, 3.6 core+extended 2,220.25-2,426.16, and the lab budget 1,520-1,540 / 298.
+  
+  Section 9 shopping maths is correct: EUR 168 = $188.85, EUR 226 = $254.05, EUR 38.70 = $43.50, ALLNET $266.74 / 317.42-322.76, Adafruit 38.60/44.55/26.70 with VAT and per-line fees, RTL-SDR Blog 243.60 → 275.96-313.11, Botland EUR 96.63 = $108.62 and savings 36.26-38.70, Nooelec 199.75 → 224.70/249.70/274.65, Crowd Supply 267 → 317.73-323.07, and the Pi Hut 74.95 / 114.90.
+  
+  Section 11 is correct: 11.1 counts 43 kept and 35 conditional; the firm saving is 55.62 = 37.67 + 17.95; the conditional saving is 413.48-717.31 = 158.71-322.68 + 210.89-306.99 + 43.88-87.64 (the IMU row ≈5-32 is really 5.07-32.07, so the "rest 17" figure of 54.36-72.34 is consistent); and the v1→v2 table matches 2.12 and 3.6.
+  
+  EU landed math under operator notes 34-35 is applied correctly everywhere I checked. EUR 3 per line is charged only for consignments of EUR 150 or less; above that the text uses normal duty (Lime board, Nooelec $199.75, Mini-Circuits lab order, ALLNET, RTL-SDR Blog bundle). The EUR 2 handling fee per line and the DDP case (LBE-1420) are handled correctly. The I2C address map, rails (BONI13V8 13.8 V, LNB 13.2 V, LNA bus 4.5 V, DISP12 ILIM 1.5 A), RILM values, RTL switch port maps and MCP pin maps are consistent across sections. Note that STACK.md was being modified while I reviewed it (mtime 21:48:33 UTC); I re-verified all five findings and the key totals against the current file after that change.
+
 ## check:rules (run `wf_a9665c78-f1d`)
 
 - **Lens:** RULES

@@ -188,7 +188,7 @@ pcie_aspm=off isolcpus=nohz,domain,managed_irq,7 nohz_full=7 rcu_nocbs=7 irqaffi
 | uart6 (spi6/i2c6 вимкнено, qup_uart6_tx/rx, okay) | radxa-overlays 0.2.31 | 16/18 | LC76G; alias `serial1 = …/serial@998000` → /dev/ttyHS1 |
 | uart7 (взаємовиключний зі spi7/i2c7/gpio30/31) | radxa-overlays 0.2.31 (у 0.2.18 образу r2 його немає) | 32 TX / 29 RX | Pico; alias `serial2 = …/serial@99c000` |
 | i2c0, 100 kHz | radxa-overlays 0.2.31 | 13/15 | лише INA228 (0x40 або 0x45) |
-| i2c2, 100 kHz | radxa-overlays 0.2.31 | 27/28 | MCP23017 #1 0x20, #3 0x22, #4 0x23 (TBD — «призначити на схемі», STACK.md 5.2), INA3221 0x41 і 0x43, TCA9517 до LAB BUS |
+| i2c2, 100 kHz | radxa-overlays 0.2.31 | 27/28 | MCP23017 #1 0x20, #3 0x22, #4 0x23 (A2..A0 = 011, STACK.md 5.2), INA3221 0x41 і 0x43, TCA9517 до LAB BUS |
 | вузол `compatible = "pps-gpio"`, `gpios = <&tlmm 96 GPIO_ACTIVE_HIGH>` | власний | **пін 7 (GPIO96)** | PPS LC76G, дріт ≤20 см |
 | польовий варіант: `pcie0` disabled; gpio-hog WIFI_PWR_EN output-low | власний | — | лінія TLMM WIFI_PWR_EN — TBD (STACK.md 5.2: знайти у W1-2) |
 | опційно FastRPC: `memory-region = <&adsp_rpc_remote_heap_mem>`, shared-dma-pool @0xc6500000, 8 MiB | власний | — | лише якщо Phase 0 покаже, що змінює результати |
