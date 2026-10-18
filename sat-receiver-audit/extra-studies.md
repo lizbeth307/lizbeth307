@@ -1636,6 +1636,92 @@
   
   Limits of this round: the shared WebSearch budget ran out after 12 searches. analog.com, mouser.com and elecom.co.jp were unreachable (503/403). AliExpress prices are snapshot discounts. JPY-to-USD conversions are approximate. Hard rules are unaffected: these are passive or optical parts and a receive-only sensor, with no radio and no loops.
 
+## searchA:raspberry_pi_pico_rp2040_hmi_supervisor (run `wf_071e1025-145`)
+
+- **Part:** Raspberry Pi Pico (RP2040, SC0915, no headers): HMI and supervisor MCU on switched LAB5, qty 2 (1 spare)
+- **Current price usd:** 10.12 for 2 (2 x GBP 3.80 including 20% UK VAT, The Pi Hut, SKU SC0915 'Without Headers'). I re-checked it on 18 Oct 2026 through the shop's product JSON: GBP 3.80, in stock. Excluding VAT that is GBP 3.17 = $4.22 each, $8.43 for 2. FX is the stack's 1 GBP = 1.3318 USD and 1 EUR = 1.1241 USD. An EU buyer pays destination-country VAT on top of the ex-VAT price, plus UK-to-EU shipping (which the stack shares with the Pi Hut FlightAware and MTT-hub lines). I did not verify whether Pi Hut collects VAT through IOSS.
+- **Critical specs:**
+  - At least 26 user GPIO on the edge at 3.3 V logic. The stack uses all of them: GP0-22 plus GP26-28, with GP22 as the reserve.
+  - 2 hardware UARTs: UART0 on GP0/1 to Q6A UART7, and UART1 on GP8/9 to the IMU pack (115200, framed, CRC). TX must be able to go high-impedance while the Q6A 3.3 V rail is absent.
+  - 1 I2C bus on GP4/5 (VEML7700 0x10, PCA9555 0x20, INT on GP10) and hardware PWM on GP17 (24 kHz backlight).
+  - PIO for 2 full-quadrature encoders. pico-examples quadrature_encoder.pio must load at address 0 and reads up to sysclk/10. Staying on RP2040 silicon avoids a firmware port.
+  - 3 ADC inputs on GP26-28: panel NTC, 1:6 battery divider on SW, case NTC. 12-bit, ENOB about 8.7 with erratum RP2040-E11. ADC_VREF and AGND must be on pins for the LM4040 3.0 V shunt.
+  - Internal sense lines: GP24 VBUS detect (used for the spare H1), GP29 VSYS/3, and GP23 PS (forcing PWM lowers SMPS ripple; matters for a quiet receive-only RF box).
+  - Power: VSYS 1.8-5.5 V buck-boost fed from LAB5 through an external Schottky, with on-board D1 Schottky VBUS to VSYS (the ORing scheme in the re-audit), and a 3V3_EN pin.
+  - Service access: SWD (SWCLK/SWDIO) plus RUN, wired to Q6A header pins 12/35/38 for OpenOCD and the Raspberry Pi Debug Probe.
+  - On-chip hardware watchdog and the open-drain GPIO drive used by the supervisor role (J21 pin 3 pulse, #2813 OFF pulse).
+  - Operating temperature -20 to +85 C (Pico and Pico H per raspberrypi.com).
+  - 51 x 21 mm castellated Pico footprint and pin order: the wiring and carrier already assume it.
+  - Supply and genuineness: Pico 1 series 'in production until at least January 2036'; buy from an approved reseller or an established distributor; pico-sdk, OpenOCD and picotool build on Ubuntu 24.04 arm64.
+- **Candidates:**
+  1.
+    - **Name:** Raspberry Pi Pico SC0915, same part, from Berrybase (DE), SKU RPI-PICO
+    - **Kind:** current_part
+    - **Price usd:** 4.61 each including 19% DE VAT (EUR 4.10); 3.87 ex VAT (EUR 3.45). For 2: $9.22 incl. VAT (EUR 8.20) or $7.75 ex VAT. Shipping extra, cost not verified. Saves $0.90 for 2 against $10.12 on an incl.-VAT basis, $0.68 ex VAT.
+    - **Spec comparison:** Identical genuine SC0915 board, so every critical spec is equal: 26 GPIO, 2 UART, PIO, 3 ADC plus ADC_VREF, GP23/24/29 internal lines, VSYS 1.8-5.5 V with D1, SWD and RUN, -20 to +85 C, same footprint.
+    - **Worse in:** No spec is worse. Shipping is charged separately (not verified), so the about $0.90 saving only holds if the parts ride on another Berrybase order. Berrybase did not appear in the subset of the raspberrypi.com reseller list I could fetch, so I could not confirm approved-reseller status. It is an established DE shop, and counterfeit risk for a $4 Pico from it is low. An EU delivery outside DE is charged that country's VAT (17-27%).
+    - **Compatibility:** Drop-in: same board, firmware and wiring.
+    - **Risks:** Shipping cost and the approved-reseller status are unverified.
+    - **Seller url:** https://www.berrybase.de/en/raspberry-pi-pico-rp2040-mikrocontroller-board
+    - **Sources:**
+      - https://www.berrybase.de/en/raspberry-pi-pico-rp2040-mikrocontroller-board
+  2.
+    - **Name:** Raspberry Pi Pico SC0915, same part, from Welectron (DE), art. RP1-709150
+    - **Kind:** current_part
+    - **Price usd:** 4.61 each incl. 19% VAT (EUR 4.10); 3.88 ex VAT (EUR 3.45). For 2: $9.22 incl. or $7.76 ex VAT. Shipping extra, not verified. 10+ in stock.
+    - **Spec comparison:** Identical board, so every spec is equal.
+    - **Worse in:** No spec is worse. Same shipping caveat as Berrybase. Approved-reseller status not confirmed on the fetched RPi list.
+    - **Compatibility:** Drop-in.
+    - **Risks:** Separate shipping charge.
+    - **Seller url:** https://www.welectron.com/Raspberry-Pi-Pico_1
+    - **Sources:**
+      - https://www.welectron.com/Raspberry-Pi-Pico_1
+  3.
+    - **Name:** Raspberry Pi Pico SC0915 from TME (PL distributor)
+    - **Kind:** current_part
+    - **Price usd:** UNVERIFIED. The page's structured data gives an aggregate of $3.71-4.00, but no quantity-1 price is visible, and the visible stock reads 0 (structured data says 1929).
+    - **Spec comparison:** Identical board, if available.
+    - **Worse in:** No spec is worse. Price and stock are unconfirmed, and TME has order minimums and favours business accounts.
+    - **Compatibility:** Drop-in.
+    - **Risks:** Possibly unavailable. The price may be ex-VAT and for a business account only.
+    - **Seller url:** https://www.tme.eu/en/details/sc0915/raspberry-pi-minicomputers/raspberry-pi/
+    - **Sources:**
+      - https://www.tme.eu/en/details/sc0915/raspberry-pi-minicomputers/raspberry-pi/
+  4.
+    - **Name:** WeAct Studio RP2040 core board (2/4/8/16 MB flash, USB-C)
+    - **Kind:** other_brand
+    - **Price usd:** UNVERIFIED. Sold only on AliExpress; I could not fetch the WeAct store page. I did not obtain a price, so no saving is established.
+    - **Spec comparison:** Same RP2040 silicon, so PIO, UARTs, I2C, PWM and the ADC (including erratum E11) are equal. From the official PINout.PNG: GP0-22, GP26-29 and GP24 are on the edge (28 GPIO, more than the Pico's 26). ADC_VREF and VBUS/VSYS pins are present. SWD is on a 4-pin DEBUG header. Flash up to 16 MB and a USB-C connector, both better.
+    - **Worse in:** 1) RUN is not on an edge pin (only on the NRST button), and there is no 3V3_EN or AGND pin. The stack wires RUN to Q6A pin 38. 2) The right-hand pin order differs from the Pico (3V3 at the 3V3_EN position, GP24 at 3V3, GP29/28/27/26 shifted, GP26 at the Pico RUN position), so it is not a drop-in on Pico wiring. 3) GP23 is a user key and GP24 is a free pin, so there is no on-board VBUS sense and no SMPS PS-mode control. 4) No schematic in the repo's HDK folder, so the regulator type, VSYS range, VBUS-to-VSYS diode, ripple and temperature rating are all undocumented. 5) No long-term supply statement, no EU distributor, and AliExpress-only, which brings counterfeit and lookalike risk. It cannot be shown not-worse, so I reject it.
+    - **Compatibility:** Usable only with rewiring, an external VBUS sense, a RUN wire soldered to the button pad, and re-validation of the power ORing. Firmware ports with a pin remap.
+    - **Risks:** Undocumented power path (back-feed into LAB5 is the stack's known hazard). AliExpress lookalikes.
+    - **Seller url:** https://github.com/WeActStudio/WeActStudio.RP2040CoreBoard
+    - **Sources:**
+      - https://github.com/WeActStudio/WeActStudio.RP2040CoreBoard
+      - https://raw.githubusercontent.com/WeActStudio/WeActStudio.RP2040CoreBoard/master/HDK/PINout.PNG
+- **Notes:** VERDICT: keep the Raspberry Pi Pico SC0915. No other brand's board is both cheaper and not worse. The only saving comes from buying the identical part from a cheaper EU shop: Berrybase or Welectron at EUR 4.10 including DE VAT ($4.61; EUR 3.45 = $3.87 ex VAT). That is $9.22 for 2 against the current $10.12, a saving of about $0.90 incl. VAT ($0.68 ex VAT). Take it only if the Picos ride on an order already placed with that shop. Otherwise keep The Pi Hut, which is already in the purchase plan (FlightAware Pro Stick Plus, Waveshare MTT hub), so shipping is shared.
+  
+  Checked and NOT cheaper (USD at 1.1241/EUR and 1.3318/GBP):
+  - DigiKey DE: EUR 4.03 ex VAT / EUR 4.80 incl. = $4.53 / $5.39 each, 40,279 in stock (DigiKey US $4.59). Useful only to consolidate with the planned DigiKey order (PEC11R, KSC641J, ferrites).
+  - Reichelt: EUR 4.80 incl. VAT ($5.40).
+  - Botland: EUR 5.06, shown as EUR 4.25 net ($5.69 / $4.78).
+  - Pimoroni: GBP 3.17 ex VAT, the same as Pi Hut, out of stock.
+  - Adafruit 4864: $4.00, out of stock, ships from the US so EU import VAT applies.
+  - Kubii: plain-Pico price not shown.
+  
+  Same-vendor upgrades are dearer:
+  - Pico 2 (RP2350A, SC1631) is better (150 MHz M33, 520 KB SRAM, 4 MB flash) but costs more: list $5, Berrybase EUR 5.50, Reichelt EUR 4.90, Pi Hut GBP 4.80.
+  - Pico H is EUR 4.80-5.50 or GBP 4.80.
+  - Waveshare RP2040-Plus (Pico pinout, MP28164 buck-boost, charger) is $6.99-8.99.
+  
+  Other established RP2040 boards (XIAO RP2040, Tiny 2040, KB2040, Pro Micro RP2040, Feather RP2040, Nano RP2040 Connect, RP2040-Zero) all have fewer than 26 edge GPIO and cost more. The stack already rejected RP2040-Zero and RP2350B boards. Unbranded or VCC-GND 'YD-RP2040' Pico clones fall under angle B; I did not verify them here.
+  
+  Rules: this is a digital MCU with no RF emission role, so receive-only, no-loop and conducted-only are unaffected. Whichever seller is used, the re-audit fixes still apply: a Schottky from LAB5 into VSYS, the battery divider tapping SW rather than N, and flashing only with the main switch ON or with the board unplugged from LAB5.
+  
+  Gaps: I had no WebSearch budget left after one search, so prices come from WebFetch of primary pages plus the Pi Hut and Pimoroni Shopify product JSON. I could not fetch AliExpress, Mouser (503), Farnell or buyzero (429), so WeAct and TME prices are unverified. Berrybase and Welectron shipping to other EU countries is unverified. Prices were read 18 Oct 2026.
+  
+  Sources: https://thepihut.com/products/raspberry-pi-pico ; https://shop.pimoroni.com/products/raspberry-pi-pico ; https://www.digikey.de/en/products/detail/raspberry-pi/SC0915/13684020 ; https://www.digikey.com/en/products/detail/raspberry-pi/SC0915/13624793 ; https://www.reichelt.com/de/en/shop/search/raspberry%20pi%20pico ; https://botland.store/search?search_query=raspberry+pi+pico+rp2040 ; https://www.adafruit.com/product/4864 ; https://www.berrybase.de/en/raspberry-pi-pico-2-rp2350-mikrocontroller-board ; https://www.raspberrypi.com/products/raspberry-pi-pico/ ; https://www.raspberrypi.com/resellers/?country=Germany ; https://www.waveshare.com/rp2040-plus.htm
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
@@ -16949,6 +17035,147 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - So every marketplace price above is a search-snippet snapshot, marked unverified. Verify at checkout, including VAT (IOSS) for an EU delivery.
   - SW6306 (iSmartWare) was considered, but no datasheet could be retrieved, so it is not listed.
   - A follow-up session could open the AliExpress listings and confirm BOM photos and prices.
+
+## searchB:ip2368_4s_100_w_pd_board_charge_only_bz (run `wf_a268b76e-da0`)
+
+- **Part:** IP2368 4S 100 W USB-C PD charger board (retail boards are COUT/bidirectional; BZ charge-only chip preferred), RVSET 5.1k (4.102 V/cell), RISET 15k (3 A), 10k B3380 NTC, KSD9700 70 C. Qty 2.
+- **Current price usd:** 25-49 for qty 2 (STACK line total, unverified). Search snippets put one board at 12.50-24.59 (Walmart 12.50/12.98, Newegg Business 15.79 ships from HK, Newegg 17.99-19.83, Newegg CA 23.98/24.59). OnBuy RO: 83.27 RON + 16.53 RON shipping. I could not open any listing page: every one returned a bot wall or 403.
+- **Critical specs:**
+  - 4S Li-ion with charge voltage settable to 4.10 V/cell. IP2368 DS V1.41: VTRGT = 4000 + 0.02*RVSET mV, 10 mV step, about +/-40 mV/cell, 1% RVSET. Pack CV at 5.1k is about 16.25-16.57 V.
+  - CC current settable to 3 A (ICHRG = 0.2*RISET mA, 15k = 3 A, max 5 A). Trickle 100 mA below 2.5 V and 200 mA up to N*3 V, used to wake the Daly BMS.
+  - USB-C PD 2.0/3.0 sink at 5/9/12/15/20 V. Input 4.5-25 V, pins withstand 30 V, VBUS OVP 25 V. Auto-derates to the adapter's PD power (45 W sources work); a PDO of 60 W or more is needed for full 3 A at 4S.
+  - Charge efficiency up to 96% (DS). The stack's thermal model assumes about 2.6 W loss at about 50 W in. Measured on a 3S board in discharge: 92.4-94.3% (mysku).
+  - Fixed 250 kHz switching for both charge and discharge. The spur plan depends on it: 2nd harmonic between NAVTEX 490 and 518 kHz, no charging in HF/LF Quiet. A replacement needs a known fixed frequency.
+  - NTC pin for 10k B3380, charge window 0-45 C (80 uA/0.39 V hot, 20 uA/0.55 V cold). Must not be floated.
+  - Termination ISTOP 100 mA, recharge at VTRGT - N*0.1 V, safety timer 45-51 h.
+  - Battery drain when idle: ISTB 180 uA at 14.8 V (DS); 0.1 mA measured (mysku). Counts against the OFF budget of 1.0 mA or less.
+  - Must never source power to, or drain the pack through, the USB-C port. BZ is charge-only. COUT boards use Try.SRC and need the TPS259470A in front plus the DRP test.
+  - On-board 5 V LDO rated 20 V or more. Node N reaches 16.8 V during the monthly ISDT balance; HT7550-1 is reported OK, ME6201 is disputed (about 16 V).
+  - Thermal at 3 A: one MOSFET passed 100 C at 5.1 A (mysku), so 3 A is the limit. OTP 110-140 C. Mounted on the enclosure wall at least 10 mm from the cells, KSD9700 70 C.
+  - Small board with USB-C as the single sealed inlet on the bottom panel. No driver needed on the Q6A; the stack uses no I2C on the charger.
+- **Candidates:**
+  1.
+    - **Name:** Same IP2368 4S 100 W COUT board from the cheapest marketplace listing (Walmart US 2-pack, or a 12.50 single 4S listing)
+    - **Kind:** current_part
+    - **Price usd:** 19.94 for 2 (2-pack) or 12.50 each = 25.00 for 2. Search-snippet prices only; Walmart pages sit behind a bot check. It is not confirmed that the 2-pack is the 4S version. EU shipping and import VAT unknown.
+    - **Spec comparison:** Same chip and the same retail board family, so every DS V1.41 spec is identical: 4.10 V/cell at RVSET 5.1k (+/-40 mV), 3 A at RISET 15k, PD 5-20 V with auto-derating, 250 kHz, 10k B3380 NTC 0/45 C, ISTOP 100 mA, 180 uA standby. Independent measurements of this board family (mysku, 3 May 2024, 3S): standby 0.1 mA; discharge efficiency 92.4-94.3% at 43-86 W; NTC trips seen at 0.39 V and 0.55 V; charge current followed the RISET formula (5.1 A at the default 27k).
+    - **Worse in:** Nothing on spec, provided it is the same board. Not proven for this exact listing: seller, LDO variant (HT7550-1 vs ME6201) and whether the 2-pack is 4S.
+    - **Compatibility:** Identical to the current pick: same footprint, RVSET/RISET/NTC rework, and TPS259470A in front. No software needed on Ubuntu 24.04 arm64.
+    - **Risks:** Unverified price and seller (US marketplace, ships from China). It is a COUT board (Try.SRC, activation charge, DRP flapping). The first board in the mysku review would not discharge, which is fine for charge-only use. Goods-in tests stay mandatory: COUT check, V_CV at 5.1k, NTC trips, LDO marking, and a 2 h burn-in at 3 A.
+    - **Seller url:** https://www.walmart.com/ip/5614775489
+    - **Sources:**
+      - https://www.walmart.com/ip/5799421375
+      - https://www.walmart.com/ip/5614775489
+      - https://mysku.club/blog/aliexpress/100034.html
+      - https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+  2.
+    - **Name:** Same IP2368 board: the exact AliExpress listing that mysku measured (item 1005004270757563)
+    - **Kind:** current_part
+    - **Price usd:** 1089 RUB when reviewed (May 2024); current USD/EUR price not verified (AliExpress returned a captcha). For EU buyers, AliExpress charges VAT at checkout under IOSS for consignments up to EUR 150.
+    - **Spec comparison:** Same chip as candidate 1, and the only listing with independent bench data (see candidate 1). Parts noted by the reviewer: 4x NVMFS5C450N (40 V, 3.3 mOhm), HYG082N03 at the USB-C port, 35 V input caps, and a fixed 10k on the NTC pin (to be replaced with the real NTC).
+    - **Worse in:** Nothing on spec. The measurements were on a 3S pack and mostly in discharge; this pass found no independent 4S charge-at-3 A measurement.
+    - **Compatibility:** Identical to the current pick.
+    - **Risks:** Price unknown today, so I cannot confirm it is cheaper. The LDO varies by batch: one reviewed board had an HT7550-1, the other an ME6201, whose voltage rating is disputed (16 V vs 30 V). Read the marking at goods-in, or swap to an LDO rated 30 V or more. Sellers warn not to connect the board's C port to another bidirectional C port.
+    - **Seller url:** https://www.aliexpress.com/item/1005004270757563.html
+    - **Sources:**
+      - https://mysku.club/blog/aliexpress/100034.html
+      - https://www.aliexpress.com/item/1005004270757563.html
+  3.
+    - **Name:** Same IP2368 4S board through an EU-facing marketplace (OnBuy Romania)
+    - **Kind:** current_part
+    - **Price usd:** 83.27 RON + 16.53 RON shipping per board (snippet; the page returned 403). Roughly 20-25 USD per board, so about 40-50 USD for 2 (exchange rate and VAT not verified). This is not cheaper than the current range.
+    - **Spec comparison:** Same chip and board family. Specs are identical to the current part.
+    - **Worse in:** Not cheaper: equal to or above the top of the current 25-49 range for 2. Seller and LDO variant unknown.
+    - **Compatibility:** Identical.
+    - **Risks:** Unverified listing. Kept only as an EU-shipping route if AliExpress delivery is a problem.
+    - **Seller url:** https://www.onbuy.com/ro/p/ip2368-bidirectional-100w-fast-charging-module-buck-boost-type-c-interface-4s-lithium-battery-high-power-charging-board~p252223345/
+    - **Sources:**
+      - https://www.onbuy.com/ro/p/ip2368-bidirectional-100w-fast-charging-module-buck-boost-type-c-interface-4s-lithium-battery-high-power-charging-board~p252223345/
+  4.
+    - **Name:** Generic IP2366 140 W PD3.1 2-6S charger board (REJECTED for angle B: no independent measurement)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Board price not verified. The IP2366 (I2C version) chip is 1.60 USD at LCSC C20415848 (JLCPCB parts data, stock 0).
+    - **Spec comparison:** From IP2366 DS V1.10.
+  Equal:
+  - CV 4.10 V/cell at RVSET 6.2k (4.06-4.14 V/cell, same +/-40 mV), but only in fixed steps (3.65/4.1/4.2/4.35/4.4 V) rather than a 10 mV fine trim.
+  - 250 kHz charge switching.
+  - NTC 0/45 C with 10k B3380, same 80/20 uA scheme.
+  - ISTOP 100 mA.
+  - TEND 48 h.
+  Better:
+  - 140 W (28 V/5 A EPR).
+  - Standby 5-10 uA vs 180 uA.
+  - Inductor peak limit 15 A vs 10 A.
+  Different or worse:
+  - Charge current cannot be set directly. Only PSET power steps exist (30/45/60/65/100/140 W), so 3 A at 4S has to come from about 45 W (about 2.6-3.2 A, my estimate).
+  - First trickle stage is 50 mA vs 100 mA.
+    - **Worse in:** No independent measurement found, so angle B rejects it. Charge current can only be set in coarse power steps, not 3 A exactly. If the board negotiates 28 V EPR (with an EPR adapter and an EMARK cable), the stack's TPS259470A (OVLO about 22 V) would trip. Bidirectional with Try.SRC, like COUT.
+    - **Compatibility:** Would need new resistor values (RVSET 6.2k, BAT_NUM 9.1k, PSET), a re-checked spur plan (same 250 kHz) and the eFuse OVLO question resolved. Not drop-in.
+    - **Risks:** Unmeasured board quality, unknown LDO rating, unverified price.
+    - **Seller url:** 
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ip2366ds/ip2366.pdf
+      - https://www.lcsc.com/product-detail/C20415848.html
+  5.
+    - **Name:** DIY board with the genuine charge-only IP2368_BZ chip on its own PCB, following the DS reference design (REJECTED: not proven cheaper, unmeasured)
+    - **Kind:** diy
+    - **Price usd:** Chip only: IP2368_BZ_VGLIP, LCSC C5203723, 2.77 (1 pc) / 2.38 (10 pcs), shown as 'not available now'. PCB, 10 A inductor, 4 MOSFETs, USB-C and assembly not priced.
+    - **Spec comparison:** Same silicon, so DS specs are equal. Two quality gains over retail: a true charge-only BZ part (no Try.SRC or source role, which removes the DRP problem) and a free choice of an LDO rated 30 V or more.
+    - **Worse in:** Efficiency, thermals and spurs depend on a home layout with no independent measurement. Chip is out of stock. Likely not cheaper than 2 retail boards at qty 2 once PCB, parts and shipping are counted (not priced).
+    - **Compatibility:** Same pinout and settings as planned in the stack, if built.
+    - **Risks:** Layout and thermal risk; QFN48 assembly; sourcing.
+    - **Seller url:** https://www.lcsc.com/product-detail/C5203723.html
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/C5203723.html
+      - https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+  6.
+    - **Name:** DIY: USB-C PD trigger at 20 V plus a generic CC/CV buck module set to 16.4 V / 3 A (REJECTED)
+    - **Kind:** diy
+    - **Price usd:** Not priced (no measured evidence gathered).
+    - **Spec comparison:** A CC/CV supply rather than a charger: no NTC charge window, no termination or safety timer, no trickle pre-charge, no auto-derating to the adapter's PDO, and an unknown switching frequency for the spur plan.
+    - **Worse in:** NTC 0-45 C window, termination at 100 mA, 45-51 h timer, PD power derating, known 250 kHz spur plan, pack back-feed when unplugged. No independent measurement.
+    - **Compatibility:** Breaks the hard battery-safety design (NTC charging window, supervised charge).
+    - **Risks:** Overcharge or temperature-unsafe charging.
+    - **Seller url:** 
+    - **Sources:** []
+  7.
+    - **Name:** Drop the internal charger and charge daily with the ISDT 608PD (already in the BOM) through the node-N service port (REJECTED)
+    - **Kind:** diy
+    - **Price usd:** 0 extra (removes 25-49 for the 2 boards plus the TPS259470A)
+    - **Spec comparison:** Official page: LiFe/LiPo/LiHv (adjustable 4.35-4.50 V) 1-6S, 0.5-10 A, USB-C PD3.1 140 W input, 72.5x60x26.6 mm, 85 g. Li-ion at 4.10 V/cell is not listed, and there is no temperature-probe input.
+    - **Worse in:** The 4.10 V/cell daily cap is not confirmed. No cell NTC charge window. The external unit must be carried. The stack requires the main switch OFF on the service port, so there is no charging while the receiver runs. It loses the single sealed USB-C inlet.
+    - **Compatibility:** Conflicts with D2/D6/battery-safety rules and the planned single power inlet.
+    - **Risks:** Charging without the temperature window.
+    - **Seller url:** https://www.isdt.co/608pd.html
+    - **Sources:**
+      - https://www.isdt.co/608pd.html
+- **Notes:** Verdict (angle B): keep the IP2368 board. It is already the cheapest generic module in its class. The only cheaper option that is not worse is the same board from a cheaper listing:
+  - Walmart 2-pack 19.94, or 2 x 12.50 = 25.00 (US snippets).
+  - The AliExpress item measured by mysku (current price unknown).
+  
+  Every IP2368 price is unverified: Walmart, Newegg, eBay, OnBuy, Amazon and AliExpress all blocked automated access. The shared WebSearch budget ran out after 3 searches, so this pass then used direct fetches, the IP2368 DS V1.41 PDF (LCSC) and files already in the scratchpad: the IP2366 DS V1.10 and JLCPCB parts JSON. EU shops checked with no IP2368 listing:
+  - LaskaKit: no results.
+  - Botland: no IP2368 product.
+  - diymore: no results.
+  - TinyTronics and Kamami: blocked.
+  
+  No alternative chip or DIY build has independent measurements that prove it equal, so all of them are rejected:
+  - IP2366: better standby and power, but coarse current setting, an EPR/OVLO clash, and no measurement.
+  - DIY IP2368_BZ: same silicon and truly charge-only, but chip out of stock, unmeasured layout, not shown cheaper.
+  - PD trigger plus CC/CV buck: loses the NTC window, termination and timer.
+  - ISDT-only charging: Li-ion 4.10 V not confirmed and no temperature probe.
+  
+  No used market applies to a 12-25 USD module.
+  
+  If the user buys from the cheapest listing, keep every goods-in gate unchanged:
+  - FNB58 sink test (COUT).
+  - V_CV at RVSET 5.1k, target 16.25-16.57 V.
+  - NTC trips at 0.39/0.55 V.
+  - LDO marking rated 20 V or more (replace if it is an ME6201).
+  - 2 h burn-in at 3 A.
+  - HF+ check of the 250/500 kHz spurs.
+  
+  Price to record: 25-49 for 2 (unverified), plausible low end about 20-25 for 2 from US marketplace snippets. For the EU, add shipping; AliExpress includes VAT under IOSS up to EUR 150.
 
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
