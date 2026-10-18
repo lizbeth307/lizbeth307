@@ -317,7 +317,7 @@
 <line x1="1880" y1="853" x2="1880" y2="867" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
 <rect x="1680" y="869" width="400" height="40" rx="4" ry="4" fill="#efe6ff" stroke="#333" stroke-width="1.2"/>
 <text x="1686" y="887" font-size="12" font-weight="bold" text-anchor="start" fill="#111">INA3221 шунт 0.2 Ω → bias-tee Boni (усередині,</text>
-<text x="1686" y="902" font-size="12" font-weight="normal" text-anchor="start" fill="#111">біля екрана HF+) → реле HF+ K1 → P5 BNC</text>
+<text x="1686" y="902" font-size="12" font-weight="normal" text-anchor="start" fill="#111">біля екрана HF+) → P5 BNC; РЧ → K1 → HF+</text>
 <line x1="1880" y1="909" x2="1880" y2="923" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
 <rect x="1680" y="925" width="400" height="25" rx="4" ry="4" fill="#efe6ff" stroke="#333" stroke-width="1.2"/>
 <text x="1686" y="943" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Boni-Whip: 65 mA тип. (виробник), ≈0.90 W (модель)</text>
