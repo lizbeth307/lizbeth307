@@ -1033,3 +1033,7 @@ P5 (проміжне): G2 — модуль UFS 4K-нативний. Radxa вип
 
 P5 (проміжне): G5 — кандидат на заміну запасного Wideband LNA V2 ($19.95): LNA4ALL (MMIC PSA4-5043+) коштує 20 EUR зібраний і 23 EUR з двома SMA. Це ≈$22.5–25.9, тобто дорожче за поточний. Джерело: lna4all.blogspot.com. Nooelec LaNA 100812 — $37.95, без опублікованих NF/OIP3 (nooelec.com). G4 — штативи K&F Concept від $36.99 (S255A3+BV01, kfconcept.com); довжину в складеному стані ще не перевірено.
 
+## 2026-10-18 13:37 UTC
+
+P5 (проміжне): G5 — EU-ціна RTL-SDR Blog Wideband LNA V2 (QPL9547) у Passion Radio (FR): €29.78 з ПДВ, €24.82 без ПДВ. Це дорожче за $19.95 в офіційному магазині RTL-SDR Blog, але склад у ЄС і мита немає. Джерело: https://www.passion-radio.com/sdr-accessory/lna-rtlsdr-764.html
+
