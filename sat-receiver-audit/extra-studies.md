@@ -32169,6 +32169,49 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   No subtotal lives in this file. Batch 2 entries (59-116) are mostly register, software and mechanical versions of the same topics: gpsd, gr-satellites, LC76G, GNSS placement, Uputronics, tripod, Yagi, helicone, spur lines and the L-band patch. They can be merged into rows 6-8, 11-17, 24 and 34, which keeps the subsection well under 60 rows.
 
+## edit:02a_bom_compute_receivers_rf:b2 (run `wf_a1f0ee5f-4e1`)
+
+- **Section:** 02a_bom_compute_receivers_rf
+- **Applied:**
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+- **Skipped:** []
+- **Notes:** All 22 changes (idx 23-44) are applied to /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/02a_bom_compute_receivers_rf.md. Batch-1 text is kept: idx 33, 35, 36 and 37 asked for whole-row swaps, and the still-valid batch-1 content was carried into the new rows. Every table row still has 7 columns.
+  
+  Merges and conflicts:
+  - idx 23 + 24 + 32 (Uputronics row). Batch 1 had already replaced the anchors for idx 23 and 32, so their text was merged into the current row. G1 (analog) sets the price, seller and status. reaudit_C details are kept: ANT has no bias pass-through, UI "ch2 off = no UHF", SMA M-F jumper or bracket mount, register #98 closed on paper with the ch2 measurement kept. For the 434 MHz variant, G1's price (EUR 42.95 = $48.28 without VAT) wins over reaudit_C's GBP 41.99, which stays as the UK price. Both plot figures (20.25 dB / 16.08 dB, −4.2 dB) are kept.
+  - idx 25 + 26 + 41 (cooling row). G2 (analog) sets the parts, sellers and prices. reaudit_D's technical text is merged in: A/B choice between the Cu block and the Armor top cover only, PTM7950 / LPDDR5 pad rule, Noctua specs, plus-side (high-side) switch with diode, tach pull-up and stall detection, max 5 Pa at the intakes. G2's stall timing (2 s, 2 pulses per revolution) is added from the G2 file. The batch-1 meta-note "fan and seller set by D/G2" is dropped because it is now done. The Arace budget note is removed per G2.
+  - idx 27 + 40 (UFS row). The G2 price, seller and status cells are applied. The 0x0198 Kioxia text was already in the row from batch 1, so it was not repeated.
+  - idx 28 + 43 (recovery row). G2 sets the parts and prices. reaudit_D adds: two cards, SHA-256 check, _512 image, no OS or DB on SD, USB keyboard in the service kit. The f3 test from idx 28 matches G2's gate, so it is written once. G2's conditions (a)-(c) for the Transcend TS-RDF5K are written out from the G2 file. The batch-1 SPI NOR text is kept. The RA019 typo is fixed.
+  - idx 29 (V4L). Most of it was already in from batch 1. Added: the $141.1-145.6 landed figure for 3, the Passion Radio price without VAT and the H1 wording, and "дешевшого рівноцінного немає". The V3 price now follows G1 at $34.95, which wins over reaudit_B's $34.95-39.95.
+  - idx 30 + 31. The batch-1 budget text is merged with G1's: the M3 standoffs and the non-plus 100852 data are both kept. On the Flamingo+ row, "DC-прохід 250 mA" is kept as a fact but marked as not a reason for choosing it. I added the EUR 150 duty and handling-fee clauses required by the landed cost rule.
+  - idx 34 (HF+). For the China-warehouse option above EUR 150, I added the EUR 2 handling fee required by the landed cost rule.
+  - idx 35 + 42 (HF+ selector). G1 sets the relay part and price. G2 #10 renames the driver board to "плата-носій G6K"; the discrete AO3400A driver is now counted in «Логіка інтерфейсу» 2.6. The price range stays 44-50 because G2 gives no new figure for the carrier board.
+  - idx 38 (2.3 subtotal). Recomputed to 249.49-261.79. G1's 232.54-244.84 leaves out the spare-V4L FM band-stop row (16.95) that batch 1 added. The G1 figure is kept in the note as "без рядка ...".
+  - idx 39 (header HF chain). The anchor had already changed in batch 1, which used reaudit_B's Boni-Whip lower bound of $167.49 from the Bonito shop. No analog file decides the Boni-Whip, so reaudit_B's price stands. G1's changes to the relay, shield and choke rows (−13.73 / −42.43) were applied on top, giving $469.71-546.74. The extractor's $480.95-546.74, which uses WiMo as the lower bound, is added as an alternative. The foldable-tier figure is unchanged because no change asked for it.
+  - idx 44 (2.1 subtotal). Set to 303.53-332.85. The plate and UFS use TinyTronics prices with NL VAT, and cooling uses the EU price with VAT. The note adds +$8.98 if the fan ships separately and gives 300.64-329.96 with cooling priced outside the EU.
+  - The 2.2 subtotal stays 282.85 because its USD prices did not change.
+
 ## searchA:adafruit_bno085_4754_rp2040_zero_metal_p (run `wf_a268b76e-da0`)
 
 - **Part:** IMU pack: Adafruit BNO085 (4754) on SPI0 of a Waveshare RP2040-Zero (20187), in a metal puck bonded to the cable braid; GX12 4-pin pair; 1.5-2 m shielded 4-core lead; TVS. Framed UART at 115200 with CRC to Pico UART1, never USB.
@@ -53374,6 +53417,73 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   Additions and checks:
   - **Prices:** I added the USD price for Peli 1450 ($235.19 = EUR 209 incl. VAT, Thomann DE, from G6) and the EUR price for Rollei (EUR 50.95 incl. 19% DE VAT, from G4). Both are from the files.
   - **Numbers spot-checked against the data files:** Arace $30.93/$32.66 vs $13.49, TPS7A4701RGWT $15.92, D36V28F5 $23.95, Rollei $57.33, PE4312 in the G6 sled, BONI13V8, TPS7A47 having no PG pin, and the operator note 7 T7 deauthorize step (supported by G6).
+
+## edit:11a_changes_analogs:b2 (run `wf_d69008e8-cbb`)
+
+- **Section:** 11a_changes_analogs (## 11. Зміни v1 → v2, ### 11.1. Заміни і зміни продавця (P5)), rows 21-40 added
+- **Applied:**
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+- **Skipped:** []
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/11a_changes_analogs.md. Batch 1 left the intro and rows 1-20; I added rows 21-40, one per P5 decision, in the 8-column table, directly after row 20, and did not change rows 1-20. The change entries in v2_changes/11a_changes_analogs.json are cut off at 200-400 characters, so I took the full figures from D/analogs_G2_display_hmi_storage.json (decisions 9-11 = idx 20-22) and D/analogs_G3_power_gnss_imu.json (decisions 0-16 = idx 23-39). I matched each idx to its record by the part text.
+  
+  Rows added:
+  - 21 MCP23017-E/SO: replaced conditionally.
+  - 22 interface logic, discrete relay driver: replaced conditionally.
+  - 23 recovery set, Verbatim and Goobay from Reichelt: replaced conditionally.
+  - 24 IMU pack, BerryBase plus named hardware, GX12 to GX16: replaced conditionally.
+  - 25 LC76G: kept, optional Botland.
+  - 26 Molicel P50B from NKON: P5 labels this replace_conditionally, so I wrote 'замінено умовно (лише продавець, елемент той самий)'.
+  - 27 Daly BMS: kept.
+  - 28 IP2368: kept.
+  - 29 D36V50F12, Botland: kept.
+  - 30 D36V28F5, Botland: kept.
+  - 31 #2813, Botland: kept.
+  - 32 INA228: kept.
+  - 33 TPS7A4701RGWT, DigiKey: kept.
+  - 34 LT3045EMSE: kept.
+  - 35 TPS2553DBVR-1 on all 10 positions: kept.
+  - 36 AON supervisor, MCP65R41 in place of TLV3012: replaced conditionally; the LDO is kept.
+  - 37 protection set, parts named: kept.
+  - 38 PCB set, spec added: kept.
+  - 39 pack sundries, itemised: kept.
+  - 40 IKEA SJÖSS plus RUNDHULT charger: replaced conditionally.
+  
+  Precedence (P5 over P4):
+  - Row 33: P5's commercial TPS7A4701RGWT from DigiKey overrides reaudit_D's 'order 2x TPS7A4701MRGWREP (EP)'. The EP part is ±3.5 %, so it is not equivalent.
+  - Row 34: P5's LT3045EMSE#PBF (MSOP) overrides reaudit_D's LT3045EDD#PBF wording.
+  - Row 37: P5's datasheet correction (TPS25947 abs max 28 V, not 30-36 V) overrides the reaudit_D text. The reaudit_B contradiction on the Boni rail (eFuse or PTC, 12.5 or 13.8 V) is recorded as a choice v2 must make, not resolved.
+  
+  Conflicts between P5 records, merged:
+  - botland.store: G3[5] lists it as a consumer store; G3[1] and G3[6] say it is B2B and needs a VAT ID. Rows 25 and 30 say B2B. Row 29 names only botland.de and botland.com.pl.
+  - Row 27 (Daly UVP wake): uses the IP2368 datasheet correction from idx 27 (30-70 mA below 2.5 V) and points to row 28.
+  - Row 31: names the supervisor comparator generically, because idx 35 may replace the TLV3012.
+  - Row 22: says the 'driver board' in row 8 becomes only the G6K carrier PCB, so the driver is not counted twice.
+  
+  Other notes:
+  - Exchange rates other than 1.1241 are marked in the row: ECB 1.1253 in rows 30 and 31, 1.124086 in row 29.
+  - Every number comes from the P5 files; models and estimates are marked as such.
+  - The file has no subtotal, so there was nothing to recompute.
+  - All 40 rows have 8 cells.
+  - No hard rule is affected.
 
 ## edit:08c_new_gates_analogs:b1 (run `wf_d86c28f4-677`)
 
