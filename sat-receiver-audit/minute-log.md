@@ -48,3 +48,9 @@
 - Навчання NPU: агент розбирає генератори сигналів TorchSig (FM тощо) для синтетичних спектрограм. Джерело: github.com/TorchDSP/torchsig.
 - КХ і меню: агент перевіряє labwc (композитор Wayland, вимога libinput ≥1.26 для деяких функцій) і екранну клавіатуру squeekboard як основу сенсорної оболонки. Джерело: github.com/labwc/labwc.
 
+## 2026-10-18 02:10 UTC
+
+- Навчання NPU: для середовища виконання на ARM є ai-edge-litert 2.3.0 (06.10.2026, manylinux aarch64) — наступник tflite-runtime (останній 2.14.0, 2023); можливий шлях QNN TFLite delegate. Джерело: pypi.org/project/ai-edge-litert.
+- КХ і меню: агент перевіряє форк SDR++ «brown» (sdrpp-brown.san.systems) і образи uConsole AIO (SDR + GPS + LoRa) як готові прикладі меню-запускачів. Джерело: github (SDRPlusPlus fork), sdrpp-brown.san.systems.
+- Радіолабораторія: soapy_power (MIT) виводить спектр у форматі rtl_power та інших, працює з RTL-SDR, Airspy, SDRplay, HackRF, bladeRF, USRP, LimeSDR. Джерело: github.com/xmikos/soapy_power.
+
