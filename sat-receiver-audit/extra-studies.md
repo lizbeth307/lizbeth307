@@ -27307,3 +27307,290 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   </invoke>
   
 
+## community:wideband_sdr (run `wf_feb0e95a-cfc`)
+
+- **Subsystem:** wideband_sdr: LimeSDR Micro M.2 2280 Basic (kept by user decision, 18 Oct 2026). Stage 2: community and field experience, plus a primary-source re-check of stage 1
+- **Findings:**
+  1.
+    - **Claim in stack:** C1 / BOM 2.11: Crowd Supply pre-order ships 15.12.2026; decide by 1.12.2026. Stage 1: the 30 Sep first run is unconfirmed.
+    - **Finding:** As of 18 Oct 2026 nobody has posted a hands-on report. Lime forum latest.json: the only Micro threads since August are design questions (t/13304 power, t/13348 range, t/13292 matching), with no backer reporting delivery. Crowd Supply: 8 updates, the last on 17 Jun ('ship in September'). The product page still says 'Orders placed now ship Dec 15, 2026' for Basic $249 and GNSS $299. The MyriadRF stories of 28 Aug and 25 Sep say nothing about Micro shipments. GitHub (LimeSuiteNG, LimeSDR-Micro_FW, LimeSDR-Micro) has no user bug reports from real units; the only one is FW #6, found by reading code. Git heads are unchanged since stage 1 (ls-remote 18 Oct): LimeSuiteNG limesdr-micro-staging 37cb1833, limesdr-micro 80ffad5c, develop 5bc2d182, only tag v25.1.0; FW master 13628a9 (9 Oct), staging 980fff2 (16 Oct).
+    - **Verdict:** confirmed
+    - **Action:** Keep the weekly order check and the 1.12 decision. Plan bring-up as a first-of-its-kind QCS6490 integration: no community fixes will exist before the 30-day RMA window ends.
+    - **Impact:** Every bring-up risk below is unmitigated by field experience.
+    - **Sources:**
+      - https://discourse.myriadrf.org/latest.json?order=created
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro/updates
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro
+      - https://myriadrf.org/stories/
+      - https://github.com/myriadrf/LimeSDR-Micro_FW/issues?q=is%3Aissue
+  2.
+    - **Claim in stack:** Stage 1 / 5.4: la9310_limesdr DKMS; 'a build against 6.18 has not been shown'; add a CI job against 6.18.2-4-qcom headers.
+    - **Finding:** Tested here (compile only). la9310_limesdr 0.2.1 and la9310_uart_module from staging 37cb1833, cross-compiled against radxa/kernel linux-6.18.2 (559f4f92, arm64 defconfig, not Radxa's exact .config) with Ubuntu 24.04 aarch64 GCC 13.3: both .ko files build with 0 errors and 17 warnings (unused variables, missing prototypes, one discarded const, one %i/size_t). With clang 18 the build fails: la9310_sysfs.c:101 discards 'volatile', which is -Werror under clang. The module was not loaded or probed.
+    - **Verdict:** corrected
+    - **Action:** Build the DKMS module with GCC, the compiler the Radxa kernel was built with (check /proc/version). Keep the CI job against the real linux-headers-6.18.2-4-qcom. If LLVM is ever used, carry a one-line cast patch.
+    - **Impact:** Build risk on 6.18 is low; probe and runtime remain untested.
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSuiteNG/tree/limesdr-micro-staging/drivers/linux/la9310_limesdr
+      - https://github.com/radxa/kernel/tree/linux-6.18.2
+  3.
+    - **Claim in stack:** #21: PCI class fixup (1957:1c10, 1957:1c12, 2058:001d -> 0x118000) if BARs do not come up. Stage 1: keep it as a fallback.
+    - **Finding:** From the firmware source: the EEPROM bootloader (bootloader/pcie_init.c, commit 7baf6e9, 18 Jun 2026) writes VID:PID 2058:001D, class 0x0D1000 (wireless / RF controller) and max link width x1. So a v1.2 board booting from EEPROM (the v1.2 default) is not classless and needs no quirk. A class-00 device appears only in ROM / host-memory boot: the v1.0 and v1.1 default, or v1.2 with the JP1 recovery jumper. For that case, the v6.18 setup-bus.c pbus_size_mem() skips classless devices when sizing the bridge window (pdev_resources_assignable check at line 1341; v6.17 pbus_size_mem has no such check). The driver's late pci_assign_resource() fallback is therefore unlikely to find space, and a quirk would have to be built into the kernel image, because a module loads too late.
+    - **Verdict:** corrected
+    - **Action:** At bring-up, run lspci -nn -vv -s 0001:01:00.0 and expect [0d10] 2058:001d. If 1957:1c1x [0000] appears, do not repair it on the Q6A. Do ROM-boot recovery and bootloader work on an x86 PC with firmware-assigned windows, or build the class quirk into a custom kernel. Ask Lime which revision and boot source ship.
+    - **Impact:** Removes the quirk from the normal path; it is needed only for recovery.
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSDR-Micro_FW/blob/staging/bootloader/pcie_init.c
+      - https://raw.githubusercontent.com/torvalds/linux/v6.18/drivers/pci/setup-bus.c
+      - https://raw.githubusercontent.com/torvalds/linux/v6.17/drivers/pci/setup-bus.c
+      - https://myriadrf.org/projects/limesdr-micro/reference/M.2/changelog.html
+  4.
+    - **Claim in stack:** Stage 1 new risk: BAR0 of 256 MiB fits the pcie1 window only at 0x50000000, with no margin; Radxa DT may differ.
+    - **Finding:** The same bootloader sets BAR0_MASK=0x3FFFFFF ('reduce BAR0 size to 64MB'), so BAR0 is 64 MiB in EEPROM boot. The 256M / 128K / 8M BAR set appears in NXP's ROM / NXP-firmware flow (iqplayer guide; NXP also shrank BAR0 to 64 MB for i.MX8MP). Radxa vendor DT (linux-6.18.2 sc7280.dtsi) has the pcie1 32-bit window at 0x40300000, size 0x1fd00000 (509 MiB), identical to mainline. The tested-devices comment lists the QPS615, ASM1182e and ASM2824 switches, an NVIDIA dGPU and a Chelsio T520-CR.
+    - **Verdict:** corrected
+    - **Action:** Drop the 'no margin' risk for EEPROM boot; it applies only in ROM boot (see the class item). Still check dmesg for 'BAR 0: no space' and record the lspci BAR sizes at bring-up. Never shrink BAR0 from the host.
+    - **Impact:** A risk of no probe becomes a recovery-only concern.
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSDR-Micro_FW/blob/staging/bootloader/pcie_init.c
+      - https://github.com/nxp-qoriq/la931x_iqplayer/blob/main/doc/iqplayer_porting_guide_LimeSDR-Micro.rst
+      - https://github.com/radxa/kernel/blob/linux-6.18.2/arch/arm64/boot/dts/qcom/sc7280.dtsi
+  5.
+    - **Claim in stack:** Implied: firmware and bootloader can be updated freely (the host loads M4 firmware from /lib/firmware).
+    - **Finding:** LimeSuiteNG bundles limesdr-micro-eeprom.bin (the bootloader, 12 Sep 2026). Documentation for 'boot source configuration' and 'bootloader update' is still missing: LimeSDR-Micro issues #11 and #12, open since 10 Sep. limeFLASH still prints FPGA and power-cycle messages for the Micro (LimeSuiteNG #375, open). Experience on sister boards: LimeSDR Mini 2.0 users ended up with unenumerable boards after updates and needed JTAG or SRAM recovery (forum t/13297, Aug 2026; t/13331, Sep 2026).
+    - **Verdict:** new_risk
+    - **Action:** Never run limeFLASH or a bootloader update in the field. Do it only on the bench, after all acceptance tests, with the recovery path on an x86 host. ROM boot on the Q6A/6.18 is classless; see the class item.
+    - **Impact:** A bad EEPROM update would leave the board unprobeable on the Q6A.
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSDR-Micro/issues?q=is%3Aissue
+      - https://github.com/myriadrf/LimeSuiteNG/issues/375
+      - https://discourse.myriadrf.org/t/13297
+      - https://discourse.myriadrf.org/t/13331
+  6.
+    - **Claim in stack:** Stage 1: the Micro cannot stream below 7 Msps; set every narrow Lime profile to >=7 Msps with host decimation.
+    - **Finding:** Code at 37cb1833 has two limits. The advertised samplingRateRange {7e6,160e6} is what Soapy getSampleRateRange and the legacy LMS API return. SetLA9310SamplingRate, however, defaults to oversample 4 for rates up to 20 Msps and only rejects an LA9310 clock below 15 MHz (clock = fs x oversample x 2). By that model, 2-6 Msps is accepted with on-chip decimation and 1 Msps is rejected (8 MHz); the minimum is 1.875 Msps. SatDump master's LimeSDR-NG plugin offers 1-149 Msps (device block) and 1-80 Msps (source) regardless of the advertised range, so a 1 Msps pick fails. Quality below 7 Msps is untested. The latest commit, 'Fix sample rate readback when oversampling is used' (16 Oct), shows this code path is new.
+    - **Verdict:** corrected
+    - **Action:** Keep 7 Msps as the default narrow profile. At bring-up, A/B test 2 and 4 Msps with oversample 4 for noise and spurs. Hard-block Lime rates below 2 Msps in labrx and SatDump profiles.
+    - **Impact:** Could cut narrow-session ingest from 28 MB/s to 8-16 MB/s if quality holds.
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/plugins/soapysdr/Settings.cpp
+      - https://github.com/SatDump/SatDump/tree/master/plugins/sdr_sources/limesdr_sdr_support
+  7.
+    - **Claim in stack:** #30 / P2: SatDump master with the LimeSuiteNG legacy API; no TX-capable software on the device; the banned list.
+    - **Finding:** SatDump master (1aedd60, 29 Sep 2026), plugin limesdrng_sdr_support: registerDevs accepts MODE_SINGLE_TX and MODE_RX_TX. LimeSDRDevBlock sets the TX LO and gain, runs LMS_Calibrate on TX, and starts TX streams (isTx=true). Maintainer comment on PR #1041 (closed 17 Sep 2026): LimeSuiteNG support 'has been added now'. LimeSuiteNG's limeOEM runs RunTxTestConfig (TX enabled, TX tone). None of these is on the stack's banned list.
+    - **Verdict:** new_risk
+    - **Action:** Patch SatDump: registerDevs allows only MODE_SINGLE_RX and MODE_NORMAL, tx_ch_number is forced to 0, and a CI grep guards it. Add limeOEM, limeVSPA, the gr-limesuiteng sink and the SatDump Lime TX modes to the banned list. Ship only limeDevice, limeConfig (refclk and --txen=0) and limeTRX in RX mode. Keep the LimeSuiteNG TX patch as a second layer.
+    - **Impact:** Closes a TX path the current rules miss.
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/tree/master/plugins/sdr_sources/limesdr_sdr_support
+      - https://github.com/SatDump/SatDump/pull/1041
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp
+  8.
+    - **Claim in stack:** #11/#95: receive-only is enforced by a LimeSuiteNG/Soapy patch that fails TX setup, plus a 50 Ohm load. Stage 1 option: an RX-only M4 firmware.
+    - **Finding:** Lime developer ricardas (forum t/13284, 23 Jul 2026): 'Data streaming controls does not affect RF configuration. The Tx LO remains powered on if the application does not disable it deliberately'; fix with limeConfig --txen=0. Code: on the Micro, CalibrateRx tunes SXT to the RX LO minus fs/8, turns on the VSPA TX tone generator and sets EN_LOOPB_TXPAD_TRF (internal loopback). SatDump calls LMS_Calibrate(RX) at every start. An RX-only firmware that removed the TX tone or DMA path would break RX IQ calibration.
+    - **Verdict:** corrected
+    - **Action:** Block TX streams but allow the internal calibration loopback. labd disables the TX chain after every configure or calibrate step (add --txen=0 to the limeConfig whitelist). Add a Bench-mode conducted check: TX port to a 30 dB pad to the tinySA, during calibration and streaming, with a leakage limit (proposed: <= -60 dBm). Park the RX-only firmware fork.
+    - **Impact:** Stronger and testable receive-only enforcement without losing image rejection.
+    - **Sources:**
+      - https://discourse.myriadrf.org/t/13284
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/boards/LimeSDR_Micro/calibrations.cpp
+      - https://github.com/SatDump/SatDump/tree/master/plugins/sdr_sources/limesdr_sdr_support
+  9.
+    - **Claim in stack:** #69/P7: external reference on J4 (LBE-1420 in extended); stage 1: install an M4 firmware with fix 1f70189.
+    - **Finding:** FW #6 is still open on 18 Oct; the fix exists only in staging (confirmed). New points: (1) The FW README makes the external reference a build option (-DEXT_REF_CLK, default 0 = off); staging also adds a runtime switch that retunes CGEN around the change. (2) Lime developer rjonaitis (FW #1, 9 Jan 2026): if the clock is disabled or misconfigured, 'the device stops responding and the host halts or reboots'. The LA9310 clock is derived from the LMS7002M (MCLK1). (3) Sister-board experience: on the LimeSDR Mini 2.0, CGEN does not lock with a 10 MHz external reference (forum t/13280, 20 Jul 2026; a second user on 26 Sep; no fix).
+    - **Verdict:** new_risk
+    - **Action:** Run P7 only in Bench mode, with a hardware watchdog armed. Feed 30.72 MHz first (the onboard VCTCXO frequency, so PLL ratios do not change), then try 10 MHz. Never unplug or lose REF IN while it is selected: labd switches back to internal first. LBE-1420 output level against the 3.3 V CMOS spec is unverified.
+    - **Impact:** A lost reference could hang the whole handheld, not just the SDR.
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSDR-Micro_FW/issues/6
+      - https://github.com/myriadrf/LimeSDR-Micro_FW/issues/1
+      - https://github.com/myriadrf/LimeSDR-Micro_FW/blob/staging/README.md
+      - https://discourse.myriadrf.org/t/13280
+      - https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/clock.html
+  10.
+    - **Claim in stack:** Stage 1 new option P7b: feed LC76G PPS into J5 (R176 to R179 rework) and let the new firmware PPSDO discipline the VCTCXO.
+    - **Finding:** Firmware PPSDO is initialised disabled (ppsdo.c: enabled=false) and turns on only with the LIME_M4_PPSDO_CTRL mailbox command. LimeSuiteNG staging 37cb1833 has no Micro host call for it (git grep finds no PPSDO in src/boards/LimeSDR_Micro). The firmware also refuses PPSDO while the external reference is selected.
+    - **Verdict:** corrected
+    - **Action:** P7b stays blocked until host support lands, or labd sends the mailbox command itself. Do it only after the acceptance tests (rework voids the RMA).
+    - **Impact:** Option deferred.
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSDR-Micro_FW/commit/ee1acd02d29f3f80838450f4eadd63376da68c90
+      - https://github.com/myriadrf/LimeSDR-Micro_FW/blob/staging/src/limesdr_micro/limesdr_commands.c
+      - https://github.com/myriadrf/LimeSuiteNG/tree/limesdr-micro-staging/src/boards/LimeSDR_Micro
+  11.
+    - **Claim in stack:** P5: 'Lime VCTCXO steering from GPS' is optional; it needs PPSDO or REF IN.
+    - **Finding:** A simpler path exists with no rework. LimeSuiteNG exposes the custom parameter 'VCTCXO DAC (volatile)' (0-65535) and an EEPROM region XO_DAC at 0xFFFE. The firmware reads XO_DAC at init and applies it (ReadXODAC_EEPROM, then SetXODAC). VCTCXO data: slope +7.5 ppm/V, ±5 ppm tuning range, factory calibration ±1 ppm, ageing ±2 ppm in the first year. Model: about 0.4 ppb per DAC step if the DAC spans 3.3 V (DAC reference unverified).
+    - **Verdict:** new_option
+    - **Action:** P5 Lime part: measure the offset against the GNSS-SDR ppm on a strong known carrier, set the volatile DAC, and write XO_DAC only after a stable result. Log the DAC value and the TMP1075 temperature. Re-trim monthly.
+    - **Impact:** Removes most of the ±1-2 ppm offset at zero cost and keeps the RMA window.
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp
+      - https://github.com/myriadrf/LimeSDR-Micro_FW/blob/staging/src/limesdr_micro/limesdr_micro_init.c
+      - https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/clock.html
+  12.
+    - **Claim in stack:** Stage 1: no operating-temperature range is published. The acceptance plan includes 20 cold boots.
+    - **Finding:** The range is published. The project index page says 'Operating temperature 0 °C to +85 °C' (commercial grade) and 'Industrial-grade operating temperature range is available upon request.' This came from LimeSDR-Micro issue #3 and commit 74c338c (30 Apr 2026): production boards use the commercial LA9310S7S11AA; prototypes used the extended-temperature part.
+    - **Verdict:** corrected
+    - **Action:** labd does not power or stream the Lime below 0 °C (TMP1075 or case sensor); require warm-up in winter. Run cold-boot tests at >= 0 °C. Ask Lime for the price of an industrial board if sub-zero use is wanted (unverified).
+    - **Impact:** European winter field use is out of spec without warm-up.
+    - **Sources:**
+      - https://myriadrf.org/projects/limesdr-micro/
+      - https://github.com/myriadrf/LimeSDR-Micro/issues/3
+      - https://github.com/myriadrf/LimeSDR-Micro/commit/74c338c
+  13.
+    - **Claim in stack:** Stage 1: arm64 shown by Lime on a Pi CM5 at 40 Msps.
+    - **Finding:** The source says only that Gqrx was 'configured for 40 Msps sampling rate' in Lime's own uConsole/CM5 demo (update of 17 Jun; story of 31 Jul). It gives no throughput, drops, OS, PCIe generation or power. There are no third-party arm64 reports. The only earlier ARM issue in LimeSuiteNG (#91, RPi4, 2024) was a CMake ordering bug, since fixed.
+    - **Verdict:** corrected
+    - **Action:** Reword as 'Lime demo on CM5, no performance data'. Keep the W-gate tests unchanged.
+    - **Impact:** arm64 confidence somewhat lower than stage 1 stated.
+    - **Sources:**
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro/updates/thanks-and-uconsole-gqrx-demo
+      - https://myriadrf.org/stories/ota-limesdr-micro-uconsole-cyberether-web-lunar-ctf-more/
+      - https://github.com/myriadrf/LimeSuiteNG/issues/91
+  14.
+    - **Claim in stack:** #21/#69: the Lime sits on a 5 cm R44SF riser from the start; acceptance at 8 GT/s x1.
+    - **Finding:** Q6A M.2 field reports: (1) t/30807 (May 2026): the slot stopped detecting any SSD after a sudden reboot; the board went back under RMA. (2) t/31195 (Jul 2026): with SPI 260120 the UEFI shell 'pci' showed only the bridge (17CB:010B) while Linux saw the NVMe. (3) Radxa staff (25 May 2026): 'Even 2280 devices can be just plugged in for testing.' (4) SmartHomeCircle (8 Jan 2026): NVMe in the slot reached Gen3 x2 at about 1644 MB/s on Windows, about 1000 MB/s on Armbian and about 750 MB/s on Radxa OS. I found no community data on ADT-Link risers with the Q6A.
+    - **Verdict:** new_option
+    - **Action:** Add stage 0: test the Lime plugged straight into the slot on the bench (overhanging, temporarily supported) before fitting the riser, so riser faults are separated from Lime or driver faults. Do not use the UEFI shell as a link test. Measure real DMA throughput at 2 x 56 Msps (448 MB/s) under Radxa OS.
+    - **Impact:** Faster fault isolation inside the 30-day RMA window.
+    - **Sources:**
+      - https://forum.radxa.com/t/30807
+      - https://forum.radxa.com/t/31195
+      - https://smarthomecircle.com/radxa-dragon-q6a-best-alternative-to-the-raspberry-pi-5
+  15.
+    - **Claim in stack:** D1 Economy mode: 'Lime parks'. Sleep and wake thresholds exist on SYS12.
+    - **Finding:** NXP's LimeSDR-Micro porting guide warns that an unexpected host suspend takes the link down, and says to mask the suspend targets. LimeSDR-Micro_FW #4 (open since 30 Jun 2026) asks for a 'PCIe link down handler… which triggers reconfiguration of memory window settings' in the bootloader. My inference: after any link-down (suspend, runtime PM, cutting M.2 power) the Micro needs a reboot.
+    - **Verdict:** new_risk
+    - **Action:** In the with-Lime build, mask the sleep, suspend and hibernate targets and set power/control=on for 0001:01:00.0. Define 'park' as streams stopped plus LMS7002M powered down over SPI, with 3.3 V and the link kept up. Never switch VCC_3V3_MKEY at runtime.
+    - **Impact:** Avoids a dead SDR until the next reboot.
+    - **Sources:**
+      - https://github.com/nxp-qoriq/la931x_iqplayer/blob/main/doc/iqplayer_porting_guide_LimeSDR-Micro.rst
+      - https://github.com/myriadrf/LimeSDR-Micro_FW/issues/4
+  16.
+    - **Claim in stack:** Thermal: 10 W heat path through a pedestal with a >= 6 W/mK pad. Lime about 4 W typical.
+    - **Finding:** Confirmed: Lime staff (t/13304) said 'about 4 W, depending on configuration'; the idle-power follow-up (24 Aug) was never answered. New detail from Lime's danny (t/13300, 2 Sep 2026): the LMS7002M typically dissipates about 1 W, with 21 °C/W from junction to package bottom, and its heat leaves through the bottom heat spreader and vias to the PCB rear.
+    - **Verdict:** corrected
+    - **Action:** Give the Lime contact on both sides: the shield lid on top, plus a pad on the PCB bottom under the LMS7002M/LA9310 area (bottom parts <= 1.35 mm). Measure idle and 56 Msps power at acceptance; log TMP1075.
+    - **Impact:** Better-placed heat path at about the same cost.
+    - **Sources:**
+      - https://discourse.myriadrf.org/t/13300
+      - https://discourse.myriadrf.org/t/13304
+      - https://myriadrf.org/projects/limesdr-micro/user/M.2/setup.html
+  17.
+    - **Claim in stack:** 5.6/#69: Lime spur lines in the mask; stage 1: replace them with measured lines.
+    - **Finding:** Community method (t/13288, Jul 2026, XTRX inside a PC): many 'internal spurs' were RFI picked up inside the noisy enclosure. Turning on the LMS7002M input-shorting switch EN_INSHSW_W_RFE (0x010D[1]) made the spectrum symmetric and removed them.
+    - **Verdict:** new_option
+    - **Action:** In the Lime A/B spur run, record every line with the LNA input shorted and open (INSHSW for LNAW and LNAL). Lines that stay go into the mask; lines that vanish go to the shield, riser and ferrite fixes.
+    - **Impact:** A smaller, truthful spur mask.
+    - **Sources:**
+      - https://discourse.myriadrf.org/t/13288
+  18.
+    - **Claim in stack:** C18/2.11: T7 1 TB at $229.99-274.99 (unverified); 56 Msps raw goes only to the T7.
+    - **Finding:** Price is still unverified (Samsung US and CDW returned 403). Measured on the Q6A blue port: about 395 MB/s fio write through a USB3-NVMe adapter, uas, 5000M (SmartHomeCircle, 8 Jan 2026). Model: 1 channel at 56 Msps ci16 is 224 MB/s (fits); 2 x 40 Msps is 320 MB/s (marginal); 2 x 56 Msps is 448 MB/s (does not fit).
+    - **Verdict:** unverified
+    - **Action:** Re-price at the gate. Limit raw-to-T7 to one channel at <= 56 Msps, or two channels at <= 40 Msps only after a soak test.
+    - **Impact:** Prevents a dual-channel recording mode that cannot work.
+    - **Sources:**
+      - https://smarthomecircle.com/radxa-dragon-q6a-best-alternative-to-the-raspberry-pi-5
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/usb
+  19.
+    - **Claim in stack:** #69/BOM: MHF4 is mated only with the I-PEX 90435-001 tool. Stage 1: unverified for MHF 4L.
+    - **Finding:** The I-PEX MHF 4L page lists 90609-0001 as the insertion/extraction tool for plugs 20572-001R-08 and 20565-001R-13 (and 90873-0001 for 20632-001R-37; tweezers 90616-0008 and 90615-0013). DigiKey lists I-PEX 90609-0001 'MHF 4L MATING/UNMATING TOOL' at $18.31, 358 in stock (18 Oct). 90435-001 is the MHF 4 tool. The Crowd Supply cables use MHF-4L plugs.
+    - **Verdict:** corrected
+    - **Action:** Change the BOM to I-PEX 90609-0001 ($18.31). Confirm the cable plug part number with Crowd Supply; if it is 20632-series, use 90873-0001.
+    - **Impact:** Right tool for connectors rated for few mating cycles.
+    - **Sources:**
+      - https://www.i-pex.com/product/mhf-4l
+      - https://www.digikey.com/en/products/result?keywords=90609-0001
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro
+  20.
+    - **Claim in stack:** Stage 1: if S-band is the only reason for the Lime, buy the Ham It Down path and cancel the pre-order.
+    - **Finding:** This conflicts with the governing rules. The user decided 'Lime KEPT' (18 Oct), and the P5 rule allows a replacement only if it is not worse in 0.3-3.8 GHz coverage, 56 MHz bandwidth, 12-bit ADC, NF/IIP3 and so on. A Ham It Down plus RTL-SDR fails on bandwidth (about 2.4 MHz), ADC (8-bit) and 3.3-3.8 GHz. Re-checked: Nooelec Ham It Down $89.95, 'usually shipped in 1 business day', 1.55-3.1 GHz in, 1.5 GHz LO, TCXO (ppm not stated).
+    - **Verdict:** corrected
+    - **Action:** Do not propose cancelling. Keep the Ham It Down only as a fallback for S-band if the Lime fails acceptance or delivery slips past a set date (proposed: 31 Jan 2027).
+    - **Impact:** Consistent with the user's decision.
+    - **Sources:**
+      - https://www.nooelec.com/store/ham-it-down.html
+  21.
+    - **Claim in stack:** Implied: the Lime set is board + riser + cables; HF is covered by the Airspy HF+.
+    - **Finding:** New Crowd Supply items (pre-order, ship 15 Dec 2026). LimeFEA HF Micro, $199: a receive-only 0-30 MHz direct-sampling third RX path over FPC; 0-2, 2-12 and 12-30 MHz filters, an MW notch, 90 dB gain, 72 dB step attenuator; no NF or IIP3 published. LimeFEA M.2 2280, $299: a full-size PCIe adapter with TX PA drivers. LimeSDR Micro Pro, $749: USB4 40 Gbps only.
+    - **Verdict:** new_option
+    - **Action:** Do not adopt. The HF Micro duplicates the kept HF+ with no dynamic-range data; the FEA M.2 has a TX PA and needs a PCIe slot; the Pro needs a USB4 host.
+    - **Impact:** —
+    - **Sources:**
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro
+  22.
+    - **Claim in stack:** #21/#3: RX DMA ring 16 x 16 KiB; lime:Rx0 at nice -20 or FIFO 10.
+    - **Finding:** Re-checked at 37cb1833: the per-lane ring is SubdivideBuffer(lane, 16 KiB, 16) = 256 KiB, which is 1.17 ms at 56 Msps ci16 (model). Packets are 2048 B, the host FIFO is 4096 packets, and SetOSThreadPriority is still commented out. No community reports exist on Micro overruns.
+    - **Verdict:** confirmed
+    - **Action:** No change; keep the FIFO-versus-nice A/B test of the loss counters.
+    - **Impact:** —
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/boards/LimeSDR_Micro/LA9310_TRX.cpp
+- **Current status oct 2026:** As of 18 Oct 2026:
+  - **Availability:** Basic $249 and GNSS $299 are on pre-order at Crowd Supply ('Orders placed now ship Dec 15, 2026'; shipping $18 worldwide). MHF4L-SMA cable $6, in stock. New pre-order companions: LimeFEA HF Micro $199, LimeFEA M.2 2280 $299, Micro Pro $749.
+  - **Shipping evidence:** none. The last campaign update is from 17 Jun 2026. No backer or forum post confirms that the Sep 30 first run shipped, and there are no hands-on or field reports from anyone.
+  - **Software heads (unchanged since stage 1):** LimeSuiteNG limesdr-micro-staging 37cb1833 (16 Oct, unmerged; only release tag v25.1.0). Firmware master 13628a9; staging 980fff2 holds the #6 external-reference fix and the initial PPSDO. FW #6 is still open.
+  - **Kernel module:** la9310_limesdr 0.2.1 compiles for arm64 with GCC 13.3 against radxa/kernel linux-6.18.2 (tested here). It fails under clang (-Werror on a volatile cast). Not yet loaded on hardware.
+  - **v1.2 boot behaviour:** the v1.2 EEPROM bootloader presents 2058:001D with class 0x0D1000 and a 64 MiB BAR0. The class quirk and the BAR worries apply only to ROM/recovery boot, which a 6.18 kernel cannot size for a classless device.
+  - **Operating range:** 0 to +85 °C (commercial grade); an industrial grade is available on request.
+  - **SatDump:** master now has a native LimeSuiteNG plugin that includes TX modes.
+  - **Power:** the only figure is Lime's 'about 4 W'.
+  - **arm64:** the only evidence is Lime's own Gqrx demo on a CM5, 'configured for 40 Msps', with no performance data. There are no QCS6490 reports.
+- **Notes:** **Method and limits.** The shared WebSearch budget was already used up, so my one search call returned nothing. Community coverage therefore came from direct fetches of primary pages:
+  - the Lime Discourse (latest.json and full topic JSON);
+  - the Radxa forum Dragon Q6A category;
+  - GitHub issue and PR lists (LimeSuiteNG, LimeSDR-Micro_FW, LimeSDR-Micro, SatDump);
+  - Crowd Supply pages and the MyriadRF stories;
+  - the NXP la931x_iqplayer guide, I-PEX and DigiKey.
+  
+  Reddit, Discord/Matrix and YouTube were not covered; a follow-up turn with search budget could add them.
+  
+  **Primary-source checks run here:**
+  - git ls-remote of all heads;
+  - git grep on LimeSuiteNG staging;
+  - reading the firmware staging tree;
+  - kernel v6.17 and v6.18 setup-bus.c;
+  - the Radxa linux-6.18.2 DT;
+  - an arm64 compile test of the driver.
+  
+  **Keep/drop gate (C1).** The user's 'Lime KEPT' decision stands. Recommended preconditions before 1 Dec:
+  - pin LimeSuiteNG 37cb1833 or later;
+  - pin an M4 firmware containing 1f70189 if P7 is wanted;
+  - add the CI compile against linux-headers-6.18.2-4-qcom with GCC;
+  - patch SatDump's Lime TX modes and extend the banned list (limeOEM, limeVSPA, gr-limesuiteng sink);
+  - add a labd temperature gate at 0 °C;
+  - mask suspend and define 'park' without cutting power;
+  - swap the BOM tool to I-PEX 90609-0001.
+  
+  After delivery:
+  - stage-0 test with the Lime directly in the slot, then the riser;
+  - check lspci for class 0d10 and BAR0 = 64M;
+  - run all acceptance tests inside the 30-day RMA window before any rework or EEPROM/bootloader update.
+  
+  The Ham It Down is a fallback only.
+  
+  **Labelled models:**
+  - minimum rate 1.875 Msps from the 15 MHz LA9310 clock rule;
+  - the 1.17 ms DMA ring;
+  - 224 / 320 / 448 MB/s against the measured 395 MB/s USB write;
+  - about 0.4 ppb per DAC step, assuming a 3.3 V DAC full scale;
+  - the suspend/link-down consequence, inferred from FW #4 and the NXP tip;
+  - the TX-port leakage limit of -60 dBm, which is my proposal.
+  
+  **Unverified:**
+  - the T7 price;
+  - the shipped board revision and boot source;
+  - the cable plug part number (which decides the I-PEX tool variant);
+  - LBE-1420 output level against the J4 CMOS spec;
+  - whether 2-6 Msps is noise-free;
+  - R44SF variant and orientation;
+  - price of the industrial-grade board.
+  
+  **Local artefacts:**
+  - compile test: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/kbuild/mod/la9310_limesdr.ko and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/kbuild/modbuild.log;
+  - Radxa kernel tree: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/kbuild/radxa-6.18.2;
+  - forum and kernel fetches: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ws2;
+  - SatDump plugin sparse clone: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ws2/satdump/sd.
+  
+  To run the compile test I installed flex, libelf-dev and gcc-aarch64-linux-gnu in the container.
+
