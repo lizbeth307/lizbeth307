@@ -26098,6 +26098,91 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   All 11.7 sums are mine and marked as estimates; I checked them with a script. The table column counts in the file are consistent.
 
+## edit:05d_arch_thermal_emi_mech:b3 (run `wf_64e39fc3-0f9`)
+
+- **Section:** 05d_arch_thermal_emi_mech (5.6 тепло, 5.7 РЧ-завади, 5.8 механіка і комплект) — batch 3, idx 84-123
+- **Applied:**
+  - 84
+  - 85
+  - 86
+  - 87
+  - 88
+  - 89
+  - 90
+  - 91
+  - 92
+  - 93
+  - 94
+  - 95
+  - 96
+  - 97
+  - 98
+  - 99
+  - 100
+  - 101
+  - 102
+  - 103
+  - 104
+  - 105
+  - 106
+  - 107
+  - 108
+  - 109
+  - 110
+  - 111
+  - 112
+  - 113
+  - 114
+  - 115
+  - 116
+  - 117
+  - 118
+  - 119
+  - 120
+  - 121
+  - 122
+  - 123
+- **Skipped:** []
+- **Notes:** I edited one file: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/05d_arch_thermal_emi_mech.md. All 40 changes are in. Edits from batches 1 and 2 are kept.
+  
+  Merges where an earlier batch had already changed the anchor text:
+  - 87: the old "UFS і T7 розраховані від 0 °C" was already rewritten. I added the missing Radxa lower-limit note into the existing ufs-hwmon clause in «Холод».
+  - 88: Noctua NF-A4x10 was already named. I only added "40 мм; L.N.A. не ставити". The cooling gates go at the end of «Повітря», after the new intake text from 101. The ≥2.7 м³/год figure was there already, so the gate says "виміряно крізь сітку і піну" instead of repeating it.
+  - 89: the HDMI line already named Adafruit 2420. I expanded it to the full G2 wording with 2× Fair-Rite 0431164281.
+  - 91: the key pitch was already 19-21 мм (re-audit A). I added the TL3145BF350QJ text to the keypad clause. It is marked conditional on the G2 keypad gate (bounce, reflow, gloves), with KSC641J LFS as the fallback; the brief requires condition and fallback. The encoder-boss text goes next to the encoders in the same bullet.
+  - 96: the Schottky diode was not yet in the paragraph. I added it with the ferrite, as G3 SC5 says both stay.
+  - 99: θJA 32.5 °C/W and the +31/+47 K rises were already there. I added the G3 worst case of 1.8 / 2.15 W. I also derived the rises, marked "виведено": about +59 K and +70 K, so about 109 and 120 °C, close to the 125 °C limit. I added the exposed pad and the LT3045EMSE details.
+  - 100: the Daly wiring order and the heat-sink rule were already in the paragraph. I added the fire-bag rule, the KSD9700/NTC note and the pure-Ni rule. G3 checked the bag fit on the old 210x135x52 мм box, so I also give the D15 size of 222.5x137.5x57.5 мм and say to check the fit.
+  - 103: the file said "прокладка 1-1.5 мм" (re-audit D). The G4 analog decision decides the part (GP-Ultimate 1.0 мм for 0.7-1.0 мм gaps), so G4 wins. The re-audit range is kept as context, with the STEP fit check deciding the thickness.
+  - 104: H (Lime) was already in the modes. I only added the lms7_temp and 5754 acceptance limits.
+  - 109: the UFS ≥30 мм clause would have appeared twice in «Під Lime». I kept it once, inside the drill-template sentence.
+  - 113: the "рядок набору 1.2-1.4 kg" note is kept next to the new Rollei 1.14 kg.
+  - 120: the bench-case text was already B&W 4000 RPD with Peli 1450 as fallback, from an earlier batch. It matched, so the file was not changed.
+  - 121: merged with the duplicate "жодних запасних елементів чи банків" clause.
+  - 122: the row was already B&W. I only added "B&W — буклет виробника 08/2017 і огляд 2016".
+  
+  Conflict:
+  - 108 against G3: G4 lists caps for "GX12/M8". G3 decision 0 changes the IMU connector to GX16-4 everywhere. G3 decides that part, so GX16-4 won. The text names it with its own tethered cap and notes G4's old name.
+  
+  Additions not in the change text, all from the source files:
+  - 86: the FT-240-31 fallback condition from G1[9].
+  - 84: the Art. 6 fallback from G1[8].
+  - 106: the local-quote condition for the 5754 blank from G4[1].
+  - 111: the fit/UV condition for the LNA boxes from G4[2].
+  - 123: the LiteVNA condition and YAT-0A+ fallback from G6[7].
+  - 95: "моє інженерне прочитання" is reworded as "інженерне прочитання специфікації Type-C за analogs G2, не перевірено".
+  
+  Subtotals recomputed in the file:
+  - 85, device mass: HF+ row 0.1 → 0.15-0.17. The parts sum is 1.58-1.81 (the extractor's 1.57-1.79 left out the earlier battery change of +0.01-0.02). With Lime, the default, 1.73-1.96 kg. Without Lime, 1.58-1.81.
+  - 114, field backpack: G4 used a device mass of 1.67-1.87. With the in-file device mass of 1.73-1.96, tripod 1.17-1.35 and mast budget 0.5-0.75:
+    - contents without HF and mast: 5.60-7.01 kg;
+    - full set: 6.50-8.26 kg;
+    - on the back with the 1.25 kg pack: 6.85-8.26 and 7.75-9.51 kg.
+    - The full set's worst case is 0.26 kg over the 4-8 kg rating, or 8.06 kg with the itemised 0.5-0.55 kg mast. The G4 figures are kept in the row for reference.
+  
+  Outside this file:
+  - 97: the case drawing in build/ also has to change from GX12 to GX16 (16 мм hole). I noted this in the text but did not touch build/.
+
 ## edit:02c_bom_display_power_gnss:b1 (run `wf_85b20a83-f63`)
 
 - **Section:** 02c_bom_display_power_gnss
