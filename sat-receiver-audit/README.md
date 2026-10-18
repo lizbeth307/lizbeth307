@@ -58,6 +58,7 @@
 | [Pack sundries nickel fish paper kapton j](components/pack_sundries_nickel_fish_paper_kapton_j.md) | · research · forums · fixes ✅ verify | `—` |
 | [Padded antenna roll element tube 15 20 l](components/padded_antenna_roll_element_tube_15_20_l.md) | · research · forums · fixes ✅ verify | `—` |
 | [Pca9555 key expander piezo status led](components/pca9555_key_expander_piezo_status_led.md) | · research · forums · fixes ✅ verify | `—` |
+| [Pinecil v2 ironos bluetooth off](components/pinecil_v2_ironos_bluetooth_off.md) | · research · forums · fixes ✅ verify | `—` |
 | [Pololu 2813 hp pushbutton power switch](components/pololu_2813_hp_pushbutton_power_switch.md) | · research · forums · fixes ✅ verify | `—` |
 | [Pololu d36v28f5 lab5](components/pololu_d36v28f5_lab5.md) | · research · forums · fixes ✅ verify | `—` |
 | [Pololu d36v50f12 sys12](components/pololu_d36v50f12_sys12.md) | · research · forums · fixes ✅ verify | `—` |

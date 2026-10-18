@@ -30783,6 +30783,269 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - The shared WebSearch budget was already exhausted at my first query, so no web searches ran. Everything above comes from WebFetch of primary pages, ITEAD's WooCommerce store API, Launchpad's API and the libairspy source.
   - Not verified: the Moonraker price (403); Mini power draw (unpublished); HydraSDR operating temperature and power; RSP1B ADC bits at 6+ Msps, NF and IIP3; FB Radio and AstroRadio VAT basis; any Black Friday 2026 sale.
 
+## searchB:airspy_mini (run `wf_c3ba734e-52b`)
+
+- **Part:** Airspy Mini (optional, gated fast L-band SDR for Metop-B/C AHRPT 1701.3 MHz and AWS 1707 MHz; qty 1; bought only if the V4L 2.88 Msps gate fails)
+- **Current price usd:** USD 99.00 ex VAT new, genuine, from ITEAD's EU warehouse (the official Airspy purchase link). SKU IM150415001EU, "242 in stock" through the ITEAD store API on 18 Oct 2026. Estimated landed price: about USD 123 to DE (19 % VAT, USD 117.81, plus about USD 5.4 shipping) and about USD 131 to FR. The shipping figures are borrowed from the ITEAD DE-warehouse HF+ Discovery cart and were not checked for the Mini. For comparison, WiMo charges EUR 144.90 incl. VAT (about USD 163), and the stack's Moonraker figure is GBP ~110 (about USD 140-160, undated). The stack price of 140-160 is out of date: the same genuine part costs about USD 20-40 less from ITEAD EU.
+- **Critical specs:**
+  - Tuning coverage at 1701.3 MHz (Metop) and 1707 MHz (AWS), with PLL lock: the airspy.com page says 24-1700 MHz. The airspy_rx.c source says FREQ_HZ_MAX 1900 MHz '(officially 1750MHz)'. The RTL-SDR.com review says 24-1800 MHz. So both targets are within the host tool's official limit but above the web-page figure. Not field-verified in this stack.
+  - Alias-free usable bandwidth: Metop is 2.33 Msym/s QPSK, about 3.5 MHz occupied, and 2 samples per symbol needs at least about 4.67 Msps. The Mini outputs 6 Msps IQ, about 5 MHz usable (SDR# shows 4.8 MHz; a reader estimates about 4.5 MHz). The 10 Msps mode is unofficial and spurious.
+  - ADC: 12-bit at 20 MSPS, 10.4 ENOB. SNR is 70 dB on airspy.com but 64 dB on ITEAD, with 95 dB SFDR. ITEAD claims 80 dB dynamic range.
+  - Strong-signal handling behind a SAWbird+ GOES (38 dB gain, OP1dB +20 dBm, passband 1648-1728 MHz) while LTE B3 uplink at 1710-1785 MHz sits next to the band: the Mini has tracking RF filters, a claimed +35 dBm front-end IIP3 (marketing figure) and +10 dBm max input. The review rates its dynamic range 'Excellent', with less overload than the RSP or HackRF.
+  - NF: 3.5 dB from 42 to 1002 MHz, not specified at 1.7 GHz. This matters little here, because the 38 dB, 1.2 dB NF LNA sets the system NF.
+  - Clock: 0.5 ppm, low-phase-noise TCXO. It is calibratable, but SoapyAirspy has no ppm correction (libre.space thread), so SatDump frequency tracking or Airspy calibration is needed.
+  - Host interface: USB 2.0 High Speed only, with no USB3 SuperSpeed RFI. It must stream 6 Msps continuously on the Q6A. The host does the real-to-IQ conversion, so arm64 CPU load needs to be measured.
+  - Drivers on Ubuntu 24.04 arm64: libairspy0 1.0.10-3build1 and soapysdr0.8-module-airspy 0.2.0-4 are both in noble/universe for arm64 (Launchpad), and SatDump supports the Airspy natively.
+  - Bias-T: 4.5 V, software-switchable, off by default. It must stay off, because the stack feeds the LNA only from the TPS2553 injector.
+  - Mechanics and thermal: 77x26x10 mm, 21 g bare (ITEAD lists 50 g shipping weight), metal enclosure. Operating range is -10 to +40 C, and it runs warm at high rates.
+  - Supply current from 5 V USB: not published by Airspy. Measure it with the FNB58.
+  - Genuine unit from an authorized dealer, with warranty: ITEAD gives a 30-day return and a 1-year quality replacement on the Mini page.
+- **Candidates:**
+  1.
+    - **Name:** Airspy Mini, new, genuine, ITEAD EU warehouse (SKU IM150415001EU). Same part, cheaper source; optionally bought in an Airspy sale.
+    - **Kind:** current_part
+    - **Price usd:** 99.00 ex VAT (242 in stock, 18 Oct 2026). About 123 landed DE and about 131 landed FR (estimates; shipping by analogy with the HF+ cart). The Airspy summer 2026 sale (27 Jun-4 Jul) priced the Mini at 79.20 (verified). A Black Friday 2026 sale is likely but not verified.
+    - **Spec comparison:** Identical part, so every critical spec is equal.
+    - **Worse in:** Nothing. The ITEAD warranty is a 1-year quality replacement plus a 30-day return.
+    - **Compatibility:** Identical: USB 2.0 HS, libairspy and SoapyAirspy in noble arm64, SatDump native.
+    - **Risks:** Some EU VAT and shipping amounts are estimates. A sale at ITEAD in late Nov 2026 is not confirmed.
+    - **Seller url:** https://itead.cc/product/airspy-mini-the-high-performance-miniature-sdr-dongle-eu/
+    - **Sources:**
+      - https://itead.cc/wp-json/wc/store/v1/products?search=airspy%20mini&per_page=20
+      - https://airspy.com/airspy-mini/
+      - https://www.rtl-sdr.com/airspy-2026-summer-sale-20-off-all-airspy-products/
+      - https://www.wimo.com/en/airspy-mini
+  2.
+    - **Name:** Used genuine Airspy Mini (eBay, Kleinanzeigen, Marktplaats)
+    - **Kind:** used
+    - **Price usd:** UNVERIFIED. No live listing found: eBay and Kleinanzeigen returned HTTP 403, and Marktplaats had 0 Airspy Mini results on 18 Oct 2026. To be worth buying it must land below about 123 (DE), or below about 88-94 landed if a 20-25 % sale repeats.
+    - **Spec comparison:** The same hardware, so specs can be equal, but only if the unit is genuine and measures equal on arrival: airspy_info board/part ID and serial, firmware version, 6 Msps for 15 min with no dropped samples on the Q6A, and a conducted noise-floor and spur check at 1701.3 and 1707 MHz against the lab signal source through at least 40 dB of attenuation.
+    - **Worse in:** Warranty and reliability: no ITEAD 1-year replacement or 30-day return, and an unknown history of ESD or overload on the front end. Counterfeit risk on marketplaces.
+    - **Compatibility:** Identical if genuine.
+    - **Risks:** Counterfeit risk; savings under about USD 20-30 compared with new from ITEAD; no listing exists today.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.marktplaats.nl/q/airspy+mini/
+  3.
+    - **Name:** Spare RTL-SDR Blog V4L at 2.88 Msps (the stack's existing budget alternative and gate test)
+    - **Kind:** other_brand
+    - **Price usd:** 0 extra (already in the stack as the spare)
+    - **Spec comparison:** Bandwidth: 2.88 Msps is about 1.2 samples per symbol for Metop, against the Mini's 6 Msps with about 5 MHz usable. The stack's stable rate is 2.4-2.56 Msps; 2.88 is only a gate test. ADC: 8-bit against the Mini's 12-bit at 10.4 ENOB. Tuner: same Rafael R820-family. Coverage is similar. Clock: 1 ppm TCXO class.
+    - **Worse in:** Worse in ADC bits and ENOB, alias-free bandwidth and sample-rate stability. It is not not-worse; it is the gate that decides whether the Mini is bought at all.
+    - **Compatibility:** Already integrated (osmocom v2.0.3).
+    - **Risks:** Dropped samples at 2.88 Msps on the blue USB port. Marginal Metop decode at 1.2 samples per symbol.
+    - **Seller url:** 
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md
+  4.
+    - **Name:** MSI.SDR / 'RSP1 clone' boards (Mirics MSi2500 + MSi001), AliExpress
+    - **Kind:** generic_or_clone
+    - **Price usd:** UNVERIFIED (not checked today)
+    - **Spec comparison:** RevSpace measured and owner notes: one unit had no input covering above 1 GHz (dump1090 failed). Sample rate is listed as '8 MHz (?)' with uncertain 12-bit depth per rate. Coverage is split across up to 5 SMA band inputs. There is no published NF, dynamic range or 1.7 GHz sensitivity measurement.
+    - **Worse in:** L-band coverage (unproven or missing on the measured unit), measured dynamic range (none), driver maturity (libmirisdr and SoapyMiri described as 'not very mature'; sdrangel crashes).
+    - **Compatibility:** Kernel msi2500 driver must be blacklisted; userspace libmirisdr only; not in the SatDump mainstream path.
+    - **Risks:** Rejected: no measured evidence of parity, and evidence of missing coverage above 1 GHz.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.revspace.nl/Msi2500SDR
+      - https://vu3dxr.in/exploring-the-msi-sdr-a-low-cost-gateway-into-software-defined-radio/
+  5.
+    - **Name:** AliExpress 'Airspy'-branded Mini or R2 clones
+    - **Kind:** generic_or_clone
+    - **Price usd:** UNVERIFIED. An earlier stack note cites R2 clones at about USD 139 around 2018. The clone market was not surveyed today because the WebSearch budget was exhausted.
+    - **Spec comparison:** No independent measurement of any clone was found.
+    - **Worse in:** Unknown. They fail the counterfeit and legality rule outright.
+    - **Compatibility:** Would probably enumerate as an Airspy, but that is unverified.
+    - **Risks:** Rejected: trademarked design copied (counterfeit), no measurements, no warranty.
+    - **Seller url:** 
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G1_receivers_rf.json
+  6.
+    - **Name:** HackRF One and its open-hardware clones
+    - **Kind:** generic_or_clone
+    - **Price usd:** UNVERIFIED (not checked today)
+    - **Spec comparison:** ADC is 8-bit (official docs), against the Mini's 12-bit at 10.4 ENOB. Rate is 2-20 Msps and coverage 1 MHz-6 GHz, both better. No NF is published. The RTL-SDR.com review reports the HackRF overloads more than the Airspy.
+    - **Worse in:** ADC bits and dynamic range, and strong-signal handling next to LTE B3. It is also a half-duplex transceiver (5-15 dBm TX), so it adds TX hardware to a receive-only role.
+    - **Compatibility:** libhackrf is available on arm64, but that is irrelevant given the rejection.
+    - **Risks:** Rejected: worse dynamic range, a TX-capable device, and clones of uneven quality.
+    - **Seller url:** 
+    - **Sources:**
+      - https://hackrf.readthedocs.io/en/latest/hackrf_one.html
+      - https://www.rtl-sdr.com/review-airspy-mini/
+  7.
+    - **Name:** Used SDRplay RSP1A
+    - **Kind:** used
+    - **Price usd:** UNVERIFIED (no used marketplace was reachable)
+    - **Spec comparison:** Coverage to 2 GHz and up to 10 MHz bandwidth, which is better on paper. However, the only paired evidence (the RTL-SDR.com Mini review, against the original RSP1) rates the Mini better in dynamic range and overload or imaging resistance. No paired RSP1A vs Mini measurement at 1.7 GHz behind a high-gain LNA was found.
+    - **Worse in:** Strong-signal parity is unproven (the RSP family was measured worse). The SDRplay API and service daemon are closed source on arm64. Its 4.7 V bias-T must be locked off. Counterfeit 'RSP1A' units (MSi clones) circulate on the used market.
+    - **Compatibility:** SatDump supports SDRplay through the closed API 3.x on arm64. It is not in the Ubuntu archive.
+    - **Risks:** Rejected: no measured evidence that it is not worse, and the price is unverified.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.rtl-sdr.com/review-airspy-mini/
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G1_receivers_rf.json
+  8.
+    - **Name:** Airspy R2 (new or used)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 169.00 ex VAT new at ITEAD EU (SKU IM141027001EU, 214 in stock). Used price unverified.
+    - **Spec comparison:** Same R820T2 front end and the same 12-bit ADC. The review measured RX performance as nearly identical to the Mini, including L-band AERO. The R2 has 10 Msps and about 9 MHz, which is better.
+    - **Worse in:** Price only: it is not cheaper.
+    - **Compatibility:** Same libairspy and SoapyAirspy stack. Larger enclosure.
+    - **Risks:** Not a cheaper analog. Listed only for completeness.
+    - **Seller url:** https://itead.cc/product/airspy-r2-eu/
+    - **Sources:**
+      - https://itead.cc/wp-json/wc/store/v1/products?search=airspy%20r2&per_page=10
+      - https://www.rtl-sdr.com/review-airspy-mini/
+- **Notes:** VERDICT (angle B): keep the Airspy Mini. No clone, generic module or DIY build has independent measurements showing it equal, so none qualifies.
+  
+  THE REAL SAVING: buy the same genuine part from ITEAD's EU warehouse at USD 99 ex VAT (about USD 123 landed DE). That is cheaper than the stack's 140-160 and WiMo's EUR 144.90. If the gate fails late in the year, watch for an Airspy Black Friday 2026 sale. The summer 2026 sale was verified at USD 79.20; Black Friday 2026 is unverified.
+  
+  DIY: no open R820T2 plus 12-bit ADC design with published measurements exists. Airspy hardware is not open, so there is no legitimate DIY clone path.
+  
+  USED: a genuine used unit would be equal only after the arrival checks listed in its candidate entry. Today no listing could be verified: eBay and Kleinanzeigen returned 403 and Marktplaats had no results. The saving would be under about USD 30 compared with new from ITEAD, and you give up the warranty.
+  
+  GATE AND RULES ARE UNCHANGED: buy only if the V4L 2.88 Msps / Metop-hump gate fails. Keep the Mini's bias-T off, because the LNA is fed only from the TPS2553 injector. Receive-only; conducted-only test sources.
+  
+  OPEN SPEC CONFLICTS:
+  (1) Upper limit. airspy.com says 24-1700 MHz, airspy_rx.c says 'officially 1750MHz' with a 1900 MHz tool limit, and the RTL-SDR.com review says 24-1800 MHz. 1701.3 and 1707 MHz are therefore not field-proven for this unit. Do a conducted check inside the 30-day return window: lab source at 1701.3 and 1707 MHz through at least 40 dB of attenuation, confirming PLL lock, and check the noise floor and spurs.
+  (2) SNR is listed as 70 dB on airspy.com but 64 dB on ITEAD.
+  (3) Supply current is unpublished.
+  
+  Search budget: the shared WebSearch limit was used up after the first call, so there is no clone-market survey, used-price survey or owner report of Mini HRPT above 1700 MHz. A follow-up run with more search budget could fill these. All other claims come from WebFetch of primary pages, the ITEAD store API, the airspyone_host source and the Launchpad API.
+  
+  FX used: about 1.124 USD/EUR, as in the stack files.
+
+## searchA:2_m_wide_path_second_flamingo_fm_uses_th (run `wf_c3ba734e-52b`)
+
+- **Part:** FM broadcast band-stop filter #2 on P8 WIDE/2 m (optional/gated, qty 1): first part behind the P8 SMA bulkhead, ahead of the bench RTL-SDR Blog Wideband LNA V2 (QPL9547, fed on its output from ch4) -> HMC7992-A RF4 -> RTL-A (V4L, 0.5-1766 MHz). Current pick: Nooelec Flamingo+ FM v2, SKU 100813.
+- **Current price usd:** 24.95 at Nooelec direct, ex-VAT. I checked nooelec.com on 18 Oct 2026; the page shows Add to Cart. It ships in the existing Nooelec core order, which is over $100, so shipping is free. Landed in the EU it costs about $29.7-30.2 with 19-21% import VAT, plus any duty or carrier handling fee (not verified). FX: 1 EUR = 1.1241 USD.
+- **Critical specs:**
+  - FM stopband rejection across the EU band 87.5-108 MHz. Flamingo+: '>60dB typical average & >70dB typical maximum' (vendor page). Readings from the datasheet Rev 1 plot: mean over 88-108 MHz about 63.6 dB, 70-77 dB at 90-102 MHz, about 47 dB at 87.5 MHz and about 32 dB at 108 MHz. This keeps FM out of the wideband LNA V2 and the V4L, whose two-tone threshold is -12 dBm at 50-160 MHz.
+  - Insertion loss at 2 m (144-146 MHz) and 137 MHz, because the filter sits in front of the LNA. Datasheet passband IL is 0.01/0.5/1.2 dB (min/typ/max). The 50-150 MHz plot shows about 0.5 dB at 145 MHz; -3 dB points are 75 and 120 MHz.
+  - Loss across the whole WIDE passband, 120 MHz to 1.766 GHz (the RTL-A/V4L ceiling behind the LNA V2). Vendor page: '<0.25dB out-of-band insertion loss', with no frequency limit. The 1-2000 MHz datasheet plot stays within about 0 to -1 dB up to 2 GHz.
+  - Passband return loss (S11/S22), because the filter sets the source impedance the LNA V2 sees. Datasheet typical is -20 dB. The plot shows about -12 to -28 dB from 130 MHz to 2 GHz, worst about -11 dB near 1.9-2 GHz.
+  - Maximum RF input of +18 dBm (5 Vp-p) or more, for strong-FM sites. It is the first part on an exposed antenna port.
+  - RF ESD diode on the input. P8 is an exposed bulkhead, and the LNA V2 input sits right behind the filter.
+  - Shielded metal enclosure (anodised aluminium plus EMI frame). It sits in the RF compartment near the Q6A, the DC-DC converters and HDMI.
+  - Interfaces: SMA female in and out, passive, no power rail, no driver (so Ubuntu 24.04 arm64 does not matter), small inline size.
+  - DC pass is NOT a criterion on P8. Bias for the LNA V2 enters at its output from ch4, so the 250 mA rating is irrelevant here.
+  - Genuine part from an authorised seller, with a 2-year warranty (Flamingo+).
+  - Hard rules: a passive receive-only filter, no TX, no loop. Every candidate below complies.
+- **Candidates:**
+  1.
+    - **Name:** Nooelec Flamingo+ FM v2 (SKU 100813), Nooelec direct [CURRENT - KEEP]
+    - **Kind:** current_part
+    - **Price usd:** 24.95 ex-VAT (about 29.7-30.2 landed in the EU with 19-21% import VAT; free shipping inside the existing Nooelec order)
+    - **Spec comparison:** Reference part. >60 dB typical average and >70 dB typical maximum rejection. Datasheet stop-band S21 -77.5/-70/-10 dB (min/typ/max). -3 dB at 75/120 MHz and -10 dB at 80/116 MHz. Passband IL 0.5 typ / 1.2 max dB; <0.25 dB out-of-band. S11 typ -20 dB. +18 dBm max input. RF ESD diode. Anodised aluminium EMI case. 250 mA DC pass (not needed on P8). 2-year warranty.
+    - **Worse in:** Nothing relative to itself. Known weakness shared with every candidate: the 108 MHz edge gives only about 32 dB (datasheet plot), so a strong station at 104-108 MHz needs a site check.
+    - **Compatibility:** Passive, SMA-F both ends, no rail or driver. Already in the RF compartment layout. Fully compatible.
+    - **Seller url:** https://www.nooelec.com/store/flamingo-plus-fm.html
+    - **Risks:** EU import VAT and possible handling fee on the Nooelec parcel. Dimensions are unpublished, so measure on arrival for the RF compartment.
+    - **Sources:**
+      - https://www.nooelec.com/store/flamingo-plus-fm.html
+      - https://www.passion-radio.com/index.php?controller=attachment&id_attachment=1206
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/flam_ds/ds_en.pdf
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/flam_ds/pg-3.png
+  2.
+    - **Name:** Same Nooelec Flamingo+ FM v2 (100813) from Passion Radio, FR, EU stock
+    - **Kind:** current_part
+    - **Price usd:** 38.11 incl. 20% FR VAT (EUR 33.90); about 31.76 ex VAT (EUR 28.25). G1 verified this earlier on 18 Oct 2026; my own fetch hit a redirect loop, so I did not re-confirm it.
+    - **Spec comparison:** Identical part, so identical specs.
+    - **Worse in:** Price only. It is not cheaper than Nooelec direct ($24.95 + VAT, about $29.9 at 20%). Its only advantage is EU dispatch with VAT already handled.
+    - **Compatibility:** Identical.
+    - **Seller url:** https://www.passion-radio.com/sdr-accessory/flamingo-v2-2539.html
+    - **Risks:** None beyond price. This is the EU fallback if the Nooelec import stalls.
+    - **Sources:**
+      - https://www.passion-radio.com/sdr-accessory/flamingo-v2-2539.html
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G1_receivers_rf.json
+  3.
+    - **Name:** Nooelec Flamingo FM v1 (SKU 100780)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 22.95 ex-VAT (Nooelec direct; verified 18 Oct 2026)
+    - **Spec comparison:** Rejection '>40dB typical' against Flamingo+ '>60dB typical average', so about 20 dB worse. -3 dB at 80/115 MHz against 75/120. Insertion loss not quantified ('minimal'). Same +18 dBm max input, RF ESD diode, anodised aluminium case with EMI frame, 250 mA DC and 2-year warranty.
+    - **Worse in:** Stopband rejection is about 20 dB shallower and fails the >=60 dB average intake limit. No published numeric passband IL. It saves only $2.
+    - **Compatibility:** Same form factor (SMA, passive). Compatible.
+    - **Seller url:** https://www.nooelec.com/store/flamingo-fm.html
+    - **Risks:** Worse FM protection for the wideband LNA V2 and V4L at strong-FM sites.
+    - **Sources:**
+      - https://www.nooelec.com/store/flamingo-fm.html
+      - https://www.nooelec.com/store/catalogsearch/result/?q=flamingo
+  4.
+    - **Name:** Nooelec Distill:FM Barebones (SKU 100758)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 17.95 ex-VAT (Nooelec direct; verified 18 Oct 2026)
+    - **Spec comparison:** Rejection '>40dB typical', about 20 dB worse. -3 dB at 80/115 MHz. Insertion loss not quantified. Keeps the +18 dBm max input, RF ESD diode and 250 mA DC. Board with an EMI frame and 2 mounting holes; no aluminium enclosure.
+    - **Worse in:** Stopband rejection about 20 dB shallower. No numeric IL. No enclosure (EMI frame only), so the build is weaker. Only a 30-day return policy is stated, with no 2-year warranty.
+    - **Compatibility:** SMA, passive. It could mount on standoffs in the RF compartment. Electrically compatible.
+    - **Seller url:** https://www.nooelec.com/store/distill-fm-broadcast-fm-filter.html
+    - **Risks:** Worse FM rejection and weaker build and warranty.
+    - **Sources:**
+      - https://www.nooelec.com/store/distill-fm-broadcast-fm-filter.html
+  5.
+    - **Name:** RTL-SDR Blog Broadcast FM Band-Stop Filter (88-108 MHz)
+    - **Kind:** other_brand
+    - **Price usd:** 16.95 ex-VAT at rtl-sdr.com (131 in stock, verified 18 Oct 2026). G1 found the direct store does not ship to the EU. Official AliExpress (RTLSDRBlog Store) and eBay (rtl-sdr-blog) prices were not verified.
+    - **Spec comparison:** Vendor: '>50 dB' at 88-108 MHz; release post: 'around 50 dB or more', almost 60 dB at 88 MHz and 45-50 dB at 108 MHz. Flamingo+ is about 47-50 dB at 87.5-88 MHz, 70-77 dB at 90-102 MHz and about 32 dB at 108 MHz. -3 dB at 76/122 MHz (Flamingo+ 75/120). IL <0.5 dB from 0-1 GHz and under 1.5 dB at 1-2 GHz. IL at 137-146 MHz is unpublished; the author comment says '<4dB' from about 120 MHz. DC pass 80 mA (irrelevant on P8). Aluminium case 2.8x2.8x1.3 cm, SMA-F both ends. No ESD diode stated, no max-input rating, no warranty term stated.
+    - **Worse in:** Mid-band rejection is about 15-20 dB shallower (about 50-60 dB against 70-77 dB). No RF ESD diode, which the exposed P8 port and LNA V2 input rely on. No max-input rating. 2 m insertion loss unpublished. 1-2 GHz loss is specified up to 1.5 dB, against roughly 1 dB or less on the Flamingo+ plot. It IS better at the 108 MHz edge (45-50 dB against about 32 dB), so it is a spec trade, not a not-worse analog.
+    - **Compatibility:** SMA-F, passive, small aluminium case. Mechanically compatible.
+    - **Seller url:** https://www.rtl-sdr.com/product/rtl-sdr-blog-broadcast-fm-band-stop-filter/
+    - **Risks:** Clones are sold on marketplaces, so buy only from the official AliExpress or eBay stores. No direct EU shipping. Losing the ESD diode would need an added part.
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-broadcast-fm-band-stop-filter/
+      - https://www.rtl-sdr.com/rtl-sdr-com-broadcast-fm-band-stop-filter-88-108-mhz-reject-now-for-sale/
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+  6.
+    - **Name:** GPIO Labs FM Notch Filter 88-108 MHz (SMA-M/SMA-F), Tindie
+    - **Kind:** other_brand
+    - **Price usd:** 30.00 (G1 verified 18 Oct 2026, 9 in stock; I did not re-fetch it)
+    - **Spec comparison:** About 25 dB at 108 MHz. Loss 0.8 dB at 150 MHz; 137 MHz not given. No ESD protection stated.
+    - **Worse in:** Not cheaper. It has weaker rejection in-band, and no ESD diode or warranty is stated. It is slightly better at 108 MHz (about 25 dB per G1 is actually below the Flamingo+'s about 32 dB, so it is not better).
+    - **Compatibility:** SMA, passive. Compatible.
+    - **Seller url:** https://www.tindie.com/products/gpio/fm-notch-filter-88-108mhz-sma-m-sma-f/
+    - **Risks:** Small maker; Tindie shipping to the EU.
+    - **Sources:**
+      - https://www.tindie.com/products/gpio/fm-notch-filter-88-108mhz-sma-m-sma-f/
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G1_receivers_rf.json
+  7.
+    - **Name:** Mini-Circuits NSBP-108+ (lumped LC band-stop, coaxial)
+    - **Kind:** other_brand
+    - **Price usd:** 184.22 at qty 1 (Mini-Circuits web store, 83 in stock; verified 18 Oct 2026)
+    - **Spec comparison:** Web page gives the stop band as 89-105 MHz, N connectors and case FF967. Rejection, IL and VSWR are not on the page. G1, from a search result I did not re-verify, gives >20 dB at 88-108 MHz, about 26 dB at 108 MHz, about 1 dB loss at 140 MHz and a mass of 73 g.
+    - **Worse in:** Over 7x the price. Its stop band misses 87.5-89 and 105-108 MHz of the EU FM band. Shallower rejection (unverified). N connectors need adapters and the part is bulky.
+    - **Compatibility:** N-type connectors would need N-SMA adapters. Too large for the handheld RF compartment.
+    - **Seller url:** https://www.minicircuits.com/WebStore/dashboard.html?model=NSBP-108%2B
+    - **Risks:** Not suitable here.
+    - **Sources:**
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=NSBP-108%2B
+- **Notes:** VERDICT (angle A): KEEP the Nooelec Flamingo+ FM v2 (100813) for P8, bought from Nooelec direct in the same core order (+$24.95, no extra shipping, EU import VAT on arrival). Saving: $0. I found no cheaper SKU, seller or established brand that is not worse in every critical spec.
+  - The cheaper Nooelec SKUs (Flamingo FM v1 $22.95, Distill:FM $17.95) lose about 20 dB of rejection.
+  - The RTL-SDR Blog filter ($16.95) is a trade. It is better only at the 108 MHz edge. It is worse in mid-band depth, has no ESD diode and no input rating, and its 2 m loss is unpublished.
+  - The same part from Passion Radio (EUR 33.90 incl. VAT) costs more.
+  
+  P8-SPECIFIC CORRECTIONS for STACK v2:
+  1. Row 299 'Budget alternative: -' should read: 'None not-worse. RTL-SDR Blog $16.95 is a spec trade (+108 MHz edge; -15-20 dB mid-band, no ESD, no max-input, 2 m IL unpublished).'
+  2. On P8, DC pass is not a selection criterion, because bias for the LNA V2 enters at its output from ch4. The real reasons are mid-band rejection, the RF ESD diode on an exposed port, the +18 dBm rating, the published IL and S11 up to 2 GHz, the shielded case and the 2-year warranty.
+  
+  INTAKE TEST for unit #2 (LiteVNA, conducted only):
+  - G1's FM point limits.
+  - |S21| <= 1.2 dB at 144-146 MHz.
+  - |S21| <= about 1.5 dB and S11 <= -10 dB over 150-1766 MHz. These limits are my reading of the datasheet's 1-2000 MHz plot.
+  At an operating site with strong FM stations at 104-108 MHz, check the intermod margin per station: the Flamingo+ gives only about 32 dB at 108 MHz, so do not assume a flat 60 dB.
+  
+  LIMITS OF THIS CHECK:
+  - The shared web-search budget (200 calls per turn) was already used up when I ran my first query, so I ran no new searches. If you want new marketplace searches, send a follow-up message.
+  - I used WebFetch on primary pages only:
+    - Nooelec Flamingo+, Flamingo v1, Distill and catalog search: all verified today.
+    - RTL-SDR Blog product page and release post: verified.
+    - Mini-Circuits NSBP-108+: verified.
+    - Amazon.com and Amazon.de: HTTP 503.
+    - WiMo and TinyTronics search URLs: 404.
+    - sdrstore.eu and Kubii searches: no Flamingo listing.
+    - Passion Radio: redirect loop today. Its EUR 33.90 price comes from G1's verification earlier today.
+  - So genuine Flamingo+ prices on Amazon EU, Nooelec's marketplace storefronts and the official RTL-SDR Blog AliExpress/eBay stores remain unverified.
+  - The Flamingo+ figures at 87.5, 108 and 145 MHz and up to 2 GHz are read from the datasheet's single-unit plot, about ±1 dB.
+  - Generic, clone, DIY and used options (Maker go Tindie $11.90, AliExpress modules, TV traps, DIY traps) belong to other angles. G1 already rejected them for unverifiable origin, lower rejection or no ESD protection.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
