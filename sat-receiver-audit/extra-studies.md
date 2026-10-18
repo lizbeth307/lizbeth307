@@ -3825,6 +3825,89 @@
   
   There are no subtotals in this file to recompute.
 
+## edit:05c_arch_software_resources:b1 (run `wf_11421893-197`)
+
+- **Section:** 05c_arch_software_resources
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+- **Skipped:** []
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/05c_arch_software_resources.md. All 41 changes (idx 0-40) are applied; none skipped.
+  
+  Merges and conflicts:
+  - idx 0 + 33 (kernel command line): merged. The Lime line is now the uncommented default, and the no-Lime build simply drops it. The note covers clk_ignore_unused, the radxa-system-config 0.6.30 hold and the SHA-256 CI check. I put panic=10 at the end of the existing line so the anchor that idx 75 and 98 use still matches. Order does not matter on a kernel command line.
+  - idx 2 + 32 (A/B boot chain): merged into a new block "Ланцюг завантаження A/B" with Route A (preferred, still to be verified on the image) and Route B. Route B follows re-audit A (embloader 0.4 with the write-back default in loader.conf). It also keeps operator note 9's Pico supervisor plus userspace A/B flag fallback, which the files support. They do not conflict.
+  - idx 3 + 35 (FastRPC golden set): merged. The dpkg -V rule and the forum 31078 "never copy by hand" rule now sit in the golden-set hash-check bullet.
+  - idx 6 + 36 (labd leases): merged. I kept the original sentence about writing DevicePolicy drop-ins per lease (the anchor for idx 76) and added the system-unit, renderD128, PipeWire and CONFIG_CGROUP_BPF details and the EPERM bring-up test with the udev ACL fallback.
+  - idx 5 + 37 (ADS-B/AIS): merged. ADS-B is suppressed if dbFlags is &1, &4 (PIA) or &8 (LADD), or if the ICAO address is in milRange(), with the fail-closed check on aircraft.csv.gz. The AIS static-message rule is in too.
+  - idx 18 and 20 vs 37: no real conflict. The rule allowlists (operator notes 32 and 33) allow ADS-B and AIS in OpenWebRX+ and SDRangel only with our display rules, "otherwise off". Re-audit A says those filters exist only in readsb and AIS-catcher, so the text now says demodadsb/demodais and the OpenWebRX+ adsb/ais modes are not built. The more restrictive reading satisfies both sources.
+  - idx 8 vs operator note 30: the note's 7.5 Msps is only an example (oversampling 4). I used the 7 Msps floor from re-audit B, which decides technical corrections.
+  - idx 17 vs operator note 1: the note's allowlist names GOES/GK-2A. Re-audit C narrows it for the Europe build, and a narrower allowlist still satisfies the rule.
+  - idx 4 + 9 + 10 (GNSS jamming gate): split across rows with no repetition. labd policy holds the gate, the gpsd row holds the LC76G commands, re-send and AppArmor check, and the location-service row holds the stale-fix fallback.
+  
+  Anchors kept for later batches: where a change allowed it, I appended text instead of rewriting, so these phrases still match:
+  - "Satellites (LRPT, HRPT, Metop/FY «експериментально», Elektro LRIT,"
+  - "Резерв: останній добрий фікс..."
+  - the -1 pin sentence
+  - the librtlsdr sentence
+  - "з джерел: SoapyAirspyHF, SatDump, SDR++, SDRangel, slowrx."
+  - "опції bias у конфігах рушіїв."
+  - "(межа порту 395 MB/s = 1.76x від 224 MB/s)"
+  
+  Six anchors changed because their change required it. Later batches will need to find these spots by part name:
+  - the A/B sentence (idx 97)
+  - "QO-100 ... за регіоном" (idx 93)
+  - the gr-satellites apt list (idx 59, 89)
+  - "Лише з Lime:" (idx 60, 83)
+  - "Роботи з Lime — лише якщо Lime залишено 1.12." (idx 69)
+  - the mirrored-debs sentence (idx 107)
+  
+  No subtotals needed recomputing. The RAM and storage tables did not change, and the IQ ring sizes (4 GiB + 3 GiB Burst by default, 1.5 GiB only without Lime) were reordered with the same values.
+  
+  Left for later batches, consistent with the new labrx text:
+  - the VkFFT mentions in the 5.5 CPU and GPU lines (idx 72, 73)
+  - the order of the free-RAM model (idx 71)
+  - the raw-IQ allowlist details in the 5.5 storage paragraph (idx 74)
+
 ## edit:08b_new_gates_reaudit:b1 (run `wf_1721ea96-ee2`)
 
 - **Section:** 08b_new_gates_reaudit
@@ -15827,6 +15910,134 @@
   I deliberately left the targets table untouched for idx 38: the T1/T2/T3 throw names, LRPT gain 10-25 dB, the ДХ row's 12.5 V and the DAB row. They still contradict the new RF1-RF4 park and the 13.8 V Boni rail until batch 2 applies.
   
   idx 7 uses 'LNB купується' as instructed; the later idx 51 says 'LNB куплено', and the brief says the QO-100 add-on was bought.
+
+## edit:02b_bom_antennas:b1 (run `wf_45d408c6-7ff`)
+
+- **Section:** 02b_bom_antennas
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+- **Skipped:** []
+- **Notes:** I applied all 24 changes (idx 0-23) in place, with Edit only, to /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/02b_bom_antennas.md. Every table row still has 7 columns, and I re-checked both subtotals by script.
+  
+  **New subtotals:**
+  - **2.4:** 255.20-281.20 (≈255-281). That is 175.79-201.79 (idx 12) plus the new QO-100 row at $79.41. The figure without QO-100 stays in the note.
+  - **2.5:** 560.26-658.04 (≈560-658). Without the horn materials it is 542.26-612.99. This is the v1 figure 350.90-625.17, plus +43.54 on the lower bound for the Boni-Whip (idx 6), plus the G4 net change +147.82 / −12.18 (idx 23), plus $18.00-45.05 for the horn materials (idx 1).
+  - **For the 02e agent:** 2.12 rows antenna-patch and antenna-foldable must use these figures. The 2.11 «Набір QO-100» row must not be counted a second time.
+  
+  **New QO-100 rows (idx 0, 1):**
+  - **2.4 row «QO-100: голий LNB + конус 11 см»:** 2× Bullseye BE01 from Passion Radio (FR), delivered to DE, EUR 67.44 = $75.81 incl. VAT and shipping, plus 2× AXING CFA 11-00 = $3.60, total $79.41. Source: P5 G6 decision 9, EU landed rule.
+  - **2.5 row «Рупор QO-100»:** $18.00-45.05, marked as an estimate. This is what is left of the v1 QO-100 row after the LNB ($47.95-75.00 minus $29.95). It matches 02e idx 39, so 2.4 + 2.5 = ≈97.41-124.46.
+  - **Cone materials:** booked in the 2.5 horn row, and the 2.4 row says so. No file gives a separate cone price, so I did not split the amount.
+  - **LNB choke:** not added to this file. Under G3 decision 14 (a P5 decision, as in 02e idx 27) the LQW2UAS68NG00L moves to core, in the DigiKey DE order. The 2.4 note says this.
+  
+  **Conflicts and which change won:**
+  - **idx 0 vs idx 12 (2.4 subtotal note):** idx 0 is a user decision and wins, so the Bullseye now sits in this tier and «— у 2.11» is gone. I kept the idx 12 wording «(Європа — купується)» and its 175.79-201.79 as the figure without QO-100.
+  - **idx 6 vs idx 23 vs idx 1 (2.5 subtotal):** combined into one figure, as idx 23 asks.
+  - **idx 21 (G4) vs idx 16 (reaudit_C), tripod:** the G4 analog decides the part, seller, price, specs and the mass of 1.14 kg. From reaudit_C I added only the ball-head note, the balance check at 30° elevation, the Manfrotto BeFree One alternative and the contrast with the v1 mass.
+  - **idx 8 vs idx 18, 70 cm antenna:** idx 8 replaced the row with two rows. I added the G1 mounting rule from idx 18 to the spare-whip row and to the Uputronics placement in the default row. I also kept «нахил боком до супутника», which is still valid.
+  - **idx 11 vs idx 17, GNSS antenna (both P4):** merged into one bias sentence. The GLONASS and magnet notes appear once.
+  - **idx 3 vs idx 19, SAWbird+ GOES:** merged, and the current figures appear once. The G1 conditional text for Barebones (idx 19, P5) replaces «лише в екранованому корпусі».
+
+## edit:10_sources:b1 (run `wf_47c804ff-504`)
+
+- **Section:** 10_sources
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+- **Skipped:**
+  1.
+    - **Idx:** 9-partial
+    - **Why:** I left out the DigiKey PEC11R-4215F-S0024 link. The P5 analog decision G2 (higher precedence than re-audit A) replaces the 4215F with PEC11R-4220F-S0024 unconditionally, and batch-2 idx 37 adds that link. The other idx 9 items went in. KSC641J is labelled as the fallback if TL3145BF350QJ fails the bench test, and TCA9555PWR as the fallback for PI4IOE5V9555, both per G2.
+  2.
+    - **Idx:** 14-partial
+    - **Why:** I did not replace the 'Omron G6K-2F-RF (RS UK)' line with the DigiKey G6K-2F-RF DC5 search link. The P5 analog G1 decision (batch-2 idx 28) has precedence: it makes G6K-2F-RF-S DC5 the main part, keeps G6K-2F-RF DC5 as the spare and keeps RS UK as the third source. The line stays as it is so idx 28 and idx 41 can still find their anchor. All the other idx 14 URLs were added.
+  3.
+    - **Idx:** 7-partial (dedupe)
+    - **Why:** The raw.githubusercontent copy of the SDRangel v7.27.2 channelrx CMakeLists.txt is the same file as the blob link from idx 0, so I kept only the blob link instead of listing it twice.
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/10_sources.md. The file has no subtotals, so nothing needed recomputing.
+  
+  Merged duplicates (each kept once):
+  - gr-satellites #820, 1bcf1d8 and fb887cf (idx 0 and 7), plus 10d27cb from idx 18: one gr-satellites line under ПЗ.
+  - OpenWebRX+ modes.py and PPA index, and systemd #23198 (idx 0 and 7).
+  - qcom-ppa: page (idx 0) and Packages.gz index (idx 6) on one line under ПЗ.
+  - embloader, rsdk socs.json, r2 manifest and forum 31078 (idx 1 and 6).
+  - limesdr_commands.c (idx 2 and 13).
+  - TLE Elektro-L3 44903 (idx 3 and 18).
+  - Pico datasheet (idx 6 and 19).
+  - osmocom tuner_r82xx.c v2.0.3 and Debian #1041701 (idx 7 and 11): in the RF osmocom/librtlsdr lines.
+  - Debian airspyhf 1.6.8-5 (idx 7 and 12): in the Airspy HF+ software line.
+  - WSJT-X CMake 2.7.0 (idx 7) and master (idx 12): one line.
+  - LimeSuiteNG plugins CMake: appended to the existing LimeSuiteNG line.
+  - TPS7A47 datasheet (idx 14 and 19).
+  - Uputronics HAB-FPA Rev 3.0 datasheet (idx 14 and 15): on the Uputronics line.
+  - Waveshare 25346 (idx 15 and 20): antennas block only.
+  - LC76G schematic and Quectel LC76G spec V1.1 (idx 16 and 20): after the LC76G line only. gpsd man 3.25 joined the gpsd line.
+  - RTL-SDR Blog buy page and V4 end-of-line (idx 11 and 25): V3 line only.
+  - SatDump pipelines (idx 0 and 18): Цілі block. SatDump build pins (1aedd602 and master plugins CMake, sdr_sources, #1212) are on one ПЗ line.
+  - Dipole kit product and guide merged into the existing dipole line; Axotron v3 zip merged into the Axotron line.
+  
+  Placement:
+  - idx 20: new '**GNSS, час і IMU**' block placed just before '**ПЗ і пакети**'.
+  - idx 19: power items placed next to the matching existing lines (Molicel TDS, IP2368 review, INA228 datasheet and PCB, Pololu forum thread, Daly BMS spec). The Radxa power forum thread went next to the existing 4S1P forum line.
+  - idx 10: tar1090 milRange and artemis-db constants are labelled as sources for the suppression filters ('Джерела фільтрів придушення'), so they are not read as military receive chains.
+  - idx 8: Hexagon DSP binaries relabelled as reference only.
+  - idx 12: Radio Clock link now points to the v7.27.2 tag.
+  - idx 21: 4D datasheet is now Rev 1.5.
+  - idx 24: IATA revision note added.
+  - idx 5: legal note now names the region as Europe.
+  
+  Batch-2 anchors:
+  - I kept these lines and line beginnings unchanged so later changes still match: Omron, Othernet Bullseye, Uputronics, Airspy HF+, Adafruit INA228, CH334F, MCP23017, 18650 Battery Store, CEVA BNO08x, Waveshare LC76G, Crowd Supply LimeSDR, Leo Bodnar, FlightAware, sigrok, tinySA, Wisecoco, ALLNET UFS, the cooling forum line, and the '**Безпека і право (загальне)**' and '**Вхідні файли**' headings.
+  - The only lost anchor is idx 33. Its anchor was the full R_1_0 URL, which idx 21 has already replaced with the same R_1_5 URL that idx 33 asks for. Batch 2 should find that line by the prefix '- 4D Systems 4DHDMI даташит:' and only add the DigiKey and Newhaven links.
+  - Batch 2 will see some repeats, which it should merge: VEML7700, Bourns PEC11R datasheet, HMC7992 datasheet, the HAB-FPA datasheet, I-PEX MHF 4L, Samsung T7, smartmontools, the Pi Hut delivery page, LiteVNA guide and tinySA Buying.
 
 ## fold:vhf_uhf (run `wf_4a343103-e9e`)
 
@@ -37854,6 +38065,117 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - VIEWE: does UEDX6911 firmware support the 45-pin UEED080FH panel and its touch IC, and what LED drive current does the board provide?
   - VSDISPLAY (eBay.de 256679793470): what is the board's input (HDMI?), how does touch reach the host, which panel part is it, and is it the same 6.97in glass as Wisecoco?
 - **Confidence:** medium
+
+## edit:11e_changes_reaudit_D:b1 (run `wf_b7e15d24-3c6`)
+
+- **Section:** 11e_changes_reaudit_D
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+  - 58
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  - 64
+  - 65
+  - 66
+  - 67
+  - 68
+  - 69
+  - 70
+  - 71
+  - 72
+  - 73
+  - 74
+  - 75
+  - 76
+  - 77
+  - 78
+  - 79
+  - 80
+  - 81
+  - 82
+  - 83
+- **Skipped:** []
+- **Notes:** I created /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/11e_changes_reaudit_D.md with Write. It starts with the heading '### 11.5. Виправлення P4: живлення, механіка, дисплей, лабораторія (повторний аудит D)', then a one-line intro and the table | № | розділ STACK | що виправлено або додано | чому |. All 84 changes (idx 0-83) are folded into 36 rows, which leaves room for batch 2 under the limit of about 60 rows.
+  
+  How they were grouped:
+  - Power: rows 1-17 (P50B mass and enclosure; IP2368 COUT board; field charge source; SoC resync; #2813; INA228; standby and UV comparator; backup EN and BMS cutoffs; TPS7A4701 spec and missing PG; LNB and Boni rails; TPS2553; SW TVS; J21 limits with #15; back-feed rules with HDMI pin 18 and the Pico divider; Q5; mode I sag).
+  - Thermal: row 18.
+  - Display and HDMI: rows 19-24.
+  - Fan, microSD and UFS: rows 25-27.
+  - GNSS, RTC, chrony, kernel and SPI hold: rows 28-32.
+  - Pinecil, bench case, tool pins, bench USB profile: rows 33-36.
+  
+  The 'what' fields in the 11e JSON were cut off at about 220 characters. I took the full wording from the matching reaudit_D entries in the per-section change JSONs; every change matched one by part name.
+  
+  Conflicts and precedence:
+  1. idx 29 and 59 (Boni rail): re-audit B (P4) moves this rail to BONI13V8. For that case the input condition from analog G3 (P5) wins over re-audit D's 'battery ≥14.2 V' (G3 requires IN ≥14.8 V). The row keeps the 12.5 V ANY-OUT straps only for the case where the rail stays at 12.5 V. I also left out the 'PTC 0.2 A' mention, because re-audit B and G3 may replace that PTC with an eFuse.
+  2. idx 73 (C22 tool pins): this disagrees with re-audit A, which is also P4 (PySide6 6.12.0, NanoVNA-Saver v0.7.3). I applied re-audit D's pins and flagged the disagreement in the row as open until the first lab-venv build.
+  3. idx 65 (chrony): re-audit A's PPS line uses 'prefer'; re-audit D's gate-controlled 'noselect' plus 'selectopts' version is the one I applied. Whoever merges 01a should settle which one stands.
+  4. idx 68 (Pinecil): the bank and port follow analog G5 (Anker 737); re-audit D's IronOS settings and no-EPR cable were applied.
+  5. idx 77 and 83 repeat what re-audit A already says and agree with it, so I merged them without repeating.
+  6. Seller, SKU and price stay with the analog decisions everywhere (G2, G3, G5, G6); the rows only point to them.
+  
+  Subtotals: this file has none. The −$23.95 to the optional subtotal (idx 12) and the budget delta of −$1.15 against the G2 HDMI line at $15.65 (idx 13) are noted as text; the actual recomputation belongs in 02e. Every row has four columns.
 
 ## extract:analogs_G4 (run `wf_be383e11-6dc`)
 
