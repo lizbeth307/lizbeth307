@@ -3779,6 +3779,159 @@
   - Currency uses the stack's model rates: EUR 1 = USD 1.1241 (EUR 148 = 166.37) and GBP 1 = USD 1.3318 (GBP 132 = 175.80). Ex-VAT figures are derived from the shown VAT rate.
   - Shipping costs for Berrybase, The Pi Hut and ALLNET into the EU were not checked.
 
+## edit:08b_new_gates_reaudit:b1 (run `wf_1721ea96-ee2`)
+
+- **Section:** 08b_new_gates_reaudit
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+- **Skipped:** []
+- **Notes:** Created /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/08b_new_gates_reaudit.md with the Write tool. It has the heading "### 8.1. Нові виміри і ворота з повторного аудиту (P4)", a one-line intro (conducted-only rule), and a 3-column table (| що треба виміряти або підтвердити | ворота / тест | коли |) of 56 rows. Rows are labelled V4L-0..10, HF-0..17, L-0..12 and RF-0..12, then one conditions row, IP2368 goods-in and the DRP matrix. I checked that every row has exactly 3 cells. The file has no subtotals.
+  
+  Merges:
+  - idx 42 + 43 (both about the HMC7992 at bring-up step 10) are one row, "RF-0 і RF-1".
+  - idx 19 + 47 (Boni rail and its eFuse) are one row, "HF-8 і RF-5". The DC-sense part of idx 47 (Boni valid / 9:1 balun short / open) went into the HF-10 row (idx 21), which already covered it.
+  
+  Where a P5 analog decision won over a P4 re-audit value:
+  - idx 43: the HMC7992 is now an on-board chip (HMC7992LP3DE), so the G1 #4 limits replace the re-audit's module limits (≤1.2 dB IL, ≥30 dB isolation). New limits: IL ≤0.9 dB at 0.1-2.2 GHz after thru-line de-embedding; isolation ≥40 dB target, ≥37 dB accept; RL ≥20 dB; between RTL-A throws ≥40 dB. For HF on BENCH: 10 nF C0G and a 1-30 MHz check, with the re-audit's 1-100 MHz sweep noted.
+  - idx 44: trip window for the 88.7 kOhm channels is 265-339 mA from G3 #11 (TPS2553DBVR-1 latch-off), not the re-audit's 262-342 mA. Added the LAB 34.8 kOhm window (685-817 mA at 5.0 V) from G3 #11.
+  - idx 45: the H1 baseline is the G6 #3 window of 108-150 mA, not "about 120 mA".
+  - idx 51: per G6 #9, the red port always gets a DC-decoupled 75 Ohm terminator (AXING CFA 11-00), not a dust cap. The comparison is open / AXING / TechniSat 0002/3077, and TechniSat goes on if AXING is more than 1 dB worse.
+  - idx 53: per G6 #2, the PE4302 module is replaced by a PE4312 on Sled v2. The sweep is all 64 states, 1 MHz-2.2 GHz, monotonic, error within ±(0.15+2%), correction table stored, plus the 0 dB-state IL limits. This replaces the re-audit's 3 states up to 2 GHz.
+  - idx 19 and 46: added the G3 #9 caveat that TPS7A4701 ±2.5% accuracy holds only at IN ≥14.8 V (BONI, pack about 15.0 V) and ≥14.2 V (LNB). For the LNB, the window is measured per unit or taken from the Bullseye load limits (11.5-14 V); the text says "вирішуєте ви" (gender-neutral, no "користувач").
+  
+  Small additions from cited analog sources:
+  - idx 18: G1 #8 keeps the damper at 220 uF (about 5.3 ms vs 7.5 ms deglitch).
+  - idx 17: names the Schubert 6B can from G1 #8.
+  - idx 24: G1 #7 -S LF/HF isolation gate (≥75/60/55 dB), RL ≥21 dB, and the fallback.
+  - idx 48: G1 #2 point limits, S11, and unit #2 at 144-146 MHz.
+  - idx 56: from G3 #4, ISTOP about 100 mA and the LDO rule (HT7550-1 OK, ME6201 replaced). The unclear phrase "будь-який VBUS = COUT" was reworded to "жодного VBUS на виході" through the TPS259470A.
+  - idx 57: Anker C2 is output-only per G5 #12.
+  
+  Rules: every injected-signal test says it is conducted only, and RF-0 says the antennas are disconnected. Lime rows note that Lime TX is blocked and do not say "if Lime is kept". There are no loops, dishes or martial-law notes, and no prices in this file.
+  
+  Left out on purpose because no change in this batch asked for them: the G6 #9 beacon-shift test, and the G3 #4 per-board fsw measurement and burn-in. Batch 2 may add them.
+
+## edit:05a_arch_power:b1 (run `wf_1721ea96-ee2`)
+
+- **Section:** 05a_arch_power
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+- **Skipped:** []
+- **Notes:** I edited one file in place: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/05a_arch_power.md. All 36 changes (idx 0-35) are applied and none were skipped. Three pairs conflicted. In each pair I took the winning value and kept every point from the losing change that did not clash.
+  
+  Conflicts:
+  - idx 6 vs idx 23 (TPS2553 limits): idx 23 wins with 265/299/339 mA. Both are P4, but idx 23 matches the analogs G3 decision 11 numbers (P5, also in batch-2 idx 59). The 262-342 mA from idx 6 is dropped. The rest of idx 6 is applied: TPS2553DBVR-1 latch with EN reset, TCBT channel at RILIM 162k = 144/166/192 mA (model), INA3221 0.2 Ohm readback with the >20% alarm.
+  - idx 8 vs idx 27 (Boni rail): idx 8 wins, so the rail is BONI13V8 at 13.8 V with no PTC. The voltage comes from reaudit_B r1 corr 9, which uses the vendor's 12-15 V rating at the barrel. idx 27 itself defers to 13.8 V if v2 adopts it, and analogs G3 decision 9 lists BONI13V8. The PTC is dropped because the eFuse is fitted (reaudit_B r3 corr 2; analogs G3 decision 13 condition). Kept from idx 27: the TLV3011 rail-good to MCP #3, the Schottky OUT to GND, and the ANY-OUT straps rebuilt for 13.8 V from analogs G3 (6P4V1, 3P2V, 1P6V, 0P8V, 0P4V). Its 'battery >=14.2 V' acceptance is replaced by the analogs G3 condition: IN >=14.8 V, which means a battery of about 15.0 V. analogs G3 says that 14.2 V is not enough for this rail.
+  - idx 7 vs idx 25 (LNB window): merged. The +/-0.33 V (12.87-13.53 V) is given as the guaranteed band of the IC. The +/-0.35 V at the F connector with battery >=14.2 V is given as the per-unit acceptance gate, with the analogs G3 wording 'IN LDO >=14.2 V'. The analogs G3 option of a window set from the load limits (Bullseye 11.5-14 V) is noted as the user's decision.
+  
+  Duplicates merged instead of repeated:
+  - idx 7 and idx 26: the 'no PG pin, TLV3011' point now appears once in the LNB row.
+  - idx 13, idx 30 and rule (3) of idx 31 (second SMBJ17A on SW): the topology states it, the protection paragraph gives VBR/VC, and rule (3) refers back to them.
+  - idx 31 rule (7) and the existing 'no VBUS to display board' sentence: merged into one sentence.
+  - idx 29: the SMBJ13A VBR is already in the sentence, so only VC 21.5 V at 27.9 A was added.
+  
+  Other points:
+  - Recomputed in-file subtotal: the LT3045 comment now reads 4 × 299 mA ≈ 1.2 A.
+  - idx 0: besides the bus-table rows (PACK, SYS12, J21, LAB5, VCC_5V_PERI), I added a one-line note under the table title. I also put the Lime figures first in the protection paragraph to match.
+  - idx 16: I kept the v1 word 'перевірено' on the <0.2 мкА off-current, because it is still valid.
+  
+  For batch 2:
+  - idx 22 removed the conditional D36V28F5 from the DISP12 row. Batch-2 idx 70 (analogs G6, higher precedence) re-adds it as a written-confirmation fallback, so that agent should insert it into the new DISP12 load cell.
+  - These batch-1 edits changed text that batch-2 changes use as anchors, so those agents should locate the spot by part name: J21 '220 мкФ/25 V' (idx 63), 'HF+ (...)' in LAB5 (idx 49), 'PG на MCP #3' (idx 57, now gone) and the TPS7A4701 spec text (idx 56). idx 58 refers to the old Boni row text 'PTC 0.2 A ... PG'; the 13.8 V choice and its straps are already applied here.
+  - The 'Заряд.' paragraph still says 'IP2368 BZ' and is left for idx 41/53. idx 12 changed only the topology mention.
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
@@ -24240,6 +24393,115 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   Subtotals recomputed:
   - 2.9: 126.6 + 20.91 + 13.49 + 35 + 116 = 312.0, and 126.6 + 28.21 + 13.49 + 70 + 168 = 406.3, so **312-406**. With the EU ASA price it is about 314-408. The note says: no shipping, weather kit ex VAT, chassis is a model, v1 was 178-313. This replaces the analog's 249-371, which counted only the weather kit.
   - 2.10: **75-145** (model). The note says v1 was 90-170 and that moving the HDMI lead to 2.6 is a re-allocation, not a saving.
+
+## edit:03a_lab_core_ext_hf:b1 (run `wf_63edf951-e40`)
+
+- **Section:** 03a_lab_core_ext_hf
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+- **Skipped:** []
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/03a_lab_core_ext_hf.md, in place, and applied all of idx 0-25. Every table row still has 7 columns.
+  
+  Conflicts and merges:
+  - idx 6 (HF+ input selector): idx 6 comes from re-audit B and names G6K-2F-RF. Analog G1 #7 names G6K-2F-RF-S DC5 and ranks higher, so it won. The row now reads: 2× Aratas (раніше Omron) G6K-2F-RF-S DC5 + driver, $44-50 (relays $39.38 for two + driver board), DigiKey, status перевірено (реле, 18.10.2026) / модель (плата). The note gives the condition (LF/HF isolation gate ≥75/60/55 dB), the fallback G6K-2F-RF DC5 at $50.12, DigiKey DE at EUR 34.58 without VAT / EUR 41.15 with VAT, the old part (RS UK, $62-80) and the saving ($10.74, or $17.89-29.87 against the RS UK price).
+  - idx 9 (HF chain total): I did not use the stated total of 483.44-589.17, because the cheaper switch from idx 6 also changes it. My recount is **465.44-559.17**: 169 + 44-50 + 8-15 + 15-30 + 46.95-66.44 + Boni 167.49-178.73 + 15-50, plus a share of LDO/eFuse. The integration note now says the switch and choke add "$59-80" instead of "$77-110".
+  - idx 3 (extended budget minimum): the result is ≈$203 rather than 207 − 8.59 = 198.53. idx 2 also raised the SAWbird+ H1 low from $45 to $49.95. The sum is H1 49.95 + DPS-150 73 + case 30 + Uputronics 50.53 = 203.48.
+  - idx 2 (SAWbird+ H1): I added the warranty conflict from G6 #3 (the page also says "standard 1 year warranty"). I also gave the EU price: Amazon.nl EUR 55.10 with VAT = $61.93, sold by Nooelec Inc.
+  - idx 0 (PE4312): the DigiKey DE price (EUR 3.86 without VAT) and the rule that only a franchised-distributor chip on our own sled board counts both come from G6 #2. The sled row price of 104-168 is unchanged.
+  - idx 5 (Airspy HF+): the $206.52 landed price for DE comes from G1 #6. The price cell stays 169.00.
+  - idx 13, 16 and 19 said "за analogs G5". I wrote the G5 content itself instead of a file reference, because STACK text does not cite file names. That covers the EU-seller GPSR check, ANNE-50+ as the noise-source input load, the ENR model (LN+ 17.4-19.8 dB, ZFL-500+ about 18.2-18.5 dB) and the brass-jack torque rule.
+  - idx 23 (Hantek): I kept the sentence "6022BL знято з продажу в The Debug Store", which is still valid and supports the budget note.
+  - idx 18 removed the old "Бюджет: VAT-30W2+" note, because the VAT-30W2+ pads are now the main part.
+  - idx 20, 22, 24 and 25 say price or seller "per analogs G5". I left those for the later batches (idx 54-59).
+  
+  Recomputed subtotals:
+  - Core: **1,507.76-1,843.07 (≈1,508-1,843)**, from v1 1,474.58-1,809.89 + $33.18 for the VAT-30W2+ pads (idx 17).
+  - Core budget minimum: ≈$1,121-1,159.
+  - Extended: **502.67-707.67 (≈503-708)**, with the H1 at $49.95 instead of $45-50.
+  
+  Later batches touch the same rows and need these warnings:
+  - idx 37 (G1) recounts the HF total with the old Boni-Whip low of $123.95. That price comes from re-audit B. No analog decision covers the Boni-Whip, so the $167.49 Bonito price from idx 9 should stay.
+  - idx 36 and idx 71 rewrite the sled row and its port assignment.
+  - idx 70 sets the extended budget minimum to ≈$286.
+  - idx 66 and idx 76 replace the core and extended subtotals.
+
+## edit:02c_bom_display_power_gnss:b1 (run `wf_85b20a83-f63`)
+
+- **Section:** 02c_bom_display_power_gnss
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+- **Skipped:** []
+- **Notes:** I applied all 23 changes (idx 0-22) to /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/02c_bom_display_power_gnss.md, using the Edit tool and writing in Ukrainian. Every table row still has 7 columns.
+  
+  Conflicts and merges:
+  - idx 6 vs idx 16 (TPS2553 at RILIM 88.7k): idx 16 (reaudit_D) won. It gives 265/299/339 mA, and the higher-precedence analog decision G3 (idx 56) uses the same figures. The 262-342 mA range from idx 6 is not used.
+  - idx 6, DigiKey price for TPS2553-1: reaudit_B quotes $1.06 each, G3 #11 quotes $7.66 for 10 as the authorised fallback. G3 won (analog decides price), so $1.06 was dropped. The price used is LCSC C111738 at $2.96 for 10, saving $2.54 against $5.50.
+  - idx 4 and idx 15 (TPS7A4701) are merged into one note: θJA 32.5 °C/W, no PG pin, a TLV3011 comparator per rail plus the TPS259630 FLT pull-up into MCP #3, a Schottky from OUT to GND, ICL that is not usable as a short-circuit limit, ANY-OUT straps for 13.2 V and 12.5 V (13.8 V named, but no strap list, because none is given in the files), and ±2.5% only at VIN ≥ VO + 1 V.
+  - idx 18 and idx 19 (protection set) and idx 7 (PTCs) are merged in the same cell.
+  - idx 1 and idx 2 say to take part and price from G2. I used the G2 figures from idx 38 and idx 39 in this same change file: HMI set 13.64, with TL3145 conditional and KSC641J ($7.00) as the fallback; expander about 2.9, with TCA9555PWR as the fallback. The old part and the saving are in the notes.
+  - idx 1: the keypad ($5-15, estimate) is a new row, "Накладка кнопок", and is counted in the subtotal.
+  
+  Subtotals recomputed:
+  - 2.6: **219.24-247.29** (was 221.39-244.44). Changes: Pico 9.18, HMI 13.64, keypad 5-15, expander 2.9.
+  - 2.7: **371.34-522.34** (was 364.81-515.81, a net +6.53). Changes: BMS 8.99, TPS2553 2.96, new rows eFuse TPS259630DDAR 2.14 and INA3221 6.94.
+  - 2.8: unchanged at 80.43-105.43, because no price in this batch touched it.
+  
+  Left for the analog batches: where an instruction said seller or price "per G3" for a part that did not change, I applied only the technical text. The seller and price stay as in v1 until the later analog changes land:
+  - TPS7A4701: RGWT order code, DigiKey, 15.92 (idx 54).
+  - #2813: Botland (idx 52).
+  - IP2368: price and status (idx 49).
+  - Cells: NKON (idx 47); idx 10 itself says not to change them here.
+  - AON set: price 2-4 kept (idx 57).
+  - Protection set: part numbers and the 31-40 price (idx 58).
+  
+  The budget lines "Бюджет: інший 4S 15-20 A", "EC11", "TPS7A4700" and "NKON" were not touched; later analog changes remove them. idx 21 deleted "Бюджет: Anker 737 (стенд)" and added the field-source rule for DRP sources. The later idx 66/61 (G5/G3) wording will need merging with it.
 
 ## community:compute_os (run `wf_9603e249-d87`)
 
