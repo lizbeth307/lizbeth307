@@ -2842,3 +2842,35 @@ GNSS/IMU і механіка без нових висновків, обидва 
 
 ---
 
+### 🤖 Зведення #98 — 2026-10-18 00:59:42 UTC
+
+**Зведення (тік, коміт b400cb9).** Нових запусків не було, черга порожня. Готово 9 з 12 компонентів. Ось що нового:
+
+- **Ринок екранів:** з'явилися перші кандидати.
+  - 8″ 1200×1920, трансфлективна панель, читається на сонці, сенсор, $74,99 (viewedisplay.com). Інтерфейс, найімовірніше, MIPI, тож потрібна плата HDMI→MIPI; її в того ж продавця теж перевіряють.
+  - 8″ 1200×1920 на 1100 ніт, MIPI, ємнісний сенсор (Youritech) і схожа 8″ панель від VIP-LCD.
+  - Готові монітори: Lilliput 819H/T (8″, 1000 ніт, IP65, сенсор, HDMI), Xenarc 702GSH, Waveshare 8DP-CAPLCD.
+- **Механіка (перевірка):** розраховано «чисті» вікна піксельної частоти, гармоніки яких до 2,4 ГГц не потрапляють у наші смуги, із запасом 10 МГц:
+
+  | Режим | Чисті вікна піксельної частоти |
+  |---|---|
+  | 1920×1200 | 164,5–168 МГц |
+  | 2560×1600 | 256–259, 266–273,5 і 287,5–300 МГц |
+
+  Стандартний режим 2560×1600@60 зі скороченим гасінням (268,5 МГц) потрапляє в чисте вікно.
+- **GNSS/IMU (перевірка):** конфігурація ядра Radxa 7.0 має драйвери GNSS (UBX), PPS через GPIO і через UART, а також USB-UART CH341 і CP210X. Тобто PPS підключається без перезбирання ядра; для закріпленого ядра 6.18 це ще треба звірити. SparkFun BNO086 (Qwiic) є в Україні: 4060 ₴ у LUXOR.uno, у наявності.
+- **Складні антени (L-діапазон):** розміри helicone T0nito: основа 134 мм, верх 440 мм, висота 88 мм. Як складаний відбивач агент розглядає фото-відбивач 5-в-1 на 60 см, решітку 2×2 з патч-антен і екранувальну тканину з міддю й нікелем з prom.ua.
+
+Софт без нових висновків, ще в етапі власних виправлень.
+
+Джерела:
+- [viewedisplay: HDMI to MIPI DSI board](https://viewedisplay.com/product/hdmi-to-mipi-dsi-converter-board/)
+- [Youritech 8″ 1100 nits 1200×1920](https://www.youritech.com/products/8-inch-high-brightness-display-1100nits-ips-1200x1920-mipi-tft-lcd-display-with-capacitive-touch.html)
+- [VIP-LCD 8″ 1200×1920](https://www.vip-lcd.com/8-inch-High-Brightness-IPS-TFT-LCD-1200x1920-MIPI-Interface-for-Industrial-HMI-Outdoor-Devices-pd584256048.html)
+- [Lilliput 819H/T](https://www.markertek.com/product/lil-819h-t/lilliput-819h-t-8-inch-1000-nits-ip65-industrial-touchscreen-monitor-ip65-unit-with-hdmi)
+- [Xenarc 702GSH](https://www.xenarc.com/702GSH.html)
+- [Waveshare 8DP-CAPLCD](https://www.waveshare.com/product/displays/lcd-oled/lcd-oled-1/8dp-caplcd.htm)
+- [radxa_qcom_7_0_defconfig](https://raw.githubusercontent.com/radxa/kernel/linux-7.0.11/arch/arm64/configs/radxa_qcom_7_0_defconfig)
+
+---
+
