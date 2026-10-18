@@ -33186,6 +33186,119 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Rates: 1.125 USD/EUR. Source quality: FNIRSI, Elektor, Botland and openelab prices were read from the stores' JSON or HTML on 18 Oct 2026. I could not read AliExpress official-store prices (JS-only pages); they are not included and must not be assumed. WebFetch hit HTTP 429 often, so curl was used for the Shopify JSON. 15 WebSearch calls used.
 
+## searchA:pelican_1450_apache_3800_case_with_divid (run `wf_c3ba734e-52b`)
+
+- **Part:** Bench-kit hard case (Pelican/Peli 1450 with padded dividers; Apache 3800 listed as budget alternative). Lab extended, qty 1, bench kit only (about 8.8 L of contents).
+- **Current price usd:** STACK lists 30-169 (Apache 3800 $30-35 US; Pelican 1450 $106-169). For Europe that range is not achievable. reaudit_D says the Apache 3800 is sold in US stores only. Verified EU price of the genuine part: Peli 1450-000-110E with foam is EUR 209 incl. 19% VAT at Thomann DE, in stock (about EUR 176 ex VAT, about $204 at an assumed 1.16 USD/EUR). The padded-divider configuration costs more. The Peli 1455 divider set is $102.95-105.95 in the US (Adorama, Markertek; search snippets, pages blocked). An RS NL/BE listing shows EUR 184.57 ex VAT (EUR 223.33 incl. VAT), configuration unclear (search snippet; RS returns 403). The realistic EU current cost is therefore about EUR 209-300 incl. VAT for a 1450 with dividers.
+- **Critical specs:**
+  - Interior size at least the Peli datasheet figure: 374 x 260 x 154 mm (lid 44 + base 111 mm), 15 L. The bench layout and the ESD-mat fold test are sized to about 37 x 26 x 15 cm. STACK's 37.1 x 25.8 x 15.2 cm / 14.5 L is slightly low against the Peli EU datasheet.
+  - Base depth at least about 111 mm (Hantek, LiteVNA, Anker 737, ISDT 608PD, Pinecil kit sit in the base).
+  - IP67 dust and immersion sealing with an O-ring lid.
+  - AUTOMATIC pressure-equalisation (purge) valve. D14 allows the case as checked baggage, and a manual valve depends on the operator remembering it.
+  - Crush and impact resistance: polypropylene shell, recognised test standards (Peli: MIL C-4150J, Def Stan 81-41).
+  - Padded hook-and-loop divider insert (or soft pouches). radio_lab rejects pick foam to save space.
+  - Empty weight at most about 2.5 kg (loaded budget 8.2-9.1 kg).
+  - Exterior about 41 x 33 x 17.5 cm or similar, acceptable as checked baggage; airline transport approval (ATA 300) is a plus.
+  - Hardware: double-throw latches, padlock or TSA-lock holes (Peli 5/16 in), stainless-steel hinge pins and padlock protectors.
+  - Temperature range (Peli -40 to +98.9 C).
+  - Warranty (Peli lifetime where the law allows) and a genuine part from an authorised seller: counterfeit Peli/Pelican cases exist on marketplaces.
+  - EU availability (user region Europe).
+- **Candidates:**
+  1.
+    - **Name:** B&W International outdoor.case Type 4000 RPD (padded dividers), e.g. 4000/Y/RPD, EAN 4031541703408
+    - **Kind:** other_brand
+    - **Price usd:** EUR 113.10 incl. 19% VAT, new, eBay.de seller FLOHR-Industriebedarf (about EUR 95 ex VAT, about $110 at 1.16 USD/EUR). Astroshop.eu shows $140.00 incl. VAT for the black RPD (page served in USD). An empty case is EUR 107.99 at aio.lv (yellow, 2-year dealer warranty); the RPD insert alone is EUR 31.50-40.57.
+    - **Spec comparison:** Interior 385 x 265 x 165 mm / 16.6 L vs Peli 374 x 260 x 154 / 15 L: larger in every dimension (better). Exterior 420 x 325 x 180 vs 409 x 331 x 175: about 1 cm longer and 0.5 cm taller, which is fine for checked baggage. Weight 2.25-2.3 kg vs 2.5 kg empty: better, though one retailer lists 2.95 kg (conflict, unverified). IP67 (Astroshop claims 5 m test) vs IP67: equal. Automatic pressure-compensation valve vs automatic purge valve: equal. Standards STANAG 4280, DEF STAN 81-41, ATA 300 and a downloadable MIL-STD-810G report vs MIL C-4150J and Def Stan 81-41: equal or better. Padded washable nylon hook-and-loop dividers plus egg-crate lid foam are included, vs Peli 1455 bought separately: equal. Latches are two two-stage (double-throw class): equal. Padlock eyelets 7 mm vs Peli 5/16 in (7.9 mm): slightly smaller. Warranty is 30 years per Transcat and a B&W booklet (not read directly) vs Peli lifetime: comparable for this use. Company based in Ibbenbueren, Germany; production site not verified.
+    - **Worse in:** Published temperature range is -30 to +80 C vs Peli -40 to +98.9 C. Both limits are wider than the bench contents tolerate (Li-ion power bank, LCDs), so this is not load-bearing, but it is a lower spec. Lid/base depth split for the 4000 is unpublished (the Type 3000 is 40/110 mm), so base depth of at least 111 mm must be measured on arrival. Hinge-pin material is unpublished (Peli: stainless). Padlock eyelet is 7 mm vs 7.9 mm. The weight figure conflicts between sources.
+    - **Compatibility:** Passive item with no electrical, driver or rail interaction. Larger interior, so the Peli layout (left VNA/RF, centre Hantek/Pinecil/mat, right tools/power) and the ESD-mat fold test (37 x 26 x 15 cm) fit. Checked-baggage OK; Li-ion items still travel in the cabin per D14. Sold by EU dealers (DE, EE, LV, FR, CH).
+    - **Risks:** Buy new from a commercial seller or authorised dealer. Check the yellow vs black SKU. Acceptance check: measured base depth of at least 111 mm, valve present and automatic, insert included. The 30-year warranty claim comes from a US distributor and needs confirming with B&W. The eBay listing price is a snapshot.
+    - **Seller url:** https://www.ebay.de/p/1825108460
+    - **Sources:**
+      - https://www.ebay.de/p/1825108460
+      - https://www.astroshop.eu/multi-purpose-cases/b-w-type-4000-case-black-compartment-divisions/p,55933
+      - https://www.transcat.com/brand/b-w-north-america-store/4000-y-rpd
+      - https://aio.lv/en/product--bw-4000y--4098118.md
+      - https://mediagear.ee/?p=365441
+      - https://www.videoplusfrance.com/en/5004004-bw-interieur-rpd-type-4000-noire.html
+  2.
+    - **Name:** Plastica Panaro MAX Cases MAX380H160 (empty) + INT380H160CAM padded-divider kit (Panaro also lists a complete MAX380H160CAM SKU)
+    - **Kind:** other_brand
+    - **Price usd:** About EUR 155 total, UNVERIFIED: case EUR 76.92 HT at Sonovente FR plus divider kit EUR 78 at Sonovente ES (VAT basis unclear); both from search snippets, as the pages return 403. MAX380H160S with cubed foam is EUR 80.52 ex / EUR 99.84 incl. VAT at Mediagear EE (snippet; page 404). A UK snippet of GBP 34.75 for the bare case at Solent Plastics could not be opened (503). Roughly $180 with dividers, so about $70 more than the B&W 4000 RPD.
+    - **Spec comparison:** Interior 380 x 270 x 160 mm (lid 36 + base 124) / 16.4 L vs Peli 374 x 260 x 154 (44 + 111) / 15 L: better overall and in base depth. Exterior 414 x 345 x 174. Weight 2.20 kg (Panaro page; one retailer says 2.455) vs 2.5 kg: better. IP67 certificate, automatic pressure release valve: equal. STANAG 4280 / DEF STAN 81-41, MIL-STD-810H, ATA 300 Cat. 1, UN4H2: equal or better. Double-throw latches, holes for double padlocking, soft-grip handle. Padded dividers and a lid organiser are offered as factory options.
+    - **Worse in:** Hinge pins are nylon (Panaro page) vs Peli stainless steel. Padlock holes show no stainless protectors. Lid depth is 36 mm vs 44 mm. Temperature range and warranty are not published (not verified). The price is not verified, and with the divider kit it is not clearly cheaper than the B&W.
+    - **Compatibility:** Passive; larger interior and base, so the layout and fold test fit. Checked-baggage size. Made in Italy (EU).
+    - **Risks:** Prices come only from search snippets (blocked pages); confirm the divider-kit part number with the dealer. The nylon pins are a durability downgrade against Peli's stainless pins.
+    - **Seller url:** https://panarocases.com/en/products/packaging/k-series/max380h160
+    - **Sources:**
+      - https://panarocases.com/en/products/packaging/k-series/max380h160
+      - https://www.sonovente.com/fr-cm/panaro-max380h160-p119836.html
+      - https://www.sonovente.com/es-es/panaro-int380h160cam-p120879.html
+      - https://mediagear.ee/?p=205416
+  3.
+    - **Name:** Explorer Cases (GT Line) 3818HL.B, with cubed foam
+    - **Kind:** other_brand
+    - **Price usd:** EUR 121 incl. VAT at Thomann BE (about EUR 100 ex 21% VAT, about $116). Thomann PT EUR 106 and ES EUR 111 per search snippets.
+    - **Spec comparison:** Interior 380 x 270 x 180 mm / 18.5 L: better. Exterior 420 x 340 x 202: about 2.7 cm taller. Weight 2.66 kg with foam vs Peli 2.9 kg with foam: about equal. IP67: equal. Temperature -33 to +90 C vs -40 to +98.9 C: worse. Polypropylene, made in the EU, 3-year Thomann warranty.
+    - **Worse in:** The pressure-equalisation valve is MANUAL vs Peli automatic: a functional downgrade for checked baggage. The insert is pick/cubed foam, not dividers (a padded-bag variant was not found). Temperature range is narrower. Test standards beyond IP67 and the hinge/latch materials are not listed. The case is taller.
+    - **Compatibility:** Passive; interior fits. Pick foam is against the radio_lab space plan unless the foam is removed and pouches are used.
+    - **Risks:** Not not-worse because of the manual valve. Reject unless the valve rule is relaxed.
+    - **Seller url:** https://www.thomann.de/be/explorer_cases_3818hl.b.htm
+    - **Sources:**
+      - https://www.thomann.de/be/explorer_cases_3818hl.b.htm
+      - https://www.thomann.pt/explorer_cases_3818hl.b.htm
+  4.
+    - **Name:** Nanuk 920 (cubed foam or padded dividers)
+    - **Kind:** other_brand
+    - **Price usd:** NOT cheaper: EUR 183.95 with cubed foam at nanuk.eu; GBP 214.96 ex VAT with padded dividers and GBP 126.62 ex VAT empty at tester.co.uk.
+    - **Spec comparison:** Interior 381 x 267 x 157 mm / 16 L, but the base is 104 mm and the lid 53 mm (Peli base 111). Weight 2.3 kg: better. IP67, automatic valve, NK-7 resin, PowerClaw latches with stainless hardware, stainless padlock eyelets, limited lifetime warranty.
+    - **Worse in:** Base depth is 104 mm vs 111 mm. Temperature range is -55 to +70 C (nanuk.eu) or -29 to +60 C (tester.co.uk) vs a Peli maximum of +98.9 C. It is not cheaper in the EU.
+    - **Compatibility:** Passive; the base is 7 mm shallower, so tall items would need checking.
+    - **Risks:** Rejected: not cheaper and worse in base depth.
+    - **Seller url:** https://nanuk.eu/products/nanuk-920
+    - **Sources:**
+      - https://nanuk.eu/products/nanuk-920
+      - https://www.tester.co.uk/nanuk-protective-case-920-optional-foam-dividers-organisers-choice-of-design
+  5.
+    - **Name:** B&W outdoor.case Type 3000 (RPD or foam)
+    - **Kind:** other_brand
+    - **Price usd:** Cheaper than the Type 4000 (exact EU price not retrieved).
+    - **Spec comparison:** Interior 330 x 235 x 150 mm / about 12 L (lid 40, base 110). IP67, automatic valve, 1.7-1.95 kg.
+    - **Worse in:** Too small: 44 mm shorter, 25 mm narrower, 4 mm shallower than the Peli interior. It fails the 37 x 26 x 15 cm layout and the ESD-mat fold test.
+    - **Compatibility:** Does not fit the bench layout.
+    - **Risks:** Rejected.
+    - **Seller url:** https://www.cliftoncameras.co.uk/b-and-w-outdoor-case-type-3000-with-dividers/body-colour/black
+    - **Sources:**
+      - https://www.cliftoncameras.co.uk/b-and-w-outdoor-case-type-3000-with-dividers/body-colour/black
+      - https://connscameras.ie/bags-cases-straps/bw-international-type-3000-outdoor-case-yellow-with-foam/4031541703323/58325/
+  6.
+    - **Name:** Peli 1450-000-110E with foam (cheaper same-vendor SKU than 1450 + 1455 dividers)
+    - **Kind:** current_part
+    - **Price usd:** EUR 209 incl. VAT at Thomann DE, in stock (about $204 ex VAT). Bax-shop UK GBP 176 (silver, foam); Restore UK GBP 110.50 (snippet). Adding the Peli 1455 divider set costs $102.95-105.95 US.
+    - **Spec comparison:** Peli EU datasheet: interior 37.4 x 26.0 x 15.4 cm (lid 4.4, base 11.1), 15 L, 2.5 kg empty / 2.9 kg with foam, IP67, automatic purge valve (3-micron hydrophobic vent), stainless pins and padlock protectors, -40 to +98.9 C, MIL C-4150J, Def Stan 81-41, lifetime guarantee, made in Germany.
+    - **Worse in:** With foam instead of dividers it wastes space (radio_lab), unless the foam is pulled and soft pouches are used. With genuine dividers it costs about EUR 300.
+    - **Compatibility:** This is the reference part.
+    - **Risks:** Counterfeits exist on marketplaces; buy from Thomann, RS or another authorised seller.
+    - **Seller url:** https://www.thomann.de/de/peli_1450_foam_black.htm
+    - **Sources:**
+      - https://www.thomann.de/de/peli_1450_foam_black.htm
+      - https://docs.rs-online.com/83cd/A700000014061190.pdf
+      - https://www.adorama.com/pl1455.html
+      - https://www.markertek.com/product/bpl1455/pelican-1455-padded-divider-set-for-1450-protector-series-cases
+      - https://nl.rs-online.com/web/p/transit-cases/0618790
+  7.
+    - **Name:** Harbor Freight Apache 3800 (STACK budget alternative)
+    - **Kind:** current_part
+    - **Price usd:** $29.99, or $24.99 member price (Slickdeals posts). US in-store only per reaudit_D; not purchasable for a user in Europe.
+    - **Spec comparison:** Interior about 14-7/8 x 10-5/8 x 6-1/8 in (37.8 x 27.0 x 15.6 cm) per retail listings. Rated IP65.
+    - **Worse in:** IP65 (jets) vs IP67 (immersion). No published valve, test standards or temperature range found. Weight unverified (one forum claim of 15.4 lb looks implausible). Not available in the EU.
+    - **Compatibility:** Fits dimensionally, but not EU-available.
+    - **Risks:** Drop it from the EU stack; reaudit_D already refutes it as a world option.
+    - **Seller url:** https://slickdeals.net/f/15103936-harbor-freight-apache-3800-weatherproof-case-29-99-b-m-or-6-99-shipping
+    - **Sources:**
+      - https://slickdeals.net/f/15103936-harbor-freight-apache-3800-weatherproof-case-29-99-b-m-or-6-99-shipping
+      - https://slickdeals.net/f/19280394-apache-3800-weatherproof-protective-case-large-black-harbor-freight-members-only-price-24-99
+- **Notes:** RECOMMENDATION (angle A): replace the Pelican/Peli 1450 with dividers (EU about EUR 209 with foam, about EUR 300 with genuine dividers) by the B&W outdoor.case Type 4000 RPD at about EUR 113 incl. VAT (about $110 ex VAT). That saves about EUR 100-190 and includes the padded dividers. On every load-bearing spec it is equal or better: larger interior (385 x 265 x 165 vs 374 x 260 x 154 mm), IP67, automatic valve, DEF STAN 81-41 / STANAG 4280 / ATA 300 / MIL-STD-810G report, about 2.3 kg, padded dividers included, long warranty. Disclosed downgrades, which I judge not load-bearing for a bench kit (the contents' own limits are tighter): temperature range -30 to +80 C vs -40 to +98.9 C, and a 7 mm vs 7.9 mm padlock eyelet. Unverified: hinge-pin material, the lid/base split (measure base depth of at least 111 mm on arrival, and return within 14 days if smaller), the 30-year warranty (US-distributor claim), and the 2.25-2.95 kg weight conflict. If the orchestrator treats temperature range as a hard spec, no candidate passes and the Peli 1450 stays. The runner-up, MAX380H160 + INT380H160CAM (about EUR 155, prices unverified), has nylon hinge pins. Explorer 3818 is rejected (manual valve). Nanuk 920 is rejected (not cheaper, base 104 mm). B&W Type 3000 is rejected (too small). Apache 3800 should be removed from the EU stack (US in-store only, IP65). STACK corrections: the Peli 1450 interior per the Peli EU datasheet (05-09-25) is 37.4 x 26.0 x 15.4 cm, 15 L (not 37.1 x 25.8 x 15.2 / 14.5 L), 2.5 kg empty / 2.9 kg with foam. The EU current price is about EUR 209+ incl. VAT, not $106-169. Method limits: RS, Sonovente, Adorama, Wex and Pelican pages returned 403, so those prices are search snippets only. USD conversions assume about 1.16 USD/EUR; that rate is not verified for October 2026. The case is passive, so none of the hard rules (receive-only, conducted sources, no loops) apply. The D14 travel rules still apply: Li-ion items go in the cabin, not in a checked case.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
