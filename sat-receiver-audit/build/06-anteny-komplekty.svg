@@ -151,9 +151,10 @@
 <line x1="1260.0" y1="602.0" x2="1380.0" y2="602.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
 <text x="1320.0" y="598.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">≥30 см</text>
 <text x="1190.0" y="700.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">магнітна основа або стрічка</text>
-<text x="1008.0" y="772.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Приймання: ≥3.05 V на IPEX під 150 Ohm (≈20 mA), інакше bias-tee 5 V.</text>
-<text x="1008.0" y="788.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Надлишок дроту — подалі від краю USB 3/HDMI/DC-DC.</text>
-<text x="1008.0" y="804.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">GLONASS — підтвердити тестом gpsd SKY; L5 не використовується.</text>
+<text x="1008.0" y="772.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Приймання: ≥3.05 V на IPEX під 150 Ohm (≈20 mA), інакше</text>
+<text x="1008.0" y="788.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">TPS2553 → bias-tee на P7 → SMA DC-блок → IPX-пігтейл.</text>
+<text x="1008.0" y="804.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Надлишок дроту — подалі від краю USB 3/HDMI/DC-DC.</text>
+<text x="1008.0" y="820.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">GLONASS — підтвердити тестом gpsd SKY; L5 не використовується.</text>
 <rect x="20.0" y="852.0" width="480.0" height="352.0" fill="#f4f8ff" stroke="#000" stroke-width="1.4"/>
 <rect x="20.0" y="852.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
 <text x="28.0" y="871.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">7. QO-100: голий Bullseye + конус 11 см (Європа)</text>
