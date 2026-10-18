@@ -159,7 +159,7 @@
 <rect x="20.0" y="852.0" width="480.0" height="352.0" fill="#f4f8ff" stroke="#000" stroke-width="1.4"/>
 <rect x="20.0" y="852.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
 <text x="28.0" y="871.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">7. QO-100: голий Bullseye + конус 11 см (Європа)</text>
-<text x="28.0" y="898.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">→ F, Goobay 58814 1 м → P4 LNB (13.2 V, лише вертикаль)</text>
+<text x="28.0" y="898.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">→ F, Goobay 58814 1 м → P4 LNB (13.2 V; з QRO.cz — 12.5 V; лише V)</text>
 <line x1="170.0" y1="908.0" x2="170.0" y2="1114.0" stroke="#999" stroke-width="0.6" stroke-dasharray="3,3"/>
 <text x="30.0" y="922.0" font-size="12" text-anchor="start" font-weight="bold" fill="#555">ПАКОВАНИЙ</text>
 <text x="180.0" y="922.0" font-size="12" text-anchor="start" font-weight="bold" fill="#555">РОБОЧИЙ</text>
@@ -245,10 +245,11 @@
 <text x="1008.0" y="1150.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">1 см, перекриття ≥1 см. Модель 13-15.7 dBic (не виміряно).</text>
 <text x="1008.0" y="1166.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">A/B t0nito 29.7°: окремий набір пелюсток (хорда обода 18.6 см).</text>
 <text x="1008.0" y="1182.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Перші проходи HRPT вище 40° — зі штатива від 50 см.</text>
+<text x="1008.0" y="1198.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">H1 → Lime RX1: ≥12 dB (YAT-10A+ + пад 2 dB, Nooelec 100815).</text>
 <rect x="20.0" y="1214.0" width="480.0" height="352.0" fill="#fff8f0" stroke="#000" stroke-width="1.4"/>
 <rect x="20.0" y="1214.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
 <text x="28.0" y="1233.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">10. Рупор QO-100: 6 сегментів (Європа)</text>
-<text x="28.0" y="1260.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">горло на ковпачку Bullseye → F → P4 LNB (13.2 V, вертикаль)</text>
+<text x="28.0" y="1260.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">горло на ковпачку Bullseye → P4 LNB (13.2 V; QRO.cz — 12.5 V)</text>
 <line x1="170.0" y1="1270.0" x2="170.0" y2="1476.0" stroke="#999" stroke-width="0.6" stroke-dasharray="3,3"/>
 <text x="30.0" y="1284.0" font-size="12" text-anchor="start" font-weight="bold" fill="#555">ПАКОВАНИЙ</text>
 <text x="180.0" y="1284.0" font-size="12" text-anchor="start" font-weight="bold" fill="#555">РОБОЧИЙ</text>
@@ -370,7 +371,7 @@
 <text x="875.0" y="1744.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">228 мм</text>
 <text x="780.0" y="1716.0" font-size="12" text-anchor="end" font-weight="normal" fill="#000">крок 32.5 мм</text>
 <text x="518.0" y="1858.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">A/B проти 2-3-виткової в тому самому конусі — до фіналізації.</text>
-<text x="518.0" y="1874.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Лише алоу-лист NORAD: Black Kite-1/2, PHASMA-LAMARR/DIRAC.</text>
+<text x="518.0" y="1874.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Лише алоу-лист NORAD: Black Kite-1/2 (66741/68474), PHASMA.</text>
 <text x="518.0" y="1890.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">S-band LNA не названо (STACK.md §5.3) — TBD; поза підсумками.</text>
 <rect x="1000.0" y="1576.0" width="480.0" height="352.0" fill="#fff8f0" stroke="#000" stroke-width="1.4"/>
 <rect x="1000.0" y="1576.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
