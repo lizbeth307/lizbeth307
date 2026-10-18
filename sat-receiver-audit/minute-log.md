@@ -1029,3 +1029,7 @@ P5 (проміжне): G2 перевіряє заміну ALLNET 64 ГБ microSD
 
 P5 (проміжне): G2 — модуль UFS 4K-нативний. Radxa випускає для UFS окремий образ radxa-dragon-q6a_noble_gnome_r2.output_4096.img.xz (для microSD/NVMe образ _512), а XML прошивки задає bLogicalBlockSize=0x0c (4096 Б). Тому будь-який аналог UFS треба прошивати саме образом _4096. Джерело: сторінка завантажень Radxa Dragon Q6A (docs.radxa.com, Dragon Q6A → downloads). G4 — Rollei Compact Traveler No. 1 підтверджено: €50.95 (чорний), €58.95 (помаранчевий), в наявності; джерело — магазин Rollei DE (rollei.de).
 
+## 2026-10-18 13:33 UTC
+
+P5 (проміжне): G5 — кандидат на заміну запасного Wideband LNA V2 ($19.95): LNA4ALL (MMIC PSA4-5043+) коштує 20 EUR зібраний і 23 EUR з двома SMA. Це ≈$22.5–25.9, тобто дорожче за поточний. Джерело: lna4all.blogspot.com. Nooelec LaNA 100812 — $37.95, без опублікованих NF/OIP3 (nooelec.com). G4 — штативи K&F Concept від $36.99 (S255A3+BV01, kfconcept.com); довжину в складеному стані ще не перевірено.
+
