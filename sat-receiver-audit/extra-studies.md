@@ -41258,6 +41258,71 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - idx 117 still says "деталі F/LC/PTC", which contradicts the reaudit_B correction applied here.
   - idx 84 handles the Adafruit MCP23017; G2 makes the DigiKey MCP23017-E/SO conditional on the power board not being ordered yet.
 
+## edit:09_shopping_bringup:b3 (run `wf_b7e15d24-3c6`)
+
+- **Section:** 09_shopping_bringup
+- **Applied:**
+  - 82
+  - 83
+  - 84
+  - 85
+  - 86
+  - 87
+  - 88
+  - 89
+  - 90
+  - 91
+  - 92
+  - 93
+  - 94
+  - 95
+  - 96
+  - 97
+  - 98
+  - 99
+  - 100
+  - 101
+  - 102
+  - 103
+  - 104
+  - 105
+  - 106
+  - 107
+  - 108
+  - 109
+  - 111
+  - 112
+  - 113
+  - 114
+  - 115
+  - 116
+  - 117
+  - 118
+  - 119
+  - 120
+  - 121
+  - 122
+- **Skipped:**
+  1.
+    - **Idx:** 110
+    - **Why:** Superseded. G5 #13 is the record that owns the bench hub. It buys the hub (Waveshare SKU 23062) direct from Waveshare in step 7, and idx 104 has already taken the hub out of step 8. Pico stays in the DigiKey basket per G2 #5, so the 'shared Pi Hut order in step 6' that idx 110 points to does not exist. Step 8 now says 'Стендовий хаб (STT) і килимок iFixit — у кроці 7'.
+- **Notes:** File edited: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/09_shopping_bringup.md. Many v1 anchors were missing because batches 1-2 had rewritten those spots. Each such change was placed by part name in the current text, and the earlier edits were kept. All table rows still have 4 columns.
+  
+  Conflicts and merges:
+  - idx 82 vs 99 (QuietPC). G2 #1 says QuietPC is a UK seller on .co.nl. G4's own notes say QuietPC NL prices do not state VAT. QuietPC was therefore taken out of the in-EU list and added to the UK/non-EU lists; the G4 pads line names it as a UK seller. The UK sentence idx 82 anchors on had already been removed by idx 0, so only the new facts were added: Pi Hut ships by DHL Express only at GBP 30 ($39.95), VAT via IOSS up to EUR 150; the GBP 135 rule is for UK buyers. The non-EU seller list was also added.
+  - idx 109 was applied only in part. Its premise was a Pi Hut order already holding 2 Pico and the MTT hub, which no longer exists: Pico is in DigiKey (G2) and the hub comes from Waveshare (G5). The Pro Stick Plus stays in step 13 with Pi Hut terms. It is bought early in the same Pi Hut order only if the hub falls back to Pi Hut WAV-21686, which saves one DHL charge ($39.95). If Pi Hut sells out, the fallback is the Uputronics 1090 from the EU storefront, EUR 44.95 = $50.53. idx 121 and 122 were adapted the same way.
+  - idx 117 vs 93 (LNB choke). G3 #14 named the choke (LQW2UAS68NG00L) and moved it into the DigiKey order, so it wins over G6's 'name the part first'. G6's 'F/LC/PTC' wording was not used: re-audit B removed the PTC from the LNB rail. The Bullseye, Passion Radio and AXING CFA 11-00 terminator parts of idx 117 were applied.
+  - idx 111 vs G1 #4. The sled v2 gets its own third PCB design (G6 #2 owns the sled), so 'spare injector PCBs for the sled' became 'for rework'. All DigiKey lines from idx 92, 103 and 111 went into the week-1 DigiKey DE order in row 6, because the step-7 DigiKey entry was removed in batch 2.
+  - idx 115: the Lime HMC7992 stays in the week-1 DigiKey order (it was already there as 3 pcs). I added a note on the DigiKey free-shipping threshold (EUR 75). Adding the Lime Mini-Circuits parts to the step-8 order is my own suggestion and is marked as such ('примітка укладача').
+  - idx 101/102/103 (Debug Probe): placed in today's step-1 Reichelt order, because the W1-2 gate needs a UART console (marked as my note). Fallback is DigiKey DE in step 6.
+  - idx 91 (f): '2 Pico' was not added again; Pico is already in the DigiKey HMI basket. Fair-Rite 0431164281: G3's 3 pcs (protection set) are listed separately from G2's 2 pcs for HDMI.
+  
+  Subtotals recomputed:
+  - Adafruit order (idx 84+90+101): $104.95 − $12.00 − $29.50 = $63.45 (EUR 56.45); $51.55 (EUR 45.86) without the 2× MCP23017. With 19-21% VAT: $75.51-76.77, or $61.34-62.38 without MCP23017. Duty plus UHF: up to 8 lines = EUR 40 = $44.96, or 7 lines = EUR 35 = $39.34.
+  - Step-1 Reichelt (c): EUR 27.20 + EUR 11.50 = EUR 38.70 = $43.50.
+  - Botland: EUR 96.63 = $108.62; saving against Pololu direct is $36.26-38.70 before shipping, duty and UHF.
+  - Nooelec conditional totals: $224.70 / $249.70 / $274.65.
+
 ## extract:analogs_G4 (run `wf_be383e11-6dc`)
 
 - **Source:** analogs_G4
@@ -55135,6 +55200,46 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - Wording is gender-neutral.
   
   This file has no subtotal, so nothing needed recomputing. Some subtotals named in the P5 files live in other section files and were not touched: group 2.9 (178-313 becomes about 249-371), the foldable tier, and the core total.
+
+## edit:11a_changes_analogs:b4 (run `wf_d69008e8-cbb`)
+
+- **Section:** 11a_changes_analogs
+- **Applied:**
+  - 60
+  - 61
+  - 62
+  - 63
+  - 64
+  - 65
+  - 66
+  - 67
+  - 68
+  - 69
+  - 70
+  - 71
+  - 72
+  - 73
+  - 74
+  - 75
+  - 76
+  - 77
+- **Skipped:** []
+- **Notes:** I added rows 61-78 to table 11.1 in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/11a_changes_analogs.md, after the existing rows 1-60 from batches 1-3 (row number = idx + 1). The file now has 78 rows. Each row has 8 columns, and I found no pipe characters inside cells. The fields in the change JSON were cut off, so I read every decision in full from D/analogs_G5_lab_bench.json (idx 60-61 = decisions [14]-[15]) and D/analogs_G6_extended_optional.json (idx 62-77 = decisions [0]-[15]). There is no subtotal in this file, so nothing needed recomputing.
+  
+  Conflicts and how I resolved them:
+  (1) idx 63 (FlightAware Pro Stick, Pi Hut) says to buy it in the same Pi Hut order as the 2x Pico and the bench hub. But other P5 decisions already in this file move those parts off Pi Hut: row 17 Pico goes to DigiKey and row 60 hub goes to Waveshare. Each P5 decision sets the seller for its own part, so I kept Pi Hut for the stick. Row 64 says a shared parcel is only possible with the hub under row 60's fallback; otherwise the stick pays the DHL charge alone (about $112.65 landed in DE, model).
+  (2) idx 65 (H1) asks for a 12 dB pad after the H1 on the Lime path. idx 69 puts a 10 dB YAT-10A+ on that same RX1 route. Both are P5 decisions. I recorded the conflict in rows 66 and 70 and let the stricter safety requirement (12 dB) win for H1 into the Lime, because the H1 OP1dB is +18 dBm against a Lime absolute maximum of +10 dBm. Until a decision is made, H1 feeds only RTL-B, or the Lime with at least 2 dB of extra attenuation (part not chosen, not verified).
+  (3) idx 68 says to order the cables at the 1 Dec 2026 'keep/cancel' gate 'so nothing is sunk if the Lime is cancelled'. The user decision of 18 Oct 2026 keeps the Lime, so I wrote the gate only as the deadline for analog decisions and dropped the cancel reasoning.
+  (4) In idx 61, condition 5 suggests compound snips for 'dish gore templates'. I left that out because the hard rules forbid dishes; the rest of the tools change is applied.
+  (5) In idx 60 the source compares against the AN8008. I wrote 'DMM (row 54)' instead, because P5 row 54 changed the lab DMM to the AN8009. idx 66 already names the AN8009.
+  
+  Merges:
+  - idx 75 (Flamingo+ #2 on P8) overlaps row 3. Row 76 points to row 3 for price, channel and the FM-band test, and holds only the P8-specific limits, budget-alternative text and site caveat.
+  - idx 68 and idx 69 both raise the I-PEX tool question. Row 70 settles it (90609-0001) and row 69 points there.
+  - For idx 70 and idx 73 I named the existing reichelt basket (rows 6, 23, 39, 56) as the shared shipment.
+  - Row 62 keeps 2 spare MHF4L-SMA alongside the 4 installed CAB.01075 in row 69.
+  
+  FX: 1.1241 by default. Rows 68 and 77 use ECB 1.1253, as their sources do, and say so.
 
 ## edit:08c_new_gates_analogs:b1 (run `wf_d86c28f4-677`)
 
