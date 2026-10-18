@@ -78,7 +78,7 @@ Raspberry Pi Pico (RP2040, без радіо) обмінюється з Q6A че
 Голі MCP23017-E/SO на силовій платі, живлення від 3.3 V хедера Q6A, 100k до землі на всіх enable:
 - **#1 (0x20)** — виходи, 16/16: ключі LAB-порту, AUX12, VBUS RTL-A/RTL-B/HF+, LNA ch1-ch3, LNB, Boni, K1/K2, A/B перемикачів RTL-A і RTL-B.
 - **#3 (0x22)** — входи (FAULT, rail-good, DC-sense, PTC AUX, наявність sled) плюс виходи GPA7 (LNA ch4) і GPB7 (VBUS T7); теж 16/16.
-- **#4 (0x23: A2 на GND, A1/A0 на 3V3_Q6A)** — виходи GPA0 EN LIME3V3 і GPA1 RESET LC76G (через 2N7002); входи GPB0/GPB1/GPB2 — FAULT ключів VBUS RTL-B, HF+ і RTL-A; решта ліній — резерв (§5.2).
+- **#4 (0x23: A2 на GND, A1/A0 на 3V3_Q6A)** — виходи GPA0 EN LIME3V3 і GPA1 RESET LC76G (через 2N7002); входи GPB0/GPB1/GPB2 — FAULT ключів VBUS RTL-B, HF+ і RTL-A, GPB3 — FLT ключа LIME3V3; решта ліній — резерв (§5.2).
 На I2C2 також стоять 2× INA3221 (0x41, 0x43) і TCA9517DR до LAB BUS.
 
 ### 2.14. GNSS, IMU і час (§2.8, §5.2)
