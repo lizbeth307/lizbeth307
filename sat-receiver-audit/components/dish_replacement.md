@@ -745,5 +745,267 @@ _Run `wf_5a66d65f-c3f`_
 
 ## Власні виправлення (`fixes`)
 
+_Run `wf_5a66d65f-c3f`_
+
+- **Component:** Antennas replacing the dishes: QO-100 at 10.489 GHz (LNB, IF about 739-740 MHz) and L-band HRPT around 1.70 GHz
+- **Fixes:**
+  1.
+    - **Problem:** No published report of QO-100 reception with a horn, metal-plate lens, zone plate, 10 GHz patch array or flat panel. The 20-23 dBi horn figures are estimates scaled from bare-LNB and dish reports (about ±3-4 dB).
+    - **Proposed fix:** Generate the missing data yourself. Build an optimum conical horn from W1GHZ's design rules: efficiency about 0.522, slant length L = d²/(3λ), λ = 28.58 mm at 10.4895 GHz. W1GHZ says built horns 'almost always' match prediction without tuning. Then measure it against the bare LNB on the same day, with a pass/fail threshold.
+  
+  Computed dimensions, all on a 20 mm inside-diameter throat:
+  - 18 dBi: mouth 100 mm. Template arcs R_in 23.3 / R_out 117 mm, sector 154.3°.
+  - 20 dBi: mouth 126 mm. Arcs 29.4 / 185 mm, sector 122.6°. Cone 146 mm long. Beam width about 16°.
+  - 23 dBi: mouth 178 mm. Arcs 41.5 / 369 mm, sector 86.8°. Cone 318 mm long. Beam width about 11°.
+  
+  Correction to the earlier research: the lower beacon is at 10489.500 MHz, not 10489.550. It is constant-carrier FSK with 400 Hz shift. The PSK beacon is at 10489.750 MHz (AMSAT-DL bandplan).
+    - **Steps:**
+      - Throat: use 22 x 1.0 mm EN 1057 copper plumbing pipe (inside diameter 20.0 mm). Its TE11 cutoff is 8.79 GHz and TM01 is 11.48 GHz, so only one mode propagates at 10.49 GHz. Any throat must have an inside diameter between 16.8 and 21.9 mm.
+      - Fitting the throat to the LNB: on the QRO.cz LNB, put the pipe in the POTY adapter, which replaces the white cap and is held by an M4 screw. On a Bullseye or Goobay, remove the cap and measure the waveguide inside diameter with calipers. Then make a sleeve, with a step under 1 mm or a 15-20 mm taper. Remove any dielectric plug.
+      - Cutting the cone: use 0.3-0.5 mm copper, brass or tinplate, with a 6-8 mm overlap tab. Solder the seam closed and solder the small end to the pipe. ±1 mm tolerance is fine. A PETG print with copper foil also works if the foil seams overlap by at least 5 mm and are soldered. Alternatively, print the template from HDL_ANT.
+      - Baseline measurement (same day, before fitting the horn): put the bare LNB on a tripod at 13 V and point it. Azimuth/elevation: Kyiv 186°/32°, Lviv 178°/33°, Kharkiv 193°/32°, Odesa 187°/36°. Record 60 s of IQ at 7.68 Msps with the LO at 738.9 MHz. Compute the C/N in 2.7 kHz of the 10489.500 and 10489.750 MHz beacons against noise at 10489.485-10489.495 MHz. That is the same noise window DJ0ABR's code uses.
+      - Fit the horn and repeat within 30 minutes. Scan ±10° in 2° steps, and rotate the assembly in 15° steps, to find the peak.
+      - Log C/N, ambient temperature and LNB current for both runs. This log becomes the missing field report.
+    - **How to verify:** Pass if the horn's C/N minus the bare LNB's C/N is +8 to +12 dB for the 20 dBi horn, or +11 to +15 dB for the 23 dBi. The extra 1-3 dB beyond the directivity gain is expected, because the narrow beam sees less warm ground. If the gain is under +6 dB, check in this order: throat step or gap, seam continuity, polarisation rotation, a dielectric left in the throat, pointing.
+  
+  Independent check that needs no satellite: switch the SDR AGC off and compare noise power pointing at the Sun against 15-20° away. At about 300 sfu, expect about +0.4-0.5 dB for 20 dBi (ΔT about 7 K) and +0.7-0.9 dB for 23 dBi (ΔT about 14 K). A bare LNB rises less than 0.05 dB (ΔT about 0.7 K).
+    - **Confidence:** medium
+    - **Sources:**
+      - http://www.w1ghz.org/antbook/chap2.pdf
+      - https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines
+      - https://amsat-dl.org/en/new-qo-100-band-plan/
+      - https://github.com/dj0abr/QO100_Transceiver
+      - http://ok1dx.cz/techinfo/qo100/qo100.html
+      - https://rigexpert.com/files/product_documentation/gpsdo/TBR-AN-1.pdf
+      - https://www.wimo.com/en/qo-100-10ghz-lnb-qro-cz
+  2.
+    - **Problem:** No dish-free Metop-B AHRPT decode exists anywhere. The 2x2 helix array would be a first-of-its-kind build aimed at one ageing satellite.
+    - **Proposed fix:** Change the target instead of forcing Metop-B. New primary evidence:
+  - The SatDump satellite list (satdump.org repo, July 2026) shows MetOp-C AHRPT at 1701.3 MHz as active and healthy.
+  - The same list says MetOp-B 'suffers from intermittent modulator issues causing a distorted constellation and lower SNR than MetOp-C'. metislair puts the loss at about 7 dB since March 2025. That makes MetOp-B unreachable with about 18 dBic.
+  - AWS PFM is active: 1707 MHz, QPSK at 1.785 Msym/s, about 1.2 dB less bandwidth than Metop, SatDump pipeline aws_pfm, end of life 2029 or later per WMO OSCAR.
+  - The NOAA OSPO 'AHRPT: No' for Metop-C conflicts with SatDump. It most likely refers to NOAA's own service, not the satellite's transmitter, so verify it on air.
+  
+  Build the array in stages, with go/no-go gates measured on the existing single helix.
+    - **Steps:**
+      - Stage 0, measurement: use the existing 11-turn helix and a SAW-filtered LNA at the feed. Record one or more high Metop-C and AWS passes at 7.68 Msps on LimeSDR RX1. The LimeSuiteNG code sets a minimum of 7 Msps. Run SatDump offline with the metop_ahrpt and aws_pfm pipelines and log the peak SNR.
+      - Decision gate: thresholds are SatDump's 4 dB plus 1 dB margin. If one helix reaches 2 dB or more, build 1x2: two helices into RX1/RX2 plus MRC (Fix 3) gives +3 dB, with no combiner and no phase matching. From 0 to +2 dB, build 2x2: two 2-way Wilkinsons into RX1/RX2 plus MRC, about +5 dB after roughly 0.4 dB combiner loss and 0.5 dB phasing loss. Below 0 dB, you need 0.4 m² or more of aperture (dish-class); stop. Expect MetOp-B about 7 dB below MetOp-C, so skip it.
+      - Mechanics: space the helices 26-30 cm apart (1.5-1.7λ at 1.70 GHz) with boresights parallel within 2°. Use a common aluminium ground plane with about 3 cm bent-up edges. Mount at least 50 cm above ground and use buildings to shadow LTE towers.
+      - RF: one SAW LNA per helix (SAWbird+ GOES class; metislair advises against SPF5189Z-type boards). Inside each Wilkinson pair, use equal-length coax within ±5 mm (about 15°, under 0.1 dB loss). Between RX1 and RX2, cable length does not matter, because MRC absorbs it.
+      - Tracking: point and wait, re-aiming every 20-30 s using Gpredict and the BNO085 aid. The 2x2 beam is about 20°.
+      - Storage: two channels of CS16 at 7.68 Msps is 61 MB/s, about 55 GB per 15-minute pass. Record to UFS and delete after decoding.
+    - **How to verify:** On the same pass, compare SatDump SNR for RX1 alone, RX2 alone and the combined output. Combined should be +2.5-3 dB over the best single helix for 1x2, or +4.5-5.5 dB for 2x2. Success means a decode with RS-corrected frames and AVHRR imagery on medium and high passes.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+      - https://github.com/SatDump/SatDump/blob/master/resources/pipelines/AWS.json
+      - https://github.com/SatDump/SatDump/blob/master/resources/pipelines/MetOp.json
+      - https://blog.metislair.com/docs/Radio/L%20band%20weather%20satellite%20reception%20guide.html
+      - https://space.oscar.wmo.int/satellites/view/aws_pfm
+      - https://www.ospo.noaa.gov/operations/metop/status.html
+      - https://user.eumetsat.int/s3/eup-strapi-media/TD_18_Metop_Direct_Readout_AHRPT_Technical_Description_v3_A_1cb789b653.pdf
+  3.
+    - **Problem:** No amateur precedent or ready software for coherent two-channel HRPT combining (spatial or polarisation) on LimeSDR hardware. LimeSuiteNG has no channel alignment, and the LMS7002M phase can flip by 0 or 180° on retune.
+    - **Proposed fix:** A blind adaptive max-SNR (MRC) combiner. It has been designed, written and tested in simulation.
+  
+  What the LimeSuiteNG limesdr-micro branch (1 Oct 2026) shows:
+  - LMS7002M_SDRDevice::SetFrequency ignores the channel argument. Both RX channels therefore share one SXR local oscillator, so their phase difference is constant within a tune, apart from the 0/180° divider ambiguity.
+  - RX1 and RX2 go as analogue I/Q to LA9310 RX0/RX1 (per the docs).
+  - Each channel has its own DMA pipeline, so a constant integer-sample offset between channels is possible.
+  - Channel alignment (issue #356) is work in progress, and only for the LimeSDR-USB.
+  
+  The algorithm, in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dishfix_ag/mrc_combine.py:
+  1. Find the integer lag by FFT cross-correlation, restricted to the signal band.
+  2. For each 20 ms block, compute the band-limited 2x2 covariance and whiten it with out-of-band noise estimates. The principal eigenvector gives the weights, referenced to channel 0's phase.
+  3. Output y = wᴴx as cf32 for SatDump.
+  
+  The same weights also form RHCP from a dual-polarised panel.
+  
+  Simulation results (sim_test.py):
+  - Lags of 37 and -12 were recovered exactly, with a 180° phase offset and 0.3-0.8 rad/s phase drift.
+  - Output SNR: +3.01 dB for equal branches; 3.76 dB from branches at 2 and -1 dB (the ideal MRC value); 0.00 dB from two branches at -3 dB.
+  - Speed: about 1x real time on one x86 core.
+    - **Steps:**
+      - Install python3-soapysdr and the LimeSuiteNG Soapy plugin (driver key 'limesuiteng').
+      - Capture: for both channels 0 and 1, set rate 7.68e6, the same frequency, antenna 'LNAW' and gain. Call setupStream(SOAPY_SDR_CS16, [0, 1]) and write the samples interleaved. Alternative: limeTRX --channelsmask 3 -o pass writes interleaved CS16 to .sigmf-data. However, limeConfig only configures channel 0, so set channel 1 through Soapy or an .ini file.
+      - Combine: python3 -I mrc_combine.py pass.sigmf-data comb.cf32 --fs 7.68e6 --bw 4.5e6. Use --bw 3.4e6 for AWS and 1.5e6 for Meteor.
+      - Decode: satdump pipeline metop_ahrpt baseband comb.cf32 out --samplerate 7.68e6 --baseband_format cf32 --dc_block
+      - Check the printed lag peak/median ratio. If it is under 5, there was no common signal yet; re-run the estimate on a later part of the pass.
+      - Bench test without a second antenna: split one helix+LNA output with a 2-way splitter and put a 30 dB pad on each branch, so the LimeSDR's own uncorrelated noise dominates. Feed RX1 and RX2 through different cable lengths. The combined SNR should rise about 3 dB, which proves the lag and phase handling works.
+      - Guard against interference: band-limit to the satellite's bandwidth. Log the eigenvalue ratio per block; a sudden jump means a strong correlated interferer has captured the weights.
+    - **How to verify:** On the bench test and on a real pass, the combined SatDump SNR should equal 10·log10(10^(SNR1/10) + 10^(SNR2/10)) within 0.5 dB. Also check for no phase jumps: the PLL stays locked across blocks, and the constellation stays clean.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSuiteNG/tree/limesdr-micro/src/boards/LimeSDR_Micro
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro/src/boards/LMS7002M_SDRDevice.cpp
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro/cli/limeTRX.cpp
+      - https://github.com/myriadrf/LimeSuiteNG/issues/356
+      - https://discourse.myriadrf.org/t/limesdr-xtrx-rx-data-out-of-sync/13290
+      - https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/digital.html
+      - https://github.com/myriadrf/LMS7002M-docs/blob/master/LimeSDR-USB_channel_alignment_v01r00.pdf
+      - https://github.com/SatDump/SatDump/blob/master/README.md
+  4.
+    - **Problem:** No QO-100 beacon-lock tool for the Ubuntu + LimeSDR stack.
+    - **Proposed fix:** Confirmed gaps:
+  - SDR++ has no beacon lock. Its source tree (July 2026) has only frequency_manager, scanner, rigctl_server, iq_exporter and recorder, and ppm correction exists only in the RTL sources.
+  - SDRangel's Frequency Tracker corrects only its own channel, by at most fs/1000 per step, and needs an external reverse-API script.
+  - AMSAT-DL's tool supports only the Pluto.
+  
+  So build a small GNU Radio 3.10 front end that feeds SDR++:
+  - LimeSDR at 7.68 Msps goes into freq_xlating_fir_filter, decimating by 8 to 960 ksps. Its 'freq' message port, which takes a dict {freq: Hz} or a pair, is confirmed in the gr-filter source.
+  - An embedded Python block runs the tracker in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dishfix_ag/qo100_beacon_track.py.
+  - Acquisition searches ±400 kHz for the pair pattern: the lower beacon at 10489.500 MHz with the PSK beacon 250 kHz above it. Requiring both rejects strong SSB stations.
+  - Tracking squares a 2 kHz slice around the BPSK beacon to remove the modulation. It sends the correction back to the 'freq' port each second.
+  - The output goes to a TCP server sink, then to the SDR++ Network source.
+  
+  Simulated with a -163 kHz error drifting 3 kHz/min, plus 25 SSB-like carriers: acquisition landed within 30 Hz, and the tracking error stayed at 3 Hz or less at 13 dB C/N and 6 Hz or less at 4 dB C/N (bare-LNB level).
+    - **Steps:**
+      - sudo apt install gnuradio python3-soapysdr (GNU Radio 3.10 on Ubuntu 24.04). Then build LimeSuiteNG from the limesdr-micro branch with its SoapySDR plugin.
+      - Soapy source: driver=limesuiteng, 7.68 Msps, LO 738.900 MHz, antenna LNAW. This keeps the NB transponder 0.6-1.1 MHz away from the DC spur; F1ATB also avoids using the beacon at the DC centre.
+      - freq_xlating_fir_filter_ccc: decimation 8, taps firdes.low_pass(1, 7.68e6, 300e3, 100e3), initial centre +850 kHz.
+      - Embedded Python block, a pass-through: buffer 1 s. On the first buffer, call acquire(). After that, each second compute resid = track(buf, 960e3, 0), set centre += resid, and publish a dict {freq: centre}. If the beacon score stays under 6 dB for 5 s, re-acquire.
+      - blocks.tcp_server_sink(gr.sizeof_gr_complex, '127.0.0.1', 5555). In SDR++: Network source, TCP (Client), 127.0.0.1:5555, Float32, sample rate 960000. Set the source manual offset to 10489.750e6 so the display shows RF frequencies. Use SDR++ for SSB demodulation and recording.
+      - Log centre against time. This also measures your LNB's drift, which F1ATB reports as -140 to -180 kHz across temperature for a plain PLL LNB.
+    - **How to verify:** Over 30 minutes including warm-up and sun, the lower beacon should stay at 10489.500 MHz ±10 Hz on the SDR++ display. An SSB QSO should stay inside a 2.7 kHz filter without retuning. The correction log should look smooth, with no 250 kHz jumps from false locks.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/AlexandreRouma/SDRPlusPlus
+      - https://github.com/f4exb/sdrangel/blob/master/plugins/channelrx/freqtracker/readme.md
+      - https://github.com/gnuradio/gnuradio/blob/maint-3.10/gr-filter/lib/freq_xlating_fir_filter_impl.cc
+      - https://amsat-dl.org/en/qo-100-linux-transceiver/
+      - https://f1atb.fr/qo-100-live/
+      - https://amsat-dl.org/en/new-qo-100-band-plan/
+  5.
+    - **Problem:** The supply voltage that selects each polarisation on the QRO.cz/RemoteQTH LNB is documented inconsistently.
+    - **Proposed fix:** The sources disagree:
+  - QRO.cz's own manual (hamparts.shop) gives 11-15 VDC and says power 'is switched between 12V and 18V to select V or H polarisation', without saying which is which.
+  - WiMo says '12 V: hor, 15 V: vert'.
+  - mikrocontroller.net and the BATC forum give the TV convention: about 13-14 V vertical, 18 V horizontal.
+  
+  Make the question irrelevant. With a rotationally symmetric conical horn or a bare LNB, rotating the LNB selects the polarisation. So fix the supply at 13.0 V and find the narrowband orientation empirically, once. The wideband DATV polarisation is not decodable without a dish anyway.
+    - **Steps:**
+      - Set a buck-boost module to 13.0 V, rated at least 0.5 A. A plain buck is not enough, because the 4S pack spans 12.0-16.8 V. The QRO.cz bias box draws about 400 mA typical; the Goobay up to 167 mA. Feed the bias-tee DC port through a 0.5 A polyfuse.
+      - Point at QO-100 and tune the PSK beacon at IF 739.750 MHz.
+      - Rotate the LNB/horn in 15° steps over 180° and log beacon C/N. Expect a maximum, and about 90° away a cross-polar minimum at least 15-20 dB lower. Mark the maximum position as 'NB @ 13 V'.
+      - At that position, briefly feed 18 V from a bench supply. The beacon should fall by at least 15 dB. If it rises instead, this unit's convention is inverted; label it.
+      - Clamp and mark the rotation. Polarisation skew from Ukraine is only a few degrees.
+    - **How to verify:** Cross-polar ratio of at least 15 dB, and a beacon drop of at least 15 dB when switching 13 V to 18 V at the marked orientation.
+    - **Confidence:** high
+    - **Sources:**
+      - https://hamparts.shop/blog/lnb-dual-lo-ref-manual.html
+      - https://www.wimo.com/en/qo-100-10ghz-lnb-qro-cz
+      - https://www.mikrocontroller.net/articles/QO-100_der_erste_geostationäre_Amateurfunkumsetzer
+      - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+  6.
+    - **Problem:** The real gain and match at 1.70 GHz of the Ukrainian dual-polarised 4G MIMO panels are unknown; 1.70 GHz is below their 1710 MHz band edge.
+    - **Proposed fix:** The aperture limit already rules out the small panels. At 1.70 GHz:
+  - 20-23 cm panels: at most 12.3-13.3 dBi even at 100% efficiency, and about 10-11 dBi at a realistic 60%.
+  - 43 cm (Energy MIMO 2x24, about 2800-2950 UAH, price not re-verified): about 16.5 dBi at 60%.
+  
+  So only the 43 cm panel is worth testing. Its two ports into RX1/RX2, combined with the Fix 3 MRC script, give full RHCP gain with no 3 dB polarisation loss.
+  
+  Measure it three ways.
+    - **Steps:**
+      - S11 of each port on a NanoVNA that reaches at least 1.8 GHz (V2 or LiteVNA class; a NanoVNA-H is only usable to about 1.5 GHz). Accept -10 dB or better across 1.69-1.71 GHz, which means 0.46 dB or less mismatch loss.
+      - Three-antenna Friis method, using helix #1, helix #2 and one panel port. Separation 5 m (the far field begins at about 2.1 m for the panel and 2.6 m for a 48 cm helix). Free-space loss is 51.0 dB at 1.70 GHz and 5 m. Mount everything 1.5-2 m high, outdoors. Use 0 dB polarisation loss for helix-to-helix (both RHCP, facing each other) and 3 dB for helix-to-linear. Solve: G_A = (L_AB + L_AC - L_BC)/2, where each L is the measured S21 plus FSPL plus the polarisation correction.
+      - Sun-noise ratio: use the same SAW LNA and fixed LimeSDR gain, with AGC off, measuring 2 MHz around 1700 MHz away from LTE. ΔP = P_sun - P_cold-sky in linear units, and gain ratio = ΔP_A / ΔP_B. At about 80 sfu, expect ΔT about 14 K for a 13 dBic helix and about 29 K for a 16 dBi panel port.
+      - On-air comparison: helix on RX1 and panel on RX2, on the same Meteor-M2-4 pass, with the same LO. Then move both panel ports to RX1/RX2 and apply MRC. Compare the SatDump SNRs.
+      - For a geostationary reference: the SatDump list says Elektro-L3 transmissions are paused pending Elektro-L5 commissioning. FengYun-2H at 79°E sends a strong 1690.5 MHz carrier around each LRIT slot (every 3 h from 00:48 UTC), at a calculated elevation of 13-20° from Ukraine.
+    - **How to verify:** The Friis and sun-noise gains should agree within 1.5 dB. Buy or keep the panel only if the MRC-combined panel beats a single helix by at least 2 dB on the same pass.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://prom.ua/Antenny-mimo-2x2.html
+      - https://5g.in.ua/en/4g-3g-lte-antenna-panelnaya-energy-mimo-2-x-15-db-1700-2700-mgts/
+      - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+      - https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/rfcontrol.html
+  7.
+    - **Problem:** Selfsat-type flat Ku panels are unproven at 10.489 GHz.
+    - **Proposed fix:** Do not buy one for this build. For close-to-dish gain without a dish, use the W1GHZ 300 mm metal-plate lens on the 20 dBi horn instead: 27.4 dBi measured at 10 GHz, about $10-25 in materials.
+  
+  If you test a panel anyway, buy from an EU shop with a 14-day return right and run a front-end test that needs no satellite before the beacon test.
+    - **Steps:**
+      - Power at 13 V with the 9.75 GHz LO (no 22 kHz tone), point at clear sky, and measure the IF noise density at 739 MHz (10.489 GHz RF) against 1000 MHz (10.75 GHz RF).
+      - If 739 MHz is more than 3 dB below 1000 MHz, the panel's input filter is rolling off at 10.49 GHz. Expect at least that much loss in G/T. Return it.
+      - If it is flat, run the Fix 1 beacon C/N comparison against the horn. Run beacon lock (Fix 4) because the LNB is not TCXO-stabilised. Mount on a tripod, since it weighs 4-4.5 kg.
+    - **How to verify:** Noise-floor slope under 3 dB between 739 and 1000 MHz IF, and a beacon C/N at least 6 dB above the 23 dBi horn. Otherwise return it.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://asset.conrad.com/media10/add/160267/c1/-/de/000943058DS01/tehnicni-podatki-943058-selfsat-h-30-d-sat-antena-brez-sprejemnika-stevilo-udelezencev-1.pdf
+      - http://www.w1ghz.org/antbook/chap3.pdf
+  8.
+    - **Problem:** Key BATC and SARTS figures could only be read as search snippets, because those sites block automated readers: Bullseye drift, the DATV MER ceiling and the SARTS bare-LNB slide.
+    - **Proposed fix:** Replace the snippet-only numbers with your own measurements, and anchor on primary sources that can be read in full: OK1DX and RigExpert TBR-AN-1 for bare-LNB results, the AMSAT-DL bandplan, and F1ATB's drift data. The DATV MER ceiling no longer matters for the decision, because no non-dish option reaches the roughly 33 dBi needed.
+    - **Steps:**
+      - Bullseye drift: run the Fix 4 tracker log over a sunny afternoon and a cold night. The spec is ±10 kHz at 23°C and ±30 kHz from -20 to 60°C.
+      - Bare-LNB C/N: take the Fix 1 baseline at your own site. It replaces the SARTS slide.
+      - Archive the IQ files and logs, and post them to the BATC or AMSAT-DL forums. That turns this build into the missing first report.
+    - **How to verify:** Your own logged C/N and drift numbers fall within the ranges quoted by the accessible sources (OK1DX, RigExpert, F1ATB), or explain any difference.
+    - **Confidence:** high
+    - **Sources:**
+      - http://ok1dx.cz/techinfo/qo100/qo100.html
+      - https://rigexpert.com/files/product_documentation/gpsdo/TBR-AN-1.pdf
+      - https://f1atb.fr/qo-100-live/
+      - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+  9.
+    - **Problem:** A reader's Goobay external-reference modification failed (no test tone, raised noise floor), and this was never explained.
+    - **Proposed fix:** Diagnosis, from the baltic-lab article (chip marked '3566E' with a 25 MHz crystal, LO = 390 x ref; about 3 Vpp injection through 2.2 µH plus 18 pF; current rose from 60 to 90 mA at lock) and the reader Ali's comment:
+  (a) A rising noise floor when the reference is applied is the normal sign of a running LO: the LNB's amplified noise is being converted to IF. The LNB was probably working.
+  (b) The test tone was the 3rd harmonic of a Pluto. That is very weak, and TV LNB input filters are specified only from 10.7 GHz.
+  (c) The reference frequency sets the IF. 25.00 versus 25.78 MHz moves the LO by 304 MHz, so the IF may simply have been outside the window being watched.
+  (d) The article is ambiguous about XTAL1 versus XTAL2. Injecting into the oscillator output pin, or overdriving it, can give an injection-pulled, noisy LO. Reciprocal mixing then raises the noise floor.
+  
+  Fix: use the real satellite as the test signal, and inject a clean sine of 0.5-1 Vpp into the oscillator input pin. Better still, buy a TCXO LNB: QRO.cz from €65 or Bullseye $29.95.
+    - **Steps:**
+      - Before modifying, check the stock Goobay on the QO-100 beacons: IF 739.500 and 739.750 MHz, with a ±300 kHz search (use the Fix 4 tracker).
+      - Remove the crystal. Drive a 25.000 MHz 0.5 ppm TCXO (clipped sine, about 0.8 Vpp) through a 100 pF capacitor into one crystal pad, and leave the other pad open. Try both pads. The right one gives lock (the current step) AND a clean beacon line.
+      - Judge the LO quality from the beacon: the PSK beacon spectrum should be narrow (a few hundred Hz), and the noise floor at 10489.49 MHz should equal its level with the stock crystal. A smeared beacon or a higher floor means a noisy LO; reduce the drive or move pins.
+      - If it still fails after 2 hours of work, stop and buy a TCXO LNB.
+    - **How to verify:** Beacons appear at the expected IF to within the TCXO error (±2.5 kHz at 9.75 GHz for 0.25 ppm), with beacon C/N within 1 dB of the stock-crystal LNB.
+    - **Confidence:** low
+    - **Sources:**
+      - https://baltic-lab.com/2023/07/lnb-modification-for-10-ghz-qo-100-satellite-reception/
+      - https://www.wimo.com/en/qo-100-10ghz-lnb-qro-cz
+      - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+  10.
+    - **Problem:** No field reports yet of the LimeSDR Micro M.2 used with an LNB or an L-band LNA chain. Its overload level and bias-tee handling are undocumented.
+    - **Proposed fix:** What the official docs and code establish:
+  - RX ports are RX*_W (0.7-2.6 GHz, LNAW) and RX*_L (0.3-2.2 GHz, LNAL), switched together for both channels by SKY13414 switches. Both 739 MHz and 1.70 GHz are covered.
+  - No bias tee is documented. Lime forum users confirm none on the Mini or USB boards; the XTRX has only an optional one.
+  - Both RX channels share one LO. You cannot receive the QO-100 IF on RX1 and L-band on RX2 at the same time.
+  - Minimum sample rate is 7 Msps (LimeSuiteNG descriptor).
+  
+  Use an external chain and set levels by the noise-rise method.
+  
+  Level budget with a 60 dB gain LNB: output noise density is about -118.6 dBm/Hz (about -27 dBm over 1.5 GHz), plus the Ku TV carriers from 26°E. After a 30 dB pad, the density is -148.6 dBm/Hz, still about 20 dB above the Lime's estimated floor of about -169 dBm/Hz. The pad therefore costs less than 0.1 dB SNR and keeps total input around -57 dBm. Lime forum users advise staying below 0 dBm, citing an IIP3 of about +4 dBm.
+    - **Steps:**
+      - QO-100 chain: LNB, then F cable, then bias tee (13 V on the DC port), then DC block, then a 20-30 dB SMA pad, then an SMA-to-MHF4 pigtail into RX1. Try LNAW and LNAL and keep whichever gives the higher beacon C/N.
+      - L-band chain: helix, then SAW LNA (3.3-5 V bias, about 50-110 mA), then coax, then bias tee (5 V), then DC block, then RX1 or RX2 on LNAW. SAWbird boards back-feed DC, so always keep a DC block on the SDR side.
+      - Noise rise: compare the IF noise floor with the LNB/LNA unpowered and powered. Aim for 10-15 dB. Above 20 dB, add pad or reduce Lime gain. Below 8 dB, remove pad.
+      - Compression check: insert an extra 3 dB pad. Signal and noise must both drop by exactly 3 dB. If their ratio changes, the chain is compressing.
+      - Ordering: Crowd Supply now lists Basic $249 and GNSS $299, with pre-orders shipping 15 December 2026. Plan the first tests with the RTL-SDR V4/V4L, which can show the QO-100 IF and Meteor HRPT, but not the 4.5 MHz Metop signal at its 2.56 Msps.
+    - **How to verify:** The noise rise lands in the 10-15 dB window, and the 3 dB-pad test shows unchanged C/N. Beacon C/N on the Lime equals or exceeds the same LNB on an RTL-SDR.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro
+      - https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/rfcontrol.html
+      - https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.0/overview.html
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp
+      - https://discourse.myriadrf.org/t/mini-2-0-rf-input-power-limits/8648
+      - https://discourse.myriadrf.org/t/bias-tee-support-on-limesdr-mini/5893
+      - https://discourse.myriadrf.org/t/bias-tee-option-on-limesdr-xtrx/13105
+      - https://discourse.myriadrf.org/t/limesdr-micro-m-2-pcie-frequency-range/13348
+- **Residual risks:**
+  - The LimeSDR Micro schedule and price have changed. Crowd Supply (October 2026) lists Basic $249 / GNSS $299 with pre-orders shipping 15 December 2026, against $199 and about 30 September in the current stack. Dual-RX streaming on it has no field reports yet.
+  - Both LimeSDR RX channels share one LO, so QO-100 IF and L-band cannot be received at the same time. The 7 Msps software minimum makes dual-channel recordings 56-61 MB/s, about 50-55 GB per 15-minute pass. The MRC script ran at about 1x real time on one x86 core; its speed on the Q6A was not measured.
+  - The horn and lens figures for QO-100 are still predictions until the user's own A/B measurement. The absolute C/N estimate is ±3-4 dB, though W1GHZ reports that built horn gain matches theory.
+  - L-band targets are uncertain. Metop-C AHRPT is 'active' per SatDump but 'No' per NOAA OSPO. Metop-B has a degraded modulator (about 7 dB loss reported). AWS EIRP is unknown and the signal fades at low elevation. Elektro-L3 transmissions are paused, and Elektro-L5 is sporadic.
+  - The adaptive MRC can be captured by a strong in-band correlated interferer. Mitigate with band-limiting and the eigenvalue-ratio log.
+  - The beacon tracker and MRC were validated only on synthetic signals, not on real hardware. Forum reports say the QO-100 beacon is occasionally jammed, so keep the re-acquire logic.
+  - Prices and stock for the SAW LNAs (SAWbird+), Wilkinson combiners, the NanoVNA V2/LiteVNA and the 43 cm Energy panel were not re-verified here.
+  - The Goobay reference-injection diagnosis is hypothesis-level; buying a TCXO LNB remains the low-risk path.
+  - The helper scripts are in a shared, temporary scratchpad folder: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dishfix_ag/ (mrc_combine.py, qo100_beacon_track.py, sim_test.py). Copy them before the session ends.
+
+## Адверсаріальна перевірка (`verify`)
+
 _Агент цього етапу ще працює (run `wf_5a66d65f-c3f`)._
 
