@@ -947,4 +947,311 @@ lab-q6a.dtso об'єднує uart6, uart7, i2c0 і i2c2 з вузлом pps-gpio
 
 **Безпека батареї.** Лише точкове зварювання; бар'єр і вентиляційний шлях; KSD9700 70 °C на IP2368; заряд лише під наглядом на негорючій поверхні або у вогнетривкому мішку; зберігання при близько 50% SoC (3.6-3.8 V/ел.); роздуті чи вм'яті елементи — у списання.
 
-<!-- STACK-APPEND -->
+---
+
+## 6. Що прибрано і чому
+
+### 6.1. Прибрано за правилами
+
+| що прибрано | правило або причина |
+|---|---|
+| КХ активна рамкова антена (LZ1AQ, Wellbrook, MLA-30+, YouLoop) і все для неї: підсилювачі, рами, дроселі для рамок | Жодних рамкових антен (рядок 11). Фізика на користь рамки біля шумного пристрою, тож видалення КХ-рамки — питання до вас. |
+| VHF-рамки 20 см і 12 см для Meteor, A/B-тести рамок, підказка IMU «супутник у площині рамки», витрати на рамку ($20-40) | Рядок 11; LRPT — складаний V-диполь. |
+| QFH (дві біфілярні рамки), eggbeater, quad, delta, biquad, halo, big wheel, феритові loopstick (CANADUINO) | Операційне визначення рамки (C16) з grep-перевіркою в CI. Дозволено: V і телескопічні диполі, Moxon, Yagi (з hairpin-узгодженням), осьові та нормальні спіралі, патч, чип, рупор, конус, штирі, E-field зонди. Складені (folded) диполі не використовуються ніде. |
+| H-field зонди ближнього поля: Com-Power PS-500 ($109), набір Zeenko 3-probe, загальні E/H набори (близько $50), саморобний H-зонд з рамкою 15 мм | Делеговане рішення (рядок 31). Замість — E-field напівжорсткі відрізки. Ціна правила: E-зонди гірше локалізують струмові петлі понижувачів. |
+| Феритова котушка AS3935 (датчик блискавки) | Рядок 31; замість — правило 30/30. |
+| Тарілки будь-якого розміру; оптимістична модель «лінза 300 мм робить типовий SSB QO-100 читабельним» | Рядок 9; модель завищена близько на 14 dB. Лінза — не тарілка, але до BOM не включена. |
+| SID на 16-25 kHz і пункт меню «VLF/LF carriers» | Рядок 36: ці маяки — військово-морські передавачі зв'язку з підводними човнами. |
+| Universal Radio Hacker (URH) | Рядок 33: архівовано, функції record-and-send і атаки. |
+| Set B (ORT 1.27 + onnxruntime-qnn 2.3.0 на QAIRT 2.47), «pin QAIRT 2.46» | Рядок 19: INT8 для QAIRT 2.42. |
+| IQ голосу: знімки ≤0.25 с, «сирі 14 днів або маскування», маскування після розмітки, MARK із сирим IQ на голосових боксах | Рядок 43: жодного IQ голосу, лише спектрограма. |
+| Таблиці і списки міст як резерв місця; константи поля і кути наведення для конкретних міст; таблиця наведення на чотири міста | Рядки 13, 39: місце — з GNSS, останнього фіксу або ручного введення; кути — з фіксу. |
+| Регіональні (UAH) цінові бази, правила мита, юридичні примітки під конкретну країну, примітки воєнного стану | Рядок 12: світові ціни; загальна юридична примітка. |
+| Декодери приватного вмісту: SDRangel demodinmarsat, SatDump inmarsat_support, stdcdec/Scytale-C з фільтрацією після декодування, пакети bulletin-board як вміст; gr-iridium (IRA/IBC), кадри Orbcomm; gr-gsm, kalibrate; пейджери, транкінг, DSD | Рядки 7, 37. Inmarsat-C — лише через egc-gate з відкиданням на заголовку. |
+| ПЗ, здатне передавати: повний GUI wsjtx, fldigi, QSSTV 9.5.8, direwolf, SoapyRemote; js8call (−1); плагін Amarisoft LimeSuiteNG; .so TX і DSD у SDRangel | Рядок 44. Замість — jt9/wsprd, slowrx, SSTV OpenWebRX+, RX-only пакетний демодулятор SDRangel. |
+| Розгортки S11 на антенах («S11 < −10 dB», «налаштувати кожен Yagi VNA», «коротка розгортка в приміщенні»), лазівка «якщо місцеві правила дозволяють», NanoVNA малого стеку ($60-130), незахищена сторінка SWR | Рядки 6, 45: будь-яка розгортка на антені випромінює (модель: −10 dBm у 2 dBi дає близько 87 dBuV/m на 3 м). |
+| Журнал пеленгів з курсу IMU, «теплова карта з GNSS-мітками», плагін SDRangel Heat Map, «GNSS-tagged surveys» | Рядок 40: огляди зберігають лише зайнятість. |
+| CARTOSAT-3 як обґрунтування S-band; рядки «Iridium reliable»; SAWbird+ IR | Рядок 7 (подвійне призначення; приватний зміст). |
+| ADALM-PLUTO | Може передавати і дублює Lime. |
+| WEFAX військових операторів (Northwood); станції NWS під керуванням USCG (за замовчуванням) | Рядок 42; USCG — збройна служба, тому питання до вас. |
+| Скан радіозондів до 406 MHz | Захоплював 406.0-406.1 MHz Cospas-Sarsat; тепер 400.0-405.9 MHz. |
+| QUIET лише з Wi-Fi | Рядок 32: rfkill блокує wlan і bluetooth. |
+| «Power meter (model TBD)», AD8318 у core, Bodnar Mini у core, дублікати OSL, набір Chelegance, пара VAT-20W2+, ZFBT у core | Рядки 35, 38 і рішення перевіряльника цінності. |
+| Політ з батареєю 72 Wh у ручній поклажі | Рядок 46: саморобна батарея ніколи не летить. |
+
+### 6.2. Прибрано як технічно замінене
+
+| що прибрано | причина / рішення |
+|---|---|
+| Батарея 3S; MT3608/XL6009 для LNB з TPS2553 | C3, C8: TPS2553 розрахований на 2.5-6.5 V; підвищувач без відключення виходу лишає 8.5-12 V на порту. |
+| Плата 8 GB; видалення Lime/T7/12 GB/складаних антен за заміненим правилом розміру | C2, C15. |
+| Живлення J21 на 9 V (Mini560/D36V50F9); SMBJ15CA «на шині J21»; SMBJ14A після регулятора | C4 і виправлення TVS: D19 стоїть на TYPEC_IN; SMBJ13A замість SMBJ14A. |
+| Buck-boost як основний 12 V; апаратна відсічка EN 13.4 V; відсічка Linux 13.6 V; дільник EN на 12.8 V | C4, D1. |
+| TPS65233, LNB 13.4/18.2 V, гілка 18 V, «18 V або поворот», S18V20AHV SEPIC + другий #2813, «12 V шина підходить LNB», LT3045 для LNB/Boni | C8: TPS7A4701 на 13.2 V. |
+| Полізапобіжник 100-160 mA; GOES+ на трійнику V4L «після прогріву»; LNA V2 і H1 на трійнику; живлення micro-USB біля антени; TCBT на каналах SAWbird+ | C9. |
+| Flamingo+ з боку SDR або «лише біля потужного FM»; режектор RTL-SDR Blog | C10. |
+| librtlsdr 2.0.3 (.so.0) і рецепт purge-and-fork | C11. |
+| Піксельна частота 128.70 MHz; нативний 1080p60 у полі; 127.9 MHz першою | C12. |
+| Route B (ядро 7.0.11) для PPS; FT232RL/pps-ldisc; запасний Route A на libgpiod v1 | C13. |
+| ina238 hwmon на i2c6; «INA228 на шині J21»; другий INA | C14. |
+| Гвинтовий штир 20 см як LRPT за замовчуванням (лишився експериментом); 2-виткова спіраль на диску 12 см + SAWbird+ iO; окремий диск 20 см; «фіксовані стрижні 53 см»; пружинна спіраль; поворот елементів 70 см на центральному гвинті | C15 і виправлення. |
+| T7 без Lime; один корінь + рятувальний rootfs 6 GB; lab-snap і оновлення на T7; запис HF+ у cf32; «5 год на UFS» | C18. |
+| FIFO 50/70 для приймання; CPU7 завжди ізольований; тренер на A55; chrt −f 10/50 | C19. |
+| Четвертий V4L; V4L як основний КХ-приймач | C21. |
+| apt nanovna-saver 0.6.3; apt Skyfield 1.48 / sgp4 2.22; Mesa 24.0.5; libgpiod v2; PPA без дзеркала | C22. |
+| Запобіжник 5 A без Lime / 7.5 A з Lime; 2 A на LAB5; LAB-порт 1 A або 0.6 A; J21 3.15 A | D2, D11. |
+| Завжди-ввімкнений MCU; LAB5 лише при ввімкненій Q6A; кнопка напряму на J21 пін 3 | D3. |
+| Межа 9 W дисплея як жорстка; LAB5 або порт Q6A для 5 V панелі; «дисплей 7-24 V від батареї»; «5 V підвищувач на 7 A» | D4 і виправлення. |
+| Безумовна купівля Wisecoco; CAD під виведений контур 164.2x98 мм зараз | D5. |
+| Блок 2x2 елементів під платою; один спільний повітряний шлях; PETG | D6, #70. |
+| Відвід XT30 до шунта | D7. |
+| Ham Filter Bank / BPF 70 см перед LNA; LNA V2 у роботі; SAWbird+ біля живлення диполя; ручне «під'єднайте X» за замовчуванням; SPF5189Z; LNA 70 см усередині корпусу | D8, #99. |
+| Ethernet у полі | D9. |
+| A/B через rtl_power з бінами 100 kHz; поріг з UBX-MON-RF | D10. |
+| Пак IMU на USB-CDC; RP2040-Zero як MCU HMI; BNO085 на I2C2; RP2350B; матриця кнопок 2x3 | D12, C6. |
+| Один MCP23017; pinctrl-mcp23s08; enable на GPIO хедера; PWM вентиляторів, оверлей PoE-HAT (1 kHz), PWM 24/25 kHz | D13, C6. |
+| Слінг 10-12 L; пристрій у Pelican; слінг 3.0-3.6 kg | D14. |
+| Старий корпус 205-215 x 130-140 x 50-55 мм; ряд HMI під екраном; HMI з обох боків; різьба 1/4-20 у пластині 2 мм; зовнішнє гніздо ANT PWR | D15, C17. |
+| sdr-ingestd/recorderd як постійні відкривачі SDR; flock на кожен SDR; окремий демон rflab; друге кільце і записувач; другий рендерер водоспаду | C7. |
+| Кільце RAM 6 або 8 GiB | RAM-рішення (5.5). |
+| Фіксовані реле, ARJ22A03, HMC241, коаксіальні реле; лише кліпсові ферити; Boni-Whip на 10.0 або 12.0 V | C17. |
+| Рішення щодо Lime 31.01.2027 | C1: повне повернення лише до відвантаження 15.12.2026. |
+| Цілі NOAA APT (завершено 2025), Metop LRPT, FY-3 L-band, Elektro як гарантоване джерело A/B; рядки МКС 145.800/145.825 і маршрут HF+ для МКС; маяк «10489.55 MHz»; tinySA «видно до 12 GHz»; «Lime від 30 MHz» | Виправлення каталогу (розділ 7). |
+| Оптимістична модель QO-100; «FT8 reliable», «PSK reliable with cone» | Консервативна модель (#107). |
+| Класи dvbs2, wifi і bt_ble у Phase 1 | Не спостерігаються з core (wifi, bt_ble — лише Lime). |
+| Вивантаження (SondeHub, WSPRnet, PSK Reporter, агрегатори ADS-B, SatNOGS) за замовчуванням | Вимкнено; оприлюднення лише після перевірки місцевих правил. |
+
+---
+
+## 7. Виправлені помилки (corrections_to_my_report, коротко)
+
+1. Діапазон Lime «30 MHz-3.8 GHz» — це опублікований діапазон виробника, не помилка; узгоджені RX 0.3-2.2 / 0.7-2.6 / 3.3-3.8 GHz, нижче 300 MHz — не перевірено; «Lime від 30 MHz» у lab_ui_hf виправлено.
+2. Підсумок #168 подає поріг Lime 0.3 GHz як нове; він був відомий у #52.
+3. compute.json: кільце DMA Lime — 16 x 16 KiB = 256 KiB (1.07 ms при 61.44 Msps, 1.17 ms при 56 Msps), не «близько 2 MB / 8.5 ms»; NIC — 1 GbE RTL8111, не 2.5 GbE RTL8125BG.
+4. compute.json: «pin QAIRT 2.46» прибрано (потрібна 2.42); ціни — світові; до утримання додано метапакети і Mesa.
+5. software.json: рецепт «osmocom 2.0.3 (.so.0) + перезбирання всіх споживачів» замінено перезбиранням .so.2 noble 2.0.1; purge-and-fork прибрано з rf_frontend і antennas; 2.0.3 — з #121 і npu_training.
+6. SAWbird+ GOES: $44.95 — це Barebones SKU 100791 (≥30 dB, 180 mA, 3.3-5.5 V); $49.95 — корпусна; порада «$44.95 скрізь» відкликана; бюджет струму 180 mA.
+7. rf_frontend: прибрано полізапобіжник 100-160 mA, GOES+ на трійнику V4L після прогріву і перемикач LNB 13.4/18.2 V.
+8. power.json: «12 V шина підходить LNB» прибрано (12 V через трійник дає 10.6-11.4 V); INA228 — на I2C0 через i2c-dev, не i2c6/ina238.
+9. mechanical_thermal і #103: SMBJ15CA (D19) стоїть на TYPEC_IN до Q5, а не на J21; вибір 9 V для J21 відкликано на користь 12 V.
+10. lab_ui_hf: «5 V підвищувач близько 7 A» — неправда (VCC_5V_PERI близько 17 W, близько 3.4 A); Boni-Whip 12.5 V, не 10.0 V; Skyfield з pip 1.55; прилад «power meter» прибрано; МКС SSTV/APRS — 437.550/437.825 MHz.
+11. #43/#45: «500 mA на порт USB-A» — анотація доріжки; кожен WS4612 обмежує близько 2.1 A (Rset 3.24 kOhm).
+12. #74 і storage: 56 Msps cs16 — 224 MB/s (245.76 MB/s — це 61.44 Msps); 1 TB T7 — близько 74 хв.
+13. small_antenna_stack: два V4L при 2.56 Msps — 10.24 MB/s = 36.9 GB/h (не 18.4 GB/h); UFS 128 GB вміщує близько 2.5 год, не 5 год.
+14. small_antenna_stack: «HRPT надійно від 13-18° на спіралі 20 см» спростовано; LRPT за замовчуванням — складаний V-диполь; AO-73/JO-97 — на межі, не надійно.
+15. rf_frontend: «RTL непридатний для HRPT» спростовано (OK9SGC документує декодування).
+16. dish_replacement і #97: оптимістична модель QO-100 завищена близько на 14 dB; замінена консервативною.
+17. МКС SSTV: серії 33 (2-6.10.2026) і 34 (22-25.10.2026) на 437.55 MHz (Robot 36); «жодної події після травня» і «серії 33/34 не знайдено» — помилки; 145.800 MHz востаннє — серія 28 (липень 2025).
+18. Elektro-L: «вимкнений» і «гарантоване джерело» — обидва надто сильні; L5 повідомлено введеним на 76E, SatNOGS — неперевірено; частота FY-2H — 1690.5 або 1687.5 MHz.
+19. Дисплей: 128.70 MHz не чистий (×12 = 1544.4 MHz Inmarsat-C, ×11 = 1415.7 MHz у смузі SAWbird+ H1); 148.5 × 5 = 742.5 MHz — лише в WB-ПЧ QO-100; «нативний 1080p60» замінено; пропущено влучання 83.77 MHz × 13 = 1089.0 MHz (ADS-B).
+20. NPU: твердження про пропущений коефіцієнт перекриття x1.07 спростовано (42.5 тайла/с — правильно); ворота 12 ms перевищують межу 50% — тому 11.7 ms або 41 тайл/с; LIME-W — N=65536 з агрегацією 16 бінів.
+21. npu_training: INA228 — у дроті батареї; клас 2 HRPT — лише Meteor; клас 12 dvbs2 — лише зайнятість; IQ голосу і Set B порушують правила.
+22. Ядро: 6.18.2-4 має CONFIG_PPS=y, тож pps-gpio поза деревом можливий; Route B прибрано; знак у Route A був інвертований (має бути +f); FT232RL потребує pps-ldisc, якого теж немає.
+23. radio_lab: libgpiod v2 немає в noble (1.6.3, v1 API); wsjtx GUI і fldigi → jt9/wsprd; Boni-Whip 12.5 V; підсумок extended — близько $605-890 (близько $555-780 без H-зондів); внутрішній інтерфейс — $56-73; слінг зі складаним набором — 3.7-4.4 kg; Inmarsat — «користувацький трафік виключено, EGC SafetyNET дозволено з фільтром заголовка».
+24. Живлення Boni-Whip: WiMo (18.10.2026) — 9-15 V, 189 g, близько 14 см, EUR 159, з 20.11.2026, струму немає; SWLing 2017 — 12-15 V; 12.5 V задовольняє обидва.
+25. КХ-дріт: балун 9:1 (ймовірно WB9-1, 0.125-125 MHz, ≥25 uH) втрачає близько 7/9/12 dB на 77.5/60/40 kHz — ДХ-сигнали часу лише з активного штиря.
+26. Передпідсилювачі Uputronics: вхід зміщення залежить від ревізії (плати з березня 2020 — 5-26 V; поточні — «5V max»).
+27. FlightAware Pro Stick Plus — GBP 52.50 (Pi Hut), не $20.95 (ціна запуску).
+28. Модуль Wi-Fi Q6A за схемою v1.21 — FCU760K; «AIC8800» не перевірено.
+29. LiteVNA 64 — близько $167-225; нижня межа $150 — з непідтвердженого фрагмента; tinySA «видно до 12 GHz» — без джерела.
+30. #126: Inmarsat-4 F2 на 64E — під сумнівом (за Celestrak близько 142.5E); NCS шукати на ефірі.
+31. #128: резерв «вибрати місто з офлайн-списку» заборонено; константи міст у gnss_imu замінено WMM2025 у точці фіксу; «7.2° для країни» з #15 уже замінено.
+32. #26/#77/#86: три діапазони J21 (12 V, 4.5-16 V, 3.6-16 V); офіційно лише «12V»; оскільки дизайн дає стабілізовані 12 V, розбіжність не важлива.
+33. #75 проти #86 — наявність 12 GB у Allnet (перевірити в день замовлення); #129 проти #132 — 2-виткова спіраль 7.4 проти 8-8.6 dBic; рядок C/N0 тарілки 35 см (#59) замінено; «пружинна спіраль з фосфористої бронзи OK» (#130) спростовано.
+34. minute-log: «SatDump v1.15.0» о 02:15 — це CyberEther; 02:08-02:11 USD прочитано як грами; «економія $670-715» застаріла ($650-665); «QAIRT 2.50 поточна» о 02:02 застаріла (ціль 2.51); 03:33 — хибно про ADS-B; 03:25 — A16W8 на 2.42 подано як факт, хоча не перевірено.
+35. antennas verify: «фіксовані стрижні 53 см» спростовано (порушує правило складання); у N2SPI 6 елементів, не 7; поворот на центральному гвинті спростовано; MT3608/XL6009 + TPS2553 для LNB спростовано.
+36. wideband_sdr: «спіраль на RX-A і ПЧ LNB на RX-B одночасно» — фізично неможливо (один LO); економія на Lime з урахуванням регіонального мита ($309-314) не застосовна.
+
+---
+
+## 8. Відкриті питання і виміри на стенді
+
+| що треба виміряти або підтвердити | ворота / тест | коли |
+|---|---|---|
+| Струми холодними і гарячими при робочій напрузі: HF+ Discovery (5 V), Boni-Whip (12.5 V), Bullseye (13.2 V), Uputronics 440, LNA V2, шумове джерело ZFL-500 (12 V) | Встановити PTC і межі TPS2553 на 1.5-2x виміряного; бюджети до того — попередні (HF+ 0.3 A, Boni 0.1 A, LNB 0.3 A, Uputronics і LNA V2 0.1 A, шумове джерело 0.15 A) | На прибутті кожної деталі |
+| Плата дисплея: діапазон входу і струм при 25/50/100%; яскравість на повному білому; чи приймаються 2200x1148@59.99 (151.50 MHz) і 2200x1125@51.68 (127.90 MHz); фактична частота і її гармоніка E-зондом; режим DSI і швидкість ліній; стабільність при SYS12 = 11.0 V; VID:PID сенсора | Приймання D4: ≥1800 ніт, ≤14 W / ≤7.5 W, 20 холодних завантажень, USB-HID | Письмові відповіді Wisecoco — близько 7 днів, інакше 4D |
+| D36V50F12: основна частота від навантаження і входу; поріг PSM; спури в межах ±5 kHz від 40, 60, 77.5, 162, 490, 518, 4209.5 kHz; крива просідання на 13.0-13.6 V; 3.5 A 60 хв у закритому корпусі при 14.0 і 16.4 V; те саме для D36V28F5 і IP2368 | Ворота C4; при провалі — buck з примусовим PWM (P5) | Після приходу tinySA і HF+ |
+| Енергія за режимами і корисна енергія з логів INA228 (замість modes2.py); очікування; пробудження BMS зарядником; NTC-блокування IP2368 і поведінка з джерелом 45 W | Таблиця 5.1 замінюється вимірами | Перше ввімкнення силової плати |
+| #2813: чи блокує утримуваний OFF від супервізора кнопку на піні A; чи дає мережа BAT54 поріг піна A; чи надійно будить плату імпульс 0.8-1.0 с на J21 пін 3 | Стенд силової плати | Крок 8 запуску |
+| Зворотне живлення: 0 V на VBUS Q6A і HDMI +5 V при вимкненій Q6A і ввімкненій LAB5; нуль зворотного струму на кожному USB Q6A; зворотне живлення від моста сенсора | FNB58 | Крок 8 запуску |
+| Пара LT3045 на 4.5 V від LAB5 біля просідання: пульсації і PSRR на портах LNA; поріг TPS2553 при 300 mA; розсіювання TPS7A4701 LNB на пластині | Осцилограф + tinySA | Стенд силової плати |
+| Тепло: 45 хв опівдні з козирком (рама ≤60 °C, скло ≤65 °C, елементи ≤45 °C); SoC у режимах B/D/G; точки зниження NTC панелі; температура зарядника відносно батареї; D36V28F5 у закритому корпусі | Приймання D6 | Після друку корпусу |
+| pcie0 вимкнено: чи випромінює кварц NIC 25 MHz на 1700.000/1575.000 MHz | A/B D9; мідна стрічка, якщо так | A/B-матриця |
+| РЧ-деталі: розв'язка, втрати і логічні рівні HMC7992; розв'язка G6K на 162-260 MHz і втрати 10 kHz-260 MHz; імпеданс синфазного дроселя на 60 kHz і 1-30 MHz; втрати і зворотні втрати інжекторів по діапазонах; DC-прохід Flamingo+ (лише якщо зміщення колись його перетне) | LiteVNA кондуктивно | Крок 10 запуску |
+| Повна вузькосмугова A/B-матриця для кожного стану з дельтою GNSS C/N0 — публікація spur mask v1 | D10 | Після складання з закритою кришкою |
+| Дерево FE1.1s: 30 хв без втрат з RTL-B, HF+ і одним пристроєм LAB (і з 4 потоками); вплив деавторизації Wi-Fi; 15 хв rtl_test 2.88 Msps на синьому порту | C5; ворота Metop (a) | W1-2 |
+| Q6A: TX UART6 (петля, `$PQTMVERNO`); GPIO96 вільний; оверлей UART7 на утримуваному образі; GPIO24/25 з увімкненим UART6; DKMS pps-gpio і `chronyc sourcestats`; вузол watchdog у DT; який пакет постачає systemd-bless-boot; чи зберігаються змінні UEFI; labwc 0.7.1 на HDMI | Ворота W1-2 | 19.10-1.11.2026 |
+| NPU і обчислення: MemTotal і RSS застосунків; VkFFT на Adreno 643 (N=4096 і 65536); HTP p99 для SpecDet-S/M/G; A16W8 на 2.42; розмір VTCM; soc_model 35 проти 93; навантаження CPU SatDump, SDRangel, OpenWebRX+; fastrpc_test 3/3; INT8 проти FP32 AP ≤2 пункти; криві 1/5/10/20 прикладів | NPU Phase 0; ворота HTP (C20) | W1-2 і далі |
+| Сховище: тривалий запис UFS після кешу WriteBooster; ID чипа; 10 хв fio; заповнення до близько 70% | C18 | На прибутті UFS |
+| LNB: рівень ПЧ з атенюаторами 15 і 20 dB (десенсибілізація); підсилення LNB; діаметр шийки і хвилеводу до рупора. КХ: ppm HF+; довжина корпусу Boni-Whip (щодо межі 35 см); DCR і S21 балуна на 40-500 kHz; тип USB-роз'єму HF+ | Стенд | Після приходу деталей |
+| Відповідність: тест egc-gate на змішаному записі (на диск, текст чи екран не потрапляє жоден байт не-SafetyNET); тести алоу-листів DSC, SITOR і WEFAX на змішаних записах; одиничний тест маски діапазонів (250, 300, 380 MHz); маска голосу при записі знімка | Без проходження — профіль вимкнений (Inmarsat-C прибирається на P7) | До першого використання профілю |
+| Lime, якщо залишено: riser 8 GT/s x1 з нулем AER за 60 хв; нуль втрат limeTRX на проході LRPT+HRPT; VCC_5V_PERI ≤14 W; підйом фону від T7 на 1.7/2.2 GHz ≤1 dB; FIFO 10 проти SCHED_OTHER nice −20 для lime:Rx0; S-band LNA назвати і оцінити | C1 | 30-денна гарантія після доставки |
+| Перевірки на ефірі: горби Metop-B/C на 1701.3/1707 MHz, AWS 1707 MHz, Elektro-L5 LRIT 1691 MHz, частота несучої FY-2H (1687.5 чи 1690.5 MHz), який NCS Inmarsat над вами | До купівлі масиву 2x2 чи Airspy Mini | Після першої спіралі |
+| Антени: A/B штиря вертикально/нахилено на SSTV серії 34; V-диполь проти перемічених стрічок; гелікон проти спіралі на NCS; перерахунок NEC для диска 18 см | Лише прийом | 22-25.10.2026 і далі |
+| GNSS: TTFF LC76G; C/N0 патча на кришці увімк./вимк. дисплея і сховища; поведінка регіонального блокування Quectel (невідомо) | C/N0 ≤1 dB-Hz зміни | Після складання |
+| Ціни: переоцінити кожен неперевірений рядок (P5); T7 і microSD — за поточними цінами; лістинг динамометричного ключа; IP2368 BZ; LCSC-рядки | P5 | Перед замовленням |
+| Процес: блоки errata в summaries.md і minute-log.md (#26/#43/#45/#59/#74/#75/#81/#103/#126/#128/#129/#160/#168; 02:02, 02:08-02:11, 02:15, 03:25, 03:33) ще не написано; оновити разом display_market, display, small_antenna_stack, тести lab_ui_hf і cmdline під C12; виправити qo100_beacon_track.py | Відкрито | До P4 |
+| Можливо не враховані в BOM дрібниці: герметична кнопка живлення 12-16 мм, перемичка XT30, панельний подовжувач 3.5 мм і навушники, дріт BNC-SMA для Boni-Whip | Уточнити в P5 | Перед замовленням механіки |
+
+**Питання до вас (наприкінці фази):**
+1. Регіон або країна (вирішує QO-100 і видимість GEO, станцію ДХ-часу, LC76G чи MAX-M10S, UAT/HD Radio/NOAA SAME, юридичний профіль і ціни з доставкою).
+2. Підтвердження видалення КХ-рамки (у записах немає вашого повідомлення про це; останнє повідомлення про КХ просило додати активну рамку).
+3. Чи прийнятні малі жорсткі антени з частинами до 20-23 см (штир 17 см, A-V85/SRH-701, 4-виткова спіраль, голий LNB з конусом) поряд із патч, чип і складаними.
+4. Чи потрібен Lime (S-band, 3.3-3.8 GHz, широкосмуговий NPU-огляд 56 MHz) — відповідь до 1.12.2026; без відповіді передзамовлення скасовується.
+5. Чи є домашній x86-64 ПК (бажано з GPU NVIDIA 8-16 GB) і чи прийнятна VM/контейнер Ubuntu 22.04 для конвертації QAIRT 2.42.
+6. Чи дозволені станції WEFAX NWS під керуванням USCG.
+7. Якщо QAIRT 2.42 не пройде ворота HTP — чи можна розглянути новішу QAIRT, чи система лишається на CPU.
+8. Чи варто вести проєкт Midas 1200x1920 (вище FHD; портретний або повернутий UI).
+9. Які деталі вже куплені чи замовлені (12 GB Q6A, T7, P50B, D36V50F12, Lime).
+10. Чи працює ємнісний сенсор крізь ваші рукавиці, чи HMI має повністю спиратися на кнопки й енкодери.
+
+---
+
+## 9. Порядок закупівлі і запуску
+
+### 9.1. Закупівлі (спершу — довгі терміни і ризик наявності)
+
+| крок | коли | що і де | чому першим |
+|---|---|---|---|
+| 1 | Сьогодні (18-20.10.2026) | Q6A 12 GB і UFS 128 GB. ЄС: одне замовлення TinyTronics з ПДВ (плата EUR 148 + UFS EUR 58 + Daly BMS EUR 8 = EUR 214 = $240.56; UFS — 2-4 тижні, до того завантаження з microSD). Інші: одне замовлення ALLNET (плата $189.99, UFS $65.90, Armor 7056A $9.90, батарейка RTC $0.95, microSD 64 GB $16.99 = $283.73). Перевірити наявність при оплаті. | Arace розпродано; Allnet 8 GB розпродано; UFS є лише в Allnet; NPU Phase 0 потребує плати в W1-2. |
+| 2 | Сьогодні | Одне замовлення Adafruit для запуску (близько $99): Debug Probe, кабель USB-A-C, зчитувач microSD, 2× CH334F, 2× MCP23017, INA228, BNO085, вентилятор, HDMI 2420, ручки. Плюс з офіційного каналу RTL-SDR Blog: 3× V4L ($113.85), 2 дипольні набори, L-band патч, набори пігтейлів і перехідників SMA, запасний LNA V2 (замовлення близько $263.55). ЄС: офіційний eBay або AliExpress 4523039. | R828S знято з виробництва (455 шт.). |
+| 3 | Сьогодні | Письмові питання до Wisecoco (VID:PID HID, бондування/AR, вхід V/I, EDID, режими 151.50/127.90 MHz, режим DSI, рукавиці, комплект). Без чіткої відповіді близько 7 днів — 4D у DigiKey ($128.95; 13 шт., далі 4 тижні). | Корпус чекає панель. |
+| 4 | Сьогодні, лише якщо Lime потрібен | Повертається передзамовлення в Crowd Supply ($249 + $18; 2× MHF4L-SMA у тому самому замовленні); рішення в календар на 1.12.2026. Нічого лише-для-Lime до того. | Відвантаження 15.12.2026; повне повернення лише до нього. |
+| 5 | Тиждень 1 | Прилади, що вирішують: tinySA ZS407 (Astroradio або інший продавець зі списку tinySA.org), FNB58 Std, DMM, Airspy HF+ (ITEAD, найближчий склад). | A/B регулятора і струми HF+, LNB, Boni-Whip. |
+| 6 | Тиждень 1 | Одне замовлення Pololu (2× D36V50F12, D36V28F5, 2× #2813) — склад «Rationed». Одне замовлення LCSC (2× TPS7A4701, 2× LT3045, 10× TPS2553, SMBJ13A/17A, запобіжники, PTC, AON LDO, супервізор). 5× P50B у перевіреного продавця у вашій країні; Daly BMS; 2-3 плати IP2368; 2 Pico. | Обмежена наявність Pololu; елементи їдуть лише всередині країни. |
+| 7 | Тиждень 1-2 | Nooelec (NOAA+, GOES+, Flamingo+, Balun One Nine v2, набір атенюаторів — $199.75, безкоштовна доставка); Uputronics 440 (GBP 51.59); плата інжекторів; плати HMC7992; G6K (RS UK); Waveshare (LC76G, RP2040-Zero для паку, L1+L5 антена); DigiKey (PEC11R ×3, KSC641J ×10, ферити); ASA, вставки CNC Kitchen, прокладки, ремінь. | РЧ-тракт і механіка. |
+| 8 | Тиждень 2-3 | Лабораторія core: LiteVNA 64 (Passion Radio, 5 шт.) + 2× 30 dB; Mini-Circuits (2× BLK-89-S+, 3× ANNE-50+, 3× 086-6SM+, ZFL-500LN+/ZFL-500+); Anker 737; Pinecil V2; килимок iFixit; Hantek 6022BE + LA; MTT-хаб; динамометричний ключ (після підтвердження лістингу). | Залишок LiteVNA малий. |
+| 9 | З 20.11.2026 | Boni-Whip (WiMo EUR 159, або Moonraker, якщо наявність підтверджено). | Дата доступності WiMo. |
+| 10 | 1.12.2026 | Рішення щодо Lime (C1). Якщо залишено: R44SF 5 см ($19), інструмент I-PEX 90435-001, T7 1 TB за поточною ціною. Якщо скасовано — CPU7 і кільце RAM лишаються в стані без Lime. | Ворота C1. |
+| 11 | Коли підтверджено, що ви в зоні Es'hail-2 | Bullseye ($29.95; Technofix уже без наявності — не зволікати), деталі F/LC/PTC, матеріали рупора; виміряти струм LNB при 13.2 V, потім PTC і атенюатор. | Ворота регіону (C23). |
+| 12 | Після проходження egc-gate на записах L-band патча | SAWbird+ iO ($49.95). Якщо ворота не пройдені — профіль Inmarsat-C прибирається і iO не купується. | Ворота відповідності. |
+| 13 | Останнім | Розширення лабораторії: LBE-1420 (GBP 132), Pro Stick Plus (GBP 52.50), кваліфіковані деталі sled, SAWbird+ H1, DPS-150, кейс. Відкладено: microSD (ціни NAND), T7 (лише з Lime), Airspy Mini (лише після горба Metop і тесту 2.88 Msps). | Після проходження процедур core. |
+
+**Митниця і ПДВ (регіон невідомий — перевірити).** ЄС: купувати з ПДВ усередині ЄС, де можливо (TinyTronics, Passion Radio, Astroradio, WiMo, iFixit EU, CNC Kitchen, QuietPC); для посилок поза ЄС — чи збирає продавець ПДВ через IOSS (до EUR 150; AliExpress і eBay збирають); понад EUR 150 — імпортний ПДВ, мито і збір кур'єра. Магазин RTL-SDR Blog у ЄС не відправляє — офіційний eBay або AliExpress 4523039. UK: продавці збирають ПДВ до GBP 135; понад — ПДВ і збір кур'єра (Pi Hut, Uputronics, Leo Bodnar, Mirfield, Moonraker). США: перевірити поточний статус de minimis і мит на товари з КНР перед замовленням з Allnet, складу RTL-SDR Blog у КНР, LCSC, Waveshare, ADT-Link чи AliExpress (за відомостями, які треба перевірити, безмитний de minimis призупинено для всіх країн з 29.08.2025); віддавати перевагу складам у США (ITEAD US, DigiKey, Adafruit, Nooelec, Pololu, Mini-Circuits, RTL-SDR Blog на Amazon USA). Інші країни: перевірити правило GST/ПДВ на малі посилки. Обмеження відправлення: RTL-SDR Blog не відправляє в RU/BY/IR/KP; Waveshare — в IR/RU; Mini-Circuits перевіряє експорт. Дрібні продавці (LCSC, DigiKey, Mini-Circuits) мають мінімуми — консолідувати замовлення. Усі підсумки — без доставки, ПДВ і мита.
+
+**Справжність.** RTL-SDR (ризик високий): лише офіційний магазин, eBay rtl-sdr-blog, AliExpress 4523039 або перелічений реселер; ніколи сині корпуси, «Pro» чи копії «V4». tinySA і LiteVNA (високий): лише продавці зі списку tinySA.org або Passion Radio; відкинути непідтверджені AliExpress «Zeenko», Banggood, TinyRFEquip, TinyRFLab, а також моделі ZS406 замість ZS407. Airspy (середній): лише дилери з airspy.com/purchase. Інше: BNO08x — лише Adafruit або SparkFun; брендовий Waveshare RP2040-Zero; оригінальний Amass XT30; LCSC не франчайзі ADI/TI (помірний ризик для LT3045); Hantek, ANENG і загальні HMC7992 з маркетплейсів — ризик сірих копій.
+
+### 9.2. Запуск (bring-up)
+
+1. **Ворота плати W1-2 (19.10-1.11.2026)**, плата на 12 V від лабораторного джерела з обмеженням струму в J21: 12 год stressapptest + memtester; 50-100 холодних завантажень з логами UART; резервна копія SPI NOR (edl-ng); ID чипа UFS. Зібрати librtlsdr .so.2 і побачити «RTL-SDR Blog V4 Lite Detected». HDMI спершу на 148.5 MHz, потім польові EDID. Петля TX UART6, PPS на GPIO96, оверлей UART7, I2C0/I2C2 з 1e6 читань кожна; аудит pinmux-pins. NPU Phase 0 (fastrpc_test 3/3, QAIRT 2.42, p99 SpecDet, A16W8, VTCM). VkFFT на N=4096 і 65536; MemTotal і RSS. 30-хвилинний тест FE1.1s без втрат.
+2. **Ранні перевірки на ефірі в міру надходження:** МКС SSTV серії 34 (22-25.10.2026, 437.550 MHz), якщо V4L і диполь прийдуть вчасно; Meteor LRPT на V-диполі, щойно прийдуть SAWbird+ NOAA і Flamingo+.
+3. **Силова плата на стенді** (лабораторне джерело з обмеженням і електронне навантаження): кожна шина і TVS; супервізор 12.8/13.6 V, запасний EN 12.0/13.5 V і чи блокує утримуваний OFF кнопку на піні A; eFuse; зворотне живлення з FNB58 (0 V на VBUS Q6A і HDMI +5 V при вимкненій Q6A); струм очікування.
+4. **Вузькосмуговий A/B ДХ/КХ/VHF** для D36V50F12, D36V28F5 і IP2368: HF+ на навантаженні, потім на дроті чи штирі, кроки навантаження 0.3-3 A; потім 60 хв у закритому корпусі при 3.5 A на 14.0 і 16.4 V. Рішення: лишити D36V50F12 або обрати заміну в P5.
+5. **РЧ-деталі (тиждень 1-2):** виміряти струми HF+, Uputronics і LNA V2; кваліфікувати на VNA кондуктивно інжектори, перемикачі й атенюатори; VNA-перевірка кожного загального атенюатора і перехідника.
+6. **Батарея:** точкове зварювання (майстерня), перевірка кожного елемента (ємність, опір, вага), пробудження BMS 3/3, NTC-блокування IP2368, 2-годинний прогін 3 A на 2-3 платах, кваліфікація кожного PD-джерела.
+7. **Приймання дисплея на прибутті:** ніти; потужність на 50 і 100%; USB-HID; обидва режими EDID; 20 холодних завантажень; стани дисплея в A/B; стабільність при SYS12 = 11.0 V.
+8. **Корпус:** CAD з Radxa STEP v1.21, виміряної панелі і батареї; друк; інтеграція; 45 хв полуденного прогону в режимах B, D, G; потім повна A/B-матриця з закритою кришкою; публікація spur mask v1.
+9. **Лабораторія core (тиждень 2-3):** LiteVNA, деталі Mini-Circuits, підсилювач шумового джерела, Pinecil, килимок, Anker 737, MTT-хаб, Hantek з LA, ключ (після підтвердження лістингу); процедури P0-P3, P16-P17.
+10. **З 20.11.2026:** Boni-Whip, вимір імпедансу синфазного дроселя, тести LF Quiet і розв'язка перемикача HF+.
+11. **1.12.2026:** рішення щодо Lime за C1; якщо залишено — R44SF, інструмент I-PEX, T7 за поточною ціною і приймання в межах 30-денної гарантії; J21 випаюється лише після прогону.
+12. **Після підтвердження регіону в зоні Es'hail-2:** Bullseye і матеріали рупора, струм LNB при 13.2 V, потім PTC і атенюатор; A/B QO-100.
+13. **Після проходження egc-gate:** SAWbird+ iO; інакше профіль Inmarsat-C прибирається.
+14. **Останнім:** розширення лабораторії (LBE-1420, Pro Stick Plus, кваліфікований sled, SAWbird+ H1, DPS-150, кейс). Відкладено: microSD, T7, Airspy Mini.
+
+---
+
+## 10. Джерела
+
+**Обчислення, ядро, NPU**
+- Radxa Dragon Q6A product brief: https://dl.radxa.com/q6a/docs/radxa_dragon_q6a_product_brief.pdf
+- Схема Q6A v1.21: https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+- Роз'єм живлення: https://docs.radxa.com/en/dragon/q6a/hardware-use/power-header
+- Піни GPIO: https://docs.radxa.com/en/dragon/q6a/hardware-use/pin-gpio
+- Завантаження образів і BIOS: https://docs.radxa.com/en/dragon/q6a/download
+- Vulkan на Q6A: https://docs.radxa.com/en/dragon/q6a/system-config/vulkan
+- DTS ядра 6.18.2: https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+- Реліз linux-qcom 6.18.2-4: https://github.com/radxa-pkg/linux-qcom/releases/tag/6.18.2-4
+- Оверлей UART7: https://raw.githubusercontent.com/radxa-pkg/radxa-overlays/main/arch/arm64/boot/dts/qcom/overlays/qcs6490-radxa-dragon-q6a-uart7.dtso
+- Форум: живлення 4S1P: https://forum.radxa.com/t/radxa-q6a-4s1p-powering/31611
+- Форум: QAIRT 2.42 і артефакти AI Hub: https://forum.radxa.com/t/qcs6490-radxa-q6a-qairt-sdk-version-mismatch-ai-hub-artifacts-2-45-x-incompatible-with-runtime-2-42-0-251225/30908
+- Форум: охолодження: https://forum.radxa.com/t/best-heatsink-cooling-solutions-for-dragon-q6a/30123
+- Hexagon DSP binaries: https://github.com/linux-msm/hexagon-dsp-binaries
+- Qualcomm HTP backend: https://docs.qualcomm.com/doc/80-63442-10/topic/htp_backend.html
+- Geerling sbc-reviews #85 (виміри Q6A): https://github.com/geerlingguy/sbc-reviews/issues/85
+- UM3304 даташит: https://www.union-ic.com/upload/Datasheet/Datasheet_UM3304_Rev16.pdf
+- SGM40666A: https://www.sg-micro.com/product/SGM40666A
+
+**Продавці основних деталей**
+- TinyTronics Q6A 12 GB: https://www.tinytronics.nl/en/development-boards/single-board-computers/radxa-dragon-q6a-qcs6490-12gb
+- ALLNET Q6A: https://shop.allnetchina.cn/products/radxa-dragon-q6a
+- ALLNET UFS 3.1: https://shop.allnetchina.cn/products/high-performance-ufs-3-1-module
+- Wisecoco 7" FHD: https://www.wisecocodisplay.com/product/7-inch-1920x1080-high-brightness-2500nits-lcd-panel-with-hdmi-in-board-ips-mipi-interface-tft-lcd-screen/
+- 4D Systems 4DHDMI даташит: https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_0.pdf
+- Midas MDT0700F1IHHC даташит: https://www.farnell.com/datasheets/3984938.pdf
+- Pololu D36V50F12 (#4095): https://www.pololu.com/product/4095
+- Pololu #2813: https://www.pololu.com/product/2813
+- TI TPS7A47: https://www.ti.com/product/TPS7A47
+- TI TPS2553: https://www.ti.com/product/TPS2553
+- Adafruit INA228: https://www.adafruit.com/product/5832
+- Adafruit CH334F: https://www.adafruit.com/product/5997 (посібник: https://learn.adafruit.com/adafruit-ch334f-mini-4-port-usb-hub-breakout?view=all)
+- Adafruit MCP23017: https://www.adafruit.com/product/5346
+- IP2368 даташит: https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+- Molicel P50B: https://www.molicel.com/inr-21700-p50b/
+- 18650 Battery Store P50B: https://www.18650batterystore.com/products/molicel-21700-p50b-5000mah-50a-battery
+- Waveshare LC76G: https://www.waveshare.com/lc76g-gnss-module.htm
+- CEVA BNO08x даташит: https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf
+
+**РЧ і приймачі**
+- RTL-SDR Blog V4L даташит: https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+- RTL-SDR Blog V4L: https://www.rtl-sdr.com/product/rtl-sdr-blog-v4l-lite-r828s-rtl2832u-1ppm-tcxo-sma-software-defined-radio-dongle-only/
+- osmocom rtl-sdr: https://github.com/osmocom/rtl-sdr
+- Airspy HF+ Discovery: https://airspy.com/airspy-hf-discovery/ ; ITEAD: https://itead.cc/product/airspy-hf-discovery/
+- Nooelec Flamingo+ FM: https://www.nooelec.com/store/flamingo-plus-fm.html
+- Nooelec SAWbird+ GOES: https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-goes-302.html
+- Nooelec SAWbird+ NOAA даташит: https://www.nooelec.com/store/downloads/dl/file/id/112/product/301/sawbird_noaa_datasheet_revision_1.pdf
+- Nooelec Balun One Nine v2: https://www.nooelec.com/store/balun-one-nine-v2.html
+- Uputronics filtered preamps: https://store.uputronics.com/products/uputronics-filtered-preamps
+- Omron G6K-2F-RF (RS UK): https://uk.rs-online.com/web/p/hf-rf-relays/0492917?gb=s
+- Coilcraft WB (балун): https://www.coilcraft.com/pdfs/wb.pdf
+- PA3FWM tn07 (активні E-field антени): https://www.pa3fwm.nl/technotes/tn07.html
+- WiMo Boni-Whip: https://www.wimo.com/en/18067
+- Othernet Bullseye LNB: https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+- Mini-Circuits ANNE-50+: https://www.minicircuits.com/pdfs/ANNE-50+.pdf
+- Crowd Supply LimeSDR Micro: https://www.crowdsupply.com/lime-micro/limesdr-micro
+- LimeSuiteNG (limesdr-micro-staging): https://github.com/myriadrf/LimeSuiteNG/tree/limesdr-micro-staging
+- sysmocom cf2235-kt30: https://shop.sysmocom.de/S-Band-cavity-filter-2170-2300-MHz/cf2235-kt30
+
+**Антени**
+- RTL-SDR Blog dipole kit: https://www.rtl-sdr.com/DIPOLE
+- Axotron (стрічковий Yagi): https://axotron.se/blog/?p=1619
+- N2SPI Yagi (AMSAT Journal): https://www.amsat.org/articles/n2spi/JulAug06AmsatJournal.pdf
+- Гелікон (libre.space): https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309
+- W1GHZ Antenna Book (рупори і лінзи): http://www.w1ghz.org/antbook/chap2.pdf , http://www.w1ghz.org/antbook/chap3.pdf
+- W9MDB виміри штирів: https://www.miklor.com/COM/pdf/AntennaTestingW9MDB.pdf
+
+**Цілі і каталог**
+- ARISS SSTV events: https://www.ariss.org/upcoming-sstv-events.html ; статус станцій: https://www.ariss.org/current-status-of-iss-stations.html
+- NOAA OSPO POES: https://www.ospo.noaa.gov/Operations/POES/status.html ; METOP: https://www.ospo.noaa.gov/Operations/METOP/status.html
+- SatDump issue #727 (V4 на 2.88 Msps): https://github.com/SatDump/SatDump/issues/727 ; релізи: https://github.com/SatDump/SatDump/releases
+- OK9SGC HRPT guide: https://sgcderek.github.io/blog/beginner-hrpt-guide.html
+- EA4GPZ: потужність маяків QO-100: https://destevez.net/2019/03/qo-100-beacons-power/
+- BATC: прийом DATV QO-100: https://wiki.batc.org.uk/Receiving_Oscar_100_DATV_signals
+- AMSAT-DL NB bandplan: https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines
+- WMO OSCAR Elektro-L N5: https://space.oscar.wmo.int/satellites/view/electro_l_n5 ; AWS: https://space.oscar.wmo.int/satellites/view/aws_pfm
+- readsb JSON (dbFlags): https://github.com/wiedehopf/readsb/blob/dev/README-json.md
+- SDRangel demodinmarsat: https://github.com/f4exb/sdrangel/blob/master/plugins/channelrx/demodinmarsat/readme.md ; Radio Clock: https://github.com/f4exb/sdrangel/blob/master/plugins/channelrx/radioclock/readme.md
+- Virgo: https://github.com/0xCoto/Virgo
+
+**Лабораторія**
+- LiteVNA: https://www.zeenko.tech/litevna ; Passion Radio: https://www.passion-radio.com/analyzer-spectrum/lite-vna64-2730.html
+- tinySA Ultra специфікація: https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Specification ; Astroradio: https://www.astroradio.com/p/tinysa-ultra-analizador-de-espectro-plus/
+- Keysight: шумовий фактор (5952-3706): https://www.keysight.com/us/en/assets/7018-06829/application-notes/5952-3706.pdf
+- Leo Bodnar LBE-1420: https://www.leobodnar.com/shop/index.php?main_page=product_info&cPath=107&products_id=393
+- FlightAware Pro Stick Plus (The Pi Hut): https://thepihut.com/products/flightaware-pro-stick-plus-usb-sdr-ads-b-receiver
+- IronOS налаштування: https://ralim.github.io/IronOS/Settings/
+- sigrok fx2lafw: https://sigrok.org/wiki/Fx2lafw
+
+**ПЗ і пакети**
+- packages.ubuntu.com noble slowrx (пакета немає): https://packages.ubuntu.com/noble/slowrx ; gpiod: https://packages.ubuntu.com/noble/gpiod
+- Gpredict PR #412: https://github.com/csete/gpredict/pull/412
+- chrony refclock_sock.c: https://gitlab.com/chrony/chrony/-/raw/master/refclock_sock.c
+
+**Безпека і право (загальне)**
+- IATA: літієві батареї для пасажирів: https://www.iata.org/contentassets/6fea26dd84d24b26a7a1fd5788561d6e/passenger-lithium-battery.pdf
+- UK Wireless Telegraphy Act 2006 s48: https://www.legislation.gov.uk/ukpga/2006/36/section/48
+- DE TDDDG §5: https://dejure.org/gesetze/TDDDG/5.html
+- US 18 USC 2511: https://www.law.cornell.edu/uscode/text/18/2511
+
+**Вхідні файли цього документа:** final/user_requirements.md (керівний), final/final_integration.json (рішення верифікатора, переважають), final/final_completeness.json, final/final_world_sourcing.json, final/report_research.json (реєстр), final/radio_lab.json, final/npu_training.json, final/lab_ui_hf.json, final/foldable_antennas.json, final/small_antenna_stack.json, final/display_market.json, final/digest.md і компонентні аудити final/<key>.json.
+
+**Загальна юридична примітка.** Країна не відома. Мати приймач у більшості країн можна без ліцензії, але що дозволено слухати — різниться. Напр., UK WTA 2006 s48 забороняє отримувати зміст, відправника чи адресата не призначених вам повідомлень і розголошувати їх; німецький TDDDG §5 дозволяє лише повідомлення для оператора станції, радіоаматорів, загалу або невизначеного кола і забороняє передавати зміст чи навіть факт інших прийомів; US 18 USC 2511(2)(g) дозволяє загальнодоступні радіозв'язки (аматорські, морські, авіаційні, лиха). Тексти перевірено перевіряльником правил 18.10.2026, тут не перезавантажено. Обсяг декодування за замовчуванням: мовлення, аматорські, метеосупутники, навігація і час, аматорська МКС, публічна MSI (NAVTEX, EGC SafetyNET через egc-gate, DSC лише лихо/терміновість/безпека), цивільний метео-WEFAX. Ідентифікатори ADS-B і AIS можуть бути персональними даними — журнали лише локально, без вивантаження; з оракулів NPU ідентифікатори прибираються; місце в експорті округлюється до 0.1° або 4-символьного локатора.
