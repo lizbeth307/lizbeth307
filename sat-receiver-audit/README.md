@@ -19,6 +19,7 @@
 | [Adi lt3045 paralleled 4 5 v lna rail](components/adi_lt3045_paralleled_4_5_v_lna_rail.md) | · research · forums · fixes ✅ verify | `—` |
 | [Airspy hf discovery](components/airspy_hf_discovery.md) | · research · forums · fixes ✅ verify | `—` |
 | [Allnet 64 gb microsd adafruit 5212 reade](components/allnet_64_gb_microsd_adafruit_5212_reade.md) | · research · forums · fixes ✅ verify | `—` |
+| [Aneng an8008 9 dmm](components/aneng_an8008_9_dmm.md) | · research · forums · fixes ✅ verify | `—` |
 | [Antennas](components/antennas.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_6b9836f8-796` |
 | [Antennas foldable](components/antennas_foldable.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Antennas patch chip](components/antennas_patch_chip.md) | ✅ research · forums · fixes ✅ verify | `—` |

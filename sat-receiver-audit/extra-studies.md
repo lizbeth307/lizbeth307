@@ -30586,6 +30586,203 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - Not verified: Samsung's per-capacity hours split, Kingston HE warranty and speed class, Hiksemi EU prices, and Netac (its site lists products dynamically).
   - Raw downloads are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/msd_b.
 
+## searchA:airspy_mini (run `wf_c3ba734e-52b`)
+
+- **Part:** Airspy Mini (optional/gated, qty 1). Its only role is the fast L-band SDR for Metop-B/C AHRPT at 1701.3 MHz (2.33 Msym/s QPSK, about 3.5 MHz wide) and AWS at 1707 MHz (about 2.59 MHz wide), behind helicone + SAWbird+ GOES, for when the spare V4L at 2.88 Msps is not enough. It is bought only if the Metop hump test and the 2.88 Msps zero-drop test fail.
+- **Current price usd:** STACK.md gives about 140-160 (GBP ~110 at Moonraker UK, undated and unverified). Moonraker returned HTTP 403 today, so that price was not re-checked. The same SKU, live today at ITEAD (Airspy's official manufacturing partner) from its DE warehouse (SKU IM150415001EU, 242 in stock, from the store API), costs 99.00 ex VAT. A guest cart (nothing ordered) gave these landed prices: DE 123.22 (VAT 18.81, DHL 4.55 + 0.86 VAT); FR 130.91 (VAT 19.80, DHL 10.09 + 2.02); ES 99.00 + 20.79 VAT, shipping not returned. No EUR 3 duty or handling-fee line, because it ships inside the EU.
+- **Critical specs:**
+  - Frequency coverage IN SPEC at 1701.3 MHz (Metop) and 1707 MHz (AWS). The Mini's official range is 24-1700 MHz. libairspy airspy.h documents set_freq as 24 MHz-1.75 GHz with no host check. So both targets can be tuned but are above the guaranteed spec, and no owner measurement was found.
+  - Alias-free bandwidth of at least about 3.5 MHz (Metop) and 2.6 MHz (AWS), so IQ output of at least 6 Msps. Mini: 3/6/10 Msps IQ, up to 6 MHz panoramic view.
+  - ADC: 12 bit at 20 MSPS, 10.4 ENOB, 70 dB SNR, 95 dB SFDR (official page). An analog needs at least 12 bit and 10.4 ENOB at the rate actually used.
+  - Linearity and overload: front-end IIP3 +35 dBm (vendor claim), max RF input +10 dBm. This matters behind a 38 dB LNA with GSM/LTE 1800 downlink (1805-1880 MHz) nearby in Europe.
+  - Noise figure: 3.5 dB at 42-1002 MHz; not published at 1.7 GHz. It matters little behind the SAWbird+ GOES (about 38 dB gain), but an analog must not be worse.
+  - Clock stability 0.5 ppm (about +-850 Hz at 1.7 GHz).
+  - Host interface: USB 2.0 High-Speed, sustained without drops at 6 Msps. That is real 12-bit samples at 2x rate, about 18-24 MB/s packed or unpacked (my estimate, not measured), on the blue port or the CH334F hub.
+  - Drivers on Ubuntu 24.04 arm64. Verified on Launchpad today, noble universe arm64: libairspy0 1.0.10-3build1, airspy 1.0.10-3build1, soapysdr0.8-module-airspy 0.2.0-4. SatDump has a native airspy plugin (stack note: apply SatDump PR #1172 stop-order fix).
+  - Receive-only hardware with no TX path. Bias tee (4.5 V, software-switchable) defaults to off and must sit behind the labd token like the V4L.
+  - Operating temperature -10 to +40 C (official). An analog must be at least as good. This matters for a handheld in sun.
+  - Size and weight: 77x26x10 mm, about 50 g (earlier research; not on today's official page). Power draw is unpublished, so an analog must not exceed it noticeably.
+  - Authenticity: buy only from distributors on airspy.com/purchase. Clones of Airspy designs exist on AliExpress.
+- **Candidates:**
+  1.
+    - **Name:** Airspy Mini EU, same SKU from ITEAD's DE warehouse (SKU IM150415001EU)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 99.00 ex VAT. Landed DE 123.22, FR 130.91, ES 119.79 + shipping (shipping not returned). 242 in stock (store API, 18 Oct 2026).
+    - **Spec comparison:** Identical hardware and SKU family to the current pick, so every critical spec is equal: 24-1700 MHz, 3/6/10 Msps, 12 bit, 10.4 ENOB, 95 dB SFDR, NF 3.5 dB at 42-1002 MHz, IIP3 +35 dBm, +10 dBm max, 0.5 ppm, 4.5 V bias tee, -10..+40 C, same libairspy and SoapyAirspy noble arm64 packages.
+    - **Worse in:** Nothing in specs. Warranty text is inconsistent: the product tooltip says 1 year, the badge image says 24 months. This is a seller-terms point, not hardware. Against Moonraker GBP 110 it saves roughly 17-37 USD landed (approximate, because the Moonraker price is unverified and its VAT basis differs).
+    - **Compatibility:** Same as the current part: USB 2.0 HS, SMA, noble arm64 packages, SatDump airspy plugin. Intra-EU shipment from DE, so none of the EUR 3 per-item duty or EUR 2 handling fee that UK/US sellers carry (operator notes 34-35).
+    - **Risks:** None beyond the Mini's own: tuning at 1701.3 and 1707 MHz is above the 1700 MHz spec, and the USB-shield-to-body contact noise seen on SBCs (earlier research). Buy only after the gate fails.
+    - **Seller url:** https://itead.cc/product/airspy-mini-the-high-performance-miniature-sdr-dongle-eu/
+    - **Sources:**
+      - https://itead.cc/wp-json/wc/store/v1/products/751684
+      - https://itead.cc/product/airspy-mini/
+      - https://airspy.com/purchase/
+      - https://airspy.com/airspy-mini/
+  2.
+    - **Name:** Same ITEAD EU SKU bought during an Airspy/ITEAD sale (conditional)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** UNVERIFIED and conditional. Earlier project research (narrowband_sdr.json) recorded 79.20 (20% off) in the 27 Jun-4 Jul 2026 sale; not re-checked today. A Black Friday 2026 sale is not announced. At 20% off, about 99.50 landed in DE (estimate: 79.20 + 19% VAT + DHL 5.41).
+    - **Spec comparison:** Identical part, so all specs are equal.
+    - **Worse in:** Nothing in specs. The price depends on a sale that may not happen.
+    - **Compatibility:** Identical.
+    - **Risks:** The gate timing may not match a sale window. Do not buy before the gate result just to catch a sale.
+    - **Seller url:** https://itead.cc/product-category/airspy/
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/narrowband_sdr.json
+  3.
+    - **Name:** Airspy Mini from other airspy.com-listed EU distributors (WiMo DE, AstroRadio ES, Neven CZ, FB Radio SE)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** NOT cheaper than ITEAD:
+  - WiMo: EUR 144.90 incl. 19% VAT (EUR 121.76 net) = 162.88 incl. / 136.87 net, in stock.
+  - AstroRadio: EUR 127.05 = 142.82; the search page does not say whether VAT is included, and stock is not shown.
+  - Neven: CZK 3,190 incl. VAT / 2,636 ex VAT, out of stock (inquiry only).
+  - FB Radio: SEK 1,595 (1,695 also shown); VAT and stock not shown, not converted.
+  FX used: 1 EUR = 1.1241 USD.
+    - **Spec comparison:** Identical part, so all specs are equal.
+    - **Worse in:** Price only. Each one costs more than ITEAD DE landed (123.22).
+    - **Compatibility:** Identical.
+    - **Risks:** Low. All are on the official distributor list.
+    - **Seller url:** https://www.wimo.com/en/airspy-mini
+    - **Sources:**
+      - https://www.wimo.com/en/airspy-mini
+      - https://www.astroradio.com/?post_type=product&s=airspy
+      - https://www.neven.cz/m/airspy
+      - https://fbradio.se/search/?q=airspy
+      - https://airspy.com/purchase/
+  4.
+    - **Name:** LimeSDR Micro M.2 already in the stack (user kept it 18 Oct 2026), used for Metop/AWS instead of buying a Mini (reaudit_C recommendation)
+    - **Kind:** other_brand
+    - **Price usd:** 0 incremental (already bought, 279 + 18 shipping). Arrives no earlier than 15 Dec 2026.
+    - **Spec comparison:** Better in:
+  - Coverage: 0.3-3.8 GHz, LNAL 0.3-2.2 GHz, so 1701-1707 MHz is in spec (the Mini is above spec).
+  - Bandwidth: up to 56 MHz; the stack hard-blocks rates below 7 Msps.
+  - Format: 12-bit ci16.
+  Unknown:
+  - NF at 1.7 GHz is not verified, but irrelevant behind the 38 dB SAWbird+ GOES (reaudit_C).
+  - IIP3 and max input are not verified against the Mini's +35 dBm and +10 dBm.
+    - **Worse in:** - Clock: VCTCXO, +-1 ppm calibration and +-2 ppm first-year ageing (Lime docs, per reaudit_B), against 0.5 ppm.
+  - Power: about 4 W depending on configuration, with a 10 W cooling design, against the Mini's unpublished but dongle-class draw.
+  - One RX LO is shared by both channels, so a Metop pass occupies the Lime and blocks any other band it would run at that time.
+  - Not available before 15 Dec 2026.
+  - TX-capable hardware, blocked only at register level by the LimeSuiteNG/SatDump patches; the receive-only rule is kept by the stack's existing patch.
+  - reaudit_C says 6 Msps but reaudit_B hard-blocks below 7 Msps, so use 7 Msps.
+  So it is NOT strictly not-worse. It is a scope decision (drop the Mini), not a like-for-like analog.
+    - **Compatibility:** Already integrated: LimeSuiteNG, SatDump limesdr plugin, M.2 riser. The switch path from the helicone + SAWbird+ GOES to the Lime RX needs confirming (reaudit_C action).
+    - **Risks:** Adds a 15-minute zero-drop 6-7 Msps capture to the Lime acceptance tests. If the Lime fails acceptance and is returned, the Mini gate comes back.
+    - **Seller url:** https://www.crowdsupply.com/lime-micro/limesdr-micro
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_C_antennas_targets.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_B_receivers_rf.json
+  5.
+    - **Name:** HydraSDR RFOne
+    - **Kind:** other_brand
+    - **Price usd:** 193.67 at DigiKey (511 in stock, 1-week lead time). NOT cheaper (+94.67 ex VAT). VAT and shipping not checked.
+    - **Spec comparison:** Equal or better on every published critical spec (datasheet):
+  - Range: 24-1800 MHz native, so Metop and AWS are IN spec.
+  - Bandwidth: 10 MHz view, 9 MHz alias-free.
+  - ADC: 12 bit at 20 MSPS, 10.4 ENOB, 80 dB DR, 64 dB SNR.
+  - NF and linearity: 3.5 dB at 42-1002 MHz; +35 dBm IIP3 front end.
+  - Clock: 0.5 ppm, GPSDO-calibrated, plus a 10 MHz clock input.
+  - Bias-T: 4.5 V, 300 mA max.
+  - Interface: USB-C at USB 2.0 HS.
+    - **Worse in:** - Price: about 2x.
+  - Size: 54x49x32 mm aluminium case, bulkier than 77x26x10 mm.
+  - Operating temperature and power not read.
+  - Mainline SDR++ needed a fork at review time.
+  - No noble arm64 package found earlier, so it must be built from source.
+    - **Compatibility:** USB 2.0 HS, open-source host library, SoapyHydraSDR, native SatDump hydrasdr plugin. arm64 build from source is likely but not verified here.
+    - **Risks:** Not cheaper, so it fails the step's rule. It is the only analog found that is strictly better on the 1701-1707 MHz coverage spec; worth considering only if a Mini is bought and fails above 1700 MHz.
+    - **Seller url:** https://www.digikey.com/en/products/detail/benjamin-vernoux/HYDRASDR-RFONE/26256067
+    - **Sources:**
+      - https://hydrasdr.com/
+      - https://hydrasdr.com/downloads/HydraSDR_RFOne_Datasheet.pdf
+      - https://www.digikey.com/en/products/detail/benjamin-vernoux/HYDRASDR-RFONE/26256067
+  6.
+    - **Name:** Airspy R2 EU (ITEAD DE warehouse, SKU IM141027001EU)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 169.00 ex VAT, in stock (store API). NOT cheaper.
+    - **Spec comparison:** Same 24-1700 MHz limit, 12 bit, 10 Msps (10 MHz), 0.5 ppm, with a larger case (from earlier research). It gives no coverage gain at 1701-1707 MHz.
+    - **Worse in:** Price (+70 ex VAT) and size, with no gain on the critical frequency spec.
+    - **Compatibility:** Same libairspy and SoapyAirspy packages.
+    - **Risks:** Rejected: not cheaper.
+    - **Seller url:** https://itead.cc/product-category/airspy/
+    - **Sources:**
+      - https://itead.cc/wp-json/wc/store/v1/products?search=airspy
+      - https://airspy.com/airspy-r2/
+  7.
+    - **Name:** SDRplay RSP1B
+    - **Kind:** other_brand
+    - **Price usd:** GBP 105.80 ex VAT (about 140.99) at SDRplay; out of stock, return expected by end of October 2026. NOT cheaper than 99.00.
+    - **Spec comparison:** Better in:
+  - Range: 1 kHz-2 GHz, so 1.7 GHz is in spec.
+  - Bandwidth: 10 MHz.
+  - Filtering: 11 preselection filters plus notches.
+  - Temperature: -10..+60 C.
+  Unpublished on the product page: NF at 1-2 GHz, IIP3, clock ppm and ADC bits (14 bit per earlier research; actual resolution at 6+ Msps not verified).
+    - **Worse in:** - Max input 0 dBm continuous, against +10 dBm.
+  - Size and weight: 98x94x35 mm and 315 g, against about 77x26x10 mm and 50 g.
+  - Closed SDRplay API and service daemon on arm64 (earlier project reports of Soapy issues on Pi).
+  - IIP3 and NF parity is unproven.
+  - Price.
+    - **Compatibility:** Poor fit: does not fit the dongle slot; closed driver.
+    - **Risks:** Rejected: not cheaper and worse in max input and size.
+    - **Seller url:** https://www.sdrplay.com/rsp1b/
+    - **Sources:**
+      - https://www.sdrplay.com/rsp1b/
+  8.
+    - **Name:** Spare RTL-SDR Blog V4L at 2.88 Msps (the stack's noted budget alternative; already owned)
+    - **Kind:** other_brand
+    - **Price usd:** 0 incremental (spare already in the BOM).
+    - **Spec comparison:** - Range: to about 1766 MHz.
+  - MDS: about -130.7 dBm/500 Hz at 1.7 GHz (reaudit_B).
+  - Bandwidth: 2.88 Msps against Metop's 3.5 MHz (about 82% truncation).
+  - ADC: 8 bit.
+  - Two-tone: about -40 dBm at 1600 MHz.
+    - **Worse in:** - ADC resolution and dynamic range: 8 bit.
+  - Usable bandwidth: below Metop's width.
+  - Linearity: far lower.
+  Not an equal analog. It is the gate test itself.
+    - **Compatibility:** Already integrated.
+    - **Risks:** It is the condition the Mini purchase depends on, not a substitute that passes the not-worse rule.
+    - **Seller url:** https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_B_receivers_rf.json
+  9.
+    - **Name:** Airspy Mini via Moonraker UK (current STACK.md source)
+    - **Kind:** current_part
+    - **Price usd:** about 146.50 (GBP 110 x 1.3318), unverified. Moonraker returned HTTP 403 today. UK seller, so EU import VAT, a EUR 3 per-item duty (under EUR 150) and shipping come on top (operator notes 34-35).
+    - **Spec comparison:** Baseline.
+    - **Worse in:** Price and EU import costs only.
+    - **Compatibility:** Baseline.
+    - **Risks:** Unverified price; UK-to-EU import costs.
+    - **Seller url:** https://moonrakeronline.com/catalogsearch/result/?q=airspy
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md
+- **Notes:** Verdict (angle A): no different part is cheaper and not worse. The cheapest not-worse option is the SAME part, the Airspy Mini EU SKU IM150415001EU, bought from ITEAD's DE warehouse.
+  - Price: 99.00 USD ex VAT; 123.22 landed in DE, 130.91 in FR (guest cart, nothing ordered); 242 in stock.
+  - Stack price: about 140-160 (Moonraker GBP 110, unverified).
+  - Saving: roughly 17-37 USD landed, with identical specs.
+  - Conditional: a sale at ITEAD (the summer 2026 sale was 20% off, from earlier research, not re-verified) would give about 99.50 landed in DE.
+  - Every other airspy.com-listed EU distributor costs more: WiMo EUR 144.90 incl. VAT; AstroRadio EUR 127.05; Neven out of stock.
+  - Other brands with equal or better specs are not cheaper: HydraSDR RFOne 193.67; Airspy R2 169; SDRplay RSP1B about 141 and out of stock.
+  - No 12-bit, 6+ Msps established-brand receiver under 99 USD was found.
+  
+  Important caveats from the re-audits that override STACK.md:
+  (1) The Airspy Mini's official range ends at 1700 MHz, so Metop (1701.3 MHz) and AWS (1707 MHz) are above spec. libairspy's header allows set_freq up to 1.75 GHz, so they are tunable, but no owner measurement was found. The only analog that is IN spec there (HydraSDR RFOne, 24-1800 MHz) costs about twice as much.
+  (2) reaudit_C recommends dropping the Mini entirely now that the user kept the LimeSDR Micro (0.3-3.8 GHz, 12 bit, 56 MHz). Run Metop/AWS on the V4L at 2.88 Msps until the Lime ships on 15 Dec 2026, then route helicone + SAWbird+ GOES to the Lime. Use 7 Msps, not 6, because reaudit_B hard-blocks Lime rates below 7 Msps.
+  - Not strictly not-worse: the Lime is worse in clock (+-1-2 ppm against 0.5 ppm), in power (about 4 W) and in LO sharing.
+  - But it costs 0 incremental, and its NF does not matter behind the 38 dB LNA.
+  
+  Recommendation:
+  - Keep the Mini only as a gated, conditional purchase.
+  - If the gate fails BEFORE the Lime passes acceptance, buy SKU IM150415001EU from ITEAD DE. Do not use Moonraker.
+  - After the Lime passes acceptance with a zero-drop 7 Msps capture, drop the Mini (reaudit_C) and save 123-131 USD landed.
+  - Hard rules: the Mini is RX-only hardware. Keep its 4.5 V bias tee default-off and token-gated.
+  
+  Verification limits:
+  - The shared WebSearch budget was already exhausted at my first query, so no web searches ran. Everything above comes from WebFetch of primary pages, ITEAD's WooCommerce store API, Launchpad's API and the libairspy source.
+  - Not verified: the Moonraker price (403); Mini power draw (unpublished); HydraSDR operating temperature and power; RSP1B ADC bits at 6+ Msps, NF and IIP3; FB Radio and AstroRadio VAT basis; any Black Friday 2026 sale.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
