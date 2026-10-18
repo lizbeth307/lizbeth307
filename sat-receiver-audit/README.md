@@ -50,6 +50,7 @@
 | [Software stack](components/software_stack.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Storage](components/storage.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_3e735695-e00` |
 | [Targets link budgets](components/targets_link_budgets.md) | ✅ research · forums · fixes ✅ verify | `—` |
+| [Tca9517 buffer 74lvc1g17 2n7002 ao3400 f](components/tca9517_buffer_74lvc1g17_2n7002_ao3400_f.md) | · research · forums · fixes ✅ verify | `—` |
 | [Tinplate hf can lc mix 31 on vbus](components/tinplate_hf_can_lc_mix_31_on_vbus.md) | · research · forums · fixes ✅ verify | `—` |
 | [Two stage coax cm choke ft 240 77 ft 240](components/two_stage_coax_cm_choke_ft_240_77_ft_240.md) | · research · forums · fixes ✅ verify | `—` |
 | [Uputronics 440 mhz cubesat filtered prea](components/uputronics_440_mhz_cubesat_filtered_prea.md) | · research · forums · fixes ✅ verify | `—` |
