@@ -3908,6 +3908,96 @@
   - the order of the free-RAM model (idx 71)
   - the raw-IQ allowlist details in the 5.5 storage paragraph (idx 74)
 
+## edit:05c_arch_software_resources:b2 (run `wf_11421893-197`)
+
+- **Section:** 05c_arch_software_resources
+- **Applied:**
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+  - 58
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  - 64
+  - 65
+  - 66
+  - 67
+  - 68
+  - 69
+  - 70
+  - 71
+  - 72
+  - 73
+  - 74
+  - 75
+  - 76
+  - 77
+  - 78
+  - 79
+  - 80
+  - 81
+- **Skipped:** []
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/05c_arch_software_resources.md, in place, on top of the batch-1 edits. All of idx 41-81 are applied. No item was skipped outright; where two changes or a change and the existing text disagreed, I merged them as follows.
+  
+  CONFLICTS AND WHICH SIDE WON
+  - idx 57 (re-audit A) vs idx 81 (re-audit B), librtlsdr. B won on the primary build: librtlsdr2 2.0.3-0+lab1 from v2.0.3 with 7ebcb04 reverted. B is the receivers re-audit, it checked both routes, and it confirmed the same 37 exports and unchanged headers, which covers A's ABI concern. A's 2.0.1 + 65f06585 + 0204c9cf recipe is kept as the fallback, which B also names. A's details are all kept: GPIO5 and every off request pass ungated, the policy-gate-not-security-boundary note, the strings/zero-copy CI check, the per-pass 1 s variance self-test, and the rtl-sdr-blog fork note. The token path follows B: /run/labd/bias/<serial>, not A's /run/lab/bias, so it matches idx 76.
+  - idx 59 (A: 'ppm stays in labrx') vs idx 77 (B: no HF+ ppm correction in labrx, the flash ppb is applied by libairspyhf). B won because it is a source-verified correction. The SoapyAirspyHF note now points to it.
+  - idx 45: the source itself said to settle GPSD_OPTIONS in the merge. I chose '-n -b -s 115200' (re-audit D) over '-n -p' (A): -b means gpsd never writes to the receiver, D is the newer re-audit, and the LC76G settings come from ExecStartPre. The text names both sources. The rest of A's row is applied (/dev/lab/gnss, the gnss-* blacklist, the SHM NMEA refclock with PPS 'prefer' on /dev/pps0, makestep, the AppArmor CONFIG_LSM note).
+  - idx 78 (B lists DSC in sdrangelsrv) vs idx 54 (A: demoddsc absent unless the lab patch that drops formats 120/123/114 before address decode passes its test). A's condition won: it is stricter and matches the user's P2 DSC rule. idx 47 and 78 are merged into one sdrangelsrv entry: NAVTEX, RTTY, FT8, BFM/RDS, VOR, Radio Clock; DSC only with the patch; WEFAX and DRM only after a release that has them; -a 127.0.0.1 and -w wisdom.
+  - idx 79 (B: 'wsjtx-decoders+lab') vs idx 51/55/59 (A: 'lab-wsjt-decoders'). I used A's name everywhere for consistency.
+  - idx 51 vs the re-audit C pipeline allowlist already in the file. A's SatDump plugin set is applied. I added a note to check it against C's 5 pipelines: AWS.json and FengYun-2.json need the AWS and FY2 plugins (C turns on PLUGIN_AWS and PLUGIN_FY2), and GK2A and the optional plugins have no pipeline in the Europe build.
+    - Open for batch 3: C (idx 88/91) turns off all sdr_sources plugins, NET_SOURCE included, and allows file/FIFO input only. That contradicts A's live net_source feed (idx 41/46/51). Batch 3 must settle it.
+  - idx 54 vs operator note 33. A's SDRangel build allowlist does not include APT, radiosonde or DAB. I followed A as a stricter subset, which breaks no rule: radiosondes go to auto_rx and DAB to welle-cli, and the text says so.
+  - idx 52 vs operator note 32. A's patched modes.py list has no APRS/packet mode and no skimmers. I followed A as the stricter list: APRS goes through SDRangel demodpacket (APRS only), and the P2 skimmer and band limits are kept. drm in OWRX+ is noted as appearing only when the source-patched Dream from idx 79 is present.
+  - idx 53 vs idx 56. The -1 pin on linux-firmware-dragonwing is limited to the PPA 20260825 build, because idx 56 holds the r2 version 1.0.0+20251203. The old 'Також на −1' items (dream conditional, limesuiteng-gui, gr-limesuiteng, limesuiteng-cli conditional, libacars*) are merged into the full list. The Packaging paragraph now points to that list instead of repeating it.
+  - idx 60 vs the existing 'legacyapi for SatDump' text. Changed to: SatDump no longer needs it, since it has no Lime plugin.
+  
+  DUPLICATES MERGED, NOT REPEATED
+  - idx 77: 'Lime rates below 7 Msps refused' was already in the labrx row.
+  - idx 66: the 1544-1545 MHz mask was already there.
+  - idx 48: the EPERM test is already in the labd row, so the lease self-test is added once next to ReadOnlyPaths.
+  - idx 50: merged into the existing menu-CI sentence.
+  - idx 69: kept the 15.12.2026 shipping date.
+  
+  RECOMPUTED SUBTOTALS (all model)
+  - Free RAM from 10.9 GiB instead of 11.3 GiB (0.4 GiB less in each row), with-Lime rows first:
+    - with Lime, pass: 1.7-4.5 GiB
+    - with Lime, training: 0.4-2.7 GiB, flagged as the tight case (v1: 0.8-3.1)
+    - without Lime, pass: 4.2-7.0 GiB
+    - without Lime, training: 2.9-5.2 GiB
+  - Visible-RAM arithmetic checked: 12288 − 588 − 64 = 11,636 MiB = 11.36 GiB; minus 512 MiB = 10.86 GiB.
+  - A55 total in CPU mode: up to about 3.0 cores with CPUQuota 150 % (idx 64).
+  - LIME-W FFT: 854 FFT/s, or 1709/s with 50 % overlap. 0.9-1.5 A78 cores without overlap, 1.8-3.0 with overlap, so the 1-2 core budget holds with overlap only at the upper GFLOPS estimate (idx 72).
+  
+  ANCHORS FOR BATCH 3
+  Still in the file: '| gpsd 3.25 + chrony 4.5 |' (idx 87); the LC76G '$PAIR752…$PAIR391' phrase (idx 86/101); 'а також 145.800 MHz, коли записується 2 m;' (idx 95); '# (або @52 …)' (idx 98); '| labclassify | — | inferd-htp' (idx 105); '| labd | Python, D-Bus | I2C2 через smbus2' (idx 116/120); the labpowerd row (idx 104/119).
+  
+  Changed by this batch, so batch 3 must place by part:
+  - UI first sentence (idx 106)
+  - hold-list sentence, now 'Утримання (apt-mark hold …' (idx 108)
+  - Python line (idx 110)
+  - 'з джерел: SoapyAirspyHF…', now 'З джерел як +lab: …' (idx 82/90)
+  - SatDump 'живий канал' parenthesis (idx 91)
+  - full labinput cell (idx 118)
+  - GPSD_OPTIONS/chrony phrase (idx 100); -b is already applied there.
+
 ## edit:08b_new_gates_reaudit:b1 (run `wf_1721ea96-ee2`)
 
 - **Section:** 08b_new_gates_reaudit
