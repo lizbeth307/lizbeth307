@@ -32399,6 +32399,236 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Rules: every part is a passive or receive-path part or a control part. Qualification is conducted only, into loads or a DUT. No loops or H-field parts. No transmit capability is added.
 
+## searchB:rf_sled_hmc7992_sp4t_pe4302_mcp23017_2_a (run `wf_c3ba734e-52b`)
+
+- **Part:** RF sled (lab extended, qty 1): SP4T switch (HMC7992; RF1 = 50 Ohm park per re-audit B, RF2 tract A, RF3 tract B, RF4 BENCH) + 6-bit 0.5 dB step attenuator (STACK says PE4302; re-audit B corrects this to PE4312 because PE4302 is discontinued) + MCP23017 #2 at 0x21 + ADS1115 at 0x48 on the LAB BUS (TCA9517, 100 kHz) + LNA bias chain (AUX12 12 V -> buck to about 6 V -> LC -> low-noise LDO 4.5-5 V -> TPS2553 -> bias tee, up to about 340 mA) + shielded aluminium box with an internal shield wall
+- **Current price usd:** 104-168 (STACK row, marketplace, unverified). My rebuild of what that covers: generic HMC7992 board $6-21 (G1 snapshots; Walmart.ca CA$20.49 not re-checkable). PE4302 module $11.49 + $6.84 shipping on eBay (radio_lab, unverified). Adafruit MCP23017 5346 $5.95 (verified by G2). Adafruit ADS1115 1085 $14.95 (adafruit.com, in stock, read 18 Oct 2026; DigiKey DE EUR 13.13). The buck, LC, LDO, TPS2553, bias tee, box, SMA jacks and LAB BUS connector are unnamed and unpriced. No PE4312 module exists to price: the only ready-made PE4312 board is pSemi's EK4312 eval board, $150 at Richardson RFPD.
+- **Critical specs:**
+  - SP4T switch: 0.1-6 GHz specified (sled carries 137/437/739.5/1090/1530-1710 MHz). IL <=0.9 dB max (0.6 typ) at 0.1-2 GHz. Isolation >=40 dB min / 45 typ at 0.1-2 GHz on the chip; board accept >=30 dB, target >=40. On-state RL 25 dB. Absorptive (off-throws terminated). P1dB 33 dBm and IIP3 56 dBm at 3.3 V. No negative-voltage generator, so no switch spurs. A=B=Low selects RF1, which takes the 49.9 Ohm park. VDD 3.0-5.4 V, VIH 1.15 V. All RF pins DC-free (C0G blocks, 1 nF on VHF paths). Genuine, traceable die.
+  - Step attenuator: 0-31.5 dB in 0.5 dB steps, 6-bit, monotonic. At least 1 MHz-2.2 GHz. IL at 0 dB <=1.5 dB below 1 GHz. Accuracy no worse than PE4302 (+-(0.10+3%) to 1 GHz, +-(0.15+5%) to 2.2 GHz). IIP3 >=52 dBm. P1dB/P0.1dB about 30 dBm. 3.3 V logic. Defined power-up state. Parallel control from MCP23017 D0-D5. Shielded. A VNA correction table is required either way.
+  - I/O expander: 16 GPIO, I2C address 0x21, 3.3 V. High-Z at POR, with external 100k pull-downs so boot = all off / RF1 park. INTA/INTB. labd drives it through smbus2 (pinctrl-mcp23s08 is not built in the held kernel). Genuine Microchip.
+  - ADC: 16-bit (not 12-bit ADS1015-in-disguise), 4 single-ended or 2 differential channels. PGA +-0.256 to +-6.144 V, 8-860 SPS. I2C 0x48 (ADDR to GND), 2.0-5.5 V. Quiet AVDD. Read by smbus2 on Ubuntu 24.04 arm64, no kernel driver.
+  - Bias supply: input AUX12 12 V behind a 0.75 A-hold PTC, with sled plus noise source etc. under the AUX budget. Buck output about 6 V at >=0.4 A, efficiency >=85% at 0.1-0.35 A. Fixed-frequency forced-PWM, with no PFM/pulse-skipping wandering spurs. Then LC, then an LDO with <=1 uVrms-class noise, PSRR >=70 dB at the buck frequency and >=0.5 A capability. Per-output current limit with FAULT (TPS2553 class). Measured ripple/spurs at the coax: no new spurs on RTL/tinySA at 137/437/739.5/1090/1575 MHz.
+  - Box: aluminium die-cast, about 110x60-70x30 mm. Internal shield wall between the bias/buck and RF sections. SMA bulkheads. 1/4-20 or tripod mount. Leak rule: a source on BENCH <= -40 dBm with antenna throws loaded must not appear on them.
+  - Compatibility: LAB BUS I2C map unchanged (0x21, 0x48). HMC7992 needs 2 control lines (A/B), not the V1-V3 the STACK lists. PE4312 is pin-compatible with PE4302, plus LE. HMC7992 VDD comes from the same 3.3 V rail as the MCP, so the power-up sequence holds. No new software or driver.
+  - Rules: switch and attenuator are passive receive-path parts. Signal sources are conducted only (BENCH, <= -40 dBm). No TX, no loop and no H-field parts. Bias only into DC-sensed LNAs.
+  - Build quality and authenticity: franchised or traceable silicon (HMC7992 and PE4302-class parts are counterfeit or remark targets). Defined 50 Ohm layout. Fewer SMA jumpers. Survives vibration and cold.
+- **Candidates:**
+  1.
+    - **Name:** DIY sled PCB with genuine franchised chips: ADI HMC7992LP3DE + pSemi PE4312C-Z + Microchip MCP23017-E/SO + TI ADS1115IDGSR + TI TPS62933FDRLR (FCCM buck) -> LC -> ADI LT3045EMSE -> TI TPS2553, on one 2-layer GCPW board (on-board RF1 49.9 Ohm park, C0G blocks, via fence, shield wall) in a Hammond 1590B (or 1590BB) die-cast box
+    - **Kind:** diy
+    - **Price usd:** About 61-111 ex VAT (about 73-132 with 19% VAT); model, partly verified. Verified chip prices: HMC7992LP3DE EUR 11.50 = $12.93 (DigiKey DE, G1, 18 Oct 2026). PE4312C-Z EUR 3.86 = $4.34 (DigiKey DE, 11,705 in stock, Active). ADS1115IDGSR EUR 4.64 = $5.22 (DigiKey DE, 36,903 in stock, Active). TPS62933FDRLR EUR 1.49 = $1.67 (DigiKey DE, 3,048 in stock). MCP23017-E/SO $1.62 (DigiKey, G2). LT3045EMSE $10.00 (DigiKey, G3). TPS2553DBVR EUR 1.02 = about $1.15 (DigiKey search page; quantity break not shown). Chips total about $36.9. Hammond 1590B EUR 8.55 incl. VAT = EUR 7.18 = $8.07 ex VAT (reichelt, in stock); 1590BB EUR 10.70. Estimates, unverified: passives, inductors and bias-tee choke $4-8; 4-5 genuine SMA jacks $8-20; sled-side LAB BUS connector $3-10; shield wall $1-3; PCB $0-25 (about $0-5 if panelised into the existing custom-PCB order; a separate CN fab order adds shipping + VAT + EUR 3 duty per tariff line + EUR 2 UHF from about 1 Nov 2026). Saving vs 104-168 is about $40-60 at mid-points (model); at the extremes the ranges overlap.
+    - **Spec comparison:** SWITCH: same HMC7992 die as the generic board claims, from a franchised channel. Datasheet Rev 0 values: 0.1-6 GHz, IL 0.6 typ / 0.9 max dB, isolation 40 min / 45 typ dB at 0.1-2 GHz, on-state RL 25 dB, P1dB 33 dBm, IIP3 56 dBm, no NVG, ESD 2 kV HBM. These are equal by identity. The board level is better: our own DC blocks (1 nF C0G where VHF passes, against the 100 pF eval-BOM copy, which costs about 0.2 dB and gives about 13 dB RL at 137 MHz), an on-board park and a via-fenced EPAD.
+  ATTENUATOR: PE4312 (datasheet DOC-81482-4.01, 06/2026) against PE4302 (datasheet copies via search; values not cross-checked against the original PDF):
+  - Range: 1 MHz-4 GHz against about 1 MHz-4 GHz in practice.
+  - IL: 1.3 typ / 1.5 max dB below 1 GHz and 1.5 / 1.8 dB at 1-2.2 GHz, against 1.5 / 1.75 dB from DC to 2.2 GHz.
+  - Accuracy: +-(0.10+1%) to 1 GHz and +-(0.15+2%) to 2.2 GHz, against +-(0.10+3%) and +-(0.15+5%).
+  - IIP3: 59 against 52 dBm. P0.1dB is 30 dBm.
+  - Switching: 500 ns typ.
+  - Supply and logic: VDD 2.3-5.5 V, 1.8 V logic compatible (VIH 1.17 V).
+  - PUP pins can force 31.5 dB at power-up (LE low), a safer boot state.
+  Independent measurement of the same pin-compatible board class: Silicon Chip (June 2018) measured a cheap unshielded open PE4302 board at 1-1.5 dB IL below 2.5 GHz, with -16.06 dB at a -16 dB setting at 1.5 GHz. It was good to about 1.5 GHz and a shield helped modestly, so a simple 2-layer layout reaches datasheet-class results.
+  EXPANDER and ADC: the same dies (MCP23017, ADS1115) as the Adafruit 5346 / 1085. Specs are identical. The ADS1115 comes from TI franchise stock, so there is no ADS1015 remark risk.
+  BIAS: TPS62933F is forced-CCM at a fixed 200 kHz-2.2 MHz (RT-set), 3.8-30 V in, 3 A, so it has no PFM wandering spurs. LT3045: 0.8 uVrms and 76 dB PSRR at 1 MHz, 500 mA (datasheet front page). TPS2553 gives the current limit and FAULT. This equals or beats the unnamed current buck/LDO and implements the integration fix exactly.
+  BOX: Hammond 1590B, 112.4x60.5x31 mm, IP54 die-cast aluminium, matching the planned 110x70x30 mm. Use the 1590BB (119.5x94x34) if the board, shield wall and 4-5 bulkheads do not fit.
+    - **Worse in:** No datasheet spec is traded, but there are flags:
+  (1) Evidence gap under this angle: there is no independent measurement of this exact board. Chip limits are manufacturer production specs, and board IL, isolation and RL are proven only by our own conducted LiteVNA qualification. The current generic boards are also unmeasured.
+  (2) PE4312 points to check against PE4302:
+  - ESD HBM is 1500 V and CDM 250 V. The PE4302 HBM rating is not verified; if it was higher, this is a regression. Handle with ESD care.
+  - Max CW input is +24 dBm above 50 MHz and derated below 50 MHz (datasheet Figure 4). Irrelevant at <= -40 dBm sources and antenna levels, but stated.
+  - The internal NVG gives about -140 dBm typical LF spurs. A -3.3 V VSS_EXT (bypass mode) removes them.
+  (3) A fixed-frequency buck still makes a comb at fsw multiples inside the box. Choose fsw at 2.2 MHz (above MW) and verify with the noise-floor A/B.
+  (4) It needs a layout plus fine-pitch assembly: QFN-16 3x3 EPAD, QFN-20 4x4, VSSOP-10, SOT583. This is the same reflow or hot-air process the stack already needs for VQFN parts.
+  (5) HMC7992 below 100 MHz is unspecified, as it is for the current part.
+    - **Compatibility:** I2C map unchanged on the LAB BUS behind the TCA9517: MCP23017 #2 at 0x21 (A2..A0 hard-tied 001) and ADS1115 at 0x48 (ADDR to GND); 4.7k pull-ups on the sled side. MCP #2 pin budget: HMC7992 A/B (2, not V1-V3), PE4312 C0.5-C16 (6) + LE (1), NOISE EN, LNA EN = 11 of 16; GPA7/GPB7 are outputs only. HMC7992 VDD and PE4312 VDD come from the sled 3.3 V, tied to the MCP rail, so VDD comes before logic. labd uses smbus2 and needs no driver or kernel change on Ubuntu 24.04 arm64 / 6.18.2-4. Powered from AUX12. Park on RF1 by pull-downs. Mechanically it fits the planned box size. EU sourcing: DigiKey DE (DDP with VAT) and reichelt DE; nothing from UK/US.
+    - **Risks:** Board must pass, conducted only into loads or a DUT:
+  - HMC7992 IL <=0.9 dB at 137/437/740/1700 MHz, isolation >=40 dB (>=30 dB minimum accept), on-state RL >=20 dB, RF1 park at boot (MCP in reset).
+  - PE4312 sweep 1 MHz-2.2 GHz at 0/0.5/15.5/31.5 dB, within +-(0.15+2%) dB after de-embedding with a thru coupon.
+  - ADS1115: low 4 bits toggle (no 16-count steps), noise at PGA +-0.256 V.
+  - Bias: ripple and spur A/B into a 50 Ohm load with the LNA bias on and off, the leak rule, and a 1e6-read I2C test on the cable.
+  If a section fails after rework, fall back to the current part for that block only. A PCB re-spin costs time. Prices for passives, SMA, connector and PCB are estimates.
+    - **Seller url:** https://www.digikey.de/en/products/result?keywords=PE4312C-Z
+    - **Sources:**
+      - https://www.psemi.com/products/digital-step-attenuators/pe4312
+      - https://www.psemi.com/pdf/datasheets/pe4312ds.pdf
+      - https://rfmw.com/products/detail/pe4302-psemi/35295/
+      - https://siliconchip.com.au/Issue/2018/June/El+Cheapo+Modules+17%3A+4GHz+digital+attenuator
+      - https://www.farnell.com/datasheets/2283884.pdf
+      - https://www.digikey.de/en/products/detail/analog-devices-inc/HMC7992LP3DE/5873027
+      - https://www.digikey.de/en/products/result?keywords=PE4312C-Z
+      - https://www.digikey.de/en/products/detail/texas-instruments/ADS1115IDGSR/2231567
+      - https://www.ti.com/product/TPS62933F
+      - https://www.digikey.de/en/products/result?keywords=TPS62933FDRLR
+      - https://www.digikey.de/en/products/result?keywords=TPS2553DBVR
+      - https://www.reichelt.de/de/en/shop/search/1590B
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G1_receivers_rf.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G2_display_hmi_storage.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G3_power_gnss_imu.json
+  2.
+    - **Name:** Generic marketplace PE4302 0.5 dB step attenuator module (33x24.5 mm, SMA, DIP switch, 10k pull-downs; Banggood/eBay/AliExpress); the attenuator in the STACK row
+    - **Kind:** generic_or_clone
+    - **Price usd:** About 11.49 + 6.84 shipping on eBay (radio_lab, unverified); $11.00 at Banggood in 2018 (Silicon Chip). EU landed cost adds VAT + EUR 3 duty + EUR 2 UHF.
+    - **Spec comparison:** Measured independently, one sample (Silicon Chip, June 2018): IL at 0 dB is 1-1.5 dB below 2.5 GHz and about 3.5 dB at 4 GHz. -16 dB set gives -16.06 dB at 1.5 GHz. 'Quite good' up to about 1.5 GHz; errors grow above that. The open PCB lets RF jump over the chip at 2 GHz and above, and a shield helped modestly. Datasheet (copies): IL 1.5/1.75 dB, accuracy +-(0.10+3%) / +-(0.15+5%), IIP3 52 dBm.
+    - **Worse in:** Against the re-audit pick (PE4312) it is worse in IL, accuracy (3x/2.5x the % term), IIP3 (-7 dB) and switching speed. The chip has been discontinued since 2016-2018, so marketplace parts are old stock or remarks, and Silicon Chip did not verify genuineness. The serial path is disabled and LE is tied high. It is also dearer than a genuine PE4312C-Z chip (EUR 3.86). Rejected as an analog.
+    - **Compatibility:** Pin-level 6-bit parallel at 3.3 V matches MCP #2 D0-D5. It needs its own shield and SMA jumpers.
+    - **Risks:** Counterfeit or remark risk, unit-to-unit variation, unshielded.
+    - **Sources:**
+      - https://siliconchip.com.au/Issue/2018/June/El+Cheapo+Modules+17%3A+4GHz+digital+attenuator
+      - https://psemi.com/?p=11471
+      - https://www.psemi.com/products/digital-step-attenuators/pe4312
+  3.
+    - **Name:** Generic HMC7992 SP4T boards (AliExpress 3256809527409961 / 1005009856440413 about $6.2-6.7; 3256808774768321 $15.58; 3256808728006825 $13.78-20.89; Walmart.ca Joystore CA$20.49)
+    - **Kind:** generic_or_clone
+    - **Price usd:** About 6.2-21 each (G1 snapshots, unverified; EU VAT, duty and UHF extra)
+    - **Spec comparison:** They claim the HMC7992 datasheet values (45 dB isolation, 0.6 dB IL, 58 dBm IIP3). No independent measurement of any generic board was found: my search, plus two earlier G1 search angles. Port capacitor values are unknown, possibly the 100 pF eval BOM, which is worse at 137 MHz.
+    - **Worse in:** No measured evidence (rejected under this angle). ADI logo silkscreened on a board ADI does not make. Price below the authorised qty-1000 chip price (EUR 7.09), so it fails 'not counterfeit'. A remarked HMC241 would pass a LiteVNA IL/isolation check while being 11 dB worse in IIP3 and 7 dB worse in P1dB, which our lab cannot measure.
+    - **Compatibility:** Same 2-line control, but a separate supply can break the VDD-before-logic sequence. Extra SMA jumpers.
+    - **Risks:** Counterfeit, unknown DC blocks, flux residue.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G1_receivers_rf.json
+      - https://www.farnell.com/datasheets/2283884.pdf
+  4.
+    - **Name:** Generic HMC472 digital attenuator module with STM32 + OLED + buttons (Banggood ID 1769385)
+    - **Kind:** generic_or_clone
+    - **Price usd:** About 30.00 + 6.70 shipping (Silicon Chip, Oct 2021; current price unverified)
+    - **Spec comparison:** Measured independently (Silicon Chip Oct 2021, Signal Hound SA44B/TG44A): IL under 2 dB to about 1.5 GHz, about 2.5 dB at 2.64 GHz, about 3.5 dB at 2.95 GHz. Errors grow above 1.5 GHz and at settings past -20 dB. HMC472 datasheet: DC-3.8 GHz, accuracy +-(0.35 dB + 5%), IL 1.1-1.2 dB below 350 MHz.
+    - **Worse in:** Only 1 dB steps: the 0.5 dB bit is unused, so the 0.5 dB scripted sweeps are lost. Accuracy is worse (+-(0.35+5%)). The serial control did not work in the test, so it cannot be driven by labd/MCP. 5 V USB power, with an extra MCU and OLED (noise) in the RF path box. Not cheaper than the PE4312 chip. Rejected.
+    - **Compatibility:** Not I2C or MCP-controllable as shipped. USB power.
+    - **Risks:** Unknown firmware, MCU clock spurs.
+    - **Sources:**
+      - https://siliconchip.com.au/Issue/2021/October/El+Cheapo+Modules%3A+3.8GHz+Digital+Attenuator
+  5.
+    - **Name:** Banggood ID 1648810 'LF-6 GHz, 0-31.75 dB, 0.25 dB step' digital attenuator module (Silicon Chip suspects HMC1119)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 51.80 + 6.70 postage (Silicon Chip, 2021; unverified now)
+    - **Spec comparison:** Advertised only: IL under 1.5 dB, 0.25 dB steps. No measurement found, and the chip is unconfirmed.
+    - **Worse in:** No measured evidence, so rejected under this angle. Dearer than the PE4312 chip and probably MCU-controlled like the 1769385.
+    - **Compatibility:** Unknown control interface.
+    - **Risks:** Unverified chip and claims.
+    - **Sources:**
+      - https://siliconchip.com.au/Issue/2021/October/El+Cheapo+Modules%3A+3.8GHz+Digital+Attenuator
+  6.
+    - **Name:** pSemi EK4312 evaluation kit (genuine PE4312 on an SMA board)
+    - **Kind:** other_brand
+    - **Price usd:** 150.00 (Richardson RFPD, stock 3; search snapshot)
+    - **Spec comparison:** Genuine PE4312 with the manufacturer's measured layout, equal to the DIY attenuator section.
+    - **Worse in:** Not cheaper (about 40x the chip). A large board with its own control interface. Rejected.
+    - **Compatibility:** Parallel/serial headers; needs wiring to MCP #2.
+    - **Risks:** None technical; cost only.
+    - **Sources:**
+      - https://shop.richardsonrfpd.com/Products/Product/PE4312EK
+  7.
+    - **Name:** Generic ADS1115 breakout modules (blue 'ADS1115' boards on AliExpress/Amazon)
+    - **Kind:** generic_or_clone
+    - **Price usd:** About 1-3 (typical marketplace price, not verified this session)
+    - **Spec comparison:** Documented fakes: modules with a 12-bit ADS1015 inside read in 16-count steps (low 4 bits always zero). The marking BRPI = ADS1015 and BOGI = ADS1115, but markings are reported painted or faked, and TI says markings vary. There is no measurement of any specific listing proving 16-bit INL and noise.
+    - **Worse in:** Possible 12-bit silicon (16x worse resolution) and unknown noise and offset. Rejected under this angle. A genuine ADS1115IDGSR at EUR 4.64 on the sled PCB costs about $3 more and is provably equal.
+    - **Compatibility:** Same address and register map if genuine; on-board 10k pull-ups and the ADDR strap must be checked.
+    - **Risks:** Counterfeit or remark.
+    - **Sources:**
+      - https://www.elektroda.com/rtvforum/topic4094810.html
+      - https://forum.arduino.cc/t/ads1115-problems-or-fake/658746
+      - https://e2e.ti.com/support/data-converters-group/data-converters/f/data-converters-forum/1276245/ads1115-ads1115idgsr
+  8.
+    - **Name:** Generic MP1584 adjustable buck module as the sled pre-regulator
+    - **Kind:** generic_or_clone
+    - **Price usd:** About 1.3 each (NA6O bought 6 for $8 on Amazon, 2019; EU price unverified)
+    - **Spec comparison:** Measured independently (NA6O test report, 12 V in, 5 V out, 450-500 mA): switching at 243 kHz, not the 1 MHz the MP1584 datasheet gives. Noise carriers about 4 kHz wide at every 243 kHz multiple. Input ripple about 20 dB above output ripple. Input conducted emissions exceed FCC Part 15 guideline limits. The input capacitor is undersized against the datasheet. 'Maybe; modifications recommended.'
+    - **Worse in:** Worse in spurs/ripple: an off-spec frequency suggests a clone or mis-built part, and the 243 kHz comb runs through MW/HF. PFM light-load behaviour is not controlled. Not cheaper than a genuine TPS62933F (EUR 1.49). Rejected.
+    - **Compatibility:** Fits 12 V in / 6 V out electrically.
+    - **Risks:** Unknown silicon, EMI.
+    - **Sources:**
+      - https://na6o.com/rfi/ewExternalFiles/MP1584EN_DC-DC_Module_test_report.pdf
+  9.
+    - **Name:** Generic marketplace 'LT3045' low-noise LDO modules
+    - **Kind:** generic_or_clone
+    - **Price usd:** About 1-6 (G3 snapshots, unverified)
+    - **Spec comparison:** G3 found no published noise, PSRR or dropout measurements. Chip origin is unknown. They use trimmer SET resistors, have no ballast and probably no PG or ILIM.
+    - **Worse in:** No measured evidence; counterfeit risk (LGYP mark shared by grades). Rejected. The genuine LT3045EMSE ($10 DigiKey / $8.33 LCSC) is used in the DIY candidate.
+    - **Compatibility:** Module form factor does not suit a shield-walled sled PCB.
+    - **Risks:** Counterfeit.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G3_power_gnss_imu.json
+  10.
+    - **Name:** Generic MCP23017 breakout modules (CJMCU-2317, Waveshare 15391 and similar)
+    - **Kind:** generic_or_clone
+    - **Price usd:** About 2-8 (not re-verified; G2)
+    - **Spec comparison:** No measured evidence of genuineness. G2 checked the Waveshare schematic: RESET is not broken out and decoupling is 100 nF only.
+    - **Worse in:** Not cheaper than the bare genuine MCP23017-E/SO at $1.62 on the sled PCB, with worse reset and decoupling. Rejected.
+    - **Compatibility:** Same register map.
+    - **Risks:** Unknown silicon provenance.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G2_display_hmi_storage.json
+  11.
+    - **Name:** Used Mini-Circuits connectorized parts (ZX76-31R5-series step attenuator, ZSWA4-63DR+ SP4T, RCDAT USB attenuators) from eBay
+    - **Kind:** used
+    - **Price usd:** Unverified: eBay returned HTTP 403. New ZSWA4-63DR+ is $307.32 with 0 in stock (re-audit B).
+    - **Spec comparison:** Datasheet-grade parts, but each used unit's condition is unmeasured, and no listing with measured S-parameters was found.
+    - **Worse in:** No verified price, so it cannot be shown cheaper. Larger and heavier. RCDAT needs a USB port and a vendor driver. Rejected for now.
+    - **Compatibility:** SMA; control lines or USB differ from MCP #2.
+    - **Risks:** Unknown history, damage from overdrive.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_B_receivers_rf.json
+  12.
+    - **Name:** Generic '1590B-size' die-cast aluminium boxes (marketplace clones)
+    - **Kind:** generic_or_clone
+    - **Price usd:** About 3-6 (typical marketplace price, unverified)
+    - **Spec comparison:** No shielding-effectiveness, wall-thickness or flatness measurements found.
+    - **Worse in:** No measured evidence. Saving about $3-5 against the Hammond 1590B at EUR 7.18 ex VAT (reichelt, in stock). Rejected.
+    - **Compatibility:** Similar outline, unverified.
+    - **Risks:** Lid fit, RF tightness.
+    - **Sources:**
+      - https://www.reichelt.de/de/en/shop/search/1590B
+  13.
+    - **Name:** Manual SMA swaps instead of the sled (STACK budget alternative)
+    - **Kind:** diy
+    - **Price usd:** 0
+    - **Spec comparison:** Same RF path when hand-patched.
+    - **Worse in:** Loses software path selection, the 50 Ohm park at boot, the scripted 0.5 dB sweeps, labd automation and the loaded-antenna leak rule. Adds connector wear. A functional downgrade, not an analog.
+    - **Compatibility:** n/a
+    - **Risks:** Operator error with bench sources.
+    - **Sources:** []
+  14.
+    - **Name:** Keep current sled parts (generic HMC7992 board + generic PE4302/PE4312 module + Adafruit 5346 + Adafruit 1085 + unnamed buck/LC/LDO + box)
+    - **Kind:** current_part
+    - **Price usd:** 104-168 (STACK, unverified)
+    - **Spec comparison:** Baseline. No measurements exist for the generic switch board. The PE4302 module class was measured once by Silicon Chip. The Adafruit boards are genuine.
+    - **Worse in:** Fallback only, per block, if a DIY section fails qualification. Fit the PE4312, not the PE4302, and check the chip marking.
+    - **Compatibility:** As in STACK, with the re-audit fixes: park on RF1, A/B 2-line control.
+    - **Risks:** Counterfeit risk on marketplace RF boards.
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md
+- **Notes:** Verdict (angle B: generic, clone, DIY, used): no marketplace module, clone or used unit can replace any sled block on measured evidence.
+  - Measured evidence rules out three of them: the HMC472 module (1 dB steps only, worse accuracy, serial control not working), MP1584 buck modules (off-spec 243 kHz comb, conducted emissions over the Part 15 guideline), and ADS1115 modules (documented 12-bit fakes).
+  - Generic HMC7992 boards and LT3045 modules have no measurements at all.
+  - The PE4302 module is measured but worse than the PE4312 the re-audit specifies, and dearer than the bare PE4312 chip.
+  
+  The only cheaper route that gives up no spec is a DIY sled PCB with franchised genuine chips:
+  - Chips: HMC7992LP3DE, PE4312C-Z, MCP23017-E/SO, ADS1115IDGSR, TPS62933F (FCCM), LT3045EMSE, TPS2553.
+  - Box: Hammond 1590B or 1590BB.
+  - Cost: about $61-111 ex VAT against 104-168, a saving of about $40-60 at mid-points (model).
+  - What it brings: same or better silicon specs, a defined layout, fewer SMA jumpers and a safer power-up state.
+  - Status: conditional (PLAUSIBLE, not proven). No independent measurement of this exact board can exist, so acceptance rests on the stack's own conducted LiteVNA qualification at the thresholds listed. If a section fails, fall back to the current part for that block.
+  
+  Corrections to carry into v2 (from re-audit B, confirmed here):
+  - The sled HMC7992 has 2 control lines (A/B), not V1-V3.
+  - A=B=Low selects RF1, so the park load goes on RF1, not RF4.
+  - PE4302 is discontinued; use PE4312. It is pin-compatible: IIP3 59 dBm, accuracy +-(0.10+1%) up to 1 GHz, IL 1.3 dB typ.
+  - Optionally strap PUP1/PUP2 high with LE low, so the attenuator boots at 31.5 dB.
+  
+  Unverified items:
+  - PE4302 datasheet numbers come from search snippets of datasheet copies (the original PDF returned 404/403).
+  - PE4302 ESD rating, so the PE4312's 1500 V HBM may or may not be a regression.
+  - The TPS2553 price quantity break.
+  - Passive, SMA, connector and PCB costs (estimates).
+  - Marketplace prices.
+  
+  EU: buy the chips from DigiKey DE (DDP, VAT included) and the box from reichelt. A PCB fabbed in CN carries VAT + EUR 3 duty per tariff line, plus the EUR 2 UHF from about 1 Nov 2026 (operator notes 34-35). Panelising it into the existing custom-PCB order keeps that marginal.
+  
+  Rules: switch and attenuator are passive receive-path parts. BENCH sources stay conducted at <= -40 dBm with antenna throws loaded. No TX, loop or H-field part is added.
+  
+  USD/EUR conversion: 1.1241 (as in G1).
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
