@@ -33106,6 +33106,85 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - idx 158: "Виміряти струм." is now the idx 95 procedure.
   - idx 159: the phrase "смуга 1648-1728 MHz; uplink LTE B3 1710-1730 MHz у смузі" is kept unchanged, so its anchor still works.
 
+## edit:01b_decisions_register:b4 (run `wf_9ce86e94-763`)
+
+- **Section:** 01b_decisions_register
+- **Applied:**
+  - 135
+  - 136
+  - 137
+  - 138
+  - 139
+  - 140
+  - 141
+  - 142
+  - 143
+  - 144
+  - 145
+  - 146
+  - 147
+  - 148
+  - 149
+  - 150
+  - 151
+  - 152
+  - 153
+  - 154
+  - 155
+  - 156
+  - 157
+  - 158
+  - 159
+  - 160
+  - 161
+  - 162
+  - 163
+  - 164
+  - 165
+  - 166
+  - 167
+  - 168
+  - 169
+  - 170
+  - 171
+  - 172
+  - 173
+  - 174
+  - 175
+  - 176
+  - 177
+- **Skipped:** []
+- **Notes:** I applied all 43 changes (idx 135-177) to /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/01b_decisions_register.md. I edited only that file, with Edit. None were skipped.
+  
+  Conflicts and which source won:
+  - 154 (reaudit_D) against idx 61 (reaudit_A, applied in an earlier batch) on row #34. Re-audit D is newer and re-checked the same claim, so its text replaced "NanoVNA-Saver v0.7.3 / QtTinySA with PySide6 6.12.0". The new text is commit 3445a0a with PySide6==6.11.2 constraints, and QtTinySA built from source on pyside6==6.11.0. The why-cell gives the reason.
+  - 173 (analogs_G6) against 154 (reaudit_D) on the LBE-1420 software. The G6 analog decision is higher precedence, so its wording stands: lbe-142x is the main tool, and lbgpsdo is used only if LBE-1420 support is confirmed. D's details (pinned commit, simontheu fallback, plugdev, --f1 ≤1.1 GHz) are merged in. D's note that lbgpsdo does not see the 1420 went into the why-cell.
+  - 166 (analogs_G3) and 148 (reaudit_D) share the #2813 anchor. G3 wins because it adds the seller and price (Botland EUR 7.99 incl. VAT / EUR 6.72 net, about $8.99 / $7.56). D's spec wording is the same, so it is merged rather than repeated. From the G3 file: Pololu direct $8.95 is the old seller, and the saving is $1.39 each ex VAT.
+  - 160 (analogs_G2) and 139 (reaudit_D) share "Робоча 0-70 °C." Their texts agree, so I wrote one merged sentence. It uses G2's "optional industrial version" wording plus D's facts: no KLUDG4UHDC-B0E1 datasheet, read temp1_crit/lcrit, and pause raw writes at min(65 °C, temp1_crit − 10 K).
+  - 165 (analogs_G3) and 147 (reaudit_D) both rewrite the IP2368 text. I merged them: COUT/Try.SRC board, BZ not sold, TPS259470A on VBUS (OVLO about 22 V), ISET_MODE 1k, RISET 27k → 15k. I also added the trickle currents, the typical-only 250 kHz, VTRGT 4.102 V, and goods-in V_CV 16.25-16.57 V.
+  - 153 (reaudit_D) against idx 102 (reaudit_B, applied earlier: ±0.33 V, ±2.5 %, 12.87-13.53 V). The two do not contradict each other. ±0.33 V is the regulator spec; ±0.35 V is the acceptance window at the connector with battery ≥14.2 V, because TPS7A4701 accuracy holds only above VO + 1 V. I kept both.
+  - 150 and 161 both add "no AR" to the 4D fallback, so it appears only once. GT928 was dropped from the decision cell; the why-cell notes that the Rev 1.5 datasheet does not name the touch IC.
+  
+  Already partly present from earlier batches; I added only the missing parts:
+  - 136: kept the PQTMCFGPPS method that was already there. Added checksums, PAIR410/PAIR400, the EPOC/PAIR007/PAIR753/PAIR006 rules, no field firmware updates, the UART6-TX condition and the "no TX" fallback only after a save test.
+  - 137: consequences cell. Added "C23 закрито для GNSS" and the MAX-M10S option for trips to border areas only after UART6 TX is proven.
+  - 146: the 18/24 W brief text was already there. Added the rev 1.5 date and "(збірка з Lime)".
+  - 162: the exact anchor was missing, but the row exists. I added the G3 goods-in checks to the tests column.
+  - 176: already applied in an earlier batch. Only "12 dB" became "≥12 dB" after H1 on the Lime path.
+  - 177: G6 seller and price were already there. Added the FR/PL landed prices and the libairspy (1.75 GHz) / airspy_rx (1.9 GHz) tuning limits.
+  - 158: anchor "Виміряти струм." was gone because the cell had already been expanded. I merged the FNB58 measurement and the "розділ 8" pointer into it.
+  - 138: the thresholds were already corrected. Added cooler options A/B, the labd stop of NPU/HTP at nspss0/1 > 85 °C, and the source fix: sc7280.dtsi, not forum 30123.
+  
+  Other choices:
+  - 141: wrote "embloader (поки його не прибрано, див. #25)". Row #25 makes purging sdboot-is-embloader the main path, so this avoids contradicting it.
+  - 152: added a note to the why-cell to reconcile "no frequency between 65 and 90 MHz is clean in all bands" with D's window 81.51-82.02 MHz, which is clean for the main bands.
+  - 163: for the UK seller I added only a pointer to the landed-cost rule (#6), because the files give no landed figure.
+  - 167/155: merged colour, alloy, nut, strap and ASA heat limits. I added the G4 price and saving to the consequences cell: 3DJake EUR 24.99 incl. VAT ≈ $28.09, or $25.99 US; saving $1.00 on the US basis and $0 in the EU.
+  - 164: kept the 15-20 A requirement and named Daly DL-J05G-L4S15ATJ at TinyTronics, EUR 8.00 incl. VAT = $8.99 (from G3).
+  - I wrapped `ATTRS{product}=="*CMSIS-DAP*"`, `/dev/ttyACM*`, `4DHDMI-156-1920-1080-*-1100` and `1200*1080` in code spans so their asterisks do not turn text italic.
+  
+  This file has no subtotals to recompute, and a check found every table row still has 4 columns.
+
 ## edit:02a_bom_compute_receivers_rf:b1 (run `wf_a1f0ee5f-4e1`)
 
 - **Section:** 02a_bom_compute_receivers_rf
@@ -40844,6 +40923,86 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   **For batch 4:**
   - All batch-4 anchors (idx 120-158) are still in the file except 153 and 154. Those were already gone before this batch: earlier changes 45 and 47 had already rewritten them.
   - Batch-4 change 158 (G6) says the assembly rule is 'no reflow'. The HMC7992 row I added from G1 #4 permits reflow or hot plate plus hot air, the same process the boards already need for the INA3221 and TPS7A4701 VQFNs. Batch 4 needs to reconcile the two.
+
+## edit:08_open_bench:b4 (run `wf_b682bee1-8a4`)
+
+- **Section:** 08_open_bench
+- **Applied:**
+  - 120
+  - 121
+  - 122
+  - 123
+  - 124
+  - 125
+  - 126
+  - 127
+  - 128
+  - 129
+  - 130
+  - 131
+  - 132
+  - 133
+  - 134
+  - 135
+  - 136
+  - 137
+  - 138
+  - 139
+  - 140
+  - 141
+  - 142
+  - 143
+  - 144
+  - 145
+  - 146
+  - 147
+  - 148
+  - 149
+  - 150
+  - 151
+  - 152
+  - 153
+  - 154
+  - 155
+  - 156
+  - 157
+  - 158
+- **Skipped:** []
+- **Notes:** File edited in place with Edit: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/08_open_bench.md. I kept the edits from earlier batches. After the edits I checked the table: every row has 3 cells. This section has no subtotals, so nothing was recomputed.
+  
+  Where the rows went:
+  - Before the LT3045 row, in this order: D36V28F5 (121), TPS7A4701 (124), TPS2553DBVR-1 (126).
+  - Before the #2813 row: a new «Супервізор AON» row for MCP65R41 (128).
+  - Before the «Ціни» row, as one block: the lab-instrument rows 135-138, 140-142, the Hantek row from 143, and 144-150.
+  - Before «Можливо не враховані в BOM дрібниці»: 127, 129, 130, 131, 132, 158.
+  - Cross-references between rows all point the right way (вище/нижче).
+  
+  Merges instead of repeats:
+  - 153: the HMC7992 truth table was already resolved in the file. The anchor text no longer exists, so I only added «за даташитом Rev 0» and «підтвердити на LiteVNA».
+  - 122/128: the N-sweep and temperature points moved from the #2813 row to the new supervisor row, with 12.8±0.1 / 13.6±0.1 V at 25 and 50 °C. Each row points to the other.
+  - 125/126: the TPS2553 trip values moved into the new TPS2553DBVR-1 row. The LT3045 row now points there and to RF-2.
+  - 154: the anchor «Lime, якщо залишено» no longer exists. I appended the items to the current Lime row and kept «C1; B14» and the 30-day warranty. T7 test (7) points to the T7 A/B already in that row, and I added «T7 — 14 днів відмови ЄС» to the timing cell.
+  - 156: merged into the existing cap-OD text in the LNB row.
+  - 157: the display row's fallback «VBUS лише з власного 5 V плати» is now marked as struck if the DISP12 check shows more than 5.25 V.
+  
+  Conflicts and how they were decided:
+  - 124 vs the existing «Рішення про шину LNB» row, which said the ±0.2 V windows are per-unit gates (re-audit B): the P5 G3 analog decision wins over the re-audit. Both rows now say per-unit gates or windows from the load limits, and the user decides.
+  - 142: the re-audit test «PCB ZT109 / DM1106EN» is not applied to the AN8009; P5 G5 wins.
+  - 147: the G5 DRP matrix replaces re-audit D's «обидва порти DRP» test design; P5 wins.
+  - 157: re-audit D's fallback is struck under the stated condition; P5 G6 wins.
+  - 120: the fallback is now LM61460AANRJRR with sync at about 1.0 MHz or less, per G3. It replaces the generic «LM61460» fallback in the gate cell and the earlier D re-audit's 1.8-2.1 MHz sync (that figure was not in this file).
+  - 154: a conflict inside G6 (12 dB pad after H1 on the Lime path vs YAT-10A+ at 10 dB). Both records have the same precedence, so I recorded it as an open question: an extra SMA attenuator is needed, and the files give no value or part.
+  
+  Small additions from the same source records:
+  - 143: the DC-only coupling note went into the LT3045 gate cell as instructed. The source (G5 decision 8) ties the «33 mV rms on 20 V» remark to the PD charger ripple test (G4), so the same note is also in G4 of row 132.
+  - 155: added the USD values from G6, T7 $231.45 and microSD $71.77-87.57.
+  - 157: added the ILIM about 1.7 A note from G6 record 14.
+  - 147: added the 140 W load-split limit from G5 decision 12.
+  
+  Left for other files or a later pass (not changed here):
+  - The «Ціни» row still says TPS259470A price and stock were not checked in P5 G3. G3 decision 13 lists DigiKey stock (78,910) and 6.18 for 3 pcs. This was not in my batch.
+  - The «Екран HF+» row (5) gives about 5.3 ms with the 220 µF damper. G3 decision 11 sets a 5 ms minimum deglitch for TPS2553DBVR-1. I only added a cross-reference from the TPS2553 row.
+  - Row 158 (no-reflow rule) conflicts with the HMC7992 row, which already plans reflow or hot plate for VQFN parts. I noted «узгодити у v2».
 
 ## edit:11e_changes_reaudit_D:b1 (run `wf_b7e15d24-3c6`)
 
