@@ -9390,6 +9390,161 @@
   
   All items are passive and mechanical, so receive-only, no loops and conducted-only sources are unaffected. I used 15 WebSearch calls and kept every downloaded file in its own scratchpad folder.
 
+## searchA:shock_corded_mast_7_x_35_cm_about_2_4_m (run `wf_37583a7b-1a8`)
+
+- **Part:** Shock-corded mast (7 x 35 cm, about 2.4 m) + 3 guys + stake. Supports group, antenna-foldable tier, qty 1 set. Role: holds the Boni-Whip E-field active whip at 2 m or more for LF/MF time signals (DCF77, MSF, TDF) and NAVTEX, with the ground stake used at the antenna per C17.
+- **Current price usd:** 15-50 (stack estimate from final_completeness.json, not tied to any SKU and not verified)
+- **Critical specs:**
+  - Packed segment length 35 cm or less. Stack rule: every foldable-kit part is 35 cm or less, so a 40-45 cm segment fails unless it is cut.
+  - Deployed height 2.4 m or more, so the Boni-Whip base sits at 2.4 m. The stack minimum is 2.0 m. PA3FWM tn07: received signal is directly proportional to height above ground, so 2.0 m is about -1.6 dB against 2.4 m (20log(2.0/2.4)).
+  - Whip geometry: if the mast is conductive, the whip must sit ABOVE the mast top, never beside it (PA3FWM tn07). This needs a tip adapter or a threaded top.
+  - Material: 7001-T6-class aluminium or GRP fibreglass. PA3FWM: 'Whether the mast is conductive or not hardly matters for the reception.' A conductive mast should be grounded at its foot. Durability matters: metal ferrules, and UV/splinter resistance for fibreglass.
+  - Top-load stiffness: the Boni-Whip (about 17 cm body, BNC; mass not published) plus adapter plus coax drop must stay upright with 3 guys at about 2/3 height. The stack's wind rule is to lower the mast above about 20 km/h.
+  - Weight: Boni-Whip + mast budget is 0.5-0.75 kg (STACK 5.8), so mast + guys + stake should be about 0.35-0.55 kg.
+  - Guys: 3 non-conductive (polyester/Dyneema), low-stretch, UV-stable lines, each about 2.5-3 m, with tensioners. Non-conductive is my reasoning for use near an E-field whip, not a sourced rule.
+  - Stake: steel, about 25-30 cm, that locates the pole foot and can double as the C17 ground stake with a clamp (galvanised or stainless).
+  - Field repairability: replaceable shock cord, spare ferrule.
+  - Sold legally by an established brand or EU seller, with no counterfeit risk. Fully passive part, so no receive-only rule issues; no loops.
+- **Candidates:**
+  1.
+    - **Name:** KEEP: generic shock-corded tent-pole mast, 7 x 35 cm (about 2.4 m), 3 guy cords, steel stake
+    - **Kind:** current_part
+    - **Price usd:** 15-50 (estimate, unverified)
+    - **Spec comparison:** Reference: 35 cm or less packed, about 2.4 m, 3 guys, stake. The SKU is not fixed. When buying, the generic part must meet the critical specs: segments 35 cm or less, 2.4 m or more assembled, metal ferrules, and a tip adapter that puts the whip above the mast top.
+    - **Worse in:** Nothing (reference)
+    - **Compatibility:** Bonito/WiMo pole mount 18067.MH (EUR 16.00 incl. VAT, available from 20.11.2026) fits 28-40 mm tubes only, so it will NOT clamp an 8.5-11 mm tent pole. Any tent-pole mast needs a small tip adapter (printed cap or hose clamps) that holds the whip above the tip.
+    - **Risks:** No priced SKU yet. The generic listings I could reach do not give segment lengths.
+    - **Seller url:** https://www.wimo.com/en/18067-mh
+    - **Sources:**
+      - https://www.pa3fwm.nl/technotes/tn07.html
+      - https://www.wimo.com/en/18067-mh
+      - https://bonito.net/en/boni-whip-2/
+  2.
+    - **Name:** Buddipole Shockcord Mast, 240 cm version (aluminium)
+    - **Kind:** other_brand
+    - **Price usd:** about 141.5 (EUR 125.90 incl. 19% VAT at WiMo, plus shipping; listed 'Nicht mehr verfügbar', the manufacturer is redesigning it)
+    - **Spec comparison:** Packed 33 cm (better than 35). Height 2.4 m (equal). 530 g on WiMo DE (540 g on another page), heavier than the target mast share. Top has 1/2 in NPT male and 3/8 in female threads (better tip interface). Rubber foot. No guy points are specified. Segment count and diameter are not stated.
+    - **Worse in:** Price (about 3-9x the estimate), availability (discontinued for now), weight, no guy provisions
+    - **Compatibility:** The 3/8 in thread at the top makes a whip-above-tip adapter easy. Guys need a clamp ring.
+    - **Risks:** Not orderable now; a redesign is pending.
+    - **Seller url:** https://www.wimo.com/de/buddipole-aluminum-schockcord-mast
+    - **Sources:**
+      - https://www.wimo.com/de/buddipole-aluminum-schockcord-mast
+      - https://www.wimo.com/it/buddipole-aluminum-schockcord-mast
+  3.
+    - **Name:** Robens DIY Pole Set 8.5 mm (7001-T6 aluminium)
+    - **Kind:** other_brand
+    - **Price usd:** about 53.8 (EUR 47.90 at Karkkainen FI, over 20 in stock; VAT inclusion assumed, not stated)
+    - **Spec comparison:** 9 x 44.5 cm sections, 400 cm shock cord (3 mm), flat and peak ends, 7001-T6, 8.5 mm, 0.35 kg, 400.5 cm assembled. Height and material are equal or better.
+    - **Worse in:** Packed length (44.5 cm against the 35 cm limit) unless every section is cut down (irreversible DIY, needs a deburr and refit). Price is above the estimate's upper end.
+    - **Compatibility:** 8.5 mm OD, so it needs a tip adapter and guy ring. Cut to about 35 cm, 7-9 sections give about 2.4-2.8 m (estimate).
+    - **Risks:** Cutting voids the 'as sold' quality. Not cheaper.
+    - **Seller url:** https://www.karkkainen.com/en/robens-diy-8-5-mm-silver-tent-pole
+    - **Sources:**
+      - https://www.karkkainen.com/en/robens-diy-8-5-mm-silver-tent-pole
+  4.
+    - **Name:** Decathlon Forclaz MT900 aluminium pole segments, 32.5 cm (8.3 / 9 / 9.5 / 10.5 mm), bought singly
+    - **Kind:** other_brand
+    - **Price usd:** about 8.9-13.4 per segment (EUR 7.95-11.90 from search snippets: DE EUR 7.99, PT EUR 7.95, CH 9.40-11.90, UK GBP 12.99 out of stock). 7-8 segments plus cord is about 63-95 (unverified; Decathlon pages returned 403).
+    - **Spec comparison:** 32.5 cm segments (better than 35) from an established EU brand with spare parts. Alloy not stated. Needs 7-8 segments plus shock cord to reach about 2.3-2.6 m.
+    - **Worse in:** Price (above the estimate). Alloy and ferrule details are unverified.
+    - **Compatibility:** Same tip-adapter need as any tent pole.
+    - **Risks:** Prices come from snippets of undated pages; stock varies.
+    - **Seller url:** https://decathlon.ch/en/p/jonc-aluminium-pour-arceau-ø-8-3-mm-x-32-5-cm-tente-mt900/_/R-p-326623
+    - **Sources:**
+      - https://decathlon.ch/en/p/jonc-aluminium-pour-arceau-ø-8-3-mm-x-32-5-cm-tente-mt900/_/R-p-326623
+      - https://www.decathlon.fr/vc/tente-forclaz-trek-900
+  5.
+    - **Name:** Intents Outdoors (Orson) 130 cm ultralight aluminium tent pole, 11 mm, 4 x 35 cm, two of them joined
+    - **Kind:** other_brand
+    - **Price usd:** NZ$36.99 each (shop JSON), so NZ$73.98 for two, about $43 at an unverified rate, plus NZ-to-EU shipping, import VAT and a joiner
+    - **Spec comparison:** 11 mm aluminium, shock-corded, 35 cm sections (equal), 125 g each (250 g for two, better). Two poles give 2.6 m (better). Alloy not stated.
+    - **Worse in:** Not cheaper once shipping and VAT are added. Non-EU seller. Two separate poles need a joiner sleeve (a weak point). Alloy unstated.
+    - **Compatibility:** Needs a tip adapter and guy ring.
+    - **Risks:** Shipping cost not verified; the shop rate-limited page fetches.
+    - **Seller url:** https://intentsoutdoors.co.nz/products/130cm-ultralight-aluminium-tent-pole
+    - **Sources:**
+      - https://intentsoutdoors.co.nz/products/130cm-ultralight-aluminium-tent-pole.json
+  6.
+    - **Name:** AliExpress unbranded '1Pc Foldable Adjustable Shelter Awning Support Pole' 1.6/2 m, 5 sections, aluminium alloy
+    - **Kind:** generic_or_clone
+    - **Price usd:** 16.69 (AliExpress search page, 18 Oct 2026; store not shown)
+    - **Spec comparison:** 2.0 m max against 2.4 m (worse). 5 sections over 2 m implies about 40 cm each (worse than 35). Alloy not stated.
+    - **Worse in:** Height (-1.6 dB of LF signal against 2.4 m, per PA3FWM height proportionality), packed length, unknown alloy and build, no brand
+    - **Compatibility:** Awning-pole diameter not stated. Probably too thin for the 28-40 mm Bonito bracket and too thick for tent tips.
+    - **Risks:** Unbranded; specs unverified.
+    - **Seller url:** https://www.aliexpress.com/w/wholesale-7001-aluminum-tent-pole-35cm.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-7001-aluminum-tent-pole-35cm.html
+  7.
+    - **Name:** AliExpress unbranded '25.6ft 7.8m 13-Section 7001-T6 Aluminum Pre-Assembled Flexible Tent Pole'
+    - **Kind:** generic_or_clone
+    - **Price usd:** 36.99 (AliExpress search page; store not shown)
+    - **Spec comparison:** 7001-T6 is claimed. 7.8 m over 13 sections is about 60 cm per section (worse). Cut to 35 cm sections it could give about 2.4 m or more.
+    - **Worse in:** Packed length unless cut (DIY). Brand and alloy claim unverified. Not clearly cheaper than the estimate.
+    - **Compatibility:** Diameter not stated.
+    - **Risks:** Counterfeit or mislabelled alloy risk on an unbranded listing.
+    - **Seller url:** https://www.aliexpress.com/w/wholesale-7001-aluminum-tent-pole-35cm.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-7001-aluminum-tent-pole-35cm.html
+  8.
+    - **Name:** Ferrino 8.5 mm 7001-T6 aluminium replacement sections (2 pcs, 50 cm)
+    - **Kind:** other_brand
+    - **Price usd:** about 32.1 per 2 sections (EUR 28.60, search snippet, not fetched)
+    - **Spec comparison:** 7001-T6, 8.5 mm (equal material). 50 cm sections (worse).
+    - **Worse in:** Packed length, price per metre (about 4-5x)
+    - **Compatibility:** Same tip-adapter need.
+    - **Risks:** Price from a search snippet only.
+    - **Seller url:** https://ferrino.com/sezione-alluminio-x-ricambio-paleria-8-5-mm-2-pz/
+    - **Sources:**
+      - https://ferrino.com/sezione-alluminio-x-ricambio-paleria-8-5-mm-2-pz/
+  9.
+    - **Name:** Tatonka Tarp Pole 180 cm, 5-piece aluminium
+    - **Kind:** other_brand
+    - **Price usd:** about 45 (EUR 40.00, Lynxgear LV; search snippet)
+    - **Spec comparison:** 180 cm (worse), packed 45.5 cm x 26 mm (worse), 325 g, shock-corded aluminium. A 26 mm tube is stiffer.
+    - **Worse in:** Height (-2.5 dB against 2.4 m, per PA3FWM height proportionality), packed length
+    - **Compatibility:** 26 mm is still below the 28 mm minimum of the Bonito bracket.
+    - **Risks:** -
+    - **Seller url:** https://lynxgear.lv/en/online-store/camping/tatonka-tarp-pole-180-cm-5-piece-aluminium-support.htm
+    - **Sources:**
+      - https://lynxgear.lv/en/online-store/camping/tatonka-tarp-pole-180-cm-5-piece-aluminium-support.htm
+  10.
+    - **Name:** Guy/stake sub-kit options: MSR Groundhog Stake Kit (6 pcs) vs unbranded AliExpress 30 m paracord + 10 aluminium 3-hole tensioners
+    - **Kind:** other_brand
+    - **Price usd:** MSR: about 25.7-30.3 (EUR 22.90 sale / 27.00 regular, Oliunid GR and Alpinstore NL). AliExpress: 3.55 (30 m paracord) + 1.33 (10 tensioners), unbranded
+    - **Spec comparison:** MSR Groundhogs are aluminium Y-stakes from an established brand: good guy anchors, but aluminium and short, so they are not a solid ground stake. AliExpress paracord is nylon, which stretches more than polyester or Dyneema (worse for a guyed mast); its quality is unverified.
+    - **Worse in:** MSR: price, not a steel ground stake. AliExpress: stretch and unverified quality, no brand.
+    - **Compatibility:** Either set needs one steel stake (25-30 cm) added for the pole foot and the C17 ground.
+    - **Risks:** AliExpress listings are unbranded; rope spec unverified.
+    - **Seller url:** https://www.alpinstore.com/nl/500437-msr-groundhog-tent-stakes-6-kit.html
+    - **Sources:**
+      - https://www.alpinstore.com/nl/500437-msr-groundhog-tent-stakes-6-kit.html
+      - https://www.oliunid.com/gr/msr-groundhog-stake-kit-v2-u
+      - https://www.aliexpress.com/w/wholesale-tent-pole-shock-cord-33cm-section.html
+- **Notes:** Verdict (Angle A): KEEP the current generic part. I found no branded or distributor SKU that is both cheaper than the $15-50 estimate and not worse on every critical spec.
+  
+  Why each option fails:
+  - Purpose-built mast: the Buddipole 240 (33 cm packed, 2.4 m) costs EUR 125.90 and is unavailable.
+  - Established-brand pole kits with 35 cm or shorter segments are dearer: Decathlon MT900 32.5 cm segments are EUR 8-12 each, so 7-8 cost EUR 56-95; Intents 4 x 35 cm poles need two plus NZ shipping.
+  - Cheaper or same-price kits use longer segments: Robens 9 x 44.5 cm EUR 47.90, Ferrino 50 cm, AliExpress 40-60 cm. They would need cutting (DIY, a different angle).
+  - Some are simply too short: 1.8-2.0 m tarp or awning poles lose about 1.6-2.5 dB at LF, per PA3FWM's 'signal proportional to height'.
+  
+  Rule check: the part is passive, and no candidate touches a hard rule (no loops, no TX). Mast material is free: PA3FWM says conductive or not 'hardly matters for the reception'. A conductive mast must carry the whip above its top, and its foot should be grounded.
+  
+  Integration finding: the official Bonito/WiMo pole mount 18067.MH (EUR 16.00, from 20.11.2026) fits 28-40 mm tubes only. It cannot clamp any 8.5-11 mm tent pole, so every tent-pole option needs a small tip adapter that puts the whip above the tip. Add this to the BOM.
+  
+  Unverified items:
+  - Boni-Whip mass (not on bonito.net).
+  - Decathlon, Ferrino and Tatonka prices (search snippets; Decathlon, eBay, Walmart and camelcamelcamel returned 403 or bot checks).
+  - AliExpress specs: unbranded, store names not shown.
+  - The NZD-to-USD conversion.
+  - EUR-to-USD uses the stack's own ratio of about 1.124 (EUR 149 = $167.49); EU prices are incl. VAT where the page said so.
+  
+  Skipped: the stack's 'tree or fence mount' budget alternative costs nothing in hardware but depends on the site. PA3FWM recommends 'ideally in the open field', and a tree or fence gives no defined ground stake, so it is not not-worse.
+  
+  Note for the purchase step: aluminium (7001-T6) segments with metal ferrules plus polyester or Dyneema guys are the quality floor. Avoid unbranded '7001' claims without a seller spec sheet.
+
 ## small:lband_sband (run `wf_41027870-8e7`)
 
 - **Band group:** L-band 1.5-1.7 GHz and S-band 2.2-2.4 GHz with antennas of at most 12 cm (STRICT) or 20 cm (SMALL). Dishes and anything tens of cm deployed are EXCLUDED, including the foldable helicones, the 11-turn helix and the 2x2 helix arrays. Rule interpretation as given: STRICT means the largest deployed dimension is about 12 cm or less; SMALL means about 20 cm or less; foldable or telescopic antennas that are larger when deployed are excluded and appear only in the borderline note.
