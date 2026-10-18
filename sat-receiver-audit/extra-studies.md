@@ -16161,6 +16161,76 @@
   - Whether the 20 cm helical whip's modelled -2.7 to -4.7 dB efficiency holds on this case geometry (no NEC run on the actual case at 137.9 MHz).
 - **Confidence:** medium
 
+## check:analogs_G4_G6 (run `wf_42b104ce-c51`)
+
+- **Lens:** COVERAGE G4-G6: every decision in analogs_G4_mechanical_field.json (6), analogs_G5_lab_bench.json (16) and analogs_G6_extended_optional.json (16), checked in the BOM and lab rows, sections 1.1/1.2, 5, 8/8.1/8.2, 9.1/9.2, 10 and 11.1, plus each entry in stack_changes.
+- **Problems:**
+  1.
+    - **Where:** 3.1, row «Банк живлення» (примітка): «Не джерело для заряду пристрою через IP2368 (DRP проти Try.SRC — очікується флапінг); лише стенд і прилади (DPS-150, Pinecil, ISDT)»
+    - **Problem:** G5 #12 routes Anker 737 USB-C2 (output-only) into the receiver's IP2368 USB-C input and into the ISDT 608PD. Field charging from the bank is allowed after the C2 DRP-matrix tests pass. STACK's own 2.7 PD-charger row, 5.1 «Заряд», D7 and P16 say the same. This BOM row flatly forbids charging the device from the bank, so it contradicts the decision and the rest of the stack.
+    - **Severity:** contradiction
+    - **Fix:** Replace the sentence with: «Не заміна мережевого PD-адаптера (G3). Заряд пристрою через IP2368 — лише з USB-C2 (лише вихід за Anker) і лише після проходження DRP-матриці на C2 (розділ 8); ніколи з USB-C1 (DRP проти Try.SRC — флапінг). Доти — лише стенд і прилади (DPS-150, Pinecil, ISDT).»
+    - **Evidence:** analogs_G5_lab_bench.json decisions[12].stack_changes item 2 («737 USB-C2 ... feeds the receiver's IP2368 USB-C input and the ISDT 608PD input») and conditions_or_tests («Field charging from the bank counts as proven only after the C2 tests pass»). STACK 5.1 line 662 and 2.7 line 284 already state this.
+  2.
+    - **Where:** 3.2, row «ADS-B приймач» (примітка): «тому купувати в одному замовленні Pi Hut з 2× Pico (і зі стендовим хабом, якщо його беруть у Pi Hut за умовою рядка «Стендовий хаб») (близько $72.70 ...)»
+    - **Problem:** No Pi Hut order with 2× Pico exists in v2. The Picos are bought on the DigiKey cart (2.6 row; 11.1 #17 says «The Pi Hut для ЄС не використовувати»), and the bench hub moved to Waveshare (G5 #13). 11.1 #64 and shopping step 13 correctly say a shared parcel exists only if the hub falls back to Pi Hut, otherwise the stick pays DHL alone. The 3.2 row contradicts them and presents the $72.70 shared-parcel figure as the default.
+    - **Severity:** contradiction
+    - **Fix:** Replace with: «спільна посилка Pi Hut можлива лише зі стендовим хабом за запасним варіантом (WAV-21686, рядок «Стендовий хаб»), тоді близько $72.70 з ПДВ і митом (модель); інакше стік несе DHL Express GBP 30 сам — близько $112.65 landed DE (модель).» Remove «з 2× Pico».
+    - **Evidence:** analogs_G6_extended_optional.json decisions[1].current_price_usd (landed $112.65 alone / $72.70 shared) and stack_changes (2). analogs_G5_lab_bench.json decisions[13].stack_changes (hub to Waveshare step 7). STACK 2.6 Pico row (DigiKey 2648-SC0915CT-ND) and 11.1 rows 17 and 64.
+  3.
+    - **Where:** 3.1, row «Відлагоджувач»: «інакше DigiKey DE 2648-SC0889-ND у замовленні кроку 7»; section 8 row «Debug Probe SC0889 (P5 G5)»: «інакше DigiKey DE у замовленні кроку 7»; 11.1 #56: «у замовленні DigiKey (крок 7)»; 11.1 #65: «в наявному замовленні DigiKey DE (крок 7)»
+    - **Problem:** These rows copy the P5 file's v1 step numbers. In v2 shopping order 9.1, the consolidated DigiKey DE order is step 6 (6 (в), which even names «Debug Probe 2648-SC0889-ND — лише якщо кошика reichelt (крок 1) немає»). Step 7 says «окремого замовлення DigiKey у цьому кроці немає». Shopping step 13 already places the sled chips «у замовленні DigiKey DE кроку 6».
+    - **Severity:** contradiction
+    - **Fix:** Change «кроку 7» / «крок 7» to «кроку 6» / «крок 6» in all four places when they refer to the DigiKey DE order (Debug Probe fallback and sled v2 chips).
+    - **Evidence:** analogs_G5_lab_bench.json decisions[9].chosen («DigiKey DE ... on the step-7 DigiKey order», v1 numbering). analogs_G6_extended_optional.json decisions[2].stack_changes 1 («DigiKey DE order (shopping step 7)»). STACK 9.1 step 6 (в) and step 7 text.
+  4.
+    - **Where:** 2.9, row «Захист від погоди» (модель): «непровідні заглушки F, USB-C, USB-A, 3.5 мм, LAB BUS, GX12/M8»; 8.2, row «Увесь пристрій: IPX4 ...»: «без води біля GX12/M8, LAB BUS і батарейного відсіку»
+    - **Problem:** G4 #2 named the IMU socket GX12/M8, but v2 changed it to GX16-4 with its own chained cap (G3). STACK 5.8 says «на GX16-4 IMU — власний ковпачок на ланцюжку (analogs G4 називав GX12/M8; роз'єм змінено на GX16-4 за G3)», and 11.1 #43 maps it to GX16. The BOM row and the IPX4 acceptance test still name GX12/M8.
+    - **Severity:** contradiction
+    - **Fix:** 2.9: replace «GX12/M8» with «(GX16-4 IMU — власний ковпачок на ланцюжку, не з цього набору)». 8.2 IPX4 row: replace «біля GX12/M8» with «біля GX16-4 IMU».
+    - **Evidence:** analogs_G4_mechanical_field.json decisions[2].chosen (10) and conditions_or_tests 6 (GX12/M8). STACK 5.8 «Панелі і прорізи», D15 (GX16-4), 11.1 #43 («GX16 (рядок 24; у файлі P5 — GX12/M8)»).
+  5.
+    - **Where:** 2.6, row «Козирок і датчик світла» (модель): «світло-сірий ASA з котушки корпусу, матово-чорне нутро — фарба або флок»; also 11.1 #16: «козирок — з наявної світло-сірої ASA корпусу»
+    - **Problem:** G4 #0 replaced the case spool with Polymaker ASA White PF01002 (Grey is out of stock). The 2.9 case row says the hood is printed «з цієї ж світлої котушки ASA (White PF01002, близько 50 g)», and P18 checks glare with a white bezel. The 2.6 hood row still says light-grey, so the two rows contradict each other.
+    - **Severity:** contradiction
+    - **Fix:** 2.6: «білий ASA White PF01002 з котушки корпусу (G4 #0), матово-чорне нутро — фарба або флок». In 11.1 #16 add «(котушку корпусу G4 #0 змінено на White PF01002)».
+    - **Evidence:** analogs_G4_mechanical_field.json decisions[0].chosen (1) and stack_changes 1; conditions_or_tests (ASA: white bezel and hood, matte black paint or flock). STACK 2.9 «Корпус» row note.
+  6.
+    - **Where:** 1.1 D14, column 3: «За сумою частин 5.8 (з Lime за замовчуванням і штативом 1.17-1.35 kg) вміст — 5.54-6.92 kg без КХ і щогли та 6.44-8.17 kg повністю; на спині 6.8-8.2 і 7.7-9.4 kg без води»; 2.12 «Вага (модель)»: «(вміст 5.54-6.92 і 6.44-8.17 kg ...)»
+    - **Problem:** D14 attributes these figures to the 5.8 parts sum, but the 5.8 table now gives 5.60-7.01 / 6.50-8.26 kg contents and 6.85-8.26 / 7.75-9.51 kg on the back (device 1.73-1.96 kg). The D14 figures are the G4 #5 values, computed with a 1.67-1.87 kg device. The stack therefore shows two different pack loads for the same Futura 27 decision, and the worst-case overshoot of the 8 kg rating is 0.26 kg in 5.8 against 0.17 kg in G4.
+    - **Severity:** contradiction
+    - **Fix:** D14: «За сумою частин 5.8 вміст — 5.60-7.01 kg без КХ і щогли та 6.50-8.26 kg повністю; на спині 6.85-8.26 і 7.75-9.51 kg без води (G4 з пристроєм 1.67-1.87 kg: 5.54-6.92 / 6.44-8.17 kg)». Align the 2.12 weight paragraph the same way, or label its figures «за G4».
+    - **Evidence:** analogs_G4_mechanical_field.json decisions[5].equivalence_proof (device 1.67-1.87; contents 5.54-6.92 / 6.44-8.17). STACK 5.8 table row «Польовий рюкзак Deuter Futura 27».
+  7.
+    - **Where:** 8.2, row «Щогла (Robens 8.5 мм 7001-T6, порізана)», column «коли»: «Перед замовленням; після приходу Boni-Whip (з 20.11.2026)»
+    - **Problem:** 20.11.2026 is the WiMo availability date. v2 buys the Boni-Whip from the Bonito shop, in stock with 1-5 days delivery (2.5 row: «Магазин виробника з наявністю знімає ризик строку WiMo 20.11.2026»; 9.2 step 10 «Після прибуття Boni-Whip (магазин Bonito, у наявності)»). The timing of the G4 mast acceptance test is stale.
+    - **Severity:** contradiction
+    - **Fix:** Change to «Перед замовленням; після приходу Boni-Whip (магазин Bonito, у наявності; крок 10 запуску)».
+    - **Evidence:** analogs_G4_mechanical_field.json decisions[3].conditions_or_tests (tests run with the Boni on the mast). STACK 2.5 «Активний E-field штир» row and 9.2 step 10.
+  8.
+    - **Where:** 1.1 D2: «Проводка AWG 18-20 у колі батареї.»; 5.1: «Проводка в колі батареї — AWG 18-20.»; 3.1 «Інструменти»: «Jokari 20050 +$28.63 (якщо тракт батареї 18 AWG)»
+    - **Problem:** G5 #15 stack_changes requires stating one gauge, 20 AWG or 18 AWG, for the battery path, because 18 AWG needs the second stripper (Jokari 20050). v2 still says 18-20 AWG, so the tools line cannot be closed. The same stack already uses an 18 AWG silicone XT30 service lead and a 16 AWG XT60-XT30 lead (2.7 «Збирання батареї»), which falls inside the 18 AWG branch.
+    - **Severity:** missing
+    - **Fix:** Fix one gauge in D2 and 5.1. If it is 18 AWG (or if the 18 AWG service lead and the 16 AWG XT60-XT30 lead are counted), move Jokari 20050 (+$28.63, TME) from «Опції» into the tools set. If it is 20 AWG, write «20 AWG — лише Jokari 40026» and keep the 8.x stripper test.
+    - **Evidence:** analogs_G5_lab_bench.json decisions[15].stack_changes («Wire gauge: state 20 AWG or 18 AWG for the battery path, since 18 AWG needs a second stripper») and conditions_or_tests 4. STACK 2.7 «Збирання батареї» (18 AWG silicone; XT60-XT30 16 AWG).
+  9.
+    - **Where:** 3.1, row «Інструменти»: «набір запчастин $57-78 (лише те, чого немає в інших рядках; 2 запасні MHF4L-SMA лишаються ...)»
+    - **Problem:** G5 #15 corrects the spares kit in two ways. v2 carries only the MHF4L one. The TVS correction (spares use SMBJ13A and SMBJ17A, not SMBJ14A) is not stated anywhere for the spares kit.
+    - **Severity:** missing
+    - **Fix:** Add to the spares note: «TVS у запасі — SMBJ13A і SMBJ17A (не SMBJ14A)».
+    - **Evidence:** analogs_G5_lab_bench.json decisions[15].chosen (OTHER, spares kit: «It uses SMBJ13A and SMBJ17A, not SMBJ14A») and stack_changes («SMBJ14A becomes SMBJ13A and SMBJ17A»).
+  10.
+    - **Where:** Section 8, row «Килимок iFixit (P5 G5 ...)»: «складання разом з ремінцем і шнуром у Pelican 1450 (близько 37×26×15 см) без заломів»
+    - **Problem:** G6 #5 made the B&W outdoor.case Type 4000 RPD the bench case, with the Peli 1450 as fallback only. Its acceptance step (f) requires the ESD-mat fold test in that case, and the 3.1 mat row already says «перевірка складання в кейсі стенду (B&W 4000 RPD або запасний Peli 1450)». The section 8 test row still names only the Pelican 1450.
+    - **Severity:** style
+    - **Fix:** Change to «у кейсі стенда B&W 4000 RPD (всередині 38.5x26.5x16.5 см; запасний Peli 1450 — 37.4x26.0x15.4 см) без заломів».
+    - **Evidence:** analogs_G6_extended_optional.json decisions[5].conditions_or_tests 3(f) and stack_changes 2 and 5. STACK 3.1 «Антистатичний килимок» row note.
+- **Notes:** Coverage check of all 38 decisions: G4 (6), G5 (16), G6 (16). For each I checked the BOM or lab row (part, seller, USD and EUR-with-VAT price, status), decisions 1.1/1.2 (D14, D15, #70, #69, #91, lab register), architecture 5.1-5.8, tests in 8, 8.1 and 8.2, shopping order 9.1, bring-up 9.2, the 11.1 change-log rows (41-78, every decision label matches keep / replace_conditionally) and the sources in 10. Almost everything is applied correctly and consistently. That includes:
+  - G4: KSD9700 single line, NO wiring, the 7/16 in hex pocket in D15 and 5.8, the weather SKUs and the D15 CAD items, the mast, tripod and bag rows with the 5.8 packing data, 8.2 tests and URLs.
+  - G5: every seller change (Eleshop/LiteVNA, GOTRONIK/Elektor/tinySA, ZFL-500+ gate A, VAT-30W2+, the official AliExpress LNA V2, FNB58, AN8009, Botland Hantek, reichelt Debug Probe, Pinecil, iFixit EU, MediaMarkt Anker, Waveshare STT hub, Lindinger ISDT, named tools and micrometer), plus the corrections and tests.
+  - G6: LBE-1420 DDP, Pro Stick in 11.1, sled v2 with PE4312 and the RF1 park mapping, H1 via Amazon.nl and the 12 dB Lime pad conflict, DPS-150 CDC-ACM, B&W case, Lime board/cable split with CAB.01075, YAT-10A+ and the 90609-0001 tool, T7 at Reichelt, Bullseye at Passion Radio (incl. VAT) with AXING, iO data, microSD SKU, Airspy at ITEAD, Flamingo budget text, D36V28F5 removal, AD8318 at 0x49.
+  The 10 problems reported are the remaining inconsistencies. Pure money totals were not rechecked. The double-listing of the QO-100 LNB in 2.4 and 2.11.2 belongs to the totals checker. Files read: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/v2_brief.md, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G4_mechanical_field.json, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G5_lab_bench.json, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G6_extended_optional.json, /home/user/lizbeth307/sat-receiver-audit/STACK.md and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/STACK_v1_backup.md. No file was edited.
+
 ## edit:05b_arch_bus_rf:b1 (run `wf_45d408c6-7ff`)
 
 - **Section:** 05b_arch_bus_rf
