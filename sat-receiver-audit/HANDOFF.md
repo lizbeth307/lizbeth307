@@ -35,7 +35,7 @@
 
 ### Зроблені пакети виправлень P6: fix:A:b1, fix:A:b2, fix:A:b3, fix:A:b4, fix:A:b5, fix:B:b1, fix:B:b2, fix:B:b3, fix:B:b4
 ### Готові автори P7: write:power+wiring, write:software+assembly
-### Файли в build/: 01-blok-skhema.md, 01-blok-skhema.svg, 02-zhyvlennia.md, 02-zhyvlennia.svg, 03-rf-trakt.svg, 04-header-40pin.svg, 04-pidkliuchennia-pinout.md, 05-mekhanika.md, 05-roztashuvannia-front.svg, 05-roztashuvannia-section.svg, 06-anteny.md, 07-pz-vstanovlennia.md, 08-zbyrannia.md, 10-bom.csv, 10-bom.md
+### Файли в build/: 01-blok-skhema.md, 01-blok-skhema.svg, 02-zhyvlennia.md, 02-zhyvlennia.svg, 03-rf-trakt.md, 03-rf-trakt.svg, 04-header-40pin.svg, 04-pidkliuchennia-pinout.md, 05-mekhanika.md, 05-roztashuvannia-front.svg, 05-roztashuvannia-panel.svg, 05-roztashuvannia-section.svg, 06-anteny.md, 07-pz-vstanovlennia.md, 08-zbyrannia.md, 10-bom.csv, 10-bom.md
 
 
 ## 4. Файли (у репозиторії, гілка ccr-1537979d-cj7q9t; і в цьому архіві)
