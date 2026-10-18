@@ -18368,6 +18368,92 @@
   - D12: GP22, the only free Pico pin, is now noted as taken by the fan tach (C6). The duplicate "Pico — лише SC0915" sentence was folded in.
   - C13: the kernel-mirroring line points to C22 instead of repeating it.
 
+## edit:01a_decisions_integration:b4 (run `wf_53f2b30c-e42`)
+
+- **Section:** 01a_decisions_integration
+- **Applied:**
+  - 132
+  - 133
+  - 134
+  - 135
+  - 136
+  - 137
+  - 138
+  - 139
+  - 140
+  - 141
+  - 142
+  - 143
+  - 144
+  - 145
+  - 146
+  - 147
+  - 148
+  - 149
+  - 150
+  - 151
+  - 152
+  - 153
+  - 154
+  - 155
+  - 156
+  - 157
+  - 158
+  - 159
+  - 160
+  - 161
+  - 162
+  - 163
+  - 164
+  - 165
+  - 166
+  - 167
+  - 168
+  - 169
+  - 170
+  - 171
+  - 172
+- **Skipped:** []
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/01a_decisions_integration.md, with Edit. Every table row still has 5 column separators.
+  
+  Changes that were already in the file from earlier batches (merged, no repeated text):
+  - 145 (#2813 wording in D2), 148 (TPS7A4701 has no PG pin; TLV3011 feeds MCP #3, in C8) and 166 (Taoglas CAB.01075 cables in C1) were already there. Nothing was added for them.
+  - 137: coil power was already about 0.105 W. I reworded it to «105 mW: 21.1 mA при 5 V» and named Omron as the source.
+  - 142: LM61460 and the 4.2 A gate (2) were already in C4. I added only the 1.263 V EN divider, the 1.8-2.1 MHz dropout and foldback model, and why TPSM63606 does not fit.
+  - 144: added only the date «побачено 18.10.2026» to BerryBase EUR 34.95.
+  - 146: added «таблиці пінів», «(high-side)» and «ніколи до AON».
+  - 147: added noise, SBVS204G May 2026, TPS7A4701RGWT from DigiKey DE, and the PSRR and dropout LC pre-filter note. The ±2.5% accuracy condition was already there.
+  - 149: θJA 32.5, +31 K and +47 K were already there. I added the 1.8 W and 2.15 W worst case and the exposed pad bonded to the mid-plate.
+  - 150: added the shared -1 SKU on LAB USB-A (34.8k: 685/747/817 mA), HF+ and RTL VBUS, and the 3.7 W latch reason.
+  - 156: Lime mode H was already in the acceptance soak. I added LMS7002M up to 75 °C and ufs-thermal.
+  - 167, 168, 169: rewrote the existing text with the SKU pins and the compromise wording.
+  - 171: the anchor had changed, but the same question (8) existed, so I replaced it.
+  
+  Spots where the anchors were gone but the place still existed (applied): 134 (D12 expander), 151 (D3 AON), 162 (D7 Pinecil), 165 (D14 bench case; Apache had already been removed).
+  
+  Conflicts and choices:
+  - 134: G2 #7 says the keys need no external pull-ups, but G2 #6 requires 2.2 kOhm on all 8 lines (1 mA minimum current for silver contacts). Both are the same P5 group, so the precedence order does not decide it. I followed #6, which is the routed instruction and gives the specific physical reason.
+  - 139 and 158 edit the same D15 phrase. I merged them into one rear-wall sentence: captured nut, strap slots, GX16-4.
+  - 157 and 160: the new G4 sum of parts already includes the tripod correction. So the old D14 sentence «Ці цифри — до виправлення штатива ... +0.6-1.0 kg» now says the correction is included. In C24 I replaced the old backpack weights and their notes from the earlier files.
+  - 170: kept «від SW» (still valid, though the instruction's replacement left it out) and added EUR 18.11 incl. VAT from G3 #6.
+  
+  Subtotals recomputed in C24:
+  - Core: v1 $1,758-2,253, minus G1 (−41.07/−88.77), plus G4 (+134.00/+93.30) = ≈$1,851-2,258.
+  - Foldable: v1 $351-625 (350.90-625.17), plus G4 (+147.82/−12.18) = ≈$499-613. I traced the G4 deltas back to the G4 file: mechanical set 98-133 → 161-168, weather kit 45-110 → 116-168, mast 15-50 → 70-80, tripod 40-100 → 57.33, bags 80-155 → 155.49.
+  - Both are labelled as an intermediate recompute with a pointer to 2.12. 2.12 currently shows the full P5 recompute: core without Lime 1,914.65-2,233.12 and foldable 542.26-612.99. The C24 figures therefore differ from 2.12 on purpose.
+  - Extended ≈$570-630 and optional ≈$1,001-1,099 / 606-630 / 394-469 follow the G6 instruction and match 2.12.
+  
+  Added notes on old part and saving, as the brief requires:
+  - C3: 18650 Battery Store $49.95 → NKON, saving $12.01; checkout condition and goods-in rule.
+  - C4: Pololu $79.90 → Botland, saving $20.82 for 2.
+  - D11: LAB5 Pololu $23.95 → Botland, saving $6.82.
+  - D3: TLV3012 → MCP65R41, saving $2.06; bench gate and fallback.
+  - D12: IMU pack about $51.73 ex VAT against $64.49-89.49.
+  - D13: 2× Adafruit 5346 $11.90 → bare MCP23017-E/SO, saving $8.0-8.3; condition tests (ii) and (iii)-(vii).
+  - D14: Futura 27 set $155.49 with conditions; B&W 4000 RPD EUR 109-119, saving about $108 against Peli 1450, with the lock rule and the 14-day arrival test.
+  
+  Left out of scope: the C6 I2C2 list of used addresses (0x20, 0x21, 0x22, 0x30, 0x48) does not include 0x49 for the AD8318 box ADS1115. The files do not say whether that box sits on I2C2, so I did not change C6.
+
 ## extract:operator_notes (run `wf_5ed966cd-eee`)
 
 - **Source:** operator_notes
