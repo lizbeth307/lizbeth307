@@ -19084,6 +19084,139 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Source files: /home/user/lizbeth307/sat-receiver-audit/STACK.md and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json. Downloaded datasheet text is in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/p2813/ds/ (ipd90p04.txt, lm74502.txt).
 
+## searchB:adafruit_ina228_5832 (run `wf_a268b76e-da0`)
+
+- **Part:** Adafruit INA228 #5832 (pack-lead coulomb counter / power monitor, I2C0 @0x40/0x45, VS from AON 3.3 V, 15 mOhm shunt high-side in the battery lead, user-space i2c-dev via labpowerd)
+- **Current price usd:** 14.95 (Adafruit, in stock, verified 18 Oct 2026; 13.46 at 10+). EU/UK reference: The Pi Hut ADA5832 GBP 14.40 inc VAT, in stock (cached retailer JSON 18 Oct 2026).
+- **Critical specs:**
+  - Hardware charge and energy accumulation: 40-bit CHARGE register (Coulombs, two's complement, so it counts charge and discharge) and 40-bit ENERGY register, valid only in continuous mode. It must keep counting while the Q6A is off (charging from the IP2368 with the device OFF).
+  - Charge/energy accuracy (TME) of 1.0% FS max, with an integrated +/-0.5% oscillator (TI SBOS*/SLYS021A).
+  - ADC: 20-bit delta-sigma. Shunt LSB 312.5 nV at ADCRANGE 0. Shunt offset +/-1 uV max (+/-0.3 typ), drift +/-10 nV/C max.
+  - Gain error +/-0.05% max, gain drift +/-20 ppm/C. VBUS gain error +/-0.05%. CMRR 154 dB min.
+  - Common-mode range -0.3 to 85 V. Node N reaches 16.8 V during the monthly balance; the SMBJ17A clamp transients are about 27 V.
+  - Shunt: 15 mOhm, giving +/-10.92 A full scale at ADCRANGE 0. Peak 4.6 A with the Lime (0.32 W). Up to 7.5 A before the fuse opens (0.84 W). Power rating must be >= 2 W (Adafruit HoLLR2512-2W). TCR must be low, Kelvin sense layout is needed, and the tolerance is trimmed by SHUNT_CAL calibration.
+  - Supply: VS 2.7-5.5 V from AON 3.3 V. IQ 640 uA typ / 750 uA max at 25 C (1.1 mA over temperature). Shutdown <= 5 uA. The VBUS pin is about 1 MOhm (about 15 uA at 14.8 V). This sets the OFF/standby budget.
+  - Interface: I2C with a fixed, stable address (A0/A1 are sampled on every transaction). ALERT is open-drain, pulled up to the Q6A 3.3 V only. No SDA/SCL pull-ups or LED to AON (on the Adafruit board R6/R7 must be removed). Register-compatible with the labpowerd INA228 map; ina238 hwmon stays blacklisted.
+  - High-side, bidirectional sensing (VBUS tied to IN+, SJ1 closed on Adafruit).
+  - Temperature range -40 to +125 C, inside an enclosure up to about 50 C.
+  - Mechanical: fits the power board (Adafruit is 25.8 x 20.2 x 10.1 mm, 3.3 g). The pack-current terminals/copper must carry >= 7.5 A.
+  - Genuine TI silicon from an authorised channel. Counterfeit risk is high while the IC is out of stock in authorised channels.
+- **Candidates:**
+  1.
+    - **Name:** Adafruit INA228 #5832 (keep)
+    - **Kind:** current_part
+    - **Price usd:** 14.95 (verified, in stock)
+    - **Spec comparison:** Baseline. INA228 + 15 mOhm 2512 shunt. The product text says 0.1%, but the Adafruit Eagle BOM says HoLLR2512-2W-15mR-1%, so the shunt is 1%, 2 W, TCR not published. Terminal block, STEMMA QT, 25.8 x 20.2 mm.
+    - **Worse in:** Needs rework: remove R6 (4x10k pack, which also floats ADDR) and R7 (LED). The address must then be strapped (close A0+A1 = 0x45, or wire ADDR to GND = 0x40). Shunt tolerance is ambiguous (1% vs 0.1%), so SHUNT_CAL calibration is needed.
+    - **Compatibility:** Already integrated in STACK C14/D3: I2C0, ALERT on pin 3, AON VS, labpowerd i2c-dev.
+    - **Risks:** Rework errors (floating A0/A1). Flying-lead board on the power plate.
+    - **Seller url:** https://www.adafruit.com/product/5832
+    - **Sources:**
+      - https://www.adafruit.com/product/5832
+      - https://github.com/adafruit/Adafruit-INA228-PCB
+      - https://www.ti.com/product/INA228
+  2.
+    - **Name:** DIY: TI INA228AIDGSR (VSSOP-10) + Bourns CRA2512-FZ-R015ELF (15 mOhm, 1%, 3 W, +/-50 ppm/C) placed directly on the existing custom 2-layer power PCB (Adafruit CC BY-SA circuit as reference)
+    - **Kind:** diy
+    - **Price usd:** about 6.0 in parts: IC 5.31 (DigiKey qty 1, cut tape) + shunt 0.59 (DigiKey cut tape) + about 0.1 for decoupling. The PCB is already in the BOM ($10-30), so no extra board cost. Shipping is free only if added to an existing distributor order. EU (DigiKey.de EUR/VAT) price not verified.
+    - **Spec comparison:** IC: identical silicon, so every converter spec is equal by construction: 20-bit, +/-1 uV offset, +/-0.05% gain, 85 V CM, 40-bit CHARGE/ENERGY, same IQ and shutdown. Shunt: 15 mOhm (equal); 1% (equal to Adafruit's actual BOM part); 3 W vs 2 W (better); TCR +/-50 ppm/C is published (Adafruit's is not, so equal or better, unverified). Interface: ADDR strapped hard to GND (0x40) and ALERT pull-up routed to the Q6A 3.3 V by design. No pull-ups or LED to remove, so the R6 floating-address hazard disappears (better). Kelvin routing per TI layout guidance can be equal or better than the breakout.
+    - **Worse in:** Nothing is worse on paper. Shunt tolerance is 1% versus Adafruit's marketing claim of 0.1%, but Adafruit's own BOM says 1% and the stack calibrates SHUNT_CAL at 0.5/2/4 A in either case. There are no independent measurements of this exact build until the existing calibration gate passes (FNB58 or DMM plus reference shunt). The IC itself is characterised by TI production distributions. Assembly: 0.5 mm-pitch VSSOP-10, which needs a stencil or a careful hand solder. Do not use series input-filter resistors above about 10 Ohm, because RDIFF is 92 kOhm.
+    - **Compatibility:** Same register map, same address (0x40), same I2C0, ALERT pin 3, AON 3.3 V VS, same labpowerd code. Ubuntu 24.04 arm64 is unaffected (user-space smbus2). It takes less space than the breakout. Receive-only and conducted-only rules are not affected.
+    - **Risks:** AVAILABILITY: INA228AIDGSR is out of stock at the TI store and TME, and DigiKey shows 0 in stock (1,178 due 04 Jan 2027, 1,322 on 07 Jan 2027, 20-week lead time). Mouser, Farnell and LCSC/JLC could not be checked (503/JS). It therefore cannot serve the W1-2 energy gate (19 Oct - 1 Nov 2026). Buy only from authorised distributors (counterfeit risk). Layout and assembly effort. One bad solder joint is invisible until calibration.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=INA228AIDGSR
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=INA228AIDGSR
+      - https://www.digikey.com/en/products/result?keywords=CRA2512-FZ-R015ELF
+      - https://www.ti.com/product/INA228/part-details/INA228AIDGSR
+      - https://www.tme.eu/en/details/ina228aidgsr/
+      - https://www.ti.com/product/INA228
+      - https://github.com/adafruit/Adafruit-INA228-PCB
+  3.
+    - **Name:** DIY variant: TI INA228AQDGSRQ1 (AEC-Q100) + Bourns CRA2512-FZ-R015ELF on the power PCB
+    - **Kind:** diy
+    - **Price usd:** about 7.4 (IC 6.72 at DigiKey qty 1, 5.17 at 10 + shunt 0.59 + passives)
+    - **Spec comparison:** Same INA228 function, with automotive qualification (reliability equal or better). Electrical parity with INA228AIDGSR was NOT checked against the -Q1 datasheet in this pass. The shunt is as in the row above.
+    - **Worse in:** Nothing known, but the -Q1 electrical tables are unverified. Same assembly and measurement caveats as the DIY row.
+    - **Compatibility:** Same pinout, package (VSSOP-10) and register map (assumed from the shared part family; verify).
+    - **Risks:** DigiKey: 0 in stock, 2,500 expected 21 Jan 2027, 20-week lead time, plus a $7 Digi-Reel fee if reeled. It also cannot meet the W1-2 gate.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=INA228AQDGSRQ1
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=INA228AQDGSRQ1
+      - https://www.digikey.com/en/products/result?keywords=INA228AIDGST
+  4.
+    - **Name:** AliExpress '5832 INA228 20-Bit Current/Voltage Supervisor STEMMA QT/Qwiic' clones (item IDs 3256809060132764, 3256809762166296, 3256809060206577, 3256809303160622)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Search page shows 1.09-1.68 with crossed-out 5.78-8.18 (UNVERIFIED: likely promo or variant pricing; item pages returned 503 or a login redirect; shipping to EU and VAT unknown)
+    - **Spec comparison:** Claims an Adafruit-5832 copy. Chip marking, shunt part, tolerance, power rating and TCR are all unknown. No published schematic for the clone.
+    - **Worse in:** REJECTED: no independent measurements, unverifiable silicon and shunt. A full module at $1-2 is below DigiKey's $5.31 single-IC price while authorised stock is zero until Jan 2027, which points to remarked or counterfeit chips (inference, not proven).
+    - **Compatibility:** Pin-compatible only if it really is a 5832 copy (same R6/R7 rework presumably).
+    - **Risks:** Counterfeit or remarked INA226/INA2xx die; wrong or high-TCR shunt; accumulators missing if the die is not an INA228. Fails the 'legally sold, not counterfeit, proven by measurement' test.
+    - **Seller url:** https://www.aliexpress.us/item/3256809762166296.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-INA228-module.html
+  5.
+    - **Name:** AliExpress multi-variant 'INA228/INA237/INA238 2.7-5.5 V current/voltage monitor' modules (e.g. 3256812638405915, 3256812630732723, 3256812739260232)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 2.91-3.41 shown on the search page (crossed-out 9.41-20.43); UNVERIFIED, variant unknown
+    - **Spec comparison:** Unknown which variant the price applies to. No shunt or BOM data. No measurements.
+    - **Worse in:** REJECTED: no measured evidence; specs unknown. The INA237/238 variants lack charge/energy accumulation.
+    - **Compatibility:** Unknown.
+    - **Risks:** Same counterfeit risk as above.
+    - **Seller url:** https://www.aliexpress.us/item/3256812638405915.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-INA228-module.html
+  6.
+    - **Name:** Generic INA226 modules (CJMCU-226 type on AliExpress, from about $1.09; M5Stack INA226-10A unit GBP 8.20 inc VAT at The Pi Hut)
+    - **Kind:** generic_or_clone
+    - **Price usd:** about 1.1 (AliExpress listing, unverified) / about 10.9 (GBP 8.20 inc VAT)
+    - **Spec comparison:** INA226 (TI datasheet values from memory, not re-fetched this pass): 16-bit (vs 20), offset +/-10 uV max (vs +/-1 uV), gain error +/-0.1% max (vs +/-0.05%), CM 0-36 V (vs 85 V, still above 16.8 V), no CHARGE/ENERGY accumulator.
+    - **Worse in:** WORSE: the missing hardware coulomb counter means charge while the Q6A is off goes uncounted (a STACK C14/D3 requirement). It also has 16 bits of resolution against 20, offset is 10x worse, and gain error is 2x worse.
+    - **Compatibility:** Different register map; labpowerd would need rewriting.
+    - **Risks:** Clone modules are often supplied with unknown shunts.
+    - **Seller url:** https://thepihut.com/products/ina226-10a-current-voltage-power-monitor-unit
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-INA228-module.html
+  7.
+    - **Name:** Adafruit INA237 #6340 / INA238 #6349 (cheaper same-vendor SKUs, listed here only to record why they are rejected)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 9.95 / 10.95 (Adafruit page, 18 Oct 2026)
+    - **Spec comparison:** 16-bit (vs 20-bit), with 0.15 mA / 42 uA LSB versus 10 / 2.5 uA. No energy or charge accumulation. INA237: 0.3% gain error and +/-50 uV offset, versus 0.05% / +/-1 uV (Pimoroni/Pi Hut product text).
+    - **Worse in:** WORSE: no hardware coulomb counter, and lower resolution and accuracy.
+    - **Compatibility:** Same footprint class and 85 V, but a different register subset; labpowerd's CHARGE logic would fail.
+    - **Risks:** -
+    - **Seller url:** https://www.adafruit.com/product/6340
+    - **Sources:**
+      - https://www.adafruit.com/product/5832
+  8.
+    - **Name:** Used Adafruit #5832 (eBay or other second-hand)
+    - **Kind:** used
+    - **Price usd:** not found (search budget exhausted; not checked)
+    - **Spec comparison:** Would be identical hardware if genuine.
+    - **Worse in:** REJECTED for this angle: no measured evidence per unit, unknown rework or ESD history, and the saving on a $15 board is negligible after shipping.
+    - **Compatibility:** Same as current.
+    - **Risks:** Unknown history.
+    - **Seller url:** 
+    - **Sources:** []
+- **Notes:** Verdict: keep the Adafruit INA228 #5832 for v1. It is in stock at $14.95, and the W1-2 gate (19 Oct to 1 Nov 2026) needs energy logs from the INA228.
+  
+  Only one cheaper option is not worse. It is a DIY build of the same TI INA228AIDGSR plus a Bourns CRA2512-FZ-R015ELF shunt (15 mOhm, 1%, 3 W, +/-50 ppm/C), laid out on the custom power PCB the stack already has.
+  - Cost: about $6.0 in parts, saving about $8.9.
+  - It is equal on every IC spec, because it is the same silicon. The shunt is better on power rating (3 W vs 2 W) and has a published TCR.
+  - It also removes the R6/R7 rework and the floating-address hazard.
+  - Conditions:
+    - The IC is not available: out of stock at the TI store and TME, and DigiKey shows 0 with restock 04-07 Jan 2027. Mouser, Farnell and LCSC/JLC could not be checked: 503 errors, JS-only pages, and JLC returned 0 results.
+    - The build must pass the stack's existing INA228 calibration gate: FNB58 or DMM plus a reference shunt at 0.5/2/4 A, and 10^5 reads to confirm a stable address.
+  - Recommendation: put it on the power PCB rev 2 once authorised stock exists. Keep #5832 as the fallback and for the current order.
+  
+  Rejected:
+  - Every AliExpress 'INA228' module or 5832 clone: no measurements, item pages unreadable, and pricing below the single-IC distributor price while authorised stock is zero, which suggests a counterfeit risk (inference).
+  - INA226 modules and Adafruit INA237/INA238: no hardware CHARGE/ENERGY accumulator, so charging while the device is off goes uncounted; also 16-bit with worse offset and gain.
+  - SparkFun SEN-31438 (INA228 Qwiic): $14.95, the same price, so it is not cheaper. Its page also contradicts itself on the shunt (15 vs 10 mOhm). It is an angle-A item anyway.
+  
+  Shunt tolerance on the current part: Adafruit's product text says 0.1%, but its own Eagle BOM lists HoLLR2512-2W-15mR-1%. Treat it as 1% and calibrate.
+  
+  Limits of this pass: WebSearch was refused on the first call because the shared per-turn search budget was already used up. This research used only WebFetch on primary and distributor pages plus cached retailer JSON from this session (scratchpad src_cmp, 18 Oct 2026) and the cached TI datasheet. EU prices with VAT are verified only for The Pi Hut (UK): ADA5832 GBP 14.40 inc VAT, in stock. DigiKey EU and other EU distributor prices are not verified. INA226 and INA238 spec numbers are partly from memory and marked as such. A follow-up with more search budget could check Mouser, Farnell, LCSC and Berrybase stock of INA228AIDGSR and the electrical tables of the -Q1 datasheet.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
