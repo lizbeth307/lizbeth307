@@ -13748,6 +13748,245 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
     - Power: 0.2.42 DSP firmware exists 'to support PM7250B Type-C controller'.
     - Compute: hardware watchdog; rsetup overlay bug; kernel 7.0.x regressions.
 
+## community:lab_ui (run `wf_9603e249-d87`)
+
+- **Subsystem:** lab_ui (Lab Shell Qt QML on labwc/cage, labbar, greetd, labd/labrx/labinput daemons, RP2040 HMI, glove/sun usability, function profiles, rule enforcement: rfkill, Artemis stop, receive-only guard) - stage 2, community experience
+- **Findings:**
+  1.
+    - **Claim in stack:** Hold the kernel and its metapackages (linux-image/headers-radxa-dragon-q6a, linux-image-6.18.2-4-qcom), firmware and the NPU set. Updates come only as a signed offline package that refuses any change to a held package (#24, 5.4).
+    - **Finding:** Community reports confirm the hold is essential for the UI. Aug 2026: 'apt full-upgrade' moved linux-image-radxa-dragon-q6a from 6.18.2-4 to 7.0.11-4 and embloader from 0.6 to 0.7. HDMI then went black once msm_dpu bound: 'Unexpected DP AUX IRQ 0x00000008 when not busy', 'Cannot find any crtc or sizes', /sys/class/drm/card1-HDMI-A-1/status 'disconnected', a 0-byte EDID, and no HPD events after replugging. Several users reproduced it. One also saw audio lost and a phantom 50-60 % load on CPU0. One user reported HDMI fixed by 'the latest kernel updates' on 9 Sep 2026. Separately (Feb 2026), 'rsetup system update' or 'apt upgrade' on r1/r2 images left boards unbootable unless the SPI firmware was updated first. A community Ubuntu 26.04 builder reports the same pattern: 'HDMI dying after an apt upgrade'.
+    - **Verdict:** confirmed
+    - **Action:** Keep the holds. Add embloader and the SPI-firmware/BIOS packages to the hold list. The offline updater must refuse any change to a radxa-* metapackage or embloader. W1-2: 'apt-mark showhold' must list all of them, and the self-test must check that card1-HDMI-A-1 is 'connected' with a non-empty EDID.
+    - **Impact:** A single unattended upgrade would leave the handheld without a screen. The UI depends on this hold.
+    - **Sources:**
+      - https://forum.radxa.com/t/linux-7-0-hdmi-not-working/31304
+      - https://forum.radxa.com/t/failure-to-boot-after-rsetup-system-update/30368
+      - https://forum.radxa.com/t/ubuntu-26-04-1-lts-images-for-the-radxa-dragon-q6a-now-on-linux-7-2-9-hdmi-works-wi-fi-bt-audio-npu-apt-upgrade-safe/31574
+  2.
+    - **Claim in stack:** labwc on the Q6A HDMI output (HDMI-A-1, RA620 bridge) with drm.edid_firmware=HDMI-A-1:edid/field.bin in initramfs and video=HDMI-A-1:1920x1080@60. This is the W1-2 gate (C12, 5.4).
+    - **Finding:** Community kernel logs confirm the connector name card1-HDMI-A-1: the msm DisplayPort controller drives a DP-to-HDMI bridge, which community posts call 'R620'/'RK620'. The mainline Q6A DTS has GPU and USB nodes but no display or DP nodes; a community kernel builder says mainline HDMI waits on bridge support. On a Radxa OS image, a Samsung G80SD failed EDID negotiation and fell back to 1024x768 until the mode was forced, so the bridge's EDID path is fragile. That supports a fixed field EDID, but nobody has shown publicly that drm.edid_firmware is honoured through this bridge path. Display is card1, not card0.
+    - **Verdict:** unverified
+    - **Action:** Keep the W1-2 gate and add three checks. (1) Compare /sys/class/drm/card1-HDMI-A-1/edid byte for byte with field.bin. (2) Set WLR_DRM_DEVICES to the /dev/dri/by-path node of the display controller, not to a card number. (3) Unplug and replug HDMI 20 times with Lab Shell and labbar running; the shell must survive.
+    - **Impact:** Edits nothing in the BOM. It narrows the main UI gate to concrete pass/fail checks.
+    - **Sources:**
+      - https://forum.radxa.com/t/linux-7-0-hdmi-not-working/31304
+      - https://forum.radxa.com/t/samsung-g80sd-can-not-negotiate-resolution-refresh-rate/31118
+      - https://forum.radxa.com/t/mainline-gentoo-7-0-9-all-working/30884
+      - https://raw.githubusercontent.com/torvalds/linux/master/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+  3.
+    - **Claim in stack:** labbar (GTK3 + gtk-layer-shell 0.8.2) is a 13 mm exclusive-zone status bar with 6 chips (REC, LOCK and others) that stays visible over Lab Shell and Expert GUIs (#51, #52).
+    - **Finding:** labwc 0.7.1 source, desktop_update_top_layer_visiblity(): any fullscreen view on the current workspace disables the whole TOP layer on its output. If Lab Shell or an Expert GUI (SDR++, SDRangel) goes fullscreen, labbar disappears, including the LOCK and REC chips. 0.7.2 softened this (top layer hidden only when no other window is above the fullscreen one) but still hides it. In layers_arrange(), exclusive zones of all layers, overlay included, reduce the usable area. Pixel sizes (model): 13 mm is 162 px on the 6.97 in FHD panel and 110 px on 1280x800.
+    - **Verdict:** new_risk
+    - **Action:** Put labbar on the OVERLAY layer (gtk_layer_set_layer OVERLAY) with a 13 mm exclusive zone. Run Lab Shell maximized, never fullscreen. Have labd deny or undo fullscreen requests from Expert GUIs; an accepted fullscreen window would sit under the overlay bar's top 13 mm. Add a CI/menu test: put each Expert GUI in fullscreen and check that labbar is still visible.
+    - **Impact:** Keeps the rule-status chips (REC, LOCK, QUIET) visible at all times. No cost.
+    - **Sources:**
+      - https://raw.githubusercontent.com/labwc/labwc/0.7.1/src/desktop.c
+      - https://raw.githubusercontent.com/labwc/labwc/0.7.1/src/layers.c
+      - https://raw.githubusercontent.com/labwc/labwc/master/NEWS.md
+  4.
+    - **Claim in stack:** labwc 0.7.1 from apt; fallbacks are 0.7.4 (+lab, same wlroots 0.17) and then 0.8.4 (stage 1). Touch is mapped with <touch mapToOutput> (lab_ui_hf).
+    - **Finding:** 0.7.4 meson.build re-checked: wlroots >=0.17.0,<0.18.0 and wayland-server >=1.19.0; noble has libwlroots-dev 0.17.1-2.1build1. The 0.7.2 NEWS adds three relevant items: an optional headless fallback output (LABWC_FALLBACK_OUTPUT) so clients always have an output when the only one (HDMI) disappears, touch on headerbars via cursor emulation, and a fix for Chromium crashing after a virtual keyboard is destroyed. A touch bug present in 0.7.1 and 0.7.4: struct touch_point stores x_offset and y_offset as uint32_t, so surfaces at negative layout coordinates get bogus wl_touch.motion X values (-8388608 reported). Fixed on master by commit 6ab9d3f (PR #3765, closed 15 Oct 2026); no release contains it yet. Also open: labwc #3338 (0.9.3), where touch-started drag-and-drop does not begin in Qt apps.
+    - **Verdict:** new_option
+    - **Action:** Prefer 0.7.4+lab as the default build, not only as a fallback. Carry the one-line 6ab9d3f change (uint32_t to double) as a patch. Set LABWC_FALLBACK_OUTPUT in the session environment. Design the touch UI without drag-and-drop (use long-press menus and encoder moves). Keep 0.8.4 only for touch mouse emulation.
+    - **Impact:** Fewer touch glitches, and the shell survives HDMI loss. No new libwayland.
+    - **Sources:**
+      - https://raw.githubusercontent.com/labwc/labwc/0.7.4/meson.build
+      - https://packages.ubuntu.com/noble/libwlroots-dev
+      - https://raw.githubusercontent.com/labwc/labwc/master/NEWS.md
+      - https://github.com/labwc/labwc/issues/3764
+      - https://raw.githubusercontent.com/labwc/labwc/0.7.4/src/input/touch.c
+      - https://github.com/labwc/labwc/issues/3338
+  5.
+    - **Claim in stack:** Lab Shell on noble Qt 6.4.2 (qt6-wayland 6.4.2-5build3) from apt (#51).
+    - **Finding:** The Ubuntu source for qt6-wayland 6.4.2-5build3 has no debian/patches directory; the last three uploads are no-change rebuilds. Noble therefore carries no qtwayland backports at all. Qt bug QTBUG-114671 (affects 6.4.0 and 6.4.2, QPA: Wayland): a Qt Quick app with a TextField crashes at startup when no input device is present, and works once one is connected. The fix is qtwayland change 488069, in 6.5.3, 6.6.0 and LTS 6.2.9. On this device the seat can have no input devices at shell start: USB-HID touch not yet enumerated, and the labinput uinput devices not yet created.
+    - **Verdict:** new_risk
+    - **Action:** Order lab-shell after labinput: labinput must create its uinput keyboard and encoder devices before the shell starts (Requires= and After= on a labinput-ready target). Optionally carry change 488069 as a +lab patch to qt6-wayland. W1-2 test: boot with the touch USB unplugged and the Pico held in reset; the shell must start and must not count as a crash toward safe mode.
+    - **Impact:** Without this, a slow touch enumeration could crash-loop the shell into cage safe mode at boot.
+    - **Sources:**
+      - http://archive.ubuntu.com/ubuntu/pool/universe/q/qt6-wayland/qt6-wayland_6.4.2-5build3.debian.tar.xz
+      - https://qt-project.atlassian.net/browse/QTBUG-114671
+  6.
+    - **Claim in stack:** (stage 1 new option) In P5, evaluate prebuilt Qt 6.8.3 or 6.12.0 linux_arm64, fetched with aqtinstall.
+    - **Finding:** Two facts change the choice. (1) QTBUG-138747: Qt Virtual Keyboard does not reappear after a web <select> pull-down in QtWebEngine on Wayland. It is a regression since 6.5.3, reproduced on Weston and on Ubuntu 24.04; it affects 6.8.3 and is fixed only in 6.8.6, 6.9.3 and 6.10.0. 6.8.6 is commercial-only, because the last open-source 6.8 is 6.8.3. (2) aqtinstall's latest release is 3.3.0 (2 Jun 2025), which predates Qt 6.12, and no issue confirms 6.11/6.12 linux_arm64 installs. Its tracker shows open 2026 bugs (#1042 BadZipFile, Aug 2026). Linux arm64 desktop support was added in PR #766. The noble 6.4.2 baseline is not affected by QTBUG-138747.
+    - **Verdict:** corrected
+    - **Action:** If the toolkit is upgraded, choose 6.12.0 (or 6.11.x), not 6.8.3. Fetch the 7z archives directly from download.qt.io with SHA checks if aqtinstall 3.3.0 fails on the 6.12 layout. Add a regression test: QVK opens on a WebEngine text field after a <select> pull-down.
+    - **Impact:** Avoids a broken on-screen keyboard in WebEngine pages, such as an OpenWebRX+ view in the shell.
+    - **Sources:**
+      - https://qt-project.atlassian.net/browse/QTBUG-138747
+      - https://pypi.org/pypi/aqtinstall/json
+      - https://raw.githubusercontent.com/miurahr/aqtinstall/master/docs/CHANGELOG.rst
+      - https://github.com/miurahr/aqtinstall/issues?q=is%3Aissue+linux_arm64
+  7.
+    - **Claim in stack:** greetd 0.9.0: initial_session and default_session both point at the crash-counting lab-session wrapper as user lab. Stage 1 flagged that a restarted default_session (greeter class) may lack device ACLs, user D-Bus and PipeWire.
+    - **Finding:** greetd 0.9.0 source (Ubuntu orig tarball) confirms that initial_session runs only when the runfile does not exist (is_first_run), i.e. once per boot. Every later start, including after 'systemctl restart greetd', runs default_session through start_unauthenticated_session('greeter', ...): XDG_SESSION_CLASS=greeter, PAM service 'greetd-greeter' if /etc/pam.d/greetd-greeter exists, otherwise 'greetd'. Noble's systemd v255 logind source: session_start() calls user_start() unconditionally, so user@.service and the user D-Bus start for greeter sessions too, and seat_apply_acls() acts on the active session without checking its class. A greeter-class restart therefore should get /dev/dri, input and audio ACLs plus user services on noble (inference from source, not tested on the board).
+    - **Verdict:** corrected
+    - **Action:** Downgrade the risk to low. Keep a short W1-2 test (kill the shell 3 times, then check loginctl session class, the /dev/dri ACL, PipeWire and D-Bus). Make /etc/pam.d/greetd-greeter absent or identical to /etc/pam.d/greetd so both paths run pam_systemd the same way. Keep the crash counter in /run so it resets on boot, matching the runfile.
+    - **Impact:** The autologin helper workaround is likely unnecessary on noble.
+    - **Sources:**
+      - http://archive.ubuntu.com/ubuntu/pool/universe/g/greetd/greetd_0.9.0.orig.tar.gz
+      - https://raw.githubusercontent.com/systemd/systemd/v255/src/login/logind-session.c
+      - https://raw.githubusercontent.com/systemd/systemd/v255/src/login/logind-seat.c
+  8.
+    - **Claim in stack:** labd writes transient DevicePolicy=closed + DeviceAllow drop-ins for every lease; Expert GUIs and exclusive leases run with ReadOnlyPaths=/data (C7, 5.4).
+    - **Finding:** systemd issue #23198 'DevicePolicy=closed silently ignored' is still open (labels RFE, pid1, analyze). The original report: on a kernel without CONFIG_CGROUP_BPF the device restrictions are not enforced and nothing is logged. A comment of 11 Aug 2026 reports that DevicePolicy and DeviceAllow have no effect in systemd --user units, and that the documentation does not say so. The v255 man page also does not state this limitation. No maintainer reply is on the thread.
+    - **Verdict:** new_risk
+    - **Action:** Run every Expert GUI and engine lease as a system unit (User=lab, with WAYLAND_DISPLAY, XDG_RUNTIME_DIR and the socket bind-mounted in), never as a --user unit. W1-2: check CONFIG_CGROUP_BPF=y in /boot/config-6.18.2-4-qcom. The self-test must open a non-leased /dev/bus/usb node from inside the leased unit and require EPERM, and must try a write under /data and require EROFS. Do not rely on unit properties or systemd-analyze.
+    - **Impact:** Without this, an Expert GUI could open any SDR and write raw IQ around the labrx voice and band masks, with no log entry.
+    - **Sources:**
+      - https://github.com/systemd/systemd/issues/23198
+      - https://raw.githubusercontent.com/systemd/systemd/v255/man/systemd.resource-control.xml
+  9.
+    - **Claim in stack:** Field and QUIET modes: rfkill wlan + bluetooth and USB authorized=0 for the FCU760K on FE1.1s P4. Stage 1: blacklist aic8800_fdrv, aic_load_fw and the aic BT module, and add a udev rule authorized=0 for a69c:8d80.
+    - **Finding:** radxa-pkg/aic8800 packaging: the DKMS file renames the modules to aic_load_fw_usb, aic8800_fdrv_usb and aic_btusb_usb (DEST_MODULE_NAME = name + '_usb'). A blacklist or 'install' line with the plain names would not match how modprobe resolves them. aic_load_fw binds the cold device; after the firmware download the chip comes back as a69c:8d81. aic8800_fdrv binds its vendor interface (ff/ff/ff) and aic_btusb binds the Bluetooth interface (class e0/01/01). On a stock Q6A image, Bluetooth shows up as a normal USB HCI ('Bus: USB', 'Manufacturer: not assigned (2875)', HCI 5.4), so a generic class match from the in-tree btusb could also bind it. fdrv has no rfkill code of its own and relies on cfg80211's per-wiphy rfkill. Both modules build with CONFIG_RFTEST=y and COUNTRY_CODE '00'. If the chip keeps its firmware across a warm reboot from home mode (the module has no power control in the DTS), field boot sees 8d81 directly, and a rule matching only 8d80 misses it.
+    - **Verdict:** corrected
+    - **Action:** Field and QUIET roots: blacklist and 'install <name> /bin/false' for both the suffixed and unsuffixed names (aic_load_fw_usb, aic8800_fdrv_usb, aic_btusb_usb, aic_load_fw, aic8800_fdrv, aic_btusb), plus blacklist btusb (Bluetooth is off permanently). The udev rule sets authorized=0 by port path (the FE1.1s port-4 devpath) for both a69c:8d80 and a69c:8d81. W1-2: boot home mode with Wi-Fi up, warm-reboot into field mode, and require no 8d81 device, no wlan netdev and no hci device.
+    - **Impact:** Closes a warm-reboot path where Bluetooth or Wi-Fi could come up in field mode despite the blacklist.
+    - **Sources:**
+      - https://raw.githubusercontent.com/radxa-pkg/aic8800/main/debian/aic8800-usb-dkms.dkms
+      - https://raw.githubusercontent.com/radxa-pkg/aic8800/main/src/USB/driver_fw/drivers/aic8800/aic8800_fdrv/aicwf_usb.h
+      - https://raw.githubusercontent.com/radxa-pkg/aic8800/main/src/USB/driver_fw/drivers/aic_btusb/aic_btusb.c
+      - https://raw.githubusercontent.com/radxa-pkg/aic8800/main/src/USB/driver_fw/drivers/aic8800/aic8800_fdrv/Makefile
+      - https://forum.radxa.com/t/why-bluetooth-manufacturer-is-not-assigned/30505
+  10.
+    - **Claim in stack:** No TX-capable software on the device; the CI and self-test forbidden list covers wsjtx GUI, fldigi, QSSTV, direwolf, SoapyRemote, URH and others (5.4, P2 rule).
+    - **Finding:** The Radxa aic8800 source package also builds the binary package 'aicrf-test' ('Aicsemi RF test tools'), which installs /usr/bin/wifi_test and /usr/bin/bt_test. wifi_test sends SET_TX, SET_TXTONE (single tone), SET_POWER and efuse tx-power commands. bt_test offers 'tx_tone ... Start a Single-Carrier Bluetooth test'. The matching handlers (aic_priv_cmd_set_tx, set_tx_tone, set_power) are compiled into aic8800_fdrv because CONFIG_RFTEST=y. Whether aicrf-test is preinstalled on Radxa OS r2 is not verified.
+    - **Verdict:** new_risk
+    - **Action:** Add aicrf-test to the -1 pins and the forbidden list. The CI and self-test must fail if dpkg lists aicrf-test or if /usr/bin/wifi_test or /usr/bin/bt_test exists. This is another reason never to load fdrv in field roots.
+    - **Impact:** Removes a continuous-carrier transmit tool from a receive-only device.
+    - **Sources:**
+      - https://raw.githubusercontent.com/radxa-pkg/aic8800/main/debian/control
+      - https://raw.githubusercontent.com/radxa-pkg/aic8800/main/debian/aicrf-test.install
+      - https://raw.githubusercontent.com/radxa-pkg/aic8800/main/src/tools/aicrf_test/wifi_test.c
+      - https://raw.githubusercontent.com/radxa-pkg/aic8800/main/src/tools/aicrf_test/bt_test.c
+  11.
+    - **Claim in stack:** SoapySDR 0.8.1 and GNU Radio 3.10.9.2 come from apt; SoapyRemote is forbidden; --no-install-recommends is specified only for OpenWebRX+ (5.4, C22).
+    - **Finding:** In noble, libsoapysdr0.8 0.8.1-4build1 Recommends soapysdr0.8-module-all. soapysdr0.8-module-all depends on soapysdr0.8-module-remote ('Use SoapySDR devices over network (client module)') and on hardware modules for TX-capable radios (hackrf, bladerf, uhd, lms7, redpitaya), plus airspy, audio, mirisdr, osmosdr, rfspace and rtlsdr. A plain 'apt install gnuradio' or 'apt install soapysdr-tools' with default APT settings therefore installs SoapyRemote.
+    - **Verdict:** new_risk
+    - **Action:** Set APT::Install-Recommends "false" globally in /etc/apt/apt.conf.d on the build host and the device. Pin soapysdr0.8-module-all, soapysdr0.8-module-remote, -lms7, -hackrf, -bladerf, -uhd and -redpitaya at -1. The CI check: SoapySDRUtil --info must list only the allowed modules (rtlsdr, airspyhf), and SOAPY_SDR_PLUGIN_PATH must be unset in all units.
+    - **Impact:** Closes a dependency path that would quietly reinstall a forbidden network-SDR module.
+    - **Sources:**
+      - https://packages.ubuntu.com/noble/libsoapysdr0.8
+      - https://packages.ubuntu.com/noble/soapysdr0.8-module-all
+  12.
+    - **Claim in stack:** The SDRangel 7.27.2 build audit and runtime audit fail on any forbidden plugin, checked at build time and for plugins loaded at runtime (5.4).
+    - **Finding:** SDRangel 7.27.2 sdrbase/plugin/pluginmanager.cpp: on Linux, plugins load only from <bindir>/../lib/sdrangel/<subdir> and <bindir>/lib/<subdir>, with filter '*' (any file in those directories). There is no per-user or environment-variable plugin path. Overriding SOAPY_SDR_ROOT happens only on Windows.
+    - **Verdict:** confirmed
+    - **Action:** The runtime audit hashes every file in <prefix>/lib/sdrangel/plugins and pluginssrv against the signed build manifest. The prefix is root-owned and mounted ReadOnly for Expert-GUI units. A file that is not in the manifest fails the self-test.
+    - **Impact:** Makes the runtime audit complete with two directory checks.
+    - **Sources:**
+      - https://raw.githubusercontent.com/f4exb/sdrangel/v7.27.2/sdrbase/plugin/pluginmanager.cpp
+  13.
+    - **Claim in stack:** labrx computes FFT tiles with VkFFT on Turnip (FFTW as fallback). There is one waterfall renderer, a QQuickItem in the shell (5.4).
+    - **Finding:** Community reports for QCS6490/Q6A conflict. On Radxa Ubuntu 24.04 with kernel 6.18.2-2, Turnip sees 'Adreno (TM) 643' (libvulkan 1.3.275, 'shared memory: 32768', 'int dot: 0'). llama.cpp's Vulkan backend aborts there ('pre-allocated tensor ... cannot run the operation'), clinfo shows 0 OpenCL platforms, and a Radxa staff member replied that 'The Q6A does not support Vulkan (GPU) as a backend' for llama.cpp. A Gentoo mainline 7.0.9 user reports 'Fully accelerated GPU (OpenGL, vulkan, venus)' and smooth KDE Plasma. No public VkFFT or Turnip compute report exists for this board.
+    - **Verdict:** unverified
+    - **Action:** Make FFTW the default labrx backend and enable VkFFT only after a W1-2 benchmark passes: bit-level agreement with FFTW within tolerance, tiles per second at the NPU tile rate, and an 8-h soak with no VK_ERROR_DEVICE_LOST. Keep Qt Quick on the OpenGL ES RHI (QSG_RHI_BACKEND=opengl), not Vulkan.
+    - **Impact:** Avoids building the spectrum pipeline on an unproven GPU compute path. The CPU budget for the FFT must be checked in the W1-2 benchmark.
+    - **Sources:**
+      - https://forum.radxa.com/t/vulkan-crashes-and-npu-setup-for-llm-inference-on-dragon-q6a-need-guidance/30264
+      - https://forum.radxa.com/t/mainline-gentoo-7-0-9-all-working/30884
+  14.
+    - **Claim in stack:** The Pico (RP2040) is the HMI MCU and supervisor on LAB5. Battery divider 1:6 on an ADC pin; emergency mode is 'divider <= 12.9 V for 5 s without heartbeat -> #2813 OFF'; Linux shutdown is at 13.2 V (D3, 5.1-5.2).
+    - **Finding:** The Pico datasheet says ADC_AVDD comes from the RT6150 3.3 V SMPS through 201 ohm into 2.2 uF, so 'the 3.3 V SMPS output accuracy ... isn't great'. There is an inherent offset of about 30 mV (about 150 uA x 200 ohm) that varies with sampling and temperature. Default PS=low puts the SMPS in PFM mode at light load (higher ripple, bursty switching); driving GPIO23 high forces PWM and 'can greatly reduce the inherent ripple'. Datasheet RP2040-E11 (all revisions, not fixed): DNL error peaks at codes 512, 1536, 2560 and 3584, ENOB 8.7 bits. Model: with a 1:6 divider, a lowered reference reads the battery about 0.9 % high (about +0.12 V at 12.9 V) before any SMPS tolerance, against only a 0.3 V gap between the 13.2 V and 12.9 V thresholds. 12.375 V maps exactly to the code-2560 DNL peak; 12.9 V maps to code 2669.
+    - **Verdict:** new_risk
+    - **Action:** Pico firmware drives GPIO23 high at boot (fixed-frequency PWM: lower ripple and steadier RF behaviour; add the RT6150 switching frequency to the harmonic scan). Fit an LM4040 3.0 V shunt reference on ADC_VREF (1.5 mA; with 1:6 the full scale is 18 V, which covers 16.8 V), or have labd calibrate the Pico reading against the INA228 and store a per-unit gain and offset in Pico flash. Tie a spare ADC input to GND for offset subtraction. Keep the 5 s average.
+    - **Impact:** Makes the hardware undervoltage backstop accurate to roughly 0.05 V instead of several tenths (model). The LM4040 costs under $1 (estimate, not verified).
+    - **Sources:**
+      - https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf
+      - https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf
+  15.
+    - **Claim in stack:** labinput uses UART7 on pins 32/29 through the radxa-overlays uart7 overlay; libgpiod v1 in labd; the PPS input is on GPIO96 (C6, 5.2).
+    - **Finding:** Radxa staff (forum, Nov 2025): all 40-pin GPIOs belong to gpiochip4, and the GPIO number is the line on that chip (pin 3 is GPIO_24, which is gpiochip4 line 24); overlays are enabled with rsetup. Radxa staff (Jan 2026): for GPI DMA, the serial engine must also be set in UEFI under 'Radxa Platform Configuration -> GPIO -> QUPV3_xxx Mode'; the SPI case was named, and UART was not tested publicly. SPI on the UM3304 tops out at about 30 MHz in staff tests (not used by labinput).
+    - **Verdict:** new_risk
+    - **Action:** W1-2: check the UEFI QUPV3 mode for the serial engines behind UART6 and UART7 (and I2C0/I2C2), then run a 1e6-frame CRC loop test on UART7. In labd and pps-gpio, use gpiochip4 line numbers looked up by chip label, not a hard-coded chip index.
+    - **Impact:** Removes a silent cause of 'UART7 overlay present but no data' at bring-up.
+    - **Sources:**
+      - https://forum.radxa.com/t/how-to-enable-spi-and-use-gpio/29642
+  16.
+    - **Claim in stack:** HMI parts: Pico 2 pcs, PEC11R-4215F-S0024 x3, KSC641J x10, PCA9555 key expander (2.6). Stage 1 corrected the Pico to DigiKey SC0915 at $4.59 and proposed the TCA9555.
+    - **Finding:** Re-fetched on 18 Oct 2026. DigiKey SC0915: $4.59 at qty 1, 40,279 in stock, Active. PEC11R-4215F-S0024: $2.95 at qty 1 and $2.375 at qty 10, 13,117 in stock, Active. KSC641J LFS: $0.82 at qty 1 and $0.70 at qty 10, 30,086 in stock, Active, IP67, 340 gf, -40 to 85 C. TI PCA9555 page: Active, 2.3-5.5 V, 'A newer version of this product is available': the TCA9555, a 'Drop-in replacement with upgraded functionality', with 'Performance enhancements for power-on reset, interrupt, and lower voltage operation' (1.65-5.5 V, Active).
+    - **Verdict:** confirmed
+    - **Action:** Keep 2 x $4.59 = $9.18 for the Pico and $17.75 for encoders, keys and knobs. Buying 10 PEC11R would lower the unit price to $2.375 if spare encoders are wanted. Specify the TCA9555.
+    - **Impact:** Prices verified; no change.
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=SC0915
+      - https://www.digikey.com/en/products/result?keywords=PEC11R-4215F-S0024
+      - https://www.digikey.com/en/products/detail/c-k/KSC641J-LFS/1003852
+      - https://www.ti.com/product/PCA9555
+      - https://www.ti.com/product/TCA9555
+  17.
+    - **Claim in stack:** Encoders are read by the Pico (GP2/3, GP6/7); every critical action works from keys and encoders alone (D12, #52).
+    - **Finding:** pico-examples quadrature_encoder.pio (2023) is a full-quadrature state machine using computed jumps. Contact bounce produces increment/decrement pairs that cancel, and it reads step rates up to sysclk/10 (12.5 Msteps/s at 125 MHz). No bounce filter is needed in software. With the PEC11R's 24 PPR and 24 detents, each detent is 4 counts.
+    - **Verdict:** confirmed
+    - **Action:** Use two PIO state machines with this program. Report detents (count/4 with ±2-count hysteresis) over UART7, not raw counts, so a half-turned knob does not jitter the tuning.
+    - **Impact:** Robust tuning input with gloves, at no CPU cost.
+    - **Sources:**
+      - https://raw.githubusercontent.com/raspberrypi/pico-examples/master/pio/quadrature_encoder/quadrature_encoder.pio
+  18.
+    - **Claim in stack:** Artemis 4.2.0 is used for identification only, with the stop in labd over the read-only DB; Linux arm64 builds come only from Flathub (stage 1).
+    - **Finding:** Flathub summary API for com.aresvalley.artemis: arches aarch64 and x86_64; installed_size 332,548,608 bytes, download_size 132,898,882 bytes; timestamp 1784388294 (18 Jul 2026). Artemis issue #78 'ARM64 support' was closed on 30 Jun 2026 with milestone v4.1.1 and no details. There are no public reports of Artemis on aarch64 Linux or Wayland, good or bad.
+    - **Verdict:** confirmed
+    - **Action:** If the GUI is shipped at all, mirror the Flatpak and runtime offline and run it with no network access and a read-only data directory (flatpak override). The labd stop reads only the mirrored SQLite DB with its SHA-256. Otherwise ship only the DB.
+    - **Impact:** About 333 MB on rootfs if the GUI is included.
+    - **Sources:**
+      - https://flathub.org/api/v2/summary/com.aresvalley.artemis
+      - https://github.com/AresValley/Artemis/issues/78
+  19.
+    - **Claim in stack:** (stage 1) Ubuntu 26.04 is deferred to v2, pending a Radxa image.
+    - **Finding:** Radxa's forum has two community-built (not Radxa) Ubuntu 26.04.1 images. rafaelwms v1.3.0 (7 Oct 2026) uses Armbian edge pinned to 7.2.9 with Armbian's DisplayPort/DPU patches for QCS6490. The author reports that 7.0 and 7.2.3 broke HDMI on their board and that 7.2.9 works; HDMI, aic8800 Wi-Fi/BT and audio were tested on one board only. A Gentoo user reports mainline 7.0.9 working with 4 small out-of-tree patches (dts, HDMI bridge, qcom-scm).
+    - **Verdict:** new_option
+    - **Action:** Do not change v1. In the v2 review, use the Armbian edge DP/DPU patch set as the reference for HDMI on newer kernels, and re-run the full NPU and HDMI gates.
+    - **Impact:** None for v1.
+    - **Sources:**
+      - https://forum.radxa.com/t/ubuntu-26-04-1-lts-images-for-the-radxa-dragon-q6a-now-on-linux-7-2-9-hdmi-works-wi-fi-bt-audio-npu-apt-upgrade-safe/31574
+      - https://forum.radxa.com/t/mainline-gentoo-7-0-9-all-working/30884
+  20.
+    - **Claim in stack:** Glove, sun and rain usability: 15/20 mm touch targets, keys and encoders cover every critical action, LOCK in rain, VEML7700-driven themes (#52, D16).
+    - **Finding:** No public community measurements were found for this panel or these parts: glove use, water false-touches, or sunlit readability. The WebSearch budget was exhausted, and the primary pages checked carry no field reports. The labwc and Qt trackers show no touch-accuracy bug for a single output mapped with mapToOutput; #3263 (accuracy shifting with multi-monitor layout) does not apply to a single HDMI output. The design rules stay supported only by the stage-1 arithmetic and the D16 physics statement.
+    - **Verdict:** unverified
+    - **Action:** Keep the bench acceptance test: at least 95 % first-hit accuracy with gloves, water spray with LOCK, readable values at 100 klx with lux logged. Add an EVIOCGRAB re-grab check after a touch USB re-enumeration, so a re-enumerated touch node is grabbed again while LOCK is shown.
+    - **Impact:** The usability claims remain design targets until the bench test.
+    - **Sources:**
+      - https://github.com/labwc/labwc/issues?q=is%3Aissue+touch
+- **Current status oct 2026:** As of 18 Oct 2026:
+  - Radxa repo: kernel 7.0.11-4 (pushed through linux-image-radxa-dragon-q6a, Aug 2026) broke HDMI (DP AUX/HPD dead) and audio. A fix was reported on 9 Sep 2026. 6.18.2-4 remains the known-good HDMI kernel, and holding the metapackages plus embloader is necessary.
+  - Mainline Q6A DTS: GPU and USB only, no display nodes. Third-party Ubuntu 26.04.1 images exist (Armbian edge 7.2.9 with DP/DPU patches); Radxa has published none.
+  - labwc master fixed a touch-offset overflow on 15 Oct 2026 (6ab9d3f), not yet in any release; 0.7.1 and 0.7.4 carry the bug. labwc #3338 (touch drag-and-drop in Qt apps, 0.9.3) is open.
+  - noble's qt6-wayland 6.4.2-5build3 has no patches, so QTBUG-114671 (crash without an input device) is unfixed there. QTBUG-138747 (QVK + WebEngine) affects open-source 6.8.3 and is fixed from 6.10.0. aqtinstall's latest release is 3.3.0 (Jun 2025).
+  - greetd 0.9.0 and systemd 255 source reviewed: the greeter-class restart gets user@ and seat ACLs.
+  - systemd #23198 is open: DevicePolicy/DeviceAllow are reported ineffective in --user units (Aug 2026).
+  - aic8800 (radxa-pkg main): modules are aic_load_fw_usb, aic8800_fdrv_usb and aic_btusb_usb, built with CONFIG_RFTEST=y; the aicrf-test package ships TX test tools. The post-firmware USB ID is a69c:8d81.
+  - noble libsoapysdr0.8 Recommends soapysdr0.8-module-all, which pulls soapysdr0.8-module-remote.
+  - Artemis Flathub ships aarch64 (332.5 MB installed).
+  - DigiKey on 18 Oct 2026: Pico SC0915 $4.59 (40,279 in stock), PEC11R-4215F-S0024 $2.95 (13,117), KSC641J LFS $0.82/$0.70 (30,086). TI recommends the TCA9555 as a drop-in for the PCA9555.
+- **Notes:** Method and limits:
+  - The first WebSearch call returned 'budget used up' (shared per-turn limit of 200, spent by other agents), so this pass made no web searches.
+  - All evidence comes from direct fetches of primary pages:
+    - Radxa Discourse category/topic JSON (forum.radxa.com/c/dragon/q6a/71.json and /t/<slug>/<id>.json). Rate-limited once, so requests were spaced.
+    - GitHub issue pages and filtered issue lists in labwc, systemd, wvkbd, Artemis and aqtinstall (github.com's own issue filter, not a search engine).
+    - Qt Jira REST (qt-project.atlassian.net) and raw sources (labwc 0.7.1/0.7.4/master, systemd v255, SDRangel v7.27.2, radxa-pkg/aic8800, pico-examples).
+    - Ubuntu archive pool tarballs (greetd 0.9.0 orig, qt6-wayland 6.4.2-5build3 debian dir), packages.ubuntu.com, Raspberry Pi datasheets (pdftotext), the Flathub API, PyPI, DigiKey and TI.
+  - api.github.com, codeload.github.com, git.sr.ht (502) and sources.debian.org (challenge) were not reachable, so greetd was read from the Ubuntu orig tarball.
+  
+  Model numbers (my arithmetic): px per mm, and the Pico ADC error through the 1:6 divider (+0.9 % ≈ +0.12 V at 12.9 V from the 30 mV reference drop; codes 2560/2669).
+  
+  Inferences, not tested on the board:
+  - A greeter-class session gets ACLs and user@ (from v255 source).
+  - Firmware may persist across a warm reboot, so 8d81 can appear at field boot.
+  - The in-tree btusb could bind the AIC HCI by class.
+  - RF-test private commands may still work while rfkill is soft-blocked.
+  
+  Not verified:
+  - Whether aicrf-test is preinstalled on Radxa OS r2.
+  - Whether drm.edid_firmware is honoured through the R620/RA620 bridge path.
+  - CONFIG_CGROUP_BPF in the 6.18.2-4-qcom config.
+  - Any VkFFT/Turnip result on QCS6490.
+  - Any glove, water or sun field reports.
+  - The LM4040 price.
+  
+  Naming inconsistency: community posts call the HDMI bridge 'R620'/'RK620', while STACK says RA620. Check the part marking on the board.
+  
+  Downloaded reference copies (untrusted data, not executed) are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/labui2_dl/ (forum JSON, labwc sources, greetd 0.9.0 source, systemd v255 logind, qt6-wayland debian dir, aic8800 sources, Pico/RP2040 datasheets). The dump helper script is /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/labui2_scripts/dump.py. No user data was sent in any request.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
