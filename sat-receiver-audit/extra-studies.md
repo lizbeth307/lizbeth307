@@ -20120,6 +20120,115 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Hard rules: none affected. This is a DC bias regulator only, with no RF emission and no change to receive-only operation.
 
+## searchB:adi_lt3045_paralleled_4_5_v_lna_rail (run `wf_a268b76e-da0`)
+
+- **Part:** ADI LT3045 x2 in parallel, LNA4V5 rail (LAB5 4.8-5.0 V -> LC -> 2x LT3045 at 4.5 V, about 1 A total). Stack BOM item: LT3045EMSE#PBF (MSOP-12E), LCSC C580012
+- **Current price usd:** 16.66 for 2 (LCSC C580012 LT3045EMSE#PBF, $8.3329 each at qty 1, 1,603 in stock, re-checked 18 Oct 2026, ex-VAT; EU VAT is added at checkout or import). For comparison: LCSC C666574 LT3045EDD#PBF DFN-10 costs $8.6304 at qty 1 ($7.5571 at 10+). LCSC is not ADI-franchised.
+- **Critical specs:**
+  - Output current: 1.0 A total at 4.5 V. That is 2 x 500 mA paralleled, with 20 mOhm ballast for each device (ADI Fig. 7, better than 20% current sharing). The labd LNA budget is 1.0 A or less, and the four TPS2553 limits total 1.2 A nominal.
+  - Dropout at the real headroom: LAB5 4.8-5.0 V into a 4.5 V output leaves 0.3-0.5 V. LT3045 dropout at 500 mA: 260 mV typ, 350 mV max at 25 C, 450 mV max over temperature. At 300 mA: 220 typ, 280 max, 350 mV max over temperature.
+  - PSRR at the D36V28F5 switching frequency (about 500 kHz) and at 1-2 MHz, AT 0.3-0.5 V HEADROOM. LT3045 G45 curve (500 mA, 25 C): at 500 kHz, about 26 dB at 0.3 V, about 55-58 dB at 0.5 V and about 67 dB at 1 V. Table value: 76 dB at 1 MHz and 77 dB at 100 kHz, both at 2 V headroom.
+  - Output noise: 0.8 uVrms (10 Hz-100 kHz, CSET 4.7 uF) and 2 nV/rtHz at 10 kHz, independent of VOUT for 1.3 V and above.
+  - Input range 1.8-20 V (abs max +/-22 V). Reverse-battery and reverse-current protection.
+  - Accuracy: ISET 100 uA +/-1% initial and +/-2% over line, load and temperature. VOS +/-2 mV. Load regulation 0.5 mV max from 1 to 500 mA.
+  - Protection and telemetry: programmable current limit (ILIM, 150 mA*kOhm), internal limit with foldback, thermal shutdown, PG output (to MCP #3), EN/UV pin.
+  - Stable with 10 uF or more of low-ESR ceramic output capacitance. The device is designed to be paralleled (the current-reference architecture allows ballast in milliohms).
+  - Package and thermal: MSOP-12E or DFN-10 3x3 with an exposed pad, on the power board bonded to the plate. About 0.25 W per device at 0.5 A x 0.5 V. Tj from -40 to 125 C (E/I grade).
+  - Authenticity and legal supply: genuine ADI silicon from a traceable source. The stack already notes the moderate risk of buying from LCSC, which is not franchised.
+- **Candidates:**
+  1.
+    - **Name:** KEEP: ADI LT3045EMSE#PBF x2 (LCSC C580012)
+    - **Kind:** current_part
+    - **Price usd:** 16.66 (2 x 8.3329, qty 1, ex-VAT)
+    - **Spec comparison:** Reference part: 500 mA each, 0.8 uVrms, 76 dB at 1 MHz (2 V headroom), 260/350/450 mV dropout at 500 mA, 1.8-20 V input, parallelable, PG, ILIM.
+    - **Worse in:** Nothing; this is the reference. Caveat for the stack, not for the analog search: at LAB5 = 4.8 V (0.3 V headroom) and 500 mA per device, the 500 kHz PSRR drops to about 26 dB (datasheet G45). The re-audit already plans a bench test for this.
+    - **Compatibility:** As designed (MSOP-12E footprint).
+    - **Seller url:** https://www.lcsc.com/product-detail/C580012.html
+    - **Risks:** LCSC is not ADI-franchised (moderate risk). The verified franchised sources cost more or have no stock: DigiKey LT3045EDD#PBF is $10.00 (0 stock, 121 expected 18 Jan 2027); DigiKey LT3045IDD#PBF is $11.37 (401 in stock); TME LT3045EDD#PBF has 0 stock ('hardly available', aggregate range $6.44-9.65, VAT status not shown). LCSC DFN C666574 is $8.63. So LCSC MSOP stays the cheapest verified in-stock source.
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/C580012.html
+      - https://www.lcsc.com/product-detail/C666574.html
+      - https://www.digikey.com/en/products/result?keywords=LT3045EDD%23PBF
+      - https://www.digikey.com/en/products/detail/analog-devices-inc/LT3045IDD-PBF/6234772
+      - https://www.tme.eu/en/details/lt3045eddpbf/ldo-adjustable-voltage-regulators/analog-devices/lt3045edd-pbf/
+      - https://www.analog.com/media/en/technical-documentation/data-sheets/lt3045.pdf
+  2.
+    - **Name:** Generic AliExpress single-LT3045 module ('HIFI LT3045 module ... Ultra-low noise Low ripple Ultra-low dropout LDO Module Board', item 3256805712076726; also similar 'LT3045 Linear Voltage Regulator Module Single Power 3.3/5V' items 3256813145260678 and 3256811688202384)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 15.68 / 16.02 / 17.09 each (AliExpress listing prices, US site, 18 Oct 2026). Two are needed for 1 A, so about 31.4-34.2.
+    - **Spec comparison:** At best the same silicon (if genuine), so 500 mA, 0.8 uVrms and 76 dB at 1 MHz at most. The board's CSET and COUT values, ballast and layout are unknown. The listings give only marketing words ('ultra-low noise'), with no numbers.
+    - **Worse in:** Price (about 1.9-2x the chips). No independent measurement of noise, PSRR or dropout was found. Chip provenance is unknown. No ballast resistors for paralleling. Adjustable versions use a trimmer on SET, which adds drift. Module footprint and mounting do not fit the plate-bonded power board.
+    - **Compatibility:** Electrically possible, but the board would be replaced by modules on standoffs, with extra wiring and loops near the RF compartment. PG and ILIM are probably not broken out (unverified).
+    - **Seller url:** https://www.aliexpress.us/item/3256805712076726.html
+    - **Risks:** Counterfeit or remarked LT3045 risk. No measured evidence, so it is REJECTED under this angle's rule.
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-lt3045-module.html
+      - https://www.aliexpress.us/item/3256805712076726.html
+  3.
+    - **Name:** Generic AliExpress 'LT3045 1A Low Noise DC Power Module 3.3V-15V Adjustable' (item 3256805706476986), plus multi-chip variants: 4-parallel 2 A (items 3256810427944842, 3256812615046068) and 6-parallel 3 A (item 3256812593436997)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 24.77 (1 A module). 52.89-57.09 (2 A). 71.29 (3 A). AliExpress listing prices, US site.
+    - **Spec comparison:** Claims 1 A (presumably 2x LT3045 in parallel; the chip count is not visible in the fetched data) and an output of 3.3-15 V. No noise, PSRR or dropout numbers are published.
+    - **Worse in:** More expensive than the current $16.66. No independent measurements. Unknown chips and passives. Adjustable trimmer. Larger board.
+    - **Compatibility:** Needs mounting and wiring outside the power-board design. PG is not confirmed.
+    - **Seller url:** https://www.aliexpress.us/item/3256805706476986.html
+    - **Risks:** Counterfeit-chip risk and no measured evidence. REJECTED (not cheaper, not proven).
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-lt3045-module.html
+      - https://www.aliexpress.us/item/3256805706476986.html
+  4.
+    - **Name:** AliExpress 'LT3042 LT3045 LT3094 Linear Power Supply ... Module Pro' (item 3256812381089908)
+    - **Kind:** generic_or_clone
+    - **Price usd:** from 1.09 (lowest variant in the listing). Which variant that price buys is UNVERIFIED: it could be a bare PCB, or the LT3042 (200 mA) version.
+    - **Spec comparison:** Unknown. If it is a bare PCB, it saves nothing on the chips. If it is the LT3042 version, it gives 200 mA per device (worse).
+    - **Worse in:** Possibly current (LT3042 200 mA). No measured data. Variant contents unverified.
+    - **Compatibility:** Unverified.
+    - **Seller url:** https://www.aliexpress.us/item/3256812381089908.html
+    - **Risks:** Unverified contents, counterfeit risk, no measurements. REJECTED.
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-lt3045-module.html
+      - https://www.aliexpress.us/item/3256812381089908.html
+  5.
+    - **Name:** Loose marketplace 'LT3045EDD / LGYP' chips (e.g. '5PCS/Lot LT3045EDD#TRPBF' item 3256811532034311; '5PCS LGYP LT3045EDD SV6030P' item 3256811602101055)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 28.59 per 5 (about 5.72 each). 6.56 per 5 (about 1.31 each), but that is a multi-part listing and the lowest price may belong to another part number. AliExpress listing prices.
+    - **Spec comparison:** Claimed to be the same part (the LGYP marking matches the datasheet marking for LT3045xDD). Specs would be equal only if the chips are genuine.
+    - **Worse in:** Provenance and authenticity. No independent measurements. The $1.31 price is far below ADI-channel pricing (LCSC charges $5.60 even at 100+), which is a typical sign of remarked or counterfeit parts. The DFN footprint differs from the stack's MSOP pick (the board can take either).
+    - **Compatibility:** Pin-identical if genuine (DFN-10).
+    - **Seller url:** https://www.aliexpress.us/item/3256811532034311.html
+    - **Risks:** High counterfeit and remark risk. A good test on one batch does not prove the next. REJECTED (fails the 'not counterfeit, legally traceable' rule and has no measured evidence).
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-lt3045edd.html
+  6.
+    - **Name:** DIY discrete low-noise regulator (capacitance multiplier or op-amp plus pass-transistor 'super regulator' from LAB5)
+    - **Kind:** diy
+    - **Price usd:** not priced (a few dollars in parts, plus board area and tuning time)
+    - **Spec comparison:** Engineering reasoning, not a measurement: emitter-follower and capacitance-multiplier designs drop at least Vbe (about 0.6-0.7 V) plus saturation margin, which is more than the 0.3-0.5 V available from LAB5 to 4.5 V. No independent measurement was found of a DIY design matching 0.8 uVrms and 76 dB at 1 MHz at 0.5 A with sub-0.5 V headroom.
+    - **Worse in:** Dropout (cannot regulate 4.5 V from 4.8-5.0 V). No proven PSRR or noise. No integrated current limit, thermal shutdown or PG.
+    - **Compatibility:** Would need a higher input rail, i.e. a power-tree change, which this step does not allow.
+    - **Risks:** No measured evidence and a headroom failure. REJECTED.
+    - **Sources:**
+      - https://www.analog.com/media/en/technical-documentation/data-sheets/lt3045.pdf
+  7.
+    - **Name:** Used or surplus: pulled LT3045 chips, or a used ADI LT3045 demo board
+    - **Kind:** used
+    - **Price usd:** No offer found below the current price. The demo-board price could not be checked: analog.com returned HTTP 503.
+    - **Spec comparison:** Equal only if genuine. A demo board carries a single device or a fixed configuration (unverified).
+    - **Worse in:** Provenance (pulled chips). Price not shown to be lower. Form factor (demo board).
+    - **Compatibility:** Pulled chips need rework and re-test. A demo board does not fit the power board.
+    - **Risks:** Counterfeit or damaged parts, no traceability. REJECTED.
+    - **Sources:**
+      - https://www.analog.com/en/products/lt3045.html
+- **Notes:** VERDICT (angle B): Keep the current part, 2x ADI LT3045EMSE#PBF from LCSC C580012 at $16.66 (ex-VAT). I found no generic module, clone, DIY build or used unit that is cheaper AND not worse AND backed by independent measurements. (1) Every generic AliExpress LT3045 module I could price costs more per 0.5 A than the genuine chip: $15.68-17.09 for a single module, $24.77 for the 1 A module. None has published or independent noise, PSRR or dropout data. (2) Loose marketplace 'LGYP' chips are cheaper on paper ($5.72, and possibly $1.31 each) but fail the authenticity rule, and the $1.31 price is below ADI-channel volume pricing. (3) A DIY discrete regulator cannot regulate 4.5 V from LAB5 4.8-5.0 V. (4) No used or surplus offer was found below the current price. No AliExpress or marketplace pricing was found for the EU site; the US-site listing prices are already above the chip price.
+  
+  LIMITS OF THIS PASS: The shared WebSearch budget was exhausted on my first query, so I could not search for independent measurements of AliExpress LT3045 boards (forums such as diyAudio, EEVblog or ASR). Following the rule, every candidate without measured evidence is rejected. If you want that search done, send a follow-up. analog.com and mouser.com returned HTTP 503. The datasheet specs come from the LT3045 Rev B PDF cached earlier today (LCSC-hosted copy, scratchpad ldo_dl/lt3045.txt and g45.png).
+  
+  STACK FINDING relevant to every analog: datasheet curve G45 (500 mA per device, 25 C) gives 500 kHz PSRR of about 26 dB at 0.3 V headroom and about 55-58 dB at 0.5 V, versus the headline 76 dB at 1 MHz (measured at 2 V headroom). Any analog must therefore be compared at 0.3-0.5 V headroom and about 0.1-0.5 A per device, not at datasheet headline conditions. Keep LAB5 at 5.0 V rather than 4.8 V, or lower the rail to 4.3-4.4 V as the re-audit suggests, and confirm on the bench.
+  
+  OUT-OF-ANGLE POINTER, for the other-brand angle to verify: TI TPS7A94 (ti.com page cached in scratchpad ldo_dl/ti_tps7a94.html). Single chip, 1 A, Vin 1.7-5.7 V, 0.46 uVrms, PSRR 78 dB at 100 kHz, 150 mV typ dropout, PG and adjustable current limit, theta-JA 46.9 C/W. One chip could replace the pair. Not checked here: price, PSRR at 0.3-0.5 V headroom and 500 kHz, and the absolute-maximum Vin margin against LAB5 transients. I make no claim that it is cheaper or not worse.
+  
+  SOURCING NOTE: no franchised source is cheaper for qty 2. DigiKey EDD is $10.00 (backorder to 18 Jan 2027) and IDD is $11.37 (in stock); TME is out of stock. LCSC MSOP at $8.33 stays the cheapest verified in-stock source, with the moderate risk of a non-franchised seller already noted in the stack.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
