@@ -681,5 +681,377 @@ _Run `wf_3e735695-e00`_
 
 ## Власні виправлення (`fixes`)
 
+_Run `wf_3e735695-e00`_
+
+- **Component:** Storage (raw IQ recording + OS) for the Radxa Dragon Q6A handheld satellite receiver: Radxa UFS 3.1 module, USB 3 SSD, RAM burst buffer
+- **Fixes:**
+  1.
+    - **Problem:** No sustained (post-WriteBooster) write figure exists for any Radxa UFS module on the Q6A, and the WriteBooster (WB) buffer size of the Samsung 128GB and Kioxia 256GB modules is unpublished. 56 MHz cs16 needs 245.76 MB/s with no gaps.
+    - **Proposed fix:** Read the module's WB size from sysfs and measure the post-cache floor in about an hour. Separately, design the recorder so the UFS only has to sustain the average rate:
+  - a RAM FIFO in front of the disk;
+  - lossless 12-bit packing (184.3 MB/s instead of 245.76 MB/s);
+  - the UFS link pinned at max gear during captures;
+  - WB flushing between passes;
+  - the module kept under ~50% full.
+  
+  What the code shows about the Q6A's Qualcomm driver:
+  - WB is switched together with clock scaling (UFSHCD_CAP_WB_WITH_CLK_SCALING).
+  - Writing the wb_on sysfs node returns EOPNOTSUPP.
+  - Each gear-scaling event quiesces the I/O queue, which is a source of write stalls.
+  
+  For scale: Radxa's own Q6A UFS provisioning XML (Android) configures a 4 GiB shared WB with preserve-user-space=1. A 4 GiB cache lasts only about 17.5 s at 245.76 MB/s.
+  
+  It is also possible that Linux-shipped modules have no WB configured at all. In that case Radxa's 388/557 MB/s figures are already the true TLC speeds. Sysfs shows which case applies.
+    - **Steps:**
+      - Find the UFS host node: U=$(ls -d /sys/bus/platform/devices/1d84000.ufs*) (Radxa kernels name it 1d84000.ufshc; mainline uses 1d84000.ufs).
+      - Dump the WB configuration: for f in capabilities/write_booster device_descriptor/wb_type device_descriptor/wb_presv_us_en device_descriptor/wb_shared_alloc_units geometry_descriptor/wb_max_alloc_units geometry_descriptor/wb_buff_cap_adj geometry_descriptor/allocation_unit_size geometry_descriptor/segment_size attributes/wb_cur_buf attributes/wb_avail_buf attributes/wb_flush_status wb_on enable_wb_buf_flush clkscale_enable; do echo "$f=$(cat $U/$f)"; done
+      - Compute the WB size as wb_shared_alloc_units x allocation_unit_size x segment_size x 512 bytes (Critical Link's QCS6490 formula). If wb_shared_alloc_units is 0, no WB is configured and the write speed is flat. wb_avail_buf is in 10% steps (0x0A = full).
+      - Pin the link at max gear for tests and captures: echo 0 | sudo tee $U/clkscale_enable. This also leaves WB permanently enabled on Qualcomm.
+      - Fill test: on an ext4 data partition, size the file to about 70% of free space and run sudo fio --name=sus --filename=/data/fio.bin --size=80G --rw=write --bs=1M --ioengine=libaio --iodepth=16 --direct=1 --write_bw_log=/root/ufs --log_avg_msec=1000 --lat_percentiles=1. In parallel, log the cache: while sleep 1; do echo $(date +%s),$(cat $U/attributes/wb_avail_buf); done > /root/wb.csv. Bytes written when wb_avail_buf reaches 0 is the effective cache size; the plateau after that is the TLC floor.
+      - Optional fast floor test (keep clkscale disabled first): build ufs-utils (github.com/westerndigitalcorporation/ufs-utils), clear fWriteBoosterEn with sudo ufs-utils fl -t 14 -c -p /dev/bsg/ufs-bsg0, run fio for 60 s, then restore with -e or reboot. This needs CONFIG_SCSI_UFS_BSG (check that ls /dev/bsg shows ufs-bsg0).
+      - Between passes, let the cache drain without hibernate: echo 1 | sudo tee $U/enable_wb_buf_flush. Keep the module under 50% full and run sudo fstrim -av after deleting captures. In preserve-user-space mode the cache shrinks as the drive fills, and the kernel logs 'dCurWBBuf: 0 WB disabled'.
+      - Cut the data rate losslessly. The LMS7002M is a 12-bit ADC. LimeSuiteNG's host-side I12 is still stored in int16 (types.h), so it saves no bytes. Pack each I/Q pair of 12-bit values into 3 bytes in the recorder: 61.44 Msps becomes 184.32 MB/s instead of 245.76 MB/s. Unpack to cs16 offline for SatDump, or use cs8 (122.9 MB/s) for surveys.
+      - Put an mlocked RAM FIFO of at least 2 GiB in front of every wideband write (see the RAM ring-buffer fix). Size it as at least 2 x data rate x the worst stall seen in the fio p99.99 latency.
+      - Decision rule: record 56 MHz cs16 to UFS only if the 10-s moving minimum is at least 295 MB/s (1.2 x 245.76). Record packed-12 to UFS only if it is at least 221 MB/s. Otherwise send wideband to the USB SSD and keep UFS for narrowband passes (HRPT 6 Msps cs16 = 24 MB/s).
+    - **How to verify:** 1. In the fio bandwidth log, the 1-s samples are in KiB/s: sort -t, -k2 -n /root/ufs_bw.1.log | head gives the worst seconds.
+  2. Plot /root/wb.csv against cumulative bytes written to find where the cache runs out.
+  3. Run a real 10-minute capture through the FIFO, e.g. limeConfig --initialize --samplerate=61.44e6 --rxen=1 --rxlo=1.7e9, then limeTRX --output=/data/iq/t --time=600000.
+  4. Check t.sigmf-meta. limeTRX adds a 'captures' entry at every timestamp discontinuity, so exactly one entry means no samples were dropped.
+  5. Repeat with the module about 60% full to confirm the preserve-user-space effect.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/torvalds/linux/blob/master/drivers/ufs/host/ufs-qcom.c
+      - https://github.com/torvalds/linux/blob/master/drivers/ufs/core/ufshcd.c
+      - https://github.com/torvalds/linux/blob/master/drivers/ufs/core/ufs-sysfs.c
+      - https://github.com/torvalds/linux/blob/master/Documentation/ABI/testing/sysfs-driver-ufs
+      - https://dl.radxa.com/q6a/images/android/provision_ufs31.xml
+      - https://ftp.criticallink.com/redmine/projects/mitysom_qc6490/wiki/UFS
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/ufs-emmc-com
+      - https://forum.radxa.com/t/30630?page=2
+      - https://github.com/myriadrf/LimeSuiteNG/blob/develop/cli/limeTRX.cpp
+      - https://github.com/myriadrf/LimeSuiteNG/blob/develop/src/include/limesuiteng/types.h
+      - https://github.com/westerndigitalcorporation/ufs-utils
+  2.
+    - **Problem:** The Kioxia fix is not in mainline Linux, and nothing documents which chip a given module SKU carries. The 128GB/Samsung and 256GB/Kioxia pairing is not guaranteed, and the 512GB chip is unknown.
+    - **Proposed fix:** Identify the chip on arrival. Run only kernels that contain the quirk, pin them, and add a boot-time self-check that reads back the setting the quirk applies.
+  
+  The fix itself (Radxa PR #551) is three lines in ufs_qcom_dev_fixups: Kioxia/Toshiba (0x198) model THGJFGT1E45BAILB gets UFS_DEVICE_QUIRK_PA_TACTIVATE. In ufshcd_tune_unipro_params that sets the host PA_TActivate (MIB 0x15A8) to 10, i.e. 1 ms.
+  
+  Verified in source:
+  - Present in radxa/kernel branches linux-6.18.2 and linux-7.0.11.
+  - Absent from mainline 7.3-rc7, both in ufs-qcom.c and in the generic ufs_fixups table.
+  
+  Because the effect is a readable link attribute, the self-check is deterministic.
+    - **Steps:**
+      - Before buying: ask Arace, Allnet or the Radxa AliExpress store for a photo of the chip marking (KIOXIA THGJFGT1E45BAILB or SAMSUNG KLUDG4UHDC-B0E1). Radxa staff said they are not certain which brand future batches will use.
+      - On arrival, boot Radxa OS from microSD with the module fitted, then check the chip: cat /sys/class/scsi_device/*/device/vendor /sys/class/scsi_device/*/device/model; cat $U/device_descriptor/manufacturer_id. 0x0198 is Kioxia/Toshiba and 0x01CE is Samsung (ufs_quirks.h).
+      - Use Radxa OS r2 (Ubuntu noble userspace) with a Radxa kernel built from linux-6.18.2 HEAD or linux-7.0.11, or Armbian 26.05 or later (the maintainer said the fix ships there; not verified). Do not use Canonical generic or mainline kernels with a Kioxia module.
+      - Pin the kernel, because a forum user's apt upgrade replaced the fixed kernel with stock 6.18.2-4-qcom: sudo apt-mark hold linux-image-$(uname -r), plus the matching linux-headers and meta packages.
+      - Boot self-check (systemd oneshot): sudo ufs-utils uic -t 1 -r -i 0x15a8 -p /dev/bsg/ufs-bsg0. The local value should read 0x0000000a on a Kioxia module. If it does not, apply the no-hibernate field profile from the next fix, show a warning on screen, and make the recorder refuse the UFS target.
+      - Fallback for a kernel without the quirk, option (a): apply the PR #551 hunk and rebuild. If CONFIG_SCSI_UFS_QCOM=m, rebuilding only drivers/ufs/host against the matching source tree is enough. Then run update-initramfs -u, because the root filesystem is on UFS.
+      - Fallback option (b): use the no-hibernate sysfs profile from the next fix. This is the equivalent of the keep-alive workaround that ran 24.5 h without errors.
+      - Fallback option (c), experimental: write the value at boot with sudo ufs-utils uic -t 1 -w 0xa -i 0x15a8 --local -p /dev/bsg/ufs-bsg0. It is lost after any host reset or link re-init, so re-check it periodically.
+      - Get it upstream: send the 3-line PR #551 patch to linux-scsi (the ufs-qcom maintainers), or ask Radxa to. Until then, treat every non-Radxa/non-Armbian kernel as unfixed.
+    - **How to verify:** 1. journalctl -k | grep -cE 'ufshcd.*(OCS invalid|pa_err|dl_err|timed-out|abort)' returns 0.
+  2. All counters in sudo cat /sys/kernel/debug/ufshcd/*/stats (PA/DL errors, host resets, aborts) stay at 0 across the 72 h soak in the next fix.
+  3. The ufs-utils readback shows 0xa after every boot and after every kernel update.
+    - **Confidence:** high
+    - **Sources:**
+      - https://patch-diff.githubusercontent.com/raw/radxa/kernel/pull/551.diff
+      - https://github.com/radxa/kernel/blob/linux-7.0.11/drivers/ufs/host/ufs-qcom.c
+      - https://github.com/radxa/kernel/blob/linux-6.18.2/drivers/ufs/host/ufs-qcom.c
+      - https://github.com/torvalds/linux/blob/master/drivers/ufs/core/ufshcd.c
+      - https://github.com/torvalds/linux/blob/master/include/ufs/ufs_quirks.h
+      - https://forum.radxa.com/t/30630
+      - https://forum.radxa.com/t/30630?page=2
+      - https://forum.radxa.com/t/30630?page=3
+      - https://github.com/westerndigitalcorporation/ufs-utils
+  3.
+    - **Problem:** The Kioxia fix's long-term stability is lightly tested. Reports cover about 10 h to about 1 day; the earlier "9 days" reading was most likely "up 9:51", i.e. 9 h 51 min one day after install. Field recording is exactly the burst-plus-idle pattern that triggers hibernate (H8) enter/exit.
+    - **Proposed fix:** Remove H8 entirely during a field session with a sysfs "field profile", independent of the quirk.
+  
+  On Qualcomm, clock gating enters H8 after clkgate_delay_ms (150 ms by default) because of UFSHCD_CAP_HIBERN8_WITH_CLK_GATING. That explains the forum results: disabling auto_hibern8 alone did not help, while a 100 ms keep-alive write did.
+  
+  Also:
+  - Prove stability with a 72 h soak that reproduces the field pattern.
+  - Have the recorder fail over to the USB SSD on any UFS error.
+    - **Steps:**
+      - Field profile (run as root at session start; reboot or revert at the end):
+  echo 0 > $U/clkgate_enable
+  echo 0 > $U/auto_hibern8
+  echo 0 > $U/rpm_lvl   (device active, link active)
+  echo 0 > $U/clkscale_enable
+  echo 1 > $U/enable_wb_buf_flush   (the cache still flushes when idle, without H8)
+      - Measure what the profile costs on battery with an inline USB-C PD meter, idle with and without it. No figure is published; expect tens to a few hundred mW (estimate).
+      - Soak test A (quirk kernel, default power management) for 72 h. Loop: sudo fio --name=burst --filename=/data/soak.bin --size=20G --rw=write --bs=1M --direct=1 --rate=250m --runtime=600 --time_based, then sleep a random 120-1200 s. Log the error grep from the previous fix plus /sys/kernel/debug/ufshcd/*/stats every hour.
+      - Soak test B: the same 72 h loop with the field profile applied.
+      - In the recorder: on EIO, a write latency over 2 s, or a new ufshcd error line, switch the write target to the USB SSD. The RAM FIFO holds the samples during the switch.
+      - Keep a microSD rescue image, but never use microSD as primary storage: forum thread 31509 reports A2 cards corrupting after months on a Q6A.
+    - **How to verify:** Both soaks finish 72 h with:
+  - uptime not reset;
+  - no stutter (fio clat max under 1 s);
+  - zero UFS error lines and zero debugfs error counters.
+  
+  If A fails and B passes, make the field profile mandatory. If both pass, use the profile only for long sessions.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/torvalds/linux/blob/master/drivers/ufs/core/ufshcd.c
+      - https://github.com/torvalds/linux/blob/master/drivers/ufs/host/ufs-qcom.c
+      - https://github.com/torvalds/linux/blob/master/Documentation/ABI/testing/sysfs-driver-ufs
+      - https://github.com/torvalds/linux/blob/master/drivers/ufs/core/ufs-debugfs.c
+      - https://forum.radxa.com/t/30630
+      - https://forum.radxa.com/t/30630?page=2
+      - https://forum.radxa.com/t/31509
+  4.
+    - **Problem:** No endurance (TBW) rating exists for Radxa UFS modules, and there is no community wear data. At 245.76 MB/s the module absorbs about 885 GB per hour.
+    - **Proposed fix:** 1. Measure wear yourself, and derive a TBW from the device's own wear steps.
+  2. Keep long wideband captures off the boot module.
+  3. Use the NPU classifier as a write gate: the RAM ring holds everything, and only segments containing a detected signal are committed to disk. This is a double duty for the NPU.
+  4. Optional and experimental: reprovision the module with a dedicated enhanced-memory (pseudo-SLC) capture LUN. Radxa's own Q6A provisioning XML uses bMemoryType=3 for its boot LUNs with bConfigDescrLock=0, which suggests these modules accept such a layout.
+  
+  Prior estimate (an assumption, not a spec): TBW ≈ capacity x P/E / WAF (Critical Link formula). With 1,000-3,000 P/E for TLC and WAF about 1.1 for large sequential files, a 256 GB module gives about 230-700 TB. That is about 260-790 h of continuous 56 MHz cs16 written to UFS.
+    - **Steps:**
+      - Wear log, run at boot and after every capture: echo "$(date +%s),$(cat $U/health_descriptor/life_time_estimation_a),$(cat $U/health_descriptor/life_time_estimation_b),$(cat $U/health_descriptor/eol_info),$(cat $U/attributes/wb_life_time_est),$(cat $U/critical_health),$(awk '{print $7*512}' /sys/block/sda/stat)" >> /var/log/ufs_wear.csv. Field 7 of /sys/block/sda/stat counts sectors written since boot, so also keep a running total across boots.
+      - Derive TBW empirically: when life_time_estimation_a or _b steps from 0x01 to 0x02 (10% used), TBW ≈ 10 x the cumulative host bytes written at that moment.
+      - Set alarms: life_time_estimation at 0x08 or above, eol_info at 0x02 or above (pre-EOL warning: 80% of reserved blocks used), or critical_health above 0. On an alarm, move captures off UFS and order a replacement module.
+      - Route data: put wideband (56 MHz) captures on the replaceable USB SSD and keep narrowband passes on UFS. A 15-minute HRPT pass at 6 Msps cs16 is about 21.6 GB.
+      - Cut background writes: mount with noatime; set journald Storage=volatile during sessions.
+      - For the USB SSD, prefer a retail TLC 2230/2242 drive that publishes a TBW figure, so wear is budgetable (check the vendor datasheet; not verified here).
+      - Optional pSLC LUN (experimental; wipes the module; can void the warranty): (1) read $U/geometry_descriptor/memory_types, enh1_memory_max_alloc_units and enh1_memory_capacity_adjustment_factor (0x300 means 3:1, i.e. SLC on TLC), and confirm $U/attributes/configuration_descriptor_lock is 0x00. (2) Write a provisioning XML based on Radxa's provision_ufs31.xml: LU0 = OS (TLC, rest of device), LU1 = capture LUN (bMemoryType=3, e.g. 32 GiB), drop the Android-only LUNs, and keep bConfigDescrLock=0. (3) Put the board in EDL mode and connect the USB 3.1 Type-A port to a PC with an A-to-A cable. (4) Run edl-ng --loader <firehose from Radxa flat_build> --memory UFS provision my.xml (syntax inferred from the edl-ng README). (5) Reflash the Radxa OS 4096-byte-sector image to LU0.
+    - **How to verify:** 1. The CSV grows on each boot and capture, and its counters only increase.
+  2. For the pSLC option:
+     - the capture LUN's unit_descriptor/lun_memory_type reads 0x03;
+     - its capacity is as provisioned;
+     - a fio sustained write to it shows no cache cliff over the LUN's full size.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/torvalds/linux/blob/master/Documentation/ABI/testing/sysfs-driver-ufs
+      - https://github.com/torvalds/linux/blob/master/drivers/ufs/core/ufs-sysfs.c
+      - https://ftp.criticallink.com/redmine/projects/mitysom_qc6490/wiki/UFS
+      - https://dl.radxa.com/q6a/images/android/provision_ufs31.xml
+      - https://docs.radxa.com/en/dragon/q6a/download
+      - https://github.com/strongtz/edl-ng
+  5.
+    - **Problem:** Only one USB 3 storage data point exists on the Q6A: about 395 MB/s fio write with an unnamed adapter, no parameters, no read figure and no sustained run. UAS stability over long captures and the interaction with HDMI on the shared QMP combo PHY are unverified.
+    - **Proposed fix:** The bandwidth question is mostly settled by the device tree. The Radxa linux-7.0.11 DT statically wires QMP PHY lanes 0-1 to the RA620 HDMI bridge (DP) and lanes 2-3 to the USB-A port, so HDMI does not take USB 3 bandwidth; only the PHY block is shared.
+  
+  What remains is to qualify one specific SSD and enclosure on the Q6A:
+  - a 60-minute sustained-write test;
+  - temperature logging;
+  - an HDMI hot-plug test;
+  - ruling out USB power and link-power-management problems.
+  
+  Hardware: a TLC NVMe of 512 GB or more (1 TB preferred) in an RTL9210B or ASM2362 UAS enclosure, or a Samsung T7 Shield 1 TB. Avoid QLC drives.
+    - **Steps:**
+      - Check the link: lsusb -t should show Driver=uas at 5000M.
+      - Sustained write on a scratch drive (this destroys its data): sudo fio --name=usbw --filename=/dev/sdX --rw=write --bs=4M --ioengine=libaio --iodepth=8 --direct=1 --time_based --runtime=3600 --write_bw_log=/root/usb --log_avg_msec=1000. Then do a 10-minute --rw=read run for the missing read figure.
+      - Log SSD temperature every 30 s with smartctl (smartmontools 7.4 in Ubuntu 24.04): sudo smartctl -d sntrealtek -A /dev/sdX (RTL9210), -d sntasmedia (ASM2362) or -d sntjmicron (JMS583).
+      - Watch the kernel log during the run: dmesg -w | grep -iE 'uas|reset|xhci|over-current|I/O error'.
+      - HDMI hot-plug: unplug and replug HDMI 10 times during the run.
+      - Power: measure the SSD current with an inline USB tester. If it peaks near or above 0.9 A, or resets occur, feed the enclosure from the system 5 V buck through a USB 3 power-injection Y cable. Radxa's brief asks for a 24 W (12 V/2 A) supply when USB 3.1 and PCIe are fully loaded.
+      - Stability knobs, if resets appear: usbcore.autosuspend=-1 and usbcore.quirks=<vid>:<pid>:k (k disables link power management). As a last resort, usb-storage.quirks=<vid>:<pid>:u disables UAS and lowers throughput. Otherwise try another bridge chip.
+      - Format the capture filesystem as ext4 or XFS with noatime (not exFAT/NTFS), and use preallocated files (fallocate -l 200G /data/iq/cap.bin) with large O_DIRECT writes.
+      - Mount the SSD where the cold-weather fix keeps it warm, and give it a thermal pad to the case wall.
+    - **How to verify:** Pass if all of the following hold:
+  - over 60 min, the minimum 1-s bandwidth is at least 300 MB/s for direct cs16, or the average is at least 270 MB/s when writing behind the RAM FIFO;
+  - zero UAS or xhci resets, including during HDMI replugs;
+  - SSD temperature stays under 70 C;
+  - a limeTRX 56 MHz capture of 30 minutes or more produces exactly one SigMF 'captures' entry.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/radxa/kernel/blob/linux-7.0.11/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://lore.gitlab.freedesktop.org/drm-ai-reviews/20260522060645.4399-1-graham.oconnor@gmail.com/
+      - https://smarthomecircle.com/radxa-dragon-q6a-best-alternative-to-the-raspberry-pi-5
+      - https://dl.radxa.com/q6a/docs/rad-doc-0150_radxa_dragon_q6a_product_brief__revision_1.5_gbc16bac.pdf
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/usb
+  6.
+    - **Problem:** No one has reported concurrent load on the Q6A: the PCIe SDR stream (184-246 MB/s), plus USB 3 or UFS recording, plus NPU inference. The SoC reaches 90 C and above under stress and shut down at 105 C without a heatsink.
+    - **Proposed fix:** Treat this as a qualification run: add one load at a time and keep each one on its own CPU cores and IRQs.
+  
+  Memory bandwidth is not the limit (LPDDR5-5500 against well under 1 GB/s of I/O). The risks are scheduling latency, IRQ collisions, thermal throttling and supply droop.
+  
+  Placement:
+  - the SDR receive thread on the 2.7 GHz A78 core;
+  - the writer on another A78 core;
+  - UFS, xHCI and PCIe interrupts on separate cores;
+  - the GUI and the NPU host process on the A55 cores.
+  
+  The classifier runs on decimated or FFT frames at a limited duty cycle.
+    - **Steps:**
+      - Map the cores: grep . /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_max_freq. Expect CPU0-3 A55, CPU4-6 A78 at 2.4 GHz and CPU7 A78 at 2.7 GHz.
+      - IRQ placement: sudo systemctl stop irqbalance. Find the IRQs with grep -iE 'ufs|xhci|dwc3|pcie|msi' /proc/interrupts, then: echo 4 > /proc/irq/<ufs>/smp_affinity_list; echo 5 > /proc/irq/<xhci>/smp_affinity_list; echo 6 > /proc/irq/<pcie-msi>/smp_affinity_list.
+      - CPU frequency during a session: echo performance | sudo tee /sys/devices/system/cpu/cpufreq/policy*/scaling_governor. Add preempt=full to the kernel command line (the Radxa kernel is PREEMPT_DYNAMIC).
+      - Pinning: taskset -c 7 chrt -f 50 <SDR receive/recorder>; taskset -c 5-6 <writer/mbuffer>; taskset -c 0-3 nice -n 10 <SDR++/SatDump GUI, NPU host app>. Raise the LimeSuiteNG batch size (limeTRX --rxPacketsInBatch=8..32) to reduce interrupt rate.
+      - Test matrix, 30 minutes per stage:
+  (A) SDR at 61.44 Msps streamed to /dev/null: SoapySDRUtil --args=driver=limesuiteng --rate=61.44e6 --direction=RX;
+  (B) A plus recording to UFS through the FIFO;
+  (C) A plus recording to the USB SSD;
+  (D) C plus NPU inference in a loop, e.g. LiteRT benchmark_model --external_delegate_path=libQnnTFLiteDelegate.so --external_delegate_options='backend_type:htp';
+  (E) D plus the SDR++ waterfall on HDMI.
+      - Log every second: cpufreq scaling_cur_freq of each core, all /sys/class/thermal zones, mbuffer fill %, overflow markers, and board input power from an inline USB-C PD meter. Run a fan curve: off below 60 C, full at 75 C on the CPU zone.
+      - If a stage fails: drop GUI frame rate first, then the NPU duty cycle, then the sample format (cs16 to packed-12 to cs8), then the sample rate.
+    - **How to verify:** Each stage passes if, for the full 30 minutes:
+  - SigMF 'captures' count is 1 and SoapySDRUtil shows no 'O' overflows;
+  - the FIFO never goes above 50% full;
+  - no CPU zone exceeds 85 C and no core's frequency drops;
+  - the input supply stays within PD source limits.
+  
+  Keep the logs as the baseline for future software updates.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://smarthomecircle.com/radxa-dragon-q6a-best-alternative-to-the-raspberry-pi-5
+      - https://dl.radxa.com/q6a/docs/rad-doc-0150_radxa_dragon_q6a_product_brief__revision_1.5_gbc16bac.pdf
+      - https://github.com/myriadrf/LimeSuiteNG/blob/develop/cli/limeTRX.cpp
+      - https://github.com/myriadrf/LimeSuiteNG/blob/develop/plugins/soapysdr/Registration.cpp
+      - https://github.com/myriadrf/LimeSuiteNG/blob/develop/plugins/soapysdr/Streaming.cpp
+      - https://forum.radxa.com/t/30630
+  7.
+    - **Problem:** Cold-weather operation is unverified. The standard UFS module is rated 0-70 C and the T7 Shield 0-60 C, and Ukrainian winter passes start well below 0 C.
+    - **Proposed fix:** Gate heavy writes on measured temperature, and use the SoC itself as the heater inside a removable insulated winter sleeve.
+  
+  1. The Q6A device tree (mainline and Radxa) defines a board NTC labelled ufs_therm, exposed as thermal zone "ufs-thermal" (presumably next to the UFS connector). This gives a direct reading for the module area.
+  2. If the module supports UFS temperature notification, the kernel also registers a "ufs" hwmon device that reads the device's case temperature.
+  3. The Q6A draws about 9.5-10 W under stress (SmartHomeCircle). That is enough to warm an insulated bay before captures, and it also keeps the Li-ion cells warmer.
+  4. Industrial module: Radxa's brief lists an optional -25 to +85 C grade (SKU and price not found).
+  
+  The mobile UFS 3.1 chips themselves are commonly listed at -25 to +85 C (distributor listings for similar Samsung and Kioxia parts; not confirmed for the exact chips).
+    - **Steps:**
+      - Find the sensors: for z in /sys/class/thermal/thermal_zone*; do echo "$z $(cat $z/type) $(cat $z/temp)"; done (look for ufs-thermal). Also run sensors, which shows a 'ufs' hwmon if the module supports it. Or read sudo ufs-utils attr -t 0x18 -p /dev/bsg/ufs-bsg0 (bDeviceCaseRoughTemperature, value minus 80 = degC; may be unsupported).
+      - Warm-up gate (systemd unit before the recorder): if ufs-thermal is below +5 C, turn the fan off and run stress-ng --cpu 4 --timeout 600 until ufs-thermal exceeds +10 C and the SSD (smartctl) exceeds +5 C. Only then allow wideband writes. Narrowband 24 MB/s writes may start earlier.
+      - Insulation: a removable 5 mm closed-cell foam (EVA/neoprene) sleeve around the electronics and battery bay, with a closable fan duct and a thermostatic fan (on above 70 C CPU). Remove the sleeve in summer.
+      - Optional heater if the gate is too slow: a 5-10 W polyimide heater film on the battery/board bay, switched by a 10 C normally-closed bimetal thermostat (KSD9700 type) or a GPIO-driven MOSFET from the 4S pack. Part and price not verified.
+      - Batteries (general Li-ion rule): never charge below 0 C. Use a BMS or charger with an NTC charge inhibit.
+      - Condensation: when coming indoors, seal the unit in a zip bag until it reaches room temperature, and keep a silica-gel sachet in the case.
+      - Ask Radxa, Arace or Allnet for the industrial-grade UFS SKU before winter.
+    - **How to verify:** Freezer test, 5 cycles:
+  1. Keep the powered-off unit at -18 C for 2 h.
+  2. Boot it outdoors or in a cold room and log ufs-thermal, the SSD temperature and CPU zones every 5 s.
+  3. Record the time to reach the gate.
+  4. At the gate, run fio --verify=crc32c with a 10 GB write and verify on both UFS and the SSD.
+  
+  Pass: boot succeeds every time, zero UFS/USB errors, zero verify mismatches, and the gate is reached in under 15 min.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://github.com/radxa/kernel/blob/linux-7.0.11/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://github.com/torvalds/linux/blob/master/drivers/ufs/core/ufs-hwmon.c
+      - https://dl.radxa.com/accessories/ufs-module/rad-doc-0154_radxa_ufs_module_product_brief__revision_1.2_g69c4d5d.pdf
+      - https://smarthomecircle.com/radxa-dragon-q6a-best-alternative-to-the-raspberry-pi-5
+      - https://trustcompo.com/product/detail/TCE000026953-KLUEG8UHGC-B0E1
+      - https://static-lang.dasenic.com/product/kioxia-america-inc-thgjfgt1e45bail-8125684
+  8.
+    - **Problem:** Sharing the Q6A M.2 slot through a PCIe switch, and the 2230-to-2280 extension for the LimeSDR Micro, are both untested on the Q6A.
+    - **Proposed fix:** Do not use a switch for storage: the USB SSD (about 395 MB/s) covers the need. None of the products found is a palm-sized, M.2-edge-hosted Gen3 switch:
+  - the Seeed ASM2806 board needs a Pi 5 FFC;
+  - ASM1182e boards are Gen2 x1;
+  - ASM2812 dual-M.2 cards are x8 slot cards.
+  
+  One point in favour: the Q6A DT already maps SMMU stream IDs for a QPS615 switch topology on pcie1 (BDFs 0x100-0x501). A generic switch with up to 3 endpoints might enumerate, but that remains untested.
+  
+  For the SDR's extension:
+  - Prefer a mechanical-only mounting: a 2280 card in the 2230 socket with a 3D-printed support at 80 mm, if the overhang is free (the brief's drawing shows an 85 x 56 mm board). Otherwise use a short rigid extender PCB, not a flexible ribbon.
+  - Validate the link, and fall back to Gen2, which is enough for 61.44 Msps but not 160 Msps.
+    - **Steps:**
+      - Check the link: sudo lspci -tv to find the SDR and its root port (RP), then sudo lspci -vv -s <SDR BDF> | grep -E 'LnkCap|LnkSta'. Expect Speed 8GT/s, Width x1.
+      - Error watch during a 1-hour stream at 61.44 Msps: cat /sys/bus/pci/devices/<BDF>/aer_dev_correctable (if present, before and after) and dmesg | grep -iE 'aer|pcie.*(error|link down)'.
+      - If errors appear, force Gen2 at runtime: sudo setpci -s <RP> CAP_EXP+0x30.w=0x2:0xf; sudo setpci -s <RP> CAP_EXP+0x10.w=0x20:0x20 (retrain), then re-check LnkSta for 5GT/s. To make it permanent, use a DT overlay: &pcie1 { max-link-speed = <2>; };
+      - Gen2 x1 gives about 400 MB/s usable: enough for 61.44 Msps I12 (184 MB/s) or I16 (246 MB/s), not for 160 Msps (480-640 MB/s).
+      - Mechanical: support the far end of the 2280 card with a screw boss and avoid board flex. Mount the Q6A on all 4 corner holes (3.5 mm diameter per the brief).
+      - Only if NVMe-in-M.2 ever becomes essential: bench-test a switch outside the handheld first. Check enumeration under UEFI 260120 (thread 31195 reports some NVMe drives not enumerating) and under Linux, and watch for SMMU faults in dmesg.
+    - **How to verify:** Pass if:
+  - LnkSta is stable at the target speed;
+  - the AER counters do not increase;
+  - a 1-hour stream shows zero gaps (one SigMF captures entry, no Soapy 'O' overflows);
+  - all of this repeats after a cold-soak cycle and a moderate tap test on the case.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://dl.radxa.com/q6a/docs/rad-doc-0150_radxa_dragon_q6a_product_brief__revision_1.5_gbc16bac.pdf
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/nvme
+      - https://www.cnx-software.com/2025/01/21/pcie3-0-to-dual-m-2-hat-for-raspberry-pi-5-features-asmedia-asm2806-pcie-3-0-switch/
+      - https://pipci.jeffgeerling.com/hats/pineboards-hatdrive-dual-nvme-m2.html
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro
+      - https://forum.radxa.com/t/30807
+  9.
+    - **Problem:** No one has reported a RAM ring-buffer recorder at 160 Msps (640 MB/s) on the Q6A or a similar ARM board.
+    - **Proposed fix:** Prove it in two steps with existing tools, then build a small dedicated recorder.
+  
+  Step 1, ingest-only: limeTRX writing into tmpfs, where writes are just memcpy, so this isolates PCIe/driver/CPU limits from storage.
+  
+  Step 2, streaming: limeTRX into a named pipe, then mbuffer with a mlocked 8 GiB buffer (-L, so no page faults during the capture), then disk.
+  
+  Production recorder: SoapySDR readStream into an mmap(MAP_POPULATE)+mlock ring, packing to 12 bits (480 MB/s), with writer threads doing 4 MiB O_DIRECT writes to the USB SSD and UFS in parallel (separate files) and a pre-trigger buffer.
+  
+  Sizing:
+  - an 8 GiB ring holds 13.4 s of 160 Msps cs16 with no drain;
+  - with a 395 MB/s drain to the USB SSD, about 35 s;
+  - packed 12-bit (480 MB/s) with a 395 MB/s drain, about 101 s;
+  - cs8 (320 MB/s) is below the USB SSD's measured rate, so it should be sustainable (verify).
+    - **Steps:**
+      - Free RAM for the ring: sudo swapoff -a (and disable zram if present); sudo sysctl vm.dirty_background_bytes=268435456 vm.dirty_bytes=1073741824.
+      - Ingest-only test:
+  sudo mount -o remount,size=12G /dev/shm
+  limeConfig --initialize --samplerate=160e6 --rxen=1 --rxlo=2.2e9 --rxlpf=100e6
+  taskset -c 7 chrt -f 50 limeTRX --output=/dev/shm/b160 --time=10000 --linkFormat=I12 --rxPacketsInBatch=16
+  The result should be about 6.4 GB. CLI flags are from LimeSuiteNG develop; the limesdr-micro branch may differ.
+      - Streaming test:
+  mkfifo /dev/shm/cap.sigmf-data   (limeTRX appends .sigmf-data to the --output name)
+  sudo mbuffer -i /dev/shm/cap.sigmf-data -m 8G -L -s 4M -o /data/iq/cap.cs16 &
+  taskset -c 7 chrt -f 50 limeTRX --output=/dev/shm/cap --time=60000 --linkFormat=I12
+  Watch mbuffer's fill %. -L needs root or ulimit -l unlimited.
+      - Compare link formats: I12 on the link is 480 MB/s, about 60% of PCIe Gen3 x1, but costs CPU to unpack. I16 is 640 MB/s, about 80% of the link. Keep whichever runs with zero gaps.
+      - Recorder design notes: preallocate output files (fallocate); pack 2 x 12 bits into 3 bytes with NEON; trigger saves from the NPU classifier; write a SigMF meta file recording the format (custom ci12 packed). Ship a converter to cs16 for SatDump.
+      - Repeat the tests at 61.44 Msps on two RX channels (491.5 MB/s cs16), since 2R is also planned.
+    - **How to verify:** 1. The ingest test produces exactly one SigMF 'captures' entry and no log errors over 10 consecutive bursts.
+  2. The streaming test shows mbuffer's maximum fill matching the predicted fill rate (e.g. 640-395 = 245 MB/s), and the output file size equals samples x 4 bytes.
+  3. SoapySDRUtil --args=driver=limesuiteng --rate=160e6 --direction=RX prints no 'O' over 60 s.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSuiteNG/blob/develop/cli/limeTRX.cpp
+      - https://github.com/myriadrf/LimeSuiteNG/blob/develop/cli/limeConfig.cpp
+      - https://github.com/myriadrf/LimeSuiteNG/blob/develop/plugins/soapysdr/Streaming.cpp
+      - https://github.com/myriadrf/LimeSuiteNG/blob/develop/src/include/limesuiteng/types.h
+      - https://manpages.ubuntu.com/manpages/noble/man1/mbuffer.1.html
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro
+      - https://dl.radxa.com/q6a/docs/rad-doc-0150_radxa_dragon_q6a_product_brief__revision_1.5_gbc16bac.pdf
+  10.
+    - **Problem:** Mechanical retention of the UFS module: it is held only by two B2B connectors (a 30-pin GB042-30S for signals and a 34-pin GB042-34S for mounting only). There are no handheld vibration or drop reports.
+    - **Proposed fix:** Clamp the module softly from the case. A 3D-printed boss or rib in the bottom shell presses on the module through a 1.0-1.5 mm soft silicone thermal pad compressed about 20-30%. This is how phones retain B2B connectors, and the pad also sinks module heat into the case.
+  
+  Also:
+  - add a Kapton strip as secondary retention;
+  - mount the board on all four corner holes to prevent flex. Signal-integrity margin is already thin: Radxa's DT limits UFS to Gear-4 Rate-A because Rate-B is "unstable due to board and UFS module design limitations".
+    - **Steps:**
+      - The UFS and eMMC connectors are on the board's bottom side (brief drawing). With the board mounted on its standoffs, measure the gap from the module's top surface to the case floor with calipers or a clay squash test.
+      - Design a rib or boss about 28 x 20 mm, avoiding the connector housings. Boss height = gap - 0.75 x pad thickness (e.g. a 1.0 mm pad leaves 0.25 mm of compression).
+      - Fit a soft silicone thermal pad (3-6 W/mK class, cut to 28 x 20 mm). Add a Kapton strip over the module onto bare PCB areas.
+      - Use all four 3.5 mm corner holes with M3 standoffs, and do not let the case press on the board elsewhere.
+      - After field trips, inspect seating and check dmesg for UFS errors.
+    - **How to verify:** 1. Run sudo fio --name=v --filename=/data/v.bin --size=10G --rw=write --bs=1M --direct=1 --verify=crc32c --do_verify=1.
+  2. During the run: 50 firm taps on the case and 10 drops from 30 cm onto a padded surface, then a 10-minute walk with the device in a backpack.
+  3. Pass: zero verify errors, zero new counters in /sys/kernel/debug/ufshcd/*/stats, and no ufshcd lines in dmesg.
+  4. Bonus check: ufs-thermal reads lower under sustained writes than before the pad.
+    - **Confidence:** medium
+    - **Sources:**
+      - https://dl.radxa.com/accessories/ufs-module/rad-doc-0154_radxa_ufs_module_product_brief__revision_1.2_g69c4d5d.pdf
+      - https://dl.radxa.com/q6a/docs/rad-doc-0150_radxa_dragon_q6a_product_brief__revision_1.5_gbc16bac.pdf
+      - https://github.com/radxa/kernel/blob/linux-7.0.11/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/ufs-emmc-com
+      - https://github.com/torvalds/linux/blob/master/drivers/ufs/core/ufs-debugfs.c
+- **Residual risks:**
+  - The post-cache UFS speed and the factory WriteBooster provisioning of Linux-shipped modules are still unknown until the user runs the sysfs dump and the fill test. Radxa's 4 GiB WriteBooster setting comes from its Android provisioning XML and may not match what Linux modules ship with.
+  - Re-provisioning the module with a pseudo-SLC capture LUN via edl-ng is unproven on Radxa modules. The edl-ng provision syntax is inferred, a mistake can make the module unusable, and it may void the warranty.
+  - The runtime PA_TActivate write through ufs-utils is untested, needs CONFIG_SCSI_UFS_BSG, and is lost after any host reset.
+  - The no-hibernate field profile's battery cost has not been measured. If the Kioxia root cause is not only hibernate entry/exit, the profile may not fully prevent the problem.
+  - The Kioxia quirk is absent from mainline (7.3-rc7). Any kernel switch (Canonical, mainline, future Radxa 7.x without the patch) can bring the bug back. Pinning the kernel blocks security updates until the patch is upstream.
+  - LimeSDR Micro support lives in a LimeSuiteNG branch, so CLI flags may differ from develop. 160 Msps half-duplex RX over PCIe Gen3 x1 has not been demonstrated on any ARM SBC. Pre-orders ship Dec 15, 2026 at $249 (Basic) or $299 (GNSS), so testing cannot start before then.
+  - USB SSD: only one Q6A data point exists, the USB-A port's current limit is unpublished, and the T7 Shield is rated 0-60 C. The chosen drive and enclosure must pass the 60-minute test.
+  - Cold weather: operating ranges for the exact chips (KLUDG4UHDC-B0E1, THGJFGT1E45BAILB) were not confirmed from vendor datasheets. Availability and price of the industrial-grade UFS SKU are unknown.
+  - The TBW figures are an estimate (assumed 1,000-3,000 P/E, WAF 1.1), not a vendor specification. Real endurance comes only from the empirical method in the wear-logging fix.
+  - Board-geometry note for the case designer: the product-brief drawing shows 85 x 56 mm, not the 85 x 65 mm in the stack list. The M.2 socket's position and whether a 2280 card can overhang were not confirmed from Radxa documents.
+  - Prices for the enclosure, heater film, thermal pad and power-injection cable were not verified, and NAND-shortage pricing in 2026 remains volatile.
+
+## Адверсаріальна перевірка (`verify`)
+
 _Агент цього етапу ще працює (run `wf_3e735695-e00`)._
 
