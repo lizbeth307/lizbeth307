@@ -1658,6 +1658,682 @@
   
   The radiofax frequencies were verified from NOAA's 'Worldwide Marine Radiofacsimile Broadcast Schedules' (7 March 2025): https://www.weather.gov/media/marine/rfax.pdf. NCDXF timing was verified at https://www.ncdxf.org/beacon/.
 
+## lab:lab_software (run `wf_1dd437c5-0cf`)
+
+- **Area:** Lab software on the Radxa Dragon Q6A (Radxa OS r2 / Ubuntu 24.04 noble arm64): spectrum survey and logging, waterfall and recording, signal analysis, offline signal ID, SatNOGS option, calibration and measurement scripts, automation, data management, touch kiosk
+- **Items:**
+  1.
+    - **Name:** rtl_power (from the rtl-sdr package, rebuilt for the V4L) + heatmap.py
+    - **Category:** Spectrum survey / logging (RTL-SDR)
+    - **Purpose in lab:** Swept power survey from 0.5 MHz to 1.766 GHz with the RTL-SDR V4L: occupancy logs, terminated-input self-noise baselines, A/B checks of EMI sources, long logs left running unattended. heatmap.py turns the CSV into waterfall PNGs.
+    - **Key specs:** Hops are 2.4-2.56 Msps wide. Range and bin size are set with -f start:stop:bin, integration with -i, duration with -e, edge crop with -c. CSV lines hold date, time, f_low, f_high, step, samples and the dB bins. Commands from the audited plan: 'rtl_power -f 24M:1766M:100k -g 40 -i 10 -e 120 term_X.csv' and 'rtl_power -f 136.3M:138.7M:1k -g 40 -i 10 -e 2m A_137.csv'.
+    - **Size weight power:** The rtl-sdr package installs 577 KB. CPU use on the Q6A is low but has not been measured. Output size is about (number of bins x ~6 bytes) per sweep line; compress with zstd.
+    - **Interface and linux:** USB, through librtlsdr. Noble arm64 ships rtl-sdr/librtlsdr2 2.0.1-2build1, which has no V4L (R828S) support. Rebuild noble's source package with commit 0204c9c (keeps the librtlsdr.so.2 soname, so gr-osmosdr, SoapyRTLSDR and Gqrx keep working) or build osmocom 2.0.3. Blacklist dvb_usb_rtl28xxu.
+    - **Price:** $0 (GPL-2.0)
+    - **Tier:** core
+    - **Integration notes:** Use a fixed gain (-g) so logs can be compared. Always record a 50-ohm-terminated baseline first. librtlsdr gives one process exclusive use of the dongle, so stop SDR++, SatNOGS and similar before a sweep. Write to /srv/lab/survey/YYYY/MM/DD/. Known issue: soapy_power's 'rtl_power' output does not work with heatmap.py (soapy_power issue #24), so use real rtl_power CSV or convert first.
+    - **Sources:**
+      - http://ports.ubuntu.com/ubuntu-ports/dists/noble/universe/binary-arm64/Packages.xz
+      - https://github.com/keenerd/rtl-sdr-misc/blob/master/heatmap/heatmap.py
+      - https://github.com/xmikos/soapy_power/issues
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/narrowband_sdr.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/digest.md
+    - **Availability:** apt (noble universe) plus a local rebuild for the V4L
+    - **Cheaper alternative:** Already $0. 'soapy_power -d driver=rtlsdr' writes the same CSV through SoapySDR.
+    - **Safety notes:** Receive only.
+  2.
+    - **Name:** lab-sweep: a small SoapySDR sweeper to write in Python, working like hackrf_sweep for the LimeSDR Micro
+    - **Category:** Spectrum survey / logging (LimeSDR Micro, up to 3.8 GHz)
+    - **Purpose in lab:** Wideband survey from 1.6 to 3.8 GHz (and lower) with the Lime. Output is rtl_power-compatible CSV plus Parquet, with GNSS position and chrony UTC on every sweep. The same script also works with driver=rtlsdr.
+    - **Key specs:** Design, not an existing product: SoapySDR device 'driver=limesuiteng' (the name is verified in LimeSuiteNG plugins/soapysdr/Registration.cpp); RX-only CS16 stream; 30.72 Msps (the Micro's minimum is 7 Msps); explicit setBandwidth, because without -B LimeSDR users saw out-of-band signals fold in; 4096-point FFT (about 7.5 kHz bins); 20% edge crop, so about 24.5 MHz usable per hop; samples thrown away after each retune (settle time still to be measured); 20-50 ms dwell per hop. That is about 90 hops for 1.6-3.8 GHz, an estimate.
+    - **Size weight power:** About 200-300 lines of Python on apt python3-soapysdr 0.8.1 and numpy 1.26.4. It FFTs only the dwell blocks, so the CPU load is a duty-cycled fraction of one A78 core (estimate, not benchmarked).
+    - **Interface and linux:** PCIe, through la9310_limesdr and the LimeSuiteNG SoapyLMS plugin (limesdr-micro-staging branch, built from source per the software audit). RTL-SDR through SoapyRTLSDR 0.3.3.
+    - **Price:** $0 (own code)
+    - **Tier:** core
+    - **Integration notes:** Open only RX streams, never setupStream(SOAPY_SDR_TX). Write the same CSV columns as rtl_power so heatmap.py, DuckDB and notebooks treat both SDRs the same way. Stamp each sweep with UTC from chrony and lat/lon from gpsd. Reuse the RAM-ring recorder rules from the storage audit if raw IQ is also kept.
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/plugins/soapysdr/Registration.cpp
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/wideband_sdr.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/software.json
+    - **Availability:** To be written; all dependencies are in apt or the LimeSuiteNG build
+    - **Cheaper alternative:** soapy_power 1.6.1 (below), with no code to write but unmaintained
+    - **Safety notes:** Opens RX streams only. Keep the Micro's TX port terminated in 50 ohm.
+  3.
+    - **Name:** soapy_power 1.6.1 (xmikos)
+    - **Category:** Spectrum survey / logging (any SoapySDR device)
+    - **Purpose in lab:** A ready-made frequency-hopping power logger for the Lime and the RTL until lab-sweep exists.
+    - **Key specs:** -f range, -r rate (default 2 Msps), -b bins or -B bin size, -n/-t/-T averaging, -o overlap or -k crop, -F rtl_power|rtl_power_fftw|soapy_power_bin, -c/-u/-e repeat control. Uses pyFFTW or SciPy (README: numpy.fft is slow and memory-hungry).
+    - **Size weight power:** Pure Python plus SimpleSoapy 1.5.1 and SimpleSpectral 1.0.0, a few hundred KB.
+    - **Interface and linux:** Status: PyPI 1.6.1 was uploaded on 26 Apr 2017. Issue #26 'Maintainers Needed' dates from Oct 2020; the newest issue is Jun 2022. Open LimeSDR issues: #20 (LimeSDR Mini cannot connect), #5 (odd gain calibration), #4 (asks whether TX is off). My test: 'pip install --no-deps soapy_power simplesoapy simplespectral' into a --system-site-packages venv on Ubuntu 24.04.5 x86_64 with Python 3.12.3, numpy 1.26.4, SciPy 1.11.4 and SoapySDR 0.8. It imported, ran its PSD and RtlPowerWriter path on synthetic IQ, and '--detect' worked. No real device and no Q6A were tested. The source contains no SOAPY_SDR_TX calls.
+    - **Price:** $0 (MIT)
+    - **Tier:** extended
+    - **Integration notes:** Install with --no-deps so pip cannot pull numpy 2.x over the apt SciPy and GNU Radio stack. Use -k crop of 20-25% and an explicit rate of at least 7 Msps on the Micro. Verify each band against lab-sweep or rtl_power before trusting it.
+    - **Sources:**
+      - https://github.com/xmikos/soapy_power
+      - https://github.com/xmikos/soapy_power/issues
+      - https://pypi.org/project/soapy_power/
+    - **Availability:** PyPI
+    - **Cheaper alternative:** rx_power from rx_tools (build from source)
+    - **Safety notes:** Receive-only code path (checked).
+  4.
+    - **Name:** rx_tools (rx_power, rx_sdr, rx_fm)
+    - **Category:** Spectrum survey / raw IQ capture (SoapySDR)
+    - **Purpose in lab:** SoapySDR ports of rtl_power and rtl_sdr. rx_power is a second sweep logger; rx_sdr dumps raw IQ into a pipe and mbuffer for burst capture.
+    - **Key specs:** Based on the rtl_* tools, using SoapySDR instead of librtlsdr. Tested upstream with RTL-SDR, HackRF and bladeRF; other devices are marked experimental. The '-B' analog-bandwidth option exists only in the darkstar007 fork (from the wideband audit).
+    - **Size weight power:** Small C binaries.
+    - **Interface and linux:** Not in noble apt; build with cmake against libsoapysdr-dev 0.8.1. The newest issue is from Mar 2025. Issue #105: the build fails with 'pthreads development files not found'. Issue #100: rx_power reads -inf with a HackRF. Issue #89: rx_power with LimeSDR. Issue #97: 'Failed to activate stream' with a remote device.
+    - **Price:** $0 (GPL-2.0)
+    - **Tier:** optional
+    - **Integration notes:** Use it only if lab-sweep is not ready and soapy_power misbehaves. Check the output against rtl_power on the RTL first.
+    - **Sources:**
+      - https://github.com/rxseger/rx_tools
+      - https://github.com/rxseger/rx_tools/issues
+    - **Availability:** GitHub source only
+    - **Cheaper alternative:** soapy_power
+    - **Safety notes:** rx_* tools are RX only.
+  5.
+    - **Name:** SDR++ (built from source on master)
+    - **Category:** Waterfall / listening / recording
+    - **Purpose in lab:** Main interactive receiver: live waterfall, VFOs, a frequency manager, a recorder, and a rigctl server that Gpredict and the scheduler can drive.
+    - **Key specs:** Checked in the source: High-DPI scaling offers 100/200/300/400% (no 150%), so use 200% on the 7 in 1080p panel, giving an effective 960x540. The recorder writes WAV only (RF64 is commented out as 'Disabled for now') as Uint8, Int16, Int32 or Float32, with name template '$t_$f_$h-$m-$s_$d-$M-$y'. rigctl_server defaults to port 4532 and accepts AOS/LOS (also \recorder_start/\recorder_stop) when its 'Recording' box is ticked. Command line: -r <config root>, -s (server mode), -p 5259, --autostart. The README marks soapy_source 'Deprecated' (OFF by default) and the scheduler module 'Unfinished' (OFF).
+    - **Size weight power:** OpenGL waterfall, CPU not benchmarked on the Q6A. WAV/RIFF sizes are 32-bit, so one file tops out near 4 GiB: about 7.5 min at 2.4 Msps Int16 IQ, or about 15 min with Uint8 (my calculation).
+    - **Interface and linux:** Build with -DOPT_BUILD_SOAPY_SOURCE=ON (needed for the Micro through driver=limesuiteng) and the rtl_sdr source, against the same librtlsdr as everything else. Upstream says do not use the Debian/Ubuntu 'sdrpp' package.
+    - **Price:** $0 (GPL-3.0)
+    - **Tier:** core
+    - **Integration notes:** Keep one config root per mode (-r /srv/lab/sdrpp/<profile>) so the launcher can start 'LRPT', 'QO-100' or 'survey' presets. For automation, tick 'Recording' in rigctl_server and send AOS/LOS. Use Uint8 or keep recordings short to stay under 4 GiB; anything longer goes to lab-rec or SatDump. Convert the WAVs to SigMF with sigmf_convert.
+    - **Sources:**
+      - https://github.com/AlexandreRouma/SDRPlusPlus
+      - https://github.com/AlexandreRouma/SDRPlusPlus/blob/master/misc_modules/rigctl_server/src/main.cpp
+      - https://github.com/AlexandreRouma/SDRPlusPlus/blob/master/misc_modules/recorder/src/main.cpp
+      - https://github.com/AlexandreRouma/SDRPlusPlus/blob/master/core/src/gui/menus/display.cpp
+      - https://github.com/AlexandreRouma/SDRPlusPlus/blob/master/core/src/command_args.cpp
+    - **Availability:** Source (nightly .deb exists, but it links the wrong librtlsdr/LimeSuite per the software audit)
+    - **Cheaper alternative:** Gqrx 2.17.4 from apt
+    - **Safety notes:** Receiver only.
+  6.
+    - **Name:** Gqrx 2.17.4 (apt) or 2.17.7 (source)
+    - **Category:** Waterfall / recording (second receiver)
+    - **Purpose in lab:** A Qt receiver with a scriptable TCP control port and SigMF I/Q saving. It is the fallback when SDR++ misbehaves.
+    - **Key specs:** Remote control on TCP 7356 (localhost) with F/f, M/m, L/l, U RECORD, AOS/LOS. Per the docs, AOS/LOS start and stop AUDIO recording. I/Q start/stop over remote control came in 2.17.7. SigMF saving in the I/Q tool came in 2.17.1, so apt 2.17.4 has it. 2.17.2 added FORCE_QT6/QT5.
+    - **Size weight power:** apt gqrx-sdr 2.17.4-2build3 installs 2.1 MB (Qt6, gr-osmosdr 0.2.5).
+    - **Interface and linux:** gr-osmosdr 0.2.5 links librtlsdr2 and libsoapysdr0.8, so the V4L needs the patched librtlsdr2. The Lime would be reached through osmosdr soapy arguments with driver=limesuiteng (not tested with the Micro). Linux AppImages are x86_64 only; the ARM64 builds are macOS DMGs.
+    - **Price:** $0 (GPL-3.0)
+    - **Tier:** extended
+    - **Integration notes:** Build 2.17.7 from source if the scheduler must start and stop I/Q recording over the port. Set QT_SCALE_FACTOR around 1.75-2 for the 7 in panel.
+    - **Sources:**
+      - https://www.gqrx.dk/doc/remote-control
+      - https://github.com/gqrx-sdr/gqrx/releases
+      - http://ports.ubuntu.com/ubuntu-ports/dists/noble/universe/binary-arm64/Packages.xz
+    - **Availability:** apt (2.17.4); source (2.17.7)
+    - **Cheaper alternative:** SDR++ only
+    - **Safety notes:** Receiver only.
+  7.
+    - **Name:** CyberEther 1.15.0
+    - **Category:** GPU waterfall (wideband)
+    - **Purpose in lab:** Vulkan waterfall for 30-56 MHz of Lime bandwidth, which the CPU-bound viewers struggle with; it can also host the ONNX classifier (per the software audit).
+    - **Key specs:** v1.15.0 released 17 Oct 2026 (v1.14.0 on 15 Oct). Assets include CyberEther-1.15.0-linux-arm64-full.nupkg (71 MB). SoapySDR discovery reworked in v1.10.0; v1.14.0 added built-in drivers that work without SoapySDR.
+    - **Size weight power:** About 71 MB package. GPU load on the Adreno 643 (Turnip) is not benchmarked.
+    - **Interface and linux:** aarch64 build. Needs mesa-vulkan-drivers (Turnip 25.2.8) and a SoapySDR source with driver=limesuiteng.
+    - **Price:** $0
+    - **Tier:** extended
+    - **Integration notes:** Use it in wide-survey mode only (FFT and waterfall, no demodulation), as the software audit advises. Releases come every few days, so pin one version.
+    - **Sources:**
+      - https://github.com/luigifcruz/CyberEther/releases
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/software.json
+    - **Availability:** GitHub releases
+    - **Cheaper alternative:** SDR++ OpenGL waterfall
+    - **Safety notes:** Receiver only.
+  8.
+    - **Name:** SatDump 2.0.0-alpha (built from source)
+    - **Category:** Satellite recording and decoding
+    - **Purpose in lab:** Records baseband and decodes it offline (LRPT/HRPT/AHRPT and more). The scheduler calls it for unattended passes.
+    - **Key specs:** CLI in docs.satdump.org (2.0.0-alpha-b65975556): 'satdump legacy record <name> --source <sdr> --samplerate <sps> --frequency <Hz> --baseband_format cf32|cs32|cs16|cs8|cu8|w16 --timeout <s>'; 'satdump pipeline <id> <input_level> <input> <output>'; 'satdump sdr_probe'. Autotrack is documented only for legacy 1.1.4+ (whose release notes say the headless autotrack config format changed); the 2.0 docs do not document it.
+    - **Size weight power:** For CPU and storage per pass, see the software and storage audits (for example 7 Msps cs16 is 28 MB/s, about 25 GB per 15-minute pass).
+    - **Interface and linux:** Build master with SoapySDR plus the LimeSuiteNG legacy API. Run with LC_NUMERIC=C.
+    - **Price:** $0 (GPL-3.0)
+    - **Tier:** core
+    - **Integration notes:** Drive it from lab-sched: 'legacy record' during the pass, then 'pipeline' afterwards at nice 10 and ionice idle. Treat SatDump autotrack on 2.0 as unverified until it is documented.
+    - **Sources:**
+      - https://docs.satdump.org/
+      - https://docs.satdump.org/md_docs_2pages_2QuickStart.html
+      - https://www.satdump.org/posts/1.1.4-release/
+    - **Availability:** Source
+    - **Cheaper alternative:** gr-satellites 5.5 (apt) for CubeSat telemetry
+    - **Safety notes:** Receiver only.
+  9.
+    - **Name:** inspectrum 0.3.1 (apt)
+    - **Category:** Signal analysis (offline IQ)
+    - **Purpose in lab:** Measure the bandwidth, symbol rate, burst period and modulation of recorded signals, and extract symbols, without any radio attached.
+    - **Key specs:** Reads SigMF (.sigmf-meta/.sigmf-data), cf32, cf64, cs32, cs16, cs8, cu8 and real formats. Handles files over 100 GB. Spectrogram with zoom and pan, cursors for period and symbol rate, amplitude/frequency/phase/IQ plots, symbol extraction, and export of filtered or demodulated data. Qt5, fftw, liquid-dsp.
+    - **Size weight power:** apt installs 335 KB.
+    - **Interface and linux:** apt inspectrum 0.3.1-1build2 (noble arm64). File-based only.
+    - **Price:** $0 (GPL-3.0)
+    - **Tier:** core
+    - **Integration notes:** Open recordings from the SigMF archive directly. Copy measured parameters into SigMF annotations (core:freq_lower_edge, core:freq_upper_edge, core:label, core:comment).
+    - **Sources:**
+      - https://github.com/miek/inspectrum
+      - http://ports.ubuntu.com/ubuntu-ports/dists/noble/universe/binary-arm64/Packages.xz
+    - **Availability:** apt
+    - **Cheaper alternative:** Jupyter notebook with numpy/scipy
+    - **Safety notes:** Offline only.
+  10.
+    - **Name:** GNU Radio 3.10.9.2 + GRC + gr-satellites 5.5.0 + in-tree gr-soapy + gr-limesuiteng (from the LimeSuiteNG build)
+    - **Category:** Signal processing / analysis
+    - **Purpose in lab:** Flowgraphs for measurement (power and Y-factor detectors, decimators, PLL carrier trackers), CubeSat decoding, and replaying recordings.
+    - **Key specs:** apt sizes on noble arm64: gnuradio 22.3 MB, gr-satellites 7.0 MB, libgnuradio-soapy 3.10.9, VOLK 3.1.2 (run volk_profile once).
+    - **Size weight power:** CPU depends on the flowgraph. Decimate early, because single-threaded FIR blocks overrun on ARM (software audit).
+    - **Interface and linux:** Do not install apt gr-limesdr 3.0.1: it links LimeSuite 23.11, which cannot see the Micro. Use gr-soapy with driver=limesuiteng or gr-limesuiteng. Note: apt gnss-sdr 0.0.19 depends on libgnuradio-limesdr3.0.2, which pulls the liblimesuite23.11-1 library but not soapysdr0.8-module-lms7. Install it with --no-install-recommends and check 'SoapySDRUtil --info' for exactly one Lime module.
+    - **Price:** $0 (GPL-3.0)
+    - **Tier:** core
+    - **Integration notes:** GRC is GTK3; set GDK_SCALE=2. Store measurement flowgraphs in /srv/lab/flowgraphs under git. Run every .grc through the receive-only lint (below) before using it unattended.
+    - **Sources:**
+      - http://ports.ubuntu.com/ubuntu-ports/dists/noble/universe/binary-arm64/Packages.xz
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/software.json
+    - **Availability:** apt, plus LimeSuiteNG from source
+    - **Cheaper alternative:** Python/numpy scripts only
+    - **Safety notes:** Never put sink blocks (soapy/osmosdr/limesuiteng sinks) in lab flowgraphs.
+  11.
+    - **Name:** Universal Radio Hacker (URH) 2.10.0, offline analysis only
+    - **Category:** Signal analysis (bursty digital signals)
+    - **Purpose in lab:** Semi-automatic demodulation, plus bit and field analysis of recorded bursts from your own devices or public telemetry, using the Interpretation and Analysis tabs only.
+    - **Key specs:** The repository was archived (read-only) on 29 Mar 2026. PyPI 2.10.0 (17 Dec 2025) has wheels only for x86_64 Linux, macOS and Windows, plus an sdist. Features also include a TX generator, fuzzing and a 'simulation environment for stateful attacks'; this lab does not use them.
+    - **Size weight power:** Python/Qt; size on aarch64 not verified.
+    - **Interface and linux:** No noble apt package. On aarch64, pip or pipx builds from the sdist, which needs a compiler and Python headers; that build is not verified on the Q6A.
+    - **Price:** $0 (GPL-3.0)
+    - **Tier:** optional
+    - **Integration notes:** Install with no device backends, or only the RTL-SDR one, so URH cannot reach the TX-capable Lime. Load files from the SigMF archive. Expect no upstream fixes.
+    - **Sources:**
+      - https://github.com/jopohl/urh
+      - https://pypi.org/project/urh/
+    - **Availability:** PyPI sdist (archived project)
+    - **Cheaper alternative:** inspectrum plus a Jupyter notebook (no TX features at all)
+    - **Safety notes:** Do not use the Generator, Simulator or fuzzing functions. Analyse only signals you are entitled to receive.
+  12.
+    - **Name:** Python lab environment: JupyterLab 4.6.4 + numpy 1.26 / SciPy 1.11 (apt) + Skyfield 1.55 + sgp4 2.27 + DuckDB 1.5.6 + PyArrow 26 + papermill 2.7
+    - **Category:** Analysis / measurement scripting
+    - **Purpose in lab:** Notebooks and scripts for calibration (ppm, NF, patterns), survey analytics, pass prediction and report generation.
+    - **Key specs:** From apt: numpy 1.26.4, scipy 1.11.4, matplotlib 3.6.3, pandas 2.1.4, h5py 3.10.0, pyqtgraph 0.13.4, python3-ipykernel 6.29.3, jupyter-notebook 6.4.12. From PyPI: jupyterlab 4.6.4 (pure Python), skyfield 1.55 (from_omm present; the apt 1.48 wheel lacks it, I checked), sgp4 2.27, duckdb 1.5.6 and pyarrow 26.0.0 (manylinux aarch64 wheels), papermill 2.7.0, onnxruntime 1.31.0 (aarch64 wheel).
+    - **Size weight power:** apt scipy 60.7 MB + numpy 18.5 MB + notebook 18.9 MB installed. RAM use is modest; the 12 GB Q6A has headroom.
+    - **Interface and linux:** Use one venv with --system-site-packages and a constraints file 'numpy<2'. apt SciPy 1.11.4 needs numpy below 1.28 (it warns 'A NumPy version >=1.21.6 and <1.28.0 is required' when numpy 2.5 is present, which I observed), and the apt GNU Radio and SoapySDR bindings are built against numpy 1.26.
+    - **Price:** $0
+    - **Tier:** core
+    - **Integration notes:** Use JupyterLab from a laptop over Wi-Fi when docked (bind to the LAN only, with a token). In the field, run notebooks headless with papermill and show the HTML/PNG output in the launcher. Keep notebooks in git under /srv/lab/notebooks.
+    - **Sources:**
+      - https://pypi.org/project/jupyterlab/
+      - https://pypi.org/project/skyfield/
+      - https://pypi.org/project/sgp4/
+      - https://pypi.org/project/duckdb/
+      - https://pypi.org/project/pyarrow/
+      - https://pypi.org/project/papermill/
+      - http://ports.ubuntu.com/ubuntu-ports/dists/noble/universe/binary-arm64/Packages.xz
+    - **Availability:** apt + PyPI
+    - **Cheaper alternative:** apt jupyter-notebook 6.4.12 + ipykernel only (no pip)
+    - **Safety notes:** None.
+  13.
+    - **Name:** SigMF tooling: sigmf-python 1.13.0 (sigmf_convert, sigmf_validate) + libsigmf 1.0.2 + an own lab-rec recorder
+    - **Category:** Data management / metadata
+    - **Purpose in lab:** Every IQ file gets standard metadata (rate, datatype, frequency, UTC, GNSS position, hardware, antenna, checksum, annotations) so inspectrum, Jupyter and other people's tools can read it.
+    - **Key specs:** sigmf 1.13.0 (PyPI, 19 Aug 2026, Python 3.10-3.14, LGPL-3). It reads .sigmf-meta, .sigmf.gz/.xz/.zip and WAV directly. Its CLIs are sigmf_convert (WAV, BLUE, Signal Hound) and sigmf_validate. Core schema keys: global core:datatype, sample_rate, hw, recorder, sha512, geolocation, extensions; captures core:datetime, frequency, geolocation; annotations core:freq_lower_edge, freq_upper_edge, label, comment, generator, uuid. Canonical extensions: antenna, capture_details, signal, spatial, traceability.
+    - **Size weight power:** Pure Python. libsigmf is a header-only C++ library from apt.
+    - **Interface and linux:** pip in the lab venv; apt libsigmf 1.0.2-2.
+    - **Price:** $0
+    - **Tier:** core
+    - **Integration notes:** lab-rec design: SoapySDR CS16 into an mlocked RAM ring, a writer thread, .sigmf-data, then a .sigmf-meta written at close with core:sha512. Use datatype ci16_le (Lime CS16), cu8 (rtl_sdr), cf32_le (Gqrx) or ci16_le/cf32_le (SDR++ WAV after sigmf_convert). Add per-capture core:geolocation (the device moves) and a private 'lab:' namespace for gain, LNA chain, ppm applied, chrony offset, temperature and IMU attitude. Run sigmf_validate after each recording.
+    - **Sources:**
+      - https://pypi.org/project/sigmf/
+      - https://github.com/sigmf/SigMF/blob/main/sigmf-schema.json
+      - https://github.com/sigmf/SigMF/tree/main/extensions
+    - **Availability:** PyPI / apt
+    - **Cheaper alternative:** Plain JSON sidecar files (not interoperable)
+    - **Safety notes:** Do not publish recordings that contain other people's communications.
+  14.
+    - **Name:** Artemis 4.2.0 (Flathub com.aresvalley.artemis) as the offline Signal Identification database
+    - **Category:** Offline signal identification
+    - **Purpose in lab:** Matches an unknown survey peak (frequency, bandwidth, modulation, mode) against a downloaded reference database with waterfall and audio examples, with no internet.
+    - **Key specs:** Database of over 500 signals (Flathub text; the Artemis site says over 520). sigidwiki calls Artemis its 'main companion app' with offline reference signals; the wiki shows 594 identified and 408 unidentified signals. 4.2.0 was dated 18 Jul 2026 (Flathub). Artemis keeps several local databases and autoloads the newest (v4.0.5 notes). Its space-weather panel needs internet.
+    - **Size weight power:** Flathub download 133 MB, installed 333 MB, plus the Flatpak runtime (size not verified).
+    - **Interface and linux:** Flathub lists both aarch64 and x86_64. flatpak 1.14.6 is in noble. Whether Flatpak's Mesa extension drives the Adreno GPU is not verified; fall back to software GL if needed. The apt package named 'artemis' on noble is an unrelated genome browser.
+    - **Price:** $0 (GPL-3.0+)
+    - **Tier:** core
+    - **Integration notes:** Install the Flatpak and download the database while online, then test it with Wi-Fi off. Record the database version in each SigMF annotation's core:comment.
+    - **Sources:**
+      - https://flathub.org/apps/com.aresvalley.artemis
+      - https://github.com/AresValley/Artemis/releases
+      - https://aresvalley.github.io/Artemis/
+      - https://www.sigidwiki.com/wiki/Signal_Identification_Guide
+    - **Availability:** Flathub
+    - **Cheaper alternative:** Manually saved sigidwiki pages for your bands (licence not stated on the site, so personal use only)
+    - **Safety notes:** Identification only. Do not decode the content of private communications.
+  15.
+    - **Name:** GNSS-SDR (apt 0.0.19; upstream docs at 0.0.22)
+    - **Category:** Calibration (frequency reference traceable to GNSS)
+    - **Purpose in lab:** Turns either SDR into a GNSS receiver whose solved clock drift is the SDR's reference error in ppm. It also logs per-satellite C/N0 for antenna-pattern tests.
+    - **Key specs:** Osmosdr_Signal_Source with 'osmosdr_args=rtl,bias=1' (the RTL bias tee powers an active GNSS antenna), 2 Msps, freq 1575420000, AGC_enabled=false. The PVT monitor (PVT.enable_monitor=true) streams user_clk_offset [s], user_clk_drift_ppm, and per-satellite azimuth_deg and elevation_deg. The Monitor block (Monitor.enable_monitor=true, UDP protobuf, default port 1234) streams CN0_dB_hz and Carrier_Doppler_hz per channel. A file source allows post-processing.
+    - **Size weight power:** apt installs 14.3 MB. Real-time load on the Q6A is not benchmarked; record IQ and post-process if it cannot keep up.
+    - **Interface and linux:** apt gnss-sdr 0.0.19-1build3. Check that 0.0.19 already has user_clk_drift_ppm; otherwise build 0.0.22. It pulls liblimesuite23.11 libraries (see the GNU Radio item).
+    - **Price:** $0 (GPL-3.0)
+    - **Tier:** core
+    - **Integration notes:** Needs a separate active GNSS L1 antenna (hardware area) on the SDR under test, because the LC76G board antenna is not shared. The LTE/GSM methods are rejected. Store results in /srv/lab/cal/ppm.csv.
+    - **Sources:**
+      - https://gnss-sdr.org/docs/sp-blocks/pvt/
+      - https://gnss-sdr.org/docs/sp-blocks/monitor/
+      - https://gnss-sdr.org/docs/sp-blocks/signal-source/
+      - https://gnss-sdr.org/my-first-fix/
+    - **Availability:** apt / source
+    - **Cheaper alternative:** PPS-disciplined sample-count method (procedure below), no extra antenna
+    - **Safety notes:** Receive only.
+  16.
+    - **Name:** gpsd 3.25 + chrony 4.5 + pps-tools 1.0.2 (as configured in the GNSS audit)
+    - **Category:** Time / position base for the lab
+    - **Purpose in lab:** QTH for pass prediction, UTC for SigMF timestamps and timers, the PPS-disciplined clock for the sample-rate method, and a reference C/N0 per satellite for antenna tests.
+    - **Key specs:** The gpsd SKY object gives PRN, az and el (degrees from true north), ss (SNR in dB-Hz), used, gnssid and svid. Expect about 1 us system time with PPS and 10-100 ms with NMEA only; SDR buffer timestamps stay at ms level (GNSS audit).
+    - **Size weight power:** Negligible.
+    - **Interface and linux:** apt (noble-updates gpsd 3.25-3ubuntu3.2, chrony 4.5-1ubuntu4.2). UART6 /dev/ttyHS1 plus PPS on GPIO96, per the GNSS audit.
+    - **Price:** $0
+    - **Tier:** core
+    - **Integration notes:** The lab scripts read gpsd JSON through python3-gps 3.25 and refuse to timestamp when chrony is not synchronised, applying the spoofing and time gates from the GNSS audit.
+    - **Sources:**
+      - https://gpsd.gitlab.io/gpsd/gpsd_json.html
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/gnss_imu.json
+    - **Availability:** apt
+    - **Cheaper alternative:** NMEA-only time (no PPS)
+    - **Safety notes:** None.
+  17.
+    - **Name:** lab-cal: own measurement scripts (ppm, Y-factor NF, sky/ground Tsys, antenna pattern)
+    - **Category:** Calibration / measurement
+    - **Purpose in lab:** Repeatable, logged measurements that turn the receiver into an instrument.
+    - **Key specs:** Y-factor: Y = P_hot/P_cold and NF = ENR(dB) - 10log10(Y-1) when T_cold is about T0 (Maxim/ADI note). In general F = (ENR_lin - Y(Tc/T0 - 1))/(Y - 1). Second-stage correction: F1 = F_sys - (F2 - 1)/G1, with G1 taken from the hot-minus-cold power deltas (Keysight AN 5952-3706). ppm: either GNSS-SDR user_clk_drift_ppm, or a linear fit of samples received against PPS-disciplined CLOCK_REALTIME over at least 30 minutes, restarted on any overflow. Pattern: per-satellite delta C/N0 (antenna under test minus reference), binned by antenna-frame angle using IMU attitude.
+    - **Size weight power:** Python, small.
+    - **Interface and linux:** Built on SoapySDR, gpsd, GNSS-SDR UDP protobuf, Skyfield, numpy and scipy, and the BNO085 USB-CDC puck.
+    - **Price:** $0 (own code)
+    - **Tier:** core
+    - **Integration notes:** Every script writes JSON plus CSV to /srv/lab/cal/<type>/<UTC>_<chain>.json with the full chain description and software versions. Each needs a warm-up step and a fixed gain (AGC off).
+    - **Sources:**
+      - https://www.analog.com/en/resources/technical-articles/noise-figure-measurement-methods-and-formulas--maxim-integrated.html
+      - https://www.keysight.com/us/en/assets/7018-06829/application-notes/5952-3706.pdf
+      - https://gnss-sdr.org/docs/sp-blocks/pvt/
+    - **Availability:** To be written
+    - **Cheaper alternative:** Manual readings in SDR++ (much less repeatable)
+    - **Safety notes:** Noise sources are conducted only: connect them straight into the LNA or SDR input, or into a terminated filter. Never connect one to an antenna.
+  18.
+    - **Name:** lab-sched: pass scheduler and unattended recorder (Skyfield OMM + systemd-run timers) + Gpredict 2.3 / Hamlib 4.5.5 for interactive passes
+    - **Category:** Automation
+    - **Purpose in lab:** Predicts passes from cached CelesTrak OMM data and the GNSS QTH, then records and decodes them unattended with health gates.
+    - **Key specs:** A target list in YAML (NORAD ID, frequency, rate, device, pipeline, minimum elevation). Per-device conflict resolution. Jobs are 'systemd-run --user --on-calendar=<UTC> --unit=pass-<id> lab-record ...'. Pre-flight gates: chrony synced, free disk at least 1.5x the expected size, battery state of charge (INA228) above a threshold, temperature below a limit. Recording uses SatDump 'legacy record --timeout' or lab-rec. Post-processing runs 'satdump pipeline' at nice/ionice idle, writes SigMF and updates the catalog.
+    - **Size weight power:** Idle when no pass is due.
+    - **Interface and linux:** Skyfield 1.55 and sgp4 2.27 from pip. Gpredict 2.3 and Hamlib 4.5.5 from apt. Gpredict needs the alias bridge for 6-digit NORAD IDs (software audit). Interactive passes: Gpredict sends Doppler and AOS/LOS to the SDR++ rigctl_server on 4532, and AOS/LOS start and stop the recorder.
+    - **Price:** $0
+    - **Tier:** core
+    - **Integration notes:** Refresh OMM whenever Wi-Fi is available, keep dated snapshots in /srv/lab/tle, and warn when LEO elements are older than about 2 weeks. Record first and decode after the pass whenever the live real-time factor is above 0.5 (software audit).
+    - **Sources:**
+      - https://pypi.org/project/skyfield/
+      - https://github.com/AlexandreRouma/SDRPlusPlus/blob/master/misc_modules/rigctl_server/src/main.cpp
+      - https://docs.satdump.org/
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/software.json
+    - **Availability:** To be written (dependencies in apt/PyPI)
+    - **Cheaper alternative:** Gpredict plus SDR++ by hand
+    - **Safety notes:** Receive only.
+  19.
+    - **Name:** SatNOGS client 2.1.4 (Docker image librespace/satnogs-client, arm64)
+    - **Category:** Optional networked receive-only station
+    - **Purpose in lab:** When parked on Wi-Fi at a fixed spot, the device can take scheduled observations for the SatNOGS Network and compare its results with other stations.
+    - **Key specs:** Tag 2.1.4, pushed 2 Oct 2026, built for amd64, arm/v7 and arm64; the arm64 image is 1178 MB compressed. PyPI satnogs-client 2.1.4. Required settings: SATNOGS_API_TOKEN, SATNOGS_STATION_ID, SATNOGS_STATION_LAT/LON/ELEV, SATNOGS_SOAPY_RX_DEVICE (driver=rtlsdr), SATNOGS_ANTENNA (RX), SATNOGS_RX_SAMP_RATE, SATNOGS_RF_GAIN, SATNOGS_PPM_ERROR, and SATNOGS_NETWORK_API_URL https://network.satnogs.org/api/, so it is online only.
+    - **Size weight power:** About 1.2 GB of image on the SSD. Takes the SDR exclusively while running.
+    - **Interface and linux:** Docker Engine 20.10+ and Compose 1.29+ per the client docs. Known issue: the timezone was hard-coded in the Docker build, so bind-mount /etc/localtime and /etc/timezone. Whether the image's librtlsdr supports the V4L is not verified; SatDump's Docker image had exactly this old-librtlsdr problem. Test with 'SoapySDRUtil --probe' inside the container.
+    - **Price:** $0 (AGPL)
+    - **Tier:** optional
+    - **Integration notes:** Update the station location in both the client and the Network whenever you move. Stop the container before field mode. Observations and waterfalls are public.
+    - **Sources:**
+      - https://hub.docker.com/r/librespace/satnogs-client/tags
+      - https://pypi.org/project/satnogs-client/
+      - https://docs.satnogs.org/projects/satnogs-client/en/latest/docker.html
+      - https://wiki.satnogs.org/SatNOGS_Client_Setup
+      - https://community.libre.space/t/issues-with-satnogs-client-on-docker/12371
+      - https://community.libre.space/t/tutorial-how-to-install-satnogs-groundstation-for-newbie-pro-for-static-and-rotator/14200
+    - **Availability:** Docker Hub
+    - **Cheaper alternative:** Use SatNOGS Network data online for missed passes (no station)
+    - **Safety notes:** Receive-only by design.
+  20.
+    - **Name:** satnogs-decoders 1.131.0
+    - **Category:** Telemetry decoding (offline)
+    - **Purpose in lab:** Kaitai-based decoders that turn amateur/CubeSat frames from gr-satellites or SatDump into engineering values, offline.
+    - **Key specs:** PyPI 1.131.0, uploaded 17 Oct 2026, pure-Python wheel.
+    - **Size weight power:** Small.
+    - **Interface and linux:** pip in the lab venv.
+    - **Price:** $0
+    - **Tier:** extended
+    - **Integration notes:** Put decoded JSON next to the pass's SigMF folder.
+    - **Sources:**
+      - https://pypi.org/project/satnogs-decoders/
+    - **Availability:** PyPI
+    - **Cheaper alternative:** gr-satellites built-in decoders
+    - **Safety notes:** Amateur and science telemetry only.
+  21.
+    - **Name:** Storage and data-management tools: fio 3.36, mbuffer, smartmontools 7.4, rsync 3.2.7 / restic 0.16.4, sqlite3 3.45 / DuckDB catalog
+    - **Category:** Data management
+    - **Purpose in lab:** Qualify the drives, buffer captures, index everything, and back up when docked.
+    - **Key specs:** From apt (noble arm64): fio 3.36-1ubuntu0.1, mbuffer 20230301, smartmontools 7.4, restic 0.16.4-2ubuntu0.24.04.3, borgbackup 1.2.8, sqlite3 3.45.1. Layout: /srv/lab/{raw,passes,survey,cal,tle,flowgraphs,notebooks}/YYYY/MM/DD/<UTC>_<device>_<freqHz>_<rateSps>.sigmf-*; catalog.sqlite (path, start UTC, f, rate, datatype, device, antenna, lat/lon, sha512, tags, retention).
+    - **Size weight power:** Wideband IQ goes on the Samsung T7; the UFS holds the OS and narrowband (storage audit).
+    - **Interface and linux:** apt.
+    - **Price:** $0
+    - **Tier:** core
+    - **Integration notes:** ext4 or XFS with noatime and preallocated files. Wideband capture goes limeTRX or lab-rec into 'mbuffer -L -m 8G' and then the disk (storage audit). Delete raw files only after products and SigMF are verified. Back up with restic to a laptop or NAS on Wi-Fi.
+    - **Sources:**
+      - http://ports.ubuntu.com/ubuntu-ports/dists/noble/universe/binary-arm64/Packages.xz
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/storage.json
+    - **Availability:** apt
+    - **Cheaper alternative:** rsync only
+    - **Safety notes:** None.
+  22.
+    - **Name:** Touch kiosk: labwc 0.7.1 + greetd 0.9.0 autologin + wvkbd 0.14.3 on-screen keyboard + lisgd 0.3.7 gestures + an own PyQt6 launcher (cage 0.1.5 for single-app mode)
+    - **Category:** Touch-friendly launcher / kiosk
+    - **Purpose in lab:** Glove-friendly big-tile launcher for modes (Survey, Waterfall, Pass, Calibrate, Analyse, Data) with a status bar (GNSS fix, chrony sync, battery, temperatures, free disk, next pass).
+    - **Key specs:** From apt: labwc 0.7.1 (wlroots 0.17 stacking compositor), wvkbd 0.14.3, lisgd 0.3.7, greetd 0.9.0, wlr-randr 0.3.0, kanshi 1.5.1, python3-pyqt6 6.6.1. cage 0.1.5+20240127 is also in apt; its README: 'A kiosk runs a single, maximized application'; upstream is now on wlroots 0.20.
+    - **Size weight power:** Each package is under 1.2 MB installed.
+    - **Interface and linux:** USB-HID touch on the 1080p 7 in panel. Keep output scale at 1 and scale per toolkit: SDR++ 200%, QT_SCALE_FACTOR around 1.75, GDK_SCALE=2 for GRC.
+    - **Price:** $0
+    - **Tier:** core
+    - **Integration notes:** Each tile starts a systemd --user unit (sdrpp@profile, survey, pass-recorder, papermill-report) so crashes are supervised and logged. Use cage only for a single-app appliance build; whether wvkbd works under the noble cage build (layer-shell) is not verified.
+    - **Sources:**
+      - https://github.com/cage-kiosk/cage
+      - http://ports.ubuntu.com/ubuntu-ports/dists/noble/universe/binary-arm64/Packages.xz
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/display.json
+    - **Availability:** apt plus own launcher
+    - **Cheaper alternative:** cage running SDR++ only
+    - **Safety notes:** None.
+  23.
+    - **Name:** Remote access when docked: SoapyRemote 0.5.2 server and SDR++ server mode (-s, port 5259)
+    - **Category:** Lab extension (optional)
+    - **Purpose in lab:** A laptop uses the handheld's SDRs, waterfalls and notebooks over Wi-Fi or Ethernet for long bench sessions.
+    - **Key specs:** soapyremote-server 0.5.2-4 (apt). SDR++ '-s' server mode with default port 5259 (in the source).
+    - **Size weight power:** Wi-Fi shares the Q6A's onboard USB 2.0 hub (compute audit), so stream only narrow rates.
+    - **Interface and linux:** apt / SDR++ build.
+    - **Price:** $0
+    - **Tier:** optional
+    - **Integration notes:** Bind to the LAN interface only and firewall it (ufw). Off by default in field mode.
+    - **Sources:**
+      - http://ports.ubuntu.com/ubuntu-ports/dists/noble/universe/binary-arm64/Packages.xz
+      - https://github.com/AlexandreRouma/SDRPlusPlus/blob/master/core/src/command_args.cpp
+    - **Availability:** apt
+    - **Cheaper alternative:** SSH plus file copy
+    - **Safety notes:** rx_tools issue #97 shows activate-stream errors over SoapyRemote; test before relying on it.
+  24.
+    - **Name:** Receive-only guard (configuration plus a small lint script)
+    - **Category:** Safety / compliance
+    - **Purpose in lab:** Makes the 'receive-only on air' rule enforceable in software around a TX-capable LimeSDR Micro.
+    - **Key specs:** (1) Build LimeSuiteNG with -DBUILD_PLUGINS_AMARISOFT=OFF; its plugins/CMakeLists.txt defaults it ON on UNIX, and it is an LTE base-station plugin. (2) Never run limeTRX with -i/--input or --looptx (its TX waveform flags in limeTRX.cpp). (3) A lint step rejects any .grc or .py flowgraph containing soapy/osmosdr/limesuiteng sink blocks or SOAPY_SDR_TX before the scheduler runs it. (4) URH without device backends. (5) A 50-ohm terminator on the Micro TX port.
+    - **Size weight power:** Negligible.
+    - **Interface and linux:** Shell/Python run as a pre-start step in the systemd units.
+    - **Price:** $0
+    - **Tier:** core
+    - **Integration notes:** Log the guard's verdict to the journal for every automated job.
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/plugins/CMakeLists.txt
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/cli/limeTRX.cpp
+    - **Availability:** To be written
+    - **Cheaper alternative:** Discipline only
+    - **Safety notes:** This is the software half of the receive-only rule; the TX-port terminator is the hardware half.
+- **Capabilities added:**
+  - Logged, geotagged swept spectrum survey from 0.5 MHz to 1.766 GHz (RTL-SDR V4L) and up to 3.8 GHz (LimeSDR Micro), in rtl_power-compatible CSV, Parquet and DuckDB
+  - Self-interference and EMI baselines (terminated-input and per-subsystem A/B sweeps)
+  - Live waterfall, listening and IQ/audio recording (SDR++, Gqrx; CyberEther for a 30-56 MHz GPU waterfall)
+  - Offline signal analysis: bandwidth, symbol rate, burst timing, modulation, symbol extraction (inspectrum, GNU Radio Companion, Jupyter, optional URH in analysis-only mode)
+  - Offline signal identification against a downloaded database of 500+ signals (Artemis 4.2.0)
+  - Satellite recording and decoding, plus telemetry decoding (SatDump 2.0, gr-satellites 5.5, satnogs-decoders)
+  - Frequency calibration of both SDRs traceable to GNSS (ppm and drift against temperature)
+  - Bench noise-figure measurement by Y-factor with second-stage correction (conducted, noise source never on an antenna)
+  - System noise temperature from sky/ground and Sun Y-factor on the real antenna (receive-only)
+  - Relative antenna patterns from GNSS C/N0, satellite beacons, the QO-100 beacon and Sun drift scans
+  - Unattended, gated pass scheduling, recording and post-processing
+  - A standard SigMF data archive with checksums, catalog, retention and restic backup
+  - Optional receive-only SatNOGS Network station when online
+  - Touch kiosk operation, plus remote lab access from a laptop when docked
+  - A software receive-only guard around the TX-capable LimeSDR Micro
+- **Procedures:**
+  1.
+    - **Name:** P1. Self-noise baseline and wideband survey
+    - **Steps:**
+      - Fit a 50-ohm terminator on the RTL input and run 'rtl_power -f 24M:1766M:100k -g 40 -i 10 -e 120 term_base.csv'. Repeat with each Q6A subsystem switched on in turn (display, Wi-Fi, SSD writes, Lime streaming), following the state list in the antennas/display audits.
+      - Lime: run 'lab-sweep --driver limesuiteng --rate 30.72e6 --bw 30e6 --fft 4096 --crop 0.2 --range 1.6e9:3.8e9 --gain <fixed> --out term_lime.csv' with a 50-ohm load (soapy_power '-d driver=limesuiteng -r 30.72e6 -k 20 -F rtl_power' as the interim tool).
+      - Connect the band antenna, filter and LNA and repeat for the band of interest at the same gain, for example 'rtl_power -f 136.3M:138.7M:1k -g 40 -i 10 -e 2m A_137.csv'.
+      - Import into DuckDB with time, lat/lon (gpsd), antenna and chain tags. Subtract the terminated baseline and flag bins more than 6 dB above it.
+      - Render PNGs with heatmap.py and attach them to the survey record. List the flagged peaks for P8.
+    - **Needs:**
+      - RTL-SDR V4L with the patched librtlsdr2
+      - LimeSDR Micro with LimeSuiteNG
+      - rtl_power
+      - lab-sweep or soapy_power
+      - 50-ohm SMA terminators
+      - DuckDB/pandas venv
+      - gpsd/chrony
+  2.
+    - **Name:** P2. Frequency calibration against GNSS
+    - **Steps:**
+      - Method A (absolute): connect an active GNSS L1 antenna to the SDR under test; for the RTL use bias=1, whose bias tee gives 4.5 V/180 mA. Run gnss-sdr with Osmosdr_Signal_Source (osmosdr_args=rtl,bias=1; freq 1575420000; 2 Msps; AGC off), PVT.enable_monitor=true and Monitor.enable_monitor=true.
+      - After the first fix, log user_clk_drift_ppm for at least 10 minutes and take the median. On the RTL the tuner and ADC share one 28.8 MHz TCXO, so this ppm also corrects tuning (standard RTL architecture).
+      - For the Lime: record about 2-5 minutes of L1 IQ at 7.68 Msps cs16 into the RAM ring and process it offline with GNSS-SDR's file source (real time on the Q6A is unbenchmarked). limePPSDO does not support the Micro (its source lists only XTRX and Mini V2).
+      - Method B (no extra antenna): with chrony locked to PPS (chronyc tracking RMS of a few us), stream the SDR for at least 30 minutes, timestamp every buffer, fit samples against time by least squares, and discard the run on any overflow. The slope error is the sample-clock ppm.
+      - Write ppm, SDR temperature and Q6A thermal-zone readings to /srv/lab/cal/ppm.csv, and repeat cold and warm to build a ppm-vs-temperature table.
+      - Apply the correction: rtl_* -p, SDR++ PPM correction, SATNOGS_PPM_ERROR, Gqrx frequency correction, and SoapySDR setFrequencyCorrection in the lab scripts. Check against a known stable carrier where one is receivable.
+    - **Needs:**
+      - GNSS-SDR (apt 0.0.19 or 0.0.22 from source)
+      - Active GNSS L1 antenna (hardware area)
+      - gpsd + chrony + PPS
+      - lab-cal ppm script
+  3.
+    - **Name:** P3. Bench noise figure by Y-factor (conducted only)
+    - **Steps:**
+      - Connect noise source, then DUT (LNA or filter+LNA), then SDR, all by cable. Leave the antenna disconnected. A 50-ohm terminator stays on any unused port.
+      - Set a fixed SDR gain with AGC off, the bias-tee state and the rate (RTL 2.048 Msps; Lime 7.68 Msps with explicit bandwidth). Pick measurement bins free of spurs and the DC spike, using the P1 baseline. Warm up for 15 minutes.
+      - SDR alone first: switch the source ON/OFF (a GPIO-driven switch or by hand) in 2-5 s blocks for at least 60 cycles. Integrate power over the chosen bandwidth to get Y2, and compute F2 = (ENR_lin - Y2(Tc/T0 - 1))/(Y2 - 1), which is NF = ENR - 10log10(Y-1) when Tc is about 290 K.
+      - Repeat with the DUT in line to get Y_sys and F_sys. Take G1 = (P_on - P_off with DUT)/(P_on - P_off without DUT), then F1 = F_sys - (F2 - 1)/G1.
+      - Linearity check: change the SDR gain by 3-5 dB and confirm Y is unchanged within about 0.1 dB; otherwise the chain is compressing.
+      - Store NF, uncertainty (ENR table uncertainty dominates and is unknown for uncalibrated sources), frequency, chain and software versions in /srv/lab/cal/nf/.
+    - **Needs:**
+      - Noise source with an ENR table (lab-instruments area; low output, conducted only)
+      - Optional GPIO switch for the noise source's DC
+      - SMA attenuators and 50-ohm terminators
+      - lab-cal NF script (SoapySDR + numpy)
+  4.
+    - **Name:** P4. System temperature from sky/ground and Sun (receive-only, on the antenna)
+    - **Steps:**
+      - With the full chain on the antenna (for example the L-band helix plus SAWbird+ GOES), fix the gain and record 60 s pointing at cold sky (high elevation, away from the Sun and the galactic plane).
+      - Record 60 s pointing at the ground (or a covered absorber, about 290 K). Y = P_ground/P_sky gives T_sys = (T_ground - Y*T_sky)/(Y - 1), with T_sky assumed at a few K at L-band (the assumption goes in the report).
+      - Optional: point at the Sun and then at cold sky to get the Sun/cold ratio (the antennas audit expects about 0.5-1 dB at 1.7 GHz for a 13-15 dBic helix).
+      - Log the results and compare before and after antenna or LNA changes; this checks P3 on the real antenna.
+    - **Needs:**
+      - lab-cal Tsys script
+      - Fixed-gain SDR chain
+      - IMU puck for pointing records
+      - Skyfield (Sun position from GNSS time and QTH)
+  5.
+    - **Name:** P5. Relative antenna pattern from GNSS C/N0
+    - **Steps:**
+      - Mount the antenna under test (L-band patch or helix; L1 is near, not equal to, 1.7 GHz) on the boom with the BNO085 puck. Feed it through its LNA/bias tee to the RTL at 1575.42 MHz.
+      - Run GNSS-SDR with the Monitor (CN0_dB_hz per channel) and the PVT monitor (azimuth_deg and elevation_deg per PRN). At the same time log LC76G reference C/N0 from gpsd SKY (ss in dB-Hz, az, el).
+      - Either step the antenna in azimuth (for example 15 degrees, 2 minutes per step) at fixed tilt, or leave it static for 12-24 hours to sample the sky.
+      - For each satellite and second compute delta = C/N0_AUT - C/N0_ref, convert az/el into antenna-frame angles with the IMU attitude, and bin into 5 x 5 degree cells. Normalise to the maximum to get relative gain in dB.
+      - Caveats in the report: relative pattern only, C/N0 saturation near the receiver's upper limit, multipath, L1 only.
+    - **Needs:**
+      - GNSS-SDR
+      - gpsd with the LC76G
+      - BNO085 USB puck
+      - lab-cal pattern script
+      - Tripod/boom
+  6.
+    - **Name:** P6. Beamwidth and pointing from beacons (satellite pass, QO-100, Sun drift)
+    - **Steps:**
+      - Satellite pass: during a pass of a satellite with a continuous downlink (for example Meteor LRPT at 137 MHz), record IQ and log 1 s carrier or band SNR. Predict az/el and range with Skyfield from OMM, correct for free-space path loss, and plot SNR against off-boresight angle from the IMU attitude.
+      - QO-100 (geostationary, only inside its footprint): with the Bullseye LNB and the 10 GHz patch or horn, sweep the antenna by hand through the beacon while logging IMU attitude and beacon SNR. Fit the -3 dB beamwidth and the pointing offset.
+      - Sun drift scan: point ahead of the Sun's predicted track and let it drift through the beam while logging power. The drift time across the -3 dB points gives the beamwidth (the Sun is about 0.5 degrees across).
+      - Store the cuts with the antenna ID in /srv/lab/cal/pattern/.
+    - **Needs:**
+      - SDR++ or lab-rec
+      - Skyfield 1.55 + OMM snapshot
+      - BNO085 puck
+      - QO-100 chain (Bullseye LNB)
+      - lab-cal pattern script
+  7.
+    - **Name:** P7. Unattended pass recording and decode
+    - **Steps:**
+      - When online, refresh CelesTrak OMM into /srv/lab/tle/YYYYMMDD.json. lab-sched reads the QTH from gpsd (3D fix plus the gates from the GNSS audit), otherwise the saved QTH.
+      - Compute passes for the YAML targets above the minimum elevation, assign devices (RTL: 137/145/435 MHz; Lime: HRPT/AHRPT at 7-10 Msps per the software audit) and resolve overlaps.
+      - Create a timer per pass with 'systemd-run --user --on-calendar=<UTC AOS-60s> --unit=pass-<norad>-<aos> lab-record <job.json>'.
+      - At start: run the receive-only guard and the gates (chrony synced, free disk at least 1.5x the expected size, battery above the threshold, temperature below the limit). Then record with 'satdump legacy record ... --baseband_format cs16 --timeout <pass s>' or lab-rec into the RAM ring and mbuffer.
+      - After LOS: 'satdump pipeline <id> baseband <file> <outdir>' at nice/ionice idle. Then write SigMF meta (sha512, geolocation, chain, ppm) and decode telemetry with satnogs-decoders where it applies.
+      - Update catalog.sqlite and apply retention (keep products and meta; delete raw after a verified decode if configured). Push a summary to the launcher status bar.
+    - **Needs:**
+      - lab-sched
+      - SatDump 2.0 (source)
+      - SigMF tools
+      - Skyfield/sgp4
+      - Samsung T7 (wideband) / UFS (narrowband)
+      - INA228 battery gauge readout
+  8.
+    - **Name:** P8. Identify an unknown signal
+    - **Steps:**
+      - From the P1 flagged peaks, record 10-60 s of IQ around the peak (SDR++ at Uint8/Int16 or lab-rec) and convert it to SigMF.
+      - In inspectrum, measure occupied bandwidth, burst length and period, and symbol rate with the cursors; check the modulation from the amplitude, frequency and phase traces.
+      - Search Artemis (offline) by frequency range, bandwidth and modulation; compare its waterfall and audio examples.
+      - Write the result as a SigMF annotation (core:freq_lower_edge, core:freq_upper_edge, core:label, core:comment with the Artemis DB version and confidence).
+      - If it is self-generated interference (it also appears in the P1 terminated or subsystem runs), log it as EMI and fix the hardware.
+    - **Needs:**
+      - SDR++/lab-rec
+      - inspectrum 0.3.1
+      - Artemis 4.2.0 with its database downloaded
+      - sigmf 1.13.0
+  9.
+    - **Name:** P9. Data ingest, check and backup
+    - **Steps:**
+      - Every recorder writes to /srv/lab/<type>/YYYY/MM/DD/ with UTC-based names and a .sigmf-meta.
+      - Run sigmf_validate on each new file and record sha512 in core:sha512 and in catalog.sqlite.
+      - Compress survey CSV with zstd. Keep IQ uncompressed while it is still being analysed, then convert to .sigmf.xz or ZIQ if space is short.
+      - Weekly: fio sanity check on the T7 and UFS life-time descriptors (storage audit), plus smartctl on the T7.
+      - When docked, run 'restic backup /srv/lab --exclude raw-pending' to a laptop or NAS, then 'restic check'.
+    - **Needs:**
+      - sigmf 1.13.0
+      - sqlite3/DuckDB
+      - restic 0.16.4
+      - fio 3.36
+      - smartmontools 7.4
+  10.
+    - **Name:** P10. Optional SatNOGS session (online, fixed spot)
+    - **Steps:**
+      - Create or update the station in the SatNOGS Network with the current lat/lon/elevation from GNSS.
+      - Start the librespace/satnogs-client:2.1.4 compose stack with SATNOGS_SOAPY_RX_DEVICE=driver=rtlsdr, the API token, station ID and ppm from P2, and /etc/localtime and /etc/timezone bind-mounted.
+      - Inside the container, check 'SoapySDRUtil --probe' with the V4L. If the old librtlsdr is used, layer the patched librtlsdr2 into a derived image.
+      - Stop the stack before going back to field mode (it takes the SDR exclusively).
+    - **Needs:**
+      - Wi-Fi with internet
+      - Docker
+      - SatNOGS account and station ID
+      - RTL-SDR
+  11.
+    - **Name:** P11. Kiosk bring-up
+    - **Steps:**
+      - apt install labwc greetd wvkbd lisgd wlr-randr python3-pyqt6. Configure greetd autologin into a labwc session.
+      - Set output scale 1 (1920x1080 at 7 in). Set QT_SCALE_FACTOR=1.75, GDK_SCALE=2, and SDR++ High-DPI 200%.
+      - Create systemd --user units for each mode (sdrpp@<profile>.service using -r /srv/lab/sdrpp/<profile> --autostart, survey.service, lab-sched.timer, papermill-report@.service).
+      - Write the launcher: big tiles that start and stop the units, plus a status bar (gpsd fix, chronyc tracking, INA228 state of charge, thermal zones, df, next pass). Map an edge swipe in lisgd to show or hide wvkbd.
+      - Test with gloves and in sunlight, with Wi-Fi off. Confirm everything starts with no network.
+    - **Needs:**
+      - labwc 0.7.1
+      - greetd 0.9.0
+      - wvkbd 0.14.3
+      - lisgd 0.3.7
+      - PyQt6 6.6.1
+      - systemd user units
+- **Rejected:**
+  1.
+    - **Name:** hackrf_sweep
+    - **Why:** It depends on HackRF firmware and the HackRF library and does not exist for the LimeSDR Micro. Its role goes to lab-sweep (SoapySDR) or soapy_power.
+  2.
+    - **Name:** QSpectrumAnalyzer 2.1.0
+    - **Why:** Last PyPI release 21 Mar 2017 with no ARM packaging. It is only a GUI over rtl_power/soapy_power/hackrf_sweep, which the lab already drives directly.
+  3.
+    - **Name:** Ubuntu 'sdrpp' apt package and the SDR++ nightly .deb for the Micro
+    - **Why:** Upstream says the Debian/Ubuntu package is incomplete and incompatible with official modules. The nightly .deb lacks the Soapy source and links the wrong libraries for the V4L and Micro (software audit).
+  4.
+    - **Name:** apt gr-limesdr 3.0.1, limesuite 23.11 and soapysdr0.8-module-lms7
+    - **Why:** They link legacy LimeSuite 23.11, which cannot see the LimeSDR Micro, and clash with the LimeSuiteNG SoapyLMS plugin. Use gr-soapy or gr-limesuiteng.
+  5.
+    - **Name:** apt python3-skyfield 1.48 for OMM-based prediction
+    - **Why:** Its sgp4lib has no EarthSatellite.from_omm (checked in the 1.48 wheel); 1.55 has it. Use pip Skyfield 1.55 and sgp4 2.27 (Alpha-5 NORAD IDs).
+  6.
+    - **Name:** apt package 'artemis' on noble
+    - **Why:** It is the Sanger genome browser (18.2.0), not the radio Artemis. Use Flathub com.aresvalley.artemis.
+  7.
+    - **Name:** numpy 2.x in the same environment as apt GNU Radio/SciPy/SoapySDR
+    - **Why:** apt SciPy 1.11.4 requires numpy below 1.28 (I observed the warning and a broken import), and the apt bindings are built against numpy 1.26. Pin numpy<2 in the venv.
+  8.
+    - **Name:** limePPSDO (LimeSuiteNG) for frequency discipline
+    - **Why:** The limesdr-micro-staging source registers only LimeSDR XTRX and Mini V2 PPSDO registers, not the Micro. The audits also say GPSDO is not implemented for the Micro. Use the GNSS-SDR clock-drift method.
+  9.
+    - **Name:** kalibrate-rtl, gr-gsm, LTE cell scanners for ppm calibration
+    - **Why:** They target cellular networks (gr-gsm is aimed at cellular communications), 2G is being shut down in many countries, and kalibrate-rtl is not in noble apt. GNSS-based calibration is better and stays clear of telecom signals.
+  10.
+    - **Name:** multimon-ng and pager/trunking/voice decoders
+    - **Why:** They are aimed at the content of private communications, which is out of scope for this lab.
+  11.
+    - **Name:** SDR++ scheduler module
+    - **Why:** The README marks it 'Unfinished' and OFF by default. Scheduling uses lab-sched plus the working rigctl_server AOS/LOS control.
+  12.
+    - **Name:** SatDump autotrack as the only scheduler on 2.0-alpha
+    - **Why:** The 2.0 documentation does not cover autotrack (only legacy 1.1.4+ does, and that release changed the headless config format). Use lab-sched calling 'satdump legacy record' plus 'satdump pipeline'; revisit when 2.0 documents it.
+  13.
+    - **Name:** squeekboard and onboard on-screen keyboards
+    - **Why:** squeekboard is not in noble arm64 apt. onboard is X11-only. wvkbd 0.14.3 is in apt and made for wlroots compositors.
+  14.
+    - **Name:** Browser-based kiosk (Chromium/Firefox)
+    - **Why:** On noble both are snap transition packages, which are heavy for a battery handheld. A native PyQt6 launcher plus systemd units is lighter and works offline.
+  15.
+    - **Name:** Offline sigidwiki mirror via Kiwix/ZIM
+    - **Why:** I found no published ZIM, and the site states no content licence. Artemis is the wiki's own designated offline companion.
+  16.
+    - **Name:** Gqrx AppImage
+    - **Why:** The Linux AppImage is x86_64 only; the ARM64 builds are macOS DMGs. Use apt 2.17.4 or build 2.17.7.
+  17.
+    - **Name:** URH transmit, fuzzing and attack-simulation features
+    - **Why:** Against the receive-only rule and the scope of the lab. URH is kept only as an optional offline analyser, and it is archived.
+  18.
+    - **Name:** rtl_433 and other consumer-device decoders
+    - **Why:** Not needed for the satellite and RF-measurement lab, and they decode third-party devices. Left out by default.
+- **Notes:** Method: versions come from the Ubuntu noble arm64 Packages indexes (ports.ubuntu.com, main/universe, noble and noble-updates, fetched 18 Oct 2026), PyPI JSON, Docker Hub and the Flathub API. Behaviour claims come from primary pages or source files, not forums: SDR++ rigctl_server, recorder, display and command_args; LimeSuiteNG limePPSDO.cpp, limeTRX.cpp, the Soapy Registration.cpp and plugins/CMakeLists.txt; the SigMF schema; the GNSS-SDR PVT, Monitor and Signal Source docs; gpsd JSON; Gqrx remote-control docs and releases. I used 6 web searches.
+  
+  Local tests: soapy_power 1.6.1 was installed and its PSD path exercised on an Ubuntu 24.04.5 x86_64 container (Python 3.12.3, numpy 1.26.4, SciPy 1.11.4, SoapySDR 0.8). That is not a Q6A, and no SDR was attached. Skyfield 1.48 vs 1.55 from_omm was checked in the PyPI wheels. Nothing in this list was run on the Q6A.
+  
+  Not verified:
+  - GNSS-SDR real-time on 4x A78, and whether apt 0.0.19 already has user_clk_drift_ppm (the docs describe 0.0.22).
+  - URH sdist build on aarch64.
+  - Artemis Flatpak GPU acceleration on Adreno.
+  - Whether the SatNOGS Docker image's librtlsdr supports the V4L.
+  - wvkbd under the noble cage build.
+  - SDR++ touch ergonomics.
+  - What SDR++ does with WAV files above 4 GiB (RF64 is disabled in the source; 32-bit RIFF sizes imply a ~4 GiB limit).
+  - LimeSDR Micro retune/settle time for lab-sweep.
+  - Every Lime path depends on the unmerged la9310_limesdr driver and the 15 Dec 2026 board ship date (software audit).
+  - The Gqrx 2.17.7 release page shows no year.
+  - CyberEther ships releases every few days: pin one.
+  
+  Receive-only and legal: on air, the lab only receives. The LimeSDR Micro can transmit, so the software guard (no TX plugins or flags, sink-block lint, URH without the Lime backend) plus a 50-ohm terminator on its TX port enforce RX-only. Any signal-generating instrument (noise source, VNA, tracking or signal generator, calibrator) is for conducted bench tests only: into cables, attenuators, filters, LNAs or dummy loads, never into an antenna. Prefer low-output models and put attenuators in line.
+  
+  Rules on receiving, recording, decoding and publishing differ by country. Many jurisdictions allow reception of amateur, weather-satellite and broadcast signals, but restrict decoding, keeping or disclosing other communications, and some restrict SDR or scanner possession or use in vehicles or near sensitive sites. Check local law before use. SatNOGS observations are public, so do not upload anything you may not share.
+  
+  Budgets reused from the audits: 7 Msps cs16 is 28 MB/s, about 25 GB per 15-minute pass. Wideband IQ goes only to the Samsung T7 through a RAM ring and mbuffer. Record first and decode after the pass whenever the live real-time factor is above 0.5. SDR buffer timestamps are ms-level even with PPS.
+  
+  Version pins to hold:
+  - Kernel 6.18.2-4-qcom with BIOS 260120.
+  - librtlsdr2 rebuilt with the V4L commit 0204c9c.
+  - LimeSuiteNG limesdr-micro-staging at 37cb183.
+  - numpy<2 in the lab venv.
+  - Skyfield 1.55 and sgp4 2.27.
+  - sigmf 1.13.0, jupyterlab 4.6.4, papermill 2.7.0.
+  - SatNOGS client 2.1.4, Artemis 4.2.0, CyberEther 1.15.0.
+  
+  All software is $0. The hardware the procedures need belongs to other areas: an active GNSS L1 antenna, a noise source with an ENR table, SMA terminators, attenuators and a TX-port load.
+  
+  Input files used: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/digest.md, software.json, storage.json, gnss_imu.json, narrowband_sdr.json, wideband_sdr.json, antennas.json and display.json in the same folder. Downloaded package indexes and checked sources are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/labsw/ (subfolders idx, dl, sdist, whl).
+
 ## small:lband_sband (run `wf_41027870-8e7`)
 
 - **Band group:** L-band 1.5-1.7 GHz and S-band 2.2-2.4 GHz with antennas of at most 12 cm (STRICT) or 20 cm (SMALL). Dishes and anything tens of cm deployed are EXCLUDED, including the foldable helicones, the 11-turn helix and the 2x2 helix arrays. Rule interpretation as given: STRICT means the largest deployed dimension is about 12 cm or less; SMALL means about 20 cm or less; foldable or telescopic antennas that are larger when deployed are excluded and appear only in the borderline note.
