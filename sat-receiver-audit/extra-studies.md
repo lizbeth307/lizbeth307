@@ -37120,6 +37120,164 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Not verified: everythingrf's VSWR for Amphenol 132360 (Amphenol's site returned 403); Crystek prices (snippets only); RS PRO price (snippet). VAT-30W2+ connector genders were confirmed as SMA-M to SMA-F from the datasheet outline drawing (the header just says 'SMA Female'). Local datasheets: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/lab_dl/{VAT-30W2P,BLK-89-SP,ANNE-50P,086-6SMP}.pdf and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/padkit_dl/ANNE-50L.pdf. 13 WebSearch calls used.
 
+## searchB:nooelec_pad_kit_2x_30_db_pads_2x_blk_89 (run `wf_e5582d4c-0a2`)
+
+- **Part:** RF accessory set: Nooelec SMA attenuator kit (SKU 100815) + 2x 30 dB SMA pads + 2x Mini-Circuits BLK-89-S+ DC block + 3x ANNE-50+ 50 ohm load + 3x 086-6SM+ Hand-Flex 6 in cable (one cut into 2 open-stub E-field probes). Bench tier, qty 1 set. Angle B: generic, clone, DIY and used parts, accepted only with independent measurements.
+- **Current price usd:** 212.68 (STACK v1 line: Nooelec kit 47.95 + 2x Passion Radio 30 dB at 14.84 + 2x BLK-89-S+ 20.26 + 3x ANNE-50+ 14.84 + 3x 086-6SM+ 16.67). Corrected by reaudit_D: 223.92 with the Passion Radio 30 dB pad at its real price of EUR 18.20 incl. VAT (USD 20.46 each, backorder), or 245.86 with 2x Mini-Circuits VAT-30W2+ at USD 31.43 (in stock). Neither figure includes Mini-Circuits US-to-EU shipping or import VAT (not verified).
+- **Critical specs:**
+  - PADS (kit + 30 dB). Frequency DC to >=6 GHz. Stack use is about 10 kHz to 3.8 GHz: LNB IF 739-1950 MHz, L-band 1.7 GHz, S-band 2.2-2.3 GHz, Lime spur map up to 3.5 GHz. The LiteVNA reaches 6.3 GHz and the tinySA 7.3 GHz.
+  - PADS: attenuation accuracy and flatness. Nooelec claims +/-0.1 dB DC-3 GHz and +/-0.4 dB DC-6 GHz. VAT-30W2+: 30 +/-0.3 dB nominal, flatness 0.70 dB DC-3 GHz, typical 28.80 dB at 3 GHz. These feed the dBFS-to-dBm calibration and the LNA tests (total pad >= LNA gain + 3 dB, split between input and output).
+  - PADS: match. Nooelec VSWR <1.2 max. VAT-30W2+ VSWR 1.25 typ / 1.35 max DC-3 GHz and 1.45 / 1.70 at 3-5 GHz.
+  - PADS: power. Nooelec and VAT-30W2+ are both rated 2 W; the stack's RF need is at most about +14 dBm (SAWbird+ output worst case). A pad is not a DC block: 13.2 V across 50 ohm is 3.48 W, so a DC block always goes first.
+  - PADS: values. 1/2/3/6/10/20 dB (1-42 dB in 1 dB steps) plus TWO 30 dB pads usable at the same time as kit pieces. SMA M-F, gold-plated, repeatable at 8 in-lb.
+  - DC BLOCK (BLK-89-S+ Rev G). 0.1-8000 MHz; low cutoff matters for tinySA checks on the Boni-Whip 12.5 V HF feed (9 kHz-30 MHz). IL 0.010 typ / 0.09 max dB at 0.1-100 MHz, 0.10 / 0.3 at 100-1000 MHz, 0.15 / 0.8 at 1-4 GHz. RL min 20 / 25 / 18 dB. DC input +50 V (stack max 18 V LNB). RF 4 W. SMA F-M, 7 g.
+  - LOAD (ANNE-50+ Rev H). DC-18 GHz, RL min 30 dB DC-4 GHz (typ 46.6 / 43.4 / 39.0 / 35.2 dB at 0.6 / 1.07 / 2.02 / 4.0 GHz), 27 dB min at 4-8 GHz. 1 W at 50 C, derated to 0.35 W at 100 C. SMA-M, 4 g. Roles: VNA reference load, HMC7992 RF4 park, HF+ port termination, noise-floor A/B. Never on a biased line.
+  - CABLE (086-6SM+ Rev B). 152 mm, SMA M-M, DC-18 GHz. IL 0.08 typ / 0.30 max DC-2 GHz, 0.26 / 0.54 at 2-6 GHz. RL min 23 dB DC-6 GHz (typ 36-49). Silver-plated copper-clad steel centre (holds its shape), solid PTFE, tin-soaked copper braid (near semi-rigid shielding, so a probe picks up only at its tip), FEP jacket, 6 mm bend radius, anti-torque nut, stainless gold-plated connectors.
+  - ALL: genuine parts from authorised channels (no 'Mini-Circuits' parts from non-authorised marketplace sellers). Passive, so receive-only and conducted-only rules are unaffected. E-field probes stay open-ended stubs, never a loop.
+- **Candidates:**
+  1.
+    - **Name:** Generic unbranded 30 dB SMA pad, AliExpress listing 3256805879252327 (global id 1005005879252327), the item measured by Randy222 on EEVblog (19 Dec 2023)
+    - **Kind:** generic_or_clone
+    - **Price usd:** about 3 each, from the forum post of 19-21 Dec 2023 ('$3(US)', '~$3usd'). Current price and availability NOT verified: AliExpress blocked fetches and a search did not resolve the listing. 2x is about 6 vs 40.92 (2x Passion Radio corrected) or 62.86 (2x VAT-30W2+). Set line about 189 vs 223.92 / 245.86 (unverified). AliExpress collects EU VAT at checkout (IOSS).
+    - **Spec comparison:** Frequency: DC-6 GHz, equal to VAT-30W2+ and the Passion Radio pad. VSWR: independent sweep (forum member's handheld VNA, 10 kHz-6 GHz) shows SWR about 1.05-1.15 up to about 4 GHz and about 1.25 at 6 GHz; poster states 'VSWR less than 1.25 ~0-6GHz'. That beats the VAT-30W2+ maximum (1.35 at DC-3 GHz, 1.70 at 3-5 GHz). Attenuation: independent result is 'basically same thing as OEM', with the OEM trace 'more flat and a tick lower' than his VNA (not quantified). Seller (OEM) plot, not independent: -30.033 / -30.017 / -30.044 dB and S11 SWR 1.0000 / 1.0121 / 1.0863 at 0.3 MHz / 3 GHz / 6 GHz. VAT-30W2+ typical is 28.80 dB at 3 GHz, so the generic pad is plausibly flatter, but there is no independent number. A 20 dB pad from the same listing was also swept (SWR <1.25). The current Passion Radio 30 dB pad is itself a generic 0-6 GHz pad with no published measured data.
+    - **Worse in:** (1) Power rating: no claim seen on the listing, and nobody measured it. Randy222 would use it at about 1 W rms; joeqsmith uses a similar set below +20 dBm; nctnico and fourfathom note cheap pads' power ratings are often exaggerated. The stack needs only +14 dBm, but a 2 W rating is NOT shown. (2) Attenuation accuracy at 1-3 GHz is not independently quantified ('a tick lower'). (3) The measurement covers one buyer's set from Dec 2023, and the listing identity and batch are not re-verified for 2026. (4) Build materials and connector durability are unpublished. Verdict: PLAUSIBLE, not confirmed. Acceptable only with an incoming LiteVNA test of each unit (S21 30 +/-0.3 dB at 10/137/437/740/1700/2200/3000 MHz; S11 and S22 <= -20 dB to 3 GHz), use at <= +20 dBm, DC block always first.
+    - **Compatibility:** SMA in-line pad (M-F per the listing type; verify on arrival). Passive, no drivers or power; fits the bench kit and the Pelican case. Rules kept: conducted-only bench use, receive-only.
+    - **Risks:** Listing may be gone or the product swapped; batch variation; the power claim is untested; the forum evidence is one user. The re-audit already requires measuring every pad on the LiteVNA, so the process adds no extra cost.
+    - **Seller url:** https://www.aliexpress.us/item/3256805879252327.html
+    - **Sources:**
+      - https://www.eevblog.com/forum/rf-microwave/sma-attenuators-(value-find)/
+      - https://www.eevblog.com/forum/rf-microwave/sma-attenuators-(value-find)/?action=dlattach;attach=1957401;image
+      - https://www.eevblog.com/forum/rf-microwave/sma-attenuators-(value-find)/?action=dlattach;attach=1957395;image
+      - https://www.minicircuits.com/pdfs/VAT-30W2+.pdf
+  2.
+    - **Name:** Generic AliExpress 2 W DC-6 GHz SMA pad set as a Nooelec kit replacement (e.g. item 4000412303682 measured by tszaboo; similar multi-value listing 3256801757708013, '1/2/3/5/6/10/15/20/30 dB')
+    - **Kind:** generic_or_clone
+    - **Price usd:** not verified (AliExpress pages blocked; search snippets show about $0.99-6 per pad, unverified)
+    - **Spec comparison:** Independent evidence covers ONE 10 dB pad: S21 -10.15 dB and S11 -28.11 dB at 5.37 GHz. Over DC-6 GHz, S21 is 'within ~0.4dB' and S11 about -28 to -45 dB. That equals Nooelec's +/-0.4 dB DC-6 GHz claim and beats its VSWR <1.2 claim. The DC-3 GHz accuracy (Nooelec claims +/-0.1 dB) cannot be read from a 10 dB/div plot. No measurement exists for the 1/2/3/6/20 dB values. Other posters in the same thread: 'acceptable up to 1 GHz' in most cases (fourfathom) and 'already in low VHF they go into crisis' (DL1DLZ, no data).
+    - **Worse in:** Accuracy DC-3 GHz is unverified (+/-0.1 dB not shown). Most kit values are unmeasured, the evidence is mixed, and the power rating is unverified. REJECTED under angle B: no measured evidence for the kit as a whole.
+    - **Compatibility:** SMA M-F passive pads; mechanically compatible.
+    - **Risks:** Batch and listing variation; exaggerated power ratings reported on EEVblog.
+    - **Seller url:** https://www.aliexpress.com/item/4000412303682.html
+    - **Sources:**
+      - https://www.eevblog.com/forum/beginners/beginner-attenuators-set-3db-6db-10db-20db/
+      - https://www.eevblog.com/forum/beginners/beginner-attenuators-set-3db-6db-10db-20db/?action=dlattach;attach=2307709;image
+      - https://www.aliexpress.us/item/3256801757708013.html
+  3.
+    - **Name:** DIY 30 dB from the Nooelec kit's 10 dB + 20 dB pads in cascade (replacing one 30 dB pad)
+    - **Kind:** diy
+    - **Price usd:** 0 extra (saves 20.46-31.43)
+    - **Spec comparison:** If the Nooelec claims hold: +/-0.2 dB worst case DC-3 GHz, better than VAT-30W2+ (+/-0.3 dB plus 0.70 dB flatness). DC-6 GHz, 2 W.
+    - **Worse in:** Function: the 10 and 20 dB kit pieces become unavailable for simultaneous split-pad LNA tests and LNB IF steps (10+10 / 20 / 30). One extra SMA interface adds VSWR ripple and wear. REJECTED: it removes the second independent 30 dB pad the stack uses alongside kit pieces.
+    - **Compatibility:** Same SMA parts.
+    - **Risks:** Lost bench flexibility; extra connector wear.
+    - **Seller url:** 
+    - **Sources:** []
+  4.
+    - **Name:** Surplus Mini-Circuits SAT-30 30 dB SMA pad (Surplus Sales)
+    - **Kind:** used
+    - **Price usd:** 13.00 each (US seller; shipping to EU not shown)
+    - **Spec comparison:** Listed range DC-1000 MHz vs required DC-6 GHz. Power not listed.
+    - **Worse in:** Frequency range: does not cover the LNB IF upper part, L-band 1.7 GHz or S-band. REJECTED.
+    - **Compatibility:** SMA, passive.
+    - **Risks:** Surplus condition unstated.
+    - **Seller url:** https://surplussales.com/RF/RFAtten-4.html
+    - **Sources:**
+      - https://surplussales.com/RF/RFAtten-4.html
+  5.
+    - **Name:** Used Weinschel 41-30-12 30 dB SMA DC-18 GHz 10 W (radio741)
+    - **Kind:** used
+    - **Price usd:** EUR 125 (about 145), as reported by search; page not opened
+    - **Spec comparison:** Better range (DC-18 GHz) and power (10 W).
+    - **Worse in:** Not cheaper. REJECTED.
+    - **Compatibility:** SMA, passive.
+    - **Risks:** Used.
+    - **Seller url:** https://www.radio741.com/en/69995-41-30-12-weinschel-fixed-attenuator-sma-30db-dc-18ghz-10w.html
+    - **Sources:**
+      - https://www.radio741.com/en/69995-41-30-12-weinschel-fixed-attenuator-sma-30db-dc-18ghz-10w.html
+  6.
+    - **Name:** Used Mini-Circuits BLK-89 DC block (eBay 116406315294, 'Used / Untested', Burnsville MN, 30-day warranty)
+    - **Kind:** used
+    - **Price usd:** 24.99 or best offer, plus US-to-EU shipping and VAT (as reported by search; eBay blocked direct fetch)
+    - **Spec comparison:** Same family as BLK-89-S+ (0.1-8000 MHz, 50 V), but untested and the exact variant is unconfirmed.
+    - **Worse in:** Not cheaper than new BLK-89-S+ at 20.26; untested. REJECTED.
+    - **Compatibility:** SMA.
+    - **Risks:** Untested used unit; variant unverified.
+    - **Seller url:** https://www.ebay.com.au/itm/116406315294
+    - **Sources:**
+      - https://www.ebay.com.au/itm/116406315294
+      - https://www.minicircuits.com/pdfs/BLK-89-S+.pdf
+  7.
+    - **Name:** Generic AliExpress/Amazon SMA M-F DC block, '2W DC-6.0GHz 50ohm SWR 1.2' (e.g. AliExpress 3256801582410693; Amazon BEVOTOP B0GV3TR25V)
+    - **Kind:** generic_or_clone
+    - **Price usd:** not verified (listings not fetched)
+    - **Spec comparison:** Seller claims: 'DC-6GHz' with no lower cutoff given, VSWR <=1.2, and 'Insertion Loss 1dB' (Amazon). DC voltage rating not shown. BLK-89-S+: 0.1 MHz lower limit, IL 0.10 typ / 0.3 max at 100-1000 MHz, 50 V DC.
+    - **Worse in:** Insertion loss (claimed 1 dB vs 0.10-0.15 dB typ). Lower cutoff and DC-voltage rating unspecified, which matters for the 12.5 V Boni-Whip HF line and 18 V LNB. No independent measurement found: tszaboo planned a Mini-Circuits vs AliExpress DC-block comparison on EEVblog but posted no results. REJECTED.
+    - **Compatibility:** SMA M-F.
+    - **Risks:** Unknown capacitor and voltage rating; a failure would put LNB/bias DC into the tinySA (+/-5 V DC limit) or an SDR.
+    - **Seller url:** https://www.aliexpress.us/item/3256801582410693.html
+    - **Sources:**
+      - https://www.amazon.com/Coaxial-Blocker-DC-6GHz-Insertion-Equipment/dp/B0GV3TR25V
+      - https://www.eevblog.com/forum/beginners/beginner-attenuators-set-3db-6db-10db-20db/
+  8.
+    - **Name:** DIY DC block (SMA board-edge connectors + series C0G capacitor)
+    - **Kind:** diy
+    - **Price usd:** not priced (no measured design found)
+    - **Spec comparison:** Physics (calculation): a single series 100 pF between 50 ohm ports has its -3 dB point near 16 MHz. Reaching 0.1 MHz needs large capacitance, and large MLCCs self-resonate in the GHz range.
+    - **Worse in:** Low-frequency coverage, and no measured evidence for any DIY design. REJECTED.
+    - **Compatibility:** Would need an enclosure.
+    - **Risks:** Voltage breakdown and SRF.
+    - **Seller url:** 
+    - **Sources:** []
+  9.
+    - **Name:** Generic 2 W DC-6 GHz SMA-M 50 ohm termination (e.g. sdrstore.eu 2WDC-DMMY-DDR6MU; Hilitand 5-pack on Amazon; Passion Radio sma-termination-6ghz-577)
+    - **Kind:** generic_or_clone
+    - **Price usd:** not verified (sdrstore page shows '€2945', format ambiguous; others not fetched)
+    - **Spec comparison:** Claimed SWR <=1.20 (RL >=20.8 dB) DC-6 GHz, 2 W. ANNE-50+: RL min 30 dB DC-4 GHz (typ 35-47 dB), 1 W, DC-18 GHz.
+    - **Worse in:** Match: about 9 dB worse RL by spec, which matters for its use as a VNA reference load and for noise A/B. No independent measurement found. REJECTED.
+    - **Compatibility:** SMA-M, passive.
+    - **Risks:** Power ratings of cheap loads are reported as exaggerated (EEVblog).
+    - **Seller url:** https://www.sdrstore.eu/test-and-measurement/dummy-loads/2w-dc-6ghz-50-ohm-rf-dummy-load-sma-male-high-quality-coaxial-termination-load/
+    - **Sources:**
+      - https://www.sdrstore.eu/test-and-measurement/dummy-loads/2w-dc-6ghz-50-ohm-rf-dummy-load-sma-male-high-quality-coaxial-termination-load/
+      - https://www.amazon.com/Coaxial-Terminators-Connector-Terminator-Termination/dp/B07G2PBZBL
+  10.
+    - **Name:** Generic AliExpress SMA cal-kit load (unnamed kit measured by M. Hellmich against a Maury 3.5 mm SOLT kit)
+    - **Kind:** generic_or_clone
+    - **Price usd:** about EUR 40 incl. shipping to DE for the whole M+F open/short/load kit (author's figure), i.e. ONE male load per kit
+    - **Spec comparison:** Independent measurement (300 kHz-4 GHz): male load RL 'well below -45 dB' almost to 4 GHz, better than ANNE-50+ (min 30, typ 35-47). Female load degrades to about -35 dB above 1-2 GHz.
+    - **Worse in:** Not cheaper per male load (the stack needs 3). Seller and model unidentified, so it cannot be re-bought with certainty. Power rating not stated. REJECTED.
+    - **Compatibility:** SMA M/F.
+    - **Risks:** Product identity.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.mariohellmich.de/projects/sma-cal-kit/sma-cal-kit.html
+  11.
+    - **Name:** Generic RG405 (0.086 in semi-flexible) SMA M-M jumpers, AliExpress/eBay (e.g. ebay.de 181583429102)
+    - **Kind:** generic_or_clone
+    - **Price usd:** not verified (listings not fetched)
+    - **Spec comparison:** RG405 construction class matches 086-6SM+ (copper-clad steel centre, PTFE, tin-soaked braid), but no assembly-level IL/RL data. 086-6SM+ guarantees IL <=0.30 dB DC-2 GHz and RL >=23 dB DC-6 GHz.
+    - **Worse in:** No independent measurement found for any cheap RG405 assembly; connector quality unknown. For the probe-only cable, the electrical specs matter less (relative E-field readings), but the angle-B evidence rule still fails. REJECTED.
+    - **Compatibility:** SMA M-M, hand-formable; the probe must stay an open-ended stub.
+    - **Risks:** Poor connector termination; shield leakage at the crimp, which would spoil the probe's localization.
+    - **Seller url:** https://www.ebay.de/itm/181583429102
+    - **Sources:**
+      - https://www.ebay.de/itm/181583429102
+      - https://www.minicircuits.com/pdfs/086-6SM+.pdf
+  12.
+    - **Name:** KEEP current parts: Nooelec kit 100815, BLK-89-S+, ANNE-50+, 086-6SM+
+    - **Kind:** current_part
+    - **Price usd:** 47.95 + 2x20.26 + 3x14.84 + 3x16.67 = 183.00 (excluding the 30 dB pads)
+    - **Spec comparison:** Mini-Circuits datasheets verified (BLK-89-S+ Rev G, ANNE-50+ Rev H, 086-6SM+ Rev B). Nooelec specs per reaudit_D.
+    - **Worse in:** n/a. No angle-B analog is both cheaper and backed by measurements showing it is not worse.
+    - **Compatibility:** As in STACK v1.
+    - **Risks:** The Nooelec +/-0.1 dB claim is a vendor claim too; the existing rule of measuring every pad on the LiteVNA covers it.
+    - **Seller url:** https://www.minicircuits.com
+    - **Sources:**
+      - https://www.minicircuits.com/pdfs/BLK-89-S+.pdf
+      - https://www.minicircuits.com/pdfs/ANNE-50+.pdf
+      - https://www.minicircuits.com/pdfs/086-6SM+.pdf
+- **Notes:** Bottom line, angle B: the only cheaper part with independent measured evidence is a generic 30 dB SMA pad (AliExpress 3256805879252327; EEVblog, Randy222, 19 Dec 2023). Its measured VSWR is below 1.25 from 0 to 6 GHz, which beats the VAT-30W2+ datasheet maximum. Two specs are NOT shown: its power rating, and its attenuation accuracy above 1 GHz. Its current price (about $3 in 2023) and the listing could not be re-verified. Verdict: PLAUSIBLE, not confirmed. If adopted, buy 3-4 units, keep only those that pass a LiteVNA incoming test (S21 30 +/-0.3 dB at 10/137/437/740/1700/2200/3000 MHz; S11 and S22 <= -20 dB to 3 GHz), use at <= +20 dBm, and keep a DC block first on any biased line. Possible saving is about $35 vs the corrected Passion Radio line ($223.92) or about $57 vs VAT-30W2+ ($245.86), both unverified. The current Passion Radio 30 dB pad is itself an unbranded generic with no published data, so the measured generic is no weaker in evidence. VAT-30W2+ remains the only 30 dB option with a full datasheet. KEEP BLK-89-S+, ANNE-50+, 086-6SM+ and the Nooelec kit: no generic, DIY or used alternative has measurements, and the used ones found are dearer (BLK-89 $24.99 used) or worse in range (SAT-30, DC-1000 MHz). Incidental other-brand finds are both pricier: Nooelec DC block $24.95 (50 kHz-8 GHz, IL <0.3 dB below 6 GHz, 50 V, 2 W; https://www.nooelec.com/store/dc-block.html) and Gquipment DC block EUR 61.95 ex VAT (20 kHz-6 GHz; https://www.gquipment.com/dc-blocks/49-dc-block-20-khz-6-ghz-aluminum-enclosure.html). Do not buy 'Mini-Circuits'-branded parts from non-authorised marketplace sellers (counterfeit risk); use minicircuits.com or Mouser/DigiKey EU. Unverified: all current AliExpress and eBay prices (both sites blocked fetches); Mini-Circuits shipping and import VAT to the EU. Hard rules unaffected: all passive; probes stay open-ended stubs (no loops, no H-field); signal sources stay conducted-only. Datasheet texts extracted to /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/padsB_dl/ (c_BLK-89-S+.txt, anne50.txt, c_086-6SM+.txt, c_VAT-30W2+.txt); EEVblog plots in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/padsB_dl/eev/ and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/padsB_dl/eev2/10db.jpg.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
