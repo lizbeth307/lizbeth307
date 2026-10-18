@@ -83,3 +83,9 @@
 - Радіолабораторія: SatDump v1.15.0 (17.10.2026) — свіжий реліз. Джерело: github.com/SatDump/SatDump/releases.
 - Навчання NPU: для aarch64 cp312 доступні torchvision 0.29.1 (30.09.2026) і onnxruntime 1.31.0 (09.10.2026). Джерело: pypi.org.
 
+## 2026-10-18 02:16 UTC
+
+- Радіолабораторія: бібліотека sigmf 1.13.0 (Python, залежності numpy/jsonschema/defusedxml) — для метаданих записів. Джерело: pypi.org/project/SigMF.
+- КХ і меню: готові «меню-образи» застарілі — PiSDR (останній коміт 04.10.2022) і веб-клієнт sdrangelcli (24.11.2024); готового сучасного сенсорного запускача для SDR немає, швидше за все треба свій. Джерела: github.com/luigifcruz/pisdr-image, github.com/f4exb/sdrangelcli.
+- Очікую відповідь користувача: чи прибирати 20 см VHF-рамку для Meteor.
+
