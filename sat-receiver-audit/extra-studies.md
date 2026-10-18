@@ -31046,6 +31046,336 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - The Flamingo+ figures at 87.5, 108 and 145 MHz and up to 2 GHz are read from the datasheet's single-unit plot, about ±1 dB.
   - Generic, clone, DIY and used options (Maker go Tindie $11.90, AliExpress modules, TV traps, DIY traps) belong to other angles. G1 already rejected them for unverifiable origin, lower rejection or no ESD protection.
 
+## searchA:pololu_d36v28f5_2_for_a_5_v_only_display (run `wf_c3ba734e-52b`)
+
+- **Part:** Pololu D36V28F5 #2 (item #3782), the optional 5 V buck that would feed the Wisecoco 7in 2000-nit panel board from the SW node, used only if that board accepts 5 V only. Tier optional, group Optional / gated, qty 1.
+- **Current price usd:** 23.95 at qty 1 from Pololu direct (22.03 each at 5+), status 'Rationed (Active and Preferred)', checked on pololu.com/product/3782 on 18 Oct 2026. For this EU buyer, Pololu US also adds shipping, import VAT, the EUR 3 flat duty per tariff line and the EUR 2 UHF (from about 1 Nov 2026), per operator notes 34-35.
+- **Critical specs:**
+  - Input range must cover the SW node at 12.0-16.8 V continuous and SMBJ17A clamp transients up to about 27.6 V. Baseline: 5.3-50 V.
+  - Output 5.0 V +/-4% (USB-class panel input, 4.8-5.2 V). Baseline: +/-4%.
+  - Continuous current of at least 2.8 A at 12-17 V in, with margin in the closed case at 50 C. This comes from the D4 acceptance limit of 14 W at the board input, which is 2.8 A at 5 V. Baseline: 3.2 A typical at 36 V in, range 2.5-4 A, higher at lower Vin. The exact value at 12-16 V is only on Pololu's graph.
+  - Efficiency of at least 88% at 12-16 V in and 1-3 A (the stack's runtime model uses 88%). Baseline: 80-90% typical.
+  - Switching and spurs: about 500 kHz under load, power-save above 20 kHz at light load. It must pass gate C4: no spur within +/-5 kHz of 40, 60, 77.5, 162, 490, 518 or 4209.5 kHz. Output ripple goes into the panel board.
+  - EN input that the Pico GP16 can drive (the panel is off whenever the Q6A is off). Baseline: sleep below 1.2 V, wake above 1.35 V, 100 k pull-up to VIN, about 10-20 uA/V in sleep.
+  - PG output, open drain, trips at +20%/-10%.
+  - Protections: reverse voltage to 40 V, over-current and short-circuit, over-temperature, output UV/OV, soft start (limits inrush into the panel board caps).
+  - Back-feed behaviour: on the D36V28Fx, putting slightly over 5 V on VOUT pumps VIN above 60 V (Pololu forum t/29129). The Wisecoco board has a 'Type-C (5V 2A) Touch+Power' port in parallel with its power input, so a candidate must be equal or better here, or carry an output Schottky and the existing rule that panel VBUS is never connected.
+  - Mechanical: 17.8 x 20.3 x 8.8 mm, two M2 holes, 0.1 in through-hole pins. No reflow (build rule). Mounted near the lower vent or bonded to the plate.
+  - Genuine part from an official channel, with EU landed cost stated. No software involved, so it is driver-neutral on Ubuntu 24.04 arm64.
+  - Hard rules: a DC rail part only. No RF emission path, no effect on receive-only, conducted-only or no-loop rules, provided it passes the C4 spur gate.
+- **Candidates:**
+  1.
+    - **Name:** Omit the converter (re-audit D decision): feed the panel 12 V from the existing DISP12 rail (SYS12 -> LC -> TPS259470A eFuse, ILIM 1.5 A, OVLO about 13.5 V, EN on Pico GP16) into the Wisecoco 'DC(5-24V)' barrel
+    - **Kind:** diy
+    - **Price usd:** 0.00 (no new part; DISP12 already exists in the stack)
+    - **Spec comparison:** Input: the panel board's own DC 5-24 V input (from the listing image), fed from 12 V. Current: 14 W at 11.0 V is 1.27 A, inside the 1.5 A eFuse limit (STACK DISP12 row). EN: the same GP16 gating via the eFuse. Protection: the eFuse adds OVLO and ILIM, which the D36V28F5 lacks. Spurs: removes one roughly 500 kHz buck from the C4 gate list. Back-feed: removes the D36V28F5 VIN-pump failure mode. The 4D fallback also takes 12 V on a 5.5 mm barrel (4DHDMI datasheet R1.5).
+    - **Worse in:** Nothing measurable is lost on paper. Unverified: whether the panel board's own buck at 12 V is quieter or noisier than a 5 V feed (its switching frequency is unknown), so the C4 A/B test must run with the panel on DISP12. It depends on the 'DC(5-24V)' label being true for the board revision actually shipped.
+    - **Compatibility:** Already the stack's default topology after re-audit D, which dropped D36V28F5 #2 from the optional list. Still needs the Wisecoco written answer on current at 12 V at 25/50/100% and the barrel size, plus the 11.0 V stability test.
+    - **Risks:** If Wisecoco ships a 5 V-only revision, the fallback is the Botland D36V28F5 below.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json
+      - https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-inch-2000-nits-lcd-7.webp
+      - https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_5.pdf
+  2.
+    - **Name:** Pololu D36V28F5 #3782 (same SKU) from Botland Germany (botland.de), an official Pololu distributor
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 20.38 gross (EUR 18.11 incl. 19% DE VAT, from the page's structured data, 18 Oct 2026) / 17.13 net (EUR 15.22, derived as 18.11/1.19). ECB rate 1.1253 USD/EUR of 16 Oct 2026, taken from the G3 analog run and not re-checked by me. Shipping from EUR 4.69 (GLS) in DE, free over EUR 100.
+    - **Spec comparison:** Identical part. Botland's page names Pololu 3782, index PLL-17169, EAN 5903351242837. Pololu's distributor list names Botland for CZ, DE and PL. Every spec matches: 5.3-50 V in, 5 V +/-4%, 3.2 A typ, about 500 kHz, EN/PG, reverse protection to 40 V, 17.8 x 20.3 mm.
+    - **Worse in:** No spec is worse. Back-feed behaviour is identical (still needs an output Schottky and the no-panel-VBUS rule).
+    - **Compatibility:** Drop-in, same footprint. EU stock, so no flat duty or UHF. Can share one Botland order and its shipping with the LAB5 D36V28F5 and the D36V50F12 from the G3 run.
+    - **Risks:** Stock text is contradictory: 'Auf Lager' plus 'cannot be ordered yet / further delivery on its way'. The visible price did not load (only the structured data showed EUR 18.11). Confirm at checkout. The botland.de consumer store delivers only within DE.
+    - **Seller url:** https://botland.de/abwartswandler/17169-d36v28f5-abwartswandler-5v-32a-pololu-3782-5903351242837.html
+    - **Sources:**
+      - https://botland.de/abwartswandler/17169-d36v28f5-abwartswandler-5v-32a-pololu-3782-5903351242837.html
+      - https://www.pololu.com/distributors
+      - https://www.pololu.com/product/3782
+  3.
+    - **Name:** Pololu D36V28F5 #3782 (same SKU) from Botland Poland (botland.com.pl)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 20.57 gross (PLN 79.90 incl. 23% VAT, verified 18 Oct 2026) / about 16.73 net (PLN 64.96, calculated at 23% VAT). Rate 4.37 PLN/EUR from the G3 run, not re-checked by me. Shipping from PLN 8.99.
+    - **Spec comparison:** Identical part (the page links to pololu.com/product/3782).
+    - **Worse in:** No spec is worse.
+    - **Compatibility:** Drop-in. Delivers to PL and LT, per the G3 run.
+    - **Risks:** Stock shows 'Dostępny' alongside 'na zamówienie' and 'przedsprzedaż' labels. Confirm quantity.
+    - **Seller url:** https://botland.com.pl/przetwornice-step-down/17169-d36v28f5-przetwornica-step-down-5v-32a-pololu-3782-5903351242837.html
+    - **Sources:**
+      - https://botland.com.pl/przetwornice-step-down/17169-d36v28f5-przetwornica-step-down-5v-32a-pololu-3782-5903351242837.html
+  4.
+    - **Name:** Pololu D36V28F5 #3782 (same SKU) from TME (POLOLU-3782), an official Pololu distributor with an EU warehouse
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 21.51-24.41 (structured-data range only; the visible price reads 'no-prices'; net or gross unclear)
+    - **Spec comparison:** Identical part.
+    - **Worse in:** No spec is worse. The price is not shown to be lower than Botland's.
+    - **Compatibility:** Drop-in.
+    - **Risks:** Stock is contradictory (0 shown on the page, 29 in the structured data). Keep as the fallback seller.
+    - **Seller url:** https://www.tme.eu/en/details/pololu-3782/converter-modules/pololu/5v-3-2a-step-down-voltage-reg-d36v28f5/
+    - **Sources:**
+      - https://www.tme.eu/en/details/pololu-3782/converter-modules/pololu/5v-3-2a-step-down-voltage-reg-d36v28f5/
+  5.
+    - **Name:** Pololu D36V28F5 #3782 from Pololu direct (current pick)
+    - **Kind:** current_part
+    - **Price usd:** 23.95, plus US shipping, EU import VAT, EUR 3 x tariff lines and EUR 2 UHF
+    - **Spec comparison:** Baseline.
+    - **Worse in:** Only the landed EU cost.
+    - **Compatibility:** Baseline.
+    - **Seller url:** https://www.pololu.com/product/3782
+    - **Sources:**
+      - https://www.pololu.com/product/3782
+  6.
+    - **Name:** Pololu D30V30F5 #4892
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 29.95 (re-audit D / G3; not re-fetched)
+    - **Spec comparison:** Better: 3.4 A at 30 V in, about 700 kHz, back-feed of about 5 V passes without the VIN pump. Worse: input max 45 V against 50 V (still above the 27.6 V clamp).
+    - **Worse in:** Price: it is dearer, so it is not a cheaper analog.
+    - **Compatibility:** Similar Pololu form factor and EN/PG. Would need a fresh C4 check at 700 kHz.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json
+  7.
+    - **Name:** Pololu D24V50F5 #2851 (5 V, 5 A)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 32.95 (Pololu category page, 18 Oct 2026; listed out of stock)
+    - **Spec comparison:** Better: 5 A. Worse: input max 38 V against 50 V. Its frequency and back-feed behaviour were not checked.
+    - **Worse in:** Dearer, and out of stock.
+    - **Compatibility:** Larger board; not checked.
+    - **Sources:**
+      - https://www.pololu.com/category/131/step-down-voltage-regulators
+  8.
+    - **Name:** Pololu D36V50F5 (5 V, about 5.5 A)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 39.95
+    - **Spec comparison:** Better: current. Same family and same 50 V input.
+    - **Worse in:** Dearer.
+    - **Compatibility:** Larger footprint.
+    - **Sources:**
+      - https://www.pololu.com/category/131/step-down-voltage-regulators
+  9.
+    - **Name:** Pololu D24V22F5 / D24V25F5 (5 V, about 2.5 A)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 25.95-27.95 (category-page family prices; per-SKU price not fetched)
+    - **Spec comparison:** Current is about 2.2-2.6 A against 3.2 A. Input max 36-38 V against 50 V.
+    - **Worse in:** Current falls below the 2.8 A need. It is also not cheaper.
+    - **Compatibility:** Pololu form factor.
+    - **Sources:**
+      - https://www.pololu.com/category/131/step-down-voltage-regulators
+  10.
+    - **Name:** RECOM R-78K5.0-2.0 (SIP3 switching regulator)
+    - **Kind:** other_brand
+    - **Price usd:** 5.93 at DigiKey qty 1 (4,727 in stock)
+    - **Spec comparison:** Datasheet Rev 2-2026: input 6.5-36 V; UVLO on at 9.9-10.7 V, off at 9.7-10.5 V (better against back-feed); 400 kHz; Iq 1 mA; accuracy +/-3% typ; load regulation 4% max; ripple 100 mVp-p typ / 120 mVp-p max at full load (20 MHz bandwidth); 89% at 36 V and 94% at minimum input; -40 to +100 C with derating; short-circuit protection with automatic recovery; 11.5 x 8.5 x 17.5 mm through-hole.
+    - **Worse in:** Current: 2.0 A against 3.2 A typ, below the 2.8 A (14 W) need. No EN pin and no PG. No reverse-polarity, OTP or OVP protection listed. Needs a diode if current can flow back into the output. Load regulation 4% max.
+    - **Compatibility:** Through-hole and no reflow, but it lacks EN for GP16 gating, so an extra load switch would be needed.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=R-78K5.0
+    - **Sources:**
+      - https://recom-power.com/pdf/Innoline/R-78K-2.0.pdf
+      - https://www.digikey.com/en/products/result?keywords=R-78K5.0
+  11.
+    - **Name:** Traco Power TSR 3-2450
+    - **Kind:** other_brand
+    - **Price usd:** 35.96 at DigiKey qty 1 (198 in stock)
+    - **Spec comparison:** DigiKey parameters: 10-30 V in, 3 A max, 91% efficiency, remote on/off, short-circuit protection, 5-SIP through-hole, 16.5 x 10.4 x 6.2 mm, -40 to 85 C with derating. OCP, OTP and reverse polarity are not listed.
+    - **Worse in:** Dearer. 3 A against 3.2 A typ. Input max 30 V against 50 V. No PG. No reverse protection listed.
+    - **Compatibility:** Through-hole. Not pursued because of price.
+    - **Seller url:** https://www.digikey.com/en/products/detail/traco-power/TSR-3-2450/9382354
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/traco-power/TSR-3-2450/9382354
+  12.
+    - **Name:** Adafruit UBEC 5 V 3 A (#1385, MP2307 inside)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 9.95
+    - **Spec comparison:** 6-16 V recommended; the input cap 'might be rated for 16V max'; 5 V +/-5%; 3 A, 5 A peak; 'a little noisy'. No EN, PG or protections stated.
+    - **Worse in:** Input range (16.8 V pack and 27.6 V clamp exceed it). Accuracy (+/-5% against +/-4%). No EN or PG. No reverse protection. Unknown frequency. The HKJ-measured MP2307-class module reached 144.5 C at 2.5 A (G3 run).
+    - **Compatibility:** Wire leads, not a pin module.
+    - **Seller url:** https://www.adafruit.com/product/1385
+    - **Sources:**
+      - https://www.adafruit.com/product/1385
+      - https://lygte-info.dk/review/Converter%20DC-DC%203A%204.75-23V%20to%201.0-17V%20UK.html
+  13.
+    - **Name:** RECOM RPM5.0-3.0
+    - **Kind:** other_brand
+    - **Price usd:** 6.90 at DigiKey (G3 run; not re-fetched)
+    - **Spec comparison:** 3-17 V in, 20 V abs max, 3.0 A, 60 mVp-p ripple, LGA package.
+    - **Worse in:** Abs max 20 V is exceeded by the 27.6 V clamp transient. 3.0 A. Needs reflow.
+    - **Compatibility:** Fails the no-reflow rule.
+    - **Sources:**
+      - https://recom-power.com/pdf/Innoline/RPM-3.0.pdf
+  14.
+    - **Name:** TI TPSM63604RDLR module plus passives (own board)
+    - **Kind:** diy
+    - **Price usd:** about 15.5 (12.48 at DigiKey plus about 3 of passives; G3 run)
+    - **Spec comparison:** Better: 4 A, FB +/-1%, forced PWM and SYNC. Worse: 36 V recommended / 42 V abs max, no reverse protection, no real OVP.
+    - **Worse in:** Reverse protection. Build method (B3QFN needs reflow). Back-feed behaviour and thermals on a 2-layer board are uncharacterised.
+    - **Compatibility:** Fails no-reflow. Our own layout.
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/tpsm63604.pdf
+  15.
+    - **Name:** MORNSUN K7805-3AR3
+    - **Kind:** other_brand
+    - **Price usd:** 3.37 at DigiKey (G3 run)
+    - **Spec comparison:** 3 A. Frequency, ripple and protections unverified.
+    - **Worse in:** 3 A rating. 'Not for new designs', with 0 stock.
+    - **Compatibility:** 32.2 x 9.1 x 14.9 mm, so a new footprint.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G3_power_gnss_imu.json
+- **Notes:** VERDICT: No cheaper analog is not-worse. Keep the Pololu D36V28F5 (#3782) and buy it from Botland, an official Pololu EU distributor: EUR 18.11 incl. 19% DE VAT, which is USD 20.38 gross or USD 17.13 net. The saving is about USD 6.82 net against USD 23.95, and it avoids the US landed costs. TME POLOLU-3782 is the fallback seller.
+  
+  Re-audit D outranks this: it already dropped D36V28F5 #2 from the optional list. The Wisecoco listing image shows 'DC(5-24V)' on a barrel jack, and the 4D fallback also takes 12 V, so DISP12 (SYS12 -> LC -> TPS259470A, 1.5 A, EN on GP16) feeds either panel directly. The cheapest option is therefore USD 0, with no part. This is not worse on paper: the eFuse adds OVLO and ILIM, one roughly 500 kHz buck leaves the C4 spur list, and the D36V28Fx back-feed VIN-pump risk (Pololu forum t/29129, more than 60 V on VIN) goes away. Buy the Botland unit only if Wisecoco's written answer shows a 5 V-only revision. In that case:
+  - Fit a Schottky at its output.
+  - Keep the rule that panel VBUS is never connected, since the panel's Type-C 5 V 2 A port is in parallel with its power input.
+  - Bundle it with the LAB5 D36V28F5 Botland order.
+  
+  Spec gap to note: the 14 W D4 limit is 2.8 A at 5 V. That is close to the D36V28F5's 3.2 A typical rating (at 36 V in; Pololu's graph shows more at lower Vin, but the exact 12-16 V value was not read). The closed-case heat test at full brightness would be required.
+  
+  Same-vendor SKUs with 3 A or more (D30V30F5 USD 29.95, D24V50F5 USD 32.95 and out of stock, D36V50F5 USD 39.95) are all dearer. Every cheaper other-brand part is worse:
+  - RECOM R-78K5.0-2.0 (USD 5.93): 2 A, no EN or PG, no reverse protection, 120 mVp-p ripple max.
+  - Adafruit UBEC (USD 9.95): 16 V input limit, no EN.
+  - RECOM RPM5.0-3.0: 20 V abs max, LGA.
+  - TPSM63604: reflow, no reverse protection.
+  - MORNSUN K7805-3AR3: not for new designs, no stock.
+  - Traco TSR 3-2450 is a credible brand, but it is dearer (USD 35.96) and lower in current.
+  
+  Limits of this check:
+  - WebSearch was unavailable: the shared per-turn budget was used up before my first query, so I worked only from WebFetch on primary pages and from the earlier G3 and re-audit D files.
+  - Other Pololu-listed EU resellers could not be priced: kamami 403, gotronic, electrokit, eckstein and opencircuit search URLs 404, robotev 429, and Lextronic does not list it. A slightly cheaper EU reseller may exist.
+  - The ECB rates (1.1253 USD/EUR, 4.37 PLN/EUR, 16 Oct 2026) come from the G3 run and I did not re-check them.
+  - Botland stock is ambiguous on both storefronts; confirm at checkout.
+  
+  Hard rules: this is a DC rail part only. No candidate affects receive-only, conducted-only sources or the no-loop rule, and any part still has to pass the C4 spur gate.
+
+## searchB:2_m_wide_path_second_flamingo_fm_uses_th (run `wf_c3ba734e-52b`)
+
+- **Part:** FM broadcast band-stop filter #2 on P8 WIDE/2 m (optional port): panel SMA → Flamingo+ #2 → bench RTL-SDR Blog Wideband LNA V2 → injector ch4 → HMC7992 → RTL-A T3. Current pick: Nooelec Flamingo+ FM v2, SKU 100813, qty 1, tier optional.
+- **Current price usd:** 24.95 ex-VAT from Nooelec direct. I re-checked nooelec.com on 18 Oct 2026: Add to Cart, ships in 1 business day, 2-year warranty. Bought inside the existing Nooelec order of more than $100, so shipping is free. EU landed cost is about $29.7-30.2 with 19-21% import VAT; IOSS does not apply because the order is over EUR 150. The EU fallback is Passion Radio (FR) at EUR 33.90 incl. VAT, about $38.1 (the G1 agent verified this on 18 Oct 2026; my re-fetch failed with a redirect loop).
+- **Critical specs:**
+  - FM stop-band depth over the European band 87.5-108 MHz. Requirement: mean S21 <= -60 dB. Flamingo+ datasheet Rev 1, S21 plot digitised to about ±1 dB: about -47 dB at 87.5 MHz, -50 at 88, -66 to -77 at 90-102, -54 at 104, -42 at 106, -32 at 108; mean about -63.6 dB. Datasheet S21 min/typ is -77.5/-70 dB. The depth at the strongest local station sets the overload margin of the LNA V2 and the V4L.
+  - 2 m pass-band loss. The filter sits ahead of the LNA V2, so its loss adds dB for dB to the path NF. Requirement at 144-146 MHz: <= 1.2 dB max, about 0.5 dB typ (datasheet passband IL is 0.01/0.5/1.2 dB). The upper edge must sit well below 137-146 MHz (Flamingo+: -3 dB at 120 MHz, -10 dB at 116 MHz).
+  - Wide pass-band for the WIDE role, from below 75 MHz up to the V4L limit of 1.766 GHz, including 400-406 MHz radiosondes. Flamingo+ datasheet 1-2000 MHz plot: forward loss about 0-1 dB from 150 to 2000 MHz; Nooelec page claims <0.25 dB out-of-band.
+  - Pass-band match: S11/S22 typ -20 dB (datasheet). The plot reads about -15 to -20 dB up to 1.2 GHz and about -11 to -15 dB at 1.6-2 GHz. This affects the noise match and stability of the LNA V2.
+  - Input survivability: +18 dBm maximum input, plus an RF ESD diode on the front end (vendor claim). P8 is an exposed panel SMA. The A-V85/SRH-701 whip is not DC-grounded, so this diode is the only static protection ahead of the LNA V2.
+  - Shielding: anodised aluminium EMI enclosure. The filter sits in the RF compartment next to the V4Ls and the Q6A, so an unshielded trap would let FM and digital noise bypass it.
+  - Interface: 50 ohm, SMA female on both ends, passive, no rail and no driver. DC pass is NOT required on P8, because bias enters at the LNA V2 output via ch4. The filter must not short DC, and its size must fit the current RF compartment slot.
+  - Build quality and legitimacy: genuine part, consistent unit to unit (it must pass the LiteVNA conducted intake limits), 2-year warranty, legally sold into the EU.
+- **Candidates:**
+  1.
+    - **Name:** Nooelec Flamingo+ FM v2 (SKU 100813), second unit, Nooelec direct (CURRENT PART, recommended to KEEP)
+    - **Kind:** current_part
+    - **Price usd:** 24.95 ex-VAT; about 29.7-30.2 landed in the EU with VAT
+    - **Spec comparison:** Reference values: datasheet S21 -77.5/-70 dB min/typ in 80.5-114.8 MHz, mean about -63.6 dB over 88-108 MHz (plot); IL 0.01/0.5/1.2 dB; -3 dB at 75/120 MHz; out-of-band loss <0.25 dB (vendor); IL <= about 1 dB to 2 GHz and S11 -11 to -20 dB on the 1-2000 MHz plot; +18 dBm max; RF ESD diode; aluminium EMI case; 250 mA DC pass; 2-year warranty.
+    - **Worse in:** Nothing against the alternatives below as a whole. Known weakness, stated so it is not hidden: the 108 MHz band edge gets only about 32 dB and 87.5 MHz about 47 dB (datasheet plot). A strong local station at 104-108 MHz is therefore attenuated much less than the '>60 dB' headline suggests.
+    - **Compatibility:** Drop-in. Passive, SMA-F/SMA-F, no rail or driver. It goes in the same Nooelec order (> $100, free shipping).
+    - **Seller url:** https://www.nooelec.com/store/flamingo-plus-fm.html
+    - **Risks:** EU import VAT and a courier fee on the Nooelec order. Mitigation: the LiteVNA intake test (mean <= -60 dB over 88-108 MHz, <= 1.2 dB at 144-146 MHz, plus S21/S11 checks at 400-406 MHz and 1.09/1.7 GHz for the WIDE role).
+    - **Sources:**
+      - https://www.nooelec.com/store/flamingo-plus-fm.html
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/flam_ds/ds_en.pdf
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G1_receivers_rf.json
+  2.
+    - **Name:** RTL-SDR Blog Broadcast FM Band-Stop Filter 88-108 MHz
+    - **Kind:** other_brand
+    - **Price usd:** 16.95 at rtl-sdr.com (verified by the G1 agent on 18 Oct 2026; the launch post said $14.95). The store does not ship to the EU. The price at the official AliExpress/eBay stores is unverified.
+    - **Spec comparison:** Measurements are the VENDOR's own VNA sweeps, not independent: 'around 50 dB or more' over 88-108 MHz, almost 60 dB at 88 MHz, 45-50 dB at 108 MHz; -3 dB at 76/122 MHz; IL 'practically zero' below 500 MHz, <0.5 dB at 0.5-1 GHz, <1.5 dB at 1-2 GHz; DC pass 80 mA (admin: possibly 200 mA); aluminium case 2.8x2.8x1.3 cm. Reader comments (unverified) put the -3 dB point at about 112 MHz and say the rise is sharp at about 116 MHz. Against Flamingo+: about 15-20 dB shallower mid-band (about 50-55 dB vs 66-77 dB at 90-102 MHz); better at the edges (88 MHz about 60 vs about 50 dB; 108 MHz 45-50 vs about 32 dB); 2 m loss probably similar; 1-2 GHz loss up to 1.5 dB vs about 1 dB.
+    - **Worse in:** Mid-band rejection (about 15-20 dB less). No ESD diode stated. No maximum-input rating. 1-2 GHz insertion loss up to 1.5 dB, which matters for WIDE use at L-band. No stated warranty. No direct EU sales. Not proven by independent measurement. It is BETTER at the 87.5-88 and 104-108 MHz edges, so it is a spec trade, not a not-worse analog.
+    - **Compatibility:** SMA-F/SMA-F, passive, fits. DC pass is irrelevant on P8.
+    - **Seller url:** https://www.rtl-sdr.com/product/rtl-sdr-blog-broadcast-fm-band-stop-filter/
+    - **Risks:** Clones are sold on marketplaces under the same spec text. EU buyers must use the official AliExpress or eBay store. An ESD part would have to be added ahead of the LNA V2.
+    - **Sources:**
+      - https://www.rtl-sdr.com/rtl-sdr-com-broadcast-fm-band-stop-filter-88-108-mhz-reject-now-for-sale/
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-broadcast-fm-band-stop-filter/
+  3.
+    - **Name:** DIY 9A4QV 'FM TRAP' 3-pole Chebyshev band-stop (2x 56 pF, 22 pF 0805; 2x 45 nH and 126 nH air-wound coils; tin-can shield)
+    - **Kind:** diy
+    - **Price usd:** Parts only, likely a few USD plus 2 SMA jacks (my estimate, unverified). The author says home-built filters are 'more time consuming then money saving'.
+    - **Spec comparison:** Designer-measured on a network analyser, not independent: '30dB or better' over 88-108 MHz, 'maximum attenuation of -44.6dB at 103.4MHz'; -3 dB 79.5-123.3 MHz, -10 dB 85-119 MHz; 'insertion losses up to 1.7Ghz are bellow 1dB'. Against Flamingo+: about 20-30 dB less mid-band rejection; mean far below 60 dB; upper -3 dB at 123.3 MHz vs 120 MHz; wide-band loss similar (<1 dB).
+    - **Worse in:** Stop-band depth (30-44.6 dB vs 63.6 dB mean). Mean fails the <= -60 dB intake limit. No ESD protection. Improvised shield (oil can). Per-unit variation means each build needs tuning and a VNA sweep. No warranty.
+    - **Compatibility:** Electrically compatible (50 ohm, SMA possible). The mechanical enclosure would have to be designed.
+    - **Seller url:** https://lna4all.blogspot.com/2015/10/diy-fm-trap-or-88-108-mhz-band-stop.html
+    - **Risks:** Hand-wound coils drift. Shielding quality depends on the build. Static damage to the LNA V2 without an added ESD part.
+    - **Sources:**
+      - https://lna4all.blogspot.com/2015/10/diy-fm-trap-or-88-108-mhz-band-stop.html
+  4.
+    - **Name:** Generic AliExpress/eBay '88-108 MHz BSF / FM trap' SMA modules (e.g. NWDZ-type)
+    - **Kind:** generic_or_clone
+    - **Price usd:** About EUR 11 (from the G1 search, UNVERIFIED; marketplace pages could not be fetched today)
+    - **Spec comparison:** No independent S21 sweep found. The only user report (via G1, unverified) gives 25-30 dB rejection. 137-146 MHz loss, wide-band loss, S11, ESD and max input are unknown. Some listings are actually band-pass filters.
+    - **Worse in:** Rejected by the angle-B rule: no measured evidence. The one reported figure (25-30 dB) is about 35 dB worse than Flamingo+. Build quality and origin are unknown.
+    - **Compatibility:** SMA, probably fits. Unverified.
+    - **Seller url:** 
+    - **Risks:** Counterfeit or mislabelled filter type. Unit-to-unit variance. Possibly unshielded.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G1_receivers_rf.json
+  5.
+    - **Name:** Maker go (adz1122) Tindie 'Broadcast FM Band-Stop Filter 88-108 MHz FM trap'
+    - **Kind:** generic_or_clone
+    - **Price usd:** 11.90 plus shipping from Shenzhen (G1, 18 Oct 2026; my re-fetch got Tindie HTTP 403, so not re-verified)
+    - **Spec comparison:** The spec text copies the RTL-SDR Blog listing (>50 dB, 76/122 MHz, <0.5 dB). No measurements of its own, no ESD, no max input, enclosure not stated.
+    - **Worse in:** No measured evidence (rejected under the angle-B rule). On paper it inherits every RTL-SDR Blog shortfall (about 15-20 dB shallower mid-band, no ESD diode, no input rating). The seller has 5 reviews and the origin is unverifiable.
+    - **Compatibility:** SMA, passive. Probably fits.
+    - **Seller url:** https://www.tindie.com/products/adz1122/broadcast-fm-band-stop-filter-88-108-mhz-fm-trap/
+    - **Risks:** Possible copy of the RTL-SDR Blog design with unknown parts. Fails the not-counterfeit and legal-origin check.
+    - **Sources:**
+      - https://www.tindie.com/products/adz1122/broadcast-fm-band-stop-filter-88-108-mhz-fm-trap/
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G1_receivers_rf.json
+  6.
+    - **Name:** Used Nooelec Flamingo+ FM v2 (eBay or forum classifieds)
+    - **Kind:** used
+    - **Price usd:** No verifiable listing. The eBay search returned HTTP 403 and web search was unavailable.
+    - **Spec comparison:** Same hardware, so it would be electrically identical IF genuine and undamaged. That can only be proven by the LiteVNA intake sweep (mean <= -60 dB over 88-108 MHz, <= 1.2 dB at 144-146 MHz, S11 <= -15 dB at 145 MHz, loss and match at 400-406 MHz and 1.09/1.7 GHz).
+    - **Worse in:** Loses the 2-year warranty, since warranty transfer is unknown. ESD-diode history is unknown: a degraded diode can add loss or fail short. Not proven equal until swept. Losing the warranty is a reliability trade that has to be stated.
+    - **Compatibility:** Identical form and fit.
+    - **Seller url:** 
+    - **Risks:** Counterfeit relabel; previous ESD damage; shipping from outside the EU adds VAT and erodes the saving. Accept only if the landed price is clearly below $24.95, the unit passes the intake sweep, and the warranty loss is accepted explicitly.
+    - **Sources:**
+      - https://www.ebay.com/sch/i.html?_nkw=nooelec+flamingo+fm&LH_ItemCondition=3000 (HTTP 403, not read)
+  7.
+    - **Name:** Cheap TV-style FM trap (75 ohm, F connectors)
+    - **Kind:** generic_or_clone
+    - **Price usd:** About 5 (rtl-sdr.com comparison; current listing not verified)
+    - **Spec comparison:** rtl-sdr.com's VNA comparison: stop-band 'attenuated by significantly less' and insertion loss elsewhere 'much larger'. No numbers given. 75 ohm F-type.
+    - **Worse in:** Rejection depth, pass-band loss (ahead of the LNA V2, so it adds directly to NF), 75 ohm mismatch plus F-to-SMA adapters, no ESD, no shielding spec.
+    - **Compatibility:** Poor: needs 2 adapters and a 75/50 ohm mismatch, and it is physically larger.
+    - **Seller url:** 
+    - **Risks:** Higher NF on 2 m and poor match at UHF/L-band.
+    - **Sources:**
+      - https://www.rtl-sdr.com/rtl-sdr-com-broadcast-fm-band-stop-filter-88-108-mhz-reject-now-for-sale/
+  8.
+    - **Name:** Topology option: no second filter; share Flamingo+ #1 between P1 and P8 (RTL-A uses only one of T1/T3 at a time), either after the HMC7992 common port or by manually moving it
+    - **Kind:** diy
+    - **Price usd:** 0 (saves 24.95)
+    - **Spec comparison:** After the switch, the filter would sit behind the LNA V2, so the LNA V2's unfiltered first stage takes the full FM load. Its intermod and compression cannot be removed downstream (STACK C10). Manual moving gives the same filter performance but requires opening the RF compartment.
+    - **Worse in:** Post-switch placement: effective FM protection of the LNA V2 drops to 0 dB, which breaks the 'filter first on VHF' rule (C10, which rejected the SDR-side filter). Manual swap: rejected in D8 (no manual 'connect X' by default) and wears the SMA joints inside the case.
+    - **Compatibility:** Electrically possible, but it contradicts the stack's front-end rules C10/D8.
+    - **Seller url:** 
+    - **Risks:** Overload and intermod on P8 near FM sites. Breaks the documented cascade-order rule.
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md (rows C10, D8, 687, 690)
+- **Notes:** Verdict (angle B: generic, clone, DIY, used): KEEP the Nooelec Flamingo+ FM v2 #2 at $24.95. No generic, clone, DIY or used candidate has measured evidence of being equal or better on every spec that matters for P8.
+  - The only cheaper filters with any measured data are worse mid-band. The RTL-SDR Blog filter (vendor sweeps, $16.95) is about 15-20 dB shallower at 90-102 MHz. The 9A4QV DIY trap (designer sweep) gives 30-44.6 dB.
+  - Generic AliExpress/eBay modules and the Tindie copy have no sweeps at all.
+  - A used Flamingo+ would be the same hardware, but I could not find a listing (eBay HTTP 403). It would also lose the 2-year warranty, so it only becomes not-worse after a LiteVNA intake sweep and with that warranty trade accepted explicitly.
+  
+  P8 differs from P1:
+  - The filter must stay low-loss and well matched across the whole WIDE range, not only at 137 MHz. That means 400-406 MHz radiosondes and up to the 1.766 GHz V4L limit. The Flamingo+ datasheet 1-2000 MHz plot shows about 0-1 dB loss and S11 of about -11 to -20 dB there.
+  - DC pass is irrelevant on P8, because bias enters at the LNA V2 output via ch4.
+  - The ESD diode does matter: P8 is an exposed panel SMA feeding an un-grounded whip, and this diode is the only static protection ahead of the LNA V2.
+  
+  Spec trade stated openly: the RTL-SDR Blog filter is better at the band edges (about 60 dB at 88 MHz and 45-50 dB at 108 MHz, against about 50 and 32 dB for the Flamingo+). If the site survey (HF+ on the AIS/FM port) shows the strongest local station at 104-108 MHz, the right fix is an added filter as a new design decision, not a swap.
+  
+  Add to the P8 intake test (conducted, LiteVNA):
+  - S21 <= 1.2 dB at 144-146 MHz.
+  - S21 <= 1.0 dB and S11 <= -15 dB at 400-406 MHz.
+  - S21 <= 1.2 dB at 1090 MHz and at 1.7 GHz.
+  - The same FM-band limits as unit #1: mean <= -60 dB over 88-108 MHz; <= -45 dB at 87.5-88 MHz; <= -65 dB at 92-100 MHz; <= -28 dB at 107.9 MHz.
+  
+  Not part of angle B, listed so nothing is missing:
+  - Nooelec's own cheaper SKUs (Distill:FM $17.95, Flamingo FM v1 $22.95) are '>40 dB typical', about 20 dB shallower.
+  - GPIO Labs FM notch ($30, about 25 dB at 108 MHz) and Mini-Circuits NSBP-108+ (about $184, >20 dB) are not cheaper and are worse.
+  These figures come from the G1 analog file (analogs_G1_receivers_rf.json) and I did not re-verify them.
+  
+  Limits of this check:
+  - WebSearch was unavailable: the shared per-turn budget was already exhausted at my first call, so I made no new marketplace searches.
+  - My WebFetch calls to eBay (403), Tindie (403), RadioReference's filter-comparison thread (503 twice) and Passion Radio (redirect loop) failed.
+  - I verified the Nooelec price and specs, the rtl-sdr.com launch-post measurements and the 9A4QV DIY measurements myself today. Generic-module data, the Tindie price and the Passion Radio price come from the G1 file of the same day and are marked as such.
+  - A follow-up run with search budget could look for independent NanoVNA sweeps of AliExpress FM traps and for EU used listings.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience

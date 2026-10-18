@@ -41,6 +41,7 @@
 | [Hantek 6022be fx2lafw la](components/hantek_6022be_fx2lafw_la.md) | · research · forums · fixes ✅ verify | `—` |
 | [Hf receiver](components/hf_receiver.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Hf selector 2x omron g6k 2f rf 5 v serie](components/hf_selector_2x_omron_g6k_2f_rf_5_v_serie.md) | · research · forums · fixes ✅ verify | `—` |
+| [Ifixit portable anti static mat](components/ifixit_portable_anti_static_mat.md) | · research · forums · fixes ✅ verify | `—` |
 | [Ip2368 4s 100 w pd board charge only bz](components/ip2368_4s_100_w_pd_board_charge_only_bz.md) | · research · forums · fixes ✅ verify | `—` |
 | [Lab instruments](components/lab_instruments.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Lab ui](components/lab_ui.md) | ✅ research · forums · fixes ✅ verify | `—` |
