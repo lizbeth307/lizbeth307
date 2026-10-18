@@ -17900,6 +17900,87 @@
   
   The 'what' fields in 11c_changes_reaudit_B.json are cut off at 220 characters. Full instructions were read from the matching entries in the other v2_changes JSONs. Scratch extract: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/11c_full.txt
 
+## edit:01a_decisions_integration:b2 (run `wf_53f2b30c-e42`)
+
+- **Section:** 01a_decisions_integration
+- **Applied:**
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+  - 58
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  - 64
+  - 65
+  - 66
+  - 67
+  - 68
+  - 69
+  - 70
+  - 71
+  - 72
+  - 73
+  - 74
+  - 75
+  - 76
+  - 77
+  - 78
+  - 79
+  - 80
+  - 81
+  - 82
+  - 83
+  - 84
+  - 85
+  - 86
+  - 87
+- **Skipped:** []
+- **Notes:** I applied all 44 changes (idx 44-87) in place to /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/01a_decisions_integration.md. The edits from earlier batches are kept. The table still has 6 columns in every row; the C11 row's only extra pipe is the escaped one in 'lsmod \| grep'.
+  
+  Conflicts and merges, with the winner of each:
+  - C8 LNB acceptance (46, 62, 85): analog G3 #9 wins. The ±2.5% band (±0.33 V, 12.87-13.53 V) is guaranteed only with IN at 14.2 V or more, so the 'battery 13.8-16.4 V' basis in 46 is dropped. The ±0.35 V window from 85 and the ±0.2 V window are written as per-unit measured gates, with the window from the Bullseye load limits (11.5-14 V) as the alternative; the user chooses. The 12.5 V option from 62 is appended, with 13.2 V kept as the default.
+  - C8 PG (45, 84): merged into one chain. TPS7A4701 -> TPS259630DDAR eFuse -> INA3221 -> choke; TLV3011 (open drain, from Q6A 3.3 V, threshold about 90%) to MCP #3; Schottky OUT->GND; no PTC.
+  - C9 TPS2553 (48, 83): merged. RILIM 88.7k, 265/299/339 mA plus IOS 262-342 mA. I recomputed the subtotal in this file: 'limits of four TPS2553 = 4 × 300 mA = 1.2 A' becomes 3 × 299 + 166 mA = about 1.06 A, with ch4 on 162k (marked as recomputed, model).
+  - C17 Boni rail (52 vs 87): 52's 13.8 V BONI13V8 wins. It matches C3 and analog G3 #9; 87 still assumed 12.5 V. From 87 I kept the TLV3011 rail-good and the Schottky. Its '±0.35 V at battery ≥14.2 V' is replaced per G3 #9: ±0.345 V, valid only with IN at 14.8 V or more (battery about 15.0 V).
+  - C17 relays (54): written to match analog G1 #7. G6K-2F-RF-S DC5 at $39.38 a pair (DigiKey DE EUR 34.58 ex VAT / EUR 41.15 incl. VAT) is the pick; G6K-2F-RF DC5 at $50.12 a pair is the fallback. The old RS UK pair ($57-69) and the saving ($17.89-29.87) are in the note.
+  - C22 libairspyhf (57 vs reaudit_A's existing pin 1.6.8-5~lab1): both are re-audits, so precedence does not decide it. I adopted reaudit_B's default, noble 1.6.8-4build1. Reason: per reaudit_B, real 1.6.8 has no use-after-free, and 1.6.8-5 drops the airspyhf_flash_calibration symbol within the same soname. reaudit_A's backport stays as an option only if 1.8.1 features are needed. The pin list now says 'libairspyhf (див. вище)'.
+  - C22 other merges (57 + 69): 'lab-wsjt-decoders' renamed to wsjtx-decoders+lab so the package is not listed twice. SatDump 1aedd602 and gr-satellites 4210dc45 stay in the pin list.
+  - C23 (58, 65): merged. The user requirement (DVB-T and LTE B28 IF check) outranks the re-audits, so DVB-T stays in the check. The note from 58 that the 700 MHz band no longer carries DVB-T is added. EGNOS was already in the row, so it is not repeated.
+  - D8 Uputronics (59, 66): merged. Price per analog G1 #3: EUR 52.95 ex VAT = $59.52; EU landed about EUR 63.0-64.1 = $70.8-72.0 plus shipping (not verified). The note says the 68.71 -> 59.52 drop is a change of price basis, not a saving.
+  - C24 (71): the row lists v1 tier figures, so I wrote 'патч-антени $176-202 (v1: $176-208; A-V85 прибрано, −$6.00...)'. The real totals are in 2.12; there is no other dependent subtotal in this file.
+  - D14 (68): the tripod note goes after the whole sentence so the analog idx 157 anchor stays intact. I also noted the tripod correction in the C24 backpack weights (no new number computed) and kept the idx 160 anchor intact.
+  
+  Small wording changes for consistency:
+  - C7: 'SatDump has no hardware SDR sources' becomes 'hardware SDR sources are disabled in the build'.
+  - C14: 'Другого INA немає' becomes 'Другого INA для батареї немає', because 2× INA3221 are now on I2C2.
+  - C15: A-V85 added to the rejected list.
+  
+  For later batches, these analog anchors no longer exist verbatim; the content is already partly merged in each case:
+  - C4 fallback: 142.
+  - C8: 147, 148, 149.
+  - C9 TPS2553: 150.
+  - C14 INA228: 146.
+  - C17 G6K: 123, 124.
+  - C21 EU sentence: 115.
+  - D2 #2813: 145.
+  - D3 AON: 151.
+  - D8 Uputronics/HMC7992: 118, 119, 120.
+  Still intact: 141 (D36V50F12 parenthesis), 143, 144, 152, 153, 157, 160.
+
 ## extract:operator_notes (run `wf_5ed966cd-eee`)
 
 - **Source:** operator_notes
