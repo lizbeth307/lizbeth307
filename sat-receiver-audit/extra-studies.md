@@ -981,6 +981,683 @@
   - MHF4L-plug to MHF4-jack compatibility (antennas audit flag).
   About 11 WebSearch calls were used; the remaining facts come from WebFetch of manufacturer pages and datasheets, plus the audited input files (rf_frontend, compute, gnss_imu, antennas).
 
+## lab:extra_receive (run `wf_1dd437c5-0cf`)
+
+- **Area:** Extra RECEIVE capabilities beyond satellites (HF, VLF/LF, ADS-B/UAT, AIS, radiosondes, FM-RDS/DAB+/HD Radio, radio astronomy, public weather/time broadcasts) using small or foldable antennas on the Dragon Q6A handheld
+- **Items:**
+  1.
+    - **Name:** RTL-SDR Blog V4L in HF mode (existing primary SDR, reused; no external upconverter needed)
+    - **Category:** HF/MW + VHF/UHF receiver (existing)
+    - **Purpose in lab:** Primary HF receiver from 0.5 to 28.8 MHz: shortwave broadcast, FT8/WSPR monitoring, WWV/WWVH/CHU time stations, DWD/NOAA/JMH radiofax, NAVTEX on 518 kHz and NCDXF beacons. Time-shared, it also handles FM-RDS, DAB+, AIS, NOAA Weather Radio, radiosondes, ADS-B and 1420 MHz.
+    - **Key specs:** VERIFIED (V4L datasheet): R828S + RTL2832U, 8-bit, 500 kHz-1.766 GHz, 2.56 MHz stable bandwidth. HF is handled by an upconverter with a 28.8 MHz LO; the datasheet lists 'no more Nyquist folding... adjustable gain on HF'. 1 ppm TCXO. Bias tee 4.5 V / 180 mA, switched in software. The front end is only a diplexer (HF vs VHF/UHF), with no triplexer or notches as on the V4. Datasheet quote: 'the lower tuning range remains at 500 kHz and very strong reception may still require front end attenuation/filtering'. CONSEQUENCE: LF/VLF (DCF77 77.5 kHz, MSF/WWVB 60 kHz, sferics) and most NDBs (190-500 kHz) are out of range.
+    - **Size weight power:** Already in the case. Typical 250-270 mA at 5 V (about 1.3 W, datasheet), plus any bias-tee load.
+    - **Interface and linux:** USB 2.0 dongle. Use the patched noble librtlsdr2 (osmocom 0204c9c) from the narrowband plan. In SDR++ you simply tune an HF frequency; the rtl-sdr.com V4/V4L guide says direct-sampling mode must NOT be enabled.
+    - **Price:** $37.95 (official store, 455 in stock at capture). Already in the BOM; a spare is already planned.
+    - **Tier:** core
+    - **Integration notes:** - Feed the HF loop into the same SMA through a 2-way SMA switch or a jumper swap. The FM band-stop can stay in line on HF: it notches only 88-108 MHz, with under 0.5 dB loss from 0-1 GHz (store page).
+  - Set gain the same way as at VHF: raise it only until the noise floor rises about 5 dB over a 50-ohm terminator.
+  - In cities, insert the AM high-pass filter (separate item).
+  - Turn the bias tee ON only for the active MLA-30+. Keep it OFF for passive loops.
+  - At 1420 MHz, check PLL lock in the warm case: the digest notes that R820T-family PLLs lose lock above about 1.4-1.5 GHz when hot. The fallback is the LimeSDR Micro.
+    - **Sources:**
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-v4l-lite-r828s-rtl2832u-1ppm-tcxo-sma-software-defined-radio-dongle-only/
+      - https://www.rtl-sdr.com/V4L
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+    - **Availability:** In stock at the official RTL-SDR Blog store. The R828S is end-of-life (narrowband digest), so keep the planned spare.
+    - **Cheaper alternative:** RTL-SDR Blog V3 ($34.95-39.95). It uses direct sampling for HF, with Nyquist folding around 14.4 MHz and weaker HF; the V4L datasheet presents the upconverter as the improvement over it.
+    - **Safety notes:** The datasheet says 'Transmit Capability: None'. Never connect it to a transmitter port. Any MDS test with a generator must be conducted, through at least 60 dB of fixed attenuation.
+  2.
+    - **Name:** MLA-30+ active receive loop (generic; eBay/AliExpress)
+    - **Category:** HF antenna (active small magnetic loop, collapsible wire)
+    - **Purpose in lab:** Core HF/MW antenna for the V4L. A small H-field loop that can be hung away from the handheld, which is its own worst noise source. Covers SW broadcast, FT8/WSPR, WWV/CHU, radiofax, NAVTEX and NCDXF beacons.
+    - **Key specs:** - Range: listings disagree, 100 kHz-30 MHz or 500 kHz-30 MHz.
+  - What ships, per the rtl-sdr.com review: an amplifier box, a 'folded up thin loop wire' with 'no physical support for the loop', and a USB-powered bias-tee injector.
+  - Review consensus: 'works well for the price', but it 'falters on handling very strong signals' and has a higher noise floor than Wellbrook loops, especially on the upper HF bands.
+  - EEVblog and G8JNJ report that the bundled injector, a 5-to-12 V converter, is noisy.
+    - **Size weight power:** - Size: an amplifier box plus a flexible wire loop. The loop diameter is not published (about 1 m class; unverified).
+  - Packing: it fits a pouch if the loop is supported on a cross of folding rods with sections of 35 cm or less (DIY), which keeps it inside the fold rule.
+  - Power: DC over the coax. rtl-sdr.com testers powered it from RTL-SDR Blog V3, Airspy and SDRplay bias tees. The current draw is not published; measure it.
+    - **Interface and linux:** Coax to the V4L SMA; no driver. Power it with rtl_biast -b 1 or the SDR++ Bias-T checkbox.
+    - **Price:** eBay 2025 listings:
+  - US$38.60 + $4 shipping (sold Sept 2025)
+  - US$37 + $5
+  - EUR 35.76 including tax
+  - US$40 with free shipping
+  
+  The AliExpress price could not be verified. The 2019 rtl-sdr.com review said 'under US$45'.
+    - **Tier:** core
+    - **Integration notes:** - Do not use the supplied 5-to-12 V injector. Power the loop from the V4L's 4.5 V tee. This works on the V3 tee per rtl-sdr.com but is unverified on the V4L, so measure the DC at the loop end with bias on.
+  - Feed line: 5-10 m of thin coax (RG174 or RG316), wound on a reel, with clip-on ferrites at both ends as a common-mode choke. Cable and ferrites cost about $10-20 (estimate).
+  - Hang the loop 2-3 m up and at least 5 m from the case. Rotate it to null local noise.
+  - Do a terminator/antenna A/B test with the display, buck and charger each on and off.
+    - **Sources:**
+      - https://www.rtl-sdr.com/reviews-of-the-low-cost-mla-30-wide-band-hf-magnetic-loop-antenna/
+      - https://www.eevblog.com/forum/rf-microwave/mla-30-active-loop-antenna/msg3364292/
+      - https://www.rtl-sdr.com/g8jnj-reverse-engineers-and-reviews-the-mla-30-hf-loop-antenna/
+      - https://www.ebay.com/itm/296305333862
+      - https://www.ebay.de/itm/157280663152
+    - **Availability:** Many eBay sellers (Shenzhen and Shanghai) in 2025. Current 2026 stock not verified.
+    - **Cheaper alternative:** A DIY 5-10 m wire on a reel with a 9:1 unun (a few dollars, estimate). It is an E-field antenna and picks up much more of the handheld's own noise.
+    - **Safety notes:** Receive-only amplifier. Take the outdoor wire down and disconnect it when thunderstorms approach. Keep it away from power lines.
+  3.
+    - **Name:** RTL-SDR Blog Broadcast AM High-Pass Filter
+    - **Category:** HF front-end filter
+    - **Purpose in lab:** Stops overload of the 8-bit V4L by strong medium-wave broadcast stations when receiving 2.5-30 MHz (FT8, WSPR, WWV, radiofax, beacons) in cities.
+    - **Key specs:** VERIFIED (store): blocks 500 kHz-1.7 MHz by more than 50 dB, 3 dB point at 2.5-2.6 MHz, receive only.
+    - **Size weight power:** Inline SMA filter, passive. Size and weight not stated.
+    - **Interface and linux:** SMA inline; no software.
+    - **Price:** $16.95 (RTL-SDR Blog store)
+    - **Tier:** extended
+    - **Integration notes:** - Take it out for NAVTEX on 518 kHz, MW DX and anything below 2.5 MHz.
+  - An LC high-pass normally blocks DC (not stated by the vendor). If the MLA-30+ loses power with the filter in line, place the filter between the loop and a separate clean 5 V bias tee, or feed the loop from its own clean supply.
+    - **Sources:**
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+    - **Availability:** RTL-SDR Blog store and its AliExpress/eBay shops.
+    - **Cheaper alternative:** None: lower the RF gain and accept some overload.
+    - **Safety notes:** The store marks it receive only.
+  4.
+    - **Name:** Airspy HF+ Discovery
+    - **Category:** HF/LF/VLF receiver (high dynamic range)
+    - **Purpose in lab:** Adds what the V4L cannot do:
+  - VLF/LF from 0.5 kHz: DCF77/MSF/WWVB/JJY carriers and keying, lightning sferics, LF NDBs (190-535 kHz), NAVTEX on 490/518 kHz, longwave broadcast.
+  - Much cleaner HF near strong signals.
+  - The receiver the passive YouLoop needs.
+  - A backup at VHF (64-260 MHz): FM, AIS, NOAA Weather Radio, 137 MHz.
+    - **Key specs:** VERIFIED (airspy.com):
+  - 'HF coverage between 0.5 kHz .. 31 MHz', VHF 64-260 MHz
+  - 2 sigma-delta ADCs at up to 36 MSPS
+  - 110 dB blocking dynamic range on HF, 95 dB on VHF
+  - MDS -140.0 dBm (0.02 uV) at 15 MHz in 500 Hz
+  - Up to 660 kHz bandwidth at 768 ksps (input file)
+  - Needs a high-speed USB 2.0 controller
+    - **Size weight power:** 60 x 45 x 10 mm, 32 g (WiMo). Powered at 5 V over USB; the current is not published on the vendor page or by WiMo, so measure it with a USB meter.
+    - **Interface and linux:** - USB 2.0, using the open-source libairspyhf.
+  - Native sources in SDR++ and SatDump (airspyhf plugin), and supported by AIS-catcher.
+  - welle.io does NOT support it ('limited bandwidth'), so DAB+ stays on the V4L or Lime.
+    - **Price:** - $169 list (narrowband input; $135.20 in the summer 2026 sale)
+  - EUR 232.00 including VAT at WiMo (in stock, ships in 1-2 days)
+    - **Tier:** extended
+    - **Integration notes:** - Port: the shared FE1.1s USB 2.0 hub (Wi-Fi and touch are on it too). Swap it with the second V4L on the same port and pigtail rather than running both.
+  - It has no bias tee, so use passive loops or a separately powered active antenna.
+  - Disable USB autosuspend for it.
+  - Keep it out of the warm SoC airflow.
+    - **Sources:**
+      - https://airspy.com/airspy-hf-discovery/
+      - https://www.wimo.com/de/airspy-discovery
+      - https://www.rtl-sdr.com/testing-the-youloop-on-vlf-lf-reception-with-an-airspy-hf-discovery/
+      - https://github.com/AlbrechtL/welle.io
+      - https://github.com/jvde-github/AIS-catcher
+    - **Availability:** In stock at WiMo (EU). Airspy dealers worldwide (iTead etc.).
+    - **Cheaper alternative:** Stay on the V4L (500 kHz and up only). Add the CANADUINO module for LF time signals and the AS3935 for lightning. This gives no VLF/LF spectrum and no NDBs below 500 kHz.
+    - **Safety notes:** Receive only. The maximum safe input level is not published, so do not use it near transmitters, and use only conducted, attenuated test signals.
+  5.
+    - **Name:** Airspy YouLoop passive loop antenna
+    - **Category:** HF/LF/VLF antenna (passive Mobius loop, coilable coax)
+    - **Purpose in lab:** A low-noise passive loop for the HF+ Discovery: VLF/LF time stations, sferics, NDBs, NAVTEX and weak HF. Its noise-cancelling design suits a noisy handheld.
+    - **Key specs:** VERIFIED (airspy.com):
+  - Passive; 'HF Response: 10kHz to 30 MHz', 'VHF Response: up to 300 MHz'
+  - Built from '2 x 1m RG402 or RG141' branches and a 2 m feed line, with a T balun ('0.28 dB loss typ')
+  - 'Maximum Power: 250 mW'
+  - Recommended receiver: 'Airspy HF+ Discovery (Recommended)', or 'Any other SDR with MDS <= -140 dBm'
+  - rtl-sdr.com review: 'needs to be used with ultra low MDS receivers'
+    - **Size weight power:** - Loop: about 0.64 m across (2 m circumference from the two 1 m branches; my calculation).
+  - Packing: coil the branches. They are stiff coax ('stiff enough to hold its shape'), so do not kink them. The packed size and weight are not published.
+  - Power: none.
+    - **Interface and linux:** SMA to the HF+ Discovery; no driver.
+    - **Price:** $39.95 (RTL-SDR Blog store). Also sold by Airspy dealers.
+    - **Tier:** extended
+    - **Integration notes:** - Keep the bias tee OFF; this is a passive loop whose balun may be a DC short.
+  - On the V4L it works only modestly: one RadioReference user says it 'works decently enough' for SW broadcast. For weak-signal HF, pair the MLA-30+ with the V4L, or the YouLoop with the HF+.
+  - Hang it 2-3 m up, at least 5 m from the case.
+    - **Sources:**
+      - https://airspy.com/youloop/
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+      - https://www.rtl-sdr.com/the-youloop-passive-loop-antenna-reviewed-on-hf-reception/
+      - https://www.rtl-sdr.com/testing-the-youloop-on-vlf-lf-reception-with-an-airspy-hf-discovery/
+      - https://forums.radioreference.com/threads/youloop-is-it-worth-buying.479516/post-4078281
+    - **Availability:** RTL-SDR Blog store and Airspy dealers.
+    - **Cheaper alternative:** A DIY Mobius loop from about 2 m of flexible RG316 with a 1:1 transformer. It packs smaller but is untested here.
+    - **Safety notes:** Receive only: the rated maximum is 250 mW. Never connect it to a transmitter. Take it down in thunderstorms.
+  6.
+    - **Name:** Second RTL-SDR Blog V4L (the planned spare) as a parallel monitor receiver
+    - **Category:** VHF/UHF monitor receiver
+    - **Purpose in lab:** Runs ADS-B, AIS, NOAA Weather Radio or the radiosonde auto-tracker continuously while the primary V4L and the LimeSDR work satellites or HF.
+    - **Key specs:** Same as the primary V4L: 500 kHz-1.766 GHz, 2.56 MS/s, 1 ppm TCXO, 4.5 V / 180 mA bias tee.
+    - **Size weight power:** Dongle in its aluminium case, about 1.3 W.
+    - **Interface and linux:** USB 2.0 hub port. Set a unique serial (rtl_eeprom -s, after backing up with rtl_eeprom -r; never change the 'RTLSDRBlog' / 'Blog V4L' strings). Select it by serial in readsb, AIS-catcher and auto_rx (device index or serial in station.cfg).
+    - **Price:** $37.95 (official store). Already budgeted as a spare in the narrowband plan.
+    - **Tier:** extended
+    - **Integration notes:** - Port budget: blue USB 3.1 = primary V4L (or the NVMe enclosure; the compute and narrowband inputs disagree). The shared 3-port USB 2.0 hub carries display touch, then this V4L or the HF+ Discovery.
+  - Turn Wi-Fi off during critical passes.
+  - If you need more ports, a powered USB 2.0 hub on the filtered 5 V rail is untested for noise. Do a terminated rtl_power A/B with the hub on and off first.
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-v4l-lite-r828s-rtl2832u-1ppm-tcxo-sma-software-defined-radio-dongle-only/
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+    - **Availability:** In stock (Oct 2026). The R828S is end-of-life.
+    - **Cheaper alternative:** RTL-SDR Blog V3 ($34.95). It works with stock noble librtlsdr and is about 2-3 dB less sensitive at VHF/UHF (narrowband digest).
+    - **Safety notes:** Receive only.
+  7.
+    - **Name:** Uputronics-design SAW-filtered preamps: 1090 MHz (ADS-B), 403 MHz (radiosondes), 162 MHz (AIS)
+    - **Category:** Band-specific filtered LNAs
+    - **Purpose in lab:** Filter before gain on the 8-bit RTL, as the narrowband audit requires: more ADS-B range, more radiosonde range, and coastal AIS, without overload from FM, DVB-T or cellular.
+    - **Key specs:** VERIFIED (Kubii table): Mini-Circuits PSA4-5043+ LNA.
+  - 162 MHz: at least 20 dB gain, 7.6 MHz SAW, about 1.4 dB insertion loss.
+  - 403 MHz: at least 21 dB, 15 MHz SAW, about 2.3 dB IL, NF 0.75 dB.
+  - 1090 MHz: about 16 dB, NF 0.75 dB.
+  - AIS model, per a Pi Hut search snippet: '159-163MHz'.
+    - **Size weight power:** Small boards with SMA connectors (size not published). Powered from USB-mini or a bias tee. The sources conflict on voltage: Kubii says a regulator accepts 5-26 V; The Pi Hut says the bias-tee input is '5V max' on the current revision. Current draw is not published.
+    - **Interface and linux:** SMA inline at the antenna, powered from the V4L bias tee (rtl_biast -b 1); no driver.
+    - **Price:** - EUR 47.64 including VAT per variant (Kubii)
+  - GBP 44.40 per unit at The Pi Hut for the 162 and 1090 MHz models, with VAT shown separately (search snippets; the direct page returned HTTP 429)
+    - **Tier:** extended
+    - **Integration notes:** - Order the 1090 and 403 MHz models; the 162 MHz model is optional (coastal use only).
+  - Check the revision: whether it runs from the V4L's 4.5 V tee is unverified, so measure gain with the tee on.
+  - Put it at the antenna, before the coax.
+  - For US UAT plus ADS-B, the Nooelec SAWbird+ ADS-B ($94.95, dual 1090/978 MHz) is the alternative.
+  - Kubii notes that 'Uputronics LNAs' have no TX bypass.
+    - **Sources:**
+      - https://kubii.com/en/network-modules/3349-lna-amplifier-modules-with-saw-filter-and-single-frequency-3272496306646.html
+      - https://thepihut.com/products/162mhz-ais-filtered-preamplifier
+      - https://core-electronics.com.au/ads-b-1090mhz-filtered-preamplifier.html
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird.html
+    - **Availability:** Kubii (FR): in stock for some variants. The Pi Hut (UK): about 11 AIS units in a snippet. Core Electronics (AU): AU$109.95-114.95 for the 1090 MHz model.
+    - **Cheaper alternative:** No preamp: the dipole kit plus the FM band-stop. ADS-B still works at shorter range (estimate).
+    - **Safety notes:** Receive only, with no TX bypass. Never put one in a transmit path. Do not exceed 5 V on the bias tee.
+  8.
+    - **Name:** Nooelec SAWbird+ H1 (1420 MHz SAW + LNA)
+    - **Category:** Radio-astronomy front end
+    - **Purpose in lab:** Hydrogen-line (21 cm) spectroscopy of the Milky Way. Also gives Sun-noise and G/T measurements at 1.42 GHz.
+    - **Key specs:** VERIFIED (Nooelec):
+  - 1420 MHz centre, 65 MHz passband
+  - At least 40 dB gain, NF about 0.8 dB (Barebones version about 1.05 dB)
+  - 120 mA nominal
+  - Power: 3-5 V through the SMA bias tee (recommended), or 3.3-5.5 V through micro-USB or the header
+  - 'up to 12 V should not damage' it, but this is not recommended long term
+    - **Size weight power:** EMI-shielded module (size not stated), about 0.5 W.
+    - **Interface and linux:** SMA. Powered from the V4L tee: 120 mA is under the 180 mA limit.
+    - **Price:** $49.95 on the product page; $44.95 on some Nooelec listings. Check before buying.
+    - **Tier:** extended
+    - **Integration notes:** - Bolt it straight onto the helicone feed in place of the SAWbird+ GOES. The GOES is 1688 MHz with an 80 MHz passband and rejects 1420 MHz.
+  - For the LimeSDR path, power it from micro-USB 5 V and fit a DC block. No Lime port may see more than 5 V DC (antenna digest).
+    - **Sources:**
+      - https://www.nooelec.com/store/sawbird-h1.html
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird.html
+      - https://www.rtl-sdr.com/a-hydrogen-line-radio-telescope-made-from-a-homemade-helical-antenna-and-rtl-sdr/
+    - **Availability:** Nooelec store ('Orders usually shipped in 1 business day'). Stock count not shown.
+    - **Cheaper alternative:** RTL-SDR Blog Wideband LNA V2 ($19.95; 100 MHz-6 GHz, NF under 1 dB, 3-5 V at 90 mA). It is unfiltered, so it risks overload from GSM/LTE at 1.8 GHz. Add a 1420 MHz cavity or SAW filter if you use it.
+    - **Safety notes:** Receive only. Use one power source at a time (vendor).
+  9.
+    - **Name:** Existing fold-flat petal helicone + L-band helix, reused as a 1420 MHz radio telescope and Sun-noise antenna
+    - **Category:** Radio-astronomy antenna (reuse, no dish)
+    - **Purpose in lab:** The minimum-size antenna for hydrogen-line and Sun noise that fits the fold rule. No new antenna is needed.
+    - **Key specs:** - Geometry: the L helix is 61.7 mm in diameter, so its circumference is about 19.4 cm. At 1420 MHz, C/lambda = 0.92, inside the 0.75-1.33 axial-mode range (my calculation).
+  - Expected gain: about 13-14 dBic and a beam of roughly 30 degrees. This is scaled from the 15.7 dBic NEC model at 1.7 GHz (estimate); measure it.
+  - Proof of concept: Geoff's homemade helix of about 13 dBi, with a SAWbird H1 and an RTL-SDR V3, showed a clear 1420 MHz power rise on the Milky Way (rtl-sdr.com).
+  - Why a small beam is enough: galactic HI fills the beam, so detection depends mostly on Tsys, not gain.
+    - **Size weight power:** - Packed: a 19 x 19 x 4 cm stack plus a 23 cm helix bundle. Deployed, the cone is 44 cm (antenna digest).
+  - Weight: about 380-500 g including the S-band helix (estimate).
+  - Power: none (the LNA is separate).
+    - **Interface and linux:** SMA to the SAWbird+ H1, then the V4L (2.4 MS/s spans about ±250 km/s around HI) or the LimeSDR. Software: Virgo (pip install astro-virgo, with gnuradio and gr-osmosdr from apt).
+    - **Price:** $0 extra. An optional dedicated 1420 MHz helix (C = 21 cm, 67 mm diameter, about 49 mm pitch, 6-7 turns, 35 cm or shorter) costs about $10-15 in materials (estimate).
+    - **Tier:** core
+    - **Integration notes:** - The match was trimmed for 1.69-1.71 GHz, so check S11 at 1420 MHz on the bench VNA. Re-trim the matching strip or wind the dedicated 1420 helix if S11 is worse than -10 dB.
+  - Point with the BNO085 and GNSS. Use a drift scan or fixed pointings about 20-30 degrees apart.
+  - The helix is circular; HI is unpolarized, so it costs nothing versus a linear antenna.
+    - **Sources:**
+      - https://www.rtl-sdr.com/a-hydrogen-line-radio-telescope-made-from-a-homemade-helical-antenna-and-rtl-sdr/
+      - https://github.com/0xCoto/Virgo
+      - https://www.rtl-sdr.com/category/radio-astronomy-2/page/6/
+    - **Availability:** Already built under the foldable-antenna plan.
+    - **Cheaper alternative:** A foil-lined cardboard (cereal-box) horn with a tin-can feed. It detected HI with an RTL-SDR V3 (rtl-sdr.com radio-astronomy page). It folds flat but is fragile.
+    - **Safety notes:** Passive. On a tripod, guard against wind (the 44 cm cone acts like an umbrella).
+  10.
+    - **Name:** Optional DIY hinged pyramidal horn for 1420 MHz (flat-pack panels of 35 cm or less)
+    - **Category:** Radio-astronomy antenna (DIY, foldable)
+    - **Purpose in lab:** A higher-gain, low-sidelobe 21 cm antenna for rotation-curve work and better Sun-noise contrast, still with no dish.
+    - **Key specs:** - Rigid reference (arXiv 2512.19262): 75 x 60 cm aperture, 18.5 dBi simulated, FWHM 18.1 by 21.3 degrees, waveguide can 16.8 x 10.2 x 24.1 cm, SAWbird+ H1. 'Successfully detected the Galactic 21 cm HI line.'
+  - A hinged flat-pack copy (each wall split into 2-3 hinged panels of 35 cm or less) is my untested adaptation.
+    - **Size weight power:** - Flat-packed: about 35 x 35 x 3 cm plus the waveguide can (estimate).
+  - Weight: about 0.6-1 kg in foam board with aluminium tape (estimate).
+  - Power: none.
+    - **Interface and linux:** SMA probe in the can, then the SAWbird+ H1 and the SDR. Same software as the helicone.
+    - **Price:** About $15-30 in materials (estimate).
+    - **Tier:** optional
+    - **Integration notes:** The horn breaks the size rule unless every wall is hinged. The aperture is at the edge of what a backpack carries. Only build it if helicone results show you need more gain.
+    - **Sources:**
+      - https://arxiv.org/html/2512.19262v1
+    - **Availability:** DIY.
+    - **Cheaper alternative:** The reused helicone (previous item).
+    - **Safety notes:** Passive. Large wind area: do not leave it unattended on a tripod.
+  11.
+    - **Name:** CANADUINO 60 kHz (WWVB/MSF/JJY60) or 77.5 kHz (DCF77) atomic-clock receiver module
+    - **Category:** LF time-signal receiver (GPIO)
+    - **Purpose in lab:** Receive and decode LF time signals, and compare the decoded minute and second marks with GNSS PPS. This is a time-transfer and propagation exercise and independent backup time.
+    - **Key specs:** - VERIFIED (Universal-Solder): Micro Analog Systems ICs, 2-5.5 V supply, 10 mA output, antenna Q above 100.
+  - Kit form: the crystal and antenna must be soldered on.
+  - The 60 kHz loopstick is 60 mm long with a 10 mm core.
+  - A comparison page notes that WWVB also uses PSK, which needs ES100-style receivers. This module uses the AM envelope.
+    - **Size weight power:** Small PCB plus a 60 mm ferrite rod. A few mA at 3.3 V (estimate).
+    - **Interface and linux:** Digital pulse output to one 40-pin GPIO (3.3 V).
+  - DCF77: dcf77pi (DCF77 only; 'FreeBSD, Linux: full support'; GPIO pin set in config).
+  - MSF/WWVB: write a small libgpiod pulse-width decoder (my own suggestion, untested on the Q6A).
+    - **Price:** 60 kHz: CAD 17.90 list (CAD 14.32 sale ended) or USD 10.88 at Universal-Solder. The 77.5 kHz version is listed on Universal-Solder (price not captured). Loopstick C$2.49. The Tindie listing is closed.
+    - **Tier:** optional
+    - **Integration notes:** - Mount the ferrite at least 15-20 cm from the Q6A bucks, the HDMI cable and the display, ideally in a lid pocket. Turn it broadside to the transmitter.
+  - A full decode needs 2 minutes or more without errors.
+  - Pick the version for your region: DCF77 for Europe, MSF for the UK and western Europe, WWVB for North America, JJY for Japan.
+    - **Sources:**
+      - https://universal-solder.ca/60khz-wwvb-atomic-clock-receiver/
+      - https://universal-solder.ca/?p=246
+      - https://www.universal-solder.ca/comparison-wwvb-msf-jjy-dcf77/
+      - https://www.universal-solder.ca/product/loopstick-antenna-60khz-for-atomic-clock-receiver/
+      - https://github.com/rene0/dcf77pi
+    - **Availability:** Universal-Solder website, eBay, Amazon and DigiKey (per the closed Tindie page).
+    - **Cheaper alternative:** Use the HF+ Discovery with the YouLoop to see the carrier and AM keying in SDR++. It needs no extra hardware but gives no automatic decoding.
+    - **Safety notes:** 3.3 V logic only. Never feed it 5 V on a GPIO line.
+  12.
+    - **Name:** SparkFun Lightning Detector - AS3935 (SEN-15441)
+    - **Category:** Lightning/sferics sensor (SPI)
+    - **Purpose in lab:** Real-time detection of nearby lightning with distance estimates. This is a storm-safety interlock for outdoor antenna work and adds a geophysics data log.
+    - **Key specs:** VERIFIED (SparkFun): AMS OSRAM AS3935, detection up to 40 km, distance to the storm front within 1 km in 14 steps, 500 kHz tuned antenna. SPI is supported; I2C hardware is present 'but SparkFun does not support it'. 2.4-5.5 V.
+    - **Size weight power:** Small breakout (size and current not listed). mW-class (estimate).
+    - **Interface and linux:** SPI plus an IRQ GPIO on the 40-pin header at 3.3 V. Only an Arduino library is listed. On Linux, use spidev with a community Python AS3935 library or your own driver (unverified on the Q6A).
+    - **Price:** $34.95 (SparkFun, in stock)
+    - **Tier:** optional
+    - **Integration notes:** - Its 500 kHz antenna will hear the handheld's switching noise, so mount it at least 10 cm from the bucks and display.
+  - Use the indoor/outdoor AFE setting, mask disturbers, and log events with GNSS time.
+  - Wire it as an alert: 'storm under 15 km: lower the loop and wire antennas'.
+    - **Sources:**
+      - https://www.sparkfun.com/products/15441
+    - **Availability:** In stock at SparkFun and its distributors.
+    - **Cheaper alternative:** A sferics waterfall from the HF+ Discovery (no distance), or live lightning maps when online.
+    - **Safety notes:** An early-warning aid only, not a safety device. Stop outdoor antenna work when it reports storms within about 15 km.
+  13.
+    - **Name:** Existing RTL-SDR Blog multipurpose dipole kit, re-set per band (FM, DAB, AIS/NOAA WX, radiosondes, ADS-B)
+    - **Category:** VHF/UHF antenna (telescopic, reuse)
+    - **Purpose in lab:** One 23 cm-collapsed kit covers every new VHF/UHF monitoring band. No new antenna is needed.
+    - **Key specs:** VERIFIED (antenna digest): 2 telescopic elements of 23 cm to 1 m, 2 of 5-13 cm, M5 thread, 60 cm + 3 m RG174, tripod and suction mount.
+  
+  Arm length per band (my calculation, about 0.95 x quarter wave; trim with the VNA):
+  - FM at 98 MHz: 73 cm, horizontal
+  - AIS / NOAA WX at 162 MHz: 44 cm, vertical
+  - DAB Band III at 174-240 MHz: about 33-34 cm, vertical
+  - Radiosondes at 403 MHz: 17.7 cm, vertical
+  - ADS-B at 1090 MHz: 6.5 cm (short elements), vertical
+    - **Size weight power:** Packed 23 x 8 x 5 cm, 150-250 g (estimates from the antenna digest). Passive.
+    - **Interface and linux:** SMA to either V4L.
+    - **Price:** $17.95 (already in the BOM)
+    - **Tier:** core
+    - **Integration notes:** - Use it vertical for AIS, ADS-B, sondes and DAB.
+  - Remove the FM band-stop for FM-RDS work.
+  - Keep the band-stop in for AIS, NOAA WX and DAB. It passes them (under 0.5 dB loss below 1 GHz).
+  - The auto_rx wiki says a quarter-wave monopole or a 70 cm antenna is usually enough for sondes.
+    - **Sources:**
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+      - https://www.rtl-sdr.com/DIPOLE
+      - https://github.com/projecthorus/radiosonde_auto_rx/wiki
+    - **Availability:** Already in the kit. Carry a spare telescopic pair.
+    - **Cheaper alternative:** Copper wire quarter-wave ground planes on an SMA bulkhead (DIY, under $5, estimate).
+    - **Safety notes:** Passive.
+  14.
+    - **Name:** Receive software stack for Ubuntu 24.04 noble arm64
+    - **Category:** Software (no hardware)
+    - **Purpose in lab:** Decoders and loggers for every new capability, all running locally with no network.
+    - **Key specs:** VERIFIED packages and repos:
+  - wsjtx 2.7.0~rc3 (noble universe, arm64)
+  - fldigi 4.2.03 (arm64): WEFAX, 'NAVTEX and SITOR-B', RTTY, SYNOP decoding, frequency measurement
+  - multimon-ng 1.3.0 (arm64): use only its EAS mode
+  - readsb (Debian package via dpkg-buildpackage, --device-type rtlsdr, works with tar1090)
+  - dump978-fa (SoapySDR, rtlsdr)
+  - AIS-catcher (RTL-SDR incl. V4, Airspy incl. HF+, SoapySDR; Debian/Fedora install script or source; built-in web viewer)
+  - radiosonde_auto_rx (Debian native or ghcr.io Docker; local web UI on port 5000; RS41/RS92/DFM/M10/M20/iMet/LMS6-400/1680 and more)
+  - chasemapper (offline tiles via tile_server_enabled; gpsd or serial GPS input)
+  - welle.io / welle-cli -w (Debian/Ubuntu packages, Flatpak for arm64)
+  - redsea (meson build with liquid-dsp; JSON per RDS group)
+  - nrsc5 (US HD Radio, RTL-SDR)
+  - Virgo (pip astro-virgo)
+  - dcf77pi
+  
+  SDR++ and GNU Radio are already in the stack.
+    - **Size weight power:** Software only. CPU: all are light except welle.io and Virgo FFT averaging (estimate: well under 2 A76 cores).
+    - **Interface and linux:** Everything must link the patched V4L librtlsdr2.
+  - Docker images and installers that bundle an older librtlsdr will be 'deaf' on the V4L (narrowband digest). Build auto_rx natively, or rebuild its image on the patched package.
+  - Check every binary with ldd for the patched librtlsdr.
+  - Route SDR++ audio to WSJT-X and fldigi through a PipeWire null sink (pactl load-module module-null-sink).
+  - chrony with the LC76G PPS gives WSJT-X far better than 1 s timing.
+    - **Price:** Free and open source.
+    - **Tier:** core
+    - **Integration notes:** - Disable all uploaders by default (auto_rx SondeHub upload is ON by default in station.cfg). Store spots and frames locally and upload later only if wanted.
+  - tar1090 and chasemapper need pre-downloaded map tiles for standalone use. Chasemapper supports this; tar1090 offline tiles are unverified.
+  - Download the readsb aircraft database while online.
+    - **Sources:**
+      - https://packages.ubuntu.com/noble/wsjtx
+      - https://packages.ubuntu.com/noble/fldigi
+      - https://www.w1hkj.org/FldigiHelp/index_of_contents_page.html
+      - https://packages.ubuntu.com/noble/multimon-ng
+      - https://github.com/EliasOenal/multimon-ng
+      - https://github.com/wiedehopf/readsb
+      - https://github.com/flightaware/dump978
+      - https://github.com/jvde-github/AIS-catcher
+      - https://jvde-github.github.io/AIS-catcher-docs/installation/overview
+      - https://github.com/projecthorus/radiosonde_auto_rx/wiki
+      - https://github.com/projecthorus/radiosonde_auto_rx/wiki/Docker
+      - https://github.com/projecthorus/chasemapper
+      - https://github.com/AlbrechtL/welle.io
+      - https://github.com/windytan/redsea
+      - https://github.com/theori-io/nrsc5
+      - https://github.com/0xCoto/Virgo
+      - https://github.com/rene0/dcf77pi
+    - **Availability:** apt (noble universe), GitHub and pip.
+    - **Cheaper alternative:** Not applicable (free).
+    - **Safety notes:** multimon-ng also contains pager and other private-traffic decoders. Do not enable them; use only EAS.
+- **Capabilities added:**
+  - HF reception from 0.5 to 28.8 MHz on the existing V4L through its built-in 28.8 MHz upconverter (no extra radio): shortwave broadcast, ham-band monitoring and utility broadcasts
+  - FT8 and WSPR propagation monitoring (receive-only spotting, logged locally with GNSS-disciplined time)
+  - NCDXF/IARU beacon propagation matrix (10 s slots, 3 min cycle, 100 W/10 W/1 W/100 mW power steps)
+  - HF weather fax: DWD 3855/7880/13882.5 kHz, NOAA NMF/NMG/NMC, JMH. Also DWD RTTY with fldigi SYNOP decoding and NAVTEX on 518 kHz
+  - HF time stations (WWV/WWVH/CHU) for listening and frequency calibration of the SDRs
+  - With the HF+ Discovery: VLF/LF from 0.5 kHz, covering lightning sferics, LF time-station carriers, NDBs at 190-535 kHz, NAVTEX on 490 kHz and longwave broadcast
+  - LF time-code decoding (DCF77, MSF, WWVB or JJY60, by region) compared against GNSS PPS
+  - Local lightning detection with distance estimate up to 40 km, used as a storm interlock for outdoor antennas
+  - ADS-B on 1090 MHz with a local map. Where public (US), UAT on 978 MHz with dump978-fa
+  - AIS ship tracking on 161.975/162.025 MHz near coasts or large rivers
+  - Radiosonde auto-detection, decoding, tracking and chase with offline maps, own GNSS position and IMU bearing. Includes 1680 MHz LMS6 sondes (US) through the existing L-band chain
+  - FM broadcast RDS logging and DAB/DAB+ reception, plus US HD Radio (nrsc5) where present
+  - NOAA Weather Radio with SAME/EAS header decoding (US and Canada)
+  - 21 cm hydrogen-line spectroscopy of the Milky Way with a foldable helix or horn (no dish)
+  - Sun-noise Y-factor and G/T checks at 1.4/1.7 GHz (helicone) and 10.5 GHz (QO-100 horn + LNB)
+  - Location-tagged RF surveys (FM/DAB coverage, ADS-B range rings, HF noise floor vs site), using the device's own GNSS
+- **Procedures:**
+  1.
+    - **Name:** HF bring-up and self-noise survey (do first)
+    - **Steps:**
+      - 1. Boot on battery only. Unplug the charger, because the IP2368 switcher is an HF noise source.
+      - 2. V4L with a 50-ohm terminator: in SDR++, record the noise floor at 3.5, 5, 7, 10, 14 and 21 MHz in a 500 Hz RBW, at the chosen gain.
+      - 3. Connect the MLA-30+ on 5-10 m of RG174 with ferrites at both ends, loop 2-3 m up and at least 5 m from the case. Turn on the bias tee (rtl_biast -b 1) and confirm with a multimeter at the loop end that it receives about 4.5 V.
+      - 4. Repeat the noise readings. A 10-20 dB rise over the terminator on 7-10 MHz means external noise dominates, which is the goal (estimate).
+      - 5. A/B each source with the antenna connected: display dimmed vs full, HDMI unplugged, LimeSDR idle vs streaming, Wi-Fi off, 12 V buck load step. Note any spur or line that moves.
+      - 6. Fit ferrites, move the loop or change the display mode until the device's own spurs sit at least 6 dB below band noise.
+      - 7. Optional bench MDS check: drive a low-level generator into the V4L through at least 60 dB of fixed attenuation. Conducted only; never connect a generator to an antenna.
+    - **Needs:**
+      - RTL-SDR Blog V4L in HF mode (existing primary SDR, reused; no external upconverter needed)
+      - MLA-30+ active receive loop (generic; eBay/AliExpress)
+      - Receive software stack for Ubuntu 24.04 noble arm64
+  2.
+    - **Name:** FT8/WSPR propagation monitor (receive-only)
+    - **Steps:**
+      - 1. Check GNSS time: chronyc sources shows PPS locked, with offset under 1 ms.
+      - 2. Set up audio: pactl load-module module-null-sink sink_name=sdr. In SDR++, select USB with a 3 kHz filter and send audio to 'sdr'. In WSJT-X, take input from 'sdr.monitor'.
+      - 3. Tune the WSJT-X built-in dial frequency for the band (FT8 or WSPR), with SDR++ in USB on the same dial.
+      - 4. Put in the AM high-pass filter if MW overload shows (spurious decodes, raised floor).
+      - 5. Log ALL.TXT and wsjtx_log, and tag each session with the GNSS position.
+      - 6. Plot distance and SNR against time of day; compare the MLA-30+ and the YouLoop+HF+.
+      - 7. Uploading to WSPRnet or PSK Reporter is optional, later, when online.
+    - **Needs:**
+      - RTL-SDR Blog V4L in HF mode (existing primary SDR, reused; no external upconverter needed)
+      - MLA-30+ active receive loop (generic; eBay/AliExpress)
+      - RTL-SDR Blog Broadcast AM High-Pass Filter
+      - Receive software stack for Ubuntu 24.04 noble arm64
+  3.
+    - **Name:** NCDXF beacon propagation matrix
+    - **Steps:**
+      - 1. Each beacon sends once on each band every 3 minutes, in 10 s slots: callsign plus four 1 s dashes at 100 W, 10 W, 1 W and 100 mW (ncdxf.org).
+      - 2. Write a small SoapySDR Python script, timed from the GNSS-disciplined clock, that steps 14.100, 18.110, 21.150, 24.930 and 28.200 MHz each slot. These frequencies are the standard IBP set, not machine-verified here because the NCDXF table is JavaScript.
+      - 3. For each slot, measure CW SNR in a 50-100 Hz bin for each dash. The weakest dash still heard gives the path margin in 10 dB steps.
+      - 4. Map the slot to the beacon callsign from the NCDXF schedule. Use fldigi CW to spot-check IDs.
+      - 5. Store a CSV of time, band, beacon and the highest decodable power step, and draw a beacon x band heat-map.
+    - **Needs:**
+      - RTL-SDR Blog V4L in HF mode (existing primary SDR, reused; no external upconverter needed)
+      - MLA-30+ active receive loop (generic; eBay/AliExpress)
+      - Receive software stack for Ubuntu 24.04 noble arm64
+  4.
+    - **Name:** HF weather fax, RTTY and NAVTEX
+    - **Steps:**
+      - 1. Pick a station from NOAA's worldwide radiofax schedule (dated 7 Mar 2025):
+  - DWD DDH3/DDK3/DDK6: 3855, 7880, 13882.5 kHz, 10 kW, F1C, white +425 Hz / black -425 Hz, 120 rpm, IOC 576
+  - NMF Boston: 4235, 6340.5, 9110, 12750 kHz
+  - NMG New Orleans: 4317.9, 8503.9, 12789.9, 17146.4 kHz
+  - NMC Pt. Reyes: 4346, 8682, 12786, 17151.2, 22527 kHz
+  - JMH: 3622.5, 7795, 13988.5 kHz
+      - 2. In SDR++, select USB with a 3 kHz filter and the dial 1.9 kHz below the assigned frequency (usual practice). Send audio to the PipeWire sink.
+      - 3. In fldigi WEFAX: centre 1900 Hz, auto-start on APT, IOC 576. Save the PNGs and tag each with time and GNSS position.
+      - 4. DWD RTTY: switch to fldigi RTTY at 50 baud and 450 Hz shift (check DWD's current schedule; not verified here). Enable SYNOP decoding to turn coded weather reports into text.
+      - 5. NAVTEX: 518 kHz is just above the V4L's 500 kHz limit. Use fldigi 'NAVTEX and SITOR-B'. Use the HF+ Discovery for 490 kHz or weak 518 kHz reception. Remove the AM high-pass filter for both.
+    - **Needs:**
+      - RTL-SDR Blog V4L in HF mode (existing primary SDR, reused; no external upconverter needed)
+      - MLA-30+ active receive loop (generic; eBay/AliExpress)
+      - Airspy HF+ Discovery
+      - Receive software stack for Ubuntu 24.04 noble arm64
+  5.
+    - **Name:** Time signals and SDR frequency calibration
+    - **Steps:**
+      - 1. HF: tune WWV/WWVH (2.5, 5, 10, 15 MHz) or CHU (3.33, 7.85, 14.67 MHz), whichever propagates. These frequencies are general knowledge, not fetched in this run.
+      - 2. Run fldigi 'Frequency Measurement & Analysis' on the carrier. The offset in Hz divided by the carrier frequency in MHz is the V4L ppm error, give or take ionospheric Doppler of about 0.1-1 Hz. Write the correction into SDR++, SatDump and auto_rx.
+      - 3. LF: solder the CANADUINO module for your region and wire it to 3.3 V, GND and one GPIO. Run dcf77pi (DCF77), or a libgpiod pulse-width script for MSF/WWVB.
+      - 4. Log the decoded minute frames next to the GNSS time and PPS edge. The module's filter delay dominates the measured offset, so calibrate it once and then watch day/night changes.
+      - 5. With the HF+ Discovery and YouLoop, also capture the LF carrier IQ in SDR++ for later phase and amplitude analysis.
+    - **Needs:**
+      - RTL-SDR Blog V4L in HF mode (existing primary SDR, reused; no external upconverter needed)
+      - MLA-30+ active receive loop (generic; eBay/AliExpress)
+      - CANADUINO 60 kHz (WWVB/MSF/JJY60) or 77.5 kHz (DCF77) atomic-clock receiver module
+      - Airspy HF+ Discovery
+      - Airspy YouLoop passive loop antenna
+      - Receive software stack for Ubuntu 24.04 noble arm64
+  6.
+    - **Name:** VLF/LF survey, sferics and lightning log
+    - **Steps:**
+      - 1. Connect the HF+ Discovery and YouLoop (bias tee none/off), with the loop hung at least 5 m from the device. Ideally work at a site away from mains wiring; whistlers need very quiet sites (unverified at handheld scale).
+      - 2. In SDR++, set the HF+ to cover 0-100 kHz (the full 768 ksps span) and record a waterfall. Sferics show as vertical broadband clicks; LF time stations as steady carriers.
+      - 3. Step up to 190-535 kHz for NDBs (CW idents) and NAVTEX on 490/518 kHz.
+      - 4. In parallel, log AS3935 events over SPI (time, distance estimate, energy) and time-match them to the sferics.
+      - 5. Rule: if the AS3935 reports a storm within about 15 km, take down the outdoor wire and loop antennas.
+    - **Needs:**
+      - Airspy HF+ Discovery
+      - Airspy YouLoop passive loop antenna
+      - SparkFun Lightning Detector - AS3935 (SEN-15441)
+      - Receive software stack for Ubuntu 24.04 noble arm64
+  7.
+    - **Name:** ADS-B (and US-only UAT) monitor with range map
+    - **Steps:**
+      - 1. Set the dipole kit's short elements to about 6.5 cm, vertical. Put the 1090 MHz filtered preamp at the antenna, powered from the second V4L's bias tee.
+      - 2. Run readsb --device-type rtlsdr --device <serial> --gain auto (or a fixed gain), with tar1090 as the local web UI. Pre-download the aircraft database and map tiles while online.
+      - 3. Let it run 30-60 min. Export the tar1090 range outline and log the GNSS site position and antenna height.
+      - 4. A/B: no preamp vs preamp; antenna at 1 m vs 2 m.
+      - 5. US only: run dump978-fa --sdr driver=rtlsdr,serial=... with skyaware978 on 978 MHz. Use the SAWbird+ ADS-B if you want both bands from one antenna.
+      - 6. Expected range with this small antenna: about 100-250 km for cruising aircraft (estimate, depending on the site horizon).
+    - **Needs:**
+      - Second RTL-SDR Blog V4L (the planned spare) as a parallel monitor receiver
+      - Uputronics-design SAW-filtered preamps: 1090 MHz (ADS-B), 403 MHz (radiosondes), 162 MHz (AIS)
+      - Existing RTL-SDR Blog multipurpose dipole kit, re-set per band (FM, DAB, AIS/NOAA WX, radiosondes, ADS-B)
+      - Receive software stack for Ubuntu 24.04 noble arm64
+  8.
+    - **Name:** AIS and NOAA Weather Radio (coastal / US-Canada)
+    - **Steps:**
+      - 1. Set the dipole arms to about 44 cm, vertical, as high as practical. Keep the FM band-stop in. The 162 MHz filtered preamp is optional.
+      - 2. Run AIS-catcher -d:<serial>, which decodes 161.975 and 162.025 MHz, with its built-in web viewer on localhost. Log NMEA to file.
+      - 3. Expected range: about 10-40 km from the shore, depending on antenna height (estimate).
+      - 4. US/Canada: tune 162.400-162.550 MHz NFM in SDR++. Pipe the audio to multimon-ng -a EAS to log SAME headers; enable only the EAS decoder.
+    - **Needs:**
+      - Second RTL-SDR Blog V4L (the planned spare) as a parallel monitor receiver
+      - Existing RTL-SDR Blog multipurpose dipole kit, re-set per band (FM, DAB, AIS/NOAA WX, radiosondes, ADS-B)
+      - Uputronics-design SAW-filtered preamps: 1090 MHz (ADS-B), 403 MHz (radiosondes), 162 MHz (AIS)
+      - Receive software stack for Ubuntu 24.04 noble arm64
+  9.
+    - **Name:** Radiosonde auto-track and chase (standalone)
+    - **Steps:**
+      - 1. Build radiosonde_auto_rx natively against the patched librtlsdr2, or rebuild the Docker image with it. Check with ldd and look for 'Blog V4L' in rtl_test.
+      - 2. In station.cfg: set the SDR serial, the 400-406 MHz scan range, the ppm offset from the WWV calibration, and turn the SondeHub, APRS and other uploaders off for offline use. Keep the ChaseMapper UDP output on.
+      - 3. Use a dipole with 17.7 cm arms (vertical) and the 403 MHz filtered preamp at the antenna.
+      - 4. Run gpsd on the LC76G UART. Run chasemapper with offline tiles (tile_server_enabled = True, cached to zoom 15) and car/handheld position from gpsd.
+      - 5. Optionally send BNO085-derived bearings from a small handheld directional antenna as horus_udp 'Bearing' messages.
+      - 6. Offline landing prediction needs cusf_predictor_wrapper and a downloaded GFS model; otherwise prediction requires internet.
+      - 7. US: LMS6-1680 sondes can be received on the existing helicone + SAWbird+ GOES chain (1648-1728 MHz passband) with a second auto_rx instance.
+    - **Needs:**
+      - Second RTL-SDR Blog V4L (the planned spare) as a parallel monitor receiver
+      - Uputronics-design SAW-filtered preamps: 1090 MHz (ADS-B), 403 MHz (radiosondes), 162 MHz (AIS)
+      - Existing RTL-SDR Blog multipurpose dipole kit, re-set per band (FM, DAB, AIS/NOAA WX, radiosondes, ADS-B)
+      - Receive software stack for Ubuntu 24.04 noble arm64
+  10.
+    - **Name:** FM-RDS and DAB+ coverage survey
+    - **Steps:**
+      - 1. FM: remove the FM band-stop and set the dipole arms to about 73 cm. Run rtl_fm -M fm -l 0 -A std -s 171k -F 9 -f <freq> | redsea, and log the JSON per station.
+      - 2. Scan 87.5-108 MHz with a script. Store PI, PS and RadioText with signal level and GNSS position.
+      - 3. Lower the gain if strong local stations overload the 8-bit RTL (birdies on empty channels).
+      - 4. DAB+: set the arms to about 33-34 cm, vertical. Run welle-cli -c <channel> -w 7979 and log the ensemble and service list, SNR and FIC errors per site.
+      - 5. US: replace step 4 with nrsc5 <freq> <program> for HD Radio.
+      - 6. Build a coverage map from the logged positions.
+    - **Needs:**
+      - RTL-SDR Blog V4L in HF mode (existing primary SDR, reused; no external upconverter needed)
+      - Existing RTL-SDR Blog multipurpose dipole kit, re-set per band (FM, DAB, AIS/NOAA WX, radiosondes, ADS-B)
+      - Receive software stack for Ubuntu 24.04 noble arm64
+  11.
+    - **Name:** 21 cm hydrogen-line drift scan or pointed survey
+    - **Steps:**
+      - 1. Bench: check the helicone's S11 at 1420 MHz with the VNA, conducted only. Re-trim the match or wind the 67 mm 1420 helix if S11 is worse than -10 dB.
+      - 2. Fit the SAWbird+ H1 on the feed. Power it from the V4L tee (120 mA) or from micro-USB 5 V with a DC block when using the Lime.
+      - 3. In the warm case, confirm the V4L holds PLL lock at 1420.4 MHz. If not, use the LimeSDR.
+      - 4. Using GNSS and astropy/skyfield, point at galactic longitudes along the plane, about 20-30 degrees apart. Use the BNO085 for azimuth and elevation.
+      - 5. Run Virgo (gr-osmosdr source) at 2.4 MS/s with 1024-4096 channels and 1-10 min per pointing. Take an off-plane 'cold' reference for the baseline.
+      - 6. Expect a line a few K to tens of K above a Tsys of about 100-150 K. The radiometer equation gives about 0.2 K rms in 10 kHz after 1 min, so detection takes minutes (my estimate; baseline ripple and RFI are the real limit).
+      - 7. Convert to LSR velocity and plot the rotation-curve tangent points (coarse with a 20-30 degree beam).
+    - **Needs:**
+      - Existing fold-flat petal helicone + L-band helix, reused as a 1420 MHz radio telescope and Sun-noise antenna
+      - Nooelec SAWbird+ H1 (1420 MHz SAW + LNA)
+      - RTL-SDR Blog V4L in HF mode (existing primary SDR, reused; no external upconverter needed)
+      - Receive software stack for Ubuntu 24.04 noble arm64
+  12.
+    - **Name:** Sun-noise Y-factor and G/T check (no new hardware at 1.7 and 10.5 GHz)
+    - **Steps:**
+      - 1. Compute the Sun's azimuth and elevation from the GNSS fix and time (skyfield).
+      - 2. Point the helicone with the existing SAWbird+ GOES (1.7 GHz) or the H1 (1.42 GHz) at cold sky about 30 degrees away from the Sun and galactic plane. Record total power with rtl_power or a SoapySDR script over 1-2 MHz for 30 s.
+      - 3. Point at the Sun, using the BNO085 and a peak search, and record again. Y = P_sun / P_cold.
+      - 4. Expected rise: about 0.7-1.5 dB at L-band with the 13-16 dBic helicone, and about 0.5-1.5 dB at 10.5 GHz with the 21-23 dBi gore horn + Bullseye LNB (my estimates from solar flux, effective area and Tsys).
+      - 5. Repeat over days to track the antenna, LNA and feed health. A sudden drop in Y flags a failed LNA, a wet feed or a bad connector.
+      - 6. Moon noise is NOT attempted (below 0.2 K with these antennas; see rejected).
+    - **Needs:**
+      - Existing fold-flat petal helicone + L-band helix, reused as a 1420 MHz radio telescope and Sun-noise antenna
+      - Nooelec SAWbird+ H1 (1420 MHz SAW + LNA)
+      - RTL-SDR Blog V4L in HF mode (existing primary SDR, reused; no external upconverter needed)
+      - Receive software stack for Ubuntu 24.04 noble arm64
+- **Rejected:**
+  1.
+    - **Name:** External HF upconverter (Ham It Up, SpyVerter) or the LimeFEA HF Micro ($199)
+    - **Why:** Redundant. The V4L datasheet lists 'HF Implementation: Upconverter with 28.8 MHz LO' from 500 kHz, and RTL-SDR Blog recommends the SpyVerter only for older dongles. The LimeFEA would cost about 5x the V4L to duplicate it.
+  2.
+    - **Name:** Mini-whip active antenna (PA0RDT design and clones)
+    - **Why:** It is an E-field probe that needs a good ground and a mast, so a battery handheld with switching converters and an HDMI display near it is its own worst noise source. The rtl-sdr.com review says even the cheap MLA-30 loop is 'probably still better than using a miniwhip, especially in suburban/city environments'. Clones are commonly fed with about 12 V phantom power, not the 4.5 V tee (not verified per clone).
+  3.
+    - **Name:** Premium rigid active loops (Wellbrook class and similar)
+    - **Why:** rtl-sdr.com puts them at '$300+'. They are rigid, about 1 m class, and break the fold rule (pieces at most 35 cm). The YouLoop + HF+ pair gives most of the low-noise benefit for $209.
+  4.
+    - **Name:** SDRplay RSP1B / RSPdx-R2 as the HF/LF receiver
+    - **Why:** The audit records unreliable closed-API service behaviour on ARM Linux (hangs after boot or replug, Soapy activateStream failures). The HF+ Discovery is open source and natively supported by SDR++ and SatDump.
+  5.
+    - **Name:** rtlsdr-wsprd for HF WSPR
+    - **Why:** Its README targets 'VHF/UHF bands' and says nothing about HF or V4/V4L upconverter mode. Use WSJT-X (noble arm64 package) through an SDR++ audio sink instead.
+  6.
+    - **Name:** Discovery Dish ($214) or a 2.4 GHz Wi-Fi grid dish (about 100 x 60 cm) for the hydrogen line
+    - **Why:** Dishes are excluded by the antenna rule. A 13 dBi homemade helix with a SAWbird H1 already showed the HI line (rtl-sdr.com), so the foldable helicone or a hinged horn is enough.
+  7.
+    - **Name:** Moon-noise measurements
+    - **Why:** With antennas of 23 dBi or less, the 0.5 degree Moon fills about 5e-4 of the beam, so the rise is about 0.1 K (my calculation). That is undetectable; it needs a dish.
+  8.
+    - **Name:** Jupiter decametric / Radio JOVE dual dipole
+    - **Why:** It needs two half-wave dipoles at about 20 MHz, roughly 7 m each (general knowledge), which the fold rule cannot meet. Shortened antennas lose too much.
+  9.
+    - **Name:** Meteor-echo counting on the GRAVES 143.050 MHz radar
+    - **Why:** The transmitter is a French military space-surveillance radar, which is excluded by the project rule. Meteor pings on distant FM broadcast carriers with the telescopic dipole are an allowed alternative.
+  10.
+    - **Name:** ACARS, VDL2, HFDL, air-band and marine voice, pagers (POCSAG/FLEX in multimon-ng), DMR, TETRA, trunking
+    - **Why:** These are private or operational communications, excluded by the rule and restricted by law in many countries. Only the public broadcast and beacon services listed (ADS-B, AIS, sondes, broadcast, weather, time, beacons) are included.
+  11.
+    - **Name:** rtl_433 general ISM-band decoding
+    - **Why:** It decodes third-party devices (tyre-pressure sensors, doorbells, etc.), which raises privacy and tracking issues. Use it only for your own weather sensors, if at all.
+  12.
+    - **Name:** Blitzortung.org lightning-network station
+    - **Why:** It is a fixed station that needs an internet uplink and site-specific antennas, not a standalone handheld. The AS3935 plus HF+ sferics cover local needs.
+  13.
+    - **Name:** HamSCI Grape WWV Doppler monitoring
+    - **Why:** It needs a GPS-disciplined receiver clock. The V4L's free-running 1 ppm TCXO (about 10 Hz at 10 MHz) is far larger than the 0.1-1 Hz ionospheric Doppler being measured, and neither the V4L nor the HF+ has an external reference input (HF+ unverified).
+  14.
+    - **Name:** Ionosonde (chirp-sounder) reception
+    - **Why:** It needs a receiver that captures most of the HF band at once. The V4L's 2.56 MHz and the HF+ Discovery's 660 kHz are far too narrow (bandwidth requirement inferred, not verified).
+  15.
+    - **Name:** DAB+ on the HF+ Discovery
+    - **Why:** welle.io states 'Airspy HF+ is not supported due to limited bandwidth'. DAB+ stays on the V4L or the LimeSDR.
+  16.
+    - **Name:** UAT 978 MHz outside the US
+    - **Why:** UAT is a US system (FAA; general knowledge, not fetched). Elsewhere there is nothing to receive, so dump978-fa and the dual-band SAWbird+ ADS-B are only worth it in the US.
+  17.
+    - **Name:** Unfiltered wideband LNA ahead of the V4L for ADS-B, sondes or HF
+    - **Why:** The narrowband audit requires filter before gain. The V4L has only a diplexer, so broadband gain near FM, DVB-T or LTE desensitises it. Use the SAW-filtered preamps instead.
+  18.
+    - **Name:** Dedicated USB sound card for VLF
+    - **Why:** It uses a scarce USB port and needs its own E-field preamp. The HF+ Discovery already covers VLF from 0.5 kHz and also does LF and HF.
+- **Notes:** VERDICTS
+  - **HF:** The RTL-SDR Blog V4L DOES cover HF with a built-in 28.8 MHz-LO upconverter from 500 kHz (verified in the V4L datasheet). No upconverter is needed; only an antenna. The core HF add-on is therefore just the MLA-30+ active loop (about $38-40 on eBay) plus thin coax and ferrites, with the $16.95 AM high-pass filter for city use.
+  - **Below 500 kHz:** The V4L's limit is 500 kHz, so VLF/LF (DCF77/MSF/WWVB, sferics) and most NDBs need the Airspy HF+ Discovery ($169 list; EUR 232 incl. VAT at WiMo; 0.5 kHz-31 MHz verified) with the passive YouLoop ($39.95). The YouLoop needs a receiver with MDS of -140 dBm or better, so it suits the HF+ rather than the V4L.
+  - **Hydrogen line:** It fits the antenna rule without a dish. Reuse the fold-flat helicone (C/lambda = 0.92 at 1420 MHz, about 13-14 dBic estimated) with a SAWbird+ H1 ($49.95, 120 mA, runs from the bias tee). A comparable 13 dBi homemade helix with a SAWbird H1 and an RTL-SDR has detected HI. A rigid 75 x 60 cm horn (18.5 dBi) is proven but complies only as a hinged flat-pack.
+  
+  USB AND PORT BUDGET (the binding constraint)
+  - **USB 3.1 (blue):** primary V4L, or the NVMe enclosure. The compute and narrowband inputs disagree; settle it once on the bench.
+  - **Shared USB 2.0 hub (3 ports, also used by Wi-Fi):** display touch, plus ONE of the second V4L or the HF+ Discovery. Swap them on one pigtail.
+  - **Expansion:** a powered USB 2.0 hub on the filtered 5 V rail is possible but untested for RF noise.
+  - **Bus load:** each V4L is about 4.8 MB/s at 2.4 MS/s, comfortable for one hub.
+  - **Bias-tee current:** SAWbird+ H1 at 120 mA fits the V4L's 180 mA. The Uputronics preamp and MLA-30+ currents are unpublished, so measure them.
+  - **GPIO/SPI:** the CANADUINO module (one GPIO) and the AS3935 (SPI plus IRQ) go on the 40-pin header at 3.3 V, alongside the GNSS UART and IMU.
+  
+  POWER
+  - An HF, ADS-B or monitor session with the Lime idle and the display dimmed should be roughly 8-12 W at the pack, about 6-9 h on the 72 Wh 4S pack (estimate).
+  - HF needs the charger off and battery-only operation.
+  - Every new receive job is low power compared with the satellite modes.
+  
+  RF NOISE
+  - At HF the handheld itself is the main noise source: Q6A bucks, the 12 V buck, the IP2368 charger, the 1080p HDMI link and the LimeSDR clocks.
+  - Remote the loop by 5-10 m and choke the feed line.
+  - Run the terminated-vs-antenna A/B test before trusting any HF result.
+  - Mount the LF ferrite and the AS3935 away from the converters.
+  
+  SOFTWARE
+  - Every package must link the patched V4L librtlsdr2.
+  - Docker images and installers with their own older librtlsdr will be 'deaf'. Rebuild auto_rx natively, and check AIS-catcher and readsb with ldd.
+  - Uploaders (SondeHub on by default, WSPRnet, PSK Reporter, ADS-B aggregators) stay off for standalone use.
+  - Pre-cache map tiles: chasemapper is verified; tar1090 offline tiles are unverified.
+  
+  PERFORMANCE (estimates unless stated)
+  - **ADS-B:** about 100-250 km with a 6.5 cm dipole and the 1090 MHz filtered preamp.
+  - **AIS:** about 10-40 km from shore.
+  - **Sondes:** typically well over 100 km while airborne. Line of sight; not verified for this antenna.
+  - **FT8/WSPR:** continental or intercontinental, depending on propagation, if self-noise is controlled.
+  - **NAVTEX on 518 kHz:** at the V4L's edge; the HF+ is better.
+  - **Sun noise:** about 0.7-1.5 dB at L-band and 0.5-1.5 dB at 10.5 GHz.
+  - **Moon:** not detectable.
+  
+  RECEIVE-ONLY / BENCH RULE
+  - Every item here is receive only. The YouLoop is rated 250 mW maximum, and the Uputronics LNAs have no TX bypass.
+  - Signal generators, VNAs or noise sources may only feed the SDRs, filters or LNAs conducted, through fixed attenuators (60 dB or more for MDS work) or into dummy loads. That covers MDS checks, S11 trims of the 1420 MHz helix and dipole lengths, and preamp gain checks. Never connect a generator to an antenna.
+  
+  LEGAL (generic, country unknown)
+  - Reception rules differ by country. Some allow only broadcast, amateur, standard-frequency/time and meteorological signals.
+  - Decoding, storing or publishing ADS-B or AIS data, or operating receivers near airports and harbours, can be regulated.
+  - Never decode, record or share communications not intended for the general public. Leave the pager and voice decoders off.
+  - Radiosonde recovery, land access and property rules vary; never enter restricted areas.
+  - Data uploads to third-party networks are optional and subject to their terms.
+  
+  UNVERIFIED / MARKED
+  - MLA-30+: loop size, current draw, and operation from the V4L's 4.5 V tee.
+  - Whether the AM high-pass filter passes DC.
+  - Uputronics preamps: the bias-tee voltage spec conflicts between sources (5 V max vs 5-26 V) and the current draw is unpublished.
+  - HF+ Discovery current draw.
+  - AS3935 Linux library on the Q6A.
+  - CANADUINO 77.5 kHz price.
+  - DWD RTTY frequencies, and NCDXF and WWV/CHU frequencies (general knowledge; the NCDXF table is JavaScript-generated).
+  - tar1090 offline tiles.
+  - The helicone's gain and S11 at 1420 MHz.
+  - V4L PLL lock at 1420 MHz when hot.
+  
+  The radiofax frequencies were verified from NOAA's 'Worldwide Marine Radiofacsimile Broadcast Schedules' (7 March 2025): https://www.weather.gov/media/marine/rfax.pdf. NCDXF timing was verified at https://www.ncdxf.org/beacon/.
+
 ## small:lband_sband (run `wf_41027870-8e7`)
 
 - **Band group:** L-band 1.5-1.7 GHz and S-band 2.2-2.4 GHz with antennas of at most 12 cm (STRICT) or 20 cm (SMALL). Dishes and anything tens of cm deployed are EXCLUDED, including the foldable helicones, the 11-turn helix and the 2x2 helix arrays. Rule interpretation as given: STRICT means the largest deployed dimension is about 12 cm or less; SMALL means about 20 cm or less; foldable or telescopic antennas that are larger when deployed are excluded and appear only in the borderline note.
