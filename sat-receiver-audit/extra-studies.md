@@ -36958,6 +36958,168 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - Every option stays BENCH-only and conducted-only, with a terminated input and a permanent output pad. None of them affects the Q6A, the antennas, Ubuntu drivers or the receive-only rules.
   - Sources I could not reach: eBay (403), groups.io tinySA (402), the tinySA wiki noise-figure page (404).
 
+## searchA:nooelec_pad_kit_2x_30_db_pads_2x_blk_89 (run `wf_e5582d4c-0a2`)
+
+- **Part:** RF accessory set (bench): Nooelec 100815 SMA attenuator kit (1/2/3/6/10/20 dB) + 2x 30 dB pads (Mini-Circuits VAT-30W2+) + 2x Mini-Circuits BLK-89-S+ DC block + 3x Mini-Circuits ANNE-50+ 50 Ohm load + 3x Mini-Circuits 086-6SM+ Hand-Flex 6 in jumper (one cut into E-field stubs)
+- **Current price usd:** 245.86 corrected (47.95 kit + 2x31.43 VAT-30W2+ + 2x20.26 BLK-89-S+ + 3x14.84 ANNE-50+ + 3x16.67 086-6SM+; Mini-Circuits and Nooelec direct, checked 18 Oct 2026, before shipping and VAT). STACK v1 shows 212.68. That figure most likely priced each Passion Radio 30 dB pad at EUR 13.20 = $14.84, which is the listing's base (-3 dB) variant. The -30 dB variant is EUR 18.20 incl. VAT ($20.46), which gives 223.92 with Passion Radio pads.
+- **Critical specs:**
+  - Frequency coverage: pads, loads and jumpers must work from DC (or 50 kHz or lower) up to at least 6.3 GHz. The LiteVNA 64 covers 50 kHz-6.3 GHz and the tinySA ZS407 generator reaches 6 GHz. The DC block needs a low corner of 0.1 MHz or lower (HF+, tinySA 100 kHz, GPSDO 10 MHz tone) and a high end of at least 6.3 GHz. BLK-89-S+: 0.1-8000 MHz.
+  - Attenuation accuracy and flatness. Nooelec kit: +/-0.1 dB DC-3 GHz, +/-0.4 dB DC-6 GHz. VAT-30W2+: 30 +/-0.3 dB nominal, flatness 1.30 dB DC-6 GHz, typical 29.72 dB at 1 GHz and 27.69 dB at 6 GHz, varies 0.3 dB max over temperature. Pads are VNA-characterised for dBFS-to-dBm calibration, but they must be stable and repeatable.
+  - Match. Kit: VSWR below 1.2 max. VAT-30W2+: VSWR 1.35 max DC-3 GHz, 1.70 max 3-5 GHz. ANNE-50+: RL at least 30 dB DC-4 GHz and 27 dB 4-8 GHz, typical about 35 dB at 4-6.4 GHz. This sets its use as the VNA LOAD standard. BLK-89-S+: RL at least 25 dB 0.1 MHz-1 GHz, 18 dB 1-4 GHz, 13 dB 4-8 GHz. 086-6SM+: RL at least 23 dB DC-6 GHz.
+  - Insertion loss. BLK-89-S+: 0.3 dB max at 0.1-1 GHz, 0.8 dB max at 1-4 GHz, 0.9 dB max at 4-8 GHz. 086-6SM+: 0.30 dB max DC-2 GHz, 0.54 dB max 2-6 GHz.
+  - Power and DC. Pads: 2 W. ANNE-50+: 1 W, derated to 350 mW at 100 C. 13.2 V of DC into it would dissipate about 3.5 W, so DC blocks always go first. BLK-89-S+: 50 V DC and 4 W RF. It must hold off LNB 13-18 V and the 28 V boost rail for the noise source.
+  - Attenuation available at the same time: two independent 30 dB pads plus the 1-20 dB kit. That gives the 80 dB + DC block chain for the GPSDO +11 dBm tone and at least 30 dB above 800 MHz for tinySA sources (at most -40 dBm into paths).
+  - Build. SMA to MIL-STD-348; pads male-to-female (VAT-30W2+ is SMA-M to SMA-F, unibody with fins, per its outline drawing); stainless or passivated coupling nuts; torque 0.9 N·m. The 086 has a solid-PTFE dielectric, a tin-soaked braid (low leakage) and a copper-clad steel centre conductor that holds shape (needed for the E-field stubs), plus an anti-torque nut and FEP jacket.
+  - Temperature: pads and loads also travel in the field case. Ratings: VAT-30W2+ -45 to +100 C; ANNE-50+ and BLK-89-S+ -55 to +100 C.
+  - Authenticity and legality: buy from Mini-Circuits direct or an authorised distributor (DigiKey 3157- prefix, Mouser) and Nooelec direct. Each part needs a datasheet with guaranteed min/max values.
+  - Hard rules: all parts passive and used conducted-only. The 086 makes E-field stubs only. No loops and no H-field probes.
+- **Candidates:**
+  1.
+    - **Name:** Current set (Nooelec 100815 + 2x VAT-30W2+ + 2x BLK-89-S+ + 3x ANNE-50+ + 3x 086-6SM+)
+    - **Kind:** current_part
+    - **Price usd:** 245.86 (Mini-Circuits direct: VAT-30W2+ 31.43, BLK-89-S+ 20.26, ANNE-50+ 14.84, 086-6SM+ 16.67, each more than 1,000 in stock; Nooelec kit 47.95). EU via DigiKey DE (authorised, EUR ex/incl. 19% VAT): VAT-30W2+ 33.12/39.41 (191 in stock); BLK-89-S+ 21.34/25.39 (0, due 27 Oct); ANNE-50+ 16.29/19.39 (0, due 27 Oct); 086-6SM+ 18.13/21.57 (0, due 27 Nov).
+    - **Spec comparison:** Baseline; datasheets read: VAT-30W2+ Rev D, BLK-89-S+ Rev G, ANNE-50+ Rev H, 086-6SM+ Rev B. Nooelec kit page: DC-6 GHz, 2 W, +/-0.1 dB to 3 GHz and +/-0.4 dB to 6 GHz, VSWR below 1.2 max (below 1.1 typ), 2-year warranty.
+    - **Worse in:** Nothing; this is the reference. Nooelec does not publish the kit's body material.
+    - **Compatibility:** Passive SMA; no drivers or power rails involved.
+    - **Seller url:** https://www.minicircuits.com/WebStore/dashboard.html?model=VAT-30W2%2B
+    - **Risks:** Mini-Circuits ships from the US, so EU import VAT and handling apply. Whether checkout collects VAT was not verified. DigiKey DE stock is thin and lead times are 16-18 weeks.
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/attenuators/attenuator-bundle.html
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=VAT-30W2%2B
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=BLK-89-S%2B
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=ANNE-50%2B
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=086-6SM%2B
+      - https://www.digikey.de/en/products/detail/mini-circuits/VAT-30W2/20526783
+      - https://www.digikey.de/en/products/detail/mini-circuits/ANNE-50/16682797
+      - https://www.digikey.de/en/products/detail/mini-circuits/086-6SM/16682770
+  2.
+    - **Name:** Mini-Circuits ANNE-50L+ (SMA-M 50 Ohm termination, DC-12 GHz) in place of ANNE-50+
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 9.41 each at Mini-Circuits direct (more than 1,000 in stock). 3x = 28.23 vs 44.52 (saves 16.29); 2x = saves 10.86. DigiKey DE: EUR 9.91 ex / 11.79 incl. VAT, 0 in stock.
+    - **Spec comparison:** Same LL561 case, 4.0 g, 1 W, -55 to +100 C, SMA male. Min RL: 26 dB DC-4 GHz (ANNE-50+: 30), 21 dB 4-8 GHz (ANNE-50+: 27). Typical RL: 30.8 dB at 4 GHz and 27.2 dB at 6 GHz (ANNE-50+: 35.2 dB at 4 GHz, 36.0 dB at 6.4 GHz). Range DC-12 GHz vs 18 GHz, which is irrelevant here. Derating to 325 mW at 100 C (ANNE-50+: 350 mW).
+    - **Worse in:** Return loss is 4 dB worse (guaranteed) below 4 GHz and 6 dB worse at 4-8 GHz. That directly degrades its use as the VNA LOAD standard. Slightly lower high-temperature derating. NOT not-worse. A flagged trade at most: use ANNE-50L+ only for the 2 parking/A-B noise loads, where 26 dB RL is ample, and keep 1 ANNE-50+ as the VNA load (saves $10.86).
+    - **Compatibility:** Drop-in SMA-M load.
+    - **Seller url:** https://www.minicircuits.com/WebStore/dashboard.html?model=ANNE-50L%2B
+    - **Risks:** None on authenticity (OEM direct). The risk is using the wrong unit as the VNA load, so label them.
+    - **Sources:**
+      - https://www.minicircuits.com/pdfs/ANNE-50L+.pdf
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=ANNE-50L%2B
+      - https://www.digikey.de/en/products/detail/mini-circuits/ANNE-50L/16682882
+  3.
+    - **Name:** Second Nooelec 100815 kit used as 2x (20 dB + 10 dB) composite 30 dB pads instead of 2x VAT-30W2+
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 47.95 vs 62.86 for 2x VAT-30W2+ (saves 14.91)
+    - **Spec comparison:** RF on paper is equal or better. 20+10 composite tolerance +/-0.2 dB to 3 GHz and +/-0.8 dB to 6 GHz, against VAT-30W2+ typical roll-off from 30.04 to 27.69 dB at 6 GHz. Per-pad VSWR below 1.2 max, against VAT 1.35 (DC-3 GHz) and 1.70 (3-5 GHz). Power 2 W, same.
+    - **Worse in:** Each 30 dB takes two bodies, adding an extra mated interface, more length and more connector wear. Both kits' 20 and 10 dB pads are used up. The GPSDO 80 dB chain then needs 20+10+20+10+6+6+3+3+2 = 9 pads in series, with no free kit steps while it is built. Nooelec does not publish the body material. A functional trade, not strictly not-worse.
+    - **Compatibility:** SMA, passive.
+    - **Seller url:** https://www.nooelec.com/store/sdr/sdr-addons/attenuators/attenuator-bundle.html
+    - **Risks:** Tolerances stack; the composite must be VNA-characterised as a pair.
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/attenuators/attenuator-bundle.html
+      - https://www.minicircuits.com/pdfs/VAT-30W2+.pdf
+  4.
+    - **Name:** Passion Radio 'RF KONNECT' SMA attenuator -30 dB, 0-6 GHz, 2 W (ref ADAPT-SMA-ATTENUA30-8263)
+    - **Kind:** generic_or_clone
+    - **Price usd:** About 20.46 each (EUR 18.20 incl. 20% FR VAT, EUR 15.17 ex VAT; page variables: base 11.00 ex + 4.17 for the -30 dB variant; the page's 'tax excl.' label is wrong). 2x = 40.92 vs 62.86 (saves 21.94). On backorder (variant stock -6).
+    - **Spec comparison:** Published: 0-6 GHz, 2 W, SMA-M to SMA-F, 50 Ohm, gold-plated brass body, 30 x 8 mm, -55 to +125 C. Unpublished: attenuation tolerance, flatness and VSWR. VAT-30W2+ guarantees +/-0.3 dB nominal and VSWR 1.35 max DC-3 GHz.
+    - **Worse in:** No guaranteed accuracy or VSWR, so it cannot be shown not-worse. The brass body is less wear-resistant than a unibody/stainless SMA (inference). Made in China, under a retailer label, with no datasheet. EEVblog VNA user reports show some cheap 2 W SMA pad batches meet VSWR below 1.25 to 6 GHz while others do not, and power ratings were sometimes not met. Not qualified.
+    - **Compatibility:** SMA M-F, passive.
+    - **Seller url:** https://www.passion-radio.com/sma/sma-attenuator-826.html
+    - **Risks:** Batch variation; untested power rating; backorder date unknown. If bought, needs per-unit VNA acceptance (S21 within +/-0.5 dB to 3 GHz, VSWR 1.35 or better) before use.
+    - **Sources:**
+      - https://www.passion-radio.com/sma/sma-attenuator-826.html
+      - https://www.eevblog.com/forum/rf-microwave/sma-attenuators-(value-find)/
+  5.
+    - **Name:** Amphenol RF 132360 SMA-M 50 Ohm terminator
+    - **Kind:** other_brand
+    - **Price usd:** 4.79 (DigiKey ACX1251-ND, 71,951 in stock)
+    - **Spec comparison:** 0-18 GHz and 2 W average (RS listings); gold-plated brass; -65 to +165 C. VSWR 1.30:1 per everythingrf, about 17.7 dB RL; Amphenol's own datasheet was not reachable (403). ANNE-50+ guarantees 30 dB RL DC-4 GHz.
+    - **Worse in:** Return loss is about 12 dB worse; unusable as the VNA LOAD standard. Brass body. Worse.
+    - **Compatibility:** SMA-M load.
+    - **Seller url:** https://www.digikey.com/en/products/detail/amphenol-rf/132360/1011928
+    - **Risks:** The VSWR figure comes from an aggregator, not an Amphenol datasheet.
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/amphenol-rf/132360/1011928
+      - https://everythingrf.com/products/rf-terminations/amphenol-rf/694-267-132360
+      - https://uk.rs-online.com/web/p/rf-terminators/1439691
+  6.
+    - **Name:** Tyclon SMA50-SP 1W SMA-M termination
+    - **Kind:** other_brand
+    - **Price usd:** 8.81 (DigiKey Marketplace, ships from Tyclon, 825 in stock, separate shipping)
+    - **Spec comparison:** Up to 18 GHz; 1 W per part name only; nickel-plated brass body with gold contact. No VSWR or RL published.
+    - **Worse in:** No RL or VSWR guarantee, so it cannot match ANNE-50+'s 30 dB. Third-party marketplace item. Not qualified.
+    - **Compatibility:** SMA-M load.
+    - **Seller url:** https://www.digikey.com/en/products/detail/tyclon/SMA50-SP-1W/20837913
+    - **Risks:** Unknown match; marketplace shipping and VAT terms.
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/tyclon/SMA50-SP-1W/20837913
+  7.
+    - **Name:** Passion Radio 'RF KONNECT' SMA-M dummy loads: 0-6 GHz 2 W (81T414) and 6 GHz 1 W termination
+    - **Kind:** generic_or_clone
+    - **Price usd:** 81T414: EUR 2.88 incl. VAT (about 3.24), out of stock for 1-2 months. 1 W 6 GHz termination: EUR 11.10 as listed (VAT basis not checked), in stock.
+    - **Spec comparison:** Only frequency (0-6 GHz) and power (2 W or 1 W) are given; no RL or VSWR; made in China.
+    - **Worse in:** No RL spec, so it cannot be used as a VNA load or shown not-worse. Not qualified.
+    - **Compatibility:** SMA-M.
+    - **Seller url:** https://www.passion-radio.com/dummy-load/81T414-2204.html
+    - **Risks:** Unknown match and build.
+    - **Sources:**
+      - https://www.passion-radio.com/dummy-load/81T414-2204.html
+  8.
+    - **Name:** Crystek CBLK-300-3 SMA DC block
+    - **Kind:** other_brand
+    - **Price usd:** About 19.88-26.84 at qty 1 (DigiKey/Mouser per search snippets and aggregators; not fetched live); Mouser EU about EUR 24.00
+    - **Spec comparison:** 300 kHz to 3 GHz, 16 V max DC, 0.4 dB max IL. BLK-89-S+: 0.1 MHz-8 GHz, 50 V, 0.3 dB max to 1 GHz.
+    - **Worse in:** Low corner is 3x higher; top end 3 GHz instead of 8 GHz, so it fails the 6.3 GHz VNA band. A 16 V rating does not cover LNB 18 V or the 28 V rail. Worse, and not reliably cheaper.
+    - **Compatibility:** SMA.
+    - **Seller url:** https://nz.rs-online.com/web/p/dc-blocks/7924164
+    - **Risks:** RS AU marks it no longer stocked.
+    - **Sources:**
+      - https://nz.rs-online.com/web/p/dc-blocks/7924164
+      - https://digikey.cn/en/products/detail/crystek-corporation/CBLK-300-3/1767722
+  9.
+    - **Name:** Crystek CATTEN series SMA fixed attenuator (30 dB value not confirmed to exist)
+    - **Kind:** other_brand
+    - **Price usd:** Not found (unverified)
+    - **Spec comparison:** Series specs: DC-3 GHz; 1 W (0.5 W for 15/20 dB); VSWR 1.30:1 on the 1/10/20 dB parts; -40 to +85 C.
+    - **Worse in:** DC-3 GHz (needs 6 GHz); 1 W or less vs 2 W; VSWR. Worse.
+    - **Compatibility:** SMA.
+    - **Seller url:** https://www.everythingrf.com/products/microwave-rf-fixed-attenuators/crystek-corporation/29-917-catten-0200
+    - **Risks:** A 30 dB part number was not confirmed.
+    - **Sources:**
+      - https://www.everythingrf.com/products/microwave-rf-fixed-attenuators/crystek-corporation/29-917-catten-0200
+      - https://www.designworldonline.com/crystek-catten-series-attenuators/
+- **Notes:** VERDICT (angle A): I found no cheaper analog that is not-worse for any of the five line items. Keep the set at $245.86, bought from Mini-Circuits direct and Nooelec direct. All Mini-Circuits parts show more than 1,000 in stock.
+  
+  Per item:
+  
+  (1) Nooelec 100815 kit, $47.95. Nooelec direct is the cheapest source found. Walmart lists it at $48.99, Newegg at $113.21, Bigamart at $119.99 (search snippets). Passion Radio does not stock it. Its own 3-30 dB pack costs EUR 66.95 incl. VAT and uses generic pads.
+  
+  (2) 30 dB pad, VAT-30W2+, $31.43. The cheaper Mini-Circuits VAT-30+ and HAT-30+ are 'non-catalog' (not sold) on Mini-Circuits' own pages, and HAT-30+ is BNC, DC-2 GHz anyway. Established-brand 30 dB DC-6 GHz parts all cost more:
+  - L-com LCAT1000-30: $57.99, +/-0.75 dB, VSWR below 1.35.
+  - Mini-Circuits BW-S30W2+: $49.94 (DigiKey).
+  - RS PRO 282-3250 (stainless): about 857 SEK ex VAT per search snippet, not fetched.
+  - DigiKey VAT-30W2+: $37.72.
+  The cheap options (RF KONNECT generic, second Nooelec kit) are listed as candidates. Each is a trade.
+  
+  (3) BLK-89-S+, $20.26. It is the cheapest SMA DC block in Mini-Circuits' table. BLK-18-S+ costs $29.73 and starts at 10 MHz, so it is worse for HF and the 10 MHz tone. Nooelec's in-line DC block costs $24.95 and is rated 2 W against 4 W. Crystek is worse.
+  
+  (4) ANNE-50+, $14.84. ANNE-50L+ at $9.41 is the only cheaper OEM SKU, and its return loss is lower (26/21 dB min vs 30/27 dB). Possible flagged trade: use 2x ANNE-50L+ for the parking/A-B loads and keep 1x ANNE-50+ as the VNA load, saving $10.86. The user would have to accept this explicitly.
+  
+  (5) 086-6SM+, $16.67. 086-3SM+ costs the same $16.67 and is shorter. Other hand-formable 0.086 in cables cost more:
+  - 086-6SMRSM+: $22.10 (DigiKey).
+  - FL086-6SM+: $25.28 (DigiKey).
+  - Cinch 415-0081-006: $44.47 (DigiKey).
+  - DigiKey ES: 086-6SM+ at EUR 16.62.
+  I found no cheaper brand-name cable that holds its shape.
+  
+  Price correction: STACK v1's $212.68 undercounts. It most likely used the EUR 13.20 base price of the Passion Radio listing (the -3 dB variant) for each 30 dB pad. Re-audit lines: $245.86 with VAT-30W2+, or $223.92 with Passion Radio pads (EUR 18.20 incl. VAT each, backordered).
+  
+  EU: Mini-Circuits direct in USD is cheaper than DigiKey DE, which is authorised and quotes VAT-inclusive EUR (see the current-part entry). Mini-Circuits' EU VAT and duty handling at checkout was not verified. Per the world-sourcing file, Nooelec ships free over $100, with import VAT due on delivery.
+  
+  Stack flag, not about analogs: BLK-89-S+ is specified only down to 0.1 MHz. STACK puts a DC block in front of every SDR, so one in front of the HF+ for 60/77.5 kHz time signals would run below its rated range. Measure it on the VNA from 50 kHz, or leave the HF+ LF path without a block once DC on it is ruled out.
+  
+  Not verified: everythingrf's VSWR for Amphenol 132360 (Amphenol's site returned 403); Crystek prices (snippets only); RS PRO price (snippet). VAT-30W2+ connector genders were confirmed as SMA-M to SMA-F from the datasheet outline drawing (the header just says 'SMA Female'). Local datasheets: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/lab_dl/{VAT-30W2P,BLK-89-SP,ANNE-50P,086-6SMP}.pdf and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/padkit_dl/ANNE-50L.pdf. 13 WebSearch calls used.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
