@@ -17442,6 +17442,153 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Not checked (WebSearch budget for this run was used up after the first query, so the rest was done by WebFetch and curl on primary pages): Kamami (403), Electrokit, Gotronic, PTRobotics and Robot-Italy (search URLs failed), RobotShop EU (Cloudflare), Mean Well, RECOM and Würth modules. Enclosed and DIN-rail Mean Well units would fail on size anyway (not priced). FX 18 Oct 2026: 1 EUR = 1.1241 USD, 1 EUR = 4.368 PLN, 1 EUR = 0.8439 GBP.
 
+## searchB:pololu_d36v50f12_sys12 (run `wf_a268b76e-da0`)
+
+- **Part:** Pololu D36V50F12 (#4095), SYS12 rail (12 V from switched 4S node SW; feeds J21/Q6A, DISP12, AUX12). Qty 2 (1 spare). Angle B: generic modules, clones, DIY builds and used units, accepted only with independent measured evidence.
+- **Current price usd:** 79.90 for 2 (39.95 each; 36.75 each at 5+), Pololu direct, 'Rationed (Active and Preferred)', backorders allowed. Re-checked 18 Oct 2026: https://www.pololu.com/product/4095. Cheaper EU sources of the same genuine part (these are not analogs): EXP-Tech (DE) lists EUR 28.94 excl. VAT, which is EUR 34.44 incl. 19% DE VAT (about $38.71; $32.53 ex VAT), 12 in stock, plus shipping, maker part no. 4095 (https://www.exp-tech.de/products/12v-45a-step-down-voltage-regulator-d36v50f12). Botland B2B lists EUR 31.27 (VAT basis not shown; businesses with a VAT ID only). The Pi Hut is GBP 38.40 incl. VAT, so dearer. A Pololu US order also pays EU import VAT, so EXP-Tech is the cheapest landed source I verified.
+- **Critical specs:**
+  - Input range covers the 4S window (about 12.4-16.8 V; gates at 14.0 and 16.4 V). Absolute max at least 30 V, because SW can see the SMBJ17A clamp (VC 27.6 V). Current part: 13.3-50 V.
+  - Reverse-voltage protection. Current part: to 40 V.
+  - Output 12.0 V +/-4%. J21 window 11.5-12.5 V; Q6A absolute limit 16 V; display must be stable at 11.0 V.
+  - Continuous 4.2 A for 60 min in the closed enclosure at 14.0 and 16.4 V input, with the module bonded to the mid-plate at about 45-50 C inside (gate C4(2), Lime default). Pololu's 4.5 A typical is quoted at 36 V input and room temperature.
+  - Efficiency at least 92% at 2-4 A from 14-16 V. The runtime model uses 92%; Pololu says 90-95% typical.
+  - Dropout: regulation down to 13.3 V input or lower at load. Lower dropout lengthens runtime before the droop zone.
+  - Switching spectrum: about 500 kHz at heavy load and power-save above 20 kHz at light load. Must pass the HF+ narrowband A/B: no line 3 dB or more above the floor within +/-5 kHz of 40, 60, 77.5, 162, 490, 518 and 4209.5 kHz. A fixed or syncable frequency with forced PWM and no spread spectrum (or spread spectrum overridden by sync) is better.
+  - Output ripple and noise low enough for the pi filter on J21, the LC on DISP12 and the AUX12 bench loads.
+  - EN pin with known thresholds (sleep below 1.2 V, wake above 1.35 V) and a 100 k internal pull-up. The 10.0k/1.00k backup UVLO divider (sleep about 12.1 V, wake about 13.6 V) is computed from these, so a different part needs a new divider.
+  - Sleep current: Pololu 10-20 uA per volt of VIN. Quiescent current 2-4 mA.
+  - PG open-drain output (+20%/-10%).
+  - Protections: overcurrent and short-circuit, over-temperature, output under- and over-voltage, soft start.
+  - Size 25.4 x 25.4 x 9.5 mm, bondable to the mid-plate.
+  - Build quality: finished and tested module from a traceable maker or distributor; genuine, not counterfeit.
+- **Candidates:**
+  1.
+    - **Name:** DIY LM61460 buck board (LM61460AANRJRR, or LM61460AFSQRJRRQ1 synced on EN/SYNC), copied from the TI LM61460EVM layout, set to 12 V
+    - **Kind:** diy
+    - **Price usd:** About 15-25 per unit (my model, partly unverified). Verified: IC $5.07 at qty 1 on DigiKey, but 0 in stock with 2,999 due 26 Jan 2027 and a 20-week lead time; LM61460AFSQRJRRQ1 is stocked only as a 3,000-piece reel at $4.30. Inductor: Wurth 74439346047 (4.7 uH, 7.4 A rated, 13 A Isat, 13 mOhm) at $4.05, 8,572 in stock. Unverified: ceramic capacitors, resistors, 4-layer PCB and shipping. For 2 units, roughly $30-50 plus PCB tooling against $79.90.
+    - **Spec comparison:** Input: 3-36 V, 42 V absolute max, against 13.3-50 V. Lower ceiling but still above 30 V, so OK. Current: 6 A against 4.5 A typical (better on paper). Dropout: 0.4 V typical at 4 A, so it regulates to about 12.4-12.6 V input (better than the 13.3 V minimum). Frequency: set or synced 200 kHz-2.2 MHz; a sync clock forces FPWM and overrides spread spectrum (datasheet 8.3.2/8.3.9). Better for spur control. Iq: 7-9 uA (better); shutdown 0.6 uA (better). EN: 1.263 V rising +/-5%, hysteresis 24-32%, no internal pull-up, so the backup UVLO divider must be redesigned. PGOOD and thermal shutdown: yes. Thermal: RthJA 25 C/W on TI's 4-layer EVM. Measured data: TI's own EVM results (efficiency curves and CISPR 25 Class 5 EMI) at 5 V and 3.3 V out only. No measurement at 12 V / 4.2 A, and none independent.
+    - **Worse in:** (1) No independent measurement of this build at 12 V and 4.2 A. Angle B requires one, so it is unproven. (2) No reverse-voltage protection (VIN absolute min -0.3 V) against Pololu's 40 V reverse protection; it would need an added ideal-diode or P-FET stage, which adds cost and loss. (3) Build quality depends on my own VQFN-HR reflow and 4-layer thermal-via layout. It is not a finished, tested module. (4) Availability: the plain AANRJRR is backordered to Jan 2027. (5) At the 1.8-2.1 MHz sync the stack prefers, efficiency and thermal margin fall below the 400 kHz figures (TI notes the derating).
+    - **Compatibility:** Same rail position and interfaces. Needs a new EN/UVLO divider and an AC-coupled sync clock from the Pico or the harmonic-scan choice. PG pull-up to 3.3 V. Footprint fits in 25x25 mm (IC 4 x 3.5 mm, inductor 6.65 x 6.45 mm) but needs plate bonding under the IC and inductor. No software or driver impact. Keeps every hard rule (it is a DC converter).
+    - **Risks:** Not proven not-worse. Reject as a replacement now. Keep it only as the stack's existing P5 fallback if the Pololu fails C4 gate (1). If built, it must pass the same gates: the A/B spur mask and 60 min at 4.2 A at 14.0/16.4 V, plus efficiency measured with the INA228/FNB58.
+    - **Sources:**
+      - https://www.ti.com/product/LM61460
+      - https://www.ti.com/lit/ug/snvu621/snvu621.pdf
+      - https://www.digikey.com/en/products/result?keywords=LM61460AANRJRR
+      - https://www.digikey.com/en/products/result?keywords=LM61460AFSQRJRRQ1
+      - https://www.digikey.com/en/products/result?keywords=74439346047
+      - https://www.ti.com/lit/ds/symlink/lm61460.pdf
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=LM61460AANRJRR
+  2.
+    - **Name:** TI LM61460EVM-FS-400K reworked to 12 V out (change the FB divider and output stage)
+    - **Kind:** diy
+    - **Price usd:** 67.38 each (DigiKey listing, stock not shown); about $135 for 2
+    - **Spec comparison:** Same silicon as above, on TI's measured 4-layer board: FPWM, 400 kHz, CISPR 25 Class 5 EMI and efficiency measured by TI at 5 V out. Board is larger than 25x25 mm (terminal blocks, EMI filter).
+    - **Worse in:** Not cheaper ($67.38 against $39.95 each). Larger. No 12 V measurement. No reverse-voltage protection.
+    - **Compatibility:** Electrically OK after rework. Mechanically worse for the mid-plate.
+    - **Risks:** Rejected: more expensive than the current part.
+    - **Sources:**
+      - https://www.ti.com/tool/LM61460EVM
+      - https://www.digikey.com/en/products/result?keywords=LM61460AANRJRR
+    - **Seller url:** https://www.ti.com/tool/LM61460EVM
+  3.
+    - **Name:** Generic XL4016 '8A / 12A' adjustable buck module (AliExpress/eBay, many sellers)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not verified (usually listed at a few dollars; no price check was possible)
+    - **Spec comparison:** XLSEMI datasheet Rev 1.6: operating input 8-36 V (40 V absolute), so OK. Free-running oscillator 180 kHz +/-20% (144-216 kHz) with no sync. Non-synchronous with an external Schottky. 93% typical only at 24 V in, 12 V out, 6 A (a datasheet figure, not a module measurement). Iq 2.1-5 mA. 100% max duty. No PG pin. Generic boards add no reverse-polarity protection.
+    - **Worse in:** Spurs: the fundamental band 144-216 kHz contains TDF 162 kHz, and the 2nd/3rd harmonics (288-648 kHz) cover NAVTEX 490/518 kHz, with no sync to move them. Non-synchronous, so efficiency below 92% is likely at 14-16 V in. No PG and no defined EN UVLO. No reverse protection. Large (trimpot, TO-220 or heatsink). Variable build quality, and remarked or counterfeit ICs are common on such boards. No independent measurement of these modules found.
+    - **Compatibility:** Electrically possible. Fails the spur and quality requirements, and the size and bonding are worse.
+    - **Risks:** Rejected: worse on several specs and no measured evidence.
+    - **Sources:**
+      - https://www.xlsemi.com/datasheet/XL4016-EN.pdf
+    - **Seller url:** 
+  4.
+    - **Name:** Generic '7A 9-60V to 3-32V' buck module with display (LT3800 controller, eBay seller best-for-sell); independently measured by HKJ (lygte-info)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not stated in the review; not verified
+    - **Spec comparison:** Measured: about 200 kHz. Output noise 'fairly high' even at light load. Minimum headroom about 2.65-3 V. About 4 W loss at 12 V in, 5 V out, 5.5 A. Heatsink 98.7 C at 5.5 A; inductor about 160 C at 3 A with 50 V in. Output jumps on load release. 62 x 44 x 18 mm, 45 g.
+    - **Worse in:** Dropout: needs about 15 V in for 12 V out, so it would drop out across most of the 4S range. Noise and spikes worse. Thermals far worse. Size much larger. No PG or EN UVLO.
+    - **Compatibility:** Not compatible with the 13.2-16.8 V input window at 12 V out.
+    - **Risks:** Rejected: measured worse.
+    - **Sources:**
+      - https://lygte-info.dk/review/Converter%20DC-DC%207A%209-60V%20to%203-32V%20UK.html
+    - **Seller url:** 
+  5.
+    - **Name:** Generic '10A 6.5-60V to 1.25-30V' buck module (LT3800 controller, eBay seller industry_mall); independently measured by HKJ
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not stated in the review; not verified
+    - **Spec comparison:** Measured: about 90% at 12 V in, 5 V out (below the 97% claim). 8-10 W loss at 24-50 V in with no heatsink path. Output adjustment drifted. The module died at 60 V and 2.5 A. The reviewer saw no apparent over-temperature protection. 75 x 21 x 16 mm.
+    - **Worse in:** Reliability (failed in test). No OTP. Voltage drift. No heatsink or plate mounting. Efficiency below 92%. The reviewer does not recommend it.
+    - **Compatibility:** No mounting for plate bonding. No PG or EN.
+    - **Risks:** Rejected: measured worse and unreliable.
+    - **Sources:**
+      - https://lygte-info.dk/review/Converter%20DC-DC%2010A%206.5-60V%20to%201.25-30V%20UK.html
+    - **Seller url:** 
+  6.
+    - **Name:** Generic LM2596 '20W' adjustable buck module (measured by HKJ)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not verified
+    - **Spec comparison:** A 20 W class module (LM2596 family, 3 A) against the 4.2 A x 12 V (about 50 W) needed.
+    - **Worse in:** Current rating far too low. Non-synchronous, with low efficiency.
+    - **Compatibility:** Cannot carry the SYS12 load.
+    - **Risks:** Rejected on rating.
+    - **Sources:**
+      - https://lygte-info.dk/review/Power%20Adjustable%20buck%20converter%20LM2596%20UK.html
+    - **Seller url:** 
+  7.
+    - **Name:** Generic Mini560 / Mini560 Pro 12 V fixed-output buck
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not verified
+    - **Spec comparison:** I found no independent measurement and no datasheet within budget. Listed input range, current and frequency are unverified.
+    - **Worse in:** No measured evidence, so it cannot be shown not-worse. The project already rejected Mini560 parts for J21 earlier (STACK.md row on J21 9 V).
+    - **Compatibility:** Unknown.
+    - **Risks:** Rejected under the angle-B rule (no measured evidence).
+    - **Sources:** []
+    - **Seller url:** 
+  8.
+    - **Name:** Used Pololu D36V50F12 (eBay or second-hand)
+    - **Kind:** used
+    - **Price usd:** Not found (eBay.com and eBay.de search pages returned HTTP 403)
+    - **Spec comparison:** Identical design if genuine.
+    - **Worse in:** Unknown stress history (overvoltage or ESD on VIN; Pololu forum t/29129 documents a back-feed pump condition on the D36V28Fx family). No warranty. Counterfeit or relabel risk. The saving over a new EU unit at EUR 34.44 incl. VAT would be small.
+    - **Compatibility:** Drop-in if genuine.
+    - **Risks:** Not verified to exist. If one turns up, accept it only after the full C4 bench gates on that unit.
+    - **Sources:**
+      - https://www.ebay.com/sch/i.html?_nkw=D36V50F12
+    - **Seller url:** 
+  9.
+    - **Name:** Pololu D36V50F12 (keep), bought from an EU authorized distributor
+    - **Kind:** current_part
+    - **Price usd:** EXP-Tech EUR 28.94 ex VAT / EUR 34.44 incl. 19% VAT (about $38.71 each; $77.43 for 2 plus shipping), 12 in stock, ships within 24 h, about 1 week EU-wide. Pololu direct: $39.95 each ($79.90 for 2) plus shipping and EU import VAT.
+    - **Spec comparison:** Same part: every spec equal.
+    - **Worse in:** Nothing. It stays subject to the existing C4 gates (narrowband A/B spur mask; 60 min at 4.2 A at 14.0/16.4 V).
+    - **Compatibility:** Unchanged.
+    - **Risks:** Distributor genuineness not independently verified beyond the 'Hersteller-Artikelnummer 4095' listing. Buy from Pololu-listed distributors only.
+    - **Sources:**
+      - https://www.exp-tech.de/products/12v-45a-step-down-voltage-regulator-d36v50f12
+      - https://www.pololu.com/product/4095
+      - https://botland.store/converters-step-down/16387-step-down-voltage-regulator-d36v50f12-12v-45a-pololu-4095-5904422344436.html
+      - https://thepihut.com/products/pololu-12v-4-5a-step-down-voltage-regulator-d36v50f12
+    - **Seller url:** https://www.exp-tech.de/products/12v-45a-step-down-voltage-regulator-d36v50f12
+- **Notes:** VERDICT (angle B): keep the Pololu D36V50F12. No generic, clone, DIY or used option is proven not-worse by independent measurement.
+  - The two generic modules HKJ measured are worse on noise, dropout, thermals and reliability (one died in test).
+  - The generic XL4016 is worse on spurs: its 144-216 kHz free-running band contains TDF 162 kHz and its harmonics cover NAVTEX 490/518 kHz. It has no sync, PG or reverse protection.
+  - The LM2596 is too weak.
+  - I found no measurement for the Mini560.
+  - I could not check used units (eBay returned 403).
+  
+  DIY LM61460: the only candidate that could beat the current part on paper.
+  - Better on paper: 0.4 V dropout, 6 A, sync with forced PWM (sync overrides spread spectrum), microamp-level Iq and shutdown current. Cost model about $15-25 per unit.
+  - Unproven: TI's measurements are its own, at 5 V and 3.3 V out, never at 12 V / 4.2 A. It has no reverse-voltage protection, its build quality depends on home reflow of a VQFN-HR with a 4-layer layout, and the plain AANRJRR is backordered at DigiKey until 26 Jan 2027.
+  - Use it only as the stack's existing P5 fallback if the Pololu fails gate C4(1). It would then need a new EN/UVLO divider: 1.263 V rising +/-5%, 24-32% hysteresis, no internal pull-up.
+  
+  Real saving on the same genuine part: EXP-Tech (DE), EUR 28.94 ex VAT / EUR 34.44 incl. VAT, 12 in stock, against Pololu US $39.95 plus shipping plus import VAT. Botland B2B lists EUR 31.27 (business only, VAT basis not shown).
+  
+  Limits of this check:
+  - WebSearch was exhausted after the first query (shared per-turn limit), so I worked from direct fetches of primary pages: the Pololu, TI, DigiKey and XLSEMI pages, HKJ's lygte-info reviews and EU shop pages.
+  - The Mini560 and other generic modules, and any used or clone listings, need a follow-up search if the user wants that coverage.
+  - The DIY BOM prices beyond the IC and inductor are my estimate, not verified.
+  - USD/EUR is 1.1241, the stack's rate.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
