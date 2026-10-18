@@ -1055,3 +1055,7 @@ P5: G2 (дисплей, HMI, накопичувачі) завершено, 12 р
 Запущено G6 (16 позицій, зокрема LimeSDR Micro і T7 1 ТБ як обов'язкові): wf_c3ba734e-52b.
 Джерела: digikey.de, reichelt.com, tinytronics.nl, pibenchmarks.com, docs.radxa.com (Dragon Q6A).
 
+## 2026-10-18 13:41 UTC
+
+P5 (проміжне): G6 — Leo Bodnar LBE-1420 у магазині leobodnar.com з EUR-цінами: £132.00 = €165.53 (≈$186). UK-відправлення в ЄС додатково обкладається пласким митом з 1.07.2026 і ПДВ при ввезенні (п. 34 operator_notes). G3 — UGREEN Nexode Air 65 W GaN коштує $34.99 в офіційному магазині UGREEN; виміряних шумів ще немає (сторінки розбору повертають 404). Джерела: https://www.leobodnar.com/shop/ , ugreen.com.
+
