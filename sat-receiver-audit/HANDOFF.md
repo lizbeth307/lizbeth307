@@ -1,6 +1,6 @@
 # HANDOFF: супутниковий приймач лише на прийом + портативна радіолабораторія
 
-Стан на 2026-10-18 21:20 UTC. Цей файл — повна передача роботи іншій моделі/людині. Читати повністю перед продовженням.
+Стан на 2026-10-18 21:21 UTC. Цей файл — повна передача роботи іншій моделі/людині. Читати повністю перед продовженням.
 
 ## 0. Критерії завершення проєкту (Definition of Done) — проєкт закінчено, коли виконано ВСЕ:
 1. sat-receiver-audit/build/ містить усі 19 файлів зі списку в §7 п.1, кожен SVG — валідний SVG 1.1 (блок назви «v2, 18.10.2026» і «теоретичний проєкт — перевірити на стенді»), 10-bom.csv читається як CSV.
@@ -33,9 +33,9 @@
 | Далі | відкриті питання STACK §8 (за запитом користувача, якщо лишиться ліміт) | не почато |
 
 
-### Зроблені пакети виправлень P6: fix:A:b1, fix:A:b2, fix:A:b3, fix:B:b1, fix:B:b2, fix:B:b3
+### Зроблені пакети виправлень P6: fix:A:b1, fix:A:b2, fix:A:b3, fix:B:b1, fix:B:b2, fix:B:b3, fix:B:b4
 ### Готові автори P7: ще жоден
-### Файли в build/: 02-zhyvlennia.svg, 07-pz-vstanovlennia.md
+### Файли в build/: 02-zhyvlennia.svg, 05-mekhanika.md, 07-pz-vstanovlennia.md
 
 
 ## 4. Файли (у репозиторії, гілка ccr-1537979d-cj7q9t; і в цьому архіві)
@@ -71,7 +71,7 @@ D19 Bench case: B&W outdoor.case Type 4000 RPD (conditional: eyelets locked when
 
 
 
-## 5a. Ще не виправлені проблеми STACK.md (53 шт.; якщо список порожній — усе виправлено)
+## 5a. Ще не виправлені проблеми STACK.md (34 шт.; якщо список порожній — усе виправлено)
 Кожна: де, що не так, як виправити, доказ. Виправляти прямо в STACK.md, перевіряючи за джерелами з final/.
 
 - [A51 | contradiction | reaudit_AB] ДЕ: 1.2 #102 «RG6 з компресійними F-роз'ємами»; 9.1 step 11 «деталі F/75 Ohm, RG6 з компресійними F, LC»; 11.4 row 20 «(RG6 з компресійними F-роз'ємами)»
@@ -243,101 +243,6 @@ D19 Bench case: B&W outdoor.case Type 4000 RPD (conditional: eyelets locked when
   ПРОБЛЕМА: The label «P5» (likewise P4) now means three different things: antenna port P5, lab procedure P5 and the analog phase P5 (about 260 uses). v2 added the heavy phase usage on top of the v1 port and procedure labels, so many sentences are ambiguous.
   ВИПРАВЛЕННЯ: Always qualify the label: «порт P5», «процедура P5», and «аналоги P5» / «етап P5» (likewise «повторний аудит P4» vs «порт P4» / «процедура P4»). Or note the three meanings once in «Позначки».
   ДОКАЗ: STACK.md lines 69, 76, 212, 313, 484, 778, 810 (grep -c «\bP5\b» about 260)
-
-- [B60 | missing | analogs_G1_G3] ДЕ: 9.1 крок 6 (в): «резистори дільників 0.1 % (продавця у файлах не названо — в одне з цих консолідованих замовлень)» and the LCSC list in 6 (б)
-  ПРОБЛЕМА: G3 #12 names a seller for the top divider resistor: Vishay MCA1206 3.3 MOhm 0.1 %, LCSC C4168316 (also in BOM 2.7). Only the 332 k + 4.02 k pair has no seller. The LCSC order in 6 (б) omits the 3.3 MOhm part.
-  ВИПРАВЛЕННЯ: Add «3.3 MOhm 0.1 % Vishay MCA1206 (LCSC C4168316, G3 #12)» to 6 (б). Change the note to «нижнє плече 332 k + 4.02 k 0.1 %/25 ppm — продавця у файлах не названо (Yageo 336 k у DigiKey і LCSC немає)».
-  ДОКАЗ: analogs_G3_power_gnss_imu.json decisions[12].conditions_or_tests (2) («Top: 3.3 MOhm 0.1 % (Vishay MCA1206, LCSC C4168316)»)
-
-- [B61 | missing | operator_user] ДЕ: 9.1 step 3: "| 3 | Сьогодні | Письмові питання до Wisecoco ..." (the only Wisecoco row)
-  ПРОБЛЕМА: Section 9 has no step that actually buys the Wisecoco panel (SKU 4681, $132, own shop, CN), and so no EU landed cost for it either. Step 3 only sends questions or falls back to 4D, while the reason column says 'Корпус чекає панель' and step 7 ties the Diamox AR film to the panel purchase. The default display, a long-lead non-EU item, has no time slot and no landed line in the shopping order.
-  ВИПРАВЛЕННЯ: Extend step 3: "Після чітких письмових відповідей (D5/G2) — одразу замовити Wisecoco SKU 4681 ($132.00, власний магазин, PayPal; продавець поза ЄС: EU landed = ціна + доставка + імпортний ПДВ (≈$157-160 з ПДВ до доставки, модель, 2.6) + EUR 3 мита + EUR 2 UHF за тарифний рядок + збір перевізника); AR-плівку Diamox — у той самий день (крок 7)".
-  ДОКАЗ: STACK 2.6 'Підсумок групи' note ("для Wisecoco ... мито EUR 3 і UHF EUR 2 за тарифний рядок (Wisecoco близько $157-160 з ПДВ до доставки"); final/analogs_G2_display_hmi_storage.json decisions[2] (keep Wisecoco SKU 4681, $132 ex shipping and ex EU import VAT)
-
-- [B62 | missing | reaudit_AB] ДЕ: 5.2 «Потрібен ще один вихід для EN ключа навантаження 3.3 V Lime M.2 (призначити на схемі)»; 5.1 row LIME3V3 «labd, EN на вільному виході MCP23017»; 2.8 GNSS і RTC «RESET (активний низький) — через 2N7002 з відкритим стоком від вільного виходу MCP23017 #1»; 11.5 row 28 (same text); 11.6 row 32 «EN — з вільного виходу MCP23017»
-  ПРОБЛЕМА: The I/O budget does not close. 5.2 assigns all 16 lines of MCP23017 #1 (GPA0-GPA7, GPB0-GPB7) and all 16 of #3 (14 inputs plus GPA7/GPB7 outputs). So the 'free output' for the LIME3V3 load-switch EN and for the LC76G RESET does not exist: two more outputs are needed. Section 8 has no open item for this, although the editor asked for one.
-  ВИПРАВЛЕННЯ: In 5.2 state that MCP #1 and #3 are 16/16 used and that LIME3V3 EN and LC76G RESET have no line yet. In 5.1, 2.8, 11.5 row 28 and 11.6 row 32, replace «від вільного виходу MCP23017 (#1)» with «лінію ще не призначено (5.2; розділ 8)». Add a section 8 row: 'Розподіл ліній I/O: EN LIME3V3 і RESET LC76G — вільних ліній на MCP #1/#3 немає; рішення до розводки силової плати'.
-  ДОКАЗ: STACK 5.2 MCP23017 #1 and #3 pin lists. v2_edit_notes 05b b1: 'MCP23017 #3 would need 17 lines but has 16. The new output is marked призначити на схемі. This should become an open bench/schematic item in 08_open_bench.'
-
-- [B63 | missing | reaudit_AB] ДЕ: 10 «Вхідні файли цього документа:»
-  ПРОБЛЕМА: The input-file list names only analogs_G4 among the P4/P5 files. It omits the re-audits that v2 applies (final/reaudit_A_compute_software.json, reaudit_B_receivers_rf.json, reaudit_C, reaudit_D), analogs_G1/G2/G3/G5/G6 and final/operator_notes.md.
-  ВИПРАВЛЕННЯ: Add final/reaudit_A_compute_software.json, final/reaudit_B_receivers_rf.json, final/reaudit_C_antennas_targets.json, final/reaudit_D_power_mech_display_lab.json, final/analogs_G1…G6 and final/operator_notes.md, each with its role (P4 technical corrections, P5 part/seller/price, operator rules).
-  ДОКАЗ: v2_brief.md data dir and precedence list. v2_edit_notes 10_sources b2: 'analogs_G1/G2/G3/G5/G6 and reaudit_A-D are still not listed'.
-
-- [B64 | missing | structure] ДЕ: 10, L2015: «final/final_integration.json (рішення верифікатора, переважають)» … «final/analogs_G4_mechanical_field.json (рішення P5 щодо аналогів: механіка і польовий набір)»
-  ПРОБЛЕМА: The «Вхідні файли цього документа» list is stale. It still says final_integration overrides everything. Of the v2 inputs it names only analogs_G4. It leaves out analogs_G1-G3, G5, G6, reaudit_A-D and operator_notes.md, although 11.1-11.6 are built on them.
-  ВИПРАВЛЕННЯ: Add final/analogs_G1-G6_*.json (рішення P5), final/reaudit_A-D_*.json (повторний аудит P4) and final/operator_notes.md. Change «переважають» to «переважають серед джерел v1; порядок v2 — у шапці».
-  ДОКАЗ: STACK.md line 2015 vs line 2021 (section 11 intro names reaudit_A-D, analogs_G1-G6, operator_notes); data dir final/ listing
-
-- [B65 | style | analogs_G1_G3] ДЕ: 11.1 #34: «Тест п. 1079 — при реальному запасі LAB5»
-  ПРОБЛЕМА: «п. 1079» is a STACK v1 line number copied from G3 #10 («STACK item 1079 bench test») and points nowhere in v2.
-  ВИПРАВЛЕННЯ: Replace with «тест пульсацій і PSRR шини LT3045 (рядок «Пара LT3045 на 4.5 V від LAB5» у розділі 8)».
-  ДОКАЗ: analogs_G3_power_gnss_imu.json decisions[10].conditions_or_tests 2 and stack_changes 4
-
-- [B66 | style | analogs_G4_G6] ДЕ: Section 8, row «Килимок iFixit (P5 G5 ...)»: «складання разом з ремінцем і шнуром у Pelican 1450 (близько 37×26×15 см) без заломів»
-  ПРОБЛЕМА: G6 #5 made the B&W outdoor.case Type 4000 RPD the bench case, with the Peli 1450 as fallback only. Its acceptance step (f) requires the ESD-mat fold test in that case, and the 3.1 mat row already says «перевірка складання в кейсі стенду (B&W 4000 RPD або запасний Peli 1450)». The section 8 test row still names only the Pelican 1450.
-  ВИПРАВЛЕННЯ: Change to «у кейсі стенда B&W 4000 RPD (всередині 38.5x26.5x16.5 см; запасний Peli 1450 — 37.4x26.0x15.4 см) без заломів».
-  ДОКАЗ: analogs_G6_extended_optional.json decisions[5].conditions_or_tests 3(f) and stack_changes 2 and 5. STACK 3.1 «Антистатичний килимок» row note.
-
-- [B67 | style | numbers] ДЕ: 11.7 «Тверда економія»: «Anker 737 A1289 (G5 #12) | … EUR 82.99 з ПДВ | 16.70 | проти бази $109.99»
-  ПРОБЛЕМА: The «firm» saving compares a DE price incl. 19% VAT ($93.29) with a US price without sales tax ($109.99). Same-basis figures are $31.60 ex VAT ($78.39 vs $109.99) or $30.35 incl. VAT against anker.com/de.
-  ВИПРАВЛЕННЯ: Label it «з ПДВ ЄС проти ціни США без податку (консервативно)», or use $31.60 ex VAT. That would make firm savings ≈$70.52, of which lab $32.85.
-  ДОКАЗ: STACK 3.1 row «Банк живлення»; analogs_G5_lab_bench.json #12
-
-- [B68 | style | operator_user] ДЕ: 9.2: step 11 "**Після доставки Lime (відвантаження 15.12.2026):**" followed by step 12 "**Тиждень 2-3, QO-100 (Європа):**"
-  ПРОБЛЕМА: The bring-up order is not chronological. The week 2-3 QO-100 bring-up comes after the Lime step, which cannot start before mid-December. Note 10 asks for the bring-up order to be correct for the Lime default build.
-  ВИПРАВЛЕННЯ: Swap 9.2 steps 11 and 12 (QO-100 becomes 11, Lime becomes 12). Then update the references "9.2 крок 11" (Lime) and "9.2 крок 12" (QO-100) in 11.6 rows 7, 32, 39, 43 and 46, in 1.1 and in section 8.
-  ДОКАЗ: final/operator_notes.md item 10 ("... shopping order and bring-up order must switch to it"); final/user_requirements.md 'User decisions' (Lime ships 15 Dec 2026)
-
-- [B69 | style | reaudit_AB] ДЕ: 8, row «Килимок iFixit»: «складання разом з ремінцем і шнуром у Pelican 1450»
-  ПРОБЛЕМА: The bench case is now the B&W outdoor.case 4000 RPD, with Peli 1450 only as the fallback (5.8, 3.2), but the mat fold test still names only the Pelican.
-  ВИПРАВЛЕННЯ: «складання … у кейсі стенда (B&W 4000 RPD або запасний Peli 1450)».
-  ДОКАЗ: v2_edit_notes 03a b3: '60 vs 74 (G5 vs G6): ... G6 won. The text now reads в кейсі стенду (B&W 4000 RPD або запасний Peli 1450)'.
-
-- [B70 | style | reaudit_AB] ДЕ: 11.6 row 14 «у 8 — довша послідовність re-audit B на прибутті кожного V4L: 7 → 137.1 → 145.8 → 437.55 → 1090 → 7 MHz»
-  ПРОБЛЕМА: Wrong attribution. That sequence is re-audit A's (A1 bench b0). Re-audit B's CI sequence is 137.9 → 1700 → 7 → 437 → 1707 MHz (8.1 V4L-2).
-  ВИПРАВЛЕННЯ: «у 8 — послідовність re-audit A … (а 8.1 V4L-2 — послідовність re-audit B 137.9 → 1700 → 7 → 437 → 1707 MHz)».
-  ДОКАЗ: reaudit_A_compute_software.json results[1].bench_tests[0]. reaudit_B_receivers_rf.json results[0].corrections[0] and bench_tests[2].
-
-- [B71 | style | rules] ДЕ: Section 8, GEO visibility self-test (line 1489): «подати фікси Лісабона, Парижа, Берліна й Атен — labd ховає Elektro-L5/FY-2H нижче 5°»
-  ПРОБЛЕМА: The labd self-test on the device ships a named list of city fixes. This is a small city list in device code, and it ties the test to the city angle table above.
-  ВИПРАВЛЕННЯ: «подати чотири безіменні тестові точки lat/lon (довготи близько 9W, 2E, 13E і 24E) — labd ховає Elektro-L5/FY-2H нижче 5°», with no city names in the fixture.
-  ДОКАЗ: final/user_requirements.md hard rules ('no city tables'; line 39 'no city list'). v2_brief.md hard rules.
-
-- [B72 | style | structure] ДЕ: 8 / 9 / 11: «---» at L1551 just before «### 8.1.»; no «---» before «## 9.» (L1715) or «## 11.» (L2019)
-  ПРОБЛЕМА: Every other top-level section (1-8, 10) is preceded by a horizontal rule, as in v1. Here a rule sits inside section 8, splitting it from its own subsections, while sections 9 and 11 have none. This happened when the section files were assembled.
-  ВИПРАВЛЕННЯ: Delete the «---» at L1551. Insert «---» plus a blank line before L1715 «## 9. Порядок закупівлі і запуску» and before L2019 «## 11. Зміни v1 → v2».
-  ДОКАЗ: STACK.md lines 1551, 1715, 2019; v1 rules at lines 1110 and 1153 before ## 9 and ## 10
-
-- [B73 | style | structure] ДЕ: 11 (intro), L2021-2022: «Журнал змін між STACK v1 і v2. …» directly followed by «Пріоритет при розбіжностях: …»
-  ПРОБЛЕМА: There is no blank line between the two lines, so markdown renders them as one paragraph and the precedence rule is buried in the change-log sentence.
-  ВИПРАВЛЕННЯ: Insert a blank line between line 2021 and line 2022, or make line 2022 a bold lead-in («**Пріоритет при розбіжностях:** …»).
-  ДОКАЗ: STACK.md lines 2021-2022
-
-- [B74 | style | structure] ДЕ: Header L11: «збір Союзу за обробку, UHF: дистанційні продажі»; 1.2 L106: «(Union handling fee для дистанційних продажів»; 3.2 L424: «UHF EUR 2 за рядок»
-  ПРОБЛЕМА: «UHF» is used about 90 times as the abbreviation for the EU Union handling fee. In a radio document UHF is the frequency band (VHF/UHF, L3, L61), so many lines read ambiguously. L106 also leaves the English «Union handling fee» in prose, and L183 itself says the term will be «далі «збір за обробку»».
-  ВИПРАВЛЕННЯ: Replace every fee use of «UHF» (e.g. «EUR 2 UHF», «мито/UHF», «UHF EUR 2») with «збір за обробку». Replace «Union handling fee» in L106 with «збір Союзу за обробку». Keep «UHF» only for the band.
-  ДОКАЗ: STACK.md lines 11, 106, 183, 227, 424 (about 92 fee uses of «UHF»; v1 used UHF only for the band)
-
-- [B75 | style | structure] ДЕ: 11.3, L2205 «(r3 corr 2)», L2213 «(r3 corr 1)», L2221 «(r1 new_risk 6/9)», L2233 «(r0 corr 13, r1 corr 0, r2 corr 0)»
-  ПРОБЛЕМА: Internal JSON field shorthand in English (round/corr/new_risk) was left in the «чому» cells. It means nothing to a reader of the document.
-  ВИПРАВЛЕННЯ: Rewrite as Ukrainian references, e.g. «(повторний аудит B, раунд 3, виправлення 2)», «(повторний аудит B, раунд 1, нові ризики 6 і 9)», or drop the bracket and keep only «повторний аудит B».
-  ДОКАЗ: STACK.md lines 2205, 2213, 2221, 2233
-
-- [B76 | style | structure] ДЕ: 11.1, row 45, L2074: «P4 (reaudit_C) назвав Rollei Compact Traveler No. 1 Aluminium (ціна TBD, дані 2016 р.)»
-  ПРОБЛЕМА: English «TBD» is left in Ukrainian prose (not a part number).
-  ВИПРАВЛЕННЯ: «(ціну не названо, дані 2016 р.)»; also «P4 (reaudit_C)» → «повторний аудит C».
-  ДОКАЗ: STACK.md line 2074
-
-- [B77 | style | structure] ДЕ: 8.1 L1426 «'zero-copy support disabled'»; 11.2 L2120 «'dd if=/dev/mtd0 bs=4096'», L2132 «'install /bin/false'», L2142 «'satdump live'», L2148 «'out of scope'», L2159 «'Not supported for QCLINUX'»
-  ПРОБЛЕМА: About 25 English strings and commands are in ASCII single quotes, all new in v2 (v1 has 0). The document's convention is «…» for quoted text (e.g. «Not compatible with Radxa OS (Ubuntu 24)», «out of scope» in v1) and backticks for commands.
-  ВИПРАВЛЕННЯ: Put log and UI strings in «…» («zero-copy support disabled», «out of scope», «Not supported for QCLINUX») and commands in backticks (`dd if=/dev/mtd0 bs=4096`, `install /bin/false`, `satdump live`).
-  ДОКАЗ: STACK.md lines 1426, 1454, 1457, 1464, 1471, 1479, 2119-2160
-
-- [B78 | style | structure] ДЕ: 9.1 L1728-1731: «| 8 | Тиждень 2-3 |», «| 9 | Тиждень 1 |», «| 10 | До 1.12.2026 |», «| 11 | Зараз, не пізніше тижня 1-2 …»; 9.2 L1752-1753: «11. **Після доставки Lime (відвантаження 15.12.2026):**» then «12. **Тиждень 2-3, QO-100 (Європа):**»
-  ПРОБЛЕМА: The order is no longer chronological. v2 changed the timing of steps (Boni-Whip is now in stock; QO-100 is bought now) but kept the v1 step positions. Week-1 purchases now come after week-2-3 and December steps, in a list titled «спершу — довгі терміни».
-  ВИПРАВЛЕННЯ: 9.1: move step 9 (Boni-Whip, Тиждень 1) to just after step 6 and step 11 (QO-100, зараз/тиждень 1-2) to just after step 7, then renumber. 9.2: put step 12 (QO-100, тиждень 2-3) before step 11 (Lime, після 15.12.2026), then renumber.
-  ДОКАЗ: STACK.md lines 1719-1733 and 1741-1755; v1 lines 1125-1128 (old timings «З 20.11.2026», «Коли підтверджено…»)
 
 
 ## 6. P7: пакет збирання (що має бути в sat-receiver-audit/build/)
