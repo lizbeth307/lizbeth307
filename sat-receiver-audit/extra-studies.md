@@ -13800,3 +13800,120 @@
   - RAM ring sizing: the compute pick is the 12 GB Q6A, not the 16 GB in the storage plan, so the ring is about 4 GiB and wideband burst length is shorter.
   - Legal: rules on what may be received and decoded differ by country. Help pages carry a local-law note per mode, and the user remains responsible for complying.
 
+## labui:verify_technical (run `wf_fceb75d0-87e`)
+
+- **Lens:** TECHNICAL: whether each tool exists and builds on Ubuntu 24.04 arm64, supports the lab's SDRs (V4L via librtlsdr, LimeSDR Micro via Soapy/LimeSuiteNG, Airspy HF+ Discovery), works with Wayland touch on the Q6A, fits the USB/power/CPU budget, and whether the HF receiver and antenna specs are right. Also checked that no loop item appears.
+- **Refuted:**
+  1.
+    - **Claim:** hf_chain and integration_table say OpenWebRX+ supports the Airspy HF+ natively, and the v1 'HF > Listen' runs on OpenWebRX+ from the luarvique PPA.
+    - **Why:** OpenWebRX+ reaches the HF+ only through SoapySDR. owrx/source/airspyhf.py is a SoapyConnectorSource with driver 'airspyhf', and feature.py requires 'soapy_connector' plus 'soapy_airspyhf' (the SoapyAirspyHF module). That module is not in the noble arm64 archive and not in the luarvique noble PPA. The PPA has only soapy-connector and soapysdr*-module-sdrplay3; I checked its Packages file today. So with apt alone, the HF+ never shows up in OpenWebRX+.
+    - **Correction:** Build pothosware/SoapyAirspyHF from source (it already appears as 'soapyairspyhf' in the local repo list) and make it a hard dependency of the OpenWebRX+ HF profile. Keep it in the P0b gate. SoapyAirspyHF calls only functions that exist in noble's libairspyhf 1.6.8 (open_sn, set_freq, set_hf_agc/att/lna, set_samplerate, get_samplerates, start/stop), so it builds against the apt library.
+    - **Source:** https://raw.githubusercontent.com/luarvique/openwebrx/master/owrx/source/airspyhf.py ; https://raw.githubusercontent.com/luarvique/openwebrx/master/owrx/feature.py ; https://luarvique.github.io/ppa/noble/Packages ; https://github.com/pothosware/SoapyAirspyHF
+  2.
+    - **Claim:** 'Calibration > Frequency: ppm correction for V4L/HF+/Lime', applied through the Soapy/labrx path (labrx uses SoapySDR modules including 'airspyhf (source)').
+    - **Why:** SoapyAirspyHF never calls airspyhf_set_calibration; I grepped its sources. OpenWebRX+ says the same: 'supportsPpm ... not currently supported by the SoapySDR module'. A ppm value set through Soapy is therefore silently ignored for the HF+.
+    - **Correction:** For the HF+, apply the correction in labrx (NCO and resampler frequency offset), or open the device with libairspyhf directly and call airspyhf_set_calibration. Another route is noble's gr-osmosdr, whose arm64 build already links libairspyhf1, through its airspyhf source. Store the correction per serial in labd.
+    - **Source:** https://raw.githubusercontent.com/pothosware/SoapyAirspyHF/master/Settings.cpp ; https://raw.githubusercontent.com/luarvique/openwebrx/master/owrx/source/airspyhf.py
+  3.
+    - **Claim:** GLFW apps (SDR++, SatDump) are forced onto XWayland with XDG_SESSION_TYPE=x11, which gives them touch-to-pointer emulation (tech_stack, integration_table, tests).
+    - **Why:** Noble ships GLFW 3.3.10 as two conflicting packages: libglfw3 (X11) and libglfw3-wayland ('Conflicts: libglfw3'). In 3.3 the backend is chosen at build time, so XDG_SESSION_TYPE does nothing. Only GLFW 3.4 builds with both backends read XDG_SESSION_TYPE (src/platform.c). SatDump's own .deb depends on 'libglfw3 | libglfw3-wayland', so if anything installs libglfw3-wayland, SDR++ and SatDump become native Wayland clients and lose touch.
+    - **Correction:** Install and hold libglfw3 (the X11 build), pin libglfw3-wayland to -1, and have the policy and self-test check that the libglfw.so.3 in use is the X11 build. Keep XDG_SESSION_TYPE=x11 only as a harmless extra in case a build vendors GLFW 3.4.
+    - **Source:** ports.ubuntu.com noble universe arm64 Packages (libglfw3 / libglfw3-wayland 3.3.10-1build1) ; https://raw.githubusercontent.com/glfw/glfw/3.4/src/platform.c ; https://raw.githubusercontent.com/SatDump/SatDump/master/CMakeLists.txt (CPACK_DEBIAN_PACKAGE_DEPENDS)
+  4.
+    - **Claim:** 'wsjtx 2.7.0~rc3 (binaries only)', plus the OpenWebRX+ apt pin list (digiham, codecserver, multimon-ng, dxlaprs-tetra, acarsdec, dumphfdl, dumpvdl2, Meshtastic/LoRa, whisper), keeps transmit-capable and disallowed decoders off the device.
+    - **Why:** Noble's wsjtx 2.7.0~rc3+repack-1build2 is the full WSJT-X package with the TX-capable GUI. No 'binaries only' package exists. The openwebrx 1.2.126 Recommends field also lists packages the pin list misses:
+  - js8call: a transmit-capable GUI, in noble universe as 2.2.0.
+  - rtl-433: ISM, TPMS and meter decoders, which the design's own rejected list excludes.
+  - python3-digiham, libdigiham0, codecserver-driver-ambe3k and libacars-tools, which the pin names do not cover.
+  - multimon-ng: also present in the main noble archive (1.3.0), not only in the PPA.
+  apt installs Recommends by default.
+    - **Correction:** - Install openwebrx with --no-install-recommends, then add only the allowed decoders explicitly (csdr-skimmer, sonde-decoders, dream, direwolf, the jt9/wsprd source).
+  - Pin to -1, by exact name: js8call, rtl-433, digiham, python3-digiham, libdigiham0, codecserver, codecserver-driver-all, codecserver-driver-ambe3k, libcodecserver, multimon-ng, acarsdec, libacars2, libacars-tools, dumphfdl, dumpvdl2, dxlaprs-lora, dxlaprs-tetra, python3-meshtastic.
+  - For WSJT-X, either build only jt9 and wsprd, or install wsjtx and dpkg-divert or remove /usr/bin/wsjtx and its .desktop file. The policy audit should check for that binary.
+    - **Source:** https://luarvique.github.io/ppa/noble/Packages (openwebrx 1.2.126 Recommends) ; ports.ubuntu.com noble universe arm64 Packages (wsjtx, js8call, rtl-433, multimon-ng)
+  5.
+    - **Claim:** SigMF recorder: 'Global: ... geolocation (GeoJSON)'; datatype 'cu8 for RTL, ci16_le for Lime' (the HF+ format is not named).
+    - **Why:** SigMF v1.2.6 puts the preferred geolocation in the Captures object as an RFC 7946 GeoJSON point; the Global field stays only for backward compatibility. That matters on a device that moves. Also, libairspyhf hands the host airspyhf_complex_float_t samples: it converts the int16 USB samples to float and applies its DSP. HF+ recordings are therefore cf32_le, about 6.1 MB/s at 768 ksps, not the 3.1 MB/s USB rate.
+    - **Correction:** Write core:geolocation in each capture segment (one new capture whenever the GNSS position moves past a threshold), and optionally also in Global. Record the HF+ as cf32_le, or quantise it to ci16_le on purpose and log the scale. Budget about 6.1 MB/s per HF+ recording.
+    - **Source:** https://sigmf.org/ ; https://raw.githubusercontent.com/airspy/airspyhf/master/libairspyhf/src/airspyhf.h ; https://raw.githubusercontent.com/airspy/airspyhf/master/libairspyhf/src/airspyhf.c
+  6.
+    - **Claim:** process_supervision gives labclassify CPUAffinity=4-6, while resource_arbitration reserves 'A78 cores 4-6 for DSP' and says the classifier never disturbs RX.
+    - **Why:** This is an internal contradiction. When the HTP falls back to CPU, the classifier competes directly with labrx and the engines on the same three A78 cores, which risks sample loss. That conflicts with the 'no effect on RX sample counters' test.
+    - **Correction:** Pin labclassify to the A55 cores (0-3) with a CPUQuota, or allow cores 4-6 only for HTP-backed inference with a hard CPUQuota on CPU fallback. Add to the soak test: classifier on CPU fallback plus Lime HRPT plus HF+, with zero dropped samples.
+    - **Source:** Design JSON (process_supervision vs resource_arbitration)
+- **Confirmed:**
+  - Airspy HF+ Discovery (Airspy page):
+  - HF 0.5 kHz-31 MHz and VHF 64-260 MHz; 'up to 660 kHz alias and image free output for 768 ksps IQ'.
+  - +15 dBm IIP3 on HF and +13 dBm on VHF at maximum gain.
+  - Blocking dynamic range 110 dB on HF and 95 dB on VHF.
+  - MDS -140 dBm at 500 Hz on HF; +10 dBm maximum input; 0.5 ppm clock; 45x60x10 mm; high-speed USB 2.0.
+  - No bias tee and no current draw are stated.
+  The AIS 162 MHz, 137 MHz LRPT and 145.8 MHz double duty is inside the stated VHF range. https://airspy.com/airspy-hf-discovery/
+  - USB load: the HF+ sends int16 IQ over USB (airspyhf_complex_int16_t), so 768 ksps x 4 B is about 3.1 MB/s. VID:PID is 03EB:800C, which is useful for the udev alias. https://raw.githubusercontent.com/airspy/airspyhf/master/libairspyhf/src/airspyhf.c
+  - Noble arm64 archive versions, checked in the ports.ubuntu.com Packages indexes today:
+  - airspyhf, libairspyhf1 and libairspyhf-dev 1.6.8-4build1; no SoapyAirspyHF module; soapysdr0.8-module-airspy 0.2.0-4; soapysdr0.8-module-rtlsdr 0.3.3-1build1; librtlsdr2 and rtl-sdr 2.0.1-2build1; SoapySDR 0.8.1-4build1; gnuradio 3.10.9.2.
+  - gr-satellites 5.5.0-2build2, direwolf 1.7+dfsg-2build2, wsjtx 2.7.0~rc3+repack-1build2, gnss-sdr 0.0.19-1build3, qsstv 9.5.8, nanovna-saver 0.6.3-1, gqrx-sdr 2.17.4-2build3.
+  - labwc 0.7.1-1build1, cage 0.1.5+20240127-2build1, wvkbd 0.14.3-1, waybar 0.9.24-1build3, gtk-layer-shell 0.8.2-1build2, xwayland 23.2.6 (noble-updates 23.2.6-1ubuntu0.8), wlr-randr 0.3.0-1, python3-evdev 1.7.0.
+  - Qt 6.4.2: qt6-base, virtualkeyboard, qml6-module-qtwebengine (6.4.2-final+dfsg-12ubuntu9), qtcharts, qtpositioning, qt6-wayland. No Qt6 Location package; Qt5 qml-module-qtlocation 5.15.13 and libqt5webengine5 5.15.16 are present. layer-shell-qt is 5.27.11 (Qt5 only).
+  - gpiod and python3-libgpiod 1.6.3-1.1build1 (v1 API), so the design's warning about the v2 '-c' syntax is correct.
+  - python3-skyfield 1.48, sgp4 2.22, sdbus 0.11.1, dbus-next 0.2.3, systemd 235, sdnotify 0.3.1, pyudev 0.24.0, serial 3.5, gps 3.25.
+  - gpsd 3.25, chrony 4.5, pipewire 1.0.5, aptly 1.5.0, reprepro 5.3.1, timeshift 24.01.1, smartmontools 7.4, lighttpd 1.4.74.
+  - sdrangel, squeekboard, sdrpp and satdump are not packaged in noble.
+  - cage 0.1.5 in noble has 'Depends: xwayland', which settles the 'is XWayland built into noble's cage?' item: it is.
+  - labwc:
+  - If and ForEach actions were added in 0.6.6.
+  - The 0.7.1 labwc-actions(5) page documents If/ForEach with <query identifier>, plus Raise, Focus and Iconify, so the HOME raise keybind can be expressed on noble.
+  - <touch deviceName mapToOutput> is new in 0.7.1.
+  - Touch mouseEmulation arrived only in 0.8.2.
+  - The virtual-keyboard and virtual-pointer protocols date from 0.6.0, so wvkbd can work.
+  - input-method-v2 and text-input-v3 arrived only in 0.7.2, so noble has no IME. In-process Qt Virtual Keyboard is the right choice.
+  - Upstream is at 0.20.2 (2026-08-21).
+  https://raw.githubusercontent.com/labwc/labwc/master/NEWS.md ; https://raw.githubusercontent.com/labwc/labwc/0.7.1/docs/labwc-actions.5.scd
+  - SDR++:
+  - The ubuntu_noble CI installs libairspyhf-dev, and OPT_BUILD_AIRSPYHF_SOURCE defaults ON, so the HF+ works in the nightly.
+  - Defaults: SOAPY OFF, PAGER ON, FALCON9 OFF, SDRPLAY OFF, LIMESDR (legacy) OFF.
+  - rigctl_server supports F/f, M/m, V/v, s/S, AOS/LOS (\recorder_start and \recorder_stop), \start, \stop, \dump_state and \get_powerstat.
+  https://raw.githubusercontent.com/AlexandreRouma/SDRPlusPlus/master/docker_builds/ubuntu_noble/do_build.sh ; https://raw.githubusercontent.com/AlexandreRouma/SDRPlusPlus/master/CMakeLists.txt ; https://raw.githubusercontent.com/AlexandreRouma/SDRPlusPlus/master/misc_modules/rigctl_server/src/main.cpp
+  - SatDump master:
+  - plugins/sdr_sources/airspyhf_sdr_support exists and links the system libairspyhf.
+  - The Lime plugin builds a LimeSuiteNG variant (limesdrng_sdr_support) when the 'limesuiteng-legacyapi' library is found; otherwise the Soapy plugin is the route.
+  https://github.com/SatDump/SatDump/tree/master/plugins/sdr_sources ; https://raw.githubusercontent.com/SatDump/SatDump/master/plugins/sdr_sources/limesdr_sdr_support/CMakeLists.txt
+  - AIS-catcher README lists 'AirSpy (Mini/R2/HF+)', RTL-SDR Blog V4 and SoapySDR, so the HF+ VHF AIS default is supported. https://github.com/jvde-github/AIS-catcher
+  - SDRangel airspyhf plugin: it uses only libairspyhf 1.6.8 functions; airspyhf_open_fd is used only under #ifdef ANDROID, so it builds against noble's apt library.
+  Server mode: these plugins have 'srv' targets (PLUGINSSRV), so sdrangelsrv can host them headless: NAVTEX, DSC, WEFAX, DRM, Inmarsat C, Radio Astronomy, Noise Figure, VOR, Radiosonde, ADS-B, WDSP RX, Heat Map, SID, Map and the Radiosonde feature.
+  The Radio Clock plugin lives in plugins/channelrx/radioclock.
+  https://raw.githubusercontent.com/f4exb/sdrangel/master/plugins/samplesource/airspyhf/airspyhfinput.cpp ; https://raw.githubusercontent.com/f4exb/sdrangel/master/plugins/channelrx/CMakeLists.txt
+  - Noble's gr-osmosdr 0.2.5 arm64 (libgnuradio-osmosdr0.2.0t64) depends on libairspyhf1 and librtlsdr2. Gqrx and GNU Radio can therefore drive the HF+ with no source build, a simpler fallback than SoapyAirspyHF for labrx.
+  - PyPI pins exist as stated:
+  - onnxruntime 1.31.0: cp312 manylinux_2_28_aarch64 wheel, uploaded 2026-10-09.
+  - PySide6-Essentials 6.12.0: cp310-abi3 manylinux_2_39_aarch64, uploaded 2026-10-08; noble's glibc 2.39 meets it.
+  - sigmf 1.13.0: uploaded 2026-08-19.
+  https://pypi.org/pypi/onnxruntime/json ; https://pypi.org/pypi/PySide6-Essentials/json ; https://pypi.org/pypi/sigmf/json
+  - SigMF v1.2.6 is the current spec. Label of at most 20 characters is RECOMMENDED. Antenna extension fields: antenna:model (required), gain and hagl. https://sigmf.org/
+  - Nooelec Balun One Nine v2: 9:1 'balun/unun', specs 'accurate to frequencies up to 80MHz+', +24 dBm maximum, AntennaGuard varistor (IEC61000-4-2, 8 kV), SMA output plus terminal-block inputs, 38x25 mm, US$26.95. https://www.nooelec.com/store/balun-one-nine-v2.html
+  - Boni-Whip (WIMO, English page): 9 kHz-300 MHz, 'only about 14 cm' radiator, 189 g, 2x BNC, bias tee included, EUR 159 incl. VAT, 'Available from 20.11.2026'. A search snippet of the Spanish page gives 9-15 V and up to +3 dB gain. https://www.wimo.com/en/18067
+  - No loop antenna, loop amplifier, loop frame or loop-specific choke appears in the design. The only 'loop' strings are the explicit removal statements, the rejected list, and a PipeWire audio 'loopback' (not an antenna). The HF antenna profiles are whip, wire on a winder with 9:1, and miniwhip/Boni-Whip only.
+- **Missing:**
+  - SDRangel source build dependencies are missing from the packaging list:
+  - WDSP RX builds only with WDSP_SUPPORT (libwdsp).
+  - Inmarsat C needs INMARSATC_FOUND (the inmarsatc decoder and parser libraries).
+  - Satellite Tracker needs SGP4 (and Qt TextToSpeech in the GUI build).
+  - The SigMF sink needs libsigmf.
+  - APT needs aptdec.
+  None of these is in noble. Use -DENABLE_EXTERNAL_LIBRARIES=AUTO, or package each one. With ENABLE_EXTERNAL_LIBRARIES=ON the build may also compile LibMbe, DSDcc and SerialDV (AMBE / digital voice), so the policy audit must check for those .so files too. https://raw.githubusercontent.com/f4exb/sdrangel/master/CMakeLists.txt
+  - SDR++ rebuild flags: the official noble CI build passes -DOPT_BUILD_M17_DECODER=ON. The design removes M17 from SDRangel but lists only 'pager and falcon9 off' for SDR++ (falcon9 is already OFF by default). For consistency, add -DOPT_BUILD_M17_DECODER=OFF and -DOPT_BUILD_PAGER_DECODER=OFF, and add sdrpp m17_decoder.so to the policy audit.
+  - HF+ sample rate: OpenWebRX+ offers 912000 sps for 'Airspy HF+ or Discovery', but Airspy specifies the Discovery at up to 768 ksps (660 kHz alias-free). Function profiles should cap the HF+ at 768 ksps and use 660 kHz sweep steps.
+  - libgpiod v1 CLI semantics: on noble, gpioset releases the line when it exits by default, and the line state afterwards is driver-dependent. Bias-rail load switches and RF relays must be held by labd as persistent python3-libgpiod line requests, with a safe default state applied at boot (pull resistors). They must never be driven by one-shot gpioset calls, because a released line could re-enable a rail into a DC-short antenna.
+  - Boni-Whip:
+  - BNC output to the HF+ SMA needs an adapter or a BNC-SMA coax lead (not in the BOM).
+  - The amplifier housing length is unpublished, so compliance with the 35 cm maximum is unverified.
+  - Supply voltage and current are not on the English WIMO page; 9-15 V comes only from a Spanish-page snippet.
+  - It is listed as available from 20.11.2026; check against the P0b (Nov-Dec 2026) HF-hub date.
+  - Balun One Nine v2: Nooelec does not state its DC path, so 'DC short at the SMA' is an assumption. Keeping the profile DC-unsafe is right, but measure DC resistance at the SMA before any bias interlock logic relies on it either way.
+  - V4L on a black USB-A port: the datasheet's 250-270 mA plus up to 180 mA bias-tee load (SAWbird LNAs) is about 430-450 mA, close to the roughly 500 mA port limit and on the same FE1.1s hub as the HF+, whose current is unpublished. Bench-measure the combined VBUS draw with every bias tee on. Airspy and the search results publish no HF+ current figure (icholakov's video table is the only measurement; not read).
+  - PySide6-Essentials 6.12.0 was released 10 days ago. Pin a version QtTinySA and NanoVNA-Saver have been tested with (6.11.x or older) rather than the newest.
+  - SDR++ rigctl_server has no gain, attenuator or AGC commands (only freq, mode, VFO, recorder and start/stop). Encoder-driven gain or ATT for an SDR++ Expert session is impossible over rigctl; document it, or drive gain through SDRangel REST or labrx instead.
+  - Upstream libairspyhf master is 1.8.1 and adds airspyhf_set_bias_tee and get_bias_tee_count; noble's 1.6.8 has neither. Whether any HF+ Discovery revision has a bias tee is unverified. The design's assumption (no tee, external injector) is safe with 1.6.8, but check the unit before buying a separate injector.
+  - Wording: the HF+ Discovery has one SMA input. Menu and arbitration entries that say 'HF+ VHF port' should say 'HF+ in VHF mode via the input selector's VHF bus', so users do not look for a second connector.
+- **Notes:** Method:\n- Downloaded the noble and noble-updates arm64 Packages indexes (main and universe) from ports.ubuntu.com and checked every apt version the design names; all match, and none was found fabricated.\n- Read primary sources directly: the OpenWebRX+ PPA Packages file and source, SDR++ CMake/CI/rigctl source, the labwc NEWS file and 0.7.1 docs, libairspyhf headers (1.6.8 and master), SoapyAirspyHF source, SDRangel CMake and plugin sources, SatDump plugin CMake, GLFW 3.4 platform.c, and the PyPI JSON.\n- Used 2 of the roughly 12 WebSearch calls.\n- Could not read: Moonraker (HTTP 403), the osmocom gitea tags page (bot wall), and the GitHub API (blocked).\n\nMost important technical fixes, in order:\n1. OpenWebRX+ needs SoapyAirspyHF, built from source, for the HF+.\n2. GLFW touch on noble depends on installing libglfw3 (the X11 build), not on XDG_SESSION_TYPE.\n3. HF+ ppm correction cannot go through SoapyAirspyHF.\n4. The OpenWebRX+ Recommends field would pull js8call (a TX-capable GUI) and rtl-433, and the wsjtx package is the full TX-capable GUI. Use --no-install-recommends plus exact-name pins.\n5. SigMF: HF+ recordings are cf32_le, and geolocation belongs in each capture.\n6. The labclassify CPU affinity overlaps the DSP cores.\n\nHardware specs in the design hold: HF+ VHF range 64-260 MHz, 768 ksps / 660 kHz, IIP3, BDR, MDS, the 3.1 MB/s USB load, and the Balun One Nine v2 data. Software support for the HF+ in SDR++, SatDump, SDRangel, AIS-catcher, Gqrx and gr-osmosdr is real. labwc 0.7.1 supports the HOME raise keybind, touch mapToOutput, and virtual keyboards. cage 0.1.5 in noble includes XWayland.\n\nOpen items still to verify: HF+ and Boni-Whip current draw, Boni-Whip supply range and housing length, whether the V4L plus its bias tee fits a 500 mA port, and whether LimeSuiteNG staging builds the limesuiteng-legacyapi library SatDump's native Lime plugin needs (otherwise use Soapy).\n\nFiles saved for reference:\n- /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/verif/owrx_noble_Packages\n- /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/verif/noble_universe.txt\n- /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/verif/labwc/NEWS.md\n- /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/verif/ahf/airspyhf.h\n- /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/verif/soapyahf/Settings.cpp
+
