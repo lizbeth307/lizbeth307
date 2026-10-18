@@ -26431,6 +26431,134 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - VSDISPLAY (eBay.de 256679793470): what is the board's input (HDMI?), how does touch reach the host, which panel part is it, and is it the same 6.97in glass as Wisecoco?
 - **Confidence:** medium
 
+## searchB:leo_bodnar_lbe_1420_gpsdo (run `wf_c3ba734e-52b`)
+
+- **Part:** Leo Bodnar LBE-1420 GPSDO locked clock source (extended lab tier, qty 1). Roles in this stack: GNSS-locked 10 MHz or exactly 30.72 MHz CMOS reference into LimeSDR Micro J4 (10-52 MHz, 1.8-3.3 V); GNSS-locked test tone, conducted only through 80 dB of pads and a DC block, to calibrate the ppm of the RTL-SDR V4L units, the Airspy HF+ and the tinySA, and the Lime VCTCXO DAC. It is configured headless from the Q6A over USB HID.
+- **Current price usd:** 175.80 (GBP 132.00 at leobodnar.com, in stock, VAT basis not stated). EU: Batronix (DE) EUR 155.00 ex VAT / EUR 184.45 incl. 19% VAT. eBay US new: USD 209.75.
+- **Critical specs:**
+  - Output frequency range and resolution: must give 10 MHz and exactly 30.72 MHz for Lime J4, plus arbitrary GNSS-locked test tones up to 1.1 GHz for receiver ppm calibration. LBE-1420: 1 Hz-1.1 GHz official (software allows 1.6 GHz). Independent check by bb1 on EEVblog: at least 10 ppb setting resolution, 1.234567890 GHz read 7 Hz off on a Tek 2712.
+  - Output format and level: 3.3 V CMOS square wave, 50 Ohm source (about 1.65 V into 50 Ohm), +11 dBm at 10 MHz, rise/fall 300/260 ps. J4 wants 1.8-3.3 V CMOS, so a 10 MHz sine-only unit would need a squarer.
+  - Phase noise at 10 MHz (vendor typ): -72 dBc/Hz at 1 Hz, -128 at 100 Hz, -147 at 1 kHz, -156 at 10 kHz, -164 at 1 MHz; sub-ps RMS jitter (TCXO cleaned). Independent: drew23 (VK4ZXI) 'much the same as the specifications'; bb1 saw no visible spurs within +/-10 MHz of 10 MHz or around 1.2346 GHz. This matters because J4-derived clock lines land in L-band and the HRPT spur gate is tested with the GPSDO on.
+  - Locked accuracy and stability: guaranteed at least 1e-11, approaching 1e-12 at 1000 s. The independent maser comparison (febo) on the older 2-output Bodnar measured -1.55e-11.
+  - Holdover: glitchless entry to and exit from frequency hold on GNSS loss. This is critical because the Lime halts the host on a lost or faulty reference.
+  - Warm-up: usable output about 30 s after power-up, with no OCXO warm-up.
+  - Power: USB-C 5 V, 250 mA max. Measured 1.2 W (KedasProbe, EEVblog). Runs from the pack's 5 V rail.
+  - Size: 69 x 40 x 12 mm including connectors; pouch module.
+  - Antenna port: SMA, 3.3 V / 30 mA bias; active magnetic antenna with 5 m cable included. It cannot share the LC76G antenna without a splitter.
+  - Linux arm64 control: USB HID 1dd2:2443. bvernoux/lbe-142x v1.2 gives status, lock and set frequency. Settings persist in flash, so it runs headless.
+  - Build and legality: enclosed vendor product, CE/FCC/UKCA, 2-year warranty, settings in flash. No PPS output on the 1420; the stack takes PPS from the LC76G.
+  - Rule fit: conducted-only source (80 dB pads + DC block, or direct short cable to J4), never into an antenna. It has no transmit function.
+- **Candidates:**
+  1.
+    - **Name:** Leo Bodnar LBE-1420, used (same part)
+    - **Kind:** used
+    - **Price usd:** No used LBE-1420 listing found (eBay pages return 403; the search showed only new units at USD 209.75). Worth buying only if <= USD 175.80 including shipping and EU import VAT.
+    - **Spec comparison:** Same hardware, so every spec is identical: 1 Hz-1.1 GHz, +11 dBm CMOS, same phase-noise table, glitchless holdover, USB-C 5 V 250 mA, 69x40x12 mm, HID 1dd2:2443.
+    - **Worse in:** Only the warranty: the 2-year warranty and support may not transfer (unverified). Also the risk of early firmware: EEVblog user EvgenyG reported an LBE-1420 that stopped receiving GPS after firmware 1.05, and Bodnar replaced it.
+    - **Compatibility:** Identical to the current pick: bvernoux/lbe-142x, udev hidraw 1dd2:2443, J4 drive, pads.
+    - **Risks:** No current listing exists, so this cannot be bought today. Before paying, require the antenna, firmware >=1.08 and a demonstrated lock with lbe-142x --status. Buy from an EU or UK seller and check import VAT and duty.
+    - **Sources:**
+      - https://www.leobodnar.com/shop/index.php?main_page=product_info&products_id=393
+      - https://www.ebay.com/itm/265907234575
+      - https://www.eevblog.com/forum/metrology/compare-gpsdo-lbe-1420-vs-mini-vs-ocxo-10mhz/
+  2.
+    - **Name:** Leo Bodnar LBE-1421 dual-output GPSDO, used
+    - **Kind:** used
+    - **Price usd:** One eBay sale at USD 120.00 used. The listing title 'Precision GPS Reference Clock with case 2-port GPSDO' is ambiguous: it may be the older 2-port model, not the LBE-1421. Sold, not currently available. One new LBE-1421 sold at USD 179.00 by best offer (one-off). New list price GBP 198 / EUR 267.75 incl. VAT. UNVERIFIED (eBay pages blocked).
+    - **Spec comparison:** Superset of the 1420 (datasheet V1.0, 15 Jul 2025): Out 1 covers 1 Hz-800 MHz or 1 PPS; Out 2 covers 1 Hz-1.4 GHz (vs 1.1 GHz); 1 uHz resolution; +11 dBm below 400 MHz, +10 dBm above; 3.3 V CMOS into 50 Ohm; 1e-12 at 1000 s; same phase-noise table on the product page (-72 to -164 dBc/Hz); USB-C 5 V 250 mA; 69x40x12 mm, 43 g; antenna port 3.3 V / 30 mA; multi-GNSS; seamless holdover. bvernoux/lbe-142x supports it (PID 0x2444, set frequency, lock, PPS enable).
+    - **Worse in:** Nothing on specs. It adds a second output and PPS. The warranty may not transfer (unverified).
+    - **Compatibility:** Same driver family (bvernoux/lbe-142x, hidraw 1dd2:2444; add a udev line). Same size and power. Use Out 2 for J4 and tones; keep PPS off unless needed.
+    - **Risks:** Opportunistic and unverified price. Make sure it really is an LBE-1421: SMA connectors, USB-C, PID 0x2444. The older 2-port 'Precision GPS Reference Clock' has BNC connectors and is worse (see the next candidate). Require the antenna and a lock demo.
+    - **Sources:**
+      - https://www.ebay.com/itm/277703990794
+      - https://www.ebay.com/itm/116984943460
+      - https://leobodnar.com/files/datasheets/LBE-1421-Datasheet-V1.0_Initial_Release-15-07-2025.pdf
+      - https://www.leobodnar.com/shop/index.php?main_page=product_info&products_id=399
+      - https://raw.githubusercontent.com/bvernoux/lbe-142x/main/README.md
+      - https://www.batronix.com/shop/frequency-references/GPSDO/index.html
+  3.
+    - **Name:** Leo Bodnar original Precision GPS Reference Clock (2-output, BNC), used
+    - **Kind:** used
+    - **Price usd:** Possibly the USD 120 used eBay sale above (ambiguous, unverified, sold). New GBP 198.
+    - **Spec comparison:** Range 450 Hz-800 MHz (vs 1 Hz-1.1 GHz). Phase noise at 10 MHz: -125 at 100 Hz, -143 at 1 kHz, -150 at 10 kHz, -155 at 1 MHz (vs -128/-147/-156/-164). Output higher: +13.3 dBm at 32 mA. Two outputs, but the second is tied to the first. 5-12 V DC or USB; BNC connectors. Independent maser test (febo): -1.55e-11 offset.
+    - **Worse in:** Frequency range (no tones from 800 MHz to 1.1 GHz); phase noise 3-9 dB worse at 100 Hz-1 MHz offsets; larger, with BNC connectors; not listed by bvernoux/lbe-142x (official tools are Windows/macOS only).
+    - **Compatibility:** Poor: no supported arm64 control path listed; BNC needs adapters.
+    - **Risks:** Rejected because it is worse.
+    - **Sources:**
+      - https://www.leobodnar.com/shop/index.php?main_page=product_info&products_id=234
+      - https://blog.febo.com/?p=636
+  4.
+    - **Name:** Leo Bodnar Mini Precision GPS Reference Clock (new or used)
+    - **Kind:** used
+    - **Price usd:** New GBP 132 (same as the 1420); one eBay new listing asks GBP 180 OBO. No used sale price found.
+    - **Spec comparison:** Range 400 Hz-810 MHz (vs 1.1 GHz). Phase noise at 10 MHz: -70 at 1 Hz, -125 at 100 Hz, -145 at 1 kHz, -155 at 1 MHz (vs -72/-128/-147/-164). Output +6.4 to +10.3 dBm at 8-32 mA. Mini-USB. 70x41x15 mm. Lower power: 0.7 W measured at 8 mA vs 1.2 W.
+    - **Worse in:** Frequency range; phase noise (2-9 dB worse); output level; mini-USB connector. Not cheaper new.
+    - **Compatibility:** Supported by lbe-142x (PID 0x2211) and lbgpsdo; would work for J4 at 30.72 MHz.
+    - **Risks:** Rejected because it is worse. It was the earlier core pick that the stack already superseded.
+    - **Sources:**
+      - https://www.leobodnar.com/shop/index.php?main_page=product_info&products_id=301
+      - https://www.eevblog.com/forum/metrology/compare-gpsdo-lbe-1420-vs-mini-vs-ocxo-10mhz/
+      - https://www.ebay.com/itm/286839916889
+  5.
+    - **Name:** BG7TBL GPSDO (Chinese generic, OCXO, 10 MHz)
+    - **Kind:** generic_or_clone
+    - **Price usd:** About USD 98 (one undated forum report, UNVERIFIED); no current listing checked.
+    - **Spec comparison:** Fixed 10 MHz sine output, about 13 dBm (1 Vrms), plus 1PPS and NMEA. 12 V input at up to about 15 W (older spec listing, unverified for current units). Independent measurements: febo/PHK maser test of the 2019-08-03 unit showed a -9.62e-11 average offset (vs -1.55e-11 for the Bodnar) and an ADEV hump more than 10x worse than the Bodnar in the loop transition region; it was better than the Bodnar only below 25 s. The 2020-01-10 version was better (about 4e-13 offset, NEO-M7N). Leo Bodnar's own phase-noise comparison against his Mini showed up to an 18 dB difference, which time-nuts attributed to the BG7TBL's Si5328.
+    - **Worse in:** No 30.72 MHz and no tones above 10 MHz (fixed 10 MHz); sine output, not CMOS (needs a squarer for J4); about 12 V / up to 15 W with OCXO warm-up; bench-box size; no USB HID control or lock reporting to labd; large unit-to-unit variance between versions; frequency offset on some versions.
+    - **Compatibility:** Poor: it needs a 12 V rail and a squarer, and has no Linux control.
+    - **Risks:** Many versions with an unknown OCXO source; no specifications from the seller. Rejected because it is worse.
+    - **Sources:**
+      - https://blog.febo.com/?p=636
+      - https://febo.com/pipermail/time-nuts_lists.febo.com/2018-December/094987.html
+      - https://www.qsl.net/vk2kfj/gpsdo.html
+  6.
+    - **Name:** QRP Labs ProgRock2 (Si5351A) disciplined by GNSS 1PPS (LC76G or QLG2)
+    - **Kind:** diy
+    - **Price usd:** 18.00 for the ProgRock2 (QRP Labs shop), plus a GNSS PPS source (the LC76G is already in the stack) and an enclosure.
+    - **Spec comparison:** Range 3.5 kHz-200 MHz (vs 1.1 GHz); 3.3 V p-p square wave; 2 outputs in GPS mode; 3.5-12 V supply; USB configuration, settings in NVM. The 1PPS discipline method and resolution are not documented. No measured phase noise exists for the ProgRock2. Si5351A measured by QRP Labs in the QCX: about -135.6 dBc/Hz at 10 kHz (vs -156), degraded by at least 10 dB into a 50 Ohm load. The firmware history notes spurs at -45 dBc that were later fixed.
+    - **Worse in:** Frequency range; phase noise (about 20 dB worse at 10 kHz, more under 50 Ohm load); fractional-N spur risk; no documented holdover behaviour; no lock reporting over HID; bare board.
+    - **Compatibility:** USB serial configuration works on Linux, but no labd driver exists. 3.3 V output works for J4.
+    - **Risks:** No measured evidence as a GPSDO. Rejected under the angle-B rule and because it is worse.
+    - **Sources:**
+      - https://qrp-labs.com/progrock2.html
+      - https://qrp-labs.com/qcx/phasenoise
+  7.
+    - **Name:** DIY OCXO GPSDO (e.g. EEVblog 'Yet another DIY GPSDO', STM32 + OCXO + GNSS module)
+    - **Kind:** diy
+    - **Price usd:** Parts cost not verified.
+    - **Spec comparison:** Extensive community ADEV and phase-wander measurements on a fixed 10 MHz OCXO output. Close-in phase noise and holdover are better than a TCXO GPSDO. Output fixed at 10 MHz; multi-watt OCXO heating with warm-up time.
+    - **Worse in:** No 30.72 MHz and no arbitrary tones up to 1.1 GHz; power and heat; size; home-built enclosure and shielding (build-quality risk next to receivers); no HID control path.
+    - **Compatibility:** Could drive J4 at 10 MHz only (after squaring if the output is sine), but cannot do the receiver tone-calibration role.
+    - **Risks:** Rejected because it is worse in range, power and size. Measured quality applies only to the builder's own unit.
+    - **Sources:**
+      - https://www.eevblog.com/forum/projects/yet-another-diy-gpsdo-yes-another-one/
+  8.
+    - **Name:** Used telecom OCXO GPSDO (HP/Symmetricom Z3805A, Trimble Thunderbolt class)
+    - **Kind:** used
+    - **Price usd:** Not verified.
+    - **Spec comparison:** Best measured stability in the febo maser test: Z3805A about +2.8e-15 average offset, the quietest of the units tested. Fixed 10 MHz output.
+    - **Worse in:** Frequency range (10 MHz only); bench size and weight; multi-watt OCXO and external supply; no USB HID control; used-telecom ageing.
+    - **Compatibility:** Not portable; no 5 V USB power.
+    - **Risks:** Rejected because it is worse for this portable stack.
+    - **Sources:**
+      - https://blog.febo.com/?p=636
+  9.
+    - **Name:** Software route already in the stack: LC76G PPS + GNSS-SDR ppm + Lime VCTCXO DAC calibration
+    - **Kind:** diy
+    - **Price usd:** 0.00
+    - **Spec comparison:** Gives ppm and ppb estimates with no RF output.
+    - **Worse in:** No GNSS-locked RF output at all: cannot drive Lime J4 and cannot provide a known tone for tinySA, HF+ or RTL calibration. The Lime firmware PPS handler is a stub.
+    - **Compatibility:** Already in the core tier.
+    - **Risks:** Fallback only; not an analog.
+    - **Sources:** []
+- **Notes:** VERDICT (angle B): KEEP the LBE-1420. No generic module, clone or DIY build with independent measurements is not-worse and cheaper. Every measured cheap GPSDO (BG7TBL family, DIY OCXO GPSDOs, used telecom units) is fixed 10 MHz sine, so it fails the 30.72 MHz J4 role and the 1.1 GHz tone role, and needs 12 V at several watts. Every cheap programmable option (Si5351-based ProgRock2, RFzero-type boards) is about 20 dB worse in phase noise and has no GPSDO measurements. No programmable AliExpress clone with published test data was found (time-nuts: these sellers post no specs or data).
+  
+  The only not-worse cheaper route is a USED Leo Bodnar LBE-1420 or LBE-1421. The LBE-1421 is a strict superset: 1.4 GHz output, PPS, same size, same 250 mA, supported by lbe-142x. One eBay used sale at USD 120 exists, but the model is ambiguous, it has sold, and eBay pages were blocked (403), so it is UNVERIFIED. It could be the older BNC 2-port model, which is worse. Buy one only if: the price including shipping and EU import VAT is <= USD 175.80; the USB PID is 0x2443 (1420) or 0x2444 (1421); the connectors are SMA and USB-C; the antenna is included; firmware is >=1.08; and lock is shown with lbe-142x --status before payment. The cost is losing the 2-year warranty.
+  
+  Evidence for the current part: vendor phase-noise table; EEVblog bb1 (resolution of at least 10 ppb, clean spectrum); drew23 phase noise 'much the same as spec'; KedasProbe 1.2 W measured; Leo Bodnar 'Informal Evaluation' PDF (third party, older unit: measured phase noise essentially as specified at offsets of 100 Hz and above; https://www.leobodnar.com/files/Informal%20Evaluation%20of%20a%20Leo%20Bodnar%20GPS%20Frequency%20Reference.pdf).
+  
+  Not found or unverified: the GNSS chip and constellations inside the 1420 (the 1421 datasheet says 'multiple GNSS'); 1420 enclosure material and shielding; whether the warranty transfers. EU buyers: leobodnar.com is a UK seller, so check post-Brexit import VAT; Batronix (DE) EUR 184.45 incl. VAT is the clean EU price. All rules are kept: conducted only, no transmitter, no loops.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
