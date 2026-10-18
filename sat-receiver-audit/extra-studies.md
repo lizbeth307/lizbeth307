@@ -18804,6 +18804,983 @@
     - **Why:** Does not apply to the AN8009 (chip-on-board under epoxy); replaced by functional checks.
 - **Notes:** Source analogs_G5_lab_bench.json has 16 decision records, all read in full (0 LiteVNA, 1 tinySA, 2 noise source, 3 RF accessories, 4 torque wrench, 5 LNA V2, 6 FNB58, 7 DMM, 8 Hantek, 9 Debug Probe, 10 Pinecil, 11 mat, 12 Anker 737, 13 bench hub, 14 ISDT 608PD, 15 tools). Together they cover all 16 rows of the 3.1 core-bench table, so the core subtotal, 3.6 totals, 2.12 bench tier and the budget-minimum sentence must be recomputed; my row-based recalculation (model, mixed base like v1) is 1,536.56-1,767.80 with the lowest conditional picks, or 1,571.94-1,767.80 with the booked LiteVNA/tinySA lows, plus the micrometer gap item. FX: several G5 records use ECB 16 Oct 2026 (1.1253 USD/EUR, 4.37 PLN/EUR, GBP/USD 1.3335) while the stack keeps 1.1241; I kept each record's USD figure and named the rate where it differs (for the mat I used the stack-rate 33.67 already in v1). All G5 records note that the WebSearch budget was exhausted; prices come from store APIs and primary pages fetched 18 Oct 2026, and Eleshop, AliExpress item pages, eBay and some shops were unreadable, so those values stay marked as not verified. Hard rules are unaffected: every item is passive or conducted-only, the ZFL-500+ swap keeps the BENCH-only noise source, no loop or H-field items enter, and the one 'dish' word in the tools record is not carried. The DMM change means G5 tests that say 'AN8008' (FNB58 cross-check, ISDT cell check, Pinecil tip-to-earth, mat test, Hantek DC check) should read 'DMM (AN8009)'. Several changes depend on other sources: the reichelt cart exists only if the G1/G2/G3 decisions survive P6; the Pi Hut order disappears only if the Pro Stick Plus also moves (extended/G6); the micrometer stays only if G3 keeps its nickel step. No file was edited.
 
+## extract:analogs_G6 (run `wf_62cf5948-d44`)
+
+- **Source:** analogs_G6
+- **Changes:**
+  1.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** Leo Bodnar LBE-1420 GPSDO
+    - **Anchor:** 175.80 (GBP 132; база ПДВ не вказана) | Leo Bodnar (UK; у наявності, антена в комплекті)
+    - **Instruction:** Keep the part (same SKU, EAN 5060992290020); change price and source cells. Price cell -> «193.08 (EUR 171.76 з ПДВ DE разом з доставкою: EUR 164.15 + EUR 7.61 EU Mail; нетто EUR 137.94 = 155.06; FR EUR 172.43 = 193.83; PL EUR 179.68 = 201.98)». Source cell -> «leobodnar.com, регіон European Union: відвантаження EU-партнером SkunkRF (FR), EU Mail Service 2-3 робочі дні, мито і податки сплачує LBE (DDP)». Status stays перевірено (кошик 18.10.2026). Prepend to the note: «UK-ціна GBP 132 — з ПДВ UK (кошик), а не «база ПДВ не вказана». Перед оплатою — кошик Bodnar-EU зі справжньою країною і індексом (ціна йде за ставкою ПДВ: DE 19% / FR 20% / PL 23%; остаточна доставка — у PayPal). Запасний продавець ЄС: Batronix EUR 184.45 з 19% ПДВ + доставка (не показано). Рядок дорожчає на ≈$17.28 проти v1 (курс 1.1241 USD/EUR, не перевірено повторно).» Keep the rest of the note (кондуктивно 80 dB + DC-блок; вимкнений під час H1, ADS-B, Inmarsat-C; Bodnar Mini замінений; бюджет PPS + GNSS-SDR).
+    - **Reason:** G6 keep: no cheaper not-worse GPSDO; Bodnar-EU DDP is the cheapest EU route; v1 price was a UK price incl. UK VAT, so the EU-landed line rises.
+    - **Sources:** https://www.leobodnar.com/shop/index.php?main_page=product_info&products_id=393 ; leobodnar.com shopping_cart + shippinginfo (18 Oct 2026); https://www.batronix.com/shop/frequency-references/GPSDO/LBE-1420.html
+    - **Saving usd:** 0 on the part; line +17.28 vs v1; vs Batronix at least 14.26 (EUR 12.69) plus Batronix shipping
+  2.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** bench_test
+    - **Part:** Leo Bodnar LBE-1420 GPSDO
+    - **Anchor:** | P6 | Кондуктивне калібрування тону GPSDO (extended) | Прилад — LBE-1420. |
+    - **Instruction:** Replace the correction cell «Прилад — LBE-1420.» with «Прилад — LBE-1420, керування bvernoux/lbe-142x v1.2 (--status, --f1, --f1t); вихід лише через 80 dB + BLK-89-S+; антенний коаксіал без КЗ (захист порту u-blox знімає зміщення 3.3 V і прийом погіршується); для підстроювання VCTCXO Lime — нерухоме повітря або прилад обгорнутий (стабільність 10-1000 с залежить від потоку повітря і температури); тест J4 Lime (P7) — спершу 30.72 MHz, потім 10 MHz.»
+    - **Reason:** G6 conditions_or_tests (5),(6) and stack_changes (4): bring-up notes for P6/P7.
+    - **Sources:** https://raw.githubusercontent.com/bvernoux/lbe-142x/main/README.md ; https://www.eevblog.com/forum/metrology/a-closer-look-at-the-leo-bodnar-lbe1-420-and-the-precision-gpsdo
+    - **Saving usd:** 0
+  3.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** LBE-1420 control software
+    - **Anchor:** lbgpsdo з python hid і udev-правилом;
+    - **Instruction:** Replace with «bvernoux/lbe-142x v1.2 (cmake, libudev-dev; hidraw udev-правило для 1dd2:2443; налаштування зберігаються у flash) — основний інструмент LBE-1420; lbgpsdo — лише якщо підтверджено підтримку LBE-1420;»
+    - **Reason:** G6 stack_changes (3): align instrument software row #34 with the re-audit; lbe-142x lists LBE-1420 = 0x2443.
+    - **Sources:** https://raw.githubusercontent.com/bvernoux/lbe-142x/main/README.md
+    - **Saving usd:** 0
+  4.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** correction
+    - **Part:** Leo Bodnar LBE-1420 GPSDO (customs paragraph)
+    - **Anchor:** (Pi Hut, Uputronics, Leo Bodnar, Mirfield, Moonraker)
+    - **Instruction:** Remove «Leo Bodnar» from this UK-seller list (-> «(Pi Hut, Uputronics, Mirfield, Moonraker)») and add after the sentence: «Leo Bodnar для адрес у ЄС відвантажує DDP із Франції (SkunkRF, EU Mail Service, мито і податки сплачує LBE) — імпортних зборів немає.» If the paragraph is rewritten for Europe under operator notes 34-35, keep this fact in the new text.
+    - **Reason:** G6 stack_changes (2).
+    - **Sources:** leobodnar.com shippinginfo and cart (18 Oct 2026)
+    - **Saving usd:** 0
+  5.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Leo Bodnar LBE-1420 GPSDO
+    - **Anchor:** 
+    - **Instruction:** Add a row to the section-8 table: «LBE-1420 (у межах 14 днів відмови ЄС): кошик Bodnar-EU зі справжньою країною і індексом, доставка EU Mail Service (DDP); (1) lbe-142x v1.2 на Q6A бачить 1dd2:2443 через hidraw, --status показує GPS lock і PLL lock протягом близько 30 с надворі; (2) --f1 10000000, потім 30720000: tinySA за 80 dB + BLK-89-S+ показує близько −69 dBm на 10 MHz (модель) і частоту в межах калібрування tinySA; (3) короткий --f1t на 1090/1420/1540 MHz видно на RTL-B за атенюаторами, потім вихід назад на 10 MHz; (4) P7: J4 Lime спершу 30.72 MHz, потім 10 MHz; (5) антенний коаксіал без КЗ; (6) підстроювання VCTCXO Lime — у нерухомому повітрі | Приймання LBE-1420 | На прибутті».
+    - **Reason:** G6 conditions_or_tests for the kept GPSDO.
+    - **Sources:** analogs_G6 record 0
+    - **Saving usd:** 0
+  6.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Leo Bodnar LBE-1420 GPSDO
+    - **Anchor:** - Leo Bodnar LBE-1420: https://www.leobodnar.com/shop/index.php?main_page=product_info&cPath=107&products_id=393
+    - **Instruction:** Keep the line and add after it: «- Leo Bodnar доставка ЄС (DDP від SkunkRF): https://www.leobodnar.com/shop/index.php?main_page=shippinginfo ; Batronix (запасний ЄС): https://www.batronix.com/shop/frequency-references/GPSDO/LBE-1420.html» and «- lbe-142x v1.2: https://raw.githubusercontent.com/bvernoux/lbe-142x/main/README.md ; EEVblog (ADEV, захист антенного порту): https://www.eevblog.com/forum/metrology/a-closer-look-at-the-leo-bodnar-lbe1-420-and-the-precision-gpsdo».
+    - **Reason:** Key URLs for the GPSDO decision.
+    - **Sources:** analogs_G6 record 0 sources
+    - **Saving usd:** 0
+  7.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** keep_with_note
+    - **Part:** FlightAware Pro Stick Plus
+    - **Anchor:** | ADS-B приймач | FlightAware Pro Stick Plus | 1 | 69.92 (GBP 52.50) | The Pi Hut | перевірено |
+    - **Instruction:** Keep model, qty, source, status. Price cell -> «69.92 (GBP 52.50 з ПДВ UK; без ПДВ GBP 43.75 = 58.27; ЄС: GBP 52.06 з 19% ПДВ DE через IOSS = 69.33, перевірено)». Replace the whole note cell with: «Безперервний ADS-B на LAB USB; 300 mA від свого порту. R820T2 + RTL2832U; LNA 19 dB, NF 0.4 dB, OIP3 +39 (паспорт; LNA бере близько 60 mA, реальний OIP3, ймовірно, нижчий); SAW 1075-1105 MHz, 2.3 dB, 30 dB поза смугою; TCXO 0.5 ppm. LNA стоїть перед SAW — на широкосмугових антенах перевантажується: лише резонансні вуса 6.5 см або антена 1090; захід — зовнішній SAW 1090 перед стиком (фільтр FA GBP 25.90 у Pi Hut, +1.2-2.8 dB NF). У ЄС Pi Hut везе лише DHL Express, GBP 30 ($39.95) за замовлення, плюс мито EUR 3 за тарифний рядок (≤EUR 150, IOSS) і UHF EUR 2 за рядок з близько 1.11.2026 (правило 35) — тому купувати в одному замовленні Pi Hut з 2× Pico і MTT-хабом (близько $72.70 за стик з ПДВ і митом, модель; окремо — близько $112.65). Інші канали: магазин FlightAware — лише США, Pimoroni розпродано, BerryBase не постачає, rtl-sdr.com немає в наявності, Moonraker не перевірено. Бюджет / запасний, якщо Pi Hut розпродано: запасний V4L + Uputronics 1090 filtered preamp — EUR 44.95 ($50.53) в Uputronics EU / US $53.00, або GBP 44.40 у Pi Hut у тому самому замовленні; компроміси: NF близько 0.95 проти 0.6 dB (модель), забирає запасний V4L (C21), потребує токена bias, без живлення сигнал не проходить.»
+    - **Reason:** G6 keep with price-basis, EU-delivery and known-limitation notes; budget fallback price corrected (was GBP 44.39 = $59.12).
+    - **Sources:** https://thepihut.com/products/flightaware-pro-stick-plus-usb-sdr-ads-b-receiver.js ; https://thepihut.com/pages/delivery ; https://www.rtl-sdr.com/flightaware-prostick-vs-flightaware-prostick-plus-review/ ; reaudit_B (Uputronics 1090 EUR 44.95 / US $53.00); operator_notes 34-35
+    - **Saving usd:** 0 on the part; 39.95 landed by sharing one DHL charge
+  8.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** Lab extended budget minimum
+    - **Anchor:** з Uputronics 1090 замість Pro Stick Plus — ≈$207
+    - **Instruction:** Replace with «з Uputronics 1090 замість Pro Stick Plus — ≈$286 (мій перерахунок, оцінка: Uputronics EUR 44.95 = $50.53 + SAWbird+ H1 $49.95 + DPS-150 $62.64 + кейс B&W 4000 RPD $122.66; Apache 3800 за $30 у Європі недоступний; Uputronics забирає запасний V4L)».
+    - **Reason:** Budget-minimum components changed by G6 (Uputronics EU price, H1, DPS-150, case; Apache dropped).
+    - **Sources:** analogs_G6 records 1, 3, 4, 5
+    - **Saving usd:** budget minimum rises by about 78.66 vs v1 207.12
+  9.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** new_risk
+    - **Part:** FlightAware Pro Stick Plus
+    - **Anchor:** Безперервний ADS-B — FlightAware Pro Stick Plus (розширення) на LAB USB.
+    - **Instruction:** Append after this sentence: «(LNA стоїть перед SAW: лише резонансні вуса 6.5 см або антена 1090; при десенсибілізації біля базової станції — нижче підсилення або зовнішній SAW 1090 перед стиком, +1.2-2.8 dB NF.)»
+    - **Reason:** G6 stack_changes (4): known limitation in C21/ADS-B rows (rtl-sdr.com review).
+    - **Sources:** https://www.rtl-sdr.com/flightaware-prostick-vs-flightaware-prostick-plus-review/
+    - **Saving usd:** 0
+  10.
+    - **Section:** 04_capabilities
+    - **Kind:** new_risk
+    - **Part:** FlightAware Pro Stick Plus
+    - **Anchor:** Спеціалізований приймач; треки з dbFlags&1 (військові) не показуються і не логуються;
+    - **Instruction:** Insert after «Спеціалізований приймач;»: «Pro Stick Plus — лише з резонансними вусами 6.5 см або антеною 1090 (LNA перед SAW перевантажується на широкосмугових антенах);». Leave the dbFlags text for the operator-note-25 change.
+    - **Reason:** G6 known limitation for ADS-B rows.
+    - **Sources:** rtl-sdr.com Pro Stick review
+    - **Saving usd:** 0
+  11.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** FlightAware Pro Stick Plus + Pi Hut order
+    - **Anchor:** ; 2 Pico.
+    - **Instruction:** Replace with «; одне замовлення The Pi Hut: 2 Pico + Waveshare MTT bench hub + FlightAware Pro Stick Plus (одна доставка DHL Express GBP 30; близько GBP 65.5 без ПДВ ≈ EUR 78, менше EUR 150 — IOSS; плюс мито EUR 3 і UHF EUR 2 з близько 1.11.2026 за кожен тарифний рядок, правило 35; Pi Hut зараз єдиний перевірений канал Pro Stick Plus з доставкою в ЄС).»
+    - **Reason:** G6 stack_changes (2): move Pro Stick Plus out of step 13 into the existing Pi Hut order; saves one DHL charge and secures stock.
+    - **Sources:** https://thepihut.com/pages/delivery ; operator_notes 34-35
+    - **Saving usd:** 39.95 landed
+  12.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Waveshare MTT bench hub (Pi Hut order)
+    - **Anchor:** Hantek 6022BE + LA; MTT-хаб;
+    - **Instruction:** Replace with «Hantek 6022BE + LA; MTT-хаб — у спільному замовленні Pi Hut кроку 6;» so the hub is not ordered twice.
+    - **Reason:** Consequence of the single Pi Hut order (G6 record 1).
+    - **Sources:** analogs_G6 record 1
+    - **Saving usd:** 0
+  13.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** FlightAware Pro Stick Plus
+    - **Anchor:** 
+    - **Instruction:** Add a row: «Pro Stick Plus на прибутті (кондуктивно або лише прийом): (1) lsusb 0bda:2832, rtl_test — R820T2, корпус FlightAware; унікальний серійник через rtl_eeprom -s для udev (C21); (2) FNB58 на LAB-порту близько 300 mA сталих (провал понад 350 mA), без FAULT TPS2553 при гарячому підключенні; (3) Bench без антени: тон tinySA 1090 MHz через 30 dB ≤ −70 dBm на SMA; тон поза смугою того самого рівня (напр. близько 800 MHz) на ≥25-30 dB нижче; (4) 2 год при 2.4 Msps, температура корпусу; стик поза закритим корпусом на нижньому порту; (5) у полі біля базової станції — повідомлень/с readsb і % сильних сигналів на макс. підсиленні проти 1-2 нижчих кроків; при десенсибілізації — нижче підсилення або зовнішній SAW 1090 (+1.2-2.8 dB NF) | Приймання | На прибутті».
+    - **Reason:** G6 acceptance checks for the kept unit.
+    - **Sources:** analogs_G6 record 1
+    - **Saving usd:** 0
+  14.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** FlightAware Pro Stick Plus
+    - **Anchor:** - FlightAware Pro Stick Plus (The Pi Hut): https://thepihut.com/products/flightaware-pro-stick-plus-usb-sdr-ads-b-receiver
+    - **Instruction:** Keep and append: « ; доставка Pi Hut у ЄС: https://thepihut.com/pages/delivery ; специфікація FA: https://www.flightaware.com/adsb/prostick/ ; огляд rtl-sdr.com (LNA перед SAW): https://www.rtl-sdr.com/flightaware-prostick-vs-flightaware-prostick-plus-review/».
+    - **Reason:** Key URLs.
+    - **Sources:** analogs_G6 record 1
+    - **Saving usd:** 0
+  15.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** replace_part
+    - **Part:** RF sled
+    - **Anchor:** | RF sled | HMC7992 SP4T + PE4302 + MCP23017 #2 + ADS1115 + зміщення buck→LC→LDO + корпус | 1 | 104-168 | маркетплейс | не перевірено |
+    - **Instruction:** Replace the whole row with: «| RF sled v2 (за умовою) | Власна 2-шарова PCB 50 Ohm GCPW: ADI HMC7992LP3DE (505-HMC7992LP3DE-ND) + pSemi PE4312C-Z (1046-1178-1-ND; виробляється, сумісний за виводами наступник PE4302) + Microchip MCP23017-E/SO + TI ADS1115IDGSR; зміщення: Pololu D36V6F6 6 V за екранною стінкою → прохідний конденсатор / π-фільтр → LC → ADI LT3045EMSE#PBF на 4.5 V → 2× TI TPS2553DBVR (FAULT на MCP #2); LDO 3.3 V для логіки і VDD; корпус Hammond 1590B (112.4x60.5x31 мм, всередині близько 107x55x27 мм; запасний 1590BB) з екранною стінкою і вклеєною/прикрученою пластиною з гайкою 1/4-20 | 1 | 72-104 без ПДВ (оцінка; перевірені рядки DigiKey DE EUR 42.46 = 47.73: HMC7992 EUR 11.50, PE4312 EUR 3.86, MCP23017 EUR 1.42, ADS1115 EUR 4.64, LT3045EMSE EUR 8.78, 2× TPS2553 EUR 2.04, 1590B EUR 10.22; чипи з 19% ПДВ EUR 25.49 = 28.65; D36V6F6 $5.95 Pololu US; PCB $2-9, 5-6 SMA $10-25, пасиви $3-8, роз'єм LAB BUS $3-8 — оцінки) | DigiKey DE (DDP, ПДВ при оплаті) + дистриб'ютор Pololu в ЄС (Botland або TME) + JLCPCB | перевірено (чипи, LT3045, TPS2553, 1590B) / модель (PCB, SMA, роз'єм) | RF1 — парковка 49.9 Ohm (A=B=Low), RF2 тракт A, RF3 тракт B, RF4 BENCH; HMC7992 має 2 лінії керування (A/B). PE4312 при ввімкненні — 31.5 dB (PUP1=PUP2=1). Правило витоку: джерело BENCH ≤ −40 dBm при навантажених RF2/RF3. Розв'язка: ціль ≥40 dB, приймання ≥37 dB на 0.1-1.7 GHz (модульна збірка — очікувано 30-37 dB). Споживання від AUX12 близько 0.21 A з 0.42 A. Умова: приймальні тести (розділ 8); при провалі після однієї переробки — запасна PCB, далі — стара модульна збірка лише після перевірки маркування і повної VNA-кваліфікації. Замінено: модульна збірка (маркетплейсна плата HMC7992, модуль PE4302 — знято з виробництва 2016, Adafruit 5346, Adafruit 1085), 104-168 (не перевірено); економія близько $20-60 (модель), більше з EU-зборами на рядках Adafruit/AliExpress/eBay. Бюджет: ручне перемикання SMA (втрачає програмний вибір шляху, парковку 50 Ohm при старті і розгортки 0.5 dB). |»
+    - **Reason:** G6 replace_conditionally: module build fails the counterfeit/EOL rule; same HMC7992 die and better PE4312 from franchised stock, cheaper on the DigiKey DE DDP order; corrected RF mapping from re-audit B.
+    - **Sources:** https://www.psemi.com/pdf/datasheets/pe4312ds.pdf ; DigiKey DE product pages (HMC7992LP3DE, PE4312C-Z, ADS1115IDGSR, MCP23017-E/SO, LT3045EMSE#PBF, TPS2553DBVR, 1590B); https://www.hammfg.com/files/parts/pdf/1590B.pdf ; https://www.pololu.com/product/3793
+    - **Saving usd:** about 20-60 (model); 17-41 on like-for-like electronics lines
+  16.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** correction
+    - **Part:** RF sled (PE4312)
+    - **Anchor:** PE4302 на sled з таблицею корекції VNA
+    - **Instruction:** Replace with «PE4312 на sled v2 з таблицею корекції VNA (64 стани, 1 MHz-2.2 GHz)».
+    - **Reason:** PE4302 replaced by PE4312 in sled v2.
+    - **Sources:** pe4312ds.pdf DOC-81482-4.01
+    - **Saving usd:** 0
+  17.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** bench_test
+    - **Part:** RF sled
+    - **Anchor:** | P13 | Підключення і керування RF sled (extended) | Розв'язка кожного шляху — до використання. |
+    - **Instruction:** Replace the correction cell with «Розв'язка кожного шляху — до використання; sled v2: IL ≤0.9 dB на вивід, розв'язка ≥37 dB (ціль ≥40 dB), RL ≥20 dB, стан при ввімкненні 31.5 dB / RF1, шлях BENCH ≤2.65 dB на 2.2 GHz (розділ 8).»
+    - **Reason:** G6 acceptance thresholds.
+    - **Sources:** analogs_G6 record 2
+    - **Saving usd:** 0
+  18.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** RF sled MCP23017 #2 line budget and PE4312 wiring
+    - **Anchor:** - **MCP23017 #2 у sled (0x21):** HMC7992 V1-V3 (кількість ліній — за таблицею істинності, як і для #1); PE4302 D0-D5; NOISE EN (BENCH); LNA EN.
+    - **Instruction:** Replace the bullet with: «- **MCP23017 #2 у sled v2 (0x21; MCP23017-E/SO на платі sled):** виходи — A, B (HMC7992), 6 біт C і LE (PE4312), NOISE EN (BENCH), LNA EN1, LNA EN2; входи — FAULT1, FAULT2 (не на GPA7/GPB7); зайнято 14 з 16 ліній. PE4312 — паралельний режим із засувкою: P/S низький; LE на виході MCP #2 зі 100k до землі (перекриває внутрішні 2 MOhm підтягування); PUP1 і PUP2 через 10k на 3.3 V (старт 31.5 dB); 10k послідовно на пін 1; пін 3 (Data) через 10k на GND; пін 12 на GND (обхідний режим з −3.3 V на пін 12 — лише якщо проявиться спур зарядового насоса); РЧ-виводи на 0 V DC за C0G-блоками; labd пише біти C, потім імпульс LE, без зміни драйвера. DC-блоки: 1 nF C0G на RFC, RF2 і RF3; 10 nF C0G на RF4/BENCH, якщо потрібна робота на КХ (нижче 100 MHz — не специфіковано до розгортки).»
+    - **Reason:** G6 stack_changes 3, 4, 6.
+    - **Sources:** pe4312ds.pdf; analogs_G6 record 2
+    - **Saving usd:** 0
+  19.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** HMC7992 control lines (sled)
+    - **Anchor:** Для тієї самої деталі в sled записано V1-V3, а логіку HMC7992 не перевірено (сайт ADI дав 503)
+    - **Instruction:** Replace the sled clause (from this anchor up to and including «Якщо ліній три — потрібні ще два виходи MCP.») with: «За даташитом HMC7992 Rev 0 (прочитано G1): 2 лінії керування A/B, A=B=Low вибирає RF1, VIH 1.15 V, без генератора від'ємної напруги; у sled v2 тому RF1 — парковка 49.9 Ohm, RF2 тракт A, RF3 тракт B, RF4 BENCH; перевірити на LiteVNA при прийманні.» Leave the main-board T1-T4 mapping and the «план — T4» parking to the G1/re-audit B change.
+    - **Reason:** G6 stack_changes 2: HMC7992 has 2 control lines, not V1-V3; RF1 park.
+    - **Sources:** https://www.farnell.com/datasheets/2283884.pdf (HMC7992 Rev 0, read by G1); reaudit_B
+    - **Saving usd:** 0
+  20.
+    - **Section:** 05a_arch_power
+    - **Kind:** architecture
+    - **Part:** RF sled v2 rails + AD8318 box (AUX12 consumers)
+    - **Anchor:** sled, шумове джерело, підвищувач 28 V
+    - **Instruction:** Replace with «sled v2 (близько 0.21 A: D36V6F6 6 V за екранною стінкою → прохідний/π-фільтр → LC → LT3045 4.5 V → 2× TPS2553, RILIM 88.7k; LDO 3.3 V живить HMC7992, PE4312, MCP23017, ADS1115 і підтягування 4.7k, тож VDD піднімається раніше за логіку; вхідний захист від переполюсування — у плати Pololu його немає), коробка AD8318 (близько 70 mA, близько 0.6 W через передрегулятор 9 V), шумове джерело, підвищувач 28 V». The 0 / 0.42 A budget stays.
+    - **Reason:** G6 records 2 (stack_changes 5) and 15 (rails).
+    - **Sources:** https://www.pololu.com/product/3793 ; Silicon Chip AD8318 article
+    - **Saving usd:** 0
+  21.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** RF sled v2 + AD8318 box ADC (D13)
+    - **Anchor:** Sled має MCP23017 #2 на 0x21 і ADS1115 на 0x48.
+    - **Instruction:** Replace with «Sled v2 має MCP23017-E/SO (#2) на 0x21 і ADS1115IDGSR на 0x48 — голі чипи з DigiKey DE на власній PCB, не модулі Adafruit; ADS1115 коробки AD8318 — на 0x49 (ADDR на VDD).»
+    - **Reason:** G6 records 2 and 15 (address collision fix).
+    - **Sources:** analogs_G6 records 2, 15
+    - **Saving usd:** 0
+  22.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** RF sled v2 parts
+    - **Anchor:** DigiKey (PEC11R ×3, KSC641J ×10, ферити)
+    - **Instruction:** Replace with «DigiKey DE (PEC11R ×3, KSC641J ×10, ферити; для sled v2: HMC7992LP3DE, PE4312C-Z, MCP23017-E/SO, ADS1115IDGSR, LT3045EMSE#PBF, 2× TPS2553DBVR, Hammond 1590B — DDP, ПДВ при оплаті); Pololu D36V6F6 — у дистриб'ютора Pololu в ЄС (Botland або TME), щоб уникнути мита; PCB sled — третій дизайн (≤100x100 мм) у замовленні JLCPCB разом із силовою платою і платою інжекторів (запасні з партії 5 шт. — для переробки; можливий ще один рядок мита EUR 3)».
+    - **Reason:** G6 stack_changes 1 and 8.
+    - **Sources:** DigiKey DE pages; analogs_G3 (JLCPCB $2 for 5 pcs)
+    - **Saving usd:** see sled row
+  23.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** rule
+    - **Part:** RF sled authenticity
+    - **Anchor:** Hantek, ANENG і загальні HMC7992 з маркетплейсів — ризик сірих копій.
+    - **Instruction:** Append: «Модулі PE4302 знято з виробництва (2016), походження недоказове — не купувати; PE4312 — лише у франчайзингових дистриб'юторів (DigiKey, Mouser, RFMW; не LCSC); маркетплейсні плати HMC7992 відкинуто; загальні плати ADS1115 — ризик перемаркованих ADS1015 (кроки по 16 відліків), за замовчуванням Adafruit 1085 або голий чип з DigiKey.»
+    - **Reason:** G6 stack_changes 9 (authenticity list) and record 15 (generic ADS1115).
+    - **Sources:** analogs_G6 records 2, 15; https://forum.arduino.cc/t/ads1115-problems-or-fake/658746
+    - **Saving usd:** 0
+  24.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** architecture
+    - **Part:** Own PCBs (sled v2 PCB; Lime 3rd HMC7992 section)
+    - **Anchor:** Двошарові: силова плата + 5-канальна плата інжекторів (дроселі на діапазон ≥0.5 A, посадкове місце дроселя LNB ≥1 A, C0G-блоки)
+    - **Instruction:** Append to the model cell: «; третій дизайн — PCB sled v2 (≤100x48 мм під 1590B; ціна — у рядку sled); з Lime: третя секція HMC7992 на платі інжекторів отримує посадкове місце PL-586 під YAT-10A+ (після C0G RF3) і один конденсатор 0402 22 pF C0G біля краєвого гнізда RX1».
+    - **Reason:** G6 records 2 (PCB) and 7 (PCB and mechanics).
+    - **Sources:** analogs_G6 records 2, 7
+    - **Saving usd:** 0
+  25.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** RF sled v2
+    - **Anchor:** 
+    - **Instruction:** Add a row: «Sled v2, лише кондуктивно (LiteVNA у навантаження або DUT): (1) де-ембединг з купоном thru-line з тієї самої панелі; (2) перемикач: IL ≤0.9 dB на вивід на 0.1-2.2 GHz; розв'язка RFC → кожен вимкнений вивід ≥40 dB ціль, ≥37 dB приймання на 0.1-1.7 GHz (нижче — via-огорожа або кришка і повторний вимір); RL у ввімкненому стані ≥20 dB на 137, 437, 739.5 і 1530-1710 MHz; при MCP у reset парковка RF1 RL ≥20 dB; (3) PE4312 після де-ембедингу: IL стану 0 dB ≤1.5 dB нижче 1 GHz і ≤1.75 dB на 1-2.2 GHz; усі 64 стани 1 MHz-2.2 GHz монотонні, похибка ±(0.15+2%), таблиця корекції записана; (4) шлях BENCH → DSA 0 dB → перемикач → RFC: IL ≤2.65 dB на 2.2 GHz; (5) при MCP у reset DSA 31.5 dB і перемикач на RF1; (6) зміщення 4.5 V ±2% на 0-0.4 A; ККД ≥85% при 0.36 A від AUX12 (INA); спрацювання TPS2553 і FAULT; спури tinySA і RTL-B на виходах bias-tee на 137, 437, 739.5, 1540-1710 MHz і кратних 2.1 MHz, з зміщенням увімк./вимк., LNA з навантаженням і без — нових спурів над фоном RTL немає (при спурі насоса PE4312 — обхідний режим −3.3 V на пін 12); (7) витік: джерело BENCH ≤ −40 dBm при навантажених RF2/RF3 — записати; (8) вхідні деталі: маркування «7992» + лот, маркування PE4312 за специфікацією pSemi, пакувальні листи DigiKey, HMC7992 MSL3 — сушити, якщо пакет відкрито понад 168 год, PE4312 MSL1, ESD (CDM 250 V); (9) PCB ≤100x48 мм з екранною стінкою, 5-6 SMA і роз'ємом LAB BUS влазить у 1590B, інакше 1590BB; (10) провал після однієї переробки → запасна PCB → стара модульна збірка лише з перевіркою маркування і повною VNA-кваліфікацією. Не перевірено: дані PE4302 (pSemi 404), ККД і легке навантаження D36V6F6, база ПДВ 1590B, вартість SMA/PCB/роз'єму, наявність TPS2553 | Приймання sled v2 | Після складання sled».
+    - **Reason:** G6 conditions_or_tests (1)-(10).
+    - **Sources:** analogs_G6 record 2
+    - **Saving usd:** 0
+  26.
+    - **Section:** 08_open_bench
+    - **Kind:** correction
+    - **Part:** HMC7992 truth table (open item)
+    - **Anchor:** таблиця істинності HMC7992 (кількість ліній керування; який вивід вибирає стан «усі низькі» — туди 50 Ohm)
+    - **Instruction:** Replace with «таблиця істинності HMC7992 — за даташитом Rev 0: 2 лінії A/B, A=B=Low → RF1, тож 50 Ohm на RF1 (підтвердити на LiteVNA)».
+    - **Reason:** G6 record 2 equivalence proof (datasheet Rev 0 read by G1) resolves the open question.
+    - **Sources:** https://www.farnell.com/datasheets/2283884.pdf
+    - **Saving usd:** 0
+  27.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** RF sled module build
+    - **Anchor:** | Вивантаження (SondeHub, WSPRnet, PSK Reporter, агрегатори ADS-B, SatNOGS) за замовчуванням |
+    - **Instruction:** After this last row of 6.2 add: «| Модульна збірка RF sled (маркетплейсна плата HMC7992, модуль PE4302, Adafruit 5346 #2, Adafruit 1085); «RF4 50 Ohm» у sled; керування HMC7992 V1-V3 | G6: PE4302 знято з виробництва (2016), модулі недоказового походження і стартують з 0 dB; маркетплейсні HMC7992 не проходять правило підробок; замінено sled v2 на франчайзингових чипах; модульна збірка — лише останній запасний варіант після перевірки маркування і повної VNA-кваліфікації. |»
+    - **Reason:** G6 record 2.
+    - **Sources:** analogs_G6 record 2
+    - **Saving usd:** see sled row
+  28.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** RF sled v2
+    - **Anchor:** - sigrok fx2lafw: https://sigrok.org/wiki/Fx2lafw
+    - **Instruction:** After this line (Лабораторія) add: «- pSemi PE4312 даташит: https://www.psemi.com/pdf/datasheets/pe4312ds.pdf ; DigiKey DE HMC7992LP3DE: https://www.digikey.de/en/products/detail/analog-devices-inc/HMC7992LP3DE/5873027 ; ADS1115IDGSR: https://www.digikey.de/en/products/detail/texas-instruments/ADS1115IDGSR/2231567 ; Hammond 1590B: https://www.hammfg.com/files/parts/pdf/1590B.pdf ; Pololu D36V6F6: https://www.pololu.com/product/3793 ; Silicon Chip, модуль PE4302: https://siliconchip.com.au/Issue/2018/June/El+Cheapo+Modules+17%3A+4GHz+digital+attenuator».
+    - **Reason:** Key URLs for sled v2.
+    - **Sources:** analogs_G6 record 2
+    - **Saving usd:** 0
+  29.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** Nooelec SAWbird+ H1
+    - **Anchor:** | LNA H1 | Nooelec SAWbird+ H1 | 1 | 45-50 | Nooelec | не перевірено (URL дав 404) |
+    - **Instruction:** Replace the whole row (including the note «120 mA через TPS2553; 65 MHz смуга, ≥40 dB, NF близько 0.8 dB.») with: «| LNA H1 | Nooelec SAWbird+ H1 cased (100811) | 1 | 49.95 без ПДВ (Nooelec; з США в ЄС ≥65.1-66.1 з ПДВ, EUR 3 мита і EUR 2 UHF, плюс доставка); ЄС: 61.93 (EUR 55.10 з 21% ПДВ NL, безкоштовна доставка; без ПДВ EUR 45.54 = 51.18; при 19% DE близько 60.91 — розрахунок G6) | Amazon.nl, продавець Nooelec Inc (A1TIGMJ4AZ1K1A), відвантажує Amazon (повернення 30 днів); інакше Nooelec напряму у спільному замовленні понад $100 | перевірено | Купувати лише коли buy box показує «Nooelec Inc» і відвантаження Amazon; Amazon.de/fr/it/es — лише за ≤EUR 55.10 з ПДВ. 1376-1441 MHz (центр 1408), смуга 65/75 MHz (3/10 dB); підсилення 40-42 dB (макс. 42); NF 0.70/0.8/0.9 dB; OP1dB +18 dBm; макс. вхід 0 dBm; 3.3-5.5 V, 108/122/150 mA (вікно INA для ch3 — 108-150 mA, а не 120 mA; у межах каналу TPS2553 300 mA); 80x30x20 мм, 52 g. Верхній схил SAW м'який (з графіка S21): близько 25 dB підсилення на 1450 MHz, близько 0 dB біля 1455 MHz, провал біля 1457 MHz, потім близько +5 dB на 1465-1500 MHz — відносне ослаблення лише близько 15-25 dB на 1452 MHz (нижній край SDL B32/n75) і близько 36 dB на 1465-1495 MHz. На тракті Lime — атенюатор 12 dB, не 10 dB (OP1dB +18 dBm проти абс. максимуму входу Lime +10 dBm). Живлення лише з ch3 по коаксіалу; ніколи micro-USB чи роз'єм біля антени (три шляхи живлення не поєднувати). Гарантія: на сторінці і «2 роки», і «1 рік»; пошкодження перенапругою виключено. Економія каналу Amazon EU близько $3-4 (більше, якщо H1 замовляти окремо). |»
+    - **Reason:** G6 keep with channel change: same SKU from the maker's Amazon EU merchant is cheaper landed; v1 '45-50, URL 404' stale; datasheet rev 1 specs replace approximations.
+    - **Sources:** https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-h1.html ; https://www.nooelec.com/datasheets/100811 ; https://www.amazon.nl/dp/B07XPV9RX2 ; https://www.nooelec.com/store/shipping-delivery-info/
+    - **Saving usd:** 0 on the part; about 3-4 landed via Amazon EU
+  30.
+    - **Section:** 04_capabilities
+    - **Kind:** new_risk
+    - **Part:** Nooelec SAWbird+ H1 selectivity
+    - **Anchor:** Підйом від Сонця близько 0.7-1.2 dB над Tsys 125 K (модель); GPSDO вимкнено;
+    - **Instruction:** Append after this text: « SAW H1 має м'який верхній схил (близько 15-25 dB ослаблення на 1452 MHz, близько 36 dB на 1465-1495 MHz) — сильні сигнали SDL B32/n75 перевіряти в A/B D10;»
+    - **Reason:** G6 selectivity caveat from datasheet S21 plot.
+    - **Sources:** https://www.nooelec.com/datasheets/100811
+    - **Saving usd:** 0
+  31.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** SAWbird+ iO and SAWbird+ H1 (#97)
+    - **Anchor:** SAWbird+ iO (1542 MHz) — для Inmarsat-C (SAW GOES блокує 1537-1545 MHz), за egc-gate. SAWbird+ H1 — для 1420 MHz.
+    - **Instruction:** Replace with «SAWbird+ iO (100788; 1542 MHz, смуга 60 MHz, ≥30 dB, 180 mA при 3-5 V по SMA, до 12 V без пошкоджень, гарантія 1 рік; NF, OP1dB, макс. вхід і числове ослаблення не опубліковані — значення GOES до iO не застосовувати, міряти при прийманні) — для Inmarsat-C (SAW GOES блокує 1537-1545 MHz), за egc-gate. SAWbird+ H1 (100811) — для 1420 MHz: 40-42 dB, NF 0.70/0.8/0.9 dB, OP1dB +18 dBm, макс. вхід 0 dBm, 108/122/150 mA.»
+    - **Reason:** G6 records 10 (a),(b) and 3 (datasheet specs).
+    - **Sources:** https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-io.html ; https://www.nooelec.com/datasheets/100811
+    - **Saving usd:** 0
+  32.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Nooelec order (Flamingo+, iO, H1 channel)
+    - **Anchor:** Nooelec (NOAA+, GOES+, Flamingo+, Balun One Nine v2, набір атенюаторів — $199.75, безкоштовна доставка)
+    - **Instruction:** Append inside the cell after this text: « — відправка з США: посилка понад EUR 150, тож звичайне мито + імпортний ПДВ + UHF EUR 2 за тарифний рядок з близько 1.11.2026 (правило 35); у це саме замовлення — другий Flamingo+ для P8 (якщо P8 будується) і SAWbird+ iO (якщо egc-gate пройдено до відправки); перевірити ті самі деталі на Amazon EU у продавця Nooelec Inc (A1TIGMJ4AZ1K1A) — не перевірено».
+    - **Reason:** G6 records 3 (Amazon EU check for other Nooelec parts), 10 (c) and 13; landed-cost rule.
+    - **Sources:** analogs_G6 records 3, 10, 13; operator_notes 35
+    - **Saving usd:** 0
+  33.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Nooelec SAWbird+ H1
+    - **Anchor:** 
+    - **Instruction:** Add a row: «SAWbird+ H1 на прибутті: (1) етикетка SKU 100811, корпусна версія з SMA вхід/вихід, у рахунку продавець Nooelec Inc через Amazon EU; (2) струм ch3 при 4.5 V 108-150 mA; (3) кондуктивна S21 на LiteVNA лише на стенді (навантаження або DUT, ніколи антена): вхід через атенюатор так, щоб H1 бачив ≤ −40 dBm, атенюатор на виході, зміщення через bias-T з DC-блоком у бік VNA; очікування ≥40 dB на 1420.4 MHz, смуга 3 dB близько 1376-1441 MHz; записати ослаблення на 1452, 1455, 1460, 1490, 1542, 1575 і 1800 MHz; (4) відносний Y-фактор з шумовим джерелом ZFL-500 (BENCH), потім лише прийом — підйом від Сонця близько 0.7-1.2 dB над Tsys 125 K (модель); (5) A/B фону D10 на 1420 MHz | Приймання H1 | На прибутті».
+    - **Reason:** G6 conditions_or_tests for the kept H1.
+    - **Sources:** analogs_G6 record 3
+    - **Saving usd:** 0
+  34.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** replace_part
+    - **Part:** FNIRSI DPS-150 (seller)
+    - **Anchor:** | Лабораторне джерело | FNIRSI DPS-150 | 1 | 73-75 | Elektor / різне | не перевірено |
+    - **Instruction:** Replace the whole row (including the old note) with: «| Лабораторне джерело | FNIRSI DPS-150 Std / Without Adapter (SKU DPS-150-BU) | 1 | 62.64 (EUR 55.68; чи включено ПДВ — не перевірено) — за умовою; запасний: 66.38 (EUR 59.00 з ПДВ) + доставка Eleshop | fnirsi.com, вітрина ЄС (виробник; склад ЄС — підтвердити для варіанта Std); запасний — Elektor/Eleshop (NL); запасний 2 — Botland EUR 58.19 з ПДВ, лише якщо вже є кошик Botland | перевірено 18.10.2026 (база ПДВ на fnirsi.com не перевірена) | Умова: у кошику fnirsi.com ≤EUR 55.68 разом з ПДВ, без окремих рядків податку, мита чи збору, доставка EUR 0 (бажано позначка «Ships from EU Warehouse»); порівняти з підсумком Eleshop для DPS150 (не DPS150PD) з доставкою — купити дешевше, при рівності в межах EUR 1 — Eleshop (продавець ЄС); якщо FNIRSI додає ПДВ зверху (EUR 66.26 у DE) — Elektor/Eleshop; купони ігнорувати, поки кошик їх не покаже. Гарантія FNIRSI 2 роки і 30 днів повернення — лише для замовлень на fnirsi.com. Від PD-джерела 20 V (Anker 737) або паку 4S; тести модулів, LNA (4.5 V, обмеження 90 mA) і LNB при 13.0-13.4 V і перевірка 18 V. ПК-зв'язок — Micro-USB, USB CDC-ACM (cdc_acm, /dev/ttyACM*, 115200), не CH340; USB-C — лише вхід PD. Правила: для робіт з батареєю чи BMS — послідовний Schottky ≥5 A, ≥40 V (падіння близько 0.4-0.5 V при 16.8 V); ніколи не живити USB-C і DC одночасно, вхід 5-30 V; індуктивні та ємнісні навантаження під'єднувати до ввімкнення виходу. Економія $3.74 проти Elektor (10.36-12.36 проти v1 73-75; 0, якщо умови кошика не виконано). |»
+    - **Reason:** G6 replace_conditionally: same unit from the manufacturer's EU storefront is cheaper if checkout conditions hold; v1 73-75 stale; PC link corrected.
+    - **Sources:** https://www.fnirsi.com/products/dps-150 ; https://www.fnirsi.com/pages/warranty-policy ; https://www.elektor.com/products/fnirsi-dps150-dc-power-supply-150-w ; botland.store product 27837
+    - **Saving usd:** 3.74 vs Elektor list; 10.36-12.36 vs v1; 0 if conditions fail
+  35.
+    - **Section:** 01b_decisions_register
+    - **Kind:** architecture
+    - **Part:** FNIRSI DPS-150 labd backend
+    - **Anchor:** логер FNIRSI;
+    - **Instruction:** Replace with «логер FNIRSI; DPS-150 — fnirsi-dps150 1.0.0 з PyPI (лише pyserial; протокол cho45), закріплено; udev за VID:PID, прочитаним при прийманні → /dev/lab/dps150, mode 0600 для labd, ENV{ID_MM_DEVICE_IGNORE}="1" (ModemManager не шле AT-проби в джерело); кабель Micro-USB з комплекту — до LAB USB-хаба;»
+    - **Reason:** G6 driver and interface correction (CDC-ACM, not CH340).
+    - **Sources:** https://pypi.org/pypi/fnirsi-dps150/json ; https://raw.githubusercontent.com/cho45/fnirsi-dps-150/main/README.md
+    - **Saving usd:** 0
+  36.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** FNIRSI DPS-150
+    - **Anchor:** 
+    - **Instruction:** Add a row: «DPS-150: перед замовленням (той самий день, звичайний браузер, адреса в ЄС) — умови кошика fnirsi.com і порівняння з Eleshop (див. рядок BOM); на прибутті (будь-який продавець; повернути протягом 30 днів при провалі): (1) етикетка і коробка FNIRSI, CE, записати версію прошивки; (2) на Q6A lsusb показує CDC-ACM, з'являється /dev/ttyACM*, записати VID:PID для udev, `fnirsi-dps150 --port /dev/ttyACM0 read-state` працює; (3) викид (Hantek, 1 MS/s): увімкнення виходу на 13.2 V у 100 Ohm — пік ≤13.6 V; вимкнення при малому навантаженні від Anker 737 і пошук імпульсу 150 ms кожні 530-600 ms; (4) запас: макс. Vout від PD 20 V при 0.3 A ≥18.0 V, інакше тест поляризації LNB 18 V — не з PD-шляху; (5) точність проти AN8009 на 4.50 і 13.20 V і CC 90 mA у КЗ — в межах ±(0.1%+5 mV) і ±(0.1%+3 mA) | Приймання DPS-150 | Перед замовленням / на прибутті».
+    - **Reason:** G6 conditions_or_tests.
+    - **Sources:** analogs_G6 record 4
+    - **Saving usd:** 0
+  37.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** replace_part
+    - **Part:** Bench-kit hard case
+    - **Anchor:** | Кейс | Pelican 1450 / Apache 3800 з перегородками | 1 | 30-169 | різне | не перевірено |
+    - **Instruction:** Replace the whole row (including the note «Лише стендовий набір (близько 8.8 L з 14.5 L).») with: «| Кейс | B&W outdoor.case Type 4000 RPD (м'які перегородки на липучці + яєчний поролон у кришці): 4000/B/RPD (EAN 4031541703231) або 4000/Y/RPD; 2 замки TSA (дужка менше 6 мм) або нержавіючі шплінти у вушка 7 мм | 1 | 127.27 (EUR 113.10 з ПДВ, жовтий, eBay.de FLOHR-Industriebedarf, безкоштовна доставка 2 дні; без ПДВ 106.95); 122.66 (EUR 109.00 з ПДВ, чорний, Calumet.de, 1-3 тижні); 134.42 (EUR 119.45, Masterfoto.lv, 5-6 днів) + замки (ціну не перевірено) | Комерційний продавець ЄС (eBay.de FLOHR, Calumet.de, Foto Erhardt, Masterfoto.lv) | перевірено (кейс) / не перевірено (замки) | Умова: обидва вушка замкнені щоразу, коли кейс несуть, відправляють чи здають у багаж (так, як «with Splint», що пройшов усі 26 падінь у PAConsult 17-8981; без фіксації кришка повністю відкрилася при падінні 1.22 м). Якщо замикати не будуть — лишається Peli 1450 (EUR 209 з ПДВ з поролоном, Thomann DE = $235.19; перегородки 1455 окремо, разом близько EUR 300 — оцінка). Внутрішній 38.5x26.5x16.5 см (основа 12.0, кришка 4.5 см), 16.6 L — лише стендовий набір (8.8 L = 53%); зовнішній 42x32.5x18 см; IP67, автоматичний клапан тиску, -30/+80 °C, гарантія 30 років. Прийнято як нев'язкі: -30/+80 проти -40/+87.8 °C, 30 років проти довічної, менші вушка без нержавіючих втулок, +11 мм довжини і +5 мм висоти, можливе виробництво поза ЄС. Apache 3800 прибрано (лише магазини Harbor Freight у США, IP65). Економія близько $108 проти Peli 1450 з поролоном у ЄС (близько $200 проти Peli з перегородками, оцінка). |»
+    - **Reason:** G6 replace_conditionally: B&W 4000 RPD is not worse with latches secured, larger inside, dividers included, much cheaper in the EU; Apache not purchasable from Europe.
+    - **Sources:** https://www.astroshop.eu/Produktdownloads/55906_MIL-STD-810G-komplett.pdf ; https://www.astroshop.eu/Produktdownloads/55906_outdoor.cases_082017.pdf ; https://www.calumet.de/product/b-w-outdoor-case-type-4000-mit-facheinteilung ; https://www.ebay.de/p/1825108460 ; https://www.thomann.de/de/peli_1450_foam_black.htm
+    - **Saving usd:** about 108 vs Peli 1450 foam (EU); about 200 vs Peli with dividers (estimate)
+  38.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** replace_part
+    - **Part:** Bench-kit hard case
+    - **Anchor:** **Стендовий набір** (Pelican 1450 / Apache 3800, лише стенд)
+    - **Instruction:** Replace with «**Стендовий набір** (B&W outdoor.case Type 4000 RPD, лише стенд; обидва вушка замкнені при перенесенні; запасний — Peli 1450)».
+    - **Reason:** G6 case decision.
+    - **Sources:** analogs_G6 record 5
+    - **Saving usd:** 0
+  39.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** rule
+    - **Part:** Bench-kit hard case travel rule
+    - **Anchor:** Pelican можна здати в багаж.
+    - **Instruction:** Replace with «стендовий кейс (автоматичний клапан) можна здати в багаж лише з замкненими обома вушками; Li-ion елементи і павербанки — ніколи в зданому кейсі.»
+    - **Reason:** G6 stack_changes 3 (D14 text).
+    - **Sources:** analogs_G6 record 5
+    - **Saving usd:** 0
+  40.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Bench-kit hard case mass and volume
+    - **Anchor:** | Кейс стенда (Pelican 1450, 14.5 L, заповнено близько 8.8 L = 61%) | 8.2-9.1 kg | цифри Pelican не перевірено (pelican.com дав 403) |
+    - **Instruction:** Replace with «| Кейс стенда (B&W 4000 RPD, 16.6 L, заповнено близько 8.8 L = 53%; внутр. 38.5x26.5x16.5 см, зовн. 42x32.5x18 см; кейс 2.3 kg, до 2.95 kg з RPD) | 8.2-9.1 kg (модель; −0.6...+0.05 kg проти Peli з поролоном — переважити) | B&W — буклет виробника 08/2017 і огляд 2016; Peli 1450 (запасний): 37.4x26.0x15.4 см, 15.0 L, 2.5/2.9 kg (даташит 1450EU) |»
+    - **Reason:** G6 stack_changes 2 (figures) and 4 (Peli datasheet if kept).
+    - **Sources:** B&W booklet 08/2017; https://docs.rs-online.com/330f/A700000016088780.pdf
+    - **Saving usd:** 0
+  41.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** Bench-kit hard case (D14)
+    - **Anchor:** Стенд: Pelican 1450 або Apache 3800 тільки для стендового набору.
+    - **Instruction:** Replace with «Стенд: B&W outdoor.case Type 4000 RPD тільки для стендового набору (запасний — Peli 1450, якщо правило замків не приймається).» In the same row also replace «Pelican можна здавати в багаж.» with «стендовий кейс (автоматичний клапан) можна здавати в багаж з замкненими обома вушками; Li-ion — лише в ручній поклажі.»
+    - **Reason:** G6 stack_changes 3.
+    - **Sources:** analogs_G6 record 5
+    - **Saving usd:** 0
+  42.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** correction
+    - **Part:** Bench-kit hard case (weight line)
+    - **Anchor:** кейс Pelican зі стендовим набором 8.2-9.1 kg
+    - **Instruction:** Replace with «кейс стенда B&W 4000 RPD зі стендовим набором 8.2-9.1 kg (модель; −0.6...+0.05 kg проти Peli з поролоном)».
+    - **Reason:** G6 case decision.
+    - **Sources:** analogs_G6 record 5
+    - **Saving usd:** 0
+  43.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** Apache 3800 / Pelican 1450 as default bench case
+    - **Anchor:** | Вивантаження (SondeHub, WSPRnet, PSK Reporter, агрегатори ADS-B, SatNOGS) за замовчуванням |
+    - **Instruction:** Add a 6.2 row: «| Apache 3800 як кейс стенда; Pelican 1450 як основний кейс | G6 і re-audit D: Apache — лише магазини Harbor Freight у США, IP65; Peli 1450 у ЄС EUR 209 з поролоном (перегородки окремо) — замінено B&W Type 4000 RPD за умовою замків, Peli 1450 — запасний. |»
+    - **Reason:** G6 record 5.
+    - **Sources:** analogs_G6 record 5; reaudit_D
+    - **Saving usd:** 0
+  44.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** B&W outdoor.case Type 4000 RPD
+    - **Anchor:** 
+    - **Instruction:** Add a row: «Кейс B&W 4000 RPD (у межах 14 днів відмови): правило — обидва вушка 7 мм замкнені (TSA з дужкою менше 6 мм або шплінти) при перенесенні, відправленні, здачі в багаж; купувати новий у комерційного продавця ЄС, перевірити литво, етикетку і EAN 4031541703231 (чорний RPD); (a) маса порожнього ≤2.5 kg (специфікація 2.3, лабораторія 2.16), з RPD — записати, ≤3.0 kg; (b) глибина основи ≥111 мм (спец. 120), довжина x ширина ≥374 x 260 мм; (c) клапан встановлений і автоматичний; (d) лише на засувках, сухі паперові рушники всередині, 1 м під водою 30 хв — сухо; (e) з замками падіння 1.2 м на лицьову сторону і кришку, повторити (d); (f) висота перегородок RPD пропускає Hantek 6022BE і LiteVNA, тест складання ESD-килимка проходить; (g) шарнірні пальці без люфту і корозії; будь-який провал — повернути. Переробку засувок після 2017 не відомо — правило замків діє завжди | Приймання кейса | На прибутті».
+    - **Reason:** G6 conditions_or_tests 1-5.
+    - **Sources:** analogs_G6 record 5
+    - **Saving usd:** 0
+  45.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** replace_part
+    - **Part:** LimeSDR Micro M.2 + MHF4L-SMA cables
+    - **Anchor:** | Широкосмуговий SDR | LimeSDR Micro M.2 2280 Basic + $18 доставка + 2× MHF4L-SMA | 1 | 279 | Crowd Supply | перевірено |
+    - **Instruction:** Split the row into two rows (keep the existing note text «Рішення до 1.12.2026 (C1); відвантаження 15.12.2026; повне повернення лише до відвантаження. Бюджет: Airspy Mini лише для швидкостей AHRPT.» on the board row). Row (a): «| Широкосмуговий SDR | LimeSDR Micro M.2 2280 Basic + $18 доставка, лише плата | 1 | 267 (без імпортного ПДВ ЄС, звичайного мита понад EUR 150, UHF EUR 2 з близько 1.11.2026 і збору кур'єра — суму не пораховано) | Crowd Supply (відвантаження з Mouser, Texas; продавця в ЄС немає) | перевірено | …existing note… У кошику Crowd Supply — лише плата; перевірити, що збір $18 worldwide один. Дешевшої плати, не гіршої за специфікацією, немає (ADALM-PLUTO, RSPdx-R2, Airspy Mini — гірші; bladeRF xA4 $540, XTRX $960, B206mini-i $1,599 — дорожчі). |». Row (b): «| Кабелі Lime | 4× Taoglas CAB.01075 (I-PEX MHF4L → SMA(f) bulkhead, 1.13 мм, 100 мм) | 4 | 18.36 (4 × 4.59; DigiKey DE EUR 4.03 без ПДВ / EUR 4.80 з 19% ПДВ за шт., EUR 16.12 без ПДВ за 4) | DigiKey DE 931-CAB.01075-ND (DDP UPS/FedEx, безкоштовна доставка від EUR 75) | перевірено | X2 RX-A, RX-B, J4 REF IN і X1 TX на внутрішнє 50 Ohm (за re-audit B — 4 кабелі). Купувати на воротах 1.12.2026 у замовленні DigiKey DE ≥EUR 75 (інакше EUR 25 доставки з'їдає економію); не DHL (CPT, ПДВ і мито при доставці). Замінено: 2× кабель Crowd Supply (проєкт Taoglas) по $6; економія $2.82 (2 кабелі) / $5.64 (4 кабелі), або $20.82 / $23.64, якщо Crowd Supply окремо бере $18 за проєкт кабелів (не перевірено). |». If the assembler moves the Lime set into the device BOM per the user decision (with-Lime default), move both rows with these prices.
+    - **Reason:** G6 replace_conditionally on the cable line only; board kept (no cheaper board meets the gates); reaudit_B requires 4 cables.
+    - **Sources:** https://www.crowdsupply.com/lime-micro/limesdr-micro ; https://www.crowdsupply.com/taoglas/coaxial-cables ; https://www.digikey.de/en/products/detail/taoglas-limited/CAB-01075/26766217
+    - **Saving usd:** 2.82 (2 cables) / 5.64 (4 cables); 20.82 / 23.64 if Crowd Supply bills the cable project's $18 separately
+  46.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** seller_or_price
+    - **Part:** MHF4L-SMA cables for the Lime (C1)
+    - **Anchor:** MHF4L-SMA $6 кожен
+    - **Instruction:** Replace with «кабелі — 4× Taoglas CAB.01075 з DigiKey DE, $4.59 / EUR 4.03 без ПДВ кожен».
+    - **Reason:** G6 cable swap.
+    - **Sources:** DigiKey CAB.01075
+    - **Saving usd:** 5.64 (4 cables)
+  47.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** LimeSDR Micro (Crowd Supply cart)
+    - **Anchor:** ($249 + $18; 2× MHF4L-SMA у тому самому замовленні)
+    - **Instruction:** Replace with «($249 + $18; у кошику лише плата — 4× Taoglas CAB.01075 ідуть у DigiKey DE на воротах 1.12.2026)».
+    - **Reason:** G6 stack_changes (shopping step 4).
+    - **Sources:** analogs_G6 record 6
+    - **Saving usd:** see cable row
+  48.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Lime-only parts, cables and T7 at the 1 Dec 2026 gate
+    - **Anchor:** Якщо залишено: R44SF 5 см ($19), інструмент I-PEX 90435-001, T7 1 TB за поточною ціною.
+    - **Instruction:** Replace with «Якщо залишено (за рішенням 18.10.2026 — так): R44SF 5 см ($19, adt.link); одне замовлення DigiKey DE ≥EUR 75 (UPS/FedEx, DDP): інструмент I-PEX 90609-0001 (EUR 16.08 без ПДВ / EUR 19.14 з ПДВ), 4× Taoglas CAB.01075, YAT-10A+ (EUR 3.93 / EUR 4.68; опційно YAT-0A+ як обхід, ціну не перевірено), 22 pF C0G GJM1555C1H220JB01D, HMC7992LP3DE (EUR 11.50 / EUR 13.685); Mini-Circuits: 1× BLK-89-S+ (лише RX2) і ANNE-50+ (X1) — з США: імпортний ПДВ + EUR 3 за тарифний рядок + UHF EUR 2 за рядок з близько 1.11.2026; T7 MU-PC1T0T/WW з Reichelt (EUR 205.90 з ПДВ; переоцінити).»
+    - **Reason:** G6 records 6, 7, 8 order changes; landed-cost rule for US/CN lines.
+    - **Sources:** analogs_G6 records 6-8; operator_notes 35
+    - **Saving usd:** see rows
+  49.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** replace_part
+    - **Part:** Lime-only parts set
+    - **Anchor:** | Деталі Lime | ADT-Link R44SF 5 см, інструмент I-PEX 90435-001, п'єдестал + прокладка + ребра, DC-блоки/атенюатори, третій HMC7992 | 1 набір | 87-127 |
+    - **Instruction:** Replace the whole row with: «| Деталі Lime | ADT-Link R44SF 5 см; інструмент I-PEX 90609-0001; 1× Mini-Circuits BLK-89-S+ (лише RX2); RX1: C0G (≥50 V) RFC/RF3 третьої секції HMC7992 + 22 pF C0G Murata GJM1555C1H220JB01D біля краєвого гнізда RX1 (3 послідовні DC-бар'єри, як з BLK); Mini-Circuits YAT-10A+ 10 dB на платі інжекторів після C0G RF3 (PL-586); ANNE-50+ на X1 (TX, вимагає правило «лише прийом»); HMC7992LP3DE (DigiKey DE) як третя секція; п'єдестал і прокладка — у рядках механіки (G4); ребра пластини | 1 набір | близько 89.65 без ПДВ і доставки (R44SF 19.00 + 90609-0001 18.08 + BLK-89-S+ 20.26 + YAT-10A+ 4.42 + 22 pF 0.12 + ANNE-50+ 14.84 + HMC7992 12.93) + 1-2 пасиви секції (модель) + ребра (без ціни) | ADT-Link (CN), DigiKey DE, Mini-Circuits (US) | перевірено (ціни 18.10.2026) / модель (пасиви) | З 19% ПДВ DE для DigiKey: інструмент EUR 19.14, YAT EUR 4.68, HMC7992 EUR 13.685. R44SF (CN) і Mini-Circuits (US): імпортний ПДВ + EUR 3 за тарифний рядок (≤EUR 150, IOSS або пошта) + UHF EUR 2 за рядок з близько 1.11.2026. Умова: VNA-тест секції (розділ 8); при провалі — YAT-0A+ у тому самому посадковому місці і назад до вбудованого VAT-10A+. Для H1 на тракті Lime — ≥12 dB (H1 OP1dB +18 dBm проти абс. максимуму входу Lime +10 dBm): додатковий SMA-атенюатор на краєвому гнізді RX1. Замінено: вбудований BLK-89-S+ на RX1 і вбудований SMA-атенюатор 10 dB (еталон VAT-10A+ $21.07), разом близько $126.44 (у v1 — модель 87-127 без навантаження X1); економія близько $36.79 без ПДВ, у ЄС більше (два US-рядки менше). Опційний компроміс користувача: ANNE-50L+ на X1 (−$5.43; нижчі RL і зниження потужності). |». If the assembler moves the Lime set into the device BOM per the user decision, move this row too.
+    - **Reason:** G6 replace_conditionally: on-board C0G caps (mandatory per HMC7992 datasheet) replace the RX1 BLK; YAT-10A+ is equal or better than VAT-10A+ in band; I-PEX tool corrected.
+    - **Sources:** https://www.i-pex.com/product/mhf-4l ; https://www.minicircuits.com/pdfs/YAT-10A+.pdf ; https://www.minicircuits.com/pdfs/VAT-10A+.pdf ; https://www.minicircuits.com/pdfs/BLK-89-S+.pdf ; DigiKey DE YAT-10A+, 90609-0001, HMC7992LP3DE, GJM1555C1H220JB01D
+    - **Saving usd:** about 36.79 ex VAT (more landed in the EU)
+  50.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** Lime-only parts (#69)
+    - **Anchor:** MHF4 — лише інструментом I-PEX 90435-001; DC-блоки на кожному порту, атенюатори 10-12 dB після SAWbird, 20-30 dB на ПЧ LNB, TX закрито 50 Ohm;
+    - **Instruction:** Replace with «MHF4 — лише інструментом I-PEX 90609-0001 (спершу перевірити на запасному кабелі Taoglas); RX1: DC-бар'єри — C0G RFC/RF3 третьої секції HMC7992 + 22 pF C0G на краю, атенюатор YAT-10A+ 10 dB на платі (для H1 на тракті Lime — ≥12 dB); RX2: BLK-89-S+; 20-30 dB на ПЧ LNB; TX X1 закрито ANNE-50+ (50 Ohm);»
+    - **Reason:** G6 record 7 corrections; H1 record 3 (12 dB on the Lime path).
+    - **Sources:** analogs_G6 records 3, 7
+    - **Saving usd:** 0
+  51.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** Lime RX1 route (3rd HMC7992)
+    - **Anchor:** третій HMC7992 направляє L-band ch3 на RTL-B або на Lime RX1 через атенюатор 10 dB
+    - **Instruction:** Replace with «третій HMC7992 (HMC7992LP3DE, C0G ≥50 V на всіх 5 РЧ-виводах) направляє L-band ch3 на RTL-B або на Lime RX1 через YAT-10A+ 10 dB на платі інжекторів (після C0G RF3; 22 pF C0G біля краєвого гнізда RX1; вбудованих BLK і SMA-атенюатора на RX1 немає; для H1 — додатковий SMA-атенюатор до ≥12 dB); виміряний S21 атенюатора записати в таблицю калібрування рівня Lime RX1 у labd; RX2 — через BLK-89-S+; X1 — ANNE-50+».
+    - **Reason:** G6 record 7 (design and labd note), record 3 (12 dB for H1).
+    - **Sources:** analogs_G6 records 3, 7
+    - **Saving usd:** 0
+  52.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** Lime RX1 pad and X1 load
+    - **Anchor:** атенюатори 10-12 dB після SAWbird; TX-порт навантажено 50 Ohm
+    - **Instruction:** Replace with «RX1: YAT-10A+ 10 dB на платі інжекторів (для H1 — ≥12 dB, додатковий SMA-атенюатор); TX-порт X1 навантажено ANNE-50+ (50 Ohm)». Also note: two inline bodies (близько 66 мм, 17 g) leave the RX1 jumper run.
+    - **Reason:** G6 record 7.
+    - **Sources:** analogs_G6 record 7
+    - **Saving usd:** 0
+  53.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Lime bring-up (I-PEX tool, T7)
+    - **Anchor:** якщо залишено — R44SF, інструмент I-PEX, T7 за поточною ціною
+    - **Instruction:** Replace with «якщо залишено — R44SF, інструмент I-PEX 90609-0001 (спершу на запасному кабелі Taoglas), 4× CAB.01075, T7 MU-PC1T0T/WW (Reichelt) і приймання T7 1-7 у межах 14 днів відмови»; keep «і приймання в межах 30-денної гарантії; J21 випаюється лише після прогону».
+    - **Reason:** G6 records 6, 7, 8.
+    - **Sources:** analogs_G6 records 6-8
+    - **Saving usd:** 0
+  54.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** Lime RX1 inline parts, Crowd Supply cables, I-PEX 90435-001
+    - **Anchor:** | Вивантаження (SondeHub, WSPRnet, PSK Reporter, агрегатори ADS-B, SatNOGS) за замовчуванням |
+    - **Instruction:** Add a 6.2 row: «| Вбудований BLK-89-S+ на Lime RX1 і окремий SMA-атенюатор 10 dB; кабелі MHF4L-SMA з Crowd Supply; інструмент I-PEX 90435-001 | G6: C0G RFC/RF3 третього HMC7992 + 22 pF C0G і YAT-10A+ на платі інжекторів; Taoglas CAB.01075 з DigiKey DE (той самий виробник і специфікація); на сторінці I-PEX MHF 4L значиться лише 90609-0001. |»
+    - **Reason:** G6 records 6, 7.
+    - **Sources:** https://www.i-pex.com/product/mhf-4l
+    - **Saving usd:** 0
+  55.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Lime acceptance additions (cables, parts, NF, T7)
+    - **Anchor:** | Lime, якщо залишено: riser 8 GT/s x1 з нулем AER за 60 хв;
+    - **Instruction:** Keep the existing items and append to the first cell: «кабелі: етикетка CAB.01075, неперервність і ізоляція центр-екран, з'єднання з MHF4 Lime лише інструментом I-PEX, опційно втрати на tinySA 1.7/2.25/3.5 GHz у межах ±0.2 dB від еталонного кабелю (Bench); плата: кондуктивний NF (Y-фактор/MDS з шумовим джерелом у порти RX, ніколи через ефір) близько 437, 1700, 2250 і 3500 MHz на RX1 і RX2 — NF помітно понад близько 8 dB в узгоджених смугах = підстава для RMA; секція RX1: після SOLT і де-ембедингу RFC → RF3 → краєве гніздо RX1 на 1.42-1.71 GHz — внесок атенюатора 10 ± 0.5 dB, секція разом ≤0.9 + 10.4 dB, RL на гнізді ≥20 dB (ніколи нижче 14 dB), при провалі — YAT-0A+ і вбудований VAT-10A+; DC на центральному піні кабелю RX1 <10 mV при ввімкненому 4.5 V ch3 (кабель від'єднано від Lime), повторити при старті з MCP у reset; тести ізоляції, парковки і спурів G1 — і для третьої секції (RF1 парковка, розв'язка ≥30 dB); прогін 45 хв опівдні — плата інжекторів біля YAT ≤85 °C; правила монтажу: C0G ≥50 V, усі три конденсатори ≥3 мм від країв і отворів; спитати ADT-Link, який варіант бере хост 2230 і карту 2280 B+M; струм і температура 3.3 V R44SF (INA228); T7 (14 днів відмови): (1) MPN MU-PC1T0T/WW, lsusb 04e8:4001, Samsung Magician бачить прошивку; (2) lsusb -t: Driver=uas 5000M на синьому порту з кабелем A-C ≤0.5 м і втулкою; (3) smartctl -d sntasmedia -a: температура, Critical Warning 0, Media Errors 0; (4) повний запис і перевірка (fio verify=crc32c або f3); (5) fio --rw=write --bs=1M --direct=1 --size=300G на Q6A з логом щосекунди при ≤35 °C у тіньовому тримачі: мінімум ≥250 MB/s, 60-хв тест 224 MB/s при SMART ≤55 °C, без скидань uas і помилок xHCI; (6) потужність шини при повному записі ≤4.5 W без просідання; (7) A/B фону на 1541/1575/1691 MHz: T7 під'єднаний у простої проти деавторизованого; при провалі 5 або 6 — T7 Shield 1 TB (Reichelt EUR 249) з переробкою тримача; конфлікт G6: запис H1 вимагає 12 dB на тракті Lime, запис деталей Lime ставить YAT-10A+ (10 dB) — додатковий SMA-атенюатор на краєвому гнізді (номінал і деталь не названо)». Keep «C1 | 30-денна гарантія після доставки».
+    - **Reason:** G6 records 6, 7, 8 conditions_or_tests; intra-source conflict on the H1 pad.
+    - **Sources:** analogs_G6 records 3, 6, 7, 8
+    - **Saving usd:** 0
+  56.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** LimeSDR Micro cables and Lime-only parts
+    - **Anchor:** - Crowd Supply LimeSDR Micro: https://www.crowdsupply.com/lime-micro/limesdr-micro
+    - **Instruction:** Keep and add after it: «- Taoglas CAB.01075 (DigiKey DE): https://www.digikey.de/en/products/detail/taoglas-limited/CAB-01075/26766217 ; Crowd Supply кабелі Taoglas: https://www.crowdsupply.com/taoglas/coaxial-cables» and «- I-PEX MHF 4L (інструмент 90609-0001): https://www.i-pex.com/product/mhf-4l ; Mini-Circuits YAT-10A+: https://www.minicircuits.com/pdfs/YAT-10A+.pdf ; ADT-Link R44SF: https://www.adt.link/product/R44SF.html».
+    - **Reason:** Key URLs.
+    - **Sources:** analogs_G6 records 6, 7
+    - **Saving usd:** 0
+  57.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** seller_or_price
+    - **Part:** Samsung T7 1 TB
+    - **Anchor:** | Зовнішній SSD | Samsung T7 1 TB | 1 | 229.99-274.99 | B&H / Samsung (лише фрагменти) | не перевірено |
+    - **Instruction:** Replace the whole row (including note) with: «| Зовнішній SSD | Samsung Portable SSD T7 1 TB MU-PC1T0T/WW (сірий) | 1 | 231.45 (EUR 205.90 з 19% ПДВ DE; без ПДВ 194.50 = EUR 173.03), доставка окремо | Reichelt (DE, обмежений залишок) | перевірено | Обов'язковий у збірці з Lime за замовчуванням (рішення 18.10.2026) — перенести разом з Lime-набором. Зовні на нижньому краї, синій порт, тіньовий тримач 85x57x8 мм, кабель A-C ≤0.5 м з феритами, uas, smartctl -d sntasmedia (правило зупинки при 55 °C). Запасні: MU-PC1T0H (синій) EUR 209.00 у Reichelt або Alternate EUR 224.90 ($252.81, у наявності); якщо інші деталі їдуть з Reichelt — в одному замовленні. Переоцінити на воротах 1.12.2026 (ціни NAND). При провалі приймання 5/6 — T7 Shield 1 TB (Reichelt EUR 249) з переробкою тримача, не дешевший бренд. v1: 229.99-274.99 (фрагменти США); економія проти Alternate $21.36, проти верхньої межі v1 $43.54. |»
+    - **Reason:** G6 keep: same SKU from an EU seller; T7 becomes required in the with-Lime default.
+    - **Sources:** https://www.reichelt.com/de/en/shop/search/samsung%20t7 ; https://www.alternate.de/Samsung/Portable-SSD-T7-1TB-Externe-SSD/html/product/1639854 ; https://download.semiconductor.samsung.com/resources/data-sheet/Samsung_Portable_SSD_T7_Datasheet_Rev2.0.pdf
+    - **Saving usd:** 0 on the part; 21.36 vs Alternate; 43.54 vs v1 top
+  58.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** keep_with_note
+    - **Part:** Samsung T7 1 TB (C18)
+    - **Anchor:** З Lime: T7 1 TB на синьому порту
+    - **Instruction:** Replace with «З Lime (збірка за замовчуванням): Samsung T7 1 TB MU-PC1T0T/WW (uas, smartctl -d sntasmedia, зупинка запису при 55 °C) на синьому порту».
+    - **Reason:** G6 record 8 SKU pin.
+    - **Sources:** smartmontools drivedb (04e8:4001, sntasmedia)
+    - **Saving usd:** 0
+  59.
+    - **Section:** 08_open_bench
+    - **Kind:** seller_or_price
+    - **Part:** T7 and microSD re-pricing
+    - **Anchor:** T7 і microSD — за поточними цінами;
+    - **Instruction:** Replace with «T7 (Reichelt EUR 205.90 з ПДВ) і microSD (Samsung PRO Endurance 128 GB, EUR 63.85-77.90) — переоцінити на воротах 1.12.2026 / перед замовленням;»
+    - **Reason:** G6 records 8 and 11 priced both items.
+    - **Sources:** analogs_G6 records 8, 11
+    - **Saving usd:** 0
+  60.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** seller_or_price
+    - **Part:** QO-100 add-on (Bullseye BE01 + AXING terminator)
+    - **Anchor:** | Набір QO-100 | Othernet Bullseye TCXO LNB + деталі F/75 Ohm + дросель інжектора LNB ≥1 A (C23) + матеріали конуса і рупора | 1 набір | 47.95-75.00 |
+    - **Instruction:** Replace the whole row with: «| Набір QO-100 | 2× Othernet Bullseye 10 kHz BE01 TCXO LNB (1 запасний) + 2× AXING CFA 11-00 (75 Ohm F male, DC-розв'язаний) на червоний порт 25 MHz + інші деталі F/75 Ohm (SAT-рейтинговані, G1; не рахувати двічі) + дросель інжектора LNB ≥1 A (C23; номера ще немає) + матеріали конуса і рупора (антени, поза оцінкою G6) | 1 набір | ≈97.41-124.46 (мій перерахунок, оцінка: решта рядка v1 $18.00-45.05 + 2 LNB до DE $75.81 + AXING $3.60) | Passion Radio (FR, склад ЄС) QO100-LNB-BULLSEYE-978 + Reichelt (AXING, у замовленні G1) + місцево | перевірено (LNB, AXING) / модель (дросель, рупор) | LNB: EUR 24.95 без ПДВ ($28.05) / EUR 29.94 з 20% ПДВ FR ($33.66); діє ПДВ країни призначення (DE EUR 29.69 = $33.37, модель); найдешевша доставка Colissimo Point Retrait; 1 шт. з доставкою: FR EUR 35.52 = $39.93, DE EUR 37.59 = $42.25, NL $42.96, IT $44.89, AT $45.82, PL $46.96; 2 шт. до DE EUR 67.44 = $75.81 (доставка EUR 8.06), близько $37.90 за шт. AXING EUR 1.60 з 19% ПДВ ($1.80) кожен. Регіон — Європа: купувати зараз (Passion Radio: «Last items in stock»; Elektor, Technofix і Amazon EU вже без наявності; вебмагазин RTL-SDR Blog у ЄС не відправляє). Запасний — офіційний AliExpress RTLSDRBlog Store (лише за посиланням з rtl-sdr.com; модель до DE $41.26 з ПДВ + EUR 3 мита + EUR 2 UHF; два однакові LNB — один тарифний рядок); Ірландія — підтвердити доставку. Червоний порт DC-зв'язаний з піном 4 MCU (F4DAV) — завжди DC-розв'язаний термінатор; запасний — TechniSat 0002/3077 (EUR 3.00, екранування >100 dB), якщо A/B спурів покаже різницю. Апгрейд: QRO.cz LNB. Порівняно з v1 LNB дорожчає на близько $8-12 за шт. |»
+    - **Reason:** G6 keep (identical LNB) with seller change to an EU seller; v1 seller does not ship to the EU; terminator named; Europe decided.
+    - **Sources:** https://www.passion-radio.com/lnb-pll/lnb-othernet-978.html ; https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/ ; http://www.pabr.org/radio/otherlnb/otherlnb.en.html ; https://www.reichelt.de/de/de/shop/produkt/f-abschlusswiderstand_75_ohm_dc_entkoppelt-310551
+    - **Saving usd:** none (line rises about 8-12 per LNB vs v1); terminator about 1.57 per piece vs TechniSat
+  61.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** QO-100 add-on purchase
+    - **Anchor:** Bullseye ($29.95; Technofix уже без наявності — не зволікати), деталі F/LC/PTC, дросель інжектора LNB ≥1 A, матеріали рупора;
+    - **Instruction:** Replace with «зараз (регіон — Європа): 2× Bullseye BE01 з Passion Radio, одна посилка (EUR 67.44 до DE з доставкою; перевірити ПДВ країни і перевізника при оплаті; останні штуки), 2× AXING CFA 11-00 у замовленні Reichelt (G1), деталі F/LC/PTC, дросель інжектора LNB ≥1 A (спершу назвати деталь), матеріали рупора;». Also change the «коли» cell «Коли підтверджено, що ви в зоні Es'hail-2» to «Тиждень 1 (Європа — у зоні Es'hail-2)» unless the user-decision change already did it.
+    - **Reason:** G6 stack_changes 5: no longer wait for the region; buy the 2 LNBs now.
+    - **Sources:** analogs_G6 record 9
+    - **Saving usd:** 0
+  62.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** QO-100 bring-up
+    - **Anchor:** **Після підтвердження регіону в зоні Es'hail-2:** Bullseye і матеріали рупора
+    - **Instruction:** Replace with «**QO-100 (Європа):** Bullseye (Passion Radio) і матеріали рупора; спершу DC на червоному порту, потім AXING CFA 11-00».
+    - **Reason:** G6 record 9.
+    - **Sources:** analogs_G6 record 9
+    - **Saving usd:** 0
+  63.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** Bullseye red 25 MHz port
+    - **Anchor:** інжектор LNB (дросель ≥1 A — встановлюється після воріт регіону, C23; DC-блок)
+    - **Instruction:** Replace with «інжектор LNB (дросель ≥1 A — номер деталі ще не названо: струм ≥1 A, DCR, імпеданс/SRF на 739.5 MHz; DC-блок); червоний порт опори 25 MHz Bullseye — завжди DC-розв'язаний 75 Ohm термінатор AXING CFA 11-00 (порт DC-зв'язаний з піном 4 MCU, F4DAV); жодного DC-зв'язаного навантаження чи приладу без DC-блока».
+    - **Reason:** G6 stack_changes 2 and 4; Europe decided (region gate no longer pending).
+    - **Sources:** http://www.pabr.org/radio/otherlnb/otherlnb.en.html
+    - **Saving usd:** 0
+  64.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** QO-100 add-on (Bullseye, terminator, choke)
+    - **Anchor:** діаметр шийки і хвилеводу до рупора
+    - **Instruction:** Replace with «діаметр шийки і хвилеводу до рупора; ковпачок 60 мм (F4DAV) проти 64 мм (Passion Radio) — виміряти до друку кільця горловини; Bullseye на прибутті: справжність (етикетка Othernet BE01, зелений F ПЧ / червоний F опори), струм при 13.2 V холодним і гарячим до встановлення RILM («близько 1 W» F4DAV — твердження, не вимір); DC на червоному порту (очікувано логічний рівень MCU) — потім AXING; зсув маяка CW 10489.500 MHz з термінатором і без ≤ близько 100 Hz; A/B спурів HF+ на 25.000/50.000/75.000 MHz і V4L біля 739.5 MHz: порт відкритий / AXING / TechniSat — якщо AXING гірший за TechniSat понад 1 dB, ставити TechniSat 0002/3077; опційно (Bench, кондуктивно) S11 термінатора на 25 MHz краще −20 dB через де-ембединговий F-SMA; дросель інжектора LNB ≥1 A — назвати деталь (номінальний струм ≥1 A, DCR, імпеданс/SRF на 739.5 MHz) до будь-якої перевірки аналогів».
+    - **Reason:** G6 conditions_or_tests 2-6 and stack_changes 3-4.
+    - **Sources:** analogs_G6 record 9
+    - **Saving usd:** 0
+  65.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** QO-100 add-on
+    - **Anchor:** - Othernet Bullseye LNB: https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+    - **Instruction:** Replace with «- Othernet Bullseye LNB: Passion Radio (продавець у ЄС): https://www.passion-radio.com/lnb-pll/lnb-othernet-978.html ; специфікація і ціна США: https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/ ; вебмагазин RTL-SDR Blog не відправляє в ЄС: https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/ ; розбір F4DAV (червоний порт DC-зв'язаний з MCU): http://www.pabr.org/radio/otherlnb/otherlnb.en.html ; AXING CFA 11-00 (Reichelt): https://www.reichelt.de/de/de/shop/produkt/f-abschlusswiderstand_75_ohm_dc_entkoppelt-310551».
+    - **Reason:** Key URLs.
+    - **Sources:** analogs_G6 record 9
+    - **Saving usd:** 0
+  66.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** keep_with_note
+    - **Part:** Nooelec SAWbird+ iO cased (100788)
+    - **Anchor:** | LNA Inmarsat-C | Nooelec SAWbird+ iO cased (100788) | 1 | 49.95 | Nooelec | перевірено | Лише після проходження egc-gate. |
+    - **Instruction:** Keep model, price ($49.95 ex VAT), source and status; replace the note with: «Лише після проходження egc-gate; якщо egc-gate проходить на L-band патчі core і гелікон не потрібен — не купувати ($0). Специфікація виробника: 1542 MHz, смуга 60 MHz, ≥30 dB, 180 mA при 3-5 V по SMA, до 12 V без пошкоджень, корпус з двома екранами на LNA, гарантія 1 рік; NF, OP1dB, макс. вхід і числове ослаблення не опубліковані (не брати з GOES) — міряти при прийманні. З США (Північна Америка): імпортний ПДВ + EUR 3 за тарифний рядок (≤EUR 150, пошта/IOSS) або звичайне мито понад EUR 150 + UHF EUR 2 з близько 1.11.2026 — купувати в тому самому замовленні Nooelec; Newegg $82.99 — дорожче; запасу в дилерів ЄС не перевірено. Barebones 100787 ($44.95) — лише в екранованому корпусі (Hammond 1455C801 EUR 12.63 — дорожче за економію); non-plus 100782 — гірший (близько 19-20 dB, ширша смуга з L1 усередині).»
+    - **Reason:** G6 keep with corrections (a)-(d).
+    - **Sources:** https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-io.html ; operator_notes 35
+    - **Saving usd:** 0
+  67.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Nooelec SAWbird+ iO
+    - **Anchor:** SAWbird+ iO ($49.95).
+    - **Instruction:** Replace with «SAWbird+ iO ($49.95; у тому самому замовленні Nooelec, щоб розділити посилку; гарантія 1 рік).»
+    - **Reason:** G6 record 10 (c).
+    - **Sources:** analogs_G6 record 10
+    - **Saving usd:** 0
+  68.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Nooelec SAWbird+ iO
+    - **Anchor:** 
+    - **Instruction:** Add a row: «SAWbird+ iO на прибутті (кондуктивно в навантаження або DUT, зміщення з інжектора ch3 при 4.5 V): S21 ≥30 dB на 1537-1545 MHz (LiteVNA, малий рівень, 20-30 dB на виході); записати ослаблення на 1452-1496, 1575.4, 1620, 925-960 і 1710-1880 MHz; NF за Y-фактором з шумовим джерелом і tinySA Ultra+ — ціль близько 1.5 dB або краще; струм ≤200 mA при 4.5 V (менше межі ch3 300 mA); підсилення нижче 30 dB або NF понад близько 2 dB — гарантія (1 рік); б/в — лише якщо проходить ці тести і коштує менше близько $35 з доставкою в ЄС | Приймання iO | Після egc-gate, на прибутті».
+    - **Reason:** G6 acceptance test for the kept iO.
+    - **Sources:** analogs_G6 record 10
+    - **Saving usd:** 0
+  69.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** seller_or_price
+    - **Part:** V30 endurance microSD (second storage)
+    - **Anchor:** | Друге сховище | V30 endurance microSD 128-256 GB | 1 | 25-82 | — | модель (ціни нестабільні) |
+    - **Instruction:** Replace the row up to the status cell with «| Друге сховище | Samsung PRO Endurance (2022) microSDXC 128 GB MB-MJ128KA/EU (EAN 8806092767256) | 1 | 71.77-87.57 (EUR 63.85-77.90 з ПДВ, плюс доставка; Reichelt EUR 64.95 = 73.01, коли з'явиться) | Reichelt (у замовленні з рятувальними картками і кабелем A-A) або arvutitark.ee (EUR 63.85; перевірити доставку і ПДВ) / Alternate (EUR 77.90, 1 шт.) | перевірено 18.10.2026 |» and replace the note with «Опційне переповнення сирих / друга копія знімків; у збірці з Lime за замовчуванням — відкладено (купувати, лише коли T7 немає або потрібен окремий носій знімків). UHS-I V30, 100/40 MB/s, ресурс 70,080 год Full HD 26 Mbps (близько 820 TB), -25...85 °C, гарантія 5 років. Діапазон v1 $25-82 жодним джерелом не підтверджено. Бюджет (явне погіршення, не аналог): SanDisk High Endurance 128 GB $42.60 (Berrybase EUR 37.90) — у 7 разів менший ресурс (10,000 год), 2 роки гарантії.»
+    - **Reason:** G6 keep pinned to a SKU; real prices replace the unsupported v1 band.
+    - **Sources:** https://download.semiconductor.samsung.com/resources/data-sheet/2024_Samsung_Data_sheet_microSD_Card_PRO_Endurance_v.1.1.pdf ; https://www.reichelt.com/de/en/shop/product/microsdxc_memory_card_128gb_samsung_pro_endurance-336143 ; https://www.arvutitark.ee/en/photo-and-videocameras/malukaardid/samsung-pro-endurance-mb-mj128kaeu-128-gb-microsd-memory-c-1129634
+    - **Saving usd:** 0
+  70.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** keep_with_note
+    - **Part:** V30 endurance microSD (C18)
+    - **Anchor:** Без Lime: V30 endurance microSD (128-256 GB), коли дозволять ціни NAND.
+    - **Instruction:** Replace with «Друге сховище (опційно; без T7 або як окремий носій знімків): V30 endurance microSD — Samsung PRO Endurance 128 GB MB-MJ128KA/EU.»
+    - **Reason:** G6 record 11 SKU pin; under the with-Lime default it is optional overflow only.
+    - **Sources:** analogs_G6 record 11
+    - **Saving usd:** 0
+  71.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Samsung PRO Endurance microSD
+    - **Anchor:** 
+    - **Instruction:** Add a row: «microSD Samsung PRO Endurance на прибутті: /sys/block/mmcblk*/device/{manfid,oemid,name} — очікувано manfid 0x00001b і oemid 0x534d («SM»; поширені значення — підтвердити); повний f3write/f3read; на Q6A 30 хв послідовного fio з попередньо виділеними файлами ≥30 MB/s, без зупинок понад 1 с, нуль помилок I/O; ext4 або exFAT без ESP; холодне завантаження з карткою — плата вантажиться з UFS (20 завантажень як у STACK); вимкнення живлення під час запису — ФС відновлюється; перед замовленням — чи arvutitark.ee відправляє в країну користувача і показує ціни з ПДВ | Приймання microSD | На прибутті».
+    - **Reason:** G6 on-arrival gate for the kept card.
+    - **Sources:** analogs_G6 record 11
+    - **Saving usd:** 0
+  72.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** replace_part
+    - **Part:** Airspy Mini (seller)
+    - **Anchor:** | Швидкий L-band SDR | Airspy Mini | 1 | близько 140-160 (GBP ~110) | Moonraker | не перевірено |
+    - **Instruction:** Replace the row up to status with «| Швидкий L-band SDR | Airspy Mini EU (SKU IM150415001EU) | 1 | 99.00 без ПДВ; з ПДВ і доставкою DHL зі складу DE: DE 123.22, FR 130.91, PL 130.23 (перевірено); AT близько 127.27, CZ 127.68, NL 128.43, BE 128.65, PT 133.96, GR 136.35, FI 141.88, SE 142.60 (модель) | ITEAD (офіційний партнер-виробник Airspy; склад DE, 242 шт.) | перевірено |» and replace the note with «Лише після горба Metop і тесту 2.88 Msps (ворота без змін). Умови: ITEAD DE відправляє в країну користувача (для ES і IT тарифу не повернуто — тоді AstroRadio ES EUR 127.05, база ПДВ не перевірена, або WiMo DE EUR 144.90 з ПДВ = $162.88); у кошику немає рядка мита чи митниці, трекінг DHL починається в DE. Офіційно 24-1700 MHz: Metop 1701.3 і AWS 1707 MHz вище специфікації (libairspy дозволяє до 1.75 GHz, airspy_rx — до 1.9 GHz); тест (c) у межах 30 днів повернення; при провалі — HydraSDR RFOne ($193.67 DigiKey, нове рішення). Умови продавця: 30 днів повернення, 1 рік заміни (бейдж — 24 місяці). Шина 5 V USB 2.0 (синій порт або CH334F), SMA female, DC-блок між лінією LNA з TPS2553 і входом SDR, трійник Mini вимкнений (airspy_set_rf_bias за токеном labd), донгл 77x26x10 мм поза корпусом на короткому USB. Замінено: Moonraker UK близько GBP 110 ($140-160, не перевірено); економія близько $23.28 у DE проти середини $146.50 (FR близько 15.59, PL 16.27, AT/CZ/NL/BE 18-19, SE/FI 4-5, ES/IT 0 до підтвердження доставки).»
+    - **Reason:** G6 replace_conditionally: same genuine part from Airspy's official manufacturing partner, cheaper landed from the DE warehouse.
+    - **Sources:** https://itead.cc/product/airspy-mini-the-high-performance-miniature-sdr-dongle-eu/ ; https://itead.cc/wp-json/wc/store/v1/products/751684 ; https://airspy.com/purchase/ ; https://www.wimo.com/en/airspy-mini
+    - **Saving usd:** about 23.28 (DE) vs 146.50 midpoint; 39.66 vs WiMo
+  73.
+    - **Section:** 01b_decisions_register
+    - **Kind:** seller_or_price
+    - **Part:** Airspy Mini (#91)
+    - **Anchor:** 6 Msps, близько $146.50 (GBP 110, без дати).
+    - **Instruction:** Replace with «6 Msps; ITEAD DE (IM150415001EU) $99.00 без ПДВ, з ПДВ і доставкою DE $123.22 (FR $130.91, PL $130.23); офіційно 24-1700 MHz (libairspy до 1.75 GHz, airspy_rx до 1.9 GHz — Metop і AWS вище специфікації, тож кондуктивний тест (c) на 1701.3/1707 MHz у межах 30 днів повернення).»
+    - **Reason:** G6 stack_changes for item #91.
+    - **Sources:** https://raw.githubusercontent.com/airspy/airspyone_host/master/airspy-tools/src/airspy_rx.c ; libairspy airspy.h
+    - **Saving usd:** about 23.28 (DE)
+  74.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** rule
+    - **Part:** Airspy Mini bias-T
+    - **Anchor:** трійник запасного V4L — лише для LNA ≤90 mA і з токеном.
+    - **Instruction:** Append after this sentence: «Трійник Airspy Mini (якщо куплено) вимкнений, airspy_set_rf_bias — лише за токеном labd; DC-блок між лінією LNA з TPS2553 і входом SDR.»
+    - **Reason:** G6 record 12 stack_changes (connectors and bias).
+    - **Sources:** analogs_G6 record 12
+    - **Saving usd:** 0
+  75.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Airspy Mini
+    - **Anchor:** 
+    - **Instruction:** Add a row: «Airspy Mini (лише якщо куплено за воротами; у межах 30 днів повернення, кондуктивно): (a) airspy_info — серійник і прошивка; (b) 6 Msps 15 хв на Q6A без втрачених відліків, лог навантаження CPU; (c) лабораторне джерело на 1701.3 і 1707 MHz через ≥40 dB у Mini: захоплення PLL, фон і спури порівняно з 1690 MHz, рівень тону в межах близько 3 dB від 1690 MHz — при провалі повернути (єдиний аналог у специфікації — HydraSDR RFOne, нове рішення); (d) струм USB на FNB58 при 6 Msps (не опубліковано) — додати в бюджет живлення. Умови джерела: ITEAD DE відправляє в країну, без рядка мита, DHL з DE | Приймання Airspy Mini | Після купівлі».
+    - **Reason:** G6 conditions_or_tests.
+    - **Sources:** analogs_G6 record 12
+    - **Saving usd:** 0
+  76.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** keep_with_note
+    - **Part:** Nooelec Flamingo+ FM v2 #2 (P8)
+    - **Anchor:** | Тракт 2 m/WIDE | Другий Flamingo+ FM (LNA V2 — зі стенда) | 1 | 24.95 | Nooelec | перевірено | Порт P8. |
+    - **Instruction:** Keep model, price, source, status; replace the note «Порт P8.» with «Порт P8. Nooelec Flamingo+ FM v2 (100813), у тому самому замовленні Nooelec (понад $100 — безкоштовна доставка); у ЄС близько $29.7-30.2 з ПДВ, плюс мито і UHF за правилом 35 (замовлення Nooelec понад EUR 150 — звичайне мито), збір перевізника не перевірено; запасний у ЄС — Passion Radio EUR 33.90 з ПДВ (за G1, не підтверджено). Режекція на краю 108 MHz лише близько 32 dB (не 60 dB) — на огляді місця перевірити запас для FM-станцій 104-108 MHz. Бюджет: не-гіршого немає; RTL-SDR Blog band-stop $16.95 — компроміс: краще на 104-108 MHz (близько 45-60 dB проти 32 dB), але мілкіше в середині смуги (близько 50-60 проти 70-77 dB), без ESD-діода, без рейтингу макс. входу і гарантії; Nooelec Flamingo v1 $22.95 і Distill:FM $17.95 — лише >40 dB.»
+    - **Reason:** G6 keep; stack_changes (a) budget alternative and (d) site-survey note.
+    - **Sources:** https://www.nooelec.com/store/flamingo-plus-fm.html ; https://www.rtl-sdr.com/product/rtl-sdr-blog-broadcast-fm-band-stop-filter/
+    - **Saving usd:** 0
+  77.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** FM band-stop on P8 (C10 rejection reason)
+    - **Anchor:** Відкинуто: фільтр з боку SDR, режектор RTL-SDR Blog (без рейтингу DC), фільтр на кожному фідері обох рівнів.
+    - **Instruction:** Replace with «Відкинуто: фільтр з боку SDR, режектор RTL-SDR Blog (на P8 причина не в рейтингу DC — зміщення LNA V2 входить на його виході через ch4, — а в мілкішій середині смуги (близько 50-60 проти 70-77 dB), відсутності RF ESD-діода на відкритому порту, рейтингу +18 dBm, опублікованих IL і S11 до 2 GHz і 2-річної гарантії; на 104-108 MHz він кращий — це компроміс, не аналог), фільтр на кожному фідері обох рівнів.»
+    - **Reason:** G6 stack_changes (b).
+    - **Sources:** Nooelec Flamingo+ page and datasheet Rev 1; rtl-sdr.com FM filter launch post
+    - **Saving usd:** 0
+  78.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Nooelec Flamingo+ FM v2 #2 (P8)
+    - **Anchor:** 
+    - **Instruction:** Add a row: «Flamingo+ #2 для P8 на LiteVNA (кондуктивно, DUT між портами, ніколи в ефір): середнє S21 ≤ −60 dB на 88-108 MHz; ≤ −45 dB на 87.5-88 MHz; ≤ −65 dB на 92-100 MHz; ≤ −28 dB на 107.9 MHz (межі з графіка даташиту); 2 m: S21 ≥ −1.2 dB на 144-146 MHz; 400-406 MHz: S21 ≥ −1.0 dB і S11 ≤ −15 dB; 1090 MHz і 1.7 GHz: S21 ≥ −1.2 dB, S11 ≤ −10 dB до 1.766 GHz; якщо динамічного діапазону LiteVNA на 90-100 MHz не вистачає для −70 dB — записати як обмежене фоном, одну точку перевірити tinySA і шумовим джерелом. Огляд місця: якщо найсильніша FM-станція на 104-108 MHz і LNA V2 або V4L показують інтермодуляцію на P8 — нове рішення (друга секція фільтра або явний компроміс RTL-SDR Blog + RF ESD-деталь) | Приймання (поряд із кроком VNA 10 запуску) | На прибутті».
+    - **Reason:** G6 stack_changes (c), (d) and site condition.
+    - **Sources:** analogs_G6 record 13
+    - **Saving usd:** 0
+  79.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** removal
+    - **Part:** Pololu D36V28F5 #2 (5 V for display)
+    - **Anchor:** | 5 V для дисплея | Pololu D36V28F5 #2 | 1 | 23.95 | Pololu | перевірено | Лише якщо Wisecoco підтвердить вхід 5 V. |
+    - **Instruction:** Delete this row (optional subtotal −$23.95). Add to the group-total note: «Запасний варіант лише для плати дисплея тільки на 5 V: D36V28F5 #3782 з Botland (EUR 15.22 без ПДВ / EUR 18.11 з ПДВ = 17.13 / 20.38; доставка від EUR 4.69 DE або EUR 8.07 GLS EU; запасний продавець TME) + ідеальний діод або Schottky на виході; у підсумки не входить.»
+    - **Reason:** G6 replace_conditionally: DISP12 feeds the Wisecoco 'DC(5-24V)' barrel or the 4D 12 V barrel directly; the converter is only a 5 V-only contingency.
+    - **Sources:** https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-inch-2000-nits-lcd-7.webp ; https://botland.de/abwartswandler/17169-d36v28f5-abwartswandler-5v-32a-pololu-3782-5903351242837.html ; https://forum.pololu.com/t/strange-behavior-of-d36v28f5-pololu-3782/29129
+    - **Saving usd:** 23.95 vs list (more vs Pololu-US landed EU cost, roughly 34+ estimate); contingency 6.82 net
+  80.
+    - **Section:** 05a_arch_power
+    - **Kind:** architecture
+    - **Part:** DISP12 rail (no 5 V converter)
+    - **Anchor:** плата Wisecoco (якщо лише 5 V — окремий D36V28F5 #2 від SW)
+    - **Instruction:** Replace with «плата Wisecoco через роз'єм DC (на зображенні лістингу «DC(5-24V)») або 12 V 5.5 мм барель 4D; лише якщо Wisecoco письмово підтвердить плату тільки на 5 V — D36V28F5 #3782 з Botland (EUR 15.22 без ПДВ / EUR 18.11 з ПДВ; запасний продавець TME) з ідеальним діодом або Schottky на виході; VBUS панелі не підключено». In the same row replace «у межах eFuse 1.5 A |» with «у межах eFuse 1.5 A (±10%, найгірше 1.35 A — розглянути ILIM близько 1.7 A номінально, 1.53 A мінімум) |».
+    - **Reason:** G6 stack_changes (DISP12 row, optional ILIM).
+    - **Sources:** Wisecoco listing image; https://www.ti.com/product/TPS25947
+    - **Saving usd:** 23.95
+  81.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** DISP12 rail (D4)
+    - **Anchor:** якщо плата лише 5 V — окремий D36V28F5 #2 від SW, ніколи LAB5 чи порт Q6A.
+    - **Instruction:** Replace with «DISP12 → роз'єм DC плати (Wisecoco «DC(5-24V)» / 4D 12 V 5.5 мм); лише для плати тільки на 5 V — D36V28F5 #3782 з Botland (EUR 15.22 без ПДВ) з ідеальним діодом або Schottky на виході, ніколи LAB5 чи порт Q6A.»
+    - **Reason:** G6 stack_changes (D4).
+    - **Sources:** analogs_G6 record 14
+    - **Saving usd:** 0
+  82.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** Wisecoco written questions (D5)
+    - **Anchor:** вхідна напруга і струм;
+    - **Instruction:** Replace with «вхід DC 5-24 V на ревізії, що відвантажується (або щонайменше 11.0-12.5 V), розмір роз'єму і струм при 12 V на 25/50/100%; чи розв'язані діодами піни VBUS Type-C від входу DC;»
+    - **Reason:** G6 stack_changes (D5): drop the input-voltage question as such, keep current at 12 V and barrel size, add the Type-C VBUS isolation question.
+    - **Sources:** analogs_G6 record 14
+    - **Saving usd:** 0
+  83.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Wisecoco written questions (step 3)
+    - **Anchor:** вхід V/I
+    - **Instruction:** Replace with «вхід DC 5-24 V на ревізії, що відвантажується, струм при 12 V на 25/50/100% і розмір роз'єму, розв'язка VBUS Type-C від входу DC».
+    - **Reason:** G6 condition 1.
+    - **Sources:** analogs_G6 record 14
+    - **Saving usd:** 0
+  84.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** correction
+    - **Part:** Wisecoco 7in display input
+    - **Anchor:** У лістингу досі «I2C Capacitive Touch», немає вхідної напруги і комплекту.
+    - **Instruction:** Replace with «У лістингу досі «I2C Capacitive Touch»; текст сторінки вхідної напруги не дає, але на зображенні лістингу роз'єм підписано «DC(5-24V)» (вхідний електроліт «100 35V» — прочитано G6 з зображення), два Type-C — лише «5V 2A» (10 W, менше межі D4 14 W); комплекту немає. Живлення — DISP12 (12 V) прямо в роз'єм DC.»
+    - **Reason:** G6 record 14 evidence from the listing image.
+    - **Sources:** https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-inch-2000-nits-lcd-7.webp
+    - **Saving usd:** 0
+  85.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Display board on DISP12
+    - **Anchor:** стабільність при SYS12 = 11.0 V; VID:PID сенсора
+    - **Instruction:** Append after «VID:PID сенсора»: «; з живленням роз'єму DC 11.0/12.0/12.5 V без USB-кабелю — VBUS обох Type-C і 5 V піна USB TP ≤5.25 V (інакше ці піни назавжди не підключені, а запасний варіант re-audit D «VBUS від власних 5 V плати» викреслено); 20 холодних стартів через dV/dt eFuse без спрацювання ILIM; повний білий 100% ≤1.17 A при 12 V і ≤1.27 A при 11.0 V; A/B C4 HF+ з панеллю на DISP12, дисплей увімк./вимк. — жодної лінії ≥3 dB над фоном у ±5 kHz від 40, 60, 77.5, 162, 490, 518, 4209.5 kHz; записати частоту перетворювача плати при 12 V; прогін SYS12 4.2 A — з дисплеєм на 100% на DISP12; лише для плати тільки на 5 V: D36V28F5 з Botland 60 хв при 2.8 A у закритому корпусі на 14.0 і 16.4 V, вихід у межах 4%, без теплового відключення, ворота C4».
+    - **Reason:** G6 conditions 2-4 and the contingency test.
+    - **Sources:** analogs_G6 record 14
+    - **Saving usd:** 0
+  86.
+    - **Section:** 08_open_bench
+    - **Kind:** new_risk
+    - **Part:** TPS259470A eFuse package
+    - **Anchor:** | Можливо не враховані в BOM дрібниці:
+    - **Instruction:** Insert a row before this one: «Якщо v2 бере eFuse TPS259470A (сімейство TPS25947, re-audit D): корпус VQFN-HR 2 x 2 мм потребує PCBA-складання або перехідної плати, бо правило збирання — без reflow; стосується екземплярів J21, USB-C VBUS і DISP12 | Рішення щодо PCBA | Перед замовленням PCB».
+    - **Reason:** G6 record 14 'already in the stack, not caused by this decision' note.
+    - **Sources:** https://www.ti.com/product/TPS25947
+    - **Saving usd:** 0
+  87.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** Pololu D36V28F5 #2 optional line
+    - **Anchor:** | Вивантаження (SondeHub, WSPRnet, PSK Reporter, агрегатори ADS-B, SatNOGS) за замовчуванням |
+    - **Instruction:** Add a 6.2 row: «| Опційний рядок «5 V для дисплея: Pololu D36V28F5 #2» з Pololu US | G6: DISP12 живить DC-вхід плати напряму (Wisecoco «DC(5-24V)», 4D 12 V); D36V28F5 — лише запасний для плати тільки на 5 V (Botland); 4.80 V мінімум мінус падіння при 2.8 A лежить на межі 5 V, близько 1.9 W тепла, накачування VIN понад 60 V при зворотному живленні (форум Pololu t/29129). |»
+    - **Reason:** G6 record 14.
+    - **Sources:** https://forum.pololu.com/t/strange-behavior-of-d36v28f5-pololu-3782/29129
+    - **Saving usd:** 23.95
+  88.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** replace_part
+    - **Part:** AD8318-class log detector power meter
+    - **Anchor:** | Вимірювач потужності | Логарифмічний детектор класу AD8318 | 1 | 25-60 | — | модель |
+    - **Instruction:** Replace the row up to status with «| Вимірювач потужності | Модуль AD8318 класичної конструкції (33 x 24.5 мм, 78L05 SOT-89, крайовий SMA, 1 MHz-8 GHz): AliExpress 3256809368914605 ($12.09, лише якщо фото показують класичну плату) або 3256805661032022 ($13.35) + Adafruit ADS1115 #1085 + передрегулятор 9 V + LDO 3.3 V + дільник + коробка на LAB BUS | 1 | близько 26.85-28.11 без ПДВ; близько 37.6-39.9 у ЄС (модель: модуль з ПДВ x1.19-1.25 + EUR 3 мита + EUR 2 UHF з близько 1.11.2026 = близько $20.0-22.3 плюс доставка; ADS1115 з DigiKey DE EUR 15.62 з ПДВ = $17.56) + доставка, 9 V регулятор, LDO, дільник, корпус (без ціни) — за умовою | AliExpress (з захистом покупця) + DigiKey DE (Adafruit 1085) | модель |» and replace the note with «Делеговане рішення: опційно в розширенні; не точніший за tinySA, з яким калібрується. Умова: фото лістингу — класична плата (0603 Clpf/Cobp, Tadj 510 Ohm, чип з логотипом ADI, «AD8318» і датою); приймальні тести (розділ 8), при провалі — повернути і взяти інший лістинг, далі — старий вибір. ADS1115 коробки на 0x49 (ADDR на VDD; 0x48 зайнята sled), живлення ADS1115 3.3 V (LDO), дільник лишається (VOUT до 4.6 V); перед роботою нижче 22 MHz встановити Clpf 1 nF і Cobp 10 nF (0603). Модуль: 68 mA, ≥7.5 V (78L05), від AUX12 через 9 V, близько 0.6 W. v1: $25-60 (модель за старими лістингами $16.50-39.00); на модулі −$3.15...−26.91; коробка тепер біля нижньої межі смуги.»
+    - **Reason:** G6 replace_conditionally: same module design at live listing prices; I2C collision and supply fixes.
+    - **Sources:** https://www.siliconchip.com.au/Issue/SC/2018/March/El+Cheapo+Modules+14%3A+Logarithmic+RF+Detector ; https://www.aliexpress.com/w/wholesale-ad8318-module.html ; https://www.digikey.de/en/products/detail/adafruit-industries-llc/1085/5761229
+    - **Saving usd:** 3.15-26.91 on the module line; 0 vs the $25 low end
+  89.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** AD8318 box ADS1115 address (I2C2 row)
+    - **Anchor:** (sled: MCP23017 #2 0x21, ADS1115 0x48, лічильник RP2040 0x30 — лише з Lime)
+    - **Instruction:** Replace with «(sled v2: MCP23017 #2 0x21, ADS1115 0x48; коробка AD8318: ADS1115 0x49, ADDR на VDD; лічильник RP2040 0x30 — лише з Lime)».
+    - **Reason:** G6 record 15: radio_lab put the box ADS1115 at 0x48, colliding with the sled ADS1115 on the same LAB BUS.
+    - **Sources:** analogs_G6 record 15; radio_lab.json
+    - **Saving usd:** 0
+  90.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** I2C address map
+    - **Anchor:** 0x20, 0x21, 0x22, 0x48, 0x30 на I2C2
+    - **Instruction:** Replace with «0x20, 0x21, 0x22, 0x48, 0x49 (ADS1115 коробки AD8318), 0x30 на I2C2» and make labd use 0x49 for the power-meter box.
+    - **Reason:** G6 record 15 address fix.
+    - **Sources:** analogs_G6 record 15
+    - **Saving usd:** 0
+  91.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** AD8318 box (outside totals note)
+    - **Anchor:** лог-детектор AD8318 ($25-60, у 2.11)
+    - **Instruction:** Replace with «лог-детектор AD8318 (близько $27-28 без ПДВ / близько $38-40 у ЄС, модель, за умовою; у 2.11)».
+    - **Reason:** G6 record 15 cost.
+    - **Sources:** analogs_G6 record 15
+    - **Saving usd:** see 2.11 row
+  92.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** AD8318 module
+    - **Anchor:** 
+    - **Instruction:** Add a row: «Модуль AD8318 (стенд, лише кондуктивно, ніколи понад +5 dBm на вході): до замовлення — фото класичної плати, оплата з захистом покупця; (1) 9.0 V — 60-75 mA (менший струм — підміна AD8317/AD8319); (2) синус tinySA Ultra+ на −20 dBm (макс. −19 dBm, ±2 dB, до 900 MHz), кроки вниз атенюаторами з виміряним на LiteVNA S21 і PE4312 sled: на 137, 435 і 740 MHz нахил −24.0...−26.0 mV/dB, лінійність ±1 dB від −20 до −60 dBm, ще відстежує −65 dBm; (3) сегмент −20...−5 dBm — лише через підсилювач з виміряним підсиленням, щонайменше на 10 dB нижче його P1dB (напр. ZFL-500LN+), інакше записати як неперевірений на цьому екземплярі; (4) площинність на 1700 і 2200 MHz у режимі tinySA «highest accuracy»: в межах ±1 dB від лінії 435 MHz після калібрування; (5) після Clpf 1 nF і Cobp 10 nF — тон 10 MHz без пульсацій; (6) S11 на LiteVNA (малий рівень) як поправка узгодження; (7) провал — повернути і взяти інший лістинг, потім старий вибір; записати нахил і зміщення кожного екземпляра для таблиці вольт → dBm | Приймання AD8318 | На прибутті».
+    - **Reason:** G6 conditions_or_tests.
+    - **Sources:** analogs_G6 record 15; https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Specification
+    - **Saving usd:** 0
+  93.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Lab extended and optional items (H1, DPS-150, case, AD8318, iO, Flamingo, Airspy, T7, microSD, Pololu)
+    - **Anchor:** - Waveshare LC76G: https://www.waveshare.com/lc76g-gnss-module.htm
+    - **Instruction:** After this line (Продавці основних деталей) add: «- Samsung T7 даташит Rev 2.0: https://download.semiconductor.samsung.com/resources/data-sheet/Samsung_Portable_SSD_T7_Datasheet_Rev2.0.pdf ; Reichelt T7: https://www.reichelt.com/de/en/shop/search/samsung%20t7 ; smartmontools drivedb: https://raw.githubusercontent.com/smartmontools/smartmontools/master/smartmontools/drivedb.h», «- Samsung PRO Endurance даташит: https://download.semiconductor.samsung.com/resources/data-sheet/2024_Samsung_Data_sheet_microSD_Card_PRO_Endurance_v.1.1.pdf ; Reichelt: https://www.reichelt.com/de/en/shop/product/microsdxc_memory_card_128gb_samsung_pro_endurance-336143», «- Pololu D36V28F5 (Botland, запасний для 5 V): https://botland.de/abwartswandler/17169-d36v28f5-abwartswandler-5v-32a-pololu-3782-5903351242837.html ; зворотне живлення D36V28Fx: https://forum.pololu.com/t/strange-behavior-of-d36v28f5-pololu-3782/29129». In «РЧ і приймачі» after the Flamingo+ line add: «- Nooelec SAWbird+ H1: https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-h1.html ; даташит: https://www.nooelec.com/datasheets/100811 ; Amazon.nl (продавець Nooelec Inc): https://www.amazon.nl/dp/B07XPV9RX2», «- Nooelec SAWbird+ iO: https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-io.html», «- Airspy Mini EU (ITEAD DE): https://itead.cc/product/airspy-mini-the-high-performance-miniature-sdr-dongle-eu/ ; дилери: https://airspy.com/purchase/ ; airspy_rx (межа 1.9 GHz): https://raw.githubusercontent.com/airspy/airspyone_host/master/airspy-tools/src/airspy_rx.c», «- RTL-SDR Blog FM band-stop (компроміс для P8): https://www.rtl-sdr.com/product/rtl-sdr-blog-broadcast-fm-band-stop-filter/». In «Лабораторія» add: «- FNIRSI DPS-150 (вітрина ЄС): https://www.fnirsi.com/products/dps-150 ; гарантія: https://www.fnirsi.com/pages/warranty-policy ; Elektor: https://www.elektor.com/products/fnirsi-dps150-dc-power-supply-150-w ; fnirsi-dps150: https://pypi.org/pypi/fnirsi-dps150/json», «- B&W outdoor.case Type 4000: буклет https://www.astroshop.eu/Produktdownloads/55906_outdoor.cases_082017.pdf ; звіт PAConsult 17-8981: https://www.astroshop.eu/Produktdownloads/55906_MIL-STD-810G-komplett.pdf ; Calumet: https://www.calumet.de/product/b-w-outdoor-case-type-4000-mit-facheinteilung ; Peli 1450EU даташит: https://docs.rs-online.com/330f/A700000016088780.pdf», «- AD8318 (Silicon Chip): https://www.siliconchip.com.au/Issue/SC/2018/March/El+Cheapo+Modules+14%3A+Logarithmic+RF+Detector».
+    - **Reason:** Key URLs for G6 decisions not covered by the other 10_sources changes.
+    - **Sources:** analogs_G6 records 3, 4, 5, 8, 10-15
+    - **Saving usd:** 0
+  94.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** Lab extended subtotal
+    - **Anchor:** **497.72-707.72 (≈498-708)**
+    - **Instruction:** Replace with «**570.25-629.73 (≈570-630)** — мій перерахунок рядків G6 (оцінка; база змішана: GPSDO і кейс — ЄС з ПДВ і доставкою, sled — без ПДВ, H1 — $49.95 США / $61.93 Amazon EU, DPS-150 — $62.64 за умовою / $66.38 запасний, Pro Stick Plus — $69.92); з Peli 1450 замість B&W (якщо правило замків не прийнято) — до ≈$730.50».
+    - **Reason:** Line items changed by G6 (GPSDO 193.08, Pro Stick 69.92, sled 72-104, H1 49.95-61.93, DPS 62.64-66.38, case 122.66-134.42).
+    - **Sources:** analogs_G6 records 0-5
+    - **Saving usd:** low end +72.53, high end −77.99 vs v1
+  95.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** seller_or_price
+    - **Part:** Lab totals
+    - **Anchor:** | Лабораторія extended | **498-708** |
+    - **Instruction:** Replace with «| Лабораторія extended | **≈570-630** (мій перерахунок G6, оцінка) |» and recompute the next row «core + extended» (anchor «| core + extended | 1,973-2,518 (мій підсумок) |») from the final core figure (G5) plus ≈570-630; with the v1 core 1,475-1,810 it would be ≈2,045-2,440 (мій підсумок). Recompute «Усе, крім опційного» only after all tiers are final.
+    - **Reason:** Consequence of the extended-tier line changes.
+    - **Sources:** analogs_G6 records 0-5
+    - **Saving usd:** see subtotal
+  96.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** seller_or_price
+    - **Part:** Tier table: extended
+    - **Anchor:** | extended (лабораторія) | GPSDO, Pro Stick Plus, sled, H1, DPS-150, кейс | **498-708** | 497.72-707.72 |
+    - **Instruction:** Replace the two number cells with «**≈570-630**» and «570.25-629.73 (мій перерахунок G6)». The summary rows «+ лабораторія (bench)» and «Усе, крім опційного» (and the arithmetic sentence under them) must be recomputed once all tiers are final; the extended tier contributes +72.53 at the low end and −77.99 at the high end vs v1.
+    - **Reason:** Consequence of G6 line changes.
+    - **Sources:** analogs_G6 records 0-5
+    - **Saving usd:** see subtotal
+  97.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** seller_or_price
+    - **Part:** Optional group subtotal
+    - **Anchor:** **932.79-1,156.84 (≈933-1,157)**
+    - **Instruction:** Replace with «**1,000.61-1,099.25 (≈1,001-1,099)** — мій перерахунок рядків G6 (оцінка; база змішана)». In the same note replace «Lime-набір (Lime + деталі + T7) близько $596-681; QO-100 $48-75; iO $49.95; microSD $25-82; Airspy Mini близько $140-160.» with «Lime-набір (плата $267 + 4 кабелі $18.36 + деталі близько $89.65-91.65 + T7 $231.45-252.81) близько $606-630 — у збірці з Lime за замовчуванням переходить у пристрій, тоді решта групи близько $394-469; QO-100 близько $97-124 (2 LNB до DE); iO $49.95 (без EU-зборів); microSD $71.77-87.57; Airspy Mini близько $123-143 з ПДВ і доставкою (за воротами); Flamingo+ #2 $24.95; AD8318 близько $27-40; рядок D36V28F5 #2 прибрано (−$23.95).» Also update the tier-table row «| optional / за воротами | не в підсумках | **933-1,157** | 932.79-1,156.84 |» to «**≈1,001-1,099** | 1,000.61-1,099.25 (мій перерахунок G6; без Lime-набору ≈394-469)».
+    - **Reason:** Consequence of G6 optional-line changes (Lime cables, Lime parts, T7, QO-100, microSD, Airspy, Pololu removal, AD8318).
+    - **Sources:** analogs_G6 records 6-15
+    - **Saving usd:** group low end +67.82, high end −57.59 vs v1
+  98.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** seller_or_price
+    - **Part:** C24 cost and weight
+    - **Anchor:** розширення $498-708; опційне/за воротами $933-1,157 (не входить у підсумки)
+    - **Instruction:** Replace with «розширення ≈$570-630 (перерахунок G6, оцінка); опційне/за воротами ≈$1,001-1,099 разом з Lime-набором ≈$606-630, без нього ≈$394-469 (не входить у підсумки)». In the same row replace «кейс Pelican для стенда 8.2-9.1 kg» with «кейс стенда B&W 4000 RPD 8.2-9.1 kg (модель)». Leave the other tier figures to their own sources.
+    - **Reason:** G6 totals and case change.
+    - **Sources:** analogs_G6
+    - **Saving usd:** see subtotals
+  99.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Lab extension purchase (step 13)
+    - **Anchor:** Розширення лабораторії: LBE-1420 ($175.80 = GBP 132), Pro Stick Plus ($69.92 = GBP 52.50), кваліфіковані деталі sled, SAWbird+ H1, DPS-150, кейс. Відкладено: microSD (ціни NAND), T7 (лише з Lime), Airspy Mini (лише після горба Metop і тесту 2.88 Msps).
+    - **Instruction:** Replace with «Розширення лабораторії: LBE-1420 (leobodnar.com, регіон EU, DDP із FR: EUR 171.76 у DE = $193.08; кошик зі справжньою адресою), кваліфіковані деталі sled v2 (чипи — у DigiKey DE кроку 7, D36V6F6 — Botland/TME, PCB — JLCPCB), SAWbird+ H1 (Amazon EU, продавець Nooelec Inc, EUR 55.10), DPS-150 (fnirsi.com EU за умовою кошика, інакше Elektor/Eleshop), кейс B&W Type 4000 RPD (eBay.de FLOHR або Calumet.de) + 2 замки TSA; Pro Stick Plus — уже в замовленні Pi Hut кроку 6; T7 — на кроці 10. Відкладено: microSD Samsung PRO Endurance 128 GB (Reichelt після поповнення, або arvutitark.ee / Alternate), Airspy Mini EU (ITEAD DE; лише після горба Metop і тесту 2.88 Msps), коробка AD8318 (за умовою).»
+    - **Reason:** G6 seller changes for every extended/optional item bought at the end.
+    - **Sources:** analogs_G6 records 0-5, 8, 11, 12, 15
+    - **Saving usd:** see rows
+  100.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Lab extension bring-up (step 14)
+    - **Anchor:** 14. **Останнім:** розширення лабораторії (LBE-1420, Pro Stick Plus, кваліфікований sled, SAWbird+ H1, DPS-150, кейс). Відкладено: microSD, T7, Airspy Mini.
+    - **Instruction:** Replace with «14. **Останнім:** розширення лабораторії (LBE-1420 — приймання в межах 14 днів, кваліфікований sled v2, SAWbird+ H1, DPS-150, кейс B&W з тестом занурення і падіння); Pro Stick Plus — приймання після замовлення Pi Hut. Відкладено: microSD, Airspy Mini, AD8318.»
+    - **Reason:** G6 changes (Pro Stick moved, T7 in the Lime step, acceptance tests).
+    - **Sources:** analogs_G6
+    - **Saving usd:** 0
+  101.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** G6 corrections (multiple parts)
+    - **Anchor:** 36. wideband_sdr:
+    - **Instruction:** After item 36 add new items: «37. LBE-1420: GBP 132 — з ПДВ UK (кошик 18.10.2026), а не «база ПДВ не вказана»; для ЄС дешевший шлях — Bodnar-EU DDP (EUR 171.76 у DE), не Batronix. 38. Bullseye у Passion Radio: EUR 29.94 — з 20% ПДВ (priceDisplayMethod=0, taxRate=20; кошик «Including VAT»), а не без ПДВ, як у re-audit C і пошуках G6; без ПДВ EUR 24.95. 39. RF sled: RF1 — парковка 49.9 Ohm (A=B=Low), RF2 тракт A, RF3 тракт B, RF4 BENCH (не «RF4 50 Ohm»); HMC7992 має 2 лінії A/B, не V1-V3; PE4302 знято з виробництва (2016) → PE4312; твердження, що PE4312 «недоступний у ЄС», хибне (DigiKey DE, 11,705 шт.). 40. Інструмент MHF 4L — I-PEX 90609-0001, не 90435-001. 41. DPS-150: ПК-зв'язок — Micro-USB CDC-ACM (cdc_acm), не «USB-C, CH340»; ціна v1 $73-75 застаріла. 42. SAWbird+ H1: сторінка працює ($49.95), «URL дав 404» застаріло; OP1dB +18 dBm (не +20, як у GOES); 108/122/150 mA. 43. SAWbird+ iO: NF 1.2 dB, OP1dB +20 dBm і макс. вхід 0 dBm — дані GOES, для iO не опубліковані; гарантія 1 рік. 44. SanDisk High Endurance 128 GB — 10,000 год, не 20,000 (20,000 — для 256 GB); Reichelt називає SDSQQNR «Max Endurance» і показує 120,000 год (256 GB) на SDSQQVR-128G — замовляти за номером деталі; діапазон microSD $25-82 джерелами не підтверджено. 45. Коробка AD8318: ADS1115 на 0x48 (radio_lab) збігається з ADS1115 sled на 0x48 на тій самій LAB BUS — 0x49. 46. Peli 1450 — 15.0 L за даташитом 1450EU (не 14.5 L); Apache 3800 з Європи не купити (лише Harbor Freight у США, IP65). 47. Wisecoco: на зображенні лістингу вхід «DC(5-24V)» — окремий 5 V перетворювач за замовчуванням не потрібен. 48. FlightAware Pro Stick Plus: LNA стоїть перед SAW — перевантаження з широкосмуговими антенами (rtl-sdr.com). 49. Flamingo+ FM v2: на 108 MHz лише близько 32 dB; причина «без рейтингу DC» проти фільтра RTL-SDR Blog на P8 не діє. 50. Вебмагазин RTL-SDR Blog не відправляє в ЄС (Bullseye — через Passion Radio або офіційний AliExpress).»
+    - **Reason:** Errors in v1 or upstream files found by the G6 analog checks.
+    - **Sources:** analogs_G6 records 0-15
+    - **Saving usd:** 0
+- **Already in v1:**
+  - FlightAware Pro Stick Plus: $69.92 (GBP 52.50) at The Pi Hut, status перевірено, on LAB USB-A (CH334F H3, TPS2553 0.75 A), about 300 mA; correction 27 (GBP 52.50, not $20.95) already in section 7
+  - GPSDO rules: conducted only through 80 dB + DC block, off and disconnected during H1, ADS-B and Inmarsat-C; Bodnar Mini rejected; PPS + GNSS-SDR ppm as the free core path
+  - Sled I2C addresses 0x21 (MCP #2) and 0x48 (ADS1115) via TCA9517 with 4.7k pull-ups on the sled side; leak rule ≤ −40 dBm; shield wall; conducted qualification before use
+  - SAWbird+ H1 on P3/ch3 through a TPS2553 300 mA channel; GPSDO off during H1; sun rise about 0.7-1.2 dB over Tsys 125 K (model)
+  - DPS-150 powered from the 20 V PD bank; LNB tests at 13.0-13.4 V
+  - SAWbird+ iO cased 100788 at $49.95 (verified), bought only after the egc-gate; cased unit at the feed, Barebones only in a shielded housing (#97); v1 #97 already attributes the NF/OP1dB/Pin figures to GOES, not to iO
+  - Flamingo+ FM v2 #2 on P8 ahead of the bench LNA V2, $24.95 Nooelec, verified; filter-first rule (C10, D8)
+  - LimeSDR Micro: $249 + $18 shipping, ships 15 Dec 2026, full refund only before shipment, decide by 1 Dec 2026; ADT-Link R44SF 5 cm $19 verified; TX port loaded 50 Ohm and TX blocked by the LimeSuiteNG patch; third HMC7992 on the injector board
+  - T7 mounted outside on the bottom edge, blue USB port, 0-60 °C rating
+  - microSD second storage optional/deferred; no ESP on data media; V30 class
+  - Airspy Mini purchase gate (Metop hump on one helix + 15 min 2.88 Msps V4L test), 6 Msps
+  - DISP12 default SYS12 → LC → eFuse 1.5 A with EN on Pico GP16; never LAB5 or a Q6A port for a 5 V panel; no VBUS link to the Q6A
+  - No Pololu-direct line for D36V28F5 #2 in the step-6 Pololu order
+  - AD8318 optional in the extended tier and not more accurate than the tinySA it is calibrated against; tinySA channel power is the core power meter
+  - QO-100: 13.2 V V-pol only, IF about 739.5 MHz to RTL-B through 15/20 dB, LNB never via AUX/sled; LNB choke ≥1 A footprint on the injector board; QRO.cz LNB as upgrade path
+- **Not applied:**
+  1.
+    - **Item:** Used Leo Bodnar LBE-1420/1421 from eBay (record 0)
+    - **Why:** No current listing verified, possibly the older worse BNC unit, loses the 2-year warranty, adds US import charges; opportunistic only, not a not-worse analog.
+  2.
+    - **Item:** Pro Stick Plus from flightaware.store ($45.99) via a US forwarder, or ADSBexchange Blue ($49.99) (record 1)
+    - **Why:** US-only shipping verified; forwarder cost unverified (break-even about $12.3 / $8.3); ADSBx specs unpublished, so it fails the never-trade-silently rule.
+  3.
+    - **Item:** Sled candidate B2 hybrid (DIY board + generic PE4302 module) and PE4312 from LCSC (record 2)
+    - **Why:** PE4302 is EOL with unprovable provenance and 0 dB power-up; LCSC franchise status with pSemi unverified (counterfeit rule).
+  4.
+    - **Item:** FNIRSI Official Store on AliExpress at EUR 54.69 (record 4)
+    - **Why:** Promo price; with the EUR 3 duty and EUR 2 UHF the saving is at most EUR 1.31 or negative, and it loses the FNIRSI 2-year warranty and the EU-seller guarantee.
+  5.
+    - **Item:** B&W Type 4000 used without locked eyelets (record 5)
+    - **Why:** Its own PAConsult drop report shows the lid opening completely; worse latch retention than the Peli. Only the locked configuration is applied.
+  6.
+    - **Item:** ANNE-50L+ on Lime X1 (saves $5.43) (record 7)
+    - **Why:** Lower published RL (26 vs 30 dB) and derating; offered only as an explicit user trade, not a silent swap.
+  7.
+    - **Item:** Removing the RX2 BLK-89-S+ as well (record 7)
+    - **Why:** The S-band LNA and its bias feed are not designed; revisit only when an injector channel with a C0G cap faces RX2.
+  8.
+    - **Item:** Used or sealed private-sale Samsung T7, and cheaper SSD brands (Kioxia, SanDisk, Kingston, Crucial) (record 8)
+    - **Why:** Warranty non-transferable / provenance trade, or worse on drop, temperature, post-cache write or SMART path; not not-worse.
+  9.
+    - **Item:** SanDisk High Endurance 128 GB ($42.60) instead of Samsung PRO Endurance (record 11)
+    - **Why:** 7x lower rated endurance and 2-year warranty; recorded only as an explicit-downgrade budget note, never as an analog.
+  10.
+    - **Item:** Optional Airspy gate 'do not buy the Mini if the Lime passes a 15-min zero-drop 7 Msps capture' and using the Lime instead of the Mini (record 12)
+    - **Why:** A scope choice with a clock (±1-2 ppm vs 0.5 ppm), power and shared-LO trade, not a like-for-like replacement; needs the user's decision, so not written into the gate.
+  11.
+    - **Item:** RTL-SDR Blog FM band-stop ($16.95) instead of Flamingo+ #2 on P8 (record 13)
+    - **Why:** Spec trade (better at 104-108 MHz, worse mid-band, no ESD diode, no ratings); documented only as a budget/trade note.
+  12.
+    - **Item:** Inverto/generic PLL LNBs, TCXO-modded LNBs and GPSDO-locked LNB (G8GKQ) instead of the Bullseye (record 9)
+    - **Why:** Worse LO stability or out-of-spec band/IF, opened housings, MER loss and a new 25 MHz spur source; rejected in the source.
+  13.
+    - **Item:** Correcting 'EUR 29.94 ex VAT' inside reaudit_C and the G6 search JSON (record 9)
+    - **Why:** Those are input data files, not STACK sections; only reflected as correction item 38 in section 7.
+  14.
+    - **Item:** readsb &4/&8 (PIA/LADD) suppression mentioned in the Pro Stick record's reminders (record 1)
+    - **Why:** It is operator note 25, listed here only as an unchanged reminder; applied by the operator-notes extractor, not by this G6 source.
+  15.
+    - **Item:** Generic AliExpress ADS1115 boards in the AD8318 box (record 15)
+    - **Why:** Documented ADS1015 relabels; not adopted by default (Adafruit 1085 stays).
+- **Notes:** All 16 G6 records read in full (GPSDO, Pro Stick Plus, RF sled, SAWbird+ H1, DPS-150, bench case, LimeSDR Micro + cables, Lime-only parts, T7, QO-100 add-on, SAWbird+ iO, microSD, Airspy Mini, Flamingo+ #2, Pololu D36V28F5 #2, AD8318 box). Every anchor was checked to occur exactly once in its section file. Decisions: keep = 0, 1, 3, 8, 9, 10, 11, 13 (several with a seller change); replace_conditionally = 2, 4, 5, 6 (cables only), 7, 12, 14, 15. Points the assembler should know: (1) There is a conflict inside the source. Record 3 (H1) asks for 12 dB after the H1 on the Lime path, because OP1dB is +18 dBm and the Lime's absolute maximum input is +10 dBm. Record 7 puts a YAT-10A+ (10 dB) on the board. I kept the YAT-10A+ and added an extra SMA pad on the RX1 edge jack for H1 routes. The source names no value or part for that pad, so it is flagged in 08. (2) The totals for the extended tier (about 570-630) and the optional group (about 1,001-1,099; Lime set about 606-630; the rest about 394-469) are my own arithmetic on the file numbers. The bases are mixed (ex VAT, incl. VAT, landed), so they are marked as estimates. The 'Усе, крім опційного' and bench sums must be recomputed after G5 and the user-decision move of the Lime set into the device BOM. (3) The rows for the Lime board, cables, parts and T7 should move with the with-Lime default (user decision). Their placement is left to that change; only the content and prices come from G6. (4) The main-board HMC7992 parking (the v1 'T4 plan' against A=B=Low = RF1) and the 05b P8 'RTL-A T3' against the record's 'RF4' mapping belong to G1/re-audit B. Only the sled-side text is changed here. (5) The records use different exchange rates: 1.1241, 1.125, 1.1253 and 1.124 USD/EUR. Each figure keeps its record's rate. (6) The EU landed-cost rule (operator notes 34-35) was applied wherever a seller is outside the EU: Pi Hut, Nooelec, Mini-Circuits, ADT-Link, Crowd Supply/Mouser, AliExpress. Amounts are given only where a file computes them. For the Lime board the duty above EUR 150 is not computed. (7) The customs paragraph in 09 will be rewritten for Europe by the operator-notes change. Only the Leo Bodnar DDP fact is supplied here. Source file: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G6_extended_optional.json; section files: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/.
+
 ## stack:draft (run `wf_63d37cf4-10a`)
 
 I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 328 KB and 1,257 lines. A script check found every Markdown table consistent.
@@ -28340,6 +29317,1065 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   (9) For the new section 11 change log, which is not in this enum, suggest one line per G4 record: case set (ASA White, GP-Ultimate 1.0 mm, M3 screws, PAC2456); chassis (5754 conditional, Piekarz KSD9700 ×5, captured nut, FR4 sources); weather kit pinned to SKUs at 116-168; mast 70-80 with the Robens route; Rollei tripod at 57.33; Deuter Futura 27 set at 155.49.
   (10) The weather SKU list also goes to parts.yaml. That is a repo file, not a STACK section.
 
+## extract:analogs_G3 (run `wf_be383e11-6dc`)
+
+- **Source:** analogs_G3
+- **Changes:**
+  1.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** replace_part
+    - **Part:** IMU pack (BNO085 + RP2040-Zero + enclosure, connector, lead, TVS)
+    - **Anchor:** | Пак IMU | Adafruit BNO085 4754 + Waveshare RP2040-Zero + металевий пак
+    - **Instruction:** Replace the whole row (keep columns). модель: Adafruit BNO085 4754 (BerryBase DE, ADA4754, EUR 27.45 incl. VAT, 35 in stock, 1-3 days) + Waveshare RP2040-Zero 20187 (BerryBase WS-20187, EUR 4.90 incl. VAT, 94 in stock, same parcel) + enclosure Hammond 1550Z101 die-cast Al natural (50.2x45.2x30.4 mm outside, 44.3x39.3x25.4 mm inside, silicone gasket, IP66 / UL NEMA 4/4X; DigiKey DE EUR 8.80) + Olimex CONNECTOR-GX16-4 set with tethered cap (Olimex EUR 1.55 or DigiKey DE EUR 1.74; M16 panel thread, clamp about 5.0 mm, 20 A) + lead HELU SUPERTRONIC-C-PURO 4x0.14 (49655) 2 m (TME, $1.78/m at qty 1, per-metre unit unverified; PUR, outdoor/UV, flex -30..+70 C, tinned-Cu braid about 85%, OD 4.5 mm) + LAPP SKINTOP MS-SC-M12 (53112610) EMC gland (TME; nickel-plated brass, IP68, 3.5-7 mm) + 2x TI TPD4E1U06DBVR (DigiKey DE EUR 0.83 each; SOT-23-6, VRWM 5.5 V, 0.8 pF, IEC 61000-4-2 +/-15 kV contact) + unpriced: 2x brass M4x20 lid screws, conductive foil tape over the lid seam, adhesive heat-shrink. к-сть: 1 набір. ціна USD: 53.73-55.73 ex VAT (my sum: 51.73 for the priced items + about 2-4 for unpriced extras; 61.56 incl. 19% VAT + 2-4); breakdown ex VAT at 1 EUR = 1.1241 USD: BNO085 25.93, RP2040-Zero 4.63, 1550Z101 9.89, GX16-4 1.96, HELU 2 m 3.56, SKINTOP 3.89, 2x TPD4E1U06 1.87; shipping not included. джерело: BerryBase DE + DigiKey DE + TME + Olimex. статус: перевірено (BerryBase, DigiKey DE) / не перевірено (TME qty-1 prices and per-metre unit, BerryBase shipping). примітка: keep 'Кадровий UART до Pico, ніколи USB. Лише Adafruit/SparkFun BNO08x і брендовий RP2040-Zero.' Add: BerryBase is on Adafruit's own EU distributor list. Old: Adafruit US $29.50 + Waveshare $4.99 + 30-55 estimate = 64.49-89.49; saving about $9-36 ex VAT, of which $3.93 firm; the saving holds only if the DigiKey and TME lines go into the already planned DigiKey and TME orders (separate shipping, or a US order with EUR 3 duty + VAT, cancels most of it). Fallback BNO085 seller: DigiKey DE EUR 25.90 ex VAT (30.82 incl.). Replace 'Бюджет: SparkFun BNO086 $34.95' with 'Друге джерело (дорожче): SparkFun BNO086 $34.95 (BerryBase EUR 41.90, немає в наявності)'. Condition: fit check on the 1550Z101 STEP model; if it fails use Hammond 1550WA (89x35x30.1 mm, EVA gasket, IP66, same EUR 8.80 at DigiKey DE, four M3.5 lid screws). Gates in section 8.
+    - **Reason:** G3 decision replace_conditionally: same two boards from an EU seller, estimated hardware replaced by named rated parts; GX12 cannot clamp a compliant braided lead; BNO086 is dearer, not budget.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 0; berrybase.de/en/search?search=BNO085; adafruit.com/product/4754; hammfg.com/files/parts/pdf/1550Z101.pdf; olimex.com CONNECTOR-GX16-4; tme.eu HELU 49655; tme.eu LAPP 53112610; ti.com/product/TPD4E1U06
+    - **Saving usd:** 9-36 ex VAT (3.93 firm)
+  2.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** IMU pack (D12)
+    - **Anchor:** Пак IMU: RP2040-Zero + Adafruit BNO085 у металевому корпусі, з'єднаному з опліткою кабелю; кадровий UART (115200, CRC) по екранованому 4-жильному дроту 1.5-2 м з гніздом GX12 4-pin і TVS — на UART1 Pico.
+    - **Instruction:** Replace with: pack IMU = RP2040-Zero + Adafruit BNO085 in a Hammond 1550Z101 die-cast aluminium enclosure (brass M4 lid screws; lid seam bridged with conductive foil tape because both Hammond gaskets are non-conductive), cable braid bonded 360 deg in a LAPP SKINTOP MS-SC-M12 EMC gland; framed UART (115200, CRC) over HELU SUPERTRONIC-C-PURO 4x0.14 (49655) 2 m (braid screen, PUR, flex to -30 C, OD 4.5 mm) with an Olimex GX16-4 receptacle (tethered cap) and one TPD4E1U06DBVR at each end on TX, RX and 5 V — to Pico UART1. Keep the rest of D12 (RS-485 only if the 1e6-frame test fails, 30 cm behind active elements, ferrite 31/43, Pico as HMI MCU). In the rationale/consequences add: GX12 replaced because its 4 mm cable entry (Olimex drawing) cannot clamp any compliant braided 4-core cold-flex lead; LAPP LiYCY rejected (flex only from -5 C, dry/damp rooms). No change to firmware (arduino-pico 6.3.0 at 125 MHz, Adafruit_BNO08x 1.2.7, SPI 1 MHz MODE3), rails or Q6A drivers (frames still arrive through the Pico on UART7).
+    - **Reason:** G3 decision 0 stack_changes 2-6.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 0; olimex.com GX12-4 drawing (DigiKey PDF); tme.eu LAPP LiYCY 0034404 datasheet
+    - **Saving usd:** 0
+  3.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** IMU connector on case rear wall (D15)
+    - **Anchor:** вушка для ременя, гніздо GX12 IMU, сервісний лючок
+    - **Instruction:** Change 'гніздо GX12 IMU' to 'гніздо GX16-4 IMU (отвір 16 мм замість 12 мм, шестигранна гайка 18.8 мм, довжина в зчепленні близько 46 мм, ковпачок на ланцюжку)'. Add in consequences: the case top-band reprint already planned for the with-Lime build covers the hole change; IPX4 spray test unchanged; pinout unchanged (5 V, TX, RX, GND).
+    - **Reason:** G3 decision 0 stack_changes 2: GX12 to GX16 everywhere.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 0; olimex.com GX16-4 gx-connector-dimension.jpg
+    - **Saving usd:** 0
+  4.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** IMU pack bus/connector
+    - **Anchor:** Пак IMU: гніздо GX12 4-pin (3.3/5 V, TX, RX, GND, з TVS), екранований 4-жильний дріт 1.5-2 м.
+    - **Instruction:** Replace with: 'Пак IMU: гніздо Olimex GX16-4 (5 V, TX, RX, GND; розпіновка без змін), TPD4E1U06DBVR біля гнізда з боку Pico і ще один у паку (TX, RX, 5 V); дріт HELU SUPERTRONIC-C-PURO 4x0.14 (49655) 2 м, оплітка обтиснута в GX16 на корпус (≤0.1 Ohm).'
+    - **Reason:** G3 decision 0 stack_changes 2, 3, 5 (LAB-bus text, STACK v1 line 672).
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 0
+    - **Saving usd:** 0
+  5.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** IMU pack mechanics/EMI
+    - **Anchor:** **9. Пак IMU.** Металевий корпус, з'єднаний з опліткою;
+    - **Instruction:** Make the enclosure concrete: Hammond 1550Z101 (aluminium, non-magnetic, IP66) with brass M4x20 lid screws; Hammond's stainless lid screws and copper-plated steel ground screw are not used; lid seam bridged with conductive foil tape (gaskets non-conductive; RF tightness proven only by the A/B test); LAPP SKINTOP MS-SC-M12 in a 12 mm hole on the wall farthest from the BNO085, braid bonded 360 deg; the two boards side by side (40.7x25.6 mm footprint in 44.3x39.3 mm, about 13 mm left for the gland, model). Mount with nylon or brass hardware, ≥30 cm from active elements and the GNSS magnet, 15-20 cm from steel (unchanged). Enclosure mass about 70 g on the boom. The pack's 5 V Schottky (re-audit back-feed fix) and the 31/43 ferrite near the pack (existing DigiKey ferrite line) stay. Fallback enclosure Hammond 1550WA if the fit check fails (also more distance gland-to-magnetometer). Keep the rest of the paragraph.
+    - **Reason:** G3 decision 0 stack_changes 4-5.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 0; hammfg.com 1550Z101.pdf, 1550WA.pdf
+    - **Saving usd:** 0
+  6.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** IMU connector on rear wall (panels 11-14)
+    - **Anchor:** 2-4 вушка для ременів на руку і шию, гніздо GX12 IMU
+    - **Instruction:** Change 'гніздо GX12 IMU' to 'гніздо GX16-4 IMU (отвір 16 мм, гайка 18.8 мм, близько 46 мм у зчепленні, ковпачок на ланцюжку)'. The case drawing in build/ must also change from GX12 to GX16 (hole 16 mm).
+    - **Reason:** G3 decision 0 stack_changes 2 (section 9 panels and case drawing).
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 0
+    - **Saving usd:** 0
+  7.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** IMU pack gates
+    - **Anchor:** | GNSS: TTFF LC76G;
+    - **Instruction:** Add a new row after the GNSS row: what = IMU pack hardware swap gates: (1) fit check on Hammond's 1550Z101 STEP model: boards side by side (40.7x25.6 mm), the M12 gland's 16 mm locknut clears floor and lid on the wall farthest from the BNO085, else 1550WA; (2) GX16 termination: clamp grips the 4.5 mm HELU jacket with the braid folded back onto the shell, shell-to-pack-box continuity through the braid ≤0.1 Ohm; (3) RF A/B pack on/off with lid seam foil-taped: GNSS C/N0 change ≤1 dB-Hz, L-band floor at 1692/1704 MHz, A/B at 145.9 and 437 MHz; on failure conductive gasket or more bonding; (4) IPX4 spray 10 min, caps fitted (GX16 receptacle, gland, lid): no water inside; (5) cold flex: 50 bends at -20 C at radius ≥34 mm (7.5x OD), then 1e6-frame CRC test with zero errors; (6) magnetics: brass M4 lid screws, no Hammond copper-plated steel ground screw, magnet-check gland and screws, calibration status 3 with everything fitted, magnetometer heading vs a sun sighting; (7) existing pack tests: 100 cold boots with SPI init every time, clk_sys = 125 MHz, Game RV static drift ≤0.5 deg/min over 20 min, quaternion-to-az/el unit tests; (8) goods-in: genuine Adafruit 4754 PCB, read the SH-2 product ID; (9) order checks: TME qty-1 prices and per-metre unit, DigiKey DE stock of 1550Z101 and GX16-4, BerryBase shipping. gate = all pass before the hardware swap is final (seller change of the two boards needs only a price/stock re-check). when = on arrival / after assembly.
+    - **Reason:** G3 decision 0 conditions_or_tests 1-9.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 0
+    - **Saving usd:** 0
+  8.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** keep_with_note
+    - **Part:** GNSS + RTC (Waveshare LC76G 24370 + RTC cell)
+    - **Anchor:** | GNSS і RTC | Waveshare LC76G 24370 + батарейка CR2032 для RTC
+    - **Instruction:** Keep the part and price 15.94 (14.99 + 0.95; both ex VAT and shipping; re-checked 18 Oct 2026). модель: change 'батарейка CR2032 для RTC' to 'готова монетна батарейка з проводом (CR2032 за документом Radxa 2P RTC; лістинг ALLNET не вказує тип і ємність)'. Note additions: (a) EU alternative source, same SKU (not an analog): Botland DE/PL WSR-23562, EUR 15.08 / PLN 65.90 incl. VAT ($16.95 / $16.96; net $14.24 / $13.79), stock to confirm at checkout (static page holds both in-stock and out-of-stock templates); use only when it ships with other Botland items (DE free shipping from EUR 100, else from EUR 4.69; PL from PLN 8.99); not botland.store (B2B). Waveshare-direct landed EU cost = $14.99 + 19-25% import VAT + share of express shipping + EUR 3 per tariff line + EUR 2 UHF (from about 1 Nov 2026) + carrier fee. (b) EU RTC cell fallback when no ALLNET order exists (EU path buys the Q6A at TinyTronics): Electrokit 41036512, CR2032 210 mAh, 1.25 mm 2-pin, 50 mm lead, SEK 32 incl. VAT = $3.23 (EU path row then 18.22 = 14.99 + 3.23, my sum). (c) Before plugging any cell into J11: read the marking, OCV ≥3.0 V, plug polarity by DMM against J11 on Radxa schematic v1.21 (PDF p.16), check the 50 mm Electrokit lead reaches the mounting spot. Keep 'Роз'єм RTC звірити з аркушем 18 схеми' as is. (d) Replace 'Бюджет: Uputronics MAX-M10S (від $38.36 = GBP 28.80), якщо потрібні прапорці підміни' with 'Опційна надбудова з прапорцями підміни (дорожче; без flash — конфіг у BBR із суперконденсатором, тож TX UART6 потрібен при кожному завантаженні): Uputronics MAX-M10S від $38.36 = GBP 28.80'. Status stays перевірено.
+    - **Reason:** G3 decision 1: keep; no cheaper analog survives (L76K, M5Stack U190/Module GPS v2.1, Grove Air530, ATGM336H, DIY LC76GABMD all worse); seller option and RTC wording only.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 1; waveshare.com/lc76g-gnss-module.htm; botland.de 23562; electrokit.com cr2032-med-kabel; docs.radxa.com/en/accessories/battery/2p-rtc-bat; shop.allnetchina.cn rtc-battery-for-radxa-sbc
+    - **Saving usd:** 0 (optional Botland 0.89-1.79 only when bundled)
+  9.
+    - **Section:** 01b_decisions_register
+    - **Kind:** keep_with_note
+    - **Part:** GNSS LC76G (#79)
+    - **Anchor:** інтерфейс I2C не використовувати. | Не перевірено на платі
+    - **Instruction:** In the test column add goods-in from G3: check the Waveshare silkscreen and the Quectel LC76G label and log the $PQTMVERNO*58 firmware string (from either seller, Waveshare or Botland). No change to UART6, PPS pin 7, IPEX to SMA-K pigtail to P7, 5 V feed or gpsd/chrony config.
+    - **Reason:** G3 decision 1 conditions_or_tests.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 1
+    - **Saving usd:** 0
+  10.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** Uputronics MAX-M10S wording (#80)
+    - **Anchor:** Uputronics MAX-M10S (spoofDetState, jammingState) — якщо у вашому регіоні важливі прапорці підміни.
+    - **Instruction:** Reword as: 'Uputronics MAX-M10S (spoofDetState, jammingState) — опційна надбудова з прапорцями підміни, дорожча (GBP 28.79, близько $38.34) і без flash (конфіг через UART6 TX при кожному завантаженні); не бюджетна альтернатива.' Leave the region-dependent decision text to the user-decision changes.
+    - **Reason:** G3 decision 1 stack_changes (4) and rejected item 11.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 1
+    - **Saving usd:** 0
+  11.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** GNSS LC76G + RTC cell
+    - **Anchor:** | GNSS: TTFF LC76G;
+    - **Instruction:** Extend this row: on arrival (any seller) check Waveshare silkscreen and Quectel LC76G label, log the $PQTMVERNO*58 firmware string; RTC cell: read marking (CR2032), OCV ≥3.0 V, plug polarity by DMM against J11 (Radxa schematic v1.21 PDF p.16; Radxa warns about polarity), Electrokit 50 mm lead reaches the mount; Botland purchase only if checkout confirms stock. Existing reaudit-D tests stay (5 V VCC feed, IPEX bias ≥3.05 V under 150 ohm, PQTMCFGPPS + PQTMSAVEPAR persistence after draining the backup, PPS stops without 3D fix, TTFF, MS621FE hold time, RTC drift).
+    - **Reason:** G3 decision 1 conditions_or_tests.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 1; dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+    - **Saving usd:** 0
+  12.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 1 (TinyTronics/ALLNET): RTC cell and spare Daly
+    - **Anchor:** ЄС: одне замовлення TinyTronics з ПДВ (плата EUR 148 + UFS EUR 58 + Daly BMS EUR 8 = EUR 214 = $240.56;
+    - **Instruction:** After the TinyTronics sentence add: EU path has no ALLNET order, so the RTC cell goes on an EU order: Electrokit 41036512 CR2032 210 mAh with 1.25 mm 2-pin lead, SEK 32 incl. VAT = $3.23 (or on an ALLNET order if one is placed; the $0.95 ALLNET cell alone from China would cost more in shipping than its price). Optional: a second Daly DL-J05G-L4S15ATJ in the same TinyTronics order (+EUR 8.00 = $8.99, outside the per-part figure), because TinyTronics shows only 9 in stock.
+    - **Reason:** G3 decision 1 stack_changes (3); decision 3 procurement.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decisions 1, 3; electrokit.com; tinytronics.nl Daly 4S 15A page
+    - **Saving usd:** 0
+  13.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** seller_or_price
+    - **Part:** Molicel INR21700-P50B cells
+    - **Anchor:** | Елементи | Molicel INR21700-P50B (5.0 Ah, 18 Wh, 60 A тривало, близько 68 g)
+    - **Instruction:** Keep the cell (same MPN). ціна USD: 37.94 (5 x EUR 6.75 incl. Dutch 21% VAT = EUR 33.75 at 1.1241; $7.59 each; EUR 5.58 ex VAT each; 10+ EUR 5.92) + shipping (cart only; NKON range EUR 3-50, post parcels ≤2 kg; not verified; with destination VAT instead the 5 cells cost $36.68-39.82, not verified). джерело: NKON (NL), Grade A listing, EAN 6097326477405, order with 'Optional solder tags: None'. Fallback: akkuteile.de EUR 8.90 incl. 19% DE VAT, in stock, shipping EUR 5.90 DE / EUR 13.90 international. статус: перевірено (live 18 Oct 2026; shipping, destination VAT under OSS and authorised-distributor status not verified). Note: replace the UN3480 sentence with 'NKON відвантажує наземно в межах ЄС; у NKON черга доставки — замовити в тиждень 1'. 18650 Battery Store $9.99 stays only as a US reference (ships UN3480 by ground inside the US only; cannot serve an EU buyer). Goods-in on all 5: ≥4.85 Ah at 1 A to 2.5 V, mass 68-71 g (PDS max 71 g; replaces 68-70 g), 1 kHz AC IR near 6.5 mOhm (reject outliers), intact wrap and readable date code; recommended: pick the best-matched 4 (capacity spread ≤2%, AC IR spread ≤1 mOhm), the 5th is the spare (Daly balances only 30 mA from 4.18 V). Delete 'Бюджет: NKON $7.59 (EUR 6.75, не перевірено)' (NKON is now the pick). Conditions at checkout: Grade A (not grade B), solder tags None, cells + shipping + VAT below akkuteile, else buy akkuteile.
+    - **Reason:** G3 decision 2 replace_conditionally: same cell, EU seller; US store cannot ship to Europe.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 2; nkon.nl/en/molicel-inr21700-p50b-5000mah-50a.html; akkuteile.de P50B; fsaeonline Molicel PDS
+    - **Saving usd:** 12.01 before shipping
+  14.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** seller_or_price
+    - **Part:** P50B cells (C3)
+    - **Anchor:** Купити 5 елементів ($9.99 кожен, 18650 Battery Store, перевірено; або перевірений місцевий продавець).
+    - **Instruction:** Replace with: 'Купити 5 елементів у NKON (NL): EUR 6.75 з ПДВ NL = $7.59 кожен, $37.94 за 5 + доставка (перевірено 18.10.2026; доставку і ПДВ країни призначення не перевірено); Grade A, solder tags: None; запас — akkuteile.de EUR 8.90; 18650 Battery Store ($9.99) — лише довідка США, у ЄС не відвантажує.' Rest of C3 unchanged (no change to BMS, IP2368 settings, CAD 46x25x150 mm, 284 g mass model, runtime models).
+    - **Reason:** G3 decision 2 stack_changes.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 2
+    - **Saving usd:** 12.01
+  15.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** P50B purchase and goods-in
+    - **Anchor:** | Енергія за режимами і корисна енергія з логів INA228 (замість modes2.py);
+    - **Instruction:** Add a new row before this one: what = NKON cart: Grade A 'Molicel INR21700-P50B 5000mAh - 50A' (not grade B), 'solder tags: None', destination VAT and shipping shown; total below akkuteile.de (5 x EUR 8.90 + EUR 5.90 DE / 13.90 intl), else akkuteile. Goods-in all 5: ≥4.85 Ah (1 A to 2.5 V), 68-71 g, 1 kHz AC IR near 6.5 mOhm, wrap and date code; choose best-matched 4 (capacity spread ≤2%, AC IR spread ≤1 mOhm). gate = reject any cell failing (counterfeit/relabel shows as low capacity, high IR or low mass). when = before payment / on arrival, before welding.
+    - **Reason:** G3 decision 2 conditions_or_tests.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 2
+    - **Saving usd:** 0
+  16.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** keep_with_note
+    - **Part:** BMS Daly DL-J05G-L4S15ATJ
+    - **Anchor:** | BMS | Daly 4S 15 A, спільний порт, з балансуванням | 1 | 9.00 | TinyTronics | не перевірено |
+    - **Instruction:** модель: 'Daly DL-J05G-L4S15ATJ (Li-ion 4S 12 V 15 A, спільний порт B-/P-, пасивний баланс 30 mA), TinyTronics SKU 005102'. ціна: 8.99 (EUR 8.00 incl. 21% NL VAT; EUR 6.61 = $7.43 ex VAT). статус: перевірено (18 Oct 2026; only 9 in stock). Note: datasheet A0: OVP 4.25+/-0.05 V (release 4.15), UVP 2.7+/-0.05 V (release 3.0), delays 1+/-0.5 s, DOCP 40+/-10 A and short circuit (10-500 us) released only by removing the load (procedure: pull the 7.5 A blade fuse), COCP 10+/-2 A released by removing the charger, balance 30+/-10 mA at ≥4.18 V only while charging, Ron <20 mOhm, Iq <500 uA excluding module self-consumption (0 uA sleep unreachable while the AON load sits on node N), no temperature protection (IP2368 NTC covers 0-45 C), no soft switch, +/-15 mV, -40..85 C, 1-year warranty; size 59x34x9 mm (TinyTronics 61x35x9 mm, 35 g) — reserve 61x35x10 mm; leads B-/P- 16 AWG 100 mm, sense 24 AWG 300 mm PHB2.0 5-pin. Keep 'Тест пробудження зарядником 3/3'. Replace 'Бюджет: інший 4S 15-20 A' with 'Дешевших не гірших аналогів немає (LFP J13G3 F04S — неправильна хімія, BMS4S30A — UVP 2.55+/-0.08 V, QSKJ — без балансу); слідкувати за Li-ion 4S J13G3 (DL-J13G3-L04S15ATJ) ≤EUR 8.00'. Optional spare unit in the same order (+$8.99).
+    - **Reason:** G3 decision 3 keep; status/price correction and datasheet documentation.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 3; tinytronics.nl daly-bms 4s-15a page and 005102 datasheet PDF
+    - **Saving usd:** 0.01 (9.00 to 8.99)
+  17.
+    - **Section:** 01b_decisions_register
+    - **Kind:** keep_with_note
+    - **Part:** BMS (#64)
+    - **Anchor:** 4S BMS із загальним портом і балансуванням (15-20 A)
+    - **Instruction:** Name the part: 'Daly DL-J05G-L4S15ATJ (TinyTronics 005102, EUR 8.00 з ПДВ; OVP 4.25 V, UVP 2.7 V, COCP 10 A, баланс 30 mA лише під час заряду)'.
+    - **Reason:** G3 decision 3.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 3
+    - **Saving usd:** 0
+  18.
+    - **Section:** 05a_arch_power
+    - **Kind:** other
+    - **Part:** BMS row in cut-off table
+    - **Anchor:** | BMS | 2.5-2.8 V/ел. | останній рубіж |
+    - **Instruction:** Change the condition to '2.5-2.8 V/ел. (Daly: UVP 2.7+/-0.05 V, відпускання 3.0 V; OVP 4.25+/-0.05 V)' and the action to 'останній рубіж; DOCP/КЗ скидаються лише зняттям навантаження — витягнути запобіжник 7.5 A'.
+    - **Reason:** G3 decision 3 documentation additions.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 3
+    - **Saving usd:** 0
+  19.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Daly BMS bench tests + watch item
+    - **Anchor:** | #2813: чи блокує утримуваний OFF від супервізора кнопку на піні A;
+    - **Instruction:** Add a new row before the #2813 row: what = Daly DL-J05G: (1) UVP wake by the IP2368 trickle 3 of 3 (expect 30-70 mA when the charger sees a pack below 2.5 V/cell and 100-300 mA from 2.5 V to 3.0 V/cell, IP2368 DS V1.41); (2) short-circuit/DOCP release with the AON load (about 1 mA) present — if it does not release, reset by pulling and re-inserting the 7.5 A fuse; (3) OVP of the actual unit during the monthly 4.20 V ISDT balance (datasheet lower edge is 4.20 V): if it trips below about 4.21 V use the spare or exchange; (4) Iq at 14.8 V vs <500 uA (stack budget 0-0.5 mA); (5) COCP margin: keep the ISDT 608PD balance charge current ≤3 A. Watch: if TinyTronics or Daly lists DL-J13G3-L04S15ATJ at ≤EUR 8.00 incl. VAT, reopen (needs tests 1-4 plus at-rest balancing from 4.125 V not draining a 50% SoC stored pack, and its onboard temperature cut not tripping in the closed sun-loaded case). gate = tests 1-5 pass. when = battery bring-up.
+    - **Reason:** G3 decision 3 conditions_or_tests; trickle values from decision 4.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decisions 3-4
+    - **Saving usd:** 0
+  20.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** rule
+    - **Part:** ISDT 608PD balance charger
+    - **Anchor:** | Балансувальний зарядник | ISDT 608PD |
+    - **Instruction:** Append to the note: 'Струм заряду під час балансу ≤3 A (COCP Daly 10+/-2 A, скидається лише від'єднанням зарядника). ISDT не замінює внутрішній зарядник: немає налаштування Li-ion 4.10 V, немає входу датчика температури, USB-C двонаправлений (140 W вхід / 100 W вихід).'
+    - **Reason:** G3 decisions 3 (COCP margin) and 4 (rejected ISDT-only charging).
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decisions 3-4; isdt.co/608pd.html
+    - **Saving usd:** 0
+  21.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** keep_with_note
+    - **Part:** IP2368 4S charger board
+    - **Anchor:** | Зарядник | IP2368 4S 100 W PD, версія BZ лише для заряду (RVSET 5.1k, RISET 15k)
+    - **Instruction:** модель: 'IP2368 4S 100 W PD, роздрібна плата COUT (двонаправлена; 48x34 мм, 4x NVMFS5C450N, VBUS FET HYG082N03, конденсатори 35 V, LDO HT7550-1 або ME6201); BZ як плата не продається, чип BZ недоступний у LCSC (18.10.2026); RVSET 5.1k, RISET 15k, ISET_MODE на GND через 1k; за TPS259470A (OVLO близько 22 V)'. к-сть: 2 (купити 3, якщо мультибай робить 3 майже за ціною 2). ціна: 25-49 for 2, stays не перевірено (Newegg 403, AliExpress captcha/login loop, Walmart bot wall, OnBuy 403). джерело: 'AliExpress, продавець з великим обсягом, доставка в ЄС з ПДВ при оплаті (IOSS)'. Note: landed EU = price + 17-27% VAT + EUR 3 per tariff line (≤EUR 150, IOSS/post) + EUR 2 UHF (from about 1 Nov 2026) + shipping; snippets $9.28-13.13 per board (unverified) land inside the range, not below it; record the real landed price at checkout. Goods-in for every board: chip marked IP2368/Injoinic; 4S strap R7 13k; swap RVSET R4 10k to 5.1k 1% and RISET R3 27k to 15k; real 10k B3380 NTC on R6 with 100 nF at the pin (never floating); LDO marking: HT7550-1 (30 V) OK, replace ME6201 with an LDO rated ≥30 V; per-board fsw measurement. Keep 'Прогін обох плат ...; NTC 10k B3380; KSD9700 на 70 °C.'
+    - **Reason:** G3 decision 4 keep; text corrections (2)-(4).
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 4; LCSC IP2368 DS V1.41 (C5203723); mysku.club/blog/aliexpress/100034.html
+    - **Saving usd:** 0
+  22.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** IP2368 charger (#63)
+    - **Anchor:** Плата IP2368 USB-C PD, бажано версія BZ лише для заряду
+    - **Instruction:** Replace with 'Роздрібна плата IP2368 USB-C PD (COUT, двонаправлена; BZ як плата не продається, чип BZ недоступний у LCSC 18.10.2026) за TPS259470A на VBUS (OVLO близько 22 V)'. Add to the spec: trickle 30/50/70 mA at VBAT <2.5 V/cell and 100/200/300 mA from 2.5 V to 3.0 V/cell (DS V1.41); 250 kHz is typical only (no min/max); VTRGT at RVSET 5.1k = 4.102 V/cell, bottom of the 4.1-4.4 V range, tolerance at 5.1k extrapolated (goods-in V_CV 16.25-16.57 V).
+    - **Reason:** G3 decision 4 stack_changes (1)-(2).
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 4
+    - **Saving usd:** 0
+  23.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** IP2368 in power topology
+    - **Anchor:** На вузлі N також: зарядник IP2368 BZ, завжди-ввімкнений (AON) LDO
+    - **Instruction:** Change 'зарядник IP2368 BZ' to 'зарядник IP2368 (роздрібна плата COUT за eFuse TPS259470A на VBUS)'.
+    - **Reason:** G3 decision 4: BZ not sold as a board.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 4
+    - **Saving usd:** 0
+  24.
+    - **Section:** 05a_arch_power
+    - **Kind:** rule
+    - **Part:** Charging paragraph (IP2368, PD source, ISDT)
+    - **Anchor:** **Заряд.** IP2368 BZ лише заряд:
+    - **Instruction:** Change 'IP2368 BZ лише заряд' to 'IP2368 (роздрібна плата COUT) лише як зарядник'. In the same paragraph: (a) after 'Джерело — PD від 60 W, кожне кваліфікувати FNB58' add 'основне — IKEA SJÖSS 65 W E2502-EU + кабель RUNDHULT 5 A (умовно, ворота G0-G7), запас — Xiaomi AD65GEU; Anker 737 не використовується як джерело для IP2368 (DRP проти Try.SRC — флапінг)'; (b) add usage rule: mains charging indoors at 5-35 C ambient, charger not covered or bagged; a 45 W thermal fold of the SJÖSS is expected and the IP2368 auto-derates (about 13% slower charging); charging below 5 C requires the AD65GEU (0-40 C); (c) add: trickle below 2.5 V/cell is 30-70 mA, 100-300 mA up to 3.0 V/cell (DS V1.41); 250 kHz is typical only — fsw measured per board; (d) after 'Баланс — ISDT 608PD на 4.20 V раз на місяць' add 'струмом ≤3 A (COCP Daly 10+/-2 A)'.
+    - **Reason:** G3 decisions 4, 16 (usage rule, Anker removal) and 3 (ISDT current).
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decisions 3, 4, 16
+    - **Saving usd:** 0
+  25.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** new_risk
+    - **Part:** Switcher frequency tolerance (IP2368, D36V28F5)
+    - **Anchor:** 2-га гармоніка 250 kHz IP2368 — за 10 kHz від NAVTEX 490 kHz
+    - **Instruction:** Append: 'IP2368 даташит дає 250 kHz лише типово (без меж): fsw на 2% нижче кладе 2·fsw на 490 kHz — fsw вимірюється на кожній платі, перевірка спурів HF+ на fsw і 2·fsw; правило «без заряду в HF/LF Quiet» лишається. D36V28F5: близько 500 kHz — за 10 kHz від 490 і 18 kHz від 518 kHz, допуск частоти Pololu не дає — ворота C4 з кроками LAB5 0.3-3 A.'
+    - **Reason:** G3 decision 4 (new fsw gate) and decision 6 (frequency note).
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decisions 4, 6
+    - **Saving usd:** 0
+  26.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** IP2368 goods-in and fsw
+    - **Anchor:** | D36V50F12: основна частота від навантаження і входу; поріг PSM;
+    - **Instruction:** Add a new row before the D36V50F12 row: what = every IP2368 board: chip mark IP2368/Injoinic; R7 13k (4S); RVSET 5.1k 1%, RISET 15k, ISET_MODE to GND via 1k; NTC 10k B3380 on R6 + 100 nF; LDO HT7550-1 OK, ME6201 replaced by ≥30 V LDO; after one activation charge from a one-way PD adapter: FNB58 sink test through the TPS259470A with no VBUS out; V_CV 16.25-16.57 V; ISTOP about 100 mA; NTC trips at 0.39/0.55 V; 2 h burn-in at 3 A logging FET temperature; NEW: fsw per board, then HF+ spur check at fsw and 2·fsw; qualify 45 W and 60 W PD sources with FNB58; record the landed EU price. gate = all pass; reject board otherwise (BOM varies even within one listing). when = on arrival.
+    - **Reason:** G3 decision 4 conditions_or_tests.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 4
+    - **Saving usd:** 0
+  27.
+    - **Section:** 08_open_bench
+    - **Kind:** other
+    - **Part:** Price re-check row (P5 results)
+    - **Anchor:** | Ціни: переоцінити кожен неперевірений рядок (P5);
+    - **Instruction:** Update: P5 G3 verified the LCSC/DigiKey power rows (LT3045EMSE C580012, TPS2553DBVR-1 C111738, TPS70933DBVR C89347, SMBJ, fuses, XT30; TPS7A4701RGWT and MCP65R41 at DigiKey) on 18 Oct 2026; IP2368 board price stays unverified (every marketplace blocked fetches) — record the landed EU price at checkout; JLCPCB ENIG/2 oz surcharges and EU shipping still to be quoted; TME qty-1 prices for the IMU lead/gland unverified.
+    - **Reason:** G3 decisions 4, 9-14.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json
+    - **Saving usd:** 0
+  28.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** seller_or_price
+    - **Part:** SYS12 Pololu D36V50F12 (#4095)
+    - **Anchor:** | SYS12 | Pololu D36V50F12 | 2 (1 запас) | 79.90 | Pololu | перевірено («Rationed») |
+    - **Instruction:** Keep the part (genuine Pololu #4095). ціна USD: 59.08 for 2 ex VAT (EUR 26.28 net each = $29.54 at 1.124086, live Botland API 18 Oct 2026, regular price); EUR 31.27 each incl. 19% DE VAT (OSS: EUR 30.75 LU 17% to EUR 33.38 HU 27%); DE landed 2 units incl. VAT and EUR 4.99 shipping = EUR 67.53 = $75.91. джерело: Botland B.Derkacz sp.k. (botland.de / botland.com.pl; product id 16387, EAN 5904422344436; official Pololu distributor for PL/DE/CZ on pololu.com/distributors). статус: перевірено (10 in stock, 18 Oct 2026). Note: old Pololu US $79.90 + VAT + EUR 3 duty + EUR 2 UHF ≥ about $101 landed DE (model), plus Pololu shipping and carrier fees; saving $20.82 net (26%). Backup seller EXP-tech (EUR 28.94 net, 12 in stock, sells to businesses only). Order soon (Pololu upstream 'Rationed'); confirm the cart applies your country's VAT on the EUR 26.28 net. Replace 'Бюджет: buck з фіксованою частотою і примусовим PWM (обирається в P5), якщо A/B не пройде' with 'Запас, лише якщо D36V50F12 не пройде C4: TI LM61460AANRJRR на власній платі — синхронізація ≤ близько 1.0 MHz (точно — з гармонічного сканування, n·f поза захищеним списком, включно з 1/7/14 MHz), дросель під цю частоту, каскад захисту від переполюсування (VIN абс. мін. −0.3 V), новий дільник EN (1.263 V, без внутрішнього pull-up). TPSM63606 для 12 V не брати (TI радить 1.7-2.2 MHz — ранній вихід з регулювання).'
+    - **Reason:** G3 decision 5 keep with seller change; fallback correction (dropout/foldback model).
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 5; botland.store 16387 + edge_api; pololu.com/distributors; ti.com lm61460.pdf
+    - **Saving usd:** 20.82 net
+  29.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** seller_or_price
+    - **Part:** D36V50F12 in C4
+    - **Anchor:** від Pololu D36V50F12 ($39.95; купити 2 — склад «Rationed»)
+    - **Instruction:** Replace the parenthesis with '(купити 2 у Botland, офіційного дистриб'ютора Pololu: EUR 26.28 без ПДВ = $29.54, EUR 31.27 з ПДВ DE; 10 шт. на 18.10.2026; у Pololu — «Rationed»)'.
+    - **Reason:** G3 decision 5.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 5
+    - **Saving usd:** 20.82 for 2
+  30.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C4 forced-PWM fallback frequency
+    - **Anchor:** (частота з гармонічного сканування, бажано від 1 MHz), деталь обирається в P5
+    - **Instruction:** Replace with '(частота з гармонічного сканування, не вище близько 1.0 MHz), деталь — TI LM61460AANRJRR з каскадом захисту від переполюсування і новим дільником EN (1.263 V); на 1.8-2.1 MHz модель дає вихід з регулювання (мінімальний час вимкнення 65/85 ns) нижче близько 13.6-14.6 V ідеального входу, і у фолдбеку частота покидає такт — маска спурів ламається на низькій батареї; TPSM63606 для 12 V не підходить з тієї ж причини'. In consequences add: C4 gate (2) runs at 4.2 A in the with-Lime default build (60 min, closed case, 14.0 and 16.4 V in), logging D36V50F12, #2813 and fuse temperatures.
+    - **Reason:** G3 decision 5 stack_changes 4-5 and gate wording.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 5; ti.com lm61460.pdf, tpsm63606.pdf
+    - **Saving usd:** 0
+  31.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** D36V50F12 gates and goods-in
+    - **Anchor:** | D36V50F12: основна частота від навантаження і входу; поріг PSM;
+    - **Instruction:** Extend this row: goods-in — Pololu silkscreen and #4095 marking, 12 V +/-4% unloaded; C4 gate (2) for the D36V50F12 at 4.2 A for 60 min in the closed case at 14.0 and 16.4 V (with-Lime default), logging D36V50F12, #2813 and fuse temperatures; EN divider sweep 10.0k/1.00k, G3 targets sleep about 12.1 V / wake about 13.6 V. Fallback if C4 fails: LM61460AANRJRR with sync ≤ about 1.0 MHz, inductor for that frequency, reverse-polarity stage, EN divider redesigned for 1.263 V; then re-run all gates.
+    - **Reason:** G3 decision 5 conditions_or_tests and stack_changes 4.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 5
+    - **Saving usd:** 0
+  32.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** seller_or_price
+    - **Part:** LAB5 Pololu D36V28F5 (#3782)
+    - **Anchor:** | LAB5 | Pololu D36V28F5 (3.2 A) | 1 | 23.95 | Pololu | перевірено | Запобіжник 3 A. |
+    - **Instruction:** Keep the part. ціна USD: 17.13 ex VAT (botland.de EUR 15.22 net / EUR 18.11 incl. 19% DE VAT = $20.38; botland.com.pl PLN 64.96 net / PLN 79.90 gross = $16.73 / $20.57; ECB 16 Oct 2026, 1 EUR = 1.1253 USD = 4.37 PLN). джерело: Botland (botland.de / botland.com.pl / botland.cz; index PLL-17169, EAN 5903351242837; Pololu-listed distributor). статус: перевірено (stock ambiguous — confirm quantity at checkout; G3 also saw 27 in stock and 50 more due 30 Oct). Note: keep 'Запобіжник 3 A.' Add: delivery — botland.de lists DE only, botland.com.pl PL and LT, botland.cz CZ; if no Botland consumer store delivers to your country, TME POLOLU-3782 (structured data $21.51-24.41, stock contradictory) then Pololu direct (23.95 + US shipping + VAT + EUR 3 duty + EUR 2 UHF). Saving $6.82 net ($3.57 after 19% DE VAT). C4/heat fallback: TI TPSM63604RDLR (DigiKey $12.48, 4,266 in stock) in FPWM at a fixed fsw (e.g. 1 MHz or SYNC) clear of the C4 lines, EN divider from VIN with UVLO about 10 V (design proposal, not bench-verified) so a back-fed VIN of about 4.5 V cannot start it, rely on the #2813 reverse protection (confirm its reverse rating), keep SMBJ17A, 4-layer power board or measured thermals on 2 layers, reflow or PCBA, re-run all gates. D36V50F5 stays the escape if LAB5 load exceeds 2.5 A.
+    - **Reason:** G3 decision 6 keep with seller change.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 6; botland.de 17169; pololu.com/distributors; tme.eu pololu-3782; ti.com tpsm63604.pdf
+    - **Saving usd:** 6.82 net
+  33.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** seller_or_price
+    - **Part:** LAB5 D36V28F5 (D11)
+    - **Anchor:** LAB5: D36V28F5 (3.2 A) із запобіжником 3 A.
+    - **Instruction:** Append: 'Купувати в Botland (EUR 15.22 без ПДВ / EUR 18.11 з ПДВ DE); запас при провалі C4 або тепла — TPSM63604RDLR на власній платі (умови в 2.7).'
+    - **Reason:** G3 decision 6.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 6
+    - **Saving usd:** 6.82
+  34.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** seller_or_price
+    - **Part:** D36V50F5 escape price (D11)
+    - **Anchor:** або перейти на D36V50F5 (ціна не перевірена)
+    - **Instruction:** Change '(ціна не перевірена)' to '(BerryBase EUR 34.95, побачено 18.10.2026)'.
+    - **Reason:** G3 decision 6 coverage note: BerryBase lists the D36V50F5 at EUR 34.95.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 6; berrybase.de/search?search=D36V28F5
+    - **Saving usd:** 0
+  35.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** seller_or_price
+    - **Part:** Optional D36V28F5 #2 for a 5 V display
+    - **Anchor:** | 5 V для дисплея | Pololu D36V28F5 #2 | 1 | 23.95 | Pololu | перевірено |
+    - **Instruction:** Same SKU as LAB5: change price to 17.13 ex VAT (Botland EUR 15.22 net / EUR 18.11 incl. DE VAT = $20.38) and source to Botland (fallback TME POLOLU-3782, Pololu direct). Still only if Wisecoco confirms a 5 V input.
+    - **Reason:** G3 decision 6 applies to the same part number.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 6
+    - **Saving usd:** 6.82 (optional, outside totals)
+  36.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** D36V28F5 goods-in and gates
+    - **Anchor:** | Пара LT3045 на 4.5 V від LAB5 біля просідання:
+    - **Instruction:** Add a new row before the LT3045 row: what = D36V28F5 (Botland): Pololu silkscreen and item number; 5.0 V +/-4% at no load and at 2.3 A from 16.4 V. Existing gates stay: C4 spur gate with LAB5 load steps 0.3-3 A; 3.5 A for 60 min closed case at 14.0 and 16.4 V; 500 kHz ripple on the LT3045 rail with LAB5 at 4.8 V; 2.3 A on the 3 A fuse for 30 min at 50 C; back-feed fixes (Schottkys on Pico VSYS and on the IMU pack, SMBJ17A on SW, flashing rule). gate = all pass, else TPSM63604 escape (conditions in 2.7). when = power-board bench.
+    - **Reason:** G3 decision 6 conditions_or_tests.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 6
+    - **Saving usd:** 0
+  37.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** seller_or_price
+    - **Part:** Main switch Pololu #2813 HP
+    - **Anchor:** | Головний вимикач | Pololu #2813 HP pushbutton power switch | 2 (1 запас) | 17.90 (8.95 кожен) | Pololu | перевірено |
+    - **Instruction:** Keep the part. ціна USD: 15.12 ex VAT for 2 (EUR 6.72 net each; 2 x EUR 7.99 incl. 19% DE VAT = EUR 15.98 = $17.98; ECB 1.1253). джерело: Botland (botland.de PLL-05117, EAN 5903351244862; authorised Pololu distributor). статус: перевірено (20 in stock, regular price, no purchase limit, Botland API 18 Oct 2026; replaces 'Rationed'). Note: change '6 A при 55 °C' to 'близько 6 A нагрівають MOSFET до 55 °C при 22 °C у спокійному повітрі (не рейтинг середовища)'; recommended 4.5-32 V, 40 V abs max; not a safety disconnect (BMS and 7.5 A fuse do that); keep on-only A to GND and <0.2 uA off. Goods-in: HP vs look-alike MP #2812 (green LED, 0.8x1.0 in, 5 mm pads; drop ≤40 mV at 4.6 A; off ≤0.2 uA at 16.8 V; about 138 mV drop = MP, reject). Pololu-direct alternative: $8.95 each + VAT + EUR 3 duty + EUR 2 UHF + US shipping; Eckstein EUR 8.63 gross (dearer). Saving $2.78 ex VAT for 2 (≥$3.32 landed).
+    - **Reason:** G3 decision 7 keep with seller change; re-audit D wording fixes carried.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 7; botland.de 5117; pololu.com/product/2813/distributors
+    - **Saving usd:** 2.78 ex VAT
+  38.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #2813 spec wording (#64)
+    - **Anchor:** #2813: $8.95, 4.5-40 V, 6 A при 55 °C, менше 0.2 мкА вимкнено.
+    - **Instruction:** Replace with '#2813: Botland EUR 7.99 з ПДВ DE (EUR 6.72 без ПДВ; Pololu $8.95); 4.5-32 V рекомендовано, 40 V абс. макс.; близько 6 A нагрівають MOSFET до 55 °C при 22 °C у спокійному повітрі; менше 0.2 мкА вимкнено; не захисне відключення (це роблять BMS і запобіжник 7.5 A).'
+    - **Reason:** G3 decision 7 stack_changes 1 and 3.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 7; pololu.com/product/2813
+    - **Saving usd:** 0
+  39.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** #2813 in SW rail row
+    - **Anchor:** | SW | N → #2813 HP (6 A при 55 °C; <0.2 мкА вимкнено, перевірено) |
+    - **Instruction:** Change the parenthesis to '(близько 6 A нагрівають MOSFET до 55 °C при 22 °C у спокійному повітрі; 4.5-32 V рекомендовано, 40 V абс. макс.; <0.2 мкА вимкнено, перевірено; не захисне відключення)'.
+    - **Reason:** G3 decision 7 stack_changes 3.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 7
+    - **Saving usd:** 0
+  40.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** #2813 in protection paragraph
+    - **Anchor:** Головний вимикач: 6 A при 55 °C проти ≤4.6 A.
+    - **Instruction:** Replace with 'Головний вимикач: близько 6 A до 55 °C MOSFET (22 °C, спокійне повітря) проти ≤4.6 A; падіння близько 40 mV і 0.18 W на піку 4.6 A.'
+    - **Reason:** G3 decision 7 equivalence proof and wording fix.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 7
+    - **Saving usd:** 0
+  41.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** #2813 wording in D2
+    - **Anchor:** #2813 (6 A при 55 °C) і BMS (15 A) вище.
+    - **Instruction:** Replace with '#2813 (близько 6 A до 55 °C MOSFET при 22 °C у спокійному повітрі) і BMS (15 A) вище.'
+    - **Reason:** G3 decision 7 stack_changes 3.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 7
+    - **Saving usd:** 0
+  42.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** #2813 goods-in and gates
+    - **Anchor:** | #2813: чи блокує утримуваний OFF від супервізора кнопку на піні A;
+    - **Instruction:** Extend this row: goods-in per Botland unit — Big HP (green LED, 0.8x1.0 in, 5 mm pads), VIN-VOUT drop ≤40 mV at 4.6 A at room temperature, off-state ≤0.2 uA at 16.8 V, about 138 mV = MP #2812, reject. Existing: held OFF vs button on A (if it turns on, route the button through the supervisor, D1); 100 pack connections at 16.8 V all come up OFF; 20 USB-PD plug/unplug cycles OFF and ON with no spontaneous change; C4 gate (2): #2813 MOSFET temperature at 4.2 A for 60 min closed case and at 4.6 A for 30 min at 50 C ambient; C4 gate (1) HF+ A/B no new lines.
+    - **Reason:** G3 decision 7 conditions_or_tests.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 7
+    - **Saving usd:** 0
+  43.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** correction
+    - **Part:** INA228 Adafruit #5832
+    - **Anchor:** | Лічильник заряду | Adafruit INA228 5832 (шунт 15 mOhm)
+    - **Instruction:** Keep part, price 14.95, source and status. модель: '(шунт 15 mOhm, 1% за BOM Eagle: HoLLR2512-2W-15mR-1%, не 0.1% з тексту Adafruit)'. Replace note 'підтягування зняти' with: 'зняти R7 (LED, 10k, близько 0.12 mA) і R6 (пакет 4x10k: підтягування SDA/SCL і стягування ADDR0/ADDR1 — після зняття A0/A1 плавають) — адресу задати: ADDR на GND (0x40) або замкнути A0+A1 (0x45), labpowerd і таблиця пінів 13/15 мають збігатися; замкнути SJ1 (high-side); ALERT підтягнути до 3.3 V Q6A, ніколи до AON; безперервний режим (ENERGY/CHARGE недійсні в triggered); SHUNT_CAL калібрувати на 0.5/2/4 A. ЄС: DigiKey DE 1528-5832-ND EUR 13.13 без ПДВ / EUR 15.62 з ПДВ, 1,177 шт.; доставка EUR 25 нижче EUR 75 — лише в більшому замовленні DigiKey DE, інакше в запланованому замовленні Adafruit.' Keep 'Шунт у дроті батареї; живлення від AON 3.3 V'.
+    - **Reason:** G3 decision 8 keep; three text corrections (address strap, shunt tolerance, EU sourcing).
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 8; github.com/adafruit/Adafruit-INA228-PCB (.sch); digikey.de adafruit 5832; ti.com/product/INA228
+    - **Saving usd:** 0
+  44.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** INA228 board prep (C14)
+    - **Anchor:** VS від завжди-ввімкненого LDO 3.3 V; підтягувальні резистори на платі зняти.
+    - **Instruction:** Replace with 'VS від завжди-ввімкненого LDO 3.3 V; зняти R7 (LED) і R6 (пакет 4x10k з підтягуваннями SDA/SCL і стягуваннями ADDR0/ADDR1) і задати адресу: ADDR на GND (0x40) або A0+A1 (0x45), у labpowerd і таблиці пінів — та сама; SJ1 замкнути (high-side); ALERT — підтягування до 3.3 V Q6A, ніколи до AON; безперервний режим; шунт 1% (BOM), калібрувати SHUNT_CAL.'
+    - **Reason:** G3 decision 8 stack_changes.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 8
+    - **Saving usd:** 0
+  45.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** INA228 address on I2C0 pins 13/15
+    - **Anchor:** | 13/15 | I2C0 (CJ3134K) | INA228 на 0x40, підтягування на платі зняти | labpowerd |
+    - **Instruction:** Change the device cell to 'INA228 на 0x40 (ADDR на GND) або 0x45 (A0+A1 замкнено); R6 (підтягування + стягування ADDR) і R7 (LED) зняти'. Also in the 'Карта адрес I2C без колізій: 0x40 на I2C0;' sentence make the I2C0 address follow the chosen strap (0x40 or 0x45).
+    - **Reason:** G3 decision 8: removing R6 floats A0/A1.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 8
+    - **Saving usd:** 0
+  46.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** rule
+    - **Part:** INA228 ALERT pull-up
+    - **Anchor:** | 3 | GPIO24 (UM3204H) | ALERT INA228 (відкритий стік) | labpowerd |
+    - **Instruction:** Change to 'ALERT INA228 (відкритий стік; підтягування до 3.3 V Q6A, ніколи до AON)'.
+    - **Reason:** G3 decision 8 board preparation.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 8
+    - **Saving usd:** 0
+  47.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** labpowerd INA228 settings
+    - **Anchor:** | labpowerd | Python | INA228 на I2C0 через i2c-dev
+    - **Instruction:** Append to the row: 'Адреса INA228 — за перемичкою (0x40 з ADDR на GND або 0x45 з A0+A1); лише безперервний режим (ENERGY і CHARGE недійсні в triggered); SHUNT_CAL з калібрування на 0.5/2/4 A; ina238 hwmon — у чорному списку.'
+    - **Reason:** G3 decision 8.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 8
+    - **Saving usd:** 0
+  48.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** INA228 preparation and gates
+    - **Anchor:** | Енергія за режимами і корисна енергія з логів INA228 (замість modes2.py);
+    - **Instruction:** Extend this row: INA228 prep (remove R7 and R6, strap address 0x40/0x45, close SJ1, ALERT pull-up to Q6A 3.3 V); SHUNT_CAL against a reference at 0.5, 2 and 4 A (treat the shunt as 1%); 10^5 reads for a stable address; standby at 14.8 V ≤1.0 mA with the INA228 running and ≤0.25 mA with it in shutdown (excluding the BMS).
+    - **Reason:** G3 decision 8 conditions_or_tests.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 8
+    - **Saving usd:** 0
+  49.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** seller_or_price
+    - **Part:** TI TPS7A4701 LDO (LNB and Boni rails)
+    - **Anchor:** | LDO LNB і Boni-Whip | TI TPS7A4701 | 2 | 10-20 | LCSC |
+    - **Instruction:** Replace row: модель 'TI TPS7A4701RGWT (RGWR також підходить; VQFN-20 RGW 5x5)'; к-сть 2; ціна 15.92 ($7.96 each, DigiKey US; DigiKey DE 296-37243-1-ND EUR 6.99 ex VAT each = EUR 13.98 for 2, EUR 8.3181 each incl. 19% VAT); джерело DigiKey DE (franchised TI; 2,332 in stock, 20-week standard lead); статус перевірено 18.10.2026. примітка: spec per SBVS204G: 3-35 V operating, 36 V abs max (above the 27.6 V SMBJ17A clamp), 1 A, dropout 307 typ / 450 max mV at 1 A, θJA 32.5 °C/W, noise about 10-12 uVrms at 12.5-13.8 V out, ±2.5% overall only for VIN ≥ VO+1 V; no PG pin — TLV3011 comparator per rail into MCP #3 (trip about 90%). Put it on the same DigiKey DE order as the other DigiKey lines (TPS259630DDAR, TLV3011, INA3221) to pass the EUR 75 free-shipping threshold (EUR 25 below). Cheaper later: DigiKey RGWR $6.75 backorder (1,374 due 4 Nov 2026) = $13.50 for 2; TI.com RGWR about $5.09 at 1-99 when TI inventory is above 0. Never by default: TPS7A4701MRGWREP (EP, ±3.5% — outside the ±0.35 V window; fallback only with per-unit measured acceptance and user sign-off), TPS7A4700 (HBM 1 kV), GONGMOSEMI GM1415. Delete 'Бюджет: модулі TPS7A4700 audio LDO'.
+    - **Reason:** G3 decision 9 keep; verified franchised price; spec corrections; supersedes re-audit D's EP buy.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 9; ti.com/lit/ds/symlink/tps7a47.pdf; digikey.de TPS7A4701RGWT/4625470; ti.com tps7a4701-ep.pdf
+    - **Saving usd:** 0 vs STACK; 6.10 vs re-audit D EP plan
+  50.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** TPS7A4701 spec in C8
+    - **Anchor:** LDO **TPS7A4701** (вхід 36 V, 1 A, 307 mV падіння при 1 A; ti.com, 18.10)
+    - **Instruction:** Replace the parenthesis with '(3-35 V робоча, 36 V абс. макс., 1 A, 307/450 mV падіння при 1 A, шум близько 10-12 мкВ rms при 12.5-13.8 V; SBVS204G, травень 2026; TPS7A4701RGWT з DigiKey DE)'. In the rationale add: overall accuracy ±2.5% holds only for IN ≥ VO+1 V (IN ≥14.2 V for 13.2 V), so the '13.2 V ±0.2 V при батареї від 13.8 V' acceptance is a per-unit measurement, not a datasheet guarantee; PSRR at 10-15 V out dips to about 30-45 dB near 0.7-1 MHz and collapses to about 15-20 dB in dropout (VDO 200-300 mV) — size the LC pre-filter for buck fundamentals and harmonics in that state, since the rails run in dropout below about a 14.0 V pack.
+    - **Reason:** G3 decision 9 stack_changes 4 and conditions (a).
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 9; ti.com tps7a47.pdf Fig 5-1, 5-15..5-18
+    - **Saving usd:** 0
+  51.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** TPS7A4701 PG in C8
+    - **Anchor:** плюс внутрішнє обмеження і термозахист LDO; PG — на MCP #3.
+    - **Instruction:** Replace 'PG — на MCP #3' with 'піна PG у TPS7A4701 немає — компаратор TLV3011 на рейку (поріг близько 90%) подає стан на MCP #3'.
+    - **Reason:** G3 decision 9 stack_changes 4.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 9
+    - **Saving usd:** 0
+  52.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** TPS7A4701 thermal in C8
+    - **Anchor:** (близько +29 K при θJA 30.5 °C/W)
+    - **Instruction:** Replace with '(близько +31 K при θJA 32.5 °C/W — мій перерахунок)'; in the same sentence change '1.44 W, близько +44 K (близько 94 °C переходу при 50 °C усередині)' to '1.44 W, близько +47 K (близько 97 °C переходу при 50 °C усередині; мій перерахунок)'. Add: G3 worst case about (16.8-13.2) x 0.5 A = 1.8 W, or about 2.15 W with the 12.5 V LNB option; exposed pad bonded to the mid-plate.
+    - **Reason:** G3 decision 9: θJA is 32.5 °C/W, not 30.5.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 9
+    - **Saving usd:** 0
+  53.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** LNB13V2 rail LDO spec
+    - **Anchor:** SW → LC → TPS7A4701 (3-36 V, 1 A, 307 mV падіння при 1 A; перевірено на ti.com)
+    - **Instruction:** Change to 'SW → LC → TPS7A4701RGWT (3-35 V робоча, 36 V абс. макс., 1 A, 307 mV падіння при 1 A; ±2.5% лише при IN ≥ VO+1 V)'.
+    - **Reason:** G3 decision 9.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 9
+    - **Saving usd:** 0
+  54.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** LNB13V2 PG
+    - **Anchor:** внутрішнє обмеження і OTP; PG на MCP #3
+    - **Instruction:** Change 'PG на MCP #3' to 'стан через компаратор TLV3011 (поріг близько 90%) на MCP #3 — піна PG немає'.
+    - **Reason:** G3 decision 9.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 9
+    - **Saving usd:** 0
+  55.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** BONI rail PG and PTC/eFuse choice
+    - **Anchor:** PTC 0.2 A утримання при 60 °C (попередньо); PG; спершу DC-sense
+    - **Instruction:** Change 'PG' to 'стан через TLV3011 на MCP #3 (піна PG немає)'. Add: if v2 fits the TPS259630DDAR eFuse on this rail (re-audit B), delete the PTC (MF-MSMF030-2); re-audit B gives both 12.5 V and 13.8 V for this rail — v2 must pick one (ANY-OUT: 12.5 = 1.4+6.4+3.2+0.8+0.4+0.2+0.1; 13.8 = 1.4+6.4+3.2+1.6+0.8+0.4). For BONI13V8 the ±2.5% accuracy needs IN ≥14.8 V (battery about 15.0 V or more).
+    - **Reason:** G3 decisions 9 and 13 (stack_changes 4).
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decisions 9, 13
+    - **Saving usd:** 0
+  56.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Regulator thermal (TPS7A4701, LT3045)
+    - **Anchor:** LDO LNB розсіює 0.96 W при 0.3 A і θJA 30.5 °C/W
+    - **Instruction:** Change θJA to 32.5 °C/W and the rises to about +31 K (about 81 °C junction at 50 °C inside) and about +47 K (about 97 °C) at 1.44 W (my recalculation, model); add G3 worst case about 1.8 W ((16.8-13.2) x 0.5 A) or about 2.15 W with the 12.5 V LNB option; exposed pad bonded to the mid-plate. Add: LT3045EMSE (MSOP-12-EP) pad 13 = GND soldered with thermal vias to plate-bonded copper; θJA 33 / θJC 8 °C/W, negligible at about 0.25 W per device.
+    - **Reason:** G3 decisions 9 and 10.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decisions 9, 10
+    - **Saving usd:** 0
+  57.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** Boni-Whip rail TPS7A4701
+    - **Anchor:** | Шина Boni-Whip | TPS7A4701 на 12.5 V ±0.25 V, PTC 0.2 A
+    - **Instruction:** Change price to 'частка від $15.92 за два TPS7A4701RGWT', source to 'DigiKey DE', status to 'перевірено', and in the note change 'PG на MCP #3' to 'стан через TLV3011 на MCP #3 (піна PG немає)'.
+    - **Reason:** G3 decision 9.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 9
+    - **Saving usd:** 0
+  58.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** MCP #3 inputs (PG, FAULT)
+    - **Anchor:** FAULT LAB-порту і ch1-ch4; PG LNB; PG Boni;
+    - **Instruction:** Change 'PG LNB; PG Boni' to 'стан LNB і Boni від компараторів TLV3011 (у TPS7A4701 немає піна PG)'. After 'FAULT LAB-порту і ch1-ch4' add 'TPS2553DBVR-1 з засувкою: FAULT = канал вимкнено до перемикання EN; канали HF+ VBUS і RTL-A/B скидаються тим самим перемиканням EN (сторожовий VBUS-цикл GPA2/GPA3/GPA0)'.
+    - **Reason:** G3 decisions 9 and 11.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decisions 9, 11
+    - **Saving usd:** 0
+  59.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** TPS7A4701 acceptance
+    - **Anchor:** | Пара LT3045 на 4.5 V від LAB5 біля просідання:
+    - **Instruction:** Add a row before the LT3045 row: what = TPS7A4701 rails: (a) test LNB13V2 with IN ≥14.2 V (≥13.5 V for the 12.5 V option) and BONI13V8 with IN ≥14.8 V (battery about 15.0 V or more) — reaudit D's 'battery ≥14.2 V' is not enough for 13.8 V; (b) guaranteed IC band is ±0.33 V at 13.2 V, ±0.345 V at 13.8 V, ±0.31 V at 12.5 V, so the ±0.2 V windows leave nothing for INA3221 0.1 Ohm shunt, eFuse RON, PTC and choke drops — either per-unit gates or windows set from load limits (Bullseye vertical 11.5-14 V, Boni 12-15 V at the barrel): USER DECIDES; (c) first power-up: confirm each strapped voltage with EN toggled from MCP #1 and the TLV3011 trip at about 90%; on arrival check TI marking and date code. gate = (a)+(c) pass; (b) open question to the user. when = power-board bench.
+    - **Reason:** G3 decision 9 conditions_or_tests.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 9
+    - **Saving usd:** 0
+  60.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** correction
+    - **Part:** ADI LT3045 pair (LNA4V5)
+    - **Anchor:** | LDO шини LNA | ADI LT3045 (паралельно, 4.5 V) | 2 | 16.66 (8.33 кожен) | LCSC | не перевірено |
+    - **Instruction:** Replace row: модель 'ADI LT3045EMSE#PBF (MSOP-12-EP), паралельно, 4.5 V'; к-сть 2; ціна 16.67 ($8.3329 each); джерело LCSC C580012 (1,603 in stock); статус перевірено (LCSC API 18.10.2026). примітка: keep 'LCSC не франчайзі ADI (помірний ризик)'; add authorised fallback DigiKey LT3045EMSE#PBF $10.00 (16,667) or EMSE#TRPBF $10.00 (12,159) = $20.00 for 2; never the DFN EDD parts (datasheet Note 5: no guaranteed max dropout at high current; DigiKey EDD#TRPBF backordered to 4 Jan 2027); do-not-order: Tokmas 'LT3045IDD-5' (LCSC C50346345, not an LT3045), loose 'LGYP' marketplace chips; footprint MSOP-12-EP, pin 13 GND soldered with thermal vias; EU landed: LCSC is non-EU — VAT + EUR 3 per tariff line + EUR 2 UHF (same for any LCSC SKU). Goods-in in section 8.
+    - **Reason:** G3 decision 10 keep; corrects re-audit D's LT3045EDD#PBF wording.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 10; lcsc.com C580012; LT3045 datasheet Rev B (LCSC mirror) Note 5; digikey.com LT3045EMSE#PBF
+    - **Saving usd:** 0 (0.60 vs re-audit D EDD#PBF)
+  61.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** LT3045 goods-in and headroom
+    - **Anchor:** | Пара LT3045 на 4.5 V від LAB5 біля просідання:
+    - **Instruction:** Extend this row: goods-in per unit — MSOP top mark '3045' with consistent lot/date code on both parts; VOUT via RSET 4.5 V ±2%; dropout at 300 mA and 25 C ≤280 mV (VIN lowered until VOUT falls 1%); current sharing within about 20% with the ADI parallel layout; a failing unit is treated as suspect (grey channel). Run the ripple test at the REAL headroom: log LAB5 under worst-case load, measure 500 kHz, 1 MHz and 2 MHz ripple and LNA-port spurs at 0.17 A and 0.6 A total; if LAB5 minus the LC drop leaves less than about 0.4 V (PSRR collapses below about 0.35 V), lower the rail to 4.3-4.4 V once the LNA owners confirm, or feed the LDOs from a higher point.
+    - **Reason:** G3 decision 10 conditions_or_tests 1-2.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 10
+    - **Saving usd:** 0
+  62.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** replace_part
+    - **Part:** TI TPS2553 current-limit switches
+    - **Anchor:** | Ключі струму | TI TPS2553 (LAB-порт 0.75 A; LNA ch1-4 по 300 mA; VBUS HF+ і RTL) | 10 | 5.50 | LCSC | не перевірено |
+    - **Instruction:** Replace row: модель 'TI TPS2553DBVR-1 (засувка latch-off) на всіх 10 позиціях: LNA ch1-4, LAB USB-A, HF+ VBUS, RTL-A і RTL-B VBUS, 2 запасні'; к-сть 10; ціна 2.96 ($0.2959 at the 5+ tier, MOQ 5; about 3.58 with 21% VAT, model); джерело LCSC C111738 (LCSC's own stock, 2,665); статус перевірено (LCSC API 18.10.2026). примітка: replace 'Перевірити варіант TPS2553-1 із засувкою. Магазин TI — немає в наявності.' with: 'Закриває пункт про -1. Авторизований запас: DigiKey TPS2553DBVR-1 $7.66 за 10 (4,259 шт.). LCSC — авторизацію TI не підтверджено: маркування CHZ на кожній деталі, інакше лот відкинути. RILIM: 88.7k = 265/299/339 mA, 162k = 144/166/192 mA, 34.8k = 685/747/817 mA (рівняння TI, TJ −40..125 °C). Канал, що засувається на пусковому струмі, отримує TPS2553DBVR зі сталим обмеженням (LCSC C55266) лише на цьому каналі. Посилка LCSC ≤EUR 150 через IOSS: EUR 3 мита + EUR 2 UHF на тарифну лінію (TARIC 8536500300), якщо лінія ще не зайнята іншою деталлю.' Old $5.50 was the LCSC qty-1 price of the constant-current TPS2553DBVR.
+    - **Reason:** G3 decision 11: same part, latch-off -1 is cheaper and required by re-audit B; one SKU on all positions.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 11; lcsc.com C111738; digikey TPS2553DBVR-1; ti.com tps2553.pdf (SLVS841F)
+    - **Saving usd:** 2.54
+  63.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** TPS2553 in C9 (latch-off, RILIM windows)
+    - **Anchor:** Кожен канал — TPS2553 на 300 mA номінально (240 mA і більше на нижньому краї допуску)
+    - **Instruction:** Replace with 'Кожен канал — TPS2553DBVR-1 (засувка) з RILIM 88.7k: 265/299/339 mA (рівняння TI, TJ −40..125 °C)'. Elsewhere in C9 add: the same -1 part is fitted on the LAB USB-A (34.8k: 685/747/817 mA), HF+ VBUS and RTL-A/B VBUS, so a shorted LAB port latches off instead of thermal-cycling at about 3.7 W in the closed case; the 162k channel (TCBT) is 144/166/192 mA.
+    - **Reason:** G3 decision 11 equivalence proof (TI equations at the stack's resistors) and stack_changes.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 11
+    - **Saving usd:** 0
+  64.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** TPS2553 in LNA4V5 rail row
+    - **Anchor:** TPS2553 на канал, 300 mA номінально (від 240 mA мінімум), FAULT на MCP #3
+    - **Instruction:** Change to 'TPS2553DBVR-1 (засувка) на канал, RILIM 88.7k: 265/299/339 mA, FAULT на MCP #3 — скидання перемиканням EN'. In the LAB5 row note that 'LAB USB-A (TPS2553 0.75 A)' is the same -1 part (34.8k: 685-817 mA).
+    - **Reason:** G3 decision 11.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 11
+    - **Saving usd:** 0
+  65.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** rule
+    - **Part:** Bias paragraph (TPS2553-1)
+    - **Anchor:** Кожен SAWbird+ — через TPS2553 300 mA на інжекторі від 0.5 A;
+    - **Instruction:** Change 'TPS2553 300 mA' to 'TPS2553DBVR-1 (засувка; 88.7k: 265/299/339 mA)'.
+    - **Reason:** G3 decision 11.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 11
+    - **Saving usd:** 0
+  66.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** labd FAULT handling for latch-off switches
+    - **Anchor:** | labd | Python, D-Bus | I2C2 через smbus2
+    - **Instruction:** Append to the labd row: 'FAULT на кожному каналі TPS2553DBVR-1 трактується як засувка: EN низький, пауза, EN високий, з лімітом спроб і backoff (не лише на каналах LNA); наявний сторожовий цикл VBUS RTL (GPA2/GPA3/GPA0) уже так робить.'
+    - **Reason:** G3 decision 11 stack_changes (labd).
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 11
+    - **Saving usd:** 0
+  67.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** TPS2553DBVR-1 trip and inrush
+    - **Anchor:** | Пара LT3045 на 4.5 V від LAB5 біля просідання:
+    - **Instruction:** Add a row before the LT3045 row: what = TPS2553DBVR-1: (1) goods-in top mark 'CHZ' on every part (TPS2553DBVR = '2553', TPS2553D = '15JL'); reject the lot otherwise; (2) trip test every channel at 4.5 V (LNA) or 5.0 V (LAB): e-load ramp 265-339 mA at 88.7k, 144-192 mA at 162k, 685-817 mA at 34.8k; latch-off within 5-10 ms, FAULT seen at MCP #3, reset by EN toggle; channel stays off with EN pulled down and the MCP unpowered; (3) inrush on the channels newly on latch-off (HF+ VBUS, RTL-A/B VBUS, LAB port): enable into the HF+ 100 uH/100 uF LC with HF+ connected and into the 120 uF USB bulk, at -10 C and in the warm case; current-limit period must end before the 5 ms minimum deglitch (model 100 uF x 5 V / (0.5-0.3 A) ≈ 2.5 ms); a latching channel gets the constant-current TPS2553DBVR (C55266) only there; (4) charge-pump spur check with tinySA at each LNA bias port; (5) landed cost: LCSC parcel ≤EUR 150 and IOSS VAT; if counterfeit risk unacceptable buy DigiKey (7.66 for 10). when = power-board bench.
+    - **Reason:** G3 decision 11 conditions_or_tests.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 11
+    - **Saving usd:** 0
+  68.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** Open items: Lime M.2 3.3 V load switch, Boni rail choice
+    - **Anchor:** | Можливо не враховані в BOM дрібниці:
+    - **Instruction:** Add a row before this one: what = (a) Lime M.2 riser 3.3 V needs a labd-controlled load switch (operator note 30, to be added to the power tree); not chosen — if given to a TPS2553 the qty becomes 11, but its 1.5 A max continuous may be marginal for the Lime; (b) Boni rail: re-audit B gives both 'drop the PTCs' (TPS259630DDAR, RILM 7.87 k) and 'BONI13V8 with a 0.15-0.2 A PTC', and both 12.5 V and 13.8 V — v2 must pick one; if the eFuse is fitted delete MF-MSMF030-2; the 2x TPS259630DDAR ($1.07 each) go in exactly one BOM row. gate = decision before the power-board layout. when = before PCB order.
+    - **Reason:** G3 decisions 11 and 13 (stack_changes 4, 9).
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decisions 11, 13; final/operator_notes.md item 30
+    - **Saving usd:** 0
+  69.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** replace_part
+    - **Part:** AON LDO + UV supervisor
+    - **Anchor:** | AON і супервізор | LDO 3.3 V класу TPS709 (вхід 30 V, мкА спокою) + мікропотужний супервізор 12.8/13.6 V
+    - **Instruction:** Replace row: модель 'TI TPS70933DBVR (LCSC C89347) + компаратор Microchip MCP65R41T-1202E/CHY (push-pull, VREF 1.21 V, SOT-23-6, той самий порядок пінів, що TLV3012 DBV) + BAT54, 3.3 MOhm 0.1% (Vishay MCA1206, LCSC C4168316), нижній 332 k + 4.02 k 0.1%/25 ppm (замість 346 k), 100 k і 4.22 M (1%)'; к-сть 1 набір; ціна 1.2-2.4 (ICs about $0.85: TPS70933DBVR $0.34 at LCSC, MOQ 5 = $1.70 line; MCP65R41 $0.51 at DigiKey, 30,091 in stock, Active; DigiKey DE EUR 0.45 ex VAT / EUR 0.5355 incl. 19% VAT); джерело LCSC + DigiKey; статус 'ціни перевірено 18.10.2026; стендові ворота — очікують'. примітка: 'Замість TLV3012AIDBVR ($2.57 DigiKey) — умовно: якщо MCP65R41 не пройде стендові ворота (дві одиниці), повернутися до TLV3012AIDBVR (той самий футпринт; нижній 340 k + 6.04 k). Модель: 12.79 V спрацювання, 13.62 V відпускання. Без конденсатора на VREF (≤200 pF); 100 nF VDD у межах 2 мм; деглітч лише на IN−. EN TPS709 лишити вільним, ніколи не з'єднувати з N (абс. макс. 7 V). Франчайзингова альтернатива: TPS709B33DBVR (DigiKey $1.51, B-розпіновка) — TPS70933DBVR у DigiKey під замовлення до грудня 2026.' Old row 2-4 (model).
+    - **Reason:** G3 decision 12 replace_conditionally (comparator), keep LDO.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 12; ww1.microchip.com DS22269B; ti.com tlv3012.pdf, tps709.pdf; lcsc.com C89347; digikey MCP65R41T-1202E/CHY
+    - **Saving usd:** 2.06 per set (IC cost)
+  70.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** replace_part
+    - **Part:** AON rail parts (D3)
+    - **Anchor:** LDO AON 3.3 V (клас TPS709, вхід 30 V, мкА спокою; перевірити), INA228 і супервізор UV
+    - **Instruction:** Replace with 'LDO AON 3.3 V TI TPS70933DBVR (2.7-30 V робоча, 32 V абс. макс. — вище кліпу SMBJ17A 27.6 V; IGND 1.3/2.05 мкА; ±1%; EN вільний), INA228 і супервізор UV на компараторі MCP65R41T-1202E/CHY (Iq 2.5/4 мкА; дільник 3.3 MOhm / 332 k + 4.02 k 0.1%; модель 12.79 V спрацювання / 13.62 V відпускання; запас — TLV3012AIDBVR)'. Rest of D3 unchanged.
+    - **Reason:** G3 decision 12.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 12
+    - **Saving usd:** 2.06
+  71.
+    - **Section:** 05a_arch_power
+    - **Kind:** replace_part
+    - **Part:** AON 3V3 rail row
+    - **Anchor:** | AON 3V3 | N → LDO класу TPS709 (30 V, мкА спокою; перевірити) | 3.3 V |
+    - **Instruction:** Change the source cell to 'N → TPS70933DBVR (2.7-30 V, 32 V абс. макс.; IGND 1.3/2.05 мкА; EN вільний)' and the loads cell to 'INA228, супервізор UV на MCP65R41T-1202E/CHY (модель 12.79 V спрацювання / 13.62 V відпускання)'; add 'гілка LDO + компаратор + дільник ≤11 мкА (модель близько 8 мкА)'.
+    - **Reason:** G3 decision 12.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 12
+    - **Saving usd:** 0
+  72.
+    - **Section:** 05a_arch_power
+    - **Kind:** other
+    - **Part:** Supervisor row in cut-off table
+    - **Anchor:** | Апаратний супервізор (AON) | 12.8 V | тримати OFF; відпускання при 13.6 V у спокої |
+    - **Instruction:** Change condition to '12.8 V (MCP65R41, модель 12.79 V; ворота стенда 12.8±0.1 V при 25 і 50 °C)' and action to 'тримати OFF; відпускання при 13.6 V у спокої (модель 13.62 V)'.
+    - **Reason:** G3 decision 12.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 12
+    - **Saving usd:** 0
+  73.
+    - **Section:** 05a_arch_power
+    - **Kind:** other
+    - **Part:** OFF standby row
+    - **Anchor:** | OFF: INA228 + очікування IP2368 + BMS + супервізор | близько 0.013-0.014 |
+    - **Instruction:** Add to the row (as a note): 'BMS Daly: Iq <500 мкА за даташитом, сон 0 мкА недосяжний з AON на N — виміряти; гілка AON (TPS70933 + MCP65R41 + дільник) ≤11 мкА; INA228 у shutdown ≤0.25 mA на 14.8 V (без BMS)'.
+    - **Reason:** G3 decisions 3, 8, 12.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decisions 3, 8, 12
+    - **Saving usd:** 0
+  74.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** MCP65R41 supervisor gate
+    - **Anchor:** | #2813: чи блокує утримуваний OFF від супервізора кнопку на піні A;
+    - **Instruction:** Add a row before the #2813 row: what = AON supervisor on MCP65R41T-1202E/CHY: layout (VREF pin 5 only to the 100 k by a short trace, no capacitor; 100 nF VDD within 2 mm; deglitch capacitor only on IN− e.g. 100 nF; clean flux off the 3.3 MOhm node); divider 332 k + 4.02 k 0.1% (4.02 k is the trim, about 35 mV at N per kOhm; alternative 330 k + 6.04 k); sweep N 14.0→12.0→14.0 V at 25 C and with the board at about 50 C: trip 12.8±0.1 V, release 13.6±0.1 V at both, trip shift 25→50 C ≤50 mV (checks the drift max Microchip does not production-test); optional cold point about 0 C; standby at 14.8 V, main switch OFF, INA228 in shutdown: AON LDO + comparator + divider ≤11 uA; goods-in MCP65R41 only from DigiKey, marking 'HV' + 2 characters; TPS70933DBVR marking 'SDG', at no load and VIN 14.8 V IGND ≤2.05 uA and VOUT 3.267-3.333 V; existing: held OFF vs button on A, 20 PD plug/unplug cycles with no spontaneous #2813 change. gate = fail → second unit; second fail → revert to TLV3012AIDBVR (bottom 340 k + 6.04 k). when = power-board bench.
+    - **Reason:** G3 decision 12 conditions_or_tests.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 12
+    - **Saving usd:** 0
+  75.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** keep_with_note
+    - **Part:** Protection and filter set
+    - **Anchor:** | Захист і фільтри | Запобіжники mini blade 7.5 A (батарея), 4 A (J21), 3 A (LAB5) + тримачі
+    - **Instruction:** Keep the spec; name the parts: fuses Littelfuse MINI 297 .WXNV (Ag): 029707.5WXNV, 0297004.WXNV, 0297003.WXNV, 0297005.WXNV (LCSC C178942/C178940/C151092/C151093, min 5 each; never .WXT Sn); holders Keystone 3568 x4 (J21, LAB5, 5 A service, pack fuse on a small carrier or inline; DigiKey $1.31, LCSC 0 stock); TVS Littelfuse SMBJ17A x2 (marking LR, LCSC C157523) and SMBJ13A (marking LG, LCSC C151252) — Vishay -E3/52 equal alternatives; 220 uF/25 V Nichicon UHE1E221MPD radial 8x11.5 mm (DigiKey $0.63 or LCSC C116228; SMD fallback Panasonic EEE-FK1E221GP, never EEE-FK1E221P); PTCs Bourns MF-MSMF075/24-2 (AUX) and MF-MSMF030-2 (Boni, only if v2 keeps a PTC there) at DigiKey qty 1; AUX12 switch AOS AO3407A + Nexperia 2N7002 (DigiKey); eFuse TI TPS259470ARPWR x3, same part on J21, DISP12 and USB-C VBUS (DigiKey, franchised, 78,910 in stock; LCSC $1.30 not TI-franchised); ferrites Fair-Rite 0431164281 x3 (DigiKey, about 310-315 Ohm at 100 MHz, 6.60 mm ID); connectors Amass XT30U-M/-F (LCSC C99101/C99102, min 5); LC parts still unnamed (spec floor; each inductor Isat ≥ downstream eFuse ILIM max, J21 about 4.4 A). ціна: 31-40 (about 27.9 for the set qty 1 at the cheapest verified channel per line + 4-12 for LC parts, model; about 25.7 if the TI parts come from LCSC; +2.14 if this set also carries the 2x TPS259630DDAR). статус: перевірено (ціни 18.10.2026) / модель (LC). Note: count LCSC MOQs (5 for TVS, fuses, capacitor, XT30; 10 for PTCs; 50 for 2N7002) — single PTCs and FETs are cheaper at DigiKey qty 1; put the set into an already planned order (DigiKey DE free from EUR 75, or the planned LCSC order), never a separate small LCSC parcel (EUR 3 + EUR 2 per tariff line). Keep 'Запасні: 7.5 A, 4 A, 3 A, 5 A.' Old 15-25 was too low by about 3-13 even before LC parts.
+    - **Reason:** G3 decision 13 keep; STACK named no parts.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 13; Littelfuse MINI datasheet (LCSC C178942 PDF); keyelco K75p48.pdf; nichicon e-uhe.pdf; Bourns MF-MSMF (LCSC C208467 PDF); ti.com tps25947.pdf; digikey Fair-Rite 0431164281
+    - **Saving usd:** 0 (cost rises about 6-15 vs 15-25)
+  76.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** keep_with_note
+    - **Part:** Fuse parts (D2)
+    - **Anchor:** автомобільний mini blade 7.5 A біля батареї; 4 A на гілці J21; 3 A на LAB5.
+    - **Instruction:** Append: 'Littelfuse MINI 297 .WXNV (Ag, UL 248; 32 VDC, 1000 A відключення) у тримачах Keystone 3568 (30 A); навантаження 4.6 A на 7.5 A — 62%, 2.3 A на 3 A — 77%; тест 50 °C лишається, бо криву перерахунку не прочитано.'
+    - **Reason:** G3 decision 13 equivalence proof 1-2.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 13
+    - **Saving usd:** 0
+  77.
+    - **Section:** 05a_arch_power
+    - **Kind:** keep_with_note
+    - **Part:** J21 220 uF capacitor
+    - **Anchor:** SMBJ13A + 220 мкФ/25 V → ключований роз'єм з фіксацією
+    - **Instruction:** Change '220 мкФ/25 V' to '220 мкФ/25 V Nichicon UHE1E221MPD (радіальний 8x11.5 мм, крок 3.5 мм, приклеїти RTV; SMD-запас EEE-FK1E221GP, ніколи EEE-FK1E221P — 2000 год)'.
+    - **Reason:** G3 decision 13 stack_changes 2.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 13
+    - **Saving usd:** 0
+  78.
+    - **Section:** 05a_arch_power
+    - **Kind:** keep_with_note
+    - **Part:** AUX12 switch and PTC
+    - **Anchor:** | AUX12 | SYS12 → P-FET ±20 V V_GS + дільник затвора 10k/10k + 2N7002 |
+    - **Instruction:** Change 'P-FET ±20 V V_GS' to 'AO3407A (−30 V, VGS ±20 V, ≤78 mOhm при −4.5 V)'; in the limit cell name the PTC 'Bourns MF-MSMF075/24-2 (≥0.55 A утримання при 60 °C, ≥24 V; Littelfuse 1812L075/24 — не заміна, 0.50 A)'. Add: Bourns does not allow hand or wave soldering of MF-MSMF parts, so the power board is reflowed (hot plate, hot air or PCBA), as the QFN TPS25947 needs anyway; keep the spares from the 10-piece MOQ (part marked NFND).
+    - **Reason:** G3 decision 13 stack_changes 3.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 13
+    - **Saving usd:** 0
+  79.
+    - **Section:** 05a_arch_power
+    - **Kind:** new_risk
+    - **Part:** TVS temperature drift and eFuse abs max
+    - **Anchor:** TVS на J21: SMBJ13A (VRWM 13 V вище максимуму 12.48 V; пробій 14.4-15.9 V — нижче 16 V конденсаторів Q6A)
+    - **Instruction:** Append: 'При 60 °C (alphaT близько 0.08%/K) кліп SMBJ17A зростає до близько 28.4 V, а VBR max SMBJ13A — до близько 16.3 V: тому основний захист 16 V Q6A від перенапруги — OVLO eFuse J21 на 13.5 V, SMBJ13A гасить лише швидкі імпульси; жоден TPS25947 (абс. макс. 28 V) не стоїть на вузлі N чи SW; на eFuse USB-C VBUS — розглянути TVS з OUT на IN (примітка TI). Позначки на прийманні: SMBJ13A — LG (LK = SMBJ14A, відкинути), SMBJ17A — LR.'
+    - **Reason:** G3 decision 13 stack_changes 5-6 and goods-in.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 13; ti.com tps25947.pdf; vishay.com/docs/88392/smbj.pdf
+    - **Saving usd:** 0
+  80.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Protection set goods-in and bench
+    - **Anchor:** | Можливо не враховані в BOM дрібниці:
+    - **Instruction:** Add a row before this one: what = protection set: goods-in SMBJ13A marked LG (LK = SMBJ14A, reject; LCSC C151252 shows SMBJ14A values in its attribute table), SMBJ17A marked LR, fuses .WXNV (Ag) not .WXT (Sn); bench (re-audit D): 4.6 A on the 7.5 A fuse and 2.3 A on the 3 A fuse, 30 min each in a 50 C enclosure, logging holder temperature rise; AUX PTC 0.42 A for 60 min at 60 C with no trip; read the Eaton TVS datasheet before using Eaton in any DigiKey-only order; confirm TME price/stock for the Fair-Rite cores; confirm how DigiKey DE handles EU duty/VAT and when the EUR 2 UHF starts. gate = all pass. when = on arrival / power-board bench.
+    - **Reason:** G3 decision 13 conditions_or_tests.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 13
+    - **Saving usd:** 0
+  81.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** keep_with_note
+    - **Part:** Custom 2-layer PCB set (power + injector boards)
+    - **Anchor:** | Власні PCB | Двошарові: силова плата + 5-канальна плата інжекторів
+    - **Instruction:** Keep price '10-30 (оцінка)' and status модель until a JLCONE checkout quote exists. джерело: 'JLCPCB через JLCONE Desktop (запас PCBWay; запас у ЄС без мита — AISLER)'. Add to the model/spec: FR-4 TG130, 1.6 mm ±10%, Dk 4.5; injector board 1 oz; power board 1 oz with widened paths, or 2 oz; ENIG; flying-probe e-test confirmed in the quote; thru-line coupon on the panel; GCPW w 1.1-1.2 mm, gap 0.2 mm, solid bottom ground, via fence (Z0 about 49-50 Ohm nominal, model). Chokes (Murata, DigiKey DE, extra lines in the existing DigiKey order, about EUR 2.71 net incl. C0G): ch1 LQW2UASR27J00L, ch2 LQW2UASR12J00L, ch3 LQW18AN33NJ80D, ch5 LNB LQW2UAS68NG00L (or 68NJ00L), ch4 LQW2UASR27J00L for 2 m only (true WIDE keeps TCBT-2R5G+ with RILIM 162 kOhm); DC blocks Murata C0G 50 V 0402: GRM1555C1H102JA01D (1 nF) on every VHF/UHF path incl. the RTL-A RFC, GRM1555C1H101JA01D (100 pF) only on ch3, ch5 and RTL-B. Landed EU (model about $15-35): fab $4.00 (2 x 'from $2.00 / 5 pcs', JLCONE only) + EUR 3 duty per tariff line (HS 8534; about $3.37, or $6.74 if two items) + EUR 2 UHF per line from about 1 Nov 2026 + VAT + shipping; ENIG/2 oz surcharges and shipping unverified. Replace 'Сам дросель LNB ≥1 A купується з набором QO-100 після воріт регіону (C23)' with 'Дросель LNB ≥1 A (LQW2UAS68NG00L, EUR 0.19) — тепер у замовленні DigiKey DE (регіон — Європа); він покриває лише ПЧ QO-100 735-750 MHz, ПЧ ТВ-LNB 950-2150 MHz потребує іншого перевіреного дроселя'. Never fit LQW18AN_00 (non-80) parts or LQW2UASR33 and above (120-470 mA). No separate LCSC parcel for these parts. Keep the TCBT budget note.
+    - **Reason:** G3 decision 14 keep; first concrete specification of the row.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 14; jlcpcb.com/capabilities/pcb-capabilities; jlcpcb.com/help/article/jlcpcb-base-material; digikey.de LQW2UAS / GRM1555 searches; community.aisler.net simple pricing
+    - **Saving usd:** 0 proven
+  82.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** Injector board parts (C9)
+    - **Anchor:** Інжектори на одній внутрішній платі з дроселями на діапазон від 0.5 A і C0G-блоками
+    - **Instruction:** After this phrase insert: '(ch1 LQW2UASR27J00L 270 nH/500 mA/SRF ≥600 MHz; ch2 LQW2UASR12J00L 120 nH/650 mA/SRF ≥950 MHz; ch3 LQW18AN33NJ80D 33 nH/1.1 A/SRF ≥3.15 GHz; ch5 LNB LQW2UAS68NG00L 68 nH/1 A/SRF ≥1.3 GHz; ch4 R27 лише для 2 m; DC-блоки C0G 50 V: 1 nF на кожному VHF/UHF шляху включно з RFC RTL-A, 100 pF лише на ch3, ch5 і RTL-B; модель: IL ≤0.08 dB на кожному каналі)'.
+    - **Reason:** G3 decision 14 stack_changes (C9 / BOM).
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 14; Murata catalog O05E LQW2UAS table
+    - **Saving usd:** 0
+  83.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** P4 LNB injector choke
+    - **Anchor:** інжектор LNB (дросель ≥1 A — встановлюється після воріт регіону, C23; DC-блок)
+    - **Instruction:** Change to 'інжектор LNB (дросель LQW2UAS68NG00L 68 nH / 1 A, купується зараз у замовленні DigiKey DE; покриває лише ПЧ 735-750 MHz; DC-блок 100 pF C0G)'.
+    - **Reason:** G3 decision 14: region Europe, choke moves out of the QO-100 kit.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 14
+    - **Saving usd:** 0
+  84.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** rule
+    - **Part:** DC-block rule on RF paths
+    - **Anchor:** → DC-блок → RTL-A T1
+    - **Instruction:** Change to '→ DC-блок 1 nF C0G (GRM1555C1H102JA01D) → RTL-A T1' and add after the RF-port table: 'Правило DC-блоків: 1 nF на кожному виводі з VHF/UHF (ch1, ch2, ch4, RFC RTL-A); 100 pF лише на ch3, ch5 і RTL-B (100 pF дає лише 19 dB RL на 137 MHz, резонує близько 740 MHz).'
+    - **Reason:** G3 decision 14 DC block rule.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 14
+    - **Saving usd:** 0
+  85.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** removal
+    - **Part:** LNB injector choke in QO-100 kit
+    - **Anchor:** дросель інжектора LNB ≥1 A (C23)
+    - **Instruction:** Remove 'дросель інжектора LNB ≥1 A (C23) + ' from the QO-100 kit model; add to the note 'дросель LNB (LQW2UAS68NG00L, EUR 0.19) перенесено в core — замовлення DigiKey DE'. Keep the kit price range as is (the choke's share was not itemised).
+    - **Reason:** G3 decision 14 stack_changes (QO-100 kit row, STACK line 295).
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 14
+    - **Saving usd:** 0
+  86.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Custom PCB order gates and LiteVNA tests
+    - **Anchor:** | Можливо не враховані в BOM дрібниці:
+    - **Instruction:** Add a row before this one: what = PCBs: (1) quote both designs in JLCONE Desktop (1.6 mm, 1 oz; power board 2 oz only if paths cannot be widened; ENIG; one parcel); e-test field must read a full flying-probe test; record landed total (fab + ENIG + shipping + IOSS VAT + EUR 3 per tariff line + EUR 2 UHF per line after about 1 Nov 2026); accept if ≤$30 and below AISLER, else PCBWay or AISLER ENIG Budget; a board over 100x100 mm leaves the $2 class — re-quote; (2) arrival: calipers 1.44-1.76 mm, ENIG pads flat, continuity spot checks; (3) LiteVNA conducted only into loads: thru-line coupon S11 ≤-20 dB to 1.8 GHz; per channel IL ≤0.3 dB, S11 ≤-15 dB (target -20; ch1 R27 models 19-20 dB, accepted after a 41 dB LNA), DC-port-to-RF and channel-to-channel isolation ≥40 dB, every RF output 0 V DC; (4) DC/thermal: ch1 at 180 mA total drop ≤0.25 V from LNA4V5 to the SAWbird+; 30 min at 180 mA on ch1 and 0.45 A on ch5: choke rise ≤15 C; after the TPS2553 and eFuse hard-short tests each choke's DCR within 10% of the first reading; Coilcraft 0805HP/1008HQ only as upgrade if ch1 self-heating or DCR fails. when = PCB order / arrival / bench.
+    - **Reason:** G3 decision 14 conditions_or_tests.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 14
+    - **Saving usd:** 0
+  87.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** keep_with_note
+    - **Part:** Battery pack sundries set
+    - **Anchor:** | Збирання батареї | Нікель 0.15x8 мм, fish paper, Kapton, склострічка
+    - **Instruction:** Keep the spec; itemise in модель/примітка: (1) nickel LaskaKit LA123130 pure Ni 8x0.15 mm 10 m, 378 CZK (9 in stock); (2) rings LaskaKit LA123144C 21700 self-adhesive insulating paper 0.2 mm, 72 pcs, 28 CZK; (3) polyimide tape CELLCON PA-R376 (reichelt PMB 8-33) EUR 16.95; (4) balance lead genuine JST XHP-5 + SXH-001T-P0.6 phosphor-bronze contacts (TME), self-crimped, 22 AWG silicone — not reichelt's BXH (brass); (5) XT30 service lead: genuine Amass XT30U-M added to the XT30 order in the protection line (+ a spare), plus DC5525 plug and 18 AWG silicone wire; BerryBase A-XT30 female EUR 0.48 as EU source for a female/spare; (6) barrier Solder Peak LAM100X160E1 1.0 mm FR-4 100x160 mm (TME, MOQ 5), copper face etched off or faced away and covered with polyimide; (7) reflective layer tesa 56223 aluminium tape 50 mm x 10 m (reichelt) EUR 8.95, outer face of the foam only; (8) fire bag 23x30 cm: Jamara LiPo Guard XL 141430 (reichelt EUR 10.50, same cart) or Robbe 90340069 (Lindinger EUR 6.49 + its shipping); (9) spot welding and 3 mm closed-cell foam: battery-shop weld (weld $20-40 estimate; foam $5-15 estimate, self-extinguishing, ≥80 C). ціна: 110-150 (model; verified goods delivered to DE about $82-86: LaskaKit 406 CZK = $18.78 + GLS EUR 5.67 = $25.16; reichelt EUR 36.40 + shipping from EUR 5.95 = $47.66; TME about $7.6-10.6, $9-13 with VAT; ECB 16 Oct 2026, 1 EUR = 1.1253 USD = 24.323 CZK). джерело: LaskaKit + reichelt + TME + BerryBase + battery shop. статус: перевірено (goods) / модель (weld, foam, TME shipping). Note: charge the polyimide and tesa rolls once across the stack (also Q6A mid-plate insulation, NTC/Lime sensor taping, QO-100 horn-seam aluminium tape); glass-fibre tape (склострічка) and the 4S wrap are still unpriced (open gap); +$30.37 for Robbe JST-XH crimp pliers (Lindinger EUR 26.99) if no XH crimper is owned. Keep 'Ніколи не летить; без пружинних тримачів і пайки до елементів. Бюджет: зварювання в майстерні.' Old 50-110 (model) was too low.
+    - **Reason:** G3 decision 15 keep; itemised and re-based.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 15; laskakit.cz nickel and rings; reichelt CELLCON, tesa 65551, LiPo bag 207644; tme.eu LAM100X160E1; cdn-reichelt JST_XH_DB_EN.pdf; berrybase A-XT30
+    - **Saving usd:** 0 (estimate raised by about 40-60 at the low end)
+  88.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** keep_with_note
+    - **Part:** Service lead (D7)
+    - **Anchor:** До сервісного порту — дріт XT30-DC5525.
+    - **Instruction:** Append: 'Дріт: оригінальний Amass XT30U-M (+ запасний) у тому самому замовленні XT30, що й у наборі захисту, штекер DC5525 і силіконовий дріт 18 AWG.'
+    - **Reason:** G3 decision 15 stack_changes.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 15
+    - **Saving usd:** 0
+  89.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** rule
+    - **Part:** Battery barrier (D6)
+    - **Anchor:** бар'єром 1 мм FR-4 або слюди з вентиляційним шляхом назовні
+    - **Instruction:** After 'бар'єром 1 мм FR-4 або слюди' insert '(FR-4 Solder Peak LAM100X160E1 з витравленою міддю або міддю назовні під поліімідом; обрізок проходить тест на самозгасання ≤10 с; слюда переважна, якщо в ЄС знайдеться лист ≤1 мм за ту саму або нижчу ціну)'.
+    - **Reason:** G3 decision 15 equivalence proof (barrier faults and fixes).
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 15
+    - **Saving usd:** 0
+  90.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** rule
+    - **Part:** Battery safety: fire bag, BMS wiring
+    - **Anchor:** **Безпека батареї.** Лише точкове зварювання;
+    - **Instruction:** Append to the paragraph: 'Заряд у мішку всередині пристрою — лише якщо закритий пристрій (близько 210x135x52 мм) входить у мішок 23x30 см із закритою липучкою, крім виходу кабелю; інакше мішок лише для зберігання/перевезення, а заряд — на негорючій поверхні; KSD9700 70 °C і NTC 45 °C лишаються активними в мішку. BMS Daly: спершу B−, потім сенсорні від B0 угору; при знятті — спершу сенсорний штекер; анодований радіатор BMS не торкається елементів і нікелю. Нікель — лише чистий Ni (тест мВ на прийманні), щонайменше 2 точки на з'єднання, без пайки до елементів.'
+    - **Reason:** G3 decisions 15 (fire bag, weld) and 3 (wiring order, heat sink).
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decisions 3, 15
+    - **Saving usd:** 0
+  91.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** other
+    - **Part:** JST-XH crimp tool
+    - **Anchor:** | Інструменти | Запасні частини, журнал, інструменти для збирання
+    - **Instruction:** In the note add: 'Кримпер JST-XH (Robbe, Lindinger EUR 26.99 = $30.37), якщо немає власного — для балансувального дроту XHP-5 + SXH-001T-P0.6.' Do not change the 245-400 range (conditional item).
+    - **Reason:** G3 decision 15 stack_changes (tools line 356).
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 15; lindinger.at Robbe crimp pliers
+    - **Saving usd:** 0
+  92.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Battery sundries goods-in
+    - **Anchor:** | Можливо не враховані в BOM дрібниці:
+    - **Instruction:** Add a row before this one: what = pack sundries: (1) nickel: 1.00 A through 100 mm of a 1 m cut at 20-25 C reads 7-8 mV (pure Ni), return the roll at ≥11.5 mV (plated steel; a magnet cannot tell), micrometer 0.15±0.01 mm, optional overnight salt-water rust test on a cut edge; (2) ring fit on one P50B: covers the shoulder, leaves the + cap weld area clear; (3) JST: XHP-5 with SXH-001T-P0.6 only (TME stock display contradictory — confirm at checkout), proper XH crimp tool, pull-test each crimp, order B-, B1, B2, B3, B+, DMM each tap before plugging into the ISDT 608PD; (4) XT30: AMASS moulding, reject unmarked; (5) barrier: etch Cu face (or face out under polyimide), flame-test an offcut, self-extinguish within about 10 s; (6) tesa 56223 only on the outer foam face, nothing conductive can reach nickel or BMS; (7) fire bag: closed device fits the 23x30 cm bag, else storage only; (8) shop weld: cells IR- and capacity-tested before welding, ≥2 spots per joint, peel-test coupons first, no soldering to cells; (9) foam: 3 mm closed-cell EPDM/PE/neoprene with a stated self-extinguishing rating and ≥80 C service temperature. when = on arrival / before pack build.
+    - **Reason:** G3 decision 15 conditions_or_tests.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 15
+    - **Saving usd:** 0
+  93.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** replace_part
+    - **Part:** USB-C PD charger + 5 A cable
+    - **Anchor:** | PD-зарядний пристрій | USB-C PD 65-100 W + кабель C-C 5 A | 1 | 35-60 | — | модель |
+    - **Instruction:** Replace row: модель 'IKEA SJÖSS 65 W 1-port USB-C, тип E2502-EU (арт. 006.097.43) + IKEA RUNDHULT USB-C–USB-C 1.5 м, 100 W / 5 A (арт. 606.209.26 або 206.177.04) — умовно, ворота G0-G7'; к-сть 1; ціна 25.83 (EUR 12.99 + EUR 9.99 incl. 19% DE VAT; $21.71 ex VAT; FX 1.1241); джерело IKEA DE (also EUR 12.99 in ES; 365-day return; delivery or Click & Collect fees extra unless picked up in store); статус 'ціну перевірено 18.10.2026; умовно — G0-G7'. примітка: PDOs 5/9/12/15 V at 3.0 A and 20 V at 3.25 A = 65 W, PPS 5-16 V 3 A, no EPR (stays below the TPS259470A OVLO about 22 V); IP2368 draws about 49-52 W = 2.5-2.6 A (75-80% of rating); Europlug 100-240 V; 65.4x48.3x32.1 mm, 152.5 g (CN unit) + about 60 g cable; operating 5-35 C indoor only; 45 W thermal fold expected. Fallback if a gate fails or charging below 5 C / above 35 C is needed: Xiaomi Mi 65W GaN AD65GEU, EUR 29.99 at mi.com/de with a 5 A 1 m C-C cable in the box ($33.71), same gates; cable fallback UGREEN 100 W 5 A 1 m SKU 70427, EUR 10.99 ($12.35). If both fail, keep the generic branded pick. Delete 'Бюджет: Anker 737 (стенд)' — the Anker 737 is DRP and not a substitute (stays only in the bench kit). Keep 'PDO від 60 W; кожне джерело кваліфікувати FNB58.'
+    - **Reason:** G3 decision 16 replace_conditionally.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 16; ikea.com/de SJÖSS 00609743 + manual PDF; chargerlab.com SJÖSS 65W teardown; ikea.com/de RUNDHULT 60620926; mi.com/de mi-65w-fast-charger-with-gan-tech; eu.ugreen.com 100W 5A cable
+    - **Saving usd:** 9.17-34.17
+  94.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** rule
+    - **Part:** Anker 737 bank role
+    - **Anchor:** | Банк живлення | Anker 737 (PDO 20 V/5 A, ≤100 Wh) |
+    - **Instruction:** Append to the note: 'Не джерело для заряду пристрою через IP2368 (DRP проти Try.SRC — очікується флапінг); лише стенд і прилади (DPS-150, Pinecil).'
+    - **Reason:** G3 decision 16 (Anker 737 rejected, stays bench only).
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 16
+    - **Saving usd:** 0
+  95.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** PD charger gates G0-G7
+    - **Anchor:** | Можливо не враховані в BOM дрібниці:
+    - **Instruction:** Add a row before this one: what = IKEA SJÖSS + RUNDHULT: G0 label E2502-EU with CE and IKEA of Sweden AB; G1 FNB58 PDO dump 5/9/12/15 V 3 A, 20 V 3.25 A, nothing above 20 V (PPS 16 V or absent fine), RUNDHULT e-marker 5 A, ≥20 V, 100 W non-EPR — no e-marker → UGREEN 70427; G2 full IP2368 charge (RISET 15k, about 50 W) from about 20% SoC with FNB58 1 s logging, at 23-25 C and at about 35 C ambient or in mode B: no VBUS dropout, hard reset or repeated renegotiation, any 45 W fold is a clean step without VBUS interruption, case surface ≤about 75 C; G3 cable drop ≤0.25 V at 2.6 A (else UGREEN 1 m); G4 ripple with Hantek 6022BE AC-coupled, spring ground at a USB-C breakout, 20 V at 2 A into 10 ohm ≥50 W: ≤33 mV rms and ≤414 mVpp; G5 load release 2.6 A→0: VBUS peak <21.5 V; G6 receiver A/B charging vs battery-only in every non-HF mode plus the HF+ watch list (40/60/77.5/162/490/518/4209.5 kHz ±5 kHz): fail on any line ≥3 dB above floor; G7 tinySA conducted VBUS spur scan through a DC block and ≥20 dB attenuation (conducted only). gate = any failure → return to IKEA (365 days), run the same gates on the Xiaomi AD65GEU, else keep the generic branded pick; charging stays banned in HF/LF Quiet. when = on arrival, before field use.
+    - **Reason:** G3 decision 16 conditions_or_tests.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 16
+    - **Saving usd:** 0
+  96.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** other
+    - **Part:** Group 2.7 subtotal
+    - **Anchor:** | **Підсумок групи** | | | **364.81-515.81** |
+    - **Instruction:** Recompute after all v2 changes. With only the G3 rows (cells 37.94, BMS 8.99, IP2368 25-49, SYS12 59.08, LAB5 17.13, #2813 15.12, INA228 14.95, TPS7A4701 15.92, LT3045 16.67, TPS2553 2.96, AON 1.2-2.4, protection 31-40, PCB 10-30, sundries 110-150, PD 25.83) my sum is 391.79-485.99 (was 364.81-515.81; low +26.98 because protection and sundries were under-estimated, high −29.82). Mark the base as mixed: EU-seller rows with VAT where only the gross price is given (NKON, TinyTronics, IKEA), Botland/DigiKey rows ex VAT; landed shipping, import VAT and EU fees not included. Keep the verifier estimate sentence.
+    - **Reason:** G3 price changes across the power group.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decisions 2-16
+    - **Saving usd:** low +26.98 / high -29.82
+  97.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** other
+    - **Part:** Group 2.8 subtotal
+    - **Anchor:** | **Підсумок групи** | | | **80.43-105.43** |
+    - **Instruction:** Recompute: IMU pack 53.73-55.73 (ex VAT) + GNSS/RTC 15.94 = 69.67-71.67 (my sum; was 80.43-105.43); EU path without an ALLNET order adds 2.28 (Electrokit cell $3.23 instead of $0.95). Keep 'GNSS-антена — у 2.4.'
+    - **Reason:** G3 decisions 0 and 1.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decisions 0, 1
+    - **Saving usd:** 10.76-33.76
+  98.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** other
+    - **Part:** Core totals and budget variant
+    - **Anchor:** і елементи NKON (EUR 6.75 × 5 = $37.94 замість $49.95, −$12.01, ціна не перевірена)
+    - **Instruction:** Remove the NKON item from the budget-variant list (NKON P50B is now the verified core default) and recompute the budget figure after all v2 changes. In the 2.12 table, the core row must be recomputed: G3 alone moves 2.7 by +26.98 / −29.82 and 2.8 by −10.76 / −33.76, i.e. core low +16.22 and high −63.58 (my sum, before other sources' changes); propagate to the summary rows.
+    - **Reason:** G3 cell seller change and group recomputation.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decisions 0-16
+    - **Saving usd:** core high -63.58 (G3 only)
+  99.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 2 Adafruit order
+    - **Anchor:** Одне замовлення Adafruit для запуску (близько $105 — $104.95 за цінами BOM;
+    - **Instruction:** Remove BNO085 from the Adafruit order (it moves to the BerryBase parcel with the RP2040-Zero, step 7); the Adafruit order becomes about $75.45 at BOM prices (my calculation: 104.95 − 29.50). INA228 stays in this order unless it is added to a DigiKey DE order already above EUR 75 (1528-5832-ND EUR 13.13 ex VAT).
+    - **Reason:** G3 decisions 0 and 8.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decisions 0, 8
+    - **Saving usd:** 0
+  100.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 6 week-1 power orders
+    - **Anchor:** | 6 | Тиждень 1 | Одне замовлення Pololu (2× D36V50F12, D36V28F5, 2× #2813) — склад «Rationed».
+    - **Instruction:** Rewrite the 'що і де' cell: (a) one Botland order (botland.de / botland.com.pl / botland.cz consumer stores; official Pololu distributor): 2x D36V50F12, D36V28F5, 2x #2813 = EUR 96.63 incl. DE VAT, just under the EUR 100 free-shipping line on botland.de (adding the LC76G, EUR 15.08, passes it); if no Botland store delivers to your country as a consumer: TME POLOLU-3782 / Pololu direct; (b) LCSC (only inside one consolidated order, never a separate small parcel: EUR 3 duty + EUR 2 UHF per tariff line): 2x LT3045EMSE#PBF (C580012), 10x TPS2553DBVR-1 (C111738), TPS70933DBVR (C89347), Littelfuse SMBJ13A (C151252) and SMBJ17A (C157523), Littelfuse 297 .WXNV fuses, Amass XT30U-M/-F (C99101/C99102); (c) DigiKey DE (free shipping from EUR 75, else EUR 25): 2x TPS7A4701RGWT, MCP65R41T-1202E/CHY, 3x TPS259470ARPWR, 4x Keystone 3568, Nichicon UHE1E221MPD, Bourns MF-MSMF075/24-2 (+ MF-MSMF030-2 only if the Boni PTC stays), AO3407A + 2N7002, 3x Fair-Rite 0431164281, plus the IMU-pack and injector-choke lines of step 7; optionally INA228 1528-5832-ND; (d) 5x P50B from NKON (Grade A, solder tags: None; fallback akkuteile.de); Daly BMS in the TinyTronics order (step 1); 2 IP2368 boards (3 if 3 cost about the same as 2) from a high-volume AliExpress listing with IOSS, record the landed price; (e) pack sundries: LaskaKit (LA123130 nickel + LA123144C rings), reichelt (CELLCON PA-R376, tesa 56223, Jamara LiPo Guard XL), TME (5x LAM100X160E1, 2x XHP-5, 10x SXH-001T-P0.6); (f) PD source IKEA SJÖSS 65 W + RUNDHULT (store pickup avoids fees); 2 Pico. Reason cell: 'Botland тримає 10 шт. D36V50F12, у Pololu — «Rationed»; NKON має чергу доставки, елементи їдуть наземно в межах ЄС'.
+    - **Reason:** G3 decisions 2-16 shopping/stack_changes.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decisions 2-16; botland edge_api (decision 7 step-2 list)
+    - **Saving usd:** see per-row savings
+  101.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 7 Waveshare / BerryBase / DigiKey / TME / PCB
+    - **Anchor:** Waveshare (LC76G, RP2040-Zero для паку, L1+L5 антена); DigiKey (PEC11R ×3, KSC641J ×10, ферити)
+    - **Instruction:** Change to: 'Waveshare (LC76G — або Botland, якщо замовлення Botland з кроку 6 оформлюється і наявність підтверджена при оплаті; L1+L5 антена); BerryBase (ADA4754 BNO085 + WS-20187 RP2040-Zero для паку); DigiKey (PEC11R ×3, KSC641J ×10, ферити; Hammond 1550Z101, Olimex GX16-4, 2× TPD4E1U06DBVR; дроселі LQW2UASR27J00L ×5, LQW2UASR12J00L ×3, LQW18AN33NJ80D ×3, LQW2UAS68NG00L ×3, C0G GRM1555C1H102JA01D ×10 і GRM1555C1H101JA01D ×10 — близько EUR 2.71); TME (HELU 49655 2 м, LAPP SKINTOP MS-SC-M12 — у тому самому замовленні TME, що й крок 6)'. Change 'плата інжекторів' to 'плати (силова + інжекторів) — JLCPCB через JLCONE Desktop, обидва дизайни однією посилкою, після котирування (запас PCBWay / AISLER)'. Ordered on their own, shipping would eat the IMU-pack saving.
+    - **Reason:** G3 decisions 0, 1, 14 shopping changes.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decisions 0, 1, 14
+    - **Saving usd:** 0
+  102.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 11 QO-100 kit
+    - **Anchor:** дросель інжектора LNB ≥1 A, матеріали рупора;
+    - **Instruction:** Remove 'дросель інжектора LNB ≥1 A, ' (bought now in the DigiKey order, step 7, LQW2UAS68NG00L).
+    - **Reason:** G3 decision 14.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 14
+    - **Saving usd:** 0
+  103.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** rule
+    - **Part:** Authenticity paragraph
+    - **Anchor:** Інше: BNO08x — лише Adafruit або SparkFun;
+    - **Instruction:** Extend: BerryBase is on Adafruit's EU distributor list (check genuine 4754 PCB and SH-2 ID); Pololu parts via Botland (official distributor on pololu.com/distributors); TPS7A4701 only from TI or franchised (DigiKey, Mouser, Farnell, TME), check TI marking and date code; TPS2553DBVR-1 from LCSC only with top mark CHZ (LCSC TI authorisation not verified), else DigiKey; MCP65R41 only from DigiKey; LT3045EMSE from LCSC is grey channel — goods-in dropout test, DigiKey as authorised fallback; NKON authorised Molicel status not confirmed — goods-in capacity/IR/mass catches relabels; Littelfuse SMBJ marking LG/LR, fuses .WXNV; Amass moulding on XT30. Do-not-order list: Tokmas 'LT3045IDD-5' (LCSC C50346345), loose 'LGYP' LT3045 chips, TPS7A4701MRGWREP as default, GONGMOSEMI GM1415, AliExpress TPS7A4700 modules and bare 'original' chips, AliExpress '5832 INA228' clones, Shenzhen JDT MINI fuse clones, KLS/MULDENTAL XT30 clones, reichelt BXH-001T-P0.6 brass contacts, LaskaKit nickel-plated steel strip (118 CZK), unbranded BNO08x boards, RP2040-Zero clones, LFP BMS boards.
+    - **Reason:** G3 decisions 0, 5-15 goods-in/authenticity conditions.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json
+    - **Saving usd:** 0
+  104.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Bring-up step 3 power-board bench
+    - **Anchor:** 3. **Силова плата на стенді**
+    - **Instruction:** Add to step 3: goods-in of #2813 (HP vs MP #2812: drop ≤40 mV at 4.6 A, off ≤0.2 uA), D36V50F12 (12 V ±4% unloaded) and D36V28F5 (5.0 V ±4% at 0 and 2.3 A from 16.4 V); LT3045 dropout ≤280 mV at 300 mA; TPS2553DBVR-1 CHZ mark, trip and inrush tests; INA228 prep (R6/R7 off, address strap, SJ1, ALERT to Q6A 3.3 V) and SHUNT_CAL at 0.5/2/4 A; TPS7A4701 strapped voltages with EN from MCP #1 and TLV3011 trip about 90% (IN ≥ VO+1 V); MCP65R41 supervisor sweep at 25 and 50 C (12.8±0.1 / 13.6±0.1 V, shift ≤50 mV); AON branch ≤11 uA; SMBJ marking and 50 C fuse test.
+    - **Reason:** G3 decisions 5-13 conditions.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json
+    - **Saving usd:** 0
+  105.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** decision
+    - **Part:** Bring-up step 4 regulator fallback
+    - **Anchor:** Рішення: лишити D36V50F12 або обрати заміну в P5.
+    - **Instruction:** Replace with 'Рішення: лишити D36V50F12 (ворота (2) — 4.2 A у збірці з Lime) або перейти на LM61460AANRJRR із синхронізацією ≤ близько 1.0 MHz; для LAB5 — лишити D36V28F5 або TPSM63604RDLR у FPWM (умови в 2.7).'
+    - **Reason:** G3 decisions 5 and 6 named the P5 fallbacks.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decisions 5, 6
+    - **Saving usd:** 0
+  106.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Bring-up step 6 battery
+    - **Anchor:** 6. **Батарея:** точкове зварювання (майстерня)
+    - **Instruction:** Extend step 6: NKON goods-in on all 5 cells and best-matched 4 of 5; nickel 4-wire mV test (7-8 mV pure Ni, reject ≥11.5 mV), ring fit, JST SXH crimps pull-tested and taps checked by DMM; barrier Cu etched and flame-tested; shop weld with ≥2 spots per joint after peel-test coupons; Daly tests (wake 3/3 expecting 30-70 mA below 2.5 V/cell, 100-300 mA up to 3.0 V/cell; DOCP release with AON present or by pulling the 7.5 A fuse; OVP during the 4.20 V balance; Iq; ISDT ≤3 A); IP2368 goods-in incl. per-board fsw and HF+ spur check at fsw and 2·fsw; PD charger gates G0-G7 on the IKEA set (fallback Xiaomi AD65GEU); fire-bag fit check.
+    - **Reason:** G3 decisions 2, 3, 4, 15, 16.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json
+    - **Saving usd:** 0
+  107.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** G3 removals (IMU, GNSS, power, charging)
+    - **Anchor:** ### 6.2. Прибрано як технічно замінене
+    - **Instruction:** Append rows to the 6.2 table: | Гніздо GX12 4-pin паку IMU | Вхід кабелю 4 мм (креслення Olimex) не затискає жоден відповідний екранований 4-жильний холодостійкий дріт → Olimex GX16-4 (та сама родина і ціна) |; | Загальний екранований 4-жильний дріт / LAPP LiYCY 4x0.25 / UNITRONIC PUR CP | Згинання лише від −5 °C (LiYCY — лише сухі/вологі приміщення) → HELU SUPERTRONIC-C-PURO 4x0.14 (49655) |; | «Бюджет: SparkFun BNO086 $34.95» | Дорожчий за $29.50 → «друге джерело (дорожче)» |; | 18650 Battery Store і Pololu US як продавці для ЄС | Не відвантажує UN3480 за межі США / EU flat duty → NKON (запас akkuteile.de), Botland (офіційний дистриб'ютор Pololu); ціни США — лише довідка |; | IP2368 «версія BZ лише для заряду» як плата | BZ як плата не продається, чип BZ недоступний у LCSC → роздрібна плата COUT за TPS259470A |; | «Бюджет: модулі TPS7A4700 audio LDO»; TPS7A4701MRGWREP як основна закупівля (re-audit D); TPS7A4701 у LCSC «10-20» | Дорожче, HBM 1 kV, невідоме походження; EP ±3.5% → TPS7A4701RGWT DigiKey $15.92 за 2 |; | LT3045EDD#PBF (DFN, re-audit D) | Без гарантії макс. падіння (Note 5) → LT3045EMSE#PBF C580012 |; | TPS2553DBVR зі сталим обмеженням ($5.50 за 10) на всіх каналах | TPS2553DBVR-1 дешевший і з засувкою; DBVR лише на каналі, що не пройде тест пускового струму |; | TLV3012AIDBVR (супервізор) — умовно | MCP65R41T-1202E/CHY дешевший і не гірший (TLV3012A — запас) |; | «Бюджет: Anker 737 (стенд)» як PD-джерело; невизначений PD-зарядний 65-100 W | DRP проти Try.SRC → IKEA SJÖSS 65 W + RUNDHULT (умовно), запас Xiaomi AD65GEU |; | «Бюджет: інший 4S 15-20 A» BMS | Усі дешевші гірші (LFP J13G3, BMS4S30A, QSKJ) |; | «Бюджет: Uputronics MAX-M10S» | Дорожчий — опційна надбудова з прапорцями підміни |; | Дросель LNB ≥1 A у наборі QO-100 | Регіон Європа → LQW2UAS68NG00L у замовленні DigiKey зараз |; | Panasonic EEE-FK1E221P; Littelfuse 1812L075/24 для AUX; reichelt BXH (латунь); нікельована сталь LaskaKit | 2000 год; 0.50 A при 60 °C; латунні контакти; сталь замість Ni |.
+    - **Reason:** G3 decisions 0-16 replaced or superseded items.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json
+    - **Saving usd:** 0
+  108.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** G3 corrections — IMU, GNSS, cells, BMS, charger, regulators
+    - **Anchor:** 36. wideband_sdr: «спіраль на RX-A і ПЧ LNB на RX-B одночасно»
+    - **Instruction:** Append numbered items after 36: 37. «Бюджет: SparkFun BNO086 $34.95» хибне: $34.95 дорожче за $29.50 (BerryBase EUR 41.90, немає в наявності). 38. GX12: вхід кабелю 4 мм за кресленням Olimex/DigiKey; «4-6 мм» у роздрібних описах суперечить кресленню. 39. LAPP LiYCY і UNITRONIC PUR CP — згинання лише від −5 °C (даташити LAPP). 40. IP2368: трикл 30/50/70 mA при <2.5 V/ел. і 100/200/300 mA від 2.5 до 3.0 V/ел. (DS V1.41), не «100 mA»; твердження angle B, що 50 mA у IP2366 — недолік, спростовано (те саме в IP2368). 41. «IP2368 BZ» — роздрібні плати є COUT; 250 kHz — лише типово. 42. Daly: файл даташита названо DL-J04G3, але всі сторінки — DL-J05G-L4S15ATJ; нижній край OVP 4.20 V збігається з кінцем балансу 4.20 V. 43. NKON: таблиця NKON суперечлива (50/60 A, 68/70 g, 21.7/21.4 мм) — чинний даташит Molicel; Grade B URL — 404; ціна EUR 6.75 тепер перевірена. 44. #2813: «6 A при 55 °C» — це нагрів MOSFET до 55 °C при 22 °C у спокійному повітрі, не рейтинг середовища; 32 V рекомендовано, 40 V абс. макс.; не захисне відключення; 16.8 V — середина діапазону. 45. Запас C4: LM61460 на 1.8-2.1 MHz виходить з регулювання нижче близько 13.6-14.6 V (модель, tOFF_MIN 65/85 ns); TPSM63606 на 12 V — те саме; тому ≤ близько 1.0 MHz.
+    - **Reason:** G3 corrections of v1/v1-input wording.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decisions 0, 2, 3, 4, 5, 7
+    - **Saving usd:** 0
+  109.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** G3 corrections — INA228, LDOs, switches, protection, charger
+    - **Anchor:** 36. wideband_sdr: «спіраль на RX-A і ПЧ LNB на RX-B одночасно»
+    - **Instruction:** Append after the previous G3 items: 46. INA228: зняття R6 знімає і стягування ADDR (A0/A1 плавають) — адресу треба задати; шунт 1% за BOM Eagle, не 0.1% з тексту Adafruit. 47. TPS7A4701: 3-35 V робоча / 36 V абс. макс. (не «3-36 V»), θJA 32.5 °C/W (не 30.5), піна PG немає, шум близько 10-12 мкВ rms при 12.5-13.8 V (не близько 4); EP TPS7A4701MRGWREP має ±3.5%, не еквівалент. 48. LT3045 DFN: максимальне падіння на високому струмі не гарантоване (Note 5) — EDD#PBF у re-audit D замінено на EMSE#PBF. 49. TPS2553: $5.50 у v1 — ціна qty 1 TPS2553DBVR зі сталим обмеженням; -1 дешевший; поріг при 88.7k — 265/299/339 mA (не «від 240 mA»). 50. TLV3012A: рядок «±1% початкова точність» суперечить власним межам (1.208-1.276 V); «7 V без живлення» стосується лише версії B; 346 k не є значенням E192. 51. Re-audit D: «27.6 V нижче меж 30-36 V TPS25947» хибне — абс. макс. TPS25947 28 V; при 60 °C кліп SMBJ17A близько 28.4 V, VBR max SMBJ13A близько 16.3 V. 52. LCSC C151252 показує в атрибутах значення SMBJ14A — перевіряти маркування LG. 53. Panasonic EEE-FK1E221P — 2000 год при 105 °C, не 5000 (лише суфікс GP — 5000 год). 54. HKJ-виміри Xiaomi 65 W (33 mV rms / 414 mVpp) — для старого CDQ07ZM, не для EU AD65GEU; AD65GEU має 5 A кабель у комплекті ($33.71, не $46.07). 55. Набір захисту 15-25 і збирання батареї 50-110 були занижені; PD-джерело 35-60 — завищене.
+    - **Reason:** G3 corrections.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decisions 8-13, 16
+    - **Saving usd:** 0
+  110.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** 18650 Battery Store reference
+    - **Anchor:** - 18650 Battery Store P50B: https://www.18650batterystore.com/products/molicel-21700-p50b-5000mah-50a-battery
+    - **Instruction:** Append ' (лише довідка США: відвантажує UN3480 наземно в межах США)' and add right after it '- NKON P50B (основний продавець, ЄС): https://www.nkon.nl/en/molicel-inr21700-p50b-5000mah-50a.html ; доставка: https://www.nkon.nl/en/ordering-and-shipping ; запас akkuteile.de: https://akkuteile.de/en/lithium-ionen-battery/size-21700/molicel/molicel-inr21700-p50b-5000mah-60a-3-6-3-7v-li-ion-battery_100638_3507 ; Molicel PDS: https://www.fsaeonline.com/content/Molicel-TDS--INR-21700-P50B-80122.pdf'.
+    - **Reason:** G3 decision 2 sources.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json decision 2
+    - **Saving usd:** 0
+  111.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** G3 key URLs (power, GNSS, IMU)
+    - **Anchor:** - CEVA BNO08x даташит: https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf
+    - **Instruction:** After this line add a block '**P5 аналоги G3 (живлення, GNSS, IMU), перевірено 18.10.2026**' with: BerryBase BNO085 https://www.berrybase.de/en/search?search=BNO085 ; Adafruit 4754 https://www.adafruit.com/product/4754 ; Hammond 1550Z101 https://www.hammfg.com/files/parts/pdf/1550Z101.pdf ; Olimex GX16-4 https://www.olimex.com/Products/Components/Connectors/CONNECTOR-GX16-4/ ; GX12-4 drawing https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/5560/Olimex%20-%20CONNECTOR-GX12-4.pdf ; HELU 49655 https://www.tme.eu/en/details/str-c-pur4x0.14/cables-for-power-chains-shielded/helu/49655/ ; LAPP SKINTOP MS-SC-M12 https://www.tme.eu/en/details/ms-sc-m12/glands/lapp/53112610/ ; TI TPD4E1U06 https://www.ti.com/product/TPD4E1U06 ; Botland LC76G https://botland.de/gps-module/23562-multi-gnss-ortungsmodul-lc76g-gps-beidou-bds-glonass-galileo-qzss-waveshare-24370-5904422385798.html ; Electrokit CR2032 https://www.electrokit.com/en/cr2032-med-kabel-3.0v-180mah ; Radxa 2P RTC https://docs.radxa.com/en/accessories/battery/2p-rtc-bat ; Daly DL-J05G (TinyTronics) https://www.tinytronics.nl/en/power/bms-and-chargers/bms/daly-bms-li-ion-li-po-protection-circuit-4s-15a-with-balancing , datasheet https://www.tinytronics.nl/product_files/005102_Data-Sheet-of-DL-J04G3-L04S15ATJ-BMS-circuits.pdf ; IP2368 board review https://mysku.club/blog/aliexpress/100034.html ; Pololu distributors https://www.pololu.com/distributors ; Botland D36V50F12 https://botland.store/converters-step-down/16387-step-down-voltage-regulator-d36v50f12-12v-45a-pololu-4095-5904422344436.html ; Botland D36V28F5 https://botland.de/abwartswandler/17169-d36v28f5-abwartswandler-5v-32a-pololu-3782-5903351242837.html ; Botland #2813 https://botland.de/elektronische-und-digitale-schalter/5117-grosser-push-mosfet-schalter-hp-45-40v-16a-mit-ruckstromschutz-pololu-2813-5903351244862.html ; TI LM61460 https://www.ti.com/lit/ds/symlink/lm61460.pdf ; TI TPSM63604 https://www.ti.com/lit/ds/symlink/tpsm63604.pdf ; Adafruit INA228 PCB https://github.com/adafruit/Adafruit-INA228-PCB ; TI TPS7A47 datasheet https://www.ti.com/lit/ds/symlink/tps7a47.pdf ; DigiKey TPS7A4701RGWT https://www.digikey.de/en/products/detail/texas-instruments/TPS7A4701RGWT/4625470 ; TPS7A4701-EP https://www.ti.com/lit/ds/symlink/tps7a4701-ep.pdf ; LCSC LT3045EMSE https://www.lcsc.com/product-detail/C580012.html ; LCSC TPS2553DBVR-1 https://www.lcsc.com/product-detail/C111738.html ; TI TPS2553 https://www.ti.com/lit/ds/symlink/tps2553.pdf ; Microchip MCP65R41 https://ww1.microchip.com/downloads/en/DeviceDoc/22269B.pdf ; TI TPS709 https://www.ti.com/lit/ds/symlink/tps709.pdf ; LCSC TPS70933DBVR https://www.lcsc.com/product-detail/C89347.html ; TI TPS25947 https://www.ti.com/lit/ds/symlink/tps25947.pdf ; Keystone 3568 https://www.keyelco.com/userAssets/file/K75p48.pdf ; Nichicon UHE https://www.nichicon.co.jp/english/series_items/catalog_pdf/e-uhe.pdf ; Vishay SMBJ https://www.vishay.com/docs/88392/smbj.pdf ; JLCPCB capabilities https://jlcpcb.com/capabilities/pcb-capabilities ; AISLER pricing https://community.aisler.net/t/our-simple-pricing ; LaskaKit nickel https://www.laskakit.cz/niklovy-propojovaci-pasek-pro-propojovani-baterii--8x0-15mm-10m/ ; JST XH datasheet https://cdn-reichelt.de/documents/datenblatt/C100/JST_XH_DB_EN.pdf ; TME LAM100X160E1 https://www.tme.eu/en/details/lam100x160e1/one-layer-laminates/solder-peak/ ; IKEA SJÖSS https://www.ikea.com/de/de/p/sjoess-ladegeraet-mit-1-usb-ausgang-65-w-00609743/ , manual https://www.ikea.com/de/de/manuals/sjoess-ladegeraet-mit-1-usb-ausgang-65-w__AA-2584269-1-2.pdf ; ChargerLAB teardown https://www.chargerlab.com/teardown-of-the-ikea-sj%C3%B6ss-65w-1-port-usb-charger/ ; IKEA RUNDHULT https://www.ikea.com/de/de/p/rundhult-usb-c-auf-usb-c-schwarz-weiss-60620926/ ; Xiaomi AD65GEU https://www.mi.com/de/product/mi-65w-fast-charger-with-gan-tech/ ; EU EUR 3 duty guidance https://taxation-customs.ec.europa.eu/document/download/053e5b4e-f0be-4f20-9a23-3e3b659a6676_en?filename=Customs%20Guidance%20on%20EUR%203%20customs%20duty.pdf .
+    - **Reason:** G3 key sources for every changed row.
+    - **Sources:** final/analogs_G3_power_gnss_imu.json sources of decisions 0-16
+    - **Saving usd:** 0
+- **Already in v1:**
+  - LC76G on UART6 (pins 16/18), PPS on pin 7, IPEX/P7 antenna feed, gpsd/chrony config: unchanged by G3 (decision 1 'none to rails, connectors, drivers, case or software').
+  - IMU pack architecture basics already in v1: framed UART 115200 with CRC to Pico UART1, never USB; mounted ≥30 cm behind active elements with ferrite 31/43; brass/nylon screws and 15-20 cm from steel; Adafruit/SparkFun BNO08x only and branded RP2040-Zero; heading live-only (no emitter geolocation).
+  - Daly 4S 15 A common-port balancing BMS from TinyTronics, wake test 3/3, BMS window 2.5-2.8 V/cell (Daly UVP 2.7 V is inside it).
+  - IP2368 settings RVSET 5.1k (4.10 V/cell), RISET 15k (3 A, about 49-52 W), NTC 10k B3380, KSD9700 70 C, no charging in HF/LF Quiet, 2nd harmonic of 250 kHz 10 kHz from NAVTEX 490 kHz, 2-board burn-in at 3 A.
+  - D36V50F12 as SYS12 with C4 gates (1) narrowband A/B and (2) closed-case soak, plate bonding, EN backup divider about 0.10.
+  - #2813 HP: on-only button on A to GND, <0.2 uA off, Pico OFF pulse and supervisor OFF diode-ORed, bench check that held OFF blocks the button on A.
+  - INA228 #5832 in the battery lead, VS from AON 3.3 V, I2C0 via user-space i2c-dev, single owner labpowerd, ALERT on pin 3, no ina238 hwmon, 15 mOhm shunt, ±10.9 A range.
+  - TPS7A4701 as LNB/Boni LDO from the switched battery node through LC, EN from MCP #1 with a true 0 V off state, bonded to the mid-plate; 36 V abs max above the SMBJ17A clamp (C8).
+  - 2x LT3045 in parallel at 4.5 V from LAB5 through LC (C9/D11); LCSC flagged as not ADI-franchised.
+  - SMBJ13A on J21 (VRWM 13 V, VBR 14.4-15.9 V) with SMBJ14A rejected; SMBJ17A on node N; fuse values 7.5 A pack / 4 A J21 / 3 A LAB5 / 5 A service with spares; genuine Amass XT30 rule; AUX PTC about 0.55 A hold at 60 C vs 0.42 A load.
+  - Injector board rule: band chokes ≥0.5 A, LNB choke ≥1 A, C0G blocks, conducted LiteVNA qualification; TCBT-2R5G+ only on channels ≤150 mA (ch4 WIDE trade).
+  - Battery safety rules: spot-weld only, never flown, 1 mm FR-4 or mica barrier with vent path, 3 mm closed-cell foam + reflective layer, supervised charging on a non-combustible surface or in a fire bag, storage at about 50% SoC.
+  - PD source rule: PDO ≥60 W and every source qualified with the FNB58; charging banned in HF/LF Quiet; Anker 737 already in the bench kit.
+  - P50B cell itself (5.0 Ah, 18 Wh, 60 A continuous) and goods-in capacity ≥4.85 Ah; NKON already named as the budget option at EUR 6.75 (now verified and promoted).
+  - D36V50F5 as the LAB5 escape route if LAB5 exceeds 2.5 A (D11).
+  - No change to hard rules: all G3 parts are passive, DC power or receive-side hardware; no TX, loop or H-field probe added.
+- **Not applied:**
+  1.
+    - **Item:** Decision 7 step-2 figure for the D36V50F12 at Botland ($29.57 net at ECB 1.1253)
+    - **Why:** Superseded by the D36V50F12's own decision 5 ($29.54 net at 1.124086, $59.08 for 2); decision 7 itself says the Pololu-order move is a decision for those parts' verifiers.
+  2.
+    - **Item:** Decision 5 claim that botland.store accepts consumers (not B2B-only)
+    - **Why:** Conflicts with decisions 1, 6 and 8, which call botland.store B2B / VAT-ID only. Changes use the consumer storefronts botland.de / botland.com.pl / botland.cz, which work under both readings; the botland.store question is left open.
+  3.
+    - **Item:** LT3045EDD#TRPBF (DFN) explicit trade option, saving $1.73
+    - **Why:** Decision 10 does not recommend it: it gives up the guaranteed maximum dropout (Note 5) and needs DFN hand assembly; only with explicit user acceptance.
+  4.
+    - **Item:** TPS7A4701MRGWREP (EP) as the default buy (re-audit D)
+    - **Why:** Superseded by decision 9 (±3.5% accuracy, outside the ±0.35 V window); fallback only with per-unit acceptance and user sign-off.
+  5.
+    - **Item:** Molicel INR21700-M65A (operator note 24) as a cell replacement
+    - **Why:** Decision 2: not cheaper than NKON's P50B (EUR 9.75 vs 6.75), out of stock at NKON, heavier (74.5 g) and 26 A; its extra capacity is a separate upgrade question, not a cheaper not-worse analog.
+  6.
+    - **Item:** INA228 DIY (INA228AIDGSR + CRA2512-FZ-R015ELF, about $6.0, saving about $8.9)
+    - **Why:** Decision 8: no authorised stock (DigiKey restock Jan 2027), unproven build quality, misses the W1-2 energy gate; rev-2 power-PCB candidate only, not a v2 BOM change.
+  7.
+    - **Item:** TLV3012BIDBVR as supervisor
+    - **Why:** Decision 12: better but $0.21 dearer than the current part, an optional paid upgrade, not the cheapest not-worse part.
+  8.
+    - **Item:** IP2366 140 W board, BQ25798 EVM, PD trigger + buck, ISDT-only charging
+    - **Why:** Decision 4 rejected all as worse (no charge-current set point or EPR 28 V tripping the OVLO, cost, lost NTC/termination, no 4.10 V Li-ion setting).
+  9.
+    - **Item:** Correction of search A's FX assumption (1.17 to 1.1253) for the D36V28F5
+    - **Why:** Search A's $17.8/$21.2 figures never entered STACK v1, so there is nothing to correct in the section files.
+  10.
+    - **Item:** Daly J13G3 Li-ion 4S (DL-J13G3-L04S15ATJ) replacement
+    - **Why:** No listing, price or stock found; kept only as a watch condition (08 change), not a replacement.
+  11.
+    - **Item:** Exact EUR 3 duty and EUR 2 UHF treated as 'amount not verified' in decisions 1, 4, 6
+    - **Why:** Operator note 35 (rule item, higher precedence) gives the exact amounts, so the changes use EUR 3 per tariff line and EUR 2 UHF from about 1 Nov 2026 rather than 'unverified'.
+  12.
+    - **Item:** Coilcraft 0805HP/1008HQ chokes, Hammond 1550WA, Eaton SMBJ, Amphenol LTW M12 / WEIPU SF12, Xiaomi AD65GEU as primary
+    - **Why:** Conditional fallbacks or upgrade paths only (used if a gate fails), entered as conditions, not as BOM picks.
+- **Notes:** Source analogs_G3 has 17 decisions (0 IMU pack replace_conditionally; 1 GNSS keep; 2 P50B replace_conditionally (same cell, NKON); 3 Daly keep; 4 IP2368 keep; 5 D36V50F12 keep, Botland; 6 D36V28F5 keep, Botland; 7 #2813 keep, Botland; 8 INA228 keep; 9 TPS7A4701 keep, RGWT at DigiKey; 10 LT3045 keep, EMSE C580012; 11 TPS2553 keep, -1 on all 10; 12 AON keep LDO / comparator replace_conditionally to MCP65R41; 13 protection set keep (parts named); 14 PCB set keep (fab/chokes named); 15 battery sundries keep (itemised, re-based to 110-150); 16 PD charger replace_conditionally to IKEA SJÖSS). Every record was read in full. Several are corrections of re-audit D wording (EP TPS7A4701, LT3045EDD, TPS25947 'limits', 100 mA trickle) and must win over the re-audit D extractor where they collide, per precedence. FX differs between decisions (stack rate 1.1241; 1.124086 open.er-api; ECB 1.1253): each figure is quoted with the decision's own rate. The USD column base is mixed (NKON, TinyTronics, IKEA and BerryBase VAT-inclusive; Botland/DigiKey net), as v1 already declares. Totals in 2.7, 2.8 and 2.12 must be recomputed after all sources; my G3-only sums are given. The v1 section files have no TPS259470A/TPS259630/TLV3011/INA3221 text (those come from the re-audit extractors), so the G3 instructions that mention them assume those parts are added. The GX12 to GX16 change also touches the case drawing in build/ (not a section file). The IMU pack's 5 V Schottky and the 4.2 A C4 gate are re-audit D items restated by G3. No G3 item breaks a hard rule; Region Europe and the with-Lime default are taken as given. G3 verifiers had no WebSearch budget; all values come from direct fetches of primary pages as recorded in the JSON.
+
 ## searchB:leo_bodnar_lbe_1420_gpsdo (run `wf_c3ba734e-52b`)
 
 - **Part:** Leo Bodnar LBE-1420 GPSDO locked clock source (extended lab tier, qty 1). Roles in this stack: GNSS-locked 10 MHz or exactly 30.72 MHz CMOS reference into LimeSDR Micro J4 (10-52 MHz, 1.8-3.3 V); GNSS-locked test tone, conducted only through 80 dB of pads and a DC block, to calibrate the ppm of the RTL-SDR V4L units, the Airspy HF+ and the tinySA, and the Lime VCTCXO DAC. It is configured headless from the Q6A over USB HID.
@@ -37786,6 +39822,2395 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - Several 08_open_bench changes share the anchor 'Q6A: TX UART6 (перемичка TX→RX' or 'NPU і обчислення: MemTotal і RSS застосунків'. Each of these means 'insert a new row next to this row'.
   
   **Numbers:** prices without a value in any file are marked as such: the LM4040, the 2230 NVMe test drive, and the duty rate. The keypad ($5-15) and the RAM, FFT and latency figures are models.
+
+## extract:reaudit_B (run `wf_d3de522a-a7e`)
+
+- **Source:** /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_B_receivers_rf.json (P4 re-audit B, group B_receivers_rf; 4 records: r0 = narrowband_sdr RTL-SDR Blog V4L x3 + librtlsdr; r1 = hf_receiver Airspy HF+ Discovery + Boni-Whip + HF software; r2 = wideband_sdr LimeSDR Micro M.2 (kept); r3 = rf_frontend LNAs, bias, LNB/BONI rails, switches, protection). All records read in full (confirmed, corrections, new_risks, refuted_findings, corrected_spec, bench_tests). Cross-checked against analogs_G1/G3/G5/G6 (P5 analog decisions), operator_notes.md and user_requirements.md.
+- **Changes:**
+  1.
+    - **Section:** 00_header_toc
+    - **Kind:** correction
+    - **Part:** Airspy HF+ Discovery VHF role
+    - **Anchor:** другий VHF-приймач (AIS, FM, DAB)
+    - **Instruction:** Replace '(AIS, FM, DAB)' with '(AIS, FM-RDS, NFM, airband, VOR; no DAB: DAB+ runs on the spare V4L or the Lime)'.
+    - **Reason:** HF+ maximum is 912 ksps; DAB needs 2.048 Msps (welle.io README: HF+ not supported; OpenWebRX+ DAB ifRate=2048000).
+    - **Sources:** reaudit_B r1 corr 6; https://raw.githubusercontent.com/AlbrechtL/welle.io/master/README.md
+    - **Saving usd:** 0
+  2.
+    - **Section:** 00_header_toc
+    - **Kind:** seller_or_price
+    - **Part:** Price-basis note (Uputronics, Boni-Whip)
+    - **Anchor:** Uputronics GBP 51.59, Boni-Whip у WiMo EUR 159
+    - **Instruction:** Replace with 'Boni-Whip at Bonito's own shop EUR 149.00 incl. VAT ($167.49)'. Remove Uputronics from the VAT-inclusive list and add after the list: 'Uputronics 440 is now on the EU-storefront ex-VAT basis: EUR 52.95 = $59.52 (EU landed about $70.8-72.0 at 19-21% VAT plus shipping, model)'.
+    - **Reason:** Re-audit B r1 corr 10 (Bonito shop in stock) and r3 corr 6 (store localises prices; stack convention is USD without import VAT); analog G1 #3 keeps this basis and says the -$9.19 is not a real saving.
+    - **Sources:** reaudit_B r1 corr 10, r3 corr 6; analogs_G1 #3; https://hamradioshop.net/Boni-Whip-Aktivantenne/0125.2 ; https://store.uputronics.com/products/uputronics-filtered-preamps.js
+    - **Saving usd:** 0 (basis change only)
+  3.
+    - **Section:** 00_header_toc
+    - **Kind:** bench_test
+    - **Part:** Status: what must be measured
+    - **Anchor:** струми HF+, Boni-Whip, Bullseye, Uputronics 440, LNA V2 і шумового джерела
+    - **Instruction:** Append to the 'what to measure' list: librtlsdr lab build gate (zero-copy off, SONAME .so.2, GPIO0-only bias gate, bias 0 V after open/close); V4L L-band thermal A/B at 40-45 C; HF+ firmware (minimum R4.0.7, target R5.0.1) and ppb calibration; LNB/Boni eFuse trip and INA3221 current readback; Lime TXEN register read-back, rate floor (7 Msps) and firmware reload after a full power-off.
+    - **Reason:** New gates from re-audit B.
+    - **Sources:** reaudit_B r0/r1/r2/r3 bench_tests
+    - **Saving usd:** 0
+  4.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** replace_part
+    - **Part:** LimeSDR Micro cables, Crowd Supply terms, S-band fallback (C1)
+    - **Anchor:** MHF4L-SMA $6 кожен
+    - **Instruction:** Replace the cable clause: '4 MHF4L-to-SMA(f) 100 mm 1.13 mm cables (X2 RX-A; RX-B = X3 or X4, check the board label; J4 REF IN; X1 TX to an internal SMA 50 Ohm load), bought per analog G6 #6 as Taoglas CAB.01075 from DigiKey DE: 4 x $4.59 = $18.36 (EUR 4.03 ex VAT / EUR 4.80 incl. 19% VAT each), at the 1 Dec 2026 gate; the Crowd Supply cart holds the board only ($249 + $18 = $267)'. Add to C1: Crowd Supply ships from Mouser (Mansfield, Texas): the EU buyer pays import VAT, normal duty above EUR 150, the EUR 2 Union handling fee (from about 1 Nov 2026) and the courier fee; free cancel only until shipment, so check the order weekly - a shipping e-mail is the effective deadline, otherwise decide by 1 Dec 2026; defects must be reported within 30 days of receipt for an RMA (returns go back to Texas at the buyer's freight cost); other returns have a restocking fee of at least $20. S-band-only fallback if the Lime fails acceptance or slips past 31 Jan 2027: Nooelec Ham It Down $89.95 (US seller; EU landed = price + shipping + import VAT + EUR 3 duty per tariff line if the consignment is EUR 150 or less via IOSS/post + EUR 2 handling fee from about 1 Nov 2026). Acceptance additions: stage 0 with the card directly in the slot, then on the riser; 50 warm + 20 cold boots at 0 C or above; 2x56 Msps for 60 min with no drops; lspci [0d10] 2058:001d, BAR0 64 MiB, LnkSta 8 GT/s x1.
+    - **Reason:** Re-audit B r2 corr 6 requires 4 cables (TX X1 needs its load); analog G6 #6 replaces the cable seller/price; r2 confirmed [1] and new_risk 8 (returns policy, Mouser Texas); r2 corrected_spec (fallback, acceptance).
+    - **Sources:** reaudit_B r2 corr 6, confirmed [0][1][22], new_risks 6/8, corrected_spec; analogs_G6 #6; operator_notes 34-35; https://www.crowdsupply.com/lime-micro/limesdr-micro ; https://www.crowdsupply.com/shipping
+    - **Saving usd:** G6 #6: 5.64 vs 4 Crowd Supply cables ($291); 23.64 if Crowd Supply would bill the cable project's $18 separately
+  5.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** Boni-Whip rail voltage (C3)
+    - **Anchor:** LNB (13.2 V), Boni-Whip (12.5 V)
+    - **Instruction:** Change 'Boni-Whip (12.5 V)' to 'Boni-Whip (13.8 V, BONI13V8)'.
+    - **Reason:** Bonito rates 12-15 V at the barrel of its supplied bias tee; 12.5 V at +/-2.5% leaves about 0.2 V margin; re-audit B r1 corr 9 sets 13.8 V (adopted by analogs G3 #9 and G1 #9).
+    - **Sources:** reaudit_B r1 corr 9; analogs_G3 #9
+    - **Saving usd:** 0
+  6.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** HF+ VBUS filter (C5)
+    - **Anchor:** H4 — HF+ за ключем навантаження від MCP, LC і Mix-31
+    - **Instruction:** Append: '(the 100 uH / 100 uF LC, about 1.6 kHz corner, must be damped - series R-C across the 100 uF or a lossy electrolytic; analog G1 #8 build: about 1 Ohm + 220 uF; inrush is limited by the TPS2553/load-switch current limit; inductor rated at 1.5x or more of the measured streaming current; the Mix-31 bead covers HF only)'.
+    - **Reason:** An undamped LC peaks at resonance and rings on load-switch turn-on; 100 uF behind a USB port exceeds the 10 uF device-inrush norm unless limited upstream.
+    - **Sources:** reaudit_B r1 corr 14, new_risk 9; analogs_G1 #8
+    - **Saving usd:** 0 (parts about $2)
+  7.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** V4L serial numbers (C5 udev)
+    - **Anchor:** udev називає кожен пристрій /dev/lab/<name> за серійним номером.
+    - **Instruction:** Append: 'V4L serials are not unique from the factory (V4 units ship as 00000001), and a numeric serial collides with the device index in osmocom verbose_device_search (auto_rx #1016). At assembly, one dongle attached at a time: rtl_eeprom -r backup_<n>.bin, then rtl_eeprom -s LAB-RTLA / LAB-RTLB / LAB-RTLS, replug, rtl_test -d LAB-RTLB. No serial may be numeric or a prefix/suffix of another.'
+    - **Reason:** Without it udev naming, SatDump (rtlsdr_get_index_by_serial) and auto_rx open the wrong dongle.
+    - **Sources:** reaudit_B r0 corr 6, confirmed [21]; https://github.com/projecthorus/radiosonde_auto_rx/issues/1016
+    - **Saving usd:** 0
+  8.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** INA3221 current monitors on I2C2 (C6)
+    - **Anchor:** I2C2 (27/28) — MCP23017 #1 (0x20, виходи) і #3 (0x22, входи) плюс TCA9517 до LAB BUS
+    - **Instruction:** Append '+ 2x TI INA3221AIRGVR at 0x41 and 0x43 (current readback of LNA ch1-ch4, LNB and Boni rails)'.
+    - **Reason:** TPS2553 has no current monitor and TPS2596-family FLT is silent in current limiting; I2C2 already uses 0x20, 0x21, 0x22, 0x30, 0x48.
+    - **Sources:** reaudit_B r3 corr 5
+    - **Saving usd:** 0
+  9.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** LNB rail protection (C8)
+    - **Anchor:** Одне обмеження струму: PTC з утриманням при 60 °C у 1.5-2 рази більшим за виміряний струм Bullseye (попередньо 0.45 A) плюс внутрішнє обмеження і термозахист LDO; PG — на MCP #3.
+    - **Instruction:** Replace with: 'Chain: TPS7A4701 (ANY-OUT 6P4V1+3P2V+1P6V+0P4V+0P2V to GND = 13.2 V) -> TI TPS259630DDAR eFuse (latch-off after thermal shutdown; fallback TPS259631DDAR auto-retry) -> INA3221 0.1 Ohm shunt -> choke 1 A or more. RILM 2.05 kOhm 1% = 0.405-0.499 A; final RILM = 903/(1.5-2 x measured I_LNB - 0.0112). OVLO divider 110 kOhm / 10.0 kOhm 0.5%: trip 13.91-14.77 V (model). FLT to MCP #3 through a pull-up, latched by labd in software; TPS7A47 has no PG pin (PG-equivalent per analog G3 #9: TLV3011 comparator to MCP #3); FLT does not assert in overcurrent/short-circuit current limiting, so the INA3221 readback covers soft overloads. TPS7A47 ICL is 1.0 A min / 1.26 A typ and is not a usable short-circuit limit. No PTC. LDO and eFuse EN together from MCP #1 GPB0.'
+    - **Reason:** v1 wires a PG pin that does not exist and relies on a PTC/LDO limit; a shorted F centre pin is now limited to about 0.45 A then latched off, and an LDO failing short can no longer put more than about 14.8 V on the LNB.
+    - **Sources:** reaudit_B r3 corr 2, confirmed [8][9], new_risks 1/4, refuted [4][5]; analogs_G3 #9/#13; https://www.ti.com/lit/ds/symlink/tps2596.pdf
+    - **Saving usd:** 0 (eFuse $1.07)
+  10.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** LNB acceptance window (C8)
+    - **Anchor:** 13.2 V ±0.2 V на F-роз'ємі під навантаженням при батареї від 13.8 V
+    - **Instruction:** Replace with '13.2 V +/-0.33 V on the F connector under load with the battery at 13.8-16.4 V (TPS7A47 overall accuracy +/-2.5% = 12.87-13.53 V; per analog G3 #9 the +/-2.5% holds only with IN at 14.2 V or more, so treat the window as a per-unit measured gate)'.
+    - **Reason:** Datasheet accuracy is +/-2.5%; +/-0.2 V is tighter than the guaranteed IC band.
+    - **Sources:** reaudit_B r3 corr 2, confirmed [8], bench [6]; analogs_G3 #9
+    - **Saving usd:** 0
+  11.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** TPS7A4701 thermal figures (C8)
+    - **Anchor:** (близько +29 K при θJA 30.5 °C/W)
+    - **Instruction:** Replace with '(about +31 K at RthetaJA 32.5 C/W for RGW, SBVS204G Rev G May 2026, model)'; in the same cell replace 'на утриманні PTC 0.45 A — 1.44 W, близько +44 K (близько 94 °C переходу при 50 °C усередині)' with 'at the 0.45 A sizing current 1.44 W, about +47 K (about 97 C junction at 50 C inside, derived 50 + 47; still inside 125 C)'. Keep the LDOs bonded to the plate.
+    - **Reason:** Rev G gives 32.5 C/W, not 30.5.
+    - **Sources:** reaudit_B r3 corr 3, refuted [8]; https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+    - **Saving usd:** 0
+  12.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** TPS2553 LNA channel limit (C9)
+    - **Anchor:** TPS2553 на 300 mA номінально (240 mA і більше на нижньому краї допуску)
+    - **Instruction:** Replace with 'TPS2553DBVR-1 (latch-off; one SKU on all positions, part/seller per analog G3 #11) at RILIM 88.7 kOhm 1%: IOS 262-342 mA (265/299/339 mA min/nom/max from the SLVS841F equations, model); labd resets a latch by toggling EN; per-channel current readback via INA3221 (0.2 Ohm shunts, 0.2 mA resolution) with an alarm at more than 20% over each LNA's bring-up baseline (catches degraded or ESD-damaged LNAs that sit under the trip point)'.
+    - **Reason:** 240 mA was the wrong lower bound; TPS2553 has no current monitor.
+    - **Sources:** reaudit_B r3 corr 5, confirmed [7]; analogs_G3 #11
+    - **Saving usd:** 0
+  13.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** new_risk
+    - **Part:** TCBT-2R5G+ channel limit (C9)
+    - **Anchor:** TCBT-2R5G+ (200 mA макс.) — тільки на каналах із LNA до 150 mA
+    - **Instruction:** Replace with 'TCBT-2R5G+ (200 mA max) only on a channel whose TPS2553 has RILIM 162 kOhm 1% (144/166/192 mA, model) - a 300 mA channel (262-342 mA) does not protect it; per analog G3 #14 the only such channel is ch4 WIDE (ch2 uses the Murata LQW2UASR12J00L choke)'.
+    - **Reason:** A partial short could cook the 200 mA injector behind a 300 mA limit.
+    - **Sources:** reaudit_B r3 corr 4, new_risk 2; analogs_G3 #11/#14
+    - **Saving usd:** 0
+  14.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** new_risk
+    - **Part:** Spare-V4L bias tee grant (C9)
+    - **Anchor:** трійник запасного V4L може живити LNA до 90 mA і лише з токеном labd
+    - **Instruction:** Append: 'The grant is a root-owned file /run/labd/bias/<serial> (st_uid 0, no group/other write), not the LAB_BIAS_OK environment variable (any process can export it: an accident guard, not access control). The lab librtlsdr sets GPIO0=0 at the end of rtlsdr_open and in rtlsdr_close for RTLSDRBlog boards (osmocom never clears it, so the 4.5 V bias otherwise survives an app exit or crash); labd cycles the LAB-port VBUS (MCP #1 GPA0) at lease end; the UI shows bias state from labd, never from SoapyRTLSDR (it ignores the rtlsdr_set_bias_tee return code).'
+    - **Reason:** Bias persistence could push 4.5 V into a bench instrument or DC-short antenna.
+    - **Sources:** reaudit_B r0 corr 12, new_risks 0-2
+    - **Saving usd:** 0
+  15.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** librtlsdr build (C11)
+    - **Anchor:** Перезібрати noble 2.0.1-2build1 з комітами 0204c9c (R828S) і 65f0658 (зависання USB)
+    - **Instruction:** Rewrite C11. Decision: package librtlsdr2 2.0.3-0+lab1 built on the arm64 builder from osmocom v2.0.3 (797f814; contains 0204c9c V4L support, 65f0658 read_async -1 on device loss, fast-retune commits): revert 7ebcb04 (SONAME librtlsdr.so.2, 37 rtlsdr_* exports, headers unchanged since 2.0.1), noble debian/ packaging, -DENABLE_ZEROCOPY=OFF passed literally (stock noble arm64 librtlsdr2 builds with zero-copy ON because of the DEB_ZEROCOPY_OPTION typo; same in Debian 2.0.3-1), -DDETACH_KERNEL_DRIVER=ON. Lab patch (compiled on amd64 only; not tested on arm64 or hardware): (a) rtlsdr_set_bias_tee_gpio refuses only gpio==0 && on without a grant; 'off' always allowed; GPIO5 (V4/V4L HF/UHF upconverter switch, driven from r82xx_set_freq) and all other GPIOs pass; rtlsdr_set_bias_tee routes through gpio 0, so one check covers both; (b) GPIO0=0 at end of rtlsdr_open and in rtlsdr_close for manufacturer 'RTLSDRBlog'; (c) d80421b port: regs[2]=0x06 before the pw_sdm bit-3 logic, retry write 0x06 under mask 0xf7, reg 0x17 div_buf_cur 0x20 for all bands - enabled by default only if it wins the thermal L-band A/B. Grant = root-owned /run/labd/bias/<serial>. Fallback: noble 2.0.1 + 65f0658 + 0204c9c with the same patch. Packaging: apt-mark hold; dpkg-divert rtl_biast; rtl_eeprom wrapped (only -r, -s and the -m/-p restore); never install the rtl-sdr-blog fork (offset-tuning hack and EEPROM force_bt turn the tee on); no rtl_tcp in field profiles (remote command 0x0e sets bias; else bind 127.0.0.1); keep the packaged DVB blacklist file but no initramfs step (CONFIG_DVB_USB_V2 is not set in 6.18.2-4-qcom; after any kernel change check 'modinfo dvb_usb_rtl28xxu' = not found). Why: a gate on every GPIO would make rtlsdr_set_center_freq return -1 on the first VHF/UHF/L-band tune and break both core receivers. Consequences: W1-2 log must show 'Found Rafael Micro R820T tuner' then 'RTL-SDR Blog V4 Lite Detected'; never smoke-test with stock noble librtlsdr2.
+    - **Reason:** Stage-1/2 gate scope, zero-copy defect and DVB step corrected by re-audit B; also closes operator notes 12/12c.
+    - **Sources:** reaudit_B r0 corr 0-3/9/12, confirmed [10]-[13][16]-[18]; r3 corr 0, new_risks 0/12; operator_notes 12, 12b, 12c; https://github.com/osmocom/rtl-sdr/releases/tag/v2.0.3
+    - **Saving usd:** 0
+  16.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** BONI13V8 rail (C17)
+    - **Anchor:** **Boni-Whip:** 12.5 V ±0.25 V від TPS7A4701 (EN на MCP #1 GPB1, спершу DC-sense, PTC з утриманням 0.2 A при 60 °C, попередньо)
+    - **Instruction:** Replace with '**Boni-Whip:** rail BONI13V8: battery SW -> LC -> TPS7A4701 (ANY-OUT) at 13.8 V (setpoint gate +/-0.2 V measured per unit; IC accuracy +/-2.5% = +/-0.345 V per analog G3 #9) -> TPS259630DDAR eFuse RILM 7.87 kOhm (0.113-0.139 A, datasheet point) -> INA3221 0.2 Ohm -> bias tee inside next to the HF+ shield: Bonito's supplied Einspeiseweiche (5.5/2.1 mm barrel) if it fits inside the shield, else DIY 2.2 mH (0.15 A or more, low DCR) + about 10 uH series choke and a 1 uF PPS/PEN film or C0G DC block (not X7R); EN on MCP #1 GPB1, DC-sense first. Gate: at least 12.0 V at the Einspeiseweiche barrel with the pack at 13.2 V; antenna-end voltage recorded (target 12.0 V or more). Energy model about 0.90 W. The LDO is in dropout below a pack of about 13.9-14.0 V (model).' Remove the PTC. NOTE: the r3 OVLO divider (110k/10.0k, trip 13.91-14.77 V) was sized for rails up to 13.53 V; at a 13.8 V setpoint it can trip in normal operation, so the BONI OVLO divider must be re-derived and bench-verified (value not in the files).
+    - **Reason:** Bonito specifies 12-15 V at the barrel of its own bias tee; v1's 12.5 V had about 0.2 V margin; r3 replaces PTCs with eFuses.
+    - **Sources:** reaudit_B r1 corr 9/12, refuted [4], new_risk 6; r3 corr 2/14; analogs_G3 #9, G1 #9
+    - **Saving usd:** 0
+  17.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** Boni-Whip supply rationale (C17)
+    - **Anchor:** 12.5 V входить в обидва опубліковані діапазони (9-15 V і 12-15 V).
+    - **Instruction:** Replace with 'Bonito specifies 12-15 V at the 2.1 mm barrel of the supplied bias tee (the rating point is the inserter input, not the antenna), typ 65 mA, 20 kHz-300 MHz; at 65 mA with 1-4 Ohm ahead of the barrel, 13.8 +/-0.2 V gives 13.34-13.54 V at the barrel and 12.0-13.4 V at the antenna; 12.5 +/-0.25 V gave only 11.99-12.19 V at the barrel; the 13.8 V LDO still gives about 13.1 V at the 13.2 V shutdown (all model).'
+    - **Reason:** Manufacturer data (hamradioshop.net/bonito.net) replace the WiMo/SWLing ranges.
+    - **Sources:** reaudit_B r1 corr 9, confirmed [24]; https://bonito.net/en/boni-whip-2/
+    - **Saving usd:** 0
+  18.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** seller_or_price
+    - **Part:** HF+ input selector relays (C17)
+    - **Anchor:** **Перемикач HF+:** два Omron G6K-2F-RF послідовно-паралельно
+    - **Instruction:** Change to 'two Aratas (formerly Omron Components) G6K-2F-RF relays, series-shunt (part per analog G1 #7: G6K-2F-RF-S DC5, fallback G6K-2F-RF DC5)'; in the 'чому' cell replace 'Пара G6K коштує близько $57-69 (GBP 43-52, RS UK)' with 'DigiKey: G6K-2F-RF DC5 $25.06 each = $50.12 per pair (re-audit B; now the fallback), G6K-2F-RF-S DC5 $39.38 per pair (G1 #7); order by part number and accept either marking'. Acceptance figures stay unverified until measured on the LiteVNA.
+    - **Reason:** DigiKey lists the relay under Aratas; Electropages confirms the rebrand; RS UK GBP figure superseded.
+    - **Sources:** reaudit_B r3 corr 12, confirmed [18]; r1 corr 19; analogs_G1 #7; https://www.electropages.com/blog/2026/07/omron-electronic-components-rebrands-aratas
+    - **Saving usd:** vs RS UK $57.27-69.25: 7.15-19.13 at $50.12; G1 #7 -S variant saves 10.74 more
+  19.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** rule
+    - **Part:** Boni interlock (C17 consequences)
+    - **Anchor:** DC-sense у labd блокує шину Boni, якщо на порту балун 9:1 (КЗ по DC).
+    - **Instruction:** Append: 'P5 becomes a BNC bulkhead keyed against SMA LNAs (an SMA LNA such as the Uputronics, max 5.5 V, must never mate with a DC-carrying P5). DC-sense locks the rail below about 10 Ohm at about 1 mA sense current (threshold set from the measured balun DCR) plus a Boni-attached confirmation; after enable a current window of 30-150 mA within 2 s (set from the measured Boni current) must hold, else the rail goes off and the event is logged; bias only in the explicit Boni profile.' In 'Відкинуто' add '12.5 V (BONI12V5) and the PTC as the only limit'.
+    - **Reason:** DC-sense alone cannot tell an open port or DC-blocked accessory from a valid Boni-Whip; Nooelec states no DC continuity for the balun.
+    - **Sources:** reaudit_B r1 corr 11, new_risk 7; r3 corr 14
+    - **Saving usd:** 0
+  20.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** V4L serials and EU channels (C21)
+    - **Anchor:** Кожен V4L з унікальним серійним номером у EEPROM, назви udev за серійним номером.
+    - **Instruction:** Replace with 'Each V4L gets a non-numeric serial at assembly (LAB-RTLA / LAB-RTLB / LAB-RTLS; factory units are not unique), udev names by serial; incoming genuineness test on every unit (diagonal screws, EEPROM strings and IR bit, conducted tones at 10.000/137.500/437.000/1700.000 MHz).' Extend the EU sentence: 'official eBay rtl-sdr-blog or AliExpress RTLSDRBlog Store 4523039 / 1101427871, confirming at checkout that it ships to the buyer's country'.
+    - **Reason:** Factory serials repeat (00000001); the driver string check alone cannot detect a V3-clone board.
+    - **Sources:** reaudit_B r0 corr 6/15, confirmed [6][21]
+    - **Saving usd:** 0
+  21.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** rule
+    - **Part:** SDR software build rules (C22)
+    - **Anchor:** SatDump 2.0-alpha, SDR++ і SDRangel 7.27.2 (RX-only) з джерел як deb-пакети +labN.
+    - **Instruction:** Append: 'SDRangel built with -DENABLE_EXTERNAL_LIBRARIES=OFF (AUTO/ON can build its own librtlsdr); no snap, flatpak, AppImage or docker SDR apps; CI runs ldd on every installed RTL consumer (rtl_connector, dump1090-fa-minimal, SatDump, SDR++, SDRangel; rtl-433 stays pinned -1) and requires the lab librtlsdr.so.2. SoapyAirspyHF tag soapy-airspyhf-0.2.1 (0b3daf0) as +lab. libairspyhf: noble 1.6.8-4build1 (true 1.6.8, soname 1). OpenWebRX+ ban list: dump978-fa, skyaware978, full dump1090-fa, piaware. WSJT-X decoders as wsjtx-decoders+lab (make jt9 wsprd).'
+    - **Reason:** Closes silent librtlsdr bypasses and the TX-capable wsjtx/libhamlib-utils dependency.
+    - **Sources:** reaudit_B r0 corr 10, confirmed [14][15]; r1 corr 1/4/8; https://github.com/f4exb/sdrangel/blob/master/external/CMakeLists.txt
+    - **Saving usd:** 0
+  22.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** QO-100 LNB IF ingress check (C23)
+    - **Anchor:** перевірити проникнення в ПЧ LNB (DVB-T 734-742 MHz, LTE B28 uplink)
+    - **Instruction:** Replace with: 'region is Europe (user decision): run the user-required DVB-T/LTE B28 ingress check against the real EU occupants: EU Decision 2016/687 puts the B28-type FDD uplink at 703-733 MHz (below the 739.5-740 MHz IF) and downlink at 758-788 MHz; the IF sits in the 733-758 MHz gap (optional SDL 738-758 MHz, PMSE, PPDR 733-736/753-758 MHz, M2M); the 700 MHz band no longer carries DVB-T. Scan 733-758 MHz (plus the 733 MHz B28 edge) with RTL-B on the LNB throw, LNB unpowered, then powered.'
+    - **Reason:** The v1 target services were wrong for Europe.
+    - **Sources:** reaudit_B r3 corr 9, new_risk 3, refuted [11]; user_requirements (region Europe, IF-penetration check); https://eur-lex.europa.eu/eli/dec_impl/2016/687/oj
+    - **Saving usd:** 0
+  23.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** keep_with_note
+    - **Part:** Uputronics 440 (D8)
+    - **Anchor:** (LNA, потім SAW 30 MHz; GBP 51.59, є в наявності)
+    - **Instruction:** Replace with '(limiter, HPF below 100 MHz, LNA, then SAW; datasheet Rev 3.0: 3.5-5.5 V, about 50 mA, NF 0.75 dB average, at least 19 dB at 440 MHz, permanent damage above 5.5 V, no signal pass-through when unpowered, not IP rated; EU storefront EUR 52.95 ex VAT = $59.52, US $62.00; in stock)'. Add to consequences: 'UHF profiles require ch2 on (UI: ch2 off = no UHF); never more than 5.5 V on P2/P3; rain cover at the Yagi feed'.
+    - **Reason:** Bias range and price corrected from the datasheet and the store's localised prices.
+    - **Sources:** reaudit_B r3 corr 6/8, confirmed [4]; analogs_G1 #3
+    - **Saving usd:** 0 (ex-VAT basis change -9.19, not a saving per G1 #3)
+  24.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** HMC7992 power-up park and throw map (D8)
+    - **Anchor:** RTL-A: T1 VHF-137, T2 UHF, T3 WIDE/2 m (опційно), T4 50 Ohm. RTL-B: T1 L-band, T2 ПЧ LNB, T4 50 Ohm. При ввімкненні — 50 Ohm.
+    - **Instruction:** Replace with 'HMC7992 Table 6: A=B=Low selects RF1, so the 50 Ohm park is on RF1 (D13's 100k pull-downs select it at boot). RTL-A: RF1 50 Ohm, RF2 VHF-137, RF3 UHF, RF4 WIDE/2 m (optional). RTL-B: RF1 50 Ohm, RF2 L-band, RF3 LNB IF, RF4 BENCH/sled. Lime switch: RF1 is the safe default route. At power-up: 50 Ohm (RF1).' Also change the preceding 'Перемикачі: плати HMC7992 SP4T за інжекторами.' to 'Switches: genuine HMC7992LP3DE chips on the custom injector PCB (analog G1 #4)'.
+    - **Reason:** T4 was the wrong park throw; pull-ups would drive logic before VDD, which the datasheet forbids.
+    - **Sources:** reaudit_B r3 corr 1, confirmed [6], refuted [6]; analogs_G1 #4; https://www.farnell.com/datasheets/2283884.pdf
+    - **Saving usd:** 0
+  25.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** HF+ LF window centre and VLF mask (#3)
+    - **Anchor:** Одне вікно HF+ з центром близько 290 kHz покриває 60/77.5 kHz і NAVTEX 490/518 kHz.
+    - **Instruction:** Replace with 'Preferred LF window: centre 330 kHz at 768 ksps (alias-free 0-660 kHz; JJY 40 at -290, DCF77 at -252.5, TDF at -168, NAVTEX 490/518 at +160/+188 kHz offset; model). If 290 kHz is used, labrx masks every bin with |f_abs| < 30 kHz, negative absolute frequencies included, before storage: with complex baseband the negative-frequency image of real 0-40 kHz signals (VLF 3-30 kHz included) lands at -40..0 kHz inside the alias-free band (model). libairspyhf keeps the LO at 180 kHz or more and adds a +5 kHz IF shift with DSP on (LO 295 kHz).'
+    - **Reason:** A positive-only 3-30 kHz mask leaks VLF (military-band survey mask rule) into stored data.
+    - **Sources:** reaudit_B r1 corr 13, new_risk 5
+    - **Saving usd:** 0
+  26.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** Radio Clock allow-list (#3)
+    - **Anchor:** JJY 60 kHz — лише амплітуда (Radio Clock його не підтримує).
+    - **Instruction:** Replace with 'Radio Clock decode allow-list on SDRangel 7.27.2: DCF77, MSF, TDF (Europe priority), WWVB, JJY 40; JJY 60 amplitude-only until tested on a recording; RBU (66.666 kHz) stays blocked in labd (RBU and PCSK-225 exist only on SDRangel master); SID logs flag TDF weekly maintenance gaps (Tuesdays 08:00-12:00, secondary source); JJY and WWVB are rarely receivable on a handheld in Europe (assessment, not measured).'
+    - **Reason:** 7.27.2 readme lists JJY 40, not JJY 60.
+    - **Sources:** reaudit_B r1 corr 7, confirmed [15]; https://en.wikipedia.org/wiki/TDF_time_signal
+    - **Saving usd:** 0
+  27.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** WSJT-X decode-only build (#10)
+    - **Anchor:** Декодери WSJT-X — лише jt9/wsprd (dpkg-divert на /usr/bin/wsjtx).
+    - **Instruction:** Replace with 'WSJT-X decoders only as the local package wsjtx-decoders+lab (make jt9 wsprd; runtime deps libgfortran5, libfftw3-single3, libgomp1, Boost.Log, libqt5core5t64) plus a one-line wsjtx_app_version stub printing WSJT-X 2.7.0 for FST4/Q65; the apt wsjtx package is not installed (it hard-depends on libhamlib-utils rigctl/rigctld). SDRangel demodft8 is the alternative for FT8/FT4. CI: wsjtx, libhamlib-utils, js8call, direwolf not installed; rigctl/rigctld absent.'
+    - **Reason:** dpkg-divert does not stop apt from pulling libhamlib-utils.
+    - **Sources:** reaudit_B r1 corr 8, confirmed [18]; https://packages.ubuntu.com/noble/wsjtx
+    - **Saving usd:** 0
+  28.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** Lime receive-only enforcement (#11)
+    - **Anchor:** limeConfig дозволено лише з опціями refclk.
+    - **Instruction:** Replace with 'limeConfig whitelist: --refclk, --refclk_source and --txen=0 only (no --ini, --txtestsignal, --txcalibrate, --txen=1). Banned tools: limeSPI, limeI2C, limeCSR, limeOEM, limeFLASH, limeVSPA, limePPSDO, limeGUI, the gr-limesuiteng sink, limeTRX --input/--repeater, SatDump TX modes. The M4 firmware drives LMS_TXEN high at init (LimeSDR-Micro issue #1 open), so TX silence is register-level: the self-test reads back register 0x0020 TXEN_A/TXEN_B = 0 after every configure and calibrate and labd re-asserts --txen=0; X1 stays on 50 Ohm; conducted X1 leakage limit <= -60 dBm (proposed). RX IQ calibration loopback (CalibrateRx uses the VSPA TX tone and EN_LOOPB_TXPAD_TRF) stays allowed. Optional future fork: LMS_TXEN low except during CalibrateRx (untested).'
+    - **Reason:** Hardware TX enable is always on; a crashed client could leave the TX chain configured.
+    - **Sources:** reaudit_B r2 corr 2, confirmed [17], new_risk 2; operator_notes 28; https://github.com/myriadrf/LimeSDR-Micro/issues/1
+    - **Saving usd:** 0
+  29.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** Lime Gen2 fallback (#21)
+    - **Anchor:** Gen2 запасний через max-link-speed=2
+    - **Instruction:** Append '(caps the Lime at 1x56 Msps or 2x<=40 Msps, shown in the UI: Gen2 x1 carries about 400-440 MB/s payload vs 448 MB/s for 2x56 Msps ci16, model)'. In the same cell add after 'Gen3 x2 на pcie1': 'the Lime trains Gen3 x1; window 0x40300000 + 0x1fd00000 (509 MiB); pcie_aspm=off, power/control=on; mask sleep, suspend, hibernate and hybrid-sleep targets; park with streams stopped and LMS channels disabled over SPI; never switch VCC_3V3_MKEY at runtime (vcc_3v3 is regulator-always-on in the Radxa DT; reboot-after-link-down is inferred from the NXP tip + FW #4)'.
+    - **Reason:** Gen2 cannot carry 2x56 Msps; suspend evidence relabelled.
+    - **Sources:** reaudit_B r2 corr 3/8, confirmed [12], refuted [2]
+    - **Saving usd:** 0
+  30.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** Lime PCI class fixup (#21)
+    - **Anchor:** PCI class fixup (1957:1c10, 1957:1c12, 2058:001d → 0x118000), якщо BAR не піднімаються
+    - **Instruction:** Replace with 'normal EEPROM boot: expect lspci [0d10] 2058:001d with BAR0 = 64 MiB (EEPROM bootloader class 0x0D1000); class fixup only if lspci -nn shows [0000] (kernel 6.18 bridge-window sizing skips class 0x0000). In ROM/recovery boot record lspci -nn: [0002] is assignable (check BAR0 256 MiB fits the 509 MiB window); [0000] means recovery on an x86 host or a kernel with a built-in quirk. Recovery needs the unfitted 0.05 in boot-source header (a board modification, not a JP1 jumper) - only after the 30-day RMA window.'
+    - **Reason:** 'ROM boot is classless' unproven (NXP log shows class [0002]).
+    - **Sources:** reaudit_B r2 corr 4, confirmed [10][11], new_risk 4, refuted [5][6]
+    - **Saving usd:** 0
+  31.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** Held-kernel config (#26)
+    - **Anchor:** Не зібрано: PPS_CLIENT_GPIO, PPS_CLIENT_LDISC, PINCTRL_MCP23S08.
+    - **Instruction:** Add DVB_USB_V2 to the 'not built' list ('# CONFIG_DVB_USB_V2 is not set' in config-6.18.2-4-qcom, so dvb_usb_rtl28xxu does not exist; the packaged blacklist stays as a harmless guard).
+    - **Reason:** Removes the needless initramfs step.
+    - **Sources:** reaudit_B r0 corr 9, refuted [3]; operator_notes 12b
+    - **Saving usd:** 0
+  32.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** SatDump Lime TX patch (#30)
+    - **Anchor:** master (2.0.0-alpha) з джерел із Soapy і legacy API LimeSuiteNG; без inmarsat_support
+    - **Instruction:** Append: 'pinned master 1aedd60 with limesdrng_sdr_support patched to MODE_SINGLE_RX and MODE_NORMAL only and tx_ch_number=0, with a CI grep guard (stock registers MODE_SINGLE_TX/MODE_RX_TX, calls LMS_Calibrate(LMS_CH_TX) and opens TX streams); its source widget offers 1-80 Msps and the device block 1-150 Msps, so Lime profiles hard-block rates below 7 Msps'.
+    - **Reason:** SatDump otherwise exposes Lime TX and firmware-rejected rates.
+    - **Sources:** reaudit_B r2 confirmed [16], refuted [7], corrected_spec; operator_notes 23
+    - **Saving usd:** 0
+  33.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** HF+ frequency correction and SoapyAirspyHF (#31)
+    - **Anchor:** SoapyAirspyHF з джерел. Корекція ppm HF+ — у labrx або libairspyhf (SoapyAirspyHF не викликає airspyhf_set_calibration).
+    - **Instruction:** Replace with 'SoapyAirspyHF tag soapy-airspyhf-0.2.1 (0b3daf0) built as +lab (0.2.0's revision check fails on 1.8.1). HF+ correction: libairspyhf reads calibration_ppb from flash at open and applies it (SDR++, SatDump, AIS-catcher, SoapyAirspyHF, OpenWebRX+); calibrate once at the bench with airspyhf_calibrate -s <SN> -c <ppb> (streaming stopped) and after every firmware flash; SDRangel 7.27.2 overwrites it with LOppmTenths x 100 on init/start (default 0), so labd writes LOppmTenths = round(ppb/100) into every SDRangel AirspyHF preset over REST and checks it after each preset load; labrx adds no correction of its own; if labrx ever writes flash it uses airspyhf_flash_calibration (airspyhf_flash_configuration does not exist in noble 1.6.8). OpenWebRX+ HF+ profiles only 768000 (default), 912000, 456000, 384000 or 192000, checked against the airspyhf_info rate list; CI rejects 256000 (firmware R4.0.0+ offers 228k; SoapyAirspyHF ignores the set_samplerate error); gain and AGC fixed per profile.'
+    - **Reason:** Avoids double/no correction and a silent wrong-rate profile.
+    - **Sources:** reaudit_B r1 corr 0/4, confirmed [11]-[13], new_risk 0, refuted [1]
+    - **Saving usd:** 0
+  34.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** Lime sample-rate rules (#43)
+    - **Anchor:** З Lime: LIME-W (N=65536 з агрегацією 16 бінів: 13.67 kHz x 1.17 ms), LIME-F, LIME-B.
+    - **Instruction:** Append: 'Lime rates: allowed 7-61.44 Msps (one-channel profiles may go higher); hard-block below 7 Msps in labrx, SatDump profiles and the Tune UI (firmware rejects a system clock below 30 MHz on master, 20 MHz on staging; systemClock = fs x 4 x 2 for fs <= 20 Msps, so 2 Msps fails on both; low clocks can hang VSPA DMA until a power cycle); narrow sessions 7 Msps (f_sys 56 MHz) host-decimated to <=1 Msps; LIME-W/F/B 56 Msps; A/B candidates 61.44 Msps and 7.68 Msps (lines merge onto the 30.72 MHz grid; CGEN VCO 1966.08 MHz). Two RX channels share one LO.'
+    - **Reason:** Stage-2 1.875 Msps minimum and 2/4 Msps A/B were refuted.
+    - **Sources:** reaudit_B r2 corr 0/5, new_risk 0, refuted [0]; operator_notes 30
+    - **Saving usd:** 0
+  35.
+    - **Section:** 01b_decisions_register
+    - **Kind:** replace_part
+    - **Part:** MHF 4L tool (#69)
+    - **Anchor:** MHF4 — лише інструментом I-PEX 90435-001
+    - **Instruction:** Replace with 'MHF4/MHF 4L only with the I-PEX 90609-0001 MHF 4L mating/unmating tool (90435-001 is the MHF 4 tool); price per analog G6 #7: EUR 16.08 ex VAT = $18.08 (EUR 19.14 incl. 19% VAT, DigiKey DE); check fit on a spare cable first (Taoglas plug, not necessarily genuine I-PEX)'.
+    - **Reason:** Crowd Supply/Taoglas cables are 1.13 mm MHF 4L plugs.
+    - **Sources:** reaudit_B r2 corr 7, confirmed [20]; analogs_G6 #7; https://www.i-pex.com/product/mhf-4l
+    - **Saving usd:** 0
+  36.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** Lime port protection (#69)
+    - **Anchor:** DC-блоки на кожному порту, атенюатори 10-12 dB після SAWbird
+    - **Instruction:** Replace with 'DC blocks on RX1/RX2 only (RX1: the 3rd HMC7992 C0G caps + 22 pF at the edge jack per analog G6 #7; RX2: BLK-89-S+); 10 dB after the SAWbird on the RX1 route (YAT-10A+ on the injector PCB, G6 #7), 12 dB after the H1 on the Lime path (G6 #3); nothing on J4 (REF IN) or J5 (PPS); 4 MHF4L cables incl. X1 to the internal 50 Ohm load'.
+    - **Reason:** J4 must be driven directly; cable count corrected.
+    - **Sources:** reaudit_B r2 corr 6/11, corrected_spec; analogs_G6 #3/#7
+    - **Saving usd:** 0
+  37.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** Lime spur mask (#69)
+    - **Anchor:** Спури 737.28 MHz і 1689.6 MHz.
+    - **Instruction:** Replace with 'Spur mask generated per profile (model): n x 30.72 MHz, n x f_sys (f_sys = fs x oversample x 2 for fs <= 80 Msps) and the CGEN VCO (4 x f_sys x 2 x (div+1); VCO chosen in 1.93-2.94 GHz). Examples: 56 Msps -> f_sys 112 MHz, 1680.00 MHz inside a 1700 MHz LIME-W window, VCO 2688 MHz; 7 Msps -> f_sys 56 MHz, VCO 2240.00 MHz inside the 2170-2300 MHz S-band preselector passband; 61.44 Msps -> f_sys 122.88 MHz on the 30.72 MHz grid, VCO 1966.08 MHz. Prune with the INSHSW short/open measurement.'
+    - **Reason:** Only the 30.72 MHz family was masked.
+    - **Sources:** reaudit_B r2 corr 5, confirmed [24], new_risk 3
+    - **Saving usd:** 0
+  38.
+    - **Section:** 01b_decisions_register
+    - **Kind:** keep_with_note
+    - **Part:** Lime coverage (#87/#88)
+    - **Anchor:** нижче 300 MHz — неузгоджено, не перевірено.
+    - **Instruction:** Append 'Lime staff (t/13348, 13 Oct 2026): no gaps in frequency coverage; 30-300 MHz and 2.6-3.3 GHz are uncharacterised; tune from 300 MHz only; never exceed +10 dBm at the input'.
+    - **Reason:** Code ranges LNAH 3.3-3.8, LNAL 0.3-2.2, LNAW 0.7-2.6 GHz confirmed; gap 2.6-3.3 GHz uncharacterised.
+    - **Sources:** reaudit_B r2 confirmed [4], corrected_spec
+    - **Saving usd:** 0
+  39.
+    - **Section:** 01b_decisions_register
+    - **Kind:** bench_test
+    - **Part:** S-band CGEN VCO check (#90)
+    - **Anchor:** Цілі: Black Kite 2286/2288 MHz GMSK 38k4, PHASMA 2208/2210 MHz (опортуністично).
+    - **Instruction:** Append: 'The S-band A/B must check for on-chip coupling of the Lime CGEN VCO at 2240.00 MHz (7 Msps profiles, model) near Black Kite 2286/2288 and PHASMA 2208/2210 MHz; prefer 7.68 Msps or 56/61.44 Msps profiles if it shows.'
+    - **Reason:** VCO line falls inside the preselector passband.
+    - **Sources:** reaudit_B r2 new_risk 3, bench [6]
+    - **Saving usd:** 0
+  40.
+    - **Section:** 01b_decisions_register
+    - **Kind:** keep_with_note
+    - **Part:** Airspy Mini (#91)
+    - **Anchor:** 6 Msps, близько $146.50 (GBP 110, без дати).
+    - **Instruction:** Replace the price clause with 'seller/price per analog G6 #12 (ITEAD DE warehouse SKU IM150415001EU, $99.00 ex VAT; landed DE $123.22)'; add: 'Official range 24-1700 MHz: Metop 1701.3 MHz and AWS 1707 MHz are above spec (not field-checked); acceptance inside the 30-day return window with a conducted lab source at 1701.3 and 1707 MHz through at least 40 dB (PLL lock, floor and tone within about 3 dB of 1690 MHz)'.
+    - **Reason:** Above-spec operation must be shown before relying on it.
+    - **Sources:** reaudit_B r0 corr 17, confirmed [9]; analogs_G6 #12; https://airspy.com/airspy-mini/
+    - **Saving usd:** per G6 #12
+  41.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** Airspy HF+ Discovery facts (#92)
+    - **Anchor:** корекція ppm поза Soapy, живлення від LAB5
+    - **Instruction:** Replace 'корекція ppm поза Soapy' with 'flash-stored ppb via airspyhf_calibrate plus the labd LOppmTenths push to SDRangel'. In the same cell after 'MDS −140 dBm у 500 Hz' add '(15 MHz); -141.5 dBm (64-118 MHz) and -141.0 dBm (118-260 MHz); +10 dBm max RF input, no DC rating (DC blocked toward it); -45..+85 C; 32 g; micro-USB B; single SMA; no bias tee; firmware minimum R4.0.7, target R5.0.1 (2024-12-11); no DAB (912 ksps max)'.
+    - **Reason:** Re-audit B r1 confirmed specs and firmware history.
+    - **Sources:** reaudit_B r1 confirmed [1][4], corr 3; https://airspy.com/airspy-hf-discovery/ ; https://airspy.com/downloads/hfplus_changelog.txt
+    - **Saving usd:** 0
+  42.
+    - **Section:** 01b_decisions_register
+    - **Kind:** bench_test
+    - **Part:** HF+ current (#92)
+    - **Anchor:** | Перевірено (airspy.com). | Виміряти струм. |
+    - **Instruction:** Replace 'Виміряти струм.' with 'Current still unpublished (AB9IL 170 mA is unattributed): bring up at a 0.75 A limit or more; measure idle (open, not streaming) and streaming at 768 and 912 ksps, cold and after 60 min sealed; then set the limit at 1.5-2x streaming; 0.3 A stays the energy placeholder.'
+    - **Reason:** R1.6.1 standby means idle and streaming currents differ.
+    - **Sources:** reaudit_B r1 corr 15, refuted [5]
+    - **Saving usd:** 0
+  43.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** Balun One Nine v2 (#94)
+    - **Anchor:** Coilcraft WB9-1 (ідентифікація з фото): 0.125-125 MHz.
+    - **Instruction:** Append: 'Part ID unverified (no part number on the page, 0 reviews; DC continuity not stated; AntennaGuard varistor; up to 80 MHz+; +24 dBm max). The 7/9/12/3 dB shunt-L losses are a matched-50 Ohm lower bound; a 7-15 m wire is mostly capacitive at LF, so the real LF loss is larger (qualitative model). Rule unchanged: LF time signals on the Boni-Whip; NAVTEX on either path. Measure DCR and S21 at 40-500 kHz incl. a series 50-150 pF wire-simulator capacitor.'
+    - **Reason:** Re-audit B r1 corr 17.
+    - **Sources:** reaudit_B r1 corr 17, confirmed [26][27]; https://www.nooelec.com/store/balun-one-nine-v2.html
+    - **Saving usd:** 0
+  44.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** RTL-A gain on VHF-137 (#96)
+    - **Anchor:** Підсилення RTL близько 10-25 dB.
+    - **Instruction:** Replace with 'RTL-A gain default 5-10 dB (range 0-15 dB): at bring-up pick the lowest gain at which switching the LNA on (antenna replaced by a load) raises the floor by 6 dB or more (model). Cascade (41 dB minus 1.5 dB ahead): RTL NF 15/20/25/30 dB gives system NF 1.11/1.14/1.22/1.46 dB, so extra RTL gain only costs headroom on the notchless V4L (two-tone limit -12 dBm at 50-160 MHz).'
+    - **Reason:** More strong-signal headroom at no measurable NF cost.
+    - **Sources:** reaudit_B r3 corr 10, bench [9]; r0 corr 5
+    - **Saving usd:** 0
+  45.
+    - **Section:** 01b_decisions_register
+    - **Kind:** new_risk
+    - **Part:** SAWbird+ GOES overload and protection (#97)
+    - **Anchor:** uplink LTE B3 1710-1730 MHz у смузі
+    - **Instruction:** Append: 'Input P1dB about -17 dBm (model: OP1dB 20 - 38 + 1); a +23 dBm handset delivers about -14 dBm at 1 m (0 dBi), about 0 dBm (absolute maximum) at 0.5 m in an 8 dBi lobe, -20 to -28 dBm at 5 m -> HRPT procedure: phones at least 5 m away or in flight mode; labd flags a noise-floor jump of more than 10 dB on the L-band throw. The GOES input at the helix feed has no published static path or limiter: fit a static bleed (shunt inductor) there or use a DC-grounded feed.'
+    - **Reason:** Most exposed MMIC in the system; desense/damage risk from nearby phones.
+    - **Sources:** reaudit_B r3 corr 15/17, new_risk 9
+    - **Saving usd:** 0
+  46.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** rtl_eeprom write modes (#101)
+    - **Anchor:** ніколи `rtl_eeprom -b 1`; labd з DC-sense.
+    - **Instruction:** Replace with 'never rtl_eeprom -b, -g (realtek/noxon clear the IR bit and overwrite the RTLSDRBlog / Blog V4L strings, after which the V4L gets no signal), -w or -i 0; rtl_eeprom is wrapped to allow only -r, -s and the -m RTLSDRBlog / -p Blog V4L restore; the self-test reads the EEPROM and asserts byte 7 bit 0x02 = 1 and intact strings (with the bit cleared, fork drivers and Windows DLLs force the tee on); labd with DC-sense.'
+    - **Reason:** Closes the bias path the token does not cover.
+    - **Sources:** reaudit_B r0 corr 8, confirmed [16]; r3 confirmed [10]
+    - **Saving usd:** 0
+  47.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** Bullseye 25 MHz reference port (#102)
+    - **Anchor:** порт опори 25 MHz закрити.
+    - **Instruction:** Replace with 'reference port: a live 25 MHz output on a second F connector, inside the HF+ (to 31 MHz) and V4L HF ranges; measure DC first; termination per analog G6 #9 (always a DC-decoupled 75 Ohm F terminator, AXING CFA 11-00); check the HF+ and V4L for 25 MHz spurs and harmonics during QO-100 sessions. LNB current is still unpublished.'
+    - **Reason:** Self-made HF spur risk.
+    - **Sources:** reaudit_B r3 corr 16, new_risk 7, confirmed [13]; analogs_G6 #9
+    - **Saving usd:** 0
+  48.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** LNB IF level model (#102)
+    - **Anchor:** Сумарний шум у SDR оцінено −33...−22 dBm, що перекривається з порогом десенсибілізації V4L (−20...−40 dBm).
+    - **Instruction:** Replace with 'LNB IF noise model (kTB over 1.211 GHz, Tsys 150-300 K, gain 50-66 dB): -36 to -17 dBm, which overlaps the V4L two-tone desense limit (datasheet, 95 MHz blocker: -24 dBm at 400-600 MHz, about -26 dBm at 739.5 MHz interpolated, -40 dBm at 1600 MHz) - the 15/20 dB pad after the DC block is justified.'
+    - **Reason:** Corrected model values.
+    - **Sources:** reaudit_B r3 confirmed [14]; r0 confirmed [2]
+    - **Saving usd:** 0
+  49.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** LNB voltage tolerance (#102)
+    - **Anchor:** 13.2 V ±0.2 V лише вертикаль
+    - **Instruction:** Replace with '13.2 V +/-0.33 V (+/-2.5%, 12.87-13.53 V) vertical only (Bullseye buy page: 11.5-14 V enables vertical)'.
+    - **Reason:** TPS7A47 overall accuracy +/-2.5%.
+    - **Sources:** reaudit_B r3 corr 2, confirmed [8][13]
+    - **Saving usd:** 0
+  50.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** seller_or_price
+    - **Part:** Boni-Whip lower bound note
+    - **Anchor:** Приклад: нижня межа Boni-Whip — Moonraker $123.95 (не перевірено); з перевіреною WiMo $178.73 складаний рівень був би $405.68-625.17, а КХ-тракт — $494.68-589.17.
+    - **Instruction:** Replace with 'Boni-Whip is now $167.49 (Bonito's shop hamradioshop.net, EUR 149.00 incl. VAT, in stock) to $178.73 (WiMo EUR 159 incl. VAT, from 20.11.2026); the untraceable Moonraker $123.95 is dropped, so the foldable tier becomes $394.44-625.17 and the HF chain $483.44-589.17 (recomputed: 350.90 - 123.95 + 167.49 and 439.90 - 123.95 + 167.49), before the Boni leads/barrel plug.'
+    - **Reason:** Re-audit B r1 corr 10.
+    - **Sources:** reaudit_B r1 corr 10, confirmed [24][25]
+    - **Saving usd:** lower bound rises by 43.54 (derived); vs WiMo 11.24 (derived)
+  51.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** seller_or_price
+    - **Part:** RTL-SDR Blog V4L x3 (stock, channels, EU landed)
+    - **Anchor:** 455 шт. на складі; R828S знято з виробництва — купувати зараз.
+    - **Instruction:** Replace with '$37.95 each, $113.85 for 3 ex VAT/shipping; 455 in stock (18.10.2026; same figure on two fetches, may be static); China warehouse only, not yet at Amazon USA (due in 2-3 months); limited edition, R828S stockpile expected to last about one year from Aug 2026, no V5 before 2027: order all 3 now. EU (store does not ship to the EU): official eBay rtl-sdr-blog or AliExpress RTLSDRBlog Store 4523039/1101427871, confirm at checkout it ships to the buyer's country (marketplace prices unverified). EU landed (model, G1 #0): about $45.16-46.68 per unit, $135.5-140.0 for 3 at 19-23% VAT, plus EUR 3 duty for the single tariff line (3 identical units, consignment EUR 150 or less via IOSS) and the EUR 2 Union handling fee from about 1 Nov 2026. Verified EU fallback: Passion Radio EUR 49.92 incl. 20% VAT each ($56.11; $168.33 for 3) only after written SKU confirmation (its page says V4/R828D). The product page still says R828D (copy error): marketing text cannot identify the part; genuineness gate on every unit.'
+    - **Reason:** Re-audit B r0 confirmed [0][5][6], corr 7, new_risk 7; analog G1 #0 adds the EU landed model and fallback.
+    - **Sources:** reaudit_B r0; analogs_G1 #0; operator_notes 21, 35; https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+    - **Saving usd:** 0
+  52.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** correction
+    - **Part:** V4L serials, V3 fallback, spare FM band-stop
+    - **Anchor:** Унікальні серійні номери в EEPROM. Бюджет: V3 як запасний варіант.
+    - **Instruction:** Replace with 'Serials programmed at assembly: LAB-RTLA / LAB-RTLB / LAB-RTLS (non-numeric). After-stockpile fallback: RTL-SDR Blog V3 R860 $34.95-39.95 (works with stock drivers) - an explicit downgrade (MDS 1-3 dB worse at 137-1766 MHz, no HF here since direct sampling is banned, 2.4 Msps stable, 270-280 mA; G1 #0). Aluminium cases bonded to the mid-plate with thermal pads (RTL-B L-band thermal gate).'
+    - **Reason:** Serials are not factory-unique; V3 is the documented replacement.
+    - **Sources:** reaudit_B r0 corr 6/14/17, confirmed [8]; analogs_G1 #0
+    - **Saving usd:** 0
+  53.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** keep_with_note
+    - **Part:** V4L RF and power figures
+    - **Anchor:** 500 kHz-1.766 GHz, 2.56 Msps стабільно, 250-270 mA.
+    - **Instruction:** Append: 'about 1.25-1.35 W (model, 5 V x current); bias tee 4.5 V / 180 mA (spare: 90 mA by policy); two-tone desense with a 95 MHz blocker -12 dBm at 50-160 MHz, -24 at 400-600, about -29 at 1090, -40 at 1600 and about -42.5 dBm at 1700 MHz (extrapolated); 3 dB MDS in 500 Hz -140.7 dBm at 90-550 MHz, about -130.7 dBm at 1.7 GHz, i.e. NF about 6.3 dB VHF/UHF and about 16 dB at 1.7 GHz (model, blog driver; lab-driver values measured in D10); no FM notch (R828S has no open_d); no operating temperature published; own spurs 144.0, 403.2, 432.0, 1699.2 MHz.'
+    - **Reason:** MDS definition is stated (3 dB MDS, S = N): NF 6.3 dB, not 3.3 dB.
+    - **Sources:** reaudit_B r0 confirmed [1]-[4][25], corr 4/5, refuted [1]; https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+    - **Saving usd:** 0
+  54.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** new_risk
+    - **Part:** Spare-V4L FM band-stop (new BOM row)
+    - **Anchor:** | FM-режектор | Nooelec Flamingo+ FM v2 (100813) | 1 | 24.95 |
+    - **Instruction:** Add a new row after the FM-режектор row: 'FM-режектор запасного V4L (вусовий набір) | RTL-SDR Blog FM band-stop, or Flamingo+ FM #2 when P8 is not used | 1 | 16.95 | RTL-SDR Blog via official eBay/AliExpress (EU) | не перевірено (EU price) | inline on the spare V4L for radiosondes/ADS-B on whiskers near FM sites (two-tone limit about -24 dBm at 400 MHz, about -29 dBm at 1090 MHz; no notch); EU landed = price + shipping + import VAT + EUR 3 duty per tariff line (consignment EUR 150 or less via IOSS/post) + EUR 2 handling fee from about 1 Nov 2026; spec trade vs Flamingo+ per G1 #2 (no ESD diode, no input rating, about 15-20 dB shallower mid-band)'. Recompute the 2.3 subtotal.
+    - **Reason:** Re-audit B r0 corr 11 new risk: the spare on bare whiskers has no filter.
+    - **Sources:** reaudit_B r0 corr 11, bench [9]; r3 confirmed [16]; analogs_G1 #2, G6 #13; operator_notes 35
+    - **Saving usd:** n/a (new line)
+  55.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** seller_or_price
+    - **Part:** Airspy HF+ Discovery
+    - **Anchor:** | 169.00 | ITEAD (офіційний партнер; склади ЄС/США/КНР) | перевірено | На CH334F H4 у власному жерстяному екрані. Лише дилери зі списку airspy.com.
+    - **Instruction:** Replace source/note with '169.00 ex VAT (about EUR 150.34 at 1.1241) | ITEAD EU warehouse, SKU IM190522001EU (310 in stock, US 96, 18.10.2026); VAT added at checkout: landed DE $206.52, FR $214.91 (G1 #6); fallback WiMo EUR 232 incl. VAT ($260.79) | перевірено | On CH334F H4 in its own tin shield; micro-USB B; only airspy.com dealers; ITEAD 2-year warranty + 30-day return; possible Black Friday window per G1 #6'.
+    - **Reason:** Stock counts and VAT treatment verified (re-audit B refuted 'no stock count').
+    - **Sources:** reaudit_B r1 corr 18, confirmed [2][3], refuted [6]; analogs_G1 #6; https://itead.cc/wp-json/wc/store/v1/products?slug=airspy-hf-discovery-eu
+    - **Saving usd:** 0
+  56.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** keep_with_note
+    - **Part:** V4L HF use (HF+ budget alternative)
+    - **Anchor:** Бюджет: другий V4L в режимі up-конвертера (без ДХ).
+    - **Instruction:** Append '(V4L HF only through SDR++ or labrx with direct_sampling=0; SoapyRTLSDR and SDRangel clamp the V4L at 24 MHz; any non-zero direct sampling powers the tuner down)'.
+    - **Reason:** Software compatibility facts.
+    - **Sources:** reaudit_B r0 corr 16, confirmed [19][20]
+    - **Saving usd:** 0
+  57.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** correction
+    - **Part:** SAWbird+ NOAA budget note
+    - **Anchor:** Бюджет: SAWbird NOAA без «+» (80 mA).
+    - **Instruction:** Replace with 'Opt-in trade only, not an equivalent: SAWbird+ NOAA Barebones 100799 $44.95 (same electronics, 1-year vs 2-year warranty, no case; only inside the shielded RF compartment). The non-plus 100852 costs the same $49.95 (about 80 mA, at least 20 dB, NF about 0.7 dB) - low-current alternative only.'
+    - **Reason:** The non-plus is not cheaper.
+    - **Sources:** reaudit_B r3 corr 7, confirmed [1], new_risk 10; analogs_G1 #1
+    - **Saving usd:** 5.00 only with the shorter warranty (not equivalent)
+  58.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** seller_or_price
+    - **Part:** Uputronics 440 MHz CubeSAT FPA price
+    - **Anchor:** | 68.71 (GBP 51.59 з ПДВ) | Uputronics (власний магазин, UK) |
+    - **Instruction:** Replace with '| 59.52 (EUR 52.95 ex VAT, EU storefront; US $62.00; UK GBP 51.59 incl. VAT = $68.71) | Uputronics direct, store.uputronics.com EU storefront (not Kubii) |'. Note: EU landed about $70.8-72.0 at 19-21% VAT plus shipping (model); confirm VAT/IOSS at checkout; if it ships from the UK via IOSS with a consignment of EUR 150 or less add EUR 3 duty + EUR 2 handling fee (from about 1 Nov 2026) per tariff line. The -$9.19 is a basis change, not a saving.
+    - **Reason:** The store publishes regional prices; refutes both $57.26 and 'keep $68.71'.
+    - **Sources:** reaudit_B r3 corr 6, refuted [0][1]; analogs_G1 #3; operator_notes 34-35
+    - **Saving usd:** 0 real (G1 #3)
+  59.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** correction
+    - **Part:** Uputronics bias input
+    - **Anchor:** Вхід зміщення залежить від ревізії (плати з березня 2020 — 5-26 V; поточні — «5V max», реєстр #98); живиться від шини LNA 4.5 V через ch2 (на передпідсилювачі трохи менше після TPS2553 і дроселя) — роботу при 4.5 V не перевірено.
+    - **Instruction:** Replace with 'Datasheet Rev 3.0 (18/10/2024): bias 3.5-5.5 V (above 5.5 V = permanent damage), about 50 mA, NF 0.75 dB average, at least 19 dB at 440 MHz, V3 enclosure 69x40x12 mm, antenna port DC-blocked, Skyworks limiter, HPF below 100 MHz, no pass-through when unpowered, not IP rated -> in spec at 4.5 V on ch2; measure current; confirm V3/Rev 3.0 on arrival; never more than 5.5 V on P2/P3; rain cover at the Yagi feed. Closes register #98.'
+    - **Reason:** Closes an open bring-up item.
+    - **Sources:** reaudit_B r3 corr 8, confirmed [4]; analogs_G1 #3
+    - **Saving usd:** 0
+  60.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** replace_part
+    - **Part:** RTL-A/RTL-B input switches HMC7992
+    - **Anchor:** | Загальні плати HMC7992 SP4T | 2 | 30-40 | маркетплейс | не перевірено | За інжекторами; усі виводи без DC; 50 Ohm (T4) при ввімкненні;
+    - **Instruction:** Replace with '| ADI HMC7992LP3DE chips on the injector PCB (DigiKey 505-HMC7992LP3DE-ND) | 2 | 25.85 (EUR 11.50 ex VAT / EUR 13.685 incl. 19% VAT each, DigiKey DE, analog G1 #4; re-audit B: $13.10 each at DigiKey US, Active, 4,655 in stock) | DigiKey | перевірено | Behind the injectors; C0G DC blocks on all five RF pins incl. RFC; 50 Ohm park on RF1 (A=B=Low selects RF1, datasheet Table 6); VDD from the same 3.3 V rail as the MCP23017s (or 1 kOhm series in A/B), 100 pF on A/B; specified 0.1-6 GHz only;'. Generic marketplace boards: no verified primary listing, missing DC blocks likely - last resort only.
+    - **Reason:** Re-audit B r3 corr 1, new_risk 11 (prefer chips on the custom PCB); analog G1 #4 decides part/seller/price.
+    - **Sources:** reaudit_B r3 corr 1, confirmed [6], new_risks 6/11; analogs_G1 #4
+    - **Saving usd:** per G1 #4: about 4-14 ex VAT on chips
+  61.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** seller_or_price
+    - **Part:** HF+ input selector relays
+    - **Anchor:** 2× Omron G6K-2F-RF 5 V послідовно-паралельно + плата драйвера
+    - **Instruction:** Replace with '2x Aratas (formerly Omron Components) G6K-2F-RF relays, series-shunt, + driver board (part per analog G1 #7: G6K-2F-RF-S DC5, $39.38 per pair at DigiKey; fallback G6K-2F-RF DC5 $25.06 each = $50.12, DigiKey, re-audit B)'; change source RS UK -> DigiKey; status verified 18.10.2026 (relays). Order by part number, accept either marking; acceptance figures (>=35 dB at 162-260 MHz, <=0.3 dB 10 kHz-260 MHz) unverified until measured on the LiteVNA.
+    - **Reason:** Rebrand and DigiKey price verified; RS UK not re-verified.
+    - **Sources:** reaudit_B r3 corr 12, confirmed [18]; r1 corr 19; analogs_G1 #7
+    - **Saving usd:** 7.15-19.13 vs RS UK at $50.12; more with G1 #7
+  62.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** correction
+    - **Part:** HF+ shield VBUS LC
+    - **Anchor:** | Екран HF+ | Жерстяний екран + LC + Mix-31 на VBUS |
+    - **Instruction:** Change model to 'Tin shield + damped LC (100 uH rated 1.5x measured current or more, low DCR; 100 uF with R-C damping, about 1.6 kHz corner, model; build per G1 #8: 1 Ohm + 220 uF damper) + Mix-31 on VBUS; short shielded micro-USB lead with strain relief, shell bonded to the mid plate'; note 'shield accepted only after the A/B test; thermal contact to the mid plate'.
+    - **Reason:** Undamped LC rings and exceeds the USB inrush norm.
+    - **Sources:** reaudit_B r1 corr 14/16, new_risk 9; analogs_G1 #8
+    - **Saving usd:** 0
+  63.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** correction
+    - **Part:** Dipole kit #2 role
+    - **Anchor:** | Диполь AIS/FM/DAB | RTL-SDR Blog dipole kit #2 |
+    - **Instruction:** Rename to 'Диполь AIS/FM' and add to the note: 'DAB+ only on the spare V4L or the Lime (not on the HF+)'.
+    - **Reason:** DAB is impossible on the HF+.
+    - **Sources:** reaudit_B r1 corr 6
+    - **Saving usd:** 0
+  64.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** new_risk
+    - **Part:** SAWbird+ GOES static protection
+    - **Anchor:** Обслуговує обидва рівні; живлення лише з TPS2553-інжектора, ніколи з трійника V4L.
+    - **Instruction:** Append: 'Static bleed (shunt chip inductor, verified on the LiteVNA: S21 loss <=0.1 dB at 1.7 GHz, no in-band SRF) at its helix-side input - the most exposed MMIC (no published static path or limiter); Pin max 0 dBm, input P1dB about -17 dBm (model): phones at least 5 m away during HRPT; 120-160 mA at 4.5 V; Barebones 100791 $44.95 confirmed.'
+    - **Reason:** A panel TVS cannot protect a stage outside the case.
+    - **Sources:** reaudit_B r3 corr 15/17, confirmed [3], new_risk 9; analogs_G1 #10
+    - **Saving usd:** 0
+  65.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** keep_with_note
+    - **Part:** Nooelec Balun One Nine v2
+    - **Anchor:** Лише КХ (від 0.125 MHz); зміщення заблоковане.
+    - **Instruction:** Append: 'Balun $26.95 confirmed (1-day dispatch, 9:1, accurate to 80 MHz+, +24 dBm max, AntennaGuard varistor, SMA + 3 terminal inputs, 38x25 mm); no part number (WB9-1 by photo, unverified), DC continuity not stated - measure DCR; real LF loss larger than the shunt-L model with a capacitive wire.'
+    - **Reason:** Re-audit B r1 corr 17.
+    - **Sources:** reaudit_B r1 confirmed [26], corr 17
+    - **Saving usd:** 0
+  66.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** seller_or_price
+    - **Part:** Bonito Boni-Whip
+    - **Anchor:** | Bonito Boni-Whip (bias-tee в комплекті) | 1 | 123.95 (Moonraker, не перевірено) / 178.73 (WiMo EUR 159 з ПДВ) | WiMo (з 20.11.2026) / Moonraker | перевірено (WiMo) | 9 kHz-300 MHz, живлення 9-15 V, близько 14 см, 189 g; живимо 12.5 V;
+    - **Instruction:** Replace with '| Bonito Boni-Whip (supplied bias tee Einspeiseweiche on a 5.5/2.1 mm barrel; BNC) | 1 | 167.49 (EUR 149.00 incl. VAT, Bonito's shop hamradioshop.net, in stock, 1-5 days) / 178.73 (WiMo EUR 159 incl. VAT, SKU 18067, from 20.11.2026) | Bonito shop (DE, manufacturer) / WiMo (second source); both EU sellers, no import duty | перевірено | 20 kHz-300 MHz (Bonito; WiMo lists 9/10 kHz-300 MHz), 12-15 V at the barrel of the supplied bias tee, 65 mA typ (vendor), +3 dB, IP3 >+30 dBm / IP2 >+50 dBm (shop; bonito.net +32.5/+55 dBm), body about 17 cm (Bonito) / about 14 cm (WiMo), 189 g (WiMo); whip (Strahler) length unpublished - measure against the 20-23 cm piece rule (max about 35 cm); no coax, PSU optional; fed 13.8 V (BONI13V8);'. Drop Moonraker $123.95 (not traceable).
+    - **Reason:** Manufacturer shop in stock removes the 20.11.2026 lead-time risk.
+    - **Sources:** reaudit_B r1 corr 9/10, confirmed [24][25], new_risk 8; https://hamradioshop.net/Boni-Whip-Aktivantenne/0125.2 ; https://www.wimo.com/en/18067
+    - **Saving usd:** 11.24 vs WiMo (derived 178.73 - 167.49)
+  67.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** seller_or_price
+    - **Part:** Foldable tier subtotal
+    - **Anchor:** **350.90-625.17 (≈351-625)**
+    - **Instruction:** Replace with '**394.44-625.17 (≈394-625)**' (recomputed with $167.49 replacing the dropped Moonraker $123.95; Boni leads/barrel plug extra). Update 2.12 'antenna-foldable' and the totals table accordingly.
+    - **Reason:** Lower bound used the untraceable Moonraker price.
+    - **Sources:** reaudit_B r1 corr 10
+    - **Saving usd:** n/a (+43.54 on the lower bound, derived)
+  68.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** correction
+    - **Part:** TPS7A4701 LDO (LNB, Boni)
+    - **Anchor:** 3-36 V вхід, 1 A, 307 mV падіння, θJA 30.5 °C/W; PG на MCP #3.
+    - **Instruction:** Replace 'θJA 30.5 °C/W; PG на MCP #3' with 'RthetaJA 32.5 C/W (RGW, SBVS204G Rev G May 2026); no PG pin - faults via the TPS259630 FLT pull-up and the TLV3011 comparator (analog G3 #9) to MCP #3; ICL 1.0 A min / 1.26 A typ, not a usable short-circuit limit; overall accuracy +/-2.5%; ANY-OUT straps for 13.2 V (1.4+6.4+3.2+1.6+0.4+0.2) and 13.8 V'. Part/seller/price per G3 #9.
+    - **Reason:** Netlist error (PG pin) and thermal figure corrected.
+    - **Sources:** reaudit_B r3 corr 2/3, confirmed [8]; analogs_G3 #9
+    - **Saving usd:** per G3 #9
+  69.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** new_risk
+    - **Part:** eFuse TPS259630DDAR and INA3221 (new BOM rows)
+    - **Anchor:** | LDO шини LNA | ADI LT3045 (паралельно, 4.5 V) |
+    - **Instruction:** Add two rows after the LT3045 row: (1) 'eFuse LNB і Boni | TI TPS259630DDAR (latch-off after thermal shutdown; fallback TPS259631DDAR auto-retry) | 2 | 2.14 (1.07 each) | DigiKey (487 in stock; TI store out of stock - buy early) | перевірено (18.10.2026) | LNB RILM 2.05 kOhm 1% = 0.405-0.499 A, final RILM = 903/(1.5-2 x I_LNB - 0.0112); Boni RILM 7.87 kOhm = 0.113-0.139 A; OVLO 110k/10.0k 0.5% (trip 13.91-14.77 V, model; re-derive for BONI13V8); FLT to MCP #3 via pull-up; FLT does not assert in current limiting'. (2) 'Струм каналів | TI INA3221AIRGVR + shunts (0.2 Ohm ch1-4 and Boni, 0.1 Ohm LNB) | 2 | 6.94 (3.47 each; re-audit: about $7 plus shunts) | DigiKey (65,552 in stock) | перевірено | I2C2 at 0x41/0x43; 0-26 V bus, 40 uV shunt LSB; labd alarm >20% over each bring-up baseline'. Both on the DigiKey DE order (EU landed per operator note 35 if the DigiKey consignment is EUR 150 or less: + EUR 3 duty and EUR 2 handling fee per tariff line, VAT). Recompute the 2.7 subtotal.
+    - **Reason:** Replaces PTCs and covers the FLT blind spot.
+    - **Sources:** reaudit_B r3 corr 2/5, new_risks 1/4; analogs_G3 #9/#13; https://www.digikey.com/en/products/result?keywords=TPS259630DDAR ; https://www.ti.com/lit/ds/symlink/ina3221.pdf
+    - **Saving usd:** n/a (new lines about $9)
+  70.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** replace_part
+    - **Part:** TPS2553 current switches
+    - **Anchor:** | Ключі струму | TI TPS2553 (LAB-порт 0.75 A; LNA ch1-4 по 300 mA; VBUS HF+ і RTL) |
+    - **Instruction:** Change model to 'TI TPS2553DBVR-1 (latch-off) on all positions (LAB port 0.75 A; LNA ch1-4 at RILIM 88.7 kOhm = 262-342 mA; a TCBT channel at 162 kOhm = 144-192 mA, model; VBUS HF+ and RTL)'; seller/price per analog G3 #11 (LCSC C111738 $2.96 for 10; authorised fallback DigiKey $7.66 for 10); re-audit B reference DigiKey $1.06 each, 4,259 in stock. The -1 latches after a 7.5 ms typical deglitch; reverse-voltage trip 95-190 mV. Closes 'check the -1 latch variant'.
+    - **Reason:** Re-audit B requires the -1 on LNA ch1-4; G3 #11 extends it to all ten.
+    - **Sources:** reaudit_B r3 corr 5, confirmed [7]; analogs_G3 #11
+    - **Saving usd:** per G3 #11: 2.54
+  71.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** removal
+    - **Part:** PTCs for LNB and Boni
+    - **Anchor:** PTC (0.75 A AUX, 0.2 A Boni, LNB — після виміру)
+    - **Instruction:** Replace with 'PTC (0.75 A AUX only; the LNB and Boni PTCs are replaced by TPS259630DDAR eFuses)'.
+    - **Reason:** r3 corr 2: drop the PTCs; G3 #13 already notes the LNB PTC replaced.
+    - **Sources:** reaudit_B r3 corr 2; analogs_G3 #13
+    - **Saving usd:** 0
+  72.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** seller_or_price
+    - **Part:** TCBT-2R5G+ budget injector
+    - **Anchor:** Бюджет: Mini-Circuits TCBT-2R5G+ $11.31 (лише канали ≤150 mA; 200 mA макс.).
+    - **Instruction:** Replace with 'Budget/WIDE: Mini-Circuits TCBT-2R5G+ $9.05 each at qty 10-20 (no 1-9 tier; 71 in stock; singles from DigiKey) - 20-2500 MHz, 200 mA, +25 V max at the DC port, external 0.01 uF required; only on a channel with RILIM 162 kOhm (144-192 mA); US seller: EU landed + VAT + EUR 3 duty + EUR 2 handling fee per tariff line (consignment EUR 150 or less).'
+    - **Reason:** Price and protection corrected.
+    - **Sources:** reaudit_B r3 corr 4, confirmed [15]; analogs_G3 #14; operator_notes 35
+    - **Saving usd:** 2.26 per unit at qty 10+ (derived 11.31 - 9.05)
+  73.
+    - **Section:** 02d_bom_case_cables
+    - **Kind:** correction
+    - **Part:** Panel connectors
+    - **Anchor:** 7 SMA + 1 F роз'єми на панель
+    - **Instruction:** Replace with '6 SMA + 1 BNC (P5, keyed against SMA LNAs) + 1 F connectors on the panel' (consistent with analog G1 #5).
+    - **Reason:** P5 becomes BNC so no SMA LNA can mate with the DC-carrying Boni port.
+    - **Sources:** reaudit_B r3 corr 14; analogs_G1 #5
+    - **Saving usd:** 0
+  74.
+    - **Section:** 02d_bom_case_cables
+    - **Kind:** correction
+    - **Part:** HF+ USB connector
+    - **Anchor:** Тип USB-роз'єму HF+ записати на прибутті.
+    - **Instruction:** Replace with 'HF+ USB = micro-USB B (inferred from WiMo's USB-A to Micro-B box cable): short shielded lead with strain relief, shell bonded to the mid plate, ferrite (G1 #8: 2x Fair-Rite 2631480002).'
+    - **Reason:** Open item closed.
+    - **Sources:** reaudit_B r1 corr 16, confirmed [3]
+    - **Saving usd:** 0 (about $3-5)
+  75.
+    - **Section:** 02d_bom_case_cables
+    - **Kind:** replace_part
+    - **Part:** Boni-Whip leads
+    - **Anchor:** дріт BNC-SMA для Boni-Whip ($5-10)
+    - **Instruction:** Replace with 'Boni-Whip leads: P5 BNC-bulkhead-to-SMA RG316 jumper + BNC M-M lead (G1 #5) and a 5.5/2.1 mm barrel plug for the supplied bias tee (price not in the files)'.
+    - **Reason:** Re-audit B r1 corr 10 adds the barrel plug; G1 #5 replaces the BNC-SMA lead.
+    - **Sources:** reaudit_B r1 corr 10; analogs_G1 #5
+    - **Saving usd:** 0
+  76.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** replace_part
+    - **Part:** LimeSDR Micro line (cables, terms, fallback)
+    - **Anchor:** | Широкосмуговий SDR | LimeSDR Micro M.2 2280 Basic + $18 доставка + 2× MHF4L-SMA | 1 | 279 | Crowd Supply |
+    - **Instruction:** Change to 'LimeSDR Micro M.2 2280 Basic + $18 shipping (board only) | 1 | 267 | Crowd Supply (ships from Mouser, Texas)' plus a line '4x Taoglas CAB.01075 MHF4L-SMA(f) bulkhead, 1.13 mm, 100 mm (X2 RX-A, RX-B X3/X4, J4 REF IN, X1 TX to internal 50 Ohm) | 4 | 18.36 (EUR 4.03 ex VAT / 4.80 incl. VAT each) | DigiKey DE (analog G6 #6)'. Note: EU import VAT, normal duty above EUR 150, EUR 2 handling fee, courier fee on the board; free cancel only until shipment (check weekly; shipping e-mail = deadline; else decide by 1 Dec 2026); defect RMA within 30 days; restocking fee at least $20; S-band-only fallback Nooelec Ham It Down $89.95 if the Lime fails acceptance or slips past 31 Jan 2027 (EU landed + VAT + EUR 3 + EUR 2 per line). Status of the with-Lime default per the user decision (other changes).
+    - **Reason:** Re-audit B needs 4 cables; seller per G6 #6.
+    - **Sources:** reaudit_B r2 corr 6, confirmed [0][1], new_risks 6/8, corrected_spec; analogs_G6 #6
+    - **Saving usd:** G6 #6: 5.64 vs $291
+  77.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** replace_part
+    - **Part:** Lime-only parts (tool, riser, ports)
+    - **Anchor:** ADT-Link R44SF 5 см, інструмент I-PEX 90435-001, п'єдестал + прокладка + ребра, DC-блоки/атенюатори, третій HMC7992
+    - **Instruction:** Replace the tool with 'I-PEX 90609-0001 (MHF 4L tool; $18.08 = EUR 16.08 ex VAT, DigiKey DE, G6 #7)'; note 'R44SF 5 cm $19 (PCIe 3.0 x4, conductive-polymer EMI shielding; confirm with ADT-Link the variant for a 2230 host and a 2280 B+M card); DC block/pad contents and price per G6 #7 (about $89.65 ex VAT); nothing on J4/J5'.
+    - **Reason:** 90435-001 is the MHF 4 tool.
+    - **Sources:** reaudit_B r2 corr 7, confirmed [20][21]; analogs_G6 #7
+    - **Saving usd:** per G6 #7
+  78.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** keep_with_note
+    - **Part:** Samsung T7 1 TB
+    - **Anchor:** | Зовнішній SSD | Samsung T7 1 TB | 1 | 229.99-274.99 |
+    - **Instruction:** Price/seller per analog G6 #8 (Reichelt EUR 205.90 incl. VAT = $231.45; $194.50 ex VAT). Add to the note: 'raw-to-T7 limit 1x<=56 Msps (224 MB/s vs measured 395 MB/s on the blue port); 2x40 Msps (320 MB/s) is marginal and allowed only after a 30-min soak test'.
+    - **Reason:** Re-audit B r2 corr 14 (throughput limits); its price was unverified.
+    - **Sources:** reaudit_B r2 corr 14, confirmed [23]; analogs_G6 #8
+    - **Saving usd:** per G6 #8
+  79.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** keep_with_note
+    - **Part:** QO-100 add-on (Bullseye)
+    - **Anchor:** Othernet Bullseye TCXO LNB + деталі F/75 Ohm + дросель інжектора LNB ≥1 A (C23)
+    - **Instruction:** Add to the note: 'Bullseye: gain 50-66 dB, NF 0.5 dB, IF 739-1950 MHz with only 8 dB return loss, 25 MHz reference on a second F connector (live; measure DC; terminate per G6 #9), current unpublished -> set the eFuse RILM after the 13.2 V current measurement; LNB eFuse/INA3221 are in 2.7.' Seller/price per G6 #9.
+    - **Reason:** Re-audit B r3 confirmed [13], corr 16.
+    - **Sources:** reaudit_B r3 confirmed [13], corr 2/16; analogs_G6 #9
+    - **Saving usd:** 0
+  80.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** keep_with_note
+    - **Part:** Airspy Mini (gated)
+    - **Anchor:** | Швидкий L-band SDR | Airspy Mini | 1 | близько 140-160 (GBP ~110) | Moonraker | не перевірено | Лише після горба Metop і тесту 2.88 Msps. |
+    - **Instruction:** Seller/price per analog G6 #12 (ITEAD DE, $99.00 ex VAT; landed DE $123.22). Add: 'official range 24-1700 MHz - Metop 1701.3 and AWS 1707 MHz above spec (not field-checked); conducted acceptance at 1701.3/1707 MHz inside the 30-day window'.
+    - **Reason:** Re-audit B r0 corr 17.
+    - **Sources:** reaudit_B r0 corr 17, confirmed [9]; analogs_G6 #12
+    - **Saving usd:** per G6 #12
+  81.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** replace_part
+    - **Part:** RF sled attenuator PE4302 -> PE4312
+    - **Anchor:** | RF sled | HMC7992 SP4T + PE4302 + MCP23017 #2 + ADS1115 + зміщення buck→LC→LDO + корпус |
+    - **Instruction:** Replace PE4302 with PE4312 (pSemi lists the PE4302 as discontinued since 2016; PE4312 is In Production, pin-compatible, 1-4000 MHz, 31.5 dB in 0.5 dB steps, 2.3-5.5 V); part/build per analog G6 #2 (PE4312C-Z on the Sled v2 PCB, DigiKey DE EUR 3.86 ex VAT). Check the chip marking; sweep 1 MHz-2 GHz at 0/15.5/31.5 dB.
+    - **Reason:** EOL part.
+    - **Sources:** reaudit_B r3 corr 11, confirmed [17]; analogs_G6 #2; https://www.psemi.com/products/digital-step-attenuators/pe4312
+    - **Saving usd:** per G6 #2
+  82.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** correction
+    - **Part:** RF sled throw map
+    - **Anchor:** RF1 тракт A, RF2 тракт B, RF3 BENCH, RF4 50 Ohm (за замовчуванням)
+    - **Instruction:** Replace with 'RF1 = 50 Ohm park (A=B=Low at power-up), RF2 chain A, RF3 chain B, RF4 BENCH; HF (<100 MHz) through the sled is unspecified until swept on the LiteVNA (HMC7992 specified 0.1-6 GHz; off-state return loss only about 7 dB at the low end)'. In the same cell replace 'правило витоку: джерело на RF3 ≤ −40 dBm при навантажених RF1/RF2' with 'leak rule: source on RF4 BENCH at -40 dBm or less with RF2/RF3 loaded'.
+    - **Reason:** Power-up state failed unsafe on RF4.
+    - **Sources:** reaudit_B r3 corr 1/11, new_risk 6; analogs_G6 #2
+    - **Saving usd:** 0
+  83.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** SAWbird+ H1
+    - **Anchor:** | LNA H1 | Nooelec SAWbird+ H1 | 1 | 45-50 | Nooelec | не перевірено (URL дав 404) | 120 mA через TPS2553; 65 MHz смуга, ≥40 dB, NF близько 0.8 dB. |
+    - **Instruction:** Replace price/status with '49.95 | Nooelec (SKU 100811, Add to Cart, 2-year warranty; URL https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-h1.html); EU channel per analog G6 #3 (Amazon.nl EUR 55.10 incl. VAT, sold by Nooelec Inc) | перевірено |'; keep '120 mA, 65 MHz, >=40 dB, NF about 0.8 dB' and add 'INA3221 baseline window 108-150 mA (G6 #3)'.
+    - **Reason:** Price verified.
+    - **Sources:** reaudit_B r3 corr 13, confirmed [3]; analogs_G6 #3
+    - **Saving usd:** 0
+  84.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** Uputronics 1090 preamp (ADS-B budget)
+    - **Anchor:** Бюджет: Uputronics 1090 preamp GBP 44.39 ($59.12) на запасному V4L.
+    - **Instruction:** Replace with 'Budget: Uputronics 1090 preamp EUR 44.95 = $50.53 (EU storefront, before checkout VAT) / US $53.00, on the spare V4L.' Also recompute the extended budget minimum ('з Uputronics 1090 замість Pro Stick Plus — ≈$207'): -$8.59 (derived 59.12 - 50.53).
+    - **Reason:** Store regional prices.
+    - **Sources:** reaudit_B r3 corr 6
+    - **Saving usd:** 8.59 (derived, ex-VAT basis)
+  85.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** rule
+    - **Part:** LBE-1420 as Lime J4 reference
+    - **Anchor:** Кондуктивно, 80 dB атенюаторів + DC-блок;
+    - **Instruction:** Append: 'for Lime P7 only: J4 REF IN (10-52 MHz at 1.8-3.3 V) is driven directly with no pad and no DC block (LBE-1420: 1 Hz-1.1 GHz, 3.3 V CMOS with 50 Ohm source, +11 dBm at 10 MHz; about 1.65 V swing if J4 is 50 Ohm terminated, model) - scope the swing once; set 30.72 MHz first; the LBE-1420 has no PPS output (P7b PPS from the LC76G).'
+    - **Reason:** Removes one unknown from P7.
+    - **Sources:** reaudit_B r2 corr 11
+    - **Saving usd:** 0
+  86.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** HF chain table: receiver
+    - **Anchor:** | Приймач | Airspy HF+ Discovery | 1 | 169.00 | ITEAD |
+    - **Instruction:** Change source to 'ITEAD EU warehouse (ex VAT; VAT at checkout; landed DE $206.52 per G1 #6)'.
+    - **Reason:** VAT treatment.
+    - **Sources:** reaudit_B r1 corr 18; analogs_G1 #6
+    - **Saving usd:** 0
+  87.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** HF chain table: input selector
+    - **Anchor:** | Перемикач входу | 2× Omron G6K-2F-RF + драйвер | 1 набір | 62-80 | RS UK |
+    - **Instruction:** Change to '2x Aratas (formerly Omron) G6K-2F-RF + driver | 1 set | per G1 #7 (relays $39.38 -S; fallback $50.12) + driver | DigiKey'.
+    - **Reason:** Rebrand/seller.
+    - **Sources:** reaudit_B r3 corr 12; analogs_G1 #7
+    - **Saving usd:** see 02a
+  88.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** correction
+    - **Part:** HF chain table: shield
+    - **Anchor:** | Екран HF+ | жерстяний + LC + Mix-31 |
+    - **Instruction:** Change to 'tin + damped LC (R-C) + Mix-31'.
+    - **Reason:** LC damping.
+    - **Sources:** reaudit_B r1 corr 14
+    - **Saving usd:** 0
+  89.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** architecture
+    - **Part:** HF chain table: Boni rail
+    - **Anchor:** | Шина Boni-Whip | TPS7A4701 на 12.5 V ±0.25 V, PTC 0.2 A, bias-tee усередині біля екрана HF+ |
+    - **Instruction:** Replace with '| Шина Boni-Whip (BONI13V8) | TPS7A4701 at 13.8 V -> TPS259630DDAR (RILM 7.87 kOhm) -> INA3221 0.2 Ohm -> bias tee inside next to the HF+ shield (Einspeiseweiche or DIY 2.2 mH + 10 uH, 1 uF PPS/PEN or C0G) |'; in the note replace '2.7; EN на MCP #1 GPB1, PG на MCP #3.' with '2.7; EN on MCP #1 GPB1; FLT (pull-up) and TLV3011 comparator to MCP #3 (no PG pin).'
+    - **Reason:** Rail redesign.
+    - **Sources:** reaudit_B r1 corr 9/12; r3 corr 2; analogs_G3 #9
+    - **Saving usd:** 0
+  90.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** HF chain table: Boni-Whip and total
+    - **Anchor:** | Активний штир | Bonito Boni-Whip | 1 | 123.95-178.73 | WiMo / Moonraker | перевірено (WiMo) | 2.5; з 20.11.2026. |
+    - **Instruction:** Replace with '| Активний штир | Bonito Boni-Whip | 1 | 167.49-178.73 | Bonito shop (in stock) / WiMo (from 20.11.2026) | перевірено | 2.5 |'. Change the total '**439.90-589.17** + частка LDO' to '**483.44-589.17** (recomputed) + share of LDO/eFuse'; replace 'Дріт BNC-SMA ($5-10) окремо не враховано.' with 'Boni BNC jumper + BNC M-M lead (G1 #5) and 5.5/2.1 mm barrel plug not counted.'
+    - **Reason:** Re-audit B r1 corr 10.
+    - **Sources:** reaudit_B r1 corr 10
+    - **Saving usd:** see 02b
+  91.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** replace_part
+    - **Part:** Capability: scripted attenuation sweeps
+    - **Anchor:** | Скриптовані розгортки ослаблення 0.5 dB і тести з атенюатором 3 dB | PE4302 на sled з таблицею корекції VNA | extended |
+    - **Instruction:** Replace 'PE4302' with 'PE4312 (pin-compatible, in production)'.
+    - **Reason:** PE4302 EOL.
+    - **Sources:** reaudit_B r3 corr 11
+    - **Saving usd:** 0
+  92.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** keep_with_note
+    - **Part:** Capability: Lime VCTCXO trim
+    - **Anchor:** | Керування VCTCXO Lime від GPS | лише якщо Lime залишено | optional |
+    - **Instruction:** Replace with '| Lime VCTCXO trim against GNSS-SDR ppm ('VCTCXO DAC (volatile)' 0-65535; EEPROM XO_DAC at 0xFFFE written only after a stable result) | Lime (with-Lime default build), GNSS-SDR, TMP1075 log | with-Lime |'.
+    - **Reason:** Concrete trim path confirmed in code.
+    - **Sources:** reaudit_B r2 confirmed [8], corrected_spec
+    - **Saving usd:** 0
+  93.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** bench_test
+    - **Part:** P5 Lime trim
+    - **Anchor:** | P5 | Калібрування частоти, простежуване до GNSS, без GPSDO (core) | Частина з VCTCXO Lime — за умовою. |
+    - **Instruction:** Replace the correction cell with: 'Lime trim: set VCTCXO DAC (volatile) against the GNSS-SDR ppm; write EEPROM XO_DAC (0xFFFE) only after a stable result; log the DAC value and TMP1075 temperature; re-trim monthly; doc values +7.5 ppm/V, +/-5 ppm tuning, +/-1 ppm calibration, +/-2 ppm first-year ageing; about 0.29-0.38 ppb per step (model).'
+    - **Reason:** Procedure from re-audit B.
+    - **Sources:** reaudit_B r2 confirmed [8], corrected_spec, bench [11]
+    - **Saving usd:** 0
+  94.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** bench_test
+    - **Part:** P7 Lime external reference
+    - **Anchor:** | P7 | Зовнішня опора LimeSDR Micro (експеримент) | Лише якщо Lime залишено. |
+    - **Instruction:** Replace the correction cell with: 'Bench mode, watchdog armed: J4 driven directly from the LBE-1420 (no pad, no DC block); first 30.72 MHz (same-frequency switch flip, no CGEN retune), then 10 MHz; firmware range 10-52 MHz; labd returns to internal before any unplug (FW #1: a disabled/faulty clock halts the host). Needs an M4 image built from LimeSDR-Micro_FW staging at or after 1f70189 (head 980fff2): the bundled limesdr-micro-m4.bin (sha256 95f9f551...) lacks the fix; confirm the running version with limeDevice -f after a full power-off. P7b (J5 PPS: R176 removed, 0 Ohm at R179; PPSDO via LIME_M4_PPSDO_CTRL) deferred until host support exists and the RMA window has closed. Ask Lime about the ADF4002 (IC21) J6 path: if fitted on Basic and supported, prefer J6 with 10 MHz (avoids halt-on-lost-reference).'
+    - **Reason:** Re-audit B r2 corr 1/10/11/12, confirmed [5]-[7][9].
+    - **Sources:** reaudit_B r2; https://github.com/myriadrf/LimeSDR-Micro_FW/commit/1f701897ca1a9e91c0ba4a6d6d573d977a7bfe72
+    - **Saving usd:** 0
+  95.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** correction
+    - **Part:** P13 RF sled
+    - **Anchor:** | P13 | Підключення і керування RF sled (extended) | Розв'язка кожного шляху — до використання. |
+    - **Instruction:** Append to the correction cell: 'Sled parks on RF1 (50 Ohm); BENCH on RF4; PE4312 (latched parallel); HF (<100 MHz) unspecified until swept.'
+    - **Reason:** RF1 park and PE4312.
+    - **Sources:** reaudit_B r3 corr 1/11; analogs_G6 #2
+    - **Saving usd:** 0
+  96.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** correction
+    - **Part:** P20 extra reception modes
+    - **Anchor:** Boni-Whip 12.5 V (не 10.0 V); кроки fldigi → канали SDRangel; wsjtx GUI → jt9/wsprd.
+    - **Instruction:** Replace with 'Boni-Whip 13.8 V (BONI13V8; gate >=12.0 V at the bias-tee barrel); fldigi steps -> SDRangel channels; WEFAX = OpenWebRX+ fax mode behind the civil allow-list (SDRangel WEFAX/DRM are master-only); DRM: none in v1 unless Dream is rebuilt from source with the transmitter removed, else the first SDRangel release with demoddrm; wsjtx GUI -> wsjtx-decoders+lab (jt9/wsprd).' Also change the 3.6 row '| КХ-тракт (уже в core і складаному рівні) | 439.90-589.17 + частка LDO |' to '483.44-589.17 (recomputed) + share of LDO/eFuse'.
+    - **Reason:** Re-audit B r1 corr 5/8/9/10.
+    - **Sources:** reaudit_B r1 corr 5/8/9/10
+    - **Saving usd:** 0
+  97.
+    - **Section:** 04_capabilities
+    - **Kind:** new_risk
+    - **Part:** Meteor HRPT (patch tier)
+    - **Anchor:** спершу сканувати власні спури 1699.2 і 1704.0 MHz; pcie0 вимк., LNB вимк.
+    - **Instruction:** Append: 'phones at least 5 m away or in flight mode (SAWbird+ GOES input P1dB about -17 dBm, model); RTL-B L-band use depends on the V4L thermal A/B gate (no R828S L-band heat data; VCO about 3.41-3.42 GHz vs a 3.54 GHz top, model)'.
+    - **Reason:** Desense and thermal risks.
+    - **Sources:** reaudit_B r0 corr 14, new_risk 4; r3 corr 17
+    - **Saving usd:** 0
+  98.
+    - **Section:** 04_capabilities
+    - **Kind:** new_risk
+    - **Part:** Meteor HRPT (folding tier)
+    - **Anchor:** задокументованого декодування без тарілки з рук немає — перші проходи вище 40° зі штатива від 50 см
+    - **Instruction:** Append: 'same phone rule and thermal gate; labd flags a noise-floor jump of more than 10 dB on the L-band throw'.
+    - **Reason:** r3 corr 17.
+    - **Sources:** reaudit_B r3 corr 17
+    - **Saving usd:** 0
+  99.
+    - **Section:** 04_capabilities
+    - **Kind:** keep_with_note
+    - **Part:** Metop-B AHRPT fallback
+    - **Anchor:** (b) прохід вище 45° і пошук горба на 1701.3 MHz; Airspy Mini — лише якщо (a) провалиться
+    - **Instruction:** Append: '(Airspy Mini official range ends at 1700 MHz: 1701.3 MHz is above spec, not field-checked; bought only per its gate with a conducted acceptance test at 1701.3 MHz within 30 days, G6 #12); if the V4L fails the thermal L-band gate: airflow first, then AHRPT moves to the Lime'.
+    - **Reason:** r0 corr 14/17.
+    - **Sources:** reaudit_B r0 corr 14/17; analogs_G6 #12
+    - **Saving usd:** 0
+  100.
+    - **Section:** 04_capabilities
+    - **Kind:** keep_with_note
+    - **Part:** AWS fallback
+    - **Anchor:** Airspy Mini — лише якщо (a) провалиться. EIRP не опубліковано
+    - **Instruction:** Append '(AWS 1707 MHz is above the Airspy Mini's 1700 MHz spec; same acceptance test at 1707 MHz)'.
+    - **Reason:** r0 corr 17.
+    - **Sources:** reaudit_B r0 corr 17, confirmed [9]
+    - **Saving usd:** 0
+  101.
+    - **Section:** 04_capabilities
+    - **Kind:** bench_test
+    - **Part:** S-band with Lime
+    - **Anchor:** 7-виткова S-спіраль у конусі 14.2 dBic (NEC); резонатор cf2235-kt30; LNA не названо
+    - **Instruction:** Append: '7 Msps narrow profiles put the Lime CGEN VCO at 2240.00 MHz inside the preselector passband (model): check for coupling near Black Kite (2286/2288) and PHASMA (2208/2210) in the S-band A/B'.
+    - **Reason:** r2 new_risk 3.
+    - **Sources:** reaudit_B r2 new_risk 3, bench [6]
+    - **Saving usd:** 0
+  102.
+    - **Section:** 04_capabilities
+    - **Kind:** new_risk
+    - **Part:** ADS-B on the spare V4L
+    - **Anchor:** обидва (Pro Stick Plus на LAB USB, або запасний V4L з вусами 6.5 см)
+    - **Instruction:** Append '(spare V4L with an inline FM band-stop; its two-tone limit is about -29 dBm at 1090 MHz)'.
+    - **Reason:** r0 corr 11.
+    - **Sources:** reaudit_B r0 corr 11
+    - **Saving usd:** 0
+  103.
+    - **Section:** 04_capabilities
+    - **Kind:** new_risk
+    - **Part:** Radiosondes on the spare V4L
+    - **Anchor:** обидва (запасний V4L з вусами 17.7 см на LAB USB або P8 WIDE)
+    - **Instruction:** Append '(inline FM band-stop on the spare; two-tone limit about -24 dBm at 400 MHz)'.
+    - **Reason:** r0 corr 11.
+    - **Sources:** reaudit_B r0 corr 11
+    - **Saving usd:** 0
+  104.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** FM-RDS / DAB+
+    - **Anchor:** | FM-RDS / DAB+ | 87.5-108 MHz / Band III | обидва (дипольний набір #2 на HF+, або запасний V4L) |
+    - **Instruction:** Replace the antenna/receiver cell with 'both tiers: FM-RDS on the HF+ (dipole kit #2 on P6/K2) or the spare V4L; DAB+ only on the spare V4L or the Lime (HF+ max 912 ksps vs DAB 2.048 Msps; welle.io: HF+ not supported)'.
+    - **Reason:** r1 corr 6.
+    - **Sources:** reaudit_B r1 corr 6, confirmed [16]
+    - **Saving usd:** 0
+  105.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** HF WEFAX decoder
+    - **Anchor:** | sdrangelsrv WEFAX |
+    - **Instruction:** Replace with '| OpenWebRX+ fax mode (built in, no external binary) behind the civil-only allow-list; SDRangel WEFAX only after a release that contains demodwefax (master-only since 1 Oct 2026) |'.
+    - **Reason:** WEFAX is not in SDRangel 7.27.2.
+    - **Sources:** reaudit_B r1 corr 5, confirmed [14][19]
+    - **Saving usd:** 0
+  106.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** HF broadcast / DRM decoder
+    - **Anchor:** | OpenWebRX+, SDRangel (DRM) |
+    - **Instruction:** Replace with '| OpenWebRX+, SDRangel (AM/SAM/SSB/CW). DRM: none in v1 unless a source-patched RX-only Dream is built (packaged dream 2.2-20251114 contains -t/--transmitter and enters transmit mode when launched as dreamt; CI fails on the strings --transmitter or CDRMTransmitter), otherwise the first SDRangel release with demoddrm |'.
+    - **Reason:** Keeps the no-TX-software rule.
+    - **Sources:** reaudit_B r1 corr 5, new_risks 1/2, refuted [3]; operator_notes 31
+    - **Saving usd:** 0
+  107.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** FT8/FT4/WSPR decode-only
+    - **Anchor:** Лише jt9/wsprd; скімери CW/RTTY/PSK — лише в аматорських діапазонах регіону; без PTT, CAT чи TX
+    - **Instruction:** Replace 'Лише jt9/wsprd' with 'Only jt9/wsprd from the decode-only wsjtx-decoders+lab build (apt wsjtx pulls libhamlib-utils); SDRangel demodft8 as alternative'.
+    - **Reason:** r1 corr 8.
+    - **Sources:** reaudit_B r1 corr 8
+    - **Saving usd:** 0
+  108.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** LF time signals
+    - **Anchor:** Boni-Whip — з 20.11.2026 (запас — клон PA0RDT); JJY 60 — лише амплітуда
+    - **Instruction:** Replace with 'Boni-Whip in stock at Bonito's shop (WiMo second source); LF window centre 330 kHz at 768 ksps; Radio Clock 7.27.2 decodes DCF77, MSF, TDF (Europe priority), WWVB and JJY 40; JJY 60 amplitude only; RBU blocked; TDF Tuesday 08:00-12:00 maintenance; JJY/WWVB rarely receivable from Europe (assessment)'.
+    - **Reason:** r1 corr 7/10/13.
+    - **Sources:** reaudit_B r1 corr 7/10/13
+    - **Saving usd:** 0
+  109.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** Survey mask on HF+ data
+    - **Anchor:** Лише зайнятість; 3-30 kHz і 225-400 MHz маскуються в «no data» до запису; твердження «видно до 12 GHz» видалено
+    - **Instruction:** Append '; for HF+ data the 3-30 kHz mask is applied by |f_abs| < 30 kHz, negative-frequency bins included (image of 0-40 kHz signals)'.
+    - **Reason:** r1 corr 13.
+    - **Sources:** reaudit_B r1 corr 13, new_risk 5
+    - **Saving usd:** 0
+  110.
+    - **Section:** 05a_arch_power
+    - **Kind:** architecture
+    - **Part:** Power topology (LNB/BONI rails)
+    - **Anchor:** TPS7A4701 → LNB 13.2 V; TPS7A4701 → BONI 12.5 V.
+    - **Instruction:** Replace with 'TPS7A4701 -> TPS259630DDAR eFuse -> INA3221 -> LNB 13.2 V; TPS7A4701 -> TPS259630DDAR eFuse -> INA3221 -> BONI 13.8 V.'
+    - **Reason:** r3 corr 2, r1 corr 9.
+    - **Sources:** reaudit_B r1 corr 9, r3 corr 2; analogs_G3 #9
+    - **Saving usd:** 0
+  111.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** LAB5 load: HF+ VBUS
+    - **Anchor:** HF+ (ключ + LC + Mix-31)
+    - **Instruction:** Replace with 'HF+ (load switch with current limit >=0.75 A at bring-up, then 1.5-2x measured streaming current; damped LC + Mix-31)'.
+    - **Reason:** r1 corr 14/15.
+    - **Sources:** reaudit_B r1 corr 14/15
+    - **Saving usd:** 0
+  112.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** LNA4V5 channel limits
+    - **Anchor:** TPS2553 на канал, 300 mA номінально (від 240 mA мінімум), FAULT на MCP #3
+    - **Instruction:** Replace with 'TPS2553DBVR-1 per channel, RILIM 88.7 kOhm = 262-342 mA (model); a TCBT channel 162 kOhm = 144-192 mA; FAULT to MCP #3 (latch; labd toggles EN to reset); INA3221 readback with 0.2 Ohm shunts, alarm >20% over baseline'.
+    - **Reason:** r3 corr 4/5.
+    - **Sources:** reaudit_B r3 corr 4/5, confirmed [7]
+    - **Saving usd:** 0
+  113.
+    - **Section:** 05a_arch_power
+    - **Kind:** architecture
+    - **Part:** LNB13V2 rail row
+    - **Anchor:** | 13.2 V ±0.2 V на F-роз'ємі | PTC з утриманням 1.5-2x виміряного струму при 60 °C (попередньо 0.45 A); внутрішнє обмеження і OTP; PG на MCP #3 |
+    - **Instruction:** Replace with '| 13.2 V +/-0.33 V on the F connector (+/-2.5%: 12.87-13.53 V) | TPS259630DDAR eFuse RILM 2.05 kOhm 1% (0.405-0.499 A; final 903/(1.5-2 x I_LNB - 0.0112)), OVLO 110k/10.0k 0.5% trip 13.91-14.77 V (model), latch-off after thermal shutdown; FLT to MCP #3 via pull-up (labd latches it) + TLV3011 comparator (no PG pin); INA3221 0.1 Ohm; LDO ICL >=1.0 A is not a short-circuit limit; no PTC |'. In the switch cell replace 'лише коли перемикач RTL-B на порту LNB' with 'LDO and eFuse EN together from MCP #1 GPB0, only while RTL-B is on RF3 (LNB IF)'; in the load cell change '1.44 W на утриманні PTC 0.45 A' to '1.44 W at the 0.45 A eFuse sizing current'.
+    - **Reason:** r3 corr 2.
+    - **Sources:** reaudit_B r3 corr 2, corrected_spec; analogs_G3 #9
+    - **Saving usd:** 0
+  114.
+    - **Section:** 05a_arch_power
+    - **Kind:** architecture
+    - **Part:** BONI rail row
+    - **Anchor:** | BONI12V5 | SW → LC → TPS7A4701 | 12.5 V ±0.25 V | PTC 0.2 A утримання при 60 °C (попередньо); PG; спершу DC-sense |
+    - **Instruction:** Replace with '| BONI13V8 | SW -> LC -> TPS7A4701 -> TPS259630DDAR -> INA3221 0.2 Ohm | 13.8 V (IC +/-2.5%; gate >=12.0 V at the Einspeiseweiche barrel with the pack at 13.2 V) | eFuse RILM 7.87 kOhm (0.113-0.139 A); OVLO to be re-derived for 13.8 V (the 13.91-14.77 V divider overlaps the 13.8 V band); FLT + comparator to MCP #3; DC-sense first, then a 30-150 mA window within 2 s; LDO in dropout below a pack of about 13.9-14.0 V (model) |'. Change '0.05-0.1 A (не опубліковано)' to '65 mA typ (vendor), energy model about 0.90 W; measure'.
+    - **Reason:** r1 corr 9/11, r3 corr 2.
+    - **Sources:** reaudit_B r1 corr 9/11, new_risk 6; r3 corr 2/14; analogs_G3 #9
+    - **Saving usd:** 0
+  115.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** Protection vs real currents
+    - **Anchor:** Канали SAWbird+: 300 mA проти 170-180 mA.
+    - **Instruction:** Replace with 'SAWbird+ channels: 262-342 mA (TPS2553 at 88.7 kOhm, model) vs 170-180 mA; TCBT channel 144-192 mA vs its 200 mA rating; LNB eFuse 0.405-0.499 A then latch-off (a shorted F centre pin is limited to about 0.45 A); Boni eFuse 0.113-0.139 A; with OVLO an LDO failing short can no longer put more than about 14.8 V on the LNB.'
+    - **Reason:** r3 corr 2/4.
+    - **Sources:** reaudit_B r3 corr 2/4
+    - **Saving usd:** 0
+  116.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** V4L power figure
+    - **Anchor:** V4L 1.3 W (даташит)
+    - **Instruction:** Replace with 'V4L 1.25-1.35 W (model: 5 V x 250-270 mA from the datasheet)'.
+    - **Reason:** The datasheet gives current; W is derived.
+    - **Sources:** reaudit_B r0 confirmed [1]
+    - **Saving usd:** 0
+  117.
+    - **Section:** 05a_arch_power
+    - **Kind:** keep_with_note
+    - **Part:** Mode E runtime
+    - **Anchor:** | E LF/HF Quiet: HF+ + Boni-Whip, дисплей вимкнено | 8.2 | 7.1 год | 6.1 год |
+    - **Instruction:** Mark the row provisional: 'HF+ current unpublished (0.3 A placeholder until the FNB58 test); Boni about 0.90 W at 13.8 V' (no number change until measured).
+    - **Reason:** r1 corr 15.
+    - **Sources:** reaudit_B r1 corr 15, bench [2]
+    - **Saving usd:** 0
+  118.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** USB map H4 (HF+)
+    - **Anchor:** | CH334F H4 | ключ навантаження (MCP #1 GPA4) + LC + Mix-31 | Airspy HF+ у своєму екрані | те саме |
+    - **Instruction:** Change the VBUS cell to 'load switch (MCP #1 GPA4) with current limit + damped LC + Mix-31' and the device cell to 'Airspy HF+ (micro-USB B, high-speed bulk 3.07-3.65 MB/s; MTT irrelevant for an HS device) in its shield; udev 03eb:800c GROUP=plugdev TAG+=uaccess, labrx and sdrangel service users in plugdev'.
+    - **Reason:** r1 corr 16, refuted [7].
+    - **Sources:** reaudit_B r1 corr 16, confirmed [10][20]
+    - **Saving usd:** 0
+  119.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** I2C2 devices
+    - **Anchor:** MCP23017 #1 0x20 і #3 0x22; сторона A TCA9517 до LAB BUS
+    - **Instruction:** Append '; 2x INA3221 at 0x41 and 0x43'. Also change the address map '0x20, 0x21, 0x22, 0x48, 0x30 на I2C2' to '0x20, 0x21, 0x22, 0x41, 0x43, 0x48, 0x30 на I2C2'.
+    - **Reason:** r3 corr 5.
+    - **Sources:** reaudit_B r3 corr 5
+    - **Saving usd:** 0
+  120.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** MCP #1 HMC7992 control and park
+    - **Anchor:** навантаження 50 Ohm підключається саме до цього виводу (план — T4). Якщо ліній три — потрібні ще два виходи MCP.
+    - **Instruction:** Replace the HMC7992 sentences with 'HMC7992 has two control lines (A/B); datasheet Table 6: A=B=Low selects RF1, so the 50 Ohm park is on RF1 (selected at boot by the 100k pull-downs). Power-up order GND, VDD, then control (logic before VDD can damage the ESD structures): VDD from the same 3.3 V rail as the MCP23017s or 1 kOhm series resistors in A/B; 100 pF on A/B; VIH min 1.15 V at VDD 3.3 V.' Also append to 'GPA2/GPA3 відсічення VBUS RTL-A / RTL-B': '(labrx watchdog: rtlsdr_read_async returns -1 or no samples for 2 s -> close, cut VBUS for 1 s, reopen by serial; GPA0 for the spare on the LAB port, also cycled at lease end)'.
+    - **Reason:** Truth table resolved; watchdog from re-audit B.
+    - **Sources:** reaudit_B r3 corr 1, confirmed [6]; r0 corrected_spec, bench [7]
+    - **Saving usd:** 0
+  121.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** MCP #3 inputs (no PG pins)
+    - **Anchor:** PG LNB; PG Boni;
+    - **Instruction:** Replace with 'FLT LNB eFuse; FLT Boni eFuse (pull-ups); TLV3011 PG-comparator outputs for LNB and Boni (analog G3 #9; TPS7A47 has no PG pin);'.
+    - **Reason:** r3 corr 2.
+    - **Sources:** reaudit_B r3 corr 2; analogs_G3 #9
+    - **Saving usd:** 0
+  122.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** replace_part
+    - **Part:** MCP #2 in the sled
+    - **Anchor:** HMC7992 V1-V3 (кількість ліній — за таблицею істинності, як і для #1); PE4302 D0-D5
+    - **Instruction:** Replace with 'HMC7992 A/B (2 lines; RF1 park); PE4312 6 C bits + LE (latched parallel, per G6 #2)'.
+    - **Reason:** r3 corr 11; truth table.
+    - **Sources:** reaudit_B r3 corr 1/11; analogs_G6 #2
+    - **Saving usd:** 0
+  123.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** P1 VHF-137 chain
+    - **Anchor:** → DC-блок → RTL-A T1 |
+    - **Instruction:** Replace with '-> C0G DC block -> HMC7992-A RF2 -> RFC (C0G) -> RTL-A. Optional static bleed: shunt chip inductor about 470 nH, SRF above 300 MHz, before the Flamingo+ (which already has an RF ESD diode); verify on the LiteVNA |'.
+    - **Reason:** r3 corr 1/15.
+    - **Sources:** reaudit_B r3 corr 1/15, corrected_spec
+    - **Saving usd:** 0
+  124.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** rule
+    - **Part:** P2 UHF chain
+    - **Anchor:** | P2 UHF | SMA, зміщення 4.5 V назовні по ch2 після DC-sense | інжектор ch2 → RTL-A T2.
+    - **Instruction:** Replace 'RTL-A T2' with 'HMC7992-A RF3 -> RTL-A'; add 'never more than 5.5 V on P2 (Uputronics damage limit); the Uputronics passes no signal unpowered, so UHF profiles require ch2 on'.
+    - **Reason:** r3 corr 1/8, bench [15].
+    - **Sources:** reaudit_B r3 corr 1/8, bench [15]
+    - **Saving usd:** 0
+  125.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** new_risk
+    - **Part:** P3 L-band chain and protection
+    - **Anchor:** | P3 L-BAND | SMA, зміщення 4.5 V назовні по ch3 після DC-sense | інжектор ч3 → RTL-B T1.
+    - **Instruction:** (anchor text exactly: '| P3 L-BAND | SMA, зміщення 4.5 V назовні по ch3 після DC-sense | інжектор ch3 → RTL-B T1.') Replace 'RTL-B T1' with 'HMC7992-B RF2 -> RTL-B'; add 'ch3 at the 300 mA limit, no TCBT; never more than 5.5 V; static bleed at the SAWbird+ GOES input at the helix feed; a panel TVS on P2/P3 stays optional (criteria VRWM >=5.5 V and C <=0.3 pF; no current part: Infineon ESD101/ESD103-B1-02ELS are Not For New Designs, Nexperia PESD5V0C1BSF discontinued)'.
+    - **Reason:** r3 corr 15, new_risk 8.
+    - **Sources:** reaudit_B r3 corr 15, new_risks 8/9
+    - **Saving usd:** 0
+  126.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** P4 LNB chain
+    - **Anchor:** → RTL-B T2; EN LNB лише коли перемикач RTL-B на T2 |
+    - **Instruction:** Replace with '-> HMC7992-B RF3 -> RTL-B; LDO and eFuse EN only while RTL-B is on RF3 |'.
+    - **Reason:** r3 corr 1, corrected_spec.
+    - **Sources:** reaudit_B r3 corr 1/2
+    - **Saving usd:** 0
+  127.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** P5 HF/Boni port
+    - **Anchor:** | P5 HF + стійка заземлення/противаги | SMA, допускає DC; 12.5 V угору по коаксіалу лише в профілі Boni |
+    - **Instruction:** Replace with '| P5 HF + ground stake/counterpoise | BNC bulkhead (keyed against SMA LNAs), tolerates DC; 13.8 V up the coax only in the Boni profile after DC-sense and a Boni-attached confirmation, then the 30-150 mA current window |'.
+    - **Reason:** r3 corr 14, r1 corr 9/11.
+    - **Sources:** reaudit_B r3 corr 14; r1 corr 9/11; analogs_G1 #5
+    - **Saving usd:** 0
+  128.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** P6 VHF2/AIS
+    - **Anchor:** HF+ покриває 64-260 MHz (AIS, FM-RDS, DAB)
+    - **Instruction:** Replace with 'shunt bleed about 470 nH (SRF above 300 MHz; about 0.02-0.08 dB at 64-260 MHz, model; verify on LiteVNA) -> K2 -> HF+; HF+ VHF role: AIS (default), FM-RDS, NFM, airband, VOR - no DAB; VHF AGC, LNA and ATT do not take effect'.
+    - **Reason:** r1 corr 6; r3 corr 15.
+    - **Sources:** reaudit_B r1 corr 6, corrected_spec; r3 corr 15
+    - **Saving usd:** 0
+  129.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** P8 WIDE/2 m
+    - **Anchor:** Flamingo+ #2 → стендовий LNA V2 → ch4 → RTL-A T3
+    - **Instruction:** Replace 'RTL-A T3' with 'HMC7992-A RF4 -> RTL-A (ch4: TCBT only with RILIM 162 kOhm)'.
+    - **Reason:** r3 corrected_spec.
+    - **Sources:** reaudit_B r3 corr 1/4
+    - **Saving usd:** 0
+  130.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** Lime switch default
+    - **Anchor:** третій HMC7992 направляє L-band ch3 на RTL-B або на Lime RX1 через атенюатор 10 dB
+    - **Instruction:** Append '(its RF1 is the safe default/park route)'.
+    - **Reason:** r3 corr 1.
+    - **Sources:** reaudit_B r3 corr 1
+    - **Saving usd:** 0
+  131.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** replace_part
+    - **Part:** Switches paragraph
+    - **Anchor:** **Перемикачі.** RTL-A і RTL-B — по загальній платі HMC7992 SP4T за інжекторами;
+    - **Instruction:** Rewrite the paragraph: 'RTL-A and RTL-B: genuine HMC7992LP3DE chips on the custom injector PCB (G1 #4); C0G DC blocks on all five RF pins incl. RFC; 50 Ohm park on RF1 (A=B=Low). RTL-A: RF1 50 Ohm, RF2 VHF-137, RF3 UHF, RF4 WIDE/2 m (optional). RTL-B: RF1 50 Ohm, RF2 L-band, RF3 LNB IF, RF4 BENCH/sled. Isolation qualified conducted (>=30 dB; G1 #4 on-board target >=40 dB, accept >=37 dB). Specified 0.1-6 GHz only. HF+: two Aratas (formerly Omron) G6K-2F-RF relays (part per G1 #7) series-shunt; de-energised the HF+ sits on 50 Ohm, both antenna ports loaded; acceptance >=35 dB at 162-260 MHz and <=0.3 dB from 10 kHz to 260 MHz (unverified until measured).'
+    - **Reason:** RF1 park; prefer chips; rebrand.
+    - **Sources:** reaudit_B r3 corr 1/12, new_risks 6/11; analogs_G1 #4/#7
+    - **Saving usd:** 0
+  132.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** rule
+    - **Part:** Bias interlocks (V4L tee)
+    - **Anchor:** Трійники V4L у core вимкнені (токен librtlsdr, bias в EEPROM вимкнено); трійник запасного V4L — лише для LNA ≤90 mA і з токеном.
+    - **Instruction:** Append: 'Grant = root-owned /run/labd/bias/<serial>; the lab librtlsdr gates only GPIO0 (GPIO5 band switching passes) and forces GPIO0=0 at open/close; labd also calls rtlsdr_set_bias_tee(dev,0) on every open and cycles LAB VBUS at lease end; the UI shows bias from labd; EEPROM byte 7 bit 0x02 = 1 checked at intake; no rtl_tcp in field profiles.' Also change 'TCBT-2R5G+ (200 mA) — лише на каналах ≤150 mA.' to 'TCBT-2R5G+ (200 mA) only on ch4 WIDE (G3 #14) with RILIM 162 kOhm (144-192 mA).'
+    - **Reason:** r0 corr 0/8/12, r3 corr 0/4.
+    - **Sources:** reaudit_B r0 corr 0/8/12; r3 corr 0/4, corrected_spec
+    - **Saving usd:** 0
+  133.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** rule
+    - **Part:** LNB/Boni interlock
+    - **Anchor:** EN LNB зблоковано з перемикачем RTL-B.
+    - **Instruction:** Replace with 'LNB LDO+eFuse EN interlocked with RTL-B on RF3; Boni rail only in the Boni profile, BNC-keyed P5, DC-sense + Boni-attached confirmation + 30-150 mA window.'
+    - **Reason:** r3 corr 2/14; r1 corr 11.
+    - **Sources:** reaudit_B r3 corr 2/14; r1 corr 11
+    - **Saving usd:** 0
+  134.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** Gain plan / V4L NF
+    - **Anchor:** 137 MHz: LNA усередині корпусу в обох рівнях; 1-1.5 м RG316 перед ним коштують 0.06-0.36 dB (модель).
+    - **Instruction:** Append: 'Gain plan (datasheet values, blog driver; model where derived): V4L NF about 6.3 dB at VHF/UHF, about 13.3 dB at 1.1-1.5 GHz, about 16 dB at 1.7 GHz (3 dB MDS, S = N); behind a 30 dB LNA the L-band penalty is about 0.2 dB (F = F1 + (F2-1)/G); two-tone limit (95 MHz blocker) -12 dBm on the 137 MHz path and about -42.5 dBm at 1.7 GHz (extrapolated); no FM notch; RTL-A gain 5-10 dB behind the SAWbird+ NOAA (system NF 1.11-1.22 dB for RTL NF 15-25 dB); LNB IF through the 15/20 dB pad. Lab-driver values are measured in the D10 matrix.'
+    - **Reason:** r0 corr 4/5; r3 corr 10.
+    - **Sources:** reaudit_B r0 corr 4/5; r3 corr 10
+    - **Saving usd:** 0
+  135.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** Targets table throw names
+    - **Anchor:** **Тракти за цілями** (без Lime)
+    - **Instruction:** Throughout the targets table remap the switch throws: RTL-A T1 -> RF2, T2 -> RF3, T3 -> RF4; RTL-B T1 -> RF2, T2 -> RF3 (RF1 = 50 Ohm park on both). In the Meteor LRPT row change 'підсилення 10-25 dB' to 'gain 5-10 dB (range 0-15)'; in the HRPT row add 'phones >=5 m away or in flight mode; 2.88 Msps only under the Metop/AWS gate'; in the ДХ-сигнали часу row change '12.5 V' to '13.8 V'.
+    - **Reason:** r3 corr 1/10/17; r1 corr 9.
+    - **Sources:** reaudit_B r3 corr 1/10/17; r1 corr 9
+    - **Saving usd:** 0
+  136.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** FM-RDS / DAB target row
+    - **Anchor:** | FM-RDS / DAB | Дипольний набір #2 | Те саме | P6 → HF+ (або запасний V4L) | redsea, welle-cli |
+    - **Instruction:** Replace with '| FM-RDS / DAB+ | Dipole kit #2 | Same | FM-RDS: P6 -> HF+ (or spare V4L); DAB+: spare V4L on H3 or the Lime only | redsea; welle-cli (DAB+ on V4L/Lime) |'.
+    - **Reason:** r1 corr 6.
+    - **Sources:** reaudit_B r1 corr 6
+    - **Saving usd:** 0
+  137.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** new_risk
+    - **Part:** ADS-B / radiosondes on the spare V4L
+    - **Anchor:** | Pro Stick Plus (extended) або запасний V4L з вусами 6.5 см на LAB USB |
+    - **Instruction:** Append '+ inline FM band-stop on the spare' here and in the radiosonde row ('| Запасний V4L з вусами 17.7 см на LAB USB (або P8 WIDE) |').
+    - **Reason:** r0 corr 11.
+    - **Sources:** reaudit_B r0 corr 11, bench [9]
+    - **Saving usd:** 0
+  138.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** LNB IF level and ingress
+    - **Anchor:** сумарний шум у SDR (модель) −33...−22 dBm на близько 1.2 GHz ПЧ
+    - **Instruction:** Replace with 'total noise into the SDR (model: kTB over 1.211 GHz, Tsys 150-300 K, gain 50-66 dB) -36...-17 dBm'. In the same paragraph replace 'проникнення DVB-T і LTE B28 перевірити, коли відомий регіон.' with 'Europe: ingress scan 733-758 MHz (optional SDL 738-758, PMSE, PPDR) plus the B28 uplink edge (703-733 MHz) with the LNB unpowered, then powered; the 700 MHz band no longer carries DVB-T.'
+    - **Reason:** r3 confirmed [14], corr 9.
+    - **Sources:** reaudit_B r3 confirmed [14], corr 9, bench [10]
+    - **Saving usd:** 0
+  139.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Kernel command line usbfs
+    - **Anchor:** preempt=full drm.edid_firmware=HDMI-A-1:edid/field.bin video=HDMI-A-1:1920x1080@60
+    - **Instruction:** Add 'usbcore.usbfs_memory_mb=0' to the line (16 MiB default; default librtlsdr buffers 15 x 256 KiB = 3.75 MiB per dongle, 11.25 MiB for three, model; little headroom once the Lime is added).
+    - **Reason:** r0 corr 18, confirmed [23].
+    - **Sources:** reaudit_B r0 corr 18, confirmed [23]; https://raw.githubusercontent.com/torvalds/linux/master/drivers/usb/core/devio.c
+    - **Saving usd:** 0
+  140.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** labd duties
+    - **Anchor:** Для кожної оренди пише тимчасові drop-in DevicePolicy=closed і DeviceAllow.
+    - **Instruction:** Append: 'labd also: issues bias grants as root-owned /run/labd/bias/<serial> files and cycles LAB VBUS (GPA0) at lease end; shows bias state itself; pushes LOppmTenths = round(ppb/100) to every SDRangel AirspyHF preset over REST and reads it back; checks OpenWebRX+ HF+ rates against the airspyhf_info list; latches eFuse FLT and TPS2553 FAULT (EN-toggle reset with retry limit) and alarms on INA3221 >20% over baseline; requires ch2 on for UHF profiles; flags a >10 dB L-band floor jump; for the Lime re-asserts --txen=0 and reads back 0x0020 after every configure/calibrate, refuses to power or stream below 0 C on the TMP1075 and returns to the internal reference before any unplug.'
+    - **Reason:** Collected labd rules from re-audit B.
+    - **Sources:** reaudit_B r0 corr 12; r1 corr 0/4; r2 corr 2, corrected_spec; r3 corr 2/5/17, bench [15]
+    - **Saving usd:** 0
+  141.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** labrx (ppm, PLL, watchdog, metadata)
+    - **Anchor:** Відвід для NPU і пре-тригер MARK. Корекція ppm HF+.
+    - **Instruction:** Replace 'Корекція ppm HF+.' with 'No HF+ ppm correction (flash ppb via libairspyhf). librtlsdr stderr is tagged by phase: only a lock failure after rtlsdr_set_center_freq counts as a tune failure, confirmed by a noise-floor or tone collapse; [R82XX] PLL not locked! during open/bandwidth calibration is logged as calibration-skipped and triggers a reopen. Watchdog: read_async -1 or 2 s without samples -> close, VBUS cut 1 s, reopen by serial. HF+ SigMF ci16 metadata: scale 1/32768 x filter_gain, lib_dsp state, firmware version, gain/AGC state; |f_abs| < 30 kHz bins of HF+ data set to no data before storage; Lime rates below 7 Msps refused.'
+    - **Reason:** r0 corr 13, r1 corr 0/13, r2 corr 0.
+    - **Sources:** reaudit_B r0 corr 13, new_risk 3; r1 corr 0/13, corrected_spec; r2 corr 0
+    - **Saving usd:** 0
+  142.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** Engine leases (sdrangelsrv modes)
+    - **Anchor:** sdrangelsrv (NAVTEX, RTTY, WEFAX, Radio Clock)
+    - **Instruction:** Replace with 'sdrangelsrv 7.27.2 (NAVTEX, RTTY, FT8, DSC, BFM/RDS, VOR, Radio Clock; WEFAX and DRM only after a release containing them); WEFAX via OpenWebRX+ fax'. Also in the UI HF hub ('HF (Listen, DRM, Band survey, NAVTEX, SITOR-B, DSC, WEFAX, Time signals,') mark DRM hidden in v1 unless the source-patched Dream passes CI and WEFAX served by OpenWebRX+ fax.
+    - **Reason:** r1 corr 5, confirmed [14].
+    - **Sources:** reaudit_B r1 corr 5, confirmed [14]
+    - **Saving usd:** 0
+  143.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** Allowed decoders
+    - **Anchor:** аматорські і SSTV — лише jt9/wsprd, slowrx (з джерел), SDRangel 7.27.2 RX-only (без TX/DSD-плагінів, demodinmarsat прибрано)
+    - **Instruction:** Change 'лише jt9/wsprd' to 'only jt9/wsprd from wsjtx-decoders+lab (plus the wsjtx_app_version stub)'; add 'HF WEFAX: OpenWebRX+ fax (civil allow-list); DRM: only a source-patched RX-only Dream (CI string check), else none in v1'.
+    - **Reason:** r1 corr 5/8.
+    - **Sources:** reaudit_B r1 corr 5/8
+    - **Saving usd:** 0
+  144.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Forbidden list additions
+    - **Anchor:** опції bias у конфігах рушіїв.
+    - **Instruction:** Append: 'the apt wsjtx package; unpatched dream (strings --transmitter / CDRMTransmitter; a dreamt symlink must not enter transmit mode); SDRangel channeltx/modbfm if master is ever built; the rtl-sdr-blog fork librtlsdr; rtl_tcp in field profiles (or bound to 127.0.0.1 only); rtl_eeprom write modes other than -s and the -m/-p restore; snap, flatpak, AppImage and docker SDR apps; Lime tools limeSPI, limeI2C, limeCSR, limeOEM, limeFLASH, limeVSPA, limePPSDO, limeGUI, the gr-limesuiteng sink and limeTRX --input/--repeater; any non-zero direct sampling (SDR++ directSamplingMode=0, no direct_sampling/direct_samp keys in OpenWebRX+ or Soapy configs); OpenWebRX+ HF+ rate 256000; airspyhf_set_bias_tee outside tests (1.8.1 builds); dump978-fa, skyaware978, full dump1090-fa, piaware.'
+    - **Reason:** Policy CI from re-audit B.
+    - **Sources:** reaudit_B r0 corr 10/12/16; r1 corr 4/5/8/20; r2 corr 2; operator_notes 31
+    - **Saving usd:** 0
+  145.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** decision
+    - **Part:** librtlsdr packaging
+    - **Anchor:** librtlsdr: noble 2.0.1 з 0204c9c, 65f0658, виправленням zerocopy і патчем токена bias-tee; rtl_biast через divert; dvb_usb_rtl28xxu у чорному списку.
+    - **Instruction:** Replace with 'librtlsdr2 2.0.3-0+lab1 from osmocom v2.0.3 with 7ebcb04 reverted (.so.2), -DENABLE_ZEROCOPY=OFF literally, -DDETACH_KERNEL_DRIVER=ON and the lab patch (GPIO0-only gate, bias off at open/close, d80421b port behind the thermal gate); fallback noble 2.0.1 + 65f0658 + 0204c9c; apt-mark hold; rtl_biast via divert; rtl_eeprom wrapper; packaged DVB blacklist kept, no initramfs step. CI: build log contains zero-copy support disabled, objdump SONAME librtlsdr.so.2, nm -D 37 rtlsdr_* exports, ldd of every RTL consumer resolves to the lab .so.2; self-test stderr never shows Allocating 15 zero-copy buffers.'
+    - **Reason:** r0 corr 1/2/9/10.
+    - **Sources:** reaudit_B r0 corr 1/2/9/10, bench [0][5]
+    - **Saving usd:** 0
+  146.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** From-source packages and libairspyhf pin
+    - **Anchor:** з джерел: SoapyAirspyHF, SatDump, SDR++, SDRangel, slowrx.
+    - **Instruction:** Replace with 'from source: SoapyAirspyHF tag soapy-airspyhf-0.2.1 (0b3daf0) +lab; SatDump master 1aedd60 (Lime TX-patched); SDR++ (system librtlsdr via pkg-config); SDRangel 7.27.2 with -DENABLE_EXTERNAL_LIBRARIES=OFF; wsjtx-decoders+lab; slowrx. libairspyhf from noble 1.6.8-4build1 (true 1.6.8, soname 1; udev 03eb:800c GROUP=plugdev TAG+=uaccess). Optional 1.8.1 only as a backport of Debian 1.6.8-5 (87cf12a, soname 1) +lab with airspyhf tools, SoapyAirspyHF, SDR++, SDRangel, SatDump, AIS-catcher and labrx rebuilt in the same repo snapshot - 1.6.8-5 drops the exported airspyhf_flash_calibration in the same soname with no symbols file, so never mix it with binaries built against 1.6.8-4; never an upstream make install; never a commit in e1dcc17..0130450^ (use-after-free window).'
+    - **Reason:** r1 corr 1/2/4, refuted [0][2].
+    - **Sources:** reaudit_B r1 corr 1/2/4, confirmed [8]-[11], new_risk 3; https://sources.debian.org/src/airspyhf/1.6.8-5/debian/changelog
+    - **Saving usd:** 0
+  147.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Lime packaging
+    - **Anchor:** Лише з Lime: la9310-limesdr-dkms+lab з -DBUILD_PLUGINS_AMARISOFT=OFF (CI падає на будь-якому amarisoft .so).
+    - **Instruction:** Append: 'LimeSuiteNG limesdr-micro-staging 37cb1833 (or a later pinned commit); la9310_limesdr 0.2.1 + la9310_uart_module 1.0.0 built with GCC as a local DKMS +lab against linux-headers-6.18.2-4-qcom (upstream has no Linux arm64 or kernel-module CI); load la9310_limesdr at boot (modalias), not on demand after long uptime (4 MiB kzalloc, order-10); ship /lib/firmware limesdr-micro-m4.bin and limesdr-micro-iqplayer.eld in the +lab package with hash checks (Debian packaging ships neither); never ship limesdr-micro-eeprom.bin; pin the hashes and the running version (limeDevice -f after a full power-off, since the M4 image reloads only when the boot handshake is absent); no EEPROM/bootloader or limeFLASH writes in the field.'
+    - **Reason:** r2 corr 1/9/13, new_risks 1/5.
+    - **Sources:** reaudit_B r2 corr 1/9/13, confirmed [13][14], new_risks 1/5
+    - **Saving usd:** 0
+  148.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** Storage rates (HF+ 912k, Lime)
+    - **Anchor:** | HF+, ci16 768 ksps | 3.07 MB/s = 11 GB/h (cf32 — лише для похідних продуктів) |
+    - **Instruction:** Append a row/note 'HF+ ci16 912 ksps: 3.648 MB/s'. In the Lime row ('| Lime, 56 Msps ci16 | 224 MB/s, лише T7, близько 74 хв на TB |') add 'raw-to-T7 1x<=56 Msps; 2x<=40 Msps (320 MB/s) only after a 30-min soak; narrow 7 Msps = 28 MB/s per channel'.
+    - **Reason:** r1 corrected_spec; r2 corr 0/14.
+    - **Sources:** reaudit_B r1 corrected_spec; r2 corr 0/14
+    - **Saving usd:** 0
+  149.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** NPU Lime profiles and HF+ mask
+    - **Anchor:** Профілі без Lime: RTL-F, RTL-C, HF-F (HF+ 768 ksps), профіль другого RTL, DDC-зуми. З Lime: LIME-W/F/B.
+    - **Instruction:** Append 'LIME-W/F/B at 56 Msps (A/B candidate 61.44 Msps); narrow Lime profiles 7 or 7.68 Msps; never below 7 Msps.' In the class-policy bullet ('маска 3-30 kHz і 225-400 MHz діє для **всіх** боксів NPU') add '(for HF+ data by |f_abs|, negative bins included)'.
+    - **Reason:** r2 corr 0/5; r1 corr 13.
+    - **Sources:** reaudit_B r2 corr 0/5; r1 corr 13
+    - **Saving usd:** 0
+  150.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Regulator thermals and BONI dropout
+    - **Anchor:** LDO LNB розсіює 0.96 W при 0.3 A і θJA 30.5 °C/W, близько +29 K (близько 79 °C переходу при 50 °C усередині); на утриманні PTC 0.45 A — до 1.44 W, близько +44 K (близько 94 °C)
+    - **Instruction:** Replace with 'LNB LDO: 0.96 W at 0.3 A, RthetaJA 32.5 C/W (Rev G): about +31 K (about 81 C junction at 50 C inside, derived); at the 0.45 A eFuse sizing current 1.44 W, about +47 K (about 97 C, derived) - inside 125 C (model). BONI13V8 runs in dropout below a pack of about 13.9-14.0 V (model) and loses PSRR: ripple test at 60/77.5/162/490/518 kHz in and out of dropout.'
+    - **Reason:** r3 corr 3; r1 new_risk 6.
+    - **Sources:** reaudit_B r3 corr 3; r1 new_risk 6, bench [8]
+    - **Saving usd:** 0
+  151.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** Lime thermal and cold rules
+    - **Anchor:** Lime (якщо залишено) — шлях відводу 10 W через п'єдестал і прокладку ≥6 W/mK до пластини.
+    - **Instruction:** Replace with 'Lime (with-Lime default): design for 10 W (Lime setup page), typical about 4 W depending on configuration (Lime staff); contact on both sides - shield lid plus a pad under the LMS7002M/LA9310 on the rear - through the pedestal and >=6 W/mK pad to the plate; operating 0 to +85 C (commercial): labd refuses to power or stream below 0 C on the TMP1075; soak at 35-40 C ambient in the closed case; cold start at 0-5 C.' In 'Холод' change 'UFS і T7 розраховані від 0 °C.' to 'UFS, T7 and the Lime are rated from 0 C (warm up before streaming in winter).'
+    - **Reason:** r2 confirmed [2][18], corrected_spec.
+    - **Sources:** reaudit_B r2 confirmed [2][18], bench [7]
+    - **Saving usd:** 0
+  152.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Known lines table (V4L 28.8 MHz, Lime f_sys/CGEN, Bullseye ref)
+    - **Anchor:** | 144.000 / 432.000 / 1704.0 | 12 MHz (хаб, RP2040) | 2 m / 70 см / Metop |
+    - **Instruction:** Change the source cell to '12 MHz (hub, RP2040); 144.0/432.0 also V4L 28.8 MHz x 5 / x 15'. Add rows after the 1700.000 row: '| 1680.00 | Lime f_sys 112 MHz (56 Msps profile) | LIME-W 1700 MHz window |', '| 2240.00 / 2688 / 1966.08 | Lime CGEN VCO at 7 / 56 / 61.44 Msps | S-band preselector (Black Kite, PHASMA) |', '| 25.000 / 50.000 / 75.000 | Bullseye 25 MHz reference port | HF+ and V4L HF |'. All model.
+    - **Reason:** r0 confirmed [25]; r2 corr 5; r3 corr 16.
+    - **Sources:** reaudit_B r0 confirmed [25]; r2 corr 5; r3 corr 16; analogs_G6 #9
+    - **Saving usd:** 0
+  153.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** new_risk
+    - **Part:** Rails near LF/NAVTEX
+    - **Anchor:** LNB, Boni-Whip і LNA живляться від LDO — жодного перемикача біля ПЧ 739.5 MHz чи КХ-живлення.
+    - **Instruction:** Append: 'In dropout the BONI LDO passes buck ripple: D36V50F12 near 500 kHz could reach the Boni feed next to NAVTEX 490/518 kHz (model) - ripple test.' Also change 'VBUS HF+ — LC + Mix-31.' to 'VBUS HF+ - damped LC (R-C; an undamped LC rings on load-switch turn-on) + Mix-31.'
+    - **Reason:** r1 new_risks 6/9.
+    - **Sources:** reaudit_B r1 new_risks 6/9, corr 14
+    - **Saving usd:** 0
+  154.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** new_risk
+    - **Part:** V4L thermal bonding
+    - **Anchor:** V4L — усередині відсіку на екранованих подовжувачах 15 см з феритами, подалі від краю HDMI/J5.
+    - **Instruction:** Append: 'aluminium cases bonded to the plate with thermal pads; no R828S L-band heat data exists (all evidence R820T/R820T2), so RTL-B at 1700/1701.3/1707 MHz depends on the thermal A/B gate; if it fails: airflow first, then AHRPT to the Lime.'
+    - **Reason:** r0 corr 14.
+    - **Sources:** reaudit_B r0 corr 14, new_risk 4
+    - **Saving usd:** 0
+  155.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Lime spur mask
+    - **Anchor:** лінії Lime (737.28, 1597.44, 1689.6, 1720.32 MHz) — у масці.
+    - **Instruction:** Replace with 'Lime spur mask generated per profile: n x 30.72 MHz, n x f_sys and the CGEN VCO (examples: 1680.00/1689.60/1720.32 MHz in a 56 Msps 1700 MHz window; VCO 2240 MHz at 7 Msps), pruned by the INSHSW short/open measurement (model).'
+    - **Reason:** r2 corr 5.
+    - **Sources:** reaudit_B r2 corr 5, corrected_spec
+    - **Saving usd:** 0
+  156.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** rule
+    - **Part:** Policy mask on HF+ data
+    - **Anchor:** Біни 3-30 kHz і 225-400 MHz маскуються в «no data» до запису
+    - **Instruction:** Append '(for HF+ complex baseband by |f_abs| < 30 kHz incl. negative bins; unit test with a conducted 35 kHz tone at LF centres 290 and 330 kHz)'.
+    - **Reason:** r1 corr 13.
+    - **Sources:** reaudit_B r1 corr 13, bench [14]
+    - **Saving usd:** 0
+  157.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** keep_with_note
+    - **Part:** Lime mechanics
+    - **Anchor:** **Під Lime.** Пластину ріжуть один раз з отворами під п'єдестал і кріплення riser.
+    - **Instruction:** Append: 'Expect hardware v1.2 (HW_VER=2, EEPROM boot; top side up to 4.5 mm incl. VCTCXO, baluns and shield; bottom up to 1.35 mm); confirm the R44SF variant (2230 host, 2280 B+M card) with ADT-Link; stage-0 test with the card plugged straight into the slot.'
+    - **Reason:** r2 confirmed [3][21][23].
+    - **Sources:** reaudit_B r2 confirmed [3][21][23]
+    - **Saving usd:** 0
+  158.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** new_risk
+    - **Part:** Helicone build: GOES static bleed
+    - **Anchor:** SAWbird+ GOES на SMA під диском, **живлення по коаксіалу з інжектора ch3, не через micro-USB**.
+    - **Instruction:** Append ': static bleed (shunt inductor) at the SAWbird+ GOES input or a DC-grounded feed; S21 loss <=0.1 dB at 1.7 GHz, no in-band SRF'.
+    - **Reason:** r3 corr 15.
+    - **Sources:** reaudit_B r3 corr 15, bench [13]
+    - **Saving usd:** 0
+  159.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** new_risk
+    - **Part:** Field case: spare V4L filter
+    - **Anchor:** польовий чохол: tinySA (у полі — лише аналізатор; генератор ніколи не вмикається з під'єднаною антеною), FNB58, DMM, атенюатори, навантаження, Debug Probe.
+    - **Instruction:** Append 'inline FM band-stop for the spare V4L whisker kit'.
+    - **Reason:** r0 corr 11.
+    - **Sources:** reaudit_B r0 corr 11
+    - **Saving usd:** 0
+  160.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** librtlsdr removals
+    - **Anchor:** | librtlsdr 2.0.3 (.so.0) і рецепт purge-and-fork | C11. |
+    - **Instruction:** Replace with '| librtlsdr 2.0.3 as .so.0 and purge-and-fork; the LAB_BIAS_OK environment variable as the bias lock; a token gate on every GPIO in rtlsdr_set_bias_tee_gpio (breaks GPIO5 band switching); install dvb_usb_rtl28xxu /bin/false + update-initramfs; the rtl-sdr-blog fork driver (V1.4.0 is a Windows release; offset-tuning and EEPROM force_bt bias paths) | C11 (re-audit B): 2.0.3 is now the base, built as .so.2 |'.
+    - **Reason:** r0 corr 0/9/12; r3 refuted [2][3].
+    - **Sources:** reaudit_B r0; r3 refuted [2][3]
+    - **Saving usd:** 0
+  161.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** Boni voltage removals
+    - **Anchor:** Boni-Whip на 10.0 або 12.0 V
+    - **Instruction:** Change to 'Boni-Whip at 10.0, 12.0 or 12.5 V (BONI12V5); PTCs as the only limit on the Boni and LNB rails; PG wiring to TPS7A47 (no PG pin)'.
+    - **Reason:** r1 corr 9; r3 corr 2.
+    - **Sources:** reaudit_B r1 corr 9; r3 corr 2
+    - **Saving usd:** 0
+  162.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** Other re-audit B removals (new rows)
+    - **Anchor:** | Вивантаження (SondeHub, WSPRnet, PSK Reporter, агрегатори ADS-B, SatNOGS) за замовчуванням | Вимкнено; оприлюднення лише після перевірки місцевих правил. |
+    - **Instruction:** Append rows to 6.2: 'DAB on the HF+ | 912 ksps max (r1)'; 'HF+ ppm correction in labrx; airspyhf_flash_configuration | flash ppb + LOppmTenths push (r1)'; 'apt wsjtx + dpkg-divert | pulls libhamlib-utils; wsjtx-decoders+lab (r1)'; 'packaged Dream and SDRangel master for DRM/WEFAX in v1 | TX mode / modbfm (r1)'; 'PE4302 | EOL; PE4312 (r3)'; 'generic marketplace HMC7992 boards; 50 Ohm park on T4/RF4; pull-ups on A/B | RF1 park, chips on the PCB (r3, G1 #4)'; 'RTL-A gain 10-25 dB | 5-10 dB (r3)'; 'Moonraker Boni-Whip $123.95; Boni bring-up waiting for 20.11.2026 | Bonito shop in stock (r1)'; 'Lime 2/4 Msps A/B, 1.875 Msps minimum, any Lime rate below 7 Msps | firmware floor and DMA hang (r2)'; 'I-PEX 90435-001 | 90609-0001 (r2)'; 'LNB IF ingress target DVB-T 734-742 MHz | EU 733-758 MHz SDL/PMSE (r3)'; 'TPS25962x 13.8 V clamp | VOVC 12.97 V min below the 13.2 V rail (r3)'.
+    - **Reason:** Record what re-audit B removed.
+    - **Sources:** reaudit_B r1/r2/r3 corrections and refuted_findings
+    - **Saving usd:** 0
+  163.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** librtlsdr correction note (#5)
+    - **Anchor:** 5. software.json: рецепт «osmocom 2.0.3 (.so.0) + перезбирання всіх споживачів» замінено перезбиранням .so.2 noble 2.0.1
+    - **Instruction:** Append ': re-audit B: the base is now osmocom 2.0.3 rebuilt as .so.2 (revert 7ebcb04, zerocopy OFF, GPIO0-only gate); noble 2.0.1 + cherry-picks is the fallback'.
+    - **Reason:** r0 corr 1.
+    - **Sources:** reaudit_B r0 corr 1
+    - **Saving usd:** 0
+  164.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** Boni-Whip facts (#24, #10, #23)
+    - **Anchor:** 24. Живлення Boni-Whip: WiMo (18.10.2026) — 9-15 V, 189 g, близько 14 см, EUR 159, з 20.11.2026, струму немає; SWLing 2017 — 12-15 V; 12.5 V задовольняє обидва.
+    - **Instruction:** Replace with '24. Boni-Whip (manufacturer, 18.10.2026): 20 kHz-300 MHz, 12-15 V at the 2.1 mm barrel of the supplied bias tee, 65 mA typ, about 17 cm body, BNC, EUR 149.00 incl. VAT in stock at Bonito's shop; WiMo EUR 159, about 14 cm, 189 g, from 20.11.2026 (second source); 12.5 V left about 0.2 V margin -> 13.8 V (BONI13V8), gate at the barrel.' Also change 'Boni-Whip 12.5 V, не 10.0 V' (#10) and 'wsjtx GUI і fldigi → jt9/wsprd; Boni-Whip 12.5 V;' (#23) to 13.8 V and 'jt9/wsprd (wsjtx-decoders+lab)'.
+    - **Reason:** r1 corr 9/10, refuted [4].
+    - **Sources:** reaudit_B r1 corr 9/10
+    - **Saving usd:** 0
+  165.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** Balun (#25)
+    - **Anchor:** 25. КХ-дріт: балун 9:1 (ймовірно WB9-1, 0.125-125 MHz, ≥25 uH)
+    - **Instruction:** Append '; part ID unverified (no part number, 0 reviews); real LF loss is larger than the shunt-L figures with a capacitive wire'.
+    - **Reason:** r1 corr 17.
+    - **Sources:** reaudit_B r1 corr 17
+    - **Saving usd:** 0
+  166.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** Uputronics bias (#26)
+    - **Anchor:** 26. Передпідсилювачі Uputronics: вхід зміщення залежить від ревізії (плати з березня 2020 — 5-26 V; поточні — «5V max»).
+    - **Instruction:** Replace with '26. Uputronics FPA datasheet Rev 3.0: bias 3.5-5.5 V, about 50 mA, permanent damage above 5.5 V -> 4.5 V on ch2 is in spec (register #98 closed); price EUR 52.95 ex VAT EU storefront ($59.52), not $68.71 or $57.26.'
+    - **Reason:** r3 corr 6/8.
+    - **Sources:** reaudit_B r3 corr 6/8
+    - **Saving usd:** 0
+  167.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** New corrections from re-audit B
+    - **Anchor:** економія на Lime з урахуванням регіонального мита ($309-314) не застосовна.
+    - **Instruction:** Append items 37-52: 37. C11 token gate on every GPIO would break GPIO5 band switching (gate gpio==0 only). 38. Stock noble/Debian librtlsdr arm64 builds have zero-copy ON (typo). 39. dvb_usb_rtl28xxu is not built in 6.18.2-4 (no initramfs step). 40. V4L serials are not factory-unique. 41. V4L is not at Amazon USA. 42. V4L '3 dB MDS' is stated: NF about 6.3 dB, not 3.3 dB. 43. HMC7992 A=B=Low selects RF1, not T4. 44. TPS7A47 has no PG pin; TPS2596 FLT is silent in current limiting. 45. TPS7A47 RthetaJA 32.5 C/W. 46. TPS2553 at 88.7 kOhm trips at 262-342 mA, not from 240 mA; TCBT needs 162 kOhm. 47. SAWbird NOAA non-plus is not cheaper. 48. QO-100 ingress targets: EU 733-758 MHz, not DVB-T/B28 uplink. 49. PE4302 is EOL. 50. HF+ cannot do DAB; WEFAX/DRM are SDRangel master-only; packaged Dream can transmit. 51. Debian/Ubuntu 1.6.8-5 is libairspyhf 1.8.1 code under soname 1. 52. Lime: firmware sets the rate floor (7 Msps used), M4 firmware reloads only without the boot handshake, LMS_TXEN is driven high at init, I-PEX tool is 90609-0001, 4 MHF4L cables needed, NXP suspend tip and t/13284 (Mini v2.4) were misread.
+    - **Reason:** Record v1 statements corrected by re-audit B.
+    - **Sources:** reaudit_B refuted_findings and corrections (all 4 records)
+    - **Saving usd:** 0
+  168.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** Current measurements row
+    - **Anchor:** Струми холодними і гарячими при робочій напрузі: HF+ Discovery (5 V), Boni-Whip (12.5 V), Bullseye (13.2 V), Uputronics 440, LNA V2, шумове джерело ZFL-500 (12 V)
+    - **Instruction:** Change 'Boni-Whip (12.5 V)' to 'Boni-Whip (13.8 V)' and add 'HF+ idle (open, not streaming) and streaming at 768/912 ksps, cold and after 60 min sealed'. In the gate cell replace 'Uputronics 440: підсилення і NF при фактичній напрузі ch2 (нижче 4.5 V); якщо ревізія потребує 5 V — окремий канал 5.0 V або явне прийняття 4.5 V. Встановити PTC і межі TPS2553 на 1.5-2x виміряного' with 'Uputronics Rev 3.0 is in spec at 4.5 V (3.5-5.5 V): measure gain and current on ch2. Set the eFuse RILM (LNB, Boni) and the TPS2553 limits at 1.5-2x measured; HF+ brought up at >=0.75 A'.
+    - **Reason:** r1 corr 15, r3 corr 2/8.
+    - **Sources:** reaudit_B r1 corr 15; r3 corr 2/8
+    - **Saving usd:** 0
+  169.
+    - **Section:** 08_open_bench
+    - **Kind:** correction
+    - **Part:** RF parts row (HMC7992 truth table)
+    - **Anchor:** РЧ-деталі: розв'язка, втрати, логічні рівні і таблиця істинності HMC7992 (кількість ліній керування; який вивід вибирає стан «усі низькі» — туди 50 Ohm)
+    - **Instruction:** Replace with 'RF parts: HMC7992 truth table resolved (2 lines; A=B=Low -> RF1 = 50 Ohm park); remaining: IL/isolation per the G1 #4 limits and the power-up park test'.
+    - **Reason:** r3 corr 1.
+    - **Sources:** reaudit_B r3 corr 1, confirmed [6]
+    - **Saving usd:** 0
+  170.
+    - **Section:** 08_open_bench
+    - **Kind:** correction
+    - **Part:** HF row (ppm, Boni length, balun, USB)
+    - **Anchor:** КХ: ppm HF+; довжина корпусу Boni-Whip (щодо межі 35 см); DCR і S21 балуна на 40-500 kHz; тип USB-роз'єму HF+
+    - **Instruction:** Replace with 'HF: HF+ ppb via airspyhf_calibrate (GNSS-locked 10 MHz); Boni-Whip whip (Strahler) length against the 20-23 cm / 35 cm piece rule; balun DCR and S21 at 40-500 kHz incl. a series 50-150 pF wire simulator; HF+ USB connector closed (micro-USB B)'.
+    - **Reason:** r1 corr 0/16/17, new_risk 8.
+    - **Sources:** reaudit_B r1
+    - **Saving usd:** 0
+  171.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Lime acceptance row
+    - **Anchor:** Lime, якщо залишено: riser 8 GT/s x1 з нулем AER за 60 хв;
+    - **Instruction:** Change to 'Lime (with-Lime default): stage 0 in the slot then on the riser, 8 GT/s x1 with zero AER in 60 min; 50 warm + 20 cold boots at >=0 C; 2x56 Msps 60 min no drops;' (rest of the row kept); add 'see the Lime tests L-0..L-12 below'.
+    - **Reason:** r2 corrected_spec acceptance.
+    - **Sources:** reaudit_B r2 corrected_spec
+    - **Saving usd:** 0
+  172.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** On-air checks / Airspy Mini
+    - **Anchor:** До купівлі масиву 2x2 чи Airspy Mini
+    - **Instruction:** Append '; Airspy Mini official range ends at 1700 MHz: if bought, conducted acceptance at 1701.3 and 1707 MHz within the 30-day window (G6 #12)'.
+    - **Reason:** r0 corr 17.
+    - **Sources:** reaudit_B r0 corr 17; analogs_G6 #12
+    - **Saving usd:** 0
+  173.
+    - **Section:** 08_open_bench
+    - **Kind:** correction
+    - **Part:** BOM small items row
+    - **Anchor:** дріт BNC-SMA для Boni-Whip
+    - **Instruction:** Replace with 'Boni BNC jumper + BNC M-M lead (G1 #5) and a 5.5/2.1 mm barrel plug'.
+    - **Reason:** r1 corr 10.
+    - **Sources:** reaudit_B r1 corr 10
+    - **Saving usd:** 0
+  174.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** FE1.1s / usbfs row
+    - **Anchor:** 15 хв rtl_test 2.88 Msps на синьому порту
+    - **Instruction:** Append ' and on FE1.1s P1; with usbcore.usbfs_memory_mb=0 a 4-stream FE1.1s test (RTL-B + HF+ + LAB device + sensor; + Lime) shows no Failed to submit transfer'.
+    - **Reason:** r0 corr 18, bench [5][6].
+    - **Sources:** reaudit_B r0 bench [5][6]
+    - **Saving usd:** 0
+  175.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** LNA rail / TPS2553 row
+    - **Anchor:** Пара LT3045 на 4.5 V від LAB5 біля просідання: пульсації і PSRR на портах LNA; поріг TPS2553 при 300 mA; розсіювання TPS7A4701 LNB на пластині
+    - **Instruction:** Replace 'поріг TPS2553 при 300 mA' with 'TPS2553 trip 262-342 mA (88.7 kOhm) / 144-192 mA (162 kOhm, TCBT)'.
+    - **Reason:** r3 corr 4/5.
+    - **Sources:** reaudit_B r3 bench [4]
+    - **Saving usd:** 0
+  176.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** V4L-0 librtlsdr build gate
+    - **Anchor:** 
+    - **Instruction:** Add row: 'librtlsdr2 2.0.3-0+lab1 build gate (arm64 builder): log contains zero-copy support disabled; objdump SONAME librtlsdr.so.2; nm -D 37 rtlsdr_* exports; lab patch applies (compiled on amd64 only so far) | must pass before any V4L use | W1-2'.
+    - **Reason:** r0 bench [0].
+    - **Sources:** reaudit_B r0 bench [0]
+    - **Saving usd:** 0
+  177.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** V4L-1 incoming genuineness
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Per V4L, conducted only: diagonal case screws; rtl_eeprom read-only shows RTLSDRBlog / Blog V4L and IR bit = 1; direct sampling 0; tinySA CW through a 30 dB pad at 10.000, 137.500, 437.000 and 1700.000 MHz, about -90 dBm at the SMA; pass: every tone visible and the log shows RTL-SDR Blog V4 Lite Detected (a V3-clone with copied strings hears nothing at HF); test the GPIO5 HF/VHF switch on every unit (batch variance) | reject fakes | on arrival'.
+    - **Reason:** r0 bench [1], corr 15, new_risk 6; G1 #0 gate (a).
+    - **Sources:** reaudit_B r0; analogs_G1 #0; operator_notes 21
+    - **Saving usd:** 0
+  178.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** V4L-2 bias/GPIO CI
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Per unit, no grant: tune 137.9 -> 1700 -> 7 -> 437 -> 1707 MHz; every rtlsdr_set_center_freq returns 0, the conducted tone is seen at each step, bias-on returns -1, LED off, SMA 0.00 V on a DMM; with the grant 4.5 V +/-0.2 V under a 90 mA load; kill -9 the app: 0 V within 1 s of the next open (immediately with the close patch) | C11 | W1-2'.
+    - **Reason:** r0 bench [2]; operator note 12c unit test.
+    - **Sources:** reaudit_B r0 bench [2]; operator_notes 12c
+    - **Saving usd:** 0
+  179.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** V4L-3 token-patch regression and DC at boot
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Patched librtlsdr, no token: tune 137.9, 437.8, 1700 and 10 MHz; level of a conducted noise source or beacon within 1 dB of the unpatched build (proves GPIO5 not gated). DMM/scope on each V4L SMA from power-on through labd start and after toggling offset tuning in OpenWebRX+/SDRangel: 0 V | C11 | W1-2'.
+    - **Reason:** r3 bench [2][3]; operator note 12.
+    - **Sources:** reaudit_B r3 bench [2][3]; operator_notes 12
+    - **Saving usd:** 0
+  180.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** V4L-4 serial/index
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Program LAB-RTLA / LAB-RTLB / LAB-RTLS; with all 3 attached rtl_test -d LAB-RTLB opens the right unit, SatDump selects by serial, auto_rx opens the correct unit | udev naming | assembly'.
+    - **Reason:** r0 bench [3].
+    - **Sources:** reaudit_B r0 bench [3]
+    - **Saving usd:** 0
+  181.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** V4L-5 thermal L-band A/B (d80421b gate)
+    - **Anchor:** 
+    - **Instruction:** Add row: 'RTL-B in the closed case at 40-45 C ambient (warm box), thermocouple on the case; conducted CW at -100 dBm, 200 kHz offset from 1700.0 then 1707.0 MHz, 60 min each, unpatched vs d80421b-patched; log tone SNR every 10 s and any lock failure after a tune; pass: no lock loss and SNR drop below 1 dB | decides whether the d80421b port is enabled by default; if RTL-B fails: airflow, then AHRPT to the Lime | after case print'.
+    - **Reason:** r0 bench [4], corr 3/14.
+    - **Sources:** reaudit_B r0 bench [4]
+    - **Saving usd:** 0
+  182.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** V4L-6 zero-copy and stream integrity
+    - **Anchor:** 
+    - **Instruction:** Add row: '30 min rtl_test -s 2560000 on each port: 0 lost bytes, stderr never shows Allocating 15 zero-copy buffers, rtl_sdr captures have no all-zero blocks; then 15 min at 2.88 Msps on the blue port and on FE1.1s P1 (Metop/AWS gate a) | C11, C5 | W1-2'.
+    - **Reason:** r0 bench [5].
+    - **Sources:** reaudit_B r0 bench [5]
+    - **Saving usd:** 0
+  183.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** V4L-7 USB/power
+    - **Anchor:** 
+    - **Instruction:** Add row: 'dr_mode reads host and lsusb -t shows the V4L at 480M on the blue port; VBUS at the dongle end of each extension at least 4.75 V at 2.56 Msps (plus 90 mA bias on the spare) | C5 | W1-2'.
+    - **Reason:** r0 bench [6].
+    - **Sources:** reaudit_B r0 bench [6]
+    - **Saving usd:** 0
+  184.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** V4L-8 stall recovery
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Pull the device or cut VBUS (GPA2/GPA3) mid-stream: rtlsdr_read_async returns -1 within 2 s; labd recovers by VBUS cycle and reopen by serial in under 5 s; event logged | labrx watchdog | W1-2'.
+    - **Reason:** r0 bench [7].
+    - **Sources:** reaudit_B r0 bench [7]
+    - **Saving usd:** 0
+  185.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** V4L-9 lab-driver RF baseline (D10)
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Conducted: two-tone desense with a 95 MHz blocker plus a test tone at 137.5, 400, 739.5 and 1090 MHz through a combiner; MDS at 137.5, 437 and 1700 MHz (500 Hz normalised, admin method: 2.4 Msps, 64K FFT, Blackman-Harris, +8.3 dB); compare with the datasheet -12/-24/-26/-29 dBm and -140.7/-140.7/-130.7 dBm | replaces datasheet numbers in the gain plan | D10 matrix'.
+    - **Reason:** r0 bench [8], confirmed [4].
+    - **Sources:** reaudit_B r0 bench [8]
+    - **Saving usd:** 0
+  186.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** V4L-10 spare whisker kit near FM
+    - **Anchor:** 
+    - **Instruction:** Add row: 'With the FM band-stop inline, a radiosonde (402-405 MHz) or ADS-B noise floor rises by less than 1 dB when a conducted -20 dBm 98 MHz tone is added through a combiner | spare kit filter | on arrival'.
+    - **Reason:** r0 bench [9].
+    - **Sources:** reaudit_B r0 bench [9]
+    - **Saving usd:** 0
+  187.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HF-0 HF+ arrival and firmware
+    - **Anchor:** 
+    - **Instruction:** Add row: 'airspyhf_info: record S/N, firmware string and rate list (on R4.0.0+ expect 228k, not 256k); flash to R5.0.1 if older than R4.0.7 (Windows 10 per README, Windows 11 with wmic_dlc, or by hand: hfplus_fw.exe, hfplus_ppb.exe, hfplus_reboot.exe, bossac -u, -e -b -v -w with the bb/cd binary, --reset on the VID_03EB&PID_6124 port); re-run airspyhf_info; recalibrate afterwards (FLASH.bat writes -152 ppb if the saved value is 0); the flash host is an offline one-off machine | inside ITEAD's 30-day return window | on arrival'.
+    - **Reason:** r1 bench [0], corr 3, new_risks 4/10.
+    - **Sources:** reaudit_B r1; https://airspy.com/downloads/airspy-hf-flash-2024-12-11_5.0.1.zip
+    - **Saving usd:** 0
+  188.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HF-1 HF+ calibration
+    - **Anchor:** 
+    - **Instruction:** Add row: 'GNSS-locked 10 MHz (Bodnar/tinySA/GPSDO) conducted through at least 40 dB; measure ppb, store with airspyhf_calibrate -c, re-open and confirm read-back; the same carrier reads within 1 Hz in SDR++, SDRangel (LOppmTenths pushed by labd), labrx and OpenWebRX+ | #31 | bench'.
+    - **Reason:** r1 bench [1].
+    - **Sources:** reaudit_B r1 bench [1]
+    - **Saving usd:** 0
+  189.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HF-2 HF+ current
+    - **Anchor:** 
+    - **Instruction:** Add row: 'FNB58 inline on HF+ VBUS: idle (open, not streaming) and streaming at 768 and 912 ksps, cold and after 60 min sealed; set the TPS2553/load-switch limit to 1.5-2x the streaming figure; update the mode E runtime | 5.1 | on arrival'.
+    - **Reason:** r1 bench [2].
+    - **Sources:** reaudit_B r1 bench [2]
+    - **Saving usd:** 0
+  190.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HF-3 HF+ USB soak
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Behind FE1.1s and CH334F on kernel 6.18: 30 min with zero dropped buffers at 768k and 912k with RTL-B and one LAB device streaming; 50 start/stop cycles; one 2 h run (excludes the R2.0.0-type 1.5 h TIMEOUT); fail on any xhci refuse reset or clear toggle in dmesg or a callback stall | C5 | W1-2 / arrival'.
+    - **Reason:** r1 bench [3].
+    - **Sources:** reaudit_B r1 bench [3]
+    - **Saving usd:** 0
+  191.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HF-4 SoapyAirspyHF / OpenWebRX+ rates
+    - **Anchor:** 
+    - **Instruction:** Add row: 'SoapySDRUtil --probe=driver=airspyhf reports a non-zero gain range and the device rate list; every OpenWebRX+ HF+ profile rate actually applies (known carrier at the right frequency, correct waterfall span); no 256000 profile | #31 | after install'.
+    - **Reason:** r1 bench [4].
+    - **Sources:** reaudit_B r1 bench [4]
+    - **Saving usd:** 0
+  192.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HF-5 SDRangel LOppmTenths
+    - **Anchor:** 
+    - **Instruction:** Add row: 'After each SDRangel preset load, REST GET the AirspyHF settings; LOppmTenths equals round(ppb/100) | #31 | after install'.
+    - **Reason:** r1 bench [5].
+    - **Sources:** reaudit_B r1 bench [5]
+    - **Saving usd:** 0
+  193.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HF-6 HF+ shield/EMI A/B
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Terminated input (50 Ohm via K1/K2 de-energised), RBW 1 Hz at 40, 60, 77.5, 162, 490, 518 and 4209.5 kHz and at 1, 7, 14 MHz; with/without tin shield, USB-lead ferrite and shell bond, LF Quiet on/off, D36V50F12/D36V28F5/IP2368 load steps | shield accepted only after this | D10'.
+    - **Reason:** r1 bench [6].
+    - **Sources:** reaudit_B r1 bench [6]
+    - **Saving usd:** 0
+  194.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HF-7 HF+ VBUS LC
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Ripple at the HF+ VBUS pin from 1 kHz to 30 MHz, turn-on ringing and inrush through the load switch (FAULT must stay clear at turn-on) | damped LC | power-board bench'.
+    - **Reason:** r1 bench [7].
+    - **Sources:** reaudit_B r1 bench [7]; analogs_G1 #8
+    - **Saving usd:** 0
+  195.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HF-8 BONI13V8 rail
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Bench supply in place of the pack at 16.4, 14.4, 14.0, 13.6 and 13.2 V: barrel and antenna-end voltage at the measured Boni current; rail ripple at 60/77.5/162/490/518 kHz in and out of dropout; gate >=12.0 V at the barrel at 13.2 V; verify the re-derived OVLO does not trip in the 13.8 V band | C17 | power-board bench'.
+    - **Reason:** r1 bench [8]; OVLO overlap.
+    - **Sources:** reaudit_B r1 bench [8]; r3 corr 2; analogs_G3 #9
+    - **Saving usd:** 0
+  196.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HF-9 Boni-Whip arrival
+    - **Anchor:** 
+    - **Instruction:** Add row: 'DC input resistance at about 1 mA sense current; supply current cold and hot; whip (Strahler) length against the 20-23 cm / 35 cm piece rule | sets the DC-sense threshold and the 30-150 mA window | on arrival'.
+    - **Reason:** r1 bench [9].
+    - **Sources:** reaudit_B r1 bench [9]
+    - **Saving usd:** 0
+  197.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HF-10 DC-sense and interlock
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Resistance seen at P5 for the balun, the Boni-Whip, open and a 50 Ohm load; set the short threshold and the 30-150 mA window; the rail turns off on a short, on open and on an out-of-window current; no SMA LNA can mate with the BNC P5 | C17 | bench'.
+    - **Reason:** r1 bench [10]; r3 bench [7].
+    - **Sources:** reaudit_B r1 bench [10]; r3 bench [7]
+    - **Saving usd:** 0
+  198.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HF-11 Boni bias tee
+    - **Anchor:** 
+    - **Instruction:** Add row: 'DIY tee or Bonito Einspeiseweiche: S21 from 20 kHz to 30 MHz conducted on the LiteVNA <=0.5 dB; DC at the HF+ SMA with bias on <=10 mV | C17 | bench'.
+    - **Reason:** r1 bench [11].
+    - **Sources:** reaudit_B r1 bench [11]
+    - **Saving usd:** 0
+  199.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HF-12 balun
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Balun DCR; S21 at 40-500 kHz conducted in 50/450 Ohm and with a series 50-150 pF wire-simulator capacitor | confirms the LF-on-whip rule | on arrival'.
+    - **Reason:** r1 bench [12].
+    - **Sources:** reaudit_B r1 bench [12]
+    - **Saving usd:** 0
+  200.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HF-13 G6K selector
+    - **Anchor:** 
+    - **Instruction:** Add row: 'G6K pair (part per G1 #7) on the LiteVNA, loads on the ports: isolation >=35 dB at 162-260 MHz (K1/K2 and both de-energised); IL <=0.3 dB from 10 kHz to 260 MHz; unpowered state = HF+ on 50 Ohm (plus G1 #7 LF/HF gate for the -S variant) | C17 | bench'.
+    - **Reason:** r1 bench [13]; r3 bench [12].
+    - **Sources:** reaudit_B r1 bench [13]; r3 bench [12]; analogs_G1 #7
+    - **Saving usd:** 0
+  201.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HF-14 LF-window image test
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Conducted 35 kHz tone at LF centre 290 kHz should show an image near -35 kHz absolute (model); repeat at 330 kHz; stored data has every |f| < 30 kHz bin set to no data | survey mask | bench'.
+    - **Reason:** r1 bench [14].
+    - **Sources:** reaudit_B r1 bench [14]
+    - **Saving usd:** 0
+  202.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HF-15 LF decode checks
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Boni-Whip in LF Quiet: DCF77, MSF and TDF (not Tuesday 08-12) in SDRangel 7.27.2 Radio Clock, and NAVTEX 490/518 kHz; replay one DCF77/MSF recording at 768/32 and at the chosen Low-IF rate | receive-only | after Boni arrival'.
+    - **Reason:** r1 bench [15].
+    - **Sources:** reaudit_B r1 bench [15]
+    - **Saving usd:** 0
+  203.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HF-16 policy CI on the image
+    - **Anchor:** 
+    - **Instruction:** Add row: 'dpkg shows no wsjtx, libhamlib-utils, js8call or direwolf; rigctl/rigctld absent; OpenWebRX+ detects FT8/WSPR (jt9/wsprd) and FST4/Q65 through the stub; if dream is present its strings contain no --transmitter or CDRMTransmitter, dream -t fails and a dreamt symlink does not transmit; SDRangel plugin list has no TX plugins (incl. modbfm if master is built) | P2 no-TX rule | every image'.
+    - **Reason:** r1 bench [16].
+    - **Sources:** reaudit_B r1 bench [16]
+    - **Saving usd:** 0
+  204.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HF-17 libairspyhf 1.8.1 only
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Only for a 1.8.1 backport: airspyhf_get_bias_tee_count returns 0 on the Discovery, no code calls airspyhf_set_bias_tee outside tests, every consumer rebuilt against the same library | condition: 1.8.1 only if its features are needed | if used'.
+    - **Reason:** r1 bench [17], corr 20.
+    - **Sources:** reaudit_B r1 bench [17]
+    - **Saving usd:** 0
+  205.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** L-0 Lime identity
+    - **Anchor:** 
+    - **Instruction:** Add row: 'lspci -nn -vv -s 0001:01:00.0: [0d10] 2058:001d, BAR0 64M, LnkSta 8GT/s x1; no BAR 0: no space in dmesg; no arm-smmu faults; limeDevice -f records HW_VER, firmware and VSPA versions; in ROM/recovery boot record the class ([0000] vs [0002]) | 30-day RMA window | delivery'.
+    - **Reason:** r2 bench [0], corr 4.
+    - **Sources:** reaudit_B r2 bench [0]
+    - **Saving usd:** 0
+  206.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** L-1 Lime stage 0 then riser
+    - **Anchor:** 
+    - **Instruction:** Add row: '60 min at 2x56 Msps with the card straight in the slot, then on the R44SF; compare AER counters, limeTRX drop counters and FIFO 10 vs nice -20 | acceptance | delivery'.
+    - **Reason:** r2 bench [1].
+    - **Sources:** reaudit_B r2 bench [1]
+    - **Saving usd:** 0
+  207.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** L-2 Lime firmware reload
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Swap m4.bin: (a) warm reboot and read the version; (b) full power-off and read again - confirms whether the M4 image reloads without a power cut | before P7 | delivery'.
+    - **Reason:** r2 bench [2], corr 1.
+    - **Sources:** reaudit_B r2 bench [2]
+    - **Saving usd:** 0
+  208.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** L-3 Lime rate floor
+    - **Anchor:** 
+    - **Instruction:** Add row: '7 Msps streams; 2 Msps is rejected cleanly (error, no hang); any 3-6 Msps test only on the bench with a power-cycle path, as a 30 min soak watching for a VSPA DMA hang | rate rule | delivery'.
+    - **Reason:** r2 bench [3].
+    - **Sources:** reaudit_B r2 bench [3]
+    - **Saving usd:** 0
+  209.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** L-4 Lime J4 reference proof
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Bench mode, watchdog armed: scope the J4 swing; LBE-1420 at 30.72 MHz, then 30.72 MHz + 30.72 Hz (1 ppm): frequency shift of a strong known carrier = 1 ppm; repeat at 10 MHz and check CGEN lock; test pulling the reference while idle with the watchdog armed | P7 | after firmware >=1f70189'.
+    - **Reason:** r2 bench [4].
+    - **Sources:** reaudit_B r2 bench [4]
+    - **Saving usd:** 0
+  210.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** L-5 Lime receive-only leakage
+    - **Anchor:** 
+    - **Instruction:** Add row: 'X1 into a 30 dB pad into the tinySA (conducted): measure during configure, CalibrateRx (SatDump start) and streaming at the RX LO, RX LO - fs/8 and the SXT; read back 0x0020 TXEN bits = 0 after each step; proposed limit <= -60 dBm | receive-only rule | delivery'.
+    - **Reason:** r2 bench [5].
+    - **Sources:** reaudit_B r2 bench [5]
+    - **Saving usd:** 0
+  211.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** L-6 Lime spur map
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Per profile (7, 7.68, 56, 61.44 Msps at 1420, 1543, 1700, 2209, 2287 and 3500 MHz): Welch FFT with the INSHSW (LNAW/LNAL) input shorted, then open; keep lines that stay, send vanishing lines to shield/riser/ferrite fixes; check the CGEN VCO at 2240 MHz in the 7 Msps S-band case | spur mask | delivery'.
+    - **Reason:** r2 bench [6].
+    - **Sources:** reaudit_B r2 bench [6]
+    - **Saving usd:** 0
+  212.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** L-7 Lime power and thermal
+    - **Anchor:** 
+    - **Instruction:** Add row: 'INA228 on VCC_5V_PERI idle (open, no stream), 1x7, 1x56 and 2x56 Msps with TMP1075 logged; pass <=14 W; repeat the soak at 35-40 C ambient in the closed case; cold start at 0-5 C | acceptance | delivery'.
+    - **Reason:** r2 bench [7].
+    - **Sources:** reaudit_B r2 bench [7]
+    - **Saving usd:** 0
+  213.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** L-8 Lime throughput to T7
+    - **Anchor:** 
+    - **Instruction:** Add row: '1x56 Msps raw to the T7 for 30 min with no drops; 2x40 Msps for 30 min; measure the Gen2 ceiling if the fallback is ever needed | T7 limit | delivery'.
+    - **Reason:** r2 bench [8].
+    - **Sources:** reaudit_B r2 bench [8]
+    - **Saving usd:** 0
+  214.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** L-9 Lime power management
+    - **Anchor:** 
+    - **Instruction:** Add row: 'sleep, suspend, hibernate and hybrid-sleep targets masked; power/control=on; park/unpark (streams stopped, LMS channels disabled over SPI) over 100 cycles without re-enumeration | never cut 3.3 V at runtime | delivery'.
+    - **Reason:** r2 bench [9].
+    - **Sources:** reaudit_B r2 bench [9]
+    - **Saving usd:** 0
+  215.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** L-10 Lime module robustness
+    - **Anchor:** 
+    - **Instruction:** Add row: 'rmmod/modprobe la9310_limesdr after 24 h uptime under memory pressure (4 MiB kzalloc succeeds); confirm the 80ffad5c BAR release works on reload | load-at-boot rule | delivery'.
+    - **Reason:** r2 bench [10].
+    - **Sources:** reaudit_B r2 bench [10]
+    - **Saving usd:** 0
+  216.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** L-11 Lime VCTCXO trim
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Step VCTCXO DAC (volatile) by +/-1000 and measure ppb per step against GNSS-SDR; confirm XO_DAC from EEPROM is applied at the next power-on | P5 | delivery'.
+    - **Reason:** r2 bench [11].
+    - **Sources:** reaudit_B r2 bench [11]
+    - **Saving usd:** 0
+  217.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** L-12 Lime questions before the 1 Dec gate
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Ask Lime: which revision and boot source ship, whether IC21 ADF4002 is fitted on Basic and will get firmware support, price of an industrial-temperature board; ask Crowd Supply: shipping charged once per order or per project; ask ADT-Link: which R44SF variant takes a 2230 host and a 2280 B+M card; resolve on the board: RX-B called X3 vs X4, VCTCXO table E7355LF vs E6245LF, versions page two vs three | gate | before 1 Dec 2026'.
+    - **Reason:** r2 bench [12], new_risk 7.
+    - **Sources:** reaudit_B r2 bench [12], new_risk 7
+    - **Saving usd:** 0
+  218.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** RF-0 HMC7992 power-up park
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Each switch: boot with labd stopped; A/B read <0.3 V; tinySA at -40 dBm through a 30 dB pad to each throw in turn: only the RF1 load path is connected and no antenna throw shows the tone (conducted) | RF1 park | step 10'.
+    - **Reason:** r3 bench [0].
+    - **Sources:** reaudit_B r3 bench [0]
+    - **Saving usd:** 0
+  219.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** RF-1 HMC7992 qualification
+    - **Anchor:** 
+    - **Instruction:** Add row: 'LiteVNA 100 MHz-2 GHz: IL <=1.2 dB at 137/437/740/1700 MHz (on-board design: G1 #4 limits <=0.9 dB, isolation >=40 dB target / >=37 dB accept); isolation >=30 dB on every throw pair; with the V4L tee forced on in a test build, 0 V DC on RF1-RF4 (RFC block works); sweep 1-100 MHz if HF bench work routes through RF4 | step 10'.
+    - **Reason:** r3 bench [1][14].
+    - **Sources:** reaudit_B r3 bench [1]; analogs_G1 #4
+    - **Saving usd:** 0
+  220.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** RF-2 TPS2553 trip per channel
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Electronic-load ramp at 4.5 V: 88.7 kOhm channels trip at 262-342 mA; TCBT channels (162 kOhm) at 144-192 mA; FAULT goes low on MCP #3, the latch holds, an EN toggle resets it | C9 | power-board bench'.
+    - **Reason:** r3 bench [4].
+    - **Sources:** reaudit_B r3 bench [4]; analogs_G3 #11
+    - **Saving usd:** 0
+  221.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** RF-3 LNA current baselines
+    - **Anchor:** 
+    - **Instruction:** Add row: 'INA3221 at 4.5 V: SAWbird+ NOAA 170-180 mA, GOES 120-160 mA, H1 about 120 mA (G6 #3 window 108-150 mA), Uputronics 440 about 50 mA, LNA V2 about 90 mA, L-band patch about 20 mA; store as labd alarm baselines (>20% over = alarm) | C9 | on arrival'.
+    - **Reason:** r3 bench [5].
+    - **Sources:** reaudit_B r3 bench [5]
+    - **Saving usd:** 0
+  222.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** RF-4 LNB rail and eFuse
+    - **Anchor:** 
+    - **Instruction:** Add row: '13.2 V +/-0.33 V at the F connector with the battery at 13.8-16.4 V; measure the Bullseye current at 13.2 V, then set RILM; hard short on F: current limits near ILIM, then thermal shutdown and latch-off, FLT low; ramp eFuse IN on a bench supply: OVLO trips at 13.9-14.8 V and FLT asserts; soft overload just above ILIM: FLT stays high and the INA3221 alarm fires | C8 | power-board bench'.
+    - **Reason:** r3 bench [6].
+    - **Sources:** reaudit_B r3 bench [6]
+    - **Saving usd:** 0
+  223.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** RF-5 Boni rail eFuse
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Setpoint under load, Boni-Whip current, eFuse limit about 0.125 A (RILM 7.87 kOhm); DC-sense distinguishes Boni (valid load), the 9:1 balun (short) and open | C17 | power-board bench'.
+    - **Reason:** r3 bench [7].
+    - **Sources:** reaudit_B r3 bench [7]
+    - **Saving usd:** 0
+  224.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** RF-6 Flamingo+ intake
+    - **Anchor:** 
+    - **Instruction:** Add row: 'S21 at 137.1/137.9 MHz <=1.2 dB (expect about 0.5 dB); stopband 88-108 MHz >=60 dB average (point limits per G1 #2) | C10 | on arrival'.
+    - **Reason:** r3 bench [8].
+    - **Sources:** reaudit_B r3 bench [8]; analogs_G1 #2
+    - **Saving usd:** 0
+  225.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** RF-7 RTL-A gain sweep
+    - **Anchor:** 
+    - **Instruction:** Add row: 'VHF-137 with SAWbird+ on and a load at the input: choose the lowest RTL-A gain at which the LNA raises the floor by >=6 dB; repeat with the antenna at a strong-FM site (receive-only) | #96 | bring-up'.
+    - **Reason:** r3 bench [9].
+    - **Sources:** reaudit_B r3 bench [9]
+    - **Saving usd:** 0
+  226.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** RF-8 QO-100 IF level and ingress
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Noise rise 10-15 dB with the LNB on and the 15/20 dB pad; a 3 dB pad step shows no intermod; ingress scan 733-758 MHz (EU SDL/PMSE) with the LNB unpowered, then powered | C23 | after LNB arrival'.
+    - **Reason:** r3 bench [10].
+    - **Sources:** reaudit_B r3 bench [10]
+    - **Saving usd:** 0
+  227.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** RF-9 Bullseye reference port
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Measure DC on the 25 MHz port; look for 25 MHz and harmonics on the HF+ and V4L with the port open, capped and terminated (terminator per G6 #9) | #102 | after LNB arrival'.
+    - **Reason:** r3 bench [11].
+    - **Sources:** reaudit_B r3 bench [11]; analogs_G6 #9
+    - **Saving usd:** 0
+  228.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** RF-10 static bleed inductors
+    - **Anchor:** 
+    - **Instruction:** Add row: 'P1, P6 and helix-feed bleed inductors: S21 loss <=0.1 dB at 137 MHz / 64-260 MHz / 1.7 GHz; no self-resonance in band (LiteVNA, conducted) | protection | step 10'.
+    - **Reason:** r3 bench [13].
+    - **Sources:** reaudit_B r3 bench [13]
+    - **Saving usd:** 0
+  229.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** RF-11 PE4312 sled module
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Read the chip marking; sweep 1 MHz-2 GHz at 0/15.5/31.5 dB (all 64 states per G6 #2); sweep the sled HMC7992 from 1 to 100 MHz if HF bench work will route through it | P13 | extended'.
+    - **Reason:** r3 bench [14].
+    - **Sources:** reaudit_B r3 bench [14]; analogs_G6 #2
+    - **Saving usd:** 0
+  230.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** RF-12 Uputronics on ch2
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Gain and current at 4.5 V on ch2; UHF reception lost with ch2 off (no pass-through); labd requires ch2 on for UHF profiles | D8 | on arrival'.
+    - **Reason:** r3 bench [15].
+    - **Sources:** reaudit_B r3 bench [15]
+    - **Saving usd:** 0
+  231.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** Purchase and enable conditions from re-audit B
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Conditions: order all 3 V4L now (limited stockpile); buy TPS259630DDAR early (TI store out of stock; fallback TPS259631DDAR); buy the Boni-Whip now from Bonito's shop (WiMo only as second source); confirm VAT/IOSS at checkout for ITEAD (EU warehouse) and Uputronics; d80421b port default-on only if it wins V4L-5; DRM in v1 only with a source-patched Dream that passes HF-16; libairspyhf 1.8.1 only via the Debian 1.6.8-5 backport; Gen2 Lime fallback caps 1x56 / 2x<=40 Msps; Lime recovery board modification and P7b only after the RMA window; BONI OVLO divider re-derived for 13.8 V before first power-up | gates | before ordering / bring-up'.
+    - **Reason:** Conditions stated across re-audit B.
+    - **Sources:** reaudit_B r0 corrected_spec; r1 corr 1/5/10; r2 corr 4/8, corrected_spec; r3 new_risk 4
+    - **Saving usd:** 0
+  232.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 2: V4L order
+    - **Anchor:** Плюс з офіційного каналу RTL-SDR Blog: 3× V4L ($113.85)
+    - **Instruction:** Append '(store ships from the China warehouse only and not to the EU; EU via eBay rtl-sdr-blog or AliExpress 4523039/1101427871, confirm country at checkout; EU landed about $135.5-140.0 for 3 incl. VAT (model) + EUR 3 duty + EUR 2 handling fee for one tariff line; not at Amazon USA; add an RTL-SDR Blog FM band-stop $16.95 for the spare kit unless Flamingo+ #2 is used)'.
+    - **Reason:** r0 corr 7/11.
+    - **Sources:** reaudit_B r0 corr 7/11; analogs_G1 #0; operator_notes 35
+    - **Saving usd:** 0
+  233.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 4: Lime order
+    - **Anchor:** 2× MHF4L-SMA у тому самому замовленні
+    - **Instruction:** Replace with 'board only in the Crowd Supply cart; 4 MHF4L-SMA cables (RX1, RX2, J4, X1 to 50 Ohm) on the DigiKey DE order at the 1 Dec gate (G6 #6)'; add 'check the order weekly (a shipping e-mail is the effective cancel deadline)'.
+    - **Reason:** r2 corr 6, corrected_spec; G6 #6.
+    - **Sources:** reaudit_B r2 corr 6; analogs_G6 #6
+    - **Saving usd:** per G6 #6
+  234.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 5: HF+
+    - **Anchor:** Airspy HF+ (ITEAD, найближчий склад)
+    - **Instruction:** Replace with 'Airspy HF+ (ITEAD EU warehouse SKU IM190522001EU, $169 ex VAT, VAT at checkout; timing per G1 #6)'.
+    - **Reason:** r1 corr 18.
+    - **Sources:** reaudit_B r1 corr 18; analogs_G1 #6
+    - **Saving usd:** per G1 #6
+  235.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 6: power parts
+    - **Anchor:** Одне замовлення LCSC (2× TPS7A4701, 2× LT3045, 10× TPS2553, SMBJ13A/17A, запобіжники, PTC, AON LDO, супервізор)
+    - **Instruction:** Remove 'PTC' (except the AUX PTC) and add a DigiKey DE line: '2x TPS259630DDAR ($1.07 each, buy early; fallback TPS259631DDAR), 2x INA3221AIRGVR ($3.47 each) + 0.2/0.1 Ohm shunts'; TPS2553 as TPS2553DBVR-1 and TPS7A4701 sourcing per G3 #11/#9.
+    - **Reason:** r3 corr 2/5, new_risk 4.
+    - **Sources:** reaudit_B r3; analogs_G3 #9/#11
+    - **Saving usd:** 0
+  236.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 7: RF parts
+    - **Anchor:** Uputronics 440 ($68.71 = GBP 51.59 з ПДВ); плата інжекторів; плати HMC7992; G6K (RS UK);
+    - **Instruction:** Replace with 'Uputronics 440 direct from the EU storefront (EUR 52.95 ex VAT = $59.52, VAT at checkout; not Kubii); injector PCB with HMC7992LP3DE chips (G1 #4); G6K relays at DigiKey (Aratas, part per G1 #7);'.
+    - **Reason:** r3 corr 6/12; G1 #3/#4/#7.
+    - **Sources:** reaudit_B r3 corr 6/12; analogs_G1 #3/#4/#7
+    - **Saving usd:** see BOM
+  237.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 9: Boni-Whip
+    - **Anchor:** | 9 | З 20.11.2026 | Boni-Whip (WiMo $178.73 = EUR 159 з ПДВ, або Moonraker $123.95, якщо наявність підтверджено). | Дата доступності WiMo. |
+    - **Instruction:** Replace with '| 9 | Week 1 | Boni-Whip from Bonito's shop hamradioshop.net (EUR 149.00 incl. VAT = $167.49, in stock, 1-5 days); WiMo (EUR 159, from 20.11.2026) only as second source; plus a 5.5/2.1 mm barrel plug | Removes the 20.11.2026 lead-time risk |'.
+    - **Reason:** r1 corr 10.
+    - **Sources:** reaudit_B r1 corr 10
+    - **Saving usd:** 11.24 vs WiMo (derived)
+  238.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 10: Lime parts
+    - **Anchor:** R44SF 5 см ($19), інструмент I-PEX 90435-001, T7 1 TB за поточною ціною.
+    - **Instruction:** Replace '90435-001' with '90609-0001 (DigiKey DE, G6 #7)'; add 'confirm the R44SF variant with ADT-Link first'; T7 price per G6 #8.
+    - **Reason:** r2 corr 7, confirmed [21].
+    - **Sources:** reaudit_B r2 corr 7; analogs_G6 #7/#8
+    - **Saving usd:** 0
+  239.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 11: LNB current then RILM
+    - **Anchor:** виміряти струм LNB при 13.2 V, потім PTC і атенюатор.
+    - **Instruction:** Replace 'потім PTC і атенюатор' with 'then set the eFuse RILM = 903/(1.5-2 x I_LNB - 0.0112) and the 15/20 dB pad'; drop 'PTC' from 'деталі F/LC/PTC'; the region is Europe, so the step is no longer waiting for the region.
+    - **Reason:** r3 corr 2.
+    - **Sources:** reaudit_B r3 corr 2; user_requirements (Europe)
+    - **Saving usd:** 0
+  240.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 13: extended lab
+    - **Anchor:** кваліфіковані деталі sled, SAWbird+ H1
+    - **Instruction:** Replace with 'Sled v2 parts incl. PE4312 (G6 #2), SAWbird+ H1 ($49.95; EU channel per G6 #3)'; and change 'Airspy Mini (лише після горба Metop і тесту 2.88 Msps)' to 'Airspy Mini (only per its gate; above-spec at 1701.3/1707 MHz, conducted acceptance within 30 days)'.
+    - **Reason:** r3 corr 11/13; r0 corr 17.
+    - **Sources:** reaudit_B r3 corr 11/13; r0 corr 17
+    - **Saving usd:** 0
+  241.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** correction
+    - **Part:** Customs: Amazon USA and UK sellers
+    - **Anchor:** RTL-SDR Blog на Amazon USA
+    - **Instruction:** Replace with 'RTL-SDR Blog store (China warehouse; V4L not yet at Amazon USA)'. In the UK sentence ('UK: продавці збирають ПДВ до GBP 135; понад — ПДВ і збір кур'єра (Pi Hut, Uputronics, Leo Bodnar, Mirfield, Moonraker).') add 'for an EU buyer use the Uputronics EU storefront; landed per operator note 35'.
+    - **Reason:** r0 corr 7; r3 corr 6.
+    - **Sources:** reaudit_B r0 corr 7; r3 corr 6; operator_notes 34-35
+    - **Saving usd:** 0
+  242.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** rule
+    - **Part:** Authenticity: V4L and HMC7992
+    - **Anchor:** RTL-SDR (ризик високий): лише офіційний магазин, eBay rtl-sdr-blog, AliExpress 4523039 або перелічений реселер; ніколи сині корпуси, «Pro» чи копії «V4».
+    - **Instruction:** Append: 'blue or green cases, square silver 4-screw cases and Pro listings are not genuine; cloned black cases have horizontal instead of diagonal screws; do not use the PCB layout; incoming conducted tone test (10 MHz HF path) on every unit; the product page still says R828D (copy error)'. Also change 'Hantek, ANENG і загальні HMC7992 з маркетплейсів — ризик сірих копій.' so that HMC7992 is bought only as chips from franchised distribution.
+    - **Reason:** r0 confirmed [7], corr 15; r3 new_risk 11.
+    - **Sources:** reaudit_B r0 confirmed [7], corr 15; r3 new_risk 11; https://www.rtl-sdr.com/GENUINE
+    - **Saving usd:** 0
+  243.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Bring-up step 1: librtlsdr gate
+    - **Anchor:** Зібрати librtlsdr .so.2 і побачити «RTL-SDR Blog V4 Lite Detected».
+    - **Instruction:** Replace with 'Build librtlsdr2 2.0.3-0+lab1 (.so.2, zero-copy off, lab patch) and pass V4L-0, V4L-2, V4L-3, V4L-6, V4L-7 and V4L-8; the log shows Found Rafael Micro R820T tuner then RTL-SDR Blog V4 Lite Detected; add usbcore.usbfs_memory_mb=0; HF+ arrival HF-0/HF-3.'
+    - **Reason:** r0 bench.
+    - **Sources:** reaudit_B r0 bench; r1 bench [0][3]
+    - **Saving usd:** 0
+  244.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Bring-up step 5: RF parts
+    - **Anchor:** **РЧ-деталі (тиждень 1-2):** виміряти струми HF+, Uputronics і LNA V2;
+    - **Instruction:** Append: 'run RF-0..RF-3, RF-6, RF-10, RF-12, HF-2, HF-7, HF-13; V4L-1 genuineness and V4L-4 serials at assembly'.
+    - **Reason:** New tests.
+    - **Sources:** reaudit_B r0/r1/r3 bench
+    - **Saving usd:** 0
+  245.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Bring-up step 10: Boni-Whip
+    - **Anchor:** **З 20.11.2026:** Boni-Whip, вимір імпедансу синфазного дроселя, тести LF Quiet і розв'язка перемикача HF+.
+    - **Instruction:** Replace '**З 20.11.2026:**' with '**On Boni-Whip arrival (Bonito shop, in stock):**' and append 'HF-8..HF-12, HF-14, HF-15, RF-5'.
+    - **Reason:** r1 corr 10.
+    - **Sources:** reaudit_B r1 corr 10, bench
+    - **Saving usd:** 0
+  246.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Bring-up step 11: Lime acceptance
+    - **Anchor:** якщо залишено — R44SF, інструмент I-PEX, T7 за поточною ціною і приймання в межах 30-денної гарантії
+    - **Instruction:** Append 'incl. L-0..L-11 (identity, stage 0, firmware reload, rate floor, TXEN leakage, spur map, power/thermal, throughput, PM, module robustness, VCTCXO); L-4/P7 only with firmware >=1f70189'.
+    - **Reason:** r2 bench.
+    - **Sources:** reaudit_B r2 bench
+    - **Saving usd:** 0
+  247.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Bring-up step 12: QO-100
+    - **Anchor:** струм LNB при 13.2 V, потім PTC і атенюатор; A/B QO-100.
+    - **Instruction:** Replace 'потім PTC і атенюатор' with 'then eFuse RILM and pad; RF-4, RF-8, RF-9'.
+    - **Reason:** r3 corr 2, bench.
+    - **Sources:** reaudit_B r3
+    - **Saving usd:** 0
+  248.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** V4L / librtlsdr sources
+    - **Anchor:** - osmocom rtl-sdr: https://github.com/osmocom/rtl-sdr
+    - **Instruction:** Add after it: osmocom v2.0.3 release https://github.com/osmocom/rtl-sdr/releases/tag/v2.0.3 ; commit 7ebcb04 https://github.com/osmocom/rtl-sdr/commit/7ebcb041f2ce887ef4d1a64607558889a86ff169 ; tuner_r82xx.c v2.0.3 https://github.com/osmocom/rtl-sdr/blob/v2.0.3/src/tuner_r82xx.c ; noble arm64 build log (zero-copy ON) https://launchpad.net/ubuntu/+source/rtl-sdr/2.0.1-2build1/+build/28133054/+files/buildlog_ubuntu-noble-arm64.rtl-sdr_2.0.1-2build1_BUILDING.txt.gz ; Debian #1041701 https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1041701 ; fork commit d80421b https://github.com/rtlsdrblog/rtl-sdr-blog/commit/d80421b ; L-band heat beta https://rtl-sdr.com/beta-testing-a-modified-rtl-sdr-driver-for-l-band-heat-issues/ ; GENUINE https://www.rtl-sdr.com/GENUINE ; V4 EOL https://www.rtl-sdr.com/rtl-sdr-blog-v4-end-of-line/ ; V4L launch https://www.rtl-sdr.com/rtl-sdr-blog-v4l-lite-now-available-for-purchase/ ; buy page https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/ ; auto_rx #1016 https://github.com/projecthorus/radiosonde_auto_rx/issues/1016 ; readsb #81 https://github.com/wiedehopf/readsb/issues/81 ; SDRangel external CMake https://github.com/f4exb/sdrangel/blob/master/external/CMakeLists.txt ; SoapyRTLSDR Settings.cpp https://github.com/pothosware/SoapyRTLSDR/blob/master/Settings.cpp ; usbfs devio.c https://raw.githubusercontent.com/torvalds/linux/master/drivers/usb/core/devio.c ; Airspy Mini https://airspy.com/airspy-mini/
+    - **Reason:** Key URLs of re-audit B r0.
+    - **Sources:** reaudit_B r0
+    - **Saving usd:** 0
+  249.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** HF+ / Boni-Whip / HF software sources
+    - **Anchor:** - WiMo Boni-Whip: https://www.wimo.com/en/18067
+    - **Instruction:** Add before it: Bonito shop Boni-Whip https://hamradioshop.net/Boni-Whip-Aktivantenne/0125.2 ; bonito.net https://bonito.net/en/boni-whip-2/ . Add near the Airspy entry: libairspyhf https://github.com/airspy/airspyhf ; SoapyAirspyHF https://github.com/pothosware/SoapyAirspyHF ; HF+ firmware 5.0.1 https://airspy.com/downloads/airspy-hf-flash-2024-12-11_5.0.1.zip ; changelog https://airspy.com/downloads/hfplus_changelog.txt ; Debian airspyhf 1.6.8-5 changelog https://sources.debian.org/src/airspyhf/1.6.8-5/debian/changelog ; Microsoft WMIC removal https://support.microsoft.com/en-us/topic/windows-management-instrumentation-command-line-wmic-removal-from-windows-e9e83c7f-4992-477f-ba1d-96f694b8665d ; SDRangel airspyhfinput.cpp v7.27.2 https://raw.githubusercontent.com/f4exb/sdrangel/v7.27.2/plugins/samplesource/airspyhf/airspyhfinput.cpp ; OpenWebRX+ airspyhf.py https://raw.githubusercontent.com/luarvique/openwebrx/master/owrx/source/airspyhf.py ; Dream source https://github.com/wwek/dream ; welle.io README https://raw.githubusercontent.com/AlbrechtL/welle.io/master/README.md ; WSJT-X CMake https://sourceforge.net/p/wsjt/wsjtx/ci/master/tree/CMakeLists.txt ; ITEAD EU store API https://itead.cc/wp-json/wc/store/v1/products?slug=airspy-hf-discovery-eu ; WiMo HF+ https://www.wimo.com/en/airspy-discovery . Replace the Radio Clock master link by the v7.27.2 tag path.
+    - **Reason:** Key URLs of re-audit B r1.
+    - **Sources:** reaudit_B r1
+    - **Saving usd:** 0
+  250.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** LimeSDR Micro sources
+    - **Anchor:** - Crowd Supply LimeSDR Micro: https://www.crowdsupply.com/lime-micro/limesdr-micro
+    - **Instruction:** Add after it: LimeSDR-Micro_FW limesdr_commands.c (master) https://github.com/myriadrf/LimeSDR-Micro_FW/blob/master/src/limesdr_micro/limesdr_commands.c ; fix 1f70189 https://github.com/myriadrf/LimeSDR-Micro_FW/commit/1f701897ca1a9e91c0ba4a6d6d573d977a7bfe72 ; limesdr_micro_init.c (TXEN) https://github.com/myriadrf/LimeSDR-Micro_FW/blob/staging/src/limesdr_micro/limesdr_micro_init.c ; LimeSDR-Micro issue #1 https://github.com/myriadrf/LimeSDR-Micro/issues/1 ; FW issue #4 https://github.com/myriadrf/LimeSDR-Micro_FW/issues/4 ; v1.2 hardware https://github.com/myriadrf/LimeSDR-Micro/tree/main/hardware/M.2/1v2 ; clock docs https://myriadrf.org/projects/limesdr-micro/user/M.2/clock.html ; NXP porting guide https://github.com/nxp-qoriq/la931x_iqplayer/blob/main/doc/iqplayer_porting_guide_LimeSDR-Micro.rst ; setup-bus.c v6.18 https://raw.githubusercontent.com/torvalds/linux/v6.18/drivers/pci/setup-bus.c ; Crowd Supply shipping https://www.crowdsupply.com/shipping ; I-PEX MHF 4L https://www.i-pex.com/product/mhf-4l ; LBE-1420 page already listed.
+    - **Reason:** Key URLs of re-audit B r2.
+    - **Sources:** reaudit_B r2
+    - **Saving usd:** 0
+  251.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** RF front end and rail sources
+    - **Anchor:** - TI TPS7A47: https://www.ti.com/product/TPS7A47
+    - **Instruction:** Add after it: TPS7A47 datasheet SBVS204G https://www.ti.com/lit/ds/symlink/tps7a47.pdf ; TPS2596 datasheet https://www.ti.com/lit/ds/symlink/tps2596.pdf ; TPS259630DDAR https://www.ti.com/product/TPS2596/part-details/TPS259630DDAR ; INA3221 https://www.ti.com/lit/ds/symlink/ina3221.pdf ; TPS2553 datasheet https://www.ti.com/lit/ds/symlink/tps2553.pdf ; HMC7992 datasheet (Farnell) https://www.farnell.com/datasheets/2283884.pdf ; TCBT-2R5G+ https://www.minicircuits.com/pdfs/TCBT-2R5G+.pdf ; pSemi PE4312 https://www.psemi.com/products/digital-step-attenuators/pe4312 ; Uputronics datasheet https://cdn.shopify.com/s/files/1/0835/7707/8094/files/HAB-FPA_Series.pdf?v=1729257808 ; Uputronics store .js https://store.uputronics.com/products/uputronics-filtered-preamps.js ; SAWbird+ H1 https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-h1.html ; EU 2016/687 https://eur-lex.europa.eu/eli/dec_impl/2016/687/oj ; Aratas rebrand https://www.electropages.com/blog/2026/07/omron-electronic-components-rebrands-aratas . Replace '- Omron G6K-2F-RF (RS UK): https://uk.rs-online.com/web/p/hf-rf-relays/0492917?gb=s' by the DigiKey G6K listing https://www.digikey.com/en/products/result?keywords=G6K-2F-RF%20DC5 (RS UK may stay as a third source).
+    - **Reason:** Key URLs of re-audit B r3.
+    - **Sources:** reaudit_B r3
+    - **Saving usd:** 0
+- **Already in v1:**
+  - V4L stays the part: 3 units $113.85 (37.95 each) from official channels; EU via official eBay/AliExpress 4523039 (02a, C21)
+  - V4L core specs 500 kHz-1.766 GHz, 2.56 Msps stable, 250-270 mA (02a)
+  - R828S end of production - buy now (02a)
+  - 2.88 Msps on the V4L only under the Metop/AWS gates (a)/(b) (04)
+  - 5.12 MB/s per V4L = 18.4 GB/h and 2 V4L 36.9 GB/h (05c, 07 #13)
+  - RTL-A on the blue port as USB 2 HS; kernel held at 6.18.2-4 (05b, 01b #23)
+  - SONAME .so.2 with apt-mark hold, rtl_biast via dpkg-divert, DVB blacklist file, EEPROM bias default off (C11; v1 already has these parts)
+  - W1-2 first task: build librtlsdr and see 'RTL-SDR Blog V4 Lite Detected' (C11, 9.2)
+  - Spare-V4L tee only for LNAs <=90 mA with a labd token (C9)
+  - Own V4L spurs 1699.2 and 403.2 MHz in the known-lines table (05d)
+  - Filter-first on VHF, LNA-first on UHF/L-band cascade rule (05b)
+  - OpenWebRX+ 1.2.126 installed with --no-install-recommends (C22)
+  - SDRangel 7.27.2 RX-only from source with TX-plugin audit (C22, #31)
+  - libhamlib-utils, js8call, direwolf banned (05c)
+  - HF WEFAX civil only, Northwood excluded (C16)
+  - AIS as default VHF role of the HF+ on P6/K2 (C5, C21)
+  - HF+ on CH334F H4 behind FE1.1s P3 with load switch, shield and Mix-31 (C5)
+  - HF+ specs: 0.5 kHz-31 MHz / 64-260 MHz, IIP3 +15/+13 dBm, BDR 110/95 dB, MDS -140 dBm, 768 ksps 660 kHz alias-free, 45x60x10 mm (01b #92)
+  - HF+ ci16 recording at 3.07 MB/s (05c)
+  - HF+ ITEAD $169 (02a)
+  - LF time signals only on the Boni-Whip; 9:1 wire HF only (C17, #94)
+  - Two-stage common-mode choke near P5, mast >=2 m, ground stake/counterpoise (C17)
+  - G6K selector de-energised = HF+ on 50 Ohm, both ports loaded; acceptance >=35 dB at 162-260 MHz and <=0.3 dB to 260 MHz (C17)
+  - Balun One Nine v2 at $26.95 and 'measure DCR and S21 at 40-500 kHz' (02b, #94)
+  - JJY 60 amplitude only (01b #3)
+  - Lime: Crowd Supply $249 + $18, ships 15 Dec 2026, full refund only before shipment, decide by 1 Dec 2026 (C1)
+  - Lime acceptance riser 8 GT/s x1, zero AER 60 min, 50 warm + 20 cold boots, zero limeTRX drops LRPT+HRPT, VCC_5V_PERI <=14 W (C1; also user decision)
+  - Lime coverage 30 MHz-3.8 GHz, matched LNAL/LNAW/LNAH bands, below 300 MHz uncharacterised, 137/145.8 MHz on RTL, one shared LO (01b #87/#88)
+  - Lime Tune only from 300 MHz (01b #54)
+  - Lime +10 dBm absolute maximum input (01b #69)
+  - Lime RX DMA ring 16 x 16 KiB = 256 KiB, 1.17/1.07 ms (07 #3, 01b #21)
+  - pcie_aspm=off on the Lime cmdline (05c)
+  - Lime spur arithmetic 737.28/1597.44/1689.6/1720.32 MHz (05d) - correct, now extended per profile
+  - Lime TX on 50 Ohm + LimeSuiteNG/Soapy TX-setup patch + -DBUILD_PLUGINS_AMARISOFT=OFF (01b #11, 05c)
+  - Lime 56 Msps ci16 = 224 MB/s vs measured 395 MB/s blue-port write (05b, 05c)
+  - Lime 10 W thermal path (05d)
+  - T7 noise-floor rise <=1 dB at 1.7/2.2 GHz in the Lime acceptance list (08)
+  - SAWbird+ NOAA cased 100800 $49.95, 41 dB, NF 1.1 dB, 170 mA, 2.6 MHz (02a, #96)
+  - SAWbird+ GOES cased 100792 $49.95; Barebones $44.95 only in a shielded box (02b, 07 #6)
+  - SAWbird+ iO $49.95 gated by egc-gate (02e)
+  - Flamingo+ FM v2 $24.95 first on VHF, 0.5/1.2 dB passband IL (C10, 02a)
+  - Bullseye LNB $29.95, LO 9750 MHz, +/-10 kHz at 23 C, NF 0.5 dB, 15/20 dB pad after the DC block (01b #102, C8)
+  - LNB EN only while RTL-B is on the LNB throw (C8)
+  - ANNE-50+ never on a biased line (13.2 V would dissipate about 3.5 W) (05b)
+  - BLK-89-S+ $20.26 and ANNE-50+ $14.84 in the RF accessory set (03a)
+  - RTL-SDR Blog Wideband LNA V2 $19.95, 90 mA (03a)
+  - L-band patch 20 mA (02b)
+  - labd LNA budget <=1.0 A and LAB-port + LNA <=1.5 A (C9)
+  - HMC7992 isolation qualification >=30 dB conducted (02a, 05b)
+  - Bench sources conducted only at <=-40 dBm with antenna throws loaded (01b #0, 05b)
+  - Uputronics 434 MHz variant not to be bought (02a)
+  - Rule compliance: receive-only, conducted-only sources, no loops, no H-field probes, no dishes (header, 3)
+- **Not applied:**
+  1.
+    - **Item:** r3 corr 0 / corrected_spec: 'Strengthen the DVB blacklist with install dvb_usb_rtl28xxu /bin/false plus update-initramfs'
+    - **Why:** Contradicted inside the same re-audit by r0 corr 9 / refuted [3] (CONFIG_DVB_USB_V2 not set in 6.18.2-4-qcom, the module does not exist) and operator note 12b; only the packaged blacklist file and a modinfo/lsmod check are kept.
+  2.
+    - **Item:** r3 corrected_spec BONI rail 'TPS7A4701 at 12.5 V (optional 13.0 V)'
+    - **Why:** Superseded by r1 corr 9 (BONI13V8 at 13.8 V, Bonito rating at the barrel), which analogs G3 #9 and G1 #9 adopt.
+  3.
+    - **Item:** r3 corr 14: 'Schedule the Boni bring-up after WiMo's 20.11.2026 date'
+    - **Why:** Superseded by r1 corr 10: the manufacturer shop hamradioshop.net has it in stock now (WiMo becomes the second source).
+  4.
+    - **Item:** r3 corrected_spec 'Boni-Whip: WiMo EUR 133.61 net / 159.00 incl. VAT' as the purchase source
+    - **Why:** WiMo kept only as second source; primary is Bonito's shop at EUR 149.00 incl. VAT (r1 corr 10).
+  5.
+    - **Item:** r1 corr 9: 'PTC hold 0.15-0.2 A ahead of the barrel' on the BONI13V8 rail
+    - **Why:** r3 corr 2 replaces the PTCs with TPS259630DDAR eFuses (RILM 7.87 kOhm) and says drop the PTCs; analog G3 #9 chain (LDO -> TPS259630 -> INA3221 -> choke) confirms the eFuse on each rail.
+  6.
+    - **Item:** r3 corr 2 OVLO divider 110k/10.0k (trip 13.91-14.77 V) applied unchanged to the Boni rail
+    - **Why:** It was sized for rails up to 13.53 V; with the 13.8 V setpoint (IC band up to 14.145 V per G3 #9) it could trip in normal operation. Kept for the LNB; the BONI value must be re-derived (no value in the files).
+  7.
+    - **Item:** r3 corr 12 / corrected_spec: G6K-2F-RF DC5 at $25.06 each ($50.12) as the chosen relay
+    - **Why:** Analog G1 #7 (P5) chooses G6K-2F-RF-S DC5 ($39.38 per pair) conditionally; the re-audit's part/price becomes the documented fallback.
+  8.
+    - **Item:** r3 confirmed [6] / corrected_spec: HMC7992LP3DE at $13.10 (DigiKey US) as the BOM price
+    - **Why:** Analog G1 #4 sets seller/price (DigiKey DE EUR 11.50 ex VAT, $25.85 for 2); r3 figure kept only as reference.
+  9.
+    - **Item:** r3 corr 5 / corrected_spec: TPS2553DBVR-1 $1.06 at DigiKey on LNA ch1-4 only
+    - **Why:** Analog G3 #11 decides seller/price (LCSC C111738 $2.96 for 10; DigiKey $7.66 fallback) and extends the -1 to all ten positions.
+  10.
+    - **Item:** r3 corr 4: TCBT allowed on 'ch2 Uputronics or ch4 LNA V2'
+    - **Why:** Analog G3 #14 assigns the Murata LQW2UASR12J00L choke to ch2, so the TCBT (with RILIM 162 kOhm) is only on ch4 WIDE.
+  11.
+    - **Item:** r3 corr 16 / corrected_spec: Bullseye reference port 'terminator only if it measures 0 V DC, otherwise a dust cap'
+    - **Why:** Superseded by analog G6 #9: the red port is DC-coupled to an MCU pin, so always fit a DC-decoupled 75 Ohm terminator (AXING CFA 11-00); DC measurement and spur check retained.
+  12.
+    - **Item:** r2 corr 6: buy 4 Taoglas cables from Crowd Supply at $6 each, budget $291/$309
+    - **Why:** Count of 4 applied; seller/price superseded by analog G6 #6 (4x CAB.01075 from DigiKey DE, $18.36).
+  13.
+    - **Item:** r2 corr 7: I-PEX 90609-0001 at $18.31 (DigiKey US)
+    - **Why:** Part applied; price per analog G6 #7 (EUR 16.08 ex VAT = $18.08, DigiKey DE).
+  14.
+    - **Item:** r2 corr 14: T7 'priced at an EU shop at the 1 Dec gate, $220-275 unverified'
+    - **Why:** Superseded by analog G6 #8 (Reichelt EUR 205.90 incl. VAT = $231.45); only the raw-to-T7 throughput limits from r2 are applied.
+  15.
+    - **Item:** r2 corrected_spec: 'DC block on RX1/RX2; 10-12 dB attenuators after SAWbird' as inline parts
+    - **Why:** Analog G6 #7 replaces the RX1 BLK-89-S+ and inline pad with on-board C0G caps + 22 pF + YAT-10A+, and G6 #3 sets 12 dB after the H1 on the Lime path; RX2 BLK-89-S+ and 'nothing on J4/J5' applied.
+  16.
+    - **Item:** r0 corr 17: Airspy Mini 'buy only after an owner report'
+    - **Why:** Analog G6 #12 keeps the existing purchase gate and adds a conducted 30-day acceptance test at 1701.3/1707 MHz; the out-of-spec note is applied, the owner-report condition is not.
+  17.
+    - **Item:** r3 corr 6: '-$9.19 on the 440 line' as a saving
+    - **Why:** Analog G1 #3: it is a price-basis change (UK incl. VAT -> EU ex VAT), not a saving; an EU buyer pays about $70.8-72.0.
+  18.
+    - **Item:** r3 corr 7: 'Budget line: Barebones 100799 $44.95'
+    - **Why:** Applied only with analog G1 #1 wording: opt-in trade, not an equivalent (1-year warranty, no case).
+  19.
+    - **Item:** r3 corr 13: H1 bought at Nooelec $49.95
+    - **Why:** $49.95 kept as the USD base; the EU purchase channel per analog G6 #3 (Amazon.nl EUR 55.10 incl. VAT, Nooelec Inc).
+  20.
+    - **Item:** r1 corrected_spec: 'BOM adds a BNC-SMA lead' for the Boni-Whip
+    - **Why:** Analog G1 #5 replaces it with a P5 BNC-bulkhead-to-SMA RG316 jumper + BNC M-M lead; the 5.5/2.1 mm barrel plug from r1 is applied.
+  21.
+    - **Item:** r1 confirmed [28]: TPS7A47 'Vin 3-36 V'
+    - **Why:** Analog G3 #9 corrects it to 3-35 V operating, 36 V abs max; not re-asserted.
+  22.
+    - **Item:** r1 corr 9: '13.8 V +/-0.2 V' as a guaranteed band
+    - **Why:** Analog G3 #9 shows the guaranteed IC band is +/-0.345 V at 13.8 V; +/-0.2 V is applied only as a per-unit measured setpoint gate.
+  23.
+    - **Item:** r0 corr 11: RTL-SDR Blog FM band-stop as the only spare-kit filter
+    - **Why:** Applied as one of two options; analog G1 #2 marks it a spec trade (no ESD diode, no input rating, shallower mid-band, not sold direct to the EU), so Flamingo+ #2 is the not-worse option.
+- **Notes:** Record keys used in 'sources': r0 = narrowband_sdr (V4L, librtlsdr), r1 = hf_receiver (HF+, Boni-Whip, HF software), r2 = wideband_sdr (LimeSDR Micro), r3 = rf_frontend (LNAs, bias, LNB/BONI rails, switches). The source has no analog decisions or stack_changes fields; it is a P4 re-audit, so analog decisions from G1/G3/G5/G6 were used to override part/seller/price where they cover the same item. 
+  Points for the orchestrator: (1) Conflicts inside re-audit B, resolved here: DVB initramfs step (r0 wins, operator note 12b supports it), Boni voltage 13.8 V (r1, adopted by G3 #9/G1 #9) over r3's 12.5/13.0 V, eFuse over PTC (r3, matching the G3 #9 chain). (2) New design gap that no file resolves: r3's OVLO divider 110k/10.0k (trip 13.91-14.77 V) was sized for <=13.53 V rails and overlaps the 13.8 V BONI band (G3 #9: +/-0.345 V), so the BONI OVLO must be re-derived; I did not invent a value. (3) Operator note 30 asks for a labd-controlled load switch on the M.2 3.3 V for Lime power-cycling, and its 7.5 Msps figure uses another formula; re-audit B (higher precedence than non-rule operator notes) says never switch VCC_3V3_MKEY at runtime and gives a 7 Msps floor (fs x 4 x 2 = 56 MHz). I applied the re-audit rule and the 7 Msps floor; the riser load-switch question needs a decision (G6 #6 mentions the note-30 switch as 'unchanged rails', but P5 analogs do not decide architecture). (4) The user decision requires a DVB-T/LTE B28 IF ingress check; I kept that check and re-aimed it at the real EU occupants (733-758 MHz) instead of removing it. (5) The lab librtlsdr patch was compiled only on amd64 (scratchpad s3nb paths in r0 bench [0]); nothing was tested on arm64 or hardware. (6) Numbers marked 'derived' are simple arithmetic on file figures (e.g. 394.44, 483.44, 97 C, 11.24); EUR values are given only where a file states them. (7) Many changes overlap with the G1/G3/G6 workers (HMC7992, G6K, TPS2553, Lime cables, T7, H1, Bullseye terminator); my instructions defer to those analog decisions so the edits stay consistent.
 
 ## community:power (run `wf_d9388111-e66`)
 
