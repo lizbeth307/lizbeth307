@@ -1070,6 +1070,466 @@
   - Ukrainian stock of the SRH-701, SRH805S, A-V85 and the Johanson chip, and their prices.
   - No published LRPT decode with an antenna under 20 cm exists.
 
+## small:ku_qo100 (run `wf_41027870-8e7`)
+
+- **Band group:** Ku / 10-12.75 GHz: QO-100 (Es'hail-2, 25.9°E) narrowband and wideband downlinks at 10.489-10.499 GHz, plus other geostationary Ku signals. Antennas: a bare LNB with its own feed (strict tier) and small conical horns on the LNB (strict at 12 cm or less, small tier up to about 15 x 18 cm). Receiver: Bullseye TCXO LNB, then the RTL-SDR V4L at the 739.5-740 MHz IF.
+- **Small antennas:**
+  1.
+    - **Name:** Othernet Bullseye TCXO LNB used bare, with no reflector (current stack part)
+    - **Type:** buy
+    - **Band:** Input 10489-12750 MHz; LO 9750/10600 MHz; QO-100 narrowband IF 739.5-740 MHz
+    - **Size cm:** About 6 cm feed by about 11-14 cm long. This is a typical single-LNB size; the rtl-sdr.com page gives no dimensions. 40 mm collar.
+    - **Gain or efficiency:** About 9-12 dBi (estimate; no measured datasheet value), beamwidth about 40-50°. NF 0.5 dB, gain 50-66 dB. Stability ±10 kHz at 23°C, ±30 kHz from -20 to 60°C.
+    - **Price:** $29.95, 70 in stock (rtl-sdr.com, read 18 Oct 2026)
+    - **Availability incl ukraine:** rtl-sdr.com store only. Not found in Ukrainian shops; shipping to Ukraine not verified.
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+      - http://ok1dx.cz/techinfo/qo100/qo100.html
+      - https://rigexpert.com/files/product_documentation/gpsdo/TBR-AN-1.pdf
+  2.
+    - **Name:** QRO.cz / RemoteQTH QO-100 LNB with 0.2 ppm TCXO (or 10 MHz external-reference version), used bare
+    - **Type:** buy
+    - **Band:** 10.489 GHz QO-100; IF 739 MHz
+    - **Size cm:** Palm-sized LNB (dimensions not published)
+    - **Gain or efficiency:** Same feed class, about 9-12 dBi (estimate). TCXO about ±1 kHz after 5 min warm-up (about 10x better than Bullseye). Rated 11-15 V, about 400 mA (about 5 W); never feed 18 V. WiMo lists 12 V = H, 15 V = V; the vendor documents disagree.
+    - **Price:** From €65 incl. VAT plus €54.62 shipping (WiMo), about €120 delivered. External-reference dual-LO version €199 ex VAT (hamparts.shop).
+    - **Availability incl ukraine:** EU (WiMo, hamparts.shop). Shipping to Ukraine not verified.
+    - **Sources:**
+      - https://www.wimo.com/en/qo-100-10ghz-lnb-qro-cz
+      - https://hamparts.shop/blog/lnb-dual-lo-ref-manual.html
+  3.
+    - **Name:** Local universal linear 'Single' TV LNB (e.g. Eurosky 107A Single Universal, Sat-Integral T-011 Single), used bare
+    - **Type:** buy
+    - **Band:** 10.7-12.75 GHz specified. 10.489 GHz is below the spec, but plain LNBs have received QO-100 (OK1DX).
+    - **Size cm:** Palm-sized, 40 mm collar
+    - **Gain or efficiency:** About 9-12 dBi feed (estimate). LO stability not stated (PLL or DRO unknown); plain LNBs are reported 50-180 kHz off or more. For QO-100 narrowband it is usable only with the wide-acquisition beacon tracker. Fine as a finder, as a test unit for cutting horns, and for Ku TV-carrier experiments. Avoid 'circular' models.
+    - **Price:** 104 UAH (Eurosky 107A), 111-121 UAH (Sat-Integral T-011), in stock on Prom.ua. The Inverto IDLP-SNL410 PLL at 219 UAH was listed but unavailable. EU alternative: Goobay 67269 PLL at €5.90 ex VAT (Passion Radio, not re-checked).
+    - **Availability incl ukraine:** Ukraine, Prom.ua: 'Готово до відправки' (ready to ship), 18 Oct 2026
+    - **Sources:**
+      - https://prom.ua/ua/search?search_term=%D0%BA%D0%BE%D0%BD%D0%B2%D0%B5%D1%80%D1%82%D0%B5%D1%80%20single%20%D1%81%D1%83%D0%BF%D1%83%D1%82%D0%BD%D0%B8%D0%BA%D0%BE%D0%B2%D0%B8%D0%B9
+      - https://passion-radio.com/lnb-pll/universal-goobay-1154.html
+      - http://ok1dx.cz/techinfo/qo100/qo100.html
+  4.
+    - **Name:** DIY clamp-on conical cone, 10 cm mouth (strict tier)
+    - **Type:** diy
+    - **Band:** 10.49 GHz (works across 10-12.75 GHz with gain scaling as f²)
+    - **Size cm:** Calculated: 10.0 cm mouth, about 6.3 cm long from the 40 mm LNB collar (11.7 cm slant from apex). Overall about 17-20 cm with the LNB body.
+    - **Gain or efficiency:** About 18.0 dBi (calculated: optimum conical horn, efficiency 0.52, slant length = D²/3λ, λ = 28.6 mm). Beamwidth about 20°. Expected +6 to +9 dB over the bare LNB; check with a same-day A/B beacon test. Mating to the LNB's scalar feed is not proven (±2 dB).
+    - **Price:** About $3-10 (aluminium flashing or tinplate, rivets, aluminium tape; or a PETG print covered in copper tape)
+    - **Availability incl ukraine:** Local hardware-store sheet metal and tape; 3D print
+    - **Sources:**
+      - http://www.w1ghz.org/antbook/chap2.pdf
+  5.
+    - **Name:** DIY conical horn, 12 cm mouth (largest strict-tier horn)
+    - **Type:** diy
+    - **Band:** 10.49 GHz
+    - **Size cm:** Calculated: 12.0 cm mouth by 10.5 cm long on the 40 mm collar (13.1 cm from a 20 mm throat). Overall about 21-24 cm with the LNB body.
+    - **Gain or efficiency:** About 19.6 dBi (calculated, efficiency 0.52), beamwidth about 17°. Expected +7 to +11 dB over the bare LNB. Also usable for sun-noise calibration (about 0.2-0.4 dB rise, calculated).
+    - **Price:** About $5-10 in materials
+    - **Availability incl ukraine:** DIY with local materials. ASA clamp ring with 40.2 mm ID and an M4 pinch bolt (antennas.json design).
+    - **Sources:**
+      - http://www.w1ghz.org/antbook/chap2.pdf
+  6.
+    - **Name:** DIY conical horn, 12.7 cm mouth (20 dBi; the earlier 'handheld' horn)
+    - **Type:** diy
+    - **Band:** 10.49 GHz
+    - **Size cm:** 12.7 cm mouth by 12.1 cm long on the 40 mm collar (18.8 cm slant; 14.9 cm from a 20 mm throat). Small tier; just over the strict 12 cm.
+    - **Gain or efficiency:** About 20.1 dBi (calculated), beamwidth about 16°
+    - **Price:** About $5-15
+    - **Availability incl ukraine:** DIY
+    - **Sources:**
+      - http://www.w1ghz.org/antbook/chap2.pdf
+      - https://www.wimo.com/en/qo-100-10ghz-lnb-qro-cz
+  7.
+    - **Name:** DIY conical horn, 15 cm mouth by about 18.5 cm (largest small-tier horn)
+    - **Type:** diy
+    - **Band:** 10.49 GHz
+    - **Size cm:** 15.0 cm mouth by 18.4 cm long on the 40 mm collar (26.2 cm slant from apex). The horn itself fits 20 cm; with the LNB the overall length is about 29-32 cm. If overall length must stay at 20 cm, the limit is an 11 cm by 8.3 cm cone (about 18.8 dBi).
+    - **Gain or efficiency:** About 21.5 dBi (calculated), beamwidth about 13°. Needs a small tripod.
+    - **Price:** About $5-15
+    - **Availability incl ukraine:** DIY
+    - **Sources:**
+      - http://www.w1ghz.org/antbook/chap2.pdf
+  8.
+    - **Name:** Commercial WR75/WR90 standard-gain horn with SMA output (not recommended)
+    - **Type:** buy
+    - **Band:** 8.2-15 GHz
+    - **Size cm:** About 10-15 cm for 15-20 dBi (not verified)
+    - **Gain or efficiency:** 15-20 dBi, calibrated
+    - **Price:** $220.80 (WR75, eBay); $228-356 (WR90, eBay); $1,520 (Pasternack)
+    - **Availability incl ukraine:** eBay (China/US). Needs a separate SMA-input 10 GHz LNA and downconverter, so it does not fit the stack.
+    - **Sources:**
+      - https://www.ebay.de/itm/317537757638
+      - https://www.pasternack.com/wr-90-waveguide-standard-gain-horn-antenna-20-dbi-sma-pewan090-20elsf-p.aspx
+- **Satellites:**
+  1.
+    - **Satellite:** QO-100 (Es'hail-2, 25.9°E) narrowband lower beacon
+    - **Band:** 10489.500 MHz, vertical (IF 739.500 MHz)
+    - **Signal:** CW/F1A beacon, 400 Hz shift
+    - **Capability:** Finding and pointing at the satellite, reference for correcting LNB drift (beacon lock), CW copy by ear
+    - **Status oct 2026:** Operational. AMSAT-DL news of 10 May 2026 reports XU7AMO starting regular QO-100 operation; amsat-dl.org shows no outage notice up to Oct 2026.
+    - **Antenna:** Bare TCXO LNB
+    - **Antenna size cm:** About 6 x 12 (LNB)
+    - **Tier:** strict
+    - **Link margin:** Calculated: C/N0 about 23.6 dB-Hz (21-27): about +6 dB in a 50 Hz bin (3-11) and about +23 dB in a 1 Hz FFT bin. Detection and beacon lock have more than 15 dB margin; copy by ear is marginal.
+    - **Reachability:** reliable
+    - **Receiver:** RTL-SDR V4L via a 13 V injector, DC block and 10-20 dB pad. FFT bins of 50 Hz or less. GNU Radio tracker that acquires wide (about ±800 kHz) first.
+    - **Legal:** Amateur-satellite downlink, receive only: OK. Do not post geotagged screenshots.
+    - **Evidence:** OK1DX copied the CW beacon with an LNB alone. A Passion Radio buyer could receive QO-100 'directly without using the dish'. OK1DX found window glass blocks the signal.
+    - **Sources:**
+      - http://ok1dx.cz/techinfo/qo100/qo100.html
+      - https://www.passion-radio.com/satellite-qo-100/converter-432-936.html
+      - https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines
+      - https://destevez.net/2019/03/qo-100-beacons-power/
+      - https://amsat-dl.org/en/
+  2.
+    - **Satellite:** QO-100 narrowband lower beacon
+    - **Band:** 10489.500 MHz, vertical
+    - **Signal:** CW/F1A
+    - **Capability:** Strong copy, accurate pointing, A/B gain measurement of the horn
+    - **Status oct 2026:** Operational (as above)
+    - **Antenna:** 10-15 cm conical horn on the LNB (18-21.5 dBi)
+    - **Antenna size cm:** 10x6.3 to 15x18.4 (horn only)
+    - **Tier:** small
+    - **Link margin:** Calculated: C/N0 about 32.5-36 dB-Hz; about +15 to +18 dB in 50 Hz (±2.5)
+    - **Reachability:** reliable
+    - **Receiver:** As above
+    - **Legal:** Amateur-satellite downlink, receive only: OK
+    - **Evidence:** Scaled from the bare-LNB reports and the EA4GPZ beacon C/N0 measurement. No published horn-on-LNB QO-100 report exists.
+    - **Sources:**
+      - https://destevez.net/2019/03/qo-100-beacons-power/
+      - https://destevez.net/2019/03/weekend-maintenance-to-qo-100-nb-beacons/
+      - http://www.w1ghz.org/antbook/chap2.pdf
+  3.
+    - **Satellite:** QO-100 narrowband middle beacon
+    - **Band:** 10489.750 MHz, vertical (IF 739.750 MHz)
+    - **Signal:** 400 bit/s BPSK telemetry beacon (AO-40-style FEC)
+    - **Capability:** Decoding beacon frames
+    - **Status oct 2026:** Listed in the AMSAT-DL bandplan; believed operational
+    - **Antenna:** Bare TCXO LNB
+    - **Antenna size cm:** About 6 x 12
+    - **Tier:** strict
+    - **Link margin:** Calculated: C/N0 about 24.6 dB-Hz (22-27) against about 26 dB-Hz needed (my estimate) = about -1.4 dB (-4 to +1)
+    - **Reachability:** opportunistic
+    - **Receiver:** RTL-SDR V4L plus a decoder for the AO-40-format beacon (which decoder runs on Linux ARM is not verified)
+    - **Legal:** Amateur telemetry: OK
+    - **Evidence:** Calculation only. The carrier is visible for beacon lock even when frames do not decode.
+    - **Sources:**
+      - https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines
+      - https://destevez.net/2019/03/qo-100-beacons-power/
+  4.
+    - **Satellite:** QO-100 narrowband middle beacon
+    - **Band:** 10489.750 MHz
+    - **Signal:** 400 bit/s BPSK
+    - **Capability:** Decoding beacon frames
+    - **Status oct 2026:** As above
+    - **Antenna:** 10-15 cm horn
+    - **Antenna size cm:** 10x6.3 to 15x18.4
+    - **Tier:** small
+    - **Link margin:** Calculated: +6.5 to +10 dB over about 26 dB-Hz
+    - **Reachability:** reliable
+    - **Receiver:** As above
+    - **Legal:** OK
+    - **Evidence:** Calculation only; antennas.json reached the same result (Eb/N0 about 7 dB with a 20 dBi horn)
+    - **Sources:**
+      - https://destevez.net/2019/03/qo-100-beacons-power/
+  5.
+    - **Satellite:** QO-100 narrowband digital segment
+    - **Band:** 10489.540-10489.650 MHz, vertical
+    - **Signal:** FT8/FT4/Q65/JT65 weak-signal digital user stations. Bandplan: stations should stay at or below beacon level.
+    - **Capability:** Decoding FT8/FT4 (receive-only listening)
+    - **Status oct 2026:** Active user traffic (amateur)
+    - **Antenna:** Bare TCXO LNB
+    - **Antenna size cm:** About 6 x 12
+    - **Tier:** strict
+    - **Link margin:** Calculated: a beacon-level FT8 signal is at about -9 dB SNR (2.5 kHz), range -13 to -5, against a decode limit of about -20 dB. That is about 10 dB margin, so stations up to about 10 dB below the beacon decode. FT4 margin is about 8 dB.
+    - **Reachability:** reliable
+    - **Receiver:** RTL-SDR V4L, WSJT-X. Needs a TCXO LNB plus beacon-lock drift correction (RigExpert used a GPSDO-locked LNB).
+    - **Legal:** Amateur traffic, public by definition: OK. Do not publish logs tied to your location.
+    - **Evidence:** RigExpert TBR-AN-1 decoded FT8 at -11 to -15 dB with an LNB alone ('Satellite dish – you do not need it!'). SARTS slide (search snippet only): 'some FT8/JT65 with bare LNB'.
+    - **Sources:**
+      - https://rigexpert.com/files/product_documentation/gpsdo/TBR-AN-1.pdf
+      - https://www.sarts.org.sg/wp/wp-content/uploads/2025/09/QO-100-Presentation-1.pdf
+      - https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines
+  6.
+    - **Satellite:** QO-100 narrowband digital segment
+    - **Band:** 10489.540-10489.650 MHz
+    - **Signal:** FT8/FT4/Q65 plus PSK31/RTTY
+    - **Capability:** FT8/FT4 for almost all stations; PSK31 at beacon level; RTTY marginal
+    - **Status oct 2026:** Active
+    - **Antenna:** 10-15 cm horn
+    - **Antenna size cm:** 10x6.3 to 15x18.4
+    - **Tier:** small
+    - **Link margin:** Calculated: beacon-level FT8 at about -1.4 to +2 dB SNR, a margin of +18 to +22 dB
+    - **Reachability:** reliable
+    - **Receiver:** As above
+    - **Legal:** OK
+    - **Evidence:** Scaled from the RigExpert result plus about 8-11 dB of horn gain
+    - **Sources:**
+      - https://rigexpert.com/files/product_documentation/gpsdo/TBR-AN-1.pdf
+  7.
+    - **Satellite:** QO-100 narrowband CW user stations
+    - **Band:** 10489.505-10489.540 MHz
+    - **Signal:** CW
+    - **Capability:** Copying CW stations by ear or with a decoder
+    - **Status oct 2026:** Active
+    - **Antenna:** Bare TCXO LNB
+    - **Antenna size cm:** About 6 x 12
+    - **Tier:** strict
+    - **Link margin:** Calculated: a beacon-level station is about +6 dB in 50 Hz; stations 5 dB or more below the beacon are lost
+    - **Reachability:** marginal
+    - **Receiver:** RTL-SDR V4L, narrow CW filter of 50-100 Hz
+    - **Legal:** OK
+    - **Evidence:** Same signal levels as the CW beacon (OK1DX)
+    - **Sources:**
+      - http://ok1dx.cz/techinfo/qo100/qo100.html
+  8.
+    - **Satellite:** QO-100 narrowband CW user stations
+    - **Band:** 10489.505-10489.540 MHz
+    - **Signal:** CW
+    - **Capability:** CW copy down to about 10 dB below the beacon
+    - **Status oct 2026:** Active
+    - **Antenna:** 10-15 cm horn
+    - **Antenna size cm:** 10x6.3 to 15x18.4
+    - **Tier:** small
+    - **Link margin:** Calculated: +15 to +18 dB in 50 Hz at beacon level
+    - **Reachability:** reliable
+    - **Receiver:** As above
+    - **Legal:** OK
+    - **Evidence:** Calculation
+    - **Sources:**
+      - https://destevez.net/2019/03/qo-100-beacons-power/
+  9.
+    - **Satellite:** QO-100 narrowband SSB voice
+    - **Band:** 10489.650-10489.850 MHz
+    - **Signal:** SSB, 2.7 kHz
+    - **Capability:** Listening to SSB contacts
+    - **Status oct 2026:** Active
+    - **Antenna:** Bare TCXO LNB
+    - **Antenna size cm:** About 6 x 12
+    - **Tier:** strict
+    - **Link margin:** Calculated: a beacon-level station is about -10 dB in 2.7 kHz (-13 to -7). Even the strongest legal stations are about 13 dB short of barely readable (+3 dB).
+    - **Reachability:** not_reachable
+    - **Receiver:** n/a
+    - **Legal:** OK if heard
+    - **Evidence:** No bare-LNB SSB report exists; OK1DX and RigExpert report only CW and FT8
+    - **Sources:**
+      - http://ok1dx.cz/techinfo/qo100/qo100.html
+      - https://rigexpert.com/files/product_documentation/gpsdo/TBR-AN-1.pdf
+  10.
+    - **Satellite:** QO-100 narrowband SSB voice
+    - **Band:** 10489.650-10489.850 MHz
+    - **Signal:** SSB
+    - **Capability:** The strongest (beacon-level) stations only, copied by an experienced ear with DSP noise reduction
+    - **Status oct 2026:** Active
+    - **Antenna:** 10-15 cm horn
+    - **Antenna size cm:** 12x10.5 (19.6 dBi) to 15x18.4 (21.5 dBi)
+    - **Tier:** small
+    - **Link margin:** Calculated: about -0.2 dB (12 cm horn) to +1.7 dB (15 cm horn) in 2.7 kHz at beacon level, ±2.5 dB, plus beacon variation of up to 2 dB per day. Readable SSB (+6 dB) needs about 26 dBi. Typical stations 5-15 dB below the beacon are lost.
+    - **Reachability:** opportunistic
+    - **Receiver:** RTL-SDR V4L, 1.8-2.4 kHz filter, beacon lock
+    - **Legal:** OK
+    - **Evidence:** Calculation, consistent with antennas.json's G/T model (-1 to +2 dB). This replaces dish_replacement.json's 14-17 dB estimate, which was wrong.
+    - **Sources:**
+      - https://destevez.net/2019/03/qo-100-beacons-power/
+      - https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines
+  11.
+    - **Satellite:** QO-100 narrowband SSB voice
+    - **Band:** 10489.650-10489.850 MHz
+    - **Signal:** SSB
+    - **Capability:** Beacon-level SSB readable
+    - **Status oct 2026:** Active
+    - **Antenna:** EXCLUDED: 23 dBi horn (17.8 cm mouth by about 28 cm) or 30 cm W1GHZ lens with a 17.5 dBi feed horn (about 60-70 cm deployed)
+    - **Antenna size cm:** 18x28; lens about 30x30, about 65 cm long
+    - **Tier:** borderline_excluded
+    - **Link margin:** Calculated: +3.2 dB (23 dBi horn) and +7.5 dB (27.4 dBi lens) in 2.7 kHz
+    - **Reachability:** marginal
+    - **Receiver:** As above
+    - **Legal:** OK
+    - **Evidence:** W1GHZ measured 27.4 dBi for the lens at 10.368 GHz with a 17.5 dBi horn
+    - **Sources:**
+      - http://www.w1ghz.org/antbook/chap3.pdf
+  12.
+    - **Satellite:** QO-100 narrowband multimedia beacon
+    - **Band:** 10489.9935 MHz
+    - **Signal:** 8APSK, 7200 bit/s
+    - **Capability:** Data decoding
+    - **Status oct 2026:** Listed in the AMSAT-DL bandplan; current activity not verified
+    - **Antenna:** Any strict- or small-tier antenna
+    - **Antenna size cm:** 12 or less to 15x18
+    - **Tier:** small
+    - **Link margin:** Calculated, assuming beacon-level power (not verified): needs about 41 dB-Hz. Small tier gives 32.5-36, a shortfall of 5-8 dB; strict bare LNB is about 16 dB short.
+    - **Reachability:** not_reachable
+    - **Receiver:** n/a
+    - **Legal:** OK
+    - **Evidence:** Calculation only
+    - **Sources:**
+      - https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines
+  13.
+    - **Satellite:** QO-100 wideband DATV transponder
+    - **Band:** 10491.5 MHz beacon (1.5 MS/s DVB-S2 QPSK 4/5) plus DATV stations at 10491-10499 MHz, horizontal (18 V)
+    - **Signal:** DVB-S2 DATV
+    - **Capability:** Video decoding. LOST in both tiers. With a horn only a spectrum hump is visible.
+    - **Status oct 2026:** Believed operational (BATC); not re-checked
+    - **Antenna:** Bare LNB or horns of 21.5 dBi or less
+    - **Antenna size cm:** 12 or less to 15x18
+    - **Tier:** small
+    - **Link margin:** Calculated from a fit to the BATC MER table: C/N in 1.5 MHz is -17 dB (bare LNB) and -9 to -5 dB (10-15 cm horns), against about +3 to +4.7 dB needed, so 8-21 dB short. Decoding needs about 31-32 dBi (a dish of about 45 cm or larger); DATV user stations need 90 cm or more.
+    - **Reachability:** not_reachable
+    - **Receiver:** n/a (a hump of about 0.5-1.1 dB is visible on an averaged spectrum with a horn)
+    - **Legal:** Amateur TV: OK
+    - **Evidence:** BATC MER table: 60 cm 6 dB, 70 cm 7 dB, 80 cm 8 dB, 1.2 m 10 dB
+    - **Sources:**
+      - https://wiki.batc.org.uk/Receiving_Oscar_100_DATV_signals
+  14.
+    - **Satellite:** Geostationary Ku broadcast carriers (e.g. Hot Bird 13F/13G at 13.0°E and other European positions between 5°E and 42°E)
+    - **Band:** 10.7-11.7 GHz on the low-band LO (IF 950-1950 MHz; the RTL-SDR reaches 11.516 GHz) and 11.7-12.75 GHz on the high band (needs 22 kHz tone and the LimeSDR)
+    - **Signal:** DVB-S2 TV multiplexes, e.g. Hot Bird 13G 11116.70 V, 8PSK 3/4, 27.5 MS/s (an encrypted carrier, used only as a power reference)
+    - **Capability:** Seeing that carriers are present (noise humps), Clarke-belt survey. No decoding.
+    - **Status oct 2026:** Hot Bird 13F/13G active at 13°E (Wikipedia; KingOfSat)
+    - **Antenna:** Bare LNB
+    - **Antenna size cm:** About 6 x 12
+    - **Tier:** strict
+    - **Link margin:** Calculated, assuming EIRP 48-53 dBW over Ukraine (not verified), slant range 38,625 km, Tsys 150 K: C/N0 59-64 dB-Hz, so -15 to -10 dB in 27.5 MHz (humps of 0.1-0.4 dB). The 40-50° beam overlaps several orbital positions.
+    - **Reachability:** opportunistic
+    - **Receiver:** RTL-SDR V4L averaged spectrum or rtl_power, 13/18 V for V/H
+    - **Legal:** Public broadcast: measure RF power only. Never attempt to decrypt pay-TV; skip contribution feeds.
+    - **Evidence:** Calculation only
+    - **Sources:**
+      - https://en.kingofsat.info/tp243
+      - https://en.wikipedia.org/wiki/Hot_Bird
+      - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+  15.
+    - **Satellite:** Geostationary Ku broadcast carriers (Hot Bird 13°E etc.)
+    - **Band:** 10.7-12.75 GHz
+    - **Signal:** DVB-S/S2 multiplexes
+    - **Capability:** Clear carrier humps for horn/LNB calibration and pointing practice. Decoding still not possible.
+    - **Status oct 2026:** Active
+    - **Antenna:** 12-15 cm horn
+    - **Antenna size cm:** 12x10.5 to 15x18.4
+    - **Tier:** small
+    - **Link margin:** Calculated: C/N -4 to +3 dB in 27.5 MHz (humps of 1.5-5 dB), against 7.9 dB needed for 8PSK 3/4, so decoding is about 5-12 dB short. Adjacent satellites stay inside the 13-17° beam.
+    - **Reachability:** reliable
+    - **Receiver:** As above. The LimeSDR Micro covers the whole IF (ships 15 Dec 2026).
+    - **Legal:** As above
+    - **Evidence:** Calculation only
+    - **Sources:**
+      - https://en.kingofsat.info/tp243
+  16.
+    - **Satellite:** Geostationary Ku tracking beacons (unmodulated carriers)
+    - **Band:** Frequencies NOT verified. A satbeams listing for the retired Hot Bird 8 showed 11699.8 H, 11701 H, 12500 V and 12500.5 H; I could not verify these for 13F/13G.
+    - **Signal:** CW carrier
+    - **Capability:** Narrow calibration carrier for frequency or gain checks
+    - **Status oct 2026:** Unverified
+    - **Antenna:** Bare LNB or horn
+    - **Antenna size cm:** About 6 x 12 or larger
+    - **Tier:** strict
+    - **Link margin:** Calculated: 10 dB in a 10 Hz bin needs a beacon EIRP of about 9 dBW (bare LNB) or about -3 dBW (12 cm horn). Real beacon EIRP is not verified.
+    - **Reachability:** opportunistic
+    - **Receiver:** LimeSDR for IF above 1766 MHz; narrow FFT
+    - **Legal:** Observe the carrier only. Do not demodulate operator telemetry (private).
+    - **Evidence:** Search snippet only (satbeams), not opened
+    - **Sources:**
+      - https://www.satbeams.com/
+  17.
+    - **Satellite:** Starlink and OneWeb Ku user downlinks (LEO)
+    - **Band:** About 10.7-12.7 GHz (not re-verified here)
+    - **Signal:** Private user data
+    - **Capability:** EXCLUDED. Starlink is a front-line military communications system in Ukraine; since 2026 only whitelisted terminals work there.
+    - **Status oct 2026:** Active; military use
+    - **Antenna:** none
+    - **Antenna size cm:** n/a
+    - **Tier:** none
+    - **Link margin:** n/a
+    - **Reachability:** not_reachable
+    - **Receiver:** n/a
+    - **Legal:** Do not record, track, characterise, decode or publish. At most: if moving bursts or a noise rise appear during a GEO measurement, ignore and discard them.
+    - **Evidence:** Wikipedia: 'Most Ukrainian units have one Starlink terminal'; Starlink 'eliminated service to all terminals in Ukraine not on a whitelist'
+    - **Sources:**
+      - https://en.wikipedia.org/wiki/Starlink_in_the_Russo-Ukrainian_War
+  18.
+    - **Satellite:** Military or government SATCOM (X and Ku band)
+    - **Band:** Various
+    - **Signal:** Military
+    - **Capability:** EXCLUDED
+    - **Status oct 2026:** n/a
+    - **Antenna:** none
+    - **Antenna size cm:** n/a
+    - **Tier:** none
+    - **Link margin:** n/a
+    - **Reachability:** not_reachable
+    - **Receiver:** n/a
+    - **Legal:** Excluded by the safety frame; under martial law do not search for it
+    - **Evidence:** Policy
+    - **Sources:** []
+- **Lost vs foldable:**
+  1.
+    - **Target:** QO-100 narrowband SSB from the strongest (beacon-level) stations
+    - **Needed:** +3 dB in 2.7 kHz to barely copy needs about 23 dBi; +6 dB readable needs about 26 dBi; +10 dB comfortable needs about 30 dBi (calculated)
+    - **Gap db:** Best small-tier horn (21.5 dBi) is 1.5 dB below the baseline 23 dBi horn and 6 dB below the 27.4 dBi lens. Strict (19.6 dBi) is 3.4 and 8 dB below. Bare LNB is about 13 dB below the horn.
+    - **What would bring it back:** The 23 dBi horn (17.8 cm by about 28 cm) for barely-readable copy, or the 30 cm W1GHZ lens with a 17.5 dBi feed (about 65 cm deployed, packs flat) for readable copy, or a 35 cm dish (+9.5 dB). Software gains only 1-2 dB (narrower filter, noise reduction).
+  2.
+    - **Target:** QO-100 typical SSB stations 5-15 dB below the beacon
+    - **Needed:** About 30-40 dBi (dish of 35-90 cm)
+    - **Gap db:** 8-20 dB short in the small tier. The foldable baseline had only partial copy here: the lens reached about +2.5 dB for stations 5 dB down.
+    - **What would bring it back:** A 35-60 cm dish only
+  3.
+    - **Target:** QO-100 multimedia beacon (8APSK, 7.2 kbit/s)
+    - **Needed:** About 41 dB-Hz (estimate, assuming beacon-level power), which is about 27 dBi
+    - **Gap db:** 5-8 dB short (small tier); about 16 dB short (bare LNB)
+    - **What would bring it back:** The 30 cm lens (marginal) or a dish
+  4.
+    - **Target:** QO-100 wideband DATV beacon and stations
+    - **Needed:** About 31-32 dBi for the beacon; a dish of 90 cm or more for user stations (BATC)
+    - **Gap db:** 10-12 dB short (small tier). The foldable baseline could not decode this either.
+    - **What would bring it back:** A dish of 45 cm or more only; no non-dish option reaches it
+  5.
+    - **Target:** Comfortable QO-100 pointing and SNR headroom (strict bare LNB versus horn)
+    - **Needed:** 18-21.5 dBi horn
+    - **Gap db:** 8-11 dB between the bare LNB and the small-tier horn. PSK beacon frames, beacon-level SSB and CW 10 dB below the beacon all depend on it.
+    - **What would bring it back:** The 10-12 cm cone already fits the strict tier by its own dimensions. Only the overall length with the LNB (about 17-24 cm) pushes it into the small tier.
+- **Borderline note:** BORDERLINE (excluded by the new size rule; for reconsideration only). The 23 dBi conical horn (17.8 cm mouth, about 28 cm long on the LNB collar, 37 cm slant) adds only about 1.5 dB over the best small-tier horn. With it, beacon-level SSB rises from about 0 dB to +3 dB, which is barely copyable. The 30 cm W1GHZ metal-plate lens is foam and foil, packs flat, and stands about 65 cm deployed with a 17.5-18 dBi feed horn. It adds about 6 dB: beacon-level SSB about +7.5 dB (readable) and the multimedia beacon marginal. Neither reaches DATV (31-32 dBi) or typical SSB stations (about 30 dBi or more). If listening to QO-100 SSB matters, the lens is the only item worth reconsidering. Otherwise the small tier loses little in this band.
+- **Notes:** TIERS AS APPLIED. Strict: the bare LNB counts as strict (the rule says so explicitly), and so does a cone with mouth and length of 12 cm or less (about 19.6 dBi). Small: horns up to 15 cm by 18.5 cm (21.5 dBi). If the 11-14 cm LNB body must be counted in the overall length, the small-tier limit drops to an 11 x 8.3 cm cone (about 18.8 dBi). Excluded: dishes, flat panels (Selfsat H21D/H30D are about 47-52 cm and not specified below 10.7 GHz), the 23 dBi horn and the lens. I found no flat Ku panel of 20 cm or less with an LNB covering 10.489 GHz.
+  
+  ERROR FOUND IN THE INPUTS (corrected here). dish_replacement.json's QO-100 budget, 'beacon C/N0 is about 28 + G dB-Hz', is about 14 dB too optimistic. It gave the bare LNB a beacon C/N of 3-6 dB in 2.7 kHz, a 20/23 dBi horn 14/17 dB, and the lens 21 dB. The anchor it used, the BATC '>30 dB on 90 cm' snippet, must have been measured in a narrow FFT bin, not in 2.7 kHz.
+  
+  The primary measurement: EA4GPZ measured the BPSK beacon at about 45 dB-Hz on a dish he describes as comparable to 60 cm (about 34.2 dBi). After maintenance the beacons were about 3 dB stronger, and the beacon C/N0 against transponder noise was 56 dB-Hz. From that I derive, as a calculation: beacon C/N0 is about G + 14.6 dB-Hz (±2.5 dB), capped by transponder noise at 56 dB-Hz. This is the model behind every number above. It matches antennas.json's G/T model (-1 to +2 dB in 2.5 kHz for 20-23 dBi horns). It also matches the field evidence: the CW beacon was only just copyable on a bare LNB (OK1DX), and FT8 decoded at -11 to -15 dB, which is close to beacon level since the bandplan says users must stay 'not stronger than the Beacon'. The horn geometry and the DATV verdict do not change.
+  
+  PHYSICS. At 10.49 GHz the wavelength is 28.6 mm, so a 12 cm horn is 4.2λ across. It is not electrically short, and its aperture efficiency (about 0.52 for an optimum horn) carries no small-antenna penalty. What limits it is aperture area against a system temperature of about 100-150 K: the LNB's 0.5 dB NF (35 K) plus ground spillover. Sky noise at 32° elevation is small. Transponder noise only matters above about 35 dBi, and band noise from outside does not set the limit. Every +3 dB of gain costs 1.41x the mouth diameter and about 2x the length.
+  
+  CHAIN.
+  - LNB: Bullseye (or QRO.cz at 12-15 V only). Use a regulated 13 V buck-boost through an injector; never the raw 4S pack, which reaches 16.8 V and can flip polarisation.
+  - Then DC block, then a 10-20 dB pad, into the RTL-SDR V4L at 739.5-740 MHz.
+  - Keep LNB DC away from the LimeSDR (its RX ESD protection is rated 5.3 V). The Lime also has a 737.28 MHz spur 2.2 MHz from the narrowband IF.
+  - HDMI 1080p60 has a 5th harmonic at 742.5 MHz, close to the wideband IF. Use a 1080p52 EDID and shielding.
+  - Cap the Bullseye's red F port: it is a +15 V serial calibration port.
+  - The beacon tracker must acquire wide (about ±800 kHz around IF 739.625 MHz) before narrowing; this fixes the earlier acquisition bug.
+  - Pointing: Kyiv 186°/32°, Lviv 178°/33°, Kharkiv 193°/32°, Odesa 187°/36°. Rotate the LNB for polarisation skew. Operate outdoors: window glass blocks 10 GHz.
+  - Ku TV carriers above 11.516 GHz on the low band, and the high band (22 kHz tone), need the LimeSDR (ships 15 Dec 2026).
+  
+  CALIBRATION EXTRAS (calculated, assuming 250-400 sfu at 11 GHz). With the 12-15 cm horn the Sun gives about a 0.2-0.5 dB noise rise; with the bare LNB about 0.03 dB, which is not practical. A cold-sky versus ground comparison gives a quick check of the LNB and horn. Ku broadcasts from the 25.5-26°E cluster (Es'hail/Badr) might help confirm the QO-100 pointing, but whether their beams cover Ukraine is not verified.
+  
+  LEGAL AND SAFETY. Receive only.
+  - Fine to receive: QO-100 amateur traffic, FTA broadcast carriers measured as RF power only.
+  - Never: decrypt pay-TV or demodulate operator telemetry.
+  - Excluded entirely: Starlink/OneWeb (private and military in Ukraine) and all military SATCOM.
+  - Martial law: never publish geotagged spectra or photos, and do not set up near military or critical sites.
+  - GNSS is widely jammed or spoofed, so enter your coordinates by hand and aim with the BNO085 plus the Sun or landmarks.
+  - Fields may hold unexploded ordnance: if you find one, call 101.
+  
+  UNVERIFIED.
+  - Bullseye dimensions and current draw.
+  - Bare-LNB gain (9-12 dBi is an estimate).
+  - How well a clamp-on cone mates to the scalar feed (±2 dB; check with an A/B beacon test, expect +6 to +11 dB).
+  - Multimedia-beacon power.
+  - Ku EIRP over Ukraine (48-53 dBW assumed).
+  - Ku tracking-beacon frequencies.
+  - Stability of the local Prom.ua LNBs.
+  - Bullseye and WiMo shipping to Ukraine.
+  - The OK1DX page returned HTTP 503 today, so its content comes from the earlier agents' reading.
+  
+  WebSearch used: 3 calls.
+
 ## fold:vhf_uhf (run `wf_4a343103-e9e`)
 
 - **Band group:** VHF/UHF: 137 MHz Meteor-M LRPT, 145.8 MHz ISS SSTV, 435-438 MHz CubeSats (RTL-SDR V4L for 137/145.8 MHz, LimeSDR Micro for 435 MHz). Targets unchanged. Packing targets unchanged: recommended tier has no piece longer than about 35 cm; ultra-compact tier no piece longer than about 20 cm.
