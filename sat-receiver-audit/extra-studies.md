@@ -29469,6 +29469,199 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   FX 1 EUR = 1.1241 USD. Six WebSearch calls used.
 
+## searchA:samsung_t7_1_tb (run `wf_c3ba734e-52b`)
+
+- **Part:** Samsung Portable SSD T7 1 TB (MU-PC1T0T/WW grey or MU-PC1T0H/WW blue). External raw-capture drive on the Q6A blue USB 3.1 Gen1 Type-A port, mounted outside on the bottom edge, with its own VBUS. With-Lime build, which is now the default per the user decision of 18 Oct 2026.
+- **Current price usd:** STACK figure: $229.99 (B&H, snippet) to $274.99 (Samsung US / CDW list). EU price fetched 18 Oct 2026: Reichelt sells MU-PC1T0T for EUR 205.90 incl. 19% VAT (EUR 173.03 ex VAT), limited stock, shipping extra. That is about $231 incl. VAT, or $194 ex VAT, at the stack's rate of 1.124 USD/EUR. MU-PC1T0H (blue) is EUR 209.00 at Reichelt. ssd-tester.com shows about $230 (US).
+- **Critical specs:**
+  - Sustained sequential write after the SLC cache must stay at or above the 395 MB/s port ceiling, and never below 224 MB/s (1x56 Msps ci16), over a continuous write of 300 GB or more, including thermal throttling. T7 1 TB: pSLC about 42 GB; a 100 GB file averaged 614 MB/s (ssd-tester), so post-cache is about 500 MB/s (inferred).
+  - Capacity at least 1 TB: 400 GB NPU raw over 14 days, 300 GB captures and bursts, a 64 GiB exFAT exchange area and a snapshot copy.
+  - TLC NAND, not QLC, and no deep post-cache cliff. Warranty at least 3 years (T7: 3-year limited).
+  - Host link: a USB 3.2 device that runs at 5 Gbps on the Q6A blue USB-A port through the in-kernel uas driver (Linux 6.18, Ubuntu 24.04 arm64), with no usb-storage quirk fallback and no vendor driver. USB-C on the drive. UNMAP/TRIM is nice to have.
+  - Bus power within the USB 3 budget (900 mA at 5 V, 4.5 W) on its own VBUS, with no brownout or UAS reset. Lower idle and write power is better for the 1.9 h with-Lime session. The T7's draw is unpublished (unverified).
+  - Operating temperature at least 0-60 C. The T7 datasheet gives 0-60 C Tc, measured at the hottest case point. The drive sits outside the case and can be in sun while writing.
+  - Ruggedness: 2 m drop to a metal plate, 1500 G / 0.5 ms non-operating shock, 20-2000 Hz 20 G vibration, metal housing (heat spreading and some help for the 1 dB noise-floor test at 1.7/2.2 GHz).
+  - Mechanical: about 85x57x8 mm and 58-72 g. The bottom-edge mount and case band are designed around the T7.
+  - Hot-swap offload to a PC (USB-C, read about 1050 MB/s on 10 Gbps).
+  - Genuine stock from an authorized EU seller with EU warranty (counterfeit T7s exist on marketplaces).
+- **Candidates:**
+  1.
+    - **Name:** Samsung T7 1 TB MU-PC1T0T/WW from Reichelt (same part, EU seller)
+    - **Kind:** current_part
+    - **Price usd:** EUR 205.90 incl. 19% VAT (EUR 173.03 ex VAT), about $231 incl. / $194 ex VAT at 1.124. Blue MU-PC1T0H is EUR 209.00. Shipping extra.
+    - **Spec comparison:** Identical part. Datasheet Rev 2.0 (2024): USB 3.2 Gen2, up to 1050/1000 MB/s, 85x57x8 mm, 72 g, 0-60 C (Tc), 2 m drop, 1500 G shock, AES-256, 3-year warranty. Ships with C-to-A and C-to-C cables.
+    - **Worse in:** Nothing; it is the same SKU. For an EU buyer it is cheaper than a US $229.99-274.99 unit once import VAT and shipping are added.
+    - **Compatibility:** Same as STACK. Join the Reichelt order already planned for the 2 microSD cards and the Goobay A-A cable (shipping from EUR 5.95), so it costs no extra shipping.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/search/samsung%20t7
+    - **Risks:** Listed as 'limited stock'. Prices move with the 2026 NAND shortage; re-check at the 1 Dec 2026 gate.
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/search/samsung%20t7
+      - https://download.semiconductor.samsung.com/resources/data-sheet/Samsung_Portable_SSD_T7_Datasheet_Rev2.0.pdf
+      - https://ssd-tester.com/samsung_portable_ssd_t7_1tb.html
+  2.
+    - **Name:** Samsung T7 Resurrected 1 TB MU-PD1T0G/WW
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** EUR 274.99 at Euronics EE (fetched 18 Oct 2026, in stock); EUR 243.90 sale at Coolblue DE (snippet); EUR 199.00 at MediaMarkt BE (snippet only, page 403, unverified). None verified below EUR 205.90.
+    - **Spec comparison:** Its datasheet (Rev 1.0, 2025) is identical to the T7: USB 3.2 Gen2, 1050/1000 MB/s, 85x57x8 mm, 72 g, 0-60 C Tc, 2 m drop, 1500 G, 3-year warranty.
+    - **Worse in:** Ships with a USB-C to C cable only, so the Q6A USB-A port needs a separate C-to-A cable. No verified price is cheaper. Internals and sustained write were not measured separately (assumed the same as the T7, unverified).
+    - **Compatibility:** Same as the T7, plus a C-to-A cable.
+    - **Seller url:** https://www.coolblue.de/en/product/973119/samsung-t7-resurrected-portable-ssd-1tb.html
+    - **Risks:** The MediaMarkt BE EUR 199 figure is unverified. Even at EUR 199 plus a cable it would save almost nothing.
+    - **Sources:**
+      - https://download.semiconductor.samsung.com/resources/data-sheet/Samsung_Portable_SSD_T7_Resurrected_Datasheet_Rev.1.0.pdf
+      - https://www.euronics.ee/en/it/it-accessories/storage-devices/mu-pd1t0gfsww/samsung-portable-ssd-t7-resurrected-1-tb-usb-3-2-gen-2-silver-external-ssd
+      - https://www.mediamarkt.be/en/product/_-2210752.html
+  3.
+    - **Name:** Kioxia EXCERIA PLUS G2 Portable SSD 1 TB LXD20K001TG8
+    - **Kind:** other_brand
+    - **Price usd:** EUR 154.95 incl. VAT at Reichelt, about $174 incl. / $146 ex VAT
+    - **Spec comparison:** USB 3.2 Gen2 with UASP, 1050/1000 MB/s (rated), aluminium housing, 72x40x11.8 mm, 42 g (smaller and lighter, which is better), 3-year warranty (equal), cables C-to-A and C-to-C (equal), operating 0-45 C Ta (ambient basis, while Samsung's 60 C is case temperature; not directly comparable).
+    - **Worse in:** Drop rating is 122 cm (MIL-STD-810H 516.8 IV, 26 drops) against 2 m for the T7. Post-cache sustained write is unpublished and unmeasured. NAND type is unconfirmed. Power is unknown (the older G1 drew 4.8 W under load, per PC-Welt). Not shown to be not-worse, so rejected.
+    - **Compatibility:** Generic UAS device; should work with the uas driver (unverified on arm64). Its smaller footprint would need a new bottom-edge mount.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/search/portable%20ssd%201tb
+    - **Risks:** The unknown post-cache rate is the main risk for 224 MB/s continuous. Only becomes eligible if a full-drive write test shows at least 395 MB/s post-cache and the user accepts the 122 cm drop rating.
+    - **Sources:**
+      - https://europe.kioxia.com/content/dam/kioxia/shared/personal/support/download/ssd/asset/productbrief/KIOXIA_Exceria_Plus_G2_Portable_Product_Brief.pdf
+      - https://www.pcwelt.de/article/2227272/kioxia-exceria-plus-portable-ssd-1tb-test.html
+      - https://www.reichelt.com/de/en/shop/search/portable%20ssd%201tb
+  4.
+    - **Name:** SanDisk Extreme Portable SSD V2 1 TB SDSSDE61-1T00-G25
+    - **Kind:** other_brand
+    - **Price usd:** EUR 187.00 incl. VAT at Reichelt, about $210 incl. / $177 ex VAT
+    - **Spec comparison:** Measured on ssd-tester: pSLC about 5 GB, 100 GB file at 551 MB/s average, so post-cache is about 540 MB/s (inferred), equal to or better than the T7's ~500. Read 1040 MB/s. IP65. A 5-year warranty is from prior knowledge, not re-fetched. Size 96.2x49.6x8.9 mm, 79 g.
+    - **Worse in:** Operating temperature is 0-45 C (SHI distributor listing; SanDisk brief not fetched) against 0-60 C. It is larger and heavier (96x50 mm, 79 g, against 85x57 mm, 72 g). Reliability reputation: in 2023 several SanDisk Extreme / Extreme Pro portable SSDs lost data and WD issued firmware fixes (prior knowledge, mostly the 2 and 4 TB models, not re-verified this run). Rejected as not shown to be not-worse.
+    - **Compatibility:** USB-C, UAS expected. Linux arm64 behaviour unverified. Needs a new mount.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/search/portable%20ssd%201tb
+    - **Risks:** Temperature rating and failure history; saves only EUR 19.
+    - **Sources:**
+      - https://ssd-tester.com/sandisk_extreme_portable_ssd_v2_1tb.html
+      - https://www.shidirect.com/product/49577116/SanDisk-Extreme-Portable-V2
+      - https://www.reichelt.com/de/en/shop/search/portable%20ssd%201tb
+  5.
+    - **Name:** Kingston XS2000 Portable SSD 1 TB SXS2000/1000G
+    - **Kind:** other_brand
+    - **Price usd:** EUR 179.50 incl. VAT at Reichelt, about $202 incl. / $170 ex VAT
+    - **Spec comparison:** USB 3.2 Gen2x2, 2000/2000 MB/s (capped by the port at about 395 MB/s on the Q6A). pSLC about 97 GB; a 100 GB file averaged 1489 MB/s (cache-dominated, ssd-tester). IP55, 5-year warranty (better), 69.5x32.6x13.5 mm, 29 g.
+    - **Worse in:** Operating temperature is 0-40 C (RS and PLE distributor listings) against 0-60 C. Post-cache rate unmeasured (the test never left the cache). Its sibling XS1000 collapses after cache (below). Rejected.
+    - **Compatibility:** USB-C, UAS expected; it falls back to Gen1 on the Q6A. Linux arm64 unverified. Needs a new mount.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/search/portable%20ssd%201tb
+    - **Risks:** Thermal rating; unknown post-cache floor.
+    - **Sources:**
+      - https://ssd-tester.com/kingston_xs2000_portable_ssd_1tb.html
+      - https://uk.rs-online.com/web/p/hard-drives/2436515
+      - https://www.ple.com.au/Products/676632/Kingston-XS2000-BOC-USB-32-Gen2-TypeC-Portable-External-SSD--1TB
+  6.
+    - **Name:** Kingston XS1000 Portable SSD 1 TB SXS1000/1000G
+    - **Kind:** other_brand
+    - **Price usd:** EU price not checked (not on the Reichelt 1 TB list); unverified
+    - **Spec comparison:** 1050/1000 MB/s rated, 5-year warranty. Measured only on the 2 TB model (ssd-tester): pSLC about 122 GB, 300 GB file at 264 MB/s average, so post-cache is about 176 MB/s (inferred).
+    - **Worse in:** Post-cache write is about 176 MB/s, below the 224 MB/s stream and far below the T7's ~500 MB/s. Operating temperature 0-40 C (Mouser). Rejected.
+    - **Compatibility:** USB-C, UAS.
+    - **Seller url:** https://www.mouser.se/new/kingston/kingston-xs1000-external-solid-state-drives
+    - **Risks:** Would drop samples in a long 56 Msps capture.
+    - **Sources:**
+      - https://ssd-tester.com/kingston_xs1000_portable_ssd_2tb.html
+      - https://www.mouser.se/new/kingston/kingston-xs1000-external-solid-state-drives
+  7.
+    - **Name:** Crucial X9 1 TB CT1000X9SSD9
+    - **Kind:** other_brand
+    - **Price usd:** EUR 199.90 incl. VAT at Reichelt, about $225 incl. VAT
+    - **Spec comparison:** QLC NAND, Phison U17 (ssd-tester). pSLC about 256 GB; a 300 GB file averaged 210 MB/s, so post-cache is about 40 MB/s (inferred).
+    - **Worse in:** QLC, a post-cache cliff to about 40 MB/s, and write speed is not specified by Crucial. Rejected.
+    - **Compatibility:** USB-C, UAS.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/search/portable%20ssd%201tb
+    - **Risks:** Fails the 224 MB/s floor once the cache fills.
+    - **Sources:**
+      - https://ssd-tester.com/crucial_x9_1tb.html
+  8.
+    - **Name:** Crucial X9 Pro 1 TB CT1000X9PROSSD9
+    - **Kind:** other_brand
+    - **Price usd:** No verified current EU offer. Arvutitark EE: sold out. EUR 116-139 listings (Bechtle, dateks.lv, eBay.de) are undated or stale. ssd-tester shows about $260 (US). Unverified.
+    - **Spec comparison:** Better on sustained write: ssd-tester wrote a 300 GB file at 981 MB/s without exhausting the cache (pSLC over 300 GB); AnandTech saw about 900 MB/s across the 2 TB model's span, ending at 62 C. 5-year warranty, IP55, 2 m drop (listings), aluminium, 65x50x10 mm, 38 g.
+    - **Worse in:** Operating temperature not found (unverified). Micron exited the Crucial consumer business (announced 3 Dec 2025, consumer shipments ended Feb 2026; warranty service continues), so only leftover stock remains and no current price is cheaper than the T7. Not adoptable as specified.
+    - **Compatibility:** USB-C, UAS, Linux listed as compatible. Needs a new mount.
+    - **Seller url:** https://www.arvutitark.ee/arvutid-ja-lisad/lisaseadmed/valised-andmekandjad/valised-pooljuhtkettad/ssd-drive-x9-pro-1tb-usb-c-32-gen2-1306518
+    - **Risks:** End-of-line brand and grey or old stock. Rated temperature unknown.
+    - **Sources:**
+      - https://ssd-tester.com/crucial_x9_pro_1tb.html
+      - https://at-web1.www.anandtech.com/show/18987/crucial-x9-pro-portable-ssd-review-micron-176l-3d-nand-delivers-record-ufd-consistency/3
+      - https://www.storagereview.com/news/micron-exits-crucial-consumer-business-to-focus-on-higher-growth-segments
+  9.
+    - **Name:** SanDisk Portable SSD 1 TB SDSSDE30-1T00-G26
+    - **Kind:** other_brand
+    - **Price usd:** EUR 164.50 incl. VAT at Reichelt, about $185 incl. VAT
+    - **Spec comparison:** Read 520 MB/s (SATA class); write not listed; no sustained data.
+    - **Worse in:** Offload read is about half the T7's (520 against 1050 MB/s). Write and post-cache unspecified. Rejected.
+    - **Compatibility:** USB-C, UAS assumed.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/search/portable%20ssd%201tb
+    - **Risks:** Unknown NAND (possibly QLC, unverified).
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/search/portable%20ssd%201tb
+  10.
+    - **Name:** Verbatim Store 'n' Go Portable SSD 1 TB (53230)
+    - **Kind:** other_brand
+    - **Price usd:** EUR 178.50 incl. VAT at Reichelt
+    - **Spec comparison:** Listed as USB 3.0 (5 Gbps); no read or write figures on the listing.
+    - **Worse in:** PC offload is capped at 5 Gbps, and there is no sustained-write data. Rejected (specs unverified).
+    - **Compatibility:** USB, UAS unknown.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/search/portable%20ssd%201tb
+    - **Risks:** Unknown internals.
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/search/portable%20ssd%201tb
+  11.
+    - **Name:** Samsung T7 Shield 1 TB MU-PE1T0S (reference: better, not cheaper)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** EUR 249.00 incl. VAT at Reichelt (beige MU-PE1T0K EUR 249.90); US $287.99 (Best Buy, snippet)
+    - **Spec comparison:** pSLC about 20 GB; 200 GB HD Tune write averaged 879 MB/s (ssd-tester, per storage.json). IP65, rubber armour, 0-60 C, 3-year warranty.
+    - **Worse in:** Not cheaper (+EUR 43). Larger and heavier than the T7 (about 88x59x13 mm, about 98 g per storage.json and STACK research; not re-fetched).
+    - **Compatibility:** Same family and USB ID class as the T7.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/search/samsung%20t7
+    - **Risks:** Not a cheaper analog. It is the measured-better fallback if the T7 fails the sustained-write acceptance test.
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/search/samsung%20t7
+      - https://ssd-tester.com/samsung_portable_ssd_t7_shield_1tb.html
+  12.
+    - **Name:** Samsung T9 1 TB MU-PG1T0B (reference: not cheaper)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** EUR 222.00 incl. VAT at Reichelt
+    - **Spec comparison:** USB 3.2 Gen2x2 with an ASMedia ASM2364 bridge. pSLC about 24 GB; a 300 GB file averaged 952 MB/s (ssd-tester).
+    - **Worse in:** More expensive (+EUR 16). 88x59x13 mm and 122 g (bigger and heavier). Gen2x2 bridge power is likely higher (unverified).
+    - **Compatibility:** UAS.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/search/portable%20ssd%201tb
+    - **Risks:** Not a cheaper analog.
+    - **Sources:**
+      - https://ssd-tester.com/samsung_portable_ssd_t9_1tb.html
+- **Notes:** VERDICT: keep the Samsung T7 1 TB. Nothing cheaper is not-worse. The cheapest not-worse source is the same part from an EU seller: Reichelt MU-PC1T0T at EUR 205.90 incl. 19% VAT (about $231 incl. / $194 ex VAT at 1.124). Add it to the Reichelt order already planned for the microSD cards and the A-A cable. Fallback: the blue MU-PC1T0H at EUR 209.00.
+  
+  The cheaper brands are all worse in at least one stack-relevant spec:
+  - Kioxia G2 (EUR 154.95): 122 cm drop rating and unknown post-cache write.
+  - Kingston XS2000 (EUR 179.50): 0-40 C rating.
+  - SanDisk Extreme V2 (EUR 187): 0-45 C rating and its 2023 failure history.
+  - Crucial X9 (EUR 199.90): QLC, about 40 MB/s once the cache fills.
+  - Kingston XS1000: about 176 MB/s post-cache.
+  - SanDisk Portable / Verbatim: SATA-class.
+  
+  The Crucial X9 Pro measures better but has no verified current EU offer, and Crucial's consumer channel is closed. The T7 Shield (EUR 249) and T9 (EUR 222) are better but dearer.
+  
+  Caveat on temperature ratings: Samsung rates 0-60 C as case temperature (Tc), while Kioxia rates 0-45 C as ambient (Ta). Kingston and SanDisk do not state a basis. These ratings are not strictly comparable, so they are treated as unproven-equal, not as proven-worse.
+  
+  RISK TO THE CURRENT PART, to add to the acceptance tests:
+  - StorageReview (2021) measured the sibling T7 Touch at only about 240 MB/s in a 6 h sequential steady-state test after 4K preconditioning.
+  - The T7's own post-cache rate is about 500 MB/s (inferred from 614 MB/s average over 100 GB with a 42 GB cache, on a Windows 10 Gbps host).
+  - No Q6A, arm64 or long-soak T7 measurement exists.
+  - Test inside the return window: on the Q6A, `fio --rw=write --bs=1M --direct=1 --size=300G`, logged per second, at ambient up to 35 C with the drive in its mount. Pass: a floor of at least 250 MB/s and no uas resets in dmesg. Also check `lsusb -t` shows the uas driver at 5000M, and the T7 power draw at full write, which is unpublished (must be within 4.5 W).
+  - If it fails, step up to the T7 Shield (measured 879 MB/s average over 200 GB, same 0-60 C rating, +EUR 43). Do not step to a cheaper brand.
+  
+  Also keep the operator-note rule: deauthorize the T7 during L-band, GNSS and S-band sessions, and run the noise-floor A/B test at 1541, 1575 and 1691 MHz.
+  
+  Research limits:
+  - Geizhals, idealo, tweakers, PriceSpy, Samsung, Kingston, Crucial, B&H and Micro Center all returned 403 or were blocked, so EU prices come from Reichelt (fetched) plus snippets marked as such.
+  - The 15-call WebSearch budget is fully used.
+  - From prior knowledge, not re-fetched: SanDisk's 5-year warranty and its 2023 failure history.
+  - Not checked: Intenso TX500, Lexar SL500/ES5, Transcend ESD310 (EUR 249.95 or more at Reichelt, so dearer anyway), and WD My Passport.
+  
+  Hard rules: storage is receive-path only, with no RF emission or TX, so no rule is affected.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
