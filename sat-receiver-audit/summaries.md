@@ -2626,3 +2626,27 @@
 
 ---
 
+### 🤖 Зведення #91 — 2026-10-18 00:51:23 UTC
+
+**Зведення (тік, коміт 9c07913).** Готово 7 з 12 компонентів, решта п'ять у роботі. Ось що нового:
+
+- **Екран (перевірка):** на форумі Radxa знайшовся ще один випадок, коли HDMI гасне після переходу з ядра 6.18.2 на 7.0.11. У журналі помилка «Unexpected DP AUX IRQ», роздільність через `video=` теж не допомагає. Отже, ядро 6.18.2 закріплюємо й далі. Агент шукає яскраві панелі Wisecoco: 7″ 1920×1080 на 2000 ніт з HDMI і 8,4″ 2560×1600 на 2000 ніт, але в останньої інтерфейс MIPI, тож без перехідника до Q6A вона не підключиться.
+- **Заміна тарілки (перевірка):** як легшу заміну рупора для QO-100 розглядає металопластинчасту лінзу з книги W1GHz. Також звіряє, чи можна прийняти Metop AHRPT на спіральну антену без тарілки, і плоску антену Selfsat.
+- **Софт (власні виправлення):** знайшлася сторонній збірка Ubuntu 26.04.1 для Q6A з ядром 7.2.9 (Armbian edge) і патчами DP/DPU. Це можливий вихід із конфлікту «404 на заголовки ядра проти зламаного HDMI в 7.0», але джерело неофіційне, тож перевіряємо. Окремо агент з'ясовує, чи підтримує NPU v68 16-бітні активації (A16W8).
+- **GNSS/IMU (перевірка):** уточнює формат SOCK-refclock у chrony для подачі PPS.
+- **Механіка (перевірка):** звіряє розміщення слота M.2 на Q6A з креслениками LimeSDR Micro.
+- **Складні антени (окреме дослідження):** у NEC змодельовано дві відомі конструкції: Yagi на 2 м з рулетки (WB2HOL) і Yagi на 70 см (N2SPI/WA5VJB). Агент також розглядає складані Yagi з форуму Libre Space Foundation, портативний Moxon 144/432 і готові складані Yagi з eBay. Таблиці «що втрачаємо» ще немає.
+
+Повні відповіді субагентів лежать у `sat-receiver-audit/components/` та `sat-receiver-audit/extra-studies.md`, усі зведення в `sat-receiver-audit/summaries.md`.
+
+Джерела:
+- [Radxa: Linux 7.0 HDMI not working](https://forum.radxa.com/t/linux-7-0-hdmi-not-working/31304)
+- [Radxa: Dragon Q6A no video output](https://forum.radxa.com/t/dragon-q6a-no-video-output/29681)
+- [Wisecoco 8,4″ 2560×1600 2000 nits (MIPI)](https://www.wisecocodisplay.com/product/8-4-inch-ips-tft-lcd-display-1600x2560-2000nits-high-brightness-screen-with-mipi-interface/)
+- [W1GHz Antenna Book, розд. 3](http://www.w1ghz.org/antbook/chap3.pdf)
+- [ubuntu-26.04.1-dragon-q6a (неофіційно)](https://github.com/rafaelwms/ubuntu-26.04.1-dragon-q6a)
+- [Libre Space: Collapsible Yagi antennas](https://community.libre.space/t/collapsible-yagi-antennas/14441)
+- [Moxon 144/432 QRP Lifestyle](https://pileupdx.com/product/qrp-lifestyle-moxon-144-432)
+
+---
+
