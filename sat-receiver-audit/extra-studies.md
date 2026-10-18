@@ -16342,6 +16342,65 @@
   - **Weight:** I combined idx 6 and idx 21. The default with Lime is about 1.7-1.9 kg (model); without Lime about 1.6-1.8 kg. The backpack and Pelican weight figures are unchanged; batch-2 idx 33 and 35 cover them.
   - **Gender-neutral wording:** I reworded two phrases ("на покупцеві", "один користувач").
 
+## edit:10_sources:b2 (run `wf_47c804ff-504`)
+
+- **Section:** 10_sources
+- **Applied:**
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+  - 52
+  - 53
+- **Skipped:** []
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/10_sources.md. It went from 189 to 259 lines, and the batch-1 edits are still in place. A script confirmed that every URL named in the instructions for idx 27-53 is now in the file. The only URL that appears twice is https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/. I kept it on purpose in the Bullseye line, because there it is the source for a separate claim (the shop does not ship to the EU). No two changes conflicted. This file has no subtotals to recompute. The incompliancemag H-field probe article was not added (as idx 30 says, and as the no-H-field-probe rule requires). The text has no loop antenna or military content.
+  
+  Where a URL was already in the file, I merged instead of repeating it:
+  - 27: added only the EU-вітрина (?country=DE); the HAB-FPA Rev 3.0 datasheet was already on the line.
+  - 28: the Omron G6K-2F-RF (RS UK) line is replaced by the Aratas G6K-2F-RF-S DC5 line (DigiKey, DigiKey DE, the spare G6K-2F-RF DC5, datasheet K242-E1-07, RS UK as third source). HMC7992LP3DE plus its DigiKey DE link went into the existing «РЧ-тракт» line, which already had the Farnell datasheet; it is now labelled Rev 0.
+  - 29 and 53: the Airspy dealers URL appears once, on the HF+ Discovery line; the Airspy Mini line points to it.
+  - 31: the 559f4f9 Kioxia quirk commit was already in «Обчислення, ядро, NPU», so the UFS/eMMC line points there.
+  - 33: the 4D datasheet was already R_1_5 from batch 1; I added only the DigiKey and Newhaven lines.
+  - 34: Würth 74271112 already comes from idx 30, so only 74271140 was added, with a pointer.
+  - 35: the VEML7700 datasheet was already in the file; Rev 1.8, Adafruit 4162 and DigiKey DE were merged into that line. The Diamox line goes after Wisecoco.
+  - 36: The Pi Hut delivery is already in «Безпека і право», so it was not repeated.
+  - 37: merged into the existing HMI line, which already had the PEC11R datasheet and Adafruit 2055. The line was not inserted before CH334F as instructed.
+  - 41: the interface-logic lines sit after the Aratas rebrand line, so the two relay lines stay together.
+  - 42: the Q6A EDL URL was already in «Завантаження і образ», so the Transcend line points there.
+  - 43: the Molicel PDS (fsaeonline) was already on the Molicel P50B line, so it was not repeated.
+  - 44: the G3 block leaves out URLs already in the file (Daly DL-J04G3 datasheet, IP2368 review, LM61460, INA228 PCB, TPS7A47, TPS2553, TPS709, TPS25947, SMBJ, DG TAXUD) and lists them in a pointer line. The block is split into labelled sub-lines.
+  - 45: the G4 block is in grouped lines, and PA3FWM tn07 now carries 'висота щогли Boni-Whip'.
+  - 47: links already in the file (LiteVNA guide, tinySA Buying, VAT-30W2+, OpenHantek limitations) were not repeated. Seller links were merged into the existing LiteVNA, tinySA, Mini-Circuits, ПЗ приладів and ISDT lines; everything else became new grouped lines. Raspberry Pi resellers come from idx 36 via a pointer.
+  - 48: lbe-142x README v1.2 and EEVblog went onto the existing Leo Bodnar line; the shipping/Batronix line follows it.
+  - 49: Pi Hut EU delivery points to «Безпека і право» rather than repeating the URL.
+  - 50: the sled v2 line points to the HMC7992LP3DE DigiKey DE link instead of repeating it.
+  - 51: the 90609-0001 tool annotation went onto the existing I-PEX MHF 4L entry.
+  - 52: the Passion Radio URL now leads the replaced Bullseye line, and the old Bullseye line keeps only Technofix.
+  - 53: Reichelt T7 was merged into the line that already had the T7 datasheet and drivedb. PRO Endurance sits with the other microSD cards. The D36V28F5 entry now notes it is the 5 V spare and points to the G3 block's Botland link. The H1 datasheet and Amazon.nl were merged into the H1 line, and 'для P8' was added to the existing band-stop line. FNIRSI warranty is listed once, on the FNB58 line.
+  
+  Open point: per idx 46 the input-files list now names analogs_G4_mechanical_field.json, but analogs_G1/G2/G3/G5/G6 and reaudit_A-D are still not listed. None of my changes asked to add them, so I left them out.
+
 ## fold:vhf_uhf (run `wf_4a343103-e9e`)
 
 - **Band group:** VHF/UHF: 137 MHz Meteor-M LRPT, 145.8 MHz ISS SSTV, 435-438 MHz CubeSats (RTL-SDR V4L for 137/145.8 MHz, LimeSDR Micro for 435 MHz). Targets unchanged. Packing targets unchanged: recommended tier has no piece longer than about 35 cm; ultra-compact tier no piece longer than about 20 cm.
