@@ -1530,6 +1530,370 @@
   
   WebSearch used: 3 calls.
 
+## small:catalog_legal (run `wf_41027870-8e7`)
+
+- **Satellites:**
+  1.
+    - **Name:** Meteor-M N2-4 (NORAD 59051)
+    - **Band:** VHF 137.900 MHz LRPT (137.100 alternate), L-band 1700/1705 MHz HRPT
+    - **Service:** Weather imagery (MSU-MR): LRPT 72 ksym/s, 3 JPEG channels at 1 km; HRPT 665.4 ksym/s, 6 channels
+    - **Status:** ACTIVE. LRPT decoded on 137.900 MHz by European SatNOGS stations on 17-18 Oct 2026 (e.g. a Greek station, 18 Oct 00:36 UTC, 7 data frames). HRPT listed active by SatDump. Tier note: a quarter wave at 137.9 MHz is 54 cm, so any LRPT antenna in either tier is electrically short. HRPT anchor from the inputs: the 12.75 dBic helix gives about 7 dB average SNR against 0.5 dB needed. The 4-5 turn helix on an 18 cm plate (11.6-12.0 dBic modelled, 19-22 cm tall) sits at the SMALL-tier edge; the 47 cm helix and the helicone are EXCLUDED.
+    - **Status date and source:** 2026-10-18 SatNOGS Network good observations with decoded data; SatDump sat_list.json, last commit 2 Jul 2026; WMO OSCAR 'operational' (2026-01-23, from the inputs)
+    - **Sources:**
+      - https://network.satnogs.org/api/observations/?norad_cat_id=59051&status=good
+      - https://network.satnogs.org/observations/15230698/
+      - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+      - https://space.oscar.wmo.int/satellites/view/meteor_m_n2_4
+  2.
+    - **Name:** Meteor-M N2-3 (NORAD 57166)
+    - **Band:** VHF 137.900 MHz LRPT (137.100 alternate), L-band 1700 MHz HRPT
+    - **Service:** Weather imagery (LRPT and HRPT, same instrument as N2-4)
+    - **Status:** ACTIVE. LRPT decoded on 137.900 MHz by SatNOGS stations in Germany, Poland, the Netherlands and Hungary on 17 Oct 2026. SatDump notes that its VHF antenna did not deploy properly (so LRPT is weaker than N2-4's) and that the LRPT compressor causes occasional pixelation and watchdog restarts. HRPT is active. Same tier notes as N2-4.
+    - **Status date and source:** 2026-10-17 SatNOGS Network (e.g. obs 15229039, decoded data); SatDump list, 2 Jul 2026
+    - **Sources:**
+      - https://network.satnogs.org/observations/15229039/
+      - https://network.satnogs.org/api/observations/?norad_cat_id=57166&status=good
+      - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+  3.
+    - **Name:** NOAA-15 / NOAA-18 / NOAA-19 (POES)
+    - **Band:** APT 137.62 / 137.9125 / 137.1 MHz; HRPT 1702.5 / 1707 / 1698 MHz
+    - **Service:** Weather APT and HRPT
+    - **Status:** ENDED. NOAA-18 was decommissioned on 6 Jun 2025 at 17:40 UTC, NOAA-19 on 13 Aug 2025 at 18:55 UTC (battery cell failure), and NOAA-15 on 19 Aug 2025 at 20:37 UTC. No APT remains anywhere.
+    - **Status date and source:** NOAA OSPO POES status page (fetched 18 Oct 2026); SatDump list end dates match
+    - **Sources:**
+      - https://www.ospo.noaa.gov/operations/poes/status.html
+      - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+  4.
+    - **Name:** Metop-B (NORAD 38771)
+    - **Band:** L-band 1701.3 MHz AHRPT (2.33 Msym/s); LRPT 137 MHz is OFF
+    - **Service:** Weather AHRPT (EUMETSAT)
+    - **Status:** ACTIVE but degraded. OSPO lists AHRPT 'Yes', with APT/LRPT and HIRS red. SatDump reports intermittent modulator problems that lower SNR. Tier note: unreachable in both tiers. The inputs put even the 12.75 dBic helix about 1.6 dB below threshold on a pass average.
+    - **Status date and source:** NOAA OSPO Metop status, updated 3 Sep 2026; SatDump list, 2 Jul 2026
+    - **Sources:**
+      - https://www.ospo.noaa.gov/operations/metop/status.html
+      - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+  5.
+    - **Name:** Metop-C (NORAD 43689)
+    - **Band:** L-band 1701.3 MHz AHRPT (2.33 Msym/s); LRPT OFF
+    - **Service:** Weather AHRPT
+    - **Status:** CONFLICTING. OSPO says AHRPT 'No' (3 Sep 2026) and lists data-loss notices for 9 Aug and 5-7 Oct 2026. SatDump (2 Jul 2026) and the SatNOGS DB list AHRPT as active. Out of reach for 20 cm antennas in any case.
+    - **Status date and source:** OSPO, 3 Sep 2026; SatDump, 2 Jul 2026
+    - **Sources:**
+      - https://www.ospo.noaa.gov/operations/metop/status.html
+      - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+  6.
+    - **Name:** Arctic Weather Satellite AWS (NORAD 60543)
+    - **Band:** L-band 1707 MHz, 1.785 Msym/s RHCP
+    - **Service:** Microwave sounder direct broadcast (ESA prototype for EPS-Sterna)
+    - **Status:** ACTIVE per SatDump; its signal fades when the satellite faces away. EIRP is unpublished. Small-antenna reception is unknown and probably out of reach, since its rate is about 2.7x Meteor HRPT.
+    - **Status date and source:** SatDump list, 2 Jul 2026
+    - **Sources:**
+      - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+      - https://space.oscar.wmo.int/satellites/view/aws_pfm
+  7.
+    - **Name:** Elektro-L N3 / N5 (76°E) and N2 (14.5°W)
+    - **Band:** L-band 1691 MHz LRIT/HRIT
+    - **Service:** Geostationary weather imagery
+    - **Status:** NOT AVAILABLE as of SatDump's July 2026 update. L3's transmissions are paused pending L5 commissioning. L5's LRIT and HRIT are 'off for commissioning' (only telemetry is active), although the SatNOGS DB entry dated 7 Apr 2026 still lists L5 LRIT as active. L2 cannot transmit xRIT after a power-supply failure. Calculation: 76°E is about 18° elevation and 127° azimuth from Kyiv. This contradicts the inputs, which use Elektro-L5 LRIT as the antenna A/B test source. Check on air before relying on it.
+    - **Status date and source:** SatDump list, 2 Jul 2026 ('Elektro updates' commit); SatNOGS DB, 7 Apr 2026
+    - **Sources:**
+      - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+      - https://github.com/SatDump/satdump.org/commits/master/sat-list/sat_list.json
+      - https://db.satnogs.org/api/transmitters/?format=json
+  8.
+    - **Name:** FengYun-2H (79°E)
+    - **Band:** L-band 1687.5 MHz S-VISSR (660 ksym/s), 1690.5 MHz test-pattern carrier every 3 h from 00:48 UTC; linear polarisation
+    - **Service:** Geostationary weather imagery
+    - **Status:** ACTIVE per SatDump. Calculation: about 16.6° elevation and 124° azimuth from Kyiv. Treat it as a fixed reference carrier for comparing antennas, not as a decode target for small antennas (unverified).
+    - **Status date and source:** SatDump list, 2 Jul 2026
+    - **Sources:**
+      - https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json
+  9.
+    - **Name:** ISS amateur stations (NA1SS Columbus, RS0ISS Zvezda)
+    - **Band:** UHF 437.800 MHz FM repeater downlink (uplink 145.990, CTCSS 67); 437.825 MHz APRS; SSTV event-based (latest listed on 437.550 MHz); HamTV 2395 MHz test signal
+    - **Service:** Amateur voice repeater, APRS packet, SSTV
+    - **Status:** ACTIVE. ARISS (7 Oct 2026): the FM repeater is active, and APRS is active on 437.825 MHz from Zvezda. 145.825 MHz is no longer listed, and the Zvezda radio is still being troubleshot. AMSAT has 'ISS [FM]' heard on 18 Oct 2026 and the UHF digipeater heard on 18 Oct 2026. AMSAT also shows 3 'VHF Digi heard' reports from one station on 17 Oct (conflicting, unverified). SSTV: the last listed event is ARISS Series 32, 8-12 May 2026, on 437.550 MHz Robot 36. No later event is posted, and AMSAT ISS SSTV was 'not heard' on 15 Oct 2026. Tier note: a quarter wave at 437 MHz is 17 cm, so it fits the SMALL tier at full size; in the STRICT tier it is about 0.7 of a quarter wave. The move of ISS SSTV and APRS to UHF benefits this rule.
+    - **Status date and source:** ARISS status, 7 Oct 2026; ARISS SSTV gallery (fetched 18 Oct 2026); AMSAT status, 13-18 Oct 2026; SatNOGS obs 15227798 (APRS 437.825, 17 Oct 2026)
+    - **Sources:**
+      - https://www.ariss.org/current-status-of-iss-stations.html
+      - https://ariss.pzk.org.pl/sstv/
+      - https://www.amsat.org/status/
+      - https://network.satnogs.org/observations/15227798/
+  10.
+    - **Name:** SO-50 (SaudiSat-1C)
+    - **Band:** UHF 436.795 MHz FM downlink
+    - **Service:** Amateur FM repeater
+    - **Status:** ACTIVE. AMSAT 'Heard' on 18 Oct 2026 00:46 UTC and on 39 of 72 slots over 6 days. SatNOGS had 25 good observations from 15-17 Oct 2026.
+    - **Status date and source:** AMSAT status 18 Oct 2026; SatNOGS 17 Oct 2026
+    - **Sources:**
+      - https://www.amsat.org/status/
+      - https://network.satnogs.org/observations/15229379/
+  11.
+    - **Name:** AO-91 (Fox-1B)
+    - **Band:** VHF 145.960 MHz FM downlink plus DUV telemetry
+    - **Service:** Amateur FM repeater
+    - **Status:** DEGRADED/INTERMITTENT. AMSAT 13-18 Oct 2026: 2 'Heard' reports (15 and 16 Oct) against 7 'Not Heard'. DUV telemetry was decoded by SatNOGS on 17 Oct 2026. The SatNOGS DB notes the repeater no longer needs CTCSS. VHF, so a quarter wave is 51 cm and the antenna is electrically short.
+    - **Status date and source:** AMSAT status 17 Oct 2026; SatNOGS obs 15222852 (17 Oct 2026)
+    - **Sources:**
+      - https://www.amsat.org/status/
+      - https://network.satnogs.org/observations/15222852/
+  12.
+    - **Name:** AO-27 (EYESAT-1)
+    - **Band:** UHF 436.795 MHz FM / AFSK beacon
+    - **Service:** Amateur FM repeater (part-time)
+    - **Status:** INTERMITTENT. The last SatNOGS good observation was 1 Oct 2026. It does not appear on the AMSAT 6-day page. Its operating schedule was not verified.
+    - **Status date and source:** SatNOGS obs 15088170, 1 Oct 2026
+    - **Sources:**
+      - https://network.satnogs.org/observations/15088170/
+  13.
+    - **Name:** AO-123 (ASRTU-1)
+    - **Band:** UHF 435.400 MHz FM downlink and BPSK 9k6 telemetry; SSDV 436.210
+    - **Service:** Amateur FM repeater, telemetry, SSDV
+    - **Status:** ACTIVE. AMSAT 'Heard' on 17 Oct 2026 (also many 'telemetry only' reports). SatNOGS good observation on 17 Oct 2026 23:55 UTC.
+    - **Status date and source:** AMSAT status 17 Oct 2026; SatNOGS obs 15229208
+    - **Sources:**
+      - https://www.amsat.org/status/
+      - https://network.satnogs.org/observations/15229208/
+  14.
+    - **Name:** PO-101 (Diwata-2)
+    - **Band:** VHF 145.900 MHz FM downlink
+    - **Service:** Amateur FM repeater (scheduled activations)
+    - **Status:** INTERMITTENT. Last SatNOGS good observation 29 Sep 2026; AMSAT 'Not Heard' on 16 Oct 2026.
+    - **Status date and source:** SatNOGS obs 15082384; AMSAT 16 Oct 2026
+    - **Sources:**
+      - https://network.satnogs.org/observations/15082384/
+      - https://www.amsat.org/status/
+  15.
+    - **Name:** IO-117 GreenCube
+    - **Band:** UHF 435.310 MHz GMSK 1k2 digipeater/telemetry
+    - **Service:** Amateur digipeater (MEO)
+    - **Status:** SILENT/PRESUMED ENDED (cause unverified). The last SatNOGS good observation was 25 Jul 2025, with only failed or bad observations until 5 Aug 2025, after which stations stopped scheduling it. It is absent from the AMSAT status page. A decommissioning was planned for 5 Feb 2024 and postponed.
+    - **Status date and source:** SatNOGS Network (latest good 2025-07-25, latest bad 2025-08-05); AMSAT-UK, Jan 2024
+    - **Sources:**
+      - https://network.satnogs.org/api/observations/?norad_cat_id=53106&status=good
+      - https://amsat-uk.org/2024/01/25/io-117-greencube-to-cease-operating-on-february-5/
+      - https://www.amsat.org/amsat-responds-planned-decommissioning-io-117-greencube/
+  16.
+    - **Name:** RS-44 (DOSAAF-85)
+    - **Band:** UHF 435.610-435.670 MHz linear transponder downlink; CW beacon 435.605
+    - **Service:** Amateur SSB/CW linear transponder
+    - **Status:** ACTIVE. AMSAT 'Heard' on 18 Oct 2026, active in 54 of 72 slots. SatNOGS good observation on 16 Oct 2026. SSB user signals are weaker than FM birds.
+    - **Status date and source:** AMSAT 18 Oct 2026; SatNOGS obs 15213134
+    - **Sources:**
+      - https://www.amsat.org/status/
+      - https://network.satnogs.org/observations/15213134/
+  17.
+    - **Name:** FO-29 (JAS-2)
+    - **Band:** UHF 435.800-435.900 MHz linear transponder; CW beacon 435.795
+    - **Service:** Amateur linear transponder
+    - **Status:** ACTIVE. AMSAT active in 47 of 72 slots over 13-18 Oct 2026; SatNOGS CW beacon observation on 17 Oct 2026.
+    - **Status date and source:** AMSAT 13-18 Oct 2026; SatNOGS obs 15214291
+    - **Sources:**
+      - https://www.amsat.org/status/
+      - https://network.satnogs.org/observations/15214291/
+  18.
+    - **Name:** AO-7, JO-97, AO-73 (VHF-downlink linear and telemetry birds)
+    - **Band:** AO-7: 145.925-145.975 MHz (mode B) and 435.100 MHz beacon; JO-97: 145.855-145.875 and BPSK 145.840; AO-73: BPSK 145.935
+    - **Service:** Amateur linear transponders and telemetry
+    - **Status:** AO-7 ACTIVE (sunlight-dependent; beacon decoded 12 Oct 2026). JO-97 ACTIVE (AMSAT active in 26 of 72 slots; SatNOGS 15 Oct 2026). AO-73 is telemetry-only (AMSAT 17 Oct 2026). All are VHF except the AO-7 435.100 MHz beacon.
+    - **Status date and source:** AMSAT 13-18 Oct 2026; SatNOGS obs 15188324, 15209178, 15228423
+    - **Sources:**
+      - https://www.amsat.org/status/
+      - https://network.satnogs.org/observations/15188324/
+      - https://network.satnogs.org/observations/15209178/
+      - https://network.satnogs.org/observations/15228423/
+  19.
+    - **Name:** Chinese CAS/XW/LilacSat birds
+    - **Band:** UHF 435-437 MHz (CAS-3H 437.200/437.225; XW-3 435.725; CAS-2T 435.710); VHF (TO-108 145.910 CW)
+    - **Service:** Amateur telemetry and FM/linear transponders
+    - **Status:** MIXED. CAS-3H (LilacSat-2) telemetry decoded on 18 Oct 2026, but its FM repeater was 'Not Heard' on 14 Oct (AMSAT). XW-3 (CAS-9/HO-113) telemetry was good on 12 Oct 2026. CAS-2T CW was last good on 29 Aug 2026. TO-108 (CAS-6) CW was last good on 24 Sep 2026 and 'Not Heard' on 15 Oct. LilacSat-3 (new, 2026) has no good SatNOGS observation (unverified). XW-2A to F, CAS-5A (FO-118), CAS-10 (HO-119) and LilacSat-1 have re-entered.
+    - **Status date and source:** SatNOGS Network / DB, 18 Oct 2026; AMSAT 13-18 Oct 2026
+    - **Sources:**
+      - https://network.satnogs.org/observations/15229995/
+      - https://network.satnogs.org/observations/15186279/
+      - https://network.satnogs.org/observations/14908809/
+      - https://network.satnogs.org/observations/15044280/
+      - https://db.satnogs.org/api/satellites/?format=json
+  20.
+    - **Name:** 435-438 MHz CubeSats regularly decoded (representative)
+    - **Band:** UHF 435.8-437.7 MHz
+    - **Service:** Amateur/educational telemetry beacons, some FM repeaters, APRS and SSTV
+    - **Status:** ALIVE (SatNOGS good observations; 'strong' is not quantified because EIRP is unpublished). TEVEL2-1 to -9: 436.400 BPSK 9k6, good 15-17 Oct 2026. SONATE-2: 437.025 GMSK 9k6, plus APRS 145.825 and SSTV 145.880 (VHF), 17 Oct. UmKA-1 (RS40S): 437.625 GMSK 9k6 and SSTV, 18 Oct. Geoscan-1 (RS92S1): 435.970 GFSK 9k6, 16 Oct. HADES-SA: 436.875 FSK 800, 17 Oct. HADES-L: 436.665 FSK 800 plus FM/USB repeater, 17 Oct. UNNE-1B (HADES-E2): 436.888 FM repeater and 200 bps telemetry, 17 Oct. SCION-X: 437.500 GFSK 9k6, 17 Oct. DISCO-2: 437.075 FSK 4k8, 15 Oct. MESAT-1 (MO-122): 435.800 BPSK 1k2, 30 Sep. MARMOTSat (CO-128): 436.125, plus 145.875 digipeater, 4 Oct.
+    - **Status date and source:** SatNOGS Network good observations, 30 Sep-18 Oct 2026 (latest per satellite)
+    - **Sources:**
+      - https://network.satnogs.org/observations/15229936/
+      - https://network.satnogs.org/observations/15229454/
+      - https://network.satnogs.org/observations/15228008/
+      - https://network.satnogs.org/observations/15213014/
+      - https://network.satnogs.org/observations/15224594/
+      - https://network.satnogs.org/observations/15215597/
+      - https://network.satnogs.org/observations/15224574/
+      - https://network.satnogs.org/observations/15218429/
+      - https://network.satnogs.org/observations/15210626/
+      - https://network.satnogs.org/observations/15091869/
+      - https://network.satnogs.org/observations/15122755/
+  21.
+    - **Name:** QO-100 (Es'hail-2, 25.9°E)
+    - **Band:** 10489.500-10490.000 MHz narrowband transponder (IF 739.5-740.0 MHz with a 9750 MHz LO); beacons 10489.500 (CW) and 10489.750 (BPSK400); 10491-10499 MHz DATV wideband
+    - **Service:** Amateur geostationary transponder
+    - **Status:** ACTIVE. AMSAT 'QO-100 [NB] Heard' by many European stations, last on 17 Oct 2026. AMSAT-DL news through Oct 2026 shows no outage. Tier note: a bare TCXO LNB with its own feed is STRICT-tier, and gives beacon, CW and FT8 per documented reports in the inputs. The 20 dBi conical horn (126 mm mouth, 147 mm cone) fits the SMALL tier. The 23 dBi horn (319 mm), the 300 mm lens and any dish are EXCLUDED, and DATV (about 31-32 dBi) is lost.
+    - **Status date and source:** AMSAT status 13-17 Oct 2026; AMSAT-DL news (fetched 18 Oct 2026); calculation: Kyiv 186°/32.0°
+    - **Sources:**
+      - https://www.amsat.org/status/
+      - https://amsat-dl.org/en/
+      - https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines
+  22.
+    - **Name:** Orbcomm OG2
+    - **Band:** VHF 137.25-137.80 MHz downlinks (e.g. 137.288, 137.713, 137.800)
+    - **Service:** Commercial M2M messaging. RECEIVE CARRIER/DOPPLER ONLY; user messages EXCLUDED
+    - **Status:** OPERATING. SatNOGS good observations of FM108, FM112 and FM118 on 17 Oct 2026. Celestrak's orbcomm group lists 14 objects with 17 Oct 2026 epochs.
+    - **Status date and source:** SatNOGS obs 15224838, 15228533 and 15224772 (17 Oct 2026); Celestrak, 17 Oct 2026
+    - **Sources:**
+      - https://network.satnogs.org/observations/15224838/
+      - https://network.satnogs.org/observations/15228533/
+      - https://celestrak.org/NORAD/elements/gp.php?GROUP=orbcomm&FORMAT=json
+  23.
+    - **Name:** Inmarsat-C EGC SafetyNET (Alphasat 24.9°E, Inmarsat-6 F1 83.8°E)
+    - **Band:** L-band 1537-1545 MHz STD-C NCS (1200 bps BPSK)
+    - **Service:** GMDSS maritime safety broadcasts (SafetyNET MSI) ONLY. FleetNET, LES traffic and Aero are EXCLUDED.
+    - **Status:** NETWORK OPERATING, but which satellite serves EMEA is UNVERIFIED. Calculation from Celestrak 17 Oct 2026 elements: Alphasat is at 24.9°E (31.9° elevation from Kyiv), I-6 F1 at 83.8°E (13.9° elevation), and I-4 F2 at about 143.5°E (Celestrak names it SouthPAN PRN 122, so it is out of view from Ukraine). I-6 F2 is drifting at about +2.5°/day. Find the NCS by scanning 1537-1545 MHz. Tier note: an amplified, filtered patch of about 10 cm is the documented antenna for Inmarsat-C, so this target is STRICT-tier.
+    - **Status date and source:** Celestrak element sets, 17 Oct 2026 (longitudes are my calculation, about ±0.5°); sigidwiki (2022); UHF-Satcom (2009); no 2026 primary source found
+    - **Sources:**
+      - https://celestrak.org/NORAD/elements/gp.php?NAME=INMARSAT&FORMAT=json
+      - https://celestrak.org/NORAD/elements/gp.php?GROUP=sbas&FORMAT=json
+      - https://sigidwiki.com/wiki/Inmarsat-C_TDM
+      - https://uhf-satcom.com/satellite-reception/l-band
+      - https://www.rtl-sdr.com/rtl-sdr-tutorial-decoding-inmarsat-std-c-egc-messages/
+  24.
+    - **Name:** Iridium NEXT
+    - **Band:** L-band 1616-1626.5 MHz (the ring-alert/simplex channel is near 1626.27 MHz, from gr-iridium documentation, not re-verified)
+    - **Service:** Commercial MSS. EXCLUDED from decoding (see excluded list)
+    - **Status:** OPERATING. Celestrak's iridium-NEXT group lists 80 objects with 17 Oct 2026 epochs. Ring-alert frames carry subscriber paging identities alongside beam and satellite positions, so only carrier/Doppler observation is allowed.
+    - **Status date and source:** Celestrak, 17 Oct 2026
+    - **Sources:**
+      - https://celestrak.org/NORAD/elements/gp.php?GROUP=iridium-NEXT&FORMAT=json
+  25.
+    - **Name:** GNSS constellations (GPS, GLONASS, Galileo, BeiDou, SBAS)
+    - **Band:** L1/E1/B1 1559-1610 MHz (plus L5/E5 1176 MHz)
+    - **Service:** Open navigation signals only (GPS C/A, L1C, L5; Galileo OS; GLONASS L1OF; BeiDou B1I/B1C); encrypted military codes EXCLUDED
+    - **Status:** OPERATING. Celestrak gps-ops lists 32 objects, glo-ops 29, galileo 32, beidou 54 (BDS-2 and BDS-3 combined) and sbas 21 (EGNOS PRN 121, 123, 136; SDCM Luch-5), all with 17 Oct 2026 epochs. Galileo GSC: 28 usable and 4 not usable (GSAT0201, 0202, 0204, 0210). Jamming and spoofing are widespread in Ukraine (see legal rules). Tier note: a 25 mm ceramic patch is STRICT-tier.
+    - **Status date and source:** Celestrak, 17 Oct 2026; GSC constellation page (fetched 18 Oct 2026); NAVCEN returned 403
+    - **Sources:**
+      - https://celestrak.org/NORAD/elements/gp.php?GROUP=gps-ops&FORMAT=json
+      - https://celestrak.org/NORAD/elements/gp.php?GROUP=glo-ops&FORMAT=json
+      - https://celestrak.org/NORAD/elements/gp.php?GROUP=beidou&FORMAT=json
+      - https://www.gsc-europa.eu/system-service-status/constellation-information
+- **Ended or dead:**
+  - NOAA-18: decommissioned 6 Jun 2025 17:40 UTC; APT 137.9125 MHz and HRPT 1707 MHz ended (NOAA OSPO).
+  - NOAA-19: decommissioned 13 Aug 2025 18:55 UTC after a Battery 1A cell failure; APT 137.1 MHz and HRPT 1698 MHz ended (NOAA OSPO).
+  - NOAA-15: decommissioned 19 Aug 2025 20:37 UTC; APT 137.62 MHz and HRPT 1702.5 MHz ended (NOAA OSPO). All 137 MHz APT is gone.
+  - Metop-A: decommissioned (NOAA OSPO). Metop-B and Metop-C LRPT on 137 MHz are off (SatDump: off because of interference with HIRS; OSPO shows APT/LRPT red).
+  - Meteor-M N2-2: LRPT inoperable after a micrometeorite strike in Dec 2019; in storage mode since Jul 2024 (SatDump).
+  - FengYun-3A, 3B and 3C L-band AHRPT ended; FY-3C was the last, in Nov 2024. FY-3D to 3H AHRPT is X-band only (7.8 GHz, 6-38 Msym/s) and needs a dish (SatDump).
+  - Elektro-L N2: no xRIT after a power-supply failure. Elektro-L N3: transmissions paused pending L5 commissioning. Elektro-L N5: LRIT/HRIT off for commissioning (SatDump, 2 Jul 2026). Not dead, but there is currently no geostationary L-band LRIT for Ukraine. The SatNOGS DB entry of 7 Apr 2026 conflicts.
+  - EWS-G1 (GOES-13): ended 31 Oct 2023 (SatDump). GOES-East and West are below the horizon from Ukraine (calculation).
+  - IO-117 GreenCube: no SatNOGS good observation after 25 Jul 2025, and stations stopped scheduling it after 5 Aug 2025. Presumed silent; cause unverified.
+  - ISS VHF APRS on 145.825 MHz: no longer listed by ARISS (7 Oct 2026), which gives APRS on 437.825 MHz instead. Three AMSAT 'VHF Digi heard' reports on 17 Oct 2026 conflict.
+  - ISS SSTV on 145.800 MHz: the latest listed ARISS event (Series 32, 8-12 May 2026) used 437.550 MHz Robot 36. The last 145.800 MHz events on the ARISS SSTV blog date from Oct-Nov 2024. No event is announced after May 2026.
+  - Re-entered (SatNOGS DB; record-update dates are not decay dates): XW-2A, 2B, 2C, 2D, 2E, 2F and CAS-3G (KAITUO-1B); CAS-5A (FO-118); CAS-10 (HO-119); LilacSat-1 (LO-90); Nayif-1 (EO-88); HADES (SO-115); URESAT-1 (SO-120); HADES-D (SO-121); HADES-R (SO-124); HADES-ICM (SO-125); Tevel-1 to -8 (first generation); UVSQ-SAT; Geoscan-Edelveis; SONATE (the first one); INSPIRESat-1; INSPIRE-SAT 7; I-INSPIRE II.
+  - Inmarsat-6 F2: drifting at about +2.5°/day (calculation from Celestrak elements); not a usable EGC source. Inmarsat-4 F2 now sits near 143.5°E (Celestrak SBAS group: SouthPAN PRN 122), out of view from Ukraine.
+  - Degraded or intermittent rather than dead: AO-91 FM (2 'heard' against 7 'not heard', 13-18 Oct 2026); PO-101 and AO-27 (scheduled or part-time); CAS-3H FM repeater; TO-108; CAS-2T (last good 29 Aug 2026); Metop-B AHRPT (modulator problems).
+- **Excluded private or military:**
+  - Iridium: voice, SMS/SBD, pager traffic and ring-alert/paging frames, which carry subscriber identities with beam and satellite positions. Under martial law these could help locate users. Carrier and Doppler observation only; no demodulation guide.
+  - Inmarsat: STD-C LES and private messages, FleetNET (commercial EGC), Aero ACARS, C-channel voice, Classic Aero, BGAN/GX. Only EGC SafetyNET maritime safety broadcasts are in scope.
+  - Orbcomm: subscriber and user message content. Carrier and Doppler only.
+  - Starlink, OneWeb, Kuiper and other broadband constellations: all user data. These also need phased arrays or dishes.
+  - Thuraya and other MSS voice and data in 1525-1559 / 1626-1660 MHz.
+  - Military UHF SATCOM 240-320 MHz (UFO/FLTSATCOM, Skynet, Sicral, Syracuse and others) and MUOS around 360-380 MHz.
+  - Military-operated or military payloads: EWS-G2 (GOES-15, US Space Force, 61.5°E; it also needs a dish), reconnaissance and military Kosmos satellites, and Russian military relay systems.
+  - Encrypted or restricted GNSS signals (GPS P(Y) and M-code, Galileo PRS, GLONASS P). Do not map or publish GNSS jamming or spoofing sources, since that could reveal EW positions.
+  - ISS non-amateur channels: Soyuz/Progress VHF-1/VHF-2 crew voice (143.625 / 130.167 MHz), EVA suit radios (121.x / 139.208 MHz), Dragon/Falcon/Kvant/TORU links. Only NA1SS/RS0ISS amateur modes are in scope.
+  - COSPAS-SARSAT 1544.5 MHz repeater downlinks on Meteor-M and Metop, and 406 MHz distress beacons: distress identities and positions.
+  - ARGOS/A-DCS (465.9875 MHz) and DCP downlinks of Elektro, Arktika, GOES and FengYun: user platform data such as animal tags and buoys.
+  - Terrestrial military, drone or FPV video and telemetry, or police links heard incidentally while scanning: do not record, decode or share.
+- **Legal rules:**
+  1.
+    - **Topic:** Receive-only equipment: licence and registration
+    - **Rule:** I found no licence, permit or registration requirement for a receive-only receiver. NKEK's list of radio equipment requiring a frequency assignment (Resolution No. 361, 3 Jul 2024, under Art. 68 of Law 1089-IX) puts broadcast receivers under code ЗД-7: general authorisation, no entry in the frequency-assignment register. Assignments and registration apply to transmitting equipment. Nothing explicitly covers SDR or satellite receivers, so this is an inference. Ask the Ukrainian Amateur Radio League (ЛРУ/UARL) and NKEK in writing, as the inputs already advise.
+    - **Source:** https://nkek.gov.ua/static-objects/nkek/sites/1/%D0%A0%D0%9E%20%D1%82%D0%B0%20%D0%92%D0%9F/dodatok-do-postanovy-361-03072024.pdf
+  2.
+    - **Topic:** Law on Electronic Communications (1089-IX)
+    - **Rule:** Law 1089-IX of 16 Dec 2020 has been in force since 1 Jan 2022 and replaced the Law on the Radio Frequency Resource. Under Art. 64, each unit of radio equipment must come with an EU-style declaration of conformity, which matters for imported SDRs and LNBs. Its secrecy-of-communications article was not re-fetched, because zakon.rada.gov.ua returned 503 or reset the connection.
+    - **Source:** https://zakon.rada.gov.ua/laws/show/1089-20 (title only fetched); https://protocol.ua/ua/pro_elektronni_komunikatsii_stattya_64/ (search snippet)
+  3.
+    - **Topic:** Martial law: transmission ban
+    - **Rule:** Art. 8 of Law 389-VIII 'On the legal regime of martial law' allows authorities to 'забороняти роботу приймально-передавальних радіостанцій особистого і колективного користування' (ban the operation of personal and collective transmit-receive radio stations) and to restrict information transmission over computer networks (item 11 in the edition checked). An amateur transmit ban has been reported since Feb 2022, and I found no source lifting it. So: receive only, never transmit or uplink (no SO-50 or ISS repeater access), and keep the LimeSDR TX port disabled and terminated.
+    - **Source:** https://kodeksy.com.ua/pro_pravovij_rezhim_voyennogo_stanu/8.htm (2019 edition); https://www.arrl.org/news/ukraine-maintains-ham-radio-silence-in-state-of-emergency
+  4.
+    - **Topic:** Martial law: seizure of equipment
+    - **Rule:** Art. 8 (item 12 in the edition checked) allows seizure of telecom equipment, TV, video and audio equipment, computers and 'інші технічні засоби зв’язку' (other technical means of communication) from people who violate the martial-law regime. Expect the receiver to be inspected or seized if it raises suspicion. Carry a Ukrainian-language explanation that it is a receive-only hobby device.
+    - **Source:** https://kodeksy.com.ua/pro_pravovij_rezhim_voyennogo_stanu/8.htm
+  5.
+    - **Topic:** Martial law: term
+    - **Rule:** Martial law runs until 31 Oct 2026 under Decree No. 596/2026: 90 days from 05:30 on 2 Aug 2026, approved by Law No. 4928-IX on 14 Jul 2026 and in force from 25 Jul. Another extension is expected but was not found as of 18 Oct 2026. Re-check after 31 Oct.
+    - **Source:** https://nfront.org.ua/?p=62502 (secondary); https://www.president.gov.ua/documents/5962026-60509 (returned 403)
+  6.
+    - **Topic:** Secrecy of communications: Constitution
+    - **Rule:** Constitution Art. 31 guarantees the secrecy of correspondence, telephone conversations, telegraph and other correspondence; exceptions are made only by a court in cases set by law. Private satellite traffic is therefore out of scope (see the excluded list). The text was not re-fetched this run because zakon.rada.gov.ua was unavailable.
+    - **Source:** https://zakon.rada.gov.ua/laws/show/254к/96-вр (not re-fetched)
+  7.
+    - **Topic:** Secrecy of communications: Criminal Code Art. 163
+    - **Rule:** Violating the secrecy of correspondence, telephone conversations, telegraph or other correspondence sent by means of communication or by computer is punishable by a fine of 50-100 untaxed minimum incomes, correctional labour up to 2 years, or restriction of liberty up to 3 years. Part 2 (repeat offences, or use of special means for covert information removal) carries 3-7 years' imprisonment. This is why Iridium, Inmarsat LES/ACARS and Orbcomm user data are excluded.
+    - **Source:** https://urst.com.ua/kku/st-163 (mirror, 05.01.2022 edition)
+  8.
+    - **Topic:** Special technical means: Criminal Code Art. 359
+    - **Rule:** Illegally acquiring, selling or using special technical means for covert information gathering is punishable by a fine of 200-1000 untaxed minimum incomes or up to 4 years; parts 2-3 carry 4-10 years. Whether a general-purpose SDR counts is not settled in commentary. Keep the device a general receiver for public broadcasts, and do not configure, describe or sell it as an interception tool.
+    - **Source:** https://urst.com.ua/kku/st-359 (mirror, 05.01.2022 edition)
+  9.
+    - **Topic:** Publishing receptions: Criminal Code Art. 114-2
+    - **Rule:** Added in March 2022 and amended by Law 2178-IX. It punishes unauthorised dissemination, under martial law, of information on the movement of weapons into Ukraine and on the movement or location of the Armed Forces and other formations (part 1: 3-5 years). Part 2 covers locations identifiable on the ground that the General Staff or MoD has not published, and courts have imposed 10 years under part 3. So: no live streams or geotagged photos. Do not publish exact station coordinates (SatNOGS publishes station latitude and longitude; AMSAT reports include grid squares). Do not post imagery or recordings that show or locate strike damage, infrastructure, or military or drone signals.
+    - **Source:** https://i.factor.ua/ukr/law-455/section-1525/article-33548/; https://court.gov.ua/press/news/1797902
+  10.
+    - **Topic:** GNSS jamming and spoofing
+    - **Rule:** Ukrainian anti-drone EW spoofs GPS. The General Staff acknowledged that it disrupts smartphone GPS and clocks (2024), and NovAtel (Sep 2025) reported spoofed receivers in Ukraine showing a future GPS week. Do not trust GNSS time or position. Use the RTC and a manually entered locator for pass prediction. Never publish GNSS-derived positions or analyses of interference sources.
+    - **Source:** https://therecord.media/ukraine-anti-drone-gps-spoofing-affects-civilian-mobile-phones; https://novatel.com/support/bulletins-alerts-release-notices/technical-update-gnss-spoofing-attacks-in-ukraine
+  11.
+    - **Topic:** Field safety: unexploded ordnance
+    - **Rule:** Set up only on known-safe ground: your own property, paved areas, or areas cleared by the State Emergency Service (ДСНС/SES). Do not enter fields, forest edges or former combat areas, and do not touch suspicious objects. Call 101 (ДСНС). Avoid infrastructure, checkpoints and military sites, where pointing antennas attracts attention.
+    - **Source:** Required by the task; 101 = ДСНС emergency number (general knowledge, not re-verified this run)
+- **Notes:** INTERPRETATION OF THE 18 OCT 2026 RULE (applied throughout):
+  - STRICT tier: largest deployed dimension at most about 12 cm (patches, chip/ceramic antennas, a bare LNB with its own feed, stubby or helical-loaded whips, small loops).
+  - SMALL tier: at most about 20 cm (short loaded whips, rubber ducks, a 20 cm patch or loop).
+  - EXCLUDED: dishes of any size and anything with a deployed size of about 20-25 cm or more, even if it folds (Yagis, helicone, full telescopic V-dipoles, the 47 cm helix, the 23 dBi horn, the 300 mm lens).
+  
+  QUARTER-WAVE LENGTHS (calculation, free space):
+  - 137.1/137.9 MHz: 54.7/54.3 cm. 145.8-145.96 MHz: about 51.4 cm.
+  - 436.8-437.8 MHz: 17.1-17.2 cm (half wave 34 cm).
+  - 1544-1700 MHz: 4.4-4.9 cm.
+  - Consequences: all VHF targets (Meteor LRPT, AO-91, PO-101, AO-7 mode B, JO-97, AO-73, Orbcomm, SONATE-2 APRS/SSTV) need electrically short antennas in both tiers, and I have not quantified those losses here. That is for the antenna/link agent; at 137-146 MHz, external noise rather than antenna efficiency may set the limit. UHF 435-438 MHz fits the SMALL tier at full quarter-wave size and is about 0.7 of a quarter wave in the STRICT tier. L-band and GNSS are naturally STRICT-tier.
+  
+  BIGGEST STATUS CHANGES AFFECTING THE RULE:
+  (1) ISS APRS is now 437.825 MHz (ARISS, 7 Oct 2026), and the latest ISS SSTV series used 437.550 MHz (May 2026). Both now sit in the small-antenna-friendly UHF band.
+  (2) All NOAA APT ended in 2025. 137 MHz weather now means only Meteor-M N2-3 and N2-4 LRPT, both observed on 137.900 MHz this week.
+  (3) There is no geostationary L-band LRIT for Ukraine right now. Elektro-L3 is paused and L5 is off for commissioning (SatDump, 2 Jul 2026). This contradicts the inputs' plan to validate antennas on Elektro-L5 LRIT; use FengYun-2H (79°E, 16.6° elevation, linear polarisation) as the reference carrier instead.
+  (4) GreenCube IO-117 has been silent since about Aug 2025.
+  (5) Inmarsat-4 F2 has moved to about 143.5°E and is out of view. Inmarsat-C EGC for Ukraine must come from Alphasat (24.9°E) or I-6 F1 (83.8°E); which one is unverified.
+  
+  REACHABILITY HINTS (reusing input numbers; not new link budgets):
+  - QO-100 narrowband: the bare TCXO LNB is STRICT-tier (beacon, CW, FT8 documented). The 20 dBi horn (126 mm mouth, 147 mm cone) is SMALL-tier. DATV is lost.
+  - Meteor HRPT: only the 4-5 turn helix on an 18 cm plate (11.6-12.0 dBic modelled, 19-22 cm tall, about +5 dB margin) sits at the SMALL-tier edge. A STRICT-tier patch of about 7-8 dBic (aperture estimate) would cut the inputs' roughly 7 dB average SNR to about 1-2 dB against 0.5 dB needed. That is my estimate, assuming SNR scales dB for dB with gain: marginal, high passes only, and unverified.
+  - Metop AHRPT and AWS are out of reach in both tiers.
+  - Inmarsat EGC SafetyNET and GNSS are STRICT-tier with patches.
+  
+  METHOD:
+  - SatNOGS Network API (good observations, 30 Sep-18 Oct 2026, most with European stations and decoded frames). SatNOGS DB 'alive' flags are often stale, so I relied on observations instead.
+  - AMSAT status page, parsed for 13-18 Oct 2026 (the JSON API returned empty).
+  - SatDump sat_list.json (last commits 2 Jul 2026); NOAA OSPO Metop (3 Sep 2026) and POES pages.
+  - ARISS status (7 Oct 2026) and the ARISS SSTV gallery.
+  - Celestrak element sets (17 Oct 2026). GEO longitudes and elevations are my calculations, good to about ±0.5°.
+  
+  GAPS:
+  - zakon.rada.gov.ua returned 503 or reset, so the legal texts come from mirrors with old editions (Criminal Code 05.01.2022; martial-law law 2019 edition). Item numbers and penalties may have changed; re-check on the official site.
+  - No 2026 primary source for Inmarsat EGC configuration, Iridium ring-alert frequency, ISS SSTV after May 2026, the martial-law extension past 31 Oct 2026, any lifting of the amateur transmit ban, or LilacSat-3 activity.
+  - The president.gov.ua and NAVCEN pages returned 403.
+  
+  Budget: 12 WebSearch calls. Raw downloads are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/status_dl and scripts in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/status_scripts.
+
 ## fold:vhf_uhf (run `wf_4a343103-e9e`)
 
 - **Band group:** VHF/UHF: 137 MHz Meteor-M LRPT, 145.8 MHz ISS SSTV, 435-438 MHz CubeSats (RTL-SDR V4L for 137/145.8 MHz, LimeSDR Micro for 435 MHz). Targets unchanged. Packing targets unchanged: recommended tier has no piece longer than about 35 cm; ultra-compact tier no piece longer than about 20 cm.
