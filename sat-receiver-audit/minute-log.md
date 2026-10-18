@@ -708,3 +708,7 @@ P4, B — ВАЖЛИВО (можлива помилка в нашому патч
 
 P4, A (уточнення до попередніх записів): CONFIG_PPS_CLIENT_GPIO=m, CONFIG_PPS_CLIENT_LDISC=m і CONFIG_PPS_GENERATOR=m є в radxa_qcom_7_0_defconfig, тобто в гілці ядра 7.0 (коміт 4ff8ac9), а не в конфігурації 6.18.2. Тому на утримуваному 6.18.2-4 pps-gpio лишається DKMS-пакетом, як і в стеку. Також підтверджено, що в linux-6.18.2 CONFIG_LSM="landlock,lockdown,yama,integrity,bpf" — AppArmor за замовчуванням не активний, а отже ризик із профілем gpsd на нашому ядрі не спрацьовує. Ще там є CONFIG_RTC_DRV_DS1307=m: цей драйвер покриває RTC класу M41T11. Виправив пункт №4 в operator_notes. Джерело: github.com/radxa/kernel (гілки linux-6.18.2 і linux-7.0.11, radxa_qcom_7_0_defconfig).
 
+## 2026-10-18 09:49 UTC
+
+P4, A (приватність ADS-B; пропозиція): у readsb dbFlags мають такі біти: &1 — військові, &2 — «interesting», &4 — PIA (FAA Privacy ICAO Address), &8 — LADD (FAA Limiting Aircraft Data Displayed: власник відмовився від показу). Стек зараз ховає лише &1. Власники бортів з PIA і LADD прямо попросили їх не показувати, тож у v2 треба так само не показувати й не логувати треки з &4 і &8, а фільтр «interesting» лишити вимкненим. Записав як пункт №25 в operator_notes. Джерело: github.com/wiedehopf/readsb, README-json.md.
+
