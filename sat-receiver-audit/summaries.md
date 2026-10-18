@@ -4513,3 +4513,35 @@ Launching the study requested: drop everything that needs dishes or antennas ten
 
 ---
 
+### 🤖 Зведення #160 — 2026-10-18 01:59:53 UTC
+
+**Зведення (тік, коміт fb2d066).** Етап 1: чекаю на чотири дослідження. У дослідженні малих антен готовий каталог супутників, а агент «стек» почав вирішувати, що лишити, а що прибрати.
+
+**Хто живий станом на 18.10.2026** (за SatNOGS, AMSAT, ARISS, NOAA OSPO і SatDump):
+
+| Група | Працюють | Нестабільні або на межі | Згасли |
+|---|---|---|---|
+| Погода на 137 МГц | Meteor-M N2-4 і N2-3 LRPT на 137,900 МГц (декодуються щодня) | — | NOAA-18 (06.06.2025), NOAA-19 (13.08.2025), NOAA-15 (19.08.2025): весь APT на 137 МГц закінчився. LRPT від Metop вимкнено |
+| Погода в L-діапазоні | AWS (1707 МГц), FengYun-2H | Metop-B AHRPT працює, але з погіршенням. Про Metop-C джерела розходяться | Elektro-L наразі недоступний |
+| МКС | FM-ретранслятор 437,800 МГц, APRS тепер на 437,825 МГц, SSTV на 437,550 МГц (остання серія — травень 2026) | — | — |
+| Аматорські супутники | SO-50, AO-123, RS-44, FO-29, AO-7, JO-97, AO-73, CAS-3H | AO-91, AO-27, PO-101 | GreenCube IO-117 мовчить з липня 2025 |
+| QO-100 | Працює | — | — |
+| Inmarsat-C EGC SafetyNET | Мережа працює | Котрий супутник обслуговує Європу й Африку, ще уточнюється. Inmarsat-6 F2 дрейфує й не годиться | — |
+| GNSS | Працює (у Galileo придатні 28 супутників) | — | — |
+
+**Чому це важливо:** МКС перенесла APRS і SSTV з 2 м на 70 см. А на 70 см навіть штир 17 см майже повноцінний, тож для малих антен це добра новина.
+
+Супутники Orbcomm у нас лише як джерело завад біля Meteor, а Iridium виключено з декодування.
+
+Джерела:
+- [SatNOGS Network](https://network.satnogs.org/)
+- [AMSAT status](https://www.amsat.org/status/)
+- [ARISS](https://www.ariss.org/)
+- [NOAA OSPO POES status](https://www.ospo.noaa.gov/operations/poes/status.html)
+- [NOAA OSPO Metop status](https://www.ospo.noaa.gov/operations/metop/status.html)
+- [SatDump sat_list](https://github.com/SatDump/satdump.org/blob/master/sat-list/sat_list.json)
+- [CelesTrak](https://celestrak.org/)
+- [Galileo constellation status](https://www.gsc-europa.eu/system-service-status/constellation-information)
+
+---
+
