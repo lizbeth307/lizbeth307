@@ -4,6 +4,394 @@
 
 ## Дослідження (`research`)
 
+_Run `wf_d9388111-e66`_
+
+- **Subsystem:** power
+- **Findings:**
+  1.
+    - **Claim in stack:** Cells: Molicel INR21700-P50B, 5.0 Ah, 18 Wh, 60 A continuous; 4S1P = 72 Wh nominal
+    - **Finding:** The Molicel product data sheet V1.1 gives 5000 mAh typical (4850 min), 18.0 Wh (17.5 min), 3.6 V nominal, 4.2 V charge, 2.5 V cutoff, 5 A standard / 25 A max charge, 60 A continuous (80 C cutoff), DC impedance 12.8 mOhm at 50% SOC, AC 6.5 mOhm at 30% SOC, and charge ambient -20 to 60 C. The molicel.com page lists 1,400 cycles. The STACK 0-45 C charge window is more conservative than the cell allows and matches the IP2368 NTC thresholds.
+    - **Verdict:** confirmed
+    - **Action:** Keep. Use 4.85 Ah (minimum) and about 7-13 mOhm (1 kHz AC / DC) as the goods-in limits.
+    - **Impact:** Battery choice holds.
+    - **Sources:**
+      - https://www.fsaeonline.com/content/Molicel-TDS--INR-21700-P50B-80122.pdf
+      - https://www.molicel.com/inr-21700-p50b/
+  2.
+    - **Claim in stack:** P50B weight about 68 g; goods-in check 68-70 g
+    - **Finding:** The official data sheet gives 71 g maximum. A 68-70 g window could reject genuine cells in the 70-71 g range. The pack is up to 284 g of cells, not 272 g.
+    - **Verdict:** corrected
+    - **Action:** Change the goods-in window to 68-71 g and the pack mass model to 4 x 71 g max.
+    - **Impact:** Small: weight budget plus about 12 g, fewer false rejects.
+    - **Sources:**
+      - https://www.fsaeonline.com/content/Molicel-TDS--INR-21700-P50B-80122.pdf
+  3.
+    - **Claim in stack:** P50B $9.99 each at 18650 Battery Store (verified); NKON $7.59 (unverified)
+    - **Finding:** On 18 Oct 2026 the 18650 Battery Store Shopify catalogue shows 'Molicel 21700 P50B 5000mAh 60A Battery' at $9.99, available. IMR Batteries also lists it at $9.99, available. NKON returned HTTP 403, so the NKON price is still unverified.
+    - **Verdict:** confirmed
+    - **Action:** Keep $49.95 for 5 cells. Leave NKON marked unverified.
+    - **Impact:** No cost change.
+    - **Sources:**
+      - https://www.18650batterystore.com/products/molicel-21700-p50b-5000mah-50a-battery
+      - https://imrbatteries.com/products/molicel-21700-p50b-5000mah-60a-battery
+  4.
+    - **Claim in stack:** 4S1P P50B is the right cell for the 72 Wh pack (power cell, 60 A)
+    - **Finding:** The worst-case pack current is about 4.6 A, which is 0.9C. The 60 A power rating is unused. Molicel now also lists INR-21700-M65A: 6.5 Ah, 23.4 Wh, 26 A continuous, 322 Wh/kg, implied mass about 73 g. A 4S1P M65A pack would be 93.6 Wh nominal, still under 100 Wh, and runs about 26% longer on the same model (mode B 4.2 h warm instead of 3.3 h). M65A is $11.99 and SOLD OUT at IMR Batteries and 18650battery.com. NKON's €9.75 comes from a search snippet; its stock is unverified. The cold (0 C) performance of the high-energy cell is not published on the page.
+    - **Verdict:** new_option
+    - **Action:** Keep P50B as the baseline. List M65A as an upgrade only after the full Molicel data sheet (charge temperature range, cold discharge curve) and in-stock retail are confirmed. Re-run the cold-runtime model with M65A cold data before switching.
+    - **Impact:** About +21 Wh and about +20-30% runtime for about +$10 and about +8-12 g, if the cells are available.
+    - **Sources:**
+      - https://www.molicel.com/inr-21700-m65a/
+      - https://imrbatteries.com/products/molicel-m65a-21700-6500mah-26a-battery
+      - https://www.nkon.nl/en/molicel-inr21700-m65a-6500mah-26a.html
+  5.
+    - **Claim in stack:** Budget cell alternative: other 5 Ah cells (stage-5 analog search)
+    - **Finding:** 18650 Battery Store lists Samsung INR21700-58E at $4.99, in stock. The listing gives 5330 mAh min (0.2C), 5170 mAh min (1C), 3.64 V nominal, 10.7 A continuous (2C), 0.5C (2.67 A) standard charge, 1C max charge, and 74 g max. All of these come from the retailer page; the Samsung SDI spec CC5493F101 was not fetched. The 3 A charge setting is slightly above the 0.5C standard. Cold performance is not given.
+    - **Verdict:** new_option
+    - **Action:** Pass to the stage-5 cheaper-analog run as a candidate (half price, about +7% Wh). Requires the Samsung spec sheet and a cold-discharge bench test. If adopted, set RISET to 2.5 A (12.5k).
+    - **Impact:** Could save about $25 for 5 cells. Unverified at the manufacturer level.
+    - **Sources:**
+      - https://www.18650batterystore.com/products/samsung-58e-21700-battery
+  6.
+    - **Claim in stack:** BMS: Daly 4S 15 A common-port with balancing, $9.00 at TinyTronics (unverified); BMS cutoff 2.5-2.8 V/cell
+    - **Finding:** TinyTronics lists €8.00 incl. VAT (€6.61 ex), 'only 9 pieces in stock'. Specs: Li-ion/LiPo, common port, 15 A continuous, discharge OCP 40±10 A, charge OCP 10±2 A, OVP 4.25±0.05 V (release 4.15), UVP 2.70±0.05 V (release 3.0 V). Balancing is passive, 30±10 mA, and starts only at 4.18 V. Self-consumption and the wake-up requirement are NOT published.
+    - **Verdict:** corrected
+    - **Action:** Price confirmed (about $9 at an assumed 1.16 USD/EUR). Correct the cutoff row to UVP 2.65-2.75 V, release 3.0 V. The 4.10 V daily charge never reaches the 4.18 V balance start, so the monthly ISDT balance is mandatory (already in STACK). Some units can hit OVP at 4.20 V, which only ends a monthly 4.20 V charge early and is harmless. Measure BMS quiescent current on the bench and keep the wake test 3/3.
+    - **Impact:** Confirms the monthly-balance design. Stock is thin (9 pcs).
+    - **Sources:**
+      - https://www.tinytronics.nl/en/power/bms-and-chargers/bms/daly-bms-li-ion-li-po-protection-circuit-4s-15a-with-balancing
+  7.
+    - **Claim in stack:** IP2368 datasheet V1.41: 2-5 cells, up to 100 W, 250 kHz, timer 45-51 h, standby 180 uA; RVSET 5.1k = 4.10 V/cell; RISET 15k = 3 A; NTC 10k B3380
+    - **Finding:** Read directly from the IP2368 V1.41 data sheet (Nov 2023; the revision note says 6S is no longer supported):
+  - VTRGT = 4000 + 0.02*RVSET mV, so 5.1k gives 4.102 V/cell. The settable Li-ion range is 4.1-4.4 V/cell, 10 mV step, 1% resistor; about ±40 mV/cell tolerance at 7.5k.
+  - With ISET_MODE to GND, ICHRG = 0.2*RISET mA, so 15k gives 3 A (5 A max).
+  - 250 kHz charge and discharge switching. TEND 45/48/51 h. ISTB 180 uA at VBAT 14.8 V.
+  - NTC: 80 uA / 0.39 V means above 45 C; 20 uA / 0.55 V means below 0 C. The BOM NTC is 10k@25 C, B=3380 (my calculation: 4.90 k at 45 C, 28.2 k at 0 C).
+  - Abs max VBAT/VBUS 30 V; VBUS operating 4.5-25 V; θJA 30 C/W.
+    - **Verdict:** confirmed
+    - **Action:** Keep the settings. Note that the 500 kHz second harmonic of the 250 kHz switcher sits between NAVTEX 490 and 518 kHz, which justifies 'no charging in HF/LF Quiet'.
+    - **Impact:** Charger parameters hold.
+    - **Sources:**
+      - https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+      - https://www.lcsc.com/product-detail/C5203723.html
+  8.
+    - **Claim in stack:** IP2368 'BZ' charge-only board version, 2 boards $25-49 from a marketplace
+    - **Finding:** The data sheet defines IP2368_BZ as the standard part (2-5S charging). IP2368_COUT adds USB-C discharge output (DRP Try.SRC); _NACT and _I2C variants also exist. Retail boards found (Walmart about $12.50-12.98, Newegg Business $15.79, Newegg $18.99, Newegg.ca $23.98) are all sold as BIDIRECTIONAL 100 W boards. Sellers warn that the bidirectional C port may only be connected to one-way chargers or devices, and that connecting another bidirectional port causes role flapping. No listing sold as charge-only was found. The IP2368_BZ_VGLIP chip (LCSC C5203723) shows 'Not available now'. The Anker 737 named in STACK as the bench source is itself a bidirectional USB-C power bank.
+    - **Verdict:** new_risk
+    - **Action:** Assume the bought board is a COUT variant until proven otherwise. Goods-in test: with the board on battery, attach a USB-C sink (FNB58 plus load); any VBUS means COUT. Mitigations, choose one:
+  - A reverse-blocking eFuse (e.g. TI TPS25947: 2.7-23 V, 28 V abs max, true reverse blocking) between the enclosure USB-C VBUS and the board. This is a model; bench-verify that PD still negotiates.
+  - Source an IP2368_BZ chip from an Injoinic distributor for the custom power PCB.
+  - Charge only from one-way PD adapters, never from bidirectional power banks.
+    - **Impact:** Without mitigation, a power bank or phone on the port could drain the pack, or charging could flap. Price is roughly confirmed ($25-48 for 2).
+    - **Sources:**
+      - https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+      - https://www.lcsc.com/product-detail/C5203723.html
+      - https://www.neweggbusiness.com/p/9B-27U-00HC-00022
+      - https://www.newegg.com/p/3C6-00RD-001C4
+      - https://www.walmart.com/ip/5614775489
+      - https://www.onbuy.com/ro/p/ip2368-bidirectional-100w-fast-charging-module-buck-boost-type-c-interface-4s-lithium-battery-high-power-charging-board~p252223345/
+      - https://www.ti.com/product/TPS25947
+  9.
+    - **Claim in stack:** For 45 W PD sources use input-power-limit mode (RISET value to verify on bench)
+    - **Finding:** The data sheet says the standard IP2368 automatically lowers charge current so that input power stays at or below the PD power the adapter advertises. Its worked example is a 30 W adapter with RISET 15k. Only the IP2368_NA custom variant ignores adapter capability. With non-PD 5 V input, input current is capped at 3 A.
+    - **Verdict:** corrected
+    - **Action:** Drop the separate 45 W RISET mode. Keep ISET_MODE to GND, RISET 15k. A 45 W source simply charges slower above about 14-15 V pack voltage. Still qualify each source with the FNB58.
+    - **Impact:** Simpler configuration; one resistor value.
+    - **Sources:**
+      - https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+  10.
+    - **Claim in stack:** SYS12: Pololu D36V50F12, 12 V ±4%, about 500 kHz under load, power-save at light load, $39.95, 'Rationed'; drop-out below about 13.3 V battery
+    - **Finding:** Pololu #4095: 12 V ±4%; 4.5 A typical at 36 V in (2.3-6.5 A typical continuous range); input 13.3-50 V; about 500 kHz under heavy load; power-save mode at light load stays above 20 kHz; EN sleep below 1.2 V, wake above 1.35 V; PG open-drain (+20% / -10%); Iq 2-4 mA; sleep current 10-20 uA per volt, 'mostly from the EN pull-up'; $39.95 (1), $36.75 (5+); 'Rationed (Active and Preferred)'. No numeric dropout is given; it rises with load (curves only).
+    - **Verdict:** confirmed
+    - **Action:** Keep with the existing A/B gates. Because EN has an internal pull-up, a divider of about 0.10 will not give exactly 12.0/13.5 V. Calibrate the backup-EN divider on the bench.
+    - **Impact:** Price, stock and specs unchanged. The about 500 kHz fundamental sits 10-18 kHz from NAVTEX 490/518 kHz and moves with load, so the C4 gate is essential.
+    - **Sources:**
+      - https://www.pololu.com/product/4095
+  11.
+    - **Claim in stack:** C4 fallback: synchronous buck with forced PWM at a fixed frequency via RT/SYNC, part to be chosen in P5
+    - **Finding:** Verified candidate: TI LM61460 (ACTIVE, Rev D 2022). Specs:
+  - 3.0-36 V input (42 V transient), 6 A, RT-set 200 kHz-2.2 MHz.
+  - An external clock on EN/SYNC forces FPWM and disables PFM ('all parts operate in FPWM mode when synchronizing'); the only orderable part, LM61460AANRJRR, is auto-mode without spread spectrum, so the sync input is how FPWM is reached.
+  - 0.4 V typical dropout at 4 A; adjustable SW rise time; HotRod package.
+  - LM61460EVM exists (5 V / 400 kHz, needs rework for 12 V).
+  Price and stock not checked.
+    - **Verdict:** new_option
+    - **Action:** Name LM61460 (synced from a clean clock chosen by the harmonic scan, e.g. 1.8-2.1 MHz) as the P5 fallback for SYS12 on the custom power PCB. Verify price and stock in P5.
+    - **Impact:** Gives a concrete fixed-frequency path if the Pololu fails the NAVTEX/LF A/B test. Lower dropout than the Pololu module.
+    - **Sources:**
+      - https://www.ti.com/product/LM61460
+      - https://www.ti.com/lit/ds/symlink/lm61460.pdf
+  12.
+    - **Claim in stack:** LAB5: Pololu D36V28F5, 3.2 A, $23.95
+    - **Finding:** Pololu #3782: 5 V ±4%; 3.2 A typical at 36 V in (2.5-4 A typical continuous); input 5.3-50 V; about 500 kHz; power-save mode above 20 kHz; same EN thresholds; Iq 2-3 mA; $23.95 (1), $22.03 (5+); Rationed (Active and Preferred). D36V50F5 (#4091, 5.5 A, $39.95) exists for the Lime case.
+    - **Verdict:** confirmed
+    - **Action:** Keep. Set the D14 'D36V50F5 price unverified' note to $39.95 (verified).
+    - **Impact:** None.
+    - **Sources:**
+      - https://www.pololu.com/product/3782
+      - https://www.pololu.com/product/4091
+  13.
+    - **Claim in stack:** Main switch: Pololu #2813 HP, 4.5-40 V, 6 A at 55 C, <0.2 uA off, A-to-GND on-only, OFF pulse from Pico, $8.95
+    - **Finding:** Pololu #2813 'Big Pushbutton Power Switch with Reverse Voltage Protection, HP':
+  - 4.5-40 V in the intro, but the spec table gives 4.5-32 V recommended and 40 V absolute maximum.
+  - About 6 A at 55 C; off current <0.2 uA; A-to-GND gives on-only; OFF pin high pulse (>1 V) turns it off; CTRL pin.
+  - $8.95 (1), $8.23 (5+); Rationed.
+  - Pololu warns against using it as an emergency cutoff or safety disconnect, and says it 'does not isolate the load when off'.
+    - **Verdict:** confirmed
+    - **Action:** Keep. Use 32 V as the design limit; the SMBJ17A clamp of 27.6 V stays below it. The BMS and the 7.5 A fuse remain the safety disconnects; the supervisor-held OFF is only an energy cutoff. Keep the bench test of a held OFF against a button press on A.
+    - **Impact:** No change. The safety wording in STACK should not call the #2813 a protective cutoff.
+    - **Sources:**
+      - https://www.pololu.com/product/2813
+  14.
+    - **Claim in stack:** Gauge: Adafruit INA228 #5832, 15 mOhm shunt, ADCRANGE 0 = ±10.9 A, $14.95; AON budget about 0.7 mA
+    - **Finding:** Adafruit #5832: $14.95, in stock; 15 mOhm 0.1% shunt; up to 10 A in high-current mode, 2.75 A in low-current mode; 85 V common mode; 10k I2C pull-ups; default address 0x40; ALRT active-low; VBUS jumper open by default. TI INA228 (ACTIVE, data sheet Rev A May 2022): 2.7-5.5 V supply; 640 uA typical, 1.1 mA max; 5 uA max shutdown; ±163.84 / ±40.96 mV ranges (15 mOhm gives 10.92 / 2.73 A); energy and charge accumulators.
+    - **Verdict:** confirmed
+    - **Action:** Keep. For high-side use, close the VBUS jumper. Budget AON at 0.7 mA typical but 1.2 mA worst case.
+    - **Impact:** None.
+    - **Sources:**
+      - https://www.adafruit.com/product/5832
+      - https://learn.adafruit.com/adafruit-ina228-i2c-power-monitor/pinouts
+      - https://www.ti.com/product/INA228
+  15.
+    - **Claim in stack:** INA228 board prep: remove pull-ups; OFF draw about 13-14 mW, about 170-185 days
+    - **Finding:** The Adafruit board also has a green 'on' power LED, and the guide shows no jumper to disable it. On a linear AON LDO fed from about 15.5 V, every 1 mA of LED current costs about 15 mW. That alone could halve standby time; the LED current is unverified. The 170-185 days figure assumes 58 Wh from full. The STACK storage rule (about 50% SoC) leaves about 36 Wh, so about 110 days at 13.5 mW (model). After that the AON load keeps draining toward BMS UVP (2.70 V/cell).
+    - **Verdict:** new_risk
+    - **Action:** Remove the board's power LED (or its resistor) as well as the pull-ups. On poweroff when SoC is below about 30%, have labpowerd put the INA228 into shutdown mode (5 uA max), accepting that charge while off is not counted, or let the supervisor cut the AON load below about 13.0 V. Restate standby as 'about 110 days from 50% storage' (model).
+    - **Impact:** Prevents a silently over-discharged pack after months in storage.
+    - **Sources:**
+      - https://learn.adafruit.com/adafruit-ina228-i2c-power-monitor/pinouts
+      - https://www.ti.com/product/INA228
+  16.
+    - **Claim in stack:** INA228 read via i2c-dev in user space, no DT binding; 'bound ina238 driver blocks CHARGE register access'
+    - **Finding:** Mainline Linux has supported INA228 in the ina238 hwmon driver since v6.17 (merged 2025). The current kernel docs list INA228, INA237, INA238, INA700, INA780 and SQ52206. The driver exposes energy1_input but no charge attribute. The user-space decision is still correct, and on any kernel 6.17 or newer a DT node would now bind the driver.
+    - **Verdict:** confirmed
+    - **Action:** Keep i2c-dev. Add 'blacklist ina238' (or make sure no ti,ina228 DT node exists) to the image, and check i2cdetect shows 0x40 not as UU.
+    - **Impact:** Prevents a silent driver grab on newer Radxa kernels.
+    - **Sources:**
+      - https://docs.kernel.org/hwmon/ina238.html
+      - https://code.amethyst.name/public-mirrors/linux/src/branch/master/drivers/hwmon/ina238.c
+  17.
+    - **Claim in stack:** LNB and Boni LDO: TI TPS7A4701, 3-36 V, 1 A, 307 mV dropout, θJA 30.5 C/W; 0.96 W at 0.3 A / 1.44 W at 0.45 A
+    - **Finding:** TI page and data sheet Rev G (May 2026): ACTIVE; IN 3-35 V operating, 36 V abs max; ANY-OUT 1.4-20.5 V (adjustable to 34 V); 1 A; dropout 216 mV at 0.5 A and 307 typ / 450 max mV at 1 A; current limit 1.0 min / 1.26 typ A; 4 uVrms; θJA 30.5 C/W (RGW VQFN-20). 13.2 V and 12.5 V can both be set with ANY-OUT pins (0.1 V steps). Dissipation recomputed: 0.96 W / +29 K and 1.44 W / +44 K (model).
+    - **Verdict:** confirmed
+    - **Action:** Keep the electrical choice.
+    - **Impact:** None.
+    - **Sources:**
+      - https://www.ti.com/product/TPS7A47
+      - https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+  18.
+    - **Claim in stack:** TPS7A4701 'PG on MCP #3' for LNB13V2 and BONI12V5
+    - **Finding:** The TPS7A47 pin table (Rev G) has OUT, NC, SENSE, the ANY-OUT pins (0P1V-6P4V2), GND, EN, NR, IN and NC. There is NO power-good pin. The schematic cannot wire PG to the MCP23017.
+    - **Verdict:** corrected
+    - **Action:** Replace the 'PG' line with an external monitor. Options: a TPS3762 or TLV6700-class comparator on each output, or read the rail through a divider into a spare ADC (Pico) or a comparator into MCP #3.
+    - **Impact:** A schematic error that would otherwise be found only at layout.
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+  19.
+    - **Claim in stack:** Acceptance: LNB 13.2 V ±0.2 V at the F connector; Boni 12.5 V ±0.25 V
+    - **Finding:** Overall TPS7A47 accuracy is ±2.5% over line, load and temperature (±1% at 25 C only), valid when VIN ≥ VO + 1 V. That is ±0.33 V at 13.2 V and ±0.31 V at 12.5 V, before the drop across the PTC, LC and choke. Near the 13.2-13.8 V battery region the LDO is close to dropout.
+    - **Verdict:** corrected
+    - **Action:** Widen acceptance to 13.2 V ±0.35 V (still inside the Bullseye 11.5-14 V V-pol window) and 12.5 V ±0.35 V, or trim in adjustable mode with 0.1% resistors. Test at a battery voltage of at least 14.2 V.
+    - **Impact:** Avoids false acceptance failures; no functional change.
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+  20.
+    - **Claim in stack:** TPS7A4701 x2 at LCSC, $10-20 total (price unverified)
+    - **Finding:** On 18 Oct 2026 LCSC C90084 (TPS7A4701RGWR) is 'Out of Stock' at $13.29 (1+), so two cost about $26.6. The TI store shows RGWR and RGWT out of stock. DigiKey regional pages show backorder with a 12-week lead time (aggregator snapshot; Mouser stock in snapshots is unverified). LCSC lists TPS7A4701MRGWREP (TI enhanced product, same function) at $11.01 with 110 in stock.
+    - **Verdict:** new_risk
+    - **Action:** Order early, the same as other long-lead items: try Mouser/DigiKey live, else buy 2x TPS7A4701MRGWREP from LCSC. Budget $22-27 for two. Keep a 36-40 V adjustable LDO as plan C (e.g. ADI LT3081/LT3080 class; not verified here).
+    - **Impact:** Plus about $7-17 and a possible schedule risk on both the LNB and Boni rails.
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/C90084.html
+      - https://www.ti.com/product/TPS7A47/part-details/TPS7A4701RGWR
+      - https://punchouttest.digikey.ca/en/products/detail/texas-instruments/TPS7A4701RGWR/4579595
+  21.
+    - **Claim in stack:** LNA rail: 2x ADI LT3045 in parallel at 4.5 V from LAB5, $8.33 each, LCSC (not ADI-franchised)
+    - **Finding:** LCSC C666574 LT3045EDD#PBF: $8.63 (1+), 446 in stock, 20 V operating, 500 mA, 260 mV typical dropout, 10 uF minimum output capacitor. Headroom is tight: D36V28F5 5.0 V ±4% (4.8 V minimum) minus the LC drop leaves about 0.25-0.45 V above 4.5 V. That puts the LT3045 near dropout, where its PSRR against the about 500 kHz LAB5 ripple is reduced (PSRR at this headroom not verified; the ADI site returned 503).
+    - **Verdict:** confirmed
+    - **Action:** Price $17.26 for 2. On the bench, measure the 4.5 V ripple at 500 kHz with LAB5 at its low tolerance. If PSRR is poor, lower the rail to about 4.3-4.4 V if the LNAs allow it (check with the rf_frontend owner).
+    - **Impact:** Small cost change; possible LNA-rail ripple issue.
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/C666574.html
+  22.
+    - **Claim in stack:** TPS2553 x10: LNA channels 300 mA nominal (240 mA minimum), LAB port 0.75 A; TI store out of stock; check -1 latch variant
+    - **Finding:** TI: ACTIVE; 2.5-6.5 V; adjustable limit about 75 mA-1.7 A; TPS2553-1 is the latch-off version; FAULT deglitch 5/7.5/10 ms; data sheet Rev F. The TI store shows TPS2553DBVR out of stock. LCSC C55266 has tens of thousands at about $0.30 (search snapshot), and TPS2553DBVR-1 is C111738.
+  Data-sheet equations, with RILIM in kOhm (my calculation):
+  - RILIM = 88.7k gives IOS min/nom/max about 265/300/341 mA.
+  - RILIM = 34.8k gives 685/747/817 mA.
+  TI also suggests the pin-compatible TPS25221 (0.275-2.7 A).
+    - **Verdict:** confirmed
+    - **Action:** Keep. Use 88.7k (1%) for the LNA channels; the minimum is about 265 mA, not 240. Use 34.8k for the LAB port (0.75 A nominal). Buy from LCSC.
+    - **Impact:** About $3-5 for 10; no change.
+    - **Sources:**
+      - https://www.ti.com/product/TPS2553
+      - https://www.ti.com/lit/ds/symlink/tps2553.pdf
+      - https://www.ti.com/product/TPS2553/part-details/TPS2553DBVR
+      - https://www.lcsc.com/product-image/C55266.html
+      - https://fat.lcsc.com/product-image/C111738.html
+  23.
+    - **Claim in stack:** AON 3.3 V: TPS709-class LDO (30 V input, uA Iq; to verify)
+    - **Finding:** TI TPS709: ACTIVE (Rev H 2021); 2.7-30 V; 150 mA; 1 uA typical Iq; 3.3 V fixed option available; WSON-6 or SOT-23-5. The page names TPS7E71 as a pin-compatible newer part (higher Iq, no reverse-current protection) and TPS7A19 (40 V). The SMBJ17A clamp of 27.6 V at Ipp stays below 30 V.
+    - **Verdict:** confirmed
+    - **Action:** Fix the part as TPS70933 (DBV). Keep TPS7A19 as the higher-margin option if the node-N transient margin worries the reviewer.
+    - **Impact:** None.
+    - **Sources:**
+      - https://www.ti.com/product/TPS709
+  24.
+    - **Claim in stack:** Micropower UV supervisor 12.8 V trip / 13.6 V release (part to be chosen in P5)
+    - **Finding:** TI TPS3762: ACTIVE (Rev A Dec 2023); 2.7-65 V supply; 4 uA Iq; 0.8 V SENSE threshold set by an external divider; 2/5/10% hysteresis options; latching option; open-drain active-low output; SOT-23-THN. It can sit directly on node N. The fixed percent hysteresis gives 13.44 V (5%) or 14.08 V (10%) release from 12.8 V, not exactly 13.6 V.
+    - **Verdict:** new_option
+    - **Action:** Use TPS3762 (5% version, release about 13.45 V) or add a resistor for extra hysteresis to land on 13.6 V. Power it from N, not from AON 3.3 V, so it works even if the AON LDO fails. Confirm the hysteresis definition in the data sheet.
+    - **Impact:** Turns a 'model' line into a sourced part costing about 0.06 mW.
+    - **Sources:**
+      - https://www.ti.com/product/TPS3762
+  25.
+    - **Claim in stack:** TVS: SMBJ13A on J21 (VRWM 13 V, breakdown 14.4-15.9 V, below the Q6A's 16 V capacitors); SMBJ17A on node N
+    - **Finding:** The Vishay SMBJ table confirms both: SMBJ13A VBR 14.4-15.9 V at 1 mA, VC 21.5 V at 27.9 A; SMBJ17A VBR 18.9-20.9 V, VC 27.6 V at 21.7 A. However, Diodes Inc's SMBJ13A listing gives VBR max 16.5 V (search snippet; primary page returned 403), so the 15.9 V bound depends on the vendor. Under any real surge the clamp (21.5 V) is above the SY81012's 16 V. If the D36V50F12 fails with its high side shorted, SMBJ13A crowbars at 16.4 V (model: about 5 A, about 80 W) until it fails or the 4 A fuse opens.
+    - **Verdict:** corrected
+    - **Action:** Specify the manufacturer: Vishay or Littelfuse SMBJ13A, not a generic part. For real J21 over-voltage protection, add an eFuse with adjustable OVLO set to about 13.5 V. TI TPS25947 (2.7-23 V, 5.5 A, adjustable ILIM 0.5-6 A, 1.2 us OVLO, true reverse blocking) also blocks back-feed from the Q6A side. Keep the TVS only for fast edges.
+    - **Impact:** Closes a real fault mode (buck short putting 16.4 V on the Q6A). About +$1-3.
+    - **Sources:**
+      - https://www.vishay.com/docs/88392/smbj.pdf
+      - https://www.diodes.com/part/view/SMBJ13A
+      - https://www.ti.com/product/TPS25947
+  26.
+    - **Claim in stack:** DISP12: eFuse 1.5 A (part unnamed)
+    - **Finding:** No part is named in STACK. TPS25947 (above) fits: 2.7-23 V, adjustable ILIM from 0.5 A (±10% above 1 A), latch or auto-retry, EN for Pico control, reverse blocking (prevents back-feed from a display board with its own supply). Iq 426 uA typ when on.
+    - **Verdict:** new_option
+    - **Action:** Name TPS25947 for DISP12 (ILIM about 1.5 A) and J21. Verify price and stock in P5.
+    - **Impact:** Turns a 'model' item into a sourced part.
+    - **Sources:**
+      - https://www.ti.com/product/TPS25947
+  27.
+    - **Claim in stack:** J21 accepts 4.5-16 V (forum); SY81012 2.7-16 V; Radxa asks for at least 24 W (12 V/2 A)
+    - **Finding:** Radxa Dragon Q6A product brief Revision 1.7 (2026-10-10): power input is 12 V (USB-C PD 12 V or 12 V DC, or the external 12 V connector). Minimum 18 W (12 V/1.5 A) without heavy USB/PCIe, at least 24 W (12 V/2 A) fully loaded. No voltage range is published, and the docs page gives pin 1 = 12 V, 2 = GND, 3 = PWR. SY81012 2.7-16 V is confirmed only from a third-party copy of the Rev 0.9A data sheet.
+    - **Verdict:** unverified
+    - **Action:** Keep 12 V regulated on J21. Treat the 4.5-16 V tolerance as forum-only. The 11.0 V display test and an 11.5 V Q6A brown-out bench test remain required.
+    - **Impact:** The dropout-zone assumption (SYS12 about 11.5-12 V) is not vendor-guaranteed.
+    - **Sources:**
+      - https://dl.radxa.com/q6a/docs/radxa_dragon_q6a_product_brief.pdf
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/power-header
+      - https://atta.szlcsc.com/upload/public/pdf/source/20240509/0FD7B458A1C7C9AED0BF280C094B69EB.pdf
+  28.
+    - **Claim in stack:** Q6A 2.9 / 9.3 / 10.1 W (measured, Geerling) as runtime-model inputs
+    - **Finding:** geerlingguy/sbc-reviews #85: idle 2.9 W 'at wall', stress-ng 9.3 W, Geekbench 9.5 W, HPL 10.1 W, LLM about 7.8-7.9 W. These are wall figures that include adapter loss, so they slightly overstate draw at J21.
+    - **Verdict:** confirmed
+    - **Action:** Keep as conservative inputs.
+    - **Impact:** None.
+    - **Sources:**
+      - https://github.com/geerlingguy/sbc-reviews/issues/85
+  29.
+    - **Claim in stack:** LNB rail 13.2 V vertical only; Bullseye 11.5-14 V V-pol; current unpublished (0.2-0.3 A assumed); PTC 0.45 A
+    - **Finding:** The RTL-SDR Blog store says the Bullseye needs 11.5-14 V for vertical and 16-19 V for horizontal polarisation. It is $29.95 with 70 in stock; stability ±10 kHz at 23 C and ±30 kHz over -20 to 60 C; each unit factory-calibrated to about 1 kHz. Current draw is still not published.
+    - **Verdict:** confirmed
+    - **Action:** Keep. Measure the LNB current before sizing the PTC and the heat-sink attachment (already in STACK).
+    - **Impact:** None.
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+      - https://www.rtl-sdr.com/?p=44655
+  30.
+    - **Claim in stack:** BONI12V5: 12.5 V inside published 9-15 V and 12-15 V ranges; 0.05-0.1 A (unpublished); PTC 0.2 A
+    - **Finding:** Only secondary sources were reachable; Bonito and WIMO pages returned 404 and Moonraker returned 403. One SWLing 2017 review measured 45 mA. The 9-15 V and 12-15 V ranges remain from search snippets and reviews.
+    - **Verdict:** unverified
+    - **Action:** Keep 12.5 V (inside both ranges) and confirm the range from the manual shipped with the antenna. The 0.2 A PTC is about 4x the measured 45 mA, which is adequate.
+    - **Impact:** Low.
+    - **Sources:**
+      - https://swling.com/blog/2017/07/portable-powerhouses-comparing-the-bonito-boni-whip-and-wellbrook-ala1530lnp-antennas
+  31.
+    - **Claim in stack:** Runtime table (58 Wh warm / 50 Wh cold): A 6.9/5.9 h ... I 0.9/0.8 h; peak battery current 4.63 A at 13.2 V
+    - **Finding:** Recomputed in Python (model): A 6.90/5.95, B 3.30/2.84, C 3.02/2.60, D 2.53/2.18, E 7.07/6.10, E2 4.83/4.17, F 3.07/2.65, G 1.29/1.11, H 1.88/1.62, I 0.95/0.82 h. 61.1 W / 13.2 V = 4.63 A; 45 W / 13.2 V = 3.41 A. The arithmetic matches STACK; the inputs are still models until the INA228 logs are taken. The charge time model (0.85 x 5 Ah / 3 A, about 1.4 h CC) is also consistent.
+    - **Verdict:** confirmed
+    - **Action:** Keep the 'model' labels. Replace them with INA228 measurements in W1-2, as planned.
+    - **Impact:** None.
+    - **Sources:**
+      - https://www.fsaeonline.com/content/Molicel-TDS--INR-21700-P50B-80122.pdf
+  32.
+    - **Claim in stack:** Monthly balance to 4.20 V with ISDT 608PD via the node-N service port
+    - **Finding:** isdt.co lists the 608PD as a current product: DC 5-30 V (XT60) or USB-C PD 3.1 5-28 V input, 240 W, 0.5-10 A charge, LiPo/LiFe/LiHV 1-6S, up to 0.8 A balance per cell. The page does not say whether a custom 4.10 V Li-ion target is settable; standard LiPo at 4.20 V is enough for the monthly balance.
+    - **Verdict:** confirmed
+    - **Action:** Keep. Set the charge current to 1-2 A for the monthly top balance.
+    - **Impact:** None.
+    - **Sources:**
+      - https://www.isdt.co/608pd.html
+  33.
+    - **Claim in stack:** Fuses: mini blade 7.5 A battery, 4 A J21, 3 A LAB5; '5 A at 60 C only about 3.3 A continuous'; PTC 0.75 A AUX
+    - **Finding:** The Littelfuse MINI (297) series page returned 403, so the time-current and temperature re-rating figures were not checked against the primary source. By ratio, 4.6 A peak on 7.5 A is 61% and 1.3-2.5 A on 4 A is 33-63%, which pass usual 75%-at-25-C rules of thumb, but this is not verified.
+    - **Verdict:** unverified
+    - **Action:** In P5, pull the Littelfuse MINI 297 data sheet (or the Bel/Eaton equivalent) and the PTC parts' hold/trip-versus-temperature curves before freezing the values.
+    - **Impact:** Low risk; values look plausible.
+    - **Sources:**
+      - https://www.littelfuse.com/products/fuses-overcurrent-protection/fuses/automotive-passenger-car/blade-fuses/mini-297
+  34.
+    - **Claim in stack:** Budget injector Mini-Circuits TCBT-2R5G+ $11.31 (200 mA max)
+    - **Finding:** The Mini-Circuits web store shows 71 in stock, with the lowest listed tier at 10+ for $9.05 (no qty-1 price shown). It also mentions DigiKey with 1,589 available. The 200 mA DC rating was not re-read here (data sheet link only).
+    - **Verdict:** unverified
+    - **Action:** Leave it to the rf_frontend owner. Re-quote the price at qty 1 from DigiKey.
+    - **Impact:** Minor.
+    - **Sources:**
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=TCBT-2R5G%2B
+- **Current status oct 2026:** Status on 18 Oct 2026, checked on primary or distributor pages.
+  
+  **Cells and BMS**
+  - Molicel P50B: active, $9.99 and in stock at 18650 Battery Store and IMR Batteries. Molicel's lineup now also lists P60C, M65A (6.5 Ah, 23.4 Wh) and P50S. M65A is sold out at the US shops checked.
+  - Daly 4S 15 A Li-ion BMS: €8.00 at TinyTronics, 9 in stock.
+  
+  **Charger**
+  - IP2368: the newest data sheet found is still V1.41 (Nov 2023; 6S support dropped).
+  - The IP2368_BZ chip shows 'Not available now' at LCSC.
+  - Retail boards ($12.50-23.98) are all sold as bidirectional.
+  
+  **Regulators and switch**
+  - Pololu D36V50F12 ($39.95), D36V28F5 ($23.95), D36V50F5 ($39.95) and #2813 ($8.95): all 'Rationed (Active and Preferred)', with backorders allowed and prices unchanged.
+  
+  **Gauge**
+  - Adafruit INA228 #5832: $14.95, in stock.
+  - TI INA228: active, data sheet Rev A (2022).
+  - Linux has supported INA228 in the ina238 hwmon driver since v6.17. It exposes energy only, no charge attribute.
+  
+  **LDOs and switches**
+  - TPS7A47 data sheet is Rev G (May 2026). TPS7A4701RGWR/RGWT are out of stock at the TI store and at LCSC ($13.29). The EP variant is in stock at LCSC (110 pcs, $11.01).
+  - LT3045EDD#PBF: $8.63 at LCSC, 446 in stock.
+  - TPS2553: active. Out of stock at the TI store; in stock at LCSC (snapshot).
+  - TPS709: active. TI lists the pin-compatible TPS7E71 as a newer part.
+  - TPS3762 and LM61460: active.
+  
+  **Q6A and other parts**
+  - Radxa Q6A product brief is now Rev 1.7 (2026-10-10). Power requirement unchanged: 12 V, 18 W minimum, 24 W when fully loaded. No header voltage range is published.
+  - ISDT 608PD: current product.
+  - Bullseye LNB: $29.95, 70 in stock.
+  
+  No EOL notices were found for any power part.
+- **Notes:** **Corrections STACK needs**
+  1. TPS7A4701 has no power-good pin. The 'PG on MCP #3' lines in C8, C17 and the rail table must become an external comparator or ADC sense.
+  2. TPS7A47 accuracy is ±2.5% overall, so widen the LNB and Boni acceptance to about ±0.35 V.
+  3. Daly cutoffs are UVP 2.70±0.05 V, release 3.0 V. Balancing starts only at 4.18 V, which confirms the monthly ISDT balance is required.
+  4. The standard IP2368 already derates to the adapter's PD power, so no separate 45 W RISET mode is needed.
+  5. P50B goods-in weight window becomes 68-71 g.
+  6. TPS7A4701 cost is about $22-27 for two, and it is out of stock at TI and LCSC.
+  
+  **Biggest new risks**
+  - Every IP2368 board on the market is bidirectional (COUT, Try.SRC). The Anker 737 bench source is also bidirectional. Goods-in test the board, and add reverse blocking (TPS25947) or charge only from one-way adapters.
+  - TPS7A4701 is out of stock at the TI store and LCSC; DigiKey regional pages show a 12-week backorder.
+  - The Adafruit INA228 power LED is not mentioned in STACK. Remove it along with the pull-ups, or standby time could roughly halve.
+  - Standby is about 110 days from 50% storage SoC, not 170-185 days.
+  - SMBJ13A on J21 crowbars rather than protects if the buck's high side fails short. Add an OVLO eFuse.
+  
+  **New options worth carrying into P5 or stage 5**
+  - LM61460 synced in forced-PWM mode as the concrete C4 fallback.
+  - TPS3762 as the 65 V micropower supervisor.
+  - TPS25947 for J21 and DISP12.
+  - Molicel M65A (+21 Wh, availability poor).
+  - Samsung 58E at $4.99 (retailer specs only).
+  
+  **What could not be checked**
+  - ADI pages (503), NKON (403), Littelfuse (403), Diodes (403), Bonito, WIMO and Moonraker.
+  - Fuse derating, the Boni-Whip supply range, Daly quiescent current and wake behaviour, Bullseye current and LT3045 PSRR near dropout all remain unverified.
+  
+  All runtime and standby numbers are models (Python recompute). Rule check: no on-air transmitters, loops or dishes are involved in this subsystem, and prices are world USD.
+  
+  Downloaded data sheets are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pw_dl/ (p50b/, ip2368/, ti/, radxa/).
+
 _Run `wf_f924b2ab-5ad`_
 
 - **Component:** Power system (battery, charging, converters, fuel gauge) for the Radxa Dragon Q6A handheld satellite receiver
