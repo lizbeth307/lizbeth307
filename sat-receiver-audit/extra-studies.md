@@ -12746,6 +12746,86 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/dish_replacement.json
   - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
 
+## stack:fix (run `wf_63d37cf4-10a`)
+
+- **Applied:**
+  - RULE (TX software): Hamlib is now library-only (no libhamlib-utils, so no rigctl/rigctld). Gpredict uses only the 'RX only' radio type plus the rotator. These and the Gpredict TRX types were added to the CI/self-test forbidden list (1.2 #29, 5.4 forbidden list, 5.4 packaging, 6.1).
+  - RULE/CONTRADICTION (Lime vs Pluto): the Lime is now stated to be 1T2R TX-capable hardware (C1, #11). Pluto's rejection reason is now 'duplicates the Lime and, like the Lime, can transmit' (C1, #89, 6.1). The TX block is now structural: LimeSuiteNG/Soapy is patched so setupStream(SOAPY_SDR_TX) returns an error (this comes from final_completeness), with a self-test that the TX stream cannot be opened (#11, 5.7 item 10).
+  - MISSING (tinySA generator): the menu leaf is now Bench-only after the 1.5 s 'antenna disconnected' hold, as lab_ui_hf has it. The lab rule now says the labd driver refuses generator/output-on outside Bench and sends output-off on every field/QUIET switch. Added a field checklist item and a label: the generator is never switched on with an antenna connected (section 3 intro, 5.4 UI, field pouch in 5.8).
+  - MISSING (engine recorders bypass masks): SDR++ is built without the recorder module, and SDRangel without FileSink/SigMF sink and without device-level IQ recording. Leases run with ReadOnlyPaths=/data, and this is part of the build audit (5.4 SDR access, #31, forbidden list).
+  - MISSING (DF with Lime MIMO): SDRangel doa2, interferometer, beamsteeringcwmod, simpleptt and limerfe were added to the forbidden-plugin audit at build time and runtime. The names are flagged to be checked against the 7.27.2 tree.
+  - MISSING (peak on signal / map): Live map layers are now listed without the 'survey heat map'. 'Peak on signal' is limited to LEO satellites, GEO beacons, the Sun and published beacons, with no bearing line or emitter marker and nothing stored (5.4 UI).
+  - MISSING (NCS scan vs LES): the 1537-1545 MHz scan is now power-only. Only the NCS candidate is demodulated, with an abort after N frames without an NCS header and a test that no non-NCS carrier is ever demodulated (#2, 4.1 row, menu, section 8 compliance row).
+  - CONTRADICTION (NPU class policy): 'приватні служби' was replaced by the register's 'private-content services'. One rule is stated: occupancy-only classes with no content or IDs are allowed (lte_dl, gsm_dl, wifi, bt_ble). DMR/P25 (#9) and Iridium/Orbcomm (completeness) keep the stricter nameless-occupancy treatment (#9 row, 5.4 class policy).
+  - CONTRADICTION (band mask): line 767 now masks 3-30 kHz and 225-400 MHz for ALL NPU boxes of any class plus MARK/SNAP, the occupancy DB and export, matching 5.7 item 11. Added a unit test with a named class at 20 kHz and 300 MHz (also in section 8).
+  - CONTRADICTION (Moxon): Moxon was moved from the allowed list to the excluded loop list, conservatively and like halo. It is not in the BOM, and final_completeness had allowed it (C16 grep list, 6.1).
+  - CONTRADICTION (HF-loop record): the 'no record found / last message asked to add a loop' wording was removed. The loop ban is now stated as binding under user_requirements line 11, and the phase-end question is reworded to 'say explicitly if you ever want an HF loop back' (C17, #4/#5, 6.1, question 2).
+  - CONTRADICTION (radios leaf): the menu leaf is now 'Wi-Fi home-only with a 1.5 s hold, auto-blocked in every field/QUIET profile; Bluetooth permanently off'. LF Quiet now says 'Wi-Fi and BT: rfkill + authorized=0'.
+  - MISSING (2x2 array size): the array is now foldable-only, with pieces of 23 cm or less (5 turns x 43 mm = 21.5 cm; 16.8 dBic on a 56 cm ground, model). 7- and 11-turn helices only if they fold (#114-#120, 3.2 note).
+  - MISSING (voice in raw pass IQ): added a static voice mask independent of the NPU, applied before any raw write: 437.800 and 436.795 MHz ±8 kHz (design value), and 145.800 MHz when 2 m is recorded. A test on a pass with repeater voice was added (5.5 retention, labrx row, section 8).
+  - MISSING (OpenWebRX+ pager via multimon-ng): multimon-ng now runs behind a wrapper that allows only '-a EAS' and sits outside OpenWebRX+'s PATH. Pager/selcall/digital-voice modes are disabled in the pinned OpenWebRX+ config, with a test that they are absent (#10, 5.4 allowed decoders).
+  - MISSING (DTF radiates): TDR/DTF is now 'cable only, antenna disconnected, end loaded or open, Bench mode' (3.4).
+  - STYLE (USD first): converted at the stated FX rates. Midas $364.62, cavity $73.57 (twice), Uputronics 434 $55.92, MAX-M10S $38.36, Lab401 $215.83, Mirfield $252.98, iFixit EU $33.67, PA0RDT $29.11, NKON $7.59, G6K $57-69, TinyTronics saving $25-30, Airspy Mini $146.50, and in the purchase plan Uputronics $68.71, WiMo $178.73, LBE-1420 $175.80 and Pro Stick Plus $69.92.
+  - STYLE: 'чашкою 18 dBi' and 'чашка' were replaced by the 11 x 8.3 cm cone (about 18.8 dBi) (5.8 step 5, #107).
+  - STYLE: 'штир 70 см' is now 'штир діапазону 70 см (17-19 см)' in the header and in the 2.4 row.
+  - STYLE: 'ДХ 3-30 kHz' and 'SID ДХ 16-25 kHz' are now 'ДНЧ (VLF)', labelled as naval transmitters (4.3, #3).
+  - WRONG NUMBER (weight): the handheld is now 1.52-1.72 kg, the sum of its parts (the final_integration 1.35-1.6 does not add up). Field daypack about 4.6-6.1 kg, 5.5-7.4 kg fully loaded (C24, D14, 2.12, 5.8 tables).
+  - CONTRADICTION (thermal envelope): the thermal model is labelled as using the superseded 210x135x52 mm case, to be re-derived for 220-225 x 135-140 x 55-60 mm (5.6).
+  - CONTRADICTION (CPU): 2.8-4.5 cores exceeds 4 A78 cores, so labd now pauses loggers, OpenWebRX+ and Expert-GUI during dual passes without the Lime too (5.5).
+  - CONTRADICTION (13.3 vs 16.4 MB/s): the ring is stated as 16.4 MB/s with HF+ as cf32 (98 s; about 121 s if ci16), and the disk stream as 13.3 MB/s ci16. microSD: 61 MB/s measured = 4.6x, V30 guarantee 30 MB/s = 2.3x (5.5).
+  - CONTRADICTION (correction 13): rewritten to about 50 min under the 30 GiB raw cap (about 1.3 h on all 46 GiB). The '2.5 h' came from the register's 92 GB-free assumption and is superseded by C18.
+  - CONTRADICTION (LNB choke): the injector PCB now has only the ≥1 A LNB choke footprint. The choke itself moved to the 2.11 QO-100 set and to 9.1 step 11, and 5.3 P4 is marked 'fitted after the region gate, C23'. No price change.
+  - CONTRADICTION (Uputronics 5 V): the bias range now depends on the revision (Mar-2020 boards 5-26 V; current stock '5V max', register #98), it is fed from the 4.5 V rail, and 4.5 V operation is unverified. Section 8 now has a gain/NF test at the actual ch2 voltage and a 5.0 V channel option.
+  - CONTRADICTION (AWS vs Metop): AWS now goes through the same gates as Metop, on the foldable tier, status 'на межі (експеримент)', at 2.88 Msps (about 1.6 vs 1.2 samples/symbol; about 1.2 dB less bandwidth). The '≥3.6 Msps' claim is noted as inconsistent. Patch tier unavailable; decoder SatDump aws_pfm.
+  - WRONG NUMBER: section 8 now reads 'Metop-B/C hump at 1701.3 MHz and AWS at 1707 MHz', keeping dish_replacement's hedge to also check Metop at 1707.
+  - WRONG NUMBER: the Adafruit order is now about $105 ($104.95 at BOM prices; the $99 counted one MCP23017).
+  - WRONG NUMBER: roll-up low ends are now $3,760 and $4,258 (2.12 and 3.6), with a rounding note; the verifier had $3,759 and $4,257.
+  - CONTRADICTION (LNA rail): added a separate labd cap of LNA ≤ 1.0 A, because 4 x 300 mA = 1.2 A exceeds the about 1 A of the LT3045 pair (C9, D11, 5.1).
+  - WRONG NUMBER (LNB LDO): 0.96 W is now stated as the value at 0.3 A. At the PTC hold of 0.45 A it is 1.44 W, about +44 K and about 94 °C junction; plate bonding is fixed after the LNB current is measured (C8, 5.1, 5.6).
+  - CONTRADICTION (display): DISP12 now reads 1.1 A (13 W model), with the 14 W acceptance at 11.0 V = 1.27 A, inside the 1.5 A eFuse. The backlight-vs-total board overhead (2.0/0.5/0.2 W) is flagged as two unreconciled models (5.1, protection paragraph, 5.6).
+  - CONTRADICTION (HMC7992 lines): the line count and the power-up 'all-low' throw are now taken from the datasheet truth table, with 50 ohm wired to that throw. If there are three lines, two more MCP outputs are needed. The bench item was extended (5.2, 5.3, section 8).
+  - WRONG NUMBER (D3): the SGM811 pulse is rewritten as 240 ms typical (150-560 ms rated) plus about 70 ms RC, about 0.2-0.6 s model, with the UEFI log seeing only 75 ms of the 400 ms it wants (power.json).
+  - CONTRADICTION (C6): now 'pin 7 and pins 12, 29, 32, 33, 35, 38, 40 behind UM3304; 3/5, 16/18, 27/28 behind UM3204H; 13/15 behind CJ3134K'.
+  - CONTRADICTION (Boni-Whip low end): the BOM rule is reworded to 'cheapest listed variant (verified or not, see status)'. Added the alternative with the verified WiMo: foldable tier $405.68-625.17, HF chain $494.68-589.17.
+  - STYLE (mixed price basis): a mixed-basis note was added to the header marks, the BOM intro and 9.1. Some EU/UK prices include VAT (Q6A, UFS, Daly, Uputronics, WiMo), LiteVNA and tinySA lows are ex-VAT, and the Lime row includes $18 shipping.
+  - WRONG NUMBER (G6K): now 'relays GBP 43-52 = $57.27-69.25; rest = driver PCB, verifier estimate' within the $62-80.
+  - CONTRADICTION (IP2368 qty): the BOM keeps 2 boards. 9.1, 9.2, #63 and the row note now say 'both boards (a third only if needed, outside the total)'.
+  - CONTRADICTION (statuses): ISS APRS and ISS FM repeater are now 'на межі (модель, EIRP припущено)'. QO-100 CW on the patch tier and the horn's PSK are now 'на межі — за воротами регіону' with model margins kept. NAVTEX and DSC are now 'на межі (локальний шум)'.
+  - CONTRADICTION (D16): reordered to 'типовий SSB і DATV QO-100 ... (26 і 31-32 dBi)'.
+  - CONTRADICTION: the boot order in the 2.1 recovery row is now USB > SD > NVMe > eMMC > UFS.
+  - CONTRADICTION: 9.1 step 1 now reads 'UFS у наявності лише в Allnet (TinyTronics — 2-4 тижні)'.
+  - WRONG NUMBER (comparison): the $250-510 rise is now explained as being against the old core plus the whole old HF chain, which included the Boni-Whip, wire and coax now in the foldable tier. Against the old core alone the rise is $620-975.
+  - WRONG NUMBER (C12): the centre of 148.11-153.27 MHz is 150.69 MHz. 151.5 MHz is 1.77 MHz (1.2%) below the top edge, so ±1% still fits but with a small upward margin.
+  - WRONG NUMBER (mode H heat): a note says the model does not subtract the external T7 (G and I do subtract external loads), so internal heat is probably lower; to re-derive.
+  - STYLE: C3 now says 'about 4.6 A (61.1 W / 13.2 V = 4.63 A)'.
+  - STYLE: #33 now says 'FFT for NPU tiles (VkFFT on the GPU) about 7.8 GFLOPS'.
+- **Rejected:**
+  1.
+    - **Problem:** Mode H internal heat: re-derive it as about 27 W
+    - **Why:** Rejected in part. I added a note that the external T7 is not subtracted and that the figure needs re-deriving. I did not write 27 W, because the T7 write power the checker used (2.5-4 W) is not in the thermal model or the final files, and inventing it would break the 'every number from the files' rule.
+  2.
+    - **Problem:** Re-run the thermal model on the 220-225 x 135-140 x 55-60 mm case
+    - **Why:** Rejected in part. No re-run exists in the files, so I only labelled the table as based on the superseded 210x135x52 mm envelope and marked it for re-derivation.
+  3.
+    - **Problem:** NPU classes: replace lte_dl/gsm_dl/wifi/bt_ble with service-neutral labels (ofdm_wideband, gmsk_carrier), or treat Iridium/Orbcomm/DMR/P25 the same way
+    - **Why:** Rejected in part. npu_training defines lte_dl as occupancy-only with no cell IDs, and register #9 bans private-content services, not occupancy. So I kept those named classes and stated one explicit rule. DMR/P25 (#9) and Iridium/Orbcomm (final_completeness) keep their stricter nameless treatment, because loosening them would override newer decisions.
+  4.
+    - **Problem:** Uputronics 440: write 'about 4.3-4.4 V at the preamp'
+    - **Why:** Rejected in part. The 4.3-4.4 V figure is the checker's own estimate and appears in no file, so I wrote 'a little below 4.5 V after TPS2553 and choke'. Everything else in the fix was applied.
+  5.
+    - **Problem:** Re-price IP2368 to qty 3
+    - **Why:** Not done. A third board has no price in the files, so I kept qty 2 and made 9.1, 9.2 and #63 say 'both boards' instead, which was the checker's other option.
+  6.
+    - **Problem:** Checker 1 note: generic masculine forms in the legal paragraph (line 1257, 'тому, хто приймає', 'радіоаматорам')
+    - **Why:** Not changed. The checker marked it optional, and the text paraphrases statute wording ('addressed to the receiver'). Nowhere does it refer to the user's gender, so the gender-neutral rule is met.
+- **Totals:** USD, before shipping, import VAT and duty, on a mixed basis (some EU/UK prices include VAT; the Lime row includes $18 shipping). Handheld core $1,758-2,253 (my line recount $1,759.40-2,252.77). With patch antennas $1,934-2,461. With both antenna tiers $2,285-3,086; with the verified WiMo Boni-Whip low end, the foldable tier would be $405.68-625.17. With the bench lab $3,760-4,896 (low end was 3,759). Everything except optional $4,258-5,603 (low end was 4,257). Optional/gated, not counted: $933-1,157, including the Lime set at about $596-681. Budget estimates unchanged: about $1,739, or about $1,647 with manual switching; both tiers about $2,116 (about $2,024). Lab core $1,475-1,810 (budget minimum about $1,088-1,126); lab extended $498-708 (about $207 budget); core plus extended $1,973-2,518. HF chain $439.90-589.17, or $494.68-589.17 with the verified Boni-Whip; it is already inside the core and foldable tiers. Adafruit first order about $105. Weight (model): handheld 1.52-1.72 kg without the Lime (+0.15 kg with it); field daypack about 4.6-6.1 kg, or 5.5-7.4 kg fully loaded; bench Pelican 8.2-9.1 kg. File: /home/user/lizbeth307/sat-receiver-audit/STACK.md (1,260 lines, about 348 KB, 44 Markdown tables, all consistent).
+- **Summary uk:** Обидва перевіряльники знайшли 51 проблему, кожну я звірив з файлами. Виправлення внесено в /home/user/lizbeth307/sat-receiver-audit/STACK.md, частину — частково (див. список відхиленого).
+  Порушення правил: Hamlib тепер лише бібліотека, без rigctl/rigctld; Gpredict працює тільки в режимі «RX only». Прямо сказано, що Lime апаратно може передавати, а TX-потік блокує патч LimeSuiteNG. Генератор tinySA вмикається лише в режимі Bench.
+  Додано захист: записувачі SDR++ і SDRangel вимкнено на збірці; MIMO-плагіни DF SDRangel заборонено; скан NCS іде лише за потужністю. Статична маска голосу накладається до запису, маска 225-400 MHz діє для всіх боксів NPU, а multimon-ng працює тільки з EAS.
+  Виправлено цифри: вага пристрою — 1.52-1.72 kg, рюкзак — 4.6-6.1 / 5.5-7.4 kg. Нижні межі підсумків — $3,760 і $4,258, замовлення Adafruit — близько $105. LDO LNB розсіює до 1.44 W на утриманні PTC, сума LNA обмежена 1.0 A. AWS тепер іде за тими самими воротами, що й Metop.
+  Moxon виключено консервативно; заборона рамок записана як обов'язкова. Ціни подано в USD першими, базу ПДВ позначено як змішану.
+  Не вигадував: тепло режиму H і тепловий корпус лише позначено для перерахунку; кількість ліній HMC7992 беремо з даташиту.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
