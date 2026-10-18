@@ -40377,6 +40377,133 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   FX: 1 EUR = 1.1253 USD (ECB, 16 Oct 2026, as used in analogs_G2).
 
+## searchA:aneng_an8008_9_dmm (run `wf_e5582d4c-0a2`)
+
+- **Part:** ANENG AN8008 DMM (bench tier, qty 1). AN8009 is not the same meter; see the candidates.
+- **Current price usd:** STACK.md gives $26-53 (unverified). AliExpress search prices on 18 Oct 2026 (US region, USD, shipping and VAT not included): AN8008 from $28.52 (250 sold, 4.6 rating, item 3256808914707497) and $29.12 (74 sold, item 3256808889489096), up to $42.59. The usual range is about $28.5-36. EU landed cost is an estimate only: AliExpress adds import VAT (19-27%) at checkout, and since 1 Jul 2026 there may be a flat EU customs duty (I believe EUR 3 per item, not verified). That gives roughly $37-40 for the $28.52 listing. No EU-stock seller was verified: Amazon.de returned 503, eBay returned 403, and EU distributors (TME, Farnell, Mouser) do not appear to carry ANENG or ZOYI.
+- **Critical specs:**
+  - DC uA, 99.99 uA range: 10 nA resolution, +/-(0.8%+3). Used for the stack's 10 uA / 90 uA burden check and the Daly quiescent current (<500 uA).
+  - DC uA, 999.9 uA range: 0.1 uA resolution, +/-(0.8%+3). Used for the standby targets of 0.25 mA (INA228 shutdown) and up to 1.0 mA (INA228 continuous). Above 999.9 uA the meter has only the 10 A-socket range at 0.1 mA resolution, about +/-0.31 mA at 1 mA.
+  - uA burden: about 100 ohm shunt (99+1 ohm per HKJ on the AN8009/Q1 family; AN8008 says 'one 100 ohm is used for the uA range'). That is about 10 mV at 99.99 uA full scale and about 100 mV at 999.9 uA (my calculation). Negligible on a 14.8 V pack.
+  - mA/A: 10 A socket with a 0.01 ohm shunt. Ranges are 999.9 mA (0.1 mA) and 9.999 A (1 mA), both +/-(1%+3), with a 10 A alarm. HKJ found the 10 A range badly calibrated and drifting a few % at 5-10 A from heating, so INA228 calibration at 4 A should use an external shunt on the mV range.
+  - DCV: 9999 counts, basic DC accuracy 0.5%, 10 MOhm input. 9.999 V range at 1 mV resolution for cell checks (4.20 V OVP, 2.5 V cutoff); 99.99 V range at 10 mV for the 12.5-16.8 V rails (tolerance +/-0.35 V).
+  - mV DC: 9.999 mV range at 1 uV resolution (about +/-5 uV dead zone) and 99.99 mV range. Input impedance in the GOhm region up to about 1.5-2 V. Used for shunt-based INA228 SHUNT_CAL checks at 0.5, 2 and 4 A.
+  - Resistance up to 9.999 MOhm; latched continuity at about 40-50 ohm; diode test about 3.2 V open circuit (display up to 3.000 V); capacitance up to at least 70 mF (slow).
+  - Frequency counter 1 Hz to 3 MHz at 1 Vrms (Hennessy: up to about 80 MHz with about 1.6 V) and duty cycle. True-RMS ACV, but only about 2-3 kHz bandwidth, so AC/RF readings are not relied on in this stack.
+  - Square-wave output, 50 Hz-5 kHz (minor; no stack test procedure uses it).
+  - Size and power for the field case: 130 x 65 x 32 mm, 136 g with batteries; 2x AAA; about 1.6 mA draw (7.5 mA with backlight); auto power-off.
+  - Build and safety: DM1106EN chip with an ICL8069 reference; fuses 0.2 A and 10 A/250 V, 3.6x10 mm; PTC plus transistor clamp on V/Ohm; zener on the uA shunt; current ranges limited to 36 VDC. The CAT rating is fake, so low-energy use only. That is enough for this stack (16.8 V DC max, 5 A max). A candidate must not be weaker here.
+  - Authenticity: the PCB must be marked ZT109 (the stack's acceptance test). No PC interface or Ubuntu driver is needed; logging is done by the FNB58 and INA228.
+- **Candidates:**
+  1.
+    - **Name:** ZOYI (Zotek) ZT109, 9999-count 'Square Wave Output' variant (the OEM-brand twin of the AN8008)
+    - **Kind:** other_brand
+    - **Price usd:** $22.28 (ZT-109 square-wave listing, 8 sold, item 3256812201274210); $24.36 (ZT109/ZT111 '9999 Counts Square Wave Output', 3 sold, item 3256811633310820). Both are AliExpress search prices, 18 Oct 2026, US region, excluding VAT and EU duty. Estimated EU landed cost about $30-33.
+    - **Spec comparison:** On paper it is the same instrument. Hennessy's AN8008 review says 'also known as Zotek ZT109', and the stack's re-audit says the AN8008 is built on the ZT109 PCB, so the uA, mA/A, DCV, mV, Ohm, Hz and square-wave specs should be identical (99.99 uA at 10 nA, 999.9 uA, 9.999 mV at 1 uV, 9999 counts, 0.5% basic DC). The listing titles match the AN8008 feature set: 9999 counts, square-wave output, palm-size, auto/manual range. I did not read ZOYI's own datasheet: AliExpress item pages need a login, and I could not reach an official ZOYI spec page.
+    - **Worse in:** Nothing on paper. The risk is the seller, not the spec. Both 9999-count listings have very few sales (3-8), and the store names were not shown, so I could not confirm an official ZOYI store. Several other 'ZT109/111' listings say '6000 Counts' and some add NCV/transistor tests. They may be a different meter (possibly the ZT111 or a ZT102-class 6000-count meter), and buying one would silently lose 9999 counts and the 10 nA range. Reject any ZT109 listing that does not say 9999 counts and square-wave output.
+    - **Compatibility:** Same as the AN8008: same size and weight class, 2x AAA, same probes and fuses. No host interface. Same acceptance test: check the ZT109 PCB marking and the DM1106EN chip, then check uA reading and burden at 10 and 90 uA against the DPS-150.
+    - **Risks:** Medium. The store is unverified and sales are low. 'ZT109/111' listings mix variants. The CAT rating is fake, same as the AN8008 (low-energy bench use only). Not checked: EU VAT-inclusive price and EU duty amount.
+    - **Seller url:** https://www.aliexpress.us/item/3256812201274210.html
+    - **Sources:**
+      - https://www.markhennessy.co.uk/budget_multimeters/aneng_an8008.htm
+      - https://lygte-info.dk/review/DMMAnengAN8008%20UK.html
+      - https://www.aliexpress.com/w/wholesale-zoyi-zt109-9999-counts.html
+      - https://www.aliexpress.us/item/3256811633310820.html
+      - https://www.aliexpress.us/item/3256812201274210.html
+  2.
+    - **Name:** ANENG AN8008 (current part), cheapest plain listing
+    - **Kind:** current_part
+    - **Price usd:** $28.52 (250 sold, 4.6 rating, item 3256808914707497); $29.12 (74 sold, item 3256808889489096); $30.12 (AN8008/AN8009 listing, 69 sold, item 2251832656233444). AliExpress, 18 Oct 2026, US region, excluding VAT and duty. Estimated EU landed cost about $37-40.
+    - **Spec comparison:** This is the reference: 9999 counts; 99.99 uA at 10 nA and 999.9 uA at 0.1 uA, both +/-(0.8%+3); 999.9 mA and 9.999 A, both +/-(1%+3); 9.999 mV at 1 uV; 9.999 MOhm max; 136 g.
+    - **Worse in:** Nothing (it is the current part). Its own known limits, which apply equally to the ZT109: no reading between 999.9 uA and the 0.1 mA-resolution 10 A-socket range, 10 A range drift at 5-10 A, 9.999 MOhm maximum, fake CAT rating.
+    - **Compatibility:** Already in the stack.
+    - **Risks:** The store is unconfirmed: the search page shows an 'ANENG' brand header with about 320K followers, but I could not tie it to any one listing. Avoid the 'AN8008/AN8009 Mini ... Rm 409b Double Fuse' listings ($35.59-36.19): the title mixes in a Richmeters RM409B, a different 6000-count meter, which suggests a mislabelled or grey listing.
+    - **Seller url:** https://www.aliexpress.us/item/3256808914707497.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-aneng-an8008.html
+      - https://de.aliexpress.com/w/wholesale-aneng-an8008.html
+  3.
+    - **Name:** ANENG AN8009
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $36.79 (AliExpress search, 12 sold, item 3256812131606766). Not cheaper.
+    - **Spec comparison:** Same 130 x 65 x 32 mm, 136 g body; 9999 counts; uA shunt 99+1 ohm; resistance up to 99.99 MOhm (better than 9.999); adds temperature (probe included) and NCV; frequency counter to 6.6 MHz at 1 Vrms; current ranges limited to 36 VDC; the same fake CAT rating per HKJ.
+    - **Worse in:** It has no square-wave output switch position (HKJ's switch list has NCV in its place). I could not confirm that it keeps the 99.99 uA / 10 nA and 9.999 mV / 1 uV ranges. It costs more than the AN8008. Not an analog under this rule.
+    - **Compatibility:** Same form factor and batteries.
+    - **Risks:** uA and mV range resolution not verified.
+    - **Seller url:** https://www.aliexpress.us/item/3256812131606766.html
+    - **Sources:**
+      - https://lygte-info.dk/review/DMMAnengAN8009%20UK.html
+      - https://www.aliexpress.com/w/wholesale-aneng-an8008.html
+  4.
+    - **Name:** ZOYI ZT109/ZT111 '9999 Counts ... NCV' listings (variant unclear, possibly the AN8009 twin)
+    - **Kind:** other_brand
+    - **Price usd:** $15.33 (items 3256811726494118 and 3256811842651199, 1-3 sold). Unverified.
+    - **Spec comparison:** The title says 9999 counts, auto range, NCV, capacitance. I could find no spec table. If it is the AN8009-type ZT111, the comparison above applies.
+    - **Worse in:** Probably no square-wave output (NCV variant). The 10 nA uA range and 1 uV mV range are unverified. The listing mixes two models, so you cannot tell which meter ships. Not accepted as not-worse.
+    - **Compatibility:** The same form factor is likely, but not verified.
+    - **Risks:** High: model ambiguity, 1-3 sales, unknown store.
+    - **Seller url:** https://www.aliexpress.us/item/3256811726494118.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-zoyi-zt109-9999-counts.html
+  5.
+    - **Name:** UNI-T UT61E+
+    - **Kind:** other_brand
+    - **Price usd:** $52.03-55.27 (AliExpress listings 3256803282185600 and 3256812359995643; official UNI-T store not identified). Not cheaper. Not stocked at TME (search empty).
+    - **Spec comparison:** Better than the AN8008 in accuracy: 22000 counts, DCV +/-(0.05%+5), resistance to 220 MOhm, frequency to 220 MHz, USB logging, real separate current inputs, an established brand. The uA range and resolution were not shown on the UNI-T page.
+    - **Worse in:** Size and weight: 190 x 90 x 50 mm and 350 g against 130 x 65 x 32 mm and 136 g, so it is a poor fit for the field case. Uses 4x AAA. It costs about twice as much. Not cheaper, so it is not an analog under this rule.
+    - **Compatibility:** Bench use is fine. A USB driver is not needed for the stack.
+    - **Risks:** Grey listings that bundle several UT61 variants.
+    - **Seller url:** https://www.aliexpress.us/item/3256803282185600.html
+    - **Sources:**
+      - https://meters.uni-trend.com/product/ut61plus-series/
+      - https://www.aliexpress.com/w/wholesale-uni-t-ut61e%2B.html
+  6.
+    - **Name:** ANENG AN870
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $34.88-35.39 (AliExpress, 1000-2000+ sold, items 3256810183270092 and 3256810620321359). Not cheaper than the $28.52 AN8008 listing.
+    - **Spec comparison:** Better in some areas: 19999 counts (from the listing titles); separate uA/mA input with a 99 ohm uA shunt and a 1 ohm mA shunt, so it has a real mA range and closes the AN8008's 1-10 mA resolution gap; 20 A range; 6x30 mm fuses; TVS protection on the shunts.
+    - **Worse in:** Size and weight: 180 x 89 x 44 mm and 374 g. It costs more. Its 20 A range drifts about 5% in 13 s at 19 A. Its CAT rating is also fake. uA resolution not verified. Not an analog under this rule (not cheaper, bulkier).
+    - **Compatibility:** Bench use only. Does not fit the field case as well.
+    - **Risks:** Listings vary widely in price ($35-179).
+    - **Seller url:** https://www.aliexpress.us/item/3256810620321359.html
+    - **Sources:**
+      - https://lygte-info.dk/review/DMMAnengAN870%20UK.html
+      - https://www.aliexpress.com/w/wholesale-aneng-an870.html
+  7.
+    - **Name:** ANENG AN8002 / ZOYI ZT-102A (6000-count sibling)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** ZT-102A $16.15 (AliExpress search, 85 sold). AN8002 about GBP 12 delivered (historical Hennessy price; current price not checked).
+    - **Spec comparison:** 6000 counts against 9999. Resistance to 60 MOhm (better). Frequency counter works down to about 50 mV (better). Shows 05.00 mA resolution on low mA.
+    - **Worse in:** Fewer counts (6000 against 9999). The 99.99 uA / 10 nA range is not confirmed (Hennessy notes 'competing' 6000-count Aneng meters use a 6000 uA range). The 9.999 mV / 1 uV range is not confirmed. Rejected: it would give up the 10 nA resolution the stack's uA tests rely on.
+    - **Compatibility:** Same size and batteries.
+    - **Risks:** Unverified uA and mV ranges.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.markhennessy.co.uk/budget_multimeters/aneng_an8008.htm
+      - https://www.markhennessy.co.uk/budget_multimeters/
+      - https://de.aliexpress.com/w/wholesale-zoyi-zt109.html
+  8.
+    - **Name:** ANENG Q1 and BSIDE ADM20 (checked and rejected)
+    - **Kind:** other_brand
+    - **Price usd:** Not checked; both were rejected on spec first.
+    - **Spec comparison:** Q1: about 20 mA active draw, a -18 mV offset on the uA range, no mA range per HKJ, 145 x 73 x 34 mm and 219 g. ADM20: 6000-count scale (inferred), 194 x 93 x 54 mm and 458 g, 250 V fuses fitted against a claimed 1000 V rating, low isolation on the USB and voltage input.
+    - **Worse in:** Q1: battery life, uA offset, no mA range, size. ADM20: counts, size, fuse and isolation issues.
+    - **Compatibility:** No better for this stack.
+    - **Risks:** n/a
+    - **Seller url:** 
+    - **Sources:**
+      - https://lygte-info.dk/review/DMMAnengQ1%20UK.html
+      - https://lygte-info.dk/review/DMMBSide%20ADM20%20UK.html
+- **Notes:** VERDICT (angle A): One candidate may be cheaper and not worse: the ZOYI/Zotek ZT109 in its 9999-count square-wave-output version, about $22-24 against $28.5 for the cheapest AN8008, saving about $5-7. The evidence that it is the same hardware is a review statement (Hennessy: 'also known as Zotek ZT109') and the stack's re-audit (AN8008 built on the ZT109 PCB). I did not read a ZOYI datasheet. Accept it only if all of these hold: (1) the listing explicitly says 9999 counts and square-wave output (reject the '6000 Counts' and NCV 'ZT109/111' listings); (2) on arrival the PCB is marked ZT109 with a DM1106EN chip; (3) it passes the existing AN8008 test (uA reading and burden at 10 and 90 uA against the DPS-150 through a known resistor). If those cannot be confirmed before ordering, KEEP the ANENG AN8008 from the $28.52 or $29.12 listing.
+  
+  No established brand (UNI-T UT61E+, ANENG AN870) is both cheaper and not worse. Those two beat the AN8008 on accuracy or current ranges but cost more ($35-55) and are 2.5-2.7 times heavier. Cheaper 6000-count siblings (AN8002/ZT-102A) lose the 10 nA uA resolution and the 9999 counts.
+  
+  Stack advice (from the measurements; applies to the AN8008 and ZT109 alike): (a) do the INA228 calibration at 2 and 4 A with an external precision shunt on the 99.99 mV range, not the 10 A range, which HKJ found drifts a few % at 5-10 A; (b) the 1.0 mA standby target sits at the top of the 999.9 uA range, and above that only 0.1 mA resolution is available (about +/-0.31 mA at 1 mA), so record whether the reading fits on the uA range.
+  
+  Limits of this pass: WebSearch was unavailable from my first call (the shared session limit of 200 was already used up), so all findings come from WebFetch on primary review pages (markhennessy.co.uk, lygte-info.dk), the UNI-T product pages and AliExpress search pages. AliExpress item pages and store names could not be read (login redirect). Prices are US-region search prices on 18 Oct 2026. EUR, VAT-inclusive prices and the exact EU flat duty after 1 Jul 2026 are unverified (I believe EUR 3 per item; check the EU Council decision). Amazon.de (503) and eBay (403) could not be checked. Sending a follow-up message, or raising CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION, would allow more searches.
+  
+  Hard rules: no issue. A DMM is passive, it adds no loop or H-field probe, and the 50 Hz-5 kHz square-wave output is a low-level conducted bench output only, never connected to an antenna.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
