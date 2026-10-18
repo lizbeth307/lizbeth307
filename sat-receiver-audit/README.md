@@ -76,6 +76,7 @@
 | [Raspberry pi debug probe](components/raspberry_pi_debug_probe.md) | · research · forums · fixes ✅ verify | `—` |
 | [Raspberry pi pico rp2040 hmi supervisor](components/raspberry_pi_pico_rp2040_hmi_supervisor.md) | · research · forums · fixes ✅ verify | `—` |
 | [Rf frontend](components/rf_frontend.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_30889068-251` |
+| [Rf sled hmc7992 sp4t pe4302 mcp23017 2 a](components/rf_sled_hmc7992_sp4t_pe4302_mcp23017_2_a.md) | · research · forums · fixes ✅ verify | `—` |
 | [Rtl sdr blog v4l r828s](components/rtl_sdr_blog_v4l_r828s.md) | · research · forums · fixes ✅ verify | `—` |
 | [Shielded hdmi lead adafruit 2420 2x wurt](components/shielded_hdmi_lead_adafruit_2420_2x_wurt.md) | · research · forums · fixes ✅ verify | `—` |
 | [Shock corded mast 7 x 35 cm about 2 4 m](components/shock_corded_mast_7_x_35_cm_about_2_4_m.md) | · research · forums · fixes ✅ verify | `—` |
