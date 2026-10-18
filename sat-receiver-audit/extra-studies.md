@@ -4758,6 +4758,74 @@
   - Dual-RTL 'LRPT and HRPT in the same pass' needs both antennas pointed at once (the loop in the satellite's plane and the helix on target). A single handheld operator needs one of them on a fixed mount or tripod. This is operationally hard, not impossible.
 - **Notes:** Overall verdict: the remove, keep and add decisions are sound. The LimeSDR can be dropped safely: everything still reachable fits the V4L's 0.5-1766 MHz range at 2.56 Msps or less, and the S-band and AWS losses are honestly listed. Three corrections are needed before the stack is final. (1) The 13 V LNB switching is wrong: a TPS2553 cannot take 9-13 V, and a plain boost without output disconnect cannot switch the LNB off. (2) Iridium IRA/IBC frame decoding must be removed from the L-band reachable list, because iridium-toolkit documents TMSI paging entries in IRA frames. (3) The 'MEAS I-4 at 64°E' Inmarsat-C source is out of date: from Ukraine it is Alphasat at about 25°E or I-6 F1 at about 83°E. Smaller fixes: rate Meteor HRPT on the 20 cm helix as model-only, not 'reliable'; prefer an antenna clearly under 20 cm to the 21 cm NA-701; give power per mode, since the LNB and dual-RTL operation are missing from 'typical'; and if the 4S pack is kept, keep the D36V50F12 buck and change the SMBJ14A. The cost, size and storage numbers reproduce from the stack's own scripts. Note the pending abolition of the EUR 150 parcel exemption (autumn 2026) and the 31 Oct 2026 martial-law expiry, with an extension expected. Files: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/verif_stack/geo_lon.py (GEO longitude from TLEs) and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/verif_stack/dl/inm.tle.
 
+## small:verify_rf_link (run `wf_41027870-8e7`)
+
+- **Lens:** RF link budgets: short antennas at 137.9/145.9/437 MHz (efficiency, pattern, counterpoise, external noise), the L-band helix/patch against HRPT/AHRPT/LRIT/EGC, and the bare LNB or cone against the QO-100 modes. My own NEC2 (PyNEC) runs and Python budgets are calculations: free space, no hand or body model, ITU-R P.372 coefficients as I recall them. Scripts are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfverify/ (whip_nec.py, whip2.py, loop_nec2.py, lb_check.py).
+- **Refuted:**
+  1.
+    - **Claim:** Whip margins that grow with elevation. Examples: 1 W 9k6 UHF CubeSats '+2.0/+3.6/+4.8 dB at 45/60/90 deg, so only passes above about 40-45 deg work'; RS-44/FO-29 CW beacons up to '+11/+13 dB' at 90 deg; AO-73/JO-97 '+15/+19 dB at 90 deg' on the NA-701; the stack's '1 W 9k6 CubeSats only above about 40-45 deg'.
+    - **Why:** small_ant/lb.py and sats.py give every whip a fixed 1.8-2.0 dBi of directivity at all elevations. A vertical monopole has a null at zenith. My NEC2 model of a plain 17 cm whip held vertically on a 13x20 cm case at 437 MHz gives realised gain of +0.5 / -2.0 / -5.1 / -9.3 / -16.0 dBi and a null at 10 / 30 / 45 / 60 / 75 / 90 deg. With the band study's own CubeSat budget (EIRP 27 dBm, 4.5 dB losses, Tsys 340 K, 51.8 dB-Hz needed, h 500 km), the margins become -5.3 / -2.4 / -3.1 / -5.7 / -11.5 / -35 dB. They are never positive. So the high-pass margins are 5-40 dB optimistic for a vertical whip.
+    - **Correction:** The numbers hold only if the whip is tilted so the satellite stays broadside to it, using the IMU as is already done for the loop. Tilted, NEC gives margins of -5.3 / +0.1 / +2.5 / +4.1 / +5.0 / +5.3 dB. Add 'keep the whip perpendicular to the line of sight' to the operating procedure. Without it, rate 1 W 9k6 CubeSats as not reachable, and treat RS-44/FO-29/AO-73 zenith margins as void. ISS SSTV survives either way: a vertical whip still gives 18.8-22 dB CNR in 15 kHz from 10 to 60 deg.
+    - **Source:** /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfverify/whip_nec.py; /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfverify/lb_check.py; /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/small_ant/lb.py
+  2.
+    - **Claim:** The stack mounts the NA-701 (about -3 dBi at 145.8 MHz, about 0 dBi at 436 MHz, from W9MDB) and the 17/12 cm whips 'on four thin 0.5-1 m coax leads with ferrite chokes, LNA at each feed, away from the box', while keeping 'AO-73/JO-97 telemetry reliable' and 'ISS/CubeSats via NA-701 + LNA V2'.
+    - **Why:** A monopole needs a counterpoise, and W9MDB measured these whips on an HT body. My NEC2 model (ideal choke, no hand): a 21 cm whip loaded to resonate on a 6x12 cm HT body is 10.6+j0.3 ohm and -4.1 dBi realised at 10 deg. Moved to a 5x3 cm LNA box it becomes 8.2-j341 ohm, with an 18.7 dB mismatch, and is -22.2 dBi realised. That is still an SNR penalty of -10.1 dB (rural, 2000 K) or -12.9 dB (quiet, 600 K) after allowing for the external-noise effect. A plain 17 cm whip on the LNA box at 437 MHz is 24.5-j175 ohm with an 8.7 dB mismatch, -7 to -10 dBi realised. Real clip-on ferrites are imperfect, so the coax shield becomes the counterpoise. That is exactly the host-noise path the leads were meant to remove. The band study itself assumed the 17 cm whip 'on the case', so the stack contradicts it.
+    - **Correction:** Choose one of two options.
+  (a) Mount the whips directly on the case. NEC puts the NA-701-type whip only about 1 dB (rural) to 1.9 dB (quiet) below the HT-body case, and the 17 cm whip at +0.5 dBi at 10 deg. Accept the host-noise risk and measure it.
+  (b) Use balanced antennas on the remote lead, which need no counterpoise: the 20 cm loop retuned to 145.8-146 MHz (NEC +1.1 dBi), and for 70 cm a 7 cm tuned loop (NEC +1.2 dBi, tuning capacitance about 0.5 pF) or a loaded 17 cm dipole.
+  With the NA-701 on a remote choked lead, AO-73/JO-97 drop from reliable (+5/+10/+15) to about -5/0/+5 dB (marginal), and VHF FM/APRS become not reachable.
+    - **Source:** /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfverify/whip2.py; https://www.miklor.com/COM/pdf/AntennaTestingW9MDB.pdf
+  3.
+    - **Claim:** Stack: the 20 cm loop has 'about 1.4 MHz 3 dB bandwidth, so one fixed tuning to 137.9 MHz covers both Meteors (and Orbcomm) with no motor'. Band study: tuning capacitance 3.5 pF.
+    - **Why:** At C/λ = 0.29 the analytic small-loop inductance is too low. Converged NEC2 (16/24/32 segments) gives X ≈ 514 ohm, tuning capacitance ≈ 2.2 pF, unloaded Q ≈ 330, so the matched 3 dB bandwidth is about 0.84 MHz and SWR stays under 1.5 over only about 170 kHz. With 2.2 pF in total, a 0.05 pF hand or stray change moves resonance by about 1.6 MHz, which delivers about -12 dB. Even with external noise cushioning it, the SNR cost is about -2.5 dB (rural) to -5.4 dB (quiet). That exceeds the modelled 0-4 dB LRPT margin at 17-40 deg. VK5BR (13.3 cm 2 m loop) reports that 'it can be put off tune by hand capacitance', even with the dial operated at arm's length.
+    - **Correction:** Keep the band study's stepper-driven trimmer, or at least peak on sky noise just before every pass. Enclose the capacitor, use an insulating mast, and keep hands more than 2 diameters away. The rest of the loop result survives and is slightly better than claimed: NEC gives +1.07 dBi in-plane and efficiency about -1.4 dB, against +0.3 dBi claimed.
+    - **Source:** /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfverify/loop_nec2.py; https://www.qsl.net/v/vk5br/LoopAntennas/VHFLoopAntenna.htm
+  4.
+    - **Claim:** Meteor-M N2-3/N2-4 HRPT is 'reliable' with the SMALL 4-turn helix 'from about 13-18 deg, margin +3.4 to +4.7 dB', and 'marginal above 22-28 deg' with the STRICT 2-turn helix or 12 cm patch.
+    - **Why:** There is no reception evidence. My search found no decode of HRPT on a small handheld helix. The anchor is soft. The metislair page gives 'average SNR being at around 7 dB' for an 11-turn helix but no pass elevation and no helix gain, and that setup had a G4DDK VLNA ahead of the SAWbird. The '12.75 dBic' anchor is an assumption in lband_small/scripts/budget.py, so the '-1.2 dB NEC optimism' correction is circular. Scaling SNR dB for dB with gain also ignores the higher Tsys of a 50-70 deg beam (ground spill of +30-60 K, about -1.3 to -1.8 dB) and the loss of the VLNA (about -0.3 dB). Redone: the 4-turn helix averages about +1.5 to +3 dB margin and decodes above about 25-30 deg; the 2-turn helix or patch is about -0.5 to +1 dB, about 38-45 deg or higher.
+    - **Correction:** SMALL 4-turn helix: marginal, passes above about 30 deg, unvalidated. STRICT 2-turn helix or 12 cm patch: opportunistic, near zenith only. Validate on a high pass before relying on it. The stack's 'HRPT reliable from 13-18 deg' should not be used as a selling point.
+    - **Source:** https://blog.metislair.com/docs/Radio/Creating%20a%20helix%20for%20direct%20satrx.html; /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/lband_small/scripts/budget.py
+- **Confirmed:**
+  - External noise at VHF (my calculation, ITU-R P.372 formulas as recalled): rural man-made noise plus galactic gives 2354 K at 137.9 MHz and 2026 K at 145.9 MHz; quiet sites give about 600 / 527 K; at 437 MHz it is about 113 K rural and 250 K residential. This matches the band study's 2300/2000 K and its point that at VHF the noise floor, not antenna efficiency, sets the limit; at UHF lost directivity costs dB for dB.
+  - 20 cm tuned loop electrical performance (NEC2): +1.07 dBi in-plane; tuned resistance 1.57 ohm including 0.34 ohm of capacitor ESR at Q 1500; efficiency about -1.4 dB. This supports 'within about 1 dB of the V-dipole in rural noise'. Meteor-M N2-4 LRPT as 'marginal (model)' is reasonable, and real omni-antenna decodes support it: SatNOGS station VK4ATW (discone) decoded N2-4 LRPT imagery (63 product files) on a 67 deg pass on 17 Oct 2026, https://network.satnogs.org/observations/15225852/ (station antenna listed as discone 135-148 MHz).
+  - 12 cm STRICT loop (NEC2): -1.1 dBi (slightly better than the -2 dBi claimed), 3 dB bandwidth about 0.41 MHz. VK5BR's measured 100 kHz at SWR 1.5 implies about 0.5 MHz at 3 dB, so the band study is right that it needs peaking every pass.
+  - ISS SSTV on 437.55 MHz is reliable. ARISS lists Series 34 for 22-25 Oct 2026 (times TBD) on 437.55 MHz, Robot 36; Series 31 lists 'ISS transmit power: 10 watts' (https://www.ariss.org/upcoming-sstv-events.html). My CNR in 15 kHz: a vertical whip on the case gives 18.8/22.0/21.4/18.8 dB at 10/30/45/60 deg; even a whip on a remote box keeps 11-16 dB. Field evidence: SatNOGS users decoded 12 of 12 images in April 2026, one at about 3 deg elevation (https://community.libre.space/t/iss-sstv-event-from-2026-04-10-to-2026-04-14/14542?page=2).
+  - AO-73 BPSK telemetry is decodable with omni-class antennas. The SatNOGS Sofia SAT Club VHF turnstile decoded 30 frames per pass, including passes peaking at 23 and 30 deg (13-14 Oct 2026). The SatNOGS API listing for NORAD 39444 has status=good; station 4272 antenna is a turnstile. So 'reliable' holds with a 20 cm loop retuned to 145.9 MHz (NEC about +1 dBi), but not with the NA-701 on a remote choked lead (refuted above).
+  - Inmarsat-C EGC on small L-band antennas has real reception reports. The rtl-sdr.com tutorial says the RTL-SDR Blog patch 'does a very good job', the modified GPS antenna is 'just on the edge of being able to decode', and a helix or dish gives the highest SNR (https://www.rtl-sdr.com/rtl-sdr-tutorial-decoding-inmarsat-std-c-egc-messages/). A 7-9 dBic 2-turn helix (+7.5 dB of G/T margin) and the 4-turn helix (+10 dB) are therefore plausible.
+  - The L-band patch is out of band for 1700 MHz HRPT, and Metop AHRPT and Elektro-L LRIT are unreachable at 20 cm or less. This is consistent with metislair, where even the final 11-turn helix reached only 'about 1.5 dB on LRIT'.
+  - QO-100 beacon model C/N0 ≈ G + 14.6 dB-Hz. It is consistent with EA4GPZ: the BPSK beacon measured 'around 45 dB-Hz' on a 95 cm dish 'comparable to a 60 cm dish' (about 34 dBi) (https://destevez.net/2019/03/qo-100-beacons-power/), and the beacons were about 3 dB stronger after maintenance. This confirms the band study's correction that dish_replacement.json's '28 + G' was about 14 dB optimistic.
+  - QO-100 CW beacon on a bare LNB: OK1DX writes 'I was able to copy CW beacon just without any dish, with LNB just pointed to QO100!' He needed about 20 dB of attenuation before the RTL and found glass blocks the signal (http://ok1dx.cz/techinfo/qo100/qo100.html, fetched 18 Oct 2026). This matches the calculated bare-LNB C/N0 of about 23.6-26.6 dB-Hz, i.e. about +6 dB in 50 Hz.
+  - QO-100 FT8 on a bare LNB: RigExpert TBR-AN-1 lists 'Satellite dish – you do not need it!' and shows WSJT-X decodes (https://rigexpert.com/files/product_documentation/gpsdo/TBR-AN-1.pdf). Note that its LNB was GPSDO-locked; the Bullseye TCXO depends on the beacon-lock tracker for an equivalent result.
+  - QO-100 limits: SSB on a bare LNB is not reachable (about -10 dB in 2.7 kHz), the DATV beacon is not reachable (-17 dB bare, -9 to -5 dB with a horn), and the multimedia beacon is not reachable. All are consistent with the G+14.6 model and the BATC MER table.
+  - 11 x 8.3 cm cone: an optimum conical horn of 11 cm aperture at η 0.52 gives 18.8 dBi, and the geometry is consistent (slant length 14.1 cm from the apex). BPSK beacon frames have about +7.4 dB nominal margin (±2.5 dB model, ±2 dB feed mating), so they stay positive in the worst case. That makes 'reliable' plausible, but it is calculation-only: run the A/B beacon test.
+  - Black Kite S-band 38k4: a real decode exists. SatNOGS 'Pi Station 1' (listed antenna: discone, 25 MHz-3 GHz) decoded a frame on an 18 deg pass (https://network.satnogs.org/observations/15185665/). So a reliable link with an 8-9 dBic helix is supported, but only for the optional Pluto module.
+  - Ku broadcast carrier humps: my calculation with an assumed EIRP of 50 dBW gives about -12.7 dB C/N in 27.5 MHz for a bare LNB, a hump of about 0.2 dB, so 'opportunistic' is right; a 19-21 dBi horn gives a visible hump of 1.5-5 dB.
+- **Missed targets or parts:**
+  - The 1080p52 EDID pixel clock of 128.7 MHz has its 12th harmonic at 1544.4 MHz. That is inside the Inmarsat-C receive band (1537-1545 MHz) and next to the excluded Cospas-Sarsat 1544.5 MHz. The 1080p60 3rd harmonic (445.5 MHz) is 8 MHz above 437 MHz. Add both to the terminated-input sweep (my calculation).
+  - When a whip is badly mismatched, the LNA's own noise temperature rises well above its nominal NF. I did not quantify this; it would make the mismatch penalties above worse, not better.
+  - The V-dipole baseline (lb.py) is also flat at 2.0 dBi at all elevations, with no ground reflection. A horizontal V-dipole at about 1-1.5 m (about 0.5 λ) has a reflection notch near zenith. This affects how the LRPT EIRP was calibrated (±2 dB).
+  - Meteor LRPT and HRPT EIRPs are still unverified. The LRPT EIRP was calibrated to an assumed V-dipole performance. The HRPT anchor has no stated elevation.
+  - A SatNOGS 'good' status on 'IQ recording' transmitters means only that a signal was seen. I checked demoddata for the LRPT, Black Kite and AO-73 observations cited here. The other agents' 'good' citations are not proven decodes.
+  - Receiving LRPT on the loop and HRPT on the helix in the same pass needs one operator to point two antennas: the loop oriented by hand and the helix manually tracked at about 1 deg/s on a tripod. This is not a link issue, but it bounds the 'two V4L' benefit.
+  - Hand and body loss were not in my NEC runs, and real ferrite-choke impedance at 145 MHz (a few hundred ohms) sits between my 'ideal choke' and 'no choke' cases.
+- **Notes:** Four refutations, in order of importance:
+  (1) Whip budgets assume no zenith null.
+  (2) Monopole whips on remote choked leads have no counterpoise. NEC shows -10 to -13 dB of SNR at 2 m, which contradicts the stack's integration plan.
+  (3) The 20 cm loop's '1.4 MHz bandwidth, no motor' claim does not hold. NEC gives 0.84 MHz bandwidth and a 2.2 pF tuning capacitance, so it is very sensitive to hand capacitance.
+  (4) Meteor HRPT 'reliable' on the 20 cm helix has no evidence behind it and a circular anchor. Downgrade it to marginal above about 30 deg.
+  
+  The core physics in the band studies is sound: rural VHF noise of about 2000-2300 K masks efficiency loss, the 20 cm loop is efficient, and the QO-100 beacon model is right.
+  
+  Actionable fixes:
+  - Use balanced antennas (tuned loops) on remote leads; whips only on the case.
+  - Tilt whips broadside to the satellite using the IMU.
+  - Keep the motorised or per-pass-peaked loop trimmer.
+  - Treat HRPT as a high-pass experiment.
+  
+  Validation order: ISS SSTV 22-25 Oct, then AO-73 on the retuned loop, then a high Meteor N2-4 LRPT pass, then an HRPT test on a pass above 40 deg.
+  
+  Downloads are kept in separate untrusted folders: dl_sn, dl_ok1dx and dl_rigexpert, under /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfverify/. Searches used: 4 WebSearch, plus WebFetch and curl on primary pages (rtl-sdr.com, ARISS, EA4GPZ, metislair, VK5BR, OK1DX, RigExpert, SatNOGS API).
+
 ## fold:vhf_uhf (run `wf_4a343103-e9e`)
 
 - **Band group:** VHF/UHF: 137 MHz Meteor-M LRPT, 145.8 MHz ISS SSTV, 435-438 MHz CubeSats (RTL-SDR V4L for 137/145.8 MHz, LimeSDR Micro for 435 MHz). Targets unchanged. Packing targets unchanged: recommended tier has no piece longer than about 35 cm; ultra-compact tier no piece longer than about 20 cm.
@@ -6902,6 +6970,240 @@
   Not verified, marked in the text: tool release numbers for TorchSig, DVC and dump1090; the Fraunhofer licence (search snippet only); SatDump output files; gr-satellites CRC behaviour; SatNOGS waterfall format; the national band plans for Ukraine; Direwolf, redsea, kalibrate and LTE-scan behaviour; all rule-of-thumb thresholds (300 boxes, 10 groups, 6 dB snap threshold, Doppler residual limits, 14-day retention), which are design proposals, not measured values.
   
   Doppler and storage numbers were computed in Python here: simple circular-orbit geometry for Doppler, and bytes = rate x bytes-per-sample for storage. The scratchpad folder dl_satnogs also holds observation JSON fetched earlier by another stage; only its field names were used. 4 WebSearch calls were used.
+
+## npu:training_compute (run `wf_62c18130-b0d`)
+
+- **Area:** Where and how to train the spectrogram detector and classifier (Q6A CPU, Adreno GPU, home PC, cloud), on-device few-shot and incremental learning, and the ONNX -> QAIRT 2.42 export path with calibration
+- **Findings:**
+  1.
+    - **Name:** The HTP (Hexagon v68) cannot train; it can only run frozen models
+    - **Role:** Defines what 'training the NPU' means. Training runs on the CPU, the base PC or the cloud. The NPU runs the frozen detector and an embedding network, and new classes are learned in a CPU head or as prototypes over NPU outputs.
+    - **Details:** Qualcomm's HTP backend doc covers inference and performance configuration only. It documents no backward pass and no on-device training API. Its only weight-update features are Weight Sharing ('Only supports Hexagon v73 and onward') and LoRA weight sharing ('Only supports offline prepare on x86_Linux platform'). Neither helps on v68. The doc says 8- and 16-bit quantized networks run on all SoCs and FP16 only on select SoCs. Radxa users confirm v68 rejects FP16. Online prepare (a DLC finalised on the device by qnn-net-run) exists, so a context binary is not strictly required.
+    - **Versions and platform:** QAIRT 2.42.0.251225 runtime (qcom-qnn-sdk-v68) on Radxa OS r2. QCS6490 = dsp_arch v68, soc_id 35 (Radxa qairt-usage page).
+    - **Limits and risks:** Every change to weights on the NPU means re-quantising and regenerating the context binary. Keep the parts that change often (class heads, prototypes) off the NPU.
+    - **Sources:**
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/htp_backend.md
+      - https://docs.radxa.com/en/dragon/q6a/app-dev/npu-dev/qairt-usage
+      - https://forum.radxa.com/t/dragon-q6a-qnn-htp-pipeline-working-but-int8-only-firmware-blocks-real-ml-workloads/31217
+  2.
+    - **Name:** On-device CPU training with PyTorch aarch64 (CPU-only wheel)
+    - **Role:** Field tiers: training heads and prototypes in seconds, and fine-tuning the small box-crop embedder in minutes. The CPU is not used to train the detector.
+    - **Details:** PyPI has torch 2.14.1 (30 Sep 2026) cp310-cp314 manylinux_2_28_aarch64 wheels. The PyPI aarch64 wheel is a CUDA 13 build (454 MB) whose metadata pulls cuda-toolkit 13.0.3, cuDNN, NCCL and triton on Linux, all useless on the Q6A. Install from https://download.pytorch.org/whl/cpu instead: torch-2.14.1+cpu cp312 aarch64 is 159 MB. Also available for cp312 aarch64: torchvision 0.29.1, onnxruntime 1.31.0 (21.4 MB), onnx 1.23.2, scikit-learn 1.9.1 and faiss-cpu 1.15.1. Throughput is derived, not measured. The 4x A78 FP32 peak is about 158 GFLOPS: 16 FLOP/cycle from two 128-bit FMA pipes, at 1x 2.7 GHz + 3x 2.4 GHz. At an assumed 10-25% training efficiency that gives 16-40 GFLOPS. With CPU7 reserved for the LimeSDR RX thread (audit), 3 cores give about 12-29 GFLOPS. Estimates from my analytic MAC count: a 0.3 M-parameter crop embedder (21 MMAC on 1x64x64) fine-tunes at about 3-8 s per epoch on 1000 crops, so 30 epochs take 2-4 min. A linear or cosine head over 128-d embeddings trains in well under 1 s. A YOLOv8n-class detector at 256x256 on 10k tiles takes 18-44 min per epoch, or 29-73 h for 100 epochs, which is not feasible in the field. PowerTrain (arXiv 2407.13944) found the Raspberry Pi 5 (A76) trains on CPU only, about two orders of magnitude slower than a Jetson Orin.
+    - **Versions and platform:** Ubuntu 24.04 (Python 3.12) on Radxa OS r2, kernel 6.18.2-4 held. Use a venv, not system pip.
+    - **Limits and risks:** Thermal: the board throttles at about 90-91 C without a fan (Tj 95 C), and training is a sustained all-core load. Power draw during training is unverified (estimate +3-6 W; measure it on the 12 V rail). CPU contention can starve the SDR RX and FastRPC threads, so never train during a pass. All timing numbers are estimates and need a benchmark on the board.
+    - **Sources:**
+      - https://pypi.org/project/torch/2.14.1/
+      - https://download.pytorch.org/whl/cpu/torch/
+      - https://pypi.org/project/onnxruntime/1.31.0/
+      - https://arxiv.org/abs/2407.13944
+  3.
+    - **Name:** Adreno 643 GPU training paths: none usable in production in Oct 2026
+    - **Role:** Checks whether the GPU could take over training from the CPU. Conclusion: keep the GPU for the waterfall and FFT, not for training.
+    - **Details:** Turnip Vulkan compute works: vkpeak gives 808 GFLOPS FP32 / 1581 FP16, and clpeak gives Vulkan 1096/748, Qualcomm OpenCL 943/650 and rusticl 405/553 (Radxa forum, from the audit). Framework status: (1) Burn (Rust) supports autodiff on its CubeCL Vulkan backend, and its README lists Qualcomm under Vulkan. It is untested on Turnip/A643, and training code would have to be rewritten in Rust. (2) MNN advertises on-device training (MNN-Train) and Vulkan/OpenCL inference backends. Whether backward passes run on its GPU backends is unverified. (3) tinygrad's QCOM backend (Adreno 6xx) drives the KGSL kernel driver directly (ops_qcom.py imports kgsl). Radxa OS uses upstream msm/Freedreno, so /dev/kgsl-3d0 is probably absent (check with ls /dev/kgsl*). tinygrad's CL backend on rusticl is slow. (4) ncnn is inference-only. (5) ExecuTorch's Vulkan delegate supports FP32/FP16 inference modes, and ExecuTorch training is 'experimental', with delegate integration still a work in progress. (6) PyTorch's Vulkan workflow tutorial now returns 404.
+    - **Versions and platform:** Mesa 25.2.8 Turnip on Radxa OS r2. Burn main branch (Oct 2026). tinygrad master.
+    - **Limits and risks:** The theoretical 5-10x gain over the CPU matters only for jobs this design does not run on the device (full detector training). Heads and the embedder finish in minutes on the CPU anyway.
+    - **Sources:**
+      - https://github.com/tracel-ai/burn
+      - https://github.com/tinygrad/tinygrad/blob/master/docs/runtime.md
+      - https://github.com/tinygrad/tinygrad/blob/master/tinygrad/runtime/ops_qcom.py
+      - https://github.com/alibaba/MNN
+      - https://github.com/Tencent/ncnn
+      - https://docs.pytorch.org/executorch/stable/backends/vulkan/vulkan-overview.html
+      - https://github.com/pytorch/executorch/blob/main/extension/training/README.md
+      - https://forum.radxa.com/t/how-to-install-qualcomm-opencl-sdk-on-dragon-q6a/30787
+  4.
+    - **Name:** Home base PC: training station and the only verified QAIRT conversion host
+    - **Role:** Tier-3 work: full detector and embedder training, quantisation-aware training (QAT), calibration, conversion, context-binary generation and regression tests.
+    - **Details:** Radxa's QAIRT install page requires a 64-bit x86 host with Ubuntu 22.04 and Python 3.10, and QAIRT 2.42.0.251225. Its tested framework versions are PyTorch 1.13.1, ONNX 1.16.1 and ONNX Runtime 1.17.1. Use the same box for PyTorch CUDA training and AIMET QAT. aimet-torch 2.41.0 (BSD-3) is the latest. The releases closest to QAIRT 2.42 are 2.21.0 (15 Dec 2025) and 2.22.0 (13 Jan 2026). aimet-onnx ships only an x86_64 wheel. Estimate: a YOLOv8n-class detector at 320 px on 10k tiles trains at roughly 13-34 s per epoch on an RTX 3060-class GPU, so 100 epochs take about 20-60 min. Data loading may dominate.
+    - **Versions and platform:** x86-64 Ubuntu 22.04 with Python 3.10 (Radxa). Current QAIRT docs also list Ubuntu 24.04 with Python 3.12 and WSL. An NVIDIA GPU with 8-16 GB is recommended (TorchSig suggests 16 GB GPU memory and 1 TB of disk for large synthetic sets).
+    - **Limits and risks:** Python 3.10 is required for QAIRT 2.42, so keep training (any Python) and conversion (a pinned 3.10 venv) in separate environments. Compatibility of AIMET's encodings format with QAIRT 2.42 is unverified.
+    - **Sources:**
+      - https://docs.radxa.com/en/dragon/q6a/app-dev/npu-dev/qairt-install
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/linux_setup.md
+      - https://pypi.org/project/aimet-torch/
+      - https://pypi.org/project/aimet-onnx/
+      - https://github.com/TorchDSP/torchsig
+    - **Cost:** $0 software if a PC exists. A GPU is the main hardware cost (not price-checked).
+  5.
+    - **Name:** Cloud: Colab and Kaggle for GPU training; Qualcomm AI Hub for compile, quantise and profile only
+    - **Role:** Fallback when no home GPU is available, plus optional proxy profiling.
+    - **Details:** Colab FAQ: on the free tier 'access to expensive resources like GPUs is heavily restricted', notebooks run 'at most 12 hours', and limits are not published. Kaggle quotas could not be read (JS page). The often-quoted '30 GPU-h/week' is unverified. Qualcomm AI Hub does not train. It compiles PyTorch/ONNX/AIMET models, runs quantize jobs (AIMET-based, '500-1000 samples' recommended) and profiles on 'QCS6490 (Proxy)'. --qairt_version takes major.minor, 'default' or 'latest', and the valid list comes from get_frameworks(). Proxy numbers 'will vary' from the real device. A Radxa thread reports that AI Hub binaries built with 2.45 fail on the 2.42 runtime (0x1388).
+    - **Versions and platform:** qai-hub 0.56.0 (BSD) and qai-hub-models 0.64.0 on PyPI.
+    - **Limits and risks:** Whether AI Hub still offers QAIRT 2.42 is unverified. If it does not, do all conversion locally. Calibration tiles uploaded to AI Hub leave your control, so do not upload tiles derived from voice or other private-content captures. Colab sessions are pre-emptible.
+    - **Sources:**
+      - https://research.google.com/colaboratory/faq.html
+      - https://app.aihub.qualcomm.com/docs/hub/api.html
+      - https://app.aihub.qualcomm.com/docs/hub/quantize_examples.html
+      - https://app.aihub.qualcomm.com/docs/hub/devices.html
+      - https://forum.radxa.com/t/qcs6490-radxa-q6a-qairt-sdk-version-mismatch-ai-hub-artifacts-2-45-x-incompatible-with-runtime-2-42-0-251225/30908
+    - **Cost:** Colab/Kaggle free tiers. AI Hub needs a Qualcomm account (pricing not checked).
+  6.
+    - **Name:** Field few-shot learning: frozen NPU embedder + imprinted prototypes + CPU cosine head
+    - **Role:** Lets the user teach a new signal by marking 5-20 boxes on the waterfall, with no retraining or reconversion.
+    - **Details:** Two-stage pipeline. (1) The NPU detector finds boxes. (2) Each box is cropped from the dB spectrogram with about 25% margin and resized to 1x64x64. A frozen embedder (about 0.3 M parameters, 21 MMAC, INT8 on HTP or FP32 on ORT CPU) produces a 128-d vector, and the CPU L2-normalises it in FP32. Box scalars are appended: log bandwidth, log duration, band and duty cycle. A new class's prototype is the mean of its normalised embeddings ('imprinted weights', Qi/Brown/Lowe, CVPR 2018: averaging beats nearest-neighbour instance embeddings). Classify by cosine similarity. Return 'unknown' when the best score is below a per-class threshold learned leave-one-out from stored exemplars, and prompt the user to label it. Then fit a logistic or cosine head on all stored exemplar embeddings (sklearn, under 1 s). RF evidence that prototypes work for modulation classes: MALWNN (arXiv 2503.18375) and FSOS-AMC (arXiv 2410.10265, few-shot open-set with meta-prototypes and an open-set classifier; AUROC gains claimed, numbers not on the abstract page).
+    - **Versions and platform:** numpy, scikit-learn 1.9.1 and faiss-cpu 1.15.1 (only needed above about 10^5 vectors) on aarch64. Embedder as a QAIRT 2.42 context binary plus an ONNX FP32 copy.
+    - **Limits and risks:** INT8 embeddings can collapse on this exact board. A Radxa user saw CLIP cosine similarity above 0.99 for everything and ArcFace at about 51% after INT8. Gate on INT8-vs-FP32 cosine parity, run the final FC and normalisation on the CPU, and try A16W8 or QAT, or run the embedder on the CPU (estimated 1-3 ms per crop). The 5/20/200 shot counts are rules of thumb, not measured.
+    - **Sources:**
+      - https://arxiv.org/abs/1712.07136
+      - https://arxiv.org/abs/2503.18375
+      - https://arxiv.org/abs/2410.10265
+      - https://forum.radxa.com/t/dragon-q6a-qnn-htp-pipeline-working-but-int8-only-firmware-blocks-real-ml-workloads/31217
+  7.
+    - **Name:** Incremental detector: class-agnostic objectness on the NPU, last-layer class head on the CPU
+    - **Role:** Adds classes to the detector without full retraining.
+    - **Details:** Train the NPU detector at base for 'signal' objectness, box regression and about 8-10 generic families: analog FM/AM, FSK/GMSK/AFSK, PSK single-carrier, OFDM, bursty/pulsed, CW/tone, chirp, noise-like/spread, and spurs/RFI. Fine labels (Meteor LRPT, HRPT, APRS, CubeSat GMSK, RS41, ADS-B, AIS, SSTV, DVB-S2, GSM/LTE/Wi-Fi/BT interference, broadcast FM) live in the CPU stage-2 head. This mirrors WBSig53, which separates detection (presence, time, frequency) from recognition (adding the modulation family). TFA (arXiv 2003.06957) shows that fine-tuning only the last layer of a detector is the key to few-shot detection, beating meta-learning by about 2-20 points. Option: have the NPU emit per-location feature maps (e.g. 32x32x64 + 16x16x128 + 8x8x256 for a 256 px tile, about 112 KB INT8) and run a 1x1 class conv on the CPU (about 2.3 MMAC for 20 classes). That conv can be retrained or imprinted in seconds. Continual learning: keep an exemplar bank (embeddings plus SigMF references) and replay it whenever the head is refit (iCaRL, arXiv 1611.07725). Owfi et al. (arXiv 2312.04718) report that incremental-learning frameworks prevent catastrophic forgetting in modulation recognition. A signal the class-agnostic detector misses (low recall) cannot be fixed in the field and must be queued for a base retrain.
+    - **Versions and platform:** Detector and head both exported from PyTorch. The head runs on onnxruntime 1.31 CPU or numpy.
+    - **Limits and risks:** Objectness generalisation to unseen shapes (very wide OFDM, sub-bin CW) is unverified. Per-location INT8 features face the same quantisation-fidelity risk as the embeddings.
+    - **Sources:**
+      - https://arxiv.org/abs/2003.06957
+      - https://arxiv.org/abs/2211.10335
+      - https://arxiv.org/abs/1611.07725
+      - https://arxiv.org/abs/2312.04718
+  8.
+    - **Name:** ONNX -> QAIRT 2.42 export, calibration and deployment path (exact commands)
+    - **Role:** Turns any trained detector or embedder into an HTP context binary that matches the device runtime.
+    - **Details:** Step 1, export: build static NCHW models (detector [1,1,256,256], embedder [1,1,64,64]) with Conv-BN-ReLU/ReLU6, nearest Resize and Concat. Give objectness, box and class logits separate outputs, and run decode/NMS on the CPU. Radxa users got all-zero YOLO outputs from a quantised concatenated head and fixed it by splitting outputs and dequantising each with its own scale. In PyTorch 2.14, torch.onnx.export defaults to dynamo=True (since 2.9) and external_data=True. Pin opset to the converter's range (the audit used 17), set external_data=False, and run onnx.checker plus an ORT parity check. Step 2, convert: 'qairt-converter --input_network m.onnx --output_path m.dlc'. With AIMET QAT, add '--quantization_overrides m.encodings'. Step 3, quantise: 'qairt-quantizer --input_dlc m.dlc --input_list calib.txt --output_dlc m_q.dlc --use_per_channel_quantization'. If accuracy drops, add --act_bitwidth 16 (A16W8, unverified on v68) and try --apply_algorithms cle. calib.txt lists 500-1000 raw float32 tiles (AI Hub recommendation; the audit used 300-500). Preprocessing must be identical (dB, noise-floor subtraction, clip, 0-1 scaling). Stratify the set across SDR, sample rate, gain, noise-only, strong-signal and every class. Step 4, context binary: 'qnn-context-binary-generator --model libQnnModelDlc.so --backend libQnnHtp.so --dlc_path m_q.dlc --output_dir out --binary_file m --config_file config_file.json'. config_backend.json uses dsp_arch v68, soc_id 35 and vtcm_mb 2; Radxa's example uses 0 (= max), but only about 2 MB is usable. Step 5, verify on the device: 'qnn-net-run --backend libQnnHtp.so --retrieve_context m.bin --input_list test.txt' and compare with ORT FP32. Step 6, ship a versioned bundle: context binary, FP32 ONNX, labels, prototypes, preprocessing parameters, calibration hash and QAIRT version string. Switch atomically and keep a rollback copy.
+    - **Versions and platform:** QAIRT 2.42.0.251225 on an x86-64 Ubuntu 22.04 host. The current (2.5x) docs list arm-Linux Ubuntu 24.04 / Python 3.12 as a host with ONNX-only conversion, and Radxa publishes an ARM64 Docker image (radxazifeng278/qairt-npu-v68:v1.2, Ubuntu 24.04 base, 3.93 GB, contents undocumented). Whether on-device conversion works with 2.42 is unverified. Flags were checked against the Sep 2026 docs; confirm them with --help in 2.42.
+    - **Limits and risks:** Acceptance gates (heuristics): detector mAP@0.5 within 2 points of FP32, per-class recall with no collapse, mean INT8/FP32 embedding cosine of at least 0.98, and few-shot accuracy within 2 points. If a model fails, use A16W8, then QAT, then CPU fallback. AIMET encodings vs 2.42 converter compatibility is untested.
+    - **Sources:**
+      - https://docs.radxa.com/en/dragon/q6a/app-dev/npu-dev/qairt-usage
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/SNPE_general_tools.md
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/qairt_quantizer.md
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/linux_setup.md
+      - https://docs.pytorch.org/docs/2.14/onnx_export.html
+      - https://forum.radxa.com/t/yolov8n-context-binary-generation-for-q6a/30899
+      - https://forum.radxa.com/t/issues-running-yolov8n-with-qairt-sdk-2-49-on-radxa-dragon-q6a-qcs6490/31462
+      - https://hub.docker.com/r/radxazifeng278/qairt-npu-v68
+  9.
+    - **Name:** Op support and measured QCS6490 detector latencies (for sizing what you train)
+    - **Role:** Constrains the architecture so it quantises and runs on the HTP, and sets frames-per-second expectations.
+    - **Details:** The QNN SupportedOps table marks HTP INT8 and INT16 'YES' for Conv2d, DepthWiseConv2d, Batchnorm, Relu, ReluMinMax (Clip), Sigmoid, HardSwish, Resize/ResizeNearestNeighbor, Concat, Split, StridedSlice, PoolMax2d/PoolAvg2d, FullyConnected, MatMul, L2Norm, LayerNorm, Softmax, Transpose and TransposeConv2d. This is the generic table; FP16 does not apply to v68. Qualcomm AI Hub model cards, measured on QCS6490 (Proxy) at 640x640: YOLOv8n-det w8a8 QNN_DLC 4.0 ms and w8a16 10.5 ms (A16 costs about 2.6x); Yolo-X (Apache-2.0, 8.98 M parameters) w8a8 7.1 ms; MobileNet-v2 224 w8a8 1.3 ms. On real Q6A boards with 2.42, Radxa users measured 10-12 ms for the official YOLOv8n binary and about 20 ms for a custom one. A 256x256 single-channel tile detector (about 0.4-0.7 GMAC) should therefore take a few ms on the HTP (extrapolated, not measured).
+    - **Versions and platform:** Model cards are from qai-hub-models v0.64.0 (AI Hub default QAIRT, not 2.42).
+    - **Limits and risks:** Proxy and newer-SDK numbers are optimistic for 2.42 firmware. Long-run HTP hangs (about 1 h) and the 0x80000600 FastRPC failures need the watchdog and CPU fallback from the audit.
+    - **Sources:**
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/SupportedOps.md
+      - https://huggingface.co/qualcomm/YOLOv8-Detection
+      - https://huggingface.co/qualcomm/Yolo-X
+      - https://huggingface.co/qualcomm/MobileNet-v2
+      - https://forum.radxa.com/t/yolov8n-context-binary-generation-for-q6a/30899
+      - https://forum.radxa.com/t/npu-htp-usage-in-radxa-dragon-q6a/29949
+  10.
+    - **Name:** Training data sources and licences
+    - **Role:** Base training sets for the detector and embedder, and what their licences allow.
+    - **Details:** TorchSig 2.2.0 (MIT, 31 Aug 2026) has one dataset class for classification and detection (num_signals_max > 1), a Spectrogram transform and 60+ signal types across FSK, QAM, PSK, ASK, OFDM and analog families. Data you generate with it is yours to use. WBSig53 (arXiv 2211.10335): 550k synthetic samples, about 2 M signals, 53 classes; the paper is CC BY 4.0 and no separate dataset licence is shown. DeepSig RadioML 2016.10A, 2016.04C and 2018.01A are CC BY-NC-SA 4.0 (non-commercial, share-alike). They are narrowband IQ only, and DeepSig warns of known errata, so use them only to pretrain the IQ second stage. SatNOGS Network observation results are distributed under 'Creative Commons Attribution-Share Alike' (version not stated; the DB transmitter list is CC BY-SA 4.0). Network data is waterfall PNG plus optional HDF5 waterfall data and audio, with no IQ. Useful for satellite signal shapes and frequency/mode priors. WRIST/SPREAD (arXiv 2107.05114: Wi-Fi, BT, ZigBee, Lightbridge, XPD; about 1 M labelled emissions) has an unverified licence. Your own captures are the main source. Store annotations in SigMF v1.2.6 physical units (core:sample_start, core:sample_count, core:freq_lower_edge, core:freq_upper_edge, core:label, core:comment, core:generator, core:uuid) so tiles can be re-rendered at any FFT size for augmentation. Store only spectrogram tiles, never demodulated content, for voice or cellular classes.
+    - **Versions and platform:** torchsig 2.2.0 (Python 3.10 or newer; deps include torch, lightning, numba and opencv). sigmf 1.13.0 (PyPI says LGPL).
+    - **Limits and risks:** Share-alike or non-commercial terms (RadioML, SatNOGS) may extend to redistributed datasets and arguably to models. Keep provenance per sample and a licence field in the dataset manifest.
+    - **Sources:**
+      - https://github.com/TorchDSP/torchsig
+      - https://pypi.org/project/torchsig/2.2.0/
+      - https://arxiv.org/abs/2211.10335
+      - https://www.deepsig.ai/datasets/
+      - https://network.satnogs.org/
+      - https://db.satnogs.org/about/
+      - https://arxiv.org/abs/2107.05114
+      - https://raw.githubusercontent.com/sigmf/SigMF/main/sigmf-schema.json
+  11.
+    - **Name:** Quantisation tooling: AIMET, qairt-quantizer, and PyTorch's quantisation migration
+    - **Role:** Choosing the post-training quantisation (PTQ) or QAT route.
+    - **Details:** qairt-quantizer options (Sep 2026 docs): --act_bitwidth 8|16, --weights_bitwidth 4|8|16, --bias_bitwidth 8|32, --use_per_channel_quantization, --use_per_row_quantization, --act_quantizer_calibration/--param_quantizer_calibration with --percentile_calibration_value, --apply_algorithms cle, --use_aimet_quantizer with adaround/amp (needs AIMET 1.33 or newer), --dump_encoding_json and --target_soc_model. QAT encodings and QDQ ONNX nodes are applied at the qairt-converter stage. PyTorch's own quantisation is moving to torchao. The docs say 'We plan to delete torch.ao.quantization in 2.10 if there are no blockers'. Prefer AIMET (Qualcomm's own, with documented encodings into QAIRT and AI Hub '.aimet' directories) for QAT.
+    - **Versions and platform:** aimet-torch 2.41.0 (x86 + CUDA host; pure-Python py310 wheel). torchao 0.18.0.
+    - **Limits and risks:** Because torch.ao.quantization is being deleted, do not build new QAT code on it. AIMET-to-2.42 encodings compatibility is unverified, so pin an AIMET release from around Dec 2025 and test.
+    - **Sources:**
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/SNPE_general_tools.md
+      - https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/converters.md
+      - https://docs.pytorch.org/docs/2.14/quantization.html
+      - https://app.aihub.qualcomm.com/docs/hub/compile_examples.html
+- **Recommendations:**
+  - Use four training tiers. T0, on the device in seconds: prototypes from 5-20 user-marked boxes over embeddings from the frozen NPU embedder. T1, on the device in seconds: refit the cosine or logistic head on the exemplar bank on the CPU. T2, on the device in minutes: fine-tune the crop embedder on the CPU and deploy it as FP32 on ORT CPU at once; the NPU version waits for base conversion. T3, at base in hours: full detector and embedder training, QAT, calibration and the context binary.
+  - Never train the detector on the Q6A. Train it on the home PC (x86-64 Ubuntu 22.04, NVIDIA GPU) or on Colab or Kaggle. Keep that PC as the only QAIRT 2.42.0.251225 conversion host, with a separate Python 3.10 venv for QAIRT.
+  - Design the detector as class-agnostic objectness + boxes + about 8-10 generic families, so new fine classes never need a detector retrain. Put fine labels in a CPU stage-2 head over NPU embeddings of box crops (1x64x64 dB crop + bandwidth/duration/band scalars).
+  - Make every NPU model INT8-friendly from the start. Use static NCHW, Conv-BN(folded)-ReLU/ReLU6, nearest Resize and Concat. Give box, objectness and class separate outputs, and do decode, NMS, the final embedding FC and L2-norm on the CPU in FP32. Use the same fixed dB, noise-floor and clip normalisation in training, calibration and inference, so one static input scale works across both SDRs and all gains.
+  - On the Q6A, install torch with 'pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu' (159 MB), not the default PyPI aarch64 wheel (454 MB, CUDA 13 with CUDA dependencies). Add onnxruntime 1.31.0 and scikit-learn 1.9.1.
+  - Run on-device training only between passes. Use 'systemd-run -p AllowedCPUs=4-6 -p CPUQuota=250% nice -n 19' (CPU7 stays reserved for the RX thread), abort if a thermal zone exceeds about 80 C or the battery is low, and cap each run at about 5 minutes.
+  - Export with torch.onnx.export(..., opset_version=17, external_data=False), since dynamo=True is the default in 2.14, and check ORT parity. Then run qairt-converter (adding --quantization_overrides when using AIMET QAT), then qairt-quantizer with --input_list of 500-1000 stratified raw tiles and --use_per_channel_quantization, then qnn-context-binary-generator with dsp_arch v68, soc_id 35 and vtcm_mb 2. Confirm every flag with --help in 2.42.
+  - Gate every deployment with qnn-net-run on the device. Require INT8 vs FP32 mAP@0.5 within 2 points, no class collapse, mean embedding cosine of at least 0.98 and few-shot accuracy within 2 points. On failure, try A16W8 (--act_bitwidth 16), then AIMET QAT, then CPU-only for that model.
+  - Keep an exemplar bank: per class, up to about 200 embeddings plus SigMF references to the source tiles. Replay all classes whenever a head is refit, use leave-one-out per-class cosine thresholds for 'unknown', and promote a class into the base detector training set only after about 200-500 boxes from several sessions.
+  - Store annotations in SigMF physical units (Hz and sample indices), never pixels, so the same labels can be re-rendered at any FFT size or overlap for multi-resolution augmentation. Split train and test by recording session or pass, not by tile.
+  - Ship models as versioned bundles: context binary, FP32 ONNX, labels, prototypes, preprocessing parameters, calibration hash and QAIRT version string. Switch atomically with a rollback copy, and keep the ORT CPU model as a live fallback for the watchdog.
+  - Use Qualcomm AI Hub only for optional proxy profiling or compiling, and only if get_frameworks() lists 2.42. Otherwise its binaries fail on the Q6A (0x1388). Do not upload tiles derived from voice or cellular captures.
+  - Licences: use TorchSig (MIT) synthetic data as the base. Use RadioML (CC BY-NC-SA 4.0) only to pretrain the IQ second stage for non-commercial use. Credit SatNOGS (CC BY-SA) if you use its waterfalls. Avoid shipping Ultralytics code or weights (AGPL-3.0): write your own small detector or base it on YOLOX (Apache-2.0).
+- **Numbers:**
+  - torch 2.14.1 (30 Sep 2026): PyPI aarch64 cp312 wheel 454 MB (CUDA 13 build); +cpu aarch64 wheel from download.pytorch.org 159 MB
+  - onnxruntime 1.31.0 aarch64 cp312 wheel 21.4 MB; onnx 1.23.2; torchvision 0.29.1; scikit-learn 1.9.1; faiss-cpu 1.15.1 (all have aarch64 wheels)
+  - onnxruntime-training last release 1.19.2 (3 Sep 2024), x86_64 wheels only
+  - aimet-torch 2.41.0 (5 Oct 2026, BSD-3); releases nearest QAIRT 2.42: 2.21.0 (15 Dec 2025) and 2.22.0 (13 Jan 2026); aimet-onnx x86_64 only
+  - QAIRT 2.42.0 dated 31 Dec 2025 in Qualcomm's delegate release table; Radxa requires 2.42.0.251225 with x86-64 Ubuntu 22.04 and Python 3.10
+  - QCS6490: dsp_arch v68, soc_id 35; usable VTCM about 2 MB of 8 MB (forum)
+  - AI Hub QCS6490 (Proxy), 640x640: YOLOv8n-det w8a8 QNN_DLC 4.0 ms, w8a16 10.5 ms; Yolo-X w8a8 7.1 ms; MobileNet-v2 224 w8a8 1.3 ms
+  - Real Q6A with 2.42 (forum): official YOLOv8n binary 10-12 ms, custom YOLOv8n about 20 ms
+  - YOLOv8n compute: 8.7 GFLOPs at 640, about 1.39 GFLOPs at 256, about 2.17 GFLOPs at 320 (pixel scaling)
+  - Derived: 4x A78 FP32 peak about 158 GFLOPS; assumed training throughput 16-40 GFLOPS (12-29 GFLOPS on 3 cores with CPU7 reserved); Turnip vkpeak 808 GFLOPS FP32 / 1581 GFLOPS FP16
+  - Estimates: crop embedder 0.3 M parameters / 21 MMAC fine-tunes at 3-8 s per epoch on 1000 crops (30 epochs in 2-4 min); prototype add for 5-20 crops under 0.1 s; linear head under 1 s
+  - Estimate: YOLOv8n-class detector at 256 px on 10k tiles takes 18-44 min per epoch on the Q6A CPU (29-73 h per 100 epochs) vs about 13-34 s per epoch on an RTX 3060-class GPU at 320 px
+  - Calibration set: 500-1000 samples (AI Hub recommendation), 300-500 in the earlier audit
+  - Colab free tier: at most 12 h per notebook, GPU 'heavily restricted'; Kaggle quota unverified
+  - Storage: uint8 256x256 tile = 64 KiB, so 10k tiles is about 0.64 GB
+  - Spectrogram bins: 56 Msps with FFT 4096 gives 13.67 kHz per bin and 73 us per row; 10 Msps with FFT 4096 gives 2.44 kHz; 2.4 Msps with FFT 1024 gives 2.34 kHz
+  - Board throttles at about 90-91 C without a fan; Tj limit 95 C (earlier audit)
+- **Rejected:**
+  1.
+    - **Name:** Training or fine-tuning on the Hexagon HTP itself
+    - **Why:** QNN HTP is inference-only. Weight Sharing needs v73 or later, and LoRA weight sharing needs offline prepare on x86 Linux, so there is no way to update v68 weights on the device.
+  2.
+    - **Name:** Full detector (YOLO-class) training on the Q6A CPU
+    - **Why:** Estimated 29-73 h per 100 epochs on 10k tiles, under sustained all-core thermal and battery load and competing with the SDR threads. Only heads and the small embedder are viable on the device.
+  3.
+    - **Name:** Adreno 643 GPU training (Burn/wgpu, MNN-Train, tinygrad QCOM or CL, ExecuTorch Vulkan, PyTorch Vulkan, ncnn)
+    - **Why:** No verified path on Turnip under Linux. tinygrad QCOM needs the KGSL driver. ExecuTorch Vulkan is inference-only and its training is experimental. The PyTorch Vulkan tutorial is gone. ncnn is inference-only. Burn means a Rust rewrite and is untested on A643. CPU minutes are enough for the field tiers.
+  4.
+    - **Name:** onnxruntime-training on the device
+    - **Why:** Last release 1.19.2 (Sep 2024), with x86_64 wheels only.
+  5.
+    - **Name:** Default PyPI torch aarch64 wheel
+    - **Why:** It is the CUDA 13 build (454 MB plus cuda-toolkit, cuDNN, NCCL and triton dependencies). Use the +cpu wheel (159 MB).
+  6.
+    - **Name:** onnxruntime-qnn 2.x, or AI Hub binaries from QAIRT 2.45 or newer
+    - **Why:** Fail on the Q6A's 2.42 DSP firmware (0x1388, INVALID_CONFIG). All conversion must be pinned to 2.42.0.251225.
+  7.
+    - **Name:** Qualcomm AI Hub as a training service
+    - **Why:** It only compiles, quantises (AIMET PTQ) and profiles on a proxy device. It does not train.
+  8.
+    - **Name:** New quantisation code on torch.ao.quantization
+    - **Why:** PyTorch is centralising quantisation in torchao and plans to delete torch.ao.quantization. Use AIMET (or torchao pt2e) for QAT.
+  9.
+    - **Name:** Shipping Ultralytics YOLOv8/YOLO11 code or weights in the device image
+    - **Why:** AGPL-3.0 obligations (Qualcomm itself won't redistribute pre-exported assets), and its fused concat head quantised to zeros on the Q6A in forum reports. Use an own small detector or a YOLOX (Apache-2.0) style detector with split outputs.
+  10.
+    - **Name:** RadioML 2018.01A as the main training set
+    - **Why:** Narrowband IQ snippets only, with no time-frequency boxes, a CC BY-NC-SA 4.0 licence and DeepSig-acknowledged errata. Use it only to pretrain the IQ second stage.
+  11.
+    - **Name:** Specific-emitter or RF-fingerprint incremental methods (e.g. arXiv 2601.03063)
+    - **Why:** They target identifying individual transmitters, which is outside the project rules. Only modulation and service-level classes are learned.
+  12.
+    - **Name:** Pure on-NPU INT8 embeddings without a parity gate
+    - **Why:** A Radxa user saw CLIP embeddings collapse (cosine above 0.99) and ArcFace drop to about 51% after INT8 on this same board.
+- **Open questions:**
+  - Does the QAIRT 2.42 aarch64 package, or Radxa's ARM64 Docker image radxazifeng278/qairt-npu-v68:v1.2, include working qairt-converter and qairt-quantizer for ONNX on the Q6A? If yes, tier T2 could re-quantise and redeploy to the NPU in the field.
+  - Does Qualcomm AI Hub get_frameworks() still list QAIRT 2.42 in Oct 2026?
+  - Does HTP v68 with 2.42 accept A16W8 and mixed precision (for example 16-bit output tensors for embeddings and per-location features)?
+  - INT8 vs FP32 cosine fidelity of a spectrogram-crop embedder on this board, and the few-shot accuracy curves (1/5/10/20 shots) on real captures.
+  - Actual PyTorch +cpu training throughput, SoC temperature and 12 V power on the QCS6490 A78s inside the handheld enclosure during a 5-minute fine-tune.
+  - Is AIMET's encodings format (2.21-2.41) compatible with the QAIRT 2.42 qairt-converter --quantization_overrides?
+  - Does the torch 2.14 dynamo ONNX exporter at opset 17 produce graphs that the 2.42 converter accepts, or is a pinned legacy exporter or older torch needed?
+  - Can HTP inference run stably while CPU training saturates cores 4-6 (FastRPC thread starvation, the reported 1 h hang)?
+  - Does /dev/kgsl-3d0 exist on the Radxa 6.18.2 kernel? This decides tinygrad QCOM, and how the proprietary qcom-adreno-opencl works.
+  - Licence of the WRIST/SPREAD dataset, and the SatNOGS Network CC BY-SA version.
+  - Do QAIRT licence terms allow redistributing libQnnHtp*.so inside your own model or app bundle?
+  - Current Kaggle GPU quota and session limits.
+- **Notes:** I verified package versions, wheel sizes and licences directly from the PyPI JSON API and the PyTorch CPU index. I also read Qualcomm's QAIRT docs (published Sep 2026, so they describe 2.5x, not 2.42), Radxa's Q6A NPU docs, Qualcomm AI Hub docs and HF model cards, and the TorchSig, Burn, tinygrad, MNN, ncnn and ExecuTorch repos. I also checked the SigMF schema v1.2.6 and the SatNOGS licence footers.
+  
+  Not measured: every training time is derived from my own MAC counts plus an assumed 10-25% CPU training efficiency and 15-40% GPU efficiency. The script is /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/calc/est.py. All of these figures need a benchmark on the board.
+  
+  The QCS6490 latencies are AI Hub proxy numbers. Q6A forum measurements with 2.42 are 2-3x slower. The forum items (version lock, 2 MB VTCM, INT8 collapse, about 1 h hangs) come from the earlier audit files and their Radxa forum URLs.
+  
+  Paper claims come from the arXiv abstract pages only. The FSOS-AMC and MALWNN numbers were not on the abstracts, and iCaRL's nearest-mean rule is in the paper body, not the abstract.
+  
+  Web search budget used: 5 searches.
 
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
