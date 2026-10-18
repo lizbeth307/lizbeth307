@@ -1262,6 +1262,229 @@
   
   RULES: the part is passive and has no effect on receive-only operation, conducted-only sources or the other hard rules. Keep the pin 18 series Schottky as specified. Lay any extra cable length as a flat S-fold, not a coil.
 
+## searchA:printed_30_mm_hinged_hood_7in_ar_film_ve (run `wf_071e1025-145`)
+
+- **Part:** Display sun kit (one set): printed 30 mm hinged hood, 7in AR film and VEML7700 lux-sensor breakout. Tier core, group Display, qty 1 set. The sensor sits outside the hood on the outer top bezel face.
+- **Current price usd:** 15-25 (stack estimate; the stack names no SKU for the AR film). Breakdown from this step:
+  (a) Hood: about $2 of filament, assuming about 50 g of ASA. Polymaker PolyLite ASA Black 1 kg is EUR 34.50 incl. 21% VAT (EUR 28.51 ex VAT) at 123-3D NL.
+  (b) VEML7700: Adafruit 4162 is $4.95 (adafruit.com; DigiKey 1528-2891-ND $4.95), plus a $0.95 STEMMA QT cable. In the EU: Botland EUR 6.98 incl. 23% VAT (EUR 5.87 net), in stock; Berrybase EUR 5.45, not deliverable; The Pi Hut (UK) GBP 4.80.
+  (c) AR film: no SKU in the stack. The only 7in-capable AR film with published specs that I found (Diamox AR1617 sheet) costs from GBP 11.11 ex VAT, about $15 (about $18 with 20% UK VAT), plus shipping and EU import VAT.
+  A realistic set is therefore about $23-26 plus shipping, at the top of the estimate.
+- **Critical specs:**
+  - HOOD: 30 mm deep, hinged, folds flat as a lid over the glass. It must fit the real panel outline (CAD only after the panel passes acceptance; the 164.2x98 mm glass size is inferred).
+  - HOOD material: ASA or similar UV-stable plastic, about 100 C heat resistance. The glass can reach 65 C and the panels are rated for 80 C storage. PLA is not acceptable because it softens at about 55-60 C.
+  - HOOD optics: matte-black low-gloss interior so the glass mirrors a dark surface; light-coloured exterior. All plastic, nothing conductive, so it has no effect on RF or antennas.
+  - AR FILM luminous reflectance: 0.7% or less on its own (spectrophotometer, about 5 deg). With the bonded panel that gives about 1.2% in total, or 6.2:1 contrast at 2000 nit and 100 klx (stack model). Every extra 0.1 pp of reflectance costs about 0.4:1.
+  - AR FILM clarity: transmittance 94-95% or more, haze 1% or less. It must be a clear interference AR film, not a matte AG film, because AG blurs a 316 PPI image and raises diffuse reflectance.
+  - AR FILM thickness and adhesive: 0.2 mm or less in total, so capacitive touch keeps working bare-handed and gloved. Optically clear adhesive over the full area (no air gap), removable without residue.
+  - AR FILM size: at least the 155x87 mm active area, cuttable to the real glass outline. A pre-cut glass protector for another device fits only if the outline matches.
+  - AR FILM durability: hard coat 2H-3H or better, steel-wool abrasion pass, oleophobic (water contact angle above 100 deg), cleanable with IPA. It must survive 80 C or more and -20 to +60 C cycling without yellowing. Low birefringence, so it passes the polarised-sunglasses test at 0 and 90 deg (PET films can show rainbow mura).
+  - LUX SENSOR range: 0 to at least 120 klx without saturating in direct sun (VEML7700 Rev 1.8: about 140 klx at gain 1/8 and IT 25 ms). 16-bit, photopic response.
+  - LUX SENSOR low-light resolution: 0.0042 lx/ct at gain x2 and IT 800 ms, for the Day/Night/Red theme switching.
+  - LUX SENSOR interface: fixed 7-bit I2C address 0x10, no clash with the PCA9555 at 0x20. 3.3 V logic on the Pico's I2C0 bus; VDD 2.5-3.6 V; -25 to +85 C. Driven by the stack's own RP2040 driver, so no Ubuntu driver is needed.
+  - LUX SENSOR mounting and ESD: small board behind a window on the outer top face of the bezel, outside the hood. 100 ohm series resistor plus TVS at the bezel. JST-SH (STEMMA QT) or soldered lead. A genuine Vishay die, sold through an authorised channel.
+- **Candidates:**
+  1.
+    - **Name:** Adafruit 4162 VEML7700 Lux Sensor, STEMMA QT (current part)
+    - **Kind:** current_part
+    - **Price usd:** 4.95 (Adafruit; DigiKey 1528-2891-ND 4.95) + 0.95 STEMMA QT cable. EU: Botland EUR 6.98 incl. 23% VAT (EUR 5.87 net), in stock; Berrybase EUR 5.45, not deliverable; The Pi Hut GBP 4.80 incl. UK VAT
+    - **Spec comparison:** Reference. Genuine Vishay VEML7700 with an on-board 3.3 V regulator, a level shifter and 4.7k pull-ups (changed from 10k in Dec 2019), STEMMA QT connector. Adafruit's page still quotes the old datasheet figures (120 klx, 0.0036 lx/ct); the die is the same, and Rev 1.8 gives about 140 klx and 0.0042 lx/ct.
+    - **Worse in:** Nothing. It is the baseline.
+    - **Compatibility:** Fits the stack: 0x10 on the Pico I2C0 bus at 3.3 V. Pull-ups are already fitted; check the total pull-up with the PCA9555 board's own.
+    - **Risks:** No real counterfeit risk via Adafruit, DigiKey or authorised EU resellers. EU stock is patchy (Berrybase out).
+    - **Seller url:** https://www.adafruit.com/product/4162
+    - **Sources:**
+      - https://www.adafruit.com/product/4162
+      - https://botland.store/search?s=VEML7700
+      - https://www.berrybase.de/search?search=VEML7700
+      - https://thepihut.com/products/adafruit-veml7700-lux-sensor-i2c-light-sensor-ada4162
+      - https://www.vishay.com/docs/84286/veml7700.pdf
+  2.
+    - **Name:** Adafruit 5378 Right Angle VEML7700 Lux Sensor, STEMMA QT
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 4.95 at Adafruit (same as 4162; 28 in stock). EU: Berrybase EUR 4.90 incl. VAT (EUR 0.55 below its 4162, but not deliverable now); Botland EUR 6.98 (same as 4162)
+    - **Spec comparison:** Same VEML7700 die, so range, resolution, address and supply are identical. It senses light parallel to the PCB, so the board can lie flat behind the top bezel face and look out through a window. 25.5x17.7x4.6 mm, 1.9 g, two STEMMA QT connectors.
+    - **Worse in:** No sensor spec is worse. Adafruit's page does not state whether this board has the regulator and level shifter (not needed at 3.3 V). It is cheaper only at Berrybase, which is out of stock.
+    - **Compatibility:** Same I2C, address and voltage. Choose 4162 or 5378 by the bezel window direction. No real saving.
+    - **Risks:** Low. EU stock.
+    - **Seller url:** https://www.adafruit.com/product/5378
+    - **Sources:**
+      - https://www.adafruit.com/product/5378
+      - https://www.berrybase.de/search?search=VEML7700
+      - https://botland.store/search?s=VEML7700
+  3.
+    - **Name:** Vishay VEML7700-TT bare sensor on our own sensor tab PCB (panelised into the keypad-PCB order)
+    - **Kind:** diy
+    - **Price usd:** Sensor 1.53 at qty 1 (DigiKey cut tape, status Active, 6,254 in stock; 1.28 at qty 10). LCSC C1850416 about 1.41 at qty 1, with an 'NRND' flag (unverified; contradicts DigiKey and Vishay). Farnell AT about EUR 1.06. Add a 0.1 uF cap, a JST-SH connector, and the 100 ohm + TVS already planned. About $2-2.5 if the tab rides on the keypad-PCB order and its assembly
+    - **Spec comparison:** Identical die: 0 to about 140 klx, 0.0042 lx/ct, 0x10, VDD 2.5-3.6 V, -25 to +85 C. No regulator or level shifter, but on a 3.3 V bus neither is needed.
+    - **Worse in:** No sensor spec is worse. Build quality is equal only if the board house machine-assembles the tab; hand-soldering the side-view J-lead package is a real risk. It also needs PCB design, pull-ups exactly once on the bus, and a window/lightpipe design. Saves only about $3-4.
+    - **Compatibility:** Fully compatible electrically and in software (own driver). The tab must fit the bezel top face outside the hood.
+    - **Risks:** LCSC's NRND flag conflicts with DigiKey's 'Active'; ask Vishay before committing. Small saving against an extra design step. Buy from an authorised distributor only.
+    - **Seller url:** https://www.digikey.com/en/products/detail/vishay-semiconductor-opto-division/VEML7700-TT/6210690
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/vishay-semiconductor-opto-division/VEML7700-TT/6210690
+      - https://fat.lcsc.com/product-detail/image/VEML7700-TT_C1850416.html
+      - https://at.farnell.com/vishay/veml7700-tt/umgebungslichtsensor-i2c-3-6v/dp/2627812
+      - https://www.vishay.com/en/product/84286/
+  4.
+    - **Name:** DFRobot SEN0228 Gravity I2C VEML7700 Ambient Light Sensor
+    - **Kind:** other_brand
+    - **Price usd:** Not cheaper. Botland EUR 6.98 incl. VAT (same as Adafruit); DigiKey DK 63.86 DKK ex VAT (0 stock, 9-week lead time); RobotShop 12.32-12.49 (out of stock)
+    - **Spec comparison:** Same VEML7700 die; the listing says 0-120 klx.
+    - **Worse in:** Price is equal or higher. Gravity PH2.0 connector instead of JST-SH/STEMMA QT, so a cable change.
+    - **Compatibility:** Compatible (0x10, I2C), but different cabling.
+    - **Risks:** None beyond price and stock.
+    - **Seller url:** https://botland.store/search?s=VEML7700
+    - **Sources:**
+      - https://botland.store/search?s=VEML7700
+      - https://www.digikey.dk/en/products/detail/dfrobot/sen0228/7682232
+      - https://www.robotshop.com/es/products/gravity-i2c-veml7700-ambient-light-sensor
+  5.
+    - **Name:** SparkFun SEN-15436 Ambient Light Sensor VEML6030 (Qwiic)
+    - **Kind:** other_brand
+    - **Price usd:** 5.95 at SparkFun (more expensive); Berrybase EUR 6.50, not deliverable
+    - **Spec comparison:** VEML6030, the VEML7700's sibling. Listed as 0-120 klx, 16-bit, with an interrupt pin. Default address 0x48, 0x10 by solder jumper.
+    - **Worse in:** Costs more. I did not re-check its range against VEML7700 Rev 1.8 (about 140 klx).
+    - **Compatibility:** Compatible after an address change or jumper.
+    - **Risks:** None; it is simply not cheaper.
+    - **Seller url:** https://www.sparkfun.com/sparkfun-ambient-light-sensor-veml6030-qwiic.html
+    - **Sources:**
+      - https://www.sparkfun.com/sparkfun-ambient-light-sensor-veml6030-qwiic.html
+      - https://www.berrybase.de/search?search=VEML7700
+  6.
+    - **Name:** Other-brand lux sensors: ams OSRAM TSL2591, TI OPT3001, ROHM BH1750 (breakouts or bare)
+    - **Kind:** other_brand
+    - **Price usd:** Not priced; rejected on spec
+    - **Spec comparison:** Upper range from my recall of the datasheets (not re-fetched in this step): TSL2591 about 88 klx, OPT3001 about 83 klx, BH1750 about 65 klx. VEML7700 reaches about 140 klx.
+    - **Worse in:** Range: all saturate in direct sun at about 100 klx, which breaks sun-mode brightness and theme logic.
+    - **Compatibility:** Electrically fine, but different addresses and drivers.
+    - **Risks:** Range figures are from memory. Re-check if anyone proposes one.
+    - **Seller url:** 
+    - **Sources:** []
+  7.
+    - **Name:** Diamond Coatings Diamox AR1617 anti-reflective PET film, 250x250 mm sheet (cut to the glass outline)
+    - **Kind:** other_brand
+    - **Price usd:** From GBP 11.11 ex VAT per sheet (about $15; about $18 with 20% UK VAT), plus shipping. EU buyers pay destination VAT and possibly duty (UK to EU). One sheet gives two 164x98 mm pieces, so a spare. The US site (Gilbert, AZ) publishes no price
+    - **Spec comparison:** Datasheet v2.1, the maker's own tests:
+  - luminous reflectance 0.74% (absolute, 5 deg), minimum 0.59% at 588 nm;
+  - transmission 94.4%, haze 0.1%;
+  - pencil hardness 2-3H at 750 g; steel wool 200 g/cm2 grade A (0-5 scratches);
+  - 100 um PET plus 20 um OCA (about 120 um, good for capacitive touch); peel 8.0 N/25 mm, no residue;
+  - water contact angle 103 deg (anti-fingerprint); anti-static 7e10 ohm/sq;
+  - 103 C for 500 h, -30 to +60 C cycling and 60 C/90% RH for 500 h, all unchanged.
+  This meets or beats every critical film spec except reflectance.
+    - **Worse in:** Reflectance is 0.74%, 0.04 pp above the 0.7% target, which is only a vendor claim for a 2in TELESIN film. That gives about 1.24% in total instead of 1.2%, so about 6.0:1 instead of 6.2:1 at 2000 nit and 100 klx (my calculation). Wet application (water and soap). It is not cheaper than the stack's film estimate; it is the cheapest 7in-capable film with published specs that I found.
+    - **Compatibility:** PET sheet, cuttable to any outline. Thin enough for capacitive touch (confirm gloved touch in the existing test). The film is passive and non-conductive, so no RF effect.
+    - **Risks:** Tests are the maker's own, not independent. PET may show rainbow mura with polarised sunglasses (inference; covered by the existing 0/90 deg test). The page notes summer-shutdown delays. UK-to-EU shipping and VAT add cost.
+    - **Seller url:** https://diamondcoatings.co.uk/product/diamox-ar1617-anti-reflective-film-sheet/
+    - **Sources:**
+      - https://diamondcoatings.co.uk/product/diamox-ar1617-anti-reflective-film-sheet/
+      - https://diamondcoatings.com/antireflective-film/
+      - https://diamondcoatings.com/wp-content/uploads/2020/09/Diamond-AR1617-Film-Datasheet-v2.1.pdf
+  8.
+    - **Name:** Accsoon ACC37 tempered-glass AR+AF protector (for CineView M7 / M7 Pro 7in monitors)
+    - **Kind:** other_brand
+    - **Price usd:** 18.90 (Uniquephoto); Midwich RRP GBP 14.00; Audioeffetti 31.30 (currency not shown). Not cheaper
+    - **Spec comparison:** A retailer lists reflection '<=0.5' with no unit, transmittance 96% or more, and an AF+AR coating. That would beat the 0.7% target if the unit is %. Not verified.
+    - **Worse in:** Fit: tempered glass cannot be cut, and the outline is made for the Accsoon M7 (glass size unpublished; B&H gives only box size), so it probably does not match the Wisecoco or 4D glass. A thicker glass layer may weaken capacitive touch. Reflectance unit unconfirmed.
+    - **Compatibility:** Only if the measured outline matches the accepted panel glass, which is unlikely.
+    - **Risks:** Fit unknown; reflectance figure ambiguous.
+    - **Seller url:** https://www.uniquephoto.com/product/accsoon-cineview-m7-pro-monitor-tempered-glass-screen-protector
+    - **Sources:**
+      - https://www.uniquephoto.com/product/accsoon-cineview-m7-pro-monitor-tempered-glass-screen-protector
+      - https://store.midwich.com/products/details/ACSACC37
+      - https://www.bhphotovideo.com/c/product/1939970-REG/accsoon_acc37_tempered_glass_screen_protector.html/specs
+  9.
+    - **Name:** Sanwa Supply CAR-F52P AR film (portable car navigation)
+    - **Kind:** other_brand
+    - **Price usd:** Not verified
+    - **Spec comparison:** Sanwa manual: reflectance 1.1%, transmittance 94.7%, AR/HC layers, 3H, UV cut, anti-smudge, anti-static.
+    - **Worse in:** Reflectance is 1.1% against 0.7%, so about 1.6% in total and about 4.9:1 instead of 6.2:1 at 2000 nit and 100 klx (my calculation). It is made for a portable navigation unit, so the size for a 155x87 mm active area is unverified.
+    - **Compatibility:** Unverified size; sold in Japan only.
+    - **Risks:** Rejected: it is worse.
+    - **Seller url:** https://cdn.sanwa.co.jp/support/setsumeisyo/pdf/C/CAR-F52P.pdf
+    - **Sources:**
+      - https://cdn.sanwa.co.jp/support/setsumeisyo/pdf/C/CAR-F52P.pdf
+  10.
+    - **Name:** ELECOM CAR-FL7W (7in-wide car-navigation anti-reflection film)
+    - **Kind:** other_brand
+    - **Price usd:** Not verified
+    - **Spec comparison:** Film is 153.5x79.5 mm; anti-reflection; no reflectance figure published.
+    - **Worse in:** Size: 79.5 mm high is below the roughly 87 mm active height (and 153.5 mm below about 155 mm), so it cannot cover the image. Reflectance unknown.
+    - **Compatibility:** Not compatible.
+    - **Risks:** Rejected.
+    - **Seller url:** https://www.elecom.co.jp/products/CAR-FL7W.html
+    - **Sources:**
+      - https://www.elecom.co.jp/products/CAR-FL7W.html
+  11.
+    - **Name:** SmallHD Ultra Matte screen protector for 702 Touch / Cine 7, and EU matte films (upscreen Reflection Shield, BROTECT Entspiegelungs-Folie)
+    - **Kind:** other_brand
+    - **Price usd:** SmallHD 39.99; upscreen/BROTECT 7in prices not verified
+    - **Spec comparison:** Matte anti-glare (AG) films with no reflectance or haze figures published.
+    - **Worse in:** They scatter light rather than cancel it, so haze is higher, the 316 PPI image is softer, and total reflectance is about glass level. That is worse than a clear AR film. SmallHD is also more expensive.
+    - **Compatibility:** Sized for other devices.
+    - **Risks:** Rejected.
+    - **Seller url:** https://newstore.smallhd.com/products/ultra-matte-screen-protector-for-702-touch-and-cine-7-monitors
+    - **Sources:**
+      - https://newstore.smallhd.com/products/ultra-matte-screen-protector-for-702-touch-and-cine-7-monitors
+      - https://www.galaxus.ch/en/s1/product/upscreen-reflection-shield-protector-matte-1310-169-monitor-protective-film-69682671
+  12.
+    - **Name:** Printed 30 mm hinged hood in black ASA (current part)
+    - **Kind:** current_part
+    - **Price usd:** About 2 of filament (model: about 50 g of Polymaker PolyLite ASA Black at EUR 34.50/kg incl. VAT, 123-3D NL). Add an A2 hinge pin if one is used
+    - **Spec comparison:** Reference. Printed to the accepted panel outline, folds flat as a lid, matte-black inside. Retailers claim ASA heat resistance of about 100-105 C (marketing; no HDT datasheet seen).
+    - **Worse in:** Nothing. A ready-made 7in monitor sunhood is fabric or velcro, does not close as a lid, and does not fit the case. None is cheaper than about $2 of filament.
+    - **Compatibility:** Fully compatible; it is designed after the panel passes acceptance.
+    - **Risks:** Do not print in PLA (softens in sun). Make the interior matte black, or flock or paint it.
+    - **Seller url:** https://www.123-3d.nl/Polymaker-PolyLite-ASA-filament-1-75-mm-Black-1-kg-70195-PF01001-PM70195-i7641-t104864.html
+    - **Sources:**
+      - https://www.123-3d.nl/Polymaker-PolyLite-ASA-filament-1-75-mm-Black-1-kg-70195-PF01001-PM70195-i7641-t104864.html
+      - https://www.3djake.com/polymaker/polylite-asa-black?sai=5245
+  13.
+    - **Name:** Budget alternative already in the BOM: hood only (no AR film, no lux sensor)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** About 2
+    - **Spec comparison:** Removes the AR film and the VEML7700.
+    - **Worse in:** Sun contrast: bonded without AR is about 4.5% reflectance, giving about 1.7:1 at 1000 nit against 3.6:1 with AR (re-audit D). The re-audit says the AR film is required on either panel. Without the sensor there is no auto-brightness and no Day/Night/Red themes, and the on-device luminance check (L = E/pi) is lost.
+    - **Compatibility:** Compatible.
+    - **Risks:** This is worse, not an analog. Rejected under the rule.
+    - **Seller url:** 
+    - **Sources:** []
+- **Notes:** VERDICT (angle A: cheaper SKUs, other official sellers, established brands): keep the set. No cheaper part is verified as not worse.
+  
+  1. VEML7700 breakout. Keep the Adafruit 4162, or the 5378 right-angle version at the same $4.95 if the bezel window faces along the board.
+  - Buy it inside a consolidated DigiKey or EU order: Botland EUR 6.98 incl. VAT, in stock; Berrybase EUR 4.90-5.45, out of stock; The Pi Hut GBP 4.80.
+  - The only cheaper not-worse route is the bare VEML7700-TT ($1.53 at DigiKey, Active, 6,254 in stock) on a machine-assembled tab panelised into the keypad-PCB order. It saves about $3-4 at the cost of a design step.
+  - LCSC flags the part NRND, but DigiKey and Vishay show it as Active. Ask Vishay before committing.
+  - Other brands (TSL2591, OPT3001, BH1750) saturate below about 100 klx, so they are worse. DFRobot SEN0228 and SparkFun VEML6030 are not cheaper.
+  
+  2. AR film. The stack names no SKU.
+  - The only 7in-capable clear AR film with a full datasheet I could verify is Diamox AR1617. It costs from GBP 11.11 ex VAT for a 250x250 mm sheet, which yields 2 pieces.
+  - It meets every critical film spec except one: luminous reflectance is 0.74% against the 0.7% target, which gives about 6.0:1 instead of 6.2:1 at 2000 nit and 100 klx (my calculation). The target itself is a TELESIN vendor claim for a 2in DJI Pocket 3 film; no 7in TELESIN exists.
+  - Recommendation: either accept AR1617 with that 0.04 pp noted openly, or keep looking (angle B, generic films) for 0.7% or less with a datasheet.
+  - Rejected:
+    - matte AG films (SmallHD $39.99, upscreen, BROTECT): haze;
+    - Sanwa CAR-F52P: 1.1% reflectance;
+    - ELECOM CAR-FL7W: 153.5x79.5 mm, too small;
+    - Accsoon ACC37 glass: $18.90; it cannot be cut, the outline does not fit, and the reflectance unit is unclear.
+  
+  3. Hood. Keep the printed ASA hood (about $2 of filament). Nothing commercial is cheaper, and none closes as a lid.
+  
+  The realistic set cost is about $23-26 plus shipping, the top of the 15-25 estimate. With the DIY sensor tab it drops to about $20-23.
+  
+  FX conversions are approximate (about 1.33 USD/GBP, about 1.16 USD/EUR assumed); verify at order time.
+  
+  Every candidate here is passive or receive-side and has no RF function. Nothing involves a loop or transmission, so all hard rules are kept. The film and hood are non-conductive.
+  
+  Unverified items:
+  - the Accsoon reflectance unit and glass size;
+  - Sanwa and ELECOM prices;
+  - whether Adafruit 5378 has the regulator;
+  - the range figures for the other-brand lux sensors (from datasheet memory);
+  - the PET rainbow risk with polarised sunglasses (inference; covered by the existing 0/90 deg test).
+  
+  Searches used: about 13 WebSearch, plus WebFetch on primary pages.
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
