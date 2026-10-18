@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="2300" height="1500" viewBox="0 0 2300 1500" font-family="DejaVu Sans, Arial, Helvetica, sans-serif">
+<title>03 РЧ-тракт: від прохідника до SDR, v2</title>
+<defs><marker id="arr_111111" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#111111"/></marker><marker id="arr_7b2fa8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7b2fa8"/></marker></defs>
+<rect x="0" y="0" width="2300" height="1500" fill="#ffffff"/>
+<text x="20.0" y="34.0" font-size="14" font-weight="bold" text-anchor="start" fill="#111">РЧ-тракт: прохідник → фільтр/LNA → інжектор → DC-блок → перемикач → SDR (лише прийом) — STACK.md v2 §5.3</text>
+<text x="20.0" y="56.0" font-size="13" font-weight="normal" text-anchor="start" fill="#111">Колонки: антена (рівень) · прохідник · каскади в корпусі · зміщення (DC) · DC-блок · HMC7992-C (з Lime) · перемикач · SDR. Lime — збірка за замовчуванням (D17).</text>
+<text x="20.0" y="100.0" font-size="13" font-weight="bold" text-anchor="start" fill="#444">До RTL-A (LABRXA) через HMC7992-A — VHF/UHF (§5.3)</text>
+<rect x="20.0" y="108.0" width="290.0" height="58.0" rx="4" fill="#f4f8ff" stroke="#333" stroke-width="1.2"/>
+<text x="26.0" y="126.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Meteor LRPT 137.1/137.9 MHz</text>
+<text x="26.0" y="144.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">патч і складаний: набір #1 як V,</text>
+<text x="26.0" y="159.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">вуса 53.4 см, 120°, 1-1.5 м RG316</text>
+<rect x="325.0" y="108.0" width="140.0" height="43.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="331.0" y="126.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">P1 VHF-137</text>
+<text x="331.0" y="144.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SMA, без DC</text>
+<rect x="480.0" y="108.0" width="300.0" height="73.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="486.0" y="126.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Фільтр першим, потім LNA</text>
+<text x="486.0" y="144.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">[опц. шунт ≈470 nH, SRF &gt;300 MHz]</text>
+<text x="486.0" y="159.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Flamingo+ FM #1 (100813)</text>
+<text x="486.0" y="174.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">→ SAWbird+ NOAA (100800)</text>
+<rect x="795.0" y="108.0" width="300.0" height="73.0" rx="4" fill="#fdeeee" stroke="#333" stroke-width="1.2"/>
+<text x="801.0" y="126.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Інжектор ch1, 4.5 V</text>
+<text x="801.0" y="144.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">TPS2553DBVR-1, RILIM 88.7k:</text>
+<text x="801.0" y="159.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">265/299/339 mA; EN MCP #1 GPA5</text>
+<text x="801.0" y="174.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">зміщення — на вихід SAWbird+</text>
+<rect x="1110.0" y="108.0" width="150.0" height="58.0" rx="4" fill="#fffbe6" stroke="#333" stroke-width="1.2"/>
+<text x="1116.0" y="126.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">DC-блок</text>
+<text x="1116.0" y="144.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">1 nF C0G</text>
+<text x="1116.0" y="159.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">GRM1555C1H102JA01D</text>
+<path d="M 310.0 129.0 L 325.0 129.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 465.0 129.0 L 480.0 129.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 780.0 129.0 L 795.0 129.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 1095.0 129.0 L 1110.0 129.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<rect x="20.0" y="195.0" width="290.0" height="73.0" rx="4" fill="#f4f8ff" stroke="#333" stroke-width="1.2"/>
+<text x="26.0" y="213.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">UHF 435-438 MHz</text>
+<text x="26.0" y="231.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">набір #1 (короткі елементи) або</text>
+<text x="26.0" y="246.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Yagi 70 см → Uputronics 440 Rev 3.0</text>
+<text x="26.0" y="261.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">(3.5-5.5 V, ≈50 mA) → перемичка</text>
+<rect x="325.0" y="195.0" width="140.0" height="58.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="331.0" y="213.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">P2 UHF</text>
+<text x="331.0" y="231.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SMA, 4.5 V назовні</text>
+<text x="331.0" y="246.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">після DC-sense</text>
+<rect x="480.0" y="195.0" width="300.0" height="73.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="486.0" y="213.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Без каскадів у корпусі</text>
+<text x="486.0" y="231.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">LNA першим — біля антени</text>
+<text x="486.0" y="246.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">(обмежувач → ФВЧ → LNA → SAW)</text>
+<text x="486.0" y="261.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">ніколи понад 5.5 V на P2</text>
+<rect x="795.0" y="195.0" width="300.0" height="73.0" rx="4" fill="#fdeeee" stroke="#333" stroke-width="1.2"/>
+<text x="801.0" y="213.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Інжектор ch2, 4.5 V</text>
+<text x="801.0" y="231.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">TPS2553DBVR-1, RILIM 88.7k</text>
+<text x="801.0" y="246.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">EN MCP #1 GPA6; DC-sense UHF</text>
+<text x="801.0" y="261.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">UI: «ch2 off = no UHF»</text>
+<rect x="1110.0" y="195.0" width="150.0" height="58.0" rx="4" fill="#fffbe6" stroke="#333" stroke-width="1.2"/>
+<text x="1116.0" y="213.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">DC-блок</text>
+<text x="1116.0" y="231.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">1 nF C0G</text>
+<text x="1116.0" y="246.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">GRM1555C1H102JA01D</text>
+<path d="M 310.0 216.0 L 325.0 216.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 465.0 216.0 L 480.0 216.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 780.0 216.0 L 795.0 216.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 1095.0 216.0 L 1110.0 216.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<rect x="20.0" y="282.0" width="290.0" height="58.0" rx="4" fill="#f4f8ff" stroke="#333" stroke-width="1.2"/>
+<text x="26.0" y="300.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">2 m 145.8-146 MHz (опційно)</text>
+<text x="26.0" y="318.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">патч: SRH-701; складаний:</text>
+<text x="26.0" y="333.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">половина Yagi 2 м (hairpin)</text>
+<rect x="325.0" y="282.0" width="140.0" height="43.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="331.0" y="300.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">P8 WIDE/2 m</text>
+<text x="331.0" y="318.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SMA, опційно</text>
+<rect x="480.0" y="282.0" width="300.0" height="58.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="486.0" y="300.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Фільтр першим, потім LNA</text>
+<text x="486.0" y="318.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Flamingo+ FM #2 (§2.11.3)</text>
+<text x="486.0" y="333.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">→ стендовий LNA V2</text>
+<rect x="795.0" y="282.0" width="300.0" height="73.0" rx="4" fill="#fdeeee" stroke="#333" stroke-width="1.2"/>
+<text x="801.0" y="300.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Інжектор ch4, 4.5 V</text>
+<text x="801.0" y="318.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">TCBT-2R5G+, RILIM 162k:</text>
+<text x="801.0" y="333.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">144/166/192 mA; EN MCP #3 GPA7</text>
+<text x="801.0" y="348.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">hairpin без LNA: зміщення заблок.</text>
+<rect x="1110.0" y="282.0" width="150.0" height="58.0" rx="4" fill="#fffbe6" stroke="#333" stroke-width="1.2"/>
+<text x="1116.0" y="300.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">DC-блок</text>
+<text x="1116.0" y="318.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">1 nF C0G</text>
+<text x="1116.0" y="333.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">GRM1555C1H102JA01D</text>
+<path d="M 310.0 303.0 L 325.0 303.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 465.0 303.0 L 480.0 303.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 780.0 303.0 L 795.0 303.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 1095.0 303.0 L 1110.0 303.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<rect x="1460.0" y="108.0" width="210.0" height="247.0" rx="4" fill="#eef4ff" stroke="#333" stroke-width="1.2"/>
+<text x="1466.0" y="126.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">HMC7992-A (секція 1)</text>
+<text x="1466.0" y="144.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RF1: 49.9 Ohm за C0G</text>
+<text x="1466.0" y="159.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  (паркування, A=B=Low)</text>
+<text x="1466.0" y="174.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RF2 ← VHF-137 (P1)</text>
+<text x="1466.0" y="189.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RF3 ← UHF (P2)</text>
+<text x="1466.0" y="204.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RF4 ← WIDE/2 m (P8)</text>
+<text x="1466.0" y="219.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RFC → 1 nF C0G → RTL-A</text>
+<text x="1466.0" y="234.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">A/B: MCP #1 GPB4/GPB5</text>
+<text x="1466.0" y="249.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">100k до GND, 100 pF на A/B</text>
+<rect x="1685.0" y="108.0" width="200.0" height="247.0" rx="4" fill="#eef9f0" stroke="#333" stroke-width="1.2"/>
+<text x="1691.0" y="126.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">RTL-A: V4L LABRXA</text>
+<text x="1691.0" y="144.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RTL-SDR Blog V4L</text>
+<text x="1691.0" y="159.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">USB: CH334F H2</text>
+<text x="1691.0" y="174.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  (VBUS: MCP #1 GPA2)</text>
+<text x="1691.0" y="189.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">bias-tee вимкнено</text>
+<text x="1691.0" y="204.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  (токен labd, EEPROM)</text>
+<text x="1691.0" y="219.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">LRPT ≈1 Msps,</text>
+<text x="1691.0" y="234.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  підсилення 5-10 dB</text>
+<path d="M 1260.0 129.0 L 1460.0 129.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 1260.0 216.0 L 1460.0 216.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 1260.0 303.0 L 1460.0 303.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 1670.0 231.5 L 1685.0 231.5" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<text x="20.0" y="393.0" font-size="13" font-weight="bold" text-anchor="start" fill="#444">До RTL-B (LABRXB) через HMC7992-B — L-band, ПЧ LNB, BENCH (§5.3)</text>
+<rect x="20.0" y="401.0" width="290.0" height="73.0" rx="4" fill="#f4f8ff" stroke="#333" stroke-width="1.2"/>
+<text x="26.0" y="419.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">L-band 1.4-1.7 GHz</text>
+<text x="26.0" y="437.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">патч / спіраль 4 вит. / гелікон</text>
+<text x="26.0" y="452.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">+ SAWbird+ GOES, H1 або iO біля</text>
+<text x="26.0" y="467.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">живлення; або активний патч 20 mA</text>
+<rect x="325.0" y="401.0" width="140.0" height="58.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="331.0" y="419.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">P3 L-BAND</text>
+<text x="331.0" y="437.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SMA, 4.5 V назовні</text>
+<text x="331.0" y="452.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">після DC-sense</text>
+<rect x="480.0" y="401.0" width="300.0" height="73.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="486.0" y="419.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Без каскадів у корпусі</text>
+<text x="486.0" y="437.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">LNA першим — біля антени</text>
+<text x="486.0" y="452.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">статичний відвід на вході GOES</text>
+<text x="486.0" y="467.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">TVS на P2/P3 — опц., деталь TBD</text>
+<rect x="795.0" y="401.0" width="300.0" height="73.0" rx="4" fill="#fdeeee" stroke="#333" stroke-width="1.2"/>
+<text x="801.0" y="419.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Інжектор ch3, 4.5 V</text>
+<text x="801.0" y="437.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">TPS2553DBVR-1, RILIM 88.7k</text>
+<text x="801.0" y="452.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">на межі 300 mA, без TCBT</text>
+<text x="801.0" y="467.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">EN MCP #1 GPA7; DC-sense L-band</text>
+<rect x="1110.0" y="401.0" width="150.0" height="58.0" rx="4" fill="#fffbe6" stroke="#333" stroke-width="1.2"/>
+<text x="1116.0" y="419.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">DC-блок</text>
+<text x="1116.0" y="437.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">100 pF C0G</text>
+<text x="1116.0" y="452.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">GRM1555C1H101JA01D</text>
+<rect x="1275.0" y="401.0" width="170.0" height="88.0" rx="4" fill="#f7efff" stroke="#333" stroke-width="1.2"/>
+<text x="1281.0" y="419.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">HMC7992-C (з Lime)</text>
+<text x="1281.0" y="437.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RFC ← ch3 (C0G)</text>
+<text x="1281.0" y="452.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RF1: паркування</text>
+<text x="1281.0" y="467.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RF3 → маршрут RX1 ↓</text>
+<text x="1281.0" y="482.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">до RTL-B: вивід TBD</text>
+<path d="M 310.0 422.0 L 325.0 422.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 465.0 422.0 L 480.0 422.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 780.0 422.0 L 795.0 422.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 1095.0 422.0 L 1110.0 422.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 1260.0 422.0 L 1275.0 422.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<rect x="20.0" y="503.0" width="290.0" height="73.0" rx="4" fill="#f4f8ff" stroke="#333" stroke-width="1.2"/>
+<text x="26.0" y="521.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">QO-100 NB 10489.5-10490 MHz</text>
+<text x="26.0" y="539.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Bullseye BE01 TCXO LNB (голий,</text>
+<text x="26.0" y="554.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">конус 11 см або рупор); порт</text>
+<text x="26.0" y="569.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">25 MHz → AXING CFA 11-00</text>
+<rect x="325.0" y="503.0" width="140.0" height="58.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="331.0" y="521.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">P4 LNB</text>
+<text x="331.0" y="539.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">F, 13.2 V</text>
+<text x="331.0" y="554.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">75 Ohm (SAT)</text>
+<rect x="480.0" y="503.0" width="300.0" height="73.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="486.0" y="521.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Усередині: 75 Ohm</text>
+<text x="486.0" y="539.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Goobay 58814 → F-F прохідник</text>
+<text x="486.0" y="554.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">→ внутрішній 75 Ohm дріт</text>
+<text x="486.0" y="569.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">ПЧ 739.5-740.0 MHz (маяки)</text>
+<rect x="795.0" y="503.0" width="300.0" height="73.0" rx="4" fill="#fdeeee" stroke="#333" stroke-width="1.2"/>
+<text x="801.0" y="521.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Інжектор LNB (ch5), 13.2 V</text>
+<text x="801.0" y="539.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">дросель LQW2UAS68NG00L 68 nH/1 A</text>
+<text x="801.0" y="554.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">← LNB13V2, EN MCP #1 GPB0</text>
+<text x="801.0" y="569.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">лише поки RTL-B на RF3</text>
+<rect x="1110.0" y="503.0" width="150.0" height="73.0" rx="4" fill="#fffbe6" stroke="#333" stroke-width="1.2"/>
+<text x="1116.0" y="521.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">DC-блок + пад</text>
+<text x="1116.0" y="539.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">100 pF C0G</text>
+<text x="1116.0" y="554.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">→ атт. 15/20/30 dB</text>
+<text x="1116.0" y="569.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">(вибір на стенді)</text>
+<path d="M 310.0 524.0 L 325.0 524.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 465.0 524.0 L 480.0 524.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 780.0 524.0 L 795.0 524.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 1095.0 524.0 L 1110.0 524.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<rect x="20.0" y="590.0" width="290.0" height="58.0" rx="4" fill="#f4f8ff" stroke="#333" stroke-width="1.2"/>
+<text x="26.0" y="608.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Стенд (Bench), кондуктивно</text>
+<text x="26.0" y="626.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">джерело ≤ −40 dBm; антенні</text>
+<text x="26.0" y="641.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">тракти на 50 Ohm</text>
+<rect x="325.0" y="590.0" width="140.0" height="58.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="331.0" y="608.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">BENCH / sled</text>
+<text x="331.0" y="626.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">крайове гніздо;</text>
+<text x="331.0" y="641.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">порт корпусу TBD</text>
+<rect x="480.0" y="590.0" width="300.0" height="73.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="486.0" y="608.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">RF sled v2 (extended, §3.2)</text>
+<text x="486.0" y="626.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">HMC7992: RF1 парк., RF2 A, RF3 B,</text>
+<text x="486.0" y="641.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RF4 BENCH; PE4312 31.5 dB при</text>
+<text x="486.0" y="656.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">старті; MCP23017 #2 0x21</text>
+<rect x="795.0" y="590.0" width="300.0" height="58.0" rx="4" fill="#fdeeee" stroke="#333" stroke-width="1.2"/>
+<text x="801.0" y="608.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Зміщення sled (від AUX12)</text>
+<text x="801.0" y="626.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">D36V6F6 6 V → LT3045 4.5 V</text>
+<text x="801.0" y="641.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">→ 2× TPS2553DBVR (FAULT MCP #2)</text>
+<rect x="1110.0" y="590.0" width="150.0" height="73.0" rx="4" fill="#fffbe6" stroke="#333" stroke-width="1.2"/>
+<text x="1116.0" y="608.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">DC-блок</text>
+<text x="1116.0" y="626.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">100 pF C0G;</text>
+<text x="1116.0" y="641.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">10 nF 0603 лише</text>
+<text x="1116.0" y="656.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">для КХ-BENCH</text>
+<path d="M 310.0 611.0 L 325.0 611.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 465.0 611.0 L 480.0 611.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 780.0 611.0 L 795.0 611.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 1095.0 611.0 L 1110.0 611.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<rect x="1460.0" y="401.0" width="210.0" height="262.0" rx="4" fill="#eef4ff" stroke="#333" stroke-width="1.2"/>
+<text x="1466.0" y="419.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">HMC7992-B (секція 2)</text>
+<text x="1466.0" y="437.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RF1: 49.9 Ohm за C0G</text>
+<text x="1466.0" y="452.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  (паркування, A=B=Low)</text>
+<text x="1466.0" y="467.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RF2 ← L-band (P3)</text>
+<text x="1466.0" y="482.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RF3 ← ПЧ LNB (P4)</text>
+<text x="1466.0" y="497.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RF4 ← BENCH / sled</text>
+<text x="1466.0" y="512.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RFC → 100 pF C0G → RTL-B</text>
+<text x="1466.0" y="527.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">A/B: MCP #1 GPB6/GPB7</text>
+<text x="1466.0" y="542.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Розв'язка ≥40 dB (ціль)</text>
+<rect x="1685.0" y="401.0" width="200.0" height="262.0" rx="4" fill="#eef9f0" stroke="#333" stroke-width="1.2"/>
+<text x="1691.0" y="419.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">RTL-B: V4L LABRXB</text>
+<text x="1691.0" y="437.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">USB: J5 верхній</text>
+<text x="1691.0" y="452.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  = FE1.1s P1</text>
+<text x="1691.0" y="467.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">VBUS: TPS2553DBVR-1</text>
+<text x="1691.0" y="482.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  (EN MCP #1 GPA3)</text>
+<text x="1691.0" y="497.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">HRPT 2.4 Msps;</text>
+<text x="1691.0" y="512.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Metop/AWS 2.88 Msps</text>
+<text x="1691.0" y="527.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  лише за воротами</text>
+<text x="1691.0" y="542.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">ПЧ: ±800 kHz → 960 ksps</text>
+<path d="M 1445.0 422.0 L 1460.0 422.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 1260.0 524.0 L 1460.0 524.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 1260.0 611.0 L 1460.0 611.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 1670.0 532.0 L 1685.0 532.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<text x="20.0" y="701.0" font-size="13" font-weight="bold" text-anchor="start" fill="#444">LimeSDR Micro M.2 — RX1, RX2, REF IN, X1 (TX) (§5.3, §2.11.1)</text>
+<rect x="20.0" y="709.0" width="1075.0" height="88.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="26.0" y="727.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Маршрут L-band ch3 → Lime RX1 (третій HMC7992 на платі інжекторів; G6 #7)</text>
+<text x="26.0" y="745.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">C0G ≥50 V на всіх 5 РЧ-виводах; RF1 — паркування за замовчуванням; розв'язка секції ≥30 dB.</text>
+<text x="26.0" y="760.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">3 послідовні DC-бар'єри: C0G RFC, C0G RF3, 22 pF C0G біля крайового гнізда RX1.</text>
+<text x="26.0" y="775.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Для H1 — додатковий SMA-атенюатор до ≥12 dB; Metop/AWS — Lime ≥7 Msps ci16 (D6).</text>
+<text x="26.0" y="790.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">S21 YAT-10A+ записати в калібрування Lime RX1 (labd); порт LIME RX1 ↔ гніздо — TBD.</text>
+<rect x="1460.0" y="709.0" width="210.0" height="88.0" rx="4" fill="#eef4ff" stroke="#333" stroke-width="1.2"/>
+<text x="1466.0" y="727.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Секція RX1</text>
+<text x="1466.0" y="745.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">YAT-10A+ 10 dB (PL-586)</text>
+<text x="1466.0" y="760.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">→ 22 pF C0G</text>
+<text x="1466.0" y="775.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">GJM1555C1H220JB01D</text>
+<text x="1466.0" y="790.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">→ гніздо RX1 → X2</text>
+<rect x="20.0" y="811.0" width="290.0" height="73.0" rx="4" fill="#f4f8ff" stroke="#333" stroke-width="1.2"/>
+<text x="26.0" y="829.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">S-band 2208-2288 MHz</text>
+<text x="26.0" y="847.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">складаний + Lime: 7-виткова</text>
+<text x="26.0" y="862.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">спіраль у конусі; лише NORAD</text>
+<text x="26.0" y="877.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">з алоу-листа (Black Kite, PHASMA)</text>
+<rect x="325.0" y="811.0" width="140.0" height="43.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="331.0" y="829.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">LIME RX2</text>
+<text x="331.0" y="847.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SMA, ліва стінка</text>
+<rect x="480.0" y="811.0" width="300.0" height="73.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="486.0" y="829.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Вхідний каскад S-band</text>
+<text x="486.0" y="847.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">LNA S-band — не названо: TBD</text>
+<text x="486.0" y="862.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">резонатор cf2235-kt30</text>
+<text x="486.0" y="877.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">(порядок каскадів — TBD)</text>
+<rect x="795.0" y="811.0" width="300.0" height="43.0" rx="4" fill="#fdeeee" stroke="#333" stroke-width="1.2"/>
+<text x="801.0" y="829.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Живлення LNA S-band</text>
+<text x="801.0" y="847.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">TBD (§5.3: LNA не названо)</text>
+<rect x="1110.0" y="811.0" width="150.0" height="43.0" rx="4" fill="#fffbe6" stroke="#333" stroke-width="1.2"/>
+<text x="1116.0" y="829.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">DC-блок</text>
+<text x="1116.0" y="847.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">BLK-89-S+</text>
+<path d="M 310.0 832.0 L 325.0 832.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 465.0 832.0 L 480.0 832.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 780.0 832.0 L 795.0 832.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 1095.0 832.0 L 1110.0 832.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<rect x="20.0" y="898.0" width="290.0" height="58.0" rx="4" fill="#f4f8ff" stroke="#333" stroke-width="1.2"/>
+<text x="26.0" y="916.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Опора (лише стенд)</text>
+<text x="26.0" y="934.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">GPSDO Leo Bodnar LBE-1420</text>
+<text x="26.0" y="949.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">(extended, §3.2)</text>
+<rect x="325.0" y="898.0" width="140.0" height="43.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="331.0" y="916.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">REF IN</text>
+<text x="331.0" y="934.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SMA, ліва стінка</text>
+<rect x="480.0" y="898.0" width="300.0" height="58.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="486.0" y="916.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Напряму в J4</text>
+<text x="486.0" y="934.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">без атенюатора і DC-блока</text>
+<text x="486.0" y="949.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">J4: 10-52 MHz, 1.8-3.3 V</text>
+<path d="M 310.0 919.0 L 325.0 919.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 465.0 919.0 L 480.0 919.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<rect x="480.0" y="970.0" width="780.0" height="73.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="486.0" y="988.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Лише прийом: TX Lime заблоковано (§1.2, §5.4)</text>
+<text x="486.0" y="1006.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">LimeSuiteNG: патч валить TX setupStream; самотест 0x0020</text>
+<text x="486.0" y="1021.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">TXEN_A/TXEN_B = 0 після configure/calibrate; labd --txen=0</text>
+<text x="486.0" y="1036.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Витік на X1 ≤ −60 dBm (запропоновано); &lt;7 Msps — заблоковано</text>
+<rect x="1460.0" y="970.0" width="210.0" height="58.0" rx="4" fill="#eef4ff" stroke="#333" stroke-width="1.2"/>
+<text x="1466.0" y="988.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">X1 (TX Lime)</text>
+<text x="1466.0" y="1006.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">→ CAB.01075 → ANNE-50+</text>
+<text x="1466.0" y="1021.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">50 Ohm, внутрішнє</text>
+<rect x="1685.0" y="709.0" width="200.0" height="334.0" rx="4" fill="#f7efff" stroke="#333" stroke-width="1.2"/>
+<text x="1691.0" y="727.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">LimeSDR Micro M.2</text>
+<text x="1691.0" y="745.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">X2 RX-A ← RX1</text>
+<text x="1691.0" y="760.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">X3/X4 RX-B ← RX2</text>
+<text x="1691.0" y="775.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  (звірити маркування)</text>
+<text x="1691.0" y="790.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">J4 REF IN; J5 PPS — нічого</text>
+<text x="1691.0" y="805.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">X1 TX → ANNE-50+</text>
+<text x="1691.0" y="820.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">4× Taoglas CAB.01075</text>
+<text x="1691.0" y="835.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">PCIe → R44SF → Q6A</text>
+<text x="1691.0" y="850.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">LIME3V3, EN MCP #4</text>
+<text x="1691.0" y="865.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Профілі ≥7 Msps (D6)</text>
+<text x="1691.0" y="880.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">56 Msps LIME-W/F/B</text>
+<path d="M 1670.0 730.0 L 1685.0 730.0" fill="none" stroke="#7b2fa8" stroke-width="1.6" marker-end="url(#arr_7b2fa8)"/>
+<path d="M 1260.0 832.0 L 1685.0 832.0" fill="none" stroke="#7b2fa8" stroke-width="1.6" marker-end="url(#arr_7b2fa8)"/>
+<path d="M 780.0 919.0 L 1685.0 919.0" fill="none" stroke="#7b2fa8" stroke-width="1.6" marker-end="url(#arr_7b2fa8)"/>
+<path d="M 1685.0 991.0 L 1670.0 991.0" fill="none" stroke="#7b2fa8" stroke-width="1.6" marker-end="url(#arr_7b2fa8)"/>
+<path d="M 1335.0 489.0 L 1335.0 730.0 L 1460.0 730.0" fill="none" stroke="#7b2fa8" stroke-width="1.6" marker-end="url(#arr_7b2fa8)"/>
+<text x="20.0" y="1081.0" font-size="13" font-weight="bold" text-anchor="start" fill="#444">До Airspy HF+ через перемикач G6K (K1/K2) (§5.3, §3.3)</text>
+<rect x="20.0" y="1089.0" width="290.0" height="73.0" rx="4" fill="#f4f8ff" stroke="#333" stroke-width="1.2"/>
+<text x="26.0" y="1107.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">КХ 0.15-31 MHz; ДХ (час, NAVTEX)</text>
+<text x="26.0" y="1125.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">складаний: дріт 7-15 м + 9:1 за</text>
+<text x="26.0" y="1140.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">5-10 м коаксіалу, противага;</text>
+<text x="26.0" y="1155.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Boni-Whip над щоглою 2.44 м</text>
+<rect x="325.0" y="1089.0" width="140.0" height="58.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="331.0" y="1107.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">P5 HF</text>
+<text x="331.0" y="1125.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">BNC-прохідник,</text>
+<text x="331.0" y="1140.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">DC допускається</text>
+<rect x="480.0" y="1089.0" width="300.0" height="73.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="486.0" y="1107.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Перемичка BNC → SMA RG316</text>
+<text x="486.0" y="1125.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">синфазний дросель FT-240-77</text>
+<text x="486.0" y="1140.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">(5977003801) + 2631102002,</text>
+<text x="486.0" y="1155.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">9-11 витків RG316</text>
+<rect x="795.0" y="1089.0" width="300.0" height="73.0" rx="4" fill="#fdeeee" stroke="#333" stroke-width="1.2"/>
+<text x="801.0" y="1107.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Bias-tee Boni-Whip (усередині)</text>
+<text x="801.0" y="1125.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">← BONI13V8 13.8 V: TPS7A4701 →</text>
+<text x="801.0" y="1140.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">TPS259630DDAR (RILM 7.87k) →</text>
+<text x="801.0" y="1155.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">INA3221 0.2 Ohm; EN MCP #1 GPB1</text>
+<path d="M 310.0 1110.0 L 325.0 1110.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 465.0 1110.0 L 480.0 1110.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 780.0 1110.0 L 795.0 1110.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<rect x="20.0" y="1176.0" width="290.0" height="58.0" rx="4" fill="#f4f8ff" stroke="#333" stroke-width="1.2"/>
+<text x="26.0" y="1194.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">AIS 162 MHz, FM-RDS, авіа, VOR</text>
+<text x="26.0" y="1212.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">набір диполів #2; AIS —</text>
+<text x="26.0" y="1227.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">вертикально, вуса 44 см</text>
+<rect x="325.0" y="1176.0" width="140.0" height="43.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="331.0" y="1194.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">P6 VHF2/AIS</text>
+<text x="331.0" y="1212.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SMA, без DC</text>
+<rect x="480.0" y="1176.0" width="300.0" height="58.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="486.0" y="1194.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Статичний відвід</text>
+<text x="486.0" y="1212.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">шунт ≈470 nH, SRF &gt;300 MHz</text>
+<text x="486.0" y="1227.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">≈0.02-0.08 dB (модель)</text>
+<rect x="795.0" y="1176.0" width="300.0" height="43.0" rx="4" fill="#fdeeee" stroke="#333" stroke-width="1.2"/>
+<text x="801.0" y="1194.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Без зміщення</text>
+<text x="801.0" y="1212.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">VHF AGC, LNA і ATT HF+ не діють</text>
+<path d="M 310.0 1197.0 L 325.0 1197.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 465.0 1197.0 L 480.0 1197.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 780.0 1197.0 L 795.0 1197.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<rect x="1460.0" y="1089.0" width="210.0" height="145.0" rx="4" fill="#eef4ff" stroke="#333" stroke-width="1.2"/>
+<text x="1466.0" y="1107.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Перемикач HF+</text>
+<text x="1466.0" y="1125.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">2× G6K-2F-RF-S DC5</text>
+<text x="1466.0" y="1140.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  послідовно-паралельно</text>
+<text x="1466.0" y="1155.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">K1 ← КХ (P5): GPB2</text>
+<text x="1466.0" y="1170.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">K2 ← VHF2 (P6): GPB3</text>
+<text x="1466.0" y="1185.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Знеструмлено: HF+ на</text>
+<text x="1466.0" y="1200.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  50 Ohm, порти навантаж.</text>
+<rect x="1685.0" y="1089.0" width="200.0" height="145.0" rx="4" fill="#eef9f0" stroke="#333" stroke-width="1.2"/>
+<text x="1691.0" y="1107.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Airspy HF+ Discovery</text>
+<text x="1691.0" y="1125.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">0.5 kHz-31 MHz,</text>
+<text x="1691.0" y="1140.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  64-260 MHz</text>
+<text x="1691.0" y="1155.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Екран Schubert Art. 6B</text>
+<text x="1691.0" y="1170.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">USB: CH334F H4</text>
+<text x="1691.0" y="1185.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">768 ksps (HF-F),</text>
+<text x="1691.0" y="1200.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  макс. 912 ksps</text>
+<path d="M 1095.0 1110.0 L 1460.0 1110.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 1095.0 1197.0 L 1460.0 1197.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 1670.0 1161.5 L 1685.0 1161.5" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<text x="20.0" y="1272.0" font-size="13" font-weight="bold" text-anchor="start" fill="#444">GNSS — окремий приймач LC76G (§5.3, §2.8)</text>
+<rect x="20.0" y="1280.0" width="290.0" height="58.0" rx="4" fill="#f4f8ff" stroke="#333" stroke-width="1.2"/>
+<text x="26.0" y="1298.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">GNSS L1 + EGNOS</text>
+<text x="26.0" y="1316.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Waveshare 25346 (магніт ≥30 см</text>
+<text x="26.0" y="1331.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">від паку BNO085)</text>
+<rect x="325.0" y="1280.0" width="140.0" height="43.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="331.0" y="1298.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">P7 GNSS</text>
+<text x="331.0" y="1316.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SMA-K прохідний</text>
+<rect x="480.0" y="1280.0" width="300.0" height="58.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="486.0" y="1298.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">IPX-пігтейл → IPEX LC76G</text>
+<text x="486.0" y="1316.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RF_IN модуля вже має</text>
+<text x="486.0" y="1331.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">блок 100 pF (C6)</text>
+<rect x="795.0" y="1280.0" width="300.0" height="73.0" rx="4" fill="#fdeeee" stroke="#333" stroke-width="1.2"/>
+<text x="801.0" y="1298.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Зміщення антени з LC76G</text>
+<text x="801.0" y="1316.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">VCC_RF: R5 10 Ohm + L1 68 nH</text>
+<text x="801.0" y="1331.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">3.06-3.19 V при 10-20 mA (модель)</text>
+<text x="801.0" y="1346.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">приймання ≥3.05 V під 20 mA</text>
+<rect x="1685.0" y="1280.0" width="200.0" height="58.0" rx="4" fill="#eef9f0" stroke="#333" stroke-width="1.2"/>
+<text x="1691.0" y="1298.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">LC76G 24370</text>
+<text x="1691.0" y="1316.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">UART6 → gpsd → chrony</text>
+<text x="1691.0" y="1331.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">PPS → пін 7 (GPIO96)</text>
+<path d="M 310.0 1301.0 L 325.0 1301.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 465.0 1301.0 L 480.0 1301.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 780.0 1301.0 L 795.0 1301.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 1095.0 1301.0 L 1685.0 1301.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<text x="20.0" y="1391.0" font-size="13" font-weight="bold" text-anchor="start" fill="#444">LAB USB-A (CH334F H3) — польовий пристрій без прохідника (§5.3)</text>
+<rect x="20.0" y="1399.0" width="290.0" height="58.0" rx="4" fill="#f4f8ff" stroke="#333" stroke-width="1.2"/>
+<text x="26.0" y="1417.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">ADS-B / радіозонди / DAB+</text>
+<text x="26.0" y="1435.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">вуса 6.5 см (1090 MHz) / 17.7 см</text>
+<text x="26.0" y="1450.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">(400-406 MHz) / набір #2 (DAB+)</text>
+<rect x="325.0" y="1399.0" width="140.0" height="58.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="331.0" y="1417.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Без прохідника</text>
+<text x="331.0" y="1435.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">антена прямо на</text>
+<text x="331.0" y="1450.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SDR на LAB USB-A</text>
+<rect x="480.0" y="1399.0" width="300.0" height="58.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="486.0" y="1417.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Прохідний FM-режектор</text>
+<text x="486.0" y="1435.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RTL-SDR Blog FM band-stop</text>
+<text x="486.0" y="1450.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">або Flamingo+ FM #2</text>
+<rect x="795.0" y="1399.0" width="300.0" height="58.0" rx="4" fill="#fdeeee" stroke="#333" stroke-width="1.2"/>
+<text x="801.0" y="1417.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Зміщення запасного V4L</text>
+<text x="801.0" y="1435.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">лише LNA ≤90 mA і з токеном</text>
+<text x="801.0" y="1450.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">/run/labd/bias/&lt;serial&gt; (D3)</text>
+<rect x="1685.0" y="1399.0" width="200.0" height="58.0" rx="4" fill="#eef9f0" stroke="#333" stroke-width="1.2"/>
+<text x="1691.0" y="1417.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Запасний V4L LABRXC</text>
+<text x="1691.0" y="1435.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">або Pro Stick Plus (ext.)</text>
+<text x="1691.0" y="1450.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">LAB USB-A = CH334F H3</text>
+<path d="M 310.0 1420.0 L 325.0 1420.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 465.0 1420.0 L 480.0 1420.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 780.0 1420.0 L 795.0 1420.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<path d="M 1095.0 1420.0 L 1685.0 1420.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
+<rect x="1900.0" y="80.0" width="380.0" height="313.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="1906.0" y="98.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Зміщення (bias) і DC (§5.3, §5.1)</text>
+<text x="1906.0" y="116.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Лише через labd: токен /run/labd/bias/&lt;serial&gt;</text>
+<text x="1906.0" y="131.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Трійники V4L у core вимкнені; лаб. librtlsdr:</text>
+<text x="1906.0" y="146.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  GPIO0 = 0 при open/close, bias в EEPROM вимк.</text>
+<text x="1906.0" y="161.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">rtlsdr_set_bias_tee(dev,0) при кожному відкритті</text>
+<text x="1906.0" y="176.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">DC-sense перед кожним увімкненням зміщення</text>
+<text x="1906.0" y="191.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Заблоковано на КЗ по DC: балун 9:1, hairpin</text>
+<text x="1906.0" y="206.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  Yagi без LNA</text>
+<text x="1906.0" y="221.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">P2/P3: ніколи понад 5.5 V; 13.8/13.2 V фізично</text>
+<text x="1906.0" y="236.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  не стикуються з P2 (BNC на P5, F на P4)</text>
+<text x="1906.0" y="251.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">LNB: EN LDO+eFuse лише поки RTL-B на RF3;</text>
+<text x="1906.0" y="266.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  вимкнути перед під'єднанням/від'єднанням;</text>
+<text x="1906.0" y="281.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  ніколи через AUX, sled чи сиру батарею</text>
+<text x="1906.0" y="296.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Boni: DC-sense + «Boni під'єднано» + вікно</text>
+<text x="1906.0" y="311.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  30 mA … межа з виміру, нижче ILIM 113 mA</text>
+<text x="1906.0" y="326.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Жодного живлення через micro-USB біля</text>
+<text x="1906.0" y="341.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  живлення антени; LNB-порт 25 MHz — лише</text>
+<text x="1906.0" y="356.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  AXING CFA 11-00 (DC-розв'язаний)</text>
+<text x="1906.0" y="371.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">DC-блок перед кожним SDR і приладом</text>
+<text x="1906.0" y="386.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  (tinySA: межа ±5 V DC)</text>
+<rect x="1900.0" y="405.0" width="380.0" height="133.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="1906.0" y="423.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">DC-блоки: Murata C0G 50 V 0402 (G3)</text>
+<text x="1906.0" y="441.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">1 nF GRM1555C1H102JA01D: ch1, ch2, ch4,</text>
+<text x="1906.0" y="456.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  RFC RTL-A (усі виводи RTL-A)</text>
+<text x="1906.0" y="471.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">100 pF GRM1555C1H101JA01D: ch3, ch5 (ПЧ),</text>
+<text x="1906.0" y="486.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  виводи RTL-B</text>
+<text x="1906.0" y="501.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">10 nF C0G 0603 на RF4/RFC RTL-B — лише</text>
+<text x="1906.0" y="516.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  якщо BENCH має доходити до КХ</text>
+<text x="1906.0" y="531.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">100 pF з eval BOM ADI на VHF не копіювати</text>
+<rect x="1900.0" y="550.0" width="380.0" height="133.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="1906.0" y="568.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Обмеження струму (засувка, FAULT → MCP #3)</text>
+<text x="1906.0" y="586.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">ch1-ch3: TPS2553DBVR-1, 88.7k → 265/299/339 mA</text>
+<text x="1906.0" y="601.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">ch4: TCBT-2R5G+ на 162k → 144/166/192 mA</text>
+<text x="1906.0" y="616.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Σ 3 × 299 + 166 mA ≈ 1.06 A (модель) — більше</text>
+<text x="1906.0" y="631.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  за ≈1 A пари LT3045; бюджет labd LNA ≤1.0 A</text>
+<text x="1906.0" y="646.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">LNB eFuse: RILM 2.05k → 0.405-0.499 A</text>
+<text x="1906.0" y="661.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Boni eFuse: RILM 7.87k → 0.113-0.139 A</text>
+<text x="1906.0" y="676.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">INA3221: тривога понад базовий рівень +20 %</text>
+<rect x="1900.0" y="695.0" width="380.0" height="148.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="1906.0" y="713.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Лише прийом (§1, §5.3, §5.4)</text>
+<text x="1906.0" y="731.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Старт: MCP23017 у скиданні, 100k до GND →</text>
+<text x="1906.0" y="746.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  усі HMC7992 на RF1 = 50 Ohm, K1/K2 знестр.</text>
+<text x="1906.0" y="761.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Джерела — лише BENCH, кондуктивно, ≤ −40 dBm</text>
+<text x="1906.0" y="776.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Lime X1 → ANNE-50+; TX заблоковано (TXEN = 0)</text>
+<text x="1906.0" y="791.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Огляд: 3-30 kHz, 225-400 MHz, 1544.0-1545.0</text>
+<text x="1906.0" y="806.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  MHz — «no data»</text>
+<text x="1906.0" y="821.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SatDump не відкриває SDR: файли або net_source</text>
+<text x="1906.0" y="836.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  на 127.0.0.1 від labrx (D1)</text>
+<rect x="1900.0" y="855.0" width="380.0" height="100.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
+<text x="1906.0" y="874.0" font-size="13" font-weight="bold" text-anchor="start" fill="#111">Умовні позначення</text>
+<text x="1906.0" y="892.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111"></text>
+<text x="1906.0" y="907.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111"></text>
+<text x="1906.0" y="922.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111"></text>
+<text x="1906.0" y="937.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111"></text>
+<path d="M 1912.0 891.0 L 1970.0 891.0" fill="none" stroke="#111111" stroke-width="1.6"/>
+<text x="1980.0" y="895.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">РЧ-тракт 50 / 75 Ohm</text>
+<path d="M 1912.0 906.0 L 1970.0 906.0" fill="none" stroke="#7b2fa8" stroke-width="1.6"/>
+<text x="1980.0" y="910.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">РЧ-тракт Lime</text>
+<rect x="1912" y="915" width="58" height="11" fill="#fdeeee" stroke="#333" stroke-width="0.8"/>
+<text x="1980.0" y="925.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">зміщення DC (інжектори, bias-tee)</text>
+<rect x="1912" y="930" width="58" height="11" fill="#fffbe6" stroke="#333" stroke-width="0.8"/>
+<text x="1980.0" y="940.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">DC-блоки і пади</text>
+<rect x="1900.0" y="967.0" width="380.0" height="104.0" rx="4" fill="#fffbe6" stroke="#333" stroke-width="1.2"/>
+<text x="1906.0" y="986.0" font-size="13" font-weight="bold" text-anchor="start" fill="#111">РЧ-тракт приймача (лише прийом)</text>
+<text x="1906.0" y="1004.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Аркуш 03 · РЧ-тракт · v2, 18.10.2026</text>
+<text x="1906.0" y="1019.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Одиниці: MHz, GHz, V, mA, dB, Ohm, nF, pF</text>
+<text x="1906.0" y="1034.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Джерело: STACK.md v2 §5.3 (також §2.3, §2.11,</text>
+<text x="1906.0" y="1049.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  §5.1, §5.2, §3.2), рішення D1-D19</text>
+<text x="1906.0" y="1064.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">теоретичний проєкт — перевірити на стенді</text>
+</svg>
