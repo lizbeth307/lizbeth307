@@ -518,3 +518,12 @@ P4, ВАЖЛИВО для безпеки (C; ще не перевірено):
   Записав у final/operator_notes.md (№8). Рішення від користувача не потрібне; P6 внесе це в стек.
 Джерела: github.com/daniestevez/gr-satellites/issues/803, /issues/820, /pull/832.
 
+## 2026-10-18 08:48 UTC
+
+P4, A (завантаження A/B; ще не перевірено):
+- У збірці образу Radxa (rsdk, core.libjsonnet) поруч із systemd-boot стоїть пакет «sdboot-is-embloader». У репозиторії Radxa є embloader, і він сам розбирає loader.conf та файли записів *.conf. Отже, на Radxa OS роль systemd-boot, можливо, виконує власний embloader від Radxa, а не оригінальний systemd-boot.
+- Наш план A/B спирається на лічильник спроб systemd-boot (суфікси +N-M у назвах записів) і на systemd-bless-boot. Треба перевірити на образі, чи embloader підтримує лічильник спроб. Якщо ні, відкат забезпечують супервізор Pico і прапорець A/B у користувацькому просторі.
+- Пов'язано з відкритим питанням стеку про те, який пакет постачає systemd-bless-boot (рядок 1085). Записав у operator_notes (№9).
+- C: у SatDump (гілка dev) з'явилися свіжі виправлення: «Fixed HRIT decoding» (08.10.2026) і виправлення витоку буфера у відновленні тактової частоти (02.10.2026). Це ще один аргумент закріпити свіжий коміт і прогнати регресійні тести.
+Джерела: github.com/RadxaOS-SDK/rsdk (core.libjsonnet), репозиторій embloader від Radxa (embloader/src/sdboot/file.c), github.com/SatDump/SatDump (історія комітів dev).
+
