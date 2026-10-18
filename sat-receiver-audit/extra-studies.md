@@ -28045,6 +28045,157 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   OUT OF SCOPE (antennas): feeds with a built-in LNA, such as the Discovery Dish 1420 feed, were not evaluated. Every candidate is a receive-only amplifier, and no hard rule is affected.
 
+## searchB:nooelec_sawbird_h1 (run `wf_c3ba734e-52b`)
+
+- **Part:** Nooelec SAWbird+ H1 (SKU 100811): 1420 MHz LNA-SAW-LNA module for the hydrogen-line add-on. Tier extended, group Lab extended, qty 1. It sits at the helicone/helix feed and gets bias over the RF output SMA from a TPS2553 LNA channel at 4.5 V, with a DC block downstream. It feeds RTL-B or the Lime.
+- **Current price usd:** 49.95 at Nooelec direct, ex-VAT (verified 18 Oct 2026; nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-h1.html). The STACK figure of 45-50 is out of date. Nooelec ships from the US, so the EU landed cost adds import VAT, EUR 3 per tariff line (IOSS/postal, consignment up to EUR 150), and EUR 2 UHF per line from about 1 Nov 2026 (operator notes 34-35). Ordering it together with the SAWbird+ NOAA, SAWbird+ GOES and Flamingo+ spreads the shipping.
+- **Critical specs:**
+  - Passband must cover 1420.406 MHz plus galactic Doppler (about +/-1.5 MHz) and continuum width. H1 datasheet rev 1: 1376-1441 MHz, centre 1408 MHz, 3 dB BW 65 MHz, 10 dB BW 75 MHz, about 2 dB ripple on the S21 plot.
+  - Gain: 42 dB max per the table, 40-42 dB in band on the plot. It must be at least about 40 dB so the RTL-B/Lime (about 6 dB NF) plus the HMC7992 switch, DC block and RG316 add almost nothing to Tsys (the stack models 125 K).
+  - Noise figure: 0.70 / 0.8 / 0.9 dB min/typ/max, i.e. Tn 51/59/67 K, at 1420 MHz. This sets the sun-rise and HI SNR.
+  - Out-of-band rejection relative to the passband, read by me from the datasheet S21 plot (+/-3 dB): about 35-40 dB at 1460-1500 MHz (the EU LTE band-32 SDL is 1452-1492 MHz), about 30-50 dB at 1300-1360 MHz, about 38 dB at 500-1000 MHz, about 45 dB at 1575 MHz, and 65-80 dB at 1800 MHz. The filter comes after the first LNA.
+  - Linearity and robustness: OP1dB +18 dBm and max input 0 dBm. Reverse isolation is above 60 dB, so the 40 dB box is stable.
+  - Matching: S11/S22 spec is -10 dB max; the plots show about -7 dB in band.
+  - Power: 3.3-5.5 V, works at the 4.5 V bus, bias tee on the RF output SMA. Current 108/122/150 mA min/typ/max, which fits the TPS2553 300 mA channel (trip at least 265 mA). Use one power path only.
+  - Mechanics: SMA in and out, aluminium enclosure, separate EMI shield per LNA, 80 x 30 x 20 mm, 52 g. It must survive mounting at the feed outdoors.
+  - Gain stability over time and temperature for continuum and sun drift scans: unspecified for the H1, so an analog cannot be shown to be worse, but a bare board without thermal mass is a risk.
+  - Legitimacy and reliability: genuine vendor with warranty (the page says both '2 year' and 'standard 1 year'), not counterfeit MMICs. Receive-only passive RF part with no driver, so Ubuntu 24.04 arm64 is not affected.
+- **Candidates:**
+  1.
+    - **Name:** Keep current: Nooelec SAWbird+ H1 cased (100811)
+    - **Kind:** current_part
+    - **Price usd:** 49.95 ex-VAT (Nooelec direct, verified 18 Oct 2026), plus EU import VAT and duty/UHF as in operator notes 35
+    - **Spec comparison:** This is the reference row. Datasheet rev 1 (2019-12-10), downloaded and read: 40-42 dB, NF 0.7/0.8/0.9 dB, 3 dB BW 65 MHz (1376-1441 MHz), OP1dB +18 dBm, Pin max 0 dBm, 108/122/150 mA, 3.3-5.5 V, 80x30x20 mm, 52 g. rtl-sdr.com's launch figure of 0.5-0.6 dB NF is superseded by the datasheet.
+    - **Worse in:** Nothing. No Barebones H1 or non-plus H1 is listed now: the Nooelec SAWbird category (?limit=all, 17 products) shows only the cased SAWbird+ H1.
+    - **Compatibility:** Already integrated: TPS2553 channel at 4.5 V, bias on the RF output, C0G DC block, SMA. Set the INA3221 baseline window to 108-150 mA, not a flat 120 mA. OP1dB is +18 dBm, not the GOES +20.
+    - **Risks:** The product page states the warranty two ways (2 years vs 1 year). Out-of-band rejection is only about 35-40 dB at 1460-1500 MHz (plot reading), so a strong nearby LTE-SDL site can still reach the SDR at roughly -40 dB relative.
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-h1.html
+      - https://www.nooelec.com/datasheets/100811 (redirects to sawbird_h1_datasheet_revision_1.pdf)
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird.html?limit=all
+  2.
+    - **Name:** DIY: 2x LNA4ALL (9A4QV, Croatia; PSA4-5043+), each with 2x SMA and the 3.3-5 V bias-T mod, plus an interstage 1420 filter (Mini-Circuits VBFZ-1400-S+ or the 9A4QV 1420 filter)
+    - **Kind:** diy
+    - **Price usd:** LNAs: 2x(EUR 23 + EUR 3) + EUR 7 shipping = EUR 59, about $66 (lna4all.blogspot.com price list, undated, stock note 'May 2025, 250 pcs'). Filter: VBFZ-1400-S+ $54.13 (radio_lab.json, not re-verified). Total about $120. The 9A4QV 1420 filter is no longer listed (price unknown).
+    - **Spec comparison:** Independent Astropeiler Y-factor test (ENR 8.73 dB): 15.4-16.0 dB and NF 0.7 dB per unit, S11 -10.7/-11.2 dB. The maker's own figure for 2 units in series is 31.35-32.2 dB with NF 0.698-0.757 dB. After 2.3 dB filter loss (Astropeiler-measured for both filters) the chain gives about 29-30 dB. Filter 3 dB points (Astropeiler): VBFZ-1400-S+ 1139-1784 MHz; 9A4QV filter 1331-1673 MHz with about 10 dB less WiFi rejection. Current is about 47 mA per unit at 4.5 V (maker).
+    - **Worse in:** More expensive (about $120 vs $49.95). Gain is about 10-12 dB lower (about 29-30 vs 40-42 dB), which raises Tsys through the RTL-B/Lime chain. Rejection is far worse: the filters pass 1452-1492 LTE-SDL, 1525-1559 Inmarsat and 1575 GNSS, where the H1's SAW passes only 1376-1441. Bare PCBs with no enclosure or shields at the outdoor feed. NF is only marginally better (0.7 vs 0.8 dB), within measurement error.
+    - **Compatibility:** Works on the 4.5 V bias bus with the mod, and the current is lower. It needs three boxes (2 LNAs + filter) and a die-cast housing (Astropeiler used a Hammond 1550C), and does not fit the single 80 mm feed mount. Ordered by e-mail. Croatia is in the EU, so there is no import duty on the LNAs.
+    - **Risks:** Stock date is May 2025, so availability is unverified. The bias reaches the first LNA through the filter only if the filter passes DC (the VBFZ is SMA-in-line; DC pass is not verified), so a separate supply may be needed. Stability of the two-box cascade on an antenna is untested.
+    - **Sources:**
+      - http://lna4all.blogspot.com/
+      - https://astropeiler.de/wp-content/uploads/2020/01/Hydrogen_2.pdf
+      - https://www.rtl-sdr.com/building-a-hydrogen-line-front-end-on-a-budget-with-rtl-sdr-and-2x-lna4all/
+  3.
+    - **Name:** Single LNA4ALL (bias-T mod, 2x SMA), no filter
+    - **Kind:** diy
+    - **Price usd:** EUR 33 incl. shipping, about $37.1 (maker price list, not order-confirmed)
+    - **Spec comparison:** Independently measured 15.4-16.0 dB and NF 0.7 dB at 1420 MHz (Astropeiler). PSA4-5043+ wideband, roughly 28 MHz-2.5 GHz (maker), with no filter.
+    - **Worse in:** Gain is about 24-26 dB lower (16 vs 40-42 dB). There is no rejection at all, losing the H1's about 35-80 dB against LTE, GSM, GNSS and WiFi. Bare PCB with no enclosure.
+    - **Compatibility:** Electrically OK on 4.5 V bias with the mod (about 47 mA). Mechanically it needs a housing.
+    - **Risks:** Overload or desense of the RTL-B/Lime from strong out-of-band signals. Availability is unverified (stock note from May 2025).
+    - **Sources:**
+      - http://lna4all.blogspot.com/
+      - https://astropeiler.de/wp-content/uploads/2020/01/Hydrogen_2.pdf
+  4.
+    - **Name:** Generic Chinese '50-4000 MHz SPF 5189Z' LNA boards (eBay/AliExpress), cascaded 2-3x plus a filter (DIY hairpin or VBFZ-1400-S+)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Board price not verified (no listing checked). Hairpin filter is DIY PCB cost; VBFZ-1400-S+ $54.13 (radio_lab.json). A die-cast box is extra.
+    - **Spec comparison:** Independent Astropeiler test of 4 units: 14.6-15.1 dB, NF 0.6-0.7 dB, S11 -13 to -18.7 dB. A measured 2-stage cascade in a Hammond box gave 28.6 dB and NF 1.0 dB. The 'RF AMP V2.0' variant of the same chip measured NF 0.8 dB per stage. The DIY hairpin filter (Sven Brauch design) measured 5 dB loss, 3 dB points 1326-1462 MHz, with a second passband near 2.4 GHz.
+    - **Worse in:** NF of the measured cascade is worse (1.0 vs 0.8 dB). Gain is lower (28.6 dB for two stages; three stages would be needed for about 40 dB, which is unmeasured and has a stability risk). Rejection is worse than the SAW. The hairpin filter adds 5 dB and has a 2.4 GHz spurious passband. No shielded enclosure. Header 5 V power only, with no bias tee.
+    - **Compatibility:** Needs a DIY bias tee or separate 5 V feed to the feed point, 2-3 boards plus a filter in a housing, and does not fit the single-module mount.
+    - **Risks:** The SPF5189Z is EOL at Qorvo, so current boards carry re-marked or counterfeit chip risk. The 2020 measurements do not cover today's listings. No CE DoC.
+    - **Sources:**
+      - https://astropeiler.de/wp-content/uploads/2020/01/Hydrogen_2.pdf
+  5.
+    - **Name:** Qorvo/Triquint TQP3M9037-PCB evaluation boards (2x) plus filter
+    - **Kind:** other_brand
+    - **Price usd:** 128.91 each at DigiKey (2 in stock, Active, 25-week lead time; DigiKey search page read 18 Oct 2026), so more than $258 for two before the filter
+    - **Spec comparison:** Independent Astropeiler test at 1420 MHz: 22.8 dB, NF 0.4 dB, S11 -10.4 dB, matching the datasheet (TQP3M9036: 15.9 dB / 0.4 dB). Two stages plus a SAW or cavity filter would beat the H1 on NF and match its gain.
+    - **Worse in:** Not worse electrically (better NF), but more than 5x the price. The eval boards are bare, with no enclosure or shields and with a reference trace to cut off.
+    - **Compatibility:** Single 5 V supply, about 70 mA typical (datasheet via search, not re-read). Needs a DIY bias tee or feed and a housing.
+    - **Risks:** Fails the 'cheaper' condition. A DIY board with a bare TQP3M9037 chip ($6.07 at DigiKey) has no independent measurement of any specific layout at 1420 MHz, so it is rejected under angle B.
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=TQP3M9037-PCB
+      - https://astropeiler.de/wp-content/uploads/2020/01/Hydrogen_2.pdf
+  6.
+    - **Name:** GPIO Labs 1420 MHz LNAs (Tindie): 'Radio Astronomy Hydrogen Line LNA' and 'Pre-filtered LNA w/ Bias Tee'
+    - **Kind:** other_brand
+    - **Price usd:** 87.00 (9 left) and 97.20 (4 left). Ships from Toronto; EU shipping, VAT and duty come on top.
+    - **Spec comparison:** Seller gain tables: 32 dB and 34 dB at 1420 MHz. NF is 'typically <1 dB' and '1 dB'. The page cites a WVU memo giving 91 +/-2 K (1.16 dB). Pre-filtered (filter ahead of the LNA), with no stated passband. Gain is still 31.5-35 dB at 1200-1500 MHz and 19-21 dB at 1800 MHz. Max input -10 dBm. Supply 5-12 V; below 5 V the seller says 'unreliable or no amplification'.
+    - **Worse in:** Price is about 1.7-1.9x higher. NF is worse (1.0-1.16 vs 0.8 dB) and gain is lower (32-34 vs 40-42 dB). Rejection near the band is far worse: the gain table is flat from 1200 to 1500 MHz, so it passes LTE-SDL and Inmarsat. Max input is lower (-10 vs 0 dBm). No enclosure is mentioned.
+    - **Compatibility:** Incompatible with the 4.5 V LNA bias bus because it needs at least 5 V. The bias-tee version puts at least +5 V DC on the RF output.
+    - **Risks:** Low stock. No independent S-parameter or Y-factor data apart from the cited memo.
+    - **Sources:**
+      - https://www.tindie.com/products/gpio/radio-astronomy-hydrogen-line-low-noise-amplifier/
+      - https://www.tindie.com/products/gpio/hydrogen-line-pre-filtered-lna-1420mhz-w-bias-tee/
+  7.
+    - **Name:** Used Down East Microwave 1420LNA / 1420LNAH
+    - **Kind:** used
+    - **Price usd:** Not verified (no listing found)
+    - **Spec comparison:** Independent Astropeiler test: 1420LNAH 27.9 dB, NF 0.8 dB, S11 -9.5 dB; 1420LNA 11.1 dB, NF 0.9 dB. Waterproof housing with N connectors and no SAW filter.
+    - **Worse in:** Gain is lower (27.9 or 11.1 vs 40-42 dB), NF is equal or worse, and there is no band filter. Older pre-pHEMT design.
+    - **Compatibility:** Uses N connectors (adapters needed). Supply and bias method not verified against the 4.5 V bus.
+    - **Risks:** Used unit with no warranty. Ageing is unknown and cannot be checked without a calibrated ENR source.
+    - **Sources:**
+      - https://astropeiler.de/wp-content/uploads/2020/01/Hydrogen_2.pdf
+  8.
+    - **Name:** Used Nooelec SAWbird+ H1
+    - **Kind:** used
+    - **Price usd:** Not verified: eBay returned HTTP 403 and a web search found no used listings.
+    - **Spec comparison:** Same design and datasheet as the current part, if genuine and undamaged.
+    - **Worse in:** Equality cannot be proven. An ESD-degraded first stage raises NF without visible gain loss. The stack's DIY ZFL-500 noise source and tinySA (about +/-0.5 dB) cannot verify 0.8 dB in absolute terms. The warranty does not transfer.
+    - **Compatibility:** Identical.
+    - **Risks:** Possible mislabelling or damage. Take one only if it is well under $49.95 landed and passes a relative Y-factor check against a new unit or the sun-rise test (0.7-1.2 dB over Tsys 125 K).
+    - **Sources:**
+      - https://www.ebay.com/sch/i.html?_nkw=sawbird+h1 (HTTP 403)
+  9.
+    - **Name:** RTL-SDR Blog Wideband LNA V2 already in the stack (bench spare) plus VBFZ-1400-S+
+    - **Kind:** diy
+    - **Price usd:** 54.13 for the filter (radio_lab.json, not re-verified). The LNA is already owned.
+    - **Spec comparison:** Unfiltered wideband LNA with about 20 dB class gain (vendor; not re-measured at 1420 MHz in an independent source I found). The VBFZ-1400-S+ measured 2.3 dB loss and 3 dB points of 1139-1784 MHz (Astropeiler).
+    - **Worse in:** It costs more than the H1 in new money ($54.13 vs $49.95). Gain is about 20 dB lower. Rejection is far wider (1139-1784 MHz). It also takes away the bench spare and the optional WIDE-path LNA.
+    - **Compatibility:** The 4.5 V bias works. Two boxes.
+    - **Risks:** No independent NF measurement at 1420 MHz found.
+    - **Sources:**
+      - https://astropeiler.de/wp-content/uploads/2020/01/Hydrogen_2.pdf
+  10.
+    - **Name:** AliExpress 'hydrogen line 1420 MHz SAW LNA' clones
+    - **Kind:** generic_or_clone
+    - **Price usd:** None found
+    - **Spec comparison:** A web search found no AliExpress 1420 MHz LNA+SAW module, and therefore no independent measurement.
+    - **Worse in:** Rejected under angle B: there is no listing and no measured evidence.
+    - **Compatibility:** n/a
+    - **Risks:** n/a
+    - **Sources:** []
+- **Notes:** Decision from angle B: keep the Nooelec SAWbird+ H1 at $49.95 ex-VAT. No generic module, clone, DIY build or used unit with independent measurements is both cheaper and not worse.
+  
+  Why:
+  - The only cheaper measured options are a single LNA4ALL ($37) and generic SPF5189Z boards (price unverified). Per stage they reach only 15-16 dB at NF 0.6-0.7 dB, and they have no filter.
+  - To reach about 40 dB gain with the H1's SAW-level selectivity (3 dB BW 65 MHz, about 35-80 dB rejection) they need 2-3 stages plus a filter. That costs more than $49.95 (2x LNA4ALL plus VBFZ is about $120).
+  - Those builds are still worse in rejection, and their measured 2-stage cascade NF is 1.0 dB against 0.8.
+  - The only measured part that beats the H1 on NF is the TQP3M9037-PCB eval board (0.4 dB), at $128.91 each.
+  
+  Datasheet facts for STACK v2. These come from the Nooelec datasheet rev 1, which I downloaded and read at nooelec.com/datasheets/100811:
+  - Range 1376-1441 MHz, centre 1408 MHz, BW 65/75 MHz (3/10 dB).
+  - Gain 42 dB max (40-42 dB on the plot).
+  - NF 0.70/0.8/0.9 dB, Tn 51/59/67 K.
+  - OP1dB +18 dBm (not +20 like the GOES); Pin max 0 dBm.
+  - Supply 3.3-5.5 V at 108/122/150 mA, so labd's INA3221 baseline should accept up to 150 mA.
+  - 80x30x20 mm, 52 g.
+  
+  The product page's '2 year warranty' conflicts with its own 'standard 1 year' text. My plot reading shows only about 35-40 dB relative rejection at 1460-1500 MHz, inside the EU LTE band-32 SDL (1452-1492 MHz). Check it in a conducted LiteVNA S21 sweep at bring-up and keep it in the D10 noise-floor A/B.
+  
+  Evidence limits:
+  - About 8 WebSearch calls used.
+  - eBay returned 403, so used prices are unverified.
+  - The Mouser and Qorvo pages failed (503/429), so TQP3M9037 data comes from Astropeiler's measurement and DigiKey's price.
+  - The LNA4ALL prices come from the maker's undated price list (stock note May 2025).
+  - The VBFZ-1400-S+ price ($54.13) is carried over from radio_lab.json and was not re-verified.
+  - EUR to USD at 1.124, matching the G1 analog file.
+  - Same-part EU resellers (landed EU price) were not checked; that is angle A.
+  
+  Local copy of the datasheet: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/p5h1b/dl/h1_ds.pdf (plots: pg-3.png). Astropeiler report: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/p5h1b/dl/astro_h2.pdf.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience

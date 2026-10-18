@@ -45,6 +45,7 @@
 | [Nooelec sawbird goes cased 100792](components/nooelec_sawbird_goes_cased_100792.md) | · research · forums · fixes ✅ verify | `—` |
 | [Nooelec sawbird noaa cased 100800](components/nooelec_sawbird_noaa_cased_100800.md) | · research · forums · fixes ✅ verify | `—` |
 | [Npu training](components/npu_training.md) | ✅ research · forums · fixes ✅ verify | `—` |
+| [Padded antenna roll element tube 15 20 l](components/padded_antenna_roll_element_tube_15_20_l.md) | · research · forums · fixes ✅ verify | `—` |
 | [Pca9555 key expander piezo status led](components/pca9555_key_expander_piezo_status_led.md) | · research · forums · fixes ✅ verify | `—` |
 | [Pololu 2813 hp pushbutton power switch](components/pololu_2813_hp_pushbutton_power_switch.md) | · research · forums · fixes ✅ verify | `—` |
 | [Pololu d36v28f5 lab5](components/pololu_d36v28f5_lab5.md) | · research · forums · fixes ✅ verify | `—` |
