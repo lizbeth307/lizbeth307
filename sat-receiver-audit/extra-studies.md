@@ -3998,6 +3998,85 @@
   - full labinput cell (idx 118)
   - GPSD_OPTIONS/chrony phrase (idx 100); -b is already applied there.
 
+## edit:05c_arch_software_resources:b3 (run `wf_11421893-197`)
+
+- **Section:** 05c_arch_software_resources
+- **Applied:**
+  - 82
+  - 83
+  - 84
+  - 85
+  - 86
+  - 87
+  - 88
+  - 89
+  - 90
+  - 91
+  - 92
+  - 93
+  - 94
+  - 95
+  - 96
+  - 97
+  - 98
+  - 99
+  - 100
+  - 101
+  - 102
+  - 103
+  - 104
+  - 105
+  - 106
+  - 107
+  - 108
+  - 109
+  - 110
+  - 111
+  - 112
+  - 113
+  - 114
+  - 115
+  - 116
+  - 117
+  - 118
+  - 119
+  - 120
+- **Skipped:**
+  1.
+    - **Idx:** 82 (part)
+    - **Why:** I left out only the words 'SatDump master 1aedd60 (Lime TX-patched)'. idx 60 (re-audit A) and re-audit C, both already in the file, say SatDump has no Lime plugin and no hardware SDR sources. SatDump is now listed as master 1aedd60 + c0b6f88 + 6b5957f without hardware SDR sources.
+  2.
+    - **Idx:** 88 (part)
+    - **Why:** 'усі sdr_sources-плагіни вимкнено' (re-audit C) would also switch off NET_SOURCE. NET_SOURCE is the live input from labrx kept by re-audit A (idx 41/46, already in the file). Both are P4 sources, so re-audit A won: it is newer and is the software-domain audit. Hardware and network-server sources stay off. The rest of 88 was merged: the gr-satellites fallback v5.9.0 + 10d27cb + 1bcf1d8, 'never 5.5.0', ProtectHome=yes and ReadWritePaths limited to the products directory. The five-JSON allow-list and 'no inmarsat_support' were already in the file.
+  3.
+    - **Idx:** 97 (part)
+    - **Why:** I did not add the 'devicetree-overlay' lines to the BLS entries. Re-audit A says systemd-boot 255/main has no devicetree-overlay key and ignores it silently, which is exactly the failure re-audit D warns about. D's goal is met by the existing merged DTB with an explicit 'devicetree' line. I added D's reason (UEFI supplies the DTB by default, forum 30440), the package DTB path, the sha256(/sys/firmware/fdt) check, the pcie0 check and the fio check. The hold-list part was applied together with 108.
+  4.
+    - **Idx:** 99 (part)
+    - **Why:** Same conflict as 97: the phrase 'оверлеї вантажаться рядками devicetree-overlay у BLS' was replaced by 'only through the merged DTB in the BLS entry'. The uart6 overlay content, the pps-gpio node, the note that no upstream pps-gpio overlay exists (e713889) and the UEFI SE6 note were all added.
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/05c_arch_software_resources.md, in place with Edit, and kept every edit from earlier batches. Many anchors were v1 text that earlier batches had already rewritten, so I placed each change at the matching current text.
+  
+  Conflicts and which source won:
+  - 82 vs idx 59 (libairspyhf): re-audit B won over re-audit A (both P4). B is the receiver audit and explicitly corrects A: Debian 1.6.8-5 is really upstream 1.8.1 and drops airspyhf_flash_calibration under the same soname. The default is now noble airspyhf/libairspyhf1/libairspyhf-dev 1.6.8-4build1, added to the apt list. The 1.6.8-5 (1.8.1) backport stays only as an option, with every consumer rebuilt in the same repo snapshot. The make install ban and the e1dcc17..0130450^ ban were added.
+  - 86 vs 101 (LC76G), plus operator note 22: merged. The one-time provisioning uses re-audit D's commands (PQTMCFGPPS mode 3 + PQTMSAVEPAR, PAIR391/410/400 + PAIR513, readbacks, optional jamming-status message). $PAIR752 was dropped, because PAIR513 does not save PPS-related PAIR settings and D wants one PPS method only. Every boot still reads the settings back and re-sends them if they differ, before PPS is trusted (note 22 and re-audit C). The SBAS/EGNOS PRN-table labelling was added.
+  - 100 vs idx 45 (chrony): re-audit D won over re-audit A. The PPS refclock is now /dev/pps-gnss with noselect and a selectopts gate, replacing 'prefer'. I also added the udev rule for /dev/pps-gnss and the exact AppArmor local rules.
+  - 110 vs idx 58 (NanoVNA-Saver): re-audit D won. analogs_G5 (P5) also uses NanoVNA-Saver @3445a0a in its acceptance test. v0.7.3 and PySide6 6.12 are replaced by git @3445a0a with PySide6==6.11.2, and QtTinySA uses pyside6==6.11.0. scikit-rf 2.1.0 is added.
+  - 113 vs 117 (UFS after WriteBooster): merged, with the analog (P5) taking precedence. The measurement happens on UFS arrival: fio 16 GiB, then fill to about 70 %. The pass floor is >=50 MB/s (re-audit D), which is well above 13.3 MB/s and the 28 MB/s per channel of a decimated Lime stream (analog).
+  
+  Merged rather than repeated:
+  - 89 needed no edit. gr-satellites 5.5.0 was already out of the apt list and pinned at −1 (= 5.5.0-2build2).
+  - 94 and 116: the 'ch2 off = no UHF' note appears once, in the labd cell next to the existing UHF/ch2 rule.
+  - 104 and 119: the INA228 settings were combined into one statement in the labpowerd row.
+  - 120 was merged into the existing eFuse/TPS2553 FAULT phrase.
+  - 97 and 108 (hold list): both go in the Утримання paragraph. embloader is held, and full-upgrade, rsetup and rupdate are banned in the field.
+  - 91: the existing LC_NUMERIC=C became LC_ALL=C.UTF-8 so the file does not give two locale settings. PrivateNetwork=yes applies to file decoding; the live net_source mode keeps IPAddressDeny=any.
+  
+  Subtotals and new rows:
+  - Storage table: /data = 119 − 1 − 22 − 22 = about 74 GiB. The quotas add up to 27.4 GiB (18.6 + 4 + 4 + 0.3 + 0.5). Records come to about 46.6 GiB, previously 'about 46'.
+  - The ESP row now says FAT32 with 4K sectors.
+  - New rate rows: HF+ ci16 912 ksps = 3.648 MB/s, which I worked out as 13.1 GB/h; Lime narrow 7 Msps = 28 MB/s per channel. The Lime 56 Msps row now gives the raw-to-T7 limits (1× ≤56 Msps; 2× ≤40 Msps = 320 MB/s only after a 30-min soak).
+  - I escaped the |B| and |g| pipes inside the location-service table row, so all table rows keep their column counts.
+
 ## edit:08b_new_gates_reaudit:b1 (run `wf_1721ea96-ee2`)
 
 - **Section:** 08b_new_gates_reaudit
