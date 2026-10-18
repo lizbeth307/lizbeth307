@@ -35,6 +35,7 @@
 | [Nooelec sawbird noaa cased 100800](components/nooelec_sawbird_noaa_cased_100800.md) | · research · forums · fixes ✅ verify | `—` |
 | [Npu training](components/npu_training.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Power](components/power.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_f924b2ab-5ad` |
+| [Radxa ufs 3 1 128 gb ra022 b10j0u2](components/radxa_ufs_3_1_128_gb_ra022_b10j0u2.md) | · research · forums · fixes ✅ verify | `—` |
 | [Rf frontend](components/rf_frontend.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_30889068-251` |
 | [Rtl sdr blog v4l r828s](components/rtl_sdr_blog_v4l_r828s.md) | · research · forums · fixes ✅ verify | `—` |
 | [Software](components/software.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_e49d4f53-8d4` |
