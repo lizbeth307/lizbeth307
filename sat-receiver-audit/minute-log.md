@@ -549,3 +549,11 @@ P4, C (приватність і мережа; ще не перевірено):
 - Пропоную для v2: явно поставити submit_tlm=false. Усім декодерам заборонити мережу через systemd (IPAddressDeny=any). У мережу виходить лише оновлювач TLE/OMM, і лише вдома. Тоді координати пристрою нікуди не потраплять. Записав як пункт №11 в operator_notes.
 Джерело: github.com/daniestevez/gr-satellites, коміт fb887cf.
 
+## 2026-10-18 08:58 UTC
+
+P4, D (GNSS/PPS; ще не перевірено):
+- На форумі Quectel відповідь щодо LC76G: періодичний шум, який бачив користувач cragen, найімовірніше, спричиняє функція EPOC (прогноз орбіт на самому чипі). У прошивці LC76GABNR12A04S вона прийшла на зміну старій EASY. Є також репозиторій від 29.04.2026 зі знімком «periodic 1PPS noise from GNSS module».
+- Що це означає для стеку: перед прогоном chrony і PPS варто вимкнути EPOC і EASY командами $PAIR і порівняти джитер PPS з увімкненою функцією та без неї. Це треба додати до тесту W1 (chronyc sourcestats).
+- A (ПЗ): у Debian пакет airspyhf оновлено до 1.6.8-5 (снапшот upstream 1.6.8-59-g87cf12a) з патчами «fix hang issue when device is disconnected» і «change freeing sequence in airspyhf_close». У noble, імовірно, старіша версія. Для HF+ варто зібрати 1.6.8-5 як +labN.
+Джерела: форум Quectel (тема про LC76G і EPOC), GitHub-репозиторій зі знімком 1PPS_noise.png (за агентом D), changelog пакета airspyhf у Debian (salsa.debian.org).
+
