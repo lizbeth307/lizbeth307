@@ -1722,6 +1722,122 @@
   
   Sources: https://thepihut.com/products/raspberry-pi-pico ; https://shop.pimoroni.com/products/raspberry-pi-pico ; https://www.digikey.de/en/products/detail/raspberry-pi/SC0915/13684020 ; https://www.digikey.com/en/products/detail/raspberry-pi/SC0915/13624793 ; https://www.reichelt.com/de/en/shop/search/raspberry%20pi%20pico ; https://botland.store/search?search_query=raspberry+pi+pico+rp2040 ; https://www.adafruit.com/product/4864 ; https://www.berrybase.de/en/raspberry-pi-pico-2-rp2350-mikrocontroller-board ; https://www.raspberrypi.com/products/raspberry-pi-pico/ ; https://www.raspberrypi.com/resellers/?country=Germany ; https://www.waveshare.com/rp2040-plus.htm
 
+## searchB:raspberry_pi_pico_rp2040_hmi_supervisor (run `wf_071e1025-145`)
+
+- **Part:** Raspberry Pi Pico (RP2040, SC0915), HMI + supervisor MCU, qty 2 (1 spare). Powered from switched LAB5 via VSYS.
+- **Current price usd:** 10.12 for 2 (2 x GBP 3.80 at The Pi Hut, per STACK; the Pi Hut page returned HTTP 429, so this price was not re-checked). Same part elsewhere: DigiKey 2648-SC0915CT-ND $4.59 each (from reaudit_A, 18 Oct 2026, ex-VAT); Berrybase (DE) EUR 4.10 each incl. 19% VAT, 100+ in stock (fetched 18 Oct 2026).
+- **Critical specs:**
+  - MCU: RP2040, so the same pico-sdk firmware runs unchanged. Needs PIO quadrature decoding for 2 encoders (quadrature_encoder.pio), UART0 to Q6A UART7, UART1 to the IMU pack, I2C0, PWM, the hardware watchdog (the Pico heartbeat is the primary Q6A watchdog) and USB-CDC as the H1 fallback.
+  - User GPIO on the edge: at least 26 (GP0-GP22 plus GP26-GP28). All are allocated in the STACK pin map (GP22 is the only reserve).
+  - ADC: 3 external channels (panel NTC, 1:6 battery divider tapped from SW, case NTC). 12-bit with ENOB about 8.7-8.9 (Mark Omo measured 8.92 bits by sine fit). Erratum E11 DNL is unchanged on any RP2040.
+  - ADC_VREF must be on the header and isolatable (Pico R7 is a removable 0603) so the LM4040 3.0 V shunt can be fitted. The reaudit treats this as required for an accurate 12.9 V emergency trip.
+  - On-board VBUS sense on GP24, used to detect the H1 native-USB fallback. VSYS/3 on ADC3 (GP29, internal on the Pico).
+  - RUN pin on the header plus SWD (SWCLK, SWDIO), wired to Q6A pins 12/35/38 for OpenOCD service.
+  - Power: VSYS 1.8-5.5 V input fed from LAB5 through an external Schottky. VBUS must reach VSYS through a Schottky (D1) and never be tied directly (back-feed rule protecting the D36V28F5 and TPS7A4701). 3V3 output load kept under 300 mA (datasheet). Stack load on it is small (model).
+  - Regulator spurs: the Pico uses an RT6150 buck-boost whose frequency is unpublished and is on the harmonic-scan list; GP23 selects PFM or PWM mode. A board with a different regulator needs its own spur scan.
+  - Clock: 12 MHz crystal (Abracon ABM8-272-T3 on the Pico). Its harmonics at 144.000, 432.000 and 1560-1704 MHz are already in the spur plan, so 12 MHz is required. The RP2040 USB bootrom also expects 12 MHz.
+  - Flash: 2 MB or more of genuine Winbond W25Q16JV-class flash, holding firmware and the INA228-derived ADC calibration.
+  - Operating temperature -20 to +85 C on the board, with 70 C maximum recommended ambient (datasheet). The enclosure runs warm.
+  - Mechanical: 21 x 51 mm, 4 x 2.1 mm mounting holes, through-hole USB socket for strength, 2.54 mm and castellated pins. It is held in a handheld that sees vibration.
+  - No radio: no Wi-Fi or BT (not a Pico W), because of the rfkill and quiet-mode policy.
+  - Supply and authenticity: production guaranteed until at least January 2036, bought from an authorised distributor.
+  - Host side on Ubuntu 24.04 arm64: cdc_acm, picotool, OpenOCD and picocom. These are identical for any RP2040 board.
+- **Candidates:**
+  1.
+    - **Name:** Raspberry Pi Pico SC0915 (the current part) from an EU authorised reseller (Berrybase, SKU RPI-PICO) or DigiKey
+    - **Kind:** current_part
+    - **Price usd:** Berrybase EUR 4.10 each incl. 19% VAT, so EUR 8.20 for 2 (about $9.5 at an assumed 1.16 USD/EUR; rate not verified; plus shipping). DigiKey $4.59 each ex-VAT, so $9.18 for 2 (reaudit_A).
+    - **Spec comparison:** Identical part, so every critical spec is equal: RP2040, 26 GPIO, 3 ADC, ADC_VREF on pin 35 with removable R7, GP24 VBUS sense, RUN on pin 30, 3-pin SWD, D1 Schottky, RT6150, ABM8-272-T3 12 MHz crystal, W25Q16JV, -20 to +85 C, 4 mounting holes, production to 2036.
+    - **Worse in:** Nothing. It is only a cheaper source of the same part, and the saving is small (about $0.6-0.9 for 2).
+    - **Compatibility:** Drop-in, the same part.
+    - **Seller url:** https://www.berrybase.de/raspberry-pi-pico-rp2040-mikrocontroller-board
+    - **Sources:**
+      - https://www.berrybase.de/search?search=raspberry%20pi%20pico
+      - https://pip-assets.raspberrypi.com/categories/610-raspberry-pi-pico/documents/RP-008307-DS-2-pico-datasheet.pdf
+    - **Risks:** None for authenticity. Berrybase is an established EU Raspberry Pi reseller. Add shipping to the total.
+  2.
+    - **Name:** WeAct Studio RP2040 core board V1.0 (2/4/8/16 MB, USB-C)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Unverified. AliExpress search pages showed generic RP2040 core boards at about $1.09-3.39 but did not name the store, so no WeAct official-store price was confirmed.
+    - **Spec comparison:** Same RP2040 and 12 MHz class (pico-sdk ships an official board header, weact_studio_rp2040_2mb.h: W25Q080 boot2, LED on GP25). Header GPIO is 28 (GP0-22, GP24, GP26-29), more than the Pico's 26, and GP29 gives a 4th ADC channel, which the reaudit said the Pico lacks. ADC_VREF is on the header (pin 35) and SWD is on a 4-pin DEBUG header. GP23 is a user key and GP25 an LED. Board size is 21.52 x 53.0 mm.
+    - **Worse in:** No mounting holes (the vendor dimension drawing shows none). RUN is not on the header, only on the NRST button, so the Q6A RUN line needs a bodge wire to the button pad. No 3V3_EN pin. No on-board VBUS sense (GP24 is a plain header pin). No schematic is published (the repo holds only PNGs and a STEP), so the regulator, the VBUS-to-VSYS diode (critical for back-feed), the crystal part and the flash brand are all unverifiable. No temperature rating, no supply-life commitment and no independent measurements. Not pin-compatible with the Pico on pins 30-37.
+    - **Compatibility:** Firmware: yes, after a GPIO remap. Wiring: the right-side pins differ from the Pico. The back-feed rule cannot be verified without a schematic.
+    - **Seller url:** https://github.com/WeActStudio/WeActStudio.RP2040CoreBoard
+    - **Sources:**
+      - https://github.com/WeActStudio/WeActStudio.RP2040CoreBoard
+      - https://raw.githubusercontent.com/WeActStudio/WeActStudio.RP2040CoreBoard/master/HDK/PINout.PNG
+      - https://raw.githubusercontent.com/raspberrypi/pico-sdk/master/src/boards/include/boards/weact_studio_rp2040_2mb.h
+    - **Risks:** REJECTED for angle B: no measured evidence (ADC noise, regulator ripple and spurs, crystal start-up). No schematic, mechanically worse, and no RUN pin.
+  3.
+    - **Name:** VCC-GND Studio YD-RP2040 (2022 V1.1, 4/16 MB, USB-C)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Unverified (no store or price confirmed; the WebSearch budget was exhausted).
+    - **Spec comparison:** From the V1.1 schematic: RP2040, a 12 MHz crystal with 10 pF loads and a 1k series resistor (as on the Pico), and Winbond W25Qxx-JV flash. Power: USB VBUS and the Vin pin are diode-ORed through a BAT54C, then a fuse F1, then a ME6215C33M5G LDO. The Vin pin (39) is therefore isolated from USB VBUS, which is better than the Pico's D1 arrangement, and the LDO has no SMPS switching spur (a model claim, not measured). RUN is on pin 30 (same as the Pico), SWD is on a 4-pin header, and GP29/ADC3 is on pin 35 (a 4th ADC). Header GPIO is 28.
+    - **Worse in:** ADC_VREF is only a pad with a 0 ohm link, not on the header. The repo's open issue #1 reports VREF not connected to 3V3 on delivered boards, so ADC readings are wrong until reworked: a QC and design defect. No VBUS sense: GP24 is the user key with an on-board 10k pull-up and pin 40 is the ORed Vout, not VBUS. GP23 is shared with the WS2812 pad. The ME6215 current rating was not verified. No mounting holes are visible in the vendor image. No temperature rating, no supply-life commitment and no independent measurements.
+    - **Compatibility:** Almost Pico pinout, but pin 35 is GP29 instead of ADC_VREF, pin 37 is GP23 instead of 3V3_EN, and pin 40 is the ORed Vout instead of VBUS. Firmware needs a GPIO remap. The LM4040 must be wired to the VREF pad.
+    - **Seller url:** https://github.com/initdc/YD-RP2040
+    - **Sources:**
+      - https://github.com/initdc/YD-RP2040
+      - https://raw.githubusercontent.com/initdc/YD-RP2040/master/YD-2040-2022-V1.1-SCH.pdf
+      - https://raw.githubusercontent.com/initdc/YD-RP2040/master/YD-2040-PIN.png
+    - **Risks:** REJECTED for angle B: no independent measurements, a documented ADC_VREF defect, an unofficial documentation mirror, and an unverified seller and price.
+  4.
+    - **Name:** Unbranded 'Pico-compatible' RP2040 boards on AliExpress (purple or black, 2-16 MB)
+    - **Kind:** generic_or_clone
+    - **Price usd:** About $1.09-3.39 as listed on the AliExpress search page. Store and listing integrity are unverified, and bundle prices such as $0.33 are not credible.
+    - **Spec comparison:** Unknown: no schematic and no measurements. Flash brand, crystal, regulator and VBUS diode all vary by listing.
+    - **Worse in:** Every documentation-dependent spec (back-feed diode, VREF, temperature, mounting, QC) is unverifiable. No measured evidence.
+    - **Compatibility:** Unknown.
+    - **Seller url:** https://www.aliexpress.com/w/wholesale-weact-rp2040.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-weact-rp2040.html
+    - **Risks:** REJECTED: no measured evidence, no schematic, and a counterfeit or variant flash and crystal lottery.
+  5.
+    - **Name:** Used genuine Raspberry Pi Pico (eBay or second-hand)
+    - **Kind:** used
+    - **Price usd:** Not verified. A new one is EUR 4.10 incl. VAT, so a used one plus shipping is unlikely to be cheaper.
+    - **Spec comparison:** Same part if genuine.
+    - **Worse in:** Unknown ESD and flash-wear history, no warranty, and the saving does not cover shipping. No measurement evidence for any specific unit.
+    - **Compatibility:** Drop-in.
+    - **Seller url:** 
+    - **Sources:** []
+    - **Risks:** REJECTED: no price advantage over a new one at EUR 4.10, and condition is unverifiable.
+  6.
+    - **Name:** DIY: bare RP2040 (RP2-B2) on a custom HMI carrier PCB, following Raspberry Pi's minimal design (W25Q16JV, ABM8-272-T3, regulator)
+    - **Kind:** diy
+    - **Price usd:** RP2040 chip EUR 0.99 single at Berrybase (not available) or EUR 419 per 500-piece reel (EUR 0.84 each). Board fabrication, assembly and the other parts would come on top (not quoted).
+    - **Spec comparison:** Could match the Pico if built to the reference design. It could also fix the ADC (LM4040 and a 4th ADC on GP29) and use an LDO instead of the RT6150.
+    - **Worse in:** At qty 2, PCB and PCBA cost almost certainly exceeds $9-10 (a model figure, not quoted). There are no measurements of any such build. RF layout, the crystal and back-feed protection would all need fresh validation.
+    - **Compatibility:** Only if a custom HMI PCB is made anyway in P7.
+    - **Seller url:** https://www.berrybase.de/raspberry-pi-rp2040-mikrocontroller-rp2-b2-rolle-mit-500-stueck
+    - **Sources:**
+      - https://www.berrybase.de/search?search=rp2040
+    - **Risks:** REJECTED for now: not cheaper at qty 2 and no measured evidence. Revisit only if P7 commits to a custom HMI board.
+- **Notes:** VERDICT: keep the genuine Raspberry Pi Pico (SC0915). No clone, DIY build or used unit passed angle B. None has independent measurements showing it equal on ADC, regulator noise and spurs, or crystal start-up. Each one checked is also documented as worse in at least one spec this stack uses:
+  - WeAct: no mounting holes, no RUN pin on the header, no schematic.
+  - YD-RP2040: ADC_VREF only on a pad and reported unconnected on delivered boards (repo issue #1), no VBUS sense.
+  - Unbranded AliExpress boards: no documentation at all.
+  
+  Branded EU alternatives are not cheaper either: Waveshare RP2040-Zero is EUR 4.90 and was already rejected for 20 GPIO, RP2040-Plus is EUR 9.90 and Pico 2 is EUR 5.50, all at Berrybase.
+  
+  The only saving is the source. Buy the same SC0915 from Berrybase at EUR 4.10 incl. 19% VAT (EUR 8.20 for 2) or DigiKey at $4.59 ex-VAT ($9.18 for 2), instead of The Pi Hut at GBP 3.80 each ($10.12 for 2; Brexit import handling for an EU buyer not checked here).
+  
+  Two clone features would be real gains if a clone is ever validated: GP29 exposed as a 4th ADC channel, which the reaudit said the Pico lacks for an offset reference, and an LDO instead of the RT6150 SMPS. Neither has been measured.
+  
+  Measured finding that matters for the stack: Mark Omo's independent characterisation of the Pico ADC (https://pico-adc.markomo.me/) measured the RT6150 in forced-PWM ('Low-Noise', GP23 high) mode as slightly noisier than PFM/PSM mode:
+  - supply noise 1.3 vs 1.0 mV RMS
+  - input-referred noise 1.36 vs 0.97 LSB RMS
+  - ENOB 8.84 vs 8.92 (sine fit)
+  - DNL 8.9 LSB and INL 7.85 LSB in both modes
+  
+  This contradicts the stack's 'drive GPIO23 high' ADC fix, which comes from the datasheet ripple statement. Recommendation: A/B test GP23 high vs low at bring-up, measuring both the ADC noise on the battery divider and the RT6150 spur in the harmonic scan. Keep PWM only if the fixed-frequency spur is what the RF plan prefers, and rely on the LM4040 plus INA228 cross-calibration for accuracy.
+  
+  Pico datasheet values re-verified (RP-008307-DS-2): -20 to +85 C with 70 C recommended maximum ambient; VSYS 1.8-5.5 V; D1 VBUS-to-VSYS Schottky; GP24 VBUS sense; GP23 RT6150 PS pin; VSYS/3 on ADC3; 3V3 output under 300 mA; R7 is a removable 0603; W25Q16JV flash; Abracon ABM8-272-T3 crystal; 4 x 2.1 mm mounting holes; through-hole USB.
+  
+  Limits of this pass: the WebSearch budget for this turn was already exhausted when I started (shared limit), so no new search for third-party clone measurements was possible. All findings come from direct fetches of primary pages, schematics and distributor listings. AliExpress prices and store identity are unverified. The EUR-to-USD rate is assumed at about 1.16 and not verified.
+  
+  Downloaded evidence is in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pico_dl_ds/pico-ds.pdf, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pico_dl_yd/sch.pdf and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pico_dl_weact/pinout.png.
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
@@ -17176,6 +17292,155 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - HF+ check of the 250/500 kHz spurs.
   
   Price to record: 25-49 for 2 (unverified), plausible low end about 20-25 for 2 from US marketplace snippets. For the EU, add shipping; AliExpress includes VAT under IOSS up to EUR 150.
+
+## searchA:pololu_d36v50f12_sys12 (run `wf_a268b76e-da0`)
+
+- **Part:** Pololu D36V50F12 (#4095), SYS12 12 V buck (feeds J21/Q6A, DISP12, AUX12). Core tier, Power group, qty 2 (1 spare), bonded to the plate. In the with-Lime default it must hold 4.2 A in the sealed case. It stays only if it passes C4 gate (1), the narrowband NAVTEX/LF A/B, and gate (2), 60 min at 4.2 A at 14.0 and 16.4 V in.
+- **Current price usd:** 79.90 for 2 (39.95 each from Pololu US; 36.75 each only at 5+). Stock 'Rationed (Active and Preferred)'. Price excludes US-to-EU shipping, import VAT and carrier handling, which I did not quantify.
+- **Critical specs:**
+  - Input range covers the 4S pack: about 12.9 V (Pico emergency) to 16.6 V (IP2368 CV 16.25-16.57 V; SW node below 17 V). Absolute-max input at or above 30 V, so it survives the SMBJ17A clamp (VC 27.6 V) on node N.
+  - Output 12 V with accuracy of +/-4% or better (11.52-12.48 V). Must stay below the TPS259470A OVLO (about 13.5 V) and the Q6A 16 V absolute limit; the display and Q6A stay stable down to 11.0 V and 11.5 V.
+  - Continuous current at least 4.2 A at 14.0 and 16.4 V in, for 60 min in the closed enclosure, bonded to the plate (Lime-default gate; about 4 A peak on SYS12). Pololu's 4.5 A typical is rated at 36 V in, room temperature, still air.
+  - Dropout and low-battery behaviour: regulates down to about 13.3 V of pack (Pololu minimum input). The runtime model accepts dropout below that. A lower dropout is better.
+  - Efficiency at least about 92% at 14-16.4 V in and 1-4 A (the value used in the runtime model).
+  - EMI and spur behaviour: about 500 kHz at heavy load, power-save mode above 20 kHz at light load. Must leave no line 3 dB or more above the floor within +/-5 kHz of 40, 60, 77.5, 162, 490, 518 and 4209.5 kHz, or at the HF+ 1/7/14 MHz checks. Fixed frequency, forced PWM or an external sync input counts as better.
+  - Precise EN for the backup UV cutoff: sleep below 1.2 V, wake above 1.35 V, 100 k pull-up to VIN. The 10.0k/1.00k divider gives sleep about 12.1 V and wake about 13.6 V. A candidate with other thresholds needs the divider redesigned and re-calibrated.
+  - PG output (open drain, +20%/-10% window).
+  - Protections: reverse-voltage to 40 V; over-current, short-circuit, over-temperature, output OV/UV; soft-start.
+  - Quiescent current 2-4 mA when on; about 10-20 uA/V on VIN when EN is low.
+  - Mechanical fit: 25.4 x 25.4 x 9.5 mm, three 0.086 in holes, flat underside for plate bonding.
+  - Build quality and provenance: finished, factory-tested module from an established maker, bought through an official channel (no clones).
+- **Candidates:**
+  1.
+    - **Name:** Pololu D36V50F12 (#4095) from Botland (official Pololu distributor, Poland; botland.store / botland.com.pl)
+    - **Kind:** current_part
+    - **Price usd:** 29.54 each net (EUR 26.28 ex VAT). 35.15 each at 19% VAT (EUR 31.27, the botland.store schema price). PL site: PLN 139.00 gross at 23% VAT = PLN 113.01 net = about USD 29.08. 2 units: about USD 59.08 net (USD 70.30 at 19% VAT), plus GLS EU shipping from EUR 8.07. FX: 1 EUR = 1.1241 USD, 1 EUR = 4.368 PLN (open.er-api, 18 Oct 2026). Under OSS the final VAT depends on the buyer's country.
+    - **Spec comparison:** Same part, same board (Pololu #4095, Pololu made in USA). Every spec is identical: 13.3-50 V in, 12 V +/-4%, 4.5 A typical at 36 V in, about 500 kHz with power-save, EN 1.2/1.35 V with 100 k pull-up, PG, 40 V reverse protection, 25.4 x 25.4 x 9.5 mm.
+    - **Worse in:** Nothing in the part itself. Purchase risk only: the price widget did not load in my fetch (price comes from the schema.org data, priceValidUntil 2026-11-02). Stock is ambiguous: the schema says InStock, but the page also carries 'currently unavailable' and 'not kept in stock, sourced from the manufacturer' templates. Confirm the quantity in the cart.
+    - **Compatibility:** Drop-in: same part, same footprint, same EN divider, same C4 gates.
+    - **Risks:** Ambiguous stock and lead time, since Pololu itself is 'Rationed'. Price not seen in a rendered widget. Botland is on Pololu's official distributor list and states that its Pololu products are original.
+    - **Seller url:** https://botland.store/converters-step-down/16387-step-down-voltage-regulator-d36v50f12-12v-45a-pololu-4095-5904422344436.html
+    - **Sources:**
+      - https://botland.store/converters-step-down/16387-step-down-voltage-regulator-d36v50f12-12v-45a-pololu-4095-5904422344436.html
+      - https://botland.com.pl/przetwornice-step-down/16387-przetwornica-step-down-d36v50f12-12v-45a-pololu-4095-5904422344436.html
+      - https://www.pololu.com/distributors
+      - https://www.pololu.com/product/4095
+  2.
+    - **Name:** Pololu D36V50F12 (#4095) from EXP GmbH (exp-tech.de, official Pololu distributor, Germany), SKU 80-4095
+    - **Kind:** current_part
+    - **Price usd:** 32.53 each net (EUR 28.94 'Exkl. MwSt. zzgl. Versand', labelled Sonderpreis). 38.71 each incl. 19% DE VAT (EUR 34.44). 2 units: USD 65.06 net / USD 77.42 incl. 19% VAT, plus UPS shipping (amount not checked).
+    - **Spec comparison:** Same part; every spec identical to the current pick.
+    - **Worse in:** Nothing in the part. Costs about USD 3 more per unit than Botland.
+    - **Compatibility:** Drop-in (same part).
+    - **Risks:** 'Sonderpreis' is a sale price and may end. Shipping cost to the buyer's country not checked; UPS takes about 1 week within Europe. Stock is confirmed: 'Verfügbar (12 Stück), versandbereit' (live Shopify data, 18 Oct 2026), so this is the safer source if Botland's stock fails.
+    - **Seller url:** https://exp-tech.de/products/12v-45a-step-down-voltage-regulator-d36v50f12
+    - **Sources:**
+      - https://exp-tech.de/products/12v-45a-step-down-voltage-regulator-d36v50f12
+      - https://exp-tech.de/products/12v-45a-step-down-voltage-regulator-d36v50f12.js
+      - https://www.pololu.com/distributors
+  3.
+    - **Name:** TI TPSM63606RDLR power module (integrated inductor) on a custom 4-layer carrier PCB
+    - **Kind:** other_brand
+    - **Price usd:** 15.82 per module at TI.com (qty 1-99; 9.53 at 1ku); 558 in TI stock (TI inventory API, 18 Oct 2026). The PCB, input/output caps, RT/FB resistors and an added reverse-polarity P-FET or ideal diode are NOT priced. My estimate of about USD 22-31 per finished board is unverified.
+    - **Spec comparison:** Data sheet SLVSGB4B:
+  - Input 3-36 V operating, 42 V absolute max (better than needed; below Pololu's 50 V, still above the 27.6 V clamp).
+  - Output 1-16 V set by resistors, FB +/-1% (better than +/-4%).
+  - 6 A rated, current limit 8.3 A DC (better).
+  - 95.6% at 24 V to 12 V, 4 A, 2 MHz (better than about 92%; no 14-16 V point published).
+  - Constant switching frequency over the full load range (FPWM). 200 kHz-2.2 MHz via RT or sync on EN/SYNC (better for the spur mask than Pololu's power-save mode).
+  - CISPR 11/32 Class B on the TI EVM layout.
+  - IQ 7 uA, shutdown 1 uA (better).
+  - Precision EN: 1.263 V rising, 0.91 V falling (needs a new divider).
+  - PG window 94-107% (tighter).
+  - 5.0 x 5.5 x 4 mm B3QFN.
+    - **Worse in:** - No input reverse-voltage protection (Pololu: 40 V); an external part must be added.
+  - Needs a custom 4-layer PCB and reflow of a B3QFN, so build quality and EMI depend on the user's layout and assembly rather than a tested product.
+  - Dropout: tOFF(min) is 85 ns max, so at 2 MHz the maximum duty is about 83%. With 12 V out it enters dropout near 14.5-14.7 V of pack (my calculation from the data sheet). In dropout it lowers its frequency, so spurs move at low battery. To match Pololu's 13.3 V it must run at or below about 1 MHz.
+  - The 'S' variant adds +/-2% spread spectrum; avoid it here.
+  - Thermal: RthJA 33.1 C/W (2 oz, 75 x 75 mm 4-layer board); the sealed 4.2 A case is unproven.
+    - **Compatibility:** Electrically fits SYS12 (12 V out from 13-16.6 V in, under 16 V output abs max). Needs its own carrier board, a new EN divider (rising threshold 1.263 V, hysteresis 0.353 V) and an added reverse-polarity stage. Clock sync from the harmonic-scan clock is possible. Its footprint is not the same as the Pololu board.
+    - **Risks:** Unverified total cost. DIY layout risk. Only a fixed-frequency alternative, not a drop-in. Must pass the same C4 gates.
+    - **Seller url:** https://www.ti.com/product/TPSM63606/part-details/TPSM63606RDLR
+    - **Sources:**
+      - https://www.ti.com/product/TPSM63606
+      - https://www.ti.com/lit/ds/symlink/tpsm63606.pdf
+      - https://www.ti.com/storeservices/cart/opninventory?opn=TPSM63606RDLR
+  4.
+    - **Name:** TI LMZM33606RLXR power module on a custom carrier PCB
+    - **Kind:** other_brand
+    - **Price usd:** 14.46 per module at TI.com (qty 1; 8.71 at 1ku). Carrier PCB, passives and reverse-polarity stage not priced, so total cost is unverified.
+    - **Spec comparison:** TI parametric data (data sheet not read):
+  - 3.5-36 V in; 1-20 V out; 6 A (better current).
+  - 350 kHz-2.2 MHz with sync.
+  - 'EMI tested', 'Light Load Efficiency', PG, enable.
+  Forced-PWM behaviour, EN thresholds, efficiency at 12 V out and package thermal data NOT verified.
+    - **Worse in:** - No reverse-voltage protection.
+  - Needs a custom PCB and reflow.
+  - Light-load mode and EN precision unverified ('Light Load Efficiency' suggests PFM unless forced PWM or sync is applied).
+  - Build quality depends on the DIY layout.
+  Until its data sheet is checked it cannot be called not-worse.
+    - **Compatibility:** Electrically suitable on paper for 12 V out at 13-16.6 V in. Not a drop-in; footprint and EN divider differ.
+    - **Risks:** Specs mostly unverified beyond the TI parametric table. DIY assembly. EMI depends on layout.
+    - **Seller url:** https://www.ti.com/product/LMZM33606
+    - **Sources:**
+      - https://www.ti.com/product/LMZM33606
+  5.
+    - **Name:** TI LM61460AANRJRR discrete synchronous buck on a custom PCB (the stack's existing P5 fallback)
+    - **Kind:** diy
+    - **Price usd:** 3.71 per IC at TI.com (qty 1; 2.01 at 1ku); 60,000 in TI stock (TI inventory API, 18 Oct 2026). The inductor, caps, PCB, clock source and reverse-polarity stage are not priced. My estimate of about USD 10-15 per board is unverified.
+    - **Spec comparison:** - 3-36 V in (42 V transient); 6 A.
+  - An external clock on EN/SYNC forces FPWM at 200 kHz-2.2 MHz (better spur control).
+  - Dropout 0.4 V at 4 A (re-audit, from data sheet SNVSBD5D), better than Pololu's 13.3 V minimum input.
+  - Maximum duty cycle 98% (TI parametric data).
+    - **Worse in:** - The only orderable part is auto mode (PFM at light load) without spread spectrum, so a clean sync clock must always be present to keep FPWM.
+  - No reverse-voltage protection.
+  - Efficiency, ripple and EMI depend on the user's inductor choice and layout.
+  - Not a finished, tested module.
+  Not proven not-worse until it passes the same A/B and heat-soak gates.
+    - **Compatibility:** Electrically suitable for SYS12. Needs its own PCB and a clock from the harmonic scan (1.8-2.1 MHz preferred in the stack). EN divider and footprint differ.
+    - **Risks:** DIY build quality and EMI risk. Total cost unverified. Already planned only as the fallback if the D36V50F12 fails C4.
+    - **Seller url:** https://www.ti.com/product/LM61460
+    - **Sources:**
+      - https://www.ti.com/product/LM61460
+      - https://www.ti.com/storeservices/cart/opninventory?opn=LM61460AANRJRR
+      - https://www.ti.com/lit/ds/symlink/lm61460.pdf
+  6.
+    - **Name:** Pololu D30V30F12 (#4896), a cheaper SKU from the same maker
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 30.95 at Pololu (qty 1); Rationed.
+    - **Spec comparison:** - 12-45 V in; 12 V +/-4%.
+  - 2.8 A typical at 30 V in (1.5-3.5 A).
+  - About 700 kHz with power-save mode and spread spectrum.
+  - EN sleep 0.85 V typ (0.65-1.05 V), wake 1 V; 100 k pull-up.
+  - PG +7.5%/-9%; 40 V reverse protection.
+  - 17.8 x 20.3 x 9 mm.
+    - **Worse in:** - Current 2.8 A typical, below the 4.2 A gate: fails.
+  - EN threshold much less precise (unit spread 0.65-1.05 V): worse backup UV cutoff.
+  - Spread spectrum smears lines, which works against a fixed narrowband spur mask.
+  REJECTED.
+    - **Compatibility:** Fails the SYS12 current requirement for the Lime-default build.
+    - **Risks:** Not usable.
+    - **Seller url:** https://www.pololu.com/product/4896
+    - **Sources:**
+      - https://www.pololu.com/product/4896
+- **Notes:** Verdict: keep the Pololu D36V50F12 and buy it in the EU from official Pololu distributors. That is cheaper and nothing gets worse:
+  - Botland: about USD 29.54 each ex VAT, so 2 units cost about USD 59.08 net instead of USD 79.90, a saving of about USD 21 (26%) before shipping. Confirm stock in the cart.
+  - EXP-tech: USD 32.53 each ex VAT, 12 confirmed in stock.
+  - Both avoid US-to-EU shipping, import VAT and courier handling fees on a Pololu US order (amounts not quantified). Since the part is identical, the C4 gates, the EN divider (10.0k/1.00k) and the plate mounting stay as they are.
+  
+  Not cheaper (checked):
+  - TME POLOLU-4095: USD 37.5-42.5 in its structured data; stock figures conflict (0 vs 19).
+  - The Pi Hut UK: GBP 38.40 incl. 20% VAT, about USD 42.62 net, plus UK-to-EU import.
+  - Pololu D42V55F12 (#5577): USD 47.95, more expensive. It has 12-60 V in, +/-3%, 4.5 A typical at 42 V in, about 400 kHz, Iq under 0.2 mA, and a less precise EN (0.5 V off / 1 V on, 1 M pull-up).
+  - Pololu D42V110F12 (USD 69.95) and D24V150F12 (USD 79.95): more expensive.
+  
+  No finished module from another established brand was found that is cheaper and not worse:
+  - TI's TPSM63606, LMZM33606 and LM61460 are better on paper for spurs (forced PWM and sync), current and efficiency. All three need a custom PCB and reflow, lack the D36V50F12's 40 V reverse protection and are not tested finished modules, and their total cost is unverified. The TPSM63606 also enters dropout near 14.5 V at 2 MHz. So they cannot be called not-worse; they remain the forced-PWM fallback if the D36V50F12 fails C4 gate (1).
+  - LMR33640 (4 A max) is rejected on current.
+  
+  Stack note: the D36V50F12's ~500 kHz fundamental and its load-dependent power-save frequency sit close to NAVTEX 490/518 kHz. That is a real risk to watch in gate (1); it is not a reason to switch before the measurement.
+  
+  Not checked (WebSearch budget for this run was used up after the first query, so the rest was done by WebFetch and curl on primary pages): Kamami (403), Electrokit, Gotronic, PTRobotics and Robot-Italy (search URLs failed), RobotShop EU (Cloudflare), Mean Well, RECOM and Würth modules. Enclosed and DIN-rail Mean Well units would fail on size anyway (not priced). FX 18 Oct 2026: 1 EUR = 1.1241 USD, 1 EUR = 4.368 PLN, 1 EUR = 0.8439 GBP.
 
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
