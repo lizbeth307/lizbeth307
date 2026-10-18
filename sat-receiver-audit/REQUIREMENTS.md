@@ -26,3 +26,10 @@ Process the user asked for (pipeline)
 6. Re-verify the stack with the analogs. 7. Complete schematic (block, power, RF, wiring/pinout), placement and mechanical drawing (SVG), software install plan, assembly and test instructions as files in sat-receiver-audit/build/.
 - Per-minute summaries are not shown to the user; they are kept in sat-receiver-audit/minute-log.md.
 - The user is asleep and delegated all remaining decisions: decide objectively, weighing these wishes; report at phase ends.
+
+Decisions I made under the delegation after P1 (18 Oct 2026; revisit if the user objects)
+- "No loops" also excludes H-field (small shielded loop) near-field probes and the AS3935 ferrite-coil lightning sensor by default; only E-field near-field probes are used. Trade-off accepted: the Airspy HF+ with a wire (feed point 5-10 m from the handheld) will often be limited by local noise.
+- Field/QUIET mode: rfkill block wlan AND bluetooth; Pinecil IronOS Bluetooth = Off; FNB58 Std (no radio).
+- Universal Radio Hacker (URH) is rejected (archived; record-and-send and attack features). The Artemis/sigidwiki database is used for identification only: a match to a military or government entry is logged as out of scope and not recorded, analysed, annotated or decoded further.
+- NPU class policy gate: no radar, drone/FPV/RC link, EW/jammer, military, emitter-fingerprint or private-content classes; voice is spectrogram-only; decoder payloads are never stored.
+- The radio-lab core kit follows the value verifier: Bodnar Mini GPSDO moves to extended (GNSS-SDR + PPS give ppm for free), no duplicate OSL kits, no AD8318 in core.
