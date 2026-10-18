@@ -9236,6 +9236,68 @@
   - Do local rules (country unknown) permit low-power antenna S11 test emissions? The default is no.
 - **Confidence:** medium
 
+## fix:B:b4 (run `wf_205287e8-e22`)
+
+- **Applied:**
+  - 71
+  - 74
+  - 77
+- **Rejected:**
+  1.
+    - **Idx:** 60
+    - **Why:** Already fixed. 9.1 step 6 (б) already lists 3.3 MOhm 0.1 % Vishay MCA1206 (C4168316, G3 #12), and (в) already says the lower leg 332 k + 4.02 k has no seller in the files and that Yageo 336 k is out of stock at DigiKey and LCSC.
+  2.
+    - **Idx:** 61
+    - **Why:** Already fixed. Step 3 already orders Wisecoco SKU 4681 ($132.00, own shop, PayPal) once clear written answers arrive, with the EU landed formula (about $157-160 incl. VAT before shipping, EUR 3 duty and EUR 2 handling fee per tariff line, carrier fee), and buys the Diamox film the same day.
+  3.
+    - **Idx:** 62
+    - **Why:** Already fixed, following decision D12, which overrides the 'line not yet assigned' wording in the fix. 5.2 already says MCP #1/#3 are 16/16 used; 5.1, 2.8, 11.5 and 11.6 put LIME3V3 EN and LC76G RESET on a new MCP23017 #4 (address 'призначити на схемі'); section 8 has the open item; BOM count and totals already include #4.
+  4.
+    - **Idx:** 63
+    - **Why:** Already fixed. The 'Вхідні файли' list in 10 already names operator_notes.md, analogs_G1-G6 (P5) and reaudit_A-D (P4), each with its role.
+  5.
+    - **Idx:** 64
+    - **Why:** Already fixed. Same list; final_integration now reads 'переважають серед джерел v1; порядок v2 — у шапці'.
+  6.
+    - **Idx:** 65
+    - **Why:** Already fixed. 11.1 #34 already reads 'Тест пульсацій і PSRR шини LT3045 (рядок «Пара LT3045 на 4.5 V від LAB5» у розділі 8)'.
+  7.
+    - **Idx:** 66
+    - **Why:** Already fixed. The section 8 mat row already reads 'у кейсі стенда B&W 4000 RPD (всередині 38.5×26.5×16.5 см; запасний Peli 1450 — 37.4×26.0×15.4 см) без заломів'.
+  8.
+    - **Idx:** 67
+    - **Why:** Already fixed. The 11.7 Anker row already labels the figure as EU price incl. 19 % VAT against the US price without tax (conservative, different bases), and gives the same-basis EUR 27.00 (about $30.35). The firm total stays $55.62, which is the G5 #12 figure.
+  9.
+    - **Idx:** 68
+    - **Why:** Already fixed by an earlier batch. In 9.2, QO-100 is now step 11 and Lime step 12. The references in 11.6 rows 7, 32, 39, 43 and 46 already point to 9.2 крок 12 (Lime) and крок 11 (QO-100).
+  10.
+    - **Idx:** 69
+    - **Why:** Already fixed (same row as 66): the row already names the B&W 4000 RPD bench case with the Peli 1450 as fallback.
+  11.
+    - **Idx:** 70
+    - **Why:** Already fixed. 11.6 row 14 already says the sequence is re-audit A's and adds that 8.1 V4L-2 is re-audit B's 137.9 → 1700 → 7 → 437 → 1707 MHz.
+  12.
+    - **Idx:** 72
+    - **Why:** Already fixed. There is no rule between the section 8 intro and 8.1 any more, and '---' plus a blank line now stands before '## 9.' and '## 11.'.
+  13.
+    - **Idx:** 73
+    - **Why:** Already fixed. The 11 intro has a blank line, and the precedence line is a bold lead-in '**Пріоритет при розбіжностях:**'.
+  14.
+    - **Idx:** 75
+    - **Why:** Already fixed. No 'rN corr/new_risk' shorthand is left in 11.3 or anywhere else in the file (grep finds none).
+  15.
+    - **Idx:** 76
+    - **Why:** Already fixed. 11.1 row 45 already reads 'повторний аудит C назвав Rollei Compact Traveler No. 1 Aluminium (ціну не названо, дані 2016 р.)'.
+  16.
+    - **Idx:** 78
+    - **Why:** Already handled by an earlier batch. 9.2 is in time order (QO-100 is 11, Lime is 12). In 9.1, the earlier fix kept the step numbers as stable cross-references (2.x, 8, 9.2 and 11 cite them) and added an intro note saying the 'коли' column sets the order: step 11 today together with 1-4; steps 5, 6 and 9 in week 1, before step 8. Renumbering 9.1 would break dozens of 'крок N' references.
+- **Totals changed:** none (no price changed; 2.x, 2.12, 3.6, 9 and 11.7 totals untouched)
+- **Summary uk:** Застосовано 3 з 19 проблем (71, 74, 77); решту 16 уже виправили попередні пакети, тому я їх відхилив із доказами.
+  71: у самоперевірці видимості GEO (розділ 8) замість Лісабона, Парижа, Берліна й Атен тепер чотири безіменні тестові точки lat/lon з обох боків межі близько 13E (повторний аудит C). Точних довгот у файлах немає, тож я їх не вигадував.
+  74: скорочення «UHF» як назву збору ЄС прибрано всюди (близько 130 місць): тепер «збір за обробку», а «Union handling fee» у прозі — «збір Союзу за обробку». «UHF» лишилося тільки як назва діапазону; англійську назву документа DG TAXUD у джерелах не чіпав.
+  77: англійські рядки в одинарних лапках у 8.1 і 11.2 переведено в «…» (логи, UI), команди і параметри — у бектики (`dd if=/dev/mtd0 bs=4096`, `install /bin/false`, `satdump live`, `-n -b -s 115200` тощо).
+  Ціни й підсумки (2.x, 2.12, 3.6, 9, 11.7) не змінювалися.
+
 ## extract:analogs_G1 (run `wf_2f4f3ad2-91a`)
 
 - **Source:** analogs_G1
