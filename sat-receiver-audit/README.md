@@ -26,6 +26,7 @@
 | [Mech thermal storage](components/mech_thermal_storage.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Mechanical thermal](components/mechanical_thermal.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_e6b8e5e2-124` |
 | [Narrowband sdr](components/narrowband_sdr.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_eb446444-464` |
+| [Nooelec flamingo fm v2 100813](components/nooelec_flamingo_fm_v2_100813.md) | · research · forums · fixes ✅ verify | `—` |
 | [Nooelec sawbird noaa cased 100800](components/nooelec_sawbird_noaa_cased_100800.md) | · research · forums · fixes ✅ verify | `—` |
 | [Npu training](components/npu_training.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Power](components/power.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_f924b2ab-5ad` |
