@@ -42148,6 +42148,118 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - Botland: EUR 96.63 = $108.62; saving against Pololu direct is $36.26-38.70 before shipping, duty and UHF.
   - Nooelec conditional totals: $224.70 / $249.70 / $274.65.
 
+## check:operator_user (run `wf_bbd28a5e-621`)
+
+- **Lens:** COVERAGE of operator notes 1-35 (with 12b and 12c) and the user decisions (region Europe and what follows from it; Lime kept and its gates), plus the shopping order in section 9: long lead times and stock risks first, EU sellers where the decisions say so, and the EU landed-cost rule applied to non-EU sellers.
+- **Problems:**
+  1.
+    - **Where:** 9.1, table order: "| 11 | Зараз, не пізніше тижня 1-2" (Bullseye) and "| 9 | Тиждень 1 | Boni-Whip з магазину Bonito"
+    - **Problem:** The table is titled 'спершу — довгі терміни і ризик наявності', but its order breaks that. The worst stock risk, the QO-100 Bullseye, is row 11: Passion Radio has 'last items', Technofix is out of stock, and the row's own 'коли' is 'Зараз'. It sits after rows 8 (Тиждень 2-3) and 10 (До 1.12.2026). The Week-1 Boni-Whip row 9 also comes after the Week 2-3 row 8.
+    - **Severity:** contradiction
+    - **Fix:** Renumber 9.1 by urgency. Put the QO-100 row in the 'Сьогодні' group right after step 4 (new step 5, коли = 'Сьогодні'). Put the Boni-Whip row before the 'Тиждень 2-3' lab row. Then update every 'крок N' cross-reference: 9.1 steps 6/7 ("у набір QO-100 кроку 11", "AXING CFA 11-00 для QO-100, крок 11"), 9.2, 2.x notes and 11.6 rows 39/43.
+    - **Evidence:** final/analogs_G6_extended_optional.json decisions[9] (chosen and stack_changes: buy now, Technofix out of stock, Passion Radio last items); STACK 2.11.2 note "Купувати зараз (Technofix уже немає в наявності; Passion Radio — «Last items in stock»"
+  2.
+    - **Where:** 9.1 step 8: "| 8 | Тиждень 2-3 | Лабораторія core: LiteVNA 64 — Passion Radio (5 шт.)"; 9.2 step 5: "РЧ-деталі (тиждень 1-2): ... кваліфікувати на VNA кондуктивно інжектори, перемикачі й атенюатори"
+    - **Problem:** Only 5 LiteVNA are left at the verified seller, yet the order is placed in week 2-3. Bring-up step 5 needs the VNA in week 1-2, so the VNA would arrive after the step that needs it. That is a stock risk placed late and an ordering contradiction.
+    - **Severity:** contradiction
+    - **Fix:** Move the LiteVNA purchase into the Week-1 instruments step (9.1 step 5, 'Прилади, що вирішують'): "LiteVNA 64 — Passion Radio (5 шт.) або Eleshop лише після перевірок того самого дня, окремим замовленням, тиждень 1". Leave the rest of step 8 as it is. Alternatively, change 9.2 step 5 to start VNA qualification only after the LiteVNA arrives (тиждень 2-3).
+    - **Evidence:** final/analogs_G5_lab_bench.json decisions[0].chosen: "If Eleshop cannot be confirmed the same day, buy at Passion Radio (5 units left), because the possible saving is too small to risk losing the verified unit."
+  3.
+    - **Where:** 9.1 step 7 (Тиждень 1-2): "запасний штир SRH-701 — WiMo (ЄС) ... його треба мати до 22.10.2026" and "SmallRig PAC2456 (Syntex, під замовлення до 23.10.2026)"
+    - **Problem:** Two items have deadlines within 4-5 days of today (18.10.2026) but sit in the 'Тиждень 1-2' row. The SRH-701 must be on hand by 22.10 for the series-34 A/B in 9.2 step 2. The SmallRig strap can only be ordered until 23.10. Read by its 'коли' column, the row would miss both.
+    - **Severity:** contradiction
+    - **Fix:** Move both lines to the 'Сьогодні' group, either as a new row or appended to step 1(в)/step 2: "Сьогодні (до 20.10.2026): SRH-701 — WiMo EUR 16.90 з ПДВ, доставка 1-2 дні (потрібен до 22.10.2026 для A/B серії 34); SmallRig PAC2456 — Syntex, замовити до 23.10.2026". Delete them from step 7. Add the Uputronics 440 to the same row if the series-34 A/B is meant to use it.
+    - **Evidence:** STACK 9.2 step 2 (ISS SSTV series 34, 22-25.10.2026; A/B dipole vs SRH-701 on Uputronics); final/analogs_G4_mechanical_field.json decisions[0] (SmallRig/Syntex lead time)
+  4.
+    - **Where:** 9.1 step 7: "перевірити, що ПДВ збирається при продажу через IOSS, і вартість доставки; EU landed — близько $70.8-72.0 при ПДВ 19-21 % плюс доставка"; also the header 'Позначки' ("Uputronics 440 — EUR 52.95 без ПДВ (EU-вітрина) ... близько $70.8-72.0 плюс доставка") and step 13 ("Uputronics 1090 з EU-вітрини, EUR 44.95")
+    - **Problem:** The Uputronics EU storefront charges VAT through IOSS, and IOSS is only used for goods shipped from outside the EU. Under the landed-cost rule an IOSS consignment up to EUR 150 also pays EUR 3 duty and EUR 2 UHF per tariff line. The stated EU landed figure leaves both out. The 'Митниця і ПДВ' paragraph lists the storefront among EU sellers who need no import charges.
+    - **Severity:** rule_violation
+    - **Fix:** In step 7, the header and step 13, add: "якщо ПДВ береться через IOSS (відправка з UK) — плюс EUR 3 мита + EUR 2 UHF за тарифний рядок (правило landed cost): EU landed 440 ≈ $76.4-77.6 плюс доставка (розрахунок: 70.8-72.0 + $5.62)". In 'Митниця і ПДВ', move 'EU-вітрина Uputronics' out of the plain EU list into a conditional clause: 'ЄС, лише якщо відвантаження зі складу ЄС; при IOSS — правило landed cost'.
+    - **Evidence:** final/analogs_G1_receivers_rf.json decisions[3].conditions_or_tests item 6 ("confirm that VAT is collected at sale (IOSS...)"); final/operator_notes.md item 35 (EUR 3 per item for IOSS/postal consignments up to EUR 150; EUR 2 UHF per item)
+  5.
+    - **Where:** 9.1 step 2: "2× CH334F (або в DigiKey DE, крок 6)" and "INA228 (лишається тут, якщо не додати 1528-5832-ND, EUR 13.13 без ПДВ, до замовлення DigiKey DE, що вже понад EUR 75)"
+    - **Problem:** For an EU buyer, both analog decisions name DigiKey DE as the seller whenever the planned DigiKey order exists. That order (step 6(в)) is always placed and, as the stack itself says, is over EUR 75. The stack still keeps Adafruit (US) as the default. With the landed-cost rule the Adafruit lines cost more: CH334F x2 is about $17.40 landed (9.90 x 1.19 + EUR 5) against about $11.65 at DigiKey DE incl. VAT; INA228 is about $23.41 against $17.56 (my calculation).
+    - **Severity:** contradiction
+    - **Fix:** Make DigiKey DE the default for both lines. In step 6(в), change "опційно 2× CH334F 1528-5997-ND замість Adafruit" and "опційно INA228 1528-5832-ND" to required lines. In step 2, drop CH334F and INA228 from the Adafruit order, keeping them only as a fallback. Recompute the Adafruit subtotal to $38.60 ($26.70 without MCP23017) and the duty/UHF lines to 6 (EUR 30 = $33.72), or 5 without MCP23017 (EUR 25 = $28.10).
+    - **Evidence:** final/analogs_G2_display_hmi_storage.json decisions[8].chosen ("For an EU buyer the identical part from DigiKey DE (1528-5997-ND, EUR 4.35 net / EUR 5.18 incl. 19% DE VAT) ... makes sense to buy it there if it ships with the planned DigiKey order"); final/analogs_G3_power_gnss_imu.json decisions[8].chosen ("for an EU landed price add it to a DigiKey EU order that is already above EUR 75"); operator_notes.md items 34-35
+  6.
+    - **Where:** 9.1 step 3: "| 3 | Сьогодні | Письмові питання до Wisecoco ..." (the only Wisecoco row)
+    - **Problem:** Section 9 has no step that actually buys the Wisecoco panel (SKU 4681, $132, own shop, CN), and so no EU landed cost for it either. Step 3 only sends questions or falls back to 4D, while the reason column says 'Корпус чекає панель' and step 7 ties the Diamox AR film to the panel purchase. The default display, a long-lead non-EU item, has no time slot and no landed line in the shopping order.
+    - **Severity:** missing
+    - **Fix:** Extend step 3: "Після чітких письмових відповідей (D5/G2) — одразу замовити Wisecoco SKU 4681 ($132.00, власний магазин, PayPal; продавець поза ЄС: EU landed = ціна + доставка + імпортний ПДВ (≈$157-160 з ПДВ до доставки, модель, 2.6) + EUR 3 мита + EUR 2 UHF за тарифний рядок + збір перевізника); AR-плівку Diamox — у той самий день (крок 7)".
+    - **Evidence:** STACK 2.6 'Підсумок групи' note ("для Wisecoco ... мито EUR 3 і UHF EUR 2 за тарифний рядок (Wisecoco близько $157-160 з ПДВ до доставки"); final/analogs_G2_display_hmi_storage.json decisions[2] (keep Wisecoco SKU 4681, $132 ex shipping and ex EU import VAT)
+  7.
+    - **Where:** 9.1 step 10: "R44SF 5 см ($19, adt.link; спершу підтвердити варіант R44SF в ADT-Link)"; 'Митниця і ПДВ' list of non-EU sellers
+    - **Problem:** ADT-Link is a Chinese seller, but step 10 gives the R44SF with no EU landed cost, and ADT-Link is missing from the paragraph's list of non-EU sellers. The BOM row (2.11.1) does apply the rule.
+    - **Severity:** rule_violation
+    - **Fix:** In step 10, after "($19, adt.link", add "; продавець з КНР: EU landed = ціна + доставка + імпортний ПДВ + EUR 3 мита + EUR 2 UHF за тарифний рядок (≤ EUR 150, IOSS/пошта) + збір перевізника". Add 'ADT-Link' to the list "(зокрема Pi Hut, QuietPC, ... ALLNET, Arace)" in 'Митниця і ПДВ'.
+    - **Evidence:** STACK 2.11.1 'Деталі Lime' note ("R44SF (CN) і Mini-Circuits (US): імпортний ПДВ + EUR 3 за тарифний рядок ... + UHF EUR 2"); final/analogs_G6_extended_optional.json decisions[7] (R44SF $19, ADT-Link); operator_notes.md item 35
+  8.
+    - **Where:** 9.1 step 7: "можливий ще один рядок мита EUR 3; запас — PCBWay / AISLER (виготовлено в ЄС, без мита)"
+    - **Problem:** For JLCPCB (CN) only a possible EUR 3 line is mentioned. Import VAT, shipping and the EUR 2 UHF per line are left out, and JLCPCB is missing from the non-EU list in 'Митниця і ПДВ'. The fallback wording also implies that PCBWay is EU-made and duty-free. The decision says only AISLER is.
+    - **Severity:** rule_violation
+    - **Fix:** Replace with: "JLCPCB (КНР): EU landed = виготовлення + ENIG + доставка + ПДВ через IOSS + EUR 3 мита за тарифний рядок (голі PCB HS 8534; два дизайни можуть бути двома рядками) + EUR 2 UHF за рядок з близько 1.11.2026; запас — PCBWay (КНР, те саме правило landed cost), потім AISLER (виготовлено в ЄС, без мита)". Add JLCPCB and PCBWay to the non-EU list in 'Митниця і ПДВ'.
+    - **Evidence:** final/analogs_G3_power_gnss_imu.json decisions[14]: chosen ("Fallbacks: PCBWay, then AISLER (made in the EU, no duty)") and conditions ("Record the landed total: fab + ENIG + shipping + IOSS VAT + EUR 3 per tariff line + the EUR 2 handling fee per line")
+  9.
+    - **Where:** 9.1 step 8: "Pinecil V2 — лише PINE64" and "динамометричний ключ (після перевірки лістингу; інакше TekBox 0.9 N·m) + набір RG402 через офіційний канал RTL-SDR Blog"; 'Митниця і ПДВ': "PINE64 (CN/HK) — ПДВ і мито при ввезенні", "TOJOIN (США) — близько $49 з доставкою (оцінка)"
+    - **Problem:** Three lab lines from non-EU sellers are not costed with the landed-cost formula. PINE64 (CN/HK, $25.99), TOJOIN (eBay US store) and the RTL-SDR Blog RG402 set (CN; the store does not ship to the EU) are all under EUR 150, so each also pays EUR 3 duty and EUR 2 UHF per line. The decision also allows PINE64-listed resellers, but step 8 limits the buy to PINE64 only.
+    - **Severity:** rule_violation
+    - **Fix:** In step 8, write "Pinecil V2 — pine64.com або реселер зі списку PINE64 (у ЄС, якщо ціна однакова або близька); з pine64.com — EU landed = $25.99 + доставка + ПДВ + EUR 3 мита + EUR 2 UHF", "ключ TOJOIN (eBay, США) — за правилом landed cost (+ ПДВ + EUR 3 + EUR 2 за рядок)" and "набір RG402 — у замовленні RTL-SDR Blog кроку 2 (офіційний eBay/AliExpress; той самий підсумок landed cost)". In 'Митниця і ПДВ', replace the two PINE64/TOJOIN phrases with the full formula.
+    - **Evidence:** final/analogs_G5_lab_bench.json decisions[10] (Pinecil "bought new from pine64.com or a PINE64-listed reseller", $25.99 plus shipping and import VAT) and decisions[4] (TOJOIN wrench + RTL-SDR Blog adapter set, EU landed about $73 estimate); operator_notes.md item 35
+  10.
+    - **Where:** 9.1 step 5: "FNB58 Std — офіційний магазин FNIRSI на AliExpress (ЄС) за умов розділу 8" and "DMM — AN8009 (умови розділу 8)"; step 6(г): "з AliExpress-лістингу з великими продажами, з доставкою в ЄС і ПДВ на оплаті (IOSS)"; step 1(б): "Arace ... брати лише якщо ... з доставкою та ПДВ дешевше за TinyTronics"
+    - **Problem:** The FNB58 store is labelled '(ЄС)', but the decision says it ships from CN, so the EUR 3 duty and EUR 2 UHF apply. The AN8009 (AliExpress), the IP2368 boards (AliExpress, IOSS) and the Arace UFS comparison are costed with VAT and shipping only. G3 #4 explicitly asks for the flat-duty note on IP2368.
+    - **Severity:** rule_violation
+    - **Fix:** Step 5: change "(ЄС)" to "(EU-вітрина, відправка з КНР: ПДВ на оплаті + EUR 3 мита + EUR 2 UHF за тарифний рядок)" and add "AN8009 — AliExpress (КНР), за правилом landed cost". Step 6(г): after "(IOSS)" add "+ EUR 3 мита + EUR 2 UHF за тарифний рядок (2-3 однакові плати — один рядок)". Step 1(б): change "з доставкою та ПДВ" to "за правилом landed cost (доставка + ПДВ + мито/UHF)".
+    - **Evidence:** final/analogs_G5_lab_bench.json decisions[6].chosen ("AliExpress EU storefront ... ships from CN") and decisions[7] (AN8009 AliExpress, prices excluding VAT and duty); final/analogs_G3_power_gnss_imu.json decisions[4].stack_changes (4) ("Add a landed-EU note (IOSS VAT plus the flat customs duty since 1 Jul 2026"); operator_notes.md item 35
+  11.
+    - **Where:** 9.1 step 12: "SAWbird+ iO ($49.95; гарантія 1 рік; якщо egc-gate пройдено до відправки замовлення Nooelec кроку 7 — у тому самому замовленні"
+    - **Problem:** If the egc-gate passes after the step-7 Nooelec order has shipped, the iO becomes a separate US order of $49.95 (under EUR 150 and under Nooelec's $100 free-shipping line), but step 12 gives no landed cost for that case.
+    - **Severity:** rule_violation
+    - **Fix:** Append: "; окремим замовленням (США, ≤ EUR 150): EU landed = $49.95 + доставка + імпортний ПДВ + EUR 3 мита + EUR 2 UHF + збір перевізника; перед цим перевірити Amazon EU (продавець Nooelec Inc)".
+    - **Evidence:** STACK 2.11.3 'LNA Inmarsat-C' note ("З США ... імпортний ПДВ + EUR 3 за тарифний рядок (≤EUR 150, пошта/IOSS) ... + UHF EUR 2"); operator_notes.md item 35
+  12.
+    - **Where:** 11.4 row 7: "конфіг LC76G (`$PAIR752,2,100`, `$PAIR391,1`) — з init-хука gpsd/labd при кожному ввімкненні"
+    - **Problem:** This row still says the per-boot LC76G config contains `$PAIR752,2,100`. 5.4, 6.2 and 11.6 row 24 remove `$PAIR752` (re-audit D: `$PAIR513` does not save PPS settings) and set PPS with `$PQTMCFGPPS` instead. That contradicts how the stack resolves note 22.
+    - **Severity:** contradiction
+    - **Fix:** Replace "конфіг LC76G (`$PAIR752,2,100`, `$PAIR391,1`)" with "конфіг LC76G (`$PQTMCFGPPS,W,1,1,100,3,0,0*70` + `$PQTMSAVEPAR*5A`, перевірка `$PQTMCFGPPS,R,1*6A`; `$PAIR391,1*2C`; `$PAIR752,2,100` прибрано — повторний аудит D)".
+    - **Evidence:** final/reaudit_D_power_mech_display_lab.json ("The fix is $PQTMCFGPPS,W,1,1,100,3,0,0*70 plus $PQTMSAVEPAR*5A"); STACK 5.4 ("Один спосіб PPS: `$PAIR752,2,100` з v1 прибрано"); operator_notes.md item 22
+  13.
+    - **Where:** 1.2 #30 (Збірка SatDump) and 5.4 'Доступ до SDR': "(ProtectHome=read-only або користувач без HOME-конфігу)"
+    - **Problem:** Note 8 requires ProtectHome=yes for every decoder, SatDump included, and 5.4 'Ізоляція декодерів' says the same. The SatDump pass-unit text in 1.2 #30 and 5.4 still allows the weaker ProtectHome=read-only. The two sandboxing specs for the same unit contradict each other.
+    - **Severity:** contradiction
+    - **Fix:** In both places, replace "(ProtectHome=read-only або користувач без HOME-конфігу)" with "(ProtectHome=yes, окремий користувач без HOME-конфігу; нотатка 8)". ProtectHome=yes also meets re-audit C's aim of no user pipelines.json.
+    - **Evidence:** final/operator_notes.md item 8 ("ProtectSystem=strict, ReadWritePaths= only its output directory, ProtectHome=yes ... apply the same hardening to SatDump"); STACK 5.4 line "**Ізоляція декодерів.** ... (gr-satellites, SatDump, ...) ... ProtectHome=yes"
+  14.
+    - **Where:** 9.2: step 11 "**Після доставки Lime (відвантаження 15.12.2026):**" followed by step 12 "**Тиждень 2-3, QO-100 (Європа):**"
+    - **Problem:** The bring-up order is not chronological. The week 2-3 QO-100 bring-up comes after the Lime step, which cannot start before mid-December. Note 10 asks for the bring-up order to be correct for the Lime default build.
+    - **Severity:** style
+    - **Fix:** Swap 9.2 steps 11 and 12 (QO-100 becomes 11, Lime becomes 12). Then update the references "9.2 крок 11" (Lime) and "9.2 крок 12" (QO-100) in 11.6 rows 7, 32, 39, 43 and 46, in 1.1 and in section 8.
+    - **Evidence:** final/operator_notes.md item 10 ("... shopping order and bring-up order must switch to it"); final/user_requirements.md 'User decisions' (Lime ships 15 Dec 2026)
+- **Notes:** Coverage that checks out. Every operator note 1-35, plus 12b and 12c, has a row in 11.6, and spot checks show the body text matches. Items checked in the body:
+  - SatDump allowlist and CI (1.2 #30, 5.4); the T7 is deauthorized and A/B-tested at 1541/1575/1691 MHz.
+  - gr-satellites pinned main build with submit_tlm=false and IPAddressDeny=any.
+  - The bias-tee gate applies only to GPIO0; offset-tuning and DVB blacklist tests are in 9.2 step 1.
+  - AppArmor, watchdog, embloader, lease EPERM, gpio96 and dpkg -V checks are in 9.2 step 1.
+  - qcom-ppa pins -1; the 6.18.2-4 debs are fetched from the GitHub release.
+  - Elektro-L3 at 14.5W is in the GEO table; the Cospas-Sarsat 1544-1545 MHz band is masked.
+  - LC76G settings are re-sent at every power-up (5.4); EASA jamming gate.
+  - LimeSuiteNG package subset; Lime sysclk ≥30 MHz, 7 Msps floor, LIME3V3 load switch and forced-hang test.
+  - Pattern pins for codecserver*/dxlaprs-tetra/dream/dump978-fa*; OpenWebRX+ mode allowlist and SDRangel channelrx allowlist; ADS-B &1/&4/&8.
+  - Cost rules 34-35 are in the header, 2.12 and the 'Митниця і ПДВ' paragraph.
+  
+  User decisions are reflected:
+  - Europe: QO-100 kit bought; DVB-T/LTE B28 IF check; European NCS confirmed by the power-only scan before the egc-gate; EGNOS; UAT 978, HD Radio and SAME off; DAB+ on; DCF77/MSF/TDF first; no city tables.
+  - Lime kept: with-Lime default build in the header, C1, 2.11.1 in core, 2.12, 5.1 with 1.9 h, 5.2 and 5.5. Crowd Supply slot kept today (9.1 step 4) with the 15.12.2026 shipment and refund-only-before-shipment wording. Any analog must be decided by 1.12.2026 (step 10, C1). The five acceptance tests run within the 30-day guarantee (C1, section 8, 9.2 step 11). Lime TX is blocked.
+  
+  Numbers I re-checked in 9.1 against the files and found correct: ALLNET and TinyTronics landed figures, Crowd Supply VAT range, Adafruit VAT and per-line duty, Botland saving and the Nooelec EUR conversion.
+  
+  Left out on purpose:
+  - Pro Stick Plus kept in the last step. This departs from G6 #1, but 11.1 row 64 documents the reason: the Picos and the hub moved off Pi Hut, and there is a fallback.
+  - The 1.2 #30 vs 5.4 contradiction over SatDump net_source is outside this lens.
+  
+  Main file: /home/user/lizbeth307/sat-receiver-audit/STACK.md. Data files: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/ (operator_notes.md, user_requirements.md, analogs_G1..G6 JSON, reaudit_C/D JSON).
+
 ## extract:analogs_G4 (run `wf_be383e11-6dc`)
 
 - **Source:** analogs_G4
