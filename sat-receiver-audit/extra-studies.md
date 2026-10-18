@@ -36131,6 +36131,115 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Searches used: 8 WebSearch. Datasheet and S2P files were read from minicircuits.com.
 
+## searchB:noise_source_mini_circuits_zfl_500ln_or (run `wf_e5582d4c-0a2`)
+
+- **Part:** Noise source: Mini-Circuits ZFL-500LN+ (or ZFL-500+) in a DIY N8DMT-type source with a 50 Ohm load or 5 dB pad on the input, a permanent 10 dB output pad and a box. It runs from regulated 12.00 V AUX, is switched by the sled NOISE EN line, and is used on the BENCH, conducted only.
+- **Current price usd:** 104.55-126.81 (ex VAT, ex shipping). ZFL-500+ is $99.55 for qty 1-4 at the Mini-Circuits web store, rechecked today (18 Oct 2026): more than 100 in stock, no EOL notice. ZFL-500LN+ is $116.81 (re-audit, verified). Add $5-10 for the box. Both ship from the US, so EU import VAT (about 21%, depends on country) and courier handling come on top. That applies equally to every US-sourced candidate below.
+- **Critical specs:**
+  - ENR with the permanent 10 dB output pad at regulated 12.00 V. This is the main figure of merit. Model is ENR ~ G + NF in dB, minus the pad. ZFL-500LN at 12 V: gain 24.3-24.7 dB + NF 2.9-3.0 dB = 27.2-27.7 dB unpadded, 17.2-17.7 dB padded. Measured reference (N8DMT, one surplus unit): 20.5 dB at 28/52 MHz, 21.0 at 146, 20.1 at 440, 17.0 at 902, 16.1 at 1296, 8.4 at 2400 MHz. A candidate must be at least equal at every stack test point (28-52, 137, 435, 740, 1090, 1545-1700, 2200-2400 MHz). The amplifier's own low NF is not a merit in this role: lower NF means lower ENR.
+  - Usable range 28 MHz-2.4 GHz with a smooth, monotonic roll-off so the ENR table interpolates. The stack does no Y-factor above 2.4 GHz.
+  - ENR stability with supply voltage and temperature, from datasheet gain at 12 V vs 15 V. ZFL-500LN is about 1.2 dB/V. ZFL-500+ is about 0.3 dB/V and the old ZFL-500 about 0.35 dB/V. Lower is better.
+  - Hot/cold source match. With the pad, output return loss should be at least about 20 dB both on and off, so mismatch error in the Y-factor stays small. Datasheet VSWR: LN 1.5/1.6, ZFL-500+ 1.3/1.3, old ZFL-500 1.9 (typical spec).
+  - No discrete spurs and no oscillation from 0.1 to 2400 MHz with the input terminated. Clean on/off switching by removing the supply.
+  - Total output stays far under the stack rule of -40 dBm or less into a receive chain. About -154 dBm/Hz at 20 dB ENR, roughly -67 dBm over 500 MHz (my calculation).
+  - DC: regulated 12 V from AUX (+17 V absolute max). Current within the 0.15 A budget; ZFL-500LN max is 60 mA at 15 V. Switchable from the sled NOISE EN / GPA5 MOSFET. Lower current is better.
+  - Build: shielded metal case (Mini-Circuits Y460), SMA-F 50 Ohm connectors, input terminated. Genuine part, legally sold, and not marketed as an 'interference generator'. Conducted only, BENCH only.
+  - Evidence (angle B): an independent ENR measurement, or datasheet identity with the measured unit, plus your own on-arrival ENR table (tinySA NF routine, EXT GAIN 0, at 11.5/12.0/12.5 V). No Ubuntu driver is involved; it is only a GPIO-switched supply.
+- **Candidates:**
+  1.
+    - **Name:** Used Mini-Circuits ZFL-500LN (non-RoHS predecessor of ZFL-500LN+), Surplus Sales, Portland, USA
+    - **Kind:** used
+    - **Price usd:** 75.00 (page schema: InStock, shipping destination 'Worldwide'). International shipping cost not shown (unverified). EU import VAT applies. Saves $41.81 vs a new LN+ and $24.55 vs a new ZFL-500+, before shipping.
+    - **Spec comparison:** Same model as the LN+, same datasheet. 0.1-500 MHz. NF 2.9 dB typ. Gain 24 dB min, 24.30-24.73 dB at 12 V (typical data). P1dB +5 dBm, IP3 +14 dBm, VSWR 1.5/1.6. 15 V nominal, 60 mA max, +17 V max. Case Y460, SMA-F. ENR model at 12 V is identical to the current LN+: 27.2-27.7 dB unpadded, 17.2-17.7 dB with the 10 dB pad. The listing itself says '0.1-500 MHz, 24 dB gain, P1dB 5 dBm, 15 V DC @ 60 mA, SMA female'. N8DMT's measured ENR table comes from a surplus ZFL-500/ZFL-500LN at 12 V. His text says ZFL-500 and his table says ZFL-500LN, so the model is ambiguous.
+    - **Worse in:** No datasheet spec is worse. It is worse in assurance. The condition is not stated on the listing. Surplus Sales states it is 'NOT an authorized Mini Circuits distributor', so there is no Mini-Circuits warranty. The unit's history is unknown: ESD, overdrive or open-load use. It is the non-RoHS revision. Shipping to the EU and import VAT may eat most of the $41.81 saving; the shipping quote is unverified.
+    - **Compatibility:** Drop-in: same case, connectors, 12 V supply and current, same GPIO MOSFET switching and pads. Acceptance test on arrival, before keeping it: (1) label, Y460 case and SMA threads; (2) DC current at 12.00 V must be 60 mA or less; (3) LiteVNA S21 at 12 V should be 24.3-24.7 dB +/-0.5 dB from 50 to 500 MHz; (4) tinySA scan 0.1-2400 MHz with the input terminated shows no discrete lines; (5) build your own ENR table at 11.5/12.0/12.5 V. Return it if gain is more than 1 dB under the typical data.
+    - **Seller url:** https://www.surplussales.com/items/105916/low-noise-amplifier/
+    - **Sources:**
+      - https://www.surplussales.com/items/105916/low-noise-amplifier/
+      - https://old.surplussales.com/Mini-Circuits/Amplifiers.html
+      - https://web.ece.ucsb.edu/~long/ece145b/ZFL-500LN.pdf
+      - https://www.minicircuits.com/pdfs/ZFL-500LN+.pdf
+      - https://qsl.net/n8dmt/test-page/diy-test-equipment/low-cost-diy-noise-source/index.html
+    - **Risks:** Possible hidden damage or a counterfeit. Counterfeit connectorized ZFL units are not known to me, but I have not verified that; the S21 and current test catches both. No warranty. Return terms are on a separate page I did not check.
+  2.
+    - **Name:** Used Mini-Circuits ZFL-500 or ZFL-500+ (non-LN), eBay or hamfest surplus (N8DMT's own source)
+    - **Kind:** used
+    - **Price usd:** About 20 (N8DMT's own surplus purchase, page dated Dec 2025). Current eBay listings and prices were NOT verified: eBay returned HTTP 403. The stack's $20-40 figure is unverified.
+    - **Spec comparison:** Depends on the revision. Old ZFL-500 datasheet: 0.05-500 MHz, NF 5.3 typ (5.72-5.79 dB in typical data at 15 V), gain 20 dB min (20.40-21.08 dB at 12 V), IP3 +18 dBm, VSWR 1.9 typ spec (typical data 1.01-1.11), 15 V / 80 mA max. Its ENR model at 12 V is 26.2-26.9 dB unpadded and 16.2-16.9 dB padded, about 1 dB below the LN. Current rev F ZFL-500+: gain 24.12-24.28 dB at 12 V, NF 4.04-4.31 dB, IP3 +25 dBm, VSWR 1.3/1.3, 80 mA max. Its ENR model is 28.2-28.6 dB unpadded and 18.2-18.6 dB padded, about 1 dB above the LN. Both revisions are better on supply sensitivity (about 0.3-0.35 dB/V vs 1.2 dB/V for the LN) and on the low end (0.05 vs 0.1 MHz). Measured evidence: N8DMT's surplus unit measured 20.5/21.0/20.1/17.0/16.1/8.4 dB at 28-52/146/440/902/1296/2400 MHz (10 dB pad, 12 V, tinySA Ultra).
+    - **Worse in:** DC current: 80 mA max vs 60 mA max at 15 V. That is still inside the 0.15 A budget, but it is a real worsening (about +0.24 W at 12 V worst case). The old (non-plus) revision has about 1 dB lower modelled ENR at 12 V and a worse VSWR spec. You can only offset the ENR by using an 8-9 dB pad, which gives up 2-4 dB of output return loss. That is a trade, so it is not allowed silently. Unknown history, no warranty, price unverified. Above 500 MHz neither datasheet gives data; only N8DMT's one unit is measured.
+    - **Compatibility:** Drop-in: same Y460 case, SMA-F, 12 V and the same switching. Accept it as not-worse only if (a) it is the rev F ZFL-500+, or (b) its own measured ENR with the 10 dB pad at 12.00 V is at least 17.2 dB from 28 to 440 MHz and at least N8DMT's values at 902-2400 MHz, and its current at 12 V is 80 mA or less. Otherwise it is a spec trade the user must accept explicitly.
+    - **Seller url:** https://qsl.net/n8dmt/test-page/diy-test-equipment/low-cost-diy-noise-source/index.html
+    - **Sources:**
+      - https://qsl.net/n8dmt/test-page/diy-test-equipment/low-cost-diy-noise-source/index.html
+      - https://hallaweb.jlab.org/tech/Detectors/public_html/manuals/data_sheets-manuals/M-N/M/mini-circuits/ZFL-500.pdf
+      - https://www.minicircuits.com/pdfs/ZFL-500+.pdf
+    - **Risks:** eBay listings are often old revisions of unknown history. The label does not always show the revision; the 12 V gain test tells them apart (about 21 dB for the old revision, about 24.2 dB for rev F). There is no seller I could verify.
+  3.
+    - **Name:** New Mini-Circuits ZFL-500+ (already the low end of the current pick)
+    - **Kind:** current_part
+    - **Price usd:** 99.55 (Mini-Circuits web store, qty 1-4, more than 100 in stock, rechecked 18 Oct 2026) + box $5 = 104.55
+    - **Spec comparison:** Against the LN+ in this role: 12 V ENR model 28.2-28.6 vs 27.2-27.7 dB unpadded (+1 dB, better). Supply sensitivity 0.29 vs about 1.17 dB/V (better). VSWR 1.3/1.3 vs 1.5/1.6 (better). Low end 0.05 vs 0.1 MHz (better). IP3 +25 vs +14 dBm and P1dB +9 vs +5 dBm (better; not critical here). Same case and connectors, new, with Mini-Circuits warranty.
+    - **Worse in:** DC current: 80 mA max vs 60 mA max (within the 0.15 A budget). No other worse spec on the datasheet. Above 500 MHz behaviour is not on either datasheet.
+    - **Compatibility:** Identical integration to the LN+.
+    - **Seller url:** https://www.minicircuits.com/WebStore/dashboard.html?model=ZFL-500%2B
+    - **Sources:**
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=ZFL-500%2B
+      - https://www.minicircuits.com/pdfs/ZFL-500+.pdf
+      - https://www.minicircuits.com/pdfs/ZFL-500LN+.pdf
+    - **Risks:** None beyond the shared need to measure your own ENR. Not an angle-B item; listed only as the reference baseline.
+  4.
+    - **Name:** Generic Chinese 'noise source / simple spectrum tracking source', 1 MHz-3.5 GHz or 0.001-3000 MHz, SMA, DC 12 V (eBay, AliExpress, Amazon; unbranded)
+    - **Kind:** generic_or_clone
+    - **Price usd:** About 16-26: US$26 in an eBay.de Shenzhen listing snippet, and CAD 16 per the EEVblog thread. Both unverified; listing pages returned 403.
+    - **Spec comparison:** No published ENR measurement found. The evidence is anecdotal only: Amazon reviews quoted on EEVblog say it is 'flat up to 1.5 GHz', and one eBay seller-profile review says 'very flat up to almost 2 GHz', level -40 dBm (RBW unknown). The one measurement in the EEVblog thread covers only the response below 30 MHz. The design is a noise junction plus MMIC gain. Listings give only 'DC12V/0.3A-1A'. On/off source match, spurs and ENR are all unpublished.
+    - **Worse in:** Unknown ENR, flatness, match and spurs, so it cannot be shown to be not-worse. The listed supply rating (0.3-1 A adapter) suggests a possibly higher draw than 60 mA (unverified). Some near-identical listings are sold as a 'Noise Source Interference Generator', which conflicts with the conducted-only rule.
+    - **Compatibility:** 12 V and SMA would fit physically. Rejected under angle B: no measured evidence.
+    - **Seller url:** https://www.ebay.de/itm/173711586861
+    - **Sources:**
+      - https://www.eevblog.com/forum/testgear/cheap-noise-source-anyone-have-a-clue
+      - https://www.ebay.de/itm/173711586861
+      - https://www.ebay.de/itm/396032431574
+    - **Risks:** Unmeasured. Variable clones. Jammer-style marketing. No ENR table. Reject.
+  5.
+    - **Name:** DIY MMIC noise source per changpuak.ch: 2x GVA-81+ (or 2x GALI) plus PAT pads; Gerbers published
+    - **Kind:** diy
+    - **Price usd:** About 99 CHF BOM per the author, roughly 120-125 USD (exchange rate is my estimate). Not cheaper. A cost-reduced build is unpriced and unmeasured.
+    - **Spec comparison:** Author's measurement with an R&S FSP-3 noise-floor method, 10 dB pad: 21.60/21.43/20.90/21.34 dB at 500/1000/2000/3000 MHz. Final version with 6+10 dB pads: 12.0 +/-0.5 dB from 0.5 to 3 GHz, compared against an Ailtech S-4241 calibrated source up to about 1.7 GHz. Output S11 better than 20 dB up to 1 GHz, both on and off. This is better than the ZFL at 0.9-2.4 GHz (about 21 vs 17.0/16.1/8.4 dB).
+    - **Worse in:** No data below 500 MHz, so 28-440 MHz (the 137 and 435 MHz NF points) is unproven. Supply: the 2x GALI prototype draws 9 V / 200 mA, and the GVA build uses a 7805 with its current unstated; that exceeds the 0.15 A budget and wastes power from 12 V. Not cheaper. Self-assembled build quality. One author's measurement.
+    - **Compatibility:** Would need a regulator from AUX12 and its own box. Rejected as a cheaper analog. It could be a later L/S-band add-on, but only if its current fits.
+    - **Seller url:** https://www.changpuak.ch/electronics/Noise-Source-with-2xGALI.php
+    - **Sources:**
+      - https://www.changpuak.ch/electronics/Noise-Source-with-2xGALI.php
+      - https://www.changpuak.ch/electronics/Noise-Source-with-2xGVA82-15dB.php
+    - **Risks:** Not cheaper. Coverage below 500 MHz is unproven. Higher current.
+  6.
+    - **Name:** Used Mini-Circuits ZJL-6G (20-6000 MHz), Surplus Sales
+    - **Kind:** used
+    - **Price usd:** 59.00 + shipping (unverified) + EU VAT
+    - **Spec comparison:** Listing: 20-6000 MHz, 12 V at 50 mA, 13 dB gain, SMA. NF not listed. No measured ENR as a noise source. Model: ENR ~ 13 dB + NF, roughly 10 dB below the ZFL-500LN's 27.2-27.7 dB at VHF/UHF; with the 10 dB pad it would be in single digits at the 137/435 MHz test points (NF unverified).
+    - **Worse in:** ENR is about 10 dB lower at VHF/UHF (model). No measurement. Lower current (50 mA) is the only better spec.
+    - **Compatibility:** 12 V and SMA fit. Rejected.
+    - **Seller url:** https://www.surplussales.com/items/103474/amplifier-zjl-6g/
+    - **Sources:**
+      - https://www.surplussales.com/items/103474/amplifier-zjl-6g/
+    - **Risks:** Worse ENR. No evidence. Not an authorized distributor.
+- **Notes:** Verdict (angle B):
+  - Only one cheaper candidate is not worse on every spec: a used ZFL-500LN at Surplus Sales, $75 vs $116.81. It is the same part with the same datasheet, so its ENR model at 12 V is identical. It is worse only in assurance: the seller is not authorized, the condition is unstated and there is no warranty. Buy it only with the on-arrival acceptance test listed in its entry, and only if the US-to-EU shipping quote plus VAT still leaves a saving. The shipping cost is unverified.
+  - The ~$20 used ZFL-500 is cheaper but depends on the revision:
+    - Old revision: modelled ENR about 1 dB lower at 12 V and a worse VSWR spec.
+    - Rev F ZFL-500+: modelled ENR about 1 dB higher.
+    - Both revisions draw up to 80 mA vs 60 mA.
+    - It counts as not-worse only if it is rev F, or if its own measured padded ENR is at least 17.2 dB from 28 to 440 MHz. Otherwise it is an explicit trade. Its price is unverified (eBay blocked).
+  - Rejected for lack of measured evidence or for worse specs: generic eBay/AliExpress noise modules (no ENR data; some marketed as 'interference generators'), DIY SPF5189Z-type LNA boards (no measured ENR found; EEVblog reports fake SPF5189Z parts) and a used ZJL-6G (about 10 dB less ENR, modelled). The changpuak 2x GVA DIY source has real measurements and is better at 0.9-3 GHz. But it is not cheaper (about 99 CHF BOM), has no data below 500 MHz, and needs about 200 mA.
+  - If nothing used is acceptable, keep the current part. Prefer the new ZFL-500+ ($99.55, verified today) over the LN+: in this role it is not worse except for +20 mA max current, and it is better on ENR (+1 dB), on supply sensitivity (0.3 vs 1.2 dB/V) and on VSWR.
+  
+  Data and method notes:
+  - ENR models are my calculation: ENR_dB ~ G_dB + NF_dB, minus the 10 dB pad. They use datasheet 12 V gain and 15 V NF, since no 12 V NF is published.
+  - N8DMT's measured unit is ambiguous: his text says ZFL-500 and his table says ZFL-500LN. His 20.5 dB padded value sits closer to the non-LN model.
+  - Above 500 MHz no datasheet covers any of these amplifiers, so the 1.0-2.4 GHz ENR must always come from your own tinySA table. Never use N8DMT's numbers as ENR.
+  - Every option stays BENCH-only and conducted-only, with a terminated input and a permanent output pad. None of them affects the Q6A, the antennas, Ubuntu drivers or the receive-only rules.
+  - Sources I could not reach: eBay (403), groups.io tinySA (402), the tinySA wiki noise-figure page (404).
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
