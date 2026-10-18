@@ -169,9 +169,9 @@
 <rect x="69.0" y="1216.0" width="18.0" height="12.0" fill="#fff" stroke="#000" stroke-width="1.2" rx="4"/>
 <rect x="708.0" y="1216.0" width="18.0" height="12.0" fill="#fff" stroke="#000" stroke-width="1.2" rx="4"/>
 <text x="102.0" y="860.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">вушка 2-4</text>
-<rect x="240.0" y="1144.0" width="36.0" height="10.5" fill="none" stroke="#000" stroke-width="1.2" rx="4"/>
-<rect x="330.0" y="1144.0" width="36.0" height="10.5" fill="none" stroke="#000" stroke-width="1.2" rx="4"/>
-<text x="303.0" y="1174.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">2 прорізи ≤12 (SmallRig PAC2456)</text>
+<rect x="126.0" y="1144.0" width="36.0" height="10.5" fill="none" stroke="#000" stroke-width="1.2" rx="4"/>
+<rect x="204.0" y="1144.0" width="36.0" height="10.5" fill="none" stroke="#000" stroke-width="1.2" rx="4"/>
+<text x="183.0" y="1174.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">2 прорізи ≤12 (SmallRig PAC2456)</text>
 <rect x="396.0" y="1156.0" width="255.0" height="60.0" fill="none" stroke="#777" stroke-width="1" stroke-dasharray="8,4"/>
 <text x="523.5" y="1192.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#444">тримач T7 85x57x8 (ззовні, внизу)</text>
 <line x1="60.0" y1="1264.0" x2="735.0" y2="1264.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>

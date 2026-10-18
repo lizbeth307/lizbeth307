@@ -27260,6 +27260,39 @@ Power+wiring group: all four files are written. Both SVGs pass the minidom check
   - Where the power button and the node-N service port sit on the case.
   - Most internal wire and harness lengths, the LAB BUS cable length, the DISP12 barrel connector type, and whether RTL-A on H2 uses a Lindy 36700 extension.
 
+## write:block+rf (run `wf_7068b0f5-040`)
+
+I wrote all four files for the "block+rf" group. Both SVGs pass the XML check you specified. My generator also checked that no text leaves the canvas or overflows its box, that boxes don't overlap, and that no line runs through a box. I had no SVG renderer here, so I haven't seen the drawings visually.
+
+**Files written** (in `/home/user/lizbeth307/sat-receiver-audit/build/`):
+- `01-blok-skhema.svg` (56,421 B): block diagram of the whole device. It covers:
+  - antenna kits (patch tier, folding tier), the QO-100 add-on, Lime-only antennas and the gated optional parts
+  - the 11 case bulkheads, the RF compartment (front ends, the 5-channel injector board with 3× HMC7992, the HF+ input switch, GNSS input)
+  - the receivers: RTL-A/B/C with serials LABRXA/LABRXB/LABRXC, HF+ and Lime as the default build
+  - the USB tree (blue J5 port, FE1.1s hub, CH334F hub), the Q6A and its buses
+  - storage, display, the Pico HMI/supervisor, the MCP23017 expanders (#1, #3, #4), GNSS/IMU/RTC
+  - the power tree, the bench kit as a separate block, a legend and the title block
+- `01-blok-skhema.md` (20,931 B): a short paragraph per block with STACK.md section references, 8 signal paths, and a TBD list.
+- `03-rf-trakt.svg` (61,688 B): RF schematic, one row per input: P1, P2, P8 to RTL-A; P3, P4 and BENCH to RTL-B; the Lime RX1, RX2, REF IN and TX port (X1) paths; P5 and P6 through relays K1/K2 to the HF+; P7 to the GNSS module; and the LAB USB-A port. It shows bias channels with current limits, DC-block part numbers, switch throws and the receive-only guards (Lime TX into a 50 Ohm load, TXEN register = 0).
+- `03-rf-trakt.md` (25,930 B): per-input chain table, switch details, cascade and gain plan, a 26-row target table (target, frequency, antenna tier, chain, SDR, sample rate, decoder), and the bias/DC safety rules.
+
+**STACK.md sections used:** §0 (header, rules and labels), §1.1 C1/C18, §1.2, §2.1–§2.11.3, §3 (lab rule), §3.1–§3.3, §4.1, §4.2, §5.1, §5.2, §5.3 (main source), §5.4, §5.8 and §8, plus decisions D1–D4, D6–D19.
+
+**Marked TBD, because STACK.md leaves them open:**
+- The third HMC7992's output to RTL-B has no pin number, and its two control lines are not assigned to any expander line.
+- How the LIME RX1 port on the case connects to the RX1 jack on the injector board is not described.
+- The case port for the BENCH/sled input is not named; §2.10 only names a connector on the board edge.
+- The S-band LNA is unnamed, so its power and its order relative to the cf2235-kt30 resonator are open.
+- The panel TVS on P2/P3 is optional and has no current part.
+- Several protection values depend on measurements: final current-limit resistors for RTL-A/B and HF+ power (1.5–2× measured current), the LNB eFuse resistor, the upper Boni current limit, and the Boni overvoltage divider for 13.8 V.
+- The LNB attenuator (15, 20 or 30 dB) is chosen on the bench.
+- The Lime's second receive input is X3 or X4, to be checked against the board marking.
+- Sample rates are not given for UHF, 2 m, Inmarsat-C, H1, ADS-B, AIS, FM-RDS, VOR or radiosondes.
+- The MCP23017 #4 address (0x23) is "assign on schematic".
+- In the block doc only: the LIME3V3 load switch is a bench choice, the blower model is unchosen, and the Wisecoco display waits on the seller's written answers.
+
+**Conflict inside STACK.md:** the §2.3 switch row says 1 nF on RTL-B's common port (RFC-B), but the §5.3 rule (G3) says 100 pF on all RTL-B pins. The drawings follow §5.3, and `03-rf-trakt.md` flags it to check at layout.
+
 ## fix:A:b3 (run `wf_7444ffc9-4aa`)
 
 - **Applied:**
