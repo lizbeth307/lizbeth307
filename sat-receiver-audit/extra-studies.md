@@ -41436,6 +41436,101 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - VSDISPLAY (eBay.de 256679793470): what is the board's input (HDMI?), how does touch reach the host, which panel part is it, and is it the same 6.97in glass as Wisecoco?
 - **Confidence:** medium
 
+## check:rules (run `wf_a9665c78-f1d`)
+
+- **Lens:** RULES
+- **Problems:**
+  1.
+    - **Where:** 1.2 #109 (STACK.md line 170): «Elektro-L5 76.05E / FY-2H 79.2E — Лісабон −4.9/−7.3°, Лондон −0.1/−2.1°, Париж +1.9/−0.1°, Берлін 7.6/5.8°, Рим 10.8/8.5°, Варшава 12.0/10.3°, Атени 20.6/18.2°» and «GOES-East 75.2W — до 9.9° (Лісабон), не видно на схід від Парижа»
+    - **Problem:** This row is a seven-city table of GEO elevation angles. The hard rules forbid city tables. v1 named no cities, so v2 added this table. It also contradicts the stack's own 1.2 line 106 («кути для конкретних міст прибрано») and the 6.1 exclusion at line 1116 («кути наведення для конкретних міст»).
+    - **Severity:** rule_violation
+    - **Fix:** Replace the city list with the region wording from operator note 19: «Elektro-L5 76.05E / FY-2H 79.2E — нижче горизонту в Іберії, Ірландії й Великій Британії, близько 6-12° у центральній Європі, близько 18-21° на південному сході; придатні лише приблизно на схід від 13E. GOES-East 75.2W — до ≈10° лише на крайньому заході (Ірландія, Португалія), з центральної і східної Європи не видно. Кут для свого місця labd рахує з GNSS-фіксу («видно звідси»).»
+    - **Evidence:** final/user_requirements.md hard rules: 'The device determines its own location automatically (GNSS + plausibility gate + fallbacks); no city tables.' v2_brief.md hard rules: 'auto-location without city tables'. operator_notes.md item 19 gives the region wording. STACK.md lines 106 and 1116. A search of STACK_v1_backup.md finds no city names (Лісабон, Париж, Берлін, Атени and others).
+  2.
+    - **Where:** 4.1 GEO L-band paragraph (line 554): «Elektro-L5/FY-2H: Берлін 7.6/5.8°, Рим 10.8/8.5°, Варшава 12.0/10.3°, Атени 20.6/18.2°; нижче або біля горизонту з Лісабона, Дубліна, Лондона, Мадрида, Парижа (модель)» and the 4.1 table row (line 562): «GOES-East до 9.9° (Лісабон) і не видно на схід від Парижа»
+    - **Problem:** The 4.1 target section repeats the city angle table, naming nine cities. The same paragraph already says angles come from the GNSS fix.
+    - **Severity:** rule_violation
+    - **Fix:** Line 554: «Elektro-L5/FY-2H: нижче горизонту в Іберії, Ірландії й Великій Британії, близько 6-12° у центральній Європі, близько 18-21° на південному сході (модель); придатні лише приблизно на схід від 13E.» Line 562: «GOES-East до ≈10° лише на крайньому заході Європи (Ірландія, Португалія), з центральної і східної Європи не видно (модель)».
+    - **Evidence:** final/user_requirements.md hard rules ('no city tables'). v2_brief.md hard rules. operator_notes.md item 19. STACK.md line 106 («кути для конкретних міст прибрано; усе наведення рахується з GNSS-фіксу»).
+  3.
+    - **Where:** 11.4 row 27 (line 2270): «Берлін 7.6/5.8°, Атени 20.6/18.2°, з Лісабона чи Парижа — біля горизонту або нижче» and 11.4 row 42 (line 2285): «GOES-East 75.2W до 9.9° і не видно на схід від Парижа … без таблиць міст»
+    - **Problem:** The correction log repeats the per-city angles. Row 42 cites a city in the same sentence that claims «без таблиць міст».
+    - **Severity:** rule_violation
+    - **Fix:** Line 2270: «Модель геометрії (сферична Земля, GEO 42164 km): близько 6-12° у центральній Європі, 18-21° на південному сході, у західній Європі — біля горизонту або нижче.» Line 2285: «GOES-East 75.2W до ≈10° лише на крайньому заході (Ірландія, Португалія), з центральної і східної Європи не видно».
+    - **Evidence:** final/user_requirements.md hard rules ('no city tables'). v2_brief.md hard rules. operator_notes.md item 19.
+  4.
+    - **Where:** 11.6 row 21, operator note 19 (line 2382): «GOES-East 75.2W видно лише на крайньому заході (≤9.9° з Лісабона)»
+    - **Problem:** The row that applies note 19 still names a city, although note 19 itself uses only region wording.
+    - **Severity:** rule_violation
+    - **Fix:** Replace «(≤9.9° з Лісабона)» with «(≤9.9° лише на крайньому заході — Ірландія, Португалія)».
+    - **Evidence:** operator_notes.md item 19: 'GOES-East 75.2 W: about 4-10 deg only at the far west edge (Ireland, Portugal), not visible from central/eastern Europe'. final/user_requirements.md ('no city tables').
+  5.
+    - **Where:** 1.1 C16 (line 68): «станції NWS під керуванням USCG виключено за замовчуванням»; 4.2 HF WEFAX (line 587): «станції NWS під керуванням USCG виключено за замовчуванням — питання до вас»; 6.1 (line 1133): «станції NWS під керуванням USCG (за замовчуванням) | … USCG — збройна служба, тому питання до вас»
+    - **Problem:** The stack itself calls the USCG an armed service. The delegated WEFAX rule excludes all stations run by military operators. The stack nevertheless treats USCG-run NWS WEFAX as excluded only by default and open to the user's opt-in, which leaves a path to targets run by a military operator.
+    - **Severity:** rule_violation
+    - **Fix:** Line 68: «станції NWS під керуванням USCG виключено правилом (оператор — збройна служба)». Line 587: «станції NWS під керуванням USCG виключено правилом (USCG — збройна служба)», deleting «за замовчуванням — питання до вас». Line 1133: remove «(за замовчуванням)» and change the reason to «USCG — збройна служба, тож виключено правилом P2 (user_requirements)».
+    - **Evidence:** final/user_requirements.md (P2): 'HF WEFAX: only civil meteorological broadcasts; stations run by military operators (e.g. Northwood) are excluded.' STACK.md line 1133 states «USCG — збройна служба».
+  6.
+    - **Where:** Section 8, open question 6 (line 1545): «6. Чи дозволені станції WEFAX NWS під керуванням USCG.»
+    - **Problem:** This puts a rule that P2 already decided back to the user as an open question.
+    - **Severity:** rule_violation
+    - **Fix:** Delete question 6 and renumber, or mark it as «Закрито: станції під керуванням USCG виключено правилом P2 (військовий оператор)».
+    - **Evidence:** final/user_requirements.md P2 WEFAX rule (delegated, already decided).
+  7.
+    - **Where:** 1.2 #31 (line 126): «явний алоу-лист channelrx: AM/NFM/SSB/WFM, ADS-B (лише з нашими правилами показу dbFlags &1/&4/&8, інакше вимкнено), AIS (лише з придушенням type-35, інакше вимкнено)»; 11.6 row 35 (line 2396), same text; 11.6 row 27 (line 2388): «ADS-B у SDRangel — лише з цими правилами показу»
+    - **Problem:** These rows list SDRangel ADS-B and AIS as allowed when the filters apply. Elsewhere the stack says SDRangel demodadsb/demodais are never built, because the military, PIA and LADD dbFlags filters and the type-35 suppression exist only in readsb and AIS-catcher, and the SDRangel plugins bypass them: 4.3 line 603, 5.4 lines 854/867/871, 6.1 line 1126, 8 line 1464 (CI fails on demodadsb/demodais), 11.2 row 33 line 2147. A builder following 1.2 #31 or 11.6 could ship a path that shows PIA/LADD and military tracks (operator note 25).
+    - **Severity:** contradiction
+    - **Fix:** Line 126 and line 2396: replace the ADS-B/AIS items with «ADS-B і AIS — не в SDRangel (demodadsb/demodais не збираються); лише readsb і AIS-catcher з dbFlags &1/&4/&8 і придушенням типу 35». Line 2388: replace «ADS-B у SDRangel — лише з цими правилами показу» with «ADS-B — лише readsb з цими правилами; demodadsb у SDRangel не збирається (5.4, 6.1)».
+    - **Evidence:** operator_notes.md item 25 (PIA &4 / LADD &8 not shown or logged). STACK.md line 867 («ADS-B і AIS — лише в readsb і AIS-catcher … бо ці фільтри є лише там») and line 1126 («demodadsb/demodais обходять фільтри dbFlags readsb і ship-type 35 AIS»).
+  8.
+    - **Where:** Header «Що це» (line 3): «Цей компроміс користувач прийняв разом із доплатою за Lime-набір»
+    - **Problem:** «користувач прийняв» uses masculine past-tense agreement, which genders the user. The rest of the stack addresses the user as «ви» or uses «рішення користувача».
+    - **Severity:** style
+    - **Fix:** «Цей компроміс ви прийняли (рішення Р7) разом із доплатою за Lime-набір» or «Цей компроміс прийнято рішенням користувача (Р7) разом із доплатою за Lime-набір».
+    - **Evidence:** v2_brief.md hard rules: 'gender-neutral wording'.
+  9.
+    - **Where:** 1.1 (line 69): «Питання наприкінці фази: чи захочете колись повернути КХ-рамку»; 1.2 «Рамкові антени: залишки» (line 105): «Якщо колись захочете КХ-рамку назад — скажіть прямо»; 6.1 (line 1106): «КХ-рамка повертається лише на ваше пряме прохання»; section 8 question 2 (line 1541): «Якщо колись захочете КХ-рамку назад — скажіть прямо: біля шумного пристрою фізика на боці рамки»
+    - **Problem:** No loop is included, but the stack reopens a settled decision four times and argues for the loop. The user has already accepted the local-noise trade-off of HF+ on a wire, so the open question in section 8 contradicts the recorded decision.
+    - **Severity:** style
+    - **Fix:** Keep only the ban: at lines 69, 105 and 1106 replace the offer with «Компроміс шуму КХ прийнято (user_requirements: no loops; trade-off accepted)», and delete question 2 in section 8 (renumber it, and fix the «питання 2» reference at line 1696).
+    - **Evidence:** final/user_requirements.md line 11 ('NO loop antennas of any kind … removed by the user') and line 31 ('Trade-off accepted: the Airspy HF+ with a wire … will often be limited by local noise').
+  10.
+    - **Where:** Section 8, GEO visibility self-test (line 1489): «подати фікси Лісабона, Парижа, Берліна й Атен — labd ховає Elektro-L5/FY-2H нижче 5°»
+    - **Problem:** The labd self-test on the device ships a named list of city fixes. This is a small city list in device code, and it ties the test to the city angle table above.
+    - **Severity:** style
+    - **Fix:** «подати чотири безіменні тестові точки lat/lon (довготи близько 9W, 2E, 13E і 24E) — labd ховає Elektro-L5/FY-2H нижче 5°», with no city names in the fixture.
+    - **Evidence:** final/user_requirements.md hard rules ('no city tables'; line 39 'no city list'). v2_brief.md hard rules.
+- **Notes:** I read all of STACK.md (lines 1-2477, in chunks) against the brief's hard rules and final/user_requirements.md.
+  
+  Checked and compliant:
+  - No loop antennas or H-field probes: «петля» hits are drip loops, UART loopback, choke turns and the internal Lime RX IQ calibration loop. 11.5 row 38 allows E-field probes only.
+  - No antenna S11 on air, and every signal source is conducted into loads or DUTs. tinySA generator, output, usbdisk and fwupdate are denied by the labd allowlist, and QtTinySA sends no generator commands. LNA tests run conducted behind attenuators. The noise source is always terminated.
+  - Private content:
+    - ADS-B &1/&4/&8 applied in readsb; AIS type 35.
+    - Cospas-Sarsat 1544-1545 MHz power-only, plus 406.0-406.1 MHz, ARGOS/DCP and ISS service channels kept out by the SatNOGS importer allowlist.
+    - egc-gate SafetyNET only; SDRangel demodinmarsat, demoddsd and demodpager OFF.
+    - OpenWebRX+ mode allowlist; TETRA, AMBE, codecserver, libacars and dump978 pinned to -1; DSC distress/urgency/safety only via the patched demoddsc; 145.800 voice mask.
+  - Military: SatDump pipeline allowlist (Cosmos-2558, DMSP, WSF-M, Syracuse-3, PAZ, Yunhai hidden); S-band NORAD allowlist; Artemis stop categories; VLF 3-30 kHz mask including negative bins; SID feature excluded.
+  - TX: Lime TX blocked (LimeSuiteNG patch, --txen=0, 0x0020 TXEN readback, X1 on 50 Ohm); limesuiteng-cli only with TX subcommands compiled out; SatDump without sinks or SDR sources; Dream only as a patched RX-only build; SDRangel master and wsjtx/hamlib/rigctl excluded.
+  - Wi-Fi/BT: rfkill in field and QUIET modes; Pinecil BT off; ISDT BLE only at home with the receiver off; touch-bridge BLE silence test.
+  - No dishes: the 65 cm dish is only an SNR anchor. Rigid parts are within about 35 cm: horn segments ≤18.7 cm, mast sections ≤35 cm, Yagi halves ≤17 cm, helicone petals about 18 cm.
+  - Prices: USD base plus EU landed. «Українські ціни базою не є» appears at lines 9, 15, 106 and 2397.
+  - No Kyiv angles, no martial-law notes, no UAH. Apart from line 3, gendered wording was not found (only generic nouns).
+  - Line 2268 «(Атени, серпень 2026)» names only the source of a community report, not an angle table.
+  
+  Issues outside this lens, for other checkers:
+  - SatDump input: line 125 disables net_source, but net_source appears live at lines 59, 855, 863, 867, 1461 and 2142-2143, and line 2281 disables every sdr_sources plugin. The plugin sets at lines 125, 867 and 2281 differ.
+  - The SDRangel channelrx allowlist at lines 126 and 2396 also lists APT, radiosondes and DAB, which other lists exclude.
+  - csdr-skimmer: line 589 conflicts with line 867.
+  - 11.6 row 1 (line 2362) lists NOAA/GOES/GK-2A pipelines as packaged, while the same row and 11.4 row 30 limit the European build to Meteor, MetOp, AWS, FY-2 and Elektro.
+  - 11.6 row 39 (line 2400) still names the DVB-T 734-742 MHz IF check, which 11.3 rows 29 and 54 (lines 2210, 2235) removed for Europe.
+  - Typo «судові канали» at lines 103 and 565.
+  - /run/lab/bias vs /run/labd/bias (line 1426).
+  - LAB-RTLA vs LABRXA serial naming (line 199).
+  - Unresolved «питання 2» reference at line 1696.
+  
+  No files were edited.
+
 ## edit:08_open_bench:b1 (run `wf_b682bee1-8a4`)
 
 - **Section:** 08_open_bench
@@ -42413,6 +42508,216 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - The 1.2 #30 vs 5.4 contradiction over SatDump net_source is outside this lens.
   
   Main file: /home/user/lizbeth307/sat-receiver-audit/STACK.md. Data files: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/ (operator_notes.md, user_requirements.md, analogs_G1..G6 JSON, reaudit_C/D JSON).
+
+## check:consistency (run `wf_bbd28a5e-621`)
+
+- **Lens:** CONSISTENCY: contradictions between sections of /home/user/lizbeth307/sat-receiver-audit/STACK.md (replaced parts still named as the pick, rails, currents, pins, I2C, reliable vs marginal, Lime shown as optional, stale v1 text, duplicated rows that disagree)
+- **Problems:**
+  1.
+    - **Where:** 5.4 «Дозволені декодери» (line 867): «NET_SOURCE_SDR_SUPPORT (опційно FY2, FY4, GOES, HIMAWARI, GEONETCAST)»; also 1.1 C7 (line 59) «живий потік підтримується: net_source UDP cf32 від labrx на 127.0.0.1», 5.4 (line 863) «єдиний живий вхід — net_source з labrx», 5.4 Lime line (885) «вхід SatDump — лише net_source», 8 «Аудит SatDump і живий шлях» (1461), 11.2 #28/#29
+    - **Problem:** The SatDump build is given two incompatible ways. 1.2 #30 and 11.4 enable only METEOR, NOAA_METOP, AWS, ELEKTRO_ARKTIKA, XRIT and FY2 and turn off every sdr_sources plugin, NET_SOURCE included, with decoding from recorded files only (PrivateNetwork=yes), and 6.2 lists network SDR-source plugins as removed. 5.4 instead enables METOPSG, FY3, GK2A, ANALOG, CUBESAT, RADIOSONDE and NET_SOURCE_SDR_SUPPORT, leaves AWS out of the ON list and keeps a live UDP net_source feed. C7, 8 and 11.2 #28/#29 also describe that live feed. PLUGIN_ANALOG is also caught by the 1.2 deny-regex «analog» and by the 4.3 exclusion «Analog».
+    - **Severity:** contradiction
+    - **Fix:** In 5.4 replace the plugin list with the 1.2 #30 list: -DPLUGINS_ALL=OFF plus METEOR, NOAA_METOP, AWS, ELEKTRO_ARKTIKA, XRIT and FY2; every sdr_sources plugin off, NET_SOURCE included; no GK2A/FY3/FY4/GOES/METOPSG/ANALOG/CUBESAT/RADIOSONDE. Remove the live path everywhere: in C7 replace the net_source parenthesis with «SatDump декодує лише записані файли (запис, потім декодування)»; in 5.4 delete the «наживо — cf32 по UDP ... net_source» clause (line 855) and the «живий канал теж підтримується ...» / «у живому режимі — IPAddressDeny=any» clauses (863); change «IPAddressDeny=any (вхід лише UDP з localhost)» to «PrivateNetwork=yes» (867) and «вхід SatDump — лише net_source» to «вхід SatDump — лише записані файли labrx» (885); drop the `satdump live` UDP test from the 8 row; update 11.2 #28/#29 to match.
+    - **Evidence:** STACK.md lines 59, 125 (1.2 #30), 855, 863, 867, 885, 1189 (6.2 «Плагіни SDR-джерел SatDump ... зокрема мережеві»), 1461, 2142-2143, 2281 (11.4), 2386 (11.6 note 23); v2_edit_notes.md lines 1043 and 1079 (the conflict between re-audit A's live net_source and C's file-only build was left for a later batch and never settled)
+  2.
+    - **Where:** 4.1 Metop-B/C AHRPT: «далі Lime ≥6 Msps ci16»; AWS: «після приходу Lime — Lime ≥6 Msps ci16»; 5.3 Lime row: «також для Metop/AWS на ≥6 Msps ci16»; 1.2 #91: «Lime RX на ≥6 Msps ci16» and «Lime на ≥6 Msps прибирає 82 %»; 9.1 step 13: «на ≥6 Msps на тракті гелікон»; 11.4 #26
+    - **Problem:** These places give a Lime capture rate of 6 Msps. The rest of v2 says Lime profiles never go below 7 Msps: 5.4 «ніколи нижче 7 Msps», 2.11.1 «≥7 Msps», 8 «reaudit C називав 6 Msps, але швидкості Lime нижче 7 Msps заблоковано», and 6.2 lists any Lime rate below 7 Msps as removed. analogs_G6 #12 also tests at 7 Msps.
+    - **Severity:** contradiction
+    - **Fix:** Replace every «≥6 Msps» used for the Lime (4.1 Metop and AWS rows, 5.3 Lime row, 1.2 #91 twice, 9.1 step 13, 11.4 #26) with «7 Msps ci16 (нижня межа профілів Lime)». Keep 6 Msps only where it is the Airspy Mini's own rate.
+    - **Evidence:** STACK.md lines 161, 550, 551, 782, 896, 1205 (6.2), 1483-1485, 1733, 2269, 323 (2.11.1); final/analogs_G6_extended_optional.json decisions[12].conditions_or_tests («15-minute zero-drop 7 Msps capture»); final/reaudit_B_receivers_rf.json (Lime floor 7 Msps)
+  3.
+    - **Where:** 1.2 #91: «і лише якщо Lime не пройшов 15-хв захоплення без втрат на цьому тракті»; 2.11.3 Airspy Mini: «І Lime не пройшов 15-хвилинне захоплення»; 9.1 step 13: «і лише якщо Lime не пройде 15-хв захоплення без втрат»; 9.2 step 14: «Lime перевіряється першим»
+    - **Problem:** These places make 'the Lime failed' a required buy condition. 1.2 #91 also joins the hump gate and the 2.88 Msps test with AND. 4.1, 8 (row 1484), 8.2 and 11.1 #75 follow analogs G6 #12 instead: buy if (a) the 2.88 Msps rtl_test fails OR (b) the Metop hump is seen but the V4L cannot decode. Skipping the buy when the Lime passes is only an optional scope choice for the user (a clock and power trade).
+    - **Severity:** contradiction
+    - **Fix:** In 1.2 #91, 2.11.3, 9.1 step 13 and 9.2 step 14 write the gate as G6 #12 does: «купувати, лише якщо (a) 15 хв rtl_test на 2.88 Msps на синьому порту не проходять без втрат або (b) горб Metop видно, а V4L не декодує; опційно (вибір обсягу, вирішуєте ви) — не купувати, якщо Lime уже пройшов 15-хв захоплення без втрат на 7 Msps». Remove the AND wording and «Lime перевіряється першим».
+    - **Evidence:** STACK.md lines 161, 345, 550, 1484, 1707, 1733, 1757, 2104; final/analogs_G6_extended_optional.json decisions[12].conditions_or_tests («Optionally, the orchestrator can add ... That is a scope choice»)
+  4.
+    - **Where:** 5.1 table, row LNA4V5: «канал з TCBT-2R5G+ (ch2 або ч4)» → exact text «канал з TCBT-2R5G+ (ch2 або ch4)» and «4 × 299 mA номінальних меж TPS2553 ≈ 1.2 A»
+    - **Problem:** 5.1 allows the TCBT on ch2 or ch4 and sums four 299 mA limits to about 1.2 A. C9, 5.3 and 11.3 #23 say the TCBT channel is only ch4 WIDE (ch2 uses the Murata choke) and give the recomputed sum 3 × 299 + 166 mA ≈ 1.06 A.
+    - **Severity:** contradiction
+    - **Fix:** In 5.1 LNA4V5 change «(ch2 або ch4)» to «(лише ch4 WIDE, G3 #14)», and change «4 × 299 mA номінальних меж TPS2553 ≈ 1.2 A» to «3 × 299 mA + 166 mA ≈ 1.06 A номінальних меж TPS2553 (ch4 на 162k; модель)».
+    - **Evidence:** STACK.md line 642 (5.1) vs line 61 (C9 «такий канал лише один — ch4 WIDE ... 3 × 299 mA + 166 mA = близько 1.06 A»), line 788 (5.3), line 2204 (11.3 #23); final/analogs_G3_power_gnss_imu.json decisions[14]
+  5.
+    - **Where:** 2.8 LC76G row and 11.5 #28: «від вільного виходу MCP23017 #1»; 5.1 LIME3V3: «EN на вільному виході MCP23017»; 11.6: «EN — з вільного виходу MCP23017»
+    - **Problem:** No free expander line exists in the 5.2 pin map. MCP #1 uses all 16 outputs (GPA0 LAB, GPA1 AUX, GPA2/3 VBUS, GPA4 HF+, GPA5-7 LNA, GPB0 LNB, GPB1 Boni, GPB2/3 K1/K2, GPB4-7 switches). MCP #3 uses 14 inputs plus GPA7 and GPB7 as outputs. 5.2 itself says another output is still needed for the Lime EN («призначити на схемі»). Yet the LC76G RESET is put on a 'free MCP #1 output', and the Lime 3.3 V switch EN on a 'free MCP23017 output'.
+    - **Severity:** contradiction
+    - **Fix:** Assign real lines for both signals in the 5.2 expander map: add an expander or move an existing function, with the choice recorded on the schematic. Then replace «від вільного виходу MCP23017 #1» (2.8, 11.5 #28) and «EN на вільному виході MCP23017» (5.1, 11.6) with the assigned pin, or with «лінію призначити на схемі: вільних ліній MCP #1/#3 немає (5.2)».
+    - **Evidence:** STACK.md lines 292 (2.8), 645 (5.1), 738-740 (5.2 MCP #1 outputs; MCP #3 inputs and GPA7/GPB7; «Потрібен ще один вихід»), 2326 (11.5 #28), 2393 (11.6)
+  6.
+    - **Where:** 5.2 USB map: «| J5 верхній = FE1.1s P1 | U35 | RTL-B»; 5.2 MCP #1: «GPA2/GPA3 відсічення VBUS RTL-A / RTL-B»; 2.7 and 11.1 #35: «VBUS RTL-A і RTL-B, 2 запасні»; C9: «VBUS HF+ і VBUS RTL-A/B»
+    - **Problem:** C9, 2.7 and 11.1 #35 put a TPS2553DBVR-1 on the RTL-B VBUS, and 5.2 has MCP #1 GPA3 cutting the RTL-B VBUS (also used by the V4L-8 test). But the USB map and C5 put RTL-B on J5 upper / FE1.1s P1, powered from the Q6A's own U35 WS4612, with no key. The 5.1 LAB5 load list has no RTL-B key either. As written, GPA3 has nothing to switch.
+    - **Severity:** contradiction
+    - **Fix:** Either define the RTL-B VBUS path in the 5.2 USB map and the 5.1 LAB5 row (for example a split-VBUS lead from LAB5 through a TPS2553DBVR-1 on MCP #1 GPA3, with pad 1 unconnected, as for H2), or remove «VBUS RTL-B» from C9, 2.7 and 11.1 #35 and GPA3 from 5.2 and 8.1 V4L-8 and lower the TPS2553 count.
+    - **Evidence:** STACK.md lines 57 (C5 «FE1.1s P1 — RTL-B»), 61 (C9), 279 (2.7), 641 (5.1 LAB5 loads), 701 (5.2 J5 upper), 738 (GPA2/GPA3), 1567 (8.1 V4L-8), 2064 (11.1 #35); STACK_v1_backup.md lines 611, 644 (same gap already in v1)
+  7.
+    - **Where:** 1.1 C17: «Уставка: ворота ±0.2 V, вимірювані на кожному екземплярі»; 6.2: «шина BONI13V8 (TPS7A4701 на 13.8 V ±0.2 V)»; 11.5 #11: «приймання ±0.35 V замість ±0.25 V»
+    - **Problem:** Three different acceptance windows are given for the Boni rail. 5.1 BONI13V8, 8.1 and 11.3 #2 follow analogs G3 #9 (higher precedence): the IC band of ±0.345 V holds only with IN at 14.8 V or more (battery about 15.0 V), and the gate is ≥12.0 V at the bias-tee barrel at a 13.2 V battery, measured per unit. 11.3 #2 says explicitly that the ±0.2 V window was not adopted.
+    - **Severity:** contradiction
+    - **Fix:** Rewrite the C17 «Уставка» clause, the 6.2 parenthesis and the 11.5 #11 text to match 5.1: «13.8 V; гарантована смуга ІС ±0.345 V лише при IN ≥14.8 V (батарея ≈15.0 V); ворота — ≥12.0 V на барелі bias-tee при батареї 13.2 V, вимір на кожному екземплярі (G3 #9)». Delete ±0.2 V and ±0.35 V as Boni acceptance windows.
+    - **Evidence:** STACK.md lines 69 (C17), 644 (5.1), 1181 (6.2), 1578 (8.1), 2183 (11.3 #2), 2309 (11.5 #11); final/analogs_G3_power_gnss_imu.json decisions[9].conditions_or_tests («Test BONI13V8 with IN at 14.8 V or more ... ±0.345 V at 13.8 V»)
+  8.
+    - **Where:** 8.1 RF-4: «13.2 V ±0.33 V на F-роз'ємі при батареї 13.8-16.4 V»; 11.3 #27: «при батареї 13.8-16.4 V замість ±0.2 V»
+    - **Problem:** Both rows set the LNB acceptance basis at a 13.8-16.4 V battery. C8, 1.2 #102 and 5.1 say ±2.5% holds only with VIN ≥ VO + 1 V, so the window is checked with IN at 14.2 V or more and the dropout is measured separately at a 13.2 V battery. The edit notes record that the 13.8-16.4 V basis was dropped.
+    - **Severity:** contradiction
+    - **Fix:** In 8.1 RF-4 and 11.3 #27 replace «при батареї 13.8-16.4 V» with «при IN LDO ≥14.2 V (G3 #9); дропаут — окремо при батареї 13.2 V».
+    - **Evidence:** STACK.md lines 60 (C8), 168 (1.2 #102), 643 (5.1), 1604 (8.1 RF-4), 2208 (11.3 #27); final/analogs_G3_power_gnss_imu.json decisions[9]; v2_edit_notes.md line 60
+  9.
+    - **Where:** 8, row «Відкриті рішення щодо живлення»: «v2 має вибрати одне; якщо встановлено eFuse — видалити MF-MSMF030-2»; 9.1 step 6: «(+ MF-MSMF030-2 лише якщо PTC Boni лишається)»; 11.1 #37: «MF-MSMF030-2 (Boni, лише якщо PTC лишається)» and «reaudit_B суперечить собі щодо шини Boni ... v2 має обрати одне»
+    - **Problem:** The Boni rail choice is still listed as open, and the shopping list and change log keep a conditional Boni PTC. 5.1 and 2.7 have already decided it: 13.8 V, eFuse TPS259630DDAR, «PTC немає ... MF-MSMF030-2 видалено», «MF-MSMF030-2 для Boni не потрібен».
+    - **Severity:** contradiction
+    - **Fix:** Close item (b) in the section 8 row: «вирішено: BONI13V8 з eFuse TPS259630DDAR, PTC і MF-MSMF030-2 прибрано (5.1, 2.7)». Delete «(+ MF-MSMF030-2 лише якщо PTC Boni лишається)» from 9.1 step 6. In 11.1 #37 remove the MF-MSMF030-2 entry and replace «v2 має обрати одне» with the decision.
+    - **Evidence:** STACK.md lines 281 (2.7), 644 (5.1), 1529 (8), 1726 (9.1 step 6), 2066 (11.1 #37)
+  10.
+    - **Where:** 5.1 BONI13V8, 5.3 P5 and C17: «вікно струму 30-150 mA»; same 5.1 row: «RILM 7.87 kOhm (0.113-0.139 A)»
+    - **Problem:** The labd current window for the Boni rail goes up to 150 mA, but the eFuse on that rail latches at 113-139 mA. Above 113-139 mA the hardware trips first, so the window's upper bound can never act and does not agree with the limit.
+    - **Severity:** contradiction
+    - **Fix:** Make the two numbers agree: either set the labd window below the eFuse minimum (for example 30-110 mA), or set the Boni RILM from the measured current as for the LNB (RILM = 903/(ILIM − 0.0112) at 1.5-2× the measured I_Boni) and state that the window lies inside it. Apply the same wording in 5.1, 5.3 (P5 row and the «Зміщення і блокування» paragraph) and C17.
+    - **Evidence:** STACK.md lines 69 (C17), 277 (2.7 eFuse row), 644 (5.1), 775 and 788 (5.3)
+  11.
+    - **Where:** 5.8 weight table: «**1.73-1.96 з Lime ... сума частин 1.58-1.81 + 0.15**» and rucksack «вміст **5.60-7.01 kg** ... **6.50-8.26 kg** ... **6.85-8.26 kg** і **7.75-9.51 kg**»; 11.4 #34: «близько 5.2-7.1 kg без КХ і щогли і 6.1-8.4 kg повністю»
+    - **Problem:** The device and rucksack weights disagree between sections. C24, D14, the 2.5 rucksack note, 2.12 and 11.1 #46 give the device as 1.72-1.94 kg (parts 1.57-1.79), contents 5.54-6.92 / 6.44-8.17 kg, and 6.8-8.2 / 7.7-9.4 kg on the back. 5.8, which D14 cites as its source («За сумою частин 5.8 ... 5.54-6.92»), gives 1.73-1.96, 5.60-7.01 / 6.50-8.26 and 6.85-8.26 / 7.75-9.51 kg. 11.4 #34 gives a third set and says the same figures are in 2.12 and D14, which is not true.
+    - **Severity:** contradiction
+    - **Fix:** Choose one recomputation and copy it everywhere. 5.8's figures already include the 0.33-0.34 kg battery correction (11.5), so use 1.73-1.96 kg, 5.60-7.01 / 6.50-8.26 kg and 6.85-8.26 / 7.75-9.51 kg in C24, D14, the 2.5 rucksack note, 2.12 «Вага», 11.1 #46 and 11.4 #34. Or revert 5.8 to the G4 numbers. Either way, all sections must show the same numbers.
+    - **Evidence:** STACK.md lines 76 (C24), 91 (D14), 243 (2.5), 387 (2.12), 1064 and 1076 (5.8), 2075 (11.1 #46), 2277 (11.4 #34), 2299 (11.5 battery row 0.33-0.34 kg)
+  12.
+    - **Where:** 9.2 step 1: «лічильник завантажень embloader і тест відкату A/B з примусовою помилкою» and «/dev/watchdog (якщо немає — сторожовий таймер Pico)»
+    - **Problem:** The bring-up step still tests an embloader boot counter. C18, 1.2 #25, 5.4 «Ланцюг завантаження A/B», 7 #42 and 8 B3 say embloader has no boot counter in any tag, so the main route A is purging sdboot-is-embloader and using real systemd-boot with tries=3 and systemd-bless-boot. The step also makes /dev/watchdog the first choice, while D3 and section 8 say QCOM_WDT is unusable (reserved for Gunyah) and the Pico is the main hardware watchdog; the Gunyah watchdog is only an option (B8).
+    - **Severity:** contradiction
+    - **Fix:** In 9.2 step 1 replace the first clause with «відкат A/B маршрутом A (purge sdboot-is-embloader, bootctl install, tries=3, systemd-bless-boot; тест B3 з примусовою помилкою; при провалі — маршрут B)», and the second with «сторожовий таймер — Pico (основний); опційно lab-gunyah-wdt лише після B8».
+    - **Evidence:** STACK.md lines 70 (C18), 80 (D3), 122 (1.2 #25), 823-825 (5.4), 1304 (7 #42), 1457-1458 (8 Q6A/B3), 1741 (9.2 step 1)
+  13.
+    - **Where:** 11.2 #15: «refclock PPS /dev/pps0 lock NMEA refid PPS prefer» and «GPSD_OPTIONS у повторних аудитах A ... узгоджується при зведенні»; 11.5 #47: «→ /dev/gnss0, ніколи жорстко ttyHS1»
+    - **Problem:** The change log repeats configurations that v2 replaced. C13, 5.4 and 11.5 use «refclock PPS /dev/pps-gnss lock NMEA refid PPS noselect» with a selectopts gate (5.4 says this replaces `prefer`), and 5.2 says «ніколи жорстко pps0». 5.4 has already chosen GPSD_OPTIONS «-n -b -s 115200». The udev target is /dev/lab/gnss (5.2, 11.2 #14), and 6.2 lists «/dev/gnss0 як ім'я GNSS» as removed.
+    - **Severity:** contradiction
+    - **Fix:** In 11.2 #15 change «/dev/pps0 ... prefer» to «/dev/pps-gnss ... noselect (ворота PPS selectopts, re-audit D)» and replace «узгоджується при зведенні» with «обрано -n -b (5.4)». In 11.5 #47 change «→ /dev/gnss0» to «→ /dev/lab/gnss».
+    - **Evidence:** STACK.md lines 65 (C13), 719 and 722 (5.2), 860 (5.4), 1199 (6.2), 2128-2129 (11.2 #14/#15), 2329 and 2345 (11.5)
+  14.
+    - **Where:** 8, row «librtlsdr +lab і ворота токена bias-tee»: «з /run/lab/bias/LABRXA з'являється близько 4.5 V»
+    - **Problem:** The bias token path in this test differs from every other place, which use /run/labd/bias/<serial> (C9, C11, 5.3, 5.4, 11.3). A test against the wrong path would never see the token.
+    - **Severity:** contradiction
+    - **Fix:** Change «/run/lab/bias/LABRXA» to «/run/labd/bias/LABRXA».
+    - **Evidence:** STACK.md line 1426 vs lines 61, 63, 788, 854, 879, 2200
+  15.
+    - **Where:** 1.2 #31: «збірка +lab проти libairspyhf1 1.6.8-5~lab1»; 8 B12: «показує кандидат +lab із пріоритетом 1001» (for libairspyhf1); 6.2: «бекпорт libairspyhf1 1.6.8-5~lab1»
+    - **Problem:** These places still use the libairspyhf 1.6.8-5~lab1 backport as the default. C22, 5.4 and 11.3 make noble 1.6.8-4build1 (real 1.6.8, soname 1) the default and allow the 1.6.8-5 backport only if 1.8.1 features are needed. A noble package comes from the mirror at priority 990, so it is not a '+lab at 1001' candidate.
+    - **Severity:** contradiction
+    - **Fix:** In 1.2 #31 write «збірка +lab проти libairspyhf1 1.6.8-4build1 (noble; бекпорт 1.6.8-5~lab1 — лише якщо потрібні функції 1.8.1)». In 8 B12 take libairspyhf1 out of the '+lab 1001' list or expect 1.6.8-4build1 at 990. In 6.2 name noble 1.6.8-4build1 as the replacement for libairspyhf0.
+    - **Evidence:** STACK.md lines 74 (C22), 126 (1.2 #31), 883 (5.4), 1198 (6.2), 1460 (8 B12), 2189 (11.3); v2_edit_notes.md line 65
+  16.
+    - **Where:** WSJT decoder package name: «lab-wsjt-decoders» in 1.2 #10 and #29, 5.4 (3×), 11.2 #22 vs «wsjtx-decoders+lab» in C22, 3.5 P20, 4.2, 6.2, 7 #23, 11.3 #43
+    - **Problem:** The same apt package has two names, six times each. Its pins, CI checks and sbuild chroot are all keyed on the name.
+    - **Severity:** contradiction
+    - **Fix:** Use one name everywhere: «lab-wsjt-decoders», which the 5.4 packaging section uses, or «wsjtx-decoders+lab». Update the six places that use the other name.
+    - **Evidence:** STACK.md lines 74, 110, 124, 499, 589, 867, 875, 883, 1202, 1280, 2136, 2224; v2_edit_notes.md lines 66 and 229
+  17.
+    - **Where:** 3.1 Debug Probe: «у замовленні кроку 7 ($11.85»; 8 Debug Probe row: «DigiKey DE у замовленні кроку 7»; 11.1 #56: «у замовленні DigiKey (крок 7)»; 11.1 #65: «в наявному замовленні DigiKey DE (крок 7)»
+    - **Problem:** 9.1 puts the consolidated DigiKey DE order in step 6, and step 7 says «окремого замовлення DigiKey у цьому кроці немає». Steps 5, 10, 11 and 13 also point to the DigiKey DE order of step 6, but these rows point to step 7.
+    - **Severity:** contradiction
+    - **Fix:** Change «кроку 7» / «крок 7» to «кроку 6» / «крок 6» in 3.1 (Debug Probe), 8 (Debug Probe row), 11.1 #56 and 11.1 #65.
+    - **Evidence:** STACK.md lines 408, 1517, 2085, 2094 vs 1725-1727, 1730, 1731, 1733 (9.1 steps 5, 6, 7, 10, 11, 13)
+  18.
+    - **Where:** 9.1 step 6: «Сам кошик HMI (3 PEC11R, 10 KSC641J, 2 ферити, 2 Pico, TCA9555)»; 11.1 #69: «(уже є PEC11R, KSC641J, ферити, деталі Lime)»; 2.6 button expander: «PCA9555 у TI замінено сумісною TCA9555.»
+    - **Problem:** These places still name replaced HMI parts as the picks. The current picks are TL3145BF350QJ ×12 (KSC641J only as a fallback) and PI4IOE5V9555LEX (TCA9555PWR only as a fallback), as 2.6, 5.2, 6.2 and the same 9.1 step 6 cart line show.
+    - **Severity:** contradiction
+    - **Fix:** 9.1 step 6: «Сам кошик HMI (3 PEC11R-4220F, 12 TL3145BF350QJ, 2 ферити, 2 Pico, 2 PI4IOE5V9555LEX)». 11.1 #69: «(уже є PEC11R, TL3145BF350QJ, ферити, деталі Lime)». 2.6: «PCA9555 (у TI — superseded) замінено на PI4IOE5V9555LEX; TCA9555PWR — запасний на тому самому посадковому місці».
+    - **Evidence:** STACK.md lines 256 and 258 (2.6), 750 (5.2), 1225-1226 (6.2), 1726 (9.1 step 6), 2047-2048 and 2098 (11.1 #18, #19, #69)
+  19.
+    - **Where:** 2.9 «Захист від погоди»: «LAB BUS, GX12/M8»; 8.2 IPX4 row: «без води біля GX12/M8»
+    - **Problem:** The weather-kit BOM row and the IPX4 test still name the GX12/M8 IMU connector. 5.2, 5.8, D12, D15 and 2.8 use the Olimex GX16-4, 6.2 lists GX12 as removed, and 11.1 #24 says «GX12 → GX16 скрізь». 11.1 #43 says the weather-kit row was meant to say GX16.
+    - **Severity:** contradiction
+    - **Fix:** In 2.9 replace «GX12/M8» with «GX16-4 (IMU)», and in 8.2 replace «біля GX12/M8» with «біля GX16-4».
+    - **Evidence:** STACK.md lines 303 (2.9), 1694 (8.2) vs 89 (D12), 92 (D15), 291 (2.8), 766 (5.2), 1040 (5.8), 1230 (6.2), 2053 and 2072 (11.1 #24, #43)
+  20.
+    - **Where:** 1.2 #83: «Лише якщо Lime залишено.»; 1.2 #21: «Запасний варіант (якщо Lime не буде)»; 8 FE1.1s row: «+ Lime, коли встановлено»
+    - **Problem:** These phrases show the Lime as optional or 'if kept'. The user decision of 18.10.2026 keeps the LimeSDR Micro M.2 and makes the with-Lime build the default. The only fallback elsewhere is 'if the Lime fails acceptance'.
+    - **Severity:** rule_violation
+    - **Fix:** 1.2 #83 consequences: «Lime залишено (18.10.2026); варіант з GNSS не брати». 1.2 #21: «Запасний варіант (лише якщо Lime не пройде приймання): без DKMS, class fixup і ізоляції CPU7». 8 FE1.1s row: «+ Lime (збірка за замовчуванням)».
+    - **Evidence:** STACK.md lines 118, 157, 1454; brief v2_brief.md hard rules («LimeSDR Micro M.2 kept (with-Lime build is the default, Lime TX blocked)»); final/user_requirements.md
+  21.
+    - **Where:** 4.1 S-band row (Lime), decoder column: «SatDump лише з цивільними й аматорськими конвеєрами з алоу-листа»
+    - **Problem:** The SatDump pipeline allowlist (1.2 #30, 4.3, 5.4, 11.4, 11.6) contains only Meteor-M.json, MetOp.json, AWS.json, FengYun-2.json and Elektro_Arktika.json. None of these is an S-band Black Kite or PHASMA pipeline, so the SatDump route named for S-band does not exist.
+    - **Severity:** contradiction
+    - **Fix:** Change the decoder cell to «gr-satellites (розбір кадрів не перевірено); SatDump-конвеєра S-band в алоу-листі немає». Or add a named civil or amateur S-band pipeline to the allowlist in 1.2 #30 and 5.4 together.
+    - **Evidence:** STACK.md line 573 (4.1 S-band) vs lines 125, 615, 867, 2273, 2362; v2_edit_notes.md line 1783
+  22.
+    - **Where:** 7 #23: «підсумок extended — близько $605-890 (близько $555-780 без H-зондів)»
+    - **Problem:** The correction item keeps an old extended-lab total. 3.6 and 2.12 give ≈$570-630, or up to ≈$730.50 with the Peli 1450. «без H-зондів» also implies the extended total contains H-field probes, which the hard rules forbid and 6.1 removes.
+    - **Severity:** rule_violation
+    - **Fix:** Replace the clause with «підсумок extended — ≈$570-630 (570.25-629.73; з Peli 1450 — до ≈$730.50; H-field зондів у стеку немає)».
+    - **Evidence:** STACK.md line 1280 vs 509 (3.6), 1109 (6.1), 15 (header hard rules); v2_edit_notes.md line 372
+  23.
+    - **Where:** 4.1 GNSS row, target name: «GNSS L1 + regional SBAS»
+    - **Problem:** The target name keeps the v1 wording. 6.2 removes «регіональний SBAS», and 11.6 says «regional SBAS» was replaced with EGNOS in the 4.1 GNSS row. The same row's own text says SBAS = EGNOS.
+    - **Severity:** contradiction
+    - **Fix:** Rename the target to «GNSS L1 + SBAS (EGNOS)».
+    - **Evidence:** STACK.md line 566 vs 1184 (6.2), 2402 (11.6), 804 (5.3 «GNSS L1 / SBAS (EGNOS)»)
+  24.
+    - **Where:** 6.2: «Flamingo+ з боку SDR або «лише біля потужного FM»; режектор RTL-SDR Blog | C10.»
+    - **Problem:** 6.2 lists the RTL-SDR Blog FM band-stop as removed, but 2.3 has it as a new bought line (FM-режектор запасного V4L, $16.95, counted in the 2.3 subtotal and in 2.12). 5.3, 9.1 step 2 and 11.3 #38 use it for the spare V4L. It was rejected only as a replacement for the Flamingo+ on P1.
+    - **Severity:** contradiction
+    - **Fix:** In 6.2 change «режектор RTL-SDR Blog» to «режектор RTL-SDR Blog як заміна Flamingo+ на P1 (для запасного V4L лишається, 2.3)».
+    - **Evidence:** STACK.md lines 209 and 215 (2.3), 379 (2.12), 806 (5.3), 1149 (6.2), 1722 (9.1), 2219 (11.3 #38); v2_edit_notes.md line 41
+  25.
+    - **Where:** 11.3 #21: «IOS 262-342 mA (модель за рівняннями SLVS841F)»; 11.3 #23: «Канал 300 mA (262-342 mA)»
+    - **Problem:** The change log states re-audit B's trip window as the v2 value. 2.7, 5.1, 7 #83 and 8.1 use the analogs G3 #11 window (265/299/339 mA), which overrides B; 7 #83 says «його 262-342 mA замінено значеннями G3».
+    - **Severity:** contradiction
+    - **Fix:** In 11.3 #21 and #23 write «265/299/339 mA (G3 #11; re-audit B давав 262-342 mA)».
+    - **Evidence:** STACK.md lines 2202, 2204 vs 279 (2.7), 642 and 648 (5.1), 1354 (7 #83), 1602 (8.1); final/analogs_G3_power_gnss_imu.json decisions[11]
+  26.
+    - **Where:** 2.6 MCU HMI row: «зайнято 23 GPIO + 3 ADC, вільний лише GP22; прошивка»
+    - **Problem:** 2.6 still shows GP22 as free. C6, D12 and 5.2 assign GP22 to the fan tach of path 1 («24 GPIO + 3 ADC і жодного вільного GPIO»).
+    - **Severity:** contradiction
+    - **Fix:** Change to «зайнято 24 GPIO + 3 ADC (GP22 — тахо вентилятора шляху 1, C6), вільних GPIO немає».
+    - **Evidence:** STACK.md line 255 (2.6) vs 58 (C6), 89 (D12), 743 and 760 (5.2)
+  27.
+    - **Where:** 1.1 C6: «уже зайняті 0x20, 0x21, 0x22, 0x30, 0x48»
+    - **Problem:** The list of addresses already taken on I2C2 leaves out 0x49 (the ADS1115 of the AD8318 box). 5.2 and D13 list 0x49 on I2C2.
+    - **Severity:** missing
+    - **Fix:** Change to «уже зайняті 0x20, 0x21, 0x22, 0x30, 0x48, 0x49».
+    - **Evidence:** STACK.md line 58 (C6) vs 723 and 766 (5.2), 90 (D13), 346 (2.11.3 AD8318 «ADS1115 коробки на 0x49»)
+  28.
+    - **Where:** 11.7 intro: «безумовних замін немає»
+    - **Problem:** 11.7 says there are no unconditional replacements. 11.1 #18 and 2.6 replace the encoder PEC11R-4215F with PEC11R-4220F «безумовно», and 11.7's own firm-savings table lists «PEC11R-4220F-S0024 (безумовна частина рядка HMI)».
+    - **Severity:** contradiction
+    - **Fix:** Change to «безумовна заміна одна — енкодери PEC11R-4220F (частина рядка G2 #6); решта замін — умовні».
+    - **Evidence:** STACK.md lines 256 (2.6), 2047 (11.1 #18), 2413 and 2426 (11.7)
+  29.
+    - **Where:** 11.7 conditional savings, Airspy Mini: «16.78-36.78 | DE, проти середини $146.50»
+    - **Problem:** The range does not match its stated basis. Against the $146.50 midpoint the DE saving is $23.28 ($146.50 − $123.22), as in 1.2 #91, 2.11.3 and 11.1 #75. The range 16.78-36.78 is measured against the $140-160 range, not the midpoint.
+    - **Severity:** wrong_number
+    - **Fix:** Write «23.28 (DE, проти середини $146.50; 16.78-36.78 проти діапазону $140-160)», or change the basis text to «проти діапазону $140-160». Check that the 43.88-87.64 and 413.48-717.31 sums still hold after the change.
+    - **Evidence:** STACK.md lines 161, 345, 2104 vs 2442 (11.7)
+  30.
+    - **Where:** 8 «Ціни» row: «ціни й наявність TPS259470A (у P5 G3 не перевірено)»
+    - **Problem:** The row says the TPS259470A price and stock were not checked. 2.7 lists «3× TI TPS259470ARPWR (DigiKey, франчайзі, 78,910 шт.; LCSC $1.30)» from analogs G3 #13, and 9.1 orders it from DigiKey.
+    - **Severity:** contradiction
+    - **Fix:** Remove TPS259470A from the unverified list in the «Ціни» row, or reword it as «TPS259470ARPWR — DigiKey 78,910 шт. (G3 #13); перевірити ціну на касі».
+    - **Evidence:** STACK.md line 1524 vs 281 (2.7), 1726 (9.1); final/analogs_G3_power_gnss_imu.json decisions[13]; v2_edit_notes.md line 471
+  31.
+    - **Where:** 3.1 «Запасний LNA» row: «ch4 → RTL-A T3»
+    - **Problem:** The row still uses the v1 throw name. v2 renamed the switch throws to RF1-RF4: WIDE/2 m is RTL-A RF4 (5.3, D8), and 11.3 maps T3→RF4.
+    - **Severity:** contradiction
+    - **Fix:** Change «RTL-A T3» to «RTL-A RF4».
+    - **Evidence:** STACK.md line 404 vs 85 (D8), 781 and 790 (5.3), 2213 (11.3)
+- **Notes:** Read for this check: the brief, the editor notes (as leads), and STACK.md sections 1.1 (C1, C5, C8, C9, C17, C24, D1-D16), 1.2 (targeted rows), 2.6, 2.7, 2.11-2.12, 3.6, 4.1-4.3, 5.1, 5.2, 5.3, 9.1, 9.2 and 11.1/11.7 in full. Everything else was checked with targeted greps (helper script in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/cons/g.py). No file was edited.
+  
+  Checked and found consistent:
+  - Lime kit total 606.46-608.46 and the device totals in C24, 2.12, 3.6 and 11.7.
+  - HF-chain total 524.71-576.74 in 2, 3.3, 3.6 and 11.3.
+  - The 2.7 subtotal and the TPS7A4701 ANY-OUT sums for 13.2, 13.8 and 12.5 V.
+  - INA228 0x40/0x45 and INA3221 0x41/0x43.
+  - The 11.1 decision count (78 = 43 kept + 35 conditional).
+  - HTP gates 11.7 ms / 41 tiles/s / 28 ms.
+  - QO-100 elevation 12-46°.
+  - Every remaining mention of PE4302, Pelican/Apache, G6K, TLV3012 and ZFL-500LN+ is a fallback or the 'old part' note, not the pick.
+  
+  Judgement calls:
+  - RTL-B VBUS: the gap is already in v1 (STACK_v1_backup.md lines 611, 644). I reported it because v2 extended it with 'TPS2553DBVR-1 on VBUS RTL-A and RTL-B'.
+  - SatDump: re-audits A and C are the same precedence level, so precedence does not decide it. I recommend file-only because 1.2 #30, 6.2, 11.4 and 11.6 note 23 already treat network SDR-source plugins as removed.
+  
+  Minor points not reported as separate problems:
+  - The LNB pad is given as 15/20 dB in 9.1 step 11 and D8 but 15/20/30 dB in C8, 5.3 and 9.2.
+  - 'UHF' is used as the abbreviation for the Union handling fee throughout, although the edit notes meant it to be avoided.
 
 ## extract:analogs_G4 (run `wf_be383e11-6dc`)
 
