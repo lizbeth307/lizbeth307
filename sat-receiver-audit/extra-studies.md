@@ -41310,6 +41310,121 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   LIMITS OF THIS PASS: the shared web-search budget ran out on my first query, so the rest of the work used WebFetch on primary pages only. Used-market prices could not be checked (eBay.de, .co.uk and .com and Kleinanzeigen all returned 403). No EU listing for the generic LA was confirmed (AZ-Delivery returned 429). The Hantek official AliExpress store price was not checked. The PLN-to-USD conversion is my model. Rules: everything here is passive receive-side test gear; any bandwidth check uses a conducted source into a 50 Ohm feed-through at the lowest level with no antenna connected; there are no loops or H-field probes.
 
+## searchA:raspberry_pi_debug_probe (run `wf_e5582d4c-0a2`)
+
+- **Part:** Raspberry Pi Debug Probe (SC0889; Adafruit 5699). Bench/field SWD + UART tool for the Pico supervisor (RP2040) and the IMU-pack RP2040-Zero, and the 3.3 V UART console
+- **Current price usd:** 12.00 (Adafruit 5699, in stock, fetched 18 Oct 2026; DigiKey US 2648-SC0889-ND $12.00 with 2,782 in stock; PiShop.us $12.00 in stock). US prices exclude tax. A Europe-based buyer pays more than this on an Adafruit order: import VAT, the new flat EU customs duty (amount not verified) and DHL shipping.
+- **Critical specs:**
+  - SWD over CMSIS-DAP v2 (USB bulk). OpenOCD supports SWD multidrop only on cmsis_dap 'version 2.0' adapters, ftdi and bitbang drivers, and the RP2040 needs multidrop. Any probe that lacks it cannot attach to the Pico supervisor or the IMU-pack RP2040-Zero.
+  - Works with stock Ubuntu 24.04 arm64 tools and needs no proprietary driver: OpenOCD 0.12.0 with interface/cmsis-dap.cfg and target/rp2040.cfg, adapter speed 5000 kHz as in the Raspberry Pi docs; picocom 3.1.
+  - USB-UART bridge as CDC-ACM (/dev/ttyACM*, in-kernel cdc_acm) at 3.3 V and at least 115200 baud. It is used for the Q6A console on header pins 8/10, Pico UART0 and the IMU-pack framed UART at 115200. debugprobe has an autobaud mode (set the port to 9728).
+  - 3.3 V nominal I/O to match the RP2040 and the Q6A header buffers. The input path is robust: Debug Probe hardware reads SWDI through a separate level-shifted input (board_debug_probe_config.h: 'For level-shifted input').
+  - Connectors and leads: the Raspberry Pi 3-pin debug connector (JST-SH) for Pico H, plus JST-to-0.1-inch female and male leads for a bare Pico or RP2040-Zero. All three leads and a USB cable come in the box.
+  - Build: an enclosure for the field case (the probe travels in the field pouch), five status LEDs, compliance-tested (certificates at pip.raspberrypi.com), genuine official part, in production until at least January 2030.
+  - Open, updatable firmware (debugprobe v2.3.1, flashed as UF2).
+  - USB bus-powered, 22 x 32 mm.
+  - Hard-rule check: it is not an RF source. Like any RP2040 device it has a 12 MHz crystal, so it is plugged in only on the bench or for service. The same applies to every RP2040 alternative.
+- **Candidates:**
+  1.
+    - **Name:** Raspberry Pi Debug Probe SC0889 (same SKU) from reichelt elektronik, DE (reichelt #RPI DEBUG PROBE)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 10.86 ex VAT (EUR 9.66) / 12.93 incl. 19% DE VAT (EUR 11.50) at 1.1241 USD/EUR; shipping extra, amount not verified
+    - **Spec comparison:** Identical part: SC0889, 3.3 V I/O, SWD (CMSIS-DAP) + UART, case, USB cable and 3 debug leads included (per the reichelt listing). In stock, 1-2 business days.
+    - **Worse in:** Nothing; it is the same part. It only works out cheaper ex VAT, or landed in the EU against Adafruit landed (Adafruit $12 + import VAT ~19-21% = at least ~$14.3, plus flat duty and shipping). Including VAT it is $0.93 above Adafruit's ex-tax $12. reichelt shipping is extra: on a separate reichelt order it can wipe out the saving, so buy it here only if a reichelt order exists or is created for other parts.
+    - **Compatibility:** Same device as the current pick: same firmware, OpenOCD and cdc_acm on Ubuntu 24.04 arm64. EU stock, so no customs.
+    - **Risks:** reichelt's Raspberry Pi Approved Reseller status was not checked on raspberrypi.com this pass (the reseller list is not in the page text). It is an established DE distributor and lists manufacturer part SC0889. Shipping cost not verified.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/raspberry_pi_debug_probe-343288
+    - **Sources:**
+      - https://www.reichelt.com/de/en/shop/product/raspberry_pi_debug_probe-343288
+      - https://www.raspberrypi.com/products/debug-probe/
+  2.
+    - **Name:** Raspberry Pi Debug Probe SC0889 (same SKU) from DigiKey DE (2648-SC0889-ND)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 11.85 ex VAT (EUR 10.54) / 14.10 incl. VAT (EUR 12.54); EUR 25 delivery under EUR 75, free from EUR 75
+    - **Spec comparison:** Identical part from an authorized distributor. 2,782 in stock.
+    - **Worse in:** Nothing in specs. It is cheaper than $12 only ex VAT, and only if it rides on the DigiKey order already planned (bring-up step 7: PEC11R x3, KSC641J x10, ferrites) so that order clears EUR 75. On its own it costs +EUR 25 shipping.
+    - **Compatibility:** Same device. EU delivery with VAT shown, no customs.
+    - **Risks:** Low: authorized distribution and genuine stock. The free-shipping threshold must be met.
+    - **Seller url:** https://www.digikey.de/en/products/result?keywords=SC0889
+    - **Sources:**
+      - https://www.digikey.de/en/products/result?keywords=SC0889
+      - https://www.digikey.com/en/products/result?keywords=SC0889
+  3.
+    - **Name:** Raspberry Pi Debug Probe SC0889 (same SKU) from BerryBase, DE (RPIP-DEBUGP, EAN 5056561803265)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 11.53 ex VAT (EUR 10.25, my calculation at 19%) / 13.71 incl. VAT (EUR 12.20); shipping extra, free from EUR 200
+    - **Spec comparison:** Identical part; 96 in stock, 1-3 days.
+    - **Worse in:** Nothing in specs. It costs more than reichelt (EUR 12.20 vs 11.50 incl. VAT), so it is a fallback only.
+    - **Compatibility:** Same device.
+    - **Risks:** Shipping cost not verified.
+    - **Seller url:** https://www.berrybase.de/raspberry-pi-debug-probe
+    - **Sources:**
+      - https://www.berrybase.de/raspberry-pi-debug-probe
+  4.
+    - **Name:** Raspberry Pi Pico / Pico H (RP2040) running debugprobe_on_pico.uf2 (official firmware build option); this is the noted 'Pico SWD' budget option
+    - **Kind:** diy
+    - **Price usd:** 4.00 (Adafruit 4864, out of stock) / 5.00 Pico H (Adafruit 5525, out of stock) / 5.40 incl. VAT (EUR 4.80, reichelt Pico or Pico H, in stock; 4.53 ex VAT). $0 extra if the BOM's spare Pico is used, but then the spare is gone. Header leads extra.
+    - **Spec comparison:** Same RP2040, same debugprobe firmware, CMSIS-DAP and the same OpenOCD/cdc_acm path. SWCLK on GP2, SWDIO on GP3, UART on GP4/GP5 at 115200 default (board_pico_config.h). Better in one point: it has a target-reset output on GP1, which the Debug Probe build lacks ('No reset pin').
+    - **Worse in:** Build and robustness. No enclosure: a bare PCB in the field pouch risks shorts and ESD. SWDIO goes straight to an RP2040 GPIO, without the Debug Probe's separate level-shifted SWDI input. No JST-SH debug connector on the probe side and no leads included, so you wire Dupont leads to GP2/GP3/GP4/GP5. One LED instead of five. No product compliance as a debug tool. This fails 'same or better build quality', so it is not acceptable under the rule.
+    - **Compatibility:** Fully compatible in software on Ubuntu 24.04 arm64. Mechanically you need loose leads.
+    - **Risks:** The Pico itself is genuine from official resellers. The risk is wiring and handling, not counterfeit parts.
+    - **Seller url:** https://www.reichelt.com/de/en/shop/product/raspberry_pi_pico_rp2040_cortex-m0_microusb_header-305824
+    - **Sources:**
+      - https://github.com/raspberrypi/debugprobe
+      - https://raw.githubusercontent.com/raspberrypi/debugprobe/master/include/board_pico_config.h
+      - https://raw.githubusercontent.com/raspberrypi/debugprobe/master/include/board_debug_probe_config.h
+      - https://www.adafruit.com/product/4864
+      - https://www.adafruit.com/product/5525
+      - https://www.reichelt.com/de/en/shop/search/raspberry+pi+pico
+  5.
+    - **Name:** ST-LINK family (official STLINK-V3MINIE or V2; V2 clones excluded as counterfeit-prone)
+    - **Kind:** other_brand
+    - **Price usd:** not verified (not fetched; rejected on compatibility first)
+    - **Spec comparison:** ST-LINK works through OpenOCD's st-link/hla drivers. OpenOCD's adapter documentation lists SWD multidrop only for 'cmsis_dap (use an adapter with CMSIS-DAP version 2.0), ftdi, all bitbang based'. ST-LINK is not on that list.
+    - **Worse in:** It cannot attach to the RP2040, which needs multidrop SWD. That is a hard incompatibility, so reject.
+    - **Compatibility:** Incompatible with the stack's RP2040 targets.
+    - **Risks:** Many V2 listings are clones.
+    - **Seller url:** 
+    - **Sources:**
+      - https://openocd.org/doc/html/Debug-Adapter-Configuration.html
+  6.
+    - **Name:** WCH-LinkE (Nanjing Qinheng / WCH), DAP mode
+    - **Kind:** other_brand
+    - **Price usd:** not verified (wch-ic.com product and manual pages returned no content; LCSC search returned no listing text)
+    - **Spec comparison:** Not verified this pass. Whether its DAP mode is CMSIS-DAP v2 (bulk), which OpenOCD needs for RP2040 multidrop, could not be confirmed from a primary source. Its UART bridge and I/O-voltage specs were not confirmed either.
+    - **Worse in:** Unproven on the critical spec (CMSIS-DAP v2 multidrop to the RP2040). The firmware is closed (debugprobe is open). Use with OpenOCD on RP2040 under Ubuntu arm64 is not documented by the vendor in anything I could read. Under the 'never trade away a spec silently' rule this is a reject until verified.
+    - **Compatibility:** Unknown for RP2040 multidrop. Generic CMSIS-DAP would use the same OpenOCD path if it is v2.
+    - **Risks:** Unverified specs. Buy only from WCH's official store if it is ever reconsidered.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.wch-ic.com/products/WCH-Link.html
+      - https://openocd.org/doc/html/Debug-Adapter-Configuration.html
+- **Notes:** VERDICT: keep the Raspberry Pi Debug Probe (SC0889). No other brand is cheaper and not worse. ST-LINK cannot do the RP2040's multidrop SWD in OpenOCD. WCH-LinkE could not be verified. A bare Pico running debugprobe is worse in build: no case, no level-shifted SWDI input, no leads included. The SC0889 has only one SKU.
+  
+  The only real saving is buying the same SKU in the EU:
+  - reichelt: EUR 11.50 incl. VAT (EUR 9.66 ex, $10.86 ex)
+  - DigiKey DE: EUR 10.54 ex VAT, only if it rides on the planned DigiKey order above EUR 75
+  - BerryBase: EUR 12.20 incl. VAT, fallback
+  - Not cheaper ex VAT than $12, so not listed as candidates: Kiwi Electronics EUR 10.89 ex VAT ($12.24; incl. NL 21% VAT about EUR 13.18, my calculation) and Botland EUR 13.05 incl. / 10.97 net ($12.33 net).
+  
+  Under the P5 cost rule (since 1 July 2026 every EU import carries a flat customs duty, plus import VAT and DHL shipping), Adafruit's $12 lands at no less than about $14.3 before duty and shipping. So any EU seller above is cheaper landed. The saving per probe is small, about $1-2, and separate shipping can wipe it out. Put the probe on whichever EU order already exists (DigiKey DE step-7 order, or reichelt if one is opened) rather than adding a dedicated order. Removing it from the Adafruit launch order does not remove that order's duty or shipping.
+  
+  Two facts for v2:
+  1. The Debug Probe build has no target-reset pin ('No reset pin' in board_debug_probe_config.h). In-system, RUN is already driven from Q6A header pin 38. On the bench, the IMU-pack RP2040-Zero needs a manual reset or its RUN pad wired.
+  2. The stack already has an in-system SWD path, OpenOCD bitbang on Q6A pins 12/35/38. OpenOCD's documentation lists 'all bitbang based' drivers as multidrop-capable; that linuxgpiod is covered is inferred from that, not stated in its text. That path does not replace the probe: it cannot reach the IMU pack's RP2040-Zero, cannot be the Q6A's own console, and is gone when the Q6A is down. The probe stays.
+  
+  Still to check:
+  - Whether Ubuntu noble's openocd udev rules include the Debug Probe VID:PID 2e8a:000c. If not, add a rule; labd's /dev/lab udev naming covers the UART.
+  - The Debug Probe's maximum UART baud and SWD clock are not published (the docs only use 5000 kHz and 115200). Both are enough for this stack.
+  - RP2350 targets would need Raspberry Pi's OpenOCD fork; none are in the stack.
+  
+  Method limits:
+  - The shared WebSearch budget was already used up when I started, so I ran no web searches. Everything above comes from WebFetch of primary pages: raspberrypi.com product and docs, the debugprobe GitHub repo and board configs, OpenOCD docs, and the Adafruit, DigiKey US/DE, PiShop.us, reichelt, BerryBase, Kiwi and Botland listings.
+  - The Pi Hut returned HTTP 429. Mouser returned 503. The TinyTronics search URLs returned 404, so TinyTronics availability for bundling with the Q6A order is not verified.
+  - The Debug Probe schematic (buffer part numbers, ESD parts) could not be fetched. The 'level-shifted input' claim rests only on the firmware board config comment.
+  
+  All prices were read on 18 Oct 2026 and converted at the stack's 1.1241 USD/EUR.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
