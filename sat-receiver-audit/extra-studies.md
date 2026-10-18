@@ -9213,6 +9213,183 @@
   
   All items are passive mechanical parts, so every hard rule holds (receive-only, conducted-only sources, no loops). The Q6A and the antennas are untouched.
 
+## searchB:weather_kit_ipx4_ip54_mesh_foam_eptfe_ve (run `wf_37583a7b-1a8`)
+
+- **Part:** Weather kit IPX4/IP54: stainless mesh + hydrophobic foam on intakes, ePTFE vents, port caps (SMA x11: P1-P8, RX1, RX2, REF IN; plus F, USB-C, LAB USB-A, 3.5 mm, LAB BUS, GX12/M8), clear rain sleeve, 2-3 IP65 feed-LNA boxes with glands, self-amalgamating tape, dielectric grease, silica gel. Tier core, group Mechanical, qty 1 set.
+- **Current price usd:** 45-110, an unverified estimate (STACK.md row 276; final_completeness.json). If every item is a genuine part at the distributor prices checked on 18 Oct 2026, the kit comes to about $130-155. That assumes 11 IP67-rated SMA caps, 2-3 Hammond boxes and 3 vents, and leaves out glands, USB/audio/LAB BUS caps and shipping. With unrated generic silicone SMA caps instead, it is about $90-115. US and EU prices are mixed and VAT is noted per line. FX is assumed at about 1.15 USD/EUR and 1.33 USD/GBP (not verified).
+- **Critical specs:**
+  - System: passes the stack's own IPX4 spray test (IEC 60529 oscillating tube or hand spray, 10 min) with every cap fitted and the fans running, with no water at the GX12/M8 or LAB BUS. Intakes must be dust-protected to meet IP5X (target IP54). The rain sleeve must never cover an intake or exhaust, and no intake may face up.
+  - Intake mesh: 316 or 304 stainless woven cloth, salt- and rain-resistant. Aperture about 0.1-0.5 mm (insects, splash break-up). Mesh plus foam together must stay at or below 5 Pa at the operating point of the 40 mm 5 V fan and the 5 V blower. That needs open area of roughly 30-40% or more, or a bigger intake to make up for less.
+  - Hydrophobic foam: reticulated open-cell PU, 30-45 PPI. Flammability UL 94 HF-1 or UL 900 Class II. Must not wick water, must resist hydrolysis and UV (polyether is preferred over polyester), work from at least -20 to +70 C (the display's operating range), and be washable or replaceable.
+  - ePTFE vents (LNA boxes and sealed sub-compartments): IP68 or better and preferably IP69K. Airflow of at least about 500-1000 ml/min at 7 kPa. Water entry pressure of at least 40-60 kPa. Hydrophobic or oleophobic membrane, -40 to +125 C, UV-rated housing (UL 746C f1). The thread and panel thickness must fit the ASA case wall and the box wall (M12 through-hole 2.0-3.5 mm).
+  - SMA caps: sealing at least as good as the IPX4 test needs (IP67-rated preferred). Must be NON-SHORTING: a metal cap that shorts the centre pin on a bias-tee port would short the DC feed. Tethered so they are not lost. UV- and ozone-stable, -20 to +70 C. The same rules apply to the caps for F, USB-C (IP2368 input), LAB USB-A, 3.5 mm, the latching LAB BUS and the GX12/M8 IMU.
+  - Rain sleeve: clear and low haze, so the 2000 cd/m2 display stays readable. Fits 225 x 140 x 60 mm plus the coax exits on the top edge. Encoders can be worked through it. Reusable, packs small, and does not trap exhaust air.
+  - Feed LNA boxes (2-3): IP65 at least, IP66/67 or NEMA 4X/6P better. UV-stabilised PC, temperature range covering sun-heated use, about -40 to +80 C or better. Inside room for the LNA, bias tee and SMA bulkheads. Glands sized for the coax OD (RG316 about 2.5 mm, RG58 about 5 mm). Room for an ePTFE vent against condensation pumping. Low RF transparency is fine, because no antenna is inside.
+  - Self-amalgamating tape: EPR, ASTM D4388 Type III, 90 C continuous and 130 C overload, 5-year shelf life, conforms over SMA/N joints, used with a UV-resistant vinyl overwrap.
+  - Dielectric grease: silicone compound to SAE AS8660 class, -40 to +200 C, non-curing, compatible with silicone O-rings and PTFE dielectric. Goes on O-rings and threads only, never on the precision RF mating faces.
+  - Desiccant: silica gel, indicating, cobalt-free (orange), DMF-free (EU Decision 2009/251/EC), regenerable at about 120 C, in a dust-free (Tyvek-type) sachet, rated in DIN 55473 units and sized to the box and Pelican volumes.
+  - Rules and compatibility: every item is passive and mechanical. It must not emit RF, it adds no loop and no conducted source, and it stays receive-only. No Ubuntu driver is involved. Sold legally with a traceable brand; no counterfeit '3M/Gore' items from marketplaces.
+- **Candidates:**
+  1.
+    - **Name:** KEEP: current kit, pinned to verified genuine parts. Amphenol LTW VENT-PS1YBK-N8001 M12 ePTFE vent x3; GCT RFCT-SMA-CAP-GS-1 IP67 SMA cap x11; Qualtek 09150-M-45 40 mm foam x3; F.H. Brundle 316 150-mesh stainless 1 sq ft; Hammond 1554B2GY PC box x2-3; OP/TECH Rainsleeve 18 in 2-pack; MOLYKOTE 4 100 g; 3M Scotch 23 19 mm x 9.15 m; indicating silica gel
+    - **Kind:** current_part
+    - **Price usd:** About $130-155 in total. Line items: vents $3.41 each (DigiKey, qty 10 $2.723); SMA caps $3.845 each at qty 10 (qty 1 $4.52), so 11 is about $42; foam $1.38 each; mesh GBP 2.70/sq ft ex VAT (GBP 3.24 inc VAT; UK seller, so an EU buyer pays import VAT and handling); Hammond $8.62 each (Solutions Direct, US; Farnell CH snippet CHF 10.93 ex VAT, not re-fetched); OP/TECH $9.49 (Glazer's, US; EU source not checked); Molykote 4 EUR 10.71 ex VAT / 12.85 inc VAT (Silmid, 500 in stock); Scotch 23 EUR 19.14 ex VAT / 22.97 inc VAT (Silmid ES, out of stock, 26-day lead); silica gel about $2-17 (unverified).
+    - **Spec comparison:** Vent: M12x1.5, IP68 (2 m, 1 h) and IP69K, >1000 ml/min at 7 kPa, water entry >=60 kPa for 60 s, hydrophobic ePTFE, -40 to +125 C, UL 94V-0 f1 housing, 1000 h salt spray, through-hole panel 2.0-3.5 mm (Amphenol LTW datasheet). SMA cap: brass, gold finish, IP67 (DigiKey). Foam: UL 900 Class II, 30/45/60/100 PPI, 36.4 mm square (Qualtek drawing). Mesh: 316, 150 mesh, 0.07 mm wire, 0.098 mm aperture, 34% open area. Hammond 1554B2GY: polycarbonate, NEMA 4/4X/6/6P/12/13, cUL, UL94-5VA, silicone gasket, about 66 x 66 x 40 mm OD. OP/TECH: polyethylene, up to 7 in diameter x 18 in, cinch closure. Molykote 4: -40 to +200 C, sold as SAE AS8660. Scotch 23: ASTM D4388 Type III, 90 C (130 C overload), 5-year shelf life.
+    - **Worse in:** Nothing; this is the reference. Gaps still open, all unverified: whether the GCT cap has an O-ring and whether it shorts the centre pin (the drawing download returned 403); whether the Qualtek foam is hydrophobic and whether it is polyether or polyester (not stated); the Hammond UV f1 rating and temperature range (not on the fetched page); the pressure drop of mesh plus foam (must be measured against the 5 Pa budget). The 150-mesh cloth has only 34% open area, so the intake must be made larger or a coarser 316 mesh chosen.
+    - **Compatibility:** Every item is passive. The M12 vents need a 12 mm hole in a 2.0-3.5 mm wall, which suits the ASA case and the Hammond lid. Check that the LNA, bias tee and bulkheads fit in the 1554B2GY (about 66 x 66 x 40 mm OD), and step up to the next 1554 size if not. The 7 in x 18 in sleeve fits the 225 x 140 x 60 mm body (perimeter about 400 mm against about 560 mm). Close the cinch around the top-edge coax bundle and leave the bottom open, so the intakes and exhaust stay clear (my model, not tested). Hard rules are kept.
+    - **Risks:** Several lines are out of stock or have a lead time (Scotch 23). UK and US sellers add import VAT and shipping for an EU buyer. If the GCT cap turns out to short the centre pin, it must not go on a bias-tee port while bias is on.
+    - **Seller url:** https://www.digikey.com/en/products/detail/amphenol-ltw/VENT-PS1YBK-N8001/7898285
+    - **Sources:**
+      - https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/7136/Amphenol%20LTW_Pressure%20Relief%20Vent%20Group.pdf
+      - https://www.digikey.com/en/products/detail/amphenol-ltw/VENT-PS1YBK-N8001/7898285
+      - https://www.digikey.com/en/products/detail/gct-gradconn/RFCT-SMA-CAP-GS-1/12822389
+      - https://www.digikey.com/en/products/detail/qualtek/09150-M-45/273619
+      - https://www.qualtekusa.com/images/Fan%20Accessories/PDFDrawings/09150m.pdf
+      - https://www.fhbrundle.co.uk/products/270615046__Stainless_316_150_Mesh_45_46g_071_Sq_Ft_Woven_1_22M_wide_roll
+      - https://solutionsdirectonline.com/hammond-2x3x3-polycarbonate-electrical-enclosure-with-solid-cover-1554b2gy
+      - https://ch.farnell.com/en-CH/hammond/1554b2gy/enclosure-polycarbonate/dp/1877394
+      - https://www.glazerscamera.com/collections/op-tech/products/op-tech-rain-sleeve
+      - https://silmid.com/es/silicones/silicone-compounds/MOLYKOTE-Dow-Corning-4-Electrical-Insulating-Compound-SAE-AS-8660-in-various-sizes
+      - https://www.silmid.com/es/tapes/insulating-tapes/3m-23-rubber-splicing-tape-19mmx9-15mt-roll/
+      - https://multimedia.3m.com/mws/media/41153O/scotch-all-voltage-splicing-tape-23.pdf
+  2.
+    - **Name:** Generic rubber/silicone SMA dust caps (marketplace lot of 100, e.g. 'SMA Dust Cap Rubber 6mm' on eBay.de) in place of the 11 GCT IP67 caps
+    - **Kind:** generic_or_clone
+    - **Price usd:** About $1.95 per lot of 100, from the search snippet only (the eBay page returned 403). Unverified.
+    - **Spec comparison:** No IP rating, no sealing data, no named material, and no UV or temperature rating. Against the GCT cap (IP67, brass): one real advantage is that a rubber cap cannot conduct, so it is non-shorting by construction and DC-safe on bias-tee ports. It is the same class as the stack's current 'silicone caps', which are themselves unspecified.
+    - **Worse in:** No measured evidence of sealing, fit retention or aging. Not tethered. REJECTED under angle B for now. It may replace the GCT caps (saving about $40) only after it passes the stack's IPX4 spray test with every cap fitted and holds after a heat and UV soak (my suggested acceptance step).
+    - **Compatibility:** Fits SMA female jacks if the 6 mm bore holds on the 1/4-36 thread (to be checked). Passive.
+    - **Risks:** Unknown compound, so it may crack or shrink in UV or ozone. Loose fit means lost caps. Possible mould-release residue on contacts.
+    - **Seller url:** https://www.ebay.de/itm/144360485421
+    - **Sources:**
+      - https://www.ebay.de/itm/144360485421
+      - https://www.digikey.com/en/products/detail/gct-gradconn/RFCT-SMA-CAP-GS-1/12822389
+  3.
+    - **Name:** Generic M12 'breathable' ePTFE vent plugs (AliExpress/marketplace) in place of the Amphenol LTW VENT-PS1YBK-N8001
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not checked. The genuine LTW part is already $2.72-3.41, so the most this could save is about $8 for three.
+    - **Spec comparison:** Seller claims usually repeat 'IP68'. I found no independent airflow, water-entry or aging measurement for any generic vent. Gore's own case study (vendor-published) says third-party qualification found unnamed Taiwanese and Chinese vents needed replacing every 4-5 years, against 10+ years for Gore.
+    - **Worse in:** No measured IP or airflow data. The membrane type (hydrophobic or oleophobic) and the housing's UV rating are unknown. REJECTED.
+    - **Compatibility:** Mechanically the same M12x1.5 thread. Passive.
+    - **Risks:** Fake membranes or bare PTFE mesh, so water may get in under a jet; the membrane may come loose.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.gore.com/system/files/2023-05/PTV-066-R2-wireless_routers_case_history.pdf
+      - https://kr.gore.com/system/files/2025-04/gore-ptv-screwin-datasheet-en.pdf
+  4.
+    - **Name:** Generic ABS 'IP65' junction boxes (LeMotech and unbranded) for the feed LNAs, in place of the Hammond 1554
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not verified.
+    - **Spec comparison:** IP65 is claimed by the seller only. Evidence is anecdotal (one user's spilled glass of water; another's 'no leaks after a year'). No spray, jet or immersion test was found. ABS with no stated UV grade, against UV-capable PC with NEMA 4X/6P and cUL for the Hammond.
+    - **Worse in:** No measured ingress data, unknown UV and temperature performance, and the seal depends on the gasket seating, as one listing itself warns. REJECTED.
+    - **Compatibility:** Size and glands vary. Passive.
+    - **Risks:** Gasket fit, ABS yellowing and cracking in sun, misleading IP claims.
+    - **Seller url:** 
+    - **Sources:**
+      - https://wald.de/products/lemotech-abs-plastic-junction-box-dustproof-waterproof-ip65/218141337/
+  5.
+    - **Name:** Spelsberg Abox 025-L (VDE-certified IP65 polystyrene junction box, 80 x 80 x 52 mm)
+    - **Kind:** other_brand
+    - **Price usd:** TWD 170 ex GST (RS Taiwan), roughly $5; EU price not verified.
+    - **Spec comparison:** IP65 under an independent VDE certification, which is real evidence. But the material is polystyrene with TPE membrane entries, the operating range is -25 to +40 C, and no UV rating was found. Hammond 1554 is polycarbonate, NEMA 4X/6P, with a silicone gasket.
+    - **Worse in:** Temperature range: +40 C maximum is not enough for a box in the sun at the feed. No UV rating. Membrane entries instead of proper glands. REJECTED as worse.
+    - **Compatibility:** Large enough for an LNA. Passive.
+    - **Risks:** Soft membranes split after repeated re-cabling.
+    - **Seller url:** https://twen.rs-online.com/web/p/junction-boxes/2662426
+    - **Sources:**
+      - https://my.rs-online.com/web/p/junction-boxes/2662426
+      - https://my.rs-online.com/web/p/junction-boxes/2704465
+  6.
+    - **Name:** DIY: 3D-printed ASA feed-LNA boxes (same Polymaker ASA as the case) with a silicone O-ring groove, printed or bought gland, and the LTW M12 vent
+    - **Kind:** diy
+    - **Price usd:** About $1-3 of filament per box (my model, not verified), plus the O-ring and gland.
+    - **Spec comparison:** ASA is UV-stable with an HDT of about 100 C, and the glass transition is 98 C (Polymaker TDS in the re-audit). There is no ingress evidence: FDM walls can leak or wick along the layer lines unless printed thick and with dense perimeters, or sealed.
+    - **Worse in:** Unproven ingress. It would need to pass an IP65 jet test (IEC 60529 IPX5: 12.5 L/min, 3 min) on the bench before use. REJECTED until measured.
+    - **Compatibility:** Can be sized exactly to the LNA. Passive.
+    - **Risks:** Porosity along layers, O-ring groove tolerance, cracking at the inserts.
+    - **Seller url:** 
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json
+  7.
+    - **Name:** 3M Temflex 2155 rubber splicing tape in place of Scotch 23
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** Not verified (assumed lower than Scotch 23's EUR 19-23).
+    - **Spec comparison:** Temflex 2155: UL 510 rated 80 C, fusion to ASTM D4388 Type I, UL listed to 600 V, 3-year shelf life. Scotch 23: ASTM D4388 Type III, 90 C with 130 C overload, up to 69 kV, 5-year shelf life.
+    - **Worse in:** Lower temperature rating (80 C against 90/130 C), a lower ASTM type, and a shorter shelf life (3 against 5 years). REJECTED as worse. The voltage class does not matter for this stack.
+    - **Compatibility:** Same use. Passive.
+    - **Risks:** None beyond the lower ratings.
+    - **Seller url:** 
+    - **Sources:**
+      - https://multimedia.3m.com/mws/media/37550O/3m-temflex-rubber-splicing-tape-2155.pdf
+      - https://multimedia.3m.com/mws/media/41153O/scotch-all-voltage-splicing-tape-23.pdf
+  8.
+    - **Name:** Generic self-fusing silicone tape (Rescue Tape type and unbranded) in place of EPR Scotch 23
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not verified.
+    - **Spec comparison:** Only manufacturer claims were found (for example 'seals leaks up to 85 psi', tensile 700-950 psi). I found no independent test; there was no Project Farm or similar result. It is removable and UV-stable, but it bonds only to itself and is not classified to ASTM D4388.
+    - **Worse in:** No measured data, no ASTM D4388 class, and no adhesion to the connector body. Reviews are mixed ('does not adhere to anything'). REJECTED under angle B.
+    - **Compatibility:** Passive.
+    - **Risks:** Unwinds if it is not stretched enough when applied.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.rvtravel.com/use-self-fusing-tape-for-weatherproof-connections/
+  9.
+    - **Name:** Generic non-indicating silica gel sachets (e.g. eBay.de 16 x 10 g; audiosense.be 5 x 10 g)
+    - **Kind:** generic_or_clone
+    - **Price usd:** EUR 14.99 inc VAT for 16 x 10 g (eBay.de, from the search snippet). EUR 1.37 for 5 x 10 g at audiosense.be, but that page now returns 404. Both unverified.
+    - **Spec comparison:** The silica gel itself is a commodity, so adsorption is comparable. But there is no indicator, and neither seller states DIN 55473 or that the product is DMF-free. An equal option is a cobalt-free orange indicating sachet such as Merck orangegel 10 g (thgeyer.com; price behind a login).
+    - **Worse in:** Non-indicating means you cannot tell when it is saturated, and there is no statement on standards or DMF. Worse unless it is bought in indicating, DMF-free form.
+    - **Compatibility:** Passive. Goes in the LNA boxes and the Pelican.
+    - **Risks:** Dusting from cheap paper sachets.
+    - **Seller url:** https://www.ebay.de/itm/176468009087
+    - **Sources:**
+      - https://www.ebay.de/itm/176468009087
+      - https://www.thgeyer.com/lab/shop/laboratoriematerial/vakuumteknik/vakuumtorkning/dessicanter
+  10.
+    - **Name:** MG Chemicals 8462 silicone grease in place of MOLYKOTE 4
+    - **Kind:** other_brand
+    - **Price usd:** $17.53 per 85 mL tube (TestEquity).
+    - **Spec comparison:** Dielectric strength 500 V/mil by ASTM D149 (2019 TDS). A later listing says 1,300 V/mil, which conflicts. Retailers cite -50 to +250 C. MOLYKOTE 4 is -40 to +200 C, SAE AS8660 class, EUR 10.71 ex VAT per 100 g.
+    - **Worse in:** Not cheaper, so REJECTED. Keep MOLYKOTE 4.
+    - **Compatibility:** Passive.
+    - **Risks:** None.
+    - **Seller url:** https://www.tequipment.net/MG-Chemicals/8462-85ML/Greases/
+    - **Sources:**
+      - https://www.mouser.lt/datasheet/3/293/1/tds_8462.pdf
+      - https://www.tequipment.net/MG-Chemicals/8462-85ML/Greases/
+      - https://silmid.com/es/silicones/silicone-compounds/MOLYKOTE-Dow-Corning-4-Electrical-Insulating-Compound-SAE-AS-8660-in-various-sizes
+  11.
+    - **Name:** Stack's own budget alternative: caps + rain sleeve only
+    - **Kind:** diy
+    - **Price usd:** About $10-52: OP/TECH $9.49, plus either generic caps (about $2) or GCT caps (about $42).
+    - **Spec comparison:** Drops the intake mesh and foam, the vents, the LNA boxes, the tape and grease, and the desiccant.
+    - **Worse in:** No IP5X dust protection, so it cannot meet IP54. The feed LNAs and outdoor coax joints are left unprotected, and nothing controls condensation. REJECTED as worse; it is a reduced kit, not an analog.
+    - **Compatibility:** Passive.
+    - **Risks:** Water and dust get into the forced-air paths.
+    - **Seller url:** 
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md
+- **Notes:** Angle B verdict: none of the generic, clone, DIY or used options I found has independent measured evidence that it is as good. That covers generic SMA caps, generic M12 ePTFE vents, generic ABS IP65 boxes, generic silicone tape, non-indicating silica gel and DIY printed boxes. So the current kit stays, as a specification.
+  
+  What changes is that the vague kit is pinned to genuine distributor parts, which are cheap anyway. At those prices the kit comes to about $130-155, not 45-110. The 45-110 estimate is likely about $30-45 low if all 11 SMA caps are IP67-rated.
+  
+  The biggest saving available, about $40, is unrated rubber SMA caps instead of the GCT IP67 caps. They become acceptable only if they pass the stack's own IPX4 spray test with every cap fitted, and are then aged under heat and UV. Rubber caps also cannot short the centre pin, which matters on bias-tee ports.
+  
+  Open checks:
+  - Is the GCT RFCT-SMA-CAP-GS-1 shorting, and does it have a gasket? Its drawing returned 403.
+  - Is the Qualtek foam hydrophobic, and is it polyether or polyester?
+  - What are the Hammond 1554 UV f1 rating and temperature range (Hammond's page returned 403)?
+  - What is the measured pressure drop of mesh plus foam at the fan operating point, against the 5 Pa budget? The 150-mesh 316 cloth has only 34% open area, so it needs a larger intake area or a coarser mesh.
+  
+  Used parts do not apply: vents, gaskets, tape, grease and desiccant age, and used ones have no traceable history.
+  
+  EU notes:
+  - Silmid (ES/FR sites) and DigiKey ship within the EU; VAT is shown per line.
+  - F.H. Brundle is in the UK, so an EU buyer pays import VAT and handling.
+  - The OP/TECH and Hammond prices are from US shops. An EU source was not checked; Farnell CH listed the Hammond at CHF 10.93 ex VAT.
+  
+  All items are passive and mechanical, so receive-only, no loops and conducted-only sources are unaffected. I used 15 WebSearch calls and kept every downloaded file in its own scratchpad folder.
+
 ## small:lband_sband (run `wf_41027870-8e7`)
 
 - **Band group:** L-band 1.5-1.7 GHz and S-band 2.2-2.4 GHz with antennas of at most 12 cm (STRICT) or 20 cm (SMALL). Dishes and anything tens of cm deployed are EXCLUDED, including the foldable helicones, the 11-turn helix and the 2x2 helix arrays. Rule interpretation as given: STRICT means the largest deployed dimension is about 12 cm or less; SMALL means about 20 cm or less; foldable or telescopic antennas that are larger when deployed are excluded and appear only in the borderline note.
