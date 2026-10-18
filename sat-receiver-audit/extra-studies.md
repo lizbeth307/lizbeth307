@@ -28787,6 +28787,183 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Search budget: 7 WebSearch calls used. Not verified: the Airspy Mini price (STACK figure) and Fobos prices.
 
+## searchB:limesdr_micro_m_2_basic_18_shipping_2x_m (run `wf_c3ba734e-52b`)
+
+- **Part:** LimeSDR Micro M.2 2280 Basic (LMS7002M + NXP LA9310, 1T2R) + $18 shipping + 2x Taoglas MHF4L-SMA. Wideband SDR for the with-Lime default build (user decision 18 Oct 2026): S-band 2.2-2.3 GHz, 3.3-3.8 GHz, 56 Msps LIME-W/F/B NPU survey profiles, HRPT/AHRPT backup, 2 RX channels sharing one LO.
+- **Current price usd:** 279 (verified 18 Oct 2026 on crowdsupply.com: $249 board, $18 worldwide shipping, MHF4L-SMA cable $6 each and in stock). This is before EU import VAT. The order ships from Mouser in Texas, so above EUR 150 normal duty applies, plus the EUR 2 Union handling fee from about 1 Nov 2026. Expect roughly $335-350 landed (model, VAT rate depends on the member state). The re-audit says 4 cables are actually needed, which makes it $291 before VAT. Free cancel only until shipment (est. 15 Dec 2026); decide by 1 Dec 2026.
+- **Critical specs:**
+  - RX tuning 0.3-3.8 GHz with matched inputs where the targets are. Micro (LimeSuiteNG 37cb1833): LNAL 0.3-2.2, LNAW 0.7-2.6, LNAH 3.3-3.8 GHz. This covers S-band 2.2-2.3 GHz and 3.3-3.8 GHz; 2.6-3.3 GHz is uncharacterised. Absolute max input +10 dBm.
+  - At least 56 MHz instantaneous bandwidth, streamed continuously to the host. Micro: up to 100 MHz / 160 Msps half-duplex or TDD, 61.44 Msps FDD. Stack profiles run 7-61.44 Msps.
+  - Two RX channels on one LO, sustained 2x56 Msps for 60 min (stack acceptance test). Raw recording at 1x56 Msps.
+  - ADC 12-bit (LMS7002M: ENOB 9 bit, SFDR 63 dBc at 10 MHz / 62 dBc at 37 MHz).
+  - Noise figure, chip level (LMS7002M datasheet): 2.0 dB at 0.95 GHz, 2.5 dB at 2 GHz, 3.5 dB at 3.8 GHz. No board-level measurement of the Micro is published yet.
+  - Linearity (LMS7002M): out-of-band IIP3 +4 dBm and IIP2 +50 dBm at gain of 50 dB or more. In-band IIP3 -5.5 dBm at 67.7 dB gain (850 MHz, LNAL) and -1.1 dBm at 3.45 GHz (LNAH, 38.7 dB gain), both from Lime's own measurement report. Gain range 89 dB at board level.
+  - Host interface: M.2 2280 B+M key, PCIe Gen3 x1, through an ADT-Link R44SF riser into the Q6A M.2 M-key 2230 slot (pcie1). The other acceptable option is USB 3 on the single blue USB 3.1 port, which in the with-Lime build carries the T7.
+  - Driver on Ubuntu 24.04 arm64: la9310_limesdr 0.2.1 DKMS (aarch64 build verified, not yet loaded on hardware), LimeSuiteNG, SoapySDR and SatDump legacy API.
+  - Power: about 4 W typical (Lime staff, t/13304), designed for 10 W, 3.3 V input. VCC_5V_PERI gate is 14 W or less measured.
+  - Reference: Rakon E6245LF 30.72 MHz VCTCXO, about ±5 ppm DAC trim. External reference 10-52 MHz on J4, PPS on J5.
+  - TX blockable: the card is 1T2R. LimeSuiteNG/Soapy/SatDump TX patch, TXEN_A/B register read-back = 0, 50 Ohm load on X1.
+  - Size and thermal: 22 x 80 mm, top side 4.5 mm or less. Operating 0 to +85 C.
+  - Genuine and legal: sold by Lime via Crowd Supply/Mouser, 30-day guarantee, open hardware.
+- **Candidates:**
+  1.
+    - **Name:** LimeSDR Micro M.2 2280 Basic (keep)
+    - **Kind:** current_part
+    - **Price usd:** 279 verified ($291 with the 4 cables the re-audit requires), before EU VAT
+    - **Spec comparison:** Baseline. This is the only option found from this angle with matched 3.3-3.8 GHz RX, 100 MHz RX-only bandwidth, 2 RX channels at 56+ Msps, M.2 PCIe, about 4 W, and LMS7002M linearity (out-of-band IIP3 +4 dBm).
+    - **Worse in:** Nothing that matters for this stack, against the candidates below. Gap: the Micro's NF has no independent board-level measurement.
+    - **Compatibility:** Already integrated in the stack (riser, DKMS, firmware pins, TX patch, power and thermal plan).
+    - **Risks:** Pre-order. arm64 driver not yet proven on hardware. Firmware asserts LMS_TXEN at boot. DMA hang below a 30 MHz system clock. Acceptance tests must pass within 30 days.
+    - **Seller url:** https://www.crowdsupply.com/lime-micro/limesdr-micro
+    - **Sources:**
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro
+      - https://wiki.myriadrf.org/LimeMicro:LMS7002M_Datasheet
+      - https://www.limemicro.com/downloads/lms7002m_measurements-v1_05.pdf
+      - https://myriadrf.org/projects/limesdr-micro/
+  2.
+    - **Name:** Used LimeSDR-USB (LMS7002M + Cyclone IV + FX3, 2x2, USB 3.0), discontinued
+    - **Kind:** used
+    - **Price usd:** about 111 (EUR 99): one forum listing, Sweden, 'accepted price 99 EUR' on 9 May 2026, with a buyer by 28 May 2026, so probably sold. Older undated listings: EUR 425 (modified unit) and $280 kit. No other used stock verified; eBay could not be read (403). Lime store lists it at a $10,000 sold-out placeholder.
+    - **Spec comparison:** Same LMS7002M chip, so chip NF, IIP3 and ADC are equal: 12-bit, 2.0-3.5 dB NF, +4 dBm IIP3. Tuning 0.1-3800 MHz, 61.44 Msps, 61.44 MHz bandwidth, 2 RX on one LO, USB 3.0, board 100 x 60 mm. In LimeSuiteNG it uses the generic LMS7002M descriptor, whose matched RX bands are LNAH 2-2.6 GHz, LNAL 0.7-0.9 GHz and LNAW 0.7-2.6 GHz.
+    - **Worse in:** (1) No input matched for 3.3-3.8 GHz and none for 0.3-0.7 GHz; the Micro's LNAH is 3.3-3.8 GHz and LNAL 0.3-2.2 GHz. Expect higher loss and NF there; no independent measurement exists to prove otherwise. (2) Bandwidth: 61.44 MHz maximum against the Micro's 100 MHz RX-only. (3) Power: measured 3.6-3.9 W idle and 5.2-5.3 W in a loopback test at USB 2 rates (Charger Doctor, ±20%, 2018), against about 4 W typical for the Micro; likely higher at USB 3 56 Msps. (4) Larger board that needs its own enclosure and fan. (5) Used, no warranty, discontinued, no spares.
+    - **Compatibility:** USB 3 only. It would take the single blue USB 3.1 port and push the T7 off it. That frees the M.2 slot, for example for a 2230 NVMe instead of the T7, but this is a system re-plan and is not priced. FX3/libusb backend in LimeSuiteNG; arm64 builds exist but are not verified on the Q6A. 2 TX channels x 2 band outputs need 4 x 50 Ohm loads plus the same TX patch.
+    - **Risks:** Unknown history (ESD-damaged LNAs are common on used LMS7002M boards). Fragile micro-USB 3 connector. Thermal. No independent NF data. One price point, which was probably sold.
+    - **Seller url:** https://discourse.myriadrf.org/t/limesdr-usb/13089
+    - **Sources:**
+      - https://discourse.myriadrf.org/t/limesdr-usb/13089
+      - https://discourse.myriadrf.org/t/power-consumption-limesdr-usb/2610
+      - https://raw.githubusercontent.com/myriadrf/LimeSuiteNG/develop/src/boards/LMS7002M_SDRDevice.cpp
+      - https://raw.githubusercontent.com/myriadrf/LimeSuiteNG/develop/src/boards/LimeSDR/LimeSDR.cpp
+      - https://rigpix.com/rfboards/limesdr.htm
+      - https://store.limemicro.com/products/limesdr-usb
+  3.
+    - **Name:** 'B210 Mini' AD9361 + FX3 USB 3.0 clone board (Shenzhen eBay/AliExpress sellers, sold as 'for ETTUS USRP B210')
+    - **Kind:** generic_or_clone
+    - **Price usd:** 285.11 (eBay.de search snippet for a 'B210 Mini AD9361' board; listing page returned 403, not verified). This is already at or above the Lime's $279.
+    - **Spec comparison:** Uses the Ettus B210/B205mini class design. Genuine board-level specs (Ettus sheet): 70 MHz-6 GHz, 12-bit, 61.44 MS/s, 56 MHz in 1x1 but only 30.72 MHz per channel in 2x2, IIP3 -20 dBm at typical NF, NF below 8 dB. Independent Librespace lab report, genuine B210: NF 5.5 / 4.4 / 5.7 / 4.8 / 6.3 dB at 145 / 437 / 1280 / 2250 / 2425 MHz. AD9361 chip: IIP3 -18 dBm at max gain (800 MHz), from ADI datasheet via search snippet; the ADI site returned 503.
+    - **Worse in:** IIP3 is about 10-24 dB worse than the LMS7002M (-20 dBm board spec against +4 dBm out-of-band and -5.5 dBm in-band at max gain). Dual-channel bandwidth is 30.72 MHz against the 2x56 Msps the stack uses. No independent measurement of any clone was found, and genuine B210 data cannot be transferred to it. Clone power is undocumented. Not cheaper. Better in tuning range (to 6 GHz) and possibly in measured NF, but those gains do not offset the linearity loss.
+    - **Compatibility:** USB 3 on the blue port, which displaces the T7. UHD is packaged for arm64 in Ubuntu noble but the clone FPGA/firmware compatibility is unverified. TX blocking would need UHD or Soapy patches.
+    - **Risks:** Relabelled or counterfeit AD9363 sold as AD9361 is a known risk. Listings trade on the Ettus trademark. No warranty or support. Spur and thermal quality unknown.
+    - **Seller url:** https://www.ebay.de/itm/365987088749
+    - **Sources:**
+      - https://www.ettus.com/wp-content/uploads/2019/01/b200-b210_spec_sheet.pdf
+      - https://www.ettus.com/wp-content/uploads/2019/01/USRP_B200mini_Data_Sheet.pdf
+      - https://gitlab.com/librespacefoundation/sdrmakerspace/sdreval/-/raw/master/Report/pdf/Evaluation_of_SDR_Boards-1.0.pdf
+      - https://www.analog.com/AD9361/datasheet
+      - https://www.ebay.de/itm/365987088749
+  4.
+    - **Name:** Full-size B210 clone ('AD9361 RF 70MHz-6GHz SDR USB3.0 kompatibel mit ETTUS USRP B210')
+    - **Kind:** generic_or_clone
+    - **Price usd:** about 540-685 plus about 30-35 shipping (eBay.de search snippets, not verified on the page)
+    - **Spec comparison:** Same as the B210 Mini clone: AD9361, 56 MHz 1x1 or 30.72 MHz 2x2, 12-bit, IIP3 class -20 dBm, board 97 x 155 mm, 350 g (genuine).
+    - **Worse in:** Price (about 2x), IIP3, 2-channel bandwidth, size and weight. No independent measurement of clones.
+    - **Compatibility:** USB 3 only. Far too large for the handheld.
+    - **Risks:** Counterfeit or relabelled RFIC. Trademark issues. No warranty.
+    - **Seller url:** https://www.ebay.de/itm/296796515430
+    - **Sources:**
+      - https://www.ebay.de/itm/296796515430
+      - https://www.ebay.de/itm/386246201165
+      - https://www.ettus.com/wp-content/uploads/2019/01/b200-b210_spec_sheet.pdf
+  5.
+    - **Name:** LibreSDR / 'Pluto+' class boards (Zynq XC7Z020 + AD9363 'configured as AD9361', Gigabit Ethernet + USB 2 OTG), also used ADALM-PLUTO
+    - **Kind:** generic_or_clone
+    - **Price usd:** unverified (AliExpress / OpenSourceSDRLab; not fetched)
+    - **Spec comparison:** Claimed 70 MHz-6 GHz and 61.44 MHz sampling. The AD9363 datasheet range is 325 MHz-3.8 GHz with 20 MHz bandwidth, so these boards run the chip beyond its rating. Pluto USB 2: sustained throughput about 6 MHz without loss (sdr-radio.com), 4-5 Msps in continuous use (GNU Radio wiki). Gigabit Ethernet is 125 MB/s, against 224 MB/s needed for 56 Msps complex 16-bit (model). Genuine Pluto NF measured 6.2 / 6.1 / 4.1 / 4.7 / 5.0 dB (Librespace).
+    - **Worse in:** Cannot stream 56 MHz continuously (USB 2 or GbE). AD936x IIP3 class -18 dBm. AD9363 run outside its datasheet range. No independent measurement of LibreSDR or Pluto+ (the sdr-radio.com post is only an order announcement). TX-capable with a full Linux on board, which the stack already rejected (#89).
+    - **Compatibility:** Ethernet or USB 2. No M.2 or USB 3 fit for the 56 Msps role.
+    - **Risks:** Chip relabelling or overclocking claims. Firmware from clone vendors. Strong TX capability.
+    - **Seller url:** https://sdr-radio.com/libresdr
+    - **Sources:**
+      - https://sdr-radio.com/libresdr
+      - https://www.sdr-radio.com/implementation
+      - https://wiki.gnuradio.org/index.php/PlutoSDR_Source
+      - https://gitlab.com/librespacefoundation/sdrmakerspace/sdreval/-/raw/master/Report/pdf/Evaluation_of_SDR_Boards-1.0.pdf
+  6.
+    - **Name:** Used Nuand bladeRF 2.0 micro xA4 (AD9361, USB 3)
+    - **Kind:** used
+    - **Price usd:** unverified. Launch price was $480 (rtl-sdr.com headline, 2018); no current used listing seen.
+    - **Spec comparison:** 47 MHz-6 GHz, 56 MHz, 12-bit, 2x2. Librespace measured NF 5.0 / 4.9 / 7.4 / 9.0 / 9.5 / 15.8 dB at 145 / 437 / 1280 / 2250 / 2425 / 5830 MHz.
+    - **Worse in:** NF 9.0-9.5 dB at S-band (measured). AD9361 IIP3 class -18 dBm. Very unlikely to be cheaper.
+    - **Compatibility:** USB 3. libbladeRF exists for arm64 (not checked on the Q6A).
+    - **Risks:** Used, unknown history. TX-capable.
+    - **Seller url:** 
+    - **Sources:**
+      - https://gitlab.com/librespacefoundation/sdrmakerspace/sdreval/-/raw/master/Report/pdf/Evaluation_of_SDR_Boards-1.0.pdf
+      - https://www.rtl-sdr.com/bladerf-2-0-micro-new-47-mhz-6-ghz-56-mhz-bandwidth-2x2-mimo-sdr-for-480/
+  7.
+    - **Name:** Used LimeSDR Mini v1.x / 2.0 (LMS7002M, USB 3)
+    - **Kind:** used
+    - **Price usd:** unverified (no used listing fetched). Librespace quoted $159 board-only for the v1, as a historical price.
+    - **Spec comparison:** Range 10 MHz-3.5 GHz, 30.72 Msps, 30.72 MHz, 1 RX. RX1_W covers 10 MHz-2 GHz and RX1_H 2-3.5 GHz. Librespace measured NF 11.1 / 13.8 / 15.6 dB at 145 / 437 / 1280 MHz on two units; above 2 GHz the noise was too high to report, and damaged matching was suspected.
+    - **Worse in:** No 3.5-3.8 GHz coverage, bandwidth of only 30.72 MHz, one RX channel. Measured NF is poor.
+    - **Compatibility:** USB 3. LimeSuiteNG supports it.
+    - **Risks:** Poor measured units. Used.
+    - **Seller url:** 
+    - **Sources:**
+      - https://gitlab.com/librespacefoundation/sdrmakerspace/sdreval/-/raw/master/Report/pdf/Evaluation_of_SDR_Boards-1.0.pdf
+      - https://www.cnx-software.com/2022/06/09/limesdr-mini-2-usb-sdr-lattice-semi-ecp5-fpga/
+  8.
+    - **Name:** LimeSDR XTRX / used Fairwaves XTRX (LMS7002M, mini PCIe)
+    - **Kind:** used
+    - **Price usd:** 960 new (verified, Crowd Supply, in stock). No used unit found.
+    - **Spec comparison:** 30 MHz-3.8 GHz, 120 Msps SISO / 90 Msps MIMO, 12-bit, 2x2, mPCIe 50.8 x 21 mm. Power not specified.
+    - **Worse in:** Price is 3.4x. Matched bands and power are unverified. It would need an M.2-to-mPCIe adapter.
+    - **Compatibility:** mPCIe. LimeSuiteNG plus limepcie driver.
+    - **Risks:** Not cheaper, so not considered further.
+    - **Seller url:** https://www.crowdsupply.com/lime-micro/limesdr-xtrx
+    - **Sources:**
+      - https://www.crowdsupply.com/lime-micro/limesdr-xtrx
+  9.
+    - **Name:** DIY build of the open LimeSDR Micro M.2 design (myriadrf/LimeSDR-Micro hardware/M.2/1v2)
+    - **Kind:** diy
+    - **Price usd:** not estimated (no verified LMS7002M, LA9310 or PCB assembly quotes)
+    - **Spec comparison:** Would be identical by design if built correctly.
+    - **Worse in:** No independent measurement of any DIY unit exists, so it is rejected under this angle's rule. The fine-pitch BGA LA9310 and LMS7002M plus a multilayer RF PCB are unlikely to cost under $279 for one unit. Untested build quality.
+    - **Compatibility:** Same as the Micro, if the EEPROM and board ID were programmed correctly.
+    - **Risks:** Assembly yield. LA9310 sourcing. No warranty. The firmware and EEPROM image are not shipped.
+    - **Seller url:** 
+    - **Sources:**
+      - https://myriadrf.org/projects/limesdr-micro/
+  10.
+    - **Name:** HackRF One clones (and PortaPack bundles)
+    - **Kind:** generic_or_clone
+    - **Price usd:** unverified (not fetched)
+    - **Spec comparison:** 1 MHz-6 GHz, 8-bit ADC, 2-20 Msps, high-speed USB (USB 2), half-duplex. Rowetel measured NF 11.1 dB without LNA (via an rtl-sdr.com summary).
+    - **Worse in:** 8-bit ADC against 12-bit. 20 MHz against 56 MHz. USB 2. Worse NF.
+    - **Compatibility:** USB 2.
+    - **Risks:** Clone quality varies. TX-capable.
+    - **Seller url:** 
+    - **Sources:**
+      - https://hackrf.readthedocs.io/en/latest/hackrf_one.html
+      - https://www.rtl-sdr.com/page/223/?pg=450
+  11.
+    - **Name:** Airspy Mini (budget alternative already noted in STACK) and its clones
+    - **Kind:** other_brand
+    - **Price usd:** unverified (sold via ITEAD; STACK estimate about $140-160 for the set)
+    - **Spec comparison:** 24-1700 MHz, 12-bit ADC, 10/6/3 MSPS, 6 MHz panoramic view, USB 2, receive-only. Librespace measured NF 7.1 / 7.4 / 10.7 dB at 145 / 437 / 1280 MHz.
+    - **Worse in:** No S-band, no 3.3-3.8 GHz, no 1.7-3.8 GHz at all. 10 MHz against 56 MHz. One channel.
+    - **Compatibility:** USB 2. libairspy on arm64.
+    - **Risks:** Clones on marketplaces are counterfeits. Covers AHRPT rates only.
+    - **Seller url:** https://airspy.com/airspy-mini/
+    - **Sources:**
+      - https://airspy.com/airspy-mini/
+      - https://gitlab.com/librespacefoundation/sdrmakerspace/sdreval/-/raw/master/Report/pdf/Evaluation_of_SDR_Boards-1.0.pdf
+- **Notes:** VERDICT (angle B: generic, clone, DIY, used): KEEP the LimeSDR Micro M.2 Basic. No measured, cheaper equivalent exists.
+  (1) Every AD936x board fails on IIP3. That covers B210 / B210-mini clones, LibreSDR, Pluto+, bladeRF 2.0 micro and B200mini. Their IIP3 is -18 to -20 dBm, against LMS7002M +4 dBm out-of-band and -5.5 dBm in-band at max gain. Their dual-channel bandwidth is also lower: 30.72 MHz per channel on a B210, and USB 2 or GbE limits on the Zynq boards. The B210-mini clone is not cheaper anyway ($285 snippet) and has no independent measurement.
+  (2) The only cheaper unit with the same chip is a used LimeSDR-USB (EUR 99 forum listing, probably sold). It has no 3.3-3.8 GHz or 0.3-0.7 GHz matched input in LimeSuiteNG, uses more power (5.2-5.3 W measured in a loopback test against about 4 W), is USB 3 only and larger, and is discontinued with no warranty.
+  (3) No used LimeSDR Micro (either form factor) and no LMS7002M clone were found. XTRX is $960. A DIY build has no measured evidence.
+  (4) Every RX-only device (Airspy, RTL, SDRplay class) fails coverage or bandwidth.
+  
+  IMPORTANT EVIDENCE GAP: the Micro's advantage is chip-level only. Its NF figures come from the LMS7002M datasheet. Its IIP3 figures come from Lime's own eval-board report, which is a vendor document. No independent board-level NF or IIP3 measurement of the Micro exists.
+  The one independent lab comparison (Librespace / Csete and Christiansen, report 1.0, 2020) measured a LimeSDR Mini (same chip, different board) at NF 11-15.6 dB on two units. The authors suspected damaged matching on both. The same lab measured AD936x boards at 4.1-6.3 dB up to 2.4 GHz (B210 4.4-6.3 dB).
+  Recommendation for v2: add a conducted NF test to the 30-day Lime acceptance. Use the MDS or Y-factor method with the bench noise source, in Bench mode, into a dummy load path only (conducted, never radiated). Measure at about 437, 1700, 2250 and 3500 MHz on RX1 and RX2. Treat NF clearly above about 8 dB (the B210 class spec) in the matched bands as an RMA reason.
+  
+  SYSTEM NOTE (unverified, not priced): any USB 3 SDR would have to take the single blue USB 3.1 port from the T7, but would free the M.2 slot for a 2230 NVMe in place of the T7. No qualifying USB 3 candidate exists, so this changes nothing now.
+  
+  EU COST: Crowd Supply ships from Mouser in Texas, and Shenzhen clone sellers face the same import rules. Above EUR 150 that means import VAT plus normal duty plus the EUR 2 handling fee from about 1 Nov 2026 (operator note 35). None of this changes the ranking.
+  
+  METHOD NOTES: analog.com returned 503, so AD9361 chip values are from the ADI datasheet as quoted in search snippets. eBay listing pages returned 403, so eBay prices are snippets and marked unverified. Primary sources fetched: Crowd Supply Micro and XTRX pages, Ettus B200/B210 and B200mini spec sheets, the Librespace PDF report, Lime's LMS7002M measurement report (pdftotext), LimeSuiteNG source on raw.githubusercontent.com, and myriadrf forum threads. Downloaded files are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/limeB_dl/.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
