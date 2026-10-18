@@ -684,3 +684,7 @@ P4, C (цивільні ДХ-несучі для SID і сигналів час�
 - **Виправлено помилки етапу 2.** Коміту gr-satellites 71dc9a1 не існує. GGAK легший за LRIT на 7–8 dB, а не на 10.7. Помилки CRC у #600 — регресія, виправлена в PR #616.
 Джерела: див. final/reaudit_C_antennas_targets.json (rtl-sdr.com, waveshare.com, quectel.com, u-blox ANN-MB5, Uputronics FPA Rev 3.0, WiMo, W9MDB, ARISS, Riviera, sigidwiki, SatNOGS, EA4GPZ, SatDump).
 
+## 2026-10-18 09:30 UTC
+
+P4, D (дисплей; кандидат для P5, не перевірено): на сайті Wisecoco є товар «…LCD Display with 2500Nits, HDMI Driver Board, MIPI Interface and I2C Capacitive Touch for Outdoor Industrial Control panel». Позначено «InStock», ціна $132.00 / $135.00, сторінку змінено 17.09.2026. Діагональ і роздільність з фрагмента не видно. Якщо це 7" 1920x1080 з оптичним бондингом, він на 500 ніт яскравіший за поточний варіант на 2000 ніт за ту саму ціну. Передаю в P5 (група G2 — дисплей) на перевірку: діагональ, роздільність, бондинг, струм підсвітки при 2500 ніт і тепло в корпусі. Джерело: wisecoco.com (сторінка товару, SKU 4681).
+
