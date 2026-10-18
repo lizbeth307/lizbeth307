@@ -1075,3 +1075,7 @@ P5 (проміжне): G3 — роз'єм GX12 4-pin Olimex CONNECTOR-GX12-4 (п
 
 P5 (проміжне): G3 — EU-ціна Molicel INR21700-P50B у akkuteile.de (DE): €8.90 за шт. Розрахунок агента: 5 шт. = €50.02, з доставкою по DE €56.65, міжнародно €65.65. NKON (NL) за 5 шт. ≈€37.94 з ПДВ, економія ≈€12; але сорт лоту NKON (Grade B?) досі не перевірено. Також розглядаються Ampace JP50 і BAK; рішення буде після верифікації (тести Mooch). Джерела: https://www.akkuteile.de/en/lithium-ionen-battery/size-21700/molicel/ , nkon.nl.
 
+## 2026-10-18 14:03 UTC
+
+P5 (проміжне): G3 — Pololu D36V50F12 у Botland (PL, ЄС): €31.27 з ПДВ, €26.28 без ПДВ, у наявності (quantity 10, availability high; дані API Botland). У Pololu напряму $39.95 (Rationed, бекордер дозволено). Попередню суперечність щодо наявності в ЄС знято на користь Botland. Джерела: botland.store (id 16387), pololu.com/product/4095.
+
