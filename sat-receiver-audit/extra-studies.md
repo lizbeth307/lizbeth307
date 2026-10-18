@@ -4295,3 +4295,353 @@
   - https://www.wisecocodisplay.com/wp-content/uploads/2026/05/7-inch-1920-1200-lcd-2-2.webp
   - https://prom.ua/ua/search?search_term=ET070WU07
 
+## dispmkt:decide (run `wf_a429c611-ea2`)
+
+- **Verdict:** The Wisecoco 7in 1920x1080 2000+ nit HDMI kit stays the main pick, but buy it only after the seller confirms two things in writing: the touch reaches the host as USB HID (with VID:PID), and the cover glass is optically bonded. If the seller cannot confirm both, buy the 4D Systems 4DHDMI-70-1280-800-CT-EAR-1000 instead: 1000 nits, optical bonding stated in the datasheet, USB-C touch, 12 V input, in stock in Ukraine at 9,520 UAH. I found no buyable plug-and-play kit above 1920x1080 at 1000 nits or more in 5.5-8in. The closest is a bring-up project around the bare Midas MDT0700F1IHHC-MIPI (1200x1920, up to 2500 nits): EUR 324.37 ex VAT at Farnell, 12-week lead time, plus a bridge board, an LED driver and a touch bridge. At 30-35 cm, going above FHD gains almost nothing visible (7in FHD is already 315 PPI, against an acuity limit of 249-291 PPI). It costs money, time, about 1-3 W and Q6A mode risk. By my calculation, optical bonding, an AR film and a hood improve sun contrast more than another 1000 nits does.
+- **Main pick:**
+  - **Name:** Wisecoco 7in 1920x1080 LTPS IPS sunlight-readable panel with HDMI-in board and capacitive touch (the description table's active area of 154.368x86.832 mm makes it 6.97in diagonal, my calculation)
+  - **Resolution:** 1920x1080, landscape by default per the product page; 316 PPI at 6.97in (calc)
+  - **Brightness:** '2000+ cd/m2 (Typ.)' in the spec table; '2500Nits' in the title only; no datasheet or measurement. A Youritech part, ET070FH01-HT, is listed at 2000 cd/m2 typ with in-cell touch, the same 164.2x98 mm outline and 85/85/85/85 viewing angles. It is very likely the same glass, which is an inference.
+  - **Price:** $132 (was $135), Add to cart, 0 reviews, re-read on wisecocodisplay.com 18 Oct 2026. The page lists no variants or package contents and says nothing on shipping. Below Ukraine's EUR 150 duty-free threshold if shipped alone.
+  - **Why:** - **Brightness:** the brightest option with HDMI, capacitive touch and a cart price. If it is bonded, 2000 nits gives about 6.2:1 at 100 klx with an AR film and about 26:1 under a hood (calc). A bonded 1000-nit module gives 3.6:1 and 13.9:1.
+  - **Q6A safety:** 1920 px wide splits as 2x960, so it never hits the sc7280 2400-px or UBWC split limits. It needs no virtual planes on the held 6.18.2 kernel.
+  - **RF:** the board's EDID can be rewritten to a harmonic-clean 128.70 MHz 1080p52 mode.
+  - **Touch evidence:** the in-cell touch is I2C at the panel. A different Wisecoco 7in kit enumerated as WCH CH57x USB HID (1a86:e5e3) under hid-multitouch (Pi forum t=368455), so a USB bridge on this board is plausible but unproven.
+  - **Not chosen:** no new 2026 candidate beats it on verified data. The SURENOO AliExpress '2000nit' module and the Youritech 1200x1920 parts were refuted or remain quote-only.
+  - **Possible second source (unverified lead):** VSDISPLAY lists a 6.97in 1080x1920 2000-nit on-cell panel with HD board at about GBP 119 on eBay.de (seen only as a snippet). It is the same 6.97in size.
+  - **Fallback if any condition fails:** the 4D Systems 4DHDMI-70-1280-800-CT-EAR-1000.
+  - **Sources:**
+    - https://www.wisecocodisplay.com/product/7-inch-1920x1080-high-brightness-2500nits-lcd-panel-with-hdmi-in-board-ips-mipi-interface-tft-lcd-screen/
+    - https://forums.raspberrypi.com/viewtopic.php?t=368455
+    - https://www.youritech.com/products/7-inch-tft-lcd-display-1920x1080-mipi-2000nits-high-brightness-lcd-display-with-in-cell-touch-for-healthcare-medical-display-solution.html
+    - https://www.youritech.com/products/7-inch-tft-lcd-display-1920x1080-high-brightness-4500nits-mipi-lcd-display-with-in-cell-touch-for-ev-charger.html
+    - https://www.ebay.de/itm/256679793470
+    - https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_0.pdf
+  - **Conditions before buying:**
+    - Written confirmation of USB-HID touch from the HDMI board: controller IC, number of touch points and lsusb VID:PID. If it is bare I2C only, budget an I2C-to-USB-HID bridge or plan for the header-I2C goodix/edt-ft5x06 fallback.
+    - Is the cover glass fully laminated (OCA/OCR) or air-gapped? Is it AR- or AG-treated? An air-gapped 2000-nit panel (1.5:1 at 100 klx, calc) is worse than the bonded 1000-nit 4D (1.7:1).
+    - An EDID hex dump: preferred mode, landscape or portrait, porches. VFP+VSW+VBP must be at least 24 lines. Does the board accept an edited EDID at 1080p52 (128.70 MHz)?
+    - Board input voltage and current at full brightness (12 V input preferred), backlight driver IC, dimming method (keys, PWM pad or DDC/CI) and PWM frequency.
+    - Exactly what the $132 includes (touch panel, FPC, HDMI and USB cables), the panel part number, typical and minimum nits, polariser transmission axis, and the LC clearing point.
+    - DHL/FedEx cost to Ukraine and an invoice under EUR 150; pay by PayPal or card for buyer protection.
+- **Above fhd tier:**
+  - **Name:** No plug-and-play option is buyable. Closest: Midas MDT0700F1IHHC-MIPI 7.02in bare panel, driven through a vendor-flashed HDMI-to-4-lane-MIPI bridge (LT6911C-class), an external constant-current LED driver and an I2C-to-USB-HID touch bridge. Alternative: a quote-only Youritech ET070WU01-HLT (2000 nits, in-cell) or ET070WU15-TT (1500 nits, CTP), only if Youritech supplies a tested HDMI board with USB-HID touch.
+  - **Resolution:** 1200x1920, portrait-native, 322.5 PPI (calc). The 1200 px width stays under the 2400-px DPU limit, so it needs no virtual planes, but the compositor must rotate it.
+  - **Brightness:** Datasheet: 1000/1500/2000/2500 cd/m2 at 200/300/400/500 mA, Vf 16 V typ (19.2 V max). The 2500 point is footnoted 'stable at room temperature, open air', so plan for 2000 nits (400 mA, about 6.4 W of LED power). AR cover lens; in-cell FT7250 touch.
+  - **Price:** EUR 324.37 ex VAT for 1 unit (EUR 302.74 at 5+) at ie.farnell.com: available to order, 12-week standard lead time, not in stock (Oct 2026 search result). Add a bridge board (about $30-60, estimate), an LED driver and a touch bridge (about EUR 20-60, estimate), and Ukrainian duty and VAT on the amount above EUR 150, about EUR 56 (calc). Landed total about EUR 420-500 plus weeks of bring-up.
+  - **Why:** - It is the only above-FHD panel of 1000 nits or more with a real datasheet: current-to-luminance table, AR cover lens, in-cell touch with no touch-layer air gap, -20 to 70 C.
+  - Everything else above FHD is ruled out:
+    - **Youritech:** brightness exists only on vendor web pages, quote only, catalog part numbers reused, no HDMI board for these models.
+    - **VIEWE 8in transflective:** 369 nits transmissive, out of stock, board does not fit.
+    - **Wisecoco 8.4in 1600x2560:** dual-port 8-lane MIPI, -10 to 50 C, no touch.
+    - **Field and drone monitors at 1920x1200:** touch works only their own menus, and the LUT7 accepts broadcast formats only, so it shows scaled 1080p.
+    - **Consumer handheld and tablet panels:** 287-706 nits measured.
+  - **Blockers:** no porch timings (the datasheet says 'Refer to Focal Tech FT7250'). The JDI-class native vertical blanking may be only 14 lines, against the 24 the Q6A needs. TDDI touch scanning is tied to display timing. No community build exists.
+  - **Verdict:** a lab project, not a purchase for this handheld.
+  - **Sources:**
+    - https://www.farnell.com/datasheets/3984938.pdf
+    - https://ie.farnell.com/midas-displays/mdt0700f1ihhc-mipi/lcd-tft-display-7-1200x1920p-mipi/dp/4248109
+    - https://www.youritech.com/products/7-inch-tft-lcd-display-1200x1920-high-brightness-2000nits-mipi-lcd-display-with-in-cell-touch.html
+    - https://www.youritech.com/products/7-02-inch-tft-lcd-display-1200x1920-mipi-high-brightness-1500nits-lcd-module.html
+    - https://viewedisplay.com/download/73/smart-display-datasheet/11743/uedx6911-hdmi-driver-board-spec-v2-0.pdf
+    - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/panel/panel-himax-hx8279.c
+  - **Conditions before buying:**
+    - Get the FT7250 video-mode timing table from Midas or Farnell: pclk, H and V porches, minimum and maximum refresh, and maximum VFP. Confirm that 24 or more lines of vertical blanking and 49-60 Hz work, and that touch still works at those timings.
+    - A bridge vendor must commit to flashing LT6911C-class firmware for this panel and provide an EDID of 1340x1946 at 156.458 MHz (26 lines) or 1340x1956 at 128.5 MHz (36 lines).
+    - Pass the gate test: prove an LED driver for 400 mA at up to 19.2 V from the 12 V rail (cheap LT6911 boards are rated only about 1.3 W total) and an I2C(1.8 V)-to-USB-HID bridge before ordering.
+    - Accept a 12-week lead time and no community precedent. Keep the Wisecoco or 4D as the working screen in the meantime.
+- **Budget pick:**
+  - **Name:** Waveshare 5DP-CAPLCD-B (5in 1024x600 IPS, optically bonded toughened glass, HDMI with 5-point USB capacitive touch). If about 1000 nits is a hard floor, the cheapest verified step up is the Newhaven NHD-7.0-HDMI-HR-RSXP-CTU (7in 1024x600, 940 nits, USB-HID touch).
+  - **Resolution:** 1024x600 (237 PPI at 5in; the Newhaven is 169.5 PPI at 7in)
+  - **Brightness:** 800 cd/m2 (Waveshare spec). Newhaven: 940 nits (manufacturer page and datasheet). Neither is independently measured.
+  - **Price:** $46.99-54.99 at the Waveshare store (variant price not shown). Newhaven: $120.20, shown as 'IN STOCK' but with a low-stock notice (18 Oct 2026).
+  - **Why:** - **Waveshare:** the cheapest option with known driver-free USB-HID touch on Linux and optical bonding (-B variant only). Bonded plain glass gives about 1.6:1 at 100 klx, about 3.1:1 with an AR film and about 11:1 in a hood (calc), so it is usable in sun only with the hood. Draw is 4.2 W and it needs at least 850 mA. The Q6A needs video=HDMI-A-1:1024x600@60 (Radxa FAQ case).
+  - **Newhaven:**
+    - Datasheet-stated 'PCAP (USB-HID)' with an FT5426 controller and a TI TFP401A receiver with no scaler. Its EDID has 35 lines of vertical blanking, which meets the 24-line rule.
+    - Optical bonding is not stated.
+    - The stock 62.00 MHz clock puts its 12th harmonic at 744.0 MHz (QO-100 IF) and its 7th at 434.0 MHz (calc), so override the EDID to 52.00 MHz at 1344x645 (60 Hz).
+    - 5 V supply at 6-7.5 W.
+  - **Sources:**
+    - https://www.waveshare.com/5dp-caplcd.htm
+    - https://www.waveshare.com/wiki/5DP-CAPLCD
+    - https://www.newhavendisplay.com/nhd70hdmihrrsxpctu-p-9649.html
+    - https://newhavendisplay.com/content/specs/NHD-7.0-HDMI-HR-RSXP-CTU.pdf
+  - **Conditions before buying:**
+    - Order the -B variant specifically; -H is air-bonded and -G is resistive.
+    - Give it its own 5 V rail of at least 1 A, and use a 25-35 mm matte-black hood.
+    - Newhaven: ask whether the cover glass is optically bonded or air-gapped, and ask the international shipping cost (or route through a US forwarder such as Nova Poshta Global or Meest).
+- **Ranked candidates:**
+  1.
+    - **Rank:** 1
+    - **Name:** Wisecoco 7in (6.97in) 1920x1080 LTPS 2000+ nit kit with HDMI-in board and capacitive touch
+    - **Resolution:** 1920x1080 landscape
+    - **Nits:** 2000+ typ (spec table); 2500 in the title; unmeasured
+    - **Touch to host:** Capacitive (in-cell likely), listed 'Interface Type: I2C'. USB HID through the board is unconfirmed (another Wisecoco 7in kit shows CH57x 1a86:e5e3).
+    - **Price:** $132 (wisecocodisplay.com, 18 Oct 2026)
+    - **Status:** MAIN PICK, conditional on written confirmation of USB-HID touch and bonding
+  2.
+    - **Rank:** 2
+    - **Name:** 4D Systems 4DHDMI-70-1280-800-CT-EAR-1000
+    - **Resolution:** 1280x800 (panel drawing shows 800x1280; OSD board)
+    - **Nits:** 1000 typ (datasheet R1.0, adjustable via OSD); 800:1
+    - **Touch to host:** Capacitive (Goodix GT928 per the drawing) over the USB-C 'Power and Touch Interface'. USB class not stated; HID likely.
+    - **Price:** 9,520 UAH (about $229), neostore.in.ua via prom.ua, in stock, 12-month warranty
+    - **Status:** VERIFIED FALLBACK. Datasheet: 'Optical Bonded to LCD'; no AR as standard; 12 V barrel at 540 mA (6.5 W); -20 to 70 C
+  3.
+    - **Rank:** 3
+    - **Name:** Midas MDT0700F1IHHC-MIPI with a vendor-flashed HDMI-to-MIPI bridge, LED driver and touch bridge
+    - **Resolution:** 1200x1920 portrait
+    - **Nits:** 1000-2500 by drive current (datasheet); plan 2000
+    - **Touch to host:** In-cell FT7250 over I2C at 1.8 V; needs an I2C-to-USB-HID bridge
+    - **Price:** EUR 324.37 ex VAT (Farnell IE, 12 weeks, not in stock) plus electronics
+    - **Status:** ABOVE-FHD PROJECT ONLY: no timings published, no community build
+  4.
+    - **Rank:** 4
+    - **Name:** 4D Systems 4DHDMI-80-1280-800-CT-EAR-1000
+    - **Resolution:** 1280x800 (188.7 PPI)
+    - **Nits:** 1000 typ (datasheet)
+    - **Touch to host:** GT928 over USB-C (class not stated)
+    - **Price:** 10,060 UAH (about $242), prom.ua, in stock
+    - **Status:** Verified alternative: larger, lower PPI, 12 V at 580 mA (about 7 W), bonded
+  5.
+    - **Rank:** 5
+    - **Name:** Xenarc 702GSH
+    - **Resolution:** 1024x600 with scaler
+    - **Nits:** 1000 (manufacturer)
+    - **Touch to host:** USB PCAP multitouch
+    - **Price:** $429, XenarcDirect, in stock
+    - **Status:** Rugged fallback: bonded with AR+AF, 10-35 V direct from the 4S pack, under 10 W, 0.70 kg, low resolution
+  6.
+    - **Rank:** 6
+    - **Name:** 4D Systems 4DHDMI-70-1024-600-CT-EAR-1000
+    - **Resolution:** 1024x600
+    - **Nits:** 1000 typ (datasheet)
+    - **Touch to host:** GT1151QM over USB-C (class not stated)
+    - **Price:** 8,140 UAH (about $196), neostore.in.ua, in stock
+    - **Status:** Best nits per watt (5 V at 790 mA, about 4 W), bonded, low resolution, push-button dimming
+  7.
+    - **Rank:** 7
+    - **Name:** Newhaven NHD-7.0-HDMI-HR-RSXP-CTU
+    - **Resolution:** 1024x600, no scaler (TFP401A)
+    - **Nits:** 940 (manufacturer)
+    - **Touch to host:** USB-HID PCAP, FT5426 (datasheet)
+    - **Price:** $120.20, low stock
+    - **Status:** Step-up budget option. Bonding unstated; 5 V at 6-7.5 W; stock 62 MHz EDID is RF-bad, so override to 52 MHz
+  8.
+    - **Rank:** 8
+    - **Name:** Youritech ET070WU01-HLT (2000) / ET070WU10-TT and ET070WU15-TT (1500)
+    - **Resolution:** 1200x1920
+    - **Nits:** 2000 / 1500 typ (vendor web pages only; sister parts list 1300/1350/1600)
+    - **Touch to host:** In-cell TDDI or optional CTP over I2C; no USB-HID path offered
+    - **Price:** Quote only
+    - **Status:** Unverified RFQ backup. Revive only with a datasheet, a concrete HDMI board, an EDID and a VID:PID
+  9.
+    - **Rank:** 9
+    - **Name:** VIEWE UEED080FH-RB39-A003 transflective with UEDX6911 board
+    - **Resolution:** 1200x1920 (8in, 283 PPI)
+    - **Nits:** 369 typ transmissive (datasheet); 7% reflectance, 15:1 reflective contrast
+    - **Touch to host:** Board offers 5-point USB HID, but its fit with this 45-pin panel is not listed
+    - **Price:** $92.99 bundle; out of stock (viewedisplay.com, 18 Oct 2026)
+    - **Status:** Sun-specialist curiosity. Pale colours (15-20% NTSC), 300:1 indoors, the board's 1.3 W rating cannot drive the 2.9 W backlight; rejected
+  10.
+    - **Rank:** 10
+    - **Name:** Waveshare 5DP-CAPLCD-B
+    - **Resolution:** 1024x600 (5in)
+    - **Nits:** 800 (vendor)
+    - **Touch to host:** USB HID, driver-free
+    - **Price:** $46.99-54.99
+    - **Status:** BUDGET PICK, below the 1000-nit target
+  11.
+    - **Rank:** 11
+    - **Name:** Youritech ET070FH01-HTT
+    - **Resolution:** 1920x1080
+    - **Nits:** 4500 typ (vendor page)
+    - **Touch to host:** In-cell over I2C, no HDMI board offered
+    - **Price:** Quote only
+    - **Status:** Lead only: same outline as the Wisecoco glass, possibly a brighter twin; would need about 10 W+ of backlight
+  12.
+    - **Rank:** 12
+    - **Name:** SURENOO SUR12001080H070K '2000nit Incell 7in 1200*1080 FHD HDMI' (AliExpress 1005006176909405)
+    - **Resolution:** Unknown: title and model number both say 1200*1080
+    - **Nits:** 2000 (title only)
+    - **Touch to host:** Unknown
+    - **Price:** $106.09 (old snippet; page captcha-walled)
+    - **Status:** REJECTED as unverifiable; not Wisecoco
+  13.
+    - **Rank:** 13
+    - **Name:** Wisecoco 8.4in 1600x2560 bare panel
+    - **Resolution:** 1600x2560
+    - **Nits:** 2000 typ (listing)
+    - **Touch to host:** None listed
+    - **Price:** $158 panel only
+    - **Status:** REJECTED: dual-port 8-lane MIPI with no bridge, -10 to 50 C
+  14.
+    - **Rank:** 14
+    - **Name:** FEELWORLD P7 / LUT7, DJI High-Bright Remote Monitor (1920x1200, 2000-2200 nits)
+    - **Resolution:** 1920x1200
+    - **Nits:** 2000-2200 (listings)
+    - **Touch to host:** None (menu-only touch or no touch)
+    - **Price:** $380 to EUR 1,459
+    - **Status:** REJECTED: no host touch; LUT7 HDMI input is broadcast formats only
+- **What above fhd costs us:** All figures are my calculations unless stated. Script: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final_calc/fc.py
+  
+  COSTS:
+  1) Brightness.
+  - Every buyable above-FHD 5.5-9in kit is 287-706 nits: Waveshare 9in about 350; Wisecoco 2.5K 500; Sharp 7.9in QXGA kits 460 per listing; Legion Go 413 and AYANEO KUN 678 measured by Notebookcheck.
+  - At 100 klx with a bonded AR-film front (1.2% reflectance) that gives about 2.3-3.2:1, against 6.2:1 at 2000 nits.
+  - The bright above-FHD glass exists only as bare MIPI panels.
+  2) Power.
+  - A 2000-nit 1200x1920 build is about 8-10 W: 6.4 W of LEDs per the Midas datasheet, plus about 1 W for the bridge, plus logic.
+  - That compares with about 6-8 W estimated for the Wisecoco FHD kit.
+  - Runtime with 15 W for the rest of the system and 61 Wh usable: about 2.5 h against about 2.8 h. An 8.4in 2.5K 2000-nit panel at about 10 W gives about 2.4 h.
+  3) GPU fill.
+  - 1200x1920 is 1.11x the FHD pixel count; 1600x2560 is 1.98x.
+  - Portrait-native panels also need a full-screen rotation pass in the compositor.
+  4) Q6A mode risk.
+  - No above-1080p display has been reported stable on Q6A HDMI.
+  - Portrait panels 1200 or 1600 px wide avoid the 2400-px DPU split. A landscape 2560-wide mode needs msm.dpu_use_virtual_planes=1 on the held 6.18.2.
+  - Bridge EDIDs often have fewer than the required 24 lines of vertical blanking (JDI-class 1200x1920 native is 14), so a custom EDID is needed. The bridge vendor must flash the firmware.
+  - 1600x2560 RB at 276.9 MHz uses 77% of the 2-lane HBR2 link; 348.5 MHz CVT is out.
+  - RF: CVT-RB 1200x1920 at 161.0 MHz hits 2254 MHz and RBv2 at 151.68 MHz hits 2275 MHz. The HX8279-style 156.458 MHz timing is clean in the six RX bands, but its 10th harmonic lands at 1564.6 MHz in the GNSS band.
+  5) Money and time.
+  - Midas EUR 324.37 ex VAT, plus about EUR 50-120 of bridge, LED and touch electronics (estimate), plus about EUR 56 UA duty and VAT, plus a 12-week lead time and unbounded bring-up.
+  - Compared with $132 under the EUR 150 threshold and a plug-in HDMI kit.
+  
+  GAINS:
+  - The 1-arcminute acuity limit is 291 PPI at 30 cm and 249 PPI at 35 cm.
+  - 7in FHD is already 315 PPI. 7.02in 1200x1920 is 322.5 PPI, only 2.5% denser linearly and invisible. 8in 1200x1920 is 283 PPI, actually less dense. 8.4in 2560x1600 is 359 PPI, beyond acuity.
+  - The only real gain is 11% more pixels on the short axis (1200 vs 1080) for UI space, or a physically larger 8-8.4in face.
+  
+  NET: not worth it for a sunlit handheld. Spend the effort on bonding, AR, a hood and auto-dimming.
+- **Refuted claims:**
+  1.
+    - **Claim:** The AliExpress '2000nit Incell 7in FHD HDMI' module ($106.09) is the same glass and board as the Wisecoco pick, and is 1920x1080.
+    - **Why:** - The brand is SURENOO, model SUR12001080H070K.
+  - Both the title and the model number encode '1200*1080', so the resolution is unknown.
+  - No datasheet, touch path or price is readable; every page is captcha-walled.
+  2.
+    - **Claim:** Youritech ET070WU07-O (1500 nits) uses the same panel as Wisecoco's $69 500-nit kit and is rated -20 to 70 C.
+    - **Why:** - Youritech's own dimension drawing gives 107.98x163.8 mm.
+  - Its FPC and separate backlight wires differ from the Wisecoco photo.
+  - Its second page and catalogue line say -10 to 60 C.
+  - It has no touch, so it fails a hard requirement.
+  3.
+    - **Claim:** Youritech ET070WU01-HLT is a buyable 2000-nit above-FHD candidate.
+    - **Why:** - 2000 cd/m2 appears only on the vendor web page: no datasheet, quote only.
+  - No HDMI board is offered for it.
+  - In-cell TDDI touch is I2C/SPI with no USB-HID path.
+  - The catalogue reuses one part number (ET070WU01-TT) for 350-nit and 1300-nit products.
+  4.
+    - **Claim:** ET070WU15-TT has a 'reference line ... CTP' entry, and the second Youritech URL supports its touch claim.
+    - **Why:** - The reference-table row for 7in 1200x1920 HX8279 says 1600 nits and no CTP.
+  - The second URL is ET070WU18-OT ('Touch: no', -10 to 60 C).
+  5.
+    - **Claim:** 1200x1920@60 at about 150 MHz hits 748.8/2246 MHz, and 51.3-51.8 Hz is clean.
+    - **Why:** - It depends on the totals.
+  - The HX8279-style 1340x1946 timing at 156.458 MHz is clean in all six RX bands.
+  - With those totals, 51.5 Hz (134.3 MHz) hits 2283 MHz.
+  - CVT-RB v1 (161.0 MHz) hits 2254 MHz; RBv2 (151.68 MHz) hits 2275.2 MHz.
+  - Calculations.
+  6.
+    - **Claim:** A cheap LT6911 board (VIEWE UEDX6911) can drive a 1500-2500 nit 7-8in panel.
+    - **Why:** - The UEDX6911 datasheet rates the whole board at 5 V, 150-260 mA (about 1.3 W).
+  - A 2000-nit 7in backlight is about 6.4 W (Midas datasheet), so an external LED driver is mandatory.
+  - The board datasheet does not list the 45-pin UEED080FH panel.
+  7.
+    - **Claim:** A 2000-nit panel is always more sun-readable than a 1000-nit one.
+    - **Why:** - At 100 klx an air-gapped, uncoated 2000-nit panel is about 1.5:1, while a bonded 1000-nit panel is about 1.7:1 (calc, from Planar reflectance values).
+  - Bonding and AR are worth more than doubling the nits.
+  8.
+    - **Claim:** Wisecoco touch is USB HID, and the panel is 2500 nits.
+    - **Why:** - The page lists 'Interface Type: I2C' and '2000+ cd/m2 (Typ.)'; 2500 appears only in the title.
+  - The CH57x USB-HID evidence comes from a different Wisecoco 7in kit.
+  - The page has no package contents, power, bonding or chip information (re-read 18 Oct 2026).
+  9.
+    - **Claim:** 4D Systems 4DHDMI modules come with an AR/AG front.
+    - **Why:** The datasheet says 'As a standard option, the displays do not have any Cover Glass Treatments'. AR, AG and AF are a custom order. Bonding is standard only on the 1024x600 and 1280x800 models; the smaller ones are air-bonded.
+  10.
+    - **Claim:** Newhaven 'Sunlight Readable' implies an optically bonded, RF-safe module.
+    - **Why:** - The page lists only 'USB-HID Capacitive + Cover Glass'; bonding is not stated.
+  - Its stock EDID clock of 62.00 MHz puts the 12th harmonic at 744.0 MHz (QO-100 IF) and the 7th at 434.0 MHz (calc).
+  11.
+    - **Claim:** 1920x1200 field or drone monitors (FEELWORLD P7/LUT7, DJI High-Bright) are an above-FHD path.
+    - **Why:** - Their touch controls only their own menus.
+  - The LUT7 HDMI input accepts broadcast formats only, so it shows scaled 1080p.
+  12.
+    - **Claim:** Above-FHD kits will work on any recent kernel.
+    - **Why:** - Mainline v7.3-rc has no Q6A display device tree, and 7.0.x breaks HDMI.
+  - Only Radxa 6.18.2 (held) or patched community kernels drive HDMI.
+  - On 6.18, landscape modes wider than 2400 px also need msm.dpu_use_virtual_planes=1.
+- **Q6a settings:**
+  - Kernel: stay on Radxa 6.18.2-x-qcom. Hold it with: sudo apt-mark hold linux-image-radxa-dragon-q6a linux-headers-radxa-dragon-q6a embloader (confirm the names with dpkg -l | grep -E 'linux-image|embloader'). Add the same names to Unattended-Upgrade::Package-Blacklist. Keep the old boot entry, a dd+zstd golden image and a USB-UART cable; measure the header voltage first.
+  - Inspect the panel before choosing a mode: edid-decode /sys/class/drm/card1-HDMI-A-1/edid; cat /sys/class/drm/card1-HDMI-A-1/modes; modetest -M msm -c. The chosen mode needs VFP+VSW+VBP of at least 24 lines. If dmesg shows 'low vbp+vfp', shearing or underrun, edit the EDID.
+  - Wisecoco bring-up: append video=HDMI-A-1:1920x1080@60 to /etc/kernel/cmdline, then sudo kernel-install add $(uname -r) /boot/vmlinuz-$(uname -r) and reboot. This is CEA 148.5 MHz, which hits 742.5 and 2227.5 MHz, so use it for bring-up only.
+  - Wisecoco field mode, RF-clean (calc): Modeline "1920x1080_52" 128.700 1920 2008 2052 2200 1080 1084 1089 1125 +hsync +vsync. That is 45 lines of vertical blanking and 3.09 Gbps, 36% of 2-lane HBR2. Clean alternative: 135.760 1920 1968 2000 2080 1080 1083 1088 1111 (58.75 Hz, 31 lines). Avoid 1080p CVT-RB at 138.5 MHz: its fundamental sits 0.5 MHz above the 137-138 MHz band.
+  - Apply the clean mode by EDID override:
+  1. cp /sys/class/drm/card1-HDMI-A-1/edid edid.bin
+  2. python3 -c "b=bytearray(open('edid.bin','rb').read());b[54:56]=(12870).to_bytes(2,'little');b[127]=(-sum(b[:127]))&255;open('wisecoco52.bin','wb').write(b)". This only gives 52 Hz if DTD#1 totals are 2200x1125. Otherwise choose a pixel clock in 127.85-129.35 or 135.4-135.95 MHz for the real totals.
+  3. Check the result with edid-decode, then sudo cp wisecoco52.bin /lib/firmware/edid/.
+  4. Add 'drm.edid_firmware=HDMI-A-1:edid/wisecoco52.bin video=HDMI-A-1:1920x1080@52' to /etc/kernel/cmdline.
+  5. Add the file to the initramfs with an initramfs-tools hook, then run kernel-install add.
+  - Portrait 1200x1920 bridge (above-FHD route): set the bridge EDID to Modeline 156.458 1200 1250 1274 1340 1920 1934 1936 1946 (60 Hz, 26 lines, 43% of the link; clean in the RX bands, but the 10th harmonic is at 1564.6 MHz in GNSS). RF-quiet option: 128.500 1200 1250 1274 1340 1920 1944 1946 1956 (49.0 Hz, 36 lines; panel and touch tolerance unknown). Rotate in GNOME Settings > Displays > Orientation, or under X11: xrandr --output HDMI-1 --rotate right plus xinput map-to-output <id> HDMI-1.
+  - Virtual planes: not needed for any recommended mode, since all are 1920 px wide or less. Only for a landscape 2560-wide test on 6.18.2: append msm.dpu_use_virtual_planes=1, run kernel-install add, and check that cat /sys/module/msm/parameters/dpu_use_virtual_planes prints Y. Use 2560x1600 CVT-RB at 268.6 MHz (totals 2720x1646, 75% of the link); never the 348.5 MHz CVT mode.
+  - 4D 1280x800: video=HDMI-A-1:1280x800@60 (CVT 83.77 MHz, 31 lines). Its only hits are weak high-order harmonics: the 19th at 1591.5 MHz (GNSS) and the 27th at 2261.6 MHz. Auto-dim by having an RP2040 pull the OSD button-board lines (10-pin 2.0 mm: Menu, Down, Up, Enter, Power) through open-drain GPIOs.
+  - Newhaven 1024x600: replace the stock 62.00 MHz EDID with Modeline 52.000 1024 1184 1204 1344 600 612 622 645 (60.0 Hz, 45 lines). The TFP401A has no scaler, so the panel itself must accept this timing.
+  - Touch: run only D+/D-/GND from the display board to a Q6A USB 2.0 port, and power the board's VBUS from its own 12 V or 5 V buck so it never back-feeds the Q6A. Check with lsusb, sudo libinput list-devices and sudo evtest. Map it in GNOME with: gsettings set org.gnome.desktop.peripherals.touchscreen:/org/gnome/desktop/peripherals/touchscreens/<vid>:<pid>/ output "['VEN','Product','Serial']".
+  - SDR++/SatDump touch (GLFW has no Wayland touch support): launch them with Exec=env XDG_SESSION_TYPE=x11 sdrpp and Exec=env XDG_SESSION_TYPE=x11 satdump-ui so they run under XWayland.
+  - DDC brightness test, expected to fail on cheap boards: sudo modprobe i2c-dev; sudo ddcutil detect --verbose; ddcutil --bus N setvcp 10 30. Otherwise use the RP2040 PWM or button route with a VEML7700 lux sensor and NTC derating.
+- **Sunlight measures:**
+  - Optical bonding first. The 100 klx model (calc) at 2000 nits: air gap 1.5:1, bonded plain glass 2.4:1, bonded plus a 1.2% AR film 6.2:1, factory bonded AR 9.9:1. At 1000 nits the same cases give 1.2, 1.7, 3.6 and 5.5:1. Reject an air-gapped front; check by holding a pen tip on the glass at a grazing angle, where a doubled reflection means an air gap.
+  - Add an AR front: an AR screen film of about 0.7% reflectance (vendor claim class, e.g. TELESIN) or AR-coated cover glass. Do not use matte AG on a 315-PPI panel, because it sparkles and softens the image. Ask 4D or Wisecoco whether AR cover glass is available as a custom option.
+  - Hood: 25-35 mm deep, matte-black interior, hinged so it folds down as a lid. Tilt the screen so it mirrors the hood interior or dark clothing, not the sky or a white shirt: a sunlit white shirt is about 25,000 cd/m2, which becomes about 1000 nits of glare at 4% reflectance (calc). In 20 klx shade the bonded 2000-nit panel reaches 8.1:1 with plain glass and 26.5:1 with AR film; the 4D reaches 4.6:1 and 13.9:1 (calc).
+  - Polariser: ask the seller for the transmission-axis angle. Test with polarized sunglasses at 0, 45 and 90 degrees before fixing the panel orientation in the case. If the axis is wrong, use non-polarized glasses; a quarter-wave retarder film (Relec and Digiwise sell TFTs fitted with one) makes the output circular, but I found no tested DIY sheet.
+  - Thermal:
+  - Light-coloured ASA case, never PLA.
+  - A fan pulls air through a 4-6 mm gap behind the backlight frame into the Q6A heatsink.
+  - 1 mm aluminium plate, doubling as RF shield and heat spreader.
+  - NTC on the frame: derate to 50% above 60 C and 20% above 68 C (panel rated -20 to 70 C).
+  - IR-rejecting film only if it shows no rainbow effect against the LCD polariser.
+  - Brightness discipline:
+  - Auto-dim from a VEML7700 behind a diffuser facing the same way as the screen.
+  - Run at 30-50% most of the time and full only in direct sun.
+  - Never exceed the datasheet LED current; the Midas 2500-nit point is rated only at room temperature in open air.
+  - Use DC/analog dimming or 20-25 kHz PWM-to-analog, not burst PWM, for RF.
+  - Do not rely on transflective or e-paper: the VIEWE 8in transflective has 15-20% NTSC colour and 300:1 contrast indoors, and e-paper smears a scrolling waterfall.
+- **Acceptance tests:**
+  - Luminance: show full white in a dark room and press a lux meter flat on the glass (L is about E/pi). Pass: Wisecoco at least 5600 lx (about 1800 nits); 4D or Newhaven at least 2800 lx (about 900 nits). Expect about 25% error; return the unit if it fails.
+  - Touch: lsusb shows the touch VID:PID (WCH boards use 1a86). dmesg shows hid-multitouch bound. evtest shows ABS_MT_SLOT with the advertised number of points and X/Y ranges matching the panel. Touch must keep working at the 52 Hz clean mode.
+  - EDID: edid-decode shows the preferred mode and its orientation, with VFP+VSW+VBP of at least 24 (or the edited EDID is accepted). The board must show no flicker, shear or colour fault at 128.70 MHz.
+  - Boot robustness on held 6.18.2: the correct mode on 20 cold boots, 20 reboots and 10 HDMI re-plugs. Log head -1 /sys/class/drm/card1-HDMI-A-1/modes from a boot service each time.
+  - Power on the 12 V rail with a 1.5 A limit: Wisecoco 9 W or less at full white; 4D about 6.5 W or less (datasheet 540 mA). Record the current at minimum and at full brightness.
+  - Back-feed: with the display powered and the Q6A off, the USB VBUS at the Q6A side must read 0 V.
+  - Optics: the pen-tip test shows no doubled reflection (bonded), and the polarized-sunglasses test passes at the chosen mounting orientation.
+  - Thermal: a 30-minute full-white soak, then a 45-minute noon test face-on to the sun with hood and fan. Pass: frame 60 C or less, glass 65 C or less, no darkening or retention, no case deformation.
+  - RF A/B: rtl_power sweeps (130-150, 430-440, 735-755, 1685-1715 MHz) and LimeSDR averaging (2200-2300 MHz), first into a terminator, then on the antenna. Compare display off, minimum, full, black screen, white screen and each mode. Pass: 1-2 dB or less rise. Also check u-blox UBX-MON-RF and C/N0 change by 1 dB-Hz or less.
+  - Application: SDR++ and SatDump launched with XDG_SESSION_TYPE=x11 tune by tap and drag. With the screen rotated, a touch in a corner lands in the same corner.
+- **Ukraine purchase:** - **Bought locally:** the only module with 1000 nits or more, optical bonding and USB touch that is stocked in Ukraine is the 4D Systems range from neostore.in.ua on prom.ua (in stock, 12-month warranty, Nova Poshta, cash on delivery):
+    - 7in 1280x800 1000-nit: 9,520 UAH
+    - 8in 1280x800 1000-nit: 10,060 UAH
+    - 7in 1024x600 1000-nit: 8,140 UAH
+  
+    prom.ua has no Wisecoco 7in FHD kit, no Lilliput 719, and nothing for ET070WU01 or ET070WU07. Its field monitors (Portkeys, SmallHD, FEELWORLD) have menu-only touch.
+  - **Wisecoco:** order direct (wisecocodisplay.com, 'Add to cart' at $132) or from the Wisecoco AliExpress store. Ask for DHL or FedEx with a correct invoice under EUR 150.
+  - **Customs (searches, Oct 2026):** Ukraine still applies the EUR 150 duty-free limit per international shipment. Above it, 10% duty and 20% VAT are charged; my understanding is that this applies to the amount over EUR 150, so verify on the order date. The Cabinet re-approved bills in Sept 2026 to charge VAT from EUR 0 (non-commercial up to EUR 45 exempt). Reports say not before July 2027, but the Rada has not passed them, so check before ordering.
+  - **Midas:** Farnell export, EUR 324.37 ex VAT, 12 weeks. Expect about EUR 56 duty and VAT (calc) plus courier and broker fees; confirm Farnell ships to Ukraine at checkout.
+  - **US items (Xenarc $429, Newhaven $120.20):** use a forwarder with a US warehouse such as Nova Poshta Global or Meest, or the vendor's own international shipping if quoted.
+  - **Payment:** PayPal or card for buyer protection.
+  - **Quality check:** get luminance and touch photos or video from the seller before shipping, and run the acceptance tests within the dispute window. AliExpress generally ships to Ukraine, but the SURENOO item could not be checked.
+- **Open questions:**
+  - Wisecoco: what is the panel part number? Is it the in-cell ET070FH01-HT-class glass (6.97in, active area 154.368x86.832 mm)? Is the 4500-nit backlight variant available, and can the board's LED driver supply it?
+  - Wisecoco: which touch controller, and does the HDMI board output USB HID? Please give the lsusb VID:PID and the number of touch points. Is a separate USB cable included in the $132?
+  - Wisecoco: please send the EDID hex: preferred mode, landscape or portrait, porches and vertical blanking. Does the board accept an edited EDID at 1080p52 (128.70 MHz), and which bridge chip and DSI lane rate does it use?
+  - Wisecoco: board input voltage range and current at full brightness? Backlight driver IC, PWM frequency, and how brightness is set (keys, PWM pad or DDC/CI)?
+  - Wisecoco: is the cover glass fully laminated (OCA/OCR) or air-gapped? AR or AG treatment, cover thickness, polariser transmission axis, and the LC clearing point or high-Tni rating?
+  - Wisecoco: DHL or FedEx cost to Ukraine, invoice value, DDP option, and warranty or DOA policy?
+  - 4D Systems: does the USB-C touch enumerate as standard HID multitouch (VID:PID)? What is the EDID native mode, and does the board scale? Can you supply DDC/CI brightness firmware, the OSD button board, and AR cover glass on a 1-off order?
+  - Midas/Farnell: please send the FT7250 video timing table and the minimum and maximum frame rate. Does in-cell touch need a host firmware download? Do you ship to Ukraine, and what is the current stock date?
+  - Youritech: can you supply ET070WU01-HLT or ET070WU15-TT with a tested HDMI board giving USB-HID touch, an EDID with at least 24 lines of vertical blanking, a datasheet with luminance test report, and a price for 1-2 samples with DDP to Ukraine?
+  - Newhaven: is the cover glass optically bonded? Do you ship internationally, and is the part being retired?
+  - VIEWE: does UEDX6911 firmware support the 45-pin UEED080FH panel and its touch IC, and what LED drive current does the board provide?
+  - VSDISPLAY (eBay.de 256679793470): what is the board's input (HDMI?), how does touch reach the host, which panel part is it, and is it the same 6.97in glass as Wisecoco?
+- **Confidence:** medium
+
