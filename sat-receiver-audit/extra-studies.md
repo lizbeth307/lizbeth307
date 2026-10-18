@@ -38920,6 +38920,174 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Hard rules: all candidates are receive-only passive gain blocks with no loops; nothing changes.
 
+## searchB:spare_rtl_sdr_blog_wideband_lna_v2 (run `wf_e5582d4c-0a2`)
+
+- **Part:** Spare RTL-SDR Blog Wideband LNA V2 (QPL9547). Bench spare and optional LNA for the P8 WIDE/2 m path (Flamingo+ #2, then LNA V2, then ch4 (TCBT channel), then RTL-A T3). Qty 1.
+- **Current price usd:** USD 19.95 at the rtl-sdr.com webstore (verified, 208 in stock). That store does not ship to the EU: "EU customers ... we can no longer ship directly to you from our webstore", and it points EU buyers to its eBay/AliExpress stores. EU price verified 18 Oct 2026 on the AliExpress listing "Wideband LNA V2 by RTL-SDR Blog" (item 33011424874, 500+ sold, 4.8 stars), Germany locale: EUR 25.79 including 19% VAT, free shipping. That is about USD 28.99, or about USD 24.36 ex VAT. The US locale shows a USD 19.95 seller price; USD 14.30 there is only a one-time new-shopper subsidy. EU-stock reseller Passion Radio (France): EUR 29.78 ex VAT (about USD 33.48), about EUR 35.74 / USD 40.17 with 20% French VAT.
+- **Critical specs:**
+  - Frequency coverage: at least 100 MHz-2.3 GHz with flat gain. That covers the 2 m/WIDE path into the RTL (to 1.766 GHz) and the bench-spare role up to the Lime (3.8 GHz), including the unnamed S-band LNA slot at 2.2-2.3 GHz. The current part reaches 6 GHz (useful with the LiteVNA/tinySA on the bench); anything below about 4 GHz counts as worse for the spare role.
+  - Noise figure at board level: 1 dB or less from 137 MHz to 2.3 GHz. Vendor: under 1 dB. Passion Radio: about 1 dB. QPL9547 chip: 0.3 dB (DigiKey parametric).
+  - Gain about 15-20 dB (QPL9547: 19.5 dB). More gain is not better: the RTL is 8-bit, and the LNA sits after only a Flamingo+ FM stop.
+  - Linearity: OP1dB about +22.7 dBm (DigiKey parametric for QPL9547). OIP3 not verified (the Qorvo datasheet returned HTTP 429).
+  - Power: 3-5 V through the coax bias tee. Must work at the 4.5 V LNA rail and through the TCBT-2R5G+ channel (150 mA or less). Must stay at 90 mA or less to be allowed on the spare V4L tee. QPL9547 typ 65 mA (DigiKey); Passion Radio says '150 mA max'; the stack's 90 mA is still unmeasured.
+  - Stable when the input is unterminated or an unmatched wideband antenna is attached (WIDE port); survives conducted bench levels with a 30-40 dB pad.
+  - Shielded metal enclosure with SMA connectors (current part: aluminium, 46.5 x 32 x 15.6 mm, 69.8 mm long with SMA; SMA M-M adapter included). Fits the bench case and P8.
+  - Genuine, active-production chip with traceable sourcing. SPF5189Z is end-of-life (Qorvo PCN 21-0060) and banned by stack rule #99 because of counterfeits.
+  - Passive accessory with no driver, so Ubuntu 24.04 arm64 is not affected. Receive-only; never placed before the FM filter or in the Lime path.
+- **Candidates:**
+  1.
+    - **Name:** RTL-SDR Blog Wideband LNA V2 via the AliExpress listing 'Wideband LNA V2 by RTL-SDR Blog' (the EU route rtl-sdr.com names)
+    - **Kind:** current_part
+    - **Price usd:** 28.99 (EUR 25.79 incl. 19% DE VAT, free shipping, verified 18 Oct 2026 in the Germany locale); about 24.36 ex VAT
+    - **Spec comparison:** Identical part.
+    - **Worse in:** Nothing in specs. In the EU it costs more than the stack's USD 19.95, but USD 19.95 is not available to an EU buyer.
+    - **Compatibility:** Identical.
+    - **Risks:** The search card did not show the store name, and the store page sits behind a captcha. So it is unverified that this listing belongs to the official 'RTLSDRBlog Store' (No. 4523039 / 1101427871, named on rtl-sdr.com). Before buying, check that the seller is that store. Whether the 1 July 2026 EU flat duty is already included is unverified.
+    - **Seller url:** https://www.aliexpress.com/item/33011424874.html
+    - **Sources:**
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+      - https://www.aliexpress.com/w/wholesale-rtl-sdr-blog-wideband-lna.html
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-wideband-lna-bias-tee-powered/
+  2.
+    - **Name:** RTL-SDR Blog Wideband LNA V2 from Passion Radio (France, EU stock, listed rtl-sdr.com reseller)
+    - **Kind:** current_part
+    - **Price usd:** 33.48 ex VAT (EUR 29.78); about 40.17 incl. 20% FR VAT
+    - **Spec comparison:** Identical part. The page lists gain 15-20 dB, NF about 1 dB, 3-5 V bias tee, '150 mA max', aluminium case 46.5 x 32 x 15.6 mm. In stock, more than 10.
+    - **Worse in:** Price only (more expensive than the AliExpress route).
+    - **Compatibility:** Identical.
+    - **Risks:** None beyond price; it is an EU seller, so no import.
+    - **Seller url:** https://www.passion-radio.com/sdr-accessory/lna-rtlsdr-764.html
+    - **Sources:**
+      - https://www.passion-radio.com/sdr-accessory/lna-rtlsdr-764.html
+  3.
+    - **Name:** Generic 'QPL9547 6GHz RF Low Noise Amplifier LNA Board 20dB' (AliExpress, Embedded Electronics Development Co., Ltd Store / 深圳市瀚弘科技有限公司)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 21.35 (EUR 18.99 early-bird promo, 'only 1 left'); the regular price is about 30.58 (the listing says '30-day lowest price: 27,2 EUR')
+    - **Spec comparison:** Same chip family by title (0.1-6 GHz, 20 dB). No published S-parameters, NF, P1dB or current. No reviews; listed 10 Oct 2026.
+    - **Worse in:** No measured evidence at all. Bias-tee input, enclosure/shield and input protection unknown ('Board'). Cheaper only during a one-unit promo; at the regular price it costs more than the EU price of the current part.
+    - **Compatibility:** Unknown. It may need a separate DC supply instead of coax bias.
+    - **Risks:** Chip could be remarked or counterfeit. Layout stability is unproven. NF cannot be checked here (no calibrated noise head). REJECT.
+    - **Seller url:** https://www.aliexpress.com/item/1005013382308811.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-QPL9547.html
+  4.
+    - **Name:** Generic TQP3M9037 LNA modules (e.g. 'TQP3M9037 50M-6GHz 20/30/40 dB', HAMGEEK MT1129, 'RF AMP 04A', '100k-6GHz Full Band' boards)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 8.08-25.84 (EUR 7.19-22.99 incl. VAT, Germany locale, 18 Oct 2026)
+    - **Spec comparison:** Marketing claims only: '100 kHz-6 GHz', 20/30/40 dB, 'NF 0.4 dB'. No independent measurement found from this angle.
+    - **Worse in:** No measured evidence. The '100 kHz' lower limit is not credible. The 30-40 dB cascades are too much gain ahead of an 8-bit RTL. Most are fed by DC pin, USB or jack rather than coax bias tee. Chip origin unknown.
+    - **Compatibility:** Usually not bias-tee powered, so it would need rework or a separate rail.
+    - **Risks:** Counterfeit or remarked chips; unknown stability and shielding. REJECT (no measurements).
+    - **Seller url:** https://www.aliexpress.com/w/wholesale-TQP3M9037-LNA.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-TQP3M9037-LNA.html
+  5.
+    - **Name:** Generic SPF5189Z LNA boards (AliExpress shielded boards; Passion Radio SPF5189Z board)
+    - **Kind:** generic_or_clone
+    - **Price usd:** about 2.10-7.19 (AliExpress seller prices; USD 1.09 shown only as a new-user deal); Passion Radio 11.13 ex VAT (EUR 9.90)
+    - **Spec comparison:** 50-4000 MHz. Genuine chip: 18.7 dB / 0.6 dB NF at 900 MHz. The Passion Radio board says 15-19 dB, 3.3-5 V 'via PCB', 33 x 25 x 3 mm.
+    - **Worse in:** Upper frequency 4 GHz instead of 6 GHz. Chip is end-of-life (Qorvo PCN 21-0060), and fakes measured at 13-15 dB gain instead of 18.7 dB (EEVblog, cited in the stack's rf_frontend research). Powered through PCB pins, not a bias tee. Bare board or shield can only, no enclosure.
+    - **Compatibility:** No coax bias input. Violates stack rule #99 (SPF5189Z removed).
+    - **Risks:** Counterfeits. REJECT.
+    - **Seller url:** https://www.passion-radio.com/sdr-accessory/lna-spf-833.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-SPF5189Z-LNA.html
+      - https://www.passion-radio.com/sdr-accessory/lna-spf-833.html
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+  6.
+    - **Name:** Generic PGA-103+ 'EMC/EMI field-probe preamp' boxes, 50 MHz-4 GHz (AliExpress)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 20.75-38.81 seller prices (lower figures such as 12.86 are new-user promos)
+    - **Spec comparison:** Title claims only, no published measurements.
+    - **Worse in:** Upper limit 4 GHz instead of 6 GHz. Fed from a 9 V+ DC jack ('DC9-'), not a 3-5 V coax bias tee. No measured evidence. Mini-Circuits parts are often counterfeited on marketplaces. Sold as kits with H-field loop probes, which the stack bans (the amplifier alone would be allowed).
+    - **Compatibility:** Does not fit the 4.5 V LNA rail or the bias tee.
+    - **Risks:** REJECT.
+    - **Seller url:** https://www.aliexpress.com/w/wholesale-PGA-103-LNA.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-PGA-103-LNA.html
+  7.
+    - **Name:** LNA4ALL (9A4QV, Croatia, EU small maker; PSA4-5043+)
+    - **Kind:** other_brand
+    - **Price usd:** 33.72 (EUR 23 assembled with 2x SMA + EUR 7 tracked shipping); bare board without SMA EUR 20 + 7 = USD 30.35
+    - **Spec comparison:** Independently measured: average TOI 34.75 dBm from 10 MHz to 3.5 GHz (DG1TRF); two units in series at 1420 MHz gave NF 0.70-0.76 dB. NF 0.75 dB at 1 GHz (Mini-Circuits). 47 mA at 4.5 V.
+    - **Worse in:** The board covers only about 28-2500 MHz (the current part reaches 6 GHz). No enclosure or shield. Coax bias needs a rework (10 uH at L2, 0 Ohm at J3). More expensive.
+    - **Compatibility:** Bias-tee feed only after the rework.
+    - **Risks:** Last stock note is from May 2025; availability in 2026 is unconfirmed. REJECT (worse and not cheaper).
+    - **Seller url:** https://lna4all.blogspot.com/
+    - **Sources:**
+      - https://lna4all.blogspot.com/
+  8.
+    - **Name:** F1OPA wideband LNA (PGA-103+, Passion Radio)
+    - **Kind:** other_brand
+    - **Price usd:** 47.21 ex VAT (EUR 42.00)
+    - **Spec comparison:** RX range 50-1500 MHz. 24.4 dB at 144 MHz, 20.8 dB at 432 MHz, 13.2 dB at 1296 MHz. NF about 0.4 dB. Needs 8-14 V at 70 mA.
+    - **Worse in:** Frequency range (1.5 GHz). Supply needs 8-14 V, so it cannot run from the 4.5 V rail. More expensive.
+    - **Compatibility:** Does not fit the 4.5 V bias rail.
+    - **Risks:** REJECT.
+    - **Seller url:** https://www.passion-radio.com/sdr-accessory/lna-opa-805.html
+    - **Sources:**
+      - https://www.passion-radio.com/sdr-accessory/lna-opa-805.html
+  9.
+    - **Name:** DIY QPL9547 LNA (own PCB, genuine chip from DigiKey DE)
+    - **Kind:** diy
+    - **Price usd:** Chip 6.82 (EUR 6.07 cut tape, quantity 1, 16,434 in stock). The full single build with PCB, 2x SMA, choke, passives, enclosure and shipping is about 25-45 (my estimate, not verified). Qorvo QPL9547EVB-01 eval board: 135.71 (EUR 120.73).
+    - **Spec comparison:** Same chip: 0.1-6 GHz, 19.5 dB, NF 0.3 dB (chip), P1dB 22.7 dBm, 3.15-5.25 V, 65 mA (DigiKey parametric). Board-level performance depends on the layout.
+    - **Worse in:** Not cheaper for one unit. No measured evidence for a self-made board. This lab cannot measure absolute NF (no calibrated 346-class noise head in STACK.md), so 'not worse' cannot be shown. The eval board only covers 600 MHz-4.2 GHz and costs far more.
+    - **Compatibility:** It would be designed to fit, but stability and NF are unproven.
+    - **Risks:** Layout oscillation and ESD; time cost. REJECT.
+    - **Seller url:** https://www.digikey.de/en/products/result?keywords=QPL9547TR7
+    - **Sources:**
+      - https://www.digikey.de/en/products/result?keywords=QPL9547TR7
+      - https://www.digikey.de/en/products/result?keywords=QPL9547EVB
+  10.
+    - **Name:** Used RTL-SDR Blog Wideband LNA V2
+    - **Kind:** used
+    - **Price usd:** unverified (eBay returned HTTP 403; no listing seen)
+    - **Spec comparison:** Same product.
+    - **Worse in:** Unknown history. The input may have been damaged by static or overload, and the current draw may have drifted.
+    - **Compatibility:** Identical.
+    - **Risks:** Consider only if it costs clearly less than about USD 29 landed in the EU, shows the genuine case and label, and passes acceptance: LiteVNA S21/S11 through a 30-40 dB pad; current at 4.5 V of 90 mA or less; noise-source A/B against the SAWbird+ path. Not recommended as the stack's only spare.
+    - **Seller url:** 
+    - **Sources:** []
+  11.
+    - **Name:** Used RTL-SDR Blog Wideband LNA V1 (SPF5189Z)
+    - **Kind:** used
+    - **Price usd:** unverified (no listing reachable)
+    - **Spec comparison:** 50-4000 MHz. Chip datasheet as quoted by rtl-sdr.com: 18.7 dB, NF 0.6 dB, OIP3 39.5 dBm at 900 MHz. Current 75-105 mA, typ 90 mA (a commenter citing the datasheet).
+    - **Worse in:** Upper limit 4 GHz instead of 6 GHz. Current can exceed the 90 mA V4L-tee limit. The chip is end-of-life (rule #99).
+    - **Compatibility:** Bias-tee powered, but worse on current.
+    - **Risks:** REJECT.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.rtl-sdr.com/new-products-in-our-store-wideband-lna-spare-metal-v3-enclosures/
+  12.
+    - **Name:** About USD 2 'TV antenna signal amplifier' (BFG425W, AliExpress), as tested by rtl-sdr.com
+    - **Kind:** generic_or_clone
+    - **Price usd:** about 2 (2019 post; current price not checked)
+    - **Spec comparison:** Only on-air A/B tests (DAB, NOAA, ADS-B) with no lab measurements. Transistor datasheet: 20 dB at 2 GHz, NF 0.8 dB at 900 MHz.
+    - **Worse in:** The rtl-sdr.com images show overload and intermodulation. No S-parameters or NF measurement. USB-powered TV design.
+    - **Compatibility:** No coax bias tee; designed for TV.
+    - **Risks:** REJECT.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.rtl-sdr.com/testing-a-2-usb-powered-lna-with-rtl-sdr/
+- **Notes:** VERDICT (angle B): KEEP the current part. I found no generic module, clone, DIY build or used unit that is both cheaper and shown by independent measurement to be not worse.
+  - The only measured alternative, LNA4ALL, is worse (to 2.5 GHz, unshielded, needs a rework for bias feed) and costs more.
+  - The only same-chip generic (an AliExpress QPL9547 board) has no data and beats the EU price only during a one-unit promo.
+  - Every SPF5189Z board breaks rule #99.
+  
+  KEY FINDING FOR v2: the stack's USD 19.95 is the rtl-sdr.com webstore price, and that store does not ship to the EU since July 2021; EU buyers are sent to the eBay or AliExpress stores, where VAT is collected. The realistic EU cost is EUR 25.79 incl. 19% DE VAT with free shipping (about USD 28.99; about USD 24.36 ex VAT) on the AliExpress listing 'Wideband LNA V2 by RTL-SDR Blog' (item 33011424874). Before ordering, confirm the seller is 'RTLSDRBlog Store' No. 4523039: the store name was not visible to me. The EU-stock route (Passion Radio) is EUR 29.78 ex VAT.
+  
+  CURRENT DRAW (for C9/D11): sources disagree.
+  - QPL9547: 65 mA typical (DigiKey parametric).
+  - Passion Radio: '150 mA max'.
+  - Stack: 90 mA (still not measured).
+  Keep the existing action: measure at 4.5 V with the FNB58/DPS-150 before using the V4L tee. ch4 via TCBT (150 mA or less) is fine either way.
+  
+  UNVERIFIED: the QPL9547 datasheet (OIP3, maximum input, test conditions); Qorvo returned HTTP 429. DigiKey gives 19.5 dB, NF 0.3 dB, P1dB 22.7 dBm, 3.15-5.25 V, 65 mA. Used-market prices could not be read (eBay HTTP 403).
+  
+  LIMITS: the shared WebSearch budget ran out at my first query, so this pass used direct fetches of primary pages (rtl-sdr.com, DigiKey DE, AliExpress search JSON in US and DE locales, Passion Radio, lna4all). Forum measurements of AliExpress TQP3M9037 or QPL9547 boards may exist that I could not reach. A follow-up with search budget could look for them. Until then, these boards stay rejected for lack of measured evidence. All candidates are receive-only accessories. The PGA-103+ 'EMC probe' kits include H-field loop probes, which the stack bans; this is another reason not to buy them.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
