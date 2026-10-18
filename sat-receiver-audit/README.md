@@ -2,7 +2,7 @@
 
 Звіт оновлюється автоматично під час аудиту. Тут зібрано всі повні відповіді субагентів і всі зведення.
 
-- [Хронологія всіх зведень](summaries.md) — 200 записів
+- [Хронологія всіх зведень](summaries.md) — 201 записів
 - Повні відповіді субагентів по кожному компоненту — посилання в таблиці нижче
 - [Фінальні перевірки](final-checks.md)
 - [Щохвилинний журнал аудиту](minute-log.md)
@@ -50,6 +50,7 @@
 | [Lab instruments](components/lab_instruments.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Lab ui](components/lab_ui.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Leo bodnar lbe 1420 gpsdo](components/leo_bodnar_lbe_1420_gpsdo.md) | · research · forums · fixes ✅ verify | `—` |
+| [Limesdr micro m 2 basic 18 shipping 2x m](components/limesdr_micro_m_2_basic_18_shipping_2x_m.md) | · research · forums · fixes ✅ verify | `—` |
 | [Litevna 64](components/litevna_64.md) | · research · forums · fixes ✅ verify | `—` |
 | [Mech thermal storage](components/mech_thermal_storage.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Mechanical thermal](components/mechanical_thermal.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_e6b8e5e2-124` |
@@ -60,11 +61,13 @@
 | [Nooelec pad kit 2x 30 db pads 2x blk 89](components/nooelec_pad_kit_2x_30_db_pads_2x_blk_89.md) | · research · forums · fixes ✅ verify | `—` |
 | [Nooelec sawbird goes cased 100792](components/nooelec_sawbird_goes_cased_100792.md) | · research · forums · fixes ✅ verify | `—` |
 | [Nooelec sawbird h1](components/nooelec_sawbird_h1.md) | · research · forums · fixes ✅ verify | `—` |
+| [Nooelec sawbird io cased 100788](components/nooelec_sawbird_io_cased_100788.md) | · research · forums · fixes ✅ verify | `—` |
 | [Nooelec sawbird noaa cased 100800](components/nooelec_sawbird_noaa_cased_100800.md) | · research · forums · fixes ✅ verify | `—` |
 | [Npu training](components/npu_training.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Pack sundries nickel fish paper kapton j](components/pack_sundries_nickel_fish_paper_kapton_j.md) | · research · forums · fixes ✅ verify | `—` |
 | [Padded antenna roll element tube 15 20 l](components/padded_antenna_roll_element_tube_15_20_l.md) | · research · forums · fixes ✅ verify | `—` |
 | [Pca9555 key expander piezo status led](components/pca9555_key_expander_piezo_status_led.md) | · research · forums · fixes ✅ verify | `—` |
+| [Pelican 1450 apache 3800 case with divid](components/pelican_1450_apache_3800_case_with_divid.md) | · research · forums · fixes ✅ verify | `—` |
 | [Pinecil v2 ironos bluetooth off](components/pinecil_v2_ironos_bluetooth_off.md) | · research · forums · fixes ✅ verify | `—` |
 | [Pololu 2813 hp pushbutton power switch](components/pololu_2813_hp_pushbutton_power_switch.md) | · research · forums · fixes ✅ verify | `—` |
 | [Pololu d36v28f5 lab5](components/pololu_d36v28f5_lab5.md) | · research · forums · fixes ✅ verify | `—` |
@@ -79,6 +82,7 @@
 | [Rf frontend](components/rf_frontend.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_30889068-251` |
 | [Rf sled hmc7992 sp4t pe4302 mcp23017 2 a](components/rf_sled_hmc7992_sp4t_pe4302_mcp23017_2_a.md) | · research · forums · fixes ✅ verify | `—` |
 | [Rtl sdr blog v4l r828s](components/rtl_sdr_blog_v4l_r828s.md) | · research · forums · fixes ✅ verify | `—` |
+| [Samsung t7 1 tb](components/samsung_t7_1_tb.md) | · research · forums · fixes ✅ verify | `—` |
 | [Shielded hdmi lead adafruit 2420 2x wurt](components/shielded_hdmi_lead_adafruit_2420_2x_wurt.md) | · research · forums · fixes ✅ verify | `—` |
 | [Shock corded mast 7 x 35 cm about 2 4 m](components/shock_corded_mast_7_x_35_cm_about_2_4_m.md) | · research · forums · fixes ✅ verify | `—` |
 | [Sma torque wrench 0 9 n m adapter set](components/sma_torque_wrench_0_9_n_m_adapter_set.md) | · research · forums · fixes ✅ verify | `—` |
@@ -96,6 +100,7 @@
 | [Travel tripod 35 cm folded 1 2 m or more](components/travel_tripod_35_cm_folded_1_2_m_or_more.md) | · research · forums · fixes ✅ verify | `—` |
 | [Two stage coax cm choke ft 240 77 ft 240](components/two_stage_coax_cm_choke_ft_240_77_ft_240.md) | · research · forums · fixes ✅ verify | `—` |
 | [Uputronics 440 mhz cubesat filtered prea](components/uputronics_440_mhz_cubesat_filtered_prea.md) | · research · forums · fixes ✅ verify | `—` |
+| [V30 endurance microsd 128 256 gb](components/v30_endurance_microsd_128_256_gb.md) | · research · forums · fixes ✅ verify | `—` |
 | [Waveshare lc76g 24370 rtc cr2032 cell](components/waveshare_lc76g_24370_rtc_cr2032_cell.md) | · research · forums · fixes ✅ verify | `—` |
 | [Waveshare mtt bench hub bank powered](components/waveshare_mtt_bench_hub_bank_powered.md) | · research · forums · fixes ✅ verify | `—` |
 | [Weather kit ipx4 ip54 mesh foam eptfe ve](components/weather_kit_ipx4_ip54_mesh_foam_eptfe_ve.md) | · research · forums · fixes ✅ verify | `—` |
