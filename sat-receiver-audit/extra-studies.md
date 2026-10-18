@@ -16736,6 +16736,394 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   **Hard rules.** All are kept: receive-only, no loops, no city tables, no emitter geolocation, and IMU heading shown live only. The Russia-restriction note concerns the device's own position, not any emitter.
 
+## community:mech_thermal_storage (run `wf_d9388111-e66`)
+
+- **Subsystem:** mech_thermal_storage: case, layout and thermal design (2000-nit display, Q6A, optional Lime, pack); connectors; kit bags; storage (Samsung 128 GB UFS, T7 or microSD, rolling caps). Stage 2: community experience checked against stage 1, 18 Oct 2026.
+- **Findings:**
+  1.
+    - **Claim in stack:** Hold linux-image-6.18.2-4-qcom. The Kioxia UFS quirk exists only in 7.0.11 (stage 1 changed this to: in the 6.18.2 branch, probably not in the 6.18.2-4 package).
+    - **Finding:** Confirmed from the package releases. In radxa-pkg/linux-qcom the last 6.18.2 package is 6.18.2-4, released 30 Mar. That is before PR #551 was merged on 11 May 2026, so the published 6.18.2-4 binary does not have the quirk. The newest package is 7.0.11-7 (17 Sep).
+  
+  The quirk (THGJFGT1E45BAILB / UFS_DEVICE_QUIRK_PA_TACTIVATE) is in the radxa/kernel linux-6.18.2 branch (line 1044) and linux-7.0.11 branch (line 1100). It is not in mainline 7.3-rc7.
+  
+  Radxa's test kernel had the same version string, 6.18.2-4, as the stock package. A routine apt upgrade quietly replaced it with the stock build (datum, thread 30630, #46). Radxa staff said they will not release 6.18 again and will move to 7.0.
+  
+  Community reports show 7.0.11-4 breaks HDMI on several boards (31304, 31288). It also shows a phantom 50-60% load on CPU0 in htop/btop (31304 #2-#4). That confirms the hold is needed.
+    - **Verdict:** corrected
+    - **Action:** Reword to: 'The published 6.18.2-4 does not contain the Kioxia fix (the package predates the fix). The fix is only in a self-built 6.18.2 or in 7.0.11-x.' Keep the Samsung 128 GB module and the hold. If a Kioxia module is ever used, build the kernel with a distinct version suffix (+labN) so dpkg and apt can tell it from stock. Verify with: dmesg | grep -ciE 'OCS invalid|pa_err|dl_err|timed-out' == 0.
+    - **Impact:** No BOM change. Avoids a silent loss of the fix on upgrade.
+    - **Sources:**
+      - https://github.com/radxa-pkg/linux-qcom/releases
+      - https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/drivers/ufs/host/ufs-qcom.c
+      - https://raw.githubusercontent.com/radxa/kernel/linux-7.0.11/drivers/ufs/host/ufs-qcom.c
+      - https://forum.radxa.com/t/ufs-random-reboots/30630
+      - https://forum.radxa.com/t/31304
+      - https://forum.radxa.com/t/31288
+  2.
+    - **Claim in stack:** Samsung-based 128 GB UFS (RA022-B10J0U2) is the stable choice; check ID 0x01CE on arrival
+    - **Finding:** Radxa staff (chenchongbiao) reproduced the freezes only on the Kioxia module: 'I have not been able to reproduce it on Samsung UFS'. Every report in thread 30630 (50 posts, last on 28 May 2026) is about the 256 GB Kioxia module. I scanned all Dragon-category topics active from May to Oct 2026 and found no failure report for a Samsung UFS module. Nobody answered whether 128 GB modules are always Samsung.
+    - **Verdict:** confirmed
+    - **Action:** Keep. Keep the on-arrival ID check (0x01CE). Add a dmesg grep for ufshcd errors to the 12 h soak.
+    - **Impact:** None.
+    - **Sources:**
+      - https://forum.radxa.com/t/ufs-random-reboots/30630
+      - https://forum.radxa.com/c/dragon/70
+  3.
+    - **Claim in stack:** UFS write 388 MB/s only inside a WriteBooster cache of about 4 GiB; stage 1 marked the 4 GiB as having no primary source
+    - **Finding:** Radxa's own UFS provisioning file sets bWriteBoosterBufferType=1 (shared), bWriteBoosterBufferPreserveUserSpaceEn=1 and shared_wb_buffer_size_in_kb=4194304, which is 4 GiB. The file is provision_ufs31.xml, used by the Android image. Critical Link's wiki for the same SoC (MitySOM-QC6490) also defaults to 4 GB and reports writes of 300-1500 MiB/s depending on the WriteBooster state. It gives a sysfs formula: wb_shared_alloc_units x 512 x allocation_unit_size x segment_size. Nothing documents how factory Linux modules are provisioned. Community write tests on the Q6A are all short: Kioxia fio 473-499 MB/s on 2 GiB runs.
+    - **Verdict:** corrected
+    - **Action:** Change '4 GiB, unverified' to: '4 GiB in Radxa's provisioning file; read the real value from sysfs at bring-up'. Keep the fio sequential fill past 10 GiB to measure the post-cache rate.
+    - **Impact:** Planning figure now has a vendor source. Worst-case raw stream is 13.3 MB/s, so no design change.
+    - **Sources:**
+      - https://dl.radxa.com/q6a/images/android/provision_ufs31.xml
+      - https://git.criticallink.com/redmine/projects/mitysom_qc6490/wiki/UFS
+      - https://forum.radxa.com/t/ufs-random-reboots/30630
+  4.
+    - **Claim in stack:** Partitions: ESP 1 + root A 22 + root B 22 + /data about 74 GiB on a 128 GB UFS (about 119 GiB)
+    - **Finding:** Flashing Radxa's Android 15 UFS image (it needs provision_ufs31.xml) re-provisions the module. LU1-LU7 add 8 MB + 8 MB + 32 MB + 6 GB + 32 MB + 4 GB + 4 GB. Model from the XML: 14.08 GiB, which leaves LU0 at about 105 GiB. The fixed 1+22+22+74 GiB layout would then not fit. Stage 1 already proposed '/data = rest of device'.
+    - **Verdict:** new_risk
+    - **Action:** Never flash the Android UFS image or its provisioning XML to the field module. Use a separate module for Android experiments. Keep /data as 'rest of device'. At bring-up, record the LU layout with lsblk and /sys/.../unit_descriptor.
+    - **Impact:** Prevents an install failure or a silent 14 GiB loss.
+    - **Sources:**
+      - https://dl.radxa.com/q6a/images/android/provision_ufs31.xml
+  5.
+    - **Claim in stack:** UFS about 60 C; stage 1 changed this to 'pad the UFS to a raised boss on the Al mid-plate' and to log ufs-thermal
+    - **Finding:** Community: jvvv (Alpine port, July 2026) used the Armor case plus two USB fans. During builds the UFS sensor was the only one above 60 C. datum's sensors stayed under 60 C with a fan-cooled 13 mm Cu heatsink, measured on the top side.
+  
+  The Q6A device tree defines ufs_therm as a 100 k pull-up NTC on PM7325 GPIO1, read through ADC_TM channel 3. It is a board thermistor near the module, not the UFS die. It has no trips.
+  
+  The community rahulbtc/radxa-q6a-monitor, tested on Radxa's official Ubuntu, lists 'ufs-thermal' (labelled 'UFS Controller'), msm-skin-thermal, quiet-thermal, xo-thermal, ddr-thermal and nspss0/1 among 35+ zones. So these zones exist on the stock image.
+    - **Verdict:** confirmed
+    - **Action:** Keep the pad-to-Al-plate correction. Log ufs-thermal and msm-skin-thermal by zone type name, never by index. Add a labd rule: pause raw writes to UFS if ufs-thermal exceeds 65 C (design value, below the unverified 70 C limit).
+    - **Impact:** Measured UFS temperature at no cost. Protects captures in midday mode G.
+    - **Sources:**
+      - https://forum.radxa.com/t/31226
+      - https://forum.radxa.com/t/ufs-random-reboots/30630
+      - https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - https://github.com/rahulbtc/radxa-q6a-monitor
+  6.
+    - **Claim in stack:** SoC: stage 1 changed this to 'kernel throttles CPU at 90 C (second step 95 C), GPU from 95 C, critical 110 C'; training gate below 75 C
+    - **Finding:** I checked the radxa linux-6.18.2 sc7280.dtsi again. CPU zones: passive 90 and 95 C, critical 110 C. GPU zones: passive 95/100/105 C, critical 110 C. NSP, DDR, video, aoss, cpuss and modem zones have only a 90 C 'hot' trip, which notifies but does not throttle, plus critical 110 C. So the kernel never throttles the NPU before the critical shutdown.
+  
+  Community data:
+  - willy, bare board: a build drew 7.8 W, the sensors hit 90-91 C at once, and the board throttled.
+  - willy, 40x40 heatsink on one pad over SoC and DRAM: still throttled while the heatsink was only about 53 C, so the interface limits heat flow.
+  - willy, 'powerful fan': stayed at or below 79 C with no throttling.
+  - SmartHomeCircle, bare board: shut down at about 105 C in a Vulkan benchmark. That is below the 110 C critical trip; the OS and sensor lag are not stated.
+    - **Verdict:** corrected
+    - **Action:** Use the stage-1 wording and add: 'NSP and DDR have no kernel throttle; labd must enforce the NPU limits'. Keep training below 75 C. Add a hard NPU/HTP job stop when nspss0/1 exceeds 85 C. Plan for a practical shutdown at about 105 C under GPU load.
+    - **Impact:** Closes a gap where an NPU-heavy load could run up to the critical shutdown.
+    - **Sources:**
+      - https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/arch/arm64/boot/dts/qcom/sc7280.dtsi
+      - https://forum.radxa.com/t/26723
+      - https://smarthomecircle.com/radxa-dragon-q6a-best-alternative-to-the-raspberry-pi-5
+  7.
+    - **Claim in stack:** Cooler: stepped Cu block (32x31 mm zone) with a pad on the LPDDR5 plus a 40 mm 5 V fan (stage-1 primary); Cu block price unverified
+    - **Finding:** Community builds with the AliExpress stepped copper cooler (SoC and LPDDR5 steps):
+  - About 55 C under stress (Bob_Weurman).
+  - The included pad covers only one chip (Moonlight0551).
+  - Use paste on the taller SoC step and the pad on the lower memory step (CATNVol).
+  - Wrong standoff order leaves the cooler floating above the chips: shorter standoffs on the PCB, longer below (Bob_Weurman).
+  - The stock fan is 'way too loud and high-pitched'; a Noctua 40x10 5 V fixed it (GinKage).
+  - Alternative: two single blocks with PTM2750 phase-change pads and 25 mm fans (Journeymangeek).
+  
+  Availability: the AliExpress listing went out of stock in Jan 2026, and AliExpress is unavailable in some countries. Fitting size: 35x35 mm is 'the max this board can fit' (TGNLabs) against '40x40 perfectly fits' (willy). The item page returned no content, so the price is still unverified.
+    - **Verdict:** confirmed
+    - **Action:** Specify paste or a phase-change pad (PTM7950/PTM2750 class) on the SoC step and a 0.5-1 mm pad on the LPDDR5 step. Keep the footprint at or below 35x35 mm and check it in the STEP v1.21 model. Fallback: two separate Cu blocks under one 40 mm fan duct. Never put a single pad over both chips.
+    - **Impact:** Avoids the interface-limited throttling seen in willy's test.
+    - **Sources:**
+      - https://forum.radxa.com/t/best-heatsink-cooling-solutions-for-dragon-q6a/30123
+      - https://forum.radxa.com/t/30737
+      - https://forum.radxa.com/t/26723
+      - https://www.aliexpress.com/item/1005010333340740.html
+  8.
+    - **Claim in stack:** Armor 7056A as an alternative cooler (stage 1: it is a two-shell enclosure; bench or home use only)
+    - **Finding:** Radxa's product page: a passive heatsink and enclosure of magnesium-silicon aluminium. Contents: metal top cover, metal bottom cover, 2 thermal pads, 4 screws CM2.5x8x4. No fan, no thermal data. Radxa support recommends it for Q6A cooling (szwendacz, sbc-reviews #85, Apr 2026).
+  
+  Community results:
+  - 40 C idle at 23 C room (Dual-O).
+  - Above 90 C and throttling at 35-40 C ambient without a fan; a glued-on 5 V fan fixed it (Rahul007).
+  - jvvv needed fans above and below, and the UFS still went over 60 C.
+  
+  Prices today: ALLNET $9.90 and Arace $4.99, both in stock.
+    - **Verdict:** confirmed
+    - **Action:** Keep the stage-1 decision: Armor for bench or home only. It is not a handheld cooler.
+    - **Impact:** None beyond stage 1.
+    - **Sources:**
+      - https://radxa.com/products/accessories/armor-case-7056a/
+      - https://github.com/geerlingguy/sbc-reviews/issues/85
+      - https://forum.radxa.com/t/recommended-heatsink-fan-for-q6a/30413
+      - https://forum.radxa.com/t/best-heatsink-cooling-solutions-for-dragon-q6a/30123
+      - https://shop.allnetchina.cn/products/radxa-heatsink-7056a
+      - https://arace.tech/products/radxa-armor-case-7056a
+  9.
+    - **Claim in stack:** Thermal 5.6: SoC expected about 85 C typical, 90-100 C at mode-G peaks in sun at 35 C; fan on at 60 C, off at 50 C, DC on/off (no fan header)
+    - **Finding:** Model from community data, not a measurement. Bob_Weurman's 55 C under stress, with an assumed 22 C room and about 10 W board power (Geerling wall figure 9.3-10.1 W), gives about 3.3 K/W SoC-to-inlet. That predicts:
+  - Fresh 35 C rear intake: about 68 C at 10 W, 75 C at 12 W.
+  - If path 1 breathes internal air at 44-51 C: 77-91 C.
+  
+  The community confirms there is no fan header. Fans run from header 5 V/GND (pins 4/6). Other projects use on at 70 C / off at 60 C (irusensei) or a 40-70 C software-PWM curve (Calin23/dragon-q6a-fan-control).
+    - **Verdict:** confirmed
+    - **Action:** Keep the 60/50 C DC control. Make sure path 1 draws only fresh rear air with no recirculation from the display duct; seal the duct walls. The midday soak test stays the acceptance gate.
+    - **Impact:** The stack's expectation sits inside the community-derived range. Recirculation is the main risk.
+    - **Sources:**
+      - https://forum.radxa.com/t/best-heatsink-cooling-solutions-for-dragon-q6a/30123
+      - https://github.com/geerlingguy/sbc-reviews/issues/85
+      - https://github.com/Calin23/dragon-q6a-fan-control
+  10.
+    - **Claim in stack:** J21 is fed regulated 12 V (D36V50F12); after the soak test J21 is desoldered and fed by a 20 AWG twisted pair from the pads
+    - **Finding:** willy (Radxa forum, Oct 2025): 'the 12V pin is 1.5mm away from the [USB-C] connector's ground and is extremely prone to short circuits'. Radxa staff (strongtz, 15 Oct 2026, answering a 4S1P LiPo question): the 12 V header 'can only handle 4.5V to 16V power input'. That replaces the earlier unofficial '3.6-16 V'. A full 4S pack (16.8 V) is out of range if connected directly.
+    - **Verdict:** new_risk
+    - **Action:** After desoldering J21:
+  - Sleeve each solder joint in heat-shrink.
+  - Put polyimide tape over the adjacent USB-C shell.
+  - Tie the pair to a board hole or mid-plate clip for strain relief.
+  - Keep the 4 A J21 fuse.
+  
+  Never route raw pack voltage to J21. Record the 4.5-16 V limit in the power notes.
+    - **Impact:** Prevents a 12 V-to-ground short from vibration or handling in a handheld.
+    - **Sources:**
+      - https://forum.radxa.com/t/26723
+      - https://forum.radxa.com/t/31611
+  11.
+    - **Claim in stack:** Q6A mounted with its underside facing the 2 mm Al mid-plate; UFS pad boss on the plate
+    - **Finding:** The Q6A underside has three exposed pogo pads marked '+', '-' and 'TS' (WindowsRX, Jan 2026). Radxa: the PMIC runs in 'fake battery' mode. R24 is not fitted. VPH_PWR must not exceed 4.5 V. Charging is impossible and disabled. Do not connect Type-C and a battery at the same time. The underside also carries the UFS/eMMC B2B connectors.
+    - **Verdict:** new_risk
+    - **Action:** Put 0.05-0.1 mm polyimide film on the mid-plate under the whole board, with a cut-out only at the UFS pad boss. In CAD, check the boss outline against the pogo pads and B2B connectors using STEP v1.21. Never use the pads for the pack.
+    - **Impact:** Prevents a short from the board underside to the grounded plate.
+    - **Sources:**
+      - https://forum.radxa.com/t/30090
+      - https://forum.radxa.com/t/29650
+  12.
+    - **Claim in stack:** Service hatch: UART console and blue USB-A for EDL with an A-A cable (stage 1: also expose the EDL button); the Q6A USB-C has no case opening
+    - **Finding:** Radxa docs: hold EDL before powering on, release after power-on. Power comes from 'a 12V Type-C adapter that supports the PD protocol'. Use an A-A data cable to the USB 3.1 Type-A port. EDL shows as 05c6:9008.
+  
+  Community results:
+  - EDL works and accepts firehose commands on a board that will not cold-boot (BrenAgain, 31450).
+  - Another board never enumerated on two Mac hosts with three cables, even though the button tested good (Gilles, 31509).
+  
+  The docs do not say whether EDL works when the board is powered through J21, which is the only power path in the handheld.
+    - **Verdict:** new_risk
+    - **Action:** Add a bring-up test: enter EDL with J21 power from the internal regulator and a Linux or Windows host. If it fails, the hatch must also expose the Q6A USB-C for a PD adapter. Keep the EDL button reachable, as in stage 1.
+    - **Impact:** Without this test, field recovery could still need the case opened.
+    - **Sources:**
+      - https://docs.radxa.com/en/dragon/q6a/low-level-dev/edl-mode
+      - https://forum.radxa.com/t/31450
+      - https://forum.radxa.com/t/31509
+  13.
+    - **Claim in stack:** Base: Radxa OS r2 on SPI BIOS 6.0.260120; systemd-boot with boot counting and a rescue entry; rescue microSD
+    - **Finding:** Community reports from 2026:
+  - Boards stopped booting after SPI updates to 260120 with DDR training failures ('RCW_TRAINING_FAIL'; ali, cjesp; 30841). Radxa called them hardware faults and sent them to RMA.
+  - 'DDR_ABORT ... ONLY_RANK_1' after the first shutdown (31080). Radxa advised 'edl-ng ... erase-part cdt', then after-sales.
+  - systemd-stub UKIs silently reboot on 260120, while systemd-boot and GRUB work (30896). Radxa reproduced it and posted a test BIOS, dragon-q6a_flat_build_wp_260916.zip (14 Oct 2026; file dated 13 Oct 2026, 10.7 MB).
+  - After 'rupdate', one board stops at the UEFI menu until Enter is pressed; unresolved (30925).
+  - rsetup on an r2 image left Geerling's board unbootable.
+    - **Verdict:** new_risk
+    - **Action:** Stay on 260120. Never update SPI in the field; only on the bench, with a UART log and both the rescue SD and the EDL kit ready. Use kernel-install layout=bls (type-1 entries via systemd-boot), never layout=uki, on 260120. Do not run rupdate or rsetup on the field image. Re-evaluate 260916 only after it appears on the download page and passes the 50 warm + 20 cold boot test.
+    - **Impact:** Protects the boot and recovery path. 260916 is a test build with no changelog beyond the UKI fix.
+    - **Sources:**
+      - https://forum.radxa.com/t/30841
+      - https://forum.radxa.com/t/31080
+      - https://forum.radxa.com/t/30896
+      - https://dl.radxa.com/dragon/q6a/images/dragon-q6a_flat_build_wp_260916.zip
+      - https://forum.radxa.com/t/30925
+      - https://github.com/geerlingguy/sbc-reviews/issues/85
+  14.
+    - **Claim in stack:** Handheld has no keyboard; HMI is encoders, buttons and a Pico over UART7, with H1 reserved for the Pico's native USB
+    - **Finding:** If the firmware stops at the UEFI boot menu (30925), recovery needs a keyboard. In an early report (willy, Sep 2025) the UART console showed only the countdown, and Escape did not open the menu. Whether the UEFI setup can be driven over UART on 260120 is unverified.
+    - **Verdict:** new_option
+    - **Action:** At bring-up, test UEFI menu entry over the hatch UART (F2/Esc). If it fails, either keep a USB keyboard in the service kit, or add Pico firmware that enumerates as a USB-HID keyboard on reserve port H1 (unverified that UEFI accepts input through the FE1.1s hub).
+    - **Impact:** Field recovery from a boot-menu stall without disassembly.
+    - **Sources:**
+      - https://forum.radxa.com/t/30925
+      - https://forum.radxa.com/t/26723
+  15.
+    - **Claim in stack:** Second storage without Lime: V30 endurance microSD; rescue microSD 64 GB outside the case
+    - **Finding:** Community:
+  - A Q6A running Armbian from a U3/A2 microSD for 3-4 months failed when the card developed bad sectors (ddrescue). A second freshly flashed card failed after its second boot (Gilles, Sep 2026).
+  - Geerling: an Etcher flash produced a board with no HDMI or network.
+  - Geerling iozone on the Q6A: 61.45 MB/s sequential write, 0.80 MB/s 4K random write.
+    - **Verdict:** confirmed
+    - **Action:** Keep microSD for overflow and rescue only. Never put the OS or databases on SD. Run a full write-verify test (f3-type) on every card at arrival and every 6 months. Flash rescue cards from an extracted .img and verify the hash. Keep two rescue cards.
+    - **Impact:** Treats SD as consumable, as the field reports show.
+    - **Sources:**
+      - https://forum.radxa.com/t/31509
+      - https://github.com/geerlingguy/sbc-reviews/issues/85
+  16.
+    - **Claim in stack:** Field DT overlay disables pcie0; a lab overlay adds PPS and the rest
+    - **Finding:** HoShiMin (6.19, Arch): with the mainline Q6A DTB, NVMe fio dropped to 27-28 MB/s, against 584-681 MiB/s with Radxa's DTB, about 30x. The cause was the missing Radxa commit 56bb627 ('Enable USB 3.0 and HDMI ports'). Radxa advice: let the UEFI firmware provide the DTB.
+    - **Verdict:** new_risk
+    - **Action:** Build every overlay against the radxa linux-6.18.2 DTB and apply it to that DTB. Never swap in a mainline DTB. Add an fio smoke test (UFS and the T7 if fitted) after any DTB or overlay change.
+    - **Impact:** Avoids a silent 30x storage slowdown after a DT change.
+    - **Sources:**
+      - https://forum.radxa.com/t/30440
+  17.
+    - **Claim in stack:** Blue USB 3.1 port: T7 limit 395 MB/s (stage 1: unattributed, unverified)
+    - **Finding:** The source of 395 MB/s is the SmartHomeCircle review: fio write of about 395 MB/s through an unnamed USB3-to-NVMe adapter, with the 5000M link and the uas driver confirmed by lsusb -t. No read figure, fio parameters or duration were given.
+  
+  The mainline usb-storage tables (unusual_uas.h / unusual_devs.h) have no Samsung portable-SSD entry, only old Samsung YP players. So no kernel quirk is applied to a T7.
+  
+  ssd-tester, T7 1 TB: about 42 GB pSLC cache, 614 MB/s average over 100 GB. Model: about 480 MB/s after the cache, above the Gen1 port limit. No ARM or SDR report for the T7 was found.
+    - **Verdict:** confirmed
+    - **Action:** Attribute the 395 MB/s to SmartHomeCircle (single data point). Keep the fio measurement on the real T7 at bring-up (Lime build only), including a 60-minute 224 MB/s sustained write while logging the T7 SMART temperature.
+    - **Impact:** Lime headroom (1.76x) still rests on one external figure.
+    - **Sources:**
+      - https://smarthomecircle.com/radxa-dragon-q6a-best-alternative-to-the-raspberry-pi-5
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/usb/storage/unusual_uas.h
+      - https://ssd-tester.com/samsung_portable_ssd_t7_1tb.html
+  18.
+    - **Claim in stack:** Rolling caps: raw only when pinned, 30 GiB raw cap, labrx refuses a raw recording that the cap cannot hold; 15-minute HRPT pass = 4.6 GB (cu8)
+    - **Finding:** SatDump issue #766 (closed Aug 2024): with 'record' on, each Meteor/NOAA pass saved an 8-10 GB baseband, and 10-15 passes filled 128 GB. The fixes were live-only mode (uncheck record), IQ decimation (10 at 2.4 Msps), and smaller baseband types (cs8/ZIQ, planned at the time). The SatDump default baseband format is larger than cu8, so the stack's 4.6 GB per pass holds only if labrx is the sole raw writer.
+    - **Verdict:** confirmed
+    - **Action:** Run SatDump wrappers with record off (live only). All raw IQ goes through labrx (cu8 / ci16 as specified), under the cap. Add a unit test that fails if any SatDump config has record=true.
+    - **Impact:** Keeps the 30 GiB / 40 min arithmetic valid.
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/issues/766
+  19.
+    - **Claim in stack:** Lime (optional): 10 W heat path via pedestal and a pad of at least 6 W/mK (stage 1: about 4 W typical per MyriadRF)
+    - **Finding:** Re-checked:
+  - Lime docs say 'the LimeSDR Micro M.2 cooling solution should be designed to dissipate at least 10 W'. They name no sensor and no pad.
+  - MyriadRF's Zack (24 Aug 2026): the 2.5 A at 3.3 V comes from the PCIe spec, and the board 'should consume about 4 W, depending on configuration'. The idle-power question has no answer.
+  - No user delivery or thermal report exists yet; the ship date is 15 Dec 2026.
+    - **Verdict:** confirmed
+    - **Action:** Keep the 10 W pedestal. Use about 4 W in thermal modes H and I, as stage 1 said.
+    - **Impact:** None beyond stage 1.
+    - **Sources:**
+      - https://myriadrf.org/projects/limesdr-micro/user/M.2/setup.html
+      - https://discourse.myriadrf.org/t/limesdr-micro-m-2-power-consumption/13304
+  20.
+    - **Claim in stack:** Display thermal: panel about 71 C at 35 C in sun at 100%, above the 70 C rating (stage 1: 70 C rating undocumented)
+    - **Finding:** The Wisecoco product page for the 7in 1920x1080 panel on an HDMI board lists:
+  - Operating '-20~70', storage '-30~80'.
+  - 2000 cd/m2 typical; the title says 2500.
+  - Outline 164.22x97.98 mm.
+  - Touch 'Interface Type: I2C'.
+  It gives no power, thickness or bonding data. No community thermal report for this panel was found (web search budget was exhausted, see notes).
+    - **Verdict:** corrected
+    - **Action:** Record 70 C as the vendor-page rating, still to be confirmed in writing per D5. Keep derating from 60 C (50%) and 68 C (20%). Add to the D5 questions: does the HDMI board expose touch as USB-HID, given the page says I2C?
+    - **Impact:** The rating now has a source. The model still exceeds it at 35 C, 100% brightness, in sun, so derating stays mandatory.
+    - **Sources:**
+      - https://www.wisecocodisplay.com/product/7-inch-1920x1080-high-brightness-2500nits-lcd-panel-with-hdmi-in-board-ips-mipi-interface-tft-lcd-screen/
+  21.
+    - **Claim in stack:** Case: light-grey ASA (PETG rejected); Polymaker ASA 1 kg + CNC Kitchen M3 inserts EUR 9.40
+    - **Finding:** Prusa knowledge base, ASA: 'significant warping'; 'an enclosure is necessary for printing large parts'; 'releases potentially dangerous fumes', so ventilate; UV-resistant; heat resistance 'up to 93 C'. Prices today: Polymaker ASA Grey 1 kg $26.99 and White 1 kg $25.99, in stock; CNC Kitchen M3x5.7 100 pcs EUR 9.40, in stock. Community Q6A cases (el_sattchmo Printables V4, Q6A-CASE-COOLANT) were printed with a 0.6 mm nozzle and 0.28 mm layers. Note for any Q6A enclosure: route the Wi-Fi antenna out (thanh_nguy_n_lam).
+    - **Verdict:** confirmed
+    - **Action:** Keep ASA. The 222 mm shell must be printed in an enclosed printer or by a print service, with ventilation. Use 93 C as the conservative heat limit.
+    - **Impact:** None.
+    - **Sources:**
+      - https://help.prusa3d.com/article/asa_1809
+      - https://shop.polymaker.com/products/asa
+      - https://cnckitchen.store/products/heat-set-insert-m3-x-5-7-100-pieces
+      - https://forum.radxa.com/t/30218
+      - https://forum.radxa.com/t/29167
+  22.
+    - **Claim in stack:** IMU socket GX12 on the rear wall; IPX4/IP54 target (stage 1: GX12 has no datasheet IP rating)
+    - **Finding:** Olimex CONNECTOR-GX12-4: 5 A, 250 VAC / 300 VDC, -50 to +70 C, zinc nickel-plated shell. No IP rating. EUR 1.55, out of stock.
+    - **Verdict:** confirmed
+    - **Action:** Keep the stage-1 action: an M8/M12-class connector with a datasheet IP67 mated rating, or GX12 with a tethered cap and a spray test.
+    - **Impact:** None beyond stage 1.
+    - **Sources:**
+      - https://olimex.com/Products/Components/Connectors/CONNECTOR-GX12-4
+  23.
+    - **Claim in stack:** Storage and cooling prices: UFS 128 GB ALLNET $65.90; Armor ALLNET $9.90 / Arace $4.99
+    - **Finding:** Shop JSON re-read on 18 Oct 2026:
+  - ALLNET UFS 128 GB RA022-B10J0U2 $65.90, available.
+  - ALLNET 64 GB ($19.00), 256 GB ($75.90) and 512 GB ($89.90) unavailable.
+  - Armor 7056A AE036: ALLNET $9.90 and Arace $4.99, available.
+  - The Arace UFS page returned 429.
+    - **Verdict:** confirmed
+    - **Action:** Keep.
+    - **Impact:** None.
+    - **Sources:**
+      - https://shop.allnetchina.cn/products/high-performance-ufs-3-1-module
+      - https://shop.allnetchina.cn/products/radxa-heatsink-7056a
+      - https://arace.tech/products/radxa-armor-case-7056a
+- **Current status oct 2026:** Status as of 18 Oct 2026:
+  
+  **Kernel and BIOS**
+  - Radxa kernel packages (radxa-pkg/linux-qcom): newest is 7.0.11-7 (17 Sep). The last 6.18.2 package is 6.18.2-4 (30 Mar), which predates the Kioxia UFS fix (PR #551, 11 May 2026).
+  - The Kioxia quirk is in the radxa/kernel linux-6.18.2 and linux-7.0.11 branches, but not in mainline 7.3-rc7.
+  - Community reports say 7.0.11-4 breaks HDMI and shows a phantom CPU0 load in htop/btop. A community Ubuntu 26.04.1 image (v1.3.0, 7 Oct 2026, Armbian edge 7.2.9) reports working HDMI.
+  - SPI BIOS: 260120 is still the documented release. Radxa staff posted a test build, dragon-q6a_flat_build_wp_260916.zip, on 14 Oct 2026; it fixes the systemd-stub UKI silent reboot.
+  - Several 2026 reports describe boards lost to DDR training failures after SPI updates. Radxa treated them as RMA cases.
+  - Radxa staff (15 Oct 2026): the 12 V header accepts 4.5-16 V.
+  
+  **Storage**
+  - ALLNET UFS 128 GB: $65.90, in stock. 64/256/512 GB: out of stock.
+  - No failure reports for the Samsung UFS module. All UFS freeze reports concern the 256 GB Kioxia module.
+  - Radxa's Android provisioning file sets a 4 GiB shared WriteBooster buffer and adds about 14 GiB of extra LUNs.
+  
+  **Cooling and case**
+  - Radxa still has no official active cooler. Radxa support points to the Armor 7056A (ALLNET $9.90 / Arace $4.99, in stock), which is passive.
+  - The community uses the AliExpress stepped Cu cooler plus a 40 mm fan (about 55 C under stress). That listing has had stock gaps.
+  - Polymaker ASA $25.99-26.99 per kg and CNC Kitchen inserts EUR 9.40 per 100: both in stock.
+  
+  **Lime and display**
+  - LimeSDR Micro M.2: pre-order, shipping 15 Dec 2026. Docs say to design cooling for at least 10 W; staff say about 4 W typical.
+  - Wisecoco 7in page lists -20 to 70 C operating and an I2C touch interface.
+  
+  No EOL notices were found for the parts in this subsystem.
+- **Notes:** **Method**
+  - Community sources were read as primary text:
+    - Radxa forum raw thread text for about 25 threads: 30123, 30413, 30630, 30737, 30218, 29167, 30090, 29650, 31226, 31509, 30440, 31304, 30749, 31574, 31611, 31450, 30841, 31080, 30896, 30925, 26723.
+    - The Dragon-category latest-topic listing (3 pages, through 15 Oct 2026).
+    - GitHub issues: geerlingguy/sbc-reviews #85 and SatDump #766.
+    - MyriadRF discourse 13304.
+    - The rahulbtc/radxa-q6a-monitor README and dashboard source (it lists the thermal zones on the official Radxa Ubuntu).
+  - Primary checks:
+    - radxa/kernel 6.18.2 and 7.0.11 ufs-qcom.c, sc7280.dtsi and the Q6A DTS.
+    - radxa-pkg/linux-qcom releases.
+    - Radxa provision_ufs31.xml.
+    - Critical Link UFS wiki.
+    - Radxa EDL docs and the Armor product page.
+    - Mainline unusual_uas.h / unusual_devs.h.
+    - Lime M.2 setup docs.
+    - Wisecoco product page.
+    - Prusa ASA knowledge-base article.
+    - Olimex GX12 page.
+    - Shopify JSON for ALLNET, Arace, Polymaker and CNC Kitchen.
+    - HEAD request on the new BIOS zip.
+  
+  **Search limits**
+  - I used four Radxa-forum site searches early on.
+  - The first general WebSearch call was refused because the shared per-turn search budget was already used up. After that I made no further search queries and fetched only known URLs and forum listings.
+  - As a result, I found no community reports by search on these topics:
+    - T7 on ARM Linux or SBCs (only the kernel quirk tables and ssd-tester were checked).
+    - Wisecoco panel heat.
+    - Molicel P50B pack behaviour.
+    - Pelican or kit bags.
+    - Adafruit 6101 airflow.
+  - Those claims keep their stage-1 status.
+  
+  **Blocked**
+  - noctua.at: 429. NF-A4x10 specs were not re-verified and remain stage-1 snippet data.
+  - Printables: 403.
+  - AliExpress cooler page: empty.
+  - Arace UFS page: 429.
+  
+  **Model numbers (not measurements)**
+  - About 14.08 GiB of extra LUNs and LU0 of about 105 GiB if the Android provisioning is applied.
+  - T7 post-cache rate of about 480 MB/s.
+  - SoC 68-91 C in the handheld, from R of about 3.3 K/W derived from one community post with an assumed 22 C room.
+  
+  **Main changes for later stages**
+  1. State that the 6.18.2-4 package has no Kioxia fix, and give any self-built kernel a distinct version suffix.
+  2. labd must stop NPU jobs itself; the kernel has no NSP or DDR throttle before the 110 C critical trip.
+  3. Never apply the Android UFS provisioning to the field module.
+  4. Put paste or phase-change material on the SoC step and a pad only on the LPDDR5.
+  5. Insulate the mid-plate under the board (battery pogo pads on the underside).
+  6. Sleeve and strain-relieve the J21 wires (12 V pin is 1.5 mm from USB-C ground).
+  7. Test EDL with J21 power, and UEFI access over UART, at bring-up.
+  8. Stay on BIOS 260120 with BLS (not UKI); no SPI updates in the field; no rupdate or rsetup.
+  9. SatDump record off.
+  10. Every DT overlay must be built on the Radxa DTB.
+  
+  **Files**
+  - Raw downloads: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/s2mt_dl (forum raw text r*.txt, DTS/dtsi, ufs-qcom.c, the shop JSON in its shop/ subfolder, and provision_ufs31.xml.txt in its prov/ subfolder).
+  - Stack read: /home/user/lizbeth307/sat-receiver-audit/STACK.md (sections 1.1, 2.1, 2.9-2.10, 5.5-5.8).
+  - Rules: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md.
+  - Background: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/storage.json and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/mechanical_thermal.json.
+
 ## report:compute_software_ai (run `wf_df1900ef-872`)
 
 - **Scope:** This audit covers the Q6A compute board, kernel/OS pinning, the full software stack, the NPU (QAIRT 2.42, INT8), the spectrum-based NPU training system and the lab menu/UI. Read in full or near full: final/compute.json, software.json, npu_training.json, lab_ui_hf.json and user_requirements.md (governing). Also read the whole of minute-log.md, the newest summaries.md entries plus keyword greps across summaries.md and extra-studies.md, and the parts of small_antenna_stack.json, radio_lab.json, display_market.json, foldable_antennas.json and wideband_sdr.json that touch this scope. All 18 named final/*.json files exist (plus foldable_partial.json and digest.md). final/report_research.json from P1b does not exist yet. I did not read wideband_sdr, narrowband_sdr, display, storage, rf_frontend, gnss_imu, power, mechanical_thermal, antennas or dish_replacement beyond targeted greps, because they are outside this scope. components/compute.md and software.md were spot-checked and match the JSON. I used 7 web lookups to settle disputes: ISS frequencies, SatDump version, the QAIRT 0x1388 error, VTCM size and noble libgpiod.
