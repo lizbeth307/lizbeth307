@@ -43599,6 +43599,110 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   LIMITS OF THIS PASS: the shared WebSearch budget was already used up at my first query, so I could not sweep AliExpress/LCSC generic metal CH334/FE2.1 hubs or used listings, and eBay.de returned HTTP 403. Evidence came from WebFetch on the Waveshare page and the Raspberry Pi docs, the uhubctl README (no cheap current USB 2.0 hub with a better verified feature), and listing, schematic and datasheet files saved by other agents in the scratchpad (Pi Hut and Olimex listings, the NeoHub schematic, the CH334 datasheet, a Botland search snapshot). Rate: ECB 16 Oct 2026, 1 EUR = 1.1253 USD = 0.84385 GBP.
 
+## searchB:isdt_608pd_balance_charger (run `wf_e5582d4c-0a2`)
+
+- **Part:** ISDT 608PD balance charger (bench tier, qty 1). It does the monthly 4S 4.20 V/cell balance of the Molicel P50B 4S1P pack through the node-N XT30 service port (5 A fuse after the INA228 shunt) and the JST-XH 5-pin lead, with the main switch OFF.
+- **Current price usd:** $49.99 at DarwinFPV, US, before tax. The re-audit verified this on 18 Oct 2026. EU price: EUR 43.90 including 19% German VAT at FPV24, which is $49.35 at 1 EUR = 1.1241 USD (EUR 36.89 = $41.47 without VAT). FPV24 shows 10 in stock and next-working-day dispatch; I verified this on 18 Oct 2026. The $32.99-42.99 in STACK.md is out of date and was never verified.
+- **Critical specs:**
+  - Chemistry and target: LiPo preset charging to 4.20 V/cell, with balancing, for 4S through a JST-XH 5-pin balance lead plus the main lead to the XT30 service port. 608PD: LiPo 4.20 V, 1-6S, balance and non-balance modes. Its manual has no Li-ion (4.10 V) preset; the stack uses the LiPo 4.20 V mode.
+  - Per-cell voltage and CV termination accuracy. This is the main spec here. The Daly BMS OVP is 4.25 +/-0.05 V, so on a low-tolerance BMS it can trip at 4.20 V. The stack therefore needs about +/-10 mV per cell, with the highest cell ending at 4.20 V or less. 608PD: ISDT does not publish an accuracy figure, I found no user calibration in the English manual pages I read (14-18), and I found no independent measurement. The baseline has to be measured against the AN8008 at goods-in.
+  - Balance current: 608PD 0.8 A/cell max. The need is modest (monthly drift of matched new cells), but under the rule a lower value counts as worse.
+  - Charge current: the stack needs 2.5 A (0.5C on 5 Ah) and must stay below 5 A because of the 5 A service-port fuse, which is about 42-67 W at 16.8 V. 608PD: 0.5-10 A, 240 W DC / 140 W USB-C; anything above about 4 A cannot be used in this stack.
+  - Input from the bench's own sources: USB-C PD sink (PD 2.0/3.0/3.1, 5-28 V, 5 A, 140 W) from the 65-100 W PD wall adapter, plus DC 5-30 V on XT60 (10 A). Anker 737 (DRP) to 608PD is not guaranteed; see the re-audit. The core bench has no DC bench supply; the DPS-150 is extended tier and is itself fed from PD.
+  - Readouts: per-cell voltage display with the balance lead connected, and per-cell internal resistance during CC (used for monthly pack-health trending).
+  - Safety: abnormal-voltage alarm, wrong-cell-count alarm, temperature-controlled fan, operating range 0-40 C.
+  - RF and rule set: no radio is preferred. QUIET-mode rules already choose radio-free tools such as the FNB58 Std and Pinecil with Bluetooth off. The 608PD has an ISD Link wireless link (FPV24 says Bluetooth; the manual shows a 'Wireless Connection Sign' and phone pairing). It is mitigated by charging at home with the receiver off and a tinySA 2.4 GHz receive-only scan. A radio-free unit would be better on this point.
+  - Size and weight for the Pelican 1450 bench case: 72.5 x 60 x 26.6 mm, 85 g +/-10%.
+  - Maintainability: firmware update over USB with ISD Go for Windows V2.0.0.2. Do not use the phone app for updates.
+  - Legitimacy: genuine unit, legally sold EU stock with a warranty, not a counterfeit.
+- **Candidates:**
+  1.
+    - **Name:** ISDT 608PD, new (current part, for reference)
+    - **Kind:** current_part
+    - **Price usd:** $49.99 at DarwinFPV (US). EUR 43.90 including VAT at FPV24 (DE) = $49.35, or $41.47 without VAT.
+    - **Spec comparison:** Baseline: LiPo 4.20 V 1-6S; 0.5-10 A; 0.8 A/cell balance; USB-C PD 3.1 in 5-28 V 140 W, DC 5-30 V 240 W; per-cell voltage and IR display; 72.5x60x26.6 mm, 85 g; 0-40 C. Cell-voltage accuracy is not published.
+    - **Worse in:** Has a wireless (BLE) link. Accuracy is unpublished and unmeasured.
+    - **Compatibility:** Matches the stack: XT60 to XT30 lead to the service port, JST-XH 4S lead, PD wall adapter.
+    - **Risks:** Treat it as a possible 2.4 GHz emitter until the tinySA scan settles it.
+    - **Seller url:** https://www.fpv24.com/de/isdt/isdt-608pd-lipo-ladegeraet-1-6s-240w-10a-usb-c-pd-xt60-smart-charger
+    - **Sources:**
+      - https://www.isdt.co/608pd.html
+      - https://www.isdt.co/down/pdf/608PD.pdf
+      - https://www.fpv24.com/de/isdt/isdt-608pd-lipo-ladegeraet-1-6s-240w-10a-usb-c-pd-xt60-smart-charger
+      - https://darwinfpv.com/products/isdt-608pd-lipo-charger-dc-240w-10a-usb-c-140w-5a-smart-digital-charger
+  2.
+    - **Name:** ISDT 608PD, used, genuine (EU second-hand market)
+    - **Kind:** used
+    - **Price usd:** Unverified: eBay.com, eBay.de and Kleinanzeigen returned 403 and willhaben could not be fetched. It is worth it only well below the new EU price, for example EUR 30 (about $34) or less delivered.
+    - **Spec comparison:** Same hardware as the current part: 0.8 A/cell balance, 0.5-10 A, USB-C PD 3.1 140 W and DC 240 W input, LiPo 4.20 V, per-cell voltage and IR display, 85 g. Older firmware can be updated with ISD Go for Windows.
+    - **Worse in:** Nothing on paper. Per unit: unknown history (fan bearing, XT60/USB-C wear, possible heat damage), no warranty, unknown firmware. It has the same BLE link as a new unit. It counts as 'equal by measurement' only after it passes goods-in.
+    - **Compatibility:** Same as the current part.
+    - **Risks:** Goods-in: (1) charge the pack to the 4.20 V end point and compare each cell with the AN8008 at the JST-XH; every cell must be within +/-10 mV and none above 4.20 V. (2) Confirm balancing visibly evens out a deliberately offset cell. (3) Check the fan and the PD negotiation with the FNB58. (4) Run the tinySA 2.4 GHz scan. Buy only with the original box and photos of the working screen, from a seller who accepts returns. I found no evidence of fake 608PD units, but treat no-box listings as suspect.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.isdt.co/down/pdf/608PD.pdf
+      - https://www.isdt.co/608pd.html
+  3.
+    - **Name:** ISDT Q6 Nano (older ISDT model, used or remaining stock)
+    - **Kind:** used
+    - **Price usd:** Unverified; no listing was fetched.
+    - **Spec comparison:** From the ISDT manual: DC 10-30 V input only (its USB port is for firmware, not PD input), 0.1-8 A, 200 W, balance 0.5 A/cell (608PD: 0.8), discharge 1 A / 10 W (608PD: 100 W via USB-C), presets LiIon 4.10 V and LiPo 4.20 V, Storage mode, per-cell IR display, and user calibration of input, output and balance voltages, which is better than the 608PD (none found in its manual). No wireless link is described, which is also better. 72x72x32 mm, 120 g.
+    - **Worse in:** Balance current (0.5 vs 0.8 A/cell). No USB-C PD input, so it needs a PD-trigger-to-XT60 lead from a qualified 20 V PD source, or a DC supply. Larger and 35 g heavier. Older model with unclear firmware support. I found no independent measurement. Rejected under the not-worse rule, although it is better on radio-free operation and calibration.
+    - **Compatibility:** XT60 output and a JST-XH balance port fit the pack. The input needs an extra PD-trigger lead, which is not in the BOM and has not been qualified.
+    - **Risks:** Second-hand condition; firmware support status unknown; the trigger lead adds another PD negotiation path to qualify with the FNB58.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.isdt.co/down/pdf/Q6nano_EN.pdf
+  4.
+    - **Name:** Generic iMAX B6 clone (B6 / 'B6 V2' / B6AC-type copies)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Unverified; no listing was fetched.
+    - **Spec comparison:** Clone baseline is the SkyRC original (SK-100002, discontinued): DC 11-18 V input, 0.1-5.0 A, 50 W charge, 300 mA/cell balance, 0.1-1.0 A / 5 W discharge, 1-6 cells. SkyRC publishes no voltage accuracy. 50 W allows about 2.9 A at 16.8 V, enough for the 2.5 A need.
+    - **Worse in:** Balance current (0.3 vs 0.8 A/cell). No USB-C PD input (11-18 V DC only). 50 W versus 140-240 W. No IR readout in the SkyRC original spec. Clones use different CPUs and firmware even under the same name. I found no independent per-cell accuracy measurement for any specific clone. Rejected.
+    - **Compatibility:** It needs an 11-18 V DC source, which is not in the core bench. JST-XH balance lead fits.
+    - **Risks:** Counterfeit risk: SkyRC runs a genuine-unit authentication service for the B6, B6mini and B6AC, so copies sold under the iMAX name are imitations of a trademarked product. This breaks the not-a-counterfeit rule. Calibration varies from unit to unit.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.skyrc.com/iMAX_B6_Charger
+      - https://github.com/stawel/cheali-charger
+  5.
+    - **Name:** DIY: ATmega32-type B6 clone reflashed with cheali-charger and calibrated against the AN8008
+    - **Kind:** diy
+    - **Price usd:** Unverified: clone price plus a USBasp programmer.
+    - **Spec comparison:** cheali-charger's procedure calibrates every cell voltage and Vin against a voltmeter, so per-cell accuracy could reach the 608PD's (unpublished) level. The hardware limits stay: 0.3 A/cell balance, 50 W, DC 11-18 V input.
+    - **Worse in:** Balance current, input (no PD), power. Only ATmega32 or M0517LBN units are supported; the 'IMAX B6 V2', B6 Mini and Accucel-6 80W are listed as unsupported. The project has no published releases and 155 open issues. Building and flashing it is work. There is no measured evidence that a built unit matches the 608PD. Rejected.
+    - **Compatibility:** Needs an 11-18 V DC source; JST-XH fits.
+    - **Risks:** Counterfeit base hardware, firmware bricking, and safety logic validated only by the user.
+    - **Seller url:** 
+    - **Sources:**
+      - https://github.com/stawel/cheali-charger
+      - https://www.skyrc.com/iMAX_B6_Charger
+  6.
+    - **Name:** DIY: DPS-150 in CC/CV at 16.80 V into the service port, relying on Daly BMS passive balancing (optionally adding a generic 4S active-balancer module), with manual AN8008 cell checks
+    - **Kind:** diy
+    - **Price usd:** $0 extra only if the extended-tier DPS-150 is bought (STACK.md: $73-75, unverified). Without it, $73-75, which costs more than the 608PD.
+    - **Spec comparison:** Pack-level CV only, with no per-cell termination. The Daly balances only while charging with cells at 4.18 V or more, and its bleed current is not published (unverified). An add-on equalizer moves charge between cells but does not end charging per cell. Per-cell readout is manual with a DMM. No cell-count or abnormal-voltage alarms.
+    - **Worse in:** Per-cell termination and protection: the only per-cell guard is the Daly OVP at 4.25 +/-0.05 V, so a high cell either reaches about 4.25 V or trips the BMS. Balance current is far lower (unverified). It needs constant manual attention. I found no measured evidence for the equalizer modules. Rejected.
+    - **Compatibility:** Electrically possible through the service port (16.8 V, below the 5 A fuse), but only in the extended tier.
+    - **Risks:** Cell overcharge or BMS OVP trips; no automatic end of charge.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.tinytronics.nl/en/power/bms-and-chargers/bms/daly-bms-li-ion-li-po-protection-circuit-4s-15a-with-balancing
+- **Notes:** Verdict for Angle B (generics, clones, DIY, used): nothing cheaper is proven not-worse by independent measurement, so keep the ISDT 608PD.
+  
+  - **The only conditional route** is a genuine used 608PD. Its price is unverified because eBay.com, eBay.de and Kleinanzeigen returned 403 and willhaben could not be fetched. Take one only if it costs about EUR 30 delivered or less and passes the AN8008 per-cell goods-in test above.
+  - **Q6 Nano:** worse in balance current (0.5 vs 0.8 A/cell) and has no USB-C PD input, but better in being radio-free, user calibration and Storage mode. It needs an explicit user decision; it is not a silent swap.
+  - **B6 clones (with or without cheali firmware) and the DPS-150 plus Daly route:** both are worse on stated specs. The clones also break the counterfeit rule.
+  
+  Price correction: the current part is $49.99 at DarwinFPV, or EUR 43.90 including 19% VAT at FPV24 ($49.35; $41.47 without VAT; 10 in stock). The cheapest verified not-worse source I found is the same SKU at FPV24. Same-SKU and other-brand price hunting (ToolkitRC, SkyRC B6neo and similar) belongs to Angle A and was not evaluated here.
+  
+  Stack findings to carry forward:
+  - **Wireless link:** the 608PD manual confirms one ('Wireless Connection Sign'; pair the ISD Link app by bringing the phone close), and FPV24 lists Bluetooth. Keep the tinySA 2.4 GHz scan and home-only charging.
+  - **No published accuracy:** ISDT publishes no cell-voltage accuracy, and the 608PD manual pages I read (English pages 14-18; pages 10-13 not fully read) describe no calibration. With the Daly OVP possibly as low as 4.20 V, the goods-in test should be a firm gate: each cell within +/-10 mV of the AN8008 and none above 4.20 V at the end of charge.
+  - **Mode:** the 608PD has no Li-ion 4.10 V preset; use the LiPo 4.20 V mode.
+  
+  Limits of this pass: my first WebSearch was refused because the shared search budget was already used up, so I ran no searches. Everything came from direct WebFetch of primary pages plus cached ISDT manuals: the 608PD manual at /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/s3lab/dl/shop/isdt608.pdf, read as page renders, and the Q6 Nano manual at /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/p5chg/q6n/q6nano.pdf, which matches https://www.isdt.co/down/pdf/Q6nano_EN.pdf. I found no independent bench measurements of the 608PD or of any clone (HKJ/lygte-info does not review RC balance chargers). A follow-up with search budget should look for RCGroups or forum DMM comparisons of the 608PD and Q6 Nano and for current used listings.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
