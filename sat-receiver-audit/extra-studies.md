@@ -17972,6 +17972,113 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   All non-Pololu module prices are marked not verified because no listing was fetched.
 
+## searchA:pololu_d36v28f5_lab5 (run `wf_a268b76e-da0`)
+
+- **Part:** Pololu D36V28F5 (#3782), LAB5 5 V buck rail: SW node (4S Li-ion) -> D36V28F5 -> 3 A fuse. Loads: Pico, CH334F hub, IMU pack, fans, HF+, LAB USB-A, 2x LT3045 LNA rail. Current: 0.6 A typical, 2.0 A peak, 2.3 A peak in the with-Lime default build.
+- **Current price usd:** 23.95 at qty 1, Pololu direct (22.03 each at qty 5). Same 23.95 on the DigiKey Marketplace (2183-3782-ND, 443 in stock; extra shipping may apply). For an EU buyer, US shipping and EU import VAT come on top. Pololu lists stock as "Rationed".
+- **Critical specs:**
+  - Input range covers the 4S pack, 12.0-16.8 V, with transient margin. The SW node has an SMBJ17A whose clamp voltage can reach about 27.6 V. Needed: abs max of 30 V or more. Current part: 5.3-50 V operating.
+  - Output 5.0 V, +/-4% or better. The 2x LT3045 4.5 V LNA rail needs LAB5 at 4.8 V or more (re-audit D); the HF+ and USB hub need 4.75-5.25 V.
+  - Continuous current of 3.2 A typical or more (Pololu rates it at 36 V in; higher at 12-16 V in). Load is 2.0 A without Lime and 2.3 A with Lime, on a 3 A fuse, in a closed enclosure at 50 C.
+  - Efficiency of about 88% or better at 0.6-2.3 A from 13-16 V (the stack power model uses 88%).
+  - Switching behaviour and spurs: about 500 kHz at heavy load; power-save at light load lowers the frequency but keeps it above 20 kHz. It must pass the C4 gate: no line 3 dB or more above the floor within +/-5 kHz of 40, 60, 77.5, 162, 490, 518 or 4209.5 kHz, with LAB5 load steps of 0.3-3 A. Fixed frequency or a sync input is an advantage.
+  - Output ripple and noise. LAB5 feeds the HF+ directly and the LT3045 LNA rail; ripple at the switching frequency goes through LT3045 PSRR (still to be bench-measured).
+  - Protections: reverse voltage up to 40 V, over-current and short-circuit, thermal shutdown, soft start, output UV/OV protection. Also an open-drain PG output and EN (sleep below 1.2 V, wake above 1.35 V).
+  - Back-feed behaviour. Pololu forum t/29129: more than about 5 V on VOUT pumps VIN above 60 V; mitigated in the stack with Schottkys plus an assembly rule. An alternative must not be worse.
+  - No-load quiescent current 2-3 mA; minor, because LAB5 is powered only while the SW node is on.
+  - Mechanical: 17.8 x 20.3 x 8.8 mm, 0.1 in through-hole pins on the 2-layer custom power board; no reflow needed.
+  - Genuine part from an official source; Pololu-made, tested assembly.
+- **Candidates:**
+  1.
+    - **Name:** Pololu D36V28F5 (#3782) from Pololu direct / DigiKey Marketplace (baseline)
+    - **Kind:** current_part
+    - **Price usd:** 23.95 qty 1; 22.03 each at qty 5. Shipping to the EU and import VAT (about 19-23% plus carrier fee) are extra.
+    - **Spec comparison:** Baseline. 5.3-50 V in; 5 V +/-4%; 3.2 A typical at 36 V in (2.5-4 A range); 80-90% efficiency (graph only); about 500 kHz at heavy load; power-save at light load, staying above 20 kHz; Iq 2-3 mA; reverse protection to 40 V; OCP, short-circuit, thermal shutdown, soft start, output UV/OV; PG and EN; 17.8 x 20.3 x 8.8 mm.
+    - **Worse in:** Nothing; this is the reference. Known weakness: the back-feed VIN pump above 60 V.
+    - **Compatibility:** Already integrated into the power tree and pin plan.
+    - **Risks:** Pololu stock is 'Rationed'. A US order to the EU adds shipping, import VAT and customs handling.
+    - **Seller url:** https://www.pololu.com/product/3782
+    - **Sources:**
+      - https://www.pololu.com/product/3782
+      - https://www.digikey.com/en/products/result?keywords=pololu%203782
+  2.
+    - **Name:** Pololu D36V28F5 (#3782, index PLL-17169), identical part, from Botland (states it is an official Pololu distributor; Poland, EU)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** EUR 15.22 net / EUR 18.11 gross (gross/net ratio implies 19% VAT), about USD 17.8 net / USD 21.2 gross at an assumed EUR/USD of about 1.17 (rate not verified for Oct 2026). botland.com.pl: PLN 64.96 net / PLN 79.90 gross (23% PL VAT). GLS EU shipping from EUR 8.07, shared with the rest of an order.
+    - **Spec comparison:** Same SKU, Pololu-made, country of origin USA: every spec identical to the baseline.
+    - **Worse in:** Nothing.
+    - **Compatibility:** Identical drop-in.
+    - **Risks:** Product page said 'In stock' with a next warehouse delivery listed, but the price widget failed to load; the search page shows the price. Check stock and the destination-country VAT at checkout. Saving vs Pololu direct is about USD 2.7 on the gross price, and more once US shipping and EU import charges are counted.
+    - **Seller url:** https://botland.store/converters-step-down/17169-step-down-voltage-converter-d36v28f5-5v-32a-pololu-3782-5903351242837.html
+    - **Sources:**
+      - https://botland.store/search?s=D36V28F5
+      - https://botland.store/converters-step-down/17169-step-down-voltage-converter-d36v28f5-5v-32a-pololu-3782-5903351242837.html
+      - https://botland.com.pl/przetwornice-step-down/17169-d36v28f5-przetwornica-step-down-5v-32a-pololu-3782-5903351242837.html
+  3.
+    - **Name:** Texas Instruments TPSM63604RDLR, 36 V / 4 A synchronous buck power module with integrated inductor (B3QFN-20, 5.0 x 5.5 x 4 mm), placed on the custom power PCB
+    - **Kind:** other_brand
+    - **Price usd:** 12.48 qty 1 at DigiKey (296-TPSM63604RDLRCT-ND, 4,266 in stock), plus about 2-4 for RT, FB divider and ceramic input/output caps (estimate). Total about 15-17 plus reflow or PCBA. Not stocked at TME.
+    - **Spec comparison:** BETTER: 4 A rated vs 3.2 A typical; FB accuracy +/-1% (0.1% line/load regulation) vs +/-4%; 94.3% efficiency at 12 V to 5 V, 4 A, 1 MHz (datasheet) vs about 88%; constant switching frequency over the full load range (FPWM); frequency set by RT from 200 kHz to 2.2 MHz, or synced to a clock on EN/SYNC, so the fundamental and harmonics can be kept off 490/518/4209.5 kHz, and there is no light-load frequency drift through 40-162 kHz. TI claims CISPR 11/32 class B (with TI's own layout). Iq 7 uA non-switching; hiccup OCP; thermal shutdown at 168 C; UVLO; PG; 3.5-7 ms soft start. WORSE: abs max VIN 42 V (36 V operating) vs 50 V; no input reverse-voltage protection (VIN abs min -0.3 V) vs 40 V on the Pololu; no output OVP is listed (Pololu has output UV/OV); FPWM no-load and light-load input current is not specified and will be above Pololu's 2-3 mA; the -3 A negative current limit means back-driving VOUT can push energy back into VIN (pump risk not measured).
+    - **Worse in:** Max input voltage (42 V abs vs 50 V; still well above the about 28 V this stack needs); reverse-polarity protection is missing (upstream #2813 switch is reverse-protected per Pololu; not re-verified here); output OVP not listed; light-load efficiency and no-load current unknown in FPWM; build quality then depends on our own 2-layer layout, while RθJA 33.1 C/W is specified for a 4-layer 2 oz board.
+    - **Compatibility:** Not a drop-in. Needs a footprint and layout on the power PCB (bottom-terminal QFN needs reflow or hot air), an RT/FB design, a new spur and thermal qualification, and a rerun of the C4 gate and 50 C soak. Electrically compatible with SW 12-16.8 V and a 5 V/2.3 A load.
+    - **Risks:** Layout-dependent EMI and thermals on a 2-layer board; assembly skill or PCBA cost; the saving vs the Botland price is only about USD 1-3 once passives are counted. Keep the Schottky back-feed fixes in place either way.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=TPSM63604
+    - **Sources:**
+      - https://www.ti.com/product/TPSM63604
+      - https://www.ti.com/lit/ds/symlink/tpsm63604.pdf
+      - https://www.digikey.com/en/products/result?keywords=TPSM63604
+      - https://www.tme.eu/en/katalog/?search=TPSM63604
+  4.
+    - **Name:** RECOM RPM5.0-3.0 (INNOLINE RPM-3.0, LGA module)
+    - **Kind:** other_brand
+    - **Price usd:** 6.90 qty 1 at DigiKey (945-3254-2-ND, 2,371 in stock)
+    - **Spec comparison:** Input 3-17 V vs 5.3-50 V; 3 A max vs 3.2 A typical; 97% peak efficiency (listing); OCP, OTP, SCP, UVLO; 12.2 x 12.2 x 3.8 mm SMD LGA.
+    - **Worse in:** REJECT. Max input 17 V is at the 16.8 V full-charge pack voltage and below the SMBJ17A clamp, with no transient margin. Current 3 A vs 3.2 A. Reverse protection not listed. Needs reflow.
+    - **Compatibility:** Electrically unsafe on the SW node.
+    - **Risks:** Input overvoltage at full charge or on a transient.
+    - **Seller url:** https://www.digikey.com/en/products/detail/recom-power/RPM5-0-3-0/9644695
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/recom-power/RPM5-0-3-0/9644695
+      - https://recom-power.com/pdf/Innoline/RPM-3.0.pdf
+  5.
+    - **Name:** MORNSUN K7805-3AR3 (12-SIP 78xx-style module)
+    - **Kind:** other_brand
+    - **Price usd:** 3.37 qty 1 at DigiKey (2725-K7805-3AR3-ND); 0 in stock, backorder unavailable
+    - **Spec comparison:** Input 8-36 V; 5 V, 3 A (15 W); 93% efficiency (listing); 32.2 x 9.1 x 14.9 mm through-hole. Switching frequency, ripple and protections were not verified (DigiKey links a K7803 datasheet).
+    - **Worse in:** REJECT. 3 A vs 3.2 A; part status 'Not for new designs'; out of stock; larger, with a different footprint; ripple, switching frequency and reverse/OV protection unverified.
+    - **Compatibility:** Would need a new footprint; supply is not secure.
+    - **Risks:** NRND and no stock; spur behaviour unknown.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=K7805-3AR3
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=K7805-3AR3
+  6.
+    - **Name:** Pololu D36V28F5 from Pimoroni (UK)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** GBP 17.50 incl. UK VAT (SKU POL-3782), about USD 23 (rate not verified). Out of stock on 18 Oct 2026.
+    - **Spec comparison:** Identical part.
+    - **Worse in:** Nothing in specs. Not cheaper once landed in the EU (UK export ex-VAT plus EU import VAT and customs), and unavailable.
+    - **Compatibility:** Identical.
+    - **Risks:** Out of stock; post-Brexit customs.
+    - **Seller url:** https://shop.pimoroni.com/products/step-down-voltage-regulator-d36v28fx
+    - **Sources:**
+      - Pimoroni Shopify products.json snapshot of 18 Oct 2026, cached in scratchpad/src_cmp/shop.pimoroni.com_p5.json
+- **Notes:** VERDICT: keep the Pololu D36V28F5 and buy it from Botland. Botland (EU, states it is an official Pololu distributor) sells the identical part for EUR 15.22 net / EUR 18.11 gross, about USD 17.8 / 21.2. That is the cheapest not-worse option found. I found no other-brand part that is cheaper and also equal or better on every spec.
+  
+  CHECKED AND NOT CHEAPER:
+  - Pololu D30V30F5 (#4892): USD 29.95; Botland EUR 24.58 net / EUR 29.25 gross, availability unclear. It is better on several points: 3.4 A at 30 V in, 5-45 V in, about 700 kHz, 80-95% efficiency, and a milder back-feed (about 5 V on VOUT was OK; 5.5 V gave about 11 V on VIN, per the forum thread). Max input is 45 V vs 50 V.
+  - Pololu D36V50F5: USD 39.95 (family starting price), the stack's escape route above 2.5 A.
+  - Pololu D24V22F5 family: USD 26.95-27.95; 36 V in; 2.2-2.6 A. Worse and dearer.
+  - Pololu D24V50F5: USD 32.95.
+  - TRACO TSR 3-2450: DigiKey USD 35.96; TME USD 27.45 and out of stock. 3 A. TRACO pages returned 403 and the distributor spec fields looked garbled, so its specs are unverified.
+  - The Pi Hut: GBP 23.00.
+  - Pololu 5-pack at USD 22.03 each only helps if 5 are bought; the stack needs 1, and re-audit D dropped the optional D36V28F5 #2 for the display.
+  
+  TI TPSM63604 is the only cheaper part that beats the D36V28F5 on efficiency, accuracy, current and fixed or sync frequency. It trades away the 50 V input rating (42 V abs max), input reverse-voltage protection and listed output OVP. It also needs our own layout and qualification, so it is not 'not worse' as a drop-in. It is a possible v3 power-board option if the user accepts those trade-offs and upstream reverse protection via #2813 is confirmed.
+  
+  SPUR NOTE for the current part (verify in C4 gate 1): the about-500 kHz fundamental sits 10 kHz from 490 kHz and 18 kHz from 518 kHz (NAVTEX). Pololu gives no frequency tolerance. Light-load power-save can move the frequency anywhere above 20 kHz, which includes 40/60/77.5/162 kHz. Run the 0.3-3 A load-step A/B with that in mind.
+  
+  FX rates (EUR/USD about 1.17, PLN) are assumptions, not verified for Oct 2026. The WebSearch budget ran out after the first query, so other EU Pololu resellers (Kamami 403, RobotShop EU 403, Eckstein 404, Mouser 503) could not be checked; this search is incomplete and a cheaper EU reseller may exist.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
