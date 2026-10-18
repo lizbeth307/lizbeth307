@@ -3305,6 +3305,148 @@
   
   Sources fetched: tinysa.org spec page, zeenko.tech, leobodnar.com, Mini-Circuits ANNE-50+ datasheet (saved to /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/vs_pdf/anne50.pdf), ralim.github.io/IronOS, github.com/jopohl/urh, github.com/hamarituc/lbgpsdo, github.com/simontheu/lbe-1420, rtl-sdr.com buy page, airspy.com, sigidwiki. Blocked: analog.com (503), Eleshop (403), Lab401 (429). WebSearch calls used: 8.
 
+## lab:verify_technical (run `wf_1dd437c5-0cf`)
+
+- **Lens:** TECHNICAL: specs, frequency coverage, Linux arm64 support, USB and power feasibility on the Q6A, and whether the procedures are physically sound (Y-factor/ENR maths, VNA calibration, GPSDO into the LimeSDR Micro reference and its firmware)
+- **Refuted:**
+  1.
+    - **Claim:** LimeSuiteNG cannot select an external reference for the Micro: only 'VCTCXO DAC (volatile)' and EEPROM XO_DAC are exposed. P5 says to stop if no option exists; the integration says fit REF IN only after LimeSuiteNG exposes the option.
+    - **Why:** Lime's web page does not document it, but the code implements it. In LimeSuiteNG limesdr-micro-staging 80ffad5, cli/limeConfig.cpp (lines 28-29 and 98-108) has --refclk <Hz> and --refclk_source internal|external. LimeSDR_Micro::Configure (lines 433-440) sends LIME_M4_SET_REFERENCE_CLOCK_FREQUENCY to the LA9310 M4. In firmware lmfw 13628a9, limesdr_commands.c ConfigureReferenceClock() rejects anything outside 10-52 MHz, flips GPIOA bit 5 of the board's MCP23017 IC15 (I2C 0x20) to switch the reference mux, and retunes CGEN. It reverts only if CGEN fails to tune. The boot default is internal (limesdr_micro_init.c lines 236-240). The SoapySDR plugin does not implement setClockSource or setReferenceClockRate.
+    - **Correction:** P5 should be: after each power-up, run 'limeConfig --refclk=30720000 --refclk_source=external' BEFORE opening the Lime in SDR++ or SatDump. When a new device object is created, LimeSuiteNG reads the active reference back from the firmware (LimeSDR_Micro.cpp line 269). Before unplugging or powering off the GPSDO, switch back with --refclk_source=internal: the LA9310 sample clock comes from LMS7002M CGEN (CGEN = 4 x LA9310_SYS_CLK_FREQ), so losing the reference while 'external' is selected stops the data clocks. This is untested on hardware, and the PPS_IN handler is still an empty weak stub (phytimer.c line 230), so there is no disciplining loop.
+    - **Source:** /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/src/lsng-micro/cli/limeConfig.cpp ; /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/src/lmfw/src/limesdr_micro/limesdr_commands.c ; https://myriadrf.org/projects/limesdr-micro/user/M.2/clock.html
+  2.
+    - **Claim:** The LimeSDR Micro covers 30 MHz-3.8 GHz as a spectrum analyser. lab-sweep covers 1.6-3.8 GHz in one sweep. The Lime is tested at 137/145.8 MHz in the noise-floor survey and in the RTL-vs-Lime A/B.
+    - **Why:** The LimeSuiteNG Micro descriptor gives RX LNAH 3.3-3.8 GHz, LNAL 0.3-2.2 GHz and LNAW 0.7-2.6 GHz. The 30 MHz figure is the lower limit of TX Band2 (0.03-1.9 GHz). Each RX path has its own connector.
+    - **Correction:** The Lime RX is specified only for 0.3-2.6 GHz (RX-L/RX-W) and 3.3-3.8 GHz (RX-H, separate port). Below 300 MHz and from 2.6 to 3.3 GHz it is outside the matched paths, so expect lower sensitivity. A sweep must change port or switch for the 3.3-3.8 GHz segment. Keep 137/145.8 MHz on the RTL; a Lime result there is out of spec.
+    - **Source:** /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/src/lsng-micro/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp lines 252-256
+  3.
+    - **Claim:** tinySA Ultra+ as a 'tracking source', 'tracking-generator sweeps with the tinySA (conducted)', and P2 'cross-check one filter with the tinySA tracking generator'.
+    - **Why:** The tinySA wiki says the generator 'can not be used as a tracking generator' because the analyser and generator cannot run at the same time. The menu tree only has CONFIG > LO OUTPUT (first LO on the CAL connector). Tracking needs an external mixer and source (third-party add-on).
+    - **Correction:** Cross-check filters with the VNA, with the noise-source scalar sweep (P10), or by stepping the tinySA generator by hand or script into an SDR used as the detector.
+    - **Source:** https://tinysa.org/wiki/ ; https://tinysa.org/wiki/pmwiki.php?n=TinySA4.MenuTree
+  4.
+    - **Claim:** P3 LNA gain/match: a 20-30 dB pad after the LNA plus 'the lowest VNA output' is enough, and port 2 is protected.
+    - **Why:** The pad protects port 2 but not the LNA. LiteVNA source power can only be set through USB registers 0x41 (MS5351) and 0x42 (MAX2871), range 0x01-0x03, and the MAX2871 defaults to 0x03. These are coarse steps of a few dB, nowhere near the -40 to -50 dBm a 30-41 dB SAWbird needs to stay linear (0 dBm max input; output reaches about +14 dBm). S21 and S11 would be measured in compression.
+    - **Correction:** Add a 20-30 dB pad at the LNA input as well as the 20-30 dB output pad. Calibrate thru with the output pad in place, measure the input pad's S21 separately and subtract it. For S11, calibrate OSL at the output of a 10 dB pad; effective directivity drops by 2 x 10 dB, which is still fine for -20 dB return loss. Linearity check: change the input pad by 10 dB; S21 must stay within 0.1 dB.
+    - **Source:** LiteVNA user guide, register table: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/techv_lv/lv.txt (lines 993-1000) ; https://gotronik.pl/images/LiteVNA - instrukcja obsługi.pdf
+  5.
+    - **Claim:** The LiteVNA gives 'two-port measurement S11, S21, S22, S12' with full SOLT, and P3 reads S22/S12.
+    - **Why:** The LiteVNA has one mixer and measures S11 and S21 through internal RF switching; register 0x44 selects 0x01 S11 or 0x02 S21. That makes it a 1-path 2-port: port-2 load match is not corrected and there is no 12-term model.
+    - **Correction:** Measure S22/S12 by physically reversing the DUT, through pads. Fit a 6-10 dB pad at port 2 to improve load match when measuring S21 of poorly matched DUTs (filter stopbands). Call the calibration 'enhanced response', not full SOLT.
+    - **Source:** /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/techv_lv/lv.txt lines 65-68, 1002-1004
+  6.
+    - **Claim:** The RP2040 PPS-gated counter resolves 33 ppb at a 1 s gate and about 0.3 ppb averaged over 100 s.
+    - **Why:** Those figures are count quantisation only. The gate error is about sqrt(2) x PPS jitter: with LC76G PPS at 30 ns (Quectel figure) to 100 ns RMS (the gnss_imu figure), that is 42-140 ppb at 1 s, larger than the 33 ppb count step, and 0.4-1.4 ppb at 100 s before adding quantisation. Reading the PWM counter in a GPIO ISR adds latency jitter of order a microsecond.
+    - **Correction:** Expect about 0.5-1.5 ppb at 100 s. Count continuously, latch the counter on each PPS edge through PIO/DMA (deterministic latency), and fit a line over 1000 s or more. Steering is still meaningful: the 16-bit AD5693 at 7.5 ppm/V gives about 0.29 ppb per LSB (assuming 2.5 V full scale). The RP2040 edge-count limit itself is confirmed: high and low periods must each exceed one system-clock period.
+    - **Source:** https://www.quectel.com/?p=49069 ; https://xiao-seeed-rp2040-renode.readthedocs.io/en/latest/specification/rp2040-datasheet/06_chapter_4_peripherals/05_4.5_pwm/ ; antennas.json (Rakon E6245LF / AD5693)
+  7.
+    - **Claim:** P8 (instruments) and P4 (software): Tsys = (T_hot - Y*T_cold)/(Y-1), with cold sky at a few K and ground at about 290 K.
+    - **Why:** That expression is the receiver noise temperature T_rx referred to the antenna terminals, not Tsys. Looking at cold sky, Tsys = T_rx + T_cold. With low-gain patch or helix antennas, the sidelobes and back lobe see the ground, so T_cold is tens of K, not a few. Ground brightness is emissivity x T, roughly 0.6-0.95 x 290 K.
+    - **Correction:** Report T_rx = (T_hot - Y*T_cold)/(Y-1) and Tsys,cold = T_rx + T_cold. Prefer an ambient absorber over the aperture as the hot load, and state the assumed T_cold including spillover. Treat the result as a relative or trend metric.
+    - **Source:** https://www.keysight.com/us/en/assets/7018-06829/application-notes/5952-3706.pdf (Y-factor method)
+  8.
+    - **Claim:** Integration: feed the QO-100 LNB 12 V from AUX through the ZFBT-4R2GW+; 12 V selects vertical, which is correct for NB.
+    - **Why:** The Bullseye is specified at about 11.5-14 V for vertical. The ZFBT DC path is 4.5 ohm, so 100-250 mA of LNB current drops 0.45-1.1 V. With the PTC and P-FET, the LNB sees about 10.6-11.4 V, below its minimum.
+    - **Correction:** Feed 13.0-13.4 V (still vertical) from a dedicated LNB regulator, as the accessories sweep originally specified, and measure the voltage at the LNB F connector under load.
+    - **Source:** https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/ ; https://www.minicircuits.com/pdfs/ZFBT-4R2GW+.pdf
+  9.
+    - **Claim:** LNA bank: 'Put a 100-160 mA polyfuse in each bias feed.'
+    - **Why:** SAWbird+ NOAA draws 170 mA (accessories sweep) and SAWbird+ GOES is 180 mA nominal (Nooelec page; the sweep says 140 mA). A PTC whose hold current is below the operating current heats and trips, and hold current derates further in a warm case. 180 mA also equals the V4L bias-tee limit.
+    - **Correction:** Rely on the TPS2553 limit set to about 250-300 mA. If you add a PTC, choose a hold current of 250 mA or more at maximum internal temperature. Never put the GOES on the V4L bias tee.
+    - **Source:** https://www.nooelec.com/store/sdr/sdr-addons/sawbird-plus-goes.html
+  10.
+    - **Claim:** Bind both MCP23017s with the kernel pinctrl-mcp23s08 driver through a DT overlay (gpiochips for libgpiod).
+    - **Why:** Both Radxa kernels have '# CONFIG_PINCTRL_MCP23S08 is not set': 6.18.2-4-qcom (the pinned kernel) and 7.0.11-7. CONFIG_GPIO_PCA953X=y is built in, CONFIG_GPIO_PCF857X=m is a module, and CONFIG_I2C_CHARDEV=y.
+    - **Correction:** Options: (a) drive the MCP23017 from user space (smbus2 over /dev/i2c-N) inside the rflab daemon; (b) build pinctrl-mcp23s08 and pinctrl-mcp23s08_i2c out of tree against linux-headers (same route as pps-gpio); (c) use a TCA9535/PCA9535 (push-pull outputs, no internal pull-ups) with the built-in pca953x driver. Avoid PCA9555/TCA9555: their 100 kOhm internal pull-ups would turn active-high enables on at power-up.
+    - **Source:** /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl/skeptic_sw/x6182/boot/config-6.18.2-4-qcom (lines 4737, 5051, 5054, 4429)
+  11.
+    - **Claim:** Hantek 6022BL: sigrok supports only the LA mode, so do not plan on PulseView for its scope mode.
+    - **Why:** The sigrok Fx2lafw page lists the Hantek 6022BL (04b4:602a / 0925:3881) with 2 analog channels at 100% status, supported by libsigrok's hantek-6xxx driver. Noble's sigrok-firmware-fx2lafw package ships /usr/share/sigrok-firmware/fx2lafw-hantek-6022bl.fw. The 6022BL wiki page's 'only LA mode' sentence is out of date.
+    - **Correction:** sigrok-cli or PulseView (hantek-6xxx) from apt is an arm64 fallback for scripted 2-channel captures. OpenHantek6022 remains the better GUI; its 3.4.1-rc2 release ships openhantek_3.4.1-rc2_arm64.deb as a release asset, not only as a CI build.
+    - **Source:** https://sigrok.org/wiki/Fx2lafw ; https://packages.ubuntu.com/noble/all/sigrok-firmware-fx2lafw/filelist ; https://github.com/OpenHantek/OpenHantek6022/releases
+  12.
+    - **Claim:** Optional 40-50 MHz low-pass filter at REF IN between the Bodnar Mini and Lime J4.
+    - **Why:** The Bodnar output is 3.3 V CMOS with a 50 ohm source impedance. J4 is specified only by logic level (1.8-3.3 V, no termination documented). A source-terminated line into a high-Z input already gives a clean 0-3.3 V edge. A 50 ohm LPF into a non-50-ohm load is mis-terminated, and its fundamental output is 4/pi x the square-wave amplitude: up to about 4.2 Vpp into high-Z, i.e. about -0.45 to +3.75 V if DC-coupled. That is outside the 1.8-3.3 V window and below ground, and sine-like edges add jitter.
+    - **Correction:** No LPF. Use a short double-shielded cable straight to J4, at the lowest drive. Check that the DMM DC average is about 1.65 V (DC-coupled, 50% duty). The lab's Hantek (20 MHz, 30 MS/s) cannot verify a 30.72 MHz waveform.
+    - **Source:** https://www.leobodnar.com/shop/index.php?main_page=product_info&products_id=301 ; https://myriadrf.org/projects/limesdr-micro/user/M.2/clock.html (Fourier/termination reasoning is my calculation)
+  13.
+    - **Claim:** tinySA: its built-in NF menu estimates noise-source ENR to about ±1-2 dB. Also: square wave up to 6.3 GHz on the ZS407.
+    - **Why:** The NOISE FIGURE submenu contains only MEASURE TINYSA NF, STORE TINYSA NF, VALIDATE TINYSA NF and MEASURE AMP NF; there is no ENR function. ENR has to be derived from absolute noise density relative to -174 dBm/Hz, so it inherits the ±2 dB absolute level accuracy. The input is 50 ohm only with at least 10 dB of internal attenuation, and the attenuator is unavailable with the LNA on, which adds mismatch error. The wiki gives square-wave output up to 6 GHz on the ZS407 (highest-accuracy mode to 7.3 GHz) and the LNA up to 6 GHz.
+    - **Correction:** Treat a tinySA-derived ENR as ±2-3 dB. That error passes dB-for-dB into Y-factor NF, so NF results from the uncalibrated source are relative only. Correct the ZS407 square-wave limit to 6 GHz.
+    - **Source:** https://tinysa.org/wiki/pmwiki.php?n=TinySA4.MenuTree ; https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Specification
+  14.
+    - **Claim:** AUX 12 V switch: AO3401 P-FET with a 2N7002 driver, gate pulled to OFF and pulled to ground when ON.
+    - **Why:** The AO3401A V_GS absolute maximum is ±12 V (AOS datasheet, from memory; verify). With the source on a 12 V rail and the gate at ground, V_GS = -12 V, exactly at the limit. Rail overshoot, or a 13.4 V LNB rail, exceeds it.
+    - **Correction:** Clamp V_GS to about -8 to -10 V with a gate divider or zener, or use a P-FET rated ±20 V V_GS.
+    - **Source:** AOS AO3401A datasheet (not fetched this session)
+  15.
+    - **Claim:** HF/extra sweep: Sun noise rise of 0.5-1.5 dB at 10.5 GHz with a 21-23 dBi horn and the Bullseye LNB.
+    - **Why:** My calculation: ΔT = S·Ae/(2k). With S about 250-350 sfu and Ae(22 dBi, 10.5 GHz) about 0.010 m², ΔT is about 9-13 K. With Tsys about 70-110 K (0.5 dB NF LNB, sky and spillover), Y is about 0.35-0.7 dB. The L-band estimate (about 0.5-1.2 dB) is fine.
+    - **Correction:** Expect about 0.3-0.7 dB at 10.5 GHz. Integrate 30-60 s per state and take care with gain drift.
+    - **Source:** Calculation; Bullseye NF from https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+- **Confirmed:**
+  - Leo Bodnar Mini (leobodnar.com, 18 Oct 2026): 400 Hz-810 MHz; square wave, '3.3V CMOS levels with 50 Ohms characteristic impedance'; +6.4/+9.0/+9.9/+10.3 dBm at 8/16/24/32 mA (10 MHz); phase noise -125 dBc/Hz at 100 Hz and -155 dBc/Hz at 1 MHz; USB 5 V, 250 mA max; 70x41x15 mm; ships with an active GPS antenna (magnetic base); 'All settings are stored inside the device and maintain values when off'; GBP 132, in stock; vendor tools are Windows and macOS only.
+  - lbgpsdo (github.com/hamarituc/lbgpsdo): lbgpsdo.py supports 'Classic Leo Bodnar GPSDO mini' with PLL/divider plan, output enable and --level CURRENT; lbe142x.py supports the LBE-1421 (PLL/FLL, PPS on output 1, drive level, --save); needs the python 'hid' package and 99-lbgpsdo.rules. The Radxa 6.18 kernel has CONFIG_HIDRAW=y.
+  - Lime clock page: Rakon E6245LF 30.72 MHz VCTCXO (±50 ppb); J4/M.2 pin 28 accepts 10-52 MHz at 1.8-3.3 V, with no impedance or coupling given; J3 is 3.3 V CMOS on MHF4; the 1PPS M.2 input is 'not populated' and is selected by moving resistors; damage warning present. Firmware 13628a9: vPhyTimerPPSINHandler is a weak stub, so there is no GPSDO loop (the known firmware issue). The firmware also accepts an external reference only in the 10-52 MHz range.
+  - LiteVNA user guide: 50 kHz-6.3 GHz; dynamic range >70 dB below 3 GHz and >50 dB at 3 GHz and above (calibrated); stability <0.5 ppm; single mixer; microSD; TDR/DTF by IFFT; the USB protocol exposes averaging/IFBW and coarse source-power registers. NanoVNA-Saver main has a LiteVNA64 class and TinySA/TinySA_Ultra classes, and the README install route is pipx.
+  - PySide6 / PySide6-Essentials / PySide6-Addons 6.12.0 ship cp310-abi3 manylinux_2_39_aarch64 wheels (aarch64 wheels since 6.5.3). Ubuntu noble has glibc 2.39, so NanoVNA-Saver and QtTinySA (PySide6 + pyqtgraph, pure-Python wheel) can be installed with pip on the Q6A. This resolves the 'PySide6 arm64 unverified' point for wheel availability, not for runtime behaviour.
+  - tinySA Ultra/Ultra+ wiki spec: normal mode to 900 MHz on Ultra+; ULTRA mode to 7.3 GHz on the ZS407; absolute maximum +6 dBm at 0 dB attenuation and +20 dBm short peak at 30 dB; ±5 V DC; DANL -102 dBm (30 kHz RBW) and -145 dBm (200 Hz RBW with LNA); generator -115 to -19 dBm in 1 dB steps, ±2 dB from -72 to -19 dBm up to 800 MHz; LNA NF 5 dB; charges in up to 1 h from a port of 500 mA or more; Ultra+ runs at least 3 h.
+  - Y-factor maths in the sweeps is correct: F = ENR_lin/(Y-1) for Tc = T0; general F = (ENR - Y(Tc/T0 - 1))/(Y - 1); second stage F1 = F_sys - (F2-1)/G1, with G1 from the hot-minus-cold power deltas; NF(dB) = ENR(dB) - 10log10(Y-1). Pad correction ENR_out = ENR_in/L is right. The MDS formula NF = P_MDS + 174 - 10log10(ENBW) is right for the S=N definition with pads at 290 K. A 0.05 dB scatter target needs B·τ of about 7.5e3 (e.g. 75 ms at 100 kHz), which is easily achievable.
+  - LimeSDR Micro VCTCXO tuning can resolve ppb steps: from the antennas.json figures (16-bit AD5693, 7.5 ppm/V, ±5 ppm pull) one LSB is about 0.29 ppb. This settles the sweep's 'DAC steps fine enough?' question; it is not a hardware test.
+  - Radxa 6.18.2-4-qcom kernel config: CONFIG_USB_VIDEO_CLASS=m (UVC, so the TC001 path is possible), USB_ACM=m (LiteVNA, tinySA, Debug Probe), USB_SERIAL_CH341/CP210X/FTDI_SIO=m, HIDRAW=y, I2C_CHARDEV=y, SPI_SPIDEV=m (AS3935), PWM_GPIO=m (pwm-gpio fan overlay), GPIO_PCA953X=y. CONFIG_PPS_CLIENT_GPIO is not set on 6.18 (=m on 7.0.11), matching the gnss_imu note.
+  - Skyfield from_omm() first appeared in v1.49 (13 June 2024), so apt python3-skyfield 1.48 lacks it and pip 1.55 is needed.
+  - Harmonic arithmetic: 74 x 10 MHz = 740.000 MHz, 170 x 10 MHz = 1700.000 MHz, 12 MHz x 12/36/142 = 144/432/1704 MHz, PCIe 100 MHz x 17 = 1700 MHz. These even harmonics are a real risk: with a duty-cycle error δ, the nth even harmonic is about (2/nπ)·sin(nπδ). For δ around 1% at n of about 74, that is the same order as the odd harmonics (my calculation).
+  - AD8318 module (Silicon Chip): supply of at least 7.5 V (78L05), AD8318 68 mA typical, output 0.5-4.6 V, measured slope -24.33 mV/dB, about 60 dB accurate range, 1 MHz-8 GHz, rated -65 to +5 dBm. A divider in front of a 3.3 V ADS1115 is justified.
+  - Bullseye LNB: 9750/10600 MHz LO, ±10 kHz at 23 °C and ±30 kHz over -20 to 60 °C, NF 0.5 dB, vertical polarisation at about 11.5-14 V. The QO-100 NB IF of 739.5-740 MHz with the 9750 MHz LO is correct.
+  - Power arithmetic: Pinecil on 4S, 13.6²/6.2 = 29.8 W to 16.4²/6.2 = 43.4 W (2.2-2.65 A); 20 W for 10 min is 3.3 Wh; pack runtime 62-65 Wh / 25-28 W = 2.2-2.6 h; bank scenario about 35-42 W gives 1.8-2.1 h from about 75 Wh. USB stream estimates are right: V4L at 2.4 Msps is 38.4 Mb/s, TC001 256x384 YUYV at 25 Hz is 39.3 Mb/s, fx2lafw at 24 MS/s is 192 Mb/s, Hantek at 30 MS/s is 240 Mb/s. Five hubs in series is within the USB 2.0 limit.
+- **Missing:**
+  - Loss-of-reference handling for the Lime external clock: the firmware has no fallback or detection, and the LA9310 sample clock comes from LMS7002M CGEN. Add a rule to the procedures and to Quiet mode: always select internal before the GPSDO is unplugged, powered off or reconfigured, and re-run limeConfig after every reboot (the firmware boots on internal).
+  - Pick a calibration-tone frequency that does not sit on Lime spurs. For the default RX-port DAC calibration, use a GPSDO frequency that is not commensurate with 30.72 MHz (e.g. a 10 MHz harmonic at 430 MHz). An exact sub-multiple of 30.72 MHz lands within ε·f of the Lime's own VCTCXO-harmonic spurs (about ±37 Hz at 737.28 MHz for ±50 ppb, ±737 Hz at 1 ppm), which makes the line ambiguous. Use 30.72 MHz only for J4. A 10 MHz J4 reference is accepted by the firmware but makes CGEN and the SX PLLs fractional (a few ppb of rate quantisation, if the fraction is 20-bit) and raises PLL in-band noise by about 20log(3.072) = 9.7 dB (my calculation).
+  - Lime board hazard from the firmware source: routing the reference clock to the M.2 SMBus CLK pin 'can affect host system stability (freeze/reboot)'. The firmware disables it (IC15 GPA6) only after it loads. Check that the Q6A M.2 riser leaves the SMBus pins unconnected, or verify them.
+  - No instrument in the lab can verify a 30.72 MHz clock waveform or level at J4: the Hantek is 20 MHz and 30 MS/s. Either add a scope or probe of 100 MHz or more, or accept DMM DC-average plus tinySA harmonic checks.
+  - Python environment conflict: NanoVNA-Saver main pins numpy~=2.1 and scipy~=1.14, while the lab venv pins numpy<2 for apt GNU Radio/SciPy. NanoVNA-Saver (and QtTinySA) must live in their own pipx venv, never in the --system-site-packages lab venv.
+  - Y-factor second-stage calibration (P7): measure F2 with exactly the same SDR gain, bandwidth and any post-LNA pad as the DUT run. With ENR around 20 dB and a 1 dB-NF LNA, Y is about 19 dB, so check RTL 8-bit headroom (hot state not clipping, cold state RMS of at least several counts) at the chosen gain. The procedure states neither point.
+  - VNA cal-kit models: the generic OSL kits are uncharacterised. At 2.2-2.4 GHz, an open/short offset delay of tens of ps gives tens of degrees of S11 phase error. Enter the known offset delay and C0 in NanoVNA-Saver, or limit phase-critical work to below about 1 GHz. Also recalibrate after any span change (TDR span vs S-parameter span).
+  - USB TT topology: only full-speed devices plugged directly into the MTT CH334F get their own TT. Everything behind the generic bench hub (probably single-TT) shares one 12 Mb/s TT. That is fine for the CDC/HID instruments, but it should be stated.
+  - I2C LAB BUS: PCA9306 is a passive translator, not a buffer. It sits in series with the header's auto-direction UM3204H/UM3304 translators, which tend to misbehave with extra capacitance and pull-ups. Use a TCA9517-class repeater, or a PCA9615 differential link for the 1 m cable, and set the pull-up values deliberately.
+  - AUX 0.5 A PTC margin: sled (LNB about 0.2-0.3 A plus LNA bias of about 0.16 A via the 5 V buck from 12 V) totals about 0.36-0.46 A, close to the hold current of a 0.5 A PTC, and PTC hold current derates with temperature. Expect nuisance trips unless the hold rating or the load is changed.
+  - PCIe refclk: if SSC down-spread (0.5%) is active, the 17th harmonic smears over about 1691.5-1700 MHz rather than sitting exactly at 1700.000 (my calculation; the Q6A SSC state is unknown). Look for a smear, not a line, in the EMI audit.
+  - The PPS-dependent methods (software P2 Method B, the RP2040 PPS tee, chrony PPS) depend on pps-gpio, which is not built in the pinned 6.18 kernel. The lab procedures should reference the out-of-tree module step from gnss_imu.
+- **Notes:** The overall stack is technically workable. This pass found 15 concrete corrections, three of them load-bearing for procedures:
+  1. LimeSDR Micro external-reference selection exists in code (limeConfig --refclk/--refclk_source plus M4 firmware handler, 10-52 MHz, mux on IC15 GPA5) but not in SoapySDR. The real firmware issues are the PPS_IN stub (no GPSDO loop) and no loss-of-reference fallback while the LA9310 sample clock is derived from CGEN.
+  2. Lime RX is specified only for 0.3-2.6 GHz and 3.3-3.8 GHz, on separate ports, not 30 MHz-3.8 GHz.
+  3. The tinySA has no tracking generator.
+  
+  The LiteVNA LNA test as written drives 30-41 dB LNAs into compression, because source power is only coarsely settable (MS5351/MAX2871 register steps 0x01-0x03, default maximum). It is a 1-path S11/S21 instrument, so S22/S12 need DUT reversal.
+  
+  Physics checks:
+  - Y-factor formulas are correct, but the Tsys formula as written gives T_rx.
+  - An uncalibrated noise source characterised on the tinySA gives ENR at ±2-3 dB, which passes 1:1 into NF; such NF numbers are relative only.
+  - With 30-100 ns of PPS jitter, the RP2040 counter is PPS-limited (about 0.5-1.5 ppb at 100 s), not count-limited.
+  - VCTCXO calibration to ppb is momentary; the spec of ±50 ppb over temperature plus ±1.5-2 ppm first-year ageing governs afterwards.
+  
+  Q6A software and kernel:
+  - Wheels exist for PySide6 aarch64 (manylinux_2_39), so NanoVNA-Saver and QtTinySA can install, but they need numpy 2 in their own pipx venv.
+  - The OpenHantek arm64 .deb is a release asset.
+  - sigrok on noble also supports the 6022BL scope mode (fx2lafw-hantek-6022bl.fw).
+  - UVC, ACM, HIDRAW and spidev are present in the 6.18 kernel. pinctrl-mcp23s08 and pps-gpio are absent, so use user-space smbus2 or a PCA953X-family expander for the MCP23017 plan.
+  
+  Electrical design corrections:
+  - LNB feed at 12 V through the ZFBT falls below the Bullseye's 11.5 V minimum; use 13-13.4 V.
+  - A 100-160 mA PTC is below SAWbird operating currents (170-180 mA).
+  - AO3401A V_GS sits at its ±12 V limit on a 12 V rail (from memory; verify).
+  - Drop the LPF on REF IN.
+  
+  Search use: 6 WebSearch calls. Firmware and LimeSuiteNG conclusions come from local clones (LimeSuiteNG limesdr-micro-staging 80ffad5, lmfw 13628a9) in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/src/. The kernel config is at /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl/skeptic_sw/x6182/boot/config-6.18.2-4-qcom. The LiteVNA guide text is at /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/techv_lv/lv.txt.
+  
+  Still unverified:
+  - LiteVNA absolute output power in dBm.
+  - Exact SAWbird P1dB.
+  - AO3401A V_GS (from memory).
+  - Whether J4 is DC-coupled or high-Z.
+  - Whether the Bodnar Mini can make exactly 30.72 MHz.
+  - Hardware behaviour of the external-reference switch on a delivered board.
+
 ## small:lband_sband (run `wf_41027870-8e7`)
 
 - **Band group:** L-band 1.5-1.7 GHz and S-band 2.2-2.4 GHz with antennas of at most 12 cm (STRICT) or 20 cm (SMALL). Dishes and anything tens of cm deployed are EXCLUDED, including the foldable helicones, the 11-turn helix and the 2x2 helix arrays. Rule interpretation as given: STRICT means the largest deployed dimension is about 12 cm or less; SMALL means about 20 cm or less; foldable or telescopic antennas that are larger when deployed are excluded and appear only in the borderline note.
