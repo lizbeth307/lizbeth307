@@ -48,6 +48,7 @@
 | [Narrowband sdr](components/narrowband_sdr.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_eb446444-464` |
 | [Noise source mini circuits zfl 500ln or](components/noise_source_mini_circuits_zfl_500ln_or.md) | · research · forums · fixes ✅ verify | `—` |
 | [Nooelec flamingo fm v2 100813](components/nooelec_flamingo_fm_v2_100813.md) | · research · forums · fixes ✅ verify | `—` |
+| [Nooelec pad kit 2x 30 db pads 2x blk 89](components/nooelec_pad_kit_2x_30_db_pads_2x_blk_89.md) | · research · forums · fixes ✅ verify | `—` |
 | [Nooelec sawbird goes cased 100792](components/nooelec_sawbird_goes_cased_100792.md) | · research · forums · fixes ✅ verify | `—` |
 | [Nooelec sawbird noaa cased 100800](components/nooelec_sawbird_noaa_cased_100800.md) | · research · forums · fixes ✅ verify | `—` |
 | [Npu training](components/npu_training.md) | ✅ research · forums · fixes ✅ verify | `—` |
