@@ -225,7 +225,7 @@
 <text x="441" y="1016" font-size="12" font-weight="normal" text-anchor="start" fill="#111">виміряного I (RILIM — TBD); EN ← MCP #1 GPA4</text>
 <text x="441" y="1031" font-size="12" font-weight="normal" text-anchor="start" fill="#111">запас: TPS2553DBVR (LCSC C55266) лише тут</text>
 <line x1="635" y1="1038" x2="635" y2="1048" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
-<rect x="435" y="1050" width="400" height="40" rx="4" ry="4" fill="#e3f1ff" stroke="#333" stroke-width="1.2"/>
+<rect x="435" y="1050" width="418" height="40" rx="4" ry="4" fill="#e3f1ff" stroke="#333" stroke-width="1.2"/>
 <text x="441" y="1068" font-size="12" font-weight="bold" text-anchor="start" fill="#111">LC SRR1260-101M + EEU-FR1C101 + демпфер 1 Ω/220 мкФ</text>
 <text x="441" y="1083" font-size="12" font-weight="normal" text-anchor="start" fill="#111">+ 2× Fair-Rite 2631480002 (#31) → H4 → Airspy HF+</text>
 <rect x="435" y="1102" width="400" height="40" rx="4" ry="4" fill="#e3f1ff" stroke="#333" stroke-width="1.2"/>
@@ -330,7 +330,7 @@
 <text x="1686" y="1040" font-size="12" font-weight="normal" text-anchor="start" fill="#111">до межі з виміру (нижче 113 mA)</text>
 <text x="1686" y="1055" font-size="12" font-weight="normal" text-anchor="start" fill="#111">±0.345 V лише при IN ≥14.8 V (батарея ≈15.0 V+)</text>
 <text x="1686" y="1070" font-size="12" font-weight="normal" text-anchor="start" fill="#111">ворота: ≥12.0 V на барелі при батареї 13.2 V</text>
-<text x="20" y="1408" font-size="14" font-weight="bold" text-anchor="start" fill="#111">Час роботи за режимами (модель; §5.1, 58 Wh тепло / 50 Wh холод)</text>
+<text x="20" y="1408" font-size="14" font-weight="bold" text-anchor="start" fill="#111">Час роботи (модель; §5.1; 58 Wh тепло / 50 Wh холод)</text>
 <rect x="14" y="1414" width="520" height="212" fill="#fafafa" stroke="#999"/>
 <text x="20" y="1428" font-size="12" font-weight="bold" text-anchor="start" fill="#111">режим</text>
 <text x="285" y="1428" font-size="12" font-weight="bold" text-anchor="start" fill="#111">W</text>
