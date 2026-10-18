@@ -40532,6 +40532,78 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   I fixed one mistranslation from the instruction: 'redrawn clamp bases' is 'перероблені', not 'перекреслені' ('crossed out').
 
+## edit:08_open_bench:b3 (run `wf_b682bee1-8a4`)
+
+- **Section:** 08_open_bench
+- **Applied:**
+  - 80
+  - 81
+  - 82
+  - 83
+  - 84
+  - 85
+  - 86
+  - 87
+  - 88
+  - 89
+  - 90
+  - 91
+  - 92
+  - 93
+  - 94
+  - 95
+  - 96
+  - 97
+  - 98
+  - 99
+  - 100
+  - 101
+  - 103
+  - 104
+  - 105
+  - 106
+  - 107
+  - 108
+  - 109
+  - 110
+  - 111
+  - 112
+  - 113
+  - 114
+  - 115
+  - 116
+  - 117
+  - 118
+  - 119
+- **Skipped:**
+  1.
+    - **Idx:** 102
+    - **Why:** Already in the file. The 'Можливо не враховані в BOM дрібниці' row already says 'перемичка P5 BNC-прохідник → SMA (RG316) і дріт BNC M-M для Boni-Whip (G1 #5; тепер у наборі кабелів 2.10)' (from an earlier batch, change 49). The anchor 'дріт BNC-SMA для Boni-Whip' no longer exists, so there was nothing to replace.
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/08_open_bench.md and built on the edits from earlier batches. All changes are in Ukrainian.
+  
+  **One fix not made with Edit.** Escaping the pipe characters inside table cells (|S21| in two rows, |Z| and |Xs| in the choke row) was done with a short python3 replace on the same file, not with the Edit tool. Without it, those rows broke the table. Every table row now has exactly 3 cells. The file has no subtotals, so nothing needed recomputing.
+  
+  **Conflicts and which source won:**
+  - **90 (re-audit D) vs 110 (G2), display row.** Merged. The gate cell uses the G2 acceptance wording (P5 is higher). The test list keeps all v1 items plus D's tests. I kept the phrase 'стабільність при SYS12 = 11.0 V; VID:PID сенсора' so batch-4 change 157 (G6, higher precedence) can still find its anchor. 157 strikes D's fallback 'VBUS лише з власного 5 V плати' if those pins read above 5.25 V on DC power. I kept that fallback for now; 157 decides.
+  - **91 (D) vs 109 (G2), UFS row.** Merged with no conflict. D's ≥50 MB/s after the cache fits inside G2's 'набагато вище 13.3 MB/s'. G2's 'when' text was added: about W3-5, the EU 14-day withdrawal window, and the guarantee or ALLNET option.
+  - **95 (D) vs 119 (G3), price row.** G3 won on the comparator: MCP65R41 is now listed as verified at DigiKey. The TPS259470A price check stays open because G3 did not verify it. 'IP2368 BZ' became the retail COUT board, with the EU landed price recorded at checkout. The anchors batch 4 needs in this row are untouched.
+  - **104 (G1) vs the existing 'закрито — micro-USB B' (re-audit B).** G1 is higher, so the text now says micro-USB B, to confirm on arrival.
+  - **86 (D, 1e5 bytes) vs the existing 1e6 bytes (re-audit A).** Kept the stricter 1e6 and noted D's minimum. Added pins 16-18, SE6, `$PQTMVERNO*58`, the gcc-12 vermagic check and the aptly mirror into the existing B4/B5 row; the old 'Q6A: TX UART6' anchor no longer exists. 111 (Pico) was put before that row.
+  - **99 (Uputronics).** Its anchor was already replaced by earlier batches. I merged the remaining items instead: about 4.4 V at the preamp (model) in the currents row, and the IOSS/shipping and GBP 51.59 note in the existing conductive Uputronics row.
+  - **100 (HMC7992).** Its anchor was already rewritten, so I replaced the current 'лишаються втрати і розв'язка…' phrase instead. Rows 100, 105, 107 and 113 were inserted after the RF row in that order.
+  
+  **Merged rather than repeated:**
+  - Section 8.1 (08b_new_gates_reaudit.md) already holds many of the same tests. The new rows point to those 8.1 rows by ID (V4L-1, V4L-9, RF-0/RF-1, RF-3, RF-6, HF-0/1/2/6/7, HF-13, and the Daly and P50B rows) instead of copying them, and add only what is new.
+  - 94 went into the first cell of the currents row, so batch-4 change 151's anchors stay intact.
+  - 111's GP23 A/B test was merged into the existing 'Pico ADC' row.
+  - In 97 I left out the TPS2553 trip numbers. G1 cites 262-342 mA, but this file says 265-339 mA, and I did not want to add a third figure.
+  
+  **Wording choices for the hard rules.** In the choke row I wrote 'витки' and 'DC-опір кола', not 'петлі', to avoid loop wording. The gate cell says 'не антена і не H-field зонд'. All signal sources stay conducted or receive-only.
+  
+  **For batch 4:**
+  - All batch-4 anchors (idx 120-158) are still in the file except 153 and 154. Those were already gone before this batch: earlier changes 45 and 47 had already rewritten them.
+  - Batch-4 change 158 (G6) says the assembly rule is 'no reflow'. The HMC7992 row I added from G1 #4 permits reflow or hot plate plus hot air, the same process the boards already need for the INA3221 and TPS7A4701 VQFNs. Batch 4 needs to reconcile the two.
+
 ## edit:11e_changes_reaudit_D:b1 (run `wf_b7e15d24-3c6`)
 
 - **Section:** 11e_changes_reaudit_D
