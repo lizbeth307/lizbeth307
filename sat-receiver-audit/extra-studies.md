@@ -24596,6 +24596,185 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
       - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json
 - **Notes:** Verdict (angle A): the cheapest candidate that is not worse on every published spec is the IKEA SJÖSS 65W + RUNDHULT 5 A set, at $25.83 incl. DE VAT ($21.71 ex VAT) against the $35-60 estimate. It meets every stack rule: 20 V at 3.25 A, source-only, single port, nothing above 20 V, EU plug. Its internals are solid (Infineon CoolGaN, Injoinic controllers, common-mode choke, X2/Y caps, fuse/MOV/NTC, full potting). But nobody has published its ripple, EMI or thermals, and its 5-35 °C operating range is narrower than ideal. So 'not worse' is CONDITIONAL on goods-in tests: (1) FNB58 PDO dump plus 2.5 h IP2368 charging at 3 A without foldback; (2) receiver noise-floor A/B with the charger plugged in. If it fails, the next cheapest with real measurements is the Xiaomi 65W GaN + UGREEN 5 A cable ($46.07 incl. VAT). It is measured, but its ripple is about 2.2-2.5x the Apple 61W reference and its OCP margin is about 3.1 A, so it is worse in ripple; that is stated, not hidden. Anker 715 qualifies only at the US price ($29.99). The EU price of EUR 42.99 brings the set to about $60.68. The UGREEN Nexode Air 65W specs could not be verified (they are only in images). A 65 W charger meets the stack's 60 W PDO rule. A 100 W unit only matters if the user wants headroom for 20 V/5 A loads such as a full-power DPS-150 at the same time; none of the 65 W candidates gives that. Limits of this pass: the shared WebSearch budget was used up before this agent started, so no WebSearch was run. All data comes from WebFetch/curl on primary pages: ikea.com product pages and its own search API, eu/uk.ugreen.com store JSON, anker.com, mi.com/de, lygte-info.dk, and one ChargerLAB teardown. Not checked: Lenovo 65W USB-C (GX20P92529), Baseus, Cuktech, Lidl/Tronic, any Mouser/DigiKey/TME listing, and the RUNDHULT e-marker. No hard rule is affected: these are mains-to-USB sources only, with no RF emission path beyond normal SMPS EMI.
 
+## searchB:65_100_w_usb_c_pd_charger_5_a_c_c_cable (run `wf_a268b76e-da0`)
+
+- **Part:** 65-100 W USB-C PD charger + 5 A C-C cable (Charging group, core, qty 1). It is the only external power source for the IP2368 4S charger board, and it also powers the Pinecil V2 and DPS-150 at 20 V.
+- **Current price usd:** 35-60 (STACK estimate, status "model"; no specific product is named)
+- **Critical specs:**
+  - Port role SOURCE-ONLY (one-way wall adapter, not DRP). Re-audit D: the retail IP2368 board is a COUT/Try.SRC type, so a DRP source such as the Anker 737 bank will probably flap. A one-way PD adapter is the only certain source.
+  - USB PD 3.0 fixed PDO 20 V >=3.25 A (65 W). STACK floor is PDO >=60 W. The IP2368 at RISET 15k draws about 49-52 W, i.e. about 2.5-2.6 A at 20 V. No PDO above 20 V is needed: TPS259470A OVLO about 22 V, ILIM about 3.5 A. EPR and PPS are not required.
+  - Sustained output: about 52 W for 1.7-2.5 h (1.4 h CC + CV; about 2.5 h when charging in mode B) at up to 35 C ambient, without thermal foldback or PD renegotiation loops.
+  - Output noise at 20 V and about 2.5 A. HKJ benchmarks: 15 mV rms / 166 mVpp (Apple 61 W) and 33 mV rms / 414 mVpp (Xiaomi 65 W). It must also pass the stack's charger on/off HF+ A/B gate (no line >=3 dB above the floor within +/-5 kHz of 40, 60, 77.5, 162, 490, 518 and 4209.5 kHz) and a conducted-only tinySA VBUS spur check.
+  - Safety: hipot pass at 2.83/4.24 kV (HKJ method), fuse, MOV, X2 cap and CM choke, plus OTP/OCP/SCP. Legally sold in the EU (CE) by a traceable seller, not counterfeit.
+  - EU plug, 100-240 V, Class II. No-load power <=0.1 W.
+  - Single port, or a port 1 that delivers 65 W alone with no hard reset when other ports are used.
+  - Operating temperature: at least 0/5-35 C (bench and travel).
+  - Cable: USB-C to C, 5 A e-marked, preferably NON-EPR 100 W (the re-audit wants a non-EPR cable for the Pinecil), about 1 m. VBUS drop <=about 0.25 V at 3.25 A, checked with the FNB58 e-marker readout. Data speed is irrelevant (power only).
+  - Size and weight for the travel kit: about 200 g or less.
+- **Candidates:**
+  1.
+    - **Name:** IKEA SJOSS charger 1x USB-C 65 W, type E2502-EU (art. 006.097.43), plus a separate 5 A non-EPR e-marked C-C cable
+    - **Kind:** other_brand
+    - **Price usd:** Charger: EUR 12.99 incl. VAT at IKEA DE (19%) and IKEA ES (21%), about $14.60 (about $12.27 ex DE VAT). Plus a cable, e.g. the verified reference Ugreen 100 W 5 A 1 m at EUR 10.99 (eu.ugreen.com), about $12.35. Combo about EUR 24 / about $27 incl. VAT. FX at the stack's 1.124 USD/EUR, not re-verified.
+    - **Spec comparison:** Manual (technical data, E2502-EU): 5/9/12/15 V 3 A, 20 V 3.25 A = 65 W, PPS 5-16 V 3 A. PD 3.0 (QC4+ in the manual, QC 3.0 on the web page). Input 100-240 V, 1.6 A max. Declared average active efficiency 83.5% (test point not stated), 73.6% at 10% load, no-load 0.08 W. One USB-C port; it is a wall adapter, so source-only. EU plug. ChargerLAB teardown of the CN twin E2502-CN (10 Oct 2026; same PDO set and input rating): Infineon IGD70R140D2S CoolGaN 700 V primary, Injoinic IP2006 flyback controller plus IP2723T protocol IC, DK5V100R10VL synchronous rectifier, bifilar CM choke plus DM choke, X2 0.15 uF, MOV 10D681K, T3.15 A fuse, 2x 400 V 27 uF + 2x 400 V 33 uF bulk, 680 uF/25 V output, potted. CN unit: 152.5 g, 65x48x32 mm. NOT MEASURED BY ANYONE I FOUND: ripple/noise, hipot, sustained full-load temperature.
+    - **Worse in:** (1) Not proven: there are no independent ripple, hipot or thermal measurements, so it fails the angle-B evidence rule until it is measured. (2) The manual documents thermal foldback to 45 W when hot. During a 1.7-2.5 h charge at about 52 W the IP2368 would auto-derate: about 13% slower charging and possible renegotiation. (3) Operating range 5-35 C, indoor use only (narrower than a field-rated adapter). (4) No cable included. It is cheaper only if all of this passes goods-in tests.
+    - **Compatibility:** Source-only, which avoids the DRP/Try.SRC problem. 20 V is at or below the TPS259470A OVLO (about 22 V) and within the IP2368 input. 3.25 A is below the eFuse ILIM of about 3.5 A. It also feeds the Pinecil V2 (20 V, about 60-65 W) and the DPS-150 (20 V). EU Europlug.
+    - **Risks:** The EU unit may differ from the CN teardown: one IKEA DE reviewer says it has no PPS, while the manual lists PPS, which suggests different firmware. Goods-in qualification with the stack's own tools is required:
+  - FNB58: PDO list, plus a 2.5 h log at IP2368 full load at 25 and 35 C to look for foldback.
+  - Hantek 6022BE: ripple at 20 V / 2.6 A, which must be no worse than the HKJ benchmarks (<=33 mV rms, <=414 mVpp).
+  - tinySA: conducted VBUS spur scan through a DC block and attenuator (conducted only).
+  - HF+ charger on/off A/B gate.
+  IKEA's 365-day return policy makes buy-test-return low risk.
+    - **Seller url:** https://www.ikea.com/de/de/p/sjoess-ladegeraet-mit-1-usb-ausgang-65-w-00609743/
+    - **Sources:**
+      - https://www.ikea.com/de/de/p/sjoess-ladegeraet-mit-1-usb-ausgang-65-w-00609743/
+      - https://www.ikea.com/es/es/p/sjoss-cargador-usb-con-1-puerto-65-w-00609743/
+      - https://www.ikea.com/de/de/manuals/sjoess-ladegeraet-mit-1-usb-ausgang-65-w__AA-2584269-1-2.pdf
+      - https://www.chargerlab.com/teardown-of-the-ikea-sj%C3%B6ss-65w-1-port-usb-charger/
+      - https://eu.ugreen.com/products/ugreen-usb-c-to-usb-c-100w-5a-charger-cable-nylon-braided
+  2.
+    - **Name:** Apple 61 W USB-C Power Adapter A1718 (used)
+    - **Kind:** used
+    - **Price usd:** UNVERIFIED. eBay.de returned HTTP 403 and the search budget was exhausted. The used-market price is unknown.
+    - **Spec comparison:** HKJ (lygte-info.dk, 2018) measured:
+  - PDOs 5 V 2.4 A (as HKJ reports), 9 V 3 A, 20 V 3 A; the output is actually 20.3 V, so 61 W.
+  - Noise 15 mV rms / 166 mVpp at 20 V 2 A, the best of all measured units.
+  - Transformer 62.4 C after 30-60 min at 20 V 3 A.
+  - Hipot 2.83 and 4.24 kV pass; no-load 0.06 W.
+  It is source-only. A 3 A cable is enough, so no 5 A cable is needed.
+    - **Worse in:** 61 W is below the 65 W lower bound of the pick (it still meets the STACK >=60 W PDO floor). It has no 12 V or 15 V PDO. The unit is used and of unknown age, the model is discontinued, and counterfeit risk is high for used Apple adapters.
+    - **Compatibility:** Works with the IP2368 (about 52 W of 61 W) and the Pinecil at 20 V 3 A. Needs an EU duckhead.
+    - **Risks:** Counterfeits. Ageing of the bulk capacitors. Each unit must be re-measured (FNB58 plus scope ripple).
+    - **Seller url:** 
+    - **Sources:**
+      - https://lygte-info.dk/review/USBpower%20Apple%2061W%20USB-C%20Power%20Adapter%20UK.html
+  3.
+    - **Name:** Xiaomi Mi 65W USB-C charger CDQ07ZM (China-market unit)
+    - **Kind:** other_brand
+    - **Price usd:** UNVERIFIED (2019 model; current availability and price not checked).
+    - **Spec comparison:** HKJ measured:
+  - PDOs 5/9/12/15 V 3 A and 20 V 3.25 A.
+  - About 3.3 A overload point with a 5 A cable (about 3.1 A with the supplied cable).
+  - Noise 33 mV rms / 414 mVpp at 20 V 2 A.
+  - Hotspot 72.0 C after 1 h at 20 V 3.25 A.
+  - Hipot 2.83/4.24 kV pass; no-load 0.08 W.
+    - **Worse in:** CN flat-pin plug: a China-market product that needs a plug adapter in Europe, so it is not an EU-legal-market unit. It is noisier than the Apple 61 W and hotter. The EU 'Mi 65W GaN' (AD65G) is a different design and was not measured.
+    - **Compatibility:** Electrically fine: source-only, 20 V 3.25 A.
+    - **Risks:** Plug adapter on a 65 W brick; grey import; old stock.
+    - **Seller url:** 
+    - **Sources:**
+      - https://lygte-info.dk/review/USBpower%20Xiaomi%20Mi%2065W%20USB-C%20charger%20CDQ07ZM%20UK.html
+  4.
+    - **Name:** IKEA SITTBRUNN USB-C to USB-C 1.0 m cable (art. 906.185.40)
+    - **Kind:** other_brand
+    - **Price usd:** EUR 2.50 incl. VAT (about $2.81)
+    - **Spec comparison:** Rated 3 A ('Nennstrom: 3 A'). No e-marker or wattage stated; 480 Mb/s; CE; TPE jacket; over-temperature protection in the plug.
+    - **Worse in:** 3 A with no e-marker is below the 5 A requirement. It caps any 65 W charger at 20 V 3 A = 60 W and limits the Pinecil.
+    - **Compatibility:** Electrically it still covers the IP2368 load of about 52 W, but that would be a silent spec trade, so it is rejected as the 5 A cable.
+    - **Risks:** None beyond the rating.
+    - **Seller url:** https://www.ikea.com/de/de/p/sittbrunn-usb-c-auf-usb-c-weiss-90618540/
+    - **Sources:**
+      - https://www.ikea.com/de/de/p/sittbrunn-usb-c-auf-usb-c-weiss-90618540/
+  5.
+    - **Name:** Generic no-brand 5 A e-marked C-C cables (AliExpress class)
+    - **Kind:** generic_or_clone
+    - **Price usd:** UNVERIFIED
+    - **Spec comparison:** No independent measurements found.
+    - **Worse in:** Unknown e-marker authenticity, wire gauge and plug quality.
+    - **Compatibility:** Acceptable only per unit, after an FNB58 e-marker readout (5 A, >=20 V, non-EPR 100 W preferred) and a VBUS drop test at 3.25 A (<=about 0.25 V per 1 m).
+    - **Risks:** Fake or misprogrammed e-markers; thin VBUS conductors; heating.
+    - **Seller url:** 
+    - **Sources:** []
+  6.
+    - **Name:** No-name 100 W dual USB-C GaN travel charger P-TR-378J-2C100-EU
+    - **Kind:** generic_or_clone
+    - **Price usd:** UNVERIFIED (no seller named)
+    - **Spec comparison:** ChargerLAB teardown (15 Oct 2026):
+  - Each port 5/9/12/15 V 3 A and 20 V 5 A; PPS 5-21 V 5 A; AVS; 65 + 30 W when both ports are used.
+  - DK8712BD AHB with integrated GaN, SR, SW3578 buck.
+  - CM choke, X2 0.22 uF, Y caps; spread-spectrum dithering.
+  - Input 200-240 V only.
+  No ripple, thermal or hipot data.
+    - **Worse in:** No maker, seller or price; no measurements; power splits to 65 + 30 W.
+    - **Compatibility:** Electrically capable (source-only, 20 V 5 A), but untraceable.
+    - **Risks:** Not legally traceable in the EU; unknown safety.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.chargerlab.com/teardown-of-the-100w-dual-usb-c-gan-charger-p-tr-37b-j-2c100-eu/
+  7.
+    - **Name:** Choetech PD72-1C3U 72 W desktop charger
+    - **Kind:** other_brand
+    - **Price usd:** not checked (rejected on safety)
+    - **Spec comparison:** HKJ: USB-C PDOs 5/9/12/15/20 V 3 A; 23 mV rms / 253 mVpp at 20 V 2 A; hotspot 71.2 C; no-load 0.46 W.
+    - **Worse in:** FAILED hipot: arced at 2.83 kV and 4.24 kV, rated unsafe by HKJ. No-load power is 6x higher.
+    - **Compatibility:** n/a
+    - **Risks:** Electrical safety.
+    - **Seller url:** 
+    - **Sources:**
+      - https://lygte-info.dk/review/USBpower%20Choetech%20USB-C%20Desktop%20charger%2072W%20PD72-1C3U%20UK.html
+  8.
+    - **Name:** DIY: industrial 24 V brick (Mean Well class) + USB-PD source module (SW35xx/IP27xx class)
+    - **Kind:** diy
+    - **Price usd:** not verified
+    - **Spec comparison:** No independent measurement of any such combination found.
+    - **Worse in:** Unproven ripple and PD compliance. Adds a second switching stage (a new spur source). Mains-adjacent DIY wiring; larger and heavier.
+    - **Compatibility:** Possible in principle, but it adds a converter and breaks the 'one certified PD adapter' simplicity.
+    - **Risks:** Safety, PD compliance, spurs.
+    - **Seller url:** 
+    - **Sources:** []
+  9.
+    - **Name:** Used OEM laptop USB-C 65 W adapters (Lenovo/Dell/HP, often with a captive cable)
+    - **Kind:** used
+    - **Price usd:** UNVERIFIED (eBay.de 403; search budget exhausted)
+    - **Spec comparison:** Typically 20 V 3.25 A, single port, source-only (not measured here). No independent ripple, hipot or thermal measurement located in this pass.
+    - **Worse in:** No measured evidence. Wear on the captive cable; unknown history; counterfeit OEM bricks are common.
+    - **Compatibility:** Electrically suitable if genuine.
+    - **Risks:** Counterfeits; aged capacitors.
+    - **Seller url:** 
+    - **Sources:** []
+  10.
+    - **Name:** CURRENT PICK (keep the spec): 65-100 W one-way USB-C PD wall adapter + 5 A non-EPR e-marked C-C cable, each FNB58-qualified
+    - **Kind:** current_part
+    - **Price usd:** 35-60 (estimate)
+    - **Spec comparison:** Reference row. The 'budget alternative' Anker 737 bench bank is NOT a substitute: it is DRP (unproven with the Try.SRC IP2368 board) and costs $109.99.
+    - **Worse in:** n/a
+    - **Compatibility:** Matches the re-audit rule: one-way PD adapter >=60 W, FNB58-qualified, 20 V within the TPS259470A OVLO.
+    - **Risks:** None new.
+    - **Seller url:** 
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json
+- **Notes:** Angle-B verdict:
+  - No candidate is both cheaper and PROVEN not-worse by independent measurements. Keep the current spec as the default.
+  - Best lead: IKEA SJOSS 65 W E2502-EU at EUR 12.99 incl. VAT (DE and ES), about $14.60, plus a 5 A non-EPR cable. The combo is about $27 against $35-60.
+  - Its datasheet values match the 65 W pick. It is EU-legal and source-only, and its GaN/SR/EMI build is documented by a ChargerLAB teardown of the CN twin.
+  - But no ripple, hipot or sustained-thermal measurement exists. The manual also states thermal foldback to 45 W and a 5-35 C operating range.
+  - So treat it as buy-and-qualify, not as a proven analog. Adopt it only if it passes the stack's own goods-in tests:
+    - FNB58: PDO list and a 2.5 h full-load log at 25 and 35 C, with no foldback.
+    - Hantek: ripple at 20 V / 2.6 A no worse than the HKJ benchmark (33 mV rms / 414 mVpp).
+    - tinySA: conducted VBUS spur scan.
+    - The HF+ charger on/off A/B gate.
+  - If any test fails, return it under IKEA's 365-day policy and keep the current part.
+  
+  Measured references (HKJ):
+  - Apple 61 W A1718 is the quietest (15 mV rms / 166 mVpp, hipot pass), but it is 61 W with no 12/15 V PDOs, and only available used at an unverified price. It is worse in power.
+  - Xiaomi CDQ07ZM is a China-market unit with a CN plug.
+  - Choetech PD72 failed hipot.
+  
+  Cable:
+  - Keep 5 A e-marked, preferably non-EPR 100 W (the re-audit asks for a non-EPR cable for the Pinecil).
+  - Ugreen 100 W 5 A 1 m at EUR 10.99 (eu.ugreen.com, verified) is a brand reference for angle A.
+  - IKEA SITTBRUNN (3 A, no e-marker, EUR 2.50) is worse: it caps the charger at 60 W.
+  - Generic AliExpress cables are acceptable only per unit after an FNB58 e-marker readout and a VBUS drop test.
+  
+  Method limits:
+  - The shared WebSearch budget was already exhausted at my first query. All facts above come from WebFetch or curl of primary pages: IKEA DE/ES product pages and the IKEA manual PDF, ChargerLAB teardowns, HKJ lygte-info reviews, the Ugreen EU store, and the STACK/re-audit files.
+  - I used IKEA store-search JSON that another agent had already saved in the scratchpad, and re-checked it against IKEA's live product pages.
+  - eBay.de returned 403, so every used-market price is UNVERIFIED.
+  - FX: 1.124 USD/EUR (the rate used elsewhere in the stack), not re-verified.
+  
+  Hard rules: no impact. This is a passive mains adapter, with no RF source, no loop and no TX.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
