@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1500" height="1158" viewBox="0 0 1500 1158" font-family="DejaVu Sans, Arial, Helvetica, sans-serif">
+<title>04-header-40pin — 40-pin хедер Q6A, v2, 18.10.2026</title>
+<rect x="0" y="0" width="1500" height="1158" fill="#ffffff"/>
+<text x="20" y="32" font-size="16" font-weight="bold" text-anchor="start" fill="#111">P7 · 04 · 40-pin хедер Radxa Dragon Q6A — карта сигналів (кольором — функція)</text>
+<text x="20" y="52" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Джерело: STACK.md v2 §5.2 «40-pin хедер», «Розширювачі», «Pico»; рішення D12. Напрям — з боку Q6A; логіка хедера 3.3 V, транслятор рівня — у дужках.</text>
+<rect x="683" y="88" width="94" height="766" rx="6" fill="#212529" stroke="#000"/>
+<text x="730" y="80" font-size="12" font-weight="bold" text-anchor="middle" fill="#111">хедер J (вид зверху)</text>
+<rect x="691" y="96" width="28" height="28" fill="#f4a261" stroke="#fff" stroke-width="1.5"/>
+<text x="705" y="114" font-size="12" font-weight="bold" text-anchor="middle" fill="#111">1</text>
+<line x1="689" y1="110" x2="679" y2="110" stroke="#f4a261" stroke-width="2"/>
+<text x="675" y="107" font-size="13" font-weight="bold" text-anchor="end" fill="#111">3.3 V (3V3_Q6A)</text>
+<text x="675" y="122" font-size="12" font-weight="normal" text-anchor="end" fill="#333">VDD MCP23017 #1/#3/#4; детектор GP14 Pico (10k)</text>
+<circle cx="755" cy="110" r="14" fill="#e63946" stroke="#fff" stroke-width="1.5"/>
+<text x="755" y="114" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">2</text>
+<line x1="771" y1="110" x2="781" y2="110" stroke="#e63946" stroke-width="2"/>
+<text x="785" y="107" font-size="13" font-weight="bold" text-anchor="start" fill="#111">5 V</text>
+<text x="785" y="122" font-size="12" font-weight="normal" text-anchor="start" fill="#333">VCC плати LC76G (пін 2 або 4); ніколи 3.3 V</text>
+<circle cx="705" cy="148" r="14" fill="#9b5de5" stroke="#fff" stroke-width="1.5"/>
+<text x="705" y="152" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">3</text>
+<line x1="689" y1="148" x2="679" y2="148" stroke="#9b5de5" stroke-width="2"/>
+<text x="675" y="145" font-size="13" font-weight="bold" text-anchor="end" fill="#111">GPIO24 (UM3204H) ← ALERT INA228</text>
+<text x="675" y="160" font-size="12" font-weight="normal" text-anchor="end" fill="#333">відкритий стік; підтяжка лише до 3.3 V хедера</text>
+<circle cx="755" cy="148" r="14" fill="#e63946" stroke="#fff" stroke-width="1.5"/>
+<text x="755" y="152" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">4</text>
+<line x1="771" y1="148" x2="781" y2="148" stroke="#e63946" stroke-width="2"/>
+<text x="785" y="145" font-size="13" font-weight="bold" text-anchor="start" fill="#111">5 V</text>
+<text x="785" y="160" font-size="12" font-weight="normal" text-anchor="start" fill="#333">VCC плати LC76G (пін 2 або 4) або VCC_5V_PERI</text>
+<circle cx="705" cy="186" r="14" fill="#9b5de5" stroke="#fff" stroke-width="1.5"/>
+<text x="705" y="190" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">5</text>
+<line x1="689" y1="186" x2="679" y2="186" stroke="#9b5de5" stroke-width="2"/>
+<text x="675" y="183" font-size="13" font-weight="bold" text-anchor="end" fill="#111">GPIO25 (UM3204H) ← INT MCP23017</text>
+<text x="675" y="198" font-size="12" font-weight="normal" text-anchor="end" fill="#333">INTA/INTB віддзеркалені, відкритий стік</text>
+<circle cx="755" cy="186" r="14" fill="#495057" stroke="#fff" stroke-width="1.5"/>
+<text x="755" y="190" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">6</text>
+<line x1="771" y1="186" x2="781" y2="186" stroke="#495057" stroke-width="2"/>
+<text x="785" y="183" font-size="13" font-weight="bold" text-anchor="start" fill="#111">GND*</text>
+<text x="785" y="198" font-size="12" font-weight="normal" text-anchor="start" fill="#333">земля</text>
+<circle cx="705" cy="224" r="14" fill="#9b5de5" stroke="#fff" stroke-width="1.5"/>
+<text x="705" y="228" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">7</text>
+<line x1="689" y1="224" x2="679" y2="224" stroke="#9b5de5" stroke-width="2"/>
+<text x="675" y="221" font-size="13" font-weight="bold" text-anchor="end" fill="#111">GPIO96 (UM3304) ← PPS LC76G</text>
+<text x="675" y="236" font-size="12" font-weight="normal" text-anchor="end" fill="#333">дріт ≤20 см; pps-gpio → /dev/pps-gnss</text>
+<circle cx="755" cy="224" r="14" fill="#90be6d" stroke="#fff" stroke-width="1.5"/>
+<text x="755" y="228" font-size="12" font-weight="bold" text-anchor="middle" fill="#111">8</text>
+<line x1="771" y1="224" x2="781" y2="224" stroke="#90be6d" stroke-width="2"/>
+<text x="785" y="221" font-size="13" font-weight="bold" text-anchor="start" fill="#111">debug UART5 (UM3204H)</text>
+<text x="785" y="236" font-size="12" font-weight="normal" text-anchor="start" fill="#333">консоль, зарезервовано; GNSS сюди ніколи</text>
+<circle cx="705" cy="262" r="14" fill="#495057" stroke="#fff" stroke-width="1.5"/>
+<text x="705" y="266" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">9</text>
+<line x1="689" y1="262" x2="679" y2="262" stroke="#495057" stroke-width="2"/>
+<text x="675" y="259" font-size="13" font-weight="bold" text-anchor="end" fill="#111">GND*</text>
+<text x="675" y="274" font-size="12" font-weight="normal" text-anchor="end" fill="#333">земля</text>
+<circle cx="755" cy="262" r="14" fill="#90be6d" stroke="#fff" stroke-width="1.5"/>
+<text x="755" y="266" font-size="12" font-weight="bold" text-anchor="middle" fill="#111">10</text>
+<line x1="771" y1="262" x2="781" y2="262" stroke="#90be6d" stroke-width="2"/>
+<text x="785" y="259" font-size="13" font-weight="bold" text-anchor="start" fill="#111">debug UART5 (UM3204H)</text>
+<text x="785" y="274" font-size="12" font-weight="normal" text-anchor="start" fill="#333">консоль у сервісному лючку (+ GND)</text>
+<circle cx="705" cy="300" r="14" fill="#e9ecef" stroke="#fff" stroke-width="1.5"/>
+<text x="705" y="304" font-size="12" font-weight="bold" text-anchor="middle" fill="#111">11</text>
+<line x1="689" y1="300" x2="679" y2="300" stroke="#e9ecef" stroke-width="2"/>
+<text x="675" y="297" font-size="13" font-weight="bold" text-anchor="end" fill="#111">—</text>
+<text x="675" y="312" font-size="12" font-weight="normal" text-anchor="end" fill="#333">не використовується</text>
+<circle cx="755" cy="300" r="14" fill="#b5838d" stroke="#fff" stroke-width="1.5"/>
+<text x="755" y="304" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">12</text>
+<line x1="771" y1="300" x2="781" y2="300" stroke="#b5838d" stroke-width="2"/>
+<text x="785" y="297" font-size="13" font-weight="bold" text-anchor="start" fill="#111">SWCLK → Pico (UM3304)</text>
+<text x="785" y="312" font-size="12" font-weight="normal" text-anchor="start" fill="#333">лише сервіс (OpenOCD)</text>
+<circle cx="705" cy="338" r="14" fill="#4895ef" stroke="#fff" stroke-width="1.5"/>
+<text x="705" y="342" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">13</text>
+<line x1="689" y1="338" x2="679" y2="338" stroke="#4895ef" stroke-width="2"/>
+<text x="675" y="335" font-size="13" font-weight="bold" text-anchor="end" fill="#111">I2C0 (CJ3134K)</text>
+<text x="675" y="350" font-size="12" font-weight="normal" text-anchor="end" fill="#333">INA228 0x40 або 0x45; labpowerd</text>
+<circle cx="755" cy="338" r="14" fill="#495057" stroke="#fff" stroke-width="1.5"/>
+<text x="755" y="342" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">14</text>
+<line x1="771" y1="338" x2="781" y2="338" stroke="#495057" stroke-width="2"/>
+<text x="785" y="335" font-size="13" font-weight="bold" text-anchor="start" fill="#111">GND*</text>
+<text x="785" y="350" font-size="12" font-weight="normal" text-anchor="start" fill="#333">земля</text>
+<circle cx="705" cy="376" r="14" fill="#4895ef" stroke="#fff" stroke-width="1.5"/>
+<text x="705" y="380" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">15</text>
+<line x1="689" y1="376" x2="679" y2="376" stroke="#4895ef" stroke-width="2"/>
+<text x="675" y="373" font-size="13" font-weight="bold" text-anchor="end" fill="#111">I2C0 (CJ3134K)</text>
+<text x="675" y="388" font-size="12" font-weight="normal" text-anchor="end" fill="#333">INA228; i2cdetect показує адресу, не UU</text>
+<circle cx="755" cy="376" r="14" fill="#2a9d8f" stroke="#fff" stroke-width="1.5"/>
+<text x="755" y="380" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">16</text>
+<line x1="771" y1="376" x2="781" y2="376" stroke="#2a9d8f" stroke-width="2"/>
+<text x="785" y="373" font-size="13" font-weight="bold" text-anchor="start" fill="#111">UART6 (UM3204H) ↔ LC76G</text>
+<text x="785" y="388" font-size="12" font-weight="normal" text-anchor="start" fill="#333">/dev/ttyHS1 → /dev/lab/gnss; gpsd -b</text>
+<circle cx="705" cy="414" r="14" fill="#f4a261" stroke="#fff" stroke-width="1.5"/>
+<text x="705" y="418" font-size="12" font-weight="bold" text-anchor="middle" fill="#111">17</text>
+<line x1="689" y1="414" x2="679" y2="414" stroke="#f4a261" stroke-width="2"/>
+<text x="675" y="411" font-size="13" font-weight="bold" text-anchor="end" fill="#111">3.3 V (3V3_Q6A)</text>
+<text x="675" y="426" font-size="12" font-weight="normal" text-anchor="end" fill="#333">як пін 1; 5-жильний джгут розширювачів</text>
+<circle cx="755" cy="414" r="14" fill="#2a9d8f" stroke="#fff" stroke-width="1.5"/>
+<text x="755" y="418" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">18</text>
+<line x1="771" y1="414" x2="781" y2="414" stroke="#2a9d8f" stroke-width="2"/>
+<text x="785" y="411" font-size="13" font-weight="bold" text-anchor="start" fill="#111">UART6 (UM3204H) ↔ LC76G</text>
+<text x="785" y="426" font-size="12" font-weight="normal" text-anchor="start" fill="#333">alias serial1 = .../serial@998000</text>
+<circle cx="705" cy="452" r="14" fill="#e9ecef" stroke="#fff" stroke-width="1.5"/>
+<text x="705" y="456" font-size="12" font-weight="bold" text-anchor="middle" fill="#111">19</text>
+<line x1="689" y1="452" x2="679" y2="452" stroke="#e9ecef" stroke-width="2"/>
+<text x="675" y="449" font-size="13" font-weight="bold" text-anchor="end" fill="#111">—</text>
+<text x="675" y="464" font-size="12" font-weight="normal" text-anchor="end" fill="#333">не використовується</text>
+<circle cx="755" cy="452" r="14" fill="#495057" stroke="#fff" stroke-width="1.5"/>
+<text x="755" y="456" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">20</text>
+<line x1="771" y1="452" x2="781" y2="452" stroke="#495057" stroke-width="2"/>
+<text x="785" y="449" font-size="13" font-weight="bold" text-anchor="start" fill="#111">GND*</text>
+<text x="785" y="464" font-size="12" font-weight="normal" text-anchor="start" fill="#333">земля</text>
+<circle cx="705" cy="490" r="14" fill="#e9ecef" stroke="#fff" stroke-width="1.5"/>
+<text x="705" y="494" font-size="12" font-weight="bold" text-anchor="middle" fill="#111">21</text>
+<line x1="689" y1="490" x2="679" y2="490" stroke="#e9ecef" stroke-width="2"/>
+<text x="675" y="487" font-size="13" font-weight="bold" text-anchor="end" fill="#111">—</text>
+<text x="675" y="502" font-size="12" font-weight="normal" text-anchor="end" fill="#333">не використовується</text>
+<circle cx="755" cy="490" r="14" fill="#e9ecef" stroke="#fff" stroke-width="1.5"/>
+<text x="755" y="494" font-size="12" font-weight="bold" text-anchor="middle" fill="#111">22</text>
+<line x1="771" y1="490" x2="781" y2="490" stroke="#e9ecef" stroke-width="2"/>
+<text x="785" y="487" font-size="13" font-weight="bold" text-anchor="start" fill="#111">—</text>
+<text x="785" y="502" font-size="12" font-weight="normal" text-anchor="start" fill="#333">не використовується</text>
+<circle cx="705" cy="528" r="14" fill="#e9ecef" stroke="#fff" stroke-width="1.5"/>
+<text x="705" y="532" font-size="12" font-weight="bold" text-anchor="middle" fill="#111">23</text>
+<line x1="689" y1="528" x2="679" y2="528" stroke="#e9ecef" stroke-width="2"/>
+<text x="675" y="525" font-size="13" font-weight="bold" text-anchor="end" fill="#111">—</text>
+<text x="675" y="540" font-size="12" font-weight="normal" text-anchor="end" fill="#333">не використовується</text>
+<circle cx="755" cy="528" r="14" fill="#e9ecef" stroke="#fff" stroke-width="1.5"/>
+<text x="755" y="532" font-size="12" font-weight="bold" text-anchor="middle" fill="#111">24</text>
+<line x1="771" y1="528" x2="781" y2="528" stroke="#e9ecef" stroke-width="2"/>
+<text x="785" y="525" font-size="13" font-weight="bold" text-anchor="start" fill="#111">—</text>
+<text x="785" y="540" font-size="12" font-weight="normal" text-anchor="start" fill="#333">не використовується</text>
+<circle cx="705" cy="566" r="14" fill="#495057" stroke="#fff" stroke-width="1.5"/>
+<text x="705" y="570" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">25</text>
+<line x1="689" y1="566" x2="679" y2="566" stroke="#495057" stroke-width="2"/>
+<text x="675" y="563" font-size="13" font-weight="bold" text-anchor="end" fill="#111">GND*</text>
+<text x="675" y="578" font-size="12" font-weight="normal" text-anchor="end" fill="#333">земля</text>
+<circle cx="755" cy="566" r="14" fill="#e9ecef" stroke="#fff" stroke-width="1.5"/>
+<text x="755" y="570" font-size="12" font-weight="bold" text-anchor="middle" fill="#111">26</text>
+<line x1="771" y1="566" x2="781" y2="566" stroke="#e9ecef" stroke-width="2"/>
+<text x="785" y="563" font-size="13" font-weight="bold" text-anchor="start" fill="#111">—</text>
+<text x="785" y="578" font-size="12" font-weight="normal" text-anchor="start" fill="#333">не використовується</text>
+<circle cx="705" cy="604" r="14" fill="#4895ef" stroke="#fff" stroke-width="1.5"/>
+<text x="705" y="608" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">27</text>
+<line x1="689" y1="604" x2="679" y2="604" stroke="#4895ef" stroke-width="2"/>
+<text x="675" y="601" font-size="13" font-weight="bold" text-anchor="end" fill="#111">I2C2 (UM3204H), 100 kHz</text>
+<text x="675" y="616" font-size="12" font-weight="normal" text-anchor="end" fill="#333">MCP #1 0x20, #3 0x22, #4 0x23 (призначити)</text>
+<circle cx="755" cy="604" r="14" fill="#4895ef" stroke="#fff" stroke-width="1.5"/>
+<text x="755" y="608" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">28</text>
+<line x1="771" y1="604" x2="781" y2="604" stroke="#4895ef" stroke-width="2"/>
+<text x="785" y="601" font-size="13" font-weight="bold" text-anchor="start" fill="#111">I2C2 (UM3204H), 100 kHz</text>
+<text x="785" y="616" font-size="12" font-weight="normal" text-anchor="start" fill="#333">INA3221 0x41/0x43; TCA9517 → LAB BUS</text>
+<circle cx="705" cy="642" r="14" fill="#2a9d8f" stroke="#fff" stroke-width="1.5"/>
+<text x="705" y="646" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">29</text>
+<line x1="689" y1="642" x2="679" y2="642" stroke="#2a9d8f" stroke-width="2"/>
+<text x="675" y="639" font-size="13" font-weight="bold" text-anchor="end" fill="#111">UART7 RX (UM3304) ← Pico GP0</text>
+<text x="675" y="654" font-size="12" font-weight="normal" text-anchor="end" fill="#333">/dev/lab/pico (labinput); ≤20 см</text>
+<circle cx="755" cy="642" r="14" fill="#495057" stroke="#fff" stroke-width="1.5"/>
+<text x="755" y="646" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">30</text>
+<line x1="771" y1="642" x2="781" y2="642" stroke="#495057" stroke-width="2"/>
+<text x="785" y="639" font-size="13" font-weight="bold" text-anchor="start" fill="#111">GND*</text>
+<text x="785" y="654" font-size="12" font-weight="normal" text-anchor="start" fill="#333">земля</text>
+<circle cx="705" cy="680" r="14" fill="#e9ecef" stroke="#fff" stroke-width="1.5"/>
+<text x="705" y="684" font-size="12" font-weight="bold" text-anchor="middle" fill="#111">31</text>
+<line x1="689" y1="680" x2="679" y2="680" stroke="#e9ecef" stroke-width="2"/>
+<text x="675" y="677" font-size="13" font-weight="bold" text-anchor="end" fill="#111">—</text>
+<text x="675" y="692" font-size="12" font-weight="normal" text-anchor="end" fill="#333">не використовується</text>
+<circle cx="755" cy="680" r="14" fill="#2a9d8f" stroke="#fff" stroke-width="1.5"/>
+<text x="755" y="684" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">32</text>
+<line x1="771" y1="680" x2="781" y2="680" stroke="#2a9d8f" stroke-width="2"/>
+<text x="785" y="677" font-size="13" font-weight="bold" text-anchor="start" fill="#111">UART7 TX (UM3304) → Pico GP1</text>
+<text x="785" y="692" font-size="12" font-weight="normal" text-anchor="start" fill="#333">alias serial2 = .../serial@99c000</text>
+<circle cx="705" cy="718" r="14" fill="#ffd166" stroke="#fff" stroke-width="1.5"/>
+<text x="705" y="722" font-size="12" font-weight="bold" text-anchor="middle" fill="#111">33</text>
+<line x1="689" y1="718" x2="679" y2="718" stroke="#ffd166" stroke-width="2"/>
+<text x="675" y="715" font-size="13" font-weight="bold" text-anchor="end" fill="#111">GPIO56 = FP_SPI_MISO (UM3304)</text>
+<text x="675" y="730" font-size="12" font-weight="normal" text-anchor="end" fill="#333">резерв: запасне керування вентилятором</text>
+<circle cx="755" cy="718" r="14" fill="#495057" stroke="#fff" stroke-width="1.5"/>
+<text x="755" y="722" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">34</text>
+<line x1="771" y1="718" x2="781" y2="718" stroke="#495057" stroke-width="2"/>
+<text x="785" y="715" font-size="13" font-weight="bold" text-anchor="start" fill="#111">GND*</text>
+<text x="785" y="730" font-size="12" font-weight="normal" text-anchor="start" fill="#333">земля</text>
+<circle cx="705" cy="756" r="14" fill="#b5838d" stroke="#fff" stroke-width="1.5"/>
+<text x="705" y="760" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">35</text>
+<line x1="689" y1="756" x2="679" y2="756" stroke="#b5838d" stroke-width="2"/>
+<text x="675" y="753" font-size="13" font-weight="bold" text-anchor="end" fill="#111">SWDIO ↔ Pico (UM3304)</text>
+<text x="675" y="768" font-size="12" font-weight="normal" text-anchor="end" fill="#333">лише сервіс (OpenOCD)</text>
+<circle cx="755" cy="756" r="14" fill="#e9ecef" stroke="#fff" stroke-width="1.5"/>
+<text x="755" y="760" font-size="12" font-weight="bold" text-anchor="middle" fill="#111">36</text>
+<line x1="771" y1="756" x2="781" y2="756" stroke="#e9ecef" stroke-width="2"/>
+<text x="785" y="753" font-size="13" font-weight="bold" text-anchor="start" fill="#111">—</text>
+<text x="785" y="768" font-size="12" font-weight="normal" text-anchor="start" fill="#333">не використовується</text>
+<circle cx="705" cy="794" r="14" fill="#e9ecef" stroke="#fff" stroke-width="1.5"/>
+<text x="705" y="798" font-size="12" font-weight="bold" text-anchor="middle" fill="#111">37</text>
+<line x1="689" y1="794" x2="679" y2="794" stroke="#e9ecef" stroke-width="2"/>
+<text x="675" y="791" font-size="13" font-weight="bold" text-anchor="end" fill="#111">—</text>
+<text x="675" y="806" font-size="12" font-weight="normal" text-anchor="end" fill="#333">не використовується</text>
+<circle cx="755" cy="794" r="14" fill="#b5838d" stroke="#fff" stroke-width="1.5"/>
+<text x="755" y="798" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">38</text>
+<line x1="771" y1="794" x2="781" y2="794" stroke="#b5838d" stroke-width="2"/>
+<text x="785" y="791" font-size="13" font-weight="bold" text-anchor="start" fill="#111">RUN → Pico (UM3304)</text>
+<text x="785" y="806" font-size="12" font-weight="normal" text-anchor="start" fill="#333">лише сервіс (OpenOCD)</text>
+<circle cx="705" cy="832" r="14" fill="#495057" stroke="#fff" stroke-width="1.5"/>
+<text x="705" y="836" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">39</text>
+<line x1="689" y1="832" x2="679" y2="832" stroke="#495057" stroke-width="2"/>
+<text x="675" y="829" font-size="13" font-weight="bold" text-anchor="end" fill="#111">GND*</text>
+<text x="675" y="844" font-size="12" font-weight="normal" text-anchor="end" fill="#333">земля</text>
+<circle cx="755" cy="832" r="14" fill="#b5838d" stroke="#fff" stroke-width="1.5"/>
+<text x="755" y="836" font-size="12" font-weight="bold" text-anchor="middle" fill="#fff">40</text>
+<line x1="771" y1="832" x2="781" y2="832" stroke="#b5838d" stroke-width="2"/>
+<text x="785" y="829" font-size="13" font-weight="bold" text-anchor="start" fill="#111">safe-boot ← Pico GP15 (UM3304)</text>
+<text x="785" y="844" font-size="12" font-weight="normal" text-anchor="start" fill="#333">прапорець для раннього unit</text>
+<text x="20" y="892" font-size="14" font-weight="bold" text-anchor="start" fill="#111">Легенда</text>
+<rect x="20" y="908" width="18" height="18" fill="#f4a261" stroke="#333"/>
+<text x="46" y="922" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Живлення 3.3 V (3V3_Q6A)</text>
+<rect x="540" y="908" width="18" height="18" fill="#e63946" stroke="#333"/>
+<text x="566" y="922" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Живлення 5 V</text>
+<rect x="20" y="932" width="18" height="18" fill="#495057" stroke="#333"/>
+<text x="46" y="946" font-size="12" font-weight="normal" text-anchor="start" fill="#111">GND* (звірити зі схемою v1.21)</text>
+<rect x="540" y="932" width="18" height="18" fill="#4895ef" stroke="#333"/>
+<text x="566" y="946" font-size="12" font-weight="normal" text-anchor="start" fill="#111">I2C (I2C0 — INA228; I2C2 — розширювачі, INA3221, LAB BUS)</text>
+<rect x="20" y="956" width="18" height="18" fill="#2a9d8f" stroke="#333"/>
+<text x="46" y="970" font-size="12" font-weight="normal" text-anchor="start" fill="#111">UART (UART6 — GNSS LC76G; UART7 — Pico)</text>
+<rect x="540" y="956" width="18" height="18" fill="#90be6d" stroke="#333"/>
+<text x="566" y="970" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Debug UART5 (консоль, зарезервовано)</text>
+<rect x="20" y="980" width="18" height="18" fill="#9b5de5" stroke="#333"/>
+<text x="46" y="994" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Входи: PPS, ALERT, INT</text>
+<rect x="540" y="980" width="18" height="18" fill="#b5838d" stroke="#333"/>
+<text x="566" y="994" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Сервіс Pico: SWD, RUN, safe-boot</text>
+<rect x="20" y="1004" width="18" height="18" fill="#ffd166" stroke="#333"/>
+<text x="46" y="1018" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Резерв</text>
+<rect x="540" y="1004" width="18" height="18" fill="#e9ecef" stroke="#333"/>
+<text x="566" y="1018" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Не використовується (за §5.2)</text>
+<text x="20" y="1048" font-size="12" font-weight="normal" text-anchor="start" fill="#111">* Номери GND і незадіяних пінів — типова розкладка 40-pin; STACK.md §5.2 їх не перелічує: звірити зі схемою Q6A v1.21 (TBD).</text>
+<text x="20" y="1066" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Розподіл SDA/SCL у парах 13/15 і 27/28 та TX/RX у 8/10 і 16/18 у STACK.md не задано — за схемою v1.21 (TBD); UART7: пін 32 TX, пін 29 RX.</text>
+<text x="20" y="1084" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Жоден запобіжний enable не сидить на GPIO хедера; кожен пін має одного власника (перевірити debugfs pinmux-pins).</text>
+<text x="20" y="1102" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Джгут розширювачів: один 5-жильний від пінів 1/17, 27/28, 5 і GND (роз'єм плати: 3V3_Q6A, GND, SDA, SCL, INT).</text>
+<text x="20" y="1120" font-size="12" font-weight="normal" text-anchor="start" fill="#111">На стороні хедера I2C2 немає підтягувань нижче 10k; 4.7k — на стороні sled; пройти 1e6 читань з нулем помилок.</text>
+<rect x="1060" y="882" width="420" height="160" fill="#fff" stroke="#111" stroke-width="1.6"/>
+<text x="1070" y="906" font-size="14" font-weight="bold" text-anchor="start" fill="#111">04-header-40pin</text>
+<text x="1070" y="930" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Портативний приймач (лише прийом)</text>
+<text x="1070" y="954" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Версія: v2, 18.10.2026 (STACK.md v2 §5.2)</text>
+<text x="1070" y="978" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Одиниці: V, kHz, см; адреси I2C — 7-бітні hex</text>
+<text x="1070" y="1002" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Деталі: 04-pidkliuchennia-pinout.md</text>
+<text x="1070" y="1026" font-size="14" font-weight="bold" text-anchor="start" fill="#b00020">теоретичний проєкт — перевірити на стенді</text>
+</svg>
