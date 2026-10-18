@@ -30625,6 +30625,139 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   No hard-rule issues: the part is a receive-only LNA with high reverse isolation (about -60 dB) and needs no loop or radiating source.
 
+## searchB:nooelec_sawbird_goes_cased_100792 (run `wf_e32114dd-52d`)
+
+- **Part:** Nooelec SAWbird+ GOES cased (SKU 100792): an L-band LNA (LNA, then SAW, then LNA) at 1688 MHz. It sits at the feed of the 4-turn helix or the petal helicone, powered with 4.5 V over the coax from injector ch3, and feeds RTL-B or the Lime (Lime path through a 10-12 dB pad).
+- **Current price usd:** 49.95 (Nooelec store price, checked on the product page on 18 Oct 2026; ships 1 business day; 1-year warranty). EU landed cost: Nooelec ships from the USA, so EU import VAT of 19-27% applies unless it is collected at checkout, about $59-63 (my estimate, not checked). Shipping is free because the Nooelec core order is above $100 ($199.75).
+- **Critical specs:**
+  - Passband must cover 1690-1710 MHz: Meteor HRPT 1700.0, Metop AHRPT 1701.3, FY-3 1704.5, Elektro-L3 LRIT 1691.0, GOES-E HRIT 1694.1. Current part: centre 1688 MHz, 3 dB bandwidth 70 MHz, 10 dB bandwidth 80 MHz. The datasheet plot shows 37-39 dB gain from 1655 to 1720 MHz.
+  - Noise figure 1.2 dB typical (Tn 100-120 K). The first stage sets Tsys (about 125 K in the model). The helix tier is already marginal for HRPT, so every 0.1 dB counts.
+  - Gain 38 dB at 1694 MHz (at least 30 dB on the product page). Enough to swamp the losses after it: RG316 jumper, injector, HMC7992 switch and RTL-B noise figure, and on the Lime path the 10-12 dB pad. With only 30 dB the system NF rises by about 0.15-0.2 dB; with 20 dB by 0.4 dB or more (my cascade estimate).
+  - Out-of-band rejection relative to the passband, read from the datasheet plot: about 45-48 dB at 1805-1880 MHz (LTE B3 / DCS1800 downlink, strong in Europe); about 40 dB at 1525-1600 MHz (Inmarsat/GNSS); 35-45 dB or more at 2.1-2.7 GHz; about 43 dB or more at 433 MHz. Note that the LTE B3 uplink at 1710-1730 MHz falls inside the passband.
+  - Linearity: output P1dB +20 dBm; maximum input 0 dBm. The first stage is unfiltered (LNA, SAW, LNA), so the IIP3 of the first MMIC matters; it is not published.
+  - Match: S11 -12 dB or better and S22 -15 dB or better at the centre frequency (helix feed and coax).
+  - Reverse isolation better than about 60 dB in band and better than 75 dB elsewhere (plot). This keeps receiver LO and spurs off the antenna (receive-only hygiene).
+  - Power: 3.3-5.5 V, 120-160 mA (budget 180 mA). It must accept bias through the RF output SMA (4.5 V from TPS2553 ch3, 300 mA nominal, 240 mA minimum limit). The stack forbids micro-USB power at the antenna.
+  - Mechanics: SMA-F in and out; shielded aluminium case 73.7 x 30.6 x 18.7 mm, 36 g; mounts on SMA under the 18 cm disc outdoors; must survive static at the helix input (the stack adds a bleed resistor).
+  - Sourcing: genuine part from the manufacturer, 1-year warranty, 30-day return; no driver needed (passive RF block, OS-independent).
+- **Candidates:**
+  1.
+    - **Name:** Nooelec SAWbird+ GOES Barebones (SKU 100791)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 44.95 (Nooelec page, 18 Oct 2026)
+    - **Spec comparison:** Covered by the same datasheet (rev 1, 2022-06-24) as 100792: 38 dB gain, NF 1.2 dB, 70/80 MHz bandwidth, OP1dB +20 dBm, 120-160 mA, 3.3-5.5 V, bias through SMA. Electrically identical (same PCB); the product page says the PCB is fully EMI-shielded and has M3 holes.
+    - **Worse in:** Build and ruggedness only: no aluminium enclosure, so the PCB and connectors are exposed when the module is screwed under the disc outdoors. The stack rule allows it only inside a shielded case. A suitable cast-aluminium box with SMA bulkheads costs about $8-15 (estimate, not checked), which uses up the $5 saving, and the extra bulkheads add some loss before the first LNA unless the input SMA is passed straight through.
+    - **Compatibility:** Same power, connectors and current. Fits only if an enclosure is added.
+    - **Risks:** Adding an enclosure yourself adds connector loss and moisture paths. The net saving is $0 or negative.
+    - **Seller url:** https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-goes.html
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-goes.html
+      - https://www.nooelec.com/store/downloads/dl/file/id/108/product/296/sawbird_goes_datasheet_revision_1.pdf
+  2.
+    - **Name:** Used Nooelec SAWbird+ GOES (eBay / EU classifieds)
+    - **Kind:** used
+    - **Price usd:** Not checked: eBay returned HTTP 403 and no EU listing could be priced.
+    - **Spec comparison:** Same design, so nominally identical to the datasheet. Each unit would need our own incoming measurements: LiteVNA S21 and S11 from 1.6 to 1.8 GHz and 1 to 4 GHz against the datasheet plot, current 120-160 mA at 5 V, and a Y-factor NF check with the lab noise source and the tinySA.
+    - **Worse in:** No warranty (Nooelec's 1 year does not carry over). Unknown history: ESD at the unfiltered first stage or long running at 12 V can raise NF with no visible gain loss. Our bench NF uncertainty (tinySA plus noise source, about +/-0.5 dB, my estimate) cannot prove 1.2 dB. Shipping and import VAT from US sellers usually cancel the saving against the free-shipping Nooelec order.
+    - **Compatibility:** Identical if it is genuinely a SAWbird+ GOES (check the + marking and the 140 mA draw; the non-plus draws 30 mA).
+    - **Risks:** Hidden NF degradation; non-plus or barebones sold as cased; no independent measurement available, so under angle B it is rejected unless a unit comes with a measurement report.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.ebay.com/sch/i.html?_nkw=sawbird+goes&LH_ItemCondition=3000 (HTTP 403)
+  3.
+    - **Name:** Nooelec SAWbird GOES (non-plus, SKU 100786)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 44.95 (Nooelec page, 18 Oct 2026)
+    - **Spec comparison:** Same 80 MHz passband at 1688 MHz, two LNAs around the SAW, aluminium case included, bias through SMA, 30 mA. Gain at least 20 dB, against 38 dB. NF is not published; Nooelec says the plus version has a slightly lower NF.
+    - **Worse in:** Gain (at least 20 dB against 38 dB): system NF rises by about 0.4 dB or more behind the 10-12 dB Lime pad and coax (my cascade estimate). NF is unpublished and stated to be higher. Not not-worse.
+    - **Compatibility:** Electrically and mechanically compatible, and draws less current, but fails on gain and NF.
+    - **Risks:** None on sourcing; it is rejected on performance.
+    - **Seller url:** https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-goes-305.html
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-goes-305.html
+  4.
+    - **Name:** RTL-SDR Blog Wideband LNA V2 (bias-tee powered)
+    - **Kind:** other_brand
+    - **Price usd:** 19.95 (RTL-SDR Blog store page)
+    - **Spec comparison:** 100 MHz-6 GHz, NF below 1 dB claimed, 3-5 V at 90 mA through the bias tee. No filter.
+    - **Worse in:** No SAW or bandpass at all, so no rejection of LTE B3/DCS1800 downlink at 1805-1880 MHz, UMTS 2.1 GHz, GNSS/Inmarsat, 433/868 MHz or FM. A single stage has much less than 38 dB gain at 1.7 GHz. A connectorised 1.69-1.71 GHz filter to add after it was not found at any price. Not not-worse.
+    - **Compatibility:** Power and connectors are compatible (already in the stack as a spare LNA).
+    - **Risks:** Overload and intermod from cellular signals in Europe when used without a filter.
+    - **Seller url:** https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+    - **Sources:**
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+  5.
+    - **Name:** LNA4ALL (9A4QV), one or two in series
+    - **Kind:** diy
+    - **Price usd:** EUR 20-23 each plus EUR 7 shipping (about $35 for one, about $61 for two); price from the maker's page
+    - **Spec comparison:** Wideband 28-2500 MHz, no filter. The MMIC datasheet gives NF 0.75 dB at 1 GHz and 0.98 dB at 2 GHz. The maker measured IP3 at about 34.75 dBm and, for two in series at 1420 MHz, 31.35-32.2 dB gain with NF 0.70-0.76 dB. 55-65 mA at 5 V.
+    - **Worse in:** No filtering, so cellular rejection is far below the about 45 dB the SAWbird gives at 1805-1880 MHz. A single unit has about half the gain (about 16 dB); two in series still have less gain than 38 dB and cost more than $49.95. The measurements come from the maker, not an independent lab, and none are at 1.7 GHz. Not not-worse.
+    - **Compatibility:** Bias through SMA is possible; the bare PCB needs its own enclosure.
+    - **Risks:** Overload by cellular signals without a filter; no case.
+    - **Seller url:** https://lna4all.blogspot.com/
+    - **Sources:**
+      - https://lna4all.blogspot.com/
+  6.
+    - **Name:** DIY SAWbird-style build (two low-NF MMICs around a 1.69-1.71 GHz SAW, own PCB and case)
+    - **Kind:** diy
+    - **Price usd:** Not established. No off-the-shelf 1.69-1.71 GHz SAW was identified, and SAWbird uses a custom filter.
+    - **Spec comparison:** No published, independently measured DIY design for 1.69-1.71 GHz was found (rtl-sdr.com SAWbird tag, usradioguy hardware pages, LNA4ALL, Mini-Kits).
+    - **Worse in:** Unproven NF, rejection and stability. Our lab cannot prove 1.2 dB NF to better than about +/-0.5 dB. The usual mass-market filters (LTE B3 TX 1710-1785, GNSS 1575, Inmarsat 1525-1560) miss 1690-1700 MHz.
+    - **Compatibility:** It could be designed for 4.5 V bias through the output, but nothing has been built or measured.
+    - **Risks:** Rejected under angle B: no measured evidence.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.rtl-sdr.com/tag/sawbird/
+      - https://usradioguy.com/tried-and-tested-hardware/
+  7.
+    - **Name:** Unbranded 'Barebones GOES LNA and SAW filter module for NOAA' (VXB Bearings, product ID 1169-4574)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 88.88 (VXB page)
+    - **Spec comparison:** 1688 MHz, dual LNA plus SAW, 3-5.5 V via bias tee, USB or header. No gain, NF, bandwidth or current given, and no brand.
+    - **Worse in:** More expensive. No specs, no maker, no measurements. Probably a relisted SAWbird barebones (not verified).
+    - **Compatibility:** Unknown.
+    - **Risks:** Unknown origin; possibly a grey-market relist.
+    - **Seller url:** https://vxb.com/products/barebones-goes-lna-and-saw-filter-module-for-noaa
+    - **Sources:**
+      - https://vxb.com/products/barebones-goes-lna-and-saw-filter-module-for-noaa
+  8.
+    - **Name:** AliExpress generic LNAs (Zeenko BM 100 kHz-6 GHz 20 dB; 'Active SAW Filter LNA' multi-band 137M/433M/868M/915M/1090M/2.4G/5.8G)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 18.41 (Zeenko); 1.09 (multi-band SAW LNA, sale price)
+    - **Spec comparison:** No 1.69-1.71 GHz SAW-plus-LNA module appeared in AliExpress searches for 'goes lna 1688mhz' and 'sawbird goes'. The Zeenko is wideband with no filter and no published NF; the cheap SAW LNA comes only in other bands.
+    - **Worse in:** Wrong band or no filter, and no NF or measured data. Not not-worse.
+    - **Compatibility:** Not applicable.
+    - **Risks:** Unknown parts; possible counterfeit MMICs.
+    - **Seller url:** https://www.aliexpress.us/item/3256807470865916.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-goes-lna-1688mhz.html
+      - https://www.aliexpress.com/w/wholesale-sawbird-goes.html
+      - https://www.aliexpress.us/item/3256810408891200.html
+  9.
+    - **Name:** KEEP: Nooelec SAWbird+ GOES cased (100792)
+    - **Kind:** current_part
+    - **Price usd:** 49.95
+    - **Spec comparison:** Reference: 38 dB, NF 1.2 dB (Tn 100-120 K), 70 MHz bandwidth at 1688 MHz, about 45-48 dB relative rejection at 1805-1880 MHz, OP1dB +20 dBm, 120-160 mA, bias through SMA, aluminium case 73.7 x 30.6 x 18.7 mm, 36 g.
+    - **Worse in:** Nothing (reference part).
+    - **Compatibility:** Already integrated: injector ch3 TPS2553 at 300 mA, P3, HMC7992-B RF2, RTL-B or Lime with a pad.
+    - **Risks:** Passband includes LTE B3 uplink 1710-1730 MHz (phones at least 5 m away during HRPT); static at the helix input (bleed resistor fitted per the stack).
+    - **Seller url:** https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-goes-302.html
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-goes-302.html
+      - https://www.nooelec.com/store/downloads/dl/file/id/108/product/296/sawbird_goes_datasheet_revision_1.pdf
+- **Notes:** VERDICT (angle B): keep the cased SAWbird+ GOES 100792 at $49.95. No generic module, clone, DIY build or used unit with measured evidence matches its gain, NF and filtering for less money.
+  - The only cheaper equal-electrical option is the Barebones 100791 ($44.95, same datasheet). It is worse in build: no case, and the stack allows it only inside a shielded case, which costs about as much as the $5 saving.
+  - Used units cannot be priced (eBay returned 403), and none come with a measurement.
+  - The non-plus SAWbird GOES (100786, $44.95) is worse in gain (at least 20 dB against 38 dB) and in NF.
+  - Wideband LNAs (LNA V2 $19.95, LNA4ALL about $35, AliExpress Zeenko $18.41) have no 1.7 GHz filter. They lose the about 45-48 dB of LTE B3/DCS1800 rejection, which matters in Europe.
+  - No AliExpress clone of a 1.69 GHz SAW-plus-LNA exists in the listings checked. The unbranded VXB barebones costs $88.88.
+  
+  The rejection figures in critical_specs I read off the Nooelec datasheet plot (manufacturer measurement, page 3). The local copy is /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfdl/sawbird_goes_datasheet_revision_1.pdf, rendered at /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/goesB/p-3.png.
+  
+  COVERAGE LIMIT: the shared WebSearch budget for this turn ran out after my first query. Coverage therefore rests on direct fetches of primary pages: Nooelec (3 SKUs), AliExpress catalogue searches, RTL-SDR Blog store, LNA4ALL, Mini-Kits, VXB, usradioguy, rtl-sdr.com SAWbird tag. Not covered: independent NF measurements of SAWbird+ GOES or of any third-party 1.7 GHz filtered LNA in forums or Reddit, EU resellers' prices (the Passion Radio search hit a redirect loop), and used listings. A follow-up search could close these gaps, but none of them could make a candidate not-worse without a published measurement.
+  
+  Also seen and rejected as not cheaper: Mini-Kits PGA-103-WB (AUD 72.50) and GALI-39 (AUD 71), both wideband with no filter. Out of scope: the KrakenRF Discovery Dish L-band feed (dish-related, an antenna).
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
