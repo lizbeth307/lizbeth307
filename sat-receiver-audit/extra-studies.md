@@ -311,6 +311,147 @@
   
   Local files: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ufs_dl/allnet.json and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ufs_dl/arace_radxa-ufs-module.json are the store JSON snapshots used for verification.
 
+## searchA:radxa_armor_7056a_heatsink_or_stepped_cu (run `wf_071e1025-145`)
+
+- **Part:** Q6A cooling set: Radxa Armor 7056A (AE036) heatsink, or the stepped Cu block, + 40 mm 5 V path-1 fan (STACK v1: Adafruit 6101; re-audit D changed it to Noctua NF-A4x10 5V non-PWM, with the 6101 kept as a spare) + 5 V display-channel blower (path 2, no model chosen yet)
+- **Current price usd:** STACK v1 line: 19.85-24.85 (ALLNET Armor 9.90 + Adafruit 6101 4.95 + blower estimate 5-10). With the re-audit fan (NF-A4x10 5V, QuietPC GBP 13.96, about 18.57 at the re-audit's 1.33 model rate): 31.47-38.47 with the ALLNET Armor, or 26.56-33.56 with the Arace Armor (blower estimated at 3-10). Rates used: EUR 1 = USD 1.1241 (implied by STACK's EUR 214 = $240.56) and GBP 1 = USD 1.33. Both are model conversions.
+- **Critical specs:**
+  - Heatsink: proven Q6A fit. Radxa lists it for the Dragon Q6A, it uses the board's mounting holes, and it fits STEP v1.21 (Armor top cover 70x56x15 mm, top cover only, on M2.5 standoffs). A Cu block must keep a footprint of 35x35 mm or less in the 32x31 mm keep-in.
+  - Heatsink: separate contact on the QCS6490 SoC and on the LPDDR5. Never one shared pad: the forum found a 40x40 sink on a shared pad to be interface-limited. The SoC interface should be paste or PTM7950-class material, with a 0.5-1 mm pad on the RAM.
+  - Heatsink thermal result (acceptance test): SoC-to-inlet of 3.5 K/W or less at about 10 W of stress-ng for 10 min, and no passive trip at 90/95 C. Forum: the Armor alone throttles at 35-40 C ambient and a 5 V fan fixes it; the stepped Cu block reaches about 55 C under stress.
+  - Heatsink build: solid aluminium alloy or copper, a non-conductive pad, nothing over the RF areas, and it must survive a sun-loaded case.
+  - Fan path 1: 40x40x10 mm with a 32 mm hole pattern; 5 V (LAB5) or another always-on rail; 2-wire DC on/off from a Pico low-side FET with a flyback diode, no PWM. Heartbeat loss drives it to 100%.
+  - Fan path 1 airflow at least 8.2 m3/h (4.83 CFM) free air and static pressure at least 1.78 mmH2O (17.5 Pa), so it still moves 2.7 m3/h or more through the mesh plus foam intake (5 Pa or less).
+  - Fan path 1 noise 17.9 dB(A) or less (handheld unit, re-audit reference).
+  - Fan path 1 power 0.25 W (0.05 A) or less. The re-audit counted the 0.75 W saving over the 6101 as a gain.
+  - Fan path 1 tach output for the Pico stall alarm (re-audit requirement).
+  - Fan bearing and life in the class of Noctua SSO2 'MTBF over 150k h', and a rating to 70 C or more inside a sun-loaded case.
+  - All fans: motor-driver EMI is unpublished for every candidate. It must pass the stack's HF/LF/L-band noise-floor A/B with the fan on and off. This is not a differentiator between parts.
+  - Blower path 2: 5 V, 2-wire on/off, radial blower class (4010-5015, 50x50x15 mm or smaller), outlet ductable into a 4-6 mm channel; measured flow of at least 2.7 m3/h through the channel and plate fins (needs blower-class pressure); ball or magnetic bearing rated to 70 C; power and noise as low as possible.
+- **Candidates:**
+  1.
+    - **Name:** Radxa Armor Case 7056A (AE036), ALLNET China (current heatsink seller in STACK v1)
+    - **Kind:** current_part
+    - **Price usd:** 9.90 (store JSON on 18 Oct 2026: AE036, 990 cents, available=true). Ships from China, so EU import VAT and handling are extra.
+    - **Spec comparison:** Reference part. Magnesium-silicon aluminium with 3D fins. Top cover 70x56x15 mm, bottom 85x56x15 mm. 2 thermal pads, 4 screws M2.5. Radxa lists it for the Dragon Q6A, Cubie A7A, ROCK 5A and ROCK 5C.
+    - **Worse in:** n/a (reference). Versus the stepped Cu block: its pad interface on the SoC and its thermal resistance are unmeasured; the forum shows only that Armor plus a 5 V fan removes throttling at 35-40 C ambient.
+    - **Compatibility:** The only Q6A cooler Radxa lists (the Q6A accessories page lists no cooler at all). The plan uses the top cover only on M2.5 standoffs, bottom shell discarded; a fit-check in STEP v1.21 comes first.
+    - **Risks:** Pad on the SoC, not paste. Whether PTM7950 fits the gap is unverified.
+    - **Seller url:** https://shop.allnetchina.cn/products/radxa-heatsink-7056a
+    - **Sources:**
+      - https://shop.allnetchina.cn/products/radxa-heatsink-7056a
+      - https://radxa.com/products/accessories/armor-case-7056a/
+      - https://docs.radxa.com/en/dragon/q6a/accessories
+  2.
+    - **Name:** Same Radxa Armor Case 7056A (same SKU AE036) from Arace, Radxa's official store
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 4.99 (store JSON on 18 Oct 2026: SKU AE036, 499 cents, available=true). Shipping to the EU is extra and unverified, plus EU import VAT (about 21% would be about 1.05).
+    - **Spec comparison:** Identical part (same Radxa SKU AE036), so every spec is equal.
+    - **Worse in:** Nothing in specs. Only logistics: a separate shipment, because the Q6A board is sold out at Arace, and the shipping cost is unverified.
+    - **Compatibility:** Same as the reference. Radxa lists it for the Dragon Q6A.
+    - **Risks:** Shipping may cancel out the saving of 4.91 versus ALLNET. Check the landed cost at checkout. Official Radxa store, so counterfeit risk is minimal.
+    - **Seller url:** https://arace.tech/products/radxa-armor-case-7056a
+    - **Sources:**
+      - https://arace.tech/products/radxa-armor-case-7056a
+  3.
+    - **Name:** Same Radxa 7056A from TinyTronics (EU, listed as 'Radxa Metal Case 7056A', SKU 007949)
+    - **Kind:** current_part
+    - **Price usd:** 13.49 (EUR 12.00 incl. 21% NL VAT; EUR 9.92 ex VAT). Only 6 in stock, Eindhoven warehouse.
+    - **Spec comparison:** Same product: top and bottom covers, 4 bolts, 2 thermal pads, 85x56 mm, 106 g.
+    - **Worse in:** Nothing in specs. Not cheaper on paper than ALLNET or Arace, but VAT is included and it can join the planned TinyTronics board order with no extra shipping. That may make it the cheapest landed EU option.
+    - **Compatibility:** The TinyTronics page names the 'Cubie Q6A' and not the Dragon Q6A. This is probably a naming error; Radxa and ALLNET list the Dragon Q6A for the same 7056A. Treat the naming as unverified.
+    - **Risks:** Low stock (6 pieces).
+    - **Seller url:** https://www.tinytronics.nl/en/tools-and-mounting/enclosures/others/radxa-metal-case-7056a-for-rock-5a-5c-and-cubie-q6a-a7a
+    - **Sources:**
+      - https://www.tinytronics.nl/en/tools-and-mounting/enclosures/others/radxa-metal-case-7056a-for-rock-5a-5c-and-cubie-q6a-a7a
+  4.
+    - **Name:** Noctua NF-A4x10 5V, non-PWM (re-audit path-1 fan; cheapest verified sellers of the same SKU)
+    - **Kind:** current_part
+    - **Price usd:** 18.57 at QuietPC UK (GBP 13.96, 6 in stock). 15.51 on the QuietPC .co.nl storefront (EUR 13.80, 6 in stock; it looks like the same UK store, and whether VAT is included is unverified). 17.87 at Alternate.de (EUR 15.90 incl. 19% DE VAT, in stock) plus EUR 7.99 (8.98) shipping. Conrad: EUR 21.90. Noctua MSRP: EUR 12.90 at launch, EUR 13.95 in the later datasheet.
+    - **Spec comparison:** Reference: 4500 rpm +/-10%, 8.2 m3/h (4.83 CFM), 1.78 mmH2O, 17.9 dB(A), 0.25 W / 0.05 A max, 5 V only, 3-pin with tach, SSO2 bearing, MTBF over 150k h, 6-year warranty. Includes the L.N.A., a 3:2-pin adaptor and an extension cable.
+    - **Worse in:** n/a (reference).
+    - **Compatibility:** 40x40x10 mm, 32 mm holes, LAB5 5 V rail, low-side FET with a flyback diode, tach to a Pico GPIO.
+    - **Risks:** 5 V only; 12 V destroys it.
+    - **Seller url:** https://www.alternate.de/Noctua/NF-A4x10-5V-Geh%C3%A4usel%C3%BCfter/html/product/1232067
+    - **Sources:**
+      - https://www.quietpc.com/nf-a4x10-flx-5v
+      - https://quietpc.co.nl/nf-a4x10-flx-5v
+      - https://www.alternate.de/Noctua/NF-A4x10-5V-Geh%C3%A4usel%C3%BCfter/html/product/1232067
+      - https://www.guru3d.com/story/noctua-expands-a-series-with-new-9280-and-40-mm-fans/
+  5.
+    - **Name:** Sunon MF40100V2-1000U-A99 (5 V MagLev/Vapo, 40x40x10)
+    - **Kind:** other_brand
+    - **Price usd:** 4.87 (DigiKey qty 1, 259-1795-ND; stock figure on the page unclear, about 10k). TME (EU) lists it only on request ('not in standard offer'). DigiKey EU shipping for a small order is unverified.
+    - **Spec comparison:** Versus the NF-A4x10 5V: 5800 rpm; 7.0 CFM / 11.9 m3/h (+45%, better); 29.9 Pa = 3.05 mmH2O (+71%, better); 20.6 dB(A) (+2.7 dB, worse); 470 mW (+0.22 W, about +88%, worse); 2 wire leads, auto-restart, no tach (worse); Vapo bearing rated 70,000 h at 40 C versus Noctua 'MTBF over 150k h' (different metrics, nominally worse); -10 to 70 C. Versus the 6101: published curve, about half the 6101's 1 W rating, MagLev bearing, 0.08 cheaper. The 6101 publishes no airflow or noise data, so an airflow comparison with it cannot be proven.
+    - **Worse in:** Against the governing re-audit pick: noise (+2.7 dB(A)), power (+0.22 W), no tach (the stall alarm is lost), lower rated life. Not 'not worse', so it does not replace the Noctua.
+    - **Compatibility:** Mechanically and electrically drop-in (5 V, 2-wire, same size and holes). The stall alarm would need another sensor, such as a dT check.
+    - **Risks:** The noise figures come from different labs, so comparability is limited. EU sourcing is quote-only at TME.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=MF40100V2-1000U-A99
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=MF40100V2-1000U-A99
+      - https://www.tme.eu/en/details/mf40100v2-a99-a/dc5v-fans/sunon/mf40100v2-1000u-a99/
+      - https://futureelectronics.com/p/electromechanical--thermal-management--fans--dc-fan/mf40100v2-1000u-a99-sunon-2093488
+  6.
+    - **Name:** Sunon HA40101V4-1000U-A99 (12 V low-noise MagLev/Vapo, 40x40x10), powered from SYS12/AUX12
+    - **Kind:** other_brand
+    - **Price usd:** 4.40 (DigiKey qty 1, 259-1790-ND, 24,166 in stock, 26-week factory lead time)
+    - **Spec comparison:** Versus the NF-A4x10 5V: 5000 rpm; 5.4 CFM / 9.17 m3/h (+12%, better); 22.4 Pa = 2.28 mmH2O (+28%, better); 15.7 dB(A) (-2.2 dB, better); 0.031 A / 380 mW (+0.13 W, about +52%, worse); auto-restart, no tach (worse); 2 wire leads; Vapo bearing rated 70,000 h at 40 C versus 'MTBF over 150k h' (nominally worse); rated 12 V with a 4.5-13.8 V range; -10 to 70 C.
+    - **Worse in:** Power (+0.13 W), no tach, lower rated life. It also moves the fan from the 5 V rail to the 12 V rail. Not 'not worse'.
+    - **Compatibility:** Needs SYS12 (D36V50F12, 12 V +/-4%, always on while J21 powers the Q6A) or AUX12 instead of LAB5. Pico low-side FET switching is unchanged, with the flyback diode to 12 V. At 5 V it would run, but its 5 V curve is unpublished. No 5 V HA40100V4 exists on DigiKey.
+    - **Risks:** Long factory lead time. One more load on the 'Rationed' D36V50F12.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=HA40101V4-1000U-A99
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=HA40101V4-1000U-A99
+      - https://www.digikey.com/en/products/result?keywords=HA40100V4
+  7.
+    - **Name:** Same Sky (ex-CUI Devices) CFM-4010V-058-206-20 (5 V, 40x40x10, with tach)
+    - **Kind:** other_brand
+    - **Price usd:** 8.00 (DigiKey qty 1, 925 in stock)
+    - **Spec comparison:** Versus the NF-A4x10 5V: 5800 rpm; 7.0 CFM (+45%, better); 29.9 Pa (+71%, better); 20.6 dB(A) (+2.7 dB, worse); 550 mW (+0.30 W, worse); auto-restart and tach, 3 wires (equal); omniCOOL magnetic-sleeve bearing, life not listed (unverified, possibly worse).
+    - **Worse in:** Noise (+2.7 dB(A)), power (+0.30 W, more than double), unknown rated life. Not 'not worse'.
+    - **Compatibility:** Drop-in: 5 V, same size, tach to a Pico GPIO.
+    - **Risks:** The bearing life is unpublished on the listing.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=CFM-4010V-0
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=CFM-4010V-0
+  8.
+    - **Name:** Adafruit 6101 40 mm 5 V USB fan (STACK v1 fan; spare only after the re-audit)
+    - **Kind:** current_part
+    - **Price usd:** 4.95 (in stock on 18 Oct 2026, per re-audit A/D)
+    - **Spec comparison:** 5 V, 0.2 A (about 1 W), 40x40x10.6 mm, 32x32 mm holes (3.3 mm), USB lead about 1 m. No airflow, pressure, rpm, noise or life data. No tach.
+    - **Worse in:** Versus the NF-A4x10 5V: about 0.75 W more power, no tach, specs unknown. The re-audit replaced it for this reason.
+    - **Compatibility:** The USB plug must be cut off for the FET drive.
+    - **Risks:** Unknown fan curve.
+    - **Seller url:** https://www.adafruit.com/product/6101
+    - **Sources:**
+      - https://www.adafruit.com/product/6101
+  9.
+    - **Name:** Same Sky CBM-5015BF-045-348-20 / CBM-5015BF-035-293-20 (5 V radial blowers, 51.6x51.2x15 mm, ball bearing, tach). Reference price for a branded path-2 blower.
+    - **Kind:** other_brand
+    - **Price usd:** 11.41 (-045-348-20, 496 in stock) and 12.28 (-035-293-20, 500 in stock), DigiKey qty 1. The non-tach -045-348 is 11.98.
+    - **Spec comparison:** No baseline exists, because no blower model has been chosen or measured. -045-348-20: 4500 rpm, 2.9 CFM = 4.9 m3/h free air, 0.45 inH2O = 112 Pa, 34.8 dB(A), 1.05 W. -035-293-20: 3500 rpm, 2.2 CFM = 3.7 m3/h, 0.27 inH2O = 67 Pa, 29.3 dB(A), 0.70 W. Both have ball bearings, -10 to 70 C and a tach.
+    - **Worse in:** Price: both cost more than the 3-10 blower estimate. The -035 has a thin margin over the 2.7 m3/h target once channel back-pressure is counted (unmeasured).
+    - **Compatibility:** 5 V; on/off from a Pico FET works (non-PWM). 15 mm thick, so the outlet needs a transition into the 4-6 mm channel.
+    - **Risks:** Noise of 29-35 dB(A) is far above path 1. The estimate in STACK assumes an unbranded blower.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=CBM-5015BF
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=CBM-5015BF
+      - https://www.sameskydevices.com/product/thermal-management/dc-fans/centrifugal-blowers/cbm-5015bf-035-293
+- **Notes:** VERDICT (angle A: same SKUs, official sellers, established brands).
+  1) Heatsink: the only cheaper not-worse option is the same Radxa Armor 7056A, SKU AE036, from Arace at $4.99 (verified in stock on 18 Oct 2026) instead of ALLNET at $9.90. Spec-identical, so the saving is $4.91 before shipping, which is extra and unverified. In the EU-primary plan, TinyTronics (EUR 12.00 incl. VAT, about $13.49, 6 left) can ride in the board order with no extra shipping. Compare landed costs at checkout.
+  No other cooler is Radxa-listed for the Q6A: the Radxa docs accessories page lists none, and the Armor page names the Q6A. So no third-party flat heatsink is proven compatible.
+  Whether Armor top cover plus fan is not worse than the stepped Cu block plus fan is unproven. The forum gives about 55 C under stress for the Cu block, and only 'removes throttling at 35-40 C ambient' for the Armor plus fan. The 3.5 K/W acceptance test decides. The AliExpress stepped block is outside angle A (price unverified, $17-30, intermittent stock).
+  2) Fan path 1: re-audit D overrides STACK. The path-1 fan is the Noctua NF-A4x10 5V non-PWM (GBP 13.96, about $18.57); the 6101 is a spare. No cheaper fan is not-worse than it. Every cheaper established-brand 40x10 fan with published specs trades at least two of noise, power, tach and rated life:
+  - Sunon MF40100V2-1000U-A99, $4.87: +2.7 dB(A), +0.22 W, no tach.
+  - Sunon HA40101V4-1000U-A99, $4.40, 12 V: better flow, pressure and noise, but +0.13 W, no tach, and needs the 12 V rail.
+  - Same Sky CFM-4010V-058-206-20, $8.00: +2.7 dB(A), +0.30 W, has a tach.
+  Also not cheaper: the Noctua NF-A4x10 5V PWM (5000 rpm, 5.24 CFM, 1.95 mmH2O, 19.6 dB(A), 0.3 W typical, 4-pin) costs the same, EUR 13.80 at QuietPC .co.nl and EUR 15.90 at Alternate, Caseking and Amazon.de. At full DC speed it is worse in noise and power, so it is not a replacement. So keep the NF-A4x10 5V. The cheapest verified sellers are QuietPC (EUR 13.80 on the .co.nl storefront, VAT status unverified, probably ships from the UK) and Alternate.de, an EU seller (EUR 15.90 incl. VAT plus EUR 7.99 shipping). The Amazon.de price was blocked and is unverified.
+  If the user accepts these trade-offs explicitly (not silently), the Sunon HA40101V4 on SYS12 is the best value: quieter and stronger, with the loss of the tach and 0.13 W more draw.
+  3) Blower path 2: no model has been chosen, so there is no baseline for 'not worse'. Branded 5 V blowers with full datasheets start at $11.41 (Same Sky CBM-5015BF-045-348-20), above the 3-10 estimate. Keep the line marked as an estimate. Sunon's 5 V Mighty Mini UB5U3 (30x30x3 mm, about 0.63 CFM, about 1.07 m3/h) fails the 2.7 m3/h target and is rejected.
+  Comparability caveats: noise figures come from different manufacturers' labs. Sunon gives life as 70k h at 40 C and Noctua as MTBF, which are different metrics. Motor-driver EMI is unpublished for all fans, so include fan on/off in the noise-floor A/B tests.
+  Hard rules: all candidates are passive cooling parts with no RF emission function. No conflict with receive-only, no-loop or conducted-only rules.
+  WebSearch calls used: 10.
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
