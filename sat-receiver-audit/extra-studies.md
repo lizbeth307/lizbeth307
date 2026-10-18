@@ -16709,6 +16709,96 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   USD rate 1 EUR = 1.1241 USD, as in STACK. Search budget used: 13 WebSearch calls.
 
+## searchA:ip2368_4s_100_w_pd_board_charge_only_bz (run `wf_a268b76e-da0`)
+
+- **Part:** IP2368 4S 100 W USB-C PD charger board (pack charger on node N; RVSET 5.1k = 4.10 V/cell, RISET 15k = 3 A, ISET_MODE through 1k to GND, 10k B3380 NTC on a cell, KSD9700 70 C). Qty 2, tier core, group Power.
+- **Current price usd:** 25-49 for 2 boards (STACK line, unverified), so about 12.5-24.5 per board. The only price STACK has is a Newegg snippet of $15.79 per board (unverified). Other snapshots I saw, none verified: eBay.de (Shenzhen seller) $23.77 plus $30 shipping, Aug 2025; OnBuy RO 83.27 RON plus 16.53 RON delivery; mysku reviewer paid 1089 RUB (about $12) in May 2024. Note: you cannot buy a charge-only BZ board. Every retail board is the bidirectional COUT version (re-audit D), so the part you would actually buy is the COUT board.
+- **Critical specs:**
+  - Chemistry and cell count: 4S Li-ion (Molicel P50B), CC/CV with trickle and pre-charge (IP2368: 100 mA below 2.5 V, 200 mA up to N*3 V)
+  - CV set point 4.10 V/cell (16.40 V pack) with RVSET 5.1k; DS tolerance about +/-40 mV/cell, so pack CV is 16.25-16.57 V. A replacement must reach 4.10 V/cell with equal or tighter tolerance
+  - Charge current can be set to 3 A at the battery (RISET 15k; ICHRG = 0.2*RISET mA). About 49 W into the pack and 51-52 W from the input. Must not be forced higher, because of heat inside the case
+  - Termination ISTOP 100 mA, recharge at VTRGT - N*0.1 V, safety timer 45-51 h (the SoC resync logic depends on these)
+  - Input: USB-C PD 2.0/3.0 sink, 5/9/12/15/20 V, 4.5-25 V operating, input OVP 25 V, pins rated to 30 V. Must auto-derate to the adapter's advertised PDO (standard IP2368) so 45 W sources work
+  - Charge-only behaviour: the board must never source VBUS from the pack. BZ silicon would be charge-only, but retail boards are COUT (Try.SRC plus an activation charge), so the TPS259470A reverse-blocking eFuse and a goods-in sink test are required. A replacement must be at least this good
+  - Fixed 250 kHz switching for both charge and discharge. The HF/LF spur plan (2nd harmonic near NAVTEX 490/518 kHz, 'no charging in HF/LF Quiet') is built on this. A different or variable frequency needs a new A/B spur gate
+  - NTC: 10k B3380, charge window 0-45 C (80 uA / 0.39 V hot, 20 uA / 0.55 V cold), pin must never float
+  - Battery-side standby drain: 180 uA DS at 14.8 V (measured 0.1 mA). This counts in the OFF budget of about 14 mW (2.7 mW of it). Lower is better
+  - Efficiency: DS up to 96 % when charging. Measured 89-94.3 % (mysku, discharge direction, 9-13 V, 47-91 W)
+  - Power headroom: rated 100 W; the reviewer measured 80-85 W max out and 5.1 A charge. At 3 A we run at about half the rating
+  - Board BOM and build: 4x NVMFS5C450N (40 V, 3.3 mOhm), HYG082N03 VBUS FET, 35 V caps. The 5 V LDO must be rated 20 V or more because node N reaches 16.8 V during the ISDT balance: HT7550-1 (30 V) passes, ME6201 (16 V claimed) fails
+  - Thermal: one MOSFET above 100 C at 5.1 A on the reviewed board; at 3 A it runs cooler. About 2.6 W of loss inside the case; KSD9700 70 C trip on the input
+  - Mechanics: about 48x34x10 mm (13 mm with USB-C), 2x M2 holes. The USB-C port is the device's only external power input, on the bottom edge
+  - Software and driver: none needed (resistor-strapped, standalone). No I2C host is required, so there is no Ubuntu 24.04 arm64 dependency
+  - Authenticity: genuine Injoinic marking, seller with real sales volume, no remarked chips
+- **Candidates:**
+  1.
+    - **Name:** Current part as actually sold: IP2368 100 W 4S bidirectional board (COUT silicon, 48x34 mm, 4x NVMFS5C450N)
+    - **Kind:** current_part
+    - **Price usd:** about 12.5-24.5 per board (STACK 25-49 for 2, unverified; Newegg $15.79 snippet)
+    - **Spec comparison:** Baseline. 4S; 4.10 V/cell with RVSET 5.1k (+/-40 mV/cell); 3 A with RISET 15k; PD 5-20 V, 4.5-25 V, OVP 25 V; auto-derating; 250 kHz; NTC 0-45 C; standby 180 uA (DS); up to 96 % (DS) / 89-94 % measured; 100 W rated (80-85 W measured).
+    - **Worse in:** Reference only. It is COUT, not BZ, so it can source VBUS. The stack covers this with the TPS259470A and the goods-in sink test.
+    - **Compatibility:** Already integrated: node N, TPS259470A on VBUS, SMBJ TVS, KSD9700, spur plan, SoC resync calibrated per board.
+    - **Risks:** Some boards ship with an ME6201 LDO (16 V claimed); read the marking at goods-in. Activation-charge quirk. Hot MOSFET at high current.
+    - **Seller url:** https://www.newegg.com/p/27U-00HC-00022
+    - **Sources:**
+      - https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+      - https://mysku.club/blog/aliexpress/100034.html
+  2.
+    - **Name:** The same IP2368 100 W 4S board from a high-volume AliExpress seller (e.g. the JETTING Electronic listing with more than 3,000 sold, or aliexpress.us item 3256805610415460), optionally on the 3-piece price tier
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** about 9-13 per board (UNVERIFIED; search snippets only: JETTING $9.28; another listing $13.13; one listing $11.98 each at 3 or more vs $18.84 for one). Listings at $0.99-1.41 are new-user promotions and should not be budgeted. EU buyers pay destination VAT at checkout (IOSS, about 19-25 %), so expect about $11-16 per board landed, shipping extra.
+    - **Spec comparison:** Same IP2368 silicon and reference design, so every datasheet spec is equal: 4S; 4.10 V/cell via RVSET 5.1k at the same +/-40 mV/cell; 3 A via RISET 15k; PD 5-20 V, 4.5-25 V, OVP 25 V; auto-derating; 250 kHz; NTC 0-45 C, 10k B3380; standby 180 uA; up to 96 %; 100 W. Build quality is equal ONLY if the board matches the reviewed BOM: 4x NVMFS5C450N 40 V/3.3 mOhm, HYG082N03 VBUS FET, 35 V caps, HT7550-1 (30 V) LDO, about 48x34 mm with M2 holes.
+    - **Worse in:** Nothing on paper. Not verified in practice: the listing pages could not be opened, so BOM, chip suffix and the cell-count default (R7 13k = 4S) are unconfirmed per seller. If a board arrives with an ME6201 LDO, a smaller inductor or other MOSFETs, it IS worse and must be reworked (LDO swap) or rejected.
+    - **Compatibility:** Drop-in: same footprint, same resistor straps (change R3 27k to 15k, set RVSET to 5.1k, fit the real NTC), same USB-C position, same TPS259470A/eFuse chain and the same 250 kHz spur plan. No software.
+    - **Risks:** Remarked or fake chips and BOM substitution are the main risks with cheaper sellers. Many listings mix 3S/4S/5S/6S variants, so order the 4S variant. The board is still COUT (bidirectional), exactly like the current part. Goods-in acceptance stays mandatory: chip marking 'IP2368' Injoinic, LDO marking, sink test (no VBUS out), V_CV at 16.25-16.57 V, NTC trips, 2 h burn-in at 3 A. Buying 3 at the multi-buy price covers a reject and costs about the same as 2 singles.
+    - **Seller url:** https://www.aliexpress.us/item/3256805610415460.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-ip2368.html
+      - https://www.aliexpress.us/item/3256809330445297.html
+      - https://mysku.club/blog/aliexpress/100034.html
+      - https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+  3.
+    - **Name:** Injoinic IP2366 140 W 2-6S board (sister chip, PD3.1), set for 4S / 4.10 V / 45 W
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** about 10-25 per board (UNVERIFIED snapshots: eBay $10.15 plus $5.79 SpeedPAK; eBay.de EUR 11.66; Walmart $24.72). Same price class as the IP2368 board, not reliably cheaper.
+    - **Spec comparison:** From DS V1.10 (Mar 2023). Better: battery standby 5 uA typ / 10 uA max at 22 V (vs 180 uA); 140 W (vs 100 W); input 4.5-28 V with OVP 29 V (vs 25 V); CC_BDO strap makes it default to SINK in low-power state; discharge needs a button wake from low power, while a charger wakes charging by itself; 14-bit ADC. Equal: 250 kHz charge and discharge; NTC thresholds identical (80/20 uA, 0.39/0.55 V, 0-45 C, 10k B3380); CV at the 4.10 V setting is 4.06-4.14 V/cell (+/-40 mV, same); ISTOP 100 mA; recharge at VTRGT - N*0.1 V; TEND 48 h; up to 96 % charge efficiency; auto-derating to PD power.
+    - **Worse in:** Charge current cannot be set to 3 A. PSET only picks input power steps of 30/45/60/65/100/140 W. At 45 W (6.2k) the battery gets about 3.2 A at 13.2 V, 2.9 A at 14.8 V and 2.6 A at 16.4 V (model, about 95 % efficiency). At 60 W it is about 3.5-4.3 A, so more heat. The datasheet lists no charge-only SKU: 'IP2366BZ' parts exist at JLC, but BZ there is the standard bidirectional part with Try.SRC. Some chips carry I2C firmware and you cannot tell which from the marking. With an EPR adapter and cable it may request 28 V, which would trip the stack's TPS259470A OVLO of about 22 V. No hands-on measurements of board BOM or temperatures found.
+    - **Compatibility:** Resistor-strapped, no software needed. Straps: BAT_NUM 9.1k = 4S, VSET 6.2k = 4.10 V, PSET 6.2k = 45 W. The VBUS protection must be rechecked for 28 V (cable that cannot do EPR, or OVLO and TVS re-rated). Different footprint, so the case wall needs CAD rework. The 250 kHz spur plan carries over.
+    - **Risks:** Side-grade, not a cheaper not-worse analog: it gives up 3 A current granularity and documented charge-only behaviour, and its price is similar. Use it only if the much lower standby drain is wanted, and only after a bench test (sink-only behaviour, no 28 V request with the fitted cable, temperatures at 45 W).
+    - **Seller url:** https://www.ebay.de/itm/176878881531
+    - **Sources:**
+      - https://atta.szlcsc.com/upload/public/pdf/source/20240105/FCCF6C49D09DDCCD74C581E56E6D79FA.pdf
+      - https://done.land/components/power/powersupplies/battery/chargers/charge-discharge/ip2366/
+      - https://www.chargerlab.com/pd3-1-supported-injoinic-launched-ip2366-pmic
+      - https://www.walmart.com/ip/5614775489
+  4.
+    - **Name:** TI USB-PD-CHG-EVM-01 (BQ25798 1-4S 5 A buck-boost charger plus TPS25751 PD controller), established-brand reference board
+    - **Kind:** other_brand
+    - **Price usd:** about 187 (DigiKey HK HKD 1,458.74 for one, 12-week lead; TI store price not shown). NOT cheaper; rejected
+    - **Spec comparison:** BQ25798: 1-4S, up to 5 A, 3.6-24 V input (TI page). The TPS25751 PD controller can sink or source 20 V/5 A and is configurable over an Aardvark/flash. Charge-voltage resolution and accuracy, switching frequency and quiescent current were not read from the DS in this pass (unverified).
+    - **Worse in:** Price is about 8-20 times higher. It needs I2C configuration from a host at every boot, which adds an MCU firmware dependency. EVM size does not fit the case. Long lead time.
+    - **Compatibility:** Needs an I2C host (Pico or Q6A) and PD controller configuration; an EVM form factor; switching frequency differs from 250 kHz, so a new spur gate is needed.
+    - **Risks:** Not a candidate under the cheapest not-worse rule. Listed only to record that the established-brand path is far more expensive.
+    - **Seller url:** https://punchouttest.digikey.hk/en/products/detail/texas-instruments/USB-PD-CHG-EVM-01/14004336
+    - **Sources:**
+      - https://www.ti.com/tool/USB-PD-CHG-EVM-01
+      - https://www.ti.com/product/BQ25798
+- **Notes:** VERDICT (angle A): The only cheaper analog that is not worse is the SAME IP2368 4S board bought from a high-volume AliExpress seller, at about $9-13 per board (unverified) against STACK's $12.5-24.5. Buy the 4S variant, ideally 3 pieces on the multi-buy tier. It is not worse only if goods-in confirms the reviewed BOM: genuine Injoinic IP2368, 4x NVMFS5C450N, HT7550-1 30 V LDO, 35 V caps. If those checks cannot be made, keep the current listing. Expected saving is about $5-20 for the pair.
+  
+  No cheaper board with equal or better specs exists from another brand. The IP2366 is a side-grade at about the same price. It is better in standby (5 vs 180 uA), power (140 W) and input range (28 V). It is worse in current setting (power steps only, no 3 A set point) and in charge-only certainty, and it may request 28 V EPR, which conflicts with the TPS259470A OVLO. Do not swap without a bench test. TI and other established-brand PD and 4S charger boards cost about $150-190 or more and need I2C firmware.
+  
+  FACTS CHECKED:
+  - IP2368 DS V1.41 lists the variants: IP2368_BZ = standard, charge-only 2-5S; COUT adds C-port discharge; NACT removes the activation charge. Other figures: OVP 25 V, ISTB 180 uA at 14.8 V, 250 kHz, up to 96 %.
+  - LCSC/JLC on 18 Oct 2026 (chip level, for the DIY angle): IP2368_BZ_VGLIP C5203723 $2.65-2.77 (1), $2.28-2.38 (10), stock 0; C7545631 $2.67, stock 0. IP2368_I2C_COUT C5372184 $2.29, stock 0. IP2366 (I2C version) C20415848 $1.60, stock 0. The JLC 'C99...' rows at $0.04 are consigned or placeholder entries, not real prices.
+  - Only a custom BZ-chip board gives true charge-only silicon. Retail boards are COUT, so the stack's eFuse and sink-test mitigation stays in force whichever board is bought.
+  
+  LIMITS:
+  - WebSearch hit the shared per-turn limit after 9 searches.
+  - AliExpress item pages would not load (redirect loop or empty). eBay, Newegg, OnBuy and Walmart returned 403 or a captcha. TinyTronics is behind Cloudflare. Botland had no IP2368 hit.
+  - So every marketplace price above is a search-snippet snapshot, marked unverified. Verify at checkout, including VAT (IOSS) for an EU delivery.
+  - SW6306 (iSmartWare) was considered, but no datasheet could be retrieved, so it is not listed.
+  - A follow-up session could open the AliExpress listings and confirm BOM photos and prices.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
