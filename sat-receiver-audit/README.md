@@ -27,6 +27,7 @@
 | [Cable bulkhead set 7 sma 1 f bulkheads r](components/cable_bulkhead_set_7_sma_1_f_bulkheads_r.md) | · research · forums · fixes ✅ verify | `—` |
 | [Compute](components/compute.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_88090a59-878` |
 | [Compute os](components/compute_os.md) | ✅ research · forums · fixes ✅ verify | `—` |
+| [Custom 2 layer pcbs power board 5 channe](components/custom_2_layer_pcbs_power_board_5_channe.md) | · research · forums · fixes ✅ verify | `—` |
 | [Daly 4s 15 a common port balancing bms](components/daly_4s_15_a_common_port_balancing_bms.md) | · research · forums · fixes ✅ verify | `—` |
 | [Dish replacement](components/dish_replacement.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_5a66d65f-c3f` |
 | [Display](components/display.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_0e70c405-a03` |
