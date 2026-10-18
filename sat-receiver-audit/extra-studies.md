@@ -8340,6 +8340,209 @@
   - Do local rules (country unknown) permit low-power antenna S11 test emissions? The default is no.
 - **Confidence:** medium
 
+## searchA:asa_1_kg_cnc_kitchen_m3_inserts_and_scre (run `wf_37583a7b-1a8`)
+
+- **Part:** Mechanical set (core, qty 1 set): ASA 1 kg filament + CNC Kitchen M3 heat-set inserts and M3 screws + Gelid thermal pads (x2) + hand strap and neck strap
+- **Current price usd:** Stack estimate $98-133, built as 26 + 46 + 11 + 15-50; only the inserts were verified before. Re-checked 18 Oct 2026, using the stack's own rates (EUR 1 = $1.124, GBP 1 = $1.332):
+  - Polymaker ASA Grey 1 kg: $26.99, in stock at us.polymaker.com.
+  - CNC Kitchen M3x5.7 inserts, 100 pcs: EUR 9.40 including German VAT ($10.57).
+  - CNC Kitchen M3 ISO 14580 A2-70 screws: EUR 5.80-7.20 per 25 pcs. Four lengths (M3x6/8/10/12) come to EUR 25.10 ($28.21). The $46 line has no breakdown; inserts plus about five screw packs would come to about $45.
+  - Gelid pads: QuietPC sells Gelid only as GP-Ultimate in 0.5-1.5 mm; GP-Extreme comes only in 2.0 or 3.0 mm. GP-Ultimate 90x50 costs GBP 3.50 / 4.19 / 6.60 for 0.5 / 1.0 / 1.5 mm, so two pads cost $10.24-14.37.
+  - Straps: the only official prices seen are Peak Design Leash $49.95 and Cuff $39.95.
+  Verified totals: about $91-95 with one $15 generic strap (that $15 is not verified); about $170 with Peak Design Leash + Cuff.
+- **Critical specs:**
+  - ASA heat: HDT at least 100 C at 1.8 MPa and 103 C at 0.45 MPa (ISO 75), Vicat at least 105 C, Tg at least 98 C. These are the Polymaker ASA TDS values. The case sits in sun and its inside reaches about 55-71 C.
+  - ASA strength: tensile X-Y at least 43.8 MPa and Z at least 32 MPa; notched Charpy X-Y at least 10.3 and Z at least 6.7 kJ/m2. These loads come from the bosses, the strap lugs, the 1/4-20 boss pull test at 3x device weight, and drops.
+  - ASA material: UV and weather stable; light grey or white (white is explicitly allowed in mechanical_thermal); no fillers. That means no carbon fibre and no glitter or metallic 'Galaxy' grades near the antennas, for RF transparency. 1.75 mm; at least 0.4 kg per print plus reprints (the Lime case top band reprint), so 1 kg.
+  - M3 inserts: M3 x 5.7 mm, brass (non-magnetic, needed near the IMU/magnetometer), lead and cadmium free, double or opposing knurl for pull-out and torque, pilot end, standard 4.0 mm hole in ASA, 100 pcs.
+  - M3 screws: stainless A2-70 (low magnetic, corrosion resistant), ISO 14580 low head TX10, lengths about 4-20 mm, 25-pc packs.
+  - Thermal pads: published conductivity at least 6 W/mK (the stack's gate for the 10 W Lime pedestal path), ideally confirmed by an independent measurement. Thicknesses within the stack ranges: Lime 0.5-1.5 mm, LPDDR5 0.5-1 mm, UFS 1-1.5 mm. Each piece at least about 26x20 mm. Hardness as low as practical (the UFS is held only by B2B clicks). Electrically non-conductive, non-curing, at least -40 to +125 C.
+  - Straps: rated safe load at least 3x device weight (1.2-1.4 kg, so at least 4.2 kg), with margin. Attaches to the printed lugs or slots (2-4 lugs). Adjustable, weather-resistant nylon, quick release preferred. Neck strap wide enough for 1.3 kg over a long pass. Little ferrous hardware (minor, because the IMU sits off-board on the boom).
+  - General: genuine branded product from an established seller; EU-available with VAT shown; no impact on receive-only or conducted-only rules (mechanical parts are neutral).
+- **Candidates:**
+  1.
+    - **Name:** Polymaker ASA White 1 kg (same material as Grey; PolyLite ASA renamed Polymaker ASA)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 25.99 (us.polymaker.com, in stock; Grey 1 kg is 26.99)
+    - **Spec comparison:** Same material and same TDS: HDT 100 C at 1.8 MPa and 103 C at 0.45 MPa, Vicat 105 C, Tg 98 C, tensile 43.8 (X-Y) and 32 (Z) MPa, notched Charpy 10.3 and 6.7 kJ/m2. White absorbs less sunlight than light grey, which is better for the sun-load model.
+    - **Worse in:** Nothing measured. Possible extra glare next to the display: use the light bezel and hood the stack already plans. Shows dirt more.
+    - **Compatibility:** Drop-in: same print settings (enclosed, ventilated). White is explicitly allowed in mechanical_thermal ('light-grey or white ASA').
+    - **Risks:** Polymaker publishes one TDS for all colours, so pigment effects on mechanical values are not published per colour. The US store price is before US sales tax; an EU buyer pays import VAT, so use the EU line below.
+    - **Seller url:** https://us.polymaker.com/products/asa
+    - **Sources:**
+      - https://us.polymaker.com/products.json (variant prices fetched 18 Oct 2026)
+      - https://polymaker.com/wp-content/uploads/lana-downloads/PolyLite_ASA_TDS_EN_V5.4.pdf
+      - https://wiki.polymaker.com/polymaker-wiki-pt/produtos-polymaker/mais-sobre-nossos-produtos/documentos/fichas-tecnicas/abs-asa/polymaker-tm-asa
+  2.
+    - **Name:** Polymaker ASA White (or Natural) 1 kg from 3DJake (established EU reseller, ships from Austria)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 27.85 including 19% DE VAT (EUR 24.78); 23.41 without VAT (EUR 20.83); was EUR 34.70
+    - **Spec comparison:** Same Polymaker SKU and TDS as the current pick. Compared VAT-for-VAT, it is cheaper for an EU buyer than importing the $26.99 US spool (US price + EU import VAT is about $32.4 at 20% VAT, before shipping and fees).
+    - **Worse in:** Nothing. Grey is SOLD OUT at 3DJake (Dark Grey is preorder), so the in-stock choice is White or Natural.
+    - **Compatibility:** Drop-in.
+    - **Risks:** VAT rate follows the destination country (19% shown is DE). Shipping not checked. The CNC Kitchen M3 inserts cost EUR 11.89 at 3DJake against EUR 9.40 direct, so do not move the inserts into this cart.
+    - **Seller url:** https://www.3djake.com/polymaker/polylite-asa-white?sai=5247
+    - **Sources:**
+      - https://www.3djake.com/api/catalogue/category-products?shopCode=print3d_eu&country=DE&categoryId=678&itemsPerPage=30 (fetched 18 Oct 2026)
+      - https://www.3djake.com/polymaker/polylite-asa-grey?sai=10507
+  3.
+    - **Name:** ELEGOO ASA Grey 1 kg
+    - **Kind:** other_brand
+    - **Price usd:** 19.10 (EUR 16.99, eu.elegoo.com, Grey in stock; White out of stock)
+    - **Spec comparison:** Retailer-published data (not an official ELEGOO TDS; colour: red): HDT 99 C at 0.45 MPa (Polymaker 103), Vicat 102 C (105), tensile X-Y 35 MPa (43.8), Z 30 MPa (32). ELEGOO claims a diameter tolerance of +/-0.02 mm. Its impact figures (40-65 kJ/m2) use an unstated method and cannot be compared with Polymaker's notched Charpy.
+    - **Worse in:** Worse in HDT (-4 C), Vicat (-3 C), X-Y tensile (-20%) and Z tensile (-6%). Rejected under the not-worse rule.
+    - **Compatibility:** Prints like any ASA.
+    - **Risks:** Only secondary-source specs; values differ between listings (one shows HDT 85.5 C).
+    - **Seller url:** https://eu.elegoo.com/products/asa-filament-1-75mm-colored-1kg
+    - **Sources:**
+      - https://eu.elegoo.com/products.json?page=2 (fetched 18 Oct 2026)
+      - https://grobotronics.com/elegoo-asa-1kg-red.html?sl=en
+      - https://www.tradeinn.com/techinn/en/elegoo-asa-filament/143196020/p
+  4.
+    - **Name:** Bambu Lab ASA (unfilled)
+    - **Kind:** other_brand
+    - **Price usd:** not checked (rejected on spec)
+    - **Spec comparison:** Bambu TDS V2.0/V3.0: HDT 92 C at 1.8 MPa (Polymaker 100), 100 C at 0.45 MPa (103), Vicat 106 C (105, slightly better). Bambu ASA-CF is excluded because of the carbon fibre.
+    - **Worse in:** Worse in HDT at both loads (-8 C and -3 C). Rejected.
+    - **Compatibility:** Prints like any ASA.
+    - **Risks:** Read from a third-party mirror of the Bambu TDS PDF.
+    - **Seller url:** 
+    - **Sources:**
+      - https://polyalkemi.no/wp-content/uploads/2024/01/Bambu_ASA_Technical_Data_Sheet.pdf
+  5.
+    - **Name:** SUNLU ASA 1 kg
+    - **Kind:** other_brand
+    - **Price usd:** 21.34 (EUR 18.99 'Ship to Europe' White; US 17.99); OUT OF STOCK at store.sunlu.com
+    - **Spec comparison:** Store page gives only a diameter tolerance of +/-0.02 mm. No HDT, Vicat, tensile or impact data found.
+    - **Worse in:** Unknown, so it cannot be shown not-worse. Not admissible.
+    - **Compatibility:** Prints like any ASA.
+    - **Risks:** No TDS; out of stock.
+    - **Seller url:** https://store.sunlu.com/products/sunlu-asa-filament-1-75mm
+    - **Sources:**
+      - https://store.sunlu.com/products.json (fetched 18 Oct 2026)
+  6.
+    - **Name:** ruthex RX-M3x5.7 brass heat-set inserts, 100 pcs (GE-M3x57-001)
+    - **Kind:** other_brand
+    - **Price usd:** 10.10 (EUR 8.99 including DE VAT, ruthex.de, in stock) vs CNC Kitchen 10.57 (EUR 9.40)
+    - **Spec comparison:** Same published specs: M3 thread, 5.7 mm length, lead and cadmium free brass (RoHS/REACH), opposing spiral knurls (CNC Kitchen: double knurl + pilot end), heat or ultrasonic install, CAD data published. Both are established German brands.
+    - **Worse in:** No published spec is worse. No independent pull-out or torque comparison between the two was found (unverified either way). Ruthex does not state a pilot end.
+    - **Compatibility:** Drop-in if the CAD hole matches ruthex's recommended hole (check its CAD file; 4.0 mm assumed, not verified).
+    - **Risks:** The saving is only EUR 0.41. The M3 screws still come from CNC Kitchen or elsewhere, so a second order and shipping cancel the saving. ruthex free delivery from EUR 22 (scope by country not checked); CNC Kitchen free shipping in DE from EUR 15.
+    - **Seller url:** https://ruthex.de/products/ruthex-gewindeeinsatz-m3-100-stuck-rx-m3x5-7-messing-gewindebuchsen
+    - **Sources:**
+      - https://ruthex.de/products.json (fetched 18 Oct 2026)
+      - https://ruthex.de/meta.json
+      - https://cnckitchen.store/products.json
+      - https://cnckitchen.store/policies/shipping-policy
+  7.
+    - **Name:** Bossard ISO 14580 M3x8 TORX stainless screws, 100 pcs (RS Germany 288-4394)
+    - **Kind:** other_brand
+    - **Price usd:** 12.14 per 100 (EUR 10.80 including VAT, EUR 9.10 without; from a search snippet, page 403, unverified) vs CNC Kitchen 6.52 per 25 (EUR 5.80)
+    - **Spec comparison:** Same standard (ISO 14580 low head TX). The listing does not clearly state A2-70; CNC Kitchen states A2-70 / AISI 304.
+    - **Worse in:** Stainless grade not confirmed. Cheaper per screw (EUR 0.11 vs 0.23) but dearer per pack. RS free shipping only from EUR 100.
+    - **Compatibility:** Drop-in if A2.
+    - **Risks:** Unverified price and grade; only cheaper if more than about 47 screws of one length are needed.
+    - **Seller url:** https://de.rs-online.com/web/p/maschinenschrauben/2884394
+    - **Sources:**
+      - https://de.rs-online.com/web/p/maschinenschrauben/2884394 (search result only)
+      - https://cnckitchen.store/products.json (CNC Kitchen M3 ISO 14580 A2 / AISI 304, dk 5.5, k 2.4)
+  8.
+    - **Name:** Gelid GP-Ultimate 1.0 mm 120x20 mm pad (same material, smaller sheet)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 3.52 each (GBP 2.64, QuietPC, 25 in stock); 2 pcs 7.03 vs two 90x50 pads 10.24-14.37
+    - **Spec comparison:** Same GP-Ultimate material: 15 W/mK claimed, density 3.2, Shore 60-70 OO, -60 to 220 C, non-conductive. 1.0 mm lies inside all three stack ranges (Lime 0.5-1.5, LPDDR5 0.5-1, UFS 1-1.5 mm). 2400 mm2 per strip covers the Lime pad (fits the 26x20 window), the LPDDR5 step and the UFS pad.
+    - **Worse in:** Only one thickness (1.0 mm) in this format at QuietPC, so you lose 0.5 / 1.5 mm tuning after the fit-check. Less spare area for the A/B pad tests (hence 2 pcs).
+    - **Compatibility:** Drop-in where the fit-check gap is about 0.8-1.0 mm. If CAD needs 1.5 mm at the Lime or the UFS, add GP-Ultimate 1.5 mm 90x50 (GBP 6.60).
+    - **Risks:** UK seller: EU delivery VAT/IOSS handling not checked. The GP-Ultimate 15 W/mK claim has no independent measurement. Igor's Lab found its sibling GP-Extreme (12 W/mK claimed) cools barely better than a 3 W/mK pad at 80 C (secondary: page returned 403, read via search summary). So the stack's '>= 6 W/mK' gate is not proven by any Gelid pad; keep the stack's A/B temperature test. GP-Ultimate is fairly hard (60-70 OO) for the B2B-retained UFS; this applies to the current pick as well.
+    - **Seller url:** https://www.quietpc.com/gel-gp-ult-1-120-20?product=6515
+    - **Sources:**
+      - https://www.quietpc.com/gel-gp-ult-1-120-20?product=6515
+      - https://www.quietpc.com/gelid-gp-ultimate-pads?product=6120
+      - https://www.quietpc.com/gelid-gp-pads?product=5037
+      - https://www.quietpc.com/gelid
+      - https://www.igorslab.de/en/waermeleitpads-with-12-w-mk-in-labortest-gelid-gp-extreme-thermal-pad-and-ec360-silver-against-the-japan-reference/4/
+  9.
+    - **Name:** ARCTIC TP-3 100x100 mm 1.0 mm (ACTPD00053A) / 1.5 mm (ACTPD00054A)
+    - **Kind:** other_brand
+    - **Price usd:** about 10.10 each (about EUR 8.99 for 1.0 mm; EUR 6.97-8.54 for 1.5 mm per Igor's Lab price table dated 16 Jul 2026; unverified)
+    - **Spec comparison:** Arctic publishes no W/mK value. Igor's Lab measured 'outstanding performance', stable at layers well below 1 mm. Very soft (0.5 mm compresses to 0.3 mm), which is better for the UFS and BGA. 10,000 mm2 per sheet.
+    - **Worse in:** No published conductivity, so it cannot be shown to meet the stack's '>= 6 W/mK' gate on paper. Not cheaper in total: two thicknesses cost about $17-20 vs $7-14 for Gelid.
+    - **Compatibility:** Fits all thickness ranges.
+    - **Risks:** Prices from secondary sources; buy only from Arctic's linked Amazon store or major EU retailers.
+    - **Seller url:** https://www.arctic.de/en/TP-3/ACTPD00052A
+    - **Sources:**
+      - https://www.arctic.de/en/TP-3/ACTPD00052A
+      - https://www.igorslab.de/en/arctic-tp-3-vs-arctic-apt2560-in-the-test-if-it-has-to-be-a-thermal-pad/
+  10.
+    - **Name:** SmallRig Hand Strap PAC2456 (hand strap across the back)
+    - **Kind:** other_brand
+    - **Price usd:** 13.49 (EUR 12 including VAT, Syntex EU; backordered, due 23 Oct 2026); UK Wex GBP 12.99
+    - **Spec comparison:** Rated safety load 12.5 kg, about 9x a 1.4 kg device and 3x the stack's 4.2 kg pull-test level. PU over EVA padding. Mounts through strap slots up to 12 mm wide (top and bottom). The stack had no priced hand strap; Peak Design's Cuff ($39.95) is a wrist loop, not a back-of-device hand strap.
+    - **Worse in:** No priced reference hand strap to compare against. Lower rated load than Peak Design anchors (90 kg), but well above the stack requirement.
+    - **Compatibility:** Needs two printed slots of 12 mm or less (or a slotted bar) on the back or side of the case: a small CAD change.
+    - **Risks:** Backordered. Rating is SmallRig's own; no independent test.
+    - **Seller url:** https://www.syntex.tv/smallrig-hand-strap-pac2456
+    - **Sources:**
+      - https://www.syntex.tv/smallrig-hand-strap-pac2456 (fetched 18 Oct 2026)
+      - https://www.wexphotovideo.com/smallrig-hand-strap-pac2456-3077116/
+      - https://www.vistek.ca/store/492300/smallrig-hand-strap
+  11.
+    - **Name:** SmallRig Camera Neck Strap Lite 2794 (quick-release neck strap)
+    - **Kind:** other_brand
+    - **Price usd:** 21.36 (EUR 19 including VAT, Syntex EU, ships 22 Oct 2026)
+    - **Spec comparison:** Rated safety load 7 kg (5x device weight, above the 4.2 kg stack level). Dual quick-release buckles, 88-130 cm, 3/8 in nylon webbing. Reference Peak Design Leash $49.95: 'each anchor holds over 200 lb (90 kg)'.
+    - **Worse in:** Worse than Peak Design Leash in rated load (7 kg vs 90 kg anchors) and probably in comfort (narrow 3/8 in webbing). Leash width not verified. If the Leash is the reference, this is a trade, not a not-worse analog.
+    - **Compatibility:** Thin end loops thread through printed lugs; SmallRig notes a split ring may be needed (not included).
+    - **Risks:** Ratings are the maker's own. Alternative SmallRig braided strap 4882 (EUR 24, 10 kg static, no quick release) also falls below the Leash rating.
+    - **Seller url:** https://syntex.tv/smallrig-camera-neck-strap-lite-2794
+    - **Sources:**
+      - https://syntex.tv/smallrig-camera-neck-strap-lite-2794 (fetched 18 Oct 2026)
+      - https://www.syntex.tv/smallrig-universal-braided-shoulder-strap-black-4882
+      - https://www.peakdesign.com/products/leash
+      - https://www.peakdesign.com/products/cuff
+  12.
+    - **Name:** Current reference parts: Polymaker ASA Grey 1 kg + CNC Kitchen M3x5.7 (100) + CNC Kitchen ISO 14580 A2-70 M3 screws + Gelid GP-Ultimate 90x50 (x2) + Peak Design Leash
+    - **Kind:** current_part
+    - **Price usd:** 26.99 + 10.57 + about 28.21 (4 lengths) + 10.24-14.37 + 49.95 = about 126-130 (about 91-95 with an unverified $15 generic strap instead of the Leash)
+    - **Spec comparison:** Reference values listed in critical_specs. Shipping not included (CNC Kitchen free in DE from EUR 15; CNC Kitchen prices include DE VAT, with B2B VAT-ID exemption).
+    - **Worse in:** Reference.
+    - **Compatibility:** As in the stack.
+    - **Risks:** Gelid conductivity is unproven by measurement (see the GP-Ultimate row). The 1/4-20 tripod mount should be a captured nut or press-in steel insert per the re-audit, not a brass heat-set insert. CNC Kitchen 1/4-20x12.7 costs EUR 9.90 if one is wanted for light loads.
+    - **Seller url:** https://cnckitchen.store/products/heat-set-insert-m3-x-5-7-100-pieces
+    - **Sources:**
+      - https://us.polymaker.com/products/asa
+      - https://cnckitchen.store/products.json
+      - https://www.quietpc.com/gelid-gp-ultimate-pads?product=6120
+      - https://www.peakdesign.com/products/leash
+- **Notes:** Bottom line (angle A):
+  - **ASA:** keep Polymaker ASA and switch to White (or Natural). It is $25.99 in the US or EUR 24.78 including VAT at 3DJake in the EU, where Grey is sold out. It is the same material, and white is thermally better in sun. Every cheaper other-brand ASA with a TDS is worse:
+    - ELEGOO EUR 16.99: HDT, Vicat and tensile all lower.
+    - Bambu: HDT 92 C at 1.8 MPa vs 100.
+    - SUNLU: no TDS.
+  - **Inserts and screws:** keep CNC Kitchen bought direct (EUR 9.40 inserts; 3DJake charges EUR 11.89). ruthex RX-M3x5.7 at EUR 8.99 matches on published specs, but its EUR 0.41 saving disappears if the screws need a second order. No cheaper not-worse A2 ISO 14580 screw pack was found for small quantities.
+  - **Pads:** the only cheaper not-worse option is the same material in a smaller format: Gelid GP-Ultimate 1.0 mm 120x20, 2 pcs for $7.03 instead of about $10-14. This works only if the fit-check confirms a 1.0 mm gap. Otherwise keep the 90x50 0.5/1.5 mm SKUs.
+  - **Straps:**
+    - Hand strap: SmallRig PAC2456 (EUR 12, 12.5 kg rating) is the cheapest rated one found. The stack never priced a hand strap.
+    - Neck strap: SmallRig 2794 (EUR 19) is cheaper than the Peak Design Leash ($49.95) but has a lower published rating (7 kg vs 90 kg anchors) and narrower webbing. That is an explicit trade, not not-worse. Strictly not-worse means keeping the Leash.
+  - **Totals:**
+    - Strict not-worse set (ASA White, CNC Kitchen inserts + 4 screw packs, 2x GP-Ultimate 120x20, PAC2456, Leash): about $135 before shipping.
+    - The same set with SmallRig 2794 replacing the Leash (accepting the lower rating): about $107.
+    - The stack's $98-133 understated the cost of two rated straps.
+  
+  Flags for v2:
+  1. No Gelid pad has an independent measurement showing it meets the stack's '>= 6 W/mK' gate for the 10 W Lime pedestal. Igor's Lab reports GP-Extreme (12 W/mK claimed) performs about like a 3 W/mK pad at 80 C; this is a secondary source because the page returned 403. GP-Ultimate is unmeasured and fairly hard (Shore 60-70 OO) for the B2B-retained UFS. The stack's A/B temperature test (pad vs no pad, pedestal temperature) is therefore the real acceptance gate.
+  2. The re-audit calls for a captured 1/4-20 nut or a press-in steel insert, not brass heat-set inserts. This is not costed in this row.
+  3. The Q6A mounts on M2.5 (Pi-pattern holes, M2.5 standoffs per the re-audit), but this row lists only M3 hardware. M2.5 screws and inserts may be missing from the BOM: CNC Kitchen M2.5 ISO 14580 is EUR 5.08-7.50 per 25 and M2.5x4 inserts EUR 9.90 per 100.
+  
+  Not verified:
+  - RS/Bossard price and grade (403).
+  - Arctic TP-3 prices (secondary).
+  - Shipping costs for all sellers.
+  - How CNC Kitchen and 3DJake set VAT outside DE.
+  - QuietPC VAT handling for EU delivery.
+  
+  FX uses the stack's rates: EUR 1 = $1.124, GBP 1 = $1.332. All mechanical items are neutral to the receive-only, conducted-only and no-loop rules. Avoid carbon-fibre and glitter 'Galaxy' ASA grades near the antennas.
+
 ## small:lband_sband (run `wf_41027870-8e7`)
 
 - **Band group:** L-band 1.5-1.7 GHz and S-band 2.2-2.4 GHz with antennas of at most 12 cm (STRICT) or 20 cm (SMALL). Dishes and anything tens of cm deployed are EXCLUDED, including the foldable helicones, the 11-turn helix and the 2x2 helix arrays. Rule interpretation as given: STRICT means the largest deployed dimension is about 12 cm or less; SMALL means about 20 cm or less; foldable or telescopic antennas that are larger when deployed are excluded and appear only in the borderline note.
