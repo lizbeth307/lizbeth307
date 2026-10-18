@@ -28432,6 +28432,160 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - Only STACK.md was edited. The section files in stack_v2_parts still hold the old totals, so re-assembling from them would undo these fixes.
   - Pre-existing markdown tables with mismatched column counts (probably literal pipes inside cells) at lines 63, 104, 131, 170, 593, 855, 861, 1426, 1444, 1447, 1450, 1584, 1626, 1650, 1661, 2348. Outside the totals, so not touched.
 
+## check:structure (run `wf_96ce0f41-1ab`)
+
+- **Lens:** STRUCTURE AND LANGUAGE: section order and subsections, TOC against headings, markdown tables and code blocks, Ukrainian prose, gender-neutral wording, status labels, and v1 content lost without a stated reason (/home/user/lizbeth307/sat-receiver-audit/STACK.md compared with /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/STACK_v1_backup.md)
+- **Problems:**
+  1.
+    - **Where:** Header «Що це», L3: «Цей компроміс користувач прийняв разом із доплатою за Lime-набір»
+    - **Problem:** This is gendered wording about the user: masculine noun plus the masculine past-tense verb «прийняв». The hard rule asks for gender-neutral wording.
+    - **Severity:** rule_violation
+    - **Fix:** Replace with «Цей компроміс прийнято рішенням 18.10.2026 разом із доплатою за Lime-набір».
+    - **Evidence:** STACK.md line 3; brief hard rules: «gender-neutral wording»
+  2.
+    - **Where:** 1.1, L49: «Ці рішення заморожені для v1 і переважають усе, що суперечить їм в інших файлах.»
+    - **Problem:** This v1 sentence was carried over unchanged. It contradicts the v2 source order in the header (user decisions > operator rules > P5 > P4 > v1 text). In v2, C1, C2, C4, C23, D8 and others were rewritten by those higher sources.
+    - **Severity:** contradiction
+    - **Fix:** Replace with «Рішення заморожено у v1; у v2 їх змінено лише там, де цього вимагають рішення користувача 18.10.2026, правила нотаток оператора, рішення аналогів P5 або повторний аудит P4 (порядок — у шапці; кожна зміна — у розділі 11).»
+    - **Evidence:** STACK.md line 49 vs line 13 («Пріоритет джерел у v2») and section 11 rows
+  3.
+    - **Where:** 2 (intro), L183: «ціни й продавці — з final_world_sourcing.json»
+    - **Problem:** Stale v1 claim. In v2, part, seller and price are decided by the P5 analog decisions (header L13, 11.1). final_world_sourcing.json no longer sets prices or sellers.
+    - **Severity:** contradiction
+    - **Fix:** Change to «ціни й продавці — з рішень аналогів P5 (final/analogs_G1-G6; див. 11.1), а де P5 нічого не змінив — з final_world_sourcing.json».
+    - **Evidence:** STACK.md line 183 vs line 13 and 11.1 intro (line 2026)
+  4.
+    - **Where:** 10, L2015: «final/final_integration.json (рішення верифікатора, переважають)» … «final/analogs_G4_mechanical_field.json (рішення P5 щодо аналогів: механіка і польовий набір)»
+    - **Problem:** The «Вхідні файли цього документа» list is stale. It still says final_integration overrides everything. Of the v2 inputs it names only analogs_G4. It leaves out analogs_G1-G3, G5, G6, reaudit_A-D and operator_notes.md, although 11.1-11.6 are built on them.
+    - **Severity:** missing
+    - **Fix:** Add final/analogs_G1-G6_*.json (рішення P5), final/reaudit_A-D_*.json (повторний аудит P4) and final/operator_notes.md. Change «переважають» to «переважають серед джерел v1; порядок v2 — у шапці».
+    - **Evidence:** STACK.md line 2015 vs line 2021 (section 11 intro names reaudit_A-D, analogs_G1-G6, operator_notes); data dir final/ listing
+  5.
+    - **Where:** Header L7 «тому додаток QO-100 купується»; 2.11.2 L332 «набір купується»; vs L76 «QO-100 куплено», 5.3 L805 «LNB куплено», 8 L1548 «Додаток QO-100 (куплено) … які ще позиції вже замовлено?», 11 L2021 «QO-100 куплено», 11.6 L2400 «додаток QO-100 уже куплено»
+    - **Problem:** The English «is bought» was mistranslated as «куплено» (already purchased) in several places. The BOM (2.4 / 2.11.2) and 9.1 step 11 («Зараз, не пізніше тижня 1-2») treat the QO-100 kit as still to be bought. The document contradicts itself on purchase status.
+    - **Severity:** contradiction
+    - **Fix:** Replace every «QO-100 куплено» / «LNB куплено» / «уже куплено» with «QO-100 купується» / «LNB купується» (or «входить у закупівлю, 9.1 крок 11»). In 8, question 9, write «Додаток QO-100 і Lime уже входять у збірку; які позиції вже замовлено?».
+    - **Evidence:** STACK.md lines 7, 332, 377, 805, 1184, 1548, 1731, 2021, 2261, 2400; final/user_requirements.md line 49 («the QO-100 add-on … is bought» as a consequence of the region decision)
+  6.
+    - **Where:** 1.2, row «Варіант Lime з GNSS (#83)», L157: «Лише якщо Lime залишено.»
+    - **Problem:** A stale v1 condition. Lime is kept (user decision 18.10.2026), so the consequence column still reads as if Lime were optional.
+    - **Severity:** contradiction
+    - **Fix:** Replace with «Lime залишено (рішення 18.10.2026): варіант з GNSS не брати.»
+    - **Evidence:** STACK.md line 157 vs line 53 (C1) and line 319
+  7.
+    - **Where:** 4.1, L554: «Elektro-L5/FY-2H: Берлін 7.6/5.8°, Рим 10.8/8.5°, Варшава 12.0/10.3°, Атени 20.6/18.2°»; 1.2 L170 «Лісабон −4.9/−7.3°, Лондон −0.1/−2.1°, Париж +1.9/−0.1°…»; 11.4 L2270
+    - **Problem:** Per-city elevation angles were added back. The same document states that city-specific angles were removed by rule: 1.2 #6 L106 «кути для конкретних міст прибрано» and 6.1 L1116 «константи поля і кути наведення для конкретних міст».
+    - **Severity:** contradiction
+    - **Fix:** Replace the city lists with regional bands, as 11.6 L2382 already does: «Elektro-L5/FY-2H: нижче або біля горизонту в Іберії, Ірландії й Великій Британії, близько 6-12° у центральній Європі, близько 18-21° на південному сході (модель)». Keep city fixes only as CI test coordinates (8, L1489).
+    - **Evidence:** STACK.md lines 106, 170, 554, 1116, 2270, 2382; final/user_requirements.md lines 13, 39, 49 («no city tables»)
+  8.
+    - **Where:** 3.1, row «Банк живлення», L411, status: «перевірено через агрегатор (сторінки магазинів — 403)»
+    - **Problem:** The document's legend says (перевірено) means seen at the primary source. Here the price comes from an aggregator (billiger.de) and the shop pages returned 403. By the document's own definition the status is not «перевірено».
+    - **Severity:** contradiction
+    - **Fix:** Status: «не перевірено (ціна з агрегатора billiger.de; сторінки MediaMarkt/Saturn — 403)».
+    - **Evidence:** STACK.md line 411 (status cell) vs line 9 («(перевірено) — … побачені на першоджерелі»)
+  9.
+    - **Where:** BOM/lab status cells: 3.3 L446 «перевірено (Robens, Forclaz) / оцінка (кілок)»; 2.5 L241 «кілок — оцінка $2-6»; 2.7 L280 «ціни перевірено 18.10.2026; стендові ворота — очікують»; 2.7 L284 «ціну перевірено 18.10.2026; умовно — ворота G0-G7»; 2.9 L303 «частково перевірено (SKU закріплено)»; 2.2 L199 «перевірено (USD) / модель (ЄС landed)»
+    - **Problem:** Status labels fall outside the three allowed values (перевірено / модель / не перевірено). «оцінка» and «частково перевірено» are not statuses, and gate information is mixed into the status column. In prose, «(оцінка)» (17 times) and «(розрахунок)» (6 times) are used for what the legend calls «(модель)».
+    - **Severity:** style
+    - **Fix:** Use only the three statuses plus a short qualifier in brackets: «перевірено (Robens, Forclaz) / модель (кілок)», «перевірено (18.10.2026)» with the gate text moved to «примітка», «перевірено (SKU) / не перевірено (ціна)», «перевірено (USD) / модель (вартість з доставкою в ЄС)». In prose, change «(оцінка)» / «(розрахунок)» to «(модель)».
+    - **Evidence:** STACK.md status column of the rows at lines 199, 241, 280, 284, 303, 446; legend line 9; brief style: «statuses перевірено / модель / не перевірено»
+  10.
+    - **Where:** Зміст, L31-32: «8.1. Нові виміри і ворота (P4)» / «8.2. Приймальні тести аналогів (P5)»
+    - **Problem:** The TOC entries do not match the headings. L1553 reads «### 8.1. Нові виміри і ворота з повторного аудиту (P4)». L1672 reads «### 8.2. Приймальні тести й умови аналогів (P5) і нотатки оператора». The TOC drops the operator-notes part of 8.2.
+    - **Severity:** style
+    - **Fix:** Set the TOC lines to «8.1. Нові виміри і ворота з повторного аудиту (P4)» and «8.2. Приймальні тести й умови аналогів (P5) і нотатки оператора».
+    - **Evidence:** STACK.md lines 31-32 vs 1553 and 1672
+  11.
+    - **Where:** 8 / 9 / 11: «---» at L1551 just before «### 8.1.»; no «---» before «## 9.» (L1715) or «## 11.» (L2019)
+    - **Problem:** Every other top-level section (1-8, 10) is preceded by a horizontal rule, as in v1. Here a rule sits inside section 8, splitting it from its own subsections, while sections 9 and 11 have none. This happened when the section files were assembled.
+    - **Severity:** style
+    - **Fix:** Delete the «---» at L1551. Insert «---» plus a blank line before L1715 «## 9. Порядок закупівлі і запуску» and before L2019 «## 11. Зміни v1 → v2».
+    - **Evidence:** STACK.md lines 1551, 1715, 2019; v1 rules at lines 1110 and 1153 before ## 9 and ## 10
+  12.
+    - **Where:** 11 (intro), L2021-2022: «Журнал змін між STACK v1 і v2. …» directly followed by «Пріоритет при розбіжностях: …»
+    - **Problem:** There is no blank line between the two lines, so markdown renders them as one paragraph and the precedence rule is buried in the change-log sentence.
+    - **Severity:** style
+    - **Fix:** Insert a blank line between line 2021 and line 2022, or make line 2022 a bold lead-in («**Пріоритет при розбіжностях:** …»).
+    - **Evidence:** STACK.md lines 2021-2022
+  13.
+    - **Where:** Throughout, e.g. 1.1 L54 «з landed-вартістю за 2.1», 1.1 L73 «правило EU landed cost», 9.1 L1735 «Митниця і ПДВ (регіон — Європа; правило landed cost)», 11.1 L2077 «landed $229.28-234.90»
+    - **Problem:** The English term «landed» / «EU landed» / «landed cost» appears 147 times in Ukrainian prose (0 times in v1). The header defines the Ukrainian term «вартість з доставкою в ЄС» and «правило вартості з доставкою в ЄС».
+    - **Severity:** style
+    - **Fix:** Replace «EU landed» / «landed» with «вартість з доставкою в ЄС» and «правило landed cost» with «правило вартості з доставкою в ЄС». Keep «(landed)» at most once as a gloss in the header.
+    - **Evidence:** STACK.md lines 11, 54, 73, 1735, 2077 (grep -c -w landed = 147; v1 = 0)
+  14.
+    - **Where:** Header L11: «збір Союзу за обробку, UHF: дистанційні продажі»; 1.2 L106: «(Union handling fee для дистанційних продажів»; 3.2 L424: «UHF EUR 2 за рядок»
+    - **Problem:** «UHF» is used about 90 times as the abbreviation for the EU Union handling fee. In a radio document UHF is the frequency band (VHF/UHF, L3, L61), so many lines read ambiguously. L106 also leaves the English «Union handling fee» in prose, and L183 itself says the term will be «далі «збір за обробку»».
+    - **Severity:** style
+    - **Fix:** Replace every fee use of «UHF» (e.g. «EUR 2 UHF», «мито/UHF», «UHF EUR 2») with «збір за обробку». Replace «Union handling fee» in L106 with «збір Союзу за обробку». Keep «UHF» only for the band.
+    - **Evidence:** STACK.md lines 11, 106, 183, 227, 424 (about 92 fee uses of «UHF»; v1 used UHF only for the band)
+  15.
+    - **Where:** e.g. 4.1 L567 «— re-audit C, модель»; 5.4 L824 «(re-audit D)»; 11.6 L2358 «> re-audit P4 >»; 11.6 L2370 «Re-audit A не знайшов»; 11.1 L2046 «P4 (reaudit_A)»
+    - **Problem:** The English «re-audit» (72 times) and file stems «reaudit_X» (38 times) appear in Ukrainian prose. Other places use «повторний аудит X» (164 times), so the terminology is inconsistent.
+    - **Severity:** style
+    - **Fix:** Replace «re-audit X» / «Re-audit X» / «reaudit_X» in prose with «повторний аудит X». Keep file names only in source citations.
+    - **Evidence:** STACK.md (grep: «re-audit [A-D]» 72, «reaudit_» 38, «повторний аудит» 164)
+  16.
+    - **Where:** 11.3, L2205 «(r3 corr 2)», L2213 «(r3 corr 1)», L2221 «(r1 new_risk 6/9)», L2233 «(r0 corr 13, r1 corr 0, r2 corr 0)»
+    - **Problem:** Internal JSON field shorthand in English (round/corr/new_risk) was left in the «чому» cells. It means nothing to a reader of the document.
+    - **Severity:** style
+    - **Fix:** Rewrite as Ukrainian references, e.g. «(повторний аудит B, раунд 3, виправлення 2)», «(повторний аудит B, раунд 1, нові ризики 6 і 9)», or drop the bracket and keep only «повторний аудит B».
+    - **Evidence:** STACK.md lines 2205, 2213, 2221, 2233
+  17.
+    - **Where:** 11.1, row 45, L2074: «P4 (reaudit_C) назвав Rollei Compact Traveler No. 1 Aluminium (ціна TBD, дані 2016 р.)»
+    - **Problem:** English «TBD» is left in Ukrainian prose (not a part number).
+    - **Severity:** style
+    - **Fix:** «(ціну не названо, дані 2016 р.)»; also «P4 (reaudit_C)» → «повторний аудит C».
+    - **Evidence:** STACK.md line 2074
+  18.
+    - **Where:** 8.1 L1426 «'zero-copy support disabled'»; 11.2 L2120 «'dd if=/dev/mtd0 bs=4096'», L2132 «'install /bin/false'», L2142 «'satdump live'», L2148 «'out of scope'», L2159 «'Not supported for QCLINUX'»
+    - **Problem:** About 25 English strings and commands are in ASCII single quotes, all new in v2 (v1 has 0). The document's convention is «…» for quoted text (e.g. «Not compatible with Radxa OS (Ubuntu 24)», «out of scope» in v1) and backticks for commands.
+    - **Severity:** style
+    - **Fix:** Put log and UI strings in «…» («zero-copy support disabled», «out of scope», «Not supported for QCLINUX») and commands in backticks (`dd if=/dev/mtd0 bs=4096`, `install /bin/false`, `satdump live`).
+    - **Evidence:** STACK.md lines 1426, 1454, 1457, 1464, 1471, 1479, 2119-2160
+  19.
+    - **Where:** 1.1 C8 L60 «рішення ваше або власника живлення»; 5.8 L1086 «12.5 V за рішенням власника живлення»; 8 L1526 «Рішення власника живлення і ваше»; 8 L1438 «після підтвердження власників LNA»; 11.4 L2251 «PPS-проводку підтверджує власник GNSS»
+    - **Problem:** These are calques of audit-team roles («power owner», «LNA owner», «GNSS owner»). They introduce undefined third parties into a single-user document, and the masculine noun «власник» refers to a person.
+    - **Severity:** style
+    - **Fix:** Replace with neutral, defined wording: «ваше рішення (8, «Рішення про шину LNB»)», «після підтвердження за даташитами LNA», «PPS-проводку підтвердити за схемою Waveshare».
+    - **Evidence:** STACK.md lines 60, 1086, 1438, 1526, 2251, 2284
+  20.
+    - **Where:** 3.5, L477: «| процедура | суть | виправлення для v1 |»; 7, L1256: «## 7. Виправлені помилки (corrections_to_my_report, коротко)»
+    - **Problem:** Both headers are stale. The 3.5 column now also holds v2 corrections (sled v2, bvernoux/lbe-142x, LMS7002M, IronOS ≥2.23). Section 7 now holds items 37-136 from P4, P5 and operator notes (L1295 «Нові виправлення v2»), not only corrections_to_my_report.
+    - **Severity:** style
+    - **Fix:** Rename the 3.5 column to «виправлення (v1 і v2)». Rename section 7 to «## 7. Виправлені помилки (v1 — corrections_to_my_report; v2 — P4, P5, нотатки оператора)» and update the TOC entry to match.
+    - **Evidence:** STACK.md lines 477-499, 1256, 1295
+  21.
+    - **Where:** 9.1 L1728-1731: «| 8 | Тиждень 2-3 |», «| 9 | Тиждень 1 |», «| 10 | До 1.12.2026 |», «| 11 | Зараз, не пізніше тижня 1-2 …»; 9.2 L1752-1753: «11. **Після доставки Lime (відвантаження 15.12.2026):**» then «12. **Тиждень 2-3, QO-100 (Європа):**»
+    - **Problem:** The order is no longer chronological. v2 changed the timing of steps (Boni-Whip is now in stock; QO-100 is bought now) but kept the v1 step positions. Week-1 purchases now come after week-2-3 and December steps, in a list titled «спершу — довгі терміни».
+    - **Severity:** style
+    - **Fix:** 9.1: move step 9 (Boni-Whip, Тиждень 1) to just after step 6 and step 11 (QO-100, зараз/тиждень 1-2) to just after step 7, then renumber. 9.2: put step 12 (QO-100, тиждень 2-3) before step 11 (Lime, після 15.12.2026), then renumber.
+    - **Evidence:** STACK.md lines 1719-1733 and 1741-1755; v1 lines 1125-1128 (old timings «З 20.11.2026», «Коли підтверджено…»)
+  22.
+    - **Where:** e.g. 1.1 D9 L69 «ніколи не повинен з'єднатися з P5, що несе DC» (port); 3.5 L484 «| P5 | Калібрування частоти» (procedure); 1.1 L76 «Економія P5 (11.7)» (analog phase)
+    - **Problem:** The label «P5» (likewise P4) now means three different things: antenna port P5, lab procedure P5 and the analog phase P5 (about 260 uses). v2 added the heavy phase usage on top of the v1 port and procedure labels, so many sentences are ambiguous.
+    - **Severity:** style
+    - **Fix:** Always qualify the label: «порт P5», «процедура P5», and «аналоги P5» / «етап P5» (likewise «повторний аудит P4» vs «порт P4» / «процедура P4»). Or note the three meanings once in «Позначки».
+    - **Evidence:** STACK.md lines 69, 76, 212, 313, 484, 778, 810 (grep -c «\bP5\b» about 260)
+- **Notes:** What was checked and passed, so none of it is reported above:
+  - **Section order and subsections:** sections 1-11 are in order. 8.1, 8.2 and 11.1-11.7 are present, plus 2.11.1-2.11.3 at H4 level.
+  - **Tables:** a script parsed all 58 markdown tables with GFM pipe splitting, honouring escaped \|. Every row has the same number of cells as its header. No table is broken by a stray line, no heading sits directly against a table, and there is a blank line before each table.
+  - **Code block:** the only one (L830-836) is closed. Its '#' lines are comments in /etc/kernel/cmdline, not headings.
+  - **Markup balance:** bold, backticks and «» are balanced on every line.
+  - **Numbering:** section 7 runs 1-136 without gaps. The tables in 11.1-11.6 are numbered without gaps (78/60/55/48/56/48 rows). The 11.1 decision column gives 43 «залишено» and 35 «замінено умовно», matching the header.
+  - **Other English:** apart from the items listed, English in prose is limited to product, UI, menu and log names inside «» or backticks, which is acceptable.
+  - **Gender:** the only gendered agreement about the user is the L3 verb. Generic «користувач» and «покупець» nouns are left as is.
+  
+  Comparison with v1, section by section:
+  - **Method:** I diffed table rows by first cell, compared 3-word shingles of every v1 clause, and checked every v1 identifier or number token and every v1 URL against v2.
+  - **Result:** almost all v1 content is present, reworded, or removed with a stated reason (section 6.2, section 7 items 37-136, section 11).
+  - **Examples of removals with reasons:** the D36V28F5 #2 row (6.2 L1252); the PTC limits (C8, 6.2); the W9MDB figures (7 #72); the T4 parking position (D8); the US de minimis and GST notes (region decision).
+  - **URLs:** the two v1 URLs that disappeared were replaced by newer versions: the 4DHDMI datasheet R1.5 and SDRangel radioclock pinned to v7.27.2.
+  - **Result of the loss check:** no valid v1 content was found lost without a reason. The only v1-related gaps reported are stale or incomplete statements: the 1.1 intro, the section 2 intro, the input-file list and the #83 condition.
+  
+  Two findings are outside a strict structure-and-language reading but are internal contradictions caused by wording, so I kept them: the per-city angles against the city-table rule, and «куплено» against «купується» for QO-100.
+
 ## extract:reaudit_C (run `wf_9cc6cab3-efa`)
 
 - **Source:** reaudit_C
