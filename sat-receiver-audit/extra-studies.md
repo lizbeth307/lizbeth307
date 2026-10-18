@@ -14152,6 +14152,1375 @@
   - VSDISPLAY (eBay.de 256679793470): what is the board's input (HDMI?), how does touch reach the host, which panel part is it, and is it the same 6.97in glass as Wisecoco?
 - **Confidence:** medium
 
+## report:compute_software_ai (run `wf_df1900ef-872`)
+
+- **Scope:** This audit covers the Q6A compute board, kernel/OS pinning, the full software stack, the NPU (QAIRT 2.42, INT8), the spectrum-based NPU training system and the lab menu/UI. Read in full or near full: final/compute.json, software.json, npu_training.json, lab_ui_hf.json and user_requirements.md (governing). Also read the whole of minute-log.md, the newest summaries.md entries plus keyword greps across summaries.md and extra-studies.md, and the parts of small_antenna_stack.json, radio_lab.json, display_market.json, foldable_antennas.json and wideband_sdr.json that touch this scope. All 18 named final/*.json files exist (plus foldable_partial.json and digest.md). final/report_research.json from P1b does not exist yet. I did not read wideband_sdr, narrowband_sdr, display, storage, rf_frontend, gnss_imu, power, mechanical_thermal, antennas or dish_replacement beyond targeted greps, because they are outside this scope. components/compute.md and software.md were spot-checked and match the JSON. I used 7 web lookups to settle disputes: ISS frequencies, SatDump version, the QAIRT 0x1388 error, VTCM size and noble libgpiod.
+- **Items:**
+  1.
+    - **Subsystem:** Compute (Q6A)
+    - **Topic:** Board choice and dimensions
+    - **Current decision:** Keep the Radxa Dragon Q6A (QCS6490): 1x A78 2.7 GHz + 3x A78 2.4 GHz + 4x A55 1.9 GHz, Adreno 643, Hexagon v68 HTP rated 12 TOPS. Per the user rule, no alternative search.
+    - **Key numbers:** 85 x 56 mm; holes 3.5 mm at 58 x 49 mm. Power 2.9 W idle, 9.3 W stress-ng, 10.1-10.17 W peak (fan included). GB6 1170/3105.
+    - **Evidence:** Radxa product brief rev 1.7 (10 Oct 2026); SBCwiki review; sbc-bench KBw_.
+    - **Status:** verified
+    - **Conflicts or errors:** The plan's 85x65 mm was wrong (corrected). The alternatives study (RUBIK Pi 3 $299, Q8B 20-43 W, RK3588 ~$225+, Orin Nano Super $399, A733 boards) is moot under the user rule.
+    - **Needed action:** None. Design the case from Radxa's drawing/STEP.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/compute.json
+      - https://dl.radxa.com/q6a/docs/radxa_dragon_q6a_product_brief.pdf
+  2.
+    - **Subsystem:** Compute (Q6A)
+    - **Topic:** RAM tier (12 GB vs 8 GB) and purchase
+    - **Current decision:** compute.json final picks 12 GB ($189.99 Allnet), with 8 GB from TinyTronics as the budget option. small_antenna_stack.json downgraded to 8 GB. npu_training and lab_ui_hf both assume 12 GB.
+    - **Key numbers:** Allnet: 6 GB $149.99, 12 GB $189.99 (in stock). Arace: 4/6/8/12 GB $95/115/139/169, all sold out. TinyTronics: 8 GB EUR 121 incl. NL VAT / EUR 100 ex VAT, 20+ in stock (18 Oct 2026). Ameridroid $169.95/$249.95, out of stock. The $124 16 GB launch price is gone. RAM cannot be upgraded later.
+    - **Evidence:** Seller .js listings fetched by the compute verifier.
+    - **Status:** conflict
+    - **Conflicts or errors:** An 8 GB board cannot hold NPU's 6-8 GiB IQ ring + 1 GiB inferd + 2 GiB trainer. lab_ui_hf assumes about 4 GiB of ring on 12 GB; compute assumes 2-4 GiB.
+    - **Needed action:** Tie the RAM tier to the pending LimeSDR decision: Lime kept means 12 GB; RTL/HF+ only means 8 GB is enough (largest stream about 10 MB/s). Buy while stock lasts.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/compute.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - https://www.tinytronics.nl/en/development-boards/single-board-computers/radxa-dragon-q6a-qcs6490-8gb
+  3.
+    - **Subsystem:** Compute (Q6A)
+    - **Topic:** Price basis
+    - **Current decision:** compute.json totals are 'before shipping and Ukrainian import VAT'. It checked Prom.ua and justifies TinyTronics by easier RMA from Ukraine.
+    - **Key numbers:** About $266 total (12 GB + 128 GB UFS + Armor case) before shipping.
+    - **Evidence:** compute.json final_recommendation and final_budget_option.
+    - **Status:** violates_requirements
+    - **Conflicts or errors:** The requirement says the user is not in Ukraine: use world prices, with Ukrainian prices only as reference.
+    - **Needed action:** Restate as world prices (ex-VAT plus shipping from EU/CN/US sellers) in STACK.md.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+  4.
+    - **Subsystem:** Compute (Q6A)
+    - **Topic:** Power input (J21 header)
+    - **Current decision:** Feed J21 (pin 1 = 12 V, 2 = GND, 3 = PWR key) from a fused, reverse-protected, regulated buck at 9 V or 7.5 V, at least 3 A. Never power USB-C at the same time (Q5 back-feed). Never apply the raw 16.8 V 4S pack.
+    - **Key numbers:** Header accepts 3.6-16 V (Radxa staff). SY81012 buck is a 16 V-class part. No fuse, TVS or reverse protection on the header. Use Pololu D36V50F9 or F7 (#4093 is the F7; the F12 is #4095). SMBJ13A clamps near 21 V, so it does not protect below 16 V; use an OVP eFuse near 13.5 V.
+    - **Evidence:** forum.radxa.com/t/30400; schematic v1.21 DC-IN page; pololu.com.
+    - **Status:** verified
+    - **Conflicts or errors:** The research claim '12 V only, 5/9 V will not start' was refuted. The pack is undecided: small_antenna_stack accepts 3S (9-12.6 V) direct to J21, but the lab UI thresholds and its 12.0 V LDO assume 4S.
+    - **Needed action:** Decide 3S vs 4S, then fix the buck and the UI thresholds.
+    - **Sources:**
+      - https://forum.radxa.com/t/30400
+      - https://www.pololu.com/product/4095
+  5.
+    - **Subsystem:** Compute (Q6A)
+    - **Topic:** Cooling
+    - **Current decision:** Active cooling is mandatory: Radxa Armor Case 7056A, or a copper heatsink with a 30-40 mm 5 V fan.
+    - **Key numbers:** Tj 95 C; throttles at about 90-91 C; 94 C seen under Windows. Armor case $4.99 (Arace) / $9.90 (Allnet); about 40 C idle with it.
+    - **Evidence:** Qualcomm thermal documentation; Arace/Allnet listings; forum 30123.
+    - **Status:** verified
+    - **Conflicts or errors:** The research claim 'no official cooler' is superseded.
+    - **Needed action:** Log temperatures in the combined SDR+NPU+storage soak and feed them to the 80/85 C shedding ladder.
+    - **Sources:**
+      - https://forum.radxa.com/t/best-heatsink-cooling-solutions-for-dragon-q6a/30123
+  6.
+    - **Subsystem:** Compute (Q6A)
+    - **Topic:** UFS module and Kioxia quirk
+    - **Current decision:** Radxa UFS 3.1 128 GB (Samsung KLUDG4UHDC), $65.90 at Allnet. The 256 GB Kioxia is sold out.
+    - **Key numbers:** Radxa's dd write figures are 388 MB/s (128 GB) and 557 MB/s (256 GB), probably WriteBooster bursts. 61.44 Msps cs16 = 246 MB/s, so 128 GB holds about 8.7-9.5 min. Gate: 10-min fio with minimum 1 s bandwidth of at least 300 MB/s.
+    - **Evidence:** docs.radxa.com UFS page; Arace/Allnet listings.
+    - **Status:** unverified
+    - **Conflicts or errors:** summaries #1259/#1342/#2679 and the compute verifier say the Kioxia PA_TACTIVATE fix (PR #551) is in the pinned 6.18.2 kernel. The software verifier extracted the 6.18.2-4 vmlinuz and found no THGJFGT1E45BAILB; only 7.0.11-7 has it. The older statements are superseded. Which chip Allnet ships is unknown.
+    - **Needed action:** Buy the Samsung module, read the chip ID on arrival, run the fio gate.
+    - **Sources:**
+      - https://github.com/radxa-pkg/linux-qcom/releases/tag/6.18.2-4
+      - https://github.com/radxa/kernel/pull/551
+  7.
+    - **Subsystem:** Compute (Q6A)
+    - **Topic:** Long-IQ storage and the single USB 3.1 port
+    - **Current decision:** Four incompatible plans. compute verify: USB3 NVMe enclosure on the blue port, RTL on a hub port. lab_ui_hf and radio_lab: Samsung T7 1 TB on the blue port, time-shared with the instrument hub. small_antenna_stack: T7 removed, RTL-A on the blue port.
+    - **Key numbers:** Blue port is USB 3.1 Gen1 5 Gb/s, direct to the SoC, on 2 PHY lanes (the other 2 drive HDMI). The three black ports share one FE1.1s 480 Mb/s hub with the AIC8800 Wi-Fi. VBUS is limited by WS4612 switches at about 2.1 A. T7 about 395 MB/s. 56 Msps raw is 403 GB/h (ci8) / 806 GB/h (ci16).
+    - **Evidence:** Schematic v1.21 and DT, as read by the compute/software fixes.
+    - **Status:** conflict
+    - **Conflicts or errors:** The fixes agent's 'RTL on USB3' was refuted by the verifier (it wastes the only SuperSpeed port).
+    - **Needed action:** Freeze one USB map in STACK.md. With Lime: blue port = T7/NVMe. Without Lime: blue port = RTL-A, instruments on the internal CH334F hub. Wi-Fi off during passes.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  8.
+    - **Subsystem:** Compute (Q6A)
+    - **Topic:** HDMI/DSI display path
+    - **Current decision:** HDMI only, through the RA620 DP-to-HDMI bridge. Wisecoco 1920x1080 with an EDID rewritten to the RF-clean 1080p52 mode (128.70 MHz). DSI is not used.
+    - **Key numbers:** 2-lane HBR2 gives about 360 MHz pixel clock. 2560x1600@60 RB (268.5 MHz) and 4K30 work; 4K60 is impossible. DRM connector is HDMI-A-1. DSI is limited to 'FHD+' and third-party panels are unproven. 1080p60 at 148.5 MHz has harmonics at 742.5 and 2227.5 MHz.
+    - **Evidence:** Radxa 6.18.2 DTS (data-lanes <0 1>), msm dp_panel.c, simple-bridge.c, display_market.json.
+    - **Status:** verified
+    - **Conflicts or errors:** The fixes agent used DP-1 (wrong). The research claim 'DSI drives a panel directly' is superseded. Mainline DTS has no HDMI node.
+    - **Needed action:** Set drm.edid_firmware=HDMI-A-1:edid/wisecoco52.bin and video=HDMI-A-1:1920x1080@52 in /etc/kernel/cmdline, with the EDID in the initramfs. Run the UI tests at @52.
+    - **Sources:**
+      - https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/display_market.json
+  9.
+    - **Subsystem:** Compute (Q6A)
+    - **Topic:** PCIe/M.2 path for LimeSDR Micro
+    - **Current decision:** If the Lime is kept: M.2 2230 M-key, Gen3 x2 on pcie1, through a short shielded riser. Set pcie_aspm=off. Apply the PCI class fixup (1957:1c10, 1957:1c12, 2058:001d set to class 0x118000) if BARs fail on kernel 6.18 or later. Gen2 fallback: max-link-speed=2.
+    - **Key numbers:** Dedicated ETA3521 4 A 3.3 V rail. Lime: $249 + $18 shipping, ships 15 Dec 2026, 1T2R, RX 0.3-2.6 and 3.3-3.8 GHz only, minimum 7 Msps, one MSI, 4 MiB flood buffer. RX ring 16 x 16 KiB = 256 KiB = 1.07 ms at 61.44 Msps / 1.17 ms at 56 Msps. Onboard NIC is 1 GbE RTL8111.
+    - **Evidence:** Source review of LA9310_TRX.cpp and la9310_pci.c (software, wideband_sdr); sbc-bench.
+    - **Status:** conflict
+    - **Conflicts or errors:** compute.json verify and fixes give the RX ring as 'about 2 MB, about 3 ms at 160 Msps / 8.5 ms at 61.44 Msps', 8x too large. Software research's 'exactly 8 MSI' was refuted (1 MSI). The fixes agent's '2.5GbE RTL8125BG' is wrong (1 GbE), so the Stage-B pass mark is unreachable. Lime is kept or removed depending on the study: small_antenna_stack removed it; foldable_antennas (allowed by the latest rules) uses it; wideband_sdr says decide on 31 Jan 2027.
+    - **Needed action:** Re-decide the Lime in final checks. If it stays, use the bring-up checklist plus a USB3 RTL8156B for the riser test. If it goes, drop DKMS, the class fixup and the CPU7 isolation.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/wideband_sdr.json
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/boards/LimeSDR_Micro/LA9310_TRX.cpp
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro
+  10.
+    - **Subsystem:** Compute (Q6A)
+    - **Topic:** CPU core allocation
+    - **Current decision:** CPU0-3 (A55): UI, daemons, NPU host and CPU fallback. CPU4-6 (A78 2.4 GHz): DSP engines and labrx. CPU7 (A78 2.7 GHz): isolated for lime:Rx0 with SCHED_FIFO 50 (its priority call is commented out upstream).
+    - **Key numbers:** Kernel parameters isolcpus=nohz,domain,managed_irq,7 nohz_full=7 rcu_nocbs=7 irqaffinity=0-6 preempt=full. T2 training estimate assumes 12-29 GFLOPS effective on A78 cores.
+    - **Evidence:** software.json verify; npu_training.json; lab_ui_hf.json.
+    - **Status:** conflict
+    - **Conflicts or errors:** lab_ui_hf puts the 'labclassify trainer on the A55 cores'. npu_training runs T2 on CPU4-6, and its 4.5-11 min estimate assumes A78 throughput; on A55 it would be several times slower (estimate). Without the Lime, isolating CPU7 wastes the fastest core.
+    - **Needed action:** Inference fallback on A55; T2 training on CPU4-6 between passes only. Release CPU7 if the Lime is dropped.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  11.
+    - **Subsystem:** Compute (Q6A)
+    - **Topic:** Board reliability and recovery
+    - **Current decision:** Burn in inside the return window. Keep UART access in the case. Back up the SPI NOR (cdt/ddr partitions) with edl-ng before any firmware change. Budget a spare board. Avoid third-party AliExpress sellers.
+    - **Key numbers:** 12 h stressapptest plus memtester; 50-100 cold boots; UART on pins 8/10/14 at 115200. Failure types: RCW_TRAINING_FAIL, DRAM_DCC_FAIL, ONLY_RANK_1.
+    - **Evidence:** Forum 30841 (staff diagnosed hardware); forum 29959 traced to bad RAM.
+    - **Status:** verified
+    - **Conflicts or errors:** Root cause and failure rate unknown.
+    - **Needed action:** Put it in Phase 0 / the W1-2 gates.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/compute.json
+  12.
+    - **Subsystem:** Kernel/OS
+    - **Topic:** Firmware and base image
+    - **Current decision:** Radxa OS r2 (Ubuntu 24.04 noble, systemd-boot, the output_4096 UFS image) on SPI BIOS 6.0.260120 (flat_build_260120).
+    - **Key numbers:** BIOS 260916 is marked 'Not compatible with Radxa OS (Ubuntu 24)', and the Radxa download page now lists only 260916.
+    - **Evidence:** docs.radxa.com download page; software.json; summaries #3072.
+    - **Status:** verified
+    - **Conflicts or errors:** None.
+    - **Needed action:** Archive the 260120 zip, EDL-NG and the image offline with SHA-256.
+    - **Sources:**
+      - https://docs.radxa.com/en/dragon/q6a/download
+  13.
+    - **Subsystem:** Kernel/OS
+    - **Topic:** Kernel pin (Path A vs Path B)
+    - **Current decision:** Path A: hold linux-image-6.18.2-4-qcom, with the Samsung UFS and the golden NPU set. Software, NPU and lab UI all use this. Path B: 7.0.11-7 + clk_ignore_unused, only with Kioxia UFS and a test-first NPU.
+    - **Key numbers:** The 7.0 HDMI black screen is fixed by clk_ignore_unused (Radxa staff, 1 Sep 2026). CDSP 'remotectl1' fails on 7.0.11-5 even with the memory-region fix. Mainline 7.3-rc7 has no Q6A UFS, USB3 or HDMI.
+    - **Evidence:** forum.radxa.com 31288/31304; mainline DTS.
+    - **Status:** verified
+    - **Conflicts or errors:** compute.json's 'Kernel 7.0.x broke HDMI, audio and FastRPC' is partly superseded (HDMI is fixable; the NPU problem is not). Path A stays because the NPU is a user wish. summaries #381 'Armbian is the better choice' is superseded.
+    - **Needed action:** Keep Path A. Validate any new kernel only on a second UFS or USB boot medium.
+    - **Sources:**
+      - https://forum.radxa.com/t/latest-q6a-update-to-linux-7-0-no-hdmi/31288
+  14.
+    - **Subsystem:** Kernel/OS
+    - **Topic:** Package holds and the repo trap
+    - **Current decision:** Hold: the linux-image/headers-radxa-dragon-q6a meta-packages, linux-image-6.18.2-4-qcom, radxa-firmware-qcs6490, linux-firmware, fastrpc, libcdsprpc1, listener libs, qcom-qnn-sdk-v68, the validated Mesa set, libdrm, xwayland, wlroots, labwc, qt6-*, systemd-boot, pipewire and the X11 libglfw3. Remove unattended-upgrades, mask the apt and fwupd timers, set Install-Recommends false.
+    - **Key numbers:** The repo index (24 Sep 2026) has only 7.0.11-7, and the meta-packages depend on it. A full upgrade replaced firmware and lost audio even on 6.18.2-4. Mesa: noble 24.0.5 vs noble-updates 25.2.8.
+    - **Evidence:** qcs6490-noble Packages.gz; forum 31288.
+    - **Status:** verified
+    - **Conflicts or errors:** summaries #2083/#2500 say the 6.18.2-4 headers return 404. The software verifier says the headers .deb is on GitHub release 6.18.2-4. compute.json's hold list leaves out the meta-packages and Mesa.
+    - **Needed action:** Merge into one hold list. Fetch headers from the GitHub release. Keep a golden disk image, not just the kernel package.
+    - **Sources:**
+      - https://radxa-repo.github.io/qcs6490-noble/dists/qcs6490-noble/main/binary-arm64/Packages.gz
+      - https://github.com/radxa-pkg/linux-qcom/releases/tag/6.18.2-4
+  15.
+    - **Subsystem:** Kernel/OS
+    - **Topic:** Kernel command line and boot safety
+    - **Current decision:** Set all parameters through /etc/kernel/cmdline plus kernel-install; never hand-edit loader entries. Add an explicit default line in loader.conf, boot counting via /etc/kernel/tries, and a rescue rootfs entry on UFS.
+    - **Key numbers:** Parameters: pcie_aspm=off, isolcpus/nohz_full/rcu_nocbs=7, irqaffinity=0-6, preempt=full, drm.edid_firmware=HDMI-A-1:... and video=HDMI-A-1:1920x1080@52.
+    - **Evidence:** software.json verify; lab_ui_hf packaging.
+    - **Status:** unverified
+    - **Conflicts or errors:** The software fixes stage said to append to the loader entries; the verifier superseded that. The Lime-only parameters are unnecessary without the Lime. Which noble package ships systemd-bless-boot is unknown, and so is UEFI variable persistence.
+    - **Needed action:** Test in the W1-2 bring-up gates.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/software.json
+  16.
+    - **Subsystem:** Kernel/OS
+    - **Topic:** Missing kernel features on the held 6.18 kernel
+    - **Current decision:** pps-gpio has to be built out of tree. pinctrl-mcp23s08 is not built, so use userspace smbus2 or a TCA9535 with the pca953x driver. Whether the UART7 overlay (pins 32/29) can be enabled is unverified.
+    - **Key numbers:** CONFIG_PPS_CLIENT_GPIO is not set on 6.18. DRM_LOAD_EDID_FIRMWARE=y, I2C_CHARDEV=y, HIDRAW=y, PWM_GPIO=m. /dev/watchdog existence unknown.
+    - **Evidence:** radio_lab.json software; software.json verify kernel-config notes.
+    - **Status:** unverified
+    - **Conflicts or errors:** lab_ui_hf assumes PPS on pin 7 (GPIO96) and UART7 without listing the pps-gpio build.
+    - **Needed action:** Add a pps-gpio DKMS +labN deb to the software plan. Test the UART7 overlay early; fallback is an internal USB 2.0 hub.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  17.
+    - **Subsystem:** NPU runtime
+    - **Topic:** FastRPC golden set
+    - **Current decision:** Take CDSP.HT.2.5.c4-00004, ADSP c9-00028 and fastrpc_shell_3/unsigned_3 from linux-msm/hexagon-dsp-binaries and record their SHA-256. Apply the DT overlay that adds memory-region (shared-dma-pool) to both fastrpc nodes. Add an initramfs hook for adsp.mbn/cdsp.mbn and a udev rule for /dev/fastrpc-* and /dev/dma_heap/*.
+    - **Key numbers:** Errors 0x80000600 and 'no reserved DMA memory for FASTRPC' (forums 31078, 31208 on 6.18.2-3). Check: fastrpc_test -a v68 passes 3/3.
+    - **Evidence:** Accepted fix in forum 31078; Qualcomm repository updated 16 Oct 2026.
+    - **Status:** verified
+    - **Conflicts or errors:** None remaining; community kits are only a cross-check.
+    - **Needed action:** Phase 0.
+    - **Sources:**
+      - https://github.com/linux-msm/hexagon-dsp-binaries
+      - https://forum.radxa.com/t/dragon-q6a-fastrpc-npu-fails-fastrpc-ioctl-init-create-returns-0x80000600-on-cdsp/31078
+  18.
+    - **Subsystem:** NPU runtime
+    - **Topic:** QAIRT 2.42 pin
+    - **Current decision:** QAIRT 2.42.0.251225 on the device (qcom-qnn-sdk-v68 0.1.0-2) and on an x86-64 Ubuntu 22.04 / Python 3.10 host. Never use AI Hub QNN or DLC artifacts.
+    - **Key numbers:** SDK zip is 1,543,955,191 B and was still downloadable on 18 Oct 2026. AI Hub has not offered 2.42 since 22 Jun 2026, and removed the qnn_context_binary target on 14 Sep 2026. Error 0x1388 means the context binary is newer than the runtime. Qualcomm is now at 2.50; onnxruntime-qnn 2.7.0 targets 2.51.
+    - **Evidence:** npu_training sweeps; forum 30908 (confirmed in this audit).
+    - **Status:** verified
+    - **Conflicts or errors:** compute.json's 'pin 2.46 (reported working)' and 'test 2.46' are superseded by the user's 2.42 requirement.
+    - **Needed action:** Archive the zip and the deb with SHA-256. Install per device; the licence forbids standalone redistribution.
+    - **Sources:**
+      - https://forum.radxa.com/t/qcs6490-radxa-q6a-qairt-sdk-version-mismatch-ai-hub-artifacts-2-45-x-incompatible-with-runtime-2-42-0-251225/30908
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+  19.
+    - **Subsystem:** NPU runtime
+    - **Topic:** Set B (ORT 1.27 + onnxruntime-qnn 2.3.0, QAIRT 2.47)
+    - **Current decision:** npu_training keeps Set B as an experimental Phase-3 path for per-channel weights and A16W8.
+    - **Key numbers:** QAIRT 2.47 (released May 2026).
+    - **Evidence:** npu_training final software and roadmap.
+    - **Status:** violates_requirements
+    - **Conflicts or errors:** The user wish is INT8 for QAIRT 2.42. The evidence also conflicts. software.json and summaries #3116 say 2.46 and later fail with CDSP c4-00004. npu_training final says 0x1388 is only a version check and that 2.46/2.47/2.49 runtimes ran on Q6A boards (forums 31047/31448/31462).
+    - **Needed action:** Remove Set B from the device plan. Allow it at most as a bench experiment on a separate boot medium, never shipped.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/software.json
+      - /home/user/lizbeth307/sat-receiver-audit/summaries.md
+  20.
+    - **Subsystem:** NPU runtime
+    - **Topic:** Precision and op constraints on v68
+    - **Current decision:** INT8 (w8a8, per-channel weights) is primary; A16W8 is the fallback. Static shapes; Conv2d 1xK instead of Conv1d; ReLU/ReLU6/HardSwish instead of SiLU. No Softmax, Sigmoid, TopK, NMS, LSTM/GRU or attention in the graph. Separate Clip-bounded outputs with explicit encodings; input encoding pinned (ORT offload_graph_io_quantization=0).
+    - **Key numbers:** v68 firmware rejects FP16 and FP32. A16W16 needs v73. The Softmax cDSP crash fix arrived only in 2.47; the concurrency fixes in 2.47/2.48.
+    - **Evidence:** Qualcomm 80-63442-10 (htp_backend, SupportedOps, HtpOpDefSupplement); forums 31217 and 31368.
+    - **Status:** verified
+    - **Conflicts or errors:** Whether A16W8 works on 2.42 is unverified. minute-log 03:25 and compute verify state it as fact; software.json and the NPU open questions say it is untested.
+    - **Needed action:** Test one A16W8 conv in Phase 0. Until then, design INT8-only.
+    - **Sources:**
+      - https://docs.qualcomm.com/doc/80-63442-10/topic/htp_backend.html
+  21.
+    - **Subsystem:** NPU runtime
+    - **Topic:** VTCM and soc_id
+    - **Current decision:** Set vtcm_mb=2 in the backend-extension config and read every binary back with qnn-context-binary-utility. dsp_arch v68, soc_model 35.
+    - **Key numbers:** A 4,194,304-byte request fails with 0x138d; about 2 MB is grantable. The QNN table maps SM7325 to 35 and QCM6490 to 93.
+    - **Evidence:** Forum reports; npu_training sweeps. My search found no official VTCM size.
+    - **Status:** unverified
+    - **Conflicts or errors:** The 'physical 8 MB' figure comes from one forum post. Whether --vtcm_override applies to .bin contexts is unclear. 35 vs 93 is unresolved.
+    - **Needed action:** In Phase 0, query the VTCM size and compare soc 35 against 93.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+  22.
+    - **Subsystem:** NPU runtime
+    - **Topic:** Stability and latency gate
+    - **Current decision:** Promote the HTP only after Phase 0: p99 of 12 ms or less per tile and no hang in an 8 h soak with fault injection; otherwise ship the MVP CPU-first on ONNX Runtime 1.31.0. Run inferd-htp sandboxed (WatchdogSec=5, MemoryMax=1G, CPUAffinity 0-3) with one execute thread, sequential init, a 500 ms deadline broker, a CDSP restart ladder and a wait of 15 s or more after restart.
+    - **Key numbers:** SpecDet-S latency is UNMEASURED (planning value 3-8 ms). Reference: YOLOv8n-640 w8a8 3.6-4.7 ms on RB3 Gen 2 with QAIRT 2.50; Q6A app-level 10-12 ms official, about 20 ms custom. Known hangs: forums 29949 (about 1 h), 31208, 31046 and 31368.
+    - **Evidence:** AI Hub cards; Radxa forums.
+    - **Status:** model_only
+    - **Conflicts or errors:** At 42.5 tiles/s, a 12 ms p99 gives 51% duty, above the design's own 50% cap. The stated tile-rate formula includes x1.07 frequency overlap, but the profile figures omit it (LIME-W 17.8 = 13.35 x 1.33; RTL-F 6.5 = 4.88 x 1.33). With it the load is about 44-45 tiles/s, about 54% duty at 12 ms.
+    - **Needed action:** Tighten the gate to p99 of 11 ms or less, or cap scheduled tiles at 40/s or fewer (raise K, fewer LIME-F tiles).
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+  23.
+    - **Subsystem:** NPU training
+    - **Topic:** Two-stage detector/classifier architecture
+    - **Current decision:** Stage 1: SpecDet, own code or YOLOX-derived (Apache-2.0; Ultralytics AGPL is benchmark-only), frozen INT8 on the HTP. Input: 2x512x512 uint8 tiles (mean and max dB re floor, 0.25 dB/LSB), SpaceToDepth to [1,32,128,128]. Outputs obj, box, fam(12) and occ at 64x64 (stride 8). Stage 2: FP32 on the CPU, E-S embedder to a 128-d embedding, prototypes plus a cosine head, open-set 'unknown'.
+    - **Key numbers:** SpecDet-S 0.29 GMAC / 0.36 M params; SpecDet-M 0.88 GMAC / 0.80 M. E-S 16.3 MMAC / 0.16 M params, 0.5-1.0 GFLOP/s at 15-30 crops/s.
+    - **Evidence:** Analytic scripts in the scratchpad (calc_train/specdet.py); tile geometry re-checked in this audit.
+    - **Status:** model_only
+    - **Conflicts or errors:** The '19 MMAC' embedder was refuted (it was 73.7 MMAC) and replaced by E-S. Magnitude-only input will weaken family accuracy against WBSig53's complex-spectrogram figures; BPSK vs QPSK is not visible.
+    - **Needed action:** Benchmark S/M/G in Phase 0. Measure the INT8 vs FP32 per-family AP gap (2 pp rule).
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+  24.
+    - **Subsystem:** NPU training
+    - **Topic:** Spectrogram profiles and SDR coverage
+    - **Current decision:** LIME-W, LIME-F and LIME-B profiles; RTL-F and RTL-C; DDC zooms. FFT on VkFFT/Turnip with an FFTW fallback.
+    - **Key numbers:** LIME-W: 56 Msps, N=4096, K=16, 13.67 kHz x 1.17 ms, tile 7.0 MHz x 0.6 s. LIME-F: 854 Hz x 2.34 ms, tile 437.5 kHz x 1.2 s. LIME-B: 54.7 kHz x 37 us, tile 28 MHz x 19 ms. RTL-F: 625 Hz x 3.2 ms, tile 320 kHz x 1.64 s. GPU FFT about 7.8 GFLOPS, about 1% of the 808 GFLOPS measured.
+    - **Evidence:** npu_training final, re-computed in this audit.
+    - **Status:** model_only
+    - **Conflicts or errors:** Three of five profiles need the undecided LimeSDR. There is no Airspy HF+ profile, yet lab_ui_hf 'HF > Band survey' promises NPU classes; the NPU roadmap puts HF in Phase 4 (Q3 2027). small_antenna_stack's second V4L adds about 7.3 tiles/s. VkFFT on Turnip is unbenchmarked.
+    - **Needed action:** Add an HF-F profile (768 ksps) and a second-RTL profile. Recompute the load once the SDR set is fixed.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  25.
+    - **Subsystem:** NPU training
+    - **Topic:** Teaching flow (few-shot and on-device learning)
+    - **Current decision:** T0: prototype from 5-20 boxes. T1: head refit. T2: E-S fine-tune on the device between passes. T2b: experimental on-device head re-quantisation. T3: full retrain at home base.
+    - **Key numbers:** T0 under 0.1 s; T1 under 1 s (scikit-learn 1.9.1; up to 200 fp16 embeddings per class = 51 kB). T2: 7.8 TFLOP gives 4.5-10.8 min at 12-29 GFLOPS (checked), 1-3 min with frozen layers. Guards: no pass within 15 min, battery above 40% or charging, SoC below 80 C, MemoryMax 2 GiB.
+    - **Evidence:** npu_training on_device_learning.
+    - **Status:** model_only
+    - **Conflicts or errors:** lab_ui_hf places the trainer on the A55 cores. Five-shot sufficiency is unmeasured ('a hope').
+    - **Needed action:** Measure 1/5/10/20-shot curves on real captures. Run T2 on CPU4-6.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+  26.
+    - **Subsystem:** NPU training
+    - **Topic:** Home-base training
+    - **Current decision:** x86-64 PC with an NVIDIA GPU of 8-16 GB (RTX 3060 class), 32-64 GB RAM and at least 1 TB NVMe. Two environments: PyTorch CUDA, and Ubuntu 22.04 with QAIRT 2.42. TorchSig 2.2.0; AIMET-torch 2.41.0 (also test 2.21/2.22).
+    - **Key numbers:** SpecDet-S 1.6-4.8 h and M 4.9-14.7 h per 100 epochs on 100k tiles (1.74e16 and 5.28e16 FLOP at 1-3 TFLOPS; checked). Labelling: about 7,200 boxes, 12-40 h.
+    - **Evidence:** npu_training budgets; the verifier refuted the earlier '1.5-3 h'.
+    - **Status:** model_only
+    - **Conflicts or errors:** Nobody has confirmed the user owns such a PC. Colab/Kaggle is allowed only with synthetic or satellite-only data, and an Ubuntu 22.04 VM for the conversion is untested.
+    - **Needed action:** Confirm the home-base hardware.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+  27.
+    - **Subsystem:** NPU training
+    - **Topic:** RAM and storage budgets
+    - **Current decision:** On 12 GB: IQ ring of 6 GiB with training enabled (8 GiB without), sized once at boot; inferd-htp up to 1 GiB, inferd-cpu about 300 MiB, trainer up to 2 GiB. 20 GB UFS dataset quota; raw IQ on the T7.
+    - **Key numbers:** 6 GiB = 28.8 s at 56 Msps ci16 (checked). Dataset: 25-35k boxes with full tiles, 70-240k with 128x128 crops. T7: 403/806 GB/h, rolling cap about 400 GB, 14-day retention.
+    - **Evidence:** npu_training budgets.
+    - **Status:** conflict
+    - **Conflicts or errors:** 6 + 1 + 2 + 0.3 is about 9.4 GiB before the OS, Lab Shell, SatDump, SDRangel and OpenWebRX+ on a board whose visible RAM is about 11 GiB (unverified), so it is over-committed. lab_ui_hf assumes about 4 GiB of ring, compute.json 2-4 GiB, small_antenna_stack an 8 GB board and no T7.
+    - **Needed action:** Set one RAM budget. Example: 12 GB board with a 4 GiB ring (19 s at 56 Msps ci16) when training is on; 8 GB board with a ring of 1.5 GiB or less and no Lime.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  28.
+    - **Subsystem:** NPU training
+    - **Topic:** Battery and power assumptions
+    - **Current decision:** 72 Wh pack at 85% usable. Training adds 3-6 W. Shedding: below 25% no training, below 15% NPU off.
+    - **Key numbers:** 2.2-2.4 h typical at 25-28 W; 1.2-1.4 h at 45-52 W; 0.05-1.1 Wh per training run. NPU incremental power unknown; measure with the INA228.
+    - **Evidence:** npu_training budgets.
+    - **Status:** superseded
+    - **Conflicts or errors:** Later stack figures (small_antenna_stack): 11-17 W typical, 24-32 W peak, possibly a 3S 54 Wh pack. The lab UI uses 20% economy and 8% / 13.2 V shutdown.
+    - **Needed action:** Recompute after the pack decision. Put all thresholds in labpowerd only.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+  29.
+    - **Subsystem:** NPU training
+    - **Topic:** Class list and policy gate
+    - **Current decision:** 12 families and classes 0-23. Blocklist (radar incl. TorchSig lfm-radar, drone/FPV/RC, EW/jammer, military, emitter-ID, private-content services; DMR/P25 become unnamed occupancy), enforced on the device at class creation. LoRa is named only when a SatNOGS-predicted LoRa satellite matches. No alerts, DF/AoA, geolocation or emitter tracks.
+    - **Key numbers:** Class names of 20 characters or fewer; 3 runtime-only unknown outcomes.
+    - **Evidence:** npu_training class_list, checked against the requirement policy gate.
+    - **Status:** verified
+    - **Conflicts or errors:** Errors: class 7 'ISS SSTV on 145.800 MHz' should be 437.550 MHz (ARISS Series 31/32 2026; Series 33 on 2-6 Oct 2026). Class 2 'Meteor/NOAA HRPT': NOAA-15/18/19 ended in 2025. Class 12 dvbs2 (QO-100 wideband beacon) cannot be received without a dish; the foldable horn loses DATV and the multimedia beacon.
+    - **Needed action:** Fix the class metadata. Make dvbs2 optional or occupancy-only.
+    - **Sources:**
+      - https://www.ariss.org/upcoming-sstv-events.html
+      - https://qsl.net/w3apl/news/2026/10/02/weekend-update.html
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+  30.
+    - **Subsystem:** NPU training
+    - **Topic:** Voice snippets
+    - **Current decision:** nfm_voice is occupancy-only and never demodulated, but 'IQ snippets 0.25 s or less' are kept on the device (about 25 kB per box).
+    - **Key numbers:** 0.25 s cap; 25 kB per box.
+    - **Evidence:** npu_training class 8; data_labelling sweep.
+    - **Status:** violates_requirements
+    - **Conflicts or errors:** The requirement says voice is spectrogram-only. Raw IQ of voice can be demodulated later.
+    - **Needed action:** Store no IQ for nfm_voice or voice-tagged F2 boxes; keep only the spectrogram crop. Keep the default 'standard' region profile; 'restricted' (the Ukraine example) stays optional, which complies with the requirement.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+  31.
+    - **Subsystem:** NPU training
+    - **Topic:** Datasets and licences
+    - **Current decision:** Own SigMF v1.2.6 recordings are the primary data. TorchSig 2.2.0 (MIT code) and GNU Radio file-only synthetics. SatNOGS DB under CC BY-SA 4.0. HisarMod2019.1 under CC BY via the DataPort ToS. RadioML (CC BY-NC-SA) for benchmarks or private pretraining only. WBSig53 regenerated.
+    - **Key numbers:** TorchSig 69 classes; HisarMod 26 classes / 780k signals.
+    - **Evidence:** Licences fetched by the practical-use verifier.
+    - **Status:** verified
+    - **Conflicts or errors:** CelesTrak OMM terms and the Fraunhofer and SPREAD dataset terms are unchecked.
+    - **Needed action:** Add a licence field per record. Keep NC data out of redistributable weights.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+  32.
+    - **Subsystem:** NPU training
+    - **Topic:** Process architecture overlap with the lab UI and radio lab
+    - **Current decision:** NPU: sdr-ingestd, recorderd, spectrumd, inferd-htp/cpu, fusiond, annotd, modeld and npu-health under rflab.target, with 'rflabd' as the MVP daemon. Lab UI: labd, labrx, labclassify, labpowerd, labinput. Radio lab: an 'rflab' daemon owning the MCP23017s, plus lab-rec and lab-sched.
+    - **Key numbers:** Three owners proposed for the SDR stream, RAM ring, recorder and GPIO.
+    - **Evidence:** npu_training, lab_ui_hf and radio_lab final software sections.
+    - **Status:** conflict
+    - **Conflicts or errors:** The name 'rflab' means different things in two designs. Two different recorders and RAM rings are specified.
+    - **Needed action:** Merge into one architecture. labd: arbiter, front end, GPIO and MCP owner. labrx: ingest, spectrum and recorder. labclassify: inferd-htp/cpu plus fusiond. One RAM ring.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  33.
+    - **Subsystem:** NPU runtime
+    - **Topic:** QAIRT licence and the CPU path
+    - **Current decision:** Keep the MIT-licensed ONNX Runtime CPU path first-class, able to carry the whole system.
+    - **Key numbers:** The AI Stack License forbids EAR Part 744 end uses, lets QTI terminate without cause, and allows no standalone redistribution.
+    - **Evidence:** Licence text fetched to scratchpad/dl_deb/lic.txt.
+    - **Status:** verified
+    - **Conflicts or errors:** The earlier claim 'licence prohibits military use, consistent with the project' was refuted (its terms are narrower).
+    - **Needed action:** None.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_deb/lic.txt
+  34.
+    - **Subsystem:** Software stack
+    - **Topic:** SDR userspace from apt and Python
+    - **Current decision:** From noble apt: GNU Radio 3.10.9.2, VOLK 3.1.2 (run volk_profile), gr-satellites 5.5.0, SoapySDR 0.8.1, SoapyRTLSDR 0.3.3, Gpredict 2.3 (behind a 5-digit alias bridge), Hamlib 4.5.5, gnss-sdr 0.0.19, direwolf 1.7, gpsd 3.25, chrony 4.5.
+    - **Key numbers:** Skyfield must be 1.49 or later for OMM: radio_lab uses pip Skyfield 1.55 / sgp4 2.27.
+    - **Evidence:** packages.ubuntu.com; SatDump issue #1221 (6-digit IDs work); Gpredict PR #412 closed unmerged.
+    - **Status:** verified
+    - **Conflicts or errors:** lab_ui_hf lists apt skyfield 1.48 / sgp4 2.22, which lacks from_omm.
+    - **Needed action:** Use a pinned pip venv for Skyfield.
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/issues/1221
+      - https://github.com/csete/gpredict/pull/412
+  35.
+    - **Subsystem:** Software stack
+    - **Topic:** librtlsdr for the V4L
+    - **Current decision:** Rebuild noble's rtl-sdr source package with commits 0204c9c (V4L R828S) and 65f0658 (USB hang), keeping the librtlsdr.so.2 soname. Blacklist dvb_usb_rtl28xxu. Do not run 'apt purge ^librtlsdr'.
+    - **Key numbers:** Noble has 2.0.1; V4L support exists only from 2.0.3 (11 Aug 2026).
+    - **Evidence:** software verify (readelf on the SDR++ deb); osmocom repository.
+    - **Status:** verified
+    - **Conflicts or errors:** software.json's final text says to use osmocom 2.0.3 (.so.0) and rebuild every consumer. Its own missed-options list, lab_ui_hf and radio_lab choose the .so.2 rebuild.
+    - **Needed action:** Build one +labN deb with the .so.2 soname.
+    - **Sources:**
+      - https://github.com/osmocom/rtl-sdr
+  36.
+    - **Subsystem:** Software stack
+    - **Topic:** SatDump build and version
+    - **Current decision:** Build master (2.0.0-alpha) from source with Soapy and LimeSuiteNG legacy API; do not install inmarsat_support. Launch with LC_NUMERIC=C, one time-boxed systemd-run unit per pass, never satdump_sdr_server.
+    - **Key numbers:** Latest numbered release is 1.2.2. The Pi64 nightly links librtlsdr.so.0 and LimeSuite 22.09 and has no Soapy plugin.
+    - **Evidence:** Verified the SatDump GitHub releases page in this audit; software verify.
+    - **Status:** verified
+    - **Conflicts or errors:** minute-log 02:15 says 'SatDump v1.15.0 (17.10.2026)'. That is wrong: v1.15.0 of 17 Oct 2026 is CyberEther (extra-studies line 1774). The alpha CLI and autotrack may change.
+    - **Needed action:** Correct the minute-log. Add version tests to the pass wrapper.
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/releases
+      - /home/user/lizbeth307/sat-receiver-audit/minute-log.md
+  37.
+    - **Subsystem:** Software stack
+    - **Topic:** SDR++, SDRangel, OpenWebRX+ and HF+ integration
+    - **Current decision:** SDR++ from source: Soapy and airspyhf sources on; pager, M17 and Falcon9 off; X11 libglfw3 held, libglfw3-wayland pinned to -1. SDRangel 7.27.2 RX-only from source on Qt 5.15, with a policy audit that fails on TX, DSD, LibMbe, DSDcc or SerialDV .so files. OpenWebRX+ 1.2.126 with --no-install-recommends and exact-name pins. SoapyAirspyHF from source. HF+ ppm correction applied in labrx or libairspyhf, not through Soapy.
+    - **Key numbers:** HF+ about 3.1 MB/s on USB; recordings cf32_le at about 6.1 MB/s; libairspyhf 1.6.8 in noble.
+    - **Evidence:** lab_ui_hf verifiers; SDRangel issue #2741 (RPi 5 build problem).
+    - **Status:** unverified
+    - **Conflicts or errors:** Nothing has been built on the Q6A and CPU load is unmeasured. Both Qt 5.15 and Qt 6.4 must be installed.
+    - **Needed action:** Set up an arm64 builder producing +labN debs from tagged commits.
+    - **Sources:**
+      - https://github.com/f4exb/sdrangel/issues/2741
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  38.
+    - **Subsystem:** Software stack
+    - **Topic:** Decoder allow-list and TX-capable packages
+    - **Current decision:** lab_ui_hf: jt9/wsprd only (dpkg-divert /usr/bin/wsjtx); js8call, rtl-433, digiham, codecserver, multimon-ng, acarsdec, dumphfdl and dumpvdl2 pinned to -1. radio_lab: installs wsjtx 2.7.0~rc3 and fldigi 4.2.03, multimon-ng with EAS only, rtl_433 off by default.
+    - **Key numbers:** Two lists that disagree on four packages.
+    - **Evidence:** lab_ui_hf packaging; radio_lab software.
+    - **Status:** conflict
+    - **Conflicts or errors:** The full WSJT-X GUI and fldigi can transmit, which goes against the lab UI's no-TX-packages policy audit.
+    - **Needed action:** Adopt lab_ui_hf's stricter list. Drop fldigi (decode RTTY/PSK31 in SDRangel or OpenWebRX+). Allow multimon-ng only as an EAS-only build when the region is US.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  39.
+    - **Subsystem:** Software stack
+    - **Topic:** GPIO tooling (libgpiod)
+    - **Current decision:** labd holds GPIO lines as persistent libgpiod v1 requests with safe defaults; never one-shot gpioset.
+    - **Key numbers:** Noble ships gpiod/libgpiod 1.6.3-1.1build1 (v1 API).
+    - **Evidence:** packages.ubuntu.com/noble/gpiod, checked in this audit.
+    - **Status:** verified
+    - **Conflicts or errors:** radio_lab says to use 'libgpiod v2 for the remaining header lines'; v2 is not in noble. radio_lab also drives the MCP23017s from a separate daemon.
+    - **Needed action:** Use the v1 API (or build v2 from source) and have a single owner.
+    - **Sources:**
+      - https://packages.ubuntu.com/noble/gpiod
+  40.
+    - **Subsystem:** Software stack
+    - **Topic:** GPU waterfall
+    - **Current decision:** Mesa Turnip; Lab Shell draws its own QQuickItem GPU-texture waterfall. VkFFT for NPU tiles. CyberEther v1.15.0 optional as an Expert view.
+    - **Key numbers:** vkpeak 808 GFLOPS FP32 / 1581 GFLOPS FP16 (measured by Radxa). qcom-adreno-opencl 1.855.3.
+    - **Evidence:** docs.radxa.com Vulkan page.
+    - **Status:** unverified
+    - **Conflicts or errors:** software.json's 'SDR++ OpenGL waterfall under a cage kiosk' is superseded by Lab Shell. VkFFT and CyberEther are untested on the Adreno 643.
+    - **Needed action:** Hold one Mesa version and benchmark.
+    - **Sources:**
+      - https://docs.radxa.com/en/dragon/q6a/system-config/vulkan
+  41.
+    - **Subsystem:** Lab menu/UI
+    - **Topic:** Shell architecture
+    - **Current decision:** Own Lab Shell (Qt 6.4.2 QML) on labwc 0.7.1 with XWayland. greetd 0.9.0 with a crash-counting wrapper; cage 0.1.5 safe mode. labbar status bar in GTK3 + gtk-layer-shell 0.8.2. Daemons: labd (D-Bus org.lab.*), labpowerd, labinput, labrx, labclassify. Engines run headless as user labrx; Expert GUIs open via a lease plus ACL hand-off.
+    - **Key numbers:** No existing system fits: SDRangel has a desktop UI, OpenWebRX+ ships disallowed decoders, PortaPack Mayhem includes TX, DragonOS is Pi-only, PiSDR's last commit was 4 Oct 2022. Effort: several person-months to P3 (estimate).
+    - **Evidence:** lab_ui_hf sweeps and two verifiers.
+    - **Status:** model_only
+    - **Conflicts or errors:** labwc 0.7.1 is untested on the Q6A HDMI path. Its fallback 0.8.4 needs bundled wlroots 0.18 and libwayland 1.23 (noble has 1.22).
+    - **Needed action:** Run the W1-2 bring-up gates (19 Oct-1 Nov 2026).
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  42.
+    - **Subsystem:** Lab menu/UI
+    - **Topic:** Ergonomics for gloves and sun
+    - **Current decision:** Touch targets at least 15 mm (primary at least 20 mm) with gaps of 3 mm or more. Depth at most Home > Hub > Mode. Two push-encoders (tune, volume) and six sealed keys (HOME, BACK, REC, MARK, FN, LOCK). Risky actions need a hold of at least 1.5 s. Every leaf works with encoder and keys alone. Day, Night and Red themes switched by the VEML7700.
+    - **Key numbers:** Home tiles about 29x20 mm at 1080p (12.4 px/mm). Status bar 13 mm = 161 px (110 px at 1280x800). Six chips 18-27 mm wide, 147 mm total, within the 151/155 mm panel widths (checked). Keys at least 12 mm at 13 mm pitch. Minimum contact 80-120 ms. Readouts at least 6 mm. Day theme contrast at least 7:1.
+    - **Evidence:** Usability verifier; arithmetic re-checked in this audit.
+    - **Status:** verified
+    - **Conflicts or errors:** The touch controller's glove and water modes are unknown.
+    - **Needed action:** Get the Wisecoco controller part number and VID:PID.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  43.
+    - **Subsystem:** Lab menu/UI
+    - **Topic:** Display-mode assumptions
+    - **Current decision:** The layout targets 1080p landscape, with a 1280x800 fallback (4D Systems).
+    - **Key numbers:** Wisecoco active area 154.4 x 86.8 mm. The Midas option is 1200x1920, portrait-native.
+    - **Evidence:** display_market.json.
+    - **Status:** unverified
+    - **Conflicts or errors:** lab_ui_hf does not reference the RF-clean 1080p52 EDID mode. The Midas above-FHD project would need output rotation and a relayout.
+    - **Needed action:** Make 1080p52 part of the UI test. Decide the orientation if Midas is pursued.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/display_market.json
+  44.
+    - **Subsystem:** Lab menu/UI
+    - **Topic:** Factual errors in menu profiles
+    - **Current decision:** The menu lists ISS SSTV on 145.800 MHz and the ISS APRS digipeater on 145.825 MHz. 'Tune' assigns the Lime at 30 MHz and above.
+    - **Key numbers:** Current ISS: APRS 437.825 MHz (RS0ISS, still in testing); FM voice up 145.990 / down 437.800; SSTV events on 437.55 MHz. Lime receives only 0.3-2.6 and 3.3-3.8 GHz.
+    - **Evidence:** ARISS station status of 7 Oct 2026 and the ARISS SSTV page (checked in this audit); radio_lab verifier.
+    - **Status:** conflict
+    - **Conflicts or errors:** Three wrong frequency or range entries. 'Listen VHF/UHF on the Lime' cannot cover VHF.
+    - **Needed action:** Fix the profiles. Take frequencies from the cached SatNOGS DB instead of hard-coding them.
+    - **Sources:**
+      - https://www.ariss.org/current-status-of-iss-stations
+      - https://www.ariss.org/upcoming-sstv-events.html
+  45.
+    - **Subsystem:** Lab menu/UI
+    - **Topic:** Menu items beyond the link-budget evidence
+    - **Current decision:** The menu offers QO-100 NB 'SSB/CW listening', Elektro-L LRIT and Metop/FY AHRPT (experimental).
+    - **Key numbers:** With the 21-23 dBi flat-pack horn: beacon-level SSB 0 to +5 dB in 2.5 kHz; typical stations -3 to -13 dB. Metop-B 'effectively lost'; FengYun AHRPT lost. Meteor HRPT on the petal helicone: about +8.9-9.4 dB (model).
+    - **Evidence:** foldable_antennas.json; small_antenna_stack.json.
+    - **Status:** model_only
+    - **Conflicts or errors:** This is a physics limit: typical QO-100 SSB stations are not readable with dish-free antennas.
+    - **Needed action:** Label these 'beacon/CW/strong SSB only' and 'experimental', and show the expected margin on the pass card.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+  46.
+    - **Subsystem:** Lab menu/UI
+    - **Topic:** Policy gaps against the requirements
+    - **Current decision:** (a) Signals AI 'tap a label for the offline Artemis entry'. (b) HF Quiet and System > Radios block only Wi-Fi. (c) Inmarsat-C 'EGC SafetyNET only' and DSC 'safety only' are filtered in labd after the SDRangel demodulator has decoded all traffic.
+    - **Key numbers:** Covers 3 menu paths.
+    - **Evidence:** lab_ui_hf menu_tree and risks; requirements decisions 2-3.
+    - **Status:** violates_requirements
+    - **Conflicts or errors:** (a) The stop-at-military/government Artemis rule is missing. (b) The requirement is rfkill block of wlan AND bluetooth in field/QUIET mode. (c) Private Inmarsat user traffic is decoded in memory before being dropped.
+    - **Needed action:** (a) Add the Artemis gate in labd: log as out of scope; no record, annotation or analysis. (b) Block both radios in QUIET and field modes. (c) Filter by packet or message type inside the decoder before message reassembly, or drop Inmarsat-C. Test with mixed recordings.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  47.
+    - **Subsystem:** Lab menu/UI
+    - **Topic:** Interference hunt vs the NPU no-DF policy
+    - **Current decision:** Spectrum > Interference hunt keeps a 'bearing log from the IMU heading'.
+    - **Key numbers:** Covers 1 menu path.
+    - **Evidence:** lab_ui_hf menu_tree; npu_training policy (no DF/AoA, geolocation or persistent emitter tracks).
+    - **Status:** conflict
+    - **Conflicts or errors:** The two designs have inconsistent internal policy. Generic RFI hunting is not forbidden by the user rules.
+    - **Needed action:** Keep RFI hunting, but store no bearing or geo logs linked to classified emitters, or document the exception.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+  48.
+    - **Subsystem:** Lab menu/UI
+    - **Topic:** Hardware I/O and HMI map
+    - **Current decision:** lab_ui_hf: UART6 (pins 16/18) for the LC76G with PPS on pin 7 (GPIO96); UART7 (pins 32/29) for the HMI RP2040, which also relays the BNO085, VEML7700, NTCs, backlight PWM and hard-cut line; I2C0 (pins 13/15) for the INA228; header GPIOs for RF switches and bias.
+    - **Key numbers:** Lab UI has 2 encoders and 6 keys; NPU wants 3 buttons (SNAP, MODE, NPU OFF).
+    - **Evidence:** lab_ui_hf, radio_lab, small_antenna_stack, npu_training.
+    - **Status:** conflict
+    - **Conflicts or errors:** radio_lab puts the RF switches on MCP23017 #1/#2 (0x20/0x21) over smbus2, and the display RP2040 and IMU puck on USB through an internal CH334F hub. small_antenna_stack puts the BNO085 in an RP2040-Zero USB puck.
+    - **Needed action:** Freeze one pinout and USB map before the schematic phase. Map SNAP to MARK, and MODE and NPU OFF to FN combinations.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+  49.
+    - **Subsystem:** Lab menu/UI
+    - **Topic:** Battery thresholds and the HF 12 V rail
+    - **Current decision:** Auto-economy at 20%. Shut down at 8%, or at 13.2 V loaded for 10 s (above the ~12.8 V hardware cutoff). 12.0 V low-noise LDO for the Boni-Whip.
+    - **Key numbers:** LDO dropout under 1.2 V at 13.2 V.
+    - **Evidence:** lab_ui_hf process_supervision and stack_changes.
+    - **Status:** conflict
+    - **Conflicts or errors:** radio_lab uses a 13.6 V cutoff (62-65 Wh usable of 72 Wh). With small_antenna_stack's 3S option (12.6 V maximum), both the 13.2 V threshold and the 12.0 V LDO are impossible.
+    - **Needed action:** Parameterise the thresholds by pack configuration. Use a boost converter for the 12 V rail on 3S.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  50.
+    - **Subsystem:** Lab menu/UI
+    - **Topic:** Packaging and offline updates
+    - **Current decision:** Signed local apt repository (aptly 1.5.0 or reprepro 5.3.1) of +labN debs from tagged commits. Pin-Priority -1 list and a policy audit in CI and the device self-test. Offline updates from the T7: GPG bundle, at least 50% battery, rsync snapshot to an ext4 'lab-snap' partition, refusal if a held package would change, self-test, rollback.
+    - **Key numbers:** Pin 1001 for lab packages. journald SystemMaxUse=200M.
+    - **Evidence:** lab_ui_hf packaging_and_updates.
+    - **Status:** conflict
+    - **Conflicts or errors:** The update path depends on the T7, which small_antenna_stack removes.
+    - **Needed action:** If the T7 is dropped, use a USB stick/SD card or an A/B root on UFS for snapshots.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  51.
+    - **Subsystem:** Lab menu/UI
+    - **Topic:** Roadmap alignment between UI and NPU
+    - **Current decision:** Lab UI: W1-2 gates 19 Oct-1 Nov 2026; P0a/P0b Nov-Dec 2026 (RTL and HF+); P1 Dec 2026-Feb 2027 (Lime); P2 Feb-Apr 2027 (Signals AI); P3 Apr-Jun 2027 (instruments). NPU: Phase 0 20 Oct-late Nov 2026; Phase 1 MVP Nov 2026-Jan 2027 (V4L only); Phase 2 Jan-Mar 2027 (Lime); HF in Phase 4 (Q3 2027).
+    - **Key numbers:** Gap of about 3 months for the labeller UI.
+    - **Evidence:** Both roadmaps.
+    - **Status:** conflict
+    - **Conflicts or errors:** NPU Phase 1 needs the labeller and waterfall UI in Nov 2026; the lab UI schedules Signals AI for Feb-Apr 2027. The UI exposes HF in P0b; NPU HF support only comes in 2027 Q3.
+    - **Needed action:** Merge into one plan. Run NPU Phase 0 inside the W1-2 hardware gates and move the minimal labeller into P0b.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+- **Open questions:**
+  - Is the LimeSDR Micro kept, which the foldable kit allows and which brings back S-band, CubeSats on RX2 and HRPT, or dropped as in the small-antenna tier? This one decision sets the Q6A RAM tier (8 vs 12 GB), whether the T7 stays, CPU7 isolation, the LIME-W/F/B NPU profiles, the USB map, and the DKMS and PCI class-fixup work. wideband_sdr.json proposes deciding on 31 Jan 2027.
+  - 3S or 4S pack? This sets the J21 feed (direct 3S or a 9/7.5 V buck on 4S), the labpowerd thresholds (13.2/13.6 V) and the 12.0 V Boni-Whip rail.
+  - Which parts are already bought or pre-ordered: the 12 GB Q6A, T7, Lime (refundable pre-order?), the fourth cell and the D36V50F12?
+  - Does the user have an x86-64 PC with an 8-16 GB NVIDIA GPU for home-base training? Is an Ubuntu 22.04 VM acceptable for the QAIRT 2.42 conversion (untested)?
+  - What are the real QAIRT 2.42 HTP per-tile latency and FastRPC overhead for SpecDet-S/M/G at [1,32,128,128] with 2 MB VTCM? What is the physical VTCM size, soc_model 35 or 93, and does 2.42 accept A16W8?
+  - How much RAM is visible on the 12 GB board after firmware carve-outs, and what do Lab Shell, labwc, SatDump, SDRangel and OpenWebRX+ actually use? This sets the size of the IQ ring.
+  - Does labwc 0.7.1 pass the HDMI hotplug, last-X11-app and HOME-keysym gates on the Q6A? Does the Wisecoco board accept the 1080p52 (128.70 MHz) EDID?
+  - On the held 6.18.2-4 kernel: can the UART7 overlay (pins 32/29) be enabled, does an out-of-tree pps-gpio module work, does /dev/watchdog exist, and which package ships systemd-bless-boot?
+  - For the Wisecoco touch controller: part number, USB-HID VID:PID, and glove and water modes.
+  - Can SDRangel's Inmarsat-C and DSC decoders be restricted to EGC SafetyNET and safety categories at the packet level? If not, should Inmarsat-C be dropped under the private-content rule?
+  - What is the sustained UFS write speed after the WriteBooster cache fills, and which flash chip is in Allnet's 128 GB module?
+  - What CPU throughput does the device actually reach: PyTorch E-S fine-tuning on the A78 vs A55 cores, ORT CPU per tile, and VkFFT on Turnip at N=4096 and 65536?
+  - Which country will the device be used in? This sets the region-profile default and the rules for displaying or recording ADS-B, AIS and voice occupancy.
+  - Should the Midas 1200x1920 above-FHD bring-up be pursued? It would force a portrait or rotated UI layout.
+  - If 2.42 fails the Phase-0 gate, may a newer QAIRT (2.47+) be considered despite the user's 2.42 wish, or does the system stay CPU-only? The forum evidence on 2.46+ with CDSP c4-00004 conflicts.
+- **Notes:** Overall: the Q6A choice and the Path A platform (BIOS 260120, Radxa OS r2, held 6.18.2-4, golden DSP set, QAIRT 2.42, INT8) are consistent across documents and fit the requirements. The main problem is a stack split. npu_training.json, lab_ui_hf.json and radio_lab.json assume the 'full' stack (LimeSDR Micro, 12 GB, Samsung T7, 4S 72 Wh). small_antenna_stack.json assumes the 'reduced' stack (no Lime, 8 GB, no T7, possibly 3S, two V4Ls). Requirements allow foldable antennas again, so the Lime question is still open and must be settled before STACK.md.
+  
+  Errors found in this audit:
+  - RX DMA ring: compute.json gives about 2 MB; the code (wideband_sdr, software) shows 256 KiB, about 1.1 ms.
+  - ISS frequencies in the lab UI menu and NPU class 7 are out of date (should be 437.55 / 437.825 / 437.800 MHz).
+  - 'Lime at 30 MHz and above' in the lab UI is wrong (0.3-2.6 and 3.3-3.8 GHz only).
+  - minute-log 'SatDump v1.15.0' is really CyberEther; SatDump's latest numbered release is 1.2.2.
+  - radio_lab's 'libgpiod v2' is not in noble (1.6.3).
+  - NPU tile-rate arithmetic omits its own x1.07 factor, and the 12 ms gate exceeds the 50% duty cap.
+  - The NPU RAM budget is over-committed.
+  
+  Requirement violations:
+  - Set B on QAIRT 2.47.
+  - Voice IQ snippets kept on the device.
+  - No Artemis military stop in the UI.
+  - Bluetooth not blocked in QUIET mode.
+  - Inmarsat-C/DSC filtered only after full decode.
+  - Ukraine-centric price framing in compute.json.
+  
+  All NPU latency, accuracy, few-shot and training-time figures are estimates (model_only); nothing has been measured on a Q6A. Web checks used: 7 (ARISS SSTV search and station-status page; SatDump search and GitHub releases page; Radxa forum search for 0x1388; VTCM search, unresolved; packages.ubuntu.com noble gpiod).
+
+## report:rf_receive (run `wf_df1900ef-872`)
+
+- **Scope:** Audit of the receive chain and targets in the satellite-receiver report, checked against the governing user_requirements.md (18 Oct 2026). Covered: the SDRs (RTL-SDR Blog V4L, LimeSDR Micro and whether it stays, the ADALM-PLUTO option, the Airspy Mini AHRPT-rate option, the Airspy HF+ Discovery HF receiver), the RF front-end (LNAs, filters, bias tees, protection, the LNB supply), antennas in both tiers (patch/chip/small and foldable, no loops), QO-100, the satellite catalogue and the reachability tables. Sources read: minute-log.md (full); summaries.md (all user messages and summaries #120-#169); extra-studies.md (section index, small/fold/lab sections through the JSON); the full verify sections of wideband_sdr, narrowband_sdr, rf_frontend, antennas and dish_replacement; the final sections of foldable_antennas, small_antenna_stack (plus its verifier verdicts and catalogue), radio_lab and lab_ui_hf; targeted greps of npu_training and power. All 18 named final/*.json files exist, plus foldable_partial.json and digest.md. The P1b output final/report_research.json does not exist yet. I used 6 WebSearch calls and 5 WebFetch calls to settle disputed facts (ISS frequencies, Lime shipping, Elektro-L5, Metop, Pluto price, V4L datasheet, SAWbird+ GOES).
+- **Items:**
+  1.
+    - **Subsystem:** SDR - narrowband
+    - **Topic:** RTL-SDR Blog V4L as the primary VHF/UHF/L-band receiver
+    - **Current decision:** V4L (R828S + RTL2832U) is the primary receiver for 137/145/435 MHz, the QO-100 IF, Inmarsat-C and Meteor HRPT. Two units in use (RTL-A, RTL-B) plus a spare, because R828S stock is expected to last about 1 year. Fallback: the V3/V3c.
+    - **Key numbers:** 500 kHz-1.766 GHz; 2.56 MHz stable (3.2 MHz with drops); 250-270 mA; bias tee 4.5 V / 180 mA; diplexer with no V4 notch; HF upconverter with a 28.8 MHz LO; $37.95 (455 in stock). The V3 is about 2-3 dB worse in MDS at VHF/UHF (-138.6 vs -140.7 dBm at 137 MHz).
+    - **Evidence:** I extracted the V4L datasheet (rtl-sdr.com, Aug 2026) text myself today: range 500 kHz-1.766 GHz, 2.56 MHz stable, 4.5 V/180 mA, diplexer. narrowband_sdr verify (confidence high).
+    - **Status:** verified
+    - **Conflicts or errors:** rf_frontend and dish_replacement list the V4L upper limit as 'not stated / confirm', which the datasheet now resolves. The planned unit count differs: narrowband 1 + spare, small_antenna_stack 2 in use, radio_lab 1 + spare as monitor, lab_ui_hf 1 (a second only as the HF budget path). The 'LRPT + HRPT on the same pass' benefit needs two antennas pointed by one operator.
+    - **Needed action:** Fix the count in STACK.md at 2 in use + 1 spare, and buy now while R828S stock lasts. Mark the range as verified from the datasheet.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/narrowband_sdr.json
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+      - https://www.rtl-sdr.com/v4l/
+  2.
+    - **Subsystem:** SDR - narrowband
+    - **Topic:** librtlsdr driver strategy for the V4L on Ubuntu 24.04 arm64
+    - **Current decision:** Three incompatible recipes exist in the report.
+    - **Key numbers:** Recipe 1: noble 2.0.1-2build1 plus osmocom 0204c9c (V4L) and 65f0658 (USB hang), plus the $(DEB_ZEROCOPY_OPTION) typo fix. Keeps SONAME librtlsdr.so.2; built and checked on amd64 only. Debian 2.0.3-1 is librtlsdr0 (.so.0) and breaks librtlsdr2.
+    - **Evidence:** narrowband_sdr verify built and checked the patched package (amd64) and reproduced the zero-copy typo.
+    - **Status:** conflict
+    - **Conflicts or errors:** Recipe 2 (rf_frontend known_problems #1, antennas known_problems): 'purge apt librtlsdr, build rtl-sdr-blog fork, rebuild SatDump/SDR++/GNU Radio'. The narrowband verifier calls this destructive on noble, because it removes soapysdr-module-rtlsdr, gr-osmosdr, gqrx and the SDR++ .deb. Recipe 3 (software summary #121; npu_training sdr-ingestd): 'librtlsdr 2.0.3 from source'. Its SONAME .so.0 breaks the same packages.
+    - **Needed action:** Adopt Recipe 1 everywhere and apt-mark hold it. Delete Recipes 2 and 3 from rf_frontend, antennas, software and npu_training. First bench task: build on the Q6A (arm64) and confirm 'RTL-SDR Blog V4 Lite Detected'.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/narrowband_sdr.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/antennas.json
+      - /home/user/lizbeth307/sat-receiver-audit/summaries.md
+  3.
+    - **Subsystem:** SDR - narrowband
+    - **Topic:** V4L overload and FM filtering
+    - **Current decision:** An FM band-stop is mandatory in the 137/145 MHz path because the V4L has no V4-style notch (antennas verify). Filter before gain, set gain manually, and run the 3 dB pad test at each site.
+    - **Key numbers:** RTL-SDR Blog FM band-stop $16.95, more than 50 dB rejection, under 0.5 dB loss, DC pass 'not stated' / '80 mA safe'. Nooelec Flamingo+ FM $24.95, more than 60 dB, 0.5 dB typ / 1.2 dB max, passes 250 mA DC. With a 95 MHz blocker, 3 dB desense occurs at -12 dBm at low VHF and -20 to -40 dBm at 300-1600 MHz.
+    - **Evidence:** V4L datasheet two-tone test; Nooelec Flamingo+ datasheet; narrowband and antennas verify.
+    - **Status:** conflict
+    - **Conflicts or errors:** Two FM filters are specified for the same job: rf_frontend uses the Flamingo+ 'only at strong-FM sites', antennas makes the RTL-SDR Blog filter 'mandatory'. One rf_frontend forum item says the missing V4L notch is 'overstated', because V4 notches gave only a few dB.
+    - **Needed action:** Standardise on one FM filter: the Flamingo+ wherever bias DC must pass, since its DC rating is published. Keep it permanently in the VHF path. Measure the DC pass of whichever filter is bought.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/antennas.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+  4.
+    - **Subsystem:** SDR - wideband
+    - **Topic:** Does the LimeSDR Micro M.2 stay?
+    - **Current decision:** Contradictory. small_antenna_stack (patch-only rule) removes it. wideband_sdr, narrowband, rf_frontend, radio_lab (REF IN, spectrum use), npu_training (LIME-W 56 Msps profile, 6-8 GiB IQ ring, T7) and lab_ui_hf (CPU7 pin) all assume it. My objective recommendation: keep it as a GATED OPTIONAL for the foldable/full-lab tier. Keep the cancellable pre-order and set a decision gate of 31 Jan 2027. No core receive function may depend on it.
+    - **Key numbers:** $249 + $18 shipping (GNSS version $299). New orders ship 15 Dec 2026. Matched RX: L 0.3-2.2, W 0.7-2.6, H 3.3-3.8 GHz. 7 Msps minimum, up to 160 Msps, 100 MHz bandwidth. One RX LO for both RX channels. About 4 W (budget 5 W, cooling 10 W). BAR0 256 MB in an about 509 MB pcie1 window. 1T2R (TX-capable). Reliable targets that only it (or a Pluto) adds with allowed antennas: Black Kite-1/2 S-band telemetry, and 56 Msps wideband IQ for the NPU. Experimental only: Metop and AWS AHRPT rates, Ku high band above 11.516 GHz.
+    - **Evidence:** My search today found no Crowd Supply update after 17 Jun 2026. The page says 'first manufacturing run will ship on September 30, 2026', and there is no confirmed backer delivery. The driver is on limesdr-micro-staging (37cb1833, 16 Oct), validated on x86 only.
+    - **Status:** conflict
+    - **Conflicts or errors:** small_antenna_stack removed the Lime, the T7 and the 12 GB board under the superseded deployed-size rule. Its savings ($309-314 landed) include Ukrainian duty and VAT, which is now superseded. Lime is not needed by any reliable patch-tier target. In the foldable tier it is the only in-stack path to S-band and to wideband NPU spectrum work.
+    - **Needed action:** STACK.md: record the Lime as conditional and list its dependents (NPU LIME-W profile, T7, 12 GB RAM ring, radio_lab REF IN, CPU pinning, Lime pads and DC blocks). Make the core work on 2x V4L + HF+. Confirm the order type is a refundable pre-order. Re-decide at the 31 Jan 2027 gate, or earlier if it ships.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/wideband_sdr.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro/updates
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro
+  5.
+    - **Subsystem:** SDR - wideband
+    - **Topic:** Lime frequency coverage and VHF routing
+    - **Current decision:** 137 and 145.8 MHz always go to the RTL. 435 MHz, 1.7 GHz and 2.2 GHz go to the Lime when it is present. Label the RX connectors X2/X4.
+    - **Key numbers:** RX_L 0.3-2.2, RX_W 0.7-2.6, RX_H 3.3-3.8 GHz. The 30 MHz figure is the TX/unmatched limit.
+    - **Evidence:** The LimeSuiteNG LimeSDR_Micro.cpp descriptor and the MyriadRF rfcontrol v1.2 reference (cited by narrowband, antennas and radio_lab verifiers).
+    - **Status:** conflict
+    - **Conflicts or errors:** Errors still in final text: wideband_sdr final_recommendation.why says '30 MHz-3.8 GHz'; lab_ui_hf hf_receiver says 'LimeSDR Micro (30 MHz floor)'. Lime staff (13 Oct 2026) claim 'no coverage gaps below 300 MHz' but give no data. The early antennas findings said 'X2 and X3'.
+    - **Needed action:** Correct both texts to 0.3-2.6 / 3.3-3.8 GHz. Run a split-antenna A/B at 137/145 MHz once a unit exists before any VHF use of the Lime.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/wideband_sdr.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  6.
+    - **Subsystem:** SDR - wideband
+    - **Topic:** Lime 'two bands at once' and RT thread pinning
+    - **Current decision:** The two Lime RX channels share one LO, so they cannot cover 739 MHz and 1.7 GHz together. Dual RX is only useful within one band, for example 435 MHz polarisation diversity.
+    - **Key numbers:** One SXR LO. The RX ring is about 1.07 ms (16 x 16 KB). QCS6490 cpu7 is the single 2.7 GHz prime core; cpu4-6 are 2.4 GHz A78 cores.
+    - **Evidence:** wideband_sdr verify (code reading); antennas known_problems (band routing).
+    - **Status:** conflict
+    - **Conflicts or errors:** (1) wideband_sdr research recommends 'helix on RX-A and LNB IF on RX-B' simultaneously, which is physically wrong (superseded). (2) wideband verify says pin lime:Rx0 to cpu4-6 and keep cpu7 for DSP, while lab_ui_hf stack_changes says 'CPU7 stays isolated for lime:Rx0'.
+    - **Needed action:** Delete the simultaneous RX-A/RX-B claim. Adopt the verify default (cpu4-6, SCHED_FIFO 70) and measure both options with limeTRX loss counters.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/wideband_sdr.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  7.
+    - **Subsystem:** SDR - S-band option
+    - **Topic:** ADALM-PLUTO as an optional S-band module
+    - **Current decision:** small_antenna_stack lists it as optional (about $350-400 with the S helix, LNA and cavity), and as the 'only way back' to Black Kite and AWS without the Lime. TX must stay unconfigured and terminated.
+    - **Key numbers:** Stock tuning 325-3800 MHz, 20 MHz bandwidth, USB 2.0. Stack price '$253.32 DigiKey, in stock'. My search found region-dependent DigiKey prices from about $197 (ES) to $429 (NZ, 0 stock); the historical list price is $149.
+    - **Evidence:** Search today: DigiKey regional listings disagree. No current US price was confirmed.
+    - **Status:** unverified
+    - **Conflicts or errors:** It duplicates the Lime's S-band role, so buying both is redundant. Like the Lime, it reintroduces a transmit-capable device, which the small stack had counted as a legal benefit to remove. Black Kite 38k4 fits easily; AWS needs at least 3.6 Msps, which is marginal on Pluto USB 2.0 (not quantified in the report).
+    - **Needed action:** Make it an either/or with the Lime in STACK.md: Pluto only if the Lime is dropped at the gate. Re-quote the price for the user's country. Optionally evaluate a receive-only S-band downconverter + RTL route (no product verified).
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - https://www.digikey.es/en/videos/a/analog-devices/the-adalm-pluto
+      - https://www.rtl-sdr.com/adalm-pluto-new-149-tx-capable-sdr-325-3800-mhz-range-12-bit-adc-20-mhz-bandwidth/
+  8.
+    - **Subsystem:** SDR - S-band option
+    - **Topic:** S-band receive chain (helix, LNA, filter) and target list
+    - **Current decision:** S helices: a 7-turn C=1.1λ helix (46.7 mm diameter, 32.5 mm pitch, 228 mm) inside the petal cone, or a 2-3 turn helix on a 12 cm disc. An S-band LNA. A sysmocom cf2235-kt30 cavity or a Mini-Circuits BFCN-2275+ LTCC filter.
+    - **Key numbers:** 7-turn in cone 14.2 dBic (NEC); 2-3 turn on 12 cm 9-10 dBic; 33 cm S cone 15.5 dBic. Cavity EUR 65.45, 2170-2300 MHz, 1.0 dB or less, 124x47x33 mm, 186 g. Black Kite 2286/2288 MHz GMSK 38k4 (a SatNOGS discone decoded an 18 deg pass). PHASMA 2208/2210 MHz 400 kbps (opportunistic).
+    - **Evidence:** NEC models; SatNOGS observations cited by the small-stack catalogue.
+    - **Status:** model_only
+    - **Conflicts or errors:** The S-band LNA part and price are never specified. The cavity blocks ISS HamTV at 2395 MHz, which the catalogue lists as an opportunistic carrier. CARTOSAT-3 is used as a 'reliable' justification but is dual-use (a civil EO satellite also used for defence); the verifier flagged it. The 'sysmocom ships UPS only, not to Ukraine' point is superseded.
+    - **Needed action:** Choose and price an S-band LNA. Drop CARTOSAT-3 from the justification. Note that HamTV needs a different filter. Apply this chain only if the Lime or Pluto is kept.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - https://shop.sysmocom.de/S-Band-cavity-filter-2170-2300-MHz/cf2235-kt30
+  9.
+    - **Subsystem:** SDR - AHRPT-rate option
+    - **Topic:** Airspy Mini / R2 for sample rates above 2.56 Msps at L-band
+    - **Current decision:** wideband_sdr budget option: if Metop or AWS AHRPT is wanted before or without the Lime, add an Airspy Mini on USB 2.0. It is receive-only.
+    - **Key numbers:** Mini: 6 Msps, 24-1700/1800 MHz, 12-bit, about £110 (Moonraker), rated -10 to +40 °C. R2: 10 Msps, about £200. AWS needs at least 3.6 Msps; Metop AHRPT is 2.33 Msym/s, above the V4L's 2.56 Msps stable rate.
+    - **Evidence:** wideband_sdr and narrowband verify (UK listings undated).
+    - **Status:** unverified
+    - **Conflicts or errors:** Not carried into small_antenna_stack, which says only the Pluto or Lime can bring AWS back. It cannot do S-band. Same R820T2-class front end, so filtering is still needed. SoapyAirspy has no ppm correction.
+    - **Needed action:** List it as the cheaper receive-only alternative to the Lime for the L-band AHRPT/AWS experiment. Buy only if the single-helix on-air gate (Metop/AWS item) passes.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/wideband_sdr.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/narrowband_sdr.json
+      - https://moonrakeronline.com/airspy-mini-sdr
+  10.
+    - **Subsystem:** SDR - HF
+    - **Topic:** HF receiver: Airspy HF+ Discovery
+    - **Current decision:** The HF+ Discovery is the HF/LF/VLF receiver and doubles as a 64-260 MHz VHF receiver (default for AIS) through a latching input-selector relay. Budget alternative: a second V4L in upconverter mode (0.5-28.8 MHz, no LF/VLF). LimeFEA HF Micro, SDRplay, RX-888 and HackRF are rejected.
+    - **Key numbers:** 0.5 kHz-31 MHz and 64-260 MHz. IIP3 +15 dBm. BDR 110 dB (HF) / 95 dB (VHF). MDS -140 dBm in 500 Hz. 660 kHz alias-free at 768 ksps, about 3.1 MB/s over USB, cf32 recordings about 6.1 MB/s. $169 list, $135.20 in the Jun-Jul 2026 sale. Current draw unpublished. No bias tee in libairspyhf 1.6.8 (noble apt). SoapyAirspyHF never calls airspyhf_set_calibration.
+    - **Evidence:** airspy.com specs; noble packages; SoapyAirspyHF source (lab_ui_hf final, 7 agents).
+    - **Status:** verified
+    - **Conflicts or errors:** The radio_lab extra_receive sweep still calls the V4L the 'primary HF receiver'; it was superseded by lab_ui_hf and the radio_lab final. HF+ current is unknown, which leaves the USB/VBUS and LAB 5 V budgets open. The HF+ shares the FE1.1s hub with Wi-Fi.
+    - **Needed action:** Keep the HF+. Measure its current. Put it in a shielded can. Apply ppm correction outside Soapy. Choose the selector relay part (still TBD).
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - https://airspy.com/airspy-hf-discovery/
+  11.
+    - **Subsystem:** Antennas - HF
+    - **Topic:** Non-loop HF antennas: wire + 9:1, Boni-Whip
+    - **Current decision:** Primary: a 7-15 m wire on a reel or winder into a Nooelec Balun One Nine v2 9:1 with a 3-5 m counterpoise. The feed point is 5-10 m from the handheld, with thin coax and ferrites. Secondary, for LF/VLF: the Bonito Boni-Whip active E-field whip, at least 2 m up and grounded, fed from a new filtered 12.0 V rail. Budget: a PA0RDT-type miniwhip clone. Telescopic elements are for quick looks only.
+    - **Key numbers:** Tecsun AN-05 reel $14.49; Balun One Nine v2 $26.95; kit about $56-66. Boni-Whip $123.95-159, 9-20 kHz to 300 MHz, 14-17 cm radiator, 189 g. Supply quoted as 9-15 V (WIMO snippet) or 12-15 V (SWLing 2017). Telescopic elements lose an estimated 50/30/20 dB at 1/10/30 MHz on 50 Ω.
+    - **Evidence:** Vendor pages; PA3FWM technotes; SWLing field reports (lab_ui_hf final).
+    - **Status:** conflict
+    - **Conflicts or errors:** (1) Physics vs wish: without loops, any small E-field antenna near a noisy handheld is limited by local noise. The radio_lab sweep rejected mini-whips for exactly this reason ('MLA-30 probably better than miniwhip in suburban/city'), yet the final picks the Boni-Whip (E-field) as the LF/VLF antenna. The remote wire with a 9:1 transformer is the closest compliant option. (2) The 12.0 V Boni-Whip rail is an LDO from a 4S pack (dropout under 1.2 V at the 13.2 V shutdown threshold); that cannot be built from the 3S pack the small stack chose. (3) The Boni-Whip amplifier housing length is unknown against the 35 cm folded limit. (4) The Balun One Nine DC path is unknown.
+    - **Needed action:** Keep the wire + 9:1 as primary and treat the Boni-Whip as conditional. Settle the pack (3S needs a boost for 12 V). Measure the Boni-Whip housing length, its current at 12 V and the balun's DC resistance. labd must lock all bias off for the wire profile.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - https://www.nooelec.com/store/balun-one-nine-v2.html
+      - https://www.pa3fwm.nl/technotes/tn07.html
+  12.
+    - **Subsystem:** Antennas - HF
+    - **Topic:** Loop-rule exclusions in HF/LF/lab items
+    - **Current decision:** Excluded: the HF active loop and everything for it (LZ1AQ, Wellbrook, MLA-30+, YouLoop), the 20/12 cm VHF loops, the CANADUINO 60/77.5 kHz loopstick module, and the AS3935 ferrite coil. H-field near-field probes and the Com-Power PS-500 are excluded by default, pending the user's answer.
+    - **Key numbers:** LF time signals now come from the HF+ with a wire or Boni-Whip (SDRangel Radio Clock): DCF77 77.5 kHz, MSF/WWVB 60 kHz, JJY 40/60 kHz, TDF 162 kHz.
+    - **Evidence:** user_requirements.md (no loops of any kind); the radio_lab final and lab_ui_hf final apply it.
+    - **Status:** violates_requirements
+    - **Conflicts or errors:** Loops remain in other files: small_antenna_stack final revised_stack item 12 is an 'optional DIY 20 cm tuned loop', with loop alternatives in the reachable.2/4/7/8, lost.0/9/11 and borderline_options rows. The GNSS/IMU row has an 'IMU cue: satellite in the loop plane'. The radio_lab lab_bom keeps the PS-500 as an extended item 'if the user allows', and its sweeps still list the CANADUINO, MLA-30+ and YouLoop.
+    - **Needed action:** Strike every loop row and option from small_antenna_stack before STACK.md. Keep the H-probe question open, with the default being E-field probes only.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  13.
+    - **Subsystem:** RF front-end
+    - **Topic:** 137 MHz chain: SAWbird+ NOAA
+    - **Current decision:** V-dipole, then the FM filter, then the SAWbird+ NOAA at the feed, then 1-2 m coax, then an SMA injector at the SDR input fed with GPIO-switched 5 V (TPS2553), then the RTL with its own tee OFF. RTL gain about 10-25 dB. Alternative: the non-plus SAWbird NOAA (80 mA) running directly from the V4L tee.
+    - **Key numbers:** SAWbird+ NOAA (datasheet): 41 dB gain, 2.6 MHz 3 dB / 3 MHz 10 dB bandwidth, NF 1.1 dB, 170 mA, OP1dB +20 dBm. Price $44.95 (rf_frontend) or $49.95 (small stack). The topology is LNA -> SAW -> LNA, so the first MMIC sees FM unfiltered. Non-plus: ≥20 dB, NF about 0.7 dB, about 80 mA, $49.95.
+    - **Evidence:** Nooelec SAWbird+ NOAA datasheet rev 1 (rf_frontend verify).
+    - **Status:** verified
+    - **Conflicts or errors:** The SAWbird+ powered over USB puts 5 V on its RF output, so a DC block or injector is required. Generic '10 MHz-6 GHz' injectors lose 3-7 dB at 100-200 MHz (rf_frontend); after 41 dB of gain the NF cost is negligible, but the part should still be rated for 137 MHz. The price conflicts between files.
+    - **Needed action:** Specify an injector rated down to about 100 MHz for the 137 MHz path. Fix the price per variant (Barebones vs cased).
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+      - https://www.nooelec.com/store/downloads/dl/file/id/112/product/301/sawbird_noaa_datasheet_revision_1.pdf
+  14.
+    - **Subsystem:** RF front-end
+    - **Topic:** L-band LNA: SAWbird+ GOES (HRPT), SAWbird+ iO (Inmarsat-C), power source
+    - **Current decision:** The SAWbird+ GOES is bolted to the helix feed for 1.69-1.71 GHz. The SAWbird+ iO (1542 MHz, $49.95) is swapped in for Inmarsat-C, because the GOES SAW blocks 1537-1545 MHz. The SAWbird+ IR is optional, for the Iridium carrier only.
+    - **Key numbers:** GOES+: 1688 MHz centre, 80 MHz passband (1648-1728). Product page (I checked today): 'minimum 30 dB', 180 mA nominal, $44.95 for the Barebones listing. Datasheet: 38 dB, NF 1.2 dB, 140 mA typ (120-160), OP1dB +20 dBm, 0 dBm maximum input. LTE B3 uplink 1710-1730 MHz is in the passband (about 37 dB of gain at 1720 MHz).
+    - **Evidence:** Nooelec product page fetched today; Nooelec datasheet (rf_frontend verify).
+    - **Status:** conflict
+    - **Conflicts or errors:** Power source: rf_frontend allows the GOES+ on the V4L 4.5 V/180 mA tee after a 2 h soak (it must stay at 4.3 V or more). antennas, radio_lab and small_antenna_stack say never put it on the V4L tee. The current conflicts (180 mA page vs 140 mA datasheet). rf_frontend's core total ($155) uses $44.95 Barebones prices, which have no enclosure.
+    - **Needed action:** Decide: every SAWbird+ runs from external current-limited 5 V injectors (TPS2553 at 250-300 mA). The V4L tee powers only LNAs of 80 mA or less (SAWbird GOES 30 mA, SAWbird NOAA 80 mA, LNA V2). Re-price as cased vs Barebones.
+    - **Sources:**
+      - https://www.nooelec.com/store/sawbird-plus-goes.html
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/antennas.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  15.
+    - **Subsystem:** RF front-end
+    - **Topic:** 70 cm front-end (LNA V2, Uputronics 435, band-pass filter)
+    - **Current decision:** RTL-SDR Blog Wideband LNA V2 (QPL9547) at the feed, behind a 70 cm band-pass filter (part TBD). The Uputronics 435 MHz SAW preamp is preferred when available, especially for the Lime. Avoid 433.92 MHz ISM SAWs, which are too narrow.
+    - **Key numbers:** LNA V2: $19.95, 100 MHz-6 GHz, NF under 1 dB, 3-5 V bias. Uputronics 435: PSA4-5043+, ≥19 dB, about 0.75 dB NF, 30 MHz SAW centred at 440 MHz, EUR 47.64 at Kubii ('last items' / out of stock). Generic 430-440 MHz BPF budgeted at about $15-40 (unverified).
+    - **Evidence:** Kubii and RTL-SDR Blog listings (rf_frontend, small stack).
+    - **Status:** unverified
+    - **Conflicts or errors:** The Uputronics bias input is listed as 5-26 V (Kubii) and as 5 V maximum (other listings, narrowband verify). The narrowband fixer said do not use the V4L tee; the narrowband verifier says a current unit probably runs from 4.5 V. No specific BPF part is named, yet the small-stack verifier calls 70 cm overload the main technical risk on an 8-bit RTL.
+    - **Needed action:** Name and price a 70 cm BPF or a filtered preamp before STACK.md. Confirm the Uputronics revision and its bias range in writing before connecting it to any tee.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/narrowband_sdr.json
+      - https://kubii.com/en/network-modules/3349-lna-amplifier-modules-with-saw-filter-and-single-frequency-3272496306646.html
+  16.
+    - **Subsystem:** RF front-end
+    - **Topic:** SPF5189Z wideband LNA
+    - **Current decision:** Removed and replaced by filtered chains (LNA V2 / SAWbirds). Never put a broadband LNA ahead of the FM filter or in front of the Lime.
+    - **Key numbers:** Discontinued per Qorvo PCN 21-0060 (8 Mar 2021); high counterfeit risk.
+    - **Evidence:** rf_frontend verify; radio_lab final.
+    - **Status:** verified
+    - **Conflicts or errors:** None remaining.
+    - **Needed action:** None.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+  17.
+    - **Subsystem:** RF front-end
+    - **Topic:** Bias-feed current limiting and polyfuse rating
+    - **Current decision:** Every LNA bias feed goes through a TPS2553 set to 250-300 mA (FAULT to a GPIO), or a PTC with a hold current of at least 250 mA at maximum internal temperature.
+    - **Key numbers:** SAWbird+ NOAA 170 mA, GOES+ 140-180 mA.
+    - **Evidence:** radio_lab final refuted_claims.
+    - **Status:** conflict
+    - **Conflicts or errors:** rf_frontend known_problems ('ESD and handling') still says 'Put a 100-160 mA polyfuse in each bias feed'. That fuse would heat and trip under 170-180 mA.
+    - **Needed action:** Delete the 100-160 mA PTC rule from rf_frontend.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  18.
+    - **Subsystem:** RF front-end
+    - **Topic:** Lime input protection (applies only if the Lime is kept)
+    - **Current decision:** No Lime port may see DC: DC blocks or injectors on every powered path. A 10-12 dB SMA pad after each 38-41 dB SAWbird. The LNB IF gets a 20-30 dB pad on the Lime. Each port gets a band filter. The TX port is capped with a 50 Ω load. The VLM-33-S+ limiter ($69.60) is used only near transmitters.
+    - **Key numbers:** Absolute maximum input +10 dBm. ESD8472: 5.3 V working, 7 V minimum breakdown. A 10 dB pad after 38 dB of gain costs under 0.05 dB of NF. Lime spurs: 30.72 MHz x24 = 737.28 MHz (2.3 MHz from the NB IF) and x55 = 1689.6 MHz.
+    - **Evidence:** Lime setup docs; rf_frontend and antennas verify.
+    - **Status:** unverified
+    - **Conflicts or errors:** The ESD8472 placement on the Micro board comes from a fix agent's BOM reading and is unconfirmed. There is no public RX schematic, so on-board DC blocks are unknown.
+    - **Needed action:** Keep it as a conditional chain. Verify on a delivered board.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/antennas.json
+  19.
+    - **Subsystem:** RF front-end
+    - **Topic:** Bias onto DC-shorted antennas
+    - **Current decision:** Bias is locked OFF whenever an antenna connects to the SDR with no LNA in between. This covers WB2HOL hairpin matches and the Balun One Nine 9:1 (a DC short). Never use 'rtl_eeprom -b 1'. labd enforces it per profile.
+    - **Key numbers:** RTL-SDR Blog warns that days of shorting can kill the LDO or fuse.
+    - **Evidence:** rf_frontend verify; lab_ui_hf setup.
+    - **Status:** verified
+    - **Conflicts or errors:** None.
+    - **Needed action:** Carry it into the labd interlock specification.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  20.
+    - **Subsystem:** LNB supply
+    - **Topic:** LNB voltage and the 18 V branch
+    - **Current decision:** A dedicated, regulated, current-limited 13.0-13.4 V feed, measured at the F connector under load. Vertical (narrowband) only. The 18 V horizontal branch is removed because DATV is lost in every tier; rotate the LNB 90° for horizontal Ku humps.
+    - **Key numbers:** Bullseye: 11.5-14 V vertical, 16-19 V horizontal. Feeding 12 V through the ZFBT tee leaves 10.6-11.4 V, below the roughly 11.5 V minimum. QRO.cz alternative: 11-15 V, about 400 mA, about 5 W; never 18 V (WiMo: 12 V H / 15 V V).
+    - **Evidence:** radio_lab final refuted_claims; dish_replacement verify; rf_frontend verify.
+    - **Status:** conflict
+    - **Conflicts or errors:** rf_frontend final still specifies a GPIO-switchable 13.4/18.2 V boost, and foldable_antennas says '18 V or rotate'. power.json says 'the 12 V rail also suits an LNB', which radio_lab refuted.
+    - **Needed action:** Fix the design at 13.2 V (±0.2 V), with no 18 V. Remove the 12 V rail claim from power.json and the 18.2 V switch from rf_frontend.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/dish_replacement.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/power.json
+  21.
+    - **Subsystem:** LNB supply
+    - **Topic:** LNB rail switching and regulator topology
+    - **Current decision:** A buck-boost (or a boost with true output disconnect) set to 13.2 V. The rail is switched by a part rated 20 V or more (a second Pololu #2813 or an eFuse), plus an LC filter, a ferrite and a polyfuse. Never put the raw pack on the LNB. Use F connectors so LNB DC cannot be mated to the Lime.
+    - **Key numbers:** The TPS2553 is rated 2.5-6.5 V, so it cannot switch it. A non-synchronous MT3608/XL6009 boost with EN low still outputs about 8.5-12 V (pack voltage minus a diode drop). 4S swings 12-16.8 V; 3S 9-12.6 V. The Q6A header tolerates 16 V.
+    - **Evidence:** small_antenna_stack verifier (topology reasoning); dish_replacement and rf_frontend.
+    - **Status:** verified
+    - **Conflicts or errors:** rf_frontend's original 'GPIO-switched boost' and a TPS2553 on the 13 V line (stack keep list) are refuted.
+    - **Needed action:** Write it into the power schematic. Acceptance test: 0 V at the F port when off, 13.2 V when on.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+  22.
+    - **Subsystem:** LNB supply
+    - **Topic:** LNB current limit
+    - **Current decision:** The current limit is set after measuring the Bullseye draw.
+    - **Key numbers:** Bullseye current is unpublished. Budgets: 200-300 mA (power), 250 mA (radio_lab), 1.4-3.6 W (small stack). Limits proposed: 250-300 mA (radio_lab), 1.5-2x the measured value with a 300 mA polyfuse (rf_frontend), a 0.5 A polyfuse (dish_replacement).
+    - **Evidence:** No datasheet value exists.
+    - **Status:** conflict
+    - **Conflicts or errors:** A 250-300 mA limit would nuisance-trip if the LNB really draws about 250 mA. Three different fuse values are given.
+    - **Needed action:** Measure at 13.2 V cold and hot, then set the limit to 1.5-2x the measured value. Use one fuse value across all files.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/dish_replacement.json
+  23.
+    - **Subsystem:** LNB supply
+    - **Topic:** LNB IF level into the SDR
+    - **Current decision:** The IF (about 739.5 MHz) goes to RTL-B through a DC-blocked injector with a 10-20 dB pad, RTL gain about 20-30 dB and its tee OFF. Use a 20-30 dB pad if it goes to the Lime. Target a 10-15 dB noise rise when the LNB is powered, and confirm with the 3 dB pad test.
+    - **Key numbers:** LNB gain 50-66 dB, NF 0.5 dB. Broadband noise into the SDR is estimated at -20 to -28 dBm across 739-1950 MHz.
+    - **Evidence:** antennas and dish_replacement verify (estimate).
+    - **Status:** model_only
+    - **Conflicts or errors:** None between files.
+    - **Needed action:** Bench-verify with the tinySA. The pad value is site-dependent.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/antennas.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/dish_replacement.json
+  24.
+    - **Subsystem:** QO-100
+    - **Topic:** LNB selection
+    - **Current decision:** Othernet Bullseye TCXO LNB, used bare (patch tier) and with a cone or gore horn (foldable tier). Upgrade path: the QRO.cz 0.2 ppm TCXO LNB. Cheaper candidate for the analog phase: the Inverto IDLP-SNL410 PLL LNB (stability unverified).
+    - **Key numbers:** Bullseye: $29.95, 70 in stock. ±10 kHz at 23 °C, ±30 kHz from -20 to 60 °C, factory calibration within 1 kHz. NF 0.5 dB. 25 MHz reference out on the red F port (cap it). QRO.cz about EUR 120 delivered (WiMo EUR 65 + EUR 54.62 shipping); its own shop lists the external-reference version at EUR 240.79.
+    - **Evidence:** rtl-sdr.com store; WiMo; hamparts.shop (dish_replacement verify).
+    - **Status:** verified
+    - **Conflicts or errors:** The Bullseye length and its waveguide inside diameter are unpublished, and both matter for the horn fit and the 20 cm tier.
+    - **Needed action:** Measure the LNB length, neck diameter (about 40 mm assumed) and waveguide ID (single mode needs 16.8-21.9 mm) on arrival.
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/dish_replacement.json
+  25.
+    - **Subsystem:** QO-100
+    - **Topic:** Link model and what each tier receives
+    - **Current decision:** Plan on the conservative model, about G + 13..16 dB-Hz. Patch tier: bare LNB, or LNB plus an 11 x 8.3 cm cone (about 18.8 dBi). Foldable tier: a 6-gore horn (21 dBi with 3 gores, 23 dBi with 6). Borderline: a flat-pack 300 mm W1GHZ lens. DATV is lost in every tier.
+    - **Key numbers:** Bare LNB: CW beacon about +6..9 dB in 50 Hz, BPSK about -1.4 dB (lost or opportunistic); FT8 is documented only with a GPSDO-locked LNB (RigExpert, -11 to -15 dB). 11 cm cone: CW about +15 dB, BPSK Eb/N0 about +7.4 dB. 21/23 dBi horn: CW 17-22 dB, PSK 8-13 dB, beacon-level SSB 0..+5 dB in 2.5 kHz. Lens: +6..+9 dB. Typical SSB stations 5-15 dB below the beacon: -3 to -13 dB at 23 dBi. DATV beacon needs about 31-32 dBi (about a 45 cm dish); DATV stations need a 90 cm or larger dish.
+    - **Evidence:** EA4GPZ beacon C/N0 anchor; RigExpert TBR-AN-1; BATC MER table; W1GHZ formula. No published horn-on-LNB QO-100 measurement exists.
+    - **Status:** model_only
+    - **Conflicts or errors:** The dish_replacement 'optimistic' anchor (G+28 dB-Hz; horn 14-17 dB beacon C/N; 'lens makes typical SSB readable') is refuted as about 14 dB too high and is superseded. Minute summary #139 reports beacons about 3-4 dB stronger after maintenance; this is unverified and not applied. Physics vs wish: readable typical SSB needs about 26 dBi and DATV needs 31-32 dBi, which only a dish provides; the closest compliant option is the 23 dBi gore horn plus the lens on a tripod.
+    - **Needed action:** Run the A/B test (bare / cup / 3 gores / 6 gores) on 10489.500 and 10489.750 MHz to settle the model. Remove the optimistic figures from dish_replacement.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/dish_replacement.json
+      - https://destevez.net/2019/03/qo-100-beacons-power/
+      - https://wiki.batc.org.uk/Receiving_Oscar_100_DATV_signals
+  26.
+    - **Subsystem:** QO-100
+    - **Topic:** Beacon frequencies and the beacon-tracker acquisition bug
+    - **Current decision:** Peak on 10489.500 (CW/FSK) and 10489.750 MHz (400 bit/s BPSK), which is IF 739.500/739.750 MHz with the 9750 MHz LO. The tracker acquires on a wide stream (±800 kHz around IF 739.625 MHz) and then narrows to 960 ksps.
+    - **Key numbers:** The '10489.55 MHz' figure is wrong. Behind a 300 kHz LPF, acquisition fails for LNB errors below about -50 kHz; plain PLL LNBs are -140 to -180 kHz off, and the Goobay is specified at ±300 kHz.
+    - **Evidence:** AMSAT-DL bandplan; code review and simulation (dish_replacement verify).
+    - **Status:** verified
+    - **Conflicts or errors:** The bug is masked with the Bullseye (±30 kHz) but would bite with a cheap PLL analog such as the Inverto or Goobay.
+    - **Needed action:** Fix qo100_beacon_track.py before the analog phase evaluates PLL LNBs.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/dish_replacement.json
+      - https://amsat-dl.org/en/p4-a-nb-transponder-bandplan-and-operating-guidelines
+  27.
+    - **Subsystem:** QO-100
+    - **Topic:** Visibility depends on the user's (unknown) region
+    - **Current decision:** QO-100 is treated as a core target in both tiers.
+    - **Key numbers:** Es'hail-2 is at 25.9°E. Its footprint covers roughly Europe, Africa, the Middle East, western and southern Asia, and eastern South America. It is not visible from most of the Americas, East Asia or Oceania (general knowledge).
+    - **Evidence:** All pointing numbers in the report are for Kyiv (186°/32°), which is superseded. The device computes pointing itself, but it cannot fix a satellite that is below the horizon.
+    - **Status:** unverified
+    - **Conflicts or errors:** The requirements say the user is not in Ukraine and has named no country. The same applies to Alphasat/Inmarsat-C, Elektro-L 76°E, FY-2H 79°E, EGNOS PRNs and LF time stations.
+    - **Needed action:** Ask for the region before buying the LNB, horn and SAWbird+ iO. Add a 'visible from here' flag per geostationary target in the menu.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+  28.
+    - **Subsystem:** Antennas - tier rule
+    - **Topic:** Which antenna-size rule governs
+    - **Current decision:** Governing rule (user, 01:43): patch and chip antennas, plus antennas that fold or collapse small. Prefer every piece 20-23 cm or less, at most about 35 cm. Deployed size may be larger. Two tiers: a patch/chip/small tier that is always carried, and a foldable kit for the backpack.
+    - **Key numbers:** The small_antenna_stack rule used deployed size instead: STRICT ≤12 cm, SMALL ≤20 cm, and foldables excluded.
+    - **Evidence:** summaries #143 and #167, minute-log 02:15/02:42, user_requirements.md.
+    - **Status:** superseded
+    - **Conflicts or errors:** Every small_antenna_stack 'remove' decision was made under the superseded rule: the Lime, T7, 12 GB board, 92 cm V-dipole, Yagis, helicone, 23 dBi horn, 2x2 array and the 18 V branch. Its 'lost' table lists targets the foldable tier recovers: Meteor HRPT from about 5°, low-pass CubeSats, VHF FM/SSB, and S-band (with the Lime).
+    - **Needed action:** STACK.md must present both tiers. Use small_antenna_stack only for the always-carried tier, and foldable_antennas for the backpack tier.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - /home/user/lizbeth307/sat-receiver-audit/summaries.md
+      - /home/user/lizbeth307/sat-receiver-audit/minute-log.md
+  29.
+    - **Subsystem:** Antennas - patch/chip tier
+    - **Topic:** Small rigid antennas that are neither patch/chip nor folding
+    - **Current decision:** The always-carried tier uses: a 17 cm quarter-wave 70 cm whip, a Diamond SRH-701 (19 cm) or Baofeng A-V85 (16.8 cm), a 20 cm normal-mode helical whip for 137.9 MHz, 2-turn (12 cm disc) and 4-turn (20 cm disc) L-band helices, the bare LNB, and an 11 x 8.3 cm cone.
+    - **Key numbers:** W9MDB at 146 MHz vs the NA-771: A-V85 -0.8 dB, NA-701 (21 cm) -2.3 dB, UV-5R stub -9.8 dB, SRH805S -29.8 dB; one NA-701 clone measured 8-10 dB worse.
+    - **Evidence:** W9MDB measurements; NEC models.
+    - **Status:** conflict
+    - **Conflicts or errors:** Strictly, the user allowed 'patch, chip, and antennas that fold small'. These rigid items do not fold, but every piece is ≤20-23 cm, which satisfies the size intent. The NA-701 at 21 cm sits at the edge and has clone risk.
+    - **Needed action:** Treat 'already small (≤20-23 cm)' as compliant, flag it to the user, and keep the A-V85/SRH-701 as defaults.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - https://www.miklor.com/COM/pdf/AntennaTestingW9MDB.pdf
+  30.
+    - **Subsystem:** Antennas - patch/chip tier
+    - **Topic:** Patch and chip physics, and the off-the-shelf L-band patch
+    - **Current decision:** Real patch/chip use is limited to L-band: the GNSS ceramic patch (LC76G active) and the RTL-SDR Blog active L-band patch for Inmarsat-C/GNSS only. Chip antennas are not used for satellite links.
+    - **Key numbers:** A half-wave patch is about 52 cm on FR4 and about 25 cm on εr≈20 ceramic at 137 MHz, about 18/8-9 cm at 400 MHz, and about 4.5/2.1 cm at 1.575 GHz. The Johanson 433 MHz chip gives -4 dBi on its evaluation board. Aperture limit at 1.70 GHz: 12x12 cm 7.6 dBi, 20x20 cm 12.1 dBi. The RTL-SDR Blog L-band patch is 175x175 mm with a 1525-1660 MHz SAW, so it does not cover HRPT; SA2KNG calls it 'not too strong'. '17 dBi' 20x20 cm LTE panels are physically impossible (it would need 295% efficiency).
+    - **Evidence:** Calculations (summary #120, small stack); vendor page.
+    - **Status:** verified
+    - **Conflicts or errors:** Physics vs wish: patch/chip antennas cannot serve 137-146 MHz or Meteor HRPT at useful gain. The closest compliant options are the 4-turn helix (HRPT) and the foldable V-dipole (LRPT).
+    - **Needed action:** Use the RTL-SDR Blog patch as the true-patch option for Inmarsat-C if the 2-turn DIY helix is not built.
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/summaries.md
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+  31.
+    - **Subsystem:** Antennas - patch/chip tier
+    - **Topic:** Whip mounting and orientation
+    - **Current decision:** Monopole whips sit on the case SMA, with each LNA directly behind its bulkhead, never on a remote lead. They must be tilted so the satellite stays broadside, using the IMU cue.
+    - **Key numbers:** Vertical 17 cm whip on the case at 437 MHz (NEC): +0.5 / -2.0 / -5.1 / -9.3 / -16 dBi at 10 / 30 / 45 / 60 / 75°, and a null at 90°. 1 W 9k6 CubeSat margins: vertical never positive; tilted -5.3 / +0.1 / +2.5 / +4.1 / +5.0 / +5.3 dB at 10-90°. A remote whip on a 5x3 cm LNA box measures 8.2-j341 Ω and -22 dBi, an SNR loss of 10-13 dB.
+    - **Evidence:** Verifier NEC2 runs (rfverify/whip_nec.py, whip2.py); no hand or body model.
+    - **Status:** model_only
+    - **Conflicts or errors:** The original small-stack budgets used a flat 1.8-2.0 dBi at all elevations and were refuted (5-40 dB optimistic). Mounting on the case puts the whips next to the Q6A, HDMI and DC-DC noise sources.
+    - **Needed action:** Add the broadside procedure to the menu. Do an A/B of vertical vs tilted on the ISS SSTV Series 34 pass. Run the terminated vs on-case noise survey.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+  32.
+    - **Subsystem:** Antennas - patch/chip tier
+    - **Topic:** Meteor LRPT without the foldable kit
+    - **Current decision:** Requirements and minute-log 02:17: Meteor LRPT uses the foldable telescopic V-dipole, and is 'unreachable' with patch/chip only. small_antenna_stack: a 20 cm helical whip on the case is the loop-free default, marginal.
+    - **Key numbers:** Helical whip: -2.7 to -4.7 dB efficiency, about -4 dBi realised. Decodes from about 24°; SNR vs the V-dipole is -1.9 / -0.9 / -4.9 dB (rural / residential / quiet). The 12 cm version decodes from about 38°. No published LRPT decode with an antenna under 20 cm exists.
+    - **Evidence:** Calculation and ITU-R P.372 noise model (as recalled). Discones do decode N2-4 (SatNOGS 15225852).
+    - **Status:** conflict
+    - **Conflicts or errors:** The two statements contradict each other. The helical-whip figure is a model with no NEC run on the actual case.
+    - **Needed action:** Make the V-dipole primary. Keep the helical whip as an 'experimental, model-only' patch-tier option, and promote it only after 2-3 decoded passes above 40°.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - /home/user/lizbeth307/sat-receiver-audit/minute-log.md
+  33.
+    - **Subsystem:** Antennas - foldable tier
+    - **Topic:** 137 MHz telescopic V-dipole
+    - **Current decision:** RTL-SDR Blog multipurpose dipole kit as a V-dipole: arms 53.4 cm, opened to 120°, axis N-S, about 1-1.1 m above ground, with the FM filter in the path. Carry a spare telescopic pair. The same kit re-set serves AIS (44 cm), FM, DAB, radiosondes (17.7 cm) and ADS-B.
+    - **Key numbers:** $17.95. Collapsed 23 cm, extended 1 m, M5 thread. NEC 3.0 dBi at zenith, SWR 1.47 (telescopic elements beat tape: tape gave SWR 2-2.9 and about -0.4 dBi). Linear polarisation, so a constant -3 dB on RHCP. Optional: re-mark the 2 m tapes to 137.5 MHz for 7.7 dBi pointed (about +6 dB).
+    - **Evidence:** Vendor page; NEC; community LRPT use.
+    - **Status:** verified
+    - **Conflicts or errors:** The antennas verify's 'fit fixed 53 cm rods' fix is refuted, since it breaks the fold rule. NEC used no ground reflection; at 1-1.5 m (about 0.5 λ) there is a zenith notch (±2 dB on the EIRP calibration).
+    - **Needed action:** Carry spare elements. Use 2-3 piece rods with M5 couplers for durability.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+      - https://www.rtl-sdr.com/DIPOLE
+  34.
+    - **Subsystem:** Antennas - foldable tier
+    - **Topic:** Crossed 2 m / 70 cm Yagi
+    - **Current decision:** WB2HOL 3-el steel-tape Yagi (horizontal) on Axotron v3 spools, plus the N2SPI 6-el (vertical) with clip-in elements, on a 20x20 mm square boom split at 0.35 m with a keyed spigot. Two feeds (145.8 to the RTL, 435 to the Lime or RTL). Ultra-compact variant: a 5-piece boom (pieces ≤16 cm) with screw-in half-elements (≤17 cm).
+    - **Key numbers:** 7.9 dBi (2 m) and 11.0 dBi (70 cm), F/B about 18/25 dB (NEC). Ultra variant 11.05 dBi, SWR 1.07-1.24 over 435-438 MHz. Longest pieces 35 cm (boom halves) and 34.0 cm (elements). Materials $25-40. A 10-20° plane creep costs 0.2-0.8 dB; co-planar mounting collapses 70 cm to 3.6 dBi. 1 W 9k6 CubeSats: +5.7 dB at 10°, +11 dB at 30° (±5 dB).
+    - **Evidence:** NEC (reproduced by two agents); Axotron v3 and WB2HOL/N2SPI primary documents.
+    - **Status:** model_only
+    - **Conflicts or errors:** The N2SPI is 6 elements, not 7 (AMSAT Table 3). The centre-pivot fold was refuted: the halves would span 60.8/45.7 cm. The standard variant is at the 35 cm maximum and exceeds the preferred 20-23 cm. Every piece is a DIY build with gain unmeasured to ±1-3 dB.
+    - **Needed action:** Default to the ultra-compact boom to meet the 20-23 cm preference (0 dB loss, 4-5 min longer setup). Set two feeds and verify on air (see the VNA item).
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+      - https://axotron.se/blog/?p=1619
+      - https://www.amsat.org/articles/n2spi/JulAug06AmsatJournal.pdf
+  35.
+    - **Subsystem:** Antennas - foldable tier
+    - **Topic:** L-band fold-flat petal helicone
+    - **Current decision:** An 18 cm, 1.5 mm Al disc plus 8 keyed petals of 0.3-0.5 mm Al, forming a cone 44 cm across and 12 cm deep. A rigid 4-5 turn C=1.1λ RHCP helix (61.7 mm diameter, 43 mm pitch, 2 mm Cu, feed 30.9 mm off-centre, matching strip). The SAWbird+ GOES sits under the disc on an external 5 V feed.
+    - **Key numbers:** 15.7 dBic flat over 1.65-1.75 GHz, beam 24-28° (NEC). Aperture limit 17.9 dBi, so 60% efficiency; AGT check 0.96 (-0.2 dB). +1.7 to +2.2 dB over the rigid 11-turn helix (13.5-14.0 dBic, 473 mm, now excluded by size). Packs to 19x19x4 cm plus a 17.2/21.5 cm helix. Materials $20-35.
+    - **Evidence:** NEC (two runs); t0nito/libre.space helicone (no published SNR).
+    - **Status:** model_only
+    - **Conflicts or errors:** The spring-helix idea was refuted (Cu-clad steel 537 MPa vs 360 allowable; phosphor bronze 294 MPa is about 87%); summary #130 had called bronze 'OK'. Small-helix gains are inconsistent across studies: 4-turn on a 20 cm disc 10.2-10.9 dBic vs a 4-5 turn on an 18 cm plate 11.6-12.0 dBic. No dish-free hand-tracked Meteor HRPT decode is documented (the helicone successes were on NOAA HRPT, now ended).
+    - **Needed action:** Build it rigid. Run an A/B against a reference: a fixed L-band source (Inmarsat NCS / FY-2H) if Elektro-L5 is unavailable. Harmonise the small-helix gain numbers.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/antennas.json
+      - /home/user/lizbeth307/sat-receiver-audit/summaries.md
+  36.
+    - **Subsystem:** Antennas - foldable tier
+    - **Topic:** QO-100 flat-pack gore horn, cone and lens
+    - **Current decision:** 6 annular-sector gores at a 13.8° half-angle: the 3 inner gores (40 to 127 mm) give about 21 dBi handheld; all 6 (to 180 mm) give about 23 dBi on a tripod. 0.3 mm Al or 0.2 mm brass, seams taped (gap under 0.2 mm), a printed 40.2 mm collar. Patch tier: an 11 x 8.3 cm (or 10 x 6.3 cm) clamp-on cone. Borderline: a 300 mm W1GHZ metal-plate lens fed by a 17.5-18 dBi horn.
+    - **Key numbers:** Largest gore about 19.7 x 13 cm; packs flat to 20x19x1.5 cm; materials $10-20. Aperture limits: 127 mm 22.9 dBi, 180 mm 25.9 dBi. Seams cost 0.2-0.5 dB. Cones: 100 mm 18.0, 110 mm 18.8, 127 mm 20.1 dBi. Lens: 27.4 dBi measured by W1GHZ at 10.368 GHz with a 17.5 dBi feed at about 53 cm, so about 65 cm deployed.
+    - **Evidence:** W1GHZ formula and measurements; no horn-on-LNB QO-100 report exists.
+    - **Status:** model_only
+    - **Conflicts or errors:** Horn dimensions differ slightly between files (127/188 mm vs 126/185 mm) and are equivalent. The small stack excluded the 23 dBi horn by deployed size; under the governing rule it is allowed (gores ≤19.7 cm). Feeding the lens from the 20-23 dBi horn under-illuminates it, so a 17.5-18 dBi feed is needed. The throat fit to the 40 mm LNB neck is unverified (40 mm is a search snippet).
+    - **Needed action:** Measure the LNB neck and waveguide first, then run the A/B test. Recompute the lens curvature for 10.489 GHz.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/dish_replacement.json
+      - http://www.w1ghz.org/antbook/chap3.pdf
+  37.
+    - **Subsystem:** Antennas - foldable tier
+    - **Topic:** Metop/AWS 2x2 fold-flat helix array
+    - **Current decision:** Experimental only: four helices on a 56 cm twist-fold reflector (SmallRig, folds to 23 cm, 274 g, re-covered with CuNi fabric), a Wilkinson combiner or software MRC, and an SDR above 2.56 Msps (Lime or Airspy Mini). It is built only after on-air gating with a single helix.
+    - **Key numbers:** 17.1-18.0 dBic after a 0.7 dB combiner (model). Metop AHRPT needs about 16-19 dBic and Es/N0 ≥4 dB. EUMETSAT flux budget: a single helix gives about -1 to +3 dB, the 2x2 array about 3-8 dB, so decodes only on passes above about 30°. Metop-B has an intermittent modulator loss of about 7 dB. Array LNAs about 4 x $44.95. mrc_combine.py must use memmap or streaming (a 55 GB pass would need 110 GB of RAM).
+    - **Evidence:** EUMETSAT TD18 and models (dish_replacement verify, foldable).
+    - **Status:** model_only
+    - **Conflicts or errors:** Summary #143 says the array 'now falls under the rule'. Target status is contested (see the Metop item). LimeSuiteNG #356 channel alignment does not cover the Micro.
+    - **Needed action:** Keep it out of the core BOM. Gate it on single-helix spectral-hump measurements of Metop-B/C (1701.3/1707 MHz) and AWS.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/dish_replacement.json
+  38.
+    - **Subsystem:** Antennas - foldable tier
+    - **Topic:** 21 cm hydrogen line (radio-astronomy basics)
+    - **Current decision:** Reuse the petal helicone and L helix at 1420 MHz with a SAWbird+ H1. Optional: a hinged flat-pack pyramidal horn (panels ≤35 cm, extended kit, carried in a backpack sleeve).
+    - **Key numbers:** SAWbird+ H1: $49.95, 1420 MHz, 65 MHz passband, ≥40 dB gain, NF about 0.8 dB, 120 mA. The L helix has C/λ = 0.92 at 1420 MHz (axial mode), estimated 13-14 dBic. The rigid reference horn is 75 x 60 cm, 18.5 dBi; the flat pack is 35 x 35 x 3 cm.
+    - **Evidence:** Nooelec page; arXiv 2512.19262 reference; a 13 dBi helix + SAWbird H1 detection reported by rtl-sdr.com.
+    - **Status:** model_only
+    - **Conflicts or errors:** The flat-pack horn sits at the 35 cm piece maximum and does not fit the Pelican case. Helix gain at 1420 MHz is scaled, not modelled.
+    - **Needed action:** Keep the helicone reuse as the default; the horn is optional.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  39.
+    - **Subsystem:** Antennas - both tiers
+    - **Topic:** Antenna tuning with a VNA radiates (receive-only rule)
+    - **Current decision:** The rule says signal-generating instruments (VNA, generators, noise sources) are conducted-only bench tools. Yet several files tune antennas with a VNA S11 sweep.
+    - **Key numbers:** NanoVNA/LiteVNA sweeps radiate about µW across the 137 MHz, 435 MHz and L1 bands. The radio_lab final drops antenna S11 trims by default.
+    - **Evidence:** user_requirements.md hard rule; radio_lab refuted_claims ('Feeding a stimulus into an antenna radiates it').
+    - **Status:** violates_requirements
+    - **Conflicts or errors:** These still call for it: antennas verify ('Trim to S11 better than -10 dB over 1690-1710 MHz', 'tune each [Yagi] with a VNA'); foldable build steps 2-5 ('S11 below -10 dB'); small_antenna_stack first_tests ('NanoVNA... tune the 20 cm helical whip', 'sweep briefly indoors').
+    - **Needed action:** Replace these with receive-only tuning: calculated lengths, peaking on sky/Sun noise, beacon C/N (QO-100), GNSS C/N0, and Inmarsat NCS / ISS signal SNR. Use the VNA only on conducted DUTs (cables, filters, LNAs, injectors). Ask the user whether brief indoor antenna sweeps are acceptable.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/antennas.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+  40.
+    - **Subsystem:** Catalogue
+    - **Topic:** ISS amateur downlinks
+    - **Current decision:** ISS SSTV on 437.550 MHz, Robot 36. APRS digipeater on 437.825 MHz. FM cross-band repeater downlink 437.800 MHz (receive only). Reliable even on a 12-17 cm whip.
+    - **Key numbers:** ARISS (fetched today): Series 33 'Student Education' 2-6 Oct 2026 on 437.550 MHz; Series 34 'ARISS Hardware' 22-25 Oct 2026 on 437.55 MHz, Robot 36, times TBD; Series 32 (May) and 31 (April) on 437.55. ISS power of 10 W is stated only for Series 31. ARISS status of 7 Oct 2026: APRS 'currently active on 437.825 MHz' (still being tested); repeater 437.800 down / 145.990 up, PL 67. Model CNR on a vertical whip: 18.8-22 dB in 15 kHz at 10-60°, against 10-12 dB needed.
+    - **Evidence:** ariss.org SSTV events page and station status page, fetched 18 Oct 2026.
+    - **Status:** verified
+    - **Conflicts or errors:** Summary #160 and the small-stack catalogue say 'last series May 2026 / no event after May', which is superseded. One secondary source (W3APL) gives 437.500 MHz for Series 33, which contradicts ARISS. The catalogue still rates 'ISS SSTV 145.800 MHz' as reliable as a legacy row.
+    - **Needed action:** Use 437.550 MHz everywhere. Downgrade the 145.800 row to 'legacy, none scheduled'. Run the first field validation on Series 34 (22-25 Oct).
+    - **Sources:**
+      - https://www.ariss.org/upcoming-sstv-events.html
+      - https://ariss.org/current-status-of-iss-stations.html
+      - https://qsl.net/w3apl/news/2026/10/02/weekend-update.html
+  41.
+    - **Subsystem:** Catalogue
+    - **Topic:** 137 MHz weather satellites
+    - **Current decision:** Only Meteor-M N2-4 and N2-3 LRPT on 137.900 MHz (72k). All APT is gone.
+    - **Key numbers:** NOAA-18 ended 6 Jun 2025, NOAA-19 13 Aug 2025, NOAA-15 19 Aug 2025. Metop LRPT is off; Meteor N2-2 has been in storage since Jul 2024. N2-3 has a partly undeployed VHF antenna (an unquantified 3-6 dB loss), so it is opportunistic. Both Meteors were observed on 137.900 MHz on 17-18 Oct 2026.
+    - **Evidence:** NOAA OSPO; SatDump sat_list; SatNOGS observations 15230698 and 15229039 (as cited).
+    - **Status:** verified
+    - **Conflicts or errors:** The minute-log (02:02) says 'NOAA-15/18/19 ended 2025', which is consistent. Orbcomm OG2 (137.2-137.8 MHz) is still transmitting and is a nearby interferer.
+    - **Needed action:** None beyond keeping the 137.1 MHz alternate in the profiles.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - https://www.ospo.noaa.gov/Operations/POES/status.html
+  42.
+    - **Subsystem:** Catalogue
+    - **Topic:** Metop AHRPT status
+    - **Current decision:** Treat it as unknown until checked on air. It is lost in the patch tier and experimental in the foldable tier.
+    - **Key numbers:** NOAA OSPO: Metop-B AHRPT 'Yes', Metop-C AHRPT 'No', APT/LRPT red. WMO OSCAR (27 Aug 2026): Metop-C 1701.3 MHz 'not in use', 1707 MHz 'part time'. SatDump: both active at 1701.3 MHz, with Metop-B 'intermittent modulator issues' (about 7 dB loss since 03/2025 per metislair). NOAA ESPC notices (Jul/Aug 2026) retire NOAA's Metop-B/C HRPT ground products on 1 Sep 2026; this concerns products, not the broadcast.
+    - **Evidence:** My search today plus the dish_replacement verify sources.
+    - **Status:** conflict
+    - **Conflicts or errors:** Summary #160 says 'Metop-B works with degradation; Metop-C sources disagree'. dish_replacement research said 'Metop-B only live AHRPT', its fixes said 'Metop-C active, skip B'.
+    - **Needed action:** Record single-helix spectral humps at 1701.3 and 1707 MHz on high passes before buying array LNAs or an AHRPT-rate SDR.
+    - **Sources:**
+      - https://www.ospo.noaa.gov/Operations/METOP/status.html
+      - https://ospo.noaa.gov/data/messages/2026/07/MSG_20260701_2000.html
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/dish_replacement.json
+  43.
+    - **Subsystem:** Catalogue
+    - **Topic:** Elektro-L as the geostationary L-band test source
+    - **Current decision:** antennas and foldable use Elektro-L5 LRIT at 76°E (1691 MHz) as the fixed A/B source. small_antenna_stack and dish_replacement say L5 is off or commissioning and L3 is paused or drifting; use the Inmarsat-C NCS or the FengYun-2H 1687.5/1690.5 MHz carriers instead.
+    - **Key numbers:** L5 launched 12 Feb 2026. LRIT decodes at about +1 dB SNR. The 11-turn helix gave about 1.5 dB on L3; the helicone is about +1.7-2.2 dB over that (model). Elevation numbers (19° from Kyiv) are location-specific.
+    - **Evidence:** Search today: rtl-sdr.com says L5 has been commissioned at 76°E; WMO OSCAR (updated 20 Apr 2026) says 'Commissioning'; the SatNOGS transmitter entry is unconfirmed; L3 is drifting to 14.5°W with no Roscosmos confirmation. SatDump (2 Jul 2026): L5 off for commissioning.
+    - **Status:** conflict
+    - **Conflicts or errors:** Sources disagree, and visibility depends on the unknown user region.
+    - **Needed action:** Make the A/B reference 'Inmarsat-C NCS first, FY-2H carrier second, Elektro-L5 if heard'. Do not list Elektro LRIT as reliable.
+    - **Sources:**
+      - https://www.rtl-sdr.com/?p=67091
+      - https://space.oscar.wmo.int/satellites/view/electro_l_n5
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/antennas.json
+  44.
+    - **Subsystem:** Catalogue
+    - **Topic:** Other L-band and X-band weather targets (AWS, FengYun)
+    - **Current decision:** AWS (1707 MHz) is an opportunistic second L-band target that needs an SDR above 2.56 Msps. FengYun-3 is lost: no L-band unit remains, and FY-3D to 3H are X-band and need a dish.
+    - **Key numbers:** AWS: 1.785 Msym/s, needs ≥3.6 Msps, 600 km orbit, end of life 2029 or later, EIRP unpublished. FY-3C (the last L-band unit) ended Nov 2024. FY-3G AHRPT is at 7790 MHz, 6 Msym/s. Metislair's sysmocom 1525-1705 MHz filter would block AWS; the SAWbird+ GOES passes it.
+    - **Evidence:** SatDump sat_list; WMO OSCAR (dish_replacement verify).
+    - **Status:** unverified
+    - **Conflicts or errors:** Summary #160 lists AWS under 'working' (true for the satellite), while the reachability tables rate it opportunistic or lost (true for the link). No conflict in substance.
+    - **Needed action:** Keep AWS as the gated target together with the Metop check.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/dish_replacement.json
+      - https://space.oscar.wmo.int/satellites/view/aws_pfm
+  45.
+    - **Subsystem:** Catalogue
+    - **Topic:** Inmarsat-C EGC SafetyNET
+    - **Current decision:** Reliable in the patch tier: a 2-turn RHCP helix on a 12 cm disc (or the 4-turn on 20 cm, or the RTL-SDR Blog L-band patch) with a SAWbird+ iO into RTL-B. Decode SafetyNET and bulletin-board packets only.
+    - **Key numbers:** 1537.0-1544.2 MHz, 1200 sym/s BPSK. G/T margin vs the ship-terminal -23 dB/K: +7.5 dB (2-turn), +10 dB (4-turn). EMEA NCS on Alphasat (about 25°E) or Inmarsat-6 F1 (about 83°E); which one is unverified. A modified GPS puck is about -3 dB, 'on the edge'.
+    - **Evidence:** Calculation from general-knowledge G/T; rtl-sdr.com decode reports with patches and helices; Celestrak longitudes.
+    - **Status:** model_only
+    - **Conflicts or errors:** Summary #126 placed Inmarsat-4 F2 at 64°E, 24° elevation; this is refuted (it is at about 142.5°E). The ocean region depends on the user's location. The decoder (stdcdec / Scytale-C) must be restricted to SafetyNET; arm64 operation is unverified.
+    - **Needed action:** Scan 1537-1545 MHz on air to find the NCS. Confirm the decoder can be filtered before shipping the profile.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - /home/user/lizbeth307/sat-receiver-audit/summaries.md
+  46.
+    - **Subsystem:** Catalogue
+    - **Topic:** Private-communications and military exclusions in catalogue rows
+    - **Current decision:** Iridium and Orbcomm are carrier and Doppler only. Inmarsat is limited to SafetyNET. Excluded: Starlink/OneWeb, Thuraya, Cospas-Sarsat 1544.5 MHz, ARGOS/DCP, military UHF SATCOM 240-320 MHz and MUOS 360-380 MHz, Yunhai-1, and GRAVES. Generic SDR coverage of those frequencies is allowed, with no targeted chain. The user's 01:19 list (243-400 MHz) gets no chain.
+    - **Key numbers:** IRA frames carry TMSI paging entries (iridium-toolkit FORMAT.md).
+    - **Evidence:** user_requirements.md; small_antenna_stack excluded list and verifier.
+    - **Status:** violates_requirements
+    - **Conflicts or errors:** Rows that remain in the band-study catalogue (small_antenna_stack bands[1]): 'Iridium ring-alert and system broadcast frames — reliable'; Orbcomm 'system/ephemeris frames — marginal'. The verifier corrected only the final tables. CARTOSAT-3 (dual-use) is still used to justify S-band.
+    - **Needed action:** Delete or rewrite those band-study rows before they feed STACK.md or the NPU class list. Drop CARTOSAT-3.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+      - https://raw.githubusercontent.com/muccc/iridium-toolkit/master/FORMAT.md
+  47.
+    - **Subsystem:** Reachability
+    - **Topic:** Amateur satellite telemetry and voice
+    - **Current decision:** Patch tier: the ISS is reliable. AO-73/JO-97 BPSK, RS-44/FO-29/AO-7 CW beacons and 1 W 9k6 CubeSats are marginal (tilted whip, passes above about 30°). SO-50, AO-91 and VHF digipeaters are opportunistic. Foldable tier (crossed Yagi): CubeSats from about 10°, plus FM voice and SSB.
+    - **Key numbers:** AO-73 telemetry is 30 mW (eclipse/transponder mode) or 300 mW, a 10 dB difference: on the whip about -5 / 0 / +5 dB at 10 / 30 / 90°. SO-50 clean FM on the whip is -5 dB at zenith. GreenCube IO-117 has been silent since Jul 2025. IO-86 never rises above the horizon at 45-52°N. Active per AMSAT reports (13-18 Oct): SO-50, RS-44, FO-29, AO-7 (in sunlight), JO-97; AO-91 is intermittent.
+    - **Evidence:** AMSAT status and SatNOGS; EIRPs are mostly assumed.
+    - **Status:** model_only
+    - **Conflicts or errors:** The catalogue row rates AO-73/JO-97 'reliable' while the final rates them 'marginal'. Summary #134 says 'reliable'.
+    - **Needed action:** Use the final ratings. Label every EIRP-based margin 'assumed EIRP'.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+  48.
+    - **Subsystem:** Reachability
+    - **Topic:** Meteor-M HRPT (1700 MHz)
+    - **Current decision:** Patch tier: 4-turn helix on a 20 cm disc, marginal above about 25-30°; the 2-turn helix on 12 cm is opportunistic (near zenith). Foldable tier: petal helicone, average margin about +8.9 to +9.4 dB (model). Receiver: RTL at 2.4-2.56 Msps now; the Lime later if kept.
+    - **Key numbers:** 665.4 ksym/s, main lobe about 2.7 MHz, so the RTL's 2.56 Msps is marginal but OK9SGC reports RTL decodes of Meteor-M HRPT. SatDump needs 0.5 dB SNR. Spurs to scan: RTL 28.8 MHz x59 = 1699.2 MHz (inside the signal); PCIe 100 MHz x17 smeared over 1691.5-1700 MHz with SSC; Lime 30.72 x55 = 1689.6 MHz. LTE B3 uplink 1710-1730 MHz sits in the SAWbird passband.
+    - **Evidence:** OK9SGC guide; metislair 11-turn helix about 7 dB average SNR (soft anchor, VLNA in front, no elevation stated).
+    - **Status:** model_only
+    - **Conflicts or errors:** rf_frontend research said the RTL is 'marginal/unusable for HRPT', which is refuted. The small-stack claim 'reliable from 13-18° on the 20 cm helix' is refuted (no field precedent; circular anchor).
+    - **Needed action:** Validate on a pass above 40° with the 4-turn helix, then the helicone, before rating either as reliable.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+      - https://sgcderek.github.io/blog/beginner-hrpt-guide.html
+  49.
+    - **Subsystem:** Self-noise
+    - **Topic:** HDMI pixel-clock harmonics against the receive bands
+    - **Current decision:** Choose a display timing whose harmonics avoid all receive bands, and confirm with a terminated-input survey with each host source switched on and off.
+    - **Key numbers:** Avoid CEA 1080p60 148.5 MHz (2.7 MHz from 145.8; 5th harmonic 742.5 near the QO-100 IF), CVT-RB 1080p60 138.5 MHz (0.6 MHz from 137.9), 4K60 (TMDS clock lane also 148.5 MHz), and 1440p60 241.5 MHz (x7 = 1690.5). My check of the claimed 'clean' clocks: 128.69 MHz x12 = 1544.3 MHz (Inmarsat-C band); 155.49 MHz x7 = 1088.4 MHz (1.6 MHz from ADS-B 1090) and x11 = 1710.4 MHz (HRPT edge); 161.0 MHz is about 1 MHz from AIS 161.975; 1280x800 at 71 MHz x24 = 1704 MHz.
+    - **Evidence:** Standard CEA/CVT timings plus my harmonic calculation. Nothing has been measured on the Q6A.
+    - **Status:** model_only
+    - **Conflicts or errors:** Summary #132/#141 calls 128.69 and 155.49/161.0 MHz 'clean'. That was checked only against satellite bands, before the lab added AIS, ADS-B, radiosondes and H1, and 128.69 MHz is not clean for Inmarsat-C.
+    - **Needed action:** Re-run the harmonic screen against the full lab band list: 0.5-30 MHz, 137, 145, 162, 400-406, 435-438, 739-741, 1090, 1420, 1537-1545, 1575, 1690-1710 and 2200-2300 MHz. Pick the timing, then measure.
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/summaries.md
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/antennas.json
+  50.
+    - **Subsystem:** Integration
+    - **Topic:** USB port allocation for the SDRs
+    - **Current decision:** Four different port maps exist.
+    - **Key numbers:** The Q6A has 4 host ports: 1 blue USB 3.1 (USB0, direct) and 3 black ports on an FE1.1s USB 2.0 hub shared with on-board Wi-Fi/BT. VBUS per WS4612 switch is about 2.1 A, not software-switchable. Streams: V4L 4.8-5.1 MB/s each, HF+ 3.1 MB/s; practical shared bandwidth is about 35-40 MB/s.
+    - **Evidence:** Radxa schematic v1.21 (narrowband, rf_frontend, radio_lab readings).
+    - **Status:** conflict
+    - **Conflicts or errors:** narrowband: V4L on the blue port. small stack: RTL-A blue, RTL-B on a hub port (no T7). lab_ui_hf: blue = T7, black = V4L, HF+, touch. radio_lab: blue = T7 only; FE1.1s P1 = V4L, P2 = touch, P3 = CH334F MTT hub (HF+, puck, LAB USB, display RP2040). rf_frontend calls the RTL port 'J5 lower USB 2.0 (U35)', while narrowband says the J5 bottom is the blue USB 3.1. The Wi-Fi chip is named FCU760K in one file and AIC8800 in another.
+    - **Needed action:** One map in STACK.md. If the Lime/T7 is dropped: RTL-A on blue, RTL-B and HF+ via the CH334F. If the T7 is kept: as radio_lab, with a fallback swap rule. Rfkill Wi-Fi during captures. Settle the J5 labelling and the Wi-Fi part name from the schematic.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/narrowband_sdr.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+  51.
+    - **Subsystem:** Integration
+    - **Topic:** Recording data rate for dual-RTL capture
+    - **Current decision:** small_antenna_stack drops the T7 because 'the largest stream left is 2x 2.56 Msps 8-bit (about 10 MB/s, 18.4 GB/h), which the 128 GB UFS holds'.
+    - **Key numbers:** 2.56 Msps x 2 B (8-bit I/Q) = 5.12 MB/s per dongle, so 10.24 MB/s for two = 36.9 GB/h, not 18.4 GB/h (18.4 GB/h is one dongle). HF+ cf32 adds 6.1 MB/s (22 GB/h).
+    - **Evidence:** My arithmetic.
+    - **Status:** conflict
+    - **Conflicts or errors:** The figure is off by a factor of 2. The 128 GB UFS holds only about 2.5-3 h of dual-RTL raw capture after the OS.
+    - **Needed action:** Correct the figure. Keep the 'record-then-decode, keep decimated' policy, or retain external storage for long raw captures.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+  52.
+    - **Subsystem:** Integration
+    - **Topic:** Pack voltage (3S vs 4S) and the RF rails it feeds
+    - **Current decision:** power verify: 4S1P 72 Wh. small_antenna_stack: 3S1P 54 Wh, dropping the 4th cell and the 12 V buck. lab_ui_hf: a 12.0 V Boni-Whip LDO from the 4S pack. radio_lab: 4S 72 Wh with a 13.6 V cutoff and an AUX 12 V rail.
+    - **Key numbers:** 4S 12.0-16.8 V; 3S 9.0-12.6 V. The LNB needs 13.2 V (a buck-boost in either case). The Boni-Whip needs 12.0 V (an LDO is possible only from 4S). The SMBJ14A conducts at 16.8 V on 4S.
+    - **Evidence:** Cross-file comparison.
+    - **Status:** conflict
+    - **Conflicts or errors:** With 3S, the 12.0 V Boni-Whip LDO and the AUX 12 V rail cannot be built as designed. With 4S, the small stack's TVS choice is wrong.
+    - **Needed action:** Decide the pack first. If 3S: add a low-noise boost and post-LDO for 12 V, and measure its spurs on HF. If 4S: keep the LDO design and fix the TVS.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/power.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  53.
+    - **Subsystem:** Scope and locale
+    - **Topic:** Ukraine-specific content in the receive-chain files
+    - **Current decision:** The user is not in Ukraine. Use world prices; device-computed pointing replaces city tables.
+    - **Key numbers:** Affected items: EUR 150 duty/VAT and landed costs (Lime $310-320 'landed'); Prom.ua and sdr.in.ua prices; 'UPS does not ship to Ukraine' (sysmocom); Kyiv pointing (QO-100 186°/32°, Alphasat 187°/32°, Elektro 19°); martial-law and Criminal Code notes; the 'Starlink front-line' rationale.
+    - **Evidence:** user_requirements.md.
+    - **Status:** superseded
+    - **Conflicts or errors:** These remain in wideband_sdr, narrowband_sdr, rf_frontend, antennas, dish_replacement and small_antenna_stack. The small stack's cost delta includes duty savings that do not apply.
+    - **Needed action:** Strip them in STACK.md. Keep the generic private/military exclusions, and re-cost at world prices once a region is known.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/wideband_sdr.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+  54.
+    - **Subsystem:** Other lab receive
+    - **Topic:** ADS-B, AIS and radiosonde front ends
+    - **Current decision:** AIS defaults to the HF+ in VHF mode (via the selector), or the spare V4L. ADS-B uses the spare V4L plus an Uputronics 1090 preamp, or a FlightAware Pro Stick Plus (extended). Radiosondes use a V4L plus the Uputronics 403 preamp. Antennas are the dipole-kit elements (AIS 44 cm, sondes 17.7 cm, ADS-B about 7 cm).
+    - **Key numbers:** Uputronics: 162 MHz ≥20 dB with a 7.6 MHz SAW; 403 MHz ≥21 dB, 15 MHz SAW, NF 0.75 dB; 1090 MHz about 16 dB, NF 0.75 dB. Pro Stick Plus is GBP 52.50 (not $20.95), about equal to the Uputronics 1090 at EUR 47.64.
+    - **Evidence:** Kubii and Pi Hut listings (radio_lab).
+    - **Status:** unverified
+    - **Conflicts or errors:** Summary #123 proposed a loop or loaded antenna for AIS; the loop is now excluded, so the telescopic dipole is used. Uputronics stock and bias range are unverified (same family as the 435 preamp).
+    - **Needed action:** Keep these extended, priced per region.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /home/user/lizbeth307/sat-receiver-audit/summaries.md
+- **Open questions:**
+  - Which country or region is the user in? It decides whether QO-100 (25.9°E) is visible at all, which Inmarsat-C NCS (Alphasat or I-6 F1) and LF time station (DCF77/MSF/WWVB/JJY) to use, whether Elektro-L/FY-2H can serve as references, legal limits, and landed prices.
+  - Do small rigid antennas whose pieces are all 20-23 cm or less (17 cm whip, SRH-701/A-V85, 20 cm helical whip, 2/4-turn helices, bare LNB with cone) count as allowed alongside patch/chip and folding antennas?
+  - LimeSDR Micro: keep the cancellable pre-order as a gated optional (decision gate 31 Jan 2027)? Is the order a refundable store pre-order or a campaign order? Which parts (12 GB Q6A, T7, 4th cell) are already bought?
+  - S-band: if the Lime is dropped, is a TX-capable ADALM-PLUTO (TX unconfigured and terminated) acceptable, or should only a receive-only downconverter route be pursued?
+  - May a VNA be swept into an antenna briefly indoors for S11 tuning, or must antenna tuning be strictly receive-only (sky/Sun noise, beacon C/N, GNSS C/N0)?
+  - Does the no-loop rule also cover H-field near-field test probes and the AS3935 ferrite coil? The default is to exclude them.
+  - Is the standard crossed Yagi with 35 cm boom halves and 34 cm elements acceptable, or must the ultra-compact (≤17-20 cm pieces, longer setup) build be the default?
+  - Pack: 3S or 4S? This determines how the 13.2 V LNB and 12.0 V Boni-Whip rails are built.
+  - Bench values still unpublished: Bullseye LNB current at 13.2 V and its length and waveguide ID; HF+ Discovery and Boni-Whip currents; Boni-Whip housing length; Balun One Nine DC path; Uputronics 435/403/1090 bias-voltage range.
+  - On-air status checks before spending on the array or an AHRPT-rate SDR: Metop-B/C AHRPT at 1701.3/1707 MHz, AWS at 1707 MHz, and Elektro-L5 LRIT at 1691 MHz.
+  - Which 70 cm band-pass filter or filtered preamp is actually purchasable? This is the main overload risk on the 8-bit V4L.
+  - Which HDMI timing will the Q6A drive the Wisecoco panel at, and does a custom EDID avoid all lab-band harmonics (including AIS 162, ADS-B 1090 and Inmarsat-C 1544)?
+  - Q6A RAM: the NPU design's 6-8 GiB IQ ring (Lime LIME-W 56 Msps) is incompatible with the small stack's 8 GB board downgrade. Keep 12 GB if the Lime stays?
+  - Does ISS SSTV Series 34 (22-25 Oct 2026) run at 10 W like Series 31? This is the assumption behind the 'reliable on a 12 cm whip' rating.
+- **Notes:** All 18 named final JSON files exist (plus foldable_partial.json and digest.md). The P1b register final/report_research.json does not exist yet. Most of the minute-log and summaries are in Ukrainian; I read them in full or in targeted excerpts.
+  
+  Biggest cross-file problems:
+  1. small_antenna_stack applied a superseded deployed-size rule. Its removals (Lime, T7, 12 GB board, all foldables, 18 V branch) must be re-decided for the two-tier rule.
+  2. Loops remain in small_antenna_stack (optional 20 cm loop and loop alternatives in its tables) and as conditional H-probes in radio_lab.
+  3. Several files prescribe VNA S11 sweeps into antennas, which conflicts with the conducted-only rule.
+  4. Three incompatible librtlsdr recipes.
+  5. Four USB port maps.
+  6. The 3S vs 4S pack choice breaks either the Boni-Whip 12 V LDO or the TVS.
+  7. The SAWbird+ bias source, LNB voltage and current limit, and polyfuse ratings are inconsistent.
+  8. The Lime frequency range is still misquoted as 30 MHz-3.8 GHz in two final texts.
+  9. QO-100 and all geostationary targets assume a European location; the user's region is unknown.
+  
+  Objective position on the Lime: no reliable patch-tier target needs it. In the foldable/full-lab tier it is the only in-stack S-band path and the basis of the NPU wideband design. Keep it as a gated optional and keep the core (2x V4L + HF+) independent of it. The Airspy Mini is the cheaper receive-only route for L-band at 3.6-6 Msps (AWS/Metop), and the Pluto is the either/or S-band fallback.
+  
+  Physics vs wishes:
+  - Patch/chip antennas cannot serve 137-146 MHz usefully. The closest options are the foldable V-dipole, or the experimental 20 cm helical whip.
+  - QO-100 DATV (about 31-32 dBi) and readable typical SSB (about 26 dBi) need dish-class gain. The closest options are the 23 dBi gore horn plus the 300 mm lens.
+  - No-loop HF is noise-limited near the handheld. The closest option is the wire with a 9:1 transformer, fed 5-10 m away.
+  - Metop AHRPT needs about 16-19 dBic plus an SDR above 2.56 Msps. That means the experimental 2x2 fold array, and the target status is itself contested.
+  
+  Web checks (6 WebSearch, 5 WebFetch):
+  - ARISS pages (fetched): Series 33 (2-6 Oct) and Series 34 (22-25 Oct 2026) are on 437.55 MHz, Robot 36. APRS is on 437.825 MHz and the FM repeater on 437.800 MHz (7 Oct status).
+  - V4L datasheet (I extracted the PDF text): 500 kHz-1.766 GHz, 2.56 MHz stable, 4.5 V/180 mA bias tee, diplexer.
+  - SAWbird+ GOES page: $44.95 Barebones, 180 mA nominal.
+  - Crowd Supply: no Lime update after 17 Jun 2026.
+  - Elektro-L5: rtl-sdr.com says commissioned, WMO says commissioning, SatNOGS lists it as unconfirmed.
+  - Metop: OSPO shows Metop-C AHRPT 'No'; NOAA retires its Metop HRPT ground products on 1 Sep 2026.
+  - Pluto: DigiKey prices vary by region ($197-$429).
+  
+  All link margins and antenna gains in the report are NEC or formula models (±1-3 dB, with EIRPs mostly assumed) until the on-air A/B tests are done.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
