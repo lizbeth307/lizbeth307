@@ -1,6 +1,6 @@
 # HANDOFF: супутниковий приймач лише на прийом + портативна радіолабораторія
 
-Стан на 2026-10-18 21:33 UTC. Цей файл — повна передача роботи іншій моделі/людині. Читати повністю перед продовженням.
+Стан на 2026-10-18 21:34 UTC. Цей файл — повна передача роботи іншій моделі/людині. Читати повністю перед продовженням.
 
 ## 0. Критерії завершення проєкту (Definition of Done) — проєкт закінчено, коли виконано ВСЕ:
 1. sat-receiver-audit/build/ містить усі 19 файлів зі списку в §7 п.1, кожен SVG — валідний SVG 1.1 (блок назви «v2, 18.10.2026» і «теоретичний проєкт — перевірити на стенді»), 10-bom.csv читається як CSV.
@@ -34,8 +34,8 @@
 
 
 ### Зроблені пакети виправлень P6: fix:A:b1, fix:A:b2, fix:A:b3, fix:A:b4, fix:A:b5, fix:B:b1, fix:B:b2, fix:B:b3, fix:B:b4
-### Готові автори P7: write:block+rf, write:power+wiring, write:software+assembly
-### Файли в build/: 01-blok-skhema.md, 01-blok-skhema.svg, 02-zhyvlennia.md, 02-zhyvlennia.svg, 03-rf-trakt.md, 03-rf-trakt.svg, 04-header-40pin.svg, 04-pidkliuchennia-pinout.md, 05-mekhanika.md, 05-roztashuvannia-front.svg, 05-roztashuvannia-panel.svg, 05-roztashuvannia-section.svg, 06-anteny.md, 07-pz-vstanovlennia.md, 08-zbyrannia.md, 10-bom.csv, 10-bom.md
+### Готові автори P7: write:block+rf, write:power+wiring, write:software+assembly, write:tests+bom
+### Файли в build/: 01-blok-skhema.md, 01-blok-skhema.svg, 02-zhyvlennia.md, 02-zhyvlennia.svg, 03-rf-trakt.md, 03-rf-trakt.svg, 04-header-40pin.svg, 04-pidkliuchennia-pinout.md, 05-mekhanika.md, 05-roztashuvannia-front.svg, 05-roztashuvannia-panel.svg, 05-roztashuvannia-section.svg, 06-anteny-komplekty.svg, 06-anteny.md, 07-pz-vstanovlennia.md, 08-zbyrannia.md, 09-testy.md, 10-bom.csv, 10-bom.md
 
 
 ## 4. Файли (у репозиторії, гілка ccr-1537979d-cj7q9t; і в цьому архіві)
