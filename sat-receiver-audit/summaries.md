@@ -3480,3 +3480,53 @@ Launching the study requested: drop everything that needs dishes or antennas ten
 
 ---
 
+### 🤖 Зведення #121 — 2026-10-18 01:22:02 UTC
+
+**Софт: перевірку завершено. Усі 12 компонентів готові.** Перевіряльник підтвердив вибір, упевненість середня.
+
+**Платформа:** Radxa OS r2 (Ubuntu 24.04), BIOS 260120, одне ядро заморожене. Є два шляхи:
+- **Шлях A:** ядро 6.18.2-4, UFS-модуль Samsung 128 ГБ і перевірений набір для NPU.
+- **Шлях B:** ядро 7.0.11-7 з параметром `clk_ignore_unused`, якщо ставити Kioxia 256 ГБ. Radxa знайшла причину чорного екрана на 7.0: ядро вимикає тактові сигнали, які лишає ввімкненими прошивка EDK2. NPU на цьому шляху ще треба перевірити.
+
+**Найважливіші виправлення:**
+- **Ядра 6.18.2 у репозиторії Radxa більше немає.** Повне оновлення ще й замінює пакети прошивок, і після цього зникає звук навіть на 6.18.2. Тому утримувати потрібно і ядро, і прошивки. Пакети 6.18.2-4 брати з релізу на GitHub.
+- **Драйверу LimeSDR потрібен лише один MSI, а не 8.** Але потік прийому працює зі звичайним пріоритетом, тож запускати його з `chrt -f 50`.
+- **Готові пакети SatDump (Pi64) і SDR++ зібрані під бібліотеки, яких в Ubuntu 24.04 немає.** Тому:
+  - обидві програми збирати з коду;
+  - librtlsdr 2.0.3 теж збирати з коду, бо підтримка V4L є лише там;
+  - SDR++ збирати з модулем SoapySDR.
+- **Номери NORAD:** SatDump master через OMM уже читає шестизначні номери (issue #1221). Ламається саме Gpredict, тож місток потрібен лише для нього і для файлів TLE.
+- **Прошивки DSP для NPU** брати з офіційного репозиторію Qualcomm `linux-msm/hexagon-dsp-binaries`, де є окрема тека для Dragon Q6A (оновлено 16.10.2026).
+- **NPU необов'язковий:** класифікатор за замовчуванням працює на CPU через ONNX Runtime.
+
+**Бюджетний варіант стосується нового правила малих антен.** Це лише RTL-SDR, без LimeSDR і без NPU:
+- **Покриває:** Meteor LRPT, SSTV з МКС, CubeSat на 435 МГц, ПЧ QO-100.
+- **На межі:** Meteor HRPT. Стабільна смуга 2,56 Msps, а сигнал займає близько 2,7 МГц.
+- **Не покриває:** MetOp і FengYun AHRPT (потрібно близько 6 Msps) та S-діапазон.
+
+**Дослідження малих антен** підтверджує мою попередню відповідь про Inmarsat-C. Звичайна активна GPS-антена з прибраним фільтром ледве вистачає для каналу NCS. Повітряна L-патч Outernet з одним-двома підсилювачами на 15 дБ дає середнє SNR.
+
+**Фінальні перевірки поки не запускаю.** За циклом їх уже час запускати, але вони мають читати результати трьох досліджень, що ще працюють:
+- малі антени, яке тепер є головною вимогою;
+- складні антени;
+- ринок екранів.
+
+Запущу перевірки інтеграції й повноти, щойно ці три дослідження завершаться.
+
+Повні відповіді: `sat-receiver-audit/components/software.md`. Коміт c3f7800.
+
+Джерела:
+- [Radxa Q6A downloads](https://docs.radxa.com/en/dragon/q6a/download)
+- [Radxa qcs6490-noble Packages](https://radxa-repo.github.io/qcs6490-noble/dists/qcs6490-noble/main/binary-arm64/Packages.gz)
+- [linux-qcom 6.18.2-4](https://github.com/radxa-pkg/linux-qcom/releases/tag/6.18.2-4)
+- [Radxa forum: Linux 7.0 no HDMI](https://forum.radxa.com/t/latest-q6a-update-to-linux-7-0-no-hdmi/31288)
+- [la9310_limesdr (staging)](https://github.com/myriadrf/LimeSuiteNG/tree/limesdr-micro-staging/drivers/linux/la9310_limesdr)
+- [LA9310_TRX.cpp](https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/boards/LimeSDR_Micro/LA9310_TRX.cpp)
+- [SatDump sdr_sources](https://github.com/SatDump/SatDump/tree/master/plugins/sdr_sources)
+- [osmocom rtl-sdr](https://github.com/osmocom/rtl-sdr)
+- [hexagon-dsp-binaries](https://github.com/linux-msm/hexagon-dsp-binaries)
+- [onnxruntime-qnn v2.7.0](https://github.com/onnxruntime/onnxruntime-qnn/releases/tag/v2.7.0)
+- [Radxa Q6A Vulkan](https://docs.radxa.com/en/dragon/q6a/system-config/vulkan)
+
+---
+
