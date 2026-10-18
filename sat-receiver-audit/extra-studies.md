@@ -32629,6 +32629,175 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   USD/EUR conversion: 1.1241 (as in G1).
 
+## searchA:nooelec_sawbird_h1 (run `wf_c3ba734e-52b`)
+
+- **Part:** Nooelec SAWbird+ H1 (SKU 100811, cased, no 50 Ohm reference). 1420 MHz LNA-SAW-LNA in the extended lab tier, qty 1. Chain: helix/helicone -> SAWbird+ H1 near the feed -> P3 L-BAND SMA -> injector ch3 (TPS2553, 4.5 V) -> RTL-B, or the Lime in the with-Lime build.
+- **Current price usd:** 49.95 at Nooelec direct, checked 18 Oct 2026 on https://www.nooelec.com/store/sawbird-h1.html. The page shows Add to Cart, 'usually shipped in 1 business day', made in the USA, UPC 0616469146557. STACK.md line 366 says 'URL gave 404'; that is out of date, because the page now resolves. Free shipping applies only to orders over $100, and the page says nothing about VAT or IOSS. Bought alone into the EU, the landed cost is about $66 or more plus shipping: $49.95 + roughly 20% import VAT + EUR 3 customs duty per item for a postal consignment + EUR 2 Union handling fee from about 1 Nov 2026 (operator_notes item 35), plus a shipping charge I could not verify. Bought inside the core Nooelec order (NOAA + GOES + Flamingo+), shipping is free; the parcel then exceeds EUR 150, so normal duty by tariff line plus the EUR 2 handling fee applies.
+- **Critical specs:**
+  - Passband covers 1420.406 MHz plus galactic Doppler (about 1419-1422 MHz) with flat gain for the spectral baseline. H1: 65 MHz bandpass 'centered near 1.42 GHz' (product page); rtl-sdr.com gives 70 MHz; one Amazon buyer measured about 67 MHz (not verified by me).
+  - Out-of-band rejection relevant to Europe: L-band IMT/SDL 1427-1517 MHz (Band 32 at 1452-1496, plus the Band 75/76 extensions where deployed), Inmarsat 1525-1559, GNSS L1 1575, GSM-900/LTE-800 downlink, LTE B3 downlink 1805-1880. Nooelec publishes only 'very high attenuation' with no numbers. My model (symmetric passband assumed) puts the edges at about 1387.5-1452.5 MHz, so 1427-1452 MHz is in-band for the H1. Rejection at 1452-1496 must be measured.
+  - Noise figure at 1420 MHz of 0.8 dB or less. Nooelec gives ~0.8 dB for 100811 and ~1.05 dB for the Barebones; rtl-sdr.com quotes 0.5-0.6 dB for the original Barebones. This sets Tsys in the stack's 125 K model.
+  - Gain of at least 40 dB at 1420 MHz (Nooelec minimum). This swamps the RTL-B/Lime NF plus the injector and cable loss.
+  - Linearity and survivability: OP1dB/IIP3 and maximum input. Not published for the H1. The SAWbird+ GOES sibling datasheet gives OP1dB +20 dBm and Pin max 0 dBm; the H1 values are unknown.
+  - Topology: two shielded LNAs around a custom SAW (LNA-SAW-LNA), each LNA under its own EMI shield.
+  - Power: bias through the output SMA at 4.5 V from ch3 (TPS2553, 300 mA nominal, at least 240 mA trip). Nooelec recommends 3-5 V on SMA and 3.3-5.5 V on USB/header; tolerates up to 12 V. Draw 120 mA nominal against the stack's 180 mA L-band budget.
+  - Mechanics: SMA-F in and out, small enough to mount at the feed, shielded or cased, works outdoors at the feed.
+  - Gain stability over temperature and time (radiometry and Sun-noise work). Not published by any vendor, so it is an arrival test.
+  - Warranty and genuine sourcing. Nooelec's page header says 2 years, but the description text says 'standard 1 year warranty'. Buy only via Nooelec or its listed affiliates.
+- **Candidates:**
+  1.
+    - **Name:** Nooelec SAWbird+ H1 100811 (same part) via Amazon.de, official affiliate listed on nooelec.com, ASIN B07XPV9RX2
+    - **Kind:** current_part
+    - **Price usd:** UNVERIFIED. About EUR 50 incl. VAT (about $56 at 1.1241) per an undated European university project page; Amazon.de and Amazon.com returned 503 or hid the price.
+    - **Seller url:** https://www.amazon.de/-/en/Nooelec-SAWbird-H1-Applications-Frequency/dp/B07XPV9RX2
+    - **Spec comparison:** Identical part, so every spec is identical: >=40 dB, ~0.8 dB NF, 65 MHz SAW, 120 mA, 3-5 V on SMA.
+    - **Worse in:** Nothing technical. It is cheaper only if the EU price incl. VAT is below the direct landed cost (about $66 + shipping when bought alone). That price is unverified.
+    - **Compatibility:** Same as the current part: SMA, 4.5 V bias on ch3, 120 mA.
+    - **Risks:** Check that the seller is Nooelec or Amazon (no marketplace reseller) and that the SKU is 100811 cased, not the Barebones B07XJLKQDN.
+    - **Sources:**
+      - https://www.amazon.de/-/en/Nooelec-SAWbird-H1-Applications-Frequency/dp/B07XPV9RX2
+      - https://www.nooelec.com/store/sawbird-h1.html
+  2.
+    - **Name:** Nooelec SAWbird+ H1 100811 (same part) via the other official EU affiliates named on nooelec.com: Antratek Electronics (NL/BE/DE), Neven (CZ), Passion Radio (FR)
+    - **Kind:** current_part
+    - **Price usd:** UNVERIFIED. Antratek returned 403 to both fetch methods. Neven search is JavaScript only. The Passion Radio catalog I could read showed SAWbird+ NOAA Barebones at EUR 59.05 but no H1 listing.
+    - **Seller url:** https://www.antratek.com/nooelec
+    - **Spec comparison:** Identical part.
+    - **Worse in:** Nothing technical. EU stock avoids the EUR 3 duty and EUR 2 handling fee.
+    - **Compatibility:** Same as the current part.
+    - **Risks:** Stock and price are unknown, so ask before ordering. Passion Radio may not carry the H1 at all.
+    - **Sources:**
+      - https://www.antratek.com/nooelec
+      - https://www.neven.cz/vyhledavani/?search=nooelec
+      - https://www.passion-radio.com/sat-accessory/lna-sawbird-1061.html
+  3.
+    - **Name:** Nooelec SAWbird+ H1 100811 (same part) via Amazon.com, ships from Amazon US
+    - **Kind:** current_part
+    - **Price usd:** UNVERIFIED. About $44.95 per a search-engine snippet; the live page hid the price ('add to cart to see').
+    - **Seller url:** https://www.amazon.com/Nooelec-SAWbird-H1-Applications-Frequency/dp/B07XPV9RX2
+    - **Spec comparison:** Identical part.
+    - **Worse in:** Nothing technical. For an EU delivery, import VAT, the EUR 3 duty, the EUR 2 handling fee and international shipping are added, so it is probably not cheaper landed than Nooelec direct or Amazon.de.
+    - **Compatibility:** Same as the current part.
+    - **Risks:** Same marketplace-seller check as Amazon.de.
+    - **Sources:**
+      - https://www.amazon.com/Nooelec-SAWbird-H1-Applications-Frequency/dp/B07XPV9RX2
+  4.
+    - **Name:** Nooelec SAWbird+ H1 Barebones (ASIN B07XJLKQDN; RF switch to a 50 Ohm reference)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** UNVERIFIED. About $39.95 per an Amazon listing snippet. https://www.nooelec.com/store/sawbird-h1-barebones.html now returns 404, and the full SAWbird category on nooelec.com lists no H1 Barebones, so it looks discontinued at Nooelec direct.
+    - **Seller url:** https://www.amazon.com/Nooelec-SAWbird-H1-Barebones-Applications/dp/B07XJLKQDN
+    - **Spec comparison:** Same SAW and LNAs, 65-70 MHz, >=40 dB, 120 mA. NF is ~1.05 dB against ~0.8 dB, per Nooelec's own 100811 page. It adds an electrically switched 50 Ohm reference for calibration (rtl-sdr.com).
+    - **Worse in:** NF is about 0.25 dB worse (about +20 K of LNA noise temperature, my conversion). It is a bare board with no case. The listing gives a 1-year warranty against 2 years for 100811. So it is NOT not-worse; rejected.
+    - **Compatibility:** Same power and SMA. It would need a shielded box and standoffs at the feed.
+    - **Risks:** Old stock only, availability unknown.
+    - **Sources:**
+      - https://www.nooelec.com/store/sawbird-h1.html
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird.html?limit=all
+      - https://www.rtl-sdr.com/new-lna-filter-for-radio-astronomy-hydrogen-line-observations-released-by-nooelec/
+      - https://www.amazon.com/Nooelec-SAWbird-H1-Barebones-Applications/dp/B07XJLKQDN
+  5.
+    - **Name:** GPIO Labs Hydrogen Line Pre-filtered LNA 1420 MHz w BIAS TEE (Tindie, Toronto)
+    - **Kind:** other_brand
+    - **Price usd:** 97.20 (Tindie page, 4 left)
+    - **Seller url:** https://www.tindie.com/products/gpio/hydrogen-line-pre-filtered-lna-1420mhz-w-bias-tee/
+    - **Spec comparison:** Gain 34 dB at 1420 MHz against >=40 dB. NF '1 dB' against ~0.8 dB. Filter type, bandwidth and rejection are not published; GPIO's separate bandpass filter is 1420 +/- 25 MHz with >=24 dB at 1300/1600 MHz. Max input -10 dBm. Supply +5 to +12 V, and the page says 'less than +5V ... unreliable or no amplification'. Edge-mount SMA-F, no enclosure listed.
+    - **Worse in:** Dearer, lower gain, higher NF, and it does not work at the stack's 4.5 V bias. Rejected.
+    - **Compatibility:** Fails on the power rail: ch3 is 4.5 V.
+    - **Risks:** No P1dB or current published. Small batch stock.
+    - **Sources:**
+      - https://www.tindie.com/products/gpio/hydrogen-line-pre-filtered-lna-1420mhz-w-bias-tee/
+      - https://www.astronomy.me.uk/the-current-range-of-1420-mhz-hydrogen-line-filters-and-low-noise-amplifiers-supplied-by-gpio
+  6.
+    - **Name:** GPIO Labs Radio Astronomy Hydrogen Line LNA (standard) and Pre-filtered LNA (no bias tee)
+    - **Kind:** other_brand
+    - **Price usd:** 87.00 for the standard LNA (Tindie, 9 left). The pre-filtered no-bias-tee price was not fetched (UNVERIFIED); an older rtl-sdr.com list gave $49.95, which it calls likely out of date.
+    - **Seller url:** https://tindie.com/products/gpio/radio-astronomy-hydrogen-line-low-noise-amplifier
+    - **Spec comparison:** 32 dB typical at 1420 MHz. Measured noise temperature 91 +/- 2 K (about 1.16 dB NF, LightWork memo) against ~0.8 dB. The standard LNA has no filter; the pre-filtered one is about 32 dB and close to 1 dB NF. Supply +5 to +12 V via micro-USB or header, no bias tee. Max input -10 dBm.
+    - **Worse in:** NF, gain, no bias-tee power, no 4.5 V operation, no published filter rejection. Not cheaper. Rejected.
+    - **Compatibility:** Needs a separate 5-12 V feed at the antenna, which breaks the single-coax ch3 scheme.
+    - **Risks:** None beyond the specs.
+    - **Sources:**
+      - https://tindie.com/products/gpio/radio-astronomy-hydrogen-line-low-noise-amplifier
+      - https://www.tindie.com/products/gpio/hydrogen-line-pre-filtered-lna-1420-mhz/
+      - https://www.astronomy.me.uk/the-current-range-of-1420-mhz-hydrogen-line-filters-and-low-noise-amplifiers-supplied-by-gpio
+  7.
+    - **Name:** LNA4ALL (9A4QV, Croatia, EU), single unit with SMAs and the 3.3-5 V bias-tee mod
+    - **Kind:** other_brand
+    - **Price usd:** About 37 (EUR 23 assembled with 2 SMA + EUR 3 bias-T mod + EUR 7 tracked mail = EUR 33, at 1.1241). Ordered by e-mail; stock note 'May 2025, 250 pcs'.
+    - **Seller url:** https://lna4all.blogspot.com/
+    - **Spec comparison:** PSA4-5043+ wideband MMIC with no filter. At 1420 MHz the maker gives only a two-unit figure (31.35 dB S21), so one unit is about 15.7 dB (inferred). NF for 2 in series is 0.698 dB with a 14 dB ENR source and 0.757 dB with 4.5 dB ENR, measured on bare boards. Draws 47 mA at 4.5 V.
+    - **Worse in:** Gain (about 16 dB against >=40 dB), no SAW or bandpass filter (no rejection of the 1452-1496 MHz SDL, Inmarsat, GNSS or GSM), bare PCB with no enclosure. The maker himself says dedicated H-line LNAs are better. Rejected.
+    - **Compatibility:** Works on 4.5 V bias after the mod. It would need a filter and a shielded box.
+    - **Risks:** Small-shop, e-mail ordering. Current stock unverified.
+    - **Sources:**
+      - https://lna4all.blogspot.com/
+  8.
+    - **Name:** LNA4ALL x2 in series (9A4QV), same build
+    - **Kind:** other_brand
+    - **Price usd:** About 66 (2 x (EUR 23 + EUR 3) + EUR 7 = EUR 59; assumes one shipment covers both, which is unverified)
+    - **Seller url:** https://lna4all.blogspot.com/
+    - **Spec comparison:** 31.35-32.2 dB at 1420 MHz against >=40 dB. NF 0.70-0.76 dB (maker's measurement), similar to ~0.8 dB. No filter. 94 mA total at 4.5 V.
+    - **Worse in:** Dearer, about 8 dB less gain, no filtering, no enclosure. Rejected.
+    - **Compatibility:** Bias would have to pass through the first unit to the second, which needs custom wiring.
+    - **Risks:** Same as the single unit.
+    - **Sources:**
+      - https://lna4all.blogspot.com/
+  9.
+    - **Name:** SSB-Electronic SLN-1420 (Germany)
+    - **Kind:** other_brand
+    - **Price usd:** UNVERIFIED, no price found. SSB's LNA series at WIMO starts at EUR 226 incl. VAT (about $254), so it is almost certainly dearer.
+    - **Seller url:** https://www.wimo.com/es/ssb-electronic-lna-preamp
+    - **Spec comparison:** A 2020 hobbyist measurement found a best NF of 0.6 dB at about 31 dB gain with a 40 MHz bandpass. It also notes that published NF figures for the unit range from 0.3 to 1.0 dB.
+    - **Worse in:** Gain is about 31 dB against >=40 dB. It costs several times more. Rejected.
+    - **Compatibility:** Bias and connector details were not checked.
+    - **Risks:** Current availability unknown.
+    - **Sources:**
+      - https://www.scribd.com/document/643905245/1420-MHz-LNA-SSB-Electronic-SLN-1420-1v0
+      - https://www.wimo.com/es/ssb-electronic-lna-preamp
+  10.
+    - **Name:** KrakenRF Discovery Dish 1.42 GHz active filtered feed (QPL9547 LNA)
+    - **Kind:** other_brand
+    - **Price usd:** 115.50 (Mouser US-region listing; 20-week lead time shown on one region)
+    - **Seller url:** https://www.mouser.hn/c/?m=KrakenRF
+    - **Spec comparison:** Integrated feed, LNA and filter in a waterproof box. NF and gain were not checked here.
+    - **Worse in:** It is an antenna feed (antennas are out of scope for this step), it is dearer, and it does not fit the helix/helicone. Rejected.
+    - **Compatibility:** It replaces the antenna, not the LNA.
+    - **Risks:** Long lead time.
+    - **Sources:**
+      - https://www.mouser.hn/c/?m=KrakenRF
+      - https://www.rtl-sdr.com/discovery-dish-1420-mhz-hydrogen-line-feed-tested-with-a-wifi-grid-dish/
+- **Notes:** VERDICT: keep the Nooelec SAWbird+ H1 100811. From angle A I found no cheaper analog that is not worse.
+  - The only cheaper Nooelec SKU, the H1 Barebones (about $39.95 on Amazon, unverified; its nooelec.com page is now 404), is worse on Nooelec's own figures: NF ~1.05 dB against ~0.8 dB, no case, and a shorter warranty on the listing.
+  - Every other-brand option is either dearer or worse in gain, NF, filtering or the 4.5 V bias rule. GPIO Labs is $87-97, about 1-1.16 dB NF, 32-34 dB, and needs 5 V or more. LNA4ALL has no filter and about 16 dB per unit. SSB SLN-1420 is about 31 dB and far dearer. The KrakenRF feed is an antenna.
+  - Nooelec makes no other 1420 MHz SAWbird. The SAW filters in the GOES and iO models block 1420 MHz.
+  
+  Cheapest legitimate route for the same part:
+  - Buy 100811 from an official EU affiliate named on nooelec.com: Amazon.de B07XPV9RX2, Antratek NL/BE/DE or Neven CZ. EU stock avoids the EUR 3 duty and EUR 2 handling fee of operator_notes item 35. Do this only if the price incl. VAT is under about $60. The EU prices are UNVERIFIED (Amazon 503, Antratek 403, Neven search is JavaScript only).
+  - Otherwise add it to the core Nooelec order (NOAA + GOES + Flamingo+) for free shipping. This conflicts with the 'buy extended last' order in STACK.md; the user decides.
+  - Bought alone from Nooelec, it is under $100, so shipping is charged on top of VAT, duty and fee.
+  
+  STACK.md corrections:
+  (a) Line 366: the URL works now (https://www.nooelec.com/store/sawbird-h1.html, SKU 100811, $49.95, add to cart). Change 'not checked (URL gave 404)' to checked on 18 Oct 2026.
+  (b) Note that 100811 has no 50 Ohm reference switch; only the Barebones had it. Any Dicke-style calibration has to use the noise source and a load, conducted only.
+  (c) Nooelec states a 65 MHz bandpass but no rejection numbers, and no P1dB or maximum input. Do not borrow the GOES sibling's +20 dBm / 0 dBm as H1 values.
+  
+  Arrival test (conducted only, LiteVNA with pads):
+  - S21 at 1420.4 MHz: at least 40 dB.
+  - Passband edges.
+  - Rejection at 1452, 1467, 1490 and 1517 MHz (European L-band SDL; my model has 1427-1452 MHz inside the passband) and at 1542, 1575 and 1805 MHz.
+  - Current on ch3 at 4.5 V: about 120 mA, logged as the labd baseline.
+  - Y-factor NF with the stack's noise source.
+  - Gain drift between cold start and warm.
+  
+  Display harmonic 1415.7 MHz (128.70 MHz x 11) falls inside every H1 filter; that is handled by shielding, not by the LNA choice.
+  
+  Evidence limits:
+  - I used 14 WebSearch calls.
+  - Amazon prices are search-snippet values only.
+  - The GPIO no-bias-tee price was not fetched.
+  - The SLN-1420 price was not found.
+  - The NF/gain values for Nooelec, GPIO and LNA4ALL are vendor or maker figures. Only the GPIO 91 K and the SLN-1420 0.6 dB are reported measurements, and those come from third parties or memos, not from my own checks.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
