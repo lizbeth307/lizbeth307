@@ -1021,3 +1021,7 @@ P5: запущено G4 (механіка й польове спорядженн
 Уточнення до запису про ZFL-500+: у самому Mini-Circuits ZFL-500+ (SMA) — $99.55 за 1 шт., на складі «понад 100», тож ризик наявності знімається (порожній склад був лише в DigiKey). Для Європи врахувати мито/ПДВ при прямому замовленні з США (пункт 34 operator_notes). Вживаний ZFL-500LN у Surplus Sales ≈$75.
 Джерела: minicircuits.com (ZFL-500+), surplussales.com (ZFL-500LN); журнал wf_e5582d4c-0a2.
 
+## 2026-10-18 13:29 UTC
+
+P5 (проміжне): G2 перевіряє заміну ALLNET 64 ГБ microSD — PNY Pro Elite 64 ГБ має 20918 балів на pibenchmarks.com (Verbatim Pro 64 ГБ ~5710). Рішення ще немає. Джерело: https://pibenchmarks.com/ (сторінки PNY SD Pro Elite SD64G, Verbatim SD Pro SD64G).
+
