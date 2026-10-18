@@ -1303,3 +1303,17 @@ P5 (проміжне): G6 — Airspy Mini підтверджено в ITEAD, EU-
   - RD6006 і XY-SK120X: потрібен окремий PD-тригер, пульсації гірші.
 - **Джерела:** fnirsi.com/products/dps-150, elektor.com (SKU 21002), botland.store, aliexpress.com, github.com/mtabini/fnirsi-dps150.
 
+## 2026-10-18 18:05 UTC
+
+**G6, Airspy Mini (13/16):** умовна заміна продавця, сама плата та сама.
+- Беремо в ITEAD: це офіційний виробник для Airspy, склад у DE. Артикул IM150415001EU, $99 без ПДВ, у наявності 242 шт.
+- Ціна з доставкою: DE $123,22, PL $130,23, FR $130,91.
+- Економія ≈$16–23 проти Moonraker (≈$146) і ≈$40 проти WiMo (€144,90).
+- Умова: ITEAD DE має доставляти в країну користувача. Для ES та IT ставки доставки немає; там резерв — AstroRadio або WiMo.
+- Покупка, як і раніше, лише після проходження гейту Metop.
+- Відхилено:
+  - вживані — ціни не перевірено, гарантії немає;
+  - HydraSDR RFOne ($193,67) — дорожчий, залишаємо його як шлях апгрейду;
+  - заміну на Lime — це вже зміна обсягу, а не рівноцінний аналог.
+- Джерела: itead.cc (WooCommerce store API, гостьовий кошик), airspy.com/purchase, wimo.com, launchpad.net (libairspy noble arm64), rtl-sdr.com, digikey.com.
+
