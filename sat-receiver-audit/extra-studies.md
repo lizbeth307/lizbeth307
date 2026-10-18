@@ -999,3 +999,267 @@
   
   Also mentioned in search results but not verified: a VIEWE UEDX6911 HDMI-to-MIPI board 'up to 1200x1920' with 'native USB touch transmission'. Its page came back empty. If it is real, it is a candidate bridge for the Youritech or Midas 1200x1920 panels.
 
+## dispmkt:bright_kits (run `wf_a429c611-ea2`)
+
+- **Angle:** Chinese bright panel kits and bare bright panels (5.5-8 in, at least 1000 nits, above FHD preferred, with an HDMI board and USB touch). Covered: Wisecoco (whole high-brightness category plus site searches), VIEWE, Youritech, Kingtech, Panox, Waveshare, BOE broker listings, Microtech (HKTDC), and Ukrainian availability on prom.ua.
+- **Candidates:**
+  1.
+    - **Name:** VIEWE UEED080FH-RB39-A003 8in 1200x1920 transflective IPS with capacitive touch (same glass is sold by Youritech as ET080TR01-VT), paired with VIEWE UEDX6911 LT6911C HDMI-to-MIPI + USB-touch board
+    - **Size in:** 8
+    - **H res:** 1200
+    - **V res:** 1920
+    - **Brightness nits:** 369
+    - **Brightness evidence:** VIEWE datasheet ALL-UEED080FH-RB39-A003A V1.0 (2025-11-06):
+  - Transmissive: 369 cd/m2 typ, 329 min (with touch; 435 without touch per the listing), contrast 300:1.
+  - Reflective: white reflectance 7% typ (6.5% min), contrast 15:1, 15-20% NTSC.
+  My calculation, assuming an extra 1% front-surface reflection: in 100 klx sun the reflected white is about 2230 cd/m2 and contrast is about 6-17:1, against about 7:1 for a 2000-nit transmissive panel. The panel gets better the brighter the sun is. The Youritech page lists the same 369 nits and the same 132.6x202.6x4.98 mm outline.
+    - **Host interface:** - Panel: MIPI DSI 4-lane on a 45-pin 0.3 mm FPC; VDD 3.3 V; VLED 25.2 V at 115 mA (45 LEDs).
+  - Board: UEDX6911 uses an LT6911C (HDMI 1.4 to 1/2-port DSI, up to 1.5 Gbps per lane) and accepts HDMI input.
+  - Fit is unconfirmed. The board datasheet lists only 30-pin and 40-pin VIEWE panels (2.1-10.1 in), not this 45-pin panel. VIEWE only shows the two as 'Frequently bought together'.
+    - **Touch to host:** - The panel's touch is I2C at 1.8 V on the FPC (pins 10-14); the touch IC is not named.
+  - The UEDX6911 has an IIC touch header and presents 5-point USB HID, driver-free per its datasheet.
+  - Whether its firmware supports this panel's touch IC is unconfirmed; ask VIEWE.
+    - **Price:** $74.99 for the panel (was $75.99); UEDX6911 $18 (was $20); bundle $92.99 on viewedisplay.com, checked 18 Oct 2026. Youritech: quote only.
+    - **Availability:** OUT OF STOCK on viewedisplay.com (18 Oct 2026); 'Get a Quote' is available. Youritech sells the same panel B2B. Not found in Ukrainian shops (prom.ua searches). Ship-to-Ukraine terms unknown.
+    - **Q6a compatibility:** Plausible over HDMI, but not plug-and-play (calculations below).
+  - Portrait-native 1200 px wide, below the sc7280 2400 px linewidth, so no virtual planes are needed; rotate in the compositor.
+  - 1200x1920@60 with 30 lines of vertical blanking is about 150 MHz and 3.6 Gbps: it needs at least DP HBR on 2 lanes (RBR is too small). It is well inside the 8.64 Gbps limit and within the LT6911C's HDMI 1.4 limit.
+  - Check that the board's EDID has at least 24 lines of vertical blanking.
+  - Driver ICs are HX8279D x2; mainline has a panel-boe-himax8279d driver for BOE 8in 1200x1920 panels, so a later direct-DSI route is conceivable, but Q6A DSI is unproven.
+  - Biggest risk: the UEDX6911 is rated at 5 V, 150 mA with backlight off and 260 mA at maximum backlight (about 1.3 W total). That is far below this panel's 2.9 W backlight, so the board's LED driver may not reach full brightness; plan an external 25 V constant-current driver (the panel exposes a PWMOUT pin).
+    - **Verdict vs current pick:** unverifiable
+    - **Sources:**
+      - https://viewedisplay.com/product/8-inch-1200x1920-transflective-tft-sunlight-readable-and-low-power-high-resolution-touch-display/
+      - https://viewedisplay.com/download/72/display-datasheet/10529/all-ueed080fh-rb39-a003a-spec-1-0.pdf
+      - https://viewedisplay.com/product/hdmi-to-mipi-dsi-converter-board/
+      - https://viewedisplay.com/download/73/smart-display-datasheet/11743/uedx6911-hdmi-driver-board-spec-v2-0.pdf
+      - https://www.youritech.com/products/8-inch-transflective-display-1200x1920-mipi-4-lanes-sunlight-readable-lcd-display-with-capacitive-touch.html
+      - https://kernel.org/doc/Documentation/devicetree/bindings/display/panel/boe%2Chimax8279d.txt
+    - **Panel tech:** a-Si IPS transflective, normally black, 283 PPI (calculated). Gamut 36-40% NTSC transmissive, 15-20% reflective. Viewing angle 60/60/60/60 at CR>2.
+    - **Optical bonding and coating:** - Datasheet drawing: full OCA lamination of cover glass and touch ('全贴OCA'); 1.8 mm cover glass; 2.4 mm touch stack.
+  - AF (anti-fingerprint) surface coating; UV-resistant ink.
+  - Not stated as AR or AG.
+    - **Power w:** Datasheet module power:
+  - 3.27 W transmissive (backlight 2.898 W).
+  - 0.18 W reflective with the backlight off.
+  Board: 5 V at 150 mA with backlight off, about 0.75 W.
+  My estimate: about 1 W in sun with the backlight off, about 4 W indoors.
+    - **Supply:** Panel: VDD 2.5-3.3 V, VLED 25.2 V at 115 mA. Board: 5 V (4.0-5.5 V), 1 A recommended. Can run from the existing 5 V buck.
+    - **Dimensions weight:** Panel 132.6 x 202.6 x 4.98 mm (6.98 mm max at the FPC area per drawing); active area 108 x 172.8 mm. Listing weight 0.51 kg (probably packed weight). Board 66 x 58 mm.
+    - **Operating temp:** -20 to 70 C operating; storage -30 to 80 C (page) or -40 to 80 C (drawing). 240 h tests at 70 C and -20 C operating.
+    - **Rf notes:** Calculations:
+  - 1200x1920@60 at about 149.8 MHz puts its 5th harmonic at 748.8 MHz (QO-100 IF) and its 15th at 2246 MHz.
+  - Clean alternative: 1280x1950 total at 51.3-51.8 Hz (about 128.0-129.3 MHz) has no harmonics in any listed band up to 2.3 GHz with 1 MHz margin, if the LT6911C accepts it.
+  - At 60 Hz the DSI lane rate is about 899 Mbps (449 MHz DDR clock, 5th harmonic 2246 MHz). At 51.5 Hz the DDR clock is about 386 MHz and its harmonics miss the listed bands (6th = 2314 MHz).
+  - Switching the 25 V backlight boost off in sun removes a noise source.
+    - **Community reports:** None found. No forum, Reddit or Radxa post on this panel or on the UEDX6911.
+    - **Ukraine availability:** Not listed on prom.ua; order from VIEWE or Youritech directly.
+  2.
+    - **Name:** Youritech ET070WU01-HLT 7in 1200x1920, 2000 nits, in-cell touch (bare MIPI). Microtech MTF070UG53A-V1 (7.02in 1920x1200, title '2000 high brightness', no touch) has the identical 105.46x162.82 mm outline
+    - **Size in:** 7
+    - **H res:** 1200
+    - **V res:** 1920
+    - **Brightness nits:** 2000
+    - **Brightness evidence:** - Youritech product page spec: '2000 cd/m2 (Typ.)'. No datasheet or measurement.
+  - Microtech lists '2000 high brightness' in its HKTDC title only; brightness is absent from its spec table.
+  - The matching outline (105.46x162.82 mm) and active area (94.5x151.2 mm) suggest the same glass from two vendors.
+    - **Host interface:** MIPI DSI (lanes and pins not stated). Needs an HDMI-to-MIPI bridge. Youritech advertises 'H-DMI board' and driver-board solutions generically, not for this model.
+    - **Touch to host:** In-cell touch; controller not stated. A raw in-cell controller is normally I2C and would need a USB-HID bridge, either from the HDMI board or a separate MCU.
+    - **Price:** Quote only (Youritech 'Get a quote'). Microtech: no price, 25-45 day lead time.
+    - **Availability:** Youritech (Shenzhen) and Microtech (HK/China) B2B. Not in Ukrainian shops.
+    - **Q6a compatibility:** Possible only via a vendor-flashed HDMI-to-MIPI board.
+  - 1200 px wide portrait fits the DPU; about 150 MHz at 60 Hz needs DP HBR on 2 lanes (calculated); rotate in the compositor.
+  - A 2000-nit 7in backlight draws about 6-7 W (estimate scaled from the Midas datasheet: 400 mA at 16 V for 2000 nits). Cheap LT6911 boards such as the UEDX6911 (about 1.3 W total) cannot drive it, so an external LED driver or a vendor board is required.
+    - **Verdict vs current pick:** unverifiable
+    - **Sources:**
+      - https://www.youritech.com/products/7-inch-tft-lcd-display-1200x1920-high-brightness-2000nits-mipi-lcd-display-with-in-cell-touch.html
+      - https://www.youritech.com/resolution/1200x1920/
+      - https://www.hktdc.com/event/electronicasia/en/product/1Z03HV3K9
+    - **Panel tech:** Transmissive TFT; viewing angle 80/80/80/80; 323 PPI (calculated).
+    - **Optical bonding and coating:** In-cell touch, so there is no separate touch layer or air gap. Cover glass not stated.
+    - **Power w:** Not stated. Estimate 6-8 W at full brightness, from Midas datasheet scaling.
+    - **Supply:** Not stated. Typical for this panel class: 1.8 V IOVCC, +/-5.5 V, and an LED string of about 16 V.
+    - **Dimensions weight:** Outline 105.46 x 162.82 mm; active area 94.5 x 151.2 mm. Microtech gives 2.4 mm thickness without touch. Weight not stated.
+    - **Operating temp:** -20 to 70 C (Youritech)
+    - **Rf notes:** Same calculations as the other 1200x1920 panels: 60 Hz at about 150 MHz hits 748.8 and 2246 MHz; 51.3-51.8 Hz (about 128-129 MHz) is clean. The backlight boost at 2000 nits is a strong switching-noise source: shield it.
+    - **Community reports:** None found.
+    - **Ukraine availability:** None.
+  3.
+    - **Name:** Youritech ET070WU15-TT / ET070WU10-TT 7.02in 1200x1920, 1500 nits, with capacitive touch; driver, DEMO and 'H-DMI' boards offered
+    - **Size in:** 7.02
+    - **H res:** 1200
+    - **V res:** 1920
+    - **Brightness nits:** 1500
+    - **Brightness evidence:** Youritech product page: '1500 cd/m2 (typical)', 'customizable from 0 to 3000'. The ET070WU15-TT reference line reads '1200x1920, MIPI, 1500nits, -20~70C, 114.04x178.25mm, CTP'. No datasheet or measurement.
+    - **Host interface:** MIPI DSI (lanes not stated). The page says a 'Driver board/adapter board, standard type and design customization: DEMO board, H-DMI board' and an 'H-DMI display solution' are available, so an HDMI kit can be ordered by quote.
+    - **Touch to host:** Capacitive touch panel, optional ('CTP'); controller and interface not stated. Ask for USB-HID output on the HDMI board.
+    - **Price:** Quote only.
+    - **Availability:** Youritech (Shenzhen) B2B; lead time unknown. Not in Ukraine.
+    - **Q6a compatibility:** Good on paper if Youritech supplies the HDMI board flashed for the panel with USB touch.
+  - Portrait 1200 px wide: no DPU split problems.
+  - About 150 MHz at 60 Hz needs DP HBR (calculated).
+  - Require an EDID with at least 24 lines of vertical blanking.
+    - **Verdict vs current pick:** unverifiable
+    - **Sources:**
+      - https://www.youritech.com/products/7-02-inch-tft-lcd-display-1200x1920-mipi-high-brightness-1500nits-lcd-module.html
+      - https://www.youritech.com/products/7-inch-high-brightness-display-1500nits-ips-1200x1920-mipi-tft-lcd-display-2.html
+    - **Panel tech:** Transmissive TFT; 85/85/85/85; 100% NTSC claimed; 322.5 PPI (calculated).
+    - **Optical bonding and coating:** Not stated; Youritech offers custom cover glass.
+    - **Power w:** Not stated. Estimate 4-6 W at 1500 nits.
+    - **Supply:** Not stated.
+    - **Dimensions weight:** Outline 114.04 x 178.25 mm (with touch); active area 94.5 x 151.2 mm.
+    - **Operating temp:** -20 to 70 C
+    - **Rf notes:** As above: avoid 60 Hz near 149.8 MHz; 51.3-51.8 Hz (about 128-129 MHz) is clean (calculated).
+    - **Community reports:** None found.
+    - **Ukraine availability:** None.
+  4.
+    - **Name:** Youritech ET070WU07-O 7in 1200x1920, 1500 nits (no touch). Its outline (160.80x98.70x1.97 mm) is identical to the panel in Wisecoco's $69 7in 1920x1200 500-nit HDMI-to-MIPI 40-pin kit
+    - **Size in:** 7
+    - **H res:** 1200
+    - **V res:** 1920
+    - **Brightness nits:** 1500
+    - **Brightness evidence:** Youritech spec table: luminance 1500 cd/m2 typ, contrast 1200:1, 45 white LEDs, backlight '9~11v', hard coating. No datasheet or measurement.
+    - **Host interface:** MIPI (the page says 'Dgital'; 5.5 V supply).
+  Hypothesis, not verified: the outline and active area (151.2x94.5 mm) match the Wisecoco 500-nit 1920x1200 panel. If the pinout and driver IC also match, Wisecoco's HDMI-to-MIPI 40-pin board could drive this brighter glass. The backlight current would need checking.
+    - **Touch to host:** None; it would need an add-on CTP plus a USB-HID controller.
+    - **Price:** Quote only. Reference: Wisecoco 500-nit kit with driver board $69.
+    - **Availability:** Youritech B2B.
+    - **Q6a compatibility:** As for the other 1200x1920 portrait panels (fits the DPU, needs HBR, needs at least 24 lines of vertical blanking). Lacks touch, so it fails the touch requirement unless a touch layer is added.
+    - **Verdict vs current pick:** unverifiable
+    - **Sources:**
+      - https://www.youritech.com/products/oem-odm-high-brightness-1500-nits-mipi-lcd-display-screen-for-outdoor-7-inch-tft-ips-lcd-display-1200x1920-lcd-module.html
+      - https://www.wisecocodisplay.com/product/7-inch-tft-lcd-module-mipi-40-pin-1920x1200-ips-lcd-display/
+    - **Panel tech:** a-Si TFT, normally black, 80/80/80/80, 323 PPI (calculated).
+    - **Optical bonding and coating:** Hard coating; no touch or cover glass.
+    - **Power w:** Not stated (45 LEDs, backlight 9-11 V; panel 60 mA). Estimate 4-6 W at 1500 nits.
+    - **Supply:** 5.5 V typ panel supply plus a 9-11 V backlight.
+    - **Dimensions weight:** 160.80 x 98.70 x 1.97 mm; active area 94.5 x 151.2 mm.
+    - **Operating temp:** -20 to 70 C (the sister ET070WU12-O and ET070WU18-OT are only -10 to 60 C).
+    - **Rf notes:** As other 1200x1920 panels (calculated).
+    - **Community reports:** None found.
+    - **Ukraine availability:** None.
+  5.
+    - **Name:** BOE GV070WUM-L50-1SP0 7in 1200x1920, 1000 nits, in-cell touch (bare industrial panel)
+    - **Size in:** 7
+    - **H res:** 1200
+    - **V res:** 1920
+    - **Brightness nits:** 1000
+    - **Brightness evidence:** Broker listing (slw-ele.com): 1000 cd/m2 typ, contrast 1200:1 min. Not a BOE datasheet.
+    - **Host interface:** MIPI DSI 4-lane, 40-pin; 1.8 V VDDI, +/-5.5 V. No HDMI board is offered pre-configured.
+    - **Touch to host:** In-cell, I2C; needs a USB-HID bridge.
+    - **Price:** 'US$50-200 (estimated)', RFQ; MOQ 1.
+    - **Availability:** Broker shows 500 in stock with a 1-2 day lead time (unverified); not in Ukraine.
+    - **Q6a compatibility:** Needs a custom LT6911 or LT8912-class bridge flashed for its init sequence, plus a touch bridge. Hard for a hobbyist.
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.slw-ele.com/gv070wum-l50-1sp0.html
+    - **Panel tech:** TFT, 323 PPI (calculated).
+    - **Optical bonding and coating:** Hard coating; in-cell touch.
+    - **Power w:** Not stated.
+    - **Supply:** 1.8 V, 5.5 V, -5.5 V plus the LED string.
+    - **Dimensions weight:** 109.8 x 173 x 5.25 mm
+    - **Operating temp:** -20 to 70 C
+    - **Rf notes:** As other 1200x1920 panels.
+    - **Community reports:** None found.
+    - **Ukraine availability:** None.
+  6.
+    - **Name:** Youritech ET080WU05-OT 8in 1200x1920, 1100 nits, capacitive touch (bare MIPI)
+    - **Size in:** 8
+    - **H res:** 1200
+    - **V res:** 1920
+    - **Brightness nits:** 1100
+    - **Brightness evidence:** Youritech page: 1100 cd/m2 typ. No datasheet.
+    - **Host interface:** MIPI; no HDMI board listed for this model.
+    - **Touch to host:** Capacitive; interface not stated.
+    - **Price:** Quote only.
+    - **Availability:** Youritech B2B.
+    - **Q6a compatibility:** Same as other 1200x1920 panels, but it needs a sourced bridge and touch bridge.
+    - **Verdict vs current pick:** worse
+    - **Sources:**
+      - https://www.youritech.com/products/8-inch-high-brightness-display-1100nits-ips-1200x1920-mipi-tft-lcd-display-with-capacitive-touch.html
+    - **Panel tech:** IPS transmissive, 283 PPI (calculated).
+    - **Optical bonding and coating:** Not stated.
+    - **Power w:** Not stated.
+    - **Supply:** Not stated.
+    - **Dimensions weight:** 119.41 x 184.84 mm; active area 107.64 x 172.22 mm.
+    - **Operating temp:** 0 to 50 C only (risky in summer sun).
+    - **Rf notes:** As other 1200x1920 panels.
+    - **Community reports:** None found.
+    - **Ukraine availability:** None.
+- **Best above fhd:** No new above-FHD candidate is a verified plug-and-play kit; on paper there are two routes.
+  
+  **Route 1: VIEWE UEED080FH 8in 1200x1920 transflective + UEDX6911 board ($74.99 + $18).**
+  - It is the only above-FHD option with a full datasheet and a retail price.
+  - Datasheet: full OCA lamination and 7% reflectance with 15:1 reflective contrast. My calculation gives about 6-17:1 contrast in 100 klx sun at about 1-4 W, against about 7:1 at 6-8 W for the 2000-nit pick.
+  - Drawbacks:
+    - pale colours in sun (15-20% NTSC)
+    - only 369 nits and 300:1 indoors
+    - 60-degree viewing cone
+    - out of stock
+    - 45-pin panel versus the 30/40-pin board
+    - the board's 1.3 W rating is too weak for the 2.9 W backlight.
+  - Before ordering, VIEWE must confirm the board-to-panel firmware, cable and touch IC.
+  
+  **Route 2: a quote from Youritech for the 7in 1200x1920 ET070WU01-HLT (2000 nits, in-cell touch) or ET070WU15-TT (1500 nits, CTP) with their 'H-DMI' board and USB touch.**
+  - This keeps transmissive colour quality, but is unverified B2B.
+- **Best overall:** Keep the Wisecoco 7in 1920x1080 2000+ nit HDMI kit as the main pick. None of the new candidates beats it with verified data.
+  - It is still the only listing found that combines at least 2000 nits, an HDMI board and touch, and can be bought with a cart button ($132, 18 Oct 2026).
+  - New fact: the page says 'Landscape by Default', so the EDID should be 1920x1080 landscape. 1920 px is below the 2400 px DPU limit and needs no rotation.
+  - Treat the VIEWE 8in transflective (sun-optimised, low power) or a Youritech 7in 1200x1920 1500-2000 nit quote as the above-FHD alternatives.
+- **Wisecoco 7in open questions resolved:** From the wisecocodisplay.com product page, fetched 18 Oct 2026.
+  
+  Resolved or newly stated:
+  - Price $132 (struck-through $135), with both 'Add to cart' and 'Get a Quote'; 0 reviews.
+  - New: 'Landscape by Default - Pre-configured widescreen orientation', so the EDID should be 1920x1080 landscape (my reading).
+  - The spec lists 'Capacitive touch', 'MIPI (4 data lanes)' and an 'Interface Type: I2C' field. I2C is most likely the bare touch panel's interface, so USB-HID depends on the HDMI board.
+  - Brightness: '2000+ cd/m2 (Typ.)' in the spec versus '2500Nits' in the title. No measurement exists.
+  - Outline 164.22 x 97.98 mm; active area 155.82 x 87.83 mm (the table swaps the axes); operating -20 to 70, storage -30 to 80 (units not given, presumably C).
+  
+  Still unresolved:
+  - the exact contents of the $132 kit
+  - touch VID:PID (the CH57x USB-HID evidence comes from a different Wisecoco 7in, Pi forum t=368455)
+  - board input voltage, current and power
+  - lamination and AG/AR
+  - panel part number, thickness, weight.
+  
+  Blocked or caveats:
+  - eBay listings 176657492046, 177315425196 ('7'' Touch Screen High Brightness 1920x1080 HMDI LCD Display Driver Board DIY KIT') and ebay.de 405247794619 return HTTP 403 here, and AliExpress needs a login, so no current marketplace price.
+  - Ukraine: prom.ua resellers carry only Wisecoco's 12.6in and 7.84in bar monitors, not this kit, so it must be imported.
+  - Warning: Wisecoco's 7in 1024x600 'sunlight readable' listing has '2000nits' in its URL, '1000nits' in its title and '400 cd/m2' in its spec. Insist on a datasheet plus a luminance-meter photo before paying.
+- **Notes:** **Searches:** 12 WebSearch calls were used; everything else was WebFetch or curl on primary pages.
+  
+  **Not found:** no plug-and-play 5.5-8in kit that is above FHD, at least 1000 nits, with an HDMI board and USB touch, from Wisecoco, VIEWE, Youritech, Kingtech, Panox, Waveshare or the Shenzhen B2B listings that were reachable. Searches mostly returned 1024x600 1000-nit industrial monitors (Xenarc, Geekland) or camera monitors.
+  
+  **Below threshold (dim or wrong format), not viable:**
+  - Waveshare's brightest in this range is 800 nits (5in 1024x600; 9.3in 1600x600).
+  - Kingtech 8in 1200x1920 PV08004TD31C-C: 500 nits.
+  - Wisecoco 7in 1920x1200 with HDMI board: 500 nits, $69.
+  - Wisecoco 6in 2560x1440 with HDMI + USB board: 450 nits, $80-85.
+  - Youritech Tianma TL070FVXS01-02 7in FHD eDP: 500 nits.
+  - Youritech 8in AMOLED 2480x1860: 600 nits, no touch.
+  - Wisecoco 5.5in 2160x3840: 4K60 exceeds the Q6A's 4K30 cap.
+  
+  **Key component fact (UEDX6911 datasheet):**
+  - The generic $18 VIEWE UEDX6911 HDMI-to-MIPI board uses an LT6911C (HDMI 1.4, 1-4 lanes per port, 80 Mbps to 1.5 Gbps per lane) and gives driver-free 5-point USB HID touch.
+  - It runs from 5 V (4.0-5.5 V); input current is 150 mA with the backlight off and 260 mA at maximum backlight, i.e. about 1.3 W.
+  - That means cheap LT6911 boards cannot power 1500-2500 nit 7-8in backlights (4-8 W). Any bright bare panel needs a vendor board with a strong LED driver, or an external constant-current driver.
+  
+  **Calculations (mine):**
+  - PPI: 7in 1200x1920 323.5; 7.02in 322.5; 8in 1200x1920 283; 7in FHD 314.7.
+  - 1200x1920@60 (1280x1950 total) is 149.76 MHz and 3.59 Gbps. It needs DP HBR on 2 lanes (RBR 2-lane gives only 2.59 Gbps).
+  - RF: harmonics land at 748.8 and 2246 MHz. Clean refresh for that total: 51.3-51.8 Hz (128.0-129.3 MHz) or 54.3-54.4 Hz (135.5-135.8 MHz).
+  - Sunlight contrast (1% front-surface diffuse reflection):
+  
+  | Ambient | 2000 nits | 1500 nits | 1000 nits |
+  |---|---|---|---|
+  | 100 klx | 7.2:1 | 5.7:1 | 4.1:1 |
+  | 50 klx | 13.4:1 | 10.3:1 | 7.2:1 |
+  
+  - The transflective 8in is 6.2-17.3:1 at 100 klx with its backlight on.
+  
+  **Inaccessible:** eBay (HTTP 403), AliExpress (login), Alibaba and Raystar (empty pages), Youritech category pages (HTTP 500/503). prom.ua is reachable: no new candidate is stocked there; it lists BenQ PVS7 2000-nit on order (already evaluated) and Wisecoco bar monitors.
+  
+  **Community reports:** none found for any new candidate.
+  
+  **Local copies:** the panel datasheet is saved at /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pdf/ueed080.pdf and the board datasheet at /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pdf/uedx6911.pdf. The calculation script is /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/calc_disp.py.
+
