@@ -23982,6 +23982,162 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Exchange rates are the ones used in STACK.md: 1 EUR = 1.1241 USD, 1 GBP = 1.3318 USD. Generic and AliExpress 137 MHz SAW LNAs are outside this angle and were not searched.
 
+## searchB:nooelec_sawbird_noaa_cased_100800 (run `wf_e32114dd-52d`)
+
+- **Part:** Nooelec SAWbird+ NOAA cased (SKU 100800): 137.5 MHz LNA-SAW-LNA module, P1 VHF-137 chain (Flamingo+ FM v2 -> SAWbird+ NOAA -> bias injector ch1 -> DC block -> HMC7992 -> RTL-A)
+- **Current price usd:** 49.95 (Nooelec US store, ex-VAT, verified 18 Oct 2026; free shipping from $100; EU import VAT is added on arrival. An EU reseller price of EUR 59.05 at Passion-Radio appeared only in a search snippet and is unverified for this SKU)
+- **Critical specs:**
+  - Passband: flat coverage of 137.0-138.0 MHz for Meteor-M LRPT at 137.100/137.900/137.9125 MHz, about +/-70 kHz each. Reference: centre 137.5 MHz, 3 dB BW 2.6 MHz, 10 dB BW 3 MHz (datasheet Rev 1).
+  - Close-in SAW selectivity, read from the datasheet S21 plot (approximate): about 60-65 dB below in-band gain at 110-130 MHz (air band), only about 25-30 dB at 141-143 MHz (spurious lobes), about 45-50 dB at 144-146 MHz (2 m), about 55-75 dB at 150-160 MHz. Wideband: about 50 dB at 300-600 MHz, falling to about 40 dB near 1 GHz. This matters because the V4L has no FM notch.
+  - Noise figure: 1.1 dB total typ, 84 K (vendor datasheet; no independent measurement found).
+  - Gain: 41 dB at 137.5 MHz over two MMIC stages. This makes RTL-A's NF negligible at the planned 5-10 dB RTL gain. A replacement needs about 35-41 dB to match the system NF without raising RTL gain on the notchless V4L.
+  - Linearity and robustness: OP1dB +20 dBm; maximum RF input 0 dBm. No IIP3 is published.
+  - Power: 3.3-5.5 V (3-5 V recommended via SMA) fed through the RF OUTPUT SMA, as the stack injects 4.5 V at the output. Current is 170 mA (datasheet) or 180 mA nominal (page), under the 300 mA TPS2553 limit; lower current is better for the 4S1P battery.
+  - Interfaces: 50 ohm, SMA female in and out; in-band S11 -9 dB, S22 -9.5 dB.
+  - Mechanics and shielding: own enclosure, 73.7 x 30.6 x 18.7 mm, 36 g. It shares the RF compartment with two V4L dongles (own spur at 144.0 MHz), so the 41 dB block's own can matters.
+  - Reliability: 2-year Nooelec warranty, overvoltage protection on the power input, genuine vendor channel.
+  - Hard rules: a passive receive LNA, no loop, no TX path. This is met by any candidate below.
+- **Candidates:**
+  1.
+    - **Name:** Nooelec SAWbird+ NOAA Barebones (SKU 100799)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 44.95 (Nooelec US, ex-VAT, verified on the SAWbird NOAA page 18 Oct 2026)
+    - **Spec comparison:** Electrically identical: one datasheet (Rev 1, 2022) covers both 100799 and 100800, with 41 dB gain, 1.1 dB NF, 2.6 MHz 3 dB BW, OP1dB +20 dBm, Pin max 0 dBm, 170 mA, 3.3-5.5 V, SMA in and out.
+    - **Worse in:** Warranty is 1 year against 2 years for the cased unit (per the re-audit; the price page does not state it). It has no enclosure, so no own shielding or mechanical protection for a 41 dB block that sits beside two V4L dongles (spur at 144.0 MHz). A shield can would be needed, which eats most of the $5 saving. Not strictly not-worse.
+    - **Compatibility:** Same powering (bias through the output SMA) and same connectors. It needs standoffs or a shield can inside the RF compartment.
+    - **Risks:** Warranty difference; stray pickup if left unshielded.
+    - **Seller url:** https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-noaa.html
+    - **Sources:**
+      - https://www.nooelec.com/store/downloads/dl/file/id/112/product/301/sawbird_noaa_datasheet_revision_1.pdf
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-noaa.html
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-noaa-308.html
+  2.
+    - **Name:** Used SAWbird+ NOAA (eBay / classifieds)
+    - **Kind:** used
+    - **Price usd:** not found (eBay.com and eBay.de search pages returned 403; web searches found no used listings)
+    - **Spec comparison:** It would be the same unit, but no listing could be checked.
+    - **Worse in:** The warranty does not transfer (Nooelec handles warranty directly). Condition and ESD history are unknown, and so is the NF of any individual unit.
+    - **Compatibility:** Identical.
+    - **Risks:** UNVERIFIED: no listing or price was found. Overvoltage damage is excluded from the warranty anyway.
+    - **Seller url:** 
+    - **Sources:** []
+  3.
+    - **Name:** Uputronics Filtered Preamp 137.5 MHz (NOAA) - other brand, outside angle B, listed for completeness
+    - **Kind:** other_brand
+    - **Price usd:** Kubii (FR) EUR 47.64 incl. VAT = $53.55 (about EUR 39.70 = $44.63 ex 20% VAT). Uputronics store GBP 44.39 = $59.12, VAT treatment unclear.
+    - **Spec comparison:** PSA4-5043+ single-stage LNA after an HPF, then a SAW (7.6 MHz passband, about 1.4 dB IL). Gain at least 21 dB against 41 dB. NF is not published for this variant and no independent measurement was found. Supply 5 V via bias-tee or USB; current not stated.
+    - **Worse in:** Gain is about 20 dB lower, so system NF degrades unless RTL gain is raised on the notchless V4L. The 7.6 MHz SAW passband is about 3x wider (less rejection near 2 m, 141-145 MHz). NF is not published. The 137.5 variant is not in the new aluminium case.
+    - **Compatibility:** SMA, 5 V bias-tee: compatible with injector ch1 at 4.5 V only if the unit tolerates 4.5 V (unverified).
+    - **Risks:** Unverified NF; stock per variant unclear.
+    - **Seller url:** https://kubii.com/en/network-modules/3349-lna-amplifier-modules-with-saw-filter-and-single-frequency-3272496306646.html
+    - **Sources:**
+      - https://kubii.com/en/network-modules/3349-lna-amplifier-modules-with-saw-filter-and-single-frequency-3272496306646.html
+      - https://store.uputronics.com/products/uputronics-filtered-preamps
+  4.
+    - **Name:** LNA4ALL (9A4QV), assembled with 2x SMA
+    - **Kind:** other_brand
+    - **Price usd:** about 33.72 (EUR 23 + EUR 7 tracked shipping = EUR 30; VAT status not stated)
+    - **Spec comparison:** Wideband 28-2500 MHz, single MMIC, NO filter. Independent data exists only at 1420 MHz: two units in series measured 31.9-32.2 dB gain and 0.70-0.76 dB NF with calibrated noise sources (H-line users). Independent IP3 sweep by DG1TRF averaged +34.75 dBm. Current about 47 mA at 4.5 V. No gain or NF measurement at 137-145 MHz is published.
+    - **Worse in:** No SAW: FM, air band, 2 m, pagers and DVB-T are all amplified into the notchless RTL, so selectivity is far worse. Single-stage gain is lower than 41 dB. No enclosure in this SKU. Unmeasured at 137 MHz. A libre.space user reported two failed units (anecdotal).
+    - **Compatibility:** Phantom-powered via coax, so it works with the 4.5 V injector. It needs an enclosure.
+    - **Risks:** Fails the selectivity requirement; overload of RTL-A.
+    - **Seller url:** https://lna4all.blogspot.com/
+    - **Sources:**
+      - https://lna4all.blogspot.com/
+      - https://community.libre.space/t/tested-and-recommended-lnas/3585
+  5.
+    - **Name:** LNA4ALL + AliExpress 130-145 MHz 'weather satellite' LC band-pass filter
+    - **Kind:** generic_or_clone
+    - **Price usd:** about 33.72 + 7.90 = about 41.6 (filter price from a listing about 6 years old, unverified as current)
+    - **Spec comparison:** The filter passband is about 15 MHz wide (130-145 MHz) with no published IL or rejection and no independent measurement. The LNA is as above.
+    - **Worse in:** The about 15 MHz LC passband lets in the 144-146 MHz 2 m band and the 130-137 MHz air band, against about 45-60 dB of rejection on the SAWbird. An LC filter ahead of the LNA adds its IL directly to NF. Gain is lower. Nothing is measured.
+    - **Compatibility:** SMA; the bias must pass through or around the filter.
+    - **Risks:** No measured evidence (REJECT per angle B); listing age and quality unknown.
+    - **Seller url:** https://www.aliexpress.com/i/4000592892517.html
+    - **Sources:**
+      - https://www.aliexpress.com/i/4000592892517.html
+      - https://lna4all.blogspot.com/
+  6.
+    - **Name:** Generic SPF5189Z LNA board (eBay/AliExpress)
+    - **Kind:** generic_or_clone
+    - **Price usd:** not verified (typical listings are a few dollars; no current listing checked)
+    - **Spec comparison:** 50-4000 MHz, no filter. A SatNOGS wiki VNA test found gain about 1 dB under the datasheet (markers at 144/435 MHz; numbers only in the plot image) and about 90 mA at 5 V. No independent NF at 137 MHz. Qorvo datasheet: 0.6 dB NF and 18.7 dB gain at 900 MHz.
+    - **Worse in:** No SAW selectivity; gain about 15-19 dB against 41 dB; NF unmeasured at 137 MHz. Qorvo has announced EOL for the SPF5189Z (QPL9547 is the replacement, per the search summary of qorvo.com), so new cheap boards carry remarked or counterfeit MMIC risk. No enclosure.
+    - **Compatibility:** 5 V board; bias-through-coax varies by board.
+    - **Risks:** Counterfeit risk; fails selectivity; no measured 137 MHz evidence (REJECT).
+    - **Seller url:** 
+    - **Sources:**
+      - https://wiki.satnogs.org/SPF5189_LNA_measurements
+      - https://community.libre.space/t/ebay-spf5189z-lna-gain-measurements/3774
+      - https://qorvo.com/products/p/SPF5189Z
+  7.
+    - **Name:** DIY PGA-103+ VHF LNA with LC band-pass (NuclearRambo/Salil design, Gerbers public)
+    - **Kind:** diy
+    - **Price usd:** not verified (Tindie boards sold out; BOM cost not published)
+    - **Spec comparison:** Designer-measured: about 18.2 dB gain; NF about 0.5 dB at 145 MHz measured with a tinySA Ultra (a low-accuracy method, not independent); LC BPF 3 dB 122.8-157 MHz; BAV99 input clamp; 5-12 V regulator; current not stated.
+    - **Worse in:** The LC passband is about 34 MHz wide against 2.6 MHz on the SAW, so it passes air band, 2 m and 150-157 MHz. Gain is 18 dB against 41 dB. There is no independent measurement and no enclosure. Assembly and quality depend on the builder.
+    - **Compatibility:** Bias-tee powered (needs 5 V or more for the 3.3 V LDO; 4.5 V injector headroom unverified).
+    - **Risks:** Not proven equal; fails selectivity and gain (REJECT).
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.rtl-sdr.com/the-design-and-test-of-a-filtered-low-noise-amplifier-for-lrpt-weather-satellite-reception/
+      - https://nuclearrambo.com/wordpress/designing-and-testing-a-low-noise-amplifier-part-1/
+      - https://nuclearrambo.com/wordpress/designing-and-testing-a-low-noise-amplifier-part-2/
+  8.
+    - **Name:** DIY two-stage MMIC (e.g. PGA-103+) + TST TB1103A 137.5 MHz SAW
+    - **Kind:** diy
+    - **Price usd:** SAW alone EUR 19.89 ex-VAT = $22.36 (DigiKey IE, 191 in stock). Full BOM with two MMICs, PCB and enclosure not costed, so savings are unverified.
+    - **Spec comparison:** TB1103A datasheet: -1 dB BW 0.8 MHz min / 1.3 MHz typ; -40 dB BW 5.5 typ / 6 max MHz; IL 4.3 typ / 8 max dB; ripple guaranteed only over Fc +/-0.36 MHz; TC -23 ppm/C; needs LC matching (68 nH / 36 pF); +10 dBm max input.
+    - **Worse in:** Passband: 137.1 and 137.9 MHz LRPT (+/-0.4 MHz plus about 60 kHz) lie at or outside the guaranteed 0.8 MHz passband, and the -23 ppm/C drift (about 0.13 MHz over 40 C) makes that worse. IL is up to 8 dB against SAWbird's internal SAW. No built unit with measurements exists.
+    - **Compatibility:** Would need a custom PCB, bias tee and enclosure.
+    - **Risks:** Passband edge loss on Meteor channels; no measured evidence (REJECT).
+    - **Seller url:** https://www.digikey.ie/en/products/detail/tst/TB1103A/16906793
+    - **Sources:**
+      - https://www.digikey.ie/en/products/detail/tst/TB1103A/16906793
+      - https://www.taisaw.com/assets/PDF/TB1103A%20_Rev.1.0_.pdf
+  9.
+    - **Name:** DIY MMIC LNA + Shoulder Electronics HDF137T SAW (136.83-138.17 MHz)
+    - **Kind:** diy
+    - **Price usd:** not found (RFQ only; no distributor price)
+    - **Spec comparison:** Per the EverythingRF listing: passband 136.83-138.17 MHz (1.34 MHz), IL 1.3 dB, 50 ohm, through-hole. No rejection data was seen (page returned 403 on fetch).
+    - **Worse in:** The passband is about half of the SAWbird's 2.6 MHz, so the Meteor channels sit near the filter edges. Price and availability are unverified, and no built unit has been measured.
+    - **Compatibility:** Custom PCB and enclosure needed.
+    - **Risks:** UNVERIFIED price and datasheet; no measured evidence (REJECT).
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.everythingrf.com/products/rf-band-pass-filters/shoulder-electronics/521-814-hdf137t
+  10.
+    - **Name:** SAWbird+ NOAA cased 100800 (keep)
+    - **Kind:** current_part
+    - **Price usd:** 49.95
+    - **Spec comparison:** Reference: 41 dB, 1.1 dB NF, 2.6/3 MHz BW, OP1dB +20 dBm, 170-180 mA at 3.3-5.5 V via the output SMA, cased, 2-year warranty.
+    - **Worse in:** Nothing relative to itself. Its NF and selectivity are vendor data only: verify on the bench with the stack's noise source and tinySA, conducted only.
+    - **Compatibility:** Already integrated (ch1 injector, 300 mA TPS2553).
+    - **Risks:** Vendor-only NF figure; the 0 dBm max input relies on the Flamingo+ ahead.
+    - **Seller url:** https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-noaa-308.html
+    - **Sources:**
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-noaa-308.html
+      - https://www.nooelec.com/store/downloads/dl/file/id/112/product/301/sawbird_noaa_datasheet_revision_1.pdf
+- **Notes:** VERDICT (angle B): KEEP the SAWbird+ NOAA cased 100800 at $49.95. No cheaper analog with measured evidence is not worse.
+  - No generic, clone, used or DIY 137 MHz LNA+SAW with independent measurements equal to 41 dB / 1.1 dB NF / 2.6 MHz SAW was found.
+  - Every cheap generic (LNA4ALL, SPF5189Z, PGA-103+ LC designs, AliExpress LC filters) lacks the narrow SAW selectivity and has a third to a half of the gain. That matters on the notchless V4L.
+  - Available DIY SAW parts at 137.5 MHz are either too narrow for the 137.1/137.9 MHz Meteor channels (TST TB1103A: 0.8 MHz min -1 dB BW, IL up to 8 dB) or unpriced (Shoulder HDF137T).
+  
+  Only same-electrics saving: SAWbird+ NOAA Barebones 100799 at $44.95 (-$5).
+  - It is worse in warranty (1 year vs 2) and has no own shield can, so it is not strictly not-worse.
+  - Acceptable only if the user accepts the shorter warranty and the RF compartment shields it, or a can is added.
+  
+  The non-plus SAWbird NOAA 100852 is the same price ($49.95), with better NF (0.7 dB) and current (80 mA) but worse gain (at least 20 dB). It is not a saving.
+  
+  Evidence gaps:
+  - SAWbird+ NOAA's own 1.1 dB NF and the rejection figures are vendor data. Rejection was read from the datasheet S21 plot; note the weak spot of only about 25-30 dB rejection at 141-143 MHz.
+  - Suggest a conducted-only acceptance check on the bench: noise source + tinySA Ultra+ Y-factor, and LiteVNA S21 into a load.
+  - eBay could not be checked (HTTP 403).
+  
+  Prices are USD ex-VAT at 1 EUR = 1.1241 USD and 1 GBP = 1.3318 USD (the re-audit rates). EU buyers pay import VAT on Nooelec US orders.
+  
+  About 14 web searches used.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.

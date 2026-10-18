@@ -23,7 +23,7 @@
 | [Hf receiver](components/hf_receiver.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Lab instruments](components/lab_instruments.md) | ✅ research · forums · fixes · verify | `—` |
 | [Lab ui](components/lab_ui.md) | ✅ research · forums · fixes · verify | `—` |
-| [Mech thermal storage](components/mech_thermal_storage.md) | ✅ research · forums · fixes · verify | `—` |
+| [Mech thermal storage](components/mech_thermal_storage.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Mechanical thermal](components/mechanical_thermal.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_e6b8e5e2-124` |
 | [Narrowband sdr](components/narrowband_sdr.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_eb446444-464` |
 | [Npu training](components/npu_training.md) | ✅ research · forums · fixes · verify | `—` |

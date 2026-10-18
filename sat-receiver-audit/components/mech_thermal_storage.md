@@ -301,3 +301,497 @@ _Run `wf_d9388111-e66`_
   
   Downloaded primary files were kept in separate directories under /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ (dl_kodiak, dl_ufsbrief, dl_q6abrief, dl_q6a2d, dl_t7, dl_shop*, dl_iata, dl_usbrfi).
 
+## Адверсаріальна перевірка (`verify`)
+
+_Run `wf_d9388111-e66`_
+
+- **Subsystem:** mech_thermal_storage: case, layout and thermal design (2000-nit display, Q6A, Lime and pack); connectors; kit bags; storage (Samsung 128 GB UFS, T7 / microSD, rolling caps). Stage 3 adversarial re-verification, 18 Oct 2026.
+- **Verdict:** Most stage 1 and stage 2 findings hold up against primary sources: Radxa docs, briefs, the 2D drawing and schematic V1.21, the radxa/kernel 6.18.2 DTS, sc7280.dtsi, ufs-qcom.c, Shopify stock JSON, the Samsung/Molicel/Polymaker datasheets, Radxa forum raw threads and Crowd Supply. Seven items are refuted or misattributed:
+  - Noctua "0.22 W typical, 0-4500 rpm".
+  - The Samsung PRO Endurance tracker prices; the cited page does not show them.
+  - The Geerling rsetup/Etcher attribution.
+  - "7.0.11 HDMI breakage confirms the hold"; Radxa posted a workaround.
+  - The "+30 mm" Armor stack height.
+  - Apache 3800 as a world option; it is US in-store only, and the user is in Europe.
+  - The stack's "Tj max 95 C / throttle 90-91 C".
+  
+  New risks from primary sources:
+  1. Per the governing requirements, the Lime build is now the DEFAULT. So the T7 1 TB, the 11-port top edge and the J21 desolder all become the baseline, not options.
+  2. J21 is a 3-pin header (12 V / GND / PWR_ON_KEY). A desolder must rewire all three pins.
+  3. Any VBUS on the Q6A USB-C turns on the back-to-back PMOS Q5 and ties USB-C VBUS to the J21 12 V rail. A USB-C opening for EDL is therefore unsafe while J21 is live.
+  4. The UFS uses 4096-byte logical blocks. Radxa ships a separate _4096 image, so partitions must be 4K-native.
+  5. By default the UEFI firmware supplies the DTB, so overlays can be silently bypassed.
+  6. In the model, a T7 in direct sun exceeds its 60 C case limit.
+  7. A USB 3 cable run to an outside T7 can fall back to 480M, which cannot carry Lime at 224 MB/s.
+  8. Padding the UFS to the mid-plate only helps if the plate is cooler than the UFS. With Lime, it may not be.
+  
+  New options:
+  - ufs-hwmon exposes the UFS device's own temperature and its crit/lcrit bounds. This can settle the unverified 0-70 C range.
+  - smartctl -d sntasmedia reads the T7 temperature.
+  - The Armor 7056A top cover alone plus a 40 mm fan is an in-stock cooler. The AliExpress Cu block has supply gaps.
+  
+  Still open (blocked or WebSearch budget exhausted): the October T7 and endurance microSD prices, the Cu block price, the Pelican EU price, real airflow, and the firmware-side NPU thermal limits.
+- **Confirmed:**
+  - Radxa UFS 3.1 128 GB RA022-B10J0U2 prices and stock (18 Oct 2026):
+  - ALLNET: $65.90, in stock. Its 64 GB ($19), 256 GB ($75.90) and 512 GB ($89.90) are out of stock.
+  - TinyTronics: EUR 58.00 incl. VAT (EUR 47.93 ex), 'Not in stock, 2-4 Weeks'.
+  - Arace: all out of stock (128G at $49).
+  - Radxa Q6A UFS doc (dd figures): Samsung KLUDG4UHDC-B0E1 128 GB reads 1703 MB/s and writes 388 MB/s; Kioxia THGJFGT1E45BAILB 256 GB reads 1811 and writes 557. The doc gives no temperature or WriteBooster data.
+  - UFS module brief rev 1.2 (2026-01-13):
+  - 'Up to 2100MB/s read and 1800MB/s write with WriteBooster'; it says ROCK 4D reaches about 1000/250.
+  - Capacities 64 GB to 1 TB; optional industrial grade -25 to +85 C.
+  - Connector 2 (34-pin) is mechanical only.
+  - Radxa provision_ufs31.xml sets a shared 4 GiB WriteBooster buffer (shared_wb_buffer_size_in_kb=4194304, PreserveUserSpace=1). LU1-LU7 add 14.08 GiB (computed). Critical Link's wiki gives the same 4 GB default and the sysfs size formula.
+  - PR #551 (Kioxia PA_TACTIVATE quirk) was merged on 11 May 2026 into radxa:linux-6.18.2 (merge 559f4f9). radxa-pkg/linux-qcom releases: last 6.18.2 is 6.18.2-4 (30 Mar); latest is 7.0.11-7 (17 Sep). Radxa staff on 18 May: 'linux-image 6.18 has not released a new version. We will update to linux-image 7.0'. The quirk is in the linux-6.18.2 (line 1044) and linux-7.0.11 (line 1100) branches, and not in mainline master.
+  - Mainline ufs_quirks.h: UFS_VENDOR_SAMSUNG 0x1CE, UFS_VENDOR_TOSHIBA 0x198 (Kioxia).
+  - Q6A DTS (radxa linux-6.18.2) thermal zones:
+  - ufs-thermal: ADC_TM ch3, PM7325 GPIO1, 100k pull-up, ratiometric NTC.
+  - msm-skin-thermal: ch2. quiet-thermal: ch1. xo-thermal: ch0.
+  - None has trips.
+  - sc7280.dtsi trip points:
+  - CPU: passive 90 and 95 C with cpufreq cooling maps per cluster; critical 110 C.
+  - GPU: passive 95/100/105 C; critical 110 C.
+  - NSP, video, aoss and cpuss: 'hot' 90 C with no cooling maps; critical 110 C.
+  - Mainline kodiak.dtsi has the same values.
+  - Q6A DTS: the QMP USB/DP PHY sends lanes 0-1 to the RA620 HDMI bridge and lanes 2-3 to the USB-A port, so they share one PHY. The microSD vqmmc supply (l6c) is 1.65-3.544 V, which allows UHS-I 1.8 V signalling.
+  - Q6A 2D drawing V1.21 (dated 2025-09-12/15): board 85.0x56.0 mm; 4x dia 3.5 mm holes on a 58.0x49.0 mm pattern, 3.5 mm from the edges (community: M2.5 hardware). The UFS B2B connectors and the +/-/TS pogo pads are on the underside. Every hardware file on the download page is still V1.21.
+  - Product brief rev 1.5 (2026-04-28): 'board layout or component locations may change over time'. It recommends at least 18 W (12 V/1.5 A), or 24 W with USB 3.1 and PCIe loaded.
+  - Radxa quick-start: 'Boot priority: USB > microSD > NVMe SSD > eMMC Module > UFS Module'. The boot page's R137 removal plus 10 kOhm at R207 'will no longer be able to boot ... from a microSD card, eMMC module, or NVMe SSD'. Installing to UFS needs no hardware mod (boot microSD, then dd the image).
+  - EDL doc: hold EDL, apply a 12 V PD Type-C adapter, release, connect an A-A cable to the USB 3.1 Type-A port; the device shows as 05c6:9008. Powering via the 12 V header is not mentioned.
+  - Radxa staff (strongtz, 15 Oct 2026): the 12 V header handles 4.5-16 V. willy: the 12 V pin is 1.5 mm from USB-C ground and prone to shorts. PMIC is in fake-battery mode; R24 is NC; VPH_PWR must stay at or below 4.5 V; no charging; do not connect Type-C and a battery together.
+  - Forum results on cooling and recovery:
+  - Bare board throttles at about 90-91 C at 7.8 W.
+  - 40x40 heatsink on one shared pad is interface-limited (heatsink about 53 C).
+  - Powerful fan: no more than 79 C.
+  - Stepped Cu cooler: about 55 C under stress; paste on the SoC step, pad on the RAM step; standoff order matters.
+  - Armor alone throttles at 35-40 C ambient; a 5 V fan fixes it.
+  - UFS is the only sensor above 60 C in jvvv's Armor+fans build.
+  - EDL works on a board that will not cold-boot (31450) but did not enumerate on another (31509).
+  - SPI BIOS: 260120 is the documented release. The R1+ images need BIOS 20251230 or newer.
+  - Test build dragon-q6a_flat_build_wp_260916.zip: 10,732,405 B, Last-Modified 13 Oct 2026, posted 14 Oct. It fixes the systemd-stub UKI silent reboot (reproduced 11 Jun, fixed in code 21 Jul).
+  - DDR failures after SPI updates: RCW_TRAINING_FAIL ended in RMA (30841); ONLY_RANK_1 got 'erase-part cdt' then after-sales (31080).
+  - Mainline vs Radxa DTB (HoShiMin, 30440): NVMe 27-28 MB/s with the mainline DTB against 584/681 MiB/s with Radxa's. The cause is missing commit 56bb627 ('Enable USB 3.0 and HDMI ports').
+  - Geerling sbc-reviews #85, 8 GB board: 2.9 W idle at the wall; 9.3/9.5/10.1 W under stress-ng/Geekbench/HPL. microSD (Samsung Pro+ 32 GB): 73.70 MB/s read and 61.45 MB/s write (1M sequential), 2.32 MB/s 1M random write, 8.91/0.80 MB/s 4K read/write.
+  - SmartHomeCircle: USB 3 write about 395 MB/s (fio, unnamed USB3-NVMe adapter, uas, 5000M). The bare board shut down at about 105 C in vkmark.
+  - Intel USB 3.0 RFI paper: with an HDD connected, the 2.4 GHz noise floor rose 'by nearly 20 dB'.
+  - Samsung T7 datasheet Rev 2.0: 0-60 C operating (Tc at the hottest case point; airflow recommended), -40 to 85 C non-operating, 85x57x8 mm, 72 g, USB 3.2 Gen 2. T7 Resurrected (MU-PD1T0G etc.) has the same specs and ships with a C-to-C cable only.
+  - Samsung T7 prices: PCWorld (8 Jun 2026) reported a $190 Amazon deal against a $275 street price. ssd-tester, T7 1 TB: about 42 GB pSLC cache and 614 MB/s average over 100 GB.
+  - LimeSDR Micro M.2 (Crowd Supply, 18 Oct): Basic $249, GNSS $299, worldwide shipping $18; 'Orders placed now ship Dec 15, 2026'.
+  - Board 22x80 mm, top-side height about 4 mm, TMP1075 sensor, PCIe Gen3 x1, up to 160 Msps half-duplex.
+  - MyriadRF docs: design cooling for at least 10 W.
+  - MyriadRF (Zack, 24 Aug 2026): about 4 W typical; 2.5 A at 3.3 V is the PCIe spec limit, not consumption.
+  - Wisecoco 7in page: operating '-20~70', storage '-30~80'; '2000+ cd/m2 (Typ.)'; outline 164.22x97.98 mm; the detail table lists the touch interface as I2C.
+  - Polymaker PolyLite ASA TDS: Tg 98 C, Vicat 105 C, HDT 100 C (1.8 MPa) and 103 C (0.45 MPa); enclosure needed. Prusa: 'up to 93 C'; significant warping; ventilate. Shop: Grey 1 kg $26.99, White 1 kg $25.99, both in stock. CNC Kitchen M3x5.7 100 pcs EUR 9.40, in stock.
+  - Adafruit 6101: 5 V 0.2 A, 40x40x10.6 mm, 32x32 mm hole pattern (dia 3.3 mm), USB lead about 1 m, $4.95, in stock; no airflow spec. Adafruit 5212 reader $6.95, in stock. Adafruit 6324 C-to-A 2 m cable $2.95, 93 in stock. ALLNET 64 GB microSD (ALN-TFUHS1-64) $16.99, in stock, 42 MB/s write / 80.6 MB/s read.
+  - Armor 7056A (AE036):
+  - ALLNET $9.90 and Arace $4.99, both in stock.
+  - Radxa page: Mg-Si aluminium, fanless, contents are top cover, bottom cover, 2 thermal pads and 4 screws CM2.5x8x4; no thermal data.
+  - ALLNET: top cover 70x56x15 mm, bottom cover 85x56x15 mm.
+  - Olimex GX12-4: 5 A, -50 to +70 C, zinc nickel-plated, no IP rating, EUR 1.55, out of stock.
+  - Molicel INR-21700-P50B TDS (third-party hosted copy):
+  - 5000 mAh / 18.0 Wh typical (so 4S1P = 72 Wh).
+  - Max dia 21.55 mm, max height 70.15 mm, max weight 71 g.
+  - Charge -20 to 60 C, discharge -40 to 60 C, 60 A continuous.
+  - IATA passenger lithium battery guidance: batteries must meet UN Manual of Tests and Criteria Part III 38.3. Spare batteries and power banks are carry-on only with terminals protected. Batteries of 100 Wh or less inside equipment may be checked.
+  - Arithmetic re-run (Python, all match the stack):
+  - 128e9 B = 119.2 GiB.
+  - 2xV4L cu8 + HF+ ci16 = 13.31 MB/s = 47.9 GB/h, so the 30 GiB cap lasts 40.3 min.
+  - 1.5 GiB ring lasts 98.3 s (121 s if ci16).
+  - 15-minute HRPT pass = 4.61 GB.
+  - Lime 224 MB/s = 74.4 min/TB; 4 GiB ring = 19.2 s; Burst 7 GiB with a 395 MB/s drain = 30.7 s.
+  - /data records after quotas: 46.6 GiB.
+  - D15 case: surface 0.1026 m2 (+10.8%), front 0.0306 m2 (+7.9%), passive about 1.03 W/K at h=10.
+  - Air rise at 5.4 m3/h: 9.8 / 12.7 / 17.3 / 20.7 / 30.5 K for 17 / 22 / 30 / 36 / 53 W.
+  - SatDump #766 (closed 8 Aug 2024): 8-10 GB baseband per pass; 10-15 passes filled 128 GB. Fixes: record off (live only), IQ decimation, cs8/ZIQ formats.
+  - Pelican 1450 (retailer, IP67): interior 37.2x26x15.5 cm = 15.0 L (0.53 ft3); 2.9 kg with foam, 2.5 kg empty.
+- **Corrections:**
+  1.
+    - **Claim in stack:** Section 2.11 / C1: LimeSDR optional, v1 built without Lime; T7 1 TB optional ('лише з Lime')
+    - **Finding:** The governing user_requirements.md (18 Oct 2026, the user's own decision) overrides C1. 'LimeSDR Micro M.2: KEPT ... The build default becomes the with-Lime configuration (T7 1 TB, Lime parts, third HMC7992, CPU7 isolation, 4 GiB ring + 3 GiB burst, J21 desolder only after the soak test, case top band reprint)'. Stages 1 and 2 still treated the Lime, the T7 and the 11-port top edge as optional.
+    - **Verdict:** corrected
+    - **Action:** Make these the baseline mechanical, thermal and storage design: the T7 1 TB (outside), the Lime pedestal and riser cut-outs, the 11-port top edge, and thermal modes H and I. Move the T7 out of 'optional' in the BOM. The microSD endurance card becomes optional overflow only.
+    - **Impact:** Raises the default BOM by the Lime set (about $596-681 per the stack). Makes the port-crowding, T7-sun and USB3-cable risks default-case risks.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+  2.
+    - **Claim in stack:** J21 = '12V header' fed regulated 12 V; after the soak test J21 is desoldered and fed by a 20 AWG twisted pair from the pads
+    - **Finding:** Schematic V1.21, page 28: J21 is CON_1X3 with pin 1 = ADP12V_IN, pin 2 = GND, pin 3 = PWR_ON_KEY. The stack itself uses J21 pin 3 for the Pico power-on pulse and the case button (C3/D3 rows). The ADP12V input caps are 22 uF 16 V (C611/C612) and the buck is an SY81012VDC. This matches Radxa's '4.5-16 V'.
+    - **Verdict:** new_risk
+    - **Action:** After the desolder, wire all three pads:
+  - 12 V and GND as a 20 AWG twisted pair.
+  - PWR_ON_KEY as a separate 26-28 AWG wire to the Pico open-drain / BAT54 OR node.
+  - Put a 3-pin latching connector in the harness so J21 can be unplugged at the hatch.
+  Sleeve every joint, put polyimide tape over the USB-C shell, and strain-relieve the harness to the mid-plate. Never exceed 16 V; the stack's 12.0 V SYS12 is fine.
+    - **Impact:** Without the pin-3 wire, power-on by the Pico or the case button stops working after the Lime desolder.
+    - **Sources:**
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://forum.radxa.com/t/31611
+      - https://forum.radxa.com/t/26723
+  3.
+    - **Claim in stack:** Stage 2: if EDL fails on J21 power, expose the Q6A USB-C in the hatch for a PD adapter
+    - **Finding:** Schematic page 28 (my reading; a model until measured):
+  - The USB-C VBUS reaches ADP12V_IN through Q5, a DMP2160UFDB dual PMOS wired back-to-back.
+  - Q5's gates are pulled low by NPN Q6, whose base is a 100k/100k divider from TYPEC_IN. The CH224D GATE pin is NC.
+  - So any VBUS presence turns Q5 on and ties USB-C VBUS directly to the J21 12 V rail. With nothing plugged into USB-C, Q5 is off and there is no back-feed.
+  - If a PD adapter is plugged in while J21 is wired, the adapter back-feeds SYS12 (display, AUX, D36V50F12 output). If J21 is live, SYS12 back-feeds the adapter.
+    - **Verdict:** new_risk
+    - **Action:** Prefer EDL with J21 power (bench test). If a USB-C opening is ever added, unplug the J21 harness connector before using it, and label the hatch 'J21 unplugged before USB-C'. Never have USB-C and J21 connected at the same time.
+    - **Impact:** Prevents back-feeding a charger or the display rail during field recovery.
+    - **Sources:**
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+      - https://docs.radxa.com/en/dragon/q6a/low-level-dev/edl-mode
+  4.
+    - **Claim in stack:** C18 / 5.5: UFS A/B layout ESP 1 + root A 22 + root B 22 + /data about 74 GiB
+    - **Finding:** The UFS is 4K-native. Radxa ships a separate UFS image, radxa-dragon-q6a_noble_gnome_r2.output_4096.img.xz (the microSD/NVMe image is _512). The provisioning XML uses bLogicalBlockSize=0x0c (4096 B). The partition sizes themselves still fit (128e9 B = 119.2 GiB).
+    - **Verdict:** new_risk
+    - **Action:** Build the field image for 4096-byte sectors, or partition on the device with sgdisk. ESP: 1 GiB FAT32 made with mkfs.vfat -S 4096. Make /data 'rest of device'. Never dd a _512 image to UFS. The rescue microSD uses the _512 image.
+    - **Impact:** Prevents an unbootable UFS or misaligned GPT.
+    - **Sources:**
+      - https://docs.radxa.com/en/dragon/q6a/download
+      - https://docs.radxa.com/en/dragon/q6a/getting-started/install-system/ufs-system/no-ufs-reader
+      - https://dl.radxa.com/q6a/images/android/provision_ufs31.xml
+  5.
+    - **Claim in stack:** Field DT overlay disables pcie0; lab overlay adds PPS (stage 2: build overlays on the Radxa DTB)
+    - **Finding:** Radxa staff (strongtz, 30440): 'let the UEFI firmware provide the DTB for the kernel (which is the default behavior anyway)'. So unless the boot entry loads a DTB explicitly, the running tree comes from the SPI firmware (260120), not from the 6.18.2-4 package. Users in 31304 did swap package DTBs, so this depends on the bootloader configuration.
+    - **Verdict:** new_risk
+    - **Action:** In the systemd-boot BLS entries, set 'devicetree /dtbs/6.18.2-4-qcom/qcom/qcs6490-radxa-dragon-q6a.dtb' and 'devicetree-overlay' lines for the field and lab overlays. At bring-up, check that sha256(/sys/firmware/fdt) matches the package DTB plus overlays, and that /proc/device-tree shows pcie0 disabled in the field profile. Run an fio smoke test after any DT change.
+    - **Impact:** Prevents overlays (pcie0 off, PPS) being silently ignored, and a silent storage slowdown.
+    - **Sources:**
+      - https://forum.radxa.com/t/30440
+      - https://forum.radxa.com/t/31304
+  6.
+    - **Claim in stack:** 5.6: 'SoC Tj max 95 C; throttling about 90-91 C'
+    - **Finding:** sc7280.dtsi: the CPU throttles at 90 C with a second step at 95 C; GPU from 95/100/105 C; critical shutdown 110 C on all zones. NSP and DDR have only a 'hot' 90 C trip with no cooling maps, so the kernel does not throttle the NPU. Whether the CDSP firmware has its own limits is unknown. One review saw a shutdown at about 105 C (bare board, vkmark).
+    - **Verdict:** corrected
+    - **Action:** Rewrite as: 'CPU throttles at 90/95 C, GPU from 95 C, critical 110 C. labd stops NPU/HTP jobs when nspss0/1 exceeds 85 C. Training only when the SoC is below 75 C. Derating ladder at 80/85 C.'
+    - **Impact:** Closes the gap where the NPU had no limit.
+    - **Sources:**
+      - https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/arch/arm64/boot/dts/qcom/sc7280.dtsi
+      - https://smarthomecircle.com/radxa-dragon-q6a-best-alternative-to-the-raspberry-pi-5
+  7.
+    - **Claim in stack:** Cooling: 'Radxa Armor 7056A OR stepped Cu block (32x31 mm zone) + Adafruit 6101' (stage 1: Cu block primary, Armor bench-only; stage 1 said the two shells add about 30 mm)
+    - **Finding:** Armor 7056A covers per ALLNET: top 70x56x15 mm, bottom 85x56x15 mm. The '+30 mm' was never derived from a drawing, and the real increment depends on the STEP; that number is refuted. The bottom shell does block the plate path and the UFS pad, which stands.
+  
+  The AliExpress stepped Cu cooler (item 1005010333340740) had stock gaps: 'no longer available' (Jan and May 2026), 'only one link left and the price is stupid'. Its price is unverified.
+  
+  The Armor top cover is in stock ($4.99-9.90). Rahul007: Armor plus a glued 5 V fan removed throttling at 35-40 C ambient.
+    - **Verdict:** new_option
+    - **Action:** Cooler, in order of preference:
+  - (A) Stepped Cu cooler: paste or PTM7950-class material on the SoC step, a 0.5-1 mm pad on the LPDDR5 step, footprint 35x35 mm or less, under a 40 mm fan.
+  - (B) In-stock fallback: the Armor 7056A top cover only, bottom shell discarded. Screw it through the dia 3.5 mm holes into M2.5 standoffs on the mid-plate, with a 40 mm fan ducted onto the fins.
+  - Run a fit check in STEP V1.21 before choosing.
+  - Never use one pad over both chips.
+    - **Impact:** Removes the single-source AliExpress dependency. Cost $4.99-9.90 for the cover.
+    - **Sources:**
+      - https://shop.allnetchina.cn/products/radxa-heatsink-7056a
+      - https://arace.tech/products/radxa-armor-case-7056a
+      - https://radxa.com/products/accessories/armor-case-7056a/
+      - https://forum.radxa.com/t/best-heatsink-cooling-solutions-for-dragon-q6a/30123
+      - https://forum.radxa.com/t/recommended-heatsink-fan-for-q6a/30413
+      - https://forum.radxa.com/t/30737
+  8.
+    - **Claim in stack:** Fan Adafruit 6101; stage 1: Noctua NF-A4x10 5V '0.22 W typical, 0-4500 rpm'
+    - **Finding:** QuietPC listing (18 Oct) for the NF-A4x10 5V:
+  - 4500 rpm +/-10% fixed (lower with the L.N.A.); the '0-4500 rpm' range belongs to the PWM model.
+  - 4.8 CFM (8.2 m3/h), 1.78 mmH2O, 17.9 dB(A).
+  - Max 0.25 W / 0.05 A; 5 V only; 3-pin with tach; SSO2 bearing; MTBF over 150k h.
+  - Includes the L.N.A. and a 3-to-2-pin adaptor. GBP 13.96, 6 in stock.
+  Adafruit 6101: 5 V 0.2 A (about 1 W), no airflow, pressure or rpm data.
+    - **Verdict:** corrected
+    - **Action:** Specify the NF-A4x10 5V (non-PWM) for path 1: DC on/off from the Pico via a MOSFET with a flyback diode. Wire the tach to a Pico GPIO for a stall alarm. Keep the 6101 only as a spare. Size the intake for no more than 5 Pa at the design flow.
+    - **Impact:** About 0.75 W less fan power, a known fan curve and stall detection. About +$14 (GBP 13.96 at about 1.33 = about $18.6, a converted model price).
+    - **Sources:**
+      - https://www.quietpc.com/nf-a4x10-flx-5v
+      - https://www.adafruit.com/product/6101
+  9.
+    - **Claim in stack:** UFS operating range 0-70 C; 'UFS and T7 rated from 0 C'
+    - **Finding:** Still no datasheet for KLUDG4UHDC-B0E1. However, mainline ufs-hwmon (probed from ufshcd when the device supports temperature notification) exposes temp1_input (QUERY_ATTR_IDN_CASE_ROUGH_TEMP), temp1_crit (HIGH_TEMP_BOUND) and temp1_lcrit (LOW_TEMP_BOUND). These are the device's own reported bounds.
+    - **Verdict:** new_option
+    - **Action:** At bring-up, read /sys/class/hwmon/hwmon*/name == 'ufs' and its temp1_crit/temp1_lcrit, and record them as the UFS limits. Pause raw writes to UFS at min(65 C on ufs-thermal, temp1_crit - 10 K). Keep 'no storage operation below 0 C' unless lcrit says otherwise.
+    - **Impact:** Turns an unverified rating into a measured device value at no cost.
+    - **Sources:**
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/ufs/core/ufs-hwmon.c
+      - https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/drivers/ufs/core/ufshcd.c
+  10.
+    - **Claim in stack:** Stage 1/2: 'UFS pressed by a 1-1.5 mm pad onto a raised boss on the Al mid-plate'
+    - **Finding:** The direction is confirmed: the UFS is on the underside (2D drawing bottom view) and is retained only by B2B clicks. But the mid-plate also takes the D36V50F12, both TPS7A4701 and, by default now, the Lime pedestal (designed for at least 10 W). A pad only cools the UFS if the plate at the boss is cooler than the UFS. The +/-/TS pogo pads sit next to the UFS connectors.
+    - **Verdict:** new_risk
+    - **Action:** Put the boss at least 30 mm from the Lime pedestal and the regulators, or cut a thermal slot in the plate around the boss. Put 0.05-0.1 mm polyimide film under the whole board with one cut-out at the boss. Check in STEP that the boss misses the pogo pads. Accept the pad only if an A/B test (pad vs no pad) lowers ufs-thermal.
+    - **Impact:** Avoids heating the UFS with Lime and regulator heat.
+    - **Sources:**
+      - https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_2d_dimensions_v1.21.pdf
+      - https://forum.radxa.com/t/30090
+      - https://forum.radxa.com/t/31226
+  11.
+    - **Claim in stack:** T7 1 TB 'outside on the bottom edge', rated 0-60 C; price $229.99-274.99 (unverified)
+    - **Finding:** The datasheet limit is 0-60 C Tc. My model gives about 2-3 W of T7 dissipation (an assumption; the datasheet gives no power).
+  - Direct sun at 35 C: +20-36 K, so 55-71 C.
+  - Shade: +8-16 K.
+  Anything strapped flat to a sun-loaded case adds more. smartmontools drivedb lists the T7 (04e8:4001) and T7 Shield (04e8:61fb) as ASMedia ASM2362 bridges using '-d sntasmedia', so NVMe SMART temperature is readable. Price: only the June 2026 figures ($190 deal / $275 street); no October price obtained.
+    - **Verdict:** new_risk
+    - **Action:** Mount the T7 in a shaded holder on the lower rear with a 3-5 mm air gap and a reflective sun flap. Log 'smartctl -d sntasmedia -A' temperature every 30 s; labrx stops writing at 55 C. Budget $190-275 and re-price before ordering. The T7 Resurrected needs a separate C-to-A cable.
+    - **Impact:** Avoids out-of-spec operation during Lime captures in sun.
+    - **Sources:**
+      - https://download.semiconductor.samsung.com/resources/data-sheet/Samsung_Portable_SSD_T7_Datasheet_Rev2.0.pdf
+      - https://download.semiconductor.samsung.com/resources/data-sheet/Samsung_Portable_SSD_T7_Resurrected_Datasheet_Rev.1.0.pdf
+      - https://raw.githubusercontent.com/smartmontools/smartmontools/master/smartmontools/drivedb.h
+      - https://www.pcworld.com/article/3158933/samsung-fast-t7-portable-ssd-finally-drops-in-price-190-was-285.html
+  12.
+    - **Claim in stack:** Blue USB 3.1 port: T7 limit 395 MB/s = 1.76x Lime 224 MB/s; 'T7 cable exit' on the bottom edge
+    - **Finding:** 395 MB/s is a single SmartHomeCircle fio write through an unnamed USB3-NVMe adapter (uas, 5000M). The T7 post-cache rate of about 480 MB/s is a model from ssd-tester. The internal blue USB-A port must reach an external T7. A panel-mount USB 3 coupler or a long cable can make the link drop to 480M (High-Speed), and 224 MB/s is then impossible.
+    - **Verdict:** new_risk
+    - **Action:** Use one continuous, shielded USB 3.x A-to-C cable of 0.5 m or less, with ferrites, through a strain-relief grommet; no couplers. Gate every Lime session on 'lsusb -t' showing 5000M and Driver=uas for the T7. Re-measure with fio on the real T7.
+    - **Impact:** Protects Lime recording, which is now the default build.
+    - **Sources:**
+      - https://smarthomecircle.com/radxa-dragon-q6a-best-alternative-to-the-raspberry-pi-5
+      - https://ssd-tester.com/samsung_portable_ssd_t7_1tb.html
+      - https://www.usb.org/sites/default/files/327216.pdf
+  13.
+    - **Claim in stack:** Hold linux-image-6.18.2-4-qcom (stage 2: 7.0.11-4 breaks HDMI, which confirms the hold)
+    - **Finding:** Radxa staff (chenchongbiao, 1 Sep 2026, thread 31288): kernel 7.0 needs 'clk_ignore_unused' in /etc/kernel/cmdline to stop AUX interrupt storms that break HDMI. So the HDMI breakage has a published workaround (not tested by us). Same thread: after an rsetup upgrade, booting back into 6.18.2-4 left 'no sound at all', so other packages changed too. 31304: the upgrade also moved embloader 0.6 to 0.7.
+    - **Verdict:** corrected
+    - **Action:** Keep 6.18.2-4 for v1, because the Samsung UFS is stable on it. Hold the whole set: linux-image-6.18.2-4-qcom, linux-image-radxa-dragon-q6a, linux-headers-radxa-dragon-q6a, embloader and the Radxa firmware packages. Never run full-upgrade or rsetup in the field. If 7.0.11 is ever needed (e.g. Kioxia), add clk_ignore_unused and re-run the A/B and boot tests.
+    - **Impact:** Avoids a half-upgraded system that loses audio or display.
+    - **Sources:**
+      - https://forum.radxa.com/t/31288
+      - https://forum.radxa.com/t/31304
+      - https://github.com/radxa-pkg/linux-qcom/releases
+  14.
+    - **Claim in stack:** UFS WriteBooster about 4 GiB (stage 1: no source; stage 2: from Radxa provisioning)
+    - **Finding:** Confirmed from provision_ufs31.xml (shared 4194304 KiB) and Critical Link (4 GB default, 300-1500 MiB/s write range on 256 GB). The Q6A DTS also caps the link at HS-G4 Rate-A ('Gear-4 Rate-B is unstable due to board and UFS module design limitations'). Factory Linux provisioning is undocumented.
+    - **Verdict:** corrected
+    - **Action:** Record it as '4 GiB in Radxa's Android provisioning; read the real value from sysfs (wb_shared_alloc_units x 512 x allocation_unit_size x segment_size)'. Measure the post-cache rate with a 16 GiB fio fill. Keep 388 MB/s as the in-cache planning figure.
+    - **Impact:** No design change; worst-case need is 13.3 MB/s.
+    - **Sources:**
+      - https://dl.radxa.com/q6a/images/android/provision_ufs31.xml
+      - https://git.criticallink.com/redmine/projects/mitysom_qc6490/wiki/UFS
+      - https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+  15.
+    - **Claim in stack:** Service hatch: UART console + blue USB-A EDL; stage 2: UEFI menu over UART unverified
+    - **Finding:** In thread 30925 the 260120 UART log prints 'Press F2 to enter Setup, F5 to enter UEFI Shell, F12 to enter Boot menu'. So the prompt reaches the serial console; whether input over UART works is still untested. One user's board stalls at the boot menu after rupdate until Enter is pressed.
+    - **Verdict:** new_risk
+    - **Action:** The hatch exposes: UART (40-pin UART5, pins 8/10, plus GND), the EDL button (or a recessed button wired in parallel), the J21 harness connector and the blue USB-A. Bench-test F2/F12 over UART. If it fails, carry a USB keyboard in the service kit. Never run rupdate.
+    - **Impact:** Field recovery without opening the case.
+    - **Sources:**
+      - https://forum.radxa.com/t/30925
+      - https://dl.radxa.com/q6a/docs/rad-doc-0150_radxa_dragon_q6a_product_brief__revision_1.5_gbc16bac.pdf
+  16.
+    - **Claim in stack:** Top edge P1-P7 (+P8) at 20 mm pitch; with Lime also RX1, RX2, REF IN
+    - **Finding:** Model re-run: 11 ports at 20 mm pitch = 200 mm centre span plus about 5 mm nut half-width at each end = 210 mm. The 220-225 mm outer edge, minus walls and corner radii, leaves about 0-5 mm. With Lime now the default, this is the baseline layout.
+    - **Verdict:** new_risk
+    - **Action:** Move RX2 and REF IN to the upper left side wall (20 mm pitch, above the battery compartment). Keep P1-P8 + RX1 on top at 20 mm. Check against the HF+ shield corner and the HMI column in CAD.
+    - **Impact:** Avoids a forced reprint of the default case.
+    - **Sources:** []
+  17.
+    - **Claim in stack:** Battery bay 46x25x150 mm 'in an insulated compartment' behind 3 mm closed-cell foam, reflective film and a 1 mm FR-4/mica barrier; battery+BMS+barrier 0.32 kg
+    - **Finding:** P50B maximum dimensions give a 2x2 pack of 43.1x21.55x140.3 mm, so the margins in 46x25x150 are 2.9 / 3.45 / 9.7 mm. The foam, film and barrier (about 4 mm per side) cannot fit inside that envelope. The compartment's outer envelope is about 54x33x158 mm (model). The cells weigh 284 g (71 g max each).
+    - **Verdict:** corrected
+    - **Action:** In CAD, treat 46x25x150 as the bare pack envelope (nickel, Kapton and fishpaper inside it, the BMS in the 9.7 mm end gap or outside). Reserve about 54x33x158 mm for the insulated compartment. Weight row: 0.33-0.34 kg (model).
+    - **Impact:** Prevents a layout clash in the 55-60 mm depth.
+    - **Sources:**
+      - https://www.fsaeonline.com/content/Molicel-TDS--INR-21700-P50B-80122.pdf
+  18.
+    - **Claim in stack:** Bench case: Pelican 1450 (14.5 L, about 8.8 L filled = 61%) or Apache 3800; $30-169 unverified
+    - **Finding:** Pelican 1450: 15.0 L interior, 2.9 kg with foam, IP67; Glazer's (US) $169.95, in stock. Apache 3800: Harbor Freight $39.99, 'In-Store Only', US only, IP65. The user is in Europe, so the Apache is not a world option.
+    - **Verdict:** corrected
+    - **Action:** Bench case: Pelican 1450 with foam, $169.95 (US price, verified); fill 8.8/15.0 L = 59%. The EU price is unverified. Drop the Apache 3800 for this user, and drop the $30 low end.
+    - **Impact:** The bench-case line becomes about $170 (low end up by about $130).
+    - **Sources:**
+      - https://www.wiltronics.com.au/product/67862/1450-pelican-protector-case-with-foam-filler/
+      - https://www.glazerscamera.com/products/pelican-1450-black
+      - https://www.harborfreight.com/3800-weatherproof-protective-case-large-black-63927.html
+  19.
+    - **Claim in stack:** Travel: IATA requires UN 38.3; Pelican may be checked
+    - **Finding:** The IATA PDF content is confirmed, but the file is 'Revision 3 effective February 2019'. 2026 airline and ICAO changes for power banks were not verified, because the search budget was exhausted.
+    - **Verdict:** corrected
+    - **Action:** Keep the rule. Add: the checked Pelican carries no spare cells or power banks. Check the airline's current power-bank rules before each trip (Anker 737 is 86.4 Wh, carry-on).
+    - **Impact:** None on the design.
+    - **Sources:**
+      - https://www.iata.org/contentassets/6fea26dd84d24b26a7a1fd5788561d6e/passenger-lithium-battery.pdf
+  20.
+    - **Claim in stack:** Rescue microSD outside the case; microSD only overflow/rescue
+    - **Finding:** Confirmed (Gilles 31509: an A2 card developed bad sectors after 3-4 months, and a fresh card failed after its second boot). Stage 2 misattributed the 'Etcher flash -> no HDMI or network' result to Geerling. In #85, the rsetup failure (no video, no network) was francorbacho's. Geerling's Etcher run showed a verification error, fixed by pre-expanding the image.
+    - **Verdict:** corrected
+    - **Action:** Keep two rescue cards, flashed from an extracted .img with a hash check; f3-style write-verify on arrival. No OS or DB on SD.
+    - **Impact:** Wording only.
+    - **Sources:**
+      - https://github.com/geerlingguy/sbc-reviews/issues/85
+      - https://forum.radxa.com/t/31509
+  21.
+    - **Claim in stack:** V30 endurance microSD $25-82 (stage 1: Slickdeals tracker 5 Apr 2026 $81.99/$115.85/$153.99)
+    - **Finding:** On 18 Oct 2026 the cited Slickdeals page shows only the expired 12 Aug 2024 $25 deal (list $48) and no tracker values. The RS page returned 403. So the stage-1 $82-154 range is not supported by its source.
+    - **Verdict:** unverified
+    - **Action:** With Lime now the default, the endurance card is optional overflow only. Keep it unpriced ('re-price at order'). Do not carry $82-154 as verified.
+    - **Impact:** Optional tier only.
+    - **Sources:**
+      - https://slickdeals.net/f/17686464-25-256gb-samsung-pro-endurance-uhs-i-microsdxc-memory-card-w-sd-adapter-at-amazon
+  22.
+    - **Claim in stack:** IMU socket GX12; LAB BUS 6-pin; IPX4/IP54
+    - **Finding:** GX12 still has no datasheet IP rating (Olimex). No specific IP67 M8 part was verified in this pass.
+    - **Verdict:** unverified
+    - **Action:** Specify a 4-pin A-coded M8 panel receptacle whose datasheet gives IP67 when mated or capped (part to be selected and priced). Or keep the GX12 with a tethered cap, and pass an IPX4 spray test with all caps fitted.
+    - **Impact:** Keeps the IP claim honest.
+    - **Sources:**
+      - https://olimex.com/Products/Components/Connectors/CONNECTOR-GX12-4
+- **New risks:**
+  - The governing requirements make the Lime build the default. The T7 outside the case, the J21 desolder, the 11-port top edge and Lime heat on the mid-plate are now baseline risks, not optional ones.
+  - J21 is 3-pin (ADP12V_IN, GND, PWR_ON_KEY). The desolder plan rewires only a twisted pair, which loses the Pico/case-button power-on.
+  - Any USB-C VBUS turns on Q5 (back-to-back PMOS via Q6) and ties USB-C VBUS to the J21 12 V rail (schematic reading, a model). A PD adapter plugged in while J21 is wired back-feeds SYS12; if J21 is live, SYS12 back-feeds the adapter.
+  - The UFS is 4K-native (_4096 image, bLogicalBlockSize 0x0c). A 512-sector image or GPT written to UFS will not boot.
+  - By default the UEFI firmware supplies the DTB. Field and lab overlays can be silently bypassed unless the BLS entries load the DTB and overlays explicitly.
+  - T7 in direct sun at 35 C: model case temperature 55-71 C, above the 60 C Tc limit.
+  - An external USB 3 cable or coupler to the T7 can fall back to 480M, which cannot carry Lime at 224 MB/s.
+  - The UFS pad-to-plate path can heat the UFS if the boss is near the Lime pedestal or the regulators.
+  - The NPU (nspss) has no kernel throttle before the 110 C critical trip, and firmware CDSP limits are unknown. One review saw a shutdown at about 105 C.
+  - Partial upgrades (kernel 7.0.11, embloader 0.7, firmware) caused HDMI or audio loss. Holding only linux-image is not enough.
+  - The AliExpress stepped Cu cooler is effectively single-source, with stock gaps and an unverified price.
+  - The battery compartment outer envelope (about 54x33x158 mm) is larger than the 46x25x150 pack envelope used in the plan.
+- **Refuted findings:**
+  1.
+    - **Finding:** Stage 1: Noctua NF-A4x10 5V is '0.22 W typical, 0-4500 rpm'.
+    - **Why:** The non-PWM 5 V model is fixed at 4500 rpm +/-10% (lower with the L.N.A.), 0.25 W / 0.05 A max (QuietPC listing). '0-4500 rpm' is the PWM variant. No source for '0.22 W typical' was found.
+  2.
+    - **Finding:** Stage 1: Slickdeals price tracker (updated 5 Apr 2026) shows Samsung PRO Endurance 256 GB at $81.99 Amazon / $115.85 Newegg / $153.99 Best Buy and Samsung.
+    - **Why:** The cited page, fetched and grepped on 18 Oct 2026, shows only the expired Aug 2024 $25 deal and no tracker values. The claim is unsupported by its source.
+  3.
+    - **Finding:** Stage 2: 'Geerling: an Etcher flash produced a board with no HDMI or network' and 'rsetup on an r2 image left Geerling's board unbootable'.
+    - **Why:** In sbc-reviews #85 the rsetup failure (no video, no network) was reported by francorbacho. Geerling's own Etcher flash gave a verification error, fixed by pre-expanding the image.
+  4.
+    - **Finding:** Stage 2: '7.0.11-4 breaks HDMI ... That confirms the hold is needed.'
+    - **Why:** Radxa staff posted a fix on 1 Sep 2026: clk_ignore_unused in /etc/kernel/cmdline (thread 31288). The hold is still sensible for UFS stability and to avoid a mixed upgrade, but HDMI is not the reason.
+  5.
+    - **Finding:** Stage 1: the Armor 7056A 'two shells add roughly 30 mm of stack height'.
+    - **Why:** Only the cover sizes are known (70x56x15 and 85x56x15 mm). The increment over standoffs plus a Cu block and fan depends on the STEP and was not derived. The qualitative mounting conflict stands; the number does not.
+  6.
+    - **Finding:** Stack D14 / stage 1: Apache 3800 as a world bench-case option ($30-50).
+    - **Why:** Harbor Freight lists it at $39.99 'In-Store Only' (US stores). The user is in Europe, so it is not a world option.
+  7.
+    - **Finding:** Stack 5.6: 'Tj max 95 C; throttling about 90-91 C (verified, forum 30123)'.
+    - **Why:** Thread 30123 states neither figure. The DT trips are CPU passive 90/95 C, GPU 95/100/105 C and critical 110 C, so 95 C is a throttle step, not Tj max.
+- **Corrected spec:** MECH / THERMAL / STORAGE: corrected spec (18 Oct 2026; the with-Lime build is the default per user_requirements.md)
+  
+  COMPUTE MOUNT
+  - Board: Radxa Dragon Q6A 12 GB, hardware files V1.21.
+    - 85.0x56.0 mm; 4x dia 3.5 mm holes on 58.0x49.0 mm, 3.5 mm from the edges.
+    - M2.5 standoffs to the 2 mm Al mid-plate.
+    - Check the delivered board against the V1.21 STEP before printing.
+  - Under the board: 0.05-0.1 mm polyimide film over the whole footprint, with one cut-out for the UFS boss. The boss must miss the +/-/TS pogo pads.
+  - UFS cooling: a 1-1.5 mm pad onto a plate boss placed at least 30 mm from the Lime pedestal and the regulators, or isolated by a plate slot. Keep it only if the A/B test (pad vs no pad) lowers ufs-thermal.
+  
+  COOLER
+  - (A) Stepped Cu cooler, footprint 35x35 mm or less: PTM7950-class material or paste on the SoC step, a 0.5-1 mm pad on the LPDDR5 step, short standoffs on the PCB side. Never one shared pad.
+  - (B) In-stock fallback: Armor 7056A (AE036, Arace $4.99 / ALLNET $9.90), top cover only on M2.5 standoffs, bottom shell discarded. Fit-check first.
+  - Fan, path 1: Noctua NF-A4x10 5V, non-PWM. 4500 rpm, 8.2 m3/h, 1.78 mmH2O, 17.9 dB(A), 0.25 W max. QuietPC GBP 13.96.
+    - Powered from the 5 V rail, switched DC on/off by the Pico through a MOSFET with a flyback diode.
+    - On at SoC 60 C, off at 50 C; 100% if the heartbeat is lost.
+    - Tach wired to a Pico GPIO; stall alarm.
+    - Adafruit 6101 ($4.95) as a spare only.
+  - Path 2: blower over the display duct and plate fins; model not yet measured.
+  - Intakes: stainless mesh plus hydrophobic foam sized for at most 5 Pa. ePTFE vents.
+  
+  THERMAL LIMITS
+  - Kernel: CPU passive 90/95 C, GPU 95/100/105 C, critical 110 C.
+  - labd:
+    - Derating at 80/85 C SoC.
+    - Training only when the SoC is below 75 C.
+    - NPU/HTP stop when nspss0/1 exceeds 85 C.
+    - Raw-to-UFS pause at min(65 C on ufs-thermal, ufs hwmon temp1_crit - 10 K).
+    - T7 writes stop at 55 C (smartctl -d sntasmedia).
+  - Log zones by type, never by index: ufs-thermal, msm-skin-thermal, quiet-thermal, xo-thermal, nspss0/1, cpu*, gpuss*, plus the ufs hwmon and the Lime TMP1075.
+  
+  THERMAL MODEL (D15 222.5x137.5x57.5 mm; a model)
+  - Surface 0.103 m2; passive about 1.0 W/K at h=10.
+  - Solar 14.6-18.4 W.
+  - Exit rise at 5.4 m3/h: 9.8 / 12.7 / 17.3 / 20.7 / 30.5 K for 17 / 22 / 30 / 36 / 53 W.
+  - Lime about 4 W typical in modes H/I; pedestal and pad designed for 10 W.
+  - Forced air is mandatory.
+  - Acceptance: 45 min at midday in modes B, D, G and H. Frame at most 60 C, glass at most 65 C, cells at most 45 C, no critical trip.
+  
+  POWER ENTRY (mechanical part)
+  - J21 = 3 pins: 1 ADP12V_IN, 2 GND, 3 PWR_ON_KEY.
+  - Fed 12.0 V SYS12; limit 4.5-16 V.
+  - After the Lime soak-test desolder:
+    - 20 AWG twisted pair for 12 V and GND, plus a 26-28 AWG wire for PWR_ON_KEY.
+    - Through a 3-pin latching connector reachable at the hatch.
+    - Heat-shrink on every joint, polyimide over the USB-C shell, strain relief to the plate.
+    - 4 A fuse.
+  - Q6A USB-C: no case opening. Never connect it while J21 is wired (Q5 back-feed).
+  
+  SERVICE HATCH
+  - UART5 console (40-pin pins 8/10 plus GND), the EDL button (or a recessed parallel button), the J21 harness connector and the blue USB-A.
+  - EDL: hold the button, apply J21 power (bench-verify), release; A-A cable; 05c6:9008.
+  - UEFI keys over UART: F2 / F5 / F12 (bench-verify).
+  - Never do the R137/R207 UFS-boot mod.
+  
+  STORAGE
+  - Radxa UFS 3.1 128 GB RA022-B10J0U2 (Samsung KLUDG4UHDC-B0E1). ALLNET $65.90, in stock; TinyTronics EUR 58, 2-4 weeks.
+    - On arrival, check the vendor ID is 0x01CE.
+    - Link is HS-G4 Rate-A (DT limit).
+    - 4096-byte logical blocks: use the _4096 image or partition on the device.
+  - GPT on UFS: ESP 1 GiB FAT32 (mkfs.vfat -S 4096), root A 22 GiB, root B 22 GiB, /data = rest of device (about 74 GiB).
+    - /data quotas: NPU dataset 20 GB, apt mirror 4 GiB, map tiles 4 GiB, models 0.3 GiB, logs 0.5 GiB (journald 200M). About 46.6 GiB is left for records.
+    - Raw cap 30 GiB rolling (about 40 min at 13.3 MB/s); products kept, raw only when pinned.
+  - WriteBooster: 4 GiB in Radxa provisioning; read the real value from sysfs. Planning write rate 388 MB/s in-cache; measure post-cache.
+  - Never apply provision_ufs31.xml or the Android UFS image to the field module.
+  - Kernel: hold linux-image-6.18.2-4-qcom and its meta-packages, embloader and the firmware packages. No full-upgrade, rsetup or rupdate in the field.
+  - SPI BIOS: stay on 260120. The 260916 test build is not for the field; SPI updates on the bench only, with UART and the EDL kit ready.
+  - Boot: systemd-boot with BLS entries (not UKI), boot counting, a rescue entry, and explicit 'devicetree' plus 'devicetree-overlay' lines. No ESP on any data medium; boot order is USB > SD > NVMe > eMMC > UFS.
+  - T7 1 TB (default, Lime build), 85x57x8 mm, 72 g, 0-60 C Tc.
+    - Budget $190-275; re-price before ordering.
+    - Lower rear, shaded holder, 3-5 mm air gap, sun flap.
+    - One continuous shielded USB 3 A-to-C cable of 0.5 m or less with ferrites, through a grommet. Gate on lsusb -t showing 5000M/uas.
+    - Allocation: raw NPU 400 GB for 14 days, captures and bursts 300 GB, exFAT exchange 64 GiB, a snapshot copy.
+    - Lime 56 Msps ci16 = 224 MB/s (74.4 min/TB). Ring 4 GiB (19.2 s); Burst +3 GiB (about 30.7 s at 160 Msps with a 395 MB/s drain).
+    - The T7 never writes during L-band, S-band or GNSS sessions.
+  - microSD: rescue kit is 2x ALLNET 64 GB ($16.99 each) + Adafruit 5212 ($6.95) + 6324 ($2.95) + an A-A cable; f3-type write-verify on arrival. A V30 endurance card for overflow is optional and unpriced. Sequential preallocated files only; no DB or journald on SD.
+  - SatDump runs with record off; all raw IQ goes through labrx.
+  
+  CASE
+  - Light-grey Polymaker ASA (1 kg Grey $26.99), printed enclosed and ventilated; heat limit 93 C (Prusa). CNC Kitchen M3x5.7 inserts EUR 9.40 per 100.
+  - Outer plan 220-225 x 135-140 x 55-60 mm.
+  - Battery compartment: outer envelope about 54x33x158 mm around the 46x25x150 pack (P50B 71 g max, cells 284 g).
+  - Top edge: P1-P8 + RX1 at 20 mm pitch. Upper left side wall: RX2 + REF IN.
+  - Bottom edge: IP2368 USB-C, capped LAB USB-A, latching 6-pin LAB BUS, 3.5 mm audio, T7 cable grommet.
+  - Rear: 1/4-20 steel insert in a boss of at least 6 mm (pull test at 3x the device weight); strap lugs; IMU on an IP67 M8 4-pin connector (or a capped GX12 that passes the spray test); service hatch.
+  - Target IPX4/IP54.
+  
+  KIT
+  - Field: 15-20 L backpack (no change; prices are a model).
+  - Bench: Pelican 1450 with foam, $169.95 (US), 15.0 L, 2.9 kg, about 59% filled.
+  - Travel: the home-built 72 Wh pack never flies; no spare cells or power banks in checked bags.
+- **Bench tests:**
+  - UFS on arrival:
+  - Vendor ID 0x01CE and model string from sysfs.
+  - 'lsblk -o NAME,SIZE,LOG-SEC,PHY-SEC' shows 4096-byte sectors.
+  - Record the LU layout (unit_descriptor).
+  - WriteBooster size = wb_shared_alloc_units x 512 x allocation_unit_size x segment_size.
+  - fio sequential write 16 GiB (bs=1M, direct=1); post-cache rate must be at least 50 MB/s.
+  - ufs hwmon: find hwmon 'ufs' and read temp1_input, temp1_crit and temp1_lcrit. Set the UFS pause threshold and the cold rule from them. If the hwmon is absent, keep 65 C on ufs-thermal.
+  - Thermal zones: list /sys/class/thermal/*/type and confirm ufs-thermal, msm-skin-thermal, quiet-thermal, xo-thermal and nspss0/1 are present. Log them by type in labpowerd.
+  - Cooler fit and performance:
+  - STEP V1.21 plus a physical paste-imprint check for both the Cu block and the Armor-top-only option.
+  - stress-ng at about 10 W for 10 min with the inlet at a known temperature.
+  - Pass: SoC-to-inlet of 3.5 K/W or less, no passive trip.
+  - Airflow: measure path 1 and path 2 flow with a hot-wire anemometer at the exhaust, or from dT at a known heater power. Pass: at least 2.7 m3/h per path. Otherwise change the fan or intake area.
+  - Midday soak, 45 min each in modes B, D, G and H (Lime), visor on, 35 C or measured ambient. Pass:
+  - Frame at most 60 C, glass at most 65 C, cells at most 45 C.
+  - UFS below its pause threshold; T7 SMART at most 55 C.
+  - No critical trip; nspss below 85 C.
+  - UFS pad A/B: ufs-thermal with and without the plate-boss pad, Lime loaded. Keep the pad only if it lowers the UFS temperature.
+  - J21 and USB-C:
+  - With J21 at 12 V and nothing on USB-C, VBUS on the USB-C pin must read under 0.5 V.
+  - Never connect USB-C while J21 is wired.
+  - Check that the power-on key on pin 3 still works after the desolder.
+  - EDL powered only through J21 (USB-C empty) from a Linux host via the A-A cable: expect 05c6:9008. UEFI F2/F12 over the hatch UART at 115200.
+  - DTB provenance: sha256 of /sys/firmware/fdt against the BLS-loaded DTB plus overlays. Field profile shows pcie0 status 'disabled'. fio smoke test on UFS and T7 after any DT change.
+  - Boot safety: 20 cold boots with the T7 and the LAB USB stick attached, all must boot from UFS. 50 warm + 20 cold boots overall, with systemd-boot boot counting and a rollback test.
+  - T7 link and endurance:
+  - 'lsusb -t' shows 5000M and Driver=uas through the final cable.
+  - fio rate-limited sequential write at 224 MB/s for 60 min, with 'smartctl -d sntasmedia -A' every 30 s, once in shade and once in sun with the flap.
+  - Pass: zero I/O errors, no labrx drops, at most 55 C.
+  - Kernel soak, 12 h: dmesg contains zero matches for 'ufshcd.*(error|timed-out)|OCS invalid|pa_err|dl_err'. 'apt-mark showhold' lists the kernel meta-packages, embloader and the firmware packages.
+  - Weather: IPX4 spray test (IEC 60529 oscillating tube or hand-held spray, 10 min) with all caps fitted; then check the GX12 or M8 and the LAB BUS for water ingress.
+  - Mechanical: pull test of the 1/4-20 insert at 3x the device weight; drop the strap-lug load; check the hatch latch.
+  - Battery compartment: thermocouple on the middle cell during the midday soak; the 0-45 C charge window must hold. Check that the compartment's outer envelope matches CAD.
+- **Confidence:** medium
+
