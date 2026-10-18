@@ -849,3 +849,10 @@ Heat map вимкнено (правило «без геолокації»). За
   - AIMET, TorchSig і конвертер QAIRT тримати в окремих середовищах (numpy 1.26 проти ≥2).
 Джерела: див. final/reaudit_A_compute_software.json (radxa-pkg, dl.radxa.com, apt-індекси Radxa, radxa/kernel 6.18.2, forum.radxa.com ~35 тем, SatDump, SDRangel, OpenWebRX+, readsb, labwc, greetd, systemd, QAIRT 2.42 SDK).
 
+## 2026-10-18 10:32 UTC
+
+Проміжне (не остаточне, агенти ще працюють):
+- Група D: перевіряє відкликання павербанків Anker у червні 2025 (моделі A1647, A1652, A1681, A1689, A1257, а також PowerCore 10000) щодо Anker 737 у стенді; Anker 737 Power Bank (A1289) у цьому списку не значиться (остаточний висновок — у файлі групи D). Ціна tinySA Ultra+ ZS407 в ЄС: 219,89 € з ПДВ 21% (у наявності). Перевіряється динамічний діапазон LiteVNA 64 v0.4.5.
+- P5 G1: як дешевші аналоги Uputronics 440 MHz перевіряються SPF5189Z і LNA4ALL (виміряний NF на 432–435 MHz).
+Джерела: журнали агентів wf_d9388111-e66 і wf_e32114dd-52d; URL будуть у final/reaudit_D_power_mech_display_lab.json і final/analogs_G1_receivers_rf.json.
+
