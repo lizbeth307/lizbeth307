@@ -6335,3 +6335,638 @@
   
   SOURCES: tinysa.org/wiki/pmwiki.php?n=Main.Buying; passion-radio.com; lab401.com; gotronik.pl; butik.limmared.nu; astroradio.com; mirfield-electronics.co.uk; randl.com; neven.cz; switch-science.com; aliexpress.com search pages; minicircuits.com; nooelec.com; fnirsi.com; thedebugstore.com; sainsmart.com; adafruit.com; pishop.us; thepihut.com; pine64.com; ifixit.com; anker.com; waveshare.com; leobodnar.com; flightaware.com/adsb/prostick; ebay.com/itm/354598266754 (snippet). WebSearch calls used: 7.
 
+## sourcing:verify (run `wf_b9cc0186-94e`)
+
+- **Buying notes:** VERIFICATION, 18 Oct 2026. Methods: Shopify .js/JSON, the WooCommerce store API, page HTML, WebFetch and datasheet PDFs. I used 2 of about 12 WebSearch calls. FX (open.er-api, 18 Oct 00:02 UTC): 1 EUR = 1.1241 USD, 1 GBP = 1.3318 USD, 1 CAD = 0.7069 USD. The SDR group converted at 1.16 USD/EUR; those lines are recomputed here. About 69% of the low total uses prices I saw live today; the rest are agent-read prices or estimates, marked verified=false.
+  
+  CONFIRMED LIVE (price and stock)
+  - Q6A 12 GB: TinyTronics EUR 148 incl. VAT, 10+ in stock. Allnet $189.99 available. Arace sold out on every variant. Allnet 8 GB sold out.
+  - Radxa's own distributor page (radxa.com/distributors) lists Allnet, Arace and TinyTronics (plus RS, SB Components and Indian/Brazilian shops). Ameridroid and OKdo are not listed.
+  - UFS 128 GB: Allnet $65.90 available. TinyTronics EUR 58, not in stock (2-4 weeks).
+  - Displays: Wisecoco $132, schema InStock. The listing still says 'I2C Capacitive Touch', with no input voltage and no package contents. 4D 4DHDMI-70-1280-800-CT-EAR-1000: DigiKey $128.95 (13 in stock), 4D store $141.85.
+  - LimeSDR Micro Basic: $249 + $18 worldwide shipping, pre-order, ships 15 Dec 2026; there is still no 2230 variant. MHF4L-SMA cable $6. Crowd Supply cancels stock and pre-orders with a full refund only before shipment. After delivery it gives a 30-day guarantee less a restocking fee of $20 or more.
+  - RF: Airspy HF+ Discovery $169 at ITEAD, in stock at its EU, US and CN warehouses (store API). V4L $37.95 (455 in stock). Bullseye $29.95 (70). LNA V2 $19.95 (208). Dipole kit $17.95 (357). L-band patch set $59.95 (on the buy page; the product URL is 404).
+  - Nooelec: SAWbird+ GOES/iO/NOAA cased $49.95 (SKUs 100792/100788/100800), Flamingo+ FM $24.95, Balun One Nine v2 $26.95, attenuator kit $47.95. Free worldwide shipping over $100.
+  - Lab: tinySA ZS407 at Astroradio EUR 219.89 incl. 21% VAT, in stock; Astroradio is on the tinySA.org safe-seller list. LiteVNA 64 at Passion Radio: 5 left. Mini-Circuits: ZFL-500LN+ $116.81, ZFBT-4R2GW+ $111.57, BLK-89-S+ $20.26. Anker 737 $109.99. FNB58 Std $53.99 (BT $58.99). LBE-1420 GBP 132, in stock, antenna included.
+  - Also confirmed: Pololu #4095/#3782/#2573/#2813 prices (all 'Rationed'). Adafruit CH334F, INA228, BNO085, HDMI 2420, fan 6101, reader, cable and Debug Probe in stock. Waveshare LC76G $14.99 and L1+L5 antenna $16.99 InStock. P50B $9.99 at 18650 Battery Store. Debug Store Hantek 6022BE GBP 100 in stock. Pi Hut Pro Stick Plus GBP 52.50 and MTT hub GBP 18.50.
+  
+  NEW FINDINGS THAT CHANGE THE DESIGN OR THE PLAN
+  1. Uputronics' own store lists the '440MHz CubeSAT' filtered preamp at GBP 51.59 incl. UK VAT (about GBP 42.99 ex VAT), available; the '434MHz' variant is GBP 41.99. Bias input is 5 V, and the store calls it Airspy bias-tee compatible. This closes the 'no buyable 70 cm BPF/filtered preamp' gap. It replaces the unnamed BPF plus the in-service LNA V2; one LNA V2 stays as the lab spare. Measure its current before using the V4L tee.
+  2. Mini-Circuits TCBT-2R5G+ datasheet: 20-2500 MHz, 0.4 dB, DC current 200 mA max, +25 V. TCBT-14+/14R+ are also 200 mA. ZFBT-4R2GW+/6GW+ are 500 mA and 30 V. So a TPS2553 set to 250-300 mA could hold an overload above the tee's rating. See conflict 9.
+  3. Allnet refund policy: return within 7 days of receipt (14 days into the EU), unused and in original packaging only. A board that fails burn-in is therefore a warranty/RMA case, not a return; keep the UART logs.
+  4. TinyTronics' delivery page lists only 26 EU destinations. The agent's 'outside EU on request / UK EUR 170 minimum' claim is unconfirmed. EU consumers pay VAT (OSS), so plan on EUR 148, not EUR 122.31.
+  5. Passion Radio page variables show base EUR 219 incl. / 182.50 ex VAT and a reduction of 31.40 incl. / 26.17 ex. So EUR 187.60 is the VAT-inclusive (FR 20%) sale price, despite the 'tax excl.' label. A non-EU buyer may pay about EUR 156.33 ($175.73); confirm at checkout.
+  6. The Nooelec core order (NOAA+, GOES+, Flamingo+, Balun, pad kit) is already $199.75, so the iO is not needed to reach free shipping.
+  7. Arace shows a '16GB $119.50' Q6A variant (sold out), probably a listing error. Radxa's page says 'up to 16 GB'. Do not plan on it.
+  
+  CUSTOMS, VAT AND REGION (country unknown: check these)
+  - EU: buy VAT-paid inside the EU where possible (TinyTronics, Passion Radio, Astroradio, WiMo, iFixit EU, CNC Kitchen, QuietPC). For non-EU parcels, check whether the seller collects VAT through IOSS (consignments of EUR 150 or less; AliExpress and eBay do). Above EUR 150, expect import VAT plus any duty plus courier handling fees. RTL-SDR Blog's webstore does not ship to the EU: use its official eBay or AliExpress store (no. 4523039).
+  - UK: sellers collect VAT on consignments of GBP 135 or less. Above that, import VAT plus courier fees apply. UK sources: Pi Hut, Uputronics, Leo Bodnar (VAT basis of the GBP 132 is not stated), Mirfield, and Moonraker (duty-paid checkout).
+  - US: check the current de minimis status and tariffs on China-origin goods before ordering from Allnet, the RTL-SDR Blog CN warehouse, LCSC, Waveshare, ADT-Link or AliExpress. My information, to verify: duty-free de minimis was suspended for all countries from 29 Aug 2025. Prefer US stock where it exists: ITEAD US, DigiKey, Adafruit, Nooelec, Pololu, Mini-Circuits, and RTL-SDR Blog on Amazon USA.
+  - CA/AU/CH/NO/JP and elsewhere: check the low-value import GST/VAT rule and whether checkout collects it.
+  - Li-ion cells (UN3480) mostly ship by ground and domestically only. Buy the five P50Bs from an established retailer in your own country and test capacity (4.85 Ah or more), IR and weight (68-70 g). The Anker 737 (24,000 mAh, about 86-88 Wh) is under the 100 Wh cabin limit.
+  - Shipping restrictions: RTL-SDR Blog will not ship to RU/BY/IR/KP; Waveshare not to IR/RU; Mini-Circuits screens exports.
+  - Small-part sellers (LCSC, DigiKey, Mini-Circuits) have shipping fees or minimums that can exceed the part value, so consolidate orders.
+  - All totals exclude shipping, import VAT and duty.
+  
+  CLONE AND AUTHENTICITY
+  - RTL-SDR (HIGH risk): official store, eBay rtl-sdr-blog, AliExpress store 4523039 or a listed reseller only. Never blue cases, 'Pro' or 'V4' copies.
+  - tinySA and LiteVNA (HIGH): tinySA.org list sellers or Passion Radio only. Reject unconfirmed AliExpress 'Zeenko' listings, Banggood, TinyRFEquip and TinyRFLab.
+  - Airspy (MEDIUM): dealers on airspy.com/purchase only.
+  - Others: Adafruit or SparkFun BNO08x only. Branded Waveshare RP2040-Zero. Genuine Amass XT30. LCSC is not franchised for ADI/TI (moderate risk on the LT3045). Hantek, ANENG and generic HMC7992 boards from marketplaces have grey or clone risk.
+  
+  CONFLICTS_FOR_FINAL_CHECKS: DECISION; REASON
+  1. LimeSDR Micro: gated optional. Place the store pre-order only if wanted. Move the free keep/cancel decision to 1 Dec 2026, before the 15 Dec ship date. A 31 Jan 2027 decision after delivery costs at least $20 restocking plus return shipping plus non-recoverable import VAT. Riser, MHF4 cables, I-PEX tool and T7 only if kept. Reason: verified Crowd Supply policy and ship date; no core function depends on it.
+  2. RAM: buy the 12 GB now. EU: TinyTronics EUR 148 incl. VAT. Elsewhere: Allnet $189.99. RAM budget: 4 GiB ring with the Lime, 1.5 GiB or less without. Reason: both are verified in stock; Allnet 8 GB is sold out and TinyTronics 8 GB saves only EUR 27; RAM cannot be added later.
+  3. Pack: 4S1P P50B, 5 cells. Reason: the 13.2 V LNB, the 12.5 V whip LDO and AUX 12 V need more than 12 V.
+  4. 12 V regulator: buy the D36V50F12 now ($39.95; stock is 'Rationed', so add a spare if the ration allows). Replace it only if the tinySA terminated-floor spur A/B or the sealed-case current test fails. Reason: no official forced-PWM 12 V buck-boost of 5 A or more was found.
+  5. USB map: freeze the Lime-agnostic map and buy 2 CH334F ($4.95, verified). Reason: works with or without the Lime. With Lime+T7, RTL-A needs another hub port; re-plan only if the Lime is kept.
+  6. Header map: adopt it. IMU = USB-CDC puck (RP2040-Zero plus Adafruit BNO085) on CH334F H2; buy 2 RP2040-Zero. Reason: does not depend on the unverified UART7.
+  7. labd is the sole hardware owner. Reason: one lock authority. No purchase impact.
+  8. LNB: 13.2 V ±0.2 V from an S18V20AHV, true-off via a second #2813, no 18 V. Measure the Bullseye current, then set one limit at 1.5-2x that value. Choose the injector after the measurement: TCBT-2R5G+ if the draw is 150 mA or less, otherwise ZFBT-4R2GW+ (500 mA). Reason: TCBT is rated 200 mA and the S18V20AHV EN is not a true disconnect.
+  9. LNA bias: keep 250-300 mA for every SAWbird+, but on any port that injects through a 200 mA TCBT, use the latch-off TPS2553-1 variant (check the TI datasheet), or a tee rated 300 mA or more. The V4L tee carries 90 mA or less (half its 180 mA rating). That covers the LNA V2 (90 mA), and the Uputronics 440 after its current is measured. Reason: the TCBT 200 mA rating found today; the vendor LNA V2 figure.
+  10. FM filter: Flamingo+ FM v2, $24.95 verified. Reason: published 250 mA DC pass.
+  11. librtlsdr: only the .so.2 rebuild of noble 2.0.1. No purchase impact.
+  12. Display: buy the Wisecoco only after written answers on USB-HID VID:PID, bonding/AR, input V/I, EDID, acceptance of a 127.9 MHz/51.7 Hz mode, glove mode and package contents. Pay by PayPal. Otherwise buy the 4D from DigiKey at $128.95. Reason: the listing still says I2C touch.
+  13. PPS: out-of-tree pps-gpio on 6.18.2-4. Do not buy the FT232RL fallback now. Reason: CONFIG_PPS=y on the held kernel.
+  14. INA228: Adafruit 5832 on I2C0 through user-space i2c-dev, shunt in the pack lead. No purchase impact.
+  15. Antenna tiers: two tiers. Patch/small: L-band patch, L1/L5 patch, small whips, 4-turn helix. Foldable: dipole kit as the V-dipole (LRPT default), crossed Yagi in the ultra-compact build, helicone, gore horn. No loops are sourced. Reason: user rule.
+  16. Policy leftovers: struck. Not sourced: H-probes (PS-500, Zeenko 3-probe set, E/H sets), YouLoop, VNA antenna sweeps, wsjtx GUI/fldigi. Reason: hard rules.
+  17. HF: Boni-Whip at 12.5 V from an LT3045. The 9:1 wire is HF only. The selector relay is still unsourced; choose it before relying on AIS-on-HF+. Reason: published supply ranges and the balun's LF loss.
+  18. Storage: no T7 and no large microSD now; buy the UFS plus a 64 GB rescue card. Reason: NAND prices; the T7 is needed only with the Lime.
+  19. CPU allocation: adopt as written. No purchase impact.
+  20. Roadmap: NPU Phase 0 in W1-2, so the board, UFS and Debug Probe are ordered first.
+  21. V4L: buy 3 now ($113.85). Continuous ADS-B goes on the Pro Stick Plus (extended), not a 4th V4L. Reason: the R828S is end of life, and the spare stays a spare.
+  22. Software: one venv-per-tool recipe. No purchase impact.
+  23. Region: hold the Bullseye, LNB supply and horn until the user is confirmed inside the Es'hail-2 footprint. Hold the SAWbird+ iO until header-level discard works on recordings from the L-band patch. Buy region-neutral lab tools from the nearest official seller. Reason: Inmarsat-C is a compliance gate, not a region gate, and the free-shipping argument for the iO is false.
+  24. Costs: re-priced in totals_usd at world prices.
+  25. P1b errata: outside sourcing. Add these sourcing errata: the 1.16 FX rate, the TCBT 200 mA rating, Uputronics availability, the Passion Radio VAT basis and the Lime cancellation timing.
+- **Per item:**
+  1.
+    - **Item:** Radxa Dragon Q6A 12 GB (RS701-D12J0R44S32Y13W28, Wi-Fi 6/BT 5.4)
+    - **Tier:** core device
+    - **Best seller:** TinyTronics NL (Radxa-listed distributor) for EU buyers; ALLNET China for everyone else
+    - **Url:** https://www.tinytronics.nl/en/development-boards/single-board-computers/radxa-dragon-q6a-qcs6490-12gb
+    - **Price usd:** 166.37 (EUR 148 incl. VAT); Allnet 189.99 + shipping
+    - **Verified:** так
+    - **Alternative:** https://shop.allnetchina.cn/products/radxa-dragon-q6a ($189.99, available)
+    - **Notes:** TinyTronics: 10+ in stock, ships only to the 26 EU countries on its delivery page. Arace ($169) is sold out. Allnet returns: 7 days, unused only, so a burn-in failure becomes a warranty claim.
+  2.
+    - **Item:** Radxa UFS 3.1 Module 128 GB (RA022-B10J0U2)
+    - **Tier:** core device
+    - **Best seller:** ALLNET China
+    - **Url:** https://shop.allnetchina.cn/products/high-performance-ufs-3-1-module
+    - **Price usd:** 65.90
+    - **Verified:** так
+    - **Alternative:** TinyTronics EUR 58 incl. VAT ($65.20), not in stock (2-4 weeks); suits EU buyers combining it with the board
+    - **Notes:** Only in-stock world source. Read the manufacturer ID on arrival (0x01CE = Samsung).
+  3.
+    - **Item:** Radxa Armor Case 7056A (AE036) + 40 mm 5 V fan
+    - **Tier:** core device
+    - **Best seller:** ALLNET China (case, same order as the board) + Adafruit PID 6101 (fan)
+    - **Url:** https://shop.allnetchina.cn/products/radxa-heatsink-7056a
+    - **Price usd:** 9.90 + 4.95
+    - **Verified:** так
+    - **Alternative:** Arace case $4.99 (in stock, but nothing else in stock there, so separate shipping); Noctua NF-A4x10 5V at The Pi Hut GBP 14 ($18.65)
+    - **Notes:** Switch the fan on/off at 60/50 C through an AO3400.
+  4.
+    - **Item:** Display: Wisecoco 7in 1920x1080 2000+ nit HDMI kit (gated)
+    - **Tier:** core device
+    - **Best seller:** Wisecoco own store
+    - **Url:** https://www.wisecocodisplay.com/product/7-inch-1920x1080-high-brightness-2500nits-lcd-panel-with-hdmi-in-board-ips-mipi-interface-tft-lcd-screen/
+    - **Price usd:** 132.00 + quoted shipping
+    - **Verified:** так
+    - **Alternative:** 4D Systems 4DHDMI-70-1280-800-CT-EAR-1000 at DigiKey $128.95 (13 in stock, 4-week lead after that); 4D store $141.85
+    - **Notes:** Price and InStock confirmed. Specs are not: the listing says I2C capacitive touch, gives no input voltage and no package contents. Buy only after written answers; pay by PayPal.
+  5.
+    - **Item:** Short shielded HDMI lead + 2 snap-on ferrites
+    - **Tier:** core device
+    - **Best seller:** Adafruit PID 2420 + DigiKey Wurth 74271140
+    - **Url:** https://www.adafruit.com/product/2420
+    - **Price usd:** 9.95 + 7.82
+    - **Verified:** так
+    - **Alternative:** Adafruit FPC kit (3548 + 3560) at $14.50, only if routing needs it
+    - **Notes:** The ferrite price ($3.91 each) was not re-checked.
+  6.
+    - **Item:** HMI and IMU MCUs: Waveshare RP2040-Zero x2
+    - **Tier:** core device
+    - **Best seller:** Waveshare
+    - **Url:** https://www.waveshare.com/rp2040-zero.htm
+    - **Price usd:** 7.98-9.98
+    - **Verified:** ні
+    - **Alternative:** Raspberry Pi Pico at The Pi Hut, GBP 3.80 ($5.06)
+    - **Notes:** Counted once for both HMI and IMU puck (the compute and power groups both listed it). Stock is not shown on the page.
+  7.
+    - **Item:** Encoders, knobs, sealed keys
+    - **Tier:** core device
+    - **Best seller:** DigiKey (Bourns PEC11R-4215F-S0024 x3, C&K KSC641J LFS x10) + Adafruit 2055 knob x2
+    - **Url:** https://www.digikey.com/en/products/result?keywords=PEC11R-4215F-S0024
+    - **Price usd:** 8.85 + 7.00 + 1.90
+    - **Verified:** ні
+    - **Alternative:** APEM IPR3SAD2 IP67 panel keys at $16.16 each (+$90 for 6)
+    - **Notes:** Adafruit knob in stock (verified). DigiKey lines not re-checked.
+  8.
+    - **Item:** Internal hub and I/O: Adafruit CH334F 5997 x2 + MCP23017 5346
+    - **Tier:** core device
+    - **Best seller:** Adafruit
+    - **Url:** https://www.adafruit.com/product/5997
+    - **Price usd:** 9.90 + 5.95
+    - **Verified:** так
+    - **Alternative:** The Pi Hut CH334F GBP 4.80
+    - **Notes:** The completeness lens counts about 24 control lines; add a TCA9535 or a second MCP23017 if confirmed.
+  9.
+    - **Item:** Flashing/rescue kit: ALLNET 64 GB microSD + Adafruit 5212 reader + Adafruit 6324 USB-A-to-C cable
+    - **Tier:** core device
+    - **Best seller:** ALLNET China + Adafruit
+    - **Url:** https://shop.allnetchina.cn/products/allnet-micro-sd
+    - **Price usd:** 16.99 + 6.95 + 2.95
+    - **Verified:** так
+    - **Alternative:** Raspberry Pi A2 64 GB (Adafruit 6011) is on backorder
+    - **Notes:** The Radxa UFS reader RA019 is sold out; flash over EDL or from microSD.
+  10.
+    - **Item:** Molicel INR21700-P50B x5
+    - **Tier:** core device
+    - **Best seller:** 18650 Battery Store (US)
+    - **Url:** https://www.18650batterystore.com/products/molicel-21700-p50b-5000mah-50a-battery
+    - **Price usd:** 49.95 (9.99 each)
+    - **Verified:** так
+    - **Alternative:** RaceDayQuads $18.49 per 2; NKON EUR 6.75 (unverified, page blocked)
+    - **Notes:** Loose cells ship domestically; buy from an established retailer in your own country and test every cell.
+  11.
+    - **Item:** Daly 4S 15 A BMS + IP2368 100 W 4S PD boards x2
+    - **Tier:** core device
+    - **Best seller:** TinyTronics (BMS) + marketplace boards
+    - **Url:** https://www.tinytronics.nl/en/power/bms-and-chargers/bms/daly-bms-li-ion-li-po-protection-circuit-4s-15a-with-balancing
+    - **Price usd:** 9.00 + 25-49
+    - **Verified:** ні
+    - **Alternative:** None official for the IP2368 board
+    - **Notes:** IP2368 prices are snippets only (Newegg $15.79). Burn in 2-3 boards; set RVSET 5.1k and RISET 15k.
+  12.
+    - **Item:** Pololu D36V50F12 (12 V), D36V28F5 (LAB 5 V), #2813 x2
+    - **Tier:** core device
+    - **Best seller:** Pololu
+    - **Url:** https://www.pololu.com/product/4095
+    - **Price usd:** 39.95 + 23.95 + 17.90
+    - **Verified:** так
+    - **Alternative:** None official for a forced-PWM 12 V 5 A buck-boost
+    - **Notes:** All 'Rationed (Active and Preferred)'. Order in one go; buy a spare D36V50F12 if the ration allows.
+  13.
+    - **Item:** Adafruit INA228 (5832) + LCSC parts (LT3045 x1, TPS2553 x10, fuses, holder, PTC, XT30, DC jacks)
+    - **Tier:** core device
+    - **Best seller:** Adafruit + LCSC
+    - **Url:** https://www.adafruit.com/product/5832
+    - **Price usd:** 14.95 + about 25-29
+    - **Verified:** ні
+    - **Alternative:** TI store TPS2553 (out of stock)
+    - **Notes:** INA228 verified in stock. LCSC lines not re-checked; LCSC is not ADI/TI-franchised. Also check the TPS2553-1 latch-off variant.
+  14.
+    - **Item:** GNSS + RTC + IMU: Waveshare LC76G 24370 + Allnet RTC cell + Adafruit BNO085 4754
+    - **Tier:** core device
+    - **Best seller:** Waveshare + ALLNET + Adafruit
+    - **Url:** https://www.waveshare.com/lc76g-gnss-module.htm
+    - **Price usd:** 14.99 + 0.95 + 29.50
+    - **Verified:** так
+    - **Alternative:** SparkFun BNO086 $34.95; Uputronics MAX-M10S only if spoof flags matter
+    - **Notes:** Confirm the RTC plug against schematic sheet 18.
+  15.
+    - **Item:** Mechanical: ASA 1 kg, CNC Kitchen inserts and screws, Gelid pads x2, strap
+    - **Tier:** core device
+    - **Best seller:** Polymaker / Prusa, CNC Kitchen, QuietPC, any rated camera strap
+    - **Url:** https://cnckitchen.store/products/heat-set-insert-m3-x-5-7-100-pieces
+    - **Price usd:** 26 + 46 + 11 + 15-50
+    - **Verified:** ні
+    - **Alternative:** Peak Design Leash $49.95 (only official strap price seen)
+    - **Notes:** CNC Kitchen M3 inserts verified (EUR 9.40). Others not re-checked.
+  16.
+    - **Item:** RTL-SDR Blog V4L (Lite) x3
+    - **Tier:** core device
+    - **Best seller:** RTL-SDR Blog official store (non-EU); official eBay/AliExpress store 4523039 (EU)
+    - **Url:** https://www.rtl-sdr.com/product/rtl-sdr-blog-v4l-lite-r828s-rtl2832u-1ppm-tcxo-sma-software-defined-radio-dongle-only/
+    - **Price usd:** 113.85 (37.95 each)
+    - **Verified:** так
+    - **Alternative:** None (V3 only as a fallback)
+    - **Notes:** 455 in stock. The R828S is end of life, so buy now. HIGH clone risk.
+  17.
+    - **Item:** 137 MHz front end: Nooelec SAWbird+ NOAA (cased, 100800) + Flamingo+ FM v2 (100813)
+    - **Tier:** core device
+    - **Best seller:** Nooelec
+    - **Url:** https://www.nooelec.com/store/flamingo-plus-fm.html
+    - **Price usd:** 49.95 + 24.95
+    - **Verified:** так
+    - **Alternative:** RTL-SDR Blog FM band-stop $16.95 (no DC rating)
+    - **Notes:** Same Nooelec order as GOES+, Balun and the pad kit ($199.75 total, free shipping).
+  18.
+    - **Item:** 70 cm front end: Uputronics Filtered Preamp, 440 MHz CubeSAT variant
+    - **Tier:** core device
+    - **Best seller:** Uputronics own store (UK)
+    - **Url:** https://store.uputronics.com/products/uputronics-filtered-preamps
+    - **Price usd:** 68.71 (GBP 51.59 incl. VAT; about 57.25 ex VAT)
+    - **Verified:** так
+    - **Alternative:** 434 MHz variant GBP 41.99 (narrower ISM SAW, avoid); LNA V2 + BPF (no BPF part found)
+    - **Notes:** Available. Bias input 5 V. Replaces the unnamed 70 cm BPF and the in-service LNA V2. Measure its current before using the V4L tee.
+  19.
+    - **Item:** LNA injectors: Mini-Circuits TCBT-2R5G+ x3 (DIY SMA board)
+    - **Tier:** core device
+    - **Best seller:** DigiKey
+    - **Url:** https://www.digikey.com/en/products/result?keywords=TCBT-2R5G%2B
+    - **Price usd:** 33.93 (11.31 each)
+    - **Verified:** так
+    - **Alternative:** Mini-Circuits ZFBT-4R2GW+ $111.57 (500 mA, 30 V)
+    - **Notes:** 1,350 in stock. Datasheet: 20-2500 MHz, 0.4 dB, 200 mA max, +25 V. Use the TPS2553-1 latch-off on SAWbird+ ports.
+  20.
+    - **Item:** Coax: RTL-SDR Blog SMA pigtail set + 0.5-1 m RG316 leads with ferrites
+    - **Tier:** core device
+    - **Best seller:** RTL-SDR Blog store + generic
+    - **Url:** https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+    - **Price usd:** 18.95 + 15-30
+    - **Verified:** ні
+    - **Alternative:** Mini-Circuits 086-24SM+ $24.73
+    - **Notes:** Leads are an estimate.
+  21.
+    - **Item:** RTL-SDR Blog Active L-band patch set (1525-1660 MHz)
+    - **Tier:** antenna kits
+    - **Best seller:** RTL-SDR Blog store
+    - **Url:** https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+    - **Price usd:** 59.95
+    - **Verified:** так
+    - **Alternative:** DIY 2/4-turn helix + SAWbird+ iO
+    - **Notes:** Listed on the buy page as in stock at the Amazon USA and China warehouses (the product URL is 404). 20 mA, so the V4L tee is fine. Patch-tier Inmarsat-C and GNSS antenna; records the header-filter test set.
+  22.
+    - **Item:** Waveshare GNSS L1+L5 active antenna (25346)
+    - **Tier:** antenna kits
+    - **Best seller:** Waveshare
+    - **Url:** https://www.waveshare.com/gps-external-antenna-d.htm
+    - **Price usd:** 16.99
+    - **Verified:** так
+    - **Alternative:** u-blox ANN-MB5 at SparkFun, $42.50
+    - **Notes:** InStock. Also serves as the lab core's L1 reference (de-duplicated).
+  23.
+    - **Item:** L-band HRPT LNA: Nooelec SAWbird+ GOES (cased, 100792)
+    - **Tier:** antenna kits
+    - **Best seller:** Nooelec
+    - **Url:** https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-goes-302.html
+    - **Price usd:** 49.95
+    - **Verified:** так
+    - **Alternative:** Barebones $44.95 (only inside a shielded case)
+    - **Notes:** Includes enclosure and SMA adapter. Feed from a TPS2553(-1), never the V4L tee.
+  24.
+    - **Item:** RTL-SDR Blog multipurpose dipole kit x2 (V-dipole + spare elements)
+    - **Tier:** antenna kits
+    - **Best seller:** RTL-SDR Blog store
+    - **Url:** https://www.rtl-sdr.com/product/rtl-sdr-blog-multipurpose-dipole-antenna-kit/
+    - **Price usd:** 35.90
+    - **Verified:** так
+    - **Alternative:** One kit + 2-3 piece rods
+    - **Notes:** 357 in stock. LRPT default antenna.
+  25.
+    - **Item:** DIY antennas: 17 cm whip, A-V85/SRH-701 class whip, 4-turn helix, crossed Yagi (ultra-compact), petal helicone
+    - **Tier:** antenna kits
+    - **Best seller:** Local hardware and metal suppliers
+    - **Url:** https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+    - **Price usd:** 55-122 (estimate)
+    - **Verified:** ні
+    - **Alternative:** None
+    - **Notes:** Materials only; tune receive-only.
+  26.
+    - **Item:** QO-100: Othernet Bullseye TCXO LNB (HOLD until region confirmed)
+    - **Tier:** antenna kits (held add-on)
+    - **Best seller:** RTL-SDR Blog store
+    - **Url:** https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+    - **Price usd:** 29.95
+    - **Verified:** так
+    - **Alternative:** Technofix UK GBP 31.99 (out of stock)
+    - **Notes:** 70 in stock; Technofix is already out, so don't wait long once the region is known.
+  27.
+    - **Item:** LNB 13.2 V supply: Pololu S18V20AHV + #2813 + injector + F-SMA/LC/PTC
+    - **Tier:** antenna kits (held add-on)
+    - **Best seller:** Pololu + DigiKey/Mini-Circuits
+    - **Url:** https://www.pololu.com/product/2573
+    - **Price usd:** 36.49 + 8.95 + 11.31 or 111.57 + 5-10
+    - **Verified:** так
+    - **Alternative:** None verified
+    - **Notes:** Pick the injector after measuring the LNB current: TCBT if 150 mA or less, else ZFBT-4R2GW+.
+  28.
+    - **Item:** QO-100 cone and gore horn materials
+    - **Tier:** antenna kits (held add-on)
+    - **Best seller:** Local metal supplier + 3M 1170 tape (DigiKey $35.70) or HVAC tape
+    - **Url:** https://www.digikey.com/en/products/result?keywords=3M%201170%20aluminum%20foil%20tape
+    - **Price usd:** 13-30 (estimate)
+    - **Verified:** ні
+    - **Alternative:** None
+    - **Notes:** Measure the LNB neck and waveguide first.
+  29.
+    - **Item:** Inmarsat-C LNA: Nooelec SAWbird+ iO (cased, 100788) (HOLD)
+    - **Tier:** antenna kits (held add-on)
+    - **Best seller:** Nooelec
+    - **Url:** https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-io-303.html
+    - **Price usd:** 49.95
+    - **Verified:** так
+    - **Alternative:** The L-band patch already covers 1537-1545 MHz
+    - **Notes:** Buy only after header-level discard works on recordings.
+  30.
+    - **Item:** LiteVNA 64 (Zeenko)
+    - **Tier:** lab core
+    - **Best seller:** Passion Radio (FR)
+    - **Url:** https://www.passion-radio.com/analyzer-spectrum/lite-vna64-2730.html
+    - **Price usd:** 210.88 (EUR 187.60 incl. FR VAT; about 175.73 ex VAT for export)
+    - **Verified:** так
+    - **Alternative:** Lab401 EUR 192 (vendor field DeepElec; not chosen)
+    - **Notes:** 5 in stock. Bundle: male OSL, F-F, 2 cables. Conducted use only.
+  31.
+    - **Item:** tinySA Ultra+ ZS407
+    - **Tier:** lab core
+    - **Best seller:** Astroradio (ES), on the tinySA.org safe list
+    - **Url:** https://www.astroradio.com/p/tinysa-ultra-analizador-de-espectro-plus/
+    - **Price usd:** 247.18 (EUR 219.89 incl. 21% VAT; 204.28 ex VAT)
+    - **Verified:** так
+    - **Alternative:** Mirfield UK GBP 189.95 (limited stock); R&L $219.95 (out of stock)
+    - **Notes:** In stock. Ignore the vendor's '12 GHz' claim. Order early: it gates the regulator decision.
+  32.
+    - **Item:** Noise source amplifier: Mini-Circuits ZFL-500+ (DIY N8DMT-type source)
+    - **Tier:** lab core
+    - **Best seller:** Mini-Circuits webstore
+    - **Url:** https://www.minicircuits.com/WebStore/dashboard.html?model=ZFL-500%2B
+    - **Price usd:** 99.55 + box 5-10
+    - **Verified:** ні
+    - **Alternative:** ZFL-500LN+ $116.81 (verified, more than 100 in stock); used ZFL-500 about $20-40
+    - **Notes:** ENR is characterised with the tinySA; NF results are relative.
+  33.
+    - **Item:** RF bench set: Nooelec pad kit, 2x 30 dB pads, 2x BLK-89-S+, 3x ANNE-50+, 3x 086-6SM+ (2 jumpers + 1 cut into E-field probes)
+    - **Tier:** lab core
+    - **Best seller:** Nooelec + Passion Radio + Mini-Circuits
+    - **Url:** https://www.minicircuits.com/WebStore/dashboard.html?model=BLK-89-S%2B
+    - **Price usd:** 47.95 + 29.68 + 40.52 + 44.52 + 50.01
+    - **Verified:** так
+    - **Alternative:** Mini-Circuits VAT-30W2+ $31.43 per 30 dB pad
+    - **Notes:** BLK-89-S+ counted once (the SDR group also listed it). The female OSL is the bundled male OSL + F-F, so $0.
+  34.
+    - **Item:** SMA torque wrench 0.9 N·m + adapter set
+    - **Tier:** lab core
+    - **Best seller:** TOJOIN eBay store + RTL-SDR Blog SMA adapter set
+    - **Url:** https://www.ebay.com/itm/354598266754
+    - **Price usd:** 35.89 + 14.95-26.95
+    - **Verified:** ні
+    - **Alternative:** AliExpress ratcheting $51.49
+    - **Notes:** Wrench seen only in a search snippet; confirm the listing before ordering.
+  35.
+    - **Item:** Spare RTL-SDR Blog Wideband LNA V2
+    - **Tier:** lab core
+    - **Best seller:** RTL-SDR Blog store
+    - **Url:** https://www.rtl-sdr.com/product/rtl-sdr-blog-wideband-lna-bias-tee-powered/
+    - **Price usd:** 19.95
+    - **Verified:** так
+    - **Alternative:** None
+    - **Notes:** 208 in stock; 90 mA.
+  36.
+    - **Item:** Bench electronics: FNIRSI FNB58 Std, ANENG AN8008/9, Hantek 6022BE + fx2lafw LA, Raspberry Pi Debug Probe
+    - **Tier:** lab core
+    - **Best seller:** fnirsi.com, AliExpress (ANENG), The Debug Store, Adafruit
+    - **Url:** https://www.fnirsi.com/products/fnb58
+    - **Price usd:** 53.99 + 26-53 + 133-160 + 8-12 + 12.00
+    - **Verified:** ні
+    - **Alternative:** 6022BL on AliExpress $84-102 (store unconfirmed)
+    - **Notes:** FNB58 Std, the 6022BE (GBP 100, VAT basis unclear) and the Debug Probe are verified. The ANENG store is unconfirmed.
+  37.
+    - **Item:** Pinecil V2, iFixit ESD mat, Anker 737, Waveshare MTT bench hub
+    - **Tier:** lab core
+    - **Best seller:** PINE64, iFixit (US/EU), Anker, The Pi Hut
+    - **Url:** https://www.anker.com/products/a1289
+    - **Price usd:** 25.99 + 34.95 + 109.99 + 24.64
+    - **Verified:** так
+    - **Alternative:** iFixit EU EUR 29.95
+    - **Notes:** Anker (20 V/5 A PDO, in stock) and the hub (GBP 18.50) verified. The Pinecil and mat were not re-checked.
+  38.
+    - **Item:** Tools, spares kit, notebook and organiser
+    - **Tier:** lab core
+    - **Best seller:** Various
+    - **Url:** https://www.ifixit.com/products/portable-anti-static-mat
+    - **Price usd:** 165-260 (estimate)
+    - **Verified:** ні
+    - **Alternative:** Fuses, XT30s and pigtails only (about $25)
+    - **Notes:** Not sourced.
+  39.
+    - **Item:** GPSDO: Leo Bodnar LBE-1420
+    - **Tier:** lab extended
+    - **Best seller:** Leo Bodnar Electronics (UK)
+    - **Url:** https://www.leobodnar.com/shop/index.php?main_page=product_info&cPath=107&products_id=393
+    - **Price usd:** 175.80 (GBP 132; VAT basis not stated)
+    - **Verified:** так
+    - **Alternative:** Bodnar Mini, same price, superseded
+    - **Notes:** In stock; antenna included; ships worldwide.
+  40.
+    - **Item:** ADS-B: FlightAware Pro Stick Plus
+    - **Tier:** lab extended
+    - **Best seller:** The Pi Hut
+    - **Url:** https://thepihut.com/products/flightaware-pro-stick-plus-usb-sdr-ads-b-receiver
+    - **Price usd:** 69.92 (GBP 52.50)
+    - **Verified:** так
+    - **Alternative:** Uputronics 1090 MHz preamp GBP 44.39 ($59.12) on the spare V4L
+    - **Notes:** Keeps the spare V4L a spare.
+  41.
+    - **Item:** RF sled: generic HMC7992 SP4T board + PE4302 + MCP23017 #2 + box/parts
+    - **Tier:** lab extended
+    - **Best seller:** Marketplace (unverified)
+    - **Url:** https://www.walmart.ca/en/ip/HMC7992-Non-Reflective-SP4T-RF-Switch-Module-PCB-Material-0-1-6GHz-Frequency-Range-3V-5V-Power-Supply-45dB-Isolation-0-6dB-Insertion-Loss-58dBm-IIP3/4LT6JIAL4ULJ
+    - **Price usd:** 99-158
+    - **Verified:** ні
+    - **Alternative:** Manual SMA swaps (free); EV1HMC7992LP3D $319.28 (rejected on value)
+    - **Notes:** Qualify isolation (conducted) before use.
+  42.
+    - **Item:** SAWbird+ H1, FNIRSI DPS-150, Pelican 1450/Apache 3800
+    - **Tier:** lab extended
+    - **Best seller:** Nooelec, Elektor, various
+    - **Url:** https://www.nooelec.com/store/
+    - **Price usd:** 45-50 + 73-75 + 30-169
+    - **Verified:** ні
+    - **Alternative:** Reuse the helix/helicone
+    - **Notes:** Not re-verified (the H1 URL tried returned 404).
+  43.
+    - **Item:** Airspy HF+ Discovery
+    - **Tier:** HF chain
+    - **Best seller:** ITEAD (official Airspy manufacturer partner), EU/US/CN warehouses
+    - **Url:** https://itead.cc/product/airspy-hf-discovery/
+    - **Price usd:** 169.00
+    - **Verified:** так
+    - **Alternative:** Moonraker $223.95 (snippet); AstroRadio EUR 214.17 = $240.75
+    - **Notes:** Store API: in stock at all three warehouses.
+  44.
+    - **Item:** HF wire + Nooelec Balun One Nine v2 (100806) + thin coax/ferrites
+    - **Tier:** HF chain
+    - **Best seller:** Nooelec + local wire (or Tecsun AN-05)
+    - **Url:** https://www.nooelec.com/store/balun-one-nine-v2.html
+    - **Price usd:** 26.95 + 5-14.49 + 15-25
+    - **Verified:** ні
+    - **Alternative:** Moonraker AN-05 $14.49 (snippet; stock contradictory)
+    - **Notes:** Balun price verified. HF only; bias locked off.
+  45.
+    - **Item:** Bonito Boni-Whip (BNC, bias tee included)
+    - **Tier:** HF chain
+    - **Best seller:** WiMo (DE)
+    - **Url:** https://www.wimo.com/en/18067
+    - **Price usd:** 178.73 (EUR 159 incl. VAT; 150.19 net)
+    - **Verified:** так
+    - **Alternative:** Moonraker $123.95 (search snippet only; page blocked)
+    - **Notes:** Available from 20 Nov 2026. 9-15 V, about 14 cm, 189 g. Feed 12.5 V.
+  46.
+    - **Item:** Boni-Whip 12.5 V rail (LT3045 + LC + load switch + shield) and HF+ input selector relay + BNC-SMA lead
+    - **Tier:** HF chain
+    - **Best seller:** LCSC + part TBD
+    - **Url:** https://www.lcsc.com/product-detail/voltage-regulators-linear-low-drop-out-ldo-regulators_analog-devices-lt3045emse-pbf_C580012.html
+    - **Price usd:** 18-23 + 10-25 (estimate)
+    - **Verified:** ні
+    - **Alternative:** 'Connect X' prompt without a relay
+    - **Notes:** Relay still unsourced.
+  47.
+    - **Item:** LimeSDR Micro M.2 2280 Basic + 2x MHF4L-SMA (Lime-conditional)
+    - **Tier:** Lime-conditional
+    - **Best seller:** Crowd Supply
+    - **Url:** https://www.crowdsupply.com/lime-micro/limesdr-micro
+    - **Price usd:** 267 + 12
+    - **Verified:** так
+    - **Alternative:** None
+    - **Notes:** Pre-order, ships 15 Dec 2026. Full refund only before shipment.
+  48.
+    - **Item:** Lime-only parts: ADT-Link R44SF 5 cm, I-PEX 90435-001 tool, Samsung T7 1 TB
+    - **Tier:** Lime-conditional
+    - **Best seller:** ADT-Link webshop, DigiKey, B&H
+    - **Url:** http://www.adt.link/product/R44SF.html
+    - **Price usd:** 19 + 18.10 + 229.99-274.99
+    - **Verified:** ні
+    - **Alternative:** None
+    - **Notes:** R44SF $19 verified (PCIe 3.0 x4, M-key to M-key). The T7 price is a snippet only; buy only if the Lime is kept.
+- **Refuted offers:**
+  1.
+    - **Offer:** Arace Tech Q6A 12 GB $169 (and the other Arace variants)
+    - **Why:** Sold out: Shopify .js shows every variant unavailable. It also lists an odd '16GB $119.50' variant. Not purchasable.
+  2.
+    - **Offer:** Ameridroid Q6A 12 GB $249.95 / 6 GB $169.95 (marked 'official_channel')
+    - **Why:** Out of stock. Ameridroid is not on radxa.com/distributors (Allnet, Arace, TinyTronics, RS, SB Components and others are). Most expensive.
+  3.
+    - **Offer:** ALLNET Q6A 8 GB $159.99
+    - **Why:** Sold out per Shopify .js.
+  4.
+    - **Offer:** TinyTronics Q6A at 'EUR 122.31 ex VAT ($137.49)' and 'ships outside the EU on request; UK minimum EUR 170'
+    - **Why:** The delivery page lists only 26 EU destinations, so the non-EU claim is unconfirmed. EU consumers pay VAT; plan on EUR 148.
+  5.
+    - **Offer:** Arace UFS 128 GB $49
+    - **Why:** Sold out (.js).
+  6.
+    - **Offer:** Passion Radio LiteVNA 64 'EUR 187.60 tax excl.'
+    - **Why:** Page variables: base 219 incl. / 182.50 ex VAT, reduction 31.40 incl. So 187.60 is the VAT-inclusive price; the ex-VAT price is about EUR 156.33. Price corrected, offer kept.
+  7.
+    - **Offer:** WiMo Boni-Whip at $184.44, and AstroRadio HF+ at $248.44
+    - **Why:** Converted at 1.16 USD/EUR. At 1.1241 they are $178.73 (net $150.19) and $240.75. Boni-Whip is not available until 20 Nov 2026.
+  8.
+    - **Offer:** Moonraker HF+ $223.95, Boni-Whip $123.95 'in stock', AN-05 $14.49
+    - **Why:** Cloudflare 403 on my fetch too; undated search snippets only. Boni 'in stock' conflicts with WiMo's 20 Nov date. Unverified, not used as a planned price.
+  9.
+    - **Offer:** Mini-Circuits TCBT-2R5G+ as the SAWbird+ injector at a 250-300 mA TPS2553 limit, or as the LNB injector
+    - **Why:** Datasheet: DC current 200 mA max, +25 V. TCBT-14+/14R+ are also 200 mA. Use only with a latch-off limit or loads of 150 mA or less; ZFBT-4R2GW+ (500 mA) otherwise.
+  10.
+    - **Offer:** SDR group's 'buy the SAWbird+ iO now because it lifts the Nooelec order over the $100 free-shipping line'
+    - **Why:** NOAA+ + GOES+ + Flamingo+ = $124.85 already (core order $199.75). The iO is gated on header-level discard, not shipping.
+  11.
+    - **Offer:** 'No purchasable 70 cm band-pass / filtered preamp'
+    - **Why:** Uputronics store lists the 440 MHz CubeSAT filtered preamp at GBP 51.59 (available).
+  12.
+    - **Offer:** AliExpress 'Zeenko' tinySA ZS407 $221.32 and LiteVNA 64 $212.63
+    - **Why:** Store not confirmed as Zeenko 5800447; HIGH clone risk per tinySA.org.
+  13.
+    - **Offer:** R&L 'TINYSAULTRAPLUS' $169.95, Lab401 'TinySA Ultra+' EUR 163, Passion Radio 'TinySA ULTRA' EUR 168.36, Neven ZS-406
+    - **Why:** Wrong model (ZS406, 5.4 GHz), not the ZS407.
+  14.
+    - **Offer:** R&L ZS407 $219.95, Neven ZS407, Switch Science ZS407, GOTRONIK LiteVNA/ZS407
+    - **Why:** Out of stock or 'temporarily unavailable'.
+  15.
+    - **Offer:** Lab401 LiteVNA EUR 192
+    - **Why:** Feed vendor 'DeepElec'. Not on any official list, and pricier than Passion Radio. Not chosen.
+  16.
+    - **Offer:** The Debug Store Hantek 6022BL GBP 110 ex VAT
+    - **Why:** Product URL 404 (delisted); SainSmart marks it discontinued. AliExpress 6022BL listings ($84-158) have no confirmed store.
+  17.
+    - **Offer:** AliExpress female OSL kits ($68.75; $10.55)
+    - **Why:** Generic, store and gender unconfirmed. The bundled male OSL + F-F adapter is free.
+  18.
+    - **Offer:** Zeenko 3-probe EMI set, Com-Power PS-500, generic E/H probe sets, YouLoop
+    - **Why:** Contain H-field loops; excluded by the no-loop rule.
+  19.
+    - **Offer:** Generic HMC7992 SP4T board on Walmart.ca, CA$20.49
+    - **Why:** Snippet only, marketplace, isolation claim of 45 dB unproven. CAD converted at 0.72 vs 0.7069 ($14.48). Extended-only experiment after a conducted check.
+  20.
+    - **Offer:** ADI EV1HMC7992LP3D $319.28 and Mini-Circuits ZSWA4-63DR+ $307.32
+    - **Why:** EV1 is real (2 in stock) but rejected on value. ZSWA4 has 0 stock.
+  21.
+    - **Offer:** Samsung T7 1 TB at $274.99 (Samsung US) / $229.99 (B&H)
+    - **Why:** Search snippets only (403). Deferred to the Lime gate; re-price then.
+  22.
+    - **Offer:** IP2368 board at Newegg $15.79, NKON P50B EUR 6.75, TOJOIN wrench $35.89
+    - **Why:** Unverified (403/Cloudflare or snippet only). Use as estimates; confirm live before ordering.
+  23.
+    - **Offer:** Adafruit #610 DC jack, Adafruit 6011 A2 microSD, Allnet RA019 UFS reader, Technofix Bullseye, Mini-Circuits 141-6SM+, LCSC IP2368 chip, TI-store TPS2553
+    - **Why:** Out of stock or backorder (Adafruit API: 0 and -3).
+  24.
+    - **Offer:** Lime decision 'on 31 Jan 2027' as a free option
+    - **Why:** Crowd Supply refunds pre-orders in full only before shipment (ships 15 Dec 2026). After delivery it is a 30-day return less a restocking fee of $20 or more.
+- **Totals usd:** USD before shipping, import VAT and duty. Range = low (EU-optimised or verified-cheapest) to high (worldwide shipper or upper estimate).
+  
+  - CORE DEVICE (handheld, 4S, no Lime): $1,138-1,278.
+    - Compute, display and HMI: $457-491.
+    - Power, GNSS/IMU and mechanics: $349-416.
+    - Internal RF front end: $332-370 (3x V4L, NOAA+, Flamingo+, Uputronics 440, 3x TCBT, leads, LAB I/O).
+  - ANTENNA KITS:
+    - Region-neutral: $218-285 (L-band patch, L1/L5 patch, GOES+, 2 dipole kits, DIY whips, helix, Yagi and helicone).
+    - Held QO-100/Inmarsat add-on: $155-277 (Bullseye, 13.2 V supply, injector, horn, iO). The injector choice sets the high end.
+  - LAB CORE: $1,347-1,740. The new noise-source amp ($105-127) replaces the earlier $20-40; no H-probes; female OSL is $0.
+  - LAB EXTENDED: $463-697. Covers the LBE-1420, Pro Stick Plus, sled, H1, DPS-150 and case; excludes the calibrated 346 head.
+  - HF CHAIN: $368-463. Covers the HF+ $169, wire, balun, coax, Boni-Whip $124-179, 12.5 V rail and the selector-relay estimate.
+  - LIME-CONDITIONAL (in no total): $316 for the Lime Basic + $18 shipping + 2 MHF4 + R44SF + I-PEX tool; plus a T7 at $230-275 (unverified); plus a $74 cavity if S-band.
+  
+  Roll-ups:
+  - Handheld + antennas + HF: $1,724-2,025.
+  - Adding the QO-100 add-on and lab core: $3,226-4,042.
+  - Everything except the Lime: $3,689-4,739.
+  
+  Single-seller first orders:
+  - ALLNET bundle (board, UFS, case, RTC cell, 64 GB SD): $283.73.
+  - TinyTronics EU bundle (board, UFS, BMS): EUR 214 = $240.56.
+  - Nooelec: $199.75, free shipping.
+  - RTL-SDR Blog: $263.55.
+  - Adafruit: $99.
+  
+  Model: computed in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/sourcing_calc/bom.py. About 69% of the low total uses prices re-seen live on 18 Oct 2026.
+- **Shopping plan:**
+  - 1. Today (18-20 Oct), stock-risk items first:
+  - Q6A 12 GB plus UFS 128 GB. EU: one VAT-paid TinyTronics order (board EUR 148 + UFS EUR 58 + Daly BMS EUR 8; the UFS comes in 2-4 weeks, so boot from microSD meanwhile). Elsewhere: one ALLNET order (board $189.99, UFS $65.90, Armor case $9.90, RTC cell $0.95, 64 GB SD $16.99).
+  - Re-check stock at checkout: both were verified available on 18 Oct.
+  - 2. Today: the bring-up kit for the W1-2 / NPU Phase 0 gates, as one Adafruit order of about $99: Debug Probe, USB-A-to-C cable, microSD reader, 2x CH334F, MCP23017, INA228, BNO085, fan, slim HDMI, knobs.
+  - 3. Today: 3x V4L ($113.85; R828S end of life) from the official channel. Non-EU: the webstore. EU: the official eBay or AliExpress 4523039 store. In the same order: 2 dipole kits, the L-band patch set, the pigtail and SMA adapter sets, and the spare LNA V2.
+  - 4. Today: send Wisecoco the written questions: USB-HID VID:PID, bonding/AR, input V/I, EDID, the 127.9 MHz/51.7 Hz mode, glove mode, package contents. Pay by PayPal only after satisfactory written answers. With no clear answer in about 7 days, order the 4D 4DHDMI-70-1280-800-CT-EAR-1000 from DigiKey ($128.95; 13 in stock, 4-week lead after that).
+  - 5. Lime: if the user wants it, place the refundable Crowd Supply store pre-order ($267 worldwide) now to hold a slot. Put the keep/cancel decision in the calendar for 1 Dec 2026, before the 15 Dec shipment. Buy nothing Lime-only before that.
+  - 6. Week 1, power: order all Pololu parts in one order because stock is 'Rationed': D36V50F12, D36V28F5, 2x #2813 (plus a spare D36V50F12 if allowed). LCSC order: LT3045 x2, TPS2553 x10 (also check the TPS2553-1 latch-off variant), fuses, holder, PTC, XT30, jacks. 5x P50B from an established local retailer. 2-3 IP2368 boards for burn-in.
+  - 7. Week 1, instruments that gate decisions: tinySA ZS407 (Astroradio or another official-list seller near you), FNB58 Std, AN8008/9. These run the terminated-floor spur A/B (keep or replace the D36V50F12) and measure the HF+, LNB and Boni-Whip currents.
+  - 8. Week 1-2, RF and mechanics:
+  - Nooelec ($199.75, free shipping): NOAA+, GOES+, Flamingo+, Balun One Nine v2, pad kit.
+  - Uputronics 440 MHz CubeSAT preamp (GBP 51.59).
+  - Waveshare: LC76G, 2x RP2040-Zero, L1+L5 antenna.
+  - DigiKey: PEC11R x3, KSC641J x10, ferrites, TCBT-2R5G+ x3.
+  - ASA filament, CNC Kitchen inserts and screws, Gelid pads, strap.
+  - 9. Week 2-3, lab core and HF:
+  - Airspy HF+ from ITEAD (choose the nearest warehouse).
+  - LiteVNA 64 (Passion Radio, 5 left) plus 2x 30 dB pads.
+  - Mini-Circuits: 2x BLK-89-S+, 3x ANNE-50+, 3x 086-6SM+, ZFL-500+.
+  - Anker 737, Pinecil V2, iFixit mat, Hantek 6022BE plus an fx2lafw LA, MTT bench hub.
+  - Torque wrench, after confirming the TOJOIN listing live.
+  - 10. On arrival:
+  - Q6A: 12 h stressapptest plus memtester and 50-100 cold boots. Allnet takes back only unused items within 7 days, so treat failures as warranty claims and keep the UART logs.
+  - UFS: read the chip ID (0x01CE).
+  - Authenticity: check the V4L (case, labels, 'RTL-SDR Blog V4 Lite Detected'), the HF+ dealer invoice and the tinySA/LiteVNA seller.
+  - Cells: test capacity, IR and weight.
+  - Passive parts: VNA-check every generic pad and adapter (conducted).
+  - 11. From 20 Nov 2026: Boni-Whip (WiMo EUR 159, or Moonraker if live stock is confirmed) with its LT3045 12.5 V rail. Choose and buy the HF+ input selector relay and a BNC-SMA lead before enabling AIS on the HF+.
+  - 12. 1 Dec 2026: Lime keep/cancel. Only if kept: R44SF 5 cm ($19, ADT webshop), the I-PEX 90435-001 tool, the 2x MHF4L-SMA on the same Crowd Supply order, and a re-priced T7 1 TB. If cancelled, keep the CPU7 and RAM-ring plan in the no-Lime state.
+  - 13. When the user's region is confirmed inside the Es'hail-2 footprint: Bullseye LNB ($29.95; Technofix is already out of stock, so do not wait long), S18V20AHV + #2813, LC/PTC/F-SMA parts and horn materials. Measure the LNB current at 13.2 V, then buy the injector: TCBT-2R5G+ if 150 mA or less, else ZFBT-4R2GW+ ($111.57).
+  - 14. After header-level discard of non-SafetyNET packets is demonstrated on L-band patch recordings: SAWbird+ iO ($49.95). If the discard cannot be done, drop the Inmarsat-C profile and do not buy it.
+  - 15. Lab extended last, after the core procedures pass: LBE-1420 (GBP 132), Pro Stick Plus (GBP 52.50), the qualified sled parts, SAWbird+ H1, DPS-150, and the case.
+  - 16. Deferred, watch prices: V30/A2 microSD or the T7 while NAND prices stay high (buy only for the Lime, or once the UFS fills). Consider a 4th V4L only if the R828S stock warning returns and a second spare is wanted.
+- **Confidence:** medium
+
