@@ -5,7 +5,7 @@
 <text x="20" y="32" font-size="16" font-weight="bold" text-anchor="start" fill="#111">P7 · 04 · 40-pin хедер Radxa Dragon Q6A — карта сигналів (кольором — функція)</text>
 <text x="20" y="52" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Джерело: STACK.md v2 §5.2 «40-pin хедер», «Розширювачі», «Pico»; рішення D12. Напрям — з боку Q6A; логіка хедера 3.3 V, транслятор рівня — у дужках.</text>
 <rect x="683" y="88" width="94" height="766" rx="6" fill="#212529" stroke="#000"/>
-<text x="730" y="80" font-size="12" font-weight="bold" text-anchor="middle" fill="#111">хедер J (вид зверху)</text>
+<text x="730" y="80" font-size="12" font-weight="bold" text-anchor="middle" fill="#111">40-pin Q6A (вид зверху)</text>
 <rect x="691" y="96" width="28" height="28" fill="#f4a261" stroke="#fff" stroke-width="1.5"/>
 <text x="705" y="114" font-size="12" font-weight="bold" text-anchor="middle" fill="#111">1</text>
 <line x1="689" y1="110" x2="679" y2="110" stroke="#f4a261" stroke-width="2"/>
