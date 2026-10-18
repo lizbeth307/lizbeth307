@@ -41,6 +41,7 @@
 | [Ip2368 4s 100 w pd board charge only bz](components/ip2368_4s_100_w_pd_board_charge_only_bz.md) | · research · forums · fixes ✅ verify | `—` |
 | [Lab instruments](components/lab_instruments.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Lab ui](components/lab_ui.md) | ✅ research · forums · fixes ✅ verify | `—` |
+| [Litevna 64](components/litevna_64.md) | · research · forums · fixes ✅ verify | `—` |
 | [Mech thermal storage](components/mech_thermal_storage.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Mechanical thermal](components/mechanical_thermal.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_e6b8e5e2-124` |
 | [Molicel inr21700 p50b](components/molicel_inr21700_p50b.md) | · research · forums · fixes ✅ verify | `—` |

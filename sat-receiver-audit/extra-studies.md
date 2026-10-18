@@ -29662,6 +29662,125 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Hard rules: storage is receive-path only, with no RF emission or TX, so no rule is affected.
 
+## searchB:samsung_t7_1_tb (run `wf_c3ba734e-52b`)
+
+- **Part:** Samsung Portable SSD T7 1 TB (MU-PC1T0T/WW or MU-PC1T0H/WW). Raw-IQ capture drive on the Q6A blue USB 3.1 Gen1 port. Required in the with-Lime build (user decision of 18 Oct 2026).
+- **Current price usd:** New retail in the EU: EUR 224.90 incl. 19% DE VAT = $252.81, or EUR 188.99 ex VAT = $212.45. Source: Alternate.de, in stock, fetched 18 Oct 2026, at the stack rate of 1 EUR = 1.1241 USD. US: $219.99-229.99 (BestBuy and ListofDisks, July 2026 search snippets), with a $189.99 Amazon deal in late June 2026. No US price for October was obtained. The stack's $229.99-274.99 is consistent with this.
+- **Critical specs:**
+  - Sustained sequential write after the cache, over the whole 1 TB. Need: at least 245.76 MB/s (56 MHz cs16), plus the 60-min fio test at 224 MB/s. T7 reference: ~42 GB pSLC cache, then 614 MB/s average over 100 GB (ssd-tester), which implies ~480 MB/s after the cache (inference). The Q6A Gen1 port caps everything at ~395 MB/s.
+  - Capacity: 1 TB (about 68 min of cs16).
+  - Link and driver: holds 5000M on the Q6A port, and runs on the uas driver under kernel 6.18 on Ubuntu 24.04 arm64. The T7 uses an ASMedia ASM2362 bridge (smartmontools drivedb, 04e8:4001). Linux 6.18 has no UAS quirk for it.
+  - SMART temperature readable through the bridge, for the labd rule that stops writes at 55 C. On the T7: smartctl -d sntasmedia.
+  - Operating temperature: 0-60 C Tc (hottest case point). Non-operating: -40 to 85 C.
+  - Ruggedness: 2 m drop onto metal; non-operating shock 1500 G / 0.5 ms; vibration 20-2000 Hz at 20 G.
+  - Size and weight: 85x57x8 mm, 72 g. This fits the shaded rear holder with a 3-5 mm air gap.
+  - Bus power: well under 1 A. The WS4612 limit is ~2.1 A, shared by both J5 ports. T7-family data: 0.12-0.57 W idle, peak 4-4.5 W at 10 Gbps (AnandTech, T7 Touch/Shield; the plain T7 was not measured).
+  - Build quality: aluminium unibody with no user-openable latch. Same or better RFI shielding is needed, since SuperSpeed noise matters for L-band/GNSS (labd deauthorizes the drive during those sessions).
+  - Warranty and provenance: 3-year Samsung limited warranty, which is 'not transferable'. No TBW is published. The part must be genuine and not a fake-capacity unit.
+  - Cable: needs a USB-C to A cable of 0.5 m or less, continuous, no couplers. The retail T7 box includes C-to-A and C-to-C cables.
+- **Candidates:**
+  1.
+    - **Name:** Used Samsung T7 1 TB from a private sale (Kleinanzeigen DE). The same part, checked against the model's independent measurements plus the unit's own SMART on pickup.
+    - **Kind:** used
+    - **Price usd:** EUR 120-175 = $134.89-196.72 (private sale, no VAT). Ten T7 1 TB listings dated 02-18 Oct 2026: 120, 120, 130, 140 VB, 140 VB, 150, 150, 150 VB, 175 and 175 VB. Shipping, where offered, is extra.
+    - **Spec comparison:** Identical model, so every performance spec is equal: cache, post-cache write, ASM2362/uas, sntasmedia SMART, 0-60 C, 2 m drop and 1500 G shock, 85x57x8 mm, power. Per-unit equality can be measured on receipt: SMART Percentage Used, Available Spare, Media Errors and Data Units Written, plus a full-capacity write and verify.
+    - **Worse in:** Warranty: Samsung's statement says the warranty 'is provided only to You and is not transferable', so in practice there is none. A private seller also excludes statutory liability. Wear and handling history are unknown (SMART shows wear, not drops or heat). Fraud and fake risk is higher than at retail. So this is NOT strictly not-worse: it trades warranty and provenance for about $56-118 saved.
+    - **Compatibility:** Drop-in: same USB ID 04e8:4001, same bridge, same holder and cable. Accept it only after these checks on pickup, paying cash after testing: lsusb shows 04e8:4001; smartctl -d sntasmedia -a shows Critical Warning 0, Media Errors 0, Percentage Used of 5% or less, Available Spare 100%; then a full 1 TB fio write with verify=crc32c (rules out fake capacity) giving at least ~450 MB/s after the cache on a 10 Gbps PC; then the stack's 60-min 224 MB/s test on the Q6A at 55 C or less. Check the MPN on the label: MU-PC1T0T/H/R.
+    - **Risks:** Counterfeit or relabelled units. Hidden heat or drop damage. No RMA path. Listings change daily, so prices are snapshots from 18 Oct 2026.
+    - **Seller url:** https://www.kleinanzeigen.de/s-samsung-t7-1tb/k0
+    - **Sources:**
+      - https://www.kleinanzeigen.de/s-samsung-t7-1tb/k0
+      - https://www.kleinanzeigen.de/s-anzeige/samsung-t7-ssd-1tb/3539741996-225-9482
+      - https://www.kleinanzeigen.de/s-anzeige/samsung-ssd-t7-1tb/3541168453-225-3522
+      - https://download.semiconductor.samsung.com/resources/warranty/Portable_SSD_Full_Warranty_Statement_English.pdf
+      - https://ssd-tester.com/samsung_portable_ssd_t7_1tb.html
+      - https://raw.githubusercontent.com/smartmontools/smartmontools/master/smartmontools/drivedb.h
+  2.
+    - **Name:** Unused Samsung T7 1 TB, sealed box, private sale (Kleinanzeigen DE). One listing has the original invoice from May 2025.
+    - **Kind:** used
+    - **Price usd:** EUR 165-190 = $185.48-213.58 (private sale, no VAT). Listings: 165 (unused, 14 Oct), 169 (two units, 1 Oct), 170 (sealed, invoice May 2025, 18 Oct), 175, 179 (26 Sep), 190 (15 Oct).
+    - **Spec comparison:** Identical to the new retail T7 in every spec. It is unused, so no wear (to be confirmed by SMART: Data Units Written near 0, Power-On Hours near 0).
+    - **Worse in:** Warranty and recourse only: Samsung's warranty is not transferable, and there is no retailer statutory warranty. Saves about $39-67 against EUR 224.90 retail.
+    - **Compatibility:** Drop-in. Same acceptance checks as for the used unit. Note that the 18 Oct listing calls the colour 'schwarz', but the T7 comes in grey, blue or red, so confirm the MPN and seal before paying.
+    - **Risks:** Re-sealed or fake box. The seller states no returns ('keine Rücknahme und Garantie').
+    - **Seller url:** https://www.kleinanzeigen.de/s-anzeige/samsung-ssd-t7-1tb-neu-ovp/3544842478-225-1855
+    - **Sources:**
+      - https://www.kleinanzeigen.de/s-anzeige/samsung-ssd-t7-1tb-neu-ovp/3544842478-225-1855
+      - https://www.kleinanzeigen.de/s-anzeige/samsung-portable-ssd-t7-ssd-1-tb-neu-ovp/3528091911-225-5514
+      - https://download.semiconductor.samsung.com/resources/warranty/Portable_SSD_Full_Warranty_Statement_English.pdf
+  3.
+    - **Name:** Samsung T7 Shield 1 TB, new, private sale (Kleinanzeigen DE, single listing).
+    - **Kind:** used
+    - **Price usd:** EUR 160 = $179.86 (private, listed 4 Sep 2026; it may already be sold). EU retail is EUR 256-289 ($287.77-324.86), which is more expensive than the T7.
+    - **Spec comparison:** Better: ssd-tester measured 879 MB/s average over 200 GB with a ~20 GB cache, which implies roughly 860 MB/s after the cache (inference), against ~480 for the T7. Also IP65, a 3 m drop rating against 2 m, and the same 1500 G shock. Equal: same ASM2362 bridge (drivedb 04e8:61fb, -d sntasmedia), the same 0-60 C Tc, the same 3-year non-transferable warranty, and a 1 TB capacity. On the Q6A both drives are capped at ~395 MB/s, so the speed advantage only shows on a PC.
+    - **Worse in:** Size and weight: 59x88x13 mm and 98 g, against 57x85x8 mm and 72 g. That is 5 mm thicker and 26 g heavier, so the shaded holder needs a redesign. Whether the elastomer skin makes sun heat better or worse is unverified. Warranty is not transferable (private sale). Only one listing exists, and it is six weeks old.
+    - **Compatibility:** Electrically and in software a drop-in. The holder and air gap need re-dimensioning. Same acceptance tests as the used T7.
+    - **Risks:** Availability (single old listing). Holder rework. Thermal behaviour of the rubber shell in sun not measured.
+    - **Seller url:** https://www.kleinanzeigen.de/s-anzeige/samsung-portable-ssd-t7-shield-usb-3-2-gen-2-1-tb-blau-neu-/3503037496-225-615
+    - **Sources:**
+      - https://download.semiconductor.samsung.com/resources/data-sheet/Samsung_Portable_SSD_T7_Shield_Datasheet_Rev.2.0.pdf
+      - https://ssd-tester.com/samsung_portable_ssd_t7_shield_1tb.html
+      - https://www.alternate.de/Samsung/Portable-SSD-T7-Shield-1-TB-Externe-SSD/html/product/1829263
+  4.
+    - **Name:** DIY: WD Black SN770 1 TB (M.2 2280, TLC, DRAM-less) in an ASUS ROG Strix Arion enclosure (ASMedia ASM236x, USB ID 0b05:1932)
+    - **Kind:** diy
+    - **Price usd:** EUR 191.79-212.79 = $215.59-239.20. Made up of the SN770 1 TB new or sealed from private sellers at EUR 149-170 (Kleinanzeigen, 30 Sep-15 Oct 2026; Alternate does not list the 2280 SN770) plus the Arion at EUR 42.79 (Alternate, in stock). With a cheaper EUR 19.99 UGREEN CM400 enclosure (bridge unverified): EUR 168.99-189.99 = $189.96-213.57.
+    - **Spec comparison:** Drive, on a PCIe host (Tom's Hardware): ~377 GB SLC cache at 4850 MB/s, then ~560 MB/s, which beats the T7's ~42 GB and ~480. Peak controller temperature 83 C, one degree below the throttle point, with no throttling in open air. Bridge: the same ASM236x family as the T7, so smartctl -d sntasmedia applies, there is no Linux UAS quirk, and it runs at 10 Gbps. On the Q6A both are capped at ~395 MB/s.
+    - **Worse in:** Nothing proves the combination equal. I found no measured fill test through a USB bridge, where the drive loses HMB. Bus power and idle power of drive plus bridge were not measured (Tom's: ~1 W idle on a desktop). The enclosure has no drop or shock rating against the T7's 2 m / 1500 G, and it has a user-openable lid. The 2280 enclosure is larger (Arion dimensions not verified). WD's warranty on a private-sale drive is unverified. The saving over the new T7 is only $14-37 with the Arion. REJECTED: not proven not-worse.
+    - **Compatibility:** USB 3.2 Gen2 to Gen1 host with uas. Needs holder redesign. A drive temperature limit of about 75 C would replace the T7's 55 C case rule.
+    - **Risks:** Bridge firmware variance, drive heat inside a closed enclosure in sun, and private-sale provenance.
+    - **Seller url:** https://www.alternate.de/ASUS/ROG-STRIX-ARION-Laufwerksgehäuse/html/product/1592729
+    - **Sources:**
+      - https://www.tomshardware.com/reviews/wd-black-sn770-ssd-review/3
+      - https://raw.githubusercontent.com/smartmontools/smartmontools/master/smartmontools/drivedb.h
+      - https://raw.githubusercontent.com/torvalds/linux/v6.18/drivers/usb/storage/uas-detect.h
+      - https://www.kleinanzeigen.de/s-wd-black-sn770-1tb/k0
+  5.
+    - **Name:** DIY: WD SN7100 1 TB (M.2 2280, BiCS8 TLC, DRAM-less) in a UGREEN CM400 enclosure (bridge not confirmed, likely RTL9210-class)
+    - **Kind:** diy
+    - **Price usd:** EUR 209.89 = $235.94 incl. VAT: SN7100 at EUR 189.90 plus CM400 at EUR 19.99, both from Alternate on 18 Oct 2026 (CM400 marked 'in Kürze verfügbar'). With the Arion instead: EUR 232.69 = $261.57, which costs more than the T7.
+    - **Spec comparison:** Better on paper: 600 TBW and a 5-year warranty (Tom's spec table), and the highest efficiency in Tom's test. Post-cache write for the 1 TB is NOT measured. TechPowerUp's 2 TB showed ~648 GB of cache then ~800 MB/s, but that does not carry over to the 1 TB.
+    - **Worse in:** No measured post-cache figure for the 1 TB. RTL9210 UAS failures (uas_eh_abort, xHCI stop-endpoint, device offline) are reported 'on several platforms' (LKML patch, Mar 2025). In Linux 6.18 only the HIKSEMI MD202 variant gets IGNORE_UAS, so a generic RTL9210 box runs UAS with that risk. No drop rating, larger size, and power not measured over USB. The saving is only $16.87. REJECTED.
+    - **Compatibility:** SMART through smartctl -d sntrealtek (in drivedb). uas or usb-storage on 6.18. Needs holder redesign.
+    - **Risks:** UAS instability over long captures, and an unknown bridge SKU.
+    - **Seller url:** https://www.alternate.de/WD/SN7100-1-TB-SSD/html/product/100116698
+    - **Sources:**
+      - https://www.tomshardware.com/pc-components/ssds/wd-black-sn7100-ssd-review
+      - https://www.techpowerup.com/review/wd-black-sn7100-2-tb/6.html
+      - https://lkml.iu.edu/hypermail/linux/kernel/2503.3/03281.html
+      - https://www.alternate.de/UGREEN/CM400-NVMe-M-2-USB-C-3-2-Gen-2-SSD-Laufwerksgehäuse/html/product/100202152
+  6.
+    - **Name:** DIY: WD Black SN770M 1 TB (M.2 2230) in a 2230 USB enclosure (smaller shell)
+    - **Kind:** diy
+    - **Price usd:** Drive: EUR 140 VB-250 private (Kleinanzeigen) or EUR 351 at Alternate (not orderable), plus an enclosure. Not cheaper than a used T7, and the retail route costs more than a new T7.
+    - **Spec comparison:** Long-term sequential write was 350 MB/s, measured by ServeTheHome at 85% fill with 10 threads after the cache. Reached 82 C with a heatsink.
+    - **Worse in:** Post-cache write of 350 MB/s is worse than the T7's ~480 MB/s (inferred; the test methods differ). Runs hot. No drop rating. REJECTED.
+    - **Compatibility:** USB uas plus a bridge-dependent SMART path.
+    - **Risks:** Thermal throttling inside a small closed enclosure.
+    - **Seller url:** https://www.alternate.de/WD/Black-SN770M-1-TB-SSD/html/product/100018392
+    - **Sources:**
+      - https://www.servethehome.com/wd-black-sn770m-1tb-ssd-review/3/
+      - https://www.kleinanzeigen.de/s-wd-black-sn770-1tb/k0
+  7.
+    - **Name:** Samsung T7 1 TB, new retail (current part)
+    - **Kind:** current_part
+    - **Price usd:** EUR 224.90 incl. VAT = $252.81 (EUR 188.99 ex VAT = $212.45), Alternate.de, in stock, 18 Oct 2026
+    - **Spec comparison:** Reference. Datasheet Rev 2.0: 85x57x8 mm, 72 g, 0-60 C Tc, 2 m drop, 1500 G shock, 3-year warranty. ssd-tester: ~42 GB cache, 614 MB/s average over 100 GB. Bridge ASM2362, SMART via sntasmedia.
+    - **Worse in:** n/a
+    - **Compatibility:** As designed: blue USB-A, an A-to-C cable of 0.5 m or less, the uas driver, labd's 55 C stop rule.
+    - **Risks:** Sun heating above 60 C Tc in the thermal model, so the shaded holder and the stop rule stay. No TBW published.
+    - **Seller url:** https://www.alternate.de/Samsung/Portable-SSD-T7-1TB-Externe-SSD/html/product/1639854
+    - **Sources:**
+      - https://download.semiconductor.samsung.com/resources/data-sheet/Samsung_Portable_SSD_T7_Datasheet_Rev2.0.pdf
+      - https://www.alternate.de/Samsung/Portable-SSD-T7-1TB-Externe-SSD/html/product/1639854
+- **Notes:** VERDICT (angle B, as of 18 Oct 2026): KEEP the new retail Samsung T7 1 TB as the default. No generic, clone or DIY part is both cheaper and proven not-worse. The October 2026 NAND shortage makes DIY uneconomic: bare TLC 1 TB NVMe drives cost EUR 150-190 at Alternate, plus EUR 12-43 for an enclosure, against EUR 224.90 for the T7. The best DIY saving is only $14-37. Every DIY combination also lacks a measured fill test through a USB bridge, a drop or shock rating, and measured bus power. RTL9210-class enclosures carry a documented UAS-failure risk on Linux (LKML, Mar 2025; only one HIKSEMI model is quirked in 6.18).
+  
+  The only cheaper option with identical specs is a used or sealed private-sale T7 1 TB on Kleinanzeigen: EUR 120-175 used ($135-197), or EUR 165-190 sealed ($185-214). It is NOT strictly not-worse. Samsung's warranty 'is provided only to You and is not transferable', and private sellers exclude liability. So it trades about $39-118 of savings for no warranty and an unknown history. Offer it to the user only as an explicit trade, never as a silent swap. If accepted: pick up in person and pay after testing. The tests are VID:PID 04e8:4001, a clean smartctl -d sntasmedia report (Percentage Used 5% or less, zero media errors, 100% spare), a full-capacity fio write with verify (anti-fake check, at least ~450 MB/s after the cache on a 10 Gbps PC), then the stack's 60-min 224 MB/s test at 55 C or less.
+  
+  The T7 Shield 1 TB, sealed private at EUR 160 ($179.86), is the only candidate better in performance and ruggedness: about 860 MB/s after the cache (inferred), IP65, 3 m drop. It is worse in size and weight (88x59x13 mm, 98 g) and in warranty, and its single listing is six weeks old.
+  
+  Unverified or gaps: the T7's own post-cache rate is inferred from a 100 GB average and not stated by ssd-tester. The plain T7's bus power was never measured; only T7 Touch and Shield figures exist (AnandTech, from search snippets). The UGREEN CM400 bridge chip is unconfirmed. No October US price was obtained. geizhals, idealo, eBay, Back Market and Samsung.com returned 403, so the EU price rests on Alternate.de plus Kleinanzeigen snapshots. FX is the stack rate, 1 EUR = 1.1241 USD.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
