@@ -462,3 +462,10 @@ P4, A (спільнота, форум Radxa; ще не перевірено):
 - Також є тема «UKI Boot on 20250120 firmware» (оновлено 14.10.2026), яка стосується нашого плану systemd-boot/UKI.
 Джерела: forum.radxa.com, теми 31462, 31574, 30896.
 
+## 2026-10-18 08:36 UTC
+
+Виправлення лічильника: «journal entries» у статусі рахує завершених агентів, а не підсистеми. У кожної підсистеми 3 етапи. Підсистем у групах: A 4, B 4, C 3, D 5. Отже, зараз завершено: A 2/12 агентів, B 4/12, C 4/9, D 2/15. Мої попередні записи «B — 1/4, C — 2/4, D — 2/4 підсистем» були хибними.
+Нове, B (ПЗ):
+- SoapyAirspyHF випустив реліз 0.2.1 (10.10.2026): «Minor fixes, Updated CMake builds». HASGAINS тепер визначається за наявністю функції airspyhf_set_hf_att, а не за версією бібліотеки. Для нашої збірки на noble arm64 краще брати 0.2.1, а не 0.2.0 2021 року. Джерело: github.com/pothosware/SoapyAirspyHF (changelog і PR).
+- A: у репозиторії Radxa є radxa-firmware-qcs6490 0.2.42 (CDSP fastrpc_shell_3 для dragon-q6a) і fastrpc 1.0.7-3. Це частина «золотого набору» FastRPC, версії треба закріпити. Джерело: apt-репозиторій Radxa (pool/main/r/radxa-firmware, pool/main/f/fastrpc).
+
