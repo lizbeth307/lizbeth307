@@ -26995,6 +26995,3246 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Section 11 (change log) is not in the section enum, so no change was emitted for it. The section 7 corrections block (07_corrections, items 37-50) can feed it.
 
+## extract:reaudit_D (run `wf_9cc6cab3-efa`)
+
+- **Source:** reaudit_D
+- **Changes:**
+  1.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** correction
+    - **Part:** Molicel INR21700-P50B
+    - **Anchor:** 60 A тривало, близько 68 g
+    - **Instruction:** In the 'Елементи' row replace 'близько 68 g' with '71 g макс. (DS V1.1; 260 Wh/kg)' and in the note replace 'вагу 68-70 g' with 'вагу 68-71 g'; add 'маса елементів пакета 4 x 71 g = 284 g (модель)'. Seller/price stay as set by analogs G3 (NKON); do not change them here.
+    - **Reason:** Molicel DS V1.1 gives 71 g max; v1 goods-in window 68-70 g would reject good cells.
+    - **Sources:** https://www.fsaeonline.com/content/Molicel-TDS--INR-21700-P50B-80122.pdf ; https://www.molicel.com/inr-21700-p50b/
+    - **Saving usd:** 
+  2.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** keep_with_note
+    - **Part:** Daly 4S 15 A BMS
+    - **Anchor:** Daly 4S 15 A, спільний порт, з балансуванням
+    - **Instruction:** Model becomes 'Daly DL-J05G-L4S15ATJ 4S 15 A, спільний порт, з балансуванням'; price $8.99 = EUR 8.00 з ПДВ (TinyTronics, 9 шт.), status перевірено. Note: OVP 4.25±0.05 V (відновлення 4.15), UVP 2.70±0.05 V (відновлення 3.0), DOCP 40±10 A, COCP 10±2 A, Ron <20 mOhm; пасивний баланс 30±10 mA лише під час заряду і від 4.18 V — щоденні 4.10 V ніколи не балансують, тож щомісячний баланс ISDT 4.20 V лишається; власне споживання <500 мкА (сон 0 мкА недосяжний з AON на вузлі N; бюджет 0-0.5 mA); монтаж: спершу B−, потім сенсорні дроти від B0 угору; радіатор не торкається елементів чи нікелю. Тест пробудження 3/3 лишається.
+    - **Reason:** Re-audit D read the Daly spec (TinyTronics PDF, file name DL-J04G3); v1 listed the BMS as unnamed and unverified.
+    - **Sources:** https://www.tinytronics.nl/en/power/bms-and-chargers/bms/daly-bms-li-ion-li-po-protection-circuit-4s-15a-with-balancing ; https://www.tinytronics.nl/product_files/005102_Data-Sheet-of-DL-J04G3-L04S15ATJ-BMS-circuits.pdf
+    - **Saving usd:** 0.01
+  3.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** correction
+    - **Part:** IP2368 charger board
+    - **Anchor:** IP2368 4S 100 W PD, версія BZ лише для заряду (RVSET 5.1k, RISET 15k)
+    - **Instruction:** Replace with 'IP2368 4S, роздрібна плата COUT (Try.SRC, потрібна одна активаційна зарядка; BZ як плата не продається): RVSET 5.1k 1% (4.102 V/ел. тип.), RISET 27k → 15k 1% (3 A; плати постачаються на 5 A), ISET_MODE через 1k на GND (як встановлено)'. In the note add: 'USB-C корпусу → TPS259470A (OVLO близько 22 V, ILIM близько 3.5 A) → VBUS плати, CC1/CC2 напряму. Приймання кожної плати: після активації FNB58 як навантаження — жодного VBUS назовні (плату, що не віддає, залишити); записати V_CV на клемах (модель 16.25-16.57 V); NTC 0.39 V гаряче / 0.55 V холодно з 10k B3380; прочитати маркування LDO 5 V (HT7550-1 на 30 V — ок; ME6201 — замінити на LDO від 30 V, за analogs G3)'. Price/status per analogs G3.
+    - **Reason:** All retail boards are bidirectional COUT; the BZ variant is not sold as a board; the DS tolerance makes pack CV board-specific; the board LDO may be 16 V-rated while node N reaches 16.8 V.
+    - **Sources:** https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723 ; https://mysku.club/blog/aliexpress/100034.html
+    - **Saving usd:** 
+  4.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** correction
+    - **Part:** Pololu #2813 main switch
+    - **Anchor:** Кнопка лише на ввімкнення (A на GND); 6 A при 55 °C, <0.2 мкА вимкнено.
+    - **Instruction:** Replace '6 A при 55 °C' with 'близько 6 A нагріває MOSFET до 55 °C у нерухомому повітрі 22 °C (це не номінал при 55 °C навколо; модель: 4.6 A у корпусі 45-50 °C — MOSFET близько 65-70 °C)'; add 'рекомендована межа 32 V (40 V абс. макс.); не аварійне відключення — це роблять BMS і запобіжник 7.5 A; «Power applied to VOUT cannot be switched to VIN»'. Seller/price per analogs G3 (Botland).
+    - **Reason:** Pololu's 55/150 C rows are MOSFET temperatures at 22 C ambient; Pololu says it is not a safety disconnect.
+    - **Sources:** https://www.pololu.com/product/2813
+    - **Saving usd:** 
+  5.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** correction
+    - **Part:** Adafruit INA228 #5832
+    - **Anchor:** Шунт у дроті батареї; живлення від AON 3.3 V; підтягування зняти.
+    - **Instruction:** Replace with: 'Шунт у дроті батареї; VS від AON 3.3 V. Підготовка: зняти R6 (одна збірка 4x10k — підтягування SDA/SCL і стягування ADDR0/ADDR1, тож без неї A0/A1 плавають) і R7 (LED, близько 0.12 mA); адресу задати перемичками A0+A1 (0x45) або ADDR на GND (0x40) і так само в labpowerd; замкнути SJ1 (верхнє плече); лише неперервний режим (CHARGE/ENERGY недійсні в triggered); шунт 15 mOhm 1% за BOM Eagle (не 0.1%) — калібрувати SHUNT_CAL за еталоном на 0.5/2/4 A; ALERT підтягнути до 3.3 V хедера Q6A, ніколи до AON (на платі підтягування ALERT немає). IQ 640 тип./750 макс. мкА при 25 °C, 1.1 mA за температурою.'
+    - **Reason:** Adafruit Eagle files: R6 is one 4x10k pack incl. the ADDR pull-downs; INA228 samples A0/A1 on every transaction; ALERT has no pull-up; BOM shunt is 1%.
+    - **Sources:** https://github.com/adafruit/Adafruit-INA228-PCB ; https://learn.adafruit.com/adafruit-ina228-i2c-power-monitor/pinouts ; https://www.ti.com/lit/ds/symlink/ina228.pdf
+    - **Saving usd:** 
+  6.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** correction
+    - **Part:** TI TPS7A4701 (LNB and Boni rails)
+    - **Anchor:** 3-36 V вхід, 1 A, 307 mV падіння, θJA 30.5 °C/W; PG на MCP #3.
+    - **Instruction:** Replace '3-36 V вхід' with '3-35 V робоча, 36 V абс. макс.'; '307 mV падіння' with '307 тип./450 макс. mV при 1 A (216 mV при 0.5 A)'; replace 'PG на MCP #3' with 'PG-виводу немає (SBVS204G): на кожну шину дільник на близько 90% у компаратор TLV3011 (відкритий стік, живлення від 3.3 V Q6A) → MCP #3; Schottky OUT→GND (катод на OUT) на кожному виході; ANY-OUT 13.2 V — на землю 6P4V1, 3P2V, 1P6V, 0P4V, 0P2V; 12.5 V — 6P4V1, 3P2V, 0P8V, 0P4V, 0P2V, 0P1V; точність ±2.5% лише при VIN ≥ VO + 1 V'. Order code, θJA value, seller and price per analogs G3 (TPS7A4701RGWT, DigiKey); delete nothing else.
+    - **Reason:** TPS7A47 Rev G pin table has no PG pin; abs-min OUT −0.4 V; accuracy only above VO+1 V.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+    - **Saving usd:** 
+  7.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** correction
+    - **Part:** TI TPS2553 current switches
+    - **Anchor:** TI TPS2553 (LAB-порт 0.75 A; LNA ch1-4 по 300 mA; VBUS HF+ і RTL)
+    - **Instruction:** Add RILIM values: LNA ch1-4 — 88.7k 1%: 265/299/339 mA (мін./ном./макс.; мінімум 265 mA, не 240); LAB-порт — 34.8k: 685/747/817 mA (без допуску резистора). Variant (-1 latch-off on all 10), seller and price per analogs G3.
+    - **Reason:** Re-audit D recomputed the DS IOS equations.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps2553.pdf
+    - **Saving usd:** 
+  8.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** replace_part
+    - **Part:** AON LDO and UV supervisor
+    - **Anchor:** LDO 3.3 V класу TPS709 (вхід 30 V, мкА спокою) + мікропотужний супервізор 12.8/13.6 V
+    - **Instruction:** Replace with 'TI TPS70933DBVR (2.7-30 V, 32 V абс. макс., IGND 1.3 мкА тип., ±1%) + push-pull UV-компаратор на AON 3.3 V (деталь — за analogs G3: MCP65R41T-1202E/CHY, запасний TLV3012AIDBVR): з N через 3.3 MOhm у IN− і нижній резистор 0.1% на землю (номінал за analogs G3), REF через 100 kOhm в IN+, OUT через 4.22 MOhm в IN+; спрацювання близько 12.8 V, відпускання близько 13.6 V (модель, калібрувати); OUT через BAT54 на OFF #2813, діодне АБО з GP13; інвертор не потрібен; разом близько 8 мкА'. Note: 'TPS3762 зі стадії 1 не годиться — лише OV-варіант TPS3762D02OVDDFR'.
+    - **Reason:** TPS3762 has no orderable UV variant, so the stage-2 inverter also falls; a push-pull comparator drives OFF directly.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps709.pdf ; https://www.ti.com/lit/ds/symlink/tps3762.pdf ; https://www.ti.com/product/TLV3012
+    - **Saving usd:** 
+  9.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** correction
+    - **Part:** Protection and filter set
+    - **Anchor:** SMBJ17A; SMBJ13A; 220 мкФ/25 V;
+    - **Instruction:** Replace with 'SMBJ17A ×2 (вузол N і вузол SW); SMBJ13A (J21; лише швидкі перехідні — основний захист від перенапруги дає OVLO eFuse); 220 мкФ/25 V; 2× Schottky проти зворотного живлення (LAB5 → VSYS Pico; вхід 5 V паку IMU); 2× Schottky OUT→GND на виходах TPS7A4701; 2× TLV3011 (rail-good LNB і Boni);'. Vishay or Littelfuse SMBJ; exact part numbers and set price per analogs G3.
+    - **Reason:** Back-feed above about 5 V on the D36V28F5 output pumps its VIN above 60 V (Pololu staff), so SW needs its own clamp; the TPS7A4701 needs an OUT clamp and external rail-good comparators.
+    - **Sources:** https://forum.pololu.com/t/strange-behavior-of-d36v28f5-pololu-3782/29129 ; https://www.vishay.com/docs/88392/smbj.pdf
+    - **Saving usd:** 
+  10.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** replace_part
+    - **Part:** eFuse (DISP12, J21, USB-C VBUS)
+    - **Anchor:** eFuse 1.5 A; LC;
+    - **Instruction:** Replace with '3× TI TPS259470A (одна деталь у трьох місцях: J21 — OVLO близько 13.5 V, ILIM близько 4 A; DISP12 — ILIM 1.5 A, OVLO близько 13.5 V, EN від GP16; USB-C VBUS зарядника — OVLO близько 22 V, ILIM близько 3.5 A); LC;'. Seller/price per analogs G3 (DigiKey TPS259470ARPWR).
+    - **Reason:** TPS25947: 2.7-23 V, reverse blocking, adjustable OVLO, ILIM 0.5-6 A; one part number closes the J21 regulator-short over-voltage path and the DRP drain path.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps25947.pdf ; https://www.ti.com/product/TPS25947/part-details/TPS259470ARPWR
+    - **Saving usd:** 
+  11.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** decision
+    - **Part:** SYS12 C4 fallback buck
+    - **Anchor:** Бюджет: buck з фіксованою частотою і примусовим PWM (обирається в P5), якщо A/B не пройде.
+    - **Instruction:** Replace with 'Ворота C4: (1) A/B NAVTEX/ДХ; (2) 60 хв при 4.2 A у закритому корпусі при 14.0 і 16.4 V. Запасний шлях, якщо C4 не пройде: TI LM61460AANRJRR (3-36 V, 6 A; зовнішній такт на EN/SYNC вмикає FPWM) з умовами analogs G3 (такт не вище близько 1.0 MHz з гармонічного сканування, дросель під цю частоту, каскад захисту від переполюсування, новий дільник EN)'.
+    - **Reason:** Re-audit D names a concrete forced-PWM escape route; analogs G3 corrects its sync frequency.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/lm61460.pdf
+    - **Saving usd:** 
+  12.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** removal
+    - **Part:** Anker 737 as charger budget option
+    - **Anchor:** Бюджет: Anker 737 (стенд).
+    - **Instruction:** Delete 'Бюджет: Anker 737 (стенд).' and add 'Польове джерело — лише односторонній PD-адаптер (від 60 W, кваліфікований FNB58), доки не пройде стендова матриця DRP: Anker 737 (USB-C1 — DRP) і порт USB-C ISDT 608PD двонаправлені, а плата IP2368 COUT з Try.SRC бере роль джерела'.
+    - **Reason:** Charging from a DRP bank through a Try.SRC COUT board will most likely flap or fail; analogs G3 also removes the Anker as an alternative here.
+    - **Sources:** https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723 ; https://www.isdt.co/608pd.html
+    - **Saving usd:** 
+  13.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** correction
+    - **Part:** Wisecoco 7in FHD kit
+    - **Anchor:** У лістингу досі «I2C Capacitive Touch», немає вхідної напруги і комплекту.
+    - **Instruction:** Replace with 'Зображення лістингу (18.10.2026): плата 96.2x82 мм — HDMI IN (повнорозмірний A), DC 5-24 V (барель), USB-C «Touch+Power» 5V/2A і USB-C «Power», роз'єми USB TP, TP (I2C), KEY, Backlight, Speaker, Earphone; «landscape by default». Ймовірно скалер з власним драйвером підсвітки і аудіопідсилювачем (висновок з фото). Текст «I2C Capacitive Touch» описує вхід панелі в плату. Активна зона 154.368x86.832 (таблиця) або 155.82x87.83 мм (креслення) — виміряти. «2000+» не підтверджено: фото продавця — люксметр 2424 lx, тобто ≥ близько 770 cd/m2 (модель).'
+    - **Reason:** Stages 1-2 never read the listing images; they answer part of the D5 gate and void the 5 V-only and native-portrait risks.
+    - **Sources:** https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-inch-2000-nits-lcd-7.webp ; https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-1.jpg ; https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-inch-2000-nits-lcd-2.webp
+    - **Saving usd:** 
+  14.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** condition
+    - **Part:** Wisecoco acceptance and 4D fallback
+    - **Anchor:** Приймання: ≥1800 ніт;
+    - **Instruction:** Rewrite the acceptance as 'Приймання (до 30 днів): ≥1800 cd/m2 на повному білому, виміряно люмінометром (грубо — VEML7700 впритул, L = E/π, близько ±25%, модель); ≤14 W при 100% і ≤7.5 W при 50% при 11.0 V; сенсор USB-HID з роз'єму USB TP при відкритому VBUS у 20/20 холодних завантажень; тиша на 2.4 GHz (тест BLE); робочий шлях димінгу;'. For the 4D fallback add: 'у рядку замовлення DigiKey перевірити MPN (короткий опис DigiKey помилково «9.0in ... 500CD/M2»); даташит Rev 1.5: 1000 cd/m2, 800:1, бондований CTP, без AR за замовчуванням, 12 V 540 mA / 5 V 1300 mA, Mini-HDMI 1.4, «Supports DDC», кабель HDMI 50 см у комплекті, IC сенсора не названо'.
+    - **Reason:** The vendor's brightness proof is a lux reading; a 2.4 GHz-capable touch bridge (WCH CH57x on another Wisecoco kit) cannot be rfkilled.
+    - **Sources:** https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_5.pdf ; https://forums.raspberrypi.com/viewtopic.php?t=368455
+    - **Saving usd:** 
+  15.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** correction
+    - **Part:** HDMI lead and ferrites
+    - **Anchor:** Adafruit 2420 (короткий екранований) + 2× Wurth 74271140
+    - **Instruction:** Correct the facts: Adafruit 2420 is 'Slim HDMI Cable - 450mm' (457 мм), not a 10-15 cm run; the Wisecoco input is full-size HDMI, so the run is A-A; Wurth 74271140 is WE-STAR-TEC for 2-3 mm cable (NiZn 4W620, not Mix-31/61). Move 1× 74271140 ($3.91, DigiKey) to its own line for the 2-3 mm touch-USB lead (D+/D−/GND only). The HDMI-lead part and its ferrites follow analogs G2 (keep 2420 with 2× Fair-Rite 0431164281; fallback 2× Wurth 74271112); lay the excess as a flat S-fold away from the RF bay and the GNSS feed.
+    - **Reason:** Re-audit D measured the listed parts against the spec; the analog decision G2 supersedes the cable choice itself.
+    - **Sources:** https://www.adafruit.com/product/2420 ; https://www.we-online.com/en/components/products/WE-STAR-TEC
+    - **Saving usd:** 
+  16.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** correction
+    - **Part:** Adafruit FPC HDMI kit (budget)
+    - **Anchor:** Бюджет: Adafruit FPC kit (3548 + 3560) $14.50, лише якщо цього вимагає трасування.
+    - **Instruction:** Replace with 'Бюджет: FPC-набір Adafruit 2× 3548 + 3560 = $14.50 (3550 — для прямого кута), завжди з заземленою обмоткою мідною стрічкою; для 4D — 3552 + 3548 + 3560 ($14.50)'.
+    - **Reason:** 3548 is $6.50 each and both ends need a straight HDMI plug; 3560 is $1.50.
+    - **Sources:** https://www.adafruit.com/product/3548 ; https://www.adafruit.com/product/3550 ; https://www.adafruit.com/product/3552 ; https://www.adafruit.com/product/3560
+    - **Saving usd:** 
+  17.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** keep_with_note
+    - **Part:** Raspberry Pi Pico (HMI/supervisor)
+    - **Anchor:** На комутованій LAB5; 26 GPIO.
+    - **Instruction:** Replace with 'Лише Pico SC0915 без радіо (не Pico W / 2 W); виробництво до щонайменше січня 2036; на комутованій LAB5 через Schottky у VSYS (VBUS→VSYS іде через D1); зайнято 23 GPIO + 3 ADC, вільний лише GP22; прошивка: clk_sys 125 MHz (ніколи SYS_CLK_MHZ=200 чи PICO_USE_FASTEST_SUPPORTED_CLOCK), апаратний watchdog'. Price/seller per analogs G2 (DigiKey).
+    - **Reason:** Pico W/2 W add a radio; the pin map is function-valid with only GP22 free; the price change of re-audit D is superseded by analogs G2.
+    - **Sources:** https://www.raspberrypi.com/products/raspberry-pi-pico/ ; https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf
+    - **Saving usd:** 
+  18.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** keep_with_note
+    - **Part:** HMI encoders, keys, knobs
+    - **Anchor:** Bourns PEC11R-4215F-S0024 ×3, C&K KSC641J IP67 ×10, Adafruit 2055 ×2
+    - **Instruction:** Add to the note (parts per analogs G2): 'PEC11R — IP40, тож ущільнювальне кільце або чохол на панелі; фільтр 10k/10k/10 nF на канал (страховка від EMI/ESD; повне квадратурне декодування в PIO саме гасить дребезг одного каналу); 4 рахунки на фіксацію (24 PPR / 24 фіксації); дві машини стану на одному PIO, quadrature_encoder.pio з offset 0'.
+    - **Reason:** Bourns DS REV D04/26 specs assume the RC filter; PIO quadrature decoding tolerates single-channel bounce.
+    - **Sources:** https://www.bourns.com/docs/Product-Datasheets/PEC11R.pdf ; https://raw.githubusercontent.com/raspberrypi/pico-examples/master/pio/quadrature_encoder/quadrature_encoder.pio
+    - **Saving usd:** 
+  19.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** keep_with_note
+    - **Part:** VEML7700 and AR film
+    - **Anchor:** Датчик — на зовнішній верхній грані безеля, поза козирком.
+    - **Instruction:** Add: 'Власний драйвер VEML7700: 0.0042 lx/відлік (бібліотека Adafruit Arduino з 0.0036 читає на 14.3% менше), gain 1/8 і IT 25 ms понад близько 20 klx, тайм-аути I2C, 9-тактове відновлення шини, watchdog, 100 Ohm + TVS біля безеля. AR-плівка обов'язкова на будь-якій панелі (бондоване скло без AR — лише близько 1.7:1 при 100 klx, модель)'.
+    - **Reason:** Stage-2 '16.7% low' was the inverse ratio; the sun-contrast model shows AR is required, not optional.
+    - **Sources:** https://raw.githubusercontent.com/adafruit/Adafruit_VEML7700/master/Adafruit_VEML7700.h ; https://www.vishay.com/docs/84286/veml7700.pdf
+    - **Saving usd:** 
+  20.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** other
+    - **Part:** Display group subtotal
+    - **Anchor:** **221.39-244.44**
+    - **Instruction:** Re-total group 2.6 after the HDMI/ferrite line (analogs G2), the Pico line (analogs G2), the HMI set (analogs G2), the separate 74271140 touch-lead line ($3.91) and a new fallback-only row '4D кнопкова плата OSD — ціна за запитом (лише якщо обрано 4D)'. State that Wisecoco and 4D-store shipping are excluded.
+    - **Reason:** Re-audit D: arithmetic matched v1 lines, but lines changed and the 4D button board was missing.
+    - **Sources:** https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_5.pdf
+    - **Saving usd:** 
+  21.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** keep_with_note
+    - **Part:** IMU pack firmware and link
+    - **Anchor:** Кадровий UART до Pico, ніколи USB.
+    - **Instruction:** Add: 'BNO085 на SPI0 RP2040-Zero (SCK, MOSI=DI, MISO=SDA, CS, INT, RST; P1 на 3V3; P0/WAKE високий з моменту до reset), Adafruit_BNO08x 1.2.7 на 1 MHz, mode 3 (I2C на RP2040 падає вище 100 kHz через clock stretching); arduino-pico 6.3.0 з FQBN rp2040:rp2040:waveshare_rp2040_zero:freq=125 явно (типово 200 MHz, а 8 x 200 = 1600 MHz у GLONASS G1); clk_sys у заголовку кадру, labd відкидає пак не на 125 MHz; Schottky на вході 5 V паку; прошивати лише з увімкненим головним вимикачем або від'єднаним від LAB5'. Enclosure, connector and lead per analogs G3.
+    - **Reason:** arduino-pico 6.3.0 lists freq.200 first (default); RP2040-Zero ties VSYS to VBUS, so USB flashing back-feeds LAB5.
+    - **Sources:** https://raw.githubusercontent.com/earlephilhower/arduino-pico/6.3.0/boards.txt ; https://learn.adafruit.com/adafruit-9-dof-orientation-imu-fusion-breakout-bno085/arduino ; https://www.waveshare.com/wiki/RP2040-Zero
+    - **Saving usd:** 
+  22.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** correction
+    - **Part:** LC76G board and Q6A RTC
+    - **Anchor:** UART6, PPS на пін 7. Роз'єм RTC звірити з аркушем 18 схеми.
+    - **Instruction:** Replace with 'UART6, PPS на пін 7. VCC плати — від 5 V (RT9193-33 на платі живить LC76G, зміщення антени VCC_RF через 10 Ohm + 68 nH і заряд MS621FE через 1N4148 + 470 Ohm), логіка 3.3 V; RESET (активний низький) — через 2N7002 з відкритим стоком від вільного виходу MCP23017 #1; SDA/SCL не використовуються. RTC: RS4C411ZAE на платі (схема v1.21, PDF стор. 16, роз'єм J11; rtc-ds1307, st,m41t11, rtc0; кварц 20 ppm); лише первинна CR2032 з готовим штекером 2-pin 1.25 мм, полярність перевірити DMM'. Cell seller per analogs G3.
+    - **Reason:** Waveshare schematic: one LDO feeds module, antenna bias and backup charging; stage-1 rename of RS4C411 is refuted; the RTC is on PDF page 16, not sheet 18.
+    - **Sources:** https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf ; https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf ; https://docs.radxa.com/en/dragon/q6a/hardware-use/rtc
+    - **Saving usd:** 
+  23.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** decision
+    - **Part:** MAX-M10S option
+    - **Anchor:** Бюджет: Uputronics MAX-M10S (від $38.36 = GBP 28.80), якщо потрібні прапорці підміни.
+    - **Instruction:** Replace with 'Регіон Європа: LC76G — за замовчуванням. Опція (дорожча, не бюджет): Uputronics MAX-M10S 3V GBP 28.79 (близько $38.39 за ECB 16.10.2026; ПДВ не перевірено) — лише для поїздок до Балтії, Фінляндії, сходу Польщі, Чорного моря чи сходу Середземномор'я і лише після доведення TX UART6: flash немає (конфіг у BBR на суперконденсаторі), тож UBX-CFG-VALSET при кожному холодному старті і читач UBX NAV-STATUS (spoofDetState)'.
+    - **Reason:** MAX-M10S DS R08 lists no flash; UART6 TX is unproven on the Q6A; region is now Europe, which resolves C23 for GNSS.
+    - **Sources:** https://content.u-blox.com/sites/default/files/MAX-M10S_DataSheet_UBX-20035208.pdf ; https://store.uputronics.com/products/ublox-max-m8q-breakout-for-active-antennas ; https://forum.radxa.com/t/uart-transmission/31422
+    - **Saving usd:** 
+  24.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** removal
+    - **Part:** Pololu D36V28F5 #2 (display 5 V)
+    - **Anchor:** | 5 V для дисплея | Pololu D36V28F5 #2 | 1 | 23.95 | Pololu | перевірено | Лише якщо Wisecoco підтвердить вхід 5 V. |
+    - **Instruction:** Delete the row. Both panels take 12 V on a barrel (Wisecoco DC 5-24 V, 4D 12 V 5.5 мм) fed from DISP12. Reduce the optional subtotal by $23.95 and recompute '932.79-1,156.84'.
+    - **Reason:** Wisecoco listing image labels DC(5-24V); analogs G6 reaches the same decision.
+    - **Sources:** https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-inch-2000-nits-lcd-7.webp
+    - **Saving usd:** 23.95
+  25.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** architecture
+    - **Part:** Samsung T7 1 TB mounting and link
+    - **Anchor:** | Зовнішній SSD | Samsung T7 1 TB |
+    - **Instruction:** In this row's note (the row moves into the default build per the user decision) replace 'Зовні на нижньому краї' with 'ззаду внизу в затіненому тримачі із зазором 3-5 мм і відбивною шторкою (0-60 °C Tc; модель: на прямому сонці при 35 °C — 55-71 °C); smartctl -d sntasmedia -A кожні 30 с, labrx зупиняє запис при 55 °C; один суцільний екранований кабель USB 3 A-C ≤0.5 м з феритами через гермоввід, без перехідників; кожна сесія Lime — лише якщо lsusb -t показує 5000M і Driver=uas; T7 Resurrected постачається лише з кабелем C-C (потрібен окремий C-A)'. Price per analogs G6.
+    - **Reason:** Datasheet Tc limit 60 C and a sun model above it; a coupler or long USB 3 run can fall back to 480M, which cannot carry Lime at 224 MB/s.
+    - **Sources:** https://download.semiconductor.samsung.com/resources/data-sheet/Samsung_Portable_SSD_T7_Datasheet_Rev2.0.pdf ; https://raw.githubusercontent.com/smartmontools/smartmontools/master/smartmontools/drivedb.h
+    - **Saving usd:** 
+  26.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** correction
+    - **Part:** Budget variant: FPC kit delta
+    - **Anchor:** FPC-набір замість HDMI-кабелю з феритами (−$3.27)
+    - **Instruction:** FPC kit is 2× 3548 + 3560 = $14.50; recompute this delta against the HDMI line chosen by analogs G2 ($15.65 → −$1.15) and recompute the ≈$1,739 / ≈$1,647 budget figures; the Arace Armor alternative is deleted by analogs G2.
+    - **Reason:** The v1 FPC kit counted one HDMI plug; the HDMI line it is compared with changed.
+    - **Sources:** https://www.adafruit.com/product/3548 ; https://www.adafruit.com/product/3560
+    - **Saving usd:** 
+  27.
+    - **Section:** 02d_bom_case_cables
+    - **Kind:** correction
+    - **Part:** HDMI lead in the cable kit
+    - **Anchor:** екранований HDMI 10-15 см з Mix 31/61
+    - **Instruction:** Replace with 'екранований HDMI A-A — за analogs G2 (Adafruit 2420, 457 мм; надлишок — пласка S-подібна укладка подалі від РЧ-відсіку і фідера GNSS) з феритами Mix 31; окремо ферит Wurth 74271140 на дроті сенсора 2-3 мм (лише D+/D−/GND)'.
+    - **Reason:** No 10-15 cm A-A cable is specified; 74271140 fits only 2-3 mm cable.
+    - **Sources:** https://www.adafruit.com/product/2420
+    - **Saving usd:** 
+  28.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** replace_part
+    - **Part:** Q6A cooler and fan
+    - **Anchor:** Radxa Armor 7056A або ступінчастий Cu-блок + Adafruit 6101 вентилятор 40 мм 5 V + повітродувка 5 V каналу дисплея
+    - **Instruction:** Replace with '(A) ступінчастий Cu-охолоджувач ≤35x35 мм (паста або PTM7950 на сходинці SoC, прокладка 0.5-1 мм на LPDDR5, ніколи одна спільна прокладка) або (B) лише верхня кришка Radxa Armor 7056A (AE036) на стійках M2.5 через отвори ⌀3.5 мм, нижню половину не ставити; вибір — після примірки в STEP V1.21. Вентилятор шляху 1 — Noctua NF-A4x10 5V без PWM (4500 rpm ±10%, 8.2 m³/h, 1.78 mmH2O, 17.9 dB(A), ≤0.25 W/0.05 A, 3 дроти з тахо); Adafruit 6101 — лише запасний; повітродувка 5 V — оцінка'. Sellers/prices per analogs G2.
+    - **Reason:** The AliExpress Cu cooler had stock gaps (effectively single source); Armor top cover is in stock; the 6101 has no airflow data; the '+30 mm' figure was never derived.
+    - **Sources:** https://forum.radxa.com/t/best-heatsink-cooling-solutions-for-dragon-q6a/30123 ; https://forum.radxa.com/t/recommended-heatsink-fan-for-q6a/30413 ; https://www.quietpc.com/nf-a4x10-flx-5v ; https://www.adafruit.com/product/6101
+    - **Saving usd:** 
+  29.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** correction
+    - **Part:** Fan switching
+    - **Anchor:** Увімк./вимк. постійним струмом від Pico, без PWM.
+    - **Instruction:** Replace with 'Увімк./вимк. постійним струмом від Pico, без PWM: вентилятор шляху 1 — ключ з боку плюса (P-MOSFET або 5 V load switch, за analogs G2) з діодом; тахо — відкритий колектор, підтяжка близько 10k до 3.3 V і 1-4.7k у вільний GPIO Pico, сигнал зупинки; забори — не більше 5 Pa на розрахунковому потоці'.
+    - **Reason:** Re-audit D adds tach stall detection; analogs G2 shows a low-side switch would float a 3-wire fan's ground.
+    - **Sources:** https://www.quietpc.com/nf-a4x10-flx-5v
+    - **Saving usd:** 
+  30.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** keep_with_note
+    - **Part:** Radxa UFS 3.1 128 GB
+    - **Anchor:** A/B-корінь; прочитати ID (0x01CE = Samsung).
+    - **Instruction:** Add: 'UFS 4K-native (bLogicalBlockSize 4096): лише образ _4096 або розмітка на пристрої, ніколи dd образу _512; лінк HS-G4 Rate-A (межа DT); на прибутті — межі ufs-hwmon temp1_crit/lcrit; ніколи не застосовувати provision_ufs31.xml чи Android-образ UFS до польового модуля'. Seller per analogs G2.
+    - **Reason:** Radxa ships a separate _4096 UFS image; its provisioning XML uses 4096-byte blocks.
+    - **Sources:** https://docs.radxa.com/en/dragon/q6a/download ; https://dl.radxa.com/q6a/images/android/provision_ufs31.xml
+    - **Saving usd:** 
+  31.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** correction
+    - **Part:** Recovery set (rescue microSD)
+    - **Anchor:** Рятувальна карта зберігається поза корпусом
+    - **Instruction:** Change to two rescue cards (card SKU per analogs G2), flashed from an extracted .img with a SHA-256 check and f3-style write-verify on arrival; the rescue card uses the _512 image (UFS uses _4096); no OS or DB on SD; if UEFI F2/F12 over the hatch UART fails, carry a USB keyboard in the service kit.
+    - **Reason:** Forum 31509: an A2 card developed bad sectors after 3-4 months and a fresh card failed after its second boot.
+    - **Sources:** https://forum.radxa.com/t/31509 ; https://github.com/geerlingguy/sbc-reviews/issues/85
+    - **Saving usd:** 
+  32.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** correction
+    - **Part:** Waveshare 25346 GNSS antenna bias
+    - **Anchor:** На P7 (3.3 V від LC76G)
+    - **Instruction:** Replace with 'На P7: зміщення від VCC_RF LC76G через 10 Ohm + 68 nH — близько 3.1 V при 20 mA (модель) проти мінімуму антени 3.0 V (плата LC76G живиться від 5 V); на запуску ≥3.05 V на центрі IPEX під 150 Ohm, інакше окремий bias-tee 5 V з DC-блоком; GLONASS для 25346 не вказано — перевірити; магнітна основа ≥30 см від паку IMU'.
+    - **Reason:** Waveshare schematic and 25346 spec (3.0-18 V, ≤20 mA, GLONASS not listed).
+    - **Sources:** https://www.waveshare.com/gps-external-antenna-d.htm ; https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf
+    - **Saving usd:** 
+  33.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** IP2368 board in topology
+    - **Anchor:** зарядник IP2368 BZ
+    - **Instruction:** Replace with 'роздрібна плата зарядника IP2368 COUT (USB-C корпусу → TPS259470A → VBUS плати)'.
+    - **Reason:** No BZ board is sold; all retail boards are COUT/Try.SRC.
+    - **Sources:** https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+    - **Saving usd:** 
+  34.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** SMBJ17A on SW
+    - **Anchor:** сервісний порт вузла N із запобіжником 5 A і TVS SMBJ17A
+    - **Instruction:** Append 'На вузлі SW — другий SMBJ17A (Vishay/Littelfuse) проти накачування VIN D36V28F5 при зворотному живленні LAB5.'
+    - **Reason:** Pololu staff reproduced >60 V on D36V28Fx VIN with slightly over 5 V on VOUT.
+    - **Sources:** https://forum.pololu.com/t/strange-behavior-of-d36v28f5-pololu-3782/29129
+    - **Saving usd:** 
+  35.
+    - **Section:** 05a_arch_power
+    - **Kind:** replace_part
+    - **Part:** AON LDO
+    - **Anchor:** N → LDO класу TPS709 (30 V, мкА спокою; перевірити)
+    - **Instruction:** Replace with 'N → TI TPS70933DBVR (2.7-30 V, 32 V абс. макс., IGND 1.3 мкА тип., ±1%)'.
+    - **Reason:** Re-audit D fixed the model-class item to a sourced part (TPS709 SBVS186H).
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps709.pdf
+    - **Saving usd:** 
+  36.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** AON loads and current
+    - **Anchor:** | INA228, супервізор UV (12.8 V спрацювання / 13.6 V відпускання) | близько 0.7 mA |
+    - **Instruction:** Replace loads/current with '| INA228 (без LED, неперервний режим; у shutdown при poweroff без зарядника), push-pull UV-компаратор (деталь за analogs G3; 12.8 V спрацювання / 13.6 V відпускання, модель) | INA228 IQ 640 тип./750 макс. мкА (1.1 mA за температурою); весь OFF при 14.8 V: ≤1.0 mA з INA228 у роботі, ≤0.25 mA з INA228 у shutdown (без BMS) |'.
+    - **Reason:** INA228 SLYS021A IQ values; the LED removal and shutdown rule restate standby.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/ina228.pdf
+    - **Saving usd:** 
+  37.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** #2813 rating in SW row
+    - **Anchor:** N → #2813 HP (6 A при 55 °C; <0.2 мкА вимкнено, перевірено)
+    - **Instruction:** Replace with 'N → #2813 HP (близько 6 A нагріває MOSFET до 55 °C у повітрі 22 °C, не номінал при 55 °C навколо; межа 32 V, 40 V абс. макс.; <0.2 мкА вимкнено; не аварійне відключення)'.
+    - **Reason:** Pololu table footnote '12 V, 22 C ambient, still air'.
+    - **Sources:** https://www.pololu.com/product/2813
+    - **Saving usd:** 
+  38.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** D36V50F12 backup EN divider
+    - **Anchor:** запасний EN (дільник близько 0.10: сон близько 12.0 V, пробудження близько 13.5 V)
+    - **Instruction:** Replace with 'запасний EN: 10.0 k (SW→EN) / 1.00 k (EN→GND), 1%, з урахуванням внутрішнього 100 k від EN до VIN — сон близько 12.1 V, пробудження близько 13.6 V (модель; при допуску 100 k ±20% сон 11.9-12.3 V; калібрувати; 9.1k/1.0k дав би 11.2/12.6 V); дільник бере 1.6 mA лише ввімкненим'.
+    - **Reason:** The Pololu 100 k EN-VIN pull-up sits in parallel with the top resistor.
+    - **Sources:** https://www.pololu.com/product/4095
+    - **Saving usd:** 
+  39.
+    - **Section:** 05a_arch_power
+    - **Kind:** architecture
+    - **Part:** J21 chain
+    - **Anchor:** SYS12 → blade 4 A → pi-фільтр → SMBJ13A + 220 мкФ/25 V → ключований роз'єм з фіксацією
+    - **Instruction:** Replace with 'SYS12 → blade 4 A → TPS259470A (OVLO близько 13.5 V, ILIM близько 4 A) → pi-фільтр → SMBJ13A (Vishay/Littelfuse) + 220 мкФ/25 V → 3-pin роз'єм з фіксацією'.
+    - **Reason:** If the SYS12 high side fails short, the SMBJ13A conducts about 2-8 A at 16.4 V (model) until the 4 A fuse opens, with the Q6A near its 16 V limit.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps25947.pdf ; https://www.vishay.com/docs/88392/smbj.pdf
+    - **Saving usd:** 
+  40.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** Q6A J21 input range source
+    - **Anchor:** Q6A приймає 4.5-16 V (форум); SY81012 2.7-16 V
+    - **Instruction:** Replace with 'Q6A приймає 4.5-16 V (персонал Radxa чотири рази, востаннє 15.10.2026; вхідні конденсатори ADP12V 16 V, TVS на шляху J21 на платі немає — 16 V абсолютна межа); SY81012 2.7-16 V'.
+    - **Reason:** Forum t/31611 (strongtz) and schematic v1.21 DC-IN sheet.
+    - **Sources:** https://forum.radxa.com/t/radxa-q6a-4s1p-powering/31611 ; https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+    - **Saving usd:** 
+  41.
+    - **Section:** 05a_arch_power
+    - **Kind:** architecture
+    - **Part:** J21 after the Lime desolder
+    - **Anchor:** (з Lime — кручена пара 20 AWG від нижніх майданчиків)
+    - **Instruction:** Replace with '(після випаювання J21 у збірці з Lime — усі три майданчики: 12 V і GND крученою парою 20 AWG, PWR_ON_KEY (пін 3) окремим дротом 26-28 AWG до вузла АБО відкритого стоку Pico / BAT54; через 3-pin роз'єм з фіксацією, доступний з лючка; термоусадка на кожному з'єднанні, поліімід поверх корпусу USB-C, фіксація джгута до пластини)'.
+    - **Reason:** Schematic v1.21 p.28: J21 is CON_1X3 (ADP12V_IN, GND, PWR_ON_KEY); a twisted pair alone loses Pico/button power-on.
+    - **Sources:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+    - **Saving usd:** 
+  42.
+    - **Section:** 05a_arch_power
+    - **Kind:** replace_part
+    - **Part:** DISP12 eFuse
+    - **Anchor:** | DISP12 | SYS12 → LC → eFuse 1.5 A | 12 V | eFuse |
+    - **Instruction:** Replace with '| DISP12 | SYS12 → LC → TPS259470A (ILIM 1.5 A, OVLO близько 13.5 V, EN від GP16) | 12 V | eFuse |'.
+    - **Reason:** Names the unnamed eFuse; one part for three places.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps25947.pdf
+    - **Saving usd:** 
+  43.
+    - **Section:** 05a_arch_power
+    - **Kind:** removal
+    - **Part:** D36V28F5 #2 in DISP12 row
+    - **Anchor:** плата Wisecoco (якщо лише 5 V — окремий D36V28F5 #2 від SW)
+    - **Instruction:** Replace with 'барель DC 5-24 V Wisecoco або 12 V 5.5 мм 4D напряму; USB-VBUS до плати дисплея не підключається'.
+    - **Reason:** Wisecoco board takes DC 5-24 V.
+    - **Sources:** https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-inch-2000-nits-lcd-7.webp
+    - **Saving usd:** 
+  44.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** TPS2553 LNA limits
+    - **Anchor:** TPS2553 на канал, 300 mA номінально (від 240 mA мінімум)
+    - **Instruction:** Replace with 'TPS2553 на канал, RILIM 88.7k 1%: 265/299/339 mA (мін./ном./макс.)'.
+    - **Reason:** Recomputed from SLVS841F IOS equations.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps2553.pdf
+    - **Saving usd:** 
+  45.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** LNB13V2 LDO spec
+    - **Anchor:** SW → LC → TPS7A4701 (3-36 V, 1 A, 307 mV падіння при 1 A; перевірено на ti.com)
+    - **Instruction:** Replace with 'SW → LC → TPS7A4701 (3-35 V робоча, 36 V абс. макс.; 307 тип./450 макс. mV при 1 A; ±2.5% лише при VIN ≥ VO + 1 V; ANY-OUT 13.2 V: на землю 6P4V1, 3P2V, 1P6V, 0P4V, 0P2V; EN високий від 2.0 V; Schottky OUT→GND)'.
+    - **Reason:** TPS7A47 SBVS204G (May 2026).
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+    - **Saving usd:** 
+  46.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** LNB13V2 acceptance window
+    - **Anchor:** 13.2 V ±0.2 V на F-роз'ємі
+    - **Instruction:** Replace with '13.2 V; приймання ±0.35 V на F-роз'ємі при батареї ≥14.2 V (самий IC дає ±0.33 V, тож вікно — вимір на екземплярі з падіннями шунта, eFuse і дроселя, за analogs G3)'.
+    - **Reason:** Overall accuracy ±2.5% only above VO+1 V; ±0.2 V gives false failures.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+    - **Saving usd:** 
+  47.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** LNB rail PG
+    - **Anchor:** внутрішнє обмеження і OTP; PG на MCP #3
+    - **Instruction:** Replace 'PG на MCP #3' with 'PG-виводу немає: дільник на близько 90% у TLV3011 (відкритий стік, живлення від 3.3 V Q6A) → MCP #3'.
+    - **Reason:** No PG pin in the TPS7A4701 pin table.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+    - **Saving usd:** 
+  48.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** BONI12V5 rail
+    - **Anchor:** | 12.5 V ±0.25 V | PTC 0.2 A утримання при 60 °C (попередньо); PG; спершу DC-sense |
+    - **Instruction:** Replace with '| 12.5 V (ANY-OUT на землю 6P4V1, 3P2V, 0P8V, 0P4V, 0P2V, 0P1V); приймання ±0.35 V при батареї ≥14.2 V | PTC 0.2 A утримання при 60 °C (попередньо); rail-good через TLV3011 → MCP #3; Schottky OUT→GND; спершу DC-sense |'. If v2 adopts the 13.8 V Boni rail from another source, use that rail's ANY-OUT straps and the analogs G3 input condition instead.
+    - **Reason:** Same TPS7A4701 PG and accuracy corrections as the LNB rail.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+    - **Saving usd:** 
+  49.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** Real-current protection: main switch
+    - **Anchor:** Головний вимикач: 6 A при 55 °C проти ≤4.6 A.
+    - **Instruction:** Replace with 'Головний вимикач: близько 6 A дає 55 °C MOSFET у повітрі 22 °C; при 4.6 A у корпусі 45-50 °C MOSFET близько 65-70 °C (модель) — логувати в C4 (2).'
+    - **Reason:** Pololu rows are not ambient ratings.
+    - **Sources:** https://www.pololu.com/product/2813
+    - **Saving usd:** 
+  50.
+    - **Section:** 05a_arch_power
+    - **Kind:** new_risk
+    - **Part:** J21 over-voltage path
+    - **Anchor:** TVS на J21: SMBJ13A
+    - **Instruction:** After the SMBJ13A sentence add: 'При КЗ верхнього ключа SYS12 SMBJ13A проводить близько 2-8 A при 16.4 V (модель), доки не згорить запобіжник 4 A, а Q6A стоїть біля межі 16 V — тому основний захист — OVLO TPS259470A, а SMBJ13A лише гасить швидкі перехідні. SMBJ13A: VBR 14.4-15.9 V, VC 21.5 V при 27.9 A.'
+    - **Reason:** Schematic v1.21: no on-board TVS on the J21 path; SY81012 input caps rated 16 V.
+    - **Sources:** https://www.vishay.com/docs/88392/smbj.pdf ; https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+    - **Saving usd:** 
+  51.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** TVS on SW
+    - **Anchor:** TVS на вузлі N: SMBJ17A (VRWM 17 V вище 16.8 V).
+    - **Instruction:** Append 'Другий SMBJ17A — на вузлі SW (VBR 18.9-20.9 V, VC 27.6 V при 21.7 A).'
+    - **Reason:** Back-feed pump condition on D36V28F5.
+    - **Sources:** https://www.vishay.com/docs/88392/smbj.pdf ; https://forum.pololu.com/t/strange-behavior-of-d36v28f5-pololu-3782/29129
+    - **Saving usd:** 
+  52.
+    - **Section:** 05a_arch_power
+    - **Kind:** rule
+    - **Part:** Back-feed wiring rules
+    - **Anchor:** **Шляхи зворотного живлення (правила проводки).**
+    - **Instruction:** Add these rules to the paragraph: (1) LAB5 → VSYS Pico лише через Schottky (схема ORing з даташиту Pico; USB Pico до ПК інакше живить усю LAB5 близько 4.7 V); (2) вхід 5 V паку IMU — через Schottky (у RP2040-Zero VSYS з'єднаний з VBUS напряму, 5.0-5.25 V з USB — умова накачування D36V28F5 понад 60 V на VIN); (3) SMBJ17A на SW; (4) прошивати будь-який MCU лише з увімкненим головним вимикачем або від'єднаним від LAB5; (5) ALERT INA228 підтягувати лише до 3.3 V хедера Q6A, ніколи до AON; (6) дільник батареї Pico 1:6 бере напругу з SW, не з N (ADC Pico має діоди на IOVDD); (7) до плати дисплея — лише D+/D−/GND сенсора, VBUS хаба ніколи.
+    - **Reason:** Pico DS (VBUS→VSYS via D1), Waveshare RP2040-Zero FAQ, Pololu forum t/29129.
+    - **Sources:** https://pip-assets.raspberrypi.com/categories/610-raspberry-pi-pico/documents/RP-008307-DS-2-pico-datasheet.pdf ; https://www.waveshare.com/wiki/RP2040-Zero ; https://forum.pololu.com/t/strange-behavior-of-d36v28f5-pololu-3782/29129
+    - **Saving usd:** -1
+  53.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** HDMI pin 18
+    - **Anchor:** HDMI пін 18 перерізано або закрито діодом.
+    - **Instruction:** Replace with 'HDMI пін 18 — через послідовний Schottky (анод з боку Q6A), ніколи не перерізати.'
+    - **Reason:** Re-audit D display spec: pin 18 must stay for HPD/EDID; series Schottky blocks back-feed.
+    - **Sources:** https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_5.pdf
+    - **Saving usd:** 
+  54.
+    - **Section:** 05a_arch_power
+    - **Kind:** architecture
+    - **Part:** Pico second OFF trigger
+    - **Anchor:** Pico відкриває #2813 через 3 с після зникнення 3.3 V Q6A.
+    - **Instruction:** Replace with 'Pico відкриває #2813, щойно зникає 3.3 V Q6A (через 3 с), або через 20-30 с після кадру OFF-NOW (хук systemd-shutdown; перед ним кадр ARM-OFF по UART7), або через 60 с втрати heartbeat після ARM-OFF. За схемою v1.21 3.3 V хедера є лише при ввімкненій шині PMIC L18B, тож після poweroff має впасти — підтвердити на стенді (halt лишає PMIC увімкненим).'
+    - **Reason:** Whether poweroff turns off L18B is firmware-dependent and unpublished; a second trigger prevents a silent drain.
+    - **Sources:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+    - **Saving usd:** 
+  55.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** Linux shutdown cutoff row
+    - **Anchor:** Pico відкриває #2813 через 3 с після зникнення 3.3 V |
+    - **Instruction:** Replace with 'labpowerd переводить INA228 у shutdown, якщо зарядника немає; Pico відкриває #2813 через 3 с після зникнення 3.3 V, або через 20-30 с після OFF-NOW, або 60 с без heartbeat після ARM-OFF |'.
+    - **Reason:** Standby restatement and second OFF trigger.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/ina228.pdf
+    - **Saving usd:** 
+  56.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** Pico divider tap
+    - **Anchor:** | Аварійний режим Pico | дільник ≤ 12.9 V протягом 5 с без heartbeat |
+    - **Instruction:** Replace with '| Аварійний режим Pico | дільник 1:6 від SW (не від N; напр. 100k/20k; 16.8 V/6 = 2.8 V) ≤ 12.9 V протягом 5 с без heartbeat |'.
+    - **Reason:** A divider on N would back-power the unpowered Pico through the ADC diodes.
+    - **Sources:** https://pip-assets.raspberrypi.com/categories/610-raspberry-pi-pico/documents/RP-008307-DS-2-pico-datasheet.pdf
+    - **Saving usd:** 
+  57.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** Hardware supervisor row
+    - **Anchor:** | Апаратний супервізор (AON) | 12.8 V |
+    - **Instruction:** Replace with '| Апаратний UV-компаратор (AON, push-pull; деталь за analogs G3) | близько 12.8 V (модель, калібрувати) |'.
+    - **Reason:** TPS3762 cannot be bought as a UV part.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps3762.pdf
+    - **Saving usd:** 
+  58.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** Backup EN cutoff row
+    - **Anchor:** | Запасний EN D36V50F12 | близько 12.0 V | сон (пробудження близько 13.5 V) |
+    - **Instruction:** Replace with '| Запасний EN D36V50F12 | близько 12.1 V (10.0k/1.00k, модель) | сон (пробудження близько 13.6 V) |'.
+    - **Reason:** Pololu 100 k pull-up in parallel with the top resistor.
+    - **Sources:** https://www.pololu.com/product/4095
+    - **Saving usd:** 
+  59.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** BMS cutoff row
+    - **Anchor:** | BMS | 2.5-2.8 V/ел. | останній рубіж |
+    - **Instruction:** Replace with '| BMS (Daly DL-J05G) | UVP 2.70 ±0.05 V/ел. (відновлення 3.0 V); OVP 4.25 ±0.05 V (відновлення 4.15 V) | останній рубіж |'.
+    - **Reason:** Daly spec via TinyTronics.
+    - **Sources:** https://www.tinytronics.nl/product_files/005102_Data-Sheet-of-DL-J04G3-L04S15ATJ-BMS-circuits.pdf
+    - **Saving usd:** 
+  60.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** SoC resync thresholds
+    - **Anchor:** | Ресинхронізація лічильника | 16.35 V при < 0.1 A, або ≥ 16.3 V у спокої при завантаженні | SoC = 100% |
+    - **Instruction:** Replace with '| Ресинхронізація лічильника | виміряна V_CV цієї плати IP2368 − 0.05 V при < 0.15 A (V_CV записується на прийманні; модель 16.25-16.57 V при RVSET 5.1k) | SoC = 100% |'.
+    - **Reason:** VTRGT tolerance about ±40 mV/cell: a low unit at 16.25 V never meets fixed 16.35/16.3 V conditions; ISTOP is 100 mA typ.
+    - **Sources:** https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+    - **Saving usd:** 
+  61.
+    - **Section:** 05a_arch_power
+    - **Kind:** rule
+    - **Part:** NPU thermal stop
+    - **Anchor:** | NPU | SoC < 25% (і для навчання SoC < 75 °C) / SoC < 15% |
+    - **Instruction:** Append to the condition: '; nspss0/1 > 85 °C — задачі NPU/HTP зупиняються (ядро не тротлить NPU до критичних 110 °C)'.
+    - **Reason:** sc7280.dtsi NSP zones have only a 'hot' 90 C trip with no cooling maps.
+    - **Sources:** https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/arch/arm64/boot/dts/qcom/sc7280.dtsi
+    - **Saving usd:** 
+  62.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** Charging section
+    - **Anchor:** **Заряд.** IP2368 BZ лише заряд:
+    - **Instruction:** Replace the opening with '**Заряд.** Роздрібна плата IP2368 COUT (Try.SRC; одна активаційна зарядка; BZ як плата не продається): RVSET 5.1k (4.102 V/ел. тип.), RISET 15k (плати постачаються з 27k = 5 A), ISET_MODE через 1k на GND; ланцюг USB-C корпусу → TPS259470A (OVLO близько 22 V, ILIM близько 3.5 A) → VBUS плати, CC1/CC2 напряму. Польове джерело — лише односторонній PD-адаптер, доки не пройде матриця DRP (Anker 737 і USB-C ISDT 608PD — двонаправлені);' and keep the rest.
+    - **Reason:** COUT boards take the source role; reverse-blocking eFuse stops pack drain but DRP charging is unproven.
+    - **Sources:** https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723 ; https://www.ti.com/lit/ds/symlink/tps25947.pdf ; https://www.isdt.co/608pd.html
+    - **Saving usd:** 
+  63.
+    - **Section:** 05a_arch_power
+    - **Kind:** removal
+    - **Part:** 45 W RISET mode
+    - **Anchor:** для джерел 45 W — режим обмеження вхідної потужності (значення RISET перевірити на стенді)
+    - **Instruction:** Replace with 'стандартний IP2368 сам знижує струм заряду до оголошеної PD-потужності (DS розд. 12.3), окремий режим для 45 W не потрібен'.
+    - **Reason:** Only the _NA custom variant ignores adapter capability.
+    - **Sources:** https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+    - **Saving usd:** 
+  64.
+    - **Section:** 05a_arch_power
+    - **Kind:** keep_with_note
+    - **Part:** Runtime mode H
+    - **Anchor:** | H Lime типово: 56 Msps + T7 + RTL-B | 30.8 | 1.9 год | 1.6 год |
+    - **Instruction:** Mark this row as the typical session of the default (with-Lime) build: append '(типова сесія збірки за замовчуванням)'.
+    - **Reason:** User made the with-Lime build default; re-audit D recomputed 1.88/1.62 h.
+    - **Sources:** https://www.fsaeonline.com/content/Molicel-TDS--INR-21700-P50B-80122.pdf
+    - **Saving usd:** 
+  65.
+    - **Section:** 05a_arch_power
+    - **Kind:** new_risk
+    - **Part:** Runtime mode I sag
+    - **Anchor:** | I Lime пік | 61.1 | 0.9 год | 0.8 год |
+    - **Instruction:** Add a footnote under the table: 'Режим I оптимістичний: на 4.63 A просідання шляху близько 0.5 V (4 × 12.8 mOhm DC + BMS <20 + шунт 15 + запобіжник і дроти близько 20 mOhm, частково припущення), тож 13.2 V під навантаженням ≈ 13.7 V OCV і режим I зупиниться раніше (модель).'
+    - **Reason:** Re-audit D path-resistance model.
+    - **Sources:** https://www.fsaeonline.com/content/Molicel-TDS--INR-21700-P50B-80122.pdf
+    - **Saving usd:** 
+  66.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** OFF standby
+    - **Anchor:** | OFF: INA228 + очікування IP2368 + BMS + супервізор | близько 0.013-0.014 | близько 170-185 днів | — |
+    - **Instruction:** Replace with '| OFF: INA228 + ISTB IP2368 0.18 mA + TPS70933 + компаратор + BMS 0-0.5 mA | близько 0.014-0.029 (модель) | близько 50-105 днів від 50% SoC; близько 145-500 днів з INA228 у shutdown | — |' and add: 'Зберігання понад 2-4 тижні — вийняти запобіжник 7.5 A (лише Daly: ≥203 дні в найгіршому разі).'
+    - **Reason:** v1 omitted Daly operating current (<500 uA) and the LED; model at 14.8 V gives 14.2-28.9 mW.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/ina228.pdf ; https://www.tinytronics.nl/product_files/005102_Data-Sheet-of-DL-J04G3-L04S15ATJ-BMS-circuits.pdf
+    - **Saving usd:** 
+  67.
+    - **Section:** 05a_arch_power
+    - **Kind:** new_risk
+    - **Part:** Q6A USB-C Q5 back-feed
+    - **Anchor:** USB-C Q6A не має отвору в корпусі (зарядник на USB-C Q6A при живому J21 живив би назад через Q5).
+    - **Instruction:** Append: 'Механізм (схема v1.21 стор. 28, прочитання = модель): Q5 — пара PMOS DMP2160UFDB зустрічно, затвори тягне NPN Q6 з дільника 100k/100k від TYPEC_IN, вивід GATE CH224D не під'єднано; будь-який VBUS вмикає Q5 і зводить VBUS USB-C з шиною 12 V J21 — PD-адаптер живив би SYS12 (дисплей, AUX, вихід D36V50F12), а живий J21 — адаптер. EDL — із живленням через J21 (перевірити на стенді); якщо колись з'явиться отвір USB-C — спершу від'єднати роз'єм J21, наклейка «J21 unplugged before USB-C».'
+    - **Reason:** Re-audit D schematic reading.
+    - **Sources:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf ; https://docs.radxa.com/en/dragon/q6a/low-level-dev/edl-mode
+    - **Saving usd:** 
+  68.
+    - **Section:** 05a_arch_power
+    - **Kind:** keep_with_note
+    - **Part:** LAB5 rail
+    - **Anchor:** | LAB5 | SW → D36V28F5 (3.2 A) → запобіжник 3 A | 5.0 V | запобіжник |
+    - **Instruction:** Add to the limit/protection cell: 'VSYS Pico і вхід 5 V паку IMU — через Schottky; запобіжник 3 A при 2.3 A з Lime = 77% — тест нагріву; якщо гріється або LAB5 > 2.5 A — D36V50F5 ($39.95 Pololu) і запобіжник 4 A'.
+    - **Reason:** With-Lime default puts 2.3 A on LAB5; fuse derating unverified (Littelfuse 403).
+    - **Sources:** https://www.littelfuse.com/products/fuses-overcurrent-protection/fuses/automotive-passenger-car/blade-fuses/mini-297
+    - **Saving usd:** 
+  69.
+    - **Section:** 05a_arch_power
+    - **Kind:** other
+    - **Part:** Runtime model replacement
+    - **Anchor:** Старі цифри 3.7-5.3 год (без Lime) і 2.2-2.6 год (з Lime) замінено.
+    - **Instruction:** Append: 'Мітки «модель» лишаються до логів INA228 у W1-2; холодний прогін режиму H при 0 °C з логом INA228 замінює модель 50 Wh.'
+    - **Reason:** Re-audit D confirmed the arithmetic but not the inputs.
+    - **Sources:** https://www.fsaeonline.com/content/Molicel-TDS--INR-21700-P50B-80122.pdf
+    - **Saving usd:** 
+  70.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** D1 BMS cutoff
+    - **Anchor:** BMS: 2.5-2.8 V/ел.
+    - **Instruction:** Replace with 'BMS (Daly DL-J05G): UVP 2.70 ±0.05 V/ел., відновлення 3.0 V.'
+    - **Reason:** Daly spec.
+    - **Sources:** https://www.tinytronics.nl/product_files/005102_Data-Sheet-of-DL-J04G3-L04S15ATJ-BMS-circuits.pdf
+    - **Saving usd:** 
+  71.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** D1 SoC resync
+    - **Anchor:** Ресинхронізація лічильника: 16.35 V при струмі менше 0.1 A або від 16.3 V у спокої при завантаженні.
+    - **Instruction:** Replace with 'Ресинхронізація лічильника: виміряна V_CV плати IP2368 − 0.05 V при струмі менше 0.15 A (V_CV кожної плати — на прийманні).'
+    - **Reason:** IP2368 VTRGT tolerance.
+    - **Sources:** https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+    - **Saving usd:** 
+  72.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** D1 backup EN
+    - **Anchor:** Запасний EN D36V50F12: дільник близько 0.10 — засинає близько 12.0 V, прокидається близько 13.5 V (пороги Pololu 1.2/1.35 V).
+    - **Instruction:** Replace with 'Запасний EN D36V50F12: 10.0 k / 1.00 k (1%) з урахуванням внутрішнього 100 k від EN до VIN — засинає близько 12.1 V, прокидається близько 13.6 V (пороги Pololu 1.2/1.35 V; модель, калібрувати).'
+    - **Reason:** Pololu product page: 100 k pull-up EN-VIN.
+    - **Sources:** https://www.pololu.com/product/4095
+    - **Saving usd:** 
+  73.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** condition
+    - **Part:** C4 gate (2)
+    - **Anchor:** (2) 60 хв при 3.5 A у закритому корпусі при 14.0 V і 16.4 V на вході.
+    - **Instruction:** Replace with '(2) 60 хв при 4.2 A у закритому корпусі при 14.0 V і 16.4 V на вході (збірка з Lime за замовчуванням: SYS12 близько 4 A на піку) з логом температур D36V50F12, MOSFET #2813 і запобіжника 7.5 A; плюс 4.6 A на батареї 30 хв при 50 °C навколо.'
+    - **Reason:** Pololu's 4.5 A typical is at 36 V in and room temperature.
+    - **Sources:** https://www.pololu.com/product/4095
+    - **Saving usd:** 
+  74.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** C4 fallback
+    - **Anchor:** Якщо ні — синхронний buck з примусовим PWM на фіксованій частоті через RT/SYNC (частота з гармонічного сканування, бажано від 1 MHz), деталь обирається в P5; без buck-boost.
+    - **Instruction:** Replace with 'Якщо ні — TI LM61460AANRJRR (3-36 V, 6 A, FPWM від зовнішнього такту на EN/SYNC) з умовами analogs G3 (такт не вище близько 1.0 MHz з гармонічного сканування, дросель під цю частоту, каскад захисту від переполюсування, новий дільник EN); без buck-boost.'
+    - **Reason:** Re-audit D names the part; analogs G3 caps the clock because of min-off-time foldback.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/lm61460.pdf
+    - **Saving usd:** 
+  75.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C4 J21 range
+    - **Anchor:** Просідання нешкідливе: J21 приймає 4.5-16 V (форум), SY81012 працює від 2.7 до 16 V.
+    - **Instruction:** Replace '(форум)' with '(персонал Radxa, востаннє 15.10.2026; 16 V — абсолютна межа: вхідні конденсатори ADP12V на 16 V і без TVS на шляху J21, тож перед J21 — OVLO eFuse TPS259470A)'.
+    - **Reason:** Forum t/31611 and schematic v1.21.
+    - **Sources:** https://forum.radxa.com/t/radxa-q6a-4s1p-powering/31611 ; https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+    - **Saving usd:** 
+  76.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** D2 #2813 rating
+    - **Anchor:** #2813 (6 A при 55 °C) і BMS (15 A) вище.
+    - **Instruction:** Replace with '#2813 (близько 6 A → 55 °C MOSFET у повітрі 22 °C; не аварійне відключення) і BMS (15 A) вище; аварійне відключення — BMS і запобіжник 7.5 A.'
+    - **Reason:** Pololu table footnote.
+    - **Sources:** https://www.pololu.com/product/2813
+    - **Saving usd:** 
+  77.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** D3 AON and standby
+    - **Anchor:** LDO AON 3.3 V (клас TPS709, вхід 30 V, мкА спокою; перевірити), INA228 і супервізор UV — близько 13-14 mW, близько 170-185 днів очікування.
+    - **Instruction:** Replace with 'LDO AON TPS70933DBVR, INA228 (без LED) і push-pull UV-компаратор (деталь за analogs G3) — близько 14-29 mW з BMS, близько 50-105 днів від 50% SoC (модель); labpowerd переводить INA228 у shutdown при poweroff без зарядника (близько 145-500 днів); для зберігання понад 2-4 тижні — вийняти запобіжник 7.5 A.'
+    - **Reason:** Re-audit D standby model includes Daly <500 uA and INA228 IQ.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/ina228.pdf ; https://www.ti.com/lit/ds/symlink/tps709.pdf
+    - **Saving usd:** 
+  78.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** D3 Pico OFF triggers
+    - **Anchor:** відкриває #2813 через 3 с після зникнення 3.3 V Q6A;
+    - **Instruction:** Replace with 'відкриває #2813 через 3 с після зникнення 3.3 V Q6A, або через 20-30 с після кадру OFF-NOW (хук systemd-shutdown після ARM-OFF), або через 60 с втрати heartbeat після ARM-OFF;'.
+    - **Reason:** Header 3.3 V fall after poweroff is firmware-dependent.
+    - **Sources:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+    - **Saving usd:** 
+  79.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C14 INA228 board prep
+    - **Anchor:** VS від завжди-ввімкненого LDO 3.3 V; підтягувальні резистори на платі зняти.
+    - **Instruction:** Replace with 'VS від AON 3.3 V; зняти R6 (4x10k: SDA/SCL і стягування ADDR) і R7 (LED); адресу задати (A0+A1 = 0x45 або ADDR на GND = 0x40) і так само в labpowerd; SJ1 замкнути; неперервний режим; SHUNT_CAL за еталоном на 0.5/2/4 A (шунт 1%); ALERT — підтяжка до 3.3 V хедера Q6A; blacklist ina238, вузла ti,ina228 у DT немає, i2cdetect показує адресу, не UU.'
+    - **Reason:** Adafruit Eagle files and INA228 DS.
+    - **Sources:** https://github.com/adafruit/Adafruit-INA228-PCB ; https://www.ti.com/lit/ds/symlink/ina228.pdf
+    - **Saving usd:** 
+  80.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C14 Pico divider
+    - **Anchor:** Pico читає батарею через власний дільник 1:6 для аварійної логіки.
+    - **Instruction:** Replace with 'Pico читає батарею через власний дільник 1:6 з вузла SW (не N) для аварійної логіки.'
+    - **Reason:** RP2040 ADC pins have diodes to IOVDD.
+    - **Sources:** https://pip-assets.raspberrypi.com/categories/610-raspberry-pi-pico/documents/RP-008307-DS-2-pico-datasheet.pdf
+    - **Saving usd:** 
+  81.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C9 TPS2553 minimum
+    - **Anchor:** (240 mA і більше на нижньому краї допуску)
+    - **Instruction:** Replace with '(RILIM 88.7k 1%: 265/299/339 mA мін./ном./макс.)'.
+    - **Reason:** TPS2553 DS equations.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps2553.pdf
+    - **Saving usd:** 
+  82.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C8 LDO PG
+    - **Anchor:** PG — на MCP #3.
+    - **Instruction:** Replace with 'PG-виводу в TPS7A4701 немає: TLV3011 (відкритий стік, від 3.3 V Q6A, поріг близько 90%) → MCP #3; Schottky OUT→GND.'
+    - **Reason:** TPS7A47 Rev G pin table.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+    - **Saving usd:** 
+  83.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C8 LNB acceptance
+    - **Anchor:** Приймання: 0 V вимкнено; 13.2 V ±0.2 V на F-роз'ємі під навантаженням при батареї від 13.8 V.
+    - **Instruction:** Replace with 'Приймання: 0 V вимкнено; 13.2 V ±0.35 V на F-роз'ємі під навантаженням при батареї від 14.2 V (±2.5% IC лише при VIN ≥ VO + 1 V); дропаут — окремо на 13.2 V батареї.'
+    - **Reason:** Avoids false acceptance failures.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+    - **Saving usd:** 
+  84.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C8 LDO input range
+    - **Anchor:** LDO **TPS7A4701** (вхід 36 V, 1 A, 307 mV падіння при 1 A; ti.com, 18.10)
+    - **Instruction:** Replace with 'LDO **TPS7A4701** (3-35 V робоча, 36 V абс. макс., 1 A, 307 тип./450 макс. mV падіння при 1 A; SBVS204G)'.
+    - **Reason:** Datasheet operating vs absolute range.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+    - **Saving usd:** 
+  85.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C17 Boni rail
+    - **Anchor:** **Boni-Whip:** 12.5 V ±0.25 V від TPS7A4701
+    - **Instruction:** Replace '±0.25 V' with '(приймання ±0.35 V при батареї ≥14.2 V; rail-good через TLV3011 → MCP #3; Schottky OUT→GND)'.
+    - **Reason:** Same LDO corrections.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+    - **Saving usd:** 
+  86.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** replace_part
+    - **Part:** D4 display rail
+    - **Anchor:** Шина: SYS12 → LC → eFuse 1.5 A (EN від Pico); якщо плата лише 5 V — окремий D36V28F5 #2 від SW, ніколи LAB5 чи порт Q6A.
+    - **Instruction:** Replace with 'Шина: SYS12 → LC → TPS259470A (ILIM 1.5 A, OVLO близько 13.5 V, EN від GP16) → барель DC (Wisecoco 5-24 V або 4D 12 V 5.5 мм); D36V28F5 #2 прибрано; ніколи LAB5 чи порт Q6A.'
+    - **Reason:** Wisecoco DC 5-24 V barrel.
+    - **Sources:** https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-inch-2000-nits-lcd-7.webp
+    - **Saving usd:** 23.95
+  87.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** new_risk
+    - **Part:** D4 dimming path and pin 18
+    - **Anchor:** Димінг — аналоговий/DC; 24.0 kHz лише якщо плата вимагає PWM. Без VBUS-зв'язку з Q6A; HDMI пін 18 перерізано або закрито діодом.
+    - **Instruction:** Replace with 'Димінг: у плати Wisecoco свій підвищувач підсвітки і роз'єм KEY, у 4D — лише OSD, тож GP17 нікуди підключати; шлях у порядку: (1) DDC/CI «ddcutil setvcp 10» через AUX RA620; (2) емуляція KEY/OSD з Pico відкритим стоком (потрібна розпіновка); (3) власний CC-драйвер LED на роз'ємі Backlight від DISP12 зі справжнім DC-димінгом (потрібні Vf/If і кількість ланцюжків). Без робочого шляху зниження за NTC і авто-яскравість не діють. Без VBUS-зв'язку з Q6A; HDMI пін 18 — через послідовний Schottky (анод з боку Q6A), ніколи не перерізати.'
+    - **Reason:** Listing images show the board's own LED boost; 4D Rev 1.5: OSD and 'Supports DDC'.
+    - **Sources:** https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-1.jpg ; https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_5.pdf
+    - **Saving usd:** 
+  88.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** condition
+    - **Part:** D5 written questions
+    - **Anchor:** Перед оплатою надіслати Wisecoco письмові питання: VID:PID USB-HID; бондування і AR; вхідна напруга і струм; дамп EDID; чи приймаються режими 151.50 і 127.90 MHz; режим DSI і швидкість ліній моста; режим для рукавиць; робоча температура; комплект.
+    - **Instruction:** Replace the list with: (1) VID:PID USB-HID і чи сенсор енумерується з роз'єму USB TP при відкритому VBUS; IC сенсора, in-cell чи CTP, режим рукавиць; (2) оптичне бондування і AR, товщина покривного скла; (3) деталь скалера чи моста, pass-through чи масштабування, піксельна частота і швидкість ліній DSI з боку панелі, частоти кварців; (4) дамп EDID і чи приймаються 2200x1148@151.50 і 2200x1125@127.90 від джерела RGB/DVI; нативний DTD панелі і діапазон вхідних таймінгів; (5) підсвітка: Vf/If ланцюжка, IC драйвера і його частота, метод димінгу (частота PWM, розпіновка KEY, DDC/CI); (6) чи є аудіопідсилювач і чи вимикається; (7) вісь поляризатора; (8) струм при 12 V на 25/50/100%, розмір бареля, комплект. Вхідну напругу з питань прибрати (DC 5-24 V на фото).
+    - **Reason:** Re-audit D: listing images settle input voltage and orientation; scaler clocks, dimming and polariser are open.
+    - **Sources:** https://www.wisecocodisplay.com/product/7-inch-1920x1080-high-brightness-2500nits-lcd-panel-with-hdmi-in-board-ips-mipi-interface-tft-lcd-screen/ ; https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-inch-2000-nits-lcd-7.webp
+    - **Saving usd:** 
+  89.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** D5 reason: touch
+    - **Anchor:** У лістингу досі «I2C touch».
+    - **Instruction:** Replace with 'Текст лістингу — «I2C touch» (вхід панелі в плату), але зображення показують USB-C «Touch+Power» і роз'єм «USB TP» — USB-сенсор закладено; лишається енумерація без VBUS.'
+    - **Reason:** Listing images.
+    - **Sources:** https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-1.jpg
+    - **Saving usd:** 
+  90.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** D5 sun contrast
+    - **Anchor:** На сонці контраст більше визначає бондування, ніж ніти (1.5:1 з повітряним зазором проти 6.2:1 з бондуванням і AR при 100 klx).
+    - **Instruction:** Append: 'Бондування без AR (близько 4.5%) дає лише близько 1.7:1, тож AR-плівка обов'язкова на обох панелях; при тривалих 1000 ніт — близько 3.6:1 (модель).'
+    - **Reason:** Re-audit D sun contrast model.
+    - **Sources:** https://www.wisecocodisplay.com/product/7-inch-1920x1080-high-brightness-2500nits-lcd-panel-with-hdmi-in-board-ips-mipi-interface-tft-lcd-screen/
+    - **Saving usd:** 
+  91.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C12 mode pinning
+    - **Anchor:** video=...@60 або @52, режим закріплено в конфігу виходу labwc.
+    - **Instruction:** Replace with 'video=HDMI-A-1:1920x1080@60 лише для консолі (fbcon); режим закріплює kanshi 1.5.1 з автозапуску labwc: «output HDMI-A-1 mode 1920x1080@59.986Hz» і «...@51.677Hz»; ніколи «@60Hz», «@52Hz» чи «--custom» (wlroots робить з custom CVT).'
+    - **Reason:** kanshi matches within 50 mHz and would prefer a 148.5 MHz 60.000 Hz mode for '@60Hz'; video= marks DTD1 USERDEF for fbcon only.
+    - **Sources:** http://archive.ubuntu.com/ubuntu/pool/universe/k/kanshi/kanshi_1.5.1.orig.tar.gz ; http://archive.ubuntu.com/ubuntu/pool/universe/w/wlroots/wlroots_0.17.1.orig.tar.gz ; https://raw.githubusercontent.com/torvalds/linux/v6.18/drivers/gpu/drm/drm_probe_helper.c
+    - **Saving usd:** 
+  92.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** new_risk
+    - **Part:** C12 scaler and TMDS combs
+    - **Anchor:** Запитати Wisecoco режим DSI і швидкість ліній моста.
+    - **Instruction:** Append: 'Якщо плата — скалер, EDID чистить лише відрізок RA620 → плата; тактові частоти панелі, підвищувач LED і клас-D підсилювач плати від EDID не залежать (A/B: плата з HDMI і без). TMDS HDMI 1.4 без скремблінгу дає гребінки f_pix/P (P = 3, 5, 7, 9) від суцільних заливок у GNSS, H1, HRPT і зондах за будь-якої частоти — правило палітри UI: великі заливки лише байтами з періодом 1 (напр. 0x10/0x08, 0x84/0x88, 0xEF/0xEE; нічний червоний 0xC8/0x10/0x10), ніколи 0x00 чи 0xFF (модель; перевірити на стенді). Якщо виміряна частота профілю 127.90 вище близько 128.0 MHz (×12 заходить у захист Inmarsat-C) — лише 151.50.'
+    - **Reason:** Re-audit D TMDS encoder model and board photo inference.
+    - **Sources:** https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-1.jpg
+    - **Saving usd:** 
+  93.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C13 chrony config
+    - **Anchor:** chrony: `refclock PPS /dev/pps0 lock NMEA`.
+    - **Instruction:** Replace with 'chrony 4.5: `refclock SHM 0 refid NMEA offset <виміряна медіана, близько 0.05-0.15> delay 0.2 noselect` і `refclock PPS /dev/pps-gnss lock NMEA refid PPS noselect`; ворота роблять `chronyc selectopts PPS -noselect` + `chronyc reselect` при прийнятті і `+noselect` на будь-який прапорець глушіння/підміни; `maxchange 5 1 -1`, `makestep 1 3`, `rtcsync` лишаються. /dev/pps-gnss — udev за SUBSYSTEM=="pps", ATTR{name}.'
+    - **Reason:** chrony 4.5 refclock.c PPS_LOCK_LIMIT 0.4 s needs an NMEA refclock with a measured offset; selectopts exists since 4.4.
+    - **Sources:** https://gitlab.com/chrony/chrony/-/raw/4.5/refclock.c ; https://chrony-project.org/doc/4.5/chrony.conf.html ; https://chrony-project.org/doc/4.5/chronyc.html
+    - **Saving usd:** 
+  94.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** rule
+    - **Part:** C13 held kernel and DKMS
+    - **Anchor:** pps-gpio поза деревом як DKMS-пакет +labN для 6.18.2-4 (CONFIG_PPS=y)
+    - **Instruction:** Append: '; linux-image і linux-headers 6.18.2-4-qcom дзеркалити з GitHub-релізу radxa-pkg/linux-qcom 6.18.2-4 в aptly зараз (в індексі qcs6490-noble лише 7.0.11-7); DKMS збирати gcc-12 (MAKE[0] CC=gcc-12; ядро зібране Debian gcc 12.2.0, MODULE_SIG вимкнено), перевіряти modinfo vermagic; джерело — radxa/kernel 559f4f9 drivers/pps/clients/pps-gpio.c'.
+    - **Reason:** Held kernel exists only as GitHub release assets; compiler mismatch with noble gcc 13.
+    - **Sources:** https://github.com/radxa-pkg/linux-qcom/releases/tag/6.18.2-4 ; https://radxa-repo.github.io/qcs6490-noble/dists/qcs6490-noble/main/binary-arm64/Packages ; https://github.com/radxa/kernel/tree/linux-6.18.2
+    - **Saving usd:** 
+  95.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** C23 GNSS choice
+    - **Anchor:** до визначення регіону — вибір між LC76G і MAX-M10S.
+    - **Instruction:** Replace with 'GNSS: регіон Європа — LC76G за замовчуванням (EGNOS, конфіг у flash, Waveshare відправляє в ЄС); MAX-M10S — лише опція для поїздок до Балтії, Фінляндії, сходу Польщі, Чорного моря чи сходу Середземномор'я після доведення TX UART6.'
+    - **Reason:** Resolves C23 for this subsystem (region Europe).
+    - **Sources:** https://content.u-blox.com/sites/default/files/MAX-M10S_DataSheet_UBX-20035208.pdf
+    - **Saving usd:** 
+  96.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** D12 IMU pack link
+    - **Anchor:** кадровий UART (115200, CRC) по екранованому 4-жильному дроту 1.5-2 м з гніздом GX12 4-pin і TVS — на UART1 Pico.
+    - **Instruction:** Append: 'Усередині паку BNO085 — на SPI0 (1 MHz, mode 3, INT і RST), Adafruit_BNO08x 1.2.7; надсилаються кватерніони Game RV, Rotation Vector, гравітація і магнітне поле; перетворення в az/el — на Q6A з юніт-тестами; не використовувати euler-хелпери sh2, sh2_setReorientation і getGravity() SparkFun, ніколи RAW-звіти окремо; прошивка з clk_sys 125 MHz явно і полем clk_sys у кадрі.' Connector type per analogs G3.
+    - **Reason:** BNO08x I2C fails above 100 kHz on RP2040; library defects confirmed in source.
+    - **Sources:** https://learn.adafruit.com/adafruit-9-dof-orientation-imu-fusion-breakout-bno085/arduino ; https://community.sparkfun.com/t/bno086-and-rp2040-dont-work-faster-than-100-khz/67222 ; https://github.com/ceva-dsp/sh2/issues
+    - **Saving usd:** 
+  97.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** rule
+    - **Part:** D12 pack placement
+    - **Anchor:** Пак кріпиться щонайменше 30 см позаду активних елементів, з феритом 31/43.
+    - **Instruction:** Append: 'і щонайменше 30 см від GNSS-антени; у матрицю A/B — пак увімк./вимк. (GNSS C/N0, 1692/1704 MHz).'
+    - **Reason:** 12 MHz crystal harmonics land in L1/E1/B1 and at 1692/1704 MHz at any clk_sys.
+    - **Sources:** https://raw.githubusercontent.com/earlephilhower/arduino-pico/6.3.0/boards.txt
+    - **Saving usd:** 
+  98.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** keep_with_note
+    - **Part:** D12 HMI MCU
+    - **Anchor:** MCU HMI — Raspberry Pi Pico (26 GPIO);
+    - **Instruction:** Replace with 'MCU HMI — Raspberry Pi Pico SC0915 без радіо (зайнято 23 GPIO + 3 ADC, вільний лише GP22; VSYS від LAB5 через Schottky);'.
+    - **Reason:** Pin map check and back-feed fix.
+    - **Sources:** https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf
+    - **Saving usd:** 
+  99.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** replace_part
+    - **Part:** C6 fans
+    - **Anchor:** Обидва вентилятори — 2-провідні 5 V, вмикаються постійним струмом через FET від Pico
+    - **Instruction:** Replace with 'Вентилятор шляху 1 — Noctua NF-A4x10 5V без PWM, 3-провідний: тахо на вільний GPIO Pico (сигнал зупинки), ключ з боку плюса (за analogs G2); повітродувка — 2-провідна 5 V; обидва вмикаються постійним струмом від Pico'.
+    - **Reason:** Re-audit D specifies a fan with a known curve and stall detection.
+    - **Sources:** https://www.quietpc.com/nf-a4x10-flx-5v
+    - **Saving usd:** 
+  100.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** D7 Pinecil power
+    - **Anchor:** Pinecil живиться від PD-банку на 20 V (близько 64 W).
+    - **Instruction:** Replace with 'Pinecil живиться від PD-банку на 20 V — близько 60 W: на першому ввімкненні IronOS ≥2.23 — Bluetooth Off, PD Mode = No Dynamic, Power limit 60 W, Power pulse, якщо банк засинає; кабель USB-C без EPR (IronOS Pinecilv2: USB_PD_VMAX 28, EPR 140 W; PINE64 дає вхід 12-20 V 3 A; 64 W тягнули б 3.2 A).'
+    - **Reason:** IronOS configuration.h; the 'safe' default does not disable EPR.
+    - **Sources:** https://raw.githubusercontent.com/Ralim/IronOS/dev/source/Core/BSP/Pinecilv2/configuration.h ; https://raw.githubusercontent.com/Ralim/IronOS/dev/Documentation/Settings.md ; https://pine64.com/product/pinecil-smart-mini-portable-soldering-iron/
+    - **Saving usd:** 
+  101.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** removal
+    - **Part:** D14 Apache 3800
+    - **Anchor:** Стенд: Pelican 1450 або Apache 3800 тільки для стендового набору.
+    - **Instruction:** Remove 'або Apache 3800' (Harbor Freight, лише в магазинах США); the bench-case part follows analogs G6.
+    - **Reason:** User is in Europe; Apache 3800 is US in-store only.
+    - **Sources:** https://www.harborfreight.com/3800-weatherproof-protective-case-large-black-63927.html
+    - **Saving usd:** 
+  102.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** rule
+    - **Part:** D14 travel
+    - **Anchor:** Anker 737 і прилади з Li-елементами — у ручну поклажу; Pelican можна здавати в багаж.
+    - **Instruction:** Append: 'У зданому кейсі немає запасних елементів чи банків; перед кожною поїздкою перевірити поточні правила авіакомпанії щодо банків (Anker 737 — 86.4 Wh, салон); PDF IATA — Rev 3 (лютий 2019), зміни 2026 не перевірено.'
+    - **Reason:** IATA PDF content confirmed but dated.
+    - **Sources:** https://www.iata.org/contentassets/6fea26dd84d24b26a7a1fd5788561d6e/passenger-lithium-battery.pdf
+    - **Saving usd:** 
+  103.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** D15 battery envelope
+    - **Anchor:** CAD — з Radxa STEP v1.21, виміряної панелі і батареї 46x25x150 мм.
+    - **Instruction:** Replace with 'CAD — з Radxa STEP v1.21 (плату звірити з STEP перед друком), виміряної панелі і батареї: 46x25x150 мм — це оголений пакет (нікель, Kapton, fish paper усередині; BMS у торцевому зазорі 9.7 мм або зовні), утеплений відсік — близько 54x33x158 мм (модель).'
+    - **Reason:** P50B max dimensions give a 43.1x21.55x140.3 mm 2x2 pack; foam, film and barrier cannot fit inside 46x25x150.
+    - **Sources:** https://www.fsaeonline.com/content/Molicel-TDS--INR-21700-P50B-80122.pdf
+    - **Saving usd:** 
+  104.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** D15 top edge ports
+    - **Anchor:** Верхній край: RF-порти P1-P7 з кроком 20 мм (опційно P8; з Lime — RX1, RX2 і REF IN).
+    - **Instruction:** Replace with 'Верхній край: P1-P8 і RX1 з кроком 20 мм; RX2 і REF IN — на лівій боковій стінці вгорі (крок 20 мм, над батарейним відсіком): 11 портів × 20 мм = близько 210 мм із гайками не вміщаються в 220-225 мм (модель); перевірити проти кута екрана HF+ і колонки HMI в CAD.'
+    - **Reason:** With Lime default the 11-port top edge leaves about 0-5 mm.
+    - **Sources:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_2d_dimensions_v1.21.pdf
+    - **Saving usd:** 
+  105.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** D15 service hatch
+    - **Anchor:** сервісний лючок (консоль, EDL синього порту)
+    - **Instruction:** Replace with 'сервісний лючок (консоль UART5 — 40-pin 8/10 + GND; кнопка EDL або утоплена паралельна; роз'єм джгута J21; синій USB-A)'.
+    - **Reason:** Field recovery without opening the case.
+    - **Sources:** https://forum.radxa.com/t/30925
+    - **Saving usd:** 
+  106.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** condition
+    - **Part:** D6 thermal acceptance
+    - **Anchor:** Приймання: 45 хв полуденного прогріву з козирком у режимах B, D і G — каркас до 60 °C, скло до 65 °C, елементи до 45 °C.
+    - **Instruction:** Replace with 'Приймання: 45 хв полуденного прогріву з козирком у режимах B, D, G і H (Lime) — каркас до 60 °C, скло до 65 °C, елементи до 45 °C, UFS нижче порогу паузи, T7 SMART до 55 °C, nspss нижче 85 °C, без критичних спрацювань.'
+    - **Reason:** Lime is the default build.
+    - **Sources:** https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/arch/arm64/boot/dts/qcom/sc7280.dtsi
+    - **Saving usd:** 
+  107.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** D6 T7 placement
+    - **Anchor:** T7 (лише з Lime) — зовні.
+    - **Instruction:** Replace with 'T7 (за замовчуванням, з Lime) — зовні ззаду внизу в затіненому тримачі із зазором 3-5 мм і відбивною шторкою.'
+    - **Reason:** T7 sun model exceeds the 60 C Tc limit.
+    - **Sources:** https://download.semiconductor.samsung.com/resources/data-sheet/Samsung_Portable_SSD_T7_Datasheet_Rev2.0.pdf
+    - **Saving usd:** 
+  108.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C18 UFS layout
+    - **Anchor:** Кожен варіант має A/B-корінь на UFS: ESP 1 GiB, root A 22 GiB, root B 22 GiB, systemd-boot з лічильником спроб і рятувальним пунктом.
+    - **Instruction:** Append: 'UFS 4K-native: образ _4096 або розмітка на пристрої (sgdisk), ESP FAT32 через mkfs.vfat -S 4096, /data — решта пристрою; ніколи dd образу _512 на UFS; пункти BLS (не UKI) з явними рядками devicetree і devicetree-overlay.'
+    - **Reason:** Radxa _4096 image and provisioning XML; UEFI supplies the DTB by default.
+    - **Sources:** https://docs.radxa.com/en/dragon/q6a/download ; https://forum.radxa.com/t/30440
+    - **Saving usd:** 
+  109.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C22 tool pins
+    - **Anchor:** QtTinySA з PySide6 6.12;
+    - **Instruction:** Replace with 'QtTinySA v2.0.1 з джерел з pyside6==6.11.0 (пін upstream; manylinux_2_39 = noble); NanoVNA-Saver з git @3445a0a через pipx з constraints PySide6==6.11.2; scikit-rf[visa]==2.1.0 + pyvisa-py 0.8.1 у lab-venv;'.
+    - **Reason:** Upstream pins pyside6==6.11.0; the prebuilt arm64 zip is a PiOS Trixie (glibc 2.41) Nuitka build.
+    - **Sources:** https://raw.githubusercontent.com/g4ixt/QtTinySA/main/src/requirements.txt ; https://raw.githubusercontent.com/wiki/g4ixt/QtTinySA/1.-Installation-and-Dependencies.md ; https://github.com/NanoVNA-Saver/nanovna-saver/commits/main ; https://pypi.org/pypi/scikit-rf/json
+    - **Saving usd:** 
+  110.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** rule
+    - **Part:** C5 bench USB profile
+    - **Anchor:** Загальна межа дерева FE1.1s — 25 MB/s. |
+    - **Instruction:** Before the cell end add: 'Профіль Bench у labd: осцилограф понад 5 MS/s або LA понад 12 MS/s — лише з паузою потоків RTL-B і HF+; інакше осцилограф ≤5 MS/s ×2 канали (10 MB/s), LA ≤12 MS/s; ніколи обидва на високій швидкості (OpenHantek до 30 MB/s; 30 + 5.12 + 3.07 = 38.2 MB/s).'
+    - **Reason:** OpenHantek limitations doc; the sum exceeds the 25 MB/s budget.
+    - **Sources:** https://raw.githubusercontent.com/OpenHantek/OpenHantek6022/main/docs/limitations.md
+    - **Saving usd:** 
+  111.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** condition
+    - **Part:** D2 fuse derating
+    - **Anchor:** 5 A при 60 °C лише близько 3.3 A тривало.
+    - **Instruction:** Append: 'Криві дерейтингу Littelfuse MINI не отримано (403) — стендовий тест 4.6 A на 7.5 A і 2.3 A на 3 A (LAB5) по 30 хв у корпусі 50 °C з температурою тримача; гарячий запобіжник LAB5 — перейти на 4 A з D36V50F5.'
+    - **Reason:** Ratios 62% and 77% are plausible but unverified.
+    - **Sources:** https://www.littelfuse.com/products/fuses-overcurrent-protection/fuses/automotive-passenger-car/blade-fuses/mini-297
+    - **Saving usd:** 
+  112.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** seller_or_price
+    - **Part:** D11 D36V50F5 price
+    - **Anchor:** перейти на D36V50F5 (ціна не перевірена)
+    - **Instruction:** Replace with 'перейти на D36V50F5 ($39.95, Pololu; у ЄС BerryBase EUR 34.95 — за analogs G3)'.
+    - **Reason:** Re-audit D power spec gives the Pololu price.
+    - **Sources:** https://www.pololu.com/product/4095
+    - **Saving usd:** 
+  113.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #7 RTC time window
+    - **Anchor:** час у межах 120 с від RTC (RS4C411 з CR2032)
+    - **Instruction:** Replace with 'час у межах 120 с + 100 ppm × (час RTC − остання схвалена воротами синхронізація; мітка в /data) від RTC (RS4C411ZAE, st,m41t11, кварц 20 ppm, CR2032); поза вікном — «unverified», відкидати лише з другим індикатором; рік RTC раніше дати збирання образу = «unset»; мітку довіри писати лише з часу, схваленого воротами'.
+    - **Reason:** Model: 120 s is exceeded after 69/41/22 days at 25/5/−10 C; rtc-ds1307 checks only the CH bit for m41t11.
+    - **Sources:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf ; https://github.com/radxa/kernel/blob/linux-6.18.2/drivers/rtc/rtc-ds1307.c
+    - **Saving usd:** 
+  114.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #79 LC76G provisioning
+    - **Anchor:** `$PAIR752,2,100` (PPS лише з 3D-фіксом) і `$PAIR391,1` (виявлення глушіння); інтерфейс I2C не використовувати.
+    - **Instruction:** Replace with 'PPS — `$PQTMCFGPPS,W,1,1,100,3,0,0*70`, потім `$PQTMSAVEPAR*5A`, перевірка `$PQTMCFGPPS,R,1*6A` (PAIR513 не зберігає PPS-налаштування PAIR752, примітка 3 spec v1.4); `$PAIR391,1*2C`, `$PAIR410,1*22`, `$PAIR400,2*20`, потім `$PAIR513*3D`; лише один метод PPS; якщо TX UART6 працює — повторне читання PQTMCFGPPS з ExecStartPre gpsd на кожному завантаженні; резерв «без TX» — лише після тесту збереження; EPOC лишити ввімкненим; ніколи `$PAIR007`; без `$PAIR753` і стаціонарного режиму; відновлення після підміни — `$PAIR006*3C` або імпульс RESET; без оновлень прошивки в полі (QGNSS Windows); інтерфейс I2C не використовувати.'
+    - **Reason:** Quectel protocol spec v1.4 PAIR513 note 3; thread 45880 shows a free-running pulse for 45 min with PPSType 1.
+    - **Sources:** https://forums.quectel.com/uploads/short-url/rUEismNTHFHWMMyJR1WxrcTaRB7.pdf ; https://forums.quectel.com/t/gnss-lc76g-1-pss-configuration/45880
+    - **Saving usd:** 
+  115.
+    - **Section:** 01b_decisions_register
+    - **Kind:** decision
+    - **Part:** #80 jam/spoof choice
+    - **Anchor:** | Вибір після визначення регіону (C23). |
+    - **Instruction:** Replace with '| Регіон Європа: LC76G за замовчуванням; MAX-M10S лише як опція для поїздок до прикордонних зон після доведення TX UART6 (C23 закрито для GNSS). Справжнього виявлення підміни в LC76G немає — лише PAIRSPF, PQTMJAMMINGSTATUS і JAM_IND. |'
+    - **Reason:** LC76G spec has no spoofing feature; region decided.
+    - **Sources:** https://quectel.com/content/uploads/2024/03/Quectel_LC76G_Series_GNSS_Specification_V1.1-1-1.pdf
+    - **Saving usd:** 
+  116.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #16 SoC thermal limits and cooler
+    - **Anchor:** Tj 95 °C; тротлінг близько 90-91 °C. | Перевірено (форум 30123).
+    - **Instruction:** Replace with 'Пороги DT sc7280: CPU пасивно 90/95 °C, GPU 95/100/105 °C, критично 110 °C; NSP/DDR — лише «hot» 90 °C без карт охолодження (NPU ядро не тротлить) — labd зупиняє NPU/HTP при nspss0/1 > 85 °C. Охолоджувач: (A) ступінчастий Cu ≤35x35 мм або (B) лише верхня кришка Armor 7056A на стійках M2.5 з вентилятором 40 мм. | Форум 30123 цих цифр не містить; пороги — з sc7280.dtsi (radxa 6.18.2).'
+    - **Reason:** Refuted 'Tj max 95 C / throttle 90-91 C (forum 30123)'.
+    - **Sources:** https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/arch/arm64/boot/dts/qcom/sc7280.dtsi ; https://forum.radxa.com/t/best-heatsink-cooling-solutions-for-dragon-q6a/30123
+    - **Saving usd:** 
+  117.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #18 UFS operating range
+    - **Anchor:** Робоча 0-70 °C.
+    - **Instruction:** Replace with 'Робочий діапазон не підтверджено (даташита KLUDG4UHDC-B0E1 немає; бриф rev 1.2 називає лише промисловий −25...+85 °C) — на запуску прочитати ufs-hwmon temp1_crit/temp1_lcrit і записати як межі; пауза сирих записів на UFS при min(65 °C на ufs-thermal, temp1_crit − 10 K).'
+    - **Reason:** Mainline ufs-hwmon exposes the device's own bounds.
+    - **Sources:** https://raw.githubusercontent.com/torvalds/linux/master/drivers/ufs/core/ufs-hwmon.c
+    - **Saving usd:** 
+  118.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #18 WriteBooster
+    - **Anchor:** 1703 MB/s читання / 388 MB/s запис у межах кешу WriteBooster (близько 4 GiB); тривалий запис після кешу невідомий.
+    - **Instruction:** Replace '(близько 4 GiB)' with '(4 GiB у провізії Radxa для Android; реальне — з sysfs: wb_shared_alloc_units × 512 × allocation_unit_size × segment_size)' and append 'лінк HS-G4 Rate-A (обмеження DT); тривалий запис — fio 16 GiB, поріг ≥50 MB/s.'
+    - **Reason:** provision_ufs31.xml shared 4194304 KiB; DTS caps the gear.
+    - **Sources:** https://dl.radxa.com/q6a/images/android/provision_ufs31.xml ; https://git.criticallink.com/redmine/projects/mitysom_qc6490/wiki/UFS ; https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+    - **Saving usd:** 
+  119.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #24 hold set
+    - **Anchor:** Один список: метапакети linux-image/headers-radxa-dragon-q6a і linux-image-6.18.2-4-qcom;
+    - **Instruction:** Append 'embloader і пакети прошивок Radxa утримуються разом із ядром; у полі ніколи full-upgrade, rsetup чи rupdate (часткове оновлення до 7.0.11 і embloader 0.7 дало втрату звуку чи HDMI);'.
+    - **Reason:** Forum 31288/31304: holding only linux-image is not enough.
+    - **Sources:** https://forum.radxa.com/t/31288 ; https://forum.radxa.com/t/31304
+    - **Saving usd:** 
+  120.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #23 reason for the kernel hold
+    - **Anchor:** Шлях A: утримати linux-image-6.18.2-4-qcom з Samsung UFS і золотим набором NPU.
+    - **Instruction:** Append: 'Причина утримання — стабільність Samsung UFS і уникнення змішаного оновлення, не HDMI: для 7.0 персонал Radxa дав обхід clk_ignore_unused (31288, нами не перевірено).'
+    - **Reason:** Refuted 'HDMI breakage confirms the hold'.
+    - **Sources:** https://forum.radxa.com/t/31288
+    - **Saving usd:** 
+  121.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #23 SPI BIOS
+    - **Anchor:** BIOS 260916 позначено «Not compatible with Radxa OS (Ubuntu 24)».
+    - **Instruction:** Append: 'Тестова збірка dragon-q6a_flat_build_wp_260916 (виправляє тихе перезавантаження UKI systemd-stub) — не для поля; лишатися на 260120; оновлення SPI лише на стенді з UART і набором EDL (після оновлень SPI бували збої DDR з RMA).'
+    - **Reason:** Forum 30841/31080 DDR failures after SPI updates.
+    - **Sources:** https://forum.radxa.com/t/30925 ; https://docs.radxa.com/en/dragon/q6a/download
+    - **Saving usd:** 
+  122.
+    - **Section:** 01b_decisions_register
+    - **Kind:** architecture
+    - **Part:** #15 J21 eFuse
+    - **Anchor:** TVS після регулятора (SMBJ13A — виправлення TVS з інтеграційної перевірки), 220 мкФ/25 V і ключований роз'єм з фіксацією.
+    - **Instruction:** Replace with 'eFuse TPS259470A (OVLO близько 13.5 V, ILIM близько 4 A) після запобіжника 4 A, далі pi-фільтр, SMBJ13A (лише перехідні), 220 мкФ/25 V і 3-pin роз'єм з фіксацією.'
+    - **Reason:** Closes the regulator-short over-voltage path.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps25947.pdf
+    - **Saving usd:** 
+  123.
+    - **Section:** 01b_decisions_register
+    - **Kind:** architecture
+    - **Part:** #15 J21 pins after desolder
+    - **Anchor:** | J21 і розміщення TVS (#15) | J21: пін 1 = 12 V, пін 2 = GND, пін 3 = клавіша PWR.
+    - **Instruction:** Append: 'Після випаювання (Lime) перепаяти всі три: 12 V/GND — кручена пара 20 AWG, PWR_ON_KEY — 26-28 AWG до вузла АБО Pico/BAT54; ніколи понад 16 V.'
+    - **Reason:** Schematic v1.21 p.28 CON_1X3.
+    - **Sources:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+    - **Saving usd:** 
+  124.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #15 power requirement
+    - **Anchor:** Radxa просить щонайменше 24 W (12 V/2 A).
+    - **Instruction:** Replace with 'бриф Radxa: мінімум 18 W (12 V/1.5 A), 24 W з навантаженими USB 3.1 і PCIe (збірка з Lime).'
+    - **Reason:** Product brief rev 1.5 (2026-04-28) and rev 1.7 (2026-10-10).
+    - **Sources:** https://dl.radxa.com/q6a/docs/rad-doc-0150_radxa_dragon_q6a_product_brief__revision_1.5_gbc16bac.pdf
+    - **Saving usd:** 
+  125.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #63 IP2368
+    - **Anchor:** бажано версія BZ лише для заряду
+    - **Instruction:** Replace with 'роздрібна плата COUT (Try.SRC; BZ як плата не продається) за TPS259470A на VBUS, ISET_MODE через 1k на GND, RISET 27k → 15k'.
+    - **Reason:** Retail boards are COUT.
+    - **Sources:** https://mysku.club/blog/aliexpress/100034.html
+    - **Saving usd:** 
+  126.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #64 #2813
+    - **Anchor:** #2813: $8.95, 4.5-40 V, 6 A при 55 °C, менше 0.2 мкА вимкнено.
+    - **Instruction:** Replace with '#2813: 4.5-32 V рекомендовано (40 V абс. макс.); близько 6 A → 55 °C MOSFET у повітрі 22 °C; менше 0.2 мкА вимкнено; не аварійне відключення.' (price per analogs G3).
+    - **Reason:** Pololu product page.
+    - **Sources:** https://www.pololu.com/product/2813
+    - **Saving usd:** 
+  127.
+    - **Section:** 01b_decisions_register
+    - **Kind:** new_risk
+    - **Part:** #74 Wisecoco brightness
+    - **Anchor:** «2000+ cd/m2 typ» у таблиці, «2500» лише в заголовку;
+    - **Instruction:** Append: 'доказ продавця — фото люксметра 2424 lx (≥ близько 770 cd/m2 для ламбертівського екрана, модель); 2000 не підтверджено до виміру люмінометром;'.
+    - **Reason:** E = π·L at contact.
+    - **Sources:** https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-inch-2000-nits-lcd-2.webp
+    - **Saving usd:** 
+  128.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #74 4D touch IC
+    - **Anchor:** сенсор GT928 по USB-C
+    - **Instruction:** Replace with 'сенсор по USB-C, що паралельно живить (IC сенсора в даташиті Rev 1.5 не названо); «Supports DDC»; без AR за замовчуванням; кнопкова плата OSD — опційно'.
+    - **Reason:** 4D datasheet Rev 1.5 (10/10/2026).
+    - **Sources:** https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_5.pdf
+    - **Saving usd:** 
+  129.
+    - **Section:** 01b_decisions_register
+    - **Kind:** keep_with_note
+    - **Part:** #74 Midas research project
+    - **Anchor:** Вище FHD — лише проєкт Midas MDT0700F1IHHC (1200x1920, $364.62 = EUR 324.37 без ПДВ, 12 тижнів).
+    - **Instruction:** Append: 'Ціну і термін Farnell не перевірено повторно (503); лише дослідження, поза підсумками; перевірити ціну перед будь-яким замовленням (теми Radxa 8HD «лише підсвітка», #30822, підтримують це).'
+    - **Reason:** Re-audit D could not re-verify.
+    - **Sources:** https://forum.radxa.com/t/30822 ; https://ie.farnell.com/midas-displays/mdt0700f1ihhc-mipi/lcd-tft-display-7-1200x1920p-mipi/dp/4248109
+    - **Saving usd:** 
+  130.
+    - **Section:** 01b_decisions_register
+    - **Kind:** keep_with_note
+    - **Part:** #78 4D field clock
+    - **Anchor:** 71 MHz — 1420.0, 1562.0, 1704.0 MHz.
+    - **Instruction:** Append: '71.0 MHz також ×3 = 213 MHz; єдине вікно, чисте для основних діапазонів між 50 і 123 MHz, — 81.51-82.02 MHz (напр. 81.8 MHz з повними 1440x947, 59.985 Hz; модель) — якщо 4D пропускає таймінг; інакше екранування і A/B зі стеженням за H1 1420.0.'
+    - **Reason:** Re-audit D harmonic scan for the 4D fallback.
+    - **Sources:** https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_5.pdf
+    - **Saving usd:** 
+  131.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #102 LNB window
+    - **Anchor:** 13.2 V ±0.2 V лише вертикаль;
+    - **Instruction:** Replace with '13.2 V (приймання ±0.35 V на роз'ємі при батареї ≥14.2 V) лише вертикаль;'.
+    - **Reason:** TPS7A4701 accuracy holds only above VO+1 V.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+    - **Saving usd:** 
+  132.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #34 instrument software
+    - **Anchor:** NanoVNA-Saver main через pipx (numpy~=2.1, scipy~=1.14); QtTinySA з колесами PySide6 6.12 aarch64 (manylinux_2_39 = glibc 2.39 noble); lbgpsdo з python hid і udev-правилом; логер FNIRSI;
+    - **Instruction:** Replace with 'NanoVNA-Saver: pipx install git+https://github.com/NanoVNA-Saver/nanovna-saver@3445a0a з constraints PySide6==6.11.2, за TCP-проксі Bench labd (labd володіє /dev/lab/litevna, udev OWNER=labd, MODE 0600); scikit-rf[visa]==2.1.0 + pyvisa-py 0.8.1 (SOL з offset-delay; 2.2.x лише після тесту); QtTinySA v2.0.1 з джерел: venv pyside6==6.11.0, pyqtgraph, numpy, pyserial, platformdirs, Pillow, 3D вимкнено, один tinySA на екземпляр, ненульовий код виходу при закритті ігнорується; готовий zip — лише якщо objdump -T не показує GLIBC_2.40/2.41; LBE-1420: bvernoux/lbe-142x v1.2 (cmake, libudev-dev, закріплений коміт; запасний simontheu/lbe-1420), udev hidraw 1dd2:2443 група plugdev, --f1 ≤1.1 GHz (lbgpsdo 1420 не бачить); логер FNIRSI з патчем refresh 0.003 для FNB58, без dev.reset(), drain при виході; прошивка tinySA tinySA4_v1.4-252-g2b4aa51 (запасна v1.4241);'.
+    - **Reason:** Re-audit D lab software findings.
+    - **Sources:** https://github.com/NanoVNA-Saver/nanovna-saver/commits/main ; https://github.com/g4ixt/QtTinySA/issues/126 ; https://raw.githubusercontent.com/bvernoux/lbe-142x/main/README.md ; https://github.com/baryluk/fnirsi-usb-power-data-logger/issues/19 ; http://athome.kaashoek.com/tinySA4/DFU/changelog.txt
+    - **Saving usd:** 
+  133.
+    - **Section:** 01b_decisions_register
+    - **Kind:** keep_with_note
+    - **Part:** #70 ASA heat limit
+    - **Anchor:** Світло-сірий ASA (PETG відкинуто — м'якне при 75-80 °C);
+    - **Instruction:** Append: 'ASA: Tg 98 °C, HDT 100 °C (1.8 MPa) за TDS Polymaker, практична межа 93 °C (Prusa); друкувати в закритій вентильованій камері (колір і продавець — за analogs G4);'.
+    - **Reason:** Polymaker PolyLite ASA TDS and Prusa guidance.
+    - **Sources:** https://us.polymaker.com
+    - **Saving usd:** 
+  134.
+    - **Section:** 01b_decisions_register
+    - **Kind:** keep_with_note
+    - **Part:** #0 attenuation rules
+    - **Anchor:** Правила атенюації: синус tinySA до −40 dBm у тракти; від 30 dB вище 800 MHz; 80 dB + DC-блок для тону GPSDO;
+    - **Instruction:** Append: 'LBE-1420 за 80 dB + BLK-89-S+ дає близько −69 dBm на DUT (модель); генератор tinySA має ±2 dB лише від −72 до −19 dBm до 800 MHz, тож калібровані рівні — −40 dBm плюс атенюатори, виміряні VNA;'.
+    - **Reason:** tinySA spec page; LBE-1420 +11 dBm at 10 MHz.
+    - **Sources:** https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Specification ; https://www.leobodnar.com/shop/index.php?main_page=product_info&cPath=107&products_id=393
+    - **Saving usd:** 
+  135.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** correction
+    - **Part:** E-field probes wording
+    - **Anchor:** Зонди ближнього поля — тільки E-field (саморобні напівжорсткі відрізки; один 086-6SM+ розрізається на зонди), H-field зондів немає.
+    - **Instruction:** Replace with 'Зонди ближнього поля — тільки E-field: відкриті штирі зі 086-6SM+ Hand-Flex (мідно-плакована сталь, обплетення з луженої міді; SMA-M з обох кінців — 2 штирі з кабелю), лише відкритий кінець, ніколи петля на кінці; затягувати 8 in-lb, тримаючи анти-торсійну гайку; H-field зондів немає.'
+    - **Reason:** Mini-Circuits 086-6SM+ datasheet.
+    - **Sources:** https://www.minicircuits.com/pdfs/086-6SM+.pdf
+    - **Saving usd:** 
+  136.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** rule
+    - **Part:** tinySA labd allow-list and firmware
+    - **Anchor:** драйвер labd для tinySA відмовляє в будь-якій команді генератора чи увімкнення виходу поза Bench
+    - **Instruction:** Append after it: '(allow-list за замовчуванням забороняє generator, output, usbdisk, fwupdate, reset dfu і запис correction; прошивка tinySA4_v1.4-252-g2b4aa51 — записати рядок git-describe, запасна v1.4241; udev — VID:PID плюс інтерфейс 00 (CDC), udisks ігнорує дисковий інтерфейс, ModemManager замасковано)'.
+    - **Reason:** v1.4-252 adds composite USB (serial + disk), usbdisk and fwupdate commands.
+    - **Sources:** http://athome.kaashoek.com/tinySA4/DFU/ ; http://athome.kaashoek.com/tinySA4/DFU/changelog.txt
+    - **Saving usd:** 
+  137.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** correction
+    - **Part:** LiteVNA LNA tests
+    - **Anchor:** Лише кондуктивно; тести LNA з атенюатором 30-40 dB на вході.
+    - **Instruction:** Replace with 'Лише кондуктивно; тести LNA — зовнішні атенюатори сумарно ≥ підсилення LNA + 3 dB, розділені на вхід і вихід (меню POWER ATTENUATION є лише на 7-дюймовому LiteVNA; опційно регістр 0x42 = 0x01 з labd чи scikit-rf).'
+    - **Reason:** LiteVNA guide: 'Power Settings (7-inch liteVNA only)'; registers 0x41/0x42 levels 1-3.
+    - **Sources:** http://nanovna.com/wp-content/uploads/2021/11/LiteVNA_User-Guide.pdf
+    - **Saving usd:** 
+  138.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** correction
+    - **Part:** LiteVNA clone rule and Lab401
+    - **Anchor:** Ризик підробок високий — лише Passion Radio або список tinySA.org. Бюджет: Lab401 $215.83 (EUR 192; не обрано).
+    - **Instruction:** Replace with 'Ризик підробок високий — LiteVNA лише з Passion Radio, Lab401 або фабричного магазину Zeenko на AliExpress, на який посилається tinySA.org (інші EU-фолбеки — за analogs G5, з перевіркою виробника Zeenko в GPSR). Альтернатива (не бюджет): Lab401 EUR 192 (база ПДВ не перевірена) — різниця з Passion Radio з ПДВ близько $5, а не $40; брати лише якщо письмово підтвердять новішу ревізію HW. Знижка Passion Radio не має дати закінчення.'
+    - **Reason:** Passion Radio GPSR names WUYI ZEENKO; specific price from/to 0000-00-00.
+    - **Sources:** https://www.passion-radio.com/analyzer-spectrum/lite-vna64-2730.html ; https://lab401.com/products/litevna ; https://tinysa.org/wiki/pmwiki.php?n=Main.Buying
+    - **Saving usd:** 
+  139.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** correction
+    - **Part:** LiteVNA spec
+    - **Anchor:** 50 kHz-6.3 GHz; 1-path, S22/S12 — розворотом DUT;
+    - **Instruction:** Append: 'планувати HW 3.1 (Passion Radio): DR >90 dB нижче 3 GHz і >50 dB від 3 GHz, дно S11 −50/−40 dB — не заявляти ослаблення чи розв'язку понад близько 45 dB вище 3 GHz (для цього — tinySA і шумове джерело); ревізію спитати в продавця, на прибутті прочитати CONFIG > VERSION; живлення 5 V, до 1 A, 2000 mAh, зберігати зарядженим (стан захисту знімає лише заряд у вимкненому стані); USB 04b4:0008, бінарний протокол V2; розгортка 21-1001 точок на пристрої, 1-65535 по USB;'.
+    - **Reason:** LiteVNA user guide DR table is per HW revision; no vendor shows a 64 at ≥v0.4.5.
+    - **Sources:** http://nanovna.com/wp-content/uploads/2021/11/LiteVNA_User-Guide.pdf ; https://www.passion-radio.com/analyzer-spectrum/lite-vna64-2730.html
+    - **Saving usd:** 
+  140.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** correction
+    - **Part:** tinySA Ultra+ spec
+    - **Anchor:** вхід до +6 dBm і ±5 V DC; DANL −102 dBm при RBW 30 kHz; синус −115...−19 dBm ±2 dB до 800 MHz. Канальна потужність ±2 dB — опорний вимірювач потужності.
+    - **Instruction:** Replace with 'вхід: +6 dBm абс. макс. при 0 dB атенюації, +20 dBm короткочасно при 30 dB, рекомендовано ≤0 dBm в авто, найкраще нижче −25 dBm; ±5 V DC; P1dB −1 dBm; IIP3 +15 dBm; 50 Ohm лише з внутрішньою атенюацією ≥10 dB (LNA вимикає атенюатор — LNA лише за атенюатором ≥20 dB); LDS −102 dBm (30 MHz, RBW 30 kHz, без LNA); точність ±2 dB після калібрування, лінійність ±2 dB нижче 5.3 GHz і ±5 dB 5.3-6 GHz, 6-7.3 GHz не охарактеризовано; генератор −115...−19 dBm кроком 1 dB, але ±2 dB лише від −72 до −19 dBm до 800 MHz; канальна потужність через «channel [1-3]» з атенюацією ≥10 dB — опорний вимірювач; батарея ≥3 год, заряд ≤1 год від ≥500 mA; власні завади — MCU 48 MHz і гармоніки (144.000, 432.000 MHz) у матриці D10.'
+    - **Reason:** tinySA4 Specification and Limitations pages.
+    - **Sources:** https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Specification ; https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Limitations
+    - **Saving usd:** 
+  141.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** correction
+    - **Part:** Noise source ENR
+    - **Anchor:** таблиця ENR — при стабілізованих 12 V (N8DMT: 20.5 dB 28-52 MHz, 21.0 dB 146 MHz, 20.1 dB 440 MHz, 17.0 dB 902 MHz, 16.1 dB 1296 MHz, 8.4 dB 2400 MHz); результати NF — відносні (±2-3 dB).
+    - **Instruction:** Replace with 'збірка як у N8DMT: на вході навантаження 50 Ohm (за analogs G5 — ANNE-50+), постійний атенюатор 10 dB на виході, ніколи відкритий вихід; живлення 12.00 V ±0.05 V (перевірити AUX12 біля джерела; +17 V макс.), напругу логувати з кожним Y-фактором (модель: близько 1.2 dB/V); ENR — власна таблиця вашого екземпляра з NF-процедури tinySA (EXT GAIN 0, атенюація ≥10 dB) 28-2400 MHz, повтор при 11.5 і 12.5 V; таблиця N8DMT (20.5/21.0/20.1/17.0/16.1/8.4 dB) — лише орієнтир, не ENR; без Y-фактора вище 2.4 GHz; модель ENR — за analogs G5; результати NF — відносні (±2-3 dB).'
+    - **Reason:** At 12 V the ZFL-500LN+ gain is 24.3-24.9 dB, so the 10 dB pad does not explain N8DMT's numbers (about 3 dB residual).
+    - **Sources:** https://qsl.net/n8dmt/test-page/diy-test-equipment/low-cost-diy-noise-source/index.html ; https://www.minicircuits.com/pdfs/ZFL-500LN+.pdf
+    - **Saving usd:** 
+  142.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** seller_or_price
+    - **Part:** 30 dB pads (RF accessories)
+    - **Anchor:** | РЧ-аксесуари | Набір атенюаторів Nooelec, 2× 30 dB, 2× BLK-89-S+, 3× ANNE-50+, 3× 086-6SM+ | 1 набір | 212.68 | Nooelec + Passion Radio + Mini-Circuits | перевірено |
+    - **Instruction:** Replace with '| РЧ-аксесуари | Набір атенюаторів Nooelec 100815, 2× Mini-Circuits VAT-30W2+ (30 ±0.3 dB, DC-6 GHz, 2 W; $31.43, >1000 шт.), 2× BLK-89-S+, 3× ANNE-50+, 3× 086-6SM+ | 1 набір | 245.86 | Nooelec + Mini-Circuits | перевірено |'. Note: 'Pads Passion Radio прибрано: EUR 13.20 — ціна варіанта −3 dB; −30 dB — EUR 18.20 з ПДВ ($20.46), під замовлення (кількість −6); кожен атенюатор виміряти на LiteVNA'. Core total +$33.18.
+    - **Reason:** Stage 1 priced the 3 dB variant; analogs G5 keeps the VAT-30W2+ set at $245.86.
+    - **Sources:** https://www.passion-radio.com/sma/sma-attenuator-826.html ; https://www.minicircuits.com/WebStore/dashboard.html?model=VAT-30W2%2B ; https://www.minicircuits.com/pdfs/VAT-30W2+.pdf
+    - **Saving usd:** -33.18
+  143.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** correction
+    - **Part:** F-F adapter offset delay
+    - **Anchor:** один 086 — на E-field зонди. Female OSL = комплектний male OSL + F-F ($0). Бюджет: VAT-30W2+ $31.43 за атенюатор 30 dB.
+    - **Instruction:** Replace with 'один 086-6SM+ — на 2 E-field штирі. Female OSL = комплектний male OSL + барель F-F ($0); затримку барелю виміряти один раз (port extension на відкритому кінці; модель 77-97 ps — 95-118° на 1.7 GHz і 323-403° на 5.8 GHz без неї) і ввести як offset delay у Saver чи scikit-rf; площину відліку записати в parts.yaml. (Примітку «Бюджет: VAT-30W2+» прибрати — тепер це основа.)'
+    - **Reason:** Undefined barrel delay corrupts phase, TDR and Smith data above about 1 GHz.
+    - **Sources:** https://www.passion-radio.com/analyzer-spectrum/lite-vna64-2730.html
+    - **Saving usd:** 
+  144.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** condition
+    - **Part:** SMA torque wrench
+    - **Anchor:** Ключ бачено лише у фрагменті — підтвердити лістинг.
+    - **Instruction:** Replace with 'Перед купівлею підтвердити в лістингу 0.9 N·m (8 in-lb) і головку 5/16 in (8 мм); момент для гнізд самих LiteVNA і tinySA (можуть бути латунні) — спитати Zeenko; правило для латунних гнізд — за analogs G5.'
+    - **Reason:** No listing could be fetched; Mini-Circuits 8 in-lb applies to its stainless parts.
+    - **Sources:** https://www.minicircuits.com/pdfs/086-6SM+.pdf
+    - **Saving usd:** 
+  145.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** correction
+    - **Part:** Spare LNA V2 current
+    - **Anchor:** | 90 mA; також LNA опційного тракту WIDE. |
+    - **Instruction:** Replace with '| QPL9547, 100 MHz-6 GHz, NF <1 dB, зміщення 3-5 V; 90 mA — не перевірено (з v1; сторінка Qorvo 429) — виміряти при 4.5 V до вмикання трійника V4L (правило ≤90 mA); також LNA опційного тракту WIDE. |' (price per analogs G5).
+    - **Reason:** Vendor page states no current.
+    - **Sources:** https://www.rtl-sdr.com/product/rtl-sdr-blog-wideband-lna-bias-tee-powered/
+    - **Saving usd:** 
+  146.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** rule
+    - **Part:** FNB58 logger
+    - **Anchor:** Вимірює кожне USB-навантаження і кваліфікує PD-джерела.
+    - **Instruction:** Append: 'Логер baryluk з патчем: refresh 0.003 для FNB58, без dev.reset(), drain при виході; прошивку записати на прибутті і не оновлювати (лише Windows); labd повідомляє «meter stalled — power-cycle FNB58».'
+    - **Reason:** Issue #19: refresh 0.003 fixes the V0.68 freeze.
+    - **Sources:** https://github.com/baryluk/fnirsi-usb-power-data-logger/issues/19 ; https://raw.githubusercontent.com/baryluk/fnirsi-usb-power-data-logger/master/README.md
+    - **Saving usd:** 
+  147.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** rule
+    - **Part:** DMM use limit
+    - **Anchor:** | Мультиметр | ANENG AN8008/9 |
+    - **Instruction:** Add to the note: 'лише малоенергетичні вимірювання на стенді (захист мінімальний, рейтинги CAT сумнівні — огляд AN8008, та сама родина); діапазон 99.99 мкА з роздільністю 10 nA; mA через шунт 10 A з роздільністю 0.1 mA'. Model choice per analogs G5 (AN8009).
+    - **Reason:** Mark Hennessy review.
+    - **Sources:** https://www.minicircuits.com/pdfs/086-6SM+.pdf
+    - **Saving usd:** 
+  148.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** correction
+    - **Part:** Hantek 6022BE + LA
+    - **Anchor:** 20 MHz, 8 біт. 6022BL знято з продажу в The Debug Store.
+    - **Instruction:** Replace with '2 канали, 20 MHz, 8 біт; у 6022BE 0 логічних каналів — окремий FX2 CY7C68013A дає 8 каналів до 24 MS/s (16 — лише з 16-бітною платою); OpenHantek6022 3.4.1-rc2 arm64 .deb (60-openhantek.rules): 30 MS/s лише CH1 або 15 MS/s на 2 канали, USB bulk до 30 MB/s; після sigrok — перепідключити і перевірити FW0210; arm64 .deb збирається в CI і на Q6A не перевірений.' Seller per analogs G5.
+    - **Reason:** sigrok wiki; OpenHantek limitations doc.
+    - **Sources:** https://sigrok.org/wiki/Hantek_6022BE ; https://sigrok.org/wiki/Fx2lafw ; https://raw.githubusercontent.com/OpenHantek/OpenHantek6022/main/docs/limitations.md
+    - **Saving usd:** 
+  149.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** keep_with_note
+    - **Part:** Debug Probe software
+    - **Anchor:** | SWD для Pico. |
+    - **Instruction:** Replace with '| SWD (CMSIS-DAP) + UART для Pico; debugprobe v2.3.1, OpenOCD 0.12.0, picocom 3.1. |' (seller per analogs G5).
+    - **Reason:** Re-audit D confirmed versions.
+    - **Sources:** https://www.adafruit.com/product/5699
+    - **Saving usd:** 
+  150.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** correction
+    - **Part:** Pinecil settings
+    - **Anchor:** Живлення від PD-банку 20 V (близько 64 W).
+    - **Instruction:** Replace with 'Живлення від PD-банку 20 V — близько 60 W: IronOS ≥2.23, Bluetooth Off, PD Mode = No Dynamic, Power limit 60 W, Power pulse, якщо банк засинає; кабель USB-C без EPR (IronOS вміє 28 V EPR 140 W, PINE64 дає 12-20 V 3 A).'
+    - **Reason:** IronOS Pinecilv2 configuration.
+    - **Sources:** https://raw.githubusercontent.com/Ralim/IronOS/dev/source/Core/BSP/Pinecilv2/configuration.h ; https://pine64.com/product/pinecil-smart-mini-portable-soldering-iron/
+    - **Saving usd:** 
+  151.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** keep_with_note
+    - **Part:** iFixit anti-static mat
+    - **Anchor:** | iFixit | не перевірено | iFixit EU $33.67 (EUR 29.95). |
+    - **Instruction:** Change status to 'перевірено' and add 'IF145-202-5: $34.95, «Ready to ship», 60x60 см, браслет 1.8 м 1 MOhm, шнур з кнопкою 10 мм, поверхня 10^7-10^9 Ohm'. EU seller/price per analogs G5.
+    - **Reason:** Re-audit D read the iFixit page.
+    - **Sources:** https://www.ifixit.com
+    - **Saving usd:** 
+  152.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** correction
+    - **Part:** Anker 737 ports and capacity
+    - **Anchor:** Anker 737 (PDO 20 V/5 A, ≤100 Wh)
+    - **Instruction:** Replace with 'Anker 737 A1289 (кожен USB-C 5/9/15/20/28 V, до 20 V/5 A і 28 V/5 A EPR, 140 W сумарно; не в списку відкликань Anker)' and in the note replace 'близько 86-88 Wh' with '86.4 Wh (модель)' and add 'USB-C1 — DRP, USB-C2 — лише вихід (за analogs G5): зарядник приймача і ISDT живити з C2; заряд приймача від банку не гарантований до тесту DRP'. Price per analogs G5.
+    - **Reason:** Re-audit D read the Anker listing; DRP charging risk.
+    - **Sources:** https://www.anker.com
+    - **Saving usd:** 
+  153.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** rule
+    - **Part:** Bench hub usage
+    - **Anchor:** Waveshare MTT bench hub (живлення від банку)
+    - **Instruction:** Add usage rules (part, seller and STT naming per analogs G5): 'перевірити bDeviceProtocol (1 = STT, 2 = MTT) — STT прийнятний, ізохронних приладів немає (CDC bulk, HID interrupt, HS bulk); «USB Output 5V@1.2A» і БЖ 5 V 2 A — прилади заряджати до сесії, ніколи не заряджати LiteVNA (до 1 A) і tinySA через хаб одночасно; живити від 5 V/3 A банку; жодного додаткового рівня хабів (Q6A → FE1.1s → CH334F → цей хаб, можливо з 2 внутрішніми чипами, — біля межі 5 хабів USB 2.0)'.
+    - **Reason:** Pi Hut text says both STT and MTT; power budget risk.
+    - **Sources:** https://thepihut.com/products/industrial-grade-dual-host-usb-hub-4x-usb-2-0
+    - **Saving usd:** 
+  154.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** rule
+    - **Part:** ISDT 608PD radio and firmware
+    - **Anchor:** Щомісячний баланс 4.20 V через сервісний порт вузла N, головний вимикач вимкнено.
+    - **Instruction:** Append: 'Можливий BLE-випромінювач (керування з телефону ISD Link): заряджати лише вдома з вимкненим приймачем, питання закриває прийомний скан tinySA 2.4 GHz; прошивка — лише по USB через ISD Go for Windows V2.0.0.2, ніколи з телефону; вихід USB-C 100 W не використовувати як лабораторне джерело; робоча 0-40 °C; DC 5-30 V / USB-C 5-28 V вхід.' Price/seller per analogs G5.
+    - **Reason:** ISDT page advertises app control and OTA; receive-only rule.
+    - **Sources:** https://www.isdt.co/608pd.html ; https://darwinfpv.com/products/isdt-608pd-lipo-charger-dc-240w-10a-usb-c-140w-5a-smart-digital-charger
+    - **Saving usd:** 
+  155.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** other
+    - **Part:** Lab core total
+    - **Anchor:** **1,474.58-1,809.89 (≈1,475-1,810)**
+    - **Instruction:** Recompute the core lab total from the final lines: this source adds +$33.18 (VAT-30W2+ pads); every other price change in this table comes from analogs G5.
+    - **Reason:** Line change.
+    - **Sources:** https://www.minicircuits.com/WebStore/dashboard.html?model=VAT-30W2%2B
+    - **Saving usd:** -33.18
+  156.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** keep_with_note
+    - **Part:** LBE-1420 GPSDO
+    - **Anchor:** Кондуктивно, 80 dB атенюаторів + DC-блок; вимкнений і від'єднаний під час сесій H1, ADS-B і Inmarsat-C.
+    - **Instruction:** Append: '1 Hz-1.1 GHz; +11 dBm на 10 MHz, квадратна хвиля CMOS 3.3 V (непарні гармоніки); за 80 dB + BLK-89-S+ близько −69 dBm на DUT (модель); USB-C 5 V 250 mA; налаштування зберігаються в приладі — налаштувати один раз і працювати без керування по USB; інструмент — bvernoux/lbe-142x v1.2 (lbgpsdo не бачить 0x2443).' Price/seller per analogs G6.
+    - **Reason:** Bodnar product page; lbgpsdo lists only 0x2444.
+    - **Sources:** https://www.leobodnar.com/shop/index.php?main_page=product_info&cPath=107&products_id=393 ; https://raw.githubusercontent.com/hamarituc/lbgpsdo/master/lbe142x.py ; https://raw.githubusercontent.com/bvernoux/lbe-142x/main/README.md
+    - **Saving usd:** 
+  157.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** bench_test
+    - **Part:** DPS-150 overshoot
+    - **Anchor:** Від PD-джерела 20 V; тести модулів, LNA і LNB при 13.0-13.4 V.
+    - **Instruction:** Append: 'Перед підключенням LNA чи LNB — тест викиду при вмиканні (Hantek).' Price/seller per analogs G6.
+    - **Reason:** Protects LNAs/LNBs during current-limited bring-up.
+    - **Sources:** https://www.elektor.com/products/fnirsi-dps150-dc-power-supply-150-w
+    - **Saving usd:** 
+  158.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** removal
+    - **Part:** Bench case row: Apache 3800
+    - **Anchor:** | Кейс | Pelican 1450 / Apache 3800 з перегородками | 1 | 30-169 | різне | не перевірено | Лише стендовий набір (близько 8.8 L з 14.5 L). |
+    - **Instruction:** Remove 'Apache 3800' and the $30 low end; the case part and price follow analogs G6 (B&W outdoor.case 4000 RPD). If Peli 1450 stays as fallback, correct '14.5 L' to '15.0 L внутрішнього об'єму (2.9 kg з піною, IP67; заповнення 8.8/15.0 L = 59%)'.
+    - **Reason:** Apache is US in-store only; Pelican retailer data give 15.0 L.
+    - **Sources:** https://www.harborfreight.com/3800-weatherproof-protective-case-large-black-63927.html ; https://www.wiltronics.com.au/product/67862/1450-pelican-protector-case-with-foam-filler/
+    - **Saving usd:** 
+  159.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** other
+    - **Part:** Lab extended total
+    - **Anchor:** **497.72-707.72 (≈498-708)**
+    - **Instruction:** Recompute after the case and DPS-150 lines (both per analogs G6); this source changes no other extended price.
+    - **Reason:** Line changes.
+    - **Sources:** 
+    - **Saving usd:** 
+  160.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** keep_with_note
+    - **Part:** VNA capability
+    - **Anchor:** LiteVNA 64, OSL + F-F, атенюатори, DC-блок, NanoVNA-Saver (pipx) або автономно з microSD
+    - **Instruction:** Append: ', scikit-rf 2.1.0 (скриптово, з offset-delay для F-F); DR HW 3.1: >90 dB нижче 3 GHz, >50 dB від 3 GHz; доступ до VNA — лише через TCP-проксі Bench labd'.
+    - **Reason:** New scripted path and realistic DR.
+    - **Sources:** https://raw.githubusercontent.com/scikit-rf/scikit-rf/master/skrf/vi/vna/nanovna/nanovna.py
+    - **Saving usd:** 
+  161.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** correction
+    - **Part:** tinySA capability
+    - **Anchor:** tinySA Ultra+ ZS407 на власній батареї, DC-блок, атенюатор 20-30 dB
+    - **Instruction:** Append: '; 50 Ohm лише з атенюацією ≥10 dB; LNA лише за ≥20 dB; рівень ±2 dB лише нижче 5.3 GHz'.
+    - **Reason:** tinySA Limitations/Specification.
+    - **Sources:** https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Limitations
+    - **Saving usd:** 
+  162.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** correction
+    - **Part:** Y-factor NF capability
+    - **Anchor:** шумове джерело з таблицею ENR від tinySA, атенюатори, SDR з фіксованим підсиленням
+    - **Instruction:** Replace with 'шумове джерело з власною таблицею ENR (NF-процедура tinySA, EXT GAIN 0, атенюація ≥10 dB, 28-2400 MHz, з логом напруги 12.00 V), атенюатори, SDR з фіксованим підсиленням; без Y-фактора вище 2.4 GHz'.
+    - **Reason:** ENR depends on unit and supply.
+    - **Sources:** https://qsl.net/n8dmt/test-page/diy-test-equipment/low-cost-diy-noise-source/index.html
+    - **Saving usd:** 
+  163.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** correction
+    - **Part:** Logic analyser capability
+    - **Anchor:** LA 8/16 каналів 24 MHz, консоль UART, SWD | AN8008, FNB58 Std, Hantek 6022BE, fx2lafw, Debug Probe, sigrok/OpenHantek
+    - **Instruction:** Replace 'LA 8/16 каналів 24 MHz' with 'LA 8 каналів до 24 MS/s (загальна CY7C68013A, fx2lafw 0.1.7; 16 — лише з 16-бітною платою FX2)'; DMM model per analogs G5.
+    - **Reason:** 6022BE has 0 logic channels; FX2 uses PB0-PB7 for 8 channels.
+    - **Sources:** https://sigrok.org/wiki/Fx2lafw ; https://sigrok.org/wiki/Hantek_6022BE
+    - **Saving usd:** 
+  164.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** keep_with_note
+    - **Part:** P1 VNA calibration
+    - **Anchor:** | P1 | Калібрування VNA і приймання пасивних деталей (кондуктивно) | Пороги — авторські, не стандарти. |
+    - **Instruction:** Append to the fix column: ' Затримку барелю F-F виміряти і ввести як offset delay; відкритий кінець на female-площині — близько 0° ±10° до 6 GHz; калібрування — лише коли сирі O/S/L відрізняються.'
+    - **Reason:** Female-plane calibration method.
+    - **Sources:** http://nanovna.com/wp-content/uploads/2021/11/LiteVNA_User-Guide.pdf
+    - **Saving usd:** 
+  165.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** correction
+    - **Part:** P3 LNA pads
+    - **Anchor:** | P3 | Підсилення, узгодження, лінійність і стабільність живлених LNA (лише кондуктивно) | Атенюатор 30-40 dB на вході. |
+    - **Instruction:** Replace the fix with 'Сумарний атенюатор ≥ підсилення LNA + 3 dB, розділений на вхід і вихід; вихідний обов'язковий лише якщо атенюатор < підсилення; POWER ATTENUATION на LiteVNA 64 немає.'
+    - **Reason:** If total attenuation ≥ gain, port 2 sees no more than during thru calibration.
+    - **Sources:** http://nanovna.com/wp-content/uploads/2021/11/LiteVNA_User-Guide.pdf
+    - **Saving usd:** 
+  166.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** rule
+    - **Part:** P8 noise figure
+    - **Anchor:** Шумове джерело — лише BENCH; блокується нижче 13.6 V на батареї.
+    - **Instruction:** Append: ' Власна таблиця ENR, атенюатор 10 dB на виході постійно, навантаження 50 Ohm на вході, 12.00 V ±0.05 V з логом напруги; без Y-фактора вище 2.4 GHz.'
+    - **Reason:** ENR sensitivity about 1.2 dB/V (model).
+    - **Sources:** https://www.minicircuits.com/pdfs/ZFL-500LN+.pdf
+    - **Saving usd:** 
+  167.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** condition
+    - **Part:** P18 thermal soak
+    - **Anchor:** 45 хв опівдні з козирком, режими B, D, G; кроки з T7 — за умовою.
+    - **Instruction:** Replace with '45 хв опівдні з козирком, режими B, D, G і H (Lime — за замовчуванням); кроки з T7 — обов'язкові (SMART ≤55 °C).'
+    - **Reason:** Lime default.
+    - **Sources:** https://download.semiconductor.samsung.com/resources/data-sheet/Samsung_Portable_SSD_T7_Datasheet_Rev2.0.pdf
+    - **Saving usd:** 
+  168.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** rule
+    - **Part:** P19 Pinecil
+    - **Anchor:** | P19 | Польова пайка і догляд за роз'ємами | Pinecil від PD-банку. |
+    - **Instruction:** Replace the fix with 'Pinecil від PD-банку: No Dynamic, ліміт 60 W, кабель без EPR, BT Off; FNB58 на банку показує 20 V і ≤3 A, ніколи 28 V.'
+    - **Reason:** EPR risk.
+    - **Sources:** https://raw.githubusercontent.com/Ralim/IronOS/dev/Documentation/Settings.md
+    - **Saving usd:** 
+  169.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** keep_with_note
+    - **Part:** P6 GPSDO tone
+    - **Anchor:** | P6 | Кондуктивне калібрування тону GPSDO (extended) | Прилад — LBE-1420. |
+    - **Instruction:** Replace the fix with 'Прилад — LBE-1420, інструмент bvernoux/lbe-142x (arm64), 10 MHz через 80 dB + BLK-89-S+ у tinySA — очікувано −69 dBm ±3 dB (модель); записати рівні 30 і 50 MHz.'
+    - **Reason:** lbgpsdo does not detect the 1420.
+    - **Sources:** https://raw.githubusercontent.com/bvernoux/lbe-142x/main/README.md
+    - **Saving usd:** 
+  170.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** bench_test
+    - **Part:** P16 power checks
+    - **Anchor:** | P16 | Перевірки живлення, USB і «першого вмикання» |
+    - **Instruction:** Add to the fix column: 'матриця DRP (Anker 737 C2 → приймач, 737 → ISDT, телефон → приймач); зворотне живлення з USB Pico/паку при вимкненому вимикачі; струм J21 2 хв після poweroff; очікування ≤1.0/≤0.25 mA'.
+    - **Reason:** Re-audit D power tests.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps25947.pdf
+    - **Saving usd:** 
+  171.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** bench_test
+    - **Part:** P17 GNSS/PPS
+    - **Anchor:** | P17 | Логіка, GNSS/PPS, I2C і консоль | BNO085 на I2C2 — прибрано; IMU через Pico. |
+    - **Instruction:** Append to the fix: ' BNO085 на SPI0 паку; пак звітує clk_sys 125 MHz; збереження PPS (PQTMCFGPPS) після розряду MS621FE; NMEA-затримка і медіана offset для chrony.'
+    - **Reason:** Re-audit D GNSS tests.
+    - **Sources:** https://forums.quectel.com/uploads/short-url/rUEismNTHFHWMMyJR1WxrcTaRB7.pdf
+    - **Saving usd:** 
+  172.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** other
+    - **Part:** Lab totals table
+    - **Anchor:** | Лабораторія core (bench) | **1,475-1,810** |
+    - **Instruction:** Recompute with the final 3.1 lines (+$33.18 from the VAT-30W2+ pads in this source; other lines per analogs G5) and the extended total per analogs G6.
+    - **Reason:** Line changes.
+    - **Sources:** 
+    - **Saving usd:** -33.18
+  173.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** GNSS band row
+    - **Anchor:** | GNSS L1 + regional SBAS | 1559-1610 MHz | обидва (Waveshare L1+L5 на P7) | надійно |
+    - **Instruction:** Change the status cell to 'GPS/Galileo/BDS/QZSS L1 + EGNOS — надійно; GLONASS G1 з 25346 не перевірено (у специфікації антени не названо)' and keep the row; settle GLONASS with the gpsd SKY bench test.
+    - **Reason:** Neither the Waveshare 25346 spec nor the Pi Hut listing names GLONASS; no passband published.
+    - **Sources:** https://www.waveshare.com/gps-external-antenna-d.htm
+    - **Saving usd:** 
+  174.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** rule
+    - **Part:** Touch USB link
+    - **Anchor:** | J2a = FE1.1s P2 | U33 | USB-HID сенсора від плати дисплея; VBUS плати не з'єднано | те саме |
+    - **Instruction:** Replace the middle cell with 'USB-HID сенсора з роз'єму USB TP плати Wisecoco (або обрізаного дроту Type-C): лише D+/D−/GND, ферит Wurth 74271140 на дроті 2-3 мм; VBUS хаба на плату ніколи (USB-C «Touch+Power» ймовірно з'єднує VBUS сенсора з 5 V плати)'.
+    - **Reason:** Mutual back-feed risk; enumeration without VBUS must be bench-proven.
+    - **Sources:** https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-1.jpg
+    - **Saving usd:** 
+  175.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** Hub tier depth
+    - **Anchor:** Глибина хабів до стендового приладу — 3 при межі 5.
+    - **Instruction:** Replace with 'Глибина хабів до стендового приладу — до 4-5 (Q6A → FE1.1s → CH334F → стендовий хаб, можливо з 2 внутрішніми чипами) при межі 5 — жодного додаткового хаба.'
+    - **Reason:** Waveshare dual-host hub may contain two hub chips.
+    - **Sources:** https://thepihut.com/products/industrial-grade-dual-host-usb-hub-4x-usb-2-0
+    - **Saving usd:** 
+  176.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** new_risk
+    - **Part:** T7 USB 3 link rate
+    - **Anchor:** Синій порт: RTL-A 5.12, або T7 224 проти виміряних 395.
+    - **Instruction:** Replace with 'Синій порт: RTL-A 5.12, або T7 224 проти 395 (один fio-запис SmartHomeCircle через невідомий USB3-NVMe адаптер; T7 після кешу близько 480 MB/s — модель ssd-tester) — переміряти fio на реальному T7; кожна сесія Lime — лише якщо lsusb -t показує 5000M і Driver=uas (USB 3 через перехідник чи довгий кабель падає на 480M).'
+    - **Reason:** Single third-party measurement; 480M cannot carry 224 MB/s.
+    - **Sources:** https://smarthomecircle.com/radxa-dragon-q6a-best-alternative-to-the-raspberry-pi-5 ; https://ssd-tester.com/samsung_portable_ssd_t7_1tb.html
+    - **Saving usd:** 
+  177.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** keep_with_note
+    - **Part:** Pin 7 PPS ownership
+    - **Anchor:** | 7 | GPIO96 (UM3304) | вхід PPS, дріт ≤20 см | ядро pps-gpio |
+    - **Instruction:** Append to the use cell: '; у DTS 6.18.2 GPIO96 названо PIN_7 і більше ніщо на нього не посилається (MI2S0 у #534 — GPIO97/98/100); pinmux-pins має показати лише pps-gpio; PPS-вузол — /dev/pps-gnss за udev, ніколи жорстко pps0'.
+    - **Reason:** Re-audit D read the Q6A DTS and the overlay repo.
+    - **Sources:** https://github.com/radxa/kernel/tree/linux-6.18.2
+    - **Saving usd:** 
+  178.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** INA228 address
+    - **Anchor:** | 13/15 | I2C0 (CJ3134K) | INA228 на 0x40, підтягування на платі зняти | labpowerd |
+    - **Instruction:** Replace the use cell with 'INA228 на 0x40 (ADDR на GND) або 0x45 (перемички A0+A1); R6 і R7 зняті — адресу обов'язково задати; i2cdetect показує адресу, не UU'.
+    - **Reason:** Removing R6 floats A0/A1.
+    - **Sources:** https://github.com/adafruit/Adafruit-INA228-PCB
+    - **Saving usd:** 
+  179.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** UART6 device naming
+    - **Anchor:** | 16/18 | UART6 (UM3204H) | LC76G (/dev/ttyHS1 → /dev/gnss0) | gpsd |
+    - **Instruction:** Replace with '| 16/18 | UART6 (UM3204H) | LC76G (ttyHS1 або ttyHS2 за порядком probe; udev KERNELS=="998000.serial" → /dev/gnss0; ніколи жорстко ttyHS1) | gpsd (-b, лише читання) |'.
+    - **Reason:** qcom_geni_serial numbers non-aliased ports after the highest alias; forum 30455.
+    - **Sources:** https://forum.radxa.com/t/using-serial-ports-on-dragon-q6/30455 ; https://github.com/radxa/kernel/blob/linux-6.18.2/drivers/tty/serial/qcom_geni_serial.c
+    - **Saving usd:** 
+  180.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** rule
+    - **Part:** INA228 ALERT pull-up
+    - **Anchor:** | 3 | GPIO24 (UM3204H) | ALERT INA228 (відкритий стік) | labpowerd |
+    - **Instruction:** Replace the use cell with 'ALERT INA228 (відкритий стік; на платі підтяжки немає — підтяжка лише до 3.3 V хедера Q6A, ніколи до AON)'.
+    - **Reason:** An AON pull-up would back-feed the Q6A header pin.
+    - **Sources:** https://github.com/adafruit/Adafruit-INA228-PCB
+    - **Saving usd:** 
+  181.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** LC76G board supply
+    - **Anchor:** | 1/17, 2/4 | 3.3 V / 5 V | 3.3 V живить MCP #1/#3 і детектор «Q6A увімкнена» Pico | — |
+    - **Instruction:** Append to the use cell: '; 5 V (пін 2/4 або VCC_5V_PERI) живить VCC плати LC76G — ніколи 3.3 V (LDO RT9193-33 випадає з регулювання, зміщення антени і заряд MS621FE падають)'.
+    - **Reason:** Waveshare schematic.
+    - **Sources:** https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf
+    - **Saving usd:** 
+  182.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** PG inputs on MCP #3
+    - **Anchor:** FAULT LAB-порту і ch1-ch4; PG LNB; PG Boni;
+    - **Instruction:** Replace 'PG LNB; PG Boni;' with 'rail-good LNB і Boni — від компараторів TLV3011 (близько 90%, відкритий стік), бо в TPS7A4701 PG-виводу немає;'.
+    - **Reason:** No PG pin.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+    - **Saving usd:** 
+  183.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** rule
+    - **Part:** Pico supply
+    - **Anchor:** **Pico** (RP2040, 26 GPIO; живлення від LAB5 через VSYS)
+    - **Instruction:** Replace with '**Pico** (RP2040, SC0915 без радіо; зайнято 23 GPIO + 3 ADC; живлення від LAB5 через Schottky у VSYS; прошивати лише з увімкненим головним вимикачем або від'єднаним від LAB5)'.
+    - **Reason:** Back-feed via the Pico USB.
+    - **Sources:** https://pip-assets.raspberrypi.com/categories/610-raspberry-pi-pico/documents/RP-008307-DS-2-pico-datasheet.pdf
+    - **Saving usd:** 
+  184.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** keep_with_note
+    - **Part:** Encoder PIO
+    - **Anchor:** | GP2/3, GP6/7 | енкодер 1 A/B, енкодер 2 A/B |
+    - **Instruction:** Append: ' (quadrature_encoder.pio з offset 0, дві машини стану на одному PIO, 4 рахунки на фіксацію; RC 10k/10k/10 nF на канал)'.
+    - **Reason:** Pairs are consecutive as the PIO program needs.
+    - **Sources:** https://raw.githubusercontent.com/raspberrypi/pico-examples/master/pio/quadrature_encoder/quadrature_encoder.pio
+    - **Saving usd:** 
+  185.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** keep_with_note
+    - **Part:** Pico I2C0 bus
+    - **Anchor:** | GP4/5 | I2C0: VEML7700 (0x10) і PCA9555 (0x20) з 6 кнопками і 2 натисканнями енкодерів |
+    - **Instruction:** Append: ' — власний драйвер VEML7700 (0.0042 lx/відлік, gain 1/8 і IT 25 ms понад близько 20 klx), тайм-аути, 9-тактове відновлення шини, 100 Ohm + TVS біля безеля; розширювач — деталь за analogs G2, адреса 0x20 не змінюється (VEML7700 — 7-біт 0x10, колізії немає)'.
+    - **Reason:** VEML7700 DS Rev 1.8.
+    - **Sources:** https://www.vishay.com/docs/84286/veml7700.pdf
+    - **Saving usd:** 
+  186.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** new_risk
+    - **Part:** GP17 dimming
+    - **Anchor:** | GP17 | димінг підсвітки (PWM через RC в аналог; прямий 24.0 kHz лише якщо плата вимагає PWM) |
+    - **Instruction:** Replace with '| GP17 | димінг — лише якщо обрано власний CC-драйвер LED на роз'ємі Backlight (шлях 3); інакше яскравість через DDC/CI (шлях 1) або емуляцію KEY/OSD відкритим стоком (шлях 2, піни Pico — за розпіновкою KEY) |'.
+    - **Reason:** The Wisecoco board has its own LED boost; GP17 has no defined connection point.
+    - **Sources:** https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-1.jpg
+    - **Saving usd:** 
+  187.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** Fan tach
+    - **Anchor:** | GP18 / GP19 | FET вентилятора Q6A / FET повітродувки |
+    - **Instruction:** Replace with '| GP18 / GP19 | ключ вентилятора шляху 1 (з боку плюса, за analogs G2) / FET повітродувки; тахо вентилятора — на вільний GPIO (GP22 — єдиний вільний; призначити в P7), підтяжка 10k до 3.3 V, 1-4.7k послідовно |'.
+    - **Reason:** Noctua tach for stall detection.
+    - **Sources:** https://www.quietpc.com/nf-a4x10-flx-5v
+    - **Saving usd:** 
+  188.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** Pico battery divider tap
+    - **Anchor:** | GP26-28 | ADC: NTC панелі, дільник батареї 1:6, NTC корпусу |
+    - **Instruction:** Replace with '| GP26-28 | ADC: NTC панелі, дільник батареї 1:6 від SW (не N; 100k/20k), NTC корпусу |'.
+    - **Reason:** ADC diodes to IOVDD.
+    - **Sources:** https://pip-assets.raspberrypi.com/categories/610-raspberry-pi-pico/documents/RP-008307-DS-2-pico-datasheet.pdf
+    - **Saving usd:** 
+  189.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** rule
+    - **Part:** Pico firmware rules
+    - **Anchor:** TX-піни Pico у високому імпедансі, поки немає 3.3 V Q6A.
+    - **Instruction:** Append: 'clk_sys 125 MHz (ніколи SYS_CLK_MHZ=200 чи PICO_USE_FASTEST_SUPPORTED_CLOCK); опція — зупинити clk_usb/PLL_USB (VCO 1200 MHz), коли працює UART7, з ADC на XOSC, і вмикати лише в збірці з резервом H1 USB-CDC; GP23 (PS RT6150, PFM/PWM) — обирати лише A/B-виміром (HF+ на списку RBR і огляд 0.1-30 MHz); апаратний watchdog. UART7: оверлей qcs6490-radxa-dragon-q6a-uart7.dtso; якщо TX мертвий — режим FIFO (без qcom,enable-gsi-dma) або H1 USB-CDC.'
+    - **Reason:** Forced PWM turns PFM bursts into a fixed comb of unknown frequency; one TX report (#31422) unresolved.
+    - **Sources:** https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf ; https://forum.radxa.com/t/uart-transmission/31422
+    - **Saving usd:** 
+  190.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** IMU pack bus
+    - **Anchor:** Пак IMU: гніздо GX12 4-pin (3.3/5 V, TX, RX, GND, з TVS), екранований 4-жильний дріт 1.5-2 м.
+    - **Instruction:** Change '3.3/5 V' to '5 V (через Schottky на вході паку)'; connector, lead and TVS parts per analogs G3.
+    - **Reason:** Pack 5 V input back-feed fix.
+    - **Sources:** https://www.waveshare.com/wiki/RP2040-Zero
+    - **Saving usd:** 
+  191.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** RF port layout
+    - **Anchor:** **РЧ-порти корпусу** (верхній край, крок 20 мм; 7 портів без Lime = 140 мм)
+    - **Instruction:** Replace the parenthesis with '(верхній край, крок 20 мм: P1-P8 + RX1; з Lime за замовчуванням RX2 і REF IN — на лівій боковій стінці вгорі, крок 20 мм)'.
+    - **Reason:** 11 ports do not fit the 220-225 mm top edge.
+    - **Sources:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_2d_dimensions_v1.21.pdf
+    - **Saving usd:** 
+  192.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** P7 GNSS bias
+    - **Anchor:** | P7 GNSS | SMA, 3.3 V від LC76G | до LC76G |
+    - **Instruction:** Replace with '| P7 GNSS | SMA, близько 3.1 V при 20 mA (модель) від VCC_RF LC76G через 10 Ohm + 68 nH (плата від 5 V); пігтейл IPEX → SMA-K | до LC76G |'.
+    - **Reason:** Waveshare schematic.
+    - **Sources:** https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf
+    - **Saving usd:** 
+  193.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** Lime port placement
+    - **Anchor:** | Лише з Lime | LIME RX1, LIME RX2, REF IN (SMA) |
+    - **Instruction:** Append to the first cell or note: 'RX1 — угорі; RX2 і REF IN — на лівій боковій стінці'.
+    - **Reason:** Top edge capacity.
+    - **Sources:** 
+    - **Saving usd:** 
+  194.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** GNSS target row
+    - **Anchor:** | GNSS L1 / regional SBAS | Waveshare L1+L5 активна | Те саме | P7 → LC76G; опційно GNSS-SDR: L-band патч → RTL-B | PPS на пін 7 |
+    - **Instruction:** Change the notes cell to 'PPS на пін 7; GPS/Galileo/BDS/QZSS + EGNOS; GLONASS з 25346 не перевірено'.
+    - **Reason:** Antenna spec does not list GLONASS.
+    - **Sources:** https://www.waveshare.com/gps-external-antenna-d.htm
+    - **Saving usd:** 
+  195.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** Boot entries and DTB
+    - **Anchor:** A/B-корінь на UFS, systemd-boot з лічильником спроб і рятувальним пунктом.
+    - **Instruction:** Append: 'Пункти BLS (не UKI) з явними рядками `devicetree /dtbs/6.18.2-4-qcom/qcom/qcs6490-radxa-dragon-q6a.dtb` і `devicetree-overlay` для польового і лабораторного оверлеїв (інакше DTB дає прошивка UEFI і оверлеї тихо ігноруються); на запуску sha256(/sys/firmware/fdt) = DTB пакета + оверлеї, /proc/device-tree показує pcie0 disabled у польовому профілі; fio-перевірка після будь-якої зміни DT. Утримання: ядро, метапакети, embloader і прошивки Radxa; у полі без full-upgrade, rsetup, rupdate.'
+    - **Reason:** Radxa staff (30440): UEFI firmware provides the DTB by default.
+    - **Sources:** https://forum.radxa.com/t/30440 ; https://forum.radxa.com/t/31304
+    - **Saving usd:** 
+  196.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** Kernel cmdline comment
+    - **Anchor:** # (або @52 для режиму 127.90 MHz; EDID — в initramfs)
+    - **Instruction:** Replace with '# video= впливає лише на консоль (fbcon); режими 59.986/51.677 Hz закріплює kanshi; EDID — в initramfs; без прапорця «e»'.
+    - **Reason:** video= only marks DTD1 USERDEF; wlroots uses the preferred DTD.
+    - **Sources:** https://raw.githubusercontent.com/torvalds/linux/v6.18/drivers/gpu/drm/drm_probe_helper.c
+    - **Saving usd:** 
+  197.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** lab-q6a.dtso content
+    - **Anchor:** lab-q6a.dtso об'єднує uart6, uart7, i2c0 і i2c2 з вузлом pps-gpio на GPIO96; польовий варіант вимикає pcie0.
+    - **Instruction:** Append: 'Вміст: оверлей uart6 Radxa (spi6/i2c6 вимкнено, qup_uart6_tx/rx, okay) плюс вузол compatible "pps-gpio" з gpios = <&tlmm 96 GPIO_ACTIVE_HIGH>; в UEFI режим QUPV3 SE6 — UART, якщо пункт є; оверлеї вантажаться рядками devicetree-overlay у BLS.'
+    - **Reason:** No pps-gpio overlay exists upstream (radxa-overlays e713889).
+    - **Sources:** https://github.com/radxa/kernel/tree/linux-6.18.2 ; https://forum.radxa.com/t/30440
+    - **Saving usd:** 
+  198.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** gpsd and chrony config
+    - **Anchor:** `GPSD_OPTIONS="-n -p -s 115200"`, `USBAUTO="false"`. chrony: `refclock PPS /dev/pps0 lock NMEA`, `maxchange 5 1 -1`, `rtcsync`.
+    - **Instruction:** Replace with '`GPSD_OPTIONS="-n -b -s 115200"` (-b: gpsd нічого не пише), `USBAUTO="false"`; налаштування LC76G — з ExecStartPre або при зупиненому gpsd. chrony 4.5: `refclock SHM 0 refid NMEA offset <виміряна медіана> delay 0.2 noselect`, `refclock PPS /dev/pps-gnss lock NMEA refid PPS noselect`, `maxchange 5 1 -1`, `makestep 1 3`, `rtcsync`; ворота: `chronyc selectopts PPS -noselect` + `reselect` при прийнятті, `+noselect` на прапорець глушіння/підміни; перезапуск chronyd лише після повторного прийняття після підміни. udev SUBSYSTEM=="pps", ATTR{name}=="<вузол pps-gpio>" → /dev/pps-gnss. Локальні правила AppArmor (gpsd /dev/ttyHS[0-9]* rw, chronyd capability ipc_owner) — лише якщо /sys/kernel/security/lsm містить apparmor.'
+    - **Reason:** gpsd -p still writes; PPS_LOCK_LIMIT needs an NMEA refclock.
+    - **Sources:** https://gitlab.com/gpsd/gpsd/-/raw/release-3.25/man/gpsd.adoc ; https://gitlab.com/chrony/chrony/-/raw/4.5/refclock.c
+    - **Saving usd:** 
+  199.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** LC76G commands
+    - **Anchor:** LC76G: `$PAIR752,2,100` (PPS лише з 3D), `$PAIR391,1` (виявлення глушіння). |
+    - **Instruction:** Replace with 'LC76G (одноразово, gpsd зупинено): `$PQTMVERNO*58` (записати); `$PQTMCFGPPS,W,1,1,100,3,0,0*70` + `$PQTMSAVEPAR*5A`, перевірка `$PQTMCFGPPS,R,1*6A`; `$PAIR391,1*2C`, `$PAIR410,1*22`, `$PAIR400,2*20` + `$PAIR513*3D`, читання `$PAIR401*3F` і `$PAIR411*3E`; опційно `$PQTMCFGMSGRATE,W,PQTMJAMMINGSTATUS,1,1*11` + `$PQTMSAVEPAR*5A`. EPOC увімкнено; ніколи `$PAIR007`; без `$PAIR753` і стаціонарного режиму; відновлення після підміни — `$PAIR006*3C` або RESET; без оновлень прошивки в полі. |'
+    - **Reason:** PAIR513 does not save PPS-related PAIR settings.
+    - **Sources:** https://forums.quectel.com/uploads/short-url/rUEismNTHFHWMMyJR1WxrcTaRB7.pdf
+    - **Saving usd:** 
+  200.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** Location gate time window
+    - **Anchor:** час у межах 120 с від RTC; дата в межах вікна TLE;
+    - **Instruction:** Replace with 'час у межах 120 с + 100 ppm × дні з останньої схваленої синхронізації (мітка в /data) від RTC — поза вікном «unverified», відкидати лише з другим індикатором; рік RTC раніше дати образу = «unset»; глушіння (PAIRSPF чи PQTMJAMMINGSTATUS ≥2) → PPS +noselect; м'які індикатори, ніколи не жорстке відкидання: рівномірність C/N0 (без QZSS), |B|/нахил проти WMM (лише на чистому місці), опційна звірка часу з DCF77/MSF; «фікс втрачено при нормальному C/N0 без прапорця глушіння» — мітка «можливе блокування або підміна»; дата в межах вікна TLE;'.
+    - **Reason:** 20 ppm crystal model; rtcsync could store spoofed time.
+    - **Sources:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf ; https://forums.quectel.com/t/lc86g-not-working-in-russia/57394
+    - **Saving usd:** 
+  201.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** WMM and pointing
+    - **Anchor:** Резерв: останній добрий фікс з віком або ручні lat/lon / Maidenhead; таблиці міст немає.
+    - **Instruction:** Append: 'WMM2025 — pygeomag 1.1.0 з COF (дійсний до 31.12.2029) у venv; попередження компаса в зонах blackout/caution. Наведення: кут місця від гравітації, азимут від прицілу на Сонце плюс Game RV, нагадування переприцілитись кожні 15-20 хв (дрейф 0.5°/хв), власне перетворення кватерніон → az/el з юніт-тестами, відкидати кадри з |g| не близько 1 g або застряглим X=Y=0, курс магнітометра лише подалі від сталі (RV близько 5°, GeoRV близько 10° на практиці); курс лише на екрані, ніколи в журналі.'
+    - **Reason:** BNO08X DS rev 1.17 accuracies; WMM2025 validity.
+    - **Sources:** https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf ; https://pypi.org/project/pygeomag/
+    - **Saving usd:** 
+  202.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** labpowerd
+    - **Anchor:** | labpowerd | Python | INA228 на I2C0 через i2c-dev,
+    - **Instruction:** Insert after 'i2c-dev,': ' неперервний режим, адреса за перемичками (0x45/0x40), blacklist ina238, без вузла ti,ina228 у DT; INA228 у shutdown при poweroff без зарядника; ресинхронізація SoC від виміряної V_CV плати; зони температур логувати за типом, ніколи за індексом (ufs-thermal, msm-skin-thermal, quiet-thermal, xo-thermal, nspss0/1, cpu*, gpuss*, ufs hwmon, TMP1075 Lime);'.
+    - **Reason:** Re-audit D power and thermal specs.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/ina228.pdf ; https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+    - **Saving usd:** 
+  203.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** NPU thermal stop
+    - **Anchor:** | labclassify | — | inferd-htp
+    - **Instruction:** Add to the row: 'labd зупиняє задачі NPU/HTP при nspss0/1 > 85 °C; навчання — лише при SoC < 75 °C (ядро NPU не тротлить, критично 110 °C; один огляд бачив вимкнення близько 105 °C)'.
+    - **Reason:** sc7280.dtsi NSP trips have no cooling maps.
+    - **Sources:** https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/arch/arm64/boot/dts/qcom/sc7280.dtsi ; https://smarthomecircle.com/radxa-dragon-q6a-best-alternative-to-the-raspberry-pi-5
+    - **Saving usd:** 
+  204.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Compositor and palette
+    - **Anchor:** **UI.** Lab Shell (Qt 6.4.2 QML) на labwc 0.7.1 з XWayland,
+    - **Instruction:** Append to the UI paragraph: 'kanshi 1.5.1 з автозапуску labwc: профіль field60 «output HDMI-A-1 mode 1920x1080@59.986Hz» і field52 «...@51.677Hz»; ніколи «@60Hz», «@52Hz», «--custom» чи кастомні режими wlr-randr; rc.xml <touch mapToOutput="HDMI-A-1"/>; Expert-GUI на весь екран без декорацій через windowRules з поверненням кнопкою; гасіння — wlopm з kanshi stop/start навколо, ніколи wlr-randr --off. Палітра: великі суцільні заливки лише байтами з періодом TMDS 1 (0x10/0x08, 0x84/0x88, 0xEF/0xEE; нічний червоний 0xC8/0x10/0x10), ніколи 0x00 чи 0xFF.'
+    - **Reason:** kanshi 50 mHz matching; labwc #2615; TMDS comb model.
+    - **Sources:** http://archive.ubuntu.com/ubuntu/pool/universe/k/kanshi/kanshi_1.5.1.orig.tar.gz ; https://github.com/labwc/labwc/issues/3352
+    - **Saving usd:** 
+  205.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** Mirrored debs
+    - **Anchor:** Сторонні deb дзеркаляться: OpenWebRX+ 1.2.126, linux-headers 6.18.2-4, прошивки radxa, qcom-qnn-sdk-v68.
+    - **Instruction:** Replace 'linux-headers 6.18.2-4' with 'linux-image і linux-headers 6.18.2-4-qcom (з GitHub-релізу radxa-pkg/linux-qcom 6.18.2-4; в індексі apt їх уже немає)'.
+    - **Reason:** The held kernel image is also gone from the repo index.
+    - **Sources:** https://github.com/radxa-pkg/linux-qcom/releases/tag/6.18.2-4
+    - **Saving usd:** 
+  206.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Hold list
+    - **Anchor:** Утримання: ядро і метапакети, прошивки і набір NPU,
+    - **Instruction:** Insert 'embloader,' after 'метапакети,' and append to the sentence 'у полі — без full-upgrade, rsetup чи rupdate;'.
+    - **Reason:** Partial upgrades caused audio/HDMI loss.
+    - **Sources:** https://forum.radxa.com/t/31288
+    - **Saving usd:** 
+  207.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** LiteVNA and tinySA device ownership
+    - **Anchor:** Гігієна пристроїв: brltty видалено, ModemManager замасковано, udev /dev/lab/<name>.
+    - **Instruction:** Append: 'labd володіє /dev/lab/litevna (OWNER=labd, MODE 0600) і віддає VNA лише через TCP-проксі Bench (QtTinySA пробує 04b4:0008 — VID:PID LiteVNA — і міг би слати ASCII, де пробіл 0x20 = опкод WRITE V2); tinySA — udev лише на інтерфейс 00, udisks ігнорує дисковий інтерфейс.'
+    - **Reason:** QtTinySA devices.py probes the LiteVNA VID:PID.
+    - **Sources:** https://raw.githubusercontent.com/g4ixt/QtTinySA/main/src/modules/devices.py ; https://raw.githubusercontent.com/NanoVNA-Saver/nanovna-saver/main/src/NanoVNASaver/Hardware/Hardware.py
+    - **Saving usd:** 
+  208.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** Python tool venvs
+    - **Anchor:** Python: один venv на інструмент (NanoVNA-Saver через pipx; QtTinySA з PySide6 6.12;
+    - **Instruction:** Replace with 'Python: один venv на інструмент (NanoVNA-Saver через pipx з git @3445a0a і constraints PySide6==6.11.2; QtTinySA v2.0.1 з джерел з pyside6==6.11.0; scikit-rf[visa]==2.1.0 + pyvisa-py 0.8.1;'.
+    - **Reason:** QtTinySA upstream pin; scikit-rf 2.2.0 released 18 Oct 2026, untested.
+    - **Sources:** https://raw.githubusercontent.com/g4ixt/QtTinySA/main/src/requirements.txt ; https://pypi.org/pypi/scikit-rf/json
+    - **Saving usd:** 
+  209.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** ESP partition
+    - **Anchor:** | ESP | 1 GiB | — |
+    - **Instruction:** Replace with '| ESP | 1 GiB | FAT32, mkfs.vfat -S 4096 (UFS 4K-native: образ _4096 або розмітка на пристрої sgdisk) |'.
+    - **Reason:** UFS uses 4096-byte logical blocks.
+    - **Sources:** https://docs.radxa.com/en/dragon/q6a/getting-started/install-system/ufs-system/no-ufs-reader
+    - **Saving usd:** 
+  210.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** /data partition
+    - **Anchor:** | /data | близько 74 GiB |
+    - **Instruction:** Replace with '| /data | решта пристрою (близько 74 GiB; після квот близько 46.6 GiB на записи) |'.
+    - **Reason:** Re-audit D arithmetic.
+    - **Sources:** 
+    - **Saving usd:** 
+  211.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** WriteBooster figure
+    - **Anchor:** Запис 388 MB/s у межах кешу WriteBooster (близько 4 GiB); тривала швидкість після кешу невідома.
+    - **Instruction:** Replace with 'Запис 388 MB/s у межах кешу WriteBooster (4 GiB у провізії Radxa для Android; реальне — з sysfs) — плановий показник; після кешу — виміряти fio 16 GiB (поріг ≥50 MB/s); лінк HS-G4 Rate-A.'
+    - **Reason:** Factory Linux provisioning undocumented.
+    - **Sources:** https://dl.radxa.com/q6a/images/android/provision_ufs31.xml
+    - **Saving usd:** 
+  212.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** new_risk
+    - **Part:** T7 port limit
+    - **Anchor:** (межа порту 395 MB/s = 1.76x від 224 MB/s)
+    - **Instruction:** Replace with '(395 MB/s — один сторонній вимір, переміряти на T7; кожна сесія — лише при 5000M/uas; запис зупиняється при SMART 55 °C)'.
+    - **Reason:** Single measurement; link fallback risk.
+    - **Sources:** https://smarthomecircle.com/radxa-dragon-q6a-best-alternative-to-the-raspberry-pi-5
+    - **Saving usd:** 
+  213.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** SatDump record off and SD use
+    - **Anchor:** Зберігання: продукти — за замовчуванням;
+    - **Instruction:** Prepend: 'SatDump працює з вимкненим записом (record off); усі сирі IQ — лише через labrx (SatDump #766: 8-10 GB на прохід). На SD — лише послідовні передвиділені файли, без БД і journald.'
+    - **Reason:** SatDump #766 filled 128 GB in 10-15 passes.
+    - **Sources:** https://github.com/SatDump/SatDump/issues/766
+    - **Saving usd:** 
+  214.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Thermal model on D15 box
+    - **Anchor:** Усе — модель (корпус 210x135x52 мм — це замінений габарит; план D15 — 220-225 x 135-140 x 55-60 мм, тож модель треба перерахувати на нього;
+    - **Instruction:** Replace with 'Усе — модель на габариті D15 222.5x137.5x57.5 мм: поверхня 0.103 m² (+10.8%), лице 0.0306 m², пасивно близько 1.0 W/K при h = 10; сонце 14.6-18.4 W; підйом повітря на виході при 5.4 m³/год — 9.8 / 12.7 / 17.3 / 20.7 / 30.5 K для 17 / 22 / 30 / 36 / 53 W; Lime близько 4 W типово в режимах H/I (MyriadRF), п'єдестал і прокладка — на 10 W; примусове повітря обов'язкове;' and keep the rest; update the table's exit-rise column accordingly.
+    - **Reason:** Re-audit D re-ran the model on the D15 plan.
+    - **Sources:** https://www.crowdsupply.com/lime-micro/limesdr-micro
+    - **Saving usd:** 
+  215.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Solar load
+    - **Anchor:** Близько половини сонячного навантаження 13.5-17 W на лицевій панелі потрапляє у внутрішнє повітря;
+    - **Instruction:** Replace '13.5-17 W' with '14.6-18.4 W (модель D15)'.
+    - **Reason:** Recomputed front area.
+    - **Sources:** 
+    - **Saving usd:** 
+  216.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** replace_part
+    - **Part:** Air path 1 cooler
+    - **Anchor:** Шлях 1: задній забір → ступінчастий мідний блок (зона 32x31 мм) з вентилятором 40 мм 5 V → викид ззаду зверху.
+    - **Instruction:** Replace with 'Шлях 1: задній забір → (A) ступінчастий Cu ≤35x35 мм або (B) верхня кришка Armor 7056A на стійках M2.5 → Noctua NF-A4x10 5V (8.2 m³/год, 1.78 mmH2O, тахо) → викид ззаду зверху; забори — сітка + піна ≤5 Pa; вимога ≥2.7 m³/год на шлях.'
+    - **Reason:** Cooler options and fan curve.
+    - **Sources:** https://www.quietpc.com/nf-a4x10-flx-5v ; https://forum.radxa.com/t/30737
+    - **Saving usd:** 
+  217.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** condition
+    - **Part:** SYS12 closed-case test
+    - **Anchor:** Тест у закритому корпусі: 3.5 A протягом 60 хв при 14.0 V і 16.4 V на вході, вихід у межах 4%, без термовідключення.
+    - **Instruction:** Replace with 'Ворота C4 (2) для SYS12: D36V50F12 при 4.2 A 60 хв у закритому корпусі при 14.0 V і 16.4 V на вході, вихід у межах 4%, без термовідключення, з логом температур D36V50F12, #2813 і запобіжника 7.5 A.'
+    - **Reason:** Lime default.
+    - **Sources:** https://www.pololu.com/product/4095
+    - **Saving usd:** 
+  218.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** new_risk
+    - **Part:** Display derating path
+    - **Anchor:** зниження за NTC: понад 60 °C — 50%, понад 68 °C — 20%.
+    - **Instruction:** Append: 'Зниження діє лише через доведений шлях димінгу: DDC/CI («ddcutil setvcp 10») → емуляція KEY/OSD з Pico → власний CC-драйвер на роз'ємі Backlight (GP17); без нього зниження і авто-яскравість не працюють.'
+    - **Reason:** No software dimming path is proven on either panel.
+    - **Sources:** https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_5.pdf
+    - **Saving usd:** 
+  219.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** new_risk
+    - **Part:** Display storage in sun and polariser
+    - **Anchor:** Фізика понад побажання: тривала яскравість на полуденному сонці — близько 1000 ніт, 2000 — короткий режим.
+    - **Instruction:** Append: 'Вимкнений пристрій лицем до сонця може перевищити 80 °C зберігання обох панелей (висновок) — козирок закривати як кришку, наклейка «не лишати лицем до сонця». Вісь поляризатора невідома — тест поляризаційних окулярів 0/90°.'
+    - **Reason:** Both panels rate storage to 80 C.
+    - **Sources:** https://www.wisecocodisplay.com/product/7-inch-1920x1080-high-brightness-2500nits-lcd-panel-with-hdmi-in-board-ips-mipi-interface-tft-lcd-screen/
+    - **Saving usd:** 
+  220.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** SoC thermal limits
+    - **Anchor:** - **SoC.** Tj максимум 95 °C; тротлінг близько 90-91 °C;
+    - **Instruction:** Replace with '- **SoC.** Пороги DT: CPU пасивно 90/95 °C, GPU 95/100/105 °C, критично 110 °C; NSP і DDR — лише «hot» 90 °C без охолодження (огляд бачив вимкнення близько 105 °C у vkmark); labd зупиняє NPU/HTP при nspss0/1 > 85 °C; плата без охолодження тротлить близько 90-91 °C при 7.8 W (форум);'.
+    - **Reason:** sc7280.dtsi trips; 95 C is a throttle step, not Tj max.
+    - **Sources:** https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/arch/arm64/boot/dts/qcom/sc7280.dtsi
+    - **Saving usd:** 
+  221.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** UFS pad and T7 placement
+    - **Anchor:** - **Інше.** UFS притиснута прокладкою до бобишки корпусу (близько 60 °C). T7 (лише з Lime) — зовні на нижньому краї (номінал 0-60 °C).
+    - **Instruction:** Replace with '- **Інше.** UFS (знизу плати, тримається лише клацанням B2B) — прокладка 1-1.5 мм на бобишку пластини щонайменше 30 мм від п'єдесталу Lime і регуляторів або з термопрорізом; поліімідна плівка 0.05-0.1 мм під усією платою з вирізом під бобишку; бобишка минає пого-майданчики +/−/TS; прокладку лишати, лише якщо A/B знижує ufs-thermal. T7 (за замовчуванням) — ззаду внизу в затіненому тримачі, зазор 3-5 мм, відбивна шторка (0-60 °C Tc; модель на сонці при 35 °C — 55-71 °C).'
+    - **Reason:** A pad only cools the UFS if the plate is cooler; Lime pedestal shares the mid-plate.
+    - **Sources:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_2d_dimensions_v1.21.pdf ; https://forum.radxa.com/t/30090
+    - **Saving usd:** 
+  222.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Cold limits
+    - **Anchor:** - **Холод.** Без заряду нижче 0 °C. UFS і T7 розраховані від 0 °C.
+    - **Instruction:** Replace 'UFS і T7 розраховані від 0 °C.' with 'T7 — 0-60 °C Tc; межі UFS — з ufs-hwmon (temp1_lcrit/crit); правило «без операцій зберігання нижче 0 °C» лишається, якщо lcrit не каже інше.'
+    - **Reason:** UFS range unverified.
+    - **Sources:** https://raw.githubusercontent.com/torvalds/linux/master/drivers/ufs/core/ufs-hwmon.c
+    - **Saving usd:** 
+  223.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** condition
+    - **Part:** Thermal acceptance
+    - **Anchor:** - **Приймання.** 45 хв опівдні з козирком у режимах B, D і G
+    - **Instruction:** Replace 'у режимах B, D і G' with 'у режимах B, D, G і H (Lime)' and add to the pass list 'UFS нижче порогу паузи, T7 SMART ≤55 °C, nspss < 85 °C, без критичних спрацювань'.
+    - **Reason:** Lime default.
+    - **Sources:** 
+    - **Saving usd:** 
+  224.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** bench_test
+    - **Part:** A/B states: display board
+    - **Anchor:** кроки електронного навантаження SYS12 і LAB5 від 0.3 до 3 A;
+    - **Instruction:** Insert after it: ' плата дисплея живлена з HDMI від'єднаним / під'єднаним (власні лінії плати: кварци, DSI, підвищувач LED, клас-D); суцільні заливки 0x000000 / 0xFFFFFF / 0x101010 / 0xEFEFEF; GP23 Pico низ/верх і clk_usb увімк./вимк.;'.
+    - **Reason:** Board-only emissions and TMDS combs are independent of the EDID.
+    - **Sources:** https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-1.jpg
+    - **Saving usd:** 
+  225.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** bench_test
+    - **Part:** A/B states: IMU pack
+    - **Anchor:** пак IMU; V4L, що стрімить на спільному хабі; T7 (збірка з Lime).
+    - **Instruction:** Replace 'пак IMU;' with 'пак IMU увімк./вимк. (і навмисно на 200 MHz для перевірки лінії 1600 MHz; 1692/1704 MHz);' and 'T7 (збірка з Lime)' with 'T7 (за замовчуванням)'.
+    - **Reason:** Confirms or refutes the 1600 MHz spur.
+    - **Sources:** https://raw.githubusercontent.com/earlephilhower/arduino-pico/6.3.0/boards.txt
+    - **Saving usd:** 
+  226.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** new_risk
+    - **Part:** Known lines table additions
+    - **Anchor:** | 144.000 / 432.000 / 1704.0 | 12 MHz (хаб, RP2040) | 2 m / 70 см / Metop |
+    - **Instruction:** Change the source cell to '12 MHz (хаб, RP2040), 48 MHz × 3 / × 9 (MCU tinySA)' and add rows (all model): '1572.0 / 1584.0 / 1596.0 / 1608.0 / 1692.0 | 12 MHz × 131/132/133/134/141 (кварц RP2040 паку, за будь-якого clk_sys) | L1, E1, B1, G1, вікно Elektro'; '1600.0 | 200 MHz × 8 (пак, якщо не 125 MHz — заборонено) | GLONASS G1'; 'TMDS 151.5 MHz: чорний 1565.50/1582.33/1599.17/1700.17/404.0, білий 1579.93/1601.57/1536.64/1688.14/1709.79; TMDS 127.9 MHz: чорний 1421.11, 1563.2/1577.4/1591.6/1605.9 | гребінки f_pix/P від суцільних заливок | GNSS, H1, HRPT, зонди'; '162.000 | символьний такт DP, якщо RA620 на RBR | між каналами AIS'.
+    - **Reason:** Re-audit D GNSS and display models.
+    - **Sources:** https://github.com/raspberrypi/pico-sdk/blob/2.3.1/src/rp2040/hardware_regs/include/hardware/platform_defs.h ; https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Limitations
+    - **Saving usd:** 
+  227.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** new_risk
+    - **Part:** Touch bridge 2.4 GHz
+    - **Anchor:** Wi-Fi/BT: rfkill + USB authorized=0 у кожному польовому і QUIET профілі; самоперевірка підтверджує, що модуля немає в lsusb і що 2.4 GHz тихо.
+    - **Instruction:** Append: 'Міст сенсора плати дисплея може мати 2.4 GHz (WCH CH57x бачили на іншому наборі Wisecoco 7") і rfkill його не бачить — тест тиші BLE (2400-2483.5 MHz, 2402/2426/2480 MHz по 5 хв); будь-яка реклама — відмова від плати.'
+    - **Reason:** Receive-only rule.
+    - **Sources:** https://forums.raspberrypi.com/viewtopic.php?t=368455
+    - **Saving usd:** 
+  228.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** new_risk
+    - **Part:** Field overlay provenance
+    - **Anchor:** Польовий DT-оверлей вимикає pcie0;
+    - **Instruction:** Append: ' (лише якщо пункт BLS вантажить DTB і оверлей явно — за замовчуванням DTB дає UEFI; перевірити /proc/device-tree pcie0 status disabled і sha256 /sys/firmware/fdt);'.
+    - **Reason:** Overlays can be silently bypassed.
+    - **Sources:** https://forum.radxa.com/t/30440
+    - **Saving usd:** 
+  229.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Field EDID section
+    - **Anchor:** **4. Дисплей.** Польовий EDID: DTD1 151.50 MHz (2200x1148, 59.99 Hz; чисте вікно 148.11-153.27 MHz; рядкова 68.86 kHz щонайменше на 8.6 kHz від кожної ДХ-несучої); DTD2 127.90 MHz (51.68 Hz; чисте 123.62-128.04 MHz).
+    - **Instruction:** Replace with '**4. Дисплей.** Польовий EDID (edid/field.bin): лише базовий блок EDID 1.4, без CTA; established timings 0x00 0x00 0x00, усі standard timings 0x01 0x01, без CVT 3-byte, біт continuous-frequency скинуто. DTD1 151.50 MHz, H 1920/88/44/148 (2200), V 1080/27/5/36 (1148) — 68.864 kHz, 59.986 Hz; DTD2 127.90 MHz, 2200 x 1125 (V 1080/4/5/36) — 58.136 kHz, 51.677 Hz. Чисті вікна за повторним скануванням (14 основних вікон з HRPT/LRIT/AHRPT 1686-1711 MHz, захист 0.5 MHz, до 2.5 GHz; модель): 148.13-153.22 і 123.89-128.04 MHz; рядкова 68.864 kHz — 7.95 kHz від NAVTEX 490; 58.136 kHz — 1.86 kHz від 60 kHz. Приймання: modetest/kmsprint показує рівно ці два режими 1920x1080; якщо виміряна частота профілю 127.90 вище близько 128.0 MHz — лише 151.50; якщо 2200-широкі тотали відкинуто — DTD з нативним htotal і подовженим VFP на тих самих частотах. Піксельна частота — необхідна, але не достатня умова: гребінки TMDS від вмісту і лінії плати-скалера не залежать від EDID (див. правило палітри).'
+    - **Reason:** Re-audit D independent scan and TMDS model.
+    - **Sources:** https://raw.githubusercontent.com/torvalds/linux/v6.18/drivers/gpu/drm/drm_edid.c
+    - **Saving usd:** 
+  230.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** HDMI cable and dimming in EMI section
+    - **Anchor:** Екранований HDMI 10-15 см з феритами Mix-31/61; DISP12 з LC-фільтром; підсвітка — аналоговий/DC димінг (24.0 kHz лише якщо PWM неминучий).
+    - **Instruction:** Replace with 'Екранований HDMI A-A за analogs G2 (2420, надлишок пласкою S-укладкою подалі від РЧ-відсіку) з феритами Mix-31; DISP12 з LC-фільтром; підсвітка — через доведений шлях (DDC/CI → KEY → власний CC-драйвер з DC-димінгом); частоту PWM плати спитати в D5.'
+    - **Reason:** No 10-15 cm cable; dimming is set by the board.
+    - **Sources:** https://www.adafruit.com/product/2420
+    - **Saving usd:** 
+  231.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** decision
+    - **Part:** C4 fallback in EMI section
+    - **Anchor:** D36V50F12 (близько 500 kHz, режим економії на малому навантаженні) — за воротами A/B; якщо не пройде — синхронний buck з фіксованою частотою і примусовим PWM з частотою з гармонічного сканування.
+    - **Instruction:** Replace the fallback with 'якщо не пройде — LM61460AANRJRR з FPWM від зовнішнього такту на EN/SYNC (частота — з гармонічного сканування, обмеження за analogs G3).'
+    - **Reason:** Named fallback part.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/lm61460.pdf
+    - **Saving usd:** 
+  232.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** rule
+    - **Part:** IMU pack EMI
+    - **Anchor:** **9. Пак IMU.** Металевий корпус, з'єднаний з опліткою; ферит 31/43 біля паку;
+    - **Instruction:** Append: ' clk_sys 125 MHz явно (FQBN freq=125), clk_sys у кадрі, labd відкидає інші; ≥30 см від GNSS-антени;'.
+    - **Reason:** arduino-pico default 200 MHz.
+    - **Sources:** https://raw.githubusercontent.com/earlephilhower/arduino-pico/6.3.0/boards.txt
+    - **Saving usd:** 
+  233.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** rule
+    - **Part:** T7 cable in Lime EMI
+    - **Anchor:** T7 ніколи не пише під час сесій L-band, S-band чи GNSS
+    - **Instruction:** Append: '; кабель T7 — один суцільний екранований USB 3 A-C ≤0.5 м з феритами через гермоввід, без перехідників; сесія Lime — лише при lsusb -t 5000M + uas'.
+    - **Reason:** USB 3 couplers and long runs.
+    - **Sources:** https://www.usb.org/sites/default/files/327216.pdf
+    - **Saving usd:** 
+  234.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** keep_with_note
+    - **Part:** ASA case heat limits
+    - **Anchor:** Параметричний світло-сірий корпус ASA (PETG відкинуто).
+    - **Instruction:** Append: 'ASA: Tg 98 °C, HDT 100 °C (TDS), практична межа 93 °C (Prusa); друк у закритій вентильованій камері (колір і продавець — за analogs G4).'
+    - **Reason:** Polymaker TDS and Prusa.
+    - **Sources:** https://us.polymaker.com
+    - **Saving usd:** 
+  235.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** rule
+    - **Part:** Hood as lid label
+    - **Anchor:** VEML7700 на зовнішній верхній грані безеля, поза шарнірним козирком 30 мм, що складається пласко як кришка.
+    - **Instruction:** Append: 'Наклейка «не лишати лицем до сонця»; козирок закривати як кришку при зберіганні.'
+    - **Reason:** Storage-temperature risk.
+    - **Sources:** 
+    - **Saving usd:** 
+  236.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** replace_part
+    - **Part:** Q6A mount and cooler in layout
+    - **Anchor:** Q6A 85x56 мм за Radxa STEP v1.21, мідний блок у зоні 32x31 мм, вентилятор 40 мм до заднього отвору.
+    - **Instruction:** Replace with 'Q6A 85x56 мм за STEP V1.21 (4 отвори ⌀3.5 мм на 58x49 мм, 3.5 мм від країв; стійки M2.5 до пластини 2 мм Al), охолоджувач (A) ступінчастий Cu ≤35x35 мм або (B) верхня кришка Armor 7056A, Noctua 40 мм до заднього отвору; ніколи одна прокладка на SoC і RAM.'
+    - **Reason:** 2D drawing V1.21; cooler options.
+    - **Sources:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_2d_dimensions_v1.21.pdf
+    - **Saving usd:** 
+  237.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Battery bay and UFS in layout
+    - **Anchor:** Батарея 46x25x150 мм — в утепленому відсіку зліва внизу з бар'єром і вентиляцією. UFS — притиснута до бобишки.
+    - **Instruction:** Replace with 'Батарея: оголений пакет 46x25x150 мм у відсіку із зовнішнім габаритом близько 54x33x158 мм (модель) зліва внизу з бар'єром і вентиляцією. UFS — прокладка на бобишку ≥30 мм від п'єдесталу Lime і регуляторів, лише якщо A/B це виправдовує.'
+    - **Reason:** Compartment envelope correction.
+    - **Sources:** https://www.fsaeonline.com/content/Molicel-TDS--INR-21700-P50B-80122.pdf
+    - **Saving usd:** 
+  238.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** Top edge ports in panels
+    - **Anchor:** Верх: P1-P7 (опційно P8; з Lime — RX1, RX2, REF IN).
+    - **Instruction:** Replace with 'Верх: P1-P8 + RX1 з кроком 20 мм. Ліва бокова стінка вгорі: RX2 і REF IN (крок 20 мм, над батарейним відсіком).'
+    - **Reason:** 11 ports do not fit the top edge.
+    - **Sources:** 
+    - **Saving usd:** 
+  239.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** T7 exit
+    - **Anchor:** вихід дроту T7 (Lime).
+    - **Instruction:** Replace with 'гермоввід кабелю T7 (за замовчуванням; сам T7 — ззаду внизу в затіненому тримачі).'
+    - **Reason:** T7 sun mitigation.
+    - **Sources:** 
+    - **Saving usd:** 
+  240.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** Service hatch contents
+    - **Anchor:** сервісний лючок (консоль UART, доступ до синього USB-A для EDL кабелем A-A).
+    - **Instruction:** Replace with 'сервісний лючок: консоль UART5 (40-pin 8/10 + GND; F2/F5/F12 UEFI по UART — перевірити на стенді, інакше USB-клавіатура в сервісному наборі), кнопка EDL (або утоплена паралельна), роз'єм джгута J21, синій USB-A (EDL: тримати кнопку, подати живлення J21, відпустити, кабель A-A, 05c6:9008). Ніколи мод R137/R207 і rupdate.'
+    - **Reason:** Forum 30925: the UEFI prompt reaches the serial console; input over UART untested.
+    - **Sources:** https://forum.radxa.com/t/30925 ; https://docs.radxa.com/en/dragon/q6a/low-level-dev/edl-mode
+    - **Saving usd:** 
+  241.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** J21 desolder wiring
+    - **Anchor:** J21 випаюється лише після прогону і лише якщо Lime залишено (далі J21 від нижніх майданчиків крученою парою 20 AWG).
+    - **Instruction:** Replace the parenthesis with '(далі — усі три майданчики: 12 V і GND крученою парою 20 AWG, PWR_ON_KEY окремим 26-28 AWG до вузла АБО Pico/BAT54, через 3-pin роз'єм з фіксацією біля лючка; термоусадка, поліімід на корпусі USB-C, фіксація джгута; запобіжник 4 A)'.
+    - **Reason:** J21 is 3-pin.
+    - **Sources:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+    - **Saving usd:** 
+  242.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** Lime baseline plate
+    - **Anchor:** - **Під Lime.** Пластину ріжуть один раз з отворами під п'єдестал і кріплення riser.
+    - **Instruction:** Append: 'Збірка з Lime — базова (рішення користувача): п'єдестал, riser, 11 портів і T7 — базові вимоги механіки; бобишка UFS ≥30 мм від п'єдесталу.'
+    - **Reason:** Re-audit D: Lime default changes the baseline risks.
+    - **Sources:** /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+    - **Saving usd:** 
+  243.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** removal
+    - **Part:** Bench kit case
+    - **Anchor:** - **Стендовий набір** (Pelican 1450 / Apache 3800, лише стенд):
+    - **Instruction:** Remove 'Apache 3800'; name the case per analogs G6.
+    - **Reason:** US in-store only.
+    - **Sources:** https://www.harborfreight.com/3800-weatherproof-protective-case-large-black-63927.html
+    - **Saving usd:** 
+  244.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** rule
+    - **Part:** Travel rules
+    - **Anchor:** Anker 737 (≤100 Wh) і прилади з Li-елементами — у ручну поклажу з ізольованими клемами; Pelican можна здати в багаж.
+    - **Instruction:** Replace '(≤100 Wh)' with '(86.4 Wh)' and append 'У зданому кейсі — жодних запасних елементів чи банків; правила авіакомпанії щодо банків перевіряти перед кожною поїздкою (PDF IATA — Rev 3, 2019).'
+    - **Reason:** IATA guidance dated; Anker capacity model.
+    - **Sources:** https://www.iata.org/contentassets/6fea26dd84d24b26a7a1fd5788561d6e/passenger-lithium-battery.pdf
+    - **Saving usd:** 
+  245.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Battery weight row
+    - **Anchor:** | батарея, BMS і бар'єр | 0.32 |
+    - **Instruction:** Replace with '| батарея, BMS і бар'єр | 0.33-0.34 (модель; елементи 4 × 71 g = 284 g) |' and update the device sum.
+    - **Reason:** Molicel 71 g max.
+    - **Sources:** https://www.fsaeonline.com/content/Molicel-TDS--INR-21700-P50B-80122.pdf
+    - **Saving usd:** 
+  246.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Bench case weight row
+    - **Anchor:** | Кейс стенда (Pelican 1450, 14.5 L, заповнено близько 8.8 L = 61%) | 8.2-9.1 kg | цифри Pelican не перевірено (pelican.com дав 403) |
+    - **Instruction:** Case per analogs G6; if Peli 1450 is kept, correct to '15.0 L, 2.9 kg з піною, заповнено 8.8/15.0 L = 59%' and drop 'не перевірено'.
+    - **Reason:** Retailer data for the Pelican 1450.
+    - **Sources:** https://www.wiltronics.com.au/product/67862/1450-pelican-protector-case-with-foam-filler/
+    - **Saving usd:** 
+  247.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** rule
+    - **Part:** Battery safety
+    - **Anchor:** **Безпека батареї.** Лише точкове зварювання;
+    - **Instruction:** Append to the paragraph: 'Daly: спершу B−, потім сенсорні дроти від B0 угору (знімати — спершу сенсорний штекер); анодований радіатор не торкається елементів чи нікелю; зберігання понад 2-4 тижні — вийняти запобіжник 7.5 A.'
+    - **Reason:** Daly wiring order; standby model.
+    - **Sources:** https://www.tinytronics.nl/product_files/005102_Data-Sheet-of-DL-J04G3-L04S15ATJ-BMS-circuits.pdf
+    - **Saving usd:** 
+  248.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** IP2368 goods-in
+    - **Anchor:** 
+    - **Instruction:** Add row: 'IP2368, кожна плата, після однієї активаційної зарядки від одностороннього PD-адаптера: FNB58 + навантаження як споживач — будь-який VBUS = COUT (лишити плату, що ніколи не віддає); V_CV на клемах при RVSET 5.1k (ціль 16.25-16.57 V), струм завершення, спрацювання NTC 0.39/0.55 V з 10k B3380; маркування LDO 5 V | Ворота плати зарядника | На прибутті'.
+    - **Reason:** Re-audit D bench test 0.
+    - **Sources:** https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+    - **Saving usd:** 
+  249.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** DRP charging matrix
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Матриця DRP, по 10 підключень, FNB58 показує, хто джерело, і чи заряджається пакет: Anker 737 (порт USB-C2, лише вихід за analogs G5; і C1) → USB-C приймача через TPS259470A; 737 → USB-C ISDT 608PD; телефон → приймач (ніколи не розряджає пакет) | До проходження — польовий заряд лише від одностороннього PD-адаптера | Після складання силової плати'.
+    - **Reason:** Re-audit D bench test 1.
+    - **Sources:** https://www.isdt.co/608pd.html ; https://www.ti.com/lit/ds/symlink/tps25947.pdf
+    - **Saving usd:** 
+  250.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Back-feed test
+    - **Anchor:** | Зворотне живлення: 0 V на VBUS Q6A і HDMI +5 V
+    - **Instruction:** Extend the row: 'головний вимикач вимкнено: 5.1 V з обмеженням 50 mA на LAB5 — SW < 17 V; USB Pico в ПК, потім USB паку — LAB5 < 0.5 V, SW близько 0 V'.
+    - **Reason:** Re-audit D bench test 2.
+    - **Sources:** https://forum.pololu.com/t/strange-behavior-of-d36v28f5-pololu-3782/29129
+    - **Saving usd:** 
+  251.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Q6A poweroff current
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Після systemctl poweroff — струм J21 INA228 протягом 2 хв; чи падає 3.3 V хедера; Pico відкриває #2813; повторювати після кожного оновлення rsetup/SPI; холодне ввімкнення доходить до входу без клавіатури | Друга умова OFF | Крок 3 запуску'.
+    - **Reason:** Re-audit D bench test 3.
+    - **Sources:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf ; https://forum.radxa.com/t/upcoming-radxa-dragon-q6a/26723
+    - **Saving usd:** 
+  252.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** D36V50F12 EN sweep and C4 (1)
+    - **Anchor:** | D36V50F12: основна частота від навантаження і входу;
+    - **Instruction:** Add to the row: 'розгортка SW 14 → 11 → 14 V лабораторним джерелом — сон/пробудження запасного EN 10.0k/1.00k (цілі близько 12.1/13.6 V); якщо C4 (1) не пройде — повторити з LM61460'.
+    - **Reason:** Re-audit D bench tests 4 and 7.
+    - **Sources:** https://www.pololu.com/product/4095
+    - **Saving usd:** 
+  253.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** UV supervisor and #2813
+    - **Anchor:** | #2813: чи блокує утримуваний OFF від супервізора кнопку на піні A;
+    - **Instruction:** Add to the row: 'розгортка N 14.0 → 12.0 → 14.0 V — спрацювання/відпускання компаратора (цілі 12.8/13.6 V; точки температур — за analogs G3); з утримуваним OFF кнопка на A не вмикає; 20 підключень/відключень PD при вимкненому і ввімкненому пристрої — стан #2813 не змінюється сам'.
+    - **Reason:** Re-audit D bench test 5.
+    - **Sources:** https://www.ti.com/product/TLV3012 ; https://www.pololu.com/product/2813
+    - **Saving usd:** 
+  254.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** C4 gate (2) at 4.2 A
+    - **Anchor:** 3.5 A 60 хв у закритому корпусі при 14.0 і 16.4 V; те саме для D36V28F5 і IP2368
+    - **Instruction:** Replace with '4.2 A 60 хв у закритому корпусі при 14.0 і 16.4 V з логом температур D36V50F12, MOSFET #2813 і запобіжника 7.5 A; плюс 4.6 A на батареї 30 хв при 50 °C навколо; D36V28F5 і IP2368 — у тих самих умовах на своїх струмах'.
+    - **Reason:** Re-audit D bench test 6.
+    - **Sources:** https://www.pololu.com/product/4095
+    - **Saving usd:** 
+  255.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Standby current
+    - **Anchor:** | Енергія за режимами і корисна енергія з логів INA228
+    - **Instruction:** Add to the row: 'очікування при 14.8 V і вимкненому вимикачі: ≤1.0 mA з INA228 у роботі, ≤0.25 mA з INA228 у shutdown (без BMS); Iq Daly окремо (специфікація <500 мкА); з джерелом 45 W — перевірити автоматичне зниження струму IP2368'.
+    - **Reason:** Re-audit D bench test 8.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/ina228.pdf
+    - **Saving usd:** 
+  256.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Daly behaviour
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Daly: пробудження після UVP від трикл-заряду IP2368 3/3 (нижче 2.5 V трикл 30-70 mA — за analogs G3); зняття спрацювання КЗ з навантаженням AON близько 1 mA; точка OVP під час балансу ISDT 4.20 V | BMS | Збирання батареї'.
+    - **Reason:** Re-audit D bench test 9.
+    - **Sources:** https://www.tinytronics.nl/product_files/005102_Data-Sheet-of-DL-J04G3-L04S15ATJ-BMS-circuits.pdf
+    - **Saving usd:** 
+  257.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** INA228 calibration
+    - **Anchor:** 
+    - **Instruction:** Add row: 'INA228: порівняти з FNB58 або DMM + шунт на 0.5, 2 і 4 A і задати SHUNT_CAL; адреса (0x45 чи 0x40) стабільна на 10^5 читань; i2cdetect показує адресу, не UU | C14 | Стенд силової плати'.
+    - **Reason:** Re-audit D bench test 10.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/ina228.pdf
+    - **Saving usd:** 
+  258.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** TPS7A4701 rails
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Шини TPS7A4701: 13.2 V і 12.5 V на F-роз'ємі / bias-tee при батареї 14.2 і 16.4 V — у межах ±0.35 V; вихід при батареї 13.2 V (дропаут); струм Bullseye → PTC/ліміт 1.5-2x при 60 °C і кріплення радіатора; струм Boni-Whip; компаратори rail-good спрацьовують близько 90% | C8, C17 | Стенд силової плати'.
+    - **Reason:** Re-audit D bench test 11.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+    - **Saving usd:** 
+  259.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** LT3045 headroom
+    - **Anchor:** | Пара LT3045 на 4.5 V від LAB5 біля просідання:
+    - **Instruction:** Add to the row: 'з LAB5, підрізаною до 4.8 V, пульсації 500 kHz і спури на шині LNA 4.5 V при навантаженні 0.17 і 0.6 A; якщо PSRR поганий — знизити шину до 4.3-4.4 V (за згодою власників LNA)'.
+    - **Reason:** Re-audit D bench test 12; ADI PSRR data unreachable.
+    - **Sources:** https://www.lcsc.com/product-detail/C666574.html
+    - **Saving usd:** 
+  260.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Fuse heating
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Нагрів запобіжників: 7.5 A при 4.6 A і запобіжник LAB5 3 A при 2.3 A, по 30 хв у корпусі 50 °C; підйом температури тримача; гарячий LAB5 → 4 A з D36V50F5 | D2 | Стенд силової плати'.
+    - **Reason:** Re-audit D bench test 13.
+    - **Sources:** https://www.littelfuse.com/products/fuses-overcurrent-protection/fuses/automotive-passenger-car/blade-fuses/mini-297
+    - **Saving usd:** 
+  261.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Cell goods-in and cold run
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Елементи: ємність при 1 A до 2.5 V (≥4.85 Ah), маса 68-71 g, AC IR на 1 kHz; пакет, охолоджений до 0 °C: прогін режиму H з логом INA228 замість моделі 50 Wh | C3 | Збирання батареї'.
+    - **Reason:** Re-audit D bench test 14.
+    - **Sources:** https://www.fsaeonline.com/content/Molicel-TDS--INR-21700-P50B-80122.pdf
+    - **Saving usd:** 
+  262.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Brown-out with eFuse
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Просідання: SYS12 = 11.0 V — дисплей стабільний; 11.5 V — Q6A стабільна; J21 живиться через TPS259470A | D4, C4 | Стенд силової плати'.
+    - **Reason:** Re-audit D bench test 15.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps25947.pdf
+    - **Saving usd:** 
+  263.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** UART6 bring-up
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX, `$PQTMVERNO`);
+    - **Instruction:** Add to the row: 'dmesg без «Invalid FW loaded» чи «UART firmware load failed»; записати режим QUPV3 SE6 в UEFI; петля 16-18 на 115200, 1e5 байт без помилок; потім відповідь на `$PQTMVERNO*58`; cat /sys/kernel/security/lsm (без apparmor — локальні правила не потрібні); DKMS pps-gpio з gcc-12 має vermagic 6.18.2-4-qcom; aptly-дзеркало містить linux-image і linux-headers 6.18.2-4'.
+    - **Reason:** Re-audit D GNSS tests 0 and 11.
+    - **Sources:** https://forum.radxa.com/t/uart-transmission/31422 ; https://github.com/radxa-pkg/linux-qcom/releases/tag/6.18.2-4
+    - **Saving usd:** 
+  264.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** PPS path
+    - **Anchor:** 
+    - **Instruction:** Add row: 'PPS: debugfs pinmux-pins — gpio96 лише в pps-gpio; ppstest /dev/pps-gnss — 1 Hz лише з 3D-фіксом; від'єднати антену — імпульси зупиняються за час втрати 3D, без вільного ходу | C13 | W1-2'.
+    - **Reason:** Re-audit D GNSS test 1.
+    - **Sources:** https://forums.quectel.com/t/gnss-lc76g-1-pss-configuration/45880
+    - **Saving usd:** 
+  265.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** PPS persistence
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Збереження PPS (вирішує резерв «без TX»): налаштувати PQTMCFGPPS + PQTMSAVEPAR + PAIR513; зняти VCC і розрядити чи вийняти MS621FE (або V_BAT через 1 kOhm 1 хв); увімкнути: `$PQTMCFGPPS,R,1*6A` повертає режим 3, є вивід PAIRSPF, `$PAIR401*3F` повертає 2 | #79 | W1-2'.
+    - **Reason:** Re-audit D GNSS test 2.
+    - **Sources:** https://forums.quectel.com/uploads/short-url/rUEismNTHFHWMMyJR1WxrcTaRB7.pdf
+    - **Saving usd:** 
+  266.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** NMEA latency and chrony
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Затримка NMEA: 24 год логу PPS → перше речення (логічний аналізатор або логи refclock); offset NMEA = медіана; chronyc sources показує PPS «*» після selectopts воріт; подій «pulse ignored» менше 1% | C13 | W1-2'.
+    - **Reason:** Re-audit D GNSS test 3; LC29H flash-save delays of 300-400 ms.
+    - **Sources:** https://gitlab.com/chrony/chrony/-/raw/4.5/refclock.c
+    - **Saving usd:** 
+  267.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** GNSS antenna bias
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Зміщення антени: при VCC = 5 V центр IPEX під 150 Ohm ≥3.05 V; повторити при 3.3 V, щоб задокументувати падіння | P7 | На прибутті LC76G'.
+    - **Reason:** Re-audit D GNSS test 4.
+    - **Sources:** https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf
+    - **Saving usd:** 
+  268.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** GLONASS with 25346
+    - **Anchor:** 
+    - **Instruction:** Add row: 'GLONASS з 25346: 30 хв відкритого неба; gpsd SKY показує використані PRN 65-96 із середнім C/N0 у межах 3 dB від GPS на схожих кутах; інакше позначити GLONASS непідтримуваним у таблиці | розділ 4 | Після складання'.
+    - **Reason:** Re-audit D GNSS test 5.
+    - **Sources:** https://www.waveshare.com/gps-external-antenna-d.htm
+    - **Saving usd:** 
+  269.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** TTFF and MS621FE hold
+    - **Anchor:** | GNSS: TTFF LC76G;
+    - **Instruction:** Add to the row: '10 холодних стартів ($PAIR006*3C) надворі — медіана ≤60 с, гарячі ≤5 с; плата без живлення 3, 7 і 14 днів — гарячий чи холодний старт (реальне утримання MS621FE; модель 9-18 днів, очікувано 1-2 тижні)'.
+    - **Reason:** Re-audit D GNSS test 6.
+    - **Sources:** https://www.sii.co.jp/en/me/datasheets/ms-rechargeable/ms621fe
+    - **Saving usd:** 
+  270.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** RTC drift
+    - **Anchor:** 
+    - **Instruction:** Add row: 'RTC: після 10+ хв без живлення — dmesg | grep -i hctosys і hwclock -r -f /dev/rtc0; дрейф за 7 днів при кімнатній і після 24 год у холодильнику — у межах зростання вікна 100 ppm | #7 | Після W1-2'.
+    - **Reason:** Re-audit D GNSS test 7.
+    - **Sources:** https://github.com/radxa/kernel/blob/linux-6.18.2/drivers/rtc/rtc-ds1307.c
+    - **Saving usd:** 
+  271.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Location gate drill
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Тренування воріт (лише кондуктивно: без GNSS-симулятора в ефір — відтворення записаного NMEA через gpsfake): RTC на 200 с після 30 днів зберігання → «unverified», не відкидання; прапорець глушіння → PPS +noselect; стрибок 150 km → запит підтвердження | #7 | Перед першим польовим виходом'.
+    - **Reason:** Re-audit D GNSS test 8; conducted-only rule.
+    - **Sources:** https://gitlab.com/gpsd/gpsd/-/raw/release-3.25/man/gpsd.adoc
+    - **Saving usd:** 
+  272.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** IMU pack
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Пак IMU: 100 холодних стартів з успішною ініціалізацією SPI; clk_sys = 125 MHz; дрейф Game RV статично 20 хв і на поворотному столі; юніт-тести кватерніон → az/el (рівно на північ і 90° довкола кожної осі); CRC на 1e6 кадрів | D12 | Після збирання паку'.
+    - **Reason:** Re-audit D GNSS test 9.
+    - **Sources:** https://learn.adafruit.com/adafruit-9-dof-orientation-imu-fusion-breakout-bno085/arduino
+    - **Saving usd:** 
+  273.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** A/B: pack and display vs GNSS
+    - **Anchor:** | Повна вузькосмугова A/B-матриця для кожного стану з дельтою GNSS C/N0 — публікація spur mask v1 | D10 | Після складання з закритою кришкою |
+    - **Instruction:** Add to the first cell: '; пак IMU і дисплей увімк./вимк. — зміна GNSS C/N0 ≤1 dB-Hz, фон L-band на 1692/1704 MHz; пак навмисно на 200 MHz — підтвердити чи спростувати лінію 1600 MHz'.
+    - **Reason:** Re-audit D GNSS test 10.
+    - **Sources:** https://raw.githubusercontent.com/earlephilhower/arduino-pico/6.3.0/boards.txt
+    - **Saving usd:** 
+  274.
+    - **Section:** 08_open_bench
+    - **Kind:** correction
+    - **Part:** Quectel regional lock
+    - **Anchor:** поведінка регіонального блокування Quectel (невідомо)
+    - **Instruction:** Replace with 'функціональне регіональне обмеження підтверджено для LC86G (Росія; механізм не описано), для LC76G — припущення; Waveshare не відправляє в IR/RU; межа висоти 10 km; ворота маркують «фікс втрачено при нормальному C/N0 без прапорця глушіння» як можливе блокування чи підміну, а не несправність антени'.
+    - **Reason:** Quectel forum 57394.
+    - **Sources:** https://forums.quectel.com/t/lc86g-not-working-in-russia/57394 ; https://www.waveshare.com/lc76g-gnss-module.htm
+    - **Saving usd:** 
+  275.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Display board acceptance row
+    - **Anchor:** | Плата дисплея: діапазон входу і струм при 25/50/100%;
+    - **Instruction:** Rewrite the row's test list: 'Плата дисплея: письмові відповіді D5 (8 питань); сенсор з USB TP лише з D+/D−/GND (VBUS відкритий) — lsusb VID:PID, hid-multitouch і evtest у 20/20 холодних завантаженнях, якщо ні — VBUS лише з власного 5 V плати і повтор, FNB58: 0 V зворотного живлення в LAB5 і Q6A в усіх станах; яскравість на повному білому люмінометром (≥1800 cd/m2; грубо — VEML7700, L = E/π); потужність на 25/50/100% при 11.0 і 12.0 V (≤7.5 W при 50%, ≤14 W при 100%)' and keep the gate/when cells.
+    - **Reason:** Re-audit D display tests 0 and 7.
+    - **Sources:** https://forums.raspberrypi.com/viewtopic.php?t=368455
+    - **Saving usd:** 
+  276.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** BLE silence
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Тиша BLE: плата дисплея живлена, сенсор активний; tinySA або RTL-B з E-зондом 2400-2483.5 MHz, затримка на 2402/2426/2480 MHz по 5 хв; будь-яка реклама — відмова від плати | Правило «тільки прийом» | Приймання дисплея'.
+    - **Reason:** Re-audit D display test 1.
+    - **Sources:** https://forums.raspberrypi.com/viewtopic.php?t=368455
+    - **Saving usd:** 
+  277.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HPD/EDID
+    - **Anchor:** 
+    - **Instruction:** Add row: 'HPD/EDID зі Schottky на піні 18: HPD високий, card1-HDMI-A-1 «connected», EDID-override застосовано в 20/20 холодних завантажень і 20 циклах wlopm off/on (шаблон kanshi stop/start) | C12 | Приймання дисплея'.
+    - **Reason:** Re-audit D display test 2; labwc #3352 unproven here.
+    - **Sources:** https://github.com/labwc/labwc/issues/3352
+    - **Saving usd:** 
+  278.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Display modes and pixel clock
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Режими: modetest/kmsprint — рівно два режими 1920x1080; фактична частота в /sys/kernel/debug/clk/clk_summary для обох профілів, 12 × f(профіль 127.9) < 1536.5 MHz; kanshi застосовує «@59.986Hz» і «@51.677Hz» | C12 | Приймання дисплея'.
+    - **Reason:** Re-audit D display test 3.
+    - **Sources:** https://raw.githubusercontent.com/torvalds/linux/v6.18/drivers/gpu/drm/drm_edid.c
+    - **Saving usd:** 
+  279.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** DP link
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Лінк DP: drm.debug=0x1ff — швидкість, кількість ліній, DOWNSPREAD (SSC); якщо RBR — додати 162.000 MHz у відомі лінії і A/B AIS; E-зондом на кабелі виміряти лінію TMDS 151.5 MHz і її ширину (SSC близько 0.76 MHz) | 5.7 | Приймання дисплея'.
+    - **Reason:** Re-audit D display test 4.
+    - **Sources:** https://raw.githubusercontent.com/torvalds/linux/v6.18/drivers/gpu/drm/drm_edid.c
+    - **Saving usd:** 
+  280.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** TMDS content test
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Вміст TMDS (перевірка моделі): заливки 0x000000, 0xFFFFFF, 0x101010 і 0xEFEFEF на 151.5 і 127.9 MHz; середнє C/N0 8 найсильніших SV і спектри RTL-B/E-зонда на передбачених лініях (151.5 чорний 1565.50/1582.33/1599.17/1700.17/404.0; білий 1579.93/1601.57/1536.64/1688.14; 127.9 чорний 1421.11/1591.64 MHz); правило палітри — якщо 0x10/0xEF чистіші | C12 | Приймання дисплея'.
+    - **Reason:** Re-audit D display test 5.
+    - **Sources:** https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-1.jpg
+    - **Saving usd:** 
+  281.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Board-only emissions
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Лінії самої плати: плата живлена з HDMI від'єднаним, потім під'єднаним; HF+ 0.1-30 MHz при RBW 1 Hz на ДХ-списку 5.7 і tinySA 1-1800 MHz; знайти кварци, такт DSI, частоту підвищувача LED і аудіопідсилювача; додати в таблицю 5.7 | 5.7 | Приймання дисплея'.
+    - **Reason:** Re-audit D display test 6.
+    - **Sources:** https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-1.jpg
+    - **Saving usd:** 
+  282.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Dimming path and sun run
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Шлях димінгу: ddcutil detect і ddcutil setvcp 10 50 через AUX RA620 (I2C 0x37) на Wisecoco і на 4D; інакше емуляція KEY/OSD з Pico; інакше власний CC-драйвер на Backlight; потім 45 хв опівдні з козирком — зниження за NTC до 50% при 60 °C і до 20% при 68 °C, скло ≤65 °C | D4, D16 | Приймання дисплея'.
+    - **Reason:** Re-audit D display test 8.
+    - **Sources:** https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_5.pdf
+    - **Saving usd:** 
+  283.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Polariser, touch through AR, keys-only
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Поляризаційні окуляри на 0 і 90° в альбомній; дотик крізь AR-плівку голою рукою і в рукавицях; повний обхід меню лише кнопками й енкодерами (приймання CI) | D16 | Приймання дисплея'.
+    - **Reason:** Re-audit D display test 9.
+    - **Sources:** 
+    - **Saving usd:** 
+  284.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Pico RF A/B
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Pico A/B: GP23 низ проти верх, clk_usb увімк. проти вимк., лише 125 MHz; фон HF+ і лінії на 144/432/1584/1704 MHz з платою HMI на кінцевому місці | 5.7 | Після складання'.
+    - **Reason:** Re-audit D display test 10.
+    - **Sources:** https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf
+    - **Saving usd:** 
+  285.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** UART7 loopback
+    - **Anchor:** 
+    - **Instruction:** Add row: 'UART7: петля в обидва боки на 115200 з оверлеєм Radxa; режим QUPV3 SE7 в UEFI; якщо TX мертвий — режим FIFO (без qcom,enable-gsi-dma) або резерв H1 USB-CDC | C6 | W1-2'.
+    - **Reason:** Re-audit D display test 11.
+    - **Sources:** https://forum.radxa.com/t/uart-transmission/31422
+    - **Saving usd:** 
+  286.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Encoders and VEML7700
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Енкодери: 60 RPM і покрокові фіксації в рукавицях, 1000 фіксацій без помилок, з RC-фільтром і без; VEML7700 на прямому сонці (близько 100 klx) не насичується при gain 1/8 / IT 25 ms; SDA на землю 1 с — після відновлення шини кнопки працюють | HMI | Після складання HMI'.
+    - **Reason:** Re-audit D display test 12.
+    - **Sources:** https://www.bourns.com/docs/Product-Datasheets/PEC11R.pdf ; https://www.vishay.com/docs/84286/veml7700.pdf
+    - **Saving usd:** 
+  287.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** UFS on arrival
+    - **Anchor:** | Сховище: тривалий запис UFS після кешу WriteBooster; ID чипа; 10 хв fio; заповнення до близько 70% |
+    - **Instruction:** Extend the first cell: 'ID виробника 0x01CE і модель з sysfs; lsblk -o NAME,SIZE,LOG-SEC,PHY-SEC показує 4096; записати розкладку LU (unit_descriptor); розмір WriteBooster = wb_shared_alloc_units × 512 × allocation_unit_size × segment_size; fio послідовний запис 16 GiB (bs=1M, direct=1) — після кешу ≥50 MB/s'.
+    - **Reason:** Re-audit D mech test 0.
+    - **Sources:** https://git.criticallink.com/redmine/projects/mitysom_qc6490/wiki/UFS
+    - **Saving usd:** 
+  288.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** ufs-hwmon
+    - **Anchor:** 
+    - **Instruction:** Add row: 'ufs hwmon: знайти hwmon «ufs», прочитати temp1_input, temp1_crit, temp1_lcrit; задати поріг паузи UFS і холодове правило; якщо hwmon немає — 65 °C на ufs-thermal | #18 | На прибутті UFS'.
+    - **Reason:** Re-audit D mech test 1.
+    - **Sources:** https://raw.githubusercontent.com/torvalds/linux/master/drivers/ufs/core/ufs-hwmon.c
+    - **Saving usd:** 
+  289.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Thermal zones
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Зони: /sys/class/thermal/*/type містить ufs-thermal, msm-skin-thermal, quiet-thermal, xo-thermal і nspss0/1; labpowerd логує їх за типом | 5.6 | W1-2'.
+    - **Reason:** Re-audit D mech test 2.
+    - **Sources:** https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+    - **Saving usd:** 
+  290.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Cooler fit and performance
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Охолоджувач: STEP V1.21 і фізичний відбиток пасти для Cu-блока і для варіанта «лише кришка Armor»; stress-ng близько 10 W 10 хв при відомій температурі на вході — SoC-до-входу ≤3.5 K/W, без пасивних спрацювань | #16 | До CAD корпусу'.
+    - **Reason:** Re-audit D mech test 3.
+    - **Sources:** https://forum.radxa.com/t/30123
+    - **Saving usd:** 
+  291.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Airflow
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Потік: шляхи 1 і 2 — термоанемометр на виході або з dT при відомій потужності нагрівача; ≥2.7 m³/год на шлях, інакше змінити вентилятор чи площу забору | 5.6 | Після друку корпусу'.
+    - **Reason:** Re-audit D mech test 4.
+    - **Sources:** https://www.quietpc.com/nf-a4x10-flx-5v
+    - **Saving usd:** 
+  292.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Midday soak incl. mode H
+    - **Anchor:** | Тепло: 45 хв опівдні з козирком
+    - **Instruction:** Extend: 'режими B, D, G і H (Lime), козирок, 35 °C або виміряне навколишнє: каркас ≤60 °C, скло ≤65 °C, елементи ≤45 °C, UFS нижче порогу паузи, T7 SMART ≤55 °C, nspss < 85 °C, без критичних спрацювань'.
+    - **Reason:** Re-audit D mech test 5.
+    - **Sources:** 
+    - **Saving usd:** 
+  293.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** UFS pad A/B
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Прокладка UFS A/B: ufs-thermal з прокладкою на бобишку і без, Lime навантажений; лишити прокладку, лише якщо знижує | 5.6 | Після складання'.
+    - **Reason:** Re-audit D mech test 6.
+    - **Sources:** https://forum.radxa.com/t/31226
+    - **Saving usd:** 
+  294.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** J21 and USB-C
+    - **Anchor:** 
+    - **Instruction:** Add row: 'J21/USB-C: при 12 V на J21 і порожньому USB-C — VBUS на піні USB-C < 0.5 V; USB-C ніколи при підключеному J21; після випаювання клавіша живлення на піні 3 працює | #15 | Після випаювання J21'.
+    - **Reason:** Re-audit D mech test 7.
+    - **Sources:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+    - **Saving usd:** 
+  295.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** EDL via J21 and UEFI over UART
+    - **Anchor:** 
+    - **Instruction:** Add row: 'EDL лише з живленням J21 (USB-C порожній) з Linux-хоста кабелем A-A — 05c6:9008; UEFI F2/F12 по UART лючка на 115200 | #22 | W1-2'.
+    - **Reason:** Re-audit D mech test 8.
+    - **Sources:** https://docs.radxa.com/en/dragon/q6a/low-level-dev/edl-mode ; https://forum.radxa.com/t/30925
+    - **Saving usd:** 
+  296.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** DTB provenance
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Походження DTB: sha256 /sys/firmware/fdt = DTB з BLS + оверлеї; у польовому профілі pcie0 «disabled»; fio-перевірка UFS і T7 після кожної зміни DT | C18 | W1-2'.
+    - **Reason:** Re-audit D mech test 9.
+    - **Sources:** https://forum.radxa.com/t/30440
+    - **Saving usd:** 
+  297.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Boot safety
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Безпека завантаження: 20 холодних завантажень з підключеними T7 і USB-накопичувачем LAB — усі з UFS; разом 50 теплих + 20 холодних з лічильником спроб systemd-boot і тестом відкату | C18 | W1-2'.
+    - **Reason:** Re-audit D mech test 10.
+    - **Sources:** https://docs.radxa.com/en/dragon/q6a/download
+    - **Saving usd:** 
+  298.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** T7 link and endurance
+    - **Anchor:** 
+    - **Instruction:** Add row: 'T7: lsusb -t — 5000M і Driver=uas через кінцевий кабель; fio з обмеженням 224 MB/s 60 хв зі smartctl -d sntasmedia -A кожні 30 с — раз у тіні, раз на сонці зі шторкою; нуль помилок I/O, без втрат labrx, ≤55 °C | C18 | Приймання Lime'.
+    - **Reason:** Re-audit D mech test 11.
+    - **Sources:** https://raw.githubusercontent.com/smartmontools/smartmontools/master/smartmontools/drivedb.h
+    - **Saving usd:** 
+  299.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Kernel soak
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Прогін ядра 12 год: dmesg без збігів «ufshcd.*(error|timed-out)|OCS invalid|pa_err|dl_err»; apt-mark showhold містить метапакети ядра, embloader і прошивки | #24 | W1-2'.
+    - **Reason:** Re-audit D mech test 12.
+    - **Sources:** https://forum.radxa.com/t/31304
+    - **Saving usd:** 
+  300.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Weather spray test
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Погода: IPX4 — оббризкування 10 хв (IEC 60529, трубка або ручний розпилювач) з усіма заглушками; потім перевірити роз'єм IMU і LAB BUS на воду | D15 | Після складання корпусу'.
+    - **Reason:** Re-audit D mech test 13; GX12 has no IP rating.
+    - **Sources:** https://olimex.com/Products/Components/Connectors/CONNECTOR-GX12-4
+    - **Saving usd:** 
+  301.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Mechanical tests
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Механіка: тест на відрив вставки 1/4-20 на 3x ваги пристрою; навантаження вушок ременя; замок лючка | D15 | Після друку корпусу'.
+    - **Reason:** Re-audit D mech test 14.
+    - **Sources:** 
+    - **Saving usd:** 
+  302.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Battery compartment
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Батарейний відсік: термопара на середньому елементі під час полуденного прогону — вікно заряду 0-45 °C тримається; зовнішній габарит відсіку відповідає CAD (близько 54x33x158 мм) | D6 | Після друку корпусу'.
+    - **Reason:** Re-audit D mech test 15.
+    - **Sources:** https://www.fsaeonline.com/content/Molicel-TDS--INR-21700-P50B-80122.pdf
+    - **Saving usd:** 
+  303.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** LiteVNA arrival
+    - **Anchor:** 
+    - **Instruction:** Add row: 'LiteVNA у вікні повернення: CONFIG > VERSION (HW і FW); розв'язка з обома портами на ANNE-50+ при найменшій IFBW, 0.05-3 GHz і 3-6.3 GHz — ≥90 / ≥50 dB; дно S11 каліброваного ANNE-50+; записати стать OSL | 3.1 | На прибутті'.
+    - **Reason:** Re-audit D lab test 0.
+    - **Sources:** http://nanovna.com/wp-content/uploads/2021/11/LiteVNA_User-Guide.pdf
+    - **Saving usd:** 
+  304.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** F-F barrel delay
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Затримка барелю F-F: port extension на відкритому з комплекту до пласкої фази; ввести як offset delay, перекалібрувати на female-площині; відкритий показує близько 0° ±10° до 6 GHz | P1 | На прибутті VNA'.
+    - **Reason:** Re-audit D lab test 1.
+    - **Sources:** https://www.passion-radio.com/analyzer-spectrum/lite-vna64-2730.html
+    - **Saving usd:** 
+  305.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** NanoVNA-Saver and scikit-rf on Q6A
+    - **Anchor:** 
+    - **Instruction:** Add row: 'NanoVNA-Saver @3445a0a і scikit-rf 2.1.0 на Q6A: по 20 розгорток на 1001 і 10,000 точок, 50 kHz-6.3 GHz; лог кількості байтів без коротких читань (#796); сирі O/S/L відрізняються до збереження калібрування; шлях TCP через проксі labd | C22 | Тиждень 2-3'.
+    - **Reason:** Re-audit D lab test 2.
+    - **Sources:** https://github.com/NanoVNA-Saver/nanovna-saver/issues/796
+    - **Saving usd:** 
+  306.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** LiteVNA source power
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Потужність LiteVNA: регістр 0x42 = 1, 2, 3 і 0x41 = 1-3; вихід порту 1 через атенюатор 30 dB у tinySA на 10 MHz, 500 MHz, 2 GHz і 5.8 GHz — записати dBm для кожного | P3 | Тиждень 2-3'.
+    - **Reason:** Re-audit D lab test 3.
+    - **Sources:** http://nanovna.com/wp-content/uploads/2021/11/LiteVNA_User-Guide.pdf
+    - **Saving usd:** 
+  307.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** LiteVNA with QtTinySA
+    - **Anchor:** 
+    - **Instruction:** Add row: 'LiteVNA + QtTinySA: udevadm info на LiteVNA — рядок продукту; з /dev/lab/litevna labd 0600 запустити QtTinySA — не падає і не відкриває порт VNA | C22 | Тиждень 2-3'.
+    - **Reason:** Re-audit D lab test 4.
+    - **Sources:** https://raw.githubusercontent.com/g4ixt/QtTinySA/main/src/modules/devices.py
+    - **Saving usd:** 
+  308.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** tinySA arrival
+    - **Anchor:** 
+    - **Instruction:** Add row: 'tinySA: рядок version = tinySA4_v1.4-252-g2b4aa51; lsusb -v показує інтерфейси CDC і MSC; udev прив'язує лише інтерфейс 00, udisks не монтує диск; 1 год скриптових scanraw + channel без зависань; прочитати таблиці correction як базу | 3.1 | На прибутті'.
+    - **Reason:** Re-audit D lab test 5.
+    - **Sources:** http://athome.kaashoek.com/tinySA4/DFU/changelog.txt
+    - **Saving usd:** 
+  309.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** tinySA level and input match
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Рівень tinySA: генератор −40 dBm через виміряні VNA атенюатори Nooelec у кожен SDR; потім узгодження входу — S11 tinySA на LiteVNA при атенюації 0 і 10 dB і з LNA | P10 | Тиждень 2-3'.
+    - **Reason:** Re-audit D lab test 6.
+    - **Sources:** https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Limitations
+    - **Saving usd:** 
+  310.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** QtTinySA venv
+    - **Anchor:** 
+    - **Instruction:** Add row: 'QtTinySA: запуск з pyside6==6.11.0; перевірити старт БД з PySide6/Qt/plugins/sqldrivers/libqsqlite.so; готовий zip — objdump -T QtTinySA* | grep -o GLIBC_2\.[0-9]* і відмова, якщо є символ новіший за 2.39 | C22 | Тиждень 2-3'.
+    - **Reason:** Re-audit D lab test 7.
+    - **Sources:** https://github.com/g4ixt/QtTinySA/releases/tag/v1.2.2
+    - **Saving usd:** 
+  311.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Noise source ENR
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Шумове джерело: ENR власного екземпляра з атенюатором 10 dB на виході, 28-2400 MHz (NF tinySA, EXT GAIN 0, атенюація ≥10 dB); повтор при 11.5, 12.0 і 12.5 V — реальний нахил dB/V (модель 1.2); гаряче/холодне S22 на LiteVNA; струм при 12 V | P8 | Тиждень 2-3'.
+    - **Reason:** Re-audit D lab test 8.
+    - **Sources:** https://www.minicircuits.com/pdfs/ZFL-500LN+.pdf
+    - **Saving usd:** 
+  312.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Bench hub
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Стендовий хаб: lsusb -v bDeviceProtocol (1 = STT, 2 = MTT) і глибина lsusb -t; споживання FNB58 LiteVNA, tinySA, Hantek і FX2 LA у простої, розгортці і заряді, сума хаба проти 5 V 2 A / 1.2 A; струм LAB-порту проти межі TPS2553 0.75 A (P16) | 3.1 | Тиждень 2-3'.
+    - **Reason:** Re-audit D lab test 9.
+    - **Sources:** https://thepihut.com/products/industrial-grade-dual-host-usb-hub-4x-usb-2-0
+    - **Saving usd:** 
+  313.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** USB throughput with scope
+    - **Anchor:** | Дерево FE1.1s: 30 хв без втрат
+    - **Instruction:** Add to the row: 'плюс 10 хв Hantek на 30 MS/s CH1 + RTL-B 2.56 Msps + HF+ 768 ksps — рахувати втрати SDR і переповнення осцилографа; повтор з обмеженим профілем (5 MS/s ×2, LA 12 MS/s) — нуль втрат'.
+    - **Reason:** Re-audit D lab test 10.
+    - **Sources:** https://raw.githubusercontent.com/OpenHantek/OpenHantek6022/main/docs/limitations.md
+    - **Saving usd:** 
+  314.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** OpenHantek on Q6A
+    - **Anchor:** 
+    - **Instruction:** Add row: 'OpenHantek 3.4.1-rc2 arm64 під labwc/XWayland на Mesa 25.2.8 freedreno; запасні «OpenHantek -e» і LIBGL_ALWAYS_SOFTWARE=1; після PulseView перепідключити і перевірити FW0210 | C22 | Тиждень 2-3'.
+    - **Reason:** Re-audit D lab test 11.
+    - **Sources:** https://raw.githubusercontent.com/OpenHantek/OpenHantek6022/main/docs/limitations.md
+    - **Saving usd:** 
+  315.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** ISDT 608PD radio check
+    - **Anchor:** 
+    - **Instruction:** Add row: 'ISDT 608PD: tinySA на своїй антені (лише прийом), 2400-2485 MHz, RBW 100 kHz, max-hold 5 хв — зарядник у простої, у заряді і з відкритим екраном парування ISD Link; шукати рекламу BLE на 2402, 2426 і 2480 MHz | Правило «тільки прийом» | Тиждень 2-3'.
+    - **Reason:** Re-audit D lab test 12.
+    - **Sources:** https://www.isdt.co/608pd.html
+    - **Saving usd:** 
+  316.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Pinecil
+    - **Anchor:** 
+    - **Instruction:** Add row: 'Pinecil: IronOS ≥2.23; Bluetooth Off, PD Mode No Dynamic, ліміт 60 W; FNB58 на 737 — 20 V і ≤3 A, ніколи 28 V; 30 хв простою з Power pulse, щоб банк не засинав | D7 | Тиждень 2-3'.
+    - **Reason:** Re-audit D lab test 13.
+    - **Sources:** https://raw.githubusercontent.com/Ralim/IronOS/dev/Documentation/Settings.md
+    - **Saving usd:** 
+  317.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** FNB58 logging
+    - **Anchor:** 
+    - **Instruction:** Add row: 'FNB58: записати прошивку; 8 год логування патченим логером; перевірити виявлення зависання | 3.1 | На прибутті'.
+    - **Reason:** Re-audit D lab test 14.
+    - **Sources:** https://github.com/baryluk/fnirsi-usb-power-data-logger/issues/19
+    - **Saving usd:** 
+  318.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** LBE-1420
+    - **Anchor:** 
+    - **Instruction:** Add row: 'LBE-1420: зібрати bvernoux/lbe-142x на arm64 і --status; задати 10 MHz; через 80 dB + BLK-89-S+ у tinySA — −69 dBm ±3 dB (модель); записати рівні гармонік 30 і 50 MHz | P6 | Розширення'.
+    - **Reason:** Re-audit D lab test 15.
+    - **Sources:** https://raw.githubusercontent.com/bvernoux/lbe-142x/main/README.md
+    - **Saving usd:** 
+  319.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** LNA V2 current
+    - **Anchor:** | Струми холодними і гарячими при робочій напрузі:
+    - **Instruction:** Add to the row: 'LNA V2 — при 4.5 V холодним і гарячим (DPS-150 + FNB58), прохід ≤90 mA для трійника V4L (90 mA у v1 не перевірено)'.
+    - **Reason:** Re-audit D lab test 16.
+    - **Sources:** https://www.rtl-sdr.com/product/rtl-sdr-blog-wideband-lna-bias-tee-powered/
+    - **Saving usd:** 
+  320.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** DPS-150 overshoot
+    - **Anchor:** 
+    - **Instruction:** Add row: 'DPS-150: викид при вмиканні на 13.2 V у навантаження 100 Ohm, Hantek на 1 MS/s — пік ≤13.6 V | 3.2 | Перед першим LNB/LNA від DPS-150'.
+    - **Reason:** Re-audit D lab test 17.
+    - **Sources:** https://www.elektor.com/products/fnirsi-dps150-dc-power-supply-150-w
+    - **Saving usd:** 
+  321.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** DMM micro-amp check
+    - **Anchor:** 
+    - **Instruction:** Add row: 'DMM: показ і падіння на діапазоні мкА проти DPS-150 при 10 і 90 мкА через відомий резистор (перевірку маркування ZT109 не робити — модель за analogs G5) | 3.1 | На прибутті'.
+    - **Reason:** Re-audit D lab test 18 (functional part).
+    - **Sources:** https://www.minicircuits.com/pdfs/086-6SM+.pdf
+    - **Saving usd:** 
+  322.
+    - **Section:** 08_open_bench
+    - **Kind:** correction
+    - **Part:** Price re-check row
+    - **Anchor:** лістинг динамометричного ключа; IP2368 BZ; LCSC-рядки
+    - **Instruction:** Replace 'IP2368 BZ' with 'IP2368 (роздрібна плата COUT, ціна з доставкою в ЄС)'; add 'ціни/наявність TPS259470A і компараторів (за analogs G3)'.
+    - **Reason:** BZ is not sold as a board.
+    - **Sources:** https://mysku.club/blog/aliexpress/100034.html
+    - **Saving usd:** 
+  323.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Week-1 power parts order
+    - **Anchor:** Одне замовлення LCSC (2× TPS7A4701, 2× LT3045, 10× TPS2553, SMBJ13A/17A, запобіжники, PTC, AON LDO, супервізор).
+    - **Instruction:** Update the parts list (sellers per analogs G3): add 3× TPS259470A, TPS70933DBVR, UV-компаратор, 2× TLV3011 (rail-good), SMBJ17A ×2 (N і SW), 2× Schottky зворотного живлення і 2× Schottky OUT→GND, резистори дільників 0.1%; LM61460 не замовляти, доки C4 не впаде.
+    - **Reason:** Parts named by re-audit D.
+    - **Sources:** https://www.ti.com/lit/ds/symlink/tps25947.pdf ; https://www.ti.com/lit/ds/symlink/tps709.pdf
+    - **Saving usd:** 
+  324.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** condition
+    - **Part:** Wisecoco questions step
+    - **Anchor:** Письмові питання до Wisecoco (VID:PID HID, бондування/AR, вхід V/I, EDID, режими 151.50/127.90 MHz, режим DSI, рукавиці, комплект).
+    - **Instruction:** Replace with 'Письмові питання до Wisecoco — 8 питань D5 (USB TP з відкритим VBUS і VID:PID; бондування/AR і скло; скалер, такти DSI і кварци; EDID і таймінги; підсвітка і димінг; аудіопідсилювач; поляризатор; струм при 12 V і барель).'
+    - **Reason:** Input voltage settled by listing images; new questions.
+    - **Sources:** https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-1.jpg
+    - **Saving usd:** 
+  325.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** LiteVNA and 30 dB pads order
+    - **Anchor:** Лабораторія core: LiteVNA 64 (Passion Radio, 5 шт.) + 2× 30 dB;
+    - **Instruction:** Replace with 'Лабораторія core: LiteVNA 64 (Passion Radio, 5 шт.) — окремим замовленням, щоб не чекати атенюаторів; 2× VAT-30W2+ — у замовленні Mini-Circuits;'.
+    - **Reason:** Combining with backordered pads could delay the last LiteVNA units.
+    - **Sources:** https://www.passion-radio.com/sma/sma-attenuator-826.html
+    - **Saving usd:** 
+  326.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** rule
+    - **Part:** tinySA/LiteVNA authenticity
+    - **Anchor:** tinySA і LiteVNA (високий): лише продавці зі списку tinySA.org або Passion Radio; відкинути непідтверджені AliExpress «Zeenko», Banggood, TinyRFEquip, TinyRFLab, а також моделі ZS406 замість ZS407.
+    - **Instruction:** Replace with 'tinySA (високий): лише продавці зі сторінки Buying tinySA.org (разом із фабричним магазином Zeenko на AliExpress, на який вона посилається); LiteVNA: Passion Radio, Lab401 або той самий фабричний магазин Zeenko (EU-фолбеки — за analogs G5, з перевіркою Zeenko в GPSR); відкинути інші лістинги з назвою «Zeenko», Banggood, TinyRFEquip, TinyRFLab і ZS406 замість ZS407; проходження selftest не доводить справжність.'
+    - **Reason:** tinySA.org Buying page names the Zeenko AliExpress factory store, Aursinc and SeeSii.
+    - **Sources:** https://tinysa.org/wiki/pmwiki.php?n=Main.Buying
+    - **Saving usd:** 
+  327.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** W1-2 board gate additions
+    - **Anchor:** Перевірка TX UART6 перемичкою TX→RX, PPS на GPIO96, оверлей UART7, I2C0/I2C2 з 1e6 читань кожна; аудит pinmux-pins.
+    - **Instruction:** Append: 'dmesg UART6 без помилок прошивки, режим QUPV3 SE6/SE7 в UEFI; cat /sys/kernel/security/lsm; DKMS pps-gpio з gcc-12 і vermagic; дзеркало linux-image/headers 6.18.2-4 в aptly; sha256 /sys/firmware/fdt проти BLS-DTB + оверлеїв; UFS показує LOG-SEC 4096; EDL лише з живленням J21; F2/F12 UEFI по UART.'
+    - **Reason:** Re-audit D GNSS and mech bring-up checks.
+    - **Sources:** https://github.com/radxa-pkg/linux-qcom/releases/tag/6.18.2-4 ; https://forum.radxa.com/t/30440
+    - **Saving usd:** 
+  328.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Power board bring-up targets
+    - **Anchor:** супервізор 12.8/13.6 V, запасний EN 12.0/13.5 V і чи блокує утримуваний OFF кнопку на піні A; eFuse; зворотне живлення з FNB58 (0 V на VBUS Q6A і HDMI +5 V при вимкненій Q6A); струм очікування.
+    - **Instruction:** Replace with 'UV-компаратор 12.8/13.6 V, запасний EN близько 12.1/13.6 V (10.0k/1.00k) і чи блокує утримуваний OFF кнопку на піні A; TPS259470A (OVLO/ILIM); шини TPS7A4701 ±0.35 V і компаратори 90%; адреса і SHUNT_CAL INA228; зворотне живлення з FNB58 (0 V на VBUS Q6A і HDMI +5 V; USB Pico/паку при вимкненому вимикачі — LAB5 < 0.5 V, SW < 17 V при 5.1 V на LAB5); струм J21 2 хв після poweroff; очікування ≤1.0 / ≤0.25 mA.'
+    - **Reason:** Re-audit D power bench tests.
+    - **Sources:** https://www.pololu.com/product/4095 ; https://www.ti.com/lit/ds/symlink/ina228.pdf
+    - **Saving usd:** 
+  329.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** condition
+    - **Part:** SYS12 closed-case current
+    - **Anchor:** потім 60 хв у закритому корпусі при 3.5 A на 14.0 і 16.4 V.
+    - **Instruction:** Replace '3.5 A' with '4.2 A (з логом температур D36V50F12, #2813 і запобіжника 7.5 A)'.
+    - **Reason:** Lime default.
+    - **Sources:** https://www.pololu.com/product/4095
+    - **Saving usd:** 
+  330.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Battery bring-up
+    - **Anchor:** пробудження BMS 3/3, NTC-блокування IP2368, 2-годинний прогін 3 A на обох платах IP2368, кваліфікація кожного PD-джерела.
+    - **Instruction:** Append: 'маса елементів 68-71 g; V_CV кожної плати IP2368 (для порогу ресинхронізації); маркування LDO 5 V; тест споживача після активаційної зарядки (жодного VBUS назовні); матриця DRP; монтаж Daly B− першим; нагрів запобіжників 7.5 A/3 A при 50 °C.'
+    - **Reason:** Re-audit D power goods-in.
+    - **Sources:** https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+    - **Saving usd:** 
+  331.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Display acceptance step
+    - **Anchor:** **Приймання дисплея на прибутті:** ніти; потужність на 50 і 100%
+    - **Instruction:** Replace 'ніти' with 'яскравість у cd/m2 люмінометром (≥1800)' and add after the list 'сенсор з USB TP при відкритому VBUS (20/20); тиша BLE; шлях димінгу; тест вмісту TMDS; лінії самої плати; поляризаційні окуляри'.
+    - **Reason:** Re-audit D display tests.
+    - **Sources:** https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-inch-2000-nits-lcd-2.webp
+    - **Saving usd:** 
+  332.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** condition
+    - **Part:** Midday soak modes
+    - **Anchor:** 45 хв полуденного прогону в режимах B, D, G;
+    - **Instruction:** Replace with '45 хв полуденного прогону в режимах B, D, G і H (Lime);'.
+    - **Reason:** Lime default.
+    - **Sources:** 
+    - **Saving usd:** 
+  333.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Lab core bring-up
+    - **Anchor:** LiteVNA, деталі Mini-Circuits, підсилювач шумового джерела, Pinecil, килимок, Anker 737, MTT-хаб, Hantek з LA, ключ (після підтвердження лістингу); процедури P0-P3, P16-P17.
+    - **Instruction:** Append: 'приймання LiteVNA (CONFIG > VERSION, розв'язка ≥90/≥50 dB) і затримка барелю F-F; udev /dev/lab/litevna 0600 до першого запуску QtTinySA; власна ENR шумового джерела; TT-тип хаба і бюджет живлення; налаштування Pinecil (No Dynamic, 60 W).'
+    - **Reason:** Re-audit D lab tests.
+    - **Sources:** http://nanovna.com/wp-content/uploads/2021/11/LiteVNA_User-Guide.pdf
+    - **Saving usd:** 
+  334.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** architecture
+    - **Part:** Lime acceptance step
+    - **Anchor:** R44SF, інструмент I-PEX, T7 за поточною ціною і приймання в межах 30-денної гарантії; J21 випаюється лише після прогону.
+    - **Instruction:** Append: 'Після випаювання — перепаяти всі три піни J21 (PWR_ON_KEY окремим дротом) і перевірити кнопку; T7 — лише при lsusb -t 5000M/uas через кінцевий кабель ≤0.5 м.'
+    - **Reason:** J21 is 3-pin; T7 link gate.
+    - **Sources:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf
+    - **Saving usd:** 
+  335.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Power sources
+    - **Anchor:** **Продавці основних деталей**
+    - **Instruction:** Add to the list: Molicel P50B TDS https://www.fsaeonline.com/content/Molicel-TDS--INR-21700-P50B-80122.pdf ; Daly spec (TinyTronics) https://www.tinytronics.nl/product_files/005102_Data-Sheet-of-DL-J04G3-L04S15ATJ-BMS-circuits.pdf ; IP2368 board review https://mysku.club/blog/aliexpress/100034.html ; Pololu D36V28F5 back-feed https://forum.pololu.com/t/strange-behavior-of-d36v28f5-pololu-3782/29129 ; TPS25947 https://www.ti.com/lit/ds/symlink/tps25947.pdf ; TPS7A47 DS https://www.ti.com/lit/ds/symlink/tps7a47.pdf ; TPS709 https://www.ti.com/lit/ds/symlink/tps709.pdf ; TLV3012 https://www.ti.com/product/TLV3012 ; LM61460 https://www.ti.com/lit/ds/symlink/lm61460.pdf ; INA228 DS https://www.ti.com/lit/ds/symlink/ina228.pdf ; Adafruit INA228 PCB https://github.com/adafruit/Adafruit-INA228-PCB ; Vishay SMBJ https://www.vishay.com/docs/88392/smbj.pdf ; Pico DS https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf ; RP2040-Zero https://www.waveshare.com/wiki/RP2040-Zero ; Radxa forum power https://forum.radxa.com/t/how-to-power-the-dragon-q6a/30400.
+    - **Reason:** Key sources of re-audit D power.
+    - **Sources:** 
+    - **Saving usd:** 
+  336.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** GNSS sources
+    - **Anchor:** **ПЗ і пакети**
+    - **Instruction:** Before this heading add a GNSS block: Quectel LC76G spec V1.1 https://quectel.com/content/uploads/2024/03/Quectel_LC76G_Series_GNSS_Specification_V1.1-1-1.pdf ; protocol spec v1.4 https://forums.quectel.com/uploads/short-url/rUEismNTHFHWMMyJR1WxrcTaRB7.pdf ; Quectel forum PPS https://forums.quectel.com/t/gnss-lc76g-1-pss-configuration/45880 ; LC86G region https://forums.quectel.com/t/lc86g-not-working-in-russia/57394 ; Waveshare LC76G schematic https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf ; Waveshare 25346 https://www.waveshare.com/gps-external-antenna-d.htm ; SII MS621FE https://www.sii.co.jp/en/me/datasheets/ms-rechargeable/ms621fe ; arduino-pico boards.txt https://raw.githubusercontent.com/earlephilhower/arduino-pico/6.3.0/boards.txt ; chrony 4.5 refclock.c https://gitlab.com/chrony/chrony/-/raw/4.5/refclock.c ; gpsd man https://gitlab.com/gpsd/gpsd/-/raw/release-3.25/man/gpsd.adoc ; MAX-M10S DS https://content.u-blox.com/sites/default/files/MAX-M10S_DataSheet_UBX-20035208.pdf ; radxa kernel 6.18.2 https://github.com/radxa/kernel/tree/linux-6.18.2 ; Adafruit BNO085 guide https://learn.adafruit.com/adafruit-9-dof-orientation-imu-fusion-breakout-bno085/arduino.
+    - **Reason:** Key sources of re-audit D GNSS.
+    - **Sources:** 
+    - **Saving usd:** 
+  337.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** 4D datasheet revision
+    - **Anchor:** https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_0.pdf
+    - **Instruction:** Replace with https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_5.pdf (Rev 1.5, 10/10/2026) and add Wisecoco listing images https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-1.jpg and https://www.wisecocodisplay.com/wp-content/uploads/2025/05/7-inch-2000-nits-lcd-7.webp ; kanshi 1.5.1 http://archive.ubuntu.com/ubuntu/pool/universe/k/kanshi/kanshi_1.5.1.orig.tar.gz ; drm_edid.c v6.18 https://raw.githubusercontent.com/torvalds/linux/v6.18/drivers/gpu/drm/drm_edid.c ; VEML7700 DS https://www.vishay.com/docs/84286/veml7700.pdf ; Bourns PEC11R https://www.bourns.com/docs/Product-Datasheets/PEC11R.pdf.
+    - **Reason:** Re-audit D read datasheet Rev 1.5.
+    - **Sources:** 
+    - **Saving usd:** 
+  338.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Compute/mech/storage sources
+    - **Anchor:** **Обчислення, ядро, NPU**
+    - **Instruction:** Add to the block: sc7280.dtsi https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/arch/arm64/boot/dts/qcom/sc7280.dtsi ; Q6A 2D drawing V1.21 https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_2d_dimensions_v1.21.pdf ; UFS provisioning XML https://dl.radxa.com/q6a/images/android/provision_ufs31.xml ; ufs-hwmon https://raw.githubusercontent.com/torvalds/linux/master/drivers/ufs/core/ufs-hwmon.c ; DTB from UEFI (forum 30440) https://forum.radxa.com/t/30440 ; kernel 7.0 clk_ignore_unused (31288) https://forum.radxa.com/t/31288 ; EDL doc https://docs.radxa.com/en/dragon/q6a/low-level-dev/edl-mode ; Samsung T7 DS https://download.semiconductor.samsung.com/resources/data-sheet/Samsung_Portable_SSD_T7_Datasheet_Rev2.0.pdf ; smartmontools drivedb https://raw.githubusercontent.com/smartmontools/smartmontools/master/smartmontools/drivedb.h ; Noctua NF-A4x10 5V https://www.quietpc.com/nf-a4x10-flx-5v.
+    - **Reason:** Key sources of re-audit D mech/storage.
+    - **Sources:** 
+    - **Saving usd:** 
+  339.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Lab sources
+    - **Anchor:** **Лабораторія**
+    - **Instruction:** Add to the block: LiteVNA user guide http://nanovna.com/wp-content/uploads/2021/11/LiteVNA_User-Guide.pdf ; tinySA Limitations https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Limitations ; tinySA Buying https://tinysa.org/wiki/pmwiki.php?n=Main.Buying ; tinySA4 DFU changelog http://athome.kaashoek.com/tinySA4/DFU/changelog.txt ; VAT-30W2+ https://www.minicircuits.com/pdfs/VAT-30W2+.pdf ; ZFL-500LN+ https://www.minicircuits.com/pdfs/ZFL-500LN+.pdf ; N8DMT noise source https://qsl.net/n8dmt/test-page/diy-test-equipment/low-cost-diy-noise-source/index.html ; QtTinySA requirements https://raw.githubusercontent.com/g4ixt/QtTinySA/main/src/requirements.txt ; NanoVNA-Saver commits https://github.com/NanoVNA-Saver/nanovna-saver/commits/main ; scikit-rf https://pypi.org/pypi/scikit-rf/json ; OpenHantek limitations https://raw.githubusercontent.com/OpenHantek/OpenHantek6022/main/docs/limitations.md ; IronOS Pinecilv2 config https://raw.githubusercontent.com/Ralim/IronOS/dev/source/Core/BSP/Pinecilv2/configuration.h ; FNB58 logger issue https://github.com/baryluk/fnirsi-usb-power-data-logger/issues/19 ; bvernoux/lbe-142x https://raw.githubusercontent.com/bvernoux/lbe-142x/main/README.md ; ISDT 608PD https://www.isdt.co/608pd.html.
+    - **Reason:** Key sources of re-audit D lab.
+    - **Sources:** 
+    - **Saving usd:** 
+  340.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** IATA PDF revision
+    - **Anchor:** - IATA: літієві батареї для пасажирів:
+    - **Instruction:** Append after the URL '(Revision 3, лютий 2019; правила 2026 не перевірено)'.
+    - **Reason:** Re-audit D date check.
+    - **Sources:** https://www.iata.org/contentassets/6fea26dd84d24b26a7a1fd5788561d6e/passenger-lithium-battery.pdf
+    - **Saving usd:** 
+  341.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** Items removed by re-audit D
+    - **Anchor:** | Батарея 3S; MT3608/XL6009 для LNB з TPS2553 |
+    - **Instruction:** Add rows to 6.2 (technically replaced): 'D36V28F5 #2 для 5 V дисплея — обидві панелі беруть 12 V бареллю (D4)'; 'Окремий режим RISET для 45 W — IP2368 сам знижує струм (DS 12.3)'; 'Версія IP2368 BZ як плата — не продається; роздрібна COUT за TPS259470A'; 'PG TPS7A4701 на MCP #3 — PG-виводу немає; TLV3011'; 'Перерізаний пін 18 HDMI — лише послідовний Schottky'; 'PAIR513 як збереження PPS — замінено PQTMCFGPPS + PQTMSAVEPAR'; '«@60Hz/@52Hz» і video= як закріплення режиму — kanshi з точними mHz'; 'Adafruit 6101 як основний вентилятор — Noctua NF-A4x10 5V, 6101 запасний'; 'Apache 3800 — лише в магазинах США'; 'Атенюатори Passion Radio 30 dB — VAT-30W2+'; 'POWER ATTENUATION на LiteVNA 64 — є лише на 7"'; 'QtTinySA з PySide6 6.12 і готовий zip без перевірки GLIBC'; 'lbgpsdo для LBE-1420 — bvernoux/lbe-142x'.
+    - **Reason:** Re-audit D replacements.
+    - **Sources:** 
+    - **Saving usd:** 
+  342.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** v1 errors corrected by re-audit D
+    - **Anchor:** 36. wideband_sdr:
+    - **Instruction:** After item 36 add new numbered items: 37. #2813 «6 A при 55 °C» — це струм, що нагріває MOSFET до 55 °C у повітрі 22 °C, не номінал. 38. TPS7A4701 не має PG-виводу; вхід 3-35 V робоча (36 V абс.). 39. Запасний EN D36V50F12: внутрішні 100 k зсувають пороги; 10.0k/1.00k → 12.1/13.6 V. 40. TPS2553 при 88.7k — мінімум 265 mA, не 240. 41. P50B — 71 g макс., не близько 68 g. 42. BMS: UVP 2.70 V, не «2.5-2.8». 43. Очікування OFF — близько 50-105 днів, не 170-185 (Daly <500 мкА і LED не враховано). 44. Tj 95 °C — крок тротлінгу CPU, критично 110 °C; форум 30123 цих цифр не містить. 45. Сенсор 4D «GT928» — у даташиті Rev 1.5 IC не названо. 46. Adafruit 2420 — 457 мм, не 10-15 см; 74271140 — для кабелю 2-3 мм, не Mix-31/61; FPC-набір — 2× 3548 + 3560. 47. Атенюатор Passion Radio EUR 13.20 — варіант 3 dB. 48. Різниця Lab401 проти Passion Radio з ПДВ — близько $5, не $40. 49. LA 8 каналів (6022BE не має логічних). 50. QtTinySA пінить PySide6 6.11.0; готовий arm64-zip зібрано на PiOS Trixie. 51. RTC RS4C411ZAE — на PDF стор. 16 (J11), не «аркуш 18». 52. Pelican 1450 — 15.0 L, не 14.5 L. 53. Pinecil з банку — близько 60 W, не 64 W.
+    - **Reason:** Section 7 records corrected v1 errors.
+    - **Sources:** https://www.pololu.com/product/2813 ; https://www.ti.com/lit/ds/symlink/tps7a47.pdf ; https://raw.githubusercontent.com/radxa/kernel/linux-6.18.2/arch/arm64/boot/dts/qcom/sc7280.dtsi
+    - **Saving usd:** 
+- **Already in v1:**
+  - 4S1P Molicel P50B, daily charge 4.10 V/cell, monthly ISDT 608PD 4.20 V balance via node-N service port (5 A fuse, after shunt) with main switch OFF
+  - Fuses 7.5 A pack / 4 A J21 / 3 A LAB5 (+5 A service); battery wiring 18-20 AWG
+  - Usable energy model 58 Wh warm / 50 Wh at 0 C; home-built pack never flown; storage about 50% SoC; spot-weld only
+  - INA228 on I2C0 via i2c-dev with labpowerd as sole owner, no DT binding, ADCRANGE 0 (C14)
+  - Q6A 12 V header 4.5-16 V; SMBJ15CA (D19) sits only on TYPEC_IN before Q5 (corrections #9)
+  - Q6A USB-C has no case opening; never USB-C together with live J21 (Q5 back-feed)
+  - Never halt (1.9-2.5 W), always poweroff; J21 pin 3 pulse 0.8-1.0 s from Pico
+  - No charging in HF/LF Quiet (IP2368 250 kHz second harmonic near NAVTEX 490 kHz)
+  - AUX12: P-FET +/-20 V VGS + PTC 0.75 A hold, BENCH only
+  - Runtime table arithmetic (modes A-I) and 61.1 W / 13.2 V = 4.63 A match the re-audit recompute
+  - Pico TX pins high-impedance until Q6A 3.3 V; Pico on switched LAB5
+  - D36V50F12 C4 gate (1) NAVTEX/LF narrowband A/B with load steps 0.3-3 A and charger on/off
+  - LC76G on UART6, PPS on GPIO96 (pin 7, wire <=20 cm), udev KERNELS 998000.serial -> /dev/gnss0
+  - DKMS pps-gpio for the held 6.18.2-4 (CONFIG_PPS=y); Route A only as fallback, never with pps-gpio
+  - chrony maxchange 5 1 -1 and rtcsync; gpsd 3.25 with DEVICES=/dev/gnss0 and USBAUTO=false
+  - Location gate: 3D with >=6 SV, first run >=8 SV within 50 m for 5 min, TLE date window, >100 km jump confirmation, fallbacks last fix / manual lat-lon / Maidenhead, no city table, exports rounded to 0.1 deg or 4-char locator, admin-0 polygons for jurisdiction only
+  - WMM2025 at the fix; Skyfield 1.55 and sgp4 2.27 in venvs
+  - IMU heading shown live only, never logged; metal pack bonded to braid, ferrite 31/43, >=30 cm behind active elements, framed UART 115200+CRC to Pico UART1, never USB
+  - Field EDID DTD1 151.50 MHz 2200x1148 and DTD2 127.90 MHz 2200x1125; CEA VICs removed; 148.5 MHz bring-up only; 128.70 MHz banned; EDID from initramfs via drm.edid_firmware
+  - Wisecoco $132.00 InStock, pay by PayPal after written answers, ~7 days then 4D fallback ($128.95 DigiKey, 13 in stock then 4 weeks / $141.85 4D store)
+  - Display acceptance >=1800 nit, <=14 W at 100% and <=7.5 W at 50%, stability at SYS12 = 11.0 V, 20 cold boots, USB-HID only
+  - Every critical action works by keys and encoders; glove touch is not relied on (D16)
+  - VEML7700 outside the hood; Pico I2C map 0x10 and 0x20; bonded + AR 6.2:1 vs air gap 1.5:1 at 100 klx; sustained about 1000 nit at noon; derating 60/68 C
+  - Adafruit CH334F MTT hub 5997 x2; HDMI-A-1 connector; HDMI and SPI display not used together
+  - UFS RA022-B10J0U2 Samsung, avoid 256 GB Kioxia, ID 0x01CE, 1703/388 MB/s, output_4096 image for UFS, A/B 1+22+22 GiB with ~74 GiB /data, ~46 GiB records, 30 GiB raw cap (~40 min at 13.3 MB/s)
+  - Path B 7.0.11-7 + clk_ignore_unused only for Kioxia; SPI BIOS 260120
+  - Boot order USB > SD > NVMe > eMMC > UFS; no ESP on data media; 15-min HRPT pass 4.6 GB
+  - Lime 56 Msps ci16 = 224 MB/s (~74 min/TB); ring 4 GiB + 3 GiB Burst; T7 never writes during L-band, S-band or GNSS sessions
+  - Active cooling mandatory; fan on at SoC 60 C off at 50 C, both fans 100% on heartbeat loss; DC on/off, no PWM
+  - Battery compartment with 3 mm foam, reflective film, 1 mm FR-4/mica barrier, vent path, NTC on middle cell, 0-45 C charge window, >60 C shutdown
+  - 1/4-20 steel insert in a >=6 mm boss with 3x pull test; IPX4/IP54 target; IP67 unreachable with forced air; outer plan 220-225 x 135-140 x 55-60 mm; light-grey ASA, PETG rejected; CNC Kitchen inserts EUR 9.40 verified
+  - IATA UN 38.3 rule; Anker 737 and Li-cell instruments carry-on; 72 Wh pack never flies
+  - Lab rules: every source conducted-only, no antenna S11 sweeps, SWR/S11 page Bench-only after 1.5 s hold, E-field probes only (no loops or H-field), tinySA generator never on with an antenna connected, <=-40 dBm into chains, >=30 dB above 800 MHz, 80 dB + DC block for the GPSDO tone
+  - LiteVNA 64 at Passion Radio EUR 156.33 ex / EUR 187.60 incl. VAT ($175.73 / $210.88), 5 units; kit 2x 30 cm cables, male OSL, F-F barrel
+  - tinySA Ultra+ ZS407 at Astroradio EUR 219.89 incl. VAT ($247.18; $204.28 ex), Normal to 900 MHz, ULTRA to 7.3 GHz
+  - Noise source ZFL-500LN+ $116.81 / ZFL-500+ $99.55 + box $104.55-126.81, BENCH only from AUX12, 0.15 A preliminary budget; NF results relative
+  - Nooelec 100815 $47.95, BLK-89-S+ $20.26, ANNE-50+ $14.84, 3x 086-6SM+
+  - FNB58 Std (no radio), Pinecil Bluetooth Off, QUIET rfkill wlan+bluetooth
+  - OpenHantek6022 3.4.1-rc2 arm64 .deb, PulseView 0.4.2, fx2lafw 0.1.7, OpenOCD 0.12.0, picocom; NanoVNA-Saver via pipx not apt 0.6.3
+  - LBE-1420 behind 80 dB + DC block, off and disconnected during H1, ADS-B and Inmarsat-C sessions; Bodnar Mini replaced
+  - ModemManager masked, brltty removed, udev /dev/lab/<name> naming
+  - Re-audit D confirmed: Pololu D36V50F12/D36V28F5/#2813 specs and Rationed status; INA228 in ina238 driver blocked (no DT binding); TPS2553-1 latch variant exists
+  - Re-audit D refuted stage-2 claims that never entered v1 (Geerling Etcher/rsetup attribution, Armor '+30 mm', Slickdeals endurance tracker prices, radxa-overlays #425 as Q6A evidence, Waveshare wiki 'PPS NC', 'one IP2368 board DOA'); no v1 text to change
+- **Not applied:**
+  1.
+    - **Item:** Re-audit D power spec: buy 5 P50B at $9.99 (18650 Battery Store / IMR)
+    - **Why:** Superseded by analogs G3 (same cell from NKON NL, EUR 6.75 incl. VAT = $7.59 each, fallback akkuteile.de EUR 8.90); P5 analog decisions decide seller and price.
+  2.
+    - **Item:** Re-audit D: order 2x TPS7A4701MRGWREP (LCSC 110 pcs, $11.01; budget $22-27)
+    - **Why:** Superseded by analogs G3: TPS7A4701RGWT from DigiKey ($7.96 / EUR 6.99 ex VAT); the EP part is not equivalent (±3.5%).
+  3.
+    - **Item:** Re-audit D LNA4V5: 2x LT3045EDD#PBF (LCSC about $8.63 each)
+    - **Why:** Superseded by analogs G3: LT3045EMSE#PBF (LCSC C580012) keeps the guaranteed max dropout and is cheaper.
+  4.
+    - **Item:** Re-audit D: 'TPS2553-1 if latch-off is preferred'
+    - **Why:** Superseded by analogs G3: TPS2553DBVR-1 on all 10 positions (LCSC C111738).
+  5.
+    - **Item:** Re-audit D UV supervisor part TLV3012 with a 346 kOhm bottom resistor
+    - **Why:** Superseded by analogs G3: MCP65R41T-1202E/CHY (conditional) with a 332k + 4.02k 0.1% bottom; TLV3012AIDBVR stays the fallback (340k + 6.04k). The topology (push-pull, OUT via BAT54 to OFF, no inverter) is applied.
+  6.
+    - **Item:** Re-audit D C4 fallback: LM61460 synced at 1.8-2.1 MHz
+    - **Why:** Superseded by analogs G3: the LM61460 enters min-off-time foldback near 13.6-14.6 V at that clock; cap at about 1.0 MHz, add reverse-polarity stage, redesign EN. The part name is applied.
+  7.
+    - **Item:** Re-audit D confirmed [22]: SMBJ17A clamp 27.6 V is below the 30-36 V limits of ... TPS25947
+    - **Why:** Contradicted by analogs G3: TPS25947 abs max is 28 V and the SMBJ17A clamp rises to about 28.4 V at 60 C; no TPS25947 may sit on N or SW.
+  8.
+    - **Item:** Re-audit D: LNB PTC sized after measurement (provisional 0.45 A)
+    - **Why:** Analogs G3 protection set adopts the TPS259630DDAR eFuse on the LNB rail (re-audit B) and removes the LNB PTC; not changed from this source.
+  9.
+    - **Item:** Re-audit D prices: D36V50F12 $39.95, D36V28F5 $23.95, #2813 $8.95 (Pololu US)
+    - **Why:** Superseded by analogs G3 (Botland EU: EUR 26.28 / 15.22 / 6.72 net).
+  10.
+    - **Item:** Re-audit D new risk: TPS25947 out of stock at TI store, price unverified
+    - **Why:** Resolved by analogs G3: TPS259470ARPWR at DigiKey (78,910 in stock, about $2.06 each).
+  11.
+    - **Item:** Re-audit D bench test: Daly UVP wake with IP2368 trickle 100-200 mA
+    - **Why:** Corrected by analogs G3: below 2.5 V the IP2368 trickle is 30/50/70 mA; the 08 row uses 30-70 mA.
+  12.
+    - **Item:** Re-audit D display: 10-15 cm shielded A-A cable chosen at assembly + WE-STAR-TEC 74271112/74271131 ferrite; cable line $14.50-25
+    - **Why:** Superseded by analogs G2: keep Adafruit 2420 + 2x Fair-Rite 0431164281 ($15.65), fallback 2420 + 2x Wurth 74271112 ($18.71). The facts (2420 is 457 mm, 74271140 to the touch lead, FPC kit composition) are applied.
+  13.
+    - **Item:** Re-audit D: Pico $4.00 each, line $8.00 (2), verified
+    - **Why:** Superseded by analogs G2: DigiKey 2648-SC0915CT-ND $9.18 for 2 (DigiKey DE EUR 8.06 ex / EUR 9.59 incl. VAT).
+  14.
+    - **Item:** Re-audit D HMI parts: PEC11R-4215F-S0024 $2.95, KSC641J LFS $0.70, PCA9555
+    - **Why:** Superseded by analogs G2: PEC11R-4220F-S0024, TL3145BF350QJ (conditional; KSC641J fallback), PI4IOE5V9555LEX (TCA9555PWR fallback). Technical rules are applied.
+  15.
+    - **Item:** Re-audit D cooler prices: Armor Arace $4.99 / ALLNET $9.90; Noctua QuietPC GBP 13.96 (~$18.6)
+    - **Why:** Superseded by analogs G2 (Armor at TinyTronics EUR 12.00 incl. VAT; Noctua Alternate.de EUR 15.90 + shipping; Arace note deleted).
+  16.
+    - **Item:** Re-audit D fan switching 'DC on/off via a MOSFET with flyback diode' (implicitly low-side)
+    - **Why:** Refined by analogs G2: a 3-wire tach fan needs high-side switching; applied with G2 wording.
+  17.
+    - **Item:** Re-audit D T7 budget $190-275 (re-price)
+    - **Why:** Superseded by analogs G6: Reichelt MU-PC1T0T/WW EUR 205.90 incl. VAT ($231.45).
+  18.
+    - **Item:** Re-audit D bench case: Pelican 1450 with foam $169.95 (US)
+    - **Why:** Superseded by analogs G6: B&W outdoor.case 4000 RPD EUR 109-119 incl. VAT; Peli 1450 only as fallback (EUR 209 incl. VAT). Apache removal is applied.
+  19.
+    - **Item:** Re-audit D rescue kit: 2x ALLNET 64 GB microSD ($16.99 each)
+    - **Why:** Superseded by analogs G2: 2x Verbatim Pro U3 64 GB 47042 from Reichelt (fallback PNY); two cards and the flashing/verify rules are applied.
+  20.
+    - **Item:** Re-audit D: V30 endurance microSD kept unpriced
+    - **Why:** Superseded by analogs G6: Samsung PRO Endurance 128 GB MB-MJ128KA/EU, $71.77-87.57.
+  21.
+    - **Item:** Re-audit D IMU connector: IP67 M8 4-pin or capped GX12
+    - **Why:** Superseded by analogs G3: Olimex GX16-4 with tethered cap; the IPX4 spray test is kept.
+  22.
+    - **Item:** Re-audit D kit: field 15-20 L backpack (no change)
+    - **Why:** Superseded by analogs G4: 25-27 L pack (Deuter Futura 27).
+  23.
+    - **Item:** Re-audit D case filament: light-grey Polymaker ASA 1 kg Grey $26.99
+    - **Why:** Superseded by analogs G4: light-grey or white; default White PF01002 (EUR 24.99 incl. VAT at 3DJake). Heat limits are applied.
+  24.
+    - **Item:** Re-audit D storage seller order (ALLNET $65.90 in stock first)
+    - **Why:** Analogs G2 makes TinyTronics (EUR 58 incl. VAT) the primary EU source.
+  25.
+    - **Item:** Re-audit D: backorder 2x Passion Radio 30 dB pads at $20.46 (line $223.92) as an option
+    - **Why:** Analogs G5 keeps only the VAT-30W2+ set ($245.86) and drops the Passion Radio pads.
+  26.
+    - **Item:** Re-audit D ISDT 608PD $49.99 (DarwinFPV)
+    - **Why:** Superseded by analogs G5: Modellbau Lindinger EUR 34.99 incl. VAT ($39.33).
+  27.
+    - **Item:** Re-audit D DPS-150 about $66 (Elektor EUR 59 incl. VAT)
+    - **Why:** Superseded by analogs G6: fnirsi.com DPS-150-BU EUR 55.68 ($62.64, conditional), Elektor as fallback. The overshoot test is applied.
+  28.
+    - **Item:** Re-audit D bench hub: Pi Hut WAV-21686 GBP 18.50, 'keep the part'
+    - **Why:** Superseded by analogs G5: Waveshare 23062 direct $14.99, renamed STT. Usage rules are applied.
+  29.
+    - **Item:** Re-audit D Hantek seller The Debug Store GBP 100/120; Debug Probe Adafruit $12
+    - **Why:** Superseded by analogs G5 (Botland EUR 67.30 incl. VAT; reichelt EUR 11.50 incl. VAT).
+  30.
+    - **Item:** Re-audit D DMM AN8008 (ZT109 PCB) and bench check 'PCB marked ZT109'
+    - **Why:** Superseded by analogs G5: AN8009 (fallback AN8008 + K-type thermometer); ZT109/DM1106EN marking check dropped; the functional uA check is applied.
+  31.
+    - **Item:** Re-audit D noise source input '50 Ohm load or 5 dB pad' and ENR model 'about 17-18 dB padded'
+    - **Why:** Superseded by analogs G5: 50 Ohm load (ANNE-50+), not an open-ended 5 dB pad; ENR model LN+ 17.4-19.8 dB, ZFL-500+ 18.2-18.5 dB; ZFL-500+ preferred conditionally.
+  32.
+    - **Item:** Re-audit D torque rule: tighten instrument ports by hand plus the wrench's lowest click, or a 0.56 N·m wrench
+    - **Why:** Superseded by analogs G5: never use the 0.9 N·m wrench on brass PCB jacks; finger-tight plus connector savers until Zeenko confirms (optional TekBox 0.5 N·m).
+  33.
+    - **Item:** Re-audit D lab totals: core $1,524.76-1,850.07 (VAT-30W2+) and extended about $491-699
+    - **Why:** Superseded by later analogs G5/G6 price changes; totals must be recomputed from final lines.
+  34.
+    - **Item:** Re-audit D LBE-1420 price GBP 132 ($175.80, VAT basis unstated)
+    - **Why:** Superseded by analogs G6: leobodnar.com EU region, DDP from SkunkRF FR, EUR 171.76 landed in DE.
+  35.
+    - **Item:** Re-audit D Anker 737 $109.99 and the statement 'Anker 737 is DRP'
+    - **Why:** Analogs G5: EUR 82.99 at MediaMarkt/Saturn ($93.29); only USB-C1 is DRP, USB-C2 is output-only per Anker spec (bench-confirm). The DRP matrix test is applied with C2.
+  36.
+    - **Item:** Re-audit D prices for FNB58 ($53.99 fnirsi.com) and LNA V2 ($19.95)
+    - **Why:** Superseded by analogs G5 (AliExpress EU storefront EUR 44.59; official AliExpress EUR 25.79 incl. VAT).
+  37.
+    - **Item:** Re-audit D: IP2368 board LDO 'replace if not documented to 20 V or more'
+    - **Why:** Refined by analogs G3: HT7550-1 (30 V) is OK, ME6201 must be replaced by a >=30 V LDO; applied with G3 wording.
+- **Notes:** Source /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json was read completely: 5 subsystems (power, gnss_imu_location, display_hmi, mech_thermal_storage, lab_instruments) with 99 corrections, 56 new risks, 43 refuted findings, 5 corrected specs and 76 bench tests. Every bench test has its own 08_open_bench change (power 0-15, GNSS 0-11, display 0-12, mech 0-15, lab 0-18). Some tests are merged into existing rows, where the anchor names that row. Precedence: wherever an analog decision (analogs_G2/G3/G4/G5/G6) changes the same part, seller or price, the instruction says 'per analogs Gx'. The re-audit's own part, seller or price is then listed in not_applied, while its technical content (thresholds, wiring, tests) is applied. All anchors were checked against the current section files: each occurs exactly once (verified with a script; empty anchor = new 08 row). Section 11_changes_v1_v2 is not in the output enum, so no change-log entries are emitted; the 07_corrections entry lists the v1 errors this source corrects. Two open conflicts are left for the editor. (1) The Boni rail is 12.5 V in v1 and re-audit D, but 13.8 V in re-audit B; the instruction keeps the 12.5 V straps and defers to the adopted rail. (2) Fan tach GPIO: GP22 is the only free Pico pin, and analogs G2 also wants GP22 spare, so the assignment is deferred to P7. User-decision items (Lime default, Europe) are touched only where this source states mechanical, thermal or storage consequences. The saving_usd sign convention: positive = saving, negative = added cost (e.g. -33.18 for the VAT-30W2+ pads). Two small figures are inferences: 0.01 on the Daly line ($9.00 to $8.99) and -1 for the back-feed parts (re-audit D says 'about $1').
+
 ## searchA:adafruit_bno085_4754_rp2040_zero_metal_p (run `wf_a268b76e-da0`)
 
 - **Part:** IMU pack: Adafruit BNO085 (4754) on SPI0 of a Waveshare RP2040-Zero (20187), in a metal puck bonded to the cable braid; GX12 4-pin pair; 1.5-2 m shielded 4-core lead; TVS. Framed UART at 115200 with CRC to Pico UART1, never USB.
