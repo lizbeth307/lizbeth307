@@ -19599,6 +19599,149 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Limits of this pass: WebSearch was not available (the shared budget was already used up; 0 searches made). Mouser, DigiKey, Farnell, Arrow, reichelt and analog.com returned 503/403/404, so their prices are unverified. Everything above comes from TI.com page data and its inventory API, the TI datasheets SBVS204G and SLVSDQ3, LCSC product pages, the GM1415 datasheet and TME pages. A follow-up with search budget could check Mouser and DigiKey stock for RGWR / 4700RGWR.
 
+## searchB:ti_tps7a4701_ldo_lnb_13_2_v_boni_12_5_v (run `wf_a268b76e-da0`)
+
+- **Part:** TI TPS7A4701 ultra-low-noise 36 V / 1 A LDO, qty 2: LNB rail (13.2 V, or 12.5 V per re-audit C) and Boni-Whip rail (now BONI13V8 at 13.8 V per re-audit B). Each rail runs battery SW node -> LC -> TPS7A4701 ANY-OUT -> TPS259630 eFuse -> INA3221 -> choke. The part has no PG pin (Rev G), so a TLV3011 comparator per rail stands in for PG.
+- **Current price usd:** USD 7.96 each, so USD 15.92 for 2. This is DigiKey US, TPS7A4701RGWT cut tape, 2,332 in stock on 18 Oct 2026, franchised. For the EU, DigiKey DE lists EUR 6.99 each without VAT (EUR 8.32 with 19 % DE VAT), and adds EUR 25 shipping to orders under EUR 75. The TPS7A4701RGWR cut tape is USD 6.75 at DigiKey but on backorder (1,374 due 4 Nov 2026). LCSC: RGWR C90084 is USD 13.29 and out of stock; TPS7A4701MRGWREP C2872670 is USD 11.01 with 110 in stock. TME lists RGWR at USD 3.58-5.44 in aggregate with 0 stock; which quantity tier each price belongs to is unverified. STACK's "10-20 for 2, unverified" is confirmed as USD 15.92 at a franchised source.
+- **Critical specs:**
+  - Input range: must run up to 16.4 V (4S full charge) and survive the SMBJ17A clamp of about 27.6 V on the SW node. TPS7A4701: 3-35 V operating, 36 V absolute maximum.
+  - Output setting without trimming: 12.5 / 13.2 / 13.8 V by strapping ANY-OUT pins (ANY-OUT goes up to 20.5 V). Overall accuracy is ±2.5 % for VIN >= VO + 1 V, which is why acceptance is ±0.33-0.35 V.
+  - Output current: at least 0.5 A continuous on the LNB rail (eFuse ILIM 0.405-0.499 A; Bullseye current not yet measured) and at least 0.15 A on the Boni rail (65 mA typ). TPS7A4701 is rated 1 A.
+  - Dropout: 216 mV typ at 0.5 A, 307 typ / 450 max mV at 1 A. This sets the battery voltage at which each rail drops out (about 13.5-14.0 V).
+  - PSRR on the switcher-fed node (D36V50F12, D36V28F5 and IP2368 ripple, with LC pre-filter): 78 dB at 1 kHz (16 V in, 15 V out, 500 mA). TI's headline is at least 55 dB from 10 Hz to 10 MHz, but Fig. 5-17 shows a dip to about 30-40 dB near 1 MHz at 10-15 V out (my reading of the figure). Measured at COUT 50 uF.
+  - Output noise, 10 Hz-100 kHz: 4.17 uVrms at 1.4 V, 4.67 at 5 V, 7.25 at 10 V, 12.28 at 15 V (CNR 1 uF, COUT 50 uF). At our 12.5-13.8 V that is about 10-12 uVrms, not 4. There is no switching, so no spurs near the 739.5 MHz IF or in HF.
+  - Enable: EN high at 2.0 V or more (the 3.3 V MCP23017 meets this) and a true 0 V off. Shutdown current 3.04 uA typ / 60 uA max at 35 V.
+  - Protection: thermal shutdown at 170 C, current limit 1.0 A min / 1.26 A typ (the downstream eFuse provides the real limit), UVLO 2.67 V.
+  - Thermal: RthJA 32.5 C/W, RthJB 11.9 C/W, Tj -40 to 125 C. Must dissipate up to about 1.44 W bolted to the plate.
+  - Package: VQFN-20 RGW 5x5 mm with exposed pad, matching the existing footprint and ANY-OUT strapping. Stable with ceramic COUT of at least 10 uF.
+  - ESD rating: HBM 2.5 kV on the TPS7A4701 versus only 1 kV on the TPS7A4700. Both rails go out to external connectors (F and the Boni coax).
+  - Supply: genuine TI part from a franchised channel, ACTIVE lifecycle, not remarked.
+- **Candidates:**
+  1.
+    - **Name:** GongMo Semi GM1415ACPZ-R7 (Chinese TPS7A47 pin-map clone, 40 V / 1 A, QFN-20 5x5)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 3.49 each at qty 1 (LCSC C53430773, 1,277 in stock); 6.98 for 2, about 8.94 less than DigiKey RGWT
+    - **Spec comparison:** Datasheet only (Rev.0, 11/2025); nothing independent exists. Same pin map as TPS7A47 (OUT 1/20, SENSE/FB 3, 6P4V2 4, 6P4V1 5, 3P2V 6, GND 7, 1P6V-0P1V 8-12, EN 13, NR 14, IN 15/16), the same 1.4 V reference and the same ANY-OUT weights, so 12.5 / 13.2 / 13.8 V can be strapped the same way. Better on paper: VIN 2.1-40 V (42 V absolute maximum) vs 35/36 V; EN high at 1.24 V max vs 2.0 V; shutdown 0.9 uA typ / 10 uA max vs 3.04 / 60 uA; 1 A rating; RthJA 32 vs 32.5 C/W; table PSRR 88 dB at 100 Hz and 75 dB at 100 kHz. Worse on paper: noise 7.4 uVrms at 5 V and 13.5 uVrms at 15 V, vs TI 4.67 and 12.28. Its Fig. 14 PSRR curve (6 V in, 5 V out) drops to about -45 dB near 500 kHz and to about -20 to -30 dB at 5-10 MHz under 0.5-1 A, against TI's roughly 58-60 dB at 10 MHz. Its own Fig. 14 also shows only about 60-70 dB at 100 kHz, not the 75 dB in its table. Accuracy is -2 / +3 % vs ±2.5 %. Dropout 276 typ / 500 max mV vs 307 / 450. Current limit 1.6 A min / 2.1 typ vs 1.0 / 1.26. Thermal shutdown 155 vs 170 C.
+    - **Worse in:** Noise at our output voltage (about +10 % at 15 V, +58 % at 5 V). PSRR above about 2 MHz (roughly 25-35 dB worse at 5-10 MHz on the datasheet curves; COUT differs between the two curves). Upper accuracy limit (+3 %). Maximum dropout (500 vs 450 mV). Higher fault current (1.6 A min). Datasheet is internally inconsistent. No independent measurements, no reliability or qualification report, and a brand-new Rev.0 part. Rejected under the not-worse rule and under angle B (no measured evidence).
+    - **Compatibility:** Drop-in footprint and pin map on paper (VQFN-20 5x5 with EP; ANY-OUT strapping identical). The higher current limit would hit the TPS259630 eFuse harder during a short. Sold legitimately by LCSC (manufacturer listing).
+    - **Risks:** Second-source clone with a Rev.0 datasheet. HF PSRR would need a bigger LC pre-filter. Any use would need a bench A/B against a genuine TPS7A4701 (tinySA ripple at the D36V50F12 frequency and its harmonics; noise into an LNA and FFT).
+    - **Seller url:** https://www.lcsc.com/product-detail/C53430773.html
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/C53430773.html
+      - https://datasheet.lcsc.com/datasheet/pdf/cd5e67c8e3650ce93fa86b135e448881.pdf?productCode=C53430773
+      - https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+  2.
+    - **Name:** AliExpress '1A TPS7A4700 Low Noise RF Linear Regulated Power Supply Module' boards (the 'TPS7A4700 audio LDO module' budget option already noted in STACK)
+    - **Kind:** generic_or_clone
+    - **Price usd:** about 18.25-18.33 each from AliExpress search results (items 3256805779477406, 89 sold, 4.5 stars; 3256805706417055, 35 sold, 4.7 stars); item pages could not be read, so unverified
+    - **Spec comparison:** Built on a TPS7A4700, so at best the same silicon. Output set by ANY-OUT straps on the module, so 12.5/13.2/13.8 V are possible (not verified on these boards). Board-level noise, PSRR, layout, capacitors and chip origin are unknown, and I found no independent measurement.
+    - **Worse in:** Not cheaper: about USD 18 per module against USD 7.96 for a genuine chip, which goes on our own power board anyway. The TPS7A4700 is rated HBM 1 kV, against 2.5 kV for the TPS7A4701. Chip origin cannot be verified. Extra wiring and connectors add pickup and take space. No measured evidence. Rejected.
+    - **Compatibility:** A separate board with pin headers or terminals instead of a footprint on the power board. Mounting it to the plate is awkward; EN and SENSE access depend on the module.
+    - **Risks:** Remarked or recycled chips and unknown capacitors. Remove this from STACK as the 'budget alternative': it is neither cheaper nor proven.
+    - **Seller url:** https://www.aliexpress.com/w/wholesale-TPS7A4700-module.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-TPS7A4700-module.html
+      - https://www.aliexpress.us/item/3256805779477406.html
+      - https://www.aliexpress.us/item/3256805706417055.html
+  3.
+    - **Name:** AliExpress bare 'original' TPS7A4700RGWR / TPS7A4701RGWR chips (non-franchised)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 2.65-6.15 each from AliExpress search results (e.g. items 3256812526831967 at 2.65, 3256812325268333 TPS7A4701 at 3.39, 3256809425277525 at 6.15); unverified
+    - **Spec comparison:** Claimed to be the same part number. Nothing proves the silicon or marking is genuine, and there are no measurements.
+    - **Worse in:** No verifiable provenance, and several prices sit below franchised distributor cut-tape prices (DigiKey 6.75-7.96), a classic remark or recycle sign. This fails the rule that a part must be legally sold and not counterfeit. Rejected.
+    - **Compatibility:** Same footprint, if genuine.
+    - **Risks:** Counterfeit or remarked dies (possibly a lower-grade LDO), with no recourse.
+    - **Seller url:** https://www.aliexpress.com/w/wholesale-TPS7A4700-module.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-TPS7A4700-module.html
+  4.
+    - **Name:** TI TPS7A4700RGWR / RGWT (ANY-OUT-only sibling, same die family)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** Not cheaper: DigiKey RGWR 6.75 (0 stock, backorder) and RGWT 7.96 (0 stock, 61 due 17 Nov 2026), the same prices as the 4701. TME aggregate 3.47-5.26 vs 3.58-5.44 for the 4701, 0 stock.
+    - **Spec comparison:** Same VIN, current, noise, PSRR, dropout, accuracy and package. ANY-OUT reaches 20.5 V, so 12.5/13.2/13.8 V are covered. No adjustable-resistor mode, which we do not need.
+    - **Worse in:** ESD HBM 1 kV vs 2.5 kV (CDM 500 V on both). No price advantage, and less stock. Rejected.
+    - **Compatibility:** Pin-for-pin with the same footprint.
+    - **Risks:** None beyond the lower ESD rating on rails that leave the box.
+    - **Seller url:** https://www.digikey.com/en/products/detail/texas-instruments/TPS7A4700RGWT/3516858
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=TPS7A4700RGWR
+      - https://www.digikey.com/en/products/detail/texas-instruments/TPS7A4700RGWT/3516858
+      - https://www.tme.eu/en/details/tps7a4700rgwr/
+      - https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+  5.
+    - **Name:** Generic LT3045 LDO module boards (the class already used for the LNA rail)
+    - **Kind:** generic_or_clone
+    - **Price usd:** about 5-10 per module (figure from the stack's power.json, unverified); the LT3045 chip is about 8.63 at LCSC (stack, not re-checked), so no saving at chip level
+    - **Spec comparison:** LT3045 is better in noise (about 0.8 uVrms class) and in MHz PSRR. But its input range is 1.8-20 V (ADI; the absolute maximum was not re-fetched because analog.com returned 503), against 35/36 V, and it is a 500 mA part against 1 A.
+    - **Worse in:** Input and transient headroom: below the 27.6 V SMBJ17A clamp and close to the 16.4 V pack maximum. Current rating: 0.5 A, with no margin over the 0.405-0.499 A LNB eFuse limit. Modules carry the same provenance and no-measurement problems as above. Rejected.
+    - **Compatibility:** Different footprint (DFN/MSOP) and resistor-set output (ISET), so a redesign. On a module, wiring as above.
+    - **Risks:** Overvoltage failure during a clamp event; parallel pairs would be needed for current.
+    - **Seller url:** 
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/power.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json
+  6.
+    - **Name:** DIY discrete regulator (LM317-class adjustable plus RC/LC filtering)
+    - **Kind:** diy
+    - **Price usd:** about 1-2 in parts (estimate, not verified)
+    - **Spec comparison:** TI LM317 (SLVS044Z, Apr 2025): input-output differential of 3 V min recommended (40 V max); RMS noise 0.003 % of VOUT over 10 Hz-10 kHz, which is about 400 uVrms at 13.2 V, against about 11 uVrms.
+    - **Worse in:** Dropout: needs at least 3 V headroom, so 13.2 V is impossible from a 13.2-16.4 V 4S pack. Noise is about 35x worse. No logic EN with a true 0 V output unless parts are added. Rejected. A discrete super-regulator would cost more and has no thermal shutdown or EN, and I found no measured design at this voltage and current.
+    - **Compatibility:** Different topology; the power board would need a redesign.
+    - **Risks:** The rail falls out early in the battery window, and noise reaches the LNB IF and the Boni HF feed.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/lm317.pdf
+  7.
+    - **Name:** Used or pulled TPS7A47 chips, or used TI TPS7A4701EVM-094 boards
+    - **Kind:** used
+    - **Price usd:** n/a (no verifiable listing found; EVM price not checked)
+    - **Spec comparison:** The same silicon if genuine.
+    - **Worse in:** No traceable source for pulled chips (rework and reflow history unknown). An EVM is a large board, not cheaper than a USD 7.96 chip, and not a footprint part. Rejected.
+    - **Compatibility:** Pulled chips fit the same footprint; an EVM does not fit the enclosure layout.
+    - **Risks:** Moisture or reflow damage and counterfeit risk.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.ti.com/product/TPS7A47
+  8.
+    - **Name:** KEEP: TI TPS7A4701RGWT (or RGWR) from a franchised distributor
+    - **Kind:** current_part
+    - **Price usd:** 7.96 each (DigiKey US RGWT, 2,332 in stock); EU EUR 6.99 without VAT / EUR 8.32 with VAT (DigiKey DE); RGWR 6.75 on backorder (restock 4 and 9 Nov 2026). Cheaper than re-audit D's LCSC EP pick at 11.01.
+    - **Spec comparison:** The reference part: 3-35 V input (36 V absolute maximum), 1 A, 307/450 mV dropout at 1 A, ±2.5 %, about 10-12 uVrms at 12.5-13.8 V, 78 dB at 1 kHz, HBM 2.5 kV, RthJA 32.5 C/W, thermal shutdown 170 C.
+    - **Worse in:** Nothing (reference).
+    - **Compatibility:** Current footprint and ANY-OUT straps. 13.2 V: ground 6P4V1, 3P2V, 1P6V, 0P4V, 0P2V. 12.5 V: ground 6P4V1, 3P2V, 0P8V, 0P4V, 0P2V, 0P1V. 13.8 V: ground 6P4V1, 3P2V, 1P6V, 0P8V, 0P4V.
+    - **Risks:** Only stock and lead time (20 weeks manufacturer standard). Order RGWT now, or RGWR on backorder if the build date allows.
+    - **Seller url:** https://www.digikey.com/en/products/detail/texas-instruments/TPS7A4701RGWT/4625470
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/texas-instruments/TPS7A4701RGWT/4625470
+      - https://www.digikey.de/en/products/detail/texas-instruments/TPS7A4701RGWT/4625470
+      - https://www.digikey.com/en/products/result?keywords=TPS7A4701RGWR
+      - https://www.lcsc.com/product-detail/C90084.html
+      - https://www.lcsc.com/product-detail/C2872670.html
+      - https://www.tme.eu/en/details/tps7a4701rgwr/
+      - https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+- **Notes:** Verdict (angle B): keep the TPS7A4701. Nothing from the module, clone, DIY or used routes is cheaper and also not worse, and none has independent measurements.
+  - The only cheaper real part is the GongMo GM1415 clone (USD 3.49). Its own Rev.0 datasheet is already worse than TI in noise at 5 and 15 V, in PSRR above about 2 MHz, in upper accuracy (+3 %) and in maximum dropout. It fails the rule before any measurement is needed.
+  - The STACK "budget alternative" (TPS7A4700 audio LDO modules) is about USD 18 a module, more than a genuine franchised chip at USD 7.96. It uses the lower-ESD 4700 and has no traceable chips. Remove it from STACK.
+  
+  Sourcing corrections:
+  - DigiKey TPS7A4701RGWT costs USD 7.96 with 2,332 in stock (DigiKey DE EUR 6.99 without VAT / EUR 8.32 with VAT; EUR 25 shipping under EUR 75, so bundle it). That is USD 15.92 for 2, which beats re-audit D's LCSC TPS7A4701MRGWREP pick (USD 11.01 each, 22.02 for 2) by about USD 6.
+  - RGWR is USD 6.75 on backorder (restock 4 Nov 2026).
+  - TPS7A4700 costs the same at DigiKey and has HBM 1 kV vs 2.5 kV, so it brings no saving.
+  
+  Spec corrections for STACK from TI SBVS204G (May 2026):
+  - Noise scales with output voltage: 7.25 uVrms at 10 V and 12.28 uVrms at 15 V. So our 12.5-13.8 V rails are about 10-12 uVrms, not the "4 uVrms" headline.
+  - PSRR at 10-15 V out dips to about 30-40 dB near 1 MHz in Fig. 5-17. The LC pre-filter should be sized for the D36V50F12, D36V28F5 and IP2368 switching frequencies with that in mind.
+  - RthJA is 32.5 C/W.
+  - There is no PG pin (already in re-audit D).
+  
+  Limits of this pass:
+  - WebSearch returned no results: the shared per-turn search budget was already used up, so no forum or review measurements could be looked up.
+  - Mouser, Farnell and analog.com returned 503.
+  - AliExpress item pages were not readable; prices come from the AliExpress search listing and are unverified.
+  - The LT3045 absolute-maximum input was not re-fetched.
+  
+  Downloaded datasheets are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_gm1415/gm1415_ds.pdf and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_tps7a47/tps7a47.pdf.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
