@@ -861,3 +861,8 @@ Heat map вимкнено (правило «без геолокації»). За
 Проміжне: група D звіряє ПЗ приладів. Остання прошивка Raspberry Pi Debugprobe — v2.3.1 (29 травня, позначена Latest; перед нею v2.3.0 і v2.2.3). QtTinySA: залежності беруться з src/requirements.txt (venv). P5 G1 шукає фільтровані LNA 70 см (зокрема варіант Nooelec SAWbird на 435 MHz) як аналог Uputronics.
 Джерела: github.com/raspberrypi/debugprobe/releases, github.com/g4ixt/QtTinySA (src/requirements.txt).
 
+## 2026-10-18 10:33 UTC
+
+Проміжне: група D перевіряє мультиметр Aneng AN8008 (9999 відліків, 1 µV у режимі mV, струм від 99.99 µA з роздільністю 10 nA, ±0.8%+3 DC). P5 G1 розглядає як кандидата SSB Electronic LNA (серія на 6 м / 2 м / 70 см, 430–440 MHz).
+Джерела: журнали агентів wf_d9388111-e66 і wf_e32114dd-52d (огляд AN8008, сторінка продавця SSB LNA); URL — у підсумкових файлах.
+
