@@ -28196,6 +28196,142 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Local copy of the datasheet: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/p5h1b/dl/h1_ds.pdf (plots: pg-3.png). Astropeiler report: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/p5h1b/dl/astro_h2.pdf.
 
+## searchB:fnirsi_dps_150_bench_supply (run `wf_c3ba734e-52b`)
+
+- **Part:** FNIRSI DPS-150 bench supply (extended lab tier, qty 1). Powered from the 20 V PD source. Uses: Q6A board bring-up at 12 V through J21; LNA and LNB bias tests at 13.0-13.4 V; RTL-SDR LNA V2 current at 4.5 V; power-board soak at 14.0 and 16.4 V with 3.5 A; AN8008 check at 10 and 90 uA; scripted from labd.
+- **Current price usd:** 73-75 in STACK v1. The re-audit corrected it to 66.32 (Elektor EUR 59.00 incl. VAT). The lowest verified price for the same part is 57.99 for the DPS-150 Std without adapter at fnirsi.com. I read it from the store's product JSON on 18 Oct 2026, marked available. It excludes shipping and EU import VAT, and the VAT handling is not verified.
+- **Critical specs:**
+  - Input: USB-C PD at 20 V from the stack's PD source; 5-32 V DC listed, though FNIRSI's own page advises 5-30 V. It is step-down only, so the maximum output is about 19.9 V from 20 V PD (mysku). Do not feed both input ports at once (FNIRSI).
+  - Output coverage the stack needs: 4.5 V (LNA V2), 12 V (J21 bring-up), 13.0-13.4 V (LNA/LNB bias), and 14.0 V and 16.4 V at 3.5 A (power-board soak, about 57 W). The DPS-150 is rated 0-30 V, 0-5 A, 150 W; from PD it is limited to about 100 W input.
+  - Current limit (CC): 1 mA setting resolution; setting accuracy <=0.1% +/-3 mA; readback <=0.1% +/-5 mA (0-3.5 A). Figures from the Botland listing. It must hold reliably at tens of mA to protect LNAs and LNBs.
+  - Voltage: 10 mV resolution; setting accuracy <=0.1% +/-5 mV; readback <=0.1% +/-10 mV (Botland listing). One mysku owner measured about +50 mV error at 1 V and 0.01-0.02 V error at 9-30 V.
+  - Turn-on overshoot (stack acceptance): <=13.6 V peak at a 13.2 V setpoint into 100 Ohm, measured on the Hantek at 1 MS/s.
+  - Ripple, noise and switching spurs: retailers claim <20 mV, but FNIRSI's own spec page gives no ripple figure. This matters for powering LNAs and LNBs and for the RF spur A/B tests.
+  - Protections: OVP, OCP, OPP, OTP, UVP, short circuit, reverse input, reverse output.
+  - Remote control from labd on Ubuntu 24.04 arm64: rear micro-USB with an AT32 virtual COM port, so a CDC serial device on Linux. The protocol is reverse-engineered (cho45/fnirsi-dps-150 and the stack's dps150tool or Python library). The vendor software is Windows-only.
+  - Size and power: 106 x 76 x 28 mm, about 178 g, fanless per the reviews, powered by PD. It must fit the Pelican 1450 bench kit and needs no mains brick.
+  - Efficiency and heat at about 50-60 W: 96.3% is claimed; a commenter estimates about 92%. One reviewer saw 35 C under the largest load he could apply.
+  - Build quality and legality: sold in the EU with CE marking and EU returns; a 2-year warranty is claimed when bought from fnirsi.com.
+- **Candidates:**
+  1.
+    - **Name:** FNIRSI DPS-150 Std (without adapter), FNIRSI official web store
+    - **Kind:** current_part
+    - **Price usd:** 57.99 list (verified 18 Oct 2026 from fnirsi.com/products/dps-150.json, variant available). Shipping and EU import VAT not verified. If about 20% VAT is added at checkout it comes to about 69.6, which is no saving against Elektor's 66.32 incl. VAT.
+    - **Spec comparison:** Same unit and firmware line as the stack's pick, so every spec is identical. The 'Plus' variant with adapter costs 84.99 and is not needed, since the stack already has a 20 V PD source.
+    - **Worse in:** No spec is worse. Sourcing is the weak point: it probably ships from outside the EU (not verified), so returns are slower and EU consumer-law returns are not guaranteed. The 30-day return and 2-year warranty are vendor claims.
+    - **Compatibility:** Identical: PD 20 V input, micro-USB CDC control, same size.
+    - **Risks:** Real VAT and shipping total for the EU unknown. Some units shipped with firmware 1.0 (EEVblog); check the version on arrival. The turn-on overshoot test is still mandatory.
+    - **Seller url:** https://www.fnirsi.com/products/dps-150
+    - **Sources:**
+      - https://www.fnirsi.com/products/dps-150.json
+      - https://hackaday.io/project/205688-fnirsi-dps-150-unboxing-the-budget-power-supply
+  2.
+    - **Name:** FNIRSI DPS150 at Botland (Poland, EU)
+    - **Kind:** current_part
+    - **Price usd:** About 65.41 (EUR 58.19 in the page's structured data; the search page shows EUR 48.90 net, so 58.19 appears to include VAT). This saves about 0.9 against Elektor.
+    - **Spec comparison:** Same part. The listing gives <20 mV ripple, 10 mV / 1 mA resolution, V set <=0.1% +/-5 mV, I set <=0.1% +/-3 mA, and 8 protections.
+    - **Worse in:** No spec is worse. The saving is negligible. The product page says ordering needs a verified business account with a VAT ID, and the stock messages are contradictory.
+    - **Compatibility:** Identical. Box: unit, 2 clip leads, USB cable, manual; no adapter.
+    - **Risks:** Buyer eligibility (B2B only?) and stock not confirmed. Shipping from EUR 8.07 (GLS EU).
+    - **Seller url:** https://botland.store/laboratory-power-supply/27837-fnirsi-dps150-laboratory-power-supply-unit-0-30v-5a-5907085527239.html
+    - **Sources:**
+      - https://botland.store/search?s=DPS-150
+      - https://botland.store/laboratory-power-supply/27837-fnirsi-dps150-laboratory-power-supply-unit-0-30v-5a-5907085527239.html
+  3.
+    - **Name:** FNIRSI DPS-150, new, from China-based eBay.de sellers
+    - **Kind:** current_part
+    - **Price usd:** About 58-75 (EUR 52-67 incl. shipping, from search snippets only). UNVERIFIED: the listing pages returned HTTP 403.
+    - **Spec comparison:** Same part if genuine.
+    - **Worse in:** No spec is worse. Seller quality varies, there is no EU warranty point, and the saving over the EU retailers is not clear.
+    - **Compatibility:** Identical.
+    - **Risks:** Prices and listings not verified. Prefer sellers with 30-60 day returns. Check the unit and its firmware against FNIRSI's description.
+    - **Seller url:** https://www.ebay.de/itm/116439450034
+    - **Sources:**
+      - https://www.ebay.de/itm/116439450034
+      - https://www.ebay.de/itm/205853579959
+      - https://www.ebay.com/itm/156961105229
+  4.
+    - **Name:** Used FNIRSI DPS-150 (eBay.de 'Gebraucht', Kleinanzeigen)
+    - **Kind:** used
+    - **Price usd:** No used listing found; price unverified.
+    - **Spec comparison:** Same specs on paper. Without a measurement of that specific unit there is no evidence it performs equally.
+    - **Worse in:** Unknown history: possible stressed output capacitors (a mysku commenter calls them very small), old firmware, no warranty. Measured evidence of equal performance would be missing until tested.
+    - **Compatibility:** Identical.
+    - **Risks:** Buy only if it costs clearly less than about $50 delivered and passes the stack's tests on arrival: overshoot <=13.6 V at 13.2 V into 100 Ohm, ripple at 13.2 V/0.3 A and 16.4 V/3.5 A, and CC hold at 50 mA.
+    - **Seller url:** 
+    - **Sources:** []
+  5.
+    - **Name:** Sinilink XY-SK120X CNC buck-boost module (generic)
+    - **Kind:** generic_or_clone
+    - **Price usd:** About EUR 15 / roughly $17 per done.land (not checked at a seller); unverified.
+    - **Spec comparison:** Input 6-36 V; output 0-36 V, 6 A, 120 W (a peak rating per the reviewer). Voltage display 0.01 V; current setting and resolution not stated. Ripple about 150 mVpp typical (listing spec, unmeasured), against the DPS-150's <20 mV claim. Modbus serial (TTL), optional WiFi.
+    - **Worse in:** Ripple spec about 7x worse. The reviewer warns that the slow CV/CC loops cause temporary overshoot and current spikes, which conflicts directly with the LNA/LNB overshoot rule. No output reverse-polarity protection. Open-frame module that needs a case, a PD trigger and a USB-TTL adapter. Fan starts at about 1 A. No independent ripple measurement found.
+    - **Compatibility:** Not PD-native (needs a 20 V trigger board). Control needs a USB-UART adapter plus a Modbus library: workable on Linux, but more parts and wiring.
+    - **Risks:** REJECT: worse in ripple, transient behaviour and protection, and there is no measured evidence of parity.
+    - **Seller url:** 
+    - **Sources:**
+      - https://done.land/components/power/powersupplies/dc-dc-converters/plug&playconverters/xy-sk120x/
+      - https://www.printables.com/model/1089518-basic-model-xy-sk120x-boost-buck-module-05-36v-0-6
+  6.
+    - **Name:** DIY: Riden RD6006 module + 20 V PD trigger + enclosure
+    - **Kind:** diy
+    - **Price usd:** Unverified; no current price found.
+    - **Spec comparison:** Ripple 100 mVpp typical by the RD_tech spec (method: 20 MHz bandwidth, 0.1 uF across the output), against the DPS-150's <20 mV claim. 0.01 V / 0.001 A resolution, equal. Input rule: Vin must exceed 1.1 x Vout + 2 V, so the ceiling from 20 V is about 16.4 V. Voltlog measured the noise on video, but no figures are in text.
+    - **Worse in:** Ripple spec 5x worse. Output ceiling from 20 V PD is about 16.36 V, borderline for the 16.4 V soak test. Larger. Needs an enclosure and a PD trigger.
+    - **Compatibility:** USB serial over Modbus, with community Python libraries. arm64 support not verified here.
+    - **Risks:** REJECT: worse in ripple and output headroom; not shown to be cheaper.
+    - **Seller url:** 
+    - **Sources:**
+      - https://budgetlightforum.com/node/76643
+      - https://voltlog.com/?p=1230
+  7.
+    - **Name:** DIY: Riden RD6006P module + 20 V PD trigger + enclosure
+    - **Kind:** diy
+    - **Price usd:** 80 normal list for the bare module (RD_tech forum post, old; current price unverified), plus a case and PD trigger.
+    - **Spec comparison:** Ripple 20 mVpp typical (RD_tech spec), equal to the DPS-150 claim. Resolution 0.001 V / 0.0001 A, better. Input 7-70 V, output 0-60 V / 6 A, but the same Vin > 1.1 x Vout + 2 V rule applies.
+    - **Worse in:** Not cheaper. The output ceiling from 20 V PD is about 16.36 V, below or at the 16.4 V soak test. Larger, not PD-native, needs DIY assembly.
+    - **Compatibility:** USB serial over Modbus. Linux tooling exists in the community; arm64 not verified here.
+    - **Risks:** REJECT: more expensive and loses headroom at 16.4 V.
+    - **Seller url:** 
+    - **Sources:**
+      - https://budgetlightforum.com/node/76643
+  8.
+    - **Name:** ALIENTEK DP100 (USB-C PD mini supply)
+    - **Kind:** other_brand
+    - **Price usd:** About 45 (from the EEVblog #1606 review title; no seller price checked); unverified.
+    - **Spec comparison:** Claimed <10 mVpp ripple, 0.01 V / 0.001 A resolution, no turn-on overshoot, 100 W, USB-C PD input. All of these are vendor or retailer claims. I found no independent numeric ripple or overshoot data; EEVblog 1606 has a noise video, but no figures in text.
+    - **Worse in:** Rated 100 W against 150 W. From a 20 V PD source both are limited to about 100 W, so this does not limit the stack's 57 W need. There is no independent measured evidence, and its Linux/arm64 control is unverified.
+    - **Compatibility:** PD-native and similar size. Its USB control path on Ubuntu arm64 was not checked.
+    - **Risks:** REJECT under angle B: no measured evidence. Worth a measured look by the brand-alternatives angle or a bench test against the DPS-150.
+    - **Seller url:** https://openelab.io/de/products/alientek-dp100-digital-power-supply
+    - **Sources:**
+      - https://www.eevblog.com/category/eevblog-official-releases/reviews/page/3
+      - https://openelab.io/de/products/alientek-dp100-digital-power-supply
+- **Notes:** Verdict from angle B: no cheaper part has measured evidence of being as good, so keep the FNIRSI DPS-150.
+  
+  - **Same part, cheaper:** fnirsi.com lists $57.99 (Std, no adapter; verified 18 Oct 2026). This is the only real saving, about $8 off the re-audited $66.32, and only if the EU checkout total including VAT and shipping stays below about EUR 59. Otherwise Elektor (EUR 59 incl. VAT, $66.32) or Botland (EUR 58.19, which may need a business account) cost the same and give EU returns. Update the STACK v1 figure of $73-75 to $58-66.
+  - **Generic and DIY options:**
+    - XY-SK120X: about 150 mVpp rated ripple, slow-loop overshoot, no output reverse protection.
+    - Riden RD6006: 100 mVpp rated ripple, and from 20 V PD the output tops out at about 16.36 V.
+    - RD6006P: equal ripple spec and better resolution, but dearer and with the same 16.36 V ceiling.
+  - **Brand alternative (DP100):** ALIENTEK DP100 has no independent measured data, so I rejected it rather than guess.
+  - **Not tried:** a used linear supply such as the Korad KA3005P. It would be mains-powered and several kg, so it breaks the PD-powered portable bench kit. I found no price, so it is not listed.
+  - **The DPS-150's own evidence is thin and contradictory:**
+    - FNIRSI's official spec page lists no ripple figure; the <20 mV comes from retailers.
+    - One EEVblog owner measured about 28 mV on battery input.
+    - A mysku image showing about 200 mVpp was questioned on EEVblog.
+    - A YouTube claim of about 400 mV gave no conditions.
+    - A mysku commenter (sandy7) reports a high-voltage pulse of about half a second at turn-on when set low. It is not quantified, but it is directly relevant to the stack's overshoot rule.
+  - **Tests on arrival, within the return window:**
+    - Overshoot <=13.6 V at 13.2 V into 100 Ohm, including output-enable from a low setpoint.
+    - Ripple at 13.2 V/0.3 A and 16.4 V/3.5 A, at 20 MHz and full bandwidth.
+    - Spur scan with the tinySA or V4L near the LNA under test.
+    - CC hold at 50 mA.
+    - Firmware version check.
+  - **Usage notes:** The unit is step-down only; FNIRSI advises a 5-30 V input and never powering both input ports at once. The 20 V PD source is fine.
+  - **Hard rules:** none affected. It is a DC supply with no RF output and no loops.
+  - **Budget:** I used about 12 WebSearch calls. The eBay pages (403) and the AliExpress store were not readable, so those prices are unverified.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
