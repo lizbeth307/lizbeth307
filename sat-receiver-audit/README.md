@@ -58,6 +58,7 @@
 | [Nooelec flamingo fm v2 100813](components/nooelec_flamingo_fm_v2_100813.md) | · research · forums · fixes ✅ verify | `—` |
 | [Nooelec pad kit 2x 30 db pads 2x blk 89](components/nooelec_pad_kit_2x_30_db_pads_2x_blk_89.md) | · research · forums · fixes ✅ verify | `—` |
 | [Nooelec sawbird goes cased 100792](components/nooelec_sawbird_goes_cased_100792.md) | · research · forums · fixes ✅ verify | `—` |
+| [Nooelec sawbird h1](components/nooelec_sawbird_h1.md) | · research · forums · fixes ✅ verify | `—` |
 | [Nooelec sawbird noaa cased 100800](components/nooelec_sawbird_noaa_cased_100800.md) | · research · forums · fixes ✅ verify | `—` |
 | [Npu training](components/npu_training.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Pack sundries nickel fish paper kapton j](components/pack_sundries_nickel_fish_paper_kapton_j.md) | · research · forums · fixes ✅ verify | `—` |
