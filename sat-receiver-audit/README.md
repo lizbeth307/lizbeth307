@@ -37,6 +37,7 @@
 | [Generic hmc7992 sp4t boards rtl a and rt](components/generic_hmc7992_sp4t_boards_rtl_a_and_rt.md) | · research · forums · fixes ✅ verify | `—` |
 | [Gnss imu](components/gnss_imu.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_45d278c2-004` |
 | [Gnss imu location](components/gnss_imu_location.md) | ✅ research · forums · fixes ✅ verify | `—` |
+| [Hantek 6022be fx2lafw la](components/hantek_6022be_fx2lafw_la.md) | · research · forums · fixes ✅ verify | `—` |
 | [Hf receiver](components/hf_receiver.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Hf selector 2x omron g6k 2f rf 5 v serie](components/hf_selector_2x_omron_g6k_2f_rf_5_v_serie.md) | · research · forums · fixes ✅ verify | `—` |
 | [Ip2368 4s 100 w pd board charge only bz](components/ip2368_4s_100_w_pd_board_charge_only_bz.md) | · research · forums · fixes ✅ verify | `—` |
