@@ -876,3 +876,9 @@ Heat map вимкнено (правило «без геолокації»). За
 Проміжне, група D: LiteVNA (NanoVNA-сумісний) знайдено в європейському магазині за 192 € (≈ $215.8 за курсом 1.1241; у стеку нижня межа $175.73 без ПДВ). Перевіряються даташити Mini-Circuits VAT-30W2+ (30 dB, 2 W, DC–6 GHz, SMA) і кабелів 086-6SM+ для стендового набору.
 Джерела: журнал агента wf_d9388111-e66 (сторінка магазину LiteVNA, даташити Mini-Circuits); остаточно — final/reaudit_D_power_mech_display_lab.json.
 
+## 2026-10-18 10:37 UTC
+
+Проміжне, група D (ПЗ приладів): на PyPI немає пакета nanovna-saver / NanoVNASaver (обидва 404), тож рецепт «NanoVNA-Saver через pipx» має ставити з git (pipx install git+https://github.com/NanoVNA-Saver/nanovna-saver) — чекаю підтвердження у підсумку D. pyvisa на PyPI — 1.16.2. OpenHantek6022 має готові пакети для Ubuntu 24.04 на сторінці Releases (потрібен Qt 6.2+).
+P5 G1: один із кандидатів-LNA 70 см у європейському магазині — передзамовлення 65,95 € з ПДВ, поставка до 15 днів, очікується 23.10.2026 (назва — у підсумку G1).
+Джерела: pypi.org (запити nanovna-saver, NanoVNASaver, pyvisa), github.com/OpenHantek/OpenHantek6022 (README, Releases); журнал wf_e32114dd-52d.
+
