@@ -1053,5 +1053,177 @@ _Run `wf_3e735695-e00`_
 
 ## Адверсаріальна перевірка (`verify`)
 
+_Run `wf_3e735695-e00`_
+
+- **Component:** Storage (OS + raw IQ recording) for the Radxa Dragon Q6A handheld: Radxa UFS 3.1 module + USB 3 SSD + RAM ring buffer
+- **Recommendation holds:** ні
+- **Issues:**
+  1.
+    - **Claim:** Recommended UFS: Radxa UFS 3.1 256GB (Kioxia) or 512GB, about $76-90 at Allnet.
+    - **Problem:** Both are sold out at Allnet. Arace lists all four capacities (64/128/256/512GB) as sold out. The 256GB carries the Kioxia THGJFGT1E45BAILB chip, which freezes and reboots on the Q6A unless the kernel has a quirk that mainline lacks. Nobody knows which chip the 512GB uses. Once wideband captures go to the USB SSD, the higher write figure of the 256GB part no longer matters.
+    - **Correction:** Use the Radxa UFS 128GB (RA022-B10J0U2, Samsung KLUDG4UHDC-B0E1) as the OS and narrowband-pass drive. It costs $65.90 at Allnet China and is in stock (Tinytronics: EUR 58, not in stock, 2-4 weeks). Radxa reproduced no faults with the Samsung module. Check the chip on arrival.
+    - **Source:** https://shop.allnetchina.cn/products/high-performance-ufs-3-1-module ; https://arace.tech/products/radxa-ufs-module ; https://forum.radxa.com/t/ufs-random-reboots/30630
+  2.
+    - **Claim:** Samsung T7 1TB costs 7,499 UAH on Rozetka; the total setup is about $250-270.
+    - **Problem:** Rozetka returned 403, so I could not verify it. Hotline.ua today lists the T7 1TB at 9,299-13,813 UAH (Titan Gray, 49 offers) and 9,700-15,958 UAH (Indigo, 65 offers). The T7 Shield 1TB Blue is 11,980-14,451 UAH and the Black is 13,587-17,899 UAH. The NBU rate on Oct 15, 2026 was about 44.98 UAH/USD.
+    - **Correction:** T7 1TB is about $207 or more; T7 Shield 1TB is about $266 or more. With the 128GB UFS, the realistic total is about $273 (T7) or about $332 (Shield), plus shipping and customs on the UFS.
+    - **Source:** https://hotline.ua/ua/sr/?q=Samsung%20T7%20Shield%201TB ; https://unn.ua/en/amp/exchange-rates-as-of-october-15-what-happened-to-the-dollar-after-its-historic-high
+  3.
+    - **Claim:** Record with LimeSuiteNG linkFormat I12 (packed 12-bit on the link). I12 at 160 Msps is 480 MB/s, about 60% of PCIe Gen3 x1.
+    - **Problem:** In the limesdr-micro branch, LA9310_TRX.cpp hard-codes 'mConfig.linkFormat = DataFormat::I16; // always force I16 link', and the RX DMA buffers are complex16_t. The LimeSDR Micro ignores I12, so 160 Msps always crosses PCIe as 640 MB/s.
+    - **Correction:** Budget PCIe at 4 bytes per complex sample (640 MB/s at 160 Msps, 245.76 MB/s at 61.44 Msps). Any reduction to 12-bit or 8-bit has to happen on the CPU after receive.
+    - **Source:** https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro/src/src/boards/LimeSDR_Micro/LA9310_TRX.cpp
+  4.
+    - **Claim:** Store packed 12-bit to save space (184 MB/s instead of 246 MB/s at 61.44 Msps).
+    - **Problem:** LimeSuiteNG's DataFormat::I12 is 'stored as int16_t' (types.h), so it saves no bytes. The limesuiteng SoapySDR plugin advertises SOAPY_SDR_CS12 but maps it to that int16-stored I12. A Soapy-based recorder that assumes the Soapy convention for CS12 (3 bytes per sample) would write corrupt or mis-sized files. SatDump has no 12-bit baseband type (CF32/CS32/CS16/CS8/CU8/WAV16/ZIQ/ZIQ2).
+    - **Correction:** Request CS16. Then either pack 2x12 bits into 3 bytes yourself with NEON and convert back to cs16 for SatDump, or save cs8 or ZIQ.
+    - **Source:** https://raw.githubusercontent.com/myriadrf/LimeSuiteNG/develop/src/include/limesuiteng/types.h ; https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro/plugins/soapysdr/Streaming.cpp ; https://raw.githubusercontent.com/SatDump/SatDump/master/src-core/common/dsp/io/baseband_type.h
+  5.
+    - **Claim:** limeTRX silent output-failure bug: use a LimeSuiteNG build from after Aug 3, 2026 (PR #376).
+    - **Problem:** The fix ('Failed to open Rx output file') is in develop only. The limesdr-micro branch, which LimeSDR Micro users must run (tip Oct 1, 2026), still opens the .sigmf-data file without checking. Its RX loop also writes the file synchronously with std::ofstream. The LA9310 RX FIFO is only 512 batches of about 100 us, roughly 50 ms, so any disk stall longer than that drops samples.
+    - **Correction:** Do not record wideband by pointing limeTRX straight at UFS or the SSD. Either use the FIFO pipeline (limeTRX into a named pipe, then mbuffer -L -m 8G, then disk), or a small custom recorder with an mlocked ring and a separate writer thread. Check that output files grow, and count SigMF 'captures' entries: exactly one means no gaps.
+    - **Source:** https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro/cli/limeTRX.cpp ; https://github.com/myriadrf/LimeSuiteNG/issues/405
+  6.
+    - **Claim:** The Kioxia fix exists in Radxa/Armbian kernels; the 9-day uptime report shows it is stable.
+    - **Problem:** The uptime line reads 'up 9:51', which is 9 h 51 min, not 9 days. Mainline (7.3-rc7, checked) has no Q6A UFS node at all, nor the Kioxia quirk. Armbian 'edge' (mainline v7.2.3 plus patches) adds the UFS device-tree node and the HS-G4 PHY fix but not the Kioxia quirk. Only Armbian 'current' (radxa/kernel linux-6.18.2) and radxa/kernel linux-7.0.11 have it.
+    - **Correction:** Run the Radxa vendor kernel (Radxa OS noble, or Armbian current). Never use a Canonical generic, mainline or Armbian-edge kernel with a Kioxia module. Hold the kernel and its matching headers. With the Samsung 128GB the quirk does not apply, but you still need the vendor kernel for UFS and USB 3.
+    - **Source:** https://forum.radxa.com/t/ufs-random-reboots/30630?page=2 ; https://github.com/armbian/build/blob/main/config/sources/families/qcs6490.conf ; https://github.com/radxa/kernel/blob/linux-7.0.11/drivers/ufs/host/ufs-qcom.c ; https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+  7.
+    - **Claim:** Budget: 128GB UFS handles cs8 at 61.44 Msps (123 MB/s), well under even a pessimistic post-cache rate of about 250 MB/s.
+    - **Problem:** The roughly 250-300 MB/s floor comes from 256GB parts (Critical Link's 256GB QCS6490 module: 300-1500 MiB/s depending on WriteBooster). A 128GB TLC part has about half the dies, so its post-cache write is probably lower, possibly near 120-200 MB/s (inference, not measured). Radxa's 388 MB/s is a short dd run inside the cache. Radxa's own Q6A provisioning uses only a 4 GiB WriteBooster buffer, about 10 s at 388 MB/s.
+    - **Correction:** Treat even 56 MHz cs8 to the 128GB UFS as unproven until a long fio fill test passes. Plan the UFS for narrowband passes (7 Msps cs16 = 28 MB/s, the LimeSDR Micro minimum without decimation) and short RAM-buffered bursts.
+    - **Source:** https://git.criticallink.com/redmine/projects/mitysom_qc6490/wiki/UFS ; https://dl.radxa.com/q6a/images/android/provision_ufs31.xml ; https://docs.radxa.com/en/dragon/q6a/hardware-use/ufs-emmc-com
+  8.
+    - **Claim:** Alternative USB storage: TLC 2230 NVMe such as the WD SN740 in a UAS enclosure.
+    - **Problem:** The SN740 is DRAM-less and relies on HMB. USB bridges (RTL9210/ASM2362/JMS583) do not pass HMB, so behind USB it runs without its host-memory map cache. I found no post-cache data for the 512GB SN740. The cheapest 1TB portable SSD in Ukraine, the Kingston XS1000 (6,726 UAH), drops to about 140 MB/s after about 60 GB of cache (Mezha 1TB test).
+    - **Correction:** Prefer the Samsung T7 1TB. ssd-tester measured a 614 MB/s average over 100 GB with a 42 GB cache, which implies about 480 MB/s after the cache. The T7 Shield 1TB averaged 879 MB/s over 200 GB with a 20 GB cache. Both stay above the Q6A's ~395 MB/s USB ceiling. Or use a DRAM-equipped TLC NVMe in a metal enclosure. Use the XS1000 only for cs8 or short cs16 bursts.
+    - **Source:** https://ssd-tester.com/samsung_portable_ssd_t7_1tb.html ; https://ssd-tester.com/samsung_portable_ssd_t7_shield_1tb.html ; https://mezha.media/en/?p=145948 ; https://hotline.ua/ua/sr/?q=Kingston%20XS1000%201TB
+  9.
+    - **Claim:** The USB-A port power limit is unpublished.
+    - **Problem:** Schematic v1.21 page 26 shows one WS4612 load switch feeding VDD_USB_VBUSTYPEA for the stacked USB3/USB2 Type-A pair. Its ISET resistor is 3.24 kOhm, and the formula Ilim = 6800/Rset gives about 2.1 A shared between the two ports. This is read from the schematic text, not measured.
+    - **Correction:** A T7 (under 1 A) plus an RTL-SDR (about 0.3 A) on that pair fits. Do not add a bus-powered hub or a Gen4 2280 NVMe enclosure to the same pair. Keep Radxa's 24 W (12 V/2 A) minimum when USB 3.1 and PCIe are both loaded.
+    - **Source:** https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf ; https://dl.radxa.com/q6a/docs/rad-doc-0150_radxa_dragon_q6a_product_brief__revision_1.5_gbc16bac.pdf
+  10.
+    - **Claim:** Optional: reprovision the UFS module with a pSLC capture LUN via edl-ng.
+    - **Problem:** edl-ng does have a 'provision <xml>' command, but on a 128GB module a 32 GiB pSLC LUN uses about 96 GiB of TLC (3:1), leaving almost nothing for the OS. The procedure wipes the module, is untested on Radxa modules and can brick it. The USB SSD already makes it unnecessary.
+    - **Correction:** Skip it. Keep wideband captures on the replaceable USB SSD.
+    - **Source:** https://github.com/strongtz/edl-ng ; https://dl.radxa.com/q6a/images/android/provision_ufs31.xml
+  11.
+    - **Claim:** The SDR is available for testing from about Sept 30, 2026 at $199.
+    - **Problem:** Crowd Supply now lists $249 Basic / $299 GNSS, with 'orders placed now ship Dec 15, 2026'. The Micro also needs the out-of-tree la9310_limesdr kernel module (DKMS).
+    - **Correction:** Storage qualification with the real SDR cannot start before about mid-December. Run the UFS and SSD fio tests now. Install the linux-headers package for the pinned Radxa kernel so the la9310 DKMS module builds.
+    - **Source:** https://www.crowdsupply.com/lime-micro/limesdr-micro ; https://github.com/myriadrf/LimeSuiteNG/tree/limesdr-micro/drivers/linux/la9310_limesdr
+- **Forum and fix assessment:** The forum work holds up, and I re-verified the parts that matter:
+  - Radxa PR #551 (merged May 11, 2026) adds UFS_DEVICE_QUIRK_PA_TACTIVATE for THGJFGT1E45BAILB. It is present in radxa/kernel linux-6.18.2 and linux-7.0.11, and absent from torvalds master (7.3-rc7).
+  - The mainline Q6A device tree does not even enable UFS or USB 3. Armbian current builds from radxa/kernel linux-6.18.2, so it includes the fix. Armbian edge (v7.2.3 plus patches) adds the UFS node and HS-G4 PHY fix but not the Kioxia quirk.
+  
+  Correction: the '9 days uptime' was 9 h 51 min. The fixes agent already caught this.
+  
+  The proposed sysfs and driver mechanics check out against mainline source:
+  - ufs-qcom sets CLK_GATING, HIBERN8_WITH_CLK_GATING, CLK_SCALING, WB_WITH_CLK_SCALING and WB_EN.
+  - wb_on_store returns -EOPNOTSUPP when WriteBooster is tied to clock scaling.
+  - The quirk writes PA_TACTIVATE = 10 (1 ms).
+  - The ufs-utils syntax is valid: 'uic -t 1 -r -i 0x15a8 -p', and 'fl -t 14 -c' to clear fWriteBoosterEn.
+  
+  That makes the H8-suppression field profile (clkgate_enable=0, auto_hibern8=0, rpm_lvl=0, clkscale_enable=0), the WriteBooster-size measurement and the long fio fill test technically sound and worth doing.
+  
+  Also confirmed:
+  - Radxa's Q6A provisioning XML has a 4 GiB shared WriteBooster with preserve-user-space=1.
+  - HDMI and USB 3 use separate QMP PHY lanes (DP on 0-1, USB on 2-3).
+  - pcie0 is used by the RTL8111K Ethernet, so there is no spare PCIe lane for an NVMe. The switch idea stays dead.
+  
+  The weak points are in the recorder plan, not the forum fixes:
+  - The Micro forces an I16 link, so I12 saves nothing.
+  - Soapy CS12 from limesuiteng is int16-stored.
+  - The limeTRX file-open fix is not in the limesdr-micro branch.
+  - limeTRX writes synchronously into an LA9310 FIFO that holds only about 50 ms.
+  
+  The RAM-FIFO approach (mbuffer -L or a custom mlocked ring with thread pinning, swap off and no copy-on-write filesystem) is therefore mandatory, not optional.
+  
+  Drop the pSLC reprovisioning; it is high-risk and redundant. The thermal pad, the cold-start gate and NPU-gated commits are sensible low-cost additions.
+- **Final recommendation:**
+  - **Name:** Two drives plus a RAM buffer: Radxa UFS 3.1 Module 128GB (RA022-B10J0U2, Samsung KLUDG4UHDC-B0E1) for the OS and narrowband passes, a Samsung T7 1TB (MU-PC1T0T/WW or MU-PC1T0H/WW) on the blue USB 3.1 port for all wideband captures, and an 8 GiB mlocked RAM ring for 160 Msps bursts
+  - **Price:** About $273 total:
+  - UFS 128GB: $65.90 (Allnet China, in stock; Tinytronics EUR 58, 2-4 weeks), plus shipping and customs (not verified).
+  - Samsung T7 1TB: from 9,299 UAH, about $207 (hotline.ua, 49-65 offers).
+  Option: a T7 Shield 1TB from 11,980 UAH (about $266) instead of the T7 brings the total to about $332.
+  - **Why:** 1. The 128GB Samsung module is the only Q6A-listed UFS module actually in stock. Radxa found no faults with the Samsung chip, and it measured 1703/388 MB/s (dd) on the Q6A. It is the fastest storage left with the SDR in M.2. It only has to carry the OS plus narrowband passes: HRPT/LRPT at 7 Msps cs16 is 28 MB/s, about 25 GB per 15-minute pass.
+  
+  2. The Q6A's USB 3.1 Gen1 port has one measured write figure: about 395 MB/s fio with UAS at 5000M. The T7 sustains above that after its cache: about 614 MB/s average over 100 GB, implying about 480 MB/s post-cache; the Shield averaged 879 MB/s over 200 GB. So the port, not the drive, is the limit, giving about 60% headroom over 56 MHz cs16 (245.76 MB/s). 1 TB holds about 68 min of cs16 or 136 min of cs8. It hot-swaps to a PC for SatDump, keeps write wear off the boot drive, and avoids the HMB loss that DRAM-less NVMe drives suffer behind USB bridges.
+  
+  3. 160 Msps always crosses PCIe as I16, 640 MB/s. No reachable storage sustains that, so record into an 8 GiB mlocked ring and drain to the T7 while capturing:
+  - about 35 s of cs16;
+  - about 101 s of CPU-packed 12-bit;
+  - cs8 (320 MB/s) roughly real-time, but only about 19% under the USB ceiling.
+  
+  Run everything on the Radxa vendor kernel (or Armbian current), held together with its headers for the la9310 DKMS module.
+  - **Sources:**
+    - https://docs.radxa.com/en/dragon/q6a/hardware-use/ufs-emmc-com
+    - https://shop.allnetchina.cn/products/high-performance-ufs-3-1-module
+    - https://www.tinytronics.nl/en/data-storage/modules/radxa-ufs-module-128gb
+    - https://forum.radxa.com/t/ufs-random-reboots/30630
+    - https://smarthomecircle.com/radxa-dragon-q6a-best-alternative-to-the-raspberry-pi-5
+    - https://ssd-tester.com/samsung_portable_ssd_t7_1tb.html
+    - https://ssd-tester.com/samsung_portable_ssd_t7_shield_1tb.html
+    - https://hotline.ua/ua/sr/?q=Samsung%20T7%20Shield%201TB
+    - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro/src/src/boards/LimeSDR_Micro/LA9310_TRX.cpp
+    - https://github.com/armbian/build/blob/main/config/sources/families/qcs6490.conf
+    - https://dl.radxa.com/q6a/docs/rad-doc-0150_radxa_dragon_q6a_product_brief__revision_1.5_gbc16bac.pdf
+- **Final budget option:**
+  - **Name:** Radxa UFS 3.1 Module 128GB only, recording narrowband or decimated, with short wideband bursts through the RAM ring; add a Samsung T7 1TB later without redesign
+  - **Price:** $65.90 (Allnet China, in stock) or EUR 58 (Tinytronics NL, 2-4 weeks), plus shipping and customs
+  - **Why:** It is the cheapest officially supported boot drive that is actually in stock, it avoids the Kioxia bug, and it costs only about EUR 13 more than a slower 64GB eMMC module (EUR 45 at Tinytronics).
+  
+  Narrowband passes fit easily: LRPT, HRPT, CubeSats and QO-100 slices at 7 Msps or less (cs16) or decimated, 28 MB/s or less.
+  
+  Wideband needs care:
+  - An 8 GiB RAM ring gives 56 MHz cs16 bursts of about 35 s with no drain.
+  - Do not plan on sustained 56 MHz cs8 to this module until a long fio fill test proves its post-cache floor. A 2-die 128GB TLC part may fall well below the ~300 MiB/s seen on 256GB QCS6490 modules.
+  
+  Offload over GbE (RTL8111K on pcie0, about 110 MB/s). Do not substitute a Kingston XS1000 as the later USB SSD for long cs16 captures: it drops to about 140 MB/s after about 60 GB of cache.
+- **Known problems and fixes to apply:**
+  - Kernel: run only the Radxa vendor kernel (Radxa OS noble, from radxa/kernel linux-6.18.2 after May 11, 2026, or linux-7.0.11) or Armbian 'current'. Mainline has no Q6A UFS or USB 3 device-tree support. Armbian 'edge' (7.2.3) lacks the Kioxia quirk. Hold the kernel, its headers and the meta packages (apt-mark hold), because an apt upgrade has already reverted the fix once. Keep the headers so the la9310_limesdr DKMS module builds.
+  - On arrival, identify the UFS chip from /sys/class/scsi_device/*/device/model and the UFS device_descriptor/manufacturer_id: 0x01CE is Samsung, 0x0198 is Kioxia. Radxa says future batches may change brand. If it is the Kioxia THGJFGT1E45BAILB:
+  - confirm the quirk is active: zero ufshcd OCS, pa_err or dl_err lines in journalctl -k, and 'ufs-utils uic -t 1 -r -i 0x15a8' reads 0xa;
+  - for long sessions, apply the H8-suppression profile: clkgate_enable=0, auto_hibern8=0, rpm_lvl=0, clkscale_enable=0.
+  - Boot firmware: update the SPI firmware to 251013 or newer (260120 preferred) with edl-ng before fitting the UFS. Keep a microSD rescue card; removing the UFS module lets the board boot from SD. If the Radxa USB reader is not detected, flash UFS on the board over EDL (Armbian Imager) or boot from SD and write it in place.
+  - Before trusting UFS for any wideband capture, measure it:
+  - WriteBooster size = wb_shared_alloc_units x 512 x allocation_unit_size x segment_size, from sysfs;
+  - a long run of 'fio --rw=write --bs=1M --direct=1 --iodepth=16' sized to about 70% of free space, with --write_bw_log, while logging attributes/wb_avail_buf.
+  Record 56 MHz to UFS only if the 10-s minimum bandwidth is at least 295 MB/s for cs16, or comfortably above 123 MB/s for cs8.
+  - Recorder: never point limeTRX straight at disk.
+  - The limesdr-micro branch has no output-file open check, writes synchronously in the RX loop, and the LA9310 FIFO holds only about 50 ms.
+  - Use limeTRX into a named pipe, then 'mbuffer -L -m 8G -s 4M' to the target, or a custom recorder: SoapySDR CS16 into a mmap+mlock ring, with a writer thread doing 4 MiB O_DIRECT writes to a preallocated (fallocate) file.
+  - Run swapoff -a, pin the RX thread with taskset -c 7 chrt -f 50, use the performance governor, move UFS, xHCI and PCIe IRQs to separate cores, and disable auto-suspend.
+  - Check that exactly one SigMF 'captures' entry exists.
+  - Formats: the LimeSDR Micro forces an I16 PCIe link (--linkFormat=I12 is ignored), and limesuiteng's Soapy 'CS12' is int16-stored, not 3-byte packed. Request CS16, then convert on the CPU to cs8 or your own packed-12 (with an offline cs16 converter for SatDump), or use SatDump ZIQ. Budget 4 bytes per sample on PCIe: 640 MB/s at 160 Msps.
+  - USB SSD: use a Samsung T7 or T7 Shield on the blue USB 3.1 port and confirm 'lsusb -t' shows Driver=uas at 5000M.
+  - Format ext4 or XFS with noatime (not exFAT or NTFS), and preallocate capture files.
+  - Run a 60-minute fio write qualification while logging 'smartctl -A' temperature and watching dmesg for uas/xhci resets, including 10 HDMI replugs.
+  - If resets appear, set usbcore.autosuspend=-1 and add the 'k' (no LPM) quirk for the drive.
+  - Avoid QLC drives, DRAM-less HMB NVMe drives in USB bridges, and the Kingston XS1000 for long cs16 captures.
+  - Power: the stacked USB3/USB2 Type-A pair shares one WS4612 switch limited to about 2.1 A (schematic v1.21, read from the schematic, not measured). Put only the T7, plus at most the RTL-SDR, on that pair. Supply the Q6A with at least 24 W (12 V/2 A) through USB-C PD or the 12 V header when PCIe and USB 3 are both loaded.
+  - Thermal and cold:
+  - The UFS module reaches about 60 C even with fans. Press it from the case with a 1.0-1.5 mm silicone pad on a printed boss (this also retains the B2B connector) and log the 'ufs-thermal' zone.
+  - The T7 Shield is rated 0-60 C (case), and the standard UFS module 0-70 C (Evelta listing).
+  - Gate wideband writes until ufs-thermal is above +10 C, warming the board with stress-ng inside a foam winter sleeve.
+  - Never charge the Li-ion pack below 0 C.
+  - Wear: no TBW is published for Radxa UFS modules. Log health_descriptor/life_time_estimation_a/b, eol_info and wb_life_time_est at every boot and capture. Keep 56 MHz captures on the replaceable T7 (885 GB/h at cs16). Optionally let the NPU classifier decide which RAM-ring segments get written to disk.
+- **Missed better options:**
+  - For this role the 128GB Samsung UFS beats the 256GB Kioxia: it is in stock, $10 cheaper on paper, and needs no vendor-only quirk. Its lower burst write does not matter once wideband goes to the USB SSD.
+  - The Samsung T7 1TB (from 9,299 UAH) is the price/performance pick in Ukraine, since any drive sustaining more than ~400 MB/s saturates the Q6A port. The T7 Shield adds IP65 and about 870 MB/s post-cache for about 2,700 UAH more. The Kingston XS1000 is cheaper (6,726 UAH) but falls to about 140 MB/s after its cache, so it is not a real substitute.
+  - Double duty: the NPU classifier can gate which RAM-ring segments are committed to disk. That cuts storage size and UFS wear without extra hardware.
+  - No hidden second PCIe lane exists: pcie0 is used by the RTL8111K Ethernet, and Wi-Fi is a USB module on the onboard USB 2.0 hub. Sharing the M.2 slot through a switch remains the only, and not recommended, route to NVMe.
+- **Remaining uncertainties:**
+  - Post-WriteBooster sustained write of both Radxa modules on the Q6A is unknown. It may be below 200 MB/s on the 128GB Samsung part (inference from die count). The WriteBooster provisioning of Linux-shipped modules is also unknown; Radxa's 4 GiB value comes from its Android XML.
+  - Only one Q6A USB 3 storage figure exists: about 395 MB/s fio write with an unnamed adapter, no parameters and no sustained run. Long-run UAS stability is untested.
+  - The chip in future 128GB and 512GB batches is not guaranteed; Radxa staff said they are 'not certain which brand will be used in the next batch'.
+  - Allnet China shipping to Ukraine and the landed cost were not verified. The AliExpress Radxa store price could not be fetched (redirect or login wall). The Rozetka 7,499 UAH T7 price could not be re-checked (HTTP 403).
+  - The roughly 2.1 A Type-A VBUS limit is read from schematic text (WS4612, Rset 3.24 kOhm). Exactly which ports share the switch is inferred from page 26.
+  - 160 Msps RX over PCIe Gen3 x1 into a RAM ring has not been demonstrated on the Q6A or any ARM SBC. The LimeSDR Micro ships Dec 15, 2026, so end-to-end tests wait until then.
+  - Cold-start behaviour below 0 C for the UFS module and the T7 is untested. Availability, SKU and price of the industrial -25 to +85 C UFS grade are unknown.
+  - The Kioxia quirk has not been upstreamed to mainline, so a future Radxa kernel rebase could drop it. Re-verify after every kernel update.
+- **Confidence:** medium
+
 _Агент цього етапу ще працює (run `wf_3e735695-e00`)._
 
