@@ -1,0 +1,485 @@
+# Display: повні відповіді субагентів
+
+Тексти відповідей агенти писали англійською; тут вони наведені повністю, без скорочень.
+
+## Дослідження (`research`)
+
+_Run `wf_0e70c405-a03`_
+
+- **Component:** Display: very bright, ideally higher than Full HD, capacitive touch, 5.5-8 in, for a Radxa Dragon Q6A handheld used in direct sunlight
+- **Current pick assessment:** The current pick, a generic "5-7 inch DSI or HDMI touchscreen at $60-100", does not meet the new requirement. Displays in that class are 300-500 nit panels at 1024x600 or 1080p (examples: Waveshare 7" FHD 1080x1920 at about 350 nits, Waveshare 7HP-CAPQLED at 500 nits), and they wash out in direct sun. A rough estimate, assuming about 1% diffuse reflectance at about 100 klx, gives these contrast ratios: 350 nits about 2:1, 1000 nits about 4:1, 2000 nits about 7:1, 3000 nits about 10:1. DSI is not a real option either. Radxa documents that only its own Display 10 FHD (1200x1920) and Display 8 HD (800x1280) are supported. A Feb-2026 forum thread shows the official 8HD panel staying black on Ubuntu 24.04, because that image has no panel driver or overlay, and no staff reply has appeared. So HDMI plus USB touch is the realistic path.
+  
+  What the Q6A HDMI port can do:
+  - Radxa's docs state up to 4K@30.
+  - The port is a QCS6490 DisplayPort output (data-lanes <0 1>, i.e. 2 lanes) feeding Radxa's passive RA620 DP-to-HDMI bridge. Mainline patches (May 2026) cap the DP voltage swing at level 2 because link training fails at level 3.
+  - The same RA620 drives a 4K@60 HDMI port on the ROCK 5 ITX, so the 4K30 cap comes from the 2-lane DP link, not the bridge.
+  - My own calculation: a 2-lane HBR2 link carries 8.64 Gbps. 4K30 at 297 MHz needs 7.13 Gbps, which matches Radxa's cap. 2560x1600@60 with reduced-blanking timing (268.5 MHz) needs 6.44 Gbps, so it should fit. 1920x1080/1200@60 (3.6-3.7 Gbps) is safe.
+  - I found no forum report of anyone running more than 1080p on a Q6A.
+  
+  Market reality in October 2026, after many searches: I could not find any plug-and-play module that is above FHD, at least 1000 nits, 5.5-8 in, and has both HDMI and USB touch.
+  - Above-FHD small panels you can actually buy are dim: Waveshare 9" 2560x1600 about 350 nits, Wisecoco 8.9"/9" 2560x1600 500 nits, LS055R1SX04 5.5" 1440x2560 450 nits, Waveshare 5.5" AMOLED about 310 nits max.
+  - Very bright small panels are 1920x1080 or 1920x1200. Camera field monitors with 1920x1200 at 2200-2600 nits do exist, but their touchscreen runs the monitor's own menus. No spec sheet I found lists a USB-HID touch output, so they will not act as a touchscreen for the Q6A.
+  - Pixel density at 7" 1080p is already 315 PPI. At a 35 cm handheld distance, 1-arcminute visual acuity is about 250 PPI, so 2.5K at 8-8.4" (359-377 PPI) adds little sharpness while costing brightness, power and GPU fill (about 1.8x the pixels).
+  Brightness matters far more than resolution for this device.
+- **Alternatives:**
+  1.
+    - **Name:** Wisecoco 7in 1920x1080 sunlight-readable LTPS IPS kit, 2000-2500 nits, with HDMI-in board and capacitive touch
+    - **Key specs:** - 7in 1920x1080, 315 PPI, LTPS IPS.
+  - Brightness: 2000+ cd/m2 typ. in the spec table; the title says 2500; eBay listings say 2000 or 2000-2400.
+  - 1000:1 contrast, 85/85/85/85 viewing angle.
+  - MIPI 4-lane panel on an HDMI-in board; capacitive touch.
+  - Outline 164.2x98.0 mm; rated -20 to 70 C.
+  - Thickness, power draw and touch-to-host interface are not stated. Midas datasheet scaling for a similar 7in panel suggests about 6-8 W total at 2000 nits (estimate).
+    - **Price:** $132 on wisecocodisplay.com ("LCD panel with HDMI in board"). The Wisecoco eBay kit (2000 nits, touch, HDMI) sold for $177.64 in June 2025, plus $80 expedited shipping. October 2026 price is unverified.
+    - **Pros:** - Among the options I could verify, it is the only one that combines at least 2000 nits, HDMI input, capacitive touch and a hobby price.
+  - 315 PPI looks retina-sharp at arm's length.
+  - 1080p60 is the safest mode on the Q6A's RA620 HDMI path.
+  - Wide temperature rating; thin and light compared with field monitors.
+  - Roughly half the power draw of a 2200-3000 nit field monitor at a comparable outdoor brightness.
+    - **Cons:** - Not above FHD.
+  - Specs are inconsistent across listings (2000 / 2400 / 2500 nits; HDMI vs MIPI).
+  - Touch-to-host interface (USB HID?), board input voltage, lamination and anti-glare finish are all unconfirmed.
+  - No datasheet or panel part number published.
+  - Shipping to Ukraine via eBay is expensive.
+    - **Sources:**
+      - https://www.wisecocodisplay.com/product/7-inch-1920x1080-high-brightness-2500nits-lcd-panel-with-hdmi-in-board-ips-mipi-interface-tft-lcd-screen/
+      - http://www.wisecocodisplay.com/product-category/high-brightness-display/
+      - https://www.ebay.com/itm/176657492046
+      - https://www.ebay.de/itm/176594983531
+      - https://www.aliexpress.us/item/3256805758322161.html
+    - **Availability:** Wisecoco B2B site ("Get a Quote"), Wisecoco eBay and AliExpress official stores. AliExpress pages need a login and could not be read; ask the seller for the datasheet and photos of the board and touch controller before ordering.
+    - **Q6a compatibility:** Good, via HDMI at 1920x1080@60 plus USB touch on a USB 2.0 port (hid-multitouch, no driver needed if the board exposes USB HID). If the board advertises a portrait mode (1080x1920), force the mode with video= and rotate in the compositor.
+  2.
+    - **Name:** Midas MDT0700F1IHHC-MIPI, 7.02in 1200x1920, 2500 nits (the brightest verified above-FHD panel)
+    - **Key specs:** - 7.02in 1200x1920 (WUXGA), 323 PPI, ADS 8-bit + FRC.
+  - 2500 cd/m2, cover lens with anti-reflection coating, in-cell capacitive touch (FT7250, I2C), so there is no extra touch layer or air gap.
+  - MIPI DSI, 4 lanes, 40-pin 0.5 mm FFC. Init is only 2 DCS commands (sleep out, display on).
+  - Module 115.7x177.06x5.4 mm; rated -20 to 70 C.
+  - Backlight from the datasheet at 16 V Vf typ.: 200 mA = 1000 nits (about 3.2 W), 300 mA = 1500 nits (4.8 W), 400 mA = 2000 nits (6.4 W), 500 mA = 2500 nits (8 W, with a thermal caveat).
+  - Needs IOVCC 1.8 V and VSP/VSN +/-5.5 V supplies.
+    - **Price:** About EUR 324 each at Farnell, 12-week lead time (from a search snippet; the live page was unavailable).
+    - **Pros:** - Best optics found: 2500 nits, AR-coated cover glass, in-cell touch, so reflections stay low in sun.
+  - Its 1920x1200 resolution is in the user's above-FHD list.
+  - Datasheet-backed power curve allows real battery planning.
+  - The trivial init sequence makes a Linux panel-simple-dsi style driver feasible.
+  - Wired directly to DSI, it frees the HDMI port and removes the bridge board.
+    - **Cons:** - Not plug-and-play. You either build a custom adapter PCB for the Q6A's 39-pin 0.3 mm DSI (+/-5.5 V, 1.8 V, a 16-19 V LED boost, plus device-tree and kernel work), or find an HDMI-to-MIPI board flashed for this panel.
+  - FT7250 is not in the mainline edt-ft5x06 compatible list (unverified whether it works).
+  - Expensive, with a long lead time.
+    - **Sources:**
+      - https://www.farnell.com/datasheets/3984938.pdf
+      - https://export.farnell.com/midas-displays/mdt0700f1ihhc-mipi/lcd-tft-display-7-1200x1920p-mipi/dp/4248109
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/mipi-dsi
+      - https://docs.kernel.org/7.1/_sources/input/devices/edt-ft5x06.rst.txt
+    - **Availability:** Farnell (UK/EU export), about 12-week lead time. Stock in October 2026 not verified.
+    - **Q6a compatibility:** Hard. Radxa supports only its own DSI panels, so a DSI build means your own device-tree overlay and panel entry. An HDMI build needs a third-party HDMI-to-MIPI bridge configured for this panel. Advanced builders only.
+  3.
+    - **Name:** Wisecoco 8.4in 1600x2560, 2000 nits (bare MIPI panel)
+    - **Key specs:** - 8.4in 1600x2560, 359 PPI, 2000 cd/m2 typ., 1500:1 contrast, 60 Hz.
+  - MIPI 8 lanes on 2 ports.
+  - Backlight 32 LEDs (8S4P, 80 mA).
+  - 115.84x190.71x2.05 mm.
+  - Operating range only -10 to 50 C.
+  - Touch and HDMI board are not stated.
+    - **Price:** $158 (panel only, Wisecoco site)
+    - **Pros:** - The only option found that is both 2.5K and about 2000 nits in the target size.
+    - **Cons:** - Dual-port MIPI, so it cannot be driven from the Q6A's single 4-lane DSI. It needs a dual-DSI HDMI bridge board that is not listed.
+  - No touch listed.
+  - 50 C maximum operating temperature is risky in summer sun.
+  - No datasheet; title and alt text disagree on orientation.
+  - I found no off-the-shelf 8.4in 2560x1600 HDMI kit anywhere.
+    - **Sources:**
+      - https://www.wisecocodisplay.com/product/8-4-inch-ips-tft-lcd-display-1600x2560-2000nits-high-brightness-screen-with-mipi-interface/
+      - http://www.wisecocodisplay.com/product-category/high-brightness-display/
+    - **Availability:** Quote-based from Wisecoco; kit availability unverified.
+    - **Q6a compatibility:** HDMI only, through a custom dual-MIPI bridge. 2560x1600@60 with reduced blanking (6.44 Gbps) should fit the Q6A's 2-lane DP link, but is untested. Uncertain.
+  4.
+    - **Name:** FEELWORLD LUT7 / LUT7S PRO (7in field monitor)
+    - **Key specs:** - 7in 1920x1200, 323 PPI, 2200 nits, 1200:1 contrast, IPS touch.
+  - 4K30 HDMI input; LUT7S PRO adds SDI.
+  - Light sensor for auto-dimming.
+  - 7-21/24 V DC, up to 20 W (Adorama lists 20 W).
+  - 450 g without battery, 460 g with battery plate.
+    - **Price:** $379.99 at Newegg; about EUR 387-469 in the EU (LUT7S PRO). Used units around $312 on eBay.
+    - **Pros:** - Above FHD (WUXGA) and very bright, in a rugged finished product.
+  - Sun-readable, with auto-dimming.
+  - Runs directly from the 4S pack voltage.
+  - Accepts any input mode up to 4K30 and scales it.
+    - **Cons:** - Touch controls only the monitor's menus; no spec sheet lists a USB touch output for the host, so you would need an encoder or buttons for SDR++.
+  - Heavy and thick; up to 20 W; runs very warm (user review).
+    - **Sources:**
+      - https://www.newegg.com/p/0UF-017N-00083
+      - https://syntex.tv/feelworld-lut7s-pro
+      - https://www.adorama.com/felut7.html
+      - https://www.adorama.com/used-feelworld-7-3d-lut-4k-hdmi-ultra-bright-2200nits-on-camera-touchscreen-monitor/p/us2015131
+    - **Availability:** EU photo/video shops; Prom.ua lists other FEELWORLD models in stock.
+    - **Q6a compatibility:** Video works over HDMI at 1920x1200@60. No touch to the host.
+  5.
+    - **Name:** Desview R72 (7in, 2600 nits, field monitor)
+    - **Key specs:** - 7in 1920x1200 IPS, 2600 nits, 1100:1 contrast, 90% DCI-P3.
+  - Touch plus scroll wheel.
+  - 4K HDMI in and out.
+  - Power and weight not listed.
+    - **Price:** $549 (Camera House AU; currency appears to be AUD); low stock
+    - **Pros:** - Brightest 1920x1200 field monitor found.
+  - Wide colour gamut.
+    - **Cons:** - Touch is for the monitor menu only.
+  - Expensive.
+  - Power draw unknown (expect 15-20 W class).
+  - Poor availability in EU and Ukraine.
+    - **Sources:**
+      - https://www.camerahouse.com.au/desview-r72-7-2600-nits-touch-screen-4k-hdmi-on-camera-field-monitor-1
+    - **Availability:** Limited; not found in Ukrainian shops.
+    - **Q6a compatibility:** Video over HDMI only.
+  6.
+    - **Name:** FEELWORLD LUT5 (5.5in, 3000 nits)
+    - **Key specs:** - 5.5in 1920x1080, 368 PPI, 3000 nits, IPS touch.
+  - 4K30 HDMI input; light sensor auto-dimming.
+  - 142x86x28 mm, 270 g.
+  - 7-24 V DC; some listings say up to 20 W. LUT5E variant listed at 9 W.
+    - **Price:** EUR 229 (Ireland) to about EUR 275-290 (Baltics); UK RRP GBP 329, street GBP 249
+    - **Pros:** - Brightest small option found.
+  - Compact and light; auto-dimming.
+  - Runs directly from 4S pack voltage.
+    - **Cons:** - FHD only, and small for the SatDump/SDR++ UI.
+  - Up to 20 W at full brightness.
+  - Touch is not usable by the host.
+    - **Sources:**
+      - https://www.photospecialist.ie/feelworld-5-5-lut-5-monitor-3000-nits
+      - https://www.masterfoto.lv/en/external-lcd-displays/5133-feelworld-55-lut-5-monitor-3000-nits-lut-5.html
+      - https://www.adorama.com/felut5e.html
+    - **Availability:** EU shops (IE, LV, EE); no UAH listing found.
+    - **Q6a compatibility:** Video over HDMI at 1080p60. No touch to the host.
+  7.
+    - **Name:** FEELWORLD F6 PLUSX (5.5in, 1600 nits), available in Ukraine
+    - **Key specs:** - 5.5in 1920x1080 IPS, 1600 nits, 1000:1 contrast, touch (menu).
+  - Up to 9-10 W; 7-24 V DC.
+  - 235 g; 148x93x20 mm.
+    - **Price:** 8,250-13,834 UAH on Prom.ua (about $200-335 at about 41.5 UAH/USD, approximate). The related F5 PROX (1600 nits) is 7,660 UAH.
+    - **Pros:** - In stock locally in Ukraine.
+  - Lowest power of the bright field monitors.
+  - Light, and runs directly from the pack.
+    - **Cons:** - 1600 nits is only adequate in direct sun.
+  - FHD at 5.5in.
+  - No touch to the host.
+    - **Sources:**
+      - https://prom.ua/Feelworld-f5.html
+      - https://www.bhphotovideo.com/c/product/1771211-REG/feelworld_f6plusx_f6_plus_x_5_5.html
+      - https://masterfoto.lv/en/external-lcd-displays/11376-feelworld-f6-plusx-55-hdmi-monitor-1600nit-d252811.html
+    - **Availability:** Prom.ua, several sellers, ready to ship.
+    - **Q6a compatibility:** Video over HDMI. Needs a separate input device.
+  8.
+    - **Name:** Other no-host-touch bright monitors: Lilliput H7s, BenQ PVS7, NEEWER F700, Portkeys LH5P II
+    - **Key specs:** - Lilliput H7s: 7in 1920x1200, 1800 nits, no touch, up to 15 W, 7-24 V, 535 g, 225x155x23 mm.
+  - BenQ PVS7: 7in 1920x1200, 2000 nits, HDMI 2.0, 10 W typ. / 18 W max, DC 6.5-16.8 V, 693 g, 38.6 mm deep.
+  - NEEWER F700: 7in 1920x1080, 2000 nits, menu touch, 12-26 V DC or USB-C 5V/3A.
+  - Portkeys LH5P II: 5.5in FHD, 2200 nits, menu touch, 285 g.
+    - **Price:** H7s $299 (out of stock); PVS7 price not listed; F700 GBP 309.99 / EUR 399.99 (2025 sale listings); LH5P II $399
+    - **Pros:** - Bright, finished, rugged units.
+  - PVS7's 6.5-16.8 V input exactly matches a 4S pack.
+    - **Cons:** - None provide touch to the host.
+  - Heavy (285-693 g), 10-18 W.
+  - Poor value for this project.
+    - **Sources:**
+      - https://avlgear.com/products/lilliput-h7s-7-inch-ultra-brightness-on-camera-monitor
+      - https://www.benq.eu/uk-ua/monitor/professional/pvs7/spec.html
+      - https://uk.neewer.com/products/neewer-f700-7-camera-field-touch-screen-monitor-66605230
+      - https://www.glazerscamera.com/collections/all/products/portkeys-lh5p-ii15-5-monitor
+    - **Availability:** EU and global photo retailers; BenQ has a Ukrainian product page.
+    - **Q6a compatibility:** Video over HDMI only.
+  9.
+    - **Name:** Lilliput 719/T (7in industrial, 1000 nits, PCAP touch over USB-C, IP65)
+    - **Key specs:** - 7in 1280x800 (216 PPI), 1000 nits, 800:1 contrast, 10-point PCAP.
+  - HDMI, VGA and USB-C (video, touch and power).
+  - DC 9-36 V, up to 8.5 W at 12 V.
+  - 410 g; 184.5x118.8x32 mm; IP65 frame; -20 to 60 C; auto-dimming.
+    - **Price:** EUR 289 incl. VAT at Syntex (on request); $289 at Markertek (out of stock)
+    - **Pros:** - Finished, rugged unit with touch delivered to the host.
+  - Runs directly from 4S pack voltage (9-36 V) with no buck converter.
+  - Moderate power draw.
+    - **Cons:** - Low resolution (below FHD).
+  - Thick and heavy for a handheld.
+  - Only 1000 nits.
+    - **Sources:**
+      - https://syntex.tv/lilliput-719-t
+      - https://www.markertek.com/product/lil-719h-t/lilliput-719h-t-7in-1000-nit-touch-screen-4k-monitor-w-ip65-frame-hdmi-extension-cable-1280x800-hdmi-usb-a
+      - https://www.syntex.tv/introducing-the-latest-offerings-from-lilliput
+    - **Availability:** Syntex (CZ, EU), on request.
+    - **Q6a compatibility:** HDMI video plus USB touch (USB-C to USB-A cable). Needs video=HDMI-A-1:1280x800@60 if the boot mode is wrong.
+  10.
+    - **Name:** Industrial 7in 1024x600 high-brightness HDMI modules: Riverdi 7.0in HDMI (800-1000 nits) and Orient Display AFY1024600A2-7.0INTH-C-HDMI (900 nits)
+    - **Key specs:** - Riverdi: 7in 1024x600 IPS, up to 1000 cd/m2 (optically bonded version 850), USB-C touch and power, backlight about 2.4-2.6 W.
+  - Orient Display: 7in 1024x600, 900 cd/m2, PCAP, RTD2662 controller, 12 V, 167x115x12 mm.
+    - **Price:** Riverdi RVT70HSHFWCA0 about $397 (RS NZ, ex GST). Orient Display $107.88.
+    - **Pros:** - Low power for the brightness; proper industrial parts with datasheets.
+  - Orient Display is cheap.
+    - **Cons:** - 170 PPI looks coarse; small UI area.
+  - Riverdi is expensive.
+    - **Sources:**
+      - https://www.mouser.at/riverdi-7inch-hdmi-displays
+      - https://sg.rs-online.com/web/p/lcd-colour-displays/0672204
+      - https://orientdisplay.com/products/7-0-raspberry-pi-tft-with-pcap-1024x600-900-nits-vga-hdmi-usb-interface/
+    - **Availability:** Riverdi via TME, Mouser and RS (EU). Orient Display ships from the US.
+    - **Q6a compatibility:** HDMI plus USB touch. Radxa's FAQ shows exactly this case: a 1024x600 panel garbles until video=HDMI-A-1:1024x600@60 is set.
+  11.
+    - **Name:** Waveshare 9in 2560x1600 monitor (SKU 18184) / Wisecoco 8.9in and 9in 2560x1600 touch kits
+    - **Key specs:** - Waveshare: 9in 2560x1600 IPS (335 PPI), about 350 nits, optically bonded 10-point capacitive touch over USB, mini HDMI, 5 V at 410-580 mA (about 2-2.9 W).
+  - Wisecoco: 8.9in or 9in 2560x1600, 500 nits, touch, HDMI and Type-C board; the 8.9in panel is dual-channel MIPI.
+    - **Price:** Waveshare: INR 10,933 + GST (about $130 + GST) at Hubtronics; about EUR 180 at Grobotronics (out of stock); discontinued at Switch Science. Wisecoco: $107-148 + about $50 shipping (eBay).
+    - **Pros:** - The only real plug-and-play above-FHD touch options.
+  - Very low power; beautiful indoors.
+    - **Cons:** - 350-500 nits is unreadable in direct sun.
+  - 9in is larger than the target size.
+  - 2.5K over the Q6A's HDMI is untested.
+  - The Waveshare unit is being discontinued.
+    - **Sources:**
+      - https://www.waveshare.com/wiki/9inch_2560x1600_Monitor
+      - https://grobotronics.com/pi-display-9-mini-hdmi-2560x1600-2k-ips-capacitive-touchscreen-usb.html
+      - https://hubtronics.in/display-devices/lcds/hdmi-lcds/9inch-2560x1600-monitor
+      - https://www.switch-science.com/products/7552
+      - https://www.ebay.de/itm/176550075238
+      - https://www.ebay.de/itm/176619193823
+    - **Availability:** Limited and fading for Waveshare; Wisecoco available on eBay and AliExpress.
+    - **Q6a compatibility:** Probable at 2560x1600@60 with reduced blanking (6.44 Gbps, below the 2-lane DP limit), but unverified on the Q6A. Fall back to 1920x1200 scaling if the link fails.
+  12.
+    - **Name:** Waveshare 5.5in HDMI AMOLED (1080x1920)
+    - **Key specs:** - 5.5in 1080x1920 AMOLED (401 PPI), about 90% NTSC.
+  - 5 brightness steps: 75 / 140 / 210 / 260 / 310 cd/m2.
+  - 5-point USB touch.
+  - 5 V at about 650 mA all-white, 250 mA all-black; 4.8 mm thick.
+    - **Price:** Not verified in this search (historically about $70-90)
+    - **Pros:** - Beautiful contrast and colour; very thin.
+  - Low power on dark UIs like SDR++ waterfalls.
+    - **Cons:** - Only about 310 nits maximum, useless in sun.
+  - Burn-in risk: Waveshare warns against static images longer than about 1 hour, and the SDR++/SatDump UI is static.
+  - Portrait-native.
+    - **Sources:**
+      - https://www.waveshare.com/wiki/5.5inch_HDMI_AMOLED
+      - https://sudomod.com/forum/viewtopic.php?p=67896
+    - **Availability:** Waveshare and AliExpress
+    - **Q6a compatibility:** HDMI plus USB touch; needs a forced 1080x1920 mode and rotation. A Sudomod user's similar Wisecoco OLED board worked on Windows but not on a Pi, which points to EDID/timing quirks.
+  13.
+    - **Name:** Waveshare 5in high-brightness capacitive LCD 5DP-CAPLCD-B (budget)
+    - **Key specs:** - 5in 1024x600 IPS (237 PPI), 800 cd/m2.
+  - Toughened glass, optically bonded (-B variant; -H is narrow-bezel and air-bonded).
+  - HDMI plus USB capacitive touch.
+    - **Price:** About $63 (RobotShop US) / GBP 50.76 / EUR 64.95 (Openelab, -H variant, sold out)
+    - **Pros:** - Cheap and proven driver-free USB touch on Linux.
+  - Optical bonding reduces reflections.
+  - Low power.
+    - **Cons:** - 800 nits is marginal in full sun.
+  - Low resolution and a small screen.
+    - **Sources:**
+      - https://www.robotshop.com/products/waveshare-5-high-brightness-touch-screen-1024x600-pixels-toughened-glass-panel-hdmi-interface-ips-panel
+      - https://openelab.io/a/s/products/waveshare-5inch-narrow-bezel-capacitive
+    - **Availability:** Waveshare store, AliExpress, EU resellers (stock varies)
+    - **Q6a compatibility:** HDMI plus USB touch. Set video=HDMI-A-1:1024x600@60 (Radxa FAQ fix).
+- **Recommended:**
+  - **Name:** Wisecoco 7in 1920x1080 2000-2500-nit sunlight-readable LTPS IPS "Full Kit" (panel + HDMI-in driver board + capacitive touch), run from the Q6A HDMI port with USB touch; upgrade path to the Midas MDT0700F1IHHC 7in 1200x1920 2500-nit panel
+  - **Why:** Brightness matters more than resolution for a sunlit handheld:
+  - About 7:1 contrast in about 100 klx sun at 2000 nits, versus about 2:1 for the 350-500 nit 2.5K panels (my estimate).
+  - 7in 1080p is 315 PPI, already past what the eye resolves at 35 cm (about 250 PPI).
+  - 1080p60 is the safest, best-supported mode on the Q6A's RA620/2-lane-DP HDMI path.
+  - HDMI avoids the DSI problem: Radxa supports only its own panels, and even those fail on Ubuntu 24.04.
+  - The only verified-price product that combines 2000+ nits, capacitive touch and HDMI at a hobby price. Field monitors with the same brightness cost $230-550, weigh 235-693 g, draw 9-20 W, and their touch does not reach the host.
+  - Expected draw is about 6-8 W at full brightness and about 4-5 W at 1000 nits. This is an estimate scaled from the Midas datasheet (backlight 3.2 W at 1000 nits, 6.4 W at 2000 nits, plus board).
+  - With a $2 lux sensor and a sun hood, average draw can be much lower.
+  
+  Before paying, insist that the seller confirms:
+  - the exact nit rating
+  - that the touch reaches the host as USB HID
+  - the board's input voltage (ideally 12 V)
+  - whether the touch glass is optically laminated.
+  
+  If you specifically want above-FHD with bonded AR glass and will do some electronics work, the Midas 7.02in 1200x1920, 2500-nit panel (about EUR 324, 12-week lead time) is the best verified panel. The cost is a custom DSI adapter and device-tree overlay, or an HDMI-to-MIPI board flashed for that panel. No verified plug-and-play above-FHD, 1000-nit-plus HDMI touch module in 5.5-8in existed in this search.
+  - **Price:** $132 (Wisecoco site, panel + HDMI board; confirm touch is included) to about $178 + shipping (Wisecoco eBay kit with touch, 2025 sale). Upgrade path: about EUR 324 for the Midas panel + about $30-60 adapter (estimate).
+  - **Sources:**
+    - https://www.wisecocodisplay.com/product/7-inch-1920x1080-high-brightness-2500nits-lcd-panel-with-hdmi-in-board-ips-mipi-interface-tft-lcd-screen/
+    - https://www.ebay.com/itm/176657492046
+    - https://www.farnell.com/datasheets/3984938.pdf
+    - https://docs.radxa.com/en/dragon/q6a
+    - https://docs.radxa.com/en/dragon/q6a/hardware-use/mipi-dsi
+    - https://forum.radxa.com/t/dragon-q6a-radxa-display-8hd-not-detected-on-ubuntu-24-04-noble-problem/30422
+    - https://lore.gitlab.freedesktop.org/drm-ai-reviews/20260522060645.4399-6-graham.oconnor@gmail.com/
+- **Budget option:**
+  - **Name:** Waveshare 5in high-brightness capacitive LCD 5DP-CAPLCD-B (1024x600, 800 nits, optically bonded, HDMI + USB touch). For a bigger budget screen, the Orient Display 7in 1024x600 900-nit PCAP HDMI module at $107.88 is the step up.
+  - **Why:** - Cheapest option that is still semi-sun-readable and has known-good, driver-free USB HID touch on Linux.
+  - Optical bonding cuts reflections.
+  - Very low power, about 2-3 W (estimate).
+  - Works on the Q6A over HDMI once video=HDMI-A-1:1024x600@60 is set, which is exactly the case Radxa's FAQ documents.
+  - Trade-off: low resolution and marginal readability in full midday sun. Pair it with a deep 3D-printed sun hood.
+  - **Price:** About $63 (RobotShop US) / EUR 65 in the EU; Orient Display 7in at $107.88
+- **Risks:**
+  - Above FHD and bright do not coexist off the shelf. Every above-FHD 5.5-9in module found is 310-500 nits. The only bright above-FHD parts are bare panels (Midas 7in WUXGA 2500 nits; Wisecoco 8.4in 2560x1600 2000 nits) that need custom drive electronics.
+  - Wisecoco listings contradict each other (2000 / 2400 / 2500 nits; HDMI vs MIPI; touch interface, input voltage and lamination not stated; no datasheet). Get written confirmation and photos of the HDMI board and touch controller before paying. eBay expedited shipping was $50-80.
+  - Camera field monitors (FEELWORLD, Desview, Portkeys, NEEWER, BenQ, Lilliput H7s): touch controls only the monitor's on-screen menus. None of the spec sheets I read list a USB-HID touch output, so they cannot replace a touchscreen. They are also 9-20 W and 235-693 g.
+  - Q6A HDMI caveats. The official cap is 4K@30. The output is a 2-lane DP link through the RA620 bridge, and mainline patches cap DP voltage swing at level 2 because link training failed at level 3. Radxa warns that 'some monitors may be incompatible'. I found no community report above 1080p on the Q6A, so 2560x1600@60 is theoretically within the link but untested.
+  - DSI route: Radxa supports only its own two panels. The official 8HD stays black on Ubuntu 24.04 because the image lacks the panel driver and overlay (Feb 2026 thread, no staff answer). Any third-party DSI panel needs your own device tree and driver work.
+  - Thermal: in direct sun an LCD can reach its liquid-crystal clearing point and go fully black until it cools (Elo). Ratings: Wisecoco 8.4in -10 to 50 C only; Midas -20 to 70 C, and its 2500-nit drive mode carries a thermal warning. A 2000-nit backlight dissipates about 6 W inside the case.
+  - Polarized sunglasses can black out an LCD at certain rotations, typically portrait vs landscape. Test before fixing the screen orientation in the case.
+  - Battery cost of brightness (estimates, assuming the rest of the system draws about 15 W and about 61 Wh is usable from the 72 Wh pack): 350-nit 2.5K panel (+3 W) about 3.4 h; 2000-nit 7in at full (+8 W) about 2.6 h; 3000-nit field monitor at its 20 W spec maximum about 1.7 h.
+  - AMOLED HDMI kits: only about 310 nits, plus burn-in with the static SDR++/SatDump UI. Waveshare warns against static images longer than about 1 hour.
+  - Cheap HDMI-to-MIPI boards often report wrong or portrait-only EDID modes. A Sudomod user's Wisecoco OLED board worked on Windows but showed nothing on a Pi. Touch does not rotate together with the image.
+  - Midas lead time is about 12 weeks; Waveshare's 9in 2.5K is discontinued at some resellers. October 2026 prices and stock for most items were not live-verified, and the UAH/USD conversion (about 41.5) is approximate.
+- **Integration notes:**
+  - Connection: use HDMI from the Q6A (DSI only for the advanced Midas build). Put touch on a USB 2.0 port; the hid-multitouch driver needs no setup. The LimeSDR is on PCIe, so the RTL-SDR, touch and one spare port fit on the 3x USB 2.0.
+  - Forcing a mode (Radxa FAQ fix): echo "$(cat /etc/kernel/cmdline) video=HDMI-A-1:1920x1080@60" | sudo tee /etc/kernel/cmdline; then sudo kernel-install add $(uname -r) /boot/vmlinuz-$(uname -r); then reboot. Check the panel's EDID first with: sudo edid-decode /sys/class/drm/card1-HDMI-A-1/edid
+  - Bad EDID (my own fix, not found on forums): load a corrected EDID with drm.edid_firmware=HDMI-A-1:edid/panel.bin (file in /lib/firmware/edid). Append 'e' to the video= argument (e.g. video=HDMI-A-1:1920x1080@60e) to force the output on even when the board is not detected at boot.
+  - Above-1080p tests: use reduced-blanking modes. 2560x1600@60 RB is 268.5 MHz (6.44 Gbps) and fits the 2-lane HBR2 limit of 8.64 Gbps. Standard CVT is 348.5 MHz and exceeds the 340 MHz HDMI 1.4 TMDS limit, so avoid it. Generate modes with cvt -r.
+  - Rotation for portrait-native boards: rotate in GNOME/KDE settings, or with xrandr --output HDMI-1 --rotate left. Then fix touch with a udev rule setting ENV{LIBINPUT_CALIBRATION_MATRIX} (e.g. '0 -1 1 1 0 0' for 90 degrees) and map the touch device to the HDMI output. Riverdi and Pi forum reports say a reboot or compositor restart may be needed, and that OSD rotation breaks touch alignment.
+  - GPU: the Adreno 643 works under Freedreno/Turnip (OpenGL 4.6, Vulkan 1.3, KDE Plasma Wayland reported in May 2026 mainline patches). Radxa's own image uses the open Mesa drivers. 1080p waterfalls are easy; 2.5K costs about 1.8x the fill rate.
+  - UI: on a 7in FHD screen set SDR++ UI scaling to about 150-200%. The SDRIAK fork (formerly SDR++ iak; v1.4.0-beta2, Sept 2026) adds a touch overlay, drag-to-tune, a frequency keypad and high-DPI fixes. It ships Linux AppImage/deb builds, but ARM64 is not confirmed, so you may have to build it from source.
+  - Power: feed the display board from a dedicated 12 V buck converter off the 4S pack, not from a Q6A USB port. A 2000-nit backlight needs about 16-19 V at 0.4-0.5 A, which the board generates by boosting its input (Midas datasheet). Power the display before or together with the Q6A so EDID is readable at boot.
+  - Cabling: keep the HDMI run short (about 20 cm or less) with a quality flat or FPC HDMI cable. The Q6A's DP-to-HDMI link already needs a voltage-swing workaround, so marginal cables cause blanking or sparkles.
+  - Mechanics: the 7in kit outline is about 164x98 mm, with the board stacked behind it. Plan a front face of about 175x110 mm, a 15-25 mm 3D-printed sun hood, a light-coloured case, and an air gap or vent behind the backlight (about 6 W at 2000 nits). Mount with the polarizer axis tested against polarized sunglasses.
+  - Optics: prefer full lamination or optical bonding with AR glass (Midas has an AR cover lens with in-cell touch). Air-gap touch glass adds two reflective interfaces and destroys sunlight contrast. A matte anti-glare film helps against specular glare but slightly softens a high-PPI image.
+- **Double duty opportunities:**
+  - One 12-13 V buck rail can feed both the display driver board (if it accepts 12-13 V) and the QO-100 LNB bias-tee injector (13 V). Give each load its own LC filter, because backlight PWM noise on the LNB feed would show up in the RF.
+  - Field monitors (7-24 V), the Lilliput 719/T (9-36 V) and the BenQ PVS7 (6.5-16.8 V) can run directly from the 4S pack (12.8-16.8 V), so the display needs no separate buck converter.
+  - A $2-5 BH1750 or VEML7700 ambient-light sensor on the same I2C bus as the BNO085 can auto-dim the backlight and save about 3-5 W in shade or at dusk. With the DSI-direct Midas build, the backlight sits under the Linux backlight class, which makes this trivial. With HDMI boards, check whether brightness can be set over DDC/CI (ddcutil) or a PWM pin; this is unverified.
+  - Driving the Midas panel directly over DSI removes the HDMI-to-MIPI bridge board (about 1-2 W and about $30-60) and frees the HDMI port for an external monitor at home.
+  - A hinged 3D-printed sun hood doubles as a protective screen lid in the backpack.
+  - Field monitors' built-in light sensor and auto-dimming (LUT5/LUT7) replaces a separate lux sensor if you go that route, but you would still need an encoder for input.
+- **Confidence:** medium
+
+_Run `wf_2f1a700c-867`_
+
+- **Component:** Display (high-res, beautiful, sunlight-readable touchscreen for Radxa Dragon Q6A handheld)
+- **Current pick assessment:** The v3 spec ("5-7 inch DSI or HDMI touchscreen, ~$60-100") has two weak points. (1) DSI is high-risk on the Q6A. Radxa's Q6A MIPI DSI page (one 4-lane port, 39-pin 0.3 mm FPC) says that "only the Radxa official displays listed are supported": Display 8 HD (8", 800x1280) and Display 10 FHD (10.1", 1200x1920). It adds that third-party panels, including Raspberry Pi panels, are not adapted. Neither Radxa product page lists the Q6A under "works with". Forum reports from Feb to May 2026 show even the official 8HD failing on the Q6A: the driver is missing from the Ubuntu 24.04 kernel 6.1.y image, and on Radxa's noble image the panel is detected as DSI-1 800x1280 with the backlight on but the screen stays black. No fix has been posted. (2) Typical $60-100 hobby screens give 300-500 nits, which washes out in direct sun. Examples: RPi Touch Display 2 at 500 cd/m2, Waveshare 7" FHD 1080x1920 at about 350 nits, Waveshare 8" 2K at 470 cd/m2. The obvious "beautiful" pick, the Waveshare 5.5" AMOLED 1080x1920 ($121.99), tops out at only 310 cd/m2 (5 steps: 75-310) and has burn-in risk with a static SDR UI. The Q6A's USB-C is a 12 V power input only, with no DP alt mode, so USB-C-only portable monitors are out. Use HDMI (HDMI 2.0, up to 4K30, so 1080p60 is fine) plus a USB-HID touch connection. That path needs no drivers and is the lowest-risk route.
+- **Alternatives:**
+  1.
+    - **Name:** Lilliput 719/T (7in, 1000 nit, PCAP)
+    - **Key specs:** 7in 1280x800 (216 PPI), 1000 nits, 10-point PCAP touch over USB-C to host; HDMI + VGA + USB-C video inputs; DC 9-36 V input; 8.5 W max at 12 V; 184.5x118.8x32 mm; 410 g. Optical bonding not stated. Variant 719H/T adds an IP65 frame.
+    - **Price:** $259 (Markertek list, out of stock in Oct 2026, ships 5-14 days when available); EU via Syntex (CZ), price not verified
+    - **Pros:** Only verified option that is ≥1000 nits AND sends multi-touch to the host. Plain HDMI + USB HID with zero drivers. Runs directly from the 4S pack (12-16.8 V sits inside 9-36 V), so no separate display buck is needed. Rugged metal housing.
+    - **Cons:** Thick (32 mm) and heavy (410 g), so it pushes the device to tablet size. Resolution is only 1280x800. Expensive. Stock is spotty.
+    - **Sources:**
+      - https://www.markertek.com/product/lil-719-t/lilliput-719-t-7in-1000-nit-highbright-10-point-touch-screen-monitor-1280x800-hdmi-vga-usb-c
+      - https://www.syntex.tv/lilliput-719-t
+    - **Q6a compatibility:** HDMI video + USB touch: generic, low risk. Q6A USB-C cannot feed it video (power-only port), so use an HDMI cable plus a USB-C-to-A cable for touch.
+    - **Availability:** US Markertek out of stock; EU distributor Syntex lists it; check before ordering
+  2.
+    - **Name:** FEELWORLD F6 PLUSX / F5 PROX (5.5in 1080p 1600-nit field monitors)
+    - **Key specs:** 5.5in IPS 1920x1080 (400 PPI), 1600 cd/m2, 1000:1. F6 PLUSX: HDMI in/out + USB-C, DC 7-24 V, ≤10 W, about 148x93x20 mm, about 235 g. F5 PROX: HDMI + USB-C, powered from 5 V/2 A USB-C or a battery. The touchscreen controls the monitor's own OSD only; no host touch confirmed.
+    - **Price:** F6 PLUSX €178-232 at EU shops, €269 at Calumet (about 3-month lead time); F5 PROX $159.99 (Walmart), €174 incl. VAT (Adcom IT), €185 (Mediagear EE)
+    - **Pros:** Most 'beautiful + sunlight' image found: 1080p at 400 PPI and 1600 nits in a palm-size 5.5in body. F6 PLUSX runs directly from the 4S pack (7-24 V). Sun hoods and mounts are widely available. HDMI only, zero drivers.
+    - **Cons:** No touch input to the Q6A (OSD touch only), so it needs encoder/buttons or a mini trackpad for SDR++/SatDump. About 20 mm thick. Up to 10 W. The 3000-nit LUT5 draws about 20 W and has a fan, so avoid it.
+    - **Sources:**
+      - https://www.calumet.de/product/feelworld-fieldmonitor-f6-plusx-5-5
+      - https://masterfoto.lv/en/external-lcd-displays/11376-feelworld-f6-plusx-55-hdmi-monitor-1600nit-d252811.html
+      - https://www.bhphotovideo.com/c/product/1771210-REG/feelworld_f5prox_f5_pro_x_5_5.html
+      - https://mediagear.ee/product/5-5-feelworld-monitor-f5prox/
+      - https://www.adcom.it/en/richiedi-consiglio/71064
+      - https://cined.com/?p=218333
+    - **Q6a compatibility:** HDMI 1080p60: no risk. No touch HID.
+    - **Availability:** EU photo retailers, some with long lead times; widely sold on AliExpress (price not verified)
+  3.
+    - **Name:** Waveshare 8inch 2K Capacitive Touch Display (1536x2048, optical bonding)
+    - **Key specs:** 8in IPS 1536x2048 (320 PPI), 470 cd/m2, 1000:1, optically bonded toughened glass, 10-point USB-C touch, standard HDMI, 4 W (800 mA at 5 V), 190x128x11 mm, CNC alloy case, speaker + 3.5 mm jack, button backlight control
+    - **Price:** $109.99 (Waveshare)
+    - **Pros:** Sharpest and best-looking LCD found at hobby price. Optical bonding cuts reflections. Thin (11 mm) and low power. HDMI audio goes to the built-in speaker and jack, which handles SSTV/voice monitoring with no USB sound card.
+    - **Cons:** 470 nits is marginal in direct sun (shade or sun hood needed). 8in is beyond palm size. Portrait-native 1536x2048 timing through the Q6A's HDMI path has not been tested (Waveshare warns weak GPUs struggle; the Adreno 643 should be fine).
+    - **Sources:**
+      - https://www.waveshare.com/8inch-1536x2048-lcd.htm
+      - https://www.waveshare.com/wiki/8inch_1536x2048_LCD
+    - **Q6a compatibility:** HDMI + USB HID touch: low risk. Needs rotation and a touch-matrix transform (xrandr/GNOME + libinput). Odd mode acceptance on the Q6A is unverified.
+    - **Availability:** In stock at Waveshare; also AliExpress Waveshare store
+  4.
+    - **Name:** Waveshare 5.5inch HDMI AMOLED (1080x1920)
+    - **Key specs:** 5.5in AMOLED 1080x1920 (400 PPI), 170 deg viewing angle, 5-point USB touch, 6H glass. Max 310 cd/m2 (steps 75/140/210/260/310). 5 V: about 650 mA all-white, 250 mA all-black. Panel+PCB 4.8 mm, 11 mm with HDMI holder. 3.5 mm audio.
+    - **Price:** $121.99 (Waveshare)
+    - **Pros:** Deepest blacks and most 'beautiful' look indoors. Very thin. Low power on a dark SDR++ theme.
+    - **Cons:** NOT sunlight-readable (310 nits max). Waveshare warns about burn-in from static content beyond about 1 hour, a poor fit for fixed waterfalls and menus. Glass is fragile.
+    - **Sources:**
+      - https://www.waveshare.com/5.5inch-HDMI-AMOLED.htm
+      - https://www.waveshare.com/wiki/5.5inch_HDMI_AMOLED
+    - **Q6a compatibility:** HDMI + USB touch: low driver risk; portrait-native, needs rotation
+    - **Availability:** In stock (Waveshare, Core Electronics, Switch Science). The 6in 1080x2160 AMOLED sibling ($139.99) is discontinued.
+  5.
+    - **Name:** Riverdi RVT70HSHNWC00-B (7in HDMI, optical bonding)
+    - **Key specs:** 7in IPS 1024x600 (170 PPI), about 850 cd/m2 (Unisystem listing), optically bonded uxTouch PCAP, USB-C touch, HDMI
+    - **Price:** $177.68 (Riverdi web shop); air-bonded RVT70HSHNWC00 $156.65
+    - **Pros:** Industrial quality, optically bonded and bright. Made in Poland, so EU shipping to Ukraine is easy.
+    - **Cons:** Low resolution, not 'beautiful'. Brightness and power figures come from distributor listings only.
+    - **Sources:**
+      - https://riverdi.com/product-category/hdmi-displays
+      - https://unisystem.com/product/ecrans-lcd-tft/rvt70hshnwc00-b-riverdi-hdmi-display
+      - https://www.mouser.it/riverdi-7inch-hdmi-displays
+    - **Q6a compatibility:** HDMI + USB HID: low risk
+    - **Availability:** Riverdi shop, Mouser, Unisystem (EU)
+  6.
+    - **Name:** Raspberry Pi Touch Display 2 (5in / 7in)
+    - **Key specs:** 720x1280 (5in: 294 PPI, 7in: 210 PPI), 500 cd/m2, anti-glare, 5-finger touch, DSI 2-lane, power from GPIO; 5in 91.5x143.4 mm, 7in 120.2x189.3 mm, about 15 mm deep; -20 to +70 C
+    - **Price:** $40 (5in) / $60 (7in) list
+    - **Pros:** Cheap, well documented, in production to at least Jan 2030
+    - **Cons:** Not supported on the Q6A (Radxa explicitly names the RPi 7in as not adapted). The Q6A connector is 39-pin 0.3 mm, so it needs a custom adapter plus a panel driver and device tree. 500 nits is not sunlight-grade.
+    - **Sources:**
+      - https://pip-assets.raspberrypi.com/categories/1083-raspberry-pi-touch-display-2/documents/RP-009106-MM-8-touch-display-2-product-brief.pdf
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/mipi-dsi
+    - **Q6a compatibility:** HIGH RISK / effectively unsupported
+    - **Availability:** Widely available
+  7.
+    - **Name:** Radxa Display 8 HD (official DSI)
+    - **Key specs:** 8in TFT 800x1280 (189 PPI), 5-point capacitive, MIPI DSI 2/4-lane, 39-pin 0.3 mm to 40-pin 0.5 mm FPC; brightness not published
+    - **Price:** Not published (Approved Partners only); not verified
+    - **Pros:** Only DSI panel Radxa names for the Q6A; single-cable
+    - **Cons:** Low resolution. Unknown brightness. Q6A users (Feb-May 2026) report black screen or no driver on Ubuntu 24.04, with no fix posted. Not listed under 'works with' on its own product page.
+    - **Sources:**
+      - https://radxa.com/products/accessories/display-8hd
+      - https://forum.radxa.com/t/dragon-q6a-radxa-display-8hd-not-detected-on-ubuntu-24-04-noble-problem/30422
+      - https://forum.radxa.com/t/radxa-dragon-q6a-firmware-snapshot/28886?page=2
+    - **Q6a compatibility:** Officially listed, but practically unproven and buggy
+    - **Availability:** Through Radxa partners / AliExpress
+  8.
+    - **Name:** Generic AliExpress/eBay 7in 1920x1080 2000-2400 nit IPS + HDMI driver board + touch kits (Wisecoco-type)
+    - **Key specs:** Listings claim 7in 1920x1080 IPS, 2000-2400 nits, 1000:1, HDMI driver board, touch. Panel model, touch type, power and thickness NOT verified (pages blocked).
+    - **Price:** Unverified
+    - **Pros:** Potentially the ideal combination (1080p + sunlight + host touch) if the claims hold
+    - **Cons:** Specs unverified and inconsistent between listings. A 2000-nit backlight probably draws well over 10 W (unverified). DIY bare module.
+    - **Sources:**
+      - https://www.ebay.de/itm/405247794619
+      - https://www.ebay.de/itm/176594983531
+    - **Q6a compatibility:** HDMI + USB HID expected: low driver risk, but quality is unknown
+    - **Availability:** Uncertain
+- **Recommended:**
+  - **Name:** Lilliput 719/T (7in 1280x800, 1000 nits, 10-pt USB PCAP, 9-36 V DC) on HDMI + USB. Beauty-first fallback if mostly used in shade: Waveshare 8in 2K (1536x2048, 470 nits, $109.99).
+  - **Why:** Among verified products, only the 719/T meets all the hard requirements together: ≥1000 nits for direct sun, real multi-touch to the host over USB, and a zero-driver HDMI + HID path that avoids the Q6A's broken/unsupported DSI path. Its 9-36 V input lets it run straight off the 4S 21700 pack, so no display buck converter is needed, and it draws 8.5 W max. At 7in, 216 PPI is crisp enough for SDR++ waterfalls and SatDump. Accept the trade-offs: about 32 mm thick, 410 g, $259, and spotty stock. If the device will mostly be used in shade or under a hood, the Waveshare 8in 2K is the most beautiful low-risk option: 320 PPI, optically bonded, 4 W, 11 mm, plus a built-in speaker. If you would give up touch for 400 PPI at 1600 nits in a true palm size, use a FEELWORLD F6 PLUSX (≤10 W, 7-24 V direct) with a rotary encoder or mini trackpad.
+  - **Price:** $259 (Markertek list); Waveshare 8in 2K $109.99
+  - **Sources:**
+    - https://www.markertek.com/product/lil-719-t/lilliput-719-t-7in-1000-nit-highbright-10-point-touch-screen-monitor-1280x800-hdmi-vga-usb-c
+    - https://www.waveshare.com/wiki/8inch_1536x2048_LCD
+    - https://docs.radxa.com/en/dragon/q6a/hardware-use/mipi-dsi
+    - https://docs.radxa.com/en/dragon/q6a
+- **Budget option:**
+  - **Name:** Waveshare 5inch High-Brightness Capacitive Touch Screen, 1024x600 IPS, HDMI, 800 cd/m2 (5DP-CAPLCD-H narrow-bezel or -B)
+  - **Why:** Cheapest verified screen that is genuinely brighter than the hobby norm: 800 cd/m2 per Robotshop and The Pi Hut, about 1.6x a Pi Touch Display 2. 237 PPI at 5in is sharp enough for a palm-size device. Toughened glass and USB multi-touch, connected over HDMI with no drivers on the Q6A. Avoid the resistive -G variant (single-point). Power, thickness and bonding are not verified.
+  - **Price:** $46.99-54.99 (Waveshare), $63.16 (Robotshop US), £52.80 (The Pi Hut), €64.95 (openelab EU, sold out at time of listing)
+- **Risks:**
+  - Q6A DSI: Radxa supports only its own 8HD/10FHD panels, and Q6A users reported black screens or missing drivers on Ubuntu 24.04 from Feb to May 2026 with no fix posted. Do not plan on any DSI panel, including the RPi Touch Display 2 and Waveshare DSI panels.
+  - Q6A USB-C is a 12 V power input only (no DP alt mode). USB-C-only portable monitors and the 719/T's single-cable USB-C video will not work; use HDMI.
+  - Brightness vs power: 1000-1600 nit backlights draw 8.5-10 W at full brightness, about 12-14% of a 72 Wh pack per hour. Unverified 2000+ nit kits likely draw more. Use auto/manual dimming.
+  - AMOLED (Waveshare 5.5in) is limited to 310 cd/m2 and Waveshare warns about burn-in after about 1 hour of static content, a poor match for a fixed SDR UI.
+  - Portrait-native HDMI panels (1080x1920, 1536x2048) need rotation and a libinput touch calibration matrix. Acceptance of non-standard HDMI timings on the Q6A HDMI path has not been verified.
+  - Direct-sun heating: LCDs can black out when the panel overheats (RPi TD2 is rated for up to +70 C). Use a sun hood and leave an air gap behind the panel.
+  - Field monitors (FEELWORLD) touch only their own OSD, so you must add an encoder or trackpad for host control.
+  - Availability: Lilliput 719/T was out of stock at Markertek; F6 PLUSX showed about 3-month lead time at Calumet; Waveshare 6in AMOLED is discontinued.
+  - Research limit: the web-search budget ran out mid-task, so AliExpress 7in 1080p 2000-2400 nit kits, Waveshare 5in HB power/thickness, and Ukrainian-store prices (Prom.ua/Rozetka) could not be verified.
+- **Integration notes:**
+  - Use the Q6A HDMI port (HDMI 2.0, up to 4K30): 1080p60 or 1280x800 is no problem. Connect touch to a USB 2.0 Type-A port (3 available; the RTL-SDR uses one).
+  - Lilliput 719/T / FEELWORLD F6 PLUSX: feed from the 4S pack (12.0-16.8 V) through a 2 A fuse and a soft switch; this is within the 9-36 V and 7-24 V ranges.
+  - Waveshare 8in 2K / 5.5in AMOLED / 5in HB: feed from a 5 V buck rated ≥1.5 A (8in 2K needs 800 mA, AMOLED about 650 mA all-white), not from a Q6A USB port.
+  - To keep the stack thin, use flat FPC HDMI cables with right-angle HDMI and micro-HDMI adapters. Mount the Q6A behind the display with the fan exhausting away from the panel.
+  - Software: on Ubuntu 24.04 GNOME (Wayland), set rotation in display settings and map touch to the HDMI output. On X11, use xrandr --rotate plus xinput set-prop 'Coordinate Transformation Matrix'. hid-multitouch should give multi-touch, but Waveshare only certifies multi-touch on Pi OS and Windows.
+  - For sunlight: add a fold-out matte sun hood (field monitor hoods fit 5.5-7in). Use a matte anti-glare film only on non-bonded panels. Use a high-contrast SDR++ theme and larger UI scaling.
+  - Physical controls (rotary encoder for frequency or zoom, plus 2-3 buttons via the 40-pin GPIO or a USB HID macro pad) are worth adding with any touch screen, since gloves and sweat make touch unreliable outdoors.
+- **Double duty opportunities:**
+  - Wide-input displays (Lilliput 719/T 9-36 V, FEELWORLD F6 PLUSX 7-24 V) run straight from the 4S pack, removing a dedicated display buck converter.
+  - HDMI audio from the Q6A to the display's speaker or 3.5 mm jack (Waveshare 8in 2K, 5.5in AMOLED, 7in FHD) gives an audio monitor for ISS voice, SSTV tones and CubeSat beacons with no USB sound card or amplifier.
+  - A display with a metal CNC case (Waveshare 8in 2K) can double as the front structural plate of the 3D-printed enclosure and a mounting point for the IMU and GNSS, away from the fan.
+  - FEELWORLD F6 PLUSX has an HDMI loop-out, so a second viewer or goggles can be attached for demos without any extra hardware on the Q6A.
+- **Confidence:** medium
+
+## Форуми та досвід спільноти (`forums`)
+
+_Агент цього етапу ще працює (run `wf_0e70c405-a03`)._
+
