@@ -28686,6 +28686,107 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Unverified: Pelican's own 1450 certifications (pelican.com and peli.com/eu were unreachable); the CDW discontinuation date; the DIV3818 price (snippet only); the B&W manufacturer data (site returned 403). The case is passive and has no effect on the receive-only, conducted-only or no-loop rules.
 
+## searchA:limesdr_micro_m_2_basic_18_shipping_2x_m (run `wf_c3ba734e-52b`)
+
+- **Part:** Wideband SDR: LimeSDR Micro M.2 2280 Basic (LMS7002M + NXP LA9310, 1T2R) + $18 worldwide shipping + 2x Taoglas MHF4L-SMA(f) 100 mm cables. Required part since the user decision of 18 Oct 2026 (Lime kept).
+- **Current price usd:** 279 ($249 Basic + $18 worldwide shipping + 2x $6 cables; Crowd Supply, fulfilled by Mouser Texas; EU import VAT and any carrier fee not included). Note: reaudit_B lists 4 cables (RX-A, RX-B, J4 REF IN, X1 TX to a 50 Ohm load), not 2. That makes the line $291, or $309 if the cable project is charged its own $18 shipping.
+- **Critical specs:**
+  - RX tuning coverage at least 0.3-3.8 GHz with no gaps. Lime: 30 MHz-3.8 GHz published. Matched inputs: LNAL 0.3-2.2, LNAW 0.7-2.6, LNAH 3.3-3.8 GHz. Must cover 1.69-1.71 GHz (HRPT/LRIT), 2.2-2.3 GHz S-band (Black Kite 2286/2288, PHASMA 2208/2210) and 3.3-3.8 GHz.
+  - Instantaneous bandwidth at least 56 MHz, sustained to the host without drops. Lime: 50 MHz FDD / 100 MHz half-duplex RF bandwidth, analog filter 0.75-100 MHz, up to 61.44 Msps FDD and 160 Msps half-duplex. LIME-W/F/B profiles run at 56 Msps; A/B test at 61.44 Msps.
+  - Two coherent RX channels sharing one LO (1T2R, expandable to 1T4R). The acceptance test needs 2x56 Msps for 60 min with no drops.
+  - ADC resolution of 12 bits or more (LMS7002M: 12-bit).
+  - Noise figure: LMS7002M chip about 2-3.5 dB (catalog), 2.5 dB at 2 GHz (Richardson/Lime announcement). Forum figures: LNAL <2 dB, LNAH <3 dB, LNAW 5-7 dB. Varies by about 2 dB from -50 to 110 C (Lime measurements v1.05). No board-level NF is published for the Micro.
+  - Linearity at max gain, chip level (Lime measurements v1.05 Table 15): IIP3 -5.5 dBm at 850 MHz and -2.4 dBm at 915 MHz (LNAL), +8.3 dBm at 1980 MHz (LNAH, out-of-band tones), +8.8 dBm at 2400 MHz (LNAL), -1.1 dBm at 3450 MHz and +3.25 dBm at 3750 MHz (LNAH). IIP2 about +40 to +58 dBm. Max safe input +10 dBm.
+  - Host interface: PCIe Gen3 x1 over an M.2 2280 Key B+M edge. It goes into the Q6A M.2 2230 M-key Gen3 x2 slot (pcie1) through an ADT-Link R44SF riser. The link must train at 8 GT/s with zero AER errors; Gen2 fallback limits it to 1x56 or 2x<=40 Msps. A USB 3 alternative would need the only SuperSpeed port (blue USB0/J5), which holds the T7 in the with-Lime build, plus the WS4612 limit of about 2.1 A shared with J5 upper.
+  - Power and rail: 3.3 V from the M.2 edge on a dedicated ETA3521 4 A rail, with a labd load switch for power-cycle recovery. Lime typical about 4 W, design 10 W; VCC_5V_PERI gate <=14 W measured.
+  - Size: 22 x 80 mm, top <=4.5 mm, bottom <=1.35 mm. Needs a thermal pad on both sides and fits the case top band reprint.
+  - Driver on Ubuntu 24.04 arm64 (Radxa kernel 6.18): LimeSuiteNG limesdr-micro-staging plus la9310_limesdr DKMS, limesuiteng-soapysdr, and SatDump limesdrng_sdr_support patched to RX-only.
+  - Clock: Rakon E6245LF 30.72 MHz VCTCXO with 16-bit DAC trim (about +/-5 ppm range, about 0.3 ppb per step) and external REF IN (J4, firmware range 10-52 MHz) for the LBE-1420.
+  - Receive-only: TX must be blockable. LimeSuiteNG/Soapy TX setup fails by patch, a register readback checks TXEN_A/B=0, and X1 is terminated in 50 Ohm. A part with no TX hardware would be better here.
+  - Operating temperature 0 to +85 C (labd refuses below 0 C).
+  - Purchase terms: 30-day RMA; full refund only before shipment (ships about 15 Dec 2026); decide by 1 Dec 2026. Must be legally sold and genuine.
+- **Candidates:**
+  1.
+    - **Name:** LimeSDR Micro M.2 2280 Basic (Crowd Supply), current pick
+    - **Kind:** current_part
+    - **Price usd:** 279 ($249 + $18 + 2x $6). With the 4 cables in reaudit_B: $291, or $309 if the cables are shipped separately. EU import VAT is extra.
+    - **Spec comparison:** Reference part. 30 MHz-3.8 GHz; 50 MHz FDD / 100 MHz half-duplex; 61.44 Msps FDD; 12-bit; 1T2R; PCIe Gen3 x1 on M.2 2280 B+M; 3.3 V from M.2, about 4 W typical. VCTCXO with DAC trim and REF IN. Same-vendor SKUs checked on 18 Oct 2026: Basic $249 is the cheapest Micro SKU. The GNSS SKU is $299 and the Micro Pro (USB4) $749 on Crowd Supply. The Lime store sells 'LimeSDR Micro Early Access' (M.2 2280 or mPCIe) at $600; its retail 'LimeSDR Micro' listing shows $10,000.00, a placeholder. The $199 early-bird price ended in May 2026. No Mouser, DigiKey or EU retail listing was found. The Crowd Supply Taoglas $6 cable is also the cheapest genuine MHF4L-SMA found. Distributor equivalents cost more: Siretta ASMGA010XD113S11 is behind a login price; the Molex 1.13 mm 305 mm cable is about INR 1,434-2,035 (about $17-24) at Mouser India.
+    - **Worse in:** Nothing (it is the reference). It has TX hardware, handled by the patch, the readback and the 50 Ohm load.
+    - **Compatibility:** Fully integrated in the stack (riser, DKMS, SatDump limesdrng, power tree).
+    - **Risks:** Pre-order ships about 15 Dec 2026 and the date is an estimate. Import VAT and a carrier handling fee may apply in the EU. Cable shipping may be charged per project (+$18). The BOM line under-counts cables (2 vs 4).
+    - **Seller url:** https://www.crowdsupply.com/lime-micro/limesdr-micro
+    - **Sources:**
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro
+      - https://store.limemicro.com/products.json
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro/updates/early-bird-pricing-ends-soon
+      - https://www.crowdsupply.com/taoglas/coaxial-cables
+      - https://www.limemicro.com/downloads/lms7002m_measurements-v1_05.pdf
+      - https://www.cnx-software.com/2026/04/15/limesdr-micro-m-2-2280-sdr-card-pairs-nxp-la9310-baseband-processor-with-lms7002m-rf-transceiver/
+  2.
+    - **Name:** Analog Devices ADALM-PLUTO (AD9363)
+    - **Kind:** other_brand
+    - **Price usd:** 253.32 (DigiKey 505-ADALM-PLUTO-ND, quantity 1, 1,573 in stock, 18 Oct 2026; EU VAT extra). Needs no MHF4 cables, so it saves about $26-56 depending on how the Lime cables are counted.
+    - **Spec comparison:** Tuning 325 MHz-3.8 GHz vs 30 MHz-3.8 GHz: misses 300-325 MHz. Channel bandwidth 200 kHz-20 MHz vs 50-56+ MHz: worse. 12-bit ADC: equal. 1 RX / 1 TX vs 2 RX: worse. USB 2.0, and ADI says it 'streams up to 4MSPS with no dropped samples', vs 2x56 Msps on PCIe Gen3: far worse. NF and sensitivity are not stated on the ADI spec page. Power comes from USB.
+    - **Worse in:** Bandwidth (20 vs 56 MHz), sustained rate (4 Msps vs 2x56 Msps), RX channel count (1 vs 2), 300-325 MHz coverage, and interface (USB 2.0, not M.2 PCIe). It is also TX-capable, like the Lime; STACK #89 already rejected it as a duplicate TX device. The AD9364 'hack' is unofficial and not a published spec.
+    - **Compatibility:** USB 2.0 would work on the FE1.1s tree. libiio/SoapyPlutoSDR exist for arm64, but it cannot run LIME-W/F/B or 2x56 Msps.
+    - **Risks:** Not qualifying. Do not use.
+    - **Seller url:** https://www.digikey.com/en/products/detail/analog-devices-inc/ADALM-PLUTO/6624230
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/analog-devices-inc/ADALM-PLUTO/6624230
+      - https://wiki.analog.com/university/tools/pluto/devs/specs
+  3.
+    - **Name:** Airspy Mini
+    - **Kind:** other_brand
+    - **Price usd:** about 146.50 (GBP 110 at Moonraker, figure from STACK.md; unverified, undated)
+    - **Spec comparison:** 24-1700 MHz vs 30 MHz-3.8 GHz: no S-band and nothing above 1.7 GHz. 12-bit ADC at 20 MSPS (10.4 ENOB): equal bits. IQ output 10/6/3 MSPS with up to 6 MHz view vs 56 MHz: worse. NF 3.5 dB from 42 to 1002 MHz: comparable only below 1 GHz. 1 RX; USB 2.0. Receive-only hardware, which is better for the rule.
+    - **Worse in:** Frequency coverage (no 1.7-3.8 GHz, no S-band, no 3.3-3.8 GHz), bandwidth (6 vs 56 MHz), channel count (1 vs 2) and interface.
+    - **Compatibility:** USB 2.0. libairspy/SoapyAirspy work on arm64. It only fills the AHRPT-rate role, as STACK already notes.
+    - **Risks:** Not qualifying as a Lime replacement.
+    - **Seller url:** https://airspy.com/airspy-mini/
+    - **Sources:**
+      - https://airspy.com/airspy-mini/
+  4.
+    - **Name:** Nooelec Ham It Down 3 GHz downconverter (SKU 100846) + the existing spare RTL-SDR Blog V4L
+    - **Kind:** other_brand
+    - **Price usd:** 89.95 (Nooelec store; the V4L is already in the stack)
+    - **Spec comparison:** Input 1.55-3.1 GHz with a 1.5 GHz LO (TCXO, no ppm figure published), IF 50 MHz-1.6 GHz into the V4L. The chain gives 8-bit RTL2832U samples at about 2.4-3.2 Msps vs 12-bit at 56 Msps. Gain and NF are not published. No 3.3-3.8 GHz. 1 RX. Receive-only.
+    - **Worse in:** ADC bits (8 vs 12), bandwidth (about 3 vs 56 MHz), no 3.3-3.8 GHz, 1 RX, no published NF, gain or LO stability, and an extra USB-powered box.
+    - **Compatibility:** Uses the existing V4L and USB 2.0 path. reaudit_B already names it the S-band-only fallback if the Lime fails acceptance.
+    - **Risks:** Not qualifying. It is a fallback only.
+    - **Seller url:** https://www.nooelec.com/store/ham-it-down.html
+    - **Sources:**
+      - https://www.nooelec.com/store/ham-it-down.html
+- **Notes:** VERDICT from angle A: KEEP the LimeSDR Micro M.2 2280 Basic. No cheaper SKU, seller or established-brand SDR meets all of these together: 0.3-3.8 GHz, at least 56 MHz sustained, 2 RX, 12-bit, M.2 PCIe (or a workable USB 3 option) and a working arm64 driver. Every cheaper unit found is worse in bandwidth, coverage, channel count and interface, and each one is flagged above.
+  
+  Same part, other sellers (18 Oct 2026):
+  - Crowd Supply Basic at $249 + $18 is the cheapest official route.
+  - The Lime store charges more: Early Access $600; the retail SKUs (Micro, USB, XTRX, Mini 2.0) show a $10,000.00 placeholder (Shopify JSON).
+  - No Mouser, DigiKey or EU retailer lists the Micro.
+  - Early-bird $199 ended May 2026.
+  
+  Checked but not cheaper (do not substitute):
+  - Nuand bladeRF 2.0 micro xA4, $540, in stock: 47 MHz-6 GHz, 2x2, 56 MHz, 61.44 Msps, USB 3.0. Its specs meet or beat the Lime's, but it costs about $261 more, needs the single USB 3 port (T7 conflict) and is TX-capable.
+  - Wavelet Lab xSDR, $549 + $18: LMS7002M 2x2, 30 MHz-3.8 GHz, 0.5-90 MHz, M.2 2230 A+E key (wrong key for the Q6A M-key slot), PCIe 2.0 x2. The listed reference is a 26 MHz XO at 0.5 ppm, and power is not stated.
+  - Wavelet Lab uSDR, $359: LMS6002D, 300-3700 MHz, 28 MHz, 30.72 Msps. Worse and dearer.
+  - LimeSDR XTRX $960 (mPCIe); LimeSDR Mini 2.0 $600 (10 MHz-3.5 GHz, 40 MHz, 1x1).
+  - MicroPhase ANTSDR E200: AD9361 $689, AD9363 $449. Gigabit Ethernet cannot carry 2x56 Msps, and the field build disables Ethernet.
+  - RigExpert Fobos: about $395 in the US and EUR 469.99-495 in the EU (secondary sources, unverified). Bandwidth is at most 50 MHz, and a review reported imaging (RigExpert: only certain sample rates are image-free).
+  - HackRF Pro: 8-bit, 20 Msps (40 Msps at 4 bits), USB 2.0. Fails.
+  - Airspy R2: 24-1700 MHz, 10 Msps. Fails; price not stated by Airspy.
+  
+  Price-line issues for the orchestrator:
+  1. reaudit_B needs 4 MHF4L-SMA cables, not 2 (+$12).
+  2. Cable shipping may be charged per project (+$18).
+  3. EU import VAT (country rate) and a possible carrier fee fall on the buyer, because Crowd Supply/Mouser ships from Texas.
+  
+  None of these makes a cheaper part not-worse. The Taoglas $6 Crowd Supply cable is still cheaper than distributor MHF4L-SMA assemblies (Molex 1.13 mm about $17-24 at Mouser India; Siretta ASMGA010XD113S11 price behind a login).
+  
+  Spec caveats:
+  - Lime NF and IIP3 above are LMS7002M chip and eval-board data. Lime has published no board-level NF or IIP3 for the Micro, so compare candidates against chip-level figures and verify on the bench (noise source on RX1/RX2 at 1.7, 2.2 and 3.5 GHz) during the 30-day RMA window.
+  - The forum NF values (LNAL <2 dB, LNAH <3 dB) are secondary (myriadrf discourse t/305).
+  
+  Search budget: 7 WebSearch calls used. Not verified: the Airspy Mini price (STACK figure) and Fobos prices.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
