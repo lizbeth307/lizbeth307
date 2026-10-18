@@ -20,6 +20,7 @@
 | [Airspy hf discovery](components/airspy_hf_discovery.md) | · research · forums · fixes ✅ verify | `—` |
 | [Allnet 64 gb microsd adafruit 5212 reade](components/allnet_64_gb_microsd_adafruit_5212_reade.md) | · research · forums · fixes ✅ verify | `—` |
 | [Aneng an8008 9 dmm](components/aneng_an8008_9_dmm.md) | · research · forums · fixes ✅ verify | `—` |
+| [Anker 737 power bank 20 v 5 a pdo 100 wh](components/anker_737_power_bank_20_v_5_a_pdo_100_wh.md) | · research · forums · fixes ✅ verify | `—` |
 | [Antennas](components/antennas.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_6b9836f8-796` |
 | [Antennas foldable](components/antennas_foldable.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Antennas patch chip](components/antennas_patch_chip.md) | ✅ research · forums · fixes ✅ verify | `—` |
