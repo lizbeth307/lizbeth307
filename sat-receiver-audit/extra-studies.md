@@ -3196,6 +3196,213 @@
   </invoke>
   
 
+## searchB:tca9517_buffer_74lvc1g17_2n7002_ao3400_f (run `wf_071e1025-145`)
+
+- **Part:** Interface logic set: TCA9517 I2C buffer (I2C2 to LAB BUS cable), 74LVC1G17 Schmitt buffer (header pin 33 fan fallback), 2N7002 small N-FETs (AUX12 P-FET gate, J21 pin 3 open drain, LC76G reset, fan fallback), AO3400 logic N-FETs (2 fans), relay driver for 2x Omron G6K-2F-RF 5 V coils (MCP #1 GPB2/GPB3), BAT54 Schottkys (power-button OR, supervisor/GP13 OR onto #2813 OFF, flyback)
+- **Current price usd:** 5-10 in STACK (estimate). My rebuild with assumed quantities (1 TCA9517, 1 74LVC1G17, 4x 2N7002, 2x AO3400A, 7x BAT54, 1 TBD62003A-class relay driver, since STACK names no driver) comes to about $6.17 at DigiKey qty-1 excl. VAT: TCA9517DR 1.47, SN74LVC1G17DCKR 0.28, 2N7002,215 0.18, AO3400A 0.52, BAT54,215 0.14, TBD62003AFNG 1.68. The same genuine parts at LCSC/JLCPCB list price come to about $1.80 (excl. VAT and shipping).
+- **Critical specs:**
+  - TCA9517: VCCA 0.9-5.5 V (header 3.3 V side) and VCCB 2.7-5.5 V (cable side). 400 kHz max; the stack runs 100 kHz. B side is buffered-low (about 0.5 V static offset), so the sled must not have a second static-offset buffer. Powered-off high-Z with 5.5 V-tolerant pins (Q6A off, sled hot-plug). ESD 5.5 kV HBM, because the B side is cable-exposed. -40..85 C. Hand-solderable package.
+  - 74LVC1G17: Schmitt input with hysteresis of at least 0.35-0.5 V at 3 V (the UM3304 TXB-type source has about 4 kOhm outputs, slow edges and an undefined boot state). Input leakage at most +/-5 uA. Ioff partial power-down at most +/-10 uA. 1.65-5.5 V supply. +/-24 mA at 3.3 V for the gate drive. At least -40..85 C.
+  - 2N7002: VDS at least 60 V (gate pull of a P-FET on 12 V SYS12; pack up to 16.8 V). VGS(th) max at most 2.5 V, lower is better, because the drive is only 3.3 V from MCP23017/Pico. RDS(on) at 4.5-5 V at most about 5.3 Ohm. ID at least 115-300 mA. IDSS at most 1 uA (J21 PMIC key, AON-adjacent lines). Low IGSS. SOT-23.
+  - AO3400(A): VDS 30 V; VGS(th) 0.65-1.45 V; RDS(on) at most 48 mOhm at VGS 2.5 V and at most 32 mOhm at 4.5 V (3.3 V gate drive); ID 5.7 A; IDSS at most 1 uA; VGS +/-12 V; SOT-23. Loads are fans (well under 0.1 A) and possibly the relay coils (21.1 mA).
+  - Relay driver: the G6K-2F-RF 5 VDC single-side-stable coil takes 21.1 mA (237 Ohm), must-operate is 80% max = 4.0 V at 23 C, and the coil R rises when hot. The low-side drop at 21 mA must stay at or below about 0.1 V so the relay still picks up at a 4.75 V rail and 60 C. Input must be logic-level from the MCP23017 at 3.3 V (VOH at least 2.6 V). Default OFF at power-up (pull-down). Flyback clamp required. VDS rating well above 5 V.
+  - BAT54: VF max 0.24/0.32/0.40/0.50 V at 0.1/1/10/30 mA (thresholds of the #2813 A input, the J21 pin 3 PMIC key and GP11). IR at most 2 uA at 25 V (standby budget; Schottky leakage rises with temperature). VR 30 V; IF 200 mA; Cd at most 10 pF; trr at most 5 ns; Tj 150 C.
+  - All parts: genuine (not remarked), from an authorized or manufacturer-sourced distributor, in stock, no Linux driver needed (TCA9517 is transparent to smbus2/labd). No effect on receive-only or the other hard rules.
+- **Candidates:**
+  1.
+    - **Name:** CURRENT: the set as genuine TI/Nexperia/AOS/Toshiba parts (TCA9517DR, SN74LVC1G17DCKR, 2N7002,215, AO3400A, BAT54,215, TBD62003AFNG as the assumed relay driver)
+    - **Kind:** current_part
+    - **Price usd:** about 6.17 at DigiKey qty-1 (TCA9517DR 1.47; SN74LVC1G17DCKR 0.28; 2N7002,215 0.18; AO3400A 0.52; BAT54,215 0.14; TBD62003AFNG 1.68), excl. VAT. Same parts at LCSC: 0.4996 / 0.0699 / 0.0172 / 0.0972 / 0.0219 / 0.8098, about 1.80 for the set, excl. VAT and shipping.
+    - **Spec comparison:** Reference. Specs from the datasheets fetched via LCSC: AO3400A VGS(th) 0.65-1.45 V, RDS(on) <26.5/32/48 mOhm at 10/4.5/2.5 V. 2N7002,215: VGS(th) 1-2.5 V, RDS(on) 5.3 Ohm max at 4.5 V/75 mA, 300 mA, IDSS 1 uA. BAT54,215: VF 240/320/400/500/800 mV max at 0.1/1/10/30/100 mA, IR 2 uA at 25 V, Cd 10 pF, trr 5 ns, Tj 150 C. TBD62003A: RON 0.7 typ / 1.14 Ohm max, VIN(ON) 2.5 V min, 50 V, clamp diodes.
+    - **Worse in:** -
+    - **Compatibility:** As designed in STACK.
+    - **Risks:** The quantities are my estimate; STACK gives no count. The STACK HF+ selector line (62-80, '+ driver board') may already include the relay driver, so it may be counted twice.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=TCA9517DR
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=TCA9517DR
+      - https://www.digikey.com/en/products/result?keywords=SN74LVC1G17DCKR
+      - https://www.digikey.com/en/products/result?keywords=AO3400A
+      - https://www.digikey.com/en/products/result?keywords=2N7002,215
+      - https://www.digikey.com/en/products/result?keywords=BAT54,215
+      - https://www.digikey.com/en/products/result?keywords=TBD62003AFNG
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_1811081213_Alpha---Omega-Semicon-AO3400A_C20917.pdf
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_2407241045_Nexperia-2N7002-215_C65189.pdf
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_2407241045_Nexperia-BAT54-215_C85084.pdf
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_TOSHIBA-TBD62003AFNG-EL_C150145.pdf
+  2.
+    - **Name:** DIY relay driver: 2x AOS AO3400A low-side + 2x Nexperia BAT54,215 flyback + 2x 100 kOhm gate pull-down, driven from MCP #1 GPB2/GPB3 (replaces an integrated driver IC; reuses part types already in the set)
+    - **Kind:** diy
+    - **Price usd:** about 0.24 at LCSC (2x 0.0972 + 2x 0.0219 + resistors) vs 0.81 for TBD62003AFNG. About 1.32 vs 1.68 at DigiKey.
+    - **Spec comparison:** Drop at the 21.1 mA coil current: 21.1 mA x 48 mOhm (max at VGS 2.5 V) = about 1 mV. TBD62003A: about 15-24 mV (0.7-1.14 Ohm). ULN2003: about 0.7-1.1 V. Turn-on margin: AO3400A VGS(th) max 1.45 V vs TBD62003A VIN(ON) min 2.5 V, against an MCP23017 VOH of about 2.6-3.3 V, so the DIY version has more margin. Clamp: BAT54 is 30 V/200 mA against a 21 mA coil (the TBD62003A has internal clamps). The 100 kOhm pull-down gives OFF at power-up, matching the STACK rule that every switch is off at power-up. IDSS 1 uA.
+    - **Worse in:** On paper only: VDS rating 30 V vs 50 V for the TBD62003A (the coil is on 5 V, about 5.6x margin). 4-6 more placements and a little more board area. No integrated input resistor or ESD network; add 100 Ohm series gate resistors if the MCP sits off-board. The diode clamp slows relay release (same with the TBD62003A clamp).
+    - **Compatibility:** The 5 V coil rail and MCP #1 outputs are unchanged. Same SOT-23 parts as the fan switches, so the BOM has fewer unique line items. No software change (labd still toggles GPB2/GPB3).
+    - **Risks:** No independent measurement exists for this exact circuit. The evidence is the production-tested datasheet limits of genuine AOS/Nexperia parts. Bench acceptance needed: coil voltage at least 4.6 V with a 4.75 V rail; pick-up at 60 C; release under 10 ms; both coils default off through a cold boot.
+    - **Seller url:** https://www.lcsc.com/product-detail/mosfets_alpha-omega-semicon-ao3400a_C20917.html
+    - **Sources:**
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_1811081213_Alpha---Omega-Semicon-AO3400A_C20917.pdf
+      - https://datasheet.lcsc.com/lcsc/2306061113_Omron-Electronics-G6K-2F-RF-S-DC12_C2750988.pdf
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_TOSHIBA-TBD62003AFNG-EL_C150145.pdf
+      - https://www.lcsc.com/product-detail/schottky-diodes_nexperia-bat54-215_C85084.html
+  3.
+    - **Name:** TI TCA9517ADGKR (in place of TCA9517DR)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 0.4865 at LCSC qty-1 (0.3821 at 10) vs TCA9517DR at 0.4996. DigiKey price for the A version not fetched.
+    - **Spec comparison:** Same VCCA 0.9-5.5 V and VCCB 2.7-5.5 V, 400 kHz, B-side buffered low, powered-off high-Z, 5.5 kV HBM, -40..85 C. TI calls it a drop-in upgrade with a higher contention threshold VILC, which lets it work with targets that have weaker pull-downs. That is better.
+    - **Worse in:** Package: VSSOP-8 at 0.65 mm pitch vs SOIC-8 at 1.27 mm, so it is harder to hand-solder and needs a new footprint. No electrical spec is worse.
+    - **Compatibility:** Same pinout and function; the footprint changes only if the board is already laid out for SOIC. labd and smbus2 see nothing different.
+    - **Risks:** Saving is only about $0.01. LCSC lists only the DGK package of the A version.
+    - **Seller url:** https://www.lcsc.com/product-detail/translators-level-shifters_texas-instruments-tca9517adgkr_C201698.html
+    - **Sources:**
+      - https://www.ti.com/product/TCA9517A
+      - https://www.ti.com/product/TCA9517
+      - https://jlcpcb.com/partdetail/TexasInstruments-TCA9517ADGKR/C201698
+  4.
+    - **Name:** Nexperia BAT54C,215 (common-cathode pair) for the two diode-OR groups
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 0.0178 per pair at LCSC vs 2x 0.0219 for single BAT54,215
+    - **Spec comparison:** Per-diode limits are the same as BAT54,215: VF 240/320/400/500/800 mV at 0.1/1/10/30/100 mA, IR 2 uA at 25 V, Cd 10 pF, trr 5 ns, Tj 150 C. Both OR groups are common-cathode: the button node (cathodes) feeds the #2813 A input, J21 pin 3 and GP11 (anodes); supervisor OUT and GP13 (anodes) feed the OFF input (cathodes).
+    - **Worse in:** Both diodes share one package, so a single package fault hits two paths. The 3-way button OR still needs one BAT54C plus one BAT54.
+    - **Compatibility:** Drop-in in the schematic (SOT-23). Flyback diodes stay single BAT54.
+    - **Risks:** Saving is a few cents. The #2813 A-pin threshold bench check in STACK still applies.
+    - **Seller url:** https://www.lcsc.com/product-detail/schottky-diodes_nexperia-bat54c-215_C37704.html
+    - **Sources:**
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_2407241028_Nexperia-BAT54C-215_C37704.pdf
+  5.
+    - **Name:** FOSAN AO3400 (LCSC C20628874)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 0.0174 at LCSC vs AOS AO3400A at 0.0972
+    - **Spec comparison:** VDS 30 V (same). VGS(th) 0.65-1.5 V vs 0.65-1.45 V. RDS(on) max 33/51 mOhm at 4.5/2.5 V vs 32/48. IDSS 1 uA (same). ID 5.8 A vs 5.7.
+    - **Worse in:** VGS(th) max is 0.05 V higher and RDS(on) max is 3-6% higher. These differences do not matter at 21-100 mA, but they are worse on paper. No independent measurements found.
+    - **Compatibility:** SOT-23, same pinout.
+    - **Risks:** Clone with no measured evidence. AO3400 is a heavily cloned and remarked number.
+    - **Seller url:** https://www.lcsc.com/product-detail/mosfets_fosan-ao3400_C20628874.html
+    - **Sources:**
+      - https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2403011756_FOSAN-AO3400_C20628874.pdf
+  6.
+    - **Name:** Guangdong Hottech AO3400 (LCSC C181090)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 0.0314 at LCSC
+    - **Spec comparison:** VGS(th) 0.65-1.45 V (same). RDS(on) max 28/33/52 mOhm at 10/4.5/2.5 V vs 26.5/32/48. IDSS 1 uA (same). 5.8 A, 1.4 W.
+    - **Worse in:** RDS(on) max is 3-8% higher. No independent measurements found.
+    - **Compatibility:** SOT-23, same pinout.
+    - **Risks:** Clone with no measured evidence.
+    - **Seller url:** https://www.lcsc.com/product-detail/mosfets_guangdong-hottech-ao3400_C181090.html
+    - **Sources:**
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_2204271430_Guangdong-Hottech-AO3400_C181090.pdf
+  7.
+    - **Name:** Same-name AO3400 parts that are clearly lower-rated: HXY MOSFET AO3400-ED (C4748722), JSMSEMI AO3400 (C5296723), YONGYUTAI AO3400B (C49446787)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 0.0203 / 0.0265 / 0.0193 at LCSC
+    - **Spec comparison:** HXY AO3400-ED: the datasheet title reads 'N-20 3A'; VDS 20 V, 3 A, RDS(on) max 55 mOhm at 4.5 V and 73 at 2.5 V. JSMSEMI: 40 mOhm at 4.5 V and 350 mW Pd (LCSC attributes). YONGYUTAI AO3400B: 4 A, 32 mOhm at 10 V (LCSC attributes).
+    - **Worse in:** VDS (HXY), ID, RDS(on) and Pd are all worse than the AOS AO3400A.
+    - **Compatibility:** SOT-23, same pinout.
+    - **Risks:** These show that a part named 'AO3400' does not guarantee AO3400A specs. Avoid unbranded 'AO3400' reels.
+    - **Seller url:** https://www.lcsc.com/product-detail/mosfets_hxy-mosfet-ao3400-ed_C4748722.html
+    - **Sources:**
+      - https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2207201830_HXY-MOSFET-AO3400-ED_C4748722.pdf
+      - https://www.lcsc.com/product-detail/mosfets_jsmsemi-ao3400_C5296723.html
+      - https://jlcpcb.com/partdetail/YONGYUTAI-AO3400B/C49446787
+  8.
+    - **Name:** LRC L2N7002LT1G (LCSC C12779)
+    - **Kind:** other_brand
+    - **Price usd:** 0.0142 at LCSC vs Nexperia 2N7002,215 at 0.0172
+    - **Spec comparison:** VDS 60 V (same). VGS(th) 1.0-2.0 V vs 1-2.5 V, which is better for 3.3 V drive. ESD protected to 1 kV, which is better. RDS(on) max 7.5 Ohm at 5 V/50 mA vs 5.3 Ohm at 4.5 V/75 mA. ID 115 mA vs 300 mA. Pd 225 mW vs 830 mW. IDSS 1 uA (same).
+    - **Worse in:** RDS(on) max, ID and Pd.
+    - **Compatibility:** SOT-23, same pinout.
+    - **Risks:** Legitimate second source, but no independent measurements found. Saving is $0.003 each.
+    - **Seller url:** https://www.lcsc.com/product-detail/mosfets_lrc-l2n7002lt1g_C12779.html
+    - **Sources:**
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_1809271814_LRC-L2N7002LT1G_C12779.pdf
+  9.
+    - **Name:** Foshan Blue Rocket BR2N7002K2 (LCSC C358380)
+    - **Kind:** other_brand
+    - **Price usd:** 0.0117 at LCSC
+    - **Spec comparison:** VDS 60 V; VGS(th) 1.0-2.5 V; ID 300 mA (all the same). RDS(on) max 2.7 Ohm at 5 V/50 mA, which is better. ESD 2 kV, which is better.
+    - **Worse in:** IGSS +/-10 uA max at +/-20 V vs 100 nA at 15 V (gate zener). Pd 350 mW vs 830 mW. No independent measurements found.
+    - **Compatibility:** SOT-23, same pinout.
+    - **Risks:** Clone-tier brand with no measured evidence. Saving is $0.006 each.
+    - **Seller url:** https://www.lcsc.com/product-detail/mosfets_foshan-blue-rocket-elec-br2n7002k2_C358380.html
+    - **Sources:**
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_1912111437_Foshan-Blue-Rocket-Elec-BR2N7002K2_C358380.pdf
+  10.
+    - **Name:** LRC LBAT54LT1G (LCSC C79020)
+    - **Kind:** other_brand
+    - **Price usd:** 0.0156 at LCSC vs Nexperia BAT54,215 at 0.0219
+    - **Spec comparison:** VF max 0.24/0.32/0.40/0.50 V at 0.1/1/10/30 mA (same). IR 2 uA at 25 V (same). Cd 10 pF (same). trr 5 ns (same). VR 30 V and IF 200 mA (same).
+    - **Worse in:** VF max 1.0 V vs 0.8 V at 100 mA. Tj max 125 C vs 150 C. Neither is used at this stack's currents and temperatures, but both are worse on paper. No independent measurements found.
+    - **Compatibility:** SOT-23. The LCSC attribute says 'series pair', which conflicts with the single-diode datasheet; check the pinout and marking on arrival.
+    - **Risks:** Listing inconsistency. Saving is $0.006 each.
+    - **Seller url:** https://www.lcsc.com/product-detail/schottky-diodes_lrc-lbat54lt1g_C79020.html
+    - **Sources:**
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_1809280611_LRC-LBAT54LT1G_C79020.pdf
+  11.
+    - **Name:** Guangdong Hottech BAT54 (LCSC C181198)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 0.0161 at LCSC
+    - **Spec comparison:** VF max 0.24/0.32/0.40/0.50 V at 0.1-30 mA (same). IR 2 uA at 25 V (same). Cd 10 pF (same). trr 5 ns (same). Tstg -55..150 C.
+    - **Worse in:** VF max 1.0 V vs 0.8 V at 100 mA. No independent measurements found.
+    - **Compatibility:** SOT-23, same pinout.
+    - **Risks:** Clone with no measured evidence.
+    - **Seller url:** https://www.lcsc.com/product-detail/schottky-diodes_guangdong-hottech-bat54_C181198.html
+    - **Sources:**
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_1811081832_Guangdong-Hottech-BAT54_C181198.pdf
+  12.
+    - **Name:** 74LVC1G17 clones: TECH PUBLIC 74LVC1G17W5-TP (C52098145), QNH QN74LVC1G17DBVR (C55144985), lingxingic SN74LVC1G17DB(LX) (C22469943); DigiKey also lists UMW SN74LVC1G17DCKR at $0.16
+    - **Kind:** generic_or_clone
+    - **Price usd:** 0.0445 / 0.0415 / 0.0386 at LCSC vs TI SN74LVC1G17DCKR at 0.0699 (TI 0.28 at DigiKey)
+    - **Spec comparison:** From LCSC attributes only (no datasheet link returned for TECH PUBLIC or QNH). TECH PUBLIC: 1.65-5.5 V, Schmitt, power-off isolation, -40..125 C, IOH/IOL 24 mA. TI: 32 mA at 4.5 V and 24 mA at 3.3 V, hysteresis 0.51-0.83 V at 3 V, II +/-5 uA, Ioff +/-10 uA. TECH PUBLIC lists tpd 8.3 ns at 5 V/50 pF; TI lists 4.6 ns max at 3.3 V.
+    - **Worse in:** Hysteresis, input leakage and Ioff are unverified. Propagation delay is slower on paper. No independent measurements found.
+    - **Compatibility:** SOT-23-5 / SC-70-5 with the same pinout (assumed; not verified).
+    - **Risks:** Some clones reuse TI part numbers (the '(LX)' suffix, UMW). Saving is $0.03.
+    - **Seller url:** https://jlcpcb.com/partdetail/TECHPUBLIC-74LVC1G17W5TP/C52098145
+    - **Sources:**
+      - https://jlcpcb.com/partdetail/QNH-QN74LVC1G17DBVR/C55144985
+      - https://www.lcsc.com/product-detail/flip-flops_lingxingic-sn74lvc1g17db-lx_C22469943.html
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_1809192011_Texas-Instruments-SN74LVC1G17DCKR_C10425.pdf
+      - https://www.digikey.com/en/products/result?keywords=SN74LVC1G17DCKR
+  13.
+    - **Name:** ULN2003A clones as the relay driver: GREENMICRO ULN2003AES (C53260841), HGSEMI ULN2003ALM/TR (C910870)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 0.0709 / 0.0934 at LCSC
+    - **Spec comparison:** Darlington outputs. HGSEMI VCE(sat) is 0.9 typ / 1.1 max at 100 mA (no figure is given at 21 mA). LCSC lists VCE(sat) up to 1.6 V. The coil would see roughly 3.7-4.3 V from a 4.75-5.0 V rail, against a must-operate of 4.0 V max at 23 C, and higher when the coil is hot.
+    - **Worse in:** Output drop is about 30-50x higher than the MOSFET options, so the relay may not pick up at low rail voltage or high temperature. This is clearly worse.
+    - **Compatibility:** SOP-16. The input works from 3.3 V.
+    - **Risks:** Relay may fail to switch, which leaves the HF+ on the wrong input or on 50 Ohm.
+    - **Seller url:** https://www.lcsc.com/product-detail/darlington-transistor-arrays_hgsemi-uln2003alm-tr_C910870.html
+    - **Sources:**
+      - https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304111630_HGSEMI-ULN2003ALM-TR_C910870.pdf
+      - https://jlcpcb.com/partdetail/GREENMICRO-ULN2003AES/C53260841
+      - https://datasheet.lcsc.com/lcsc/2306061113_Omron-Electronics-G6K-2F-RF-S-DC12_C2750988.pdf
+  14.
+    - **Name:** Diodes Inc. PI6ULS5V9517BUEX (TCA9517-class second source, LCSC C2675202)
+    - **Kind:** other_brand
+    - **Price usd:** 0.3499 listed at LCSC but stock 0
+    - **Spec comparison:** Datasheet not fetched; specs unverified. No Chinese clone of the 9517 appears in the LCSC/JLCPCB catalogue; only TI, NXP, onsemi and Diodes originals do. NXP PCA9517ADP is 0.5192, which is not cheaper.
+    - **Worse in:** Unverified and not buyable now.
+    - **Compatibility:** MSOP-8; 9517-family pinout (unverified).
+    - **Risks:** No stock and no measurements.
+    - **Seller url:** https://jlcpcb.com/partdetail/DiodesIncorporated-PI6ULS5V9517BUEX/C2675202
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=TCA9517DR
+- **Notes:** Result for angle B (clones, generics, DIY or used parts, accepted only with independent measured proof): no clone passes. I found no independent measurements for any of these SOT-23/SC-70 clones. The WebSearch budget for this run (shared across agents) was already used up before my first query, so I could not search forums such as EEVblog for measurements. All evidence here comes from datasheets fetched through the JLCPCB parts API (same inventory and prices as LCSC), DigiKey listing pages and TI product pages, all on 18 Oct 2026. On datasheet limits, every clone checked is equal or slightly worse in at least one maximum. Examples: FOSAN and Hottech AO3400 RDS(on) max 3-8% higher; LRC and Hottech BAT54 VF at 100 mA of 1.0 V vs 0.8 V; LRC 2N7002 ID 115 mA vs 300 mA. Some 'AO3400' parts are much lower-rated: HXY AO3400-ED is 20 V/3 A. Under the not-worse rule they are rejected. The savings would also be only $0.003-0.08 per part.
+  
+  What does pass, cheapest first:
+  1. DIY relay driver from 2x AOS AO3400A + 2x BAT54 flyback + 100 kOhm pull-downs, instead of a driver IC. It is not worse in any spec that matters: 1 mV drop vs 15-24 mV for the TBD62003A and 0.7-1.1 V for a ULN2003, more turn-on margin from 3.3 V, and off at power-up. Its only on-paper loss is a 30 V vs 50 V VDS rating on a 5 V coil. Saves about $0.57 at LCSC or $0.36 at DigiKey. Needs the bench test described in that candidate.
+  2. TCA9517ADGKR instead of TCA9517DR: about $0.01 cheaper and better (higher VILC contention threshold); package is VSSOP.
+  3. BAT54C,215 pairs for the two common-cathode OR groups (a few cents).
+  Everything else stays as is: TI TCA9517/74LVC1G17, Nexperia 2N7002/BAT54, AOS AO3400A. ULN2003-class Darlington drivers are worse: 21.1 mA coil, must-operate 80% = 4.0 V max for the G6K-2F-RF 5 VDC per the Omron datasheet.
+  
+  The real saving is in where the same genuine parts are bought. The whole set is about $6.2 at DigiKey qty-1 (my quantity assumptions) vs about $1.2 at LCSC with the DIY relay driver (about $1.16 with TCA9517A and BAT54C), excluding VAT and shipping. STACK already plans an LCSC order (TPS7A4701 line), so adding these parts costs little extra shipping. For EU delivery, VAT of 19-27% is added: LCSC collects it at checkout for small EU orders and DigiKey adds it on EU orders (I did not verify the exact mechanism). I did not verify whether LCSC is a TI-authorized distributor. If anti-counterfeit assurance is strict, buy the TI parts from TI.com or an authorized distributor (DigiKey, Mouser, Farnell); the Nexperia, AOS and Toshiba SOT-23 parts from LCSC are low risk but also not verified as authorized.
+  
+  Used or salvaged units do not apply to these jellybean SMD parts (no provenance, reflow damage). Generic AliExpress level-shifter or I2C modules are rejected: I verified no listing, a module costs more than the bare IC, and BSS138 shifter modules are not buffers because they do not isolate the cable capacitance.
+  
+  Flags for the integrator:
+  (a) STACK puts the G6K coil at about 0.12-0.15 W, but the Omron datasheet gives about 100 mW (21.1 mA, 237 Ohm at 5 VDC). Only one coil is on at a time.
+  (b) The HF+ selector line (62-80, '+ driver board') and this set's 'relay driver' may count the same driver twice.
+  (c) Use AO3400A rather than 2N7002 wherever a 3.3 V drive must carry tens of mA: the 2N7002 VGS(th) max is 2.5 V and it has no RDS(on) spec below 4.5 V. The LRC part's lower 2.0 V max threshold is the one advantage it has.
+  
+  No hard rule is affected: this is passive glue logic with no RF emission, no driver needs, and receive-only and conducted-only remain intact. Quantities and the TBD62003A as the baseline driver are my assumptions, because STACK names neither.
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
