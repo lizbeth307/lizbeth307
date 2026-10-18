@@ -420,3 +420,8 @@ P4, нове (ще не перевірено):
 - A (ПЗ, версії станом на жовтень 2026): readsb v3.16.17 (27.09.2026), AIS-catcher v0.70 (19.06.2026), multimon-ng 1.6.2 (26.09.2026). Джерела: GitHub-релізи wiedehopf/readsb, jvde-github/AIS-catcher, EliasOenal/multimon-ng.
 - C (L-band патч): RTL-SDR Blog у коментарях підтверджує, що патч має поляризацію RHCP. Твердження з блогу 2019 року, що Inmarsat — це LHCP, хибне. Джерело: rtl-sdr.com, стаття про L-band патч і коментарі адміністратора.
 
+## 2026-10-18 08:17 UTC
+
+P4, уточнення до ризику AppArmor/gpsd (ще не перевірено):
+- D: у qcom_module.config ядра Radxa є CONFIG_SECURITY_APPARMOR=y, але CONFIG_LSM="landlock,lockdown,yama,integrity,bpf" (apparmor у списку немає) і CONFIG_DEFAULT_SECURITY_DAC=y. Отже, без параметра ядра lsm=…,apparmor AppArmor на Q6A, швидше за все, не активний. Тоді профіль gpsd нічого не блокує, але й обмеження AppArmor для решти сервісів не діють. Вирішити треба одне з двох: (а) лишити AppArmor вимкненим і покладатися на ізоляцію через systemd (DevicePolicy, ProtectSystem, NoNewPrivileges), або (б) увімкнути AppArmor через cmdline і додати правило для /dev/ttyHS[0-9]*. Тест на старті: cat /sys/kernel/security/lsm і aa-status. Шлях у звіті агента — rk618/arch/arm64/configs/qcom_module.config, тобто це може бути не та гілка, що в нашому ядрі 6.18.2-4; перевірити на образі. Джерело: git-репозиторій ядра Radxa (github.com/radxa).
+
