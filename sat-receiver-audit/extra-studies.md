@@ -14581,3 +14581,1562 @@
   
   Budget: 4 WebSearch calls plus WebFetch on primary pages. Local checks used this container's Ubuntu 24.04 files: xkb-data 2.41-2ubuntu1.1 and systemd 255.4-1ubuntu8.17 kernel-install. All loop items stay excluded, as the user asked.
 
+## labui:final (run `wf_fceb75d0-87e`)
+
+- **Verdict:** The loop antenna and everything for it (loop amplifiers, frames and loop-specific chokes) is out. Every HF item below is a small whip, a wire or an E-field antenna that folds or collapses.
+  
+  HF RECEIVER: Airspy HF+ Discovery.
+  - Covers 0.5 kHz-31 MHz plus 64-260 MHz. +15 dBm IIP3, 110 dB blocking dynamic range on HF, switched preselectors.
+  - $169 list, $135 in Airspy sales.
+  - Needs only about 3.1 MB/s, so it fits on a black USB 2.0 port.
+  - The driver is in apt for noble arm64, and SDR++, SatDump, SDRangel and AIS-catcher support it natively. OpenWebRX+ and Soapy need SoapyAirspyHF built from source.
+  - When HF is idle it is also the lab's second VHF receiver (default for AIS).
+  
+  HF ANTENNAS:
+  - Primary: a 7-15 m wire on a winder feeding a Nooelec Balun One Nine v2 9:1, with a counterpoise. The kit costs about $56-66.
+  - For LF/VLF and camp use: a Bonito Boni-Whip active E-field whip, mounted at least 2 m up with a ground. It runs from a new 12.0 V filtered LDO rail; that value sits inside both published supply ranges, 9-15 V and 12-15 V.
+  - The budget option is a PA0RDT-type miniwhip clone. The telescopic elements are for quick looks only.
+  
+  MENU SYSTEM: no existing system is an ideal touch-menu field lab on Linux arm64.
+  - SDRangel has the functions but a desktop UI.
+  - OpenWebRX+ is a web receiver and ships disallowed decoders.
+  - PortaPack Mayhem is HackRF firmware with TX.
+  - DragonOS runs only on Raspberry Pi.
+  So the plan is to build a thin, glove-first Lab Shell (Qt 6.4 QML) on labwc, with a GTK layer-shell status bar. Under it sit:
+  - labd, which arbitrates resources, holds the function profiles and enforces safety interlocks;
+  - labpowerd and labinput;
+  - an RP2040 HMI with two encoders and six sealed keys.
+  Existing engines (SatDump, SDR++, SDRangel RX-only, OpenWebRX+, readsb, AIS-catcher, auto_rx, gr-satellites) run headless under it as supervised units, and each engine's own GUI stays only as an Expert view.
+  
+  Both verifiers' corrections are applied:
+  - GLFW touch depends on installing the X11 libglfw3 build.
+  - OpenWebRX+ is installed with --no-install-recommends and exact-name pins (js8call, rtl-433, the full WSJT-X GUI).
+  - HF+ frequency (ppm) correction is applied outside Soapy.
+  - SigMF: geolocation goes in each capture, and HF+ recordings are cf32_le.
+  - The status bar is 13 mm tall with 6 chips.
+  - Menu depth is truly 3 levels.
+  - A physical volume encoder is added.
+  - Leases are enforced with a separate user and ACLs.
+  - The power key is handled by logind and labpowerd, with a hardware hard-cut.
+  - greetd runs a crash-counting session.
+  - The boot default is pinned, with boot counting.
+  - Mesa and the graphics stack are held, and the apt timers are removed.
+- **Hf receiver:**
+  - **Name:** Airspy HF+ Discovery: dedicated HF/LF/VLF receiver (0.5 kHz-31 MHz) that doubles as a 64-260 MHz VHF receiver
+  - **Price:** $169 list (iTead; ships from EU/US warehouses in 3-6 days, otherwise from China). It was $135.20 in Airspy's 20% sale of Jun 27-Jul 4 2026, so watch for the next sale.
+  Installation extras (estimates): about $5 for a shield can and $5-10 for ferrites and a short USB lead.
+  Whole HF chain: about $205-400, depending on which active antenna you choose.
+  - **Why:** WHY THIS RECEIVER
+  - Best HF strong-signal handling per dollar: +15 dBm IIP3 and 110 dB blocking dynamic range on HF.
+  - HF switched preselectors: high-pass at about 0/5/10/17 MHz, low-pass at 5/31 MHz.
+  - MDS -140 dBm (500 Hz), 0.5 ppm clock.
+  - Reviews: WRTH calls it 'Best value SDR'. Guy Atkins found it 'close to identical' to the $899 Elad FDM-DUOr. Leif SM5BSZ ranked it second only to the Perseus in most tests.
+  - Covers LF and VLF down to 0.5 kHz, which neither the V4L (500 kHz floor) nor the LimeSDR Micro (30 MHz floor) can do.
+  
+  FIT IN THE HANDHELD
+  - USB 2.0 only, about 3.1 MB/s (768 ksps int16 IQ). That fits the shared FE1.1s hub next to the V4L (about 4.8 MB/s); the only USB 3.1 port stays free.
+  - Size 45x60x10 mm.
+  - Software is in apt for noble arm64: airspyhf, libairspyhf1 and libairspyhf-dev 1.6.8-4build1.
+  - Native support in SDR++ (noble aarch64 CI builds airspyhf_source), SatDump (airspyhf plugin), SDRangel (airspyhf plugin, uses only 1.6.8 functions), AIS-catcher, and noble's gr-osmosdr (which links libairspyhf1).
+  
+  SECOND VHF RECEIVER
+  - Its 64-260 MHz range with 95 dB VHF blocking dynamic range makes it the default AIS (162 MHz) receiver, and the backup for LRPT (137 MHz), ISS (145.8 MHz) and VOR (108-118 MHz). That takes load off the V4L.
+  - Only one SMA for both ranges, so HF and VHF use exclusive leases.
+  
+  LIMITS
+  - 660 kHz alias-free bandwidth, so the NPU HF survey sweeps in 660 kHz steps.
+  - Plastic case, and a community report of host EMI pickup, so it needs a shield can and the HF Quiet profile.
+  - No bias tee in libairspyhf 1.6.8.
+  - Current draw is not published by Airspy or RigPix (measure it).
+  
+  REJECTED
+  - LimeFEA HF Micro: ships Dec 15 2026, and its HF-path software is unproven.
+  - SDRplay RSP1B / RSPdx-R2: 315 g, and a closed API that needs restarts on ARM.
+  - RX-888 and Fobos: USB 3 only.
+  - HackRF: a transceiver, starts at 1 MHz.
+  - **Setup:**
+    - BUY AND BENCH-TEST FIRST. Buy from iTead or an Airspy dealer and test it on the Q6A before building it in:
+  - sudo apt install airspyhf libairspyhf1 libairspyhf-dev
+  - airspyhf_info
+  - a 30 min airspyhf_rx capture at 768 ksps while the V4L streams at 2.4 Msps on the same FE1.1s hub, Wi-Fi off. Pass = zero dropped samples.
+    - MEASURE ITS CURRENT with an inline USB meter (not published). Log it in the power budget. The Q6A USB-A VBUS switches are WS4612 parts limited to about 2.1 A (the '500 mA' schematic labels are trace annotations), so V4L + bias tee (about 450 mA) + HF+ fit. Still check the combined draw with every bias tee on.
+    - UDEV IDENTITY. Add a rule for VID:PID 03EB:800C plus the unit's serial:
+  - SYMLINK /dev/lab/hfplus
+  - TAG+=systemd with SYSTEMD_ALIAS=/dev/lab/hfplus
+  - GROUP labrx, MODE 0660
+  Engine units then BindsTo the device and stop cleanly on unplug.
+    - BUILD SoapyAirspyHF. Build pothosware/SoapyAirspyHF against noble's libairspyhf 1.6.8 and package it as soapyairspyhf+lab1 in the local apt repo. It is a hard dependency of the OpenWebRX+ HF profile, which reaches the HF+ only through soapy_connector + soapy_airspyhf, and of the labrx Soapy path. noble's gr-osmosdr airspyhf source is a fallback for labrx.
+    - CAP THE SAMPLE RATE. Limit every function profile to 768 ksps (660 kHz alias-free) and use 660 kHz sweep steps. Do not use the 912000 sps entry that OpenWebRX+ offers for 'HF+ or Discovery'.
+    - CALIBRATE FREQUENCY per serial against the GPSDO, a GNSS-locked carrier or a strong time-signal carrier, and store it in labd. Apply it in labrx (NCO/resampler offset), or open the device with libairspyhf and call airspyhf_set_calibration. SoapyAirspyHF never calls set_calibration, so a ppm value set through Soapy is silently ignored.
+    - MOUNT IT.
+  - Put it in its own copper-clad or aluminium can, bonded to the 2 mm aluminium mid-plate and to the USB shield.
+  - Place it at the end of the case farthest from the 12 V buck, the backlight boost converter and the HDMI bridge.
+  - Feed it through a short USB lead with ferrites and the GPIO VBUS-cut pigtail (P-FET, on by default), so labd can power-cycle a wedged unit.
+    - INPUT SELECTOR (one SMA serves HF and VHF). Wire a latching, DC-capable signal relay with three ports: HF antenna bulkhead / VHF bus / 50-ohm termination. Choose a part that gives good isolation at 162-260 MHz (part TBD).
+  - Do not use the planned HMC241 GaAs SP4T here: it needs DC-blocking capacitors that hurt LF/VLF.
+  - Without a selector, the profile shows a 'connect X' prompt that must be confirmed.
+  - In the UI, call it 'HF+ in VHF mode via selector', never 'HF+ VHF port'.
+    - ACCEPTANCE TEST: HF noise A/B. Measure at 0.1, 0.5, 1, 5, 10 and 20 MHz with the input terminated and then on each antenna, and with each noise source on and off: display at 2000 nits / minimum / off, Wi-Fi, Lime streaming, charger.
+  Then save the HF Quiet profile: backlight minimum or off, Wi-Fi rfkill, Lime stream stopped (driver stays loaded), T7 idle, fixed fan speed, charger warning.
+  - **Budget alternative:** RTL-SDR Blog V4L built-in upconverter: 0.5-28.8 MHz with a 28.8 MHz LO, no LF/VLF.
+  - Cost: $0 if it time-shares the existing V4L, but then HF blocks LRPT, ISS and the QO-100 IF on that dongle. A second V4L costs $37.95 (official store; about $34.20 on the official AliExpress listing) and goes on a black USB 2.0 port (about 4.8 MB/s).
+  - Expect 8-bit overload near MW/SW broadcasters with a long wire; add the AM band-stop (about EUR 23) or attenuation.
+  - Expect spur families from 28.8 MHz; lower the LNA gain and set gain stages separately.
+  - Use the same wire and 9:1. The 9:1 is a DC short, so the V4L bias tee must stay locked OFF.
+  - **Sources:**
+    - https://airspy.com/airspy-hf-discovery/
+    - https://www.itead.cc/product/airspy-hf-discovery/
+    - https://airspy.com/downloads/WRTH2020Features_Airspy_Discovery_review.pdf
+    - https://www.rtl-sdr.com/airspy-hf-discovery-collection-of-tests-and-reviews/
+    - https://swling.com/blog/2019/08/airspy-hf-discovery-first-impressions-on-medium-wave-vs-elad-fdm-duor/
+    - https://rigpix.com/miscrx/airspy_hfplusdiscovery.htm
+    - https://packages.ubuntu.com/search?keywords=airspyhf&searchon=names&suite=noble&section=all
+    - https://github.com/pothosware/SoapyAirspyHF
+    - https://raw.githubusercontent.com/pothosware/SoapyAirspyHF/master/Settings.cpp
+    - https://raw.githubusercontent.com/luarvique/openwebrx/master/owrx/source/airspyhf.py
+    - https://raw.githubusercontent.com/airspy/airspyhf/master/libairspyhf/src/airspyhf.h
+    - https://raw.githubusercontent.com/AlexandreRouma/SDRPlusPlus/master/docker_builds/ubuntu_noble/do_build.sh
+    - https://github.com/jvde-github/AIS-catcher
+    - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+    - https://www.rtl-sdr.com/measuring-the-usb-power-consumption-of-various-software-defined-radios/
+- **Hf antenna:**
+  - **Name:** Two antennas, neither a loop. Primary: wire on a winder with a 9:1 transformer. Secondary, for LF/VLF and camp use: Bonito Boni-Whip active E-field whip. No loop antenna, loop amplifier, loop frame or loop-specific choke is part of the kit.
+  - **Price:** WIRE KIT: about $56-66.
+  - Wire: Tecsun AN-05 7 m reel, US$14.49 (£12.95 / €15.41 at Moonraker).
+  - 9:1 transformer: Nooelec Balun One Nine v2, $26.95 (Nooelec) or €19.50-21.67 (Passion Radio).
+  - 5-10 m of thin 50-ohm coax (RG-174/RG-316 class) plus clip-on ferrites: about $15-25 (estimate).
+  
+  BONI-WHIP OPTION:
+  - US$123.95 (Moonraker) or EUR 135-159 incl. VAT (WIMO; one WIMO page says available from 20.11.2026).
+  - Plus a BNC-to-SMA lead (about $5-10, estimate) and the 12 V rail parts (LC filter, low-noise LDO, polyfuse, load switch; about $5-10, estimate).
+  - **Why:** WIRE + 9:1 (PRIMARY)
+  - Passive, so no amplifier IMD, no bias power and no added noise.
+  - Best signal per cost from about 0.5 to 30 MHz.
+  - Packs into a pocket: reel about 10 cm, balun 38x25 mm.
+  - The feed point sits 5-10 m away from the noisy handheld.
+  - The HF+ preselectors and 110 dB blocking dynamic range handle the stronger signals a wire delivers.
+  - Community: a long wire at the same height was 'much quieter' than a noisy clone miniwhip, and WRTH tested the Discovery with random wires.
+  - Engineering choice: 9:1 suits a broadband random wire; 49:1 is for end-fed half-waves.
+  
+  BONI-WHIP (LF/VLF AND CAMP)
+  - Covers 9-20 kHz to 300 MHz with a 14-17 cm radiator, 189 g. Its bias tee is included.
+  - Fits the size rule, and it is the compact way to receive 40-162 kHz time signals, NDBs, NAVTEX and SID carriers.
+  - Like every small E-field antenna, the signal is the voltage between the element and its ground or coax shield (PA3FWM). It must sit at least 2 m up and away from the device, with a ground stake or counterpoise.
+  - SWLing field reports: 'terrible' at home in urban electrosmog, much better at a quiet field site.
+  - Supply: 9-15 V (WIMO Spanish page) versus 12-15 V (SWLing 2017), so the rail is set to 12.0 V.
+  
+  TELESCOPIC ELEMENTS: quick look only, because they lose about 50/30/20 dB at 1/10/30 MHz on 50 ohms (estimate).
+  - **Setup:**
+    - WIRE: CHOOSE THE SITE. Pick a spot 5-10 m from where you will sit, away from power lines, fences with electric feeds, and vehicles. Never deploy or stay connected when thunderstorms are possible; the balun's varistor is a last resort, not protection.
+    - WIRE: RAISE THE FAR END. Throw a cord with a small weight over a branch 2-5 m up, or use any support. Tie the far end of the wire to the cord through an insulator, never directly to a metal mast. Unreel 7 m (AN-05) or 10-15 m (DIY wire on a winder of 20 cm or less) as a sloper or inverted-L.
+    - WIRE: CONNECT THE TRANSFORMER. Fit the Balun One Nine v2 near the ground at the feed point. The wire goes to the antenna terminal. A 3-5 m counterpoise wire goes to the ground terminal and lies on the ground away from the wire. Then run 5-10 m of thin coax back to the handheld, lying on the ground.
+    - WIRE: DISCHARGE, THEN PLUG IN. Discharge the wire first by touching it to the case ground/counterpoise post. Then connect the coax to the HF SMA bulkhead with clip-on ferrites at the receiver end (a general common-mode choke).
+  - Before the first use, measure the transformer's DC resistance at the SMA: Nooelec does not state its DC path.
+    - WIRE: MENU. Choose HF > Antenna > 'Wire + 9:1'. This profile is DC-unsafe, so labd locks every bias source off, including the V4L tee on the budget path.
+  - Run the noise check (terminated versus antenna). Expect at least a 10 dB rise at 7 MHz at night; that is my criterion.
+  - Then enable HF Quiet, run on battery only, and unplug the charger.
+    - BONI-WHIP: MOUNT. Hoist it at least 2 m up on a cord to a branch, or use a pole that collapses to 35 cm or less. Drive a ground stake, or lay a counterpoise wire, at the base and bond the coax shield there.
+  - Never mount it on the handheld.
+  - Run the coax through the Boni-Whip's own bias tee, with a BNC-to-SMA lead to the HF SMA.
+    - BONI-WHIP: POWER. Feed the injector from the lab's 12.0 V active-antenna rail: 4S pack -> LC filter -> low-noise LDO -> polyfuse -> labd GPIO load switch, which defaults OFF at boot. It never comes from USB 5 V.
+  - In the menu choose HF > Antenna > 'Active E-field whip'. labd runs the DC-sense probe and expects an active load.
+  - Hold 1.5 s to enable 12 V. The SDR chip shows the bias glyph and the rail current.
+    - BONI-WHIP: PACK UP. Turn bias off before disconnecting. Reel the wire in without kinking. Store the transformer, the counterpoise and the coax in the accessory pouch.
+  - **Budget alternative:** In place of the Boni-Whip, a PA0RDT-type miniwhip clone:
+  - Passion Radio 'Active 0-50 MHz mini antenna', EUR 25.90; the price of the 10 kHz-30 MHz item was not captured.
+  - Needs an injector rated down to about 10 kHz, fed from the same 12 V rail.
+  - Clone quality varies: one RadioReference user saw spikes every 10 kHz.
+  - Same mounting rules: at least 2 m up and grounded at the base.
+  
+  In place of the AN-05 reel: 10-15 m of thin insulated wire on a 3D-printed winder, with the same Nooelec 9:1.
+  
+  Quick look only, at $0 extra: the lab's RTL-SDR Blog dipole-kit telescopic elements (23 cm to 1 m, M5) straight on the HF+, for strong SW broadcast and 10-30 MHz in daytime.
+  - **Sources:**
+    - https://www.nooelec.com/store/balun-one-nine-v2.html
+    - https://moonrakeronline.com/us/an-05-fm-sw-reel-antenna-with-clip
+    - https://www.wimo.com/en/18067
+    - https://moonrakeronline.com/us/bonito-boni-whip-active-antenna
+    - https://swling.com/blog/tag/bonito/page/3/
+    - https://www.pa3fwm.nl/technotes/tn07.html
+    - https://pa3fwm.nl/technotes/tn09d.html
+    - https://www.passion-radio.com/sdr-antennas/mini-whip-1012.html
+    - https://forums.radioreference.com/threads/problems-with-ra0sms-mini-whip-antenna.354968/
+    - https://www.rtl-sdr.com/an-opensource-mini-whip-antenna-and-upconverter-design-for-rtl-sdrs/
+- **Hf capabilities:**
+  - General-coverage listening, 0.5 kHz-31 MHz, in AM, SAM, SSB and CW, through a 660 kHz alias-free window. Engines: OpenWebRX+ in P0; shell-native WDSP RX on sdrangelsrv from P2.
+  - LF time signals decoded and compared with the GNSS/PPS clock (SDRangel Radio Clock): DCF77 77.5 kHz, MSF and WWVB 60 kHz, JJY 40/60 kHz, TDF 162 kHz. HF time stations are listen-only.
+  - Maritime safety information:
+  - NAVTEX 518/490 kHz and 4209.5 kHz, with alerts on new warnings.
+  - HF SITOR-B MSI.
+  - DSC, showing only distress, urgency and safety categories.
+  - HF WEFAX chart capture on a schedule.
+  - Concurrent LF window: one HF+ window centred near 290 kHz covers 60/77.5 kHz time signals plus 490/518 kHz NAVTEX. One sdrangelsrv device set can run Radio Clock and NAVTEX together.
+  - DRM digital shortwave, plus LW/MW/SW AM broadcast, with an optional AM band-stop near strong MW transmitters.
+  - Amateur bands, decode-only with no PTT, CAT or TX:
+  - FT8, FT4 and WSPR, with an offline propagation map built from received spots.
+  - CW and RTTY skimmers, and PSK31.
+  - IBP beacon cycle logging.
+  - NDB idents on LF/MF, and VOR bearing and ident (108-118 MHz) with the HF+ in VHF mode.
+  - SID space-weather logging: amplitude of VLF/LF carriers only, never demodulated, with a solar-flare plot. Needs the active E-field whip.
+  - HF band survey: 0.5-30 MHz swept in 660 kHz steps, with occupancy logs and NPU/CPU signal classes on the waterfall. The V4L's 2.4 MHz windows are the alternative.
+  - Overnight background logging (FT8/WSPR bands, NAVTEX broadcast times) at lease priority 'background', preempted automatically by starred satellite passes.
+  - Noise diagnostics: terminated versus antenna noise check, and display/Wi-Fi/Lime/charger A/B reports.
+  - Second VHF receiver, 64-260 MHz, whenever HF is idle: AIS by default, backup for 137 MHz LRPT and 145.8 MHz ISS, broadcast FM. This frees the V4L for satellites.
+  - SigMF IQ recording of HF captures: cf32_le at about 6.1 MB/s at 768 ksps, to UFS, with per-capture GNSS geolocation and antenna metadata.
+- **Ui system:**
+  - **Summary:** VERDICT ON EXISTING SYSTEMS
+  Nothing that exists today is a glove-first, menu-driven, receive-only lab UI for this hardware.
+  - SDRangel 7.27.2 covers most functions, but it has a dense desktop UI and no arm64 binary.
+  - OpenWebRX+ has the best touch receiver UI, but it is a web server that ships disallowed decoders.
+  - PortaPack Mayhem has the right menu pattern, but it is HackRF firmware with TX.
+  - DragonOS and PiSDR run only on Raspberry Pi.
+  
+  THE DESIGN
+  A thin purpose-built layer over strong existing engines.
+  - Lab Shell (Qt 6.4.2 QML) is the only home screen. It runs on labwc, under a GTK layer-shell status bar (labbar).
+  - Below it are four daemons:
+    - labd: Python daemon on D-Bus. It handles leases and arbitration, function profiles, the scheduler, the recorder, the RF front-end and the safety interlocks.
+    - labpowerd: a minimal coulomb-gauge and shutdown daemon.
+    - labinput: bridges the RP2040 HMI to uinput.
+    - labrx: our own GNU Radio/SoapySDR core for FFT, IQ taps, SigMF, the RAM ring, sweeps and Doppler correction.
+  - Each lab function is a one-tap FUNCTION PROFILE. Starting it leases the SDR plus its antenna path and bias, starts the engine as a supervised headless unit, and shows a native screen.
+  - Each engine's own GUI is only an Expert view, reached by a lease hand-off.
+  
+  CONTROLS
+  - Glove-size targets (at least 15 mm).
+  - Two hardware encoders: tune/focus and volume.
+  - Six sealed keys: HOME, BACK, REC, MARK, FN, LOCK.
+  - Menu depth is at most Home > Hub > Mode.
+  - Every action can be done with encoder and keys alone.
+  
+  RULES
+  - Receive-only and policy-safe by construction: no TX or PTT items, allow-listed decoders, apt pins at -1, and a packaging policy audit.
+  - Signal sources are reachable only in Bench mode, conducted-only.
+  - No loop-antenna items exist anywhere; HF antenna profiles are wire + 9:1, active E-field whip, and telescopic whip.
+  - **Architecture:** LAYERS, bottom to top:
+  
+  1. BASE: Radxa OS r2 (Ubuntu 24.04 noble), BIOS 260120, held kernel 6.18.2-4-qcom with the golden NPU set (QAIRT 2.42).
+     - The systemd-boot loader.conf has an explicit 'default' line pointing at the held entry, so a newer kernel cannot become the default.
+     - Trial kernels get boot counting (/etc/kernel/tries).
+  
+  2. HARDWARE I/O (no USB for slow peripherals):
+     - UART6 (pins 16/18): LC76G GNSS, with PPS on pin 7 (GPIO96).
+     - UART7 (pins 32/29, behind the UM3304 TXB buffer): the HMI RP2040. It handles both encoders, the 6 keys, VEML7700, NTCs, backlight PWM, RGB LED, piezo, a heartbeat and the hard-cut request line, and it relays the BNO085 over its second UART. UART7 overlay availability must be checked; the fallback is a small internal USB 2.0 hub on the touch port.
+     - I2C0 (pins 13/15): INA228 on an always-on supply. CHARGE is read from user space over i2c-dev, and the kernel driver is not bound at the same time.
+     - Header GPIOs, held by labd as persistent libgpiod v1 line requests with pull-resistor safe defaults (never one-shot gpioset):
+       - RF switches and the HF+ input selector relay;
+       - bias load switches: V4L tee via its driver, LNA 5 V, LNB 13.4/18.2 V, HF active-antenna 12.0 V;
+       - the DC-sense probe;
+       - VBUS-cut pigtails;
+       - the noise-source switch.
+  
+  3. SYSTEM DAEMONS (systemd):
+     - labd: Python 3.12 asyncio on the system D-Bus, interfaces org.lab.{Arbiter, Profiles, Scheduler, Recorder, Frontend, Status, Instruments, Models, Alerts}. It persists the lease table in /run/lab/leases.json and reconciles it with systemd unit state on restart.
+     - labpowerd: separate and minimal. It owns KEY_POWER (logind HandlePowerKey=ignore).
+     - labinput: UART-to-uinput bridge. It emits real keysyms (XF86Tools, XF86Launch5-9) for the labwc keybinds, so they work even if labd is down. It routes the encoders by focus and owns the touch grab for LOCK.
+     - gpsd and chrony.
+     - labclassify: sandboxed NPU/CPU classifier on the A55 cores.
+     - Headless engines run as system user 'labrx' via templated units: labrx@<sdr>, one sdrangelsrv (several device sets), satdump-pass@, openwebrx, readsb, ais-catcher, auto-rx, gr-satellites@.
+  
+  4. SESSION: greetd 0.9.0, with both initial_session and default_session set to a crash-counting lab-session wrapper running as user 'lab'.
+     - labwc 0.7.1 with XWayland. If the week-1 gate fails, use a local labwc 0.8.4 build; it requires wlroots 0.18 via its meson wrap and libwayland at least 1.23 as a meson fallback, because noble has 1.22.
+     - labbar: GTK3 + gtk-layer-shell 0.8.2, a 13 mm exclusive zone.
+     - Lab Shell (app_id lab.shell).
+     - labsession: starts Expert GUI units and raises windows.
+     - Expert apps: SDR++ and SatDump on the X11 libglfw3 build, SDRangel GUI, NanoVNA-Saver, QtTinySA, CyberEther. They open maximized under the bar, and only while the user holds an Expert lease with a node ACL.
+  
+  5. SAFE MODE: after 3 session crashes in 10 minutes, or HOME held at power-on (read by an early unit from an RP2040-driven GPIO), the system boots cage 0.1.5 with 'lab-shell --safe'. Safe mode offers Devices, Logs, Recovery (restore last good snapshot) and Shutdown.
+  
+  NAVIGATION
+  - Home is a 4x3 grid of live tiles, about 29x20 mm at 1080p: Satellites, HF, Air & Sea, Sondes, Spectrum, Radio Astronomy, Instruments, Signals AI, Recordings, Map & Point, GNSS & Time, System.
+  - A hub is ONE scrolling list: Favorites and Recent rows on top, then section headers (e.g. Maritime safety, Amateur decode-only) with mode cards.
+  - Sheets and overlays (pass card, control sheets, the Running drawer, the quick sheet) do not add depth. Depth is at most Home > Hub > Mode.
+  - Global entries:
+    - TUNE: frequency-first entry. It proposes the SDR, antenna, mode and the decoders that can run together.
+    - RUNNING drawer: every lease and job, with Resume/Stop.
+    - Alerts inbox.
+    - Pass banners.
+  - HOME raises the shell; if the shell is gone, it restarts it.
+  - BACK goes up one level.
+  - REC and MARK act globally according to the mode's capability flags.
+  - LOCK disables touch while the encoders stay live.
+  
+  POLICY BY CONSTRUCTION
+  - The shell shows only allow-listed profiles.
+  - Engines are built or installed without TX and without disallowed decoders.
+  - The Lime TX ports are terminated and never leased.
+  - Generators (tinySA output, VNA port, noise source) are reachable only in Bench mode, behind the conducted-only interlock enforced by labd.
+  - **Tech stack:** Versions are from the noble arm64 archive, checked 18 Oct 2026, unless marked otherwise.
+  
+  BASE AND GRAPHICS (held)
+  - Radxa OS r2, kernel 6.18.2-4-qcom (held), radxa-firmware-qcs6490, fastrpc, libcdsprpc1, qcom-qnn-sdk-v68.
+  - Hold the validated Mesa set: noble 24.0.5 versus noble-updates 25.2.8; never let Mesa move silently. Also hold linux-firmware, libdrm, xwayland 23.2.6, wlroots, labwc, qt6-*, systemd-boot and pipewire.
+  
+  COMPOSITOR, SESSION AND INPUT
+  - labwc 0.7.1-1build1. Fallback: labwc 0.8.4 local build (wlroots-0.18 >=0.18.1 <0.19 via wrap; wayland-server >=1.23 meson fallback; libdrm >=2.4.122 is satisfied by noble-updates 2.4.125).
+  - greetd 0.9.0, cage 0.1.5 (depends on xwayland) for safe mode, wlr-randr 0.3.0.
+  - wvkbd 0.14.3 for third-party Wayland apps. squeekboard is not in noble.
+  - python3-evdev 1.7.0.
+  - libglfw3 3.3.10, the X11 build, held; libglfw3-wayland pinned to -1. GLFW 3.3 chooses its backend at build time, so XDG_SESSION_TYPE=x11 alone does nothing.
+  
+  SHELL
+  - C++17 + QML on Qt 6.4.2: qt6-base, qt6-declarative, Quick Controls, qt6-wayland, qt6-virtualkeyboard-plugin, qml6-module-qtwebengine (Expert web pages only), qtcharts, qtpositioning, QtDBus.
+  - Qt 6 Location is not in noble, so the map is our own MBTiles tile layer read through Qt SQL.
+  - Waterfall: a custom QQuickItem with GPU textures fed from labrx shared memory, plus an NPU box overlay.
+  - Help: Markdown in Qt.
+  - Languages: Qt Linguist en and uk from P0. Numbers always use the C locale.
+  
+  STATUS BAR: Python 3.12 + PyGObject 3.48.2 + GTK3 + gtk-layer-shell 0.8.2. layer-shell-qt in noble is Qt5-only, so the bar cannot live inside the Qt6 shell.
+  
+  DAEMONS
+  - python3-sdbus 0.11.1 or dbus-next 0.2.3, python3-systemd 235, sdnotify 0.3.1.
+  - python3-libgpiod 1.6.3: v1 API. Lines are held as persistent requests; the v2 'gpioset -c' syntax does not exist on noble.
+  - pyudev 0.24, pyserial 3.5, python3-gps 3.25, numpy 1.26.4.
+  - Passes: skyfield 1.48 and sgp4 2.22 (pin newer versions in a venv if OMM or Alpha-5 parsing is missing).
+  - gpsd 3.25, chrony 4.5.
+  - PipeWire 1.0.5: volume per stream via wpctl, driven by the volume encoder.
+  
+  RX CORE: labrx in C++.
+  - GNU Radio 3.10.9.2, gr-soapy, gr-zeromq, VOLK.
+  - SoapySDR 0.8.1 modules: rtlsdr 0.3.3, airspy 0.2.0, soapyairspyhf (source build), limesuiteng (source build).
+  - gr-osmosdr 0.2.5 as the HF+ fallback.
+  - HF+ frequency correction is applied in labrx, never via Soapy.
+  
+  ENGINES
+  - SatDump master (source): airspyhf plugin; inmarsat_support removed; LC_NUMERIC=C.
+  - SDR++ (source):
+    - ON: OPT_BUILD_SOAPY_SOURCE.
+    - OFF: OPT_BUILD_PAGER_DECODER, OPT_BUILD_M17_DECODER, OPT_BUILD_FALCON9_DECODER.
+    - rigctl_server autoStart=true in every generated -r config.
+  - SDRangel 7.27.2, RX-only, from source on Qt 5.15.
+    - Packaged dependencies: sgp4, inmarsatc, libsigmf, aptdec, and whatever WDSP_SUPPORT needs.
+    - The audit fails on any LibMbe, DSDcc, SerialDV or TX .so file.
+  - OpenWebRX+ 1.2.126 (luarvique PPA): installed --no-install-recommends, plus explicit allowed decoders (csdr-skimmer, sonde-decoders, dream, direwolf, jt9/wsprd).
+  - readsb (wiedehopf, rtlsdr build profile) with tar1090 on lighttpd 1.4.74.
+  - AIS-catcher (source), radiosonde_auto_rx (venv).
+  - From noble apt: gr-satellites 5.5.0, direwolf 1.7, gnss-sdr 0.0.19, qsstv 9.5.8 and gqrx 2.17.4 (both RX-only fallbacks).
+  - WSJT-X: jt9 and wsprd only. Either build those alone, or install wsjtx and dpkg-divert /usr/bin/wsjtx and its .desktop file.
+  - CyberEther (optional).
+  
+  INSTRUMENTS
+  - nanovna-saver 0.6.3 (apt).
+  - QtTinySA in a venv with PySide6-Essentials pinned to a tested 6.11.x or older. 6.12.0 has a manylinux_2_39 aarch64 wheel, but it is 10 days old.
+  - labd serial drivers for the tinySA, power meter and GPSDO.
+  - SDRangel Noise Figure plugin.
+  
+  AI
+  - Training at home: PyTorch, plus INT8 conversion on an x86-64 Ubuntu 22.04 QAIRT 2.42 host.
+  - On device: onnxruntime 1.31.0 (cp312 aarch64 wheel) for CPU, plus a C++ QNN HTP runner.
+  
+  DATA AND PACKAGING
+  - SigMF 1.2.6, with sigmf-python 1.13.0 as the validator.
+  - MBTiles, CelesTrak OMM.
+  - aptly 1.5.0 or reprepro 5.3.1 for the local repo.
+  - rsync snapshots to an ext4 'lab-snap' partition on the T7. timeshift 24.01.1 is optional and only on an ext4 target.
+  - smartmontools 7.4.
+  - **Menu tree:**
+    1.
+      - **Path:** Home
+      - **Function:** Contents:
+  - 4x3 live tiles, about 29x20 mm each, showing live state (next pass countdown, AIS ship count, REC minutes left, battery).
+  - Soft-key column (4 keys of 22x15 mm): TUNE, NEXT PASS, QUIET, RUNNING.
+  - Hardware keys are always active.
+      - **Backend:** Lab Shell + labd Status. Device: none.
+    2.
+      - **Path:** Global > Tune (frequency-first)
+      - **Function:** Type or dial a frequency (MHz/kHz keys). The shell proposes:
+  - the SDR: HF+ below 31 MHz; HF+ in VHF mode for 64-260 MHz if free; V4L; or Lime at 30 MHz and above;
+  - the antenna profile, the mode, and the decoders that can run with that tuning.
+  One tap starts it.
+      - **Backend:** labd Profiles + Arbiter. Device: any free SDR.
+    3.
+      - **Path:** Global > Running drawer
+      - **Function:** Every active lease and job: owner, SDR, priority, since, capability (REC IQ/AUD/products), with [Resume] [Stop (hold 1.5 s)].
+  - Preempted jobs show 'paused by X, resumes on exit' and auto-resume.
+  - Hidden Expert apps drop from P2 to P4 after a timeout.
+      - **Backend:** labd Arbiter. Device: all.
+    4.
+      - **Path:** Global > Alerts inbox
+      - **Function:** Info / Pass / Warning / Critical messages, each with actions.
+  - Do-not-disturb during recording, except Critical.
+      - **Backend:** labd Alerts. Device: none.
+    5.
+      - **Path:** Global > Pass banner (T-10 and T-2 min)
+      - **Function:** [Start] [Skip] [Use other SDR].
+  - Never steals focus.
+  - LED and tone when the screen is off.
+  - Shows conflicts 48 h ahead.
+      - **Backend:** labd Scheduler -> Shell/labbar. Device: per profile.
+    6.
+      - **Path:** Global > Quick sheet (tap STATUS chip or FN+BACK)
+      - **Function:** Detail of status items not shown on the bar:
+  - UTC + time source, GNSS fix, AI state and windows/s, SoC/battery temperatures, storage free, Wi-Fi/Quiet state.
+  - Each row opens its System page.
+      - **Backend:** labd Status. Device: none.
+    7.
+      - **Path:** Home > Satellites > Pass list
+      - **Function:** Next 24-48 h:
+  - AOS/LOS, maximum elevation, mode, chosen SDR, conflict badge and star.
+  - Tapping a row opens the pass card sheet: [Auto-record star] [Point] [Choose SDR/antenna] [Record IQ] [Skip], plus a setup checklist and the expected margin.
+      - **Backend:** labd Scheduler (Skyfield on cached CelesTrak OMM). Device: planning only.
+    8.
+      - **Path:** Home > Satellites > Auto-record rules
+      - **Function:** Per-satellite rules:
+  - minimum elevation, starred priority, SDR order, front-end path;
+  - live decode or record-then-decode;
+  - retention.
+      - **Backend:** labd Scheduler. Device: per profile.
+    9.
+      - **Path:** Home > Satellites > Meteor-M LRPT 137.1/137.9 MHz [Weather]
+      - **Function:** Live pass screen:
+  - sky plot, SNR/lock, image preview strip, products.
+      - **Backend:** SatDump CLI per pass (satdump-pass@).
+  - Device: V4L, or the HF+ in VHF mode via the selector as alternate.
+  - Antenna: telescopic V-dipole + FM band-stop + SAWbird+ NOAA on the V4L 4.5 V tee.
+    10.
+      - **Path:** Home > Satellites > Meteor-M HRPT 1.7 GHz [Weather]
+      - **Function:** Live or record-then-decode HRPT, with the pointing aid.
+      - **Backend:** SatDump CLI at 7-10 Msps.
+  - Device: LimeSDR Micro RX1 (V4L marginal).
+  - Antenna: helicone/helix + SAWbird+ GOES.
+    11.
+      - **Path:** Home > Satellites > Metop/FY AHRPT, experimental [Weather]
+      - **Function:** Record-then-decode on high passes only.
+      - **Backend:** SatDump CLI. Device: Lime RX1 + helicone.
+    12.
+      - **Path:** Home > Satellites > Elektro-L LRIT 1691 MHz [Weather]
+      - **Function:** Fixed-pointing L-band check and antenna A/B test.
+      - **Backend:** SatDump CLI. Device: Lime RX1 + helicone + SAWbird+ GOES.
+    13.
+      - **Path:** Home > Satellites > ISS SSTV 145.800 MHz [ISS and amateur]
+      - **Function:** SSTV image capture in the pass window, with a gallery.
+      - **Backend:** OpenWebRX+ background SSTV on a pass profile. Fallback: labrx NFM audio -> QSSTV (RX-only).
+  - Device: V4L, or the HF+ in VHF mode.
+    14.
+      - **Path:** Home > Satellites > ISS APRS digipeater 145.825 MHz receive [ISS and amateur]
+      - **Function:** Packet list and positions on the map.
+      - **Backend:** labrx NFM audio -> PipeWire virtual sink -> direwolf 1.7 (no PTT device).
+  - Device: V4L, or the HF+ in VHF mode.
+    15.
+      - **Path:** Home > Satellites > CubeSats 435-438 MHz [ISS and amateur]
+      - **Function:** Pick the satellite by NORAD ID (6-digit OK). Doppler-corrected telemetry frames, with a frame log.
+      - **Backend:** labrx Doppler NCO -> gr-satellites 5.5.0 (.yml per satellite).
+  - Device: Lime RX2 (alternate: V4L).
+  - Antenna: crossed Yagi 70 cm + Uputronics 435 preamp.
+    16.
+      - **Path:** Home > Satellites > QO-100 NB transponder [GEO]
+      - **Function:** Contents:
+  - waterfall of 10489.5-10490 MHz;
+  - SSB/CW listening;
+  - beacon-locked LNB drift correction;
+  - LNB 13.4 V (V) / 18.2 V (H), hold-to-confirm.
+      - **Backend:** labrx beacon lock + sdrangelsrv SSB/CW demod with transverter offset (P0: SDR++ Expert via rigctl).
+  - Device: V4L at the 739.5-740 MHz IF.
+  - Antenna: Bullseye LNB + horn, injector, DC block.
+    17.
+      - **Path:** Home > Satellites > QO-100 beacon monitor [GEO]
+      - **Function:** C/N0 log of the CW 10489.500 and PSK 10489.750 beacons, for horn/lens A/B tests.
+      - **Backend:** labrx. Device: V4L.
+    18.
+      - **Path:** Home > Satellites > Inmarsat-C SafetyNET, EGC MSI only [GEO]
+      - **Function:** Navigational warnings, meteorological warnings and SAR broadcasts only. Every other Inmarsat traffic type is dropped and never stored.
+      - **Backend:** sdrangelsrv Inmarsat C -> UDP -> labd EGC SafetyNET allow-list. SatDump inmarsat_support is not installed.
+  - Device: Lime RX1 (alternate: V4L).
+  - Antenna: RHCP helix/patch + SAWbird iO.
+    19.
+      - **Path:** Home > Satellites > TLE/OMM data [Data]
+      - **Function:** Age per satellite and stale warnings (3 days for ISS, 7 days for others), import from the T7, refresh when online.
+      - **Backend:** labd OMM cache. Device: none.
+    20.
+      - **Path:** Home > Satellites > Products [Data]
+      - **Function:** Image and telemetry gallery by pass.
+      - **Backend:** Shell gallery over SatDump, gr-satellites and OpenWebRX+ outputs. Device: none.
+    21.
+      - **Path:** Home > Satellites > Expert: SatDump GUI
+      - **Function:** The full SatDump UI, including offline processing. The lease is handed to the GUI and returned on exit.
+      - **Backend:** satdump-ui (X11 libglfw3, XWayland, LC_NUMERIC=C) as a user unit, with a node ACL. Device: the leased SDR.
+    22.
+      - **Path:** Home > HF > HF Listen [Listen]
+      - **Function:** AM/SAM/SSB/CW receiver:
+  - 6 mm or taller frequency digits, band and mode buttons;
+  - encoder tuning, FN+encoder for step;
+  - volume encoder, memories, S-meter, waterfall with AI labels;
+  - AGC/ATT/filter keys.
+      - **Backend:** P0: OpenWebRX+ (localhost:8073, via SoapyAirspyHF). The encoder maps to its keyboard shortcuts: arrows to tune, Ctrl+arrows for step, Space to mute.
+  P2: shell-native receiver on sdrangelsrv WDSP RX over REST.
+  - Device: HF+ (alternate: V4L upconverter 0.5-28.8 MHz).
+    23.
+      - **Path:** Home > HF > DRM [Listen]
+      - **Function:** DRM digital broadcast audio.
+      - **Backend:** SDRangel DRM in the HF+ device set (alternate: OpenWebRX+ dream). Device: HF+.
+    24.
+      - **Path:** Home > HF > Band survey 0.5-30 MHz [Listen]
+      - **Function:** Sweep in 660 kHz windows, with an occupancy log and NPU classes.
+      - **Backend:** labrx sweep + labclassify. Device: HF+ (alternate: V4L 2.4 MHz windows).
+    25.
+      - **Path:** Home > HF > NAVTEX 518/490/4209.5 kHz [Maritime safety]
+      - **Function:** Message list by station and subject, with alerts for new warnings. Can run together with Radio Clock in one LF window.
+      - **Backend:** sdrangelsrv NAVTEX channel (alternate: OpenWebRX+). Device: HF+.
+    26.
+      - **Path:** Home > HF > SITOR-B [Maritime safety]
+      - **Function:** HF MSI text.
+      - **Backend:** OpenWebRX+. Device: HF+.
+    27.
+      - **Path:** Home > HF > DSC [Maritime safety]
+      - **Function:** Distress, urgency and safety alerts only. Routine individual calls are hidden and not stored.
+      - **Backend:** sdrangelsrv DSC + labd category filter. Device: HF+.
+    28.
+      - **Path:** Home > HF > HF WEFAX [Maritime safety]
+      - **Function:** Scheduled chart capture, with a gallery.
+      - **Backend:** sdrangelsrv WEFAX (alternate: OpenWebRX+ FAX). Device: HF+.
+    29.
+      - **Path:** Home > HF > Time signals [Time and beacons]
+      - **Function:** Decode LF time stations (DCF77, MSF, WWVB, JJY, TDF) and compare them with the GNSS/PPS clock. HF time stations are listen-only. One-tap 'LF window' preset centred near 290 kHz adds NAVTEX.
+      - **Backend:** sdrangelsrv Radio Clock.
+  - Device: HF+ with the active E-field whip or a long wire.
+    30.
+      - **Path:** Home > HF > IBP beacons [Time and beacons]
+      - **Function:** Timed beacon cycle, with a signal log.
+      - **Backend:** labd schedule + labrx level log. Device: HF+.
+    31.
+      - **Path:** Home > HF > FT8/FT4/WSPR [Amateur decode-only]
+      - **Function:** Decode list and an offline propagation map from received spots. No PTT, no CAT, no TX.
+      - **Backend:** OpenWebRX+ background scheduler with the jt9/wsprd decoders only. Device: HF+.
+    32.
+      - **Path:** Home > HF > CW / RTTY / PSK31 [Amateur decode-only]
+      - **Function:** Skimmer and text decode.
+      - **Backend:** OpenWebRX+ csdr-skimmer, or sdrangelsrv RTTY/PSK31. Device: HF+.
+    33.
+      - **Path:** Home > HF > SID space weather [Space weather]
+      - **Function:** VLF/LF carrier-amplitude logging only, with a solar-flare plot.
+      - **Backend:** sdrangelsrv SID feature, or labrx power log. Device: HF+ with the active E-field whip.
+    34.
+      - **Path:** Home > HF > Antenna [Setup]
+      - **Function:** Pick one of three profiles:
+  - Wire + 9:1: DC-unsafe, bias locked.
+  - Active E-field whip (Boni-Whip or miniwhip): DC-sense must see an active load, then hold 1.5 s for 12.0 V.
+  - Telescopic whip.
+  Also: an antenna-versus-terminated noise check, and the deployment checklist from help.
+      - **Backend:** labd Frontend (input selector relay, DC-sense probe, 12 V load switch, DC-safety flags) + labrx noise meter. Device: HF+ input selector and the 12 V rail.
+    35.
+      - **Path:** Home > HF > HF Quiet [Setup]
+      - **Function:** Toggles quiet mode:
+  - backlight minimum or off, with encoder, audio and LED operation;
+  - Wi-Fi off, Lime parked, T7 idle;
+  - fixed fan speed, speaker amplifier off;
+  - charger warning.
+      - **Backend:** labd + labinput + RP2040 backlight. Device: system.
+    36.
+      - **Path:** Home > HF > Background logging [Setup]
+      - **Function:** Overnight schedules (FT8/WSPR bands, NAVTEX broadcast times) at lease priority P4, with auto-resume after a preemption.
+      - **Backend:** OpenWebRX+ scheduler, governed by the labd lease. Device: HF+.
+    37.
+      - **Path:** Home > HF > Expert: SDR++ / SDRangel
+      - **Function:** Native receiver UIs, opened by a hand-off:
+  - labd saves the current server configuration, stops the headless engine, starts the GUI with the same lease and node ACL, and restores everything on exit.
+      - **Backend:** sdrpp -r /var/lib/lab/sdrpp/<profile> (X11 libglfw3; rigctl held by labd), or sdrangel GUI (Qt Wayland, own port). Device: HF+.
+    38.
+      - **Path:** Home > Air & Sea > ADS-B
+      - **Function:** Aircraft list and offline map, range plot, message rate.
+      - **Backend:** readsb -> labd JSON -> shell-native list and map. tar1090 is Expert only.
+  - Device: V4L (alternate: Lime via Soapy).
+  - Antenna: dipole-kit short elements.
+    39.
+      - **Path:** Home > Air & Sea > AIS
+      - **Function:** Ship list and map for both channels, plus an NMEA log.
+  - Pauses with a notice when HF Listen takes the HF+, unless it moves to the V4L.
+      - **Backend:** AIS-catcher -> NMEA over UDP -> labd -> shell map.
+  - Device: HF+ in VHF mode via the selector (alternate: V4L).
+  - Antenna: dipole kit as a vertical.
+    40.
+      - **Path:** Home > Air & Sea > Nav aids (VOR / NDB receive)
+      - **Function:** VOR bearing and Morse ident, and NDB ident on LF/MF.
+      - **Backend:** sdrangelsrv VOR, or labrx + CW. Device: HF+ (VHF for VOR, HF for NDB) or V4L.
+    41.
+      - **Path:** Home > Air & Sea > Logs
+      - **Function:** ADS-B and AIS statistics, with export.
+      - **Backend:** labd log collector. Device: none.
+    42.
+      - **Path:** Home > Sondes > Live
+      - **Function:** Radiosonde list, telemetry, track on the offline map, chase pointing.
+      - **Backend:** radiosonde_auto_rx (SondeHub upload off) -> labd -> shell-native list and map. The auto_rx web UI is Expert only.
+  - Device: V4L, selected by its unique EEPROM serial (alternate: Lime + sdrangelsrv RS41).
+    43.
+      - **Path:** Home > Sondes > Scan settings
+      - **Function:** 400-406 MHz scan range and known launch times.
+      - **Backend:** auto_rx config written by labd. Device: V4L.
+    44.
+      - **Path:** Home > Spectrum > Live waterfall
+      - **Function:** Pick the SDR and span: Lime up to 56 MHz, V4L 2.4 MHz, HF+ 0.66 MHz. A tap snaps to the nearest signal. AI overlay toggle.
+      - **Backend:** labrx + shell waterfall. Device: any free SDR.
+    45.
+      - **Path:** Home > Spectrum > Listen VHF/UHF
+      - **Function:** NFM/AM/WFM/RDS/DAB listening. No digital-voice or pager decoders.
+      - **Backend:** P0: SDR++ Expert; P2: shell receiver on sdrangelsrv. Device: V4L, Lime or HF+ in VHF mode.
+    46.
+      - **Path:** Home > Spectrum > Survey
+      - **Function:** Scheduled sweeps, occupancy statistics, GNSS-tagged heat map.
+      - **Backend:** labrx sweep + labd logger. Device: Lime (wide), V4L, HF+.
+    47.
+      - **Path:** Home > Spectrum > Measure
+      - **Function:** Channel power, occupied bandwidth, SNR, peak table, markers.
+      - **Backend:** labrx. Device: any.
+    48.
+      - **Path:** Home > Spectrum > Interference hunt
+      - **Function:** S-meter with audio pitch, peak hold, and a bearing log from the IMU heading.
+      - **Backend:** labrx + labd IMU. Device: any SDR + BNO085.
+    49.
+      - **Path:** Home > Spectrum > Noise floor A/B
+      - **Function:** Terminated versus antenna, and each noise source on/off (display, Wi-Fi, Lime, charger, speaker amplifier), with a saved report.
+      - **Backend:** labrx + labd Frontend (50-ohm position). Device: all SDRs.
+    50.
+      - **Path:** Home > Spectrum > Expert: GPU wideband (optional)
+      - **Function:** Vulkan wideband view.
+      - **Backend:** CyberEther on the Lime lease. Device: Lime.
+    51.
+      - **Path:** Home > Radio Astronomy > Hydrogen line 1420.406 MHz
+      - **Function:** Integrating spectrometer with LSR correction, on/off-source, saved spectra.
+      - **Backend:** sdrangelsrv Radio Astronomy (alternate: labrx integrator).
+  - Device: V4L or Lime RX1 + SAWbird+ H1.
+  - Antenna: helicone/helix.
+    52.
+      - **Path:** Home > Radio Astronomy > Sun drift scan
+      - **Function:** Total-power transit at 10 GHz (LNB IF) or L-band.
+      - **Backend:** sdrangelsrv radiometer, or labrx power log. Device: V4L (LNB + horn) or Lime.
+    53.
+      - **Path:** Home > Radio Astronomy > Calibration (Tsys)
+      - **Function:** Hot/cold (ground versus sky). Y-factor with the noise source on the CAL port, behind the Bench interlock.
+      - **Backend:** sdrangelsrv + labd Instruments. Device: noise source, Lime/V4L.
+    54.
+      - **Path:** Home > Radio Astronomy > Target and pointing
+      - **Function:** Sun, Moon and galactic-plane targets, with az/el and the IMU arrow.
+      - **Backend:** labd Skyfield + Map & Point. Device: BNO085.
+    55.
+      - **Path:** Home > Radio Astronomy > Observation log
+      - **Function:** Runs with metadata, exported as CSV and SigMF.
+      - **Backend:** labd Recorder. Device: none.
+    56.
+      - **Path:** Home > Instruments > Bench mode
+      - **Function:** Entering Bench mode:
+  - parks every antenna path on 50 ohm;
+  - turns every bias rail off;
+  - shows the red 'CONDUCTED ONLY - DUT/attenuator, never an antenna' band and checklist.
+      - **Backend:** labd Frontend interlock. Device: RF switches, bias rails.
+    57.
+      - **Path:** Home > Instruments > VNA
+      - **Function:** Quick SWR/S11 page (huge readout) and an S21 filter/cable check. NanoVNA-Saver is the Expert view.
+      - **Backend:** labd serial driver; nanovna-saver 0.6.3 holds the lease while open. Device: NanoVNA/LiteVNA on the instrument port.
+    58.
+      - **Path:** Home > Instruments > Spectrum analyzer (tinySA)
+      - **Function:** Sweep mirrored in the shell, screenshot, preset recall. QtTinySA is the Expert view.
+      - **Backend:** labd tinySA serial driver + QtTinySA venv. Device: tinySA.
+    59.
+      - **Path:** Home > Instruments > Signal generator (conducted only)
+      - **Function:** tinySA output or the VNA port as a source, by cable to a DUT or attenuator only. Only inside Bench mode, after a 1.5 s hold on 'antenna disconnected'.
+      - **Backend:** labd interlock + instrument driver. Device: tinySA / VNA.
+    60.
+      - **Path:** Home > Instruments > Power meter
+      - **Function:** dBm/W readout, calibration factors, logging.
+      - **Backend:** labd driver (model TBD) or manual entry. Device: USB power meter.
+    61.
+      - **Path:** Home > Instruments > Noise figure
+      - **Function:** Y-factor NF and gain of LNAs and paths, with the ENR table.
+      - **Backend:** SDRangel Noise Figure via sdrangelsrv REST. Device: noise source (load switch) + Lime/V4L.
+    62.
+      - **Path:** Home > Instruments > Reference / GPSDO
+      - **Function:** Lock status, 10 MHz/PPS health, ppm of each SDR versus the reference.
+      - **Backend:** labd driver + labrx carrier measurement. Device: GPSDO (model TBD), LC76G PPS.
+    63.
+      - **Path:** Home > Instruments > Frequency calibration [Calibration]
+      - **Function:** Per-serial ppm for the V4L, HF+ and Lime, from the GPSDO, a GNSS-locked carrier, a time-signal carrier or the QO-100 beacon.
+      - **Backend:** labd + labrx. HF+ correction is applied in labrx or via airspyhf_set_calibration, never via Soapy. Device: all SDRs.
+    64.
+      - **Path:** Home > Instruments > Level and path loss [Calibration]
+      - **Function:** Per-path S21 table (from the VNA) and gain offsets stored in profiles.
+      - **Backend:** labd. Device: VNA, power meter.
+    65.
+      - **Path:** Home > Instruments > RF path
+      - **Function:** Live path diagram:
+  - set each switch manually;
+  - LNA power per stage, with current;
+  - LNB voltage;
+  - HF+ input selector;
+  - DC-safe flags and DC-sense results;
+  - 'terminate all'.
+      - **Backend:** labd Frontend (persistent libgpiod requests).
+  - Hardware: HMC241 SP4T boards, HF+ relay selector, SAWbird filters/LNAs, LNA V2, Uputronics 435.
+    66.
+      - **Path:** Home > Signals AI > Live labels
+      - **Function:** Detections on the active waterfall: class, confidence, bandwidth. Tap a label for the offline Artemis entry.
+      - **Backend:** labclassify (energy/CFAR proposals + CNN; HTP INT8 or CPU). Device: the IQ tap of a labrx-owned lease.
+    67.
+      - **Path:** Home > Signals AI > Record and collect
+      - **Function:** MARK saves the last N s from the RAM ring plus live IQ, and queues it for labelling. Greyed out with a reason when the mode has no IQ tap.
+      - **Backend:** labrx ring + labd Recorder. Device: labrx-owned lease.
+    68.
+      - **Path:** Home > Signals AI > Label on waterfall
+      - **Function:** Drag a time x frequency box and pick or create a label. It is saved as a SigMF annotation.
+      - **Backend:** Lab Shell + labd Recorder. Device: none (works on recordings).
+    69.
+      - **Path:** Home > Signals AI > Train on device
+      - **Function:** Few-shot: add classes from labelled examples through a prototype head on the frozen backbone.
+      - **Backend:** labclassify trainer on the A55 cores with a CPU quota. Device: CPU (backbone on HTP or CPU).
+    70.
+      - **Path:** Home > Signals AI > Dataset export / model import
+      - **Function:** SigMF dataset tar to the T7 for home-base training; import a signed model bundle.
+      - **Backend:** labd Models. Device: T7.
+    71.
+      - **Path:** Home > Signals AI > Models
+      - **Function:** Versions and backend (HTP/CPU); deploy and roll back. A golden-set INT8-versus-FP32 check runs before activation.
+      - **Backend:** labd Models + labclassify. Device: NPU (QNN HTP v68).
+    72.
+      - **Path:** Home > Signals AI > Evaluate
+      - **Function:** Confusion matrix, per-class precision/recall, latency, NPU-versus-CPU agreement.
+      - **Backend:** labclassify eval. Device: NPU/CPU.
+    73.
+      - **Path:** Home > Signals AI > Detection log
+      - **Function:** Search by time, frequency or label, and jump to the recording.
+      - **Backend:** labd log. Device: none.
+    74.
+      - **Path:** Home > Recordings > Browser
+      - **Function:** SigMF list with filters (date, mode, SDR, satellite, label), size, replay and a preview waterfall.
+      - **Backend:** Lab Shell + labd Recorder index. Device: UFS / T7.
+    75.
+      - **Path:** Home > Recordings > Replay into decoder
+      - **Function:** Send a recording as a file source to SatDump, sdrangelsrv, gr-satellites, AIS-catcher or readsb.
+      - **Backend:** labd job runner. Device: none.
+    76.
+      - **Path:** Home > Recordings > Products
+      - **Function:** Images, decoded text (NAVTEX, EGC, DSC safety categories, FT8, AIS/ADS-B logs) and sonde tracks.
+      - **Backend:** Shell gallery. Device: none.
+    77.
+      - **Path:** Home > Recordings > Voice memos and screenshots
+      - **Function:** Voice notes from the headset mic (no speech-to-text), saved as sidecars to the active SigMF recording. FN+MARK takes a global screenshot.
+      - **Backend:** labd + PipeWire capture. Device: Q6A 3.5 mm jack mic.
+    78.
+      - **Path:** Home > Recordings > Export
+      - **Function:** Copy .sigmf archives and products to the T7, with checksums.
+      - **Backend:** labd. Device: T7.
+    79.
+      - **Path:** Home > Recordings > Storage and retention
+      - **Function:** Status of UFS, the T7 and the RAM ring; minutes left at the current rate; auto-delete rules.
+  - 'Safely remove T7' (hold 1.5 s). A yanked T7 fails over to UFS.
+      - **Backend:** labd Status. Device: UFS, T7.
+    80.
+      - **Path:** Home > Recordings > Verify / repair
+      - **Function:** SigMF validation, and repair of files cut by a crash or power loss.
+      - **Backend:** lab-sigmf-repair + sigmf-python validator. Device: none.
+    81.
+      - **Path:** Home > Map & Point > Live map
+      - **Function:** Offline tiles. Layers: own position, aircraft, ships, sondes, satellite ground tracks, survey heat map, APRS.
+  - Zoom with the +/- buttons and the encoder; pinch is optional.
+      - **Backend:** Shell QML MBTiles layer. Device: LC76G.
+    82.
+      - **Path:** Home > Map & Point > Point antenna
+      - **Function:** Big arrow with az/el error bars, audio pitch and LED.
+  - Targets: pass satellite, QO-100/Inmarsat/Elektro GEO, Sun, sonde, manual.
+      - **Backend:** labd (Skyfield, WMM declination) + IMU stream. Device: BNO085 via the HMI RP2040.
+    83.
+      - **Path:** Home > Map & Point > Sky view
+      - **Function:** Polar plot of the next passes, the GEO arc, Sun and Moon.
+      - **Backend:** Lab Shell. Device: none.
+    84.
+      - **Path:** Home > Map & Point > IMU calibration
+      - **Function:** Magnetometer accuracy-3 routine, save DCD, sun-shadow heading offset.
+      - **Backend:** labd IMU. Device: BNO085.
+    85.
+      - **Path:** Home > Map & Point > Map data
+      - **Function:** Installed regions; import MBTiles from the T7. Tiles are rendered by the user from OSM data, not scraped.
+      - **Backend:** labd. Device: T7.
+    86.
+      - **Path:** Home > GNSS & Time > Fix and sky plot
+      - **Function:** Constellations, C/N0, DOP, fix type.
+      - **Backend:** gpsd 3.25. Device: LC76G.
+    87.
+      - **Path:** Home > GNSS & Time > SBAS/EGNOS
+      - **Function:** SBAS enabled state, tracked SBAS PRNs, DGPS/SBAS fix flag.
+      - **Backend:** labd sending $PAIR410/$PAIR411 (community-documented; check against the firmware) + gpsd. Device: LC76G.
+    88.
+      - **Path:** Home > GNSS & Time > Integrity
+      - **Function:** Plausibility gate: position jump, time versus RTC, C/N0 anomalies.
+  - On a trip, scheduling is blocked, and chrony falls back to RTC holdover (mechanism to verify).
+      - **Backend:** labd + chrony. Device: LC76G, RTC.
+    89.
+      - **Path:** Home > GNSS & Time > Time sources
+      - **Function:** chrony PPS/NMEA/RTC state and offset. FREE (unsynced) blocks auto-record.
+      - **Backend:** chrony 4.5. Device: LC76G PPS, CR2032 RTC.
+    90.
+      - **Path:** Home > GNSS & Time > SDR GNSS lab (experimental)
+      - **Function:** L1 C/A acquisition and tracking demo.
+      - **Backend:** gnss-sdr 0.0.19. Device: Lime RX1 + active GNSS antenna.
+    91.
+      - **Path:** Home > System > Power
+      - **Function:** Battery % from the coulomb counter, V, W, time to empty, per-mode energy, charge state, thresholds.
+  - Auto-economy at 20%.
+  - Long-job refusal with a hold-to-override.
+      - **Backend:** labpowerd (INA228 over i2c-dev). Device: INA228, 4S pack.
+    92.
+      - **Path:** Home > System > Thermal
+      - **Function:** SoC, board, battery and panel temperatures; fan; throttle history.
+  - Shedding ladder: AI, then background loggers, then Lime sample rate, then brightness.
+      - **Backend:** labd (thermal zones, NTCs via the RP2040). Device: sensors.
+    93.
+      - **Path:** Home > System > Storage
+      - **Function:** Free space, health, mount state, write-rate test.
+  - Critical alert if ext4 remounts read-only.
+      - **Backend:** labd + smartmontools. Device: UFS, T7.
+    94.
+      - **Path:** Home > System > Devices
+      - **Function:** SDRs and instruments with serials, the USB tree, the full lease table.
+  - Release a lease (hold 1.5 s).
+  - Power-cycle through a VBUS-cut pigtail.
+  - Lime 'wedged' -> schedule a reboot in the next pass gap.
+      - **Backend:** labd Arbiter + udev. Device: all.
+    95.
+      - **Path:** Home > System > Profiles
+      - **Function:** View and edit function and antenna profiles; reset to factory.
+      - **Backend:** labd Profiles. Device: all.
+    96.
+      - **Path:** Home > System > Home and modes
+      - **Function:** App Manager:
+  - hide unused modes;
+  - edit Home and hub favorites;
+  - reorder tiles.
+      - **Backend:** Lab Shell + labd. Device: none.
+    97.
+      - **Path:** Home > System > Display and input
+      - **Function:** Display: auto/manual brightness, Day/Night/Red theme.
+  Input: handedness, touch lock, glove/water mode (if the controller has one), minimum contact time, encoder steps and acceleration.
+      - **Backend:** labd + RP2040. Device: display, HMI.
+    98.
+      - **Path:** Home > System > Audio
+      - **Function:** Headphones/speaker selection with headphone-detect, per-stream volume, cue-tone level. The speaker is auto-muted in HF Quiet.
+      - **Backend:** PipeWire (wpctl) via labd. Device: Q6A jack, optional amplifier.
+    99.
+      - **Path:** Home > System > Radios off/on
+      - **Function:** Wi-Fi (off by default in the field) and RF Quiet.
+      - **Backend:** labd (rfkill). Device: onboard Wi-Fi.
+    100.
+      - **Path:** Home > System > Region, language and units
+      - **Function:** ITU region/country band plan: HF band buttons, MW 9 or 10 kHz steps, local-law notes.
+  Also: language (en/uk), UTC/local display, units.
+      - **Backend:** labd Settings. Device: none.
+    101.
+      - **Path:** Home > System > Updates
+      - **Function:** Offline signed bundle from the T7, in this order:
+  1. Check.
+  2. Simulate.
+  3. Snapshot.
+  4. Apply.
+  5. Self-test.
+  6. Roll back if needed.
+      - **Backend:** labd Updater (local apt repo, rsync snapshot to T7 ext4, rescue entry). Device: T7.
+    102.
+      - **Path:** Home > System > Logs and self-test
+      - **Function:** Per-unit logs, failure cards, full self-test. Absent kit is marked SKIPPED.
+      - **Backend:** journald + labd. Device: all.
+    103.
+      - **Path:** Home > System > Settings
+      - **Function:** Station position source, pass thresholds, retention, alert levels, Do-not-disturb rules.
+      - **Backend:** labd. Device: none.
+    104.
+      - **Path:** Home > System > Help and legal
+      - **Function:** Offline help per mode: antenna deployment, expected signal, troubleshooting. Also the receive-only statement, a local-law note per mode, and licences.
+      - **Backend:** Shell Markdown viewer (lab-help package). Device: none.
+    105.
+      - **Path:** Home > System > Restart / shut down
+      - **Function:** Hold 1.5 s. Recordings are finalised and bias rails cut first.
+      - **Backend:** labpowerd. Device: system.
+  - **Screens:**
+    - Home: 4x3 live tiles (about 29x20 mm) under the 13 mm bar, plus a 22 mm soft-key column on the handed side: TUNE, NEXT PASS, QUIET, RUNNING (each 22x15 mm).
+    - Hub: one scrolling list. Favorites and Recent at the top, then section headers with mode cards (each at least 20 mm tall). A card shows status, the SDR it would use, which jobs can run together, and a busy/preempt warning.
+    - Mode template:
+  - Content area of about 130x74 mm.
+  - Soft-key column of 4 keys per page (22x15 mm). FN or MORE pages through the groups SOURCE/FREQ, LEVEL, VIEW (display/marker/measure), RECORD and HELP.
+  - A group key opens a large control sheet over the content.
+  - The main encoder moves focus or tunes; a push selects.
+    - Receiver (HF and VHF/UHF):
+  - Frequency digits at least 6 mm tall; tap for the numeric keypad with MHz/kHz keys.
+  - Band and mode buttons; FN+encoder sets the step; the volume encoder sets volume and squelch.
+  - S-meter, waterfall with AI boxes, AGC/ATT/filter keys, memory list.
+  - An antenna-profile chip with a bias glyph.
+    - Tune sheet: frequency entry, then a proposal card (SDR, antenna, mode, compatible decoders), with [Start] and [Alternatives].
+    - Pass list and pass card sheet: AOS countdown, maximum elevation, mode icon, SDR, conflict badge and star toggle, plus a setup checklist (antenna, front-end, bias).
+    - Live pass: sky plot with the track, SNR/lock meters, decoder state, image preview strip, recording time left, POINT shortcut.
+    - QO-100: transponder waterfall, beacon-lock indicator and drift graph, LNB voltage/polarisation chip, SSB/CW controls.
+    - Message screens (NAVTEX, EGC SafetyNET, DSC safety categories, FT8 spots, APRS): newest first, large text, filter chips (station, subject, category), alert badges.
+    - Map: offline tiles, layer toggles, follow-me, target info cards. Zoom with +/- keys and the encoder.
+    - Point: full-screen arrow, az/el error bars, target name, AOS/LOS time, beam-width ring, audio-pitch toggle, calibration-quality badge.
+    - Spectrum/waterfall: span and centre on soft keys; a tap snaps to a signal; drag-box labelling; marker table; AI overlay toggle.
+    - Signals AI pages: label picker, training progress, model list with the golden-set result, confusion matrix, per-class precision/recall.
+    - Recordings browser: filter chips, list with thumbnail waterfalls, replay/decode/export actions, storage gauge, 'Safely remove T7' (hold).
+    - RF path view: schematic-style diagram of antenna ports, switches, LNAs, filters, the HF+ input selector and bias rails, with live currents, DC-sense results and DC-safe flags. Tap a block to change it; bias changes need a 1.5 s hold.
+    - Bench mode: red 'CONDUCTED ONLY' band, checklist (antenna disconnected, DUT/attenuator attached), 1.5 s hold to enable a source.
+    - Instrument panels: quick SWR (huge readout plus sweep), tinySA mirror, power-meter readout, noise-figure result, GPSDO lock.
+    - Running drawer: one card per lease/job (owner, SDR, priority, capability, since), with Resume/Stop (hold). Preempted jobs show their reason and auto-resume state.
+    - Expert view: the external app maximized under the bar. The HOME, MODE/BACK and KBD (wvkbd) controls stay visible, and a hand-off notice says that channels have moved to the Expert app.
+    - Engine failure card: 'X failed 3 times in 60 s' with [Show log] [Restart] [Use fallback engine/SDR]. Another card says 'SDR++ control lost' when the rigctl link drops.
+    - Quiet listening (screen off): backlight off or minimal. The encoder tunes with audio cue tones, the LED shows status, and a tap wakes the screen for 10 s at low brightness.
+    - System detail pages, one per status item: time, GNSS, passes, SDRs, recording, AI, thermal, storage, battery, alerts.
+    - Update wizard: pre-checks (power, held packages, simulation), snapshot progress, apply, self-test results, rollback button.
+    - Low-battery banner: 30 s countdown (cancellable on a charger), then progress through the shutdown steps.
+    - First-run wizard: language (en/uk), region/band plan, handedness, theme, glove/touch test, station check (GNSS fix, SDR enumeration), antenna profiles.
+    - Safe-mode screen (cage session): Devices, Logs, Recovery (restore last good snapshot), Shutdown.
+    - On-screen keyboard (Qt Virtual Keyboard, about 15.5 mm key pitch) and a large numeric/frequency keypad. Pick lists and preset labels are preferred over typing.
+  - **Status bar:** labbar
+  - GTK3 + gtk-layer-shell 0.8.2, top layer.
+  - Exclusive zone 13 mm: 161 px at 1080p (12.4 px/mm), 110 px at the 1280x800 fallback (8.5 px/mm).
+  - Always visible over the shell and every Expert app. Read-only toward the radios; data comes from labd over D-Bus.
+  - Two text lines per chip, bold, at least 3.5 mm tall for sunlight, themed Day/Night/Red.
+  
+  WHY 13 MM: the hardware HOME/BACK keys are primary and every chip duplicates a key or opens a page. 13 mm matches the 12.7 mm cockpit optimum and the 13 mm DTIC gloved spacing. The previous 7 mm bar with ten chips broke the lab's own 15 mm rule and left no gaps on 1280x800.
+  
+  CHIPS: six chips, each at least 18 mm wide, with 3 mm gaps; total about 147 mm, which fits both the 155 mm and 151 mm panel widths. Left to right:
+  1. HOME (18 mm): raises the shell, or restarts it if it is gone. A 1 s press opens the Running drawer.
+  2. MODE/BACK (25 mm): line 1 '< HF Listen'; line 2 'UTC 14:05Z' plus a time-source letter (P = PPS, G = GNSS, R = RTC, ! = FREE) and Quiet/Wi-Fi glyphs. A tap is BACK.
+  3. NEXT PASS (22 mm): 'M2-4 T-07:12' / '62 deg' plus a star when auto-record is on. A conflict shows a red edge plus an icon. A tap opens the pass card.
+  4. SDRs (27 mm): three segments, HF+ / V4L / LIME, each with the owner's short name (FT8, LRPT, AIS, park) and a lightning glyph when that SDR's bias rail is on. Bias over-current shows a warning icon. A tap opens the Running drawer.
+  5. REC (18 mm): 'REC IQ 12:04' / '47 min'. Other states: 'REC AUD', 'REC n/a (mode)', idle. Amber below 15 min. A tap opens recording detail.
+  6. STATUS (22 mm): '78% 9.4 W' / '3h12', plus a temperature warning icon and an alert-count badge. A tap opens the quick sheet (GNSS, AI, temperatures, storage, Wi-Fi, alerts).
+  
+  OVERFLOW: on narrow layouts, line 2 drops UTC seconds first, then the Quiet/Wi-Fi glyphs. Chips are never dropped.
+  
+  ALERTS:
+  - Levels: Info, Pass, Warning (TLE stale, storage 85%, GNSS lost or untrusted, hot, charger attached during HF Quiet), Critical (battery, overheat, SDR fault, bias over-current, ext4 read-only).
+  - Critical pulses the relevant chip with an icon, sounds the piezo and lights the RP2040 LED, even with the screen off.
+  - Do-not-disturb during recording holds back everything but Critical.
+  - State is never shown by colour alone: every amber or red state also has an icon or text.
+  
+  RECOVERY: labd restarts labbar on DRM hotplug.
+  - **Resource arbitration:** labd Arbiter is the single owner of every shared resource. Leases are enforced by permissions, not just by convention.
+  
+  1) ENFORCEMENT
+  - Headless engines run as system user 'labrx'.
+  - udev gives SDR and instrument nodes mode 0660, group labrx.
+  - The GUI user 'lab' gets an ACL (setfacl) only on the leased node, and only for the length of an Expert lease.
+  - Expert configs are generated pinned to the leased serial.
+  - Gqrx, QSSTV and CyberEther are hidden unless an SDR is leased to them.
+  - The lease table persists in /run/lab/leases.json and is reconciled with systemd unit state when labd restarts.
+  - The shell watches labd through org.freedesktop.systemd1, so it can show 'arbiter down'.
+  
+  2) RESOURCES
+  - HF+: libairspyhf serial, 03EB:800C, /dev/lab/hfplus.
+    - One SMA and one tuner, so HF and VHF use are mutually exclusive.
+    - At most 768 ksps.
+    - Input-selector state is part of the lease.
+  - V4L: unique EEPROM serial, set with rtl_eeprom after a backup, without touching the Blog V4L strings. /dev/lab/v4l, at most 2.56 Msps, 4.5 V/180 mA tee.
+  - LimeSDR Micro: PCIe 0001:01:00.0.
+    - RX1 and RX2 share one LO, so both centres must sit within the NCO range of a common LO (about +/-30.72 MHz at 61.44 Msps).
+    - TX is never leased.
+  - Front-end paths: switch, relay and filter states.
+  - Bias rails, each current-limited and DC-sense-gated: V4L tee, LNA 5 V, LNB 13.4/18.2 V, HF active-antenna 12.0 V.
+  - Audio: one demod stream plus cue tones.
+  - NPU HTP context: a singleton.
+  - Storage bandwidth: UFS narrowband (HF+ cf32_le about 6.1 MB/s, V4L cu8 about 4.8 MB/s); T7 wideband.
+  - FE1.1s hub: HF+ about 3.1 MB/s plus V4L about 4.8 MB/s plus touch, with Wi-Fi off during jobs.
+  - CPU classes:
+    - A55 cores 0-3: UI, daemons and labclassify, with CPUQuota.
+    - A78 cores 4-6: DSP engines and labrx.
+    - CPU7: isolated for lime:Rx0.
+  - Energy: predicted Wh against what is left.
+  - Instrument port: the blue USB 3.1 port, time-shared with the T7.
+  
+  3) PRIORITY
+  - P0: system safety.
+  - P1: starred scheduled pass or recording.
+  - P2: interactive foreground (hidden Expert apps drop to P4 after a timeout).
+  - P3: unstarred pass.
+  - P4: background loggers (FT8/WSPR, AIS, ADS-B, SID, sondes).
+  - P5: survey and AI collection.
+  
+  4) PLACEMENT
+  - Profiles list SDR candidates in order, with quality notes:
+    - HF: HF+, then V4L.
+    - AIS: HF+ (VHF mode), then V4L.
+    - LRPT: V4L, then HF+ (VHF mode).
+    - ADS-B: V4L, then Lime.
+    - Inmarsat-C: Lime, then V4L.
+    - CubeSat: Lime, then V4L.
+  - The arbiter picks the best free candidate that also satisfies the Lime LO rule, DC safety, the antenna actually attached (DC-sense) and the energy budget.
+  - A lower class may be preempted silently but always gets a notice and auto-resumes when the lease returns.
+  - Preempting P2 shows a 15 s banner with [Allow] [Keep] [Use alternate] and a configurable default.
+  - Planning runs 48 h ahead, so conflicts appear on the pass list before they happen.
+  
+  5) ONE ENGINE PER SDR SESSION
+  - There is ONE sdrangelsrv with one device set per SDR. Extra instances get their own -p port; the 8091 default would collide.
+  - Compatible channels share a session; for example Radio Clock plus NAVTEX in one HF+ window near 290 kHz.
+  - Opening the SDRangel GUI is a hand-off: save the configuration, stop the server, start the GUI on the same lease, and reverse on exit.
+  - labd holds the single SDR++ rigctl_server connection (one client at a time) and multiplexes the encoder, the scheduler and Doppler through it, with keepalive and reconnect.
+  
+  6) CAPABILITY FLAGS (per profile)
+  - rec = iq | audio | products | none; mark_ring and ai_tap = true/false.
+  - They are true only when labrx, the SDR++ iq_exporter or an SDRangel Remote/UDP sink supplies IQ.
+  - Unavailable keys are greyed with a reason; REC shows what it will actually record.
+  
+  7) HAND-OFF (target under 3 s for USB SDRs)
+  - systemctl stop: SIGTERM, TimeoutStopSec 8 s, then SIGKILL.
+  - Confirm no open fd on the usbfs node.
+  - Front-end order: bias off, switch, DC-sense, bias on if allowed; settle 100 ms.
+  - Start the new unit, which BindsTo the device unit.
+  - Lime: stop the stream only. Never reload la9310_limesdr in the field.
+  - Wedged RTL: re-open, then usb reset, then the VBUS-cut pigtail. uhubctl cannot help, because the FE1.1s power pin is not wired.
+  
+  8) INTERLOCKS (in labd, not the UI)
+  - Bias turns on only if the profile is DC-safe, expects that voltage, and DC-sense confirms an open or active load.
+    - A short (9:1 transformer, hairpin Yagi) locks bias off.
+    - Over-current trips the load switch and raises an alert.
+  - LNB 13/18 V only behind a DC block toward the SDR.
+  - Bench mode terminates every antenna path and turns all bias off before any source or noise source is powered.
+  - GPIO lines are held by labd with safe boot defaults, so a released line can never re-enable a rail.
+  
+  9) QUALITY COUPLING
+  - HF Quiet is a soft resource. A Lime wideband job or a bright display marks an HF lease 'degraded'.
+  - Profile option 'HF priority' parks the Lime.
+  - The AI tap attaches read-only and never owns an SDR.
+  - **Process supervision:** Everything is a systemd unit; nothing is started by hand.
+  
+  SYSTEM UNITS
+  All run with rtprio limits and LC_NUMERIC=C.
+  - labd: Type=notify, WatchdogSec=10, Restart=always. It reconciles leases from /run on restart.
+  - labpowerd: minimal and separate, Restart=always. It reads KEY_POWER, because logind.conf has HandlePowerKey=ignore and the long-press variants are also ignored.
+  - labinput: Restart=always. It has a UART framing check (CRC, sequence numbers, debounce, hold timers counted on the RP2040). It re-grabs the touch evdev node on every udev add, so LOCK survives re-enumeration, and auto-locks on phantom-touch patterns.
+  - gpsd and chrony.
+  - labclassify:
+    - Restart=on-failure, MemoryMax, watchdog.
+    - CPUAffinity=0-3 with a CPUQuota, so the CPU fallback never competes with DSP on cores 4-6.
+    - Write access only to its model and log directories.
+    - If the HTP has not answered within N s: restart, retry the HTP once, then fall back to CPU.
+    - Never in the RX data path.
+  - Engine templates, run as user labrx: labrx@, sdrangelsrv, satdump-pass@, openwebrx, readsb, ais-catcher, auto-rx, gr-satellites@.
+    - BindsTo and After the dev-lab-<sdr>.device unit.
+    - CPUAffinity 4-6.
+    - Restart=on-failure with StartLimitBurst=3 per 60 s.
+    - OnFailure=lab-alert@%n.
+  
+  SESSION
+  - greetd 0.9.0, with initial_session and default_session both set to /usr/lib/lab/lab-session (user lab).
+  - The wrapper counts exits in /run/lab/session-crashes. After 3 in 10 minutes it execs 'cage lab-shell --safe'.
+  - User units under graphical-session.target: lab-shell (Restart=always), labbar, Expert GUIs.
+  - The shell restores its last screen only if that screen ran more than 60 s before the crash. After a second crash in a row it opens Home with the card '<screen> crashed twice: open log / reset this mode'.
+  - labwc HOME keybind: If query identifier='lab.shell', then Raise + Focus, else Execute 'systemctl --user restart lab-shell'. It is bound to the real keysym (XF86Tools); check it with wev.
+  - RX engines are system units, so a compositor or HDMI crash never stops a pass.
+  
+  PASS ROBUSTNESS
+  - Pre-pass check at T-3 min: device opens, short sample-loss test, temperature, storage, battery, and a trusted time source.
+  - If an engine dies mid-pass: one restart. On a second failure the lease switches to labrx record-only, so the rest of the pass is captured as IQ for offline decoding.
+  
+  WATCHDOGS AND HARD POWER
+  - RuntimeWatchdogSec only if /dev/watchdog exists.
+  - The HMI RP2040 watches the labinput heartbeat: after 5 s it lights the LED and beeps.
+  - The last-resort cut is a hardware load switch or the pack EN (never the J21 PWR pin, which only opens a shutdown menu or a logind action). The RP2040 drives it only when both conditions hold:
+    - a shutdown request, a 6 s key hold, or a critical voltage;
+    - no heartbeat for 60 s.
+  - SWD (SWDIO/SWCLK/RUN) is routed to Q6A GPIOs, so OpenOCD's linuxgpiod adapter can reflash the RP2040 in the case. The RP2040 boot ROM offers only USB (from recollection of the datasheet; verify).
+  
+  LOW BATTERY (labpowerd; thresholds to tune against INA228 logs)
+  - 20%: warn and enter auto-economy (dim, AI off, Lime parked, loggers off).
+  - Refuse a new long job if its predicted energy exceeds what is left (hold to override).
+  - 8%, or 13.2 V loaded for 10 s (above the ~12.8 V hardware cutoff), triggers the shutdown sequence:
+    1. 30 s banner.
+    2. Stop the scheduler.
+    3. Finalise SigMF.
+    4. Stop engines.
+    5. Cut bias, LNB and the 12 V active-antenna rail.
+    6. sync, poweroff.
+  
+  CRASH-SAFE DATA
+  - A provisional .sigmf-meta is written at recording start.
+  - The lab-sigmf-repair boot oneshot recomputes the sample count and adds a 'recovered' annotation.
+  - Persistent journald, SystemMaxUse=200M.
+  - Lime wedge: the shell schedules a reboot in the next pass gap and shows the reason.
+  
+  TIME
+  - No clock steps during active recordings.
+  - The integrity gate can drop the GNSS/PPS refclock and hold over on the RTC (chrony mechanism to verify).
+  
+  NETWORK
+  - All engine web and REST ports bind to 127.0.0.1 where supported.
+  - nftables drops non-loopback traffic to them; OpenWebRX+ may bind to all interfaces.
+  - **Integration table:**
+    1.
+      - **Tool:** Lab Shell (own, Qt 6.4.2 QML)
+      - **How integrated:** Only home screen (app_id lab.shell). Talks to labd over D-Bus and watches systemd directly. Native screens, a waterfall from labrx shared memory, an MBTiles map, Markdown help. A WebEngineView is used only for Expert web pages.
+      - **Touch handling:** Native Wayland touch.
+  - Targets sized in mm from the EDID (15 mm minimum, 20 mm primary).
+  - Minimum contact time and a movement threshold; taps are never lengthened.
+  - 1.5 s fill-ring hold-to-confirm.
+  - Qt Virtual Keyboard and numeric keypad; encoder focus ring.
+    2.
+      - **Tool:** labbar (own, GTK3 + gtk-layer-shell 0.8.2)
+      - **How integrated:** 13 mm exclusive top layer, read-only, fed by labd D-Bus. A chip tap calls the shell's D-Bus open-page method. Restarted on DRM hotplug.
+      - **Touch handling:** GTK touch. Six chips of at least 18x13 mm with 3 mm gaps; hardware keys duplicate them.
+    3.
+      - **Tool:** labd / labpowerd / labinput / labsession (own, Python 3.12)
+      - **How integrated:** Arbiter, profiles, scheduler, recorder, front-end GPIO (persistent libgpiod v1 requests), instruments, models, power, uinput key injection, ACL grants, window raise via labwc.
+      - **Touch handling:** N/A.
+  - labinput routes the main encoder by focus (shell, OpenWebRX+ shortcuts, or SDR++ via the labd-held rigctl link).
+  - The volume encoder goes to PipeWire (wpctl).
+    4.
+      - **Tool:** labrx (own, GNU Radio 3.10.9.2 + SoapySDR 0.8.1)
+      - **How integrated:** Per-SDR headless unit labrx@<sdr>:
+  - FFT to shared memory, ZMQ IQ taps, SigMF writer (per-capture geolocation; HF+ cf32_le), RAM ring of about 4 GiB, sweeps, Doppler and beacon-lock NCO.
+  - Applies HF+ frequency correction itself.
+  - HF+ through SoapyAirspyHF, or noble gr-osmosdr as fallback.
+      - **Touch handling:** No UI; drawn by the shell.
+    5.
+      - **Tool:** labclassify (own; ONNX Runtime 1.31 CPU / QNN HTP INT8, QAIRT 2.42)
+      - **How integrated:** Sandboxed daemon on A55 cores 0-3 with a CPUQuota. Reads windows from labrx taps and returns detections over D-Bus. Signed model bundles must pass the golden-set gate.
+      - **Touch handling:** Through shell screens.
+    6.
+      - **Tool:** SatDump (master, source)
+      - **How integrated:** satdump-pass@ unit per pass (legacy live/record CLI; check the 2.0-alpha flags). Pipelines are allow-listed. The inmarsat_support plugin (it includes Aero) is removed in packaging. The airspyhf plugin is enabled. The GUI is Expert only, by hand-off.
+      - **Touch handling:** GLFW 3.3 on the held X11 libglfw3, running under XWayland, so touch becomes pointer events. libglfw3-wayland is pinned to -1, and the self-test checks the backend.
+    7.
+      - **Tool:** SDR++ (source)
+      - **How integrated:** User unit: sdrpp -r /var/lib/lab/sdrpp/<profile> with autoStart=true for rigctl_server.
+  - labd holds the single rigctl connection: F/f, M/m, recorder start/stop, start/stop.
+  - No gain, ATT or AGC over rigctl, so those use its own UI or labrx.
+  - iq_exporter feeds the AI.
+  - Pager, M17 and Falcon9 modules are not built.
+      - **Touch handling:** X11 GLFW under XWayland pointer emulation. Tuning goes through rigctl from the encoder, never wheel events. UI scale about 200%.
+    8.
+      - **Tool:** SDRangel 7.27.2 (RX-only source build, Qt 5.15)
+      - **How integrated:** One headless sdrangelsrv (REST 127.0.0.1:8091) with one device set per SDR.
+  - Channels: WDSP RX, NAVTEX, DSC, WEFAX, DRM, Radio Clock, Inmarsat C, Radio Astronomy, Noise Figure, VOR, SID, RS41, ADS-B.
+  - Results come from REST and UDP. labd applies the EGC SafetyNET allow-list and the DSC category filter.
+  - Build: TX, PTT, DSD, pager, ChirpChat, Meshtastic/MeshCore, 802.15.4, DroneID and AMBE are off; sample sinks are deleted; the audit checks for LibMbe, DSDcc and SerialDV.
+  - The GUI is a hand-off on its own port.
+      - **Touch handling:** Qt Wayland: long-press acts as right-click, pinch on spectrum and map, QT_SCALE_FACTOR=2, tabbed sub-windows. Expert only.
+    9.
+      - **Tool:** OpenWebRX+ 1.2.126 (luarvique PPA)
+      - **How integrated:** openwebrx.service, started and stopped by the labd lease, with profiles generated from function profiles.
+  - HF+ through soapy_connector + SoapyAirspyHF (source build), capped at 768 ksps.
+  - Installed --no-install-recommends, with the allowed decoders added explicitly.
+  - Exact-name pins at -1: js8call, rtl-433, digiham, python3-digiham, libdigiham0, codecserver, codecserver-driver-all, codecserver-driver-ambe3k, libcodecserver, multimon-ng, acarsdec, libacars2, libacars-tools, dumphfdl, dumpvdl2, dxlaprs-lora, dxlaprs-tetra, python3-meshtastic.
+  - Lime source patched to 'limesuiteng'.
+      - **Touch handling:** Shown in a WebEngineView with injected large-control CSS; browser touch pan and zoom.
+  - labinput maps the encoder to its Shortcuts.js keys: arrows tune, Ctrl+arrows step, Ctrl+Up/Down volume, Space mute, { } squelch, T frequency entry.
+    10.
+      - **Tool:** readsb + tar1090 (+ lighttpd 1.4.74)
+      - **How integrated:** readsb unit on the V4L. Its JSON feeds the labd statistics and the shell-native list and map. tar1090 is Expert only (offline tiles unverified).
+      - **Touch handling:** Shell-native by default; web touch in Expert view.
+    11.
+      - **Tool:** AIS-catcher
+      - **How integrated:** Unit on the HF+ in VHF mode via the selector, or on the V4L. NMEA over UDP to labd and the shell map.
+      - **Touch handling:** Shell-native; the web viewer is Expert only.
+    12.
+      - **Tool:** radiosonde_auto_rx
+      - **How integrated:** Venv unit on the V4L, selected by serial, with config written by labd. SondeHub upload is off. Telemetry goes to the shell list and map.
+      - **Touch handling:** Shell-native; the web UI is Expert only.
+    13.
+      - **Tool:** gr-satellites 5.5.0 (apt)
+      - **How integrated:** gr-satellites@<norad> on a Doppler-corrected labrx IQ tap. Frames go to the labd log and the shell.
+      - **Touch handling:** No UI.
+    14.
+      - **Tool:** direwolf 1.7 (apt)
+      - **How integrated:** Receive-only APRS from labrx NFM audio via a PipeWire virtual sink. No PTT device configured.
+      - **Touch handling:** No UI.
+    15.
+      - **Tool:** jt9 / wsprd (WSJT-X decoders only)
+      - **How integrated:** OpenWebRX+ decoder back-ends. Either build only jt9 and wsprd, or install wsjtx and dpkg-divert /usr/bin/wsjtx and its .desktop file. The policy audit checks that the GUI binary is absent.
+      - **Touch handling:** N/A
+    16.
+      - **Tool:** gpsd 3.25 + chrony 4.5 + LC76G
+      - **How integrated:** UART6 at 115200 with PPS on GPIO96. labd reads gpsd JSON and sends the $PAIR SBAS commands. chrony uses PPS locked to NMEA, plus the RTC, under integrity-gate control.
+      - **Touch handling:** Shell pages.
+    17.
+      - **Tool:** gnss-sdr 0.0.19 (apt, experimental)
+      - **How integrated:** Unit with a stock L1 config on a Lime Soapy source; output parsed by labd.
+      - **Touch handling:** Shell page.
+    18.
+      - **Tool:** NanoVNA-Saver 0.6.3 (apt)
+      - **How integrated:** Expert app on the instrument port, leased with an ACL. The shell quick-SWR page talks to the VNA directly when NanoVNA-Saver is not open.
+      - **Touch handling:** Qt Wayland, scale 1.75-2.
+    19.
+      - **Tool:** QtTinySA (venv, PySide6-Essentials pinned to a tested 6.11.x)
+      - **How integrated:** Expert app. labd's tinySA driver provides the shell mirror, screenshots and presets. Generator use only in Bench mode.
+      - **Touch handling:** Qt Wayland touch.
+    20.
+      - **Tool:** Power meter / GPSDO / noise source (models TBD)
+      - **How integrated:** labd plug-in drivers, or manual entry. The noise source is powered by a load switch only after the Bench interlock.
+      - **Touch handling:** Shell panels.
+    21.
+      - **Tool:** QSSTV 9.5.8 / Gqrx 2.17.4 (apt fallbacks)
+      - **How integrated:** RX-only (no PTT, no TX audio device). Shown only with a lease and ACL.
+      - **Touch handling:** Qt touch as mouse.
+    22.
+      - **Tool:** CyberEther (optional)
+      - **How integrated:** Expert GPU wideband view on the Lime lease.
+      - **Touch handling:** Undocumented; Expert only.
+    23.
+      - **Tool:** labwc 0.7.1 (or local 0.8.4) / greetd 0.9.0 / cage 0.1.5 / wvkbd 0.14.3
+      - **How integrated:** labwc is the session compositor:
+  - keybinds on the real keysyms (XF86Tools, XF86Launch5-9) for HOME/BACK/REC/MARK;
+  - If/else raise-or-restart for HOME;
+  - window rules maximize Expert apps.
+  greetd runs the crash-counting wrapper; cage is safe mode; wvkbd is toggled by the bar's KBD control in Expert view.
+      - **Touch handling:** touch mapToOutput (0.7.1). GLFW pointer emulation comes from XWayland. labwc mouseEmulation exists only from 0.8.2 and is not used, because it disables multitouch.
+    24.
+      - **Tool:** PipeWire 1.0.5
+      - **How integrated:** Volume, mute and squelch-cue routing per stream (wpctl), driven by the volume encoder through labd. Headphone-detect switches the optional speaker; the speaker is muted in HF Quiet. Mic capture for voice memos.
+      - **Touch handling:** Volume encoder plus the System > Audio page.
+    25.
+      - **Tool:** HMI RP2040 firmware (own)
+      - **How integrated:** UART7 framed protocol with CRC and sequence numbers.
+  - Inputs: both encoders, 6 keys, lux, NTCs, IMU quaternion relay.
+  - Outputs: LED, piezo, backlight, heartbeat, hard-cut request, safe-boot GPIO.
+  - Reflashed over SWD from Q6A GPIOs.
+      - **Touch handling:** Physical controls: 30-35 mm main knob, a volume push-encoder, and sealed keys of at least 12 mm at 13 mm pitch.
+  - **Design rules:**
+    - One tap per function: every lab function is a versioned function profile. It sets the engine, SDR, antenna path, bias, gain, sample rate, recording policy, decode allow-list, quiet needs and help page. Nothing has to be configured in the field.
+    - Depth is at most Home > Hub > Mode. Groups are section headers in one scrolling hub list. Sheets and overlays add no depth. Each hub starts with Favorites/Recent, and an App Manager hides unused modes.
+    - Touch targets are at least 15 mm with at least 3 mm gaps, and primary actions at least 20 mm.
+  - The only exception is the 13 mm status-bar chips, because each one duplicates a hardware key.
+  - Soft-key columns hold at most 4 keys (22x15 mm) per page.
+    - Every leaf works with the main encoder and keys alone; gestures are optional extras. Each page declares its encoder map (shell focus, OpenWebRX+ shortcuts, SDR++ via rigctl).
+    - Volume is physical and global: a second push-encoder (turn = volume, push = mute, FN+turn = squelch), applied in PipeWire so it behaves the same in every engine.
+    - Normal taps are never slowed. Insensitivity comes from controller glove/water modes, an 80-120 ms minimum contact time, a movement threshold and palm rejection.
+  - Destructive or RF-hazard actions need a hold of at least 1.5 s with a visible fill ring, or the equivalent encoder-push hold.
+    - Readouts at least 6 mm tall, labels at least 3 mm cap height, bold. The 1.5 mm encoder focus ring is always visible.
+  - State is never shown by colour alone.
+  - Day (positive polarity, at least 7:1), Night and Red themes switch from VEML7700 lux with hysteresis.
+    - Handedness flips the soft-key column and keeps both encoders and the keys under the holding thumb. Critical content goes in the centre; nothing dangerous sits in a corner.
+    - Be honest about capability: REC shows IQ, AUD, products or n/a for the current mode, and unavailable keys are greyed with a one-line reason.
+    - Make ownership visible: the SDR chip shows who owns each device. Preemptions say why and auto-resume. The Running drawer lists every job.
+    - Safety lives in labd, not the UI: DC-sense plus DC-safe flags before any bias, the Bench interlock before any source, and GPIO lines held with safe boot defaults.
+    - Receive-only by construction: no TX, PTT, CAT-transmit or modulator items exist. Decoders are allow-listed (no private-communications or military decoders), Inmarsat shows EGC SafetyNET only, DSC shows safety categories only, and the policy audit runs on every build and update.
+    - Frequency-first entry is always one press away: TUNE proposes the SDR, antenna, mode and compatible decoders.
+    - Notifications never steal focus: pass banners at T-10 and T-2 min, LED and tone when the screen is off, Do-not-disturb during recordings except Critical.
+    - Honest power: coulomb-counter percentage and time to empty, per-job energy prediction, auto-economy at 20%, and a sequenced shutdown that finalises data.
+    - Offline first: everything except the OMM refresh works for 48 h with Wi-Fi off. Maps are rendered locally, and help is local.
+    - Times are UTC in logs and SigMF, with local time optional in the UI. Numbers use the C locale; the UI ships in en and uk from P0, with a region/band-plan setting.
+    - Text entry is the last resort: use pick lists, preset labels and the numeric keypad. The QWERTY gives only about 15.5 mm pitch on a 155 mm screen.
+    - No silent failure: every failed unit appears as a card with [Log] [Restart] [Fallback], and lost control links (rigctl, arbiter) are shown.
+    - Screen-off operation is first class: tune, record and mark with encoder, keys, cue tones and the LED, for HF Quiet and unattended passes.
+    - It must be recoverable without a keyboard: holding HOME at power-on enters safe mode, and recovery restores the last good snapshot from the device itself.
+  - **Packaging and updates:** LOCAL REPOSITORY
+  - A signed local apt repo (aptly 1.5.0 or reprepro 5.3.1) on the device, mirrored to the T7.
+  - Every source build is a '+labN' .deb built from tagged commits on an arm64 builder, with a lockfile of source SHAs:
+    - SDR stack: librtlsdr2 (noble 2.0.1 + V4L commit 0204c9c + USB-hang fix 65f0658, soname .so.2), limesuiteng + la9310-limesdr-dkms, soapyairspyhf.
+    - Engines: satdump, sdrpp, sdrangel-rx (plus its sgp4, inmarsatc, libsigmf, aptdec and WDSP dependencies), readsb, ais-catcher, radiosonde-auto-rx (venv in /opt, pinned), qttinysa-venv (PySide6 pinned).
+    - Fallback compositor: labwc 0.8.4 with wlroots 0.18 and libwayland 1.23 built in, if needed.
+    - Own components: lab-shell, labd, labbar, labrx, labclassify, lab-hmi-fw, lab-help.
+    - Data: lab-models-<ver>, lab-tiles-<region>.
+  
+  HOLDS AND PINS
+  - apt-mark hold: linux-image/headers 6.18.2-4 and the meta packages, radxa-firmware-qcs6490, linux-firmware, fastrpc, libcdsprpc1, qcom-qnn-sdk-v68, the validated mesa-* / libgl1-mesa-dri set, libdrm, xwayland, libwlroots, labwc, qt6-*, systemd-boot, pipewire, libglfw3 (X11).
+  - Pin-Priority -1:
+    - other linux-image packages, libglfw3-wayland, Ubuntu's limesuite and soapysdr0.8-module-lms7, duplicate dump1090 builds;
+    - every forbidden decoder or TX-capable package by exact name: js8call, rtl-433, digiham, python3-digiham, libdigiham0, codecserver, codecserver-driver-all, codecserver-driver-ambe3k, libcodecserver, multimon-ng (main archive and PPA), acarsdec, libacars2, libacars-tools, dumphfdl, dumpvdl2, dxlaprs-lora, dxlaprs-tetra, python3-meshtastic.
+  - Pin 1001 for lab packages.
+  - apt config: APT::Install-Recommends 'false'.
+  - Remove unattended-upgrades. Mask apt-daily*.timer, motd-news.timer and fwupd-refresh.timer. Hold or remove snapd if present.
+  
+  POLICY AUDIT
+  Runs in CI and in the device self-test. It fails if any of these is present:
+  - SDRangel TX, DSD, pager, ChirpChat, DroneID, LibMbe, DSDcc or SerialDV .so files;
+  - SatDump inmarsat_support;
+  - SDR++ pager or m17 modules;
+  - /usr/bin/wsjtx or js8call;
+  - any profile that references TX, or any engine config that opens a TX stream.
+  It also checks that the active libglfw.so.3 is the X11 build.
+  
+  BOOT SAFETY
+  - loader.conf gets an explicit 'default RadxaOS-6.18.2-4-qcom*' line (or the exact entry ID). Do not rely on bootctl set-default: persistent UEFI variables arrived only in later firmware.
+  - Trial kernels get boot counting via /etc/kernel/tries ('+N' entries), with automatic fallback when the trial fails to bless (confirm which noble package ships systemd-bless-boot).
+  - A small rescue rootfs entry on UFS (or an A/B root) can restore snapshots without a live USB; no generic live image is known to boot this board.
+  
+  UPDATES: offline by default, from System > Updates.
+  1. Insert the T7 with a GPG-signed bundle (repo snapshot, data, models).
+  2. Require a charger or at least 50% battery.
+  3. rsync snapshot of the rootfs to the T7's ext4 'lab-snap' partition. A separate exFAT partition stays for PC exchange.
+  4. Run apt-get -s; refuse if any held or blacklisted package would change.
+  5. Apply.
+  6. Self-test: SDRs stream for 30 s (absent kit marked SKIPPED), HDMI mode, touch, labwc and XWayland, GLFW backend, NPU golden set, policy audit, sample decodes of stored IQ.
+  7. On failure, roll back to the previous package versions kept in the local repo, then to the snapshot if needed.
+  
+  DATA (separate from code)
+  - CelesTrak OMM refreshes on home Wi-Fi or from the T7. Stale warnings at 3 days for ISS and 7 days for other satellites.
+  - Map tiles are rendered by the user from OSM data.
+  - Model bundles go through the golden-set gate, with N-1 kept for rollback.
+  - Help and legal notes ship as packages.
+  
+  CONFIGURATION
+  - /etc/lab and /var/lib/lab, with a schema number, migrated by labd and exported to the T7.
+  - **Roadmap:**
+    - W1-2 (19 Oct-1 Nov 2026) bring-up gates. No feature code yet; device hardening only.
+  Gates to pass:
+  - labwc 0.7.1 + XWayland + USB-HID touch on the Q6A HDMI path: SDR++/SatDump touch on X11 libglfw3; HOME raise-or-restart via the XF86Tools keybind; HDMI unplug/replug with labbar mapped; closing the last X11 app.
+  - If 0.7.1 fails, build labwc 0.8.4 with wlroots 0.18 and libwayland 1.23 built in.
+  - greetd crash counter and cage safe mode.
+  - logind HandlePowerKey=ignore.
+  - loader.conf default line and boot counting.
+  - UART6, UART7 and I2C0 exposed.
+  - HF+ and V4L on the FE1.1s for 30 min with no sample loss.
+  - HF+ current draw.
+  - Terminated HF noise floor with the display on and off.
+  - /dev/watchdog present.
+  Hardening to do now:
+  - Holds and pins in place, unattended-upgrades removed, apt timers masked.
+    - P0a (Nov 2026; RTL and HF+ only):
+  - labd core: profiles, arbiter with labrx user and ACLs, persistent GPIO, DC-sense, power, GNSS, storage, lease persistence.
+  - labinput with CRC framing and touch re-grab; RP2040 firmware for both encoders, keys, LED, piezo, heartbeat and hard-cut.
+  - labbar at 13 mm with 6 chips.
+  - Shell skeleton: Home, hub lists with Favorites, Running drawer, Alerts, Tune, System pages, Help, Safe mode, en/uk strings, region/band plan.
+  - SigMF recorder (per-capture geolocation, cf32_le for the HF+) and repair; labrx on V4L and HF+ with HF+ frequency correction.
+    - P0b (Nov-Dec 2026):
+  - Satellites: pass list and scheduler, LRPT through SatDump, ISS SSTV and APRS, CubeSats and QO-100 on the V4L.
+  - HF hub:
+    - OpenWebRX+ via SoapyAirspyHF, with the encoder mapped to its shortcuts;
+    - sdrangelsrv HF device set with NAVTEX, DSC, WEFAX, Radio Clock and the LF window;
+    - antenna profiles and HF Quiet;
+    - Boni-Whip integration once it ships (WIMO: from 20.11.2026).
+  - Shell-native ADS-B, AIS and sonde lists and map; their web UIs become Expert only.
+  - Offline tile layer and IMU pointing.
+  - Encoder-only test on the shipped default paths.
+    - P1 (Dec 2026-Feb 2027; the LimeSDR Micro ships Dec 15):
+  - Lime gate: driver, PCIe, a 30-minute 56 Msps run.
+  - HRPT, Elektro LRIT and CubeSats on the Lime.
+  - Inmarsat-C SafetyNET with the EGC allow-list.
+  - Wide survey, T7 recordings, RAM ring, MARK pre-trigger.
+  - Lime LO rule; record-only fallback.
+    - P2 (Feb-Apr 2027):
+  - Signals AI: labelling UI, CPU classifier on the A55 cores, golden-set gate, QNN HTP INT8 deploy, few-shot prototypes, evaluation pages, dataset export.
+  - A shell-native receiver on sdrangelsrv WDSP RX replaces OpenWebRX+ as the default HF Listen.
+  - A shell VHF/UHF receiver replaces SDR++ as the default.
+    - P3 (Apr-Jun 2027):
+  - Instruments: Bench interlock, VNA quick SWR plus NanoVNA-Saver, tinySA panel plus QtTinySA, power meter, noise figure, GPSDO, calibration tables.
+  - RF switch and filter/LNA automation.
+  - Radio astronomy: H-line, Sun drift, Tsys.
+    - P4 (polish):
+  - Update wizard UI with rescue-entry rollback.
+  - Per-mode power profiling and energy prediction.
+  - First-run wizard; voice memos.
+  - Glove and sunlight field trials; accessibility review.
+  - Optional sunlight-readable secondary status display on the RP2040.
+    - Later:
+  - Ubuntu 26.04 with labwc 0.9.x/squeekboard, after NPU and HDMI revalidation.
+  - LimeFEA HF Micro once LimeSuiteNG HF support is proven.
+  - An SDR++ module that draws NPU labels.
+  - A 2x2 helix array for Metop.
+  - **Tests:**
+    - COMPOSITOR GATE: 1-hour labwc + XWayland session on the Q6A HDMI panel. Pass:
+  - Touch reaches SDR++ and SatDump as clicks on the X11 libglfw3; the self-test fails if libglfw3-wayland gets installed.
+  - HOME raises the shell in under 300 ms from any app, and restarts it when it has been killed.
+  - labbar stays on top.
+  - HDMI unplug/replug and closing the last X11 app do not end the session.
+    - SESSION AND POWER-KEY RECOVERY: kill labwc 3 times within 10 minutes; pass = the cage safe mode appears. Press the Q6A power key; pass = labpowerd runs its sequence (SigMF finalised, bias off) and logind takes no immediate poweroff.
+    - BOOT DEFAULT: install a newer trial kernel. Pass = the held 6.18.2 entry still boots by default; a trial entry that fails to bless falls back by itself; HOME held at power-on reaches lab-safe.target.
+    - ENCODER-ONLY WALKTHROUGH, per phase: with touch locked, reach and run every leaf of that phase's shipped default paths with the encoders and keys only. Pass: 100% reachable, at most 4 presses from Home to any hub mode (Favorites count as 1).
+    - LOCK ROBUSTNESS: with LOCK on, force the touch controller to re-enumerate (VBUS glitch). Pass: touch stays locked and the bar and LED keep showing LOCKED.
+    - GLOVE AND SUN: 20 target hits per hub with 1 mm gloves (if the controller supports glove mode) and in direct sun, with lux logged. Pass: at least 95% first-hit accuracy and readable values at 100 klx. A slow glove tap must never complete a 1.5 s hold-to-confirm. (My thresholds.)
+    - VOLUME AND AUDIO: the volume encoder changes level, mute and squelch the same way in OpenWebRX+, sdrangelsrv, SDR++ and QSSTV. The speaker mutes on entering HF Quiet.
+    - USB LOAD: HF+ at 768 ksps plus V4L at 2.4 Msps plus touch for 30 min, with Wi-Fi off and then on. Pass: zero drops with Wi-Fi off; the Wi-Fi-on result is logged. Also measure combined VBUS current with every bias tee on.
+    - HF NOISE A/B: terminated input and each antenna profile at 0.1, 0.5, 1, 5, 10 and 20 MHz, across display at 2000 nits/minimum/off, Wi-Fi, Lime, charger and speaker amplifier. Pass (my criteria):
+  - the HF Quiet floor is within 3 dB of everything-off;
+  - the wire raises the floor at least 10 dB over terminated at 7 MHz at night.
+    - BIAS SAFETY:
+  - Wire + 9:1 profile: every bias request is refused.
+  - DC-sense identifies short, open and active load.
+  - Shorting the 12 V active-antenna output trips the load switch or polyfuse and raises a Critical alert.
+  - After a labd crash, no rail comes back on.
+    - HF DECODER GOLDEN SET: replay stored HF+ cf32_le IQ through each engine: NAVTEX, WEFAX, FT8/WSPR, DRM, DCF77/MSF and the LF window (Radio Clock and NAVTEX together), SITOR-B, DSC. Pass: expected messages and images.
+    - HF+ CALIBRATION: set a ppm offset and verify that the carrier error goes away through labrx. Show that a Soapy-only ppm setting is not relied upon anywhere.
+    - SATELLITE GOLDEN SET: LRPT, HRPT, ISS SSTV, CubeSat frames, Inmarsat-C EGC and the QO-100 beacon, through SatDump, gr-satellites, OpenWebRX+ and sdrangelsrv file sources. Pass: products identical to the reference.
+    - POLICY: an Inmarsat recording with mixed packet types, and a DSC recording with routine calls. Pass: only EGC SafetyNET MSI and DSC distress/urgency/safety reach the UI or disk.
+  The policy audit then passes on the installed image: no forbidden binaries or plugins, no wsjtx or js8call GUI, all pins in place, Lime TX never opened.
+    - ARBITER CONFLICTS (scripted):
+  - a starred pass versus interactive HF Listen while AIS runs on the HF+;
+  - two Lime requests 160 MHz apart;
+  - background-logger preemption.
+  Pass: correct decisions, notices and auto-resume. An Expert app cannot open a non-leased node (ACL).
+    - HAND-OFF SOAK: 100 V4L/HF+ hand-offs, plus 20 sdrangelsrv-to-GUI hand-offs. Pass: under 3 s for USB SDRs, no fd leaks, no 'device busy', no REST port collisions.
+    - RIGCTL ROBUSTNESS: drop and half-open the SDR++ rigctl connection. Pass: labd reconnects, or shows the 'SDR++ control lost' card within 5 s.
+    - HOT-UNPLUG: unplug an SDR during a stream. Pass: the bound unit stops and an alert appears; replugging recovers; the VBUS-cut ladder recovers a stuck V4L.
+    - SUPERVISION: kill -9 each engine mid-pass. Pass: one restart, then record-only fallback, with a continuous IQ file apart from the gap.
+    - CLASSIFIER: SIGSTOP labclassify, then force CPU fallback during a soak of Lime HRPT plus HF+ FT8 plus V4L LRPT. Pass: watchdog restart within 15 s, and zero dropped RX samples with the classifier on cores 0-3.
+    - 8-HOUR SOAK: three SDRs, classifier on, display auto-dim. Pass: no sample loss, no throttling below the thresholds, memory stable.
+    - POWER: inject INA228 values for 20%, 8% and 13.2 V. Pass:
+  - auto-economy at 20%; long-job refusal with override;
+  - the full shutdown finalises SigMF and cuts rails;
+  - with labinput frozen, the RP2040 hard-cut fires only when both conditions are met.
+    - POWER CUT MID-RECORDING: pull the battery. Pass: after boot, repair produces valid SigMF (sigmf-python) with a 'recovered' annotation.
+    - SIGMF CONFORMANCE: every output validates and has datatype (cu8 / ci16_le / cf32_le), sample_rate, hw, antenna:model, a UTC datetime and core:geolocation per capture, plus NPU and MARK annotations with generator and label.
+    - STORAGE: yank the T7 mid-recording. Pass: fail-over to UFS with an alert. Force an ext4 read-only remount. Pass: Critical alert, and scheduling stops.
+    - TIME INTEGRITY: replay spoofed NMEA. Pass: the integrity gate trips, auto-record is blocked and the clock does not step during a recording.
+    - PASSES AND POINTING:
+  - Skyfield AOS/LOS within 5 s of SatDump for 20 passes; 6-digit NORAD IDs work; stale-TLE warnings fire.
+  - BNO085 heading and elevation within 3 degrees of the Sun after calibration.
+    - GNSS/EGNOS: SBAS enabled via $PAIR410 and status read via $PAIR411; SBAS PRNs and the DGPS flag shown.
+    - CONDUCTED-ONLY INTERLOCK: try the tinySA generator, VNA output or noise source outside Bench mode, and with an antenna profile marked connected. Pass: blocked. Inside Bench mode, all paths are terminated and bias is off before a source is enabled.
+    - OFFLINE: 48 h with Wi-Fi off. Pass: everything except the OMM refresh works, including maps, help, passes and decoders.
+    - UPDATE AND ROLLBACK: a bundle with a deliberately failing package. Pass: the self-test fails and the previous versions are restored. Then restore from the rescue entry with no live USB. Held kernel, Mesa and NPU packages stay untouched.
+    - HMI UART: inject line noise and frame errors. Pass: no phantom HOME, power action or hold-to-confirm. After an MCU reset, safe defaults apply. Reflash the RP2040 over SWD from the Q6A.
+    - NPU MODEL GATE: INT8-versus-FP32 agreement and per-class recall on the golden set must be within the bundle's threshold before activation. Few-shot must add a class from 10 examples in under 30 s on CPU (my target).
+- **Stack changes:**
+  - USB PORT MAP (final):
+  - Blue USB 3.1, direct to the SoC: Samsung T7 in the field. On the bench it is time-shared with the instrument hub (tinySA, VNA, power meter, GPSDO).
+  - Black ports on the FE1.1s hub (3 ports, shared with Wi-Fi): V4L, Airspy HF+ Discovery, USB-HID touch.
+  - GNSS on UART6, HMI and IMU relay on UART7, INA228 on I2C0, so none of them uses a USB port.
+  - If UART7 cannot be enabled: add a small internal USB 2.0 hub on the touch port.
+  - The Q6A USB-C stays blocked, because of back-feed through Q5 when powered from J21.
+  - USB POWER: the Q6A USB-A VBUS goes through WS4612 switches limited to about 2.1 A (Rset 3.24 kOhm), fed from a 5 V boost good for about 7 A. V4L + 180 mA tee (about 450 mA) + HF+ (unpublished; measure it) fit. Give the HF+ its own GPIO VBUS-cut pigtail, with ferrites.
+  - NEW POWER RAIL, HF active antenna 12.0 V:
+  - Chain: 4S pack -> LC filter -> low-noise LDO (dropout under 1.2 V at the 13.2 V shutdown threshold) -> polyfuse -> labd GPIO load switch (boot default OFF via pull-down) -> DC jack for the Boni-Whip injector.
+  - 12.0 V sits inside both published Boni-Whip ranges (9-15 V WIMO, 12-15 V SWLing). The earlier 10 V plan was below the 12 V floor in the second source.
+  - It never comes from USB 5 V.
+  - HARD POWER CUT: a hardware load switch or the pack EN, driven by the RP2040 only when two conditions agree (shutdown request, 6 s hold or critical voltage, AND no heartbeat). The J21 PWR_ON_KEY pin is not used for forced off; logind HandlePowerKey=ignore and labpowerd owns KEY_POWER.
+  - CASE AND SHIELDING:
+  - HF+ in its own copper-clad or aluminium can, bonded to the 2 mm aluminium mid-plate and the USB shield, at the end farthest from the 12 V buck, the backlight boost and the HDMI bridge.
+  - HF SMA bulkhead, plus a ground/counterpoise post (binding post) bonded to the chassis.
+  - HF+ input-selector board: latching DC-capable relay with HF antenna / VHF bus / 50-ohm termination, plus the DC-sense probe.
+  - ACCESSORY POUCH (every piece 35 cm or less folded):
+  - AN-05 7 m reel or a 10-15 m wire winder;
+  - Nooelec Balun One Nine v2 9:1;
+  - 3-5 m counterpoise wire;
+  - 5-10 m thin 50-ohm coax with clip-on ferrites;
+  - throw cord and weight; ground stake;
+  - BNC-to-SMA lead;
+  - Boni-Whip and its injector, or a miniwhip clone with an injector rated to about 10 kHz;
+  - optional AM band-stop.
+  No loop antenna, loop amplifier, frame or loop choke.
+  - BUTTONS AND ENCODERS:
+  - Main tune/focus push-encoder with a 30-35 mm knob.
+  - NEW second push-encoder for volume (turn = volume, push = mute, FN+turn = squelch).
+  - Six sealed keys of at least 12 mm at 13 mm or more pitch: HOME, BACK, REC, MARK, FN, LOCK.
+  - RGB status LED and piezo.
+  - HOME held at power-on = safe mode (RP2040 drives a header GPIO read in early boot).
+  - HMI RP2040: merged with the dimming MCU and wired to UART7 (pins 32/29; behind the UM3304 TXB buffer, push-pull UART is fine). Framed protocol with CRC and sequence numbers. It relays the BNO085 over its second UART. SWDIO/SWCLK/RUN go to Q6A GPIOs for in-case reflashing with OpenOCD linuxgpiod.
+  - AUDIO: the Q6A 3.5 mm four-pole jack (headphones plus mic for voice memos). Optional small speaker with a linear class-AB amplifier (LM386-class) and headphone-detect, auto-muted in HF Quiet. Otherwise the device is headphones-only. Part and noise are unverified.
+  - SOFTWARE STACK CHANGES:
+  - Session: greetd 0.9.0 with a crash-counting wrapper, labwc 0.7.1 (or local 0.8.4), cage safe mode.
+  - Packages: libglfw3 (X11) held and libglfw3-wayland pinned to -1. SoapyAirspyHF built from source. OpenWebRX+ installed --no-install-recommends with exact-name pins. WSJT-X decoders only. SDR++ with pager, M17 and Falcon9 off.
+  - Holds on Mesa, linux-firmware, libdrm, xwayland, wlroots, Qt6, systemd-boot and PipeWire. unattended-upgrades removed and apt timers masked.
+  - Boot: loader.conf default line and /etc/kernel/tries boot counting.
+  - Engines run as user 'labrx', with ACL-based Expert leases.
+  - STORAGE: the T7 gets an ext4 'lab-snap' partition for rollback snapshots next to the exFAT exchange partition, and UFS gets a small rescue rootfs entry. HF+ recordings are cf32_le at about 6.1 MB/s, to UFS.
+  - CPU: labclassify moves to the A55 cores 0-3 with a CPUQuota. A78 cores 4-6 stay for DSP, and CPU7 stays isolated for lime:Rx0.
+  - COST ADDED BY THE HF CHAIN: about $205-400 (HF+ $135-169, wire kit about $56-66, Boni-Whip about $124-159 or a miniwhip about EUR 26, rails, shield and selector about $15-30 estimated). Lab Shell software is $0 but takes several person-months to reach P3 (estimate).
+- **Refuted claims:**
+  1.
+    - **Claim:** OpenWebRX+ supports the Airspy HF+ natively from the apt/PPA install (v1 HF Listen).
+    - **Why:** OpenWebRX+ reaches the HF+ only through SoapySDR (soapy_connector + soapy_airspyhf). SoapyAirspyHF is in neither noble nor the luarvique noble PPA, so build it from source.
+  2.
+    - **Claim:** Frequency (ppm) correction for the HF+ can be set through the Soapy/labrx path.
+    - **Why:** SoapyAirspyHF never calls airspyhf_set_calibration, and OpenWebRX+ says ppm is unsupported by the Soapy module. Apply the correction in labrx, via libairspyhf directly, or via gr-osmosdr.
+  3.
+    - **Claim:** XDG_SESSION_TYPE=x11 forces GLFW apps (SDR++, SatDump) onto XWayland, which gives them touch.
+    - **Why:** noble's GLFW 3.3.10 picks its backend at build time (libglfw3 vs libglfw3-wayland). Hold the X11 libglfw3 and pin libglfw3-wayland to -1.
+  4.
+    - **Claim:** 'wsjtx (binaries only)' plus the original pin list keeps TX-capable and disallowed decoders off the device.
+    - **Why:** noble's wsjtx is the full TX-capable GUI. The openwebrx Recommends also pull in js8call, rtl-433 and digiham/codecserver variants. Fix: --no-install-recommends, exact-name pins, and a dpkg-divert or jt9/wsprd-only build.
+  5.
+    - **Claim:** SigMF geolocation is a Global field, and HF+ recordings follow the 3.1 MB/s USB rate.
+    - **Why:** SigMF 1.2.6 prefers core:geolocation per capture, which matters on a moving device. libairspyhf delivers float samples, so recordings are cf32_le at about 6.1 MB/s.
+  6.
+    - **Claim:** labclassify on A78 cores 4-6 never disturbs RX.
+    - **Why:** Those cores are reserved for DSP, so a CPU fallback would compete with labrx. Move it to the A55 cores 0-3 with a CPUQuota.
+  7.
+    - **Claim:** A 7 mm status bar with ten chips of 15 mm or more is consistent with the 15 mm target rule.
+    - **Why:** Chip height would be half the minimum, and on 1280x800 the chips would leave no room for gaps. Corrected: a 13 mm bar with 6 chips; hardware keys are primary.
+  8.
+    - **Claim:** Menu depth is at most Home > Hub > Mode.
+    - **Why:** The earlier tree had 4-level paths (ISS > SSTV, Maritime safety > NAVTEX and so on). Groups are now section headers inside one hub list.
+  9.
+    - **Claim:** A 22 mm soft-key column can show 7 groups (SOURCE/FREQ/LEVEL/DISPLAY/MARKER/MEASURE/RECORD) at glove size.
+    - **Why:** 7 keys of 15 mm plus gaps need about 129 mm of height, but the content area is about 74 mm. Corrected: 4 keys per page, with control sheets.
+  10.
+    - **Claim:** REC, MARK and the AI tap work everywhere.
+    - **Why:** OpenWebRX+, readsb, AIS-catcher, auto_rx and the SatDump CLI own the SDR and expose no IQ. Added per-profile capability flags and greyed keys with a reason.
+  11.
+    - **Claim:** Every action can be done with encoder and keys alone, while P0 uses embedded web UIs.
+    - **Why:** Only OpenWebRX+ has a keyboard map (Shortcuts.js). The ADS-B, AIS and sonde web pages are replaced with shell-native lists in P0b, and the encoder-only test runs on each phase's shipped paths.
+  12.
+    - **Claim:** Templated sdrangelsrv@ instances on REST 127.0.0.1:8091, plus a GUI that shares the same REST.
+    - **Why:** The GUI and the server both default to 8091 and are separate instances. Corrected: one server with device sets (own ports if more are needed), and the GUI as a hand-off.
+  13.
+    - **Claim:** labd drives SDR++ over rigctl freely.
+    - **Why:** rigctl_server accepts one client at a time, defaults to autoStart=false, and has no gain or volume commands. labd now holds and multiplexes the connection; volume goes through PipeWire.
+  14.
+    - **Claim:** F13-F18 keybinds cover HOME/BACK/REC/MARK, and HOME always raises the shell.
+    - **Why:** noble xkb maps FK13-18 to XF86Tools and XF86Launch5-9, and ForEach matches nothing if the shell has died. Bind the keysyms and use If/else to raise or restart.
+  15.
+    - **Claim:** The RP2040 pulses J21 PWR to force power-off.
+    - **Why:** Radxa says the power pin opens a shutdown menu and does not shut down immediately; logind may instead power off without the lab's shutdown sequence. Use HandlePowerKey=ignore plus a hardware load-switch cut.
+  16.
+    - **Claim:** The display manager restarts the session, and 3 crashes boot safe mode.
+    - **Why:** No display manager was chosen, and greetd runs initial_session only once. Corrected: a greetd wrapper that counts crashes.
+  17.
+    - **Claim:** Trial kernels as a second systemd-boot entry leave the held entry as the default.
+    - **Why:** Radxa's loader.conf has no default line, so a newer entry can win the sort. Add an explicit default and boot counting.
+  18.
+    - **Claim:** Timeshift snapshots to the T7 give rollback.
+    - **Why:** Timeshift restore of an unbootable system needs a live USB, which is unknown for this board, and an exFAT T7 does not work with it. Use a rescue entry on UFS and an ext4 snapshot partition.
+  19.
+    - **Claim:** Holding the kernel, NPU and firmware packages protects the validated stack.
+    - **Why:** Mesa (noble 24.0.5 vs noble-updates 25.2.8), linux-firmware, xwayland and wlroots were unpinned, and the apt timers were active. These are now held and the timers masked.
+  20.
+    - **Claim:** Make touch deliberately insensitive (the Malahit lesson) and use a 0.8 s hold-to-confirm.
+    - **Why:** Slowed taps make a 0.8 s hold indistinguishable from a slow glove tap. Corrected: normal tap speed with a minimum contact time, and a hold of at least 1.5 s.
+  21.
+    - **Claim:** EVIOCGRAB LOCK reliably locks touch.
+    - **Why:** A grab is lost when the device re-enumerates. labinput now re-grabs on every udev add.
+  22.
+    - **Claim:** Nothing opens an SDR without a lease.
+    - **Why:** Expert apps ran as the same user as the engines. Engines now run as a separate user, and Expert apps get ACLs.
+  23.
+    - **Claim:** USB-A ports supply about 500 mA each, so V4L plus its bias tee is close to the limit.
+    - **Why:** Per the Radxa v1.21 schematic as read in the compute, power and narrowband stages, the '500mA' marks are trace annotations; the WS4612 switches limit at about 2.1 A from a 5 V boost good for about 7 A. Still measure the combined draw.
+  24.
+    - **Claim:** Boni-Whip bias at 10 V is safe because it sits inside 9-15 V.
+    - **Why:** The 9-15 V range comes from a WIMO search snippet; SWLing's 2017 review gives 12-15 V. Use a 12.0 V rail.
+  25.
+    - **Claim:** Home tiles of at least 28x22 mm.
+    - **Why:** With the bar and the soft-key column, the 155x87 mm panel leaves about 29x20 mm per tile. That still meets the 20 mm primary rule.
+  26.
+    - **Claim:** 'HF+ VHF port'.
+    - **Why:** The HF+ has a single SMA. Call it 'HF+ in VHF mode via the input selector'.
+- **Risks:**
+  - HF+ host EMI: the HF+ is in a plastic case, and the display backlight boost converter, the bucks, HDMI and USB can dominate HF reception. Mitigations: shield can, ferrites, HF Quiet, a remote feed point. The A/B test is the arbiter.
+  - Unpublished current draw: Airspy, RigPix and RigReference publish none for the HF+, and Bonito publishes none for the Boni-Whip. The Boni-Whip supply range is also inconsistent (9-15 V vs 12-15 V), and WIMO stock starts 20.11.2026.
+  - Small E-field antennas depend on ground and height above ground. The Boni-Whip was 'terrible' in urban electrosmog in a field report, clone miniwhips vary, and any of them is useless mounted on the handheld.
+  - Long wires collect static and lightning risk. The Balun One Nine v2's DC path is unstated, so a wrong DC-safety flag could put bias into a short. Mitigations: DC-sense, held GPIO lines, a manual discharge step.
+  - Compositor: labwc 0.7.1 is untested on the Q6A HDMI path and lacks later fixes (layer-shell unmap with no outputs, XWayland persistence). The fallback labwc 0.8.4 build bundles wlroots 0.18 and libwayland 1.23 (noble has 1.22), which adds a private graphics stack to maintain.
+  - Effort: the shell, labd, labrx, labclassify and the HMI firmware are new code, several person-months to P3 (estimate). Phasing, plus OpenWebRX+ and the Expert apps early, reduce the risk.
+  - SDRangel has no arm64 binary. Its build dependencies (WDSP, inmarsatc, sgp4, libsigmf, aptdec) must be packaged; ENABLE_EXTERNAL_LIBRARIES can pull in AMBE/DSD libraries, which the audit must catch; CPU load on the A78 cores is unmeasured.
+  - SatDump 2.0 is alpha: CLI flags and autotrack may change, so the per-pass wrapper needs version tests.
+  - The Inmarsat-C SafetyNET-only and DSC safety-only rules rely on labd filtering engine output. A filter bug could expose non-MSI traffic, so filtering is allow-list based and tested with mixed recordings.
+  - OpenWebRX+ and its PPA can pull disallowed decoders or TX-capable apps through Recommends and new dependencies. Mitigations: --no-install-recommends, exact-name pins, policy audit on every update.
+  - USB scarcity: all three black ports are used (V4L, HF+, touch), the instrument hub time-shares the blue port with the T7, and UART7 availability in the Radxa image is unverified.
+  - The FE1.1s 480 Mb/s hub is shared with Wi-Fi, so Wi-Fi bursts can drop samples. Wi-Fi is off during jobs.
+  - Qt 6 Location is not in noble, so the map and offline tiles are our own code. Tiles must be rendered by the user, because bulk scraping breaks OSM policy.
+  - LimeSDR Micro: ships Dec 15 2026, its driver is unmerged and untested on Qualcomm hosts, so P1 may slip. It is a transceiver: TX must stay unused, ports terminated, streams audited.
+  - NPU: INT8-only HTP v68 with QAIRT 2.42, and a reported HTP stall after about 1 h. Mitigations: CPU fallback on the A55 cores, watchdog, never in the RX path.
+  - Touch controller glove and water modes are unknown until the Wisecoco seller names the controller part.
+  - Holding kernel, Mesa and firmware freezes security fixes. The device is offline by design, with localhost-bound services and nftables, but home Wi-Fi use remains a residual exposure.
+  - noble's libgpiod is 1.6.3 (v1). Scripts written for the v2 syntax fail, and one-shot gpioset releases lines, so lines are held persistently by labd.
+  - LC76G SBAS control ($PAIR410/411) is documented only in community posts.
+  - RAM ring: with the 12 GB board the ring is about 4 GiB, so wideband bursts are shorter.
+  - Legal: rules on receiving and decoding differ by country. Help pages carry a local-law note per mode, and compliance remains the user's responsibility.
+- **Open questions:**
+  - Bench measurements still needed:
+  - HF+ Discovery current, and combined VBUS current on the FE1.1s ports with every bias tee on.
+  - Boni-Whip current at 12 V; confirm its supply range with Bonito or the manual.
+  - Boni-Whip amplifier housing length, against the 35 cm folded limit.
+  - Does any HF+ Discovery revision have a bias tee? (libairspyhf master 1.8.1 adds bias-tee calls; noble ships 1.6.8.)
+  - Balun One Nine v2 DC resistance at the SMA (DC short or open), and whether it bleeds static from the wire.
+  - Which latching relay part to use for the HF+ input selector, with acceptable isolation at 162-260 MHz and DC-to-LF performance.
+  - On the Q6A, does labwc 0.7.1 pass the HDMI hotplug, last-X11-app and HOME-keysym tests, or is the local 0.8.4 build required?
+  - Can UART7 (pins 32/29) be enabled with an overlay on the held 6.18.2 image? If not, an internal USB 2.0 hub goes on the touch port.
+  - Does /dev/watchdog exist on the Radxa kernel? Which noble package ships systemd-bless-boot? Is Radxa's boot manager systemd-boot with loader.conf default ordering as expected?
+  - Which external libraries does SDRangel's WDSP_SUPPORT need on noble? Which features run inside sdrangelsrv versus only in the GUI (Map, some features)?
+  - Do SatDump 2.0-alpha legacy live/record CLI and autotrack still behave as in 1.1.4?
+  - Does the RP2040 boot ROM support only USB (UF2/PICOBOOT)? This was recalled from the datasheet, not re-checked; SWD is planned either way.
+  - Which chrony mechanism can drop the GNSS/PPS refclock at runtime when the integrity gate trips?
+  - Wisecoco touch controller: part number, glove and water modes, USB-HID VID:PID.
+  - Is QtWebEngine GPU acceleration enabled or blocklisted on Turnip/Adreno 643? It affects the OpenWebRX+ page in P0.
+  - Does OpenWebRX+ honour a 127.0.0.1 bind? (nftables stays regardless.) Do tar1090 and AIS-catcher support offline tiles?
+  - Speaker option: is a small linear amplifier acceptable for HF Quiet noise, or ship headphones-only?
+  - Optional sunlight-readable secondary status display (memory LCD or e-paper) on the RP2040: noise, price and value are unverified.
+- **Confidence:** medium
+
