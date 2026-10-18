@@ -17973,6 +17973,283 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Policy: nothing here transmits. No loops, dishes or military-aimed items are involved. The CH57x 2.4 GHz silence test from stage 1 stays.
 
+## community:lab_instruments (run `wf_d9388111-e66`)
+
+- **Subsystem:** lab_instruments
+- **Findings:**
+  1.
+    - **Claim in stack:** LiteVNA 64: dynamic range (stage 1: 90 dB below 3 GHz, 50 dB at 3 GHz and above, so rejection claims above 3 GHz limited to about 45 dB); tests of LNAs use a 30-40 dB pad on the input
+    - **Finding:** The Zeenko LiteVNA user guide (firmware v1.4; covers the 62, 64 and 67) gives dynamic range per hardware revision, not per model. At 3 GHz and above it is >50 dB only for HW <=v0.3.2 (IFBW 1.1 kHz), >70 dB for v0.3.3, and >80 dB for HW >=v0.4.5 (IFBW 225 Hz). Below 3 GHz it is >90 dB for v0.3.x (IFBW 90-225 Hz) and >100 dB for HW >=v0.4.5 (IFBW 50 Hz). Passion Radio lists 'Hardware version: 3.1' with 90/50 dB, which matches the oldest rows, and its stock is flagged 'last items'. A buyer review on the Passion Radio page (LdG, 21 Nov 2025) says: noise becomes visible below about -70 dB; the maximum port input is not documented ('less than +5 dBm, I would say not more than 0 dBm'); with attenuators and a DC block the results stayed accurate. The guide adds CAL > POWER ATTENUATION (up to 31.5 dB of source attenuation; recalibrate afterwards).
+    - **Verdict:** corrected
+    - **Action:** Before ordering, ask Passion Radio which hardware revision ships. Prefer HW >=v0.4.5, from Passion Radio, Lab401 or the Zeenko factory store. On arrival, read CONFIG > VERSION inside the return window. Apply the 45-50 dB limit above 3 GHz only to v0.3.x units; v0.4.5+ allows about 75-80 dB. In P3, keep port 2 at or below 0 dBm: add a pad at the LNA output as well as the input, or use POWER ATTENUATION and recalibrate.
+    - **Impact:** With current hardware the stack understates the LiteVNA by 30 dB above 3 GHz. Without an output pad, testing a 30-40 dB LNA can put port 2 near its undocumented limit.
+    - **Sources:**
+      - http://nanovna.com/wp-content/uploads/2021/11/LiteVNA_User-Guide.pdf
+      - https://www.passion-radio.com/analyzer-spectrum/lite-vna64-2730.html
+      - https://www.zeenko.tech/litevna
+  2.
+    - **Claim in stack:** NanoVNA-Saver main via pipx is the PC software for the LiteVNA 64 (stage 1: confirmed; LiteVNA support since v0.7.0)
+    - **Finding:** Several community bug reports are open:
+  - #796 (open since 11 Feb 2025; LiteVNA64; Saver 0.7.1/0.7.2 on Windows 11): 'Invalid data during sweep', hangs, and 'List assignment index out of range'. The maintainer's log shows 'expected 6432 bytes, got 5825' (and 928), which he attributes to incomplete serial reads of the NanoVNA_V2 binary protocol. No fix is linked, and the commits on main up to 18 Apr 2026 do not touch it.
+  - #791 (open): Saver shows wrong LiteVNA64 device info: firmware 'v2.20' instead of the installed 1.3.40, Vbat 0.0 V, serial 'NOT SUPPORTED'.
+  - #841 (open, 0.7.3): open and short are recorded as the same at the start of a sweep; the device is not named.
+  - #768: the LiteVNA defaults to USB mode, and device and app calibrations are separate.
+  - #831: there is no Linux binary for v0.7.3.
+  No Linux or arm64 LiteVNA report was found either way.
+    - **Verdict:** new_risk
+    - **Action:** Bring-up test on the Q6A inside the return window:
+  - 20 repeated sweeps at 1001 and 10,000 points over 50 kHz-6.3 GHz;
+  - check that the raw open, short and load data differ before saving a calibration;
+  - record the firmware from the device's CONFIG > VERSION, never from Saver.
+  If sweeps truncate, fall back to scikit-rf (see the next finding) or to standalone Touchstone files on microSD.
+    - **Impact:** The primary VNA GUI may hang or produce corrupt calibrations with the LiteVNA64.
+    - **Sources:**
+      - https://github.com/NanoVNA-Saver/nanovna-saver/issues/796
+      - https://github.com/NanoVNA-Saver/nanovna-saver/issues/791
+      - https://github.com/NanoVNA-Saver/nanovna-saver/issues/841
+      - https://github.com/NanoVNA-Saver/nanovna-saver/issues/768
+      - https://github.com/NanoVNA-Saver/nanovna-saver/issues/831
+      - https://github.com/NanoVNA-Saver/nanovna-saver/commits/main
+  3.
+    - **Claim in stack:** VNA control: NanoVNA-Saver only. Female OSL = male OSL + F-F adapter (stage 1: the adapter delay must be defined)
+    - **Finding:** scikit-rf's NanoVNAv2 driver (skrf.vi.vna.nanovna) names the LiteVNA (zeenko.tech) as a compatible device and connects over serial ('ASRL/dev/ttyACM0::INSTR'). It returns only uncalibrated networks whatever the device's own calibration, so calibration happens in Python, where standards with an offset delay for the F-F adapter can be defined exactly.
+    - **Verdict:** new_option
+    - **Action:** Add a scikit-rf path to labd for scripted P1/P2 runs (SOL with adapter-offset standards, Touchstone into parts.yaml). It is also the fallback if NanoVNA-Saver issue #796 reproduces on the Q6A. Install it in the lab venv; test against the LiteVNA at bring-up.
+    - **Impact:** A scripted, reproducible VNA path that does not depend on Saver's open bugs and handles the female-plane calibration properly.
+    - **Sources:**
+      - https://raw.githubusercontent.com/scikit-rf/scikit-rf/master/skrf/vi/vna/nanovna/nanovna.py
+  4.
+    - **Claim in stack:** labd gates the VNA and tinySA (Bench only); GUIs open the instruments directly
+    - **Finding:** NanoVNA-Saver main gained 'Add TCP/IP support' (commit 4852068, 18 Apr 2026) and a socat note (commit 2b872a4): 'socat ... <serial>,raw,echo=0 TCP-LISTEN:2000,reuseaddr,fork'. This is not in v0.7.3. With it, a daemon can own the serial node and Saver can connect over TCP.
+    - **Verdict:** new_option
+    - **Action:** Pin Saver to a commit at or after 4852068. Give labd exclusive ownership of /dev/lab/litevna (udev owner labd, mode 0600) and have it expose a localhost TCP proxy only in Bench, so the Bench gate sits in the data path. Test at bring-up.
+    - **Impact:** The receive-only and Bench gating becomes enforceable for the VNA GUI, not just a UI convention.
+    - **Sources:**
+      - https://github.com/NanoVNA-Saver/nanovna-saver/commit/2b872a4ee51c990f8a665562751cfb75a75bfebd
+      - https://github.com/NanoVNA-Saver/nanovna-saver/commits/main?author=sas972
+  5.
+    - **Claim in stack:** tinySA firmware (stage 1: v1.4-252 adds composite USB; pin the firmware tested at bring-up)
+    - **Finding:** The changelog also contains serial-reliability fixes that matter for scripted control:
+  - v1.4223 (24 Mar 2026): 'Merged fix for occasional hang after sending serial commands'.
+  - v1.4252: 'USB serial: fixed the PC waiting for more data after a reply that is a multiple of 64 bytes long' and 'Fixed a race in the console command handling that could hang a command'.
+  The changelog labels are not monotonic: V1.4245 (2026-09-27) sits above V1.4252 (2026-09-26). The binary is tinySA4_v1.4-252-g2b4aa51 (30 Sep 2026). Community data points: the QtTinySA wiki needs firmware >=1.4.120, and >=1.4.177 for fast scanraw. QtTinySA #108: a ZS407 on 1.4.200 worked. QtTinySA #86: a Pi 4 with firmware 1.4-197 had the serial port drop with 'Bad file descriptor'; the maintainer suspected the cable or USB 3 ports.
+    - **Verdict:** corrected
+    - **Action:** Target v1.4-252 for labd scripting, for its serial-hang fixes, and test composite USB inside the return window. Fall back to v1.4223-v1.4241 (has the March hang fix, no composite device) if composite USB breaks QtTinySA or udev. Record the git-describe string (v1.4-252-g2b4aa51), not the changelog label. Use USB 2 paths and short cables.
+    - **Impact:** 'Pin the firmware' becomes a concrete choice. Older firmware has known serial hangs that would look like labd bugs.
+    - **Sources:**
+      - http://athome.kaashoek.com/tinySA4/DFU/changelog.txt
+      - http://athome.kaashoek.com/tinySA4/DFU/
+      - https://raw.githubusercontent.com/wiki/g4ixt/QtTinySA/1.-Installation-and-Dependencies.md
+      - https://github.com/g4ixt/QtTinySA/issues/108
+      - https://github.com/g4ixt/QtTinySA/issues/86
+  6.
+    - **Claim in stack:** QtTinySA with PySide6 6.12 aarch64 wheels (stage 1: try the prebuilt QtTinySA_arm64_2404.zip; pin 6.11.2)
+    - **Finding:** Upstream src/requirements.txt pins pyside6==6.11.0; PyPI has pyside6-6.11.0 manylinux_2_39_aarch64 (23 Mar 2026). The asset QtTinySA_arm64_2404.zip (142 MB, 28 Aug 2026) is confirmed. Wiki notes:
+  - install the Qt SQLite driver (libqt6sql6-sqlite) and the QtSql bindings;
+  - an old platformdirs causes startup or database errors;
+  - add the user to dialout;
+  - the arm64 Nuitka executable runs but its 3D view does not work;
+  - 'try a USB2 port rather than USB3'.
+  Known issues:
+  - v2.0.0 notes a segfault on close on every OS (still present in 2.0.1 per the notes).
+  - #142 (open, Oct 2026): with two devices the scan range is not applied to both.
+  - #126: the Pi Bookworm binary failed with 'GLIBC_2.38 not found'; noble has glibc 2.39, so it is fine.
+  - #106: a serial-port exception on Ubuntu 24.04.2 went away after a system update.
+    - **Verdict:** corrected
+    - **Action:** In the venv, pin pyside6==6.11.0 (the version upstream tested), not 6.12. Install libqt6sql6-sqlite. Keep the 3D view off and use one tinySA per instance. labd must not treat QtTinySA's non-zero exit (the segfault on close) as an instrument fault.
+    - **Impact:** Removes an untested Qt pin and explains expected quirks before bring-up.
+    - **Sources:**
+      - https://raw.githubusercontent.com/g4ixt/QtTinySA/main/src/requirements.txt
+      - https://pypi.org/pypi/PySide6/6.11.0/json
+      - https://github.com/g4ixt/QtTinySA/releases/expanded_assets/v2.0.1
+      - https://github.com/g4ixt/QtTinySA/releases
+      - https://raw.githubusercontent.com/wiki/g4ixt/QtTinySA/1.-Installation-and-Dependencies.md
+      - https://raw.githubusercontent.com/wiki/g4ixt/QtTinySA/2.-Connecting-the-tinySA.md
+      - https://github.com/g4ixt/QtTinySA/issues/142
+      - https://github.com/g4ixt/QtTinySA/issues/126
+      - https://github.com/g4ixt/QtTinySA/issues/106
+  7.
+    - **Claim in stack:** labd's tinySA driver refuses generator and output commands outside Bench (stage 1: make it a default-deny allow-list)
+    - **Finding:** From reading the code (not tested at runtime): QtTinySA's modules/devices.py lists serial ports by VID (0x0483, 0x1d50, 0x04b4) and PID (0x5740, 0x6108, 0x0008), identifies the device by its USB product string ('tinySA4' = Ultra), and opens the raw ttyACM itself. So labd's filter never sees QtTinySA's traffic.
+  Commands found in the source: scanraw, sweep start/stop, rbw, attenuate, lna on (with attenuate 0), spur, repeat, time, sd_list, sd_read, correction (writes the device's level-correction table), reset, pause, resume, abort, vbat, version, info, deviceid. No output or generator command was found.
+  The ID 04b4:0008 (NanoVNA V2) is also matched. The LiteVNA probably uses it, since Saver detects it as a V2 (unverified). If the product string matches no known name, devices[i] stays None and .test() is then called on it, which would raise AttributeError.
+    - **Verdict:** new_risk
+    - **Action:** - Run QtTinySA only in Bench.
+  - labd takes an exclusive lock on /dev/lab/tinysa while its own driver runs.
+  - After each QtTinySA session, labd reads back the 'correction' tables and compares them with the stored baseline, because they set the level that the ±2 dB power-meter role relies on.
+  - Unplug the LiteVNA while QtTinySA runs, or test the combination.
+  - After the composite firmware, confirm the product string is still 'tinySA4'.
+    - **Impact:** The labd filter does not cover the GUI path. QtTinySA cannot switch the generator on, but it can silently change the level calibration.
+    - **Sources:**
+      - https://raw.githubusercontent.com/g4ixt/QtTinySA/main/src/modules/devices.py
+      - https://raw.githubusercontent.com/g4ixt/QtTinySA/main/src/QtTinySA.py
+  8.
+    - **Claim in stack:** tinySA Ultra+: channel power ±2 dB as the reference power meter; spectrum profile 0.8-7.3 GHz (coarse)
+    - **Finding:** The spec page gives power linearity versus frequency of ±2 dB below 5.3 GHz and ±5 dB from 5.3 to 6 GHz; nothing is stated for 6-7.3 GHz. Absolute accuracy after calibration is ±2 dB. The LNA (NF 5 dB up to 6 GHz on the ZS407) disables the input attenuator, so 'stronger signals will easily overload the LNA'. The Limitations page warns of radiation from the tinySA MCU at 48 MHz and its harmonics; 3x48 = 144.000 MHz and 9x48 = 432.000 MHz (my arithmetic). Battery: at least 3 h for the Ultra+; charging takes at most 1 h on a port of at least 500 mA. N8DMT reports the tinySA Ultra has difficulty measuring ENR above about 4 GHz because its noise floor rises.
+    - **Verdict:** corrected
+    - **Action:** Limit the '±2 dB channel power' claim to below 5.3 GHz; mark 5.3-6 GHz as ±5 dB and 6-7.3 GHz as uncharacterised. Use LNA mode only behind a pad of at least 20 dB. Add a powered tinySA near the receiver as a row in the D10 A/B interference matrix. Keep it off or away during weak-signal 2 m and 70 cm reception.
+    - **Impact:** Prevents power-meter claims at 5.8 GHz and above, and adds a known self-interference source on 144.000 and 432.000 MHz.
+    - **Sources:**
+      - https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Specification
+      - https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Limitations
+      - https://qsl.net/n8dmt/test-page/diy-test-equipment/low-cost-diy-noise-source/index.html
+  9.
+    - **Claim in stack:** Noise source: ZFL-500LN+ in an N8DMT-type source; ENR table at 12 V (20.5 dB at 28-52 MHz ... 8.4 dB at 2400 MHz). Stage 1: a datasheet model predicts 26.9 dB against the measured 20.5 dB
+    - **Finding:** N8DMT's table was measured on a ZFL-500LN at +12 V with a 5 dB pad on the input and two 5 dB pads (10 dB) on the output. He writes that without the output pads the ENR would be 'closer to 30 dB', and that the pads reduce the on/off impedance shift. He measured ENR with the tinySA Ultra's MEASURE > MORE > NOISE FIGURE routine, entering EXT GAIN = 0. My model, with input terminated at 290 K and NF 2.9 dB: gain 28 dB plus 10 dB pad gives 20.9 dB; gain 24 dB plus pad gives 16.9 dB; with no pad, 26.9-30.9 dB. So the stage-1 mismatch comes from the 10 dB output pad, not a measurement error.
+    - **Verdict:** corrected
+    - **Action:** Build the source as N8DMT did: a 50 Ohm load or 5 dB pad on the input and a 10 dB output pad fixed permanently, recorded in the ENR record. Measure your own unit's ENR with the tinySA NF routine (EXT GAIN = 0) at the 12 V actually used, up to 2.4 GHz, and store that table. Never quote the N8DMT values for a source without the pads.
+    - **Impact:** Without the output pad the real ENR is about 10 dB higher than the stack's table, which would bias every Y-factor NF. With the pad, the hot/cold match error also drops.
+    - **Sources:**
+      - https://qsl.net/n8dmt/test-page/diy-test-equipment/low-cost-diy-noise-source/index.html
+      - https://www.minicircuits.com/pdfs/ZFL-500LN+.pdf
+  10.
+    - **Claim in stack:** USB tester FNB58 Std plus the FNIRSI (baryluk) logger
+    - **Finding:** Issues in baryluk/fnirsi-usb-power-data-logger:
+  - #19 (open since Feb 2024): with FNB58 firmware V0.68, running the script freezes the meter and the script times out. The reporter says changing the refresh value fixes it, but the exact change is unclear.
+  - #7 (open): sporadic USB lock after Ctrl-C or at start; the meter freezes and only a reboot of the meter clears it.
+  Reported workarounds: drain the buffer on exit (merged PR); remove dev.reset() and set_configuration() ('quite reliable', though it still froze after 5-6 runs for one user); time.sleep(0.08) before each ep_in.read with a 5000 ms timeout (reported to work well, Jul 2024).
+  A customer review on fnirsi.com says the unit arrived on v0.63 while v0.68 was available.
+    - **Verdict:** new_risk
+    - **Action:** Record the FNB58 firmware on arrival and do not update to v0.68 or later until the logger has been tested with it. Use a patched logger: no reset, a sleep before reads, a drain on exit. labd shows 'meter stalled - power-cycle FNB58' rather than retrying silently.
+    - **Impact:** Long P16/P18 power logs can stop without notice.
+    - **Sources:**
+      - https://github.com/baryluk/fnirsi-usb-power-data-logger/issues/19
+      - https://github.com/baryluk/fnirsi-usb-power-data-logger/issues/7
+      - https://www.fnirsi.com/
+  11.
+    - **Claim in stack:** Pinecil V2 (IronOS BT off) powered from the 20 V PD bank (about 64 W); Anker 737 offers 20 V/5 A and 28 V/5 A
+    - **Finding:** IronOS docs: 'PD Mode ... No Dynamic disables EPR & PPS, Safe mode does not use padding resistance'. So the V2.23 'safe' default still allows EPR.
+  - #2186 (Ralim, 28 Jun 2026): '28V has been enabled for years'; the toggle is in advanced settings. In the same issue, a Pinecil V2 on v2.22 negotiated 28 V from a PD bank, and the tip later measured 0 Ohm (cause disputed).
+  - #1936 (open): on 28 V EPR at about 130 W the iron dropped to 5.1 V after a few minutes and ended in a thermal-runaway error. Ralim: EPR and PPS need periodic keep-alive messages.
+  - #1823: a power bank cut output at idle and the Pinecil rebooted. IronOS 'Power pulse' exists to keep banks awake.
+  Anker's FAQ says 140 W needs a PD 3.1 cable and a PD 3.1 device.
+    - **Verdict:** new_risk
+    - **Action:** Set PD Mode = No Dynamic on first boot (with BLE Off). Use a 100 W (20 V/5 A) e-marked cable, not a 240 W EPR cable, so the iron stays on fixed 20 V and the 64 W model holds. Enable Power pulse if the 737 sleeps at idle. Add both settings to P19.
+    - **Impact:** Avoids 130 W EPR draw from the field bank, the EPR dropout and thermal-runaway error, and a disputed tip failure.
+    - **Sources:**
+      - https://raw.githubusercontent.com/Ralim/IronOS/dev/Documentation/Settings.md
+      - https://github.com/Ralim/IronOS/issues/2186
+      - https://github.com/Ralim/IronOS/issues/1936
+      - https://github.com/Ralim/IronOS/issues/1823
+      - https://github.com/Ralim/IronOS/releases
+      - https://www.anker.com/products/a1289
+  12.
+    - **Claim in stack:** LAB USB-A behind TPS2553 0.75 A: one field device (Pro Stick Plus, spare V4L or instrument); instruments on their own batteries
+    - **Finding:** The LiteVNA guide gives the LiteVNA 62/64 supply as USB 5 V ±0.5 V, 1 A max, with a 2000 mAh LiPo. If the battery reaches its protection state, it must be charged while the unit is off to reactivate. The tinySA spec says charging takes at most 1 h on a port of at least 500 mA. Both charge whenever USB is attached. Model: a LiteVNA (up to 1 A) on the 0.75 A LAB port can reach the current limit, and a charging tinySA adds about 2.5-3.75 W to the handheld pack.
+    - **Verdict:** new_risk
+    - **Action:** - Connect the instruments only to the bank-powered bench hub.
+  - In the field, take instruments fully charged and put at most one on LAB.
+  - In P16, measure each instrument's LAB draw with the FNB58.
+  - Store the LiteVNA charged to avoid the deep-discharge lockout.
+  - Budget the bench hub: model about 2-2.2 A for LiteVNA + tinySA + Hantek + LA, against the hub's 5 V 2 A supply. Feed it from the bank's 5 V/3 A.
+    - **Impact:** Possible TPS2553 current limiting or brownout on the LAB port, and an unplanned drain on the field battery.
+    - **Sources:**
+      - http://nanovna.com/wp-content/uploads/2021/11/LiteVNA_User-Guide.pdf
+      - https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Specification
+      - https://thepihut.com/products/industrial-grade-dual-host-usb-hub-4x-usb-2-0
+  13.
+    - **Claim in stack:** Scope/LA on the LAB port; USB budget: one LAB device <=5.12 MB/s; the FE1.1s tree carries RTL-B 5.12 + HF+ 3.07 + LAB, against a 25 MB/s limit (35-40 practical)
+    - **Finding:** OpenHantek6022's limitations doc says all data streams in real time as USB bulk. Because of USB bandwidth, the maximum usable rate is 30 MS/s for CH1 alone and 15 MS/s for CH1+CH2 (about 30 MB/s either way); beyond that data overruns. Its developer notes say that at fast rates the app requests one big block 'to make the transfer more robust against USB interruptions by other traffic'. Model: an FX2 analyser at 8 channels x 24 MHz is 24 MB/s. Scope (30) plus RTL-B and HF+ (8.19) is 38.2 MB/s, above the 25 MB/s limit.
+    - **Verdict:** new_risk
+    - **Action:** In the Bench profile, labd either pauses the RTL-B and HF+ streams while the scope runs above 5 MS/s or the LA above 12 MHz, or caps the scope at 5 MS/s with 2 channels (10 MB/s) and the LA at 12 MHz. Never stream the scope and the LA at high rates together. Alternatively, move the bench hub to the blue USB 3.1 port with RTL-A unplugged.
+    - **Impact:** Otherwise expect sample drops on RTL-B and HF+, or scope overruns, during bench sessions.
+    - **Sources:**
+      - https://raw.githubusercontent.com/OpenHantek/OpenHantek6022/main/docs/limitations.md
+      - https://raw.githubusercontent.com/OpenHantek/OpenHantek6022/main/docs/developer_info.md
+  14.
+    - **Claim in stack:** OpenHantek6022 3.4.1-rc2 arm64 .deb; sigrok/PulseView with the fx2lafw firmware
+    - **Finding:** The README says Linux packages are built on Ubuntu 24.04. 3.4.1 moved to Qt 6, added the arm64 build, and now reconnects after a USB disconnect; the .deb installs 60-openhantek.rules. Graphics: it needs OpenGL 2.1+ or GLES 1.2+ (OpenGL 3.2+ or GLES 2.0+ for the normal GlScope); the fallbacks are 'OpenHantek -e' / --useGLES or LIBGL_ALWAYS_SOFTWARE=1. ARM history: #28 (RPi4, 'eglMakeCurrent failed', fixed only by the legacy driver) and #256 (PinePhone, black window, closed unresolved). No Q6A or Adreno report was found. The firmware lives in RAM only: after using sigrok or another program, the scope must be unplugged and replugged before OpenHantek, and the top line must show FW0210. sigrok's firmware re-enumerates the device as 1d50:608e.
+    - **Verdict:** confirmed
+    - **Action:** Keep. At bring-up, test under labwc/XWayland with Mesa 25.2.8 freedreno; keep -e and LIBGL_ALWAYS_SOFTWARE=1 as documented fallbacks. Lab Shell shows 'replug scope' whenever the user switches between OpenHantek and PulseView.
+    - **Impact:** Small. Without the replug step, OpenHantek fails after a PulseView session.
+    - **Sources:**
+      - https://raw.githubusercontent.com/OpenHantek/OpenHantek6022/main/README.md
+      - https://github.com/OpenHantek/OpenHantek6022/releases
+      - https://github.com/OpenHantek/OpenHantek6022/issues/28
+      - https://github.com/OpenHantek/OpenHantek6022/issues/256
+      - https://sigrok.org/wiki/Hantek_6022BE
+  15.
+    - **Claim in stack:** LBE-1420 software (stage 1: use simontheu/lbe-1420 or patch lbgpsdo)
+    - **Finding:** Re-checked October 2026: hamarituc/lbgpsdo lbe142x.py still lists only (0x1dd2, 0x2444) and has 'TODO: 1420' comments; its last commits are from Mar 2026. In simontheu/lbe-1420, issues #1 and #2 concern the 1421's PID, and the owner points to a derivative. That derivative, bvernoux/lbe-142x, is a C/CMake tool using libudev. It lists LBE-1420 = 0x2443 ('up to 1600 MHz', --f1 <=1600000000 for the 1420) and the Mini, documents a hidraw udev rule (1dd2, plugdev), and is tested on Windows 11 and Ubuntu 24.04 x64, not arm64.
+    - **Verdict:** new_option
+    - **Action:** Make bvernoux/lbe-142x the primary tool: build it on arm64 and pin a commit, with simontheu/lbe-1420 as the fallback. Keep the hidraw udev rule. Limit --f1 to 1.1 GHz, the Bodnar product-page spec, even though the tool accepts 1.6 GHz.
+    - **Impact:** A maintained Linux tool that actually supports the 1420.
+    - **Sources:**
+      - https://raw.githubusercontent.com/bvernoux/lbe-142x/main/README.md
+      - https://raw.githubusercontent.com/hamarituc/lbgpsdo/master/lbe142x.py
+      - https://github.com/hamarituc/lbgpsdo/commits/master
+      - https://github.com/simontheu/lbe-1420/issues/1
+      - https://github.com/simontheu/lbe-1420/issues/2
+  16.
+    - **Claim in stack:** ISDT 608PD balance charger (stage 1: check whether it has a radio)
+    - **Finding:** ISDT's official 608PD page (Chinese) advertises phone-app control ('APP操控 ... 手机APP高效联动'), 'OTA云端升级' (cloud OTA upgrade) and the ISD Link app ('无需获取任何权限', no permissions required); it does not state the link type. ISD Link PC software V2.0.0.2 (2025-12-08) lists the 608PD among the devices it can update. Spec: DC 5-30 V or USB-C 5-28 V input; the USB-C port is two-way (up to 140 W in, 100 W out); balance current 0.8 A/cell; operating 0-40 C; 85 g.
+    - **Verdict:** unverified
+    - **Action:** Keep the 608PD on the QUIET checklist as a possible BLE emitter: charge at home with the receiver off. Settle the question with a receive-only 2.4 GHz scan on the tinySA while the charger idles, or by inspecting the board. Update the firmware with the PC ISD Link software over USB, not a phone. Do not use the 100 W USB-C output as a lab supply.
+    - **Impact:** Unknown radio emitter on the bench.
+    - **Sources:**
+      - https://www.isdt.co/608pd.html
+  17.
+    - **Claim in stack:** DMM ANENG AN8008/9 with a 10 nA range
+    - **Finding:** Mark Hennessy's teardown confirms the uA range uses the V/Ohm input. The mA function uses the 10 A shunt, so 0.1 mA gives only 1 uV across it (poor mA resolution, very low burden). Other points: highest resistance range 9.999 MOhm; the frequency function needs a zero crossing and is less sensitive; 'minimal input protection'; the CAT ratings are 'unlikely in practice, so low-energy bench use only'; the chip is a DM1106EN (an improved DTM0660); it runs on 2x AAA, not supplied; it is also sold as the Zotek ZT109.
+    - **Verdict:** confirmed
+    - **Action:** Keep it for uA and nA standby measurements. Take mA-level currents with the FNB58 or DPS-150. Buy AAA cells. Bench and low-energy use only.
+    - **Impact:** Small.
+    - **Sources:**
+      - https://www.markhennessy.co.uk/budget_multimeters/aneng_an8008.htm
+  18.
+    - **Claim in stack:** Bench supply FNIRSI DPS-150 (extended), from a 20 V PD source
+    - **Finding:** Linux control tools exist: svenk123/dps150tool (Linux CLI; /dev/ttyACM0 or ttyUSB0; dialout; options to switch protection on and off), KochC/DPS-150-python-library, and cho45/fnirsi-dps-150 (WebSerial; issue #9: it works on Linux only in Chromium over https or localhost, not from file://). The official software is Windows only. The svenk123 README notes the bundled adapter gives 20 V/5 A (100 W), so full 150 W output needs another supply. No public report of overshoot or other firmware quirks was found.
+    - **Verdict:** new_option
+    - **Action:** If the DPS-150 is bought, use dps150tool or the Python library from labd for scripted, current-limited power-up in P16. Verify turn-on overshoot with the Hantek before connecting an LNA or LNB at 13 V.
+    - **Impact:** Scripted bias tests; overshoot is unverified.
+    - **Sources:**
+      - https://github.com/svenk123/dps150tool
+      - https://github.com/cho45/fnirsi-dps-150/issues/9
+      - https://github.com/search?q=DPS-150+fnirsi&type=repositories
+- **Current status oct 2026:** As of 18 Oct 2026 (from public trackers and vendor pages):
+  - **NanoVNA-Saver:** the last release is still v0.7.3, with no Linux binary. Main's newest commits (18 Apr 2026) add TCP/IP support. Three LiteVNA64-related bugs are open: #796 hang/'Invalid data during sweep' (byte loss on serial reads), #791 wrong device info, and #841 open/short recorded as identical.
+  - **QtTinySA:** v2.0.1 (28 Aug 2026) with QtTinySA_arm64_2404.zip. Upstream pins pyside6==6.11.0, and an aarch64 manylinux_2_39 wheel exists. Known issues: segfault on close since v2.0.0, multi-device range bug #142 (open), 3D view broken on the arm64 build.
+  - **tinySA4 firmware:** v1.4-252-g2b4aa51 (binaries 30 Sep 2026; changelog updated 13 Oct 2026). It fixes serial hangs (64-byte zero-length-packet case, console race; earlier fix in v1.4223) and adds composite USB.
+  - **LiteVNA:** the guide lists hardware revisions up to v0.4.5+ (>80 dB above 3 GHz). Passion Radio still lists 'HW 3.1' with 90/50 dB and has 5 'last items'.
+  - **IronOS:** V2.23 (31 Aug 2025) is latest. BLE is off by default; the 'Safe' PD mode still allows EPR 28 V. The EPR dropout bug #1936 is open.
+  - **FNB58 logger:** the V0.68 freeze (#19) and sporadic lock (#7) are still open.
+  - **OpenHantek6022:** 3.4.1-rc2 (Qt 6, arm64 deb built on Ubuntu 24.04), with a devdrop on 8 Oct.
+  - **LBE-1420 tools:** hamarituc lbgpsdo still lacks 1420 support. bvernoux/lbe-142x supports the 1420 (0x2443) and is tested on Ubuntu 24.04 x64.
+  - **Q6A:** no public report was found of any of these lab tools running on the Dragon Q6A or a QCS6490.
+- **Notes:** **Method limits**
+  - WebSearch was refused on the first call: the turn's shared 200-search budget was already used up. So no general web, Reddit, EEVblog, YouTube or Discord searching was possible.
+  - groups.io, where the main tinySA and LiteVNA user groups live, returned HTTP 402 or a bot-probe redirect to both WebFetch and curl. Those community archives could not be read.
+  - What was used instead: GitHub issue lists, issues, commits and release pages through WebFetch (github.com via curl and api.github.com are blocked); raw.githubusercontent.com; the Radxa Discourse forum's own search.json; vendor and manufacturer pages; the tinySA wiki and firmware directory; PyPI JSON; and the N8DMT page.
+  
+  **Radxa forum**
+  - Searches for tinySA, NanoVNA, sigrok, OpenHantek, cdc_acm and freedreno on the Q6A gave no relevant hits. The nearest arm64 reports come from Raspberry Pi and PinePhone.
+  - One Q6A data point (topic 31352, Aug 2026): only two UVC cameras per USB 2.0 bus work, because each reserves 3060 B per microframe of isochronous bandwidth. The lab instruments use bulk and interrupt transfers, so this does not limit them directly. Bulk throughput, however, is a real constraint (see the FE1.1s finding).
+  - Topic 31611 (14 Oct 2026, 'Radxa q6a 4s1p powering') concerns the power subsystem, not this one.
+  
+  **Stage-1 items re-checked and unchanged**
+  - The ±2 dB generator range (-72 to -19 dBm), the composite USB and new commands, the female-OSL adapter delay, the 8-channel LA, the 086 Hand-Flex wording, and the lbgpsdo 1420 gap.
+  - ModemManager mask, brltty purge and udev naming by serial are already in STACK.md (section 5.4).
+  - Still to check at bring-up: whether the tinySA and LiteVNA report unique USB serial numbers. Saver #791 shows 'serial NOT SUPPORTED' for the LiteVNA; if the serials are not unique, name devices by ID_PATH (port).
+  
+  **Still unverified**
+  - LiteVNA hardware revision in Passion Radio's stock, and its VID:PID (assumed 04b4:0008).
+  - The ISDT 608PD radio type.
+  - DPS-150 turn-on overshoot.
+  - Waveshare hub MTT vs STT (the Pi Hut page still says both).
+  - Hantek 6022BE and tinySA supply currents.
+  - TOJOIN wrench, AN8008 store and price, Mirfield price, RTL-SDR LNA V2 current (all as in stage 1).
+  - Year of the debugprobe v2.3.1 release.
+  
+  **My models and arithmetic (not from sources)**
+  - ENR with a 10 dB pad: 16.9-20.9 dB for gain 24-28 dB; 26.9-30.9 dB without the pad.
+  - USB load: 30 + 8.19 = 38.2 MB/s against the 25 MB/s limit; FX2 analyser 24 MB/s.
+  - LAB port: LiteVNA up to 1 A against the 0.75 A TPS2553; tinySA charging about 2.5-3.75 W; bench hub about 2-2.2 A.
+  - tinySA MCU harmonics: 3x48 MHz = 144.000 MHz and 9x48 MHz = 432.000 MHz.
+  
+  **Price impact:** none from this stage. Choosing a v0.4.5+ LiteVNA may mean Lab401 (EUR 192) or the Zeenko store instead of the Passion Radio discount.
+  
+  Scratch downloads are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/s2lab/.
+
 ## report:compute_software_ai (run `wf_df1900ef-872`)
 
 - **Scope:** This audit covers the Q6A compute board, kernel/OS pinning, the full software stack, the NPU (QAIRT 2.42, INT8), the spectrum-based NPU training system and the lab menu/UI. Read in full or near full: final/compute.json, software.json, npu_training.json, lab_ui_hf.json and user_requirements.md (governing). Also read the whole of minute-log.md, the newest summaries.md entries plus keyword greps across summaries.md and extra-studies.md, and the parts of small_antenna_stack.json, radio_lab.json, display_market.json, foldable_antennas.json and wideband_sdr.json that touch this scope. All 18 named final/*.json files exist (plus foldable_partial.json and digest.md). final/report_research.json from P1b does not exist yet. I did not read wideband_sdr, narrowband_sdr, display, storage, rf_frontend, gnss_imu, power, mechanical_thermal, antennas or dish_replacement beyond targeted greps, because they are outside this scope. components/compute.md and software.md were spot-checked and match the JSON. I used 7 web lookups to settle disputes: ISS frequencies, SatDump version, the QAIRT 0x1388 error, VTCM size and noble libgpiod.
