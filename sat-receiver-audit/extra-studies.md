@@ -1485,6 +1485,157 @@
   
   Searches used: about 13 WebSearch, plus WebFetch on primary pages.
 
+## searchB:printed_30_mm_hinged_hood_7in_ar_film_ve (run `wf_071e1025-145`)
+
+- **Part:** Display sun kit: printed 30 mm hinged hood + 7in AR film + VEML7700 lux breakout (core, Display group, qty 1 set). Lux sensor on the outer top face of the bezel, outside the hood.
+- **Current price usd:** 15-25 (STACK estimate). Only one item is verified: Adafruit VEML7700 #4162 at $4.95 (adafruit.com, in stock), or EUR 4.35 ex VAT / EUR 5.18 incl. 19% VAT at DigiKey DE (209 in stock, Active). The AR film has no chosen product or price yet; it is only a "~0.7% vendor-claim class". The hood is about 45-60 g of ASA, roughly $1-2 by my estimate, which can come from the case's 1 kg ASA spool, plus an M3 or steel-pin hinge.
+- **Critical specs:**
+  - HOOD: 30 mm deep. Hinged so it folds flat as a screen lid for transport, adding about 5 mm or less to the closed thickness.
+  - HOOD: ASA material: UV-stable and keeps its shape in noon sun. PLA and PETG are rejected because they soften at about 55-80 C. A light exterior keeps the solar load down.
+  - HOOD: matte-black inside so the screen reflects a dark surface. This gives about 13.9:1 at 1000 nit with AR film under the hood, against 3.6:1 unhooded (model). Non-conductive: no foil or metal lining near the RF bay or the top edge.
+  - HOOD: must not shade the VEML7700 (sensor sits outside it). Hinge must survive hundreds of cycles.
+  - AR FILM: front-surface photopic reflectance of about 0.7% or less. This is what gives the ~1.2% total stack and 6.2:1 at 2000 nit / 3.6:1 at 1000 nit in 100 klx (model). Plain glass at about 4.4% gives only 1.7-2.4:1.
+  - AR FILM: clear interference AR, not matte AG (matte sparkles and blurs at 315 PPI). Haze about 1% or less, transmittance about 95% or more.
+  - AR FILM: cuttable film, not tempered glass. Must cover the 154.4x86.8 mm active area and be trimmed to the ~164.2x98 mm glass. Full adhesive, no air gap. Thin enough (about 0.2 mm or less) that capacitive touch still works through it.
+  - AR FILM: survives glass temperatures of 65-70 C and UV. Low-birefringence substrate (TAC or a low-retardation PET), so the planned polarized-sunglasses test shows no rainbow mura. Oleophobic or hard-coat surface.
+  - VEML7700: genuine Vishay part (datasheet Rev 1.8, 28-Nov-2024). Range 0 to 140 klx at gain 1/8, IT 25 ms, so it does not saturate in direct European sun. 0.0042 lx/step at gain x2, IT 800 ms (needed for the Night and Red themes). 16-bit, photopic response.
+  - VEML7700: fixed 7-bit I2C address 0x10, no clash with the PCA9555 at 0x20. I2C at 10-400 kHz on Pico I2C0 GP4/5 at 3.3 V. Pull-ups 2.2-4.7 kohm (datasheet). ID register 0x07 must read 0xC481, a cheap authenticity check.
+  - VEML7700: supply 2.5-3.6 V from an LDO only, no switching regulator (RF-quiet). Rated -25 to +85 C. Small enough for the outer top face of the bezel behind a clear window, with 100 ohm + TVS at the bezel and our own driver at 0.0042 lx/ct.
+  - ALL: legally sold, not counterfeit, no radio, receive-only rules unaffected.
+- **Candidates:**
+  1.
+    - **Name:** Adafruit VEML7700 Lux Sensor #4162 (STEMMA QT)
+    - **Kind:** current_part
+    - **Price usd:** 4.95 (adafruit.com); EUR 4.35 ex VAT / EUR 5.18 incl. VAT (DigiKey DE, 209 in stock, Active). It can go in the DigiKey order the stack already places (PEC11R, KSC641J, ferrites), so it adds no extra shipping.
+    - **Spec comparison:** Genuine VEML7700, 0-120 klx per Adafruit (chip datasheet: 140 klx), 0.0036 lx/ct quoted (datasheet Rev 1.8: 0.0042). 3.3 V LDO + level shifter, 4.7 k pull-ups (2019 revision), JST-SH STEMMA QT connectors. The fixed 0x10 address fits the bus.
+    - **Worse in:** Baseline. The regulator and level shifter are not needed on the 3.3 V Pico, but they do no harm. No TVS on the board; the stack adds it.
+    - **Compatibility:** Fully compatible. Pico I2C0 3.3 V, address 0x10, own driver.
+    - **Risks:** Low. Buy from Adafruit or an authorized distributor.
+    - **Seller url:** https://www.digikey.de/en/products/detail/adafruit-industries-llc/4162/9997696
+    - **Sources:**
+      - https://www.adafruit.com/product/4162
+      - https://www.digikey.de/en/products/detail/adafruit-industries-llc/4162/9997696
+      - https://www.vishay.com/docs/84286/veml7700.pdf
+  2.
+    - **Name:** Generic AliExpress VEML7700 module ('120k Lux Light Measuring Sensor Board, I2C, 3.3V/5V')
+    - **Kind:** generic_or_clone
+    - **Price usd:** 1.09 shown on the AliExpress search page, but listed as a discount against struck-through prices of $2.98 and up, so the real repeat price is likely $3-4 (unverified, no store names shown). A similar ended eBay listing was $4.78 + $6.98 shipping.
+    - **Spec comparison:** If the chip is genuine, chip specs are identical (140 klx, 0.0042 lx/step, 0x10). Pull-ups, regulator and level shifter vary by listing and are not documented.
+    - **Worse in:** Not proven equal. I found no independent measurements of any generic board against a reference meter or the Adafruit board, and no clone or counterfeit study. Chip origin is unknown. Build quality (pull-up values, LDO) is undocumented.
+    - **Compatibility:** Electrically compatible if it is a real VEML7700 at 0x10, 3.3 V.
+    - **Risks:** Possible remarked or recycled chip. The 0x07 ID register (0xC481) check is weak. The saving is only about $1-3 once shipping or the real price is counted. REJECTED under angle B (no measured evidence).
+    - **Seller url:** https://www.aliexpress.com/w/wholesale-veml7700-module.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-veml7700-module.html
+      - https://www.ebay.de/itm/145150899559
+      - https://www.atomic14.com/esp32/sensors/veml7700/
+  3.
+    - **Name:** DIY sensor tab: genuine Vishay VEML7700-TT/TR + 0.1 uF + 2x 4.7 k pull-ups + 100 ohm + TVS on a ~10x20 mm PCB
+    - **Kind:** diy
+    - **Price usd:** Chip: $1.20 (LCSC C1850416, 2,764 in stock), CAD 2.44 (~$1.75; DigiKey CA, Active, 6,254 in stock), or EUR 1.06 for VEML7700-TR (DigiKey ES, 0 in stock in snapshot). PCB about $2 for 5 plus $2-5 shipping to the EU (estimate, unverified). Standalone total about $5-8.
+    - **Spec comparison:** Same silicon as the Adafruit board, so every chip spec is equal (140 klx, 0.0042 lx/step, 0x10, -25 to +85 C, photopic). Vishay's datasheet characterization applies identically. The Adafruit LDO and level shifter are not needed at 3.3 V. Putting TVS and series R on the tab is better ESD protection than the bare Adafruit board.
+    - **Worse in:** Specs not worse. It is NOT cheaper standalone, because the PCB order and shipping exceed the $4.95 Adafruit board, and the STACK has no custom PCB order to share with. Build quality depends on your own reflow of a 4-pin J-lead package.
+    - **Compatibility:** Compatible: Pico I2C0 3.3 V, address 0x10. Can be shaped exactly for the outer top face of the bezel.
+    - **Risks:** Buy the chip from an authorized distributor (DigiKey, Mouser, TME, Farnell) to rule out counterfeits. LCSC's Vishay franchise status is unverified. Worth it only if a PCB order (e.g. an HMI board) happens anyway, which would save about $3. Otherwise keep the Adafruit board.
+    - **Seller url:** https://digikey.ca/en/products/detail/vishay-semiconductor-opto-division/VEML7700-TT/6210690
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/VEML7700-TT_C1850416.html
+      - https://digikey.ca/en/products/detail/vishay-semiconductor-opto-division/VEML7700-TT/6210690
+      - https://punchouttest.digikey.es/en/products/detail/vishay-semiconductor-opto-division/VEML7700-TR/5820243
+      - https://www.vishay.com/docs/84286/veml7700.pdf
+  4.
+    - **Name:** DFRobot Gravity SEN0228 (VEML7700, 0-120 klx)
+    - **Kind:** other_brand
+    - **Price usd:** EUR 8.52 (DigiKey GR, 1 in stock); about AUD 16.60 at Core Electronics
+    - **Spec comparison:** Same VEML7700 chip; Gravity PH2.0 connector.
+    - **Worse in:** Not cheaper (about 1.7x the Adafruit price). Bulkier connector.
+    - **Compatibility:** Compatible (I2C 0x10).
+    - **Risks:** None technical. Rejected on price.
+    - **Seller url:** https://www.digikey.gr/en/products/detail/dfrobot/SEN0228/7682232
+    - **Sources:**
+      - https://www.digikey.gr/en/products/detail/dfrobot/SEN0228/7682232
+      - https://core-electronics.com.au/gravity-i2c-veml7700-ambient-light-sensor-0-120klx.html.plain.md
+  5.
+    - **Name:** Generic BH1750 (GY-302), TSL2591, OPT3001 and MAX44009 (GY-49) light-sensor modules
+    - **Kind:** generic_or_clone
+    - **Price usd:** About $1-4 (unverified; not priced this round because the search budget was used up)
+    - **Spec comparison:** All from prior datasheet knowledge, NOT re-verified this round (analog.com unreachable). BH1750: 65,535 lx max by default, about 100 klx only by changing MTreg, ~1 lx steps. TSL2591: about 88 klx max. OPT3001: about 83 klx max. MAX44009: 0.045-188 klx, I2C 0x4A/0x4B, lifecycle status unknown.
+    - **Worse in:** BH1750, TSL2591 and OPT3001 saturate below the 120-140 klx of direct sun (worse range). MAX44009 has 10x coarser low-light resolution (0.045 vs 0.0042 lx) and uncertain availability. All need a new driver. No measured evidence for any generic board.
+    - **Compatibility:** I2C 3.3 V works; driver and Pico firmware would change.
+    - **Risks:** Counterfeit or recycled chips are likely on obsolete parts. REJECTED (worse spec and no measurements).
+    - **Seller url:** 
+    - **Sources:** []
+  6.
+    - **Name:** 7in AR film, current class: unspecified clear interference-AR film of about 0.7% reflectance (TELESIN-class vendor claims)
+    - **Kind:** current_part
+    - **Price usd:** Unpriced in STACK; about $5-15 implied by the 15-25 set estimate (unverified)
+    - **Spec comparison:** Reference claims (TELESIN, DJI Pocket 3 product only): about 0.7% reflectance, 95% transmission, haze under 1%, multi-layer optical coating. Vendor claims, no third-party measurement.
+    - **Worse in:** Baseline. No specific 7in product has been chosen yet. TELESIN makes no 7in size, so it is a class reference only.
+    - **Compatibility:** Must be a cuttable film covering 154.4x86.8 mm active / ~164.2x98 mm glass.
+    - **Risks:** The baseline itself is unmeasured.
+    - **Seller url:** https://www.telesinstore.com/products/anti-reflection-screen-protector-for-pocket-3
+    - **Sources:**
+      - https://www.telesinstore.com/products/anti-reflection-screen-protector-for-pocket-3
+  7.
+    - **Name:** Sanwa Supply LCD-101WABVNGF free-cut 10.1W 'anti-reflection' film (cut to 7in)
+    - **Kind:** other_brand
+    - **Price usd:** JPY 4,950 incl. tax (about $33, approximate conversion), plus Japan shipping
+    - **Spec comparison:** Sanwa describes it as a matte anti-glare surface; no reflectance, transmittance or thickness is stated.
+    - **Worse in:** It is matte AG, not interference AR. The stack rejects matte AG on a 315 PPI panel (sparkle, blur, haze). Reflectance unknown. Not cheaper.
+    - **Compatibility:** Large enough to cut to 7in.
+    - **Risks:** REJECTED.
+    - **Seller url:** https://www.sanwa.co.jp/product/acc/protectfilm/free_cut.html?pan_list=1
+    - **Sources:**
+      - https://www.sanwa.co.jp/product/acc/protectfilm/free_cut.html?pan_list=1
+  8.
+    - **Name:** Sanwa Supply LCD-70KFP free-cut 7.0W glossy anti-fingerprint film
+    - **Kind:** other_brand
+    - **Price usd:** JPY 2,728 incl. tax (about $18, approximate), plus Japan shipping
+    - **Spec comparison:** Glossy, 2-3H, 130x200 mm. No AR coating and no reflectance stated, so assume a plain-surface ~4% class.
+    - **Worse in:** No AR: about 4% or more front reflectance against about 0.7%. Sun contrast drops from 6.2:1 to about 2.4:1 at 2000 nit (model). 130 mm height is under the ~164 mm glass width only if mounted landscape-correct (it is 130x200, so it fits). Not cheaper.
+    - **Compatibility:** Size fits by cutting.
+    - **Risks:** REJECTED (worse reflectance).
+    - **Seller url:** https://www.sanwa.co.jp/product/acc/protectfilm/free_cut.html?pan_list=1
+    - **Sources:**
+      - https://www.sanwa.co.jp/product/acc/protectfilm/free_cut.html?pan_list=1
+  9.
+    - **Name:** ELECOM AVA-PA10FLG glossy low-reflection film (iPad size, would need cutting)
+    - **Kind:** other_brand
+    - **Price usd:** Unverified (page returned 403)
+    - **Spec comparison:** A search snippet says 0.77% reflectance (vendor claim), size 182.9x236.4 mm. Transmittance, haze and thickness are unverified.
+    - **Worse in:** The claimed 0.77% is slightly worse than the 0.7% target. No independent measurement. The fit is a guess: cutting an iPad film to size can damage the edge coating.
+    - **Compatibility:** Big enough to cut to 7in.
+    - **Risks:** REJECTED under angle B (vendor claim only, slightly worse claim, price unknown).
+    - **Seller url:** https://www.elecom.co.jp/products/AVA-PA10FLG.html
+    - **Sources:**
+      - https://www.elecom.co.jp/products/AVA-PA10FLG.html
+  10.
+    - **Name:** Printed ASA 30 mm hinged hood (current DIY part)
+    - **Kind:** current_part
+    - **Price usd:** About 1-2 for 45-60 g ASA from the case's 1 kg spool, plus about $0.2-0.5 for the hinge pin (estimate). A matte-black interior needs black ASA, matte paint or flock lining at extra cost (unverified).
+    - **Spec comparison:** Meets every hood spec when printed in ASA with a matte-black interior.
+    - **Worse in:** Baseline. This is already the floor price: no commercial or used part can cost less than its filament.
+    - **Compatibility:** Designed into the bezel; parametric CAD after the panel arrives.
+    - **Risks:** Do not print it in PLA or PETG. Keep conductive linings off it.
+    - **Seller url:** 
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md
+- **Notes:** Verdict from angle B (generic, clone, DIY, used, all requiring measured evidence): keep the current set. Nothing cheaper is proven not-worse.
+  
+  1) VEML7700 breakout: keep the Adafruit #4162 ($4.95; EUR 4.35 ex VAT at DigiKey DE, bought in the DigiKey order already planned).
+  - Generic AliExpress boards show $1.09, but as discounts on struck-through prices of $2.98 and up. No independent measurement or clone study exists for any of them, so they are rejected.
+  - A DIY tab with a genuine Vishay chip from an authorized distributor is spec-equal (same silicon, and its TVS gives better ESD protection). It is cheaper only if a PCB order happens anyway; standalone it costs about $5-8 because of PCB shipping.
+  - Alternative sensors are worse. BH1750, TSL2591 and OPT3001 saturate below the 140 klx needed in direct sun. MAX44009 has 10x coarser low-light resolution and unknown lifecycle; its specs are from memory and not re-verified.
+  
+  2) AR film: no generic or clone 7in AR film with independently measured reflectance was found. Measured reflectance data for consumer AR protectors is essentially absent; a Shimadzu study of phone protectors measured only plain glass at 5-7%.
+  - The STACK line itself is only vendor-claim class (TELESIN ~0.7%, which exists only for the DJI Pocket 3), and no 7in product is chosen yet. Choosing one is still an open item.
+  - The candidates checked are all worse: Sanwa 'anti-reflection' is matte AG; Sanwa glossy has no AR; ELECOM claims 0.77%, vendor-only.
+  - Suggested acceptance test so a cheap film could qualify later (my method, not evidence): in a dark room, an LED torch at about 15 degrees, the VEML7700 at the mirror angle, readings on the bare bonded glass (~4% reference) versus the filmed glass. A ratio of about 0.2 or less means about 0.7-0.9%. Also check haze visually at 315 PPI and look for rainbow mura through polarized sunglasses (PET birefringence).
+  
+  3) Hood: printed ASA is already at floor cost (about $1-2 of filament from the case spool). The 'hood only' budget option drops the AR film and the sensor, and is worse: about 1.7:1 instead of 3.6:1 at 1000 nit, 100 klx, and no auto-brightness or Day/Night/Red themes.
+  
+  Limits of this round: the shared WebSearch budget ran out after 12 searches. analog.com, mouser.com and elecom.co.jp were unreachable (503/403). AliExpress prices are snapshot discounts. JPY-to-USD conversions are approximate. Hard rules are unaffected: these are passive or optical parts and a receive-only sensor, with no radio and no loops.
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
@@ -28616,6 +28767,195 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   Unverified items: the Mouser, Farnell and RS pages returned 503/403. LCSC shipping and VAT, HFD48 and IM03 prices, and Teledyne RF300/RF303 TO-5 surplus prices and measurements were not obtained. I found no AliExpress listing for G6K-2F-RF; marketplace relays would be rejected on provenance anyway.
   
   Working files (datasheet downloads and renders): /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_g6k/g6k_2f_rf.pdf, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_g6k/iso_both.png, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_hfd48/HFD48.pdf, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_im/im.pdf.
+
+## searchA:tinplate_hf_can_lc_mix_31_on_vbus (run `wf_e32114dd-52d`)
+
+- **Part:** Tinplate shield can for the Airspy HF+ Discovery, plus the VBUS LC filter (100 uH, then 100 uF with R-C damping) and a Mix-31 ferrite on the short shielded micro-USB lead. Tier core, group HF, qty 1. STACK.md gives no part numbers, so I defined a reference build from verified parts (first candidate) and compared every alternative against it.
+- **Current price usd:** 8-15 (STACK.md estimate, not verified). The verified reference build comes to about 10.7-11.2: Schubert #9 can 6.27 + Bourns SRR1260-101M 1.11 + Panasonic EEU-FR1C101 0.41 + damping R/C 0.3-0.6 (estimate) + Fair-Rite 0431164281 2.62-2.85. Shipping is extra, and Schubert has a EUR 20 minimum order.
+- **Critical specs:**
+  - Shield material: solderable tinplate (tin-plated low-carbon steel) at least 0.5 mm thick. This is what gives magnetic near-field attenuation across the HF+ range (0.5 kHz-31 MHz and 64-260 MHz) and against the LF/MF buck combs. Model: at 100 kHz the skin depth in steel is about 20-45 um, so 0.5 mm is many skin depths; in aluminium it is about 0.26 mm, so 0.5 mm Al gives only about 17 dB of absorption. An aluminium or diecast box is therefore WORSE at LF, not equal.
+  - Construction: a closed six-sided box with two removable overlapping lids, solderable seams and corners, and openings only for the SMA bulkhead, the USB lead entry and feedthroughs. Lid-to-frame contact quality (overlap or spring fingers) decides how much leaks through the seams.
+  - Inner size must fit the HF+ Discovery (45x60x10 mm, 32 g, micro-USB B, one SMA), a strain-relieved micro-USB plug and the LC parts. If the Boni Einspeiseweiche or DIY tee (and possibly the G6K board) also goes inside, as the BONI13V8 note says, a 74x111 mm or larger footprint is needed. The outside must fit the top-right corner of the case.
+  - Flat face for thermal contact to the mid plate; the can is bonded to the plate.
+  - VBUS inductor: 100 uH +/-20%, magnetically shielded, Irms and Isat at least 0.75 A (bring-up current limit; at least 1.5x the measured HF+ current, which is still unmeasured), DCR at most about 0.18 ohm (about 55 mV drop at 0.3 A), SRF of about 6 MHz or higher.
+  - VBUS capacitor: 100 uF rated at least 10 V (16 V preferred) plus the R-C damping leg, LC corner about 1.6 kHz (model). Filter attenuation at the D36V28F5 switching frequency and its harmonics up to 30 MHz.
+  - Mix-31 ferrite: Fair-Rite 31 material (1-300 MHz). Single-turn impedance must be no lower than the reference: about 20/75/104/170 ohm at 1/5/10/25 MHz. Bore must be at least the lead's outside diameter, case UL94 V-0. Below 1 MHz a single snap-on contributes almost nothing; the FT-240-77/31 bulkhead choke (a separate line) covers that.
+  - Genuine parts from the maker or an authorized distributor, RoHS. All passive, so it fits every hard rule: no emission, not a loop antenna, not an H-field probe.
+- **Candidates:**
+  1.
+    - **Name:** REFERENCE (my concrete version of the STACK line): Otto Schubert GmbH tinplate housing art. #9 (74x111x30 mm outside, inside minus 2 mm, 0.5 mm tinplate, two walls and two lids) + Bourns SRR1260-101M + Panasonic EEU-FR1C101 100 uF/16 V + damping R/C + Fair-Rite 0431164281 31-mix snap-it (6.3 mm bore)
+    - **Kind:** current_part
+    - **Price usd:** about 10.7-11.2 before shipping. Can EUR 5.58 incl. 19% DE VAT = 6.27 USD (EUR 4.69 net). Inductor 1.11 (DigiKey, qty 1). Capacitor 0.41 (DigiKey). Damping R/C 0.3-0.6 (estimate, not verified). Ferrite 2.85 (DigiKey qty 1) or about 2.62 (TME, USD net; highest price in the page's structured data, quantity tier not shown).
+    - **Spec comparison:** Can: 0.5 mm tinplate, sold as 'HF-DICHT', solderable, two slip-on lids (Schubert page and photo). Inductor: 100 uH +/-20%, shielded, 1.7 A rated, Isat 1.7 A, DCR 180 mOhm max, SRF 6.07 MHz, 12.5x12.5x6.5 mm, 81k in stock. Ferrite 0431164281: 31 material, 6.3 mm max cable, 20/75/104/170/315 ohm at 1/5/10/25/100 MHz.
+    - **Worse in:** Baseline.
+    - **Compatibility:** Inside 72x109x28 mm holds the HF+ (45x60x10) with plugs, the LC and a small tee. Solderable for an SMA bulkhead and feedthroughs.
+    - **Risks:** Schubert takes orders by e-mail only, with prepayment or SEPA (no PayPal). Minimum order EUR 20 excluding shipping; EU shipping is quoted per order. Schubert's other lid type (flange lid, FD series) is sold separately.
+    - **Seller url:** https://www.schubert-gehaeuse.de/weissblechgehaeuse.html
+    - **Sources:**
+      - https://www.schubert-gehaeuse.de/weissblechgehaeuse.html
+      - https://www.schubert-gehaeuse.de/versand.html
+      - https://www.digikey.com/en/products/result?keywords=SRR1260-101M
+      - https://www.digikey.com/en/products/result?keywords=EEU-FR1C101
+      - https://www.digikey.com/en/products/result?keywords=0431164281
+      - https://fair-rite.com/product/round-cable-snap-its-431164281/
+      - https://www.tme.eu/en/details/0431164281/ferrites-for-cables/fair-rite/
+  2.
+    - **Name:** Fair-Rite 0431164951 31-mix round-cable snap-it (4.9 mm min bore), replacing the 0431164281
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 2.46 (DigiKey qty 1, 116k in stock) or about 1.57 (TME USD net, highest price in the structured data; quantity tier not shown, inventory 685). Saves 0.39-1.05.
+    - **Spec comparison:** Same 31 material. Typical single-turn impedance 20.5/77/106/174/324/370 ohm at 1/5/10/25/100/250 MHz, against 20/75/104/170/315/380 for 0431164281: equal or better at every point that matters (1-100 MHz), 3% lower at 250 MHz, outside the HF+ ranges. Smaller body (16.8x36.2x8.4 mm, 17 g, against 20x39.5 mm, 26 g), which is better in a handheld. UL94 V-0 case.
+    - **Worse in:** Takes a smaller cable: max 4.9 mm (DigiKey lists the bore as 5.11 mm) against 6.3 mm. Not worse electrically.
+    - **Compatibility:** Not worse only if the short shielded micro-USB lead is 4.9 mm OD or less. Measure the lead before ordering; typical thin leads are about 3-4.5 mm (not verified). If the lead is thicker, keep 0431164281.
+    - **Risks:** None beyond fitting the lead; buy from TME, DigiKey or Mouser (authorized).
+    - **Seller url:** https://www.tme.eu/en/details/0431164951/ferrites-for-cables/fair-rite/
+    - **Sources:**
+      - https://fair-rite.com/product/round-cable-snap-its-431164951/
+      - https://fair-rite.com/kits/31-material-snap-it-kit/
+      - https://www.digikey.com/en/products/result?keywords=0431164951
+      - https://www.tme.eu/en/details/0431164951/ferrites-for-cables/fair-rite/
+  3.
+    - **Name:** Schubert tinplate housing art. #6 (55x111x30) or #6B (55x111x20), replacing #9
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 4.78 (EUR 4.25 incl. 19% VAT; EUR 3.57 net). Saves 1.49 against #9.
+    - **Spec comparison:** Same maker, same 0.5 mm tinplate, same two-lid construction, same 'HF-DICHT' claim. Inside 53x109x28 (#6) or 53x109x18 (#6B).
+    - **Worse in:** Only the footprint: 53 mm inner width against 72 mm. That leaves about 8 mm beside the 45 mm-wide HF+ and about 10-15 mm of length for the LC parts.
+    - **Compatibility:** Not worse only if the can holds just the HF+ and the LC. If the Boni Einspeiseweiche or DIY tee or the G6K board must sit inside, it is too small; keep #9 (74x111) or use #10 (74x148, EUR 6.09 = 6.85 USD).
+    - **Risks:** Schubert EUR 20 minimum order; e-mail ordering; shipping quoted per order.
+    - **Seller url:** https://www.schubert-gehaeuse.de/weissblechgehaeuse.html
+    - **Sources:**
+      - https://www.schubert-gehaeuse.de/weissblechgehaeuse.html
+      - https://airspy.com/airspy-hf-discovery/
+  4.
+    - **Name:** Schubert tinplate housing art. #5 (55x74x30)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 3.54 (EUR 3.15 incl. VAT)
+    - **Spec comparison:** Same material and construction. Inside 53x72x28 mm.
+    - **Worse in:** Compatibility: 72 mm inner length against 60 mm of HF+ body leaves 12 mm for the micro-USB plug and the LC. That only works with the HF+ SMA passing through the wall and a right-angle micro-USB plug, and is not confirmed (whether the 45x60x10 mm size includes the SMA is unknown).
+    - **Compatibility:** Not recommended until the HF+ is measured on arrival.
+    - **Risks:** May not close over the plug; no room for the LC.
+    - **Seller url:** https://www.schubert-gehaeuse.de/weissblechgehaeuse.html
+    - **Sources:**
+      - https://www.schubert-gehaeuse.de/weissblechgehaeuse.html
+  5.
+    - **Name:** Fair-Rite 0431173951 31-mix snap-it (4.9 mm)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** about 1.21 (TME USD net, highest price in the structured data)
+    - **Spec comparison:** 12/45/65/103/172/199 ohm at 1/5/10/25/100/250 MHz.
+    - **Worse in:** About 40% lower impedance at every HF point than 0431164281 or 0431164951. REJECTED.
+    - **Compatibility:** Fits a cable up to 4.9 mm.
+    - **Risks:** Would silently trade away common-mode suppression.
+    - **Seller url:** https://www.tme.eu/en/details/0431173951/ferrites-for-cables/fair-rite/
+    - **Sources:**
+      - https://fair-rite.com/product/round-cable-snap-its-431173951/
+      - https://www.tme.eu/en/details/0431173951/ferrites-for-cables/fair-rite/
+  6.
+    - **Name:** Fair-Rite 2631480002 solid 31-mix sleeve (12.3x4.95x25.4 mm)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 0.45 in the TME structured data, but MOQ 1504 and 0 in stock
+    - **Spec comparison:** Better: 37/104/129/192/318 ohm at 1/5/10/25/100 MHz, because a solid core has no air gap.
+    - **Worse in:** Cannot be bought singly (MOQ 1504). The 4.95 mm bore cannot pass a molded micro-USB plug, so it only works on a lead terminated after the sleeve is threaded on. REJECTED for practical purchase.
+    - **Compatibility:** Custom lead only.
+    - **Risks:** Availability.
+    - **Seller url:** https://www.tme.eu/en/details/2631480002/ferrite-sleeves/fair-rite/
+    - **Sources:**
+      - https://fair-rite.com/product/round-cable-emi-suppression-cores-2631480002/
+      - https://www.tme.eu/en/details/2631480002/ferrite-sleeves/fair-rite/
+  7.
+    - **Name:** Fair-Rite 2631102002 solid 31-mix sleeve (25.9x12.8x28.6 mm), 2 turns of the lead
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** about 2.71 (TME USD net, highest price; inventory 207)
+    - **Spec comparison:** Single turn 38/90/110/163 ohm at 1/5/10/25 MHz; two turns give roughly 4x that (model, lower near self-resonance). A performance upgrade, especially at 1-5 MHz.
+    - **Worse in:** Not cheaper than 0431164951 (1.57-2.46). It is 56 g and larger, and the micro-USB plug must pass the 12.8 mm bore (not verified). Listed as an upgrade, not as a saving.
+    - **Compatibility:** Size and weight in the HF+ corner need checking.
+    - **Risks:** Plug pass-through not verified.
+    - **Seller url:** https://www.tme.eu/en/details/2631102002/ferrite-sleeves/fair-rite/
+    - **Sources:**
+      - https://fair-rite.com/product/round-cable-emi-suppression-cores-2631102002/
+      - https://www.tme.eu/en/details/2631102002/ferrite-sleeves/fair-rite/
+  8.
+    - **Name:** Wurth Elektronik 7447714101 WE-PD 100 uH (other inductor brand)
+    - **Kind:** other_brand
+    - **Price usd:** 2.26 (DigiKey qty 1; 0 in stock, 500 due 20 Jan 2027)
+    - **Spec comparison:** 100 uH +/-20%, shielded, 1.5 A rated, Isat 1.8 A, DCR 198 mOhm max, SRF 5.9 MHz, 10x10x5 mm.
+    - **Worse in:** More expensive. Higher DCR (198 against 180 mOhm), lower rated current (1.5 against 1.7 A), lower SRF. Out of stock. REJECTED; SRR1260-101M stays.
+    - **Compatibility:** Smaller footprint (10x10 mm), its only advantage.
+    - **Risks:** Lead time 13 weeks.
+    - **Seller url:** https://www.digikey.com/en/products/detail/w%C3%BCrth-elektronik/7447714101/2625928
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/w%C3%BCrth-elektronik/7447714101/2625928
+  9.
+    - **Name:** Schubert WB1 tinplate sheet 200x100x0.5 mm, hand-folded and soldered into a can
+    - **Kind:** diy
+    - **Price usd:** 2.06 (EUR 1.83 incl. VAT). Saves about 2.7-4.2 against #6/#9.
+    - **Spec comparison:** Same 0.5 mm tinplate from the same maker.
+    - **Worse in:** Build quality: no factory-formed overlapping lids, so seam and lid fit depend on the builder. Fully soldered seams with a lid made to fit can match it, but this is not guaranteed. Counted as worse unless the A/B shield test passes.
+    - **Compatibility:** Any size.
+    - **Risks:** Seam leakage; time.
+    - **Seller url:** https://www.schubert-gehaeuse.de/weissblechgehaeuse_zubehoer.html
+    - **Sources:**
+      - https://www.schubert-gehaeuse.de/weissblechgehaeuse_zubehoer.html
+  10.
+    - **Name:** Shielding enclosure GH02AG003/320 (74x111x30, 0.5 mm tinplate, one body and two lids, spring lid optional) from industriegehaeuse.de
+    - **Kind:** other_brand
+    - **Price usd:** not published (ask for a quote)
+    - **Spec comparison:** Same material and thickness as Schubert. The optional spring lid could improve seam contact. Inside = outside minus 1 mm.
+    - **Worse in:** Price unknown, so cheaper is not shown. Maker not confirmed on the page.
+    - **Compatibility:** Same footprint as Schubert #9.
+    - **Risks:** Price and minimum order unknown; the 50-piece minimum applies to non-standard sizes only.
+    - **Seller url:** https://industriegehaeuse.de/en/steel-sheet-enclosures/shielding-enclosure/shielding-enclosure-ag003
+    - **Sources:**
+      - https://industriegehaeuse.de/en/steel-sheet-enclosures/shielding-enclosure/shielding-enclosure-ag003
+  11.
+    - **Name:** Perancea FFL-series screening box (for example FFL1T 55x55x17, bright acid tin on mild steel, finger-flanged lids)
+    - **Kind:** other_brand
+    - **Price usd:** about 26 (GBP 19.50 ex VAT at Farnell UK; search snippet only, not fetched)
+    - **Spec comparison:** Thicker frame and finger-flanged lids, possibly better seam contact.
+    - **Worse in:** About 4-5x the price. FFL1T is too small for the HF+ plus plugs. REJECTED.
+    - **Compatibility:** Larger FFL sizes are needed.
+    - **Risks:** Price not verified on the page.
+    - **Seller url:** https://export.farnell.com/perancea/ffl1t/enclosure-rfi-emi-open-frame/dp/1181380
+    - **Sources:**
+      - https://export.farnell.com/perancea/ffl1t/enclosure-rfi-emi-open-frame/dp/1181380
+  12.
+    - **Name:** Teko 273.16 tin-plated steel RF box 106x50x26 with two snap-on finger-flanged lids (Electrokit)
+    - **Kind:** other_brand
+    - **Price usd:** n/a (discontinued)
+    - **Spec comparison:** Hot tin-plated steel with finger-flanged lids: comparable or better construction.
+    - **Worse in:** Not available: 'outdated and no longer active'. REJECTED.
+    - **Compatibility:** 106x50 would fit the HF+ alone.
+    - **Risks:** None, since it cannot be bought.
+    - **Seller url:** https://www.electrokit.com/en/hf-tat-lada-lodbar-tk273-106x50x26mm
+    - **Sources:**
+      - https://www.electrokit.com/en/hf-tat-lada-lodbar-tk273-106x50x26mm
+- **Notes:** Verdict (Angle A):
+  
+  1. Cheapest build that is not worse, about 8.2-10.9 USD before shipping:
+     - Schubert tinplate can: #6/#6B (4.78 USD) if it holds only the HF+ and the LC. Keep #9 (6.27 USD) if the Einspeiseweiche/DIY tee or the G6K board also goes inside.
+     - Bourns SRR1260-101M: 1.11 USD. It is the cheapest shielded 100 uH with 180 mOhm DCR and 1.7 A I found; Wurth 7447714101 is dearer and worse.
+     - Panasonic EEU-FR1C101 plus the damping R/C: about 0.7-1.0 USD.
+     - Fair-Rite 0431164951: 1.57 (TME) to 2.46 (DigiKey) USD, if the micro-USB lead is 4.9 mm OD or less. It has equal or slightly higher impedance than 0431164281 from 1 to 100 MHz. Otherwise keep 0431164281.
+  
+  2. Rejected, all because they are worse, not just more expensive:
+     - Any aluminium or diecast box: much weaker magnetic shielding at LF/MF (model).
+     - Fair-Rite 0431173951: about 40% lower impedance.
+     - Wurth inductor: higher DCR, lower current rating, out of stock.
+  
+  3. Board-level cans (Wurth WE-SHC, Masach, Laird) are only 1.7-4 mm tall (search results), so they cannot hold the 10 mm HF+ module with its plugs.
+  
+  Purchase caveats:
+  - Schubert prices include 19% German VAT. Minimum order EUR 20 (22.48 USD) excluding shipping, e-mail order, prepayment or SEPA only; EU shipping is quoted per order. Ordering just one can costs at least 22.48 USD plus shipping. Fill the order with useful items: a spare can, D1000 1000 pF solder-in feedthrough capacitors (EUR 0.68 = 0.76 USD each, useful for VBUS entry into the can), partitions, or WB sheet.
+  - DigiKey prices are USD with no VAT. TME prices come from page structured data in USD, net; I assumed the highest price is the qty-1 tier (not confirmed).
+  - I could not reach any EU reseller of Schubert cans without the minimum (reichelt, box73), nor Fischer or SOS prices (403).
+  
+  Open measurements:
+  - HF+ current (sets the inductor margin).
+  - Micro-USB lead OD (decides between 0431164951 and 0431164281).
+  - Whether the HF+ 45x60x10 mm size includes the SMA (decides #5/#6/#9).
+  - Shield A/B test (D10) on the chosen can.
+  
+  Not checked: other ferrite brands (TDK ZCAT, Wurth STAR-TEC, Laird) for an equal 1-30 MHz impedance. No equal brand was found, so none is proposed.
+  
+  Hard rules: all parts are passive (no emitter, no loop antenna, no H-field probe), so none are affected.
 
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
