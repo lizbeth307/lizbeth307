@@ -16335,6 +16335,116 @@
   - G6: LBE-1420 DDP, Pro Stick in 11.1, sled v2 with PE4312 and the RF1 park mapping, H1 via Amazon.nl and the 12 dB Lime pad conflict, DPS-150 CDC-ACM, B&W case, Lime board/cable split with CAB.01075, YAT-10A+ and the 90609-0001 tool, T7 at Reichelt, Bullseye at Passion Radio (incl. VAT) with AXING, iO data, microSD SKU, Airspy at ITEAD, Flamingo budget text, D36V28F5 removal, AD8318 at 0x49.
   The 10 problems reported are the remaining inconsistencies. Pure money totals were not rechecked. The double-listing of the QO-100 LNB in 2.4 and 2.11.2 belongs to the totals checker. Files read: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/v2_brief.md, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G4_mechanical_field.json, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G5_lab_bench.json, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G6_extended_optional.json, /home/user/lizbeth307/sat-receiver-audit/STACK.md and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/STACK_v1_backup.md. No file was edited.
 
+## check:analogs_G1_G3 (run `wf_42b104ce-c51`)
+
+- **Lens:** COVERAGE G1-G3: every decision in analogs_G1_receivers_rf.json (11), analogs_G2_display_hmi_storage.json (12) and analogs_G3_power_gnss_imu.json (17), checked in BOM rows, sections 1.1/1.2, 3.3, 5.1-5.8, 6.2, 7, 8/8.1/8.2, 9.1/9.2, 10 and 11.1, plus each decision's stack_changes entries.
+- **Problems:**
+  1.
+    - **Where:** 2.9 «Захист від погоди»: «непровідні заглушки F, USB-C, USB-A, 3.5 мм, LAB BUS, GX12/M8»; 8.1 D15 row: «інакше GX12 з заглушкою на ремінці або M8 — у GX12 немає IP-класу»; 8.2 IPX4 row: «без води біля GX12/M8»; 11.1 #24: «GX12 → GX16 скрізь»
+    - **Problem:** G3 #0 changes the IMU connector from GX12 to the Olimex GX16-4 with a tethered cap, everywhere it appears. Three places still name GX12/M8. 8.1 also keeps GX12 as a fallback that G3 #0 does not offer (GX12 cannot clamp the cable). This contradicts D12, D15, 5.2, 5.8 and the 11.1 #24 claim «скрізь».
+    - **Severity:** contradiction
+    - **Fix:** 2.9: replace «LAB BUS, GX12/M8» with «LAB BUS; на GX16-4 IMU — власний ковпачок на ланцюжку (пара Olimex)». 8.1 D15: replace «(GX16, якщо заміну G3 #0 прийнято; інакше GX12 з заглушкою на ремінці або M8 — у GX12 немає IP-класу)» with «GX16-4 з ковпачком на ланцюжку». 8.2: replace «без води біля GX12/M8» with «без води біля GX16-4».
+    - **Evidence:** analogs_G3_power_gnss_imu.json decisions[0].stack_changes item 2 («Connector GX12 to GX16, everywhere it appears ... Tethered cap. IPX4 spray test unchanged»); decisions[0].chosen (4); STACK 5.8 already says «analogs G4 називав GX12/M8; роз'єм змінено на GX16-4 за G3»
+  2.
+    - **Where:** 2.3 «Перемикачі входів RTL»: «специфіковано лише 0.1-6 GHz; кваліфікувати розв'язку від 30 dB кондуктивно, логіку 3.3 V»
+    - **Problem:** A 30 dB isolation threshold contradicts the G1 #4 acceptance gate. That gate is at least 40 dB at 0.1-1.7 GHz and between RTL-A throws at 137-437 MHz; 37-40 dB is accepted with a layout fix; below 37 dB means fence vias or a shield and a re-measure. 5.3, the HMC7992 row in 8 and 11.1 #5 already state the 40 dB gate.
+    - **Severity:** contradiction
+    - **Fix:** Replace with «приймання на платі кондуктивно: розв'язка ≥40 dB на 0.1-1.7 GHz і між виводами RTL-A на 137-437 MHz (37-40 dB — прийняти із записом виправлення розводки; нижче 37 dB — паркан віа або екран і повторний вимір); логіка 3.3 V».
+    - **Evidence:** analogs_G1_receivers_rf.json decisions[4].conditions_or_tests (3)
+  3.
+    - **Where:** 2.3 «Екран HF+»: «демпфер — не більше 220 uF (inrush, розділ 5.7)»; 5.1 LAB5: «inrush у межах затримки TPS2553: 100 + 220 мкФ при 0.3 A — близько 5.3 мс проти 7.5 мс тип.»; 8 «Екран HF+» (5): «близько 5.3 ms проти типових 7.5 ms deglitch»; 11.1 #9: «близько 5.3 ms проти 7.5 ms типово у TPS2553»; 8 «TPS2553DBVR-1» (3): «100 µF × 5 V / (0.5 − 0.3 A) ≈ 2.5 ms»
+    - **Problem:** G3 #11 puts HF+ VBUS on the latch-off TPS2553DBVR-1. Its overcurrent FAULT deglitch is 5/7.5/10 ms (min/typ/max), and G3 #11 requires the current-limit period to end before the 5 ms minimum. The G1 #8 damper (100 + 220 uF) models at about 5.3 ms, which is above that minimum, so «у межах» is wrong. The TPS2553 inrush model counts only 100 uF on this channel. Also, inrush is covered in 5.1, not 5.7 (5.7 is RF interference).
+    - **Severity:** contradiction
+    - **Fix:** In 2.3, 5.1, the 8 HF+ shield row and 11.1 #9, write: «100 + 220 мкФ при 0.3 A — близько 5.3 мс, вище за мінімальний deglitch 5 мс TPS2553DBVR-1 (тип. 7.5 мс): канал VBUS HF+ має пройти тест пускового струму (рядок TPS2553DBVR-1, п. 3) при остаточному RILIM; якщо засувається — лише на цьому каналі TPS2553DBVR зі сталим обмеженням (LCSC C55266)». In the TPS2553 row (3), model the HF+ channel with 320 µF (100 + 220). Change «розділ 5.7» to «розділ 5.1».
+    - **Evidence:** analogs_G1_receivers_rf.json decisions[8].conditions_or_tests item 5; analogs_G3_power_gnss_imu.json decisions[11].conditions_or_tests item 3 and equivalence_proof («FAULT deglitch 5/7.5/10 ms (overcurrent)»)
+  4.
+    - **Where:** 1.1 C9: «IOS 262-342 mA (265/299/339 mA мін./ном./макс.» and «канал на 300 mA (262-342 mA) його не захищає»; 11.3 #21: «IOS 262-342 mA (модель за рівняннями SLVS841F)»; 11.3 #23: «Канал 300 mA (262-342 mA)»
+    - **Problem:** G3 #11 governs the 88.7k trip window: 265-339 mA (265/299/339). Section 7 item 83 says the re-audit's 262-342 mA was replaced, but these four places still give 262-342 mA as the IOS.
+    - **Severity:** contradiction
+    - **Fix:** Replace «262-342 mA» with «265-339 mA (G3 #11)» in all four places. In C9, keep only «265/299/339 mA мін./ном./макс.».
+    - **Evidence:** analogs_G3_power_gnss_imu.json decisions[11].conditions_or_tests 2 («265-339 mA at 88.7k»); STACK 7 item 83
+  5.
+    - **Where:** 8 «Відкриті рішення щодо живлення (P5 G3)» (b): «v2 має вибрати одне; якщо встановлено eFuse — видалити MF-MSMF030-2»; 9.1 крок 6 (в): «(+ MF-MSMF030-2 лише якщо PTC Boni лишається)»; 11.1 #37: «MF-MSMF030-2 (Boni, лише якщо PTC лишається)» and «v2 має обрати одне»
+    - **Problem:** v2 has already chosen: BONI13V8 at 13.8 V with eFuse TPS259630DDAR (RILM 7.87k). C17 says «Без PTC», and BOM 2.7 says «MF-MSMF030-2 для Boni не потрібен». G3 #13 says that if the eFuse is fitted, MF-MSMF030-2 is deleted. Leaving it open or conditional contradicts the BOM and keeps a purchase line for a deleted part.
+    - **Severity:** contradiction
+    - **Fix:** 8 (b): «вирішено: BONI13V8 13.8 V з eFuse TPS259630DDAR (RILM 7.87 k), без PTC; MF-MSMF030-2 не купувати». 9.1 6(в): delete «(+ MF-MSMF030-2 лише якщо PTC Boni лишається)». 11.1 #37: replace with «MF-MSMF030-2 прибрано (обрано eFuse)».
+    - **Evidence:** analogs_G3_power_gnss_imu.json decisions[13].stack_changes item 4
+  6.
+    - **Where:** 8 row «eFuse TPS259470A (сімейство TPS25947, re-audit D), якщо v2 його бере: ... правило збирання у файлі пошуку — без reflow ... правило збирання узгодити у v2»
+    - **Problem:** v2 takes 3× TPS259470ARPWR (BOM 2.7, G3 #13), and G3 #13 settles the assembly rule. Bourns forbids hand or wave soldering of MF-MSMF parts, so the power board must be reflowed (hot plate, hot air or PCBA), which the QFN TPS25947 needs anyway. 5.1 already says this. The row is stale and still conditional.
+    - **Severity:** contradiction
+    - **Fix:** Replace with «eFuse TPS259470ARPWR ×3 (J21, DISP12, USB-C VBUS; G3 #13): силова плата — лише оплавлення (гаряча плита, гаряче повітря або PCBA), бо цього потребують і MF-MSMF, і VQFN-HR; рішення прийнято».
+    - **Evidence:** analogs_G3_power_gnss_imu.json decisions[13].chosen (eFuse line) and stack_changes items 3 and 6
+  7.
+    - **Where:** 8 row «B1, день 1 (у межах вікна повернення)»: «виробника, модель і ID виробника UFS»
+    - **Problem:** G2 #0 moves the UFS chip-ID read out of the W1-2 board gate to «on UFS arrival» (about W3-5), because the TinyTronics UFS ships 2-4 weeks later in a separate parcel. 9.2 step 1 already says «ID чипа UFS — на прибутті UFS ..., не в цих воротах». The B1 day-1 row contradicts this.
+    - **Severity:** contradiction
+    - **Fix:** Delete «, виробника, модель і ID виробника UFS» from B1. The ID read stays in the «Сховище» row (on UFS arrival, about W3-5, within the 14-day EU withdrawal window).
+    - **Evidence:** analogs_G2_display_hmi_storage.json decisions[0].stack_changes («Schedule: move 'UFS chip ID' out of the W1-2 board gate to 'on UFS arrival' (about W3-5)»)
+  8.
+    - **Where:** 10: «Daly BMS DL-J04G3-L04S15ATJ, специфікація (TinyTronics)» and «Даташити Daly DL-J04G3-L04S15ATJ, огляд плати IP2368»
+    - **Problem:** The BMS is the Daly DL-J05G-L4S15ATJ. G3 #3 notes that the TinyTronics PDF file name says DL-J04G3, but every page says DL-J05G-L4S15ATJ. The source labels name the wrong model.
+    - **Severity:** contradiction
+    - **Fix:** In both places write «Daly DL-J05G-L4S15ATJ, специфікація A0 (TinyTronics; ім'я файлу — DL-J04G3, на всіх сторінках — DL-J05G-L4S15ATJ)».
+    - **Evidence:** analogs_G3_power_gnss_imu.json decisions[3].equivalence_proof («The file name says DL-J04G3, but every page says DL-J05G-L4S15ATJ»)
+  9.
+    - **Where:** 10 «LDO, обмежувачі струму, компаратор, конденсатори» (ends «Nichicon UHE: https://www.nichicon.co.jp/english/series_items/catalog_pdf/e-uhe.pdf»), «Батарея і BMS», «Плати»
+    - **Problem:** Section 10 has no source URLs for several BOM parts chosen by G1/G3: Littelfuse MINI 297 fuses, Bourns MF-MSMF075/24-2, AOS AO3407A, Amass XT30U, the Murata LQW chokes and GRM1555 C0G blocks (G3 #14), Bourns SRR1260-101M and Panasonic EEU-FR1C101 (HF+ shield, G1 #8), and reichelt tesa 56223 and the Jamara fire bag (G3 #15).
+    - **Severity:** missing
+    - **Fix:** Add: https://datasheet.lcsc.com/datasheet/pdf/6640fa58723348e000da25e795536560.pdf?productCode=C178942 ; https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_BOURNS-MF-MSMF075-24-2_C208467.pdf ; https://www.lcsc.com/datasheet/lcsc_datasheet_1810231523_Alpha---Omega-Semicon-AO3407A_C15155.pdf ; https://www.lcsc.com/product-detail/plug_changzhou-amass-elec-xt30u-m_C99101.html ; https://www.digikey.de/en/products/result?keywords=LQW2UASR27J00L (also LQW2UASR12J00L, LQW18AN33NJ80D, LQW2UAS68N, GRM1555C1H102JA01D, GRM1555C1H101JA01D) ; https://www.digikey.com/en/products/result?keywords=SRR1260-101M ; https://www.digikey.com/en/products/result?keywords=EEU-FR1C101 ; https://www.reichelt.com/de/en/shop/product/tesa_aluminium_tape-65551 ; https://www.reichelt.com/de/en/shop/product/lipo_fire_protection_bag-207644
+    - **Evidence:** analogs_G3_power_gnss_imu.json decisions[13].sources, decisions[14].sources, decisions[15].sources; analogs_G1_receivers_rf.json decisions[8].sources
+  10.
+    - **Where:** 2.6 «Логіка інтерфейсу»: «5× AOS AO3400A (вентилятор Q6A, повітродувка, котушки G6K K1 і K2, запасний шлях вентилятора)»; 2.1 «Охолодження»: «вентилятор шляху 1 — ключ з боку плюса (P-MOSFET або 5 V load switch) з діодом»
+    - **Problem:** G2 #1 says the 3-wire tach fan on path 1 must be switched high-side by a P-MOSFET plus driver, or by a 5 V load switch. No BOM row lists or prices that P-MOSFET or load switch. The interface-logic set (G2 #10) has only the N-channel AO3400A for «вентилятор Q6A», and on its own that is a low-side switch.
+    - **Severity:** missing
+    - **Fix:** Add to 2.6 «Логіка інтерфейсу» (or the 2.1 cooling row) an unpriced item «P-MOSFET верхнього ключа вентилятора шляху 1 (або ключ навантаження 5 V) + діод зворотного ходу — деталь не обрано, модель (G2 #1, п. 3); AO3400A «вентилятор Q6A» — його драйвер затвора».
+    - **Evidence:** analogs_G2_display_hmi_storage.json decisions[1].stack_changes 3 («switch path-1 high-side (P-MOSFET plus a small driver, or a 5 V load switch)»); decisions[10].chosen (AO3400A list)
+  11.
+    - **Where:** 9.1 крок 6 (в): «AO3407A + 2N7002 (ключ AUX12)» and «логіка інтерфейсу (TCA9517DR, SN74LVC1G17DBVR, 3× 2N7002,215, 5× AO3400A, 5× BAT54C,215)»
+    - **Problem:** The AUX12-gate 2N7002 is already one of the 3× 2N7002,215 in G2 #10, and BOM 2.7 says «2N7002 затвора AUX12 уже є в 2.6 «Логіка інтерфейсу» — купувати один раз». The shopping list still buys it twice.
+    - **Severity:** contradiction
+    - **Fix:** Replace «AO3407A + 2N7002 (ключ AUX12)» with «AO3407A (ключ AUX12; його 2N7002 — у логіці інтерфейсу нижче)».
+    - **Evidence:** analogs_G2_display_hmi_storage.json decisions[10].chosen («3x Nexperia 2N7002,215, for the AUX12 P-FET gate, J21 pin 3 and LC76G RESET»); analogs_G3_power_gnss_imu.json decisions[13].chosen (AUX12 switch AO3407A + 2N7002)
+  12.
+    - **Where:** 9.1 крок 6 (в): «резистори дільників 0.1 % (продавця у файлах не названо — в одне з цих консолідованих замовлень)» and the LCSC list in 6 (б)
+    - **Problem:** G3 #12 names a seller for the top divider resistor: Vishay MCA1206 3.3 MOhm 0.1 %, LCSC C4168316 (also in BOM 2.7). Only the 332 k + 4.02 k pair has no seller. The LCSC order in 6 (б) omits the 3.3 MOhm part.
+    - **Severity:** missing
+    - **Fix:** Add «3.3 MOhm 0.1 % Vishay MCA1206 (LCSC C4168316, G3 #12)» to 6 (б). Change the note to «нижнє плече 332 k + 4.02 k 0.1 %/25 ppm — продавця у файлах не названо (Yageo 336 k у DigiKey і LCSC немає)».
+    - **Evidence:** analogs_G3_power_gnss_imu.json decisions[12].conditions_or_tests (2) («Top: 3.3 MOhm 0.1 % (Vishay MCA1206, LCSC C4168316)»)
+  13.
+    - **Where:** 9.1 крок 6 (в): «Сам кошик HMI (3 PEC11R, 10 KSC641J, 2 ферити, 2 Pico, TCA9555) — близько EUR 27 без ПДВ»; 11.1 #69: «уже є PEC11R, KSC641J, ферити, деталі Lime»
+    - **Problem:** After G2 #6 and #7, the DigiKey HMI basket holds PEC11R-4220F ×3, TL3145BF350QJ ×12 (KSC641J only if TL3145 fails) and PI4IOE5V9555LEX (TCA9555PWR only as fallback), plus the piezo, LED and VEML7700. These two places still describe the superseded KSC641J/TCA9555 contents.
+    - **Severity:** contradiction
+    - **Fix:** 9.1: «кошик HMI (3 PEC11R-4220F, 12 TL3145BF350QJ, 2 Fair-Rite 0431164281 + 1 Wurth 74271140, 2 Pico, 2 PI4IOE5V9555LEX + CPT-1207-3TH + WP7113LSECK/J3, VEML7700); EUR 27 без ПДВ — оцінка G2 #5 для старого складу». 11.1 #69: replace «KSC641J» with «TL3145BF350QJ».
+    - **Evidence:** analogs_G2_display_hmi_storage.json decisions[6].stack_changes 1; decisions[7].stack_changes (BOM row); decisions[5].stack_changes 3
+  14.
+    - **Where:** 2.6 «Козирок і датчик світла»: «світло-сірий ASA з котушки корпусу»; 11.1 #16: «козирок — з наявної світло-сірої ASA корпусу»
+    - **Problem:** G2 #4 says to print the hood from the case's existing spool. The case spool is now Polymaker ASA White PF01002, and 2.9 itself says the hood is printed «з цієї ж світлої котушки ASA (White PF01002)». «Світло-сірий» contradicts this.
+    - **Severity:** contradiction
+    - **Fix:** In both places replace «світло-сірий/світло-сірої ASA» with «ASA з котушки корпусу (White PF01002)».
+    - **Evidence:** analogs_G2_display_hmi_storage.json decisions[4].chosen (1) and stack_changes (3); STACK 2.9 «Корпус» row
+  15.
+    - **Where:** 2.1 «Відновлення»: «Transcend TS-RDF5K (Reichelt EUR 7.95 = $7.51 без ПДВ, ще −$2.39)»
+    - **Problem:** EUR 7.95 is the Reichelt price including 19 % VAT, and $7.51 is the ex-VAT price. Equating them under «без ПДВ» mislabels the EUR figure.
+    - **Severity:** style
+    - **Fix:** Write «Reichelt EUR 7.95 з ПДВ = $7.51 без ПДВ».
+    - **Evidence:** analogs_G2_display_hmi_storage.json decisions[11].rejected[0].name («Reichelt EUR 7.95 incl. = $7.51 ex»)
+  16.
+    - **Where:** 11.1 #34: «Тест п. 1079 — при реальному запасі LAB5»
+    - **Problem:** «п. 1079» is a STACK v1 line number copied from G3 #10 («STACK item 1079 bench test») and points nowhere in v2.
+    - **Severity:** style
+    - **Fix:** Replace with «тест пульсацій і PSRR шини LT3045 (рядок «Пара LT3045 на 4.5 V від LAB5» у розділі 8)».
+    - **Evidence:** analogs_G3_power_gnss_imu.json decisions[10].conditions_or_tests 2 and stack_changes 4
+- **Notes:** I checked all 40 decisions (G1 0-10, G2 0-11, G3 0-16) against BOM 2.1-2.11, 1.1 (C3, C4, C6, C8, C9, C10, C14, C17, C21, D3, D4, D8, D11, D12, D13, D15), 1.2 (#16, #18, #63, #64, #74, #79, #92, #96, #97), 3.1 and 3.3, 5.1-5.3, 5.7, 5.8, 6.2, 7, 8, 8.1, 8.2, 9.1, 9.2, 10 and 11.1 rows 1-40. Most of the work is applied correctly: part, seller, USD and EUR incl. VAT prices, statuses, conditions and fallbacks.
+  
+  STACK.md was modified by another process while I was checking (2457 lines at start, 2463 lines at 20:04, about 6 lines added around 2.12). For that reason I cite sections and quotes, not line numbers. I re-checked every quoted phrase above against the current file with grep -F, and each one is present.
+  
+  Totals were ignored, as instructed. One weight-total mismatch (2.12 «1.57-1.79» against the 5.8 table «1.58-1.81») is left for the totals checker.
+  
+  I did not report two points:
+  - The G2 #6 versus G2 #7 conflict on external key pull-ups. STACK consistently follows G2 #6 (2.2 kOhm on all 8 lines).
+  - The C21 serial-name pattern clash (LAB-RTLA versus ^LAB[A-Z]{3}$). It does not come from G1 #0, so it is outside this lens.
+
 ## edit:05b_arch_bus_rf:b1 (run `wf_45d408c6-7ff`)
 
 - **Section:** 05b_arch_bus_rf
