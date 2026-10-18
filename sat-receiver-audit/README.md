@@ -10,6 +10,7 @@
 
 | Компонент | Етапи (✅ готово, ⏳ працює) | Поточний run |
 |---|---|---|
+| [Adafruit ch334f mtt hub 5997](components/adafruit_ch334f_mtt_hub_5997.md) | · research · forums · fixes ✅ verify | `—` |
 | [Airspy hf discovery](components/airspy_hf_discovery.md) | · research · forums · fixes ✅ verify | `—` |
 | [Antennas](components/antennas.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_6b9836f8-796` |
 | [Antennas foldable](components/antennas_foldable.md) | ✅ research · forums · fixes ✅ verify | `—` |
@@ -35,6 +36,7 @@
 | [Nooelec sawbird goes cased 100792](components/nooelec_sawbird_goes_cased_100792.md) | · research · forums · fixes ✅ verify | `—` |
 | [Nooelec sawbird noaa cased 100800](components/nooelec_sawbird_noaa_cased_100800.md) | · research · forums · fixes ✅ verify | `—` |
 | [Npu training](components/npu_training.md) | ✅ research · forums · fixes ✅ verify | `—` |
+| [Pca9555 key expander piezo status led](components/pca9555_key_expander_piezo_status_led.md) | · research · forums · fixes ✅ verify | `—` |
 | [Power](components/power.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_f924b2ab-5ad` |
 | [Printed 30 mm hinged hood 7in ar film ve](components/printed_30_mm_hinged_hood_7in_ar_film_ve.md) | · research · forums · fixes ✅ verify | `—` |
 | [Radxa armor 7056a heatsink or stepped cu](components/radxa_armor_7056a_heatsink_or_stepped_cu.md) | · research · forums · fixes ✅ verify | `—` |
