@@ -256,5 +256,494 @@ _Run `wf_5a66d65f-c3f`_
 
 ## Форуми та досвід спільноти (`forums`)
 
+_Run `wf_5a66d65f-c3f`_
+
+- **Component:** Antennas to replace the dishes: QO-100 at 10.489 GHz (TCXO LNB with no reflector, conical horn, metal-plate lens) and L-band HRPT at 1.70 GHz (long helix or helicone, a 2x2 helix array, 4G MIMO panels, loop Yagi), all feeding a LimeSDR Micro on the Radxa Dragon Q6A
+- **Experiences:**
+  1.
+    - **Product:** Plain TV LNB with no dish, into an RTL-SDR
+    - **Source url:** http://ok1dx.cz/techinfo/qo100/qo100.html
+    - **Community:** OK1DX personal ham station page (Czech Republic, updated August 2025)
+    - **What they built:** A standard LNB pointed at QO-100 with no reflector, feeding an RTL-SDR through an attenuator. The same LNB was later used in an 80 cm offset dish.
+    - **Problems:**
+      - The LNB output was too strong for the RTL-SDR, which needed about 20 dB of attenuation.
+      - The 10 GHz signal did not pass through the glass of the balcony door.
+      - The LO drifted about 50 kHz after switch-on.
+    - **Fixes:**
+      - Fitted an attenuator of about 20 dB between the LNB and the RTL-SDR.
+      - Moved the LNB outside so there was no glass in the path.
+      - For drift, the author points to beacon locking but did not use it himself.
+    - **Outcome:** He copied the CW beacon with the LNB alone, just pointed at QO-100. In the dish the signal was strong enough to show the transponder noise floor. He later removed the receive dish and went back to a web SDR.
+  2.
+    - **Product:** LNB modified for an external 25 MHz reference (RigExpert Tokenblauser GPSDO), ADALM-Pluto on a 40 MHz external reference, SDR Console and WSJT-X
+    - **Source url:** https://rigexpert.com/files/product_documentation/gpsdo/TBR-AN-1.pdf
+    - **Community:** RigExpert application note TBR-AN-1 (12 July 2022)
+    - **What they built:** A dish-free FT8 receiver for the QO-100 narrowband transponder. The note's parts list literally reads 'Satellite dish – you do not need it!'
+    - **Problems:**
+      - The stock 25 MHz crystal is not stable enough for narrowband FT8.
+      - The LNB has to be pointed and its polarisation set.
+    - **Fixes:**
+      - Opened the LNB and used an oscilloscope to find the crystal pad with the larger swing (the chip's output). Cut that trace and wired it to an RF connector with a 75 Ω resistor to ground (or reused the LNB's second output). Fed 25 MHz from the GPSDO. Resealed the case with silicone.
+      - Aimed to within about ±20° using eshail.batc.org.uk/point, because the bare LNB has a wide beam. Mounted the LNB for vertical polarisation.
+    - **Outcome:** FT8 signals at 10.489540-10.489543 GHz showed on the waterfall and decoded in WSJT-X. The note gives no S/N figures.
+  3.
+    - **Product:** RemoteQTH (QRO.cz) LNB PLL with TCXO plus bias-tee pack (€69 excl. VAT)
+    - **Source url:** https://www.passion-radio.com/satellite-qo-100/converter-432-936.html
+    - **Community:** Passion Radio customer review dated 17/12/2022
+    - **What they built:** The QRO.cz TCXO LNB and its bias-tee, tested with and without an ex-Sky dish
+    - **Problems:**
+      - The review gives no figures.
+    - **Fixes:** []
+    - **Outcome:** Quote: 'I can actually receive the QO-100 directly without using the dish antenna, which was a surprise.' With the dish the signal was 'very strong'. This is an independent confirmation that a TCXO LNB alone hears QO-100.
+  4.
+    - **Product:** Bare LNB used for receive, with a WiFi panel or Yagi for transmit
+    - **Source url:** https://www.sarts.org.sg/wp/wp-content/uploads/2025/09/QO-100-Presentation-1.pdf
+    - **Community:** SARTS (Singapore Amateur Radio Transmitting Society) QO-100 presentation, September 2025
+    - **What they built:** A minimal QO-100 station for members who cannot get permission for a dish
+    - **Problems:**
+      - Elevation from Singapore is only about 3.2°.
+      - Tall buildings block the path.
+      - Dishes need permission and draw attention.
+    - **Fixes:**
+      - Use a bare LNB for receive, which is enough for some FT8 and JT65.
+    - **Outcome:** The slide text reads: 'Can work some FT8/JT65 with bare LNB for RX + wifi panel/yagi for TX'. This was seen only in a search-engine snippet; downloading the PDF failed (HTTP 503 or connection reset).
+  5.
+    - **Product:** Othernet Bullseye TCXO LNB with ADALM-Pluto and SDR Console beacon lock
+    - **Source url:** https://forum.sdr-radio.com/viewtopic.php?p=10393
+    - **Community:** SDR-Radio.com forum, Pluto board (October 2023, G8VLR, M0TGC, G4ELI, jdow)
+    - **What they built:** A QO-100 narrowband receiver using the Bullseye LNB
+    - **Problems:**
+      - The frequency drifted by up to 2 kHz over time even with beacon lock on.
+      - It later jumped by a 'massive 20 kHz'.
+    - **Fixes:**
+      - Reinstalled SDR Console, which did not help.
+      - Started testing the Pluto and its new 40 MHz reference separately.
+      - jdow's advice: 1 ppm at 10 GHz is 10 kHz, so a GPS-locked downconverter is needed for tight tolerance.
+    - **Outcome:** Unresolved in the thread; a hardware fault was suspected. M0TGC reports years of drift-free beacon lock with a similar setup.
+  6.
+    - **Product:** Othernet Bullseye LNB with Langstone and Minitiouner receivers
+    - **Source url:** https://forum.batc.org.uk/viewtopic.php?p=26716
+    - **Community:** BATC forum (2021). Seen only through search-engine snippets, because the forum serves a JavaScript browser-verification page (HTTP 503) to automated clients.
+    - **What they built:** QO-100 narrowband and wideband receive setups
+    - **Problems:**
+      - One user's Bullseye had about 10 kHz offset with 'some drift'.
+      - Another (topic p=27854) found the LO 'normally within 20 kHz' and his was 16 kHz low.
+    - **Fixes:**
+      - Reply in the Langstone thread: there is 'no means of locking a drifting LNB'; the software assumes a modified, stable LNB.
+      - Asked the manufacturer whether users could trim the LO; the answer was not seen.
+    - **Outcome:** Bullseye offsets of 10-20 kHz are normal. Software beacon lock needs a capture window of at least ±30 kHz to cover its temperature specification.
+  7.
+    - **Product:** Goobay 67269 PLL LNB modified for an external reference
+    - **Source url:** https://baltic-lab.com/2023/07/lnb-modification-for-10-ghz-qo-100-satellite-reception/
+    - **Community:** baltic-lab blog and its comments (July 2023, comments up to February 2024)
+    - **What they built:** A Goobay LNB with its crystal removed, fed with 25.78 MHz to pull the LO near 10.49 GHz
+    - **Problems:**
+      - The LNB's high gain easily overdrove the receiver.
+      - The 75 Ω LNB input was not matched to 50 Ω test equipment.
+      - There is very little room inside the case.
+      - Reader 'Ali' (February 2024) saw the supply current rise when the reference was connected, but only a raised noise floor and no signal, on two LNBs.
+    - **Fixes:**
+      - Removed the 25 MHz crystal and fitted a 2.2 µH inductor under Kapton tape. Cut the XTAL1 trace and added 18 pF from the F-connector pin to XTAL1. Injected about 3 Vpp (about 12 dBm) of reference.
+      - Fed 14 V bias; the current rose from about 60 mA unlocked to about 90 mA locked.
+      - Pointed the LNB away from the source and fitted a 10 dB attenuator before the RTL2832.
+    - **Outcome:** Works on the bench with the author's test signals; it had not been tested on the satellite. Ali's failure case is unresolved.
+  8.
+    - **Product:** AMSAT-DL QO-100 Linux Transceiver (ADALM-Pluto on ARM single-board computers)
+    - **Source url:** https://amsat-dl.org/en/qo-100-linux-transceiver/
+    - **Community:** AMSAT-DL project page
+    - **What they built:** A QO-100 transceiver running on Raspberry Pi 4, Odroid C4/N2 and Rocket-PI-4 boards (armhf image)
+    - **Problems:**
+      - LNB clock drift.
+    - **Fixes:**
+      - Optional beacon synchronisation corrects LNB drift within a range of about 2 kHz.
+      - Built-in calibration programs for the Pluto TCXO and the LNB, for systems without GPS sync.
+    - **Outcome:** A working precedent for beacon lock on ARM Linux. It supports the Pluto only, not the LimeSDR, and its ±2 kHz range implies a TCXO or GPSDO LNB.
+  9.
+    - **Product:** F1ATB Remote-SDR, a QO-100 live web SDR (Raspberry Pi 4, GNU Radio, HackRF or Nooelec)
+    - **Source url:** https://f1atb.fr/qo-100-live/
+    - **Community:** F1ATB project page and its comments
+    - **What they built:** A browser-based QO-100 receiver that corrects LNB drift automatically
+    - **Problems:**
+      - The required LNB correction is about -140 to -180 kHz depending on temperature.
+      - The middle beacon sits at the SDR centre frequency, where I/Q DC bias corrupts it.
+      - Beacons are sometimes switched off, which breaks the lock.
+      - Users report waterfall lag.
+    - **Fixes:**
+      - Locks on the lower and upper beacons instead of the middle one.
+      - Enable autocorrect; for large drift, move the signal manually with the mouse wheel; set the span to 500 kHz.
+    - **Outcome:** Proves a wide-capture, two-beacon tracker can make an unstabilised LNB usable on Linux and ARM. A ±2 kHz window could never cover drift of this size.
+  10.
+    - **Product:** W1GHZ/KB1VC aluminium-foil metal-plate lenses (150 mm and 300 mm) on a small horn
+    - **Source url:** http://www.w1ghz.org/antbook/chap3.pdf
+    - **Community:** W1GHZ (Paul Wade) Microwave Antenna Book, Eastern VHF/UHF Conference 1992, contest use 1992-1997
+    - **What they built:** Foam-and-foil lenses in front of a Gunnplexer horn at 10 GHz, used for portable terrestrial contesting
+    - **Problems:**
+      - Best gain came with the horn slightly closer to the lens than calculated (edge effects).
+      - The lens only works in the E-plane.
+      - With a Gunnplexer, energy reflected from the lens modulated the LO.
+    - **Fixes:**
+      - Make the plates 1-2 inches larger than calculated.
+      - Mount the plates perpendicular to the wide waveguide wall, i.e. parallel to the E-field.
+      - Adjust the horn-to-lens spacing for the best received signal.
+      - Cut to 1 mm accuracy; the foam thickness sets the plate spacing.
+    - **Outcome:** Measured on an antenna range: horn 17.5 dBi; with the 150 mm lens 20.9 dBi; with the 300 mm lens 27.4 dBi (about 50% efficiency). Contest range grew about 50%, to over 200 km. This is terrestrial use; no QO-100 use was found.
+  11.
+    - **Product:** W1GHZ HDL_ANT homebrew horns at 10 GHz
+    - **Source url:** http://www.w1ghz.org/antbook/chap2.pdf
+    - **Community:** W1GHZ Microwave Antenna Book
+    - **What they built:** Sheet-metal horns from printed templates, including a 17.5 dB horn used for long 10 GHz contacts
+    - **Problems:**
+      - The horn's length grows much faster than its gain.
+    - **Fixes:**
+      - Use optimum-horn templates from HDL_ANT.
+    - **Outcome:** 'Performance of the finished horn almost always matches predictions, with no tuning adjustments required.' This supports the estimated gain of a DIY horn, but no QO-100 horn report exists.
+  12.
+    - **Product:** QO-100 wideband DATV beacon, received with large dishes
+    - **Source url:** https://forum.batc.org.uk/viewtopic.php?p=18655
+    - **Community:** BATC forum, 'QO-100 Wideband Spectrum Monitor' thread. Seen only through a search-engine snippet; the forum is behind a browser-verification wall.
+    - **What they built:** Measurements of beacon MER on consumer-grade setups
+    - **Problems:**
+      - Beacon MER is about 8-9 dB on a 1.2 m dish and roughly 10 dB on 1.8 m.
+      - Nobody has reported more than about 11 dB.
+    - **Fixes:** []
+    - **Outcome:** The wideband beacon is limited by noise on the satellite itself, and a 71 cm dish already sits only about 3 dB above threshold. A 20-27 dBi horn or lens cannot decode DATV, which confirms dropping DATV.
+  13.
+    - **Product:** 11-turn RHCP copper helix on a 17x17 cm ground plane with bent-up edges, with a SAWbird+ GOES LNA and Airspy R2
+    - **Source url:** https://blog.metislair.com/docs/Radio/Creating%20a%20helix%20for%20direct%20satrx.html
+    - **Community:** Meti's blog (metislair), also covered by RTL-SDR.com
+    - **What they built:** Successive dish-free L-band helices of 5.5, 8 and 11 turns
+    - **Problems:**
+      - Signal depends strongly on height above ground and can vanish at the wrong height.
+      - Small build imperfections cost signal.
+      - A nearby cell tower raised the noise floor.
+      - The 5.5-turn and 8-turn versions underperformed.
+    - **Fixes:**
+      - Hold the helix about 50 cm up and vary the height during the pass.
+      - Rotating the helix gained about 1 dB.
+      - Moving a few metres so trees shadowed the cell tower steadied the noise floor.
+      - Bending up the ground-plane edges gained about 1.5 dB.
+      - Went to 11 turns.
+    - **Outcome:** Meteor-M2-3 HRPT image at about 7 dB average SNR. Elektro-L3: 10.5 dB average on GGAK and LRIT decoded at 13° elevation. No Metop attempt reported.
+  14.
+    - **Product:** t0nito 3D-printed 1.7 GHz helicone (Thingiverse 6436342), PLA, Nooelec GOES preamp, RTL-SDR
+    - **Source url:** https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309
+    - **Community:** SatNOGS community forum (pe2bz, t0nito, herman; January-February 2024)
+    - **What they built:** The helicone (cone 134 mm base, 440 mm top, 88 mm high, 29.7°), used hand-tracked and as a fixed zenith-pointing SatNOGS station, also tried with 1545 and 2250 MHz helices
+    - **Problems:**
+      - PrusaSlicer did not fix print orientation or add supports, which cost PLA and hours of reprinting.
+      - The holder did not suit swappable helices and connectors.
+      - Question raised: a wok or frying-pan reflector flips the handedness, so does this one?
+    - **Fixes:**
+      - Check part orientation and supports before slicing.
+      - For S-band, all dimensions were scaled to 75%.
+      - herman's explanation: a helix over a ground plane keeps its handedness (RHCP helix for an RHCP signal); only a reflector fed from the focus inverts it.
+    - **Outcome:** Good Meteor images, hand-tracked. After 72 h of observations at 1700 and 2250 MHz it beat a helix with a flat reflector. Three weak S-band satellites were found that had not shown up before.
+  15.
+    - **Product:** t0nito helicone printed by Saveitforparts (Gabe), with a phone, RTL-SDR and SatDump
+    - **Source url:** https://www.rtl-sdr.com/saveitforparts-testing-a-3d-printable-satellite-antenna-for-noaa-meteor-and-other-polar-orbiting-l-band-satellites/
+    - **Community:** RTL-SDR.com write-up of a YouTube build
+    - **What they built:** A handheld helicone for polar-orbiting L-band satellites
+    - **Problems:**
+      - The scaffold legs warped in several prints.
+    - **Fixes:**
+      - Modified the model to add centre supports.
+    - **Outcome:** NOAA HRPT images received hand-tracked. NOAA HRPT has since ended with NOAA-15/18/19 decommissioning, so Meteor-M is the remaining target.
+  16.
+    - **Product:** 5-turn helix (derekcz OpenSCAD scaffold) with an AliExpress TQM3M9037 LNA powered by the HackRF bias-tee
+    - **Source url:** https://community.libre.space/t/station-2830-stockholm-l-and-s-band-new-helix-antenna/12046
+    - **Community:** SatNOGS community forum (SM0TGU, SA2KNG, m0roj, vu3tyg; July-August 2024)
+    - **What they built:** A fixed, zenith-pointing L/S-band SatNOGS station
+    - **Problems:**
+      - The LNA board includes a TP4056 Li-ion charger. If the switch is ON when power is applied, it drops into trickle mode and delivers only about 2.5 V.
+      - A B5819 diode sits oddly in the bias path.
+      - m0roj found the LNA unsuitable for mast-head use because of this power behaviour.
+      - Users asked about running L-band and S-band through one LNA with a diplexer.
+    - **Fixes:**
+      - Power up with the switch OFF ('USB mode').
+      - SA2KNG removed the charger circuit and fitted a linear regulator.
+      - Sprayed the helix with UV protection and sealed solder joints with glue and vulcanising tape.
+      - SA2KNG's advice: one LNA at each antenna feedpoint, cavity filters against strong adjacent signals, and quarter-wave care if joining feeds with a T.
+    - **Outcome:** Performance comparable to other helix S-band stations.
+  17.
+    - **Product:** 26-element loop Yagi on a Meade telescope mount compared with helices (RSP2 HRPT tutorial and its comments)
+    - **Source url:** https://www.rtl-sdr.com/a-tutorial-on-receiving-hrpt-weather-satellite-images-with-an-sdrplay-rsp2/
+    - **Community:** RTL-SDR.com reader comments (RFGeek, Adam, G1EKW and others)
+    - **What they built:** HRPT reception with a loop Yagi about 181 cm long. Readers also built or discussed 25-turn and 1.5 m helices.
+    - **Problems:**
+      - RFGeek tested a helix against a loop Yagi of similar length; the helix 'performed much worse', mainly from terrestrial interference outside the beam.
+      - A helix's feed impedance is about 150 Ω.
+      - Kraus's gain formula is about 3 dB optimistic.
+      - The helix ground plane collided with a DS2090AT mount, limiting tilt to about 45°.
+      - The loop Yagi is narrowband and needs tuning.
+    - **Fixes:**
+      - G1EKW: helix impedance is about 140 × C/λ ohms; a parallel-fed stacked pair gives about 70 Ω; enlarge the circumference about 7% (about 12 mm at HRPT).
+      - Adam: capacitive matching near the first turn, an aluminium square boom, copper strip, and a rimmed reflector.
+      - Trim the reflector where it hits the mount.
+    - **Outcome:** The loop Yagi decoded HRPT; no SNR figures. Adam estimated a 25-turn helix at about 16.5 dBi and a 7λ practical limit.
+  18.
+    - **Product:** 2.4 GHz WiFi grid antenna, LNA4ALL and ADALM-Pluto, used for NOAA-18 HRPT
+    - **Source url:** https://www.rtl-sdr.com/receiving-almost-hrpt-with-the-adalm-pluto-and-a-wifi-grid-antenna/
+    - **Community:** RTL-SDR.com, Tysonpower (German YouTube)
+    - **What they built:** An off-band, mid-gain antenna with no tracking
+    - **Problems:**
+      - The signal was detected but too weak to decode.
+      - The antenna is designed for 2.4 GHz, not 1.7 GHz.
+      - There was no tracking.
+    - **Fixes:** []
+    - **Outcome:** Failed to decode. A cautionary data point: mid-gain antennas that are off-band or untracked fall short even of the easiest HRPT.
+  19.
+    - **Product:** SatDump Metop AHRPT on an RTL-SDR Blog V4 with autotrack
+    - **Source url:** https://github.com/SatDump/SatDump/issues/727
+    - **Community:** SatDump GitHub issues (closed 13 June 2024)
+    - **What they built:** Metop AHRPT reception (antenna not stated)
+    - **Problems:**
+      - NOSYNC despite 'plenty of SNR'; restarting mid-pass made it sync immediately.
+    - **Fixes:**
+      - Raised the sample rate to 2.88 Msps and enabled both DC block and AGC. Maintainer Aang23 suspected the RTL-SDR was at the edge of its capability.
+    - **Outcome:** Decoded AVHRR. On the LimeSDR, run Metop at about 6 Msps with DC block on, so no symbol-rate edge case occurs.
+  20.
+    - **Product:** L-band LNAs and minimum SNR (metislair L-band reception guide)
+    - **Source url:** https://blog.metislair.com/docs/Radio/L%20band%20weather%20satellite%20reception%20guide.html
+    - **Community:** metislair guide (SatDump user community)
+    - **What they built:** Guidance compiled from many HRPT stations
+    - **Problems:**
+      - The SAWbird+ GOES backfeeds DC when powered over USB.
+      - Cheap 'SPF/SBF' wideband LNAs do not work well enough for L-band HRPT.
+      - Noise-floor jumps come from phones, cell towers, bad USB cables and storms.
+      - NOSYNC with a 'donut' constellation near the SDR's sample-rate limit.
+      - Viterbi spikes from dropped samples.
+    - **Fixes:**
+      - Power the SAWbird+ through a bias-tee or add a DC block.
+      - Use a SAWbird+ GOES or a Digitelektro L-band LNA (about €60).
+      - Airplane mode for phones; move away from towers; lower the gain; add a cavity filter such as the Sysmocom L-band filter.
+      - Sample at about 1.2x the symbol rate plus Doppler margin; use a high-performance power plan and raise SatDump's priority.
+    - **Outcome:** Minimum SNRs: Meteor HRPT 0.5 dB, Metop AHRPT 4 dB. The minimum dish for both is 60 cm. Metop AHRPT is called 'just barely receivable with an RTLSDR'.
+  21.
+    - **Product:** LMS7002M dual-RX phase coherence (LimeSDR family, including LimeSuiteNG on XTRX)
+    - **Source url:** https://discourse.myriadrf.org/t/limesdr-xtrx-rx-data-out-of-sync/13290
+    - **Community:** MyriadRF/Lime discourse: topics 13290 (July 2026), 8708 (2025-2026), 2501 (2018); LimeSuiteNG issue #356
+    - **What they built:** Two-channel coherent receivers for direction finding, beamforming and MIMO
+    - **Problems:**
+      - Driving both RX channels from a splitter showed misaligned sample data between RX A and RX B in LimeSuiteNG basicRX and LimeGUI.
+      - The channel-alignment code from classic LimeSuite was never ported to LimeSuiteNG; the StreamConfig alignPhase flag is unused.
+      - On the LMS7002M, the phase between RX A and RX B is randomly 0° or 180° after power-up or an LO retune.
+    - **Fixes:**
+      - Andrew Back (Lime) opened LimeSuiteNG issue #356 'Channel Alignment' on 29 July 2026; it is still open.
+      - CarlThurston wrote an unfinished patch porting AlignRxRF.
+      - 2018 workarounds: RstRxIQGen() resets the RX PLL forward divider and quadrature generator. Others measured the phase on a loopback or external tone after every retune and added π when needed.
+    - **Outcome:** No fix in LimeSuiteNG yet. This directly affects the plan to combine two helix sub-arrays or two panel polarisations on the LimeSDR Micro's RX1/RX2.
+  22.
+    - **Product:** Ukrainian 4G MIMO panels for 1700-2700 MHz (R-Net 'Kvadrat' 2x17, Energy MIMO 2x15, Energy MIMO 2x24)
+    - **Source url:** https://prom.ua/Antenny-mimo-2x2.html
+    - **Community:** Prom.ua listings (Ukraine). These are spec checks, not user reports; no hobbyist HRPT report with these panels was found.
+    - **What they built:** No builds; I worked out each panel's maximum possible gain from the dimensions in its listing.
+    - **Problems:**
+      - R-Net 2x17: 205x205x50 mm, 0.6 kg, 1900 UAH. Its 20.5 cm aperture cannot exceed 12.3 dBi at 1.70 GHz even at 100% efficiency, or 16.3 dBi at 2.7 GHz.
+      - Energy 2x15: 230x230 mm, 935 UAH. At most 13.3 dBi at 1.70 GHz.
+      - Energy 2x24: 430x430x40 mm, 2805-2950 UAH. At most 18.7 dBi at 1.70 GHz and 22.8 dBi at 2.7 GHz.
+      - 1.70 GHz is below the 1710 MHz design edge of all three panels.
+    - **Fixes:**
+      - Self-researched: gain from aperture, D = 4πA/λ² with λ = 0.176 m.
+      - Real-world estimates: about 10-11 dBi for the small panels and about 15-17 dBi for the 43 cm panel.
+      - Check the 1.70 GHz match with a NanoVNA, and compare against the 11-turn helix on a Meteor pass, before relying on any panel.
+    - **Outcome:** The small panels are not Metop candidates. The 43 cm panel, with software polarisation combining, could reach roughly 15-17 dBic, which is borderline for Metop-B. Unverified.
+- **Common problems:**
+  1.
+    - **Problem:** LNB output (50-66 dB gain) overloads the SDR when the LNB is used without a dish
+    - **Affected products:** Bare TV LNBs, Goobay PLL LNB, Bullseye or QRO.cz LNB into RTL-SDR, Pluto or LimeSDR
+    - **Frequency:** common
+    - **Known fix:** Fit a 10-20 dB pad between the LNB and the SDR (OK1DX used about 20 dB; baltic-lab used 10 dB). Also fit a DC block on the SDR side of the bias-tee. Even without a dish, the LNB's own gain is the problem.
+    - **Fix sources:**
+      - http://ok1dx.cz/techinfo/qo100/qo100.html
+      - https://baltic-lab.com/2023/07/lnb-modification-for-10-ghz-qo-100-satellite-reception/
+  2.
+    - **Problem:** LNB LO drift or offset is too large for narrowband SSB, CW and FT8 and for narrow beacon-lock windows
+    - **Affected products:** Plain LNBs: about 50 kHz after switch-on (OK1DX) and -140 to -180 kHz versus temperature (F1ATB). Bullseye: offset 10-20 kHz and drift up to ±30 kHz. Goobay: ±300 kHz.
+    - **Frequency:** common
+    - **Known fix:** Use a 0.2 ppm TCXO LNB (QRO.cz, about ±1 kHz after 5 minutes of warm-up) or a GPSDO-referenced LNB (RigExpert method). Then add software beacon lock. AMSAT-DL's Linux tracker covers only ±2 kHz. F1ATB's Remote-SDR tracks the lower and upper beacons (avoiding the centre-frequency DC spike) over a wide range, which suits unstabilised LNBs.
+    - **Fix sources:**
+      - https://www.wimo.com/en/qo-100-10ghz-lnb-qro-cz
+      - https://rigexpert.com/files/product_documentation/gpsdo/TBR-AN-1.pdf
+      - https://amsat-dl.org/en/qo-100-linux-transceiver/
+      - https://f1atb.fr/qo-100-live/
+      - https://forum.sdr-radio.com/viewtopic.php?p=10393
+  3.
+    - **Problem:** 10 GHz does not pass through window or door glass (likely coated glazing)
+    - **Affected products:** Any indoor dish-free QO-100 attempt
+    - **Frequency:** occasional
+    - **Known fix:** Operate outdoors or through an open window with a clear path to 25.9°E.
+    - **Fix sources:**
+      - http://ok1dx.cz/techinfo/qo100/qo100.html
+  4.
+    - **Problem:** Dish-free L-band helix: signal swings with height and ground reflection, and nearby cell towers raise the noise floor
+    - **Affected products:** 11-turn helix, helicone, longer helices
+    - **Frequency:** common
+    - **Known fix:** Mount at least 50 cm above ground and vary the height during the pass. Rotate the helix (about +1 dB). Bend up the ground-plane edges (about +1.5 dB). Pick a spot where trees or buildings shadow cell towers. Put a SAW-filtered LNA (SAWbird+ GOES, Digitelektro) at the feed, and add a cavity filter if needed.
+    - **Fix sources:**
+      - https://blog.metislair.com/docs/Radio/Creating%20a%20helix%20for%20direct%20satrx.html
+      - https://blog.metislair.com/docs/Radio/L%20band%20weather%20satellite%20reception%20guide.html
+      - https://community.libre.space/t/station-2830-stockholm-l-and-s-band-new-helix-antenna/12046
+  5.
+    - **Problem:** A helix picks up terrestrial interference outside its main beam, worse than a loop Yagi of similar length
+    - **Affected products:** Long L-band helices
+    - **Frequency:** occasional
+    - **Known fix:** Filter at the feed and shield by site choice. Consider a loop Yagi (narrower, cleaner pattern, but narrowband and needs tuning). An array narrows the beam and reduces the problem.
+    - **Fix sources:**
+      - https://www.rtl-sdr.com/a-tutorial-on-receiving-hrpt-weather-satellite-images-with-an-sdrplay-rsp2/
+  6.
+    - **Problem:** Helix feed impedance is about 140-150 Ω, and Kraus's gain formula is about 3 dB optimistic
+    - **Affected products:** All axial-mode helices and helix arrays
+    - **Frequency:** common
+    - **Known fix:** Fit a matching strip or capacitive matching near the first turn (2 mm above the reflector at its start, adjusted for peak signal). Use Z ≈ 140·C/λ. A parallel-fed pair gives about 70 Ω. Use Emerson's or King-Wong's gain figures, not Kraus's. Check every element with a NanoVNA.
+    - **Fix sources:**
+      - https://www.rtl-sdr.com/a-tutorial-on-receiving-hrpt-weather-satellite-images-with-an-sdrplay-rsp2/
+      - https://wettersat.bplaced.net/equipment.html
+      - https://www.qsl.net/seti/articles/helix2.htm
+  7.
+    - **Problem:** Getting circular-polarisation handedness wrong
+    - **Affected products:** Helix over a ground plane versus a helix feeding a reflector (wok, dish)
+    - **Frequency:** occasional
+    - **Known fix:** A helix on a ground plane or cone keeps its handedness, so wind it RHCP for RHCP downlinks. Only reflector-fed helices need the opposite hand.
+    - **Fix sources:**
+      - https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309
+  8.
+    - **Problem:** 3D-printed helix and helicone scaffolds warp or print badly
+    - **Affected products:** t0nito helicone, derekcz helix scaffold
+    - **Frequency:** occasional
+    - **Known fix:** Add centre supports to the legs (Saveitforparts). Check orientation and supports in the slicer (pe2bz). Spray UV protection and seal joints with glue and vulcanising tape for outdoor use.
+    - **Fix sources:**
+      - https://www.rtl-sdr.com/saveitforparts-testing-a-3d-printable-satellite-antenna-for-noaa-meteor-and-other-polar-orbiting-l-band-satellites/
+      - https://community.libre.space/t/3d-printed-helical-cone-reflector-antenna/11309
+  9.
+    - **Problem:** Cheap AliExpress L-band LNA boards misbehave on bias power
+    - **Affected products:** TQM3M9037 LNA with an onboard TP4056 charger
+    - **Frequency:** occasional
+    - **Known fix:** Power up with the switch OFF ('USB mode'), or remove the charger and fit a linear regulator.
+    - **Fix sources:**
+      - https://community.libre.space/t/station-2830-stockholm-l-and-s-band-new-helix-antenna/12046
+  10.
+    - **Problem:** Metop AHRPT NOSYNC even with good SNR
+    - **Affected products:** SatDump metop_ahrpt pipeline on marginal sample-rate settings
+    - **Frequency:** occasional
+    - **Known fix:** Raise the sample rate (2.88 Msps worked on an RTL-SDR V4; use about 6 Msps on the LimeSDR) and enable DC block and AGC.
+    - **Fix sources:**
+      - https://github.com/SatDump/SatDump/issues/727
+  11.
+    - **Problem:** LMS7002M RX A/B relative phase is random (including 0/180° flips after retune) and samples are misaligned; LimeSuiteNG has no channel alignment
+    - **Affected products:** LimeSDR family, including LimeSDR Micro two-channel combining
+    - **Frequency:** occasional
+    - **Known fix:** There is no driver fix (LimeSuiteNG issue #356 is open). Workaround: estimate the delay and phase in software on each stream.
+    - **Fix sources:**
+      - https://discourse.myriadrf.org/t/limesdr-xtrx-rx-data-out-of-sync/13290
+      - https://discourse.myriadrf.org/t/lms7002m-mimo-mode/2501
+      - https://github.com/myriadrf/LimeSuiteNG/issues?q=channel+alignment
+  12.
+    - **Problem:** Advertised 4G panel gains are physically impossible at 1.7 GHz
+    - **Affected products:** Prom.ua 1700-2700 MHz MIMO panels advertised at 17 dBi or 24 dBi
+    - **Frequency:** common
+    - **Known fix:** Self-researched. Check gain against aperture: a 20 cm square tops out at about 12 dBi at 1.70 GHz, and a 43 cm square at about 18.7 dBi. Measure against a known helix on a Meteor pass.
+    - **Fix sources:**
+      - https://prom.ua/p1469825430-moschnaya-panelnaya-antenna.html
+      - https://prom.ua/p2499424468-antenna-energy-mimo.html
+  13.
+    - **Problem:** The metal-plate lens focus shifts and the lens only works in one polarisation
+    - **Affected products:** W1GHZ-type lens
+    - **Frequency:** rare
+    - **Known fix:** Make the plates 1-2 inches oversize, set the horn-to-lens spacing on the beacon, and keep the plates parallel to the E-field. That means rotating the lens 90° between the vertical narrowband transponder and the horizontal wideband one.
+    - **Fix sources:**
+      - http://www.w1ghz.org/antbook/chap3.pdf
+- **Unresolved problems:**
+  1.
+    - **Problem:** No published report of QO-100 reception with a horn, a metal-plate lens, a zone plate or Fresnel lens, a 10 GHz patch array, or a Selfsat flat panel
+    - **Why it matters for us:** The recommended 20-23 dBi conical horn and the optional 300 mm lens rest on estimates scaled from bare-LNB and dish reports, accurate to about ±3-4 dB. The horn should beat the bare LNB by about 10 dB, but whether typical SSB stations become comfortable copy is unproven. Self-test: log beacon C/N in 2.7 kHz with the bare LNB, then with the horn, on the same day. The horn should add 8-11 dB; if not, check throat fit and polarisation.
+    - **Evidence:** Searches in English, German, Russian and Ukrainian, and checks of SatNOGS, SDR-Radio, EEVblog, Hackaday and WiMo/Passion Radio, found only bare-LNB reports (OK1DX, RigExpert, a Passion Radio review, SARTS) and dish or dish-feed reports. The BATC forum, mikrocontroller.net, groups.io and Reddit could not be read.
+  2.
+    - **Problem:** No dish-free Metop-B AHRPT decode found anywhere (helix, helix array, panel or Yagi)
+    - **Why it matters for us:** The 2x2 helix array (about 0.3 m², 2-3 kg, $60-200) would be a first-of-its-kind build aimed at a single ageing satellite. NOAA OSPO (3 September 2026) lists Metop-C AHRPT as 'No'. NOAA POES is decommissioned, and FengYun-3 L-band is gone. The closest data point, Tysonpower's mid-gain antenna, failed to decode even NOAA HRPT.
+    - **Evidence:** metislair lists a 60 cm dish as the minimum for Metop. All found dish-free L-band successes are Meteor-M HRPT, Elektro-L LRIT or NOAA HRPT (helix, helicone). https://www.ospo.noaa.gov/operations/metop/status.html
+  3.
+    - **Problem:** No amateur precedent and no ready software for coherent two-channel combining of HRPT (spatial or polarisation) on LimeSDR hardware
+    - **Why it matters for us:** Both the 'two helix sub-arrays into RX1/RX2' idea and the 'dual-polarised panel with software RHCP' idea depend on it. LimeSuiteNG lacks channel alignment, and the LMS7002M flips phase by 0 or 180° on retune. A self-designed fix, not field-tested: lock the LO, then estimate the inter-channel delay once per stream by cross-correlation on the satellite signal and correct it with a delay block. Then track the complex weight w = E[x1·x2*]/E[|x2|²] over blocks of about 10-50 ms and add x1 + w·x2. That is an adaptive maximal-ratio combiner, which absorbs any fixed or flipped phase. Write the summed IQ to a file and feed it to SatDump. Simpler fallback: a passive 4-way Wilkinson combiner into a single RX, which needs no software alignment.
+    - **Evidence:** https://discourse.myriadrf.org/t/limesdr-xtrx-rx-data-out-of-sync/13290 ; https://discourse.myriadrf.org/t/lms7002m-mimo-mode/2501 ; https://discourse.myriadrf.org/t/limesuiteng-and-mimo-phase-alignment-on-xtrx/8708 . A web search for amateur diversity combining for HRPT or LRPT returned only patents and theses.
+  4.
+    - **Problem:** No QO-100 beacon-lock tool found for the planned Ubuntu stack with a LimeSDR (SDR++ beacon lock not confirmed)
+    - **Why it matters for us:** With a Goobay or other plain LNB (±300 kHz, or the -140 to -180 kHz F1ATB measured), SSB is unusable without lock. The AMSAT-DL tool (±2 kHz) is Pluto-only, and F1ATB's Remote-SDR targets the Raspberry Pi with HackRF or RTL. A self-designed fix: a GNU Radio Python block that FFT-peak-tracks the CW beacon at 10489.550 MHz, or the lower and upper PSK beacons (avoiding the DC centre), across a ±400 kHz window, then drives a frequency-xlating rotator. Or buy the 0.2 ppm QRO.cz TCXO LNB so a narrow tracker is enough.
+    - **Evidence:** https://amsat-dl.org/en/qo-100-linux-transceiver/ ; https://f1atb.fr/qo-100-live/
+  5.
+    - **Problem:** Supply voltage versus polarisation for the QRO.cz/RemoteQTH LNB is documented inconsistently
+    - **Why it matters for us:** WiMo's listing says '12 V horizontal, 15 V vertical'. Passion Radio's RemoteQTH pack says 12 V for the narrowband (vertical) transponder and 18 V for DATV (horizontal), which matches standard TV practice of 13 V vertical and 18 V horizontal. The wrong voltage on the 4S-pack bias-tee would select the wrong polarisation and lose the beacon. Verify on the beacon by switching voltage, or ask QRO.cz.
+    - **Evidence:** https://www.wimo.com/en/qo-100-10ghz-lnb-qro-cz ; https://www.passion-radio.com/satellite-qo-100/converter-432-936.html
+  6.
+    - **Problem:** Real gain and match of the Ukrainian 4G MIMO panels at 1.70 GHz, below their 1710 MHz band edge
+    - **Why it matters for us:** Only the 43 cm 'Energy MIMO 2x24' (about 2800-2950 UAH) is physically capable of about 15-17 dBi at 1.70 GHz (my aperture calculation). The 20-23 cm models cannot exceed 12-13 dBi. With no user reports, this needs a NanoVNA and an on-air comparison before it can replace the helix array.
+    - **Evidence:** Prom.ua listings: R-Net 205x205 mm '17 dBi', Energy 230 mm '15 dBi', Energy 430x430 mm '24 dBi'. No HRPT reports with these panels were found.
+  7.
+    - **Problem:** Selfsat-type flat Ku panels at 10.489 GHz
+    - **Why it matters for us:** It is the only flat shape with dish-class gain (about 31-33 dBi in band). But it is specified only from 10.7 GHz, with no QO-100 reports, and it uses a non-TCXO LNB and weighs 4+ kg. It stays a gamble and should not be bought for this build.
+    - **Evidence:** Vendor specs only (satking.de, Conrad datasheet). Web searches found no amateur test.
+  8.
+    - **Problem:** Several key claims could only be seen in search-engine snippets because the source sites block automated readers
+    - **Why it matters for us:** The BATC Bullseye drift threads (p=26716, p=27854), the wideband beacon MER ceiling (p=18655, p=37232) and the SARTS bare-LNB slide could not be read in full. Their figures should be treated as indicative.
+    - **Evidence:** forum.batc.org.uk returns a JavaScript proof-of-work page (HTTP 503). The SARTS PDF returned 503 or connection reset.
+  9.
+    - **Problem:** Goobay external-reference modification failure (no signal, raised noise floor) never explained
+    - **Why it matters for us:** It matters only if the €6 Goobay is modified instead of buying a TCXO LNB. Likely causes, untested: reference too weak or too strong, or the chip has a different crystal-oscillator topology. Prefer a ready TCXO LNB.
+    - **Evidence:** Comment by 'Ali' (February 2024) on https://baltic-lab.com/2023/07/lnb-modification-for-10-ghz-qo-100-satellite-reception/
+  10.
+    - **Problem:** No field reports yet of the LimeSDR Micro M.2 used with an LNB or an L-band LNA chain
+    - **Why it matters for us:** The board ships from about 30 September 2026. Its RX input overload level with an LNB (even after a 20 dB pad) and bias-tee handling (none on board, as far as found) are undocumented. Lime confirmed that the RX bands in the docs only show where matching is optimised, not coverage gaps, so the 740 MHz IF and 1.70 GHz are covered.
+    - **Evidence:** https://discourse.myriadrf.org/t/limesdr-micro-m-2-pcie-frequency-range/13348
+- **Communities checked:**
+  - ok1dx.cz (OK1DX station page): readable
+  - RigExpert application note TBR-AN-1: readable
+  - Passion Radio product reviews (France): readable
+  - WiMo product page (QRO.cz LNB): readable, no reviews
+  - SatNOGS community forum (community.libre.space): readable through the Discourse JSON search and topic API; topics 11309, 12046, 11343, 2496
+  - MyriadRF/Lime discourse (discourse.myriadrf.org): readable through JSON; topics 13348, 13290, 8708, 2501 and search results
+  - SDR-Radio.com forum (phpBB): readable; beacon-lock and Pluto threads
+  - BATC forum: blocked by JavaScript browser verification (HTTP 503); only search-engine snippets used
+  - BATC wiki: readable (wideband bandplan, search)
+  - Reddit (r/RTLSDR, r/amateursatellites and others): not reachable; WebFetch is blocked and the WebSearch domain filter was rejected
+  - groups.io (QO-100 group): blocked by a JavaScript fingerprint wall
+  - mikrocontroller.net: HTTP 403
+  - Hackaday.io: search needs login; hackaday.com articles seen through search only
+  - EEVblog forum: searched through WebSearch, no relevant threads
+  - RTL-SDR.com articles and comments: Bullseye LNB, HRPT RSP2 tutorial, Elektro-L3 helix, Saveitforparts helicone, Tysonpower grid, TechMinds Inmarsat helix
+  - blog.metislair.com: helix build and L-band reception guide
+  - GitHub: SatDump issues through WebFetch (issue #727); LimeSuiteNG issues (issue #356). The gh search API is blocked in this session
+  - Thingiverse (t0nito helicone): HTTP 403
+  - AMSAT-DL (QO-100 Linux transceiver page)
+  - F1ATB Remote-SDR page and comments
+  - baltic-lab blog and comments (Goobay modification)
+  - W1GHZ Microwave Antenna Book, chapters 2 and 3
+  - SETI League helix article (qsl.net/seti)
+  - DARC regional talks (DK3NB PDF) and OE3DSB station page (German)
+  - SARTS Singapore QO-100 presentation: snippet only, download failed
+  - Google Groups pnw-microwave: nothing relevant
+  - NOAA OSPO Metop status page (updated 3 September 2026)
+  - Prom.ua listings (Ukraine): readable; 5g.in.ua: Cloudflare challenge
+  - Russian- and Ukrainian-language web searches: no dish-free QO-100 or HRPT community reports found
+- **Recommendation impact:** QO-100:
+  - Keep the plan, but reorder it. The TCXO LNB with no reflector is the only dish-free option with real field reports: OK1DX (CW beacon), RigExpert (FT8), a Passion Radio buyer, and SARTS (FT8, snippet only). Make it phase 1.
+  - Prefer the 0.2 ppm QRO.cz/RemoteQTH TCXO LNB over the Goobay. Users report plain-LNB drift of 50-180 kHz, and the only ARM/Linux beacon-lock precedent (AMSAT-DL) covers just ±2 kHz. The Bullseye is acceptable if the software tracker captures at least ±30 kHz.
+  - Always fit a 10-20 dB pad and a DC block. Operate outdoors, since glass blocks 10 GHz.
+  - Verify which supply voltage selects which polarisation on the beacon; the QRO.cz documentation conflicts.
+  - Phase 2: the 20-23 dBi conical horn. W1GHZ reports that his horns 'almost always' match their predicted gain. It is unvalidated on QO-100, so measure it against the bare LNB.
+  - The W1GHZ metal-plate lens has a long real-world record (27.4 dBi measured, years of contest use) and remains the best non-dish path to near-dish gain.
+  - DATV is definitively out. The wideband beacon's MER tops out around 8-11 dB even with large dishes.
+  - Drop the Selfsat panel.
+  
+  L-band:
+  - Keep the 11-turn helix or the helicone for Meteor-M HRPT and Elektro-L; there are several successful dish-free reports.
+  - Apply the community fixes: at least 50 cm height, a bent-edge ground plane, a SAW LNA at the feed, shadowing cell towers, an RHCP winding over the ground plane, and a matching strip.
+  - Downgrade the Metop-B 2x2 helix array from 'recommended' to 'experimental'. Nobody has decoded Metop without a dish, and Metop-B is the last L-band AHRPT source.
+  - If the array is built, combine passively first (4-way Wilkinson into one RX). Do not rely on RX1/RX2 software combining until a custom delay-and-phase estimator is written. LimeSuiteNG lacks channel alignment (issue #356 open) and the LMS7002M flips phase after retune.
+  - Treat a loop Yagi as an alternative to the array: one user found it far cleaner than a helix against terrestrial interference.
+  - Remove the 20-23 cm Ukrainian 4G panels as Metop candidates; their aperture caps them at about 12-13 dBi at 1.70 GHz. Only the 43 cm 'Energy MIMO 2x24' class (about 2800-2950 UAH) is worth a NanoVNA and Meteor-pass test, for S-band experiments and possibly polarisation-combined L-band.
+  
+  Confidence: medium-high for the bare-LNB and helix findings; low for horn, lens, array and panel performance on these specific targets.
+
+## Власні виправлення (`fixes`)
+
 _Агент цього етапу ще працює (run `wf_5a66d65f-c3f`)._
 
