@@ -743,5 +743,5 @@ P4, A — ВАЖЛИВО (доступність утримуваного ядр
 (а) у перший же день завантажити deb-пакети 6.18.2-4 з GitHub-релізу radxa-pkg/linux-qcom «Release 6.18.2-4» (16 файлів), перевірити контрольні суми і тримати їх у локальному apt-архіві на пристрої та поза ним;
 (б) DKMS pps-gpio і оверлей збирати проти цих заголовків;
 (в) 7.0.11-7 — єдиний шлях, який далі підтримує Radxa. Переходити на нього лише після тестів HDMI (тема 31304), FastRPC/NPU, PPS (там CONFIG_PPS_CLIENT_GPIO=m, DKMS не потрібен) і EDID.
-Записав у operator_notes, пункт №29. Рішення від користувача не потрібне. Джерела: радxa-repo (dists/qcs6490-noble/main/binary-arm64/Packages, перевірка за агентом A), github.com/radxa-pkg/linux-qcom/releases.
+Записав у operator_notes, пункт №29. Рішення від користувача не потрібне. Джерела: radxa-repo (dists/qcs6490-noble/main/binary-arm64/Packages, перевірка за агентом A), github.com/radxa-pkg/linux-qcom/releases.
 
