@@ -24760,6 +24760,88 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   The budget lines "Бюджет: інший 4S 15-20 A", "EC11", "TPS7A4700" and "NKON" were not touched; later analog changes remove them. idx 21 deleted "Бюджет: Anker 737 (стенд)" and added the field-source rule for DRP sources. The later idx 66/61 (G5/G3) wording will need merging with it.
 
+## edit:03b_lab_capabilities_procedures_totals:b1 (run `wf_85b20a83-f63`)
+
+- **Section:** 03b_lab_capabilities_procedures_totals
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+- **Skipped:** []
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/03b_lab_capabilities_procedures_totals.md. All 43 changes are applied. The table structure still holds: 3 columns in 3.4 and 3.5, 2 columns in 3.6.
+  
+  Merges and which source won:
+  - idx 0 and 10, Lime VCTCXO capability row: merged. The user decision sets "Lime (збірка за замовчуванням)" and the tier "core (збірка з Lime за замовчуванням)". The trim details come from reaudit B: the volatile VCTCXO DAC 0-65535, EEPROM XO_DAC at 0xFFFE only after a stable result, and the TMP1075 log.
+  - idx 1 is merged into P4 and P14 (now "входять у збірку за замовчуванням") and into P5 (idx 11), P7 (idx 12) and P18.
+  - P18 conflict: idx 30 (G4) keeps "Кроки з T7 — за умовою"; idx 1 (the user decision) and idx 22 make the T7 default. The user decision won: T7 steps are mandatory, with SMART ≤55 °C. All of G4's content (mode H, lms7_temp ≤75 °C, 5754 plate acceptance, glare check) and mode H from reaudit D are kept.
+  - idx 9 and 40: merged into "PE4312 (сумісний за виводами наступник PE4302, виробляється) на sled v2 … (64 стани, 1 MHz-2.2 GHz)".
+  - idx 13 and 41, P13: merged. G6's acceptance limits come first, plus reaudit B's RF1 park, BENCH on RF4, latched parallel control and "HF <100 MHz unspecified until swept". They agree: the power-on state is RF1.
+  - idx 18 and 32: the LA fix (8 channels up to 24 MS/s, fx2lafw 0.1.7) is combined with G5's DMM choice (AN8009, or AN8008 + K-type thermometer) and the 6022BE spec fixes.
+  - idx 19 and 33, P1: both added, no repeats.
+  - idx 21 and 34, P8: merged. "навантаження 50 Ohm на вході" and "ANNE-50+" became one phrase.
+  - idx 23 and 37, P19: G5 is the base text. Reaudit D's check is kept: FNB58 reads 20 V and ≤3 A, never 28 V.
+  - idx 24 and 39, P6: merged. I narrowed "вихід лише через 80 dB + BLK-89-S+" to RF chains and named the exception: the Lime J4 reference input in P7, which idx 12 drives directly. Otherwise the two rows would contradict each other.
+  - idx 25 and 35, P16: the two DRP matrices are merged into one. idx 8 is added as well.
+  - idx 27 and 38: G5's core lab total, 1,536.56-1,767.80, already includes the VAT-30W2+ pads (+$33.18; RF line 245.86). I did not add them a second time.
+  - HF chain total, idx 14 (reaudit B, 483.44-589.17) against idx 29 (G1, 426.17-546.74): G1 won for the lines it decided (switch 44-50, shield 8.56-8.86, choke 18.71-23.71). No analog decision covers the Boni-Whip, so reaudit B's price stands: 167.49-178.73, with Moonraker $123.95 dropped. I also used the G4 mast at 70-80. The recombined total is 524.71-576.74 + "частка LDO/eFuse"; "eFuse" comes from reaudit B. Neither source figure counted all the line changes.
+  
+  3.6 totals, recomputed (my calculation, marked as estimates, with the breakdown listed under the table):
+  - bench ≈1,537-1,768
+  - extended ≈570-630
+  - core + extended 2,106.81-2,397.53
+  - device with Lime + both antenna tiers with QO-100 + bench: 4,868.13-5,554.98
+  - everything except optional: 5,438.38-6,184.71
+  
+  Inputs to those totals:
+  - Device core with Lime: 2,516.11-2,847.94. This is the group subtotals from G1, G2, G3 and G4. The new reaudit B rows are added: spare-V4L FM band-stop $16.95, eFuse $2.14, INA3221 $6.94. The G6 Lime set adds 606.46-629.82.
+  - Antennas: 815.46-939.24. Patch tier 175.79-201.79 (reaudit C). Foldable tier with G4 and the Boni-Whip at $167.49. G6 QO-100 set 97.41-124.46.
+  
+  EU-landed rows are lower bounds only: ≈4,921-5,629 and ≈5,491-6,259. They add just the import VAT on the Lime board (19-27%, $50.73-72.09) and the EUR 2 handling fee ($2.25). The files give no duty rate for the Lime (above EUR 150). Shipping, VAT on rows priced without VAT, and the EUR 3 + EUR 2 per tariff line on small non-EU orders are not counted; the note under the table says so.
+  
+  Two other sections must match these figures:
+  - 03a 3.3: the HF chain total should become 524.71-576.74. Its own change list does not include the G4 mast or reaudit B's Boni-Whip price on top of G1's figure.
+  - 02e 2.12: the device and tier totals should match the breakdown above.
+
 ## community:compute_os (run `wf_9603e249-d87`)
 
 - **Subsystem:** compute_os (Radxa Dragon Q6A, which stays): stage 2 check against community reports. Covers RAM tier, BIOS/SPI, the held 6.18.2-4 kernel and apt holds, DT overlays, USB/VBUS, M.2, cooling, NPU firmware, QAIRT 2.42 and FastRPC.
@@ -30875,6 +30957,177 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
     - **Why:** Refined by analogs G3: HT7550-1 (30 V) is OK, ME6201 must be replaced by a >=30 V LDO; applied with G3 wording.
 - **Notes:** Source /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json was read completely: 5 subsystems (power, gnss_imu_location, display_hmi, mech_thermal_storage, lab_instruments) with 99 corrections, 56 new risks, 43 refuted findings, 5 corrected specs and 76 bench tests. Every bench test has its own 08_open_bench change (power 0-15, GNSS 0-11, display 0-12, mech 0-15, lab 0-18). Some tests are merged into existing rows, where the anchor names that row. Precedence: wherever an analog decision (analogs_G2/G3/G4/G5/G6) changes the same part, seller or price, the instruction says 'per analogs Gx'. The re-audit's own part, seller or price is then listed in not_applied, while its technical content (thresholds, wiring, tests) is applied. All anchors were checked against the current section files: each occurs exactly once (verified with a script; empty anchor = new 08 row). Section 11_changes_v1_v2 is not in the output enum, so no change-log entries are emitted; the 07_corrections entry lists the v1 errors this source corrects. Two open conflicts are left for the editor. (1) The Boni rail is 12.5 V in v1 and re-audit D, but 13.8 V in re-audit B; the instruction keeps the 12.5 V straps and defers to the adopted rail. (2) Fan tach GPIO: GP22 is the only free Pico pin, and analogs G2 also wants GP22 spare, so the assignment is deferred to P7. User-decision items (Lime default, Europe) are touched only where this source states mechanical, thermal or storage consequences. The saving_usd sign convention: positive = saving, negative = added cost (e.g. -33.18 for the VAT-30W2+ pads). Two small figures are inferences: 0.01 on the Daly line ($9.00 to $8.99) and -1 for the back-feed parts (re-audit D says 'about $1').
 
+## edit:11b_changes_reaudit_A:b1 (run `wf_9ce86e94-763`)
+
+- **Section:** 11b_changes_reaudit_A
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+  - 58
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  - 64
+  - 65
+  - 66
+  - 67
+  - 68
+  - 69
+  - 70
+  - 71
+  - 72
+  - 73
+  - 74
+  - 75
+  - 76
+  - 77
+  - 78
+  - 79
+  - 80
+  - 81
+  - 82
+  - 83
+  - 84
+  - 85
+  - 86
+  - 87
+  - 88
+  - 89
+  - 90
+  - 91
+  - 92
+  - 93
+  - 94
+  - 95
+  - 96
+  - 97
+  - 98
+  - 99
+  - 100
+  - 101
+  - 102
+  - 103
+  - 104
+  - 105
+  - 106
+- **Skipped:** []
+- **Notes:** I created /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/11b_changes_reaudit_A.md with the Write tool. It starts with the heading "### 11.2. Виправлення P4: обчислення і ПЗ (повторний аудит A)", then one intro line, then the table | № | розділ STACK | що виправлено або додано | чому |. The table has 60 rows. I checked that every row has 4 columns and that the rows are numbered 1-60. No cell contains a pipe: "max |diff|" was rewritten in words.
+  
+  All 107 changes are in the table, with related changes merged into one row:
+  - 0 → row 1
+  - 58, 59, 60 → row 2 (#13, #15)
+  - 6, 68 → row 8 (cmdline)
+  - 3, 90 → row 14 (LC76G)
+  - 14, 44, 51 → row 15 (time chain)
+  - 17 + the Bluetooth part of 46 → row 18
+  - 21, 43 → row 20 (librtlsdr)
+  - 23, 70, 101 → row 21 (packages and gr-satellites)
+  - 24, 49, 78 → row 23 (pin priorities and offline updater)
+  - 19, 55, 102 + the multimon-ng part of 54 → row 24 (-1 list)
+  - 18, 50, 54 → row 25 (OpenWebRX+)
+  - 20, 74 + the SDRangel part of 56 → row 26
+  - 73 + the SDR++ part of 20 → row 27
+  - 12, 15, 42 → row 28 (SatDump live)
+  - 72 + the SatDump part of 56 → row 29
+  - 16, 93 (readsb details) → row 31
+  - 8, 45, 93, 97 → row 32 (ADS-B)
+  - 94, 97 → row 33 (AIS)
+  - 9, 46, 52, 91, 92, 98 → row 34 (Artemis)
+  - 11, 34 → row 35 (raw-IQ allowlist)
+  - 10, 76 → row 36 (FFT backend)
+  - 22, 77 → row 37 (venvs)
+  - 7, 79 → row 38 (FastRPC set)
+  - 13, 26, 48 → row 40 (inferd-cpu)
+  - 25, 82 → row 41 (SpecDet input)
+  - 83, 84 → row 43 (soc_model and VTCM test)
+  - 27, 86 → row 45 (T2b)
+  - 28, 53 → row 46 (TorchSig)
+  - 29, 87, 88 → row 47 (licences)
+  - 30, 31 → row 48 (RAM)
+  - 32, 33 → row 49 (CPU and GPU budget)
+  - 35, 40, 41, 61 → row 50 (thermal)
+  - 37, 63 → row 4 (EDID)
+  - 38, 89 → row 52 (HMI)
+  - 47, 96 → row 54 (WEFAX)
+  
+  Each of the other changes has its own row.
+  
+  Section references: change 0 points to 1.1 C2 and 2.1, which is where the re-audit's claim_in_stack sits. Change 105 is labelled "#28" in the change list, but that item is section 7 item 28, not a 1.2 register row, so the row cites "7 (п. 28); 5.2".
+  
+  Conflict, not resolved here: change 14 itself says GPSD_OPTIONS differ between re-audit A ('-n -p -s 115200') and re-audit D ('-n -b -s 115200'). Both are P4 re-audits with the same precedence, so neither wins. Row 15 records both and says the choice is settled when the files are merged. The orchestrator should settle it in the 05c (5.4) gpsd row.
+  
+  Precedence check on change 0: the P5 analog files make TinyTronics the EU seller for the Q6A, and re-audit A's own action says the same, with ALLNET only as fallback. The row therefore describes return terms only and does not change the seller or price.
+  
+  Several 'what' fields in the change list were cut off. For six of them I took the missing detail from the source file /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_A_compute_software.json:
+  - DSC: demoddsc is OFF without the patch.
+  - SDRangel demodadsb/demodais and OpenWebRX+ adsb/ais are not built.
+  - auto_rx payload_summary_enabled = False.
+  - rpm_lvl=0, taken from analogs_G2.
+  - Item 39: what sbc-reviews #85 actually says.
+  - The Artemis category list.
+  
+  Three more cut-off clauses were finished by inference and not checked against the source: the HF+ "if not 0" clause is written generically, P21's "4-character l…" is read as "4-символьного локатора" (locator), and the rsetup item is completed as "прошивання і записи оверлеїв через rsetup". No numbers were invented: the ORT and deb SHA-256 values are marked "закріплено" and not shortened, and the QAIRT MD5 and SHA-256 are given in full.
+  
+  Rule checks: wording is gender-neutral ("ваше рішення", "персонал Radxa", "operator_notes п. N" in place of gendered nouns). There are no prices and no Ukrainian prices, and the region is Europe throughout. The file has no subtotals.
+
 ## edit:02a_bom_compute_receivers_rf:b1 (run `wf_a1f0ee5f-4e1`)
 
 - **Section:** 02a_bom_compute_receivers_rf
@@ -30928,6 +31181,92 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
     - idx 39: 'КХ-тракт — $494.68-589.17' was replaced by idx 9's '$483.44-589.17'.
   - idx 39: the header HF-chain figure (483.44-589.17, from idx 9) uses the v1 HF line prices. My relay change in this batch already lowers it by 18 (lower bound) and 30 (upper bound), so it is out of step until idx 39 lands. With the analog line changes plus the Bonito lower bound it would be 426.17 − 123.95 + 167.49 = 469.71, so 469.71-546.74 (derived).
   - idx 38: its 2.3 subtotal of 232.54-244.84 leaves out the new 16.95 row. With that row it becomes 249.49-261.79.
+
+## edit:11d_changes_reaudit_C:b1 (run `wf_a1f0ee5f-4e1`)
+
+- **Section:** 11d_changes_reaudit_C
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+  - 58
+- **Skipped:** []
+- **Notes:** Created /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/11d_changes_reaudit_C.md with the Write tool. It has the heading "### 11.4. Виправлення P4: антени і цілі (повторний аудит C)", a one-line intro and the table "| № | розділ STACK | що виправлено або додано | чому |" with 34 rows (all rows checked to have 4 columns).
+  
+  How the entries were grouped into rows:
+  - 0 and 13 went into row 1; 24, 25 and the Yagi part of 13 into row 2; 23 and 26 into row 3.
+  - 1 is row 4; 16 and 41 are row 5; 2 and 17 are row 6; 42 is row 7; 8 is row 8.
+  - 3, 7 and 58 are row 9; 14, 31 and 32 are row 10; 4, 35 and the helicone part of 15 are row 11.
+  - 33 and 15 are row 12; 34 and 55 are row 13; 5 is row 14; 6 is row 15.
+  - 9, 11 and 54 are row 16; 10, 12 and 54 are row 17.
+  - 18, 43 and 22 are row 18; 44 and 45 are row 19; 19, 20 and 51 are row 20; 21 and 53 are row 21.
+  - 27 and 28 are row 22; 29 is row 23; 30 and 57 are row 24; 36 and 37 are row 25; 38 is row 26; 39 is row 27.
+  - 40 and 48 are row 28; 49 is row 29; 50 is row 30; 46 is row 31; 47 is row 32; 52 is row 33; 56 is row 34.
+  
+  The truncated "what" fields were matched to their full text in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/v2_extract/reaudit_C.json by part name. Every number in the rows comes from that file, from analogs G1/G4, or from the updated 02b subtotal.
+  
+  Conflicts and how they were settled:
+  - Uputronics 440 price (entries 9 and 54): the re-audit gives GBP 51.59, but analog G1 is higher in the precedence. G1 wins: EU storefront, EUR 52.95 ex VAT. Row 16 says this.
+  - Patch-tier subtotal (entries 3, 7 and 58): the re-audit gives 175.79-201.79. The user's decision "Europe" ranks higher and adds the QO-100 bare LNB and cone to this tier (operator_notes). So row 9 shows both figures: 175.79-201.79 without QO-100, and 255.20-281.20 with it. The second figure is the one already in the edited 02b subtotal (+$79.41). The 2.12 tier and C24 are marked as recomputed with all v2 changes, and no new sums were hard-coded.
+  - Tripod mass (entry 56): this matches analog G4 (Rollei Compact Traveler No. 1, 1.14 kg). Row 34 names it; there is no conflict.
+  - ANN-MB5 EU landed cost: only the landed-cost rule is cited, because no file gives the figure.
+  
+  No subtotal lives in this file. Batch 2 entries (59-116) are mostly register, software and mechanical versions of the same topics: gpsd, gr-satellites, LC76G, GNSS placement, Uputronics, tripod, Yagi, helicone, spur lines and the L-band patch. They can be merged into rows 6-8, 11-17, 24 and 34, which keeps the subsection well under 60 rows.
 
 ## searchA:adafruit_bno085_4754_rp2040_zero_metal_p (run `wf_a268b76e-da0`)
 
@@ -38065,6 +38404,157 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - VIEWE: does UEDX6911 firmware support the 45-pin UEED080FH panel and its touch IC, and what LED drive current does the board provide?
   - VSDISPLAY (eBay.de 256679793470): what is the board's input (HDMI?), how does touch reach the host, which panel part is it, and is it the same 6.97in glass as Wisecoco?
 - **Confidence:** medium
+
+## edit:08_open_bench:b1 (run `wf_b682bee1-8a4`)
+
+- **Section:** 08_open_bench
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+- **Skipped:** []
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/08_open_bench.md. The table now has 48 data rows, and every row still has exactly 3 cells. Pipes inside code spans are escaped as \|, and `<lease>` and the `*` names are inside backticks. This section has no subtotals. The anchors that batches 2-4 need are unchanged: the Струми row, the РЧ-деталі/HMC7992 text, the Ціни row, the Антени/SSTV row, and questions 5 and 7.
+  
+  Conflicts and how I settled them, using the brief's precedence:
+  - idx 4 against idx 13 (watchdog and systemd-bless-boot): re-audit A (idx 13) won, because operator items 3 and 9 are only candidates. In the Q6A row both questions are now marked closed. The APSS watchdog node is reserved for Gunyah, the Pico stays the main hardware watchdog, and B8 covers the optional Gunyah watchdog. systemd-bless-boot comes in the noble systemd-boot package, and embloader has no boot counting. The fallback in operator item 9 ("Pico + userspace A/B flag") gave way to the re-audit's Route B: embloader 0.4 with write-back by default, plus the rescue-microSD drill (row B3). The parts of idx 4 that agreed were merged into B5 and the Q6A row: gpio96 owned by pps-gpio with no MI2S claim, and the AppArmor check. The lease/EPERM test and CONFIG_CGROUP_BPF=y went into the idx 36 row (b), with a reference to systemd #23198.
+  - idx 8 against idx 30 (librtlsdr): I made one row, placed where idx 8 asked (before Енергія, gate C11). The re-audit retune sequence 7→137.1→145.8→437.55→1090→7 MHz replaced the operator's 100→400→1090 MHz. The operator's arrival checks (R828S, 'Blog V4L') are kept.
+  - idx 1 against idx 29 (Lime row name): merged as 'Lime (залишено 18.10.2026)'. The 8 GT/s riser test became the condition for moving from Gen2 to Gen3. The T7 A/B tests at 1541/1575/1691 MHz were merged with the existing T7 noise-rise item.
+  
+  Duplicates I merged rather than repeated:
+  - idx 5 went into row B6 (idx 16): dpkg -V first, then the apt-cache policy -1 pins.
+  - The NPU summary row (idx 15) now points to B6/B7 and the rows below for fastrpc_test, VTCM, INT8 against FP32, HTP p99 and A16W8. 'soc_model 35 проти 93' is removed.
+  - idx 7 is spread across the existing rows:
+    - the SatDump ID self-check is in the SatDump row;
+    - demodinmarsat and demoddsd were added to the SDRangel fail list;
+    - "mode list equals the allowlist" is in the OpenWebRX+ row;
+    - FileReceiver and submit_tlm stay only in the +lab builds row (c);
+    - the apt refusal list was merged into B12 (multimon-ng appears once);
+    - IPAddressDeny=any, the synthetic 1544.5 MHz carrier and readsb &4/&8 went into the Відповідність row, which refers to the rows above.
+  - idx 39 was merged with the existing mask items in the Відповідність row (the named-class boxes at 20 kHz and 300 MHz, and MARK/SNAP).
+  - idx 38: the GP23 states are given as 'обидва стани GP23 (A/B, за G2)'. The re-audit said 'GPIO23 high', but the analog decision G2 takes precedence.
+  
+  Not a conflict: the SDRangel fail list from the re-audit includes demodadsb and demodais, while the rule in operator item 33 allows ADS-B and AIS. The re-audit says these two plugins bypass the dbFlags and ship-type-35 filters. I kept them on the fail list and added a note that ADS-B and AIS go only through readsb and AIS-catcher, which is stricter than the rule and still within it.
+  
+  For new rows where the change gave no gate or 'коли' value, I used the existing labels (Ворота W1-2, NPU Phase 0, C20, CI, Стенд) and timings already used in the table (W1-2, Стенд силової плати, Після складання). For the converter CI row I wrote 'До першої конвертації'. I added no new numbers.
+
+## edit:07_corrections:b1 (run `wf_b682bee1-8a4`)
+
+- **Section:** 07_corrections
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+- **Skipped:** []
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/07_corrections.md, using the Edit tool. The list now has 136 items, numbered 1-136 with no gaps. Section 7 has no subtotals, so nothing needed recomputing.
+  
+  Changes to existing items:
+  - #5 (idx 4): added the re-audit B base (osmocom 2.0.3 rebuilt as .so.2) and named noble 2.0.1 as the fallback.
+  - #6: added the SAWbird+ GOES warranty and band from G1 (idx 12, its point 47).
+  - #10, #23 and #24 (idx 5): Boni-Whip now 13.8 V on the BONI13V8 rail; jt9/wsprd (wsjtx-decoders+lab); manufacturer price EUR 149.00 incl. VAT (about $167.49) and WiMo EUR 159 ($178.73). Both USD figures are from reaudit_B. The barrel gate is ≥12.0 V with the pack at 13.2 V.
+  - #18 (idx 0): Elektro-L N5, FY-2H and Elektro-L3 statuses. I removed the old "SatNOGS — неперевірено", because the new statuses replace it.
+  - #25 (idx 6): balun caveat appended.
+  - #26 (idx 7, 9 and G1 point 40 of idx 12): merged into one item. The three sources agree. Price is EUR 52.95 ex VAT ($59.52). I also added the EU landed cost incl. 19-21% VAT, about EUR 63.0-64.1 = $70.8-72.0, marked as a model; it comes from analogs_G1.
+  - #27: the FlightAware "LNA before SAW" point (idx 25, its point 48).
+  - #28 (idx 2): FCU760K/aic8800 USB driver details; the aicrf-test package is forbidden.
+  - #29: the LiteVNA HW 3.1 and Eleshop/Elektor points (idx 24, its points 38 and 51).
+  
+  New items 37-136:
+  - They sit under a bold heading "Нові виправлення v2", grouped by topic: software, receivers/RF, antennas and targets, power, mechanics, lab. Each item ends with its source tag.
+  - Many batches reported the same error. I merged those into one item instead of repeating it:
+    - C11 bias gate: idx 1, 3, 8
+    - gr-satellites: idx 1, 3, 10 (fix pair 10d27cb + 1bcf1d8, PR #832, pin main 4210dc4)
+    - kernel 6.18.2-4 source: idx 1, 3
+    - embloader / systemd-boot: idx 1, 3
+    - Lime firmware rate floor and I-PEX tool: idx 1, 8, 25
+    - HMC7992 / RF sled: idx 8, 12, 25
+    - PE4302: idx 8, 25
+    - TPS7A4701: idx 8, 11, 22
+    - TPS2553: idx 8, 11, 22
+    - Pololu #2813: idx 11, 21
+    - Tj 95 °C: idx 3, 11
+    - libairspyhf: idx 3, 8
+    - SDRangel: idx 1, 3, 8
+    - OpenWebRX+: idx 1, 3
+    - SAWbird NOAA: idx 8, 12
+    - Flamingo+: idx 12, 25
+    - G6K: idx 12, 19
+    - HDMI set: idx 11, 12, 14
+    - Peli 1450: idx 11, 25
+    - attenuator / RF accessories: idx 11, 24
+    - Hantek: idx 11, 24
+    - tripod: idx 10, 23
+    - Daly BMS: idx 11, 21
+    - P50B / NKON: idx 11, 21
+    - LC76G: idx 1, 10
+    - QO-100: idx 8, 10
+    - USB 3 EMI: idx 1, 10
+  - One conflict: TPS2553 at 88.7k. analogs_G3 (idx 22) gives 265/299/339 mA and re-audit B (idx 8) gives 262-342 mA. G3 won, because P5 analog decisions rank above the P4 re-audit, and the item says so. TCBT RILIM 162 kOhm (144/166/192 mA, model) is kept from re-audit B. No other changes disagreed.
+  - Small additions, each supported by a data file:
+    - $29.50 is Adafruit 4754 (from G3).
+    - The G4/G3 cost ranges are given in USD.
+    - In item 50, pagers are noted as off because they are private communications (hard rule).
+  
+  Not changed: item 23 still says "близько $555-780 без H-зондів", which assumes the extended total includes H-field probes. That clashes with the hard rule against H-field loop probes. None of my changes covered it; the lab totals owner should check it.
 
 ## edit:11e_changes_reaudit_D:b1 (run `wf_b7e15d24-3c6`)
 
