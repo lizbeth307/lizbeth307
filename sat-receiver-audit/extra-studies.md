@@ -44354,6 +44354,150 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   METHOD LIMITS: WebSearch returned budget-exhausted on the first call (the limit is shared across agents), so this pass used WebFetch and curl on primary pages and the stores' own product or search endpoints: isdt.co, toolkitrc.com, skyrc.com, Pyrodrone, Unmanned Tech, FPV24, AliExpress, Oscar Liang. DarwinFPV and RaceDayQuads returned HTTP 429. GetFPV and n-factory returned 403. No independent measurements were found for the M4 Pocket or the B6neo-series accuracy. A follow-up with search budget could check the ISDT official AliExpress store price with EU VAT and HOTA models, which I could not reach (hotatech.com is a parked domain).
 
+## searchB:tools_spares_notebook_build_tools_calipe (run `wf_e5582d4c-0a2`)
+
+- **Part:** Tools, spares, notebook, build tools (bench tier, Tools group, qty 1 set). The line is a price model with no named models. Reconstructed from radio_lab.json and final_completeness.json, it holds: iFixit Mako 64-bit driver kit, other hand tools (flush cutter, 20-30 AWG stripper, ESD tweezers, nylon spudger, 8 mm SMA spanner), a spares kit, a field notebook and labels, a soft organiser, and build tools (digital calipers, snips plus deburrer, M5 tap and die, heat gun).
+- **Current price usd:** 245-400 (STACK.md line 356, marked 'model', not verified). Reconstruction: Mako $39.95 (verified 18 Oct 2026; iFixit EU EUR 39.95, ships from Germany, page does not say whether VAT is included) + other hand tools $20-35 + spares kit $80-130 + notebook and labels $10-25 + organiser $15-35 + build tools $80-140 = $244.95-404.95. All parts except the Mako are estimates.
+- **Critical specs:**
+  - Digital calipers: 0-150 mm range and 0.01 mm resolution. Error limit 0.03 mm or better (DIN 862 class); this is needed to pass the 4.90 mm lead OD vs 4.95 (+0.25/-0) mm sleeve-bore check, the Q6A 85.0/56.0 +/-0.2 mm outline, the 58/49 mm hole pitch and the 6.1-6.3 mm cable build-up. Inside jaws for the LNB neck and waveguide ID, depth rod, hardened stainless jaws, and no Bluetooth or radio data link (QUIET mode).
+  - Gap, not an analog: the G3 nickel goods-in check (0.15 +/- 0.01 mm) needs a 0-25 mm micrometer. No caliper (+/-0.02-0.03 mm) can verify +/-0.01 mm.
+  - Snips: clean straight and curved cuts in 0.3-0.5 mm aluminium sheet (horn petals and gores) without rolling the edge; rated for 1.0 mm mild steel or more; plus a swivel deburring blade for the sharp petal edges.
+  - M5 tap and die: M5x0.8 ISO coarse in HSS, so it cuts aluminium, brass and A2 stainless rod. A 6H/6g fit, so repaired threads mate with the RTL-SDR Blog dipole base (kit QC reports damaged M5 threads) and with M5 couplers for 2-3 piece rods. 20 mm die OD with a matching die stock, plus a tap wrench.
+  - Heat gun: 230 V CEE 7/7 plug, CE and WEEE marked, with a named EU responsible person. The low end must be adjustable to about 100-150 C or lower, for adhesive-lined 3:1 polyolefin next to PETG/ASA prints, PVC fittings and RG174 PVC jacket. High end 300 C or more, a reflector nozzle and an overheat cut-out. Bench only, on mains.
+  - Hand tools: S2 bits on a 4 mm hex covering hex 1.5/2.0/2.5 mm (M2/M2.5/M3 socket screws), PH000-PH2, T5-T10 and flat 1-4 mm. Flush cutter and 20-30 AWG stripper, ESD-safe tweezers, nylon spudger, and an 8 mm open spanner to hold the SMA body while the 0.9 N·m wrench turns the nut.
+  - Spares: exactly the stack part numbers. That means genuine Amass XT30, SMBJ13A/SMBJ17A as corrected in STACK (the spares list still names the old SMBJ14A), 10k B3380 NTC, KSD9700 70 C NO, Daly 4S 15 A BMS, Adafruit 6101 fan, RP2040-Zero and MHF4L-SMA. No loose cells; store insulated.
+  - Notebook and labels: a waterproof field notebook that can be written on in rain, plus heat-shrink or colour-band labels for the SMA leads.
+  - All items: sold legally in the EU (no counterfeit brand tools), EU stock preferred because of operator note 35 (EUR 3 duty plus EUR 2 handling fee per tariff line), and no radio emitters.
+- **Candidates:**
+  1.
+    - **Name:** Spares kit rebuilt from the spare quantities already in other STACK lines (de-duplicated). Only items not bought elsewhere stay: a spare Daly 4S 15 A BMS, an Adafruit 6101 40 mm fan, an RP2040-Zero, a 220 uF/25 V cap, a 10k B3380 NTC, SMBJ13A/17A, 2 Amass XT30 pairs, short USB A-C and A-micro cables, Dupont jumpers and headers, M2.5 screws and standoffs, paste and 20 AWG silicone wire.
+    - **Kind:** diy
+    - **Price usd:** about 45-66 (estimate) instead of 80-130. Only the board prices come from STACK (BMS $9.00, fan $4.95, RP2040-Zero $4.99), and none was re-verified today. Saving about $35-64; the line becomes about $210-345.
+    - **Spec comparison:** The parts are identical, so no spec changes. STACK already carries these spares in other lines: V4L qty 3 (1 spare), Pico 2 (1 spare), CH334F 2 (1 spare), D36V50F12 2 (1 spare), #2813 2 (1 spare), P50B 5 (1 spare), IP2368 2 (both burned in), Lime 2x MHF4L-SMA, spare fuses 7.5/4/3/5 A (protection line, D2), KSD9700 qty 5 (G4, one for spares), 3x ANNE-50+ loads, 2x BLK-89-S+ DC blocks, the adapter set with the torque wrench, CR2032 (GNSS line), and Kapton and nickel (battery line). The radio_lab spares estimate counted those parts a second time.
+    - **Worse in:** Nothing, provided the other lines keep their spare quantities. One caveat: the radio_lab kit allowed '1-2 spare IP2368'. STACK's 2 boards give exactly 1 spare; for 2 spares add the 'third board if needed' (about $12-25, unverified).
+    - **Compatibility:** Same part numbers as the stack, so rails, connectors and fit are unchanged. It also corrects the old SMBJ14A entry to the stack's SMBJ13A/SMBJ17A.
+    - **Risks:** If any P5 analog cuts a parent line to qty 1, that spare must move back into this kit. Keep a single spares inventory sheet in the notebook.
+    - **Seller url:** Various (TinyTronics, Adafruit, Waveshare, LCSC/DigiKey), as in each parent STACK line
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md lines 57, 63, 175, 183, 233, 236, 245-250, 256, 258, 266, 293, 343-356
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json (spares-kit entry)
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/analogs_G4_mechanical_field.json (KSD9700 qty 5)
+  2.
+    - **Name:** Goobay 77001 digital caliper 150 mm (Wentronic rebrand; reichelt 'SCHIEBLEHRE LCD')
+    - **Kind:** generic_or_clone
+    - **Price usd:** about 22.0 (EUR 18.99 incl. 19% DE VAT, reichelt, in stock, verified 18 Oct 2026; EUR at 1.16 USD; shipping extra)
+    - **Spec comparison:** From the reichelt page and the manual PDF: 0-150 mm, 0.01 mm resolution, error limit 30 um per DIN 862, repeatability 0.01 mm, capacitive scale, outside/inside/depth/step measurement, hardened stainless steel, LR44 cell, auto-off, 0-40 C, no radio. On paper this meets the 0.03 mm floor; on the 4.90/4.95 mm check a 4.90 reading leaves about 0.02 mm margin.
+    - **Worse in:** No IP rating ('dry interior rooms only'). 30 um, against the 20 um typical of Mitutoyo-class calipers, if that is what the model assumed. There are NO independent measurements of this unit, so under angle B it is REJECTED as 'proven equal'.
+    - **Compatibility:** Fully compatible: no power or interface needed and no emitter.
+    - **Risks:** Unmeasured accuracy and scale drift. Can be made conditional by an acceptance test on arrival: three ISO 8734 m6 dowel pins (for example 3, 5 and 10 mm, 4-15 um over nominal) must read within +/-0.02 mm, and the reading must return to 0.00 after 10 closes. That is a self-measurement, not independent evidence.
+    - **Seller url:** https://www.reichelt.de/de/de/shop/produkt/messschieber_analog_digital_150_mm-16976
+    - **Sources:**
+      - https://www.reichelt.de/de/de/shop/produkt/messschieber_analog_digital_150_mm-16976
+      - https://cdn-reichelt.de/documents/datenblatt/D300/77001_BEDIENUNGSANLEITUNGMANUAL.pdf
+      - https://www.reichelt.de/de/de/shop/suche/messschieber
+  3.
+    - **Name:** Goobay 77822 heat gun, 1500 W, stepless 50-500 C
+    - **Kind:** generic_or_clone
+    - **Price usd:** about 31.3 (EUR 26.99 incl. 19% DE VAT, reichelt, in stock, verified 18 Oct 2026)
+    - **Spec comparison:** From the datasheet and manual: two ranges set steplessly with a rear wheel (low 50-350 C, high 200-500 C), 450 l/min, reflector nozzle plus 2 reduction nozzles and 1 flat nozzle, IP20, CE, CEE 7/7 plug, 1.3 m cord, 703 g. Against a branded reference (Steinel HL 1821 S datasheet: 1800 W, two fixed stages of 300/550 C, 350-450 l/min, thermal fuse, 3-year warranty, 2.2 m cord), the Goobay is better at the low end that heat-shrink near prints and PVC needs, since it reaches 50 C where the Steinel's lowest stage is 300 C.
+    - **Worse in:** No overheat cut-out or thermal fuse is stated, no warranty is stated, and the cord is shorter (1.3 m vs 2.2 m). The nozzle temperature has NO independent measurement, so under angle B it is REJECTED as 'proven equal'.
+    - **Compatibility:** Bench mains tool and EU plug, not on the device rails. No emitter.
+    - **Risks:** Real temperature at a given setting is unknown. Conditional test: if the AN8009 (thermocouple variant of the stack DMM) is bought, put the K-type probe 20 mm in front of the reflector nozzle; the minimum setting must hold 120 C or less, and shrinking 3:1 adhesive-lined tube on an RG174 offcut must leave no jacket damage. Never leave it running unattended.
+    - **Seller url:** https://www.reichelt.de/de/de/shop/produkt/heissluftpistole_1500_w_230_v_stufenlos_50_bis_500_grad-417265
+    - **Sources:**
+      - https://www.reichelt.de/de/de/shop/produkt/heissluftpistole_1500_w_230_v_stufenlos_50_bis_500_grad-417265
+      - https://cdn-reichelt.de/documents/datenblatt/D200/GOOBAY_77822_DB-MULTI.pdf
+      - https://cdn-reichelt.de/documents/datenblatt/D200/GOOBAY_77822_ANL-MULTI.pdf
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_steinel/hl1821s.pdf (Steinel HL 1821 S datasheet, reference only, price not checked by me)
+  4.
+    - **Name:** Goobay 77823 heat gun, 1500 W, 100-650 C with display
+    - **Kind:** generic_or_clone
+    - **Price usd:** about 38.3 (EUR 32.99 incl. 19% DE VAT, reichelt, verified 18 Oct 2026)
+    - **Spec comparison:** From the manual: stage I 100-300 C and stage II 300-650 C in 10 C steps, with the set point shown on a display. It covers the 100-150 C heat-shrink window with repeatable settings. Otherwise the same family as the 77822.
+    - **Worse in:** Minimum 100 C (the 77822 reaches 50 C). No stated thermal cut-out or warranty. No independent measurement, so REJECTED under angle B, with the same conditional test as the 77822.
+    - **Compatibility:** Bench mains tool, EU plug.
+    - **Risks:** The display shows the set point, not a measured air temperature.
+    - **Seller url:** https://www.reichelt.de/de/de/shop/produkt/heissluftpistole_1500_w_230_v_stufenlos_100_bis_650_grad_mit_l-417266
+    - **Sources:**
+      - https://www.reichelt.de/de/de/shop/suche/heissluftpistole
+      - https://cdn-reichelt.de/documents/datenblatt/D200/GOOBAY_77822_ANL-MULTI.pdf
+  5.
+    - **Name:** EXACT 20003 M5 HSS tap (DIN 352 form B, single-cut) + EXACT SE M5 die (20 mm OD)
+    - **Kind:** other_brand
+    - **Price usd:** about 11.1 for tap plus die (EUR 4.20 + EUR 5.40 incl. VAT, reichelt, verified 18 Oct 2026). A tap wrench and a 20 mm die stock are still needed: reichelt lists only a HAZET holder at EUR 53.99; cheaper holders are unverified.
+    - **Spec comparison:** Tap: HSS, DIN 352 form B, M5, for hand or machine use, through holes; pitch and tolerance class are not listed (M5 coarse is 0.8 mm by definition). Die: M5, 20 mm OD; material and standard are not stated.
+    - **Worse in:** Die material unknown: a carbon-steel (WS) die would be worse than HSS on A2 stainless rod. The 6H tolerance is not stated. No measured evidence, so REJECTED under angle B.
+    - **Compatibility:** M5 matches the dipole kit thread and M5 couplers; the 20 mm die fits standard 20 mm die stocks.
+    - **Risks:** Conditional test: cut a thread on a 5 mm brass or aluminium offcut. A stock A2 M5 nut must run on by hand without play, and the threaded rod must seat in the dipole base. Re-check the die material with the seller before buying for stainless.
+    - **Seller url:** https://www.reichelt.de/de/de/shop/produkt/gewindebohrer_m5-214069 ; https://www.reichelt.de/de/de/shop/produkt/schneideisen_m5-44247
+    - **Sources:**
+      - https://www.reichelt.de/de/de/shop/produkt/gewindebohrer_m5-214069
+      - https://www.reichelt.de/de/de/shop/suche/schneideisen
+      - https://www.reichelt.de/de/de/shop/suche/gewindebohrer
+  6.
+    - **Name:** WISS M5R compound-action snip, 233 mm (reference price for the snips slot)
+    - **Kind:** other_brand
+    - **Price usd:** about 34.8 (EUR 29.99 incl. VAT, reichelt, verified 18 Oct 2026)
+    - **Spec comparison:** Branded compound-action snip, 233 mm. The listing states no cutting capacity, so I could not confirm the 1.0 mm mild-steel rating against the 0.3-0.5 mm aluminium need.
+    - **Worse in:** Unknown: no capacity on the listing and no measured cut-quality test. Not a generic, and only a price reference. A deburrer is not included.
+    - **Compatibility:** Hand tool.
+    - **Risks:** Rejected under angle B for lack of measured evidence and a stated capacity.
+    - **Seller url:** https://www.reichelt.de/de/de/shop/produkt/blechschere_bulldogschere_233_mm-161071
+    - **Sources:**
+      - https://www.reichelt.de/de/de/shop/suche/blechschere
+  7.
+    - **Name:** iFixit Moray Driver Kit (32 bits), instead of the Mako
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 19.95 (iFixit US, ready to ship, verified 18 Oct 2026)
+    - **Spec comparison:** Same S2 steel, 4 mm hex shank and lifetime guarantee as the Mako. Bits: hex 1.5/2.5/3.0/4.0, PH #000/#0/#1/#2, T3-T5, TR6/8/10/15, flat 1.0/2.5/4.0, nut drivers 2.5/5.0. Case 12.4x7.8x2.2 cm.
+    - **Worse in:** WORSE in coverage. It has no 2.0 mm hex (needed for M2.5 socket-head screws on the Q6A, standoffs and case), no PH #00, no plain T6-T10, and only 3 flat sizes. REJECTED.
+    - **Compatibility:** Same handle and bit system as the Mako.
+    - **Risks:** Not applicable (rejected).
+    - **Seller url:** https://www.ifixit.com/products/moray-driver-kit
+    - **Sources:**
+      - https://www.ifixit.com/products/moray-driver-kit
+      - https://www.ifixit.com/products/mako-driver-kit-64-precision-bits
+  8.
+    - **Name:** Borrow from a makerspace or tool library (the already noted budget alternative), for one-off build tools only: tap and die, heat gun, snips
+    - **Kind:** used
+    - **Price usd:** 0 to a membership fee (not verified)
+    - **Spec comparison:** Possibly equal or better tools, but their spec and condition are unknown until inspected.
+    - **Worse in:** Not provable in advance. Calipers are needed again and again for goods-in checks (lead OD, board, waveguide, cable build-up), so borrowing calipers is worse in availability. Keep owned calipers.
+    - **Compatibility:** Hand and bench tools.
+    - **Risks:** Tool condition unknown: check the M5 thread on a nut and the heat-gun low setting with the thermocouple before use. Availability depends on location.
+    - **Seller url:** 
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md line 356 (budget note)
+  9.
+    - **Name:** KEEP: iFixit Mako 64-bit driver kit, buying from iFixit EU
+    - **Kind:** current_part
+    - **Price usd:** 39.95 US, or EUR 39.95 (about 46.3) from iFixit EU, which ships from Germany; the page does not say whether VAT is included
+    - **Spec comparison:** Reference part. Hex 0.7-5.0 including 2.0 mm, PH #000-#2, flat 1.0-4.0, T2-T5, TR6-TR25 and nut drivers 2.5-5.5; S2 steel, lifetime guarantee.
+    - **Worse in:** Not applicable.
+    - **Compatibility:** Covers every stack fastener drive listed.
+    - **Risks:** None noted. Buying from iFixit EU avoids the non-EU EUR 3 duty plus EUR 2 handling fee per item (operator note 35).
+    - **Seller url:** https://www.ifixit.com/en-eu/products/mako-driver-kit-64-precision-bits
+    - **Sources:**
+      - https://www.ifixit.com/products/mako-driver-kit-64-precision-bits
+      - https://www.ifixit.com/en-eu/products/mako-driver-kit-64-precision-bits
+- **Notes:** Verdict (angle B: generics, clones, DIY, used, proven by measurement):
+  1. The only saving that is proven not-worse is the spares de-duplication. It uses the same part numbers and no spec changes; the line drops from about $245-400 to about $210-345 (estimate). Apply it in v2. Also fix the old SMBJ14A in the spares list to SMBJ13A/SMBJ17A.
+  2. No generic tool candidate has independent measured evidence. That covers the Goobay 77001 caliper, the Goobay 77822/77823 heat guns and the EXACT M5 tap and die. Their EU prices and datasheet specs are verified and meet the stack floor on paper, but under this angle they are rejected as 'proven equal'. Each can become a conditional pick after the acceptance tests listed with it; those are self-measurements, not independent ones.
+  3. Keep the Mako: the Moray lacks the 2.0 mm hex bit.
+  4. Even an all-generic EU build-tool set does not undercut the model by much. Caliper EUR 18.99 + 77822 EUR 26.99 + tap EUR 4.20 + die EUR 5.40 + WISS M5R EUR 29.99 = EUR 85.57 (about $99), before a tap wrench, die stock and deburrer (unpriced). The model allows $80-140 for that subset.
+  
+  Gaps and corrections found:
+  - (a) The G3 nickel check of 0.15 +/- 0.01 mm needs a 0-25 mm micrometer, which no line includes; calipers cannot do it.
+  - (b) Calipers must have no Bluetooth or radio data link (QUIET mode).
+  - (c) The 245-400 total is my reconstruction from radio_lab.json and final_completeness.json; STACK gives no breakdown.
+  
+  Method limits:
+  - The shared WebSearch budget was already used up when I started (0 searches available to me), so I could not search forums or reviews for measured tests. Per the tool's instruction I did not work around this.
+  - Everything here comes from direct fetches of reichelt and iFixit pages and the Goobay datasheet and manual PDFs, read 18 Oct 2026.
+  - Prices include 19% DE VAT; other EU countries pay their own VAT via OSS. Shipping is extra. USD uses an approximate rate of EUR 1 = USD 1.16.
+  - No product, price or spec was invented. Items marked unverified come from STACK or the earlier research files.
+  - Downloaded PDFs are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/toolsB_dl/.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
