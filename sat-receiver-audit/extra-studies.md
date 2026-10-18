@@ -135,6 +135,182 @@
   - Not checked: Hubtronics (403), Amazon B0GX92F11S (captcha; price not seen), AliExpress capacity and store identity, eBay (403).
   - Exchange rates: EUR 1 = USD 1.1241 per STACK. The INR rate is my assumption.
 
+## searchA:radxa_ufs_3_1_128_gb_ra022_b10j0u2 (run `wf_071e1025-145`)
+
+- **Part:** Radxa UFS 3.1 Module 128 GB, RA022-B10J0U2 (boot and A/B root storage for the Radxa Dragon Q6A)
+- **Current price usd:** 65.90 (ALLNET China, in stock; checked in the shop's Shopify product JSON on 18 Oct 2026; excludes VAT and shipping. Landed in the EU with 19-21 % import VAT that is about $78.4-79.7 plus shipping and handling, a model figure.) The same SKU from TinyTronics NL is EUR 58.00 incl. VAT = $65.20, or EUR 47.93 ex VAT = $53.88. It is out of stock there with a 2-4 week lead time (checked 18 Oct 2026).
+- **Critical specs:**
+  - Mechanical and electrical fit on the Q6A eMMC/UFS combo connector: a 30 x 22 mm module with dual B2B connectors, GB042-30S-H10 (signal) and GB042-34S-H10 (mount only), pinout per Radxa brief rev 1.2. The Q6A supplies VCC_3V3, VCC_1V8 and VCC_1V2, plus UFS_DET and EMMC_DET detect pins. The module must be on Radxa's Q6A compatibility list, because Radxa warns that untested third-party modules can short the board.
+  - Interface: UFS 3.1 (JEDEC JESD220E), 2 lanes, HS-Gear4, with WriteBooster. Boot from UFS under SPI BIOS 6.0.260120 using the RadxaOS r2 output_4096 image (4 KiB logical sectors).
+  - Driver: runs on the held stock kernel linux-image-6.18.2-4-qcom (Ubuntu 24.04 noble arm64) without a self-built kernel. Samsung (wManufacturerID 0x01CE) needs no quirk. Kioxia (0x0198) needs the 6.18.2-4+lab1 quirk build or the no-suspend / rpm_lvl=0 mitigation (bench test B13).
+  - Capacity at least 128 GB (about 119 GiB) for the A/B layout: ESP 1 GiB, root A 22 GiB, root B 22 GiB, and /data about 74 GiB. /data holds about 46 GiB of recordings (30 GiB raw rolling cap) and the 20 GB NPU dataset quota.
+  - Measured on the Q6A by Radxa with dd: at least 1703 MB/s sequential read and at least 388 MB/s sequential write, inside the WriteBooster cache of about 4 GiB. Sustained write after the cache fills is unknown (expected about 250-300 MB/s, not measured). It must stay well above the worst no-Lime disk stream of 13.3 MB/s and the with-Lime decimated L/S-band and GNSS writes.
+  - Operating temperature: 0 to 70 C standard (an industrial -25 to +85 C version exists). The module sits pressed to a case boss at about 60 C, and its ufs thermal zone is logged.
+  - Wear and health: no TBW published by Radxa. Wear is monitored through life_time_estimation_a/b and wb_life_time_est in sysfs. Write protect, secure erase and power-off notification are supported.
+  - Supply and authenticity: genuine Radxa part from a Radxa-approved partner (Radxa sells it only through approved partners). Supply is guaranteed until at least Sep 2035.
+  - Reliability role: this is the device's only internal boot medium (the M.2 slot is taken by the kept LimeSDR Micro). The A/B rollback and the self-test design rule depend on it, so it cannot move to an optional or removable disk.
+- **Candidates:**
+  1.
+    - **Name:** Radxa UFS 3.1 Module 128 GB RA022-B10J0U2 from ALLNET China (current pick)
+    - **Kind:** current_part
+    - **Price usd:** 65.90 ex VAT, in stock (checked 18 Oct 2026). About $78.4-79.7 landed in the EU with 19-21 % import VAT, plus shipping (model).
+    - **Spec comparison:** Reference part: UFS 3.1, 2-lane HS-G4. On the Q6A, Radxa measured 1703 MB/s read and 388 MB/s write with the Samsung KLUDG4UHDC-B0E1 chip. Rated 0-70 C. Officially listed for the Q6A.
+    - **Worse in:** Nothing; this is the reference. Its only drawback is the highest EU landed price of the in-stock options.
+    - **Compatibility:** Official Q6A compatibility (Radxa UFS brief rev 1.2, section 7). Stock 6.18.2-4 kernel if the chip reads 0x01CE.
+    - **Risks:** Seller listings do not name the chip vendor. Read wManufacturerID and model on day 1; if it reads 0x0198 (Kioxia), apply bench test B13. EU import VAT and handling are added at delivery.
+    - **Seller url:** https://shop.allnetchina.cn/products/high-performance-ufs-3-1-module
+    - **Sources:**
+      - https://shop.allnetchina.cn/products/high-performance-ufs-3-1-module.js
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/ufs-emmc-com
+      - https://dl.radxa.com/accessories/ufs-module/rad-doc-0154_radxa_ufs_module_product_brief__revision_1.2_g69c4d5d.pdf
+  2.
+    - **Name:** Same SKU RA022-B10J0U2 from Arace Limited (Radxa-approved global distributor)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 49.00 ex VAT, SOLD OUT (Arace Shopify product JSON, 18 Oct 2026). Landed in the EU about $58.3-59.3 with 19-21 % VAT, plus unknown shipping (model).
+    - **Spec comparison:** Identical part number, so every spec is equal: UFS 3.1, 2-lane HS-G4, 1703/388 MB/s on the Q6A, 0-70 C, 128 GB.
+    - **Worse in:** No spec is worse. It is unavailable today, so it can only be used if restocked before the order.
+    - **Compatibility:** Same as the current part (official on the Q6A).
+    - **Risks:** Out of stock with no restock date. Ships from Hong Kong, so EU import VAT and handling apply. The chip vendor is not stated (same day-1 ID check). The stack's own notes say 'Arace sold out' for the board; recheck at checkout.
+    - **Seller url:** https://arace.tech/products/radxa-ufs-module
+    - **Sources:**
+      - https://arace.tech/products/radxa-ufs-module.js
+      - https://radxa.com/distributors/
+  3.
+    - **Name:** Same SKU RA022-B10J0U2 from TinyTronics B.V. (Radxa-approved EU distributor, NL)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 65.20 incl. 21 % NL VAT (EUR 58.00); 53.88 ex VAT (EUR 47.93). Out of stock, 2-4 weeks (product page, 18 Oct 2026).
+    - **Spec comparison:** Identical part number, so every spec is equal.
+    - **Worse in:** No spec is worse. Lead time is 2-4 weeks instead of in-stock, so the board boots from microSD until the module arrives (already planned in STACK.md).
+    - **Compatibility:** Same as the current part (official on the Q6A).
+    - **Risks:** Lead time could slip. An older cached search snippet showed EUR 60.00 in stock; the live page now shows EUR 58.00 out of stock, so recheck at checkout. This is the cheapest verified VAT-paid EU source, and it can share the TinyTronics order with the Q6A board and the Daly BMS.
+    - **Seller url:** https://www.tinytronics.nl/en/data-storage/modules/radxa-ufs-module-128gb
+    - **Sources:**
+      - https://www.tinytronics.nl/en/data-storage/modules/radxa-ufs-module-128gb
+      - https://radxa.com/distributors/
+  4.
+    - **Name:** Radxa UFS 3.1 Module 256 GB (Arace SKU RA022-B60J0U4; Allnet lists RA022-B10J0U4), Kioxia THGJFGT1E45BAILB as measured by Radxa
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 49.00 at Arace, SOLD OUT; 75.90 at ALLNET China, SOLD OUT; INR 7,316 incl. GST at Evelta, out of stock (all checked 18 Oct 2026).
+    - **Spec comparison:** Better than the current part in capacity (256 vs 128 GB), in measured read on the Q6A (1811 vs 1703 MB/s) and in measured write (557 vs 388 MB/s). Same interface and the same 0-70 C rating.
+    - **Worse in:** Driver compatibility is worse. The Kioxia chip (0x0198) shows resume and OCS errors on the held stock 6.18.2-4 kernel, so it needs the self-built 6.18.2-4+lab1 quirk kernel (one model-specific quirk entry), or no system suspend plus rpm_lvl=0. That adds a kernel to maintain, and STACK.md says to avoid this module. The Arace/Evelta SKU code (B60) differs from Allnet's (B10), so the chip in current stock is unverified.
+    - **Compatibility:** Officially listed for the Q6A, but not drop-in with the stack's held kernel. It fails the 'not worse in compatibility' test.
+    - **Risks:** Sold out everywhere checked. There is a known quirk risk, and the SKU revision is unclear.
+    - **Seller url:** https://arace.tech/products/radxa-ufs-module
+    - **Sources:**
+      - https://arace.tech/products/radxa-ufs-module.js
+      - https://shop.allnetchina.cn/products/high-performance-ufs-3-1-module.js
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/ufs-emmc-com
+      - https://github.com/radxa/kernel/commit/559f4f921a01e5358602153364c618fe2a3e431e
+  5.
+    - **Name:** Radxa UFS 3.1 Module 64 GB RA022-B10J0U1
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 19.00 at ALLNET China and at Arace; SOLD OUT at both (18 Oct 2026).
+    - **Spec comparison:** Same interface (UFS 3.1, 2-lane HS-G4). Half the capacity. No Q6A speed measurement, and the chip vendor is unknown.
+    - **Worse in:** Capacity: 64 GB (about 59.6 GiB) cannot hold ESP 1 + 2 x 22 GiB roots plus the 74 GiB /data, which includes the 46 GiB recording area and the 20 GB NPU quota. Speed on the Q6A is unmeasured.
+    - **Compatibility:** Official Radxa module, but it does not fit the stack's storage layout.
+    - **Risks:** Sold out. Rejected on capacity.
+    - **Seller url:** https://shop.allnetchina.cn/products/high-performance-ufs-3-1-module
+    - **Sources:**
+      - https://shop.allnetchina.cn/products/high-performance-ufs-3-1-module.js
+      - https://arace.tech/products/radxa-ufs-module.js
+  6.
+    - **Name:** Radxa eMMC Module Blue Edition 128 GB (VA001-128GB)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 49.99 at Arace, SOLD OUT (18 Oct 2026). The 64 GB is $35.00, also sold out.
+    - **Spec comparison:** eMMC 5.1 (HS400 bus at most about 400 MB/s) against UFS 3.1 at 1703 MB/s read and 388 MB/s write measured on the Q6A.
+    - **Worse in:** Sequential and random read and write are several times lower. It is not cheaper than the Arace UFS price ($49.00). Fit on the Q6A combo connector is unverified, since Radxa's Q6A docs name no tested eMMC module.
+    - **Compatibility:** Not proven for the Q6A.
+    - **Risks:** Rejected: worse in performance, not cheaper, and compatibility unproven.
+    - **Seller url:** https://arace.tech/products/emmc-module
+    - **Sources:**
+      - https://arace.tech/products/emmc-module.js
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/ufs-emmc-com
+  7.
+    - **Name:** Same SKU RA022-B10J0U2 from Hubtronics (Radxa-approved, India)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** UNVERIFIED: about 31-33 (INR 2,815 incl. 18 % GST, from a search snippet only, at an assumed 85-90 INR/USD). The page returned HTTP 403, and the snippet showed 'Stock: 0'.
+    - **Spec comparison:** Identical part number, so every spec is equal.
+    - **Worse in:** Not available. The price is probably stale (2025, before the NAND shortage). It is an Indian domestic seller with no confirmed shipping to the EU.
+    - **Compatibility:** Same as the current part.
+    - **Risks:** Price, stock and international shipping are all unverified. Not usable for an EU buyer unless they confirm shipping in writing.
+    - **Seller url:** https://hubtronics.in/radxa-128gb-ufs-module
+    - **Sources:**
+      - https://hubtronics.in/radxa-128gb-ufs-module
+      - https://radxa.com/distributors/
+  8.
+    - **Name:** Same SKU RA022-B10J0U2 from Evelta (Radxa-approved, India)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** About 73-78 (INR 6,608 incl. GST at an assumed 85-90 INR/USD); out of stock (page data, 18 Oct 2026).
+    - **Spec comparison:** Identical part number, so every spec is equal.
+    - **Worse in:** Not cheaper and not in stock.
+    - **Compatibility:** Same as the current part.
+    - **Risks:** Rejected: more expensive and unavailable.
+    - **Seller url:** https://evelta.com/ufs-module-detachable-ufs-redefined-embedded-storage-module-radxa/
+    - **Sources:**
+      - https://evelta.com/ufs-module-detachable-ufs-redefined-embedded-storage-module-radxa/
+  9.
+    - **Name:** Same SKU RA022-B10J0U2 from Ameridroid (US)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 89.95, in stock (product page, 18 Oct 2026).
+    - **Spec comparison:** Identical part number, so every spec is equal.
+    - **Worse in:** Not cheaper ($24.05 more than Allnet), and shipping to the EU is not confirmed.
+    - **Compatibility:** Same as the current part.
+    - **Risks:** Rejected on price.
+    - **Seller url:** https://ameridroid.com/products/high-performance-ufs-3-1-module-128gb
+    - **Sources:**
+      - https://ameridroid.com/products/high-performance-ufs-3-1-module-128gb
+  10.
+    - **Name:** Amazon listings: Radxa store ASIN B0GX92F11S (unavailable) and third-party 'MiiElAOD/Miistore' ASIN B0FCM5KGX8
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** B0GX92F11S 'Currently unavailable'; B0FCM5KGX8 $99.00 (Amazon.com, 18 Oct 2026).
+    - **Spec comparison:** Claimed to be the same Radxa 128 GB module. The B0GX92F11S listing quotes '1200 MB/s read', a marketing number.
+    - **Worse in:** Not cheaper, or not available. The third-party reseller adds a risk to provenance.
+    - **Compatibility:** Presumably the same part; provenance not verified for B0FCM5KGX8.
+    - **Risks:** Rejected: price and provenance.
+    - **Seller url:** https://www.amazon.com/Module-Welding-Support-Multiple-Boards/dp/B0FCM5KGX8
+    - **Sources:**
+      - https://us.amazon.com/Radxa-Module-Pluggable-Storage-Compatible/dp/B0GX92F11S
+      - https://www.amazon.com/Module-Welding-Support-Multiple-Boards/dp/B0FCM5KGX8
+  11.
+    - **Name:** FriendlyElec UFS 2.0 Flash Module (for NanoPi M5), the only other-brand plug-in UFS module found
+    - **Kind:** other_brand
+    - **Price usd:** 94.26 (Amazon.com 'consider these items' panel, 18 Oct 2026; not verified on a FriendlyElec page).
+    - **Spec comparison:** UFS 2.0 (HS-G3, about half the UFS 3.1 link rate) against UFS 3.1 HS-G4.
+    - **Worse in:** Interface speed, connector and pinout. It is not proven to fit the Radxa GB042 B2B combo connector or its rails. It is also more expensive.
+    - **Compatibility:** Not compatible or not proven for the Q6A. Radxa warns that third-party modules can short the board.
+    - **Risks:** Rejected.
+    - **Seller url:** https://us.amazon.com/Radxa-Module-Pluggable-Storage-Compatible/dp/B0GX92F11S
+    - **Sources:**
+      - https://us.amazon.com/Radxa-Module-Pluggable-Storage-Compatible/dp/B0GX92F11S
+- **Notes:** VERDICT: keep the Radxa RA022-B10J0U2. No other SKU or other-brand module is cheaper and not worse. The only no-trade-off saving is buying the identical SKU from a cheaper Radxa-approved seller.
+  
+  Order of preference:
+  1. Arace at $49.00 ex VAT, about $58-59 landed in the EU, saving about $17 against Allnet ex VAT. Sold out today; use it only if restocked when ordering.
+  2. TinyTronics NL at EUR 58.00 incl. VAT ($65.20; ex VAT EUR 47.93 = $53.88). This is the cheapest verified VAT-paid EU source and saves about $13-14.5 against Allnet landed with EU VAT. Out of stock, 2-4 weeks; it fits the planned single TinyTronics order (Q6A + UFS + Daly). Until it arrives, boot from microSD, as STACK.md already plans.
+  3. ALLNET China at $65.90 is the only in-stock source. Use it if the UFS is needed before the TinyTronics lead time.
+  
+  Rejected, with reasons:
+  - 256 GB Kioxia module: better speed and capacity, and only $49 at Arace (sold out), but it needs a quirk kernel on the held 6.18.2-4. That is a compatibility regression and it is sold out.
+  - 64 GB module: capacity too small for the A/B layout.
+  - eMMC Blue Edition: slower, not cheaper, and its Q6A fit is unproven.
+  - India sellers: unavailable, or no EU shipping.
+  - Ameridroid and Amazon: more expensive.
+  - FriendlyElec UFS 2.0: slower, and its connector is unproven on the Q6A.
+  
+  Outside this part, but checked:
+  - An NVMe drive on the M.2 slot is impossible because the LimeSDR Micro is kept (user decision, 18 Oct).
+  - A USB SSD or microSD as root would violate the rule that A/B rollback cannot depend on an optional disk. It is also slower or near the USB-3 RFI noted at GNSS and L-band.
+  
+  Third-party generic 'for Radxa UFS' modules on AliExpress (listings citing KLUDG4UHDC-B0E1) could not be opened (captcha). They belong to the generic/clone angle and are not Radxa-tested; Radxa's Q6A docs say "Do not use untested third-party UFS or eMMC modules ... may short the SBC". Not recommended.
+  
+  The industrial -25 to +85 C version is in Radxa's brief, but no retail SKU or price was found. It would be better on cold rating, not cheaper.
+  
+  Day-1 action applies to every source, because sellers do not name the chip vendor: read wManufacturerID and model. 0x01CE (Samsung) means stay on stock 6.18.2-4. 0x0198 (Kioxia) means run bench test B13.
+  
+  Unverified items: the Hubtronics price (search snippet only), the Radxa AliExpress store price (captcha), and the INR-to-USD conversions (assumed 85-90 INR/USD). Exchange rate used: 1 EUR = 1.1241 USD (STACK.md).
+  
+  Local files: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ufs_dl/allnet.json and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ufs_dl/arace_radxa-ufs-module.json are the store JSON snapshots used for verification.
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
