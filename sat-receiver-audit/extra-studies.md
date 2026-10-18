@@ -24784,3 +24784,208 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - Live eBay and AliExpress V4L prices.
   - Any RTL-SDR report on the QCS6490.
 
+## community:hf_receiver (run `wf_feb0e95a-cfc`)
+
+- **Subsystem:** hf_receiver (Airspy HF+ Discovery on Q6A arm64: driver stack, firmware, USB/EMI/power, VHF backup role, HF/LF decoders, HF wire + 9:1 + Boni-Whip); stage 2, community experience
+- **Findings:**
+  1.
+    - **Claim in stack:** Part choice and price: HF+ Discovery $169 at ITEAD; only dealers on the airspy.com list (2.2, #92, C17).
+    - **Finding:** Re-checked today. ITEAD still lists USD 169.00, EU/US warehouses at 3-6 business days, China at 15-35 days, no stock count, and 'High speed USB 2.0 controller' as the host requirement. The user has now set the region to Europe. ITEAD's page does not say whether the EU-warehouse price includes VAT. WiMo's EUR 232 incl. VAT is about $261 at STACK's EUR/USD rate (model).
+    - **Verdict:** confirmed
+    - **Action:** Keep ITEAD as the primary source. At checkout, check whether EU VAT and duty are included. If they are not, the landed price is about $201-211 at 19-25% VAT (model), which is still below WiMo.
+    - **Impact:** BOM line stays $169. The EU landed cost may be $201-211 (model).
+    - **Sources:**
+      - https://itead.cc/product/airspy-hf-discovery/
+      - https://www.wimo.com/en/airspy-discovery
+  2.
+    - **Claim in stack:** Stage 1: check firmware on arrival. The minimum is R4.0.5 (hub buffering); flash from a Windows PC that still has WMIC.
+    - **Finding:** Community reports make this stronger. The firmware ITEAD shows (R2.0.0, 2019-05-02) is the one that caused 'readStream failed: TIMEOUT, disabling' after about 1.5 h on a Raspberry Pi with SoapyAirspyHF; R2.2.0 fixed it (SoapyAirspyHF #8). The changelog shows R2.9.0 fixed calibration save/restore, R4.0.5 adjusted buffering for hubs, and R4.0.7 fixed the initialisation of the 384k and 192k Low-IF rates. f4exb (SDRangel #928) found that R3.0.7 gave correct rates only at 912 and 456 kS/s. R5.0.1 (2024-12-11) is still the latest. The flasher README lists 'Windows 10 or Windows 7' as the prerequisite. FLASH.bat looks up VID_03EB&PID_6124 with wmic. Microsoft confirms that WMIC was removed from Windows 11 24H2/25H2 in the August 2026 preview update and from 26H1 in the September 2026 preview update, that it is no longer a Feature on Demand, and that wmic_dlc.zip is a temporary package. A possible Linux route has parts in noble: airspyhf_calibrate (in the noble 'airspyhf' package) reads and writes the ppb value, and bossa-cli 1.9.1 is in universe. But libairspyhf has no reboot-to-bootloader call, so on Linux SAM-BA mode needs the case opened and the erase pins shorted, which Airspy documents only for recovering R1.0. That route is untested.
+    - **Verdict:** new_risk
+    - **Action:** Raise the minimum firmware to R4.0.7 (correct Low-IF rates), with R5.0.1 as the target. Flash on Windows 10, or on Windows 11 with wmic_dlc installed. Save the ppb value with hfplus_ppb.exe or with 'airspyhf_calibrate' on Linux before flashing. Do not use the erase-pin route on Linux except as a last resort.
+    - **Impact:** Avoids a known stall after about 1.5 h, broken 192k/384k rates and loss of the calibration value. No cost.
+    - **Sources:**
+      - https://github.com/pothosware/SoapyAirspyHF/issues/8
+      - https://github.com/f4exb/sdrangel/issues/928
+      - https://airspy.com/downloads/hfplus_changelog.txt
+      - https://airspy.com/downloads/airspy-hf-flash-2024-12-11_5.0.1.zip
+      - https://support.microsoft.com/en-us/topic/windows-management-instrumentation-command-line-wmic-removal-from-windows-e9e83c7f-4992-477f-ba1d-96f694b8665d
+      - https://packages.ubuntu.com/noble/bossa-cli
+      - https://sources.debian.org/src/airspyhf/1.6.8-4/debian/control
+  3.
+    - **Claim in stack:** Stage 1: keep noble libairspyhf 1.6.8-4build1. If needed, build master 1.8.1 as a +lab deb pinned at 24fe8ff; SOVERSION stays 0.
+    - **Finding:** The two are not drop-in compatible. Debian's 'bump-soversion' patch changes SOVERSION 0 to 1, so noble ships libairspyhf.so.1 (package libairspyhf1), while an upstream build produces .so.0 / .so.1.8.1. In SDR++ #1805 (Aug 2026), a source-built 1.8.1 broke the prebuilt aarch64 deb on Ubuntu 26.04 and Bookworm: 'libairspyhf.so.1: cannot open shared object file'. A symlink did not help, and the maintainer said to use the distro library. Master also no longer exports airspyhf_flash_calibration; it is now a #define for airspyhf_flash_configuration. That keeps source compatibility but breaks binaries built against 1.6.8 that call it, even though the soname is unchanged. The public structs are unchanged. Upstream refused to tag releases ('No.', issue #62, 7 Jan 2026), and 24fe8ff (22 Jul 2026) is still the head of master. Of the consumer apps, SDRangel, SDR++, SoapyAirspyHF, SatDump and AIS-catcher do not call flash_calibration (I grepped their sources).
+    - **Verdict:** corrected
+    - **Action:** Keep noble 1.6.8 as the default. If 1.8.1 is ever needed, build it from the Debian packaging, keeping bump-soversion (soname 1, package libairspyhf1) and the udev rule. Rebuild the airspyhf tools from the same source and SoapyAirspyHF at 0.2.1 (see the next finding). Labrx must call airspyhf_flash_configuration, not airspyhf_flash_calibration. Never install an upstream 'make install' next to the deb.
+    - **Impact:** Prevents SDR++, SDRangel and Soapy breaking at load time after a library upgrade.
+    - **Sources:**
+      - https://sources.debian.org/src/airspyhf/1.6.8-4/debian/patches/
+      - https://raw.githubusercontent.com/airspy/airspyhf/master/libairspyhf/src/CMakeLists.txt
+      - https://raw.githubusercontent.com/airspy/airspyhf/master/libairspyhf/src/airspyhf.h
+      - https://raw.githubusercontent.com/airspy/airspyhf/1.6.8/libairspyhf/src/airspyhf.h
+      - https://github.com/AlexandreRouma/SDRPlusPlus/issues/1805
+      - https://github.com/airspy/airspyhf/issues/62
+      - https://github.com/airspy/airspyhf/commits/master
+      - https://github.com/airspy/airspyhf/commit/0130450
+  4.
+    - **Claim in stack:** Build SoapyAirspyHF from source on noble (#31). OpenWebRX+ reaches the HF+ only through it.
+    - **Finding:** SoapyAirspyHF 0.2.1 was tagged on 2026-10-10 ('Minor fixes, Updated CMake builds'). It contains PR #25 (a2fd6cf, July 2023), which replaced a nested version check with check_function_exists(airspyhf_set_hf_att). Debian 0.2.0-1.1 (sid/forky) and Ubuntu 26.04 0.2.0-1 still use '#if MAJOR>=1 / MINOR>=1 / REVISION>=2'. That check passes for 1.6.8 but fails for 1.7.1 and 1.8.1 (revision 1), so gain, attenuator and LNA control silently drop out (issue #24: 'Full gain range: [0, 0] dB'). Other community reports: changing AGC or gain stalls the stream, and some applications cannot cope (#9, open since 2019). 'readStream failed: OVERFLOW, disabling' on Raspbian went away after a larger SAMPLES_TO_TRANSFER (#11). In OpenWebRX, manual gain only takes effect with AGC off, and rf_gain 'auto' turns AGC on (jketterl #53).
+    - **Verdict:** corrected
+    - **Action:** Build SoapyAirspyHF from tag soapy-airspyhf-0.2.1 (0b3daf0) as a +lab deb, not 0.2.0. Add a CI check that SoapySDRUtil --probe=driver=airspyhf reports a non-zero gain range. Fix gain and AGC per profile and do not change them during a recording. If a change is unavoidable, labrx writes a SigMF annotation at that point.
+    - **Impact:** Gain control that works with either library version; no stream stalls during recordings.
+    - **Sources:**
+      - https://github.com/pothosware/SoapyAirspyHF/tags
+      - https://github.com/pothosware/SoapyAirspyHF/issues/24
+      - https://github.com/pothosware/SoapyAirspyHF/pull/25
+      - https://raw.githubusercontent.com/pothosware/SoapyAirspyHF/soapy-airspyhf-0.2.1/CMakeLists.txt
+      - https://sources.debian.org/src/soapyairspyhf/0.2.0-1.1/Settings.cpp
+      - https://github.com/pothosware/SoapyAirspyHF/issues/9
+      - https://github.com/pothosware/SoapyAirspyHF/issues/11
+      - https://github.com/jketterl/openwebrx/issues/53
+  5.
+    - **Claim in stack:** Stage 1: store the ppb value in HF+ flash once; libairspyhf then applies it automatically in Soapy, SDR++, SDRangel, OpenWebRX+, AIS-catcher and SatDump.
+    - **Finding:** This is wrong for SDRangel. SDRangel 7.27.2 airspyhfinput.cpp calls airspyhf_set_calibration(m_dev, m_LOppmTenths*100) in applySettings whenever LOppmTenths changes or force is set, which includes device start. That overwrites the value libairspyhf read from flash, so SDRangel's 'LO ppm' setting (default 0, steps of 0.1 ppm = 100 ppb) replaces it. SDR++, SoapyAirspyHF (and so OpenWebRX+), SatDump and AIS-catcher never call set_calibration, so the stored flash value does apply in those. The library code confirms open reads the flash value (checked against CALIBRATION_MAGIC) and set_freq applies it.
+    - **Verdict:** corrected
+    - **Action:** Keep the flash-stored ppb. In labd, also write LOppmTenths = round(ppb/100) into every sdrangelsrv AirspyHF device preset through the REST API, and check it after each preset load. Labrx does not add its own correction. Add a test: the same GNSS-locked carrier must read within 1 Hz in SDR++, SDRangel and labrx.
+    - **Impact:** Without this, every SDRangel decoder (Radio Clock, NAVTEX, FT8, AIS) runs uncorrected. 0.1 ppm steps leave up to 0.5 Hz at 10 MHz and 8 Hz at 162 MHz (model).
+    - **Sources:**
+      - https://raw.githubusercontent.com/f4exb/sdrangel/v7.27.2/plugins/samplesource/airspyhf/airspyhfinput.cpp
+      - https://raw.githubusercontent.com/f4exb/sdrangel/v7.27.2/plugins/samplesource/airspyhf/readme.md
+      - https://raw.githubusercontent.com/airspy/airspyhf/1.6.8/libairspyhf/src/airspyhf.c
+      - https://raw.githubusercontent.com/AlexandreRouma/SDRPlusPlus/master/source_modules/airspyhf_source/src/main.cpp
+      - https://raw.githubusercontent.com/SatDump/SatDump/master/plugins/sdr_sources/airspyhf_sdr_support/airspyhf_sdr.cpp
+      - https://raw.githubusercontent.com/jvde-github/AIS-catcher/main/Source/Device/AIRSPYHF.cpp
+  6.
+    - **Claim in stack:** USB: HF+ on CH334F H4 behind FE1.1s; 30-minute no-loss test (C5).
+    - **Finding:** The noble udev rule is: 03eb:800c, GROUP="plugdev", TAG+="uaccess". uaccess covers only the logged-in seat user. Headless services need plugdev; otherwise you get 'only recognized as root' (airspyhf #50 on Pi 3 aarch64, SDR++ #1720). Earlier Linux reports on kernel 5.4 with some xHCI/libusb 1.0.23 combinations: the device opens but rx_callback is never called, or xhci logs 'EP not empty, refuse reset' / 'Can't enqueue URB while manually clearing toggle' (SDRangel #600 and #1111). Kernel 5.8.14 fixed it, or forcing the port to EHCI. libairspyhf calls libusb_clear_halt at start and stop. The HF+ uses bulk transfers, so the Q6A's limit on periodic (isochronous) bandwidth per USB 2.0 bus (Radxa forum, Aug 2026, UVC cameras) does not apply to it. Model: the 1.6.8 ring is 8 x 2048 samples, which is 21.3 ms at 768 ksps and 18.0 ms at 912 ksps; master doubles it (42.7 ms). I found no public report of any Airspy on the Dragon Q6A or QCS6490.
+    - **Verdict:** new_risk
+    - **Action:** Put the labrx and sdrangel service users in plugdev. Add a udev rule power/control=on for 03eb:800c (precaution, no reported failure). Extend the 30-minute soak test with 50 start/stop cycles, and fail it on any xhci 'refuse reset' or 'clear toggle' message in dmesg or any callback stall. If drops occur at 912k, use 768k or a +lab 1.6.8 with SAMPLES_TO_TRANSFER 4096 (soname unchanged). Run the HF+ receive thread at nice -5 or better, as planned.
+    - **Impact:** Turns known Linux failure modes into pass/fail tests. No cost.
+    - **Sources:**
+      - https://sources.debian.org/src/airspyhf/1.6.8-4/debian/libairspyhf1.udev
+      - https://github.com/airspy/airspyhf/issues/50
+      - https://github.com/AlexandreRouma/SDRPlusPlus/issues/1720
+      - https://github.com/f4exb/sdrangel/issues/600
+      - https://github.com/f4exb/sdrangel/issues/1111
+      - https://github.com/airspy/airspyhf/issues/42
+      - https://forum.radxa.com/t/31352
+      - https://raw.githubusercontent.com/airspy/airspyhf/1.6.8/libairspyhf/src/airspyhf.c
+  7.
+    - **Claim in stack:** EMI: tin shield + LC + Mix-31 on VBUS, placed farthest from the bucks (2.3).
+    - **Finding:** Airspy's author is quoted: shielding comes from 'a small anechoic chamber made from the PCB itself', 'the metal can, and some EMI absorbing material', and a metal case is not needed for PCB noise rejection but 'can help with the heat dissipation in systems running 24/7/365'. A user comment on the portable HF+ + Pi build says the HF+ 'injects all EMI from your host device into the receive path'. The builder of that setup reports noise from the Pi's USB bus and needing a low-drop micro-USB cable. The community evidence therefore points at the USB cable and ground path, not radiation into the board.
+    - **Verdict:** confirmed
+    - **Action:** Keep the shield, but rank the fixes as USB common mode first: LC on VBUS, a ferrite on the micro-USB lead, a short shielded lead with its shell bonded to the mid plate. Run the A/B test with and without the shield as planned.
+    - **Impact:** None; clearer priorities for the noise test.
+    - **Sources:**
+      - https://www.rtl-sdr.com/a-new-aftermarket-airspy-hf-discovery-aluminum-enclosure-for-sale/
+      - https://www.rtl-sdr.com/going-portable-with-the-airspy-hf-rapsberry-pi-and-7-inch-touch-lcd/
+  8.
+    - **Claim in stack:** HF+ current not published; 0.3 A placeholder; bring up at ≥0.75 A (stage 1).
+    - **Finding:** Still no measured Discovery figure. AB9IL (June 2025) writes 'the Airspy HF+ itself typically draws about 170 mA at 5V (≈0.85W)'. That is the original HF+, not the Discovery, and no method is given. RigPix and RigReference leave the field blank. The rtl-sdr.com page about icholakov's USB-meter video gives no numbers in text. Firmware R1.6.1 added 'a low current standby mode when the device is not streaming', so idle and streaming currents differ.
+    - **Verdict:** unverified
+    - **Action:** Keep the ≥0.75 A bring-up limit. Measure idle (open, not streaming) and streaming current at 768 and 912 ksps, cold and hot. Set TPS2553 to 1.5-2x the streaming figure. Mode E runtimes stay provisional.
+    - **Impact:** Runtime of mode E (7.1 h / 6.1 h) is unchanged but still unconfirmed.
+    - **Sources:**
+      - https://www.ab9il.net/software-defined-radio/2025-06-22_12-15-50.html
+      - https://rigpix.com/miscrx/airspy_hfplusdiscovery.htm
+      - https://www.rtl-sdr.com/measuring-the-usb-power-consumption-of-various-software-defined-radios/
+      - https://airspy.com/downloads/hfplus_changelog.txt
+  9.
+    - **Claim in stack:** HF+ VHF backup: AIS, FM-RDS and DAB (summary line 3, 4.2, 5.3).
+    - **Finding:** The stage-1 correction stands, and the user has now set DAB+ = on for Europe. OpenWebRX+ itself defines DAB with ifRate=2048000. welle.io states that the HF+ is unsupported because of its limited bandwidth. The HF+ maximum is 912 ksps. AIS-catcher's HF+ driver picks the nearest rate from airspyhf_get_samplerates and always turns HF AGC on. The SDRangel readme says AGC, LNA and attenuator 'appear to work only on HF band'.
+    - **Verdict:** confirmed
+    - **Action:** Remove DAB from every HF+ row. DAB+ (now required) runs on the spare V4L at 2.048 Msps or on the Lime. The HF+ VHF role is AIS (default), FM-RDS, NFM and airband/VOR. Do not expect VHF gain controls to change anything.
+    - **Impact:** No cost. DAB+ needs a free V4L or Lime slot in the arbiter.
+    - **Sources:**
+      - https://raw.githubusercontent.com/luarvique/openwebrx/master/owrx/modes.py
+      - https://github.com/AlbrechtL/welle.io
+      - https://raw.githubusercontent.com/jvde-github/AIS-catcher/main/Source/Device/AIRSPYHF.cpp
+      - https://raw.githubusercontent.com/f4exb/sdrangel/v7.27.2/plugins/samplesource/airspyhf/readme.md
+  10.
+    - **Claim in stack:** DRM via SDRangel (4.2, #3) and HF WEFAX via 'sdrangelsrv WEFAX' (509), with SDRangel pinned at 7.27.2 (C22).
+    - **Finding:** Neither decoder is in 7.27.2. The demoddrm readme returns 404 at tags v7.24.0 through v7.27.2 and exists only on master. It was first added in 2d7bef0 ('Add DRM demodulator', srcejon, 14 Oct 2026), with Qt5 and white-space fixes on 14-15 Oct. demodwefax was first added in 606ab8f on 1 Oct 2026, also master only. Both are four to seventeen days old and I found no field reports. NAVTEX, RTTY, FT8, DSC, BFM, DAB, AIS and Radio Clock are in 7.27.2. Fallback in a release: OpenWebRX+ 1.2.126 has 'drm' (needs the dream binary) and 'fax' modes. The luarvique noble repo has dream 2.2-20251114 for arm64 (headless; depends on libfdk-aac2, libhamlib4t64 as a library, libpulse0). The SDRangel DRM plugin links an in-tree modemdrm and has a server build (demoddrmsrv).
+    - **Verdict:** corrected
+    - **Action:** For v1, run DRM and WEFAX in OpenWebRX+ (dream from the luarvique repo and the 'fax' mode), behind the WEFAX civil-only allow-list. Move SDRangel DRM and WEFAX to a later step: either the next SDRangel release, or a master build pinned at or after 12b08f5 that passes the HF golden-set replay. Update rows 4.2, 509 and 510 and the P20 instructions.
+    - **Impact:** Fixes two capability claims that could not work on the pinned build. No hardware cost. libfdk-aac2 comes from Ubuntu multiverse.
+    - **Sources:**
+      - https://github.com/f4exb/sdrangel/commits/master/plugins/channelrx/demoddrm
+      - https://github.com/f4exb/sdrangel/commits/master/plugins/channelrx/demodwefax
+      - https://github.com/f4exb/sdrangel/blob/master/plugins/channelrx/demoddrm/readme.md
+      - https://raw.githubusercontent.com/f4exb/sdrangel/master/plugins/channelrx/demoddrm/CMakeLists.txt
+      - https://raw.githubusercontent.com/luarvique/openwebrx/master/owrx/feature.py
+      - https://luarvique.github.io/ppa/noble/Packages
+  11.
+    - **Claim in stack:** Stage 1: Radio Clock supports JJY; RBU kept out by policy; PCSK-225 optional.
+    - **Finding:** In the pinned 7.27.2, the Radio Clock readme lists MSF 60, DCF77 77.5, TDF 162 (PM), WWVB 60 and JJY 40 kHz (OOK). RBU and PCSK-225 appear only on master. The user's European priority (DCF77, MSF, TDF first) is fully covered by 7.27.2. JJY 60 kHz is still not listed and stays unverified.
+    - **Verdict:** corrected
+    - **Action:** For 7.27.2, the allow-list is DCF77, MSF, TDF, WWVB and JJY 40. PCSK-225 is not available until SDRangel is upgraded. RBU stays blocked in labd by frequency (66.666 kHz) when the upgrade happens.
+    - **Impact:** None for Europe.
+    - **Sources:**
+      - https://raw.githubusercontent.com/f4exb/sdrangel/v7.27.2/plugins/channelrx/radioclock/readme.md
+      - https://github.com/f4exb/sdrangel/blob/master/plugins/channelrx/radioclock/readme.md
+  12.
+    - **Claim in stack:** No TX-capable software on the device (P2, C16, section 6 forbidden list).
+    - **Finding:** Two gaps the P2 rule implies. (1) OpenWebRX+'s debian/control Recommends wsjtx, js8call, libhamlib-utils, direwolf, codecserver, multimon-ng, dumphfdl and others, so any install without --no-install-recommends brings in TX-capable or banned packages (STACK already specifies --no-install-recommends). (2) Dream: the SourceForge page shows a 'Transmitter Main Window' screenshot. I have not checked whether the headless 'dream' binary keeps a transmitter mode.
+    - **Verdict:** new_risk
+    - **Action:** Keep --no-install-recommends and extend the CI and self-check: dpkg must not show wsjtx, js8call, libhamlib-utils or direwolf. Before allowing dream, run 'dream --help' on the build host. If it has a transmit option, ship it only behind a wrapper that passes receive arguments, or build Dream from source with the transmitter disabled. Otherwise use only SDRangel DRM once it is released.
+    - **Impact:** Policy only; prevents a silent breach of the TX rule.
+    - **Sources:**
+      - https://raw.githubusercontent.com/luarvique/openwebrx/master/debian/control
+      - https://sourceforge.net/projects/drm/
+      - https://luarvique.github.io/ppa/noble/Packages
+  13.
+    - **Claim in stack:** Stage 1: do not install noble wsjtx (it hard-depends on libhamlib-utils); build jt9/wsprd decode-only.
+    - **Finding:** Re-checked: noble wsjtx 2.7.0~rc3+repack-1build2 lists 'libhamlib-utils' as a dependency. The WSJT-X CMakeLists shows the decode-only build is practical. wsprd links only FFTW3 and libm. jt9 links wsjt_fort, wsjt_cxx (Boost.Log) and fort_qt (Qt5::Core, shared memory). Hamlib is linked only into wsjt_qt (GUI). find_package(Hamlib REQUIRED) means libhamlib-dev is needed on the build host only. OpenWebRX+ enables FT8/WSPR when it can run jt9 and wsprd. FST4 and Q65 also need 'wsjtx_app_version --version' to print 'WSJT-X 2.3/2.4+', and that tool links wsjt_qt (the Hamlib library and Qt Widgets, no rigctl).
+    - **Verdict:** confirmed
+    - **Action:** Build a 'wsjtx-decoders+lab' deb with 'make jt9 wsprd' (runtime: libgfortran5, libfftw3-single3, libgomp1, libboost-log, libqt5core5t64). For FST4/Q65, add a one-line wsjtx_app_version stub that prints 'WSJT-X 2.7.0'. The CI check stays: rigctl and rigctld must not be present.
+    - **Impact:** Build effort only. Keeps the P2 rule.
+    - **Sources:**
+      - https://packages.ubuntu.com/noble/wsjtx
+      - https://sourceforge.net/p/wsjt/wsjtx/ci/master/tree/CMakeLists.txt
+      - https://raw.githubusercontent.com/luarvique/openwebrx/master/owrx/feature.py
+  14.
+    - **Claim in stack:** Boni-Whip fed at 12.5 V ±0.25 V, current 0.05-0.1 A 'not published' (C17, BONI12V5 row); stage 1 proposed about 13.8 V.
+    - **Finding:** Bonito's own shop now publishes 'Stromverbrauch Typ: 65mAh' (read as 65 mA typical) and 'Spannungsversorgung 12V-15V (2,1mm Hohlstecker)'. The supplied Einspeiseweiche (bias tee) takes the supply on a 5.5/2.1 mm barrel. The power supply and coax are not included. The antenna connector is BNC. The page also gives 20 kHz-300 MHz, IP3 > +30 dBm, IP2 > +50 dBm and about 17 cm. Model at 65 mA, using stage 1's assumed resistances (PTC 1-4 Ω, choke 1-10 Ω, 5-10 m of coax at 0.35-1.0 Ω/m loop): a 12.5 V setpoint gives 10.9-12.3 V at the antenna, so usually below the 12 V minimum. 13.8 V gives 12.2-13.6 V.
+    - **Verdict:** corrected
+    - **Action:** Set BONI to 13.8 V ±0.2 V. Set the PTC hold to about 0.15-0.2 A, sized for 65 mA typical. Accept only if the antenna end measures ≥12.3 V. Record 65 mA typical as the vendor figure until it is measured. Mount Bonito's Einspeiseweiche inside the shield and feed its barrel input from BONI. Add a BNC-SMA lead to the BOM.
+    - **Impact:** Meets the rated supply at the antenna. The energy model can use about 0.9 W at 13.8 V (model).
+    - **Sources:**
+      - https://hamradioshop.net/Boni-Whip-Aktivantenne/0125.2
+      - https://bonito.net/en/boni-whip-2/
+  15.
+    - **Claim in stack:** Boni-Whip source: WiMo EUR 159 incl. VAT ($178.73), available from 20.11.2026; Moonraker $123.95 unverified.
+    - **Finding:** The manufacturer's shop has it in stock: EUR 149.00 incl. VAT, 'Sofort verfügbar, Lieferzeit: 1-5 Tage', which is about $167.49 at STACK's EUR/USD rate (model). Today WiMo still shows EUR 159.00 and 'Available from 20.11.2026'. The product link on bonito.net (/antennas/e-field-active-antennas/310/...) returns 404; the live listing is /Boni-Whip-Aktivantenne/0125.2. The Bonito manual PDF link also returns 404.
+    - **Verdict:** new_option
+    - **Action:** For the European build, buy directly from Bonito (hamradioshop.net), which removes the 20.11.2026 lead-time risk. Keep WiMo as the second source.
+    - **Impact:** About $11 cheaper and in stock now instead of waiting until 20.11.2026.
+    - **Sources:**
+      - https://hamradioshop.net/Boni-Whip-Aktivantenne/0125.2
+      - https://www.wimo.com/en/18067
+      - https://bonito.net/en/boni-whip-2/
+  16.
+    - **Claim in stack:** Nooelec Balun One Nine v2 $26.95, identified as WB9-1; LF time signals only on the active whip (#94).
+    - **Finding:** Price confirmed at $26.95, 'shipped in 1 business day', 'accurate to frequencies up to 80MHz+', max +24 dBm. The product page has no customer reviews or Q&A, and I found no community report on its LF loss or its transformer part. The WB9-1 identification and the LF loss model (12.3/9.1/7.2/2.9 dB at 40/60/77.5/162 kHz) remain unverified.
+    - **Verdict:** confirmed
+    - **Action:** Keep the rule that LF time signals go to the Boni-Whip. Keep the conducted S21 and DCR measurement of the balun at 40-500 kHz.
+    - **Impact:** None.
+    - **Sources:**
+      - https://www.nooelec.com/store/balun-one-nine-v2.html
+  17.
+    - **Claim in stack:** HF+ sample format and rates: cf32 from libairspyhf; 768 ksps default; enumerate rates (stage 1).
+    - **Finding:** The libairspyhf sources confirm bulk transfers and cf32 output. AIS-catcher and SDR++ already enumerate rates with airspyhf_get_samplerates. SDRangel #928 (2021) saw spurs or no signal around 60-80 kHz at 192 kS/s with decimation 8 on an old library, while 768/32 was fine. A newer library fixed it, and the rate problems on old firmware are covered in the firmware finding above.
+    - **Verdict:** confirmed
+    - **Action:** Enumerate rates in labrx. Before using 192 or 384k Low-IF on the LF window, replay a DCF77/MSF recording at 768/32 and at the Low-IF rate and compare.
+    - **Impact:** Test item only.
+    - **Sources:**
+      - https://github.com/f4exb/sdrangel/issues/928
+      - https://raw.githubusercontent.com/jvde-github/AIS-catcher/main/Source/Device/AIRSPYHF.cpp
+  18.
+    - **Claim in stack:** Tecsun AN-05 7 m reel about $14.50 (#94).
+    - **Finding:** Not re-checked this round: Moonraker returns 403 and my search budget ran out. Stage 1's $14.49 special / $17.95 regular comes only from undated search snippets.
+    - **Verdict:** unverified
+    - **Action:** Check the price live before ordering. Any 7-15 m insulated wire on a winder up to 20 cm is an equivalent substitute.
+    - **Impact:** About $15-18.
+    - **Sources:**
+      - https://moonrakeronline.com/us/an-05-fm-sw-reel-antenna-with-clip
+- **Current status oct 2026:** The Airspy HF+ Discovery is still sold at USD 169 by ITEAD (EU, US and CN warehouses; the page still lists firmware R2.0.0) and at EUR 232 incl. VAT by WiMo. Latest firmware is still R5.0.1 (2024-12-11). The Windows-only flasher depends on WMIC, which Microsoft removed from Windows 11 in the Aug/Sep 2026 preview updates (wmic_dlc.zip is a temporary workaround). Host library: upstream master 1.8.1 (head 24fe8ff, 22 Jul 2026); upstream refuses to tag releases (issue #62). Debian/Ubuntu ship 1.6.8 with the soname bumped to 1. Master drops the exported airspyhf_flash_calibration symbol. SoapyAirspyHF 0.2.1 was tagged 2026-10-10 with the gain-detection fix; Debian/Ubuntu still ship 0.2.0. SDRangel 7.27.2 (19 Aug 2026) has NAVTEX, RTTY, FT8, DSC and Radio Clock (MSF, DCF77, TDF, WWVB, JJY 40). DRM (14 Oct 2026) and WEFAX (1 Oct 2026) exist only on master, and RBU and PCSK-225 in Radio Clock are also master-only. OpenWebRX+ 1.2.126 has DRM (with dream 2.2-20251114 arm64 from the luarvique repo), FAX, NAVTEX, FT8 and WSPR. Boni-Whip: in stock at Bonito's own shop for EUR 149 incl. VAT (65 mA typical, 12-15 V, bias tee included, no power supply); WiMo lists EUR 159, available from 20.11.2026. I found no public report of an HF+ running on a Dragon Q6A or QCS6490.
+- **Notes:** Method and limits. The shared WebSearch budget for this turn ran out after three searches, so I could not search Reddit, Discord/Matrix logs, YouTube or groups.io; community coverage is thinner than the task asked for. I used issue trackers and primary pages fetched directly instead: airspyhf, SoapyAirspyHF, SDR++, SDRangel, OpenWebRX (jketterl) and AIS-catcher on GitHub; sources.debian.org; packages.ubuntu.com; the luarvique Packages index; the WSJT-X CMakeLists on SourceForge; the Radxa forum's own Discourse search (no Airspy or SDR reports on the Q6A); bonito.net and hamradioshop.net; ITEAD, WiMo and Nooelec; rtl-sdr.com and AB9IL articles; and Microsoft support. I read the firmware zip's README and FLASH.bat as text and executed nothing from it. Models (Python, labelled as such): the USB ring depth from SAMPLES_TO_TRANSFER x 8 transfers; the Boni-Whip antenna-end voltage at the vendor's 65 mA with stage 1's assumed resistances; EUR to USD at STACK's own rate (1.1241); the EU VAT landed price. Stage-1 results now overturned or tightened: (1) SDRangel overwrites the flash ppb with its own LO ppm on start, so labd must push LOppmTenths, contrary to stage 1's 'applies automatically in SDRangel'. (2) DRM and WEFAX are not in the pinned SDRangel 7.27.2; use OpenWebRX+ (dream, fax) for v1. (3) A source-built libairspyhf 1.8.1 is not drop-in (soname 0 vs Debian's 1; flash_calibration symbol removed), and SoapyAirspyHF 0.2.0 silently disables gains with 1.8.1, so pair any 1.8.1 build with SoapyAirspyHF 0.2.1. (4) The minimum firmware rises to R4.0.7, because ITEAD's listed R2.0.0 is the version with the 1.5 h TIMEOUT stall and older firmware breaks Low-IF rates. (5) Boni-Whip current is now a vendor figure (65 mA typical), which confirms the 13.8 V feed, and Bonito's shop has it in stock at EUR 149. User decisions made after stage 1 (Europe, DAB+ on, Lime kept) reinforce moving DAB+ off the HF+ (V4L or Lime). Policy items for the decoders owner, outside this scope: OpenWebRX+ also offers DSC and SITOR-B modes, which must follow the P2 DSC and SITOR allow-lists, and Dream's possible transmitter mode must be checked before it is allowed. Still not measured: HF+ current (idle and streaming), shield A/B noise, balun LF loss, and USB stability behind FE1.1s and CH334F on the Q6A's kernel 6.18.
+
