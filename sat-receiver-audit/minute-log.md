@@ -24,3 +24,8 @@
 - Навчання NPU: агент звіряє поля SigMF core (datatype, sample_rate, hw, license, annotations) для розмітки рамками на водоспаді. Джерело: github.com/sigmf/SigMF.
 - Малі антени: агент «стек» перевіряє діапазон V4L (до 1,766 ГГц) і ціну/наявність фільтрованого підсилювача Uputronics 435 МГц.
 
+## 2026-10-18 02:06 UTC
+
+- КХ і меню: OpenWebRX+ підтримує LimeSDR через SoapySDR (клас LimeSdrSource, драйвер "lime"); треба перевірити, чи плагін LimeSuiteNG для Micro реєструється під тим самим ім'ям драйвера. Джерело: github.com/luarvique/openwebrx (owrx/source).
+- Малі антени («стек»): агент розглядає ADALM-PLUTO як можливу заміну LimeSDR для S-діапазону і перевіряє ціну/наявність. Джерело: analog.com.
+
