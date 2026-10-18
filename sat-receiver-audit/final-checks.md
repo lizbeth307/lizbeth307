@@ -3083,6 +3083,767 @@
   
   Sources: https://github.com/SatDump/SatDump/issues/727 ; https://www.ariss.org/current-status-of-iss-stations.html ; https://github.com/f4exb/sdrangel/blob/master/plugins/channelrx/radioclock/readme.md ; https://github.com/f4exb/sdrangel/blob/master/plugins/channelrx/demodinmarsat/readme.md ; https://packages.ubuntu.com/noble/qsstv ; https://www.rtl-sdr.com/rtl-sdr-blog-active-l-band-patch-antenna-for-inmarsat-iridium-gps-back-in-stock/ ; https://www.electrokit.com/en/rtl-sdr-aktiv-antenn-l-band-1525-1660mhz ; https://www.ariss.org/hamtv-on-the-iss.html ; https://db.satnogs.org/satellite/98527/ ; https://space.oscar.wmo.int/satellites/view/meteor_m_n2_5 ; https://pre-egnos.gsc-europa.eu/services/open-service/open-service-realtime-performance ; https://www.ospo.noaa.gov/data/messages/2026/05/MSG_20260506_1452.html
 
+## completeness:lens3 (run `wf_6ce87eb1-883`)
+
+- **Lens:** RULES + LEGAL + SAFETY. I checked every final/*.json (19 files), the register in report_research.json, digest.md and minute-log.md against user_requirements.md for: loop antennas and H-field probes; antenna S11 on air; decoding private content; military targets and NPU classes; voice IQ retention; TX-capable software and the Lime TX; Wi-Fi/Bluetooth in QUIET; the Artemis stop; city tables and Kyiv constants; Ukrainian prices and law used as the base. I also wrote generic legal and safety notes for a receive-only lab in an unknown country. I searched with a JSON-path walker (/tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rules_lens/jgrep.py), ran an emission and DC-hazard model (rules_lens/calc.py), made 2 WebSearch calls and 7 WebFetch calls (2 of the fetches failed).
+- **Issues:**
+  1.
+    - **Area:** Inmarsat-C EGC SafetyNET decoder path
+    - **Components:**
+      - SDRangel demodinmarsat plugin (inmarsatc lib)
+      - labd EGC filter
+      - stdcdec / Scytale-C (small stack)
+      - SatDump inmarsat_support
+    - **Problem:** Every planned backend decodes all packets first and filters later. The SDRangel plugin fills a Messages table, and its two regular-expression filters act only on the decoded Type and Message columns. labd filters only after it receives UDP output from that decoder, and the Expert SDRangel GUI would show every message. The small stack decodes with stdcdec or Scytale-C and filters afterwards, and it also keeps 'bulletin-board packets' in scope. All of this breaks the rule in user_requirements.md line 37: discard at header level; never reassemble, convert to text, display, log or store any payload; FleetNET is discarded too.
+    - **Severity:** blocker
+    - **Evidence:** lab_ui_hf.json design.menu_tree[13].backend ('UDP output to labd EGC allow-list filter'), final.ui_system.integration_table[7] ('EGC SafetyNET allow-list and the DSC category filter'); small_antenna_stack.json final.reachable[9].receiver ('stdcdec or Scytale-C filtered to SafetyNET and bulletin-board packets'), final.excluded_by_law_or_ethics[1]; the SDRangel readme fetched today: 'The Messages table displays only packets that contain messages', and the filters match the 'Type column' and 'Message column'.
+    - **Fix:** 1. Remove the SDRangel demodinmarsat plugin and the SatDump inmarsat_support plugin from the build; the packaging audit fails if either is present. 2. Write a labd 'egc-gate'. BPSK demodulation, deinterleaving and Viterbi decoding are unavoidable (physics caveat). Then, in RAM, read each packet descriptor, drop every non-EGC packet before any payload bytes are copied, read the EGC service code, drop FleetNET, and only then assemble SafetyNET text. 3. Use bulletin-board packets only for frame lock, never display or store them. 4. Never tune LES or ship channels. 5. Gate the release on mixed recordings: no non-SafetyNET byte may reach text, display or disk. 6. If the gate is not ready by P7, ship without the Inmarsat-C profile and do not buy the SAWbird+ iO. The packet descriptor values must be taken from the decoder source (unverified here).
+    - **Fix cost:** $0 in parts, about 2-4 developer days (estimate); -$49.95 if the profile is dropped
+    - **Sources:**
+      - https://raw.githubusercontent.com/f4exb/sdrangel/master/plugins/channelrx/demodinmarsat/readme.md
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+  2.
+    - **Area:** Antenna S11/VSWR sweeps (radiate)
+    - **Components:**
+      - foldable_antennas final build steps
+      - small_antenna_stack NanoVNA
+      - radio_lab safety_and_legal[0] / P0
+      - lab_ui_hf VNA leaf
+      - antennas verify
+      - narrowband_sdr fixes
+    - **Problem:** Final build and test steps still sweep a VNA into antennas, and radio_lab adds a loophole ('unless local rules explicitly allow'). Hard rule 1 has no exception. A model of a -10 dBm sweep into a 2 dBi antenna gives 87 dBuV/m at 3 m. That is about 33 dB above the FCC 15.209 limit above 960 MHz (54 dBuV/m), and 44 dB above GPS C/A (-128.5 dBm) at 100 m on L1. The sweeps also cross the 1400-1427 MHz passive band (ITU RR 5.340, from memory).
+    - **Severity:** blocker
+    - **Evidence:** foldable_antennas.json final.build_and_test_steps[1],[2],[3],[9], loss_table[1],[11], ultra_compact_tier ('VNA-tune it'), foldable_kit[0]; small_antenna_stack.json final.first_tests[2] ('NanoVNA, briefly and indoors: tune the 20 cm helical whip'), revised_stack[29] ('Sweep briefly indoors'), legal_notes[7]; radio_lab.json final.safety_and_legal[0] and procedures[0].steps[4] ('unless local rules explicitly allow'), open_questions[14]; lab_ui_hf.json final.ui_system.menu_tree[56] ('Quick SWR/S11 page', not gated by Bench mode); antennas.json fixes.fixes[1].steps[2], verify.known_problems_and_fixes_to_apply[0],[7]; narrowband_sdr.json fixes.fixes[3].steps[4]. Model: rules_lens/calc.py.
+    - **Fix:** 1. Delete every antenna S11 step and the 'local rules' clause, and close radio_lab OQ14 and register #0 with 'No'. 2. Replace them with receive-only acceptance: calculated lengths and printed marks, antenna-versus-terminated noise rise, Sun and cold sky, QO-100 beacon, NCS and GNSS C/N0 (P9/P15). 3. Check baluns and matching sections conducted only, into SMD-resistor dummy loads, and cables by TDR with the antenna removed. 4. Put the VNA leaf behind the Bench interlock, labelled 'DUT/load only'. 5. Drop the small-stack NanoVNA purchase, which duplicates the LiteVNA 64.
+    - **Fix cost:** $0; saves $60-130 (unverified NanoVNA price)
+    - **Sources:**
+      - https://www.law.cornell.edu/uscode/text/18/2511
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rules_lens/calc.py
+  3.
+    - **Area:** Loop antennas and H-field probes in final BOM lines
+    - **Components:**
+      - small_antenna_stack DIY 20 cm/12 cm loop
+      - radio_lab PS-500 / generic E/H set
+      - display.json DIY H-field probe
+      - QFH options
+    - **Problem:** Loop items are still priced or prescribed. Small stack final: the optional DIY 20 cm loop (+$20-40), loop alternatives in reachable and lost, the IMU 'satellite in the loop plane' cue, and loop A/B tests. radio_lab final: lab_bom[3] allows 'small H-loop probes', its cheaper alternative is an E/H probe set, lab_bom[40] is the PS-500 (mostly H loops), and totals and the verdict keep the H-probe branch. The register misses that display.json still builds a DIY 15 mm H-field loop probe. QFH antennas (two bifilar loops) are still listed as options: antennas research.alternatives[1] and foldable bands[0].options[9]. Neither QFH nor eggbeater is on any exclusion list.
+    - **Severity:** blocker
+    - **Evidence:** small_antenna_stack.json final.revised_stack[12],[22],[23],[26], reachable[2],[4],[7],[8], lost[0],[9],[11], first_tests[2],[7],[8], borderline_options[2], size_rule_used, cost_size_power_delta; radio_lab.json final.lab_bom[3],[40], totals, verdict, open_questions[0],[1]; display.json fixes.fixes[5].steps[2] ('Make a DIY H-field probe: a 15 mm loop'); antennas.json research.alternatives[1]; foldable_antennas.json bands[0].options[9]. user_requirements.md lines 11 and 31.
+    - **Fix:** Strike every loop row, cue, test and cost. Use E-field semi-rigid stub probes only, and replace the display.json H-probe step with an E-field stub. Add a 'loop-type antennas excluded' list: small and magnetic loops, QFH, eggbeater, quad, delta, biquad, halo, big wheel, ferrite loopsticks and coils (CANADUINO, AS3935), and H-field probes.
+    - **Fix cost:** $0; saves $20-40 (loop) and $50-109 (H-probe line)
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+  4.
+    - **Area:** VLF SID in the final menu and capabilities
+    - **Components:**
+      - lab_ui_hf menu SID
+      - lab_ui_hf hf_capabilities[7]
+      - radio_lab capabilities[16]
+    - **Problem:** The final menu still offers 'VLF/LF carrier-amplitude logging', and radio_lab still lists 'SID carrier logging'. The 16-25 kHz carriers are naval transmitters, so this is a receive chain aimed at military transmitters, which the delegated decision forbids.
+    - **Severity:** blocker
+    - **Evidence:** lab_ui_hf.json final.ui_system.menu_tree[32] ('SID space weather: VLF/LF carrier-amplitude logging'), final.hf_capabilities[7]; radio_lab.json final.capabilities[16]; user_requirements.md line 36.
+    - **Fix:** Rename the leaf 'SID (civil LF carriers)'. labd allow-lists DCF77 77.5 kHz, MSF and WWVB 60 kHz, JJY 40/60 kHz and TDF 162 kHz, records amplitude only, and refuses any SID tuning between 3 and 30 kHz.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+  5.
+    - **Area:** Voice IQ retention
+    - **Components:**
+      - npu_training class nfm_voice
+      - npu_training retention.py
+      - lab_ui_hf MARK / Record and collect
+      - labrx ring snapshots
+    - **Problem:** Voice is still kept as IQ. nfm_voice keeps IQ snippets of 0.25 s or less on the device. Raw IQ is kept 14 days, and voice bins are masked only after labelling. MARK saves 'the last N s from the RAM ring plus live IQ' even when the box is voice. All of these can be demodulated later, against the rule 'voice is spectrogram-only'.
+    - **Severity:** blocker
+    - **Evidence:** npu_training.json final.class_list[9] ('IQ snippets 0.25 s or less and kept on the device'), final.datasets[0].licence ('raw IQ is retained 14 days or masked'), final.scripts_to_write[25] ('masking ... after labelling'); lab_ui_hf.json final.ui_system.menu_tree[66]; user_requirements.md line 34.
+    - **Fix:** 1. Persist no IQ for voice-tagged boxes; MARK on a voice box saves only the magnitude spectrogram crop. 2. labrx masks voice bins, taken from detector boxes plus the band plan, when a snapshot is written to UFS, not after labelling. 3. Refuse a raw-IQ pin that overlaps an unmasked voice box. 4. Exempt only broadcast programme audio (FM, AM, DRM, DAB).
+    - **Fix cost:** $0, about 1 developer day (estimate)
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+  6.
+    - **Area:** Private networks and dual-use targets in the small-stack catalogue
+    - **Components:**
+      - Iridium NEXT target
+      - Orbcomm OG2 target
+      - SAWbird+ IR
+      - CARTOSAT-3
+      - gr-iridium IRA/IBC
+    - **Problem:** The small-stack final still lists Iridium NEXT as 'reliable (carrier only)', with an optional SAWbird+ IR bought only for it, and Orbcomm OG2 as a target. Its bands and stack sections still rate Iridium IRA/IBC frames 'reliable', tell the decoders to keep 'Iridium IRA/IBC' frames, and justify S-band with CARTOSAT-3, a dual-use satellite. No user goal needs Iridium or Orbcomm. A burst-Doppler log of a private network is traffic metadata, and Iridium carries military users.
+    - **Severity:** major
+    - **Evidence:** small_antenna_stack.json final.reachable[8],[13], revised_stack[30], verdict ('Iridium is carrier and Doppler only'); bands[1].notes ('Filter the decoders to SafetyNET, bulletin-board and Iridium IRA/IBC'); stack.add[9], stack.remove[0], stack.sdr_decision, stack.revised_bom[23], stack.risks[7] (CARTOSAT-3); report_research register decision #1.
+    - **Fix:** Remove Iridium and Orbcomm as targets. They show up only as unnamed occupancy in surveys: no Doppler product, no NPU class, no SAWbird+ IR. Delete every CARTOSAT-3 row. S-band (only with the Lime) is justified by Black Kite-1/2 housekeeping telemetry (a civil Rapidtek/TASA IoT CubeSat, verified; its LoRa IoT payload stays undecoded) and by amateur and science signals.
+    - **Fix cost:** $0; saves $49.95
+    - **Sources:**
+      - https://db.satnogs.org/satellite/98527/
+      - https://www.everythingrf.com/news/details/21257-rapidtek-successfully-launches-black-kite-1-with-taiwan-space-agency-to-advance-leo-iot-constellation
+  7.
+    - **Area:** HF/VHF text decoders without allow-lists (DSC, SITOR-B, RTTY/CW/PSK skimmer)
+    - **Components:**
+      - lab_ui_hf menu DSC
+      - SITOR-B
+      - CW/RTTY/PSK31 skimmer
+      - SDRangel DSC demod
+    - **Problem:** DSC 'hides' routine individual calls only after decoding them, and those calls carry the sender and addressee MMSIs. SITOR-B and the RTTY/CW/PSK skimmer decode on any tuned frequency, so outside the amateur and MSI channels they will print utility traffic: commercial telex, military or diplomatic RTTY, STANAG. UK WTA 2006 s48 makes it an offence to use apparatus 'with intent to obtain information as to the contents, sender or addressee' of messages not meant for the user, and to disclose them. Germany's §5 TDDDG allows listening only to messages meant for the operator, radio amateurs, the general public or an unspecified group of people.
+    - **Severity:** major
+    - **Evidence:** lab_ui_hf.json final.ui_system.menu_tree[25] (SITOR-B), [26] ('Routine individual calls are hidden and not stored'), [31] (CW/RTTY/PSK31); integration_table[7] ('DSC category filter'). The UK s48 and DE §5 texts were fetched today.
+    - **Fix:** 1. labd gets a per-mode decode allow-list. RTTY/PSK/CW text only inside the amateur allocations of the region band plan, plus named public met broadcasts (the DWD RTTY list, to verify). SITOR-B only on the GMDSS HF MSI frequencies (4209.5, 4210, 6314, 8416.5, 12579, 16806.5, 19680.5, 22376 and 26100.5 kHz, from memory, to verify). 2. DSC: drop each frame at the format specifier. Keep distress and all-ships calls with distress, urgency or safety categories; drop individual and group calls before the address or self-ID fields are emitted. 3. Remove the SDRangel DSC plugin from the build if it cannot be configured to do this.
+    - **Fix cost:** $0, about 1-2 developer days (estimate)
+    - **Sources:**
+      - https://www.legislation.gov.uk/ukpga/2006/36/section/48
+      - https://dejure.org/gesetze/TDDDG/5.html
+  8.
+    - **Area:** QUIET/field mode leaves Bluetooth on
+    - **Components:**
+      - lab_ui_hf HF Quiet
+      - System > Radios
+      - FCU760K Wi-Fi/BT module
+    - **Problem:** In the lab UI final, HF Quiet and 'Radios off/on' block Wi-Fi only, and the HF+ setup text says 'Wi-Fi rfkill'. The delegated rule is rfkill on wlan AND bluetooth. Nothing tests that the out-of-tree Wi-Fi driver actually honours rfkill.
+    - **Severity:** major
+    - **Evidence:** lab_ui_hf.json final.ui_system.menu_tree[34], [98] ('Wi-Fi (off by default in the field)'), final.hf_receiver.setup[8]; radio_lab.json final.procedures[0].steps[2] (compliant); user_requirements.md line 32.
+    - **Fix:** 1. Every QUIET, field, pass and recording profile runs rfkill block wlan plus rfkill block bluetooth. 2. Bluetooth is disabled for good: mask bluetooth.service, blacklist the BT driver, persist the rfkill state. 3. Radios are blocked at every boot; Wi-Fi is unblocked only at home, by hold-to-confirm. 4. A self-test checks with the tinySA that 2.4 GHz emissions stop.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  9.
+    - **Area:** Artemis identification-only stop
+    - **Components:**
+      - lab_ui_hf Signals AI > Live labels
+      - labclassify
+    - **Problem:** 'Tap a label for the offline Artemis entry' has no stop rule, and nothing defines what triggers the stop. A naive 'government' match would also stop on civil services such as weather satellites, time standards, NAVTEX and NOAA Weather Radio. The out-of-scope log could become a log of military emitters if it keeps frequency or position.
+    - **Severity:** major
+    - **Evidence:** lab_ui_hf.json final.ui_system.menu_tree[65]; radio_lab.json final.procedures[21].steps[1] and software[7] (stop rule present); user_requirements.md line 33. Artemis 4.2.0 category names are unverified.
+    - **Fix:** labclassify treats a match as out of scope when the Artemis category is Military, Radar or Numbers, or the description names a military, navy, air force, intelligence, EW, jammer or OTH user. The box then shows only 'out of scope', and MARK, record, label, decode and export are disabled on it. The log row is UTC plus 'out of scope' only, with no frequency, location or bearing. Civil government services in the target catalogue are allow-listed so they never trigger the stop.
+    - **Fix cost:** $0, about 0.5 developer day
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  10.
+    - **Area:** Emitter geolocation through the UI
+    - **Components:**
+      - Interference hunt bearing log
+      - GNSS-tagged survey heat map
+      - SDRangel Heat Map plugin
+    - **Problem:** A saved bearing log from the IMU heading, a 'GNSS-tagged heat map' survey and SDRangel's Heat Map plugin (named in the sweeps) together make an emitter-geolocation tool. That contradicts the NPU policy of no DF, AoA, geolocation or emitter tracks.
+    - **Severity:** major
+    - **Evidence:** lab_ui_hf.json final.ui_system.menu_tree[47] ('a bearing log from the IMU heading'), [45] ('GNSS-tagged heat map'), sweeps[2].options[6].key_specs (Heat Map); npu_training.json final.class_list[27]; register decision #12.
+    - **Fix:** Interference hunting becomes a live readout that is never saved. A survey carries one rounded site tag per session and no spatial power map. The packaging audit fails if the SDRangel Heat Map plugin is present.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  11.
+    - **Area:** No out-of-scope band mask for surveys and NPU logs
+    - **Components:**
+      - labrx survey
+      - labclassify detection log
+      - rtl_power heatmaps
+    - **Problem:** Generic surveys from 0.5 to 1766 MHz and 'unknown_energy' detection boxes store GNSS-tagged activity in military bands: 225-400 MHz military aero UHF with SATCOM at 240-320 MHz and MUOS at 360-380 MHz, and VLF at 3-30 kHz. The result is an activity record of military emitters, which the VLF SID precedent and the Artemis stop rule out. Germany's §5(2) TDDDG also forbids passing on the fact that a non-public message was received.
+    - **Severity:** major
+    - **Evidence:** radio_lab.json final.capabilities[2] (0.5 MHz-1.766 GHz survey); lab_ui_hf.json final.ui_system.menu_tree[45], [72]; npu_training.json final.class_list[25] (unknown outcomes); small_antenna_stack.json final.excluded_by_law_or_ethics[5].
+    - **Fix:** Add a labd band mask that the region profile can adjust. Defaults: 3-30 kHz and 225-400 MHz, with 328.6-335.4 MHz (ILS glide path) left visible. Inside the mask: live waterfall only; storage keeps only the band-mean noise floor; no boxes, snapshots or exports.
+    - **Fix cost:** $0, about 1 developer day
+    - **Sources:**
+      - https://dejure.org/gesetze/TDDDG/5.html
+  12.
+    - **Area:** TX-capable software and hardware paths
+    - **Components:**
+      - wsjtx 2.7.0~rc3 GUI
+      - fldigi 4.2.03
+      - QSSTV 9.5.8
+      - SoapyRemote 0.5.2
+      - LimeSDR Micro TX
+      - ADALM-PLUTO option
+    - **Problem:** radio_lab final installs the full WSJT-X GUI and fldigi, and so do the small stack and P20. lab_ui_hf installs QSSTV, which can transmit, as an 'RX-only fallback'. radio_lab lists SoapyRemote, which serves the Lime TX streams to any LAN client and bypasses the ExecStartPre lint. The guard itself is a text lint: a script that passes direction 0 instead of SOAPY_SDR_TX gets past it. The Pluto option adds a second TX device, and whether it emits anything at power-up is unverified.
+    - **Severity:** major
+    - **Evidence:** radio_lab.json final.software[8], [11], procedures[20].steps[1], capabilities[16]; small_antenna_stack.json final.revised_stack[28], reachable[15], first_tests[5], revised_stack[31]; lab_ui_hf.json final.ui_system.tech_stack ('qsstv 9.5.8 and gqrx 2.17.4 (both RX-only fallbacks)'); register decisions #10, #11, #89.
+    - **Fix:** 1. Install only jt9 and wsprd. 2. Drop fldigi, QSSTV (SatDump or an RX-only SSTV decoder covers SSTV) and SoapyRemote. 3. Patch the lab build of LimeSuiteNG and its Soapy module so any TX stream setup fails hard. Keep BUILD_GUI=OFF, the 50-ohm loads on the TX ports and the guard. 4. Do not adopt the Pluto. 5. The packaging audit checks for these binaries. 6. If the Lime is kept, check its TX ports with the tinySA after every boot.
+    - **Fix cost:** $0, about 1 developer day
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  13.
+    - **Area:** City tables and Kyiv constants; no bootstrap rule
+    - **Components:**
+      - gnss_imu WMM constants
+      - dish_replacement pointing table
+      - antennas/foldable/small stack angles
+      - digest.md
+    - **Problem:** Fixed angles and field values still stand in for computation. dish_replacement has a four-city pointing table (Kyiv 186/32, Lviv 178/33, Kharkiv 193/32, Odesa 187/36). gnss_imu has Kyiv and Odesa field values (F 51.05 uT, dip 67.6 deg, D +8.5 deg). Kyiv angles appear in antennas, foldable and small-stack finals, and in digest.md. Summary #128 offered a city list. There is still no first-boot rule for no saved fix with an unset RTC.
+    - **Severity:** major
+    - **Evidence:** dish_replacement.json fixes.fixes[0].steps[3], verify.known_problems_and_fixes_to_apply[4],[11]; gnss_imu.json fixes.fixes[5],[6], verify.known_problems_and_fixes_to_apply[7]; antennas.json fixes.fixes[0].steps[3], verify.issues[2], known_problems[10]; foldable_antennas.json final.loss_table[10], other_ways_out[4], build_and_test_steps[6]; small_antenna_stack.json final.first_tests[4],[5], reachable[9],[12],[14]; digest.md lines 116, 140, 914, 975.
+    - **Fix:** 1. Compute every az/el and the WMM2025 declination, dip and field strength at the current fix. 2. Bootstrap: accept the first fix when it is 3D, has 8 or more satellites and stays within 50 m for 5 min; if the RTC is unset, accept GNSS time flagged 'unverified' until NTP over home Wi-Fi or a second session confirms it. 3. Fallbacks are the last good fix with its age, or manual lat/lon or Maidenhead entry. 4. No city list anywhere.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/gnss_imu.json
+  14.
+    - **Area:** Ukrainian law and prices used as the base
+    - **Components:**
+      - small_antenna_stack legal_notes
+      - display_market purchase
+      - compute/wideband/storage/power/gnss_imu prices
+    - **Problem:** The small-stack legal notes are built on Ukrainian law: NKEK, martial law, Criminal Code 163/359/114-2, DSNS and SES-cleared land. Its cost delta counts Ukrainian duty, and display_market has a 'ukraine_purchase' field with UAH and EUR 150 duty-threshold pricing. Ukrainian price bases also remain in compute, wideband, storage, power, gnss_imu and foldable. The user is not in Ukraine.
+    - **Severity:** major
+    - **Evidence:** small_antenna_stack.json final.legal_notes[1]-[6], reachable[1].legal, reachable[11].legal, refuted_claims[6], excluded_by_law_or_ethics[3], revised_stack[0], cost_size_power_delta; display_market.json final.ukraine_purchase, main_pick.price, above_fhd_tier.price, ranked_candidates[1],[3],[5], open_questions[5],[7],[8]; foldable_antennas.json final.total_cost; register decision #6.
+    - **Fix:** Re-price at world prices in P5. Replace the legal notes with the generic note in notes. Ukraine survives only as an optional 'restricted' region-profile example.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+  15.
+    - **Area:** Air travel with the DIY 4S pack
+    - **Components:**
+      - 4S1P Molicel P50B 72 Wh pack
+      - 88.8 Wh PD bank
+    - **Problem:** radio_lab tells the user to carry the 72 Wh receiver pack in cabin baggage because it is under 100 Wh. IATA also requires batteries to be 'of a type that meets the requirements of the UN Manual of Tests and Criteria, Part III, subsection 38.3'. A home-welded 4S1P has no UN 38.3 test summary.
+    - **Severity:** major
+    - **Evidence:** radio_lab.json final.safety_and_legal[6]; IATA passenger lithium battery guide (fetched today): up to 100 Wh in carry-on, spares in carry-on only with insulated terminals, UN 38.3 type requirement.
+    - **Fix:** Rewrite SL6: never fly with the DIY pack. Fly with the commercial bank (100 Wh or less, terminals insulated) for bench work. For field use after a flight, buy or build a pack at the destination, or use a commercial 4S Li-ion pack that comes with a UN 38.3 summary (price unverified).
+    - **Fix cost:** $0 (rule); a commercial pack is unpriced
+    - **Sources:**
+      - https://www.iata.org/contentassets/6fea26dd84d24b26a7a1fd5788561d6e/passenger-lithium-battery.pdf
+  16.
+    - **Area:** Battery fire and thermal-runaway design
+    - **Components:**
+      - 4S P50B pack
+      - IP2368 board
+      - ASA shell
+      - mid-plate
+    - **Problem:** No study designs pack containment. The 72 Wh pack sits in an ASA shell next to an IP2368 whose MOSFET went above 100 C at 5 A, with one report of a spontaneous burn-out. There is no barrier, no vent path, no charging-supervision rule and no storage state-of-charge rule. The grep found no mention of 'thermal runaway', a fire bag or UN 38.3.
+    - **Severity:** major
+    - **Evidence:** mechanical_thermal.json verify.final_recommendation (no pack bay); power.json fixes.fixes[5] ('spontaneous burn-out', 'over 100 C at 5 A'), verify.known_problems_and_fixes_to_apply[5],[6].
+    - **Fix:** 1. Separate the pack bay from the electronics with the 2 mm aluminium mid-plate, or 1 mm FR-4 or mica. 2. Use fish paper, insulator rings and glass-fibre tape; spot-weld, never solder. 3. Give the bay a vent path to the outside, away from the grip and face. 4. Charge only when attended, on a non-flammable surface or in a fire-resistant bag. 5. Keep the existing 0-45 C NTC and the 70 C KSD9700. 6. Store at 3.6-3.8 V per cell, and retire swollen or dented cells.
+    - **Fix cost:** About +$10-25 (estimate, unverified)
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/power.json
+  17.
+    - **Area:** Bias onto DC-shorted antennas through the librtlsdr API
+    - **Components:**
+      - librtlsdr .so.2 rebuild
+      - V4L 4.5 V tee
+      - 9:1 balun, hairpin Yagis
+    - **Problem:** Any process can call rtlsdr_set_bias_tee, and the EEPROM can make bias the default. labd's interlock binds only the daemons that go through it, and the DC-shorted antennas (hairpin matches, the 9:1 path) can burn the tee's LDO or fuse.
+    - **Severity:** major
+    - **Evidence:** report_research register decision 'Bias onto DC-shorted antennas'; minute-log.md 05:19 (librtlsdr lets any process enable bias).
+    - **Fix:** In the .so.2 rebuild, make the bias-tee calls fail unless /run/labd/bias/<serial> exists. Set the EEPROM bias default to off. Require DC-sense before enabling.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/minute-log.md
+  18.
+    - **Area:** LNB and DC hazard leftovers
+    - **Components:**
+      - lab_ui_hf QO-100 leaf
+      - rf_frontend LNB supply
+      - radio_lab SL3
+      - foldable
+    - **Problem:** The final menu still offers 'LNB 13.4 V (V) / 18.2 V (H)', SL3 still says '13-18 V', rf_frontend still has the switchable 13.4/18.2 V boost, and foldable says '18 V or rotate'. No rule covers hot-plugging the LNB. In the model, 13.2 V puts 3.5 W into a 1 W ANNE-50+ load and is 8.2 V above the tinySA's 5 V DC limit; 18.2 V would put 6.6 W into the load.
+    - **Severity:** minor
+    - **Evidence:** lab_ui_hf.json final.ui_system.menu_tree[15]; radio_lab.json final.safety_and_legal[3]; rf_frontend.json verify.final_recommendation; foldable_antennas.json final; rules_lens/calc.py.
+    - **Fix:** 13.2 V only, current-limited. labd enforces 'feed off before connect or disconnect' with hold-to-confirm. A DC block goes toward every SDR and instrument, and the LNB is never on the sled, AUX or the raw pack.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rules_lens/calc.py
+  19.
+    - **Area:** Region and legal profile only in the NPU
+    - **Components:**
+      - labd
+      - npu_training region profile
+      - lab_ui_hf Region page
+    - **Problem:** Only the NPU has a standard/restricted region profile, its default is 'standard', and the lab region is picked by hand. In an unknown country, ADS-B/AIS handling, VHF listening presets, UAT, NOAA SAME, HD Radio and upload defaults all need a lab-wide legal default.
+    - **Severity:** minor
+    - **Evidence:** npu_training.json final.ui_flows[12]; lab_ui_hf.json final.ui_system.menu_tree[99].
+    - **Fix:** Make the region profile lab-wide in labd. It is derived from the GNSS fix through offline Natural Earth admin-0 polygons (public domain; jurisdiction only, not a location fallback) and is 'restricted' until a fix exists. The user can edit it.
+    - **Fix cost:** $0, about 1 developer day
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+  20.
+    - **Area:** Generic legal and privacy notes
+    - **Components:**
+      - radio_lab safety_and_legal[9]
+      - SigMF exports
+      - tar1090
+      - radiosonde chase
+    - **Problem:** The generic note does not say that secrecy laws differ: the UK and Germany restrict listening to and disclosing non-public messages, while US 18 USC 2511(2)(g) allows radio communications that are readily accessible to the general public. SigMF exports outside the NPU keep the exact GNSS position, which reveals the user's home. tar1090 military and 'interesting' filters are not disabled. There are no radiosonde-chase safety rules.
+    - **Severity:** minor
+    - **Evidence:** radio_lab.json final.safety_and_legal[9], procedures[21].steps[0] (GNSS geolocation in every recording); lab_ui_hf.json final.ui_system.verdict ('SigMF: geolocation goes in each capture'); npu_training.json final.pipeline[24] (rounding only in NPU exports).
+    - **Fix:** Add the legal note given in notes. Round the location in every export to 0.1 deg or a 4-character locator. Disable tar1090's military and 'interesting' filters. Sonde chase: obey traffic rules, respect private land and airfields, never climb trees or poles, keep away from power lines.
+    - **Fix cost:** $0
+    - **Sources:**
+      - https://www.legislation.gov.uk/ukpga/2006/36/section/48
+      - https://dejure.org/gesetze/TDDDG/5.html
+      - https://www.law.cornell.edu/uscode/text/18/2511
+  21.
+    - **Area:** Public broadcasts from military-operated stations
+    - **Components:**
+      - HF WEFAX schedule
+      - NAVTEX/MSI
+    - **Problem:** No boundary is defined. GYA Northwood is a Royal Navy broadcast (hobbyist sources), and NMF/NMG/NMC are US Coast Guard (an armed service), yet NAVTEX is an explicit user target. Without a rule, the VLF precedent is applied inconsistently.
+    - **Severity:** minor
+    - **Evidence:** radio_lab.json sweeps[2].procedures[3].steps[0] (NMF/NMG/NMC), capabilities_added[3]; lab_ui_hf.json final.ui_system.menu_tree[27]; hfunderground and goughlui pages on GYA.
+    - **Fix:** Apply proposed decision D-B: the default schedule holds civil met services plus public MSI. GYA stays out pending the user's answer.
+    - **Fix cost:** $0
+    - **Sources:**
+      - https://hfunderground.com/wiki/index.php/Maritime_Fax_Transmissions
+      - https://goughlui.com/2019/01/28/radiofax-gya-northwood-united-kingdom/
+  22.
+    - **Area:** Radiosonde scan overlaps the Cospas-Sarsat band
+    - **Components:**
+      - radiosonde_auto_rx scan settings
+    - **Problem:** The 400-406 MHz scan includes 406.0-406.1 MHz, where the excluded EPIRB/PLB distress beacons transmit.
+    - **Severity:** minor
+    - **Evidence:** lab_ui_hf.json final.ui_system.menu_tree[42] ('400-406 MHz scan range'); small_antenna_stack.json final.excluded_by_law_or_ethics[10].
+    - **Fix:** Set the auto_rx scan to 400.0-405.9 MHz.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  23.
+    - **Area:** Outdoor antenna safety gaps
+    - **Components:**
+      - telescopic V-dipole
+      - tape Yagi elements
+      - throw line
+      - masts and tripods
+    - **Problem:** The lightning rule in the radio_lab sweeps depends on the excluded AS3935. Nothing covers eye injury from telescopic tips or tape-measure edges, a throw-weight hitting someone, or a mast in wind. The power-line rule appears only in the HF wire setup.
+    - **Severity:** minor
+    - **Evidence:** radio_lab.json sweeps[2].procedures[5].steps[4] (AS3935 storm rule); lab_ui_hf.json final.hf_antenna.setup[0]; radio_lab.json final.safety_and_legal[5].
+    - **Fix:** Add rules: 30/30 thunder rule (no AS3935), take antennas down at first thunder, discharge before connecting; keep at least 2x the antenna or wire height from overhead lines; tip caps on telescopic and tape elements; eye protection when throwing a line; guy or lower masts above about 20 km/h wind (estimate).
+    - **Fix cost:** About +$2-5 for tip caps (estimate)
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  24.
+    - **Area:** QAIRT Set B in the NPU device plan
+    - **Components:**
+      - onnxruntime 1.27 + onnxruntime-qnn 2.3.0 (QAIRT 2.47)
+    - **Problem:** Set B is still in the architecture, software, pipeline and roadmap, although the rule is INT8 on QAIRT 2.42.
+    - **Severity:** minor
+    - **Evidence:** npu_training.json final.architecture, software[5], pipeline[19], roadmap[3]; register decision #38.
+    - **Fix:** Delete Set B from the device plan. If Phase 0 fails on 2.42, ask the user before using any newer QAIRT.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/npu_training.json
+  25.
+    - **Area:** Process: HF-loop removal has no recorded user message
+    - **Components:**
+      - user_requirements.md line 11
+    - **Problem:** The governing file says the user removed the HF active loop, but the transcript records no such message; the last HF message (01:54) asked to add one. The rule stands, but it should be confirmed.
+    - **Severity:** minor
+    - **Evidence:** report_research register decision #5; summaries.md verifier check.
+    - **Fix:** Keep the ban, which is the governing rule. Ask the user at the next phase end. If loops are allowed again, an LZ1AQ-class active loop returns as the HF/LF antenna and H-field probes as bench tools.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/summaries.md
+- **Proposed decisions:**
+  1.
+    - **Question:** C1. LimeSDR Micro M.2: keep or drop?
+    - **Decision:** Gated optional. Keep the cancellable pre-order (ships 15 Dec 2026) and decide on delivery or 31 Jan 2027. No core function, menu default or NPU MVP profile depends on it. If kept: 50-ohm loads on the TX ports, LimeSuiteNG with BUILD_GUI=OFF and AMARISOFT=OFF plus a patch that makes TX stream setup fail, no SoapyRemote, and every dependent item tagged conditional (CPU7, riser/J21, 10 W cooling, T7, LIME-W/F/B, 7.5 A fuse, sled COM, P4/P5/P7/P14/P18, REF IN, S-band).
+    - **Reason:** Every core target runs on 2-3 V4Ls plus the HF+. The Lime is the only TX-capable part, so dropping it makes the kit physically receive-only, the strongest legal position.
+    - **Consequences:** Without it: no S-band, Metop AHRPT marginal, NPU loses 3 of 5 profiles; about $650-665 avoided, including the T7. With it: 45-52 W peak and a 7.5 A fuse.
+    - **Alternatives rejected:** ADALM-PLUTO (also TX-capable, duplicates the Lime); buying unconditionally now.
+  2.
+    - **Question:** C2. Q6A RAM tier
+    - **Decision:** Buy the 12 GB board now (P2 sourcing: TinyTronics about $137 ex VAT / $166 incl. VAT; ALLNET $189.99). RAM ring: 4 GiB with Lime and training, 1.5 GiB or less without the Lime.
+    - **Reason:** RAM is soldered and cannot be upgraded. NPU training, SatDump, SDRangel and the Lab Shell together are unmeasured.
+    - **Consequences:** About $25-54 more than 8 GB. No effect on the rules.
+    - **Alternatives rejected:** 8 GB (cannot be fixed later).
+  3.
+    - **Question:** C3. Pack: 3S or 4S?
+    - **Decision:** 4S1P Molicel P50B (72 Wh) with a regulated 12 V rail into J21. 13.2 V LNB rail, 12.5 V Boni-Whip LDO, 10k NTC charging window 0-45 C. Fuse 7.5 A with the Lime, 5 A without. The DIY pack is never flown.
+    - **Reason:** Every downstream rail gets headroom and regulation, including the noise-source ENR stability. 72 Wh is under the 100 Wh class, but a DIY pack has no UN 38.3 summary.
+    - **Consequences:** A 12 V regulator is needed, and the field pack does not travel by air.
+    - **Alternatives rejected:** 3S feeding J21 directly (no headroom for 13.2 V; ENR drift).
+  4.
+    - **Question:** C4. 12 V regulator
+    - **Decision:** Prototype on the D36V50F12 (buy 2, rationed stock): EN divider as a backstop, a supervisor driving the #2813 cut. Run the terminated-floor A/B at 40-162 kHz, 490/518 kHz, 2-30 MHz and 137/437/1544 MHz, and a sealed-case current test at 13.6-16.4 V. Switch to a forced-PWM buck-boost rated 5 A or more only if either test fails.
+    - **Reason:** A verified part is available now, and the light-load spur risk can be measured.
+    - **Consequences:** The rail drops out below about 13.3 V. That is harmless, because J21 accepts 4.5-16 V.
+    - **Alternatives rejected:** Choosing before measuring.
+  5.
+    - **Question:** C5. USB port map
+    - **Decision:** Freeze the Lime-agnostic map. Blue USB 3.1: RTL-A, or the T7 with the Lime. FE1.1s P1 RTL-B, P2 touch, P3 CH334F (HMI RP2040, IMU puck, LAB USB, HF+), P4 the internal FCU760K Wi-Fi/BT. HF+ and injectors are powered from LAB 5 V (VCC_5V_PERI is about 17 W).
+    - **Reason:** One map has to work with or without the Lime. Wi-Fi shares the FE1.1s tree, so it is off during jobs anyway.
+    - **Consequences:** The J5 labels and the FCU760K name are settled in STACK.md.
+    - **Alternatives rejected:** The four divergent per-study maps.
+  6.
+    - **Question:** C6. 40-pin and bus map; IMU interface
+    - **Decision:** PPS pin 7 (GPIO96); console 8/10; UART6 16/18 (LC76G); I2C0 13/15 for the INA228 only, from user space; I2C2 27/28 for MCP23017 x2 (+TCA9535) and the RP2040 target; fan via pwm-gpio on pin 33; spi14 off. The IMU is the USB-CDC RP2040 puck on the boom.
+    - **Reason:** Keeps the magnetometer away from the cells, the fan and DC currents, and avoids the BNO08x I2C problems on Linux. UART7 is unverified.
+    - **Consequences:** The puck uses one CH334F port.
+    - **Alternatives rejected:** BNO085 on I2C2; a UART7 relay.
+  7.
+    - **Question:** C7. Hardware and policy ownership
+    - **Decision:** labd is the single owner of lines, leases and interlocks, and the single enforcement point for policy: receive-only guard, rfkill, bias token, Bench interlock, region profile, Artemis stop, band mask, decode allow-lists. labrx owns the single RAM ring and recorder and applies voice masking. labclassify runs inferd and fusiond. rflab becomes a labd module, with one lease mechanism.
+    - **Reason:** Rules can be enforced reliably only at one choke point.
+    - **Consequences:** The npu_training daemon names are merged.
+    - **Alternatives rejected:** Three daemons and three lock schemes.
+  8.
+    - **Question:** C8. LNB supply
+    - **Decision:** 13.2 V ±0.2 V measured at the F connector under load, vertical only, true 0 V disconnect, switch rated 20 V or more, no 18 V branch. One current limit at 1.5-2x the measured Bullseye draw. Feed off before connect or disconnect. DC block toward the SDR.
+    - **Reason:** 18 V only selects horizontal, which every tier loses anyway. 13.2 V into a 50-ohm load is 3.5 W.
+    - **Consequences:** Rotate the LNB 90 deg for horizontal humps.
+    - **Alternatives rejected:** Switchable 13.4/18.2 V; the 12 V rail through a tee (10.6-11.4 V).
+  9.
+    - **Question:** C9. LNA bias rule
+    - **Decision:** Every SAWbird+ runs from a TPS2553 at 250-300 mA. The V4L tee feeds only LNAs of 80 mA or less. Delete the 100-160 mA PTC and the 'GOES+ on the V4L tee' allowance. Cased SAWbird+ ($49.95) in the field; Barebones ($44.95) only inside the shielded bay.
+    - **Reason:** The SAWbird+ NOAA draws 170 mA and the GOES 180 mA, against the tee's 180 mA.
+    - **Consequences:** One injector channel per SAWbird+.
+    - **Alternatives rejected:** A polyfuse that trips at its own working current.
+  10.
+    - **Question:** C10. FM filter
+    - **Decision:** Nooelec Flamingo+ FM (250 mA DC pass) permanently in the 137/145 MHz path. The second VHF/UHF entry needs its own filter (completeness lens).
+    - **Reason:** One part with a published DC rating.
+    - **Consequences:** Needs a second filter for the second VHF/UHF entry.
+    - **Alternatives rejected:** Mixing the RTL-SDR Blog and Flamingo filters.
+  11.
+    - **Question:** C11. librtlsdr
+    - **Decision:** Use only the .so.2 rebuild of noble 2.0.1 with 0204c9c and 65f0658, plus a patch: bias-tee calls fail unless the labd token /run/labd/bias/<serial> exists. EEPROM bias default off.
+    - **Reason:** One ABI for all consumers, and DC-shorted antennas need bias protection.
+    - **Consequences:** One small patch to keep across rebuilds.
+    - **Alternatives rejected:** 2.0.3 (.so.0) with every consumer rebuilt; purge-and-fork.
+  12.
+    - **Question:** C12. Display field-mode pixel clock
+    - **Decision:** About 127.9 MHz (51.7 Hz at 2200x1125), or 164.4-168.4 MHz if the panel accepts it. The 1280x800 fallback needs per-profile mode switching plus shielding. The display on/off A/B covers 1415.7, 1544.4 MHz and the LF bands.
+    - **Reason:** The local harmonic scan.
+    - **Consequences:** Cmdline and EDID edits.
+    - **Alternatives rejected:** 128.70 MHz (its 12th harmonic falls inside Inmarsat-C).
+  13.
+    - **Question:** C13. Kernel hold and PPS
+    - **Decision:** Build pps-gpio out of tree on 6.18.2-4 (CONFIG_PPS=y). Drop gnss_imu Route B (7.0.11). Build pps-ldisc only if the FT232RL fallback stays.
+    - **Reason:** The kernel hold protects HDMI and the NPU.
+    - **Consequences:** One DKMS-style module.
+    - **Alternatives rejected:** A kernel jump.
+  14.
+    - **Question:** C14. INA228
+    - **Decision:** On I2C0 through user-space i2c-dev, with no DT binding. Shunt in the pack lead after the fuse. Fix npu_training's 'on the J21 rail'.
+    - **Reason:** The hwmon driver would block the CHARGE register.
+    - **Consequences:** labpowerd reads the registers directly.
+    - **Alternatives rejected:** The ina238 hwmon driver.
+  15.
+    - **Question:** C15. Antenna tiers
+    - **Decision:** The two-tier rule from user_requirements.md governs: patch/chip antennas, and foldable antennas with pieces of 20-23 cm or less (about 35 cm maximum). Every small-stack removal made under the old 'deployed 20 cm or less' rule is void and re-decided: Lime gated (C1), T7 only with the Lime (C18), 12 GB bought (C2), foldables restored. LRPT default: the telescopic V-dipole. Crossed Yagi default: the ultra-compact build. Small rigid whips and helices await the user's confirmation. All loops are struck.
+    - **Reason:** The governing file was revised after the small-stack run.
+    - **Consequences:** The small-stack verdict and stack sections become archive only.
+    - **Alternatives rejected:** Keeping the 20 cm helical whip as the LRPT default.
+  16.
+    - **Question:** C16. Receive-only and policy leftovers
+    - **Decision:** Strike every item in stale_items_to_purge before STACK.md. Add a CI grep over STACK.md and build/ for banned items: loop antennas, antenna S11, Iridium frames, VLF SID, 18 V, the wsjtx GUI, fldigi, QSSTV, SoapyRemote, Set B, city names, UAH base prices.
+    - **Reason:** Leftovers would otherwise re-enter at P4/P5 re-research.
+    - **Consequences:** About 70 edits across 13 files.
+    - **Alternatives rejected:** Purging by hand only.
+  17.
+    - **Question:** C17. HF antenna chain
+    - **Decision:** Boni-Whip on a 12.5 V LDO from 4S, with DC-sense and default OFF. The 9:1 wire is for HF only; LF time signals are credited to the active whip. Add a latching DC-capable HF+ input relay (HF / VHF-AIS / 50-ohm) to the BOM (part TBD). The HF-loop ban stays; confirm it with the user.
+    - **Reason:** 12.5 V is inside both published ranges (9-15 V WiMo, 12-15 V SWLing). The WB9-1 is rated only from 0.125 MHz.
+    - **Consequences:** The radio_lab and lab_ui_hf 10.0/12.0 V text is fixed.
+    - **Alternatives rejected:** 10.0 V; leaving the selector off the BOM.
+  18.
+    - **Question:** C18. Storage and retention
+    - **Decision:** T7 only with the Lime. Otherwise a V30/A2 microSD or USB stick for exports and updates, and an A/B root on UFS. Retention: products by default; raw IQ only when pinned, deleted after 14 days; voice bins masked when a snapshot is written; masked bands never stored. Dual-RTL raw is 36.9 GB/h, about 2.5 h on 92-100 GB free.
+    - **Reason:** Rule compliance and real data rates.
+    - **Consequences:** labrx implements the masking.
+    - **Alternatives rejected:** Buying the T7 unconditionally.
+  19.
+    - **Question:** C19. CPU allocation
+    - **Decision:** A55 cores 0-3: UI, daemons and the labclassify fallback. A78 cores 4-6: DSP. T2 training on cores 4-6 only between passes. CPU7 isolated only with the Lime; measure cpu4-6 against cpu7 for lime:Rx0.
+    - **Reason:** Keeps pass capture deterministic.
+    - **Consequences:** Training pauses during passes.
+    - **Alternatives rejected:** Training on the A55 cores.
+  20.
+    - **Question:** C20. Roadmaps
+    - **Decision:** NPU Phase 0 runs inside the W1-2 gates (19 Oct-1 Nov 2026), and a minimal labeller moves into P0b. The policy gates (class policy, voice masking, Artemis stop, band mask) ship before the first labeller. HF classes appear in the UI only after the HF-F and second-RTL profiles exist.
+    - **Reason:** The rules must exist before any data is collected.
+    - **Consequences:** About 2-3 extra developer days in P0b.
+    - **Alternatives rejected:** Adding policy after data collection starts.
+  21.
+    - **Question:** C21. V4L count
+    - **Decision:** Buy 3 (2 in service, 1 spare). Continuous ADS-B/AIS/sonde monitoring time-shares a receiver, with AIS on the HF+. A 4th only if the user asks.
+    - **Reason:** Cost against continuity.
+    - **Consequences:** Monitors pause during passes.
+    - **Alternatives rejected:** Using the spare as a full-time monitor at $0.
+  22.
+    - **Question:** C22. Software recipes and exclusions
+    - **Decision:** One venv per tool: NanoVNA-Saver via pipx, PySide6 6.12, libgpiod v1 API, Skyfield 1.55 from pip, SatDump 2.0 from source, OpenWebRX+ 1.2.126 with pins. Excluded: the wsjtx GUI (jt9 and wsprd only), fldigi, QSSTV, js8call, SoapyRemote, the SDRangel Inmarsat C, DSC and Heat Map plugins (replaced by labd gates), and URH. The packaging audit fails the build on any of them.
+    - **Reason:** Receive-only and policy enforcement by construction.
+    - **Consequences:** The DSC gate and egc-gate are own code.
+    - **Alternatives rejected:** Installing the full GUIs and relying on lint.
+  23.
+    - **Question:** C23. Region unknown
+    - **Decision:** Ask the user. Meanwhile labd derives the jurisdiction from the GNSS fix (offline Natural Earth admin-0 polygons, not a city table) and stays 'restricted' until a fix exists. GEO 'visible from here' flags are computed at the fix. Hold the LNB, horn and SAWbird+ iO purchases until the region is known.
+    - **Reason:** Legal flags and GEO visibility depend on the region.
+    - **Consequences:** A few MB of polygon data, edited by the user.
+    - **Alternatives rejected:** A 'standard' default everywhere.
+  24.
+    - **Question:** C24. Costs and weights
+    - **Decision:** Recompute in P5 at world prices. radio_lab extended about $555-780 without H-probes; internal interface $56-73; sling about 3.7-4.4 kg (4.4-6.05 kg with supports, per the completeness lens); HF chain including the relay. Remove the loop, H-probe, NanoVNA and SAWbird+ IR lines (and the iO if Inmarsat is dropped). Add about $12-30 of safety items.
+    - **Reason:** The subtotals do not match their line items, and the rules remove items.
+    - **Consequences:** The fix-cost table below.
+    - **Alternatives rejected:** Keeping the stale subtotals.
+  25.
+    - **Question:** C25. P1b completion
+    - **Decision:** Close it. final/report_research.json exists (576,735 B, 18 Oct 04:51). Add errata blocks to summaries.md and minute-log.md, and delete the 'does not exist' statements.
+    - **Reason:** File check.
+    - **Consequences:** None.
+    - **Alternatives rejected:** None.
+  26.
+    - **Question:** D-A. Is any antenna S11 sweep allowed, for example briefly indoors?
+    - **Decision:** No. The ban is absolute, with no 'local rules' exception. radio_lab OQ14 and register #0 are closed as 'No' unless the user explicitly changes hard rule 1.
+    - **Reason:** Rule 1 is explicit. The model puts a -10 dBm sweep about 33 dB above a typical unlicensed limit at 3 m and about 44 dB above GPS C/A at 100 m. Physics: any S11 sweep radiates.
+    - **Consequences:** Antennas are accepted by receive-only checks and conducted checks of their matching parts.
+    - **Alternatives rejected:** Brief indoor uW sweeps; sweeps in a shield box (the box detunes the antenna; impractical).
+  27.
+    - **Question:** D-B. Public broadcasts from military-operated stations
+    - **Decision:** Allowed: public MSI and met broadcasts intended for general reception (NAVTEX, EGC SafetyNET, DSC distress/urgency/safety, NWS charts via the USCG NMF/NMG/NMC). Excluded: military communications (VLF submarine broadcasts, HFGCS, STANAG data, military SATCOM and aero), and stations broadcasting mainly for armed forces (GYA Northwood) from the default schedule until the user answers.
+    - **Reason:** The rule targets chains aimed at military communications. NAVTEX is an explicit user target. GYA is described as 'for the Royal Navy' (hobbyist sources).
+    - **Consequences:** The WEFAX default is civil met services (DWD, JMH) plus NWS charts.
+    - **Alternatives rejected:** A strict operator-based ban (it would remove US NAVTEX and WEFAX and contradict the user's own NAVTEX target).
+  28.
+    - **Question:** D-C. Iridium and Orbcomm
+    - **Decision:** No named target, no Doppler product, no NPU class, no SAWbird+ IR. They appear only as unnamed occupancy in surveys.
+    - **Reason:** No user goal; burst and Doppler logs are traffic metadata; Iridium carries military users.
+    - **Consequences:** -$49.95.
+    - **Alternatives rejected:** Register #1 'carrier and Doppler only' target.
+  29.
+    - **Question:** D-D. Loop definition
+    - **Decision:** Excluded: any antenna whose radiating element is a closed or nearly closed current loop (small and magnetic loops, QFH, eggbeater, quad, delta, biquad, halo, big wheel), ferrite loopsticks and coils (CANADUINO, AS3935), and H-field probes. Allowed: dipoles (V, folded, telescopic), Moxon, Yagi (including hairpin matches), axial and normal-mode helices, patch, chip, horn, cone, whips, E-field probes.
+    - **Reason:** 'NO loop antennas of any kind' needs an operational test, or the P4/P5 re-research will bring QFH back.
+    - **Consequences:** The QFH options are struck.
+    - **Alternatives rejected:** Shape-only or name-only lists.
+  30.
+    - **Question:** D-E. Radios at boot
+    - **Decision:** rfkill blocks all radios at boot. Bluetooth is disabled for good (service masked, driver blacklisted). Wi-Fi is unblocked only at home, by hold-to-confirm, and is re-blocked automatically at QUIET, pass, record or field start. A self-test confirms with the tinySA that 2.4 GHz emissions stop.
+    - **Reason:** Meets the delegated rule even when the user forgets, and nothing needs Bluetooth.
+    - **Consequences:** OMM refresh only at home, or by offline import.
+    - **Alternatives rejected:** Blocking Wi-Fi only.
+  31.
+    - **Question:** D-F. Band mask for surveys and NPU logs
+    - **Decision:** Default mask: 3-30 kHz and 225-400 MHz, with 328.6-335.4 MHz (ILS glide path) left visible; adjustable by region. Inside the mask: live display only; storage keeps the band-mean noise floor; no boxes, snapshots or exports.
+    - **Reason:** Consistent with the VLF SID drop and the Artemis stop. DE §5(2) forbids disclosing the fact of reception.
+    - **Consequences:** Small loss of generic survey detail.
+    - **Alternatives rejected:** No mask; deleting the band from the display.
+  32.
+    - **Question:** D-G. Artemis stop
+    - **Decision:** Out of scope when the category is Military, Radar or Numbers, or the description has military, intelligence, EW or OTH keywords. Civil government services in the target catalogue are allow-listed. Log row: UTC plus 'out of scope' only.
+    - **Reason:** Makes 'identification only' operational without stopping on weather satellites or time standards.
+    - **Consequences:** The Artemis 4.2.0 category names must be checked.
+    - **Alternatives rejected:** Stopping on every 'government' entry.
+  33.
+    - **Question:** D-H. Air travel
+    - **Decision:** The DIY 4S pack never flies. The commercial bank (100 Wh or less) travels in carry-on. A UN 38.3-documented commercial 4S pack is an option (unpriced).
+    - **Reason:** IATA requires a UN 38.3 battery type.
+    - **Consequences:** The pack is rebuilt or bought at the destination.
+    - **Alternatives rejected:** A cell-holder pack (vibration, contact resistance).
+  34.
+    - **Question:** D-I. Voice data
+    - **Decision:** No voice IQ is ever persisted. Masking happens at snapshot time. MARK on a voice box saves the spectrogram crop only. Broadcast programme audio is exempt; amateur voice is masked too.
+    - **Reason:** Strict reading of 'voice is spectrogram-only'.
+    - **Consequences:** Voice-class training uses spectrograms only.
+    - **Alternatives rejected:** 0.25 s snippets; masking after labelling.
+  35.
+    - **Question:** D-J. Geolocation features
+    - **Decision:** No persistent bearing logs or spatial power maps. Interference hunting is a live readout only.
+    - **Reason:** The NPU no-DF/geolocation policy.
+    - **Consequences:** Self-RFI hunting still works.
+    - **Alternatives rejected:** A bearing log not linked to classes.
+- **Budget tables:**
+  - RULE-LEFTOVER PURGE BUDGET (grep hits in final/stack/design sections, 18 Oct 2026; approximate)
+  | Category | small_antenna_stack | radio_lab | lab_ui_hf | npu_training | foldable | others |
+  |---|---|---|---|---|---|---|
+  | Loop / H-probe | stack 18, final 31 | final 18 (some are 'excluded' text) | 0 | 0 | QFH option (bands) | display fixes[5] H-probe; antennas QFH alternative |
+  | Antenna S11 | final 3 | final 2 + OQ14 (loophole) | menu[56] not gated | 0 | final 7 | antennas verify 3, narrowband fixes 1 |
+  | City / Kyiv angles | final 5 | 0 | 0 | 0 | final 4 | gnss_imu 6, antennas 4, dish 3 (4-city table), digest 6 |
+  | UA law / UA price base | final about 17 | UAH as reference only (allowed) | 0 | example only | final 1 | display_market final about 24, compute, wideband, storage, power, gnss_imu |
+  | Private / dual-use targets | stack 13, final 18 | 0 | Inmarsat and DSC decode-then-filter | 0 | 0 | 0 |
+  | TX-capable software | stack 8, final 8 | final 7 | QSSTV | Set B (QAIRT 2.47) | 0 | 0 |
+  | LNB 18 V | stack 2 | SL3 wording | final 4, design 4 | 0 | final 1 | rf_frontend verify 8 |
+  - DC / BIAS HAZARD LIMITS
+  | Line | Value | Hazard if misrouted | Rule |
+  |---|---|---|---|
+  | LNB feed | 13.2 V ±0.2 V; limit 1.5-2x measured (budget 200-300 mA, unmeasured) | 3.5 W into a 1 W ANNE-50+; 8.2 V above the tinySA's 5 V DC limit; Lime ESD8472 conducts above 7 V | DC block toward every SDR and instrument; never on the sled or AUX; feed off to connect |
+  | 18 V branch | deleted | 6.6 W into a 1 W load | none |
+  | SAWbird+ (NOAA/GOES/iO/H1) | 120-180 mA at 5 V | trips the 180 mA V4L tee | TPS2553 at 250-300 mA |
+  | V4L tee | 4.5 V, 180 mA | DC into DC-shorted antennas (hairpin, 9:1) | LNAs of 80 mA or less only; bias calls need a labd token |
+  | Boni-Whip | 12.5 V LDO on 4S | n/a | DC-sense, default OFF |
+  | Pack | 4S 12.0-16.8 V; fuse 7.5 A (Lime) / 5 A (no Lime) | n/a | #2813 hard cut; supervisor at 12.8 V |
+  - ANTENNA S11 SWEEP EMISSION (model: free space, 2 dBi antenna, rules_lens/calc.py)
+  | Source into the antenna | E at 3 m | vs FCC 15.209 above 960 MHz (54 dBuV/m) | L1 at 100 m vs GPS C/A (-128.5 dBm) |
+  |---|---|---|---|
+  | -20 dBm | 77 dBuV/m | +23 dB | +34 dB |
+  | -10 dBm | 87 dBuV/m | +33 dB | +44 dB |
+  | 0 dBm | 97 dBuV/m | +43 dB | +54 dB |
+  The FCC limit is only an example of an unlicensed-emission limit; the user's country is unknown.
+  - PACK TRANSPORT AND CHARGE SAFETY
+  | Item | Value | Source |
+  |---|---|---|
+  | Energy | 4 x 18 Wh = 72 Wh (about 67 Wh at 4.10 V/cell) | P50B 5.0 Ah x 3.6 V |
+  | Airline class | 100 Wh or less: carry-on; spares carry-on only, terminals insulated | IATA passenger guide |
+  | Test requirement | battery type must meet UN 38.3, so the DIY welded pack fails | IATA passenger guide |
+  | Charge window | 0-45 C (10k B3380 NTC) | power.json verify |
+  | IP2368 hot spot | above 100 C at 5 A, so 3 A RISET and a 70 C KSD9700 | power.json |
+  | Fuse | 7.5 A (Lime) / 5 A (no Lime) | register |
+  - QUIET / FIELD EMITTER STATE
+  | Emitter | Field / QUIET | Home | Enforcement |
+  |---|---|---|---|
+  | Q6A Wi-Fi (FCU760K) | rfkill blocked | unblocked by hold-to-confirm; re-blocked at pass or record | labd + systemd-rfkill + tinySA self-test |
+  | Q6A Bluetooth | blocked | blocked | service masked, driver blacklisted |
+  | Pinecil V2 BLE | IronOS Bluetooth Off | Off | P0 check |
+  | FNB58 | Std (no radio) | Std | BOM |
+  | Lime TX | 50-ohm loads + TX-reject patch | same | build + guard |
+  | VNA, tinySA generator, GPSDO, noise source | off | Bench mode only, into loads or DUTs | labd interlock + procedure |
+  - STORAGE / RETENTION (rules view)
+  | Stream | Rate | On about 92-100 GB free UFS | Policy |
+  |---|---|---|---|
+  | 1x V4L 2.56 Msps cu8 | 18.4 GB/h | about 5 h | products by default; raw only when pinned; deleted after 14 days |
+  | 2x V4L | 36.9 GB/h | about 2.5 h | same |
+  | HF+ cf32 768 ksps | about 22 GB/h | about 4 h | same |
+  | NPU dataset quota | 20 GB | n/a | no voice IQ; masked bands never stored |
+  | Voice IQ | 0 B | n/a | spectrogram crops only |
+  - COST DELTA FROM THE RULE FIXES
+  | Change | Delta |
+  |---|---|
+  | Drop H-field probe line (PS-500 or generic E/H set) | -$50 to -$109 |
+  | Drop optional 20 cm loop | -$20 to -$40 |
+  | Drop small-stack NanoVNA (duplicates the LiteVNA) | -$60 to -$130 (unverified price) |
+  | Drop SAWbird+ IR (Iridium) | -$49.95 |
+  | Drop SAWbird+ iO if the egc-gate is not ready | -$49.95 |
+  | Do not adopt the Pluto module | -$350 to -$400 (small-stack estimate) |
+  | Fire-resistant charging bag, pack barrier, fish paper | +$10 to +$25 (estimate) |
+  | Tip caps for telescopic and tape elements | +$2 to +$5 (estimate) |
+  | Software gates (egc-gate, DSC, band mask, Artemis stop, bias token, TX reject, region profile) | $0 in parts, about 6-10 developer days (estimate) |
+- **Checks passed:**
+  - The Q6A stays in every final; no alternative board is a pick.
+  - No dish in any final pick (the 300 mm lens and the horns are not dishes).
+  - radio_lab final: conducted-only source rules, pad levels, Bench interlock (sled on RF3/RF4 with antenna feeds loaded), rfkill on wlan and bluetooth in QUIET, Pinecil Bluetooth Off, FNB58 Std, Lime TX terminated.
+  - lab_ui_hf final: pagers, DSD/AMBE, TETRA, ACARS/VDL2/HFDL, Meshtastic/LoRa, DroneID, 802.15.4 and the SDRangel TX plugins are excluded; apt pins at -1; network ports bound to 127.0.0.1 with nftables; uploads off by default.
+  - URH is rejected everywhere; kalibrate-rtl and gr-gsm are rejected; GRAVES radar meteor counting is rejected; jammers are never bought (SL8).
+  - LimeSuiteNG is built with BUILD_GUI=OFF and AMARISOFT=OFF; limeTRX TX flags are banned; limeConfig is limited to the refclk options.
+  - NPU class policy excludes radar, drone/FPV/RC, EW/jammer, military, emitter fingerprinting and private-content classes; DMR/P25 become unnamed occupancy; LoRa is named only on a SatNOGS-predicted pass; ADS-B/AIS oracles discard ICAO, MMSI and positions; LTE, GSM, Wi-Fi and BT are occupancy-only.
+  - The small-stack exclusion list covers Starlink, OneWeb, Kuiper, Thuraya, Globalstar, military UHF SATCOM and MUOS, Yunhai-1, DMSP, Coriolis, encrypted GNSS codes, ISS non-amateur channels, Cospas-Sarsat, ARGOS/DCP, pay-TV and terrestrial military or drone links.
+  - Black Kite-1 is a civil Rapidtek/TASA/ITRI LEO IoT CubeSat (verified by web); housekeeping telemetry only is acceptable.
+  - No Wi-Fi hotspot/AP mode, ESP32, Pico W or other radio accessory is in any BOM (grep).
+  - The lab_ui_hf location design uses GNSS, a plausibility gate and WMM at the fix, with no city list; no hard-coded time zone was found.
+  - Thunderstorm, discharge-before-connect and power-line rules exist in the lab_ui_hf HF wire setup; a GDT is fitted only with an earth that meets the electrical code.
+  - Power safety already present: 0-45 C NTC charging window, never charging below 0 C, 70 C KSD9700 on the IP2368, pack fuse, #2813 hard cut, Q6A USB-C covered against back-feed, 72 Wh under the 100 Wh class.
+  - The QAIRT AI Stack License terms are noted and the MIT ONNX Runtime CPU path stays first-class; dataset licences are recorded (RadioML NC kept out of redistributable weights).
+  - SL3 DC-hazard notes and the 'DC block before every instrument' rule exist; the LNB never goes on the sled.
+- **Notes:** Base path: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/. Tools: rules_lens/jgrep.py (JSON-path grep) and rules_lens/calc.py (emission and DC model). The register already caught most violations. This pass adds the following:
+  - display.json fixes[5] still builds an H-field loop probe.
+  - The QFH options are not marked as loops.
+  - radio_lab SL0/P0 has a 'local rules' S11 loophole, and lab_ui_hf menu[56] (the SWR page) is not gated.
+  - SoapyRemote and QSSTV are TX paths.
+  - DSC, SITOR-B and the RTTY/CW skimmer have no allow-list.
+  - The survey heat map and the SDRangel Heat Map plugin allow emitter geolocation.
+  - There is no band mask for military bands.
+  - The airline note ignores UN 38.3.
+  - The pack has no fire containment.
+  - The radiosonde scan overlaps the 406 MHz distress band.
+  - The bias-tee API is ungated.
+  
+  GENERIC LEGAL NOTE for STACK.md (country unknown):
+  - Owning and using a receiver is licence-free in most countries, but what may be listened to differs.
+  - UK WTA 2006 s48: an offence to use apparatus to obtain the contents, sender or addressee of messages not meant for you, or to disclose them.
+  - Germany §5 TDDDG: only messages meant for the operator, radio amateurs, the general public or an unspecified group of people may be heard; the content of others, and even the fact they were received, may not be passed on.
+  - US 18 USC 2511(2)(g): radio communications readily accessible to the general public are allowed, including amateur, marine, aeronautical and distress.
+  - So by default the lab decodes only broadcast, amateur, met-satellite, navigation and time, and public MSI. ADS-B and AIS follow the region profile. No air-band or marine voice presets exist. Recordings and exports never contain non-public content. Nothing is published without checking local rules.
+  
+  The 25 conflicts_for_final_checks are resolved as C1-C25, plus 10 extra decisions (D-A to D-J).
+  
+  Web use: 2 WebSearch calls (Black Kite-1, GYA Northwood) and 7 WebFetch calls (UK s48, DE §5 at dejure.org, US 18 USC 2511, IATA PDF, SDRangel readme; gesetze-im-internet.de returned 503 and FAA PackSafe returned 403).
+  
+  Unverified: the Artemis category names; the Inmarsat-C packet descriptor values; the GMDSS HF MSI and DWD RTTY frequency lists (from memory); ITU RR 5.340 (from memory); GYA's operator (hobbyist sources); the prices of the fire bag, tip caps and a commercial UN 38.3 pack.
+  
+  stale_items_to_purge (could not be passed as a separate field: the tool rejected one long JSON string; split for readability; each line is file: field - fix):
+  - small_antenna_stack.json:
+    - final.revised_stack[12]: DIY loop - delete
+    - final.revised_stack[22],[23],[26]: loop leads/IMU loop-plane cue - delete
+    - final.reachable[2],[4],[7],[8]: loop options - delete
+    - final.lost[0],[9],[11]: loop alternatives - delete
+    - final.borderline_options[2]: loop comparison - delete
+    - final.size_rule_used: superseded rule and loop tiers - delete
+    - final.first_tests[2]: NanoVNA/loop - rewrite receive-only
+    - final.first_tests[7],[8]: loop A/B - delete
+    - final.first_tests[4],[5]: Kyiv angles, WSJT-X - compute at fix; jt9 only
+    - final.revised_stack[29]: NanoVNA - delete
+    - final.legal_notes[7]: indoor sweep - delete
+    - final.reachable[8]: Orbcomm target - delete
+    - final.reachable[13], revised_stack[30]: Iridium / SAWbird+ IR - delete
+    - final.reachable[9]: Kyiv angles; bulletin-board packets; stdcdec - fix
+    - final.reachable[12],[14]: Kyiv angles - compute at fix
+    - final.reachable[15], revised_stack[28]: WSJT-X, stdcdec/Scytale-C - replace
+    - final.reachable[1].legal, [11].legal: Ukrainian Criminal Code, Ukrainian territory - generic
+    - final.legal_notes[1]-[6]: NKEK, martial law, Art. 163/359/114-2, DSNS - generic note
+    - final.refuted_claims[6]: Ukrainian law wording - generic
+    - final.excluded_by_law_or_ethics[1]: bulletin-board in scope - SafetyNET only
+    - final.excluded_by_law_or_ethics[3]: Starlink Ukraine framing - keep exclusion, drop the framing
+    - final.revised_stack[0], cost_size_power_delta: duty, EUR 150 - world prices
+    - final.revised_stack[31]: Pluto - not adopted
+    - final.borderline_options[0]: 950 UAH - world price
+    - final.open_questions[0],[7]: stale - close
+    - final.verdict: optional loop; helical-whip LRPT default - V-dipole
+    - bands[1]: Iridium IRA/IBC 'reliable', gr-iridium, CARTOSAT-3 - delete
+    - stack.add[9], remove[0], sdr_decision, revised_bom[23], risks[7]: CARTOSAT-3 - delete
+  - radio_lab.json:
+    - final.safety_and_legal[0] and procedures[0].steps[4]: 'unless local rules allow' - delete
+    - final.open_questions[14]: close as No
+    - final.open_questions[0],[1]: H-probe and AS3935 questions - close (decided)
+    - final.safety_and_legal[3]: '13-18 V' - 13.2 V
+    - final.safety_and_legal[6]: airline - DIY pack never flies
+    - final.lab_bom[3]: H-loop option, E/H set - E-field only
+    - final.lab_bom[40], totals, verdict: PS-500 / generic set - delete
+    - final.lab_bom[49], procedures[20].steps[0]: Boni-Whip 9-15 V/10 V - 12.5 V
+    - final.capabilities[16]: SID, WSJT-X/fldigi - civil LF SID; jt9/wsprd
+    - final.software[8]: wsjtx GUI, fldigi - jt9/wsprd only
+    - final.software[11]: SoapyRemote - delete
+    - final.procedures[20].steps[1]: WSJT-X/fldigi - replace
+  - lab_ui_hf.json:
+    - final.ui_system.menu_tree[12],[13]: 145.800/145.825 - 437.550/437.825
+    - menu_tree[15]: 13.4/18.2 V - 13.2 V
+    - menu_tree[17] and design.menu_tree[13], integration_table[7]: decode-then-filter - egc-gate
+    - menu_tree[25],[26],[31]: no allow-lists - add them
+    - menu_tree[32], hf_capabilities[7]: VLF SID - civil LF only
+    - menu_tree[33], hf_antenna.setup, verdict: 12.0 V - 12.5 V
+    - menu_tree[34],[98], hf_receiver.setup[8]: Wi-Fi only - add Bluetooth
+    - menu_tree[42]: 400-406 MHz - 405.9 MHz
+    - menu_tree[45],[47]: GNSS heat map, bearing log - live only
+    - menu_tree[56]: SWR page - Bench-gated, DUT only
+    - menu_tree[59]: 'power meter' - tinySA channel power
+    - menu_tree[65]: Artemis - add the stop
+    - menu_tree[66]: MARK raw IQ on voice - spectrogram only
+    - tech_stack: qsstv - delete
+  - npu_training.json:
+    - final.class_list[9]: voice IQ snippets - delete
+    - final.class_list[7]: SSTV 145.800 - 437.550
+    - final.class_list[2]: NOAA HRPT - Meteor only
+    - final.datasets[0], scripts_to_write[25]: masking after labelling - mask at snapshot
+    - final.architecture, software[5], pipeline[19], roadmap[3]: Set B - delete
+  - foldable_antennas.json:
+    - final.build_and_test_steps[1],[2],[3],[9], loss_table[1],[11], ultra_compact_tier, foldable_kit[0]: S11/VNA tuning - receive-only checks
+    - final.build_and_test_steps[6], loss_table[10], other_ways_out[4]: Kyiv - compute at fix
+    - final.total_cost: Ukraine shipping - world prices
+    - bands[0].options[9]: collapsible QFH - excluded
+    - final: '18 V or rotate' - rotate only
+    - final: ISS 145.8 - 437.x
+    - build step 3: SAWbird+ via micro-USB - TPS2553 injector
+  - gnss_imu.json:
+    - fixes[5],[6], verify.known_problems_and_fixes_to_apply[7]: Kyiv/Odesa field values - WMM at fix
+    - verify.final_recommendation: UAH price base; 'pps-gpio on 7.0.11'; Route B - world prices; out-of-tree module on 6.18.2-4
+  - antennas.json:
+    - fixes.fixes[0].steps[3], verify.issues[2], verify.known_problems_and_fixes_to_apply[10]: Kyiv - compute
+    - fixes.fixes[1].steps[2], verify.known_problems_and_fixes_to_apply[0],[7], forums.common_problems[8].known_fix: VNA tuning - receive-only checks
+    - research.alternatives[1]: QFH - excluded
+  - dish_replacement.json:
+    - fixes.fixes[0].steps[3], verify.known_problems_and_fixes_to_apply[4]: four-city pointing table - compute at fix
+    - verify.known_problems_and_fixes_to_apply[11]: Kyiv - compute at fix
+    - optimistic QO-100 model and '300 mm lens SSB readable' - superseded
+  - display.json:
+    - fixes.fixes[5].steps[2]: DIY H-field loop probe - E-field stub
+    - final: 'native 1080p60' - 127.9 MHz field mode
+  - display_market.json:
+    - final.ukraine_purchase, main_pick.price, above_fhd_tier.price, ranked_candidates UAH, open_questions[5],[7],[8]: Ukraine basis - world prices
+    - final: 128.70 MHz - 127.9 MHz
+  - narrowband_sdr.json fixes.fixes[3].steps[4]: 'NanoVNA also tunes the Yagis and helix' - delete
+  - rf_frontend.json: 13.4/18.2 V switchable LNB, 100-160 mA PTC, 'GOES+ on V4L tee' - delete
+  - power.json: '12 V rail suits an LNB', UAH prices - delete, world prices
+  - compute.json: 'before Ukrainian import VAT', 'pin QAIRT 2.46' - delete
+  - wideband_sdr.json: Lime '$310-320 landed' including Ukrainian duty - world price
+  - storage.json: T7 9,299 UAH - world price
+  - mechanical_thermal.json: 9 V buck into J21 - 12 V
+  - digest.md lines 116, 140, 914, 975 (city/Kyiv) and 944 (Ukrainian EW) - delete
+  - summaries.md #128 (city-list fallback) - errata
+
 ## sourcing:group2 (run `wf_b9cc0186-94e`)
 
 - **Group:** SDR + RF FRONT END + ANTENNAS (final verified picks; loops, H-field probes, YouLoop, VNA antenna sweeps and the 18 V LNB branch are excluded by the user's rules)
