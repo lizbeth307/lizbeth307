@@ -16189,6 +16189,77 @@
   
   Left for batch 3 (changes 76-113), which aim at nearby text: Goobay lead (86), Uputronics Rev 3.0 (78), DC-block rule (104), INA228 0x45 in the I2C address map (99), GX16 connector for the IMU pack (98), GP18/19 driver parts (89), GP20-22 row (91) and the bench STT hub sentence (106).
 
+## edit:05b_arch_bus_rf:b3 (run `wf_45d408c6-7ff`)
+
+- **Section:** 05b_arch_bus_rf
+- **Applied:**
+  - 76
+  - 77
+  - 78
+  - 79
+  - 81
+  - 83
+  - 84
+  - 85
+  - 86
+  - 87
+  - 88
+  - 89
+  - 90
+  - 91
+  - 92
+  - 93
+  - 94
+  - 95
+  - 96
+  - 97
+  - 98
+  - 99
+  - 101
+  - 102
+  - 103
+  - 104
+  - 105
+  - 106
+  - 107
+  - 108
+  - 109
+  - 110
+  - 111
+  - 112
+  - 113
+- **Skipped:**
+  1.
+    - **Idx:** 80
+    - **Why:** Already in the file. Batch idx 25 had replaced the sled 'HMC7992 V1-V3' text with 'HMC7992 A/B (2 лінії; паркування на RF1)', and idx 107/108 have now rewritten the whole sled bullet with the same content.
+  2.
+    - **Idx:** 82
+    - **Why:** Already in the file. Earlier batches (idx 26-29, 32, 38) had remapped every throw label in the port and target tables to RF2/RF3/RF4, with RF1 as the park. No T1-T3 labels are left.
+  3.
+    - **Idx:** 100
+    - **Why:** Already in the file. Batch idx 63 had set the pin 3 cell to an open-drain ALERT with the pull-up only to the Q6A header 3.3 V and never to AON.
+- **Notes:** File edited: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/05b_arch_bus_rf.md. All table rows still have their column counts. No subtotals live in this file.
+  
+  Anchors that no longer matched: idx 79, 81, 87, 88, 99, 103, 104, 106, 108 and 110 pointed at v1 text that earlier batches had already rewritten. I applied them to the current text, merging rather than repeating.
+  
+  Conflicts and which source won:
+  (1) idx 103 (G3 #14) vs idx 110 (G6). G3 names the LNB choke part, LQW2UAS68NG00L 68 nH / 1 A, bought now in the DigiKey DE order; G6 says no part number is named yet. G3's part decision won. From idx 110 only the Bullseye red-port AXING CFA 11-00 terminator text went into the P4 row.
+  (2) idx 87 (G1 #6, keep) vs re-audit B (batch idx 39). Re-audit B says HF+ cannot do DAB (912 ksps max vs 2.048 Msps). That stays because the analog kept the part, and G1 #6's own stack_changes say no change is needed. G1's Band III 174-260 MHz reduced-performance caveat was added.
+  (3) idx 81 (G1 #4) vs the earlier re-audit isolation wording (≥30 dB). G1 #4's acceptance test for the new chip part won: ≥40 dB at 0.1-1.7 GHz, 37-40 dB accept and log a layout fix, below 37 dB add fence vias or a shield and re-measure.
+  (4) idx 104 (G3 #14) vs G1 #4 on DC blocks. G1 put 1 nF on RFC-B; G3's newer explicit rule puts 100 pF on ch3, ch5 and the RTL-B pins, and that rule was applied. G1's 10 nF on RTL-B RF4/RFC for HF bench work was kept as an exception.
+  (5) idx 95 (G2 #10) says the relay driver sits on the G6K board inside the HF+ can. G1 #8 (the decision on the can) and section 5.8 in 05d say the G6K board sits beside the can, outside it. The placement was written as outside, per G1 #8 and 5.8. The driver parts from G2 #10 were applied in full.
+  (6) idx 78. The sentence on sources that must never mate with P2 says '12.5 V (Boni)'. I wrote 13.8 V because v2 chose the BONI13V8 rail (05a and the P5 row). The re-audit's 'no signal unpowered' and G1's 'heavily attenuated' were merged, since the datasheet says both.
+  (7) idx 106 (G5 #13) vs re-audit D's hub depth text. Re-audit D's 'до 4-5 при межі 5' limit was kept. G5's STT note and its acceptance check were added: `lsusb -t` must show the hub adds exactly one tier, and the internal CH334F stays MTT.
+  
+  Recomputed: the Pico header line now reads 24 GPIO + 3 ADC with no free GPIO, because GP22 becomes the path-1 fan tach (idx 89/91, to confirm in P7).
+  
+  Conditional replacements carry their condition and fallback inline:
+  - Lindy 36700: noise-floor rise under 0.5 dB; fallback is the generic 15 cm extension.
+  - Goobay 58814: ingress A/B and DC drop ≤0.1 V; fallback is Goobay 66620 or the current lead.
+  - Bare MCP23017-E/SO: power PCB still unordered plus the bench tests; fallback is 2× Adafruit 5346.
+  - G6K-2F-RF-S: LF/HF gate; fallback is G6K-2F-RF DC5.
+  - HF choke stage: gate; fallback is FT-240-31 2631803802.
+
 ## edit:10_sources:b1 (run `wf_47c804ff-504`)
 
 - **Section:** 10_sources
