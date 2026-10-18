@@ -3589,3 +3589,106 @@
   
   In-cell touch adds no separate touch layer. Cover glass is not stated: an air-gapped cover would add about 8% specular glare. Bonded AR glass is needed to be truly sunlight-readable. Because the brightness is unverified, this estimate is conditional.
 
+## dispmkt:check2 (run `wf_a429c611-ea2`)
+
+- **Name:** AliExpress '2000nit High Brightness Incell Touch CTP 7" 1200*1080 FHD HDMI-Compatible IPS LCD Module' (brand SURENOO, model SUR12001080H070K), item 1005006176909405 / US 3256805990594653
+- **Exists and orderable:** ні
+- **Confirmed specs:** Only these points could be confirmed, all from search-engine snippets of the AliExpress page. Every primary page was captcha-walled (AliExpress .com/.us/.ru/m., Alibaba) or returned 403 (eBay, surenoo.com).
+  - Exact listing title: '2000nit High Brightness Incell Touch CTP 7" 1200*1080 FHD HDMI-Compatible IPS LCD Module Monitor Display Panel Sunlight Outdoor'.
+  - Item specifics in the snippet: Brand SURENOO, Model Number SUR12001080H070K, Type TFT.
+  - The global ID 1005006176909405 (= US ID 3256805990594653 minus 2^51) answers with a 302 redirect to the US item page, not to an 'item not found' page. So the listing probably still exists, but stock, price and shipping could not be seen.
+  - Size 7 in. Calculated PPI is 314.7 if the panel really is 1920x1080.
+  Related context, also from snippets only:
+  - The two other 7in FHD 2000-nit in-cell offers found are MIPI panels. One is item 3256805881153921, 'Sunlight Readable Screen 7 Inch 1920x1080 2000 Nits ... Wide Temperature ... Automotive LCD'. The other is a Wisecoco 'TOP070FHD03HB', described as 7in 1920x1080, 2000 nits, in-cell, MIPI.
+  - So this HDMI module is most likely a MIPI phone-type glass behind an HDMI-to-MIPI bridge board. That is an inference, not confirmed.
+- **Refuted or doubtful:**
+  - Brightness of 2000 nit is a listing-title claim only. No datasheet, panel part number or independent luminance measurement was found for SUR12001080H070K.
+  - Resolution is not established. The '1200*1080' is not a one-off title typo: the seller's own model number SUR12001080H070K encodes the same figure. No standard 7in 1200x1080 panel is known, so the true panel could be 1920x1080 or 1080x1920 (portrait MIPI), or 1200x1920 (a common 7in MIPI format). The candidate's assumed 1920x1080 is unverified.
+  - 'Same glass and board as the current Wisecoco pick' is refuted as stated. The brand is SURENOO, not Wisecoco. There is no evidence that it uses the same panel, the same bridge board, or the CH57x USB-HID touch bridge.
+  - The touch path to the host is not documented. In-cell TDDI touch outputs I2C/SPI, and the board would need an MCU that converts it to USB HID. No VID:PID, controller chip or USB connector was found.
+  - The $106.09 price comes from an earlier search snippet. It could not be re-read, and shipping and the final price to Ukraine are unverified.
+  - Does not meet the 'above Full HD' wish. At best it is exactly FHD, and if 1200x1080 were real it would be below FHD.
+  - Cover glass, AR/AG coating and optical bonding are unknown. The listing says only 'in-cell CTP'.
+  - If the native mode is portrait 1080x1920 (likely for MIPI glass), the host must rotate the picture. The vertical blanking on phone-panel EDIDs is often under 24 lines (e.g. VFP+VSW+VBP of about 20 to 22), which would break the Q6A DP rule. This is unverified, so an EDID dump is needed.
+- **Touch reaches host as usb hid:** unknown
+- **Q6a mode line and link check:** All figures below are calculations. The native EDID is unknown, so several native-mode cases are covered.
+  - Native 1920x1080@60:
+    - CVT-RB v1 timing: 2080x1111, vblank 31 (meets the 24-line rule), 138.5 MHz. That is 3.32 Gbps, or 38% of the 8.64 Gbps 2-lane HBR2 payload.
+    - 1920 px is under the 2400 px DPU linewidth, so no virtual planes are needed.
+  - Native portrait 1080x1920@60 (likely for MIPI glass):
+    - RB v1: 1240x1975, vblank 55, 146.75 MHz, 3.52 Gbps (41%).
+    - RB v2: 1160x1975, 137.46 MHz.
+  - Native 1200x1920@60: RB v1 1360x1975, 161.0 MHz, 45% of the link.
+  - Every case fits the link with a large margin and under 330 MHz, and stays under the 2400 px limit.
+  - The real constraint: an HDMI-to-MIPI bridge (LT6911/TC358870 class) usually passes timing through to the panel. The host must then send the panel's native porches. If the EDID's VFP+VSW+VBP is under 24, add lines to VFP (and lower the refresh rate) in a custom mode, then confirm the panel and the in-cell touch tolerate it.
+  - RF-clean examples, checked against harmonics 1 to 40 with a 1 MHz guard:
+    - Portrait: 1080x1920 at htotal 1240, vtotal 1975, 135.7 MHz = 55.4 Hz. The same timing at 128.6 MHz gives 52.5 Hz.
+    - Landscape: 1920x1080 RB at 2080x1111 and 135.7 MHz = 58.7 Hz. CEA 2200x1125 at 128.7 MHz = 52 Hz.
+    - Each needs about 3.1 to 3.3 Gbps (36 to 38% of the link).
+  - Clean pixel-clock windows between 125 and 160 MHz: 127.85-129.35, 135.4-135.95, 153.4-153.5 and 155.55-157.05 MHz.
+- **Rf harmonics check:** All calculations; native clocks are assumed.
+  - 148.5 MHz (CEA 1080p60): x5 = 742.5 MHz (QO-100 IF), x15 = 2227.5 MHz.
+  - 138.5 MHz (CVT-RB 1080p60): the fundamental sits 0.5 MHz above the 137-138 MHz weather-satellite band; x16 = 2216 MHz.
+  - 146.75 MHz (RB v1 1080x1920@60): x15 = 2201.25 MHz.
+  - 137.46 MHz (RB v2 portrait 60 Hz): the fundamental is inside 137-138 MHz.
+  - About 145.2 MHz (a common portrait clock): the fundamental is in 144-146 MHz and x3 = 435.6 MHz.
+  - 1080x1920@52 RB v1 (126.75 MHz) is not clean: x18 = 2281.5 MHz. 1200x1920@52 RB v2 (130.99 MHz) hits 1702.9 and 2226.8 MHz.
+  - Clean choices: see the modes and windows in the mode-line check (e.g. 135.7 MHz or 128.6/128.7 MHz).
+  - Extra source on a MIPI bridge board: the 4-lane DSI clock lane runs at about 3 x the pixel clock.
+    - At 145.2 MHz pixel clock, the clock lane is at 435.6 MHz, inside the 435-438 band.
+    - At 141 MHz, x4 of the clock lane is 1692 MHz.
+    - At 148.5 MHz, x5 is 2227.5 MHz.
+    - The bridge's DSI rate is often set independently, so ask for it.
+  - The LED boost converter and the TDDI scan are further broadband sources. Plan shielding, ferrites on the HDMI and USB cables, and test with the SDR before final assembly.
+- **Power and thermal:** No power figure was found for this item. Everything below is an engineering estimate, not a sourced number.
+  - Power: a 7in, 314 ppi IPS panel at 2000 nits typically means a strong edge-lit LED bar. The estimate is about 6-12 W total for backlight, panel and bridge at full brightness.
+  - Supply: this rules out powering it from a Q6A USB-A port (500 mA x 5 V = 2.5 W). Use the 12 V rail and a dedicated buck, budgeting about 1-1.5 A at 12 V until a measurement exists.
+  - Heat from sunlight: about 13.5 W of sun lands on the 155.0 x 87.2 mm active area at 1000 W/m² (calculation), and much of it is absorbed in the polarizers and the backlight.
+  - Total heat: together with the backlight, roughly 20 W of heat in a 7in handheld.
+  - Overheating risk: blackout above the liquid crystal's clearing point and accelerated LED ageing.
+  - Mitigation: an aluminium back plate or heat spreader on the LED-bar edge, a sun hood, and running below 100% where possible. Brightness control must exist (button, USB or DDC), and its PWM frequency matters for RF and flicker.
+- **Sunlight readability estimate:** Calculation for 100 klx direct sun on the screen, using diffuse reflectance R; specular glare is not included.
+  | Luminance | R = 0.5% | R = 1% | R = 2% |
+  |---|---|---|---|
+  | 2000 nit (if true) | 13.6:1 | 7.3:1 | 4.1:1 |
+  | 1000 nit (if the title overstates) | 7.3:1 | 4.1:1 | 2.6:1 |
+  | 700 nit | | 3.2:1 | |
+  - In-cell touch avoids the extra touch sensor and air gap of a separate touch layer, which lowers reflections. That is a plus.
+  - Uncoated cover glass still gives about 4% specular reflection per surface, so AR/AG coating and optical bonding decide real-world readability.
+  - With an IPS polarizer at 0°/90°, the screen can black out through polarized sunglasses in one orientation. Ask for the polarizer axis.
+  - Verdict: readable in direct sun only if the 2000 nits is real and the front stack is coated or bonded; neither is confirmed.
+- **Real price and shipping to ukraine:** Not verified. The only figure is the earlier search snippet of $106.09 (Oct 2026); the page itself is captcha-protected and could not be read.
+  - Shipping to Ukraine for this item, and the final landed price, are unknown. AliExpress generally ships to Ukraine, but that was not confirmed for this listing.
+  - Add Ukrainian import VAT or duty if the parcel exceeds the current duty-free threshold; check the rules that apply on the order date.
+  - Comparison prices, all from snippets: Wisecoco site kit $132 (current pick); MIPI-only 2000-nit 7in FHD in-cell item 3256805881153921 at $160.32; VSDISPLAY 6.97in 1080x1920 2000-nit MIPI on-cell with an 'HD board' at about £119 on eBay.de 256679793470.
+- **Questions for seller:**
+  - What is the real native resolution and orientation? Your title and model number SUR12001080H070K both say 1200*1080. Is it 1920x1080, 1080x1920 or 1200x1920?
+  - What is the panel's part number and manufacturer, and can you send its datasheet? Is the 2000 cd/m2 figure typical or minimum, and is it measured at the cover glass with touch?
+  - Please send the full EDID dump (hex) from the HDMI board: preferred mode, pixel clock, porches and sync widths. Does it accept 50-58 Hz, a modified VFP, or custom pixel clocks such as 128.6 or 135.7 MHz?
+  - Which bridge chip is on the board (e.g. LT6911UXC, TC358870)? What is the DSI lane count and per-lane bit rate?
+  - How does touch reach the host: a separate USB port, the touch controller chip, and the 'lsusb' VID:PID? Is it a standard HID multitouch device that works on Linux without drivers, and how many touch points does it report?
+  - Does in-cell touch keep working if the refresh rate is changed from 60 Hz (e.g. 52-58 Hz)?
+  - What is the supply voltage and current at 100% brightness? How is brightness controlled (buttons, USB, DDC/CI), and what are the backlight PWM frequency and LED driver switching frequency?
+  - What are the operating and storage temperature ranges, and the clearing-point or sunlight-heating behaviour? Is there a metal back frame?
+  - What are the cover glass thickness, AR/AG coating and optical bonding, and the polarizer orientation?
+  - What exactly is in the box (FPC, HDMI and USB cables, board)? What is the shipping method and cost to Ukraine (Nova Poshta/Ukrposhta), and is there a warranty or DOA policy?
+- **Keep:** ні
+- **Reason:** It does not survive checking. Every key claim rests on one AliExpress title, and that title contradicts itself ('1200*1080' and 'FHD'). The seller's model number SUR12001080H070K repeats the odd 1200x1080, so the resolution is unknown, not merely a typo.
+  - Brightness has no datasheet or measurement behind it.
+  - The brand is SURENOO, not Wisecoco, so the 'same glass and board as the current pick' assumption is unfounded.
+  - There is no evidence of how touch reaches the host (no chip or VID:PID).
+  - Price, stock and shipping to Ukraine could not be read because the pages are captcha-walled.
+  - Even in the best case it is only FHD, not above FHD.
+  Electrically, any of the plausible native modes fits the Q6A link easily: 36-45% of 2-lane HBR2 and under 2400 px wide. But a MIPI-bridge board may expose phone-panel porches with fewer than 24 blanking lines. Likely default clocks (138.5, 145, 146.75 or 148.5 MHz) also land harmonics or fundamentals in our bands, so a custom clean mode (e.g. 135.7 MHz) must be confirmed to work with the panel and its in-cell touch.
+  Treat it as a lead only: re-evaluate if the seller supplies the panel datasheet, an EDID dump and the lsusb VID:PID. Until then, the current pick stays ahead.
+- **Sources:**
+  - https://www.aliexpress.com/item/1005006176909405.html (search-snippet title + item specifics SURENOO / SUR12001080H070K; 302 redirect to the US page; page captcha-protected)
+  - https://www.aliexpress.us/item/3256805990594653.html (captcha / login-cookie redirect loop, unreadable)
+  - https://www.aliexpress.us/item/3256805881153921.html (snippet: 'Sunlight Readable Screen 7 Inch 1920x1080 2000 Nits ... Wide Temperature ... Automotive LCD', MIPI)
+  - https://www.aliexpress.us/item/3256805758322161.html (snippet: '7 Inch 2400Nits IPS LCD Touchscreen Module')
+  - https://www.alibaba.com/product-detail/7-Inch-1920-1080-FHD-IPS_10000041147858.html (captcha, unreadable)
+  - https://www.ebay.de/itm/256679793470 (snippet: VSDISPLAY 6.97in 1080x1920 2000 nits IPS MIPI 39-pin on-cell + HD board, ~GBP 119; 403 to fetch)
+  - https://www.ebay.de/itm/176657492046 (snippet: Wisecoco 7in 1920x1080 2000 nits touch HDMI kit, listing ended; 403 to fetch)
+  - https://www.surenoo.com/ (403 Access Denied to fetch)
+  - Calculation scripts: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/calc/t.py and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/calc/m.py
+
