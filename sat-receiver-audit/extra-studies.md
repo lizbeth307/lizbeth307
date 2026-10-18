@@ -25188,6 +25188,130 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Stack correction to carry: the 50 Ohm park goes on RF1, not T4/RF4 (datasheet Table 6, reaudit B).
 
+## searchB:generic_hmc7992_sp4t_boards_rtl_a_and_rt (run `wf_e32114dd-52d`)
+
+- **Part:** Generic HMC7992 SP4T switch boards ×2 (RTL-A and RTL-B input selectors; after the bias injectors; 50 Ohm park load on RF1, because A=B=low selects RF1)
+- **Current price usd:** 30-40 for the line of 2 boards (about 15-20 each). Marketplace price, unverified (STACK.md row 2.3). The boards found carry silkscreened Analog Devices branding that ADI does not sell, and no independent measurement of any generic board was found.
+- **Critical specs:**
+  - Frequency coverage of every used throw: RTL-A 137-146 MHz (VHF-137, 2 m) and 435-438 MHz (UHF). RTL-B 1.53-1.71 GHz (L-band), 739.5 MHz (QO-100 LNB IF) and BENCH/sled (up to the V4L top, ideally also HF). HMC7992 baseline: specified 0.1-6 GHz. ADI's text says it 'can operate well down to 10 kHz' (P1dB 21 dBm, IIP3 37 dBm at 1 MHz), but IL and isolation below 100 MHz are not tabulated.
+  - Insertion loss at 0.1-2 GHz: baseline 0.6 dB typ / 0.9 dB max.
+  - Isolation RFC to RF1-RF4, worst case, 0.1-2 GHz: baseline 40 dB min / 45 dB typ. The stack's acceptance floor is 30 dB or more, measured conducted on the finished board.
+  - Nonreflective (absorptive) off ports terminated in 50 Ohm, so unselected LNA/SAW outputs see a load. Return loss baseline: on-state 25 dB; off-state 7 dB (low end), 15 dB (0.4-1 GHz), 20 dB (1-6 GHz).
+  - Linearity at VDD 3.3 V: IIP3 56 dBm, P1dB 33 dBm, P0.1dB 31 dBm. Max RF input 32 dBm through / 27 dBm terminated.
+  - Supply and control: VDD 3.0-5.4 V from the 3.3 V rail, IDD 0.16 mA typ. Two control lines (on-chip 2:4 decoder) from the MCP23017 at 3.3 V, VIH 1.15 V min. Power-up state: all-low selects RF1 (the park load). VDD must come up before the logic.
+  - DC handling: all five RF pins are DC-coupled. The switch sits behind bias injectors, so C0G DC blocks on all five pins (RFC included) are mandatory, plus 100 pF on A/B and a VDD bypass.
+  - Robustness: ESD 2 kV HBM / 1.25 kV CDM; case -40 to +105 C.
+  - Build and provenance: genuine silicon from an authorized channel; 50 Ohm grounded coplanar waveguide with via fence and a solid EPAD ground; good SMA or direct on-PCB routing; fits the top-edge RF compartment; can be shielded.
+  - Spurs: no charge-pump or negative-voltage-generator spurs in the 137 MHz-1.7 GHz receive bands, checked with the RTL and tinySA through the switch.
+  - Legal and rule compliance: not a counterfeit and no trademark misuse; passive receive-path part (receive-only rule met); conducted-only qualification on the LiteVNA.
+- **Candidates:**
+  1.
+    - **Name:** DIY: genuine ADI HMC7992LP3DE ×2 placed on the existing custom 5-channel injector PCB (follows the re-audit advice 'prefer chips on the custom injector PCB')
+    - **Kind:** diy
+    - **Price usd:** About 27 excl. VAT for two (DigiKey DE EUR 11.50/pc excl. VAT, about USD 12.93 at the 1.124 USD/EUR rate implied by the re-audit; DigiKey US USD 13.10/pc per re-audit 18 Oct; plus about USD 1 of C0G 0402 passives, which is a model figure). About USD 31-32 incl. 19% VAT (VAT varies by member state). It also removes 10 SMA jacks and about 8 inter-board pigtails, which the USD 30-40 line does not count.
+    - **Spec comparison:** Same silicon, so the chip-level specs are identical: 0.1-6 GHz (operates to 10 kHz per ADI text), IL 0.6/0.9 dB, isolation 45 typ / 40 min dB at 0.1-2 GHz, on-state RL 25 dB, IIP3 56 dBm and P1dB 33 dBm at 3.3 V, VIH 1.15 V, IDD 0.16 mA, RF1 at power-up, ESD 2 kV HBM. Board-level IL and isolation depend on the layout. ADI's characterization used its eval PCB on Rogers 4350 / Arlon 25FR. On FR4 with short GCPW runs the extra loss at 1.7 GHz should be small (model). DC blocks are guaranteed because they are on our own BOM.
+    - **Worse in:** Nothing at chip level. Board-level equality is unproven until measured: no independent measurement exists for this layout. Hand-assembly risk: QFN-16 3x3 mm with EPAD needs hot-air or hotplate reflow, or PCBA. If both switches sit on the injector board, a fault there takes out both selectors (repairability).
+    - **Compatibility:** Same control (2 lines on MCP23017 GPB4-7), same 3.3 V rail and same truth table, so no software change. The injector PCB needs 50 Ohm GCPW with a via fence and stitching. A 2-layer 0.8 mm or 4-layer stack is easier to route than 1.6 mm 2-layer (model). Keep RF1 = 50 Ohm park. The output goes to each RTL by one coax; the inputs come straight from the injector channels.
+    - **Risks:** Accept only after a LiteVNA conducted sweep of each throw, 0.1-1.8 GHz plus an HF spot check: IL no more than 0.9 dB plus the trace, isolation at least 40 dB, on-state RL at least 15-20 dB, and no new spurs on the RTL/tinySA. Otherwise fall back to separate boards. DigiKey DE showed 4,655 in stock; the DigiKey test mirror showed 0, so buy with the existing DigiKey order. ADI silicon from an authorized distributor removes the counterfeit risk. The saving is marginal: about USD 3-13 excl. VAT, roughly break-even incl. VAT, before counting the saved connectors.
+    - **Seller url:** https://www.digikey.de/en/products/detail/analog-devices-inc/HMC7992LP3DE/5873027
+    - **Sources:**
+      - https://www.farnell.com/datasheets/2283884.pdf
+      - https://www.digikey.de/en/products/detail/analog-devices-inc/HMC7992LP3DE/5873027
+  2.
+    - **Name:** Generic AliExpress 'SPDT/SP4T RF Switch Module 100MHz-6GHz HMC7992 HMC349 ARW3235 HMC849' (HMC7992 SP4T variant), a cheaper store for the same class of board
+    - **Kind:** generic_or_clone
+    - **Price usd:** 6.69 each for 2+ pcs per the search-result snippet, so about 13.4 for two. Unverified: the item page is blocked by a captcha. The 0.99 'from' price on the multi-chip listing is for another variant.
+    - **Spec comparison:** Claims only (datasheet copy: 0.1-6 GHz, 45 dB isolation, 0.6 dB IL, 58 dBm IIP3). Product photos show 5 SMA jacks, small caps near the ports (they may or may not be DC blocks on all 5 pins), an A/B/VDD/GND header, visible flux residue and no shield. No measured S-parameters, user plots or forum measurements found in 3 searches.
+    - **Worse in:** Unknown, because there is no measured evidence (rejected under this angle). Provenance: the price is below the authorized single-unit chip price (EUR 11.50 / USD 13.10), so the chip may be pulled, remarked or grey. The silkscreen shows the 'ANALOG DEVICES' logo and the ADI part description on a board ADI does not make (ADI sells only the EV1HMC7992LP3D, about USD 319), which is trademark misuse that looks like a counterfeit. Build quality is visibly lower than an eval board.
+    - **Compatibility:** Same pinout and control as the current pick (3-5 V, A/B header). Fits only if all five RF pins really have DC blocks.
+    - **Risks:** Fails the 'not counterfeit / legally sold' check as photographed. The current generic pick very likely shares this design and branding. If it were bought anyway, each board would need a LiteVNA sweep (isolation at least 30 dB required, 40 dB to count as not-worse) and a chip-marking check before installation.
+    - **Seller url:** https://www.aliexpress.com/item/1005009856440413.html
+    - **Sources:**
+      - https://www.aliexpress.us/item/3256809670125661.html?gatewayAdapt=glo2usa4itemAdapt
+      - https://www.aliexpress.com/item/1005009027098492.html
+      - https://ae-pic-a1.aliexpress-media.com/kf/S8cc609f3513a4fe980d25eb31a205d56A.jpg_960x960.jpg
+      - https://ae-pic-a1.aliexpress-media.com/kf/S199d5161f8c94c998a9b92f3d80812496.jpg_960x960.jpg
+  3.
+    - **Name:** DIY: Mini-Circuits HSWA4-63DR+ ×2 (absorptive SP4T MMIC, 30 MHz-6 GHz, 4x4 QFN-24) on the injector PCB
+    - **Kind:** diy
+    - **Price usd:** About 15 excl. VAT for two (DigiKey DE EUR 6.15/pc excl. VAT, EUR 7.32 incl., 5,567 in stock; about USD 6.91 each at 1.124; plus about USD 1 of passives, a model figure). About 17.5 incl. VAT.
+    - **Spec comparison:** vs HMC7992 at 3.3 V. Insertion loss is worse: 0.9 typ / 1.1 max dB at 30-900 MHz and 1.1 / 1.35 dB at 0.9-2.1 GHz, against 0.6 / 0.9. Isolation is better: 61 typ / 55 min at 30-900 MHz and 55 / 52 at 0.9-2.1 GHz, against 45 / 40. On-state return loss is worse: 17 dB against 25. Off-state return loss is better: 22 dB against 7-20. IIP3 is equal or better: +58 dBm against +56. P0.1dB is better: +35 dBm against +31. Frequency range is better: 30 MHz-6 GHz against 0.1-6 GHz. Supply 2.3-5.5 V at 110 uA. VIH 1.17 V, but control is limited to 3.6 V max. In 2-pin mode, all-low selects RF4, so the park load moves to RF4. 3-pin mode adds an ALL-OFF (all terminated) state. Data is Mini-Circuits' own measurement on TB-927+ with an N5230A.
+    - **Worse in:** Insertion loss is 0.3-0.5 dB higher typ and on-state return loss is 8 dB lower. Behind 19-41 dB of LNA gain this raises system NF by only about 0.03 dB (model), but it is still a spec loss, so it is NOT a not-worse analog under the user's rule. Spurs from its built-in negative-voltage generator are unpublished. No independent measurement exists.
+    - **Compatibility:** Control lines need only 3.3 V (MCP23017 is fine; never 5 V logic). Truth-table remap in labd (park on RF4, or use ALL-OFF with control 3 wired). Different footprint (QFN-24 4x4). It does not need DC blocks itself, but keep them because the injectors put DC on the lines.
+    - **Risks:** Reject unless the user explicitly accepts the IL and RL trade. Check NVG spurs at 137/435/740/1540-1700 MHz on the RTL and tinySA. Lead time is 16 weeks if stock runs out.
+    - **Seller url:** https://www.digikey.de/en/products/detail/mini-circuits/HSWA4-63DR/13928004
+    - **Sources:**
+      - https://www.minicircuits.com/pdfs/HSWA4-63DR+.pdf
+      - https://www.digikey.de/en/products/detail/mini-circuits/HSWA4-63DR/13928004
+  4.
+    - **Name:** Generic HMC241-based SP4T boards (or DIY HMC241LP3E, the pin-compatible GaAs predecessor)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Unverified (no primary listing checked). Earlier research only noted 'cheaper on AliExpress'.
+    - **Spec comparison:** From the HMC241LP3/LP3E datasheet (Vdd +5 V). Frequency range DC-4 GHz, better at the low end. IL 0.6 dB (DC-1 GHz) and 0.7 / 1.0 dB (DC-2 GHz), against 0.6 / 0.9. Isolation 45 / 40 dB (DC-1 GHz) and 43 / 38 dB (DC-2 GHz), against 45 / 40. On-state RL 18 dB against 25. Off-state RL 12 dB. P1dB 26 dBm against 33. IIP3 45 dBm against 56.
+    - **Worse in:** IL at 2 GHz, isolation min at 1-2 GHz, on-state RL, P1dB (-7 dB), IIP3 (-11 dB). It also needs a +5 V supply instead of the 3.3 V rail. GaAs. One distributor listing marks HMC241LP3 obsolete. No measured evidence for the generic boards.
+    - **Compatibility:** Same 2-line decoder and same pinout as the HMC7992 (ADI says they are pin compatible). Needs a 5 V switch rail; 3.3 V TTL control is fine.
+    - **Risks:** Rejected: worse in several specs, provenance unknown and no measurements.
+    - **Seller url:** 
+    - **Sources:**
+      - https://cdn.components.ru/media/PDF/1451084.pdf
+      - https://www.farnell.com/datasheets/2283884.pdf
+  5.
+    - **Name:** Used connectorized Mini-Circuits ZSWA4-63DR+ (absorptive SP4T 1-6000 MHz) or a used ADI EV1HMC7992LP3D eval board
+    - **Kind:** used
+    - **Price usd:** New: ZSWA4-63DR+ USD 307.32 each (Mini-Circuits web store, 0 stock); EV1HMC7992LP3D about USD 319 (stack data). No used listings found, so no used price can be stated.
+    - **Spec comparison:** Good lab-grade parts (ZSWA4 covers 1 MHz-6 GHz), but they are not cheaper. A used price would have to be under about USD 15-20 to compete.
+    - **Worse in:** Price, by an order of magnitude. ZSWA4 is a large SMA box with a D-sub control connector, so size and power fit the handheld poorly.
+    - **Compatibility:** Poor for the handheld: housing size; ZSWA4 control through a 9-pin D-sub at 2.3-3.6 V.
+    - **Risks:** Rejected on price and size. A used unit would also need a fresh LiteVNA check.
+    - **Seller url:** https://www.minicircuits.com/WebStore/dashboard.html?model=ZSWA4-63DR%2B
+    - **Sources:**
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=ZSWA4-63DR%2B
+  6.
+    - **Name:** Manual 'connect X' SMA swap (budget alternative already noted in STACK)
+    - **Kind:** diy
+    - **Price usd:** 0
+    - **Spec comparison:** No switch, so a direct cable has the lowest IL. Isolation equals whatever is unplugged.
+    - **Worse in:** Function: no software selection, no automatic 50 Ohm park at boot, no labd/menu automation, and connector wear plus handling with gloves. It is not an analog of a switch.
+    - **Compatibility:** The Lab Shell menu would need 'connect X' prompts instead of switching.
+    - **Risks:** Rejected as not-worse. It stays only as an emergency budget fallback.
+    - **Seller url:** 
+    - **Sources:** []
+  7.
+    - **Name:** Current pick: generic HMC7992 SP4T boards from a marketplace (for reference)
+    - **Kind:** current_part
+    - **Price usd:** 30-40 for two (unverified)
+    - **Spec comparison:** Datasheet claims only. No independent measurement found for any generic HMC7992 board.
+    - **Worse in:** Unproven performance. Unknown chip provenance. DC blocks on all five pins are not guaranteed. The boards seen carry ADI branding although ADI does not make them.
+    - **Compatibility:** Fits as specified (3.3 V, A/B lines, SMA).
+    - **Risks:** Same counterfeit-look and unverified-isolation risks as the cheaper AliExpress listing.
+    - **Seller url:** https://www.walmart.ca/en/ip/HMC7992-Non-Reflective-SP4T-RF-Switch-Module-PCB-Material-0-1-6GHz-Frequency-Range-3V-5V-Power-Supply-45dB-Isolation-0-6dB-Insertion-Loss-58dBm-IIP3/4LT6JIAL4ULJ
+    - **Sources:**
+      - https://www.walmart.ca/en/ip/HMC7992-Non-Reflective-SP4T-RF-Switch-Module-PCB-Material-0-1-6GHz-Frequency-Range-3V-5V-Power-Supply-45dB-Isolation-0-6dB-Insertion-Loss-58dBm-IIP3/4LT6JIAL4ULJ
+- **Notes:** VERDICT (angle B: generic, clone, DIY, used, with measured evidence only):
+  
+  No cheaper generic, clone or used board has independent measured evidence. In 3 searches I found no VNA plot or forum measurement for any AliExpress, Amazon or Walmart HMC7992 board. The only not-worse option that also costs about the same or less is the DIY one: genuine HMC7992LP3DE chips from DigiKey on the custom injector PCB.
+  - Cost: about USD 27 excl. VAT (about USD 31-32 incl. 19% VAT) for two, against USD 30-40. It also removes 10 SMA jacks and about 8 pigtails.
+  - It is conditional on a LiteVNA acceptance sweep. Thresholds: IL no more than 0.9 dB plus the trace; isolation at least 40 dB from 0.1 to 1.7 GHz on every throw; on-state RL at least 15-20 dB; no new spurs.
+  - If the user does not want QFN/EPAD soldering, or the sweep fails, keep separate boards. Even then, a board built from a DigiKey chip is preferable to the generic boards, for the reason below.
+  
+  Generic boards and counterfeit risk. The AliExpress HMC7992 board, sold at about USD 6.69 per the search snippet (unverified), is cheaper than the authorized single-unit chip (EUR 11.50 / USD 13.10). Its photos show an 'ANALOG DEVICES' logo and the ADI part text silkscreened on a board ADI does not sell, which is trademark misuse that looks like a counterfeit. The current generic pick very likely shares this design. Flag it in P6: 'legally sold, not counterfeit' is not met as photographed.
+  
+  Mini-Circuits HSWA4-63DR+ (EUR 6.15) is cheaper and better in isolation (55-61 dB), low-end coverage (30 MHz), P0.1dB and off-state RL. But it is worse in IL (+0.3 to +0.5 dB) and on-state RL (17 against 25 dB), so it is not offered as not-worse. Its system NF impact behind the LNAs is about 0.03 dB (model). The user would have to accept the trade explicitly.
+  
+  HMC241 boards are worse in IL, isolation min, P1dB, IIP3 and RL, and need 5 V. Used Mini-Circuits switches and ADI eval boards cost USD 300 or more new, and no used listings were found.
+  
+  Datasheet correction for P6. The HMC7992 Rev 0 text says it 'has good low frequency input power handling below 0.1 GHz and can operate well down to 10 kHz' (P1dB 21 dBm, IIP3 37 dBm at 1 MHz). The re-audit called HF use 'unspecified'. IL and isolation below 100 MHz are still not tabulated, so the BENCH and HF sweep on the LiteVNA is still required.
+  
+  Other facts confirmed from the datasheet: A=B=low selects RF1, so the park load goes on RF1. All RF pins are DC-coupled. VIH is 1.15 V at 3.3 V. IDD is 0.16 mA. Isolation is 45 typ / 40 min dB at 0.1-2 GHz. IIP3 is 56 dBm and P1dB 33 dBm at 3.3 V. ADI's eval board uses Rogers 4350 / Arlon 25FR.
+  
+  Assumptions and unverified items:
+  - USD/EUR 1.124, implied by the re-audit's EUR 52.95 = USD 59.52.
+  - DigiKey shipping is assumed to ride on the existing DigiKey order.
+  - AliExpress and Amazon pages were blocked (captcha / 503), so those prices come from search snippets.
+  - The passive cost (about USD 1) and the PCB stack-up remarks are a model.
+  
+  Rules: all candidates are passive receive-path parts. Qualification is conducted only (LiteVNA into a load or DUT). No loops are involved.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
