@@ -320,7 +320,7 @@
 <text x="856.0" y="979.0" font-size="13" font-weight="bold" text-anchor="start" fill="#111">LIME3V3 (з Q6A)</text>
 <text x="856.0" y="997.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">M.2 3.3 V Q6A → TPS259470ARPWR (4-й екз.)</text>
 <text x="856.0" y="1012.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  → riser R44SF → LimeSDR Micro M.2</text>
-<text x="856.0" y="1027.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">EN MCP #4 GPA0, FLT GPB3; вимикати після PCIe</text>
+<text x="856.0" y="1027.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">EN MCP #4 GPA0, FLT GPB3; вимикати після розбору PCIe-лінку</text>
 <text x="856.0" y="1042.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RILM 1.65 kΩ: ILIM 1.80-2.20 A (старт); ≈4 W (модель)</text>
 <rect x="850.0" y="1070.0" width="470.0" height="89.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
 <text x="856.0" y="1089.0" font-size="13" font-weight="bold" text-anchor="start" fill="#111">Бюджет (§5.1, модель)</text>
