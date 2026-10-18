@@ -93,3 +93,9 @@
 
 - Рішення користувача: прибрати й VHF-рамку 20 см для Meteor — жодних рамкових антен. Meteor LRPT лише на складаний V-диполь; у рівні «лише патч/чіп» Meteor недосяжний. Записано у стан і вхідні дані фінальних перевірок.
 
+## 2026-10-18 02:17 UTC
+
+- КХ і меню: інструкція SDRangel зі збирання з коду розрахована саме на Ubuntu 24.04 (Qt 5.15) — зібрати на Q6A (noble arm64) реально; залежності aptdec, cm256cc тощо ставляться в /opt/install. Джерело: github.com/f4exb/sdrangel/wiki/Compile-from-source-in-Linux.
+- Навчання NPU: агент читає примітки до релізів QNN TFLite Delegate (остання v2.50.0 від 31.08.2026) — потрібна версія, сумісна з QAIRT 2.42 на пристрої. Джерело: docs.qualcomm.com.
+- Радіолабораторія: soapy_power використовує спрощений модуль SimpleSpectral (pyFFTW → scipy → numpy). Джерело: github.com/xmikos/simplespectral.
+
