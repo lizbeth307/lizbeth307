@@ -82,7 +82,7 @@ Raspberry Pi Pico (RP2040, без радіо) обмінюється з Q6A че
 На I2C2 також стоять 2× INA3221 (0x41, 0x43) і TCA9517DR до LAB BUS.
 
 ### 2.14. GNSS, IMU і час (§2.8, §5.2)
-Waveshare LC76G 24370 → UART6 (/dev/lab/gnss), PPS → пін 7 (pps-gpio, /dev/pps-gnss). VCC плати — 5 V хедера (пін 2/4), ніколи 3.3 V. RESET — через MCP23017 #4 і 2N7002. Пак IMU: Adafruit BNO085 4754 і Waveshare RP2040-Zero 20187 у Hammond 1550Z101, з'єднаний через Olimex GX16-4 (D18) і дріт HELU 4x0.14 2 м з UART1 Pico. RTC — RS4C411ZAE на платі Q6A (J11) з первинною CR2032. Час: gpsd → chrony.
+Waveshare LC76G 24370 → UART6 (/dev/lab/gnss), PPS → пін 7 (pps-gpio, /dev/pps-gnss). VCC плати — 5 V хедера (пін 2/4), ніколи 3.3 V. RESET — через MCP23017 #4 GPA1 і 2N7002. Пак IMU: Adafruit BNO085 4754 і Waveshare RP2040-Zero 20187 у Hammond 1550Z101, з'єднаний через Olimex GX16-4 (D18) і дріт HELU 4x0.14 2 м з UART1 Pico. RTC — RS4C411ZAE на платі Q6A (J11) з первинною CR2032. Час: gpsd → chrony.
 
 ### 2.15. Дерево живлення (§5.1; повна схема — `02-zhyvlennia.svg`)
 - **Батарея.** 4S1P Molicel P50B (72 Wh номінально) → Daly 4S 15 A BMS → запобіжник blade 7.5 A → шунт INA228 15 mOhm → вузол N.
