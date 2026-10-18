@@ -3779,6 +3779,110 @@
   - Currency uses the stack's model rates: EUR 1 = USD 1.1241 (EUR 148 = 166.37) and GBP 1 = USD 1.3318 (GBP 132 = 175.80). Ex-VAT figures are derived from the shown VAT rate.
   - Shipping costs for Berrybase, The Pi Hut and ALLNET into the EU were not checked.
 
+## check:reaudit_CD (run `wf_0e6a03c6-4e4`)
+
+- **Lens:** COVERAGE re-audit C+D: every correction, new risk, corrected spec value and bench test in reaudit_C_antennas_targets.json (3 results: 53 corrections, 30 risks, 38 tests) and reaudit_D_power_mech_display_lab.json (5 results: 99 corrections, 56 risks, 76 tests) checked against STACK.md, plus the cross-section items flagged in v2_edit_notes.md (Boni 12.5/13.8 V, TPS2553 limits, Lime 6/7 Msps, B&W/Peli, Airspy gate, weights with Lime, GPSD/chrony naming, TPS259470A/reflow).
+- **Problems:**
+  1.
+    - **Where:** 1.1 C24 «близько 1.72-1.94 kg»; 2.12 «плюс 0.15 kg за Lime = 1.72-1.94 kg»; 1.1 D14 «на спині 6.8-8.2 і 7.7-9.4 kg»; 2.5 Сумки «вміст 5.54-6.92 kg без КХ»; 11.4 рядок 34 «близько 5.2-7.1 kg без КХ і щогли»; 5.8 «вміст **5.60-7.01 kg**»
+    - **Problem:** The device and backpack weights with Lime disagree across sections. 5.8 adds up its own mass table: parts 1.58-1.81 kg (battery row 0.33-0.34 kg, HF+ shield +0.05-0.07), so 1.73-1.96 kg with Lime. Backpack contents are 5.60-7.01 / 6.50-8.26 kg, and on the back 6.85-8.26 / 7.75-9.51 kg. C24 and 2.12 still give parts 1.57-1.79 / 1.72-1.94 kg. C24, D14, 2.12, 2.5 and 11.1 still give G4's backpack figures (5.54-6.92 / 6.44-8.17; 6.8-8.2 / 7.7-9.4), which G4 computed with a 1.67-1.87 kg device. 11.4 row 34 still gives the pre-Lime 5.2-7.1 / 6.1-8.4 kg and says 2.12 and D14 carry the same figures, which they do not. Also, the 5.8 sum uses a 1.17-1.35 kg tripod, but the chosen Rollei weighs 1.14 kg.
+    - **Severity:** contradiction
+    - **Fix:** Use the 5.8 sum everywhere. In C24 and 2.12: device with Lime 1.73-1.96 kg (parts 1.58-1.81 kg), without Lime 1.58-1.81 kg. In C24, D14, 2.12, 2.5 «Сумки», 11.1 (G4 rows) and 11.4 row 34: backpack contents 5.60-7.01 kg without HF and mast and 6.50-8.26 kg full, on the back 6.85-8.26 / 7.75-9.51 kg. Keep 5.54-6.92 / 6.44-8.17 only as «G4, пристрій 1.67-1.87 kg». Delete 5.2-7.1 / 6.1-8.4 from 11.4 row 34. Either recompute with the Rollei 1.14 kg (calculation from the 5.8 rows: 5.57-6.80 / 6.47-8.05 kg, on the back 6.82-8.05 / 7.72-9.30 kg) or state that 1.17-1.35 kg is a conservative tripod value.
+    - **Evidence:** STACK 5.8 mass table (rows sum to 1.58-1.81 kg); reaudit_D_power_mech_display_lab.json results[3].corrections[16] (battery 0.33-0.34 kg); reaudit_C_antennas_targets.json results[1].corrections[15]; analogs_G4_mechanical_field.json decisions[4] (Rollei 1.14 kg) and decisions[5] (backpack computed with a 1.67-1.87 kg device)
+  2.
+    - **Where:** 4.1 Metop-B/C «далі Lime ≥6 Msps ci16 (гелікон + SAWbird+ GOES → Lime RX)»; 4.1 AWS «після приходу Lime — Lime ≥6 Msps ci16; Airspy Mini»; 5.3 «також для Metop/AWS на ≥6 Msps ci16»; 1.2 #91 «на цьому тракті. 6 Msps; продавець і ціна»; 9.1 «захоплення без втрат на ≥6 Msps на тракті гелікон»; 11.4 рядок 26 «Lime ≥6 Msps ci16, Airspy Mini — лише запасний за воротами»
+    - **Problem:** The Lime sample rate for Metop/AWS conflicts between sections. 2.11.1, 2.11.3, 5.7, 8 (L-3) and 8.1 all state a hard 7 Msps floor and say «reaudit C називав 6 Msps, але швидкості Lime нижче 7 Msps заблоковано». The 9.1 Airspy condition defines an acceptance capture at a blocked rate. 1.2 #91 also has a stray fragment «. 6 Msps;» left over from an edit.
+    - **Severity:** contradiction
+    - **Fix:** Replace «≥6 Msps» with «7 Msps ci16 (нижня межа профілів Lime; L-3 у 8.1)» in the 4.1 Metop and AWS rows, the 5.3 «Лише з Lime» row, 9.1 and 11.4 row 26. In 1.2 #91, delete the fragment «6 Msps;» and change «Lime на ≥6 Msps прибирає 82 %» to «Lime на 7 Msps прибирає 82 %». In 9.1, make the Airspy condition «15-хв захоплення без втрат на 7 Msps».
+    - **Evidence:** reaudit_B_receivers_rf.json Lime sample rates ('Allowed: 7-61.44 Msps ... Block anything below 7 Msps'; 'the 7 Msps floor stays'); analogs_G6_extended_optional.json decisions[12].conditions_or_tests ('15-minute zero-drop 7 Msps capture'); reaudit_C results[2].corrections[11] (the 6 Msps that was overridden)
+  3.
+    - **Where:** 1.2 #91 «лише після воріт «горб на одній спіралі» і тесту V4L 2.88 Msps і лише якщо Lime не пройшов»; 2.11.3 «Airspy Mini купувати лише якщо ворота (a)/(b) провалені І Lime не пройшов»; 9.1 «і лише якщо Lime не пройде 15-хв захоплення без втрат на ≥6 Msps»
+    - **Problem:** The Airspy Mini purchase gate is inconsistent. In 4.1, 8 and 8.2 the gate follows G6 #12: buy if (a) 15 min of rtl_test at 2.88 Msps fails, OR (b) the Metop hump is seen but the V4L cannot decode. The Lime condition there is an optional scope choice for the user. 1.2 #91, 2.11.3 and 9.1 instead require a gate AND a failed Lime capture, which turns the Lime condition into a mandatory one.
+    - **Severity:** contradiction
+    - **Fix:** In 1.2 #91, 2.11.3 «Швидкий L-band SDR» and 9.1, use the G6 wording already in 4.1 and 8: «купувати лише якщо (a) 15 хв rtl_test 2.88 Msps на синьому порту не проходять без втрат АБО (b) горб Metop видно, а V4L не декодує; опційно не купувати, якщо Lime уже пройшов 15-хв захоплення без втрат на 7 Msps на тракті гелікон + SAWbird+ GOES — вибір обсягу (компроміс такту й живлення), вирішуєте ви».
+    - **Evidence:** analogs_G6_extended_optional.json decisions[12].conditions_or_tests ('Buy only if gate (a) fails ... or gate (b) shows the Metop hump but the V4L cannot decode. Optionally ... That is a scope choice, and it must be told to the user')
+  4.
+    - **Where:** 8, рядок «Відкриті рішення щодо живлення (P5 G3)» (b) «v2 має вибрати одне; якщо встановлено eFuse»; 9.1 «+ MF-MSMF030-2 лише якщо PTC Boni лишається»; 11.1 рядок 37 «v2 має обрати одне»
+    - **Problem:** The Boni rail is still listed as undecided (12.5 vs 13.8 V, eFuse vs PTC), but v2 has already decided it. 5.1 says «PTC немає (на шині стоїть eFuse, тож MF-MSMF030-2 видалено; ... v2 обирає 13.8 V)», and 2.7 says «MF-MSMF030-2 для Boni не потрібен». C17 and 11.3 row 2 agree. The shopping list still has a conditional MF-MSMF030-2.
+    - **Severity:** contradiction
+    - **Fix:** Section 8, item (b): replace it with «шину Boni вирішено: BONI13V8 13.8 V, eFuse TPS259630DDAR (RILM 7.87 k, 0.113-0.139 A), без PTC; MF-MSMF030-2 видалено; 2× TPS259630DDAR — лише в рядку «eFuse LNB і Boni»». 9.1: delete «(+ MF-MSMF030-2 лише якщо PTC Boni лишається)». 11.1 row 37: replace «reaudit_B суперечить собі ... — v2 має обрати одне» with «v2 обрав BONI13V8 з eFuse, без PTC (5.1)» and delete «MF-MSMF030-2 (Boni, лише якщо PTC лишається)».
+    - **Evidence:** STACK 5.1 BONI13V8 row and 2.7 «Захист і фільтри»; analogs_G3_power_gnss_imu.json decisions[9] (BONI13V8) and decisions[13] (eFuse in place of PTC); edit notes 01a b1/b2 ('52's 13.8 V BONI13V8 wins')
+  5.
+    - **Where:** 1.1 C9 «IOS 262-342 mA (265/299/339 mA» і «канал на 300 mA (262-342 mA) його не захищає»; 11.3 рядок TPS2553 «IOS 262-342 mA (модель за рівняннями SLVS841F)» і рядок TCBT «Канал 300 mA (262-342 mA)»
+    - **Problem:** The TPS2553 limit at 88.7k is still given as re-audit B's 262-342 mA, sometimes alongside 265/299/339 mA. Section 7 (item 83), 8.1 and 2.7 say that G3 (higher precedence, and matching re-audit D) replaced 262-342 mA with 265/299/339 mA.
+    - **Severity:** wrong_number
+    - **Fix:** C9: change to «IOS 265/299/339 mA (мін./ном./макс., G3 #11; 262-342 mA повторного аудиту B замінено)», and change «канал на 300 mA (262-342 mA)» to «канал на 300 mA (265-339 mA)». Make the same change in both 11.3 rows.
+    - **Evidence:** analogs_G3_power_gnss_imu.json decisions[11] (265/299/339 mA); reaudit_D results[0].corrections[21] ('88.7k gives 265/299/339 mA'); edit notes 08_open_bench b1 ('G3 won')
+  6.
+    - **Where:** 5.4 «Дозволені декодери» «увімкнено лише PLUGIN_METEOR, NOAA_METOP, METOPSG, ELEKTRO_ARKTIKA, FY3, GK2A, XRIT, ANALOG, CUBESAT, RADIOSONDE і NET_SOURCE_SDR_SUPPORT» … «IPAddressDeny=any (вхід лише UDP з localhost)»; 11.2 рядок 29 «вхід лише net_source»
+    - **Problem:** The SatDump build contradicts itself. 1.2 #30, which points to 5.4 as its plugin allow-list, and 11.4 rows 30 and 38 follow re-audit C. They enable only METEOR, NOAA_METOP, AWS, ELEKTRO_ARKTIKA, XRIT and FY2, turn off every sdr_sources plugin by name including NET_SOURCE, decode recordings only, and use PrivateNetwork=yes. 5.4 keeps re-audit A's set: no AWS and no FY2 (both needed by the packaged AWS.json and FengYun-2.json), plus GK2A, FY3, ANALOG, CUBESAT, RADIOSONDE, METOPSG and a live NET_SOURCE UDP input with IPAddressDeny instead of PrivateNetwork. Re-audit C says a second SDR input path bypasses the labd bias token and the labrx masks.
+    - **Severity:** contradiction
+    - **Fix:** In 5.4, replace the build sentence with the re-audit C build from 1.2 #30: «-DPLUGINS_ALL=OFF; увімкнено лише PLUGIN_METEOR, NOAA_METOP, AWS, ELEKTRO_ARKTIKA, XRIT, FY2; кожен плагін sdr_sources вимкнено поіменно (зокрема NET_SOURCE, RTLSDR, LIMESDR, AIRSPY, SOAPY); EXPERIMENTAL_DEVICES, TOOLS_APP, WEBHOOK_APP, PORTAUDIO_SINK, AAUDIO_SINK — OFF; SatDump лише декодує записи labrx; unit проходу з PrivateNetwork=yes». In 11.2 row 29, change «вхід лише net_source» to «без net_source; запис, потім декодування (повторний аудит C)».
+    - **Evidence:** reaudit_C_antennas_targets.json results[2].corrections[1] (action: every sdr_sources plugin OFF, PrivateNetwork=yes) and corrected_spec 'SATDUMP BUILD AND RUN' (plugin list; NET_SOURCE among the plugins turned OFF)
+  7.
+    - **Where:** 4.1, рядок «S-band | ті самі | складаний + Lime», декодер «SatDump лише з цивільними й аматорськими конвеєрами з алоу-листа»
+    - **Problem:** The S-band decoder cell names SatDump pipelines, but the v2 package ships only Meteor-M, MetOp, AWS, FengYun-2 and Elektro_Arktika (1.2 #30, 5.4, 11.4 row 30). No SatDump pipeline exists for Black Kite or PHASMA. An editor flagged this and it is still open.
+    - **Severity:** contradiction
+    - **Fix:** Change the decoder cell to «gr-satellites (розбір кадрів не перевірено); конвеєра SatDump для Black Kite/PHASMA у пакеті немає (лише Meteor-M, MetOp, AWS, FengYun-2, Elektro_Arktika)».
+    - **Evidence:** reaudit_C results[2].corrections[0] action (package only Meteor-M.json, MetOp.json, AWS.json, FengYun-2.json, Elektro_Arktika.json); edit notes 04_capabilities b2 ('Possible inconsistency ... S-band Black Kite/PHASMA rows')
+  8.
+    - **Where:** 1.2 #7 «SHM 0 refid NMEA noselect + PPS lock NMEA prefer»; 11.5 рядок 47 «KERNELS=="998000.serial" → /dev/gnss0»; 11.2 рядок 15 «refclock PPS /dev/pps0 lock NMEA refid PPS prefer» … «узгоджується при зведенні»
+    - **Problem:** GNSS timing and device names conflict with the body text. 5.4, C13 and 11.5 row 31 set PPS to /dev/pps-gnss with noselect, enabled by the gate through chronyc selectopts. 5.2 and 5.4 use /dev/lab/gnss, and 6.2 lists /dev/gnss0 as removed. 5.4 has already chosen GPSD_OPTIONS -n -b. #7 still says PPS 'prefer', 11.5 row 47 says /dev/gnss0, and 11.2 row 15 says /dev/pps0 'prefer' and calls the gpsd options unresolved.
+    - **Severity:** contradiction
+    - **Fix:** 1.2 #7: «chrony 4.5: refclock SHM 0 refid NMEA offset <виміряна медіана> delay 0.2 noselect + refclock PPS /dev/pps-gnss lock NMEA refid PPS noselect; ворота вмикають PPS через chronyc selectopts PPS -noselect». 11.5 row 47: change «→ /dev/gnss0» to «→ /dev/lab/gnss (ім'я — за повторним аудитом A; /dev/gnss0 прибрано, 6.2)». 11.2 row 15: replace «/dev/pps0 … prefer» with «/dev/pps-gnss … noselect (повторний аудит D)» and «узгоджується при зведенні» with «обрано -n -b -s 115200 (5.4)».
+    - **Evidence:** reaudit_D results[1].corrections[5] (chrony action), corrections[11] (/dev/pps-gnss), corrections[12] (-b); STACK 5.4 gpsd/chrony row and 6.2 («/dev/gnss0 як ім'я GNSS»)
+  9.
+    - **Where:** 11.4 рядок 7 «конфіг LC76G (`$PAIR752,2,100`, `$PAIR391,1`) — з init-хука gpsd/labd»
+    - **Problem:** The change log still lists $PAIR752 as the PPS configuration. The body (1.2 #79, 5.4, 11.5 row 30, 6.2) removed PAIR752 because PAIR513 does not save PPS-related PAIR settings. The single PPS method is now $PQTMCFGPPS + $PQTMSAVEPAR.
+    - **Severity:** contradiction
+    - **Fix:** Replace it with «конфіг LC76G (`$PQTMCFGPPS,W,1,1,100,3,0,0*70` + `$PQTMSAVEPAR*5A`, перевірка `$PQTMCFGPPS,R,1*6A`; `$PAIR391,1*2C`, `$PAIR410,1*22`, `$PAIR400,2*20` + `$PAIR513*3D`) — з ExecStartPre gpsd при кожному завантаженні, якщо TX працює».
+    - **Evidence:** reaudit_D results[1].corrections[0] (PAIR513 note 3; action: PQTMCFGPPS + PQTMSAVEPAR, 'Use one PPS method only'); reaudit_C results[2].corrections[16] (re-applying at boot is only insurance)
+  10.
+    - **Where:** 5.1, таблиця порогів, рядок «BMS (Daly DL-J05G-L4S15ATJ) | 2.5-2.8 V/ел. (Daly: UVP 2.70»
+    - **Problem:** The cutoff value is still the v1 range 2.5-2.8 V/cell, although the same cell, 2.7, section 7 (item 95) and 11.5 give UVP 2.70 ±0.05 V. Re-audit D explicitly corrects this row.
+    - **Severity:** wrong_number
+    - **Fix:** Change the value to «2.65-2.75 V/ел. (UVP 2.70 ±0.05 V, відпускання 3.0 V)».
+    - **Evidence:** reaudit_D results[0].corrections[1] (action: 'Cutoff row: UVP 2.65-2.75 V, release 3.0 V')
+  11.
+    - **Where:** 8, рядок D36V28F5 (LAB5) «3.5 A 60 хв у закритому корпусі при 14.0 і 16.4 V на вході; пульсації»; 8, рядок D36V50F12 «D36V28F5 (3.5 A) і IP2368»; 11.1, рядок LAB5 «3.5 A 60 хв; пульсації на шині LT3045»
+    - **Problem:** A 3.5 A, 60-minute gate is applied to LAB5 (D36V28F5, a 3.2 A part on a 3 A fuse). In v1 the 3.5 A gate was C4 gate (2) for SYS12 (D36V50F12), and re-audit D raised it to 4.2 A for SYS12 only. Re-audit D's LAB5 heat test is 2.3 A on the 3 A fuse for 30 min at 50 °C. G3 keeps the part, so the re-audit's tests apply.
+    - **Severity:** contradiction
+    - **Fix:** In the section 8 D36V28F5 row and the 11.1 LAB5 row, delete «3.5 A 60 хв у закритому корпусі при 14.0 і 16.4 V». In the D36V50F12 row, delete «D36V28F5 (3.5 A)». LAB5 keeps C4 (1) with load steps 0.3-3 A, «2.3 A на запобіжнику 3 A 30 хв при 50 °C», and D36V50F5 if the load exceeds 2.5 A. The 60-minute closed-case gate applies only to SYS12, at 4.2 A.
+    - **Evidence:** STACK_v1_backup.md C4 row ('(2) 60 хв при 3.5 A' for D36V50F12); reaudit_D results[0].corrections[7] (gate (2) at 4.2 A for SYS12), corrections[23] and bench_tests[13] (LAB5 2.3 A on the 3 A fuse); STACK 2.7 LAB5 row ('3.2 A', 'Запобіжник 3 A')
+  12.
+    - **Where:** 8, рядок цін «ціни й наявність TPS259470A (у P5 G3 не перевірено)»; 8, рядок «eFuse TPS259470A … якщо v2 його бере … правило збирання узгодити у v2»
+    - **Problem:** Both rows are stale. 2.7 already lists 3× TPS259470ARPWR as verified at DigiKey (78,910 in stock), used for J21, DISP12 and USB-C VBUS. G3 settles the assembly question: the power board must be reflowed (hot plate, hot air or PCBA), which both the MF-MSMF and the QFN TPS25947 need. An editor left this flagged as «узгодити у v2».
+    - **Severity:** contradiction
+    - **Fix:** In the prices row, delete «ціни й наявність TPS259470A (у P5 G3 не перевірено)», or replace it with «TPS259470A — DigiKey, 78,910 шт. (G3)». In the TPS259470A row, delete «якщо v2 його бере» and replace «правило збирання узгодити у v2» with «силову плату оплавляти (гаряча плита, фен або PCBA) — цього потребують і TPS25947 (QFN), і MF-MSMF (G3)».
+    - **Evidence:** analogs_G3_power_gnss_imu.json decisions[13] ('Buy the TPS259470A from DigiKey (franchised; 78,910 in stock)'; 'the power board must be reflowed (hot plate, hot air or PCBA); the QFN-10 TPS25947 needs that anyway'); edit notes 03a b2 ('Row 158 (no-reflow rule) conflicts ... узгодити у v2')
+  13.
+    - **Where:** 2.9 «непровідні заглушки F, USB-C, USB-A, 3.5 мм, LAB BUS, GX12/M8 |»; 8.2 IPX4 «без води біля GX12/M8»
+    - **Problem:** Two places still name the IMU connector as GX12/M8 after G3 changed it to an Olimex GX16-4 with a tethered cap. 2.8, 5.2 and 5.8 already use GX16-4, and 5.8 notes «analogs G4 називав GX12/M8; роз'єм змінено на GX16-4 за G3».
+    - **Severity:** style
+    - **Fix:** 2.9: replace «GX12/M8» in the cap list with «GX16-4 (власний ковпачок на ланцюжку, 2.8)», or drop that cap. 8.2: change «без води біля GX12/M8» to «без води біля GX16-4 паку IMU».
+    - **Evidence:** analogs_G3_power_gnss_imu.json decisions[0] (GX16-4); reaudit_D results[3].corrections[21] (GX12 has no IP rating)
+  14.
+    - **Where:** 11.5 рядок 28, обґрунтування «GLONASS не називають ні специфікація, ні лістинг Pi Hut, смугу пропускання не опубліковано»
+    - **Problem:** This contradicts 2.4, 4.1 and 11.4 row 6. Re-audit C found the vendor's S21 plot, which shows 39.09 dB at 1.602 GHz (the LNA passes G1). Only the response of the patch element itself is unpublished.
+    - **Severity:** contradiction
+    - **Fix:** Change the end of the sentence to «GLONASS у текстовому списку не названо, але графік S21 продавця має 39.09 dB на 1.602 GHz (повторний аудит C); відгук самого патча на G1 не опубліковано — закрити тестом gpsd SKY».
+    - **Evidence:** reaudit_C results[0].corrections[2] and refuted_findings[2]
+  15.
+    - **Where:** 2.4 GNSS-антена «інакше окремий bias-tee 5 V з DC-блоком» (також 11.5 рядок 28)
+    - **Problem:** The P7 fallback bias is described vaguely and differs from 5.3. Re-audit C requires a TPS2553 channel (the 4.5 V LNA rail), then a bias tee at P7, then an inline SMA DC block between the bias tee and the board's IPX pigtail. Without the block, about 117 mA back-feeds into VCC_RF. A '5 V bias-tee with a DC block' does not say where the block goes.
+    - **Severity:** style
+    - **Fix:** In 2.4 and 11.5 row 28, write «інакше запасне зовнішнє зміщення: канал TPS2553 → bias-tee на P7 → SMA DC-блок між bias-tee і IPX-пігтейлом плати (5.3; без блока ≈117 mA зворотного живлення у VCC_RF, модель); R5 ніколи не перемикати».
+    - **Evidence:** reaudit_C results[0].corrections[1] action and corrected_spec 'Fallback bias'; STACK 5.3 P7 row
+- **Notes:** Coverage result: nearly all re-audit C and D corrections, risks, corrected specs and bench tests are in the body text and in 11.4/11.5, and their tests are in 8, 8.1 and 8.2. Items checked and found correct include: LC76G fed from 5 V with ≥3.05 V at P7; A-V85 removed; the 70 cm default dipole; the Uputronics 427-452 MHz passband; V-dipole bisector orientation; N2-3 passes from 30-35°; QO-100 G+11...14 dB-Hz; skew and the ±45° neck adapter; Yagi couplers; the Rollei tripod; SatNOGS allow-list importer; egc-gate; GEO Europe rows; HRPT spur gate; MCP65R41/TLV3012; INA228 preparation; EN 10.0k/1.00k; C4 at 4.2 A; standby 50-105 days; COUT IP2368 plus TPS259470A; J21 3-pin rewire and Q5 back-feed; UFS 4K; ufs-hwmon; T7 sun and cable rules; B&W 4000 RPD with Peli fallback (consistent in 1.1 D14, 3.2, 3.6, 5.8, 9.1 and 11.7); display D5 questions and the TMDS palette; lab instrument corrections.
+  
+  The file was being edited by others during the audit: line count went from 2457 to 2463, so all locations above are given by section and quote, not line number. One inconsistency I first found, the optional subtotal (C24 at 272.52-289.58 against 2.11.3 and 2.12 at 296.74-344.97), was fixed during the audit and is not reported. Every other quote was re-verified with grep -F against the current file just before reporting.
+  
+  Not reported: missing key-source URLs. About 22 of 111 C URLs and 99 of 219 D URLs are absent from section 10, which lists only key URLs. The one worth adding is the OSPO Metop status page (https://www.ospo.noaa.gov/operations/metop/status.html), which 4.1 cites by name.
+  
+  Lower-priority leftovers outside C/D: the 11.3 row-2 HF-chain figure «483.44-589.17» against 3.3's 469.71-546.74 (re-audit B lens).
+  
+  Working files: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/covCD/ (C0-C2.txt and D0-D4.txt are dumps of every item; g.py and g8.py are grep helpers).
+
 ## edit:00_header_toc:b1 (run `wf_11421893-197`)
 
 - **Section:** 00_header_toc
