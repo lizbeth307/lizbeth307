@@ -6625,3 +6625,277 @@
   - VSDISPLAY (eBay.de 256679793470): what is the board's input (HDMI?), how does touch reach the host, which panel part is it, and is it the same 6.97in glass as Wisecoco?
 - **Confidence:** medium
 
+## labui:hf_receiver (run `wf_fceb75d0-87e`)
+
+- **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
+- **Options:**
+  1.
+    - **Name:** Airspy HF+ Discovery (RECOMMENDED dedicated HF/LF/VLF receiver)
+    - **What it is:** Pocket-size HF + VHF SDR with sigma-delta ADCs, an 18-bit DDC and band-tracking preselectors. Open-source driver (libairspyhf).
+    - **Key specs:** HF 0.5 kHz-31 MHz and VHF 64-260 MHz. Up to 768 ksps IQ, 660 kHz alias-free. MDS -140 dBm (HF, 500 Hz). IIP3 +15 dBm at max gain (HF). Blocking dynamic range 110 dB on HF (WRTH estimates about 116 dB at 10 MHz). HF preselection: switched high-pass at about 0/5/10/17 MHz and low-pass at 5/31 MHz. Max input +10 dBm. 0.5 ppm clock. Single 50-ohm SMA input. No bias tee is listed on Airspy's page or RigPix.
+    - **Linux arm64 support:** Good and open source. Ubuntu noble universe has airspyhf, libairspyhf1 and libairspyhf-dev 1.6.8-4build1 for arm64, so no source build is needed. SDR++'s ubuntu_noble aarch64 nightly is built against libairspyhf-dev, so airspyhf_source is included. SatDump has an airspyhf plugin and SDRangel has a plugins/samplesource/airspyhf plugin (SDRangel has no verified arm64 binary; build it from source). SoapyAirspyHF (pothosware) is not packaged in noble, so build it from source. The USB load is about 3.1 MB/s (768 ksps x 4 bytes), far below the roughly 30 MB/s measured on a Q6A USB 2.0 port, so it can share the black-port FE1.1s hub with Wi-Fi.
+    - **Price:** $169 list (iTead; ships from EU/US warehouses in 3-6 days, otherwise from China). It was $135.20 in Airspy's 20% summer sale, Jun 27-Jul 4 2026.
+    - **Pros:** Best HF strong-signal handling per dollar. WRTH: 'Best value SDR'; Guy Atkins found it 'close to identical' to the $899 Elad FDM-DUOr; Leif SM5BSZ ranked it second only to the Perseus in most tests. Covers VLF/LF down to 0.5 kHz. Very small and USB 2.0 only. Open driver in apt. Double duty: its 64-260 MHz range with 95 dB VHF blocking dynamic range can back up the V4L for 137 MHz LRPT or 145.8 MHz near strong FM.
+    - **Cons:** Only 660 kHz of usable bandwidth: it cannot show the whole HF spectrum at once, so the NPU classifier must sweep or work in narrow windows. The case is plastic (WRTH: 60x42x12 mm plastic box) and a community comment says the HF+ picks up EMI from its host, so it needs shielding inside the handheld. No bias tee is listed, so an active antenna needs an external injector. Current draw is not published (unverified; measure it).
+    - **Sources:**
+      - https://airspy.com/airspy-hf-discovery/
+      - https://www.itead.cc/product/airspy-hf-discovery/
+      - https://www.rtl-sdr.com/?p=66258
+      - https://airspy.com/downloads/WRTH2020Features_Airspy_Discovery_review.pdf
+      - https://www.rtl-sdr.com/airspy-hf-discovery-collection-of-tests-and-reviews/
+      - https://swling.com/blog/2019/08/airspy-hf-discovery-first-impressions-on-medium-wave-vs-elad-fdm-duor/
+      - https://packages.ubuntu.com/search?keywords=airspyhf&searchon=names&suite=noble&section=all
+      - https://raw.githubusercontent.com/AlexandreRouma/SDRPlusPlus/master/docker_builds/ubuntu_noble/do_build.sh
+      - https://github.com/pothosware/SoapyAirspyHF
+      - https://github.com/f4exb/sdrangel/tree/master/plugins/samplesource
+      - https://rigpix.com/miscrx/airspy_hfplusdiscovery.htm
+    - **Community reports:** WRTH 2020: 'truly a pocketable item and ideal for portable use'; listening tests showed it 'barely distinguishable' from the Excalibur Pro. G4ELI: 'virtually immune to strong signals' on Band II. A portable build of the original HF+ with a Raspberry Pi 3 and the 7-inch touch LCD got about 3.5 h from a 13000 mAh bank; the builder had to tackle noise from the Pi's USB bus, and a commenter said the HF+ picks up EMI from the host (rtl-sdr.com). A RadioReference user runs a PA0NHC Mini Whip with the Discovery for VLF. A reviewer reports that early-prototype overload above 19 MHz was fixed in production units.
+    - **Size weight power:** 45x60x10 mm (Airspy) or 60x42x12 mm plastic (WRTH). iTead lists 75x45x10 mm and 105.6 g (that figure may include packaging; unverified). 5 V USB bus power. Current not published by Airspy or RigPix; icholakov measured it on video but the numbers are not in the text.
+  2.
+    - **Name:** RTL-SDR Blog V4L built-in HF mode (BUDGET / fallback; use a second V4L)
+    - **What it is:** The V4L already in the lab. It has a built-in upconverter with a 28.8 MHz LO, so you tune HF directly. Direct sampling is not used.
+    - **Key specs:** Datasheet: 500 kHz-1.766 GHz, 'Upconverter with 28.8 MHz LO', diplexer front end, no notch filter, 8-bit RTL2832U, 2.56 MS/s stable, 4.5 V / 180 mA bias tee, 250-270 mA. The HF upconverter path covers about 0.5-28.8 MHz (earlier-stage reading). HF MDS is 'significantly improved' over V3 direct sampling: about -135 dBm versus -115 to -120 dBm, read from the chart by the earlier stage. Its two-tone (95 MHz blocker) results are 'identical to the V3'. Datasheet: 'very strong reception may still require front end attenuation/filtering'.
+    - **Linux arm64 support:** Already planned. Use the patched librtlsdr (osmocom 2.0.3 / commit 0204c9c) with SoapyRTLSDR, SDR++, SatDump and GNU Radio, as in narrowband_sdr.json. Without the updated driver the V4L gives no signal.
+    - **Price:** $0 extra if it timeshares the existing V4L. A dedicated second unit costs $37.95 (official store), or about $34.20 on the official AliExpress listing.
+    - **Pros:** Cheapest. 2.4 MHz windows feed the NPU classifier better than the HF+'s 660 kHz. Has a bias tee. Same software stack as the satellite chain.
+    - **Cons:** No LF/VLF (500 kHz floor). 8-bit: overloads near MW/SW broadcast transmitters with a long wire, so add the AM band-stop or attenuation. Spur families from 28.8 MHz (shared TCXO and LO). Users report an HF noise floor about 1-1.5 dB higher than the V4. The main V4L is committed to 137/145/435 MHz and the QO-100 IF, so HF at the same time needs a second V4L on a black USB 2.0 port (about 4.8 MB/s). The R828S stock is finite.
+    - **Sources:**
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+      - https://www.rtl-sdr.com/V4L
+      - https://www.rtl-sdr.com/rtl-sdr-blog-v4l-lite-now-available-for-purchase/
+      - https://www.reddit.com/r/RTLSDR/comments/1pfnvqa/rtlsdr_creates_fake_signals_that_spread_from_288/
+    - **Community reports:** r/RTLSDR: spur families spreading from 28.8 MHz even with no antenna; fixes are lower LNA gain and setting gain stages separately. RTL-SDR Blog: activating direct sampling on a V4 'will yield no results'. A few users report the V4L's HF noise floor about 1-1.5 dB above the V4 (narrowband_sdr.json forum stage).
+    - **Size weight power:** Dongle size, aluminium case. 250-270 mA at 5 V (about 1.3 W).
+  3.
+    - **Name:** LimeFEA HF Micro add-on for the LimeSDR Micro M.2
+    - **What it is:** Companion board that adds a third, direct-sampling 0-30 MHz RX path to the LimeSDR Micro M.2 2280 (Basic or GNSS). The base Micro covers only 30 MHz-3.8 GHz.
+    - **Key specs:** 0-30 MHz direct sampling into the second pair of LA9310 analogue baseband inputs over a 15-pin FPC. 90 dB gain, 72 dB step attenuator, MW broadcast notch, filters at 0-2 MHz LPF, 2-12 MHz BPF and 12-30 MHz BPF ('relatively basic band filtering'; Lime says an external preselector may help). Includes two FPC cables and five MHF4-to-SMA transitions; I2C is used for control.
+    - **Linux arm64 support:** Unverified for the HF path. Crowd Supply names LimeSuiteNG (with a SoapySDR plug-in) only for the product in general. No HF-path support is documented in the limesdr-micro-staging branch that the lab already depends on.
+    - **Price:** $199 pre-order plus $18 worldwide shipping. Orders placed now ship Dec 15, 2026.
+    - **Pros:** Uses no USB port (it rides on the M.2/PCIe Lime). Direct sampling captures the whole HF range, which is attractive for the NPU waterfall. Has a built-in MW notch and step attenuator.
+    - **Cons:** Not shipping until Dec 15, 2026, and HF software support is unproven. It adds a board, FPC cables and MHF4 transitions inside the handheld. It costs more than the HF+ Discovery and has weaker preselection. Its channel concurrency with the Lime's RF RX (shared LA9310) is unverified. The LimeSDR Micro itself is a transceiver, so TX must stay disabled in the menu.
+    - **Sources:**
+      - https://www.crowdsupply.com/lime-micro/limesdr-micro
+    - **Community reports:** No user reports were found (the product is not shipping yet).
+    - **Size weight power:** Size and power are not published.
+  4.
+    - **Name:** SDRplay RSP1B
+    - **What it is:** 14-bit, 1 kHz-2 GHz single-tuner SDR with an 11-band preselector.
+    - **Key specs:** 1 kHz-2 GHz, up to 10 MHz bandwidth, 11 band filters, switchable AM/FM and DAB notches, bias-T (voltage not stated on the page), SMA input, max input 0 dBm continuous / +10 dBm burst.
+    - **Linux arm64 support:** Closed-source API 3.15 plus a service daemon. The Linux .run installer contains an arm64 library: SDR++'s noble aarch64 CI copies arm64/libsdrplay_api.so.3.15 from API 3.15.2. SDRplay says Linux is 'only tested and supported on Ubuntu LTS distributions up to 24.04 LTS', which fits the held noble image but blocks a move to 26.04. SoapySDRPlay3 needs API 3.15 or later. SDRangel has an sdrplayv3 plugin and SatDump has an sdrplay plugin.
+    - **Price:** £105.80 ex VAT (about $141), out of stock at SDRplay until end of October 2026. Moonraker US $141.99; Passion Radio €154.87 ex VAT.
+    - **Pros:** 10 MHz windows with 14 bits, best for the NPU HF classifier and spectrum survey. Good preselection and MW notch. Has a bias-T.
+    - **Cons:** 98x94x35 mm and 315 g, larger and heavier than the Q6A, which breaks the palm-size goal. Closed API with restart problems on ARM. Covers the same 30 MHz+ ranges as the V4L and Lime, so it adds little else. Current draw not published.
+    - **Sources:**
+      - https://www.sdrplay.com/rsp1b/
+      - https://www.sdrplay.com/api/
+      - https://github.com/pothosware/SoapySDRPlay3
+      - https://raw.githubusercontent.com/AlexandreRouma/SDRPlusPlus/master/docker_builds/ubuntu_noble/do_build.sh
+      - https://community.libre.space/t/sdrplay-and-client-version-2-1-1/14380
+      - https://discussions.flightaware.com/t/help-with-sdrplay-rsp1b-to-upload-adsb-data/92031
+    - **Community reports:** SatNOGS on a Pi (Feb 2026) works only after a manual sdrplay service and container restart after each boot. On a Pi 5 with API 3.15.2, SoapySDRPlay3 activateStream failed with 'sdrplay_api_Fail' for one user, and the RSP1B worked only with a vendor-specific dump1090 build.
+    - **Size weight power:** 98x94x35 mm, 315 g, USB bus powered (current not published).
+  5.
+    - **Name:** SDRplay RSPdx-R2
+    - **What it is:** 14-bit, 1 kHz-2 GHz SDR with three antenna inputs and an HDR mode for LF/MF.
+    - **Key specs:** 1 kHz-2 GHz on the two SMA inputs and 1 kHz-200 MHz on BNC. 12 band filters plus an extra LF filter. HDR mode on 0-500 kHz, 0-1750 kHz, 2200 m, 630 m, 160 m, LW, MW and the NDB bands. AM/FM and DAB notches. Max input 0 dBm continuous. 24 MHz external reference input.
+    - **Linux arm64 support:** Same closed API 3.15 and the same caveats as the RSP1B.
+    - **Price:** £188.00 ex VAT (about $250.54), in stock at SDRplay. Moonraker $255.95.
+    - **Pros:** Best LF/VLF/MW performance of the options (HDR mode). Three inputs let you switch wire, active whip or a filtered input without a separate RF switch. 10 MHz bandwidth.
+    - **Cons:** Same 315 g, 98x94x35 mm box. Highest price. Closed API on ARM. Better suited to a bench or home station than the handheld.
+    - **Sources:**
+      - https://sdrplay.com/product/rspdxr2/
+      - https://sdrplay.com/wp-content/uploads/2026/06/RSPdxR2_Datasheet.pdf
+      - https://www.sdrplay.com/api/
+    - **Community reports:** The same ARM service-restart reports apply. A LimeSDR Mini 2.2 vs RSPdx NOAA APT comparison found the RSPdx clean where the Lime showed interference lines (narrowband_sdr.json forum stage).
+    - **Size weight power:** 98x94x35 mm, 315 g, USB bus powered (current not published).
+  6.
+    - **Name:** Airspy Mini (or R2) + SpyVerter R2
+    - **What it is:** 12-bit VHF/UHF Airspy plus an external upconverter that moves 1 kHz-60 MHz up to a 120 MHz IF.
+    - **Key specs:** SpyVerter R2: RF 1 kHz-60 MHz, IF 120 MHz, IIP3 +35 dBm, 8 dB conversion and filter loss, 65 MHz RF low-pass, 120-180 MHz IF band-pass, Si5351C PLL with 0.5 ppm VCTCXO, powered from a 4.2-5.5 V bias tee at under 100 mA.
+    - **Linux arm64 support:** Good. soapysdr0.8-module-airspy 0.2.0-4 is in noble for arm64. SDR++ and SatDump support Airspy natively. Set the upconverter offset in the software.
+    - **Price:** SpyVerter R2 $49 ($39.20 on sale); Airspy Mini $99 ($79.20); Airspy R2 $169 ($135.20). Mini + SpyVerter is about $148 list.
+    - **Pros:** Wider HF windows than the HF+ (Mini at 6 MS/s). The Mini doubles as a 12-bit VHF/UHF receiver for AHRPT (narrowband_sdr.json).
+    - **Cons:** Two boxes and an extra SMA joint. HF performance is below the HF+ Discovery in Leif SM5BSZ's comparisons. The Mini's bias tee is reported at about 50 mA (forum), against the SpyVerter's 'under 100 mA', so check that the Mini can power it (unverified). The Mini lacks ppm correction on Linux, and a SatDump Stop-deadlock fix is unmerged (narrowband_sdr.json).
+    - **Sources:**
+      - https://airspy.com/spyverter-r2/
+      - https://www.rtl-sdr.com/?p=66258
+      - https://www.rtl-sdr.com/leif-compares-various-sdrs-including-the-rsp1-airspy-with-spyverter-airspy-hf-fdm-s1-ic706-perseus/
+      - https://discussions.flightaware.com/t/airspy-and-bias-tee/51220
+    - **Community reports:** Leif SM5BSZ's multi-receiver comparisons (RSP1, Airspy + SpyVerter, HF+, Perseus) placed the HF+ Discovery second only to the Perseus in most tests. FlightAware forum users cite about 50 mA for the Airspy Mini bias tee.
+    - **Size weight power:** Two small boxes. SpyVerter under 100 mA from the bias tee. Airspy Mini current not published.
+  7.
+    - **Name:** ANTENNA A (RECOMMENDED primary): wire on a winder + 9:1 unun (Tecsun AN-05 7 m reel or a 10-15 m DIY wire on a winder + Nooelec Balun One Nine v2)
+    - **What it is:** Passive random-wire HF antenna. The wire winds onto a small reel, and a 9:1 transformer at the feed point drives 3-5 m of thin 50-ohm coax back to the handheld.
+    - **Key specs:** Balun One Nine v2: 9:1 balun/unun, 38x25 mm aluminium case, SMA output plus terminal-block inputs, AntennaGuard ESD varistor, +24 dBm max, HF to 80 MHz+. Tecsun AN-05: 7.0 m wire reel with clip. Add a 3-5 m counterpoise wire on the ground terminal (engineering recommendation). A 49:1 transformer is meant for end-fed wires near a half wave (for example about 20 m for 7 MHz or about 10 m for 14 MHz); for a broadband random wire, 9:1 is the usual choice (engineering judgement, not measured).
+    - **Linux arm64 support:** N/A (passive).
+    - **Price:** Balun One Nine v2 $26.95 (Nooelec), €19.50-21.67 at Passion Radio. Tecsun AN-05 7 m reel £12.95 / US$14.49 / €15.41 (Moonraker). The AN-03L is listed as 4.5 m at £14.95 (Moonraker) and as 7 m by Tecsun Australia (about 15, currency unclear). Thin coax and clip-on ferrites cost about $15-25 (estimate).
+    - **Pros:** No amplifier, so no IMD or bias power and no added noise. Best signal per cost from about 0.5 to 30 MHz. Packs into a pocket (reel about 10 cm). The feed point and wire sit away from the noisy handheld.
+    - **Cons:** Needs a support (tree, branch or pole) and a few minutes to deploy. It is not usable while walking. It is weak at LF/VLF with only 7 m. Long wires build static, so discharge the wire before connecting and never use it in thunderstorms (the balun's varistor is a last line of defence).
+    - **Sources:**
+      - https://www.nooelec.com/store/balun-one-nine-v2.html
+      - https://moonrakeronline.com/us/an-05-fm-sw-reel-antenna-with-clip
+      - https://moonrakeronline.com/eu/an-03l-fm-sw-reel-antenna-with-3-5mm-plug
+      - https://www.tecsunradios.com.au/store/product/tecsun-radios-australia-an-03l-retractable-longwire-antenna/
+      - https://www.passion-radio.com/sdr-antennas/mini-whip-1012.html
+    - **Community reports:** A RadioReference mini-whip thread reported that a long wire at the same height was 'much quieter' than a noisy ra0sms mini whip. WRTH tested the Discovery with 'several random wires'.
+    - **Size weight power:** Reel about pocket size. Balun 38x25 mm. 0 W.
+  8.
+    - **Name:** ANTENNA B (RECOMMENDED for LF/VLF and fixed camp use): Bonito Boni-Whip active E-field whip
+    - **What it is:** Commercial small active whip (E-field) with a weatherproof amplifier head, a 14-17 cm radiator and a bias tee included.
+    - **Key specs:** 9 kHz (WIMO) or 20 kHz (Moonraker EU) to 300 MHz. Radiator 'about 14 cm' (WIMO) or 'approx. 17 cm' (Moonraker). 189 g. 2x BNC. Bias tee included. 9-15 V supply and up to +3 dB gain (WIMO Spanish listing via search snippet; current draw not published). Radiators are interchangeable, so your own whip or wire can be fitted.
+    - **Linux arm64 support:** N/A. Feed the bias tee from a filtered 12 V rail made from the 4S pack (12.8-16.8 V) with a low-noise linear regulator and a polyfuse (engineering recommendation).
+    - **Price:** Moonraker US$123.95 (was $134.95), £109.95, €127.27. WIMO €135-159 incl. VAT. One WIMO page says available from 20.11.2026.
+    - **Pros:** Fits the antenna size rule (under 20 cm). Covers VLF to 300 MHz. Ships with its injector, so no DIY bias tee. Weatherproof. Can take the lab's 23 cm-1 m telescopic elements as a longer radiator (thread compatibility unverified).
+    - **Cons:** Like every small E-field antenna, it receives the voltage between its element and its ground or coax shield, so performance depends on mounting and grounding. Mounted on or near the handheld, local noise will dominate. Needs about 2 m+ height and a ground stake or counterpoise. Costs about 5x a clone.
+    - **Sources:**
+      - https://www.wimo.com/en/18067
+      - https://moonrakeronline.com/us/bonito-boni-whip-active-antenna
+      - https://www.pa3fwm.nl/technotes/tn07.html
+      - https://pa3fwm.nl/technotes/tn09d.html
+    - **Community reports:** No user reports were opened for the Boni-Whip (retailer data only). General active-whip physics from PA3FWM: received signal is 'directly proportional to the height of the antenna above ground'; 'if the antenna is only grounded in the shack, via the coax cable, much noise can be picked up'; a fully isolated system receives 'nothing'.
+    - **Size weight power:** Radiator 14-17 cm, 189 g, 9-15 V via the included bias tee (current not published).
+  9.
+    - **Name:** ANTENNA B-budget: PA0RDT-type miniwhip clone (10 kHz-30 MHz)
+    - **What it is:** Small PCB-plate active E-field antenna (PA0RDT design family), sold as clones and kits.
+    - **Key specs:** Passion Radio listing: 10 kHz-30 MHz, built-in preamp, 9-15 V via bias-T (12 V nominal), SMA female, install 'outdoors... away from all metal sources and at a height of at least 2 metres'. A plate of about 2 pF gives a useful signal (PA3FWM).
+    - **Linux arm64 support:** N/A. Needs a bias tee rated down to about 10 kHz. A generic RF bias tee rated from MHz upward will not pass LF/VLF properly (engineering note). Use the kit's own injector or a DIY one with a large choke and large coupling capacitor.
+    - **Price:** Passion Radio 'Active 0-50 MHz mini antenna' €25.90 incl. VAT, in stock. The 10 kHz-30 MHz item's price was not captured. Tindie and AliExpress kits not verified (Tindie returned 403).
+    - **Pros:** Very cheap and very small. Good LF/MF/low-HF coverage when mounted correctly.
+    - **Cons:** Clone quality varies: a RadioReference user found the ra0sms mini whip produced noise spikes every 10 kHz and '100% static'. Same grounding and placement sensitivity as the Boni-Whip. Needs a separate 12 V injector.
+    - **Sources:**
+      - https://www.passion-radio.com/sdr-antennas/mini-whip-1012.html
+      - https://forums.radioreference.com/threads/problems-with-ra0sms-mini-whip-antenna.354968/
+      - https://www.rtl-sdr.com/an-opensource-mini-whip-antenna-and-upconverter-design-for-rtl-sdrs/
+      - https://www.pa3fwm.nl/technotes/tn07.html
+    - **Community reports:** rtl-sdr.com open-source mini-whip guidance: install it 'up high and preferably away from the house' because mini-whips are 'quite susceptible to local noise pickup', and they 'need to have a good ground connection'. PA0NHC's installation guide says to run the ground wire to the PCB GND point, not to the coax.
+    - **Size weight power:** PCB about 10-20 cm in a tube (typical, unverified). 12 V at tens of mA (unverified).
+  10.
+    - **Name:** ANTENNA C (quick look only): telescopic whip, reusing the lab's RTL-SDR Blog dipole-kit elements (23 cm collapsed, 1 m extended, M5)
+    - **What it is:** A passive short whip or short dipole on the 50-ohm SDR input.
+    - **Key specs:** A whip is about 10 pF per metre (PA3FWM). Into 50 ohms, a 1 m whip loses roughly -50 dB at 1 MHz, -30 dB at 10 MHz and -20 dB at 30 MHz compared with a high-impedance buffer (my estimate from Xc = 1/(2*pi*f*C) with C = 10 pF; not measured).
+    - **Linux arm64 support:** N/A.
+    - **Price:** $0 (already in the BOM as the 137 MHz dipole kit, $17.95).
+    - **Pros:** Instant to deploy and already carried. Adequate for strong SW broadcast and 10-30 MHz in daytime.
+    - **Cons:** Too inefficient below about 5 MHz on a 50-ohm input, and very close to the device's noise. As the main HF antenna it is rejected; use it as the radiator on an active buffer (Antenna B) instead.
+    - **Sources:**
+      - https://www.pa3fwm.nl/technotes/tn07.html
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+    - **Community reports:** None specific; the figures are a physics estimate.
+    - **Size weight power:** 23 cm collapsed. 0 W.
+- **Recommendation:** Add an Airspy HF+ Discovery (about $169 list, $135 in Airspy's sales) as the dedicated HF/LF/VLF receiver (0.5 kHz-31 MHz):
+  - Plug it into one of the Q6A's black USB 2.0 ports. It needs about 3.1 MB/s, which the FE1.1s hub can share with Wi-Fi. The blue USB 3.1 port stays with the V4L.
+  - Install it with apt (airspyhf 1.6.8-4build1 arm64). It runs natively in the SDR++ noble aarch64 nightly, SatDump and SDRangel; build SoapyAirspyHF from source.
+  - Put it inside a shielded compartment bonded to the USB shield, because its case is plastic. Feed it from a clean 5 V rail with ferrites on a short USB lead.
+  
+  Antenna kit (no loops):
+  - **Primary: a wire on a winder** (Tecsun AN-05 7 m reel, about $14.50, or 10-15 m of thin wire on a winder) with a Nooelec Balun One Nine v2 9:1 ($26.95) at the feed point.
+    - Add a 3-5 m counterpoise wire on the ground.
+    - Run 3-5 m of thin coax to the handheld, with clip-on ferrites at the receiver end as a general common-mode choke (not a loop accessory).
+  - **For LF/VLF and camp use: a Bonito Boni-Whip** (14-17 cm, bias tee included, about $124-159).
+    - Feed it 12 V from the 4S pack through a low-noise linear regulator and a polyfuse.
+    - Mount it at least 2 m up and away from the device, with a ground stake or counterpoise.
+    - A PA0RDT-type miniwhip clone (about €26) is the cheap substitute.
+  - **The lab's 23 cm-1 m telescopic elements** serve only as a quick-look whip for strong stations, or as the Boni-Whip's radiator.
+  - **Optional:** an AM broadcast band-stop (500 kHz-1.7 MHz, >50 dB, about €23) near strong MW transmitters. It matters mainly for the 8-bit V4L.
+  
+  Budget path: use the V4L's built-in upconverter (0.5-28.8 MHz) with the same wire and 9:1. A second V4L ($37.95, on a black USB 2.0 port) is needed if HF must run while the first V4L tracks satellites. This path has no LF/VLF.
+  
+  Do not buy the LimeFEA HF Micro ($199, ships Dec 15, 2026) until LimeSuiteNG support for its HF path is proven. Use the SDRplay RSPdx-R2 only as a bench or home upgrade: it is too big at 315 g, and its closed API needs restarts on ARM.
+- **Requirements or findings:**
+  - The V4L has an HF mode, and it is an upconverter, not direct sampling. The datasheet lists 'HF Implementation: Upconverter with 28.8 MHz LO', 500 kHz-1.766 GHz, a diplexer front end and no notch. RTL-SDR Blog says there is 'no need to activate direct sampling', and that activating direct sampling on a V4 'will yield no results'. Its two-tone results are identical to the V3, and 'very strong reception may still require front end attenuation/filtering'. There are spur families from 28.8 MHz. It has no LF/VLF.
+  - The LimeSDR Micro M.2 covers only '30 MHz - 3.8 GHz'. Below 30 MHz you need the LimeFEA HF Micro: a separate 0-30 MHz direct-sampling third RX path into the LA9310 baseband inputs over FPC, $199, shipping Dec 15, 2026. Its HF-path software support is not documented. The Lime is also a 1T2R transceiver, so the menu must never expose TX.
+  - USB budget: three black USB 2.0 ports share one FE1.1s hub with Wi-Fi, and the single blue USB 3.1 port is taken by the V4L (narrowband_sdr.json). An HF receiver must therefore be a USB 2.0 device with low throughput. The HF+ needs about 3.1 MB/s, a second V4L about 4.8 MB/s and the RSP1B up to 10 MS/s. USB-3-only HF SDRs (RX-888 MkII, Fobos) are ruled out.
+  - Overload criteria for small antennas: the HF+ Discovery has 110 dB blocking dynamic range on HF (WRTH estimate about 116 dB at 10 MHz), IIP3 +15 dBm, max input +10 dBm and four HF preselector banks. The RSP1B and RSPdx-R2 have 11-12 band filters plus MW/FM/DAB notches, and the RSPdx-R2 adds HDR mode on LF/MW. The 8-bit V4L is the most overload-prone. A small whip delivers less signal than a wire, so overload matters mainly with long wires near MW/SW broadcast sites.
+  - arm64 software (verified):
+  - Ubuntu noble universe ships airspyhf, libairspyhf1 and libairspyhf-dev 1.6.8-4build1 for arm64.
+  - SDR++'s ubuntu_noble aarch64 build installs libairspyhf-dev and the SDRplay API 3.15.2, copying the arm64 library, and enables OPT_BUILD_SDRPLAY_SOURCE.
+  - SoapyAirspyHF and SoapySDRPlay3 are not packaged in noble; SoapySDRPlay3 needs API 3.15 or later.
+  - SDRangel (v7.27.2) has airspyhf, sdrplayv3, rtlsdr and soapysdrinput plugins; no arm64 binary was confirmed.
+  - SDRplay supports Linux only on Ubuntu LTS up to 24.04.
+  - How small active E-field antennas work (PA3FWM): the receiver sees the potential difference between the plate or whip and its ground or coax shield. Signal is proportional to height. Grounding only through the coax picks up 'much noise', and a fully isolated system receives 'nothing'. A common-mode choke helps only when there is a ground. For a battery handheld, this means a ground stake or counterpoise wire at the mast or feed, with the antenna mounted at least 2 m up and away from the electronics.
+  - Noise from the handheld: switching bucks, the 2000-nit backlight driver, HDMI, USB and the Q6A all radiate most strongly at HF. A portable HF+ build with a Pi and 7-inch touch LCD needed work on Pi USB-bus noise, and a commenter says the HF+ picks up host EMI.
+  Mitigations (engineering recommendations):
+  - Keep the antenna feed point 5-10 m away on thin coax lying on the ground, with ferrites at the receiver end.
+  - Run on battery only, with no charger attached.
+  - Shield the HF+ and bond it to the USB shield.
+  - Use an 'HF quiet' menu profile that dims or blanks the display, turns Wi-Fi off and parks the Lime.
+  - Do A/B noise-floor sweeps (terminated input, display on and off) at about 0.1, 0.5, 1, 5, 10 and 20 MHz.
+  - Expected antenna performance (engineering estimates, not measured):
+  - A 7-15 m wire with a 9:1 transformer, raised 2-5 m and away from the device, should be limited by external noise across most of 3-30 MHz on the HF+.
+  - A miniwhip or Boni-Whip at 2 m or more with a ground is the best compact option for LF/MF and lower HF.
+  - A 1 m telescopic whip directly on 50 ohms loses roughly 50/30/20 dB at 1/10/30 MHz compared with a high-impedance buffer (C about 10 pF), so it suits only strong signals.
+  - LF/VLF: the HF+ starts at 0.5 kHz, the Boni-Whip at 9-20 kHz, PA0RDT-type miniwhips at 10 kHz, the RSPdx-R2 at 1 kHz (with HDR) and the V4L at 500 kHz. Suitable receive-only targets include LF time signals (60/77.5 kHz), NDBs and NAVTEX (490/518 kHz). For SID space-weather monitoring, log only the carrier amplitude of VLF stations and never demodulate them. Performance below about 10 kHz (sferics, whistlers) with these antennas is unverified.
+  - Receive-only HF functions suitable for the menu:
+  - AM, SSB and CW listening in SDR++.
+  - FT8 and WSPR decode-only, with no PTT or CAT configured.
+  - NAVTEX/SITOR-B and HF WEFAX reception.
+  - Time signals.
+  - An HF band-scan and survey mode for the NPU classifier.
+  The HF+'s 660 kHz windows mean the classifier must sweep; the V4L or RSP give wider windows.
+  - Power: no maker publishes current draw for the HF+ Discovery, RSP1B or RSPdx-R2 (RigPix also leaves the HF+ field blank). Bench-measure each one. The V4L draws 250-270 mA, and the SpyVerter R2 under 100 mA from the bias tee. Active-antenna bias (9-15 V) must come from the 4S pack through a regulator, never from the USB 5 V rail.
+- **Rejected:**
+  1.
+    - **Name:** Any loop antenna (YouLoop, MLA-30+, Wellbrook, etc.), loop amplifiers (including the LZ1AQ loop/dipole amplifier), loop frames and loop-specific chokes
+    - **Why:** The user explicitly removed the loop and everything for it.
+  2.
+    - **Name:** HackRF One (and HackRF-class transceivers) as the HF receiver
+    - **Why:** Starts at 1 MHz, 8-bit, no HF preselection, and is damaged above -5 dBm input. It is a half-duplex transceiver, which conflicts with the receive-only lab.
+  3.
+    - **Name:** RX-888 MkII
+    - **Why:** Needs USB 3: ka9q-radio docs cite over 2 Gb/s at 129.6 MS/s. The only USB 3.1 port is used by the V4L. Users report thermal problems, powered hubs failing and Pi 4 enumeration trouble.
+  4.
+    - **Name:** RigExpert Fobos SDR
+    - **Why:** A USB 3.0 device at £375-430 (Moonraker). Retailers give conflicting HF coverage (100 kHz versus 25 MHz floor). It duplicates the Lime's VHF/UHF coverage.
+  5.
+    - **Name:** Nooelec Ham It Up Plus v2 ($79.95, 300 Hz-65 MHz, 125 MHz TCXO) / Ham It Up Nano ($49.95 at launch)
+    - **Why:** Redundant with the V4L's built-in upconverter. Behind the Lime, the 125-155 MHz IF falls below the Lime's matched LNAL range (from 300 MHz per narrowband_sdr.json). It needs its own USB 5 V power and adds a box with no gain over the HF+.
+  6.
+    - **Name:** RTL-SDR V3 or clone direct-sampling mode for HF
+    - **Why:** Nyquist folding around 14.4 MHz and an HF MDS of about -115 to -120 dBm, versus about -135 dBm on the V4L upconverter (datasheet chart via narrowband_sdr.json).
+  7.
+    - **Name:** Standalone RTL-SDR Blog HF upconverter
+    - **Why:** None was found in the sources checked. RTL-SDR Blog's HF path is the upconverter built into the V4/V4L (not exhaustively verified).
+  8.
+    - **Name:** Passive telescopic whip directly on 50 ohms as the main HF antenna
+    - **Why:** Roughly -50 dB at 1 MHz and -30 dB at 10 MHz versus a buffered whip (estimate), and it sits right next to the device's noise. Kept only for quick looks, or as an active-whip radiator.
+  9.
+    - **Name:** KiwiSDR / WebSDR remote receivers
+    - **Why:** They need a network, so they do not fit a standalone, no-phone handheld. At most, offer them as an optional online extra.
+  10.
+    - **Name:** Mounting the miniwhip or active whip directly on the handheld
+    - **Why:** Per PA3FWM the coax shield or ground is half the antenna, so the device's own noise would be received. Place it at least 2 m up and away, with a ground.
+- **Notes:** Unverified items:
+  - Current draw of the HF+ Discovery, RSP1B, RSPdx-R2 and Boni-Whip.
+  - The HF+ USB connector type and weight (iTead's 105.6 g may include packaging).
+  - The Boni-Whip supply range (9-15 V comes from a search snippet of the WIMO Spanish page).
+  - Price of the Passion Radio 10 kHz-30 MHz miniwhip (only the related €25.90 0-50 MHz unit was captured).
+  - Whether the Airspy Mini's bias tee can power a SpyVerter R2.
+  - An SDRangel arm64 binary.
+  - LimeSuiteNG support for the LimeFEA HF path.
+  - Whether the Boni-Whip thread fits the M5 dipole-kit elements.
+  
+  Engineering estimates, not measurements:
+  - The 10 pF/m whip loss figures.
+  - Expected wire and whip performance.
+  - The 3.1 MB/s HF+ USB load (768 ksps x 2 x 16-bit).
+  
+  The AM band-stop price (€23 incl. VAT) is from the Passion Radio related-products listing.
+  
+  Prices are list prices, mostly in USD, GBP or EUR; shipping to the user's country is not verified.
+  
+  For the menu designer:
+  - Keep HF decoders decode-only, with no PTT/CAT and no TX.
+  - I did not add HFDL/ACARS message decoders, because their message text can carry private operational content.
+  - Treat VLF stations only as amplitude beacons for SID logging.
+  
+  Web budget: 10 WebSearch calls used.
+  
+  Input files used:
+  - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/narrowband_sdr.json
+  - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/software.json
+  - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/digest.md
+  - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+  
+  Extracted text of the V4L datasheet and the WRTH review is in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/hfpdf/.
+
