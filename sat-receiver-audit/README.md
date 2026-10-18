@@ -10,6 +10,7 @@
 
 | Компонент | Етапи (✅ готово, ⏳ працює) | Поточний run |
 |---|---|---|
+| [Adafruit bno085 4754 rp2040 zero metal p](components/adafruit_bno085_4754_rp2040_zero_metal_p.md) | · research · forums · fixes ✅ verify | `—` |
 | [Adafruit ch334f mtt hub 5997](components/adafruit_ch334f_mtt_hub_5997.md) | · research · forums · fixes ✅ verify | `—` |
 | [Adafruit mcp23017 5346 0x20 outputs 0x22](components/adafruit_mcp23017_5346_0x20_outputs_0x22.md) | · research · forums · fixes ✅ verify | `—` |
 | [Airspy hf discovery](components/airspy_hf_discovery.md) | · research · forums · fixes ✅ verify | `—` |
