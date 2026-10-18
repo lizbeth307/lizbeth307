@@ -2591,6 +2591,137 @@
   
   Sources: https://www.adafruit.com/product/5997 ; https://learn.adafruit.com/adafruit-ch334f-mini-4-port-usb-hub-breakout/pinouts ; https://learn.adafruit.com/adafruit-ch334f-mini-4-port-usb-hub-breakout/downloads ; https://cdn-learn.adafruit.com/assets/assets/000/131/435/original/CH334DS1.PDF ; https://cdn-learn.adafruit.com/assets/assets/000/131/436/original/components_schem.png ; https://www.digikey.com/en/products/result?keywords=adafruit%205997 ; https://www.digikey.de/en/products/result?keywords=1528-5997-ND ; https://www.berrybase.de/en/search?search=CH334F ; https://shop.pimoroni.com/products/adafruit-ch334f-mini-4-port-usb-hub-breakout ; https://www.adafruit.com/product/5999 ; https://www.olimex.com/Products/USB-Modules/ ; https://www.waveshare.com/catalogsearch/result/?q=usb+hub ; https://www.waveshare.com/usb-hub-hat-b.htm
 
+## searchB:adafruit_ch334f_mtt_hub_5997 (run `wf_071e1025-145`)
+
+- **Part:** Adafruit CH334F Mini 4-Port USB Hub Breakout (PID 5997): internal MTT hub on FE1.1s P3. Qty 2: #1 fitted (H2 RTL-A with the Lime kept, H3 LAB USB-A, H4 HF+, H1 kept free for Pico USB fallback); #2 is a like-for-like spare, also fitted behind H1 if the Lime is kept and UART7 fails.
+- **Current price usd:** $4.95 each, $9.90 for 2 (Adafruit, in stock, checked 18 Oct 2026). Price breaks: $4.46 for 10-99, $3.96 for 100+. Same board at UK sellers, at about 1.332 USD/GBP (the rate earlier phases used): The Pi Hut GBP 4.80 incl. 20% UK VAT (about $6.39, or $5.33 ex VAT), in stock; Pimoroni GBP 4.15 incl. VAT (about $5.53, or $4.61 ex VAT), out of stock.
+- **Critical specs:**
+  - USB 2.0 High Speed (480 Mb/s) upstream from FE1.1s P3, and 4 downstream HS/FS/LS ports. All 4 are allocated with the Lime kept: H2 RTL-A, H3 LAB, H4 HF+, H1 Pico fallback. A 2-port board is not equal.
+  - MTT: one transaction translator per port (lsusb bDeviceProtocol 2). This keeps full-speed and low-speed devices on the LAB port and the Pico fallback from sharing one TT. STT counts as worse.
+  - Single hub tier (one hub chip). Tree: Q6A root, FE1.1s, CH334F, optional CH334F #2 or bench hub. The tier budget is already near the USB 2.0 5-hub limit.
+  - Hub 5V input separable from upstream VBUS: the hub is powered from LAB5 with Q6A VBUS left unconnected, so there is no back-feed into VCC_5V_PERI. Downstream VBUS must allow external per-port feeds (TPS2553 0.75 A on H3; MCP load switch, LC and Mix-31 on H4) with no forced shared fuse in series.
+  - Downstream ports as solder pads for pigtails (stack wiring plan), not fixed receptacles.
+  - Must stream HS bulk with zero drops in the 30-min soak and 50 start/stop cycles: HF+ at 3.1-3.7 MB/s, RTL-A at 5.12 MB/s, plus one LAB device.
+  - Clock and EMI: 12 MHz crystal with internal 480 MHz PLL. The CH334 has built-in crystal load capacitors and accepts an external 12 MHz clock. Port LEDs can be switched off with a cuttable jumper. This matters because the hub sits next to the HF+ chain (0-31 MHz and 60-260 MHz).
+  - ESD on the USB pins: 6 kV enhanced (Class 3A) per the CH334 specification quoted by Adafruit.
+  - Linux: plain USB hub class (kernel hub driver). No vendor driver on Ubuntu 24.04 arm64 / kernel 6.18.2-4.
+  - Size and mounting: 31.6 x 20.4 x 4.8 mm, 2.9 g, 4 mounting holes (mid-plate placement).
+  - Build quality and provenance: assembled and tested by Adafruit, genuine WCH CH334F, RoHS 2. Stays within the LAB5 budget of 0.6 A typical / 2.0 A (2.3 A with RTL-A on the hub).
+- **Candidates:**
+  1.
+    - **Name:** 8086 Consultancy 'Mini 4-Port USB-C USB 2.0 Hub' (CH334-based), The Pi Hut SKU 106383
+    - **Kind:** generic_or_clone
+    - **Price usd:** GBP 4.00 incl. 20% UK VAT, about $5.33 ($4.44 ex VAT). In stock at The Pi Hut, read from the live listing 18 Oct 2026. Not listed on 8086.net. EU VAT and shipping from the UK not verified.
+    - **Spec comparison:** Chip: 'WCH CH334' (suffix not stated) vs CH334F. MTT per port: yes per the listing, equal on paper. Ports: 4 HS downstream, equal. Upstream: USB-C with 5.1k CC and a 1 A polyfuse in the 5 V input, vs header pads with separate 5V. Downstream: 4 USB-C receptacles with 56k CC ('legacy', 500 mA advertised) and VBUS hard-wired from the fused 5 V net, vs solder pads. Size: 30 x 32 x 5 mm (960 mm²) vs 31.6 x 20.4 x 4.8 mm (645 mm²). LEDs and LED disable: not stated. ESD: not stated. Crystal: not stated. Schematic: none published (only a 3D case file). Independent measurements: none found.
+    - **Worse in:** Rejected. (1) No measured evidence: nothing published on eye pattern, drop-free streaming or emissions. (2) Integration: the stack needs separate per-port VBUS feeds (TPS2553 on H3, switched LC feed on H4) and a hub 5V from LAB5 with Q6A VBUS open. On this board VBUS runs from the fused upstream USB-C pin straight to every receptacle, so it would need trace cuts or custom VBUS-less cables. (3) The single 1 A polyfuse is shared by all ports. (4) About 50% larger footprint. (5) The receptacles need USB-C to micro-USB (HF+) and USB-C to USB-A (LAB) leads instead of short pigtails. (6) Chip suffix, LED behaviour, ESD and crystal are not documented.
+    - **Compatibility:** Linux: generic hub class, so drivers are fine. Electrical and mechanical integration need rework (VBUS separation, fuse, connectors, a new mid-plate footprint). Legally sold by a major UK reseller.
+    - **Risks:** Unknown CH334 variant and layout quality. HS signal integrity and spurs near the HF+ chain are unmeasured. Polyfuse trips if downstream VBUS is fed through it.
+    - **Seller url:** https://thepihut.com/products/mini-4-port-usb-c-usb-2-0-hub
+    - **Sources:**
+      - https://thepihut.com/products/mini-4-port-usb-c-usb-2-0-hub
+      - https://thepihut.com/products/mini-4-port-usb-c-usb-2-0-hub.js
+      - https://8086.net/products
+  2.
+    - **Name:** Adafruit CH334F Mini 2-Port USB Hub Breakout (PID 5999)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $4.50 (Adafruit, 'in stock' in this session's Adafruit catalog snapshot; $4.05 at 10+). Pimoroni GBP 3.75 incl. VAT (about $4.99), in stock. Pi Hut GBP 4.40, out of stock.
+    - **Spec comparison:** Same CH334F chip, MTT, 12 MHz crystal and ESD, same maker and build. 2 downstream ports vs 4. Smaller board.
+    - **Worse in:** Rejected. 2 ports vs 4: with the Lime kept, H2, H3 and H4 are in use and H1 is reserved. Two 2-port boards cost more ($9.00) and add a hub tier. Not usable as the spare either, because the spare must be able to replace #1 like for like. It would save only $0.45 if its sole job were the H1 expansion.
+    - **Compatibility:** Same interfaces and driver. Fewer ports.
+    - **Risks:** None beyond the port count.
+    - **Seller url:** https://www.adafruit.com/product/5999
+    - **Sources:**
+      - https://www.adafruit.com/product/5999
+      - https://shop.pimoroni.com/products/adafruit-ch334f-mini-2-port-usb-hub-breakout
+  3.
+    - **Name:** Same part (ADA5997) from Pimoroni (UK)
+    - **Kind:** current_part
+    - **Price usd:** GBP 4.15 incl. 20% UK VAT, about $5.53 ($4.61 ex VAT). OUT OF STOCK on the live listing, 18 Oct 2026.
+    - **Spec comparison:** Identical board (Adafruit-made, same SKU).
+    - **Worse in:** Nothing in specs. In USD it beats Adafruit's $4.95 only ex VAT and before shipping, and it is out of stock now.
+    - **Compatibility:** Identical.
+    - **Risks:** Availability. UK-to-EU VAT and shipping not verified.
+    - **Seller url:** https://shop.pimoroni.com/products/adafruit-ch334f-mini-4-port-usb-hub-breakout
+    - **Sources:**
+      - https://shop.pimoroni.com/products/adafruit-ch334f-mini-4-port-usb-hub-breakout.js
+  4.
+    - **Name:** Same part (ADA5997) from The Pi Hut (the stack's noted 'budget alternative')
+    - **Kind:** current_part
+    - **Price usd:** GBP 4.80 incl. 20% UK VAT, about $6.39 ($5.33 ex VAT). In stock, live listing 18 Oct 2026.
+    - **Spec comparison:** Identical board.
+    - **Worse in:** Nothing in specs. Not cheaper in USD than Adafruit's $4.95 list price; it wins only once Adafruit's US-to-EU shipping and import VAT are counted, or when pooled with other Pi Hut items. The stack's 'budget' label is misleading on unit price.
+    - **Compatibility:** Identical.
+    - **Risks:** EU VAT handling on UK orders not verified.
+    - **Seller url:** https://thepihut.com/products/adafruit-ch334f-mini-4-port-usb-hub-breakout
+    - **Sources:**
+      - https://thepihut.com/products/adafruit-ch334f-mini-4-port-usb-hub-breakout.js
+  5.
+    - **Name:** Pi Hut 'USB Mini Hub with Power Switch - OTG Micro-USB' (SKU 102877)
+    - **Kind:** generic_or_clone
+    - **Price usd:** GBP 4.30 incl. VAT, about $5.73 ($4.77 ex VAT). In stock in this session's cached Pi Hut catalog (not re-checked live).
+    - **Spec comparison:** 4 ports at 480 Mb/s. Chip and TT type not stated. Cased dongle, 72 x 25 x 19 mm, 24 g, with a 130 mm captive micro-USB lead. One power switch for all ports. Downstream 5 V tied to upstream VBUS; the DC jack needs an internal wire cut.
+    - **Worse in:** Rejected. MTT not documented (likely STT), much larger, no per-port VBUS separation, no pads, no measurements.
+    - **Compatibility:** Generic hub class driver. Mechanically unsuitable for the internal mid-plate.
+    - **Risks:** Unknown chip and build.
+    - **Seller url:** https://thepihut.com/products/usb-mini-hub-with-power-switch-otg-micro-usb
+    - **Sources:**
+      - https://thepihut.com/products/usb-mini-hub-with-power-switch-otg-micro-usb
+  6.
+    - **Name:** Generic FE1.1s / GL850G / SL2.1A 4-port hub modules (AliExpress class)
+    - **Kind:** generic_or_clone
+    - **Price usd:** UNVERIFIED. No listing checked: the web-search budget was exhausted before this sweep.
+    - **Spec comparison:** These chips are single-TT (STT) USB 2.0 hubs (FE1.1s is the STT hub already upstream in the stack). CH334F is MTT.
+    - **Worse in:** Rejected. STT vs MTT (full-speed and low-speed devices share one TT). Layout, crystal, ESD and VBUS handling vary by seller. No independent measurements; counterfeit or relabelled chips are common in this class.
+    - **Compatibility:** Generic hub class driver works. Wiring varies by module.
+    - **Risks:** Counterfeit chips, no QA, unknown emissions.
+    - **Seller url:** 
+    - **Sources:** []
+  7.
+    - **Name:** DIY: own small PCB with a bare WCH CH334F (QFN) and a 12 MHz crystal
+    - **Kind:** diy
+    - **Price usd:** UNVERIFIED: LCSC refused access (HTTP 403) and the WCH datasheet download was refused. At qty 2, PCB fab, assembly and shipping minimums very likely exceed $9.90 (not verified).
+    - **Spec comparison:** Same silicon. MTT and port power control are possible: the WCH datasheet v2.91 (28 Aug 2026) metadata states MTT plus over-current detection and port power control for the CH334/CH335 family. Performance depends entirely on the layout.
+    - **Worse in:** Rejected. No measured equality: HS eye, soak results and emissions would all be new and unproven. Hand-assembling a QFN risks reliability. Not cheaper at qty 2.
+    - **Compatibility:** Generic hub class driver. Could be shaped to the mid-plate, but needs its own validation.
+    - **Risks:** HS signal-integrity failure, crystal or EMI spurs near the HF+, rework time.
+    - **Seller url:** https://www.wch-ic.com/downloads/CH334DS1_PDF.html
+    - **Sources:**
+      - https://www.wch-ic.com/downloads/CH334DS1_PDF.html
+  8.
+    - **Name:** Used Adafruit 5997
+    - **Kind:** used
+    - **Price usd:** UNVERIFIED. No used listings found; the search budget was exhausted.
+    - **Spec comparison:** Identical if genuine.
+    - **Worse in:** Rejected. New costs $4.95, so there is no realistic saving. Unknown solder and ESD history on an exposed-pad breakout.
+    - **Compatibility:** Identical.
+    - **Risks:** Prior damage, rework on the pads.
+    - **Seller url:** 
+    - **Sources:** []
+- **Notes:** VERDICT: keep the Adafruit CH334F 5997, qty 2, $4.95 each, $9.90 total. No candidate cheaper than $4.95 is shown by measurements to be not-worse.
+  
+  WHY:
+  - The only other CH334-based 4-port board found (8086 Consultancy, GBP 4.00 at The Pi Hut) has no measurements.
+  - It is also worse in integration: VBUS runs from a fused 1 A input straight to fixed USB-C receptacles, so the stack's separate per-port VBUS feeds and 'Q6A VBUS open' wiring would need rework. Its footprint is about 50% larger, and its chip suffix, LEDs and ESD are undocumented.
+  - The Adafruit 2-port 5999 ($4.50) has too few ports.
+  - The STT generics are worse on the TT spec.
+  - DIY and used units are unproven and not cheaper at qty 2.
+  
+  PRICE CORRECTION: the stack's 'budget alternative Pi Hut GBP 4.80' includes UK VAT and is about $6.39, or $5.33 ex VAT. It is not cheaper in USD than Adafruit's $4.95 list price; it only wins once Adafruit's international shipping and EU import VAT are counted.
+  
+  EU SOURCING (identical part): Pimoroni GBP 4.15 incl. VAT when back in stock (about $4.61 ex VAT), otherwise The Pi Hut GBP 4.80. Ideally pool it with the other UK-sourced items, or keep it in the planned Adafruit bring-up order. UK-to-EU VAT and IOSS handling was not verified.
+  
+  BRING-UP CHECKS TO ADD:
+  - `lsusb -v` must show bDeviceProtocol 2 (multi-TT).
+  - Consider cutting the LED jumper to remove LED switching current near the HF+ chain. This is optional, not required by the stack, and I have not measured its effect.
+  
+  LIMITS OF THIS PASS:
+  - The shared WebSearch budget (200 per turn) was already used up when I started, so the AliExpress, eBay and forum-measurement sweep for generic CH334F modules could not be run. Only primary pages were fetched.
+  - LCSC refused access (403), so the bare-chip price is unverified.
+  - The WCH CH334 datasheet v2.91 (28 Aug 2026) could not be downloaded (the API refused it). Only its metadata was read: MTT, over-current detection and port power control, scope CH334F/H/L/P/R/S/U/X and CH335F/P.
+  - Adafruit page facts used: 6 kV Class 3A ESD, crystal with built-in capacitors plus optional external 12 MHz, built-in 1.5k and 15k resistors, 31.6 x 20.4 x 4.8 mm, LED disable jumper, solder-pad ports.
+  
+  No candidate affects the hard rules: a USB hub is passive with respect to RF, and nothing here transmits.
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
