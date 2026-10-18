@@ -807,3 +807,17 @@ P4, A (правило «без приватного змісту», OpenWebRX+):
 - дозволені цифрові: NAVTEX/SITOR-B на каналах MSI, цивільний WEFAX, FT8/FT4/WSPR (лише декодування через jt9/wsprd), SSTV (лише декодування), аматорський APRS/AX.25, AIS, ADS-B за нашими правилами показу.
 Пакети, які потрібні решті режимів, не встановлювати. Записав як пункт №32 в operator_notes. Джерело: OpenWebRX+, owrx/modes.py і вимоги функцій (за агентом A).
 
+## 2026-10-18 10:26 UTC
+
+P4, A (правило «без приватного змісту», SDRangel): SDRangel збирає плагін channelrx/demodinmarsat, якщо знаходить бібліотеку inmarsatc. Цей плагін декодує весь трафік Inmarsat-C повз наш egc-gate у labd. У v2 SDRangel треба збирати з ENABLE_CHANNELRX_DEMODINMARSAT=OFF і так само вимкнути demoddsd (цифровий голос DMR, dPMR, NXDN, P25), demodpager та інші декодери приватного трафіку. Поруч із наявним аудитом TX-плагінів потрібен явний дозволений список channelrx-плагінів:
+- AM/NFM/SSB/WFM;
+- ADS-B (за нашими правилами показу) і AIS;
+- APT;
+- NAVTEX/RTTY на дозволених каналах;
+- FT8 (лише декодування);
+- радіозонди;
+- VOR/ILS;
+- DAB;
+- потужність каналу.
+Heat map вимкнено (правило «без геолокації»). Записав як пункт №33 в operator_notes. Джерело: SDRangel, plugins/channelrx/CMakeLists.txt (за агентом A).
+
