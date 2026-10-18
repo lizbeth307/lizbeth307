@@ -5389,3 +5389,8 @@ Lime уже був у списку P5. Тепер для нього жорстк
 
 ---
 
+### 🧑 Повідомлення користувача — 2026-10-18 14:56:50 UTC
+
+> Stop hook feedback:
+> [~/.claude/stop-hook-git-check.sh]: There are uncommitted changes in the repository. Please commit and push these changes to the remote branch.
+
