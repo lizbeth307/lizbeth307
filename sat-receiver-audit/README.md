@@ -45,6 +45,7 @@
 | [Nooelec sawbird noaa cased 100800](components/nooelec_sawbird_noaa_cased_100800.md) | · research · forums · fixes ✅ verify | `—` |
 | [Npu training](components/npu_training.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Pca9555 key expander piezo status led](components/pca9555_key_expander_piezo_status_led.md) | · research · forums · fixes ✅ verify | `—` |
+| [Pololu d36v50f12 sys12](components/pololu_d36v50f12_sys12.md) | · research · forums · fixes ✅ verify | `—` |
 | [Power](components/power.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_f924b2ab-5ad` |
 | [Printed 30 mm hinged hood 7in ar film ve](components/printed_30_mm_hinged_hood_7in_ar_film_ve.md) | · research · forums · fixes ✅ verify | `—` |
 | [Radxa armor 7056a heatsink or stepped cu](components/radxa_armor_7056a_heatsink_or_stepped_cu.md) | · research · forums · fixes ✅ verify | `—` |
