@@ -21096,6 +21096,367 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Datasheet copies: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ds_tps2553/tps2553.txt, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ds_cand/ap.txt, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ds_cand/sgm.txt, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ds_cand/t221.txt, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ds_cand/t200.txt, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/ds_htc/htc.txt.
 
+## searchA:aon_3_3_v_ldo_tps709_class_micropower_uv (run `wf_a268b76e-da0`)
+
+- **Part:** AON 3.3 V LDO + micropower UV supervisor 12.8/13.6 V. The re-audit fixed the parts as TI TPS70933DBVR, plus a TI TLV3012AIDBVR push-pull comparator with internal 1.242 V reference. Divider 3.3 MOhm / 346 kOhm (0.1%), REF through 100 kOhm into IN+, 4.22 MOhm feedback from OUT. OUT goes through BAT54 to the #2813 OFF pin.
+- **Current price usd:** About $2.9 for the two ICs at the cheapest verified sources (18 Oct 2026):
+  - TPS70933DBVR: $0.34 at LCSC (C89347).
+  - TLV3012AIDBVR: $2.57 at DigiKey; at LCSC it is $3.44 with only 3 in stock.
+  
+  With the BAT54 and the 0.1% divider and feedback resistors, the set is about $3.2-4.5. That matches the $2-4 estimate. The resistor part depends on where the 0.1% values can be found: 346 kOhm and 4.22 MOhm at 0.1% show no LCSC stock.
+- **Critical specs:**
+  - LDO VIN: works at 13.2-16.8 V on node N and survives the SMBJ17A clamp of 27.6 V. TPS709: 2.7-30 V operating, 32 V absolute maximum (SBVS186H).
+  - LDO no-load ground current: 1.3 uA typ / 2.05 uA max for VOUT <= 3.3 V. This is part of the about 8 uA supervisor-plus-LDO standby budget.
+  - LDO output accuracy: +/-1% for VOUT >= 3.3 V (-40 to 85 C). AON 3.3 V is the comparator's OUT-high level, so it sets the 13.6 V release point through the 4.22 MOhm feedback.
+  - LDO current: at least about 1 mA continuous (INA228 + comparator). Current limit 200 mA min. Line regulation 3 mV typ over the full VIN range.
+  - LDO reverse-current protection (100 nA into OUT with VIN = 0). Stable with 2.2 uF ceramics. Tj -40 to 125 C. Hand-solderable SOT-23-5.
+  - Comparator supply 1.8-5.5 V from AON 3.3 V. Iq 2.8 uA typ / 5 uA max (TLV3012).
+  - Integrated reference about 1.2 V. TLV3012: '+/-1% initial accuracy', but the same table gives VOUT limits of 1.208-1.276 V (+/-2.7%). Drift 100 ppm/C max. REF must drive the 100 k / 4.22 M network and tolerate the capacitance on it (TLV3012: up to 10 nF).
+  - Comparator offset 15 mV max (TLV3012, 25 C). Input bias in the pA range, because the divider source impedance is about 313 kOhm.
+  - Topology: both inputs brought out, so the 6% hysteresis (12.8 V trip / 13.6 V release) can be set with resistors. Push-pull output, high on undervoltage in the inverting connection. It drives BAT54 into #2813 OFF with no inverter.
+  - Comparator operating range -40 to 125 C. SOT-23-6 pinout OUT/V-/IN+/IN-/REF/V+ (the same on all TLV3012 versions).
+  - Genuine parts from a franchised or manufacturer-direct channel. DigiKey is franchised for TI and Microchip. LCSC's franchise status for TI is not verified (moderate counterfeit risk, as STACK already notes for ADI at LCSC).
+  - Hard rules: power-only part with no RF function. Receive-only is unaffected.
+- **Candidates:**
+  1.
+    - **Name:** TI TPS70933DBVR from LCSC C89347 (KEEP: current LDO, cheapest source)
+    - **Kind:** current_part
+    - **Price usd:** $0.338 (1+), $0.26 (50+), $0.19 (500+) at LCSC, 40,884 in stock. DigiKey: $1.51 (1), out of stock, 2,989 expected 21 Dec 2026, 20-week lead time.
+    - **Spec comparison:** Reference part (SBVS186H Rev H):
+  - 2.7-30 V, 32 V absolute maximum, 150 mA.
+  - IGND 1.3 typ / 2.05 max uA (VOUT <= 3.3 V).
+  - +/-1% (VOUT >= 3.3 V, -40 to 85 C); current limit 200-500 mA.
+  - Reverse current 100 nA into OUT; dropout 295 mV at 50 mA.
+  - Thermal shutdown 158 C; Tj -40 to 125 C.
+    - **Worse in:** Nothing; this is the current part. The cheapest source (LCSC) is not a confirmed TI-franchised channel.
+    - **Compatibility:** Already designed in. SOT-23-5. Buy it in the planned single LCSC order; DigiKey has no stock until December.
+    - **Risks:** LCSC is not confirmed as TI-franchised, but this is a low-value LDO with 40k units in stock. Goods-in check: at no load, IGND at 14.8 V is about 1.3-2 uA and VOUT is 3.267-3.333 V.
+    - **Seller url:** https://www.lcsc.com/product-detail/C89347.html
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/tps709.pdf
+      - https://www.digikey.com/en/products/result?keywords=TPS70933DBVR
+      - JLCPCB/LCSC parts catalog API query 'TPS70933DBVR', 18 Oct 2026 (C89347)
+  2.
+    - **Name:** TI TLV3012AIDBVR (current supervisor comparator)
+    - **Kind:** current_part
+    - **Price usd:** $2.57 (1), $1.91 (10), $1.56 (100) at DigiKey US, 1,541 in stock; DigiKey DE EUR 2.26 (VAT status not shown). LCSC C62505: $3.44 (1), only 3 in stock.
+    - **Spec comparison:** Reference part (SBOS300C):
+  - 1.8-5.5 V; Iq 2.8 typ / 5 max uA.
+  - REF 1.242 V: '+/-1% initial', but VOUT limits are 1.208-1.276 V; drift 40 typ / 100 max ppm/C.
+  - VOS 0.5 typ / 15 max mV; IB +/-10 pA.
+  - Push-pull; REF stable up to 10 nF; -40 to 125 C.
+    - **Worse in:** Nothing; this is the current part. It has no POR, so its output state during AON power-up is not specified.
+    - **Compatibility:** Already designed in.
+    - **Risks:** Low.
+    - **Seller url:** https://www.digikey.com/en/products/detail/texas-instruments/TLV3012AIDBVR/1678203
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/tlv3012.pdf
+      - https://www.digikey.com/en/products/detail/texas-instruments/TLV3012AIDBVR/1678203
+      - https://www.digikey.de/en/products/result?keywords=TLV3012AIDBVR
+  3.
+    - **Name:** Microchip MCP65R41T-1202E/CHY (push-pull comparator, 1.21 V integrated reference, SOT-23-6)
+    - **Kind:** other_brand
+    - **Price usd:** $0.51 (1), $0.459 (25) at DigiKey US, 30,091 in stock. DigiKey DE: EUR 0.45 excl. VAT (EUR 0.54 incl.), EUR 0.40 at 25. LCSC C219181: $0.88 (1), 291 in stock. Saves about $2.06 per set against TLV3012AIDBVR at DigiKey.
+    - **Spec comparison:** Versus TLV3012A, from datasheet DS22269B (25 C limits for both parts):
+  - Supply: 1.8-5.5 V, equal.
+  - Iq: 2.5 typ / 4 max uA vs 2.8 / 5, better.
+  - VOS: +/-3 typ / +/-10 max mV vs 0.5 / 15, better max.
+  - Internal hysteresis: 1-5 mV (3.3 typ), adds about 36 mV at N.
+  - REF limits: 1.185-1.234 V (+/-2%) vs 1.208-1.276 V (+/-2.7%), tighter. But the headline 'initial tolerance' is +/-2% max vs TLV3012's '+/-1%'.
+  - REF drift: 27 typ / 100 max ppm/C vs 40 / 100. Microchip's max is 'characterized, not production tested'.
+  - REF output: +/-500 uA.
+  - Input range: VSS-0.3 to VDD+0.3, equal.
+  - Push-pull output; -40 to 125 C (E grade), equal.
+  - Pinout: OUT1, VSS2, +IN3, -IN4, VREF5, VDD6. Identical to TLV3012 DBV.
+    - **Worse in:** Four points, none hidden:
+  (1) Headline initial reference tolerance is +/-2% max vs TLV3012's +/-1% line, although its min/max window is tighter than TLV3012's own 1.208-1.276 V.
+  (2) The reference drift max is not production-tested.
+  (3) VREF tolerates only about 200 pF (typ) vs 10 nF. Put no capacitor on VREF; the 100 k series resistor already isolates any IN+ filter capacitor.
+  (4) Input bias can reach 5 nA max at 125 C (vs pA). Into about 313 kOhm that is about 1.5 mV, about 0.12% of the threshold. Negligible.
+    - **Compatibility:** Same footprint and pinout, same push-pull active-high-on-UV wiring through BAT54.
+  
+  Resistor change for VREF = 1.21 V (model): keep 3.3 MOhm top, 100 kOhm REF and 4.22 MOhm feedback; change the bottom resistor to 336 kOhm 0.1% (E192). Trip is about 12.79 V falling, release about 13.62 V rising. Bench calibration is still required, as in STACK.
+  
+  Standby current falls by about 0.3 uA typ.
+    - **Risks:** Data sheet dates from 2010-2011, but the part is active with 30k at DigiKey. 336 kOhm 0.1% shows no LCSC stock (DigiKey not checked). Its threshold before calibration is less certain on paper than TLV3012B.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=MCP65R41T-1202E%2FCHY
+    - **Sources:**
+      - https://ww1.microchip.com/downloads/en/DeviceDoc/22269B.pdf
+      - https://www.digikey.com/en/products/result?keywords=MCP65R41T-1202E%2FCHY
+      - https://www.digikey.de/en/products/result?keywords=MCP65R41T-1202E%2FCHY
+      - https://www.lcsc.com/product-detail/comparators_microchip-tech-mcp65r41t-1202e-chy_C219181.html
+  4.
+    - **Name:** TI TLV3012AIDCKR (the same TLV3012A in SC70-6)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $1.39 (1), $1.15 (10), $0.88 (100) at LCSC C2860248, 44 in stock. Not cheaper at DigiKey ($2.80).
+    - **Spec comparison:** Same device and data sheet, so every electrical spec is identical. Only the package changes: SC70-6, 2.0 x 2.1 mm, 0.65 mm pitch.
+    - **Worse in:** Package only: harder to hand-solder and inspect than SOT-23-6. LCSC's metadata says -40 to 85 C, but TI's data sheet gives -40 to 125 C for the family (LCSC listing error, unverified).
+    - **Compatibility:** Same pinout as the DBV. Needs an SC70-6 footprint on the power board.
+    - **Risks:** Small LCSC stock (44). LCSC is not confirmed TI-franchised.
+    - **Seller url:** https://www.lcsc.com/product-detail/C2860248.html
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/tlv3012.pdf
+      - https://www.digikey.com/en/products/result?keywords=TLV3012AIDCKR
+      - JLCPCB/LCSC parts catalog API query 'TLV3012', 18 Oct 2026 (C2860248)
+  5.
+    - **Name:** TI TLV3012BIDBVR (newer 'B' die, drop-in)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $2.83 (1), $1.94 (100) at LCSC C20345924, 1,833 in stock. DigiKey: $2.78 (1), $1.70 (100), 1,469 in stock. Cheaper only against TLV3012AIDBVR at LCSC ($3.44); at DigiKey it costs $0.21 more than the A version.
+    - **Spec comparison:** Versus TLV3012A (SBOS300C section 6.9):
+  - Iq: 2.4 typ / 3.1 max uA, and 3.6 max over -40 to 125 C (vs 5 max at 25 C), better.
+  - VOS: +/-6 mV max, and +/-9 mV over temperature (vs 15 max), better.
+  - REF limits: 1.223-1.260 V vs 1.208-1.276 V, tighter. Drift 100 ppm/C max, equal.
+  - Adds POR (defined output at power-up), fail-safe inputs, and 2-8 mV built-in hysteresis.
+  - Same push-pull output, pinout and package.
+    - **Worse in:** On paper only: its accuracy line reads '+/-1.5% max', while the A version's reads '+/-1%'. Its actual min/max window is tighter, so the threshold error before calibration is smaller (about +/-2% vs about +/-3.9% at 25 C, model).
+    - **Compatibility:** Drop-in: same DBV pinout; same resistors (built-in hysteresis adds about 63 mV at N). Calibrate on the bench as planned.
+    - **Risks:** Low. LCSC is not confirmed TI-franchised; DigiKey is the franchised alternative.
+    - **Seller url:** https://www.lcsc.com/product-detail/C20345924.html
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/tlv3011b.pdf
+      - https://www.ti.com/product/TLV3012B
+      - https://www.digikey.com/en/products/result?keywords=TLV3012BIDBVR
+  6.
+    - **Name:** TI TLV4051R5DBVR (inverting push-pull comparator with trimmed 0.5 V threshold) + 2N7002 + about 6.2 MOhm to switch in the hysteresis
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $1.30 (1), $0.82 (100) at LCSC C2871616, 135 in stock; plus about $0.05 for the FET and resistor. Not checked at DigiKey. TLV4051R1 (1.2 V) exists only in a 4-bump DSBGA; DigiKey lists no TLV4051R1DBVR.
+    - **Spec comparison:** From TI SNVSB04C:
+  - Threshold including offset: VIT- 0.4752-0.4848 V at 25 C (+/-1%) and 0.4704-0.4896 V over -40 to 125 C (+/-2%). TLV3012A's budget is about +/-3.2-3.9%, so this is better.
+  - Iq: 2 typ / 3.5 max uA (5 max over temperature), better.
+  - 1.6-5.5 V supply; known POR state; push-pull output, asserted high when IN < VIT-, which is the correct polarity.
+    - **Worse in:** Fixed 20 mV hysteresis, and a single inverting input, so the 6% hysteresis cannot be added with a feedback resistor. OUT must drive a 2N7002 that switches about 6.2 MOhm in parallel with the bottom resistor (model: 3.3 MOhm / about 128.6 kOhm). That adds parts, changes the topology and is not yet bench-proven. FET leakage adds a small error.
+    - **Compatibility:** Not drop-in: SOT-23-5 with different pins, and the divider is recalculated. Output wiring to BAT54/OFF is unchanged.
+    - **Risks:** Design change on a safety-relevant line (holding OFF on undervoltage). LCSC stock is small.
+    - **Seller url:** https://www.lcsc.com/product-detail/C2871616.html
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/tlv4021.pdf
+      - https://www.ti.com/product/TLV4041
+      - https://www.digikey.com/en/products/result?keywords=TLV4051R1DBVR
+  7.
+    - **Name:** Holtek HT7533-2 (SOT-23-5) / HT7533-1 (SOT-89) 3.3 V LDO
+    - **Kind:** other_brand
+    - **Price usd:** $0.166 (SOT-23-5) / $0.145 (SOT-89) at LCSC (C82217, C14289), large stock
+    - **Spec comparison:** From the LCSC listing (Holtek data sheet not fetched): 30 V input, 100 mA, Iq 2.5 uA, -40 to 85 C.
+    - **Worse in:** Iq 2.5 uA vs 1.3 uA typ; temperature range -40 to 85 C vs Tj -40 to 125 C; 100 mA vs 150 mA. Reverse-current protection and +/-1% accuracy are not shown. REJECT.
+    - **Compatibility:** Pin-compatible footprints exist, but it fails on specs.
+    - **Risks:** Many unbranded 'HT7533' clones are on sale (UMW, KEXIN and others, some rated 18-24 V).
+    - **Seller url:** https://www.lcsc.com/product-detail/C82217.html
+    - **Sources:**
+      - JLCPCB/LCSC parts catalog API query 'HT7533', 18 Oct 2026
+  8.
+    - **Name:** Diodes AP7381-33SA-7 (40 V, 150 mA LDO, SOT-23)
+    - **Kind:** other_brand
+    - **Price usd:** $0.113 at LCSC C3752764, 0 in stock (the SOT-89 version C460411 is $0.32, 2 in stock)
+    - **Spec comparison:** From the LCSC listing (data sheet not fetched): 40 V input (better), 150 mA, Iq 2.5 uA, Tj -40 to 125 C.
+    - **Worse in:** Iq 2.5 uA vs 1.3 uA typ. Accuracy and reverse-current protection were not verified. REJECT.
+    - **Compatibility:** SOT-23-3, so a different footprint.
+    - **Risks:** Out of stock.
+    - **Seller url:** https://www.lcsc.com/product-detail/C3752764.html
+    - **Sources:**
+      - JLCPCB/LCSC parts catalog API query 'AP7381-33', 18 Oct 2026
+  9.
+    - **Name:** onsemi NCP730ASN330T1G (38 V, 150 mA, 1 uA-class LDO)
+    - **Kind:** other_brand
+    - **Price usd:** $1.07 at LCSC C892814 (197 in stock). Not cheaper than TPS70933DBVR at LCSC ($0.34).
+    - **Spec comparison:** From the LCSC listing: 38 V input (better), 150 mA, Tj -40 to 125 C. Iq is listed as 1.8 uA for the 3.3 V version (data sheet not fetched).
+    - **Worse in:** Not cheaper. Iq may be worse (1.8 uA listed). Not pursued.
+    - **Compatibility:** SOT-23-5 (pinout not verified).
+    - **Risks:** Not applicable.
+    - **Seller url:** https://www.lcsc.com/product-detail/C892814.html
+    - **Sources:**
+      - JLCPCB/LCSC parts catalog API query 'NCP730', 18 Oct 2026
+  10.
+    - **Name:** TPS70933 pin-compatible clones: MSKSEMI TPS70933DBVR-MS, TECH PUBLIC TPS70933DBVR-TP, HEERMICR HE2210M533R
+    - **Kind:** generic_or_clone
+    - **Price usd:** $0.136 (MSKSEMI, C30197521) / $0.256 (TECH PUBLIC, C2937032) / $0.25 (HEERMICR, C5123374) at LCSC
+    - **Spec comparison:** From the LCSC listings:
+  - TECH PUBLIC: 36 V, 200 mA, Iq 2 uA, -40 to 85 C.
+  - HEERMICR: 30 V, 400 mA, Iq 2 uA.
+  - MSKSEMI: no specs listed.
+    - **Worse in:** Iq 2 uA vs 1.3 uA typ; temperature range (TECH PUBLIC); accuracy and reverse-current protection not verified; makers are not established. Saves only $0.08-0.20. REJECT.
+    - **Compatibility:** Claimed SOT-23-5 pin-compatible.
+    - **Risks:** Second-source clones with no independent measurements found.
+    - **Seller url:** https://www.lcsc.com/product-detail/C30197521.html
+    - **Sources:**
+      - JLCPCB/LCSC parts catalog API query 'TPS70933DBVR', 18 Oct 2026
+  11.
+    - **Name:** RUNIC RS8912XH (comparator with built-in reference)
+    - **Kind:** other_brand
+    - **Price usd:** $0.39 at LCSC C2887732, 1,891 in stock
+    - **Spec comparison:** From the LCSC listing: 2.3-5.5 V, Iq 3.5 uA, -40 to 85 C, built-in reference (value and accuracy not verified).
+    - **Worse in:** Temperature range -40 to 85 C vs -40 to 125 C; Iq 3.5 vs 2.8 uA typ; reference accuracy not published in the listing. REJECT.
+    - **Compatibility:** Pinout not verified.
+    - **Risks:** Chinese brand; data sheet not checked.
+    - **Seller url:** https://www.lcsc.com/product-detail/comparators_jiangsu-runic-tech-rs8912xh_C2887732.html
+    - **Sources:**
+      - JLCPCB/LCSC parts catalog API query 'RS8912XH', 18 Oct 2026
+- **Notes:** VERDICT
+  - LDO: keep TI TPS70933DBVR. No cheaper LDO is not-worse. Holtek HT7533, Diodes AP7381/AP7384, Torex XC6216 (5 uA), TPS7B6933 (25 uA) and the clones all draw more ground current, and some also have a narrower temperature range or a lower current rating. onsemi NCP730 is more expensive. Buy the LDO at LCSC: $0.34 against $1.51 at DigiKey, which is out of stock until about 21 Dec 2026.
+  - Comparator, cheapest strictly not-worse: the same TLV3012A in SC70-6, TLV3012AIDCKR at LCSC, $1.39 (saves about $1.2-2.0). The only cost is the smaller package.
+  - Comparator, if you prefer SOT-23-6: TLV3012BIDBVR. It is better than the A version on Iq, offset, reference window and POR, but it is only cheaper inside LCSC ($2.83 vs $3.44). At DigiKey it costs $0.21 more than the A version.
+  - Largest saving: Microchip MCP65R41T-1202E/CHY. $0.51 at DigiKey (EUR 0.45 excl. VAT, 30k in stock), saving about $2.06 per set. Same pinout and wiring; better Iq and offset; tighter reference min/max window. Not silently equal, though:
+    - Its headline initial reference tolerance is +/-2% max, against TLV3012's '+/-1%' line. TLV3012's own limits are 1.208-1.276 V, which is +/-2.7%.
+    - Its 100 ppm/C drift max is characterized, not production-tested.
+    - VREF should carry no more than about 200 pF.
+    - Because the thresholds are bench-calibrated anyway, it is acceptable only if you accept these points. With it, the bottom divider resistor changes to 336 kOhm 0.1%.
+  - TLV4051R5DBVR has the best threshold accuracy, but it needs a FET-switched divider to get the 12.8/13.6 V hysteresis. That is a topology change, so it is not recommended.
+  
+  SET TOTALS (two ICs, model)
+  - Current: about $2.91 (LDO from LCSC + TLV3012A from DigiKey).
+  - TLV3012AIDCKR route: about $1.73.
+  - MCP65R41 route: about $0.85 at DigiKey, or $1.22 if everything comes from LCSC.
+  - Passives (BAT54 about $0.03, 0.1% resistors) are the same on every route.
+  - Sourcing gap: LCSC has the 3.3 MOhm 0.1% (Vishay MCA1206 C4168316, $0.21) but no stock of 346 kOhm, 336 kOhm or 4.22 MOhm at 0.1%. Source those from DigiKey (not checked). The 4.22 MOhm feedback and 100 kOhm REF resistors only set the hysteresis, so 1% / 25-50 ppm parts are enough there.
+  
+  EU
+  - DigiKey DE prices exclude VAT; the shown VAT-inclusive figure implies 19% for Germany.
+  - TME has no MCP65R41 listing.
+  - Mouser and Farnell returned HTTP 503. TI store prices are hidden behind a login and the store shows TPS70933/TLV3012 out of stock.
+  
+  METHOD
+  - WebSearch was unavailable: the shared limit for this turn was already used up. One search attempt was refused.
+  - All data comes from primary data sheets (TI SBVS186H Rev H, SBOS300C Rev Apr 2023, SNVSB04C; Microchip DS22269B), TI product pages, DigiKey listings, and the JLCPCB/LCSC parts catalog API, all on 18 Oct 2026.
+  - Specs marked 'from LCSC listing' were not checked against the manufacturer's data sheet.
+  - No real-world measurements were found for any of the comparators. All threshold values are models; the bench sweep test in reaudit D stays mandatory.
+  
+  Data sheets saved in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/aon_ds/
+
+## searchB:aon_3_3_v_ldo_tps709_class_micropower_uv (run `wf_a268b76e-da0`)
+
+- **Part:** AON 3.3 V LDO + micropower UV supervisor 12.8/13.6 V. The re-audit fixed it as TI TPS70933DBVR (from node N) plus TI TLV3012 (push-pull comparator with 1.242 V reference) on AON 3.3 V. Wiring: 3.3 MOhm / 346 kOhm 0.1 % divider from N into IN-; REF through 100 kOhm into IN+; OUT through 4.22 MOhm into IN+; OUT through BAT54 to #2813 OFF.
+- **Current price usd:** STACK estimate is 2-4 USD per set. Verified DigiKey qty-1 prices, ex-VAT: TPS70933DBVR 1.51 (out of stock: 20-week lead time, 11 pcs due 03-Dec-2026, 2,989 due 21-Dec-2026) plus TLV3012AIDBVR 2.57. That is about 4.08 USD for the two ICs, before the 0.1 % resistors, BAT54 and caps. TME (EU, net prices, add local VAT of 19-27 %) shows only aggregate ranges: TLV3012AIDBVR 0.92-1.46 USD (page contradicts itself: 0 in stock vs 1,062), TPS70933DBVR 0.69-1.39 USD (0 in stock). LCSC prices could not be read (403 or JS-only pages), so they are unverified.
+- **Critical specs:**
+  - LDO VIN: works at 13.2-16.8 V on node N, and the abs max must sit above the 27.6 V SMBJ17A clamp. TPS709 runs 2.7-30 V, abs max 32 V.
+  - LDO no-load ground current sets standby drain: TPS70933 is 1.3 uA typ / 2.05 uA max (VOUT 3.3 V or less).
+  - LDO output accuracy: TPS70933 is +/-1 % (VOUT 3.3 V or more). The comparator release threshold moves only about 8 mV at N per 1 % of AON, because OUT high = AON feeds hysteresis through 4.22 MOhm.
+  - LDO line regulation: 3 mV typ / 10 mV max over the full VIN range. N swings with Lime load peaks up to 4.6 A.
+  - LDO protection: current limit 200-500 mA, thermal shutdown, and reverse-current protection (10 nA out of IN at VIN = 0). Load is about 0.7 mA (INA228 plus comparator).
+  - LDO EN pin: abs max 7 V, recommended 6.5 V or less. Leave EN floating (internal 300 nA pull-up). Never tie it to N.
+  - LDO must be stable with a 2.2 uF ceramic output cap, TJ -40 to 125 C, SOT-23-5 (hand-solderable).
+  - Comparator output must be push-pull and active-high on undervoltage, to drive BAT54 into #2813 OFF (diode-OR with Pico GP13), with no inverter.
+  - Comparator integrated reference: TLV3012 is 1.242 V, initial accuracy +/-1 % (headline; table limits 1.208-1.276 V), drift 40 ppm/C typ / 100 ppm/C max, 0.5 mA drive, stable up to 10 nF. Drift sets threshold stability after bench calibration: 100 ppm/C over 50 C is about 64 mV at N.
+  - Comparator Iq: TLV3012 is 2.8 uA typ / 5 uA max on 3.3 V AON.
+  - Comparator input bias current must be pA-class for the 3.3 MOhm / 346 kOhm divider (about 313 kOhm Thevenin): TLV3012 is +/-10 pA. nA-class parts would add tens of mV at N.
+  - Comparator VOS: TLV3012 is 0.5 mV typ / 15 mV max, drift +/-12 uV/C. This is calibrated out on the bench.
+  - Comparator inputs: TLV3012 inputs are clamped only to V-, up to 7 V regardless of V+. This matters if AON is absent while N is present.
+  - Comparator: supply 1.8-5.5 V, SOT-23-6 pinout OUT/V-/IN+/IN-/REF/V+, TA -40 to 125 C.
+  - Divider resistors: 0.1 %, 25 ppm/C or better thin film (3.3 MOhm, 346 kOhm, 100 kOhm, 4.22 MOhm). Their tolerance and drift add to the reference error.
+  - Legality and authenticity: genuine parts from authorized distributors only. No AliExpress lots and no pulled or used ICs.
+- **Candidates:**
+  1.
+    - **Name:** Microchip MCP65R41T-1202E/CHY (push-pull comparator, 1.21 V integrated reference, SOT-23-6), replacing the TLV3012
+    - **Kind:** other_brand
+    - **Price usd:** 0.51 at qty 1 (DigiKey CT, ex-VAT; 0.459 at 25; 0.39 at 3k T&R); Active; about 30k in stock; 4-week lead time. Not found at TME (EU). LCSC price unverified.
+    - **Spec comparison:** Iq: 2.5 uA typ / 4 uA max vs TLV3012 2.8 / 5. Better.
+  VOS: +/-3 mV typ / +/-10 mV max vs 0.5 typ / 15 max. Better on max.
+  IB: 1 pA typ vs +/-10 pA. Equal or better.
+  VREF: 1.185-1.234 V (+/-2 % max, +/-1 % typ) vs TLV3012 1.208-1.276 V with a +/-1 % headline.
+  VREF drift: 22-27 ppm/C typ / 100 ppm/C max vs 40 / 100. Equal on max.
+  VREF output: +/-500 uA vs 0.5 mA. Equal.
+  Supply: 1.8-5.5 V. Equal.
+  Output: push-pull, short-circuit +/-50 mA. Equal.
+  Temperature: -40 to 125 C. Equal.
+  Pinout: OUT/VSS/+IN/-IN/VREF/VDD, the same order as TLV3012 (OUT/V-/IN+/IN-/REF/V+). Drop-in footprint.
+  Internal hysteresis: 1-5 mV, which TLV3012 non-B lacks.
+    - **Worse in:** Initial reference tolerance on paper is +/-2 % max, against the TLV3012 +/-1 % headline. The bench calibration that STACK already requires removes this.
+  VREF capacitive load: 200 pF recommended, and above 2000 pF it may oscillate at power-up, vs 10 nF for TLV3012. Rule: no capacitor on VREF.
+  VREF drift max is characterized but not production tested.
+  Inputs are clamped to VDD + 0.3 V (max +/-2 mA), while TLV3012 inputs tolerate up to 7 V unpowered. Through 3.3 MOhm the current is only microamps, so this is harmless.
+  The 1.21 V reference needs a divider change: 346 k becomes 336 k 0.1 % (E192). Model: about 12.79 V trip and 13.62 V release, plus the internal 1-5 mV hysteresis, about 10-50 mV at N.
+  Evidence is the manufacturer datasheet only. I found no independent measurements, because the search budget was used up.
+    - **Compatibility:** Same SOT-23-6 footprint and pin order. Same 3.3 V AON rail and push-pull output into BAT54 to #2813 OFF. Only the bottom divider resistor changes. No software impact (no driver). No RF or TX impact.
+    - **Risks:** Outside angle B: this is a branded part with no independent measurement. It needs adversarial verification and a bench calibration of trip and release at 25 C and in the warm enclosure. Saves about 2.06 USD per set at DigiKey qty 1, but only about 0.4-0.95 USD against the TME TLV3012 range.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=MCP65R41T-1202E%2FCHY
+    - **Sources:**
+      - https://ww1.microchip.com/downloads/en/DeviceDoc/22269B.pdf
+      - https://www.digikey.com/en/products/result?keywords=MCP65R41T-1202E%2FCHY
+      - https://www.ti.com/lit/ds/symlink/tlv3012.pdf
+  2.
+    - **Name:** TI TPS70933DRVR (same TPS709 die, 3.3 V, WSON-6 2x2 mm)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 1.34 at qty 1 (DigiKey, ex-VAT; stock not shown)
+    - **Spec comparison:** Same datasheet and part (SBVS186H): 2.7-30 V, 32 V abs max, 1.3 / 2.05 uA, +/-1 %, 150 mA, reverse-current protection, thermal shutdown. Electrically identical.
+    - **Worse in:** Hand assembly and inspection only: WSON-6 with an exposed pad needs hot air or reflow, while SOT-23-5 can be soldered by iron. Saves just 0.17 USD.
+    - **Compatibility:** Different footprint (DRV pinout: OUT 1, EN 4, GND 3, IN 6, NC 2/5). Power-board layout change.
+    - **Risks:** Stock not confirmed. The saving is too small to justify the harder package on a hand-built board.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=TPS70933DRVR
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=TPS70933DRVR
+      - https://www.ti.com/lit/ds/symlink/tps709.pdf
+  3.
+    - **Name:** TI TPS709B33DBVR (same TPS709 die and spec, SOT-23-5 B pinout): stock workaround, not cheaper
+    - **Kind:** current_part
+    - **Price usd:** 1.51 at qty 1 (DigiKey; 5,264 in stock), the same price as TPS70933DBVR
+    - **Spec comparison:** Identical electrical spec (same datasheet table). Only the pinout differs: GND 1, IN 2, OUT 3, NC 4, EN 5.
+    - **Worse in:** Nothing electrically. Not cheaper.
+    - **Compatibility:** SOT-23-5 with a different pin order, so it needs a B-pinout footprint. Lay out for it now, because TPS70933DBVR is out of stock at DigiKey, TME and the TI store until Dec 2026.
+    - **Risks:** None beyond a footprint mix-up. Mark the pinout variant on the board silkscreen.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=TPS709B33DBVR
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=TPS709B33DBVR
+      - https://www.ti.com/lit/ds/symlink/tps709.pdf
+      - https://www.ti.com/product/TPS709/part-details/TPS70933DBVR
+  4.
+    - **Name:** Goodwork HT7533-1 (Chinese second-source of Holtek HT75xx-1, 3.3 V, SOT-89): REJECTED
+    - **Kind:** generic_or_clone
+    - **Price usd:** 0.04228 each at 1,000 MOQ (DigiKey Marketplace, ships in about 90 days)
+    - **Spec comparison:** VIN: up to 30 V operating, and the abs max is also 30 V, vs 30 V operating / 32 V abs max for TPS709.
+  Iq: 1.5 typ / 3.0 max uA vs 1.3 / 2.05.
+  Accuracy: +/-2 % (3.234-3.366 V) vs +/-1 %.
+  Line regulation: 0.2 %/V max (about 6.6 mV/V) vs 10 mV max over the whole range.
+  Iout: 100 mA (70 min). Enough.
+  Temperature: TA -40 to 85 C vs TJ -40 to 125 C.
+    - **Worse in:** Iq max, accuracy, line regulation, abs-max margin above the 27.6 V TVS clamp, temperature range. No reverse-current protection, current limit or thermal shutdown is specified. Larger SOT-89 package. I found no independent measurements, so angle B rejects it.
+    - **Compatibility:** Electrically usable on N for 3.3 V and less than 1 mA, but with a different footprint.
+    - **Risks:** Clone-grade documentation (Chinese-only datasheet). 1k MOQ and 90-day marketplace lead time.
+    - **Seller url:** https://www.digikey.com/en/products/detail/goodwork/HT7533-1/29516608
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/goodwork/HT7533-1/29516608
+      - https://www.gk-goodwork.com/static/upload/file/20260710/1783647666348043.pdf
+  5.
+    - **Name:** UMW HT7533-1 (Chinese second-source of Holtek HT75xx-1, 3.3 V, SOT-89): REJECTED
+    - **Kind:** generic_or_clone
+    - **Price usd:** 0.25 at qty 1 (DigiKey, 4,136 in stock; 0.127 at 100)
+    - **Spec comparison:** Per the DigiKey listing: VIN max 30 V, Iq 3 uA, 100 mA, dropout 0.1 V at 1 mA, short-circuit protection only, operating -25 to 70 C. The UMW datasheet link returned HTML, so accuracy is not verified.
+    - **Worse in:** Iq (3 vs 1.3 / 2.05 uA). Temperature range (-25 to 70 C vs -40 to 125 C; the cell shutdown limit is 60 C and the enclosure runs 45-50 C). Lower abs-max margin. No reverse-current protection or thermal shutdown listed. SOT-89. No independent measurements.
+    - **Compatibility:** Different footprint. Would work electrically, but with no margin.
+    - **Risks:** Low-temperature limit for winter field use. Unverified accuracy.
+    - **Seller url:** https://www.digikey.com/en/products/detail/umw/HT7533-1/17635239
+    - **Sources:**
+      - https://www.digikey.com/en/products/detail/umw/HT7533-1/17635239
+  6.
+    - **Name:** TI TLV709 (cost-optimized 30 V, 150 mA LDO, SOT-23-5): REJECTED
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** not verified (TI page shows no price)
+    - **Spec comparison:** VIN 2.5-30 V. Iq 3.2 uA typ vs 1.0-1.3. Accuracy 2 % vs 1 %. The page mentions no reverse-current protection.
+    - **Worse in:** Iq, accuracy, reverse-current protection.
+    - **Compatibility:** SOT-23-5 (DBV), but the pinout is unverified.
+    - **Risks:** Not not-worse. Listed only so it is not proposed later.
+    - **Seller url:** https://www.ti.com/product/TLV709
+    - **Sources:**
+      - https://www.ti.com/product/TLV709
+- **Notes:** Angle B result: no generic module, clone, DIY build or used unit passes. The only clones found are the HT7533-1 copies by Goodwork and UMW. They are cheaper but worse in Iq max, accuracy, line regulation, abs-max margin, temperature range and protections, and neither has independent measurements, so both are rejected.
+  
+  Measurement search was not possible: the shared WebSearch budget was used up on my first query. I relied on WebFetch of datasheets and distributor pages. A follow-up with search budget could look for independent Iq measurements of HT75xx clones, but on datasheet values they already fail.
+  
+  Other angle-B options:
+  - Used or pulled ICs and AliExpress TI/Microchip lots: rejected on principle for counterfeit risk.
+  - Generic battery low-voltage cutoff modules: rejected as a class without checking a specific listing. They do not provide the push-pull 12.8 / 13.6 V micro-amp function into #2813 OFF.
+  - DIY TL431 or zener plus comparator: adds parts and current, with no gain.
+  
+  Recommendation:
+  1. LDO: keep the TPS709. Nothing cheaper is not-worse. TPS70933DBVR is out of stock everywhere I checked (DigiKey backorder until Dec 2026, TME 0, TI store none), so lay the board out for TPS709B33DBVR. It has the same spec and price (1.51 USD) and 5,264 in stock at DigiKey, but a different SOT-23-5 pin order (GND 1, IN 2, OUT 3, NC 4, EN 5).
+  2. Build rule from the datasheet (SBVS186H): leave EN floating. It has a 300 nA internal pull-up, is clamped at 6.5 V and rated 7 V abs max. Never tie EN to N.
+  3. Comparator: the only cheaper credible analog is Microchip MCP65R41T-1202E/CHY at 0.51 USD, against 2.57 USD for TLV3012AIDBVR at DigiKey. It has the same footprint and pin order, and better Iq, VOS and IB.
+     - On paper it is worse in initial reference tolerance (+/-2 % max vs +/-1 %), but the bench calibration STACK already requires removes that.
+     - It needs a VREF capacitive load of 200 pF or less (no cap on VREF) and the bottom divider resistor changed from 346 k to 336 k 0.1 %. Model: about 12.79 V trip and 13.62 V release, plus 1-5 mV internal hysteresis, about 10-50 mV at N.
+     - It is a branded part outside angle B with datasheet-only evidence, so it should go to adversarial and bench verification before adoption.
+     - If not adopted, keep the TLV3012. The TLV3012B (2.78 USD) is a better drop-in (POR, fail-safe inputs, 3.1 uA max, VOS 6 mV max) but costs more.
+  
+  The set saving from the comparator swap is about 2.06 USD at DigiKey qty 1, but only about 0.4-0.95 USD against the TME TLV3012 range. DigiKey and TME prices are ex-VAT; EU buyers add 19-27 % VAT.
+  
+  Datasheets read: TPS709 SBVS186H (Jul 2021), TLV3011/12/B SBOS300C (Apr 2023), MCP65R41/6 DS22269B, and the Goodwork HT75XX Rev 2.0 (Jan 2025). Downloaded copies are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_ti, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_mcp65r41 and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_ht7533. This is a DC power and supervision part: no RF emission, no TX path, no loop, and no hard rule is affected.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
@@ -33970,6 +34331,147 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   Rate basis: 1 EUR = 1.1241 USD (stack). PLN/CZK use the ECB rates of 16 Oct 2026 (4.37 and 24.323).
   
   Hard rules: unaffected. Same instrument, port 1 conducted only, Bench-gated, no loops. LibreVNA (100 kHz-6 GHz, full 2-port) was not price-checked. It has no built-in screen or battery and is believed to cost well above the pick (unverified), so it is not a not-worse cheaper option.
+
+## searchB:litevna_64 (run `wf_e5582d4c-0a2`)
+
+- **Part:** LiteVNA 64 (Zeenko), bench VNA, Lab instruments group, qty 1. Conducted use only.
+- **Current price usd:** 175.73 ex VAT (EUR 156.33) / 210.88 incl. 20% FR VAT (EUR 187.60) at Passion Radio, SKU NANO-LITEVNA64-2730. Re-checked 18 Oct 2026: EUR 26.17 reduction still applied, quantityAvailable=5, taxRate 20. Converted at the stack's 1.1241 USD/EUR.
+- **Critical specs:**
+  - Frequency range 50 kHz to 6.3 GHz. This covers LF filter work (60/77.5/162 kHz), the 60 kHz CM-choke target, HF to S-band filters, HMC7992 isolation to 6 GHz and 5.8 GHz checks.
+  - S21 system dynamic range >=90 dB below 3 GHz (IFBW 225 Hz) and >=50 dB at 3 GHz and above. This is the HW v0.3.1/0.3.2 baseline the stack plans on; HW v0.3.3 is specified at >70 dB above 3 GHz.
+  - Calibrated S11 noise floor <=-50 dB below 3 GHz and <=-40 dB at 3 GHz and above.
+  - Frequency stability <0.5 ppm over 0-50 C.
+  - Measurement set: S11 plus S21 (1-path), SOL+thru calibration, TDR/DTF, Touchstone export via host software.
+  - Sweep: 21-1001 points on the device, 1-65535 points over USB, >1600 points/s (HW >=v0.3.2).
+  - Source power control over registers 0x41/0x42 (levels 1-3), needed for padded LNA tests; port limit +20 dBm absolute.
+  - Host interface: USB-C CDC-ACM 04b4:0008 with the NanoVNA V2 binary protocol. Works with NanoVNA-Saver @3445a0a and the scikit-rf NanoVNAv2 driver on Ubuntu 24.04 arm64 (user-space Python, no kernel driver). labd must own the port so the Bench-mode S11 gate holds.
+  - Power: USB 5 V +/-0.5 V, 1 A max (bench-hub budget). Internal 2000 mAh Li-po, because instruments are charged before sessions and run on battery.
+  - Standalone UI: 3.95 in 480x320 resistive touch plus jog, MicroSD.
+  - SMA female ports, matching the stack's SMA pads, ANNE-50+ loads and 086-6SM+ wrench. Box contents: male OSL, F-F barrel, 2x 30 cm cables.
+  - Provenance: genuine Zeenko from an authorized seller with an EU GPSR responsible person, and a return window long enough for the arrival isolation test.
+- **Candidates:**
+  1.
+    - **Name:** LiteVNA 62 (Zeenko, same family, 2.8 in)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 137.82 ex VAT / 169.52 incl. 23% PL VAT (gotronik.pl 535.77 / 659.00 PLN, product card dated 18 Oct 2026, ships in 24 h). Neven.cz 152.40 ex / 184.40 incl. (3,297.52 / 3,990 CZK, in stock). Eleshop EUR 130 ex = 146.13 (search snippet only; page blocked by Cloudflare, unverified). PLN 4.37 and CZK 24.323 are ECB rates of 16 Oct 2026.
+    - **Spec comparison:** The official LiteVNA guide (PDF of 6 Jul 2026) gives dynamic range, S11 floor, <0.5 ppm, sweep rate and points per HW revision, not per model. They apply to the 62 and 64 alike, and the 62 matches on 50 kHz-6.3 GHz, 5 V/1 A max, SMA female and box contents. The guide's model-specific rows are: 62 has a 2.8 in 320x240 display vs 480x320 3.95 in on the 64, and a 1500 mAh battery (vendors say 1300 mAh) vs 2000 mAh. Vendor pages give the 62 only '>70 dB <3 GHz / >50 dB >=3 GHz' (the IFBW 6.7 kHz row) and do not state its HW revision.
+    - **Worse in:** Display (2.8 in 320x240 vs 3.95 in 480x320) and battery (1300-1500 vs 2000 mAh). Its RF equality to the 64 rests only on the manufacturer's table. No independent isolation or dynamic-range measurement of a 62 was found. Rejected under the not-worse rule. It would save up to $37.91 ex VAT only if the user accepts the smaller screen and battery.
+    - **Compatibility:** Identical host side (same V2 protocol and VID:PID family per NanoVNA-Saver/scikit-rf), same SMA kit, same 5 V supply. Its lower draw (Neven lists 600 mA max) would ease the bench-hub budget.
+    - **Risks:** HW revision of stock unknown; ask the seller for CONFIG > VERSION. The reaudit's sourcing rule limits LiteVNA purchases to Passion Radio, Lab401 and the Zeenko factory store; gotronik is a tinySA.org-listed Zeenko reseller for tinySA, but not for LiteVNA.
+    - **Seller url:** https://www.gotronik.pl/litevna-62-przenosny-analizator-sieci-wektorowych-50-khz-63-ghz-zeenko-p-13581.html
+    - **Sources:**
+      - https://www.gotronik.pl/litevna-62-przenosny-analizator-sieci-wektorowych-50-khz-63-ghz-zeenko-kartapdf-13581.html
+      - https://www.neven.cz/p/litevna-6ghz-prenosny-vektorovy-sitovy-analyzator
+      - http://nanovna.com/wp-content/uploads/2021/11/LiteVNA_User-Guide.pdf
+      - https://eleshop.eu/litevna.html
+  2.
+    - **Name:** Zeenko AliExpress factory store LiteVNA 64 (same part, different seller)
+    - **Kind:** current_part
+    - **Price usd:** UNVERIFIED. AliExpress returned a login/JS wall to every fetch. DiSlord's Feb 2024 survey said 'LiteVNA64 from $140' on AliExpress, which is stale. EU import VAT is collected at checkout or on import.
+    - **Spec comparison:** Same product. One Zeenko-titled listing reads 'Zeenko LiteVNA 64 Version 0.3.3 ... 2000mAh'. If the unit really is HW v0.3.3, the guide specifies >70 dB at >=3 GHz vs >50 dB for Passion Radio's HW 3.1, which is better. Everything else is identical.
+    - **Worse in:** Nothing on specs if the listing is genuine. Not proven: the store ID behind the listing (it must be store 5800447, the one linked from tinySA.org), the price and the HW revision are all unverified.
+    - **Compatibility:** Identical to the current part.
+    - **Risks:** The listing may not belong to the factory store. Returns from China and the 30-day arrival test are harder. GPSR responsible person unknown. A consignment over EUR 150 pays import VAT plus a carrier clearance fee.
+    - **Seller url:** https://www.aliexpress.us/item/3256803365552690.html
+    - **Sources:**
+      - https://tinysa.org/wiki/pmwiki.php?n=Main.Buying
+      - https://mysku.club/blog/misc/99119.html
+      - https://www.aliexpress.us/item/3256803365552690.html
+  3.
+    - **Name:** Grey-market 'LiteVNA-64' listings (HamGeek on AliExpress, unbranded 'Update of NanoVNA' on eBay, 'Hugen'-labelled)
+    - **Kind:** generic_or_clone
+    - **Price usd:** UNVERIFIED, from search snippets (listing pages blocked): HamGeek $151.31; eBay.com $160; eBay.de EUR 164.48 incl. import charges (= $184.89, ships from Shenzhen); 'Hugen' $245.44.
+    - **Spec comparison:** The listings claim identical specs (50 kHz-6.3 GHz, 3.95 in, 2000 mAh; titles say HW 0.3.2/0.3.3). No measurement of any of them was found.
+    - **Worse in:** No measured evidence. Provenance cannot be verified, and Lab401 states that 'many variations and grey-market clones of the LiteVNA ... use cheaper components ... at the cost of accuracy and precision' (vendor claim). No EU GPSR responsible person verified. Rejected per angle B and the stack's authenticity rule.
+    - **Compatibility:** Probably identical host side if genuine; unknown if cloned.
+    - **Risks:** Counterfeit or degraded RF parts, unknown firmware, no warranty path.
+    - **Seller url:** https://www.aliexpress.us/item/3256808585830905.html
+    - **Sources:**
+      - https://lab401.com/products/litevna
+      - https://ebay.com/itm/386029602606
+      - https://www.ebay.de/itm/336126407114
+  4.
+    - **Name:** Used LiteVNA 64
+    - **Kind:** used
+    - **Price usd:** None available. kleinanzeigen.de and marktplaats.nl returned 0 results for 'litevna' on 18 Oct 2026; eBay could not be fetched (403); web search found no used listings.
+    - **Spec comparison:** Would be identical if it is a genuine unit with HW >=v0.3.1.
+    - **Worse in:** Not available. A future listing would be acceptable only with: a photo of CONFIG > VERSION; a screenshot showing isolation >=90/50 dB with both ports terminated; an intact battery; clean SMA ports; and a landed price clearly under $175.73.
+    - **Compatibility:** Identical.
+    - **Risks:** Battery wear and SMA wear. Clone risk applies to resold grey units. No warranty.
+    - **Seller url:** https://www.kleinanzeigen.de/s-litevna/k0
+    - **Sources:**
+      - https://www.kleinanzeigen.de/s-litevna/k0
+      - https://www.marktplaats.nl/q/litevna/
+  5.
+    - **Name:** NanoVNA V2 Plus4 / Plus4 Pro (NanoRFE, S-A-A-2 lineage)
+    - **Kind:** other_brand
+    - **Price usd:** ~$200 per DiSlord's Feb 2024 survey (stale, unverified). No cheaper price found.
+    - **Spec comparison:** Range 50 kHz-4.4 GHz vs 6.3 GHz. Dynamic range: Plus4 90 dB at 1 GHz (AVG 20) and 80 dB at 3 GHz (AVG 5); the Pro 96/90/80 dB. S11 floor -50 dB below 1.5 GHz, -40 dB below 3 GHz. 3200 mAh 18650 cell. Same V2 binary protocol.
+    - **Worse in:** No coverage from 4.4 to 6.3 GHz (HMC7992 to 6 GHz, 5.8 GHz checks), and not shown to be cheaper. Rejected. It is better in dynamic range near 3 GHz.
+    - **Compatibility:** NanoVNA-Saver and scikit-rf V2 driver: yes.
+    - **Risks:** Clone-heavy market. Buy only from the NanoRFE shop or its Tindie store.
+    - **Seller url:** https://nanorfe.com/nanovna-v2.html
+    - **Sources:**
+      - https://nanorfe.com/nanovna-v2.html
+      - https://mysku.club/blog/misc/99119.html
+  6.
+    - **Name:** NanoVNA-H4 (Zeenko/Hugen)
+    - **Kind:** other_brand
+    - **Price usd:** 82.61 ex VAT / 101.61 incl. (gotronik.pl 321.14 / 395 PLN)
+    - **Spec comparison:** 10 kHz to 1.5 GHz fundamental range. Text protocol instead of V2 binary.
+    - **Worse in:** Does not cover L-band above 1.5 GHz, S-band or 3-6.3 GHz, and has lower dynamic range. Rejected.
+    - **Compatibility:** NanoVNA-Saver: yes, but a different driver path.
+    - **Risks:** Many clones (EEVblog clone warning thread).
+    - **Seller url:** https://www.gotronik.pl/nanovna-h4-analizator-sieci-wektorowej-10khz-1-5ghz-zeenko-p-13252.html
+    - **Sources:**
+      - https://www.gotronik.pl/zeenko-m-164.html
+      - https://www.eevblog.com/forum/testgear/warning-about-nanovna-clones-and-comparison-with-siglent-vna/msg4626394/
+  7.
+    - **Name:** NanoVNA-F V3 (Deepelec / SeeSii)
+    - **Kind:** other_brand
+    - **Price usd:** GBP 189.99 on eBay.de from SeeSii (cached Oct 2025, unverified); Newegg $479.99
+    - **Spec comparison:** Range 1 MHz to 6 GHz. Vendor dynamic range: S21 65 dB at 3 GHz and 60 dB at 6 GHz; S11 50/40 dB.
+    - **Worse in:** No 50 kHz-1 MHz coverage (LF time-signal filters, 60 kHz choke), and 65 dB vs 90 dB dynamic range below 3 GHz. Not proven cheaper. Rejected.
+    - **Compatibility:** Different protocol; NanoVNA-Saver support for it is unverified.
+    - **Risks:** Vendor specs only, no independent measurement.
+    - **Seller url:** https://www.ebay.de/itm/296970765807
+    - **Sources:**
+      - https://moonrakeronline.com/eu/chelegance-nanovna-f-v3-vna-6g
+      - https://www.sdrstore.eu/test-and-measurement/spectrum-analyzer/nanovna-f-v3-1mhz-6ghz-portable-vector-network-analyzer-vna-for-mf-hf-vhf-uhf-shf/
+  8.
+    - **Name:** SV6301A / SV4401A (7 in clones)
+    - **Kind:** generic_or_clone
+    - **Price usd:** SV6301A EUR 949 incl. VAT at WiMo (= $1066.77); SV4401A ~$330 (Feb 2024)
+    - **Spec comparison:** SV6301A: 1 MHz-6.3 GHz, S21 75 dB below 3 GHz and 60 dB above. SV4401A: 50 kHz-4.4 GHz, 70 dB measured by a user, -12 dBm maximum output.
+    - **Worse in:** Worse dynamic range below 3 GHz, worse low-end (SV6301A) or worse top end (SV4401A), and both cost more. Rejected.
+    - **Compatibility:** Not V2-protocol compatible; host support unverified.
+    - **Risks:** Not applicable.
+    - **Seller url:** https://www.wimo.com/en/vna-sv6301a-vector-network-analyzer
+    - **Sources:**
+      - https://www.wimo.com/en/vna-sv6301a-vector-network-analyzer
+      - https://mysku.club/blog/misc/99119.html
+  9.
+    - **Name:** DIY: NanoVNA V2 open-hardware build, or the stack's tinySA Ultra+ plus a return-loss bridge
+    - **Kind:** diy
+    - **Price usd:** V2 build: parts plus PCB, not cheaper once assembled (model). tinySA plus bridge: about $30-40 extra for the bridge (model, unverified).
+    - **Spec comparison:** V2_2 design: 50 kHz-3 GHz, 60 dB. tinySA plus bridge: scalar return loss only.
+    - **Worse in:** V2: no coverage above 3 GHz and 60 dB dynamic range. tinySA plus bridge: no phase, no Smith chart, no vector OSL correction, no TDR. Rejected.
+    - **Compatibility:** Not applicable.
+    - **Risks:** Not applicable.
+    - **Seller url:** https://nanorfe.com/nanovna-v2.html
+    - **Sources:**
+      - https://nanorfe.com/nanovna-v2.html
+- **Notes:** VERDICT: keep the LiteVNA 64 from Passion Radio. Nothing I found is both cheaper and proven not-worse on measured evidence.
+  
+  The nearest option is the LiteVNA 62. It saves up to $37.91 ex VAT (gotronik). Per the official guide its RF specs are the same as the 64's for the same HW revision. It is worse in display (2.8 in 320x240) and battery (1300-1500 mAh), and no independent measurement of a 62 exists. That is a trade-off for the user to accept explicitly, not a not-worse analog.
+  
+  Other checks:
+  - Genuine 64 from other EU sellers costs more ex VAT: Neven.cz $179.13, gotronik $179.85, Astroradio $189.51. Lab401 is EUR 192 = $215.83, VAT basis unverified.
+  - Neven.cz lists HW 'ver. 0.3.3' for its 62/64 stock and has 19 units in stock across both variants. Per the guide, v0.3.3 gives >70 dB dynamic range at 3 GHz and above, vs >50 dB for Passion Radio's HW 3.1, which would raise the stack's 45 dB rejection ceiling above 3 GHz. But its dynamic-range text is the old table, and Neven names the manufacturer as 'NANOLAB'. Neither is verified. Worth asking Neven for CONFIG > VERSION: if they confirm v0.3.3, paying +$3.40 ex VAT buys real headroom above 3 GHz, and Neven is a fallback if the last 5 units at Passion Radio go. It sits outside the reaudit's LiteVNA seller list (Passion Radio, Lab401, Zeenko factory store), so the user would have to approve that.
+  - AliExpress (factory store and grey sellers) and eBay prices could not be verified, because the pages were blocked. No used units were listed on Kleinanzeigen or Marktplaats on 18 Oct 2026.
+  - LiteVNA 67 (Eleshop EUR 239 ex, from search snippets) and LibreVNA (EUR 409 ex at Eleshop; 2,599 PLN at gotronik) are better but more expensive, so they are out of scope.
+  - Every candidate is a signal source and stays under the same conducted-only, Bench-mode-gated rule.
+  - Exchange rates: ECB 16 Oct 2026 (PLN 4.37, CZK 24.323); USD at the stack's 1.1241.
 
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
