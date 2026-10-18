@@ -9889,6 +9889,164 @@
   
   The 2026 spec-table figures are vendor data, not measured. Product URLs used: https://www.rollei.de/products/stativ-compact-traveler-no-1 ; https://justmore.dk/images/media/ProductsDocs/Rollei-Compact-Traveler-No-I-kamerastativ-sort.pdf ; https://bigbearsound.com/products/manfrotto-befree-one-aluminium-travel-tripod-with-head-black (re-audit source for the Manfrotto price).
 
+## searchA:travel_tripod_35_cm_folded_1_2_m_or_more (run `wf_37583a7b-1a8`)
+
+- **Part:** Travel tripod for the folding antenna kit (Supports group, qty 1): folds to 35 cm or less, reaches 1.2 m or more, pan-tilt or ball head with panorama lock, 1/4-20. It carries the horn, helicone, V-dipole at 1.087 m, the L-band patch, and sometimes the device. The current pick per reaudit_C is the Rollei Compact Traveler No. 1 Aluminium (Manfrotto BeFree One Aluminium is the noted alternative).
+- **Current price usd:** USD 57.33 incl. 19% DE VAT (EUR 50.95 on rollei.de, 18 Oct 2026, black, SKU 22585 / EAN 4048805225859, in stock). The shop gives EUR 99.00 as the maker's list price and EUR 50.95 as its lowest price in the last 30 days. Without VAT: EUR 42.82 = USD 48.18. Landed: DE/AT EUR 56.93 = USD 64.06 (shipping EUR 5.98); rest of EU EUR 63.94 = USD 71.95 (shipping EUR 12.99, free from EUR 150). Shipped from the German maker's own store, so no import duty. Orange costs EUR 58.95. Conversion uses reaudit_C's rate, 1.1253 USD/EUR. The STACK estimate of USD 40-100 holds.
+- **Critical specs:**
+  - Folded length 35 cm or less (every folding-kit part must be 35 cm or less). Current: 34.5 cm per the Oct 2026 shop table; the 2016 datasheet says 31.5 cm.
+  - Maximum height 1.2 m or more, with margin for the V-dipole at 1.087 m (lambda/2 at 137.9 MHz). Current: 145 cm maximum; 134 cm in the 2016 datasheet.
+  - Height with the centre column down (stiffness at about 1.1 m). Current: 113 cm 'max. Arbeitshöhe' (max. working height).
+  - Rated load, which matters because of the lever arm at 30 deg elevation (horn on the LNB collar clamp, helicone 18 cm disc with SAWbird+, crossed Yagi, or the 1.0-1.2 kg device). Current: 8 kg per the shop (5 kg in the 2016 datasheet). Makers' load figures are not standardised.
+  - Head: 360 deg panorama base with its own lock, plus tilt to 90 deg for high-elevation pointing. A ball head is accepted per reaudit_C. Current: aluminium ball head with panorama lock, rated 8 kg.
+  - Camera interface: 1/4-20 screw on an Arca-Swiss quick-release plate (matches the enclosure's 1/4-20 insert and the printed V clamp). Current: Arca plate 40x40 mm, 20 g.
+  - Head-to-leg thread 3/8-16, so the head can be swapped for a true pan-tilt head. Current: 3/8 in.
+  - Weight including head; the kit weight line is 1.2-1.4 kg. Current: 1.14 kg (942 g without head).
+  - Leg stiffness: 5 sections, tubes 22/19/16/13/10 mm, aluminium. Leg-angle stops including a low position.
+  - Field stability: centre-column hook for ballast in wind, spikes on rough ground, spirit level(s) for the IMU az/el pointing step. Current: spikes yes; hook and 3 levels per the 2016 datasheet.
+  - Build and support: maker warranty and an EU seller (no flat customs duty; see operator note 34). Current: 24-month exchange warranty, Rollei GmbH Norderstedt DE.
+  - Hard rules: a passive mechanical support, so receive-only and the no-loop rule are unaffected. Metal legs under a horizontal V are cross-polarised to the vertical legs (minor coupling).
+- **Candidates:**
+  1.
+    - **Name:** Rollei Compact Traveler No. 1 Aluminium, black (SKU 22585) - CURRENT PICK, keep
+    - **Kind:** current_part
+    - **Price usd:** 57.33 incl. 19% VAT (EUR 50.95); 48.18 without VAT; landed 64.06 (DE/AT) or 71.95 (other EU)
+    - **Spec comparison:** Oct 2026 shop table: folded 34.5 cm, min 34.5 cm, max 145 cm, 113 cm column down, 5 sections, 10-22 mm tubes, aluminium, 1.14 kg with head, 8 kg load. Ball head is aluminium, 8.8 cm tall, 197 g, 8 kg, 3/8 in mount, Arca plate. Has spikes, converts to a 151 cm monopod, includes a bag. The 2016 datasheet (justmore.dk PDF) gives 31.5 cm, 134 cm, 1170 g, 5 kg, panorama ball head with 3 levels, hook, 41x40 mm Arca plate.
+    - **Worse in:** Baseline. Folded length has only 5 mm of margin under 35 cm (34.5 cm in the current table); measure on delivery. Rollei publishes no operating temperature range.
+    - **Compatibility:** 1/4-20 on Arca plate fits the enclosure insert and the printed V clamp. A 3/8 in head thread allows a pan-tilt head later. Fits the 35 cm folding-kit rule.
+    - **Risks:** Rollei's two spec sheets disagree (31.5 vs 34.5 cm, 5 vs 8 kg, 134 vs 145 cm): the product appears revised (now 3/8 in head mount, spikes, monopod). One review on the page says a phone holder was missing from the box. The EUR 50.95 price is a sale.
+    - **Seller url:** https://www.rollei.de/products/stativ-compact-traveler-no-1
+    - **Sources:**
+      - https://www.rollei.de/products/stativ-compact-traveler-no-1
+      - https://www.rollei.de/products/stativ-compact-traveler-no-1.json
+      - https://www.rollei.de/policies/shipping-policy
+      - https://justmore.dk/images/media/ProductsDocs/Rollei-Compact-Traveler-No-I-kamerastativ-sort.pdf
+  2.
+    - **Name:** Rollei Compact Traveler Star S1 (ex DIGI 3400), SKU 20837
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 20.20 incl. VAT (EUR 17.95 on rollei.de; list price EUR 69.97)
+    - **Spec comparison:** Folded 40 cm vs 34.5 cm; max 120 cm vs 145 cm; load 2 kg vs 8 kg; weight 570 g vs 1.14 kg (better); 3-way head with pan arm (a true pan-tilt) vs ball head with panorama lock.
+    - **Worse in:** Folded length breaks the 35 cm rule. Max height 120 cm has no margin over 1.087 m plus the clamp. Load is a quarter of the current part's. Not not-worse.
+    - **Compatibility:** Has a 1/4 in quick-release plate (type not stated). Does not fit the 35 cm kit rule.
+    - **Risks:** Light-duty video tripod; likely to flex with the helicone or horn in wind.
+    - **Seller url:** https://www.rollei.de/products/compact-traveler-star-s1-20837
+    - **Sources:**
+      - https://www.rollei.de/products/compact-traveler-star-s1-20837.json
+  3.
+    - **Name:** Rollei Compact Traveler Mini M-1, SKU 20846
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 46.08 incl. VAT (EUR 40.95 on rollei.de)
+    - **Spec comparison:** Working height 17-49 cm vs 145 cm; folded 16 cm (better); 710 g (better); 8 kg (equal); ball head with Arca plate (equal).
+    - **Worse in:** Maximum height 49 cm fails the 1.2 m requirement and the 1.087 m V-dipole height. Not not-worse.
+    - **Compatibility:** Arca plate, 1/4 in. Table-top or ground use only.
+    - **Risks:** Not usable for the V-dipole or for raising antennas above ground clutter.
+    - **Seller url:** https://www.rollei.de/products/stativ-compact-traveler-mini-m-1-schwarz-20846
+    - **Sources:**
+      - https://www.rollei.de/products/stativ-compact-traveler-mini-m-1-schwarz-20846.json
+  4.
+    - **Name:** Manfrotto Element Traveller Small with ball head, aluminium (MKELES5BK-BH)
+    - **Kind:** other_brand
+    - **Price usd:** Not verified. The official Manfrotto product page shows no price, and the EU retailer pages and B&H could not be fetched (403/404). Do not treat it as cheaper.
+    - **Spec comparison:** Closed 32 cm (better, 3 mm more margin); max 143 cm vs 145 cm (about equal); 127.5 cm column down vs 113 cm (better); min 36 cm; 1.15 kg vs 1.14 kg (equal); 5 sections, 10-22 mm tubes (equal); twist locks; leg angles 21.5/54.5/83 deg. Ball head has its own 360 deg pan lock, front tilt +90/-32 deg, Arca-type plate, 1/4-20. 2 spirit levels vs 3 on the old Rollei head. Rated -30 to +60 C (Rollei publishes none). Load: 'payloads up to 6 kg' in the overview text only, against Rollei's 8 kg. Manfrotto cites the UNI/PdR 105:2021 payload test, so the figures may not be comparable.
+    - **Worse in:** Lower stated load (6 kg vs 8 kg) and one fewer level. Price unverified, so it does not qualify as a cheaper not-worse part.
+    - **Compatibility:** 1/4-20 on an Arca-type plate; the manufacturer's tech-spec table lists the top attachment only as a 1/4 in screw (no 3/8 in head thread listed). Fits the 35 cm rule.
+    - **Risks:** Price unknown; it usually sells above the Rollei sale price (unverified).
+    - **Seller url:** https://www.manfrotto.com/global/element-traveller-tripod-small-with-ball-head-black-mkeles5bk-bh/
+    - **Sources:**
+      - https://www.manfrotto.com/global/element-traveller-tripod-small-with-ball-head-black-mkeles5bk-bh/
+  5.
+    - **Name:** SIRUI Traveler 5A aluminium travel tripod
+    - **Kind:** other_brand
+    - **Price usd:** 89.90 (store.sirui.com, US store; EU landed price not checked)
+    - **Spec comparison:** Folded 33 cm (better); max 138 cm vs 145 cm (worse); min 16 cm; 1.05 kg (better); 5 sections, 10-22 mm (equal); load 4 kg vs 8 kg (worse).
+    - **Worse in:** More expensive, half the stated load, slightly lower maximum height. Not a valid replacement.
+    - **Compatibility:** Ball head with panorama base; 1/4-20 assumed (plate details not read).
+    - **Risks:** US store means EU import duty and VAT (operator note 34).
+    - **Seller url:** https://store.sirui.com/products/sirui-traveler-5c-5a-54-3-inches-lightweight-carbon-fiber-aluminum-travel-tripod
+    - **Sources:**
+      - https://store.sirui.com/products/sirui-traveler-5c-5a-54-3-inches-lightweight-carbon-fiber-aluminum-travel-tripod.json
+  6.
+    - **Name:** K&F Concept A305A1+BH-40, 63 in aluminium travel tripod (KF09.170)
+    - **Kind:** other_brand
+    - **Price usd:** 59.99 (kfconcept.com official store, 'Tax Free', US pricing; EU price not checked)
+    - **Spec comparison:** Folds to 40 cm, or 48 cm with the head (vs 34.5 cm); max about 160 cm (better); 1.18 kg (about equal); load 22 lb / 10 kg (better on paper); 40 mm Arca ball head with 360 deg panorama base.
+    - **Worse in:** Folded length breaks the 35 cm rule. Also not cheaper than the Rollei landed price. Not not-worse.
+    - **Compatibility:** Arca plate, 1/4 in.
+    - **Risks:** Load figure is the maker's claim, with no standard test cited.
+    - **Seller url:** https://www.kfconcept.com/KF09.170_63-aluminum-travel-camera-tripod-arca-ball-head
+    - **Sources:**
+      - https://www.kfconcept.com/KF09.170_63-aluminum-travel-camera-tripod-arca-ball-head
+  7.
+    - **Name:** K&F Concept budget travel tripods: S204A1 (USD 22.99), S205A1 (USD 27.99), S174A1 (USD 29.99), O234A1+BH-36 (USD 59.99)
+    - **Kind:** other_brand
+    - **Price usd:** 22.99-59.99 (kfconcept.com, US pricing)
+    - **Spec comparison:** Folded length: S204A1 43 cm, 2 kg (4.4 lb) load, 3-way head. S205A1 42.5 cm, 740 g, 158 cm. S174A1 43 cm, 151 cm max (111 cm column down), 596 g, flip locks, 4 sections 11-17 mm, 3 kg (from its feature list). O234A1 39 cm, 160 cm, 1.24 kg, 4 sections 13-22 mm, 8 kg (17.6 lb).
+    - **Worse in:** All fold to 39-43 cm, breaking the 35 cm rule. The cheap ones also have 2-3 kg load and thinner 11-17 mm legs. None is not-worse.
+    - **Compatibility:** 1/4 in; some have Arca plates.
+    - **Risks:** Lower-tier build; loads are maker claims.
+    - **Seller url:** https://www.kfconcept.com/KF09.101V1_64-inch-aluminum-travel-camera-tripod-ball-head
+    - **Sources:**
+      - https://www.kfconcept.com/KF09.168_57.9-inch-travel-tripod-1.36lbs-360-rotation-4.4lb-load
+      - https://www.kfconcept.com/KF09.169_62-compact-lightweight-travel-tripod-phone-camera
+      - https://www.kfconcept.com/KF09.125_60-ultra-lightweight-travel-tripod-phone-holder
+      - https://www.kfconcept.com/KF09.101V1_64-inch-aluminum-travel-camera-tripod-ball-head
+  8.
+    - **Name:** NEEWER TP53 57.5 in metal travel tripod (USD 29.99) and NEEWER BASICS TP12 (USD 49.99)
+    - **Kind:** other_brand
+    - **Price usd:** 29.99 / 49.99 (neewer.com, US store)
+    - **Spec comparison:** TP53: folds to 43 cm (the spec line says 42 cm), 146 cm, 568 g, load 1.5 kg, 3-way head. TP12: 51 cm folded or minimum (listed as the first dimension), 134 cm column down, 169 cm max, 1.33 kg, 5 kg, Arca plate, detachable panorama ball head.
+    - **Worse in:** Both break the 35 cm rule. TP53 has 1.5 kg load; TP12 is heavier (1.33 kg) with 5 kg load. Not not-worse.
+    - **Compatibility:** 1/4 in; TP12 has an Arca plate.
+    - **Risks:** US store means EU duty and VAT.
+    - **Seller url:** https://www.neewer.com/products/neewer-basics-tp12-aluminum-alloy-travel-tripod-66607053
+    - **Sources:**
+      - https://www.neewer.com/products/neewer-entry-level-version-tp53-metal-travel-tripod-66607525.json
+      - https://www.neewer.com/products/neewer-basics-tp12-aluminum-alloy-travel-tripod-66607053.json
+  9.
+    - **Name:** Cullmann NANDO 530TM RB8.5
+    - **Kind:** other_brand
+    - **Price usd:** Not listed on cullmann.de (manufacturer page only)
+    - **Spec comparison:** Packed 39 cm (vs 34.5 cm); 136 cm max; 3 kg load (vs 8 kg); 1540 g (vs 1.14 kg). Arca-compatible aluminium ball head; integrated monopod.
+    - **Worse in:** Breaks the 35 cm rule, heavier, much lower load. The whole NANDO series packs to 39-49 cm.
+    - **Compatibility:** Arca plate, 1/4 in.
+    - **Risks:** None checked further.
+    - **Seller url:** https://www.cullmann.de/products/nando/nando-530tm-rb8-5/
+    - **Sources:**
+      - https://www.cullmann.de/products/nando/nando-530tm-rb8-5/
+  10.
+    - **Name:** Rollei Compact Traveler No. 1 Carbon (SKU 22578), plus the Vanguard VEO 3 GO 204AB Gen 2 and Ulanzi Ombra YING for price reference
+    - **Kind:** other_brand
+    - **Price usd:** Rollei Carbon 132.77 (EUR 117.99); Vanguard USD 139.99; Ulanzi USD 69.95
+    - **Spec comparison:** Rollei Carbon: same functions, height and load as the aluminium No. 1 (8 kg, 34.5 cm), lighter at 961 g (better). Ulanzi Ombra YING: 1.1 kg, 158 cm, Arca plate; folded length not verified. Vanguard specs not read.
+    - **Worse in:** None is cheaper than the current part. Rollei Carbon is not-worse (lighter) but costs about 2.3x as much.
+    - **Compatibility:** Rollei Carbon is mechanically identical to the current pick.
+    - **Risks:** None checked further.
+    - **Seller url:** https://www.rollei.de/products/carbon-stativ-compact-traveler-no-1
+    - **Sources:**
+      - https://www.rollei.de/products/carbon-stativ-compact-traveler-no-1.json
+      - https://www.vanguardworld.com/search/suggest.json?q=veo%203go
+      - https://www.ulanzi.com/products/ombra-ying-travel-tripod-3029.json
+- **Notes:** Verdict: keep the current part. The Rollei Compact Traveler No. 1 Aluminium (black) costs EUR 50.95 incl. VAT (USD 57.33) on rollei.de, EU stock, 18 Oct 2026. No cheaper part I could verify is not-worse.
+  - Every cheaper item I found fails at least one critical spec. Rollei Star S1 is 40 cm folded and rated 2 kg. Rollei Mini M-1 reaches only 49 cm. K&F S204A1, S205A1 and S174A1 and Neewer TP53 fold to 42-43 cm and are rated 1.5-3 kg.
+  - Every established-brand part that fits 35 cm or less costs more: Sirui Traveler 5A USD 89.90, Vanguard VEO 3 GO from USD 139.99, Rollei Carbon EUR 117.99. Manfrotto Element Traveller Small has no verifiable price.
+  - The current part also costs less than the stack's earlier named alternative, Manfrotto BeFree One Aluminium (EUR 119.95 = USD 134.98, 2.5 kg).
+  
+  Correction to reaudit_C: its Rollei figures (31.5 cm, 134 cm, 1170 g, 5 kg) come from the 2016 datasheet. The Oct 2026 shop table gives:
+  - 34.5 cm folded and 34.5 cm minimum height
+  - 145 cm max, 113 cm with the column down
+  - 1.14 kg with head (942 g without), 8 kg rated load
+  - 3/8 in head mount, spikes, monopod mode
+  It still meets the 35 cm rule, but with only 5 mm of margin; measure it on arrival. Use EUR 50.95 / USD 57.33 as the P5 price, not 'price not found'.
+  
+  Method limits:
+  - The shared WebSearch budget was exhausted on my first call. Every check above is a direct fetch of an official store or maker page: Rollei Shopify JSON and product page, Manfrotto, store.sirui.com, kfconcept.com, neewer.com, ulanzi.com, vanguardworld.com, cullmann.de.
+  - Amazon.de, idealo and geizhals (403/503 or blocked), B&H (403) and the Manfrotto EU stores (redirect or 404) could not be read. So other EU sellers' prices for the same Rollei SKU, and any EU price for the Manfrotto Element Traveller Small, are unverified.
+  - K&F, Neewer, Sirui, Ulanzi and Vanguard prices are from US stores. Per operator note 34, add the EU flat duty and import VAT unless an EU warehouse is confirmed.
+  
+  Budget alternative noted in the stack: the flexible mini tripod in the dipole kit costs nothing extra but cannot reach 1.087 m, so it is worse.
+  
+  Hard rules: a passive mechanical support does not affect receive-only, conducted-only sources or the no-loop rule. The ball head with panorama lock was already accepted in reaudit_C for the GEO horn and the static V. Check horn and helicone balance at 30 deg elevation, and use the column hook with ballast in wind.
+
 ## small:lband_sband (run `wf_41027870-8e7`)
 
 - **Band group:** L-band 1.5-1.7 GHz and S-band 2.2-2.4 GHz with antennas of at most 12 cm (STRICT) or 20 cm (SMALL). Dishes and anything tens of cm deployed are EXCLUDED, including the foldable helicones, the 11-turn helix and the 2x2 helix arrays. Rule interpretation as given: STRICT means the largest deployed dimension is about 12 cm or less; SMALL means about 20 cm or less; foldable or telescopic antennas that are larger when deployed are excluded and appear only in the borderline note.
