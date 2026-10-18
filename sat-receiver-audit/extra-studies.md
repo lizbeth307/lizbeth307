@@ -42063,6 +42063,79 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Keep the re-audit settings: IronOS >=2.23, Bluetooth Off, PD Mode No Dynamic, power limit 60 W, Power pulse if the 737 sleeps, a non-EPR cable, and an FNB58 check of 20 V and <=3 A.
 
+## searchA:ifixit_portable_anti_static_mat (run `wf_e5582d4c-0a2`)
+
+- **Part:** iFixit Portable Anti-Static Mat, iFixit part number IF145-202-5 (bench tier, Bench electronics, qty 1)
+- **Current price usd:** 34.95 (iFixit US store, verified 18 Oct 2026, https://www.ifixit.com/products/portable-anti-static-mat). The same SKU costs EUR 29.95 at iFixit EU, shipped from Germany (https://www.ifixit.com/en-eu/products/portable-anti-static-mat), and GBP 27.99 at iFixit UK.
+- **Critical specs:**
+  - Top-surface resistance in the dissipative range. iFixit states 1e7 to 1e9 ohm. A candidate must be inside 1e6 to 1e9 ohm, the ANSI/ESD S20.20 worksurface limit, and must not be insulative.
+  - Documented compliance. iFixit claims design to ESD S4.1 (worksurface resistance measurement) and ESD S20.20 (control program). A candidate needs an equal claim (or IEC 61340-5-1 / 61340-2-3) and a published resistance figure.
+  - Grounding. iFixit has a 10 mm snap and a 1.8 m ground cord that attaches to a wall-socket earth or to a metal object. In the field the stack grounds to the device or bench common point, so the cord needs a clip or a 4 mm or 10 mm connector.
+  - Wrist strap included, with a 1 Mohm series resistor, an adjustable band and an alligator clip (iFixit: 1.8 m, 1 Mohm, adjustable to XL). This protects the LNAs, the HMC7992 switches, the RTL/Lime boards and the Q6A during field repair.
+  - Work area at least 60 x 60 cm (iFixit 60 x 60 cm). That is room for the open handheld enclosure halves, the Q6A, the Pinecil and the small parts.
+  - Portability. It must fold and pack into the bench kit case (Pelican 1450 or Apache 3800; the Pelican 1450 interior is about 37 x 26 x 15 cm). It must be light fabric, not a rigid 2 mm rubber or silicone slab that has to be rolled. iFixit says it is foldable; its folded size and weight are not published.
+  - Raised border so screws and parts do not roll off (iFixit: yes).
+  - Durability and guarantee. iFixit gives a lifetime guarantee (EU page: 25-year producer guarantee) and says the mat is easy to clean.
+  - Heat. iFixit publishes no heat rating for this polyester mat, so the baseline is 'none'. The Pinecil tip must stay on its stand. A heat-rated candidate is better, never worse.
+  - Sold by an official, legal EU or UK seller with VAT handled, and not counterfeit.
+  - Hard rules. It is a passive item with no RF function. The ground cord and wrist-strap coil are not loop antennas or H-field probes, so no rule conflict.
+- **Candidates:**
+  1.
+    - **Name:** iFixit Portable Anti-Static Mat IF145-202-5, bought from the iFixit EU store (ships from Germany)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** EUR 29.95. That is about $33.67 at the STACK conversion rate (1.124), or about $35.0 at 1.17 USD/EUR, so the saving in USD depends on the rate. The page does not say whether VAT is included; EU consumer prices normally include it, so check at checkout. Free shipping only over EUR 65, so this item alone pays shipping (amount not verified).
+    - **Spec comparison:** Same product and SKU, so every spec is identical: 60 x 60 cm, polyester, surface resistance 1e7 to 1e9 ohm, ESD S4.1/S20.20 claim, 10 mm snap, 1.8 m ground cord, adjustable 1 Mohm wrist strap with alligator clip, foldable, raised border. The EU page states a 25-year producer guarantee. Listed as 'Ready to ship from Germany', dispatch within 24 h.
+    - **Worse in:** Nothing in specs. On the label price alone it may not be cheaper in USD, depending on the EUR/USD rate. The landed cost for a buyer in Europe is lower: it avoids US shipping plus import VAT and handling on a $34.95 US order. Shipping applies below EUR 65.
+    - **Compatibility:** Identical to the current pick; it fits the bench kit. For an EU buyer it ships VAT-paid inside the EU, as STACK already lists iFixit EU as an EU seller.
+    - **Seller url:** https://www.ifixit.com/en-eu/products/portable-anti-static-mat
+    - **Risks:** Shipping fee and VAT inclusion not verified on the page. The page says the ground cord 'connects to a wall socket'; the EU plug type is not stated, so check which earth connector ships in the box.
+    - **Sources:**
+      - https://www.ifixit.com/en-eu/products/portable-anti-static-mat
+      - https://www.ifixit.com/products/portable-anti-static-mat
+  2.
+    - **Name:** iFixit Portable Anti-Static Mat IF145-202-5, bought from the iFixit UK store
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** GBP 27.99, about $37 at about 1.33 USD/GBP (rate not verified). Not cheaper than the EU store.
+    - **Spec comparison:** Same SKU and specs. UK page lists a lifetime guarantee and 'Ready to dispatch from Germany'.
+    - **Worse in:** No spec difference. More expensive in USD than the EU store, and a GBP-priced UK store is the wrong channel for an EU buyer.
+    - **Compatibility:** Identical.
+    - **Seller url:** https://www.ifixit.com/en-gb/products/portable-anti-static-mat
+    - **Risks:** UK VAT and customs handling for delivery into the EU; not recommended.
+    - **Sources:**
+      - https://www.ifixit.com/en-gb/products/portable-anti-static-mat
+  3.
+    - **Name:** Adafruit Anti-Static ESD Rework Mat with Grounding Clip, A4 (PID 4405), plus iFixit Anti-Static Wrist Strap (Adafruit PID 5911)
+    - **Kind:** other_brand
+    - **Price usd:** 15.45 ($7.50 + $7.95, qty 1, US seller; shipping to the EU and import VAT extra)
+    - **Spec comparison:** Mat is 30 x 20 cm, 2 mm thick, with a grounding clip; surface resistance only described as '10s of Megaohms'; 'somewhat heat-resistant' (better than the iFixit mat's 'not rated'). The wrist strap has a 1 Mohm cord, 2 m coiled, adjustable, alligator clip, which equals the iFixit strap.
+    - **Worse in:** Area is about 1/6 of 60 x 60 cm. No ESD S4.1/S20.20 or IEC 61340 claim and no numeric resistance range. No resistor stated in the ground clip. Folding is not stated (a 2 mm slab). No raised border. No lifetime guarantee. US-only seller for an EU buyer. Not a not-worse analog: REJECT.
+    - **Compatibility:** Too small for the open enclosure plus Q6A plus iron. It would fit the case flat.
+    - **Seller url:** https://www.adafruit.com/product/4405
+    - **Risks:** Resistance claim not quantified; import costs to the EU.
+    - **Sources:**
+      - https://www.adafruit.com/product/4405
+      - https://www.adafruit.com/product/5911
+- **Notes:** VERDICT: keep the iFixit Portable Anti-Static Mat IF145-202-5. No cheaper part from another vendor was found that is not worse. The only change is the channel: buy the same SKU from the iFixit EU store (EUR 29.95, Germany warehouse), as STACK already says. Its USD label price is about the same as the US $34.95: $33.67 at the STACK rate, about $35.0 at 1.17. The real saving is the landed cost in Europe (no US shipping, no import VAT or handling). The order pays shipping unless iFixit items total EUR 65 or more.
+  
+  CHECKED AND MORE EXPENSIVE (not candidates):
+  - STAT-X Mobile ESD workstation, reichelt ESD SERVICEKIT (MPN 920000 000002), EUR 42.99 incl. 19% VAT. 590 x 590 mm, 10-100 Mohm, coiled wrist strap, case, 0.735 kg (https://www.reichelt.com/de/en/shop/product/mobile_esd_workstation-60392).
+  - STAT-X ESD desktop work mat with press studs, EUR 38.99; no wrist strap stated.
+  - Bernstein grounding mats and sets: EUR 60.99 to 159.99.
+  - Weller ESD mat sets 900 x 600: EUR 83.99 to 84.39 (reichelt search https://www.reichelt.de/de/en/shop/search/esd%20mat).
+  - reichelt has nothing under EUR 35 that has both a mat and a wrist strap.
+  
+  CHECKED, WORSE OR PRICE UNKNOWN:
+  - Velleman AS14: grounded silicone bench mat, 600 x 500 mm, dissipative top 1 Mohm to 1 Gohm, 200-300 C, 990 g, ground cord included, no wrist strap stated. Smaller, heavy, not foldable, out of stock, no price shown (https://www.velleman.eu/products/view/true-grounded-esd-bench-mat-50x60cm-as14/?id=450022). Better in heat; worse in size, mass and portability, and has no strap.
+  - iFixit Silicone Work Mat EUR 9.95 (17 x 10 cm) and Magnetic Project Mat EUR 19.95: not ESD worksurfaces of the right size.
+  
+  COVERAGE LIMITS:
+  - The shared WebSearch budget was already used up on my first call, so this angle relied only on direct WebFetch of seller pages.
+  - Desco/SCS (8501-type field service kits), Antistat UK, Farnell/CPC, Mouser, Conrad (Toolcraft), Amazon.de, geizhals and idealo were all blocked (403/503/unreachable), so their prices are NOT verified.
+  - From general knowledge, Desco/SCS/3M portable field service kits usually cost more than this mat; this is not verified here.
+  - A follow-up with search budget could check Conrad Toolcraft, Antistat, StaticTec and Warmbier field kits.
+  
+  STACK NOTE (no spec traded): the iFixit polyester mat has no published heat rating. With the Pinecil, keep the iron in its stand and use a separate silicone pad for the hot tip. The mat's grounding should go to the bench or device common point in the field. Check which EU earth plug or clip ships with the EU unit.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
