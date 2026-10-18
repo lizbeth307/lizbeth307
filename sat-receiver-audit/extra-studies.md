@@ -15552,6 +15552,83 @@
   - Whether the 20 cm helical whip's modelled -2.7 to -4.7 dB efficiency holds on this case geometry (no NEC run on the actual case at 137.9 MHz).
 - **Confidence:** medium
 
+## edit:05b_arch_bus_rf:b1 (run `wf_45d408c6-7ff`)
+
+- **Section:** 05b_arch_bus_rf
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+- **Skipped:** []
+- **Notes:** I applied all 38 changes (idx 0-37) in place to /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/05b_arch_bus_rf.md. No two changes in this batch conflicted, so precedence did not have to decide anything.
+  
+  Merges instead of repeats:
+  - idx 9 + idx 35: both describe the bias token and GPIO0/GPIO5. They are now one passage in «Зміщення і блокування», and the TCBT sentence was replaced as idx 35 asked.
+  - idx 4 + idx 17: the pin 7 table cell has the short mi2s0_mclk note and the debug/pinctrl check. The detailed point (no DTS node claims gpio96, no enabled MI2S node may take it) is in the pinmux paragraph.
+  - idx 13: the "U33 feeds J2" part was already there (the J2a row names U33). The 'at most one isochronous device' rule went into the bandwidth paragraph.
+  - idx 23: the 'за поточним планом' wording for GPB4-7 now reads 'по дві лінії керування (A/B)', matching the resolved truth table.
+  - idx 30 + idx 36: the Boni rules (13.8 V, BNC, DC-sense, Boni-attached confirmation, 30-150 mA window) agree with each other.
+  
+  Subtotal recomputed: after idx 21 (HF+ 3.07-3.65 MB/s), the FE1.1s tree bandwidth reads 'HF+ 3.07-3.65 ... тобто ≤14.0' instead of '≤13.3' (5.12 + 3.65 + 5.12 + 0.1 = 13.99).
+  
+  Small layout edits:
+  - idx 0: the USB map column headers now read 'без Lime (запасний варіант)' and 'з Lime (за замовчуванням)'.
+  - idx 2: the CH334F #2 'з Lime' cell changed from '—' to 'те саме', so the default column states the condition.
+  - idx 5: the wording avoids nested brackets ('встановлюється, регіон — Європа').
+  
+  Pin count problem, left in the text as instructed: after idx 24 (FLT plus TLV3011 PG instead of 2 PG lines) and idx 3 (one more output for the Lime 3.3 V switch EN), MCP23017 #3 would need 17 lines but has 16. The new output is marked 'призначити на схемі'. This should become an open bench/schematic item in 08_open_bench.
+  
+  For batches 2-3: these anchors no longer exist verbatim, so those changes have to be located by part name:
+  - idx 38: the '(без Lime)' heading
+  - idx 41 and 54: the DVB-T 'коли відомий регіон' sentence
+  - idx 52: the P4 injector text
+  - idx 62: '/dev/ttyHS1 → /dev/gnss0'
+  - idx 65: 'PG LNB; PG Boni;'
+  - idx 68: the PCA9555 cell
+  - idx 71: the GP26-28 cell
+  - idx 78: '→ RTL-A T2' in P2
+  - idx 79: the V1-V3 sentence, now already replaced
+  - idx 80: the sled V1-V3 text, already replaced
+  
+  I deliberately left the targets table untouched for idx 38: the T1/T2/T3 throw names, LRPT gain 10-25 dB, the ДХ row's 12.5 V and the DAB row. They still contradict the new RF1-RF4 park and the 13.8 V Boni rail until batch 2 applies.
+  
+  idx 7 uses 'LNB купується' as instructed; the later idx 51 says 'LNB куплено', and the brief says the QO-100 add-on was bought.
+
 ## fold:vhf_uhf (run `wf_4a343103-e9e`)
 
 - **Band group:** VHF/UHF: 137 MHz Meteor-M LRPT, 145.8 MHz ISS SSTV, 435-438 MHz CubeSats (RTL-SDR V4L for 137/145.8 MHz, LimeSDR Micro for 435 MHz). Targets unchanged. Packing targets unchanged: recommended tier has no piece longer than about 35 cm; ultra-compact tier no piece longer than about 20 cm.
