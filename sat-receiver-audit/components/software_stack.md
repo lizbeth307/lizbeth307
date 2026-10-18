@@ -347,3 +347,513 @@ _Run `wf_9603e249-d87`_
   
   Working files (scratch, not deliverables): /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/sw_repos (clones), /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/owrx_noble_Packages, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/radxa_qcs6490_Packages, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/radxa_noble_Packages, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/chrony45.txt.
 
+## Адверсаріальна перевірка (`verify`)
+
+_Run `wf_9603e249-d87`_
+
+- **Subsystem:** software_stack
+- **Verdict:** The software stack holds up once it is corrected, but the v1 recipes are not shippable as written. All the core version and recipe claims survived re-checking against primary sources:
+  - librtlsdr .so.2 rebuild: cherry-pick onto v2.0.1 applies cleanly and was rebuilt with SONAME librtlsdr.so.2.
+  - The zerocopy typo was reproduced in CMake and in the noble arm64 binary.
+  - SatDump PLUGINS_ALL, SDR++ and SDRangel defaults, the OpenWebRX+ 1.2.126 dependencies, WSJT-X/Hamlib coupling, libairspyhf SONAME, gr-satellites path traversal, the embloader boot chain, and the 6.18.2-4 kernel config all hold up. The kernel deb is byte-identical to the official radxa-pkg/linux-qcom 6.18.2-4 release asset.
+  
+  Stage 3 refutes 4 stage-1 claims and has to correct the impact of 2 more:
+  - Refuted: gr-satellites 5.9.0 as the target; libairspyhf0 from master; the Gpredict v2.6 tag; and "6.18.2-4 can no longer be fetched".
+  - Impact corrected: under a naive bias-tee gate, the V4L loses all tuning above 28.8 MHz, not HF. SatDump's hardware SDR sources would bypass the labrx masks.
+  
+  Stage 3 also adds 15 new risks that neither earlier stage caught (listed under new_risks). The ones with the biggest effect:
+  - SatDump hardware-source plugins default ON, outside PLUGINS_ALL, including HackRF/BladeRF TX sinks.
+  - The SDRangel REST API binds to every interface.
+  - SDRangel M17/FreeDV/ChirpChat/ADS-B/AIS/DSC demodulators are ON by default and bypass the stack's filters.
+  - OpenWebRX+ 1.2.123+ has Whisper speech-to-text, MQTT export and ADS-B through dump1090.
+  - readsb's military flag is a silent no-op without --db-file.
+  - The WSJT-X build needs Hamlib, and wsjtx_app_version links it.
+  - The qcom-ppa qcom-fastrpc1 package replaces fastrpc.
+  - CelesTrak ran out of 5-digit catalog numbers on 2026-07-11.
+  - The STACK contradicts itself on pin priorities (100 vs 1001).
+  
+  Nothing has been validated on Q6A hardware.
+- **Confirmed:**
+  - osmocom rtl-sdr: v2.0.1=420086a (2023-11-03), v2.0.2=619ac31 (2024-04-23), v2.0.3=797f814 (2026-08-12). 0204c9c 'Add RTL-SDR Blog V4L Support' (author 2026-05-01, commit 2026-08-11) and 65f0658 'Fix application hang on USB transfer errors' (commit 2026-01-26) are both in v2.0.3 only. They cherry-pick cleanly onto v2.0.1, and the x86-64 build gives SONAME librtlsdr.so.2. 7ebcb04 'lib: set SOVERSION back to 0' is in v2.0.2. include/ is unchanged between v2.0.1 and v2.0.3.
+  - V4L detection is an exact strcmp on manufacturer 'RTLSDRBlog' and product 'Blog V4L'. The log string is 'RTL-SDR Blog V4 Lite Detected' (librtlsdr.c 2.0.3 l.1567).
+  - Ubuntu noble debian/rules passes -DENABLE_ZEROCOPY=$DEB_ZEROCOPY_OPTION. A CMake test with that value prints 'Building with usbfs zero-copy support enabled'. The noble arm64 librtlsdr2_2.0.1-2build1 binary contains 'Allocating %d zero-copy buffers'. The same typo is in Debian 2.0.3-1. Upstream's option default is OFF.
+  - Debian rtl-sdr 2.0.3-1 (6 Sep 2026, forky/sid) ships librtlsdr0 with Breaks/Replaces librtlsdr2 (<< 2.0.2).
+  - The rtl-sdr-blog fork (HEAD aed0ea1, 2026-03-22) has two bias hacks: rtlsdr_set_offset_tuning() calls rtlsdr_set_bias_tee() on R820T/R828D, and force_bt = !(EEPROM buf[7]&0x02) forces the bias tee on and blocks turning it off. osmocom has neither. osmocom rtl_eeprom has -i, the fork has -b.
+  - SatDump master 1aedd602 (2026-09-29) declares VERSION 2.0.0 with type 'alpha'; dev is 96bb626 (2026-10-08); the last numbered tag is 1.2.2. plugins/CMakeLists.txt has PLUGINS_ALL default ON and if(PLUGIN_X OR PLUGINS_ALL) for every satellite plugin, including inmarsat, orbcomm, dmsp, wsf, spacex and bluewalker3.
+  - SatDump net_source_support accepts 'udp' or 'nng_sub' and receives complex float samples. The legacy CLI src-cli/legacy/live.cpp exists.
+  - SatDump satdump_cfg.json defaults to kepler_update_interval '1 day' and fetches from http://orbicentral.net/gp.php (plain HTTP); a 'Never' option exists. #1212 (open): Meti172's workaround is to trim the first CADU frames with dd bs=8192 skip=4. #1207 (open): LC_NUMERIC=C fixes the rotctl comma-locale bug.
+  - SDR++ master 8c9f5ee (2026-07-04) has VERSION_STR 1.3.0; the last tag is 1.0.4. CMake defaults: SOAPY_SOURCE OFF; PAGER_DECODER ON; RECORDER ON; IQ_EXPORTER ON ('Export raw IQ through TCP or UDP'); DISCORD_PRESENCE ON; RIGCTL_CLIENT ON; M17 and FALCON9 OFF. The rigctl_server default is localhost:4532. Maintainer in #1061 (Jul 2024): 'the server is single client only', and it will not be fixed.
+  - SDRangel v7.27.2 = 97e9e21 has ENABLE_QT6 default OFF. Every option named in the STACK and in stage 1 exists: CHANNELTX, CHANNELMIMO, DEMODINMARSAT, HEATMAP, DEMODDSD, FILESINK, SIGMFFILESINK, DEMODPAGER, DEMODMESHTASTIC, DEMODMESHCORE, REMOTESINK, REMOTETCPSINK, UDPSINK, FEATURE_AMBE, PERTESTER, SIMPLEPTT, LIMERFE, METIS. samplesink always builds testsink, fileoutput, localoutput and audiooutput. samplemimo builds audiocatsiso whenever find_package(Hamlib) succeeds. sdrangel/sdrangelsrv accept -w/--fftwf-wisdom.
+  - SDRangel #2268 (RK3588, 7.22): FFTW plans took 20-121 s per size without wisdom. f4exb: 'On these machines it is mandatory to use a FFT Wisdom file'.
+  - OpenWebRX+ 1.2.126 (5 Oct 2026, Architecture: all) is in luarvique noble. Its Depends are only owrx-connector >= 0.6.5 and python3-csdr >= 0.18.40; every decoder is a Recommends. 1.2.127 in git is dated 19 Oct 2026. 1.2.125 added 'optional ability to press RigControl PTT'; the feature requires 'rigctl -V'. The PPA page calls Noble 'experimental', gives Telegram as the support channel, and gives 'sudo install-softmbe.sh' to enable mbelib.
+  - OWRX+ feature.py: page, selcall and eas need 'multimon-ng --help' to succeed on PATH. Noble multimon-ng 1.3.0+dfsg-1 installs /usr/bin/multimon-ng. The OWRX+ repo carries multimon-ng 1.5.0, dxlaprs-tetra, dxlaprs-lora, python3-meshtastic 2.7.7, python3-bleak, codecserver-driver-ambe3k, digiham 0.6.11, libacars-tools, dump978-fa, redsea 1.3.1 and csdr 0.18.40/0.18.41.
+  - Noble wsjtx 2.7.0~rc3+repack-1build2 Depends libhamlib-utils and libhamlib4t64, and ships jt9, wsprd and wsjtx_app_version in /usr/bin. The WSJT-X 2.7.0 GA tag exists on git.code.sf.net (wsjtx-2.7.0 -> b4f9a43).
+  - Noble gpredict 2.3-115-g0f3beb6-3build3 has no libgps dependency; it Recommends gpsd and libhamlib-utils. Upstream: v2.4 6d298e5 (2025-12-27), v2.5/2.5.1 (2026-03-22), v2.5.2 06cadb6 (2026-07-20), v2.6 commit c9fa018 (2026-08-16). Master 1d80049 (2026-10-11) contains 21e95dc (radio-control self-deadlock fix, #425), dd2edc0 (#426), f05abf3 (#427) and f1739fc. No OMM support. #435 is open and the bug is at gtk-rot-ctrl.c:180/189.
+  - Noble versions per the Launchpad API: gnuradio 3.10.9.2-1.1ubuntu2, volk 3.1.2-1.1build1, gr-satellites 5.5.0-2build2, soapysdr 0.8.1-4build1, soapyrtlsdr 0.3.3-1build1, gpsd 3.25-3ubuntu3.2, chrony 4.5-1ubuntu4.2, hamlib 4.5.5-3.2build2, libgpiod 1.6.3-1.1build1, gnss-sdr 0.0.19-1build3, mesa 25.2.8-0ubuntu0.24.04.4 (-updates; -security has .2), libdrm 2.4.125-1ubuntu0.1~24.04.2, labwc 0.7.1-1build1, welle.io 2.4+ds-2build5 (Depends librtlsdr2 >= 2.0.1), airspyhf 1.6.8-4build1, limesuite 23.11.0+dfsg-2build2.
+  - Upstream tags: soapy-sdr-0.9.0 (ABI '0.9' vs '0.8'), soapy-rtlsdr-0.3.4 and soapy-airspyhf-0.2.1 (all 2026-10-10), Hamlib 4.7.2, GNU Radio v3.10.12.0, VOLK v3.3.0. soapysdr0.8-module-all Depends soapysdr0.8-module-remote. SoapyAirspyHF 0.2.1 never calls airspyhf_set_calibration.
+  - gr-satellites: v5.9.0 = f663ee4 (2025-12-14); main 4210dc4 (2026-09-22) is VERSION_API 10 and still find_package(Gnuradio "3.10"). Fix commits are on main only: 10d27cb (2026-03-17), 1bcf1d8 (2026-05-29), fb887cf (2026-06-16, submit_tlm default 'no' and GR_SATELLITES_SUBMIT_TLM parsed with BOOLEAN_STATES), plus c526924, 833e259, 45b146f and 882e503. The v5.5.0 config default is submit_tlm = 'yes'. #820 (closed as duplicate of #803): reporter's CVSS 8.4, affects 4.7.0 to 5.9.0.
+  - libairspyhf: master 24fe8ff (2026-07-22) declares 1.8.1 with SOVERSION 0. There are no tags after 1.6.8. Noble libairspyhf1 ships libairspyhf.so.1. Debian 1.6.8-5 (20 Sep 2025) = '1.6.8-59-g87cf12a (would be 1.8.1)' with patches 0044 use-after-free, 0045 4k buffers and bump-soversion (SOVERSION 1). SDR++ #1805 shows the .so.1 vs source-build mismatch.
+  - LimeSuiteNG: the only tag is v25.1.0. limesdr-micro-staging = 37cb183, limesdr-micro = 80ffad5. BUILD_PLUGINS_AMARISOFT is a cmake_dependent_option that defaults ON on UNIX. debian/control has limesuiteng-legacyapi, limepcie-dkms, gr-limesuiteng and limesuiteng-soapysdr.
+  - 6.18.2-4 kernel: the local deb's sha256 0bbdbfda97627a0e51afefb3d0aa7dc23c3658151e5f14aee24c276d0bb7fbeb matches the official https://github.com/radxa-pkg/linux-qcom/releases/download/6.18.2-4/ asset. The config has GPIO_CDEV=y, GPIO_CDEV_V1=y, PPS=y, '# CONFIG_PPS_CLIENT_GPIO is not set', SND_ALOOP=m, '# CONFIG_DVB_USB_V2 is not set', GNSS=m (GNSS_SERIAL/UBX/MTK/SIRF/USB=m), QCOM_WDT=m, ARM_SMC_WATCHDOG=y, PREEMPT_DYNAMIC=y, QCOM_QSEECOM_UEFISECAPP=y, SECURITY_APPARMOR=y with CONFIG_LSM="landlock,lockdown,yama,integrity,bpf".
+  - Boot chain: rsdk core.libjsonnet installs 'systemd-boot sdboot-is-embloader' for edk2 products and runs bootctl install --no-variables --entry-token=literal:RadxaOS. The radxa noble repo has embloader 0.7 and sdboot-is-embloader 0.7 (Depends embloader (= 0.7), systemd-boot). embloader 8912189 (2026-08-20) LoaderFeatures = timeout, timeout-oneshot, entry-default, entry-oneshot, sort-key, saved-entry, devicetree, menu-disable; there is no boot counting. Its parser handles the devicetree and devicetree-overlay keys. Forum 31304: embloader went 0.6 -> 0.7 together with the 7.0.11 meta.
+  - UKI on BIOS 6.0.260120 silently reboots (forum 30896). Radxa's strongtz reproduced it on 2026-06-11 as a firmware issue and posted a test BIOS dragon-q6a_flat_build_wp_260916.zip on 2026-10-14. Users report that systemd-boot and grub boot.
+  - rsdk socs.json gives the qcs6490 group extra_ppa ubuntu-qcom-iot/qcom-ppa (since 42b9c78, committed 2025-09-02) and kisak/turtle (since b17a31b, 2026-09-15); additional_repos also adds ppa:mozillateam/ppa. The current qcom-ppa has qairt-libs/qairt-dsp-binaries/libqnn1 2.49.0, linux-firmware-dragonwing 20260825 (Breaks/Replaces firmware-qcom-hlosfw, firmware-qcm6490-msl), qcom-adreno1 1.855.3 and dragonwing-defaults 1.1.4. kisak has libgl1-mesa-dri 26.1.8~kisak1~n.
+  - chrony 4.5 docs: 'lock' pairs PPS samples with the refclock that has the given refid; a negative maxchange 'ignore' value disables the limit so large offsets are always ignored; the syntax is makestep threshold limit.
+  - slowrx master ca6d701 (2024-07-30) and slowrxd (sjlongland slowrx-daemon c94327a, 2024-12-17) both capture only through snd_pcm_open; snd-aloop is available as a module.
+  - PyPI: Skyfield 1.55 (2026-08-07), sgp4 2.27, PySide6 6.12.0 (2026-10-08, cp310-abi3 manylinux_2_39_aarch64, which matches noble glibc 2.39), onnxruntime 1.31.0 (cp312 manylinux_2_28_aarch64). NanoVNA-Saver v0.7.3 has requires-python >=3.10,<3.13 and pyside6~=6.8, which allows 6.12.
+  - Decoder tags: readsb v3.16.17 (README-json: military = dbFlags & 1), AIS-catcher v0.70, radiosonde_auto_rx v1.9.0 (station.cfg.example sondehub_enabled = True), multimon-ng 1.6.2, GNSS-SDR v0.0.22, Artemis v4.2.0, Virgo v3.8.9, welle.io v2.7, redsea v1.3.1.
+  - auto_rx #1016 (Jul 2025 - Feb 2026): RTL serial '00000002' was taken as device index 2. The maintainer advised a non-numeric serial.
+- **Corrections:**
+  1.
+    - **Claim in stack:** C11: bias-tee token patch in rtlsdr_set_bias_tee() and rtlsdr_set_bias_tee_gpio() (stage-1 impact: 'HF upconversion and band switching fail')
+    - **Finding:** The stage-1 impact statement is inverted. On the V4L, r82xx_set_freq calls rtlsdr_set_bias_tee_gpio(dev, 5, !cable_1_in), which gives on=1 for every band above 28.8 MHz. priv->input starts at the air_cable1_in value (0x00 or 0x60) while HF=1 and VHF=2, so the very first VHF/UHF tune after open goes through this call. A naive gate therefore makes every V4L tune above 28.8 MHz fail (137, 145, 437 and 1090 MHz), while HF tuning still works. The V4 path does the same with !cable_2_in.
+    - **Verdict:** corrected
+    - **Action:** Put the gate inside rtlsdr_set_bias_tee_gpio() and refuse only when gpio == 0 && on && !token_ok(dev). Pass GPIO 5 (upconverter switch) and every off request through ungated. The token is the existence of root-owned /run/lab/bias/<serial>, written only by labd; never read it from an environment variable. Treat this as a policy gate, not a security boundary, since raw libusb control transfers bypass it; the hardware DC-sense/eFuse on the LNA rail remains the safety layer.
+    - **Impact:** Without the fix, both V4L receivers lose all VHF/UHF reception as soon as the patch ships.
+    - **Sources:**
+      - https://github.com/osmocom/rtl-sdr/blob/v2.0.3/src/tuner_r82xx.c
+      - https://github.com/osmocom/rtl-sdr/blob/v2.0.3/src/librtlsdr.c
+  2.
+    - **Claim in stack:** C11 zerocopy fix (stage 2: 'any consumer can record all-zero IQ on ARM')
+    - **Finding:** Binary and CMake evidence confirmed. The only field report, Debian #1041701, comes from an Odroid N2+ running vendor kernel 4.9.337 on rtl-sdr 0.6.0-4, so the all-zero failure has not been shown on 6.18.
+    - **Verdict:** corrected
+    - **Action:** Keep $(DEB_ZEROCOPY_OPTION) or pass -DENABLE_ZEROCOPY=OFF explicitly. CI: strings librtlsdr.so.2 | grep -c zero-copy == 0. Keep the per-pass 1 s variance self-test. Pin the Ubuntu librtlsdr2 (= 2.0.1-2build1) at -1.
+    - **Impact:** The risk is plausible, not proven, but the fix costs only a memcpy.
+    - **Sources:**
+      - https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1041701
+      - http://ports.ubuntu.com/pool/universe/r/rtl-sdr/librtlsdr2_2.0.1-2build1_arm64.deb
+  3.
+    - **Claim in stack:** C11 option: rebuild 2.0.3 with SOVERSION 2
+    - **Finding:** include/rtl-sdr.h is byte-identical between v2.0.1 and v2.0.3, and the device struct is opaque. The ABI risk is therefore low, though not zero.
+    - **Verdict:** new_option
+    - **Action:** Default stays the minimal cherry-pick. Optionally use v2.0.3 (797f814) with SOVERSION 0 -> 2 after an abi-compliance-checker run against 2.0.1.
+    - **Impact:** Faster r82xx retune for survey and scanning.
+    - **Sources:**
+      - https://github.com/osmocom/rtl-sdr/compare/v2.0.1...v2.0.3
+  4.
+    - **Claim in stack:** #30 SatDump recipe (stage 1: PLUGINS_ALL=OFF plus allow-list including sdr_sources rtlsdr/airspyhf/soapy/net_source)
+    - **Finding:** PLUGINS_ALL covers only the satellite plugins. Every sdr_source and app has its own option, most default ON: AIRSPY, HYDRASDR, AIRSPYHF, HACKRF, LIMESDR, SDRPLAY, PLUTOSDR, BLADERF, LITEXM2SDR, USRP, RTLSDR, MIRISDR, SPYSERVER, RTLTCP, SDRPP_SERVER, AARONIA, RFNM, FOBOSSDR, NET_SOURCE, REMOTE_SDR, EXPERIMENTAL_DEVICES, TOOLS_APP, WIPSETTINGS_EDITOR_APP and WEBHOOK_APP. hackrf_sdr_support and bladerf_sdr_support contain TX sinks (commit 1aa692b 'Initial TX Support + HackRF Sink'). SatDump is not one of the exclusive-lease engines, so any hardware source lets it open an SDR and record baseband outside the labrx masks.
+    - **Verdict:** corrected
+    - **Action:** Configure -DPLUGINS_ALL=OFF and turn ON only METEOR, NOAA_METOP, METOPSG, ELEKTRO_ARKTIKA, FY3, GK2A, XRIT, ANALOG, CUBESAT, RADIOSONDE, plus FY2/FY4/GOES/HIMAWARI/GEONETCAST if wanted. Set PLUGIN_*_SDR_SUPPORT=OFF for every hardware and network SDR source, and also SPYSERVER, RTLTCP, SDRPP_SERVER, REMOTE_SDR, EXPERIMENTAL_DEVICES, WEBHOOK_APP, TOOLS_APP and WIPSETTINGS_EDITOR_APP. Keep NET_SOURCE_SDR_SUPPORT=ON. CI fails on any lib*_sdr_support.so other than net_source, and on inmarsat, orbcomm, dmsp, wsf, spacex or bluewalker3.
+    - **Impact:** Closes a TX-capable code path and a mask bypass.
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/blob/1aedd602055c154401384a8cc7876713bb371254/plugins/CMakeLists.txt
+      - https://github.com/SatDump/SatDump/tree/master/plugins/sdr_sources/hackrf_sdr_support
+  5.
+    - **Claim in stack:** Decoder allow-list: SatDump DMSP/WSF (stage-1 policy question)
+    - **Finding:** Both plugins exist and are pulled in by PLUGINS_ALL. Per Wikipedia, DMSP is managed by the US Space Force with on-orbit operations by NOAA, and WSF-M is a defense weather satellite. They are military-owned transmitters.
+    - **Verdict:** new_risk
+    - **Action:** Exclude PLUGIN_DMSP and PLUGIN_WSF under the Northwood precedent and record the decision in the register. Also exclude SPACEX and BLUEWALKER3.
+    - **Impact:** Keeps the satellite decoders in line with the 'nothing aimed at military transmitters' rule.
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/tree/master/plugins/dmsp_support
+      - https://en.wikipedia.org/wiki/Defense_Meteorological_Satellite_Program
+  6.
+    - **Claim in stack:** C7/5.4: SatDump live feed 'only if alpha supports it'
+    - **Finding:** It is supported. The legacy 'satdump live' CLI and the net_source plugin (UDP or nng_sub) both exist. The UDP payload is complex float samples (complex_t, 8 bytes each), received in blocks of 8192 samples.
+    - **Verdict:** confirmed
+    - **Action:** labrx converts cu8 to cf32 for the SatDump UDP feed on 127.0.0.1. Keep decode-from-file as the default. Bench-compare live and file products.
+    - **Impact:** Removes an open item in the access model.
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/blob/1aedd602055c154401384a8cc7876713bb371254/plugins/sdr_sources/net_source_support/net_source.cpp
+  7.
+    - **Claim in stack:** Stage 2 SatDump runtime config (#1224 'CLI crashes at startup')
+    - **Finding:** #1224 was reported against a Fedora Copr build at f3d82adbf. The maintainer could not reproduce it and believes it is already fixed, so the crash claim is overstated. The config action still stands, because the default 1-day OMM fetch uses plain HTTP to orbicentral.net and the field profile has no network.
+    - **Verdict:** corrected
+    - **Action:** Ship kepler_update_interval 'Never'. labd supplies 17-column OMM CSV/JSON. Set Environment=LC_NUMERIC=C. Add the LRPT retry with dd bs=8192 skip=4. Build with -j4 and zram.
+    - **Impact:** Gives deterministic TLE/OMM provenance and prevents lost Meteor passes.
+    - **Sources:**
+      - https://github.com/SatDump/SatDump/issues/1224
+      - https://github.com/SatDump/SatDump/issues/1212
+      - https://github.com/SatDump/SatDump/issues/1207
+  8.
+    - **Claim in stack:** #31 SDR++ (stage-1 option list)
+    - **Finding:** Confirmed, with additions. OPT_BUILD_NETWORK_SINK (audio network export) is ON by default. HACKRF, PLUTOSDR, HERMES, RFSPACE, SPECTRAN_HTTP, SPYSERVER, RTL_TCP and SDRPP_SERVER sources are also ON and none is needed.
+    - **Verdict:** corrected
+    - **Action:** Pin SDR++ 8c9f5ee8fe405775bfcd62c8c8f8c0fc928a64af. Use -DOPT_BUILD_SOAPY_SOURCE=ON -DOPT_BUILD_PAGER_DECODER=OFF -DOPT_BUILD_RECORDER=OFF -DOPT_BUILD_IQ_EXPORTER=OFF -DOPT_BUILD_DISCORD_PRESENCE=OFF -DOPT_BUILD_RIGCTL_CLIENT=OFF -DOPT_BUILD_NETWORK_SINK=OFF, and turn OFF the HACKRF, PLUTOSDR, HERMES, RFSPACE, SPECTRAN_HTTP, SPYSERVER, RTL_TCP and SDRPP_SERVER sources. Keep RTL_SDR, AIRSPYHF, NETWORK_SOURCE (labrx feed), FILE_SOURCE and RIGCTL_SERVER (localhost:4532). The audit fails on iq_exporter.so, recorder.so, network_sink.so or pager_decoder.so.
+    - **Impact:** Closes IQ and audio export paths and reduces the network attack surface.
+    - **Sources:**
+      - https://github.com/AlexandreRouma/SDRPlusPlus/blob/8c9f5ee8fe405775bfcd62c8c8f8c0fc928a64af/CMakeLists.txt
+      - https://github.com/AlexandreRouma/SDRPlusPlus/blob/master/misc_modules/iq_exporter/src/main.cpp
+  9.
+    - **Claim in stack:** 5.4 SDRangel 7.27.2 RX-only (stage-1 option list)
+    - **Finding:** Confirmed, with omissions. These are ON by default and conflict with existing STACK rules:
+  - demodm17 and demodfreedv: digital voice; the STACK says no digital voice.
+  - demodchirpchat: LoRa payloads.
+  - demodadsb, demodais and feature ais: bypass the readsb dbFlags and AIS ship-type-35 filters.
+  - demoddsc unpatched: shows every call with MMSIs; STACK row 'DSC' demands an own gate or a patched plugin.
+  - feature remotecontrol: drives network devices.
+  ENABLE_LIMESUITE is also ON: limesdroutput and limesdrmimo are TX-capable if a library named LimeSuite is found. LimeSuiteNG's legacyapi installs liblimesuiteng-legacyapi.so, which SDRangel's finder does not match, but this should not be left to chance.
+    - **Verdict:** corrected
+    - **Action:** Add these to stage 1's list: -DENABLE_CHANNELRX_DEMODM17=OFF -DENABLE_CHANNELRX_DEMODFREEDV=OFF -DENABLE_CHANNELRX_DEMODCHIRPCHAT=OFF -DENABLE_CHANNELRX_DEMODADSB=OFF -DENABLE_CHANNELRX_DEMODAIS=OFF -DENABLE_FEATURE_AIS=OFF -DENABLE_FEATURE_REMOTECONTROL=OFF -DENABLE_CHANNELRX_ENDOFTRAIN=OFF -DENABLE_LIMESUITE=OFF. Set -DENABLE_CHANNELRX_DEMODDSC=OFF unless the lab patch that drops formats 120/123/114 before address decode is applied and tested. Build in a chroot without libhamlib-dev, libdsdcc, libmbe or libcodec2-dev. Delete every samplesink and samplemimo .so (testmi and testmosync included) during packaging.
+    - **Impact:** Several filter bypasses and banned decoders would otherwise ship in the Expert GUI and sdrangelsrv.
+    - **Sources:**
+      - https://github.com/f4exb/sdrangel/blob/v7.27.2/CMakeLists.txt
+      - https://github.com/f4exb/sdrangel/blob/v7.27.2/plugins/channelrx/CMakeLists.txt
+      - https://github.com/f4exb/sdrangel/blob/v7.27.2/plugins/samplemimo/CMakeLists.txt
+      - https://github.com/f4exb/sdrangel/blob/v7.27.2/cmake/Modules/FindLimeSuite.cmake
+  10.
+    - **Claim in stack:** 5.4 sdrangelsrv as an exclusive lease
+    - **Finding:** mainparser.cpp sets m_serverAddress = "" ('Bind to any address') for the REST/WebSocket API, default port 8091. --remote-tcp-address defaults to 0.0.0.0. Any host on the home LAN can retune the receiver, add channels or change device settings.
+    - **Verdict:** new_risk
+    - **Action:** Start sdrangel and sdrangelsrv with -a 127.0.0.1 -w /var/lib/lab/fftw/sdrangel.wisdom. Add a systemd unit drop-in IPAddressDeny=any / IPAddressAllow=localhost. The self-test checks with 'ss -ltn' that 8091 is bound to 127.0.0.1 only.
+    - **Impact:** Removes unauthenticated network control of the RF engines.
+    - **Sources:**
+      - https://github.com/f4exb/sdrangel/blob/v7.27.2/sdrbase/mainparser.cpp
+  11.
+    - **Claim in stack:** OpenWebRX+ 1.2.126 with -1 list (stage 1 extended list)
+    - **Finding:** Confirmed, with omissions:
+  - 1.2.123 added Whisper speech-to-text, a background speech service and MQTT reporting of transcripts. The feature is on when speech_url is set; it keeps voice content, against the voice rule.
+  - MQTT exports decodes and GPS position.
+  - The 'adsb' mode runs dump1090 with no military filter, bypassing readsb dbFlags.
+  - 'mp3' recording works if lame is on PATH.
+  - hpsdrconnector and nrsc5 are in the repo.
+  - 1.2.126 itself carries security fixes ('?ref=' redirect, relative path parsing, local-network login restriction), so it is the right pin.
+    - **Verdict:** corrected
+    - **Action:** Mirror openwebrx 1.2.126, owrx-connector/rtl-connector/rtl-tcp-connector/soapy-connector 0.6.5, csdr/libcsdr0/python3-csdr 0.18.40 and redsea 1.3.1. Add to -1: dump1090-fa, dump1090-fa-minimal, lame, python3-paho-mqtt, hpsdrconnector, nrsc5, python3-js8py and js8call, on top of the stage-1 additions. Locked settings: speech_url empty, MQTT off, rig control off, PSKReporter/WSPRnet reporting off in the field profile, admin password set. Run the unit with IPAddressAllow=localhost (home LAN only in the home profile). The feature page must report multimon, rigcontrol, tetra, lora, meshtastic, digital_voice_*, pocsag, adsb, mp3, speech, mqtt, hfdl, vdl2, acars and ism as unavailable.
+    - **Impact:** Keeps OpenWebRX+ inside the voice, military-filter and no-upload rules.
+    - **Sources:**
+      - https://github.com/luarvique/openwebrx/blob/master/debian/changelog
+      - https://github.com/luarvique/openwebrx/blob/master/owrx/feature.py
+      - https://luarvique.github.io/ppa/noble/Packages
+  12.
+    - **Claim in stack:** 5.4 'OpenWebRX+ does not see the real multimon-ng'
+    - **Finding:** Confirmed: detection is by 'multimon-ng --help' on PATH, and noble installs /usr/bin/multimon-ng. multimon-ng is needed only for EAS in the US profile, and the region is Europe.
+    - **Verdict:** corrected
+    - **Action:** Do not install multimon-ng on the European build (pin it at -1). For a US profile only: dpkg-divert to /usr/lib/lab/multimon-ng.real (0750, group labeas) behind the '-a EAS' wrapper, and give the openwebrx unit a restricted PATH.
+    - **Impact:** Removes POCSAG/FLEX/selcall entirely rather than hiding them.
+    - **Sources:**
+      - https://github.com/luarvique/openwebrx/blob/master/owrx/feature.py
+      - https://packages.ubuntu.com/noble/arm64/multimon-ng/filelist
+  13.
+    - **Claim in stack:** #10/C16 jt9/wsprd via divert (stage 1: build only jt9/wsprd from 2.7.0 with no Hamlib dependency)
+    - **Finding:** WSJT-X 2.7.0's CMakeLists has find_package(Hamlib REQUIRED) at configure time. jt9 links wsjt_fort, wsjt_cxx and fort_qt (Qt5::Core) and wsprd links FFTW only, so neither needs Hamlib at runtime. But wsjtx_app_version, which OWRX+ runs to enable the wsjt-x-2-3/2-4 modes, links wsjt_qt -> Hamlib::Hamlib. This contradicts stage 1's 'no libhamlib-dev on the builder'.
+    - **Verdict:** corrected
+    - **Action:** Build lab-wsjt-decoders from tag wsjtx-2.7.0 in its own sbuild chroot (libhamlib-dev only there) and ship only jt9 and wsprd. Ship /usr/bin/wsjtx_app_version as a 2-line shim that prints 'WSJT-X 2.7.0'. CI: readelf -d jt9 wsprd shows no libhamlib. Keep libhamlib-dev out of the SDRangel and Gpredict chroots. Pin wsjtx, libhamlib4t64, libhamlib-utils and libhamlib-dev at -1 on the device.
+    - **Impact:** Resolves the packaging dead end without transmit-capable rig control.
+    - **Sources:**
+      - https://sourceforge.net/p/wsjt/wsjtx/ci/wsjtx-2.7.0/tree/CMakeLists.txt
+      - https://packages.ubuntu.com/noble/arm64/wsjtx/filelist
+  14.
+    - **Claim in stack:** #29 Gpredict 2.3 apt (stage 1: build v2.6; stage 2: build master 1d80049)
+    - **Finding:** Stage 2 is confirmed. Two additions:
+  - The configure check for libgps is optional. If it is linked, the QTH can read gpsd directly and bypass the plausibility gate.
+  - CelesTrak's banner says it 'ran out of 5-digit catalog numbers on 2026-07-11'; TLE formats do not support numbers above 99999. Objects launched since are OMM-only, so the alias bridge is mandatory now. Because the whole 5-digit space is assigned, aliases must reuse numbers of decayed objects that are absent from every loaded set.
+  One detail: a1a1fec is the annotated v2.6 tag object; the commit is c9fa018.
+    - **Verdict:** corrected
+    - **Action:** Build Gpredict 1d80049b (2.6+git20261011) in a chroot without libgps-dev and libhamlib-dev. Apply a local patch to rotctld_socket_rw: recv sizeout-1, check for negative returns, treat a full buffer as an error. Disable network TLE and transponder updates. The alias bridge picks decayed-object numbers and keeps the 6-digit -> alias map in labd. Audit: ldd gpredict shows neither libgps nor libhamlib.
+    - **Impact:** Removes the Doppler deadlock and a gate bypass, and keeps tracking of new CubeSats.
+    - **Sources:**
+      - https://github.com/csete/gpredict/blob/master/NEWS
+      - https://github.com/csete/gpredict/blob/master/configure.ac
+      - https://celestrak.org/NORAD/documentation/gp-data-formats.php
+      - https://github.com/csete/gpredict/issues/435
+  15.
+    - **Claim in stack:** gr-satellites 5.5.0 apt (stage 1: rebuild 5.9.0)
+    - **Finding:** Stage 1's 5.9.0 target is refuted: the FileReceiver path traversal affects 4.7.0 through 5.9.0. Stage 2's main pin is confirmed. The fix on main rejects any filename whose Path.parent != '.', replacing it with a uuid. A bare '..' still passes the check but resolves to a directory, so it cannot write. The v5.5.0 default is submit_tlm = 'yes'.
+    - **Verdict:** corrected
+    - **Action:** Build main 4210dc45 as 5.10.0~git20260922-0lab1 against GNU Radio 3.10.9.2 and pin noble gr-satellites at -1. Ship config.ini with submit_tlm = no and set GR_SATELLITES_SUBMIT_TLM=0. Run the units with PrivateNetwork=yes (file decode) or IPAddressDeny=any, ReadWritePaths limited to the products directory, and NoNewPrivileges=yes. CI runs a crafted-filename test ('../x', '/x', '..').
+    - **Impact:** Closes an over-the-air file-write path and a hidden location upload.
+    - **Sources:**
+      - https://github.com/daniestevez/gr-satellites/issues/820
+      - https://github.com/daniestevez/gr-satellites/commit/1bcf1d8bccac463550c70091d76a24b09178b1c3
+      - https://github.com/daniestevez/gr-satellites/commit/fb887cf70777af29655f923393b740668d28e964
+  16.
+    - **Claim in stack:** #31 libairspyhf from apt (stage 1: libairspyhf0 from master)
+    - **Finding:** Stage 1's libairspyhf0 is refuted: upstream SOVERSION is 0, while all noble consumers need .so.1 (SDR++ #1805). Stage 2's Debian 1.6.8-5 backport is confirmed. New detail: libairspyhf exports airspyhf_set_bias_tee and airspyhf_get_bias_tee_count, which the librtlsdr token gate does not cover. SoapyAirspyHF 0.2.1 only keeps an rfBias variable.
+    - **Verdict:** corrected
+    - **Action:** Backport libairspyhf1 1.6.8-5~lab1 (SONAME .so.1) and build SoapyAirspyHF soapy-airspyhf-0.2.1, SDR++ and SDRangel against it. Self-test: airspyhf_get_bias_tee_count == 0 on the HF+. If it is not 0, gate airspyhf_set_bias_tee the same way as librtlsdr.
+    - **Impact:** Gets the 2025 HF+ fixes without breaking any consumer, and closes a possible second bias path.
+    - **Sources:**
+      - https://sources.debian.org/src/airspyhf/1.6.8-5/debian/
+      - https://github.com/airspy/airspyhf/blob/master/libairspyhf/src/airspyhf.h
+      - https://github.com/AlexandreRouma/SDRPlusPlus/issues/1805
+  17.
+    - **Claim in stack:** #7 gpsd/chrony
+    - **Finding:** The correction holds: 'lock NMEA' needs a refclock with refid NMEA. The chrony docs example uses SOCK, but gpsd SHM 0 is equally valid. The kernel has GNSS=m with GNSS_USB/UBX/MTK/SIRF modules, so /dev/gnss0 can be claimed by the kernel GNSS class. The forum UART claims (ttyHS1, buggy uart6 dtbo) were not re-checked in this pass.
+    - **Verdict:** corrected
+    - **Action:** Use 'refclock SHM 0 refid NMEA offset <measured> delay 0.2 noselect', 'refclock PPS /dev/pps0 lock NMEA refid PPS prefer', 'makestep 1 3', 'maxchange 5 1 -1' and 'rtcsync'. Use /dev/lab/gnss through a udev rule keyed on the UART6 DT path. Blacklist the gnss-usb, gnss-ubx and gnss-mtk modules. Keep gpsd 3.25.
+    - **Impact:** PPS becomes selectable and there is no device-name collision.
+    - **Sources:**
+      - https://chrony-project.org/doc/4.5/chrony.conf.html
+      - https://github.com/radxa-pkg/linux-qcom/releases/tag/6.18.2-4
+  18.
+    - **Claim in stack:** #24 holds; stage 1: '6.18.2-4 cannot be fetched from Radxa any more'
+    - **Finding:** Refuted. The apt index (24 Sep 2026) lists only 7.0.11-7, but the radxa-pkg/linux-qcom GitHub release 6.18.2-4 still serves linux-image-6.18.2-4-qcom and linux-headers-6.18.2-4-qcom (HTTP 206). The image asset is byte-identical to the scratch copy (sha256 0bbdbfda...fbeb).
+    - **Verdict:** corrected
+    - **Action:** Mirror the image and headers from that release URL into aptly with the sha256 recorded. Keep the golden disk image as a second copy. Add edk2-radxa-dragon-q6a/edk2-qcs6490 0.1.0-9 and radxa-overlays-dkms 0.2.31 to the holds.
+    - **Impact:** The kernel stays reproducible from a primary source.
+    - **Sources:**
+      - https://github.com/radxa-pkg/linux-qcom/releases/download/6.18.2-4/linux-image-6.18.2-4-qcom_6.18.2-4_arm64.deb
+      - https://radxa-repo.github.io/qcs6490-noble/dists/qcs6490-noble/main/binary-arm64/Packages
+  19.
+    - **Claim in stack:** #24/#35 golden NPU set vs Radxa-added PPAs
+    - **Finding:** Confirmed. One addition: the qcom-ppa also carries qcom-fastrpc1 1.0.15+repack2 with Replaces/Breaks fastrpc, so it would displace the golden fastrpc 1.0.7-3. Stage 2's claim that the r2 image already contains the PPA lists was not re-verified.
+    - **Verdict:** new_risk
+    - **Action:** Pin origins LP-PPA-ubuntu-qcom-iot-qcom-ppa, LP-PPA-kisak-turtle and LP-PPA-mozillateam at -1. By name, pin qcom-fastrpc*, linux-firmware-dragonwing, qairt-*, libqnn*, libsnpe*, qcom-adreno*, dragonwing-defaults and mesa >= 26 at -1. Delete the PPA lists on first boot and check with 'ls /etc/apt/sources.list.d'.
+    - **Impact:** Protects the CDSP/QAIRT 2.42 golden set.
+    - **Sources:**
+      - https://ppa.launchpadcontent.net/ubuntu-qcom-iot/qcom-ppa/ubuntu/dists/noble/main/binary-arm64/Packages.gz
+      - https://github.com/RadxaOS-SDK/rsdk/blob/main/src/share/rsdk/configs/socs.json
+  20.
+    - **Claim in stack:** #35 'lab packages at priority 1001' (stage 1 confirmed) vs C22 'mirror third-party .debs and pin them at 100'
+    - **Finding:** The STACK contradicts itself, and stage 1 missed it. At 100 a mirrored package loses to any 500 source carrying the same name; for example, Ubuntu multimon-ng 1.3.0 would beat the OWRX+ 1.5.0 build. Separately, systemd 255.4-1ubuntu8.18 is in noble-security while noble-updates has .17.
+    - **Verdict:** corrected
+    - **Action:** Use one signed aptly publish as the only source: lab packages 1001, the mirrored snapshot (noble, -updates, -security, OWRX+ and radxa subsets) 990, and 'Package: * Pin: origin *' -1 for everything else. Mirror both -updates and -security.
+    - **Impact:** Deterministic candidates and no silent downgrade or upgrade paths.
+    - **Sources:**
+      - https://manpages.ubuntu.com/manpages/noble/man5/apt_preferences.5.html
+      - https://launchpad.net/ubuntu/+source/systemd
+  21.
+    - **Claim in stack:** 5.4 A/B with systemd-boot boot counting (stage 2: choose Route A or Route B)
+    - **Finding:** Confirmed: the shipped loader is embloader 0.7 with no boot counting. New argument: Route B depends on EFI variable writes (LoaderEntryOneShot) from Linux, whose persistence on the Q6A is unproven (efibootmgr had no effect in forum 30925). Route A's counting renames entry files on the ESP and needs no EFI variables. systemd-boot is reported to boot on BIOS 260120; UKIs are not. Stage 2's 'BIOS 260916 is not compatible with Radxa OS 24' was not found in the thread.
+    - **Verdict:** corrected
+    - **Action:** Prefer Route A: purge sdboot-is-embloader, run bootctl install with systemd-boot 255.4-1ubuntu8.18, and use Type #1 entries with devicetree, devicetree-overlay and +3 counters. Keep Route B only as a fallback if embloader-specific DT handling turns out to be required. Both routes: per-slot entry tokens labA/labB, root=PARTUUID, panic=10, RuntimeWatchdogSec=30s, a finite timeout, and no UKI. Do not adopt the 260916 test BIOS.
+    - **Impact:** The rollback actually works.
+    - **Sources:**
+      - https://github.com/BigfootACA/embloader
+      - https://forum.radxa.com/t/uki-boot-on-20250120-firmware/30896
+      - https://forum.radxa.com/t/q6a-no-longer-autoboots-into-radxaos/30925
+      - https://github.com/RadxaOS-SDK/rsdk/blob/main/src/share/rsdk/build/mod/packages/categories/core.libjsonnet
+  22.
+    - **Claim in stack:** Decoder allow-list readsb 'dbFlags&1 suppressed', auto_rx 'uploads off'
+    - **Finding:** readsb --db-file defaults to 'none'. Without the tar1090-db CSV every dbFlags is 0, so the military suppression silently does nothing. --net-bind-address defaults to Any. auto_rx's station.cfg.example also has web_host = 0.0.0.0 and payload_summary_enabled = True (UDP to the LAN), besides sondehub_enabled = True.
+    - **Verdict:** corrected
+    - **Action:** Use readsb v3.16.17 with --db-file pointing at a pinned aircraft.csv.gz (hash recorded) and --net-bind-address 127.0.0.1; the self-test replays a Beast file containing a DB-flagged military hex. Set auto_rx v1.9.0 to sondehub_enabled = False, payload_summary_enabled = False and web_host = 127.0.0.1. Run all engine units with IPAddressAllow=localhost.
+    - **Impact:** Makes the military filter real and stops LAN leaks.
+    - **Sources:**
+      - https://github.com/wiedehopf/readsb/blob/dev/README.md
+      - https://github.com/projecthorus/radiosonde_auto_rx/blob/master/auto_rx/station.cfg.example
+  23.
+    - **Claim in stack:** labd selects SDRs by serial (stage 2: non-numeric serials)
+    - **Finding:** Confirmed and sharpened. verbose_device_search() in the rtl tools first parses the string with strtol(s, &s2, 0), so decimal, 0x-hex and leading-zero octal are all read as an index. Only then does it try an exact match, then a prefix match, then a suffix match.
+    - **Verdict:** confirmed
+    - **Action:** Serials must match ^LAB[A-Z]{3}$ (e.g. LABRXA, LABRXB, LABRXC), with no serial a prefix or suffix of another. Select devices only by serial in every engine config.
+    - **Impact:** No wrong-dongle leases or tokens.
+    - **Sources:**
+      - https://github.com/osmocom/rtl-sdr/blob/v2.0.3/src/convenience/convenience.c
+      - https://github.com/projecthorus/radiosonde_auto_rx/issues/1016
+  24.
+    - **Claim in stack:** #11 LimeSuiteNG (Lime kept)
+    - **Finding:** Confirmed: staging is 37cb183 and AMARISOFT defaults ON. limeGUI and the CLI tools are TX-capable unless the setupStream patch is applied.
+    - **Verdict:** confirmed
+    - **Action:** Pin 37cb1833e35955f7072c0fb91642d14ae5515f28. Build with -DBUILD_PLUGINS_AMARISOFT=OFF -DBUILD_GUI=OFF, without gr-limesuiteng, and with the TX-fail patch. Package la9310_limesdr-dkms against linux-headers-6.18.2-4. Pin limesuite and soapysdr0.8-module-lms7 at -1. The SatDump Lime plugin is not needed.
+    - **Impact:** The Lime path still rests on an unreleased branch.
+    - **Sources:**
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/plugins/CMakeLists.txt
+      - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/debian/control
+  25.
+    - **Claim in stack:** Q6A platform validation of engines
+    - **Finding:** No public report was found of SatDump, SDR++, SDRangel or OpenWebRX+ running on a QCS6490. This was not re-searched, because the web-search budget was exhausted.
+    - **Verdict:** unverified
+    - **Action:** Run an 8 h W1-2 soak with 2x V4L and the HF+, leasing every engine in turn.
+    - **Impact:** Sets expectations.
+    - **Sources:** []
+- **New risks:**
+  - SatDump: sdr_sources and apps sit outside PLUGINS_ALL and default ON. They include HackRF and BladeRF TX sinks (hackrf_sdr_sink.cpp, bladerf_sdr_sink.cpp), webhook_app, remote_sdr, sdrpp_server, spyserver and rtltcp. Any hardware source lets SatDump record baseband outside the labrx masks.
+  - SDRangel REST/WebSocket API binds to every interface by default (port 8091, m_serverAddress=""), which gives unauthenticated LAN control of sdrangelsrv and the Expert GUI.
+  - SDRangel defaults ON for demodm17 and demodfreedv (digital voice), demodchirpchat (LoRa payloads), demodadsb/demodais/feature ais (bypass readsb dbFlags and the AIS ship-type-35 filter), demoddsc (all calls with MMSIs), feature remotecontrol and ENABLE_LIMESUITE (TX-capable limesdroutput/limesdrmimo if libLimeSuite is present).
+  - OpenWebRX+ 1.2.123 and later: Whisper speech-to-text with a background service and MQTT transcript reporting; MQTT export of decodes and GPS position; ADS-B through dump1090 with no military filter; MP3 recording if lame is installed.
+  - readsb --db-file defaults to none, so dbFlags is 0 for every aircraft and the military suppression silently does nothing. --net-bind-address defaults to Any.
+  - radiosonde_auto_rx's example config ships web_host = 0.0.0.0 and payload_summary_enabled = True (LAN UDP broadcast) on top of sondehub_enabled = True.
+  - WSJT-X 2.7.0 needs Hamlib at configure time, and wsjtx_app_version (used by OWRX+ to detect modes) links Hamlib through wsjt_qt. This conflicts with keeping libhamlib-dev off the SDRangel builder, so per-package build chroots and a version shim are needed.
+  - qcom-ppa qcom-fastrpc1 1.0.15+repack2 Replaces/Breaks fastrpc. One apt run would replace the golden fastrpc 1.0.7-3 used by the CDSP.
+  - CelesTrak ran out of 5-digit catalog numbers on 2026-07-11, so new objects are OMM-only. Gpredict stays TLE-only, and alias numbers must reuse decayed-object numbers that are absent from loaded sets.
+  - The STACK contradicts itself on pin priority: C22 pins mirrored third-party .debs at 100, while #35 puts lab packages at 1001. At 100, an Ubuntu package with the same name wins the candidate selection.
+  - rtl tools' device search parses the string with strtol base 0 before trying a serial match, so serials that look like decimal, hex (0x) or octal (leading 0) are taken as device indices.
+  - libairspyhf exports airspyhf_set_bias_tee, which the librtlsdr token gate does not cover. Whether the HF+ reports a bias-tee count of 0 is unverified.
+  - SDR++ ships OPT_BUILD_NETWORK_SINK (audio network export) and 8 unneeded network/hardware sources ON by default.
+  - systemd 255.4-1ubuntu8.18 is only in noble-security; noble-updates has .17. A mirror of -updates alone misses it.
+  - A Gpredict built with libgps (when libgps-dev is in the build chroot) can read gpsd directly, bypassing the location plausibility gate.
+  - Boot Route B (embloader oneshot) depends on EFI-variable persistence from Linux, which is unproven on the Q6A.
+- **Refuted findings:**
+  1.
+    - **Finding:** Stage 1: rebuild gr-satellites 5.9.0 as +lab.
+    - **Why:** The v5.9.0 tag (f663ee4, 2025-12-14) still has the FileReceiver over-the-air path traversal (#803/#820, affects 4.7.0 to 5.9.0). The fixes 10d27cb and 1bcf1d8 exist only on main, so pin main 4210dc4.
+  2.
+    - **Finding:** Stage 1: build libairspyhf from master 1.8.1 as 'libairspyhf0 +lab'.
+    - **Why:** Upstream SOVERSION 0 gives libairspyhf.so.0, while every noble consumer links libairspyhf.so.1 (Debian bump-soversion patch; SDR++ #1805). Backport Debian 1.6.8-5 (.so.1) instead.
+  3.
+    - **Finding:** Stage 1: build Gpredict at the v2.6 tag, possibly linked with libgps.
+    - **Why:** v2.6 (c9fa018) lacks the radio-control deadlock fix 21e95dc (#425), which is on master 1d80049 only. Linking libgps lets the QTH bypass the location gate; build without it.
+  4.
+    - **Finding:** Stage 1: 'the 6.18.2-4 kernel cannot be fetched from Radxa any more'.
+    - **Why:** github.com/radxa-pkg/linux-qcom/releases/tag/6.18.2-4 still serves the image and headers. The image is byte-identical to the scratch copy (sha256 0bbdbfda97627a0e51afefb3d0aa7dc23c3658151e5f14aee24c276d0bb7fbeb).
+  5.
+    - **Finding:** Stage 1 impact: a naive bias gate breaks 'HF upconversion and band switching'.
+    - **Why:** On the V4L, GPIO5 is driven 'on' for every band above 28.8 MHz, starting with the first tune after open. HF keeps working, and all VHF/UHF tuning fails.
+  6.
+    - **Finding:** Stage 1: SatDump allow-list including rtlsdr/airspyhf/soapy sdr_sources.
+    - **Why:** SatDump is not an exclusive-lease engine. Hardware sources let it open SDRs and record baseband outside the labrx masks, and they are not needed because live input comes through net_source UDP.
+  7.
+    - **Finding:** Stage 2: SatDump #1224 means 'the CLI crashes at startup'.
+    - **Why:** It was reported on an unofficial Copr build (f3d82adbf). The maintainer could not reproduce it and believes it is fixed. The 'Never' auto-update setting is still right, for provenance and network reasons.
+  8.
+    - **Finding:** Stage 2: 'BIOS 260916 is not compatible with Radxa OS 24'.
+    - **Why:** Not found in forum topic 30896. Radxa posted the 260916 test BIOS on 2026-10-14 without such a statement. Treat it as unverified; the stack does not use a UKI either way.
+  9.
+    - **Finding:** Stage 2: 'Gpredict v2.6 (a1a1fec)'.
+    - **Why:** a1a1fec is the annotated tag object; the tagged commit is c9fa018. This is a trivial correction.
+- **Corrected spec:** BASE AND BOOT
+  - Radxa OS r2 (noble) on SPI BIOS 6.0.260120. Do not use the 260916 test BIOS and never boot a UKI.
+  - Hold linux-image-6.18.2-4-qcom and linux-headers-6.18.2-4-qcom (mirrored from github.com/radxa-pkg/linux-qcom/releases/tag/6.18.2-4; image sha256 0bbdbfda97627a0e51afefb3d0aa7dc23c3658151e5f14aee24c276d0bb7fbeb).
+  - Also hold: the radxa-dragon-q6a metas at 6.18.2-4; radxa-firmware-qcs6490 as on the golden image; fastrpc/libcdsprpc1 1.0.7-3; qcom-qnn-sdk-v68 0.1.0-2; radxa-qcom-qairt 0.1.0-2; edk2-radxa-dragon-q6a/edk2-qcs6490 0.1.0-9; radxa-overlays-dkms 0.2.31; Mesa 25.2.8-0ubuntu0.24.04.4; libdrm 2.4.125-1ubuntu0.1~24.04.2; qt6 6.4.2; labwc 0.7.1; pipewire.
+  - Kernel config is confirmed: GPIO_CDEV_V1=y (libgpiod 1.6.3 OK), PPS=y with PPS_CLIENT_GPIO unset (pps-gpio DKMS +lab), SND_ALOOP=m, GNSS=m (blacklist gnss-usb, gnss-ubx, gnss-mtk, gnss-sirf, gnss-serial), AppArmor inactive (CONFIG_LSM has no apparmor). systemd sandboxing is the effective confinement layer.
+  - Boot, Route A (preferred): purge sdboot-is-embloader and pin embloader at -1. Use systemd-boot 255.4-1ubuntu8.18 (hold systemd-boot and systemd-boot-efi) with BLS Type #1 entries: linux, initrd, devicetree (6.18.2-4 dtb), devicetree-overlay lab-q6a.dtbo, '+3' counters.
+  - Use per-slot /etc/kernel/entry-token labA/labB, root=PARTUUID, and a fresh filesystem UUID on slot B.
+  - cmdline: preempt=full panic=10 plus the existing display arguments. RuntimeWatchdogSec=30s through qcom-wdt or arm-smc-wdt. loader.conf has a finite timeout and no editor. systemd-bless-boot blesses the slot after self-test.
+  - Route B (fallback, embloader 0.7 held): trial boot with LoaderEntryOneShot, then bootctl set-default. Only allowed if the EFI-variable persistence test passes.
+  
+  APT AND PACKAGING
+  - One signed aptly publish is the only source.
+  - Pin priorities:
+    - Lab +labN packages: Pin-Priority 1001.
+    - Mirrored snapshot (noble, noble-updates, noble-security, the OWRX+ noble subset, the radxa noble and qcs6490 subsets): 990.
+    - 'Package: * Pin: origin *': -1.
+  - Install-Recommends false. unattended-upgrades removed. apt and fwupd timers masked. All PPA lists deleted on first boot.
+  - -1 list, by name:
+    - Hamlib, WSJT-X and TX-capable tools: wsjtx, libhamlib4t64, libhamlib-utils, libhamlib-dev, fldigi, qsstv, direwolf, js8call, python3-js8py.
+    - Soapy and Lime: soapysdr-module-all, soapysdr0.8-module-all, soapysdr0.8-module-remote, libsoapysdr0.9*, soapysdr0.8-module-lms7, limesuite.
+    - librtlsdr: librtlsdr0, librtlsdr2 (= 2.0.1-2build1).
+    - OWRX+ decoders: rtl-433, digiham, python3-digiham, codecserver, codecserver-driver-*, acarsdec, dumphfdl, dumpvdl2, libacars-tools, dump1090-fa, dump1090-fa-minimal, dump978-fa, dump978-fa-minimal, dxlaprs-tetra, dxlaprs-lora, python3-meshtastic, python3-bleak, m17-demod, nrsc5, hpsdrconnector.
+    - Other tools: multimon-ng (European build), lame, python3-paho-mqtt, gr-gsm, gr-iridium, kalibrate-rtl, urh.
+    - Superseded noble versions: gpredict (= 2.3-115-g0f3beb6-3build3), gr-satellites (= 5.5.0-2build2).
+    - Qualcomm and Mesa: qcom-fastrpc*, linux-firmware-dragonwing, qairt-*, libqnn*, libsnpe*, qcom-adreno*, dragonwing-defaults, mesa >= 26.
+  - -1 list, by origin: LP-PPA-ubuntu-qcom-iot-qcom-ppa, LP-PPA-kisak-turtle, LP-PPA-mozillateam.
+  - Each +lab source package builds in its own sbuild chroot. Only the wsjt-decoders chroot has libhamlib-dev. The SDRangel chroot has no libhamlib-dev, libdsdcc, libmbe or libcodec2-dev. The Gpredict chroot has no libgps-dev or libhamlib-dev.
+  
+  LIBRTLSDR
+  - librtlsdr2 2.0.1-2build1+lab1: v2.0.1 (420086a) plus 65f06585 and 0204c9cf. debian/rules uses -DENABLE_ZEROCOPY=$(DEB_ZEROCOPY_OPTION), which gives OFF on arm64. SONAME librtlsdr.so.2.
+  - Bias patch inside rtlsdr_set_bias_tee_gpio(): if (gpio==0 && on && access('/run/lab/bias/<serial>')!=0) return -1. GPIO 5 and every off request pass ungated.
+  - rtl_biast via dpkg-divert. dvb_usb_rtl28xxu blacklisted (harmless, not built).
+  - Serials LABRXA, LABRXB, LABRXC, written with rtl_eeprom -s after an rtl_eeprom -r backup; keep the EEPROM IR bit set.
+  - Optional: v2.0.3 (797f814) with SOVERSION 2 after an ABI check.
+  
+  AIRSPY HF+ AND SOAPY
+  - libairspyhf1 1.6.8-5~lab1 (Debian backport, SONAME .so.1).
+  - SoapyAirspyHF soapy-airspyhf-0.2.1 built against SoapySDR 0.8.1.
+  - ppm correction stays in labrx.
+  - From noble apt: SoapySDR 0.8.1-4build1, SoapyRTLSDR 0.3.3-1build1 (runs on the +lab .so.2), GNU Radio 3.10.9.2-1.1ubuntu2, VOLK 3.1.2-1.1build1. Never mix in SoapySDR 0.9.
+  
+  SATDUMP
+  - Pin 1aedd602055c154401384a8cc7876713bb371254 as satdump 2.0.0~alpha+git20260929+lab1.
+  - Plugins OFF: -DPLUGINS_ALL=OFF, and OFF for every PLUGIN_*_SDR_SUPPORT except NET_SOURCE, plus SPYSERVER, RTLTCP, SDRPP_SERVER, REMOTE_SDR, EXPERIMENTAL_DEVICES, WEBHOOK_APP, TOOLS_APP and WIPSETTINGS_EDITOR_APP.
+  - Plugins ON: PLUGIN_METEOR, NOAA_METOP, METOPSG, ELEKTRO_ARKTIKA, FY3, GK2A, XRIT, ANALOG, CUBESAT, RADIOSONDE, and NET_SOURCE_SDR_SUPPORT. Optional: FY2, FY4, GOES, HIMAWARI, GEONETCAST.
+  - Never: INMARSAT, ORBCOMM, DMSP, WSF, SPACEX, BLUEWALKER3.
+  - Config: kepler_update_interval 'Never'; OMM from labd (17-column CSV or JSON).
+  - Unit: LC_NUMERIC=C, IPAddressDeny=any (allow localhost only for UDP in).
+  - Live input: labrx sends cf32 over UDP to 127.0.0.1 into net_source; file decode is the default.
+  - LRPT retry on a CADU trimmed with dd bs=8192 skip=4.
+  
+  SDR++
+  - Pin 8c9f5ee8fe405775bfcd62c8c8f8c0fc928a64af.
+  - ON: SOAPY_SOURCE, RTL_SDR, AIRSPYHF, NETWORK_SOURCE, FILE_SOURCE, RIGCTL_SERVER (localhost:4532).
+  - OFF: RECORDER, IQ_EXPORTER, PAGER_DECODER, NETWORK_SINK, DISCORD_PRESENCE, RIGCTL_CLIENT, and the HACKRF, PLUTOSDR, HERMES, RFSPACE, SPECTRAN_HTTP, SPYSERVER, RTL_TCP and SDRPP_SERVER sources. M17 and FALCON9 stay OFF.
+  - Never run 'sdrpp --server'. Gpredict is the only rigctl client, on one persistent connection.
+  
+  SDRANGEL
+  - v7.27.2 (97e9e21) on Qt5.
+  - Device switches OFF: ENABLE_CHANNELTX, ENABLE_CHANNELMIMO, ENABLE_METIS, ENABLE_HACKRF, ENABLE_IIO, ENABLE_BLADERF, ENABLE_USRP, ENABLE_XTRX, ENABLE_LIMESUITE.
+  - Channel RX plugins OFF: DEMODPAGER, DEMODMESHTASTIC, DEMODMESHCORE, DEMODCHIRPCHAT, DEMODM17, DEMODFREEDV, DEMODDSD, DEMODINMARSAT, DEMODADSB, DEMODAIS, HEATMAP, FILESINK, SIGMFFILESINK, REMOTESINK, REMOTETCPSINK, UDPSINK, ENDOFTRAIN.
+  - DEMODDSC is OFF unless the lab format/category patch passes the test.
+  - Feature plugins OFF: AMBE, PERTESTER, SIMPLEPTT, LIMERFE, AIS, REMOTECONTROL.
+  - Packaging deletes every samplesink and samplemimo .so.
+  - Units: sdrangelsrv -a 127.0.0.1 -w /var/lib/lab/fftw/sdrangel.wisdom (fftwf-wisdom from libfftw3-bin, generated on the Q6A), IPAddressAllow=localhost, ReadOnlyPaths=/data.
+  
+  OPENWEBRX+
+  - Mirror openwebrx 1.2.126 (luarvique noble, Architecture: all), owrx-connector/rtl-connector/rtl-tcp-connector/soapy-connector 0.6.5, csdr/libcsdr0/python3-csdr 0.18.40 and redsea 1.3.1. Install with --no-install-recommends.
+  - Locked config: rig control off, speech_url empty, MQTT off, PSKReporter/WSPRnet off in the field, admin password set.
+  - Unit: IPAddressAllow=localhost (home LAN only in the home profile).
+  - The SITOR-B and csdr-skimmer bookmarks are band-limited to amateur and MSI channels.
+  - Mode list must not contain page, selcall, eas, dmr, ysf, nxdn, p25, tetra, lora, meshtastic, m17, freedv, pocsag, adsb, hfdl, vdl2, acars, ism, mp3 or speech.
+  
+  GR-SATELLITES AND TRACKING
+  - gr-satellites main 4210dc45c9725e30d8f612eeec614f3f353cd09c as 5.10.0~git20260922-0lab1 against GNU Radio 3.10.9.2 and numpy 1.26.
+  - config.ini submit_tlm = no, plus GR_SATELLITES_SUBMIT_TLM=0.
+  - Units: PrivateNetwork=yes, ReadWritePaths=<products>, NoNewPrivileges=yes.
+  - Gpredict 1d80049b0fecc06a18378d88f09b1d154a070234 (GTK3, no libgps, no hamlib) plus the rotctld_socket_rw recv(sizeout-1) patch.
+  - Radios only 'RX only'. Network TLE and transponder updates off. QTH is the static file from the location service.
+  - The alias bridge maps 6-digit OMM objects to decayed 5-digit numbers absent from loaded sets; the map is kept in labd.
+  - Skyfield 1.55 and sgp4 2.27 read OMM directly.
+  
+  DECODERS
+  - jt9 and wsprd from tag wsjtx-2.7.0 (b4f9a43) as lab-wsjt-decoders, plus a /usr/bin/wsjtx_app_version shim that prints 'WSJT-X 2.7.0'. No Hamlib at runtime.
+  - slowrxd from sjlongland/slowrx slowrx-daemon c94327ae40ab970b0bea20ebb378d71f8e69b98a. labrx audio reaches it through snd-aloop (or a PipeWire virtual source).
+  - readsb v3.16.17: --db-file pinned aircraft.csv.gz (sha256 recorded), --net-bind-address 127.0.0.1, dbFlags&1 suppressed.
+  - AIS-catcher v0.70: no -X; AIS ship type 35 suppressed.
+  - radiosonde_auto_rx v1.9.0: sondehub_enabled False, payload_summary_enabled False, web_host 127.0.0.1, sdr by serial.
+  - welle-cli from noble welle.io 2.4 (on the +lab .so.2). redsea 1.3.1.
+  - GNSS-SDR 0.0.19 apt (0.0.22 optional). Virgo v3.8.9. Artemis 4.2.0 (identify-only gate).
+  
+  TIME AND LOCATION
+  - gpsd 3.25-3ubuntu3.2: DEVICES="/dev/lab/gnss", GPSD_OPTIONS="-n -p -s 115200", USBAUTO="false".
+  - chrony 4.5-1ubuntu4.2:
+    - refclock SHM 0 refid NMEA offset <measured> delay 0.2 noselect
+    - refclock PPS /dev/pps0 lock NMEA refid PPS prefer
+    - makestep 1 3
+    - maxchange 5 1 -1
+    - rtcsync
+  - pps-gpio DKMS on GPIO96. Route A GPIO v2 ioctl is the fallback (never together with pps-gpio).
+  
+  LIME (KEPT)
+  - LimeSuiteNG limesdr-micro-staging 37cb1833e35955f7072c0fb91642d14ae5515f28 with -DBUILD_PLUGINS_AMARISOFT=OFF -DBUILD_GUI=OFF, no gr-limesuiteng, and the TX setupStream fail patch.
+  - la9310_limesdr-dkms +lab built against the 6.18.2-4 headers.
+  - CI fails on any amarisoft .so.
+  
+  PYTHON
+  - One venv per tool: NanoVNA-Saver v0.7.3 through pipx; QtTinySA v2.0.1 with PySide6 6.12.0 aarch64; onnxruntime 1.31.0; lab-venv importing apt GNU Radio with numpy<2.
+  
+  UPDATES
+  - GPG-signed offline bundle; requires >= 50% battery; installs into the inactive slot; refuses any package whose origin is not the lab aptly repo or that would change a held package.
+  - Self-test, then bless; otherwise the boot counter rolls back.
+- **Bench tests:**
+  - librtlsdr +lab on the Q6A:
+  - The arm64 build log shows 'zero-copy support disabled', and 'strings librtlsdr.so.2 | grep -c zero-copy' returns 0.
+  - Each V4L prints 'RTL-SDR Blog V4 Lite Detected'.
+  - Without a token, retune 7 -> 137.1 -> 145.8 -> 437.55 -> 1090 -> 7 MHz with rc==0 at every step. The bias pin stays below 0.1 V (DMM on the SMA centre into 1 kOhm), and rtlsdr_set_bias_tee(1) returns -1.
+  - With /run/lab/bias/LABRXA present, about 4.5 V appears.
+  - All-zero IQ guard: capture 1 s at 2.4 Msps from each RTL before every pass and require sample variance above the noise-only threshold. Then run an 8 h soak with 2x V4L and the HF+ under the zero-copy-off build, with zero all-zero blocks and zero USB transfer errors.
+  - SatDump audit and live path:
+  - The plugin directory contains exactly the allow-list, and no hackrf, bladerf, remote_sdr, sdrpp_server, spyserver, rtltcp or webhook libraries.
+  - labrx sends cf32 UDP to 127.0.0.1 into 'satdump live meteor_m2-x_lrpt' on a recorded pass. The products match a file decode of the same baseband.
+  - The LRPT trim-retry recovers the #1212 sample.
+  - SDR++ and SDRangel audit:
+  - No iq_exporter.so, recorder.so, network_sink.so or pager_decoder.so.
+  - The SDRangel plugin list matches the allow-list, with no samplesink or samplemimo .so.
+  - 'ss -ltnp' shows 8091 on 127.0.0.1 only and 4532 on localhost only.
+  - The sdrangelsrv log says 'successfully imported' FFTW wisdom.
+  - HF+ lease hand-off from SDRangel to OWRX+ and back, 20 times, each under 10 s.
+  - OpenWebRX+ 1.2.126 on noble arm64:
+  - An 8 h soak.
+  - The /features page reports multimon, rigcontrol, tetra, lora, meshtastic, digital voice, pocsag, adsb, mp3, speech and mqtt as unavailable.
+  - tcpdump on wlan0 shows no outbound traffic in the field profile.
+  - The FT8 mode decodes a recorded WAV through jt9, and the wsjt-x-2-4 feature reads true through the shim.
+  - WSJT decoders: 'readelf -d' on jt9 and wsprd shows no libhamlib, and 'dpkg -S libhamlib' on the device returns nothing.
+  - Gpredict 1d80049+lab:
+  - ldd shows neither libgps nor libhamlib.
+  - One persistent rigctl connection to SDR++ through a full LEO pass with Doppler.
+  - 20 SDR++ lease stop/start cycles without a Gpredict deadlock.
+  - A 6-digit (post-2026-07-11) CubeSat tracks through the alias bridge, and its pass times agree with Skyfield from_omm within 1 s.
+  - gr-satellites main 4210dc4:
+  - Builds against GNU Radio 3.10.9.2.
+  - satyaml and python tests pass on the device.
+  - A crafted FileReceiver frame with filenames '../x', '/tmp/x' and '..' writes nothing outside the products directory.
+  - With submit_tlm=no, a network-namespace capture shows zero packets.
+  - chrony and gpsd:
+  - 'chronyc sources' shows NMEA (noselect) and PPS '*' within 10 min of a 3D fix.
+  - The NMEA offset at 115200 is measured over 1 h and written into the config.
+  - A boot with the RTC set 1 day wrong converges through makestep.
+  - Boot rollback (Route A first):
+  - Force a bad boot by poisoning the slot-B initrd, 10 times. Each time the system returns to slot A with no keyboard input, and the slot-B entry shows '+0-3'.
+  - EFI-variable persistence test: run 'bootctl set-oneshot', reboot, and check LoaderEntrySelected. This decides whether Route B is viable.
+  - Confirm that embloader-specific DT handling is not needed under systemd-boot: MAC address, serial, and that the DT overlay applies.
+  - readsb military filter: replay a Beast capture containing a hex flagged military in the pinned tar1090-db. It must not appear in aircraft.json, the UI or the logs. Run the same replay without --db-file and confirm the self-test fails.
+  - auto_rx and AIS-catcher network silence: 2 h of reception with tcpdump on all interfaces shows no packets except localhost; the auto_rx web UI is reachable only on 127.0.0.1.
+  - apt policy:
+  - 'apt-cache policy librtlsdr2 libairspyhf1 gr-satellites gpredict' shows the +lab version as candidate at 1001.
+  - 'apt-get -s install' of wsjtx, libhamlib-utils, dump1090-fa, lame, multimon-ng, qcom-fastrpc1, linux-firmware-dragonwing and soapysdr0.8-module-remote is refused for all of them.
+  - No *.list file references ppa.launchpadcontent.net.
+  - Airspy HF+: airspyhf_get_bias_tee_count returns 0 (not verified in this pass). If it is not 0, add the gate to libairspyhf and retest.
+  - ISS SSTV chain: labrx 437.550 MHz FM audio goes into snd-aloop and on to slowrxd, which decodes a recorded series-34 pass into PNG. OWRX+ SSTV serves as the cross-check.
+- **Confidence:** medium
+
