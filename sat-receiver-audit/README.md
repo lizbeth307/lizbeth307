@@ -15,6 +15,7 @@
 | [Adafruit ch334f mtt hub 5997](components/adafruit_ch334f_mtt_hub_5997.md) | · research · forums · fixes ✅ verify | `—` |
 | [Adafruit ina228 5832](components/adafruit_ina228_5832.md) | · research · forums · fixes ✅ verify | `—` |
 | [Adafruit mcp23017 5346 0x20 outputs 0x22](components/adafruit_mcp23017_5346_0x20_outputs_0x22.md) | · research · forums · fixes ✅ verify | `—` |
+| [Adi lt3045 paralleled 4 5 v lna rail](components/adi_lt3045_paralleled_4_5_v_lna_rail.md) | · research · forums · fixes ✅ verify | `—` |
 | [Airspy hf discovery](components/airspy_hf_discovery.md) | · research · forums · fixes ✅ verify | `—` |
 | [Allnet 64 gb microsd adafruit 5212 reade](components/allnet_64_gb_microsd_adafruit_5212_reade.md) | · research · forums · fixes ✅ verify | `—` |
 | [Antennas](components/antennas.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_6b9836f8-796` |
