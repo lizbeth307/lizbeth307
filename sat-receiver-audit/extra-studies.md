@@ -9545,6 +9545,196 @@
   
   Note for the purchase step: aluminium (7001-T6) segments with metal ferrules plus polyester or Dyneema guys are the quality floor. Avoid unbranded '7001' claims without a seller spec sheet.
 
+## searchB:shock_corded_mast_7_x_35_cm_about_2_4_m (run `wf_37583a7b-1a8`)
+
+- **Part:** Shock-corded mast (7 x 35 cm, about 2.4 m) + guys + stake. Foldable tier, Supports group, qty 1 set. Holds the Bonito Boni-Whip (189 g, about 17 cm, BNC) at 2 m or more for LF time signals and NAVTEX, with a ground stake or counterpoise at the base (STACK C17, D-rows 513/713).
+- **Current price usd:** 15-50. This is the STACK's own model estimate with no seller named, so it is unverified. The only ready-made product found that matches the spec is the Buddipole Shockcord Mast, short version (33 cm folded, 2.4 m). It costs $79.00 at buddipole.com, where it is out of stock. WiMo lists it at EUR 125.90 incl. 19% DE VAT (about $141.5), marked no longer available because of a manufacturer redesign. Neither price includes guys or a stake. So the $15-50 range can only be reached with a DIY build.
+- **Critical specs:**
+  - Erected height: at least 2.4 m. The stack needs the Boni-Whip at least 2 m up for the LF Quiet profile, and greater height adds effective height at LF.
+  - Packed section length: at most 35 cm including the ferrule, under the foldable-kit rule (each piece ideally 20-23 cm, at most about 35 cm).
+  - Top-load capacity: at least 0.25-0.3 kg (189 g Boni-Whip + mount + coax strain). Target buckling safety factor of 3 or more when guyed (my design target, not a stack figure).
+  - Guying and stability: 3 guys at the top, plus a second level of 3 guys for thin masts. Stays up in wind up to about 20 km/h; the STACK rule is to lower the mast above that. Pegs and stake at most 35 cm long.
+  - Material: non-conductive GRP preferred (SOTAbeams calls its masts non-conducting 'for best RF performance'; fishing-pole guidance says fibreglass, not carbon). Carbon is rejected. Aluminium is acceptable only if bonded at the ground stake (my engineering judgement, unverified for the Boni).
+  - Mass of mast + guys + stake: about 0.55 kg or less. The STACK budgets 0.5-0.75 kg for 'Boni-Whip and mast', and the Boni alone is 189 g.
+  - Top interface: holds the Boni body firmly and relieves strain on the BNC lead. The Bonito mast bracket fits only 28-40 mm poles, so a thin mast needs a clamp or a printed sleeve.
+  - Ground stake: conductive and clampable for the ground lead or counterpoise (C17), at most 35 cm.
+  - Durability: survives UV and cold, uses reinforced (not hollow or unreinforced) GRP, has sealed cut ends, and has a replaceable shock cord.
+  - Deploy time: within the STACK target of 5-8 min for the Boni-Whip on the mast.
+  - Rules: a passive, non-loop support. No conflict with receive-only or conducted-only rules.
+- **Candidates:**
+  1.
+    - **Name:** CURRENT PICK: generic shock-corded mast 7 x 35 cm (~2.4 m) + guys + stake. Reference product: Buddipole Shockcord Mast, short version
+    - **Kind:** current_part
+    - **Price usd:** 15-50 (model estimate). Buddipole: $79.00 (buddipole.com, out of stock) or EUR 125.90 incl. VAT (about $141.5, WiMo, no longer available)
+    - **Spec comparison:** Buddipole (seller data):
+  - Aluminium.
+  - 33 cm folded, 2.4 m erected.
+  - 0.45 kg (buddipole.com) or 530-540 g (WiMo).
+  - Keyed sections that resist twisting; replaceable shock cord.
+  - Top: 1/2 in NPT male plus 3/8 in female. Base: rubber foot.
+  - No load rating and no tube diameter published.
+  - No guys or stake included.
+    - **Worse in:** This is a reference, not an analog. It is conductive and out of stock at both sellers. The ready-made price ($79-141) sits above the $15-50 estimate.
+    - **Compatibility:** Fits the 35 cm rule and the height target. A Boni adapter is still needed. Conductive, so bond it to the ground stake.
+    - **Risks:** Unavailable during the redesign; the new version's specs are unknown.
+    - **Seller url:** https://www.buddipole.com/shockcordmast.html
+    - **Sources:**
+      - https://www.buddipole.com/shockcordmast.html
+      - https://www.wimo.com/de/buddipole-aluminum-schockcord-mast
+  2.
+    - **Name:** DIY 8.5 mm GRP shock-corded mast from the Decathlon Quechua 8.5 mm fibreglass tent-pole kit (10 x 50 cm rods). Use 8 rods cut to about 33 cm, so each section is at most 35 cm with the ferrule and the mast is about 2.6 m. Add the Forclaz ultralight reflective guy-rope kit (10 m rope), pegs and a ground stake.
+    - **Kind:** diy
+    - **Price usd:** Pole kit: EUR 9.99 incl. 24% VAT (decathlon.com.gr), about $11.2. Elsewhere EUR 12.99 (CY), EUR 16.50 (IE), $19.99 (US).
+  Guy kit: EUR 12.99 (CY) or $10 on sale / $19.99 list (US), about $10-14.6. A second kit for two-level guying adds another $10-14.6.
+  Pegs, ground stake and top clamp: not priced (unverified).
+  Total: about $26-48 plus stakes.
+    - **Spec comparison:** Height: about 2.6 m. Equal or better.
+  Section length: at most 35 cm after cutting. Equal.
+  Mass: kit is 654 g for 5 m, so about 0.35 kg for 2.64 m; about 0.45 kg with guys and stake (my calculation). Within budget and lighter than Buddipole.
+  Material: 100% glass fibre, non-conductive. Better than the aluminium reference for the E-field whip.
+  Stiffness: worse. Model (E = 35-45 GPa, solid rod assumed, my calculation):
+  - Euler buckling load is about 15-19 N pinned over 2.45 m.
+  - With one guy level at 3 N pretension, the axial load is about 9 N, a safety factor of about 2, below the target of 3.
+  - With guys at about 1.3 m and at the top, buckling rises to about 60-75 N, a safety factor of about 6.
+  Rod solidity is not stated. The mass of 131 g/m matches a solid rod plus fittings (my calculation).
+  Top fitting: none.
+    - **Worse in:** 1. Stiffness. It needs 6 guys on two levels, which adds about 2-3 min to deployment (my estimate).
+  2. No top fitting; a clamp or sleeve has to be made for the Boni.
+  3. No independent load or deflection measurement exists, only a 4.4/5 rating from 241 reviews. Under angle B it is NOT proven equal. Accept it only after the acceptance test in the notes.
+  4. Cut GRP ends need sanding and sealing to avoid splinters.
+  5. The page does not say whether every rod has a ferrule fitted.
+    - **Compatibility:** Passive and non-conductive; no loop. Fits the 35 cm pack rule. The Bonito 28-40 mm bracket does not fit; use hose clamps or a printed sleeve. The coax runs down the mast to the C17 choke and stake.
+    - **Risks:** Hollow or unreinforced fibreglass cracks easily (forum warning about poles in general). Ferrules can split at the joints. Stock varies by country. The 2-year warranty does not cover modified use.
+    - **Seller url:** https://decathlon.com.gr/en/p/3740-quechua-85-mm-fiberglass-tent-pole-kit.html
+    - **Sources:**
+      - https://decathlon.com.gr/en/p/3740-quechua-85-mm-fiberglass-tent-pole-kit.html
+      - https://decathlon.com/products/tent-fiberglass-pole-kit-o-85-mm
+      - https://decathlon.com.cy/products/fiberglass-tent-pole-kit-85-mm-diameter
+      - https://www.decathlon.ie/p/3740-198751-fiberglass-tent-pole-kit-85-mm-diameter.html
+      - https://www.decathlon.com/products/forclaz-backpacking-ultra-light-reflective-guyropes-304420
+      - https://decathlon.com.cy/products/ultra-light-reflective-guy-ropes-orange
+      - https://www.worldwidedx.com/goto/post?id=222172
+  3.
+    - **Name:** DIY 11 mm GRP mast from 4 CAO fibreglass pole repair kits (H2R Equipements, ref. 760457, 2 x 50 cm rods per kit), cut to 8 sections of about 33 cm. Variant: the 9.5 mm kit, ref. 760456.
+    - **Kind:** diy
+    - **Price usd:** 11 mm: EUR 13.20 incl. 20% FR VAT per kit; 4 kits = EUR 52.80, about $59.4.
+  9.5 mm: EUR 11.40 per kit; 4 kits = EUR 45.60, about $51.3.
+  Plus guys ($10-14.6) and stakes: about $62-75 in total.
+    - **Spec comparison:** Height: about 2.6 m. Equal.
+  Section length: at most 35 cm. Equal.
+  Material: GRP, non-conductive. Better than aluminium.
+  Stiffness: the second moment of area scales with d^4, so 11 mm is about 2.8x the 8.5 mm rod. Model buckling load is about 42-53 N over 2.45 m, a safety factor of about 5 with one guy level (my calculation). The 9.5 mm rod is about 1.56x.
+  Mass: about 190 g/m solid, so about 0.5 kg for the mast and about 0.6 kg with guys and stake (my calculation).
+  Kit contents: one 50 cm rod with a sleeve, one 50 cm rod, 2 sleeves, 2 tips and 4 m of 2.5 mm elastic. The page writes the sizes in 'cm'; I read them as mm.
+    - **Worse in:** 1. Weight: about 0.6 kg, slightly over the about 0.55 kg budget.
+  2. Not cheaper than the $15-50 estimate.
+  3. Made to order, 15-18 days.
+  4. No independent measurement, so unproven under angle B.
+  5. Half of the rods need loose sleeves fitted, so there are more glued joints.
+    - **Compatibility:** Same as the 8.5 mm build. One guy level is enough by the model.
+    - **Risks:** Whether the rods are solid is not stated. Ferrule glue joints are the weak point.
+    - **Seller url:** https://www.h2r-equipements.com/accessoire-de-tente-camping-randonnee/10065-cao-kit-reparation-arceau-fibre.html
+    - **Sources:**
+      - https://www.h2r-equipements.com/accessoire-de-tente-camping-randonnee/10065-cao-kit-reparation-arceau-fibre.html
+  4.
+    - **Name:** Tree or fence mount: the Boni-Whip hoisted on a cord over a branch, or lashed to a fence post (the STACK's noted budget alternative)
+    - **Kind:** diy
+    - **Price usd:** About $10-14.6 for a 10 m cord (Forclaz guy kit) or existing cord, plus the ground stake (not priced)
+    - **Spec comparison:** Height: 2-5 m depending on the branch. Equal or better.
+  Packed size and mass: better, cord only.
+  Material: non-conductive cord.
+  Stability: depends on the site.
+    - **Worse in:** 1. Site independence. No tree or fence means no deployment, so LF time signals are lost in open fields or on beaches.
+  2. A hung Boni swings, and its weatherproofing orientation (whip up) cannot be guaranteed.
+  3. A wet branch or post near the whip lowers the E-field effective height (physics, not measured).
+  4. The stack forbids climbing trees.
+  5. Deploy time varies.
+    - **Compatibility:** Passive and receive-only. The ground stake or counterpoise is still needed (C17).
+    - **Risks:** Line snags; the throw line needs eye protection (STACK outdoor-safety rule).
+    - **Sources:**
+      - https://www.decathlon.com/products/forclaz-backpacking-ultra-light-reflective-guyropes-304420
+  5.
+    - **Name:** Used Buddipole Shockcord Mast, short version (eBay, ham swap sites)
+    - **Kind:** used
+    - **Price usd:** Unverified: eBay sold listings could not be reached (HTTP 403). New list price is $79.00.
+    - **Spec comparison:** The same product as the reference, so it is equal by identity: 33 cm folded, 2.4 m, 0.45 kg, aluminium, keyed sections.
+    - **Worse in:** Not shown to be cheaper. Condition and shock-cord age are unknown. Conductive. Availability is sporadic.
+    - **Compatibility:** Same as the reference.
+    - **Risks:** A worn shock cord or bent sections. No guys or stake included.
+    - **Sources:**
+      - https://www.buddipole.com/shockcordmast.html
+  6.
+    - **Name:** SOTAbeams Mini telescopic mast 4.1 m (glass-fibre composite)
+    - **Kind:** other_brand
+    - **Price usd:** GBP 20.95 incl. 20% UK VAT, about $27.8. Shipping to the EU may add import VAT.
+    - **Spec comparison:** Height: 4.1 m. Better.
+  Mass: 0.3 kg. Better.
+  Material: non-conducting.
+  Build: 10 sections, 28 mm base, 2.2 mm tip.
+  Packed length: 51 cm. Fails the 35 cm rule.
+  No numeric load rating. Reviewers used it with a Slim Jim and wire antennas, 'light to moderate wind' with the stake kit.
+    - **Worse in:** Packed length (51 cm against a 35 cm limit) breaks the foldable-kit size rule. Friction-fit telescopic joints are not rated for a 0.25 kg rigid top load. REJECTED.
+    - **Compatibility:** Would carry the Boni at about 2.4 m on the thicker sections, but breaks the pack rule.
+    - **Risks:** Telescopic sections can slip down under load.
+    - **Seller url:** https://www.sotabeams.co.uk/mini-telescopic-mast-4-1-m-13-5-ft/
+    - **Sources:**
+      - https://www.sotabeams.co.uk/mini-telescopic-mast-4-1-m-13-5-ft/
+  7.
+    - **Name:** Commercial tarp poles: Tatonka Tarp Pole 180 cm, DD Hammocks Tarp Pole 2.2 m, REI Co-op Adjustable Tarp Pole 8 ft
+    - **Kind:** other_brand
+    - **Price usd:** Not captured for all (rejected on specs)
+    - **Spec comparison:** Tatonka: 5 shock-corded aluminium sections, 1.8 m, packed 45.5 cm.
+  DD: 4 aluminium screw-join sections, 2.2 m, 460 g; packed length not stated, about 55-60 cm by my estimate from 4 sections.
+  REI 8 ft: shock-corded, packs to 72 cm.
+    - **Worse in:** Height below 2.4 m (Tatonka, DD) and/or packed length well over 35 cm (all three). Conductive. REJECTED.
+    - **Compatibility:** Fails the pack rule.
+    - **Sources:**
+      - https://lynxgear.lv/en/online-store/camping/tatonka-tarp-pole-180-cm-5-piece-aluminium-support.htm
+      - https://www.ddhammocks.com/products/dd_tarp_pole_2-2m
+      - https://www.rei.com/product/845322
+- **Notes:** VERDICT (angle B): no generic, clone, DIY or used candidate is proven equal by independent measurement. The listings give dimensions and masses, but I found no load or deflection test of any tent-pole mast. All strength figures above are my models.
+  
+  What this means for the current pick:
+  - The 'current part' is itself only a model line.
+  - Its only ready-made realization (Buddipole short mast) costs $79-141 and is out of stock or no longer available.
+  - So the $15-50 estimate is reachable only as DIY.
+  
+  Recommendation:
+  - Keep the line, but specify it as a DIY 8.5 mm solid-GRP shock-corded mast: 8 sections of at most 35 cm each including ferrule, about 2.6 m tall, guyed at two levels (about 1.3 m and the top). Base: Decathlon Quechua kit, EUR 9.99-16.50 / $19.99. Total about $26-48 plus stakes.
+  - Mark it UNPROVEN until it passes this acceptance test (my proposal):
+    - Erect and guy it, hang 0.6 kg (about 2x Boni + mount + coax) at the top for 10 min.
+    - No buckling, no ferrule split, and lateral bow of 3 cm or less (my target).
+    - Repeat with the Boni in a wind of about 20 km/h or less.
+    - Deploy within the 5-8 min target.
+    - Check that the coax and ground lead reach the stake.
+  - If single-level guying or more margin is wanted, use the 11 mm CAO build (about $62-75). It is better in stiffness but heavier (about 0.6 kg) and not cheaper.
+  
+  Rejected on rules or specs:
+  - SOTAbeams Mini (51 cm packed).
+  - Tarp poles (height and/or pack length).
+  - Military-surplus fibreglass mast sections (about 1.2 m sections; Sportsmobile forum).
+  - Carbon poles (conductive).
+  - Pocket telescopic fishing rods (tip too thin for a 189 g rigid top load).
+  - Stansport 7 mm kit ($6.99, out of stock, about 0.46x the stiffness of 8.5 mm by d^4).
+  - Eureka 7.9 mm kit (hollow sections, discontinued).
+  
+  Top fitting:
+  - The Bonito Boni-Whip mast bracket fits only 28-40 mm poles (WiMo/Moonraker), so any thin GRP mast needs a hose-clamp or printed sleeve adapter.
+  - A drip loop and strain relief are needed for the BNC.
+  
+  Material:
+  - Non-conductive GRP is preferred: fibreglass poles are the common portable miniwhip mount (rtl-sdr.com, G4NSJ reports), and SOTAbeams says 'non-conducting for best RF performance'.
+  - Any aluminium mast must be bonded at the ground stake (my judgement, unverified for the Boni).
+  
+  Hard rules: a passive support with no loop, nothing that transmits and no conducted-source issue. Not a counterfeit-prone category.
+  
+  Prices and FX:
+  - Prices include local VAT: GR 24%, CY 19%, IE 23%, FR 20%, DE 19%, UK 20% (UK orders may add EU import VAT).
+  - FX follows the STACK's implied rates: EUR 1 ≈ $1.124, GBP 1 ≈ $1.33.
+  - Pegs and ground-stake prices were not verified.
+  
+  Sources: https://www.buddipole.com/shockcordmast.html ; https://www.wimo.com/de/buddipole-aluminum-schockcord-mast ; https://decathlon.com.gr/en/p/3740-quechua-85-mm-fiberglass-tent-pole-kit.html ; https://www.h2r-equipements.com/accessoire-de-tente-camping-randonnee/10065-cao-kit-reparation-arceau-fibre.html ; https://www.sotabeams.co.uk/mini-telescopic-mast-4-1-m-13-5-ft/ ; https://www.wimo.com/en/18067-mh ; https://moonrakeronline.com/bonito-antenna-mast-mounting-bracket-for-boni-whip-gigactiv-and-megaloop ; https://www.rtl-sdr.com/an-opensource-mini-whip-antenna-and-upconverter-design-for-rtl-sdrs/ ; https://preview.radio-workshop.co.uk/g4nsj-mini-whip-active-antenna-hf-lf-vlf/ ; https://www.sportsmobileforum.com/threads/fiberglass-or-pvc-mast-suggestions.742780/ ; https://www.cabelas.com/shop/en/stansport-7mm-shock-corded-tent-pole-replacement-kit ; https://eurekacamping.johnsonoutdoors.com/us/shop/outlet/fiberglass-tent-pole-repair-replacement-kit
+
 ## small:lband_sband (run `wf_41027870-8e7`)
 
 - **Band group:** L-band 1.5-1.7 GHz and S-band 2.2-2.4 GHz with antennas of at most 12 cm (STRICT) or 20 cm (SMALL). Dishes and anything tens of cm deployed are EXCLUDED, including the foldable helicones, the 11-turn helix and the 2x2 helix arrays. Rule interpretation as given: STRICT means the largest deployed dimension is about 12 cm or less; SMALL means about 20 cm or less; foldable or telescopic antennas that are larger when deployed are excluded and appear only in the borderline note.
