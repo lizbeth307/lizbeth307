@@ -17746,6 +17746,233 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - Rules: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md.
   - Background: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/storage.json and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/mechanical_thermal.json.
 
+## community:display_hmi (run `wf_d9388111-e66`)
+
+- **Subsystem:** display_hmi (Wisecoco 7in FHD 2000-nit kit + 4D fallback, field EDID / pixel clock / mode pinning, sun/thermal, glove touch, RP2040 Pico HMI with encoders, keys and VEML7700) - stage 2, community experience
+- **Findings:**
+  1.
+    - **Claim in stack:** #23/#24/5.4: hold linux-image 6.18.2-4-qcom (path A); path B = 7.0.11-7 + clk_ignore_unused; HDMI-A-1 through RA620 works
+    - **Finding:** Community reports back this up. On 7.0.11-4-qcom the HDMI goes black once msm_dpu takes over. dmesg shows 'Unexpected DP AUX IRQ 0x00000008 when not busy' and 'Cannot find any crtc or sizes', and card1-HDMI-A-1 stays 'disconnected' with a 0-byte EDID. Booting 7.0.11 with the 6.18 DTB did not help; rolling back to 6.18.2-4 did (Aug 2026, several users). Radxa staff (1 Sep 2026): 7.0 needs clk_ignore_unused, otherwise AUX interrupt storms. One user reported HDMI working after later kernel updates (9 Sep). A community Ubuntu 26.04 image author found 7.0 and 7.2.3 broke HDMI, while 7.2.9 with the Armbian QCS6490 DP/DPU patches works. Other reports: GNOME/GDM freezes above 1080p (Fedora, KDE fine); a 4K Samsung fell back to 1024x768; Radxa docs warn that 'some monitors may not work'. Users also report HDMI breaking after apt upgrade.
+    - **Verdict:** confirmed
+    - **Action:** Keep the 6.18.2-4 hold and the apt/fwupd freeze. On path B, put clk_ignore_unused in /etc/kernel/cmdline and make 'HDMI-A-1 connected + EDID read' the first gate, before NPU tests. Keep the golden disk image.
+    - **Impact:** No design change; it confirms that the package hold protects the display.
+    - **Sources:**
+      - https://forum.radxa.com/t/linux-7-0-hdmi-not-working/31304
+      - https://forum.radxa.com/t/latest-q6a-update-to-linux-7-0-no-hdmi/31288
+      - https://forum.radxa.com/t/custom-ubuntu-26-04-1-lts-for-the-radxa-dragon-q6a-hdmi-audio-fixes-working-npu-runtime-out-of-the-box/31466
+      - https://forum.radxa.com/t/ubuntu-26-04-1-lts-images-for-the-radxa-dragon-q6a-now-on-linux-7-2-9-hdmi-works-wi-fi-bt-audio-npu-apt-upgrade-safe/31574
+      - https://forum.radxa.com/t/stock-fedora-support/30893
+      - https://forum.radxa.com/t/samsung-g80sd-can-not-negotiate-resolution-refresh-rate/31118
+      - https://docs.radxa.com/en/dragon/q6a/hardware-use/hdmi
+  2.
+    - **Claim in stack:** Stage-1 action: 'optionally add the e force flag to video=' as an HPD/EDID safety net
+    - **Finding:** In the 7.0 regression thread, forcing 'video=HDMI-A-1:1280x720@60e' did not fix the disconnected connector. On this path the source is DisplayPort into the RA620, so the link needs HPD and AUX/DPCD link training. Forcing the connector on cannot replace a sink that does not answer. My reading of msm DP fits that report.
+    - **Verdict:** corrected
+    - **Action:** Do not count 'e' as a fallback. Robustness has to come from HPD integrity (Schottky on pin 18, not a cut) and the EDID override. Keep the HPD/AUX check in the 20-cold-boot test.
+    - **Impact:** Removes a false safety net.
+    - **Sources:**
+      - https://forum.radxa.com/t/linux-7-0-hdmi-not-working/31304
+  3.
+    - **Claim in stack:** C12: 'mode pinned in the labwc output config' (stage 1: use kanshi 'mode 1920x1080@59.988Hz'; '<reuseOutputMode> only in later labwc')
+    - **Finding:** (1) labwc issue #2615 (Mar 2025, still open): labwc ignored video=DP-1:1920x1080@60 even with <reuseOutputMode>yes</reuseOutputMode>. The maintainer recommends kanshi from autostart. (2) Stage 1 was wrong about the version: reuseOutputMode has existed since labwc 0.6.1, so noble's 0.7.1-1build1 has it; it just is not reliable. autoEnableOutputs only arrived in 0.8.3. (3) kanshi source: match_refresh accepts a refresh only within ±50 mHz, and custom modes are a TODO, so the mode must already be in the EDID. wlroots computes 59.986 Hz (59986 mHz) for 151.50 MHz/2200x1148 and 51.677 Hz (51677 mHz) for 127.90 MHz/2200x1125 (model from calculate_refresh_rate). So '@60Hz' or '@59.988Hz' matches DTD1, but '@52Hz' or '@51.68Hz'-style rounding to 52 fails, and kanshi aborts the profile. (4) wlroots builds custom modes (wlr-randr --custom-mode) as CVT timings, which ignore our clean pixel clocks.
+    - **Verdict:** corrected
+    - **Action:** Start kanshi 1.5.1 from labwc autostart with 'output HDMI-A-1 mode 1920x1080@59.986Hz' (field) and a second profile at '1920x1080@51.677Hz'. Never use custom modes or wlr-randr --custom-mode. reuseOutputMode is an optional extra, not the mechanism.
+    - **Impact:** As written, the 127.9 MHz profile could silently fail to apply.
+    - **Sources:**
+      - https://github.com/labwc/labwc/issues/2615
+      - https://raw.githubusercontent.com/labwc/labwc/master/NEWS.md
+      - https://raw.githubusercontent.com/emersion/kanshi/master/main.c
+      - https://raw.githubusercontent.com/swaywm/wlroots/master/backend/drm/drm.c
+      - https://raw.githubusercontent.com/swaywm/wlroots/master/backend/drm/util.c
+      - https://packages.ubuntu.com/noble/kanshi
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dhs2/dl/kanshi_main.c
+  4.
+    - **Claim in stack:** C12: field EDID with two DTDs; 'CEA VIC removed'; 148.5 MHz only for bring-up
+    - **Finding:** The kernel's _drm_edid_connector_add_modes adds more than DTDs. It also adds CVT 3-byte codes, Standard Timings, Established Timings, CTA modes, and, if the EDID feature bit DRM_EDID_FEATURE_CONTINUOUS_FREQ is set, modes inferred from the range limits. Any of these can bring back a 1920x1080@60 DMT/CTA mode at 148.5 MHz (60000 mHz), which also falls inside kanshi's ±50 mHz window for '@60'. Today only the DTD1 'preferred' sort order keeps 148.5 out.
+    - **Verdict:** new_risk
+    - **Action:** Field EDID build rule: base block only (no CTA extension); Established and Standard Timings all unused (0x01 0x01); no CVT 3-byte block; continuous-frequency bit cleared. Acceptance: modetest/kmsprint must list exactly two 1920x1080 modes, at 151.50 and 127.90 MHz.
+    - **Impact:** Stops any tool (fbcon, wlroots, kanshi, a future script) from selecting 148.5 MHz in the field (harmonics at 742.5/1188 MHz).
+    - **Sources:**
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/drm_edid.c
+  5.
+    - **Claim in stack:** Display power/blanking states (D4 25/50/100%, display bus off) and 'states of the display in A/B'
+    - **Finding:** labwc issue #3352 (Jan-Mar 2026, open): on a Pi 5, after swayidle + 'wlopm --off', the HDMI never woke up. 'wlr-randr --on' failed with 'failed to apply configuration'. The maintainer suggested stopping kanshi around blanking ('pkill kanshi; wlopm --off' / 'kanshi & wlopm --on'). A later wlroots update helped but did not fully fix it. noble ships wlopm 0.1.0, and labwc 0.7.1 supports wlr-output-power-management.
+    - **Verdict:** new_risk
+    - **Action:** If the screen is ever blanked in the field, use wlopm with the kanshi stop/start pattern, never wlr-randr --off. Add a 20x blank/unblank cycle through the RA620 to display acceptance.
+    - **Impact:** Avoids a black screen after a power-save blank, which needs a compositor restart.
+    - **Sources:**
+      - https://github.com/labwc/labwc/issues/3352
+      - https://packages.ubuntu.com/noble/wlopm
+  6.
+    - **Claim in stack:** D5/C12: Wisecoco HDMI-to-MIPI board will accept the 151.50/127.90 MHz field modes; 20 cold boots at acceptance
+    - **Finding:** Raspberry Pi forum reports about Wisecoco and LT6911-class HDMI-to-MIPI boards: (a) A Wisecoco 5.5in 1080x1920 gave flicker lines, a green tint and wrong scaling until timings exactly matched its EDID DTD (134.49 MHz, H 48/6/25, V 8/2/4). That EDID is generic: 'Manufacturer CVT', model 12594, wk32/2018, CTA-861 with YCbCr and audio. (b) Wisecoco's own config for an 8.9in kit used hdmi_ignore_edid plus forced timings. (c) Two threads describe LT6911 boards that came up with wrong colours at power-on until a replug or modeset (xrandr off/auto fixed it); in one, the user switched to Wisecoco boards and found them stable (n=1). (d) One Wisecoco 7in USB-touch kit failed within days, on a Pi 3 as well (n=1). Model (vstretch.py): if the panel rejects the 2200-wide totals, the clean windows can still be reached by keeping the native htotal and stretching only VFP. For example, htotal 2000 gives vtotal 1262 at 60 Hz (151.5 MHz) or 1230 at 52 Hz (127.9 MHz), with 150-182 blank lines; the panel must tolerate a long VFP.
+    - **Verdict:** new_risk
+    - **Action:** Pico enables DISP12 as soon as Q6A 3.3 V is seen, so the bridge is up before UEFI/kernel TMDS. In the 20 cold boots, also check colours and garbage, not just 'image present'. Add a labd recovery step (kanshi reload / wlopm off-on) when the user presses a 'display reset' key. If 2200x1148 is rejected, try native-htotal + stretched-VFP DTDs before falling back to 148.5 MHz. Add to D5: does the board need the source's TMDS present at its power-up, and does it accept RGB-only/DVI (no CTA block)?
+    - **Impact:** The field EDID plan depends on a board class that the community reports as timing-picky and sometimes badly initialised.
+    - **Sources:**
+      - https://forums.raspberrypi.com/viewtopic.php?t=373978
+      - https://forums.raspberrypi.com/viewtopic.php?t=384136
+      - https://forums.raspberrypi.com/viewtopic.php?t=393606
+      - https://forums.raspberrypi.com/viewtopic.php?t=376420
+      - https://forums.raspberrypi.com/viewtopic.php?t=368455
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dhs2/calc/vstretch.py
+  7.
+    - **Claim in stack:** 2.6/C12: Wisecoco 1920x1080 landscape; field DTDs 2200x1148 / 2200x1125; line rates 68.86 / 58.14 kHz
+    - **Finding:** The Wisecoco spec table gives the active area as '86.832X154.368mm', which is portrait order. The likely twin, Youritech ET070FH01-HT, is listed as landscape 1920x1080 (164.19x97.87 mm), while its sibling ET070FH01-RT is 1080x1920. The kit's native scan orientation is therefore not settled. If it is 1080x1920, every DTD total changes and the LF line-rate analysis is void. Example (model): at 151.5 MHz with htotal 1260, the line rate is 120.24 kHz and a harmonic lands 1.17 kHz from NAVTEX 4209.5.
+    - **Verdict:** new_risk
+    - **Action:** Add 'native orientation and native DTD' to the D5 questions. If it is portrait, build 1080x1920 DTDs at the same two pixel clocks, rotate with kanshi 'transform 90', and redo the line-rate check.
+    - **Impact:** Avoids building a field EDID the panel cannot display.
+    - **Sources:**
+      - https://www.wisecocodisplay.com/product/7-inch-1920x1080-high-brightness-2500nits-lcd-panel-with-hdmi-in-board-ips-mipi-interface-tft-lcd-screen/
+      - https://www.youritech.com/products/7-inch-tft-lcd-display-1920x1080-mipi-2000nits-high-brightness-lcd-display-with-in-cell-touch-for-healthcare-medical-display-solution.html
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dhs2/calc/portrait.py
+  8.
+    - **Claim in stack:** Stage-1 new option: drive the Midas 1200x1920 directly over the Q6A's native 4-lane DSI (no bridge)
+    - **Finding:** Community data on Q6A DSI is poor even for Radxa's own panel. Radxa Display 8HD on Ubuntu Noble (6.18.2-3) gives backlight only, no image (threads Feb-Sep 2026, several users). One cause found was overlay AD002 vs panel AD001. One user's full drm.debug trace shows jadard-jd9365da bound, the DPU completing frames, and touch working, yet the glass is never driven. That user also saw vblanks at exactly half the mode rate, rsetup reporting 'no DSI display detected', and /boot/dtbo holding only Amlogic overlays. Radxa staff: VCC_3V3_LCD is 0.2 A per connector pin, so do not power a 4-5 W backlight from it; backlight PWM comes from the PMIC PM7350C; reset is GPIO44 and LCD power GPIO80. A user asking about a 7in DSI touch panel (Aug 2026) got no answer.
+    - **Verdict:** corrected
+    - **Action:** Downgrade native DSI to research-only; do not plan the above-FHD project around it. If it is ever attempted: a separate backlight supply and driver, a proven init sequence, and a scope on the DSI lanes.
+    - **Impact:** Prevents counting a bridge-free above-FHD path that has no working community example.
+    - **Sources:**
+      - https://forum.radxa.com/t/radxa-display-8-hd-black-screen-on-dragon-q6a/30454
+      - https://forum.radxa.com/t/only-backlight-on-8hd/30822
+      - https://forum.radxa.com/t/dragon-q6a-radxa-display-8hd-not-detected-on-ubuntu-24-04-noble-problem/30422
+      - https://forum.radxa.com/t/radxa-q6a-with-mipi-dsi-panel/29646
+      - https://forum.radxa.com/t/31373
+  9.
+    - **Claim in stack:** Stage 1: 4DHDMI datasheet Rev 1.0 (08/08/2025) is current; brightness only by OSD (button board on request); DDC/CI only as a customisation; Pico GP17 has nothing to drive on the fallback
+    - **Finding:** The 4D Resource Centre datasheet is now Rev 1.5 (10/10/2026). Rev 1.2 (03/03/2026) is described as 'Updated models which support DDC'. The 4DHDMI-1280-800 Series block (which covers the 7.0in) lists 'Supports DDC'. The general section says models with DDC allow 'software control of the brightness'. The 7in CT-EAR-1000 entry still says 'Adjustable via OSD Menu'. The OSD button board is still 'not included as standard'. Still true: power 5 V 1300 mA / 12 V 540 mA; optical bonding; no AR/AG/AF as standard; no touch IC named; -20 to +70 C. On the host side: noble has ddcutil 1.4.1, and the 6.18.2-4 config has I2C_CHARDEV=y and DRM_DISPLAY_DP_AUX_CHARDEV=y. Whether the RA620 passes DDC/CI (I2C 0x37 over AUX) is unknown. A Radxa forum user on a Rock 5 ITX saw 0x50 but not 0x37 (cause not established).
+    - **Verdict:** corrected
+    - **Action:** For the 4D fallback, plan labd brightness and thermal derating via 'ddcutil setvcp 10' over the AUX I2C bus. Run 'ddcutil detect' on arrival. Still request the OSD button board (Pico open-drain) as a backup in case the RA620 blocks 0x37. Update the datasheet reference to Rev 1.5.
+    - **Impact:** The fallback may get auto-brightness and derating with no extra hardware.
+    - **Sources:**
+      - https://resources.4dsystems.com.au/datasheets/4dhdmi/
+      - https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_5.pdf
+      - https://4dsystems.com.au/products/4dhdmi-7-0
+      - https://forum.radxa.com/t/any-luck-with-sending-ddc-commands-over-hdmi/24618
+      - https://packages.ubuntu.com/noble/ddcutil
+  10.
+    - **Claim in stack:** C5: FE1.1s P2 = USB-HID touch from the display board, VBUS not connected
+    - **Finding:** Re-read of the only Wisecoco USB-touch report (RPi forum, Apr 2024): the device enumerated as 1a86:e5e3 'wch.cn CH57x', first under hid-generic and then hid-multitouch. The USB lead went to the display's '5V + Touch' connector, so one port carried both board power and touch. The unit later stopped working on a Pi 3 too. Upstream hid-ids.h/hid-multitouch.c have no WCH 0xe5e3 entry, so it runs as generic hid-multitouch and needs no quirk.
+    - **Verdict:** confirmed
+    - **Action:** If the 7in kit also has a combined 5V+touch port, build a split lead: D+/D-/GND to FE1.1s P2, and VBUS from the display eFuse rail (never from the hub). Then check that touch enumerates in all 20 cold boots.
+    - **Impact:** Keeps the 'no VBUS link' rule workable on a combined power/touch port.
+    - **Sources:**
+      - https://forums.raspberrypi.com/viewtopic.php?t=368455
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/hid/hid-ids.h
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/hid/hid-multitouch.c
+  11.
+    - **Claim in stack:** #51 / 5.4: Lab Shell on labwc 0.7.1 with XWayland; Expert GUIs by lease hand-over; touch as a convenience
+    - **Finding:** Per labwc NEWS: <touch mapToOutput> arrived in 0.7.1, so it is available. Touch on labwc's own server-side title bars and menus only arrived in 0.7.2 (#1550), and touch-to-mouse emulation in 0.8.2 (#2277). windowRules with serverDecoration exist (0.6.x). On noble's 0.7.1, touching a labwc title bar or menu does nothing.
+    - **Verdict:** new_risk
+    - **Action:** Run Expert GUIs fullscreen and undecorated via windowRules. Make the hand-back to Lab Shell a key or encoder action. Map touch with <touch mapToOutput="HDMI-A-1"/>.
+    - **Impact:** Low; it avoids a stuck window that cannot be moved or closed by touch.
+    - **Sources:**
+      - https://raw.githubusercontent.com/labwc/labwc/master/NEWS.md
+      - https://packages.ubuntu.com/noble/labwc
+  12.
+    - **Claim in stack:** 5.2/D3/D12: Pico UART0 <-> Q6A UART7 (pins 32 TX / 29 RX) via the lab-q6a.dtso; H1 native USB as reserve
+    - **Finding:** Radxa now ships qcs6490-radxa-dragon-q6a-uart7.dtso (2026; 'pin 32(tx), 29(rx)'; qcom,enable-gsi-dma; disables spi7/i2c7). Community experience with Q6A application UARTs: Radxa's uart6 dtbo had an error, which a user fixed locally in Jan 2026; the fix was not published, and another user asked for it in Sep 2026. A Sep 2026 user reports RX works but TX does not, unresolved. Radxa staff (Jan 2026) say QUPv3 serial-engine modes are set in UEFI (Radxa Platform Configuration -> GPIO -> QUPV3_xxx Mode).
+    - **Verdict:** new_risk
+    - **Action:** At W1-2, loop back both directions on UART7 at 115200 with the shipped overlay, and check the BIOS QUPV3 mode for SE7. If TX is dead, try an overlay without qcom,enable-gsi-dma (FIFO mode; this is inference). Keep the H1 Pico USB-CDC fallback wired, as C5 already allows.
+    - **Impact:** Without Q6A->Pico TX, backlight, fan and display-bus commands from labinput do not reach the Pico.
+    - **Sources:**
+      - https://raw.githubusercontent.com/radxa-pkg/radxa-overlays/main/arch/arm64/boot/dts/qcom/overlays/qcs6490-radxa-dragon-q6a-uart7.dtso
+      - https://github.com/radxa-pkg/radxa-overlays/tree/main/arch/arm64/boot/dts/qcom/overlays
+      - https://forum.radxa.com/t/using-uart-in-native-mode-solved/30063
+      - https://forum.radxa.com/t/uart-transmission/31422
+      - https://forum.radxa.com/t/how-to-enable-spi-and-use-gpio/29642
+  13.
+    - **Claim in stack:** 5.2: VEML7700 (0x10) and PCA9555 (0x20, 6 keys + 2 encoder pushes) share Pico I2C0; VEML7700 sits outside the hood
+    - **Finding:** Open Adafruit_VEML7700 issues: #30 says datasheet Rev 1.7+ changed the resolution to 0.0042 lx/ct (140 klx max), but the Arduino library still has MAX_RES 0.0036, which reads about 16.7% low; the CircuitPython driver uses 0.0042. #31 and #34 dispute the polynomial correction applied above 1000 lx. #35: one corrupted I2C read of the integration time causes a delay of about 49.7 days (permanent freeze). On our bus, a hang or ESD event on the exposed sensor would also freeze the keys.
+    - **Verdict:** new_risk
+    - **Action:** Pico firmware: own VEML7700 driver with 0.0042 lx/ct (Rev 1.8), lux thresholds checked against a reference meter, i2c_*_timeout_us on every transfer, 9-clock bus recovery, and the hardware watchdog. Put about 100 ohm series resistors plus a low-capacitance TVS on the sensor's SDA/SCL near the bezel.
+    - **Impact:** Keeps keys working if the light sensor fails; theme switching is unaffected by the 17% scale error once corrected.
+    - **Sources:**
+      - https://github.com/adafruit/Adafruit_VEML7700/issues/30
+      - https://github.com/adafruit/Adafruit_VEML7700/issues/31
+      - https://github.com/adafruit/Adafruit_VEML7700/issues/35
+      - https://raw.githubusercontent.com/adafruit/Adafruit_VEML7700/master/Adafruit_VEML7700.h
+      - https://raw.githubusercontent.com/adafruit/Adafruit_CircuitPython_VEML7700/main/adafruit_veml7700.py
+      - https://www.vishay.com/docs/84286/veml7700.pdf
+  14.
+    - **Claim in stack:** 2.6/5.2: Bourns PEC11R-4215F-S0024 x3 on GP2/3 and GP6/7 with the PIO quadrature program
+    - **Finding:** PEC11R datasheet REV D04/26: IP40; -30 to +70 C; contact bounce 2.0 ms max at 15 RPM; 60 RPM max operating; the specs assume Bourns' suggested filter (10k pull-up, 10k series, 0.01 uF per channel); use within 6 months of delivery. The pico-examples quadrature_encoder.pio has no debounce, enables only the internal pull-ups, and must load at address 0 (one copy per PIO, shared by both state machines). The pin map wires 2 encoders while 3 are bought, so the third is presumably a spare.
+    - **Verdict:** corrected
+    - **Action:** Add the Bourns RC filter (pull-ups to 3.3 V) on both channels of each encoder. Run both encoders as two SMs on one PIO. Seal with a panel O-ring or boot (IP40 part). State in the BOM that the third encoder is a spare.
+    - **Impact:** Removes detent jitter and miscounts on a glove-operated knob; about $0.10 of passives.
+    - **Sources:**
+      - https://www.bourns.com/docs/Product-Datasheets/PEC11R.pdf
+      - https://raw.githubusercontent.com/raspberrypi/pico-examples/master/pio/quadrature_encoder/quadrature_encoder.pio
+  15.
+    - **Claim in stack:** 5.7 known lines: 12 MHz (RP2040) 144/432/1704; stage-1 rules: clk_sys 125 MHz, never 200
+    - **Finding:** pico-sdk master confirms: SYS_CLK_HZ defaults to 125 MHz and PICO_USE_FASTEST_SUPPORTED_CLOCK defaults to 0, so 200 MHz is opt-in. New from the SDK clock defaults: PLL_USB runs its VCO at 1200 MHz (/5/5 = 48 MHz), and the 200 MHz PLL_SYS option also uses a 1200 MHz VCO; both sit inside Galileo E5b/BDS B2 (about 1197-1217 MHz, not a core band). The 48 MHz clk_usb/clk_adc comb (x33 = 1584 MHz) falls in the GNSS L1 band. PLL_SYS at 125 MHz uses a 1500 MHz VCO, which is not in any listed band. The Pico's own USB is unused while UART7 works.
+    - **Verdict:** new_option
+    - **Action:** Firmware option (inference, check against the SDK): with UART7 working, stop clk_usb, deinit PLL_USB and clock the ADC from XOSC (enough for the NTC and battery ADC). That removes the 48 MHz comb and the 1200 MHz VCO. Re-enable it only in the H1 USB-fallback build. Put both states in the A/B matrix.
+    - **Impact:** Removes one self-made comb near GNSS L1 and a VCO at E5b; costs nothing.
+    - **Sources:**
+      - https://raw.githubusercontent.com/raspberrypi/pico-sdk/master/src/rp2040/hardware_regs/include/hardware/platform_defs.h
+      - https://raw.githubusercontent.com/raspberrypi/pico-sdk/master/src/rp2_common/hardware_clocks/include/hardware/clocks.h
+  16.
+    - **Claim in stack:** Stage-1 rule: drive Pico GP23 high (RT6150 PWM) in the HF/LF Quiet profiles
+    - **Finding:** I found no community RF measurement of the Pico's PFM/PWM mode. The only related RPi forum thread (VSYS noise, 2024) suggested forcing PWM; the poster never tested it, and the problem turned out to be a ground fault.
+    - **Verdict:** unverified
+    - **Action:** Keep it as an A/B bench item (HF+ noise floor, GP23 low vs high); do not claim a benefit before measuring.
+    - **Impact:** None until measured.
+    - **Sources:**
+      - https://forums.raspberrypi.com/viewtopic.php?t=366599
+      - https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf
+  17.
+    - **Claim in stack:** HMI = HDMI panel + Pico (piezo, status LED); no auxiliary display
+    - **Finding:** Radxa staff (Mar 2026): HDMI and an SPI12 display cannot be used for active output at the same time on the Q6A, and there are no plans to support it. The GNOME session crashed on HDMI hotplug with the SPI overlay active.
+    - **Verdict:** new_risk
+    - **Action:** Do not add an SPI status display later; keep auxiliary indication on the Pico (LED/piezo).
+    - **Impact:** Low; it closes off a tempting add-on.
+    - **Sources:**
+      - https://forum.radxa.com/t/dragon-q6a-spi-display-overlay-disables-hdmi-output-in-gnu-mode/30490
+  18.
+    - **Claim in stack:** 2.6/D5: Wisecoco 7in $132, InStock, I2C touch in listing, -20 to 70 C
+    - **Finding:** Re-checked 18 Oct 2026: schema price 132.00 (135.00 list), InStock, SKU 4681, dateModified 2026-09-17. 'I2C Capacitive Touch' and 'Interface Type I2C' are still there; operating -20~70, storage -30~80. There are no reviews, and I found no community report for this exact 2000-nit 7in SKU (RPi forum search for 'wisecoco': 20 topics, none for it).
+    - **Verdict:** confirmed
+    - **Action:** Keep the D5 gate.
+    - **Impact:** None.
+    - **Sources:**
+      - https://www.wisecocodisplay.com/product/7-inch-1920x1080-high-brightness-2500nits-lcd-panel-with-hdmi-in-board-ips-mipi-interface-tft-lcd-screen/
+      - https://forums.raspberrypi.com/search.php?keywords=wisecoco&terms=all&sf=all&sr=topics
+- **Current status oct 2026:** Q6A display path: HDMI-A-1 through the RA620 works on the held 6.18.2-4-qcom. On 7.0.11 it broke for many users in Aug 2026 (AUX IRQ storm). Radxa's fix is clk_ignore_unused, and one user reports it working again after updates on 9 Sep. A community Ubuntu 26.04 image (v1.3.0, 7 Oct) runs 7.2.9 with the Armbian DP/DPU patches and working HDMI. Radxa's own DSI panel (8HD) still shows backlight only on Noble (latest report 18 Sep 2026).
+  
+  Radxa ships a UART7 overlay (pins 32/29, GSI DMA). Application-UART TX problems on the Q6A have been reported (Sep 2026, unresolved).
+  
+  Software on noble: labwc 0.7.1-1build1, kanshi 1.5.1-1, wlr-randr 0.3.0-1, wlopm 0.1.0-1, ddcutil 1.4.1-1build2. kanshi matches refresh within ±50 mHz and has no custom modes. labwc issue #2615 (mode pinning, open) recommends kanshi.
+  
+  Wisecoco 7in FHD 2000-nit: $132, InStock, page modified 2026-09-17, still 'I2C touch', no reviews or community reports for this SKU.
+  
+  4D Systems: 4DHDMI datasheet Rev 1.5 (10/10/2026). The 1280-800 series 'Supports DDC' (since Rev 1.2, 03/03/2026). 7in CT-EAR-1000 is $141.85 at the 4D store (record updated 18 Oct 2026); there is no new EOL notice.
+  
+  Bourns PEC11R datasheet REV D04/26 (IP40). Pico SDK master: RP2040 default is still 125 MHz. The VEML7700 Arduino library still has the pre-Rev-1.7 resolution constant.
+- **Notes:** Method: primary community sources fetched on 18 Oct 2026. Radxa forum via its own Discourse JSON search and topic endpoints; Raspberry Pi forum via WebFetch, including its built-in search for 'wisecoco', 'lt6911' and SMPS; GitHub issue pages via WebFetch (labwc #2615, #3612, #3352; Adafruit_VEML7700 #30/#31/#35); raw source (kernel drm_edid.c, msm dp_panel.c, hid-ids.h, kanshi main.c, wlroots drm.c/util.c, pico-sdk clocks, pico-examples quadrature PIO, Radxa overlays); the 4D Resource Centre and datasheet Rev 1.5 PDF; the Bourns PEC11R PDF; Ubuntu package pages. Downloads are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dhs2/dl/.
+  
+  WebSearch: the shared 200-call budget for this turn was already used up by other agents, so I ran 0 general web searches. I used only the forums' and sites' own search pages, not a general search engine. More general searches (Reddit, YouTube, Discord/Matrix logs) need a follow-up run.
+  
+  Blocked: Reddit (bot wall), the 4D Systems forum (Cloudflare 403), gitlab.freedesktop.org (Anubis; drm/msm #86 not read), git.sr.ht (502; wlr-randr refresh-match tolerance not verified), and the GitHub API search (session-bound).
+  
+  Models, not measurements:
+  - wlroots refresh values 59986/51677 mHz, from calculate_refresh_rate.
+  - Portrait line-rate example: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dhs2/calc/portrait.py
+  - Native-htotal VFP-stretch table: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dhs2/calc/vstretch.py
+  - Pico VCO band overlaps.
+  
+  Stage-1 items confirmed by community or source: kanshi instead of labwc config (now with exact mHz strings); Schottky on HDMI pin 18 rather than a cut; VBUS handling for touch; CH57x identity; 125 MHz Pico clock; Wisecoco gate.
+  
+  Stage-1 items corrected:
+  - labwc has had reuseOutputMode since 0.6.1, but it is unreliable.
+  - The 'e' force flag does not help on the DP-bridge path.
+  - The 4D datasheet is Rev 1.5 and lists DDC support, so DDC/CI is not only a customisation.
+  - Native DSI should be downgraded.
+  
+  Weak evidence: the community has n=1 or 2 reports per Wisecoco or LT6911 board, mostly on other sizes. Nothing on glove touch or sun/thermal behaviour for these exact panels was found. The thermal model stays a model.
+  
+  Policy: nothing here transmits. No loops, dishes or military-aimed items are involved. The CH57x 2.4 GHz silence test from stage 1 stays.
+
 ## report:compute_software_ai (run `wf_df1900ef-872`)
 
 - **Scope:** This audit covers the Q6A compute board, kernel/OS pinning, the full software stack, the NPU (QAIRT 2.42, INT8), the spectrum-based NPU training system and the lab menu/UI. Read in full or near full: final/compute.json, software.json, npu_training.json, lab_ui_hf.json and user_requirements.md (governing). Also read the whole of minute-log.md, the newest summaries.md entries plus keyword greps across summaries.md and extra-studies.md, and the parts of small_antenna_stack.json, radio_lab.json, display_market.json, foldable_antennas.json and wideband_sdr.json that touch this scope. All 18 named final/*.json files exist (plus foldable_partial.json and digest.md). final/report_research.json from P1b does not exist yet. I did not read wideband_sdr, narrowband_sdr, display, storage, rf_frontend, gnss_imu, power, mechanical_thermal, antennas or dish_replacement beyond targeted greps, because they are outside this scope. components/compute.md and software.md were spot-checked and match the JSON. I used 7 web lookups to settle disputes: ISS frequencies, SatDump version, the QAIRT 0x1388 error, VTCM size and noble libgpiod.
