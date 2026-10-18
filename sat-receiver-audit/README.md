@@ -70,6 +70,7 @@
 | [Pelican 1450 apache 3800 case with divid](components/pelican_1450_apache_3800_case_with_divid.md) | · research · forums · fixes ✅ verify | `—` |
 | [Pinecil v2 ironos bluetooth off](components/pinecil_v2_ironos_bluetooth_off.md) | · research · forums · fixes ✅ verify | `—` |
 | [Pololu 2813 hp pushbutton power switch](components/pololu_2813_hp_pushbutton_power_switch.md) | · research · forums · fixes ✅ verify | `—` |
+| [Pololu d36v28f5 2 for a 5 v only display](components/pololu_d36v28f5_2_for_a_5_v_only_display.md) | · research · forums · fixes ✅ verify | `—` |
 | [Pololu d36v28f5 lab5](components/pololu_d36v28f5_lab5.md) | · research · forums · fixes ✅ verify | `—` |
 | [Pololu d36v50f12 sys12](components/pololu_d36v50f12_sys12.md) | · research · forums · fixes ✅ verify | `—` |
 | [Power](components/power.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_f924b2ab-5ad` |
