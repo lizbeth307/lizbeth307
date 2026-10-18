@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1500" height="2088" viewBox="0 0 1500 2088" font-family="Arial, Helvetica, sans-serif">
+<title>Антенні комплекти: пакований і робочий стан</title>
+<defs>
+<marker id="ar" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker>
+<marker id="al" viewBox="0 0 10 10" refX="0" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M10,0 L0,5 L10,10 z" fill="#000"/></marker>
+</defs>
+<rect x="0" y="0" width="1500" height="2088" fill="#ffffff"/>
+<text x="20.0" y="34.0" font-size="18" text-anchor="start" font-weight="bold" fill="#000">06. Антенні комплекти: кожна антена в пакованому і робочому стані (ключові розміри)</text>
+<text x="20.0" y="56.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Джерело: STACK.md §2.4, §2.5, §2.11.2, §4, §5.3 (порти), §5.8 (комплекти, виготовлення, приймання). Ескізи не в масштабі; розміри — підписані.</text>
+<text x="20.0" y="74.0" font-size="12" text-anchor="start" font-weight="bold" fill="#000">Правила: лише прийом; жодних рамкових антен і тарілок; частини ≈20-23 см (макс. 35 см); без S11 на ефірі — приймання за шумом, маяками, шумом Сонця.</text>
+<text x="20.0" y="92.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Орієнтація — лише з GNSS-фіксу і живого TLE (без таблиць міст). Порт = прохідник корпусу (аркуш 05-roztashuvannia-panel).</text>
+<text x="20.0" y="110.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Патч/чип рівень (завжди з собою): панелі 1-7.   Складаний рівень (рюкзак): панелі 8-15.</text>
+<rect x="20.0" y="128.0" width="480.0" height="352.0" fill="#f4f8ff" stroke="#000" stroke-width="1.4"/>
+<rect x="20.0" y="128.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
+<text x="28.0" y="147.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">1. V-диполь LRPT (дипольний набір #1)</text>
+<text x="28.0" y="174.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">→ 1-1.5 м RG316 → P1 VHF-137 (без DC); Meteor LRPT 137.9 MHz</text>
+<line x1="170.0" y1="184.0" x2="170.0" y2="390.0" stroke="#999" stroke-width="0.6" stroke-dasharray="3,3"/>
+<text x="30.0" y="198.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">ПАКОВАНИЙ</text>
+<text x="180.0" y="198.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">РОБОЧИЙ</text>
+<rect x="45.0" y="235.0" width="100.0" height="6.0" fill="#ddd" stroke="#000" stroke-width="1"/>
+<rect x="45.0" y="255.0" width="100.0" height="6.0" fill="#ddd" stroke="#000" stroke-width="1"/>
+<text x="95.0" y="288.0" font-size="11" text-anchor="middle" font-weight="bold" fill="#000">23 см</text>
+<text x="95.0" y="304.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">(телескопи, M5)</text>
+<line x1="335.0" y1="328.0" x2="222.4" y2="263.0" stroke="#000" stroke-width="2.2"/>
+<line x1="335.0" y1="328.0" x2="447.6" y2="263.0" stroke="#000" stroke-width="2.2"/>
+<line x1="335.0" y1="328.0" x2="335.0" y2="208.0" stroke="#000" stroke-width="0.8" stroke-dasharray="5,3" marker-end="url(#ar)"/>
+<text x="339.0" y="220.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">бісектриса</text>
+<text x="335.0" y="344.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">затискач 120° (вставка 1/4-20)</text>
+<text x="240.0" y="258.0" font-size="11" text-anchor="middle" font-weight="bold" fill="#000">53.4 см</text>
+<text x="430.0" y="258.0" font-size="11" text-anchor="middle" font-weight="bold" fill="#000">53.4 см</text>
+<text x="335.0" y="314.0" font-size="11" text-anchor="middle" font-weight="bold" fill="#000">120°</text>
+<text x="180.0" y="372.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">висота 1.0-1.1 м (1.087 м = λ/2), горизонтально</text>
+<text x="28.0" y="410.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">≥35° піку (усі спроби N2-3): бісектриса Пн-Пд, кінці Сх-Зх;</text>
+<text x="28.0" y="426.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">≤30°: повернути на 90° (кінці Пн-Пд, борт до проходу);</text>
+<text x="28.0" y="442.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">без нагляду — бісектриса Пн-Пд; 30-35° — TBD (STACK.md §2.4).</text>
+<text x="28.0" y="458.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">На прибутті: M5 і центр-оплітка розімкнено &gt;1 MΩ (DMM).</text>
+<rect x="510.0" y="128.0" width="480.0" height="352.0" fill="#f4f8ff" stroke="#000" stroke-width="1.4"/>
+<rect x="510.0" y="128.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
+<text x="518.0" y="147.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">2. Диполь AIS/FM (дипольний набір #2)</text>
+<text x="518.0" y="174.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">→ P6 VHF2/AIS → реле K2 → HF+ (без DC); AIS 162 MHz, FM-RDS</text>
+<line x1="660.0" y1="184.0" x2="660.0" y2="390.0" stroke="#999" stroke-width="0.6" stroke-dasharray="3,3"/>
+<text x="520.0" y="198.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">ПАКОВАНИЙ</text>
+<text x="670.0" y="198.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">РОБОЧИЙ</text>
+<rect x="535.0" y="235.0" width="100.0" height="6.0" fill="#ddd" stroke="#000" stroke-width="1"/>
+<rect x="535.0" y="255.0" width="100.0" height="6.0" fill="#ddd" stroke="#000" stroke-width="1"/>
+<text x="585.0" y="288.0" font-size="11" text-anchor="middle" font-weight="bold" fill="#000">23 см</text>
+<line x1="820.0" y1="208.0" x2="820.0" y2="283.0" stroke="#000" stroke-width="2.4"/>
+<line x1="820.0" y1="293.0" x2="820.0" y2="368.0" stroke="#000" stroke-width="2.4"/>
+<rect x="812.0" y="283.0" width="16.0" height="10.0" fill="#999" stroke="#000" stroke-width="0.8"/>
+<line x1="800.0" y1="208.0" x2="800.0" y2="283.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="795.0" y="249.5" font-size="12" text-anchor="end" font-weight="normal" fill="#000">44 см</text>
+<line x1="800.0" y1="293.0" x2="800.0" y2="368.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="795.0" y="334.5" font-size="12" text-anchor="end" font-weight="normal" fill="#000">44 см</text>
+<text x="836.0" y="292.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">вертикально</text>
+<text x="518.0" y="410.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Вуса 44 см кожен, вертикально; також запасні елементи для #1.</text>
+<text x="518.0" y="426.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">DAB+ — лише на запасному V4L або Lime (не на HF+).</text>
+<text x="518.0" y="442.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Не використовувати для 70 см: працює одночасно з AIS.</text>
+<rect x="1000.0" y="128.0" width="480.0" height="352.0" fill="#f4f8ff" stroke="#000" stroke-width="1.4"/>
+<rect x="1000.0" y="128.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
+<text x="1008.0" y="147.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">3. 70 см: основа набору #1 + короткі елементи</text>
+<text x="1008.0" y="174.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">→ 60 см RG174 (ферит) → ANT Uputronics 440 → P2 UHF (ch2 4.5 V)</text>
+<line x1="1150.0" y1="184.0" x2="1150.0" y2="390.0" stroke="#999" stroke-width="0.6" stroke-dasharray="3,3"/>
+<text x="1010.0" y="198.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">ПАКОВАНИЙ</text>
+<text x="1160.0" y="198.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">РОБОЧИЙ</text>
+<rect x="1025.0" y="235.0" width="100.0" height="6.0" fill="#ddd" stroke="#000" stroke-width="1"/>
+<rect x="1030.0" y="268.0" width="40.0" height="6.0" fill="#ddd" stroke="#000" stroke-width="1"/>
+<rect x="1080.0" y="268.0" width="40.0" height="6.0" fill="#ddd" stroke="#000" stroke-width="1"/>
+<text x="1075.0" y="294.0" font-size="11" text-anchor="middle" font-weight="bold" fill="#000">23 см + 2 ел.</text>
+<text x="1075.0" y="310.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">5-13 см</text>
+<line x1="1175.0" y1="248.0" x2="1300.0" y2="248.0" stroke="#000" stroke-width="2.4"/>
+<line x1="1320.0" y1="248.0" x2="1445.0" y2="248.0" stroke="#000" stroke-width="2.4"/>
+<rect x="1300.0" y="242.0" width="20.0" height="12.0" fill="#999" stroke="#000" stroke-width="0.8"/>
+<line x1="1175.0" y1="238.0" x2="1300.0" y2="238.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="1237.5" y="234.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">≈14 + 2 см</text>
+<line x1="1320.0" y1="238.0" x2="1445.0" y2="238.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="1382.5" y="234.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">≈14 + 2 см</text>
+<text x="1310.0" y="270.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">прямий 180°, бортом до проходу</text>
+<path d="M1310,254 C1300,308 1260,318 1230,350" fill="none" stroke="#555" stroke-width="1.2"/>
+<rect x="1196.0" y="350.0" width="70.0" height="20.0" fill="#fff" stroke="#000" stroke-width="1.2"/>
+<text x="1231.0" y="364.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">Upu 440</text>
+<text x="1280.0" y="333.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">60 см RG174 + ферит</text>
+<text x="1280.0" y="364.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">→ перемичка SMA M-F → P2</text>
+<text x="1008.0" y="410.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Резонанс ≈445 MHz (модель); антена за 60 см від пристрою; Доплер увімк.</text>
+<text x="1008.0" y="426.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Uputronics 440 — ніколи консоллю на P2; дощовий чохол; ≤5.5 V на P2.</text>
+<text x="1008.0" y="442.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Запас: штир λ/4 17.1 см або SRH-701 19 см (26 g) на Uputronics,</text>
+<text x="1008.0" y="458.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">нахил боком до супутника. Опційно третій набір (+17.95 USD).</text>
+<rect x="20.0" y="490.0" width="480.0" height="352.0" fill="#f4f8ff" stroke="#000" stroke-width="1.4"/>
+<rect x="20.0" y="490.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
+<text x="28.0" y="509.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">4. L-band патч RTL-SDR Blog v2 (RHCP)</text>
+<text x="28.0" y="536.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">→ 2 м RG174 → P3 L-BAND (ch3 4.5 V, 15-20 mA)</text>
+<line x1="170.0" y1="546.0" x2="170.0" y2="752.0" stroke="#999" stroke-width="0.6" stroke-dasharray="3,3"/>
+<text x="30.0" y="560.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">ПАКОВАНИЙ</text>
+<text x="180.0" y="560.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">РОБОЧИЙ</text>
+<rect x="50.0" y="585.0" width="90.0" height="90.0" fill="#e8e8e8" stroke="#000" stroke-width="1.6"/>
+<text x="95.0" y="695.0" font-size="11" text-anchor="middle" font-weight="bold" fill="#000">175 x 175 мм</text>
+<text x="95.0" y="711.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">(пакований = робочий)</text>
+<polygon points="220.0,720.0 320.0,610.0 336.0,624.0 236.0,734.0" fill="#e8e8e8" stroke="#000" stroke-width="1.6"/>
+<line x1="278.0" y1="672.0" x2="278.0" y2="740.0" stroke="#000" stroke-width="2"/>
+<line x1="278.0" y1="740.0" x2="250.0" y2="752.0" stroke="#000" stroke-width="1.2"/>
+<line x1="278.0" y1="740.0" x2="306.0" y2="752.0" stroke="#000" stroke-width="1.2"/>
+<path d="M336,624 C400,640 420,690 470,700" fill="none" stroke="#555" stroke-width="1.2"/>
+<text x="355.0" y="612.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">2 м RG174,</text>
+<text x="355.0" y="628.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">≥1 м від пристрою</text>
+<text x="355.0" y="718.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">штатив (бажано)</text>
+<text x="355.0" y="734.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">або присоска</text>
+<text x="28.0" y="772.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Наведення на NCS: az/el з фіксу → IMU → ручний перебір нахилу</text>
+<text x="28.0" y="788.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">і обертання на живому C/N0 NCS (лише потужність) → фіксація.</text>
+<text x="28.0" y="804.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Inmarsat-C лише через egc-gate; 1544.0-1545.0 MHz — без демодуляції.</text>
+<text x="28.0" y="820.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Записати на прибутті: підсилення, NF, краї SAW, стать роз'єму.</text>
+<rect x="510.0" y="490.0" width="480.0" height="352.0" fill="#f4f8ff" stroke="#000" stroke-width="1.4"/>
+<rect x="510.0" y="490.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
+<text x="518.0" y="509.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">5. 4-виткова RHCP спіраль HRPT на диску 18 см</text>
+<text x="518.0" y="536.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">SAWbird+ GOES під диском → P3 L-BAND (ch3 4.5 V по коаксіалу)</text>
+<line x1="660.0" y1="546.0" x2="660.0" y2="752.0" stroke="#999" stroke-width="0.6" stroke-dasharray="3,3"/>
+<text x="520.0" y="560.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">ПАКОВАНИЙ</text>
+<text x="670.0" y="560.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">РОБОЧИЙ</text>
+<line x1="540.0" y1="720.0" x2="630.0" y2="720.0" stroke="#000" stroke-width="3"/>
+<polyline points="585.0,585.0 588.6,586.4 592.0,587.8 594.9,589.2 597.1,590.5 598.5,591.9 599.0,593.3 598.5,594.7 597.1,596.1 594.9,597.5 592.0,598.9 588.6,600.2 585.0,601.6 581.4,603.0 578.0,604.4 575.1,605.8 572.9,607.2 571.5,608.6 571.0,609.9 571.5,611.3 572.9,612.7 575.1,614.1 578.0,615.5 581.4,616.9 585.0,618.2 588.6,619.6 592.0,621.0 594.9,622.4 597.1,623.8 598.5,625.2 599.0,626.6 598.5,627.9 597.1,629.3 594.9,630.7 592.0,632.1 588.6,633.5 585.0,634.9 581.4,636.3 578.0,637.6 575.1,639.0 572.9,640.4 571.5,641.8 571.0,643.2 571.5,644.6 572.9,646.0 575.1,647.3 578.0,648.7 581.4,650.1 585.0,651.5 588.6,652.9 592.0,654.3 594.9,655.7 597.1,657.0 598.5,658.4 599.0,659.8 598.5,661.2 597.1,662.6 594.9,664.0 592.0,665.4 588.6,666.7 585.0,668.1 581.4,669.5 578.0,670.9 575.1,672.3 572.9,673.7 571.5,675.1 571.0,676.4 571.5,677.8 572.9,679.2 575.1,680.6 578.0,682.0 581.4,683.4 585.0,684.8 588.6,686.1 592.0,687.5 594.9,688.9 597.1,690.3 598.5,691.7 599.0,693.1 598.5,694.4 597.1,695.8 594.9,697.2 592.0,698.6 588.6,700.0 585.0,701.4 581.4,702.8 578.0,704.1 575.1,705.5 572.9,706.9 571.5,708.3 571.0,709.7 571.5,711.1 572.9,712.5 575.1,713.8 578.0,715.2 581.4,716.6 585.0,718.0" fill="none" stroke="#b5651d" stroke-width="1.4"/>
+<text x="585.0" y="738.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">жорстка: пак. = роб.</text>
+<line x1="680.0" y1="726.0" x2="860.0" y2="726.0" stroke="#000" stroke-width="3.2"/>
+<polyline points="770.0,580.0 776.7,581.5 783.0,583.0 788.4,584.5 792.5,586.0 795.1,587.5 796.0,589.0 795.1,590.5 792.5,592.0 788.4,593.5 783.0,595.0 776.7,596.5 770.0,598.0 763.3,599.5 757.0,601.0 751.6,602.5 747.5,604.0 744.9,605.5 744.0,607.0 744.9,608.5 747.5,610.0 751.6,611.5 757.0,613.0 763.3,614.5 770.0,616.0 776.7,617.5 783.0,619.0 788.4,620.5 792.5,622.0 795.1,623.5 796.0,625.0 795.1,626.5 792.5,628.0 788.4,629.5 783.0,631.0 776.7,632.5 770.0,634.0 763.3,635.5 757.0,637.0 751.6,638.5 747.5,640.0 744.9,641.5 744.0,643.0 744.9,644.5 747.5,646.0 751.6,647.5 757.0,649.0 763.3,650.5 770.0,652.0 776.7,653.5 783.0,655.0 788.4,656.5 792.5,658.0 795.1,659.5 796.0,661.0 795.1,662.5 792.5,664.0 788.4,665.5 783.0,667.0 776.7,668.5 770.0,670.0 763.3,671.5 757.0,673.0 751.6,674.5 747.5,676.0 744.9,677.5 744.0,679.0 744.9,680.5 747.5,682.0 751.6,683.5 757.0,685.0 763.3,686.5 770.0,688.0 776.7,689.5 783.0,691.0 788.4,692.5 792.5,694.0 795.1,695.5 796.0,697.0 795.1,698.5 792.5,700.0 788.4,701.5 783.0,703.0 776.7,704.5 770.0,706.0 763.3,707.5 757.0,709.0 751.6,710.5 747.5,712.0 744.9,713.5 744.0,715.0 744.9,716.5 747.5,718.0 751.6,719.5 757.0,721.0 763.3,722.5 770.0,724.0" fill="none" stroke="#b5651d" stroke-width="1.6"/>
+<text x="770.0" y="744.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">диск 18 см, Al 1.5 мм</text>
+<line x1="744.0" y1="576.0" x2="796.0" y2="576.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="770.0" y="572.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">Ø61.7 мм</text>
+<line x1="830.0" y1="580.0" x2="830.0" y2="616.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="835.0" y="602.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">крок 43 мм</text>
+<text x="834.0" y="650.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">4 витки → ≈172 мм</text>
+<text x="834.0" y="666.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">(похідне: 4 x 43)</text>
+<text x="834.0" y="690.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">живлення 30.9 мм</text>
+<text x="834.0" y="706.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">від центру диска</text>
+<text x="518.0" y="772.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Мідь 2 мм на друкованій оправці; узгоджувальна смужка; той самий</text>
+<text x="518.0" y="788.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">диск — у гелікона. SAWbird+ GOES у Gainta G201 + клапан O8002.</text>
+<text x="518.0" y="804.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Статичний відвід: S21 ≤0.1 dB на 1.7 GHz (LiteVNA, без антени).</text>
+<text x="518.0" y="820.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Телефони ≥5 м під час HRPT; Meteor HRPT — «на межі — недоступно».</text>
+<rect x="1000.0" y="490.0" width="480.0" height="352.0" fill="#f4f8ff" stroke="#000" stroke-width="1.4"/>
+<rect x="1000.0" y="490.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
+<text x="1008.0" y="509.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">6. GNSS Waveshare 25346 (L1, RHCP)</text>
+<text x="1008.0" y="536.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">→ фіксований дріт 3 м RG174, SMA-J → P7 GNSS (≈3.1 V від LC76G)</text>
+<line x1="1150.0" y1="546.0" x2="1150.0" y2="752.0" stroke="#999" stroke-width="0.6" stroke-dasharray="3,3"/>
+<text x="1010.0" y="560.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">ПАКОВАНИЙ</text>
+<text x="1160.0" y="560.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">РОБОЧИЙ</text>
+<rect x="1045.0" y="610.0" width="60.0" height="22.0" fill="#333" stroke="#000" stroke-width="1.4" rx="6"/>
+<circle cx="1075.0" cy="665.0" r="26.0" fill="none" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
+<text x="1075.0" y="706.0" font-size="11" text-anchor="middle" font-weight="bold" fill="#000">шайба: TBD</text>
+<text x="1075.0" y="722.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">+ 3 м дроту</text>
+<rect x="1190.0" y="650.0" width="70.0" height="24.0" fill="#333" stroke="#000" stroke-width="1.4" rx="8"/>
+<path d="M1260,662 C1320,662 1330,720 1440,720" fill="none" stroke="#555" stroke-width="1.2"/>
+<rect x="1380.0" y="590.0" width="60.0" height="40.0" fill="none" stroke="#000" stroke-width="1" stroke-dasharray="4,2"/>
+<text x="1410.0" y="614.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">пак IMU</text>
+<line x1="1260.0" y1="602.0" x2="1380.0" y2="602.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="1320.0" y="598.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">≥30 см</text>
+<text x="1190.0" y="700.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">магнітна основа або стрічка</text>
+<text x="1008.0" y="772.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Приймання: ≥3.05 V на IPEX під 150 Ohm (≈20 mA), інакше bias-tee 5 V.</text>
+<text x="1008.0" y="788.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Надлишок дроту — подалі від краю USB 3/HDMI/DC-DC.</text>
+<text x="1008.0" y="804.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">GLONASS — підтвердити тестом gpsd SKY; L5 не використовується.</text>
+<rect x="20.0" y="852.0" width="480.0" height="352.0" fill="#f4f8ff" stroke="#000" stroke-width="1.4"/>
+<rect x="20.0" y="852.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
+<text x="28.0" y="871.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">7. QO-100: голий Bullseye + конус 11 см (Європа)</text>
+<text x="28.0" y="898.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">→ F, Goobay 58814 1 м → P4 LNB (13.2 V, лише вертикаль)</text>
+<line x1="170.0" y1="908.0" x2="170.0" y2="1114.0" stroke="#999" stroke-width="0.6" stroke-dasharray="3,3"/>
+<text x="30.0" y="922.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">ПАКОВАНИЙ</text>
+<text x="180.0" y="922.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">РОБОЧИЙ</text>
+<rect x="50.0" y="952.0" width="36.0" height="70.0" fill="#eee" stroke="#000" stroke-width="1.4"/>
+<rect x="50.0" y="942.0" width="36.0" height="10.0" fill="#d33" stroke="#000" stroke-width="1.2"/>
+<polygon points="100.0,962.0 150.0,947.0 150.0,1027.0 100.0,1012.0" fill="#ddd" stroke="#000" stroke-width="1.2"/>
+<text x="95.0" y="1052.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">LNB (розмір TBD)</text>
+<text x="95.0" y="1068.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">+ конус Al 0.3-0.5</text>
+<rect x="210.0" y="987.0" width="70.0" height="40.0" fill="#eee" stroke="#000" stroke-width="1.4"/>
+<rect x="280.0" y="992.0" width="10.0" height="30.0" fill="#d33" stroke="#000" stroke-width="1.2"/>
+<polygon points="290.0,992.0 360.0,962.0 360.0,1052.0 290.0,1022.0" fill="none" stroke="#000" stroke-width="1.6"/>
+<line x1="370.0" y1="962.0" x2="370.0" y2="1052.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="375.0" y="1011.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">устя 110.5 мм</text>
+<text x="325.0" y="952.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">напівкут 22.9°</text>
+<text x="325.0" y="1074.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">конус 11 x 8.3 см</text>
+<text x="210.0" y="980.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">адаптер 40 мм, ±45°</text>
+<text x="210.0" y="1048.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">AXING на червоний порт</text>
+<text x="28.0" y="1134.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">R_in = r/sin 22.9° = 82-85 мм (горло 64-66 мм); кільце горла — на</text>
+<text x="28.0" y="1150.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">площині червоного ковпачка (OD 64 або 60 мм — виміряти до друку).</text>
+<text x="28.0" y="1166.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Перекіс LNB: tan ψ = sin Δlon / tan lat (25.9E); пік кроками 5°.</text>
+<text x="28.0" y="1182.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Ковпачок не знімати; 18 V немає; заглушка F — не термінатор.</text>
+<rect x="510.0" y="852.0" width="480.0" height="352.0" fill="#fff8f0" stroke="#000" stroke-width="1.4"/>
+<rect x="510.0" y="852.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
+<text x="518.0" y="871.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">8. Схрещений Yagi 2 m / 70 см (WB2HOL + N2SPI)</text>
+<text x="518.0" y="898.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">70 см → Upu 440 → P2; 2 m → P8 (без зміщ.); LRPT → P1</text>
+<line x1="660.0" y1="908.0" x2="660.0" y2="1114.0" stroke="#999" stroke-width="0.6" stroke-dasharray="3,3"/>
+<text x="520.0" y="922.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">ПАКОВАНИЙ</text>
+<text x="670.0" y="922.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">РОБОЧИЙ</text>
+<rect x="530.0" y="942.0" width="48.0" height="8.0" fill="#ccc" stroke="#000" stroke-width="1"/>
+<rect x="530.0" y="956.0" width="48.0" height="8.0" fill="#ccc" stroke="#000" stroke-width="1"/>
+<rect x="530.0" y="970.0" width="48.0" height="8.0" fill="#ccc" stroke="#000" stroke-width="1"/>
+<rect x="530.0" y="984.0" width="48.0" height="8.0" fill="#ccc" stroke="#000" stroke-width="1"/>
+<rect x="530.0" y="998.0" width="48.0" height="8.0" fill="#ccc" stroke="#000" stroke-width="1"/>
+<circle cx="615.0" cy="957.0" r="13.0" fill="none" stroke="#000" stroke-width="1.2"/>
+<circle cx="645.0" cy="957.0" r="13.0" fill="none" stroke="#000" stroke-width="1.2"/>
+<circle cx="615.0" cy="991.0" r="13.0" fill="none" stroke="#000" stroke-width="1.2"/>
+<circle cx="645.0" cy="991.0" r="13.0" fill="none" stroke="#000" stroke-width="1.2"/>
+<text x="585.0" y="1032.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">штанга 5 ч. ≤16 см</text>
+<text x="585.0" y="1046.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">стрічки на котушках</text>
+<text x="585.0" y="1060.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">елементи ≤17 см</text>
+<line x1="685.0" y1="1002.0" x2="965.0" y2="1002.0" stroke="#666" stroke-width="4"/>
+<line x1="685.0" y1="949.5" x2="685.0" y2="1054.5" stroke="#c48a00" stroke-width="2"/>
+<line x1="773.8" y1="956.9" x2="773.8" y2="1047.1" stroke="#c48a00" stroke-width="2"/>
+<line x1="907.2" y1="957.4" x2="907.2" y2="1046.6" stroke="#c48a00" stroke-width="2"/>
+<text x="689.0" y="944.0" font-size="10" text-anchor="start" font-weight="normal" fill="#000">R 105.1</text>
+<text x="773.8" y="952.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">DE 2x45.1</text>
+<text x="907.2" y="952.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">D 89.2</text>
+<circle cx="698.1" cy="1002.0" r="4.0" fill="#2a6" stroke="#2a6" stroke-width="1.2"/>
+<circle cx="726.1" cy="1002.0" r="4.0" fill="#2a6" stroke="#2a6" stroke-width="1.2"/>
+<circle cx="759.4" cy="1002.0" r="4.0" fill="#2a6" stroke="#2a6" stroke-width="1.2"/>
+<circle cx="823.2" cy="1002.0" r="4.0" fill="#2a6" stroke="#2a6" stroke-width="1.2"/>
+<circle cx="892.8" cy="1002.0" r="4.0" fill="#2a6" stroke="#2a6" stroke-width="1.2"/>
+<circle cx="965.0" cy="1002.0" r="4.0" fill="#2a6" stroke="#2a6" stroke-width="1.2"/>
+<text x="670.0" y="1072.0" font-size="10" text-anchor="start" font-weight="normal" fill="#000">2 m (жовті): R / DE / D на 0 / 0.203 / 0.508 м;</text>
+<text x="670.0" y="1085.0" font-size="10" text-anchor="start" font-weight="normal" fill="#000">70 см (зелені): 0.030/0.094/0.170/0.316/</text>
+<text x="670.0" y="1098.0" font-size="10" text-anchor="start" font-weight="normal" fill="#000">0.475/0.640 м; половини ≤17.0 см</text>
+<text x="518.0" y="1134.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">DE 2 m: проміжок 19-25 мм, hairpin 127 мм 14-18 AWG; DE 70 см: розріз</text>
+<text x="518.0" y="1150.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">12 мм + hairpin ≈11.5 nH. Паразитні 70 см — муфта M3 &lt;1 Ohm (DMM).</text>
+<text x="518.0" y="1166.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Стики штанги 0.13/0.25/0.40/0.56 м; площини ортогональні ±5°.</text>
+<text x="518.0" y="1182.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">LRPT: 111.4 / 2x47.8 / 94.6 см. Довжини ел. 70 см — TBD (N2SPI).</text>
+<rect x="1000.0" y="852.0" width="480.0" height="352.0" fill="#fff8f0" stroke="#000" stroke-width="1.4"/>
+<rect x="1000.0" y="852.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
+<text x="1008.0" y="871.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">9. Пелюстковий гелікон (диск 18 см + 8 пелюсток)</text>
+<text x="1008.0" y="898.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">SAWbird+ GOES (або iO/H1) → P3 → RTL-B або Lime RX1</text>
+<line x1="1150.0" y1="908.0" x2="1150.0" y2="1114.0" stroke="#999" stroke-width="0.6" stroke-dasharray="3,3"/>
+<text x="1010.0" y="922.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">ПАКОВАНИЙ</text>
+<text x="1160.0" y="922.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">РОБОЧИЙ</text>
+<line x1="1025.0" y1="1062.0" x2="1125.0" y2="1062.0" stroke="#000" stroke-width="3"/>
+<polygon points="1040.0,1042.0 1050.0,952.0 1100.0,952.0 1110.0,1042.0" fill="#ddd" stroke="#000" stroke-width="1.2"/>
+<text x="1075.0" y="944.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">16.8</text>
+<text x="1075.0" y="1038.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">6.9</text>
+<text x="1075.0" y="1082.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">диск 18 + 8 пелюсток</text>
+<text x="1075.0" y="1096.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">похила 17.7 см</text>
+<line x1="1255.0" y1="1082.0" x2="1375.0" y2="1082.0" stroke="#000" stroke-width="3.2"/>
+<polygon points="1255.0,1082.0 1170.0,962.0 1460.0,962.0 1375.0,1082.0" fill="none" stroke="#000" stroke-width="1.8"/>
+<polyline points="1315.0,972.0 1319.1,973.1 1323.0,974.2 1326.3,975.4 1328.9,976.5 1330.5,977.6 1331.0,978.8 1330.5,979.9 1328.9,981.0 1326.3,982.1 1323.0,983.2 1319.1,984.4 1315.0,985.5 1310.9,986.6 1307.0,987.8 1303.7,988.9 1301.1,990.0 1299.5,991.1 1299.0,992.2 1299.5,993.4 1301.1,994.5 1303.7,995.6 1307.0,996.8 1310.9,997.9 1315.0,999.0 1319.1,1000.1 1323.0,1001.2 1326.3,1002.4 1328.9,1003.5 1330.5,1004.6 1331.0,1005.8 1330.5,1006.9 1328.9,1008.0 1326.3,1009.1 1323.0,1010.2 1319.1,1011.4 1315.0,1012.5 1310.9,1013.6 1307.0,1014.8 1303.7,1015.9 1301.1,1017.0 1299.5,1018.1 1299.0,1019.2 1299.5,1020.4 1301.1,1021.5 1303.7,1022.6 1307.0,1023.8 1310.9,1024.9 1315.0,1026.0 1319.1,1027.1 1323.0,1028.2 1326.3,1029.4 1328.9,1030.5 1330.5,1031.6 1331.0,1032.8 1330.5,1033.9 1328.9,1035.0 1326.3,1036.1 1323.0,1037.2 1319.1,1038.4 1315.0,1039.5 1310.9,1040.6 1307.0,1041.8 1303.7,1042.9 1301.1,1044.0 1299.5,1045.1 1299.0,1046.2 1299.5,1047.4 1301.1,1048.5 1303.7,1049.6 1307.0,1050.8 1310.9,1051.9 1315.0,1053.0 1319.1,1054.1 1323.0,1055.2 1326.3,1056.4 1328.9,1057.5 1330.5,1058.6 1331.0,1059.8 1330.5,1060.9 1328.9,1062.0 1326.3,1063.1 1323.0,1064.2 1319.1,1065.4 1315.0,1066.5 1310.9,1067.6 1307.0,1068.8 1303.7,1069.9 1301.1,1071.0 1299.5,1072.1 1299.0,1073.2 1299.5,1074.4 1301.1,1075.5 1303.7,1076.6 1307.0,1077.8 1310.9,1078.9 1315.0,1080.0" fill="none" stroke="#b5651d" stroke-width="1.2"/>
+<line x1="1170.0" y1="954.0" x2="1460.0" y2="954.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="1315.0" y="950.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">устя 44 см</text>
+<line x1="1179.0" y1="962.0" x2="1179.0" y2="1082.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="1174.0" y="1026.0" font-size="12" text-anchor="end" font-weight="normal" fill="#000">12 см</text>
+<text x="1315.0" y="1102.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">диск 18 см; 42.7° від площини диска</text>
+<text x="1008.0" y="1134.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Пелюстки Al 0.3-0.5 мм: хорди 6.9/16.8 см, похила 17.7 см, язички</text>
+<text x="1008.0" y="1150.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">1 см, перекриття ≥1 см. Модель 13-15.7 dBic (не виміряно).</text>
+<text x="1008.0" y="1166.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">A/B t0nito 29.7°: окремий набір пелюсток (хорда обода 18.6 см).</text>
+<text x="1008.0" y="1182.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Перші проходи HRPT вище 40° — зі штатива від 50 см.</text>
+<rect x="20.0" y="1214.0" width="480.0" height="352.0" fill="#fff8f0" stroke="#000" stroke-width="1.4"/>
+<rect x="20.0" y="1214.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
+<text x="28.0" y="1233.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">10. Рупор QO-100: 6 сегментів (Європа)</text>
+<text x="28.0" y="1260.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">горло на ковпачку Bullseye → F → P4 LNB (13.2 V, вертикаль)</text>
+<line x1="170.0" y1="1270.0" x2="170.0" y2="1476.0" stroke="#999" stroke-width="0.6" stroke-dasharray="3,3"/>
+<text x="30.0" y="1284.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">ПАКОВАНИЙ</text>
+<text x="180.0" y="1284.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">РОБОЧИЙ</text>
+<polygon points="42.0,1314.0 102.0,1314.0 96.0,1374.0 48.0,1374.0" fill="#e6e6e6" stroke="#000" stroke-width="1"/>
+<polygon points="48.0,1320.0 108.0,1320.0 102.0,1380.0 54.0,1380.0" fill="#e6e6e6" stroke="#000" stroke-width="1"/>
+<polygon points="54.0,1326.0 114.0,1326.0 108.0,1386.0 60.0,1386.0" fill="#e6e6e6" stroke="#000" stroke-width="1"/>
+<circle cx="140.0" cy="1419.0" r="26.0" fill="none" stroke="#000" stroke-width="1.2"/>
+<circle cx="140.0" cy="1419.0" r="18.0" fill="none" stroke="#000" stroke-width="1.2"/>
+<text x="70.0" y="1400.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">сегм. ≤18.7 см</text>
+<text x="70.0" y="1414.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">кільця 18 см</text>
+<text x="95.0" y="1464.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">у рюкзаку (не в тубусі)</text>
+<rect x="185.0" y="1375.0" width="18.0" height="28.0" fill="#eee" stroke="#000" stroke-width="1.2"/>
+<polygon points="203.0,1380.0 330.0,1349.0 330.0,1429.0 203.0,1398.0" fill="none" stroke="#000" stroke-width="1.6"/>
+<polygon points="323.0,1351.0 465.0,1316.0 465.0,1462.0 323.0,1427.0" fill="none" stroke="#000" stroke-width="1.6"/>
+<line x1="330.0" y1="1349.0" x2="330.0" y2="1429.0" stroke="#000" stroke-width="1" stroke-dasharray="3,2"/>
+<line x1="465.0" y1="1316.0" x2="465.0" y2="1462.0" stroke="#000" stroke-width="2"/>
+<text x="265.0" y="1345.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">внутр. 134-138 → 267</text>
+<text x="395.0" y="1317.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">зовн. 255-378</text>
+<text x="330.0" y="1447.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">кільце 127</text>
+<text x="425.0" y="1481.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">кільце 180 мм</text>
+<text x="28.0" y="1496.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">6 x 28.6°, напівкут 13.8°, Al 0.3-0.5 мм; R_in = r_горла/sin 13.8°</text>
+<text x="28.0" y="1512.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">(134.2-138.3 мм). Шви внахлест ≥5 мм на заклепках + Al-стрічка.</text>
+<text x="28.0" y="1528.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Планувати ≈18-21 dBi до A/B; 3 внутрішні — з рук, 6 — на штативі.</text>
+<text x="28.0" y="1544.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Радіуси — по твірній від вершини конуса (мм).</text>
+<rect x="510.0" y="1214.0" width="480.0" height="352.0" fill="#fff8f0" stroke="#000" stroke-width="1.4"/>
+<rect x="510.0" y="1214.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
+<text x="518.0" y="1233.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">11. КХ-дріт 7-15 м + Balun One Nine v2 (9:1)</text>
+<text x="518.0" y="1260.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">балун (SMA) → 5-10 м коаксіалу → P5 HF/BNC (зміщення заблоковане)</text>
+<line x1="660.0" y1="1270.0" x2="660.0" y2="1476.0" stroke="#999" stroke-width="0.6" stroke-dasharray="3,3"/>
+<text x="520.0" y="1284.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">ПАКОВАНИЙ</text>
+<text x="670.0" y="1284.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">РОБОЧИЙ</text>
+<circle cx="585.0" cy="1354.0" r="34.0" fill="none" stroke="#000" stroke-width="2"/>
+<circle cx="585.0" cy="1354.0" r="12.0" fill="none" stroke="#000" stroke-width="1"/>
+<text x="585.0" y="1410.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">мотовило: дріт 7-15 м</text>
+<rect x="560.0" y="1424.0" width="50.0" height="20.0" fill="#eee" stroke="#000" stroke-width="1.2"/>
+<text x="585.0" y="1460.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">балун 38 x 25 мм</text>
+<line x1="685.0" y1="1309.0" x2="965.0" y2="1309.0" stroke="#8b4513" stroke-width="2"/>
+<rect x="680.0" y="1302.0" width="24.0" height="16.0" fill="#eee" stroke="#000" stroke-width="1.2"/>
+<text x="810.0" y="1302.0" font-size="11" text-anchor="middle" font-weight="normal" fill="#000">дріт 7-15 м (відкритий, не петля)</text>
+<line x1="692.0" y1="1318.0" x2="692.0" y2="1454.0" stroke="#555" stroke-width="1.4"/>
+<text x="700.0" y="1394.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">коаксіал 5-10 м → P5</text>
+<line x1="692.0" y1="1318.0" x2="840.0" y2="1454.0" stroke="#2a6" stroke-width="1.4" stroke-dasharray="6,3"/>
+<text x="810.0" y="1414.0" font-size="11" text-anchor="start" font-weight="normal" fill="#2a6">противага</text>
+<text x="518.0" y="1496.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Лише КХ (від 0.125 MHz); балун 9:1 — КЗ по DC: зміщення заблоковане.</text>
+<text x="518.0" y="1512.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">DCR балуна — DMM; кабелі — TDR з від'єднаною антеною.</text>
+<text x="518.0" y="1528.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Безпека: ≥2x висоти від повітряних ліній; захист очей при закиданні.</text>
+<rect x="1000.0" y="1214.0" width="480.0" height="352.0" fill="#fff8f0" stroke="#000" stroke-width="1.4"/>
+<rect x="1000.0" y="1214.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
+<text x="1008.0" y="1233.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">12. Boni-Whip на щоглі Robens 8.5 мм 7001-T6</text>
+<text x="1008.0" y="1260.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">→ BNC M-M → P5 (13.8 V лише в профілі Boni після DC-sense)</text>
+<line x1="1150.0" y1="1270.0" x2="1150.0" y2="1476.0" stroke="#999" stroke-width="0.6" stroke-dasharray="3,3"/>
+<text x="1010.0" y="1284.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">ПАКОВАНИЙ</text>
+<text x="1160.0" y="1284.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">РОБОЧИЙ</text>
+<line x1="1030.0" y1="1314.0" x2="1030.0" y2="1404.0" stroke="#777" stroke-width="2.2"/>
+<line x1="1036.0" y1="1314.0" x2="1036.0" y2="1404.0" stroke="#777" stroke-width="2.2"/>
+<line x1="1042.0" y1="1314.0" x2="1042.0" y2="1404.0" stroke="#777" stroke-width="2.2"/>
+<line x1="1048.0" y1="1314.0" x2="1048.0" y2="1404.0" stroke="#777" stroke-width="2.2"/>
+<line x1="1054.0" y1="1314.0" x2="1054.0" y2="1404.0" stroke="#777" stroke-width="2.2"/>
+<line x1="1060.0" y1="1314.0" x2="1060.0" y2="1404.0" stroke="#777" stroke-width="2.2"/>
+<line x1="1066.0" y1="1314.0" x2="1066.0" y2="1404.0" stroke="#777" stroke-width="2.2"/>
+<line x1="1072.0" y1="1314.0" x2="1072.0" y2="1404.0" stroke="#777" stroke-width="2.2"/>
+<rect x="1095.0" y="1324.0" width="14.0" height="60.0" fill="#eee" stroke="#000" stroke-width="1.2"/>
+<text x="1055.0" y="1424.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">8 x ≈30.5 см</text>
+<text x="1055.0" y="1438.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">пакунок ≈35 см</text>
+<text x="1102.0" y="1400.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">Boni</text>
+<line x1="1170.0" y1="1464.0" x2="1460.0" y2="1464.0" stroke="#000" stroke-width="1.2"/>
+<line x1="1300.0" y1="1464.0" x2="1300.0" y2="1306.0" stroke="#777" stroke-width="2.4"/>
+<rect x="1295.0" y="1272.0" width="10.0" height="34.0" fill="#eee" stroke="#000" stroke-width="1.2"/>
+<line x1="1300.0" y1="1272.0" x2="1300.0" y2="1256.0" stroke="#000" stroke-width="1.2" stroke-dasharray="3,2"/>
+<line x1="1300.0" y1="1358.7" x2="1190.0" y2="1464.0" stroke="#000" stroke-width="1" stroke-dasharray="5,3"/>
+<line x1="1300.0" y1="1358.7" x2="1410.0" y2="1464.0" stroke="#000" stroke-width="1" stroke-dasharray="5,3"/>
+<line x1="1270.0" y1="1464.0" x2="1270.0" y2="1464.0" stroke="#000" stroke-width="1"/>
+<line x1="1340.0" y1="1306.0" x2="1340.0" y2="1464.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="1345.0" y="1389.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">2.44 м</text>
+<text x="1288.0" y="1286.0" font-size="10" text-anchor="end" font-weight="normal" fill="#000">Boni ≈17 см</text>
+<text x="1310.0" y="1282.0" font-size="10" text-anchor="start" font-weight="normal" fill="#000">штир: TBD</text>
+<text x="1188.0" y="1364.7" font-size="10" text-anchor="start" font-weight="normal" fill="#000">відтяжки ≈2/3</text>
+<text x="1350.0" y="1478.0" font-size="10" text-anchor="start" font-weight="normal" fill="#000">кілок 25-30 см</text>
+<text x="1008.0" y="1496.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Boni-Whip над вершиною (друкований адаптер, розвантаження BNC);</text>
+<text x="1008.0" y="1512.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">≥2 м над землею; кілок = заземлення, основа-кілок &lt;1 Ohm;</text>
+<text x="1008.0" y="1528.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">відтяжки непровідні, ≤3 N; опускати при вітрі &gt; ≈20 km/h.</text>
+<text x="1008.0" y="1544.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Довжину штиря не опубліковано — виміряти (20-23, макс. 35 см).</text>
+<rect x="20.0" y="1576.0" width="480.0" height="352.0" fill="#fff8f0" stroke="#000" stroke-width="1.4"/>
+<rect x="20.0" y="1576.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
+<text x="28.0" y="1595.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">13. Штатив Rollei Compact Traveler No. 1</text>
+<text x="28.0" y="1622.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">кульова голова, Arca, 1/4-20; 1.14 kg; рупор, гелікон, V, патч</text>
+<line x1="170.0" y1="1632.0" x2="170.0" y2="1838.0" stroke="#999" stroke-width="0.6" stroke-dasharray="3,3"/>
+<text x="30.0" y="1646.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">ПАКОВАНИЙ</text>
+<text x="180.0" y="1646.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">РОБОЧИЙ</text>
+<rect x="80.0" y="1666.0" width="30.0" height="140.0" fill="#ddd" stroke="#000" stroke-width="1.4"/>
+<line x1="70.0" y1="1666.0" x2="70.0" y2="1806.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="65.0" y="1740.0" font-size="12" text-anchor="end" font-weight="normal" fill="#000">34.5 см</text>
+<line x1="320.0" y1="1661.0" x2="320.0" y2="1736.0" stroke="#000" stroke-width="3"/>
+<line x1="320.0" y1="1736.0" x2="250.0" y2="1826.0" stroke="#000" stroke-width="2"/>
+<line x1="320.0" y1="1736.0" x2="390.0" y2="1826.0" stroke="#000" stroke-width="2"/>
+<line x1="320.0" y1="1736.0" x2="320.0" y2="1826.0" stroke="#000" stroke-width="2"/>
+<circle cx="320.0" cy="1656.0" r="8.0" fill="#ccc" stroke="#000" stroke-width="1.2"/>
+<line x1="410.0" y1="1656.0" x2="410.0" y2="1826.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="415.0" y="1745.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">до 145 см</text>
+<text x="220.0" y="1676.0" font-size="10" text-anchor="start" font-weight="normal" fill="#000">113 см з опущеною</text>
+<text x="220.0" y="1690.0" font-size="10" text-anchor="start" font-weight="normal" fill="#000">колоною</text>
+<text x="28.0" y="1858.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">5 секцій 22/19/16/13/10 мм; монопод 49-151 см; 8 kg (заявлено).</text>
+<text x="28.0" y="1874.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">V-диполь на 1.087 м — з опущеною колоною; рівня немає — рівень дає IMU.</text>
+<text x="28.0" y="1890.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Перевірити баланс гелікона і рупора на 30° кута місця.</text>
+<rect x="510.0" y="1576.0" width="480.0" height="352.0" fill="#fff8f0" stroke="#000" stroke-width="1.4"/>
+<rect x="510.0" y="1576.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
+<text x="518.0" y="1595.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">14. S-band: 7-виткова спіраль у конусі (Lime)</text>
+<text x="518.0" y="1622.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">→ S-band LNA (TBD) → cf2235-kt30 → RX2 (ліва стінка)</text>
+<line x1="660.0" y1="1632.0" x2="660.0" y2="1838.0" stroke="#999" stroke-width="0.6" stroke-dasharray="3,3"/>
+<text x="520.0" y="1646.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">ПАКОВАНИЙ</text>
+<text x="670.0" y="1646.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">РОБОЧИЙ</text>
+<text x="585.0" y="1726.0" font-size="11" text-anchor="middle" font-weight="bold" fill="#000">TBD</text>
+<text x="585.0" y="1742.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">(не задано)</text>
+<line x1="760.0" y1="1814.0" x2="860.0" y2="1814.0" stroke="#000" stroke-width="3"/>
+<polyline points="810.0,1668.0 814.1,1668.9 818.0,1669.7 821.3,1670.6 823.9,1671.4 825.5,1672.3 826.0,1673.1 825.5,1674.0 823.9,1674.9 821.3,1675.7 818.0,1676.6 814.1,1677.4 810.0,1678.3 805.9,1679.1 802.0,1680.0 798.7,1680.9 796.1,1681.7 794.5,1682.6 794.0,1683.4 794.5,1684.3 796.1,1685.1 798.7,1686.0 802.0,1686.9 805.9,1687.7 810.0,1688.6 814.1,1689.4 818.0,1690.3 821.3,1691.1 823.9,1692.0 825.5,1692.9 826.0,1693.7 825.5,1694.6 823.9,1695.4 821.3,1696.3 818.0,1697.1 814.1,1698.0 810.0,1698.9 805.9,1699.7 802.0,1700.6 798.7,1701.4 796.1,1702.3 794.5,1703.1 794.0,1704.0 794.5,1704.9 796.1,1705.7 798.7,1706.6 802.0,1707.4 805.9,1708.3 810.0,1709.1 814.1,1710.0 818.0,1710.9 821.3,1711.7 823.9,1712.6 825.5,1713.4 826.0,1714.3 825.5,1715.1 823.9,1716.0 821.3,1716.9 818.0,1717.7 814.1,1718.6 810.0,1719.4 805.9,1720.3 802.0,1721.1 798.7,1722.0 796.1,1722.9 794.5,1723.7 794.0,1724.6 794.5,1725.4 796.1,1726.3 798.7,1727.1 802.0,1728.0 805.9,1728.9 810.0,1729.7 814.1,1730.6 818.0,1731.4 821.3,1732.3 823.9,1733.1 825.5,1734.0 826.0,1734.9 825.5,1735.7 823.9,1736.6 821.3,1737.4 818.0,1738.3 814.1,1739.1 810.0,1740.0 805.9,1740.9 802.0,1741.7 798.7,1742.6 796.1,1743.4 794.5,1744.3 794.0,1745.1 794.5,1746.0 796.1,1746.9 798.7,1747.7 802.0,1748.6 805.9,1749.4 810.0,1750.3 814.1,1751.1 818.0,1752.0 821.3,1752.9 823.9,1753.7 825.5,1754.6 826.0,1755.4 825.5,1756.3 823.9,1757.1 821.3,1758.0 818.0,1758.9 814.1,1759.7 810.0,1760.6 805.9,1761.4 802.0,1762.3 798.7,1763.1 796.1,1764.0 794.5,1764.9 794.0,1765.7 794.5,1766.6 796.1,1767.4 798.7,1768.3 802.0,1769.1 805.9,1770.0 810.0,1770.9 814.1,1771.7 818.0,1772.6 821.3,1773.4 823.9,1774.3 825.5,1775.1 826.0,1776.0 825.5,1776.9 823.9,1777.7 821.3,1778.6 818.0,1779.4 814.1,1780.3 810.0,1781.1 805.9,1782.0 802.0,1782.9 798.7,1783.7 796.1,1784.6 794.5,1785.4 794.0,1786.3 794.5,1787.1 796.1,1788.0 798.7,1788.9 802.0,1789.7 805.9,1790.6 810.0,1791.4 814.1,1792.3 818.0,1793.1 821.3,1794.0 823.9,1794.9 825.5,1795.7 826.0,1796.6 825.5,1797.4 823.9,1798.3 821.3,1799.1 818.0,1800.0 814.1,1800.9 810.0,1801.7 805.9,1802.6 802.0,1803.4 798.7,1804.3 796.1,1805.1 794.5,1806.0 794.0,1806.9 794.5,1807.7 796.1,1808.6 798.7,1809.4 802.0,1810.3 805.9,1811.1 810.0,1812.0" fill="none" stroke="#b5651d" stroke-width="1.2"/>
+<line x1="794.0" y1="1662.0" x2="826.0" y2="1662.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="810.0" y="1658.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">Ø46.7 мм</text>
+<line x1="870.0" y1="1668.0" x2="870.0" y2="1812.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="875.0" y="1744.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">228 мм</text>
+<text x="780.0" y="1716.0" font-size="10" text-anchor="end" font-weight="normal" fill="#000">крок 32.5 мм</text>
+<text x="518.0" y="1858.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">A/B проти 2-3-виткової в тому самому конусі — до фіналізації.</text>
+<text x="518.0" y="1874.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Лише алоу-лист NORAD: Black Kite-1/2, PHASMA-LAMARR/DIRAC.</text>
+<text x="518.0" y="1890.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">S-band LNA не названо (STACK.md §5.3) — TBD; поза підсумками.</text>
+<rect x="1000.0" y="1576.0" width="480.0" height="352.0" fill="#fff8f0" stroke="#000" stroke-width="1.4"/>
+<rect x="1000.0" y="1576.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
+<text x="1008.0" y="1595.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">15. Пакування: патч-чохол і рюкзак Deuter Futura 27</text>
+<text x="1008.0" y="1622.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">маса і об'єм — модель STACK.md §5.8</text>
+<line x1="1150.0" y1="1632.0" x2="1150.0" y2="1838.0" stroke="#999" stroke-width="0.6" stroke-dasharray="3,3"/>
+<text x="1010.0" y="1646.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">ПАКОВАНИЙ</text>
+<text x="1160.0" y="1646.0" font-size="11" text-anchor="start" font-weight="bold" fill="#555">РОБОЧИЙ</text>
+<rect x="1030.0" y="1676.0" width="90.0" height="60.0" fill="#e8f0fb" stroke="#000" stroke-width="1.4" rx="8"/>
+<text x="1075.0" y="1704.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">патч-чохол</text>
+<text x="1075.0" y="1718.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">0.8 L</text>
+<text x="1075.0" y="1756.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">0.25-0.4 kg</text>
+<rect x="1200.0" y="1656.0" width="110.0" height="170.0" fill="#fff3e0" stroke="#000" stroke-width="1.6" rx="14"/>
+<text x="1255.0" y="1736.0" font-size="11" text-anchor="middle" font-weight="bold" fill="#000">27 L</text>
+<text x="1255.0" y="1752.0" font-size="10" text-anchor="middle" font-weight="normal" fill="#000">4-8 kg</text>
+<line x1="1195.0" y1="1656.0" x2="1195.0" y2="1826.0" stroke="#000" stroke-width="0.8" marker-start="url(#al)" marker-end="url(#ar)"/>
+<text x="1190.0" y="1745.0" font-size="12" text-anchor="end" font-weight="normal" fill="#000">≥40 см</text>
+<rect x="1340.0" y="1676.0" width="18.0" height="120.0" fill="#ddd" stroke="#000" stroke-width="1.2" rx="6"/>
+<text x="1366.0" y="1726.0" font-size="10" text-anchor="start" font-weight="normal" fill="#000">тубус DN50</text>
+<text x="1366.0" y="1740.0" font-size="10" text-anchor="start" font-weight="normal" fill="#000">≈40 см,</text>
+<text x="1366.0" y="1754.0" font-size="10" text-anchor="start" font-weight="normal" fill="#000">внутр. ≈46.4</text>
+<text x="1008.0" y="1858.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Рюкзак: вміст 5.60-7.01 kg без КХ і щогли, 6.50-8.26 kg повністю.</text>
+<text x="1008.0" y="1874.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Складаний 1.3-1.8 kg (6-6.5 L); КХ 0.4-0.5 kg; щогла+Boni 0.5-0.55;</text>
+<text x="1008.0" y="1890.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">штатив 1.14 kg; польовий чохол 0.8 kg. Зважування ≤8.0 kg.</text>
+<text x="1008.0" y="1906.0" font-size="11" text-anchor="start" font-weight="normal" fill="#000">Сегменти 35 см і штатив 34.5 см стоять вертикально.</text>
+<rect x="820.0" y="1953.0" width="660.0" height="120.0" fill="none" stroke="#000" stroke-width="1.5"/>
+<line x1="820.0" y1="1983.0" x2="1480.0" y2="1983.0" stroke="#000" stroke-width="1"/>
+<text x="830.0" y="1974.0" font-size="14" text-anchor="start" font-weight="bold" fill="#000">Антенні комплекти — пакований і робочий стан</text>
+<text x="830.0" y="2003.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Аркуш: 06-anteny-komplekty (1/1)</text>
+<text x="830.0" y="2021.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Версія: v2, 18.10.2026    Одиниці: см / мм (як підписано)</text>
+<text x="830.0" y="2039.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Джерело: STACK.md v2 (розділи вказано на аркуші)</text>
+<text x="830.0" y="2057.0" font-size="13" text-anchor="start" font-weight="bold" fill="#b00000">«теоретичний проєкт — перевірити на стенді»</text>
+<text x="20.0" y="1988.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Кольори: блакитне тло — патч/чип рівень; бежеве — складаний рівень.</text>
+<text x="20.0" y="2006.0" font-size="12" text-anchor="start" font-weight="normal" fill="#000">Деталі збірки, налаштування і пакувальний список — 06-anteny.md.</text>
+</svg>

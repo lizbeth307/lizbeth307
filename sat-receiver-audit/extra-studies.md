@@ -71933,6 +71933,51 @@ I wrote all four files for the "block+rf" group. Both SVGs pass the XML check yo
   - FX 1.1241 USD/EUR (stack).
   - Downloaded catalogue text: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_scala/scala.txt
 
+## write:tests+bom (run `wf_fa12e9b4-a87`)
+
+I wrote the three "tests+bom" files to `/home/user/lizbeth307/sat-receiver-audit/build/`, all in Ukrainian. The CSV passes the csv.reader check (146 rows, 16 columns each). A script that sums the CSV rows reproduces every group and tier subtotal in STACK.md §2.12 and §3.6 to the cent. Both .md files have consistent table column counts. There are no SVGs in this group.
+
+**Files**
+- `/home/user/lizbeth307/sat-receiver-audit/build/09-testy.md` (151,404 B): the full test plan. Each test gives the setup (conducted only), procedure, pass value, what to record, when (gate, deadline or bring-up step) and the STACK.md section it comes from. It covers:
+  - receive-only rules, return windows and the gate calendar;
+  - board bring-up checks (B1–B14, kernel, UFS);
+  - the receive-only and policy self-tests: TX streams cannot open, bias token, rfkill, band masks, egc-gate, DSC/SITOR/WEFAX allow-lists, ADS-B/AIS privacy filters, SatDump/SDRangel/OpenWebRX+ audits, location without city tables;
+  - the power-board bench, including TPS2553 trips at 265/299/339, 144/166/192 and 685/747/817 mA, the HF+ 5.3 ms inrush check, the eFuses, the sealed 4.2 A / 60 min regulator run and its spur A/B, and the expanders including MCP #4;
+  - battery and charging, USB bandwidth and VBUS, and the D10 A/B matrix with per-band noise floor, display harmonic scan and HRPT spur gate;
+  - RF parts acceptance, the display (brightness, power, touch, BLE, dimming), thermal, mechanics and weather;
+  - the NPU gate, Lime acceptance within 30 days (L-0…L-12 and T7 (1)–(7)), every lab instrument's per-analog acceptance (P5), procedures P0–P21 with formulas, field tests, and the open questions.
+- `/home/user/lizbeth307/sat-receiver-audit/build/10-bom.csv` (63,911 B): 145 parts, one row per STACK.md BOM line. Sets stay as sets at the set price, with every part number listed. Columns include tier, whether the row counts in the tier total, numeric min/max USD, the EU price with VAT or landed price, status, and the condition for conditional replacements.
+- `/home/user/lizbeth307/sat-receiver-audit/build/10-bom.md` (20,715 B): per-tier totals, summary roll-ups, group composition, the budget variant, the EU landed-cost rule, the §9.1 shopping order (13 steps, longest lead times first), a deadline table with the Lime decision before 1.12.2026 in bold, authenticity rules and the TBD list. Headline totals:
+
+| Tier | USD |
+|---|---|
+| core with Lime | 2,523.01–2,843.48 |
+| core without Lime | 1,916.55–2,235.02 |
+| Lime set | 606.46–608.46 |
+| patch | 175.79–201.79 |
+| QO-100 | 97.41–124.46 |
+| folding | 542.26–612.99 |
+| lab core | 1,609.39–1,767.80 |
+| lab extended | 582.23–629.73 |
+| optional | 272.52–289.58 |
+
+**STACK.md sections used:** 1.1/1.2 (C4, C11, #11), 2.1–2.12, 3 (lab rule), 3.1–3.6, 5.7, 8, 8.1, 8.2, 9.1, 9.2, plus decisions D1–D19 (D2 serials, D3 token path, D6 7 Msps floor, D7 Airspy Mini gate, D8, D9, D11, D12 MCP #4, D13 RTL-B VBUS, D14 TPS2553 values, D15 Boni eFuse and reflow, D17, D18, D19).
+
+**Marked TBD, because STACK.md leaves them open or unpriced:**
+- Lime M.2 3.3 V load switch (part "не визначено", §2.11.1 and §8).
+- MCP23017 #4 address 0x23 and its lines, "призначити на схемі" (D12).
+- 5 V blower model (§2.1) and the filter LC parts (§2.7).
+- Fibreglass tape, 4S wrap and XT60-XT30 lead (no price).
+- Vendor for the UV divider's bottom resistors and the Schottkys (§9.1 step 6).
+- Piezo acoustic vent, LED window and IP67 SMA feedthroughs (no SKU, §2.9).
+- 4D OSD board (price on request).
+- Extra SMA attenuator for H1 on the Lime path (≥12 dB total; §8 names no value or part).
+- S-band LNA (not named).
+- Case TSA locks, hub power lead, Boni 5.5/2.1 mm plug, 240 W EPR cable, connector savers, BNC DC-block for the Hantek, LM4040 and the test NVMe 2230 (unpriced).
+- LNB bus 13.2 V vs 12.5 V and its tolerance window (owner decision, §8).
+
+**One inconsistency inside STACK.md §2.12:** the prose paragraph gives EU-landed lower bounds of ≈$4,965–5,641 and ≈$5,535–6,270, but the §2.12 table and §3.6 give ≥≈5,038–5,641 and ≥≈5,620–6,270. I used the table values. They equal the base totals plus the $90.09 Lime import uplift, so the prose looks like the error.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
