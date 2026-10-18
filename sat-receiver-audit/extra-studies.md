@@ -4061,6 +4061,99 @@
   - These batch-1 edits changed text that batch-2 changes use as anchors, so those agents should locate the spot by part name: J21 '220 мкФ/25 V' (idx 63), 'HF+ (...)' in LAB5 (idx 49), 'PG на MCP #3' (idx 57, now gone) and the TPS7A4701 spec text (idx 56). idx 58 refers to the old Boni row text 'PTC 0.2 A ... PG'; the 13.8 V choice and its straps are already applied here.
   - The 'Заряд.' paragraph still says 'IP2368 BZ' and is left for idx 41/53. idx 12 changed only the topology mention.
 
+## edit:08b_new_gates_reaudit:b2 (run `wf_1721ea96-ee2`)
+
+- **Section:** 08b_new_gates_reaudit
+- **Applied:**
+  - 58
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  - 64
+  - 65
+  - 66
+  - 67
+  - 68
+  - 69
+  - 70
+  - 71
+  - 72
+  - 73
+  - 74
+  - 75
+  - 76
+  - 77
+  - 78
+  - 79
+  - 80
+  - 81
+  - 82
+  - 83
+  - 84
+  - 85
+  - 86
+  - 87
+  - 88
+  - 89
+  - 90
+  - 91
+  - 92
+  - 93
+  - 94
+  - 95
+  - 96
+  - 97
+  - 98
+  - 99
+  - 100
+  - 101
+  - 102
+  - 103
+  - 104
+  - 105
+  - 106
+  - 107
+  - 108
+  - 109
+  - 110
+  - 111
+  - 112
+  - 113
+  - 114
+- **Skipped:** []
+- **Notes:** I edited one file, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/08b_new_gates_reaudit.md, with Edit, building on batch 1. All 57 changes are in. 56 of them became new rows after the DRP-matrix row. They are grouped as power, GNSS/IMU, display/HMI, mech/storage, then lab. The table now has 112 data rows, and a script confirmed every row has exactly 3 cells. Pipes inside commands are escaped (\|) for idx 70, 94 and 105. There is no subtotal in this file.
+  
+  Merges:
+  - idx 61 (TPS7A4701 rails) did not get its own row. It is the same test as the existing RF-4 (LNB) and HF-8 (BONI13V8) rows, so I merged it into them. Added: output at a 13.2 V battery (dropout), PTC at 1.5-2x the Bullseye current at 60 C, heat-sink mounting, the TLV3011 rail-good trip at about 90%, and the first-power-up check with EN toggled from MCP #1.
+  
+  Conflicts and which source won:
+  1. idx 61: analog G3 #9 (P5) beat re-audit D.
+     - The ±0.35 V connector window is treated like the other windows: measure each unit, or set the window from the load limits. You decide.
+     - The IC bands are now named: ±0.33 V at 13.2 V, ±0.31 V for the 12.5 V option, ±0.345 V at 13.8 V.
+     - Re-audit D's "battery ≥14.2 V" is noted as not enough for the BONI rail.
+     - Re-audit D's 12.5 V bias-tee target is replaced by BONI13V8. The power-architecture file (05a) already uses BONI13V8, after re-audit B and G3 #9.
+  2. idx 59 (Daly UVP wake): the G3 #4 correction from the IP2368 datasheet (30-70 mA below 2.5 V; 100/200/300 mA from 2.5 V to N×3.0 V) beat re-audit D's 100-200 mA. G3 #3 repeated 100-200 mA unchanged, but G3 #4 explicitly says to fix this test. I also added from G3 #3: the fuse pull/re-insert reset, and spare or exchange if OVP trips below about 4.21 V.
+  3. idx 114 (DMM): G5 #7 beat re-audit D. The meter is now the AN8009 (fallback AN8008), and the ZT109 / DM1106EN PCB-marking check is dropped. The 0.1% resistor example and the ±0.11 uA tolerance come from G5 #7.
+  4. idx 95 (IPX4): the IMU connector is GX16 if the G3 #0 change is accepted, otherwise a capped GX12 or M8. Re-audit D only said GX12 or M8.
+  
+  Refinements from higher-precedence analog decisions, cited inline:
+  - idx 60: G5 #6, G5 #7 and G3 #8 (FNB58 only after a DMM/DPS-150 cross-check, or the external-shunt mV method; shunt treated as 1%).
+  - idx 62: G3 #13 (.WXNV fuses).
+  - idx 63: G3 #2 (NKON; AC IR about 6.5 mOhm; picking 4 of the 5 cells).
+  - idx 72: G3 #0 (Game RV drift ≤0.5°/min).
+  - idx 83: G2 #6 (PEC11R-4220F).
+  - idx 96: G4 #1 (captured nut).
+  - idx 98: G5 #0 (14-day EU window, 04b4:0008, IFBW per hardware revision, S11 floor limits).
+  - idx 106: G5 #2 (ZFL-500+ limits).
+  - idx 107: G5 #13 (Waveshare 23062, STT expected, one added tier).
+  - idx 111: G5 #6 (do not update the firmware; 100 sps, stall handling).
+  
+  Section 8.2 (08c) already holds the full analog acceptance for LBE-1420, DPS-150, whole-device IPX4 and the captured nut. Rows 112, 113, 95 and 96 keep the re-audit test and point to 8.2 instead of repeating it.
+  
+  Wording: "Pico відкриває #2813" became "Pico розмикає #2813", because "відкриває" can be misread in Ukrainian as "turns the switch on". All signal-source steps are marked conducted-only, the BLE and 2.4 GHz checks are receive-only, and the probes are E-field only (no loop or H-field probe).
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
@@ -15961,6 +16054,76 @@
   - **idx 11 vs idx 17, GNSS antenna (both P4):** merged into one bias sentence. The GLONASS and magnet notes appear once.
   - **idx 3 vs idx 19, SAWbird+ GOES:** merged, and the current figures appear once. The G1 conditional text for Barebones (idx 19, P5) replaces «лише в екранованому корпусі».
 
+## edit:05b_arch_bus_rf:b2 (run `wf_45d408c6-7ff`)
+
+- **Section:** 05b_arch_bus_rf
+- **Applied:**
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 48
+  - 49
+  - 50
+  - 51
+  - 52
+  - 53
+  - 54
+  - 55
+  - 56
+  - 57
+  - 58
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  - 64
+  - 65
+  - 66
+  - 67
+  - 68
+  - 69
+  - 70
+  - 71
+  - 72
+  - 73
+  - 74
+  - 75
+- **Skipped:** []
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/05b_arch_bus_rf.md, in place, keeping every batch-1 edit. All 38 changes are applied; none was skipped outright. Some were merged with each other, and a few were applied in part where they clashed with a higher-precedence source or with another change.
+  
+  Merges and conflicts:
+  - 42 and 64 (pins 1/17, 2/4): both say the LC76G board takes 5 V. Merged into one cell: never 3.3 V, the RT9193-33 drops out, antenna bias falls below 3.0 V (model), the MS621FE charge falls.
+  - 43 and 75 (P7 GNSS row): merged into one row. I kept the fuller numbers from 43 (3.06-3.19 V at 10-20 mA, model; accept ≥3.05 V) and added "about 3.1 V at 20 mA" from 75. Also in: IPEX → SMA-K pigtail, the fallback with a DC block, and the R5 / RT9193 limits.
+  - 38 with 45, 48, 49, 51: the throw remap (T1→RF2, T2→RF3, T3→RF4) is applied inside the rewritten LRPT, UHF, 2 m, HRPT, Inmarsat, H1 and QO-100 rows. No T1-T4 labels are left.
+  - 38 and 48 (HRPT row): merged. Capture is "RTL-B RF2, 2.4 Msps, or Lime RX1" (reaudit_C), replacing 2.4-2.56. "2.88 Msps only under the Metop/AWS gate" and the phones rule come from 38. I wrote "pcie0 off" as applying to RTL-B capture, because the Lime option needs PCIe on.
+  - 41 and 54 (LNB IF ingress): both re-audit. 41 wins on DVB-T: the 700 MHz band no longer carries it, so the batch-1 text "DVB-T (734-742 MHz)" and the DVB-T mention in 54 are removed. The rest of 54 stays: duplex gap, B28 UL/DL edges, engineering estimate, mandatory field check with a pointer to section 8, injector with DC block in the shielded bay. The scan uses 41's ranges (733-758 MHz plus 703-733 MHz, LNB unpowered then powered), which cover the 730-750 MHz in 54.
+  - 52 and 54, the "RG6 with compression F" part only: not applied. analogs_G1, which ranks higher, chose the Goobay 58814 lead (5.4 mm, triple shield, moulded F) and rejected an RG6-class cable. The P4 row now says "shielded 75 Ohm lead with tight F connectors" and points to the LNB IF paragraph. I left the phrase "Подвійно екранований 75 Ohm дріт, щільні F-роз'єми" unchanged so batch-3 change 86 can still find it.
+  - 52: the batch-1 note "choke fitted, region Europe" is kept. The pad is now 15/20/30 dB chosen on the bench, and the SMA pads 10+10 and 20 dB are added. The pad value is also updated to 15/20/30 in the gain-plan line, so it matches 53.
+  - 62 and batch-1 change 15 (UART6), both re-audit: kept 15's /dev/lab/gnss target instead of 62's /dev/gnss0. Reasons: the kernel GNSS class can claim /dev/gnss0, and the file's udev rule names devices /dev/lab/<name>. From 62 I added the probe-order note (ttyHS1 or ttyHS2, never hard-code ttyHS1), KERNELS=="998000.serial" and "gpsd (-b, лише читання)".
+  - 60 and batch-1 change 4 (pin 7): I appended the re-audit facts (PIN_7 in the 6.18.2 DTS, MI2S0 on GPIO97/98/100, /dev/pps-gnss via udev, never pps0). "Nothing else references it" is softened to "nothing apart from the mi2s0_mclk pinctrl state", so it does not contradict the operator-note rule already in the cell.
+  - 65 and batch-1 change 24 (MCP #3 inputs): merged. TLV3011 rail-good, about 90%, open drain; the TPS7A4701 has no PG pin.
+  - 68: merged with the existing PI4IOE5V9555 row, so the no-collision note appears once. Per the reaudit_D datasheet note, 0.0042 lx/count is the resolution at gain ×2 / IT 800 ms; gain 1/8 and IT 25 ms apply above about 20 klx.
+  - 72: the firmware rules are added after the TX-pins sentence. The GP23 PFM/PWM sentence moved from the GP26-28 row into this paragraph, so it is not stated twice; the row now points there. On UART7, reaudit_D's fallback (FIFO mode, overlay without qcom,enable-gsi-dma, or H1 USB-CDC) is kept with a note that reaudit_A says qcom_geni_serial ignores the flag. The overlay is tied to the radxa-overlays 0.2.31 fragment in lab-q6a.dtbo, as the existing text says.
+  - 40: FM band-stop added to the spare-V4L ADS-B and radiosonde rows, with the two-tone limits from reaudit_B (about −29 dBm at 1090 MHz, about −24 dBm at 400 MHz). The gain-plan sentence "no FM notch" now says this applies only to RTL-A/RTL-B.
+  - 38: the time-signal row now reads 13.8 V, with the acceptance gate at the Boni 2.1 mm barrel, which matches the P5 port row.
+  - 39: the DAB+ row says why the HF+ cannot do DAB (912 ksps max against 2.048 Msps).
+  - 51: "LNB куплено" replaces batch-1's "купується", matching the user decision of 18 Oct 2026 (add-on bought).
+  - 56: the S-band NORAD allow-list is a guard that keeps military-operated 2200-2300 MHz downlinks out of the schedule, so it fits the hard rule.
+  
+  Subtotals recomputed:
+  - Pico header: 23 GPIO + 3 ADC used, only GP22 free; 24 GPIO + 3 ADC if GP22 becomes the fan tach (change 70).
+  - RF ports: P1-P8 + RX1 on the top edge is 9 ports, 160 mm between end centres plus about 10 mm for nuts, so about 170 mm (model; method from reaudit_D). All 11 ports on top would take about 210 mm of the 220-225 mm edge. This replaces "7 ports = 140 mm".
+  
+  Left for batch 3 (changes 76-113), which aim at nearby text: Goobay lead (86), Uputronics Rev 3.0 (78), DC-block rule (104), INA228 0x45 in the I2C address map (99), GX16 connector for the IMU pack (98), GP18/19 driver parts (89), GP20-22 row (91) and the bench STT hub sentence (106).
+
 ## edit:10_sources:b1 (run `wf_47c804ff-504`)
 
 - **Section:** 10_sources
@@ -25341,6 +25504,57 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   Two other sections must match these figures:
   - 03a 3.3: the HF chain total should become 524.71-576.74. Its own change list does not include the G4 mast or reaudit B's Boni-Whip price on top of G1's figure.
   - 02e 2.12: the device and tier totals should match the breakdown above.
+
+## edit:02c_bom_display_power_gnss:b2 (run `wf_85b20a83-f63`)
+
+- **Section:** 02c_bom_display_power_gnss
+- **Applied:**
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+  - 38
+  - 39
+  - 40
+  - 41
+  - 42
+  - 43
+  - 44
+  - 45
+- **Skipped:** []
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/02c_bom_display_power_gnss.md, in place. The batch 1 edits (idx 0-22) are still there and I built on them. Every table row still has 7 columns; I checked this by counting the pipes.
+  
+  Conflicts and merges:
+  - idx 24, 25 and 35 (HDMI). The G2 analog decision (idx 35) sets the part and price: Adafruit 2420 + 2x Fair-Rite 0431164281, $15.65, fallback 2x Wurth 74271112 at $18.71, and a separate row for the Wurth 74271140 touch-lead ferrite at $3.91. From re-audit D I merged three facts: the run is A-A because the Wisecoco input is full-size HDMI; 74271140 is WE-STAR-TEC NiZn 4W620 for 2-3 mm cable, not Mix-31/61; and the FPC kit is 2x 3548 + 3560 = $14.50, with 3550 for a right angle and 3552 + 3548 + 3560 for the 4D. G2's wording won on the FPC kit's role: it is a routing fallback ("запас трасування"), not a "Бюджет" option.
+  - idx 26 and 37 (Pico). G2 sets seller, price and the shared-basket rules. Re-audit D's technical text replaces the old "26 GPIO": 23 GPIO + 3 ADC used, only GP22 free, Schottky into VSYS, clk_sys 125 MHz, watchdog, production until at least Jan 2036. D's "only SC0915, no radio" was not repeated because the model cell already says it.
+  - idx 27 against the batch 1 text (re-audit A, "no sealing class"): I merged them as "лише IP40". The word "дребезг" is written as "брязкіт".
+  - idx 28 and 36 (sun kit): I applied the G2 row and added re-audit D's VEML7700 driver notes and the rule that the AR film is mandatory.
+  - idx 30 and 45 (IMU pack): I applied the G3 row and added re-audit D's firmware and flashing notes.
+  - idx 31 against the batch 1 text from idx 9 (LC76G VCC): merged, so nothing is repeated.
+  - idx 32 (MAX-M10S): I applied re-audit D's content (region Europe, LC76G as default, travel-only option, no flash, UART6 TX first). On price, the G3 analog decision won (it is idx 46, in batch 3): the line keeps $38.36 = GBP 28.80 instead of D's GBP 28.79, about $38.39.
+  - idx 23 and 34 (Wisecoco / 4D): merged into one text about the 4D fallback, so the 1000 cd/m2, 800:1 and no-AR figures are not repeated. idx 29 added a new fallback-only row "Кнопкова плата OSD 4D" with price on request, not counted in the subtotal.
+  - idx 33 and 42 (custom PCBs, same row): both applied. The price stays 10-30 (модель).
+  
+  Recomputed subtotals:
+  - 2.6: 219.24-247.29 became 221.24-237.59. This adds the button overlay 5-15 (модель), which batch 1 already included, to G2's 216.24-222.59; without the overlay the figure is G2's 216.24-222.59. If every conditional replacement falls back to its alternative, the upper bound is 252.44 by my sum (+3.06 +3.33 +8.00 +0.46). G2 gives "up to 237.48" without the overlay, but its own figures add to 237.44. So I did not quote 237.48 in the file. The note now says that Wisecoco and 4D-store shipping, Diamox film shipping and VAT, and the 4D OSD board are excluded.
+  - 2.8: 80.43-105.43 became 69.67-71.67 (53.73-55.73 + 15.94, without VAT or shipping).
+  - 2.7: nothing in this batch changes a 2.7 price, so 371.34-522.34 is unchanged.
+  
+  Notes for batch 3:
+  - The anchor for idx 46(d), "Бюджет: Uputronics MAX-M10S (від $38.36 = GBP 28.80), якщо потрібні прапорці підміни", is gone; that spot now reads "Опція (дорожча, не бюджет): Uputronics MAX-M10S 3V від $38.36 = GBP 28.80". The price already matches G3.
+  - idx 46 says to keep "Роз'єм RTC звірити з аркушем 18 схеми", but idx 31 (re-audit D) replaced that sentence because the RTC is on PDF page 16 (J11), not sheet 18. The line now reads "RTC: RS4C411ZAE на платі Q6A (схема v1.21, PDF стор. 16, роз'єм J11 — не аркуш 18; …)". G3's own point (c) also uses PDF page 16.
+  - The model-cell text "батарейка CR2032 для RTC" is unchanged and still there for idx 46.
 
 ## community:compute_os (run `wf_9603e249-d87`)
 
