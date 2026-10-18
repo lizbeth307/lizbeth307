@@ -26530,6 +26530,123 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Search use: 11 WebSearch calls.
 
+## searchA:airspy_hf_discovery (run `wf_e32114dd-52d`)
+
+- **Part:** Airspy HF+ Discovery (core, HF group, qty 1): dedicated 0.5 kHz-31 MHz HF/LF receiver and second VHF receiver (64-260 MHz: AIS, FM-RDS, airband, VOR, LRPT/ISS backup), on CH334F port H4, in its own shield can
+- **Current price usd:** 169.00 at ITEAD's DE warehouse (EU SKU IM190522001EU, 310 in stock, store API 18 Oct 2026). Neither the page nor the API says whether VAT is included. If 19-25 % VAT is added, the landed price is about $201-211.
+- **Critical specs:**
+  - Coverage HF/LF: 0.5 kHz-31 MHz continuous. Needed for DCF77 77.5 kHz, MSF 60 kHz, TDF 162 kHz, JJY 40 kHz, NAVTEX 490/518 kHz (LF window centred at 330 kHz) and the HF bands. 3-30 kHz is masked in logging only.
+  - Coverage VHF: 64-260 MHz on the same SMA. Needed for the second-VHF role: AIS 162 MHz (default), FM-RDS, airband, VOR, LRPT 137 MHz and ISS 145.8 MHz backup.
+  - HF sensitivity: MDS -140.0 dBm typ in 500 Hz at 15 MHz. I derived NF from it: about 7 dB if MDS equals the noise floor, about 4 dB if MDS is defined 3 dB above it. Airspy does not publish an NF.
+  - VHF sensitivity: MDS -141.5 dBm (64-118 MHz) and -141.0 dBm (118-260 MHz) in 500 Hz.
+  - Linearity: IIP3 +15 dBm on HF and +13 dBm on VHF at maximum gain.
+  - Blocking dynamic range: 110 dB HF, 95 dB VHF. Maximum input +10 dBm. This matters for a long wire near MW/SW broadcast transmitters.
+  - Real-antenna measurement: SM5BSZ 7.2 MHz dynamic-range test, relative to the Perseus: HF+ Discovery -3 dB, HF+ Dual -10 dB, AFEDRI -15 dB, Airspy+SpyVerter -18 dB, RSP1 -23 dB.
+  - Preselection: switched HF high-pass and low-pass filters. 660 kHz alias- and image-free at 768 ksps, 120 dB software image rejection.
+  - ADC/DDC: 2x sigma-delta ADC at up to 36 MSPS, 18-bit DDC. IQ rates 192/384/456/768/912 ksps; the 768 ksps profile is required.
+  - Clock: 0.5 ppm, 1 ppb adjust step. The ppb value is stored in device flash (airspyhf_calibrate) and libairspyhf applies it automatically.
+  - Interface: USB 2.0 high-speed, micro-USB B, about 3.1-3.65 MB/s bulk, behind a USB 2.0 hub (CH334F H4). USB 3-only devices are excluded by the port map and by the SuperSpeed RFI note.
+  - Driver on Ubuntu 24.04 arm64: open source and in the archive (libairspyhf1 1.6.8-4build1, plugdev udev rule). Supported by SoapyAirspyHF 0.2.1, SDR++, SDRangel 7.27.2, SatDump, AIS-catcher and OpenWebRX+.
+  - Power: USB bus powered, current not published (0.3 A budget; an unattributed figure of about 170 mA). Fed through a current-limited VBUS load switch.
+  - Size and mass: 45x60x10 mm, 32 g. Shielded by its own metal can and absorber, inside the handheld.
+  - Operating temperature: -45 to +85 C.
+  - Rule fit: receive-only with no TX path, no bias tee (no DC on the antenna port), one 50-ohm SMA fed by the G6K-2F-RF K1/K2 selector.
+  - Sourcing: genuine unit from ITEAD or a dealer listed on airspy.com/purchase.
+- **Candidates:**
+  1.
+    - **Name:** Airspy HF+ Discovery (current pick), ITEAD DE warehouse
+    - **Kind:** current_part
+    - **Price usd:** 169.00 (VAT handling not shown; about $201-211 landed if 19-25 % VAT is added)
+    - **Spec comparison:** Baseline. Airspy's page (fetched 18 Oct 2026): 0.5 kHz-31 MHz and 64-260 MHz; IIP3 +15/+13 dBm; BDR 110/95 dB; MDS -140 / -141.5 / -141.0 dBm in 500 Hz; +10 dBm max input; 2x sigma-delta 36 MSPS ADC, 18-bit DDC; 660 kHz alias-free at 768 ksps; 0.5 ppm clock with 1 ppb adjust; -45..+85 C; 45x60x10 mm.
+    - **Worse in:** n/a (reference)
+    - **Compatibility:** Already integrated: noble arm64 libairspyhf 1.6.8-4build1, SoapyAirspyHF 0.2.1 (+lab build), SDR++, SDRangel, SatDump, AIS-catcher, OpenWebRX+ (rates 768k/912k/456k/384k/192k only). USB 2.0 HS on CH334F H4.
+    - **Risks:** ITEAD's VAT handling for the DE warehouse is not shown; check at checkout. The CN-warehouse SKU (IM190522001) is also $169 but adds import VAT/customs and a longer transit, so it gains nothing.
+    - **Seller url:** https://itead.cc/product/airspy-hf-discovery-eu/
+    - **Sources:**
+      - https://airspy.com/airspy-hf-discovery/
+      - https://itead.cc/wp-json/wc/store/v1/products?slug=airspy-hf-discovery-eu
+      - https://itead.cc/wp-json/wc/store/v1/products?search=airspy&per_page=50
+      - https://airspy.com/purchase
+  2.
+    - **Name:** Same part (Airspy HF+ Discovery), bought at ITEAD during Airspy's seasonal sale (Black Friday 2026 is about 27 Nov)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $135.20 at 20 % off or $126.75 at 25 % off, ex VAT, if the 2026 Black Friday sale repeats (not yet announced, so unverified). About $151-169 with 19-25 % VAT. Saves $33.80-42.25 against $169.
+    - **Spec comparison:** Identical part, identical specs.
+    - **Worse in:** Nothing in specs or quality. The only cost is timing: the sale is expected but not confirmed.
+    - **Compatibility:** Identical to the current part.
+    - **Risks:** Sale history (rtl-sdr.com): Black Friday 20 % in 2022, 2023 and 2024 ($135.20) and 25 % in 2025 ($126.75); summer sale 20 % in 2025 (27-30 Jun) and 2026 (27 Jun-4 Jul), $135.20. Each was at the ITEAD store and most participating resellers. A 2026 Black Friday sale is not confirmed: if none starts by about 1 Dec 2026, buy at $169. Waiting does not delay the build, because the kept LimeSDR Micro ships on 15 Dec 2026. Buy only from ITEAD or an airspy.com/purchase dealer, and check on arrival with airspyhf_info (S/N, firmware, rate list).
+    - **Seller url:** https://itead.cc/product/airspy-hf-discovery-eu/
+    - **Sources:**
+      - https://www.rtl-sdr.com/an-overview-of-2025-sdr-black-friday-deals/
+      - https://www.rtl-sdr.com/airspy-and-youloop-2024-black-friday-sale-20-off/
+      - https://www.rtl-sdr.com/airspy-2026-summer-sale-20-off-all-airspy-products/
+      - https://www.rtl-sdr.com/airspy-2025-summer-sale-20-off-all-airspy-products/
+  3.
+    - **Name:** Same part from other official EU dealers (AstroRadio ES, Moonraker EU, WiMo DE, Neven CZ, FB Radio SE), as fallback sources
+    - **Kind:** current_part
+    - **Price usd:** AstroRadio EUR 214.17 incl. 21 % IVA (EUR 209.89 by bank transfer) = $235.94-240.75. Net EUR 177.00 = $198.97. Delivery 1 week, but a back-in-stock form is shown, so stock is unclear. Moonraker EUR 231.99 incl. local VAT, free DPD = $260.78. WiMo EUR 232.00 incl. VAT (EUR 194.96 net) = $260.79. Neven CZK 5,590 incl. VAT (CZK 4,619.83 net), 5 in stock, not converted (no CZK rate in STACK). FB Radio SEK 2,495 (was 2,695), VAT not shown, not converted. Conversions use STACK's 1 EUR = 1.1241 USD.
+    - **Spec comparison:** Identical part.
+    - **Worse in:** None are cheaper. Each is above ITEAD's $169 + VAT ($201-211).
+    - **Compatibility:** Identical.
+    - **Risks:** Not a saving; useful only if ITEAD is out of stock or VAT handling there turns out badly. Dealers usually join the seasonal sales too: WiMo at 20 % off would be about EUR 185.60 incl. VAT (my arithmetic), still above ITEAD on sale.
+    - **Seller url:** https://www.astroradio.com/p/airspy_hf_discovery/
+    - **Sources:**
+      - https://airspy.com/purchase
+      - https://www.astroradio.com/p/airspy_hf_discovery/
+      - https://moonrakeronline.com/eu/airspy-hf-plus-discovery-high-peformance-sdr-receiver
+      - https://www.wimo.com/es/airspy-discovery
+      - https://www.neven.cz/p/airspy-hf-discovery-sdr-prijimac
+      - https://fbradio.se/sdr/airspy-hf-discovery-sdr-mottagare/
+  4.
+    - **Name:** SDRplay RSP1B
+    - **Kind:** other_brand
+    - **Price usd:** $140.99 (GBP 105.80 ex VAT at SDRplay; out of stock, expected back end of Oct 2026). EU: eleshop.eu EUR 123.13 ex VAT = $138.41 (search snippet only, page not opened); Passion Radio EUR 154.87 ex VAT (earlier stage, not re-checked).
+    - **Spec comparison:** Datasheet V1.0 (Jan 2024). Coverage 1 kHz-2 GHz (better). Bandwidth up to 10 MHz, 14-bit ADC at 2-6.048 MSPS (better for bandwidth). NF 22 dB at 300 kHz, 18 dB at 2 and 4 MHz, 15 dB at 12/25/40 MHz, against HF+ about 4-7 dB derived from MDS. So HF sensitivity is about 8-15 dB worse: about -132 dBm in 500 Hz at 12-25 MHz versus -140 dBm (my derivation). VHF NF 3.3 dB at 100-200 MHz (better than HF+ VHF, about 6 dB derived). IIP3 and BDR are not published at all (HF+ +15 dBm / 110 dB). Max input 0 dBm continuous, +10 dBm short (HF+ +10 dBm). TCXO 0.5 ppm trimmable to 0.01 ppm (10 ppb, against 1 ppb). 185 mA without bias-T. 98x94x35 mm, 315 g (HF+ 45x60x10 mm, 32 g). Specified at 0-35 C typ, page -10..+60 C (HF+ -45..+85 C). Measurements: SM5BSZ dynamic range RSP1 -23 dB against HF+ Discovery -3 dB relative to the Perseus (that was the RSP1, not the RSP1B). A forum user found the RSP1B's MDS not good enough for 60 kHz WWVB on a YouLoop where the HF+ worked (anecdotal).
+    - **Worse in:** HF noise figure (8-15 dB worse), unpublished IIP3/BDR, max continuous input (0 dBm against +10 dBm), size and mass (about 10x the mass), operating temperature range, frequency-trim resolution, and a closed-source driver. A software-switchable 4.7 V bias-T on the antenna port is an extra DC-on-antenna path to gate. Better only in coverage above 260 MHz, 10 MHz bandwidth and VHF NF, none of which this role needs. REJECTED.
+    - **Compatibility:** USB 2.0 HS type B (fits the hub electrically). Closed SDRplay API 3.15 with an arm64 library and a service daemon; supported on Ubuntu LTS up to 24.04, with ARM service-restart reports. SoapySDRPlay3, SDRangel sdrplayv3 and SatDump support it. The 98x94x35 mm box does not fit the handheld slot sized for 45x60x10 mm.
+    - **Risks:** Out of stock at SDRplay. The closed API is a binary dependency on the device. The bias-T needs its own gate under the receive-only/DC rules.
+    - **Seller url:** https://www.sdrplay.com/rsp1b/
+    - **Sources:**
+      - https://sdrplay.com/wp-content/uploads/2026/06/RSP1B_Datasheet.pdf
+      - https://www.sdrplay.com/rsp1b/
+      - https://www.sdrplay.com/product/rspdxr2
+      - https://eleshop.eu/sdrplay-rsp1b-rf-receiver.html
+      - https://www.rtl-sdr.com/?p=36199
+      - https://forums.radioreference.com/threads/hf-sdr.497626/
+  5.
+    - **Name:** Airspy Mini + SpyVerter R2 (upconverter combination)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $148.00 list at ITEAD (Mini $99.00, SpyVerter R2 $49.00, both in stock in the EU warehouse). $118.40 at 20 % sale prices. Ex VAT.
+    - **Spec comparison:** SpyVerter R2: RF 1 kHz-60 MHz to 120 MHz IF, converter IIP3 +35 dBm, about 8 dB conversion and filter loss, 65 MHz low-pass, 0.5 ppm VCTCXO, powered by bias tee at under 100 mA. Airspy Mini: 12-bit, 24-1700 MHz native, up to 6 MS/s (wider HF windows, better). Measurement: SM5BSZ real-antenna HF dynamic range at 7.2 MHz, Airspy+SpyVerter -18 dB against HF+ Discovery -3 dB relative to the Perseus, so about 15 dB worse. Airspy publishes no combined HF MDS/BDR for this pair.
+    - **Worse in:** HF dynamic range (about 15 dB worse measured). It is two boxes plus an extra SMA joint, larger than 45x60x10 mm. It needs the Mini's bias tee to power the SpyVerter, a DC path that conflicts with the default-off bias policy; the Mini's bias-tee current (about 50 mA per forum) against the SpyVerter's 'under 100 mA' is unverified. The VHF role needs the SpyVerter bypassed or an extra RF switch path (bypass behaviour unverified). The Mini lacks ppm correction on Linux (earlier stage). No 0.5 kHz LF floor claim (SpyVerter starts at 1 kHz, acceptable). REJECTED.
+    - **Compatibility:** soapysdr0.8-module-airspy 0.2.0-4 in noble arm64; SDR++ and SatDump native support. USB 2.0. Software must apply the 120 MHz offset.
+    - **Risks:** Mini bias-tee capacity for the SpyVerter not confirmed. The SatDump Stop-deadlock fix for the Airspy source was unmerged (earlier stage).
+    - **Seller url:** https://itead.cc/wp-json/wc/store/v1/products?search=airspy&per_page=50
+    - **Sources:**
+      - https://airspy.com/spyverter-r2/
+      - https://www.rtl-sdr.com/?p=36199
+      - https://www.rtl-sdr.com/leif-compares-various-sdrs-including-the-rsp1-airspy-with-spyverter-airspy-hf-fdm-s1-ic706-perseus/
+      - https://discussions.flightaware.com/t/airspy-and-bias-tee/51220
+- **Notes:** VERDICT: keep the Airspy HF+ Discovery. No cheaper part from another established brand is not-worse. The only not-worse saving is the identical part bought at ITEAD during Airspy's seasonal sale. Buy it in the expected Black Friday 2026 sale (about 27 Nov): $126.75-135.20 ex VAT, saving $33.80-42.25. Airspy has run 20-25 % sales at Black Friday 2022-2025 and in summer 2025-2026. If no sale is live by about 1 Dec 2026, buy at $169. This does not delay the build, since the Lime ships 15 Dec 2026.
+  
+  The ITEAD DE warehouse ($169) is cheaper than every other official EU dealer: AstroRadio EUR 214.17 incl. VAT, Moonraker EUR 231.99, WiMo EUR 232, Neven CZK 5,590, FB Radio SEK 2,495. ITEAD's VAT handling is still unverified (not shown on the page or the API; the policy page could not be fetched, HTTP 404/429). No ITEAD/Airspy official AliExpress listing was found, so that is unverified.
+  
+  Rejected as not cheaper or incompatible:
+  - SDRplay RSPdx-R2: GBP 188 ex VAT = $250.54, in stock; same 315 g box and closed API.
+  - SDRplay RSPduo: GBP 214 = $285.19.
+  - LimeFEA HF Micro: $199 + $18 shipping, ships 15 Dec 2026, HF-path software unproven (earlier stage).
+  - RX-888 MkII and RigExpert Fobos: USB 3 only (the port map and the SuperSpeed RFI note exclude them); Fobos GBP 375-430.
+  - HF+ Dual Port: older model, SM5BSZ -10 dB against -3 dB for the Discovery; not in ITEAD's current Airspy listing.
+  - RSP1A: not shown on SDRplay's store page; SDRplay says the RSP1B improves on it at HF and below 1 MHz, so it is worse than the RSP1B, which is already worse than the HF+.
+  
+  Higher-tier HF SDRs (Perseus, ELAD FDM-S2/S3, ColibriNANO, Afedri) were not price-checked in this pass. They are generally above $169 (unverified).
+  
+  Caveats:
+  - The NF numbers for the HF+ are my derivation from Airspy's MDS (-140 dBm in 500 Hz gives NF of about 4-7 dB, depending on the MDS definition); Airspy publishes no NF.
+  - On HF with a wire, local noise often dominates (see user_requirements). Even so, a published 8-15 dB worse NF and unpublished IIP3/BDR count as worse under the user's rule.
+  - A used unit (eBay.de, US seller, $110.25, from a search snippet) belongs to the used angle and was not evaluated.
+  - The prices for the HF+ itself were opened live on 18 Oct 2026. eleshop.eu's RSP1B price comes from a search snippet only, and Passion Radio's from an earlier stage.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
