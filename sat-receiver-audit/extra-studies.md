@@ -40504,6 +40504,130 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Hard rules: no issue. A DMM is passive, it adds no loop or H-field probe, and the 50 Hz-5 kHz square-wave output is a low-level conducted bench output only, never connected to an antenna.
 
+## searchB:aneng_an8008_9_dmm (run `wf_e5582d4c-0a2`)
+
+- **Part:** ANENG AN8008/9 pocket DMM (bench and field case, qty 1)
+- **Current price usd:** STACK lists 26-53, unverified. Live AliExpress search pages on 18 Oct 2026 (US/DE sites, prices shown in USD, seller not named, VAT not shown): AN8009 $24.35-36.79, AN8008 $28.52-42.59. For an EU buyer, AliExpress normally adds VAT at checkout (IOSS, orders up to EUR 150). That is the general EU rule; I did not check it on these listings.
+- **Critical specs:**
+  - uA current: 99.99 uA range at 10 nA resolution, DC +/-(0.8%+3). Needed for standby and off-state targets: <=0.25 mA and <=1.0 mA totals, about 8 uA supervisor, TPS70933 1.3 uA, #2813 off-state <0.2 uA. Also 999.9 uA at 0.1 uA.
+  - uA burden: 100 ohm shunt (R23+R24 = 99+1 ohm, measured by lygte-info), so 10 mV at full scale. This keeps the pack-chain current undisturbed with the meter in series.
+  - mA current: through the 0.01 ohm 10 A shunt, so burden is very low (about 1 uV at 0.1 mA). 999.9 mA at 0.1 mA, +/-(1%+3). Used for LNA and bias-tee current against the V4L 180 mA limit, TPS2553 trip points (265-339 mA, 685-817 mA), and HF+, LNB and Boni-Whip currents.
+  - 10 A range for pack current up to about 4 A. Its known limit is poor calibration with 5-10% heating drift at 5-10 A, so the FNB58 and INA228 carry high-current accuracy. A candidate must not be worse than this.
+  - DC volts: 9999 counts, 0.5% basic accuracy, 10 MOhm input, 9.999 mV range at 1 uV, mV input in the GOhm region. Used for the TPS7A4701 13.2 V +/-0.35 V acceptance, the 4.5 V LT3045 rail, TLV3012 trip calibration at 12.8/13.6 V, EN divider at 12.1/13.6 V and IP2368 CV.
+  - Resistance at least 9.999 MOhm (AN8008) or 99.99 MOhm (AN8009). The supervisor uses 3.3 MOhm and 4.22 MOhm resistors. Also latched continuity under 50 ohm, 3.2 V diode test (BAT54, SMBJ, LEDs) and capacitance (220 uF bulk caps).
+  - Frequency counter: AN8008 is 1 Hz-3 MHz at 1 Vrms (about 600 mV at 1 kHz). AN8009 is 1 Hz-6.6 MHz at 1 Vrms (about 250 mV at 1 kHz).
+  - K-type thermocouple (AN8009 only), used for the procedures' spot temperatures: stress test, KSD9700 70 C trip, cell 45 C. NCV on the AN8009 is not needed.
+  - Fuses on both current inputs: 0.2 A/250 V on uA and 10 A/250 V on A/mA, ceramic 3.6x10 mm. Wrong-jack mistakes on a 4S pack that can deliver tens of amps must blow a fuse, not a trace.
+  - Pocket size for the field case: 136 g, 130x65x32 mm, 2x AAA at 1.6-2 mA. Low-energy use only. Both reviewers call the CAT rating fake, which is acceptable in a stack with no mains and at most a 20 V PD rail.
+  - Genuine unit: PCB marked ZT109, DM1106EN chip, ICL8069 reference. No mixed-model listing.
+- **Candidates:**
+  1.
+    - **Name:** ANENG AN8009 (the '/9' variant of the current pick), from the cheapest AliExpress listing
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 24.35-27.78 listing price (AliExpress US-site search, 18 Oct 2026; seller not named; VAT not shown; may be a coupon or new-user price). Unverified at checkout.
+    - **Spec comparison:** Same case (136 g, 130.4x65x32.3 mm), 9999 counts, same uA input on the V/Ohm jack with a 99+1 ohm shunt, and same 0.01 ohm A/mA shunt. Same fuses (0.2 A and 10 A, 3.6x10 mm). Same 10 MOhm input. lygte-info found it within spec except the 10 A range, the same result as for the AN8008. Better than the AN8008: resistance to 99.99 MOhm (vs 9.999), counter to 6.6 MHz at 1 Vrms (vs 3 MHz), 250 mV sensitivity at 1 kHz (vs about 600 mV), K-type temperature on the mV position, NCV, and a 120 s backlight (vs 15 s).
+    - **Worse in:** No square-wave output (retailer description only; the stack does not use it). The 99.99 uA / 10 nA range is not spelled out in the AN8009 review. I inferred it from the identical 100 ohm shunt and chip family, so confirm it on the unit. Supplied thermocouple housing was cracked in the review.
+    - **Compatibility:** Drop-in: standalone, 2x AAA, no Linux interface needed. Works with the existing off-current procedure (move the lead from the A jack to the uA position).
+    - **Risks:** Seller not confirmed. One mixed listing ('AN8008/AN8009 ... Rm 409b Double Fuse') signals grey or mixed stock, so avoid that one. On arrival check: PCB marked ZT109 / DM1106EN, both fuses present, 99.99 uA range present, and a reading against the DPS-150 at 10 uA and 90 uA through a known resistor (the reaudit acceptance test).
+    - **Seller url:** https://www.aliexpress.us/item/3256810125666852.html
+    - **Sources:**
+      - https://lygte-info.dk/review/DMMAnengAN8009%20UK.html
+      - https://lygte-info.dk/review/DMMAnengAN8008%20UK.html
+      - https://www.aliexpress.com/w/wholesale-aneng-an8009.html
+      - https://de.aliexpress.com/w/wholesale-aneng-an8008.html
+  2.
+    - **Name:** ZOYI / Zotek ZT109 (OEM rebrand of the AN8008 PCB)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 15.33 ('Stable ZOYI ZT109 ZT111 ... 9999 Counts') and 21.55 ('ZOYI ZT-109 Anti-burn'), AliExpress search listings, 18 Oct 2026. Seller and specs unverified.
+    - **Spec comparison:** Older measured evidence: Mark Hennessy found the AN8008 PCB marked ZT109, and the meter is also sold as the Zotek ZT109. That unit would be the same meter as the AN8008. No measurement exists for the SKU sold today under that name.
+    - **Worse in:** Unproven. Other current ZOYI 'ZT109/111' listings advertise 6000 counts, so the model name now covers at least one different meter. No listing states a 99.99 uA range. If it is the 6000-count meter, it loses the 10 nA range, which would be a fatal loss for the stack. No temperature function is confirmed.
+    - **Compatibility:** Standalone, same as the current part, if it really is the ZT109 PCB.
+    - **Risks:** Model-name ambiguity, unknown seller, and no independent measurement of the 2026 SKU. Under Angle B rules it is REJECTED until the seller documents 9999 counts plus 99.99 uA / 10 nA plus the DM1106EN chip, and a unit passes the DPS-150 uA test. The Zotek site (szzotek.com) returned HTTP 503, so the OEM spec could not be checked.
+    - **Seller url:** https://www.aliexpress.com/w/wholesale-zoyi-zt109.html
+    - **Sources:**
+      - https://www.markhennessy.co.uk/budget_multimeters/aneng_an8008.htm
+      - https://www.aliexpress.com/w/wholesale-zoyi-zt109.html
+      - http://szzotek.com/en/col.jsp?id=144
+  3.
+    - **Name:** ANENG AN8002 / Zotek ZT102
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** About GBP 12 delivered in the older review (about $16). Current price not verified.
+    - **Spec comparison:** Same case, 6000 counts, 0.5% basic DCV, temperature with thermocouple, counter to 80 MHz.
+    - **Worse in:** No uA range: best current resolution is 10 uA (vs 10 nA), so it cannot measure the standby or off-state budget. Also 6000 counts vs 9999. Rejected.
+    - **Compatibility:** Standalone.
+    - **Risks:** Fails the core uA requirement.
+    - **Sources:**
+      - https://www.markhennessy.co.uk/budget_multimeters/aneng_an8002.htm
+      - https://lygte-info.dk/review/DMMAnengAN8002%20UK.html
+  4.
+    - **Name:** ANENG AN860B+ / Zotek VC17B+
+    - **Kind:** other_brand
+    - **Price usd:** Not verified (lygte-info class: under $30).
+    - **Spec comparison:** 6000 counts, 0.5% basic DCV, separate current jacks (4 terminals).
+    - **Worse in:** Best resolution 0.1 uA (vs 10 nA); 6000 counts; 20 mm glass fuses (the reviewer advises ceramic); counter fails above about 8 MHz; nearly Fluke 87V size, so too big for the pocket case. Rejected.
+    - **Compatibility:** Standalone, but too big for the field case.
+    - **Risks:** Worse resolution and fuses.
+    - **Sources:**
+      - https://www.markhennessy.co.uk/budget_multimeters/aneng_an860bplus.htm
+  5.
+    - **Name:** ANENG AN870
+    - **Kind:** other_brand
+    - **Price usd:** 41-42 (EUR 35.92 incl. VAT, EUR 30.19 net at Botland, listed as unavailable on 18 Oct 2026). Not cheaper.
+    - **Spec comparison:** Separate mAuA jack (better against wrong-jack mistakes), uA shunt 99 ohm (same as AN8008), 20 A jack, thermocouple, counter 1 Hz-5.6 MHz at 100 mVrms and 20 MHz at 2 Vrms.
+    - **Worse in:** mA shunt is 1 ohm, about 100x the AN8008's 0.01 ohm mA-range burden, which matters for 300 mA LNA and TPS2553 trip tests. 374 g and 180x89x44 mm, not pocket size. 20 A range drifts 5% in 13 s. PCB nearly loose in the case. More expensive. Rejected.
+    - **Compatibility:** Standalone; too big for the field case.
+    - **Risks:** Not cheaper; out of stock at the EU seller.
+    - **Seller url:** https://botland.store/universal-meters/26588-truerms-universal-meter-with-auto-range-and-ncv-aneng-an870-6957924120663.html
+    - **Sources:**
+      - https://lygte-info.dk/review/DMMAnengAN870%20UK.html
+      - https://botland.store/search?s=aneng
+  6.
+    - **Name:** UNI-T UT61E (used or old stock)
+    - **Kind:** used
+    - **Price usd:** About GBP 30-45 per the older Mark Hennessy review (about $40-60). Used price not verified; eBay.de returned HTTP 403.
+    - **Spec comparison:** 22,000 counts, uA range at about 10 nA resolution (per its spec class), counter to 78 MHz, PC interface, 6.3x25 mm fuses (better fuses).
+    - **Worse in:** Burden: the uA/mA chain is 1/9/90/900 ohm, and the reviewer calls current burden 'rather high', about 10x the AN8008 in uA. Also no temperature, 352 g and 180x88x44 mm, 9 V battery. Not cheaper. Rejected.
+    - **Compatibility:** Standalone; RS-232/USB logging software is old Windows-only (COM1-4).
+    - **Risks:** Used unit with unknown fuse and shunt history.
+    - **Sources:**
+      - https://lygte-info.dk/review/DMMUNI-T%20UT61E%20UK.html
+      - https://www.markhennessy.co.uk/budget_multimeters/unit_ut61e.htm
+  7.
+    - **Name:** DIY: use the in-device INA228 (or an INA2xx breakout) as a uA meter
+    - **Kind:** diy
+    - **Price usd:** 0 extra (INA228 already in the BOM at $14.95)
+    - **Spec comparison:** Logs current continuously over I2C.
+    - **Worse in:** 15 mOhm shunt with a 312.5 nV LSB gives about 20.8 uA per LSB, about 2000x coarser than 10 nA. No volts, ohms, continuity, diode, capacitance or temperature. Not a DMM replacement. Rejected (my calculation from the INA228 data in reaudit_D).
+    - **Compatibility:** Already present for the gauge; it supplements the DMM but cannot replace it.
+    - **Risks:** None, but it does not meet the spec.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json
+  8.
+    - **Name:** Used ANENG AN8008/AN8009 (eBay, Kleinanzeigen)
+    - **Kind:** used
+    - **Price usd:** Not verified (eBay.de returned HTTP 403).
+    - **Spec comparison:** Same meter if genuine.
+    - **Worse in:** No measured evidence per unit. Unknown fuse history; a blown 0.2 A fuse or a stressed 100 ohm uA shunt is invisible until tested. A new unit is already only about $24, so the saving is a few dollars at most. Not recommended.
+    - **Compatibility:** Same as the current part.
+    - **Risks:** Fails Angle B's evidence rule unless the seller allows the DPS-150 uA test.
+    - **Sources:** []
+- **Notes:** VERDICT (Angle B: clones, generics, DIY, used): nothing from this angle is proven not-worse and cheaper. Keep the ANENG, and buy it as the AN8009 variant. On today's AliExpress listings the AN8009 is cheaper (from about $24.35, vs $28.52 or more for the AN8008), and the independent measurements show it is a superset of the AN8008 for this stack: 99.99 MOhm, 6.6 MHz counter at 250 mV, K-type temperature for the procedures' spot checks, same shunts and fuses. Its only loss is the square-wave output, which the stack does not use. The ZOYI ZT109 is the OEM twin of the AN8008 PCB in older measured evidence, but in 2026 the name also covers a 6000-count 'ZT109/111' meter and no listing states the 99.99 uA range. It is rejected until a seller documents 9999 counts plus 99.99 uA plus DM1106EN and a unit passes the bench test.
+  
+  Acceptance on arrival (from reaudit_D):
+  - PCB marked ZT109; DM1106EN chip.
+  - Fuses: 0.2 A and 10 A, 3.6x10 mm.
+  - uA reading against the DPS-150 at 10 uA and 90 uA through a known resistor.
+  - Confirm the 99.99 uA range and that the K-type input reads.
+  - Buy spare 3.6x10 mm fuses; they are a non-standard size and hard to find locally.
+  
+  Known limit of both AN8008 and AN8009: the 10 A range drifts 5-10% from shunt heating at 5-10 A, so pack-current accuracy stays with the FNB58 and INA228.
+  
+  Limits of this search:
+  - WebSearch returned 'budget used up' on the first call (shared per-turn limit), so I relied on WebFetch of review sites and shop search pages.
+  - AliExpress item pages could not be fetched (login redirect or empty), so sellers, checkout prices and EU VAT are unverified.
+  - The Zotek OEM site returned 503 and eBay.de returned 403.
+  - I found no EU seller listing the AN8008/9 or ZT109. Botland lists only the AN870, at EUR 35.92 incl. VAT, unavailable.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
