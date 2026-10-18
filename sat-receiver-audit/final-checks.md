@@ -1,5 +1,633 @@
 # Фінальні перевірки: повні відповіді субагентів
 
+## integration:lens1 (run `wf_221684d9-b6c`)
+
+- **Lens:** POWER + THERMAL. One power architecture for the handheld and bench kit: pack, J21 feed, every rail and regulator, spur behaviour, fuses and limits against real currents, cutoffs, charger and gauge, back-feed paths, runtime per mode, and heat inside the case (2000-nit display, Q6A, optional Lime, cells).
+- **Issues:**
+  1.
+    - **Area:** Power budget / runtime
+    - **Components:**
+      - 4S1P Molicel P50B
+      - IP2368 (4.10 V/cell)
+      - labpowerd
+      - INA228
+    - **Problem:** The runtime figures in every file are too optimistic. They assume 72 Wh x 85% = 61 Wh usable and leave loads out. Three things cut usable energy and add draw. (1) Charging stops at 4.10 V/cell, about 93% SoC in my model. (2) A 13.6 V loaded cutoff stops at about 17% SoC. Together that leaves about 55-56 Wh. (3) The HF+, LNB, Boni-Whip, fans, converter losses and the LAB port are missing from the budgets, and the display is under-counted. On my model a no-Lime LEO pass draws 18.5 W at the pack and runs about 3.1 h, not 3.7-5.3 h. A Lime pass draws 31 W and runs about 1.9 h, not 2.2-2.6 h.
+    - **Severity:** major
+    - **Evidence:** report_research register #67 and #58 ('61-65 Wh usable to 13.6 V'), small_antenna_stack cost_size_power_delta (3.7-5.3 h at 11-17 W), npu_training budgets (2.2-2.4 h), register #63 (RVSET 5.1k = 4.10 V/cell). My model in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/p2_power/model.py uses a generic NMC/Si 21700 OCV curve (not a Molicel curve), cell IR 12.8 mOhm (Molicel page) / 18 mOhm DC, and 39 mOhm of path resistance. Usable energy is 55-57 Wh at a 13.6 V cut and 60-62 Wh at a 13.2 V cut, at 25 C with new cells. The per-mode figures are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/p2_power/modes.py.
+    - **Fix:** Plan with 58 Wh (warm, new cells, 13.2 V cut) and 50 Wh (0 C or after about 300 cycles). Publish the single per-mode table from budget_tables in STACK.md. Measure every mode with the INA228 at first power-up and replace the model rows.
+    - **Fix cost:** $0
+    - **Sources:**
+      - https://www.molicel.com/inr-21700-p50b/
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/report_research.json
+  2.
+    - **Area:** Battery cutoffs
+    - **Components:**
+      - labpowerd
+      - D36V50F12 EN
+      - Pololu #2813
+      - BMS
+    - **Problem:** Four cutoff sets conflict: 13.6 V Linux (power, radio_lab); 13.2 V (lab_ui_hf); a 12.8 V hardware cut; and the register's 'hardware cut at 13.4 V or above with the D36V50F12'. The register reasons that the buck drops out below 13.3 V. That dropout does not harm the Q6A, because J21 accepts 4.5-16 V. A 13.4-13.6 V cut throws away about 5 Wh (7%) for no benefit. Separately, the EN-divider-only hardware cut leaves the LAB 5 V buck and the RP2040 powered after the cut, so the pack keeps draining at about 0.5-25 mA.
+    - **Severity:** major
+    - **Evidence:** register #66 and #60; power.json verify known_problems ('Linux 13.6 V, EN 12.8 V'); lab_ui_hf ui_system.process_supervision ('8% or 13.2 V loaded for 10 s, above the ~12.8 V hardware cutoff'); Pololu 4095 page fetched today (EN sleep below 1.2 V, wake above 1.35 V; sleep current 10-20 uA per volt; PG low at 10% below nominal); compute register #15 (J21 4.5-16 V).
+    - **Fix:** Use one table (see budget_tables): economy at 20% SoC; Linux poweroff at 3% SoC or V_N <= 13.2 V loaded for 10 s; hardware cut at V_N <= 12.8 V by a micropower supervisor on the always-on rail that drives the #2813 OFF input, with the D36V50F12 EN divider as a backstop; BMS at 2.5-2.8 V/cell as the last resort. Re-enable only by the button, and only above 13.6 V at rest. labd blocks noise-source NF measurements below V_N 13.6 V, because the 12 V rail only regulates above about 13.3 V.
+    - **Fix cost:** About $2-4 (supervisor plus divider)
+    - **Sources:**
+      - https://www.pololu.com/product/4095
+  3.
+    - **Area:** Display power
+    - **Components:**
+      - Wisecoco 7in FHD 2000+ nit
+      - SYS12 display branch
+    - **Problem:** The display is under-budgeted. small_antenna_stack uses 3.6-4.8 W at 60% and 6-8 W at full, and the acceptance test asks for 9 W or less at full white. Comparable products draw more: the 4D 1000-nit panel is 6.5 W (12 V, 540 mA), the BenQ PVS7 2000-nit 7in is 10 W typical and 18 W maximum, and the LUT7 is 20 W. Scaling from these gives about 10-14 W at 100% for a 2000-nit FHD panel (my model). As written, the acceptance test would reject a normal panel, and the runtime and heat budgets are low. The board's input voltage is still unknown. If it is 5 V only, it needs about 2.6 A at full brightness, which the LAB 5 V and Q6A rails cannot supply.
+    - **Severity:** major
+    - **Evidence:** small_antenna_stack stack.display_power_mechanical_impact; display_market final.acceptance_tests; mechanical_thermal verify issue 2 (BenQ PVS7, IMA 16 W); power.json verify (LUT7 20 W); the Youritech ET070FH01-HT page (fetched today) gives no backlight power, -20 to 70 C operating.
+    - **Fix:** Budget 3 W at 25%, 6 W at 50% and 13 W at 100% until measured. Change the acceptance to: 9 W or less at 50%, 14 W or less at 100%, and at least 1800 nits at 100%. Feed the panel from SYS12 through an LC filter and a 1.5 A eFuse or PTC. If the vendor confirms a 5 V-only board, add a dedicated D36V28F5 #2 (5 V/3.2 A); never use LAB 5 V or a Q6A USB port. Use DC/analog dimming. Get the input range in writing before buying.
+    - **Fix cost:** $0, or $23.95 if the board is 5 V only
+    - **Sources:**
+      - https://resources.4dsystems.com.au/datasheets/4dhdmi/4DHDMI_Datasheet_R_1_0.pdf
+      - https://www.benq.eu/en-eu/monitor/creative-pro/pvs7/spec.html
+  4.
+    - **Area:** LNB rail
+    - **Components:**
+      - Othernet Bullseye LNB
+      - LNB regulator
+      - labd
+    - **Problem:** The files hold four incompatible LNB feeds. radio_lab BOM has a 'TPS65233-class 13.0-13.4 V regulator with a 250-300 mA limit'; that class is an LNB IC with 13.4/18.2 V outputs and 22 kHz functions the device does not need. rf_frontend and the lab_ui_hf menu and arbiter have a 13.4/18.2 V switchable boost ('LNB 13.4 V (V) / 18.2 V (H), hold-to-confirm'). small_antenna_stack has an MT3608/XL6009 boost behind a #2813. power.json feeds it from the 12 V rail. On 4S the switched pack node stays at 13.2-16.4 V over the whole usable window, so a switching boost is not needed at all.
+    - **Severity:** major
+    - **Evidence:** radio_lab final.lab_bom ('LNB feed fix'), lab_ui_hf final.ui_system.menu_tree[15] and resource_arbitration, small_antenna_stack final.revised_stack, register #102-104. LT3045 (datasheet via search): 1.8-20 V in, 0-15 V out, 500 mA, 260 mV typical dropout, programmable current limit, can be paralleled.
+    - **Fix:** LNB rail = an LT3045 LDO set to 13.2 V, fed from the switched pack node through an LC filter. Use the LT3045-EP, or 2x LT3045 in parallel, bonded to the mid-plate; worst-case dissipation is (16.4-13.2) x 0.3 A = 0.96 W. EN comes from labd and is low at boot, which gives a true 0 V output with no boost leakage. ILIM is the single current limit, set to 1.5-2x the measured LNB current (provisionally 0.45 A for a draw of 0.3 A or less). The LDO holds 13.2 V down to about 13.55 V of pack, and still gives about 12.6-12.8 V at the LNB at the 13.2 V cutoff. That is above the 11.5 V minimum and below the roughly 14 V horizontal threshold, so the LNB can never switch to horizontal. Delete every 18.2 V entry, the TPS65233 line and the boost lines. Acceptance: 0 V when off; 13.2 V +/-0.2 V at the F connector under load with pack at 13.8 V or more.
+    - **Fix cost:** About $5-15 (unverified module or board price)
+    - **Sources:**
+      - https://www.radiolocman.com/datasheet/pdf.html?di=169717
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  5.
+    - **Area:** LNA bias rail
+    - **Components:**
+      - LT3045 LNA LDO
+      - TPS2553 injectors
+      - SAWbird+ NOAA/GOES/iO/H1
+      - LAB 5 V
+    - **Problem:** No file says what feeds the 'LT3045-class 5 V LNA LDO'. Fed from SYS12, it would dissipate (12-5) x 0.35 A = 2.45 W for two SAWbirds, above what an MSOP/DFN LDO can handle at a 45-50 C internal temperature. A 5 V output cannot come from the 5 V LAB rail. The TPS2553 (2.5-6.5 V) cannot sit on 12 V either. The LAB 5 V budget and its 2 A fuse also leave out the LNA current.
+    - **Severity:** major
+    - **Evidence:** power.json research.integration_notes ('LNAs: feed them from an LT3045-class LDO (5 V) behind an LC filter') with no source named; register #61 ('LNAs: LT3045-class LDO'); radio_lab final.lab_bom D36V28F5 (2 A fuse, budget without LNAs); my dissipation calculation.
+    - **Fix:** LNA rail: LAB 5 V -> LC -> LT3045 set to 4.5 V (dissipation 0.25 W at 0.5 A) -> one TPS2553 per port at 300 mA nominal (about 240 mA minimum) -> injector. The SAWbird+ accepts 3.3-5.5 V. Raise the LAB 5 V fuse to 3 A and keep the LAB port at 1 A or less. labd enforces the LAB budget: LAB port + LNA current <= 1.5 A.
+    - **Fix cost:** About $5-10
+    - **Sources:**
+      - https://www.nooelec.com/store/sawbird-plus-goes.html
+  6.
+    - **Area:** Back-feed (USB and display)
+    - **Components:**
+      - Adafruit CH334F hub
+      - LAB 5 V
+      - Q6A FE1.1s port P3 / WS4612
+      - HF+
+      - Wisecoco board
+      - Q6A USB-C
+    - **Problem:** On the Adafruit CH334F breakout, the upstream 5V pin is the board's power input, and each downstream port's 5V pin is an output. If LAB 5 V powers the hub while the Q6A port's VBUS is also wired to it, two 5 V sources run in parallel. LAB 5 V then back-feeds the Q6A's VCC_5V_PERI through the WS4612, and phantom-powers the Q6A when it is off. The same risk exists on the display board through its USB VBUS and HDMI pin 18 (+5 V). The register's acceptance test checks only USB VBUS. On the Q6A USB-C, a 'removable plug and label' still allows a charger to be connected while J21 is live, which back-feeds through Q5.
+    - **Severity:** major
+    - **Evidence:** Adafruit CH334F learn guide (search snippet: the upstream 5V pin is listed as a power input, the downstream 5V pins as outputs); register #62 and #129 (CH334F tree powered from LAB 5 V); display_market acceptance_tests (USB VBUS 0 V only); power.json verify issue 11 (VBUS from any source turns on Q5).
+    - **Fix:** Wire the CH334F upstream through its pin header. Take D+, D- and GND from the Q6A port, and connect its 5V pin to LAB 5 V only. Leave the Q6A port's VBUS unconnected and never use the hub's USB-C. Apply the same rule to the display board: no VBUS link, and HDMI pin 18 cut or diode-blocked. The case has no opening for the Q6A USB-C, so bench power comes only through the IP2368 port. Acceptance with the FNB58: zero reverse current on every Q6A port, and 0 V on Q6A VBUS and HDMI +5 V with the Q6A off and LAB 5 V on.
+    - **Fix cost:** $0 (wiring and trace cuts)
+    - **Sources:**
+      - https://learn.adafruit.com/adafruit-ch334f-mini-4-port-usb-hub-breakout?view=all
+  7.
+    - **Area:** Q6A 5 V rail (Lime-conditional)
+    - **Components:**
+      - SGM40666AS/SY7120 VCC_5V_PERI
+      - LimeSDR Micro
+      - Samsung T7
+      - RTL-A/RTL-B
+    - **Problem:** With the Lime and T7 kept, VCC_5V_PERI at the allowances is about 20.6 W: Lime 8.25 W, T7 7.5 W (storage budget), 2 V4L at 2.6 W, tee LNAs 0.8 W, fan, GNSS, touch and Wi-Fi. The rail's limit is about 17 W (SGM40666A 4.5 A). That overload would hit during exactly the 160 Msps burst recordings. Typical draw is about 11.8 W, which is fine.
+    - **Severity:** major
+    - **Evidence:** register #62 (about 17 W); storage.json ('a power budget of about 7.5 W' for the SSD); register #21 and #86 (Lime about 4 W typical, 8.25 W allowance); modes.py VCC_5V_PERI table.
+    - **Fix:** Only if the Lime is kept: power the T7 from LAB 5 V through a VBUS-split USB 3 lead (data from the blue port, VBUS from a TPS2553 at 1.5 A). Then upgrade LAB 5 V to a Pololu D36V50F5 (price unverified), or switch the LAB port off during Lime recording. Accept only if the J21 input stays at 20 W or less in a 60-minute 56 Msps plus T7 write soak. Without the Lime, nothing changes (4.9 W of 17 W).
+    - **Fix cost:** $5-10 lead and switch; about $35-40 if the D36V50F5 is needed (unverified)
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/storage.json
+  8.
+    - **Area:** Regulator spurs (HF/LF)
+    - **Components:**
+      - Pololu D36V50F12
+      - Pololu D36V28F5
+      - IP2368
+      - Airspy HF+
+      - Boni-Whip
+    - **Problem:** Per Pololu, the D36V50F12 switches at about 500 kHz under heavy load, and at light load drops into a power-save mode that only stays above 20 kHz. Its fundamental can therefore land near NAVTEX 490 and 518 kHz, its harmonic comb covers MW and HF, and in power-save mode it can wander through the 40-162 kHz time-signal band (DCF77, MSF/WWVB, JJY, TDF). All of these are in-scope HF+ targets. The D36V28F5 (LAB 5 V) behaves similarly and feeds the HF+ directly. The IP2368's 250 kHz has its 2nd harmonic at 500 kHz while charging. Forced PWM would not fix a fixed fundamental near NAVTEX; only the frequency choice does. No file plans an A/B test below 500 kHz.
+    - **Severity:** major
+    - **Evidence:** Pololu 4095 page fetched today ('about 500 kHz under heavy loads', 'ultrasonic ... above 20 kHz'); power.json verify known_problems (EMI list); radio_lab final.lab_bom (D36V28F5 power-save); lab_ui_hf hf_receiver.setup acceptance test (0.1-20 MHz only).
+    - **Fix:** Add an LF/HF A/B gate: the HF+ terminated and then on the Boni-Whip at 2 m, at 40, 60, 77.5, 162, 490 and 518 kHz plus 0.5-30 MHz, with the SYS12 and LAB loads stepped from 0.3 to 3 A on an electronic load and the charger on and off. If any regulator line falls within +/-1 kHz of a target, or within the passband of an in-scope decode, replace that regulator with a forced-PWM buck whose RT/SYNC-set frequency comes from a harmonic scan (part chosen in P5). Put an LC filter plus Mix-31 ferrite on the HF+ VBUS. The HF Quiet profile forbids charging.
+    - **Fix cost:** $0 for the test; about $10-30 per regulator swap if it fails (estimate)
+    - **Sources:**
+      - https://www.pololu.com/product/4095
+  9.
+    - **Area:** Thermal (cells, panel, SoC)
+    - **Components:**
+      - P50B pack
+      - IP2368
+      - Wisecoco panel
+      - Q6A
+      - T7
+      - UFS
+    - **Problem:** Model results:
+  - Internal heat: 8-36 W without the Lime (about 17 W on a LEO pass) and 30-53 W with it, plus about 7 W of face solar reaching the internal air.
+  - Air temperature with two fan paths (about 5.4 m3/h): mean rise 6-16 K, outlet rise up to 25 K (35 K at Lime peak). At 35 C ambient, cells downstream of the board sit at 45-55 C. The charger's 45 C NTC limit then blocks charging, and the cells age faster.
+  - Charging adds about 2.6 W of IP2368 loss inside the case.
+  - Panel: at 35 C ambient in full sun at 100% backlight it reaches about 71 C, above its 70 C rating. The derating ladder will hold it near 50% (about 1000 nits).
+  - Q6A: about 85 C typical and 90-100 C at peak in 35 C sun, so it throttles.
+  - T7 (Lime only): sits near its 60 C limit in the hot air.
+    - **Severity:** major
+    - **Evidence:** thermal.py (/tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/p2_power/thermal.py; model, case 210x135x52 mm, h about 10 W/m2K); register #16 and #17 (throttling at 90-91 C, solar 13.5-17 W, UFS about 60 C); Youritech ET070FH01-HT page (fetched today: operating -20 to 70 C); power.json IP2368 NTC thresholds (0/45 C); storage.json (T7 Shield 0-60 C).
+    - **Fix:** Put the pack in a separate grip compartment on the INTAKE side, behind 3 mm closed-cell foam and reflective film, with the NTC on the middle cell. Keep the IP2368 pad-mounted to the case at least 10 mm from the cells, with a 70 C KSD9700. Mount the T7 (Lime only) at the intake or outside the case. Allow NPU T2 training only when the SoC is below 75 C and the battery above 25%, or on a charger. State plainly that 2000 nits in hot noon sun is a burst mode, and that sustained brightness falls to about 1000 nits by physics. Keep the hood and IR film. Run the 45-minute noon soak with every mode in this table.
+    - **Fix cost:** About $5 (foam, film, thermal fuse)
+    - **Sources:**
+      - https://www.youritech.com/products/7-inch-tft-lcd-display-1920x1080-mipi-2000nits-high-brightness-lcd-display-with-in-cell-touch-for-healthcare-medical-display-solution.html
+  10.
+    - **Area:** 12 V regulator capacity (Lime peak)
+    - **Components:**
+      - D36V50F12
+      - J21 wiring
+    - **Problem:** At the Lime peak, the D36V50F12 output reaches about 3.6-4.1 A at 12 V: J21 about 2.5 A, display about 1.1 A, AUX up to 0.42 A. Pololu rates it at 4.5 A typical at 36 V in, limited by heat dissipation, and its stock is 'Rationed'. In a sealed 45-50 C case this is marginal. Without the Lime the peak is about 2.9 A, which is fine.
+    - **Severity:** minor
+    - **Evidence:** Pololu 4095 page fetched today (4.5 A typical at 36 V in, 2.3-6.5 A depending on conditions, 'Rationed', $39.95 / $36.75 at 5+); modes.py peak modes.
+    - **Fix:** Bond the D36V50F12 to the mid-plate and run the sealed-case test at 14.0 and 16.4 V input, 3.5 A, for 60 min (output stays within 4%, no thermal cut). Buy 2 now (one spare) because stock is rationed. If the Lime is kept and the test fails, AUX must be off during Lime peaks.
+    - **Fix cost:** $36.75-39.95 for the spare
+    - **Sources:**
+      - https://www.pololu.com/product/4095
+  11.
+    - **Area:** TVS values
+    - **Components:**
+      - SMBJ14A at J21
+      - pack-node TVS
+    - **Problem:** SMBJ14A at J21: its breakdown voltage (VBR) can be as high as 17.2 V (datasheet maximum), above the 16 V rating of C611/C612 and the SY81012's 16 V operating limit. If the buck fails short (16.4 V), it may not clamp hard below 16 V. The pack node N, where the 20 V-max LT3045s sit, has no TVS specified.
+    - **Severity:** minor
+    - **Evidence:** register #15 (C611/C612 22 uF/16 V, SY81012 2.7-16 V, 18 V absolute maximum); standard SMBJ series ratings (SMBJ14A VBR 15.6-17.2 V; SMBJ13A 14.4-15.9 V; SMBJ17A 18.9-20.9 V), from catalogue values, not re-fetched.
+    - **Fix:** Use an SMBJ13A at J21 (VRWM 13 V, above the 12.48 V maximum regulated output) and an SMBJ17A at node N (VRWM 17 V, above 16.8 V). Do the monthly 4.20 V balance charge with the master switch OFF, so the LDO inputs never see more than 16.4 V.
+    - **Fix cost:** About $0.5
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_sch/q6a_sch.txt
+  12.
+    - **Area:** AUX 12 V switch
+    - **Components:**
+      - AO3401A
+      - AUX 12 V
+    - **Problem:** radio_lab says pulling the AO3401A gate to ground 'sits exactly at the ±12 V limit'. The D36V50F12 output can reach 12.48 V (+4%), which puts V_GS at -12.48 V, beyond the absolute maximum. The clamp is therefore mandatory.
+    - **Severity:** minor
+    - **Evidence:** radio_lab final.lab_bom AUX switch and refuted_claims; Pololu 4095 (12 V +/-4%).
+    - **Fix:** Use a P-FET rated ±20 V V_GS (for example the AO3407A; verify the datasheet), still with the 10k/10k gate divider (about -6 V), a 2N7002 driver and the 0.75 A-hold PTC, default OFF.
+    - **Fix cost:** About $0.2
+    - **Sources:**
+      - https://www.pololu.com/product/4095
+  13.
+    - **Area:** Bias current limits
+    - **Components:**
+      - TPS2553
+      - PTC option
+      - SAWbird+
+      - Flamingo+ FM
+    - **Problem:** 'A PTC with a hold current of 250 mA or more at the maximum internal temperature' is easy to misread. A PTC sold as 250 mA hold is rated at 25 C and derates to about 180-190 mA at 60 C, below the SAWbird+ 180 mA. A TPS2553 set to 250 mA nominal has only about 20-40 mA margin at its low tolerance edge. If the Flamingo+ FM (250 mA DC pass) sits between the injector and the LNA, a 300 mA fault limit exceeds its DC rating.
+    - **Severity:** minor
+    - **Evidence:** register #97 and #100 (SAWbird+ 170-180 mA, TPS2553 250-300 mA); register #85 and conflict 10 (Flamingo+ FM, 250 mA DC pass); typical PTC thermal derating (catalogue behaviour, not re-fetched).
+    - **Fix:** Set the TPS2553 to 300 mA nominal on every SAWbird+ port. If a PTC is used instead, choose one with a hold current of 0.35-0.4 A at 25 C. Place the Flamingo+ FM on the SDR side of the injector, so no bias current flows through it.
+    - **Fix cost:** $0
+    - **Sources:**
+      - https://www.nooelec.com/store/sawbird-plus-goes.html
+  14.
+    - **Area:** MCU and always-on rail
+    - **Components:**
+      - HMI RP2040
+      - INA228
+      - always-on LDO
+    - **Problem:** register #66 puts the RP2040 hard cut and the J21 pin 3 pulse on an 'always-on rail', but the USB map powers the HMI RP2040 from CH334F H1, which is LAB 5 V and switched. An always-on RP2040 would drain about 0.1-0.4 W in 'off' unless it sleeps in dormant mode. When the RP2040 runs while the Q6A is off, its UART7 TX can also back-feed the Q6A's IO.
+    - **Severity:** minor
+    - **Evidence:** register #66 and #129; lab_ui_hf ui_system.architecture (UART7 behind UM3304).
+    - **Fix:** Put the RP2040 on LAB 5 V. It powers up with the #2813, sends the J21 pin 3 pulse (0.5-1.5 s) only when the 40-pin 3.3 V is absent, opens the #2813 a few seconds after poweroff, and tri-states TX while the 40-pin 3.3 V is low. The always-on rail is a 30 V-rated LDO with Iq of a few uA (for example TI TPS709; verify) that powers only the INA228 and the 12.8 V supervisor. Off drain is about 14 mW, so a full pack lasts about 170 days.
+    - **Fix cost:** About $1-2
+    - **Sources:**
+      - https://www.adafruit.com/product/5832
+  15.
+    - **Area:** Gauge integrity
+    - **Components:**
+      - Pinecil V2
+      - ISDT 608PD
+      - INA228
+    - **Problem:** The Pinecil can run from 'the pack's XT30 service lead' at about 2.65 A (43 W at 16.4 V), and the monthly 4.20 V ISDT balance charge also goes through the XT30. If that lead sits upstream of the INA228 shunt, the coulomb count drifts without the gauge knowing.
+    - **Severity:** minor
+    - **Evidence:** radio_lab final.lab_bom (Pinecil lead, ISDT); register #63 and #65.
+    - **Fix:** Run the Pinecil from the PD bank (about 64 W at 20 V). If the pack must be used, take it from a fused 5 A service port on node N, downstream of the shunt, with IronOS set to 4S and 3.3 V/cell. labpowerd re-syncs to 100% at boot when node N rests at 16.3 V or more, and recalibrates capacity at each full IP2368 charge.
+    - **Fix cost:** $0
+    - **Sources:**
+      - https://ralim.github.io/IronOS/Settings/
+  16.
+    - **Area:** Charger source qualification
+    - **Components:**
+      - IP2368 BZ
+      - PD sources
+    - **Problem:** At 3 A in battery-current mode the IP2368 draws about 48-52 W from the source. A 45 W PD source may be overloaded if the IP2368 does not honour the source's PDO current; this is unverified. 'Use while charging' at an 18-24 W load still leaves only about 25 W for the cells, so a full charge takes about 2.5 h instead of 1.7-1.9 h.
+    - **Severity:** minor
+    - **Evidence:** power.json verify (ISET 15k = 3 A; input-power mode 4 W per kOhm; source of 45-65 W or more for use while charging); my calculation (4.19 Ah to refill, 1.4 h CC at 3 A plus CV).
+    - **Fix:** Qualify each PD source with the FNB58: at a 3 A charge, the source current must stay within its PDO rating. If 45 W sources must be used, switch to input-power mode at about 45 W (RISET about 11.3k by the 4 W/kOhm rule; verify on the bench). The UI shows 'charging paused (cell hot)' when the NTC blocks charging.
+    - **Fix cost:** $0
+    - **Sources:**
+      - https://datasheet.lcsc.com/datasheet/pdf/752f0c4a0b5b0a79a7f68752c4eac200.pdf?productCode=C5203723
+  17.
+    - **Area:** Stale power values in study files
+    - **Components:**
+      - radio_lab
+      - lab_ui_hf
+      - power.json
+      - npu_training
+    - **Problem:** Superseded values are still in the files:
+  - radio_lab integ: AUX '0.5 A PTC'; 'LNB injector in the sled runs at 12 V'; 'AUX from the LNB 12 V branch'; Boni-Whip '10.0 V LDO' (item 49, P20).
+  - lab_ui_hf: 'LDO dropout under 1.2 V at the 13.2 V shutdown threshold'; '5 V boost good for about 7 A'; HF+ on Q6A VBUS with a GPIO VBUS-cut.
+  - power.json: 'a 7-24 V display straight from the pack'.
+  - npu_training: 'INA228 on the 12 V J21 rail'.
+    - **Severity:** minor
+    - **Evidence:** radio_lab integ.power_budget and conflicts_and_fixes; lab_ui_hf final.stack_changes; power.json verify final_recommendation.why; npu_training final.hardware_needs.
+    - **Fix:** STACK.md uses only the rail table in budget_tables. Add an errata block that lists these lines as superseded.
+    - **Fix cost:** $0
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  18.
+    - **Area:** Unpublished currents
+    - **Components:**
+      - Airspy HF+ Discovery
+      - Boni-Whip
+      - Bullseye LNB
+      - ZFL-500 noise source
+    - **Problem:** There is still no published current for the HF+ (I found none; the rtl-sdr.com comparison article keeps its numbers in a video), the Boni-Whip, the Bullseye or the noise source. The rail limits are therefore provisional.
+    - **Severity:** minor
+    - **Evidence:** WebSearch and WebFetch today (rtl-sdr.com USB power article without figures); register open_questions.
+    - **Fix:** Provisional budgets: HF+ 0.3 A at 5 V, Boni-Whip 0.1 A at 12.5 V, LNB 0.3 A at 13.2 V, noise source 0.15 A at 12 V. Measure each with the FNB58 or DMM on arrival, then set the LT3045 ILIM and TPS2553 values to 1.5-2x the measured current.
+    - **Fix cost:** $0
+    - **Sources:**
+      - https://www.rtl-sdr.com/measuring-the-usb-power-consumption-of-various-software-defined-radios/
+  19.
+    - **Area:** Cell sourcing (world price)
+    - **Components:**
+      - Molicel P50B
+    - **Problem:** The files give only UAH prices for the cells.
+    - **Severity:** minor
+    - **Evidence:** register #59; search result today: nkon.nl EUR 6.75 incl. VAT (EUR 5.58 ex VAT), dated 31-07-2026. The page itself returned 403, so this is unverified. Simpower NZ lists NZ$18.45.
+    - **Fix:** Budget 5 cells (4 plus 1 spare) at about EUR 6.75 each (about EUR 34) from NKON or an equivalent authorised EU/US seller. Test capacity and IR before welding.
+    - **Fix cost:** About EUR 34
+    - **Sources:**
+      - https://www.nkon.nl/default/molicel-inr21700-p50b-5000mah-50a.html
+      - https://www.molicel.com/inr-21700-p50b/
+- **Proposed decisions:**
+  1.
+    - **Question:** C1 LimeSDR Micro keep or drop
+    - **Decision:** Gated optional. Keep the cancellable pre-order and decide on 31 Jan 2027 or on delivery. Size the power architecture so the Lime plugs in without a redesign: same pack, same 7.5 A fuse and D36V50F12, plus three Lime-only changes. (1) The T7 takes VBUS from LAB 5 V. (2) J21 is wired from the bottom pads with a 20 AWG twisted pair. (3) The 10 W conduction path to the plate.
+    - **Reason:** No core function depends on it. Its power cost is large: typical 31 W against 18.5 W, peak 64 W, and it would push VCC_5V_PERI over its limit if the T7 also ran from the Q6A.
+    - **Consequences:** With the Lime: about 1.9 h typical, 0.9 h at peak, and 30-53 W of internal heat. Without it: 2.4-3.1 h typical.
+    - **Alternatives rejected:** Lime as core: it would push VCC_5V_PERI past 17 W and runtime under 2 h. Dropping it now loses S-band and wideband NPU data before any test.
+  2.
+    - **Question:** C2 Q6A RAM tier
+    - **Decision:** Buy the 12 GB board now, as the register says.
+    - **Reason:** RAM cannot be upgraded, and the Lime and training option stays open. Power impact is negligible.
+    - **Consequences:** Training bursts add 3-6 W for 1-11 min, gated by temperature and SoC.
+    - **Alternatives rejected:** 8 GB, because 9.3 GiB of planned use does not fit.
+  3.
+    - **Question:** C3 Pack 3S vs 4S
+    - **Decision:** 4S1P Molicel P50B (72 Wh nominal), charged daily to 4.10 V/cell (16.4 V). Plan with 58 Wh usable when warm and 50 Wh in the cold or when aged. Buy 5 cells, about EUR 6.75 each at NKON (unverified).
+    - **Reason:** The LNB at 13.2 V, the Boni-Whip at 12.5 V, AUX 12 V and the noise source need 12 V or more. On 4S these become quiet LDOs from the pack; on 3S each would need its own boost. 4S also halves the current.
+    - **Consequences:** Adds about $45 and 75 g over 3S. Every runtime is restated from the per-mode table.
+    - **Alternatives rejected:** 3S direct into J21: it needs 3-4 boosts and gives about 46 Wh. 4.20 V daily charge: about +8% energy, but faster aging.
+  4.
+    - **Question:** C4 12 V regulator
+    - **Decision:** Pololu D36V50F12 ($39.95, buy 2 because stock is 'Rationed') feeding SYS12. It is bonded to the plate, with an EN divider at 12.8 V as backstop, then a pi-filter and an SMBJ13A plus 220 uF/25 V at J21. Accept its dropout region, since the Q6A accepts 4.5-16 V. Gate: the sealed-case current test and the LF/HF/VHF A/B. If either fails, replace it with a forced-PWM buck whose frequency is set by RT/SYNC (P5).
+    - **Reason:** It is the only verified, branded 12 V module of 4.5 A or more in hand. No forced-PWM 12 V buck-boost of 5 A or more was found from a reputable module vendor; Pololu's S18V20F12 is a 2 A SEPIC. Its load never falls below about 0.35 A while the Q6A runs, which favours PWM. Its 500 kHz needs the NAVTEX check.
+    - **Consequences:** Below about 13.3 V of pack, SYS12 sags towards about 11.5 V. That is harmless for the Q6A and the display. labd blocks noise-source NF measurements below 13.6 V.
+    - **Alternatives rejected:** 9 V buck: it would need a second 12 V converter for the display and AUX. LTC3780 module: reported very noisy. A buck-boost of unknown origin: spurs unverified.
+  5.
+    - **Question:** C5 USB port map
+    - **Decision:** Use the register's Lime-agnostic map. Power rules on top of it:
+  - RTL-A, RTL-B, touch, fan and GNSS take power from the Q6A (4.9 W of 17 W).
+  - The CH334F tree, HMI RP2040, IMU puck, HF+, LAB port and LNA rail run from LAB 5 V. Q6A VBUS is never tied to LAB 5 V; the hub is wired through its upstream pin header with the 5V pin on LAB 5 V only.
+  - With the Lime, the T7 takes VBUS from LAB 5 V.
+    - **Reason:** It keeps the Q6A's 17 W rail at 30% or less without the Lime and at 70% or less with it, and removes the back-feed path.
+    - **Consequences:** The LAB 5 V budget is 2.4 A at most with a 3 A fuse. With the Lime and T7, upgrade to the D36V50F5 or switch the LAB port off during recording.
+    - **Alternatives rejected:** HF+ on Q6A VBUS (lab_ui_hf), and a hub powered both ways.
+  6.
+    - **Question:** C6 40-pin and bus map
+    - **Decision:** Use the register's map. Power-related lines:
+  - INA228 on I2C0 (0x40), read through user-space i2c-dev.
+  - Q6A fan on/off at 60/50 C through an AO3400 on header pin 33 used as a plain GPIO, not 1 kHz pwm-gpio.
+  - The display-channel blower is switched by the HMI RP2040 from the panel NTC.
+  - The 12.8 V supervisor and the #2813 OFF line stay off the 40-pin entirely.
+  - IMU over the RP2040 UART relay.
+    - **Reason:** This avoids 1 kHz PWM ticking, frees a pin, and keeps the hardware cut independent of Linux.
+    - **Consequences:** The RP2040 firmware owns the blower and backlight derating.
+    - **Alternatives rejected:** GPIO56 with the PoE-HAT overlay (1 kHz PWM and the overlay typo); IMU over USB-CDC, which costs a hub port.
+  7.
+    - **Question:** C7 Hardware ownership
+    - **Decision:** labd is the only owner of the rail enable lines: LNB, Boni-Whip, LNA ports, AUX, LAB port, T7 VBUS and the noise source. Their boot defaults are OFF. labpowerd stays separate and minimal: it owns the INA228, KEY_POWER, the cutoff table and shed commands, and labd must obey them.
+    - **Reason:** There must be one lock authority. The power safety logic must survive a labd crash.
+    - **Consequences:** labd restarts reconcile the rail state from /run.
+    - **Alternatives rejected:** rflab or rflabd as a second GPIO owner.
+  8.
+    - **Question:** C8 LNB supply
+    - **Decision:** LT3045 LDO at 13.2 V from the switched pack node (EP part or 2 in parallel, bonded to the plate). EN from labd, default low, giving a true 0 V output. The single current limit is the LT3045 ILIM at 1.5-2x the measured current (provisionally 0.45 A). No 18 V.
+    - **Reason:** On 4S the pack stays at 13.2 V or more over the whole usable window, so no switcher is needed. Below 13.55 V of pack the LNB still gets 12.6-12.8 V and stays vertical. Worst-case dissipation is 0.96 W.
+    - **Consequences:** The TPS65233, the 13.4/18.2 V menu and arbiter entries, the boost lines, and power.json's '12 V rail suits LNB' are deleted.
+    - **Alternatives rejected:** TPS65233-class 13.4/18.2 V, MT3608/XL6009 boost, the 12 V rail through the tee (10.6-11.4 V).
+  9.
+    - **Question:** C9 LNA bias rule
+    - **Decision:** LAB 5 V -> LT3045 at 4.5 V -> a TPS2553 at 300 mA nominal for every SAWbird+ (FAULT to the MCP23017). The V4L tee powers only LNAs of 80 mA or less. If a PTC is used, its hold current is 0.35-0.4 A at 25 C.
+    - **Reason:** SAWbird+ draws 170-180 mA. 300 mA leaves margin at the TPS2553's low tolerance edge, and a 250 mA PTC derates below the load when hot.
+    - **Consequences:** The LAB 5 V budget gains up to 0.5 A, so its fuse goes from 2 A to 3 A.
+    - **Alternatives rejected:** A 100-160 mA PTC, GOES+ on the V4L tee, and an LT3045 at 5 V from 12 V (2.45 W).
+  10.
+    - **Question:** C10 FM filter
+    - **Decision:** Nooelec Flamingo+ FM, permanently in the 137/145 MHz path, on the SDR side of the injector.
+    - **Reason:** This keeps bias current out of its 250 mA DC path.
+    - **Consequences:** None.
+    - **Alternatives rejected:** A second filter type.
+  11.
+    - **Question:** C11 librtlsdr
+    - **Decision:** Use the register's .so.2 rebuild of noble 2.0.1 (0204c9c + 65f0658).
+    - **Reason:** Verified recipe. No power impact.
+    - **Consequences:** Test on the Q6A.
+    - **Alternatives rejected:** 2.0.3 (.so.0) and the purge-and-fork recipe.
+  12.
+    - **Question:** C12 Display field-mode pixel clock
+    - **Decision:** About 127.9 MHz (51.7 Hz), or 164.4-168.4 MHz if the panel accepts it, as the register says. Add from the power side: DC/analog backlight dimming, the backlight boost frequency measured in the A/B, and the display fed from SYS12 through an LC filter and a 1.5 A eFuse.
+    - **Reason:** 128.70 MHz hits Inmarsat-C. Backlight PWM and boost noise are separate sources.
+    - **Consequences:** The A/B includes 40-518 kHz.
+    - **Alternatives rejected:** 128.70 MHz, 148.5 MHz.
+  13.
+    - **Question:** C13 PPS on the held kernel
+    - **Decision:** Out-of-tree pps-gpio on 6.18.2-4, as the register says.
+    - **Reason:** CONFIG_PPS=y. No power impact.
+    - **Consequences:** None for power.
+    - **Alternatives rejected:** Route B on 7.0.11.
+  14.
+    - **Question:** C14 INA228
+    - **Decision:** Adafruit #5832 with the 15 mOhm shunt in the pack lead (ADCRANGE 0, +/-10.9 A). VS comes from a 30 V-rated LDO with Iq of a few uA. Breakout pull-ups are removed, the device is read over user-space i2c-dev, and no driver is bound. There is no second INA: NPU power is measured as the delta at the pack with A/B toggling.
+    - **Reason:** It counts both charge and load current. Off drain is about 10 mW. A second INA adds $15 for a number the A/B already gives.
+    - **Consequences:** Fix npu_training's 'on the J21 rail'.
+    - **Alternatives rejected:** ina238 hwmon binding (it blocks CHARGE access); i2c6.
+  15.
+    - **Question:** C15 Antenna tiers
+    - **Decision:** Use the register's two-tier rule: the V-dipole is the LRPT default and the ultra-compact Yagi is the default build; strike the loops.
+    - **Reason:** User rule. Power side: every active antenna is fed from a limited rail with the DC-sense interlock.
+    - **Consequences:** None for power.
+    - **Alternatives rejected:** The small-stack removals.
+  16.
+    - **Question:** C16 Policy leftovers
+    - **Decision:** Strike everything on the register's list. On the power side, the noise source and every other signal source can be energised only through AUX in a BENCH profile with the antenna paths terminated.
+    - **Reason:** Receive-only rule.
+    - **Consequences:** AUX stays OFF in field profiles.
+    - **Alternatives rejected:** None.
+  17.
+    - **Question:** C17 HF antenna chain
+    - **Decision:** Boni-Whip on an LT3045 at 12.5 V (+/-0.25 V) from the switched pack node, with ILIM provisionally 0.2 A and EN from labd, default OFF. The LT3045 current limit makes a separate polyfuse unnecessary. The 9:1 wire is for HF only. The HF+ selector is a latching DC-capable relay (zero hold current, pulsed from LAB 5 V; part TBD). Ask the user to confirm the loop removal.
+    - **Reason:** 12.5 V sits inside both published ranges (9-15 V and 12-15 V) and stays regulated down to about 12.85 V of pack, below the 13.2 V cutoff.
+    - **Consequences:** Fix item 49, P20 and the setup text (10.0 V / 12.0 V).
+    - **Alternatives rejected:** 10.0 V; 12.0 V at the lower edge; a boost on 3S.
+  18.
+    - **Question:** C18 Storage
+    - **Decision:** T7 only if the Lime stays, powered from LAB 5 V and mounted at the intake or outside the case. Otherwise use UFS and a V30/A2 microSD with the retention policy.
+    - **Reason:** This avoids the VCC_5V_PERI overload and keeps the T7 below its 60 C limit.
+    - **Consequences:** A VBUS-split USB 3 lead is needed with the Lime.
+    - **Alternatives rejected:** An internal T7 on Q6A VBUS in the hot air path.
+  19.
+    - **Question:** C19 CPU allocation
+    - **Decision:** Use the register's plan, and add a power gate: T2 training runs only between passes, with the SoC below 75 C and the battery above 25%, or on a charger.
+    - **Reason:** The thermal model shows the Q6A at 85-100 C in 35 C sun under load.
+    - **Consequences:** Training may wait until shade or the bench.
+    - **Alternatives rejected:** Training on the A55 cores.
+  20.
+    - **Question:** C20 Roadmaps
+    - **Decision:** Use the register's plan, and add a Phase-0 power task in the W1-2 gates: INA228 logs per mode, the HF/LF regulator A/B, and the sealed-case D36V50F12 test.
+    - **Reason:** Every runtime and thermal number is a model until then.
+    - **Consequences:** Replace the model rows in STACK.md with measurements.
+    - **Alternatives rejected:** Measuring after the build.
+  21.
+    - **Question:** C21 V4L count
+    - **Decision:** Buy 3: 2 in service and 1 spare. Monitoring time-shares a receiver. A 4th V4L would add 1.3 W, which still fits (6.2 W of 17 W).
+    - **Reason:** Register. Power allows either choice.
+    - **Consequences:** None.
+    - **Alternatives rejected:** 1 + spare.
+  22.
+    - **Question:** C22 Software recipes
+    - **Decision:** Use the register's recipes, plus labpowerd (Python, i2c-dev, systemd Restart=always, HandlePowerKey=ignore, poweroff never halt).
+    - **Reason:** Halt leaves 1.9-2.5 W draining.
+    - **Consequences:** Test on the Q6A.
+    - **Alternatives rejected:** HandlePowerKey=poweroff.
+  23.
+    - **Question:** C23 Region unknown
+    - **Decision:** Build the LNB rail (LT3045, EN, F port) in every build; defer the LNB, horn and SAWbird+ iO purchases until the region is known. The power design itself does not depend on the region. The 72 Wh pack and an 88.8 Wh bank are both under the 100 Wh cabin limit.
+    - **Reason:** The rail is cheap. The LNB is useless outside the QO-100 footprint.
+    - **Consequences:** None for power.
+    - **Alternatives rejected:** Buying everything now.
+  24.
+    - **Question:** C24 Costs and weights
+    - **Decision:** Power subsystem at world prices: about $187-248 with one D36V50F12, plus about $37-40 for a spare. Cells 4 x about 68 g = 272 g, plus a spare. Power electronics about 50-70 g (estimate).
+    - **Reason:** Itemised in budget_tables; several prices unverified.
+    - **Consequences:** P5 re-prices the BMS, IP2368 BZ and LT3045 boards.
+    - **Alternatives rejected:** UAH price bases.
+  25.
+    - **Question:** C25 P1b completion
+    - **Decision:** Close it. final/report_research.json exists (576 KB, read today). Still to do: STACK.md and the summaries.md and minute-log.md errata blocks, which should include the stale power lines listed in issues.
+    - **Reason:** The file exists.
+    - **Consequences:** None.
+    - **Alternatives rejected:** None.
+  26.
+    - **Question:** P1 Cutoff and threshold table
+    - **Decision:** Economy at 20% SoC (or V_N below 14.0 V loaded for 30 s). No training below 25%; NPU off below 15%. Linux poweroff at 3% SoC or V_N <= 13.2 V loaded for 10 s. Hardware cut at V_N <= 12.8 V by the supervisor driving the #2813 OFF input, with the D36V50F12 EN divider as a backstop. BMS at 2.5-2.8 V/cell. Restart only by the button and only above 13.6 V at rest. Temperature: charge inhibited below 0 C and above 45 C (NTC); labpowerd shuts down above 60 C at the cell.
+    - **Reason:** It recovers about 5 Wh against 13.6 V, keeps about 10% reserve, and avoids BMS lock-out and oscillation.
+    - **Consequences:** The register's '13.4 V or above hardware cut' is rejected.
+    - **Alternatives rejected:** Linux at 13.6 V; hardware cut at 13.4 V; BMS-only.
+  27.
+    - **Question:** P2 Pack fuse
+    - **Decision:** One value: a 7.5 A automotive mini blade fuse at the pack, for both configurations.
+    - **Reason:** Model peaks: 3.6 A without the Lime and 4.8 A with it, plus charging up to 3 A. A 5 A fuse is marginal at 60 C. Downstream, the #2813 (6 A at 55 C) never sees more than about 4.8 A.
+    - **Consequences:** Spares kit: 7.5 A pack, 3 A LAB, 5 A service lead.
+    - **Alternatives rejected:** 5 A.
+  28.
+    - **Question:** P3 Always-on rail scope
+    - **Decision:** Only the INA228 and the 12.8 V supervisor are always on (about 1 mA, about 14 mW, about 170 days of standby). The HMI RP2040 runs on LAB 5 V.
+    - **Reason:** Minimal standby drain. The hard-off and boot-pulse functions work from the switched side.
+    - **Consequences:** The RP2040 tri-states its UART while the Q6A is off.
+    - **Alternatives rejected:** RP2040 always on.
+  29.
+    - **Question:** P4 Display power
+    - **Decision:** Budget 3, 6 and 13 W at 25, 50 and 100%. Acceptance: 9 W or less at 50%, 14 W or less at 100%, at least 1800 nits. Feed from SYS12 through an LC filter and a 1.5 A eFuse; a dedicated 5 V buck if the board is 5 V only.
+    - **Reason:** 2000-nit 7in comparables draw 10-18 W.
+    - **Consequences:** At 100%, runtime is about 1.2 h at peak. Sustained 2000 nits in hot sun is not achievable thermally; expect about 1000 nits by physics, which the user's wish has to accept.
+    - **Alternatives rejected:** 9 W at full white as a hard limit.
+  30.
+    - **Question:** P5 Pack placement and thermal layout
+    - **Decision:** Pack in an insulated grip compartment on the intake side. IP2368 pad-mounted at least 10 mm from the cells with a 70 C KSD9700. Two fan paths (Q6A fin stack; blower through the panel channel). T7 (Lime only) at the intake or outside.
+    - **Reason:** Downstream cells would sit at 45-55 C at 35 C ambient, which blocks charging and ages the cells.
+    - **Consequences:** The case layout changes before the drawing.
+    - **Alternatives rejected:** A 2x2 block under the board.
+  31.
+    - **Question:** P6 Pinecil power source
+    - **Decision:** Run the Pinecil from the PD bank at 20 V (about 64 W). From the pack only through a fused 5 A service port on node N, downstream of the shunt, with the receiver OFF and IronOS set to 4S and 3.3 V/cell.
+    - **Reason:** The gauge stays correct and the pack keeps its energy for receiving.
+    - **Consequences:** The XT30-to-DC5525 lead is fitted to the node-N service port.
+    - **Alternatives rejected:** A raw pack XT30 tap upstream of the shunt.
+- **Checks passed:**
+  - J21 limits: the regulated SYS12 (11.5-12.5 V including dropout) stays inside the staff-stated 4.5-16 V, the SY81012's 2.7-16 V and the 16 V input capacitors. Raw 4S (16.4-16.8 V) is correctly excluded.
+  - 12 V rather than 9 V into J21: 24 W is 2.0 A at 12 V against 2.7 A at 9 V. The TVS argument for 9 V is refuted by the schematic (D19 sits on TYPEC_IN).
+  - J21 current: about 1.3 A or less without the Lime, about 2.5 A at the Lime peak (with J21 wired from the bottom pads).
+  - #2813 HP (6 A at 55 C) carries the maximum switched load of about 4.8 A.
+  - Pack current: 4.8 A at most against P50B 60 A continuous; IR loss about 1 W or less at peak.
+  - 72 Wh pack and 88.8 Wh bank are both under the 100 Wh cabin limit.
+  - IP2368: 2-5 cells, so 4S is supported; RVSET 5.1k gives 4.10 V/cell; the 10k B3380 NTC gives 0/45 C windows; charge-only BZ avoids Try.SRC pushing power into banks.
+  - INA228 with the 15 mOhm shunt (ADCRANGE 0, +/-10.9 A) covers 3 A charge and 4.8 A discharge. With the shunt in the pack lead it counts both directions; the always-on draw is about 10 mW.
+  - Standby drain: INA228 plus IP2368 standby (180 uA) plus BMS is about 14 mW, about 170 days from full.
+  - Boni-Whip 12.5 V on an LT3045 (20 V in, 15 V maximum out, 260 mV dropout) stays regulated to about 12.85 V of pack. 12.5 V is inside both published ranges (9-15 V WiMo, 12-15 V SWLing).
+  - LNB LDO keeps the Bullseye in vertical (11.5-14 V) down to the 13.2 V cutoff; the 18 V branch is not needed.
+  - V4L bias tee (4.5 V, 180 mA) is limited to LNAs of 80 mA or less; the WS4612 (about 2.1 A per port) covers an RTL plus tee at about 0.35 A.
+  - VCC_5V_PERI without the Lime is about 4.9 W of about 17 W (30%).
+  - Lime 3.3 V comes from the on-board ETA3521 (4 A) against a 2.5 A allowance. The 3.20 V at-card acceptance leaves margin over the M.2 minimum of 3.135 V.
+  - AUX 12 V load (sled about 0.2 A, noise source about 0.15 A, 28 V boost about 0.07 A, about 0.42 A total) is under a 0.75 A-hold PTC, which is still about 0.55 A at 60 C.
+  - LDO thermal: Boni-Whip LDO 0.39 W, LNA LDO 0.25 W, LNB LDO 0.96 W worst case (needs plate bonding). All within LT3045 capability on a plate-bonded pad (model).
+  - PSRR: LT3045 class (about 70 dB or more at 0.25-1 MHz) suppresses D36V50F12 and IP2368 input ripple on the LDO-fed rails (LNB, Boni-Whip, LNA).
+  - The 3S budget option is correctly demoted: the LNB, Boni-Whip and AUX would each need a boost.
+  - Q6A cooling (stepped copper block plus 30-40 mm fan, two airflow paths, Lime conduction to the plate) is the right topology. The noon soak and the 80/85 C shedding ladder remain the gate.
+  - Power-key handling (labpowerd owns KEY_POWER and calls poweroff, never halt) and the RP2040 J21 pin 3 boot pulse (0.5-1.5 s, UEFI needs 400 ms or more) are consistent with each other.
+- **Budget tables:**
+  - RAIL MAP (one architecture; I = typical / max)
+  | Rail | Source -> regulator | Setpoint | Limit / protection | Switch, default | Loads | I typ / max |
+  |---|---|---|---|---|---|---|
+  | PACK / node N | 4S1P P50B + 4S balancing BMS 15-20 A -> 7.5 A fuse -> INA228 15 mOhm shunt | 12.8-16.4 V (16.8 V only during a balance charge, master switch OFF) | SMBJ17A at node N | always | IP2368 BAT+, always-on LDO, #2813 | 0.6 / 4.8 A |
+  | AON 3.3 V | node N -> 30 V uA-Iq LDO (TPS709 class, verify) | 3.3 V | - | always on | INA228, 12.8 V supervisor | about 1 mA |
+  | SW | node N -> Pololu #2813 HP | pack voltage | 6 A at 55 C | button / RP2040 / supervisor OFF | all rails below | - |
+  | SYS12 | SW -> D36V50F12 (EN divider 12.8 V) | 12.0 V +/-4%; tracks pack minus dropout below about 13.3 V | internal OCP/OTP, PG | with SW | J21, DISP12, AUX12 | 1.0 / 2.9 A without Lime; about 4 A at Lime peak |
+  | J21 | SYS12 -> pi-filter + SMBJ13A + 220 uF/25 V | 11.5-12.5 V | - | - | Q6A plus everything on VCC_5V_PERI | 0.35-1.3 A without Lime; 2.5 A at Lime peak |
+  | DISP12 | SYS12 -> LC filter -> eFuse | 12 V | 1.5 A | RP2040 backlight | Wisecoco board (12 V input preferred) | 0.25 / 1.1 A (model) |
+  | AUX12 | SYS12 -> P-FET rated +/-20 V V_GS + 10k/10k gate divider | 12 V | 0.75 A-hold PTC | labd, OFF, BENCH only | sled, noise source, 28 V boost | 0 / 0.42 A |
+  | LAB5 | SW -> D36V28F5 (D36V50F5 if Lime + T7) | 5.0 V | 3 A fuse | with SW | CH334F tree (wired through its 5V pin), HMI RP2040, IMU puck, HF+ (LC + ferrite), LAB port (TPS2553 1 A), LNA4V5, blower | 0.6 / 2.4 A |
+  | LNA4V5 | LAB5 -> LT3045 | 4.5 V | TPS2553 at 300 mA per port | labd per port, OFF | SAWbird+ NOAA/GOES/iO/H1, LNA V2 | 0.17 / 0.5 A |
+  | LNB13V2 | SW -> LT3045 (EP or 2 in parallel, bonded to plate) | 13.2 V | ILIM 1.5-2x measured (provisionally 0.45 A) | labd, OFF | Bullseye through the internal tee | 0.2-0.3 A (unpublished) |
+  | BONI12V5 | SW -> LT3045 | 12.5 V | ILIM about 0.2 A (provisional) | labd, OFF | Boni-Whip injector | about 0.05-0.1 A (unpublished) |
+  | VCC_5V_PERI | inside the Q6A: SGM40666AS -> SY7120 | 5 V | about 17 W; WS4612 about 2.1 A per port | - | RTL-A, RTL-B, fan, GNSS, touch, Wi-Fi, M.2 | 4.9 W without Lime; 11.8 W Lime typical; 20.6 W Lime worst case if the T7 stays on it |
+  | M.2 3V3 | VCC_5V_PERI -> ETA3521 4 A | 3.3 V (3.20 V or more at the card) | - | - | LimeSDR (optional) | 1.2 / 2.5 A |
+  - PER-MODE PACK POWER AND RUNTIME (model; usable 58 Wh warm / 50 Wh cold or aged; 4.10 V/cell charge, 13.2 V cutoff)
+  | Mode | W at pack | Runtime warm | Runtime cold | Files claimed |
+  |---|---|---|---|---|
+  | A idle/menu, display 25% | 8.5 | 6.8 h | 5.9 h | - |
+  | B LEO pass: 1 V4L + SAWbird, NPU, display 50% | 18.5 | 3.1 h | 2.7 h | 3.7-5.3 h at 11-17 W |
+  | C QO-100 NB: V4L-B + LNB 13.2 V, display 50% | 20.0 | 2.9 h | 2.5 h | 13-21 W |
+  | D survey: 2 V4L + HF+ + NPU, display 50% | 23.8 | 2.4 h | 2.1 h | - |
+  | E HF Quiet: HF+ + Boni-Whip, display minimum | 9.0 | 6.4 h | 5.5 h | - |
+  | F bench on pack: V4L, sled, noise source, 1 LAB instrument | 19.2 | 3.0 h | 2.6 h | 19-22 W, 2.8-3.4 h |
+  | G peak without Lime: display 100%, all rails, LAB port 1 A | 47.6 (about 42 without the LAB port) | 1.2 h | 1.05 h | 24-32 W |
+  | H Lime typical: 56 Msps + T7 + V4L, display 50% | 31.2 | 1.9 h | 1.6 h | 25-28 W, 2.2-2.6 h |
+  | I Lime peak, display 100% | 63.9 | 0.9 h | 0.8 h | 45-52 W |
+  | OFF (INA228 + IP2368 standby + BMS) | 0.014 | about 170 days | - | - |
+  Charging from a 60 W or larger PD source: about 1.4 h CC plus 0.3-0.5 h CV (9.5% to 93%). While running mode B: about 2.5 h. The IP2368 draws 48-52 W at 3 A.
+  - PROTECTION VALUES AGAINST REAL CURRENTS
+  | Point | Device | Setting | Real current | Margin / verdict |
+  |---|---|---|---|---|
+  | Pack | blade fuse | 7.5 A | 3.6 A peak without Lime, 4.8 A with Lime, 3 A charge | OK; 5 A rejected |
+  | Master | Pololu #2813 HP | 6 A at 55 C | 4.8 A or less | OK |
+  | LAB5 | fuse | 3 A (was 2 A) | 2.4 A maximum including LNAs | OK; 2 A too small |
+  | LAB port | TPS2553 | 1.0 A | 0.05-1.0 A | OK |
+  | SAWbird+ ports | TPS2553 | 300 mA nominal (about 240 mA minimum) | 170-180 mA | OK; 250 mA nominal is too tight; a PTC needs 0.35-0.4 A hold |
+  | V4L tee | internal | 180 mA | 80 mA or less allowed | OK |
+  | LNB | LT3045 ILIM | 1.5-2x measured (provisionally 0.45 A) | 0.2-0.3 A (unpublished) | measure |
+  | Boni-Whip | LT3045 ILIM | about 0.2 A (provisional) | unpublished | measure |
+  | AUX12 | PTC | 0.75 A hold (about 0.55 A at 60 C) | 0.42 A | OK |
+  | Display | eFuse | 1.5 A | 1.1 A at 100% (model) | OK |
+  | Q6A USB-A | WS4612 | about 2.1 A | 0.35 A per RTL plus tee | OK |
+  | VCC_5V_PERI | SGM40666AS | about 17 W | 4.9 / 11.8 / 20.6 W | OVER only for Lime + T7 at worst case: move the T7 to LAB5 |
+  | J21 | SMBJ13A + 220 uF | VRWM 13 V | 12.48 V maximum | OK; SMBJ14A rejected (VBR up to 17.2 V) |
+  | Node N | SMBJ17A | VRWM 17 V | 16.4 V (16.8 V with switch OFF) | OK |
+  - CUTOFF TABLE (4S, labpowerd + hardware)
+  | Level | Trigger | Action |
+  |---|---|---|
+  | Economy | SoC 20% or V_N below 14.0 V loaded for 30 s | dim to 30%, Lime parked, loggers off |
+  | NPU shed | below 25% / below 15% | no training / NPU off |
+  | Shutdown | SoC 3% or V_N <= 13.2 V loaded for 10 s | 30 s banner, finalise SigMF, bias/LNB/Boni/AUX off, sync, poweroff; RP2040 opens #2813 when 40-pin 3.3 V drops |
+  | Hardware | V_N <= 12.8 V | supervisor -> #2813 OFF; D36V50F12 EN sleep as backstop |
+  | BMS | 2.5-2.8 V/cell | last resort |
+  | Restart | button only, V_N >= 13.6 V at rest | - |
+  | Temperature | cell below 0 or above 45 C: no charge; cell above 60 C: shutdown; SoC above 75 C: no training; panel above 60 C: 50%, above 68 C: 20% | - |
+  | Gauge resync | 16.35 V and below 0.1 A (IP2368 full), or V_N at rest >= 16.3 V at boot after an ISDT balance charge | - |
+  - HEAT IN THE CASE (model: 210x135x52 mm, two fan paths about 5.4 m3/h, h about 10 W/m2K; ambient 35 C)
+  | Mode | Internal W | Mean air rise shade/sun | Outlet rise | Notes |
+  |---|---|---|---|---|
+  | B LEO pass | 17.1 | 6.3 / 8.7 K | 10-14 K | cells downstream about 45-49 C, so no charging |
+  | D survey | 22.1 | 8.1 / 10.5 K | 13-17 K | - |
+  | G peak without Lime | 36.4 | 13.3 / 15.8 K | 21-25 K | SoC throttles (about 90-100 C) |
+  | H Lime typical | 29.8 | 10.9 / 13.4 K | 17-21 K | T7 near its 60 C limit if inside |
+  | I Lime peak | 52.7 | 19.3 / 21.7 K | 31-35 K | not sustainable |
+  | Charging | +2.6 W (IP2368 loss) | - | - | keep at least 10 mm from the cells |
+  Panel (backlight 11/5.5/2.8 W at 100/50/25%; 11.4 W of sun on the active area): at 25 C ambient, full sun, 100% about 61 C; at 35 C, full sun, 100% about 71 C (over the 70 C rating, so it derates to about 50%); at 35 C with the hood (50% shade) and 50% about 53 C.
+  - POWER SUBSYSTEM COST (world prices)
+  | Part | Qty | Price | Status |
+  |---|---|---|---|
+  | Molicel P50B | 5 | about EUR 6.75 each incl. VAT (NKON, 31 Jul 2026) | search snippet; the page returned 403 |
+  | 4S common-port balancing BMS 15-20 A | 1 | $5-12 | unverified |
+  | IP2368 BZ charge-only board | 2 | $8-17 each | unverified |
+  | Pololu #2813 HP | 1 | $8.95 | verified (power.json) |
+  | Pololu D36V50F12 | 1 (+1 spare) | $39.95 ($36.75 at 5+) | verified today, 'Rationed' |
+  | Pololu D36V28F5 | 1 | $23.95 | radio_lab |
+  | Adafruit INA228 #5832 | 1 | $14.95 | verified (power.json) |
+  | LT3045 boards (LNA, LNB, Boni-Whip) | 3 | $5-10 each | unverified |
+  | TPS2553 + carriers | 5 | $2-4 each | unverified |
+  | uA LDO + 12.8 V supervisor | 1 | $2-4 | unverified |
+  | SMBJ13A, SMBJ17A, P-FET rated +/-20 V V_GS, AO3400, fuses, NTC, XT30, 220 uF, ferrites, LC parts, foam/film, KSD9700 | - | $12-20 | estimate |
+  | Total | | about $187-248 (+$37-40 for a spare D36V50F12) | |
+  Optional: ISDT 608PD (reference price $47-54). D36V50F5 only for Lime + T7 (price unverified).
+  - CURRENT PER LOAD USED IN THE MODEL
+  | Load | Value | Basis |
+  |---|---|---|
+  | Q6A | 2.9 / 9.3 / 10.1 W | measured (Geerling) |
+  | V4L | 1.3 W (250-270 mA) | datasheet |
+  | SAWbird+ NOAA / GOES / H1 | 170 / 180 / 120 mA | Nooelec |
+  | Lime | 4 W typical, 8.25 W allowance | Lime staff / M.2 spec |
+  | Display | 3 / 6 / 13 W at 25/50/100% | model |
+  | HF+ | 0.3 A at 5 V | provisional, unpublished |
+  | LNB | 0.2-0.3 A at 13.2 V | unpublished |
+  | Boni-Whip | 0.05-0.1 A at 12.5 V | unpublished |
+  | Fans | 0.8-2 W | estimate |
+  | T7 | 3 W typical, 7.5 W budget | storage.json |
+  | Efficiencies | D36V50F12 92%, D36V28F5 88%, Q6A internal 85%, LDO Vout/Vin | Pololu 90-95%; estimates |
+- **Notes:** I chose one power architecture:
+  - **Pack:** 4S1P P50B, charged daily to 4.10 V/cell, behind a 7.5 A fuse and the INA228 shunt to node N.
+  - **Charger:** IP2368 BZ, permanently on node N.
+  - **Master switch:** #2813 HP, opened by the button, the RP2040 or a 12.8 V supervisor.
+  - **Main 12 V:** D36V50F12 feeds SYS12: J21, a display branch with a 1.5 A eFuse, and AUX 12 V (default OFF).
+  - **LAB 5 V:** D36V28F5 feeds the hub tree, HF+, LAB port and a 4.5 V LT3045 LNA rail with TPS2553 switches at 300 mA.
+  - **Pack-fed LDOs:** two more LT3045s run straight from the switched pack node, LNB at 13.2 V and Boni-Whip at 12.5 V. No switching boost and no 18 V anywhere.
+  
+  There are no blockers in this lens. Ten findings are major. The biggest corrections:
+  - Runtime and usable energy are overstated. Plan with 58 Wh warm and 50 Wh cold.
+  - The display is under-budgeted. Model 10-14 W at 100%; the vendor input voltage is still unknown.
+  - The LNB feed exists in four incompatible versions.
+  - The LNA LDO has no defined input.
+  - The CH334F/LAB 5 V wiring can back-feed into Q6A VBUS.
+  - With the Lime, the Q6A's 17 W VCC_5V_PERI is exceeded if the T7 also runs from it.
+  - The roughly 500 kHz switching of the 12 V buck sits near NAVTEX 490/518 kHz, and its light-load mode can wander through the LF time-signal band.
+  - Cell and panel heat in sun: the charge NTC trips, and sustained 2000 nits is not reachable at 35 C ambient.
+  
+  Physics against the wishes: in hot noon sun, sustained 2000 nits is thermally impossible in a sealed handheld. Expect about 1000 nits sustained; 2000 is a burst mode. A 2000-nit panel at full brightness also roughly halves runtime.
+  
+  Model files:
+  - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/p2_power/model.py: usable energy, using a generic NMC/Si OCV curve, not Molicel data.
+  - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/p2_power/modes.py: per-mode power and VCC_5V_PERI.
+  - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/p2_power/thermal.py: case air rise and panel temperature.
+  
+  All runtime and thermal figures are models until the INA228 logs and the noon soak exist.
+  
+  Web use: 5 searches and 7 fetches. 3 fetches failed (TI 404, ADI 503, NKON 403).
+  - Pololu 4095, fetched today: 13.3-50 V subject to dropout; 12 V ±4%; about 500 kHz under heavy load, light-load mode above 20 kHz; 4.5 A typical at 36 V in, 2.3-6.5 A depending on conditions; EN thresholds 1.2/1.35 V; sleep current 10-20 µA per volt; PG trips at -10%/+20%; $39.95 ($36.75 at 5+); 'Rationed'.
+  - Molicel P50B page: 18 Wh, 60 A continuous, 12.8 mΩ.
+  - LT3045, from a datasheet mirror found by search: 1.8-20 V in, 0-15 V out, 500 mA, 260 mV dropout, programmable current limit, can be paralleled.
+  - Pololu S18V20F12: 2 A SEPIC, so no verified Pololu 12 V buck-boost of 5 A or more exists.
+  - Adafruit CH334F guide: the upstream 5V pin is the board's power input; each downstream port's 5V pin is an output.
+  - P50B price: EUR 6.75 at NKON, from a search snippet only.
+  
+  Still unverified: currents of the HF+, Boni-Whip, Bullseye LNB and noise source; Wisecoco input voltage and power; the D36V50F12 dropout curve and its real fundamental frequency versus load; IP2368 BZ world price and how it behaves with a 45 W source; BMS price; the AO3407A and TPS709 ratings, which are from memory.
+  
+  All 25 conflicts_for_final_checks items are resolved in proposed_decisions as C1-C25. P1-P6 are additional power decisions.
+
 ## completeness:lens2 (run `wf_6ce87eb1-883`)
 
 - **Lens:** MISSING PARTS: cables and adapters, RF switching and its drive, bias tees, DC blocks, pads, loads, filters, fuses, PTCs and TVS, connectors and DC jacks, power key, charger input, fasteners, thermal parts, fan, sun hood, strap and tripod mount, weather protection, bags, spares, tools, flashing media, and the home-base PC for QAIRT 2.42.
