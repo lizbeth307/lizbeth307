@@ -2973,6 +2973,229 @@
   
   Limits: the WebSearch budget was already used up when this step started (0 searches run), so generic AliExpress modules could not be found or measured; they are rejected for lack of evidence. All prices above come from WebFetch of distributor pages or the scratchpad cache, 18 Oct 2026.
 
+## searchA:tca9517_buffer_74lvc1g17_2n7002_ao3400_f (run `wf_071e1025-145`)
+
+- **Part:** Interface logic set: TCA9517 I2C repeater (I2C2 to LAB BUS), 74LVC1G17 (spare fan path from pin 33), 2N7002 (J21 pin 3 open drain, LC76G RESET, AUX12 P-FET gate, spare fan), AO3400 (Q6A fan, blower, G6K coil switches), relay driver for 2x G6K-2F-RF 5 V coils, BAT54 (power-button OR, OFF OR, flyback). Qty 1 set, core, group Interface.
+- **Current price usd:** STACK gives 5-10 (estimate). My recount at DigiKey qty-1 prices (Oct 2026), with quantities I counted from STACK sections C6/D3/5.2 (my count, not stated in STACK): TCA9517DGKR $1.56 (DigiKey showed stock 1) + SN74LVC1G17DBVR $0.15 + 4x 2N7002-class ($0.19 each for 2N7002BK) + 4x AO3400A (AOS) $0.52 + 9x BAT54,215 $0.14 = about $5.81. Add $0.40-1.99 if the relay driver is an IC (UMW ULN2003A $0.40, ST ULN2003A DIP $1.99). STACK never names the relay-driver part.
+- **Critical specs:**
+  - TCA9517: VCCA 0.9-5.5 V, VCCB 2.7-5.5 V, VCCA <= VCCB (3.3 V both sides here); A side has no static offset (faces the UM3204H TXS-type header buffer); B side buffered-low VOL <= 0.6 V and contention threshold VILC >= 0.40 V (sled MCP23017/ADS1115/RP2040); 400 kHz (stack runs 100 kHz); 400 pF per side (cable); I2C pins high-Z and 5.5 V tolerant when unpowered (LAB BUS hot-plug, sled unpowered); ESD >= +/-5.5 kV HBM / 1 kV CDM (B side leaves the case on a cable); -40 to 85 C; VSSOP-8 (DGK) footprint
+  - 74LVC1G17: 1.65-5.5 V supply at 3.3 V; Schmitt input with hysteresis >= 0.5 V at 3 V (the UM3304 TXB edge is slow and weak, 4 kOhm); Ioff partial power-down (header boot state is undefined); +/-24 mA at 3 V; -40 to 125 C; ESD 2 kV HBM; SOT-23-5 land
+  - 2N7002 roles: VDS >= 30 V (AUX12 12 V gate divider); VGS(th) max <= 2.5 V and RDS(on) specified at <= 5 V gate (3.3 V drive from Pico/MCP23017); ID >= 115 mA; IDSS <= 1 uA (leakage on the J21 pin 3 PMIC key and RESET lines); gate ESD protection preferred (harness to J21); SOT-23
+  - AO3400 roles (fans about 50 mA, G6K coils about 24-30 mA at 5 V from STACK's 0.12-0.15 W): VDS 30 V; VGS(th) 0.65-1.45 V; RDS(on) <= 32 mOhm at 4.5 V and <= 48 mOhm at 2.5 V; ID 5.7 A; VGS +/-12 V; IDSS <= 1 uA; SOT-23
+  - Relay driver: 2 channels; <= 0.1 V drop at 30 mA so the G6K coil keeps its must-operate margin on a 5 V rail; output defined OFF while the MCP23017 is tri-stated at power-up (keeps the de-energised 50 Ohm default, i.e. the receive-only terminated state); flyback clamp; works with a 3.3 V logic input and a 5 V coil supply
+  - BAT54: VF <= 240/320/400/500 mV at 0.1/1/10/30 mA (sets the low level seen by the #2813 A pin and J21 pin 3); IR <= 2 uA at 25 V (AON/standby leakage); VR 30 V; IF 200 mA, IFRM 300 mA (flyback); CT <= 10 pF; SOT-23
+  - All parts: no Linux driver involved (I2C repeater and discretes are transparent; works on Ubuntu 24.04 arm64 as is); bought from franchised distributors to avoid counterfeits (AO3400 and 2N7002 are heavily cloned)
+- **Candidates:**
+  1.
+    - **Name:** TI TCA9517ADGKR (TCA9517A, same vendor, newer SKU)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 1.38 (DigiKey qty 1, cut tape, 14,369 in stock) vs 1.56 for TCA9517DGKR (DigiKey showed stock 1). TME does not stock TCA9517A.
+    - **Spec comparison:** TI pages and datasheets: VCCA 0.9-5.5 V and VCCB 2.7-5.5 V on both parts, both with VCCA <= VCCB; 400 kHz both; 400 pF per side both; ESD +/-5500 V HBM and +/-1000 V CDM both; latch-up > 100 mA both; I2C pins high-Z when unpowered on both, and on TCA9517A all I/Os and EN are 5.5 V tolerant at 0 V supply; B-side VOL 0.45/0.52/0.6 V min/typ/max on both; VILC 0.45 V (TCA9517A) vs 0.40 V (TCA9517), so TCA9517A is better; -40 to 85 C both.
+    - **Worse in:** Nothing found. TI calls it a drop-in replacement with upgraded functionality.
+    - **Compatibility:** Same VSSOP-8 DGK pinout and land (TI: P2P). Same orientation rule (A side to the header behind the UM3204H, B side to the LAB BUS cable, 4.7k on the sled side), same 100 kHz bring-up and 1e6-read test. No software impact.
+    - **Risks:** Low. Franchised source (DigiKey). Prices are USD ex VAT; add EU VAT (19-25%) at checkout.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=TCA9517
+    - **Sources:**
+      - https://www.ti.com/product/TCA9517A
+      - https://www.ti.com/lit/ds/symlink/tca9517a.pdf
+      - https://www.ti.com/lit/ds/symlink/tca9517.pdf
+      - https://www.ti.com/product/TCA9517
+      - https://www.digikey.com/en/products/result?keywords=TCA9517
+  2.
+    - **Name:** TI TCA9517DGKR (the current part) from TME (Poland, EU)
+    - **Kind:** current_part
+    - **Price usd:** about 1.03 at qty 1 (TME structured data range 0.58-1.031 USD, assumed ex VAT; no tier table on the page). Stock shows 627 in the structured data but 0 on the page, so availability is unverified.
+    - **Spec comparison:** Identical part.
+    - **Worse in:** Nothing on spec. Its VILC is 0.40 V, versus 0.45 V on TCA9517A.
+    - **Compatibility:** Identical.
+    - **Risks:** TME's live price and stock are unconfirmed (the page showed 'no-prices'). EU seller, so VAT applies. This is cheaper than the DigiKey TCA9517A only if TME shipping is already paid on another order.
+    - **Seller url:** https://www.tme.eu/en/details/tca9517dgkr/level-translators/texas-instruments/
+    - **Sources:**
+      - https://www.tme.eu/en/details/tca9517dgkr/level-translators/texas-instruments/
+  3.
+    - **Name:** NXP PCA9517ADP,118 (TSSOP8)
+    - **Kind:** other_brand
+    - **Price usd:** 1.43 (DigiKey qty 1, 14,836 in stock). SO-8 PCA9517AD,118 costs 1.76.
+    - **Spec comparison:** TME/NXP parameters: VCCA 0.9-5.5 V and VCCB 2.7-5.5 V, -40 to 85 C, the same architecture (B-side buffered low). ESD rating, VILC and Ioff could not be verified: nxp.com returned 403 and the datasheet PDF did not parse.
+    - **Worse in:** Costs more than TCA9517A. ESD, VILC and Ioff are unverified, so not-worse is not proven.
+    - **Compatibility:** Functional equivalent of TCA9517. NXP TSSOP8 (SOT505-1) is believed to share the VSSOP-8 land; I did not verify this.
+    - **Risks:** Unverified specs. No price advantage over TCA9517A.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=PCA9517A
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=PCA9517A
+      - https://www.tme.eu/en/details/pca9517adp.118/interfaces-others-integrated-circuits/nxp/pca9517adp-118/
+  4.
+    - **Name:** Nexperia 74LVC1G17GW-Q100 / 74LVC1G17GW,125 (SOT-353)
+    - **Kind:** other_brand
+    - **Price usd:** 0.13 (DigiKey, GW-Q100, 27,506 in stock) vs 0.15 for TI SN74LVC1G17DBVR at DigiKey. GW,125 at TME is about 0.091 (structured-data high value; on-page stock inconsistent).
+    - **Spec comparison:** Verified: 1.65-5.5 V and -40 to 125 C (TME), the same LVC family as TI SN74LVC1G17 (TI datasheet: +/-24 mA at 3.3 V, Ioff +/-10 uA, hysteresis 0.51-0.83 V at 3 V, 2 kV HBM). Nexperia's own drive, hysteresis and ESD figures could not be read (nexperia.com 403). GW-Q100 adds AEC-Q100 qualification.
+    - **Worse in:** The SC-70-5 package is smaller and harder to hand-solder. Its land differs from SOT-23-5. Nexperia's ESD and hysteresis figures are unverified.
+    - **Compatibility:** Same function and pinout. A different footprint is needed unless the board is laid out for SC-70-5.
+    - **Risks:** Savings of only $0.02-0.05. Not worth a footprint change unless the board uses SC-70.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=74LVC1G17GW
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=74LVC1G17GW
+      - https://www.tme.eu/en/details/74lvc1g17gw.125/buffers-transceivers-drivers/nexperia/74lvc1g17gw-125/
+      - https://www.ti.com/lit/ds/symlink/sn74lvc1g17.pdf
+      - https://www.digikey.com/en/products/result?keywords=SN74LVC1G17DBVR
+  5.
+    - **Name:** Diodes Inc 74LVC1G17W5-7 (SOT-25, SOT-23-5 land)
+    - **Kind:** other_brand
+    - **Price usd:** about 0.13 at TME (structured-data high value, ex VAT) vs 0.14 for TI SN74LVC1G17DBVR at TME
+    - **Spec comparison:** TME: 1.65-5.5 V, push-pull, -40 to 125 C. Drive, Ioff, hysteresis and ESD are not verified from the Diodes datasheet.
+    - **Worse in:** Nothing proven worse, but the critical specs (Ioff, hysteresis) are unverified.
+    - **Compatibility:** Drop-in for the SOT-23-5 land.
+    - **Risks:** Saves $0.01. TME stock shown is inconsistent.
+    - **Seller url:** https://www.tme.eu/en/details/74lvc1g17w5-7/buffers-transceivers-drivers/diodes-incorporated/
+    - **Sources:**
+      - https://www.tme.eu/en/details/74lvc1g17w5-7/buffers-transceivers-drivers/diodes-incorporated/
+      - https://www.tme.eu/en/details/sn74lvc1g17dbvr/buffers-transceivers-drivers/texas-instruments/
+  6.
+    - **Name:** Nexperia 2N7002BK,215 (ESD-protected 2N7002)
+    - **Kind:** other_brand
+    - **Price usd:** 0.031-0.067 at TME (structured data; qty-1 tier assumed 0.067, ex VAT; 16,572 in stock in the structured data); 0.19 at DigiKey qty 1
+    - **Spec comparison:** Compared with a plain 2N7002 (JSCJ listing: 60 V, 115 mA, 5 Ohm at 10 V, VGS(th) max 2.5 V, no ESD): 60 V; +/-20 V; 245 mA (TME) or 350 mA (DigiKey title); RDS(on) 2 Ohm (TME, test condition not given); Qg 0.6 nC; ESD-protected gate (better). VGS(th) could not be verified (nexperia.com 403).
+    - **Worse in:** No spec is shown worse. An ESD-protected gate has higher gate leakage than an unprotected one (the Diodes 2N7002K is rated IGSS +/-10 uA at +/-20 V); this is negligible at 3.3 V with a 100k pull-down. VGS(th) max is unverified.
+    - **Compatibility:** SOT-23 pin-compatible in every 2N7002 role.
+    - **Risks:** Franchised sources (TME, DigiKey). TME's qty-1 price is inferred.
+    - **Seller url:** https://www.tme.eu/en/details/2n7002bk.215/smd-n-channel-transistors/nexperia/2n7002bk-215/
+    - **Sources:**
+      - https://www.tme.eu/en/details/2n7002bk.215/smd-n-channel-transistors/nexperia/2n7002bk-215/
+      - https://www.digikey.com/en/products/result?keywords=2N7002BK%2C215
+  7.
+    - **Name:** Diodes Inc 2N7002K-7
+    - **Kind:** other_brand
+    - **Price usd:** 0.22 (DigiKey qty 1)
+    - **Spec comparison:** Fully verified in datasheet DS30896 Rev 20: 60 V; +/-20 V; 380 mA (310 mA at VGS 5 V); RDS(on) <= 2 Ohm at 10 V and <= 3 Ohm at 5 V/50 mA; VGS(th) 1.0/1.6/2.5 V; IDSS <= 1 uA; Ciss 30 pF typ; ESD 2 kV. Better than a plain 2N7002 on current, RDS(on) and ESD.
+    - **Worse in:** IGSS is +/-10 uA at 20 V (from the ESD diodes), which is negligible at 3.3 V. It costs about $0.03 more than 2N7002BK at DigiKey.
+    - **Compatibility:** SOT-23 drop-in.
+    - **Risks:** None beyond price.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=2N7002K-7
+    - **Sources:**
+      - https://www.diodes.com/assets/Datasheets/2N7002K.pdf
+      - https://www.digikey.com/en/products/result?keywords=2N7002K-7
+  8.
+    - **Name:** JSCJ (Changjiang) 2N7002, LCSC C8545
+    - **Kind:** other_brand
+    - **Price usd:** 0.0176 each at 50+ (MOQ 50, so $0.88 per strip), 1,994,400 in stock
+    - **Spec comparison:** LCSC listing: 60 V, 115 mA, 5 Ohm at 10 V, VGS(th) 2.5 V max, Ciss 50 pF, 225 mW. This equals the plain-2N7002 baseline STACK names.
+    - **Worse in:** No gate ESD protection and a higher RDS(on) than 2N7002BK/2N7002K. RDS(on) is not specified at 3.3-5 V gate drive. It is worse than the ESD variants, but equal to a plain 2N7002.
+    - **Compatibility:** SOT-23 drop-in.
+    - **Risks:** Only cheaper if an LCSC order exists anyway (shipping to the EU not verified). JSCJ is an established manufacturer (JCET group), but this is not a franchised EU channel.
+    - **Seller url:** https://www.lcsc.com/product-detail/C8545.html
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/C8545.html
+  9.
+    - **Name:** AOS AO3400A (genuine AOS, the current part) from LCSC C20917
+    - **Kind:** current_part
+    - **Price usd:** 0.098 each at 5+ (MOQ 5, so $0.49), 527,335 in stock, vs 0.52 at DigiKey qty 1. TME lists 0.066-0.098 (MOQ 10) but has 0 in stock.
+    - **Spec comparison:** Same part. AOS datasheet Rev 3.1: 30 V; +/-12 V; 5.7 A; RDS(on) < 26.5/32/48 mOhm at 10/4.5/2.5 V; VGS(th) 0.65-1.45 V; IDSS 1 uA.
+    - **Worse in:** Nothing on spec.
+    - **Compatibility:** Identical.
+    - **Risks:** AO3400 is one of the most cloned SOT-23 FETs. LCSC lists the part under AOS, but I could not confirm that LCSC is an AOS-franchised channel. LCSC shipping to the EU is not verified, so the $1.7 saving on 4 pcs only holds if shipping is already paid.
+    - **Seller url:** https://www.lcsc.com/product-detail/C20917.html
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/C20917.html
+      - https://www.aosmd.com/res/datasheets/AO3400A.pdf
+      - https://www.digikey.com/en/products/result?keywords=AO3400A
+      - https://www.tme.eu/en/details/ao3400a/smd-n-channel-transistors/alpha-omega-semiconductor/
+  10.
+    - **Name:** UMW AO3400A (second source using the AOS part number)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 0.44 (DigiKey qty 1)
+    - **Spec comparison:** UMW datasheet not checked, so equivalence to the AOS figures is unverified.
+    - **Worse in:** Specs unverified. It is a clone of the AOS part number and costs more than genuine AOS at LCSC.
+    - **Compatibility:** SOT-23 pinout presumably identical (unverified).
+    - **Risks:** Provenance and spec drift. Rejected.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=AO3400A
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=AO3400A
+  11.
+    - **Name:** Diodes Inc DMN3404L (AO3400 alternative)
+    - **Kind:** other_brand
+    - **Price usd:** not fetched
+    - **Spec comparison:** Datasheet: 30 V; +/-20 V; 5.8 A; VGS(th) 1.0/1.5/2.0 V; RDS(on) <= 42 mOhm at 4.5 V; at 3 V only 95 mOhm at 85 C is given; no 2.5 V rating; AEC-Q101.
+    - **Worse in:** VGS(th) max is 2.0 V vs 1.45 V, RDS(on) at 4.5 V is 42 vs 32 mOhm, and there is no 2.5 V rating. All three matter for 3.3 V gate drive. Rejected.
+    - **Compatibility:** SOT-23 drop-in.
+    - **Risks:** Worse at 3.3 V gate drive.
+    - **Seller url:** https://www.diodes.com/assets/Datasheets/DMN3404L.pdf
+    - **Sources:**
+      - https://www.diodes.com/assets/Datasheets/DMN3404L.pdf
+  12.
+    - **Name:** Discrete relay driver: 2x AO3400A + 1x BAT54C (common cathode to +5 V) + 2x 100k gate pull-downs
+    - **Kind:** diy
+    - **Price usd:** about 0.35 (2x AO3400A at LCSC $0.098 + BAT54C,215 at DigiKey $0.15; resistors already in the stack). About 1.19 if everything comes from DigiKey (2x $0.52 + $0.15).
+    - **Spec comparison:** Compared with IC drivers: drop at a 30 mA coil current is <= 1.4 mV (48 mOhm max at VGS 2.5 V). TI ULN2003A VCE(sat) is 0.9 V typ / 1.1 V max at 100 mA (not specified at 30 mA), leaving the coil at about 3.9-4.3 V. TI TPL7407L needs VCOM 8.5-40 V for full drive, so it is not specified with a 5 V COM. Flyback: BAT54 IFRM 300 mA, VR 30 V vs a 30 mA coil. Inputs: 3.3 V MCP23017 GPB2/GPB3 drive is well above the 1.45 V threshold max. Power-up: 100k pull-downs hold both coils off while the MCP is tri-stated, so the HF+ sits on 50 Ohm (the receive-only terminated default is kept).
+    - **Worse in:** No rated input-ESD network (AO3400A has no ESD spec). This is acceptable because the gates are on-board MCP outputs. It needs two resistors, which ULN/TPL integrate.
+    - **Compatibility:** 5 V coil rail and 3.3 V logic. Uses part types already in the set. Fits on the G6K board.
+    - **Risks:** Release time is slightly longer with a diode clamp (irrelevant for an RF input selector). Check isolation and loss on the LiteVNA as already planned.
+    - **Seller url:** https://www.lcsc.com/product-detail/C20917.html
+    - **Sources:**
+      - https://www.aosmd.com/res/datasheets/AO3400A.pdf
+      - https://www.ti.com/lit/ds/symlink/uln2003a.pdf
+      - https://www.ti.com/lit/ds/symlink/tpl7407l.pdf
+      - https://www.digikey.com/en/products/result?keywords=ULN2003A
+      - https://www.digikey.com/en/products/result?keywords=BAT54C%2C215
+  13.
+    - **Name:** ULN2003A (UMW SOIC-16 / ST DIP-16) as the relay driver
+    - **Kind:** other_brand
+    - **Price usd:** 0.40 (UMW) / 1.99 (ST DIP), DigiKey
+    - **Spec comparison:** Darlington VCE(sat) is 0.9 V typ / 1.1 V max at 100 mA (TI datasheet). It has integral clamp diodes and 7 channels.
+    - **Worse in:** About 0.7-1 V drop on a 5 V coil (vs about 1 mV discrete), which cuts the must-operate margin. UMW is a second-source clone. It costs more than the discrete option. Rejected.
+    - **Compatibility:** 3.3 V input works. The extra board area of an SO-16 is not needed.
+    - **Risks:** Reduced coil margin when cold or with rail sag.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=ULN2003A
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/uln2003a.pdf
+      - https://www.digikey.com/en/products/result?keywords=ULN2003A
+  14.
+    - **Name:** Nexperia BAT54C,215 (dual, common cathode) replacing single BAT54s
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 0.15 per package of 2 diodes (DigiKey qty 1) vs 0.14 per single BAT54,215; TME about 0.13 high value. About 5 packages replace about 9 singles: about $0.75 vs about $1.26.
+    - **Spec comparison:** Same BAT54 die rating (Diodes BAT54/A/C/S family datasheet: VF <= 240/320/400/500/800 mV at 0.1/1/10/30/100 mA, IR <= 2 uA at 25 V, CT <= 10 pF, VR 30 V, IF 200 mA, IFRM 300 mA). TME: 30 V, 0.2 A, common cathode.
+    - **Worse in:** Nothing on spec. Layout constraint: both diodes in a package share the cathode. That holds for each group as wired in STACK: the button OR has its cathodes at the button node, the supervisor/GP13 OR has its cathodes at the #2813 OFF input, and the coil/fan flyback diodes have their cathodes at +5 V. Confirm this on the schematic.
+    - **Compatibility:** SOT-23 with a different pinout from a single BAT54 (pins 1 and 2 anodes, pin 3 common cathode), so the footprint netlist changes, not the land.
+    - **Risks:** A schematic error would short two OR inputs together. Check in the build/ schematic review.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=BAT54C%2C215
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=BAT54C%2C215
+      - https://www.digikey.com/en/products/result?keywords=BAT54%2C215
+      - https://www.tme.eu/en/details/bat54c.215/smd-schottky-diodes/nexperia/bat54c-215/
+      - https://www.diodes.com/assets/Datasheets/ds11005.pdf
+- **Notes:** VERDICT (angle A): a cheaper set exists that is not worse on any verified spec.
+  - TCA9517 -> TI TCA9517ADGKR. $1.38 vs $1.56. Same pinout and specs, VILC 0.45 V vs 0.40 V. DigiKey had the TCA9517DGKR at stock 1.
+  - Relay driver -> discrete AO3400A + BAT54 flyback + 100k pull-down per coil. About 1 mV drop. ULN2003A drops about 1 V. TPL7407L needs a COM of 8.5 V or more.
+  - Single BAT54s -> BAT54C duals. Every diode group in STACK is common-cathode.
+  - 2N7002 -> 2N7002BK or 2N7002K. ESD-protected, lower RDS(on), same or lower price.
+  - Keep TI SN74LVC1G17DBVR. Nexperia and Diodes save only $0.01-0.05, and Nexperia needs a footprint change.
+  
+  Set cost:
+  - All from DigiKey, qty 1: about $5.12 (1.38 + 0.15 + 4x0.19 + 4x0.52 + 5x0.15). Baseline is about $5.81, or $6.2-7.8 with a relay-driver IC.
+  - With genuine AOS AO3400A from LCSC ($0.098): about $3.53, plus LCSC shipping (not verified).
+  - The set is tiny, so shipping decides the real cost. The cheapest path is to add it to the DigiKey order already in the STACK order plan (week 1-2: PEC11R, KSC641J, ferrites). DigiKey's EU free-shipping threshold was not re-verified.
+  - All prices are ex VAT. Add EU VAT (19-25%) at checkout.
+  
+  Design observation (no price change): the spare fan path 'pin 33 -> 74LVC1G17 -> 2N7002' runs at 3.3 V gate drive. RDS(on) of a 2N7002 is specified only at 5-10 V, with VGS(th) max 2.5 V. An AO3400A (48 mOhm max at 2.5 V) is the right FET there.
+  
+  Rejected:
+  - TI TCA9803: VCCB max 3.6 V, B-side current source, pin-to-pin not confirmed.
+  - UMW clones (AO3400A, SN74LVC1G17DBVR): not cheaper than the genuine parts, specs unverified.
+  - DMN3404L: higher VGS(th) and RDS(on).
+  - ULN2003A and TPL7407L: see the candidate entries.
+  
+  Hard rules are unaffected. The relay coils stay de-energised at power-up through the pull-downs, so the HF+ defaults to 50 Ohm. Nothing transmits, and there are no loops.
+  
+  Limits of this check:
+  - The shared WebSearch budget ran out on my first query, so all data came from WebFetch on primary and distributor pages.
+  - nexperia.com, nxp.com, onsemi.com and the Omron/Aratas G6K PDF returned 403. Nexperia 2N7002BK VGS(th), Nexperia 74LVC1G17 ESD and hysteresis, and NXP PCA9517A ESD and VILC are unverified.
+  - The G6K coil current (about 24-30 mA) is taken from STACK's 0.12-0.15 W, not from the datasheet.
+  - TME prices come from page structured data (low/high values); the pages showed 'no-prices'. Qty-1 = high value is my assumption, and on-page stock often read 0.
+  - The quantities per set are my count from STACK, not a STACK figure.
+  
+  Downloaded datasheets (text) are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_iface/</notes>
+  </invoke>
+  
+
 ## lab:instruments (run `wf_1dd437c5-0cf`)
 
 - **Area:** Portable RF test and measurement instruments (VNA, spectrum analyzer, noise source, frequency reference, counter, power meter, near-field probes, attenuators, loads) for the receive-only handheld lab built around the Radxa Dragon Q6A, RTL-SDR Blog V4L and LimeSDR Micro M.2
@@ -19741,6 +19964,161 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - The LT3045 absolute-maximum input was not re-fetched.
   
   Downloaded datasheets are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_gm1415/gm1415_ds.pdf and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_tps7a47/tps7a47.pdf.
+
+## searchA:adi_lt3045_paralleled_4_5_v_lna_rail (run `wf_a268b76e-da0`)
+
+- **Part:** ADI LT3045, two in parallel for the 4.5 V LNA bias rail (LNA4V5: LAB5 D36V28F5 5.0 V -> LC -> 2x LT3045 -> 4x TPS2553 at about 300 mA -> bias tees). Real load 0.17-0.6 A; labd LNA budget 1.0 A.
+- **Current price usd:** 16.66 for 2 at LCSC (checked 18 Oct 2026): LT3045EMSE#PBF C580012 $8.33 each, 1603 in stock. The DFN version that re-audit D names, LT3045EDD#PBF C666574, is $8.63 each (446 in stock). Prices exclude EU VAT and shipping. LCSC is not franchised by ADI. The authorised price is $20.00 for 2 at DigiKey: LT3045EMSE#PBF $10.00 each, 16,667 in stock; EDD#PBF $10.00 each but backordered until 18 Jan 2027.
+- **Critical specs:**
+  - Output current: at least 1.0 A total (labd LNA budget; 4 TPS2553 channels with RILIM 88.7k trip at 265/299/339 mA). Real load is 0.17-0.6 A, so 0.25-0.3 A per LT3045 in the pair.
+  - Dropout at stack current must be below the available headroom. Pololu's D36V28F5 page gives 5.0 V +/-4% (4.8-5.2 V), minus the LC drop, for a 4.5 V output: about 0.27-0.65 V of headroom. Baseline LT3045 at 300 mA: 220 mV typ, 280 mV max at 25 C, 350 mV max over temperature (datasheet Rev B).
+  - PSRR at low headroom (0.3-0.6 V) at the buck fundamental (about 500 kHz under heavy load per Pololu; lower in power-save mode at light load) and its harmonics at 1-2 MHz, up to about 10 MHz. This sets the spurs reaching the LNAs. Baseline LT3045 at 2 V headroom and 500 mA (table): 77 dB at 100 kHz, 76 dB at 1 MHz, 53 dB at 10 MHz. At 0.5 V headroom (graph G45, read by eye): about 67/58/56/65 dB at 100 kHz/500 kHz/1 MHz/2 MHz.
+  - Output noise, 10 Hz-100 kHz: 0.8 uVrms per LT3045, about 0.57 uVrms for the pair in theory. This has little effect on LNA bias, but it is listed so no trade is silent.
+  - Input voltage rating and fault robustness: VIN 2-20 V, absolute maximum +/-22 V. If LAB5's buck fails high, up to 16.4 V can appear on LAB5; the LT3045 survives, holds 4.5 V or goes into thermal shutdown, and so protects the LNAs.
+  - Reverse-battery and reverse-current protection: reverse output current 25 uA max. The rail leaves the case on external SMA bias ports through the TPS2553s.
+  - Current limit: programmable with ILIM (150 mA*kOhm). Internal limit 570-850 mA each, with foldback. Thermal shutdown at 165 C with hysteresis.
+  - Control: precision EN/UV driven from MCP #1, PG output, fast start-up.
+  - Output accuracy at 4.5 V: ISET 100 uA, +/-1% at 25 C, +/-2% over temperature; VOS +/-2 mV. It must stay safely under the Uputronics 440 '5 V max' input.
+  - Thermal: theta-JA 34 C/W (DFN-10 3x3) or 33 C/W (MSOP-12E). Worst case about 0.5 W in total.
+  - GND current (battery efficiency): 2.2 mA each at no load, 15 mA each at 500 mA.
+  - Package and paralleling: DFN-10 3x3 per re-audit D; designed for direct paralleling. Operating range -40 to 125 C (E grade).
+  - Authenticity: franchised source (DigiKey, ADI) or the known grey channel (LCSC). Avoid name-squatted parts (see the Tokmas entry).
+- **Candidates:**
+  1.
+    - **Name:** ADI LT3045EDD#TRPBF (same silicon and same DFN-10 3x3 as EDD#PBF, sold as cut tape from the reel), qty 2, LCSC C514420
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 14.93 for 2 ($7.46 each at qty 1; $6.43 at qty 10). LCSC 18 Oct 2026, 4236 in stock, excl. EU VAT and shipping. Saves $1.73.
+    - **Spec comparison:** Same part number and die; only the packing (tape and reel) differs from EDD#PBF. Every spec is identical: 500 mA each, 1 A as a pair; dropout 260 mV typ at 500 mA; 76 dB PSRR at 1 MHz (2 V headroom); 0.8 uVrms; +/-22 V absolute maximum; reverse protection; ILIM, PG and EN/UV.
+    - **Worse in:** Nothing on specs. The sourcing risk is the same as the current pick (LCSC is not ADI-franchised).
+    - **Compatibility:** Fits the DFN-10 3x3 footprint that re-audit D specifies (LT3045EDD). If the PCB is drawn for MSOP-12E, use LT3045EMSE#PBF instead ($8.33; EMSE#TRPBF is $8.42, so no saving there).
+    - **Risks:** Grey channel, as with the current pick. Check the LGYP top mark on arrival. Whether LCSC charges a reel-cut fee for TR parts was not verified.
+    - **Seller url:** https://www.lcsc.com/product-detail/C514420.html
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/C514420.html
+      - https://www.lcsc.com/product-detail/C666574.html
+      - https://www.lcsc.com/product-detail/C580012.html
+      - https://datasheet.lcsc.com/datasheet/pdf/9d46bf6db3babcb8c3f12d5d51205ba7.pdf?productCode=C666577
+  2.
+    - **Name:** ADI LT3045EMSE#PBF x2 from DigiKey (authorised distributor)
+    - **Kind:** current_part
+    - **Price usd:** 20.00 for 2 ($10.00 each, 16,667 in stock; USD site, excl. VAT). This is $3.34 more than the current pick.
+    - **Spec comparison:** Same part as the current pick.
+    - **Worse in:** Price only. It is listed as the authenticity fallback, not as a saving.
+    - **Compatibility:** MSOP-12E. The EDD (DFN) version at DigiKey is backordered until 18 Jan 2027.
+    - **Risks:** None beyond the price.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=LT3045EMSE%23PBF
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=LT3045EMSE%23PBF
+      - https://www.digikey.com/en/products/result?keywords=LT3045EDD%23PBF
+  3.
+    - **Name:** TI TPS7A9401DSCR (TPS7A94): one 1 A ultra-low-noise LDO in place of the pair
+    - **Kind:** other_brand
+    - **Price usd:** 8.73 at DigiKey (authorised, 8,953 in stock); 9.07 at TI.com for 1-99 pcs; 2.63 at LCSC C5220127 (3,981 in stock, not franchised).
+    - **Spec comparison:** Current: 1 A from one chip, equal. Dropout: 150 mV typ, 240 mV max at 1 A; better. Noise: 0.46 uVrms; better. Accuracy: 1% over line, load and temperature; better. PSRR at 0.5 V headroom, VOUT 5.0 V, 500 mA (Fig 6-4, read by eye): about 78/69/50/52 dB at 100 kHz/500 kHz/1 MHz/2 MHz, about 42 dB at the 1.6 MHz dip, about 34 dB at 10 MHz. The LT3045 gives about 67/58/56/65 dB (G45) and 53 dB at 10 MHz (at 2 V headroom). So the TPS7A94 is better up to about 500 kHz and worse from 1 to 10 MHz. VIN is 1.7-5.7 V with a 6.0 V absolute maximum, against 20 V and +/-22 V. It has no reverse-current or reverse-battery protection (OUT absolute maximum is VIN+0.3 V). GND current is 8-22 mA (15 mA typ at no load) against 2x2.2 mA. Theta-JA is 46.1 C/W (JEDEC) against 34 C/W. Current limit is programmable in 3 steps (100/80/60%) only. It is parallelable, with PG and precision EN/UV.
+    - **Worse in:** PSRR at 1-2 MHz (about 6-13 dB lower) and at about 10 MHz (about 20 dB lower), which covers the buck harmonics. Absolute maximum input 6.0 V instead of +/-22 V: a failed-high LAB5 would destroy it and could pass the pack voltage to the LNAs. No reverse-current protection. About 10 mA more GND current, about 50 mW while the rail is on. Coarser current-limit programming. So it is NOT 'not worse'.
+    - **Compatibility:** 5.0 V in, 4.5 V out is within range (VIN max 5.7 V; LAB5 max 5.2 V). WSON-10 3x3, not pin-compatible with the LT3045 DFN. EN can be driven from MCP #1 and PG works the same way.
+    - **Risks:** The LCSC price is grey-channel; DigiKey and TI.com are authorised. It is the strongest option only if the user explicitly accepts the 1-10 MHz PSRR and input-robustness trades. Its lower dropout also helps at the -4% LAB5 corner (see notes).
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=TPS7A9401DSCR
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/tps7a94.pdf
+      - https://www.ti.com/product/TPS7A94
+      - https://www.digikey.com/en/products/result?keywords=TPS7A9401DSCR
+      - https://www.lcsc.com/product-detail/C5220127.html
+  4.
+    - **Name:** ADI LT3041ADE#PBF: one 1 A member of the LT3045 family
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 10.64 at DigiKey (0 in stock; 115 due 30 Oct 2026 and 375 due 2 Nov 2026). LCSC C7452881: $10.13 but 0 in stock; the TRPBF is $21.18 with 20 in stock.
+    - **Spec comparison:** Current 1 A, equal to the pair. Input 2.2-20 V, +/-22 V absolute maximum, reverse-battery and reverse-current protection; equal. PSRR at 0.5 V headroom and 1 A (Fig 49, read by eye): about 69/60/62/87 dB at 100 kHz/500 kHz/1 MHz/2 MHz, better than the LT3045's about 67/58/56/65 dB at 500 mA. At 1.7 V headroom (table): 77 dB at 100 kHz, 70 dB at 1 MHz, 56 dB at 10 MHz. ISET +/-1% over temperature, better than +/-2%. Iq 4.3 mA, about the same as 2x2.2 mA. Theta-JA 34-37 C/W, about equal. Programmable ILIM, PG, EN/UV, VIOC.
+    - **Worse in:** Dropout: 290 mV typ at 500 mA (380 max at 25 C, 470 max over temperature) and 310 mV typ at 1 A (390/480 max). The LT3045 pair at 0.3 A each gives 220 mV typ, 350 max. That is about 70-120 mV worse, inside a 0.27-0.65 V headroom window. Noise: 1.0 uVrms, against about 0.57 uVrms for the pair (0.8 for one). Reverse output current up to 1000 uA max, against 25 uA. Needs 2x10 uF on the output. So it is NOT 'not worse'.
+    - **Compatibility:** DFN-14 4x3, a different footprint. Same control pins as the LT3045, so the same EN and PG wiring works.
+    - **Risks:** Out of stock now. It saves only about $6. It goes into dropout earlier at the low-tolerance LAB5 corner.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=LT3041ADE%23PBF
+    - **Sources:**
+      - https://datasheet.lcsc.com/datasheet/pdf/edce8deb70883c53cbe3578b120f6cef.pdf?productCode=C7452881
+      - https://www.lcsc.com/product-detail/C7452881.html
+      - https://www.digikey.com/en/products/result?keywords=LT3041ADE%23PBF
+  5.
+    - **Name:** TI TPS7A4701RGWR (TPS7A47; already used in the stack for the LNB and Boni rails)
+    - **Kind:** other_brand
+    - **Price usd:** 5.09 at TI.com for 1-99 pcs (TPS7A4701RGWR); stack note: LCSC TPS7A4701MRGWREP $11.01.
+    - **Spec comparison:** 1 A, 3-36 V input (better input robustness), dropout 307 mV at 1 A, noise 4.17-4.67 uVrms (5-8x the LT3045), PSRR 82 dB at 100 Hz and 'at least 55 dB from 10 Hz to 10 MHz' (front page; the low-headroom PSRR curve was not read), fixed internal current limit (not programmable), no PG pin (re-audit D adds a TLV3011 comparator for PG).
+    - **Worse in:** Noise (about 5x), no programmable ILIM, no PG pin, higher dropout per amp, and the published PSRR floor is lower. NOT 'not worse'.
+    - **Compatibility:** QFN-20 5x5, already stocked for the LNB and Boni rails (one fewer part type).
+    - **Risks:** None beyond the spec gaps.
+    - **Seller url:** https://www.ti.com/product/TPS7A47
+    - **Sources:**
+      - https://www.ti.com/product/TPS7A47
+      - https://www.ti.com/lit/ds/symlink/tps7a47.pdf
+  6.
+    - **Name:** TI TPS7A9601DSCR (TPS7A96, 2 A)
+    - **Kind:** other_brand
+    - **Price usd:** 11.12 at TI.com for 1-99 pcs; 11.46 at DigiKey; 9.61 at LCSC C22015929 (682 in stock).
+    - **Spec comparison:** 2 A (better), 0.5 uVrms (better), dropout 160 mV at 2 A (better). PSRR is worse: 58 dB at 100 kHz and 48 dB at 1 MHz (front page). VIN 1.9-5.7 V and no reverse protection, as with the TPS7A94.
+    - **Worse in:** PSRR at 100 kHz-1 MHz, 6 V-class input rating, no reverse-current protection. NOT 'not worse'.
+    - **Compatibility:** WSON-10 3x3, 5 V input.
+    - **Risks:** It saves only about $5.
+    - **Seller url:** https://www.ti.com/product/TPS7A96
+    - **Sources:**
+      - https://www.ti.com/product/TPS7A96
+      - https://www.digikey.com/en/products/result?keywords=TPS7A9401DSCR
+  7.
+    - **Name:** ADI ADM7150ACPZ-4.5-R7 or -5.0-R7 (800 mA ultra-low-noise LDO)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 12.42 at DigiKey (-5.0-R7, 0 in stock). LCSC: -5.0-R7 $9.43 (461 in stock); -4.5-R7 $15.33 (10 in stock).
+    - **Spec comparison:** 800 mA, against 1 A for the pair. Dropout 1 V max at 800 mA (DigiKey parametrics). VIN max 16 V. PSRR 95 dB down to 62 dB from 1 kHz to 1 MHz.
+    - **Worse in:** It cannot regulate 4.5 V from 4.8-5.2 V (it needs VIN of about 5.5 V or more), and it gives less current. Rejected.
+    - **Compatibility:** Fails the headroom requirement.
+    - **Risks:** None needed; it is rejected on specs. The ADI datasheet could not be reached (analog.com returned 503), so the specs come from DigiKey parametrics.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=ADM7150ACPZ-5.0-R7
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=ADM7150ACPZ-5.0-R7
+  8.
+    - **Name:** 3PEAK TPL910ADJA-DF6R (1 A low-noise LDO), LCSC C5289801
+    - **Kind:** other_brand
+    - **Price usd:** 1.01 at LCSC (4,807 in stock), from the JLCPCB/LCSC parts API.
+    - **Spec comparison:** 1 A. Noise 4.5 uVrms, dropout 500 mV at 1 A, PSRR 50 dB at 1 MHz, VIN max 6.5 V (catalogue description; the datasheet was not read).
+    - **Worse in:** Noise (about 5x), dropout (it would drop out at 0.27-0.65 V headroom), PSRR, and input rating. Rejected.
+    - **Compatibility:** DFN-8 3x3.
+    - **Risks:** Catalogue data only.
+    - **Seller url:** https://www.lcsc.com/product-detail/C5289801.html
+    - **Sources:**
+      - JLCPCB parts API (jlcpcb.com smtGood/selectSmtComponentList, keyword TPL910), 18 Oct 2026
+  9.
+    - **Name:** Tokmas 'LT3045IDD-5(TOKMAS)', LCSC C50346345 (warning: name-squatted part, not an LT3045)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 0.55 at LCSC (90 in stock), from the JLCPCB/LCSC parts API.
+    - **Spec comparison:** SOT-23-3, fixed 5 V, 200 mA, 1 V dropout at 200 mA, 56 dB at 100 Hz, 40 V input (catalogue description).
+    - **Worse in:** Everything that matters: current, dropout, PSRR, adjustability. It is not LT3045-compatible despite the name. Rejected. Keep it off the BOM so nobody orders it by mistake.
+    - **Compatibility:** Not compatible.
+    - **Risks:** Its name is misleading enough to cause a mis-order.
+    - **Seller url:** https://www.lcsc.com/product-detail/C50346345.html
+    - **Sources:**
+      - JLCPCB parts API (keyword 'TOKMAS LT3045'), 18 Oct 2026
+  10.
+    - **Name:** A single LT3045 (qty 1 instead of 2), or LT3042 (200 mA)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** A single LT3045EDD#TRPBF is $7.46 (LCSC). LT3042EDD#TRPBF is $6.25 each (LCSC C580010), but 1 A needs 5 of them ($31.24).
+    - **Spec comparison:** One LT3045 gives 500 mA (internal limit 570-850 mA) against 1 A. The LT3042 has the same family PSRR and noise (79 dB at 1 MHz, 0.8 uVrms) at 200 mA per device.
+    - **Worse in:** A single LT3045 has half the current capacity; the stack's C9/D11 already rejects 'one LT3045 at 0.5 A'. The LT3042 is more expensive at 1 A.
+    - **Compatibility:** Same footprint family.
+    - **Risks:** None needed; both are rejected.
+    - **Seller url:** https://www.lcsc.com/product-detail/C514420.html
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/C514420.html
+      - JLCPCB parts API (keyword LT3042), 18 Oct 2026
+- **Notes:** VERDICT: keep the LT3045 pair. The only cheaper option that is not worse is the same part in a cheaper SKU: LT3045EDD#TRPBF from LCSC (C514420), $7.46 each, $14.93 for 2, saving $1.73. It is identical silicon in the DFN-10 package that re-audit D already specifies, and carries the same grey-channel risk as the current pick. The authorised option (DigiKey, $10.00 each) costs $3.34 more.
+  
+  Every cheaper alternative from another part number is worse in at least one spec that matters here. Closest options, only if the user explicitly accepts the trade:
+  (a) TI TPS7A94: DigiKey $8.73 authorised, LCSC $2.63. Better in noise, dropout and PSRR up to about 500 kHz. Worse in PSRR at 1-10 MHz, 6 V absolute maximum input, and no reverse protection.
+  (b) ADI LT3041: DigiKey $10.64, out of stock until about 30 Oct 2026. Better PSRR at 0.5 V headroom and the same 22 V robustness. About 70-120 mV more dropout and slightly more noise.
+  
+  DESIGN FLAG (applies to every candidate; verify on the bench): Pololu specifies the D36V28F5 at 5.0 V +/-4%. At the -4% corner (4.8 V) minus the LC drop, the 4.5 V rail has only about 0.27 V of headroom. That is below the LT3045's 350 mV maximum dropout over temperature at 300 mA. Graph G45 shows its PSRR falling to about 25-40 dB at 0.25-0.3 V, from about 56-67 dB at 0.5 V. The stack should measure the real LAB5 voltage under load. If it is low, set the rail a little lower (for example 4.3-4.4 V, if the LNAs allow it) or feed the LDOs from a slightly higher point. The PSRR checks already listed in STACK section 1079 should be done at the real headroom.
+  
+  PSRR values marked 'read by eye' come from the datasheet graphs (LT3045 G45; TPS7A94 Figs 6-4 and 6-7; LT3041 Fig 49) and are good to about +/-3 dB. The test conditions differ slightly: LT3045 at 500 mA and 3.0 V out; TPS7A94 at 500 mA and 5.0 V out; LT3041 at 1 A. With the real 0.25-0.3 A per LT3045, the pair would do somewhat better than the 500 mA curve.
+  
+  Sources and limits: the WebSearch budget for this turn was already used up (shared limit), so all data comes from direct fetches. These were the LCSC product pages, the JLCPCB/LCSC parts API for LCSC codes, DigiKey search pages, TI.com product pages and datasheets, Pololu, and the LT3045 and LT3041 datasheets via LCSC's mirror. analog.com, Mouser and Farnell returned 503 (Mouser also served a JavaScript challenge) and Arrow returned 403. TME lists LT3045EDD#PBF only as a product outside its standard offer (no price). EU prices including VAT were not fetched; all prices are USD excluding VAT and shipping. EU VAT of about 19-27% applies on import or checkout depending on the seller; this was not verified for each seller.
+  
+  Hard rules: none affected. This is a DC bias regulator only, with no RF emission and no change to receive-only operation.
 
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 

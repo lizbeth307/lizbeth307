@@ -24,6 +24,7 @@
 | [Gnss imu](components/gnss_imu.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_45d278c2-004` |
 | [Gnss imu location](components/gnss_imu_location.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Hf receiver](components/hf_receiver.md) | ✅ research · forums · fixes ✅ verify | `—` |
+| [Hf selector 2x omron g6k 2f rf 5 v serie](components/hf_selector_2x_omron_g6k_2f_rf_5_v_serie.md) | · research · forums · fixes ✅ verify | `—` |
 | [Lab instruments](components/lab_instruments.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Lab ui](components/lab_ui.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Mech thermal storage](components/mech_thermal_storage.md) | ✅ research · forums · fixes ✅ verify | `—` |
@@ -39,6 +40,7 @@
 | [Software stack](components/software_stack.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Storage](components/storage.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_3e735695-e00` |
 | [Targets link budgets](components/targets_link_budgets.md) | ✅ research · forums · fixes ✅ verify | `—` |
+| [Tinplate hf can lc mix 31 on vbus](components/tinplate_hf_can_lc_mix_31_on_vbus.md) | · research · forums · fixes ✅ verify | `—` |
 | [Uputronics 440 mhz cubesat filtered prea](components/uputronics_440_mhz_cubesat_filtered_prea.md) | · research · forums · fixes ✅ verify | `—` |
 | [Wideband sdr](components/wideband_sdr.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_e64436d6-ae7` |
 
