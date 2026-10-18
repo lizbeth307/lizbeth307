@@ -8727,6 +8727,136 @@
   
   Hard rules are unaffected (mechanical parts only). I used 14 WebSearch calls. The My Tech Fun spreadsheet is saved at /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/angleB_mech/dl_mtf/asa-10x.xlsx.
 
+## searchB:2_mm_al_mid_plate_copper_clad_fr4_rf_bay (run `wf_37583a7b-1a8`)
+
+- **Part:** Chassis set: 2 mm Al mid-plate + copper-clad FR4 RF bay + steel 1/4-20 tripod insert + KSD9700 70 C thermal switch (Mechanical, core, qty 1 set)
+- **Current price usd:** 35-70 (STACK v1 estimate, 'local', model; not a quote)
+- **Critical specs:**
+  - MID-PLATE: 2.0 mm thick (stiffness, heat spreading, EMC ground). About 210x125 mm to fit the 220-225x135-140 mm case. Mass about 0.14 kg or less
+  - MID-PLATE: thermal conductivity at least about 140 W/mK. The stack never fixed an alloy. 5754 is 140-160 (Wieland), 6082-T6 180 (Aalco), 1050A about 222 (RS PRO). Young's modulus is about 70 GPa for every Al alloy, so stiffness depends only on thickness
+  - MID-PLATE: flat (0.1-0.2 mm or better under the Q6A, the Lime pedestal and the regulator pads) and deburred. Hole positions: Q6A 4x M2.5 on 58.0x49.0 mm (V1.21), regulator holes for the D36V50F12 and 2x TPS7A4701, the UFS isolation slot, the Lime window/pedestal attach, and a bare-metal bond point for the HF bulkhead
+  - RF BAY: glass-epoxy FR4 (not FR-1/FR-2 paper phenolic), double-sided, 1.5-1.6 mm, 35/35 um Cu. Must solder without scorching or delaminating; seams of 7 mm or less
+  - 1/4-20 MOUNT: 1/4in-20 UNC (ISO 1222 tripod thread), steel (thread wear from repeated tripod use), in a boss of at least 6 mm, never tapped into the 2 mm plate. Must pass the pull test at 3x device weight (about 1.5-1.75 kg device) and survive hand-tight tripod torque without spinning
+  - KSD9700: 70 C +/-5 C, normally OPEN, auto-reset, wired in parallel with the CHG_INHIBIT MOSFET (signal-level current, so the 5 A/250 VAC rating has ample margin). Metal shell for coupling to the hot MOSFET. Contact resistance 50 mOhm or less; CQC/UL marked; 10,000 cycles or more; about 20x8x4.2 mm
+  - All: legal retail sources, no counterfeits; every item passes the stack's acceptance tests (pull test, KSD9700 trip check in burn-in, hole and fit check against V1.21)
+- **Candidates:**
+  1.
+    - **Name:** Current set as in STACK v1 (locally sourced plate, FR4, steel 1/4-20 press-in insert, KSD9700 70 C NO)
+    - **Kind:** current_part
+    - **Price usd:** 35-70 (estimate only)
+    - **Spec comparison:** Reference. The alloy, insert make and KSD9700 source are not specified in STACK v1 or reaudit_D.
+    - **Worse in:** -
+    - **Compatibility:** Matches reaudit_D MECH spec (M2.5 standoffs, pedestal, 1/4-20 in a boss of 6 mm or more).
+    - **Risks:** The price is a model, not a quote. The alloy is unspecified, so 'not worse' for the plate is judged against the 140 W/mK floor above.
+    - **Seller url:** 
+    - **Sources:**
+      - /home/user/lizbeth307/sat-receiver-audit/STACK.md line 275
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json results[3].corrected_spec
+  2.
+    - **Name:** DIY mid-plate: 2 mm EN AW-5754 sheet cut to size (metallshopper.de, NL), holes drilled on a drill press from the V1.21 drawing / the board itself
+    - **Kind:** diy
+    - **Price usd:** about 5-6 for 230x140 mm. EUR 128.21/m2 ex VAT, so about EUR 4.1 ex VAT; destination VAT on top. Shipping is shown only in the cart (an unlabelled EUR 9.79 appears on the page; unverified)
+    - **Spec comparison:** Thickness 2.0 mm, equal. k 140-160 W/mK (Wieland 5754 sheet): equal to the 140 floor, but about 15-20% below a 6082/6061 plate (167-180) if the local shop had used one. E about 70 GPa, equal (stiffness the same). Cut 'accurate to the millimetre', degreased and deburred. Hole accuracy depends on the builder: about +/-0.2 mm with a drill press and a template, enough for M2.5 clearance holes (2.7-2.9 mm).
+    - **Worse in:** Outline tolerance about +/-1 mm against about +/-0.1 mm for laser/CNC. Hand-drilled hole position is not guaranteed. Lower k than a 6xxx plate (only matters if the baseline was 6xxx). The pedestal, UFS boss and fins are separate parts in both cases, so no difference there.
+    - **Compatibility:** Same geometry and material class. The Q6A standoffs, regulators, Lime pedestal and HF bulkhead bond are unchanged. Leave bare metal at bond points (no anodize).
+    - **Risks:** Not-worse holds only if acceptance is passed: hole positions within +/-0.2 mm (calipers; board mounts without stress), flatness 0.2 mm or better under the pads, no burrs. Choose 1050A (about 222 W/mK) or 6082 (180) instead if the baseline is 6xxx; I found no verified cut-to-size price for those.
+    - **Seller url:** https://metallshopper.de/Aluminiumblech-2mm
+    - **Sources:**
+      - https://metallshopper.de/Aluminiumblech-2mm
+      - https://metallshopper.de/kundendienst/lieferung/
+      - https://www.wieland.com/de/content/download/17175/file/EN-AW-5754_EN.pdf
+      - https://docs.rs-online.com/3200/A700000015669212.pdf
+  3.
+    - **Name:** Laser-cut mid-plate from an online sheet-metal service (JLCCNC, Aluminium 5052)
+    - **Kind:** generic_or_clone
+    - **Price usd:** UNVERIFIED: a quote needs CAD upload (only a 'from $0.4' floor is published); EU shipping and VAT unknown
+    - **Spec comparison:** Laser-cut outline and holes are at least as precise as a local shop. 5052-H32 k is about 138 W/mK (handbook value, not fetched here), just under the 140 floor and below 5754/6xxx.
+    - **Worse in:** Thermal conductivity slightly lower (about 138 vs 140 or more); about 20% lower than a 6xxx baseline. Price unknown.
+    - **Compatibility:** Same DXF as the local shop; no bosses (the pedestal stays a separate block, as in the baseline).
+    - **Risks:** Not proven cheaper. Treat it as a fallback only if the quote plus shipping comes in below the local price.
+    - **Seller url:** https://jlccnc.com/materials/sheet-metal
+    - **Sources:**
+      - https://jlccnc.com/materials/sheet-metal
+  4.
+    - **Name:** RF-bay laminate: Scankemi FR4 double-sided 1.6 mm 35/35 um, 233x160 mm (Electrokit SE, art. 41003697)
+    - **Kind:** generic_or_clone
+    - **Price usd:** about 8.0 per sheet (76 SEK incl. 25% SE VAT); 5+ 68.40 SEK, 10+ 57 SEK. 1-2 sheets for the bay (my area estimate, not from CAD). FX approximate
+    - **Spec comparison:** Glass-reinforced epoxy FR4, equal. Double-sided 35/35 um, equal. 1.6 mm, within 1.5-1.6. Note: the page title says 233x160 but the description says 200x160 mm.
+    - **Worse in:** None known, but the evidence is the distributor's spec only (no laminate datasheet or UL94 file on the page); I found no independent measurement.
+    - **Compatibility:** Drop-in material for the soldered bay; seams of 7 mm or less are unchanged.
+    - **Risks:** Check the size on arrival; check FR4 (glass weave visible at the cut edge, no scorching at 350 C). Cheaper only if the local FR4 costs more than about $8 per sheet.
+    - **Seller url:** https://www.electrokit.com/en/kopparlaminat-dubbelsidigt-fr4-1.6mm-35/35u-233x160
+    - **Sources:**
+      - https://www.electrokit.com/en/kopparlaminat-dubbelsidigt-fr4-1.6mm-35/35u-233x160
+  5.
+    - **Name:** Captured steel 1/4in-20 UNC hex nut (RS PRO, zinc-plated steel, ASME B18.2.2) in a back-loaded (bottom-pocket) hex pocket in the 6 mm or larger ASA boss, instead of a press-in steel insert
+    - **Kind:** generic_or_clone
+    - **Price usd:** about 0.13 each; RS PRO 100-pack EUR 11.63 ex VAT / EUR 13.84 incl. VAT (DE). From the search snippet; the RS page returned 403, so the price was not re-read
+    - **Spec comparison:** Thread 1/4-20 UNC, equal. Material steel, equal. Engagement: standard nut height 7/32in (5.56 mm) and 7/16in across flats (ASME standard values). Pull-out measured by CNC Kitchen (M3, PETG, 100% infill, 3 samples): bottom-pocket nut 166 kg vs heat-set insert 119 kg, so 40% better; side pocket only 86 kg. Torque-out: nut about 2 Nm (PETG failed in compression) vs insert 3 Nm. The hex pocket is a positive anti-rotation lock.
+    - **Worse in:** Torque-out was LOWER in the only measurement (M3 scale: 2 vs 3 Nm). There is no measurement at 1/4-20 size in ASA, so torque-out must be shown by test. The pocket must be back-loaded; a side pocket measured 28% weaker than the insert.
+    - **Compatibility:** The stack already allows it ('a captured 1/4-20 nut, or a press-in steel insert in a boss of 6 mm or more', final_integration back panel). Not in the 2 mm plate. Leave screw-tip clearance behind the nut.
+    - **Risks:** Acceptance: the existing pull test at 3x weight, plus a torque test at 2 Nm or more with a tripod screw (my threshold; tripod plates are hand-tightened). Print the boss with 100% infill and 4 or more perimeters, as in the test.
+    - **Seller url:** https://de.rs-online.com/web/p/sechskantmuttern/2450741
+    - **Sources:**
+      - https://www.cnckitchen.com/blog/helicoils-threaded-insets-and-embedded-nuts-in-3d-prints-strength-amp-strength-assessment
+      - https://de.rs-online.com/web/p/sechskantmuttern/2450741
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/final_integration.json
+  6.
+    - **Name:** KSD9700 NO 70 C 5 A 250 VAC, 4.2x8x20 mm with leads (Piekarz PL, item 31610)
+    - **Kind:** generic_or_clone
+    - **Price usd:** about 0.74 net (2.75 PLN; 5+ 1.89 PLN), about 0.91 with 23% PL VAT. 33 in stock. FX approximate
+    - **Spec comparison:** Same part class as the current pick: 70 C, NO, 5 A/250 VAC, bimetal auto-reset. The listing gives no tolerance, reset temperature or approvals. The KSD9700 class datasheet (Xucheng) gives +/-5 C trip, at least 10,000 cycles and 50 mOhm or less.
+    - **Worse in:** Nothing visible against a generic KSD9700. No factory test report or CQC/UL evidence on the listing.
+    - **Compatibility:** Drop-in (glued to the IP2368 MOSFET, in parallel with CHG_INHIBIT).
+    - **Risks:** No independent trip-point measurement of any KSD9700 found. Bench-check each unit: trip 70 +/-5 C in a stirred bath or on a hot plate with a thermocouple (the stack's burn-in already fails a board on a KSD9700 trip). Buy 2 or more. Saves under $1.
+    - **Seller url:** https://www.piekarz.pl/en/thermostats/6
+    - **Sources:**
+      - https://www.piekarz.pl/en/thermostats/6
+      - https://atta.szlcsc.com/upload/public/pdf/source/20180131/C156521_15173930978591329060.pdf
+  7.
+    - **Name:** Xucheng (XC Electronics Shenzhen) KSD9700 via LCSC, CQC listed, with factory test report
+    - **Kind:** generic_or_clone
+    - **Price usd:** 0.46 (1+) / 0.37 (10+), verified for the 130 C variant C156521; 70 C NO SKU (code letter K = NO) NOT confirmed at LCSC
+    - **Spec comparison:** Datasheet: trip +/-5 C; reset about 25-35 K lower (e.g. 125 +/-5 C / 90 +/-12 C); contact 50 mOhm or less; 10,000 cycles at 5 A/250 VAC; 1450 VAC hipot; UL873/EN60730-2-9 listed as applicable standards; CQC mark. Factory report: 5 of 5 samples within tolerance (the vendor's own measurement, not independent).
+    - **Worse in:** Nothing known; better documented than an anonymous KSD9700.
+    - **Compatibility:** Drop-in if a 70 C NO metal-shell variant is listed.
+    - **Risks:** 70 C NO availability unverified. LCSC shipping to the EU is only worth it combined with other parts. Same incoming trip test as above.
+    - **Seller url:** https://www.lcsc.com/product-detail/C156521.html
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/C156521.html
+      - https://atta.szlcsc.com/upload/public/pdf/source/20180131/C156521_15173930978591329060.pdf
+  8.
+    - **Name:** Combined DIY set: metallshopper 5754 plate (drilled at home) + Electrokit FR4 x1-2 + RS PRO 1/4-20 captured nut + Piekarz KSD9700 70 C NO x2
+    - **Kind:** diy
+    - **Price usd:** about 26-51 including VAT: plate 5-6, plate shipping about 11 (unverified), FR4 8-16, nut pack 16 (or one nut from a local hardware shop, unpriced), KSD9700 2x 0.9. Several EU shops, so shipping is the swing factor
+    - **Spec comparison:** Every item is equal or better on its critical spec under the conditions above. Pull-out is better (+40%, CNC Kitchen); FR4 and Cu thickness are equal; plate k is 140-160, equal to the floor.
+    - **Worse in:** Plate outline and hole precision unless the drill-press/template acceptance passes. Nut torque-out is unproven at 1/4-20 (lower at M3). Plate k is lower than a 6xxx baseline. Evidence for the FR4 and KSD9700 is distributor or vendor data only.
+    - **Compatibility:** Same mechanical design (reaudit_D MECH). The captured nut is already an allowed variant.
+    - **Risks:** Saves about $0-45 against the $35-70 estimate. The saving only holds if shipping is consolidated; at the low end of the estimate it saves nothing.
+    - **Seller url:** 
+    - **Sources:**
+      - https://metallshopper.de/Aluminiumblech-2mm
+      - https://www.electrokit.com/en/kopparlaminat-dubbelsidigt-fr4-1.6mm-35/35u-233x160
+      - https://de.rs-online.com/web/p/sechskantmuttern/2450741
+      - https://www.piekarz.pl/en/thermostats/6
+- **Notes:** VERDICT (angle B): this set is commodity material, so the analog search is mostly a sourcing and DIY question. The only real saving is the mid-plate: cut-to-size 2 mm sheet plus drill-press holes instead of local machining. Next is a captured steel 1/4-20 nut instead of a press-in steel insert; the stack already allows it, and it measured +40% pull-out but lower torque-out at M3. The FR4 and KSD9700 analogs save under $1-8 each. Net about $0-45 against a $35-70 estimate that is a model, not a quote. If home drilling cannot meet the +/-0.2 mm hole and 0.2 mm flatness acceptance, KEEP the locally machined or laser-cut plate.
+  
+  FIX THE ALLOY: STACK v1 never names an alloy. Write 'k at least 140 W/mK' into v2. Prefer 6082-T6 (180) or 1050A (about 222) if available cut-to-size; 5754 (140-160) is acceptable at the floor. Avoid any alloy below about 140 W/mK; 5083 is about 120 by handbook value (not fetched here).
+  
+  REJECTED (no measured evidence, or worse):
+  (a) AliExpress/eBay generic 'FR4' copper clad: nothing shows it is not FR-1/FR-2 paper phenolic, which scorches or delaminates under the iron.
+  (b) Brass heat-set 1/4-20 inserts: brass, not steel, so the threads wear faster. CNC Kitchen measured cheap inserts at 39 kg pull-out against 181 kg for Ruthex (M3, PLA), so an untested insert can be far worse (https://www.cnckitchen.com/blog/threaded-inserts-for-3d-prints-cheap-vs-expensive).
+  (c) Anonymous eBay KSD9700 lots (e.g. 10x 70 C NO about $6 + $5 shipping, https://www.ebay.de/itm/111315307102): no test report or approval evidence.
+  (d) Replacing the KSD9700 with a firmware NTC limit: it removes the independent hardware backstop, so it is worse.
+  (e) Tinplate walls for the RF bay: plausible, but I found no measured evidence or verified EU price, and it is a design change.
+  (f) Side-loaded nut pocket: measured 86 kg against 119 kg for the insert.
+  
+  No independent trip-point measurement of any KSD9700 exists that I could find; only vendor reports (5 of 5 within +/-5 C, Xucheng). Every KSD9700, the current one included, needs the incoming bath or hot-plate trip test.
+  
+  UNVERIFIED: RS PRO nut price (page 403; search snippet only); metallshopper shipping (cart only); JLCCNC price (CAD quote needed); LCSC 70 C NO SKU; Electrokit sheet size (233x160 vs 200x160); FX rates (EUR about 1.16, PLN about 0.27, SEK about 0.105 USD, approximate); the bay laminate area (1-2 sheets is my estimate, not from CAD).
+  
+  Hard rules are unaffected: all passive mechanical parts, no RF emission, no loops.
+
 ## small:lband_sband (run `wf_41027870-8e7`)
 
 - **Band group:** L-band 1.5-1.7 GHz and S-band 2.2-2.4 GHz with antennas of at most 12 cm (STRICT) or 20 cm (SMALL). Dishes and anything tens of cm deployed are EXCLUDED, including the foldable helicones, the 11-turn helix and the 2x2 helix arrays. Rule interpretation as given: STRICT means the largest deployed dimension is about 12 cm or less; SMALL means about 20 cm or less; foldable or telescopic antennas that are larger when deployed are excluded and appear only in the borderline note.
@@ -21843,6 +21973,250 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   The set saving from the comparator swap is about 2.06 USD at DigiKey qty 1, but only about 0.4-0.95 USD against the TME TLV3012 range. DigiKey and TME prices are ex-VAT; EU buyers add 19-27 % VAT.
   
   Datasheets read: TPS709 SBVS186H (Jul 2021), TLV3011/12/B SBOS300C (Apr 2023), MCP65R41/6 DS22269B, and the Goodwork HT75XX Rev 2.0 (Jan 2025). Downloaded copies are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_ti, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_mcp65r41 and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_ht7533. This is a DC power and supervision part: no RF emission, no TX path, no loop, and no hard rule is affected.
+
+## searchB:protection_filter_set_7_5_a_pack_4_a_j21 (run `wf_a268b76e-da0`)
+
+- **Part:** Protection/filter set (core, Power, qty 1 set): Littelfuse MINI 297 blade fuses 7.5 A pack / 4 A J21 / 3 A LAB5 (+5 A service, spares) with holders; SMBJ17A x2 (node N and SW, per reaudit D); SMBJ13A (J21); 220 uF/25 V; PTCs (0.75 A AUX, 0.2 A at 60 C Boni, LNB sized after measurement); P-FET with +/-20 V VGS (AUX12); eFuse TPS259470A (reaudit D: x3, for J21, DISP12 and USB-C VBUS); LC pi-filter parts; Mix-31 ferrites; genuine Amass XT30
+- **Current price usd:** STACK gives 15-25 (estimate). Priced item by item from verified LCSC/DigiKey listings (qty 1, no shipping or VAT) it comes to about 22-28. The range depends on the number of LC inductors and ferrites, which STACK does not fix. Items: 8 Littelfuse fuses 0.92; 4 Keystone 3568 holders 5.24; Littelfuse SMBJ17A x2 + SMBJ13A 0.36; Panasonic EEE-FK1E221P 0.41; Bourns PTCs (2x MF-MSMF075/24-2 + MF-MSMF030-2) 0.27; AOS AO3407A + Nexperia 2N7002 0.12; 3x TPS259470ARPWR 3.86; 2 Amass XT30U pairs 0.87; 2 Fair-Rite 0431164281 5.70-7.28; about 7 LC inductors plus capacitors about 4-9 (assumed).
+- **Critical specs:**
+  - Blade fuses: MINI/ATM form factor, 32 V DC rating (above the 16.8 V pack maximum), fast-acting. Values 7.5 A (pack peak 4.63 A = 62 %), 4 A (J21: 2.5 A Lime peak), 3 A (LAB5: 2.3 A = 77 %), 5 A (service port). The published time-current curve and temperature re-rating at a 50-60 C enclosure matter; genuine brand required.
+  - Fuse holders: PCB through-hole for MINI 297 blades, rated at least 20 A and at least 32 V, low contact resistance and firm blade retention under vibration. Keystone 3568 is rated 30 A / 500 V.
+  - SMBJ13A (J21): VRWM 13.0 V (above the 12.48 V maximum); VBR 14.40-15.90 V (below the Q6A's 16 V input caps); VC no more than 21.5 V at 27.9-28 A (10/1000 us); 600 W; IR no more than 1 uA. Vishay or Littelfuse per reaudit D.
+  - SMBJ17A (node N and SW): VRWM 17.0 V (above 16.8 V); VBR 18.9-20.9 V; VC no more than 27.6 V at 21.7 A, which is below the 30-36 V limits of TPS709/TPS7A47/IP2368/TPS25947. Vishay or Littelfuse.
+  - 220 uF/25 V bulk capacitor on J21: at least 25 V, 105 C, life at least 5000 h at 105 C, ripple at least 600 mA at 100 kHz, impedance about 0.16 ohm (enough ESR to damp the pi filter), 8x10.2 mm SMD (Panasonic FK is the baseline).
+  - PTCs: hold current at 60 C is the governing number. AUX: at least 0.55 A at 60 C for a 0.42 A load. Boni: about 0.2 A at 60 C. LNB: 1.5-2x the measured current at 60 C (provisional 0.45 A). Vmax at least 24 V, since a SYS12 high-side fault can reach 16.4 V; enough Imax; R1max; 1812 footprint.
+  - AUX12 P-FET: VDS -30 V or beyond, VGS +/-20 V (the 10k/10k divider gives -6 to -8.2 V), low RDS(on) at -4.5 to -10 V, ID well above 0.42 A, SOT-23, genuine.
+  - eFuse (TPS259470A): 2.7-23 V, 28 V abs max, -15 V reverse polarity. Adjustable OVLO with about 1.2 us response (about 13.5 V for J21/DISP12, about 22 V for USB-C VBUS). ILIM 0.5-6 A, +/-10 % above 1 A (1.5 A DISP12, about 4 A J21, about 3.5 A USB-C). True reverse-current blocking (back-to-back FETs), EN, FLT, auto-retry, QFN-10 2x2.
+  - LC pi-filter parts: shielded inductor with Isat at least 1.5-2x the rail peak (J21 2.5 A, so Isat at least 4 A; LAB5 2.3 A; DISP12 1.27 A; LNB/Boni no more than 0.5 A). Low DCR for drop and heat, SRF above the switcher harmonics; X7R/C0G capacitors rated 25-50 V.
+  - Mix-31 ferrites: genuine Fair-Rite #31 with a published guaranteed impedance curve (0431164281: 20/75/104/170/315/380 ohm at 1/5/10/25/100/250 MHz, -20 % minimum). The 1-30 MHz performance matters for the HF+ and the LF/HF noise floor. Must fit the cable outer diameter.
+  - XT30: genuine Amass XT30U (gold-plated contacts, heat-resistant housing), mates with the pack, service-port and ISDT leads, 18-20 AWG.
+  - Every item: legally sold, not counterfeit, from a traceable distributor. No part changes the receive-only or conducted-only rules.
+- **Candidates:**
+  1.
+    - **Name:** Current set, same branded parts at the cheapest verified sources (keep)
+    - **Kind:** current_part
+    - **Price usd:** about 22-28 for the set (qty 1, no shipping/VAT); itemized in current_price_usd
+    - **Spec comparison:** Identical parts. Verified listings:
+  - Littelfuse 029707.5WXNV $0.1004 (LCSC C178942, stock 7500; DigiKey $0.39).
+  - 0297004.WXNV $0.1116 (C178940); 0297003.WXNV $0.1153 (C151092); 0297005.WXNV $0.1313 (C151093).
+  - Keystone 3568 holder 30 A/500 V, $1.31 at DigiKey (107,223 in stock). Littelfuse 01530008Z is $4.04 at LCSC.
+  - Littelfuse SMBJ17A $0.1067 (C157523) and SMBJ13A $0.1421 (C151252). Vishay is $0.1458 (SMBJ17A-E3/52, C1973197) and $0.2433 (SMBJ13A-E3/52, C968569).
+  - Panasonic EEE-FK1E221P $0.411 (C128511, stock 196).
+  - Bourns MF-MSMF075/24-2 $0.0898 (C208467) and MF-MSMF030-2 $0.0908 (C12604).
+  - AOS AO3407A $0.1058 (C15155, stock 111,044); Nexperia 2N7002,215 $0.0172 (C65189).
+  - TI TPS259470ARPWR $1.2881 at qty 1, $1.0645 at qty 10 (C3662799, stock 4454).
+  - Amass XT30U-F $0.2059 / XT30U-M $0.2281 (C99102/C99101).
+  - Fair-Rite 0431164281 $3.6389 (LCSC, stock 186), or $2.85 at DigiKey (G1 analog agent figure, not re-fetched).
+    - **Worse in:** Nothing. These are the reference parts.
+    - **Compatibility:** As in STACK and reaudit D.
+    - **Risks:** - LCSC is not TI-franchised (final_world_sourcing), so the TPS259470A from LCSC carries moderate grey-market risk. The TI store is out of stock and I did not verify a franchised price.
+  - The LCSC attribute row for Littelfuse SMBJ13A C151252 is wrong: it shows VRWM 14 V and VBR 17.2 V, the SMBJ14A values. The Littelfuse datasheet row is correct (13.0 V; 14.40-15.90 V; 21.5 V at 28.0 A). Goods-in: check marking LG on SMBJ13A and LR on SMBJ17A.
+  - EU VAT is added at checkout (not verified).
+    - **Seller url:** https://www.lcsc.com/product-detail/surge-protection-devices-spds_texas-instruments-tps259470arpwr_C3662799.html
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/automotive-fuses_littelfuse-0297004-wxnv_C178940.html
+      - https://www.lcsc.com/product-detail/automotive-fuses_littelfuse-0297003-wxnv_C151092.html
+      - https://www.lcsc.com/product-detail/automotive-fuses_littelfuse-0297005-wxnv_C151093.html
+      - https://www.digikey.com/en/products/detail/littelfuse-inc/029707-5WXNV/146586
+      - https://www.digikey.com/en/products/detail/keystone-electronics/3568/2137306
+      - https://www.lcsc.com/product-detail/esd-and-surge-protection-tvs-esd_littelfuse-smbj17a_C157523.html
+      - https://www.lcsc.com/product-detail/esd-and-surge-protection-tvs-esd_littelfuse-smbj13a_C151252.html
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Littelfuse-SMBJ13A_C151252.pdf
+      - https://www.lcsc.com/product-detail/esd-and-surge-protection-tvs-esd_vishay-intertech-smbj13a-e3-52_C968569.html
+      - https://www.lcsc.com/product-detail/aluminum-electrolytic-capacitors-smd_panasonic-eeefk1e221p_C128511.html
+      - https://www.lcsc.com/product-detail/resettable-fuses_bourns-mf-msmf075-24-2_C208467.html
+      - https://www.lcsc.com/product-detail/resettable-fuses_bourns-mf-msmf030-2_C12604.html
+      - https://www.lcsc.com/product-detail/mosfets_alpha-omega-semicon-ao3407a_C15155.html
+      - https://www.lcsc.com/product-detail/mosfets_nexperia-2n7002-215_C65189.html
+      - https://www.lcsc.com/product-detail/plug_changzhou-amass-elec-xt30u-f_C99102.html
+      - https://www.lcsc.com/product-detail/plug_changzhou-amass-elec-xt30u-m_C99101.html
+      - https://www.ti.com/lit/ds/symlink/tps25947.pdf
+  2.
+    - **Name:** Shenzhen JDT Fuse clone MINI blades 029707.5J / 0297004.J / 0297003.J (Littelfuse-style part numbers)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 0.0443 (7.5 A, LCSC C55118090), 0.0578 (4 A C55118088, 3 A C55117686); 8 fuses about 0.40 vs 0.92
+    - **Spec comparison:** Claimed same ampere ratings and form factor. I did not verify a published time-current curve, interrupting rating or temperature re-rating, and found no independent opening-time or I2t measurement.
+    - **Worse in:** Unproven opening behaviour, the one spec a fuse exists for. The pack fuse is the safety disconnect (reaudit D).
+    - **Compatibility:** Fits MINI holders mechanically.
+    - **Risks:** The part numbers mimic Littelfuse numbering. No measured evidence. Saves about $0.50 per set. REJECT under angle B.
+    - **Seller url:** LCSC C55118090 (no product URL returned by the catalogue API)
+    - **Sources:**
+      - JLCPCB/LCSC catalogue API, 18 Oct 2026 (C55118090, C55118088, C55117686)
+  3.
+    - **Name:** Generic Chinese SMBJ13A / SMBJ17A (MDD SMBJ13A C404130; FOSAN SMBJ13A C5353259; YFW SMBJ17A C5764635)
+    - **Kind:** generic_or_clone
+    - **Price usd:** SMBJ13A 0.0567 (MDD) / 0.0376 (FOSAN); SMBJ17A 0.025 (YFW); about 0.11 vs 0.36 for 3 parts
+    - **Spec comparison:** MDD datasheet row: VRWM 13.0 V, VBR 14.40-15.90 V, VC 21.5 V at 28.0 A, IR 1 uA, 600 W 10/1000 us. This is identical on paper to Littelfuse (13.0 / 14.40-15.90 / 21.5 V at 28.0 A) and Vishay (21.5 V at 27.9 A). FOSAN: VC 21.5 V at 27.9 A, IR 5 uA (worse leakage on paper).
+    - **Worse in:** No independent surge or clamp measurement (datasheet-equal only). FOSAN IR is 5 uA vs 1 uA. Not 'Vishay/Littelfuse' as reaudit D requires for the J21/N/SW clamps.
+    - **Compatibility:** SMB/DO-214AA, drop-in.
+    - **Risks:** Clamp-voltage spread is unproven at the 16 V Q6A margin. Saves about $0.25. REJECT under angle B.
+    - **Seller url:** https://www.lcsc.com/product-detail/esd-and-surge-protection-tvs-esd_mdd-microdiode-semiconductor-smbj13a_C404130.html
+    - **Sources:**
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_2407291901_MDD-Microdiode-Semiconductor-SMBJ13A_C404130.pdf
+      - https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2301131609_FOSAN-SMBJ13A_C5353259.pdf
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Littelfuse-SMBJ13A_C151252.pdf
+      - https://www.vishay.com/docs/88392/smbj.pdf
+  4.
+    - **Name:** LUTE 1812L075/24GR PTC (clone numbering of Littelfuse 1812L) for AUX / LNB
+    - **Kind:** generic_or_clone
+    - **Price usd:** 0.0474 (LCSC C19078722, stock 12,132) vs 0.0898 Bourns MF-MSMF075/24-2
+    - **Spec comparison:** Same as Bourns MF-MSMF075/24 on: 0.75 A hold / 1.5 A trip at 25 C, 24 V, 40 A, R1max 0.45 ohm. LUTE Pd is 1.0 W vs 0.8 W. Hold derating at 60 C: LUTE 0.49 A vs Bourns 0.55 A.
+    - **Worse in:** Hot hold current: 0.49 vs 0.55 A at 60 C. The AUX margin over the 0.42 A load drops from 31 % to 17 %. No independent measurements.
+    - **Compatibility:** 1812 footprint, drop-in.
+    - **Risks:** Nuisance trips in a hot case. REJECT: worse on its own datasheet.
+    - **Seller url:** https://www.lcsc.com/product-detail/resettable-fuses_lute-1812l075-24gr_C19078722.html
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/resettable-fuses_lute-1812l075-24gr_C19078722.html
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_BOURNS-MF-MSMF075-24-2_C208467.pdf
+  5.
+    - **Name:** KUU K1812L075PR PTC (also the branded 13.2 V parts Littelfuse 1812L075PR and Bourns MF-MSMF075-2)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 0.0487 (KUU C2892435); Littelfuse 1812L075PR 0.0799 (C142689); Bourns MF-MSMF075-2 0.0858 (C84140)
+    - **Spec comparison:** 0.75 A hold / 1.5 A trip. Vmax: KUU 16 V, Littelfuse 1812L075PR 13.2 V, Bourns MF-MSMF075-2 13.2 V, vs 24 V for the /24 part. KUU Imax 40 A.
+    - **Worse in:** Vmax is below the 16.4 V that a SYS12 high-side or pack fault can put across a tripped PTC.
+    - **Compatibility:** 1812, drop-in electrically, but under-rated.
+    - **Risks:** A tripped PTC can fail short or arc above Vmax. REJECT. Also warn the assembler that the plain MF-MSMF075-2 is NOT the /24 part.
+    - **Seller url:** https://www.lcsc.com/product-detail/resettable-fuses_kuu-k1812l075pr_C2892435.html
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/resettable-fuses_kuu-k1812l075pr_C2892435.html
+      - https://www.lcsc.com/product-detail/resettable-fuses_littelfuse-1812l075pr_C142689.html
+      - https://www.lcsc.com/product-detail/resettable-fuses_bourns-mf-msmf075-2_C84140.html
+  6.
+    - **Name:** LUTE 1812L030/30GR PTC for the Boni rail (0.2 A at 60 C)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 0.0445 (LCSC C20627121, stock 14,973) vs 0.0908 Bourns MF-MSMF030-2
+    - **Spec comparison:** On paper equal or better than Bourns MF-MSMF030: 0.30 A hold / 0.60 A trip, 30 V, 0.21 A hold at 60 C on both, trip 0.10 s at 8 A on both. Imax: LUTE 40 A vs Bourns 10 A. Rmin: LUTE 0.25 ohm vs Bourns 0.30. R1max 3.0 ohm on both.
+    - **Worse in:** No independent measurement. Bourns publishes its qualification (30 min at Ihold no-trip, 100 trip cycles at Vmax/Imax); I did not find the LUTE equivalent.
+    - **Compatibility:** 1812, drop-in.
+    - **Risks:** Saves $0.046. Under angle B: REJECT for lack of measured evidence. It is the only clone that is not worse on paper.
+    - **Seller url:** https://www.lcsc.com/product-detail/resettable-fuses_lute-1812l030-30gr_C20627121.html
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/resettable-fuses_lute-1812l030-30gr_C20627121.html
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_BOURNS-MF-MSMF075-24-2_C208467.pdf
+  7.
+    - **Name:** UMW AO3407A (second-source copy of AOS AO3407A) for AUX12
+    - **Kind:** generic_or_clone
+    - **Price usd:** 0.0394 (LCSC C347478, stock 46,274) vs 0.1058 AOS
+    - **Spec comparison:** -30 V, VGS +/-20 V, ID -4.2 A (AOS -4.3 A), RDS(on) 37 mOhm typ at -10 V / 52 mOhm typ at -4.5 V, Pd 1.4 W. The datasheet says 'AO3407A are electrically identical'.
+    - **Worse in:** No independent measurement. Only typical figures compared; ID -4.2 vs -4.3 A (irrelevant at 0.42 A).
+    - **Compatibility:** SOT-23, drop-in.
+    - **Risks:** Saves $0.067. REJECT under angle B (no measured evidence). The AOS original is cheap and in stock.
+    - **Seller url:** https://www.lcsc.com/product-detail/mosfets_umw-youtai-semiconductor-co-ltd-ao3407a_C347478.html
+    - **Sources:**
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_2311091734_UMW-Youtai-Semiconductor-Co---Ltd--AO3407A_C347478.pdf
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_1810231523_Alpha---Omega-Semicon-AO3407A_C15155.pdf
+  8.
+    - **Name:** HRK GVT1E227M0810CNVC 220 uF/25 V (also Nichicon UWT1E221MNL1GS)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 0.0753 HRK (C2983548, stock 9745); 0.1953 Nichicon UWT (C340743, stock 5) vs 0.411 Panasonic FK
+    - **Spec comparison:** All are 8x10 mm, 25 V, 105 C.
+  - Life: HRK 2000 h, Nichicon UWT 1000 h, Panasonic FK 5000 h at 105 C.
+  - Ripple: HRK 175 mA at 120 Hz vs FK 450 mA at 120 Hz (LCSC attributes); FK datasheet 600 mA at 100 kHz, impedance 0.16 ohm.
+    - **Worse in:** Life (2.5-5x shorter) and ripple rating. No measured ESR for HRK.
+    - **Compatibility:** Same footprint.
+    - **Risks:** REJECT: worse on datasheet.
+    - **Seller url:** https://www.lcsc.com/product-detail/aluminum-electrolytic-capacitors-smd_hrk-gvt1e227m0810cnvc_C2983548.html
+    - **Sources:**
+      - https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2203221030_HRK-GVT1E227M0810CNVC_C2983548.pdf
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_PANASONIC-EEEFK1E221P_C128511.pdf
+      - https://www.lcsc.com/product-detail/aluminum-electrolytic-capacitors-smd_nichicon-uwt1e221mnl1gs_C340743.html
+  9.
+    - **Name:** Sunlord SWRB1207S-101MT 100 uH (cheaper pi-filter inductor)
+    - **Kind:** other_brand
+    - **Price usd:** 0.4604 (LCSC C169378, stock 5518) vs Bourns SRR1260-101M 1.2048 (C2041335) / Wurth 7447709101 1.4742 (C6463690)
+    - **Spec comparison:** Rated current: Sunlord 1.7 A, Bourns 1.7 A (Isat 1.7 A), Wurth 2.5 A Irms / 3.1 A Isat. DCR: 220 / 180 / 110 mOhm (LCSC attributes). The Sunlord datasheet download failed.
+    - **Worse in:** Higher DCR than both, lower current than Wurth. For J21 (2.5 A Lime peak) none of the three 100 uH parts is enough; the rail needs Isat at least 4 A.
+    - **Compatibility:** 12x12 mm SMD.
+    - **Risks:** REJECT as an equal; acceptable only on rails no higher than 0.5 A after a per-rail check. Not an angle-B 'proven' part.
+    - **Seller url:** https://www.lcsc.com/product-detail/power-inductors_sunlord-swrb1207s-101mt_C169378.html
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/power-inductors_sunlord-swrb1207s-101mt_C169378.html
+      - https://www.lcsc.com/product-detail/power-inductors_bourns-srr1260-101m_C2041335.html
+      - https://www.lcsc.com/product-detail/power-inductors_wurth-elektronik-7447709101_C6463690.html
+  10.
+    - **Name:** Unbranded clip-on 'ferrite' cores (marketplace) instead of Fair-Rite #31 snap-ons
+    - **Kind:** generic_or_clone
+    - **Price usd:** not checked (search budget exhausted); Fair-Rite 0431164281 is $3.64 LCSC / $2.85 DigiKey (G1 figure)
+    - **Spec comparison:** No published or independently measured impedance curve found. Fair-Rite #31 guarantees 20/75/104/170/315/380 ohm at 1/5/10/25/100/250 MHz (-20 % minimum). K9YC (measured data) shows choke impedance vs frequency is set by the mix chemistry, so an unknown mix cannot be assumed to match #31 at 1-30 MHz.
+    - **Worse in:** Unknown, and probably lower, HF (1-30 MHz) impedance. Unverified.
+    - **Compatibility:** Fits cables mechanically.
+    - **Risks:** Silent loss of HF/LF noise suppression on the HF+ VBUS and DC leads. REJECT under angle B.
+    - **Seller url:** n/a
+    - **Sources:**
+      - http://k9yc.com/RFI-Ham.pdf
+  11.
+    - **Name:** XT30 clones (non-Amass)
+    - **Kind:** generic_or_clone
+    - **Price usd:** not checked; genuine Amass XT30U pair is $0.434 at LCSC
+    - **Spec comparison:** No measured contact-resistance or housing data found for any clone.
+    - **Worse in:** Unproven contact resistance and housing heat resistance on the pack path (4.6 A peak).
+    - **Compatibility:** Mates mechanically.
+    - **Risks:** A cent-level saving at most against a genuine part already in stock (42-50k pcs). final_world_sourcing already requires genuine Amass. REJECT.
+    - **Seller url:** https://www.lcsc.com/product-detail/plug_changzhou-amass-elec-xt30u-f_C99102.html
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/plug_changzhou-amass-elec-xt30u-f_C99102.html
+      - https://www.lcsc.com/product-detail/plug_changzhou-amass-elec-xt30u-m_C99101.html
+  12.
+    - **Name:** DIY discrete eFuse (P-FET + PTC or a comparator current limit) instead of TPS259470A
+    - **Kind:** diy
+    - **Price usd:** about 0.3-0.6 in parts (estimate) vs 1.29
+    - **Spec comparison:** TPS259470A: 1.2 us adjustable OVLO, +/-10 % ILIM above 1 A, back-to-back FETs with true reverse-current blocking, -15 V reverse polarity, FLT and auto-retry. A discrete circuit gives none of these at equal accuracy or speed without a measured design.
+    - **Worse in:** OVLO speed and accuracy, current-limit accuracy, reverse blocking (the USB-C back-feed role), fault reporting.
+    - **Compatibility:** Needs new layout.
+    - **Risks:** Re-opens the J21 over-voltage path that reaudit D closed. REJECT.
+    - **Seller url:** n/a
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/tps25947.pdf
+  13.
+    - **Name:** TI TPS259472ARPWR (cheaper TPS25947 variant)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 1.0726 at qty 1 (LCSC C3662789, stock 2531) vs 1.2881
+    - **Spec comparison:** Same die family. Instead of adjustable OVLO cutoff it has a pin-selectable over-voltage CLAMP: 3.88 / 5.74 / 13.85 V (13.2-14.5 V range). The datasheet requires the input operating voltage to be limited to the selected clamp threshold. PG instead of FLT. No 22 V option, so it cannot do the USB-C VBUS role.
+    - **Worse in:** It clamps and dissipates instead of disconnecting under a 16.4 V fault. Clamp up to 14.5 V vs 13.5 V OVLO. No FLT.
+    - **Compatibility:** Same QFN-10 footprint, different pin functions.
+    - **Risks:** REJECT.
+    - **Seller url:** https://www.lcsc.com/product-detail/surge-protection-devices-spds_texas-instruments-tps259472arpwr_C3662789.html
+    - **Sources:**
+      - https://www.ti.com/lit/ds/symlink/tps25947.pdf
+      - https://www.lcsc.com/product-detail/surge-protection-devices-spds_texas-instruments-tps259472arpwr_C3662789.html
+  14.
+    - **Name:** Used or salvaged protection parts (fuses, PTCs, TVS, eFuses pulled from boards)
+    - **Kind:** used
+    - **Price usd:** n/a
+    - **Spec comparison:** PTC resistance rises after trips (R1max); a TVS's surge history cannot be seen; eFuse provenance cannot be traced.
+    - **Worse in:** Unverifiable condition on every safety spec.
+    - **Compatibility:** n/a
+    - **Risks:** REJECT.
+    - **Seller url:** n/a
+    - **Sources:**
+      - https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_BOURNS-MF-MSMF075-24-2_C208467.pdf
+- **Notes:** VERDICT (angle B): keep the current branded parts. No generic part, clone, DIY build or used unit has independent measured evidence of being equal.
+  - Worse on their own datasheets: LUTE 1812L075/24GR (0.49 vs 0.55 A hold at 60 C), KUU K1812L075PR (16 V max), HRK and Nichicon UWT 220 uF (life 2000 h / 1000 h vs 5000 h), Sunlord inductor (DCR), TPS259472A (clamp, not cutoff).
+  - Equal on paper but unmeasured: MDD/FOSAN/YFW SMBJ, LUTE 1812L030/30GR, UMW AO3407A, JDT fuses. Together they would save only about $0.6-1.0 per set.
+  
+  THE REAL SAVING IS SOURCING, NOT SUBSTITUTION:
+  - Littelfuse MINI fuses at LCSC cost $0.10-0.13, against $0.39 at DigiKey.
+  - Littelfuse SMBJ17A/13A ($0.107/$0.142) are cheaper than Vishay ($0.146/$0.243). Reaudit D allows either brand.
+  - Keystone 3568 PCB holder (30 A, $1.31 DigiKey) is cheaper than Littelfuse 01530008Z ($4.04).
+  - Panasonic EEE-FK1E221P is the cheapest 220 uF that is not worse.
+  
+  STACK FIXES TO CARRY INTO v2:
+  - (a) The set now holds 3x TPS259470A (J21, DISP12, USB-C VBUS) and 2x SMBJ17A (N and SW), per reaudit D, not the single 1.5 A eFuse and single SMBJ17A in the STACK row. This raises the set to about $22-28.
+  - (b) Specify the PTCs by voltage and by hold current at 60 C:
+    - AUX: Bourns MF-MSMF075/24-2 (24 V, 0.55 A at 60 C). Never the 13.2 V MF-MSMF075-2 or Littelfuse 1812L075PR.
+    - Boni: MF-MSMF030-2 (30 V, 0.21 A at 60 C).
+    - LNB: size from the measured current. 075/24 gives 0.55 A at 60 C; 050/30X gives only 0.37 A.
+  - (c) The LCSC attribute table for Littelfuse SMBJ13A C151252 shows SMBJ14A values. The datasheet row is correct (VRWM 13.0, VBR 14.40-15.90 V, VC 21.5 V at 28 A). Goods-in marking: SMBJ13A 'LG', SMBJ17A 'LR'. SMBJ17A row: 17.0 / 18.90-20.90 / 27.6 V at 21.8 A.
+  - (d) None of the three 100 uH inductors checked is adequate for J21 (2.5 A Lime peak); pick a part with Isat at least 4 A per rail in v2.
+  
+  LIMITS OF THIS PASS:
+  - The WebSearch budget for this turn was already used up at my first query (shared limit). I could not look for independent measurements of clone fuses, clip-on ferrites, XT30 clones or generic TVS, and their absence is not proof that none exist. The user can send a follow-up to continue the search.
+  - Prices come from the JLCPCB/LCSC catalogue API and DigiKey listings, 18 Oct 2026, qty 1, USD, without shipping or EU VAT; EU VAT at checkout is not verified.
+  - The Fair-Rite $2.85 DigiKey figure is from the parallel G1 analog agent and was not re-fetched.
+  - The Littelfuse MINI time-current and re-rating curves are still unverified (Littelfuse pages return 403). The reaudit D bench test (4.6 A on 7.5 A and 2.3 A on 3 A, 30 min at 50 C) still applies.
+  - LCSC is not TI-franchised; buy the TPS259470A from a franchised distributor if one has stock.
+  
+  No candidate touches the receive-only, conducted-only or no-loop rules. Datasheets I downloaded are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/p5prot_dl/.
 
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
