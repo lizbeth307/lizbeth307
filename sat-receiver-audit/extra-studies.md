@@ -18201,6 +18201,94 @@
   - D8 Uputronics/HMC7992: 118, 119, 120.
   Still intact: 141 (D36V50F12 parenthesis), 143, 144, 152, 153, 157, 160.
 
+## edit:01a_decisions_integration:b3 (run `wf_53f2b30c-e42`)
+
+- **Section:** 01a_decisions_integration
+- **Applied:**
+  - 88
+  - 89
+  - 90
+  - 91
+  - 92
+  - 93
+  - 94
+  - 95
+  - 96
+  - 97
+  - 98
+  - 99
+  - 100
+  - 101
+  - 102
+  - 103
+  - 104
+  - 105
+  - 106
+  - 107
+  - 108
+  - 109
+  - 110
+  - 111
+  - 112
+  - 113
+  - 114
+  - 115
+  - 116
+  - 117
+  - 118
+  - 119
+  - 120
+  - 121
+  - 122
+  - 123
+  - 124
+  - 125
+  - 126
+  - 127
+  - 128
+  - 129
+  - 130
+  - 131
+- **Skipped:** []
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/01a_decisions_integration.md, using Edit, and kept the edits from earlier batches. All 50 table rows still have 4 columns. The only extra pipe is in C11, an escaped `\|` from an earlier edit.
+  
+  Conflicts and which source won:
+  - 101 vs 130 (C6 fans): merged into one clause. 130 (analogs_G2) wins on the wiring: high-side switch, tach rules, and "blower model not chosen". 101's re-audit content (NF-A4x10 5V non-PWM, 3-wire, tach on a free GPIO) is inside it. The re-audit reason (known curve, stall signal) went into the "чому" cell.
+  - 90 vs 131 (D5 questions to Wisecoco): I used 90's detailed numbered list (1)-(10). 131 (analogs_G2, higher precedence) wins on keeping the input voltage and current question. 90 wanted to drop it, so I rewrote it as "confirm DC 5-24 V for the shipped revision, plus current at 12 V at 25/50/100%". From 131 I also added "робоча температура" and the 4D fallback note "(явне, записане в журнал зниження ...)". Batch 4's anchor "вхідна напруга і струм;" (idx 171) is gone; the text now has "вхідна напруга і струм:" in item (8).
+  - 88 (D4 rail): applied TPS259470A (ILIM 1.5 A, OVLO about 13.5 V, EN from GP16) and the DC barrel. I did not apply "D36V28F5 #2 прибрано" or its $23.95 saving. Batch 4 idx 170 (analogs_G6, higher precedence than re-audit D) keeps the D36V28F5 as the fallback for a 5 V-only board. I left that sentence word for word so 170's anchor still matches.
+  
+  Merged with what was already in the file:
+  - Already present from earlier batches, so no new text: 118 (Uputronics Rev 3.0 description and EU price, D8) and 124 (G6K -S DigiKey price and the old RS UK price in C17 "чому").
+  - Merged into text that earlier batches had already changed: 119 and 120 (D8, small additions only), 115 (C21 EU sourcing), 123 (C17 relay part numbers), 126 (C5 H4 parts).
+  - Anchors that had changed since extraction, which I found by part name: 95, 97, 110, 115, 118, 119, 120, 122, 123, 124, 126.
+  
+  Left for batch 4 on purpose:
+  - 98: the GX12 connector is unchanged; batch 4 idx 138/139 (analogs G3) switch it to GX16-4. I added the BNO085 SPI text as a separate sentence, so 138's anchor still matches.
+  - 103: removed only "або Apache 3800" and added Apache to the rejected list; batch 4 idx 165 replaces Pelican.
+  - 102 is compatible with batch 4 idx 162, but 162's anchor sentence (Pinecil 64 W) is now gone, so 162 has to find D7 by part name.
+  - 125 is the same change as batch 4 idx 137.
+  
+  Totals recomputed in this file:
+  - C24 device weight: parts sum 1.57-1.79 kg (+0.05-0.07 kg for the HF+ shield). With Lime: 1.72-1.94 kg. Without Lime: about 1.6-1.8 kg.
+  - C24 backpack figures were not recomputed, because batch 4 idx 160 replaces them. The note now says they do not include the extra +0.05-0.07 kg.
+  - C24 core delta after G1: −$41.07 / −$88.77; the per-line sum checks out.
+  - C17 HF chain: $63-74 (44 + 18.71 / 50 + 23.71).
+  - C5 bench USB: 30 + 5.12 + 3.07 = 38.2 MB/s, which is over the 25 MB/s limit.
+  
+  Small additions to the "чому" cells, all taken from the change reasons:
+  - C12: kanshi matching tolerance.
+  - C13: chrony PPS_LOCK_LIMIT and the gcc mismatch.
+  - C22: QtTinySA pin and the PiOS Trixie zip.
+  - D4: listing photos.
+  - D6: T7 Tc and mode H.
+  - D7: the IronOS "safe" default does not turn off EPR.
+  - D12: I2C limit, 12 MHz harmonics, and the reason for the Schottky.
+  - D15: P50B pack size.
+  
+  Two other consistency notes:
+  - D12: GP22, the only free Pico pin, is now noted as taken by the fan tach (C6). The duplicate "Pico — лише SC0915" sentence was folded in.
+  - C13: the kernel-mirroring line points to C22 instead of repeating it.
+
 ## extract:operator_notes (run `wf_5ed966cd-eee`)
 
 - **Source:** operator_notes
@@ -32864,6 +32952,80 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   Flags for later batches:
   - idx 106 (re-audit C) gives the TDF maintenance mask as Tuesday 06:00-12:00 UTC. idx 79 (re-audit B), applied here, says Tuesday 08:00-12:00 from a secondary source, with no time zone. Batch 3 should reconcile the two.
   - idx 110, 111, 136, 154 and 176 have anchors on text this batch changed (SatDump decision cell, LC76G «udev /dev/gnss0», NanoVNA-Saver, MHF4 tool / DC blocks). They will need the current wording.
+
+## edit:01b_decisions_register:b3 (run `wf_9ce86e94-763`)
+
+- **Section:** 01b_decisions_register (1.2 register decisions), batch 3 of 4, idx 90-134
+- **Applied:**
+  - 90
+  - 91
+  - 92
+  - 93
+  - 94
+  - 95
+  - 96
+  - 97
+  - 98
+  - 99
+  - 100
+  - 101
+  - 102
+  - 103
+  - 104
+  - 105
+  - 106
+  - 107
+  - 108
+  - 109
+  - 110
+  - 111
+  - 112
+  - 113
+  - 114
+  - 115
+  - 116
+  - 117
+  - 118
+  - 119
+  - 120
+  - 121
+  - 122
+  - 123
+  - 124
+  - 125
+  - 126
+  - 127
+  - 128
+  - 129
+  - 130
+  - 131
+  - 132
+  - 133
+  - 134
+- **Skipped:** []
+- **Notes:** I edited one file: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/01b_decisions_register.md. All edits were made in place with Edit. Every table row still has 4 columns (checked with a script), and this file holds no subtotals.
+  
+  Conflicts, merges and anchors that had changed:
+  - 93 + 114 (Airspy Mini #91) are merged into one row. Seller and price follow analog G6 #12, which ranks above the re-audits: ITEAD DE, SKU IM150415001EU, $99.00 ex VAT, $123.22 landed in DE. The note column holds the old price (~$146.50 / GBP 110) and the saving (~$23.28 landed in DE, the figure from idx 177), plus the conducted test at 1701.3/1707 MHz within the 30-day return window. Re-audit C says "Lime RX at >=6 Msps", but the 7 Msps Lime floor from re-audit B (#21/#43) still stands, so the text reads ">=6 Msps (in practice from 7 Msps)".
+  - 101 is aligned with 116: the justified pad now reads 15/20 dB, up to 30 dB on the bench.
+  - 105 was already in the file from idx 0. I only aligned the wording ("MEOSAR/LEOSAR; Galileo SAR 1544-1545 MHz; LEOSAR 1544.5").
+  - 106: the anchor text had changed. I inserted the Tuesday 06:00-12:00 UTC mask after "TDF 162 kHz" and corrected the consequences note (08:00-12:00 from a secondary source, time zone unknown).
+  - 107 and 109: the anchors had changed (EGNOS text from earlier batches). Only the gpsd version was changed, to >=3.25-3ubuntu3.2 (noble-security).
+  - 108: gr-satellites was already off the apt list (idx 25/54). I merged the 4210dc45 / v5.9.0+cherry-pick recipe, the sandbox rules and the CI filename tests into the existing build sentence, and added the reason to the "why" cell.
+  - 110: the SatDump row had been rewritten by idx 26/56/85. Still-valid content is kept: the limesdrng_sdr_support explanation, the "never" list, the CI checks and "last numbered release 1.2.2". LC_ALL=C.UTF-8 replaces LC_NUMERIC=C. NET_SOURCE is now off too, so I replaced "input only net_source" with "decodes only recorded files (record then decode, #73)". That reading is mine.
+  - 111: added the 5 V VCC and the PPS-NC wiring note. The FAQ remark is now corrected: it concerns the L76, not the LC76G, and re-sending the settings is kept as a cheap safeguard.
+  - 113: "Лише з Lime:" was already replaced by idx 13, so I only reworded the opening. "S-band LNA still unnamed" is merged with the existing LNA gate.
+  - 118: in the "why" cell I recomputed how much the optimistic model overstates: 14-17 dB (28 against 11-14).
+  - 119: the Europe figures went into the decision cell. I removed the duplicate Europe sentences from the consequences but kept the Elektro-L3 TLE details. I-6 F1, PRN EGNOS and the time stations stay under the same "visible from here" flag. The cities are marked as model examples only, with no city tables on the device and no Kyiv figure.
+  - 121: A-V85 is removed from the list and the optional L-band patch shroud is added. The W9MDB A-V85 measurement stays only as a reference.
+  - 129: the anchor had changed (idx 30). Merged, and "or I-4" is kept because re-audit C itself says "Alphasat or I-4".
+  - 100: the terminator detail comes from G6 #9: AXING CFA 11-00 from Reichelt at EUR 1.60 incl. VAT = $1.80, 2 units, with TechniSat 0002/3077 as fallback.
+  
+  Things batch 4 will run into:
+  - idx 153 (re-audit D): its anchor "13.2 V ±0.2 V лише вертикаль;" is gone. The text now carries the ±0.33 V from idx 102, so batch 4 has to resolve that conflict.
+  - idx 177: its anchor is gone, but the G6 #12 price is already merged.
+  - idx 158: "Виміряти струм." is now the idx 95 procedure.
+  - idx 159: the phrase "смуга 1648-1728 MHz; uplink LTE B3 1710-1730 MHz у смузі" is kept unchanged, so its anchor still works.
 
 ## edit:02a_bom_compute_receivers_rf:b1 (run `wf_a1f0ee5f-4e1`)
 
