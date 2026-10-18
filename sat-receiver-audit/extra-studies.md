@@ -8720,6 +8720,622 @@
   
   Policy: the class set is civilian and lab only. Interference classes (LTE, GSM, Wi-Fi, Bluetooth) are occupancy labels and are never demodulated, and no emitter-identity fields are logged.
 
+## npu:design (run `wf_62c18130-b0d`)
+
+- **Architecture:** GOAL AND SCOPE. The NPU learns to find signals on the spectrum, i.e. on the waterfall/spectrogram across the SDR's whole captured span. It outputs boxes (t_start, t_stop, f_low, f_high) and a class for each box. The user teaches it by marking signals on a frozen waterfall. Classifying IQ snippets is only an optional second stage on a detected box. The system is receive-only: the LimeSDR TX path is never opened, and synthetic waveforms exist only as files.
+  
+  FOUR TIERS.
+  (1) Device, real-time inference.
+  (2) Device, learning in seconds to minutes. This covers new classes from a few examples, and head and stage-2 refits.
+  (3) Home base, hours. Full detector training, quantisation and HTP compilation.
+  (4) Optional cloud. Colab/Kaggle for GPU training. Qualcomm AI Hub only for runtime-neutral QDQ-ONNX quantize jobs and reference profiling.
+  
+  The HTP can only run frozen INT8 graphs. QNN offers no on-device training, and weight sharing needs v73+ (https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/htp_backend.md). So 'training the NPU' means three things:
+  - retraining the frozen detector graph at home base;
+  - learning everything that changes often (fine classes, prototypes, thresholds) in a stage 2 that runs FP32 on the CPU;
+  - redeploying the detector only after quantisation and a gate check on the device.
+  
+  TWO-STAGE MODEL. This split follows WBSig53: small YOLO-class models find signals well (YOLOv5-nano mAP 73.8 / AP50 87.0) but classify families poorly (57.0 mAP) (https://arxiv.org/abs/2211.10335).
+  
+  Stage 1, 'SpecDet' on the HTP:
+  - Anchor-free CenterNet/FCOS-style detector. Own code, or derived from YOLOX (Apache-2.0); not Ultralytics, which is AGPL-3.0.
+  - Input: static NCHW uint8 [B,2,512,512]. The two channels are mean dB and max dB relative to the per-bin noise floor.
+  - Stem: SpaceToDepth 4x4, turning 2 channels into exactly 32 channels at 128x128. Qualcomm recommends channel counts that are multiples of 32 and says 1-16 channels are inefficient (https://docs.qualcomm.com/bundle/publicresource/80-63442-10/topics/htp_guidelines_channels.md, .../htp_guidelines_low_depth_activations.md).
+  - Body: Conv/DW-Conv with ReLU/ReLU6, folded BatchNorm, and a nearest-Resize FPN back to stride 8 (a 64x64 grid).
+  - Four separate raw outputs, so each gets its own quantisation encoding:
+    - obj [B,1,64,64];
+    - box ltrb [B,4,64,64] (ReLU, in cells);
+    - fam [B,16,64,64], with 12 shape families plus 4 reserved slots;
+    - occ [B,1,64,64], an occupancy mask used for long carriers and energy 'unknowns'.
+  - Not in the graph: Sigmoid, Softmax, TopK, NMS, LSTM/GRU and attention. QAIRT 2.42 lacks the Softmax cDSP fix that came in 2.47, NMS needs all its data in TCM/2, and shared output scales collapse on the Q6A (forum 31368, 30899).
+  - Size (my analytic count, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/calc_train/specdet.py):
+    - SpecDet-S: about 0.29 GMAC per tile, 0.36 M params;
+    - SpecDet-M: about 0.88 GMAC, 0.80 M params;
+    - for comparison, YOLOX-Nano at 512 is about 1.6 G (README units).
+  - VTCM is safe. After the stem the activation width is 128, far below the TCM fit limit (W=512, D=32 needs 0.39 MB at A8 and 0.78 MB at A16 against a 1 MB budget at 2 MB VTCM), so an A16W8 fallback also fits.
+  
+  Stage 2 runs on the CPU in FP32 (ORT CPU EP, onnxruntime 1.31 aarch64):
+  - A crop embedder of about 0.4 M params and about 19 MMAC (estimate). Input is a 2x64x64 crop of the box from the best view, plus physical scalars: log bandwidth (Hz), log duration (s), duty cycle, Doppler slope (Hz/s) and the band.
+  - Output: a 128-d L2-normalised embedding feeding a cosine head plus a per-class prototype bank. Temperature scaling and per-class thresholds produce the label or 'unknown'.
+  - Optional IQ second stage: a Conv2d(1xK) CNN on IQ for the box after DDC, giving the modulation family (BPSK/QPSK/GMSK/...), which magnitude spectrograms cannot separate.
+  - Keeping stage 2 off the NPU avoids INT8 embedding collapse, which was seen on this board with CLIP and ArcFace (forum 31217). It also means a new class never needs re-quantisation or recompilation.
+  
+  RUNTIME SETS. Two are pinned.
+  - Set A (baseline): QAIRT 2.42.0.251225 device runtime (qcom-qnn-sdk-v68), the QNN C API in our own worker, context binaries made by the on-device aarch64 qnn-context-binary-generator from 2.42 DLCs, and the 2.42 qairt-converter/quantizer on an x86-64 Ubuntu 22.04 / Python 3.10 host. Alternative inside Set A: QDQ ONNX on Radxa's onnxruntime_qnn 1.23.2 cp312 fork, which compiles on the device and caches the context (ep.context_enable=1).
+  - Set B (experimental): onnxruntime 1.27.0 + onnxruntime-qnn 2.3.0 (QAIRT 2.47). One user ran it on a Q6A with vtcm_mb=2 and W8A16 (forum 31448). It adds per-channel and A16W8, plus the 2.47 ARM-Linux host tools. Use it only after the golden test and an 8 h soak.
+  - Every graph uses htp_arch 68, soc_model 35 (test 93), VTCM 2 MB, disable_cpu_ep_fallback=1, and a sustained/balanced performance mode.
+  - AI Hub QNN/DLC artifacts are never used with Set A. AI Hub stopped offering 2.42 around 22 Jun 2026, and artifacts are forward-compatible only (error 0x1388, forum 30908).
+  
+  DEVICE PROCESS LAYOUT. Nine supervised processes under one systemd target. Capture never depends on inference.
+  - P1 sdr-ingestd: CPU7 at SCHED_FIFO. CS16/CU8 into shared-memory IQ rings, each block carrying a sample counter, GNSS-disciplined UTC ns, fc, fs, gain and an overflow flag. It is the only process that opens the SDRs and has no TX code path.
+  - P2 recorderd: SigMF writer and pre-trigger 'Snap' from the existing 8 GiB mlocked RAM ring (38 s at 56 Msps ci16).
+  - P3 spectrumd:
+    - one FFT per SDR (VkFFT on Turnip Vulkan preferred, FFTW3f/VOLK NEON as fallback);
+    - derived views (tiling profiles), noise floor, dB-to-uint8 tiles, display rows and a CFAR occupancy and narrow-line map;
+    - the same C++ tiler is exposed to Python via pybind, so training tiles are bit-identical.
+  - P4a inferd-htp: sandboxed. systemd DevicePolicy=closed, DeviceAllow=/dev/fastrpc-cdsp, PrivateNetwork=yes, MemoryMax=1G, CPUAffinity=0-3, Type=notify, WatchdogSec=5. One execute thread, contexts initialised sequentially, never parallel HTP contexts on 2.42.
+  - P4b inferd-cpu: warm standby on ORT CPU with the same QDQ ONNX.
+  - P5 fusiond:
+    - decode, NMS, cross-tile and cross-view merge, an IoU tracker in absolute (UTC ns, Hz) coordinates;
+    - stage 2 and open-set logic;
+    - deadline broker: 500 ms per tile, with failover to CPU after 3 misses or restarts in 60 s.
+  - P6 annotd: JSONL journal, then sorted SigMF .sigmf-meta; also the dataset store.
+  - P7 ui: own GL ES/Vulkan waterfall with overlays, touch labeller, train/deploy screens. SDR++ remains a listening client over network_source; its hooks draw only on the FFT pane.
+  - P8 modeld: registry, golden gate, shadow A/B, promote and rollback; also runs on-device training jobs at nice 19 on CPU4-6, only when no pass is scheduled.
+  - P9 npu-health: fastrpc_test, golden tile, CDSP remoteproc and cdsprpcd recovery.
+  - IPC: memfd/shm seqlock rings for bulk IQ, rows and tiles; ZeroMQ over path ipc:///run/rflab/*.sock with msgpack for events and control.
+  
+  HOME BASE:
+  - x86-64 PC with an NVIDIA GPU (8-16 GB; TorchSig recommends 16 GB or more).
+  - PyTorch training env, plus a separate pinned Python 3.10 QAIRT 2.42 env.
+  - TorchSig 2.2.0 (MIT) and GNU Radio 3.10 synthetic generators.
+  - DVC-tracked dataset manifests, AIMET-torch for QAT, IQEngine (MIT) for review, and CI that runs the CPU path and tiler-parity tests.
+  - Sync with the device by LAN rsync/HTTPS or by swapping the T7. Model bundles are signed (ed25519) and checked by SHA-256 on import.
+  
+  OPEN SET. 'Unknown' is a runtime outcome, never a trained class. It fires in three cases: objectness or occupancy is high but stage-2 calibrated confidence is below the threshold or outside the prototype radius (energy score as an option, https://arxiv.org/abs/2010.03759); a CFAR box has no NN match; or a narrow line falls below the detector's 8 px resolution. Unknowns are drawn grey and go to the labelling inbox, which closes the active-learning loop.
+- **Pipeline steps:**
+  1.
+    - **Step:** 1. IQ capture into shared-memory rings
+    - **Where:** device
+    - **Tools:** sdr-ingestd (C++). SoapySDR 0.8.1 + LimeSuiteNG limesdr-micro-staging (LimeSDR Micro, CS16 over PCIe); librtlsdr 2.0.3 (RTL-SDR Blog V4L, CU8 at 2.56 Msps stable). GNSS/NMEA-disciplined epoch. CPU7 at SCHED_FIFO 50. No TX API is ever called.
+    - **Inputs outputs:** In: RF. Out: IQ ring per SDR (Lime 56 Msps cs16 = 224 MB/s; V4L 2.56 Msps cu8 = 5.1 MB/s). Each block has a header: 64-bit sample counter, UTC ns, fc, fs, gain, overflow flag. A file-replay source (SigMF) feeds tests through the same path.
+  2.
+    - **Step:** 2. Spectrogram engine and multi-resolution tiling
+    - **Where:** device
+    - **Tools:** spectrumd (C++). VkFFT on Mesa Turnip Vulkan (Adreno 643) preferred; FFTW3f/VOLK NEON fallback. 4-term Blackman-Harris window, no FFT overlap. Per-bin noise floor = running 20th percentile over 2-5 s, excluding bins under confirmed boxes. dB-to-uint8 at 0.25 dB/LSB with code 24 = floor (range floor-6 to floor+57.75 dB). The same tiler is compiled for Python via pybind for training.
+    - **Inputs outputs:** In: IQ ring. Out:
+  - tiles [2,512,512] uint8 (channel 0 = mean dB, channel 1 = max dB re floor over the K frames or aggregated bins), with a header: profile id, fc, fs, sample0, rows*hop, floor_dB, scale;
+  - display rows at 30 rows/s;
+  - a CFAR occupancy and narrow-line map.
+  Profiles (computed, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/calc_train/profiles.py):
+  - LIME-W: N=65536 at 56 Msps with 16-bin aggregation, 13.67 kHz x 1.17 ms pixels, tile 7 MHz x 0.6 s, 8 tiles across the usable ~49 MHz.
+  - LIME-F: raw 854 Hz bins with K=2, 2.34 ms rows, tile 437.5 kHz x 1.2 s; scheduled from the band plan, CFAR and user pins, at most 16 tiles per 1.2 s.
+  - LIME-B: burst snapshots, N=1024 with hop 512 and K=4, 54.7 kHz x 37 us, tile 28 MHz x 19 ms.
+  - RTL-F: N=4096 at 2.56 Msps with K=2, 625 Hz x 3.2 ms, tile 320 kHz x 1.64 s.
+  - RTL-C: 8-bin aggregation, 5 kHz, whole span in one tile.
+  - Zooms: 250 kHz DDC with N=1024 (244 Hz); CW zoom 48 kHz with N=4096 (11.7 Hz).
+  3.
+    - **Step:** 3. Stage-1 detection on the HTP
+    - **Where:** device
+    - **Tools:** inferd-htp. QNN C API with libQnnHtp.so from QAIRT 2.42.0.251225 and a v68 context binary. VTCM_SIZE_IN_MB=2, sustained/balanced perf, rpcPollingTime short or 0, batch 1, then a batch-4 context if it helps. Alternative backend: Radxa onnxruntime_qnn 1.23.2 with QDQ ONNX and ep.context_enable=1. Sandboxed systemd unit with WATCHDOG=1 sent only when no execute has been stuck for more than 2 s.
+    - **Inputs outputs:** In: tile_ready messages (ZeroMQ PUSH) plus the tile slot from shm. Out: raw uint8 tensors obj/box/fam/occ with their own scale/offset, published as det{tile_seq, model_id, backend, t_exec}. Planning load is about 42 tiles/s (Lime survey + RTL).
+  4.
+    - **Step:** 4. CPU fallback detection
+    - **Where:** device
+    - **Tools:** inferd-cpu: ONNX Runtime 1.31.0 CPU EP (aarch64 cp312), with the same detector as FP32 or QDQ-INT8 ONNX. Warm standby on CPU0-3.
+    - **Inputs outputs:** In: tiles re-dispatched by the broker after a missed 500 ms deadline, or in CPU mode. Out: the same det messages with backend=cpu. CPU mode cuts the schedule to LIME-W/RTL-C plus round-robin CFAR-active fine tiles (target 4-6 tiles/s, estimate) and shows 'NPU degraded'.
+  5.
+    - **Step:** 5. Decode, NMS, cross-tile merge, tracking
+    - **Where:** device
+    - **Tools:** fusiond (Python 3.12 + NumPy, or C++). Steps:
+  - sigmoid on obj, 3x3 max-pool peak picking, top-K 200;
+  - ltrb boxes, NMS IoU 0.5 per tile;
+  - merge across 32-bin frequency overlap and 25% time overlap;
+  - IoU tracker in (t,f), confirming a track after 2 of 3 tiles.
+    - **Inputs outputs:** In: det messages and tile headers. Out: tracks in absolute coordinates (UTC ns start/stop, Hz low/high at RF), computed as f = fc + (bin - N/2)*fs/N*agg and sample = sample0 + row*hop*K, with family, scores and the profile list.
+  6.
+    - **Step:** 6. Stage-2 classification and open set
+    - **Where:** device
+    - **Tools:** fusiond plus ORT CPU (FP32 crop embedder, about 19 MMAC per crop, estimate), a NumPy cosine head and prototype bank, temperature scaling (https://arxiv.org/abs/1706.04599), per-class thresholds and an optional energy score. Optional IQ CNN: Conv2d(1xK) on [B,2,1,1024] IQ after DDC, sliced from the IQ ring by the box's sample range.
+    - **Inputs outputs:** In: confirmed tracks, 2x64x64 crops from the best view, physical scalars, and IQ if still in the ring (ring holds 2 s or more). Out: class_id, calibrated confidence, embedding (kept for the exemplar bank), 'unknown' flags, and an optional modulation family.
+  7.
+    - **Step:** 7. Live overlay and SigMF annotation logging
+    - **Where:** device
+    - **Tools:** ui (own GL ES/Vulkan waterfall, boxes coloured by class, unknown in grey, dashed when unverified). annotd with sigmf-python 1.13.0 (LGPL-3.0); sigmf_validate in tests.
+    - **Inputs outputs:** In: tracks (ZeroMQ PUB). Out:
+  - on-screen boxes refreshed at 2-10 Hz with track extrapolation;
+  - an append-only JSONL journal, then a sorted .sigmf-meta at rotation or close (SigMF requires annotations sorted by sample_start);
+  - core:metadata_only=true for live sessions without IQ.
+  8.
+    - **Step:** 8. Training-data capture (Snap / Pass / Survey)
+    - **Where:** device
+    - **Tools:** recorderd (O_DIRECT, preallocated files) to the Samsung T7 (wideband) or the UFS (narrowband). Pass scheduler: Skyfield EarthSatellite.from_omm plus CelesTrak OMM.
+    - **Inputs outputs:** In: the 8 GiB RAM ring, the user's 'Snap', the pass schedule and detector gating. Out: SigMF recordings, e.g. 4 s at 56 Msps ci8 = 448 MB, ci16 for spans of 20 MHz or less, cu8 native for the V4L, each with current model detections as tier=model annotations. Survey mode commits only segments that contain detections.
+  9.
+    - **Step:** 9. Context auto-labelling (predicted boxes)
+    - **Where:** either
+    - **Tools:** Skyfield with CelesTrak OMM. Cached SatNOGS DB transmitters (alive/active; CC BY-SA 4.0, https://db.satnogs.org/about/). Band-plan rules for terrestrial classes. CFAR/energy box tightening. Doppler-curve fit with a free offset, accepted if residual RMS is under about 1 kHz (UHF) or 3 kHz (L-band); this threshold is a design value.
+    - **Inputs outputs:** In: recording, time and location, SDR ppm estimate. Out: annotations with tier=predicted (training weight 0.5 until reviewed), the fitted centre-frequency track in rflab:doppler, and transmitter_uuid/norad_id for public satellites only.
+  10.
+    - **Step:** 10. Decoder-oracle confirmation
+    - **Where:** either
+    - **Tools:** Decoders run as separate GPL processes inside systemd-run PrivateNetwork=yes with read-only input:
+  - gr-satellites 5.5.0 (--sigmf / --rawfile --samp_rate, --kiss_out);
+  - SatDump pipeline on segments;
+  - dump1090-fa --ifile --iformat (12 MHz sample-counter timestamps give exact sample indices);
+  - AIS-catcher -r CS16 -s rate -M D, run per burst;
+  - Direwolf for APRS (version not checked);
+  - radiosonde_auto_rx, live only.
+  A wrapper passes on only {ok, n_frames, crc_rate, snr, ppm}.
+    - **Inputs outputs:** In: channelised segments or bursts cut from the recording around the predicted or detected box. Out: tier=decoded annotations (ground truth, weight 1). Payloads, ICAO addresses, MMSIs, callsigns, positions and RDS are discarded inside the sandbox. Boxes are never placed from decoder wall-clock times.
+  11.
+    - **Step:** 11. Human labelling and review
+    - **Where:** device
+    - **Tools:** Snapshot labeller in ui:
+  - freeze, then pinch/pan each axis;
+  - drag a box, which snaps to energy (threshold floor+6 dB inside the box plus 20% margin, largest connected component);
+  - class picker sorted by prediction, model top-3 and recent picks;
+  - proposal inbox with swipe accept/reject and an active-learning queue.
+  IQEngine (MIT) on the PC for bulk review.
+    - **Inputs outputs:** In: SigMF recordings with model, predicted and decoded proposals. Out: tier=human annotations (verified=true) and a blind audit set of about 5% labelled without proposals shown, to measure drift toward the model.
+  12.
+    - **Step:** 12. Dataset curation, splits and versioning
+    - **Where:** either
+    - **Tools:** Device: append-only store keyed by sha512 (core:sha512), plus a JSONL/Parquet manifest. Home base: DVC (Apache-2.0) tracking the manifest, taxonomy.yaml (semver), tiling.yaml (profiles, dB mapping) and splits.json.
+    - **Inputs outputs:** In: recordings and annotations. Out: a dataset version hash.
+  - Group split by pass_id/session_id, about 70/15/15, never by tile; whole days and sites go to test, and test membership is frozen by hash.
+  - At most 50 boxes per group per class; class-aware sampling; 20-30% background/hard-negative tiles.
+  - Licence and privacy class per record, plus a 'redistributable' view that excludes NC data.
+  13.
+    - **Step:** 13. Synthetic data generation
+    - **Where:** home_base
+    - **Tools:** TorchSig 2.2.0 (MIT; wideband scenes with num_signals_max > 1; lfm-radar, dmr and p25 excluded). GNU Radio 3.10.9.2 file-only generators for lab classes TorchSig lacks: AFSK1200/NBFM, SSTV/NBFM, AIS GMSK+HDLC, split-phase BPSK HRPT, LRPT QPSK 72k, RS41-like GFSK 4800, keyed CW. Generators write SigMF with exact annotations.
+    - **Inputs outputs:** In: generator configs, plus real noise and background captures from the device (terminated input, quiet bands, RTL and LMS7002M artefacts). Out: synthetic SigMF IQ with exact boxes, rendered through the shared tiler at every profile (about 100k-300k tiles for v1, estimate).
+  14.
+    - **Step:** 14. Augmentation
+    - **Where:** home_base
+    - **Tools:** IQ-domain transforms with box bookkeeping, applied before the STFT:
+  - frequency shift; resample_poly at ratios 0.8-1.25;
+  - LEO Doppler ramps from real Skyfield pass geometry (+/-3 kHz at 137 MHz up to +/-50 kHz at 2.2 GHz);
+  - TorchSig AWGN, Fading, Shadowing, IQImbalance, Spurs, CarrierPhaseNoise, NonlinearAmplifier, IntermodulationProducts and Adjacent/Cochannel interference;
+  - copy-paste of labelled snippets into real backgrounds.
+  TimeReversal and SpectralInversion are avoided.
+    - **Inputs outputs:** In: real and synthetic SigMF. Out: augmented tiles. Boxes whose in-band SNR falls below about 0 dB after augmentation become ignore regions. Spectrogram-domain extras: dB offset jitter and SpectrogramDropSamples.
+  15.
+    - **Step:** 15. Detector training (stage 1)
+    - **Where:** home_base
+    - **Tools:** PyTorch (CUDA) on a home GPU, Colab/Kaggle as fallback. Own SpecDet code or a YOLOX-derived detector (Apache-2.0). FCOS/CenterNet-style losses (focal on obj, GIoU on ltrb, BCE on fam, Dice on occ). Optional DETR/XCiT teacher on the PC for pseudo-labels and distillation only.
+    - **Inputs outputs:** In: dataset version (real tiers human/decoded at weight 1, predicted at 0.5) plus synthetic tiles. Out: FP32 checkpoint, per-family validation AP50/AP50:95, and calibration statistics. Estimated 1.5-3 h for 100 epochs on 100k tiles with SpecDet-M on an RTX 3060-class GPU, versus about 30 days on the Q6A CPU (my FLOP estimate).
+  16.
+    - **Step:** 16. Stage-2 embedder and IQ classifier training
+    - **Where:** either
+    - **Tools:** PyTorch. Supervised-contrastive or cosine-margin loss for the crop embedder; Conv2d(1xK) IQ CNN on TorchSig modulation families plus own recordings. RadioML (CC BY-NC-SA 4.0) only for non-redistributed benchmarks. On the device: torch 2.14.1+cpu from https://download.pytorch.org/whl/cpu (159 MB), not the 454 MB CUDA wheel on PyPI.
+    - **Inputs outputs:** In: crops and IQ snippets with class labels plus the exemplar bank. Out: FP32 ONNX embedder, cosine head, prototypes and temperature. Base training at home base; fine-tunes on the device (see on-device learning).
+  17.
+    - **Step:** 17. ONNX export and parity check
+    - **Where:** either
+    - **Tools:** torch.onnx.export(opset_version=17, external_data=False, static shapes; dynamo is the default since 2.9). onnx.checker plus an ORT CPU parity check. Clear value_info rather than running onnxsim (Q6A forum fix).
+    - **Inputs outputs:** In: FP32 checkpoint. Out: detector_fp32.onnx [B,2,512,512] uint8-scaled input with separate outputs obj/box/fam/occ, and embedder.onnx. Whether QAIRT 2.42 accepts dynamo-exported graphs is unverified, so test it.
+  18.
+    - **Step:** 18. Quantisation (PTQ, QAT if needed)
+    - **Where:** home_base
+    - **Tools:** Set A:
+  - qairt-converter --input_network m.onnx, then qairt-quantizer --input_list calib.txt --use_per_channel_quantization (x86-64 Ubuntu 22.04, Python 3.10, QAIRT 2.42.0.251225), producing a DLC; or
+  - ORT get_qnn_qdq_config / qnn_preprocess_model (QUInt8 activations, int8 symmetric weights), producing QDQ ONNX. ORT documents its QNN quantisation utilities as x86_64 only (https://onnxruntime.ai/docs/execution-providers/QNN-ExecutionProvider.html).
+  If PTQ fails: aimet-torch QAT (BSD-3) with encodings passed via --quantization_overrides, compatibility with 2.42 unverified; or A16W8 on Set B.
+    - **Inputs outputs:** In: FP32 ONNX plus 500-1000 calibration tiles stratified over SDR, profile, gain, SNR, every family and noise-only. The input needs no calibration because the dB mapping is fixed. Out: quantised DLC or QDQ ONNX with a separate encoding per output and a calibration-set hash. Acceptance is judged on HTP outputs, not on CPU QDQ simulation (v68 device offsets).
+  19.
+    - **Step:** 19. HTP compilation
+    - **Where:** either
+    - **Tools:** Device (Set A): qnn-context-binary-generator (aarch64, in qcom-qnn-sdk-v68) with --dlc_path m_q.dlc --vtcm_override 2 --backend libQnnHtp.so; or Radxa ORT QNN EP 1.23.2 with ep.context_enable=1, vtcm_mb=2, htp_arch=68, soc_model=35, session.disable_cpu_ep_fallback=1. Home base: the same generator from the 2.42 SDK with dsp_arch v68, soc_id 35, vtcm_mb 2.
+    - **Inputs outputs:** In: quantised DLC or QDQ ONNX. Out: model.v68.qairt2.42.bin or an EP-context ONNX, bound in the manifest to a platform fingerprint (kernel 6.18.2-4, CDSP c4-00004 hashes, libQnnHtp/V68 stub/skel SHA-256). A graph that compiles can still fail on the board at 2 MB, so step 20 is mandatory.
+  20.
+    - **Step:** 20. Golden gate and evaluation
+    - **Where:** device
+    - **Tools:** modeld with qnn-net-run / qnn-throughput-net-run / qnn-profile-viewer (--profiling_level basic), inferd self-test, TorchMetrics MeanAveragePrecision or pycocotools, and the SigMF replay harness.
+    - **Inputs outputs:** In: candidate bundle, the frozen test set (by hash), 100 golden tiles with reference outputs, noise-only captures. Out: metrics.json comparing FP32-CPU, QDQ-CPU and HTP:
+  - per-class AP50 and AP50:95, track P/R, recall vs SNR, confusion matrix;
+  - false alarms per hour per MHz;
+  - dead-channel check on every family output;
+  - latency p50/p99 and duty.
+  Pass rules: HTP per-family AP50 within 2 points of FP32; no class losing more than 2 pp recall at fixed precision vs the champion; mAP50 at least champion minus 0.5; p99 within budget; golden tolerance met. A runtime or firmware change also needs an 8 h soak with fault injection (kill cdsprpcd, SIGSTOP inferd, disk full, RTL unplug).
+  21.
+    - **Step:** 21. Shadow A/B, promote, rollback
+    - **Where:** device
+    - **Tools:** modeld registry (/opt/rflab/models/<role>/<semver>/, current and previous symlinks switched atomically with rename(2)). The challenger runs on the CPU at a low rate, or on every 4th tile on the HTP if VTCM and duty allow.
+    - **Inputs outputs:** In: gated bundle. Out:
+  - agreement/disagreement stats and user confirmations;
+  - manual one-tap promote, with background load and self-test before the swap;
+  - automatic rollback on HTP errors, latency regression or a false-alarm spike;
+  - the last 5 versions kept.
+  22.
+    - **Step:** 22. On-device few-shot and incremental learning
+    - **Where:** device
+    - **Tools:** modeld trainer: NumPy/scikit-learn 1.9.1 for prototypes and heads; torch 2.14.1+cpu for the stage-2 fine-tune. Runs under systemd-run AllowedCPUs=4-6, nice 19, MemoryMax=2G, and only when no pass is scheduled, battery is above 40% (or charging) and SoC temperature is below 80 C.
+    - **Inputs outputs:** In: user boxes, the exemplar bank (up to 200 embeddings plus SigMF refs per class), the previous model. Out:
+  - new prototypes and thresholds (seconds);
+  - refitted cosine head (seconds);
+  - fine-tuned FP32 embedder (minutes), deployed through steps 20-21 on the CPU path.
+  23.
+    - **Step:** 23. Home-base sync and release
+    - **Where:** either
+    - **Tools:** rsync or HTTPS over LAN, or a T7 swap. Manifest-diff import. Bundles signed with ed25519 and checked by SHA-256. DVC push. Every manifest carries a licence list.
+    - **Inputs outputs:** In: device dataset diff (new SigMF and annotations, privacy-filtered), device metrics and field 'unknown' clusters. Out: new dataset version, retrained bundle, release notes (class map diff, metric deltas).
+  24.
+    - **Step:** 24. NPU health, watchdog and recovery
+    - **Where:** device
+    - **Tools:** npu-health:
+  - fastrpc_test -a v68, golden tile;
+  - /sys/class/remoteproc CDSP stop/start, cdsprpcd restart (audit script);
+  - systemd RuntimeWatchdogSec if /dev/watchdog0 exists (unverified).
+    - **Inputs outputs:** In: health events, broker misses, QNN_COMMON_ERR_SYSTEM_COMMUNICATION. Out:
+  - restart of inferd-htp;
+  - after 3 failures in 60 s, CPU mode plus CDSP restart, waiting at least 15 s after a CDSP crash (SSR waits 5 s up to 2.47);
+  - return to the HTP only after a golden-tile pass and 10 min of hysteresis;
+  - health is logged into SigMF sessions (rflab:backend).
+- **On device learning:** WHAT 'TEACHING' CHANGES. The user marks boxes on the frozen waterfall. Nothing on the HTP is retrained on the device by default. The detector is class-agnostic (objectness, occupancy and box) plus 12 coarse shape families. Fine classes live in the FP32 CPU stage 2. A new signal class therefore works within seconds, as long as the detector already finds it as 'a signal' or the user's manual box or a CFAR box supplies it.
+  
+  T0, instant, under 0.1 s:
+  1. The user picks 'New class' (name of 20 characters or fewer, parent family, privacy flag: public or occupancy-only).
+  2. The user marks 5-20 boxes, from 2 or more sessions or passes if possible.
+  3. Each box is snapped to energy.
+  4. A 2x64x64 crop is cut from the best view, plus physical scalars (log bandwidth, log duration, duty cycle, Doppler slope, band).
+  5. The FP32 embedder computes 128-d L2-normalised embeddings.
+  6. The prototype is the mean embedding ('imprinted weights', https://arxiv.org/abs/1712.07136).
+  7. The per-class cosine radius comes from leave-one-out over the exemplars.
+  'Try it' shows live matches in a distinct colour before 'Keep'.
+  
+  T1, under 1 s: refit the cosine or logistic head (scikit-learn) on the whole exemplar bank. The bank holds up to 200 embeddings per class in float16, about 51 kB per class, plus SigMF references, and every refit replays all classes (iCaRL-style, https://arxiv.org/abs/1611.07725). Per-class thresholds are set for precision of 0.9 or more on held-out exemplars. Temperature scaling is refit.
+  
+  T2, minutes, between passes only:
+  - Fine-tune the stage-2 crop embedder on the device CPU with torch 2.14.1+cpu on CPU4-6.
+  - The loss is supervised-contrastive or cosine-margin plus distillation from the previous embedder, as in Learning without Forgetting (https://arxiv.org/abs/1606.09282), to limit forgetting.
+  - Estimates (my FLOP arithmetic, unmeasured): about 1-3 min with early layers frozen and features cached; about 5-12 min for a full fine-tune over about 4000 crops x 20 epochs on 3 A78 cores at 12-29 GFLOPS effective.
+  - The result is deployed FP32 on ORT CPU right away through the golden gate. No quantisation or compilation is needed.
+  - Guards: no scheduled pass in the next 15 min, battery above 40% or charging, SoC below 80 C (the board throttles at about 90-95 C), MemoryMax 2 GiB with the IQ ring shrunk to 2 GiB in Train mode, abort and resume on any pass or thermal event.
+  
+  T2b, experimental and unverified, 10-30 min:
+  - Detector head-only fine-tune on the device: cache backbone features and train the head and family convs, for example to activate one of the 4 reserved family slots.
+  - Then re-quantise to QDQ ONNX with ORT get_qnn_qdq_config on aarch64. ORT documents this utility as x86_64 only; onnx 1.23.2 now ships aarch64 wheels, so it may work.
+  - Compile on the device with Radxa ORT QNN EP 1.23.2 and ep.context_enable=1, or on Set B with the 2.47 ARM-Linux host tools.
+  - Gate it like any release.
+  - Only enable this after a Phase 3 trial. Known segfault reports for ORT 1.23.2 and the context generator (forum 31046, 31368).
+  
+  T3, home base, hours:
+  - Full detector retrain, re-quantise and recompile with QAIRT 2.42 (x86-64 Ubuntu 22.04).
+  - Triggers: a new class shows a new spectral shape; objectness recall for that class is under target (a miss that cannot be fixed in the field and is queued automatically); or 300 or more verified boxes from 10 or more groups have accumulated (rule of thumb, unverified).
+  - Retrain on replay of all old classes with a calibration set that includes the new class.
+  - Promotion is gated on no regression on the frozen test set for every old class.
+  
+  FORGETTING AND CONSISTENCY:
+  - Class IDs are immutable and append-only, and retired IDs are never reused.
+  - Taxonomy semver: MAJOR for a change in preprocessing, tiling or IDs; MINOR for new classes; PATCH for a retrain or recalibration.
+  - A class with too few examples maps to 'unknown (vX.Y)' in models that lack it.
+  - Stage-2 refits always replay the exemplar bank and distil from the previous version.
+  - A per-class regression test runs on the frozen test set plus the user's confirmed field boxes.
+  
+  OPEN SET AND ACTIVE LEARNING:
+  - 'Unknown' fires when objectness or occupancy is high but the calibrated class probability is below its threshold, the embedding is outside every prototype radius, or the energy score is above threshold. CFAR boxes and narrow lines below 8 px also count as unknown.
+  - Unknowns cluster by embedding (cosine) and go to the inbox. The queue is ordered by model score 0.3-0.7, model-vs-auto-label disagreement, classes under target, and a new SDR, gain or site.
+  - Thresholds are calibrated to 95% TPR per SDR and gain profile.
+  
+  LIMITS:
+  - Field learning cannot fix detector misses, signals below 8 px (CFAR and zoom profiles cover these), or INT8 failures of the detector.
+  - Every few-shot claim, such as 5 shots being enough, must be measured on real captures (1/5/10/20-shot curves).
+- **Data formats:** 1) RECORDINGS: SigMF v1.2.6 (https://sigmf.org/), one .sigmf-meta/.sigmf-data pair per Snap, Pass or Survey segment.
+  - datatype: ci16_le for the LimeSDR (CS16), ci8 for long wideband surveys, cu8 native for the RTL-SDR V4L.
+  - global: core:sample_rate, core:sha512, core:recorder, core:license (the user's own captures), core:extensions = [{name:'signal', version:'1.0.0', optional:true}, {name:'rflab', version:'0.1.0', optional:true}], core:metadata_only=true for live sessions saved without IQ.
+  - captures: a new segment at every retune: core:frequency, core:datetime (GNSS-disciplined), rflab:gain, rflab:sdr, rflab:ppm_est.
+  - Location is a GeoJSON point on the device only. Exports round it to about 0.1 degree or a 4-character Maidenhead locator.
+  
+  2) ANNOTATIONS: one box = one annotation, in physical units only, never pixels.
+  - Core fields: core:sample_start, core:sample_count, core:freq_lower_edge and core:freq_upper_edge (RF Hz, always as a pair), core:label (20 characters or fewer, from the taxonomy), core:uuid, core:generator (user, model@ver, decoder@ver, predictor), core:comment.
+  - Annotations MUST be sorted by sample_start, so annotd journals JSONL and finalises sorted files.
+  - rflab namespace fields:
+    - class_id (immutable int), taxonomy (semver), family;
+    - tier (human | decoded | predicted | model), verified (bool), score, model (name@semver+sha256), backend (htp | cpu | energy | user), profile (W/F/B/RTL-F/...);
+    - snr_db, track_id, pass_id, session_id;
+    - transmitter_uuid and norad_id (public satellites only), doppler (fitted fc(t) polynomial), n_frames_ok (decoder);
+    - privacy (public | occupancy_only), ignore (bool, for sub-0 dB or clipped boxes), licence, source.
+  - signal:detail (mod_class, standard) is filled where known. signal:emitter is NEVER used.
+  - Box to tile label, per profile:
+    - xc = ((f_lo+f_hi)/2 - (fc - fs/2))/fs_view; w = (f_hi-f_lo)/fs_view;
+    - yc = (sample_start + sample_count/2 - s0)/(rows*hop*K); h = sample_count/(rows*hop*K);
+    - clip to the tile; drop boxes under 2 px or that keep under 50% of their area, and turn them into ignore regions.
+  - Because labels are physical, re-tiling at any FFT size, overlap or dB setting never needs relabelling.
+  
+  3) WATERFALL ARCHIVE (metadata-only sessions): an .rfwf file of uint8 rows (2 channels: mean and max dB) plus a JSON sidecar (profile, fc, fs, hop, K, agg, floor_dB per row block, 0.25 dB/LSB, code 24 = floor, first sample index). It is referenced by rflab:waterfall in the .sigmf-meta. 56 Msps LIME-W at 1.17 ms rows is about 3.5 MB/s for 2 x 3584 bins.
+  
+  4) TILES:
+  - Detector input: [B,2,512,512] uint8 NCHW, about 0.5 MiB per tile.
+  - Header (msgpack): profile_id, fc, fs, N, hop, K, agg, sample0, utc_ns0, floor_dB, scale.
+  - Training cache on the home base: sharded tar (WebDataset-style) or HDF5 of uint8 tiles plus per-tile JSON boxes [cid, xc, yc, w, h, ignore], regenerated from SigMF by the shared tiler.
+  - Calibration set: float32 .raw files listed in calib.txt for qairt-quantizer (2 MiB per tile, kept at the home base).
+  
+  5) CROPS AND EXEMPLARS: 2x64x64 uint8 crops plus a float32 scalar vector [log10 BW_Hz, log10 dur_s, duty, doppler_Hz_per_s, band_id]. exemplars.npz holds float16 [n,128] embeddings plus SigMF refs (rec sha512, annotation uuid). The voice-capable class nfm_voice gets spectrogram crops only at W/F resolution; IQ snippets are 0.25 s or less and kept on the device.
+  
+  6) MODEL BUNDLE, /opt/rflab/models/<role>/<semver>/:
+  - detector_fp32.onnx, detector_qdq.onnx;
+  - detector.v68.qairt2.42.bin (or an EP-context ONNX);
+  - embedder_fp32.onnx, iqcls_fp32.onnx (optional);
+  - head.npz, prototypes.npz;
+  - classmap.json (immutable IDs, family map, privacy class);
+  - thresholds.json (per-class tau, temperature, radius);
+  - preproc.yaml (profiles, window, floor estimator, dB mapping);
+  - golden/ (100 tiles plus reference outputs plus tolerances);
+  - metrics.json (FP32-CPU, QDQ-CPU and HTP per class, latency p50/p99);
+  - manifest.json: SHA-256 of every file, QAIRT build string 2.42.0.251225, soc_model, vtcm_mb, runtime set (A/B), platform fingerprint, dataset version hash, calibration hash, licence list, parent version;
+  - signature.ed25519.
+  
+  7) DATASET MANIFEST (JSONL or Parquet, DVC-tracked at the home base): rec_sha512, meta_sha512, session_id, pass_id, sdr, profile set, class counts per tier, licence, privacy class, split (frozen for test), retention state.
+  
+  8) RUNTIME EVENTS: msgpack over ZeroMQ: tile_ready, det, tracks, ctl, health.
+  
+  LICENCES:
+  - Own recordings: the user's licence in core:license.
+  - TorchSig code MIT; data generated with it is your own.
+  - GNU Radio GPL-3.0 (tool only).
+  - SatNOGS DB/Network data CC BY-SA, which means attribution and share-alike on derived datasets.
+  - DeepSig RadioML 2016.04C/2016.10A/2018.01A CC BY-NC-SA 4.0 (https://www.deepsig.ai/datasets/): benchmark or private pretraining of the IQ stage only, excluded from redistributable weights.
+  - HisarMod2019.1 and CSPB.ML: no stated licence, so benchmark only.
+  - WBSig53: regenerate it with TorchSig (dataset licence not stated).
+  - WRIST/SPREAD: licence not stated, so not used.
+  - Fraunhofer Wi-Fi/BT: CC BY 4.0 per the MDPI listing (unverified).
+  - Libraries and models: sigmf-python LGPL-3.0, ORT MIT, AIMET BSD-3, YOLOX Apache-2.0, Ultralytics AGPL-3.0 (benchmark only, never shipped).
+  - QAIRT runtime: Qualcomm AI Stack License. Install it on each device from Radxa/Qualcomm and never redistribute it standalone. The licence prohibits military end use, which is consistent with this project.
+- **Ui flows:**
+  - LIVE WATERFALL (home screen):
+  - Full-width waterfall from LIME-W or RTL-C, plus a zoom strip.
+  - Boxes coloured by class with the label and confidence. Unknown boxes are grey; unverified ones are dashed.
+  - Top bar: model version, backend (HTP / CPU-degraded / recovering), NPU duty, tiles/s, temperature, battery.
+  - Tap a box to open a card: class, confidence, bandwidth, duration, SNR, family, model version and backend. Buttons: Confirm, Relabel, Not a signal, Save, and Listen/Decode, which appears only for public classes (LRPT, HRPT, APRS, CubeSat, ADS-B, AIS, sonde) and never for nfm_voice or interference classes.
+  - Every touch target is at least 112 px (9 mm at 315 PPI) for gloves.
+  - High-contrast palette for 2000-nit sun use; one-hand reachable bottom bar.
+  - RECORD:
+  - A large 'SNAP' button saves the last N seconds already seen (pre-trigger from the RAM ring) plus the current detections as model-tier annotations. Defaults: 4 s at 56 Msps ci8, 10 s ci16 for spans of 20 MHz or less, 60 s cu8 on the RTL.
+  - 'Pass record' arms the scheduler from Skyfield/SatNOGS predictions.
+  - 'Survey (gated)' commits only segments that contain detections.
+  - A toast shows the size written, free space on the T7/UFS and the file id.
+  - LABEL (snapshot labeller):
+  - Open a Snap: the waterfall is frozen.
+  - Pinch or pan time and frequency independently.
+  - Drag a box. It snaps to energy (floor+6 dB inside the box plus 20% margin, largest blob), with large handles to adjust.
+  - A class grid appears, sorted by: (i) the SatNOGS/band-plan prediction at that time and frequency, (ii) the model's top 3, (iii) recent picks. 'Unknown', 'Artifact' and 'Noise' are always present. The predicted Doppler curve is overlaid.
+  - Save writes a human-tier SigMF annotation.
+  - Undo is always visible. There is no audio demodulation anywhere in the labeller.
+  - INBOX / REVIEW (active learning):
+  - A card stack of model, predicted and decoder proposals plus unknown clusters, ordered by uncertainty (score 0.3-0.7), disagreement and under-represented classes.
+  - Swipe right to accept, left to reject; tap to edit the box or class.
+  - Sessions are capped at about 5 min / 20-40 items with a progress bar.
+  - About 5% of items are blind (shown without proposals) to measure drift toward the model.
+  - TEACH A NEW CLASS:
+  1. Tap 'New class'. Pick a name from taxonomy suggestions or type one (20 characters or fewer), then choose the parent family and privacy (public / occupancy-only).
+  2. Mark at least 5 boxes, ideally 20 from at least 2 sessions; a ring counter shows progress.
+  3. Tap 'Try it': live matches appear in a new colour within seconds (prototype).
+  4. Tap 'Keep': the head refits in under 1 s and the class goes live in stage 2.
+  A banner states whether a home-base detector retrain is recommended (low objectness recall or a new shape family) and how many verified boxes from how many groups are still needed (target 300 / 10, rule of thumb).
+  - TRAIN:
+  - Three choices, each with a time estimate:
+    - 'Quick: prototypes and head' (seconds);
+    - 'Device fine-tune: stage-2 embedder' (minutes, estimate);
+    - 'Export for home-base retrain' (writes a dataset diff to the T7 or syncs over LAN).
+  - Pre-checks shown as green/red chips: no pass in the next 15 min, battery above 40% or charging, SoC below 80 C, free RAM. Train mode shrinks the IQ ring.
+  - Progress view: loss, ETA, temperature, power. Cancel at any time; auto-pause on a pass or thermal limit, then resume.
+  - The result becomes a candidate model, never live directly.
+  - DEPLOY:
+  - The Models screen lists the champion and candidates (device-trained or imported home-base bundles with verified signature and hashes).
+  - Each candidate shows a delta table vs the champion: per-class AP50 and recall, false alarms per hour, latency p50/p99, INT8-vs-FP32 gap, golden test pass/fail, and platform fingerprint match.
+  - 'Shadow test': the challenger runs silently on the CPU or on every 4th tile for N minutes, with a live agreement meter and disagreements queued to the Inbox.
+  - 'Promote' is a 1 s press-and-hold: background load, self-test, then an atomic switch. Promote is disabled if any gate fails, and the failing gate is shown.
+  - EVALUATE:
+  - Dashboard tabs:
+    - per-class precision/recall/AP50 on the frozen test set and on the user's confirmed field boxes;
+    - confusion matrix;
+    - recall vs SNR;
+    - false alarms per hour per MHz on noise captures;
+    - INT8 vs FP32 deltas;
+    - open-set AUROC and FPR@95%TPR;
+    - latency, duty, HTP restarts and CPU-fallback minutes per session.
+  - 'Run golden test now' gives an immediate HTP check.
+  - 'Replay recording' runs any SigMF file through the full pipeline at 1x or faster.
+  - ROLL BACK:
+  - Models > History shows the last 5 versions with date, class-map diff and metrics.
+  - 'Roll back' is a 1 s press-and-hold: an atomic symlink switch plus self-test.
+  - Automatic rollback on HTP errors, a latency regression or a false-alarm spike shows a red banner ('Rolled back to vX.Y: reason'), with a one-tap 'Keep rollback' or 'Retry new model'.
+  - A wrong class can also be retired from the class map. Its ID stays reserved and its boxes show as unknown.
+  - NPU STATUS AND RECOVERY:
+  - Status chip: HTP OK / CPU fallback / recovering (CDSP restart).
+  - Tapping it shows the cause: deadline misses, QNN error code, fingerprint mismatch.
+  - Buttons: 'Restart NPU' (runs the npu-health script) and 'Stay on CPU'.
+  - Recording and the waterfall keep running throughout; only labels may pause.
+  - SYNC WITH HOME BASE:
+  - A Dock screen exports the dataset diff (privacy-filtered: no payloads, rounded location) and imports signed bundles.
+  - It shows licence flags per data source; NC data is never included in redistributable exports.
+  - It shows the dataset version and taxonomy version on both sides.
+- **Budgets:** All figures are estimates unless marked measured.
+  
+  NPU THROUGHPUT ('frames' = 512x512x2 tiles). Computed in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/calc_train/profiles.py. A gap-free stream of 512x512 tiles needs fs/(K*512^2) tiles/s, whatever the FFT size, then x1.07 for 32-bin frequency overlap and x1.33 for 25% time overlap.
+  - Lime survey mix: LIME-W 17.8 + LIME-F scheduled 13.4 + LIME-B 4.0 tiles/s.
+  - RTL-F 6.5 + RTL-C 0.8 tiles/s.
+  - Total about 42.5 tiles/s.
+  
+  Latency per tile:
+  - SpecDet-S is about 0.29 GMAC and SpecDet-M about 0.88 GMAC (analytic count). YOLOv8n at 640 is about 4.3 GMAC and measures 3.6-4.7 ms NPU-only on QCS6490 (AI Hub, QAIRT 2.50) but 10-12 ms official / about 20 ms custom end-to-end on a Q6A with 2.42 (forum 30899).
+  - Planning value: 3-8 ms per tile end-to-end, with per-call FastRPC overhead unmeasured.
+  - NPU duty at 42.5 tiles/s: 13% at 3 ms, 21% at 5 ms, 34% at 8 ms, 51% at 12 ms. Cap is 50% duty.
+  - Capacity at 50% duty: 40-170 tiles/s.
+  - Knobs if latency is higher: raise K, use fewer scheduled fine tiles, a batch-4 context, or send only tiles whose energy changed.
+  
+  Box latency: tile length plus inference, about 0.6 s on LIME-W, 1.2 s on LIME-F, 1.6 s on RTL. Confirmed after 2 of 3 tiles: about 1.2-3.3 s. Overlay refresh 2-10 Hz on a 30 rows/s waterfall.
+  
+  CPU (4x A78: 1x 2.7 + 3x 2.4 GHz; 4x A55 at 1.9 GHz):
+  - LIME N=65536 FFT: 4.48 GFLOPS (854.5 FFT/s), on VkFFT/Turnip (vkpeak 808 GFLOPS FP32, audit) or about 2 A78 cores on FFTW NEON (unbenchmarked).
+  - RTL FFT: 0.15 GFLOPS.
+  - Burst-view snapshots: duty-cycled, small.
+  - dB/aggregation/tiling: about 11 Mpx/s, NEON.
+  - Stage 2: about 38 MFLOP per crop x about 15-30 crops/s, about 0.6-1.2 GFLOP/s, a fraction of one core.
+  - Running detection on the CPU instead would need about 24 GFLOP/s for SpecDet-S (42.5 x 0.57 GFLOP), i.e. all the big cores, so CPU mode is cut to 4-6 tiles/s.
+  - Core plan (audit): CPU7 RX; CPU4-6 FFT fallback, decoders and on-device training (never together with a pass or SatDump); CPU0-3 UI, fusion, annotd and inferd host threads.
+  
+  TRAINING TIME:
+  - T0 prototypes: under 0.1 s. T1 head: under 1 s.
+  - T2 stage-2 fine-tune: 1-3 min with frozen early layers, 5-12 min full (about 4000 crops x 20 epochs at 12-29 GFLOPS effective on 3 A78 cores).
+  - T2b detector head (experimental): 10-30 min including quantisation and compilation.
+  - T3 detector at home base: about 1.5-3 h for 100 epochs on 100k tiles with SpecDet-M on an RTX 3060-class GPU (about 5.3 GFLOP per tile-pass). The same job on the Q6A CPU would take about 30 days, which is why the detector never trains on the device.
+  - PTQ calibration with 500-1000 tiles plus compilation: minutes.
+  - Golden gate: about 5 min. Soak (runtime or firmware changes only): 8 h.
+  
+  RAM (12 GB):
+  - IQ ring: 8 GiB in wideband survey (38.3 s at 56 Msps ci16), shrunk to 2 GiB in Train mode.
+  - Row and tile rings: about 64 MiB.
+  - inferd-htp: MemoryMax 1 GiB. inferd-cpu: about 300 MiB.
+  - Trainer: MemoryMax 2 GiB, only in Train mode.
+  - Exemplar bank: about 51 kB per class.
+  
+  STORAGE:
+  - UFS 128 GB: OS and apps about 16 GB. Model registry: last 5 bundles x 10-30 MB, under 150 MB. Labelled dataset quota 20 GB: a 2-channel context tile is 0.5 MiB (0.26 MiB at 1 channel) plus a ci16 snippet of 1-1000 kB per box, so about 50k boxes. Golden set about 50 MB. UFS TBW is unpublished, so log health descriptors at every boot.
+  - Samsung T7 1 TB: raw snapshots. 56 Msps ci8 = 403 GB/h (4 s = 448 MB); ci16 = 806 GB/h (4 s = 896 MB); V4L cu8 = 18.4 GB/h. Rolling cap of about 400 GB, deleted 14 days after extraction unless pinned. Pass channel files are deleted after the decoder oracle has run.
+  - Home base: synthetic plus real tile shards of 100-300k tiles x 0.5 MiB, about 50-150 GB, plus raw SigMF archives (TorchSig recommends at least 1 TB).
+  
+  POWER:
+  - Measured (audit): Q6A 2.9 W idle, 9.3 W stress-ng, 10.1 W HPL. Pack 4S1P Molicel P50B, 72 Wh. System typical 25-28 W at the pack, peak 45-52 W, so about 2.5-2.9 h typical.
+  - Estimates: survey compute adds 3-4.5 W over idle. NPU incremental power is unknown; measure it with the INA228 on J21 and run the HTP in sustained/balanced mode, never burst.
+  - On-device training adds an estimated 3-6 W for 1-12 min, i.e. 0.05-1.2 Wh per run. Allowed only above 40% battery or on a charger.
+  - Thermal: the fan is mandatory; throttling at about 90-95 C. Training is aborted above 80 C.
+- **Class list:**
+  - DETECTOR SHAPE FAMILIES (stage 1, NPU output 'fam', 12 trained plus 4 reserved slots): F1 tone_cw (carrier, beacon, Morse); F2 fm_narrow (NFM-like analog, including AFSK and SSTV inside FM); F3 fm_wide (broadcast WFM); F4 sc_cont (continuous single-carrier digital: PSK/QPSK/APSK such as LRPT, HRPT, DVB-S2); F5 packet_nb (narrowband bursts/packets: FSK/GMSK/AFSK/BPSK telemetry, AIS, APRS, radiosonde frames); F6 ofdm_block (LTE, DVB-T, Wi-Fi OFDM); F7 tdma_burst (GSM); F8 short_wide_burst (ADS-B, Wi-Fi frames, BT/BLE hops); F9 css_chirp (LoRa); F10 am_ssb (analog AM/SSB, for HF later); F11 artifact (DC, spur, IQ image, intermod); F12 other_signal (energy of unknown shape). Plus class-agnostic objectness and occupancy. Background/noise is the negative class.
+  - 0 noise: background or noise-only. Hard negatives from terminated-input, quiet-band and SSD/display-on captures.
+  - 1 lrpt: Meteor-M LRPT QPSK at 72k/80k sym/s, 137.1/137.9 MHz (F4). Views: RTL-F, LIME-F. Oracle: SatDump. Public.
+  - 2 hrpt: Meteor/NOAA HRPT and MetOp AHRPT around 1.7 GHz (F4). LIME-W/F only; marginal on the V4L at 2.56 Msps. Oracle: SatDump. Public.
+  - 3 cs_gmsk_fsk: CubeSat GMSK/GFSK/FSK (G3RUH) telemetry, 1k2-9k6, 435-438 MHz (F5). Oracle: gr-satellites 5.5.0. Public.
+  - 4 cs_bpsk: BPSK telemetry and beacons, e.g. 1k2 BPSK (F5/F4). Oracle: gr-satellites. Public.
+  - 5 afsk_aprs: AFSK 1200 AX.25 over NFM, e.g. 144.800 MHz (Region 1, assumed) and the ISS digipeater (F5/F2). Oracle: Direwolf CRC check; only the CRC verdict and box are kept.
+  - 6 cw_beacon: CW Morse beacons from satellites and amateurs (F1). Uses the CW zoom profile (11.7 Hz bins). Confirmed by SatNOGS prediction plus the OOK pattern.
+  - 7 sstv: ISS SSTV events on 145.800 MHz NFM (F2). Event schedule plus human label. Public.
+  - 8 nfm_voice: narrow FM voice (amateur/ISS) (F2). Occupancy-only: never demodulated, IQ snippets 0.25 s or less, spectrogram at W/F resolution only.
+  - 9 adsb: 1090 MHz Mode S/ES activity regions (F8). LIME-B burst view or the V4L. Oracle: dump1090-fa with sample-indexed timestamps. ICAO addresses and positions are discarded.
+  - 10 ais: AIS 161.975/162.025 MHz GMSK bursts (F5). Oracle: AIS-catcher, run per burst, which also gives a ppm estimate. MMSI and positions are discarded.
+  - 11 radiosonde: RS41/DFM/M10-type, 400-406 MHz (F5). Oracle: radiosonde_auto_rx (live only) or human label.
+  - 12 dvbs2: DVB-S2 carriers, e.g. the QO-100 wideband beacon and transponder via the LNB IF (F4). Human label plus beacon prior.
+  - 13 bcast_fm: FM broadcast 87.5-108 MHz (F3). Band-plan rule. Interference/occupancy.
+  - 14 lte_dl: LTE downlink OFDM blocks of 1.4-20 MHz (F6). Occupancy-only: no cell IDs decoded.
+  - 15 gsm_dl: GSM 200 kHz TDMA bursts (F7). Occupancy-only.
+  - 16 wifi: 2.4 GHz OFDM bursts (F6/F8). LimeSDR only (to 3.8 GHz). Occupancy-only: no MACs.
+  - 17 bt_ble: Bluetooth/BLE hopping bursts of 1-2 MHz (F8). LIME-B. Occupancy-only.
+  - 18 art_dc: DC offset / LO leakage at the tuned centre (F11). Hard negative so the detector stops firing on it.
+  - 19 art_spur: fixed spurs (LMS7002M, display/HDMI harmonics, DC-DC, USB3) (F11).
+  - 20 art_image: IQ-imbalance mirror images (F11).
+  - 21 art_imd: intermodulation and overload products, e.g. RTL 8-bit overload next to FM broadcast (F11).
+  - 22 lora (optional, taxonomy 1.1): LoRa CSS from LoRa satellites and 433/868 MHz IoT (F9). Occupancy plus a public-satellite flag.
+  - 23 dvbt (optional, taxonomy 1.1): DVB-T/T2 terrestrial TV, a common UHF interferer (F6). Occupancy-only.
+  - RUNTIME-ONLY OUTCOMES (never trained as classes): unknown (signal found but outside every prototype or below threshold); unknown_energy (CFAR box with no NN match); unknown_narrow (line under 8 px, handed to a zoom profile).
+  - GENERIC MODULATION FAMILIES (optional IQ second stage, own class map, trained on TorchSig synthetic data plus own recordings): ook_ask, fsk2, fsk4, gmsk_msk, bpsk, qpsk_oqpsk, psk8, apsk16_32, qam16_64, ofdm, am_dsb, ssb, fm_analog, css_chirp, noise.
+  - EXCLUDED BY POLICY and enforced by a taxonomy CI check:
+  - radar of any kind, including TorchSig 'lfm-radar';
+  - drone/FPV links, jammers and EW, military emitters;
+  - RF fingerprinting or emitter identification (signal:emitter, ORACLE-style datasets);
+  - named public-safety or private digital-voice classes (TorchSig dmr and p25 are mapped to other_signal occupancy only);
+  - any class whose purpose is extracting private-communications content (Iridium/Inmarsat/Orbcomm user traffic, Starlink user data).
+- **Roadmap:**
+  - PHASE 0, Oct-Nov 2026 (2-3 weeks), NPU and front-end measurement. Gate for everything else.
+  - Freeze the golden NPU set: kernel 6.18.2-4, CDSP c4-00004, fastrpc, qcom-qnn-sdk-v68 2.42.0.251225, all apt-mark held. Record SHA-256 of libQnnHtp and the V68 stub/skel.
+  - Build random-weight SpecDet-S and SpecDet-M [1/4,2,512,512] uint8 graphs. Compile them on Set A with VTCM 2 MB (qnn-context-binary-generator --vtcm_override 2, and the ORT QNN EP 1.23.2 path). Test soc_model 35 vs 93.
+  - Measure with qnn-throughput-net-run and qnn-profile-viewer: latency p50/p99, per-call FastRPC overhead, batch gain, and the VTCM grant via QnnDevice_getPlatformInfo.
+  - Benchmark the N=65536 FFT (FFTW NEON vs VkFFT/Turnip) and ORT CPU latency.
+  - 8 h soak with fault injection.
+  - Exit criterion: HTP p99 of 12 ms or less per tile and no hang in 8 h. Otherwise ship the MVP CPU-first, with the HTP still experimental.
+  - PHASE 1 (MVP), Nov-mid Dec 2026, RTL-SDR V4L only:
+  - Device: sdr-ingestd and recorderd (SigMF, Snap from the RAM ring), spectrumd with RTL-F/RTL-C/zoom profiles, the C++ tiler with pybind parity tests, annotd, the labeller UI (snap-to-energy, class grid, inbox) and CFAR proposals.
+  - Home base: SpecDet-S v0.1 (objectness, occupancy, 8 families) trained on TorchSig and GNU Radio synthetic data rendered at RTL profiles, plus first real V4L captures.
+  - Runs first on ORT CPU, then on the HTP behind the watchdog/fallback, golden gate, registry and rollback.
+  - Stage 2: FP32 CPU embedder with T0 prototypes and T1 head ('teach a class' works).
+  - Initial classes: lrpt, cs_gmsk_fsk, cs_bpsk, afsk_aprs, cw_beacon, sstv, nfm_voice, ais, adsb, radiosonde, bcast_fm, art_*, noise.
+  - PHASE 2, Dec 2026-Feb 2027 (the LimeSDR Micro ships 15 Dec 2026):
+  - LIME-W/F/B profiles at 56 Msps; the fine-tile scheduler (band plan, CFAR, user pins).
+  - Interference and occupancy classes (lte_dl, gsm_dl, wifi, bt_ble), plus hrpt and dvbs2. LMS7002M artefacts measured and added as hard negatives.
+  - Auto-labelling: Skyfield/SatNOGS prediction, Doppler-fit gate, sandboxed decoder oracles.
+  - Active-learning queue, shadow A/B, automatic rollback.
+  - SpecDet-M vs SpecDet-S chosen on measured HTP latency and per-family AP50.
+  - Taxonomy 1.1 with all 12 families. The first full T3 home-base retrain on real data with group splits.
+  - PHASE 3, Feb-Apr 2027:
+  - T2 on-device stage-2 fine-tune with LwF distillation and replay.
+  - Optional IQ second-stage modulation CNN (CPU).
+  - Open-set calibration per SDR, gain and site profile.
+  - Evaluate runtime Set B (ORT 1.27.0 + onnxruntime-qnn 2.3.0 / QAIRT 2.47) behind the golden test and an 8 h soak for per-channel and A16W8. Use it only if it beats Set A without stability loss.
+  - Trial of the experimental T2b path: on-device ORT QDQ quantisation plus on-device compile.
+  - AIMET QAT if any family fails the 2-point INT8 rule.
+  - PHASE 4 (FULL), from Q2 2027:
+  - DETR/XCiT teacher at the home base for pseudo-labels and distillation into SpecDet.
+  - Track-level evaluation and false-alarms-per-hour SLOs per band.
+  - Reserved family slots activated through gated head fine-tunes.
+  - Periodic dataset releases (DVC) with licence-separated views; optional SatNOGS-compatible exports (CC BY-SA).
+  - HF profiles and am_ssb once the HF receiver is integrated.
+  - A documented release checklist: tiler parity, golden test, soak, signed bundles.
+- **Risks:**
+  - HTP STABILITY on 2.42.
+  - Field reports: inference hangs after about 1 h (forum 29949), CDSP crash during finalize (31208), kernel panic during NPU allocation (29959), segfaults in ORT 1.23.2 (31046) and in qnn-context-binary-generator (31368).
+  - Fixes for hangs and concurrency only arrived in 2.44-2.48.
+  - Mitigation: separate sandboxed process, a single execute thread, sequential context init, a 500 ms deadline broker, warm ORT CPU standby, CDSP remoteproc recovery, golden-tile re-entry. Recording never depends on the NPU. Whether a thread stuck in a FastRPC ioctl can be killed is unverified; test it by fault injection.
+  - RUNTIME VERSION LOCK.
+  - Context binaries and DLCs only run on the same or a newer runtime.
+  - AI Hub has not offered 2.42 since about 22 Jun 2026, and its 2.45+ artifacts fail with 0x1388.
+  - The 2.42 converter and quantizer exist only for x86-64 Ubuntu 22.04 / Python 3.10, so every detector update needs the home-base PC.
+  - Set B (QAIRT 2.47) has one public Q6A success and a conflicting failure report.
+  - Mitigation: pin both sets with hashes, bind bundles to a platform fingerprint, fall back to CPU on mismatch.
+  - VTCM AND COMPILATION.
+  - Only about 2 MB of VTCM is grantable. The 4 MB default is rejected (err 0x138d), and graphs that compile can still fail on the board.
+  - Mitigation: VTCM fixed at 2 MB everywhere; 512-wide tiles with a SpaceToDepth stem (width 128 after the stem); on-device validation in every gate.
+  - The physical VTCM size and the reason for the 2 MB grant are undiagnosed.
+  - INT8 ACCURACY.
+  - Seen on this SoC: shared output scales destroyed YOLO outputs, class channels came back as zero after quantisation (31368), INT8 embeddings collapsed (CLIP, ArcFace 51%), and v68 device offsets mean CPU QDQ simulation does not predict HTP output.
+  - Mitigation: separate obj/box/fam/occ outputs, a fixed uint8 dB input scale, stratified calibration of 500-1000 tiles, a dead-channel check, acceptance on HTP outputs only, and stage 2 kept in FP32 on the CPU.
+  - A16W8 on 2.42 and per-channel on ORT 1.23.2 are unverified; QAT compatibility with 2.42 is untested.
+  - LATENCY AND FPS ARE UNMEASURED ON THE Q6A.
+  - AI Hub figures come from QAIRT 2.50 on RB3 Gen 2. Q6A end-to-end runs 2-3x slower, and the FastRPC per-call overhead is unknown.
+  - The 42.5 tiles/s plan holds only if latency is 12 ms or less per tile.
+  - Mitigation: Phase 0 measurement first, then knobs (K, fine-tile budget, batch 4, change-gated tiles).
+  - RESOLUTION LIMITS.
+  - A stride-8 detector misses objects under about 8 px: CW tones, sub-ms bursts in the W/F views.
+  - No single FFT size covers CW (about 23 Hz needed) through LTE (20 MHz).
+  - Mitigation: the resolution pyramid, burst and zoom profiles, a CFAR narrow-line path into unknown_narrow, and 'activity region' labels for ADS-B, BT and Wi-Fi. The profile set adds complexity, and every preprocessing change forces a MAJOR retrain.
+  - DOMAIN GAP AND DATA SCARCITY.
+  - Published synthetic-to-real drops are large (WRIST mAP@0.75 from 92.2 on the test set to 78.9 in the wild).
+  - There are no RTL or LMS7002M results and no real data from the LimeSDR before 15 Dec 2026.
+  - Rare classes (SSTV events, HRPT, sondes, DVB-S2) take weeks to accumulate.
+  - Mitigation: real noise and artefact backgrounds, copy-paste augmentation, decoder-confirmed auto-labels, group splits. The 300-box / 10-group threshold is unverified.
+  - LABEL NOISE AND CONFIRMATION BIAS.
+  - Auto-labels are biased toward high-SNR decodes; band-plan labels are weak; users drift toward model suggestions.
+  - Mitigation: label tiers and weights, a blind audit set, ignore regions below 0 dB, human review of predicted labels before they become ground truth.
+  - CLASS GROWTH AND FORGETTING.
+  - New classes can degrade old ones; prototype radii drift with gain, antenna and site.
+  - Mitigation: immutable IDs, exemplar replay, LwF distillation, per-class regression gates, shadow A/B, one-tap and automatic rollback, per-profile open-set calibration.
+  - RESOURCE CONTENTION.
+  - FFT, RX, decoders and training compete for 4 A78 cores and 12 GB RAM, with the 8 GiB ring mlocked.
+  - Throttling at about 90-95 C. Training adds 3-6 W (estimate). NPU power is unknown.
+  - Mitigation: the mode split (survey / pass / train), training only between passes in Train mode with the ring shrunk, cgroup limits, thermal and battery guards, INA228 measurement.
+  - STORAGE AND WEAR.
+  - 56 Msps raw is 403-806 GB/h, and UFS endurance (TBW) is unpublished.
+  - Mitigation: pre-trigger Snap and gated survey instead of continuous capture, raw data on the replaceable T7, quotas and retention, health-descriptor logging.
+  - Sustained T7 write on the Q6A rests on one figure (about 395 MB/s fio) and is untested over long runs.
+  - LICENCES.
+  - RadioML CC BY-NC-SA 4.0 may taint redistributed weights.
+  - SatNOGS CC BY-SA requires share-alike on derived datasets.
+  - HisarMod, CSPB.ML, WBSig53 data and SPREAD have no stated licence.
+  - Ultralytics is AGPL-3.0.
+  - QAIRT's AI Stack License forbids standalone redistribution and reverse engineering, and restricts military end use and embargoed regions.
+  - Mitigation: a per-record licence field, a redistributable view without NC data, own or YOLOX-based (Apache-2.0) detector code, QAIRT installed on each device from Radxa/Qualcomm.
+  - PRIVACY AND LEGAL.
+  - Decoders expose ICAO addresses, MMSIs, callsigns, positions and voice. Local rules on recording or sharing these are not researched.
+  - Mitigation: decoders only as sandboxed yes/no oracles with payloads discarded, no demodulation in the labeller, occupancy-only classes for voice and cellular, rounded location in exports, everything kept local until checked.
+  - TOOLING UNKNOWNS.
+  - Does QAIRT 2.42 accept torch 2.14 dynamo ONNX exports?
+  - Do the ORT QNN quantisation utilities run on aarch64? (Documented as x86_64 only.)
+  - Does the Radxa qairt-npu-v68 Docker image contain the converters?
+  - Do AIMET encodings feed qairt-converter 2.42 --quantization_overrides?
+  - Is variable batch supported in 2.42?
+  Each one is a Phase 0/3 test item. The design works without them, through the home-base x86 path.
+  - SCOPE AND DUAL USE. Generic detectors can be retrained on any signal. Mitigation: a taxonomy CI blocklist (radar, drones, EW, military, emitter ID, private content), receive-only hardware configuration with no TX path in sdr-ingestd, and this policy documented in the bundle manifest.
+
 ## dispmkt:industrial_rugged (run `wf_a429c611-ea2`)
 
 - **Angle:** Industrial and rugged sunlight-readable modules and small monitors with HDMI plus USB touch to the host (Lilliput, Xenarc, Faytech, Litemax, Winmate/Kontron via search, Geekland, Beetronics, Eagle Touch, Densitron, Waveshare DP series), drone ground-station monitors, field monitors that pass touch to the host, and industrial bare panels from a Chinese B2B maker (Youritech) that turn out to share the Wisecoco 7in glass. I used all 12 WebSearch calls, then WebFetch on primary pages. AliExpress and eBay item pages could not be read (empty page or HTTP 403); figures from those sites are search-snippet titles only.
