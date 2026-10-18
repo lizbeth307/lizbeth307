@@ -206,6 +206,8 @@ _Run `wf_e49d4f53-8d4`_
   - Gpredict, Hamlib's rotctld and SatDump's tracker share the TLE and pass data, which feed the BNO085-based on-screen pointing aid without extra hardware.
 - **Confidence:** medium
 
+_Агент цього етапу ще працює (run `wf_e49d4f53-8d4`)._
+
 ## Форуми та досвід спільноти (`forums`)
 
 _Run `wf_e49d4f53-8d4`_
@@ -1195,5 +1197,165 @@ _Run `wf_e49d4f53-8d4`_
 
 ## Адверсаріальна перевірка (`verify`)
 
-_Агент цього етапу ще працює (run `wf_e49d4f53-8d4`)._
+_Run `wf_e49d4f53-8d4`_
+
+- **Component:** Software stack feasibility on the Radxa Dragon Q6A (QCS6490): OS/kernel/firmware, LimeSDR Micro la9310_limesdr PCIe driver, SatDump / SDR++ / GNU Radio / gr-satellites / SoapySDR / Gpredict, GPU waterfall, NPU (QNN) classifier with CPU fallback
+- **Recommendation holds:** так
+- **Issues:**
+  1.
+    - **Claim:** Research: la9310_limesdr needs exactly 8 plain MSI vectors and aborts with fewer; check dmesg for '8 MSI successfully created'.
+    - **Problem:** This is false for the current code. Probe calls la9310_dev_set_interrupt_capability(la9310_dev, PCI_INT_MODE_MSI) (la9310_pci.c line 311, staging commit 37cb183 of 16 Oct 2026). That path is a single pci_enable_msi(). The 8-vector PCI_INT_MODE_MULTIPLE_MSI branch is never used, so the '8 MSI' line will never appear.
+    - **Correction:** The driver needs one MSI. Drop the 8-MSI check and look for the 'BAR:0 ... len:0x10000000' and 'IQ Flood Buffer size: 4194304' dmesg lines instead.
+    - **Source:** https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/drivers/linux/la9310_limesdr/la9310_pci.c
+  2.
+    - **Claim:** Community findings: pin 6.18.2-4-qcom because it is the only kernel line with the confirmed Kioxia UFS PA_TACTIVATE fix.
+    - **Problem:** I extracted the vmlinuz from the official 6.18.2-4 deb (GitHub release 6.18.2-4). It has no THGJFGT1E45BAILB string, although other quirk models are present (THGJFJT1E45BATP, H28U74301AMR). The 7.0.11-7 vmlinuz does contain THGJFGT1E45BAILB. PR #551 is in the git branch but was never released as a 6.18.2 deb.
+    - **Correction:** Either run 6.18.2-4 with the Samsung KLUDG4UHDC 128 GB module, or, for the Kioxia 256 GB module, run 7.0.11-7 or a self-built 6.18.2 from the branch head.
+    - **Source:** https://github.com/radxa-pkg/linux-qcom/releases/tag/6.18.2-4 ; https://radxa-repo.github.io/qcs6490-noble/pool/main/l/linux-upstream/linux-image-7.0.11-7-qcom_7.0.11-7_arm64.deb
+  3.
+    - **Claim:** Community findings: kernel 7.0.x breaks HDMI; roll back to 6.18.2 and avoid 7.0.
+    - **Problem:** This misses the vendor fix. Radxa staff (chenchongbiao, 1 Sep 2026) traced the 7.0 black screen to clocks that EDK2 leaves on, which the kernel then disables, causing DP AUX IRQ storms. The fix is to add clk_ignore_unused to /etc/kernel/cmdline and re-run kernel-install. A user reported HDMI working after later updates (9 Sep). The 7.0 problem that remains unresolved is the CDSP 'remotectl1' NPU failure, plus VPU issues with the Hypervisor Override setting.
+    - **Correction:** 7.0.11-7 + clk_ignore_unused is a valid kernel when the NPU is optional (and it carries the Kioxia quirk). Set all cmdline parameters through /etc/kernel/cmdline + kernel-install, not by hand-editing /boot/efi/loader/entries/*.conf, which kernel-install regenerates.
+    - **Source:** https://forum.radxa.com/t/latest-q6a-update-to-linux-7-0-no-hdmi/31288 ; https://forum.radxa.com/t/linux-7-0-hdmi-not-working/31304
+  4.
+    - **Claim:** Holding the kernel packages is enough to stay on 6.18.2-4.
+    - **Problem:** In the qcs6490-noble index (24 Sep 2026), linux-image-radxa-dragon-q6a 7.0.11-7 depends on linux-image-7.0.11-7-qcom, and the repo no longer carries any 6.18.2 kernel. A full upgrade also replaced firmware packages, which removed audio even when booting 6.18.2-4 (forum 31288).
+    - **Correction:** Hold the meta-packages, linux-image-6.18.2-4-qcom, radxa-firmware-qcs6490, the fastrpc/libcdsprpc packages and qcom-qnn-sdk-v68. Fetch the 6.18.2-4 headers from the GitHub release (the URL exists).
+    - **Source:** https://radxa-repo.github.io/qcs6490-noble/dists/qcs6490-noble/main/binary-arm64/Packages.gz
+  5.
+    - **Claim:** Research: SatDump has an ARM64 nightly ('Pi64' .deb) to start from.
+    - **Problem:** I checked the 2.0.0-alpha-1aedd60 Pi64 deb. It was built on Debian 12 (GCC 12.2.0-14+deb12u1). Its librtlsdr_sdr_support.so needs librtlsdr.so.0 and liblimesdr_sdr_support.so needs libLimeSuite.so.22.09-1, and there is no soapy_sdr_support plugin. Noble ships librtlsdr.so.2 and LimeSuite 23.11, so neither SDR plugin loads on Radxa OS.
+    - **Correction:** Build SatDump master from source. Master does have soapy_sdr_support and a limesuiteng-legacyapi variant of limesdr_sdr_support.
+    - **Source:** https://github.com/SatDump/SatDump/tree/master/plugins/sdr_sources
+  6.
+    - **Claim:** Budget option: apt-only stack with rtl-sdr 2.0.1 (or 2.0.3 from source) and the SDR++ noble aarch64 nightly deb, using the RTL-SDR Blog V4L.
+    - **Problem:** V4L (R828S) support exists only in osmocom rtl-sdr v2.0.3 (commit 0204c9c, 11 Aug 2026), so no Ubuntu release has it. Upstream builds librtlsdr.so.0 (SOVERSION 0) and its debian/ directory builds librtlsdr0. Noble's consumers link librtlsdr.so.2: the SDR++ deb's rtl_sdr_source (verified with readelf), soapysdr-module-rtlsdr and gr-osmosdr. Following RTL-SDR.com's 'apt purge ^librtlsdr' therefore breaks or removes them.
+    - **Correction:** With a V4L the budget path cannot be apt-only. Rebuild librtlsdr 2.0.3, SoapyRTLSDR, SDR++ and SatDump against the same library, or rebuild noble's rtl-sdr source package with commit 0204c9c so the .so.2 soname is kept. A V4 (R828D) works with noble's 2.0.1.
+    - **Source:** https://github.com/osmocom/rtl-sdr ; https://www.rtl-sdr.com/v4l/ ; https://packages.ubuntu.com/noble/arm64/librtlsdr2/filelist
+  7.
+    - **Claim:** Budget option: the RTL-SDR covers the 1.7 GHz targets through the L-band LNA.
+    - **Problem:** The V4L datasheet gives 500 kHz to 1.766 GHz and 2.56 MHz of stable bandwidth. SatDump's default sample rates are 3 Msps for Meteor-M HRPT (665.4 ksym/s Manchester, main lobe about 2.7 MHz), 6 Msps for MetOp AHRPT (2.333 Msym/s) and 6 Msps for FengYun-3 AB AHRPT (2.8 Msym/s).
+    - **Correction:** The RTL path covers APT/LRPT, SSTV, 435 MHz CubeSats, the QO-100 IF, and Meteor HRPT only marginally. MetOp and FY-3 AHRPT and S-band need the LimeSDR Micro, whose minimum rate is 7 Msps.
+    - **Source:** https://github.com/SatDump/SatDump/tree/master/resources/pipelines ; https://www.rtl-sdr.com/v4l/
+  8.
+    - **Claim:** Community and own fixes: SatDump silently drops 6-digit NORAD IDs, so it needs an alias-ID OMM bridge.
+    - **Problem:** Issue #1221 (closed 27 Sep 2026) shows that SatDump master's OMM path parses 6-digit IDs correctly. What fails is Alpha-5 TLE text files and 19-column SupGP CSV. Gpredict is the tool that really breaks: PR #412 was closed unmerged and Alpha-5 IDs decode as 0.
+    - **Correction:** Feed SatDump 2.0 standard CelesTrak OMM/GP data (17-column CSV or JSON) with no alias. Use the alias bridge only for Gpredict, and use Skyfield on OMM for the pointing aid.
+    - **Source:** https://github.com/SatDump/SatDump/issues/1221 ; https://github.com/csete/gpredict/pull/412
+  9.
+    - **Claim:** Research: the onnxruntime-qnn 2.7.0 aarch64 wheel is a possible NPU path (v68 untested).
+    - **Problem:** Its release notes say it is built for QAIRT SDK 2.51.0 and needs ONNX Runtime >= 1.24.1. The device runtime is 2.42.0.251225 (strings of libQnnHtp.so in qcom-qnn-sdk-v68 0.1.0-2), and users report the CDSP c4-00004 firmware failing with QAIRT 2.46+.
+    - **Correction:** Drop it. Pin QAIRT 2.42.0.251225 on both the host and the device, and use qnn-net-run or LiteRT with libQnnTFLiteDelegate.so (both are in the package).
+    - **Source:** https://github.com/onnxruntime/onnxruntime-qnn/releases/tag/v2.7.0 ; https://radxa-repo.github.io/qcs6490-noble/pool/main/q/qcom-qairt/qcom-qnn-sdk-v68_0.1.0-2_all.deb
+  10.
+    - **Claim:** Own fix: on stock 6.18.2-4, setting auto_hibern8=0, rpm_lvl=0 and wb_on=1 does what Radxa's keep-alive script does for the Kioxia module.
+    - **Problem:** In the UFS thread, a user set auto_hibern8=0 and the stutters continued, because software hibern8 enter/exit was still counted. limit-hs-gear=<2> did not help either. Only the PA_TACTIVATE quirk fixed it.
+    - **Correction:** Treat the sysfs recipe as unverified. Use the Samsung module, a quirk kernel, or the keep-alive script. If you try sysfs anyway, also set clkgate_enable=0 and power/control=on on 1d84000.ufshc, then run the 24 h test.
+    - **Source:** https://forum.radxa.com/t/ufs-random-reboots/30630
+  11.
+    - **Claim:** Own fix: isolating CPU7 and taskset-pinning the lime:Rx0 thread is enough to service the 1.17 ms RX ring.
+    - **Problem:** In the LimeSDR Micro code, SetOSThreadPriority for the RX thread is commented out (LA9310_TRX.cpp line 450), so lime:Rx0 runs as SCHED_OTHER. The ring is 16 x 16 KiB per lane (line 397), as the own fix said.
+    - **Correction:** Also run chrt -f -p 50 <tid of lime:Rx0>, allow rtprio for the SDR user in /etc/security/limits.d, and keep CS16 output where the application allows it.
+    - **Source:** https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/boards/LimeSDR_Micro/LA9310_TRX.cpp
+  12.
+    - **Claim:** Own fix: build the golden DSP/NPU set from a community kit (vladisUl/npu_runtime_armbian) or a Radxa rootfs.
+    - **Problem:** There is a better source. Qualcomm's own linux-msm/hexagon-dsp-binaries (updated 16 Oct 2026) has qcs6490/radxa/dragon-q6a/CDSP.HT.2.5.c4-00004-KODIAK-1 (fastrpc_shell_3, fastrpc_shell_unsigned_3) and ADSP.HT.5.5.c9-00028-KODIAK-2.
+    - **Correction:** Take the DSP payload from linux-msm/hexagon-dsp-binaries and use community kits only as a cross-check of the digests.
+    - **Source:** https://github.com/linux-msm/hexagon-dsp-binaries
+  13.
+    - **Claim:** Stack: the UFS module sustains >= 250 MB/s; the Samsung 128 GB module writes 388 MB/s.
+    - **Problem:** 388 MB/s is a dd figure on Radxa's page, with no method given, so it is a burst or WriteBooster number, not a sustained one. At 224 MB/s, 128 GB fills in about 9.5 minutes.
+    - **Correction:** Gate on a 10-minute fio sequential write with a minimum 1 s bandwidth of at least 300 MB/s on the actual module. Record decode-bandwidth basebands (7-10 Msps) by default and keep the 56 Msps cs16 captures short.
+    - **Source:** https://docs.radxa.com/en/dragon/q6a/hardware-use/ufs-emmc-com
+  14.
+    - **Claim:** Stack: LimeSDR Micro costs $199 and deliveries start around 30 Sep 2026.
+    - **Problem:** Crowd Supply now lists the Basic at $249 (+$18 worldwide shipping) on pre-order: 'Orders placed now ship Dec 15, 2026.' The $199 was the early-bird price, which ended in May 2026. The last project update was 17 Jun 2026.
+    - **Correction:** Budget $267 delivered and expect no hardware before late December 2026. The RTL-SDR path is the real platform until then.
+    - **Source:** https://www.crowdsupply.com/lime-micro/limesdr-micro
+  15.
+    - **Claim:** Research and own fix: the LA9310 does 4x oversampling (hardware decimation) below 20 Msps.
+    - **Problem:** The wording is slightly off. SetLA9310SamplingRate selects 'oversample' 4x for <= 20 Msps, 2x for <= 40 Msps and 1x up to 160 Msps; this is the LMS7002M ADC clock and decimation chain, capped by a 160 MHz system clock. The effect is right: the link rate equals the requested rate, with a 7 Msps minimum.
+    - **Correction:** Request 7-10 Msps for HRPT and telemetry to get on-chip decimation; the VSPA DSP is not used for this.
+    - **Source:** https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp
+- **Forum and fix assessment:** Most of the source-level claims in the own fixes hold up. I checked them against the actual code and binaries:
+  - Single MSI, 64-bit DMA mask, and two 4 MiB kzalloc + dma_map_single buffers mapped through dma_mmap_coherent. These work through dma-iommu on Q6A's dma-coherent pcie1.
+  - Kernel limits: MAX_ORDER is 10, so 4 MiB is the largest kmalloc. The kernel is PREEMPT_DYNAMIC with NO_HZ_FULL and RCU_NOCB_CPU, the ondemand governor, IOMMU strict mode, PCIEAER and DW debugfs enabled, and DRM_LOAD_EDID_FIRMWARE=y with DRM_MSM built in.
+  - pcie-qcom ops_1_9_0 force-enables all ASPM states (qcom_pcie_enable_aspm walks the bus with PCIE_LINK_STATE_ALL), so pcie_aspm=off is sound.
+  - The DKMS packaging bug is real: MAKE[0]="make" plus KERNEL_DIR ?= /lib/modules/`uname -r`/build. Both kernels were built with gcc 12.2.0 (Debian), so the gcc-12 + KERNEL_DIR=${kernel_source_dir} fix is correct.
+  - The HBR2 2-lane DP cap (data-lanes <0 1>, no link-frequencies) gives about 360 MHz of pixel clock. That matches Radxa's '4K@30' spec.
+  - The QAIRT on the device is 2.42.0.251225, and libQnnGpu and libQnnTFLiteDelegate are present.
+  
+  The community findings are accurate on NPU fragility, packaging traps, and the lack of any Qualcomm-host LimeSDR report. No Radxa forum post mentions LimeSDR, SatDump or SDR on the Q6A.
+  
+  They were wrong or incomplete in five places:
+  1. The 8-MSI claim.
+  2. The belief that 6.18.2-4 carries the Kioxia fix.
+  3. They missed Radxa's clk_ignore_unused fix for 7.0 HDMI.
+  4. They overstated the SatDump 6-digit-ID problem.
+  5. They understated the V4L soname problem.
+  
+  Fixes that remain weak or unverified:
+  - The Kioxia sysfs workaround.
+  - Raising the RX ring to 31 blocks.
+  - The HBR3 overlay.
+  - QNN GPU FP16.
+  
+  Net: the stack is feasible but unproven end to end. The LimeSDR Micro on QCS6490 is still a paper analysis, and the NPU should stay optional.
+- **Final recommendation:**
+  - **Name:** Radxa OS r2 (Ubuntu 24.04 noble) on BIOS 260120, frozen on one validated kernel. Path A: 6.18.2-4-qcom with the Samsung 128 GB UFS module and the golden NPU set. Path B: 7.0.11-7-qcom with clk_ignore_unused, if you use the Kioxia 256 GB module and accept a test-first NPU. On top: LimeSuiteNG limesdr-micro-staging @37cb183 (la9310_limesdr via patched DKMS, SoapySDR plugin, legacy API, built as debs from its debian/ dir); SatDump master and SDR++ built from source against one librtlsdr 2.0.3 and LimeSuiteNG; apt GNU Radio 3.10.9.2, VOLK 3.1.2, gr-satellites 5.5.0, SoapySDR 0.8.1, Gpredict 2.3 (behind an OMM alias bridge), Hamlib 4.5.5; the SDR++ OpenGL waterfall under a cage kiosk (CyberEther/Vulkan optional); ONNX Runtime CPU classifier as the default and QNN HTP INT8 (QAIRT 2.42.0.251225) as an optional accelerator
+  - **Price:** $0 for the software (QAIRT is free with a Qualcomm account; conversion host is x86-64 Ubuntu 22.04). The stack depends on the LimeSDR Micro Basic at $249 + $18 shipping, which ships 15 Dec 2026.
+  - **Why:** It is still the only image that combines working UFS, HDMI, matching kernel headers for the out-of-tree LA9310 module, and apt-packaged fastrpc/QNN/OpenCL/Vulkan. Source review shows the driver's real needs are modest (1 MSI, a 64-bit DMA mask, two order-10 buffers, a coherent SMMU path), and Q6A's pcie1 meets them. The corrections are about choosing a kernel/UFS pair that has the Kioxia quirk and working HDMI, building the SDR apps from source because the prebuilt debs link the wrong librtlsdr/LimeSuite sonames, and keeping the NPU off the critical path.
+  - **Sources:**
+    - https://docs.radxa.com/en/dragon/q6a/download
+    - https://radxa-repo.github.io/qcs6490-noble/dists/qcs6490-noble/main/binary-arm64/Packages.gz
+    - https://github.com/radxa-pkg/linux-qcom/releases/tag/6.18.2-4
+    - https://forum.radxa.com/t/latest-q6a-update-to-linux-7-0-no-hdmi/31288
+    - https://github.com/myriadrf/LimeSuiteNG/tree/limesdr-micro-staging/drivers/linux/la9310_limesdr
+    - https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/src/boards/LimeSDR_Micro/LA9310_TRX.cpp
+    - https://github.com/SatDump/SatDump/tree/master/plugins/sdr_sources
+    - https://github.com/osmocom/rtl-sdr
+    - https://github.com/linux-msm/hexagon-dsp-binaries
+    - https://github.com/onnxruntime/onnxruntime-qnn/releases/tag/v2.7.0
+    - https://www.crowdsupply.com/lime-micro/limesdr-micro
+    - https://docs.radxa.com/en/dragon/q6a/system-config/vulkan
+    - https://arxiv.org/abs/2208.04659
+- **Final budget option:**
+  - **Name:** Radxa OS r2 on held 6.18.2-4-qcom, RTL-SDR only: librtlsdr 2.0.3 from source (needed for the V4L), SoapyRTLSDR and SDR++ rebuilt against it, SatDump master from source, apt GNU Radio/gr-satellites/Gpredict, ONNX Runtime CPU classifier; no LimeSDR, no NPU, no out-of-tree kernel module
+  - **Price:** $0
+  - **Why:** No out-of-tree PCIe module, no FastRPC and no SDK pinning, and it works before the LimeSDR Micro arrives (15 Dec 2026). It covers Meteor LRPT, ISS SSTV, 435 MHz CubeSats and the QO-100 LNB IF, with Meteor HRPT only marginal (2.56 Msps stable vs a 2.7 MHz main lobe). It cannot do MetOp or FY-3 AHRPT (SatDump defaults to 6 Msps) or S-band (the V4L tops out at 1.766 GHz). With a V4L it is not apt-only, because noble's librtlsdr 2.0.1 lacks R828S support. With an old V4 in hand, noble's librtlsdr 2.0.1 plus the SDR++ nightly deb works straight from apt.
+- **Known problems and fixes to apply:**
+  - Firmware and image: stay on BIOS 260120. 260916 is 'Not compatible with Radxa OS (Ubuntu 24)'. Flash the r2 output_4096 image to UFS with EDL-NG and keep the BIOS zip, EDL-NG and the image offline.
+  - Kernel freeze: the repo meta-package now pulls 7.0.11-7. Run apt-mark hold on linux-image-radxa-dragon-q6a, linux-headers-radxa-dragon-q6a, linux-image-6.18.2-4-qcom, radxa-firmware-qcs6490, fastrpc, libcdsprpc1, the listener libs and qcom-qnn-sdk-v68. Install linux-headers-6.18.2-4-qcom_6.18.2-4_arm64.deb from the GitHub release.
+  - UFS/kernel pairing: on 6.18.2-4 use the Samsung KLUDG4UHDC module. 6.18.2-4 lacks the Kioxia THGJFGT1E45BAILB quirk; 7.0.11-7 has it. For Kioxia, use 7.0.11-7 or self-build 6.18.2 from the radxa/kernel branch head.
+  - If you run 7.0.11-x: add clk_ignore_unused to /etc/kernel/cmdline and run 'sudo kernel-install add $(uname -r) /boot/vmlinuz-$(uname -r)' (Radxa's fix for the HDMI black screen). Use poweroff plus a long press of the power button if a warm reboot goes black. Expect the CDSP 'remotectl1' NPU failure.
+  - Kernel command line: put pcie_aspm=off isolcpus=nohz,domain,managed_irq,7 nohz_full=7 rcu_nocbs=7 irqaffinity=0-6 preempt=full in /etc/kernel/cmdline and re-run kernel-install. Do not hand-edit the loader entries, because kernel-install regenerates them.
+  - LimeSuiteNG: clone limesdr-micro-staging and check out 37cb183. Configure with -DBUILD_DRIVERS_LIMEPCIE=OFF -DBUILD_DRIVERS_LA9310=ON -DBUILD_PLUGINS=ON -DBUILD_LEGACYAPI=ON -DBUILD_GUI=OFF, or build the debs from its debian/ directory. Do not install Ubuntu's limesuite or soapysdr-module-lms7 23.11.
+  - DKMS fix: in dkms.conf set MAKE[0]="make KERNEL_DIR=${kernel_source_dir} CC=gcc-12" and pass the same KERNEL_DIR to CLEAN. Install gcc-12 (both kernels were built with gcc 12.2.0). Add a postinst check that modinfo -F vermagic matches the target kernel.
+  - Bring-up checks: lspci on 0001:01:00.0. dmesg should show 'BAR:0 ... len:0x10000000', 'using 64bit DMA mask' and the IQ Flood Buffer line, and no 'Unhandled context fault' or AER errors. The driver uses one MSI, not 8. Load the module early, or run compact_memory before reloading it, because of the order-10 allocations.
+  - Real-time RX: the performance governor on policy4 and policy7, taskset -pc 7 and chrt -f -p 50 on lime:Rx0 (its priority call is commented out upstream), and rtprio limits for the user. Prefer CS16 output. Gate on a 30-minute 56 Msps run with o:0 and l:0, and cap the link with max-link-speed=2 if AER errors grow.
+  - Rates: use 7-10 Msps for HRPT/AHRPT and S-band telemetry; on-chip decimation is automatic at <= 20 Msps. At 56 Msps run only the waterfall or burst recording. Record first and decode after the pass whenever the live real-time factor is above 0.5.
+  - RTL-SDR V4L: build osmocom rtl-sdr v2.0.3 (or rebuild noble's source package with commit 0204c9c so librtlsdr.so.2 is kept). Then rebuild SoapyRTLSDR, SDR++ (with -DOPT_BUILD_SOAPY_SOURCE=ON) and SatDump against it, and blacklist dvb_usb_rtl28xxu. Do not blindly 'apt purge ^librtlsdr', because that removes the dependents.
+  - SatDump: build master from source with libvolk-dev, libfftw3-dev, libglfw3-dev, libzstd-dev, libhdf5-dev, SoapySDR and limesuiteng-legacyapi. The Pi64 nightly deb links librtlsdr.so.0 and libLimeSuite 22.09 and has no Soapy plugin. Launch with LC_NUMERIC=C (uk_UA uses a comma decimal separator). If the config is not found, run from /usr/share/satdump. Run passes as time-boxed systemd-run units and never use satdump_sdr_server.
+  - Tracking: give SatDump CelesTrak OMM/GP data (JSON, or 17-column CSV, not 19-column SupGP). Gpredict needs the 5-digit alias bridge (sgp4/skyfield) for NORAD IDs > 99999. Drive the pointing aid with Skyfield on OMM plus BNO085 and gpsd.
+  - Display: choose an HDMI panel whose native timing is <= 360 MHz pixel clock (for example 1920x1200 or 2560x1600 at 60 Hz CVT-RB). Read the EDID early. If it needs correcting, put edid/panel.bin into the initramfs and set drm.edid_firmware=HDMI-A-1:edid/panel.bin video=HDMI-A-1:<mode>. Run cage instead of GDM.
+  - NPU (optional): take CDSP.HT.2.5.c4-00004 and ADSP c9-00028 plus fastrpc_shell_3/unsigned_3 from linux-msm/hexagon-dsp-binaries (qcs6490/radxa/dragon-q6a) and record their checksums. Pin QAIRT 2.42.0.251225 on host and device, and use an INT8 (or A16W8) QDQ CNN with BatchNorm folded and a static NCHW shape. Validate on-device accuracy against FP32. Run it as a supervised daemon that falls back to the ONNX Runtime CPU model. Do not use onnxruntime-qnn 2.x, which needs QAIRT 2.51.
+  - FastRPC 0x80000600: apply the shared-dma-pool memory-region DTBO and restore the radxa-firmware payload until dpkg -V is clean. Add the initramfs hook for adsp.mbn and cdsp.mbn and a udev rule for /dev/fastrpc-* and /dev/dma_heap/*. Verify with fastrpc_test -a v68.
+  - Storage: run a 10-minute fio sequential write and require a minimum 1 s bandwidth of at least 300 MB/s while the SDR is streaming. 128 GB holds about 9.5 minutes of 56 Msps cs16. Send 160 Msps bursts to a RAM ring.
+  - Recovery kit: a USB-TTL serial console, a second UFS module or USB boot medium for re-validating any new kernel or BIOS, and a seller with a real RMA path. DDR-training failures after SPI flashing have killed several boards.
+- **Missed better options:**
+  - Qualcomm-maintained linux-msm/hexagon-dsp-binaries already has the Q6A CDSP c4-00004 and ADSP c9-00028 payloads with fastrpc shells. That is a cleaner provenance than community firmware kits or extracting files from a rootfs.
+  - Radxa's documented 7.0 HDMI fix (clk_ignore_unused through /etc/kernel/cmdline and kernel-install) makes 7.0.11-7 usable. It is the only packaged kernel with the Kioxia UFS quirk, which is good enough for an SDR build that does not depend on the NPU.
+  - LimeSuiteNG ships a debian/ packaging directory (including limesuiteng-legacyapi). Building debs keeps apt aware of the files and prevents silent clashes with Ubuntu's limesuite and soapysdr-module-lms7 23.11.
+  - Rebuilding noble's own rtl-sdr source package with the V4L commit keeps the librtlsdr.so.2 soname. All apt consumers (SDR++ deb, soapysdr-module-rtlsdr, gr-osmosdr) keep working without rebuilds, unlike osmocom's upstream librtlsdr.so.0.
+  - SatDump 2.0's OMM-based tracker already handles 6-digit NORAD IDs, so only Gpredict needs the alias bridge. SatDump's tracker and rotctld could serve the pointing aid directly.
+- **Remaining uncertainties:**
+  - Nobody has run the LimeSDR Micro on any Qualcomm host. All Q6A conclusions come from reading source and device trees. The staging branch was still changing streaming code on 9-16 Oct 2026, and the board itself ships 15 Dec 2026.
+  - Whether the 256 MB BAR0 plus the TCM BARs get assigned inside pcie1's 509 MB window under the 6.18 or 7.0 setup-bus logic is untested. Check lspci for 'no space for BAR'.
+  - Sustained (post-WriteBooster) write speed of the Samsung 128 GB and Kioxia 256 GB UFS modules at 224 MB/s alongside PCIe DMA is unmeasured. Radxa's figures are dd bursts.
+  - The NPU on 7.0.11-7 with any firmware set is unproven ('remotectl1 domains not supported' is unresolved). Long-run HTP stability (hangs after about 1 hour, board hangs) is unproven on 6.18.2-4. Whether HTP v68 supports A16W8 and whether the QNN GPU backend works with qcom-adreno-opencl on Q6A are both untested.
+  - Whether 7.0.11-7 already includes the clk_ignore_unused or HDMI fix by default is unclear; its changelog says only 'update submodules'.
+  - Live 56 Msps throughput on 4x A78 (Soapy CF32 conversion on the RX thread plus the SDR++ frontend) is unbenchmarked, as are CyberEther on Turnip/A643 and the RA620 bridge with HBR3 or high-resolution panels.
+  - Whether the Kioxia sysfs workaround (auto_hibern8, rpm_lvl, clkgate_enable, power/control) stops the hibern8 failures without the kernel quirk.
+  - Current real prices and stock of the Q6A 16GB and UFS modules in October 2026 were not verified here.
+- **Confidence:** medium
 
