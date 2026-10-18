@@ -35776,6 +35776,2017 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   **Still unverified:** the Metop-B '7 dB modulator' figure, the QO-100 constant, the patch-tier (4-turn helix) HRPT margin, and USCG NAVTEX status.
 
+## extract:reaudit_A (run `wf_d3de522a-a7e`)
+
+- **Source:** /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_A_compute_software.json (P4 re-audit A; 4 records: [0] compute_os, [1] software_stack, [2] lab_ui, [3] npu_training; every confirmed/corrections/new_risks/refuted_findings/corrected_spec/bench_tests entry read)
+- **Changes:**
+  1.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** seller_or_price
+    - **Part:** Radxa Dragon Q6A 12 GB RS701-D12J0R44S32Y13W28
+    - **Anchor:** TinyTronics NL (лише 26 країн ЄС) / ALLNET China
+    - **Instruction:** Rewrite the source/price cells: primary for Europe = TinyTronics NL, SKU 007479, EUR 148.00 incl. VAT (EUR 122.31 ex VAT), 10+ in stock 18.10.2026, USD 166.37 at the model rate; EU seller, so no import VAT/duty (VAT for a non-NL EU destination may differ, unverified). Mark the '26 EU countries' limit as unverified (TinyTronics shipping page returns 404). Fallback only if TinyTronics is out of stock: ALLNET $189.99 ex EU VAT = EUR 169.02 (> EUR 150), landed EU = price + shipping (not published) + import VAT 19-21 % ($226.09-229.89) + normal duty by tariff line (rate not in the files) + EUR 2 Union handling fee per tariff line from about 1 Nov 2026 ($2.25). Note: not 8 GB (sold out), no 16 GB (no stock anywhere; Arace $119.50 is a sold-out placeholder), never AliExpress (RMA refunds ended as store points, forum 30749).
+    - **Reason:** Europe region (user decision 18.10); TinyTronics is the cheaper EU-stock seller; landed-cost rule (operator notes 34-35).
+    - **Sources:** reaudit_A [0] corrections 0,1; confirmed 0,1; corrected_spec 'Board and purchase'; https://www.tinytronics.nl/en/development-boards/single-board-computers/radxa-dragon-q6a-qcs6490-12gb ; https://shop.allnetchina.cn/policies/refund-policy ; https://arace.tech/products/radxa-dragon-q6a.js
+    - **Saving usd:** 23.62 vs ALLNET list; 59.72-63.52 vs ALLNET landed before shipping, duty and UHF
+  2.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** correction
+    - **Part:** Radxa Dragon Q6A 12 GB (returns and burn-in)
+    - **Anchor:** Allnet повертає лише 7 днів і невикористане — збій прогону = гарантія; зберегти логи UART.
+    - **Instruction:** Replace with: ALLNET 7-day return, and EU 14-day cooling-off, both only for unused goods in original packaging; defects must be reported on reception. So any burn-in failure is a defect claim filed the same day with UART logs, not a return. Burn-in on arrival: 12 h stressapptest + memtester, 50-100 cold boots, plus a 1-2 h HTP loop with large DMA buffers alongside memtester.
+    - **Reason:** Return terms re-read; burn-in failures fall to the defect path.
+    - **Sources:** reaudit_A [0] corrections 0; new_risks 10; corrected_spec 'Day 1'
+    - **Saving usd:** 0
+  3.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** keep_with_note
+    - **Part:** Radxa UFS 3.1 128 GB RA022-B10J0U2
+    - **Anchor:** Модуль 256 GB Kioxia не брати.
+    - **Instruction:** Append: the Kioxia quirk (radxa/kernel 559f4f9, two commits after 6.18.2-4) covers only model THGJFGT1E45BAILB. On arrival read wManufacturerID and model: 0x1CE Samsung -> stock 6.18.2-4; 0x198 Kioxia -> bench test B13 and, only if errors appear, build 6.18.2-4+lab1 with the read model string added to the quirk table.
+    - **Reason:** Kioxia quirk is model-specific; self-built kernel only if hardware needs it.
+    - **Sources:** reaudit_A [0] corrections 11; new_risks 6; bench_tests 12; https://github.com/radxa/kernel/commit/559f4f921a01e5358602153364c618fe2a3e431e
+    - **Saving usd:** 0
+  4.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** keep_with_note
+    - **Part:** Cooling set (Armor 7056A)
+    - **Anchor:** Radxa Armor 7056A або ступінчастий Cu-блок
+    - **Instruction:** Add to the note: Armor 7056A only if its 15 mm covers fit (fit-check against STEP v1.21); the thermal ladder reads cpu*, gpuss*, nspss0/1 and ddr zones (NPU/DDR have no kernel passive cooling, see 5.6). Fan model and seller are set by reaudit_D/G2 (Noctua NF-A4x10 5V; TinyTronics for the Armor in the EU), not by this source.
+    - **Reason:** Fit condition and thermal facts from re-audit A.
+    - **Sources:** reaudit_A [0] corrected_spec 'Cooling'; corrections 12
+    - **Saving usd:** 0
+  5.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** keep_with_note
+    - **Part:** Recovery set / SPI NOR
+    - **Anchor:** прошивати через EDL або з microSD
+    - **Instruction:** Append: the boot SPI NOR is 32 MiB (edl-ng reports 33,554,432 B; DTS w25q256); the schematic v1.21 label W25Q64FWZPIG (8 MiB) is stale, so dump scripts must use the size edl-ng reports. Before any SPI write make two full raw reads with equal SHA-256 and store them off-device with the board serial. Flash only over EDL with flat_build_wp_260120; never rsetup or edk2 setup.sh (update_spinor erases the whole /dev/mtd0, writes a generic 24-byte CDT and a zeroed ddr partition, forcing DDR retraining). Archive edl-ng-dist-v1.6.0.zip (31.3 MiB).
+    - **Reason:** Every BIOS flash wipes per-board data; dump makes reflash recoverable.
+    - **Sources:** reaudit_A [0] corrections 2; new_risks 0,7; confirmed 6,7; https://forum.radxa.com/t/30841 ; https://forum.radxa.com/t/28886
+    - **Saving usd:** 0
+  6.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** condition
+    - **Part:** RTL-SDR Blog V4L x3 (serials)
+    - **Anchor:** Унікальні серійні номери в EEPROM.
+    - **Instruction:** Replace with: unique EEPROM serials matching ^LAB[A-Z]{3}$ (LABRXA, LABRXB, LABRXC), none a prefix or suffix of another; write with rtl_eeprom -s after an rtl_eeprom -r backup; keep the EEPROM IR bit set. Reason: rtl tools parse the device string with strtol base 0 first, so numeric, 0x or leading-zero serials are taken as an index (auto_rx #1016).
+    - **Reason:** Prevents wrong-dongle leases and bias tokens.
+    - **Sources:** reaudit_A [1] corrections 22; new_risks 10; https://github.com/osmocom/rtl-sdr/blob/v2.0.3/src/convenience/convenience.c
+    - **Saving usd:** 0
+  7.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** new_risk
+    - **Part:** Airspy HF+ Discovery (bias path)
+    - **Anchor:** На CH334F H4 у власному жерстяному екрані.
+    - **Instruction:** Append: libairspyhf exports airspyhf_set_bias_tee and airspyhf_get_bias_tee_count, which the librtlsdr token gate does not cover; self-test airspyhf_get_bias_tee_count == 0 on the HF+ (unverified); if not 0, gate airspyhf_set_bias_tee like librtlsdr.
+    - **Reason:** Possible second bias path.
+    - **Sources:** reaudit_A [1] corrections 15; new_risks 11; bench_tests 13
+    - **Saving usd:** 0
+  8.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** seller_or_price
+    - **Part:** Raspberry Pi Pico SC0915 x2
+    - **Anchor:** 10.12 (2 x GBP 3.80) | The Pi Hut | не перевірено
+    - **Instruction:** Replace with: 9.18 (2 x $4.59, US list ex VAT; DigiKey DE EUR 8.06 ex VAT / EUR 9.59 incl. 19 % VAT for 2 = $9.06 / $10.78) | DigiKey 2648-SC0915CT-ND (40,279 in stock, Active) | verified 18.10.2026. Note: SC0915 non-wireless only (never W/WH or Pico 2 W; CI part check); buy in the DigiKey HMI basket; Berrybase RPI-PICO / Welectron RP1-709150 (EUR 4.10 incl. 19 % DE VAT each) only on a shared basket; do not use The Pi Hut for EU delivery (DHL Express plus flat EU duty).
+    - **Reason:** Verified cheaper EU-stock source; no extra transmitter in the device.
+    - **Sources:** reaudit_A [2] corrections 17; confirmed 15; analogs_G2 decision 'Raspberry Pi Pico' (keep, governs seller); https://www.digikey.com/en/products/result?keywords=SC0915
+    - **Saving usd:** 0.94
+  9.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** keep_with_note
+    - **Part:** HMI set (encoders, keys, knobs)
+    - **Anchor:** не перевірено (рядки DigiKey)
+    - **Instruction:** Change status to verified 18.10.2026 for the v1 lines (PEC11R $2.95 / $2.375 at qty 10, 13,117 in stock; KSC641J $0.70 at qty 10, 30,086 in stock; Adafruit 2055 $0.95; sum $17.75 exact), but take the part numbers and price from the G2 analog decision (PEC11R-4220F-S0024 unconditional; TL3145BF350QJ conditional). Add from this source: silicone keypad or individual boots over the keys ($5-15, model), distinct cap shapes (LOCK, REC with a ridge); main encoder on a connectorized daughterboard with one spare (PEC11R: 30,000 rotations min, 60 RPM max, -30 C lower limit, no sealing class); O-ring or boot behind the panel.
+    - **Reason:** Lines verified; IP67 covers only the switch; encoder life risk.
+    - **Sources:** reaudit_A [2] corrections 8,17; new_risks 5,6; corrected_spec section 4; analogs_G2 decision 'HMI set'
+    - **Saving usd:** -5 to -15 (keypad added, model)
+  10.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** replace_part
+    - **Part:** HMI key expander (PCA9555)
+    - **Anchor:** PCA9555, п'єзо, світлодіод стану
+    - **Instruction:** Replace PCA9555 (superseded by TI with the drop-in TCA9555). Per the governing G2 analog decision the fitted part is Diodes PI4IOE5V9555LEX with TCA9555PWR as the same-footprint fallback (TSSOP-24, address 0x20, INT open-drain, 5 V-tolerant); price per G2.
+    - **Reason:** PCA9555 superseded; analog decides the exact SKU.
+    - **Sources:** reaudit_A [2] corrections 17; confirmed 16; analogs_G2 decision 'HMI key-expander set'; https://www.ti.com/product/PCA9555
+    - **Saving usd:** per G2
+  11.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** seller_or_price
+    - **Part:** Group 2.6 subtotal
+    - **Anchor:** **221.39-244.44**
+    - **Instruction:** Recompute the group subtotal from the changed rows (Pico 10.12 -> 9.18, i.e. -0.94; HMI set and expander rows as set by G2; keypad $5-15 model if counted). Do not keep the old figure.
+    - **Reason:** Rows changed.
+    - **Sources:** reaudit_A [2] corrections 17
+    - **Saving usd:** 0.94 (Pico only)
+  12.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** USB VBUS switches U35/U33 (WS4612)
+    - **Anchor:** U35 WS4612 (близько 2.1 A, спільно з J5 верхнім)
+    - **Instruction:** Replace with: U35 WS4612 shared by both J5 ports (model current limit about 2.10 A typical, 1.8-2.4 A, ISET 3.24 kOhm; reverse current 1 uA); U33 feeds J2. The sum of the planned J5 loads must stay under 1.5 A (bench B10). At most one isochronous device on the FE1.1s tree.
+    - **Reason:** WS4612 datasheet model and schematic re-read.
+    - **Sources:** reaudit_A [0] confirmed 19; corrected_spec 'USB and VBUS'; bench_tests 9
+    - **Saving usd:** 0
+  13.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** FCU760K Wi-Fi/BT block
+    - **Anchor:** FCU760K Wi-Fi/BT: rfkill + USB authorized=0 у кожному польовому і QUIET профілі
+    - **Instruction:** Expand: FCU760K (mainline DTS wifi@4, usba69c,8d80 on the FE1.1s hub) uses the radxa-pkg aic8800 USB driver. Field/QUIET roots: blacklist plus 'install /bin/false' for aic_load_fw(_usb), aic8800_fdrv(_usb), aic_btusb(_usb) and btusb; udev authorized=0 keyed on the FE1.1s port-4 devpath (any VID; the driver also lists PID 8d81 and VID 0x368B); rfkill as second layer; aicrf-test (/usr/bin/wifi_test, bt_test; driver built with CONFIG_RFTEST=y) forbidden. W1-2: find the WIFI_PWR_EN TLMM line (schematic page 4; SoC GPIO via CJ3134K to WIFI_PWR_EN_3V3) and test a field-DTBO gpio-hog output-low; if the module then does not enumerate and the home root still unblocks it, the hog becomes the primary field block.
+    - **Reason:** Turns the software block into an unpowered radio; VID:PID rules are brittle.
+    - **Sources:** reaudit_A [2] corrections 9; confirmed 9; https://raw.githubusercontent.com/radxa-pkg/aic8800/main/debian/aic8800-usb-dkms.dkms
+    - **Saving usd:** 0
+  14.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** UART6 / LC76G device name
+    - **Anchor:** LC76G (/dev/ttyHS1 → /dev/gnss0)
+    - **Instruction:** Replace with: LC76G (/dev/ttyHS1, fixed by alias serial1 = .../serial@998000 in lab-q6a.dtso; udev symlink keyed on the platform path 998000.serial -> /dev/lab/gnss). Blacklist gnss-usb, gnss-ubx, gnss-mtk, gnss-sirf and gnss-serial: the kernel has GNSS=m and its GNSS class can claim /dev/gnss0.
+    - **Reason:** ttyHS numbers follow probe order; avoid the kernel GNSS name collision.
+    - **Sources:** reaudit_A [0] corrections 5; [1] corrections 16; confirmed 14
+    - **Saving usd:** 0
+  15.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** UART7 / Pico link
+    - **Anchor:** UART0 Pico, 2 дроти, ≤20 см або через 74LVC2T45
+    - **Instruction:** Append: alias serial2 = .../serial@99c000 -> udev /dev/lab/pico; UEFI 'Radxa Platform Configuration -> GPIO -> QUPV3' modes: SE0/SE2 = I2C, SE6/SE7 = UART (or not loaded), recorded with the SPI dump.
+    - **Reason:** Stable port names; serial engines must hold the right protocol firmware.
+    - **Sources:** reaudit_A [0] corrections 5; corrected_spec 'DT overlay'; [2] confirmed 17
+    - **Saving usd:** 0
+  16.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** lab-q6a.dtbo / pinmux
+    - **Anchor:** Перевірити через debugfs pinmux-pins, що в кожного піна один власник: UART6 проти GPIO24/25, і що оверлей UART7 є на утримуваному образі.
+    - **Instruction:** Replace with: check via debugfs pinmux-pins one owner per pin (UART6 vs GPIO24/25; pins 29/32). The uart7 fragment (pins 32 TX / 29 RX, exclusive with spi7/i2c7/gpio30/31) is copied from radxa-overlays 0.2.31 into our lab-q6a.dtbo, because r2's 0.2.18 has no uart7. GPIO96 (pin 7) must be owned by pps-gpio: no Q6A DTS node claims it, it is only defined as a mi2s0 pinctrl state, so no enabled MI2S node may take it (operator note 26). The qcom,enable-gsi-dma flag in the UART overlays is a no-op (qcom_geni_serial ignores it); the aliases keep the ttyHS order.
+    - **Reason:** Corrected mechanism and overlay source.
+    - **Sources:** reaudit_A [0] confirmed 12,13; corrections 5; refuted_findings 1; operator_notes item 26
+    - **Saving usd:** 0
+  17.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** replace_part
+    - **Part:** Pico I2C0 key expander
+    - **Anchor:** I2C0: VEML7700 (0x10) і PCA9555 (0x20) з 6 кнопками і 2 натисканнями енкодерів
+    - **Instruction:** Replace PCA9555 with PI4IOE5V9555 (TCA9555PWR fallback, G2) at 0x20; VEML7700 stays at 0x10 (no collision).
+    - **Reason:** PCA9555 superseded (TI) and analog decision.
+    - **Sources:** reaudit_A [2] corrections 17; confirmed 16; analogs_G2 'HMI key-expander set'
+    - **Saving usd:** 0
+  18.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** Pico ADC (battery backstop)
+    - **Anchor:** ADC: NTC панелі, дільник батареї 1:6, NTC корпусу
+    - **Instruction:** Append: no spare ADC channel (GP29 is VSYS/3), so no grounded offset channel. Fit an LM4040 3.0 V shunt on ADC_VREF (remove R7): full scale 18.0 V at 1:6; 12.9 V = code 2935, 13.2 V = 3004, 16.8 V = 3823, clear of the RP2040-E11 DNL peaks 2560 (11.25 V) and 3584 (15.75 V). Without it the ~30 mV reference drop reads +0.118 V at 12.9 V (model). labd cross-calibrates against the INA228 at boot and stores gain/offset in Pico flash. GP23 PFM/PWM state is chosen by A/B (G2, reaudit_D).
+    - **Reason:** Accurate undervoltage backstop with the existing pin map.
+    - **Sources:** reaudit_A [2] corrections 7; confirmed 19; refuted_findings 7; analogs_G2 Pico conditions
+    - **Saving usd:** 0 (LM4040 price not in files)
+  19.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** condition
+    - **Part:** udev naming
+    - **Anchor:** udev: /dev/lab/<name> за серійним номером.
+    - **Instruction:** Append: RTL serials ^LAB[A-Z]{3}$; UART devices named by DT/platform path (/dev/lab/gnss, /dev/lab/pico); every engine config selects SDRs only by serial.
+    - **Reason:** strtol index parsing in rtl tools; probe-order independence.
+    - **Sources:** reaudit_A [1] corrections 22; [0] corrections 5
+    - **Saving usd:** 0
+  20.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** Boot chain A/B (Route A)
+    - **Anchor:** A/B-корінь на UFS, systemd-boot з лічильником спроб і рятувальним пунктом. Командний рядок ядра через /etc/kernel/cmdline і kernel-install:
+    - **Instruction:** Rewrite boot: r2 ships embloader (sdboot-is-embloader diverts systemd-bootaa64.efi) and embloader has no boot counting in any tag 0.1-0.7 or HEAD 8912189. Route A (preferred): apt purge sdboot-is-embloader (restores the .distrib binary), bootctl install, pin embloader at -1; hold systemd-boot and systemd-boot-efi at one mirrored version (255.4-1ubuntu8.18 from noble-security, or r2's 8.12); BLS Type #1 entries written only by our own kernel-install plugin (never rsetup), each with an explicit 'devicetree' pointing to a merged lab.dtb built with 'fdtoverlay -i qcs6490-radxa-dragon-q6a.dtb -o lab.dtb lab-q6a.dtbo' (systemd-boot 255/main ignores devicetree-overlay); never rebuild the base DTB; /etc/kernel/tries=3 + boot-complete.target; systemd-bless-boot (ships in noble systemd-boot) blesses after self-test; per-slot entry tokens labA/labB, root=PARTUUID, fresh filesystem UUID on slot B, finite loader timeout, editor off; no UKI (silent reboot on 260120); keep 6.18.2-3 as rescue entry. Route B (fallback, untested design): embloader 0.4 held with a write-back 'default' trial in loader.conf; a failure before the initramfs still needs the rescue microSD. Never run rsetup System Update or Update SPI Bootloader. Mask sleep/suspend/hibernate/hybrid-sleep targets; IdleAction=ignore.
+    - **Reason:** Real automatic rollback; no reliance on unproven EFI-variable persistence.
+    - **Sources:** reaudit_A [0] corrections 10; confirmed 22,23,24; new_risks 8; [1] corrections 20; new_risks 15; https://github.com/BigfootACA/embloader ; https://raw.githubusercontent.com/systemd/systemd/v255/src/boot/efi/boot.c
+    - **Saving usd:** 0
+  21.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** Kernel command line
+    - **Anchor:** preempt=full drm.edid_firmware=HDMI-A-1:edid/field.bin video=HDMI-A-1:1920x1080@60
+    - **Instruction:** State that /etc/kernel/cmdline holds r2's full base line exactly as recorded on first boot (console=ttyMSM0,115200n8 ... rw earlycon consoleblank=0 console=tty1 coherent_pool=2M irqchip.gicv3_pseudo_nmi=0 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory swapaccount=1 kasan=off, root per slot as root=PARTUUID) followed by the lab additions 'preempt=full panic=10 drm.edid_firmware=... video=...'. The Lime line becomes part of the default build (Lime kept): 'pcie_aspm=off isolcpus=nohz,domain,managed_irq,7 nohz_full=7 rcu_nocbs=7 irqaffinity=0-6'. No clk_ignore_unused (leaves unused clocks running: spur and power cost). Hold radxa-system-config-* at 0.6.30 (0.7.4's kernel-cmdline-ttymsm0 postinst appends clk_ignore_unused and re-runs kernel-install for every kernel). CI: SHA-256 of /etc/kernel/cmdline and /proc/cmdline.
+    - **Reason:** Prevents losing root=/console= and silent cmdline drift.
+    - **Sources:** reaudit_A [0] corrections 6; new_risks 1; corrected_spec 'Boot'; [1] corrected_spec; https://github.com/radxa-pkg/radxa-system-config/blob/main/debian/radxa-system-config-kernel-cmdline-ttymsm0.postinst
+    - **Saving usd:** 0
+  22.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** DT overlay lab-q6a.dtbo
+    - **Anchor:** lab-q6a.dtso об'єднує uart6, uart7, i2c0 і i2c2 з вузлом pps-gpio на GPIO96; польовий варіант вимикає pcie0.
+    - **Instruction:** Append: fragments copied from radxa-overlays 0.2.31 (uart6 pins 16/18, uart7 pins 32/29, i2c0 and i2c2 at 100 kHz); /aliases serial1 = uart6 (.../serial@998000), serial2 = uart7 (.../serial@99c000), paths taken from /proc/device-tree; pps-gpio on tlmm 96 (DKMS against the held headers; pps_register_source exported); optional FastRPC fragment (memory-region = <&adsp_rpc_remote_heap_mem>, shared-dma-pool on the reserved node @0xc6500000, 8 MiB) only if Phase 0 shows it changes results; UEFI QUPV3 modes SE0/SE2 = I2C, SE6/SE7 = UART; libgpiod addresses lines by TLMM chip label (gpiochip4), never by number; field DTBO: WIFI_PWR_EN gpio-hog pending W1-2.
+    - **Reason:** Stable names and a reproducible overlay.
+    - **Sources:** reaudit_A [0] corrected_spec 'DT overlay lab-q6a.dtbo'; [2] confirmed 17
+    - **Saving usd:** 0
+  23.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** Golden NPU/FastRPC set
+    - **Anchor:** Золотий набір FastRPC (CDSP c4-00004, ADSP c9-00028, оверлей shared-dma-pool), QAIRT 2.42.0.251225 з qcom-qnn-sdk-v68.
+    - **Instruction:** Replace with: the golden set is identified by SHA-256 only and sourced only from radxa-firmware-qcs6490 (not linux-msm/hexagon-dsp-binaries). Candidates chosen by the Phase-0 matrix: DSP set r2 = 0.2.29 (deb sha256 f59a5e5b...7e98; cdsp.mbn a9645c94..., adsp.mbn 01fea794..., 9,871,840 B) or 0.2.42 (cdsp.mbn 644cb94c..., adsp.mbn da35227f..., 14,012,896 B; new adsp 'to support PM7250B Type-C controller' may change USB-C behaviour); both report CDSP.HT.2.5.c4-00004-KODIAK-1 / ADSP.HT.5.5.c9-00028-KODIAK-2; shells fastrpc_shell_3 d6ef508a...a02d, fastrpc_shell_unsigned_3 655a0032...3dff, ADSP fastrpc_shell_0 17078ae4...d68e (identical in both). fastrpc userspace candidates: 1.0.4-1 (GitHub release only; the combination that passed fastrpc_test 3/3 in 31208) and 1.0.7-3 (repo). Install the whole chosen set (fastrpc, libcdsprpc1, libadsprpc1, libsdsprpc1, lib{a,c,s}dsp-default-listener1, fastrpc-dev, fastrpc-test) before qcom-qnn-sdk-v68 (it depends on unversioned fastrpc-dev and would pull 1.0.7-3), then hold. 1.0.4-1 ships no udev rule or group: ship KERNEL=='fastrpc-*' and dma_heap/* GROUP='fastrpc' MODE='0660' plus a sysusers.d group. One DSP boot method: our initramfs hook lab-dsp-fw (copies dragon-q6a {adsp,cdsp}.mbn, *.jsn and a660_zap.mbn, checks SHA-256) for the 0.2.29 set; with 0.2.42 only its own hook. Hash check before every update-initramfs and every NPU start (dpkg -V clean, dpkg -S single owner); never copy DSP files by hand (operator note 18). shared-dma-pool overlay optional (Radxa: CDSP needs no reserved DMA memory), only via the systemd-boot entry. QAIRT 2.42.0.251225 from qcom-qnn-sdk-v68 0.1.0-2 (44,221,844 B, SHA-256 306fd647...6e54), runtime libs byte-identical to the SDK zip.
+    - **Reason:** Mixed DSP sources give 0x80000600; version-string identity is not enough.
+    - **Sources:** reaudit_A [3] corrections 3,4,12; confirmed 18,20,21; [0] corrections 8,9; confirmed 15,16,17; new_risks 4,9; https://github.com/radxa-pkg/radxa-firmware/releases/download/0.2.29/radxa-firmware-qcs6490_0.2.29_all.deb ; https://forum.radxa.com/t/31078
+    - **Saving usd:** 0
+  24.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** labd leases (DevicePolicy)
+    - **Anchor:** Для кожної оренди пише тимчасові drop-in DevicePolicy=closed і DeviceAllow.
+    - **Instruction:** Extend: leases run as system units (DevicePolicy is ignored in --user managers and without CONFIG_CGROUP_BPF, systemd #23198): User=lab, DevicePolicy=closed, DeviceAllow=<leased /dev/bus/usb/BBB/DDD> rw plus /dev/dri/renderD128 rw (otherwise Expert GUIs and OpenWebRX+ fall back to llvmpipe or fail), audio only through the PipeWire socket (not /dev/snd), pass WAYLAND_DISPLAY, XDG_RUNTIME_DIR=/run/user/<uid>, DBUS_SESSION_BUS_ADDRESS; ProtectSystem=strict, ReadOnlyPaths=/data, ReadWritePaths=/data/products/<lease>. Requires CONFIG_CGROUP_BPF=y (check /boot/config-6.18.2-4-qcom). If the EPERM self-test fails, fall back to udev ACL/group ownership per lease (operator note 20).
+    - **Reason:** Keeps enforcement working without breaking GPU rendering.
+    - **Sources:** reaudit_A [2] corrections 6; new_risks 3; confirmed 8; https://github.com/systemd/systemd/issues/23198
+    - **Saving usd:** 0
+  25.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** labd ADS-B/AIS military filter
+    - **Anchor:** придушення ADS-B dbFlags&1 і AIS тип 35, без журналів пеленгів
+    - **Instruction:** Replace with: ADS-B suppressed if (dbFlags & 1) OR the ICAO address lies in tar1090's military ranges milRange() (pinned copy); the profile is refused if the pinned aircraft.csv.gz is missing or older than 90 days (fail closed; readsb --db-file defaults to none, which makes dbFlags 0). AIS: a vessel stays off map and log until a static message (5, 19, 24B) with ship type other than 35 arrives; purge on a late 35. Both filters apply only to readsb and AIS-catcher; SDRangel demodadsb/demodais and OpenWebRX+ adsb/ais are not built. No bearing logs.
+    - **Reason:** Military suppression no longer depends on data that may be missing.
+    - **Sources:** reaudit_A [2] corrections 14; [1] corrections 21; new_risks 4; https://raw.githubusercontent.com/wiedehopf/tar1090/master/html/planeObject.js ; https://gpsd.gitlab.io/gpsd/AIVDM.html
+    - **Saving usd:** 0
+  26.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Artemis identification stop
+    - **Anchor:** стоп Artemis «out of scope»
+    - **Instruction:** Replace with: Artemis stop using artemis-db v74 only (mirrored with a locally computed SHA-256, format to verify; no Artemis GUI, which can collect/store signals and ships only as a 333 MB Flatpak on aarch64); matching in labd, Lab Shell 'Identify' is a client. Stop if category in {Military, Radar, Numbers Stations} (the DB has no 'Government' category), OR name/description matches the deny regex (military, navy, air force, NATO, STANAG, MIL-STD, Link-11/16, ALE 4G/WALE, jammer, OTH, intelligence), OR the frequency lies in a masked band; untagged entries in masked bands fail closed; 'Trunked Radio' counts as unnamed occupancy only.
+    - **Reason:** Closes the missing-'Government' gap and removes a collect/store tool.
+    - **Sources:** reaudit_A [2] corrections 15; confirmed 13; https://raw.githubusercontent.com/AresValley/artemis-db/main/utils/constants.py
+    - **Saving usd:** 0
+  27.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** labrx FFT backend
+    - **Anchor:** FFT-тайли через VkFFT на Turnip (запасний FFTW).
+    - **Instruction:** Replace with: FFT tiles via FFTW (default). VkFFT only after a W1-2/P0 bench pass: max |diff| against FFTW below 1e-4 relative, at least 1709 FFT/s at N=65536 (LIME-W with 50 % overlap) and an 8 h soak with zero VK_ERROR_DEVICE_LOST. Qt Quick stays on the OpenGL ES RHI (QSG_RHI_BACKEND=opengl).
+    - **Reason:** No public VkFFT/Turnip compute result on QCS6490; Radxa says Vulkan unsupported for llama.cpp on the Q6A.
+    - **Sources:** reaudit_A [2] corrections 16; bench_tests 10; https://forum.radxa.com/t/vulkan-crashes-and-npu-setup-for-llm-inference-on-dragon-q6a-need-guidance/30264
+    - **Saving usd:** 0
+  28.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** labrx masks before write
+    - **Anchor:** Маска спурів, маска діапазонів і статична маска голосу (5.5) до запису; IQ голосу не зберігає.
+    - **Instruction:** Replace 'статична маска голосу (5.5)' with 'fail-closed raw-IQ allowlist plus the static voice mask (5.5)'; also mask 1544-1545 MHz (Cospas-Sarsat MEOSAR downlink; power-only, never logged, rule item 17) together with 3-30 kHz and 225-400 MHz.
+    - **Reason:** Voice rule must not depend on unmeasured NPU recall; operator rule item 17.
+    - **Sources:** reaudit_A [3] corrections 19; operator_notes item 17
+    - **Saving usd:** 0
+  29.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** labrx -> SatDump feed
+    - **Anchor:** SatDump (файл або канал)
+    - **Instruction:** Replace with: SatDump (file decode by default, or live cf32 over UDP to 127.0.0.1 into SatDump's net_source plugin; labrx converts cu8 to cf32, 8-byte complex samples in blocks of 8192).
+    - **Reason:** Live input is supported (legacy 'satdump live' + net_source).
+    - **Sources:** reaudit_A [1] corrections 5; confirmed 6
+    - **Saving usd:** 0
+  30.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** inferd-htp unit
+    - **Anchor:** inferd-htp (пісочниця: WatchdogSec=5, MemoryMax=1G, CPUAffinity 0-3, один потік виконання
+    - **Instruction:** Extend the inferd-htp sandbox: native systemd unit, never in a container; User=labnpu, SupplementaryGroups=fastrpc (fastrpc >=1.0.6 creates the group at service start); Environment=ADSP_LIBRARY_PATH='/opt/lab/npu/2.42/dsp;/usr/lib/dsp/cdsp' (semicolon list; read-only golden copy of the skel; the skel needs libc++.so.1/libc++abi.so.1 from the matched DSP tree; /usr/lib/dsp is deleted and relinked by setup-dsp.sh on every boot); LD_LIBRARY_PATH=/opt/lab/npu/2.42/lib; DevicePolicy=closed with DeviceAllow /dev/fastrpc-cdsp rw, /dev/fastrpc-cdsp-secure rw, /dev/dma_heap/system rw; no PrivateDevices; Requires/After=fastrpc.service cdsprpcd.service. One thread creates backend, device and context and calls every graphExecute (no shared contexts; onnxruntime-qnn #892 multi-thread wrong results, unverified on v68). Loads offline context binaries only (no DLC, no online prepare, no on-device generator). Log backend/stub/skel build-version lines at start. Restart ladder: re-create context -> stop/start CDSP remoteproc, wait >=15 s, run fastrpc_test -> mark NPU dead, CPU mode, reboot only between passes.
+    - **Reason:** Correct DSP search path, permissions and threading.
+    - **Sources:** reaudit_A [3] corrections 11; new_risks 4,7,8; corrected_spec 'inferd-htp'; https://raw.githubusercontent.com/radxa-pkg/fastrpc/main/fastrpc/usr/libexec/fastrpc/setup-dsp.sh
+    - **Saving usd:** 0
+  31.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** inferd-cpu (ORT)
+    - **Anchor:** inferd-cpu (ONNX Runtime 1.31)
+    - **Instruction:** Replace with: inferd-cpu (onnxruntime 1.31.0 cp312 manylinux_2_28_aarch64, 21,420,804 B, sha256 35758d7606d578ec5b9d65f6e8a1f488013194c3f6097038a3223cb26d35ef9a; intra_op_num_threads=1, inter_op_num_threads=1, session.intra_op.allow_spinning=0, session.inter_op.allow_spinning=0; no ORT affinity, systemd pins; QDQ model if its AP holds; own thresholds).
+    - **Reason:** ORT defaults spin against the CPU quota.
+    - **Sources:** reaudit_A [3] corrections 13; confirmed 29,30
+    - **Saving usd:** 0
+  32.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** labinput / watchdog
+    - **Anchor:** Кадровий протокол UART7 з Pico
+    - **Instruction:** Append: on /dev/lab/pico, CRC-framed; encoders via PIO quadrature_encoder.pio loaded at origin 0, two state machines (GP2/3, GP6/7), 4 counts per detent, emitted as count/4 with ±2-count hysteresis. The Pico heartbeat is the primary hardware watchdog (QCOM_WDT unusable: APSS watchdog node reserved for Gunyah; no arm,smc-wdt node).
+    - **Reason:** Watchdog and encoder facts verified.
+    - **Sources:** reaudit_A [2] confirmed 20; corrected_spec section 3; [0] corrected_spec 'Watchdog and recovery'
+    - **Saving usd:** 0
+  33.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** gpsd + chrony
+    - **Anchor:** gpsd 3.25 + chrony 4.5
+    - **Instruction:** Rewrite the row: gpsd 3.25-3ubuntu3.2 with DEVICES='/dev/lab/gnss', USBAUTO='false' (GPSD_OPTIONS: this source gives '-n -p -s 115200'; reaudit_D gives '-n -b -s 115200' – settle in merge); chrony 4.5-1ubuntu4.2: 'refclock SHM 0 refid NMEA offset <measured> delay 0.2 noselect', 'refclock PPS /dev/pps0 lock NMEA refid PPS prefer', 'makestep 1 3', 'maxchange 5 1 -1', 'rtcsync' (v1's 'lock NMEA' had no refclock with refid NMEA, so PPS could not be selected). Blacklist gnss-usb/ubx/mtk/sirf/serial. AppArmor is inactive (CONFIG_LSM='landlock,lockdown,yama,integrity,bpf'), so add local gpsd/chronyd rules only if /sys/kernel/security/lsm lists apparmor (operator note 2). pps-gpio DKMS on GPIO96; Route A GPIO v2 ioctl fallback never together with pps-gpio.
+    - **Reason:** PPS becomes selectable; no device-name collision.
+    - **Sources:** reaudit_A [1] corrections 16; corrected_spec 'TIME AND LOCATION'; confirmed 20,24; https://chrony-project.org/doc/4.5/chrony.conf.html
+    - **Saving usd:** 0
+  34.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** SDR access model / SatDump
+    - **Anchor:** проходи записуються, потім SatDump 2.0-alpha декодує з базового файлу (живий канал — лише якщо alpha це підтримує)
+    - **Instruction:** Replace the parenthesis: live feed is supported (legacy 'satdump live' CLI + net_source, UDP cf32 from labrx on 127.0.0.1); file decode stays the default. Add: SatDump is not an exclusive-lease engine and is built with no hardware or network SDR source, so it can never open an SDR outside the labrx masks.
+    - **Reason:** Closes a mask bypass and an open item.
+    - **Sources:** reaudit_A [1] corrections 3,5; refuted_findings 5
+    - **Saving usd:** 0
+  35.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** Exclusive-lease engines
+    - **Anchor:** radiosonde_auto_rx (вивантаження вимкнено), OpenWebRX+ 1.2.126, sdrangelsrv (NAVTEX, RTTY, WEFAX, Radio Clock)
+    - **Instruction:** Replace with: readsb v3.16.17 (--db-file pinned aircraft.csv.gz with sha256 recorded, --net-bind-address 127.0.0.1), AIS-catcher v0.70 (no -X), radiosonde_auto_rx v1.9.0 (sondehub_enabled = False, payload_summary_enabled = False, web_host = 127.0.0.1, SDR by serial), OpenWebRX+ 1.2.126+lab1, sdrangelsrv (NAVTEX, RTTY, Radio Clock; started with -a 127.0.0.1 -w /var/lib/lab/fftw/sdrangel.wisdom; REST/WebSocket API otherwise binds every interface on 8091). WEFAX moves to OpenWebRX+ 'fax' (SDRangel 7.27.2 has no WEFAX plugin). All engine units IPAddressAllow=localhost (home LAN only in the home profile).
+    - **Reason:** Stops LAN leaks and unauthenticated control; WEFAX had no backend.
+    - **Sources:** reaudit_A [1] corrections 9,21; new_risks 1,4,5; [2] corrections 5; refuted_findings 3
+    - **Saving usd:** 0
+  36.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** bench_test
+    - **Part:** Lease self-test
+    - **Anchor:** кожна ексклюзивна оренда й Expert-GUI запускаються з ReadOnlyPaths=/data
+    - **Instruction:** Append the self-test: inside a lease unit, open() of a non-leased /dev/bus/usb node returns EPERM, a write under /data returns EROFS while /data/products/<lease> is writable, and the EGL renderer is not llvmpipe.
+    - **Reason:** DevicePolicy can be silently ignored.
+    - **Sources:** reaudit_A [2] bench_tests 2; operator_notes item 20
+    - **Saving usd:** 0
+  37.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** UI stack (labwc, greetd, labbar, LOCK)
+    - **Anchor:** **UI.** Lab Shell (Qt 6.4.2 QML) на labwc 0.7.1 з XWayland, панель labbar (GTK3 + gtk-layer-shell), greetd з лічильником збоїв, cage як безпечний режим.
+    - **Instruction:** Replace with: Lab Shell (Qt 6.4.2 QML, maximized, never fullscreen) on labwc 0.7.4+lab1 built against noble libwlroots 0.17.1-2.1build1 with the 6ab9d3f touch-offset backport (uint32_t -> double; fixed only on master, #3764); apt 0.7.1-1build1 is the rollback; XWayland 2:23.2.6 held. Session env: LABWC_FALLBACK_OUTPUT=NOOP-fallback, WLR_DRM_DEVICES=/dev/dri/by-path/<display controller>, QSG_RHI_BACKEND=opengl, QT_IM_MODULE=qtvirtualkeyboard; rc.xml pins the HDMI-A-1 mode, maps touch to HDMI-A-1, window rule for app_id lab.shell. labbar: GTK3 + gtk-layer-shell 0.8.2 on the OVERLAY layer (TOP is hidden over fullscreen views), exclusive zone 13 mm (162 px FHD / 110 px 1280x800), six chips >=18 mm with 3 mm gaps; CI fullscreens every Expert GUI and asserts labbar is visible. greetd 0.9.0-4ubuntu1: lab-session supervises labwc and the shell and never exits; 3 crashes in 10 min -> exec cage 0.1.5 with lab-shell --safe (no SDR engines); 3 more -> text status console (cage + labctl status, or a VT) with labd and labinput still running; counter in /run; greetd.service drop-in StartLimitBurst=0 or OnFailure=lab-rescue.target. LOCK = labd writes a labwc rc.xml fragment with touch sendEventsMode=no and runs labwc --reconfigure (EVIOCGRAB by labinput only if reconfigure >300 ms). OSK: QVK in the shell, wvkbd 0.14.3 for third-party apps. P5 option only: Qt 6.12.0 LTS arm64 under /opt as +labN (open-source support to 1 Apr 2027), gated by the WebEngine <select> -> QVK test on labwc.
+    - **Reason:** Crash loop would end in a black screen; touch glitches; chips must stay visible.
+    - **Sources:** reaudit_A [2] corrections 1,10,11,12,18; new_risks 0; confirmed 3,5,6,7; corrected_spec sections 1-2
+    - **Saving usd:** 0
+  38.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Menu System/Wi-Fi and menu CI
+    - **Anchor:** System (Wi-Fi — лише вдома, утримання 1.5 с, автоматичне блокування в кожному польовому і QUIET профілі; Bluetooth вимкнено назавжди)
+    - **Instruction:** Append: field roots block Wi-Fi/BT by module blacklist with 'install /bin/false', port-path authorized=0 and (after W1-2) the WIFI_PWR_EN hog; rfkill is the second layer. Menu CI is data-driven from the same allowlists: every leaf must resolve to an existing backend (e.g. WEFAX -> OpenWebRX+ 'fax'), with and without Lime and T7, and every critical leaf must work from keys and encoders.
+    - **Reason:** WEFAX leaf had no backend; hardware-level radio block.
+    - **Sources:** reaudit_A [2] corrections 5,9; corrected_spec 6a, 6g
+    - **Saving usd:** 0
+  39.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** Allowed decoders (SatDump, gr-satellites, WSJT, SSTV, multimon-ng)
+    - **Anchor:** **Дозволені декодери:** супутники — SatDump (без inmarsat_support), gr-satellites 5.5;
+    - **Instruction:** Rewrite the satellites/amateur part: SatDump pinned 1aedd602055c154401384a8cc7876713bb371254 as 2.0.0~alpha+git20260929+lab1, -DPLUGINS_ALL=OFF, ON only PLUGIN_METEOR, NOAA_METOP, METOPSG, ELEKTRO_ARKTIKA, FY3, GK2A, XRIT, ANALOG, CUBESAT, RADIOSONDE and NET_SOURCE_SDR_SUPPORT (optional FY2, FY4, GOES, HIMAWARI, GEONETCAST); OFF every other PLUGIN_*_SDR_SUPPORT (hackrf/bladerf contain TX sinks) plus SPYSERVER, RTLTCP, SDRPP_SERVER, REMOTE_SDR, EXPERIMENTAL_DEVICES, WEBHOOK_APP, TOOLS_APP, WIPSETTINGS_EDITOR_APP; never INMARSAT, ORBCOMM, DMSP, WSF (US Space Force / defense weather satellites), SPACEX, BLUEWALKER3; plus the labd and menu pipeline allowlist of rule items 1/14 (civil pipelines named one by one; Cosmos 2558, dmsp_rtd, syracuse3_tlm, wsf_m_db, angels_l_band, yunhai_ahrpt and any 'encrypted' pipeline hidden) with a CI test; config kepler_update_interval 'Never' (default is a 1-day plain-HTTP fetch from orbicentral.net), OMM from labd (17-column CSV or JSON), LC_NUMERIC=C, IPAddressDeny=any (localhost UDP in only), LRPT retry on a CADU trimmed with 'dd bs=8192 skip=4' (#1212), build -j4 with zram. gr-satellites main 4210dc45c9725e30d8f612eeec614f3f353cd09c as 5.10.0~git20260922-0lab1 against GNU Radio 3.10.9.2 and numpy 1.26 (5.5.0 and 5.9.0 still have the FileReceiver path traversal #803/#820; fixes 10d27cb, 1bcf1d8 only on main); config.ini submit_tlm = no plus GR_SATELLITES_SUBMIT_TLM=0 (v5.5.0 default is 'yes'); units PrivateNetwork=yes (file decode) or IPAddressDeny=any, ReadWritePaths=<products>, NoNewPrivileges=yes. Amateur: lab-wsjt-decoders = jt9 and wsprd from tag wsjtx-2.7.0 (b4f9a43) built in their own sbuild chroot (the only one with libhamlib-dev), plus a 2-line /usr/bin/wsjtx_app_version shim printing 'WSJT-X 2.7.0' for OWRX+ mode detection. SSTV: slowrxd (sjlongland slowrx-daemon c94327ae40ab970b0bea20ebb378d71f8e69b98a) fed with labrx FM audio via snd-aloop or a PipeWire virtual source. Broadcast: welle-cli from noble welle.io 2.4 (on the +lab .so.2), redsea 1.3.1. GNSS-SDR 0.0.19 (0.0.22 optional), Virgo v3.8.9. multimon-ng is NOT installed in the European build (pinned -1); only a US profile would dpkg-divert it to /usr/lib/lab/multimon-ng.real (0750, group labeas) behind the '-a EAS' wrapper, with a restricted PATH for the openwebrx unit.
+    - **Reason:** TX sinks, mask bypass, military pipelines, RCE-class file write, hidden location upload.
+    - **Sources:** reaudit_A [1] corrections 3,4,6,11,12,14; confirmed 5,7,13,17,25; new_risks 0,6; operator_notes items 1,8,11,14,23; https://github.com/SatDump/SatDump/blob/1aedd602055c154401384a8cc7876713bb371254/plugins/CMakeLists.txt ; https://github.com/daniestevez/gr-satellites/commit/1bcf1d8bccac463550c70091d76a24b09178b1c3
+    - **Saving usd:** 0
+  40.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** OpenWebRX+ mode allowlist
+    - **Anchor:** OpenWebRX+ не бачить справжнього multimon-ng (обгортка поза його PATH), а режими pager (POCSAG/FLEX), selcall і цифрового голосу вимкнені в закріпленому конфігу OpenWebRX+, з тестом, що їх немає в списку режимів; обидва пункти — в аудиті політики.
+    - **Instruction:** Replace: OpenWebRX+ 1.2.126 has no per-mode disable setting (a mode appears whenever its requirement is met; dsc, sitorb, navtex, rtty, bpsk, cwdecoder, fax and sstv have no requirement). Repackage as openwebrx 1.2.126+lab1 with a patched owrx/modes.py keeping only nfm, wfm, am, sam, lsb, usb, cw, usbd, drm, dab, bpsk31/63, rtty170/450/85, sitorb, navtex, ft8, ft4, jt9, wspr, sstv, fax, sonde-*, meteor-lrpt, elektro-lrit; removed: dsc (all categories with MMSIs), page, selcall, zvei, eas, tetra, p25, dmr, dstar, nxdn, ysf, m17, freedv, radel/radeu, ism, wmbus, lora-*, meshtastic, meshcore, meshcom, speech (Whisper transcriber), hfdl, vdl2, acars, adsb, uat, ais. Locked settings (CI asserts): allow_center_freq_changes=false, allow_audio_recording=false, allow_chat=false, speech_url='', MQTT off, rig control off, PSKReporter/WSPRnet off in the field, admin password set. Profiles are allowlisted frequency windows (amateur bands, NAVTEX 490/518 kHz, published MSI and civil WEFAX channels, broadcast). Mirror owrx-connector/rtl-connector/rtl-tcp-connector/soapy-connector 0.6.5, csdr/libcsdr0/python3-csdr 0.18.40, redsea 1.3.1; install --no-install-recommends; unit IPAddressAllow=localhost. CI queries the running feature/mode list and fails on any mode outside the list (TETRA matters most in Europe).
+    - **Reason:** Config approach did not close TETRA/P25, pager, mesh, wM-Bus, speech-to-text and routine DSC.
+    - **Sources:** reaudit_A [2] corrections 2; new_risks 1; refuted_findings 2; [1] corrections 10; operator_notes item 32; https://raw.githubusercontent.com/luarvique/openwebrx/1.2.126/owrx/modes.py
+    - **Saving usd:** 0
+  41.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** -1 pin list
+    - **Anchor:** Додатково закріплено на −1: js8call, rtl-433, digiham, codecserver, acarsdec, dumphfdl, dumpvdl2.
+    - **Instruction:** Replace with the full -1 list (use pattern pins so new codec/driver packages stay blocked, operator note 31). Hamlib/WSJT/TX: wsjtx, libhamlib4t64, libhamlib-utils, libhamlib-dev, fldigi, qsstv, direwolf, js8call, python3-js8py. Soapy/Lime: soapysdr-module-all, soapysdr0.8-module-all, soapysdr0.8-module-remote, -lms7, -hackrf, -bladerf, -uhd, -redpitaya, libsoapysdr0.9*, limesuite. librtlsdr0, librtlsdr2 (= 2.0.1-2build1). OWRX+ decoders: rtl-433, digiham*, python3-digiham, codecserver*, codecserver-driver-*, acarsdec, dumphfdl, dumpvdl2, libacars-tools, dump1090-fa, dump1090-fa-minimal, dump978-fa*, skyaware978, dxlaprs-tetra, dxlaprs-lora, python3-meshtastic, python3-bleak, m17-demod, nrsc5 (outside US), hpsdrconnector. Other: multimon-ng (European build), lame, python3-paho-mqtt, gr-gsm, gr-iridium, kalibrate-rtl, urh. Superseded noble: gpredict (= 2.3-115-g0f3beb6-3build3), gr-satellites (= 5.5.0-2build2). Qualcomm/Mesa/kernel: qcom-fastrpc*, linux-firmware-dragonwing, qairt-*, libqnn*, libsnpe*, qnn-tools, snpe-tools, qcom-adreno*, dragonwing-defaults, firmware-qcom-audioreach, firmware-qcom-soc, linux-firmware-qualcomm-misc, hexagon-dsp-binaries*, firmware-qcom-dsp, mesa >= 26, linux-image-7.*, linux-headers-7.*, edk2-* (>= 0.1.0-8), embloader (Route A). By origin: LP-PPA-ubuntu-qcom-iot-qcom-ppa, LP-PPA-kisak-turtle, LP-PPA-mozillateam. Pin on the aptly mirror, the device and the build host.
+    - **Reason:** Missing pins would re-enable TETRA/mesh via feature detection, mix firmware or pull 2.49 QAIRT.
+    - **Sources:** reaudit_A [1] corrected_spec 'APT AND PACKAGING'; [2] corrections 3,13; [0] corrections 3,7; operator_notes items 15,31
+    - **Saving usd:** 0
+  42.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** SDRangel and SDR++ build allowlists
+    - **Anchor:** .so TX і DSD у SDRangel, плагіни SDRangel Inmarsat C і Heat Map
+    - **Instruction:** Replace the SDRangel deny items with a build ALLOWLIST: SDRangel v7.27.2 (97e9e21, Qt5) configured with every ENABLE_* OFF except channelrx chanalyzer, channelpower, demodam, demodbfm, demodwfm, demodnfm, demodssb, demodnavtex, demodrtty, demodft8, demodpacket (APRS only), radioclock, radioastronomy, freqtracker, demodvor, demodils, noisefigure (Bench only); samplesource rtlsdr, airspyhf, soapysdrinput (patched LimeSuiteNG module only), fileinput, sigmffileinput, testsource; feature satellitetracker, startracker, skymap, freqdisplay, antennatools, demodanalyzer, denoiser, morsedecoder. None from channeltx, channelmimo, samplesink, samplemimo; packaging deletes every samplesink/samplemimo .so (testmi, testmosync included). Explicitly absent: feature/sid (readme targets naval VLF GQD/HWU/NAA), demoddsc (unless the lab patch dropping formats 120/123/114 before address decode passes its test, then sdrangelsrv only), demodadsb, demodais, feature ais, audiocatsiso (soundcard TX + CAT PTT), remotetcpsink, udpsink, localsink, rigctlserver, ambe, demodm17, demodfreedv, demodchirpchat, demodendoftrain, demodpager, demodmesh*, demoddsd, demodinmarsat, heatmap, filesink, sigmffilesink, remotesink, kiwisdr/remotetcpinput/aaroniartsainput, remotecontrol, pertester, simpleptt, limerfe; ENABLE_LIMESUITE=OFF (limesdroutput/limesdrmimo TX-capable). Build chroot without libhamlib-dev, libdsdcc, libmbe, libcodec2-dev. Text decoders (RTTY, NAVTEX, packet) only in sdrangelsrv at labd-set frequencies, not in the Expert-GUI build. Runtime audit hashes every file in <prefix>/lib/sdrangel/* and <prefix>/bin/lib/* against the signed manifest; re-run on every tag. FFTW wisdom generated on the Q6A (fftwf-wisdom from libfftw3-bin). SDR++: pin 8c9f5ee8fe405775bfcd62c8c8f8c0fc928a64af; ON SOAPY_SOURCE, RTL_SDR, AIRSPYHF, NETWORK_SOURCE, FILE_SOURCE, RIGCTL_SERVER (localhost:4532); OFF RECORDER, IQ_EXPORTER, PAGER_DECODER, NETWORK_SINK, DISCORD_PRESENCE, RIGCTL_CLIENT and the HACKRF, PLUTOSDR, HERMES, RFSPACE, SPECTRAN_HTTP, SPYSERVER, RTL_TCP, SDRPP_SERVER sources (M17, FALCON9 stay OFF); audit fails on iq_exporter.so, recorder.so, network_sink.so, pager_decoder.so; never 'sdrpp --server'; Gpredict is the only rigctl client on one persistent connection.
+    - **Reason:** Several filter bypasses, a TX/PTT path and IQ export paths would ship otherwise.
+    - **Sources:** reaudit_A [2] corrections 4; new_risks 2; [1] corrections 7,8; confirmed 8,9,10; operator_notes item 33; https://raw.githubusercontent.com/f4exb/sdrangel/v7.27.2/plugins/channelrx/CMakeLists.txt ; https://raw.githubusercontent.com/f4exb/sdrangel/v7.27.2/plugins/feature/sid/readme.md
+    - **Saving usd:** 0
+  43.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** Packaging: apt sources and priorities
+    - **Anchor:** **Пакування.** Підписаний aptly-репозиторій deb +labN з тегованих комітів на arm64-збирачі.
+    - **Instruction:** Append: one signed aptly publish is the only apt source. Pin-Priority: lab +labN 1001; mirrored snapshot 990 (noble, noble-updates, noble-security – systemd 255.4-1ubuntu8.18 is only in -security –, the OWRX+ noble subset, the radxa noble and qcs6490 subsets); 'Package: * Pin: origin *' -1 for everything else. Delete the PPA lists rsdk adds (ubuntu-qcom-iot/qcom-ppa, kisak/turtle, ppa:mozillateam) on first boot; check ls /etc/apt/sources.list.d. Each +lab source package builds in its own sbuild chroot (only lab-wsjt-decoders has libhamlib-dev; SDRangel chroot without libhamlib-dev, libdsdcc, libmbe, libcodec2-dev; Gpredict chroot without libgps-dev and libhamlib-dev). CI: 'apt-get -s dist-upgrade' shows 0 changes against the full original source list, no launchpad origin, dpkg -V clean for firmware and FastRPC packages.
+    - **Reason:** Deterministic candidates; the PPA would pull QAIRT 2.49 and firmware.
+    - **Sources:** reaudit_A [1] corrections 18,19; new_risks 7,9,13; [0] corrections 7; confirmed 25; operator_notes item 15
+    - **Saving usd:** 0
+  44.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** Hold list
+    - **Anchor:** Утримання: ядро і метапакети, прошивки і набір NPU, Mesa 25.2.8-0ubuntu0.24.04.4 з libdrm 2.4.125, xwayland/wlroots/labwc/qt6, systemd-boot, pipewire.
+    - **Instruction:** Replace with the explicit hold list (apt-mark hold plus aptly priority 1001): kernel linux-image-6.18.2-4-qcom (68,282,992 B, sha256 0bbdbfda97627a0e51afefb3d0aa7dc23c3658151e5f14aee24c276d0bb7fbeb), linux-headers-6.18.2-4-qcom (9,025,048 B, sha256 696e4279fe530e6974c5b3e388e41f82e6c02aa617cbe009115561f4a74fef2d) and linux-image/headers-radxa-dragon-q6a 6.18.2-4, all dpkg -i'd from the GitHub release radxa-pkg/linux-qcom 6.18.2-4 before any apt upgrade (the apt index lists only 7.0.11-7; operator note 29); 6.18.2-3 archived as rescue entry and NPU fallback. BIOS/recovery: edk2-qcs6490 and edk2-radxa-dragon-q6a 0.1.0-5 (r2; same 260120 imagefv stamp as 0.1.0-7; deb sha256 2a311f20d32ab814b6e624b304011cca822d1bbf3ece0a5904f8b43b3de951ae; 0.1.0-7 kept only as archive), edl-ng 1.4.1, rsetup and rsetup-config-first-boot 0.4.26. Bootloader per Route A/B. u-boot-menu 4.2.3ubuntu1; radxa-overlays-dkms 0.2.18. Firmware: radxa-firmware and radxa-firmware-qcs6490 0.2.29 (unless Phase 0 picks 0.2.42), linux-firmware 20240318.git3b128b60-0ubuntu2.23, linux-firmware-dragonwing 1.0.0+20251203, qcom-iot-defaults 1.19. System config: radxa-system-config-* 0.6.30, task-qcs6490, task-qualcomm, task-qualcomm-npu, task-qualcomm-gstreamer 0.1.0-7, task-radxa-dragon-q6a 0.4.42, alsa-ucm-conf 1.2.14-1radxa2, aic8800-usb-dkms and aic8800-firmware 4.0+git20250410.b99ca8b6-5. FastRPC set per Phase 0. QNN: qcom-qnn-sdk-v68 0.1.0-2 (and radxa-qcom-qairt 0.1.0-2). Graphics: Mesa 25.2.8-0ubuntu0.24.04.4, libdrm2 2.4.125-1ubuntu0.1~24.04.2, labwc 0.7.4+lab1 (0.7.1-1build1 rollback), XWayland 2:23.2.6, wlroots, qt6 6.4.2, pipewire.
+    - **Reason:** Closes the remaining transitive drift paths (qcom-iot-defaults 1.21 -> dragonwing-defaults; firmware 0.2.42 -> PPA firmware).
+    - **Sources:** reaudit_A [0] corrected_spec 'Holds'; corrections 3,4-7; confirmed 8,9; [1] corrections 17; confirmed 20; operator_notes item 29
+    - **Saving usd:** 0
+  45.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** librtlsdr +lab and bias-tee gate
+    - **Anchor:** librtlsdr: noble 2.0.1 з 0204c9c, 65f0658, виправленням zerocopy і патчем токена bias-tee; rtl_biast через divert; dvb_usb_rtl28xxu у чорному списку.
+    - **Instruction:** Replace with: librtlsdr2 2.0.1-2build1+lab1 = v2.0.1 (420086a) + 65f06585 + 0204c9cf, SONAME librtlsdr.so.2; debian/rules -DENABLE_ZEROCOPY=$(DEB_ZEROCOPY_OPTION) (OFF on arm64) or explicit OFF; CI 'strings librtlsdr.so.2 | grep -c zero-copy' == 0; keep the per-pass 1 s variance self-test. Bias gate inside rtlsdr_set_bias_tee_gpio() only: if (gpio==0 && on && access('/run/lab/bias/<serial>')!=0) return -1 (and rtlsdr_set_bias_tee); GPIO 5 (V4L input switch, driven on for every band above 28.8 MHz from the first tune) and every off request pass ungated – a literal gate would make every V4L tune above 28.8 MHz fail (operator note 12c). Token = existence of root-owned /run/lab/bias/<serial>, written only by labd, never an environment variable; a policy gate, not a security boundary (raw libusb control transfers bypass it), so the hardware DC-sense/eFuse stays the safety layer. The rtl-sdr-blog fork's bias hacks (offset tuning -> bias tee, EEPROM force_bt) are not in osmocom or our cherry-picks (operator note 12 verified); test anyway. rtl_biast via dpkg-divert; blacklist dvb_usb_rtl28xxu, rtl2832, rtl2830, r820t (harmless: CONFIG_DVB_USB_V2 not set; operator note 12b). Option: v2.0.3 (797f814) with SOVERSION 0 -> 2 after an abi-compliance-checker run against 2.0.1.
+    - **Reason:** Without the fix both V4L lose all VHF/UHF reception.
+    - **Sources:** reaudit_A [1] corrections 0,1,2; confirmed 0-4; refuted_findings 4; https://github.com/osmocom/rtl-sdr/blob/v2.0.3/src/tuner_r82xx.c
+    - **Saving usd:** 0
+  46.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** Python tool venvs
+    - **Anchor:** Python: один venv на інструмент (NanoVNA-Saver через pipx; QtTinySA з PySide6 6.12; Skyfield 1.55 і sgp4 2.27; lab-venv з numpy<2).
+    - **Instruction:** Replace with: one venv per tool – NanoVNA-Saver v0.7.3 via pipx (requires-python >=3.10,<3.13; pyside6~=6.8 allows 6.12); QtTinySA v2.0.1 with PySide6 6.12.0 aarch64 (cp310-abi3 manylinux_2_39 = noble glibc 2.39); onnxruntime 1.31.0; Skyfield 1.55 and sgp4 2.27 (read OMM directly); lab-venv imports apt GNU Radio with numpy<2; never pip-install onnxruntime-qnn into any device venv.
+    - **Reason:** Pinned versions verified on PyPI.
+    - **Sources:** reaudit_A [1] corrected_spec 'PYTHON'; confirmed 26; [3] corrections 16
+    - **Saving usd:** 0
+  47.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** apt/source packages (gr-satellites, Gpredict, Hamlib, libairspyhf)
+    - **Anchor:** Інше з apt: GNU Radio 3.10.9.2, VOLK 3.1.2, gr-satellites 5.5.0, SoapySDR 0.8.1, SoapyRTLSDR 0.3.3, Gpredict 2.3 (радіо лише «RX only»), Hamlib 4.5.5 (лише бібліотека, без libhamlib-utils), gnss-sdr 0.0.19; з джерел: SoapyAirspyHF, SatDump, SDR++, SDRangel, slowrx.
+    - **Instruction:** Replace with: from apt GNU Radio 3.10.9.2-1.1ubuntu2, VOLK 3.1.2-1.1build1, SoapySDR 0.8.1-4build1 (never mix in 0.9), SoapyRTLSDR 0.3.3-1build1 (on the +lab .so.2), gnss-sdr 0.0.19, gpsd 3.25-3ubuntu3.2, chrony 4.5-1ubuntu4.2; no Hamlib on the device (libhamlib4t64 at -1). From source as +lab: gr-satellites 4210dc45 (5.10.0~git20260922-0lab1); Gpredict 1d80049b0fecc06a18378d88f09b1d154a070234 (2.6+git20261011, GTK3, no libgps – it would bypass the location gate – and no hamlib; local patch to rotctld_socket_rw: recv sizeout-1, check negative returns, full buffer = error; master has the #425 radio-control deadlock fix, v2.6 c9fa018 does not; radios only 'RX only'; network TLE and transponder updates off; QTH = static file from the location service; audit ldd shows neither libgps nor libhamlib); libairspyhf1 1.6.8-5~lab1 (Debian backport, SONAME .so.1; upstream master is SOVERSION 0); SoapyAirspyHF soapy-airspyhf-0.2.1 against SoapySDR 0.8.1 (ppm stays in labrx); SatDump, SDR++, SDRangel, lab-wsjt-decoders, slowrxd. The Gpredict alias bridge is mandatory: CelesTrak ran out of 5-digit catalog numbers on 2026-07-11 (new objects OMM-only); aliases reuse numbers of decayed objects absent from every loaded set; the 6-digit -> alias map lives in labd.
+    - **Reason:** Security fix, deadlock fix, SONAME compatibility, gate bypass.
+    - **Sources:** reaudit_A [1] corrections 13,14,15; confirmed 14-18; new_risks 8,14; refuted_findings 0,1,2,8; https://github.com/csete/gpredict/issues/435 ; https://celestrak.org/NORAD/documentation/gp-data-formats.php
+    - **Saving usd:** 0
+  48.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** LimeSuiteNG (Lime kept, default build)
+    - **Anchor:** Лише з Lime: la9310-limesdr-dkms+lab з -DBUILD_PLUGINS_AMARISOFT=OFF (CI падає на будь-якому amarisoft .so).
+    - **Instruction:** Replace with: default build (Lime kept, user decision 18.10): LimeSuiteNG limesdr-micro-staging 37cb1833e35955f7072c0fb91642d14ae5515f28 with -DBUILD_PLUGINS_AMARISOFT=OFF -DBUILD_GUI=OFF, without gr-limesuiteng, with the TX setupStream fail patch (Lime TX blocked); la9310_limesdr-dkms +lab built against linux-headers-6.18.2-4; limesuite and soapysdr0.8-module-lms7 at -1; no SatDump Lime plugin (SatDump input is net_source only). CI fails on any amarisoft .so; 'SoapySDRUtil --info' must list only rtlsdr, airspyhf and the patched LimeSuiteNG module; SOAPY_SDR_PLUGIN_PATH unset in all units. Note: the Lime path still rests on an unreleased branch (only tag v25.1.0).
+    - **Reason:** Blocks an unpatched TX-capable Lime driver and SoapyRemote.
+    - **Sources:** reaudit_A [1] corrections 23; confirmed 19; [2] corrections 13; user_requirements 'User decisions'; operator_notes item 28
+    - **Saving usd:** 0
+  49.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Offline updater
+    - **Anchor:** **Оновлення.** Підписаний GPG офлайн-пакет з USB-накопичувача на LAB USB
+    - **Instruction:** Append: the updater refuses any package whose origin is not the lab aptly repo and any change to a held kernel, embloader/systemd-boot or SPI firmware package (forum: 7.0.11-4 via apt broke HDMI and audio).
+    - **Reason:** Radxa repo drift risk.
+    - **Sources:** reaudit_A [1] corrected_spec 'UPDATES'; [2] new_risks 8
+    - **Saving usd:** 0
+  50.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** SpecDet build (stage 1)
+    - **Anchor:** - Ступінь 1 на HTP: SpecDet (S за замовчуванням, M і G — у бенчмарку Phase 0), заморожений INT8 (w8a8, ваги по каналах), лише conv; 12 сімейств форм; кодування входу і VTCM 2 MB закріплені.
+    - **Instruction:** Append the build spec: input uint8 [1,32,128,128] from a 4x4 space-to-depth of 2x512x512 dB tiles at 0.25 dB/LSB in the tiler, pinned with the 2.42 converter flags --input_dtype, --input_layout, --custom_io, --preserve_io_datatype and quantizer --use_native_input_files, checked in the qnn-context-binary-utility dump (offload_graph_io_quantization=0 exists only on the optional ORT-EP path). Outputs obj, box, fam (one 12-channel tensor) and occ on 64x64, each Clip-bounded with its encoding fixed to the Clip range via --quantization_overrides; w8a8 --use_per_channel_quantization with class-balanced calibration. ReLU/ReLU6 by default, HardSwish only after a v68 fusion check; channels in multiples of 32; SpecDet-G (grouped, <=32 channels per group) promoted over depthwise S if its AP >= S. ONNX export opset 17-21 with ir_version=10 set explicitly. Generator: dsp_arch v68, soc_model 35, vtcm_mb=2 explicit (default requests 4,194,304 B and fails 0x138d); CI rejects any binary above 2 MB VTCM. FP16/FP32 on HTP not available; one A16W8 test on the fam head only (budget 2-4x INT8 latency). Expected graph time (model, MAC-scaled from AI Hub QAIRT 2.50): SpecDet-S about 1.0-1.3 ms, M about 3.1-3.9 ms.
+    - **Reason:** Native-path flags, VTCM behaviour and head-collapse hazards on QCS6490.
+    - **Sources:** reaudit_A [3] corrections 1,2,7,9,15; confirmed 6-12,15,16,25,34; new_risks 3
+    - **Saving usd:** 0
+  51.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** decision
+    - **Part:** HTP gates (with-Lime default)
+    - **Anchor:** - Ворота HTP: p99 ≤ 28 ms при 50% навантаження без Lime; ≤ 11.7 ms або ≤ 41 тайлів/с з Lime; плюс 8-годинний прогін з ін'єкцією збоїв.
+    - **Instruction:** Replace with: default gate (Lime kept, 18.10): p99 <= 11.7 ms at 42.5 tiles/s, otherwise cap at 41 tiles/s; no-Lime profile: p99 <= 28 ms at 16.6-17.6 tiles/s. Choose the lowest-power DCVS mode that meets p99 with 2x margin; RPC polling off by default; log FastRPC per-call overhead. 8 h soak with fault injection: canary tile every 5 min whose output hash must equal the golden one, plus one forced CDSP crash.
+    - **Reason:** User kept the Lime, so the with-Lime gate is the default.
+    - **Sources:** reaudit_A [3] corrections 14; corrected_spec 'GATES'; user_requirements 'User decisions'
+    - **Saving usd:** 0
+  52.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** CPU fallback rate
+    - **Anchor:** CPU-режим — 4-6 тайлів/с
+    - **Instruction:** Replace with: CPU mode – target >=4 tiles/s on one A55 (unmeasured; needs 2.3-3.5 GFLOP/s against a 15.2 GFLOPS A55 FP32 peak, model); if below, raise K or allow CPUQuota of about 150 % on CPU0-3, never take time from the A78s.
+    - **Reason:** Not measured anywhere.
+    - **Sources:** reaudit_A [3] corrections 13; confirmed 34
+    - **Saving usd:** 0
+  53.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** removal
+    - **Part:** T2b on device
+    - **Anchor:** T2b — експеримент
+    - **Instruction:** Replace with: T2b (head re-quantisation) and T3 only at the home base (env A), returning a new golden-gated context binary; impossible on the device (no aarch64 qairt-quantizer, no libPyIrQuantizer/Optimizer; HTP graph composition and updatable static tensors 'Not supported for QCLINUX'; on-device DLC prepare crashed the CDSP in 31208). On the device T0, T1 and T2 run on the CPU only (T2 on CPU4-6). Optionally drop libQnnHtpPrepare.so from the inferd-htp path after the load-without-prepare test.
+    - **Reason:** T2b cannot run on the device.
+    - **Sources:** reaudit_A [3] corrections 8; new_risks 2; confirmed 10
+    - **Saving usd:** 0
+  54.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** NPU class policy (TorchSig, masks)
+    - **Anchor:** - Політика класів (CI і пристрій): без радарів
+    - **Instruction:** Append: TorchSig is an allowlist by signal name – exclude lfm-radar, dmr and p25 and never use TorchSig family labels ('chirp' merges lfm-radar with LoRa CSS; chirpss only for lora_sat); CI fails on any banned name in a dataset manifest. The pre-write mask list also includes 1544-1545 MHz (Cospas-Sarsat MEOSAR, rule item 17).
+    - **Reason:** Family labels would leak radar into training.
+    - **Sources:** reaudit_A [3] corrections 17; new_risks 5; operator_notes item 17
+    - **Saving usd:** 0
+  55.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** Datasets and licences
+    - **Anchor:** - Датасет: квота 20 GB на UFS
+    - **Instruction:** Append: HisarMod2019.1 licence unverified (IEEE DataPort page states none; ToS unread) – pretraining/benchmarks only, never in redistributable weights. SatNOGS DB is CC BY-SA 4.0: keep the per-record licence field and exclude BY-SA and NC data from any published weights until reviewed. RadioML (CC BY-NC-SA 4.0) benchmark only.
+    - **Reason:** Licence claim refuted; ShareAlike risk.
+    - **Sources:** reaudit_A [3] corrections 18; new_risks 9; refuted_findings 6; confirmed 31
+    - **Saving usd:** 0
+  56.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** Home base environments
+    - **Anchor:** - Домашня база: x86-64 з ≥16 GB RAM і контейнером ubuntu:22.04 / Python 3.10 з QAIRT 2.42 (мінімум без GPU)
+    - **Instruction:** Replace with three environments: Env A converter (frozen, offline): ubuntu:22.04 container, apt python3.10, QAIRT 2.42 zip v2.42.0.251225.zip (1,543,955,191 B, MD5 8afeb63c22bd4bacb721648636c8829c = ETag, SHA-256 1a744ed72a813fc9dd4a29e31b1685f784786102fd45414d74915bb3351ae321), constraints onnx==1.16.1 and numpy==1.26.4, pip check and pin the protobuf the converter actually imports (QAIRT lists 3.19.6 while onnx 1.16 needs >=3.20.2), no AIMET and no TorchSig, generator jobs one at a time with logs kept; Python 3.10 is EOL since 2026-10-01 and Ubuntu 22.04 standard support ends 2027-06-01, so env A stays offline. Env B train/parity: Ubuntu 24.04, Python 3.12, torch 2.14.1, torchvision 0.29.1, onnxruntime 1.31.0, scikit-learn 1.9.1, onnx 1.23.2, torchsig 2.2.0, sigmf 1.13.0. Env C optional: AIMET 2.41.0 (fallback 2.22.0) in its own venv, handing ONNX + encodings JSON to env A's --quantization_overrides; never trusted without an HTP measurement (aimet pulls onnxscript, whose 0.7.2 needs onnx>=1.17). Device stage 2: torch 2.14.1+cpu from the /whl/cpu index only (159,242,183 B, sha256 2af649994b36dffc627175c3f306d9e513a309b58d4619ac7107577613336454), faiss-cpu 1.15.1, scikit-learn 1.9.1. GPU optional, only for T3 (prices unverified). Never redistribute the zip; AI Hub never used (no longer offers 2.42).
+    - **Reason:** QAIRT pins conflict with TorchSig and AIMET dependencies.
+    - **Sources:** reaudit_A [3] corrections 6,7; new_risks 1,10,11; confirmed 2-5,30; https://pypi.org/pypi/aimet-torch/json ; https://pypi.org/pypi/torchsig/json
+    - **Saving usd:** 0
+  57.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** decision
+    - **Part:** Roadmap Lime work
+    - **Anchor:** Роботи з Lime — лише якщо Lime залишено 1.12.
+    - **Instruction:** Replace with: Lime kept (user decision 18.10.2026) – Lime work is part of the default build; Lime acceptance within the 30-day guarantee (section 8); every menu leaf still declares a no-Lime/no-T7 backend.
+    - **Reason:** User decision.
+    - **Sources:** user_requirements 'User decisions'; reaudit_A [2] corrected_spec header
+    - **Saving usd:** 0
+  58.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** Visible RAM
+    - **Anchor:** **RAM** (плата 12 GB; близько 11.3 GiB видимо — екстраполяція з виміряних плат: 6 GB показує 5609 MB, 8 GB — 7604 MiB; RSS застосунків — модель)
+    - **Instruction:** Replace '11.3 GiB' with: plan with about 10.9 GiB (model: 8 GB board 8192 - 7604 = 588 MiB reserved; scaled to 12 GB plus 64 MiB struct-page = 11,636 MiB = 11.36 GiB; minus the unverified 512 MiB WP-firmware penalty = 10.86 GiB; 7604 MiB was measured on 6.17.1-3 with unstated firmware). W1-2 MemTotal gate on 260120 + 6.18.2-4 passes at >=10.9 GiB; re-run the table with the measured value.
+    - **Reason:** WP reserved-memory layout change; with-Lime training row is tight.
+    - **Sources:** reaudit_A [0] corrections 16; bench_tests 1; confirmed 3
+    - **Saving usd:** 0
+  59.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** Free-RAM model
+    - **Anchor:** Вільна RAM (модель): без Lime, прохід — 4.6-7.4 GiB
+    - **Instruction:** Recompute all four free-RAM rows with 10.9 GiB instead of 11.3 GiB (about 0.4 GiB less each, model) and list the with-Lime rows first, since with-Lime is the default build; flag the with-Lime training row (v1: 0.8-3.1 GiB) as the tight case.
+    - **Reason:** Visible RAM model lowered.
+    - **Sources:** reaudit_A [0] corrections 16
+    - **Saving usd:** 0
+  60.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** CPU budget LIME-W FFT
+    - **Anchor:** Якщо VkFFT не запрацює на Adreno 643, CPU-запасний LIME-W потребує ще близько 2 ядер A78.
+    - **Instruction:** Replace with: FFTW is the default; LIME-W (56 MS/s, N=65536) needs 854 FFT/s, or 1709/s with 50 % overlap; at an assumed 3-5 GFLOPS per A78 core with FFTW NEON one core does 572-954 FFT/s, i.e. 0.9-1.5 cores without overlap; budget 1-2 A78 cores for LIME-W (model, not measured).
+    - **Reason:** FFTW default.
+    - **Sources:** reaudit_A [2] corrections 16
+    - **Saving usd:** 0
+  61.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** GPU line
+    - **Anchor:** - GPU: VkFFT близько 7.8 GFLOPS з 808 GFLOPS FP32 (Radxa, Mesa 25.2.8).
+    - **Instruction:** Append: no public VkFFT or Turnip compute result exists for the QCS6490; Radxa staff say Vulkan is unsupported as a llama.cpp backend on the Q6A (OpenCL supported), a mainline Gentoo user reports Vulkan working; VkFFT is used only after its bench gate.
+    - **Reason:** Unproven GPU path.
+    - **Sources:** reaudit_A [2] corrections 16; confirmed 18
+    - **Saving usd:** 0
+  62.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Raw-IQ voice policy
+    - **Anchor:** labrx до будь-якого сирого запису накладає **статичну маску голосу**
+    - **Instruction:** Replace the static-mask-only rule with a fail-closed allowlist: raw bins are written only inside (a) predicted data-downlink windows (SatNOGS transmitter with a data mode, pass +/- Doppler + margin) or (b) bench/conducted captures; in amateur 144-146 and 430-440 MHz, PMR446, land-mobile, marine VHF and aero 118-137 MHz, bins outside allowlist windows are excised before write regardless of the NPU. Keep the static mask (437.800, 436.795, 145.800 MHz) as an extra layer; nfm_voice boxes spectrogram only. Unit test: synthetic NFM voice at 145.500, 433.500 and 446.006 MHz inside a pinned raw capture is excised.
+    - **Reason:** Static mask leaves other FM voice to unmeasured NPU recall.
+    - **Sources:** reaudit_A [3] corrections 19; bench_tests 11
+    - **Saving usd:** 0
+  63.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** SoC thermal trips and app ladder
+    - **Anchor:** - **SoC.** Tj максимум 95 °C; тротлінг близько 90-91 °C; очікування близько 85 °C типово і 90-100 °C на піках режиму G на сонці при 35 °C. Драбина скидання при 80 і 85 °C.
+    - **Instruction:** Replace with: kernel trips (6.18.2 sc7280.dtsi): CPU passive 90/95 C, GPU passive 95/100/105 C, NSP (nspss0/1), DDR, video, camera, cpuss and aoss only a 'hot' trip at 90 C, critical 110 C everywhere; 95 C is the second CPU passive step, not Tj max. The kernel never throttles the HTP, so a runaway NPU load runs to the 110 C shutdown. labd and labclassify ladder on the max of cpu*, gpuss*, nspss0/1 and ddr: 80 C pause the trainer and reduce HTP duty; 85 C stop HTP inference. Log the msm-skin, ufs and xo thermistor zones. Fan on 60 / off 50 C; training only below 75 C. Keep the expectation figures as model.
+    - **Reason:** Prevents an NPU-driven critical shutdown in the sun.
+    - **Sources:** reaudit_A [0] corrections 12; new_risks 5; confirmed 20
+    - **Saving usd:** 0
+  64.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** Wi-Fi/BT board-level block
+    - **Anchor:** Wi-Fi/BT: rfkill + USB authorized=0 у кожному польовому і QUIET профілі; самоперевірка підтверджує, що модуля немає в lsusb і що 2.4 GHz тихо.
+    - **Instruction:** Extend: layers = aic8800/btusb module blacklist with 'install /bin/false', udev authorized=0 by FE1.1s port-4 devpath, WIFI_PWR_EN gpio-hog low in the field DTBO (pending W1-2), rfkill. Self-test pass: no device on P4 (lsusb -t), no wlan netdev, no hci0 – also after a warm reboot from the home root with Wi-Fi up.
+    - **Reason:** Unpowered radio instead of a software block.
+    - **Sources:** reaudit_A [2] corrections 9; bench_tests 3
+    - **Saving usd:** 0
+  65.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** new_risk
+    - **Part:** Pico RT6150 regulator spurs
+    - **Anchor:** Вентилятори — постійний струм, без PWM.
+    - **Instruction:** Append: the Pico RT6150 buck-boost switching frequency is not in the Pico datasheet – measure it and add its harmonics (PFM and PWM states) to the harmonic scan; the GP23 state is chosen by that A/B.
+    - **Reason:** Unknown spur source on the HMI MCU.
+    - **Sources:** reaudit_A [2] corrections 7; analogs_G2 Pico conditions
+    - **Saving usd:** 0
+  66.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** new_risk
+    - **Part:** EDID override limit
+    - **Anchor:** Фактичну частоту перевірити modetest і debugfs
+    - **Instruction:** Append: drm.edid_firmware is applied on the msm DP path only after HPD and a successful DPCD/sink-count read; it cannot rescue a dead HPD/AUX path (the 7.0.11 regression), so the kernel hold is the only protection. Check /sys/class/drm/card1-HDMI-A-1/edid byte-identical to field.bin.
+    - **Reason:** Override is not a fallback for bridge failures.
+    - **Sources:** reaudit_A [2] new_risks 7; confirmed 22; bench_tests 0
+    - **Saving usd:** 0
+  67.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** HMI key pitch
+    - **Anchor:** 2x3 герметичні кнопки (HOME, BACK, REC, MARK, FN, LOCK) з кроком 13 мм
+    - **Instruction:** Replace '13 мм' with 19-21 mm pitch (7-9 mm edge gap; block 31-33 x 50-54 mm, i.e. pitch + cap wide and 2 x pitch + cap tall); 22-25 mm only if the 135-140 mm face height still fits the 35 mm main knob, the volume encoder and 62 mm of keys; keys under a silicone keypad or boots (KSC641J IP67 covers the switch only; '12 mm key' is a printed cap/plunger over a 6.2 mm switch with 7.7 mm actuator); distinct cap shapes (LOCK and REC with a ridge).
+    - **Reason:** At 13 mm, 12 mm caps leave 1 mm; fewer gloved mispresses; real sealing.
+    - **Sources:** reaudit_A [2] corrections 8; new_risks 6; refuted_findings 9
+    - **Saving usd:** 0
+  68.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** new_risk
+    - **Part:** Main tuning encoder
+    - **Anchor:** головний енкодер з натисканням 30-35 мм
+    - **Instruction:** Append: mounted on a small daughterboard with a connector, one spare carried; O-ring or boot behind the panel (PEC11R: 30,000 rotations min, 60 RPM max, -30 C lower limit, no sealing class; a heavily used tuning knob may need replacement within months, model).
+    - **Reason:** Encoder life.
+    - **Sources:** reaudit_A [2] new_risks 5; confirmed 15
+    - **Saving usd:** 0
+  69.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** LOCK in rain
+    - **Anchor:** у дощ — LOCK і робота лише енкодерами
+    - **Instruction:** Append: LOCK sets libinput touch sendEventsMode=no via labwc --reconfigure (matches by category, survives touch USB re-enumeration); EVIOCGRAB only as fallback.
+    - **Reason:** Simpler, robust LOCK.
+    - **Sources:** reaudit_A [2] corrections 10
+    - **Saving usd:** 0
+  70.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** Lime software and PCIe
+    - **Anchor:** TX-порт навантажено 50 Ohm, а TX-потік LimeSuiteNG/Soapy патчем повертає помилку (#11)
+    - **Instruction:** Append: LimeSuiteNG 37cb183 without GUI and gr-limesuiteng; the riser link defaults to max-link-speed=2 (Gen2); Gen3 only after 60 min with zero AER errors (the Android 15 RC 'PCIe 2.0' limit is no Linux evidence).
+    - **Reason:** Lime is the default build.
+    - **Sources:** reaudit_A [0] corrections 14; [1] corrections 23
+    - **Saving usd:** 0
+  71.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Q6A fan control input
+    - **Anchor:** Вентилятор Q6A: увімк. при SoC 60 °C, вимк. 50 °C (команда labd)
+    - **Instruction:** Append: 'SoC' = max of the cpu*, gpuss*, nspss0/1 and ddr zones.
+    - **Reason:** NPU/DDR zones have no kernel cooling.
+    - **Sources:** reaudit_A [0] corrections 12
+    - **Saving usd:** 0
+  72.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** C2 Q6A purchase
+    - **Anchor:** збій — гарантійний випадок (Allnet повертає лише 7 днів, невикористане), логи UART зберегти.
+    - **Instruction:** Replace with: Europe (user region) buys only from TinyTronics (EUR 148 incl. VAT, EU seller, no import VAT); Allnet only if TinyTronics is out of stock (landed cost per 2.1). A burn-in failure is a defect claim reported the same day with UART logs (Allnet 7-day / EU 14-day returns only for unused goods). The 16 GB branch is dropped (no stock anywhere). Never AliExpress.
+    - **Reason:** Region decided; cheaper EU path; return terms.
+    - **Sources:** reaudit_A [0] corrections 0,1; new_risks 10
+    - **Saving usd:** 23.62-63.52 vs Allnet (see 2.1)
+  73.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** C6 overlay and aliases
+    - **Anchor:** Один об'єднаний lab-q6a.dtso з оверлеїв Radxa uart6, uart7, i2c0, i2c2.
+    - **Instruction:** Append: fragments copied from radxa-overlays 0.2.31; /aliases serial1 = uart6 (998000), serial2 = uart7 (99c000); udev /dev/lab/gnss and /dev/lab/pico by platform path; GPIO96 owned by pps-gpio (only defined as mi2s0 pinctrl state; no MI2S node may claim it).
+    - **Reason:** ttyHS order follows probe order.
+    - **Sources:** reaudit_A [0] corrections 5; confirmed 12,13; operator_notes item 26
+    - **Saving usd:** 0
+  74.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C6 fan thresholds input
+    - **Anchor:** вентилятор Q6A вмик. при 60 °C, вимк. при 50 °C (команда labd)
+    - **Instruction:** Append: on the max of cpu*, gpuss*, nspss0/1 and ddr zones; NSP/DDR have no kernel passive cooling (see 5.6).
+    - **Reason:** Thermal trips re-read.
+    - **Sources:** reaudit_A [0] corrections 12
+    - **Saving usd:** 0
+  75.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** C7 lease enforcement
+    - **Anchor:** оренда примусово обмежується тимчасовими DevicePolicy=closed + DeviceAllow на цьому USB-вузлі.
+    - **Instruction:** Append: as system units (User=lab) with DeviceAllow also for /dev/dri/renderD128, ProtectSystem=strict, ReadOnlyPaths=/data, ReadWritePaths=/data/products/<lease>; needs CONFIG_CGROUP_BPF=y; EPERM self-test, fallback udev ACL/group (systemd #23198). SatDump is not a lease engine (no hardware SDR sources); sdrangel/sdrangelsrv bind 127.0.0.1.
+    - **Reason:** Enforcement can be silently ignored; GPU node needed.
+    - **Sources:** reaudit_A [2] corrections 6; [1] corrections 3,9; operator_notes item 20
+    - **Saving usd:** 0
+  76.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C7 SatDump live
+    - **Anchor:** (живий потік — лише якщо 2.0-alpha це підтримує)
+    - **Instruction:** Replace with: (live stream supported: net_source UDP cf32 from labrx on 127.0.0.1; file decode remains the default).
+    - **Reason:** Verified in SatDump source.
+    - **Sources:** reaudit_A [1] corrections 5
+    - **Saving usd:** 0
+  77.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C11 bias-tee token
+    - **Anchor:** rtlsdr_set_bias_tee() і rtlsdr_set_bias_tee_gpio() відмовляють «on», якщо LAB_BIAS_OK не дорівнює серійному номеру пристрою; labd ставить його тільки в DC-безпечних юнітах.
+    - **Instruction:** Replace with: the gate refuses 'on' only for GPIO 0 (bias pin) in rtlsdr_set_bias_tee_gpio() and in rtlsdr_set_bias_tee(); GPIO 5 (V4L HF/VHF input switch, driven on for every band above 28.8 MHz) and all off requests pass, otherwise every V4L tune above 28.8 MHz fails (137, 145, 437, 1090 MHz) while HF works. Token = root-owned file /run/lab/bias/<serial> written only by labd in DC-safe units (no environment variable). Policy gate, not a security boundary (raw libusb bypasses it); hardware DC-sense/eFuse stays the safety layer. Zero-copy OFF verified by CI; Ubuntu librtlsdr2 (= 2.0.1-2build1) at -1. Also check airspyhf_get_bias_tee_count == 0.
+    - **Reason:** Literal gate breaks VHF/UHF; operator note 12c confirmed.
+    - **Sources:** reaudit_A [1] corrections 0,1,15; refuted_findings 4; operator_notes items 12,12c
+    - **Saving usd:** 0
+  78.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C13 chrony
+    - **Anchor:** refclock PPS /dev/pps0 lock NMEA
+    - **Instruction:** Replace the chrony snippet with: refclock SHM 0 refid NMEA offset <measured> delay 0.2 noselect; refclock PPS /dev/pps0 lock NMEA refid PPS prefer; makestep 1 3; maxchange 5 1 -1; rtcsync (lock needs a refclock with refid NMEA). Keep pps-gpio DKMS (PPS_CLIENT_GPIO unset in 6.18.2-4; =m only in the 7.0 defconfig, operator note 4).
+    - **Reason:** PPS was not selectable.
+    - **Sources:** reaudit_A [1] corrections 16; confirmed 20,24; [0] confirmed 10
+    - **Saving usd:** 0
+  79.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** rule
+    - **Part:** C16 ADS-B/AIS
+    - **Anchor:** треки ADS-B з dbFlags&1 і AIS тип 35 не показуються і не логуються
+    - **Instruction:** Replace with: ADS-B tracks with dbFlags&1 or an ICAO address in tar1090's military ranges are not shown or logged; profile refused without a pinned aircraft.csv.gz no older than 90 days (fail closed); AIS vessels are shown/logged only after a static message with ship type other than 35 (purge on a late 35).
+    - **Reason:** readsb suppression is a silent no-op without --db-file.
+    - **Sources:** reaudit_A [2] corrections 14; [1] corrections 21
+    - **Saving usd:** 0
+  80.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** rule
+    - **Part:** C16 Artemis and Bluetooth
+    - **Anchor:** Artemis показує лише «out of scope»; Bluetooth — rfkill + деавторизація USB
+    - **Instruction:** Replace with: artemis-db v74 (DB only, no Artemis GUI) matched in labd; stop on {Military, Radar, Numbers Stations}, the deny regex or a masked band (no 'Government' category exists); shown only as 'out of scope'. Bluetooth/Wi-Fi in the field: module blacklist with install /bin/false, port-path authorized=0, WIFI_PWR_EN hog after W1-2, rfkill second.
+    - **Reason:** Category gap; hardware-level block.
+    - **Sources:** reaudit_A [2] corrections 9,15
+    - **Saving usd:** 0
+  81.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C16 WEFAX backend
+    - **Anchor:** WEFAX — лише цивільні метеослужби (Northwood виключено
+    - **Instruction:** Add after the WEFAX clause: backend = OpenWebRX+ 'fax' with one profile per allowlisted civil channel and allow_center_freq_changes=false (SDRangel 7.27.2 has no WEFAX plugin).
+    - **Reason:** WEFAX leaf had no backend.
+    - **Sources:** reaudit_A [2] corrections 5
+    - **Saving usd:** 0
+  82.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** C18 A/B boot
+    - **Anchor:** root B 22 GiB, systemd-boot з лічильником спроб і рятувальним пунктом. /data близько 74 GiB
+    - **Instruction:** Replace 'systemd-boot з лічильником спроб' with: real systemd-boot after purging sdboot-is-embloader (embloader has no boot counting), merged DTB per kernel via fdtoverlay, tries=3 + boot-complete.target, systemd-bless-boot; embloader 0.4 write-back fallback only after its test; rescue microSD drill.
+    - **Reason:** Shipped loader cannot count boots.
+    - **Sources:** reaudit_A [0] corrections 10; [1] corrections 20
+    - **Saving usd:** 0
+  83.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C19 ORT CPU fallback
+    - **Anchor:** CPU-запасний ORT (CPUQuota 100%)
+    - **Instruction:** Append: ORT with intra/inter threads 1 and spinning off; if one A55 gives fewer than 4 tiles/s, raise K or allow CPUQuota of about 150 % on CPU0-3, never A78 time.
+    - **Reason:** ORT default spinning.
+    - **Sources:** reaudit_A [3] corrections 13
+    - **Saving usd:** 0
+  84.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** C20 HTP gate default
+    - **Anchor:** **Ворота просування HTP** за набором SDR: p99 до 28 ms при 50% навантаження без Lime (16.6-17.6 тайлів/с); 11.7 ms або до 41 тайла/с з Lime
+    - **Instruction:** Mark the with-Lime gate as the default (Lime kept): p99 <= 11.7 ms at 42.5 tiles/s, otherwise cap 41 tiles/s; the 28 ms gate stays for the no-Lime profile; Phase 0 logs per-call overhead and an INA228 sweep over perf modes and RPC polling.
+    - **Reason:** User decision.
+    - **Sources:** reaudit_A [3] corrections 14
+    - **Saving usd:** 0
+  85.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C22 pin priority
+    - **Anchor:** і закріпити їх на 100
+    - **Instruction:** Replace with: and pin the mirrored snapshot at 990, lab +labN packages at 1001 and every other origin at -1 (at 100 any priority-500 source with the same name wins, e.g. Ubuntu multimon-ng 1.3.0 over the OWRX+ 1.5.0 build; this contradicted #35).
+    - **Reason:** STACK contradicted itself.
+    - **Sources:** reaudit_A [1] corrections 19; new_risks 9
+    - **Saving usd:** 0
+  86.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C22 OpenWebRX+
+    - **Anchor:** OpenWebRX+ 1.2.126 з --no-install-recommends і точними пінами.
+    - **Instruction:** Replace with: OpenWebRX+ 1.2.126+lab1 (patched modes.py allowlist; 1.2.126 itself carries the '?ref=' redirect, relative-path and local-login security fixes, so it stays the base) with --no-install-recommends and exact pins.
+    - **Reason:** No per-mode disable knob exists.
+    - **Sources:** reaudit_A [2] corrections 2; [1] corrections 10
+    - **Saving usd:** 0
+  87.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** C22 source pins
+    - **Anchor:** SatDump 2.0-alpha, SDR++ і SDRangel 7.27.2 (RX-only) з джерел як deb-пакети +labN.
+    - **Instruction:** Append the pins: SatDump 1aedd602 (plugin allowlist), SDR++ 8c9f5ee8, SDRangel v7.27.2 97e9e21 (build allowlist), gr-satellites 4210dc45, Gpredict 1d80049b, labwc 0.7.4+lab1, lab-wsjt-decoders (wsjtx-2.7.0), slowrxd c94327ae, libairspyhf1 1.6.8-5~lab1, LimeSuiteNG 37cb183. No public report shows these engines on a QCS6490: run an 8 h W1-2 soak with 2x V4L and the HF+, leasing every engine in turn.
+    - **Reason:** Reproducible builds; unvalidated platform.
+    - **Sources:** reaudit_A [1] corrections 24; corrected_spec
+    - **Saving usd:** 0
+  88.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** C1 VkFFT keep-condition
+    - **Anchor:** (2) стендові дані без Lime показують VkFFT N=65536 від 854 FFT/s на Turnip
+    - **Instruction:** Since the user kept the Lime (18.10), this condition no longer decides the purchase; move it to a labrx backend gate: FFTW default, VkFFT only at >=1709 FFT/s at N=65536 (50 % overlap), max |diff| < 1e-4 and 8 h without VK_ERROR_DEVICE_LOST; CPU budget for LIME-W 1-2 A78 cores (model).
+    - **Reason:** User decision; FFT backend corrected.
+    - **Sources:** reaudit_A [2] corrections 16; user_requirements 'User decisions'
+    - **Saving usd:** 0
+  89.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** D3 watchdog
+    - **Anchor:** **Pico на комутованій LAB5:**
+    - **Instruction:** Add a sentence: the Pico is the primary hardware watchdog (heartbeat over UART7; on loss it cuts power through #2813 OFF, restores it, then pulses J21 pin 3 if the 3.3 V rail does not appear within 1-2 s); QCOM_WDT is unusable (watchdog@17c10000 reserved for Gunyah; no arm,smc-wdt node); optional lab-gunyah-wdt DKMS (RuntimeWatchdogSec=20s, under the 32 s max) only if its probe passes (B8).
+    - **Reason:** gunyah_wdt absent from the build; operator note 3.
+    - **Sources:** reaudit_A [0] corrections 4; confirmed 11; refuted_findings 0; operator_notes item 3
+    - **Saving usd:** 0
+  90.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** replace_part
+    - **Part:** D12 key expander
+    - **Anchor:** 6 кнопок і 2 натискання енкодерів — на PCA9555 по I2C Pico з INT.
+    - **Instruction:** Replace PCA9555 with PI4IOE5V9555 (TCA9555PWR fallback, G2); Pico SC0915 non-wireless only.
+    - **Reason:** PCA9555 superseded; no radio on the HMI MCU.
+    - **Sources:** reaudit_A [2] corrections 17; analogs_G2
+    - **Saving usd:** 0
+  91.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #7 time chain
+    - **Anchor:** GNSS (з SBAS) → gpsd 3.25 → chrony 4.5
+    - **Instruction:** Append: (device /dev/lab/gnss; chrony SHM 0 refid NMEA noselect + PPS lock NMEA prefer, makestep 1 3, maxchange 5 1 -1, rtcsync).
+    - **Reason:** PPS selectable.
+    - **Sources:** reaudit_A [1] corrections 16
+    - **Saving usd:** 0
+  92.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #8 Artemis
+    - **Anchor:** Artemis 4.2.0 — тільки ідентифікація: збіг з військовим/урядовим записом логується як «out of scope»
+    - **Instruction:** Replace with: artemis-db v74 only (no Artemis 4.2.0 GUI: it can collect and store signals and ships only as a 333 MB Flatpak on aarch64) – identification in labd; the DB has no 'Government' category, so stop on {Military, Radar, Numbers Stations}, the deny regex or a masked band; untagged entries in masked bands fail closed; a match is logged as 'out of scope'.
+    - **Reason:** Category gap.
+    - **Sources:** reaudit_A [2] corrections 15; confirmed 13
+    - **Saving usd:** 0
+  93.
+    - **Section:** 01b_decisions_register
+    - **Kind:** architecture
+    - **Part:** #8 Bluetooth/Wi-Fi
+    - **Anchor:** Bluetooth вимкнено назавжди (сервіс замасковано, драйвер у чорному списку, стан rfkill збережено)
+    - **Instruction:** Append: module names aic_load_fw(_usb), aic8800_fdrv(_usb), aic_btusb(_usb), btusb with install /bin/false; udev authorized=0 by FE1.1s port-4 devpath; aicrf-test forbidden; WIFI_PWR_EN gpio-hog test in W1-2. Pinecil: IronOS V2.23 or later with BLE Off.
+    - **Reason:** Brittle VID:PID rules; hardware block option.
+    - **Sources:** reaudit_A [2] corrections 9; confirmed 14
+    - **Saving usd:** 0
+  94.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #9 TorchSig
+    - **Anchor:** Виключені класи: радари (зокрема TorchSig lfm-radar)
+    - **Instruction:** Append: TorchSig generators by name allowlist (lfm-radar, dmr, p25 excluded; family labels never used); CI fails on a banned name in a dataset manifest.
+    - **Reason:** Family 'chirp' hides radar.
+    - **Sources:** reaudit_A [3] corrections 17
+    - **Saving usd:** 0
+  95.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #10 OpenWebRX+ modes, multimon-ng, WSJT
+    - **Anchor:** режими pager/selcall OpenWebRX+ вимкнено в конфігу (інакше встановлений multimon-ng відкрив би їх).
+    - **Instruction:** Replace with: OpenWebRX+ 1.2.126 has no per-mode disable setting, so 1.2.126+lab1 ships a patched modes.py allowlist (5.4); multimon-ng is not installed in the European build (-1), US profile only via divert behind '-a EAS'. Also change the WSJT-X part of this row: jt9/wsprd come from lab-wsjt-decoders (tag wsjtx-2.7.0) with a wsjtx_app_version shim, and wsjtx itself is pinned -1 (no divert of the GUI package needed).
+    - **Reason:** Config-based disabling does not exist; Europe region.
+    - **Sources:** reaudit_A [2] corrections 2; [1] corrections 11,12
+    - **Saving usd:** 0
+  96.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #10 -1 pins
+    - **Anchor:** Закріплено на −1: js8call, rtl-433, digiham, codecserver, acarsdec, dumphfdl, dumpvdl2.
+    - **Instruction:** Append: plus the full list in 5.4 (dxlaprs-tetra, dxlaprs-lora, codecserver-driver-*, libacars-tools, dump978-fa*, skyaware978, dump1090-fa*, nrsc5 outside US, hpsdrconnector, python3-meshtastic, python3-bleak, m17-demod, lame, python3-paho-mqtt, Hamlib, soapy modules, PPA packages), as pattern pins.
+    - **Reason:** Feature detection would re-enable banned modes.
+    - **Sources:** reaudit_A [2] corrections 3; operator_notes item 31
+    - **Saving usd:** 0
+  97.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #11 build audits
+    - **Anchor:** Аудит збірки SDRangel падає на будь-якому TX, DSD, LibMbe, DSDcc чи SerialDV .so.
+    - **Instruction:** Append: SDRangel is built from an allowlist (5.4) with every samplesink/samplemimo .so deleted; SatDump is built without hardware/network SDR sources (HackRF/BladeRF supports contain TX sinks, commit 1aa692b) and CI checks that the installed SatDump exposes no sink for any SDR and that the plugin dir equals the allowlist (operator note 23).
+    - **Reason:** TX-capable code paths outside channeltx.
+    - **Sources:** reaudit_A [1] corrections 3,8; [2] corrections 4; operator_notes item 23
+    - **Saving usd:** 0
+  98.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #11 LimeSuiteNG
+    - **Anchor:** LimeSuiteNG — з -DBUILD_PLUGINS_AMARISOFT=OFF
+    - **Instruction:** Append: and -DBUILD_GUI=OFF, pinned at limesdr-micro-staging 37cb183, without gr-limesuiteng (limeGUI and CLI tools are TX-capable without the setupStream patch).
+    - **Reason:** TX-capable GUI/tools.
+    - **Sources:** reaudit_A [1] corrections 23
+    - **Saving usd:** 0
+  99.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #13 Q6A board facts
+    - **Anchor:** Hexagon v68 HTP, 12 TOPS
+    - **Instruction:** Replace '12 TOPS' with: ('12 TOPS' is not stated in product brief rev 1.7 – unverified); brief rev 1.7 (10 Oct 2026): LPDDR5 5500 MT/s, Adreno 643 with OpenCL 2.0, M.2 M-key PCIe Gen3 x2 for 2230 NVMe only (no SATA), 1x USB 3.1 OTG Type-A + 3x USB 2.0 Type-A, available until at least Sep 2035.
+    - **Reason:** Primary-source check.
+    - **Sources:** reaudit_A [0] confirmed 2; https://dl.radxa.com/q6a/docs/radxa_dragon_q6a_product_brief.pdf
+    - **Saving usd:** 0
+  100.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #13 measured power
+    - **Anchor:** 2.9 W простій, 9.3 W stress-ng, 10.1-10.17 W пік (виміряно).
+    - **Instruction:** Append: (measured at the wall on an 8 GB board with kernel 6.17.1-3, sbc-reviews #85: 2.9 W idle, 9.3 W stress-ng --matrix, 9.5 W Geekbench, 10.1 W HPL).
+    - **Reason:** Context of the measurement.
+    - **Sources:** reaudit_A [0] confirmed 3
+    - **Saving usd:** 0
+  101.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #15 power requirement
+    - **Anchor:** Radxa просить щонайменше 24 W (12 V/2 A).
+    - **Instruction:** Replace with: product brief rev 1.7: 18 W minimum (12 V/1.5 A), 24 W (12 V/2 A) at full USB3/PCIe load; Radxa staff: J21 range 4.5-16 V (strongtz, 15 Oct 2026) / 3.6-16 V (BigfootACA).
+    - **Reason:** Brief re-read.
+    - **Sources:** reaudit_A [0] confirmed 2,26; corrections 15
+    - **Saving usd:** 0
+  102.
+    - **Section:** 01b_decisions_register
+    - **Kind:** condition
+    - **Part:** #15 J21 wiring
+    - **Anchor:** J21: пін 1 = 12 V, пін 2 = GND, пін 3 = клавіша PWR.
+    - **Instruction:** Append: verify by continuity before wiring (pin to the ADP12V input caps, GND and PWR_ON_KEY); auto power-on with 12 V applied differs between boards (forum 30852), so keep the Pico J21 pin-3 pulse; bench B11.
+    - **Reason:** Avoids a wrong-pin connection on the main input.
+    - **Sources:** reaudit_A [0] corrections 15; bench_tests 10
+    - **Saving usd:** 0
+  103.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #16 cooling facts
+    - **Anchor:** Tj 95 °C; тротлінг близько 90-91 °C.
+    - **Instruction:** Replace with: CPU passive trips 90/95 C, GPU passive 95/100/105 C, NSP and DDR only 'hot' 90 C with no passive cooling, critical 110 C everywhere (95 C is the second CPU passive step, not Tj max); ladder on cpu*, gpuss*, nspss0/1, ddr.
+    - **Reason:** Kernel never throttles the HTP.
+    - **Sources:** reaudit_A [0] corrections 12; confirmed 20
+    - **Saving usd:** 0
+  104.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #18 Kioxia quirk
+    - **Anchor:** Квірк Kioxia є лише в 7.0.11-7, не в утримуваному 6.18.2-4.
+    - **Instruction:** Replace with: the Kioxia quirk (UFS_DEVICE_QUIRK_PA_TACTIVATE) is in radxa/kernel 559f4f9, two commits after 6.18.2-4, and matches only model THGJFGT1E45BAILB; on 0x198 first test without system suspend and with UFS rpm_lvl=0, then build 6.18.2-4+lab1 with the read model string if errors appear.
+    - **Reason:** Model-specific quirk; avoid a self-built kernel by default.
+    - **Sources:** reaudit_A [0] corrections 11; refuted_findings 5
+    - **Saving usd:** 0
+  105.
+    - **Section:** 01b_decisions_register
+    - **Kind:** new_risk
+    - **Part:** #20 EDID override
+    - **Anchor:** польовий режим через EDID-override з initramfs
+    - **Instruction:** Append: (applied only after HPD and a successful DPCD/sink-count read on the msm DP path; cannot rescue a dead HPD/AUX path, so the kernel hold is the only protection).
+    - **Reason:** Limits of the override.
+    - **Sources:** reaudit_A [2] new_risks 7; confirmed 22
+    - **Saving usd:** 0
+  106.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #21 PCIe default
+    - **Anchor:** Gen2 запасний через max-link-speed=2
+    - **Instruction:** Replace with: through the riser Gen2 (max-link-speed=2) is the default; Gen3 only after the 60-min zero-AER test (the user's 8 GT/s x1 acceptance test); the Android 15 RC 'PCIe 2.0' limit is not Linux evidence. Also change the row start 'Тільки якщо Lime залишено' to 'Lime залишено (18.10.2026)'.
+    - **Reason:** Thin margin through the riser; user decision.
+    - **Sources:** reaudit_A [0] corrections 14; user_requirements 'User decisions'
+    - **Saving usd:** 0
+  107.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #22 SPI dump procedure
+    - **Anchor:** резервна копія SPI NOR (розділи cdt/ddr) через edl-ng до будь-якої зміни прошивки; уникати сторонніх продавців AliExpress.
+    - **Instruction:** Replace with: two full raw reads of the whole 32 MiB SPI NOR (33,554,432 B as edl-ng reports; schematic label 8 MiB is stale) with equal SHA-256 before any SPI write (on 6.18.2-4 + 260120 'dd if=/dev/mtd0 bs=4096', otherwise an EDL read with edl-ng v1.6.0 – check the sub-command with --help), stored off-device with the board serial; never flash with rsetup or setup.sh (whole-chip erase, generic 24-byte CDT, zeroed ddr: forced DDR retraining, the stage where reported boards die); if unavoidable, flash 260120 over EDL and keep the dump to restore cdt, ddr, DPP, SECDATA, APDP. Never AliExpress (RMA as store points, 30749).
+    - **Reason:** Flash procedure itself destroys per-board data.
+    - **Sources:** reaudit_A [0] corrections 2; new_risks 0,7,10; confirmed 27
+    - **Saving usd:** 0
+  108.
+    - **Section:** 01b_decisions_register
+    - **Kind:** removal
+    - **Part:** #23 Path B (7.0.11)
+    - **Anchor:** Шлях B (7.0.11-7 + clk_ignore_unused) — лише для Kioxia UFS, з першим тестом NPU і на другому носії.
+    - **Instruction:** Replace with: no 7.0.x, no clk_ignore_unused, no 260916, no UKI. Kioxia UFS -> 6.18.2-4+lab1 from 559f4f9 (see #18). 7.0.11-7 is the only upstream-supported path, adopted only after the HDMI (31304), FastRPC/NPU (31391 fails on 7.0.11-5), PPS and EDID tests pass; the A/B scheme must never let apt pull 7.0.11 onto a slot (linux-image-7.* at -1). Reflash only if the BIOS is older than 20251230 or is 260916, over EDL with flat_build_wp_260120 only.
+    - **Reason:** Path B unnecessary; NPU fails on 7.0.11.
+    - **Sources:** reaudit_A [0] corrections 11; corrected_spec 'Base OS and kernel', 'Day 1'; [3] confirmed 22; operator_notes item 29
+    - **Saving usd:** 0
+  109.
+    - **Section:** 01b_decisions_register
+    - **Kind:** condition
+    - **Part:** #23 offline archive
+    - **Anchor:** Архівувати zip 260120, EDL-NG і образ офлайн із SHA-256.
+    - **Instruction:** Replace with: archive offline (on the device and off it) with SHA-256: dragon-q6a_flat_build_wp_260120.zip (10.9 MiB), 260916.zip (10.2 MiB), edl-ng-dist-v1.6.0.zip (31.3 MiB), the 6.18.2-4 and 6.18.2-3 image/header/meta debs from the GitHub releases, edk2 0.1.0-5 (0.1.0-7 as archive), fastrpc 1.0.4-1 and 1.0.7-3 sets, radxa-firmware 0.2.29 and 0.2.42, the QAIRT 2.42 zip and qcom-qnn-sdk-v68 deb, and the golden disk image.
+    - **Reason:** Packages exist only as GitHub releases or may vanish.
+    - **Sources:** reaudit_A [0] corrected_spec 'Day 1' item 5; [3] corrections 5,12; new_risks 0
+    - **Saving usd:** 0
+  110.
+    - **Section:** 01b_decisions_register
+    - **Kind:** architecture
+    - **Part:** #24 hold list
+    - **Anchor:** Один список: метапакети linux-image/headers-radxa-dragon-q6a і linux-image-6.18.2-4-qcom;
+    - **Instruction:** Point the row to the full hold list in 5.4 (kernel 6.18.2-4 debs from the GitHub release with sha256; edk2 0.1.0-5; edl-ng 1.4.1; rsetup 0.4.26; overlays 0.2.18; radxa-firmware 0.2.29 unless Phase 0 picks 0.2.42; linux-firmware 0ubuntu2.23; linux-firmware-dragonwing 1.0.0+20251203; qcom-iot-defaults 1.19; radxa-system-config-* 0.6.30; task-* versions; FastRPC set per Phase 0; qcom-qnn-sdk-v68 0.1.0-2; Mesa/libdrm/labwc/XWayland/qt6/pipewire), with the dist-upgrade CI check.
+    - **Reason:** New transitive drift paths found.
+    - **Sources:** reaudit_A [0] corrections 7; corrected_spec 'Holds'
+    - **Saving usd:** 0
+  111.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #25 open items resolved
+    - **Anchor:** Невідомо: який пакет постачає systemd-bless-boot і чи зберігаються змінні UEFI (W1-2).
+    - **Instruction:** Replace with: systemd-bless-boot (binary, service, generator) ships in noble systemd-boot; embloader has no boot counting in any tag; EFI-variable persistence from Linux is unproven (efibootmgr had no effect in 30925) and is tested only to decide any EFI-variable-based fallback (bootctl set-oneshot, check LoaderEntrySelected).
+    - **Reason:** Answered by package and source checks.
+    - **Sources:** reaudit_A [0] confirmed 22,23; [1] corrections 20; bench_tests 9
+    - **Saving usd:** 0
+  112.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #25 cmdline rules
+    - **Anchor:** Лише через /etc/kernel/cmdline і kernel-install; явний пункт за замовчуванням у loader.conf; лічильник спроб через /etc/kernel/tries; рятувальний пункт.
+    - **Instruction:** Append: /etc/kernel/cmdline = r2's full base line (recorded at first boot) + lab parameters, never only the lab additions; no clk_ignore_unused; radxa-system-config-* held at 0.6.30; CI SHA-256 of /etc/kernel/cmdline and /proc/cmdline; entries written by our own kernel-install plugin with explicit devicetree.
+    - **Reason:** 0.7.4 postinst rewrites cmdline and entries.
+    - **Sources:** reaudit_A [0] corrections 6
+    - **Saving usd:** 0
+  113.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #26 watchdog and kernel config
+    - **Anchor:** сторожовий таймер — QCOM_WDT.
+    - **Instruction:** Replace with: hardware watchdog = Pico heartbeat (QCOM_WDT=m exists but watchdog@17c10000 is 'reserved' for Gunyah; GUNYAH_WATCHDOG unset; optional out-of-tree lab-gunyah-wdt, whose symbols are exported in 6.18.2-4). Also confirmed: SOFT_WATCHDOG=m, PSTORE_RAM=m, QCOM_PD_MAPPER=m, OF_OVERLAY=y, OF_CONFIGFS unset, GNSS=m, SND_ALOOP=m, CONFIG_DVB_USB_V2 not set, CONFIG_LSM without apparmor (AppArmor inactive; operator notes 2-4), CMA_SIZE_MBYTES=32, HZ=1000, SERIAL_QCOM_GENI_UART_PORTS=8.
+    - **Reason:** APSS watchdog unavailable to Linux.
+    - **Sources:** reaudit_A [0] confirmed 10,11; corrections 4; [1] confirmed 20; operator_notes items 2,3,4
+    - **Saving usd:** 0
+  114.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #29 apt SDR software
+    - **Anchor:** gr-satellites 5.5.0, SoapySDR 0.8.1, SoapyRTLSDR 0.3.3, Gpredict 2.3 (з мостом 5-значних псевдонімів)
+    - **Instruction:** Replace gr-satellites 5.5.0 and Gpredict 2.3 with the +lab builds: gr-satellites main 4210dc45 (5.10.0~git20260922-0lab1; 5.5.0 has the OTA path traversal and submit_tlm='yes') and Gpredict 1d80049b (2.6+git20261011, no libgps/hamlib, rotctld patch); noble versions pinned -1; alias bridge mandatory (CelesTrak 5-digit numbers exhausted 2026-07-11).
+    - **Reason:** Security and deadlock fixes.
+    - **Sources:** reaudit_A [1] corrections 13,14
+    - **Saving usd:** 0
+  115.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #29 Hamlib
+    - **Anchor:** Hamlib 4.5.5 — лише бібліотека, якщо її тягне залежність
+    - **Instruction:** Replace with: no Hamlib on the device – wsjtx, libhamlib4t64, libhamlib-utils and libhamlib-dev pinned -1 (jt9/wsprd link no Hamlib; Gpredict built without it); libhamlib-dev exists only in the lab-wsjt-decoders sbuild chroot.
+    - **Reason:** Resolves the packaging dead end without rig control.
+    - **Sources:** reaudit_A [1] corrections 12; new_risks 6
+    - **Saving usd:** 0
+  116.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #30 SatDump build
+    - **Anchor:** master (2.0.0-alpha) з джерел із Soapy і legacy API LimeSuiteNG; без inmarsat_support;
+    - **Instruction:** Replace with: pinned 1aedd602 (2.0.0~alpha+git20260929+lab1) with -DPLUGINS_ALL=OFF and the plugin allowlist from 5.4, no hardware/network SDR sources (input only net_source; no Soapy, no LimeSuiteNG), never inmarsat, orbcomm, dmsp, wsf, spacex, bluewalker3; kepler_update_interval 'Never'; plus the pipeline allowlist (rule items 1/14);
+    - **Reason:** PLUGINS_ALL covers only satellite plugins; sources default ON.
+    - **Sources:** reaudit_A [1] corrections 3,4,6; operator_notes items 1,14
+    - **Saving usd:** 0
+  117.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #31 SDR++
+    - **Anchor:** SDR++ з джерел: джерела Soapy і airspyhf увімк.; pager, M17, Falcon9 і recorder вимк.
+    - **Instruction:** Append: pinned 8c9f5ee8; also OFF IQ_EXPORTER, NETWORK_SINK, DISCORD_PRESENCE, RIGCTL_CLIENT and the HACKRF, PLUTOSDR, HERMES, RFSPACE, SPECTRAN_HTTP, SPYSERVER, RTL_TCP, SDRPP_SERVER sources; RIGCTL_SERVER on localhost:4532 (single client).
+    - **Reason:** IQ/audio export paths defaulted ON.
+    - **Sources:** reaudit_A [1] corrections 7; confirmed 8
+    - **Saving usd:** 0
+  118.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #31 SDRangel and SoapyAirspyHF
+    - **Anchor:** SDRangel 7.27.2 RX-only з джерел на Qt 5.15, з аудитом TX-плагінів. SoapyAirspyHF з джерел.
+    - **Instruction:** Replace with: SDRangel 7.27.2 (97e9e21, Qt5) from a build allowlist (5.4); its REST/WebSocket API binds every interface on 8091 by default, so start with -a 127.0.0.1 and IPAddressAllow=localhost; FFTW wisdom mandatory on ARM (-w). SoapyAirspyHF soapy-airspyhf-0.2.1 against libairspyhf1 1.6.8-5~lab1.
+    - **Reason:** Unauthenticated LAN control; SONAME.
+    - **Sources:** reaudit_A [1] corrections 9,15; confirmed 10
+    - **Saving usd:** 0
+  119.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #32 libgpiod
+    - **Anchor:** labd тримає лінії як постійні запити libgpiod v1 з безпечними станами
+    - **Instruction:** Append: (header lines on gpiochip4 looked up by TLMM chip label, not by number).
+    - **Reason:** Chip numbering not stable.
+    - **Sources:** reaudit_A [0] corrected_spec; [2] confirmed 17
+    - **Saving usd:** 0
+  120.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #33 FFT
+    - **Anchor:** VkFFT для тайлів NPU з запасним FFTW.
+    - **Instruction:** Replace with: FFTW for NPU tiles by default; VkFFT only after its bench gate (5.4).
+    - **Reason:** Unproven GPU path.
+    - **Sources:** reaudit_A [2] corrections 16
+    - **Saving usd:** 0
+  121.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #34 instrument software
+    - **Anchor:** NanoVNA-Saver main через pipx (numpy~=2.1, scipy~=1.14)
+    - **Instruction:** Replace with: NanoVNA-Saver v0.7.3 via pipx; QtTinySA v2.0.1 (PySide6 6.12.0 aarch64).
+    - **Reason:** Pinned release instead of main.
+    - **Sources:** reaudit_A [1] corrected_spec 'PYTHON'; confirmed 26
+    - **Saving usd:** 0
+  122.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #35 priorities and updater
+    - **Anchor:** лабораторні пакети з пріоритетом 1001
+    - **Instruction:** Append: mirrored snapshot 990, every other origin -1; the offline updater refuses any package not from the lab repo.
+    - **Reason:** Consistent priorities.
+    - **Sources:** reaudit_A [1] corrections 19
+    - **Saving usd:** 0
+  123.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #36 golden FastRPC set
+    - **Anchor:** З linux-msm/hexagon-dsp-binaries: CDSP.HT.2.5.c4-00004, ADSP c9-00028 і fastrpc_shell_3/unsigned_3 з записаними SHA-256; DT-оверлей додає memory-region (shared-dma-pool) до обох вузлів fastrpc;
+    - **Instruction:** Replace with: only from radxa-firmware-qcs6490 (r2 0.2.29 or 0.2.42, chosen by Phase 0), identified by SHA-256 only (cdsp.mbn, adsp.mbn, both shells, the whole dsp/cdsp tree incl. libc++.so.1/libc++abi.so.1, fastrpc and libcdsprpc1 versions); the shared-dma-pool overlay is optional, tested without it first, installed only via the systemd-boot entry (never rsetup: get_product_id bug, wrong DTB via 'find | head -n 1'); fastrpc set 1.0.4-1 or 1.0.7-3 per the Phase-0 matrix, installed before QNN; own udev rule and sysusers group; check = the Phase-0 matrix (section 8) instead of fastrpc_test alone;
+    - **Reason:** Every working Q6A report uses the matched radxa-firmware set.
+    - **Sources:** reaudit_A [3] corrections 3,4,10,12; [0] corrections 8,9; confirmed 24
+    - **Saving usd:** 0
+  124.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #37 QAIRT hashes
+    - **Anchor:** Zip SDK — 1,543,955,191 байт (можна було завантажити 18.10.2026).
+    - **Instruction:** Append: MD5 8afeb63c22bd4bacb721648636c8829c (= ETag), SHA-256 1a744ed72a813fc9dd4a29e31b1685f784786102fd45414d74915bb3351ae321; deb qcom-qnn-sdk-v68 0.1.0-2 44,221,844 B SHA-256 306fd647b88902d170831980ca68a31d77d77923534e2070783fbeca132a6e54; runtime libs byte-identical to the zip (libQnnHtp 6a04a4b8e276b863eb1ea8550f6855a3f8345412c5548f5679d26d7c2609b02a, V68 stub 1436f5337f6d469cb6aca1095fc7426ab1ac61d030c4a39b2cdf013fe17d9ec4, V68 skel 2cf8b6662cd9c98049c6ac0285d83c4b6966e6a1c9abb00aa843cb8e7e706b3c, qnn-net-run cd778f561e5f553b44acc9b4d63f909e9f728cf00f536108f6ebf0cff7adc264) – write into the golden manifest; copy the zip to the PC and the T7; the deb has no converter or quantizer.
+    - **Reason:** Upgraded from size match to SHA-256 identity.
+    - **Sources:** reaudit_A [3] corrections 0; confirmed 0-2
+    - **Saving usd:** 0
+  125.
+    - **Section:** 01b_decisions_register
+    - **Kind:** keep_with_note
+    - **Part:** #38 Set B
+    - **Anchor:** Прибрано з плану пристрою (ORT 1.27 + onnxruntime-qnn 2.3.0 на QAIRT 2.47).
+    - **Instruction:** Append: never pip-install onnxruntime-qnn into any device venv; Set B (ORT 1.27.0 + onnxruntime-qnn 2.3.0 = QAIRT 2.47.0, cp312 aarch64 wheels 78.7 MB bundling their own QNN libs, ORT floor >=1.24.2) is offered only as an answer to question 7, with its own golden set and soak (it ran fully on a Q6A v68 in 31448).
+    - **Reason:** Keeps rule; documents the only alternative.
+    - **Sources:** reaudit_A [3] corrections 16; refuted_findings 3,4; confirmed 26,27
+    - **Saving usd:** 0
+  126.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #39 activations
+    - **Anchor:** ReLU/ReLU6/HardSwish замість SiLU
+    - **Instruction:** Replace with: ReLU/ReLU6 (Clip 0..6) by default instead of SiLU; HardSwish only after a Phase-0 profile shows it fused on v68; channels in multiples of 32.
+    - **Reason:** 2.42 guide prefers ReLU-family for A8; fusion only on 'latest hardware'.
+    - **Sources:** reaudit_A [3] corrections 9; refuted_findings 2
+    - **Saving usd:** 0
+  127.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #39 input encoding
+    - **Anchor:** кодування входу закріплене (offload_graph_io_quantization=0).
+    - **Instruction:** Replace with: input encoding pinned on the native path with the converter flags --input_dtype, --input_layout, --custom_io, --preserve_io_datatype and quantizer --use_native_input_files, --quantization_overrides, verified in the qnn-context-binary-utility dump (offload_graph_io_quantization=0 only on the optional ORT-EP path).
+    - **Reason:** That option exists only in ORT QNN EP.
+    - **Sources:** reaudit_A [3] corrections 1; confirmed 11,12
+    - **Saving usd:** 0
+  128.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #40 soc_model
+    - **Anchor:** soc_model 35 до перевірки (QNN мапить SM7325 на 35, QCM6490 на 93).
+    - **Instruction:** Replace with: soc_model 35 (2.42 table: QCM6490 = 35 and SM7325 = 35; no SoC is 93; the board's Linux soc_id is 498 = QCS6490, which Radxa's fastrpc packaging treats as below 4 MB VTCM); vtcm_mb=2 set explicitly in every generator config; CI rejects any binary above 2 MB.
+    - **Reason:** '93' claim refuted.
+    - **Sources:** reaudit_A [3] corrections 2; refuted_findings 5; confirmed 8,13,14
+    - **Saving usd:** 0
+  129.
+    - **Section:** 01b_decisions_register
+    - **Kind:** removal
+    - **Part:** #40 35-vs-93 test
+    - **Anchor:** Phase 0: розмір VTCM і порівняння 35/93.
+    - **Instruction:** Replace with: Phase 0: VTCM test (2 MB binary loads; generator-default binary requests 4,194,304 B and fails 0x138d); the 35-vs-93 comparison is dropped.
+    - **Reason:** No SoC model 93.
+    - **Sources:** reaudit_A [3] corrections 2; bench_tests 1
+    - **Saving usd:** 0
+  130.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #42 accuracy gate
+    - **Anchor:** Phase 0: бенчмарк S, M, G; різниця AP INT8 проти FP32 до 2 пунктів.
+    - **Instruction:** Append: AP measured only from HTP outputs (2.42 qnn-net-run), BatchNorm folded; plus a zero-input probe, non-zero variance per output channel and a per-channel scale-count audit of every Conv weight in the dump (CPU QDQ did not predict HTP error in PrismPhi's port); G promoted over S if its AP is at least S's.
+    - **Reason:** Head-collapse hazards on QCS6490.
+    - **Sources:** reaudit_A [3] corrections 15; bench_tests 3
+    - **Saving usd:** 0
+  131.
+    - **Section:** 01b_decisions_register
+    - **Kind:** removal
+    - **Part:** #44 T2b
+    - **Anchor:** T2b: експериментальне переквантування голови.
+    - **Instruction:** Replace with: T2b only at the home base (env A), impossible on the device (no aarch64 qairt-quantizer; composition 'Not supported for QCLINUX').
+    - **Reason:** Cannot run on device.
+    - **Sources:** reaudit_A [3] corrections 8
+    - **Saving usd:** 0
+  132.
+    - **Section:** 01b_decisions_register
+    - **Kind:** architecture
+    - **Part:** #45 home base
+    - **Anchor:** контейнер ubuntu:22.04 / Python 3.10 з архівним QAIRT 2.42.0.251225 (контейнер не перевірено).
+    - **Instruction:** Replace with: three environments – env A converter ubuntu:22.04 / apt python3.10 with QAIRT 2.42 (constraints onnx==1.16.1, numpy==1.26.4; no AIMET, no TorchSig; offline, Python 3.10 EOL since 2026-10-01), env B Ubuntu 24.04 / Python 3.12 for training and parity, env C optional AIMET 2.41.0 in its own venv (details in 5.4).
+    - **Reason:** Dependency conflicts.
+    - **Sources:** reaudit_A [3] corrections 6
+    - **Saving usd:** 0
+  133.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #48 HisarMod licence
+    - **Anchor:** HisarMod2019.1 (CC BY)
+    - **Instruction:** Replace with: HisarMod2019.1 (licence unverified – DataPort ToS; pretraining/benchmarks only, never in redistributable weights)
+    - **Reason:** Licence claim refuted.
+    - **Sources:** reaudit_A [3] corrections 18; refuted_findings 6
+    - **Saving usd:** 0
+  134.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #48 licences verified claim
+    - **Anchor:** Ліцензії перевірено.
+    - **Instruction:** Replace with: Licences verified except HisarMod2019.1; BY-SA (SatNOGS) and NC data stay out of any published weights until reviewed; TorchSig 2.2.0 is MIT.
+    - **Reason:** Accuracy of the claim.
+    - **Sources:** reaudit_A [3] corrections 18; new_risks 9
+    - **Saving usd:** 0
+  135.
+    - **Section:** 01b_decisions_register
+    - **Kind:** architecture
+    - **Part:** #51 shell stack
+    - **Anchor:** Власна Lab Shell (Qt 6.4.2 QML) на labwc 0.7.1 з XWayland; greetd 0.9.0 з обгорткою-лічильником збоїв; cage 0.1.5 як безпечний режим;
+    - **Instruction:** Replace with: Lab Shell (Qt 6.4.2 QML) on labwc 0.7.4+lab1 (6ab9d3f backport; apt 0.7.1 rollback) with XWayland; greetd 0.9.0 with a lab-session wrapper that never exits (internal supervision, 3 crashes/10 min -> cage 0.1.5 --safe, 3 more -> text console; StartLimitBurst=0 or OnFailure drop-in), because greetd exits when a default_session that never created a session exits and its unit allows only 5 restarts in 30 s; Qt 6.12.0 LTS under /opt only as a P5 option;
+    - **Reason:** Crash loop would black-screen the field UI.
+    - **Sources:** reaudit_A [2] corrections 1,12,18; refuted_findings 1
+    - **Saving usd:** 0
+  136.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #52 ergonomics numbers
+    - **Anchor:** Плитки близько 29x20 мм; рядок стану 13 мм з 6 чипами; кнопки від 12 мм з кроком 13 мм;
+    - **Instruction:** Replace with: home tiles about 36 x 22 mm; status bar 13 mm (162 px FHD / 110 px 1280x800) on the OVERLAY layer with 6 chips of at least 18 mm and 3 mm gaps; keys = printed caps over 6.2 mm sealed switches at 19-21 mm pitch under a silicone keypad or boots, distinct cap shapes; acceptance: at least 95 % first-hit accuracy with 3 glove types on 15/20 mm targets and the keys;
+    - **Reason:** 13 mm pitch leaves 1 mm between 12 mm caps.
+    - **Sources:** reaudit_A [2] corrections 8,11; corrected_spec section 5; bench_tests 7
+    - **Saving usd:** 0
+  137.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #79 LC76G device
+    - **Anchor:** Waveshare 24370 LC76G на UART6 (/dev/ttyHS1, udev /dev/gnss0)
+    - **Instruction:** Replace with: Waveshare 24370 LC76G on UART6 (/dev/ttyHS1 fixed by alias serial1; udev /dev/lab/gnss keyed on 998000.serial; kernel gnss-* modules blacklisted)
+    - **Reason:** Name collision with kernel GNSS class.
+    - **Sources:** reaudit_A [1] corrections 16; [0] corrections 5
+    - **Saving usd:** 0
+  138.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** correction
+    - **Part:** Data archive / identification capability
+    - **Anchor:** sigmf, sqlite/DuckDB, restic, Artemis 4.2.0
+    - **Instruction:** Replace 'Artemis 4.2.0' with 'artemis-db v74 (DB only, matched in labd; no Artemis GUI)'.
+    - **Reason:** GUI has collect/store features.
+    - **Sources:** reaudit_A [2] corrections 15
+    - **Saving usd:** 0
+  139.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** correction
+    - **Part:** P21
+    - **Anchor:** Artemis — лише ідентифікація; експорт місця — до 0.1° або 4-символьного локатора.
+    - **Instruction:** Replace with: artemis-db v74 in labd – identification only (stop on Military/Radar/Numbers Stations, deny regex or masked band; untagged in masked bands fail closed); location export rounded to 0.1 deg or a 4-character locator.
+    - **Reason:** Category gap.
+    - **Sources:** reaudit_A [2] corrections 15
+    - **Saving usd:** 0
+  140.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** bench_test
+    - **Part:** P0 receive-only guard
+    - **Anchor:** rfkill wlan + bluetooth; без лазівки «якщо місцеві правила дозволяють».
+    - **Instruction:** Append: plus the field-root module blacklist and port-path authorized=0 self-test (no device on FE1.1s P4, no wlan netdev, no hci0), the bias gate test (offset tuning on without token -> bias rail 0 V) and SoapySDRUtil --info listing only rtlsdr, airspyhf and patched LimeSuiteNG.
+    - **Reason:** Extended receive-only checks.
+    - **Sources:** reaudit_A [2] bench_tests 3; [1] bench_tests 0; [2] corrections 13
+    - **Saving usd:** 0
+  141.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** bench_test
+    - **Part:** P17 logic/GNSS/PPS/console
+    - **Anchor:** BNO085 на I2C2 — прибрано; IMU через Pico.
+    - **Instruction:** Append: UART6/UART7 jumper loopback at 115200 and 921600, 1e6 bytes zero errors, names stable over 20 reboots; UART7 1e6-frame CRC loop; PPS ppstest 1 Hz and chronyc PPS offset under 1 us after 30 min; pinmux one owner per pin (B4, B5).
+    - **Reason:** New bring-up tests.
+    - **Sources:** reaudit_A [0] bench_tests 3,4; [2] bench_tests 9
+    - **Saving usd:** 0
+  142.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** bench_test
+    - **Part:** P16 power/USB first power-on
+    - **Anchor:** Зворотне живлення: 0 V на VBUS Q6A і HDMI +5 V при вимкненій Q6A.
+    - **Instruction:** Append: U35 WS4612 trip current with an e-load or FNB58 (model 1.8-2.4 A; sum of planned J5 loads under 1.5 A); 0 V backfeed on every Q6A USB port with Q6A off and LAB5 on; J21 continuity map, auto-start note, Pico pulse starts the board 20/20, run at 11.0 V and 16.0 V (B10, B11).
+    - **Reason:** New power tests.
+    - **Sources:** reaudit_A [0] bench_tests 9,10
+    - **Saving usd:** 0
+  143.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** ADS-B row
+    - **Anchor:** треки з dbFlags&1 (військові) не показуються і не логуються
+    - **Instruction:** Replace with: tracks with dbFlags&1 or a military ICAO range (tar1090 milRange) are not shown or logged; profile refused without a pinned aircraft.csv.gz (<=90 days); readsb v3.16.17 --net-bind-address 127.0.0.1
+    - **Reason:** Fail-closed military filter.
+    - **Sources:** reaudit_A [2] corrections 14; [1] corrections 21
+    - **Saving usd:** 0
+  144.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** AIS row
+    - **Anchor:** судна типу 35 не показуються і не логуються
+    - **Instruction:** Replace with: a vessel is shown/logged only after a static message (5, 19, 24B) with ship type other than 35; purge on a late 35
+    - **Reason:** Ship type arrives only in static messages.
+    - **Sources:** reaudit_A [2] corrections 14; confirmed 12
+    - **Saving usd:** 0
+  145.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** DSC decoder
+    - **Anchor:** власні ворота DSC або виправлений плагін SDRangel
+    - **Instruction:** Replace with: SDRangel demoddsc only with the lab patch dropping formats 120/123/114 before address decode, tested, and only in sdrangelsrv; OpenWebRX+ 'dsc' removed (decodes all categories with MMSIs); without the patch the DSC leaf is hidden
+    - **Reason:** Both stock DSC decoders show routine calls and MMSIs.
+    - **Sources:** reaudit_A [1] corrections 8; [2] corrections 2,4
+    - **Saving usd:** 0
+  146.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** WEFAX decoder
+    - **Anchor:** sdrangelsrv WEFAX
+    - **Instruction:** Replace with: OpenWebRX+ 'fax' (one profile per allowlisted civil channel, allow_center_freq_changes=false)
+    - **Reason:** SDRangel 7.27.2 has no WEFAX plugin.
+    - **Sources:** reaudit_A [2] corrections 5
+    - **Saving usd:** 0
+  147.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** 4.3 military ADS-B/AIS
+    - **Anchor:** dbFlags&1 і тип 35 не показуються і не логуються.
+    - **Instruction:** Replace with: dbFlags&1 or a tar1090 military ICAO range (fail closed without the pinned DB) and AIS type 35 (decided only from static messages) are not shown or logged; SDRangel demodadsb/demodais and OpenWebRX+ adsb/ais are not built.
+    - **Reason:** Bypass paths closed.
+    - **Sources:** reaudit_A [2] corrections 14
+    - **Saving usd:** 0
+  148.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** 4.3 Artemis row
+    - **Anchor:** | Збіг Artemis з військовим/урядовим записом |
+    - **Instruction:** Replace the first cell with: artemis-db match on category Military, Radar or Numbers Stations, on the deny regex or in a masked band (the DB has no 'Government' category).
+    - **Reason:** Category gap.
+    - **Sources:** reaudit_A [2] corrections 15
+    - **Saving usd:** 0
+  149.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** 4.3 new excluded rows
+    - **Anchor:** | CARTOSAT-3 | Подвійного призначення; не обґрунтовує S-band. |
+    - **Instruction:** Add rows after it: (1) DMSP and WSF-M (US Space Force / defense weather satellites, military transmitters): SatDump dmsp/wsf (and spacex, bluewalker3) plugins are not built and the pipeline allowlist hides Cosmos 2558, syracuse3_tlm, angels_l_band, yunhai_ahrpt and every 'encrypted' pipeline; (2) naval VLF via SDRangel feature/sid (its readme targets GQD/HWU/NAA) – not built; (3) OpenWebRX+ TETRA, P25/DMR/NXDN/YSF/D-Star, wM-Bus, ISM sensors, LoRa/Meshtastic/MeshCore/MeshCom, pager/selcall and the speech transcriber – removed from modes.py, helper packages at -1.
+    - **Reason:** Rule: nothing aimed at military transmitters or private content.
+    - **Sources:** reaudit_A [1] corrections 4; [2] corrections 2,4; operator_notes items 1,14
+    - **Saving usd:** 0
+  150.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** ISS SSTV decoder
+    - **Anchor:** slowrx (з джерел), SSTV в OpenWebRX+
+    - **Instruction:** Replace with: slowrxd (slowrx-daemon c94327a) fed via snd-aloop from labrx; OpenWebRX+ SSTV as cross-check
+    - **Reason:** slowrx captures only through ALSA.
+    - **Sources:** reaudit_A [1] confirmed 25; bench_tests 14
+    - **Saving usd:** 0
+  151.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** gr-satellites version in decoder cells
+    - **Anchor:** gr-satellites 5.5 / SatDump (офлайн із запису)
+    - **Instruction:** Replace 'gr-satellites 5.5' with 'gr-satellites 4210dc4 (+lab)' here and in every other 4.1 decoder cell that says 'gr-satellites 5.5'.
+    - **Reason:** 5.5.0 vulnerable; main pinned.
+    - **Sources:** reaudit_A [1] corrections 14
+    - **Saving usd:** 0
+  152.
+    - **Section:** 04_capabilities
+    - **Kind:** correction
+    - **Part:** US-only profile
+    - **Anchor:** nrsc5, multimon-ng (лише EAS), dump978-fa
+    - **Instruction:** Append: (US profile only; region Europe, so these packages are not installed – pinned -1).
+    - **Reason:** User region Europe.
+    - **Sources:** reaudit_A [1] corrections 11; user_requirements 'User decisions'
+    - **Saving usd:** 0
+  153.
+    - **Section:** 04_capabilities
+    - **Kind:** decision
+    - **Part:** NPU capability row
+    - **Anchor:** labclassify (SpecDet INT8 + E-S)
+    - **Instruction:** In the same row, state the default gate with Lime (p99 <= 11.7 ms at 42.5 tiles/s, cap 41) and that CPU mode targets >=4 tiles/s on one A55 (unmeasured).
+    - **Reason:** With-Lime default.
+    - **Sources:** reaudit_A [3] corrections 13,14
+    - **Saving usd:** 0
+  154.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** 6.1 rule removals (software)
+    - **Anchor:** | ADALM-PLUTO |
+    - **Instruction:** Add rows after the ADALM-PLUTO row: SatDump dmsp/wsf/spacex/bluewalker3 plugins and every hardware/network SDR source (HackRF/BladeRF TX sinks) – rule lines 37/44; SDRangel feature/sid, unpatched demoddsc, demodadsb/demodais/feature ais, audiocatsiso (TX + CAT PTT), remotetcpsink/udpsink/localsink, rigctlserver, ambe, m17, freedv, chirpchat, endoftrain, ENABLE_LIMESUITE outputs; OpenWebRX+ modes outside the allowlist (TETRA, P25/DMR, pager, mesh, wM-Bus, ISM, speech transcriber), MQTT export, audio recording and chat; SDR++ iq_exporter, recorder, network_sink, pager_decoder and network sources; multimon-ng in the European build; Artemis GUI; aicrf-test; TorchSig dmr, p25, lfm-radar generators and family labels; gr-satellites telemetry submit (default 'yes' in 5.5.0) and network access for decoder units.
+    - **Reason:** Removed under the receive-only, private-content and military rules.
+    - **Sources:** reaudit_A [1] corrections 3,4,7,8,10,11,14; [2] corrections 2,4,9,15; [3] corrections 17
+    - **Saving usd:** 0
+  155.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** 6.2 technically superseded
+    - **Anchor:** | Вивантаження (SondeHub, WSPRnet, PSK Reporter, агрегатори ADS-B, SatNOGS) за замовчуванням |
+    - **Instruction:** Add rows after this row: 16 GB board branch (no stock); edk2 0.1.0-7 mirror (r2's 0.1.0-5 already has 260120); Path B 7.0.11 + clk_ignore_unused; self-built 6.18.2-4+lab1 by default; flashing or overlay entries via rsetup/setup.sh; UKI and the 260916 test BIOS; QCOM_WDT as the watchdog; gr-satellites 5.5.0 apt and a 5.9.0 rebuild; libairspyhf0 from master; Gpredict 2.3 apt and the v2.6 tag; VkFFT as default FFT; SatDump Soapy/legacy LimeSuiteNG input; pin priority 100 for mirrors; config-based OpenWebRX+ mode disabling; hand-made libcdsprpc.so symlink (Armbian-only step); T2b on the device; one home-base container with AIMET; soc_model 35-vs-93 comparison; PCA9555; 13 mm key pitch; EVIOCGRAB as primary LOCK; labwc 0.7.1 as default; WEFAX in sdrangelsrv; static-mask-only raw-IQ voice policy; grounded Pico ADC offset channel; ALLNET as the EU default seller; /dev/gnss0 as the GNSS name; 'drive GP23 high' (replaced by A/B).
+    - **Reason:** Superseded by re-audit A findings.
+    - **Sources:** reaudit_A all four records' corrections and refuted_findings
+    - **Saving usd:** 0
+  156.
+    - **Section:** 06_removed
+    - **Kind:** keep_with_note
+    - **Part:** librtlsdr 2.0.3
+    - **Anchor:** | librtlsdr 2.0.3 (.so.0) і рецепт purge-and-fork | C11. |
+    - **Instruction:** Append to the reason cell: (2.0.3 rebuilt with SOVERSION 2 after an abi-compliance-checker run remains an option, not the default; include/rtl-sdr.h is byte-identical between 2.0.1 and 2.0.3).
+    - **Reason:** New low-risk option.
+    - **Sources:** reaudit_A [1] corrections 2
+    - **Saving usd:** 0
+  157.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** #28 Wi-Fi module driver
+    - **Anchor:** 28. Модуль Wi-Fi Q6A за схемою v1.21 — FCU760K; «AIC8800» не перевірено.
+    - **Instruction:** Replace with: FCU760K (mainline DTS wifi@4, compatible usba69c,8d80 on the FE1.1s hub) is driven by radxa-pkg/aic8800 USB (modules aic_load_fw_usb, aic8800_fdrv_usb, aic_btusb_usb; IDs 8d80/8d81, second VID 0x368B; built with CONFIG_RFTEST=y and an aicrf-test package with wifi_test/bt_test, which is forbidden).
+    - **Reason:** Verified in radxa-pkg/aic8800 and the DTS.
+    - **Sources:** reaudit_A [2] confirmed 9
+    - **Saving usd:** 0
+  158.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** New corrected errors (re-audit A)
+    - **Anchor:** 36. wideband_sdr:
+    - **Instruction:** Append items after 36: 37. gunyah_wdt can be one out-of-tree module (stage-1 'needs a qcom_scm change' refuted). 38. ttyHS reordering is not caused by GSI-DMA (UART ignores the flag); aliases stay. 39. sbc-reviews #85 says only 'shipped with 251013'; the 20251230 requirement is from the Radxa download page; 7604 MiB was measured on 6.17.1-3. 40. The Android 15 RC 'PCIe 2.0' limit is no Linux evidence. 41. 'Tj max 95 C' is the second CPU passive step; NSP/DDR have no passive cooling. 42. Schematic v1.21 flash label W25Q64FWZPIG (8 MiB) is stale; the part is 32 MiB (w25q256). 43. Forum 30896's real systemd-boot was systemd 260.2 on Gentoo with 7.0.11, not 255.4. 44. The libcdsprpc.so symlink step (31144) applies to Armbian, not RadxaOS with fastrpc 1.0.4-1. 45. r2's edk2 0.1.0-5 already carries 260120. 46. The Kioxia quirk is only for THGJFGT1E45BAILB and only in 559f4f9. 47. A naive bias gate breaks all V4L tuning above 28.8 MHz, not HF. 48. 6.18.2-4 is still served by the GitHub release (stage-1 'cannot be fetched' refuted). 49. gr-satellites 5.9.0 still has the FileReceiver path traversal. 50. libairspyhf0 (SOVERSION 0) would break every .so.1 consumer. 51. Gpredict v2.6 lacks the #425 deadlock fix; a1a1fec is the tag object, the commit is c9fa018. 52. SatDump #1224 'CLI crashes' came from an unofficial Copr build. 53. 'BIOS 260916 not compatible with Radxa OS (Ubuntu 24)' is from the 260916 zip changelog, not forum 30896. 54. QTBUG-114671 does not apply (labwc and cage always create seat0). 55. greetd greeter-class restarts are not low risk (crash-loop lockout). 56. OpenWebRX+ 1.2.126 has no per-mode disable setting. 57. SDRangel 7.27.2 has no WEFAX plugin; demodpager is POCSAG only (FLEX is OpenWebRX+ 'page'). 58. '--no-install-recommends only for OpenWebRX+' was wrong (#24 sets it globally). 59. labwc 'smarter top layer' is in 0.7.3, not 0.7.2. 60. QTBUG-138747 is Weston-specific; Qt 6.12 stays the option for support reasons. 61. The Pico has no spare ADC channel. 62. A 2-column key block is pitch + cap wide (19 mm pitch -> 31 mm). 63. Forum 31208 is an unresolved failure, not proof that the container works. 64. qualcomm/fastrpc #371 is a group-permission regression, not a DSP defect. 65. 'QAIRT 2.46+ all fail / QNN 2.32 cap' refuted (2.47 runs in 31448); onnxruntime-qnn floor is >=1.24.2. 66. No SoC model 93 exists in the 2.42 table. 67. HisarMod2019.1 'CC BY' is unverified. 68. 'Grouped conv beats depthwise' and 'HardSwish fuses on A8' are inferences to benchmark, not documented facts.
+    - **Reason:** Section 7 lists corrected errors.
+    - **Sources:** reaudit_A refuted_findings of records 0-3; corrections 0-5,12-14 of record 0; corrections 0,13-15,17 of record 1
+    - **Saving usd:** 0
+  159.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** B1 day-1 identification, SPI dump, burn-in
+    - **Anchor:** Q6A: TX UART6 (перемичка TX→RX
+    - **Instruction:** Insert a new row before this row: Day 1 inside the return window – UART console on pins 8/10 (ttyMSM0 115200); record dmidecode -s bios-version (target 6.0.260120.BOOT.MXF.1.0.1-00549-KODIAKWP-1; expect 251013, 260120 or 260916), board revision, LPDDR vendor from the XBL log, UFS vendor/model/manufacturer ID; two full raw SPI reads with equal SHA-256 (33,554,432 B), stored off-device with the serial; UEFI QUPV3 modes noted; burn-in 12 h stressapptest + memtester, 50-100 cold boots, 1-2 h HTP loop with large DMA buffers alongside memtester. Gate: W1-2; when: on arrival.
+    - **Reason:** Recoverable reflash; defect claim timing.
+    - **Sources:** reaudit_A [0] bench_tests 0; corrected_spec 'Day 1'
+    - **Saving usd:** 0
+  160.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Q6A W1-2 row (UART, PPS, watchdog, boot facts)
+    - **Anchor:** Q6A: TX UART6 (перемичка TX→RX
+    - **Instruction:** Rewrite this row: B4 UART6/UART7 – UEFI QUPV3 modes read; no 'Invalid FW loaded' or 'UART firmware load failed' in dmesg; TX-RX jumper loopback at 115200 and 921600 on both ports, 1e6 bytes zero errors; after 20 reboots /dev/ttyHS1 -> 998000.serial and /dev/ttyHS2 -> 99c000.serial; LC76G answers $PQTMVERNO; UART7 1e6-frame CRC loop zero errors; pinmux single owner for pins 29/32. B5 PPS – pps-gpio DKMS loads on GPIO96 (pinctrl ownership via /sys/kernel/debug/pinctrl), ppstest 1 Hz with 3D fix, chronyc sourcestats PPS offset under 1 us after 30 min. Remove the resolved items 'вузол watchdog у DT' (reserved for Gunyah) and 'який пакет постачає systemd-bless-boot' (noble systemd-boot); replace 'labwc 0.7.1 на HDMI' with the display gate row.
+    - **Reason:** Concrete pass criteria; resolved questions.
+    - **Sources:** reaudit_A [0] bench_tests 3,4; [2] bench_tests 9
+    - **Saving usd:** 0
+  161.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** B3 boot rollback
+    - **Anchor:** Q6A: TX UART6 (перемичка TX→RX
+    - **Instruction:** Add a row: Route A test – purge sdboot-is-embloader, bootctl install, merged lab.dtb, tries=3; 20 cold boots show the lab nodes (aliases, pps, uart7) in /sys/firmware/devicetree/base; a deliberately broken root B (init=/bin/false) and a poisoned slot-B initrd (10 times) return to slot A without keyboard input and the entry shows '+0-3'; systemd-bless-boot marks the good entry; confirm MAC address, serial and the overlay under systemd-boot (no embloader-specific DT handling needed); EFI-variable persistence test (bootctl set-oneshot, check LoaderEntrySelected). Fail -> Route B (embloader 0.4 write-back default) and the rescue-microSD drill. When: W1-2.
+    - **Reason:** Rollback must actually work.
+    - **Sources:** reaudit_A [0] bench_tests 2; [1] bench_tests 9
+    - **Saving usd:** 0
+  162.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** B2 MemTotal
+    - **Anchor:** NPU і обчислення: MemTotal і RSS застосунків
+    - **Instruction:** In this row set the MemTotal pass criterion: /proc/meminfo on 12 GB with 260120 + 6.18.2-4 at >=10.9 GiB (model 10.86-11.36 GiB); re-run the RAM table with the measured value. Replace 'VkFFT на Adreno 643 (N=4096 і 65536)' with the FFT backend gate (FFTW vs VkFFT at N=65536, >=1709 FFT/s, max |diff| < 1e-4, A78 load for FFTW, 8 h VkFFT soak with zero VK_ERROR_DEVICE_LOST) and delete 'soc_model 35 проти 93'.
+    - **Reason:** New pass criteria; dropped item.
+    - **Sources:** reaudit_A [0] bench_tests 1; [2] bench_tests 10; [3] corrections 2
+    - **Saving usd:** 0
+  163.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** FastRPC/firmware/kernel matrix (B6)
+    - **Anchor:** NPU і обчислення: MemTotal і RSS застосунків
+    - **Instruction:** Add a row: on kernel 6.18.2-4 (fallback 6.18.2-3 for the NPU decision only; then confirm 6.18.2-3 has the NO_HZ_FULL/RCU_NOCB config the Lime build needs) test each combination of {DSP set r2 0.2.29, 0.2.42} x {fastrpc 1.0.4-1, 1.0.7-3}: dpkg -V radxa-firmware-qcs6490 fastrpc libcdsprpc1 clean and SHA-256 of cdsp.mbn, adsp.mbn and the three shells match; fastrpc_test -a v68 3/3 with and without the shared-dma-pool fragment (ship it only if results differ); qnn-platform-validator runs; the 2.42 SpecDet-S context via qnn-net-run gives the golden output hash; 'remote processor cdsp is now up' on 20 cold boots from UFS, no remoteproc '-2'; 8 h soak with a CDSP stop/start every 30 min, zero hangs and zero fsck events. Pin and hold the first fully passing combination. No published NPU pass exists on 6.18.2-4.
+    - **Reason:** Golden set chosen by measurement.
+    - **Sources:** reaudit_A [3] bench_tests 0; corrections 5; new_risks 0; [0] bench_tests 5; operator_notes item 18
+    - **Saving usd:** 0
+  164.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** QNN 2.42 VTCM and accuracy (B7)
+    - **Anchor:** NPU і обчислення: MemTotal і RSS застосунків
+    - **Instruction:** Add a row: qnn-net-run on the HTP with ADSP_LIBRARY_PATH='/usr/lib/aarch64-linux-gnu;/usr/lib/dsp/cdsp;/usr/lib/rfsa/adsp'; SpecDet-S at soc_model 35 / v68 with vtcm_mb=2 loads, a control binary at the generator default requests 4,194,304 B and fails 0x138d (record the reported VTCM); per-channel conv-weight encoding compiles and runs; INT8 vs FP32 AP drop <=2 points per class family on HTP outputs, BatchNorm folded; variance > 0 per obj/box/occ and per fam channel; zero-input probe within the manifest; per-channel scale counts correct for every Conv weight.
+    - **Reason:** VTCM and head-collapse hazards.
+    - **Sources:** reaudit_A [0] bench_tests 6; [3] bench_tests 1,3
+    - **Saving usd:** 0
+  165.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** HTP latency/power sweep
+    - **Anchor:** NPU і обчислення: MemTotal і RSS застосунків
+    - **Instruction:** Add a row: 10,000 tiles each of SpecDet-S/M/G through single-threaded inferd-htp; sweep perf modes {burst, sustained_high_performance, balanced, power_saver} x RPC polling {off, 9999 us}; record p50, p99, per-call overhead (wall minus graphExecute) and INA228 board power. Pass: with Lime p99 <=11.7 ms at 42.5 tiles/s; without Lime p99 <=28 ms at 17.6 tiles/s; choose the lowest-power mode with 2x margin.
+    - **Reason:** Gate is with-Lime by default.
+    - **Sources:** reaudit_A [3] bench_tests 2
+    - **Saving usd:** 0
+  166.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** A16W8 fam head and HardSwish
+    - **Anchor:** NPU і обчислення: MemTotal і RSS застосунків
+    - **Instruction:** Add a row: A16W8 on the fam head only, plus HardSwish vs ReLU6 – record the latency multiplier (expected 2-4x), the AP change and whether the profile shows HardSwish fused on v68.
+    - **Reason:** Replaces the generic 'A16W8 на 2.42' item.
+    - **Sources:** reaudit_A [3] bench_tests 4
+    - **Saving usd:** 0
+  167.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** ORT CPU fallback and T2
+    - **Anchor:** NPU і обчислення: MemTotal і RSS застосунків
+    - **Instruction:** Add rows: (a) SpecDet-S FP32 and QDQ under ORT 1.31.0 with intra=1, inter=1, spinning off, on one A55 (CPUQuota 100 %) and on one A78; pass >=4 tiles/s on one A55, else raise K or CPUQuota ~150 % on CPU0-3. (b) T2: one E-S epoch with torch 2.14.1+cpu on CPU4-6 (3 threads, SCHED_IDLE) x 20 <= 11 min, else default to the frozen-early-layer variant.
+    - **Reason:** CPU path never measured.
+    - **Sources:** reaudit_A [3] bench_tests 5,6
+    - **Saving usd:** 0
+  168.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Home-base converter CI and AIMET handoff
+    - **Anchor:** NPU і обчислення: MemTotal і RSS застосунків
+    - **Instruction:** Add a row (home base): env A export at opset 17-21 and ir_version 10; onnx 1.16.1 checker, qairt-converter, qairt-quantizer with --quantization_overrides, qnn-context-binary-generator; two rebuilds give the same context hash; pip check clean and onnx still 1.16.1 after every install; ORT 1.31 load in env B. Env C: AIMET 2.41.0 (and 2.22.0) encodings accepted by the 2.42 converter via --quantization_overrides without warnings.
+    - **Reason:** Dependency drift and opset mismatch.
+    - **Sources:** reaudit_A [3] bench_tests 7,8; corrections 7
+    - **Saving usd:** 0
+  169.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Load without prepare and NPU soak
+    - **Anchor:** NPU і обчислення: MemTotal і RSS застосунків
+    - **Instruction:** Add rows: (a) load the context with libQnnHtpPrepare.so absent from LD_LIBRARY_PATH; if it works, remove it from the inferd-htp path. (b) 8 h soak: canary tile every 5 min with output-hash check, one forced CDSP crash (remoteproc stop/start) with ladder timing measured, zero silent output drift.
+    - **Reason:** Makes on-device prepare impossible; detects silent drift.
+    - **Sources:** reaudit_A [3] bench_tests 9,10
+    - **Saving usd:** 0
+  170.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Optional Gunyah watchdog (B8)
+    - **Anchor:** Q6A: TX UART6 (перемичка TX→RX
+    - **Instruction:** Add a row: build lab-gunyah-wdt DKMS (gunyah_wdt.c + platform_device_register_simple shim) and modprobe; pass if the STATUS call succeeds and /dev/watchdog1 appears; then a sysrq hang resets the board within 32 s; else drop it. Optional, not on the critical path.
+    - **Reason:** Possible in-SoC hang recovery.
+    - **Sources:** reaudit_A [0] bench_tests 7; corrections 4
+    - **Saving usd:** 0
+  171.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Thermal with NPU (B9)
+    - **Anchor:** Тепло: 45 хв опівдні з козирком
+    - **Instruction:** Append to this row: 45 min HTP + CPU load in the closed enclosure logging cpu*, gpuss*, nspss0/1, ddr, skin, ufs and xo; confirm the NSP is not kernel-throttled and that the app ladder acts at 80/85 C before any zone reaches 90 C.
+    - **Reason:** No kernel NPU throttling.
+    - **Sources:** reaudit_A [0] bench_tests 8
+    - **Saving usd:** 0
+  172.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** VBUS trip and backfeed (B10)
+    - **Anchor:** Зворотне живлення: 0 V на VBUS Q6A і HDMI +5 V при вимкненій Q6A і ввімкненій LAB5
+    - **Instruction:** Append: with an e-load or the FNB58 on the J5 pair find the U35 trip current (model 1.8-2.4 A); pass if the sum of the planned J5 loads stays under 1.5 A; 0 V backfeed on every Q6A USB port.
+    - **Reason:** Shared VBUS switch.
+    - **Sources:** reaudit_A [0] bench_tests 9
+    - **Saving usd:** 0
+  173.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** J21 and power-on (B11)
+    - **Anchor:** #2813: чи блокує утримуваний OFF від супервізора кнопку на піні A
+    - **Instruction:** Append: continuity map of J21 against the schematic (ADP12V_IN, GND, PWR_ON_KEY) before wiring; note whether the board auto-starts with 12 V applied; the Pico pulse starts it 20 of 20 power cycles; run at 11.0 V and 16.0 V input. Also boot with touch unplugged and the Pico in reset: the shell must come up.
+    - **Reason:** Main-input safety; auto-start varies by board.
+    - **Sources:** reaudit_A [0] bench_tests 10; [2] corrections 0
+    - **Saving usd:** 0
+  174.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Package drift CI and apt policy (B12)
+    - **Anchor:** Q6A: TX UART6 (перемичка TX→RX
+    - **Instruction:** Add a row: in a test chroot with all original r2 sources re-enabled, 'apt-get -s dist-upgrade' lists 0 changes to held or pinned packages; installing qcom-qnn-sdk-v68 keeps fastrpc-dev at the chosen version; 'apt-cache policy librtlsdr2 libairspyhf1 gr-satellites gpredict' shows the +lab candidate at 1001; 'apt-get -s install' of wsjtx, libhamlib-utils, dump1090-fa, lame, multimon-ng, qcom-fastrpc1, linux-firmware-dragonwing, soapysdr0.8-module-remote is refused; no *.list references ppa.launchpadcontent.net; /etc/kernel/cmdline hash unchanged after a simulated reinstall of radxa-system-config 0.6.30.
+    - **Reason:** Closes silent upgrade paths.
+    - **Sources:** reaudit_A [0] bench_tests 11; [1] bench_tests 12
+    - **Saving usd:** 0
+  175.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** UFS Kioxia test (B13)
+    - **Anchor:** Сховище: тривалий запис UFS після кешу WriteBooster
+    - **Instruction:** Append: only if the UFS reports 0x198 – first 24 h of fio with system suspend masked and rpm_lvl=0, zero 'OCS invalid' or 'pa_err' events; if errors appear, build and test 6.18.2-4+lab1 with the read model string in the quirk table.
+    - **Reason:** Model-specific quirk.
+    - **Sources:** reaudit_A [0] bench_tests 12
+    - **Saving usd:** 0
+  176.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** M.2 slot and Lime riser (B14)
+    - **Anchor:** Lime, якщо залишено: riser 8 GT/s x1
+    - **Instruction:** Rename to 'Lime (залишено 18.10.2026)'. Add: inside the Q6A return window, even before the Lime ships (15.12.2026), a 2230 NVMe enumerates and passes 60 min of fio with zero AER errors (test drive price not in the files); with the Lime riser the link defaults to Gen2 (max-link-speed=2) and moves to Gen3 only after the user's 8 GT/s x1 acceptance test shows zero AER in 60 min.
+    - **Reason:** Slot must be validated in the return window.
+    - **Sources:** reaudit_A [0] bench_tests 13; corrections 14; user_requirements 'User decisions'
+    - **Saving usd:** 0
+  177.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** librtlsdr +lab and bias gate
+    - **Anchor:** Q6A: TX UART6 (перемичка TX→RX
+    - **Instruction:** Add a row: arm64 build log shows 'zero-copy support disabled' and strings count 0; each V4L prints 'RTL-SDR Blog V4 Lite Detected'; without a token, retune 7 -> 137.1 -> 145.8 -> 437.55 -> 1090 -> 7 MHz with rc==0 at every step while the bias pin stays below 0.1 V (DMM on the SMA centre into 1 kOhm) and rtlsdr_set_bias_tee(1) returns -1; offset tuning on without a token leaves 0 V; bias rail 0 V at plug-in and 'lsmod | grep rtl28' empty; with /run/lab/bias/LABRXA present about 4.5 V appears. All-zero IQ guard: 1 s capture at 2.4 Msps per RTL before every pass with variance above the noise-only threshold. 8 h soak with 2x V4L and the HF+ (zero-copy off): zero all-zero blocks, zero USB transfer errors, every engine leased in turn.
+    - **Reason:** Gate must not break tuning; zero-copy risk; engines unvalidated on QCS6490.
+    - **Sources:** reaudit_A [1] bench_tests 0,1; corrections 24; operator_notes items 12,12b,12c
+    - **Saving usd:** 0
+  178.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** SatDump audit and live path
+    - **Anchor:** Q6A: TX UART6 (перемичка TX→RX
+    - **Instruction:** Add a row: the plugin directory contains exactly the allowlist and no hackrf, bladerf, remote_sdr, sdrpp_server, spyserver, rtltcp or webhook libraries, and no SDR sink; the pipeline allowlist hides every military/encrypted pipeline (CI); labrx sends cf32 UDP to 127.0.0.1 into 'satdump live meteor_m2-x_lrpt' on a recorded pass and the products match a file decode; the LRPT trim-retry recovers the #1212 sample.
+    - **Reason:** Closes TX path and mask bypass.
+    - **Sources:** reaudit_A [1] bench_tests 2; operator_notes items 1,14,23
+    - **Saving usd:** 0
+  179.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** SDR++/SDRangel audit
+    - **Anchor:** Q6A: TX UART6 (перемичка TX→RX
+    - **Instruction:** Add a row: no iq_exporter.so, recorder.so, network_sink.so or pager_decoder.so; the SDRangel plugin set equals the manifest (fail on sid, demoddsc, demodadsb, demodais, audiocatsiso, remotetcpsink, udpsink, localsink, rigctlserver, ambe, demodm17, demodfreedv, demodpager, demodmesh*, demodchirpchat, heatmap, any samplesink, samplemimo or channelmimo); 'ss -ltnp' shows 8091 and 4532 on localhost only; the sdrangelsrv log says FFTW wisdom 'successfully imported'; HF+ lease hand-off SDRangel <-> OpenWebRX+ 20 times, each under 10 s.
+    - **Reason:** Allowlist enforcement.
+    - **Sources:** reaudit_A [1] bench_tests 3; [2] bench_tests 4
+    - **Saving usd:** 0
+  180.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** OpenWebRX+ audit
+    - **Anchor:** Q6A: TX UART6 (перемичка TX→RX
+    - **Instruction:** Add a row: 1.2.126+lab1 with the -1 pins on noble arm64, 8 h soak; the running feature/mode report shows no dsc, tetra, p25, dmr, page, selcall, eas, ism, wmbus, lora-*, mesh*, speech, adsb or ais, and multimon, rigcontrol, digital voice, pocsag, mp3, mqtt as unavailable; settings read allow_center_freq_changes=false, allow_audio_recording=false, allow_chat=false, speech_url=''; tcpdump on wlan0 shows no outbound traffic in the field profile; FT8 decodes a recorded WAV through jt9 and the wsjt-x-2-4 feature reads true through the shim; the WEFAX profile decodes a civil WEFAX recording in 'fax'.
+    - **Reason:** Mode allowlist enforcement.
+    - **Sources:** reaudit_A [1] bench_tests 4; [2] bench_tests 5
+    - **Saving usd:** 0
+  181.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** WSJT decoders, Gpredict, gr-satellites, HF+ bias
+    - **Anchor:** Q6A: TX UART6 (перемичка TX→RX
+    - **Instruction:** Add rows: (a) readelf -d jt9 wsprd shows no libhamlib; dpkg -S libhamlib on the device returns nothing. (b) Gpredict 1d80049+lab: ldd shows neither libgps nor libhamlib; one persistent rigctl connection to SDR++ through a full LEO pass with Doppler; 20 SDR++ lease stop/start cycles without deadlock; a 6-digit (post-2026-07-11) CubeSat tracks through the alias bridge with pass times within 1 s of Skyfield from_omm. (c) gr-satellites 4210dc4 builds against GNU Radio 3.10.9.2, satyaml and python tests pass on the device, a crafted FileReceiver frame with '../x', '/tmp/x' and '..' writes nothing outside the products directory, and with submit_tlm=no a network-namespace capture shows zero packets. (d) airspyhf_get_bias_tee_count returns 0 on the HF+, else add the gate and retest.
+    - **Reason:** Verifies the +lab builds.
+    - **Sources:** reaudit_A [1] bench_tests 5,6,7,13
+    - **Saving usd:** 0
+  182.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Display gate on held kernel
+    - **Anchor:** Плата дисплея: діапазон входу і струм при 25/50/100%
+    - **Instruction:** Add a row after this one: W1-2 display gate on 6.18.2-4 with labwc 0.7.4+lab1, Lab Shell and labbar on card1-HDMI-A-1: /sys/class/drm/card1-HDMI-A-1/edid byte-identical to field.bin; modetest/debugfs pixel clock 151.50 MHz; 20 cold boots; 20 HDMI unplug/replug cycles with the shell surviving (LABWC_FALLBACK_OUTPUT set). XWayland touch: SDR++ (GLFW/X11) taps, slider drags and waterfall pans on 0.7.4; if pointer emulation is broken, try the 0.8.4 fallback.
+    - **Reason:** UI depends on the RA620 HDMI path on the held kernel.
+    - **Sources:** reaudit_A [2] bench_tests 0,11
+    - **Saving usd:** 0
+  183.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** greetd recovery and lease enforcement
+    - **Anchor:** Q6A: TX UART6 (перемичка TX→RX
+    - **Instruction:** Add rows: (a) kill Lab Shell 3 times in 2 min – the wrapper stays alive, switches to cage --safe on the third crash, greetd never restarts (journalctl shows no greetd exit); then crash --safe 3 times – text console appears, labd running, keys work; check the loginctl class and the /dev/dri ACL in each state. (b) inside an Expert-GUI system unit: open() of a non-leased RTL node returns EPERM, write under /data returns EROFS while /data/products/<lease> is writable, EGL renderer is not llvmpipe; CONFIG_CGROUP_BPF=y in /boot/config-6.18.2-4-qcom; on failure use udev ACL/group per lease.
+    - **Reason:** Crash loop and silent DevicePolicy failure.
+    - **Sources:** reaudit_A [2] bench_tests 1,2; operator_notes item 20
+    - **Saving usd:** 0
+  184.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Wi-Fi/BT block test
+    - **Anchor:** Q6A: TX UART6 (перемичка TX→RX
+    - **Instruction:** Add a row: home root with Wi-Fi up, warm reboot into the field root – no device on FE1.1s port 4 (lsusb -t), no wlan netdev, no hci0; repeat from a cold boot; find the WIFI_PWR_EN TLMM line, apply a gpio-hog low in the field DTBO, measure the module supply at 0 V and confirm the home unblock still works; 'dpkg -l aicrf-test' absent.
+    - **Reason:** Hardware-level radio block.
+    - **Sources:** reaudit_A [2] bench_tests 3
+    - **Saving usd:** 0
+  185.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Glove/sun/rain and Pico ADC
+    - **Anchor:** 10. Чи працює ємнісний сенсор крізь ваші рукавиці
+    - **Instruction:** Add bench rows to the table (before the questions): (a) 3 glove types, at least 95 % first-hit accuracy on 15/20 mm targets and on keys at 19-21 mm pitch; LOCK under water spray (no touch events; LOCK still set after a touch USB re-enumeration); values readable at 100 klx with VEML7700 lux logged; theme hysteresis without flapping. (b) Pico battery reading vs INA228 from 11.0 to 16.8 V in 0.1 V steps before and after fitting the LM4040, in both GP23 states (A/B per G2 instead of 'GP23 high'); error at most 0.05 V at 12.9 and 13.2 V from -20 to +50 C; scan HF and VHF for RT6150 harmonics.
+    - **Reason:** Usability acceptance; accurate undervoltage backstop.
+    - **Sources:** reaudit_A [2] bench_tests 7,8; analogs_G2 Pico conditions
+    - **Saving usd:** 0
+  186.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Policy recordings
+    - **Anchor:** Відповідність: тест egc-gate на змішаному записі
+    - **Instruction:** Append to this row: replay a mixed SigMF set (ADS-B with and without the DB, an AIS vessel with ship type 35 and with a late static message, DSC routine and distress, an Artemis Military entry and an untagged entry at 300 MHz) – only allowed objects shown or logged, nothing stored inside masked bands; a Beast capture with a DB-flagged military hex never appears in aircraft.json, UI or logs, and the same replay without --db-file makes the self-test fail; 2 h of auto_rx and AIS-catcher reception with tcpdump on all interfaces shows only localhost packets and the auto_rx UI only on 127.0.0.1; TorchSig manifest with lfm-radar, dmr or p25 fails CI; synthetic named-class signals at 20 kHz and 300 MHz masked before write; synthetic NFM voice at 145.500, 433.500 and 446.006 MHz in a pinned raw capture excised; MARK/SNAP on an nfm_voice box saves the spectrogram only.
+    - **Reason:** Policy gates tested on recordings.
+    - **Sources:** reaudit_A [2] bench_tests 6; [1] bench_tests 10,11; [3] bench_tests 11
+    - **Saving usd:** 0
+  187.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** ISS SSTV chain
+    - **Anchor:** Антени: A/B штиря вертикально/нахилено на SSTV серії 34
+    - **Instruction:** Append: labrx 437.550 MHz FM audio -> snd-aloop -> slowrxd decodes a recorded series-34 pass into PNG; OpenWebRX+ SSTV as cross-check; series 34 times are still TBD – re-check the ARISS page on 20-21 Oct 2026.
+    - **Reason:** First live recordings.
+    - **Sources:** reaudit_A [1] bench_tests 14; [3] confirmed 33; corrected_spec 'First live recordings'
+    - **Saving usd:** 0
+  188.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** Question 7 (QAIRT newer)
+    - **Anchor:** 7. Якщо QAIRT 2.42 не пройде ворота HTP — чи можна розглянути новішу QAIRT, чи система лишається на CPU.
+    - **Instruction:** Append: the only documented alternative is Set B (ORT 1.27.0 + onnxruntime-qnn 2.3.0 on QAIRT 2.47.0, ran fully on a Q6A v68 in forum 31448, kernel 6.18.2-3), with its own golden set and soak; never pip-installed into the current device venvs.
+    - **Reason:** Gives the user a concrete option.
+    - **Sources:** reaudit_A [3] corrections 16
+    - **Saving usd:** 0
+  189.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** Question 5 (home PC)
+    - **Anchor:** 5. Чи є домашній x86-64 ПК (бажано з GPU NVIDIA 8-16 GB) і чи прийнятна VM/контейнер Ubuntu 22.04 для конвертації QAIRT 2.42.
+    - **Instruction:** Append: the converter env must be an offline ubuntu:22.04 / Python 3.10 container (Python 3.10 EOL since 2026-10-01); training runs in a separate Ubuntu 24.04 / Python 3.12 env; GPU only for T3.
+    - **Reason:** Env split.
+    - **Sources:** reaudit_A [3] corrections 6; new_risks 11
+    - **Saving usd:** 0
+  190.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** Price re-check row
+    - **Anchor:** Ціни: переоцінити кожен неперевірений рядок (P5)
+    - **Instruction:** Append: Pico (DigiKey SC0915 $4.59) and the PEC11R, KSC641J and Adafruit 2055 lines are now verified (re-audit A, 18.10); still unpriced: LM4040 3.0 V, silicone keypad ($5-15 model), a 2230 NVMe test drive for B14.
+    - **Reason:** Price status update.
+    - **Sources:** reaudit_A [2] corrections 8,17; [0] bench_tests 13
+    - **Saving usd:** 0
+  191.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 1 Q6A order
+    - **Anchor:** Q6A 12 GB і UFS 128 GB. ЄС: одне замовлення TinyTronics з ПДВ
+    - **Instruction:** Rewrite step 1 for the Europe region: TinyTronics order with the Q6A 12 GB (EUR 148.00 incl. VAT, 10+ in stock 18.10; check at payment); UFS handling per G2 (separate order or confirmed partial shipment so the board ships at once). The ALLNET order (Q6A $189.99, UFS $65.90, Armor $9.90, RTC battery $0.95, microSD $16.99 = $283.73 = EUR 252.41) becomes the fallback only if TinyTronics is out of stock; landed EU for that order = price + shipping (not published) + import VAT 19-21 % ($337.64-343.31) + normal duty per tariff line (consignment > EUR 150; rate not in files) + EUR 2 UHF x 5 lines = EUR 10 ($11.24) from about 1 Nov 2026. No waiting for 16 GB. Never AliExpress.
+    - **Reason:** Region Europe; landed-cost rule.
+    - **Sources:** reaudit_A [0] corrections 0,1; operator_notes items 34,35; analogs_G2 UFS
+    - **Saving usd:** 59.72-63.52 on the board vs ALLNET landed (before shipping, duty, UHF)
+  192.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 1 reasons
+    - **Anchor:** Arace розпродано; Allnet 8 GB розпродано; UFS у наявності лише в Allnet (TinyTronics — 2-4 тижні); NPU Phase 0 потребує плати в W1-2.
+    - **Instruction:** Append: no 16 GB stock anywhere (Arace's $119.50 16 GB is a sold-out placeholder); returns accept only unused goods, so burn-in starts the day the board arrives and failures go to the same-day defect claim.
+    - **Reason:** Removes a wait on a phantom SKU.
+    - **Sources:** reaudit_A [0] corrections 0,1
+    - **Saving usd:** 0
+  193.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 6 Pico
+    - **Anchor:** 2 плати IP2368 (як у BOM; третя — за потреби, поза підсумком); 2 Pico.
+    - **Instruction:** Move '2 Pico' out of step 6 into the DigiKey HMI basket (SC0915 non-wireless) and pull that basket into week 1: the Pico is needed for the W1-2 gate (B11 J21 pulse test, boot with the Pico in reset). DigiKey DE delivers free only from EUR 75, else EUR 25 ($28.10) – consolidate DigiKey lines.
+    - **Reason:** Needed early; consolidated shipping.
+    - **Sources:** reaudit_A [2] corrections 17; analogs_G2 Pico stack_changes
+    - **Saving usd:** 0
+  194.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 7 DigiKey basket
+    - **Anchor:** DigiKey (PEC11R ×3, KSC641J ×10, ферити)
+    - **Instruction:** Extend: DigiKey HMI basket = encoders and keys per G2 (PEC11R-4220F x3, TL3145 or KSC641J), 2x Pico SC0915, key expander (PI4IOE5V9555LEX / TCA9555PWR), LM4040 3.0 V shunt (price not in files), ferrites; silicone keypad sourced separately ($5-15, model).
+    - **Reason:** New parts from this source.
+    - **Sources:** reaudit_A [2] corrections 7,8,17
+    - **Saving usd:** 0
+  195.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** other
+    - **Part:** Bring-up 1: SPI and UFS ID
+    - **Anchor:** резервна копія SPI NOR (edl-ng); ID чипа UFS.
+    - **Instruction:** Replace with: B1 day-1 identification; two full raw SPI dumps with equal SHA-256 (33,554,432 B) before anything else, never rsetup/setup.sh flashing; reflash only if BIOS older than 20251230 or 260916, over EDL with 260120; kernel 6.18.2-4 debs dpkg -i'd from the GitHub release before any apt upgrade, holds and -1 pins in place, PPA lists deleted; UFS chip ID on UFS arrival (G2).
+    - **Reason:** Correct day-1 order.
+    - **Sources:** reaudit_A [0] corrected_spec 'Day 1', 'Base OS'; corrections 2
+    - **Saving usd:** 0
+  196.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** other
+    - **Part:** Bring-up 1: NPU Phase 0 and compute
+    - **Anchor:** NPU Phase 0 (fastrpc_test 3/3, QAIRT 2.42, p99 SpecDet, A16W8, VTCM). VkFFT на N=4096 і 65536; MemTotal і RSS.
+    - **Instruction:** Replace with: NPU Phase 0 = FastRPC/DSP/kernel matrix (section 8), QAIRT 2.42 with vtcm_mb=2, SpecDet p99 against the with-Lime gate, A16W8 on fam only; FFT backend gate (FFTW default); MemTotal >=10.9 GiB and RSS; Route A rollback test; M.2 NVMe test (B14) inside the return window; package-drift CI; 8 h engine soak.
+    - **Reason:** Updated Phase-0 content.
+    - **Sources:** reaudit_A [3] bench_tests 0-3; [0] bench_tests 1,2,11,13
+    - **Saving usd:** 0
+  197.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** other
+    - **Part:** Bring-up 1: librtlsdr
+    - **Anchor:** Зібрати librtlsdr .so.2 і побачити «RTL-SDR Blog V4 Lite Detected».
+    - **Instruction:** Append: then the no-token retune test (7 -> 137.1 -> 145.8 -> 437.55 -> 1090 -> 7 MHz, rc==0, bias pin < 0.1 V) and the zero-copy-disabled check.
+    - **Reason:** Gate must not break V4L tuning.
+    - **Sources:** reaudit_A [1] bench_tests 0
+    - **Saving usd:** 0
+  198.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** other
+    - **Part:** Bring-up 1: HDMI
+    - **Anchor:** HDMI спершу на 148.5 MHz, потім польові EDID.
+    - **Instruction:** Append: then the display gate on the held kernel with labwc 0.7.4+lab1 (EDID byte-identical to field.bin, 151.50 MHz, 20 cold boots, 20 HDMI replugs).
+    - **Reason:** Display gate.
+    - **Sources:** reaudit_A [2] bench_tests 0
+    - **Saving usd:** 0
+  199.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** other
+    - **Part:** Bring-up 1: UART/PPS/J21
+    - **Anchor:** Перевірка TX UART6 перемичкою TX→RX, PPS на GPIO96, оверлей UART7, I2C0/I2C2 з 1e6 читань кожна; аудит pinmux-pins.
+    - **Instruction:** Append: loopback also at 921600; aliases give stable ttyHS1/ttyHS2 over 20 reboots; chrony PPS selected within 10 min of a 3D fix; J21 continuity check before wiring and Pico pulse 20/20; boot with touch unplugged and the Pico in reset.
+    - **Reason:** New bring-up checks.
+    - **Sources:** reaudit_A [0] bench_tests 3,4,10; [1] bench_tests 8; [2] corrections 0
+    - **Saving usd:** 0
+  200.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** other
+    - **Part:** Bring-up 2: ISS SSTV
+    - **Anchor:** МКС SSTV серії 34 (22-25.10.2026, 437.550 MHz)
+    - **Instruction:** Append: (times still TBD – re-check the ARISS page on 20-21 Oct; chain labrx -> snd-aloop -> slowrxd, OpenWebRX+ SSTV as cross-check).
+    - **Reason:** Event times not yet published.
+    - **Sources:** reaudit_A [3] confirmed 33; [1] bench_tests 14
+    - **Saving usd:** 0
+  201.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** other
+    - **Part:** Bring-up 11: Lime
+    - **Anchor:** J21 випаюється лише після прогону.
+    - **Instruction:** Append: the riser runs Gen2 by default; Gen3 only after the 60-min zero-AER acceptance test; LimeSuiteNG 37cb183 TX-blocked build and SoapySDRUtil check before first RX.
+    - **Reason:** Lime kept.
+    - **Sources:** reaudit_A [0] corrections 14; [1] corrections 23
+    - **Saving usd:** 0
+  202.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Authenticity
+    - **Anchor:** **Справжність.** RTL-SDR (ризик високий)
+    - **Instruction:** Add: Q6A only from TinyTronics (EU) or ALLNET, never AliExpress (RMA ended as store points, forum 30749); Pico only SC0915 non-wireless from DigiKey or raspberrypi.com approved resellers.
+    - **Reason:** Warranty and radio rules.
+    - **Sources:** reaudit_A [0] new_risks 10; [2] corrections 17
+    - **Saving usd:** 0
+  203.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Compute, kernel, NPU URLs
+    - **Anchor:** - SGM40666A: https://www.sg-micro.com/product/SGM40666A
+    - **Instruction:** Append after this line: linux-qcom 6.18.2-3 release https://github.com/radxa-pkg/linux-qcom/releases/tag/6.18.2-3 ; edk2 0.1.0-5 https://github.com/radxa-pkg/edk2-qualcomm/releases/download/0.1.0-5/edk2-qcs6490_0.1.0-5_all.deb ; r2 manifest https://github.com/radxa-build/radxa-dragon-q6a/releases/download/rsdk-r2/radxa-dragon-q6a_noble_gnome_r2.manifest ; radxa/kernel 559f4f9 (Kioxia quirk) https://github.com/radxa/kernel/commit/559f4f921a01e5358602153364c618fe2a3e431e ; sc7280.dtsi at 559f4f9 https://raw.githubusercontent.com/radxa/kernel/559f4f921a01e5358602153364c618fe2a3e431e/arch/arm64/boot/dts/qcom/sc7280.dtsi ; gunyah_wdt.c https://raw.githubusercontent.com/torvalds/linux/master/drivers/watchdog/gunyah_wdt.c ; radxa-system-config cmdline postinst https://github.com/radxa-pkg/radxa-system-config/blob/main/debian/radxa-system-config-kernel-cmdline-ttymsm0.postinst ; qcom-ppa index https://ppa.launchpadcontent.net/ubuntu-qcom-iot/qcom-ppa/ubuntu/dists/noble/main/binary-arm64/Packages.gz ; rsdk socs.json https://github.com/RadxaOS-SDK/rsdk/blob/main/src/share/rsdk/configs/socs.json ; embloader https://github.com/BigfootACA/embloader ; systemd v255 boot.c https://raw.githubusercontent.com/systemd/systemd/v255/src/boot/efi/boot.c ; fastrpc releases https://github.com/radxa-pkg/fastrpc/releases ; setup-dsp.sh https://raw.githubusercontent.com/radxa-pkg/fastrpc/main/fastrpc/usr/libexec/fastrpc/setup-dsp.sh ; radxa-firmware 0.2.29 https://github.com/radxa-pkg/radxa-firmware/releases/download/0.2.29/radxa-firmware-qcs6490_0.2.29_all.deb ; QAIRT 2.42 zip https://softwarecenter.qualcomm.com/api/download/software/sdks/Qualcomm_AI_Runtime_Community/All/2.42.0.251225/v2.42.0.251225.zip ; ORT QNN EP options https://onnxruntime.ai/docs/execution-providers/QNN-ExecutionProvider.html ; ORT threading https://onnxruntime.ai/docs/performance/tune-performance/threading.html ; onnxruntime-qnn 2.3.0 https://github.com/onnxruntime/onnxruntime-qnn/releases/tag/v2.3.0 ; qualcomm/fastrpc #371 https://github.com/qualcomm/fastrpc/issues/371 ; PrismPhi Q6A HTP port https://github.com/PrismPhi/radxa-dragon-q6a-qwen3.5-0.8b-qcs6490-qnn-npu ; forum threads https://forum.radxa.com/t/30841 , /t/28886 , /t/30896 , /t/30925 , /t/31304 , /t/31391 , /t/31208 , /t/31078 , /t/30699 , /t/30850 , /t/31448 , /t/30288 , /t/30630 , /t/30852 , /t/30749 ; Pico datasheet https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf ; RP2040 datasheet https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf ; aic8800 DKMS https://raw.githubusercontent.com/radxa-pkg/aic8800/main/debian/aic8800-usb-dkms.dkms.
+    - **Reason:** Key primary sources of re-audit A.
+    - **Sources:** reaudit_A sources fields
+    - **Saving usd:** 0
+  204.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Software and packages URLs
+    - **Anchor:** - chrony refclock_sock.c: https://gitlab.com/chrony/chrony/-/raw/master/refclock_sock.c
+    - **Instruction:** Append after this line: osmocom tuner_r82xx.c v2.0.3 https://github.com/osmocom/rtl-sdr/blob/v2.0.3/src/tuner_r82xx.c ; Debian #1041701 https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1041701 ; SatDump plugins CMake at 1aedd602 https://github.com/SatDump/SatDump/blob/1aedd602055c154401384a8cc7876713bb371254/plugins/CMakeLists.txt ; SatDump #1212 https://github.com/SatDump/SatDump/issues/1212 ; SDR++ CMake at 8c9f5ee https://github.com/AlexandreRouma/SDRPlusPlus/blob/8c9f5ee8fe405775bfcd62c8c8f8c0fc928a64af/CMakeLists.txt ; SDRangel channelrx CMake https://raw.githubusercontent.com/f4exb/sdrangel/v7.27.2/plugins/channelrx/CMakeLists.txt ; SDRangel mainparser https://github.com/f4exb/sdrangel/blob/v7.27.2/sdrbase/mainparser.cpp ; SDRangel feature/sid readme https://raw.githubusercontent.com/f4exb/sdrangel/v7.27.2/plugins/feature/sid/readme.md ; OWRX+ PPA https://luarvique.github.io/ppa/noble/Packages ; OWRX+ modes.py https://raw.githubusercontent.com/luarvique/openwebrx/1.2.126/owrx/modes.py ; feature.py https://raw.githubusercontent.com/luarvique/openwebrx/master/owrx/feature.py ; WSJT-X 2.7.0 CMake https://sourceforge.net/p/wsjt/wsjtx/ci/wsjtx-2.7.0/tree/CMakeLists.txt ; gr-satellites #820 https://github.com/daniestevez/gr-satellites/issues/820 , fix 1bcf1d8 https://github.com/daniestevez/gr-satellites/commit/1bcf1d8bccac463550c70091d76a24b09178b1c3 , fb887cf https://github.com/daniestevez/gr-satellites/commit/fb887cf70777af29655f923393b740668d28e964 ; Gpredict #435 https://github.com/csete/gpredict/issues/435 ; CelesTrak GP formats https://celestrak.org/NORAD/documentation/gp-data-formats.php ; Debian airspyhf 1.6.8-5 https://sources.debian.org/src/airspyhf/1.6.8-5/debian/ ; chrony 4.5 docs https://chrony-project.org/doc/4.5/chrony.conf.html ; LimeSuiteNG staging plugins https://github.com/myriadrf/LimeSuiteNG/blob/limesdr-micro-staging/plugins/CMakeLists.txt ; systemd #23198 https://github.com/systemd/systemd/issues/23198 ; labwc NEWS https://raw.githubusercontent.com/labwc/labwc/master/NEWS.md , #3764 https://github.com/labwc/labwc/issues/3764 ; QTBUG-138747 https://qt-project.atlassian.net/browse/QTBUG-138747 ; greetd 0.9.0 source http://archive.ubuntu.com/ubuntu/pool/universe/g/greetd/greetd_0.9.0.orig.tar.gz ; TorchSig https://pypi.org/pypi/torchsig/json ; HisarMod page https://ieee-dataport.org/open-access/hisarmod-new-challenging-modulated-signals-dataset.
+    - **Reason:** Key software sources.
+    - **Sources:** reaudit_A sources fields
+    - **Saving usd:** 0
+  205.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Hexagon DSP binaries label
+    - **Anchor:** - Hexagon DSP binaries: https://github.com/linux-msm/hexagon-dsp-binaries
+    - **Instruction:** Relabel as reference only: the golden DSP set comes only from radxa-firmware-qcs6490 (that tree shows no Radxa board and no CDSP.HT.2.5.c4-00004).
+    - **Reason:** Source of the golden set corrected.
+    - **Sources:** reaudit_A [3] corrections 3
+    - **Saving usd:** 0
+  206.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Seller URLs
+    - **Anchor:** - TinyTronics Q6A 12 GB: https://www.tinytronics.nl/en/development-boards/single-board-computers/radxa-dragon-q6a-qcs6490-12gb
+    - **Instruction:** Append: ALLNET refund policy https://shop.allnetchina.cn/policies/refund-policy ; DigiKey Pico SC0915 https://www.digikey.com/en/products/result?keywords=SC0915 ; DigiKey KSC641J https://www.digikey.com/en/products/detail/c-k/KSC641J-LFS/1003852 ; DigiKey PEC11R https://www.digikey.com/en/products/result?keywords=PEC11R-4215F-S0024 ; Adafruit 2055 https://www.adafruit.com/product/2055 ; TI PCA9555/TCA9555 https://www.ti.com/product/PCA9555.
+    - **Reason:** Seller verification sources.
+    - **Sources:** reaudit_A [0] corrections 0; [2] corrections 17
+    - **Saving usd:** 0
+  207.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Policy filter URLs
+    - **Anchor:** - readsb JSON (dbFlags): https://github.com/wiedehopf/readsb/blob/dev/README-json.md
+    - **Instruction:** Append: readsb README (--db-file, --net-bind-address) https://github.com/wiedehopf/readsb/blob/dev/README.md ; tar1090 planeObject.js (milRange) https://raw.githubusercontent.com/wiedehopf/tar1090/master/html/planeObject.js ; AIVDM https://gpsd.gitlab.io/gpsd/AIVDM.html ; auto_rx station.cfg.example https://github.com/projecthorus/radiosonde_auto_rx/blob/master/auto_rx/station.cfg.example ; artemis-db constants https://raw.githubusercontent.com/AresValley/artemis-db/main/utils/constants.py.
+    - **Reason:** Policy filter sources.
+    - **Sources:** reaudit_A [1] corrections 21; [2] corrections 14,15
+    - **Saving usd:** 0
+  208.
+    - **Section:** 00_header_toc
+    - **Kind:** other
+    - **Part:** Status: what to measure
+    - **Anchor:** VkFFT на Adreno 643; тривалий запис UFS
+    - **Instruction:** Replace with: FFT backend (FFTW by default; VkFFT on Adreno 643 only after its gate); Phase-0 FastRPC/DSP-firmware matrix; two SPI NOR dumps on day 1; sustained UFS write
+    - **Reason:** Status list must match the new gates.
+    - **Sources:** reaudit_A [2] corrections 16; [3] bench_tests 0; [0] bench_tests 0
+    - **Saving usd:** 0
+- **Already in v1:**
+  - Q6A 12 GB is the purchase and both prices are right: TinyTronics EUR 148 incl. VAT and ALLNET $189.99 (C2, 2.1). Only the seller policy and landed cost change.
+  - 8 GB rejected because it is sold out (C2).
+  - BIOS 260120 as the baseline. The '260916 Not compatible with Radxa OS (Ubuntu 24)' note in #23 is correct: it comes from the 260916 zip changelog (record 0, confirmed 4). Record 1 could not find it in forum 30896, so only the attribution is off.
+  - Kernel config items in #25/#26 are confirmed: PPS=y; PPS_CLIENT_GPIO, PPS_CLIENT_LDISC and PINCTRL_MCP23S08 unset; PREEMPT_DYNAMIC, NO_HZ_FULL, RCU_NOCB_CPU, DRM_LOAD_EDID_FIRMWARE, GPIO_PCA953X, I2C_CHARDEV, HIDRAW and ARM_SMC_WATCHDOG =y; PWM_GPIO, QCOM_WDT and ina238 =m. Operator note 4 is consistent: PPS_CLIENT_GPIO=m exists only in the 7.0 defconfig, so pps-gpio stays a DKMS module.
+  - pps-gpio DKMS on GPIO96, with Route A (GPIO v2 ioctl) as fallback and never used together with pps-gpio (C13).
+  - 40-pin map (C6/5.2): GPIO96 = pin 7, UART6 = 16/18, UART7 = 32/29, I2C0 = 13/15, I2C2 = 27/28, GPIO24/25 = 3/5, GPIO56 = 33, console = 8/10.
+  - QAIRT 2.42.0.251225 pin, zip size 1,543,955,191 B, AI Hub artifacts never used, and the no-redistribution licence (#37, #49).
+  - Set B removed from the device plan (#38, 6.1).
+  - INT8 w8a8 with per-channel weights as primary; A16W8 only after a test; static shapes; no Softmax/Sigmoid/TopK/NMS/RNN/attention in the graph; FP16/FP32 unavailable on this HTP (#39).
+  - vtcm_mb=2 (#40).
+  - SpecDet layout (#42): 2x512x512 uint8 tiles at 0.25 dB/LSB to [1,32,128,128]; outputs obj, box, fam(12), occ on 64x64; E-S at 16.3 MMAC.
+  - HTP gate arithmetic (C20): 28 ms, 11.7 ms or 41 tiles/s, 42.5 tiles/s with Lime.
+  - T0 <0.1 s, T1 <1 s, T2 4.5-10.8 min (1-3 min frozen), T3 1.6-4.8 h (S) / 4.9-14.7 h (M), and the C19 trainer guards (75 C, 25 %, MemoryMax 2 GiB) (#44).
+  - NPU class policy: occupancy-only classes, masks applied before write, decoder payloads never stored, ADS-B/AIS oracles drop IDs (#9, 5.4).
+  - RadioML for benchmarks only; SatNOGS DB is CC BY-SA 4.0 (#48).
+  - ISS SSTV series 34 on 22-25.10.2026 at 437.55 MHz, Robot 36, as the first live recordings.
+  - U35 WS4612 is shared by both J5 ports at about 2.1 A (Rset 3.24 kOhm) (5.2, 07 item 11).
+  - Fan on at 60 C and off at 50 C; training only below 75 C (C6, C19, 5.6).
+  - Pico pulses J21 pin 3 if the Q6A 3.3 V is absent after 1-2 s; Pico TX stays high-Z while the 3.3 V is absent (D3).
+  - J21 pin order 1 = 12 V, 2 = GND, 3 = PWR, regulated 12 V, never together with USB-C (#15). reaudit_D confirms the order from schematic page 28; this source only adds a continuity check.
+  - Holds for Mesa 25.2.8-0ubuntu0.24.04.4 with libdrm 2.4.125, unattended-upgrades removed, apt/fwupd timers masked, global Install-Recommends false (C22, #24). Stage 2's 'only for OpenWebRX+' claim is refuted.
+  - Skyfield 1.55 / sgp4 2.27 and PySide6 6.12 for QtTinySA (C22).
+  - SDRangel 7.27.2 built on Qt5 (#31).
+  - SatDump run with LC_NUMERIC=C, never satdump_sdr_server (#30).
+  - libgpiod v1 1.6.3 (GPIO_CDEV_V1=y confirmed) (#32).
+  - DSC limited to distress/urgency/safety; WEFAX excludes Northwood; USCG question kept (C16, 04). Only the backends change.
+  - Touch targets 15/20 mm, 3 mm gaps, 6 mm digits, 7:1 day contrast, Home > Hub > Mode menu depth, 1.5 s holds for risky actions (#52).
+  - labbar at 13 mm with 6 chips (#52). The stale 7 mm draft is not in v1.
+  - URH rejected; Pinecil Bluetooth Off; FNB58 Std (#8). The IronOS V2.23+ detail is carried by G5.
+  - HF+ ppm correction stays in labrx because SoapyAirspyHF never calls airspyhf_set_calibration (#31).
+  - TX-capable tools removed: wsjtx GUI, fldigi, QSSTV, direwolf, SoapyRemote (C16, 6.1).
+  - Field DT disables pcie0 (D9).
+  - UFS RA022-B10J0U2 with Samsung chip; avoid the 256 GB Kioxia module (#18).
+  - HDMI-A-1 through the RA620 bridge (#20).
+  - 2 Pico bought, 1 as spare (D12).
+  - labd as single owner of each resource, with transient DevicePolicy=closed + DeviceAllow (C7). Extended, not replaced.
+  - inferd-htp sandbox: WatchdogSec=5, MemoryMax=1G, CPUAffinity 0-3, one execution thread, CDSP restart ladder with >=15 s wait (5.4).
+  - NPU dataset quota 20 GB; private recordings never leave the home base (5.4, #45).
+  - One merged lab-q6a.dtso; udev /dev/lab/<name> naming (C5, C6).
+  - One venv per tool; lab-venv with numpy<2 (C22).
+  - OpenWebRX+ 1.2.126 is the right base version because it carries security fixes (C22).
+  - egc-gate; SatDump inmarsat_support and SDRangel demodinmarsat removed (C16, 6.1).
+  - VEML7700 at 0x10 does not collide with the expander at 0x20 (5.2).
+  - bias default off in EEPROM; rtl_biast via dpkg-divert; dvb_usb_rtl28xxu blacklisted (C11). Extended in v2.
+  - Rescue microSD kept outside the case (2.1).
+- **Not applied:**
+  1.
+    - **Item:** Record 1 corrected_spec: hold edk2-radxa-dragon-q6a/edk2-qcs6490 0.1.0-9
+    - **Why:** Record 0 shows that 0.1.0-9 still carries the 260916 stamps for qcs6490. r2's 0.1.0-5 already has 260120, so hold 0.1.0-5 and pin edk2-* >= 0.1.0-8 at -1.
+  2.
+    - **Item:** Record 1 corrected_spec: hold radxa-overlays-dkms 0.2.31
+    - **Why:** Record 0 holds r2's 0.2.18 and copies the uart7 fragment from 0.2.31 into our own lab-q6a.dtbo. rsetup overlays are never used, so holding 0.2.31 is not needed.
+  3.
+    - **Item:** Record 1 corrected_spec Route A: 'devicetree-overlay lab-q6a.dtbo' in systemd-boot entries
+    - **Why:** systemd-boot v255 and main have no overlay key (record 0, confirmed 23); rsetup's devicetree-overlay lines are silently ignored. Use a merged DTB built with fdtoverlay.
+  4.
+    - **Item:** Record 1 corrected_spec Route B: embloader 0.7 held with LoaderEntryOneShot
+    - **Why:** Record 0: LoaderEntryOneShot exists only in embloader commit 37bc5b9, which is in no tag (0.7 = 16 Jul 2026). Use record 0's Route B instead: embloader 0.4 with a write-back 'default' trial (untested).
+  5.
+    - **Item:** Record 1 corrected_spec: RuntimeWatchdogSec=30s through qcom-wdt or arm-smc-wdt
+    - **Why:** Record 0: watchdog@17c10000 is reserved for Gunyah and no arm,smc-wdt node exists. RuntimeWatchdogSec=20s applies only with the optional lab-gunyah-wdt module, if its probe passes.
+  6.
+    - **Item:** Record 0 'install fastrpc 1.0.4-1 and hold' and record 1 'hold fastrpc/libcdsprpc1 1.0.7-3' as fixed choices
+    - **Why:** Both are replaced by record 3's Phase-0 matrix (DSP set x fastrpc version on 6.18.2-4). Install the passing set before qcom-qnn-sdk-v68 and hold it. 1.0.4-1 is the default candidate.
+  7.
+    - **Item:** Record 0: udev symlink 998000.serial -> /dev/gnss0
+    - **Why:** Record 1 uses /dev/lab/gnss and blacklists the gnss-* modules, because GNSS=m lets the kernel GNSS class claim /dev/gnss0. Conflict with reaudit_D's DEVICES='/dev/gnss0' and '-b' is flagged in notes.
+  8.
+    - **Item:** Record 2: drive Pico GPIO23 high (forced PWM)
+    - **Why:** Superseded by the G2 analog (Mark Omo measurement: PSM mode is lower-noise) and by reaudit_D. GP23 low/high becomes an A/B test per profile.
+  9.
+    - **Item:** Record 0 cooling: Adafruit 6101 two-wire fan with flyback diode, $4.95
+    - **Why:** reaudit_D and G2 govern the fan: Noctua NF-A4x10 5V non-PWM (3-pin with tach, high-side switching); the 6101 is a spare only. The 60/50 C thresholds and the zone list from this source still apply.
+  10.
+    - **Item:** Record 2: TCA9555 as the fitted expander
+    - **Why:** The G2 analog chooses Diodes PI4IOE5V9555LEX, with TCA9555PWR as fallback on the same footprint. TCA9555 becomes the fallback.
+  11.
+    - **Item:** Record 2: keep PEC11R-4215F-S0024 and KSC641J LFS as the parts
+    - **Why:** G2 replaces them with PEC11R-4220F-S0024 (unconditional) and TL3145BF350QJ (conditional). This source's pitch, keypad, daughterboard and spare rules are kept.
+  12.
+    - **Item:** Record 0 corrected_spec: 'Also from Allnet: UFS $65.90; Armor 7056A $9.90; RTC battery $0.95' as the purchase set
+    - **Why:** For Europe, G2 makes TinyTronics primary for the UFS (EUR 58) and the Armor (EUR 12). ALLNET is only the fallback.
+  13.
+    - **Item:** Record 1 corrected_spec: 'Artemis 4.2.0 (identify-only gate)'
+    - **Why:** Record 2 is more specific and governs: artemis-db v74 only, with no Artemis GUI.
+  14.
+    - **Item:** Record 1 corrected_spec: hold 'labwc 0.7.1'
+    - **Why:** Record 2 governs: labwc 0.7.4+lab1 with the 6ab9d3f backport, keeping 0.7.1 as rollback.
+  15.
+    - **Item:** Record 1: SDRangel explicit OFF list as the mechanism
+    - **Why:** Subsumed by record 2's build allowlist (all ENABLE_* off except the named plugins). The OFF list is kept only as audit expectations.
+  16.
+    - **Item:** Operator note 28: install limesuiteng-legacyapi for SatDump
+    - **Why:** Higher-precedence P4 re-audit: SatDump takes input only through net_source, so its Lime plugin is not needed. Install legacyapi only if another consumer needs it.
+  17.
+    - **Item:** Operator note 32: keep AIS and ADS-B display modes in the OpenWebRX+ allowlist
+    - **Why:** Re-audit A removes the adsb and ais modes from OpenWebRX+: its dump1090 path has no military filter, while readsb and AIS-catcher carry the filters.
+  18.
+    - **Item:** Operator notes 5, 6, 7, 13, 16, 19, 21, 22, 24, 25, 27, 30
+    - **Why:** Not covered or verified by re-audit A (targets, G6K brand, T7 RFI, V4L sourcing, LC76G persistence, M65A cells, readsb PIA/LADD, EASA jamming, Lime sysclk). Left to the sources that verify them.
+  19.
+    - **Item:** Record 2 corrections 0: order lab-shell After=labinput-ready because of QTBUG-114671
+    - **Why:** Refuted: labwc and cage always create seat0. The ordering may stay for usability but must not be a dependency. The stage-2 risk was never in v1, so only the test is added.
+- **Notes:** I wrote the instructions in English. Whoever applies them must write the v2 text in Ukrainian, in gender-neutral wording, and keep USD as the base price with EU prices including VAT next to it.
+  
+  **How the four records of the file were reconciled.** Where the records disagree, I followed the more specific and better-evidenced one:
+  - **Boot and firmware:** record 0 (compute) wins on edk2 0.1.0-5, overlays 0.2.18, the merged DTB, the watchdog and Route B design.
+  - **DSP and FastRPC:** record 3 (NPU) wins on choosing the DSP firmware and fastrpc versions by a Phase-0 matrix.
+  - **UI policy:** record 2 (lab_ui) wins on the SDRangel allowlist, the OpenWebRX+ modes.py patch, Artemis DB-only and labwc 0.7.4.
+  
+  **Precedence applied:**
+  - The G2 analog decides the part and seller for the Pico, the HMI set and the key expander, and the GP23 A/B rule.
+  - reaudit_D and G2 decide the fan.
+  - The user decisions make the with-Lime build the default. This switches the NPU gate, the kernel command line, the LimeSuiteNG build and the PCIe riser default.
+  
+  **Cost rule (operator notes 34-35):**
+  - Only ALLNET, outside the EU, needs a landed cost. The board alone is EUR 169.02, over EUR 150, so normal duty applies; the files give no duty rate, so I left it unquantified. Import VAT is 19-21 % (the range G2 uses), and the EUR 2 handling fee is about $2.25 per tariff line from about 1 Nov 2026. ALLNET shipping is not published.
+  - TinyTronics and DigiKey DE are EU-stock sellers, so no import costs apply.
+  
+  **Rule items applied where this source touches them:**
+  - Items 1/14: SatDump pipeline allowlist on top of the plugin allowlist.
+  - Item 17: the 1544-1545 MHz mask added to the labrx and NPU mask lists.
+  - Items 34/35: landed cost.
+  
+  **Other operator notes this source supports:** 2 (AppArmor inactive), 3 (gunyah_wdt), 4, 8/11 (gr-satellites), 9 (embloader), 12/12b/12c (bias gate, verified that osmocom lacks the rtl-sdr-blog bias hacks), 15, 18, 20, 23, 26, 29, 31, 33.
+  
+  **Open conflict for the merge step:** for gpsd, this source gives GPSD_OPTIONS '-n -p -s 115200' and DEVICES='/dev/lab/gnss'; reaudit_D gives '-n -b -s 115200' and '/dev/gnss0'. I recommend /dev/lab/gnss, because the kernel GNSS class can claim /dev/gnss0 when gnss modules load; -p versus -b needs a decision.
+  
+  **Anchors and new rows:**
+  - Every anchor was checked to occur exactly once in its section file.
+  - Several 08_open_bench changes share the anchor 'Q6A: TX UART6 (перемичка TX→RX' or 'NPU і обчислення: MemTotal і RSS застосунків'. Each of these means 'insert a new row next to this row'.
+  
+  **Numbers:** prices without a value in any file are marked as such: the LM4040, the 2230 NVMe test drive, and the duty rate. The keypad ($5-15) and the RAM, FFT and latency figures are models.
+
 ## community:power (run `wf_d9388111-e66`)
 
 - **Subsystem:** power
