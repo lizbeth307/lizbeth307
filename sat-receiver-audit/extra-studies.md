@@ -26894,6 +26894,735 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - VSDISPLAY (eBay.de 256679793470): what is the board's input (HDMI?), how does touch reach the host, which panel part is it, and is it the same 6.97in glass as Wisecoco?
 - **Confidence:** medium
 
+## extract:analogs_G4 (run `wf_be383e11-6dc`)
+
+- **Source:** analogs_G4
+- **Changes:**
+  1.
+    - **Section:** 02d_bom_case_cables
+    - **Kind:** replace_part
+    - **Part:** Корпус (механічний набір: ASA, вставки/гвинти, термопрокладки, шийний ремінь)
+    - **Anchor:** ASA 1 kg, вставки й гвинти M3 CNC Kitchen
+    - **Instruction:** Replace the whole 'Корпус' row with: | Корпус | Polymaker ASA White 1 kg (PF01002); вставки CNC Kitchen M3x5.7, M2.5x4 і 1/4-20x12.7 (лише для паку IMU), гвинти M2.5x6 TX8 A2 і мідні M2.5x12; Gelid GP-Ultimate 1.0 мм 90x50 (TP-GP04-B) x1; шийний ремінь Peak Design Leash | 1 набір | ≈126.6 (з ціною ASA в ЄС ≈128.7) | 3DJake.de (ASA EUR 24.99 з 19% ПДВ = $28.09, 16 шт., доставка 22.10) або us.polymaker.com ($25.99, лише для США); CNC Kitchen (EUR 40.90 = $45.97); QuietPC NL (EUR 4.14 = $4.65, 378 шт.; ПДВ на сторінці не вказано); Peak Design ($49.95) | перевірено 18.10.2026 (ціну Leash у ЄС і рейтинг якоря 90 kg не перевірено) | Замість ASA Grey PF01003 ($26.99; у 3DJake немає в наявності, дати немає) і 2x Gelid GP-Extreme 80x40x2.0 мм (TP-GP01-D, 2 x EUR 4.98 = $11.20): економія ≈$7.55 на базі США (ASA $1.00, прокладки $6.55); у ЄС ПДВ-до-ПДВ ASA $0 (обидва EUR 24.99), прокладки EUR 5.82 ($6.54). Попередній вибір фактично коштував ≈$134.1 до доставки, а не 98-133. Прокладка 1.0 мм — лише якщо перевірка посадки дасть зазори 0.7-1.0 мм (п'єдестал Lime, сходинка LPDDR5, бобишка UFS; 08); інакше GP-Ultimate 90x50 потрібної товщини (0.5 мм EUR 3.46, 1.5 мм EUR 6.52), економія на прокладках ≈$0; варіант — 2 смуги 120x20 (TP-GP04-R-B, EUR 2.61 кожна, 25 шт., +$1.22). Якщо прокладку IP2368-корпус залишено — +1 GP-Extreme 2.0 мм (EUR 4.98). Leash кріпиться через друковані вушка; якщо купувати з США — правило landed cost (ПДВ + EUR 3 мита за лінію + EUR 2 збору з ≈1.11.2026 + доставка). Без CF/металізованого ASA біля антен. Бюджет: сервіс друку. |
+    - **Reason:** P5 analog decision G4[0] (replace_conditionally): White is the same material with the same TDS (Tg 98 C, HDT 100 C at 1.8 MPa) and in stock; 2.0 mm GP-Extreme fills only 1.4-2.0 mm gaps and fails the corrected 0.5-1.5 mm spec; CNC Kitchen and Leash kept (no cheaper not-worse part).
+    - **Sources:** analogs_G4 decisions[0] chosen, chosen_price_usd, saving_usd, stack_changes 1-2; https://www.3djake.de/polymaker/polymaker-asa-weiss ; https://us.polymaker.com/products/asa.json ; https://cnckitchen.store/products.json ; https://quietpc.co.nl/gelid-gp-ultimate-pads?product=6120 ; https://www.peakdesign.com/products/leash
+    - **Saving usd:** 7.55 (ASA 1.00 + pads 6.55, US basis); EU VAT-for-VAT 6.54 (pads only); pads saving ~0 if the fit check needs other thicknesses
+  2.
+    - **Section:** 02d_bom_case_cables
+    - **Kind:** other
+    - **Part:** Гвинти M3 CNC Kitchen ISO 14580 A2 TX10 (новий рядок)
+    - **Anchor:** Бюджет: сервіс друку. |
+    - **Instruction:** Insert a new row directly after the 'Корпус' row: | Гвинти M3 | CNC Kitchen ISO 14580 A2 TX10, довжини з CAD | 3-4 довжини по 25 шт. | 20.91-28.21 | CNC Kitchen (EUR 5.80-6.60 за 25 шт.) | перевірено | Рядка бракувало: $46 CNC Kitchen покривають вставки і гвинти M2.5, але не гвинти M3. M3x8/10/12 — $20.91; 4 довжини — $28.21. Позначка пошуку A «M2.5 бракує» хибна. Не брати незнайомі «304» гвинти (можуть бути магнітною сталлю серії 200) і ISO 7380 (інша голівка, не для зенковок). |
+    - **Reason:** G4[0] stack_changes 3: missing BOM line; the $46 line has no M3 screws.
+    - **Sources:** analogs_G4 decisions[0] chosen_price_usd, stack_changes 3, rejected (generic 304 screws); https://cnckitchen.store/products.json
+    - **Saving usd:** 0 (adds 20.91-28.21)
+  3.
+    - **Section:** 02d_bom_case_cables
+    - **Kind:** other
+    - **Part:** Ремінь на руку SmallRig PAC2456 (новий рядок)
+    - **Anchor:** Бюджет: сервіс друку. |
+    - **Instruction:** Insert a second new row after the new 'Гвинти M3' row: | Ремінь на руку | SmallRig Hand Strap PAC2456 | 1 | 13.49 (EUR 12 з ПДВ) | Syntex (syntex.tv) | перевірено (під замовлення до 23.10.2026) | Новий рядок, не заміна (рядок 'ремені на руку і шию' мав ціну лише на шийний). Потрібні два прорізи ≤12 мм у задній половині корпусу; тест на відрив 3x ваги пристрою разом із тестом вушок ременя; за приміткою SmallRig тримати подалі від прямого сонця (PU/EVA) — витратна деталь, оглядати щосезону. |
+    - **Reason:** G4[0] chosen (5) and stack_changes 3: hand strap was never priced.
+    - **Sources:** analogs_G4 decisions[0] chosen, conditions_or_tests (Hand strap); https://www.syntex.tv/smallrig-hand-strap-pac2456
+    - **Saving usd:** 0 (adds 13.49)
+  4.
+    - **Section:** 02d_bom_case_cables
+    - **Kind:** condition
+    - **Part:** Шасі: середня пластина, РЧ-відсік FR4, кріплення 1/4-20, KSD9700
+    - **Anchor:** Середня пластина 2 мм Al, РЧ-відсік з фольгованого FR4
+    - **Instruction:** Rewrite the 'Шасі' row: | Шасі | Середня пластина 2.0 мм EN AW-5754 (AlMg3, mill finish, 130 W/mK) + заготовка п'єдесталу; РЧ-відсік з фольгованого FR4 35/35 мкм (Bungard 120306Z33 1.5 мм 160x100 x2 або Scankemi 1.6 мм, Electrokit 41003697 x1); захоплена сталева гайка 1/4-20 UNC (оцинкована, ASME B18.2.2, 7/16 in AF, 7/32 in) у шестигранному гнізді задньої бобишки; KSD9700 NO 70 °C, Piekarz 31610 x5 | 1 набір | 35-70 | місцева обробка пластини (за замовчуванням) або Alu-Verkauf DE (за умовою); TME / Electrokit; Piekarz PL; гайка — RS PRO 245-0741 або місцево | модель (рядок); перевірені позиції — близько $27-49 з доставкою по DE | Пластина Alu-Verkauf 150x250 EUR 5.95 з 19% ПДВ ($6.90); п'єдестал 25x25x75 EUR 3.81 ($4.42) або 10 мм 50x50 EUR 8.33 ($9.66); доставка до 5 kg: DE EUR 6.95 ($8.06), AT/BE/NL/LU/DK EUR 12.95 ($15.02), FR EUR 19.50 ($22.6), SE EUR 27.50 ($31.9), інші країни не вказано. DIY-заготовка (свердлити за шаблоном 1:1 з STEP V1.21) — лише якщо місцева ціна пластина + п'єдестал перевищить близько $25 (DE) або $35-45 (FR/SE) І пройде полуденний прогін з Lime (08); інакше місцева обробка. 5754 — 130 W/mK, не 140-160: модель +28% підйому температури пластини, близько +1-2 K на п'єдесталі Lime при 4 W; запас <3 K → 1050A-H14 (222 W/mK) або 6082-T6 (близько 180 W/mK). FR4: Bungard 2 x $2.97-3.70 = $5.94-7.40 (net/gross не вказано) — зняти фоторезист перед паянням; Electrokit 76 SEK з 25% ПДВ ≈ $7.98. KSD9700: 2.75 PLN без ПДВ за 1 шт., 1.89 PLN за 5+ (5 шт. ≈ 9.45 PLN ≈ $2.55 без ПДВ, $3.14 з 23% ПДВ), 33 шт.; 1 у пристрій, 1 у ЗІП, решта — запас після сортування; поліімід під корпусом; NO, сигнальний рівень, паралельно MOSFET CHG_INHIBIT. Гайка: RS PRO 245-0741, 100 шт., EUR 11.63 без ПДВ ≈ $13.5 (не перевірено, 403). Латунна вставка 1/4-20 — лише для паку IMU. Тест на відрив 3x ваги пристрою; різьба в пластині 2 мм — ніколи. |
+    - **Reason:** G4[1] replace_conditionally: names alloy, sources and SKUs; the DIY plate saves money only if a local quote is high and the thermal soak passes; KSD9700 kept once (Piekarz 31610 matches power.json: NO, 70 C, 4.2x8x20 mm); captured nut is already allowed by final_integration. Verified covered items 27-49 delivered DE match the model, so the row stays 35-70.
+    - **Sources:** analogs_G4 decisions[1] chosen, chosen_price_usd, saving_usd, equivalence_proof, stack_changes; https://alu-verkauf.de/products/aluminium-platten ; https://alu-verkauf.de/policies/shipping-policy ; https://www.piekarz.pl/en/thermostats/6 ; https://www.tme.eu/en/details/fr4100x160_3535/two-layer-laminates/bungard/120306z33/ ; https://www.electrokit.com/en/kopparlaminat-dubbelsidigt-fr4-1.6mm-35/35u-233x160 ; https://www.makeitfrom.com/material-properties/5754-AlMg3-3.3535-A95754-Aluminum
+    - **Saving usd:** 0 proven (only machining labour if a local quote exceeds ~25 DE / 35-45 FR/SE); KSD9700 and nut changes save under 1-2 each
+  5.
+    - **Section:** 02d_bom_case_cables
+    - **Kind:** seller_or_price
+    - **Part:** Захист від погоди IPX4/IP54 (набір з SKU)
+    - **Anchor:** IPX4/IP54: нержавіюча сітка + гідрофобна піна
+    - **Instruction:** Rewrite the 'Захист від погоди' row: | Захист від погоди | IPX4/IP54: 5x Amphenol LTW VENT-PS1YBK-O8002 (олеофобний ePTFE, з гайкою, >1000 ml/min при 70 mbar, IP68/IP69K, M12x1.5); 11x GCT RFCT-SMA-CAP-GS-1 (латунь, золото, IP67, на ланцюжку); 3x Gainta G201-IP67 (PC) для фідерних LNA; 6x LAPP SKINTOP ST-M 12x1.5 (53111400) — лише для RG58/LMR-195; піна Qualtek 09150-M-30 (36.4 мм, UL 900 Class II) за грубою тканою сіткою 316 (отвір близько 0.4-0.5 мм, ≥45% відкритої площі, продавець з ЄС); OP/TECH Rainsleeve 18 in, 2 шт. (9001132); 3M Scotch 23 19 мм x 9.15 м; MOLYKOTE 4 100 g; помаранчевий індикаторний силікагель без кобальту 5-10 g + індикаторна картка вологості (SKU відкрито); непровідні заглушки F, USB-C, USB-A, 3.5 мм, LAB BUS, GX12/M8 | 1 набір | 116-168 (без ПДВ, до доставки) | TME (клапани, заглушки SMA, бокси, сальники); DigiKey (резерв LTW і GCT, піна Qualtek); Silmid EU (MOLYKOTE 4 EUR 10.71 без ПДВ / EUR 12.85 з ПДВ; Scotch 23 EUR 12.50-19.14 без ПДВ; у Silmid ES Scotch 23 не було, 26 днів); чохол — B&H (США) або UK | частково перевірено (SKU закріплено) | Перевірені SKU — близько $102-138; оцінки — $14-30 (інші заглушки $3-8, сітка $5-10, силікагель і картка $6-12); курс 1.15 USD/EUR (не перевірено). Рядки: клапани $19.25 (DigiKey 5 x 3.85) - $23.20 (TME); заглушки SMA $30.14-45.43 (TME; DigiKey $42.97); бокси $10.29-12.48; сальники $2.10-5.88; піна ≈$4.14 (ціна -45; ціну -30 не перевірено); чохол $9.49-12.99 (США) або GBP 8 (UK); Scotch 23 ≈$14.4-22.0; MOLYKOTE 4 ≈$12.3. Споживач у ЄС платить 19-27% ПДВ зверху; рядки поза ЄС (чохол США/UK, UK-сітка) — + EUR 3 мита за тарифну лінію, + EUR 2 збору за лінію приблизно з 1.11.2026, імпортний ПДВ і доставка, тож шукати продавця в ЄС. Було 45-110 (модель без SKU) — реальний набір на $58-71 дорожчий. Бокс G201 — лише якщо пройде тест посадки й Gainta письмово підтвердить UV-стабілізований PC; інакше більший бокс Gainta IP67 PC (без ціни) або G104MF-IP67 (Al, +85 g на бокс). Вводи RG316 (≈2.5 мм): сальник M12 на 2-5 мм або редукційна вставка, або IP67 SMA прохідні з короткими перемичками RG316 (без ціни — відкритий рядок); готовий штекер SMA (шестигранник 8 мм) крізь сальник M12 не пройде. Заглушка F — ніколи не термінатор 75 Ohm. SKU-перелік також у parts.yaml. IP67 недосяжний з примусовим охолодженням. Знижений варіант «заглушки + чохол» — не аналог: знижений захист, без використання в дощ і пил. |
+    - **Reason:** G4[2] keep: content kept, now pinned to verified SKUs; no cheaper not-worse kit exists; the 45-110 estimate cannot be met by a genuine branded build. O8002 replaces both search picks (O8001 half the airflow, N8001 not oleophobic).
+    - **Sources:** analogs_G4 decisions[2] chosen, chosen_price_usd, saving_usd, stack_changes; operator_notes items 34-35; https://www.tme.eu/en/details/vent-ps1ybk-o8002/enclosures-other-accessories/amphenol-ltw/ltw-vent-ps1ybk-o8002/ ; https://www.digikey.com/en/products/detail/gct-gradconn/RFCT-SMA-CAP-GS-1/12822389 ; https://www.tme.eu/en/details/g201-ip67/multipurpose-enclosures/gainta/
+    - **Saving usd:** none; real cost is 58-71 above the 45-110 estimate (Gainta instead of Hammond saves 16-21 within the kit; O8002 costs 2.20 more than N8001 for 5)
+  6.
+    - **Section:** 02d_bom_case_cables
+    - **Kind:** seller_or_price
+    - **Part:** Підсумок групи 2.9
+    - **Anchor:** **178-313**
+    - **Instruction:** Replace the 2.9 group subtotal **178-313** with **312-406** (мій розрахунок: корпус 126.6 + гвинти M3 20.91-28.21 + ремінь на руку 13.49 + шасі 35-70 + захист від погоди 116-168; з ціною ASA в ЄС +2.1). Add in the note column: 'без доставки; захист від погоди — без ПДВ'. The analog's own figure 249-371 counted only the weather-kit change and is superseded by this combined sum.
+    - **Reason:** Sum of the G4 row changes in 2.9 (case set, two new lines, weather kit; chassis unchanged).
+    - **Sources:** analogs_G4 decisions[0] chosen_price_usd, decisions[1] stack_changes, decisions[2] stack_changes (subtotal 249-371)
+    - **Saving usd:** none (+134.00 lower / +93.30 upper)
+  7.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** keep_with_note
+    - **Part:** Щогла для Boni-Whip (DCF77/MSF/TDF, NAVTEX)
+    - **Anchor:** | Щогла | На амортизаторі 7 x 35 см
+    - **Instruction:** Rewrite the 'Щогла' row: | Щогла | Трубна дуга Robens DIY Pole Set 8.5 мм 7001-T6 (9 x 44.5 см, 400.5 см, 0.35 kg), порізана на 8 секцій ≈30.5 см труби + муфта (≈2.44 м, одна секція запасна), амортизатор 400 см перенатягнути; 3 непровідні відтяжки з набору Forclaz Ultra-light Reflective Guy Ropes (10 м x 2 мм, 20 kg, 4 бігунки, 32 g) на ≈2/3 висоти з легким натягом; сталевий кілок 25-30 см (оцинкований або нержавіючий; він же заземлювальний кілок C17); друкований PETG/ASA адаптер вершини, що тримає Boni-Whip НАД вершиною щогли, з розвантаженням BNC; затискач дроту заземлення від основи щогли до кілка | 1 набір | 70-80 | Karkkainen FI (Robens EUR 47.90 = $53.8; чи включено ПДВ — не вказано; >20 шт.); Decathlon CY (Forclaz EUR 12.99 з ПДВ = $14.6); кілок — місцево | перевірено (Robens, Forclaz); кілок — оцінка $2-6; доставка не перевірена | Специфікація: 8.5 мм 7001-T6, металеві муфти, секції ≤35 см з муфтою, ≥2.4 м, 3 непровідні відтяжки з малим розтягом на ≈2/3 висоти, сталевий кілок. Перевірений шлях ≈$68.4 + кілок + доставка; було 15-50 (модель без SKU): алюмінієвої щогли з секціями ≤35 см до $50 немає (Buddipole short $79, немає в наявності). Кріплення Bonito/WiMo 18067.MH (EUR 16.00) — лише на труби 28-40 мм, сюди не підходить. Різати вдома: труборіз і зачищувач. Маса: щогла ≈0.22 kg, відтяжки 0.03, кілок 0.05-0.1 → Boni + щогла ≈0.5-0.55 kg. Компроміс лише з вашої явної згоди: Quechua 8.5 мм склопластик (EUR 9.99, decathlon.com.gr) + Forclaz ≈$25.8 + кілок — економія ≈$42.6, але +0.1-0.13 kg і нижчий клас довговічності (ті самі тести й підтвердження суцільних стрижнів). Бюджет: дерево або паркан. |
+    - **Reason:** G4[3] keep with tighter spec: no candidate is both cheaper and not worse; the model price 15-50 is not reachable with a verified seller.
+    - **Sources:** analogs_G4 decisions[3] chosen, chosen_price_usd, saving_usd, stack_changes; https://www.karkkainen.com/en/robens-diy-8-5-mm-silver-tent-pole ; https://decathlon.com.cy/products/ultra-light-reflective-guy-ropes-orange ; https://www.wimo.com/en/18067-mh ; https://www.pa3fwm.nl/technotes/tn07.html
+    - **Saving usd:** 0 (row rises from 15-50 to 70-80; optional GRP trade saves ~42.6 only with explicit user consent)
+  8.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** seller_or_price
+    - **Part:** Дорожній штатив
+    - **Anchor:** | Штатив | Дорожній, до 35 см у складеному
+    - **Instruction:** Rewrite the 'Штатив' row: | Штатив | Rollei Compact Traveler No. 1 Aluminium, чорний (SKU 22585, EAN 4048805225859), версія 2026 з кульовою головою і пластиною Arca | 1 | 57.33 (EUR 50.95 з 19% ПДВ DE) | rollei.de (Rollei GmbH & Co. KG, Norderstedt DE) | перевірено 18.10.2026 (ціна розпродажу; RRP EUR 99) | Складений 34.5 см, мін. 34.5 см, макс. 145 см, 113 см з опущеною колоною; 5 алюмінієвих секцій 22/19/16/13/10 мм, твіст-замки, шипи, зворотне складання, монопод 49-151 см; 942 g без голови, 1.14 kg з головою; 8 kg (заявлено); голова Al 197 g, з'єднання 3/8 in; пластина Arca 4x4x1 см з гвинтом 1/4 in. З доставкою: DE/AT $64.06 (EUR 56.93; доставка EUR 5.98, безкоштовно від EUR 100), інші країни ЄС $71.95 (EUR 63.94; EUR 12.99, безкоштовно від EUR 150); для не-DE адрес ціна з ПДВ може змінитися (OSS, не перевірено). Купувати, поки діє ціна. Опційно (поза підсумком): друга пластина Arca EUR 26.95 (SKU 20022) — разом зі штативом нижче EUR 100. Рівнів у комплекті немає — рівень дає IMU; пізніше голову 3/8-16 можна замінити на pan-tilt. Для рупора, гелікона і V-диполя (1.087 м з опущеною колоною). Було 40-100 (модель). Бюджет: гнучкий міні-штатив з дипольного набору (рупор і гелікон — у руках). |
+    - **Reason:** G4[4] keep: Rollei is the current pick; every cheaper candidate fails folded length, height or load, and every one that fits is dearer or unpriced. The 2026 listing supersedes the 2016 datasheet figures.
+    - **Sources:** analogs_G4 decisions[4] current_pick, current_price_usd, chosen, equivalence_proof, stack_changes; https://www.rollei.de/products/stativ-compact-traveler-no-1 ; https://www.rollei.de/products/kugelkopf-compact-traveler-no1-v2026 ; https://www.rollei.de/policies/shipping-policy
+    - **Saving usd:** 0 (kept; 77.65 cheaper than Manfrotto BeFree One at EUR 119.95)
+  9.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** replace_part
+    - **Part:** Сумки: рюкзак, м'який чохол для антен, тубус для елементів
+    - **Anchor:** | Сумки | Чохол для антен + тубус для елементів + рюкзак 15-20 L
+    - **Instruction:** Rewrite the 'Сумки' row: | Сумки | Deuter Futura 27 (3400326; 27 L, рекомендоване навантаження 4-8 kg, пружинна сталева рама Aircomfort, стегнові крила, дощовий чохол; бажано світлий greystone-alu) + Millenium Classic Stick Bag (Thomann 101124) як м'який чохол + DIY тубус: Marley HT 50 x 500 мм (toom 5650106) + 2x Muffenstopfen 50 мм (toom 5650733) + Überschiebemuffe 50 мм (toom 5650689), різати до ≈40 см | 1 набір | 155.49 (EUR 138.32 з 19% ПДВ DE; без ПДВ $130.66) | Bergfreunde DE (EUR 123.96), Thomann (EUR 9.90), toom (EUR 4.46: 1.29 + 2 x 0.79 + 1.59) | перевірено 18.10.2026 (рюкзак і тубус); чохол — ціна перевірена, посадку не перевірено | Модель «рюкзак 15-20 L» замінено: рекомендоване навантаження перевірених рюкзаків 18-25 L — 2-7 kg, а вміст 5.54-6.92 kg без КХ і щогли та 6.44-8.17 kg повністю. Економії немає (+$0.49 до верхньої межі 80-155). Якщо ціна Bergfreunde «ab» не діє для обраного кольору — найдешевший колір або deuter.com EUR 155 (набір $190.38); якщо повернеться стара SKU 3400321 (EUR 108.50) — набір $138.11. Труба: EN 1451 HT PP DN50, стінка 1.8 мм, внутрішній ≈46.4 мм. Зважування повного набору ≤8.0 kg (08). Без магнітних застібок. Гострі краї пелюсток і сегментів 0.3-0.5 мм. Резерв: Zildjian Mini Drumstick Bag (EUR 18.90), якщо Millenium не пройде посадку; dBlue DN50 (EUR 15.46 = $17.38), якщо стінка Marley <1.8 мм. Бюджет (лише з явною позначкою): Deuter AC Lite 23 (Bergfreunde EUR 82.46 = $92.69; набір $108.84; 3-6 kg) — лише якщо КХ-набір і щогла їдуть поза рюкзаком. |
+    - **Reason:** G4[5] replace_conditionally: defines the unnamed model line with real parts; no 15-25 L pack has a maker load rating that covers the D14 load.
+    - **Sources:** analogs_G4 decisions[5] chosen, chosen_price_usd, saving_usd, equivalence_proof, rejected, stack_changes; https://www.deuter.com/de-en/futura-27/4046051185187 ; https://www.bergfreunde.de/deuter-futura-27-wanderrucksack/ ; https://www.thomann.de/de/millenium_msb20bk_stick_bag.htm ; https://toom.de/p/hochtemperaturrohr-50-x-500-mm/5650106
+    - **Saving usd:** none (+0.49 vs band top, +75.49 vs band bottom)
+  10.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** seller_or_price
+    - **Part:** Підсумок групи 2.5 (складаний рівень)
+    - **Anchor:** **350.90-625.17 (≈351-625)**
+    - **Instruction:** Recompute the 2.5 subtotal from the updated rows. G4 deltas only: Щогла +55.00 / +30.00 (15-50 → 70-80), Штатив +17.33 / −42.67 (40-100 → 57.33), Сумки +75.49 / +0.49 (80-155 → 155.49), net +147.82 / −12.18; with only G4 changes the subtotal is 498.72-612.99 (≈499-613; мій розрахунок). Apply other groups' changes (e.g. Boni-Whip) on top before writing the final figure.
+    - **Reason:** Mast, tripod and bag rows changed by G4[3]-[5].
+    - **Sources:** analogs_G4 decisions[3]-[5] chosen_price_usd; decision[3] stack_changes ('tier total rises by about 20-30 at the top end' refers to the mast alone)
+    - **Saving usd:** none (+147.82 lower / −12.18 upper)
+  11.
+    - **Section:** 02c_bom_display_power_gnss
+    - **Kind:** correction
+    - **Part:** KSD9700 у рядку зарядника IP2368 (подвійний облік)
+    - **Anchor:** NTC 10k B3380; KSD9700 на 70 °C
+    - **Instruction:** In the 'Зарядник' row note replace 'KSD9700 на 70 °C.' with 'KSD9700 70 °C NO — один рядок у 2.9 (Шасі: Piekarz 31610 x5); приклеєний через поліімід до найгарячішого MOSFET IP2368, на сигнальному рівні паралельно MOSFET CHG_INHIBIT, ніколи послідовно з VBUS PD 20 V.' Do not price it here.
+    - **Reason:** G4[1] stack_changes: remove the double count (charger line and chassis line); fix the wiring text to match power.json.
+    - **Sources:** analogs_G4 decisions[1] stack_changes (KSD9700), equivalence_proof; final/power.json (per the analog)
+    - **Saving usd:** 0
+  12.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** seller_or_price
+    - **Part:** Підсумок рівня core (2.12)
+    - **Anchor:** | core | пристрій з внутрішнім РЧ
+    - **Instruction:** Recompute the core tier after all groups. G4 contribution: group 2.9 rises from 178-313 to 312-406, i.e. +134.00 (lower) / +93.30 (upper); with only G4 changes the line recount would be 1,893.40-2,346.07 (мій розрахунок). Note in the row that the weather kit is ex VAT.
+    - **Reason:** Case set, new M3-screw and hand-strap lines, and the SKU-pinned weather kit (G4[0], G4[2]).
+    - **Sources:** analogs_G4 decisions[0] chosen_price_usd, decisions[2] chosen_price_usd
+    - **Saving usd:** none (+134.00 / +93.30)
+  13.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** seller_or_price
+    - **Part:** Підсумок рівня antenna-foldable (2.12)
+    - **Anchor:** | antenna-foldable | Yagi, гелікон, КХ-дріт, Boni-Whip, щогла, штатив, сумки
+    - **Instruction:** Recompute the antenna-foldable tier from the new 2.5 subtotal. G4 deltas +147.82 / −12.18 (mast, Rollei tripod, Deuter set); with only G4 changes 498.72-612.99 (мій розрахунок).
+    - **Reason:** G4[3]-[5] price changes.
+    - **Sources:** analogs_G4 decisions[3]-[5]
+    - **Saving usd:** none (+147.82 / −12.18)
+  14.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** seller_or_price
+    - **Part:** Зведення 2.12 (пристрій + рівні + лабораторія)
+    - **Anchor:** | **Пристрій (core), основний варіант** |
+    - **Instruction:** Recompute all five summary rows after all groups. G4 deltas: Пристрій (core) +134.00 / +93.30; Пристрій + патч-антени +134.00 / +93.30; Пристрій + обидва рівні антен, + лабораторія (bench) і Усе, крім опційного — +281.82 / +81.12 (мій розрахунок). Update the rounding paragraph below the table accordingly.
+    - **Reason:** Core and foldable tiers changed.
+    - **Sources:** analogs_G4 decisions[0]-[5]
+    - **Saving usd:** none
+  15.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** seller_or_price
+    - **Part:** Бюджетний варіант складаного рівня
+    - **Anchor:** міні-штативом з дипольного набору (−$40) і кріпленням до дерева замість щогли (−$15)
+    - **Instruction:** Replace '(−$40)' with '(−$57.33, замість Rollei Compact Traveler No. 1)' and '(−$15)' with '(−$70, нижня межа нової щогли 70-80)'; recompute '≈$201' from the new foldable lower bound (only G4 changes: 498.72 − 94.84 − 57.33 − 70 ≈ $277, мій розрахунок; re-run after the Boni-Whip/PA0RDT figures of other groups). Add: 'Позначені компроміси, лише з вашої згоди: щогла зі склопластику Quechua 8.5 мм (−≈$42.6, +0.1-0.13 kg, нижча довговічність); Deuter AC Lite 23 замість Futura 27 (набір $108.84, −≈$47) — лише якщо КХ-набір і щогла не в рюкзаку.' Recompute the 'пристрій + обидва рівні антен' budget (≈$2,116 / ≈$2,024) with the core budget raised by +$134 (G4 2.9 change).
+    - **Reason:** Budget alternatives now differ from the new row prices; G4[3] and G4[5] list explicit trades.
+    - **Sources:** analogs_G4 decisions[3] saving_usd, rejected (Quechua); decisions[5] rejected (AC Lite 23); decisions[4] rejected (flexible mini tripod fallback)
+    - **Saving usd:** budget trades: mast GRP ~42.6, AC Lite 23 ~47 (both flagged, not default)
+  16.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** correction
+    - **Part:** Вага польового рюкзака (2.12)
+    - **Anchor:** польовий рюкзак близько 4.6-6.1 kg, або 5.5-7.4 kg з КХ-набором і щоглою
+    - **Instruction:** Replace with 'польовий рюкзак (Deuter Futura 27, порожній 1.25 kg) близько 6.8-8.2 kg без КХ і щогли або 7.7-9.4 kg повністю, без води (вміст 5.54-6.92 і 6.44-8.17 kg; з Lime за замовчуванням +0.15 kg і штативом 1.17-1.35 kg за reaudit C; з Rollei 1.14 kg верхні межі нижчі приблизно на 0.2 kg — мій розрахунок)'.
+    - **Reason:** G4[5] weight recount (Lime default, real tripod mass, real pack mass).
+    - **Sources:** analogs_G4 decisions[5] equivalence_proof, stack_changes (Weight table in 5.8); decisions[4] equivalence_proof (1.14 kg)
+    - **Saving usd:** 0
+  17.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** D6: KSD9700 і приймання прогону
+    - **Anchor:** з KSD9700 на 70 °C; без заряду в HF/LF Quiet
+    - **Instruction:** Replace with 'з KSD9700 70 °C NO (Piekarz 31610), приклеєним через поліімід до найгарячішого MOSFET IP2368 і ввімкненим на сигнальному рівні паралельно MOSFET CHG_INHIBIT (ніколи послідовно з VBUS PD 20 V: немає DC-номіналу, 50 mOhm самонагріву); без заряду в HF/LF Quiet'. In the same row change 'Приймання: 45 хв полуденного прогріву з козирком у режимах B, D і G' to '... у режимах B, D, G і (з Lime) H; з Lime також LMS7002M (lms7_temp) ≤75 °C і ufs-thermal не гірше'.
+    - **Reason:** G4[1] stack_changes: wiring text must match power.json; the plate acceptance soak includes Lime modes.
+    - **Sources:** analogs_G4 decisions[1] stack_changes, conditions_or_tests 2
+    - **Saving usd:** 0
+  18.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** D14: польовий рюкзак
+    - **Anchor:** Поле: рюкзак 15-20 L з пристроєм
+    - **Instruction:** Change 'рюкзак 15-20 L' to 'рюкзак 25-27 L з рекомендованим навантаженням виробника від 8 kg, пружинною сталевою рамою, стегновими крилами і дощовим чохлом (Deuter Futura 27, 4-8 kg)'. In the reason column replace 'За моделлю польове навантаження близько 5.5-7.4 kg повністю (5.8; у файлі 5.3-7.3 до виправлення ваги пристрою).' with 'За сумою частин 5.8 (з Lime за замовчуванням і штативом 1.17-1.35 kg) вміст — 5.54-6.92 kg без КХ і щогли та 6.44-8.17 kg повністю; на спині 6.8-8.2 і 7.7-9.4 kg без води. Рекомендоване навантаження перевірених рюкзаків 18-25 L — 2-7 kg. Вміст близько 12-14 L + чохол, тубус і штатив уміщуються в 27 L; повний набір з водою перевищує рейтинг будь-якого перевіреного денного рюкзака.' Add to the rejected list: 'рюкзаки 18-25 L з рейтингом 2-7 kg (Deuter AC Lite 23, Trail 25, Futura 23, Speed Lite 21, Gregory Nano 18)'.
+    - **Reason:** G4[5] stack_changes D14.
+    - **Sources:** analogs_G4 decisions[5] equivalence_proof, rejected, stack_changes
+    - **Saving usd:** 0
+  19.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** D15: кріплення 1/4-20 і прорізи ременя
+    - **Anchor:** Задня стінка: запресована гайка 1/4-20 або сталева вставка в бобишці від 6 мм, вушка для ременя
+    - **Instruction:** Replace with 'Задня стінка: захоплена сталева гайка 1/4-20 UNC (оцинкована, ASME B18.2.2, 7/16 in AF), вкладена зсередини в шестигранне гніздо 11.3 мм AF (близько 5.8 мм) бобишки ASA (100% заповнення, ≥4 периметри), зовнішня стінка ≤1.0 мм з отвором 6.6 мм, ≥3 повні витки (3.8 мм) з найкоротшим гвинтом штатива (дозволена альтернатива — запресована сталева вставка в бобишці від 6 мм; латунна вставка 1/4-20 — лише для паку IMU), вушка для ременя і два прорізи ≤12 мм для ременя на руку'.
+    - **Reason:** G4[1] stack_changes (rear boss) and G4[0] (hand strap slots).
+    - **Sources:** analogs_G4 decisions[1] chosen (2), conditions_or_tests 3, stack_changes; decisions[0] conditions_or_tests (Hand strap)
+    - **Saving usd:** 0
+  20.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** D15: захист IPX4/IP54 у CAD
+    - **Anchor:** Захист: ціль IPX4/IP54.
+    - **Instruction:** Append after this sentence: 'У CAD: майданчики під клапани M12 товщиною 2.0-3.5 мм на порожнині дисплея і батарейному відсіку (клапани ніколи догори); забори під падіння ≤5 Pa з грубою сіткою і гніздами-фіксаторами піни 36.4 мм, жоден забір не дивиться вгору; анкери для ланцюжків заглушок біля кожного SMA і біля портів F, USB і LAB BUS.'
+    - **Reason:** G4[2] stack_changes (Case CAD, D15).
+    - **Sources:** analogs_G4 decisions[2] stack_changes
+    - **Saving usd:** 0
+  21.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** seller_or_price
+    - **Part:** C24: вартість і вага
+    - **Anchor:** польовий рюкзак близько 4.6-6.1 kg, або 5.5-7.4 kg з КХ-набором і щоглою
+    - **Instruction:** Replace the backpack weight with 'польовий рюкзак (Deuter Futura 27) близько 6.8-8.2 kg без КХ і щогли або 7.7-9.4 kg повністю, без води (вміст 5.54-6.92 / 6.44-8.17 kg)'. Also in this row update 'core-пристрій $1,758-2,253' and 'складані антени $351-625' to the recomputed totals (G4 deltas: core +134.00 / +93.30; foldable +147.82 / −12.18) and add to the reason column that G4 found the case set, weather kit, mast and bags under-priced (case ≈$134.1 actual vs 98-133; weather 116-168 vs 45-110; mast 70-80 vs 15-50; bags 155.49 vs 80-155).
+    - **Reason:** G4[0], [2], [3], [5] cost and weight changes.
+    - **Sources:** analogs_G4 decisions[0] current_price_usd, decisions[2] saving_usd, decisions[3] chosen_price_usd, decisions[5] stack_changes
+    - **Saving usd:** none
+  22.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** C17: щогла Boni-Whip і заземлювальний кілок
+    - **Anchor:** сигнали часу ДХ — Boni-Whip на щоглі від 2 м
+    - **Instruction:** Replace with 'сигнали часу ДХ — Boni-Whip над вершиною щогли 2.44 м (від 2 м; 2.0 м дає близько −1.6 dB відносно 2.4 м, бо сигнал пропорційний висоті — PA3FWM tn07); провідна щогла — лише під штирем, не поруч; заземлювальний кілок — сталевий 25-30 см, основа щогли з'єднана з ним <1 Ohm'.
+    - **Reason:** G4[3] equivalence_proof and conditions (height, whip above mast, bonding).
+    - **Sources:** analogs_G4 decisions[3] equivalence_proof, conditions_or_tests 3-4; https://www.pa3fwm.nl/technotes/tn07.html
+    - **Saving usd:** 0
+  23.
+    - **Section:** 01b_decisions_register
+    - **Kind:** decision
+    - **Part:** Корпус (#70): колір ASA, гайка 1/4-20, сплав пластини
+    - **Anchor:** Світло-сірий ASA (PETG відкинуто — м'якне при 75-80 °C)
+    - **Instruction:** Change to 'Світло-сірий або білий ASA (за замовчуванням Polymaker ASA White PF01002; той самий TDS, що й у Grey; без CF/металізованого ASA біля антен) (PETG відкинуто — м'якне при 75-80 °C)'; in the same row change 'середня пластина 2 мм Al' to 'середня пластина 2 мм Al (EN AW-5754, 130 W/mK — лише якщо пройде прогін з Lime; інакше 1050A або 6082-T6)' and 'запресована гайка 1/4-20; ремінь обов'язковий' to 'захоплена сталева гайка 1/4-20 у шестигранному гнізді, вкладена зсередини; ремінь обов'язковий (Peak Design Leash на шию + SmallRig PAC2456 на руку)'.
+    - **Reason:** G4[0] stack_changes 1 and G4[1] stack_changes.
+    - **Sources:** analogs_G4 decisions[0] stack_changes 1, decisions[1] stack_changes
+    - **Saving usd:** 1.00 (ASA, US basis)
+  24.
+    - **Section:** 01b_decisions_register
+    - **Kind:** keep_with_note
+    - **Part:** Деталі лише для Lime (#69): термопрокладка п'єдесталу
+    - **Anchor:** п'єдестал з термопрокладкою від 6 W/mK
+    - **Instruction:** Append '(Gelid GP-Ultimate 1.0 мм з набору корпусу, заявлено 15 W/mK — лише заява виробника, Gelid більше не публікує W/mK; товщину обирає перевірка посадки, зазор Lime 0.5-1.5 мм)'.
+    - **Reason:** G4[0]: the only pad in the stack is now GP-Ultimate 1.0 mm; the >=6 W/mK gate is met only by the maker's claim.
+    - **Sources:** analogs_G4 decisions[0] equivalence_proof, conditions_or_tests (Pads 3)
+    - **Saving usd:** 0
+  25.
+    - **Section:** 03a_lab_core_ext_hf
+    - **Kind:** other
+    - **Part:** Інструменти для тестів механіки G4
+    - **Anchor:** інструменти для збирання (штангенциркуль, ножиці + зачищувач, мітчик і плашка M5, термофен)
+    - **Instruction:** Add to the 'Інструменти' row note: 'Для тестів механіки (8): термопара K і плитка або перемішувана ванна (KSD9700), 4-провідний вимір мОм, щупи і флоат-скло (площинність пластини), манометр або порівняння тахо (забір ≤5 Pa), труборіз і зачищувач (щогла), вантаж для тестів відриву — без ціни, уточнити в P5.' Do not change the row price.
+    - **Reason:** G4 bench tests need these tools; the analog prices none of them.
+    - **Sources:** analogs_G4 decisions[1] conditions_or_tests 1-2, decisions[2] conditions_or_tests 5, decisions[3] stack_changes (tools for the cut)
+    - **Saving usd:** 0
+  26.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** bench_test
+    - **Part:** P18 тепловий прогін
+    - **Anchor:** 45 хв опівдні з козирком, режими B, D, G; кроки з T7 — за умовою.
+    - **Instruction:** Change to '45 хв опівдні з козирком, режими B, D, G, з Lime (за замовчуванням) — також H: LMS7002M (lms7_temp) ≤75 °C, ufs-thermal не гірше; це й приймання середньої пластини 5754 (запас <3 K → 1050A/6082-T6). Перевірити читабельність дисплея на сонці з білим безелем і козирком; при відблиску — матова чорна фарба або флок усередині козирка. Кроки з T7 — за умовою.'
+    - **Reason:** G4[0] ASA condition (glare) and G4[1] plate acceptance soak.
+    - **Sources:** analogs_G4 decisions[0] conditions_or_tests (ASA), decisions[1] conditions_or_tests 2
+    - **Saving usd:** 0
+  27.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** seller_or_price
+    - **Part:** Підсумки 3.6 (пристрій + рівні + bench)
+    - **Anchor:** | Пристрій + обидва рівні антен + bench | 3,760-4,896 |
+    - **Instruction:** Recompute this row and '| Усе, крім опційного | 4,258-5,603 |' after all groups; G4 deltas +281.82 / +81.12 (мій розрахунок).
+    - **Reason:** Core and foldable tiers changed by G4.
+    - **Sources:** analogs_G4 decisions[0]-[5]
+    - **Saving usd:** none
+  28.
+    - **Section:** 04_capabilities
+    - **Kind:** keep_with_note
+    - **Part:** ДХ-сигнали часу: щогла Boni-Whip
+    - **Anchor:** складаний (Boni-Whip на щоглі від 2 м, кілок; профіль LF Quiet)
+    - **Instruction:** Change to 'складаний (Boni-Whip над вершиною щогли 2.44 м, сталевий кілок 25-30 см, з'єднаний з основою щогли; профіль LF Quiet)'.
+    - **Reason:** G4[3]: kept mast is 2.44 m; whip must sit above a conductive mast.
+    - **Sources:** analogs_G4 decisions[3] chosen, equivalence_proof
+    - **Saving usd:** 0
+  29.
+    - **Section:** 05a_arch_power
+    - **Kind:** correction
+    - **Part:** Заряд: підключення KSD9700
+    - **Anchor:** **Заряд.** IP2368 BZ лише заряд
+    - **Instruction:** Append at the end of the 'Заряд.' paragraph: 'Апаратний термозахист: KSD9700 70 °C NO (Piekarz 31610; клас: спрацювання 70±5 °C, повернення 50±10 °C, ≤50 mOhm) приклеєний через поліімід до найгарячішого MOSFET IP2368 і підключений на сигнальному рівні паралельно MOSFET CHG_INHIBIT; ніколи послідовно з VBUS PD 20 V (немає DC-номіналу, 50 mOhm самонагріву). Прошивкова межа NTC його не замінює.'
+    - **Reason:** G4[1] stack_changes: wiring per power.json; firmware-only NTC limit was rejected because it removes the hardware backstop.
+    - **Sources:** analogs_G4 decisions[1] equivalence_proof (Xucheng class datasheet), rejected (firmware-only NTC), stack_changes; https://datasheet.lcsc.com/datasheet/pdf/d10b39980d4644c3b735c1f0516a765d.pdf?productCode=C156512
+    - **Saving usd:** 0
+  30.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** keep_with_note
+    - **Part:** РЧ-тракт ДХ-сигналів часу: щогла
+    - **Anchor:** Boni-Whip на щоглі від 2 м, заземлювальний кілок
+    - **Instruction:** Change to 'Boni-Whip над вершиною щогли 2.44 м (8.5 мм 7001-T6), заземлювальний сталевий кілок 25-30 см, з'єднаний з основою щогли <1 Ohm'.
+    - **Reason:** G4[3] spec.
+    - **Sources:** analogs_G4 decisions[3] chosen, conditions_or_tests 4
+    - **Saving usd:** 0
+  31.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** Забори повітря і клапани (5.6)
+    - **Anchor:** Забори — нержавіюча сітка і гідрофобна піна, ePTFE-клапани.
+    - **Instruction:** Replace with 'Забори — груба тканa сітка 316 (отвір близько 0.4-0.5 мм, ≥45% відкритої площі, продавець з ЄС; сітка 150 mesh не використовується — модель дає 10-20 Pa) і піна Qualtek 09150-M-30 (36.4 мм, UL 900 Class II, 30 PPI) у гніздах-фіксаторах; падіння тиску ≤5 Pa на робочій точці вентилятора 40 мм і повітродувки (вимір; якщо більше — збільшити площу забору). Клапани ePTFE — Amphenol LTW VENT-PS1YBK-O8002 (олеофобні, >1000 ml/min при 70 mbar, IP68/IP69K, M12x1.5 з гайкою) на пласких майданчиках 2.0-3.5 мм на порожнині дисплея і батарейному відсіку, ніколи догори; вони не замінюють вентиляційний шлях батареї.'
+    - **Reason:** G4[2] chosen (1),(5), conditions 5 and 8, stack_changes (Case CAD).
+    - **Sources:** analogs_G4 decisions[2]; https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/7136/Amphenol%20LTW_Pressure%20Relief%20Vent%20Group.pdf ; https://www.qualtekusa.com/images/Fan%20Accessories/PDFDrawings/09150m.pdf
+    - **Saving usd:** 0
+  32.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Зарядник: KSD9700 (5.6)
+    - **Anchor:** KSD9700 на 70 °C на вході
+    - **Instruction:** Replace with 'KSD9700 70 °C NO (Piekarz 31610), приклеєний через поліімід до найгарячішого MOSFET IP2368 і підключений на сигнальному рівні паралельно MOSFET CHG_INHIBIT (ніколи послідовно з VBUS PD 20 V)'.
+    - **Reason:** G4[1] stack_changes: 'in its input' is wrong; must match power.json.
+    - **Sources:** analogs_G4 decisions[1] stack_changes
+    - **Saving usd:** 0
+  33.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** condition
+    - **Part:** Термопрокладки UFS і Lime (5.6 Інше)
+    - **Anchor:** UFS притиснута прокладкою до бобишки корпусу (близько 60 °C)
+    - **Instruction:** After this phrase insert '(Gelid GP-Ultimate 1.0 мм для зазорів 0.7-1.0 мм; товщину обирає перевірка посадки в STEP V1.21; після складання UFS має повністю сидіти на B2B — лінк HS-G4, без підйому, бо тонша прокладка при тому самому допуску тисне сильніше; прокладку лишити лише якщо A/B знижує ufs-thermal)'. In the next sentence change 'прокладку ≥6 W/mK до пластини' to 'прокладку ≥6 W/mK до пластини (GP-Ultimate, заявлено 15 W/mK — лише заява виробника)'.
+    - **Reason:** G4[0] pads replacement and conditions 1-3.
+    - **Sources:** analogs_G4 decisions[0] equivalence_proof, conditions_or_tests (Pads); https://gelidsolutions.com/product/gp-ultimate-thermal-pad/
+    - **Saving usd:** 6.55 (pads, US basis)
+  34.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** bench_test
+    - **Part:** Приймання теплового прогону (5.6)
+    - **Anchor:** **Приймання.** 45 хв опівдні з козирком у режимах B, D і G
+    - **Instruction:** Change to '**Приймання.** 45 хв опівдні з козирком у режимах B, D, G і (з Lime) H' and append to the limits: '; з Lime LMS7002M (lms7_temp) ≤75 °C, ufs-thermal не гірше. Це й приймання середньої пластини EN AW-5754: запас <3 K або провал → 1050A-H14 (222 W/mK) чи 6082-T6 (близько 180 W/mK).'
+    - **Reason:** G4[1] condition 2.
+    - **Sources:** analogs_G4 decisions[1] conditions_or_tests 2
+    - **Saving usd:** 0
+  35.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** seller_or_price
+    - **Part:** РЧ-відсік FR4 (5.7 Компонування)
+    - **Anchor:** РЧ-відсік з паяного фольгованого FR4 уздовж верхнього краю, шви ≤7 мм.
+    - **Instruction:** Append: 'FR4 35/35 мкм: Bungard 120306Z33 1.5 мм 160x100 x2 (TME; фоторезист зняти перед паянням; стик двох листів пропаяти безперервно з обох боків) або Electrokit 41003697 1.6 мм x1. 35 мкм — не 18 мкм (Solder Peak 18 мкм відкинуто).'
+    - **Reason:** G4[1] chosen (4), conditions 4, rejected (Solder Peak).
+    - **Sources:** analogs_G4 decisions[1]; https://www.tme.eu/en/details/fr4100x160_3535/two-layer-laminates/bungard/120306z33/
+    - **Saving usd:** 0
+  36.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** Пристрій: колір ASA і сплав пластини (5.8)
+    - **Anchor:** Параметричний світло-сірий корпус ASA (PETG відкинуто).
+    - **Instruction:** Replace with 'Параметричний світло-сірий або білий корпус ASA (за замовчуванням Polymaker ASA White PF01002: той самий TDS — Tg 98 °C, HDT 100 °C при 1.8 MPa, Vicat 105 °C; білий краще відбиває сонце і без сажі, тож РЧ-прозорість для Wi-Fi/GNSS не гірша; без CF/металізованого ASA біля антен) (PETG відкинуто).' In the next sentence after 'Середня пластина 2 мм Al' insert '(EN AW-5754 mill finish, 130 W/mK, зачищені голі точки з'єднання; приймається лише якщо пройде полуденний прогін з Lime, інакше 1050A-H14 або 6082-T6)'.
+    - **Reason:** G4[0] stack_changes 1 and G4[1] stack_changes (alloy).
+    - **Sources:** analogs_G4 decisions[0] equivalence_proof, decisions[1] equivalence_proof; https://wiki.polymaker.com/polymaker-wiki-pt/produtos-polymaker/mais-sobre-nossos-produtos/documentos/fichas-tecnicas/abs-asa/polymaker-tm-asa
+    - **Saving usd:** 1.00 (ASA, US basis)
+  37.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** Задня стінка: гайка 1/4-20 і прорізи ременя (5.8)
+    - **Anchor:** Задня стінка: запресована гайка 1/4-20 або сталева вставка в бобишці ≥6 мм (тест на відрив 3x ваги), 2-4 вушка для ременів на руку і шию
+    - **Instruction:** Replace with 'Задня стінка: захоплена оцинкована сталева гайка 1/4-20 UNC (7/16 in AF), вкладена зсередини в шестигранне гніздо 11.3 мм AF (близько 5.8 мм) бобишки ASA 100% заповнення з ≥4 периметрами, зовнішня стінка ≤1.0 мм з отвором 6.6 мм, ≥3 повні витки з найкоротшим гвинтом штатива, ≥3 мм за гайкою (альтернатива — запресована сталева вставка в бобишці ≥6 мм; тест на відрив 3x ваги, момент ≥3 Nm, 20 циклів), 2-4 вушка для ременів на руку і шию (Peak Design Leash) і два прорізи ≤12 мм для SmallRig PAC2456'.
+    - **Reason:** G4[1] condition 3 and stack_changes (rear boss); G4[0] hand strap.
+    - **Sources:** analogs_G4 decisions[1] conditions_or_tests 3; decisions[0] conditions_or_tests (Hand strap); https://www.cnckitchen.com/blog/helicoils-threaded-insets-and-embedded-nuts-in-3d-prints-strength-amp-strength-assessment
+    - **Saving usd:** 0
+  38.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** Захист IPX4/IP54: заглушки і анкери (5.8)
+    - **Anchor:** Захист — IPX4/IP54; у дощ — LOCK і робота лише енкодерами, забір повітря ніколи вгору.
+    - **Instruction:** Append: 'Заглушки: GCT RFCT-SMA-CAP-GS-1 на ланцюжку на кожному SMA (11), ставити лише з вимкненими bias-tee (за замовчуванням labd); непровідні заглушки на F, USB-C, USB-A, 3.5 мм, LAB BUS і GX12/M8; заглушка F — ніколи не термінатор 75 Ohm (на F є DC шини LNB). Анкери ланцюжків — біля кожного порту. У дощ — чохол OP/TECH Rainsleeve 18 in.'
+    - **Reason:** G4[2] conditions 3-4, stack_changes (Case CAD).
+    - **Sources:** analogs_G4 decisions[2]
+    - **Saving usd:** 0
+  39.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** Під Lime: шаблон свердління пластини (5.8)
+    - **Anchor:** Пластину ріжуть один раз з отворами під п'єдестал і кріплення riser.
+    - **Instruction:** Append: 'Шаблон свердління 1:1 з STEP V1.21 — у build/; отвори ±0.2 мм (отвори плати 3.5 мм під M2.5, близько 0.5 мм люфту), площинність ≤0.2 мм під Q6A, п'єдесталом і майданчиками регуляторів, вікно riser близько 26x20 мм, бобишка/проріз UFS ≥30 мм від п'єдесталу; різьбу в пластині не нарізати.'
+    - **Reason:** G4[1] stack_changes (drill template) and conditions 2.
+    - **Sources:** analogs_G4 decisions[1] equivalence_proof (holes), conditions_or_tests 2, stack_changes
+    - **Saving usd:** 0
+  40.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** replace_part
+    - **Part:** Складаний рюкзак: модель рюкзака (5.8 Комплекти)
+    - **Anchor:** у рюкзаку 15-20 L
+    - **Instruction:** Replace with 'у рюкзаку Deuter Futura 27 (27 L, 4-8 kg, внутрішня висота ≥40 см — сегменти 35 см і штатив 34.5 см стоять вертикально; бічні кишені й стяжки для щогли і штатива)'.
+    - **Reason:** G4[5] stack_changes; G4[4] packing (inner length >=36 cm).
+    - **Sources:** analogs_G4 decisions[5] equivalence_proof, decisions[4] stack_changes (packing)
+    - **Saving usd:** 0
+  41.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** replace_part
+    - **Part:** Складаний рюкзак: щогла, штатив, чохол, тубус, бокси LNA (5.8 Комплекти)
+    - **Anchor:** Boni-Whip зі щоглою 7x35 см на амортизаторі, відтяжками і кілком; дорожній штатив ≤35 см з панорамною головою; чохол для антен і тубус
+    - **Instruction:** Replace with 'Boni-Whip на щоглі Robens 8.5 мм 7001-T6 (8 секцій ≤35 см з муфтою, 2.44 м), друкованим адаптером вершини (штир над вершиною), 3 непровідними відтяжками на ≈2/3 висоти і сталевим кілком 25-30 см (заземлювальний кілок C17); штатив Rollei Compact Traveler No. 1 (34.5 см складений, 1.14 kg, кульова голова з Arca); чохол Millenium Classic Stick Bag і тубус Marley HT DN50 ≈40 см; фідерні LNA складаного рівня — у 3 боксах Gainta G201-IP67 з клапаном O8002 на бічній стінці і саше силікагелю'.
+    - **Reason:** G4[2]-[5] named parts.
+    - **Sources:** analogs_G4 decisions[2] stack_changes (Feed LNA boxes), decisions[3]-[5] chosen
+    - **Saving usd:** 0
+  42.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Вага: Boni-Whip і щогла (5.8)
+    - **Anchor:** | Boni-Whip і щогла | 0.5-0.75 kg | — |
+    - **Instruction:** Replace with '| Boni-Whip і щогла | 0.5-0.55 kg (щогла близько 0.22, відтяжки 0.03, кілок 0.05-0.1, Boni 0.189; бюджет 0.5-0.75) | пакунок близько 35 см x 8 секцій 8.5 мм |'.
+    - **Reason:** G4[3] stack_changes (Weight).
+    - **Sources:** analogs_G4 decisions[3] stack_changes, equivalence_proof
+    - **Saving usd:** 0
+  43.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Вага: штатив (5.8)
+    - **Anchor:** | Штатив | 0.3-0.6 kg | — |
+    - **Instruction:** Replace with '| Штатив (Rollei Compact Traveler No. 1 з головою) | 1.14 kg (сума рюкзака нижче рахує 1.17-1.35 kg за reaudit C) | 34.5 см складений; внутрішня довжина рюкзака ≥36 см |'.
+    - **Reason:** G4[4] 2026 listing; G4[5] used reaudit-C tripod 1.17-1.35 kg.
+    - **Sources:** analogs_G4 decisions[4] equivalence_proof, stack_changes; decisions[5] stack_changes
+    - **Saving usd:** 0
+  44.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Вага: польовий рюкзак разом (5.8)
+    - **Anchor:** | **Польовий рюкзак 15-20 L** |
+    - **Instruction:** Before the total row insert two rows: '| Чохол і тубус | 0.35-0.7 kg | — |' and '| Рюкзак Deuter Futura 27 (порожній) | 1.25 kg | 27 L |'. Replace the total row with '| **Польовий рюкзак Deuter Futura 27** | вміст **5.54-6.92 kg** без КХ і щогли, **6.44-8.17 kg** повністю (пристрій з Lime за замовчуванням 1.67-1.87 kg, штатив 1.17-1.35 kg); на спині з рюкзаком близько **6.8-8.2 kg** і **7.7-9.4 kg**, без води | рейтинг 4-8 kg: найгірший кут повного набору 8.17 kg перевищує його на 0.17 kg — зважування (8); повний набір з водою перевищує рейтинг будь-якого перевіреного денного рюкзака; вміст близько 12-14 L + чохол, тубус і штатив |'.
+    - **Reason:** G4[5] stack_changes (Weight table in 5.8).
+    - **Sources:** analogs_G4 decisions[5] equivalence_proof, stack_changes
+    - **Saving usd:** 0
+  45.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** new_risk
+    - **Part:** Безпека надворі: відтяжки щогли
+    - **Anchor:** щогли — з відтяжками або опускати при вітрі понад близько 20 km/h (оцінка)
+    - **Instruction:** Replace with 'щогли — з відтяжками на ≈2/3 висоти з легким натягом (≤3 N на відтяжку; модель: труба 8.5 мм має ейлерове навантаження близько 16 N на 2.4 м, тож тугі відтяжки лише на вершині можуть її зігнути, а відтяжки на 2/3 піднімають нижній проліт до близько 36 N) або опускати при вітрі понад близько 20 km/h (оцінка)'.
+    - **Reason:** G4[3] condition 2 (buckling model).
+    - **Sources:** analogs_G4 decisions[3] equivalence_proof, conditions_or_tests 2
+    - **Saving usd:** 0
+  46.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** architecture
+    - **Part:** Гелікон: бокс для SAWbird+ GOES (виготовлення антен, крок 3)
+    - **Anchor:** SAWbird+ GOES на SMA під диском
+    - **Instruction:** Append after this phrase: ' (у боксі Gainta G201-IP67 з клапаном VENT-PS1YBK-O8002 на бічній стінці і саше силікагелю — якщо пройде тест посадки зі з'єднаними штекерами; інакше більший бокс Gainta IP67 PC)'.
+    - **Reason:** G4[2] chosen (3) and conditions 1-2.
+    - **Sources:** analogs_G4 decisions[2] conditions_or_tests 1-2; https://www.nooelec.com/store/sawbird-plus-goes.html
+    - **Saving usd:** 0
+  47.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Безпека батареї: KSD9700
+    - **Anchor:** KSD9700 70 °C на IP2368
+    - **Instruction:** Change to 'KSD9700 70 °C NO на найгарячішому MOSFET IP2368 (паралельно CHG_INHIBIT, сигнальний рівень)'.
+    - **Reason:** Consistency with the corrected wiring (G4[1]).
+    - **Sources:** analogs_G4 decisions[1] stack_changes
+    - **Saving usd:** 0
+  48.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** Прибрані/замінені деталі механіки й польового набору
+    - **Anchor:** | Вивантаження (SondeHub, WSPRnet, PSK Reporter
+    - **Instruction:** After this last row of the 6.2 table add rows: '| Polymaker ASA Grey (PF01003) як закупівля за замовчуванням; Gelid GP-Extreme 80x40x2.0 мм (TP-GP01-D) як основні прокладки | ASA White PF01002 (той самий TDS; Grey у 3DJake немає); 2.0 мм заповнює 1.4-2.0 мм, а потрібно 0.5-1.5 мм → GP-Ultimate 1.0 мм (2.9). |' ; '| Подвійний облік KSD9700 (рядки зарядника і шасі); KSD9700 «на вході» IP2368 | Один рядок Piekarz 31610 x5 у 2.9; NO паралельно CHG_INHIBIT (5.1, 5.6). |' ; '| Розточка під вставку 1/4-20 як основний варіант задньої бобишки | Шестигранне гніздо 7/16 in зі сталевою гайкою, вкладеною зсередини (D15). |' ; '| Захист від погоди: модель 45-110 без SKU; клапани LTW O8001 (>550 ml/min) і N8001 (лише гідрофобні); сітка 316 150 mesh (модель 10-20 Pa); Hammond 1554B2GY як еталонний бокс; LAPP ST-M12 для всіх вводів (не ущільнює RG316); 3M Temflex 2155; Permatex; неіндикаторний силікагель; OP/TECH Small 8 in | SKU-набір 2.9 (O8002, GCT, Gainta G201-IP67, Qualtek 09150-M-30, Scotch 23, MOLYKOTE 4). |' ; '| Щогла-модель 15-50 без SKU; кріплення Bonito/WiMo 18067.MH (лише труби 28-40 мм); Buddipole short (немає в наявності) | Robens 8.5 мм 7001-T6, порізаний на 8 секцій, + Forclaz + сталевий кілок + друкований адаптер (2.5). |' ; '| Штатив-модель 40-100; дані Rollei з даташиту 2016 (31.5 см, 134 см, 1170 g, 5 kg) | Rollei Compact Traveler No. 1 версії 2026, $57.33 (2.5). |'.
+    - **Reason:** G4 replacements and rejected lists.
+    - **Sources:** analogs_G4 decisions[0]-[4] rejected and stack_changes
+    - **Saving usd:** 0
+  49.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** Рюкзак 15-20 L
+    - **Anchor:** | Слінг 10-12 L; пристрій у Pelican; слінг 3.0-3.6 kg | D14. |
+    - **Instruction:** Change to '| Слінг 10-12 L; пристрій у Pelican; слінг 3.0-3.6 kg; рюкзак 15-20 L (рекомендоване навантаження 18-25 L рюкзаків 2-7 kg нижче за вміст 5.54-8.17 kg) | D14. |'.
+    - **Reason:** G4[5].
+    - **Sources:** analogs_G4 decisions[5] equivalence_proof
+    - **Saving usd:** 0
+  50.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** Виправлені помилки G4
+    - **Anchor:** 36. wideband_sdr:
+    - **Instruction:** After item 36 append: '37. Набір корпусу: «98-133» занижено — вибрані в final-checks позиції коштували ≈$134.1 до доставки; $46 CNC Kitchen — це вставки M3/M2.5/1/4-20 і гвинти M2.5 (позначка пошуку A «M2.5 бракує» хибна), але не гвинти M3; «35 OO» QuietPC для GP-Extreme суперечить сторінці Gelid (65 Shore OO); GP-Extreme 2.0 мм при стисненні 30% заповнює лише 1.4-2.0 мм, а виправлена специфікація — Lime 0.5-1.5, LPDDR5 0.5-1, UFS 1-1.5 мм.' ; '38. «EN AW-5754 = 140-160 W/mK» (пошуки) — неправда: 130 W/mK (MakeItFrom, Wikipedia); 6xxx-T6 близько 180, 1050A 222 W/mK.' ; '39. KSD9700 «на вході» IP2368 — неправильно: NO, сигнальний рівень, паралельно MOSFET CHG_INHIBIT (power.json); подвійний облік прибрано.' ; '40. Захист від погоди: 45-110 — оцінка без SKU; набір з SKU — 116-168 без ПДВ; клапан O8001 (пошук A) — >550 ml/min, N8001 (пошук B) — лише гідрофобний.' ; '41. Щогла 15-50 — модель; перевірений шлях — близько 70-80. Штатив: дані даташиту 2016 (31.5 см, 134 см, 1170 g, 5 kg, голова 275 g) замінено лістингом 2026 (34.5 см, 145 см, 1.14 kg, 8 kg, голова 197 g).' ; '42. Рюкзак 15-20 L не відповідає навантаженню; таблиця ваги 5.8 рахувала штатив 0.3-0.6 kg.'
+    - **Reason:** Corrections stated in G4 equivalence proofs and stack_changes.
+    - **Sources:** analogs_G4 decisions[0] current_price_usd, equivalence_proof, stack_changes 3; decisions[1] equivalence_proof; decisions[2] rejected; decisions[3] chosen_price_usd; decisions[4] stack_changes; decisions[5] stack_changes
+    - **Saving usd:** 0
+  51.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Тепловий прогін з Lime (оновлення рядка)
+    - **Anchor:** | Тепло: 45 хв опівдні з козирком (каркас ≤60 °C, скло ≤65 °C, елементи ≤45 °C)
+    - **Instruction:** In this row add: 'з Lime (за замовчуванням) — також режим H: LMS7002M (lms7_temp) ≤75 °C, ufs-thermal не гірше; це й приймання середньої пластини 5754 (запас <3 K → 1050A-H14 або 6082-T6); перевірка відблиску білого ASA-безеля (P18)'.
+    - **Reason:** G4[1] condition 2; G4[0] ASA glare check.
+    - **Sources:** analogs_G4 decisions[1] conditions_or_tests 2, decisions[0] conditions_or_tests (ASA)
+    - **Saving usd:** 0
+  52.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Термопрокладки Gelid: посадка і UFS
+    - **Anchor:** 
+    - **Instruction:** Add row: '| Прокладки Gelid: перевірка посадки в STEP V1.21 і CAD охолоджувача/п'єдесталу до замовлення — зазори п'єдестал Lime, сходинка LPDDR5, бобишка UFS; після складання — UFS повністю сидить на B2B (лінк HS-G4, без видимого підйому) | Усі три зазори 0.7-1.0 мм → лише GP-Ultimate 1.0 мм; інакше GP-Ultimate 90x50 потрібної товщини (0.5 мм EUR 3.46, 1.5 мм EUR 6.52), економія ≈$0. Лишаються ворота: A/B прокладки UFS (тримати лише якщо знижує ufs-thermal) і температура п'єдесталу Lime у режимах H/I; ≥6 W/mK — лише за заявою виробника | До замовлення прокладок; після складання |'.
+    - **Reason:** G4[0] conditions (Pads 1-3).
+    - **Sources:** analogs_G4 decisions[0] conditions_or_tests; reaudit_D results[3] bench_tests[6] (UFS pad A/B)
+    - **Saving usd:** 0
+  53.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Ремінь на руку SmallRig PAC2456
+    - **Anchor:** 
+    - **Instruction:** Add row: '| Ремінь на руку PAC2456: два прорізи ≤12 мм у CAD; тест на відрив 3x ваги пристрою разом із тестом вушок ременя; огляд PU/EVA щосезону (тримати подалі від прямого сонця) | Без розриву і деформації | Після друку корпусу; щосезону |'.
+    - **Reason:** G4[0] conditions (Hand strap).
+    - **Sources:** analogs_G4 decisions[0] conditions_or_tests; reaudit_D results[3] bench_tests[14]
+    - **Saving usd:** 0
+  54.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** KSD9700 Piekarz 31610: сортування
+    - **Anchor:** 
+    - **Instruction:** Add row: '| KSD9700 (кожен з 5): плитка або перемішувана ванна, термопара K, нагрів ≤1 K/хв; замикання при 65-75 °C, розмикання щонайменше на 15 K нижче; опір замкненого ≤50 mOhm (4-провідно); 10 циклів; магнітний тест (корпус має бути залізним, пластикові відкинути); найкращий — у пристрій через поліімід на язичок MOSFET | У 2-год прогоні IP2368 не спрацьовує; гаряче повітря на MOSFET вмикає CHG_INHIBIT не вище 75 °C | На прибутті; крок 6 запуску |'.
+    - **Reason:** G4[1] condition 1 (the listing gives no tolerance, reset, shell or approval).
+    - **Sources:** analogs_G4 decisions[1] conditions_or_tests 1, equivalence_proof
+    - **Saving usd:** 0
+  55.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** Середня пластина DIY (Alu-Verkauf EN AW-5754)
+    - **Anchor:** 
+    - **Instruction:** Add row: '| Середня пластина DIY — лише якщо місцева ціна пластина + п'єдестал перевищить близько $25 (DE) або $35-45 (FR/SE): отвори ±0.2 мм від V1.21 (Q6A сідає без зусилля); площинність ≤0.2 мм під Q6A, п'єдесталом і майданчиками обох TPS7A4701/D36V50F12 (щуп на флоат-склі); зачищені голі точки з'єднання, без різьби; вікно riser близько 26x20 мм; бобишка/проріз UFS ≥30 мм від п'єдесталу | Прогін 45 хв з Lime у B, D, G і H: каркас ≤60 °C, LMS7002M ≤75 °C, ufs-thermal не гірше, елементи ≤45 °C; запас <3 K або провал → 1050A-H14 (222 W/mK) або 6082-T6 (близько 180 W/mK; перевіреної ціни з порізкою немає) | До замовлення пластини; P18 |'.
+    - **Reason:** G4[1] condition 2 and chosen (3).
+    - **Sources:** analogs_G4 decisions[1] conditions_or_tests 2
+    - **Saving usd:** 0 proven
+  56.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Захоплена гайка 1/4-20
+    - **Anchor:** 
+    - **Instruction:** Add row: '| Гайка 1/4-20: гніздо 11.3 мм AF, близько 5.8 мм, вкладається зсередини, гайка вклеєна або закрита; зовнішня стінка ≤1.0 мм, отвір 6.6 мм; ≥3 повні витки (3.8 мм) з найкоротшим гвинтом штатива чи швидкознімної пластини (виміряти виступ мінус стінка); ≥3 мм зазору за гайкою; бобишка ASA 100% заповнення, ≥4 периметри | Відрив 3x ваги пристрою (близько 4.5-5.3 kg) 60 с; момент ≥3 Nm без прокручування і зминання (поріг аналогу); 20 циклів кріплення | Після друку корпусу |'.
+    - **Reason:** G4[1] condition 3: only test proves the nut not-worse at 1/4-20; inside-loaded nut engages fewer threads with a short screw.
+    - **Sources:** analogs_G4 decisions[1] conditions_or_tests 3, equivalence_proof
+    - **Saving usd:** 0
+  57.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** FR4 на прибутті
+    - **Anchor:** 
+    - **Instruction:** Add row: '| FR4 на прибутті: скловолокно видно на зрізі; без пухирів після 10 с при 350 °C; виміряти лист Electrokit (у заголовку 233x160, в описі 200x160); з двох листів 160x100 — стик пропаяти безперервно з обох боків; фоторезист Bungard зняти до паяння | — | На прибутті |'.
+    - **Reason:** G4[1] condition 4.
+    - **Sources:** analogs_G4 decisions[1] conditions_or_tests 4
+    - **Saving usd:** 0
+  58.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** Бокси фідерних LNA: посадка і UV
+    - **Anchor:** 
+    - **Instruction:** Add row: '| Бокси LNA: виміряти SAWbird+ GOES у корпусі (й інші фідерні LNA) зі з'єднаними штекерами (Nooelec розмірів не публікує); G201-IP67 (58x64x35 мм зовні, внутрішні не опубліковано) має вмістити LNA і прямі штекери SMA з вигином RG316 або кутові штекери; письмове підтвердження UV-стабілізованого PC від Gainta | Не влазить → наступний більший Gainta IP67 PC (не Hammond за замовчуванням); UV не підтверджено → G104MF-IP67 (+85 g на бокс) | До замовлення 3 боксів |'.
+    - **Reason:** G4[2] conditions 1-2.
+    - **Sources:** analogs_G4 decisions[2] conditions_or_tests 1-2
+    - **Saving usd:** 0
+  59.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Заглушки SMA і F
+    - **Anchor:** 
+    - **Instruction:** Add row: '| Заглушки GCT RFCT-SMA-CAP-GS-1: на кожному панельному SMA опір центр-корпус — розрив (>10 MOhm; креслення GCT недоступне, 403); ланцюжок є; ставити лише з вимкненими bias-tee. Порт F — лише непровідна заглушка, ніколи термінатор 75 Ohm (DC шини LNB) | — | На прибутті |'.
+    - **Reason:** G4[2] conditions 3-4 (whether the cap shorts the centre pin is not published).
+    - **Sources:** analogs_G4 decisions[2] conditions_or_tests 3-4, equivalence_proof 2
+    - **Saving usd:** 0
+  60.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Падіння тиску на заборі
+    - **Anchor:** 
+    - **Instruction:** Add row: '| Забір (сітка 316 + піна Qualtek 30 PPI) на робочій точці вентилятора 40 мм 5 V і повітродувки | ≤5 Pa (манометр або порівняння тахо/потоку з відкритим забором); більше — збільшити площу забору, піна 30 PPI і грубіша сітка | Після друку корпусу |'.
+    - **Reason:** G4[2] condition 5.
+    - **Sources:** analogs_G4 decisions[2] conditions_or_tests 5
+    - **Saving usd:** 0
+  61.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** IPX4 пристрою і IPX5 боксів LNA
+    - **Anchor:** 
+    - **Instruction:** Add row: '| Увесь пристрій: IPX4 (IEC 60529, коливна трубка або ручний розпилювач, 10 хв) з усіма заглушками і ввімкненими вентиляторами — без води біля GX12/M8, LAB BUS і батарейного відсіку; потім перевірка пилу на заборах. Кожен закритий бокс LNA з клапаном і сальниками/прохідними: IPX5 (12.5 L/хв, 3 хв) — усередині сухо, індикаторна картка не змінилась | — | Після складання |'.
+    - **Reason:** G4[2] conditions 6-7.
+    - **Sources:** analogs_G4 decisions[2] conditions_or_tests 6-7
+    - **Saving usd:** 0
+  62.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** Монтаж клапанів і MOLYKOTE 4
+    - **Anchor:** 
+    - **Instruction:** Add row: '| Клапани O8002: кожен — на пласкому майданчику 2.0-3.5 мм з гайкою (Y-версія), ніколи догори; по одному на бокс LNA, порожнину дисплея і батарейний відсік (не замінюють вентиляційний шлях батареї). MOLYKOTE 4: підтвердити в TDS Dow сумісність із силіконовими кільцями; до того — лише на хлоропренові ущільнення сальників і різьби, ніколи на РЧ-контактні поверхні | — | До складання |'.
+    - **Reason:** G4[2] conditions 8-9.
+    - **Sources:** analogs_G4 decisions[2] conditions_or_tests 8-9
+    - **Saving usd:** 0
+  63.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Щогла: приймання збірки
+    - **Anchor:** 
+    - **Instruction:** Add row: '| Щогла (Robens, порізана): кожна секція ≤35 см з муфтою, торці зачищені, амортизатор перенатягнуто, висота ≥2.4 м; відтяжки на ≈2/3 висоти, ≤3 N на відтяжку; 0.6 kg на вершині 10 хв — без вигину, без пошкодження муфт, бічний прогин ≤3 см; корпус Boni-Whip повністю над вершиною в адаптері, розвантаження BNC і провис кабелю для стікання води; основа щогли з'єднана з кілком <1 Ohm (DMM); розгортання ≤8 хв; опускати при вітрі понад близько 20 km/h. Компроміс зі склопластику — лише з вашої згоди і після тих самих тестів і підтвердження суцільних стрижнів | — | Після приходу Boni-Whip (з 20.11.2026) |'.
+    - **Reason:** G4[3] conditions 1-5.
+    - **Sources:** analogs_G4 decisions[3] conditions_or_tests
+    - **Saving usd:** 0
+  64.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** Щогла: підтвердження до купівлі
+    - **Anchor:** 
+    - **Instruction:** Add row: '| До купівлі щогли: підтвердити в продавця, що шнур Forclaz непровідний (поліестер або Dyneema без металевої світловідбивної нитки), інакше — простий поліестеровий шнур; чи включає EUR 47.90 Karkkainen ПДВ і скільки коштує доставка | — | Перед замовленням |'.
+    - **Reason:** G4[3] condition 6.
+    - **Sources:** analogs_G4 decisions[3] conditions_or_tests 6
+    - **Saving usd:** 0
+  65.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Штатив Rollei: приймання у 14-денне вікно повернення
+    - **Anchor:** 
+    - **Instruction:** Add row: '| Штатив Rollei (14 днів на повернення; з DE/AT — безкоштовно, з інших країн ЄС — EUR 15, вихідна доставка не повертається): (1) складена довжина з головою і пластиною ≤35.0 см (лістинг 34.5); (2) голова 2026 має незалежний панорамний фіксатор і проріз для 90°; (3) гачок для баласту — якщо нема, шнур з карабіном навколо основи колони; (4) повзучість ≤2° за 10 хв: гелікон (близько 0.4-0.5 kg) і рупор + Bullseye під 30° на 1.1-1.3 м при вітрі близько 20 km/h; (5) V-диполь на 1.087 м з опущеною колоною (робоча висота 113 см) стабільний; (6) гвинт 1/4-20 пластини Arca сідає у вставку корпусу і друкований V-затискач; різьба голови 3/8-16 | Будь-яка секція ковзає або провал (1) чи (4) → повернути | Протягом 14 днів після отримання |'.
+    - **Reason:** G4[4] conditions (1)-(6).
+    - **Sources:** analogs_G4 decisions[4] conditions_or_tests
+    - **Saving usd:** 0
+  66.
+    - **Section:** 08_open_bench
+    - **Kind:** condition
+    - **Part:** Набір сумок: ціна, вага, тканина, посадка
+    - **Anchor:** 
+    - **Instruction:** Add row: '| Сумки: (1) на сторінці замовлення — ціна EUR 123.96 Bergfreunde для обраного кольору (бажано greystone-alu), інакше найдешевший колір або Deuter EUR 155; спершу перевірити, чи повернулась SKU 3400321 (EUR 108.50); (2) зважити повний польовий вміст — ≤8.0 kg, інакше щогла Boni-Whip або вода — поза рюкзаком, або КХ-набір лишається на базі, записати; (3) тканина основи (deuter.com — 210D PA X-Grid, Bergfreunde — 600D PA) і бартеки: повернути протягом 30 днів, якщо основа — тонка одинарна 210D; (4) посадка в чохол Millenium (30 днів Thomann): шаблони — пелюстка 16.84 x 18 см з язичком, зовнішній сегмент 18.7 x 13.1 см, диск 18 см, дипольний набір 23 см, частина штанги Axotron 34.7 см; не влазить → Zildjian Mini (EUR 18.90) або м'який пласкій рукав (без ціни, тоді переоцінити рядок); додати еластичні ремінці або липучки; (5) труба Marley: маркування EN 1451, стінка ≥1.8 мм, заглушки сидять щільно; різати рівно, зачистити, торці стрижнів — піна або стрічка; (6) без магнітних застібок | — | Перед замовленням і на прибутті |'.
+    - **Reason:** G4[5] conditions 1-6.
+    - **Sources:** analogs_G4 decisions[5] conditions_or_tests
+    - **Saving usd:** 0
+  67.
+    - **Section:** 08_open_bench
+    - **Kind:** seller_or_price
+    - **Part:** Неперевірене в G4 (ціни й дані)
+    - **Anchor:** | Ціни: переоцінити кожен неперевірений рядок (P5)
+    - **Instruction:** Add to this row: 'G4 не перевірено: ступені цін TME (видима ціна прихована, поля запасу суперечать), ціна OP/TECH чохла і сітки 316 у ЄС, дата старту збору EUR 2 за лінію; ціна Peak Design Leash у ЄС чи б/в і рейтинг якоря 90 kg; ціна 3DO ASA (лише якщо реальна ціна ЄС < EUR 24.99); дані прокладок Igor's Lab (403); доставка і ПДВ 3DJake і QuietPC поза DE (ціни QuietPC NL без указаного ПДВ); ціна гайки RS 245-0741 (403); доставка TME, Piekarz і metallshopper; ПДВ і доставка Karkkainen; довжина гвинта штатива ISO 1222; Decathlon і Osprey (403).'
+    - **Reason:** Items each G4 record lists as not verified.
+    - **Sources:** analogs_G4 decisions[0]-[5] conditions_or_tests and stack_changes (not verified notes)
+    - **Saving usd:** 0
+  68.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Крок 7: механіка, захист від погоди, польовий набір
+    - **Anchor:** ASA, вставки CNC Kitchen, прокладки, ремінь.
+    - **Instruction:** Replace with 'механіка: Polymaker ASA White 1 kg (3DJake.de, EUR 24.99, у наявності), CNC Kitchen (вставки, гвинти M2.5 і M3 ISO 14580; DE безкоштовно від EUR 15, інакше EUR 3.90, світ EUR 8.90), Gelid GP-Ultimate 1.0 мм (QuietPC NL, після перевірки посадки), Peak Design Leash, SmallRig PAC2456 (Syntex, під замовлення до 23.10.2026); шасі: Piekarz 31610 x5, FR4 (TME або Electrokit), гайка 1/4-20, Alu-Verkauf — лише за умовою DIY; захист від погоди: TME (LTW O8002, GCT, Gainta, LAPP), DigiKey (Qualtek; резерв LTW і GCT), Silmid EU (MOLYKOTE 4, Scotch 23), чохол OP/TECH (шукати продавця в ЄС), помаранчевий силікагель без кобальту; польовий набір: Rollei Compact Traveler No. 1 (rollei.de — ціна розпродажу, не зволікати), Robens 8.5 мм (Karkkainen) + Forclaz (Decathlon CY) + кілок, Deuter Futura 27 (Bergfreunde), Millenium (Thomann, безкоштовно від EUR 29 — об'єднати з іншими позиціями Thomann), труби Marley (toom: самовивіз або безкоштовно від EUR 59). Рядки TME і Piekarz — об'єднати з іншими замовленнями (доставка не перевірена).' Keep the reason column 'РЧ-тракт і механіка.'
+    - **Reason:** G4 sourcing notes (EU sellers, backorder, sale price, free-shipping thresholds).
+    - **Sources:** analogs_G4 decisions[0]-[5] chosen, conditions_or_tests, stack_changes (Sourcing/Procurement)
+    - **Saving usd:** 0
+  69.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** rule
+    - **Part:** Митниця і ПДВ: продавці ЄС для механіки; landed cost поза ЄС
+    - **Anchor:** (TinyTronics, Passion Radio, Astroradio, WiMo, iFixit EU, CNC Kitchen, QuietPC)
+    - **Instruction:** Extend the EU-VAT seller list to '(TinyTronics, Passion Radio, Astroradio, WiMo, iFixit EU, CNC Kitchen, QuietPC, 3DJake, Alu-Verkauf, Piekarz, TME, Electrokit, Silmid EU, Syntex, rollei.de, Bergfreunde, Thomann, toom, Decathlon CY, Karkkainen)' and add after the sentence: 'Для дрібних механічних рядків уникати продавців з UK і США (чохол OP/TECH з B&H/UK, Peak Design з США, сітка F.H. Brundle UK): landed = ціна + доставка + імпортний ПДВ + EUR 3 мита за тарифну лінію (до EUR 150, IOSS або пошта) + EUR 2 збору за лінію приблизно з 1.11.2026 + збір перевізника.'
+    - **Reason:** Landed cost rule (operator_notes 34-35) applied to G4 non-EU lines; G4 stack_changes prefer EU sellers.
+    - **Sources:** operator_notes.md items 34-35; analogs_G4 decisions[1] stack_changes (Sourcing), decisions[2] stack_changes (Sourcing, Europe)
+    - **Saving usd:** 0
+  70.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Запуск, крок 8: корпус
+    - **Anchor:** 8. **Корпус:** CAD з Radxa STEP v1.21, виміряної панелі і батареї
+    - **Instruction:** Extend step 8: 'перед друком — перевірка посадки прокладок у STEP V1.21; шаблон свердління пластини 1:1 у build/; у CAD — майданчики клапанів 2.0-3.5 мм, забори під ≤5 Pa і гнізда піни 36.4 мм, прорізи ≤12 мм під ремінь на руку, шестигранне гніздо гайки 1/4-20, анкери ланцюжків біля портів; після друку — тести гайки і вушок (3x ваги, ≥3 Nm, 20 циклів), падіння тиску, IPX4; прогін P18 з режимом H (Lime) і перевіркою відблиску; SKU-перелік захисту від погоди — у parts.yaml.'
+    - **Reason:** G4 conditions mapped to the bring-up order.
+    - **Sources:** analogs_G4 decisions[0]-[2] conditions_or_tests, stack_changes
+    - **Saving usd:** 0
+  71.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Джерела механіки, захисту від погоди і польового набору
+    - **Anchor:** **Безпека і право (загальне)**
+    - **Instruction:** Insert before this heading a new block '**Механіка, захист від погоди, польовий набір**' with: 3DJake Polymaker ASA White: https://www.3djake.de/polymaker/polymaker-asa-weiss ; Polymaker ASA TDS: https://wiki.polymaker.com/polymaker-wiki-pt/produtos-polymaker/mais-sobre-nossos-produtos/documentos/fichas-tecnicas/abs-asa/polymaker-tm-asa ; CNC Kitchen (каталог і доставка): https://cnckitchen.store/products.json , https://cnckitchen.store/policies/shipping-policy ; CNC Kitchen тест вставок і гайок: https://www.cnckitchen.com/blog/threaded-inserts-for-3d-prints-cheap-vs-expensive , https://www.cnckitchen.com/blog/helicoils-threaded-insets-and-embedded-nuts-in-3d-prints-strength-amp-strength-assessment ; QuietPC GP-Ultimate: https://quietpc.co.nl/gelid-gp-ultimate-pads?product=6120 , https://quietpc.co.nl/gel-gp-ult-1-120-20?product=6515 ; Gelid GP-Ultimate: https://gelidsolutions.com/product/gp-ultimate-thermal-pad/ ; SmallRig PAC2456 (Syntex): https://www.syntex.tv/smallrig-hand-strap-pac2456 ; Peak Design Leash: https://www.peakdesign.com/products/leash ; Piekarz KSD9700: https://www.piekarz.pl/en/thermostats/6 ; даташит класу KSD9700: https://datasheet.lcsc.com/datasheet/pdf/d10b39980d4644c3b735c1f0516a765d.pdf?productCode=C156512 ; Alu-Verkauf: https://alu-verkauf.de/products/aluminium-platten , https://alu-verkauf.de/policies/shipping-policy ; 5754 (MakeItFrom): https://www.makeitfrom.com/material-properties/5754-AlMg3-3.3535-A95754-Aluminum ; Bungard FR4 (TME): https://www.tme.eu/en/details/fr4100x160_3535/two-layer-laminates/bungard/120306z33/ ; Electrokit FR4: https://www.electrokit.com/en/kopparlaminat-dubbelsidigt-fr4-1.6mm-35/35u-233x160 ; каталог клапанів Amphenol LTW: https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/7136/Amphenol%20LTW_Pressure%20Relief%20Vent%20Group.pdf ; LTW VENT-PS1YBK-O8002 (TME): https://www.tme.eu/en/details/vent-ps1ybk-o8002/enclosures-other-accessories/amphenol-ltw/ltw-vent-ps1ybk-o8002/ ; GCT RFCT-SMA-CAP-GS-1: https://www.digikey.com/en/products/detail/gct-gradconn/RFCT-SMA-CAP-GS-1/12822389 ; Gainta G201-IP67: https://www.tme.eu/en/details/g201-ip67/multipurpose-enclosures/gainta/ ; Gainta G104MF-IP67: https://www.tme.eu/en/details/g104mf-ip67/multipurpose-enclosures/gainta/ ; LAPP SKINTOP ST-M 12x1.5: https://www.tme.eu/en/details/skintop-st-m12x1.5/glands/lapp/53111400/ ; Qualtek 09150-M: https://www.qualtekusa.com/images/Fan%20Accessories/PDFDrawings/09150m.pdf ; OP/TECH Rainsleeve: https://www.bhphotovideo.com/c/product/469774-REG/OP_TECH_USA_9001132_18_Rainsleeve_Set_of.html ; 3M Scotch 23 TDS: https://multimedia.3m.com/mws/media/41153O/scotch-all-voltage-splicing-tape-23.pdf ; MOLYKOTE 4 (Silmid): https://silmid.com/es/silicones/silicone-compounds/MOLYKOTE-Dow-Corning-4-Electrical-Insulating-Compound-SAE-AS-8660-in-various-sizes ; Robens DIY Pole Set 8.5 мм: https://www.karkkainen.com/en/robens-diy-8-5-mm-silver-tent-pole ; Forclaz відтяжки: https://decathlon.com.cy/products/ultra-light-reflective-guy-ropes-orange ; WiMo 18067.MH (не підходить): https://www.wimo.com/en/18067-mh ; Rollei Compact Traveler No. 1: https://www.rollei.de/products/stativ-compact-traveler-no-1 , голова 2026: https://www.rollei.de/products/kugelkopf-compact-traveler-no1-v2026 , пластина: https://www.rollei.de/products/schnellwechselplatte-fur-compact-traveler-no-1-version-2026-arca-swiss , доставка: https://www.rollei.de/policies/shipping-policy ; Deuter Futura 27: https://www.deuter.com/de-en/futura-27/4046051185187 ; Bergfreunde Futura 27: https://www.bergfreunde.de/deuter-futura-27-wanderrucksack/ ; Millenium Stick Bag: https://www.thomann.de/de/millenium_msb20bk_stick_bag.htm ; toom Marley HT DN50: https://toom.de/p/hochtemperaturrohr-50-x-500-mm/5650106 , https://toom.de/p/muffenstopfen-50-mm/5650733 , https://toom.de/p/ueberschiebemuffe-50-mm/5650689 . (PA3FWM tn07 уже є в розділі «РЧ і приймачі»; додати до нього примітку 'висота щогли Boni-Whip'.)
+    - **Reason:** Key URLs of the G4 decisions.
+    - **Sources:** analogs_G4 decisions[0]-[5] sources
+    - **Saving usd:** 0
+  72.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Вхідні файли документа
+    - **Anchor:** **Вхідні файли цього документа:**
+    - **Instruction:** Add 'final/analogs_G4_mechanical_field.json (рішення P5 щодо аналогів: механіка і польовий набір)' to the input-files list.
+    - **Reason:** New input file for v2.
+    - **Sources:** analogs_G4
+    - **Saving usd:** 0
+- **Already in v1:**
+  - Never tap the 2 mm mid-plate ('різьба в пластині 2 мм — ніколи', 02d chassis row; 06_removed 'різьба 1/4-20 у пластині 2 мм') — G4[1] keeps it.
+  - 1/4-20 pull test at 3x device weight (02d chassis row, 05d 5.8) — G4 keeps it and only adds torque, cycle and engagement checks.
+  - Steel 1/4-20 mount as a captured nut or press-in steel insert in a boss of 6 mm or more (D15, 05d) — G4[1] picks the already-allowed captured nut.
+  - FR4 RF bay seams of 7 mm or less (05d 5.7 #8).
+  - IP67 unreachable with forced cooling (02d weather row, D15).
+  - No air intake facing upward ('забір повітря ніколи вгору', 05d 5.8).
+  - Lower masts above about 20 km/h of wind (05d outdoor safety).
+  - Boni-Whip deploy time target 5-8 min (05d deployment times); G4[3] accepts <=8 min.
+  - Boni-Whip at least 2 m above ground with grounding (02b Boni row, C17, 04).
+  - Tree or fence as the mast budget fallback (02b mast row).
+  - Flexible mini tripod from the dipole kit as the tripod budget fallback (02b tripod row).
+  - Light bezel and 30 mm hinged hood on the display (05d 5.6) — G4[0] relies on it for the white ASA.
+  - Battery bay has its own vent path outward (05d 5.6, D6) — G4[2] vents do not replace it.
+  - Sharp petal and segment edges 0.3-0.5 mm noted in the bags row (02b).
+  - 45-min noon soak in modes B, D, G with frame <=60 C and cells <=45 C (D6, 05d, 08, P18) — G4 only adds mode H with Lime.
+  - CNC Kitchen M3x5.7 inserts EUR 9.40 verified (02d case row status).
+  - CNC Kitchen and QuietPC already listed as EU sellers with VAT in the 9.1 customs paragraph.
+  - KSD9700 70 C on the IP2368 charger exists in v1 (D6, 02c, 05d); only the wiring text and the count change.
+- **Not applied:**
+  1.
+    - **Item:** G4[2] stack_changes: 'Group 2.9 subtotal 178-313 becomes about 249-371'
+    - **Why:** Counts only the weather-kit change; superseded by the combined G4 sum 312-406 (case set and two new lines also change 2.9).
+  2.
+    - **Item:** G4[0] stack_changes 3: separate unpriced BOM line for a stainless captured 1/4-20 nut or press-in steel insert
+    - **Why:** G4[1] (same group, more specific) puts the zinc-plated steel 1/4-20 UNC nut in the chassis row; a second line would double count.
+  3.
+    - **Item:** G4[0] stack_changes 2: order the pads 'in the same QuietPC order as the Noctua NF-A4x10'
+    - **Why:** The G2 analog sources the NF-A4x10 at Alternate.de, not QuietPC, so there is no shared QuietPC order; the instruction only says to keep all pads in one QuietPC order (shipping not verified).
+  4.
+    - **Item:** G4[2] condition 4: F-port reason 'the LNB rail carries 13/18 V DC'
+    - **Why:** v1 decision C8 removed the 18 V branch (LNB 13.2 V only); the v2 text says 'DC шини LNB' without 18 V.
+  5.
+    - **Item:** G4[2] condition 8: 'these vents do not replace the P2 battery thermal-runaway vent path'
+    - **Why:** In STACK v1 P2 is the filter/bias-tee procedure, so the label is dropped; the meaning (vents do not replace the battery vent path) is kept.
+  6.
+    - **Item:** G4[4] stack_changes: 'Kit weight line: 1.14 kg is within 1.2-1.4 kg'
+    - **Why:** Arithmetic is wrong (1.14 is below 1.2) and v1 has no such kit line; v2 uses the 2026 listing mass 1.14 kg in the 5.8 weight table.
+  7.
+    - **Item:** G4[4] stack_changes: 'Packing table: tripod 31.5-32 cm becomes 34.5 cm'
+    - **Why:** STACK v1 has no packing table with 31.5-32 cm; the 34.5 cm folded length and the >=36 cm inner-length need go into the 02b tripod row and the 05d weight/kit text instead.
+  8.
+    - **Item:** G4[1] and G4[2]: 'EU low-value import duty, amount unverified (operator note 34)'
+    - **Why:** Superseded by rule item operator_notes 35 (EUR 3 per tariff line up to EUR 150 via IOSS/post, EUR 2 Union handling fee per line from about 1 Nov 2026); v2 uses those amounts.
+  9.
+    - **Item:** Decathlon Quechua 8.5 mm fibreglass mast build as the default (G4[3] rejected, saves about 42.6)
+    - **Why:** Worse in mass (+0.1-0.13 kg) and durability class; only offered as an explicit user-accepted trade in the budget text, not applied by default.
+  10.
+    - **Item:** Deuter AC Lite 23 or other 18-25 L packs as the default pack (G4[5] rejected)
+    - **Why:** Maker load rating 2-7 kg is below the D14 contents; only listed as a flagged budget option when the HF kit and mast ride outside.
+  11.
+    - **Item:** Deuter Futura 27 old SKU 3400321 at EUR 108.50
+    - **Why:** Currently unavailable, so the price is not real today; kept only as an opportunistic check before ordering.
+  12.
+    - **Item:** Xucheng KSD9700-70/5JSB/080C (LCSC C156512, normally closed)
+    - **Why:** Wrong contact form for the NO-in-parallel-with-CHG_INHIBIT wiring; usable only if v2 deliberately chose an NC fail-safe loop, which no file decides.
+  13.
+    - **Item:** ruthex RX-M3x5.7 inserts, 3DO ASA, ELEGOO/SUNLU/Bambu ASA, Arctic/Jaden pads, SmallRig 2794/4882 straps
+    - **Why:** Rejected by G4[0]: higher landed price, unverified price, or measured worse.
+  14.
+    - **Item:** Generic eBay rubber SMA caps (could save about 30-40)
+    - **Why:** Rejected by G4[2] until they pass the full IPX4 spray and heat/UV soak and get a tether; no verified price.
+  15.
+    - **Item:** Manfrotto Element Traveller Small and Sirui Traveler 5A as tripod replacements
+    - **Why:** No verified EU price (Manfrotto) or dearer with lower load (Sirui); the keep stands.
+- **Notes:** I read all 6 G4 records in full and checked every anchor above with a script: each one occurs exactly once in its section file. Things the assembler should know:
+  (1) All total deltas are G4-only and my own calculation. Core +134.00 / +93.30; antenna-foldable +147.82 / −12.18; the combined summary rows +281.82 / +81.12. Recompute the 02e, 03b and C24 totals only after merging the other groups, for example Boni-Whip and PA0RDT from G1/G6.
+  (2) Section 2.9 is built as follows. The case row is ≈126.6 (US basis; ≈128.7 with the EU ASA price). Two new rows are added: M3 screws 20.91-28.21 and the hand strap 13.49. The chassis row stays 35-70 (model). The weather kit is 116-168 ex VAT. The new 2.9 subtotal is 312-406.
+  (3) Possible pad mismatch. The corrected UFS gap spec is 1-1.5 mm, but a 1.0 mm pad fills only 0.7-1.0 mm. The UFS may therefore need the 1.5 mm GP-Ultimate (EUR 6.52). The fit check decides this; the analog's claim that 1.0 mm sits 'inside all three ranges' only holds at the 1.0 mm edge.
+  (4) Tripod mass. G4[5] summed the pack weight with the tripod at 1.17-1.35 kg (reaudit C). G4[4] gives 1.14 kg for the 2026 Rollei. The pack totals are kept as G4[5] states them, with a note that they are slightly conservative.
+  (5) The records use different FX rates: 1.124, 1.16, 1.15, 1.1253 and 1.1241 USD/EUR. Each USD figure is kept as its record states it.
+  (6) QuietPC NL and TME prices do not say whether VAT is included. The Karkkainen EUR 47.90 also does not state VAT. Rollei, Bergfreunde, 3DJake, Syntex, Alu-Verkauf, Electrokit and Decathlon CY are incl. VAT.
+  (7) The landed-cost rule applies to the non-EU lines: OP/TECH sleeve (US/UK), Peak Design (US price only) and the Polymaker US store (US basis only).
+  (8) Hard rules are unaffected: all parts are passive mechanics, nothing transmits, no loops and no dishes. I wrote the drip-loop and the cord-loop wording as 'провис кабелю' and 'шнур з карабіном' so they cannot be read as antenna loops.
+  (9) For the new section 11 change log, which is not in this enum, suggest one line per G4 record: case set (ASA White, GP-Ultimate 1.0 mm, M3 screws, PAC2456); chassis (5754 conditional, Piekarz KSD9700 ×5, captured nut, FR4 sources); weather kit pinned to SKUs at 116-168; mast 70-80 with the Robens route; Rollei tripod at 57.33; Deuter Futura 27 set at 155.49.
+  (10) The weather SKU list also goes to parts.yaml. That is a repo file, not a STACK section.
+
 ## searchB:leo_bodnar_lbe_1420_gpsdo (run `wf_c3ba734e-52b`)
 
 - **Part:** Leo Bodnar LBE-1420 GPSDO locked clock source (extended lab tier, qty 1). Roles in this stack: GNSS-locked 10 MHz or exactly 30.72 MHz CMOS reference into LimeSDR Micro J4 (10-52 MHz, 1.8-3.3 V); GNSS-locked test tone, conducted only through 80 dB of pads and a DC block, to calibrate the ppm of the RTL-SDR V4L units, the Airspy HF+ and the tinySA, and the Lime VCTCXO DAC. It is configured headless from the Q6A over USB HID.
