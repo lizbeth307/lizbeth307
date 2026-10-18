@@ -27994,6 +27994,142 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   The driver PCB, flyback diodes and FETs are the same for every candidate and are left out of the price comparison. All candidates are passive, receive-only parts and keep every hard rule. Downloaded datasheets are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/g6k_dl/, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/hf3_dl/ and /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/g6ky_dl/.
 
+## searchB:hf_selector_2x_omron_g6k_2f_rf_5_v_serie (run `wf_e32114dd-52d`)
+
+- **Part:** HF+ input selector: 2x Omron/Aratas G6K-2F-RF DC5 (DPDT, non-latching, series-shunt; K1 = P5 HF, K2 = P6 VHF2/AIS; de-energised = HF+ on 50 ohm) + driver PCB
+- **Current price usd:** 50.12 for two relays (DigiKey G6K-2F-RF DC5, now sold as 'Aratas (Formerly Omron Components)', $25.06 each, 6,930 in stock, 18 Oct 2026; this is the re-audit's corrected figure). It replaces the STACK figure of 62-80 (RS UK, GBP 43-52 ex VAT). The driver PCB is not included in either figure.
+- **Critical specs:**
+  - DC-coupled path from 10 kHz or lower (LF time signals 40-77.5 kHz, NAVTEX 490/518 kHz) up to at least 260 MHz (HF+ VHF ceiling), with no DC-block capacitors in the path. HMC241 was rejected for exactly this reason.
+  - Insertion loss of the switched pair: 0.3 dB or less from 10 kHz to 260 MHz (stack acceptance, conducted on the LiteVNA).
+  - Isolation: 35 dB or more at 162-260 MHz, conducted, between the unselected antenna port and the HF+ (AIS on P6 vs HF on P5). Per-relay open-contact isolation at 162-260 MHz should be about 40 dB or more.
+  - Return loss / VSWR: 1.2 or better (about 21 dB RL) to 260 MHz, so the HF+ MDS (-140 dBm HF, -141 dBm VHF) and its filters see 50 ohm.
+  - Linearity and spurs: passive metal contacts only, so the switch cannot limit the HF+ IIP3 (+15/+13 dBm) or BDR (110/95 dB). No charge pump, clock or semiconductor junction in the path.
+  - Fail-safe state: single-side-stable (non-latching). With no coil current the HF+ sits on 50 ohm and both antenna ports are terminated, which the boot and terminated-floor states need. Latching parts were rejected for this.
+  - Coil: 5 V from LAB5 through a FET driver on MCP23017 #1 GPB2/GPB3. About 0.1 W per coil (only one coil is ever on), must-operate 80% or lower, must-release 10% or higher.
+  - Contacts: DPDT (2 Form C) per relay for series-shunt. Au-clad for dry-circuit microvolt signals, contact resistance 100 mOhm or less, mechanical life 5e7 operations or more.
+  - Environment and build: -40 to +70 C or wider, fully sealed (field humidity, cleanable after reflow), shock and vibration rated for a handheld.
+  - Size: SMD on a mini PCB with 3 SMA edge jacks in the RF bay.
+  - Provenance: franchised or traceable stock, not counterfeit. Either the Omron or the Aratas marking is acceptable.
+  - Hard rules: passive and receive-only. The Boni 12.5 V bias tee sits on the antenna side of K1, so no DC crosses the contacts. No loop or H-field parts.
+- **Candidates:**
+  1.
+    - **Name:** Omron/Aratas G6K-2F-RF DC5 x2 (current part)
+    - **Kind:** current_part
+    - **Price usd:** 50.12 (2 x 25.06, DigiKey, 6,930 in stock)
+    - **Spec comparison:** Datasheet guarantees at 1 GHz: isolation 20 dB min (same polarity) / 30 dB min (different polarity), IL 0.2 dB max, VSWR 1.2 max. From Omron's average curves (10 pcs, HP 8753D, read by eye ±2 dB): isolation about 52 dB at 100 MHz, about 46 dB at 160 MHz, about 40 dB at 260 MHz. IL under 0.05 dB and RL over 40 dB below 300 MHz. Coil: 5 V, 237 ohm, 21.1 mA, about 100 mW, must-operate 80%, must-release 10%, max 150%. Contacts: 100 mOhm max, Au/Ag. Life: 5e7 mechanical, 1e5 electrical. -40 to 70 C, fully sealed.
+    - **Worse in:** Reference part
+    - **Compatibility:** As designed (P5 HF via K1, P6 VHF2 via K2, MCP23017 GPB2/GPB3 with FET drivers, LAB5).
+    - **Risks:** The curve values at 162-260 MHz are averages, not guaranteed minimums. The LiteVNA acceptance test stays. Omron Components has been rebranded Aratas.
+    - **Seller url:** https://www.digikey.com/en/products/detail/aratas-formerly-omron-components/G6K-2F-RF-DC5/503107
+    - **Sources:**
+      - https://omronfs.omron.com/en_US/ecb/products/pdf/en-g6k_2f_rf.pdf
+      - https://www.digikey.com/en/products/detail/aratas-formerly-omron-components/G6K-2F-RF-DC5/503107
+  2.
+    - **Name:** Omron/Aratas G6K-2F-RF-S DC5 x2 ('board space-saving' variant of the same relay), franchised source
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 39.38 (2 x 19.69, DigiKey US, Active, 2,027 in stock). DigiKey.de EUR 17.29 each (about $19.44; the page does not say whether VAT is included, so add local VAT if it is not). TME lists it but has 0 in stock.
+    - **Spec comparison:** Covered by the same datasheet and the same guarantee table, G6K(U)-2F(P)-RF(-S). At 1 GHz: isolation 20/30 dB min, IL 0.2 dB max, VSWR 1.2 max, 3 W carry. Omron average curves for the -S (10 pcs, same fixture): isolation about 50 dB at 100 MHz, about 45 dB at 160 MHz, about 40-41 dB at 260 MHz. That is equal to the standard -RF within graph-reading error. IL under 0.05 dB and RL over 35-40 dB below 300 MHz, also equal. Coil identical: 5 V, 237 ohm, 21.1 mA, about 100 mW, 80% / 10% / 150%. Contacts, life (5e7 / 1e5), -40 to 70 C, fully sealed and non-latching are all identical. The body is the same 10.3 x 6.9 x 5.4 mm; the terminal span is smaller (about 10.7 mm vs 12.8 mm).
+    - **Worse in:** Nothing that matters here. Above about 0.5 GHz its isolation curve differs slightly from the standard -RF's, but the HF+ stops at 260 MHz.
+    - **Compatibility:** The coil, contact form and fail-safe behaviour are identical, so the drivers, labd/MCP23017 mapping, LAB5 rail and topology are unchanged. The land pattern differs (smaller footprint, different ground-terminal layout), so the driver PCB must use Omron's -S pattern. The PCB is not laid out yet (part chosen in P5), so this costs nothing.
+    - **Risks:** Same caveat as the current part: the 162-260 MHz curve figures are manufacturer averages, not guaranteed minimums. Keep the LiteVNA acceptance test (35 dB or more, 0.3 dB or less, pair on the real PCB). Its 26-week factory lead time is the same as the current part's; DigiKey has stock. The evidence is the manufacturer's own measurement; I found no independent measurement for either variant.
+    - **Seller url:** https://www.digikey.com/en/products/detail/aratas-formerly-omron-components/G6K-2F-RF-S-DC5/1936449
+    - **Sources:**
+      - https://omronfs.omron.com/en_US/ecb/products/pdf/en-g6k_2f_rf.pdf
+      - https://www.digikey.com/en/products/detail/aratas-formerly-omron-components/G6K-2F-RF-S-DC5/1936449
+      - https://www.digikey.de/en/products/result?keywords=G6K-2F-RF-S%20DC5
+      - https://www.tme.eu/en/details/g6k-2f-rf-s-5dc/rf-relays/omron-electronic-components/g6k-2f-rf-s-5vdc/
+  3.
+    - **Name:** Same G6K-2F-RF-S DC5 x2 bought from LCSC (C2750987, brand listed as OMRON)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 24.00 (2 x 11.9961 at qty 1, 357 in stock, read from the LCSC product API on 18 Oct 2026). Shipping and EU VAT/IOSS handling were not verified and will add cost unless the order is combined with other LCSC parts.
+    - **Spec comparison:** Same part number as the DigiKey -S candidate, so the same specs. The LCSC listing repeats 20/30 dB isolation and 0.2 dB IL at 1 GHz, 5 V / 237 ohm coil, 2 Form C, -40 to 70 C, 10.3 x 6.9 x 5.4 mm.
+    - **Worse in:** Specs are the same on paper. Provenance is weaker: I did not verify that LCSC is a franchised Omron/Aratas distributor, so the traceability is not the same as DigiKey's.
+    - **Compatibility:** Same as the DigiKey -S candidate (needs the -S footprint).
+    - **Risks:** Counterfeit or grey-market risk is low but not zero, and the reseller is not proven franchised. Mitigate by checking the marking and date code on arrival, plus the LiteVNA pair test (isolation, IL, RL) and coil pull-in/drop-out at 4.0/0.5 V. If the user requires franchised-only parts, buy from DigiKey instead.
+    - **Seller url:** https://www.lcsc.com/product-detail/C2750987.html
+    - **Sources:**
+      - https://www.lcsc.com/product-detail/C2750987.html
+  4.
+    - **Name:** Omron/Aratas G6K-2F-RF-S DC4.5 x2 (4.5 V coil run from the 5 V rail)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 27.44 (2 x 13.72, DigiKey US, 1,091 in stock)
+    - **Spec comparison:** RF and contact specs are identical to the -S DC5. Coil: 194 ohm, 23.2 mA at 4.5 V, max 150%. On 5 V directly it draws 25.8 mA, about 129 mW (111% of rated). With a series resistor of about 22 ohm it draws about 23 mA, about 116 mW from the rail, against 105 mW for the DC5. Must-release is 0.45 V vs 0.5 V.
+    - **Worse in:** Coil power is 10-24 mW higher per energised coil (+10% with the resistor, +23% without), with slightly more coil heating. The must-release threshold is 0.05 V lower. Because of these small trades it is NOT a strict not-worse analog.
+    - **Compatibility:** Same footprint as the -S DC5. Fitting the optional 22 ohm resistor adds one part.
+    - **Risks:** Running a coil above its rated voltage continuously is within the datasheet maximum but outside the rated point. Offer it only if the user accepts the coil-power trade.
+    - **Seller url:** https://www.digikey.com/en/products/result?keywords=G6K-2F-RF-S
+    - **Sources:**
+      - https://www.digikey.com/en/products/result?keywords=G6K-2F-RF-S
+      - https://omronfs.omron.com/en_US/ecb/products/pdf/en-g6k_2f_rf.pdf
+  5.
+    - **Name:** DIY with standard telecom Omron G6K-2F DC5 x2 (non-RF version)
+    - **Kind:** diy
+    - **Price usd:** 10.06 (2 x 5.03, DigiKey, per the DigiKey 'related parts' list)
+    - **Spec comparison:** No RF guarantee. Omron's only RF data is average curves for the G6K-2G sample, 1-100 MHz: isolation about 46 dB at 100 MHz, IL about 0.18 dB at 100 MHz and rising steeply, RL about 29 dB at 100 MHz. The -RF part is about 0.03 dB and about 45 dB RL at 100 MHz. There is no data at 162-260 MHz. The coil is the same (237 ohm, about 100 mW), contact life is the same, and it is fully sealed.
+    - **Worse in:** IL is about 6x higher at 100 MHz, so two relays in the path would likely exceed 0.3 dB at 260 MHz (extrapolated, not measured). RL is worse by about 15 dB. Nothing guarantees isolation or IL above 100 MHz. I found no independent measurement.
+    - **Compatibility:** Electrically drop-in (5 V coil, DPDT), but needs its own footprint.
+    - **Risks:** Rejected under angle B: no measured evidence at 162-260 MHz, and the evidence that exists is already worse at 100 MHz.
+    - **Seller url:** https://www.digikey.com/en/products/detail/aratas-formerly-omron-components/G6K-2F-RF-DC5/503107
+    - **Sources:**
+      - https://omronfs.omron.com/en_US/ecb/products/pdf/en-g6k.pdf
+  6.
+    - **Name:** DIY with TE/Axicom IM03GR signal relays x2
+    - **Kind:** other_brand
+    - **Price usd:** Not checked in this run
+    - **Spec comparison:** TE IM datasheet RF data: isolation 37.0 dB at 100 MHz and 18.8 dB at 900 MHz, IL 0.03/0.33 dB, VSWR 1.06/1.49. Log interpolation gives about 33 dB at 162 MHz and about 29 dB at 260 MHz (my estimate), against about 46/40 dB for the G6K-RF. Standard coil is 140 mW (a 100 mW sensitive version exists).
+    - **Worse in:** Isolation is about 11-15 dB worse at 100-260 MHz. VSWR is worse. The standard coil draws 40% more power.
+    - **Compatibility:** 5 V coil, 2 Form C, SMT. Usable electrically.
+    - **Risks:** Rejected because it is worse on isolation. I found no independent VHF measurement.
+    - **Seller url:** 
+    - **Sources:**
+      - https://static.rapidonline.com/pdf/60-1278.pdf
+  7.
+    - **Name:** Hongfa HFD48/5-SR (Chinese-brand 3 GHz DPDT RF relay; its 3 GHz spec matches the G6K-RF-T's)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not verified (the LCSC search endpoint was blocked)
+    - **Spec comparison:** Spec at 3 GHz only: isolation 18 dB min (open contacts) and 25 dB min (between sets), IL 0.6 dB max, VSWR 1.4 max. The curves (HFD48/5-SR, Keysight E5071C) look similar to Omron's at low GHz, but 100-300 MHz cannot be read off the 0-6 GHz plot. Coil 5 V, 125 ohm, 200 mW. Polarized coil. Plastic sealed. -40 to +85 C. Mechanical life 1e8.
+    - **Worse in:** Coil power is doubled (200 mW vs 100 mW). It is plastic sealed rather than fully sealed. It has no stated 162-260 MHz data and no 1 GHz guarantee. I found no independent measurement.
+    - **Compatibility:** 5 V, DPDT, SMT, but a different footprint and coil polarity matters.
+    - **Risks:** Rejected: worse coil power and sealing, and no measured VHF evidence.
+    - **Seller url:** 
+    - **Sources:**
+      - https://macrogroup.ru/upload/iblock/d12/gs6kxustts46kilcbe8du2d8xcnv2fil/HFD48.pdf
+  8.
+    - **Name:** Generic solid-state switch boards (HMC7992/HMC241-class SP4T/SPDT modules)
+    - **Kind:** generic_or_clone
+    - **Price usd:** Not priced. The HMC7992 chip alone is $13.10 at DigiKey per the re-audit.
+    - **Spec comparison:** HMC7992 is specified 0.1-6 GHz only. Its RF pins need DC blocks, so the LF/MF range (10-500 kHz) is lost. IIP3 is 58 dBm typical, which is fine. Its state with VDD off is not a defined 50-ohm termination.
+    - **Worse in:** Frequency range (no LF/MF), fail-safe state, and ESD exposure on the long HF wire. The stack already rejects HMC241 for the LF reason.
+    - **Compatibility:** Would require DC blocks and a powered default state.
+    - **Risks:** Rejected on the hard requirements (DC-coupled down to 10 kHz, unpowered = 50 ohm). I found no generic module with independent measurements.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.farnell.com/datasheets/2283884.pdf
+  9.
+    - **Name:** Used/surplus SMA coaxial relays (e.g. Radiall R5703x2100 DC-3 GHz SPDT, 12 V)
+    - **Kind:** used
+    - **Price usd:** Not verified (no used listing checked)
+    - **Spec comparison:** Per datasheet listing (not fetched by me): IL 0.15 dB max, isolation 80 dB min, DC-3 GHz, so better RF than the G6K-RF. 12 V actuator; coil power not verified.
+    - **Worse in:** Size and mass are far larger than a 10 mm SMD relay in the mini RF bay. Coil power is unverified and likely much higher. Used units come with no measured condition and unknown contact wear.
+    - **Compatibility:** The SYS12 rail exists, but the parts do not fit the 220 x 140 x 60 mm handheld RF bay layout.
+    - **Risks:** Rejected under angle B: no independent measurement of used units, no verified price, and size/power trades. The stack already rejected new coax relays at $242 or more.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.datasheets.com/radiall/r570322100
+- **Notes:** VERDICT (angle B: generic, clone, DIY, used). I found no generic module, clone, DIY build or used unit that is proven equal by independent measurements. The cheaper relays with data (TE IM03, Hongfa HFD48, the standard G6K-2F) are each measurably worse on isolation, IL/RL, coil power or sealing, or have no data at 162-260 MHz. Solid-state boards fail the DC-to-10-kHz and unpowered-50-ohm rules. Used SMA coax relays have no verified price or condition and do not fit the size and power budget.
+  
+  The only cheaper part that is not worse is outside angle B's narrow scope, but I report it because it meets the user's rule: Omron/Aratas G6K-2F-RF-S DC5, the 'board space-saving' variant of the same relay. It has the same guarantee table, the same coil, contacts, life, sealing and fail-safe behaviour, and its average isolation/IL/RL at 100-300 MHz matches the standard part within graph-reading error. Two cost $39.38 at DigiKey (franchised, 2,027 in stock), saving $10.74 against $50.12, or $24.00 at LCSC (357 in stock, before shipping and VAT). LCSC's franchise status was not verified.
+  
+  Recommendation: switch the BOM to G6K-2F-RF-S DC5, bought from DigiKey (EU: DigiKey.de EUR 17.29 each; VAT status not shown on the page). Use LCSC only if it is bundled into a larger LCSC order and the user accepts non-franchised provenance. Draw the PCB with the -S land pattern. Keep the LiteVNA pair acceptance test unchanged (35 dB or more at 162-260 MHz, 0.3 dB or less from 10 kHz to 260 MHz, RL measured), because all the 162-260 MHz figures are manufacturer averages, not guaranteed minimums. Graph readings come from Omron catalogue page 3 (G6K-2F-RF vs G6K-2F-RF-S isolation, IL and RL curves, measured on an HP 8753D with 10 pcs) and are about ±2 dB.
+  
+  The DC4.5 coil variant ($27.44 for two) is cheaper still, but it costs 10-24 mW more coil power on the 5 V rail. That is a stated trade, not a not-worse substitute.
+  
+  The budget alternative already in the stack (manual swap at P5/P6) loses the automatic terminated-floor and boot state, so it is also worse.
+  
+  Unverified items: the Mouser, Farnell and RS pages returned 503/403. LCSC shipping and VAT, HFD48 and IM03 prices, and Teledyne RF300/RF303 TO-5 surplus prices and measurements were not obtained. I found no AliExpress listing for G6K-2F-RF; marketplace relays would be rejected on provenance anyway.
+  
+  Working files (datasheet downloads and renders): /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_g6k/g6k_2f_rf.pdf, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_g6k/iso_both.png, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_hfd48/HFD48.pdf, /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl_im/im.pdf.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
