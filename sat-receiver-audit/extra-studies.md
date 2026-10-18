@@ -28558,6 +28558,134 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Peli's own knock-off warning: https://peliproducts.co.uk/blogs/news/risks-buying-knock-off-peli-case. USD conversions use an assumed 1.15 USD/EUR (not verified for Oct 2026).
 
+## searchA:pelican_1450_apache_3800_case_with_divid (run `wf_c3ba734e-52b`)
+
+- **Part:** Bench transport case with padded dividers (current: Pelican 1450 Protector, 1450-004-110 with padded dividers; Apache 3800 budget alternative). Bench kit only, qty 1, tier extended.
+- **Current price usd:** Pelican 1450-004-110 (padded dividers): $213.95-215.95 in the US (Markertek $215.95, out of stock; Newegg/Adorama and Studio Depot $213.95; Full Compass $215.95). A CDW search snippet says this SKU was discontinued on 9 Jun 2026 (not fetched). Pelican 1450 with foam (1450-000-110): $169.95 at Glazer's (US, verified in the re-audit). In the EU the foam version is EUR 209 incl. VAT at Thomann DE/IE (about $238-242 at 1.14-1.16 USD/EUR, or about $200-204 without VAT). The stack's $30-169 range is out of date: the re-audit dropped the Apache 3800 for a European buyer, and the 'with dividers' configuration costs about $214-216.
+- **Critical specs:**
+  - Interior at least Pelican 1450 size on every axis: 372 x 260 x 155 mm (37.2 x 26.0 x 15.5 cm), 15.0 L. The bench kit fills about 8.8 L, so the fill stays at 59% or less.
+  - Base depth at least 111 mm (Pelican 4.37 in), so the instruments stand upright in the dividers; lid depth for flat items.
+  - Watertight and dustproof IP67, certified or tested (not IP65).
+  - Automatic pressure-equalisation valve: the case may go in checked baggage (stack D14).
+  - Padded, reconfigurable hook-and-loop dividers included or available (the stack says dividers rather than pick foam).
+  - Weight: at most 2.5 kg empty and about 2.9 kg fitted, because the 8.2-9.1 kg bench kit weight is modelled on this.
+  - Hardware: corrosion-proof hinge pins (Pelican uses stainless steel); at least 2 reinforced padlock holes about 8 mm (Pelican has stainless padlock protectors) for checked baggage.
+  - Rated temperature range wider than what the contents tolerate (the Li-ion Anker 737 and ISDT and the instruments: about -20 to +60 C storage). Pelican's figure for reference: -40 to +99 C.
+  - Build and warranty: injection-moulded PP or equivalent shell; Pelican gives a Limited Lifetime Warranty.
+  - Exterior about 42 x 33-35 x 17-20 cm or less (bench shelf, checked bag); not required to fit as carry-on.
+  - Legitimate EU availability from an official store or authorised distributor; no counterfeit or grey import.
+- **Candidates:**
+  1.
+    - **Name:** Pelican 1450-004-110 Protector Case with Padded Dividers (current pick)
+    - **Kind:** current_part
+    - **Price usd:** $213.95-215.95 (US, without sales tax); EU price for the divider SKU not found
+    - **Spec comparison:** Interior 372 x 260 x 155 mm (bottom depth 111 mm, total 155 mm); exterior 418 x 330 x 173 mm; 2.5 kg empty, 2.9 kg with foam; buoyancy 13.6 kg. PP body, ABS latches, stainless-steel pins and padlock protectors (8 mm holes). Automatic purge valve with a 3 um hydrophobic vent. -40 to +99 C. Limited Lifetime Warranty; made in USA. IP67 per Thomann (Markertek gives no IP line). Padded dividers with VELCRO tabs included.
+    - **Worse in:** Reference part. Supply is uncertain: Markertek is out of stock and a CDW snippet says the SKU was discontinued 9 Jun 2026 (unverified).
+    - **Compatibility:** Fits the bench kit (8.8 L of 15.0 L = 59%). Checked baggage allowed (stack D14).
+    - **Risks:** Possible end of life for the divider SKU. EU price for the divider version unknown; the Peli 1450 divider set alone is GBP 116 at Wex (special order).
+    - **Seller url:** https://www.markertek.com/product/bpl1454b/pelican-1450-protector-case-with-padded-dividers-black
+    - **Sources:**
+      - https://www.markertek.com/product/bpl1454b/pelican-1450-protector-case-with-padded-dividers-black
+      - https://www.thomann.de/de/peli_1450_foam_black.htm
+      - https://www.cdw.com/product/pelican-protector-case-1450-with-padded-dividers-hard-case/1361864
+      - https://www.wexphotovideo.com/peli-1450-divider-set-1005564/
+  2.
+    - **Name:** Pelican/Peli 1450-000-110(E) with foam (same case, foam insert)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** $169.95 (Glazer's, US). EU: EUR 209 incl. 19% VAT at Thomann DE, in stock (about $238-242 with VAT, about $200-204 without).
+    - **Spec comparison:** Same shell as the current pick. Thomann's spec: interior 374 x 260 x 154 mm, exterior 409 x 331 x 175 mm, 2.9 kg with foam, IP67, automatic valve, O-ring, Peli no. 1450-000-110E.
+    - **Worse in:** No padded dividers: it has pick or convoluted foam, which the stack rejects. Adding a genuine Peli divider set (GBP 116 at Wex) costs more than the divider SKU. Only cheaper in the US, and only without dividers. In the EU it is not cheaper than the alternatives below.
+    - **Compatibility:** Same as the current pick.
+    - **Risks:** US eBay listings near $134 (Nov 2025, stale) would add import VAT and duty, and the seller's provenance is unknown. Not recommended.
+    - **Seller url:** https://www.thomann.de/de/peli_1450_foam_black.htm
+    - **Sources:**
+      - https://www.thomann.de/de/peli_1450_foam_black.htm
+      - https://www.glazerscamera.com/products/pelican-1450-black
+      - https://www.wexphotovideo.com/peli-1450-divider-set-1005564/
+  3.
+    - **Name:** Explorer Cases 3818HL (3818HL.B with foam, or 3818HL.B E empty) + DIV3818 padded divider
+    - **Kind:** other_brand
+    - **Price usd:** Case: EUR 122 incl. 19% VAT at Thomann DE, in stock (3818HL.B with foam; the empty 3818HL.B E price was not found). DIV3818: $29.53 / GBP 24.05 without VAT at MisterWorker (search snippet only; page returned 403). Total about EUR 150-158 incl. VAT, about $147-150 without VAT (at 1.14-1.16 USD/EUR). About 30% below the Pelican divider SKU.
+    - **Spec comparison:** Interior 380 x 270 x 180 mm (larger on every axis); 18.5 L versus 15.0 L. Lid/base 47/133 mm (base deeper than Pelican's 111 mm). Exterior 420 x 340 x 202 mm. Weight 2.26 kg empty and 2.66 kg with foam; with DIV3818 (0.3 kg, 375 x 265 x 130 mm) about 2.56 kg, lighter than Pelican's 2.5/2.9 kg. IP67 with a certificate linked on the official page. Automatic pressure-release valve per the official page. Corrosion-proof metal hinges with lid stay. Metal-reinforced padlock holes. Copolymer PP shell. Buoyancy 12.3 kg. -33 to +90 C. 'Guaranteed forever' warranty against breakage and defects (no duration defined). EU-made per Thomann.
+    - **Worse in:** Rated temperature -33 to +90 C against Pelican's -40 to +99 C. This is narrower, but both still exceed the about -20 to +60 C the Li-ion contents tolerate, so it does not bind. The MIL-standard claim is 'pending certification release'; only IP67 is certified now. The exterior is 29 mm taller. Thomann calls the valve 'manually adjustable', which conflicts with the official 'automatic'; check on arrival. Dividers are a separate part, and their price comes only from a search snippet.
+    - **Compatibility:** Holds the full bench kit at 8.8/18.5 L = 48%. DIV3818 is listed on the official 3818HL page as its padded divider. Checked baggage: valve and padlock holes present.
+    - **Risks:** Confirm the valve type and the DIV3818 EU price and stock before ordering. Do not confuse it with the non-HL 3818, which is heavier (3.14 kg empty, 3.58 kg with foam) and has a manual purge valve.
+    - **Seller url:** https://www.thomann.de/de/explorer_cases_3818hl.b.htm
+    - **Sources:**
+      - https://www.explorercases.com/en/products/3818hl/
+      - https://www.explorercases.com/en/products/3818/
+      - https://www.explorercases.com/it/company/warranty/
+      - https://www.thomann.de/de/explorer_cases_3818hl.b.htm
+      - https://www.misterworker.com/en/explorer-cases/padded-divider-for-case-3818-375x265x130mm-div3818/116361.html
+  4.
+    - **Name:** MAX Cases (Plastica Panaro) MAX380H160CAM, padded dividers
+    - **Kind:** other_brand
+    - **Price usd:** EUR 138.00 without VAT on the official Panaro EU shop ('Taxes and shipping calculated at checkout'): about $157-160 without VAT, about EUR 164 incl. 19% DE VAT or EUR 168 incl. 22% IT VAT (about $187-195). About 26% below the Pelican divider SKU.
+    - **Spec comparison:** Interior 380 x 270 x 160 mm (larger on every axis); 16.4 L. Lid/base 36/124 mm (base deeper than Pelican's 111 mm). Exterior 414 x 345 x 174 mm, about Pelican's size. Weight 2.20 kg empty; the shop's weight field gives 2.70 kg for the CAM version (may include packaging), against Pelican's 2.5 kg empty and about 2.9 kg fitted. IP67, STANAG 4280 / DEF STAN 81-41, MIL-STD-810H, ATA 300 Cat. 1 and UN4H2, all published; Pelican's 1450 publishes fewer. Automatic pressure-release valve; full-length hinge; double-throw latches; double padlock holes. -51 to +90 C per the official shop. Limited Lifetime Warranty (official Panaro warranty page). Made in Italy.
+    - **Worse in:** Latches and hinge pins are nylon ('corrosion-free'); Pelican's pins are stainless steel, so the hardware material is a step down. The page does not say whether the padlock holes are reinforced (Pelican has stainless protectors). Hot end +90 C against Pelican's +99 C, which does not bind with the contents; the cold end is better (-51 against -40 C).
+    - **Compatibility:** Holds the bench kit at 8.8/16.4 L = 54%. The padded-divider variant comes from the factory (CAM code). Checked baggage: valve and padlock holes present; ATA 300 certified for air transport.
+    - **Risks:** An older retailer listing claimed a 5-year warranty; the official page says limited lifetime, so rely on the official page. The empty MAX380H160 is EUR 66.50 without VAT, but no separate price for its divider kit was found. Buy from the official shop or a listed distributor.
+    - **Seller url:** https://shop-eu.panarocases.com/products/max380h160
+    - **Sources:**
+      - https://shop-eu.panarocases.com/products/max380h160
+      - https://shop-eu.panarocases.com/pages/warranty
+      - https://panarocases.com/en/products/packaging/k-series/max380h160
+  5.
+    - **Name:** B&W Outdoor.Case Type 4000/B/RPD (padded dividers)
+    - **Kind:** other_brand
+    - **Price usd:** EUR 111.12 without VAT / EUR 137.79 incl. 24% VAT at Mediagear (Estonia; partner stock, about 1 week), about $127-129 without VAT. US: $148.70 at PartsSource. About 31-40% below the Pelican divider SKU.
+    - **Spec comparison:** Interior 385 x 265 x 165 mm (larger on every axis); 16.6 L. Exterior 420 x 325 x 180 mm. Weight 2.77 kg with RPD (PartsSource, 6.1 lb); Astroshop gives 2.3 kg without saying which configuration. IP67 'certified'; DEF STAN 81-41 per PartsSource. Automatic pressure-compensation valve per EU retailers. PP shell; two padlock eyelets. RPD padded nylon hook-and-loop dividers plus egg-crate lid foam included.
+    - **Worse in:** Temperature rating is narrower and the sources conflict: -30 to +80 C (EU retailers) or -40 to +60 C (PartsSource), against Pelican's -40 to +99 C. The +60 C figure sits at the content limit. Warranty term not verified. Hinge-pin and padlock-hole materials not published. Country of origin conflicts (China per PartsSource, Germany per Digitec). Base depth not published. Too little is verified to call it not-worse on build quality.
+    - **Compatibility:** Holds the bench kit at 8.8/16.6 L = 53%. Dividers included. Valve and padlock eyelets suit checked baggage.
+    - **Risks:** The manufacturer site returned 403 and no primary datasheet was read. Get the official B&W spec sheet (temperature, warranty, hardware) before choosing it.
+    - **Seller url:** https://mediagear.ee/?p=364601
+    - **Sources:**
+      - https://mediagear.ee/?p=364601
+      - https://partssource.com/parts/bw-north-america/4000BRPD
+      - https://www.astroshop.eu/multi-purpose-cases/b-w-type-4000-case-yellow-compartment-divisions/p,55936
+      - https://www.digitec.ch/en/s1/product/bw-outdoor-case-type-4000-rpd-with-compartment-division-camera-case-1660-l-camera-bag-10379816
+  6.
+    - **Name:** Nanuk 920 (cubed foam)
+    - **Kind:** other_brand
+    - **Price usd:** EUR 183.95 (nanuk.eu, black, cubed foam, in stock; VAT inclusion not stated), about $210-213. Divider-version price not shown.
+    - **Spec comparison:** Interior 381 x 267 x 157 mm; 16 L; lid/base 53/104 mm. Exterior 424 x 340 x 173 mm. 2.3 kg empty. IP67; automatic valve; PowerClaw latches; stainless padlock eyelets 7.62 mm; -55 to +70 C; Limited Lifetime Warranty; NK-7 resin.
+    - **Worse in:** Not meaningfully cheaper: with foam it costs about the same as the Pelican divider SKU, and the divider version costs more. Base depth 104 mm is less than Pelican's 111 mm. Hot end +70 C against +99 C. Rejected.
+    - **Compatibility:** Would fit the kit (55% fill), but it fails the price test.
+    - **Risks:** None beyond price.
+    - **Seller url:** https://nanuk.eu/products/nanuk-920
+    - **Sources:**
+      - https://nanuk.eu/products/nanuk-920
+      - https://nanuk.eu/products/nanuk-925
+  7.
+    - **Name:** Apache 3800 (Harbor Freight), the stack's budget alternative
+    - **Kind:** other_brand
+    - **Price usd:** $39.99 (Harbor Freight, 'In-Store Only', US only), per the re-audit
+    - **Spec comparison:** IP65 (Pelican IP67). Official interior dimensions not found; forum users say it is about Pelican 1450 size.
+    - **Worse in:** IP65 is lower than IP67. Interior and weight specs are unverified. Not sold in the EU. The re-audit already dropped it for this user. Rejected.
+    - **Compatibility:** Not obtainable in Europe through official channels.
+    - **Risks:** Grey import only.
+    - **Seller url:** https://www.harborfreight.com/3800-weatherproof-protective-case-large-black-63927.html
+    - **Sources:**
+      - https://www.harborfreight.com/3800-weatherproof-protective-case-large-black-63927.html
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json
+- **Notes:** VERDICT (Angle A). Two cheaper cases are not worse on every spec that binds in this stack. Each is worse on a numeric rating that does not bind, and that is stated rather than hidden.
+  
+  (1) Explorer Cases 3818HL plus DIV3818: about EUR 150-158 incl. VAT, about $147-150 without VAT. It is the cheapest option whose hardware matches Pelican: metal hinges, metal-reinforced padlock holes, a 'guaranteed forever' warranty, and an IP67 certificate. It has more volume (18.5 L), a deeper base (133 mm) and less weight (about 2.56 kg fitted). Weak points: rated -33 to +90 C against -40 to +99 C; the MIL certification is pending; the exterior is 29 mm taller. Before ordering, confirm the valve type (Thomann says manual, the official page says automatic) and the DIV3818 EU price.
+  
+  (2) MAX Cases MAX380H160CAM: EUR 138 without VAT from the official Panaro EU shop, about $157-160. It is the best documented: IP67, STANAG 4280 / DEF STAN 81-41, MIL-STD-810H, ATA 300 and UN4H2, a Limited Lifetime Warranty, made in Italy, a larger interior (16.4 L, 124 mm base) and 2.2 kg empty. Weak points: nylon latches and pins instead of stainless pins; padlock-hole reinforcement not stated; hot end +90 C against +99 C.
+  
+  Both save about $55-65 (26-31%) against the Pelican 1450 divider SKU ($213.95-215.95), and more against EU Peli pricing (EUR 209 for the foam version alone at Thomann).
+  
+  The B&W Type 4000 RPD is the cheapest of all (EUR 111 without VAT, about $128), but its temperature rating (+60 to +80 C, conflicting sources), warranty and hardware are not verified. Treat it as plausible, not proven. Nanuk 920 is not cheaper. Apache 3800 is IP65 and US-only. Pelican 1450 with foam is only cheaper in the US, and only by dropping the dividers.
+  
+  If the user wants zero numeric compromises, nothing cheaper is strictly better on every published number: Pelican's -40 to +99 C range and stainless pins are not matched by any cheaper candidate together. In that case keep the Pelican, but note that the divider SKU may be end-of-life.
+  
+  Corrections for the stack: the current price for 'with dividers' is about $214-216 US, not $30-169. Bench-case weight drops 0.2-0.35 kg with either recommended alternative. Fill drops from 59% to 48% (Explorer) or 54% (MAX).
+  
+  Exchange rate assumed at 1.14-1.16 USD/EUR (undated 1.141 and an Aug 2026 figure of 1.156); not a live October 2026 quote.
+  
+  Unverified: Pelican's own 1450 certifications (pelican.com and peli.com/eu were unreachable); the CDW discontinuation date; the DIV3818 price (snippet only); the B&W manufacturer data (site returned 403). The case is passive and has no effect on the receive-only, conducted-only or no-loop rules.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
