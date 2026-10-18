@@ -4482,3 +4482,539 @@
   
   Sources fetched on 18 Oct 2026: Pololu #4095/#3782/#2573/#2813 and categories 131/133; Adafruit 5832/4754/610; SparkFun SEN-22857; Waveshare LC76G and RP2040-Zero; LCSC C55266, C580012, C5372184, C178942, C151093, C427665, C208478, C99102, C319097, C319096, C20606809, C20606791, C521201; TI TPS2553DBVR; TinyTronics Daly; 18650batterystore, BatteryJunction and RaceDayQuads (Shopify JSON); Kiwiquads; Polymaker; Prusa; CNC Kitchen (Shopify JSON); QuietPC; Peak Design; Allnet. NKON, Newegg, Walmart, OnBuy, Mouser, DigiKey, TME, Farnell, Bolt Depot and analog.com blocked fetches; their figures are marked as snippets or not found. Scratch files are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/pm_fetch.
 
+## sourcing:group4 (run `wf_b9cc0186-94e`)
+
+- **Group:** LAB INSTRUMENTS + BENCH TOOLS (final verified picks per radio_lab.json final lab_bom and report_research.json decisions 130-137 and 134; loops and H-field probes excluded)
+- **Offers:**
+  1.
+    - **Item:** LiteVNA 64 (Zeenko), 50 kHz-6.3 GHz
+    - **Seller:** Passion Radio (FR), Zeenko's official reseller in Europe
+    - **Url:** https://www.passion-radio.com/analyzer-spectrum/lite-vna64-2730.html
+    - **Price:** EUR 187.60, labelled 'tax excl.' (sale price, was EUR 219.00)
+    - **Price usd:** 210.88
+    - **In stock:** yes: 'In stock, 5 items, last items in stock'
+    - **Ships to:** Europe and overseas, shipped from France
+    - **Official channel:** так
+    - **Notes:** Bundle: SMA cal kit (male OSL), USB cable, 2x 30 cm SMA M-M, SMA F-F. Clone risk: buy only from Zeenko-linked resellers. The research's EUR 177.03 is stale.
+  2.
+    - **Item:** LiteVNA 64 (Zeenko)
+    - **Seller:** Lab401 (FR)
+    - **Url:** https://lab401.com/products/litevna
+    - **Price:** EUR 192.00
+    - **Price usd:** 215.82
+    - **In stock:** yes (store feed available=true)
+    - **Ships to:** not stated (EU-based shop)
+    - **Official channel:** ні
+    - **Notes:** Listed as 'LiteVNA (NanoVNA Compatible)', SKU ZEENKO-LITEVNA. The description says '1x Zeenko LiteVNA 64' but the feed vendor field reads DeepElec. The shop claims official Zeenko origin, and Zeenko publishes no seller list to check that against.
+  3.
+    - **Item:** LiteVNA 64 (Zeenko)
+    - **Seller:** GOTRONIK (PL), Zeenko distributor on the tinySA.org official list
+    - **Url:** https://www.gotronik.pl/litevna-64-analizator-sieci-wektorowej-50khz-6-3ghz-p-10197.html
+    - **Price:** PLN 860.00 gross / PLN 699.19 net (promo price)
+    - **Price usd:** 221.33 gross (179.94 net)
+    - **In stock:** no: 'Chwilowo niedostepny' (temporarily unavailable)
+    - **Ships to:** Poland (only domestic couriers listed)
+    - **Official channel:** так
+    - **Notes:** Dispatch 24 h once stocked.
+  4.
+    - **Item:** LiteVNA 64 (Zeenko)
+    - **Seller:** Limmared (SE)
+    - **Url:** https://butik.limmared.nu/en/antenna-analysis/7430-litevna-64-vector-network-analyser-50khz-63ghz-.html
+    - **Price:** SEK 2,195 incl. VAT
+    - **Price usd:** 221.47
+    - **In stock:** no: 'Out-of-Stock'
+    - **Ships to:** not stated
+    - **Official channel:** ні
+    - **Notes:** Brand ZeenKo, ref 29-1053. Same bundle as Passion Radio.
+  5.
+    - **Item:** LiteVNA 64 (Zeenko)
+    - **Seller:** AliExpress listing titled 'Zeenko LiteVNA 64 Version 0.3.3' (store name not visible)
+    - **Url:** https://www.aliexpress.us/item/3256803365552690.html
+    - **Price:** USD 212.63
+    - **Price usd:** 212.63
+    - **In stock:** unknown
+    - **Ships to:** worldwide (AliExpress)
+    - **Official channel:** ні
+    - **Notes:** HIGH CLONE RISK. Buy only if the item is in the Zeenko factory store (store 5800447). The store page needs JavaScript, so I could not confirm the seller.
+  6.
+    - **Item:** tinySA Ultra+ ZS407
+    - **Seller:** Astroradio (ES), on the tinySA.org official list
+    - **Url:** https://www.astroradio.com/p/tinysa-ultra-analizador-de-espectro-plus/
+    - **Price:** EUR 219.89 (listed as 'tinySA ULTRA++', Modelo ZS407)
+    - **Price usd:** 247.17
+    - **In stock:** yes: schema InStock, 'En stock entrega inmediata'
+    - **Ships to:** Spain with free shipping ('Envio gratuito'); international not stated
+    - **Official channel:** так
+    - **Notes:** SKU 470011-1. The vendor text claims signals are visible to 12 GHz (marketing only; keep it out of the spec).
+  7.
+    - **Item:** tinySA Ultra+ ZS407
+    - **Seller:** Mirfield Electronics (UK), on the tinySA.org official list
+    - **Url:** https://www.mirfield-electronics.co.uk/
+    - **Price:** GBP 189.95 + GBP 7.50 UK post (GBP 10 Europe post on sibling items)
+    - **Price usd:** 252.98 + 9.99 post
+    - **In stock:** limited: 'Limited stock forward orders accepted', 'Just arrived'
+    - **Ships to:** UK and Europe
+    - **Official channel:** так
+    - **Notes:** Order code ME-TinySAUltra+. VAT basis not stated.
+  8.
+    - **Item:** tinySA Ultra+ ZS407
+    - **Seller:** R&L Electronics (US), on the tinySA.org official list
+    - **Url:** https://www.randl.com/index.php?main_page=product_info&cPath=16_16990&products_id=76237
+    - **Price:** USD 219.95
+    - **Price usd:** 219.95
+    - **In stock:** no: 'Out of stock'
+    - **Ships to:** US (international not stated)
+    - **Official channel:** так
+    - **Notes:** R&L's 'TINYSAULTRAPLUS' at $169.95 is the ZS406 (5.4 GHz): wrong model.
+  9.
+    - **Item:** tinySA Ultra+ ZS407
+    - **Seller:** GOTRONIK (PL), on the tinySA.org official list
+    - **Url:** https://www.gotronik.pl/tinysa-ultra-analizador-widma-100khz-7-3ghz-zs407-zeenko-p-13267.html
+    - **Price:** PLN 899.00 gross / PLN 730.89 net
+    - **Price usd:** 231.36 gross (188.10 net)
+    - **In stock:** unclear: the page shows both 'Chwilowo niedostepny' and an add-to-cart button
+    - **Ships to:** Poland
+    - **Official channel:** так
+    - **Notes:** Titled 'TinySA ULTRA ... ZS407 Zeenko'; the spec table says ZS-407.
+  10.
+    - **Item:** tinySA Ultra+ ZS407
+    - **Seller:** Neven (CZ), on the tinySA.org official list
+    - **Url:** https://www.neven.cz/search?phrase=tinysa
+    - **Price:** CZK 5,790 incl. VAT (CZK 4,785.12 ex VAT)
+    - **Price usd:** 267.47 (221.05 ex VAT)
+    - **In stock:** no: 'Neni skladem (0 ks)'
+    - **Ships to:** Central and Eastern Europe
+    - **Official channel:** так
+    - **Notes:** The ZS-406 is in stock there (12 pcs) but is the wrong model.
+  11.
+    - **Item:** tinySA Ultra+ ZS407
+    - **Seller:** Switch Science (JP), on the tinySA.org official list
+    - **Url:** https://www.switch-science.com/search?q=tinysa
+    - **Price:** JPY 33,800 incl. tax
+    - **Price usd:** 213.92
+    - **In stock:** no: sold out
+    - **Ships to:** Japan
+    - **Official channel:** так
+    - **Notes:** The old tinySA Ultra is marked discontinued there in favour of the ZS407.
+  12.
+    - **Item:** tinySA Ultra+ ZS407
+    - **Seller:** AliExpress listing titled 'Zeenko TinySA Ultra ZS407 (7.3 GHz, HW V0.5.4)' (store name not visible)
+    - **Url:** https://www.aliexpress.us/item/3256812823730328.html
+    - **Price:** USD 221.32
+    - **Price usd:** 221.32
+    - **In stock:** unknown
+    - **Ships to:** worldwide
+    - **Official channel:** ні
+    - **Notes:** HIGH CLONE RISK. tinySA.org says only the Zeenko factory store (zeenko.aliexpress.com/store/5800447) is safe on AliExpress, and I could not confirm this listing is in that store.
+  13.
+    - **Item:** Noise source part: Mini-Circuits ZFL-500LN+ (low-noise amp for the N8DMT DIY source)
+    - **Seller:** Mini-Circuits
+    - **Url:** https://www.minicircuits.com/WebStore/dashboard.html?model=ZFL-500LN%2B
+    - **Price:** USD 116.81 (qty 1-4)
+    - **Price usd:** 116.81
+    - **In stock:** yes: more than 100
+    - **Ships to:** not stated on page (Mini-Circuits sells worldwide via its store and DigiKey/Mouser)
+    - **Official channel:** так
+    - **Notes:** 0.1-500 MHz, SMA. Add an ANNE-50+ on the input, pads from the Nooelec kit and a small box; run from regulated AUX 12 V. The study's $20-40 holds only for a used ZFL-500.
+  14.
+    - **Item:** Noise source part: Mini-Circuits ZFL-500+ (alternative amp)
+    - **Seller:** Mini-Circuits
+    - **Url:** https://www.minicircuits.com/WebStore/dashboard.html?model=ZFL-500%2B
+    - **Price:** USD 99.55 (qty 1-4)
+    - **Price usd:** 99.55
+    - **In stock:** yes: more than 100
+    - **Ships to:** not stated
+    - **Official channel:** так
+    - **Notes:** 0.05-500 MHz gain block. Cheaper new option. Its ENR is uncalibrated: characterise it with the tinySA.
+  15.
+    - **Item:** E-field near-field probe parts: Mini-Circuits 086-6SM+ (cut in half to make two E-field stub probes)
+    - **Seller:** Mini-Circuits
+    - **Url:** https://www.minicircuits.com/WebStore/dashboard.html?model=086-6SM%2B
+    - **Price:** USD 16.67
+    - **Price usd:** 16.67
+    - **In stock:** yes: more than 1,000
+    - **Ships to:** not stated
+    - **Official channel:** так
+    - **Notes:** 0.086 in. hand-flex, SMA male both ends, 15 cm. Expose about 5-10 mm of centre conductor and heat-shrink it. E-field only, as the rule requires.
+  16.
+    - **Item:** E-field probe parts (stiffer option): Mini-Circuits 141-6SM+
+    - **Seller:** Mini-Circuits
+    - **Url:** https://www.minicircuits.com/WebStore/dashboard.html?model=141-6SM%2B
+    - **Price:** USD 14.65
+    - **Price usd:** 14.65
+    - **In stock:** no: current stock 0 (contact sales)
+    - **Ships to:** not stated
+    - **Official channel:** так
+    - **Notes:** 0.141 in. hand-flex, SMA.
+  17.
+    - **Item:** Nooelec SMA Attenuator Kit (1/2/3/6/10/20 dB, DC-6 GHz, 2 W)
+    - **Seller:** Nooelec store
+    - **Url:** https://www.nooelec.com/store/attenuator-bundle.html
+    - **Price:** USD 47.95
+    - **Price usd:** 47.95
+    - **In stock:** not stated ('Orders usually shipped in 1 business day')
+    - **Ships to:** worldwide ('Any order, anywhere'; free shipping over $100)
+    - **Official channel:** так
+    - **Notes:** SKU 100815. +/-0.1 dB to 3 GHz, +/-0.4 dB to 6 GHz.
+  18.
+    - **Item:** 30 dB SMA pad (generic, M-F, 0-6 GHz, 2 W), need x2
+    - **Seller:** Passion Radio (FR), RF KONNECT brand
+    - **Url:** https://www.passion-radio.com/sma/sma-attenuator-826.html
+    - **Price:** EUR 13.20 each (EUR 11.00 ex VAT in the listing block); -30 dB version
+    - **Price usd:** 14.84 each
+    - **In stock:** yes: more than 10
+    - **Ships to:** Europe and overseas
+    - **Official channel:** так
+    - **Notes:** Gold-plated brass, symmetrical. VNA-check on arrival as the BOM requires.
+  19.
+    - **Item:** 30 dB SMA pad (branded fallback): Mini-Circuits VAT-30W2+
+    - **Seller:** Mini-Circuits
+    - **Url:** https://www.minicircuits.com/WebStore/dashboard.html?model=VAT-30W2%2B
+    - **Price:** USD 31.43 (qty 1-4)
+    - **Price usd:** 31.43
+    - **In stock:** yes: more than 1,000 (DigiKey 48)
+    - **Ships to:** not stated
+    - **Official channel:** так
+    - **Notes:** DC-6 GHz. Power rating is not on the page; check the datasheet. The VAT-30+ is non-catalog.
+  20.
+    - **Item:** 30 dB SMA pad (generic): Zeenko 30 dB DC-6 GHz 2 W
+    - **Seller:** GOTRONIK (PL)
+    - **Url:** https://www.gotronik.pl/tlumik-rf-sma-30db-dc-6ghz-2w-zeenko-p-15003.html
+    - **Price:** PLN 48.00 gross / PLN 39.02 net
+    - **Price usd:** 12.35
+    - **In stock:** unclear ('Chwilowo niedostepny' shown)
+    - **Ships to:** Poland
+    - **Official channel:** так
+    - **Notes:** SMA plug to jack.
+  21.
+    - **Item:** Mini-Circuits BLK-89-S+ DC block (need x2)
+    - **Seller:** Mini-Circuits
+    - **Url:** https://www.minicircuits.com/WebStore/dashboard.html?model=BLK-89-S%2B
+    - **Price:** USD 20.26 (qty 1-9)
+    - **Price usd:** 20.26 each
+    - **In stock:** yes: more than 1,000
+    - **Ships to:** not stated
+    - **Official channel:** так
+    - **Notes:** SMA-F/SMA-M. DigiKey shows 0.
+  22.
+    - **Item:** Mini-Circuits ANNE-50+ 50 ohm termination (need x3)
+    - **Seller:** Mini-Circuits
+    - **Url:** https://www.minicircuits.com/WebStore/dashboard.html?model=ANNE-50%2B
+    - **Price:** USD 14.84 (qty 1-24)
+    - **Price usd:** 14.84 each
+    - **In stock:** yes: more than 1,000
+    - **Ships to:** not stated
+    - **Official channel:** так
+    - **Notes:** SMA-M, 18 GHz. Never put LNB 13 V on it.
+  23.
+    - **Item:** Mini-Circuits 086-6SM+ 15 cm hand-flex jumper (need x2)
+    - **Seller:** Mini-Circuits
+    - **Url:** https://www.minicircuits.com/WebStore/dashboard.html?model=086-6SM%2B
+    - **Price:** USD 16.67 (qty 1-9)
+    - **Price usd:** 16.67 each
+    - **In stock:** yes: more than 1,000
+    - **Ships to:** not stated
+    - **Official channel:** так
+    - **Notes:** Buy a 3rd if you make the E-field probes from one.
+  24.
+    - **Item:** Female SMA OSL kit (explicitly female)
+    - **Seller:** AliExpress listing '3.5MM FEMALE CALIBRATION KIT 6GHZ YSG-85033 OPEN SHORT LOAD SET OF 3 SMA FEMALE'
+    - **Url:** https://www.aliexpress.us/item/3256806434652651.html
+    - **Price:** USD 68.75
+    - **Price usd:** 68.75
+    - **In stock:** unknown
+    - **Ships to:** worldwide
+    - **Official channel:** ні
+    - **Notes:** Generic, store unknown; VNA-check it. Above the BOM's $10 estimate.
+  25.
+    - **Item:** Female SMA OSL kit (budget, gender of OSL not confirmed)
+    - **Seller:** AliExpress listing '5pcs Network Analyzer Calibrator Kit DC-6GHz Short/Open/50 ohm Load SMA ... Female-to-Female'
+    - **Url:** https://www.aliexpress.us/item/3256812356892241.html
+    - **Price:** USD 10.55
+    - **Price usd:** 10.55
+    - **In stock:** unknown
+    - **Ships to:** worldwide
+    - **Official channel:** ні
+    - **Notes:** The item page would not load. Confirm the OSL standards are female before buying. Free fallback: the bundled male OSL plus the bundled F-F adapter.
+  26.
+    - **Item:** SMA torque wrench 0.9 N·m, 8 mm, break-over (TOJOIN)
+    - **Seller:** TOJOIN Official Store on eBay
+    - **Url:** https://www.ebay.com/itm/354598266754
+    - **Price:** USD 35.89, free standard shipping
+    - **Price usd:** 35.89
+    - **In stock:** seen in search results only (the eBay page returned 403 to fetch)
+    - **Ships to:** multi-region eBay listing (de/fr/au/ca/at/es mirrors)
+    - **Official channel:** так
+    - **Notes:** The brand's own eBay store. Seen only in a search snippet, so confirm before ordering.
+  27.
+    - **Item:** SMA torque wrench (alternative): 8/4 mm ratcheting, preset 0.5-0.9 N·m
+    - **Seller:** AliExpress listing (store unknown)
+    - **Url:** https://www.aliexpress.us/item/3256812748700589.html
+    - **Price:** USD 51.49
+    - **Price usd:** 51.49
+    - **In stock:** unknown
+    - **Ships to:** worldwide
+    - **Official channel:** ні
+    - **Notes:** Fixed 0.9 N·m Zhongji listings cost $92.89-94.39.
+  28.
+    - **Item:** ANENG AN8008 pocket DMM
+    - **Seller:** AliExpress listing 'ANENG AN8008 True RMS Digital Multimeter' (store name not visible)
+    - **Url:** https://www.aliexpress.us/item/3256808914707497.html
+    - **Price:** USD 28.22
+    - **Price usd:** 28.22
+    - **In stock:** unknown
+    - **Ships to:** worldwide
+    - **Official channel:** ні
+    - **Notes:** Other AN8008 listings cost $21.56-42.59. ANENG sells mainly through AliExpress, but no listing showed a store name.
+  29.
+    - **Item:** ANENG AN8008 / AN8009 (thermocouple variant)
+    - **Seller:** AliExpress listing 'ANENG AN8008/AN8009 Mini Digital Multimeter ... Double Fuse'
+    - **Url:** https://www.aliexpress.us/item/3256809391514502.html
+    - **Price:** USD 36.19
+    - **Price usd:** 36.19
+    - **In stock:** unknown
+    - **Ships to:** worldwide
+    - **Official channel:** ні
+    - **Notes:** Choose AN8009 for the K-type thermocouple option. Store not confirmed.
+  30.
+    - **Item:** FNIRSI FNB58 Std (no Bluetooth)
+    - **Seller:** FNIRSI official store
+    - **Url:** https://www.fnirsi.com/products/fnb58
+    - **Price:** USD 53.99 (FNB58 Std.); BT variant USD 58.99
+    - **Price usd:** 53.99
+    - **In stock:** yes (variant available=true)
+    - **Ships to:** not stated
+    - **Official channel:** так
+    - **Notes:** CORRECTION: the $58.99 in radio_lab is the BT price. The required Std is $53.99.
+  31.
+    - **Item:** Hantek 6022BL USB scope + 16-ch LA
+    - **Seller:** AliExpress listing '[Hantek Official Genuine] 6022BE ... 6022BL+Logic Analyzer'
+    - **Url:** https://www.aliexpress.us/item/3256806554958024.html
+    - **Price:** USD 102.34
+    - **Price usd:** 102.34
+    - **In stock:** unknown
+    - **Ships to:** worldwide
+    - **Official channel:** ні
+    - **Notes:** The title mixes BE and BL, so choose the BL variant. Store not confirmed. Grey and clone risk.
+  32.
+    - **Item:** Hantek 6022BL
+    - **Seller:** AliExpress listing 'Hantek 6022BL 2CH USB PC Oscilloscope 20MHz 48MSa/s 16CH Logic Analyzer'
+    - **Url:** https://www.aliexpress.us/item/3256807879472370.html
+    - **Price:** USD 84.33
+    - **Price usd:** 84.33
+    - **In stock:** unknown
+    - **Ships to:** worldwide
+    - **Official channel:** ні
+    - **Notes:** Cheapest 6022BL seen; range $84.33-157.99. Store unknown.
+  33.
+    - **Item:** Hantek 6022BL (Western distributor)
+    - **Seller:** The Debug Store (UK, Hantek distributor)
+    - **Url:** https://thedebugstore.com/products/hantek-6022bl-oscilloscope-analyser-uk
+    - **Price:** GBP 110 ex VAT / GBP 132 incl. VAT (search snippet only)
+    - **Price usd:** 146.50 ex VAT
+    - **In stock:** delisted: the product URL now returns 404, and the shop search lists only the 6022BE
+    - **Ships to:** worldwide (multi-currency store)
+    - **Official channel:** так
+    - **Notes:** SainSmart also marks the 6022BL '[Discontinued]' at $88.20. Fallback in stock here: Hantek 6022BE at GBP 100 (about $133.18, https://thedebugstore.com/products/hantek-6022be-usb-oscilloscope-uk) plus the core fx2lafw LA.
+  34.
+    - **Item:** Raspberry Pi Debug Probe
+    - **Seller:** Adafruit (US)
+    - **Url:** https://www.adafruit.com/product/5699
+    - **Price:** USD 12.00
+    - **Price usd:** 12.00
+    - **In stock:** yes: 'In stock'
+    - **Ships to:** international (Adafruit ships worldwide; not stated on page)
+    - **Official channel:** так
+    - **Notes:** Raspberry Pi approved reseller.
+  35.
+    - **Item:** Raspberry Pi Debug Probe
+    - **Seller:** PiShop.us (US)
+    - **Url:** https://www.pishop.us/product/raspberry-pi-debug-probe/
+    - **Price:** USD 12.00
+    - **Price usd:** 12.00
+    - **In stock:** yes: 'IN STOCK'
+    - **Ships to:** not stated
+    - **Official channel:** так
+    - **Notes:** Approved reseller.
+  36.
+    - **Item:** Raspberry Pi Debug Probe
+    - **Seller:** The Pi Hut (UK)
+    - **Url:** https://thepihut.com/products/raspberry-pi-debug-probe
+    - **Price:** GBP 11.50 incl. VAT
+    - **Price usd:** 15.32
+    - **In stock:** yes (available=true, SKU SC0889)
+    - **Ships to:** worldwide
+    - **Official channel:** так
+    - **Notes:** Approved reseller.
+  37.
+    - **Item:** PINE64 Pinecil V2
+    - **Seller:** PINE64 store
+    - **Url:** https://pine64.com/product/pinecil-smart-mini-portable-soldering-iron/
+    - **Price:** USD 25.99 community price (retail USD 35.99)
+    - **Price usd:** 25.99
+    - **In stock:** yes: 'In stock'
+    - **Ships to:** not stated (PINE64 ships internationally)
+    - **Official channel:** так
+    - **Notes:** Set IronOS Bluetooth Off and 4S at 3.4 V/cell.
+  38.
+    - **Item:** iFixit Portable Anti-Static Mat (with 1 Mohm wrist strap)
+    - **Seller:** iFixit US
+    - **Url:** https://www.ifixit.com/products/portable-anti-static-mat
+    - **Price:** USD 34.95
+    - **Price usd:** 34.95
+    - **In stock:** yes: 'Ready to ship'
+    - **Ships to:** US domestic free over $75; international not stated
+    - **Official channel:** так
+    - **Notes:** Part IF145-202-5. 10 mm snap, 1.8 m strap.
+  39.
+    - **Item:** iFixit Portable Anti-Static Mat
+    - **Seller:** iFixit EU
+    - **Url:** https://www.ifixit.com/en-eu/products/portable-anti-static-mat
+    - **Price:** EUR 29.95
+    - **Price usd:** 33.67
+    - **In stock:** yes: 'Ready to ship from Germany'
+    - **Ships to:** EU
+    - **Official channel:** так
+    - **Notes:** Cheaper for EU buyers.
+  40.
+    - **Item:** 65 W+ PD power bank: Anker 737 Power Bank (PowerCore 24K), A1289
+    - **Seller:** Anker official store (US)
+    - **Url:** https://www.anker.com/products/a1289
+    - **Price:** USD 109.99
+    - **Price usd:** 109.99
+    - **In stock:** yes: 'In Stock, estimated delivery in 3-7 business days'
+    - **Ships to:** US (regional Anker stores elsewhere)
+    - **Official channel:** так
+    - **Notes:** USB-C 5/9/15 V 3 A, 20 V 5 A, 28 V 5 A; 140 W max; 24,000 mAh (under the 100 Wh airline limit). Meets the 20 V/3 A PDO rule. It is bidirectional, so use the charge-only IP2368 BZ or check with the FNB58.
+  41.
+    - **Item:** Bench powered USB 2.0 hub, 4-port, separate 5 V input, reverse-current protection
+    - **Seller:** The Pi Hut (UK), Waveshare Industrial Grade Dual-Host USB Hub (4x USB 2.0)
+    - **Url:** https://thepihut.com/products/industrial-grade-dual-host-usb-hub-4x-usb-2-0
+    - **Price:** GBP 18.50 incl. VAT
+    - **Price usd:** 24.64
+    - **In stock:** yes (available=true, WAV-21686)
+    - **Ships to:** worldwide
+    - **Official channel:** так
+    - **Notes:** MTT hub chip; protection against over-voltage, over-current, reverse current, UVLO and 8 kV ESD; 5 V DC barrel input (UK 5 V 2 A PSU included). Power it from the bank with a USB-to-DC5521 lead. Preferred because MTT avoids the single-TT bottleneck.
+  42.
+    - **Item:** Bench powered USB 2.0 hub (alternative): Waveshare USB-HUB-4U
+    - **Seller:** Waveshare official store
+    - **Url:** https://www.waveshare.com/usb-hub-4u.htm
+    - **Price:** USD 14.99-16.99 (with or without PSU)
+    - **Price usd:** 14.99-16.99
+    - **In stock:** not stated
+    - **Ships to:** not stated (Waveshare ships internationally)
+    - **Official channel:** так
+    - **Notes:** STT chip (single TT), DC 5 V jack, reverse-current protection, 1.2 A per port.
+  43.
+    - **Item:** GPSDO (extended): Leo Bodnar LBE-1420 GPS locked clock source
+    - **Seller:** Leo Bodnar Electronics (UK)
+    - **Url:** https://www.leobodnar.com/shop/index.php?main_page=product_info&cPath=107&products_id=393
+    - **Price:** GBP 132.00 (VAT basis not stated)
+    - **Price usd:** 175.80
+    - **In stock:** yes: 'In stock'
+    - **Ships to:** 'We ship to anywhere in the world'
+    - **Official channel:** так
+    - **Notes:** 1 Hz-1.1 GHz, 3.3 V into 50 ohm; USB-C 5 V 250 mA max; includes a magnetic active GPS antenna with 5 m cable. Same price as the Mini, and the vendor recommends it.
+  44.
+    - **Item:** GPSDO (extended alternative): Leo Bodnar Mini Precision GPS Reference Clock
+    - **Seller:** Leo Bodnar Electronics (UK)
+    - **Url:** https://www.leobodnar.com/shop/index.php?main_page=product_info&products_id=301
+    - **Price:** GBP 132.00
+    - **Price usd:** 175.80
+    - **In stock:** yes: 'In stock'
+    - **Ships to:** anywhere in the world
+    - **Official channel:** так
+    - **Notes:** 400 Hz-810 MHz. The product page shows 'We recommend a newer version of this product': LBE-1420.
+  45.
+    - **Item:** FlightAware Pro Stick Plus (ADS-B option)
+    - **Seller:** The Pi Hut (UK), FlightAware's listed worldwide source
+    - **Url:** https://thepihut.com/products/flightaware-pro-stick-plus-usb-sdr-ads-b-receiver
+    - **Price:** GBP 52.50 incl. VAT
+    - **Price usd:** 69.92
+    - **In stock:** yes (available=true, SKU 103075)
+    - **Ships to:** worldwide
+    - **Official channel:** так
+    - **Notes:** FlightAware's own page lists flightaware.store (USA) and The Pi Hut (worldwide). The US store blocked automated fetches (429 / bot check).
+- **Not found:**
+  1.
+    - **Item:** ANENG AN8008 from a verifiable ANENG official store
+    - **Closest equivalent:** AliExpress AN8008 listings at $21.56-42.59 (store name not shown on any of them)
+    - **Note:** One search and two AliExpress fetches found no confirmed 'ANENG Official Store' page. ManoMano.de EUR 28.99 (third-party, search snippet) and eBay.de AU$44.60 (Shenzhen seller) are not official.
+  2.
+    - **Item:** Hantek 6022BL from an official Western reseller
+    - **Closest equivalent:** Hantek 6022BE (GBP 100, in stock at The Debug Store) plus the core fx2lafw logic analyser; or AliExpress 6022BL listings ($84-158, store unconfirmed)
+    - **Note:** The Debug Store's 6022BL page now returns 404 and SainSmart marks it discontinued. The 6022BE is scope-only, which matches the BOM's listed cheaper alternative.
+  3.
+    - **Item:** Female SMA OSL kit from a branded or official maker at the BOM's ~$10 estimate
+    - **Closest equivalent:** Mini-Circuits KSOLT-63-S+ (female and male OSL, matched thrus and a torque wrench in one kit; price not retrievable), AliExpress generic kits ($10.55-68.75), or the free route: bundled male OSL plus bundled F-F adapter
+    - **Note:** The Zeenko SOLT kit at Gotronik (PLN 120) has MALE open/short, so it does not fit. The Passion Radio RF KONNECT kit (EUR 19.90, in stock) does not state its gender.
+  4.
+    - **Item:** Ready-made E-field-only near-field probe set
+    - **Closest equivalent:** DIY stub probes cut from a Mini-Circuits 086-6SM+ ($16.67)
+    - **Note:** The Zeenko 3-probe EMI set (Gotronik PLN 39) contains two H-field loops (28 mm and 4.5 mm) plus one E-field probe, so the no-loop rule EXCLUDES it. The PS-500 and generic E/H sets are struck for the same reason.
+  5.
+    - **Item:** SMA torque wrench store page fetched directly
+    - **Closest equivalent:** TOJOIN Official Store on eBay, $35.89 with free shipping (seen in search results only)
+    - **Note:** eBay returned 403. A branded L-com LC-TWC08516 (DigiKey JP, about JPY 58,537, about $370) is far above budget.
+  6.
+    - **Item:** tinySA ZS407 and LiteVNA 64 confirmed inside the Zeenko AliExpress factory store (5800447)
+    - **Closest equivalent:** AliExpress search listings titled 'Zeenko' ($221.32 tinySA, $212.63 LiteVNA); official EU/UK/US resellers above
+    - **Note:** Store pages render only with JavaScript and item pages redirect to a login and captcha, so the seller could not be confirmed.
+  7.
+    - **Item:** FlightAware own US store price
+    - **Closest equivalent:** The Pi Hut GBP 52.50 (in stock, worldwide)
+    - **Note:** flightaware.store answered 429 and then a bot-verification page.
+  8.
+    - **Item:** Buyable compliant noise-source module
+    - **Closest equivalent:** DIY N8DMT-type source built on a Mini-Circuits ZFL-500+ ($99.55) or ZFL-500LN+ ($116.81)
+    - **Note:** The study bans the generic '0.001-3000 MHz noise generator' modules. The Nooelec 'Ham It Up noise source kits' ($5.95/$9.95) are upconverter add-ons and were not evaluated.
+  9.
+    - **Item:** LBE-1420 EUR price
+    - **Closest equivalent:** GBP 132.00 on leobodnar.com
+    - **Note:** The research's 'EUR 155 net' could not be re-seen. The UK shop page does not state its VAT basis.
+- **Notes:** FX used (open.er-api.com, 18 Oct 2026 00:02 UTC): 1 USD = 0.8896 EUR / 0.7508 GBP / 3.8857 PLN / 9.911 SEK / 158.0 JPY / 21.65 CZK. All prices exclude shipping and import VAT unless stated.
+  
+  PICKS (cheapest in-stock official offers seen): LiteVNA 64 at Passion Radio EUR 187.60 (about $211); tinySA ZS407 at Astroradio EUR 219.89 (about $247, in stock), or Mirfield GBP 189.95 (limited); ZFL-500LN+ $116.81 or ZFL-500+ $99.55; E-field probes from one 086-6SM+ $16.67; Nooelec kit $47.95; 2x 30 dB pads from Passion Radio at EUR 13.20 each; 2x BLK-89-S+ $40.52; 3x ANNE-50+ $44.52; female OSL at about $10.55 (AliExpress, gender unconfirmed); 2x 086-6SM+ $33.34; TOJOIN wrench $35.89; AN8008 about $28; FNB58 Std $53.99; Hantek 6022BL about $84-102 (AliExpress only); Debug Probe $12; Pinecil $25.99; iFixit mat $34.95 (EUR 29.95 in the EU); Anker 737 $109.99; Waveshare MTT hub GBP 18.50. Core subtotal in this group is about $1,200 before shipping and VAT. Extended: LBE-1420 GBP 132 (about $176). ADS-B: Pro Stick Plus GBP 52.50 (about $70).
+  
+  CLONE RISK: tinySA: buy only from the tinySA.org list (Zeenko AliExpress store 5800447, Eleshop, R&L, Switch Science, Mirfield, Astroradio, Neven, Kami, Selteq, Gotronik, the Aursinc/SeeSii Amazon stores). TinyRFEquip and TinyRFLab are fake 'authorised' shops, and Banggood sells clones. WRONG MODEL: Lab401 'TinySA Ultra+' EUR 163, Passion Radio 'TinySA ULTRA' EUR 168.36, R&L 'TINYSAULTRAPLUS' $169.95 and Neven ZS-406 are all the 5.4 GHz ZS406, not the ZS407. LiteVNA: AliExpress listings carry high clone risk; prefer Passion Radio (Zeenko's official EU reseller) or Gotronik. Hantek on AliExpress is a grey/clone risk. RTL and Airspy are not in this group.
+  
+  CORRECTIONS from this step:
+  (a) FNB58 Std is $53.99; $58.99 is the BT variant.
+  (b) LBE-1420 is GBP 132 (same as the Mini), in stock, with antenna included. Choose the LBE-1420 for the extended GPSDO slot; the Linux flash-save and drive-level caveats remain.
+  (c) The Hantek 6022BL looks discontinued in the West.
+  (d) Passion Radio's LiteVNA 64 price is now EUR 187.60, not EUR 177.03.
+  (e) R&L's ZS407 is out of stock at $219.95.
+  (f) The Anker 737 has a 20 V/5 A PDO.
+  (g) A new ZFL-500(LN)+ costs $100-117, so the core noise-source line becomes about $110-140 new (the $20-40 needs a used amp).
+  (h) The Astroradio vendor text is the only source for 'visible to 12 GHz' and it is marketing; keep it out of the spec.
+  
+  RESOLUTIONS of conflicts_for_final_checks (decision, then reason):
+  1. Lime: gated optional. Keep the cancellable pre-order and decide on 31 Jan 2027; no core lab function depends on it. Reason: S-band and 56 Msps are the only unique gains. Here, the GPSDO's 30.72 MHz J4 use is conditional.
+  2. Buy the 12 GB Q6A now. Reason: RAM cannot be added later, and it keeps training and the Lime open. Re-check Allnet stock on the order date.
+  3. 4S1P P50B with a regulated 12 V rail. Reason: the LNB, Boni-Whip, AUX and ENR stability need at least 12 V. The Pinecil is set to 4S at 3.4 V/cell.
+  4. Defer the 12 V regulator choice until the terminated-floor spur A/B and the sealed-case current test. Reason: it needs data, so buy the tinySA, FNB58 and AN8008 first.
+  5. Freeze the Lime-agnostic USB map. Bench mode puts the MTT Waveshare hub, powered from the bank, behind LAB USB. Reason: VCC_5V_PERI is only about 17 W.
+  6. Adopt the header map. The IMU goes over a UART relay through the HMI RP2040. Reason: it saves a USB port; the Debug Probe verifies UART6/7.
+  7. labd is the sole hardware owner. Reason: one lock authority.
+  8. LNB at 13.2 V +/-0.2 V with true disconnect and no 18 V; current limit 1.5-2x the measured draw. Reason: the Bullseye window and safety. Never into an ANNE-50+.
+  9. TPS2553 at 250-300 mA for every SAWbird+, and the V4L tee only for LNAs of 80 mA or less. Reason: the 180 mA draw.
+  10. Flamingo+ FM only. Reason: its 250 mA DC pass is published.
+  11. Use only the librtlsdr .so.2 rebuild. Reason: no consumer rebuilds are needed.
+  12. Run the display at 127.9 MHz. Reason: the 128.70 MHz harmonics fall at 1544.4 and 1415.7 MHz. Verify with the tinySA and an E-field probe.
+  13. Build pps-gpio out of tree on 6.18.2-4. Reason: CONFIG_PPS=y and the kernel hold.
+  14. INA228 on I2C0 through user-space i2c-dev, shunt in the pack lead. Reason: this keeps CHARGE access.
+  15. Two antenna tiers, V-dipole as the LRPT default, all loops struck. Reason: user rule.
+  16. Strike every policy leftover. For this group: no H-field probes (PS-500, the E/H sets and the Zeenko 3-probe set are excluded); the LiteVNA never sweeps an antenna; the tinySA generator, noise source and GPSDO are conducted-only.
+  17. Boni-Whip at 12.5 V, add the HF+ selector relay, LF only via the active whip. Reason: supply ranges and balun loss. The loop ban stands but is flagged for user confirmation.
+  18. T7 only with the Lime; otherwise microSD or UFS. Reason: cost.
+  19. CPU plan as recommended. Reason: isolation is needed only with the Lime.
+  20. NPU Phase 0 inside W1-2. Reason: the early gate.
+  21. Buy 3 V4Ls. For dedicated continuous ADS-B, the Pro Stick Plus (about $70) is cheaper than a V4L plus Uputronics 1090 (about $92). Reason: the prices above.
+  22. venv recipe; test NanoVNA-Saver with the LiteVNA 64 and QtTinySA inside the return window. Reason: the apt versions are unverified.
+  23. Region unknown: hold the LNB, horn and SAWbird+ iO. Lab instruments are region-neutral, so buy from the nearest official seller (EU: Passion Radio, Astroradio, iFixit EU; UK: Mirfield, Pi Hut, Bodnar; US: Mini-Circuits, Nooelec, Adafruit, PiShop, PINE64, Anker).
+  24. Re-priced here at world prices, with the H-probe line removed. Reason: P5 needs real prices.
+  25. report_research.json now exists and was read. The errata blocks belong to the orchestrator's summaries and minute-log step, not this sourcing step.
+  
+  SOURCES: tinysa.org/wiki/pmwiki.php?n=Main.Buying; passion-radio.com; lab401.com; gotronik.pl; butik.limmared.nu; astroradio.com; mirfield-electronics.co.uk; randl.com; neven.cz; switch-science.com; aliexpress.com search pages; minicircuits.com; nooelec.com; fnirsi.com; thedebugstore.com; sainsmart.com; adafruit.com; pishop.us; thepihut.com; pine64.com; ifixit.com; anker.com; waveshare.com; leobodnar.com; flightaware.com/adsb/prostick; ebay.com/itm/354598266754 (snippet). WebSearch calls used: 7.
+
