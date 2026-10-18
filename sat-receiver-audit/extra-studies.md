@@ -23644,6 +23644,136 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - What is the sustained UFS write speed after the WriteBooster cache fills, which chip does Allnet ship, and is a V30/A2 microSD reliable enough as secondary storage if the T7 is not bought?
   - Should a 4th V4L be bought for continuous ADS-B/AIS/sonde monitoring, or should those functions time-share a receiver?
 
+## searchB:rtl_sdr_blog_v4l_r828s (run `wf_e32114dd-52d`)
+
+- **Part:** RTL-SDR Blog V4L (R828S + RTL2832U, 1 ppm TCXO), qty 3 (RTL-A VHF/UHF, RTL-B L-band / LNB IF, spare). Angle B: generic modules, clones, DIY builds and used units, accepted only with measured evidence
+- **Current price usd:** 113.85 for 3 (37.95 each), official store rtl-sdr.com, re-fetched 2026-10-18: 'USD $37.95', '455 in stock', no quantity discount. Excludes shipping, VAT and duty. The official store does not ship to the EU. EU buyers use the official eBay 'rtl-sdr-blog' or AliExpress 'RTLSDRBlog Store' 4523039 / 1101427871; their prices are unverified (eBay returned 403, and no AliExpress price was found). With EU VAT charged at checkout (example: 21 %) the cost would be about $45.9 each or $137.8 for 3 (model). The EU reseller sdrstore.eu lists it at EUR 83.44, out of stock.
+- **Critical specs:**
+  - Continuous coverage of at least 24 MHz to 1.707 GHz. V4L: 500 kHz-1.766 GHz. Roles: 137 MHz LRPT, 400-405.9 MHz radiosondes, 437 MHz, 739.5 MHz LNB IF, 1090 MHz, 1420 MHz, 1544/1575 MHz, 1691 MHz LRIT, 1698-1707 MHz HRPT/Metop/AWS. Coverage must not stop at 1 GHz or 1.7 GHz.
+  - HF backup path: upconverter with a 28.8 MHz LO and no Nyquist folding. V4L MDS is about -134 to -135 dBm (500 Hz) at 3-28 MHz. HF is secondary because the HF+ is the HF receiver, but this is the stated budget fallback.
+  - Sensitivity, vendor 3 dB MDS at 500 Hz: -140.7 dBm at 90-550 MHz, about -137 at 740 MHz, about -133.7 at 1.1-1.5 GHz, about -130.7 at 1.7 GHz. Implied NF (model): about 6.3 dB at VHF/UHF and about 16 dB at 1.7 GHz. This matters most for the spare on bare whiskers (ADS-B, radiosondes), which has no LNA.
+  - Strong-signal two-tone desense threshold (95 MHz blocker): -12 dBm at 50-160 MHz, -20 at 300, -24 at 400-600, -28 at 1000, -40 at 1600 MHz.
+  - ADC and rate: RTL2832U 8-bit, 2.56 Msps stable. 2.88 Msps is needed for the Metop/AWS gate.
+  - Clock: 1 ppm TCXO, needed for LRPT/HRPT Doppler, GNSS-SDR and narrowband decoders.
+  - Bias tee: 4.5 V / 180 mA, switched in software on GPIO0, default off, gated by the lab librtlsdr patch. The spare feeds LNAs of 90 mA or less.
+  - Driver: osmocom librtlsdr 2.0.3 lab build (.so.2) on Ubuntu 24.04 arm64. Detection uses the 'RTLSDRBlog'/'Blog V4L' strings, the EEPROM must allow a non-numeric serial, and SatDump, SDR++, SDRangel, OpenWebRX+, rtl_433, readsb and auto_rx must work.
+  - USB 2.0 HS, USB-A male, 250-270 mA (about 1.3 W) per unit on the 5 V rails. The spare's rail is a TPS2553 at 0.75 A.
+  - Thermal and mechanical: aluminium case with a thermal pad, bonded to the plate (L-band PLL thermal gate), SMA female 50 ohm, fits the RF bay on a 15 cm extension.
+  - Known spur set: 28.8 MHz LO harmonics at 144.0, 403.2, 432.0 and 1699.2 MHz, already in the spur mask. A substitute would need its own spur characterisation.
+  - Receive-only: 'Transmit Capability: None'.
+  - Genuine part from an official channel, with a check on arrival: tuner log 'RTL-SDR Blog V4 Lite Detected', diagonal case screws, EEPROM strings.
+- **Candidates:**
+  1.
+    - **Name:** RTL-SDR Blog V4L (keep): official store, or official eBay / AliExpress store for the EU
+    - **Kind:** current_part
+    - **Price usd:** 37.95 each, 113.85 for 3, ex VAT/shipping (official store, 2026-10-18). EU via official eBay/AliExpress: price unverified.
+    - **Seller url:** https://www.rtl-sdr.com/product/rtl-sdr-blog-v4l-lite-r828s-rtl2832u-1ppm-tcxo-sma-software-defined-radio-dongle-only/
+    - **Spec comparison:** Reference values from datasheet V1.0: R828S + RTL2832U 8-bit, 0.5-1766 MHz, 2.56 Msps stable, 1 ppm TCXO, 4.5 V/180 mA bias tee, 250-270 mA, aluminium case with thermal pad, diplexer, no TX. MDS -140.7 dBm at 90-550 MHz, -130.7 at 1.7 GHz. Its MDS is the best of the RTL-SDR Blog family at VHF/UHF/L-band.
+    - **Worse in:** Nothing within this search. Caveat: every V4L RF number is the vendor's own. No independent V4L measurement exists yet (searched 2026-10-18), so the D10 bench baseline (MDS and two-tone at 137.5/437/1700 MHz) stays mandatory. Supply is limited (R828S stockpile about one year).
+    - **Compatibility:** Already integrated: lab librtlsdr 2.0.3 .so.2, GPIO0-only bias gate, USB map.
+    - **Risks:** High counterfeit risk outside the official channels. Single China warehouse. EU VAT and possible duty are charged at checkout.
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/rtl-sdr-blog-v4l-lite-r828s-rtl2832u-1ppm-tcxo-sma-software-defined-radio-dongle-only/
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+      - https://www.rtl-sdr.com/rtl-sdr-blog-v4l-lite-now-available-for-purchase/
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+  2.
+    - **Name:** Used genuine RTL-SDR Blog V4 (R828D), end-of-line
+    - **Kind:** used
+    - **Price usd:** Used price UNVERIFIED (eBay sold-listing search returned 403). Third-party listings found by search are marked 'new' at about $61.75 (ebay.at/.de) and $63.41-63.75 (ebay.com), all above the V4L, and genuineness is unknown. The official store's old $39.95 price is gone (EOL).
+    - **Seller url:** https://www.ebay.com/p/14063778322
+    - **Spec comparison:** Same as V4L: RTL2832U 8-bit, 0.5-1766 MHz, 2.56 Msps, 1 ppm TCXO, 4.5 V/180 mA bias, 250-270 mA, aluminium case with thermal pad, no TX (V4 datasheet V1.0). Better: triplexer plus switchable notch; two-tone threshold -7 dBm vs -12 at 50-160 MHz, +8 vs -24 at 400 MHz, -2 vs -40 at 1600 MHz; HF MDS about 1-2 dB better at 3-28 MHz. MDS read from the vendor's combined V3/V4/V4L chart (500 Hz): about -137.5 vs -140.7 dBm at 137 MHz; about -139.5 vs -140.7 at 400 MHz; about -133 vs -137 at 740 MHz; about -129 vs -133 at 1090 MHz; about -126 vs -130.7 at 1.7 GHz. Independent (Tech-ni-shn, uncalibrated, 2400 Hz): V4 MDS -132.0 dBm, NF about 8 dB at 136 MHz, against about 4 dB for a V3 in the same test.
+    - **Worse in:** Sensitivity: about 3 dB worse at 137 MHz, 1-2 dB at 400 MHz, about 4 dB at 740/1090 MHz and 4-5 dB at 1.7 GHz. The V4 datasheet itself admits 'minor degradation in the VHF and UHF band' against the V3. Behind a 30 dB LNA (RTL-A, RTL-B) the penalty is negligible (model), but the spare's bare-whisker ADS-B and radiosonde roles lose about 1-4 dB. It is also not cheaper on any verified price.
+    - **Compatibility:** osmocom 2.0.3 supports 'Blog V4' (R828D); SoapyRTLSDR gives 0-1764 MHz. The bias gate and EEPROM rules carry over, and the spur set is the same 28.8 MHz LO.
+    - **Risks:** RTL-SDR Blog: most marketplace 'V4' units are fakes with a copied enclosure and a V3-clone circuit. A genuine unit logs an R828D. No warranty and unknown thermal or ESD history. EOL, so no replacements.
+    - **Sources:**
+      - https://www.rtl-sdr.com/wp-content/uploads/2024/12/RTLSDR_V4_Datasheet_V_1_0.pdf
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/SDR-Sensitivity-and-Noise-figure.pdf
+      - https://www.rtl-sdr.com/tech-ni-shn-measures-rtl-sdr-blog-and-airspy-sensitivity/
+      - https://www.rtl-sdr.com/rtl-sdr-blog-v4-end-of-line/
+      - https://www.ebay.at/itm/358536214637
+  3.
+    - **Name:** Used genuine RTL-SDR Blog V3 (R820T2/R860)
+    - **Kind:** used
+    - **Price usd:** Used price UNVERIFIED (eBay blocked). New from official stores: $34.95-39.95 (re-audit), i.e. at most $3 below the V4L.
+    - **Seller url:** https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+    - **Spec comparison:** Same: RTL2832U 8-bit, 0.5-1766 MHz, 2.56 Msps, 1 ppm TCXO, 4.5 V/180 mA bias, aluminium case, and the same two-tone result as the V4L (the vendor says 'identical'). Stock Ubuntu drivers work. Vendor MDS chart (500 Hz): about -138.7 vs -140.7 dBm at 137 MHz; -137.7 vs -140.7 at 400 MHz; about -134.5 vs -137 at 740 MHz; about -132.7 vs -133.7 at 1090 MHz; about -127.7 vs -130.7 at 1.7 GHz. HF uses direct sampling: about -115 to -122 vs -134 dBm, with folding around 14.4 MHz. Independent Tech-ni-shn at 136 MHz: V3 NF about 4 dB. No independent V4L value exists to compare against.
+    - **Worse in:** MDS 1-3 dB worse at VHF/UHF/L-band (vendor data). HF is 12-18 dB worse, with Nyquist folding and no HF gain control. Slightly higher current and heat (the V4L datasheet says the V4L draws less than the V3). Equality is not proven by any independent measurement.
+    - **Compatibility:** Drop-in for USB, power and drivers (the R820T path in librtlsdr). The bias GPIO0 gate is the same. The HF backup role would need direct-sampling mode, which the stack bans (direct_sampling=0).
+    - **Risks:** Clone-heavy market; used units carry no warranty.
+    - **Sources:**
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf
+      - https://www.rtl-sdr.com/wp-content/uploads/2024/12/RTLSDR_V4_Datasheet_V_1_0.pdf
+      - https://www.rtl-sdr.com/wp-content/uploads/2026/08/SDR-Sensitivity-and-Noise-figure.pdf
+      - https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/
+  4.
+    - **Name:** Generic RTL2832U + R820T2/R860 'RTL-SDR V3'-style clones (marketplace 'RTL.SDR', blue or silver 4-screw cases)
+    - **Kind:** generic_or_clone
+    - **Price usd:** UNVERIFIED (marketplace listings not fetched; typically well under $37.95)
+    - **Seller url:** 
+    - **Spec comparison:** Advertised: the same RTL2832U 8-bit core and 24-1766 MHz. There is no independent MDS, two-tone or clock-stability data showing equality to the V4L. rtl-sdr.com tested several 'RTL.SDR' clones and found that 'all had a defect causing very strange distorted spectrums where the signals where wider than they should be'. 'Some units introduced a mysterious high pitched whine'. 'Most of them are missing key features like the bias tee and the TCXO.'
+    - **Worse in:** Clock: usually no TCXO, against 1 ppm. Bias tee often missing or unable to supply the current. Distorted spectrum and whine (observed). No HF upconverter. Unknown thermal behaviour at L-band. Sensitivity is unmeasured; the one anecdote is ADS-B range under 50 mi against about 100 mi for a genuine unit.
+    - **Compatibility:** librtlsdr works, but the V4L HF switching and the strings/EEPROM self-test do not apply, and the spare cannot power its LNA without a bias tee.
+    - **Risks:** Trade-dress copies of RTL-SDR Blog products (copied logos and enclosures), so they fail the not-counterfeit rule. Large unit-to-unit variation. REJECTED: no measured evidence of equality.
+    - **Sources:**
+      - https://www.rtl-sdr.com/avoiding-fake-rtl-sdr-blog-v3-clones-2021-supply-chain-updates/
+      - https://www.rtl-sdr.com/watch-out-for-new-rtl-sdr-blog-v3-counterfeits/
+  5.
+    - **Name:** Marketplace 'RTL-SDR Blog V4' / 'V4 Pro' listings (non-official sellers)
+    - **Kind:** generic_or_clone
+    - **Price usd:** About 61.75-63.75 (eBay listings found by search, labelled new; genuineness not verifiable), so more expensive than the V4L
+    - **Seller url:** https://www.ebay.de/itm/388593860482
+    - **Spec comparison:** RTL-SDR Blog says these fakes use 'a copied Blog V4 enclosure but a Blog V3-clone circuit inside'. If that holds, the spec is at best V3-clone level: no upconverter (a 7 MHz request would be upconverted to 35.8 MHz and hear nothing), no triplexer or notch, and an unknown TCXO and bias tee.
+    - **Worse in:** Everything a V3 clone is worse in (see above). It is also more expensive than the V4L.
+    - **Compatibility:** The driver may misdetect it, and the HF path is dead.
+    - **Risks:** Counterfeit. REJECTED.
+    - **Sources:**
+      - https://www.rtl-sdr.com/rtl-sdr-blog-v4-end-of-line/
+      - https://www.ebay.at/itm/358536214637
+      - https://www.ebay.de/itm/388593860482
+  6.
+    - **Name:** MSI.SDR (MSi2500 + MSi001, unauthorised SDRplay RSP1 clone)
+    - **Kind:** generic_or_clone
+    - **Price usd:** About 30-65 on AliExpress (from prior project research; not re-verified today)
+    - **Seller url:** 
+    - **Spec comparison:** Better: 12-bit ADC, up to about 8 MHz of bandwidth (the author marks this '(?)'). Worse: the revspace owner reports 'there is no input for signals > 1 GHz on my receiver', so dump1090 fails. Five band-split inputs. He also reports no rtl_433 decodes via Soapy, 'not very mature' drivers and an unusable in-kernel msi2500 driver. Prior project research found it weak on 2 m and 70 cm. No independent MDS or two-tone data. The board claims a TCXO, but no ppm figure is given.
+    - **Worse in:** Frequency coverage: nothing above 1 GHz on the measured unit, so it loses 1090 MHz, 1544-1707 MHz, the RTL-B role and the LNB IF top end. No bias tee. No measured sensitivity. Driver maturity on arm64 is poor (libmirisdr forks, SoapyMiri).
+    - **Compatibility:** Not a drop-in: a different library (libmirisdr). The lab librtlsdr gate, spur mask and USB budget would all need redoing.
+    - **Risks:** Unauthorised clone (the SDRplay API refuses it) with seller-dependent quality. REJECTED.
+    - **Sources:**
+      - https://www.revspace.nl/Msi2500SDR
+      - https://vu3dxr.in/exploring-the-msi-sdr-a-low-cost-gateway-into-software-defined-radio/
+      - https://github.com/vladisslav2011/libmirisdr-4
+  7.
+    - **Name:** DIY RTL2832U + R828S (or R820T2) board with TCXO, bias tee, diplexer and aluminium case
+    - **Kind:** diy
+    - **Price usd:** Not determinable (no distributor source for the R828S verified). PCB, assembly, TCXO and case at qty 3 almost certainly exceed $37.95 per unit (estimate, not quoted).
+    - **Seller url:** 
+    - **Spec comparison:** At best a copy of the V4L reference, with zero measured evidence of equality until built and benched. RTL-SDR Blog says it obtained its R828S stockpile through its contract manufacturer. The R828D stock available to third parties ended up 'all counterfeits', per the vendor.
+    - **Worse in:** No measurements and no layout pedigree (the V4L has the improved PCB layout and power supply). Chip authenticity is unverifiable. Build effort is high.
+    - **Compatibility:** librtlsdr would need custom EEPROM strings. Copying 'RTLSDRBlog'/'Blog V4L' strings to get the V4L code path would be misrepresentation.
+    - **Risks:** Counterfeit tuner chips. REJECTED: not cheaper and no evidence.
+    - **Sources:**
+      - https://www.rtl-sdr.com/rtl-sdr-blog-v4l-lite-now-available-for-purchase/
+      - https://www.rtl-sdr.com/rtl-sdr-blog-v4-end-of-line/
+- **Notes:** VERDICT (angle B): KEEP the RTL-SDR Blog V4L x3 from official channels. No generic, clone, DIY or used unit is both cheaper and proven not worse by independent measurement.
+  - Used genuine V4 (R828D): better two-tone and HF, but about 1-5 dB worse MDS at 137-1700 MHz, and the verified listings ($61.75-63.75) cost more than the V4L. The vendor's combined MDS chart gives the gaps. Tech-ni-shn's independent test also shows a weak V4 at 136 MHz (NF about 8 dB against about 4 dB for a V3).
+  - Used V3: worse HF (direct sampling) and 1-3 dB worse VHF/UHF/L-band MDS on vendor data.
+  - Generic clones: no TCXO or bias tee and distorted spectra in rtl-sdr.com tests; no measurements show equality; trade-dress counterfeits.
+  - MSI.SDR: no coverage above 1 GHz on the measured unit.
+  - DIY: not cheaper and unproven.
+  
+  Not listed as candidates: Airspy Mini/R2 clones and HackRF/Pluto clones cost more than $37.95, and the HackRF/Pluto class is TX-capable hardware. Nooelec SMArt v5 ($44.95, angle A) costs more and has no bias tee.
+  
+  Evidence gap: no independent V4L measurement exists yet (search 2026-10-18), so the V4L numbers are the vendor's. Keep the D10 bench baseline (MDS and two-tone at 137.5/437/1700 MHz) and the per-unit genuineness check. A future 'not worse' claim for any substitute must be made on that same conducted bench.
+  
+  EU sourcing: buy from the official eBay 'rtl-sdr-blog' or AliExpress 'RTLSDRBlog Store' 4523039 / 1101427871. Confirm at checkout that it ships to the buyer's country, and expect VAT at checkout. The EU price is unverified because eBay and AliExpress pages could not be read.
+  
+  Supply: the R828S stockpile is expected to last about one year, so order all three now. The V3 R860 at $34.95-39.95 remains the documented budget fallback, and it is a deliberate downgrade (HF and 1-3 dB MDS), not an equal.
+  
+  Searches used: 6 WebSearch calls. Two datasheet PDFs and the Tech-ni-shn PDF were downloaded into /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/p5rtl/; the MDS chart values above were read from the embedded chart images, so they are approximate (about ±0.5 dB).
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
