@@ -31579,6 +31579,153 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   No hard rule is affected: receive-only, conducted-only sources, no loops, and the Q6A and antennas untouched.
 
+## searchA:ad8318_class_log_detector_power_meter (run `wf_c3ba734e-52b`)
+
+- **Part:** AD8318-class log detector power meter (optional, extended lab; qty 1). Bare AD8318 module (1 MHz-8 GHz, SMA, 78L05 regulator, needs 7.5-9 V) read by an ADS1115 on Q6A i2c0/i2c2 and calibrated against the tinySA Ultra+ ZS407.
+- **Current price usd:** 25-60 (STACK.md row, a model estimate). Underlying data in radio_lab.json: about $16.50 (Banggood unit tested by Silicon Chip in 2018) and $39.00 on eBay (dated listing). Reference price for the genuine chip on DigiKey, 18 Oct 2026: AD8318ACPZ-REEL7 $18.85 at qty 1 (0 in stock); AD8318SCPZ-EP-RL7 $27.31 (195 in stock); AD8318ACPZ-R2 (discontinued) $6.96 each at 250 pcs.
+- **Critical specs:**
+  - Frequency coverage. Must cover at least 1 MHz (HF+ and HF level checks) to 3.8 GHz (LimeSDR Micro RX), including the stack's calibration points 137/435/740/1700/2200 MHz. Current part: 1 MHz-8 GHz chip. On the module, the 1 nF coupling gives a cutoff near 300 kHz, and second-harmonic ripple appears below about 22 MHz unless the Clpf/Cobp pads are fitted (Silicon Chip).
+  - Accurate (+/-1 dB) dynamic range. Current part: about 60 dB. Silicon Chip measured -5 to -60 dBm, with the 100 MHz, 1, 2 and 4 GHz curves within +/-1 dB of each other. DigiKey gives -60 to -2 dBm at +/-1 dB. The module is rated -65 to +5 dBm.
+  - Maximum safe input: +5 dBm rated (Silicon Chip tested to +10 dBm). Needed for LNA-output and generator-level checks ahead of the Lime (+10 dBm maximum).
+  - Slope and intercept stability and repeatability. Measured -24.33 mV/dB (nominal -25), with intercept around +20 dBm. Temperature stability is about +/-0.5 dB per the ADI datasheet (not re-checked: analog.com returned 503). This counts because absolute accuracy comes from the tinySA (+/-2 dB) and the detector only has to hold that calibration.
+  - Detection law. Log-average (not RMS) gives waveform-dependent error on noise-source total power and modulated carriers. Equal or RMS is acceptable.
+  - Output and interface. Analog VOUT about 0.5-2.0 V in measurement mode (Mikroe driver limits 0.5/2.0 V; Silicon Chip quotes 0.5-4.6 V), read by an ADS1115 (mainline ti-ads1015 IIO driver or Python smbus on Ubuntu 24.04 arm64) on Q6A i2c0 (pins 13/15) or i2c2 (27/28). Any replacement must be readable from the Q6A with in-kernel drivers.
+  - Supply and power. The module needs 7.5-9 V (78L05, 2 V dropout) at about 68 mA, about 0.6 W. The stack has no 9 V rail any more (AUX 12 V, switched), so a 5 V-only board or a 7-15 V board is a compatibility plus. Lower current is better.
+  - RF input: 50 ohm (51 ohm shunt, about 49 ohm below 100 MHz), SMA. The match matters for conducted levels.
+  - Size: PCB about 33 x 24.5 mm, in the lab case (extended items).
+  - Build quality and authenticity: a genuine ADI die, SMA quality, optional shielding. Marketplace modules carry remark/counterfeit risk, so each one needs a slope and linearity acceptance test against the tinySA.
+  - Hard rules: measure-only and conducted-only (bench, or a coupler tap after the LNA as an overload alarm). No loop or H-field probe.
+- **Candidates:**
+  1.
+    - **Name:** Same classic AD8318 module, cheaper listing: '1-8000MHz AD8318 RF Logarithmic Detector 70dB RSSI Measurement Power Meter' (AliExpress item 3256805661032022)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 13.35 (AliExpress search-page price on 18 Oct 2026 as served to a US-located fetch; 47 sold, rating 4.2. EU VAT (IOSS, about 19-25%) and shipping not shown. Store name not verified: item page behind captcha)
+    - **Spec comparison:** The title is word-for-word the design already in the stack (radio_lab's eBay source is titled 'AD8318 RF Log Detector 70dB RSSI Measurement Power Meter 1 MHz to 8000 MHz'), and it is the Banggood board Silicon Chip measured. If it is the same board, every spec is identical: 1 MHz-8 GHz, about 60 dB accurate (-5 to -60 dBm), -24.3 mV/dB, -65 to +5 dBm, 7.5-9 V, 68 mA, SMA, 33 x 24.5 mm. The PCB revision and BOM on this listing are not verified.
+    - **Worse in:** Nothing on paper if the board and chip are genuine. Unverified: chip authenticity, PCB revision, seller reliability. Price-to-chip ratio: DigiKey sells the genuine chip at $18.85 (qty 1) but $6.96 (qty 250), so a $13 module is plausible with a real die, though not proof of one.
+    - **Compatibility:** Drop-in for the current plan (same ADS1115 wiring, same 7.5-9 V need from AUX 12 V through a regulator). Analog output, so no driver concerns on Ubuntu 24.04 arm64.
+    - **Risks:** Marketplace module: remark/counterfeit chip or a lower-range part (for example AD8317) possible. On arrival, run a conducted acceptance test with the tinySA generator at -40 dBm plus VNA-measured pads and the step attenuator at 137/435/740 MHz. Pass needs a slope of -24 to -25.5 mV/dB, a straight line within +/-1 dB from -60 to -5 dBm, and about 68 mA. Use AliExpress buyer protection if it fails.
+    - **Seller url:** https://www.aliexpress.com/item/3256805661032022.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-AD8318-RF-power-meter.html
+      - https://www.siliconchip.com.au/Issue/SC/2018/March/El+Cheapo+Modules+14%3A+Logarithmic+RF+Detector
+      - https://www.digikey.com/en/products/filter/rf-detectors/862?keywords=AD8318
+  2.
+    - **Name:** Same AD8318 module, second-cheapest listing: 'AD8318 RF Logarithmic Detector with 70dB RSSI Measurement, 1-8000MHz Power Meter Module' (AliExpress item 3256811787185958)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 21.69 (shown as reduced from 30.99; AliExpress search page, 18 Oct 2026, US view, excl. EU VAT. Sold count and store not shown)
+    - **Spec comparison:** The title claims the same 1-8000 MHz and 70 dB range as the classic board. Regulator, supply range and PCB are not verified (item page behind captcha).
+    - **Worse in:** Nothing claimed worse. Every spec is unverified beyond the title. Costs more than the $13.35 listing with no evidence of better build.
+    - **Compatibility:** Same as the current plan, if it is the classic 78L05 board.
+    - **Risks:** Same counterfeit and revision risk. No sales history shown. Needs the same acceptance test.
+    - **Seller url:** https://www.aliexpress.com/item/3256811787185958.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-AD8318-RF-power-meter.html
+  3.
+    - **Name:** AD8318 module with wide-input supply: 'AD8318 RF Signal Detector RSSI Power Meter Module 1-8000MHz 70dB -65dBm to +5dBm SMA 7-15VDC' (AliExpress item 3256812931208143)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 29.99 (shown as reduced from 59.98; AliExpress search page, 18 Oct 2026, US view, excl. EU VAT; 1 sold)
+    - **Spec comparison:** Same chip and the same claimed -65 to +5 dBm and 1-8000 MHz. Better on paper in one compatibility spec: the 7-15 V DC input could run straight from the switched AUX 12 V rail with no 9 V regulator (claim from the title only).
+    - **Worse in:** Nothing claimed worse. All specs are title-only and unverified. Cheaper than the $60 top of the current range but dearer than the $13-22 listings.
+    - **Compatibility:** Better fit to the stack's power tree if the 7-15 V claim holds (AUX 12 V, PTC-protected). Same ADS1115 analog read-out.
+    - **Risks:** One sale, no reviews. Regulator type and dropout are unknown. Same chip-authenticity risk and the same acceptance test.
+    - **Seller url:** https://www.aliexpress.com/item/3256812931208143.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-AD8318-RF-power-meter.html
+  4.
+    - **Name:** MikroElektronika RF Meter Click (MIKROE-2034): AD8318 plus on-board MCP3201 12-bit SPI ADC, mikroBUS
+    - **Kind:** other_brand
+    - **Price usd:** 53.00 at DigiKey (7 in stock, 18 Oct 2026, excl. VAT); TME lists 52.31 USD, 0 in stock (EU distributor, VAT extra)
+    - **Spec comparison:** Same AD8318 die, so frequency range, dynamic range, slope and temperature stability are the same chip specs. The Mikroe driver uses slope -0.025 V/dB, intercept +20 dBm and a valid window of 0.5-2.0 V. Better: genuine-chip supply chain through franchised distributors and an established board maker. The built-in 12-bit ADC (2.5 V reference, about 0.61 mV/LSB, about 0.025 dB/LSB) replaces the ADS1115 and its divider. TME gives the supply as 3.3 V or 5 V, so no 9 V rail.
+    - **Worse in:** Not cheaper than the $25 low end or than the $13-22 generic modules. Only cheaper than the $60 top of the range. Unverified: which mikroBUS rail feeds the AD8318 (it needs 4.5-5.5 V), the SMA type, the input network and the low-frequency cutoff (mikroe.com and its PDFs returned 403). Its 12-bit ADC is coarser than the ADS1115's 16 bits, though about 0.025 dB/LSB is far finer than the +/-1 dB accuracy.
+    - **Compatibility:** SPI instead of I2C: needs a free SPI bus and chip-select on the Q6A 40-pin header with spidev enabled on Ubuntu 24.04 arm64 (not verified for the Q6A in this session). mikroBUS pinout, so jumper wires or an adapter are needed. 3.3 V logic.
+    - **Risks:** Low stock (DigiKey 7, TME 0). The board specs are not confirmed from the maker (403).
+    - **Seller url:** https://www.digikey.com/en/products/filter/expansion-boards-daughter-cards/797?keywords=RF%20Meter
+    - **Sources:**
+      - https://www.digikey.com/en/products/filter/expansion-boards-daughter-cards/797?keywords=RF%20Meter
+      - https://www.tme.eu/en/details/mikroe-2034/expansion-boards/mikroelektronika/rf-meter-click/
+      - https://raw.githubusercontent.com/MikroElektronika/mikrosdk_click_v2/master/clicks/rfmeter/lib_rfmeter/include/rfmeter.h
+  5.
+    - **Name:** AD8317 log-detector modules (1 MHz-10 GHz), for example AliExpress items 3256811891652990 and 3256810209299407
+    - **Kind:** other_brand
+    - **Price usd:** 6.41 (deep-discount listing, 4 sold) to 59.39; 16.82 for the listing that states '-55dBm to 0dBm' (AliExpress search page, 18 Oct 2026, US view, excl. VAT). Genuine AD8317ACPZ-R7 chip: $14.04 at DigiKey, 15,079 in stock
+    - **Spec comparison:** Better: upper frequency 10 GHz (8 GHz on the AD8318). The ADI datasheet also gives a lower supply current (about 22 mA, 3-5.5 V; analog.com returned 503, so not re-checked). Same 1 MHz lower limit. The modules are titled 'DC 7-15 V'.
+    - **Worse in:** Dynamic range. The listing states -55 to 0 dBm (55 dB), and the ADI part is the '55 dB log detector', against about 60 dB accurate and 70 dB usable on the AD8318. That loses about 5-10 dB at the low end (-55 against -60/-65 dBm). It fails the not-worse rule.
+    - **Compatibility:** Same analog read-out by the ADS1115 and the same 7-15 V module supply.
+    - **Risks:** Marketplace module, so chip authenticity is unverified.
+    - **Seller url:** https://www.aliexpress.com/item/3256810209299407.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-AD8317.html
+      - https://www.digikey.com/en/products/filter/special-purpose-amplifiers/771?keywords=AD8317
+  6.
+    - **Name:** MikroElektronika RF Meter 3 Click (MIKROE-4906): LT5581 RMS detector
+    - **Kind:** other_brand
+    - **Price usd:** 29.00 at DigiKey (2 in stock, 18 Oct 2026, excl. VAT)
+    - **Spec comparison:** Better: true-RMS detection (no waveform error on noise or modulated signals), 2.7-5.25 V at 1.4 mA, established brand, genuine supply chain.
+    - **Worse in:** Frequency range 10 MHz-6 GHz against 1 MHz-8 GHz, so it loses HF from 1 to 10 MHz. Input range -34 to +6 dBm at +/-1 dB (40 dB) against about 60 dB, so it loses about 26 dB at the low end. It fails the not-worse rule.
+    - **Compatibility:** Analog output (the Mikroe driver reads the AN pin) into an ADC. Enable pin. mikroBUS.
+    - **Risks:** Low stock.
+    - **Seller url:** https://www.digikey.com/en/products/filter/expansion-boards-daughter-cards/797?keywords=RF%20Meter
+    - **Sources:**
+      - https://www.digikey.com/en/products/filter/rf-detectors/862?keywords=LT5581
+      - https://raw.githubusercontent.com/MikroElektronika/mikrosdk_click_v2/master/clicks/rfmeter3/lib_rfmeter3/include/rfmeter3.h
+  7.
+    - **Name:** LTC5582 RMS detector (ADI/Linear), chip only (no module found)
+    - **Kind:** other_brand
+    - **Price usd:** Genuine: $20.97 at DigiKey (LTC5582IDD#PBF, 6,463 in stock). AliExpress chip listings at $5.89-6.65 are below the distributor price, so a counterfeit is likely
+    - **Spec comparison:** Better: true RMS, +/-0.5 dB accuracy, -57 to +2 dBm (59 dB, about equal), 40 MHz-10 GHz, 3.1-3.5 V at 41.6 mA (lower power).
+    - **Worse in:** Low end is 40 MHz against 1 MHz, so the whole HF range (HF+, 1-30 MHz) is lost. No ready module from an established seller, so it would be a DIY board. It fails the not-worse rule.
+    - **Compatibility:** A 3.3 V supply suits the stack, but it needs a custom PCB and an ADC.
+    - **Risks:** Counterfeit chips on marketplaces. A DIY RF layout affects accuracy.
+    - **Seller url:** https://www.digikey.com/en/products/filter/rf-detectors/862?keywords=LTC5582
+    - **Sources:**
+      - https://www.digikey.com/en/products/filter/rf-detectors/862?keywords=LTC5582
+      - https://www.aliexpress.com/w/wholesale-LTC5582.html
+  8.
+    - **Name:** ADL5513 log detector (ADI), chip only (no module found)
+    - **Kind:** other_brand
+    - **Price usd:** $18.85 at DigiKey (ADL5513ACPZ-R7, qty 1; stock shown as 0)
+    - **Spec comparison:** Better: -58 to +6 dBm at +/-0.5 dB, 2.7-5.5 V at 31 mA, 1 MHz low end (equal).
+    - **Worse in:** Upper frequency 4 GHz against 8 GHz. That still covers the stack's 3.8 GHz Lime ceiling, but it is narrower than the current part. No module, so a DIY board, and not cheaper than the AD8318 modules. Not adopted.
+    - **Compatibility:** Would need a custom PCB plus an ADC. 3.3 V capable.
+    - **Risks:** DIY RF layout. Out of stock at DigiKey.
+    - **Seller url:** https://www.digikey.com/en/products/filter/rf-detectors/862?keywords=ADL5513
+    - **Sources:**
+      - https://www.digikey.com/en/products/filter/rf-detectors/862?keywords=ADL5513
+  9.
+    - **Name:** Unbranded '8GHz 1MHz-8000MHz RF power meter, OLED display, PC software, with 10 W 30 dB attenuator' (AliExpress item 3256801533533451)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 26.79 (AliExpress search page, 18 Oct 2026, US view, excl. VAT; 33 sold, rating 5). The similar 500MHz/3GHz/8GHz OLED meter is 37.30-41.19
+    - **Spec comparison:** Standalone instrument with an OLED and an attenuation-offset setting, and a 30 dB 10 W attenuator included. Detector chip, dBm range, linearity, supply and USB protocol are not stated and could not be checked (item page behind captcha).
+    - **Worse in:** Cannot be shown not-worse: every critical spec is unverified. Its PC software and protocol are probably Windows-only, and Ubuntu arm64 support is unverified.
+    - **Compatibility:** Would sit outside the ADS1115/labd path and would take a scarce Q6A USB port to be logged. Possibly CH340 USB-serial (unverified).
+    - **Risks:** Unknown detector, unknown firmware calibration.
+    - **Seller url:** https://www.aliexpress.com/item/3256801533533451.html
+    - **Sources:**
+      - https://www.aliexpress.com/w/wholesale-RF-power-meter-OLED-8GHz.html
+  10.
+    - **Name:** Mini-Circuits ZX47-60LN-S+ connectorised power detector (established-brand reference)
+    - **Kind:** other_brand
+    - **Price usd:** 177.73 at qty 1-4 (Mini-Circuits web store, 0 in stock)
+    - **Spec comparison:** Established-brand housed detector. Specs not read (the datasheet PDF was not fetched).
+    - **Worse in:** Price: about 3-13x the current range, so not a cheaper analog. Also out of stock.
+    - **Compatibility:** Analog output into the ADS1115. Supply not checked.
+    - **Risks:** None material. Simply not cheaper.
+    - **Seller url:** https://www.minicircuits.com/WebStore/dashboard.html?model=ZX47-60LN-S%2B
+    - **Sources:**
+      - https://www.minicircuits.com/WebStore/dashboard.html?model=ZX47-60LN-S%2B
+  11.
+    - **Name:** Rejected without pricing: HMC611 (1 MHz-10 GHz, +/-1 dB)
+    - **Kind:** other_brand
+    - **Price usd:** No qty-1 price (DigiKey: all variants obsolete; 40-piece strip $20.21)
+    - **Spec comparison:** 1 MHz-10 GHz, +/-1 dB, 4.5-5.5 V.
+    - **Worse in:** 106 mA supply against 68 mA. Obsolete, with no module source.
+    - **Compatibility:** DIY only.
+    - **Risks:** Obsolete, so only grey-market stock.
+    - **Seller url:** https://www.digikey.com/en/products/filter/rf-detectors/862?keywords=HMC611
+    - **Sources:**
+      - https://www.digikey.com/en/products/filter/rf-detectors/862?keywords=HMC611
+- **Notes:** Verdict (angle A). No other detector family is not-worse on every spec this stack uses (1 MHz to at least 3.8 GHz, about 60 dB at +/-1 dB, +5 dBm maximum). The AD8317 loses about 5-10 dB of range, the LT5581 loses 26 dB and the HF range, the LTC5582 loses everything below 40 MHz, and the ADL5513 stops at 4 GHz and exists only as a chip. So the cheapest analog is the same AD8318 module from a cheaper listing. Lowest seen: AliExpress item 3256805661032022 at $13.35 (title identical to the stack's current module design, 47 sold). Next: $21.69 (item 3256811787185958). Both are below the $25-60 estimate. The $29.99 7-15 V variant is worth taking only if running straight from AUX 12 V matters (no 9 V regulator). Recommendation: buy the $13.35 board, but count it as adopted only after the conducted acceptance test (slope -24 to -25.5 mV/dB, straight within +/-1 dB from -60 to -5 dBm at 137/435/740 MHz against the tinySA plus VNA-measured pads, current about 68 mA). If it fails, return it and keep the current pick. Absolute accuracy stays tied to the tinySA (+/-2 dB), as the stack already says. For a known-genuine chip, the MikroElektronika RF Meter Click (MIKROE-2034, $53 at DigiKey, 7 in stock; TME 52.31 USD, out of stock) is the established-brand AD8318 board. It removes the ADS1115, the divider and the 9 V rail, but it is not cheaper than the generic modules, and SPI on the Q6A header is unverified. EU: AliExpress charges VAT at checkout (IOSS, about 19-25% depending on country). DigiKey and TME prices above are ex-VAT. No EU-stocked AD8318 module was found (Amazon.de returned 503, eBay 403, Banggood no longer lists it). Limits of this check: the shared WebSearch budget was exhausted before my first search, so all evidence comes from direct fetches. analog.com returned 503 (ADI datasheet numbers for temperature stability and AD8317 current are from the datasheets as previously known, not re-verified). mikroe.com and its PDFs returned 403. AliExpress item pages sit behind a captcha, so store names, shipping, variant prices (for example the $7.55 multi-variant AD8310/AD8313/AD8318 listing 3256809377096025, whose AD8318 price is unknown) and PCB details are unverified. The prices shown are a US-located view on 18 Oct 2026. Hard rules: every candidate is a passive measure-only detector used conducted (bench, or a coupler tap after the LNA). None transmits, none is a loop or H-field probe.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
