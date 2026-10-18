@@ -16832,6 +16832,1726 @@
   - Carry spares: a telescopic pair, 2 x 70 cm elements, a petal plus clips, binder clips, aluminium tape and a spare tape spool.
 - **Confidence:** medium
 
+## extract:operator_notes (run `wf_5ed966cd-eee`)
+
+- **Source:** operator_notes
+- **Changes:**
+  1.
+    - **Section:** 00_header_toc
+    - **Kind:** decision
+    - **Part:** Region (user decision 18 Oct 2026)
+    - **Anchor:** Регіон не відомий, тому все, що залежить від регіону, винесено в окремі ворота.
+    - **Instruction:** Replace this sentence: region = Europe (user decision 18.10.2026; no country named). Consequences to state in one or two sentences: QO-100 (Es'hail-2, 25.9E) is in coverage, so the QO-100 add-on (Othernet Bullseye TCXO LNB, F/75 Ohm parts, horn materials, LNB injector choke >=1 A) is bought; Inmarsat-C uses the European ocean-region NCS (confirmed by the power-only NCS scan 1537-1545 MHz before the egc-gate); SBAS = EGNOS; US-only profiles (UAT 978, HD Radio, NOAA SAME/EAS) stay off; DAB+ on; civil time signals DCF77/MSF/TDF first; still no city tables, everything from the GNSS fix. Prices: USD base plus EUR incl. VAT for EU sellers and EU landed cost for non-EU sellers (see the landed-cost rule).
+    - **Reason:** User decision overrides the v1 'region unknown' gates.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 10
+    - **Saving usd:** 
+  2.
+    - **Section:** 00_header_toc
+    - **Kind:** decision
+    - **Part:** LimeSDR Micro M.2 kept (user decision)
+    - **Anchor:** Приймачі: два RTL-SDR Blog V4L у роботі (RTL-A для VHF/UHF, RTL-B для L-band і ПЧ конвертера) плюс один запасний
+    - **Instruction:** Add to the receiver list: LimeSDR Micro M.2 is KEPT (user decision 18.10.2026, 'Lime беремо'); the with-Lime configuration is the default build (T7 1 TB, Lime-only parts, third HMC7992, CPU7 isolation, 4 GiB ring + 3 GiB Burst, J21 desoldered only after the soak test, case top-band reprint). Lime TX stays blocked (LimeSuiteNG TX patch + 50 Ohm load on TX; receive-only rule).
+    - **Reason:** User decision makes the with-Lime build the default.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 10
+    - **Saving usd:** 
+  3.
+    - **Section:** 00_header_toc
+    - **Kind:** decision
+    - **Part:** Runtime with Lime (model)
+    - **Anchor:** Живлення — власна батарея 4S1P Molicel P50B (72 Wh номінально).
+    - **Instruction:** Append: typical session of the default with-Lime build about 1.9 h (model, mode H 30.8 W) instead of about 3.3 h without Lime (mode B, model); trade-off accepted by the user together with about $596-681 extra cost (v1 figure; recompute with P5 prices).
+    - **Reason:** User accepted the runtime/cost trade-off.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  4.
+    - **Section:** 00_header_toc
+    - **Kind:** decision
+    - **Part:** QO-100 add-on bought (Europe)
+    - **Anchor:** рупор QO-100 із сегментів
+    - **Instruction:** After 'рупор QO-100 із сегментів' add that the QO-100 add-on is bought (region Europe, QO-100 in coverage): Othernet Bullseye TCXO LNB, F/75 Ohm parts, LNB injector choke >=1 A, cone and horn materials.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  5.
+    - **Section:** 00_header_toc
+    - **Kind:** rule
+    - **Part:** Price basis and EU landed-cost rule
+    - **Anchor:** Усі ціни — у USD, без доставки, імпортного ПДВ і мита
+    - **Instruction:** Keep USD as the base, then add the Europe rule: EU sellers are also shown in EUR incl. VAT; for every non-EU seller the EU landed cost is stated. EU landed cost for a non-EU seller = price + shipping + import VAT + EUR 3 x tariff lines (consignment intrinsic value <= EUR 150 sold via IOSS or sent by post; above EUR 150 normal duty by origin, tariff classification and value) + EUR 2 x tariff lines (Union handling fee, distance sales, any value, non-refundable, expected from about 1 Nov 2026; delegated act C(2026)6694 still under scrutiny, re-check the start date before ordering) + any carrier handling fee. Basis: the EUR 150 duty relief (DRR Art. 23-24) is abolished; a temporary EUR 3 customs duty per item applies 1 Jul 2026 - 1 Jul 2028 (Council Regulation (EU) 2026/382 of 11 Feb 2026, Art. 20 new UCC Regulation (EU) 2026/2108; DG TAXUD guidance version 5 Oct 2026, explanatory, not legally binding); 'item' = goods with the same tariff classification and description (Art. 5(78) nUCC), no grouping, so 3 tariff lines pay EUR 9. Prefer EU-stock sellers when the price is equal or close. Delete 'Регіон не відомий...' from this paragraph (see the region change).
+    - **Reason:** Rule items 34-35 (cost rule for a Europe-based user).
+    - **Sources:** operator_notes.md item 34, 35
+    - **Saving usd:** 
+  6.
+    - **Section:** 00_header_toc
+    - **Kind:** rule
+    - **Part:** Hard-rules line: prices
+    - **Anchor:** світові ціни в USD; Radxa Dragon Q6A лишається.
+    - **Instruction:** Replace 'світові ціни в USD' with: prices in USD as the base, plus EUR incl. VAT for EU sellers and EU landed cost for non-EU sellers (landed-cost rule); no Ukrainian prices as the base. Keep 'Radxa Dragon Q6A лишається.'
+    - **Reason:** Brief hard rule + cost rule.
+    - **Sources:** operator_notes.md item 34, 35; user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  7.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** C1 LimeSDR Micro: kept
+    - **Anchor:** | C1. LimeSDR Micro: залишати чи ні | Опційно за воротами; v1 будується **без** Lime.
+    - **Instruction:** Rewrite C1. Decision: LimeSDR Micro M.2 KEPT (user decision 18.10.2026); with-Lime is the default build. Keep the Crowd Supply pre-order slot ($249 + $18; ships 15.12.2026; full refund only before shipment) - do not let it lapse; any analog must be decided before 1.12.2026 (P5 G6: no cheaper board survived, board kept). Acceptance within the 30-day guarantee (unchanged): riser 8 GT/s x1; 50 warm + 20 cold boots; zero AER errors in 60 min; zero limeTRX drops during LRPT+HRPT; VCC_5V_PERI <=14 W; add: forced VSPA-DMA hang recovered by power-cycling the Lime through the labd-controlled M.2 3.3 V load switch without rebooting the Q6A, and a rate-floor test (Lime profiles >=7 Msps; 2 Msps must be rejected cleanly). Delete keep-conditions (1)/(2) and 'Без відповіді — скасувати'. Why-column: user accepts about 1.9 h typical session instead of 3.3 h (30.8 W vs 17.6 W, model) and about $596-681 more (v1 figure, recompute with P5 prices); Lime TX stays blocked (LimeSuiteNG patch, 50 Ohm on TX). Consequences: the 'З Lime' list becomes the default; the 'Без Lime' list is the fallback only if the Lime fails acceptance. Keep the rejected options (31.01.2027 decision, Lime as base, Pluto).
+    - **Reason:** User decision overrides the C1 gate; operator note 30 adds the power-cycle recovery test.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 10, 30; analogs_G6 decision 6; reaudit_B results[2] corrections[0]/bench_tests[3]
+    - **Saving usd:** 
+  8.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** C5 USB map with Lime as default
+    - **Anchor:** синій USB 3.1 (J5 знизу, USB0, також EDL) — RTL-A на екранованому подовжувачі 15 см з феритом (з Lime — T7)
+    - **Instruction:** Make the with-Lime map the default: blue USB 3.1 (J5 bottom) = Samsung T7 on its own VBUS, outside at the bottom edge; RTL-A on CH334F H2; RTL-A on the blue port only in the no-Lime fallback. Add: during L-band, GNSS and S-band sessions labd deauthorizes the T7 (authorized=0 after sync) or forces the port to USB 2. In the same row change 'встановлюється лише якщо Lime залишено і не працює UART7' to: the Lime is kept, so CH334F #2 is fitted only if UART7 fails or a fifth internal device appears.
+    - **Reason:** User decision (USB map must switch to with-Lime) + operator note 7.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 7, 10
+    - **Saving usd:** 
+  9.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** rule
+    - **Part:** C6 PPS pin gpio96 vs mi2s0
+    - **Anchor:** Пін 7 (GPIO96) — PPS
+    - **Instruction:** Add: in the QCS6490 DTS gpio96 (header pin 7) is also defined as mi2s0_mclk (function 'pri_mi2s'); the lab overlay must ensure that no enabled audio/MI2S node claims gpio96 (disable the mi2s0 pinctrl user if present; re-audit A found no Q6A DTS node or 0.2.31 overlay claiming GPIO96-100, they exist only as mi2s0 pinctrl states); bring-up confirms in /sys/kernel/debug/pinctrl that gpio96 is owned by pps-gpio.
+    - **Reason:** PPS pin conflict check.
+    - **Sources:** operator_notes.md item 26; reaudit_A results[0] confirmed[12]; reaudit_D results[1] bench_tests[1]
+    - **Saving usd:** 
+  10.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** bench_test
+    - **Part:** C7 lease enforcement (DevicePolicy)
+    - **Anchor:** оренда примусово обмежується тимчасовими DevicePolicy=closed + DeviceAllow на цьому USB-вузлі
+    - **Instruction:** Add: systemd issue #23198 'DevicePolicy=closed silently ignored' is still open (ignored in --user managers and without CONFIG_CGROUP_BPF, re-audit A), so lease units must be system units and bring-up must prove it: from a decoder unit without the lease, opening the leased /dev/bus/usb node must fail with EPERM; if it does not, fall back to udev ACL/group ownership per lease. Check CONFIG_CGROUP_BPF=y in /boot/config-6.18.2-4-qcom.
+    - **Reason:** Lease enforcement could silently fail.
+    - **Sources:** operator_notes.md item 20; reaudit_A results[2] confirmed[8], corrections[6]
+    - **Saving usd:** 
+  11.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C11 librtlsdr bias-tee token gate
+    - **Anchor:** rtlsdr_set_bias_tee() і rtlsdr_set_bias_tee_gpio() відмовляють «on», якщо LAB_BIAS_OK не дорівнює серійному номеру пристрою
+    - **Instruction:** Correct the gate: refuse 'on' without the token only for gpio == 0 (the bias-tee pin) inside rtlsdr_set_bias_tee_gpio(), and in rtlsdr_set_bias_tee() (which routes through gpio 0). GPIO5 must pass ungated: the cherry-picked V4L commit 0204c9c switches the HF/VHF/UHF input (upconverter switch) through rtlsdr_set_bias_tee_gpio(dev, 5, !cable_1_in / !cable_2_in), so a literal gate breaks V4L tuning above 28.8 MHz. State that the gate covers EVERY path that drives GPIO0; the offset-tuning bias hack and the EEPROM force-bias flag exist only in the rtl-sdr-blog fork, not in osmocom (never install the fork). Unit and bench tests: with no token tune 100 -> 400 -> 1090 MHz (input switches, bias rail stays 0 V); offset tuning on without a token leaves the bias rail at 0 V. Ship a blacklist file (dvb_usb_rtl28xxu, rtl2832, rtl2830, r820t) even though the Radxa 6.18 config has '# CONFIG_DVB_USB_V2 is not set'; bring-up: lsmod | grep rtl28 empty and 0 V on the bias rail at plug-in with no token.
+    - **Reason:** Literal v1 gate breaks V4L band switching; legacy DVB driver and fork paths can turn the tee on.
+    - **Sources:** operator_notes.md item 12, 12b, 12c; reaudit_A results[1] corrections[0]; reaudit_B results[0] confirmed[10], corrections[9]; reaudit_B results[3] corrections[0]
+    - **Saving usd:** 
+  12.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** rule
+    - **Part:** C16 decoder allowlists (SatDump, SDRangel, OpenWebRX+)
+    - **Anchor:** **Inmarsat-C:** прибрати SatDump inmarsat_support і SDRangel demodinmarsat
+    - **Instruction:** Add to C16 three allowlists (never denylists): (1) SatDump pipelines - only civil weather/science/amateur pipelines named one by one; Cosmos-2558 dump (2284.0 MHz), DMSP RTD (dmsp_rtd, 2252.5 MHz), 'Yunhai AHRPT - Encrypted' (1704.0 MHz), syracuse3_tlm, wsf_m_db, angels_l_band and any military-operated or encrypted pipeline are hidden; enforced in labd policy and the menu, with a CI test. (2) SDRangel built with ENABLE_CHANNELRX_DEMODINMARSAT=OFF (else INMARSATC_FOUND builds full Inmarsat-C decoding that bypasses the egc-gate), demoddsd and demodpager OFF, plus an explicit channelrx allowlist. (3) OpenWebRX+ mode allowlist (details in 5.4).
+    - **Reason:** Rule gaps in the receive-only/private-content policy.
+    - **Sources:** operator_notes.md item 1, 14, 32, 33; reaudit_C results[2] corrections[0]
+    - **Saving usd:** 
+  13.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** rule
+    - **Part:** C16 ADS-B privacy flags
+    - **Anchor:** треки ADS-B з dbFlags&1 і AIS тип 35 не показуються і не логуються
+    - **Instruction:** Change to: ADS-B tracks with readsb dbFlags &1 (military), &4 (PIA, FAA Privacy ICAO Address) and &8 (LADD, owner opt-out) are not shown and not logged; the 'interesting' (&2) filter stays off; AIS type 35 unchanged.
+    - **Reason:** PIA/LADD owners asked not to be displayed.
+    - **Sources:** operator_notes.md item 25 (readsb README-json.md)
+    - **Saving usd:** 
+  14.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** rule
+    - **Part:** C16 mask: Cospas-Sarsat 1544-1545 MHz
+    - **Anchor:** маска діапазонів 3-30 kHz і 225-400 MHz зберігається як «no data»
+    - **Instruction:** Add 1544.0-1545.0 MHz (Cospas-Sarsat MEOSAR incl. Galileo SAR, and LEOSAR 1544.5) to the bands stored as «no data»; in the NCS scan this sub-band is power-only, never demodulated, decoded or logged.
+    - **Reason:** Distress-beacon traffic carries beacon IDs and positions: treated as private content.
+    - **Sources:** operator_notes.md item 17; reaudit_C results[2] corrections[9]
+    - **Saving usd:** 
+  15.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** C8 LNB purchase no longer waits for region
+    - **Anchor:** Шина будується в кожному екземплярі, хоча купівля LNB чекає регіону.
+    - **Instruction:** Replace with: region = Europe (QO-100 in coverage), so the Bullseye LNB is bought now; the LNB rail is built in every unit.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  16.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** C15 horn tier (Europe)
+    - **Anchor:** рупор із сегментів (залежить від регіону)
+    - **Instruction:** Replace '(залежить від регіону)' with '(Європа: входить у набір)'.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  17.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** C15 Lime/T7 review note
+    - **Anchor:** Кожне видалення в small_antenna_stack переглянуто: Lime за воротами, T7 тільки з Lime
+    - **Instruction:** Change 'Lime за воротами, T7 тільки з Lime' to 'Lime залишено (рішення 18.10.2026), T7 — у збірці з Lime за замовчуванням'.
+    - **Reason:** User decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  18.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** C18 storage default with Lime
+    - **Anchor:** Без Lime: V30 endurance microSD (128-256 GB), коли дозволять ціни NAND. З Lime: T7 1 TB на синьому порту
+    - **Instruction:** Reorder: default (with Lime) = T7 1 TB on the blue port, outside at the bottom edge; the V30 microSD path is the no-Lime fallback (second-storage role per the P5 G6 decision).
+    - **Reason:** User decision (default build with Lime).
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 10
+    - **Saving usd:** 
+  19.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** correction
+    - **Part:** C18 T7 during L-band/GNSS/S-band sessions
+    - **Anchor:** ніколи не пише під час сесій L-band, S-band чи GNSS (ті децимуються до 1 Msps і нижче і пишуться на UFS)
+    - **Instruction:** Replace with: during L-band, S-band and GNSS sessions labd deauthorizes the T7 (sysfs authorized=0 after sync) or forces the port to USB 2 - pausing writes is not enough, because an idle SuperSpeed link in U0 still radiates broadband noise (Intel white paper 'USB 3.0 Radio Frequency Interference Impact on 2.4 GHz Wireless Devices'; field report of a USB 3 SSD desensing a u-blox M8, fixed by moving it to a USB 2 port or 1.8 m away). Those sessions are still decimated to <=1 Msps and written to UFS. Test: noise-floor A/B at 1541, 1575 and 1691 MHz, T7 connected-idle vs deauthorized.
+    - **Reason:** With the Lime kept the T7 is always present.
+    - **Sources:** operator_notes.md item 7; analogs_G6 decision 8 conditions_or_tests step 7
+    - **Saving usd:** 
+  20.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** C18 A/B boot: embloader
+    - **Anchor:** systemd-boot з лічильником спроб і рятувальним пунктом
+    - **Instruction:** Add a caveat: on Radxa OS the 'systemd-boot' role is filled by Radxa embloader (rsdk lists systemd-boot with sdboot-is-embloader; embloader/src/sdboot/file.c parses loader.conf and entries), and re-audit A found no boot counting in embloader (tags 0.1-0.7 and HEAD). Verify on the image; use real systemd-boot with boot counting (+tries, systemd-bless-boot) after purging sdboot-is-embloader, or, if boot counting is not available, the Pico supervisor + a userspace A/B flag provide the fallback.
+    - **Reason:** A/B rollback relies on boot counting that embloader may not provide.
+    - **Sources:** operator_notes.md item 9; reaudit_A results[0] confirmed[23], corrections[10]
+    - **Saving usd:** 
+  21.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** C19 CPU7 isolation default
+    - **Anchor:** З Lime: CPU7 ізольовано
+    - **Instruction:** Mark the with-Lime case as the default build ('Збірка з Lime (за замовчуванням): CPU7 ізольовано ...'); CPU7 in the A78 pool only in the no-Lime fallback.
+    - **Reason:** User decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  22.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** C20 HTP gate default
+    - **Anchor:** p99 до 28 ms при 50% навантаження без Lime (16.6-17.6 тайлів/с); 11.7 ms або до 41 тайла/с з Lime
+    - **Instruction:** State the with-Lime gate (p99 <=11.7 ms or <=41 tiles/s) as the default gate; the 28 ms gate applies only to the no-Lime fallback.
+    - **Reason:** User decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  23.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** condition
+    - **Part:** C21 V4L sourcing in Europe
+    - **Anchor:** У ЄС купувати через офіційний eBay або AliExpress-магазин 4523039.
+    - **Instruction:** Keep, and add: RTL-SDR Blog says the Blog V4 is end-of-line and most 'Blog V4' listings elsewhere are clones; buy the V4L only from rtl-sdr.com/store official resellers; on arrival check the R828S tuner string and the 'Blog V4L' USB product string. Apply the EU landed-cost rule to the official AliExpress/eBay orders.
+    - **Reason:** Counterfeit risk; Europe landed cost.
+    - **Sources:** operator_notes.md item 21, 35; analogs_G1 decision 0
+    - **Saving usd:** 
+  24.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** architecture
+    - **Part:** C22 mirror kernel image + PPA pins
+    - **Anchor:** дзеркалити всі сторонні .deb (OpenWebRX+, linux-headers 6.18.2-4, прошивки radxa, qcom-qnn-sdk-v68)
+    - **Instruction:** Change 'linux-headers 6.18.2-4' to 'linux-image і linux-headers 6.18.2-4 (усі 16 активів GitHub-релізу radxa-pkg/linux-qcom 6.18.2-4, з перевіркою контрольних сум; копія на пристрої й поза ним)' and add: pin the ubuntu-qcom-iot/qcom-ppa QNN/QAIRT/firmware packages (libqnn1, libqnn-dev, qairt-dsp-binaries 2.49.0, linux-firmware-dragonwing 20260825) to -1.
+    - **Reason:** Kernel pool URLs return 404; PPA drift.
+    - **Sources:** operator_notes.md item 15, 29
+    - **Saving usd:** 
+  25.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** C23 region known: Europe
+    - **Anchor:** | C23. Регіон невідомий |
+    - **Instruction:** Rewrite the row as 'C23. Регіон — Європа (рішення користувача 18.10.2026)'. Decision: QO-100 add-on bought now (Bullseye, F/75 Ohm parts, horn materials, LNB injector choke >=1 A); IF-penetration check for DVB-T (734-742 MHz) and LTE B28 near the LNB IF now; Inmarsat-C: European ocean-region NCS, confirmed by the power-only NCS scan 1537-1545 MHz before the egc-gate (1544.0-1545.0 MHz never logged); SAWbird+ iO still waits for the egc-gate (compliance gate, not region); SBAS = EGNOS; UAT 978, HD Radio and NOAA SAME/EAS stay off; DAB+ on; civil time signals DCF77/MSF/TDF first; LC76G stays the GNSS module (re-audit D). labd still computes 'visible from here' from the GNSS fix; no city tables. Delete 'Запитати регіон' and the rejected 'купувати для Європи за замовчуванням'.
+    - **Reason:** User decision replaces the region gate.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 10, 17
+    - **Saving usd:** 
+  26.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** decision
+    - **Part:** C24 totals switch to with-Lime + QO-100
+    - **Anchor:** | C24. Вартість і вага | Прийнято інтегрований BOM (USD, без доставки, ПДВ і мита)
+    - **Instruction:** Instruct that the totals switch: the Lime set (board, Lime-only parts incl. the M.2 3.3 V load switch, T7) moves from optional into the core device total; the QO-100 add-on moves into the patch/foldable antenna tiers; every tier is recomputed with the P5 analog prices and shown as USD base plus EU-landed totals (landed-cost rule); device weight with Lime = sum of parts + 0.15 kg (model). Point to 2.12 for the numbers; do not keep the v1 tier figures as current.
+    - **Reason:** User decision + cost rule.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 10, 34, 35
+    - **Saving usd:** 
+  27.
+    - **Section:** 01a_decisions_integration
+    - **Kind:** bench_test
+    - **Part:** D11 LAB5 with RTL-A on H2 (now default)
+    - **Anchor:** Збірка з Lime: якщо RTL-A на H2 разом з важким LAB-навантаженням тягне LAB5 понад 2.5 A
+    - **Instruction:** Note that the with-Lime build is now the default, so this LAB5 check (>2.5 A with RTL-A on H2 -> disable the LAB port during Lime recording or move to D36V50F5) is a mandatory bring-up measurement.
+    - **Reason:** User decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  28.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #1 Cospas-Sarsat band
+    - **Anchor:** Cospas-Sarsat 1544.5 MHz
+    - **Instruction:** Replace with 'Cospas-Sarsat 1544.0-1545.0 MHz (MEOSAR incl. Galileo SAR; LEOSAR 1544.5)'.
+    - **Reason:** Rule clarification.
+    - **Sources:** operator_notes.md item 17; reaudit_C results[2] corrections[9]
+    - **Saving usd:** 
+  29.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #2 NCS scan: Europe and Cospas-Sarsat sub-band
+    - **Anchor:** NCS шукати на ефірі скануванням 1537-1545 MHz **лише за потужністю**
+    - **Instruction:** Add: Europe - the European ocean-region NCS is confirmed by this power-only scan before the egc-gate. The 1544-1545 MHz part of the scan holds the Cospas-Sarsat MEOSAR (Galileo SAR etc.) downlink repeaters; distress-beacon traffic carries beacon IDs and positions of people in distress, so it is treated like private content: power-only, no demodulation, no decoder, no logging of carriers there, masked like the military bands in surveys.
+    - **Reason:** Rule item 17 + region decision.
+    - **Sources:** operator_notes.md item 17; user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  30.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #3 time signals priority (Europe)
+    - **Anchor:** SID — лише амплітуда цивільних ДХ-несучих DCF77 77.5 kHz, MSF/WWVB 60 kHz, JJY 40/60 kHz, TDF 162 kHz.
+    - **Instruction:** Add: Europe - DCF77, MSF and TDF first.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  31.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #6 price basis (Europe)
+    - **Anchor:** | Світові ціни (#6) | Ціни — світові (виробник, AliExpress, магазини ЄС/США) у USD;
+    - **Instruction:** Rewrite the decision: prices in USD as the base; the user is in Europe, so EU sellers are also given in EUR incl. VAT and every non-EU seller with its EU landed cost (EU landed cost for a non-EU seller = price + shipping + import VAT + EUR 3 x tariff lines (consignment intrinsic value <= EUR 150 sold via IOSS or sent by post; above EUR 150 normal duty by origin, tariff classification and value) + EUR 2 x tariff lines (Union handling fee, distance sales, any value, non-refundable, expected from about 1 Nov 2026; delegated act C(2026)6694 still under scrutiny, re-check the start date before ordering) + any carrier handling fee). Since 1 Jul 2026 the EUR 150 duty-free exemption is gone; UK and US sellers (Uputronics UK store, The Pi Hut, Pimoroni, Mirfield, RS UK, Adafruit, Pololu, SparkFun, rtl-sdr.com, ITEAD-CN) carry the duty, import VAT and express shipping; The Pi Hut ships to the EU by DHL Express only. Prefer EU-stock sellers (Uputronics EU storefront, DigiKey DE, Mouser EU, TME, reichelt, TinyTronics, Kiwi, Botland, ITEAD DE warehouse, EU Zeenko warehouse) when the price is equal or close. No Ukrainian prices as the base. The pointing-from-fix part stays.
+    - **Reason:** Cost rule.
+    - **Sources:** operator_notes.md item 34, 35
+    - **Saving usd:** 
+  32.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #7 SBAS = EGNOS
+    - **Anchor:** GNSS (з SBAS) → gpsd 3.25 → chrony 4.5
+    - **Instruction:** Change '(з SBAS)' to '(SBAS = EGNOS; gpsd reports SBAS as gnssid 1, PRN 120-158; LC76G(AB) lists SBAS support)'.
+    - **Reason:** Region decision; LC76G note.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 22
+    - **Saving usd:** 
+  33.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #10 pins -1: codec/TETRA/ACARS/DRM/UAT
+    - **Anchor:** Закріплено на −1: js8call, rtl-433, digiham, codecserver, acarsdec, dumphfdl, dumpvdl2.
+    - **Instruction:** Extend the -1 list with dxlaprs-tetra (TETRA decoder), codecserver-driver-ambe3k and codecserver-driver-all (codecserver-driver-*), libacars-tools / libacars*, dream (unless a source-patched RX-only build; the packaged dream has a DRM transmitter mode), dump978-fa* (outside the US profile, i.e. always in the Europe build), and use a pattern pin (Package: codecserver* digiham* dxlaprs-tetra* ...) so new codec/driver packages stay blocked.
+    - **Reason:** Pin-list gap in the OpenWebRX+ PPA (private content, TX).
+    - **Sources:** operator_notes.md item 31; reaudit_B results[1] corrections[5]
+    - **Saving usd:** 
+  34.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #10 OpenWebRX+ mode allowlist
+    - **Anchor:** режими pager/selcall OpenWebRX+ вимкнено в конфігу (інакше встановлений multimon-ng відкрив би їх)
+    - **Instruction:** Replace with: OpenWebRX+ runs an ALLOWLIST of modes (see 5.4); everything else, incl. page (POCSAG), selcall, wmbus, ism, lora-wan, meshcore, meshcom, is off and its requirement packages stay uninstalled.
+    - **Reason:** Disabling only pager/selcall left private-data modes on.
+    - **Sources:** operator_notes.md item 32
+    - **Saving usd:** 
+  35.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #10 multimon-ng in Europe
+    - **Anchor:** multimon-ng — лише EAS і лише в регіоні US, через обгортку лише з `-a EAS`
+    - **Instruction:** Add: region Europe - the NOAA SAME/EAS profile is off, so multimon-ng is not installed in the Europe build (apt install refused, re-audit A apt test).
+    - **Reason:** Region decision (US-only profiles off).
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; reaudit_A results[1] bench_tests[12]
+    - **Saving usd:** 
+  36.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #11 no telemetry egress
+    - **Anchor:** Вивантаження (SondeHub, WSPRnet, PSK Reporter, агрегатори ADS-B, SatNOGS) вимкнені за замовчуванням.
+    - **Instruction:** Add: gr-satellites telemetry submitter (SatNOGS DB / Warehouse, sends frames with callsign and lat/lon) is set explicitly submit_tlm=false (v5.5.0 default is 'yes'; disable-logic fix in commit fb887cf, 16.06.2026; also GR_SATELLITES_SUBMIT_TLM=0); every decoder unit gets IPAddressDeny=any; only the TLE/OMM updater may reach the network, and only at home.
+    - **Reason:** Privacy/egress gap.
+    - **Sources:** operator_notes.md item 11; reaudit_A results[1] confirmed[17], corrections[14]
+    - **Saving usd:** 
+  37.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #11 LimeSuiteNG package set
+    - **Anchor:** LimeSuiteNG — з -DBUILD_PLUGINS_AMARISOFT=OFF
+    - **Instruction:** Add: from the LimeSuiteNG Debian packaging install only liblimesuiteng (+ the TX-block patch), limesuiteng-soapysdr, limesuiteng-udev and limepcie-dkms (limesuiteng-legacyapi only if a consumer still needs it - SatDump no longer opens SDRs); never limesuiteng-gui or gr-limesuiteng; limesuiteng-cli only if every TX subcommand (limeTRX TX etc.) is compiled out, otherwise leave it off and use a patched RX-only diagnostic; pin the rest to -1.
+    - **Reason:** No-TX-software rule with the Lime kept.
+    - **Sources:** operator_notes.md item 28; reaudit_C results[2] corrections[1]
+    - **Saving usd:** 
+  38.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #11 SatDump has no TX sinks
+    - **Anchor:** Аудит збірки SDRangel падає на будь-якому TX, DSD, LibMbe, DSDcc чи SerialDV .so.
+    - **Instruction:** Add: SatDump is built with every *_sdr_sink compiled out (e.g. plugins/sdr_sources/bladerf_sdr_support/bladerf_sdr_sink.cpp, hackrf_sdr_sink.cpp; check for a Lime/Soapy sink and compile it out too) and the audio sink off - re-audit C goes further and turns every SatDump sdr_sources plugin OFF; the LimeSuiteNG TX-block patch stays the lower guard; a CI check fails if the installed SatDump exposes a sink for any SDR.
+    - **Reason:** Receive-only rule: SatDump ships SDR sink (transmit) plugins.
+    - **Sources:** operator_notes.md item 23; reaudit_C results[2] corrections[1]
+    - **Saving usd:** 
+  39.
+    - **Section:** 01b_decisions_register
+    - **Kind:** architecture
+    - **Part:** #21 PCIe/M.2 Lime: kept + clock floor + power-cycle switch
+    - **Anchor:** | PCIe/M.2 для Lime (#21) | Тільки якщо Lime залишено:
+    - **Instruction:** Delete 'Тільки якщо Lime залишено:' (Lime kept, default build). Add: LimeSDR-Micro_FW SetLA9310SystemClock() rejects system clocks below 30 MHz (master; staging 20 MHz) because lower clocks can hang VSPA DMA with no recovery except a power cycle - all Lime profiles keep the rate >=7 Msps (re-audit B hard floor in labrx, SatDump profiles and the Tune UI) and decimate in software for HRPT/L-band. Because the Q6A cannot cut the M.2 3.3 V at runtime, the riser 3.3 V goes through a labd-controlled load switch (PCIe link torn down first), so the Lime can be power-cycled without rebooting the Q6A; add it to the power tree and to the Lime acceptance test (forced hang -> recover by power cycle). Consequences: 'Без Lime — ...' becomes the fallback.
+    - **Reason:** Firmware clock floor; unrecoverable DMA hang otherwise needs a full device power cycle.
+    - **Sources:** operator_notes.md item 30; reaudit_B results[2] corrections[0], new_risks[0]; analogs_G6 decision 6 stack_changes
+    - **Saving usd:** 
+  40.
+    - **Section:** 01b_decisions_register
+    - **Kind:** decision
+    - **Part:** #55 Lime-only parts are now default
+    - **Anchor:** Позначено «за умовою»:
+    - **Instruction:** Replace with 'Входять у збірку за замовчуванням (Lime залишено 18.10.2026):' and add the labd-controlled M.2 riser 3.3 V load switch to the list.
+    - **Reason:** User decision + operator note 30.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 30
+    - **Saving usd:** 
+  41.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #66 S-band chain with Lime kept
+    - **Anchor:** | S-band тракт (#90) | Лише з Lime:
+    - **Instruction:** Replace 'Лише з Lime:' with 'Lime залишено — у збірці за замовчуванням:' and add: the 2170-2300 MHz chain also passes military S-band downlinks (DMSP/WSF-M 2252.5, Cosmos-2558 2284, PAZ 2285 MHz), so only allowlisted civil/amateur SatDump pipelines may decode anything from it (operator notes 1/14).
+    - **Reason:** Lime kept; allowlist rule.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 1, 14; reaudit_C results[2] verdict
+    - **Saving usd:** 
+  42.
+    - **Section:** 01b_decisions_register
+    - **Kind:** decision
+    - **Part:** #74 LNB bought (Europe)
+    - **Anchor:** LNB — Othernet Bullseye TCXO ($29.95;
+    - **Instruction:** Add before the LNB description: 'Регіон — Європа: LNB купується зараз;' and in the consequences add the DVB-T (734-742 MHz) and LTE B28 IF-penetration check near the LNB IF.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  43.
+    - **Section:** 01b_decisions_register
+    - **Kind:** decision
+    - **Part:** #76 GEO visibility for Europe
+    - **Anchor:** Регіон — питання до вас.
+    - **Instruction:** Replace with Europe specifics: QO-100/Alphasat (about 25-26E) visible over Europe (12-46 deg, re-audit C); Elektro-L3 at 14.5W is the primary European GEO LRIT target if it is station-kept there and transmits (TLE epoch 9.10.2026: about 6.7W drifting -3.07 deg/day west, reaching 14.5W about 12.10.2026; status since 9.10 unknown; 8-45 deg over Europe per re-audit C); Elektro-L5 (76.05E) and FY-2H (79E) are location-dependent: below the horizon in Iberia/Ireland/UK, usable only east of about 13E (about 6-12 deg in central Europe, about 18-21 deg in the south-east); GOES-East (75.2W) only at the far west edge (<=9.9 deg from Lisbon), not from central/eastern Europe. The GNSS-based 'visible from here' flag handles this.
+    - **Reason:** Region decision; operator Europe-target items checked against re-audit C geometry.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 16, 19; reaudit_C results[2] confirmed[8,9], corrections[3,4]
+    - **Saving usd:** 
+  44.
+    - **Section:** 01b_decisions_register
+    - **Kind:** decision
+    - **Part:** #80 GNSS module choice (region known)
+    - **Anchor:** Вибір після визначення регіону (C23).
+    - **Instruction:** Replace with: region = Europe (C23): LC76G stays the default; spoof-flag hardware (MAX-M10S) only as an option per re-audit D; the jamming gate below applies.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; reaudit_D results[1] corrections[6]
+    - **Saving usd:** 
+  45.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #80 GNSS jamming/spoofing gate (Europe)
+    - **Anchor:** Ворота правдоподібності лишаються в будь-якому разі.
+    - **Instruction:** Add: EASA Safety Information Bulletin on GNSS jamming/spoofing (SIB 2022-02R4, issued 03.07.2026) notes receivers may be unable to use GNSS even after leaving the affected area. When LC76G jamming detection ($PAIR391 -> $PAIRSPF) or spoof indicators fire, labd stops PPS/NMEA disciplining of chrony (PPS +noselect; fall back to RTC + last good fix, marked stale); after exit it forces a GNSS cold restart ($PAIR006, keeps settings; never $PAIR007, which restores factory settings) and re-sends and reads back the GNSS settings (see #79).
+    - **Reason:** Europe GNSS interference risk.
+    - **Sources:** operator_notes.md item 27; reaudit_D results[1] confirmed[3], refuted_findings[8], corrections[5]
+    - **Saving usd:** 
+  46.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #79 LC76G settings persistence
+    - **Anchor:** `$PAIR752,2,100` (PPS лише з 3D-фіксом) і `$PAIR391,1` (виявлення глушіння); інтерфейс I2C не використовувати.
+    - **Instruction:** Add: the Waveshare LC76G FAQ says configuration is lost on power loss, so the settings are re-sent at every power-up from a gpsd ExecStartPre / labd init hook and read back before PPS is trusted. Per re-audit D, $PAIR513 does not save PPS-related PAIR settings: provision PPS with $PQTMCFGPPS,W,1,1,100,3,0,0*70 + $PQTMSAVEPAR*5A and read back $PQTMCFGPPS,R,1*6A (one PPS method only); keep $PAIR391,1 (+ $PAIR513). SBAS: EGNOS (gpsd gnssid 1, PRN 120-158).
+    - **Reason:** Settings set 'once' do not survive power loss.
+    - **Sources:** operator_notes.md item 22; reaudit_D results[1] corrections[0], new_risks[0]
+    - **Saving usd:** 
+  47.
+    - **Section:** 01b_decisions_register
+    - **Kind:** bench_test
+    - **Part:** #26 kernel pin availability
+    - **Anchor:** Шлях A: утримати linux-image-6.18.2-4-qcom з Samsung UFS і золотим набором NPU.
+    - **Instruction:** Add: the Radxa apt repo dists/qcs6490-noble (InRelease 24.09.2026) lists only linux-image/headers-7.0.11-7-qcom and the linux-image-radxa-dragon-q6a metapackage pointing there; the 6.18.2-4 and 6.18.2-3 pool URLs return 404, and the r2 image ships 6.18.2-3 (manifest). So: (a) on day one fetch the 6.18.2-4 debs from the GitHub release radxa-pkg/linux-qcom 'Release 6.18.2-4' (16 assets), verify checksums, keep them in a local apt repo/archive on the device and off-device; (b) build DKMS pps-gpio and the lab overlay against those headers; (c) 7.0.11-7 is the only upstream-supported path, adopted only after the HDMI (forum topic 31304), FastRPC/NPU, PPS (CONFIG_PPS_CLIENT_GPIO=m there) and EDID tests pass; the A/B scheme must never let apt pull 7.0.11 onto slot A/B without that gate.
+    - **Reason:** 'Hold 6.18.2-4' cannot rely on the apt repo.
+    - **Sources:** operator_notes.md item 29; reaudit_A results[0] verdict; reaudit_D results[1] verdict, new_risks[4]
+    - **Saving usd:** 
+  48.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #27 repo index detail
+    - **Anchor:** | Індекс репозиторію (24.09.2026) містить лише 7.0.11-7. |
+    - **Instruction:** Extend the why-cell: '...; URL пулу 6.18.2-4 і 6.18.2-3 повертають 404; образ r2 постачається з 6.18.2-3.'
+    - **Reason:** Kernel pin availability.
+    - **Sources:** operator_notes.md item 29
+    - **Saving usd:** 
+  49.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #27 qcom-ppa pins
+    - **Anchor:** Прибрати unattended-upgrades, замаскувати таймери apt і fwupd, Install-Recommends false
+    - **Instruction:** Add: Radxa OS r2 adds ubuntu-qcom-iot/qcom-ppa (rsdk socs.json), which ships libqnn1, libqnn-dev, qairt-dsp-binaries 2.49.0 and linux-firmware-dragonwing 20260825; pin these QNN/QAIRT/firmware packages to -1 (QAIRT stays 2.42.0.251225; forum thread 31462 reports YOLOv8n output collapse with 2.49 on QCS6490).
+    - **Reason:** PPA drift would replace the QAIRT 2.42 set.
+    - **Sources:** operator_notes.md item 15; reaudit_A results[0] confirmed[25]
+    - **Saving usd:** 
+  50.
+    - **Section:** 01b_decisions_register
+    - **Kind:** architecture
+    - **Part:** #28 boot counting vs embloader
+    - **Anchor:** лічильник спроб через /etc/kernel/tries
+    - **Instruction:** Add: verify on the image whether the boot manager is Radxa embloader (sdboot-is-embloader) and whether it supports boot counting (+tries-left suffixes, systemd-bless-boot); re-audit A: embloader has no boot counting -> primary: purge sdboot-is-embloader and use real systemd-boot; if counting is not available, the Pico supervisor + a userspace A/B flag must provide the fallback.
+    - **Reason:** A/B plan depends on boot counting.
+    - **Sources:** operator_notes.md item 9; reaudit_A results[0] corrections[10]
+    - **Saving usd:** 
+  51.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #29 watchdog on 6.18.2-4
+    - **Anchor:** сторожовий таймер — QCOM_WDT
+    - **Instruction:** Replace with: hardware watchdog = Pico supervisor (heartbeat over UART7, acting through its J21 pin 3 / #2813 lines) if /dev/watchdog is missing on 6.18.2-4: gunyah_wdt.c is absent from the radxa-6.18.2 branch (GUNYAH_WATCHDOG unset) and the APSS watchdog node is 'reserved' for Gunyah (re-audit A). Optional second layer: an out-of-tree lab-gunyah-wdt module only if its probe passes (re-audit A). Consequence-cell: check /dev/watchdog on the held image.
+    - **Reason:** QCOM_WDT cannot bind on the held kernel.
+    - **Sources:** operator_notes.md item 3; reaudit_A results[0] confirmed[10,11], corrections[4]
+    - **Saving usd:** 
+  52.
+    - **Section:** 01b_decisions_register
+    - **Kind:** correction
+    - **Part:** #29 kernel config clarifications
+    - **Anchor:** Не зібрано: PPS_CLIENT_GPIO, PPS_CLIENT_LDISC, PINCTRL_MCP23S08.
+    - **Instruction:** Add: CONFIG_PPS_CLIENT_GPIO=m exists only in radxa_qcom_7_0_defconfig (kernel 7.0 branch, commit 4ff8ac9, 14.10.2026), so DKMS pps-gpio stays while 6.18.2-4 is held. The 6.18.2 config has CONFIG_LSM without apparmor (AppArmor inactive by default) and CONFIG_RTC_DRV_DS1307=m (covers M41T11-class RTCs such as the on-board RS4C411).
+    - **Reason:** Clarified kernel facts.
+    - **Sources:** operator_notes.md item 4; reaudit_D results[1] confirmed[12]
+    - **Saving usd:** 
+  53.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #29 gr-satellites not from apt
+    - **Anchor:** gr-satellites 5.5.0, SoapySDR 0.8.1
+    - **Instruction:** Remove gr-satellites 5.5.0 from the noble-apt list: issue #803 (16.03.2026) path traversal in the QO-100 multimedia file receiver/file reassembly allows arbitrary file write; #820 chains it to code execution via a Python .pth file; fix PR #832 merged 29.05.2026 (merge 1bcf1d8). Build gr-satellites from a pinned commit at or after the fixes as a +labN deb (re-audit A: main 4210dc45 as 5.10.0~git20260922-0lab1 against GNU Radio 3.10.9.2, noble gr-satellites pinned -1), or disable the file receivers if that is not possible. Over-the-air data is untrusted input.
+    - **Reason:** Security.
+    - **Sources:** operator_notes.md item 8; reaudit_A results[1] confirmed[17], corrections[14]
+    - **Saving usd:** 
+  54.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #30 SatDump pipeline allowlist + no sinks
+    - **Anchor:** master (2.0.0-alpha) з джерел із Soapy і legacy API LimeSuiteNG; без inmarsat_support
+    - **Instruction:** Add: only allowlisted pipeline JSONs are packaged (civil weather/science/amateur, named one by one; see 5.4); every *_sdr_sink and the audio sink compiled out; CI fails on any pipeline outside the allowlist and on any SDR sink.
+    - **Reason:** Rule gaps (military/encrypted pipelines; TX sinks).
+    - **Sources:** operator_notes.md item 1, 14, 23; reaudit_C results[2] corrections[0,1]
+    - **Saving usd:** 
+  55.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #32 SDRangel channelrx allowlist
+    - **Anchor:** SDRangel 7.27.2 RX-only з джерел на Qt 5.15, з аудитом TX-плагінів.
+    - **Instruction:** Add: build with ENABLE_CHANNELRX_DEMODINMARSAT=OFF (else INMARSATC_FOUND builds full Inmarsat-C decoding, bypassing the egc-gate), demoddsd (DMR/dPMR/NXDN/P25 digital voice) OFF, demodpager OFF, and every other decoder of private traffic OFF (re-audit A also names demodm17, demodfreedv, demodchirpchat); keep an explicit channelrx allowlist: AM/NFM/SSB/WFM, ADS-B (only with our display rules dbFlags &1/&4/&8 - otherwise off), AIS (only with type-35 suppression - otherwise off), APT, NAVTEX/RTTY on allowed channels, FT8 decode-only, radiosonde, VOR/ILS, DAB broadcast, channel power; heat map OFF (no-geolocation rule); next to the TX-plugin audit.
+    - **Reason:** Private-content rule gap.
+    - **Sources:** operator_notes.md item 33; reaudit_A results[1] corrections[8]
+    - **Saving usd:** 
+  56.
+    - **Section:** 01b_decisions_register
+    - **Kind:** bench_test
+    - **Part:** #36 FastRPC: dpkg -V before fastrpc_test
+    - **Anchor:** Перевірка: fastrpc_test -a v68 проходить 3/3.
+    - **Instruction:** Add before it: 'dpkg -V radxa-firmware-qcs6490 fastrpc libcdsprpc1' must be clean before fastrpc_test; never copy DSP files by hand (forum 31078: FASTRPC_IOCTL_INIT_CREATE 0x80000600 on CDSP was fixed by a DT fix plus restoring a clean DSP payload tree; dpkg -V showed mismatched DSP files such as /usr/lib/dsp/cdsp/fastrpc_shell...).
+    - **Reason:** NPU bring-up failure mode.
+    - **Sources:** operator_notes.md item 18; reaudit_A results[0] bench_tests[5]; reaudit_A results[3] corrections[3]
+    - **Saving usd:** 
+  57.
+    - **Section:** 01b_decisions_register
+    - **Kind:** rule
+    - **Part:** #38 QAIRT pin vs PPA 2.49
+    - **Anchor:** QAIRT 2.42.0.251225 на пристрої (qcom-qnn-sdk-v68 0.1.0-2)
+    - **Instruction:** Add: the qcom-ppa 2.49.0 QNN/QAIRT packages are pinned -1 (forum 31462: YOLOv8n output collapse with 2.49 on QCS6490).
+    - **Reason:** Package pinning.
+    - **Sources:** operator_notes.md item 15
+    - **Saving usd:** 
+  58.
+    - **Section:** 01b_decisions_register
+    - **Kind:** decision
+    - **Part:** #81 L-band GEO references for Europe
+    - **Anchor:** опорне L-band джерело — NCS Inmarsat-C першим, FY-2H другим, Elektro-L LRIT — лише якщо чути
+    - **Instruction:** Replace with: Europe - the Inmarsat NCS (Alphasat or I-4) first (the only robust GEO L-band reference in western Europe, re-audit C); Elektro-L3 at 14.5W is the primary European GEO LRIT target if station-kept there and transmitting (confirm longitude and LRIT status before first light); Elektro-L5 76E and FY-2H 79E only where visible (about east of 13E).
+    - **Reason:** Region decision + Europe targets.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 16, 19; reaudit_C results[2] corrections[3]
+    - **Saving usd:** 
+  59.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** rule
+    - **Part:** BOM price basis (EU landed)
+    - **Anchor:** Ціни — USD без доставки, імпортного ПДВ і мита (база змішана — див. «Позначки» вгорі).
+    - **Instruction:** Add: for the Europe-based user every EU seller also gets EUR incl. VAT, and every non-EU seller (UK, US, CN) gets its EU landed cost per the landed-cost rule (EU landed cost for a non-EU seller = price + shipping + import VAT + EUR 3 x tariff lines (consignment intrinsic value <= EUR 150 sold via IOSS or sent by post; above EUR 150 normal duty by origin, tariff classification and value) + EUR 2 x tariff lines (Union handling fee, distance sales, any value, non-refundable, expected from about 1 Nov 2026; delegated act C(2026)6694 still under scrutiny, re-check the start date before ordering) + any carrier handling fee); prefer EU-stock sellers when the price is equal or close; small multi-line non-EU orders (AliExpress, LCSC, Adafruit, Pi Hut, Pololu direct) are penalised most.
+    - **Reason:** Cost rule.
+    - **Sources:** operator_notes.md item 34, 35
+    - **Saving usd:** 
+  60.
+    - **Section:** 02a_bom_compute_receivers_rf
+    - **Kind:** condition
+    - **Part:** V4L sourcing/genuineness
+    - **Anchor:** Високий ризик підробок: лише офіційні канали, ніяких синіх корпусів, «Pro» чи копій «V4».
+    - **Instruction:** Add: RTL-SDR Blog says the Blog V4 is end-of-line and most 'Blog V4' listings elsewhere are clones; buy V4L only from rtl-sdr.com/store official resellers; on arrival check the R828S tuner string and the 'Blog V4L' USB product string.
+    - **Reason:** Counterfeit risk.
+    - **Sources:** operator_notes.md item 21
+    - **Saving usd:** 
+  61.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** decision
+    - **Part:** QO-100 bare LNB + cone into patch tier
+    - **Anchor:** Голий Bullseye з конусом 11 см (залежить від регіону) — у 2.11.
+    - **Instruction:** Region = Europe: move the bare Bullseye with the 11 cm cone (Othernet Bullseye TCXO LNB, F/75 Ohm parts, LNB injector choke >=1 A, cone materials) into this patch tier as a bought row (seller/price per the P5 G6 QO-100 decision and the EU landed rule) and recompute the group total; remove '(залежить від регіону) — у 2.11'.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 10
+    - **Saving usd:** 
+  62.
+    - **Section:** 02b_bom_antennas
+    - **Kind:** decision
+    - **Part:** QO-100 horn materials into foldable tier
+    - **Anchor:** Матеріали рупора QO-100 — у 2.11 (залежить від регіону).
+    - **Instruction:** Region = Europe: move the QO-100 horn materials into the foldable tier as a bought row and recompute the group total.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  63.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** decision
+    - **Part:** LimeSDR Micro: from optional to core
+    - **Anchor:** | Широкосмуговий SDR | LimeSDR Micro M.2 2280 Basic + $18 доставка + 2× MHF4L-SMA |
+    - **Instruction:** Move this row out of 2.11 into the core device BOM (Lime kept, default build). Note: 'Залишено (рішення користувача 18.10.2026); не допустити спливання слоту; відвантаження 15.12.2026, повне повернення лише до відвантаження; аналог — лише до 1.12.2026'. Seller/price/cable split per P5 G6 decision 6, with the EU landed cost (non-EU seller: import VAT, duty above EUR 150, EUR 2 UHF per line from about 1 Nov 2026, courier fee).
+    - **Reason:** User decision + cost rule.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 10, 35
+    - **Saving usd:** 
+  64.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** architecture
+    - **Part:** Lime-only parts: core + M.2 3.3 V load switch
+    - **Anchor:** | Деталі Lime | ADT-Link R44SF 5 см
+    - **Instruction:** Move into the core BOM; replace 'Лише якщо Lime залишено' with the default-build note; add a labd-controlled load switch on the M.2 riser 3.3 V (part to be chosen in P5/bench; G3 notes a TPS2553 at 1.5 A max may be marginal for the Lime, which draws about 4 W on the M.2 3.3 V per G6), price not determined (status: модель).
+    - **Reason:** Operator note 30 (Lime power-cycle recovery).
+    - **Sources:** operator_notes.md item 30; analogs_G3 decision 11 stack_changes; analogs_G6 decision 6
+    - **Saving usd:** 
+  65.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** decision
+    - **Part:** T7: from optional to core
+    - **Anchor:** | Зовнішній SSD | Samsung T7 1 TB |
+    - **Instruction:** Move into the core BOM (default with Lime); replace 'лише з Lime; переоцінити на воротах' with: default build; deauthorized (authorized=0) or forced to USB 2 during L-band, GNSS and S-band sessions; price per the P5 G6 T7 decision.
+    - **Reason:** User decision + operator note 7.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 7
+    - **Saving usd:** 
+  66.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** decision
+    - **Part:** QO-100 set: bought (Europe)
+    - **Anchor:** | Набір QO-100 | Othernet Bullseye TCXO LNB
+    - **Instruction:** Region = Europe: the set is bought; move it out of 2.11 into the antenna tiers (patch: bare LNB + cone; foldable: horn materials). Replace 'Утримано до визначення регіону' and 'не зволікати після визначення регіону' with 'купувати зараз (Technofix уже немає в наявності)'; prices per P5 G6 decision 9 and the EU landed rule.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 10
+    - **Saving usd:** 
+  67.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** decision
+    - **Part:** 2.11 group total
+    - **Anchor:** | **Підсумок групи** | | | **932.79-1,156.84 (≈933-1,157)** |
+    - **Instruction:** Recompute 2.11 without the Lime set (board, parts, T7) and without the QO-100 set; update the footnote that lists 'Lime-набір ... близько $596-681; QO-100 $48-75' accordingly.
+    - **Reason:** Items moved into core/antenna tiers.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  68.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** decision
+    - **Part:** 2.12 tier and summary totals
+    - **Anchor:** | optional / за воротами | не в підсумках |
+    - **Instruction:** Recompute the tier table and the summary table: core now includes the Lime set; patch/foldable tiers include the QO-100 add-on; 'Пристрій (core), основний варіант' = with Lime; add EU-landed totals next to the USD base (landed-cost rule). Do not reuse v1 figures for the changed rows.
+    - **Reason:** User decision + cost rule.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 10, 34, 35
+    - **Saving usd:** 
+  69.
+    - **Section:** 02e_bom_optional_totals
+    - **Kind:** decision
+    - **Part:** Device weight with Lime as default
+    - **Anchor:** **Вага (модель):** пристрій близько 1.5-1.7 kg без Lime
+    - **Instruction:** Present the with-Lime device weight as the default (sum of parts + 0.15 kg, model); the no-Lime figure only as fallback.
+    - **Reason:** User decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  70.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** decision
+    - **Part:** Lime GPS-disciplined VCTCXO capability
+    - **Anchor:** | Керування VCTCXO Lime від GPS | лише якщо Lime залишено | optional |
+    - **Instruction:** Lime kept: replace 'лише якщо Lime залишено' with 'Lime (збірка за замовчуванням)' and the tier 'optional' with the default build tier.
+    - **Reason:** User decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  71.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** decision
+    - **Part:** Procedures with Lime steps
+    - **Anchor:** | P7 | Зовнішня опора LimeSDR Micro (експеримент) | Лише якщо Lime залишено. |
+    - **Instruction:** Lime kept: P7 applies (experiment). Also change P4 'кроки з Lime — за умовою', P5 'Частина з VCTCXO Lime — за умовою', P14 'Частини з Lime — за умовою' and P18 'кроки з T7 — за умовою' to 'входять у збірку за замовчуванням'.
+    - **Reason:** User decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  72.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** rule
+    - **Part:** Survey mask incl. 1544-1545 MHz
+    - **Anchor:** 3-30 kHz і 225-400 MHz зберігаються як «no data»
+    - **Instruction:** Add 1544.0-1545.0 MHz (Cospas-Sarsat MEOSAR/LEOSAR) to the bands stored as «no data».
+    - **Reason:** Rule item 17.
+    - **Sources:** operator_notes.md item 17
+    - **Saving usd:** 
+  73.
+    - **Section:** 03b_lab_capabilities_procedures_totals
+    - **Kind:** decision
+    - **Part:** 3.6 totals with Lime/QO-100 and EU landed
+    - **Anchor:** | Пристрій + обидва рівні антен + bench | 3,760-4,896 |
+    - **Instruction:** Recompute the device + antenna + bench and 'Усе, крім опційного' lines with the Lime set in core and the QO-100 add-on in the antenna tiers; add EU-landed totals (landed-cost rule).
+    - **Reason:** User decision + cost rule.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 35
+    - **Saving usd:** 
+  74.
+    - **Section:** 04_capabilities
+    - **Kind:** decision
+    - **Part:** QO-100 CW beacon row: no region gate
+    - **Anchor:** на межі — за воротами регіону (LNB у необов'язковому наборі)
+    - **Instruction:** Replace with 'на межі (Європа: QO-100 у зоні покриття, LNB купується)'; elevation from the fix (Alphasat/QO-100 about 25-26E is 12-46 deg over Europe, re-audit C).
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; reaudit_C results[2] corrections[3]
+    - **Saving usd:** 
+  75.
+    - **Section:** 04_capabilities
+    - **Kind:** decision
+    - **Part:** QO-100 PSK row: no region gate
+    - **Anchor:** PSK — на межі лише через ворота регіону
+    - **Instruction:** Replace with 'PSK — на межі (Європа)'.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  76.
+    - **Section:** 04_capabilities
+    - **Kind:** decision
+    - **Part:** S-band row: Lime kept
+    - **Anchor:** | S-band | ті самі | складаний + Lime (лише якщо залишено) |
+    - **Instruction:** Replace '(лише якщо залишено)' with '(залишено; збірка за замовчуванням)'; decoder cell: SatDump only with allowlisted civil/amateur pipelines (military S-band pipelines in 2170-2300 MHz are not packaged).
+    - **Reason:** User decision + allowlist rule.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 1, 14
+    - **Saving usd:** 
+  77.
+    - **Section:** 04_capabilities
+    - **Kind:** decision
+    - **Part:** Elektro / FY-2H rows for Europe
+    - **Anchor:** | FY-2H несуча / Elektro-L LRIT |
+    - **Instruction:** Restructure into: (a) Elektro-L3 LRIT 1691 MHz at 14.5W, helicone, on the edge - primary European GEO LRIT target if station-kept there and transmitting (TLE epoch 9.10.2026: about 6.7W drifting -3.07 deg/day west, reaching 14.5W about 12.10.2026, matching the rtl-sdr.com note; status since 9.10 unknown; becomes a target automatically when stationary; 8-45 deg over Europe, re-audit C); confirm the station-kept longitude and LRIT status before first light. (b) Elektro-L5 76.05E (WMO OSCAR 'Commissioning', updated 20.04.2026) and FY-2H 79E ('Operational, limited access'): location-dependent - below the horizon in Iberia/Ireland/UK, usable only east of about 13E (about 6-12 deg central Europe, about 18-21 deg south-east). (c) GOES-East 75.2W only at the far west edge (<=9.9 deg from Lisbon), not from central/eastern Europe. Replace 'статус Elektro-L5 непевний; залежить від регіону'. Keep the separate re-audit C correction of the LRIT margin basis.
+    - **Reason:** Region decision; Europe GEO targets.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 5, 16, 19; reaudit_C results[2] confirmed[7,8,9], corrections[3,4]
+    - **Saving usd:** 
+  78.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** Inmarsat-C row: Europe NCS + Cospas sub-band
+    - **Anchor:** NCS шукати скануванням 1537-1545 MHz лише за потужністю, демодулювати лише кандидата NCS (#2)
+    - **Instruction:** Add: Europe - the European ocean-region NCS (Alphasat or I-4) is confirmed by this power-only scan before the egc-gate; the 1544.0-1545.0 MHz part (Cospas-Sarsat MEOSAR/LEOSAR downlinks) is power-only, never demodulated, decoded or logged, and masked as «no data».
+    - **Reason:** Region decision + rule item 17.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 17
+    - **Saving usd:** 
+  79.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** GNSS row: SBAS = EGNOS
+    - **Anchor:** EGNOS → «regional SBAS» (WAAS, MSAS, GAGAN за видимістю)
+    - **Instruction:** Replace with 'SBAS = EGNOS (Європа; gpsd: gnssid 1, PRN 120-158)' and add the jamming gate note (EASA SIB 03.07.2026: on jamming/spoof flags labd stops PPS/NMEA disciplining).
+    - **Reason:** Region decision; operator notes 22/27.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 22, 27
+    - **Saving usd:** 
+  80.
+    - **Section:** 04_capabilities
+    - **Kind:** decision
+    - **Part:** US-only profiles off in Europe
+    - **Anchor:** | HD Radio, NOAA SAME, UAT | — | обидва | на межі — лише регіональний профіль US |
+    - **Instruction:** Status becomes 'вимкнено (регіон Європа)': UAT 978, HD Radio and NOAA SAME/EAS stay off; nrsc5, multimon-ng and dump978-fa are not installed in the Europe build.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  81.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** ADS-B row: PIA/LADD + no dump978
+    - **Anchor:** треки з dbFlags&1 (військові) не показуються і не логуються; фільтри military/interesting у tar1090 вимкнено
+    - **Instruction:** Change to: tracks with dbFlags &1 (military), &4 (PIA) and &8 (LADD) are not shown and not logged; the 'interesting' filter stays off. In the decoder cell of the same row replace 'dump978-fa — лише профіль US' with 'dump978-fa не встановлюється (Європа; закріплено −1)'.
+    - **Reason:** Privacy rule + region decision.
+    - **Sources:** operator_notes.md item 25, 31; user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  82.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** Time signals priority (Europe)
+    - **Anchor:** | ДХ-сигнали часу | DCF77 77.5 kHz, MSF/WWVB 60 kHz, JJY 40/60 kHz, TDF 162 kHz |
+    - **Instruction:** Add 'Європа: спершу DCF77, MSF, TDF' in the margin cell.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  83.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** DRM decoder
+    - **Anchor:** | OpenWebRX+, SDRangel (DRM) |
+    - **Instruction:** Change to: DRM only through a source-patched RX-only Dream (the packaged dream 2.2-20251114 has a DRM transmitter mode and is pinned -1); SDRangel 7.27.2 has no DRM plugin (re-audit B).
+    - **Reason:** No-TX-software rule + pin list.
+    - **Sources:** operator_notes.md item 31; reaudit_B results[1] corrections[5]
+    - **Saving usd:** 
+  84.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** 4.3 Cospas-Sarsat row
+    - **Anchor:** | Cospas-Sarsat 406.0-406.1 MHz і 1544.5 MHz, ARGOS/DCP, Yunhai-1, GRAVES |
+    - **Instruction:** Change '1544.5 MHz' to '1544.0-1545.0 MHz (MEOSAR/LEOSAR downlinks)' and in the reason cell add: distress-beacon traffic carries beacon IDs and positions of people in distress - power-only in the NCS scan, no demodulation, decoder or logging, masked «no data» in surveys.
+    - **Reason:** Rule item 17.
+    - **Sources:** operator_notes.md item 17
+    - **Saving usd:** 
+  85.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** 4.3 ADS-B privacy row
+    - **Anchor:** | Військові випромінювачі в ADS-B / AIS | dbFlags&1 і тип 35 не показуються і не логуються. |
+    - **Instruction:** Add a row after it: 'ADS-B PIA (dbFlags&4) і LADD (dbFlags&8)' - owners asked not to be displayed; not shown or logged, same handling as &1.
+    - **Reason:** Privacy rule.
+    - **Sources:** operator_notes.md item 25
+    - **Saving usd:** 
+  86.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** 4.3 codec/TETRA packages
+    - **Anchor:** | Пейджери, транкінг, DMR/TETRA/P25 (вміст), ACARS/HFDL, GSM (gr-gsm, kalibrate) | Декодери заборонені; DMR/P25 — лише безіменна зайнятість. |
+    - **Instruction:** Add to the reason cell: dxlaprs-tetra, codecserver-driver-*, libacars* (incl. libacars-tools) and digiham are pinned -1 with a pattern pin.
+    - **Reason:** Pin list gap.
+    - **Sources:** operator_notes.md item 31
+    - **Saving usd:** 
+  87.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** 4.3 new rows: SatDump pipelines and OpenWebRX+ modes
+    - **Anchor:** | CARTOSAT-3 | Подвійного призначення; не обґрунтовує S-band. |
+    - **Instruction:** Add rows after this one: (1) 'SatDump pipelines поза алоу-листом' - Cosmos-2558 S-band dump (2284.0 MHz), DMSP RTD (2252.5 MHz), Yunhai AHRPT encrypted (1704.0 MHz), syracuse3_tlm (French military SATCOM telemetry), wsf_m_db (US Space Force WSF-M), angels_l_band (US Air Force research satellite), any encrypted or military-operated pipeline: not packaged, not in the menu, CI test. (2) 'OpenWebRX+ режими поза алоу-листом' - page (POCSAG), selcall, wmbus (smart-meter data), ism (sensors), lora-wan, meshcore, meshcom (LoRa mesh messaging): private messages or household data; off and requirement packages uninstalled.
+    - **Reason:** Rule items 1, 14, 32.
+    - **Sources:** operator_notes.md item 1, 14, 32
+    - **Saving usd:** 
+  88.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** Survey row mask incl. 1544-1545 MHz
+    - **Anchor:** Лише зайнятість; 3-30 kHz і 225-400 MHz маскуються в «no data» до запису
+    - **Instruction:** Add 1544.0-1545.0 MHz to the masked bands.
+    - **Reason:** Rule item 17.
+    - **Sources:** operator_notes.md item 17
+    - **Saving usd:** 
+  89.
+    - **Section:** 04_capabilities
+    - **Kind:** rule
+    - **Part:** CubeSat decoder: pinned gr-satellites
+    - **Anchor:** 0.5 W і 19k2+ — недоступно | gr-satellites 5.5
+    - **Instruction:** Replace 'gr-satellites 5.5' by the pinned gr-satellites build (fixed file receiver; submit_tlm=false) in this row and in the next CubeSat row ('+5.7 dB на 10°, +11 dB на 30° | gr-satellites 5.5 / SatDump |').
+    - **Reason:** Security.
+    - **Sources:** operator_notes.md item 8, 11
+    - **Saving usd:** 
+  90.
+    - **Section:** 05a_arch_power
+    - **Kind:** decision
+    - **Part:** Bus table: with-Lime values as default
+    - **Anchor:** **Таблиця шин**
+    - **Instruction:** In every row make the with-Lime value the default and the no-Lime value the fallback (PACK peak 4.6 A; SYS12 about 4 A peak; J21 2.5 A peak; LAB5 2.3 A with RTL-A on the hub; VCC_5V_PERI about 11.8 W typical, gate <=14 W measured).
+    - **Reason:** User decision (power budget must switch to with-Lime).
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 10
+    - **Saving usd:** 
+  91.
+    - **Section:** 05a_arch_power
+    - **Kind:** architecture
+    - **Part:** Topology: Lime M.2 3.3 V load switch
+    - **Anchor:** Від SW: D36V50F12 → SYS12 (J21, DISP12, AUX12); D36V28F5 → LAB5; TPS7A4701 → LNB 13.2 V; TPS7A4701 → BONI 12.5 V.
+    - **Instruction:** Add: 'M.2 3.3 V Q6A → ключ навантаження під labd → riser R44SF → LimeSDR Micro' (power-cycles the Lime after a VSPA-DMA hang without rebooting the Q6A; PCIe link torn down first).
+    - **Reason:** Operator note 30.
+    - **Sources:** operator_notes.md item 30; reaudit_B results[2] new_risks[0]
+    - **Saving usd:** 
+  92.
+    - **Section:** 05a_arch_power
+    - **Kind:** architecture
+    - **Part:** Bus table: new LIME3V3 row
+    - **Anchor:** | BONI12V5 | SW → LC → TPS7A4701 |
+    - **Instruction:** Add a row after BONI12V5: LIME3V3 | Q6A M.2 3.3 V -> labd-controlled load switch (part chosen in P5/bench; TPS2553 at 1.5 A max may be marginal, G3) -> riser R44SF | 3.3 V | switch current limit | labd, EN on a free MCP23017 output, off only after the PCIe link is torn down | LimeSDR Micro M.2 | about 4 W (G6, model).
+    - **Reason:** Operator note 30.
+    - **Sources:** operator_notes.md item 30; analogs_G3 decision 11; analogs_G6 decision 6
+    - **Saving usd:** 
+  93.
+    - **Section:** 05a_arch_power
+    - **Kind:** decision
+    - **Part:** Runtime table: mode H is the default session
+    - **Anchor:** | H Lime типово: 56 Msps + T7 + RTL-B | 30.8 | 1.9 год | 1.6 год |
+    - **Instruction:** Mark mode H as the default typical session of the build (user accepts about 1.9 h instead of 3.3 h for mode B without Lime, model).
+    - **Reason:** User decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  94.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** decision
+    - **Part:** USB map: with-Lime column default
+    - **Anchor:** **Карта USB** (схема v1.21; незалежна від Lime)
+    - **Instruction:** State that the 'з Lime' column is the default build and 'без Lime' the fallback: J5 bottom = T7; CH334F H2 = RTL-A.
+    - **Reason:** User decision (USB map must switch).
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 10
+    - **Saving usd:** 
+  95.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** T7 deauthorized during L-band/GNSS/S-band
+    - **Anchor:** T7 на власному VBUS, зовні на нижньому краї
+    - **Instruction:** Add: labd deauthorizes the T7 (authorized=0 after sync) or forces the port to USB 2 during L-band, GNSS and S-band sessions (an idle SuperSpeed link still radiates).
+    - **Reason:** Operator note 7.
+    - **Sources:** operator_notes.md item 7
+    - **Saving usd:** 
+  96.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** decision
+    - **Part:** CH334F #2 condition
+    - **Anchor:** встановлюється за H1 лише якщо Lime залишено І UART7 не працює, або з'явиться п'ятий внутрішній пристрій
+    - **Instruction:** Replace with 'Lime залишено, тож встановлюється за H1, якщо не працює UART7 або з'явиться п'ятий внутрішній пристрій'.
+    - **Reason:** User decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  97.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** architecture
+    - **Part:** MCP output for Lime 3.3 V switch
+    - **Anchor:** **MCP23017 #3, виходи:** GPA7 enable LNA ch4 (WIDE, опційно) і GPB7 VBUS T7 (лише Lime).
+    - **Instruction:** Replace '(лише Lime)' with '(збірка з Lime — за замовчуванням)' and add: one more output is needed for the EN of the Lime M.2 3.3 V load switch (assign in the schematic). With the 100k pull-downs the boot state leaves the Lime unpowered, so labd must enable it and rescan PCIe (or the EN polarity is inverted) - verify on the bench.
+    - **Reason:** Operator note 30.
+    - **Sources:** operator_notes.md item 30
+    - **Saving usd:** 
+  98.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** rule
+    - **Part:** Pin 7 / gpio96 mi2s0
+    - **Anchor:** | 7 | GPIO96 (UM3304) | вхід PPS, дріт ≤20 см | ядро pps-gpio |
+    - **Instruction:** Add to the usage cell: gpio96 is also defined as mi2s0_mclk (pri_mi2s) in the QCS6490 DTS; no enabled MI2S/audio node may claim it; bring-up confirms ownership by pps-gpio in /sys/kernel/debug/pinctrl.
+    - **Reason:** Operator note 26.
+    - **Sources:** operator_notes.md item 26
+    - **Saving usd:** 
+  99.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** decision
+    - **Part:** P4 LNB injector choke fitted
+    - **Anchor:** інжектор LNB (дросель ≥1 A — встановлюється після воріт регіону, C23; DC-блок)
+    - **Instruction:** Replace 'встановлюється після воріт регіону, C23' with 'встановлюється (регіон — Європа)'.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  100.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** decision
+    - **Part:** Tract table header
+    - **Anchor:** **Тракти за цілями** (без Lime)
+    - **Instruction:** Rename '(без Lime)' to '(RTL і HF+; тракти Lime — рядок «Лише з Lime» у таблиці портів, тепер у збірці за замовчуванням)'.
+    - **Reason:** User decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  101.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** decision
+    - **Part:** QO-100 tract not held
+    - **Anchor:** | QO-100 NB (утримано до регіону) |
+    - **Instruction:** Replace with '| QO-100 NB (Європа; LNB купується) |'.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  102.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** bench_test
+    - **Part:** LNB IF penetration check now
+    - **Anchor:** проникнення DVB-T і LTE B28 перевірити, коли відомий регіон
+    - **Instruction:** Replace with: region = Europe - check DVB-T (734-742 MHz) and LTE B28 penetration near the LNB IF on the bench and on site.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  103.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** correction
+    - **Part:** Bias-tee token scope
+    - **Anchor:** Трійники V4L у core вимкнені (токен librtlsdr, bias в EEPROM вимкнено)
+    - **Instruction:** Add: the token gates only GPIO0 (the bias-tee pin); GPIO5 V4L band/input switching is never gated; blacklist file for dvb_usb_rtl28xxu, rtl2832, rtl2830, r820t; 0 V on the bias rail at plug-in with no token.
+    - **Reason:** Operator notes 12, 12b, 12c.
+    - **Sources:** operator_notes.md item 12, 12b, 12c
+    - **Saving usd:** 
+  104.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** rule
+    - **Part:** ADS-B tract privacy
+    - **Anchor:** Оренда readsb; треки з dbFlags&1 придушено
+    - **Instruction:** Change to 'треки з dbFlags&1, &4 (PIA) і &8 (LADD) придушено'.
+    - **Reason:** Privacy rule.
+    - **Sources:** operator_notes.md item 25
+    - **Saving usd:** 
+  105.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** rule
+    - **Part:** GNSS tract: EGNOS
+    - **Anchor:** | GNSS L1 / regional SBAS |
+    - **Instruction:** Replace 'regional SBAS' with 'EGNOS'.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  106.
+    - **Section:** 05b_arch_bus_rf
+    - **Kind:** rule
+    - **Part:** Survey tract mask
+    - **Anchor:** Лише зайнятість; 3-30 kHz і 225-400 MHz — «no data»
+    - **Instruction:** Add 1544.0-1545.0 MHz to the «no data» bands.
+    - **Reason:** Rule item 17.
+    - **Sources:** operator_notes.md item 17
+    - **Saving usd:** 
+  107.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** decision
+    - **Part:** Kernel cmdline: Lime params default
+    - **Anchor:** # лише з Lime: pcie_aspm=off isolcpus=nohz,domain,managed_irq,7 nohz_full=7 rcu_nocbs=7 irqaffinity=0-6
+    - **Instruction:** Change the comment to '# збірка з Lime (за замовчуванням):' - these parameters are in the default cmdline; drop them only in the no-Lime fallback.
+    - **Reason:** User decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  108.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** Base system: kernel debs from GitHub release
+    - **Anchor:** Radxa OS r2 (noble) на SPI BIOS 6.0.260120, утримано linux-image-6.18.2-4-qcom.
+    - **Instruction:** Add: the 6.18.2-4 image/header debs come only from the GitHub release radxa-pkg/linux-qcom 6.18.2-4 (16 assets, checksums verified on day one, local apt repo on the device and an off-device copy); the r2 image ships 6.18.2-3; DKMS pps-gpio and the lab overlay are built against these headers; 7.0.11-7 only after the HDMI (topic 31304), FastRPC/NPU, PPS and EDID tests, and apt may never pull it onto slot A/B without that gate.
+    - **Reason:** Operator note 29.
+    - **Sources:** operator_notes.md item 29
+    - **Saving usd:** 
+  109.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** Base system: A/B boot counting caveat
+    - **Anchor:** A/B-корінь на UFS, systemd-boot з лічильником спроб і рятувальним пунктом
+    - **Instruction:** Add: on Radxa OS the boot manager may be Radxa embloader (sdboot-is-embloader), which has no boot counting (re-audit A); use real systemd-boot (purge sdboot-is-embloader), or the Pico supervisor + a userspace A/B flag as the fallback; verify on the image.
+    - **Reason:** Operator note 9.
+    - **Sources:** operator_notes.md item 9; reaudit_A results[0] corrections[10]
+    - **Saving usd:** 
+  110.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** bench_test
+    - **Part:** FastRPC: dpkg -V rule
+    - **Anchor:** Золотий набір FastRPC (CDSP c4-00004, ADSP c9-00028, оверлей shared-dma-pool)
+    - **Instruction:** Add: before fastrpc_test run 'dpkg -V radxa-firmware-qcs6490 fastrpc libcdsprpc1' (must be clean); never copy DSP files by hand (forum 31078).
+    - **Reason:** Operator note 18.
+    - **Sources:** operator_notes.md item 18
+    - **Saving usd:** 
+  111.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** labd policy list extensions
+    - **Anchor:** Політика: egc-gate (профіль вимкнений до тесту на змішаному записі)
+    - **Instruction:** Add to labd policy: SatDump pipeline allowlist (menu shows only allowlisted pipelines); 1544.0-1545.0 MHz power-only and masked; GNSS jamming/spoof gate (stop PPS/NMEA disciplining, RTC + last good fix marked stale, cold restart + re-send settings after exit); Lime rate floor >=7 Msps and Lime power-cycle via the M.2 3.3 V load switch.
+    - **Reason:** Operator notes 1, 14, 17, 27, 30.
+    - **Sources:** operator_notes.md item 1, 14, 17, 27, 30
+    - **Saving usd:** 
+  112.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** labd ADS-B suppression
+    - **Anchor:** придушення ADS-B dbFlags&1 і AIS тип 35
+    - **Instruction:** Change to 'придушення ADS-B dbFlags&1, &4 (PIA) і &8 (LADD) і AIS тип 35'.
+    - **Reason:** Privacy rule.
+    - **Sources:** operator_notes.md item 25
+    - **Saving usd:** 
+  113.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** bench_test
+    - **Part:** labd leases: EPERM test
+    - **Anchor:** Для кожної оренди пише тимчасові drop-in DevicePolicy=closed і DeviceAllow.
+    - **Instruction:** Add: leases only on system units; bring-up test - a decoder unit without the lease gets EPERM opening the leased /dev/bus/usb node; otherwise fall back to udev ACL/group ownership per lease (systemd #23198).
+    - **Reason:** Operator note 20.
+    - **Sources:** operator_notes.md item 20; reaudit_A results[2] corrections[6]
+    - **Saving usd:** 
+  114.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** labd: T7 deauthorization
+    - **Anchor:** драйвери приладів по serial, rfkill і деавторизація USB.
+    - **Instruction:** Add: deauthorization of the T7 (authorized=0 after sync) or forcing its port to USB 2 during L-band, GNSS and S-band sessions.
+    - **Reason:** Operator note 7.
+    - **Sources:** operator_notes.md item 7
+    - **Saving usd:** 
+  115.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** labrx: Lime rate floor
+    - **Anchor:** | labrx | C++ | Єдиний, хто відкриває SDR у режимі labrx (librtlsdr .so.2+lab, libairspyhf, LimeSuiteNG якщо є).
+    - **Instruction:** Replace 'LimeSuiteNG якщо є' with 'LimeSuiteNG (Lime залишено)' and add: Lime rates are refused below 7 Msps (firmware sysclk floor 30 MHz; re-audit B), narrow targets are decimated in software.
+    - **Reason:** Operator note 30.
+    - **Sources:** operator_notes.md item 30; reaudit_B results[2] corrections[0]
+    - **Saving usd:** 
+  116.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** gpsd/LC76G: AppArmor check, settings re-send, jam gate
+    - **Anchor:** LC76G: `$PAIR752,2,100` (PPS лише з 3D), `$PAIR391,1` (виявлення глушіння).
+    - **Instruction:** Add: (1) the LC76G loses its configuration on power loss: re-send the settings at every power-up from a gpsd ExecStartPre/labd init hook and read them back before trusting PPS (re-audit D: PPS via $PQTMCFGPPS,W,1,1,100,3,0,0*70 + $PQTMSAVEPAR*5A, read back $PQTMCFGPPS,R,1*6A; $PAIR391,1 kept). (2) On jamming ($PAIRSPF) or spoof flags labd stops PPS/NMEA disciplining of chrony; after exit cold restart ($PAIR006) and re-send. (3) The noble gpsd AppArmor profile allows only /dev/tty{,S,USB,AMA,ACM}[0-9]* while the LC76G is /dev/ttyHS1; the 6.18.2 config has CONFIG_LSM without apparmor, so check 'cat /sys/kernel/security/lsm; aa-status' at bring-up and add the local rule only if AppArmor is active.
+    - **Reason:** Operator notes 2, 22, 27.
+    - **Sources:** operator_notes.md item 2, 22, 27; reaudit_D results[1] corrections[0,12], bench_tests[11]
+    - **Saving usd:** 
+  117.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Location service on jamming
+    - **Anchor:** Резерв: останній добрий фікс з віком або ручні lat/lon / Maidenhead; таблиці міст немає.
+    - **Instruction:** Add: while a jamming/spoof flag is active the service falls back to RTC time + the last good fix, marked stale.
+    - **Reason:** Operator note 27.
+    - **Sources:** operator_notes.md item 27
+    - **Saving usd:** 
+  118.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** New paragraph: decoder isolation
+    - **Anchor:** **Політика пам'яті.**
+    - **Instruction:** Insert before this paragraph a new paragraph '**Ізоляція декодерів.**': over-the-air data is untrusted input; every decoder (gr-satellites, SatDump, AIS-catcher, readsb, auto_rx, multimon-ng where present, NPU services) runs as an unprivileged user under systemd with ProtectSystem=strict, ReadWritePaths= only its output directory, ProtectHome=yes, NoNewPrivileges=yes, no writable Python site-packages, and IPAddressDeny=any; only the TLE/OMM updater may reach the network, and only at home. gr-satellites: submit_tlm=false set explicitly (commit fb887cf fixed the disable logic).
+    - **Reason:** Security (#803/#820) and egress.
+    - **Sources:** operator_notes.md item 8, 11; reaudit_A results[1] corrections[14]
+    - **Saving usd:** 
+  119.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Menu: SatDump pipelines and Elektro entry
+    - **Anchor:** Satellites (LRPT, HRPT, Metop/FY «експериментально», Elektro LRIT
+    - **Instruction:** Add: the Satellites hub lists only allowlisted SatDump pipelines; 'Elektro LRIT' = Elektro-L3 at 14.5W when the TLE shows it stationary, Elektro-L5 only where visible.
+    - **Reason:** Operator notes 1, 14, 16, 19.
+    - **Sources:** operator_notes.md item 1, 14, 16, 19
+    - **Saving usd:** 
+  120.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** decision
+    - **Part:** Menu: QO-100 enabled
+    - **Anchor:** QO-100 NB і монітор маяків — за регіоном
+    - **Instruction:** Replace 'за регіоном' with 'увімкнено (Європа)'.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  121.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Menu: EGNOS
+    - **Anchor:** GNSS & Time («regional SBAS»)
+    - **Instruction:** Replace «regional SBAS» with «EGNOS».
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  122.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Menu: NCS scan
+    - **Anchor:** скан NCS 1537-1545 MHz (лише потужність, без демодуляції; див. #2)
+    - **Instruction:** Add: European NCS identified here before the egc-gate; 1544.0-1545.0 MHz (Cospas-Sarsat) - no carrier list/log.
+    - **Reason:** Rule item 17 + region decision.
+    - **Sources:** operator_notes.md item 17; user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  123.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** decision
+    - **Part:** Menu: GEO table
+    - **Anchor:** перевірка GEO-несучих з прапорцем «видно звідси»
+    - **Instruction:** Add Elektro-L3 at 14.5W to the GEO table and the 'visible from here' list; Elektro-L5/FY-2H/GOES-E marked location-dependent.
+    - **Reason:** Operator notes 16, 19.
+    - **Sources:** operator_notes.md item 16, 19
+    - **Saving usd:** 
+  124.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Allowed decoders: SatDump allowlist and gr-satellites pin
+    - **Anchor:** супутники — SatDump (без inmarsat_support), gr-satellites 5.5;
+    - **Instruction:** Replace with: SatDump with an ALLOWLIST of pipelines named one by one (re-audit C list: only Meteor-M.json, MetOp.json, AWS.json, FengYun-2.json and Elektro_Arktika.json with elektro_ggak_mqtt removed; GOES/GK-2A/FY-4 pipelines not in the Europe build; no other JSON or .json.inc; WorkingDirectory an empty root-owned directory, no user pipelines.json); hidden: Cosmos-2558 dump, DMSP RTD, Yunhai AHRPT (encrypted), syracuse3_tlm, wsf_m_db, angels_l_band and anything military-operated or encrypted; enforced in labd policy and the menu, CI test at build and in the device self-check (a deny regex only as a second layer, never the primary control); amateur CubeSat/ISS decoding via gr-satellites. gr-satellites = the pinned build at or after fix PR #832 (re-audit A: main 4210dc45 as 5.10.0~git20260922-0lab1), submit_tlm=false.
+    - **Reason:** Rule items 1, 14; security item 8.
+    - **Sources:** operator_notes.md item 1, 8, 14; reaudit_C results[2] corrections[0,3]; reaudit_A results[1] corrections[14]
+    - **Saving usd:** 
+  125.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Allowed decoders: SDRangel channelrx allowlist
+    - **Anchor:** SDRangel 7.27.2 RX-only (без TX/DSD-плагінів, demodinmarsat прибрано)
+    - **Instruction:** Add: built with ENABLE_CHANNELRX_DEMODINMARSAT=OFF, demoddsd and demodpager OFF and every other private-traffic decoder OFF; explicit channelrx allowlist (AM/NFM/SSB/WFM, ADS-B only with dbFlags &1/&4/&8 display rules, AIS only with type-35 suppression, APT, NAVTEX/RTTY on allowed channels, FT8 decode-only, radiosonde, VOR/ILS, DAB broadcast, channel power; heat map OFF), audited next to the TX-plugin audit.
+    - **Reason:** Rule item 33.
+    - **Sources:** operator_notes.md item 33
+    - **Saving usd:** 
+  126.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** decision
+    - **Part:** multimon-ng off in Europe
+    - **Anchor:** multimon-ng — лише EAS і лише в профілі US, через обгортку, що пропускає тільки `-a EAS`.
+    - **Instruction:** Add: region Europe - EAS profile off, multimon-ng not installed in the Europe build.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  127.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** OpenWebRX+ mode ALLOWLIST
+    - **Anchor:** а режими pager (POCSAG/FLEX), selcall і цифрового голосу вимкнені в закріпленому конфігу OpenWebRX+, з тестом, що їх немає в списку режимів
+    - **Instruction:** Replace with an ALLOWLIST of OpenWebRX+ modes: analog AM/FM/SSB/CW/SAM; NAVTEX/SITOR-B on MSI channels; WEFAX (civil only); FT8/FT4/WSPR decode-only via jt9/wsprd; SSTV decode-only; APRS/AX.25 amateur; AIS; ADS-B only with our display rules (dbFlags &1/&4/&8; otherwise off); CW/RTTY/PSK skimmers only on amateur bands (user_requirements P2 rule). Everything else is off - page (POCSAG), selcall, wmbus (wireless M-Bus smart-meter data), ism (rtl_433-style sensors), lora-wan, meshcore, meshcom (LoRa mesh messaging), digital voice - and the requirement packages of non-allowlisted modes stay uninstalled; test: the mode list equals the allowlist.
+    - **Reason:** Rule item 32.
+    - **Sources:** operator_notes.md item 32; user_requirements.md P2 (skimmers)
+    - **Saving usd:** 
+  128.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Pin list: pattern pins
+    - **Anchor:** Додатково закріплено на −1: js8call, rtl-433, digiham, codecserver, acarsdec, dumphfdl, dumpvdl2.
+    - **Instruction:** Add: dxlaprs-tetra, codecserver-driver-* (ambe3k, all), libacars-tools/libacars*, dream (unless the source-patched RX-only build), dump978-fa* (Europe build), multimon-ng (Europe build), limesuiteng-gui, gr-limesuiteng (and limesuiteng-cli unless its TX subcommands are compiled out); use a pattern pin (Package: codecserver* digiham* dxlaprs-tetra* ...).
+    - **Reason:** Rule items 28, 31; region decision.
+    - **Sources:** operator_notes.md item 28, 31; user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  129.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Forbidden: SatDump sinks, SDRangel private decoders, Lime TX packages
+    - **Anchor:** модуль recorder SDR++
+    - **Instruction:** Add to the forbidden list: SatDump *_sdr_sink plugins (bladerf, hackrf and any Lime/Soapy sink) and audio sink; SDRangel demodinmarsat, demoddsd, demodpager (and other private-traffic decoders); limesuiteng-gui, gr-limesuiteng; packaged dream; SatDump pipelines outside the allowlist.
+    - **Reason:** Rule items 23, 28, 31, 33, 1/14.
+    - **Sources:** operator_notes.md item 1, 14, 23, 28, 31, 33
+    - **Saving usd:** 
+  130.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Packaging: gr-satellites from source
+    - **Anchor:** Інше з apt: GNU Radio 3.10.9.2, VOLK 3.1.2, gr-satellites 5.5.0
+    - **Instruction:** Remove gr-satellites 5.5.0 from the apt list and add it to 'з джерел': pinned commit at or after fix PR #832 (merge 1bcf1d8) as +labN deb (re-audit A: main 4210dc45, 5.10.0~git20260922-0lab1), noble gr-satellites pinned -1; if not possible, disable the file receivers.
+    - **Reason:** Security item 8.
+    - **Sources:** operator_notes.md item 8; reaudit_A results[1] corrections[14]
+    - **Saving usd:** 
+  131.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** correction
+    - **Part:** Packaging: librtlsdr gate scope
+    - **Anchor:** librtlsdr: noble 2.0.1 з 0204c9c, 65f0658, виправленням zerocopy і патчем токена bias-tee; rtl_biast через divert; dvb_usb_rtl28xxu у чорному списку.
+    - **Instruction:** Specify: the token patch gates only gpio == 0 (rtlsdr_set_bias_tee_gpio and rtlsdr_set_bias_tee); GPIO5 band switching from 0204c9c passes; never the rtl-sdr-blog fork (offset-tuning bias hack, EEPROM force-bias); blacklist file dvb_usb_rtl28xxu, rtl2832, rtl2830, r820t; unit test: no token, tune 100 -> 400 -> 1090 MHz, input switches and bias rail stays 0 V; offset tuning without token -> 0 V.
+    - **Reason:** Operator notes 12, 12b, 12c.
+    - **Sources:** operator_notes.md item 12, 12b, 12c; reaudit_B results[3] corrections[0]
+    - **Saving usd:** 
+  132.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Packaging: LimeSuiteNG package set
+    - **Anchor:** Лише з Lime: la9310-limesdr-dkms+lab з -DBUILD_PLUGINS_AMARISOFT=OFF (CI падає на будь-якому amarisoft .so).
+    - **Instruction:** Replace 'Лише з Lime:' with 'Lime залишено:' and add: from the LimeSuiteNG Debian packaging only liblimesuiteng (+ TX-block patch), limesuiteng-soapysdr, limesuiteng-udev, limepcie-dkms (limesuiteng-legacyapi only if a consumer needs it); never limesuiteng-gui or gr-limesuiteng; limesuiteng-cli only with every TX subcommand compiled out (otherwise a patched RX-only diagnostic, also for the 'zero limeTRX drops' acceptance test); pin the rest to -1.
+    - **Reason:** Rule item 28.
+    - **Sources:** operator_notes.md item 28
+    - **Saving usd:** 
+  133.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** Packaging: qcom-ppa pins
+    - **Anchor:** Список −1; unattended-upgrades прибрано
+    - **Instruction:** Add to the -1 list: libqnn1, libqnn-dev, qairt-dsp-binaries (2.49.0) and linux-firmware-dragonwing (20260825) from ubuntu-qcom-iot/qcom-ppa (added by Radxa OS r2); QAIRT stays 2.42.0.251225.
+    - **Reason:** Rule item 15.
+    - **Sources:** operator_notes.md item 15
+    - **Saving usd:** 
+  134.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** Packaging: mirror kernel image debs
+    - **Anchor:** Сторонні deb дзеркаляться: OpenWebRX+ 1.2.126, linux-headers 6.18.2-4
+    - **Instruction:** Change 'linux-headers 6.18.2-4' to 'linux-image і linux-headers 6.18.2-4 (16 активів GitHub-релізу, контрольні суми, копія на пристрої й поза ним)'.
+    - **Reason:** Operator note 29.
+    - **Sources:** operator_notes.md item 29
+    - **Saving usd:** 
+  135.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** rule
+    - **Part:** NPU mask incl. 1544-1545 MHz
+    - **Anchor:** маска 3-30 kHz і 225-400 MHz діє для **всіх** боксів NPU
+    - **Instruction:** Add 1544.0-1545.0 MHz to this mask (all NPU boxes, MARK/SNAP, occupancy DB and export) and to its unit test (synthetic named-class signal at 1544.5 MHz).
+    - **Reason:** Rule item 17.
+    - **Sources:** operator_notes.md item 17
+    - **Saving usd:** 
+  136.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** decision
+    - **Part:** Roadmap: Lime work
+    - **Anchor:** Роботи з Lime — лише якщо Lime залишено 1.12.
+    - **Instruction:** Replace with: Lime kept - Lime work starts on delivery (ships 15.12.2026), acceptance within the 30-day guarantee.
+    - **Reason:** User decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  137.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** decision
+    - **Part:** IQ ring default with Lime
+    - **Anchor:** без Lime — **1.5 GiB**
+    - **Instruction:** Reorder: default (with Lime) 4 GiB + 3 GiB Burst; 1.5 GiB only in the no-Lime fallback.
+    - **Reason:** User decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  138.
+    - **Section:** 05c_arch_software_resources
+    - **Kind:** architecture
+    - **Part:** Storage: T7 unavailable during L-band/GNSS/S-band
+    - **Anchor:** З Lime — T7 1 TB на синьому порту (межа порту 395 MB/s = 1.76x від 224 MB/s)
+    - **Instruction:** Mark as default ('Збірка з Lime (за замовчуванням) — T7 ...') and add: the T7 is deauthorized (or on USB 2) during L-band, GNSS and S-band sessions, so it takes no overflow then (those sessions go to UFS).
+    - **Reason:** Operator note 7; user decision.
+    - **Sources:** operator_notes.md item 7; user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  139.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** bench_test
+    - **Part:** A/B state: T7 idle vs deauthorized
+    - **Anchor:** T7 (збірка з Lime)
+    - **Instruction:** Replace with 'T7 під'єднаний-простій проти деавторизованого (authorized=0) на 1541, 1575 і 1691 MHz (збірка з Lime — за замовчуванням)'.
+    - **Reason:** Operator note 7.
+    - **Sources:** operator_notes.md item 7; analogs_G6 decision 8
+    - **Saving usd:** 
+  140.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** correction
+    - **Part:** Lime section: T7 deauthorization, rate floor, power-cycle
+    - **Anchor:** T7 ніколи не пише під час сесій L-band, S-band чи GNSS
+    - **Instruction:** Replace with 'labd деавторизує T7 (authorized=0 після sync) або переводить порт на USB 2 під час сесій L-band, S-band чи GNSS'; add: Lime rates >=7 Msps only (VSPA-DMA hang below the firmware sysclk floor); hang recovery = power cycle through the M.2 3.3 V load switch. Also change the heading '**10. Lime (якщо залишено).**' to '**10. Lime (залишено; збірка за замовчуванням).**'.
+    - **Reason:** Operator notes 7, 30; user decision.
+    - **Sources:** operator_notes.md item 7, 30; user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  141.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** rule
+    - **Part:** Policy mask incl. 1544-1545 MHz
+    - **Anchor:** Біни 3-30 kHz і 225-400 MHz маскуються в «no data» до запису
+    - **Instruction:** Add 1544.0-1545.0 MHz (Cospas-Sarsat) to the masked bins and a synthetic 1544.5 MHz carrier to the unit test.
+    - **Reason:** Rule item 17.
+    - **Sources:** operator_notes.md item 17
+    - **Saving usd:** 
+  142.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** decision
+    - **Part:** Under-Lime mechanics: kept
+    - **Anchor:** J21 випаюється лише після прогону і лише якщо Lime залишено
+    - **Instruction:** Replace with 'Lime залишено: J21 випаюється лише після прогону'; keep: print the case without Lime first, then reprint only the top band (default build).
+    - **Reason:** User decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  143.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** decision
+    - **Part:** Patch kit: Bullseye
+    - **Anchor:** Залежить від регіону: голий Bullseye з конусом 11 см.
+    - **Instruction:** Replace with 'Європа: голий Bullseye з конусом 11 см (купується).'
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  144.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** decision
+    - **Part:** Foldable kit: horn
+    - **Anchor:** рупор із сегментів (за регіоном)
+    - **Instruction:** Replace '(за регіоном)' with '(Європа)'.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  145.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** decision
+    - **Part:** Weight with Lime default
+    - **Anchor:** **1.52-1.72 — сума частин (без Lime; +0.15 з Lime)
+    - **Instruction:** Present the with-Lime weight (sum of parts + 0.15 kg, model) as the default; without Lime as fallback.
+    - **Reason:** User decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  146.
+    - **Section:** 05d_arch_thermal_emi_mech
+    - **Kind:** decision
+    - **Part:** L-band A/B order for Europe
+    - **Anchor:** FY-2H другою (частоту 1687.5/1690.5 MHz встановити на ефірі), Elektro-L LRIT — лише якщо чути
+    - **Instruction:** Replace with: then Elektro-L3 at 14.5W if it is stationary and transmitting; FY-2H (1687.5/1690.5 MHz, set on air) and Elektro-L5 only where visible (about east of 13E); angles from the fix.
+    - **Reason:** Operator notes 16, 19; region.
+    - **Sources:** operator_notes.md item 16, 19; reaudit_C results[2] corrections[3]
+    - **Saving usd:** 
+  147.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** 6.1 new removals by rules
+    - **Anchor:** | ADALM-PLUTO | Дублює Lime;
+    - **Instruction:** Add rows to 6.1: (1) SatDump pipelines outside the allowlist (Cosmos-2558 dump, DMSP RTD, Yunhai AHRPT encrypted, syracuse3_tlm, wsf_m_db, angels_l_band, any encrypted or military-operated) - military-transmitter/private rule; allowlist, never denylist. (2) OpenWebRX+ modes page/POCSAG, selcall, wmbus, ism, lora-wan, meshcore, meshcom and their requirement packages - private messages/household data. (3) SDRangel demoddsd, demodpager (and other private-traffic decoders) besides demodinmarsat. (4) ADS-B PIA (&4)/LADD (&8) display and logging. (5) Demodulation/decoding/logging in 1544.0-1545.0 MHz (Cospas-Sarsat). (6) US-only profiles in the Europe build: UAT 978/dump978-fa, HD Radio/nrsc5, NOAA SAME/EAS/multimon-ng (region decision). (7) gr-satellites telemetry submit and network egress of decoder units.
+    - **Reason:** Rule items 1, 11, 14, 17, 25, 31, 32, 33; region decision.
+    - **Sources:** operator_notes.md item 1, 11, 14, 17, 25, 31, 32, 33; user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  148.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** 6.1 TX-capable software additions
+    - **Anchor:** MIMO TX beamsteeringcwmod і simpleptt SDRangel
+    - **Instruction:** Add to this TX-capable list: SatDump *_sdr_sink plugins (bladerf, hackrf; any Lime/Soapy sink) and audio sink; limesuiteng-gui, gr-limesuiteng, limesuiteng-cli with TX subcommands; packaged dream (DRM transmitter mode).
+    - **Reason:** Rule items 23, 28, 31.
+    - **Sources:** operator_notes.md item 23, 28, 31
+    - **Saving usd:** 
+  149.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** 6.1 private decoders: codec/TETRA packages
+    - **Anchor:** | Декодери приватного вмісту: SDRangel demodinmarsat
+    - **Instruction:** Add to this row: dxlaprs-tetra, codecserver-driver-* (AMBE3K etc.), libacars-tools/libacars* (pinned -1 with a pattern pin).
+    - **Reason:** Rule item 31.
+    - **Sources:** operator_notes.md item 31
+    - **Saving usd:** 
+  150.
+    - **Section:** 06_removed
+    - **Kind:** removal
+    - **Part:** 6.2 technically superseded items
+    - **Anchor:** | Рішення щодо Lime 31.01.2027 |
+    - **Instruction:** Add rows to 6.2: (1) no-Lime as the base build and the C1 keep-gate (S-band/VkFFT/5 W conditions) - user decision 18.10.2026; (2) region gates of C23 (QO-100 purchase, LC76G/MAX-M10S choice, 'regional SBAS') - region Europe; (3) gr-satellites 5.5.0 from noble apt - file-receiver path traversal (#803/#820), pinned build after PR #832; (4) relying on 'T7 pauses writes' - deauthorize/USB 2; (5) literal bias-token gate on all GPIOs - GPIO0 only; (6) one-time $PAIR752/$PAIR391 provisioning - re-send and read back every power-up (PPS via $PQTMCFGPPS per re-audit D); (7) Lime profiles below the firmware sysclk floor (<7 Msps); (8) apt-based 'hold 6.18.2-4' - GitHub release debs in a local repo.
+    - **Reason:** User decisions and operator notes 7, 8, 12c, 22, 29, 30.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 7, 8, 12c, 22, 29, 30
+    - **Saving usd:** 
+  151.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** #18 Elektro status update
+    - **Anchor:** L5 повідомлено введеним на 76E, SatNOGS — неперевірено
+    - **Instruction:** Update: Elektro-L N5 - WMO OSCAR 'Commissioning' (updated 20.04.2026), TLE 17.10 76.05E; FY-2H - 'Operational, limited access', 79E; Elektro-L3 (NORAD 44903) - TLE epoch 9.10.2026 about 6.7W drifting -3.07 deg/day west toward 14.5W, status since then unknown.
+    - **Reason:** Operator notes 5, 16.
+    - **Sources:** operator_notes.md item 5, 16; reaudit_C results[2] confirmed[7,8,9]
+    - **Saving usd:** 
+  152.
+    - **Section:** 07_corrections
+    - **Kind:** correction
+    - **Part:** New corrections 37+
+    - **Anchor:** 36. wideband_sdr:
+    - **Instruction:** Add after item 36: 37. C11 as written (token gate on every rtlsdr_set_bias_tee_gpio call) would break V4L input switching - 0204c9c drives GPIO5 through that function; gate gpio==0 only. 38. 'T7 never writes during L-band/S-band/GNSS' is not enough: an idle SuperSpeed link radiates; deauthorize or USB 2. 39. gr-satellites 5.5.0 from noble apt has the file-receiver path traversal (#803, #820); use a pinned build after PR #832. 40. 'Hold 6.18.2-4' cannot rely on the Radxa apt repo (pool URLs 404, index lists only 7.0.11-7, r2 ships 6.18.2-3); use the GitHub release debs. 41. The A/B plan assumed upstream systemd-boot counting; on Radxa OS the role is Radxa embloader (no boot counting per re-audit A). 42. LC76G settings set once are lost on power loss; re-send and read back every power-up. 43. The NCS scan band includes 1544-1545 MHz Cospas-Sarsat MEOSAR repeaters; power-only, no logging. 44. readsb privacy: hiding only dbFlags&1 missed PIA (&4) and LADD (&8). 45. Disabling only pager/selcall in OpenWebRX+ left wmbus, ism and LoRa (lora-wan, meshcore, meshcom) on; allowlist instead. 46. SDRangel builds demodinmarsat when INMARSATC_FOUND; explicit OFF needed. 47. Lime firmware rejects sysclk <30 MHz (VSPA-DMA hang risk); profiles >=7 Msps.
+    - **Reason:** Corrections implied by operator notes.
+    - **Sources:** operator_notes.md item 7, 8, 9, 12c, 17, 22, 25, 29, 30, 32, 33
+    - **Saving usd:** 
+  153.
+    - **Section:** 08_open_bench
+    - **Kind:** decision
+    - **Part:** Questions answered (region, Lime)
+    - **Anchor:** 1. Регіон або країна (вирішує QO-100
+    - **Instruction:** Mark Q1 answered: region Europe (user, 18.10.2026); country not named - EU VAT at checkout depends on it. Mark Q4 ('Чи потрібен Lime') answered: kept (18.10.2026). In Q9 note that the QO-100 add-on and the Lime are in the build; ask which items are already ordered.
+    - **Reason:** User decisions.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  154.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Lime acceptance additions
+    - **Anchor:** | Lime, якщо залишено: riser 8 GT/s x1
+    - **Instruction:** Change 'Lime, якщо залишено' to 'Lime (залишено)' and add tests: forced VSPA-DMA hang (bench only, with the power-cycle path) recovered by power-cycling through the labd M.2 3.3 V load switch with the PCIe link torn down first, without rebooting the Q6A; rate floor: 7 Msps streams, 2 Msps is rejected cleanly (error, no hang); load-switch EN boot state / PCIe rescan; T7 noise-floor A/B at 1541, 1575 and 1691 MHz, connected-idle vs deauthorized; LAB5 current with RTL-A on H2 (D11).
+    - **Reason:** Operator notes 7, 30; user decision.
+    - **Sources:** operator_notes.md item 7, 30; reaudit_B results[2] bench_tests[3]
+    - **Saving usd:** 
+  155.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** LNB IF penetration (Europe)
+    - **Anchor:** | LNB: рівень ПЧ з атенюаторами 15 і 20 dB (десенсибілізація)
+    - **Instruction:** Add: DVB-T (734-742 MHz) and LTE B28 penetration near the LNB IF (region Europe, now).
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  156.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** On-air: Elektro-L3 and European NCS
+    - **Anchor:** Elektro-L5 LRIT 1691 MHz
+    - **Instruction:** Replace with 'Elektro-L3 на 14.5W (утримувана довгота і статус LRIT до першого прийому; з фіксу і живого TLE), Elektro-L5 LRIT 1691 MHz — лише східніше близько 13E'; in the same row replace 'який NCS Inmarsat над вами' with 'європейський NCS (Alphasat або I-4), підтверджений скануванням лише за потужністю перед egc-gate; 1544.0-1545.0 MHz без журналу'.
+    - **Reason:** Operator notes 16, 17, 19; region.
+    - **Sources:** operator_notes.md item 16, 17, 19; user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  157.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Q6A platform checks
+    - **Anchor:** | Q6A: TX UART6 (перемичка TX→RX, `$PQTMVERNO`)
+    - **Instruction:** Add to this row: AppArmor state ('cat /sys/kernel/security/lsm; aa-status'; local gpsd/chrony rules only if active); replace 'вузол watchdog у DT' with '/dev/watchdog on 6.18.2-4 (if missing - Pico supervisor watchdog)'; replace 'GPIO96 вільний' with 'gpio96 owned by pps-gpio in /sys/kernel/debug/pinctrl, no enabled MI2S node claims it'; replace 'який пакет постачає systemd-bless-boot' with 'embloader vs systemd-boot: boot counting present? forced failed boot must roll back to the other slot, else Pico + userspace A/B flag'; add lease test (EPERM on a leased /dev/bus/usb node from a unit without the lease; else udev ACL) and CONFIG_CGROUP_BPF=y.
+    - **Reason:** Operator notes 2, 3, 9, 20, 26.
+    - **Sources:** operator_notes.md item 2, 3, 9, 20, 26
+    - **Saving usd:** 
+  158.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** NPU: dpkg -V and PPA pins
+    - **Anchor:** fastrpc_test 3/3;
+    - **Instruction:** Prefix: 'dpkg -V radxa-firmware-qcs6490 fastrpc libcdsprpc1 clean (forum 31078), then'; add 'apt-cache policy shows -1 for libqnn1, libqnn-dev, qairt-dsp-binaries, linux-firmware-dragonwing'.
+    - **Reason:** Operator notes 15, 18.
+    - **Sources:** operator_notes.md item 15, 18
+    - **Saving usd:** 
+  159.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Kernel 7.0.11 adoption gate
+    - **Anchor:** | NPU і обчислення: MemTotal і RSS застосунків
+    - **Instruction:** Add a new row before this one: 'Ядро: 6.18.2-4 debs from the GitHub release (16 assets) with checksums in the local repo; 7.0.11-7 adopted only after HDMI (topic 31304), FastRPC/NPU, PPS (CONFIG_PPS_CLIENT_GPIO=m) and EDID tests pass; apt never pulls 7.0.11 onto slot A/B without the gate' | gate: kernel pin | W1-2 and every update.
+    - **Reason:** Operator note 29.
+    - **Sources:** operator_notes.md item 29
+    - **Saving usd:** 
+  160.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** Compliance CI tests
+    - **Anchor:** | Відповідність: тест egc-gate на змішаному записі
+    - **Instruction:** Add tests: SatDump pipeline allowlist (build + device self-check fail on any ID outside the list); installed SatDump exposes no SDR sink; gr-satellites crafted FileReceiver filenames ('../x', '/tmp/x', '..') write nothing outside the products directory, and with submit_tlm=no a network-namespace capture shows zero packets; every decoder unit has IPAddressDeny=any; 1544.0-1545.0 MHz not demodulated or logged (synthetic 1544.5 MHz carrier in the mask test); readsb with synthetic dbFlags &4/&8 entries - not shown or logged; OpenWebRX+ mode list equals the allowlist; installed SDRangel channelrx set equals the allowlist (no demodinmarsat, demoddsd, demodpager); apt-get -s install refused for limesuiteng-gui, gr-limesuiteng, dxlaprs-tetra, codecserver-driver-*, libacars-tools, dream, dump978-fa, multimon-ng (Europe).
+    - **Reason:** Rule items 1, 8, 11, 14, 17, 23, 25, 28, 31, 32, 33.
+    - **Sources:** operator_notes.md item 1, 8, 11, 14, 17, 23, 25, 28, 31, 32, 33; reaudit_A results[1] bench_tests[7]
+    - **Saving usd:** 
+  161.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** librtlsdr gate and V4L arrival tests
+    - **Anchor:** | Енергія за режимами і корисна енергія з логів INA228
+    - **Instruction:** Add a new row before this one: 'librtlsdr token gate: no token - tune 100 -> 400 -> 1090 MHz, input switches and bias rail stays 0 V; offset tuning on without token - 0 V; 0 V at plug-in; lsmod | grep rtl28 empty. On arrival every V4L shows tuner R828S, USB product 'Blog V4L' and 'RTL-SDR Blog V4 Lite Detected'' | gate: C11 | W1-2 and on arrival.
+    - **Reason:** Operator notes 12, 12b, 12c, 21.
+    - **Sources:** operator_notes.md item 12, 12b, 12c, 21; reaudit_B results[3] bench_tests[2,3]
+    - **Saving usd:** 
+  162.
+    - **Section:** 08_open_bench
+    - **Kind:** bench_test
+    - **Part:** GNSS settings persistence and jamming drill
+    - **Anchor:** | GNSS: TTFF LC76G;
+    - **Instruction:** Add: after a full power-off the LC76G settings are re-sent and read back before PPS is trusted ($PQTMCFGPPS,R,1 returns mode 3; $PAIRSPF output present - re-audit D); jamming/spoof gate drill with recorded NMEA replayed by gpsfake (conducted-only rule, no GNSS simulator on air): PPS/NMEA disciplining stops, RTC + last good fix marked stale; after exit cold restart ($PAIR006) and settings re-sent.
+    - **Reason:** Operator notes 22, 27.
+    - **Sources:** operator_notes.md item 22, 27; reaudit_D results[1] bench_tests[2,8]
+    - **Saving usd:** 
+  163.
+    - **Section:** 08_open_bench
+    - **Kind:** keep_with_note
+    - **Part:** Molicel M65A option (not a replacement)
+    - **Anchor:** | #2813: чи блокує утримуваний OFF
+    - **Instruction:** Add a row before this one: 'Опція M65A (6.5 Ah, 23.4 Wh, 26 A; 4S1P 93.6 Wh): P50B лишається; M65A — лише після повного даташиту, наявності й тесту розряду при 0 °C (re-audit D); у P5 G3 відхилено як аналог (NKON EUR 9.75 = $10.96, немає в наявності, 74.5 g проти 71 g)' | gate: P5/bench | before reordering cells.
+    - **Reason:** Candidate item 24 kept only as an option.
+    - **Sources:** operator_notes.md item 24; analogs_G3 decision 2 rejected[2]; reaudit_D results[0] corrections[22]
+    - **Saving usd:** 
+  164.
+    - **Section:** 08_open_bench
+    - **Kind:** rule
+    - **Part:** Prices: EU landed and UHF date
+    - **Anchor:** | Ціни: переоцінити кожен неперевірений рядок (P5)
+    - **Instruction:** Add: state the EU landed cost for every non-EU seller (landed-cost rule) and re-check the Union handling fee start date (about 1 Nov 2026) and destination-country VAT before ordering.
+    - **Reason:** Cost rule.
+    - **Sources:** operator_notes.md item 34, 35
+    - **Saving usd:** 
+  165.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** rule
+    - **Part:** Customs paragraph -> Europe landed-cost rule
+    - **Anchor:** **Митниця і ПДВ (регіон невідомий — перевірити).**
+    - **Instruction:** Replace the whole paragraph with the Europe rule: buy inside the EU with VAT where possible (TinyTronics, Passion Radio, Astroradio, WiMo, iFixit EU, CNC Kitchen, QuietPC, DigiKey DE, Mouser EU, TME, reichelt, Kiwi, Botland, Uputronics EU storefront, ITEAD DE warehouse, EU Zeenko warehouse); since 1 Jul 2026 the EUR 150 duty-free exemption is gone, so for every non-EU seller: EU landed cost for a non-EU seller = price + shipping + import VAT + EUR 3 x tariff lines (consignment intrinsic value <= EUR 150 sold via IOSS or sent by post; above EUR 150 normal duty by origin, tariff classification and value) + EUR 2 x tariff lines (Union handling fee, distance sales, any value, non-refundable, expected from about 1 Nov 2026; delegated act C(2026)6694 still under scrutiny, re-check the start date before ordering) + any carrier handling fee. UK and US sellers (Uputronics UK, The Pi Hut, Pimoroni, Mirfield, RS UK, Adafruit, Pololu, SparkFun, rtl-sdr.com, ITEAD-CN, Leo Bodnar) carry the duty, import VAT and express shipping; The Pi Hut ships to the EU by DHL Express only (delivery page, 18.10.2026). Consolidate small multi-line non-EU orders (AliExpress, LCSC, Adafruit, Pi Hut, Pololu direct). Drop the UK/US/other-country branches; keep the shipping restrictions sentence.
+    - **Reason:** Cost rule.
+    - **Sources:** operator_notes.md item 34, 35
+    - **Saving usd:** 
+  166.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 2 Adafruit/RTL-SDR Blog orders
+    - **Anchor:** Одне замовлення Adafruit для запуску
+    - **Instruction:** Add: Adafruit is a US seller - give the EU landed cost of the consolidated order (landed rule) and prefer EU-stock equivalents (DigiKey DE, Mouser EU, TME, reichelt, TinyTronics, Kiwi, Botland) where the price is equal or close; RTL-SDR Blog in the EU only via the official eBay rtl-sdr-blog or AliExpress 4523039, V4L only from official resellers.
+    - **Reason:** Cost rule; sourcing.
+    - **Sources:** operator_notes.md item 21, 34, 35
+    - **Saving usd:** 
+  167.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 5 Airspy HF+ warehouse
+    - **Anchor:** Airspy HF+ (ITEAD, найближчий склад)
+    - **Instruction:** Replace 'найближчий склад' with 'склад ITEAD DE (EU stock)'.
+    - **Reason:** EU-stock preference.
+    - **Sources:** operator_notes.md item 34
+    - **Saving usd:** 
+  168.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 6 Pololu/LCSC/Pi Hut
+    - **Anchor:** Одне замовлення Pololu (2× D36V50F12, D36V28F5, 2× #2813)
+    - **Instruction:** Add: Pololu (US), LCSC (CN) and The Pi Hut (UK, Pico) are non-EU - one consolidated order each with the EU landed cost (EUR 3 + EUR 2 per tariff line penalise small multi-line orders); prefer EU stock (e.g. Botland) when the price is equal or close.
+    - **Reason:** Cost rule.
+    - **Sources:** operator_notes.md item 34, 35
+    - **Saving usd:** 
+  169.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 7 Uputronics EU storefront
+    - **Anchor:** Uputronics 440 ($68.71 = GBP 51.59 з ПДВ)
+    - **Instruction:** Add: prefer the Uputronics EU storefront (EU stock) over the UK store when the price is equal or close; UK store = duty + import VAT + express shipping (landed rule).
+    - **Reason:** EU-stock preference.
+    - **Sources:** operator_notes.md item 34, 35
+    - **Saving usd:** 
+  170.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 13 UK lab sellers
+    - **Anchor:** LBE-1420 ($175.80 = GBP 132), Pro Stick Plus ($69.92 = GBP 52.50)
+    - **Instruction:** Add the EU landed cost for these UK sellers (Leo Bodnar above EUR 150: normal duty + import VAT + UHF; The Pi Hut: DHL Express only).
+    - **Reason:** Cost rule.
+    - **Sources:** operator_notes.md item 34, 35
+    - **Saving usd:** 
+  171.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** condition
+    - **Part:** Authenticity: V4L
+    - **Anchor:** RTL-SDR (ризик високий): лише офіційний магазин, eBay rtl-sdr-blog, AliExpress 4523039 або перелічений реселер
+    - **Instruction:** Add: the Blog V4 is end-of-line and most 'Blog V4' listings are clones; on arrival check the R828S tuner string and the 'Blog V4L' USB product string.
+    - **Reason:** Operator note 21.
+    - **Sources:** operator_notes.md item 21
+    - **Saving usd:** 
+  172.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 4 Lime kept
+    - **Anchor:** | 4 | Сьогодні, лише якщо Lime потрібен |
+    - **Instruction:** Change 'лише якщо Lime потрібен' to '(Lime залишено)': keep the Crowd Supply pre-order (board only in the cart per P5 G6; ships 15.12.2026; full refund only before shipment) - do not let the slot lapse; any analog decision before 1.12.2026; EU landed cost (ships from the US: import VAT, duty above EUR 150, EUR 2 UHF per line, courier fee). Drop 'Нічого лише-для-Lime до того' if the Lime-parts timing in step 10 says otherwise.
+    - **Reason:** User decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 10, 35
+    - **Saving usd:** 
+  173.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 10 Lime parts
+    - **Anchor:** | 10 | 1.12.2026 | Рішення щодо Lime (C1).
+    - **Instruction:** Replace the decision with: Lime kept - by 1.12.2026 order the Lime parts (R44SF 5 cm, I-PEX tool, T7 1 TB at the current price, the M.2 3.3 V load switch); 1.12.2026 is only the last date for any analog change. 'Якщо скасовано...' becomes 'only if the Lime fails acceptance'.
+    - **Reason:** User decision; operator note 30.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 30
+    - **Saving usd:** 
+  174.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 11 QO-100 now
+    - **Anchor:** | 11 | Коли підтверджено, що ви в зоні Es'hail-2 |
+    - **Instruction:** Change 'when' to 'Тиждень 1-2 (регіон — Європа, QO-100 у зоні покриття)': Bullseye (Technofix already out of stock - do not delay), F/LC/PTC parts, LNB injector choke >=1 A, horn materials; then LNB current at 13.2 V, PTC and attenuator.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  175.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Bring-up step 1 additions
+    - **Anchor:** **Ворота плати W1-2 (19.10-1.11.2026)**
+    - **Instruction:** Add to step 1: day one - fetch the 6.18.2-4 debs (16 assets) from the GitHub release, verify checksums, keep a local apt repo on the device and off-device, build DKMS pps-gpio and the overlay against those headers; checks - AppArmor state (lsm/aa-status), /dev/watchdog (else Pico watchdog), embloader boot counting and a forced-failure A/B rollback test, gpio96 owned by pps-gpio, lease EPERM test, 'dpkg -V radxa-firmware-qcs6490 fastrpc libcdsprpc1' clean before fastrpc_test, librtlsdr no-token tests (100/400/1090 MHz, offset tuning, 0 V at plug-in, lsmod | grep rtl28), apt policy -1 for the qcom-ppa QNN/QAIRT/firmware packages.
+    - **Reason:** Operator notes 2, 3, 9, 12, 12b, 12c, 15, 18, 20, 26, 29.
+    - **Sources:** operator_notes.md item 2, 3, 9, 12, 12b, 12c, 15, 18, 20, 26, 29
+    - **Saving usd:** 
+  176.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Bring-up step 11 Lime
+    - **Anchor:** 11. **1.12.2026:** рішення щодо Lime за C1
+    - **Instruction:** Replace with: 'Після доставки Lime (відвантаження 15.12.2026)': R44SF, I-PEX tool, T7, M.2 3.3 V load switch; acceptance within the 30-day guarantee incl. the forced-hang power-cycle and 7 Msps rate-floor tests and the T7 A/B at 1541/1575/1691 MHz; J21 desoldered only after the soak test.
+    - **Reason:** User decision; operator notes 7, 30.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'; operator_notes.md item 7, 30
+    - **Saving usd:** 
+  177.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Bring-up step 12 QO-100 now
+    - **Anchor:** 12. **Після підтвердження регіону в зоні Es'hail-2:**
+    - **Instruction:** Replace with 'Тиждень 2-3 (регіон — Європа):' and add the DVB-T/LTE B28 IF-penetration check.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  178.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** shopping
+    - **Part:** Step 13: T7 no longer deferred
+    - **Anchor:** Відкладено: microSD (ціни NAND), T7 (лише з Lime)
+    - **Instruction:** Remove 'T7 (лише з Lime)' from the deferred list: with the Lime kept the T7 is bought with the Lime parts (step 10).
+    - **Reason:** User decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  179.
+    - **Section:** 09_shopping_bringup
+    - **Kind:** bench_test
+    - **Part:** Bring-up step 14: T7 no longer deferred
+    - **Anchor:** Відкладено: microSD, T7, Airspy Mini.
+    - **Instruction:** Change to 'Відкладено: microSD, Airspy Mini.' (the T7 is part of the default with-Lime build, step 11).
+    - **Reason:** User decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+  180.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Software/security sources
+    - **Anchor:** **ПЗ і пакети**
+    - **Instruction:** Add under this heading: gr-satellites issue #820 (duplicate of #803): https://github.com/daniestevez/gr-satellites/issues/820 ; fix merge 1bcf1d8 (PR #832): https://github.com/daniestevez/gr-satellites/commit/1bcf1d8bccac463550c70091d76a24b09178b1c3 ; submit_tlm fix fb887cf: https://github.com/daniestevez/gr-satellites/commit/fb887cf70777af29655f923393b740668d28e964 ; SatDump pipelines: https://github.com/SatDump/SatDump/tree/master/resources/pipelines ; SatDump sdr_sources (sinks): https://github.com/SatDump/SatDump/tree/master/plugins/sdr_sources ; OpenWebRX+ modes.py: https://raw.githubusercontent.com/luarvique/openwebrx/1.2.126/owrx/modes.py ; OpenWebRX+ PPA index: https://luarvique.github.io/ppa/noble/Packages ; SDRangel channelrx CMakeLists: https://github.com/f4exb/sdrangel/blob/v7.27.2/plugins/channelrx/CMakeLists.txt ; systemd #23198: https://github.com/systemd/systemd/issues/23198 ; osmocom 0204c9c (V4L): https://github.com/osmocom/rtl-sdr/commit/0204c9cfb1c5ff7bd64f466ce5b8fe53b40a636a ; qcom-ppa: https://launchpad.net/~ubuntu-qcom-iot/+archive/ubuntu/qcom-ppa
+    - **Reason:** Key URLs for the new rules.
+    - **Sources:** operator_notes.md item 1, 8, 11, 12c, 14, 15, 20, 23, 31, 32, 33
+    - **Saving usd:** 
+  181.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Compute/boot sources
+    - **Anchor:** **Обчислення, ядро, NPU**
+    - **Instruction:** Add: embloader: https://github.com/BigfootACA/embloader ; rsdk core.libjsonnet: https://github.com/RadxaOS-SDK/rsdk/blob/main/src/share/rsdk/build/mod/packages/categories/core.libjsonnet ; rsdk socs.json: https://github.com/RadxaOS-SDK/rsdk/blob/main/src/share/rsdk/configs/socs.json ; r2 manifest: https://github.com/radxa-build/radxa-dragon-q6a/releases/download/rsdk-r2/radxa-dragon-q6a_noble_gnome_r2.manifest ; forum 31078 (FastRPC 0x80000600): https://forum.radxa.com/t/31078 ; forum 31462 (YOLOv8n with QAIRT 2.49): https://forum.radxa.com/t/31462
+    - **Reason:** Key URLs.
+    - **Sources:** operator_notes.md item 9, 15, 18, 29
+    - **Saving usd:** 
+  182.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Lime firmware source
+    - **Anchor:** **РЧ і приймачі**
+    - **Instruction:** Add: LimeSDR-Micro_FW limesdr_commands.c (SetLA9310SystemClock floor): https://github.com/myriadrf/LimeSDR-Micro_FW/blob/master/src/limesdr_micro/limesdr_commands.c
+    - **Reason:** Key URL.
+    - **Sources:** operator_notes.md item 30
+    - **Saving usd:** 
+  183.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** Target sources (Elektro-L3)
+    - **Anchor:** **Цілі і каталог**
+    - **Instruction:** Add: SatNOGS DB TLE Elektro-L3 (NORAD 44903): https://db.satnogs.org/api/tle/?norad_cat_id=44903 ; rtl-sdr.com on the Elektro-L3 move: https://www.rtl-sdr.com/?p=67091
+    - **Reason:** Key URLs.
+    - **Sources:** operator_notes.md item 16; reaudit_C results[2] corrections[4]
+    - **Saving usd:** 
+  184.
+    - **Section:** 10_sources
+    - **Kind:** source_url
+    - **Part:** EU customs and GNSS-interference sources
+    - **Anchor:** **Безпека і право (загальне)**
+    - **Instruction:** Add: DG TAXUD guidance 'The temporary EUR 3 customs duty and the Union handling fee' (version 5.10.2026; Council Regulation (EU) 2026/382; Art. 20 Regulation (EU) 2026/2108): https://taxation-customs.ec.europa.eu/document/download/053e5b4e-f0be-4f20-9a23-3e3b659a6676_en?filename=Customs%20Guidance%20on%20EUR%203%20customs%20duty.pdf ; The Pi Hut delivery (EU duty, DHL Express only): https://thepihut.com/pages/delivery ; EASA SIB 2022-02R4 GNSS outage/jamming/spoofing (issued 03.07.2026), easa.europa.eu ; Intel white paper 'USB 3.0 Radio Frequency Interference Impact on 2.4 GHz Wireless Devices' (title only).
+    - **Reason:** Key sources for the cost rule and operator notes 7/27.
+    - **Sources:** operator_notes.md item 7, 27, 34, 35
+    - **Saving usd:** 
+  185.
+    - **Section:** 10_sources
+    - **Kind:** decision
+    - **Part:** Legal note: region
+    - **Anchor:** **Загальна юридична примітка.** Країна не відома.
+    - **Instruction:** Replace 'Країна не відома.' with 'Регіон — Європа (рішення користувача 18.10.2026); країну не названо.' Keep the rest.
+    - **Reason:** Region decision.
+    - **Sources:** user_requirements.md 'User decisions (18 Oct 2026)'
+    - **Saving usd:** 
+- **Already in v1:**
+  - operator note 4: DKMS pps-gpio for the held 6.18.2-4 is already v1 policy (C13, 01b #29) - only the 7.0 defconfig/RTC/LSM clarifications are added.
+  - operator note 10 / user decision: the Lime acceptance tests (riser 8 GT/s x1, 50 warm + 20 cold boots, zero AER in 60 min, zero limeTRX drops during LRPT+HRPT, VCC_5V_PERI <=14 W) are already listed in C1 and section 8.
+  - user decision: Lime TX blocked by the LimeSuiteNG TX-stream patch + 50 Ohm on TX is already in 01b #11 and 5.7 #10.
+  - user decision: no city tables, location from GNSS fix, last good fix or manual entry - already in 01b #7, 5.4 and 6.1.
+  - user decision: J21 desoldered only after the soak test and case top-band reprint already in C1 and 5.8 (only the conditional wording changes).
+  - user decision: DAB+ already reliable via welle-cli in 4.2 (no region gate in v1).
+  - operator note 12b: dvb_usb_rtl28xxu is already blacklisted in C11/5.4 (the extra module names and the lsmod check are added).
+  - operator note 17: Cospas-Sarsat 1544.5 MHz and 406.0-406.1 MHz were already excluded in the catalogue (01b #1, 4.3), and the NCS scan was already power-only (01b #2) - the 1544.0-1545.0 band, no-logging and survey masking are added.
+  - operator note 21: 'only official channels, no V4 copies' already in 2.2 and 9.1 (EOL/clone note and string checks added).
+  - operator note 22: $PAIR752,2,100 and $PAIR391,1 already set in 01b #79 and 5.4 (persistence and readback added).
+  - operator note 25: readsb README-json (dbFlags) already in section 10.
+  - operator note 26: one-owner-per-pin pinmux audit already in C6 and bring-up step 1 (gpio96/mi2s0 specifics added).
+  - operator note 29: 6.18.2-4 headers from the GitHub release and the release URL already in 01b #27 and section 10 (image debs, 404 pool and 7.0.11 gate added).
+  - operator note 31: js8call, rtl-433, digiham, codecserver, acarsdec, dumphfdl, dumpvdl2 already pinned -1 (01b #10, 5.4).
+  - operator note 33: SDRangel demodinmarsat not built and Heat Map plugin forbidden already in C16, 5.4 and 01b #12.
+  - operator note 11: uploads (SondeHub, WSPRnet, PSK Reporter, ADS-B aggregators, SatNOGS) already off by default in 01b #11.
+  - operator note 34: EU-VAT shops already preferred in the v1 customs paragraph (9.1) - replaced by the exact landed-cost rule of note 35.
+- **Not applied:**
+  1.
+    - **Item:** operator note 6: G6K-2F-RF DC5 under the Aratas brand at about $25.06 each
+    - **Why:** Superseded by the P5 G1 analog decision #7 (higher precedence for part/seller/price): 2x Aratas G6K-2F-RF-S DC5 from DigiKey ($39.38 for two; DigiKey DE EUR 17.29 ex VAT / EUR 20.58 incl. VAT each), with the standard G6K-2F-RF DC5 Z2037-ND at $25.06 each only as the fallback; that decision already carries the Aratas name.
+  2.
+    - **Item:** operator note 13: helicone about equal (+0.1 dB) to a 65 cm dish, Elektro LRIT SNR about 3.3-4.3 dB
+    - **Why:** Superseded by re-audit C results[2] corrections[5] (technical precedence): dish anchor 3-4 dB (post-#616 below 3 dB still clean), helicone 0 to -5 dB vs the anchor (polarisation unknown), threshold about +1 dB; rating stays 'on the edge'.
+  3.
+    - **Item:** operator note 19 elevation figures (Elektro-L3 14-45 deg, QO-100 21-46 deg, GOES-East 4-10 deg)
+    - **Why:** Re-audit C geometry has precedence: 14.5W is 8-45 deg over Europe, Alphasat/QO-100 12-46 deg, GOES-East at most 9.9 deg (Lisbon); the qualitative ranking and 'location-dependent' labels are applied with the re-audit numbers.
+  4.
+    - **Item:** operator note 24: replace P50B with Molicel INR21700-M65A (4S1P 93.6 Wh)
+    - **Why:** Rejected by the P5 G3 analog decision #2 (not cheaper than NKON P50B, out of stock at NKON EUR 9.75 = $10.96, 74.5 g vs 71 g, 26 A, datasheet gated) and re-audit D keeps P50B; kept only as an optional upgrade row in section 8.
+  5.
+    - **Item:** operator note 12: check SatDump #1030 (bias-T/gain/DC-block not applied from the SatDump CLI) on the pinned 2.0-alpha commit
+    - **Why:** Moot: re-audit C results[2] corrections[1] turns every SatDump sdr_sources plugin OFF (SatDump never opens an SDR; labrx is the only opener), which also removes the #1030/#864 risk.
+  6.
+    - **Item:** operator note 30: 'with oversampling 4 the sample rate must be >= 7.5 Msps' and the invalid 16 MHz B-agent plan
+    - **Why:** Re-audit B is more precise (host systemClock = fs x 4 x 2 for fs <= 20 Msps; minimum 3.75 Msps master / 2.5 Msps staging) and sets a hard 7 Msps floor, which is applied instead; the 2/4 Msps plans are not in the v1 text.
+  7.
+    - **Item:** operator note 28: install limesuiteng-legacyapi 'for SatDump'
+    - **Why:** SatDump no longer links any SDR library (re-audit C turns its LIMESDR source off), so legacyapi is installed only if another consumer needs it; the rest of the package rule is applied.
+  8.
+    - **Item:** operator note 22: keep re-sending $PAIR752,2,100 as the PPS setting
+    - **Why:** Re-audit D: $PAIR513 does not save PPS-related PAIR settings; the PPS mode is set and read back with $PQTMCFGPPS + $PQTMSAVEPAR instead (one PPS method only). The re-send/read-back rule itself is applied.
+  9.
+    - **Item:** operator note 1: allowlist entries 'FY-3 where civil' and 'NOAA/GOES/GK-2A xRIT/LRIT' in the Europe build
+    - **Why:** FY-3 is X-band only (unavailable without a dish); re-audit C keeps GOES/GK-2A/FY-4 pipelines out of the Europe build (not visible), so the Europe allowlist is Meteor-M, MetOp, AWS, FengYun-2 and Elektro_Arktika (minus elektro_ggak_mqtt); amateur CubeSat/ISS decoding stays in gr-satellites.
+  10.
+    - **Item:** re-audit C city table including a Kyiv elevation row
+    - **Why:** Brief hard rule: no Kyiv angles; only western/central/south-eastern European examples are used.
+- **Notes:** All 35 operator-note items (plus 12b/12c) and both user decisions were processed. Rule items (1, 8, 10, 11, 12/12b/12c, 14, 15, 17, 20, 23, 25, 28-35) are applied everywhere they occur; candidate items were checked against the P4/P5 files: 2, 3, 7, 9, 16, 18, 19, 21, 22, 26, 27 are supported (re-audit A/B/C/D, G6) and applied, 6, 13 and 24 are superseded (see not_applied), 5 is confirmed by re-audit C. Where re-audit gives sharper technical detail (gr-satellites commit, PQTMCFGPPS, 7 Msps floor, embloader route, SatDump Europe pipeline list) the instructions cite it so the re-audit extractor's changes do not conflict. Totals are not recomputed here (no new numbers): 2.12/3.6/C24 changes only say what moves (Lime set into core, QO-100 into antenna tiers) and that EU-landed totals must be added. The Lime M.2 3.3 V load switch has no chosen part or price in any file (marked model). Several changes share one paragraph (05c labd row, 05c allowed decoders) but each has its own unique anchor. Anchors were verified to occur exactly once in their section files.
+
 ## npu:models_datasets (run `wf_62c18130-b0d`)
 
 - **Area:** Models, datasets and the training pipeline for detecting and classifying signals on the waterfall (spectrogram) on the Radxa Dragon Q6A (QCS6490, Hexagon v68 HTP, INT8 first, QAIRT 2.42.0.251225 on the device). The primary task is wideband detection: boxes in time x frequency plus a class. Classifying IQ snippets is the second stage.
