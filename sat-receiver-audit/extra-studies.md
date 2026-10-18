@@ -31857,6 +31857,166 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
     - **Sources:** []
 - **Notes:** VERDICT (angle B): no cheaper analog is proven not-worse, so keep the current part class: a generic AD8318 module with a genuine ADS1115. The only cheaper route is the same part class sourced cheaply: an AliExpress AD8318 module at about $12.09 (item 3256809368914605, listing price only) plus an Adafruit ADS1115 from DigiKey DE at EUR 13.13 ex VAT / EUR 15.62 incl. VAT ($14.76 / $17.56, verified). That lands at about $27 ex VAT, or about $38 EU-landed incl. VAT (model), plus a box and a 9 V regulator. This is the low end of the existing $25-60 band, not a saving below it. Accept that module only if the arrival test passes (see the candidate entry); otherwise return it and buy a module of the exact Silicon Chip-measured layout. Every other candidate is either worse in a critical spec (OLED meter: 50 dB range; AD8307/8310/8313: frequency coverage; AD8317: about 55 dB; LTC5582: 40 MHz low end and 57 dB; RP2040 ADC: resolution and linearity; used HP/Agilent: not portable, mains, GPIB) or has no measured evidence (multi-variant $5.45 listings, the 'V1.0 -65~15 dBm' meter, bare-chip DIY). Fit Clpf 1 nF and Cobp 10 nF (0603 pads) on any module used for the 10 MHz GPSDO tone or HF levels; Silicon Chip shows ripple below 22 MHz otherwise. The 'AD8318 True RMS' listing at $160.69 (item 3256809304996792) mislabels a log detector as RMS: treat that seller as unreliable. The core alternative is unchanged: tinySA channel power, $0 extra, +/-2 dB, and the AD8318 cannot be more accurate than the tinySA it is calibrated against. EU cost: every AliExpress line adds EUR 3 duty per tariff line, a EUR 2 Union handling fee from about 1 Nov 2026, and import VAT (operator notes 34-35). LIMITS OF THIS PASS: the shared WebSearch budget was already exhausted at my first query, so no forum or review measurements of the OLED or V1.0 meters could be looked for. analog.com and Mouser returned 503, so the AD8318/AD8317/AD8313/LTC5582 datasheet figures were not re-read (marked in each entry). AliExpress item pages did not render, so only titles, prices and sold counts from the wholesale listing pages were seen. eBay returned 403. A follow-up with search budget could check for independent measurements of the $26.79 OLED meter; it would still fail on its 50 dB range.
 
+## searchA:flightaware_pro_stick_plus (run `wf_c3ba734e-52b`)
+
+- **Part:** FlightAware Pro Stick Plus (1090 MHz ADS-B RTL-SDR: LNA + SAW filter built in), qty 1, tier extended / Lab extended, continuous ADS-B on the LAB USB-A port
+- **Current price usd:** 69.92 (GBP 52.50 incl. 20% UK VAT, The Pi Hut). The Pi Hut Shopify JSON shows available=true on 18 Oct 2026; a cached collection page said 'sold out', so check stock at checkout. For a German address The Pi Hut shows GBP 52.06 ($69.33), which is GBP 43.75 ex VAT plus 19% DE VAT. The only shipping rate to DE is GBP 30.00 ($39.95) DHL Express (from the cart API). Landed alone that is about $109; the cost is lower only if the shipping is shared with other Pi Hut items. FX as in the stack: 1 GBP = 1.3318 USD, 1 EUR = 1.1241 USD.
+- **Critical specs:**
+  - 1090 MHz sensitivity: first-stage LNA (SKY7150) 19 dB gain, 0.4 dB NF, OIP3 +39 dBm (FlightAware spec). My cascade estimate of system NF with the 2.3 dB SAW and the R820T2 is about 0.5 dB (estimate, not measured).
+  - Selectivity: SAW 1075-1105 MHz, 2.3 dB insertion loss, 30 dB attenuation elsewhere (FlightAware). The order is LNA then SAW (rtl-sdr.com review), so out-of-band blocking is set by the LNA's +39 dBm OIP3.
+  - Overload behaviour: measured LNA overload on a wideband discone; lowering RTL gain does not help (rtl-sdr.com). In this handheld, nearby LTE, DVB-T and FM must not desense it.
+  - In-band self-spur immunity and shielding: the display harmonic 83.77 MHz x13 = 1089.0 MHz falls in the passband (STACK errata 19). GPSDO x109 = 1090.000 MHz (the GPSDO is off and disconnected during ADS-B sessions). No filter removes in-band spurs, so enclosure and shielding count.
+  - Tuner/ADC: R820T2 + RTL2832U, 8-bit, 2.0-2.4 Msps for readsb, USB 2.0.
+  - Reference: 0.5 ppm TCXO (not critical for ADS-B, but it must not regress).
+  - Power: 300 mA at 5 V from the LAB USB-A port (TPS2553, 0.75 A limit); self-heating in a closed case.
+  - Mechanical/RF: SMA female, 95 x 32 x 13 mm, 17 g, one box with no extra preamp or cable.
+  - Software: stock or the stack's patched librtlsdr on Ubuntu 24.04 arm64, readsb; unique EEPROM serial (rtl_eeprom) because every SDR is opened by serial; no bias tee (no DC on the antenna port, nothing to gate).
+  - Role: does not use up the spare V4L (STACK C21: the spare stays a spare; R828S is end of life).
+  - Legitimacy: genuine FlightAware with a published EU Declaration of Conformity; seller that delivers to the EU.
+- **Candidates:**
+  1.
+    - **Name:** FlightAware Pro Stick Plus from The Pi Hut (CURRENT PICK, keep)
+    - **Kind:** current_part
+    - **Price usd:** 69.92 (GBP 52.50 UK); 69.33 (GBP 52.06 incl. DE VAT) + 39.95 (GBP 30) DHL Express to DE
+    - **Spec comparison:** Reference part. 19 dB / 0.4 dB NF / OIP3 +39 dBm LNA, then SAW 1075-1105 MHz (IL 2.3 dB, 30 dB rejection), R820T2, 0.5 ppm TCXO, 300 mA, SMA-F, 95x32x13 mm.
+    - **Worse in:** Nothing (reference). Known weakness of the design: LNA before SAW, so it can overload on wideband antennas (rtl-sdr.com).
+    - **Compatibility:** Fits as planned: LAB USB-A (300 mA under a 0.75 A limit), librtlsdr/readsb on arm64, no bias tee.
+    - **Risks:** Stock varies (a cached page said sold out; JSON says available). GBP 30 express shipping to the EU if bought alone. The Pi Hut sale price was GBP 42.00 around 28 Nov 2025 (elecena.pl price history); a similar sale this year is possible, not guaranteed.
+    - **Seller url:** https://thepihut.com/products/flightaware-pro-stick-plus-usb-sdr-ads-b-receiver
+    - **Sources:**
+      - https://thepihut.com/products/flightaware-pro-stick-plus-usb-sdr-ads-b-receiver.js
+      - https://www.flightaware.com/adsb/prostick/
+      - https://elecena.pl/product/22716902/rss
+  2.
+    - **Name:** Same SKU: FlightAware Pro Stick Plus at Pimoroni (UK, ships to 146 countries incl. EU)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 26.30 (GBP 19.75 GB listing) / 26.92 (EUR 23.95 shown for DE); OUT OF STOCK
+    - **Spec comparison:** Identical part (same FlightAware SKU, vendor FlightAware in the listing); every spec is equal.
+    - **Worse in:** Nothing on specs. Availability: Shopify JSON shows available=false on 18 Oct 2026.
+    - **Compatibility:** Identical to the current part.
+    - **Risks:** Out of stock and restock unknown. The GBP 19.75 price may be a stale listing price and could change on restock. Shipping cost to the EU not verified (a sold-out item cannot be added to the cart).
+    - **Seller url:** https://shop.pimoroni.com/products/pro-stick-plus-high-performance-usb-sdr-ads-b-receiver
+    - **Sources:**
+      - https://shop.pimoroni.com/products/pro-stick-plus-high-performance-usb-sdr-ads-b-receiver.js
+      - https://shop.pimoroni.com/products/pro-stick-plus-high-performance-usb-sdr-ads-b-receiver.js?country=DE
+  3.
+    - **Name:** Same SKU: FlightAware Pro Stick Plus at the official FlightAware store (Houston, US)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 45.99 (in stock), US shipping only
+    - **Spec comparison:** Identical part from the manufacturer; every spec is equal.
+    - **Worse in:** Nothing on specs. It cannot be shipped to the EU: the store's meta.json lists ships_to_countries = ["US"].
+    - **Compatibility:** Identical to the current part.
+    - **Risks:** It would need a parcel forwarder plus EU import VAT (19-21%) and any EU low-value-parcel duty (not verified). Landed cost is not verified and is probably no better than The Pi Hut's GBP 52.06 unless shipping to the Pi Hut cannot be shared.
+    - **Seller url:** https://www.flightaware.store/products/pro-stick-plus
+    - **Sources:**
+      - https://www.flightaware.store/products/pro-stick-plus.js
+      - https://www.flightaware.store/meta.json
+      - https://www.flightaware.com/adsb/prostick/
+  4.
+    - **Name:** Same SKU: FlightAware ProStick Plus at the rtl-sdr.com store
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 29.95; OUT OF STOCK
+    - **Spec comparison:** Identical part; every spec is equal.
+    - **Worse in:** Nothing on specs; the page shows 'Out of stock' (fetched 18 Oct 2026).
+    - **Compatibility:** Identical to the current part.
+    - **Risks:** Not orderable now; restock unknown.
+    - **Seller url:** https://www.rtl-sdr.com/product/flightaware-prostick-plus/
+    - **Sources:**
+      - https://www.rtl-sdr.com/product/flightaware-prostick-plus/
+  5.
+    - **Name:** ADSBexchange.com Blue R820T2 RTL2832U, 0.5 PPM TCXO ADS-B SDR w/Amp and 1090 MHz Filter (stick only, SKU ADSBX1090)
+    - **Kind:** other_brand
+    - **Price usd:** 49.99 (store.adsbexchange.com, 60 in stock)
+    - **Spec comparison:** Published: R820T2/RTL2832U, 0.5 ppm TCXO (equal), onboard 1090 MHz filter and amplifier, aluminium case (the seller says better heat and interference performance than the plastic-bodied Pro Stick Plus; seller claim). NOT published: LNA gain, NF, OIP3, filter passband, rejection, filter-before or after LNA, current draw.
+    - **Worse in:** Not verified as not-worse: none of the RF specs that matter (NF, gain, IP3, rejection) are published and I found no independent measurement or teardown. It cannot be accepted under the not-worse rule. The metal case may be better for in-band self-spurs (not measured).
+    - **Compatibility:** Probably the same driver path (RTL2832U + R820T2, librtlsdr/readsb arm64). Current draw and bias-tee presence unknown, so measure on LAB USB.
+    - **Risks:** No shipping rate to Germany: the store's cart shipping-rate API returned none, although meta.json lists DE, so it may not be orderable to the EU in practice. Amazon US listing B09F2ND4R6 not verified. EU import VAT applies. A bundle SKU with an antenna and microSD costs $70.99 and is out of stock.
+    - **Seller url:** https://store.adsbexchange.com/products/adsbexchange-com-blue-r820t2-rtl2832u-0-5-ppm-tcxo-ads-b-sdr-w-amp-and-1090-mhz-filter
+    - **Sources:**
+      - https://store.adsbexchange.com/products.json?limit=250
+      - https://store.adsbexchange.com/products/adsbexchange-com-r820t2-rtl2832u-0-5-ppm-tcxo-ads-b-sdr-w-amp-and-1090-mhz-filter-software-on-industrial-microsd.js
+      - https://store.adsbexchange.com/meta.json
+  6.
+    - **Name:** AirNav (RadarBox) FlightStick USB ADS-B receiver (SKU RBFLIGHTSTICK)
+    - **Kind:** other_brand
+    - **Price usd:** 49.95 + 4.99 standard shipping to DE (EUR 45.95 shown for DE; VAT basis not stated). Landed with 19% import VAT about 65 (estimate)
+    - **Spec comparison:** Published: R820T2, integrated 1090 MHz band-pass filter, ESD protection, 20.5 dB amplifier (+1.5 dB over 19 dB). NOT published: NF, IP3, filter passband or rejection, TCXO, current. Teardown chain per the FA forum (SoNic67): protection diodes, LNA, SAW, which is the same topology as the Pro Stick Plus. Measured (nu3e, FA forum, Jan 2019, under 2 km from a cell site): with no external filter on either, the Pro Stick Plus 'received many more aircraft'. The FlightStick matched it only with an external 1090 filter added. User report: 'Does run hot'.
+    - **Worse in:** Worse in out-of-band overload resistance (the one side-by-side measurement). NF, IP3 and TCXO not published. Thermal: reported to run hot.
+    - **Compatibility:** RTL2832U + R820T2, so the librtlsdr/readsb arm64 path is probably fine. Current draw unknown.
+    - **Risks:** US merchant (Naples, FL): import VAT and handling on delivery. Measurement is from 2019 and the hardware may have been revised since (not verified). Passion Radio (FR) lists it as no longer available.
+    - **Seller url:** https://shop.radarbox.com/products/airnav-ads-b-flightstick-dongle-ads-b-receiver
+    - **Sources:**
+      - https://shop.radarbox.com/products/airnav-ads-b-flightstick-dongle-ads-b-receiver.js
+      - https://discussions.flightaware.com/t/radarbox-flightstick-vs-flightaware-pro-stick-plus/44824
+      - https://www.passion-radio.com/1090mhz/flightstick-1050.html
+  7.
+    - **Name:** FlightAware Pro Stick (orange, no built-in filter)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 60.33 (GBP 45.30, The Pi Hut, available)
+    - **Spec comparison:** Same LNA (19 dB, 0.4 dB NF, OIP3 +39 dBm), R820T2, 0.5 ppm TCXO, 300 mA, SMA-F, same size. No SAW filter.
+    - **Worse in:** No 1090 MHz filter, so it has none of the 30 dB out-of-band rejection. That is a clear regression in a handheld near LTE, DVB-T and FM. Adding the FlightAware external filter (GBP 25.90) makes it GBP 71.20, more than the Pro Stick Plus.
+    - **Compatibility:** Same as the current part.
+    - **Risks:** Desense near strong transmitters; Berrybase lists it at EUR 64.90 and not deliverable.
+    - **Seller url:** https://thepihut.com/products/flightaware-pro-stick-usb-sdr-ads-b-receiver
+    - **Sources:**
+      - https://thepihut.com/products/flightaware-pro-stick-usb-sdr-ads-b-receiver.js
+      - https://www.flightaware.com/adsb/prostick/
+      - https://www.rtl-sdr.com/flightaware-prostick-vs-flightaware-prostick-plus-review/
+  8.
+    - **Name:** Uputronics 1090 MHz filtered preamp on the spare RTL-SDR Blog V4L (the STACK's noted budget alternative)
+    - **Kind:** other_brand
+    - **Price usd:** 59.12 (GBP 44.39 GB) / 50.53 (EUR 44.95 shown for DE; VAT basis not stated); the V4L is already owned
+    - **Spec comparison:** Uputronics: LNA before SAW (same topology as the Pro Stick Plus), aluminium case, SMA-F, 5 V bias-tee or USB-C power. Unit NF 0.75 dB per a reseller (Core Electronics), not on the Uputronics page; gain, IP3 and rejection not confirmed here. Receiver: V4L, 1 ppm TCXO (vs 0.5 ppm), 1090 MHz MDS about -133.7 dBm (V4L datasheet).
+    - **Worse in:** Published NF 0.75 dB vs 0.4 dB. It uses up the spare V4L, so RTL-A and RTL-B lose their spare (STACK C21). It needs the V4L bias tee (labd token gate) at 4.5 V against Uputronics' stated 5 V input (not verified to work). Two boxes plus a jumper instead of one stick. TCXO 1 ppm vs 0.5 ppm.
+    - **Compatibility:** Works with the stack's patched librtlsdr (V4L) on arm64. Bias-tee current must be measured. Fits the LAB USB current budget.
+    - **Risks:** The role change is a design trade, not a like-for-like swap. The 4.5 V tee vs 5 V input needs a bench check.
+    - **Seller url:** https://store.uputronics.com/products/uputronics-filtered-preamps
+    - **Sources:**
+      - https://store.uputronics.com/products/uputronics-filtered-preamps.js
+      - https://store.uputronics.com/products/uputronics-filtered-preamps.js?country=DE
+      - https://core-electronics.com.au/ads-b-1090mhz-filtered-preamplifier.html
+  9.
+    - **Name:** Nooelec SAWbird+ ADS-B (LNA + SAW) on the spare V4L
+    - **Kind:** other_brand
+    - **Price usd:** unverified (no nooelec.com page or price retrieved)
+    - **Spec comparison:** Only a third-party guide figure: gain 34 dB or more, NF 0.9 dB or less (not from the manufacturer). Forum reports are mixed; one user saw lower range at a noisy site.
+    - **Worse in:** Not verified. The only NF figure (0.9 dB or less, not from the manufacturer) is worse than 0.4 dB. Like the Uputronics option, it uses up the spare V4L and needs the bias tee.
+    - **Compatibility:** V4L bias-tee powered; same role-change caveat as the Uputronics option.
+    - **Risks:** Specs and price unverified; the nooelec.com URL I tried returned 404.
+    - **Seller url:** https://www.nooelec.com/
+    - **Sources:**
+      - https://discussions.flightaware.com/t/nooelec-sawbird-preamp-filter/89833
+      - https://discussions.flightaware.com/t/question-gain-setting-after-adding-nooelec-sawbird/90292
+- **Notes:** VERDICT: keep the FlightAware Pro Stick Plus. I found no different product that is cheaper and verifiably not worse.
+  
+  Only an identical part from another seller is cheaper with every spec equal, and none can be ordered to Europe today:
+  - Pimoroni: GBP 19.75 / EUR 23.95 ($26-27), out of stock.
+  - rtl-sdr.com: $29.95, out of stock.
+  - FlightAware's own store: $45.99, ships to the US only.
+  
+  Action: keep The Pi Hut (available=true, GBP 52.50 / GBP 52.06 incl. DE VAT) and watch Pimoroni for a restock. Buy the extended tier at the end (roadmap step 13), ideally in a Pi Hut sale (GBP 42.00 seen around 28 Nov 2025; historical) and in the same Pi Hut order as other items, so the GBP 30 DHL Express is shared.
+  
+  Different products:
+  - ADSBx Blue ($49.99): no published NF, gain, IP3 or rejection, and the store gives no shipping rate to DE. Unverified, so not accepted.
+  - AirNav FlightStick ($49.95 + $4.99 to DE): measured worse on out-of-band overload (FA forum, 2019) and reported to run hot.
+  - Pro Stick orange (GBP 45.30): no SAW filter.
+  - Uputronics or SAWbird+ on the spare V4L: higher published NF (0.75 dB, 0.9 dB) and they use up the spare V4L.
+  None of these is not-worse.
+  
+  Other sellers checked that are not cheaper or not available:
+  - Berrybase DE: EUR 79.90 incl. VAT, not deliverable.
+  - Moonraker EU: EUR 68.96, discontinued.
+  - Core Electronics AU: AUD 98.75 incl. GST, plus international shipping.
+  - Passion Radio: FlightStick and RTL-SDR Blog ADS-B LNA both 'no longer available'.
+  
+  Not reachable: Amazon US/DE (captcha) and the Core Electronics listings (Cloudflare 403).
+  
+  Design notes for v2, not price issues:
+  1. The Pro Stick Plus is LNA-first. rtl-sdr.com measured overload on a wideband antenna, so it should be fed from a 1090-resonant antenna, not a wideband whip.
+  2. The 1089.0 MHz display harmonic (83.77 MHz x13) is in-band. FlightAware does not state the stick's shielding, so keep the profile-based pixel-clock switching active during ADS-B sessions.
+  
+  Budget used: 14 WebSearch calls; most other data came from vendor Shopify JSON and cart shipping-rate endpoints, fetched 18 Oct 2026.
+
 ## community:antennas_patch_chip (run `wf_d3593e9c-5ce`)
 
 - **Subsystem:** antennas_patch_chip (GNSS L1 puck on P7/LC76G, RTL-SDR Blog active L-band patch for Inmarsat-C EGC SafetyNET and GNSS-SDR, 435 MHz small antennas with the Uputronics 440 preamp, chip antennas): stage 2, community experience
