@@ -3779,6 +3779,52 @@
   - Currency uses the stack's model rates: EUR 1 = USD 1.1241 (EUR 148 = 166.37) and GBP 1 = USD 1.3318 (GBP 132 = 175.80). Ex-VAT figures are derived from the shown VAT rate.
   - Shipping costs for Berrybase, The Pi Hut and ALLNET into the EU were not checked.
 
+## edit:00_header_toc:b1 (run `wf_11421893-197`)
+
+- **Section:** 00_header_toc
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+- **Skipped:** []
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/00_header_toc.md, in place with the Edit tool. All 14 changes are applied and none were skipped.
+  
+  Extra tasks:
+  - The title is now "# Стек v2 (18 жовтня 2026)".
+  - The status paragraph now says v2 applies the P4 re-audit (8.1), the P5 analog decisions (78 parts: 43 kept, some with a new seller or price; 35 replaced conditionally, with condition and fallback; tests in 8.2), the operator notes and the user decisions of 18 Oct 2026 (region Europe, Lime kept). It points to section 11. I checked the 78/43/35 counts against the decision fields in the analogs_*.json files.
+  - The table of contents has nested entries 8.1 and 8.2 (the names given in the task) and a new entry 11 with 11.1-11.7. The 11.x titles are copied from the headings in v2_edit_pairs.json.
+  
+  Merges where changes overlapped:
+  - **idx 0 + idx 4:** both remove "Регіон не відомий..." from the Позначки paragraph. The region text from idx 0 is now its own bold paragraph, "**Регіон — Європа**", placed after the status paragraph.
+  - **idx 3 + idx 0:** the QO-100 add-on list (Bullseye, F/75 Ohm parts, choke >=1 A, cone and horn materials) appears once, in "Що це". The region paragraph says "(склад — вище)" instead of repeating it.
+  - **idx 8 + idx 11:** both move Uputronics from the incl.-VAT list to the ex-VAT basis. They agree; I kept the exact idx 11 wording «Uputronics 440 — EUR 52.95 без ПДВ (EU-вітрина)», added the idx 8 figures ($59.52; EU about $70.8-72.0 plus shipping, model) and noted that the drop from $68.71 is only a basis change, not a saving (analogs_G1 #3). From idx 8, Boni-Whip is now "Bonito shop EUR 149.00 with VAT ($167.49)", replacing "WiMo EUR 159".
+  - **idx 12 + idx 4:** both state the landed-cost rule. It is written once in full as a new paragraph, "Правило вартості з доставкою в ЄС (нотатки оператора 34-35)", with the legal basis from operator_notes item 35. idx 12 adds the Armor 7056A EUR 12.00 and NF-A4x10 EUR 15.90 prices and the DigiKey DE note.
+  
+  No change was overridden: the overlapping changes did not contradict each other.
+  
+  Number choice:
+  - **idx 2:** idx 2 asked for the Lime-set extra cost to be recomputed at P5 prices. I did not compute a new figure myself. I used the one already worked out in v2_changes/02e_bom_optional_totals.json idx 47: about $606-630 (board $267 + 4 cables $18.36 + parts about $89.65-91.65 + T7 $231.45-252.81). It is marked as an estimate and points to 2.11, next to the v1 $596-681. The runtimes (1.9 h, mode H, 30.8 W; 3.3 h, mode B) match 05a.
+  
+  Other text:
+  - **idx 13:** the Eleshop $162.53 price is marked "не перевірено", as analogs_G5 #0 says.
+  - **Small additions from higher-precedence sources (my choice; not in the change list):**
+    - I added a "Пріоритет джерел у v2" line, taken from the brief, in front of the v1 priority sentence.
+    - I added a pointer at the end of the measurement list: the Lime acceptance tests within the 30-day guarantee are in section 8.
+    - I added the check of DVB-T and LTE B28 leaking into the LNB IF, from the user decision in user_requirements.md.
+  
+  There are no subtotals in this file to recompute.
+
 ## edit:08b_new_gates_reaudit:b1 (run `wf_1721ea96-ee2`)
 
 - **Section:** 08b_new_gates_reaudit
@@ -30618,6 +30664,60 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
     - **Why:** Refined by analogs G3: HT7550-1 (30 V) is OK, ME6201 must be replaced by a >=30 V LDO; applied with G3 wording.
 - **Notes:** Source /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/reaudit_D_power_mech_display_lab.json was read completely: 5 subsystems (power, gnss_imu_location, display_hmi, mech_thermal_storage, lab_instruments) with 99 corrections, 56 new risks, 43 refuted findings, 5 corrected specs and 76 bench tests. Every bench test has its own 08_open_bench change (power 0-15, GNSS 0-11, display 0-12, mech 0-15, lab 0-18). Some tests are merged into existing rows, where the anchor names that row. Precedence: wherever an analog decision (analogs_G2/G3/G4/G5/G6) changes the same part, seller or price, the instruction says 'per analogs Gx'. The re-audit's own part, seller or price is then listed in not_applied, while its technical content (thresholds, wiring, tests) is applied. All anchors were checked against the current section files: each occurs exactly once (verified with a script; empty anchor = new 08 row). Section 11_changes_v1_v2 is not in the output enum, so no change-log entries are emitted; the 07_corrections entry lists the v1 errors this source corrects. Two open conflicts are left for the editor. (1) The Boni rail is 12.5 V in v1 and re-audit D, but 13.8 V in re-audit B; the instruction keeps the 12.5 V straps and defers to the adopted rail. (2) Fan tach GPIO: GP22 is the only free Pico pin, and analogs G2 also wants GP22 spare, so the assignment is deferred to P7. User-decision items (Lime default, Europe) are touched only where this source states mechanical, thermal or storage consequences. The saving_usd sign convention: positive = saving, negative = added cost (e.g. -33.18 for the VAT-30W2+ pads). Two small figures are inferences: 0.01 on the Daly line ($9.00 to $8.99) and -1 for the back-feed parts (re-audit D says 'about $1').
 
+## edit:02a_bom_compute_receivers_rf:b1 (run `wf_a1f0ee5f-4e1`)
+
+- **Section:** 02a_bom_compute_receivers_rf
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+- **Skipped:** []
+- **Notes:** I edited one file: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/02a_bom_compute_receivers_rf.md. All 23 changes (idx 0 to 22) are applied and none were skipped. Every table row still has 7 columns.
+  
+  Conflicts and merges:
+  - idx 7 against idx 11, the V4L serial names. Both come from P4 re-audits, so the brief's order does not decide it. I used idx 7 (reaudit_A): pattern ^LAB[A-Z]{3}$, names LABRXA, LABRXB, LABRXC. Reasons: it is the software parsing rule (strtol), sections 05b and 08 already use LABRX* for bias tokens, and these names meet every reaudit_B constraint (non-numeric, none a prefix or suffix of another). reaudit_B's LAB-RTLA / LAB-RTLB / LAB-RTLS fail the pattern, and the note says so. 01a and 08b still use LAB-RTL*, so the orchestrator should make the names match across files. The rest of idx 11 is applied: V3 R860 $34.95-39.95 as an explicit downgrade, and the aluminium cases on thermal pads.
+  - idx 20, the HF+ relays. idx 20 itself names the analog G1 #7 part (G6K-2F-RF-S DC5, $39.38 a pair), so the analog price wins over reaudit_B's $50.12 basis. The price cell is now 44-50, a figure taken from analogs_G1 decisions[7]. G6K-2F-RF DC5 ($50.12) is the listed fallback.
+  - idx 22 (reaudit_C model cell), idx 17 (EU storefront price) and idx 18 (datasheet Rev 3.0 bias text) are merged. NF, gain, V3 enclosure, limiter and high-pass filter go in the model cell only, not repeated in the note. Price, seller and status follow the EU storefront (59.52 = EUR 52.95 ex VAT), as idx 22 asks.
+  - idx 1 and idx 10 are merged into the existing counterfeit sentence. idx 10's per-unit and total price moved into the price cell (no repetition), and the status is now 'перевірено (USD) / модель (ЄС landed)'.
+  - idx 0: the header defines 'збір за обробку' (Union handling fee). Rows use that term instead of 'UHF', which would clash with the radio band name.
+  - idx 5: the fan model cell is left alone, as told. The note only points to reaudit_D / analogs G2.
+  
+  Subtotals:
+  - 2.1 stays 283.31-312.63 (no row price changed).
+  - 2.2 stays 282.85.
+  - 2.3 is now 244.22-272.22 = 49.95 + 24.95 + 16.95 (new spare-V4L FM band-stop row, idx 13) + 59.52 + 25.85 + 44-50 + 8-15 + 15-30.
+  
+  For batch 2:
+  - These anchors no longer exist; merge into the current text instead.
+    - idx 23, 32: the old Uputronics bias sentence was replaced by idx 18.
+    - idx 29: 'Бюджет: V3 як запасний варіант.' was replaced. '455 шт. на складі' is kept.
+    - idx 33, 35: the HMC7992 and G6K rows were rewritten.
+    - idx 34: the HF+ price cell is now '169.00 без ПДВ ...'.
+    - idx 36: the shield model text changed.
+    - idx 39: 'КХ-тракт — $494.68-589.17' was replaced by idx 9's '$483.44-589.17'.
+  - idx 39: the header HF-chain figure (483.44-589.17, from idx 9) uses the v1 HF line prices. My relay change in this batch already lowers it by 18 (lower bound) and 30 (upper bound), so it is out of step until idx 39 lands. With the analog line changes plus the Bonito lower bound it would be 426.17 − 123.95 + 167.49 = 469.71, so 469.71-546.74 (derived).
+  - idx 38: its 2.3 subtotal of 232.54-244.84 leaves out the new 16.95 row. With that row it becomes 249.49-261.79.
+
 ## searchA:adafruit_bno085_4754_rp2040_zero_metal_p (run `wf_a268b76e-da0`)
 
 - **Part:** IMU pack: Adafruit BNO085 (4754) on SPI0 of a Waveshare RP2040-Zero (20187), in a metal puck bonded to the cable braid; GX12 4-pin pair; 1.5-2 m shielded 4-core lead; TVS. Framed UART at 115200 with CRC to Pico UART1, never USB.
@@ -51379,6 +51479,47 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
 - **Notes:** Record keys used in 'sources': r0 = narrowband_sdr (V4L, librtlsdr), r1 = hf_receiver (HF+, Boni-Whip, HF software), r2 = wideband_sdr (LimeSDR Micro), r3 = rf_frontend (LNAs, bias, LNB/BONI rails, switches). The source has no analog decisions or stack_changes fields; it is a P4 re-audit, so analog decisions from G1/G3/G5/G6 were used to override part/seller/price where they cover the same item. 
   Points for the orchestrator: (1) Conflicts inside re-audit B, resolved here: DVB initramfs step (r0 wins, operator note 12b supports it), Boni voltage 13.8 V (r1, adopted by G3 #9/G1 #9) over r3's 12.5/13.0 V, eFuse over PTC (r3, matching the G3 #9 chain). (2) New design gap that no file resolves: r3's OVLO divider 110k/10.0k (trip 13.91-14.77 V) was sized for <=13.53 V rails and overlaps the 13.8 V BONI band (G3 #9: +/-0.345 V), so the BONI OVLO must be re-derived; I did not invent a value. (3) Operator note 30 asks for a labd-controlled load switch on the M.2 3.3 V for Lime power-cycling, and its 7.5 Msps figure uses another formula; re-audit B (higher precedence than non-rule operator notes) says never switch VCC_3V3_MKEY at runtime and gives a 7 Msps floor (fs x 4 x 2 = 56 MHz). I applied the re-audit rule and the 7 Msps floor; the riser load-switch question needs a decision (G6 #6 mentions the note-30 switch as 'unchanged rails', but P5 analogs do not decide architecture). (4) The user decision requires a DVB-T/LTE B28 IF ingress check; I kept that check and re-aimed it at the real EU occupants (733-758 MHz) instead of removing it. (5) The lab librtlsdr patch was compiled only on amd64 (scratchpad s3nb paths in r0 bench [0]); nothing was tested on arm64 or hardware. (6) Numbers marked 'derived' are simple arithmetic on file figures (e.g. 394.44, 483.44, 97 C, 11.24); EUR values are given only where a file states them. (7) Many changes overlap with the G1/G3/G6 workers (HMC7992, G6K, TPS2553, Lime cables, T7, H1, Bullseye terminator); my instructions defer to those analog decisions so the edits stay consistent.
 
+## edit:11a_changes_analogs:b1 (run `wf_d69008e8-cbb`)
+
+- **Section:** 11a_changes_analogs (NEW section 11 start + 11.1 replacements and seller changes (P5))
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+- **Skipped:** []
+- **Notes:** I created /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/11a_changes_analogs.md with the Write tool (batch 1). It has "## 11. Зміни v1 → v2", a short intro naming the sources (P4, P5, operator notes, user decisions of 18.10.2026) and the precedence order, then "### 11.1. Заміни і зміни продавця (P5)". That subsection opens with a short notes paragraph: what each decision means, the price basis, the FX rates from P5 (1 EUR = 1.1241 USD, 1 GBP = 1.3318 USD) and the landed-cost rule for non-EU sellers from operator_notes items 34-35 (EUR 3 duty and EUR 2 UHF per tariff line). The 8-column table follows, with one row per P5 decision. Row number = idx + 1, so idx 0-19 are rows 1-20 and later batches should continue at row 21.
+  
+  The changes JSON cuts off its conditions, sources, chosen and price fields at 200-400 characters. So I took the full text of each decision from the P5 source files D/analogs_G1_receivers_rf.json (decisions 0-10 = idx 0-10) and D/analogs_G2_display_hmi_storage.json (decisions 0-8 = idx 11-19). I used their current_pick and current_price_usd fields, plus a few stack_changes facts: the DigiKey DE Pico price for 2 (EUR 8.06 / 9.59), the Pi Hut DHL-only note, and the hub VBUS pad note. v1 values were checked against STACK_v1_backup.md BOM rows. Every number comes from these files. Models and estimates are marked as such. Where I applied the landed-cost rule (row 1: 3 dongles on one tariff line), I only used the rule amounts. No totals were invented.
+  
+  Merges with P4, no conflicts:
+  - Row 8: the P4 relay price fix ($50.12) is shown under "було". P5 sets the new part.
+  - Row 13: the reaudit_D fan change (NF-A4x10, 6101 kept as a spare) is the baseline. P5 keeps it and changes only the EU seller.
+  - Row 15: the reaudit_D separate 74271140 line for the touch-USB lead is noted as its own BOM line.
+  - Rows 17 and 19: the reaudit_A moves (Pico to DigiKey, PCA9555 to TCA9555PWR) are the baseline.
+  
+  Row 4 (Uputronics) reports saving 0.00, as P5 requires. The BOM drop from 68.71 to 59.52 is a change of price basis only.
+  
+  Kept rows (keep decisions) are short. Conditional rows give the condition and the fallback. All tests are written as conducted bench tests. Row 15 states E-field probe only, with no H-field loops.
+  
+  There is no subtotal in this file, so none was recomputed. I checked the table: every row has exactly 8 cells, and no stray pipe characters are left in the cells (|S21| and |Z| were reworded).
+
 ## edit:08c_new_gates_analogs:b1 (run `wf_d86c28f4-677`)
 
 - **Section:** 08c_new_gates_analogs
@@ -51411,6 +51552,110 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   - **Number check:** I compared key numbers with analogs_G2/G4 in the data dir and found them all ($18.71, KSC641J $7.00, $0.78, +$0.46, $11.90, 59.5 GB, 0xC481, 1934-1464, 3.5 K/W, 2.7 m3/h, EUR 3.46/6.52, G104MF +85 g, 12.5 L, 5 Pa, 222 W/mK, 11.3 mm, 233x160, 50 mOhm). The Gelid fallback pads have only EUR prices in the source, so no USD was invented.
   - **Rules and precedence:** nothing conflicts with the hard rules. The HDMI A/B uses only an E-probe, with no loop or H-field probe. There were no precedence conflicts.
   - **Subtotals:** none exist in this file.
+
+## edit:04_capabilities:b1 (run `wf_d86c28f4-677`)
+
+- **Section:** 04_capabilities
+- **Applied:**
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  - 33
+  - 34
+  - 35
+  - 36
+  - 37
+- **Skipped:** []
+- **Notes:** I edited only /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/04_capabilities.md, in place with Edit. All tables still have the right column counts (6 in 4.1 and 4.2, 2 in 4.3). This file has no subtotals to recompute.
+  
+  Conflicts and merges:
+  - 15 + 24 (gr-satellites): merged into "gr-satellites 4210dc4 (+lab; ... submit_tlm = no; не 5.5.0)" in both CubeSat rows. The re-audit A wording "submit_tlm = no" won over the operator note's "submit_tlm=false", because a P4 re-audit outranks the other operator notes.
+  - 7 + 16 + 32 (ADS-B): merged into one row. dbFlags &1 or a tar1090 milRange address, plus &4 (PIA) and &8 (LADD), are not shown or logged. Without the pinned aircraft.csv.gz (max 90 days old) the profile does not start. readsb v3.16.17 with --net-bind-address 127.0.0.1 went into the decoder cell, and dump978-fa is now "не встановлюється (Європа; закріплено −1)". The spare V4L got the FM band-stop and its −29 dBm figure.
+  - 9 + 36 (DRM): 36's fuller text is used. From 9 I kept that SDRangel 7.27.2 has no DRM plugin. I read "none in v1" as the first device build.
+  - 19 + 35 (WEFAX): merged. OpenWebRX+ "fax", one profile per civil channel, allow_center_freq_changes=false; SDRangel only after a release with demodwefax.
+  - 6 + 25 (US-only profiles): merged. The status is now "вимкнено (регіон Європа)", and the packages are pinned −1. I also added this status to the legend in the intro.
+  - 13 + 22 (new 4.3 rows): merged into two new rows after CARTOSAT-3, one for SatDump pipelines and plugins and one for OpenWebRX+ modes. Item (2) of 22 (naval VLF via SDRangel feature/sid) went into the existing VLF row instead of a new row, because the topic was already there.
+  - 20 + 11: the 4.3 military ADS-B/AIS row was replaced, and a PIA/LADD row was added after it.
+  - 26: the v1 figure "CPU-режим близько 5 тайлів/с" was replaced by the re-audit target "≥4 тайлів/с на одному A55 (не виміряно)", because P4 outranks v1. The default with-Lime HTP gate and the 28 ms no-Lime gate were added.
+  
+  Additions beyond the literal anchors:
+  - 0: I also removed "— залежить від регіону" from the QO-100 CW antenna cell, since the region is now decided. The intro now says the region is Europe and has no city tables.
+  - 23: also applied to the decoder cell of the folding-tier SSTV row.
+  - 5: I added the fallback from operator note 27 (RTC plus last good fix, marked stale).
+  - 3: the row is split into three rows: Elektro-L3 at 14.5W, Elektro-L5/FY-2H (depends on location), and GOES-East (far west only). The files give no frequency for GOES-East, so it says "L-band". "PLUGIN_GOES не збирається" comes from re-audit C correction 3, which change 3 cites. I left the v1 LRIT margin text in the Elektro-L3 row so the separate re-audit C correction can replace it.
+  
+  Open items for batch 2:
+  - The Inmarsat-C frequency cell still says 1537.0-1544.2 MHz, which overlaps the new no-demodulation range 1544.0-1545.0 MHz. I left it for change 59 (re-audit C), which rewrites that cell.
+  - The GNSS target cell still says "regional SBAS"; I left it for changes 61 and 70.
+  - These anchors are now changed or broken; batch 2 should find these spots by part name instead: 39 (survey mask now includes 1544.0-1545.0 MHz), 47/48 ("gr-satellites 5.5" is gone), 57 (an Airspy note now sits before "EIRP не опубліковано"), 58 (the Elektro row is now three rows), 61, 62 (QO-100 CW row), 65 ("(лише якщо залишено)" is gone), 67 ("1544.5 MHz" in the Cospas-Sarsat row is replaced). The anchors for 52, 53, 56 and 73 ("Спеціалізований приймач;") are still present.
+
+## edit:08c_new_gates_analogs:b2 (run `wf_d86c28f4-677`)
+
+- **Section:** 08c_new_gates_analogs
+- **Applied:**
+  - 17
+  - 18
+  - 19
+  - 20
+  - 21
+  - 22
+  - 23
+  - 24
+  - 25
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+- **Skipped:** []
+- **Notes:** I added 15 rows to the 8.2 table in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/stack_v2_parts/08c_new_gates_analogs.md. They go after the batch-1 IPX row and before the questions block. Every row has the 3 columns (pipe counts checked). Batch-1 content is unchanged.
+  
+  - **Merged:** idx 18 (mast acceptance) and idx 19 (mast check before buying) are about the same part, so they share one row. It is timed "Перед замовленням; після приходу Boni-Whip (з 20.11.2026)".
+  - **idx 17 kept separate:** valves O8002 and MOLYKOTE 4 have their own row. They are a different test from the batch-1 rows on LNA boxes and IPX.
+  - **Column layout:** where the instruction put everything in the first column, I moved pass thresholds and fallbacks into the "ворота / тест" column, as the batch-1 rows do. Sled v2 example: the failure path is spare PCB, then the current module build.
+  - **Small additions from the source files.** I checked all numbers against analogs_G4_mechanical_field.json and analogs_G6_extended_optional.json and added these from the same records:
+    - H1: order condition (buy box Nooelec Inc A1TIGMJ4AZ1K1A, Amazon EU only at EUR 55.10 or less incl. VAT, otherwise Nooelec direct with VAT + EUR 3 duty + EUR 2 fee per line).
+    - DPS-150: the checkout gate (EUR 55.68 or less incl. VAT, shipping EUR 0, Eleshop on a tie or within EUR 1, Botland EUR 58.19 as fallback 2).
+    - B&W case: if the eyelets will not be locked, the Peli 1450 stays.
+    - microSD: buy only without the T7 or for a separate snapshot copy; fallback Reichelt or Alternate.
+    - Airspy: the purchase gates (a)/(b) and the fallback sellers AstroRadio/WiMo.
+    - AD8318: the classic-board photo check, otherwise the $13.35 listing.
+    - Deuter EUR 155 = $190.38.
+  - **Question added:** "Питання до вас" item 2, the fibreglass Quechua mast trade. It costs about $25.8 plus a stake and saves about $42.6, but adds 0.1-0.13 kg and is less durable. It needs your explicit consent and the same tests. The mast row points to it.
+  - **Wording fix:** "пласкій рукав" is now "плаский рукав".
+  - **Other checks:** no conflicts between changes, nothing ran against a hard rule (all tests are conducted or receive-only), and this file has no subtotals.
 
 ## community:power (run `wf_d9388111-e66`)
 
