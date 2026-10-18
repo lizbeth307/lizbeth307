@@ -16019,6 +16019,511 @@
   - [RigPix: Airspy HF+ Discovery](https://rigpix.com/miscrx/airspy_hfplusdiscovery.htm)
   - [rtl-sdr.com: SDR USB power measurements](https://www.rtl-sdr.com/measuring-the-usb-power-consumption-of-various-software-defined-radios/)
 
+## report:lab_extras (run `wf_df1900ef-872`)
+
+- **Scope:** The radio-lab package: instruments (VNA, spectrum analyser, noise source, GPSDO/reference, power meter, near-field probes, pads, loads), RF accessories (sled switch, step attenuator, filter and LNA bank, LNB feed), extra receive capabilities (HF, LF/VLF, ADS-B, AIS, radiosondes, broadcast, radio astronomy), lab software and daemons, bench tools, and the USB/power/case plan. I read the governing user_requirements.md (identical to REQUIREMENTS.md), the full radio_lab.json (sweeps, integ, verdicts, final), lab_ui_hf.json final, small_antenna_stack.json final and foldable_antennas.json final, plus minute-log.md, the related summaries.md entries (#123, #147, #155, #168) and the extra-studies.md lab and report:rf_receive sections. I used 7 web lookups: airspy.com, WiMo Boni-Whip, a Boni-Whip search, a Balun One Nine search, rtl-sdr.com, a Coilcraft WB9-1 search and a Pro Stick Plus search. All 18 named final/*.json files exist. report_research.json, the P1b output, does not exist yet.
+- **Items:**
+  1.
+    - **Subsystem:** Lab instruments
+    - **Topic:** LiteVNA 64 (core VNA)
+    - **Current decision:** Core. Conducted S11/S21 of cables, pads, DC blocks, bias tees, filters, the sled and powered LNAs. TDR finds bad crimps. Port 1 never goes to an antenna. It is a 1-path instrument, so its calibration is enhanced response, and S22/S12 are measured by reversing the DUT.
+    - **Key numbers:** 50 kHz-6.3 GHz. Dynamic range above 70 dB below 3 GHz and above 50 dB at 3 GHz and up. Source power is set only by coarse registers 0x41/0x42 (values 0x01-0x03, default maximum); the dBm level is unpublished. The bundle has 2 x 30 cm SS405 cables, an SMA-male OSL and an F-F adapter. Prices: EUR 177.03 ex VAT (Passion Radio, 8 in stock), SEK 2,195 incl. VAT (Limmared). The totals use $150-210.
+    - **Evidence:** The technical verifier read the LiteVNA user-guide register table and NanoVNA-Saver main, which has a LiteVNA64 class. The value verifier checked the bundle contents against the Limmared, Lab401 and Passion Radio listings.
+    - **Status:** verified
+    - **Conflicts or errors:** (1) The $150 low end rests on an unconfirmed Eleshop snippet ('EUR 130 ex VAT, model unclear'). Real current offers are about $167 (Selteq, discounted) to $225. (2) lab_ui_hf installs nanovna-saver 0.6.3 from apt. radio_lab says to use NanoVNA-Saver main via pipx in its own venv (numpy~=2.1, scipy~=1.14). Nobody checked that 0.6.3 supports the LiteVNA 64. (3) Other files still tune antennas with a VNA (antennas verify, foldable build steps, small_antenna_stack first_tests). That contradicts the conducted-only hard rule.
+    - **Needed action:** Re-price at about $167-225. Choose one install route: pipx main in its own venv, unless apt 0.6.3 is shown to detect the LiteVNA 64. Strike the antenna-S11 steps from the other files.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - https://www.zeenko.tech/litevna
+      - https://butik.limmared.nu/en/antenna-analysis/7430-litevna-64-vector-network-analyser-50khz-63ghz-.html
+  2.
+    - **Subsystem:** Lab instruments
+    - **Topic:** tinySA Ultra+ ZS407 (core analyser and low-level generator)
+    - **Current decision:** Core. An independent level-calibrated analyser with its own battery. It has no tracking generator. Its generator is used only conducted. The ZS405 is rejected as discontinued.
+    - **Key numbers:** Normal mode to 900 MHz; ULTRA mode to 7.3 GHz. +6 dBm maximum input and ±5 V DC. DANL -102 dBm at 30 kHz RBW, or -145 dBm at 200 Hz with the LNA. Sine output -115 to -19 dBm, ±2 dB, up to 800 MHz. Square wave up to 6 GHz (not 6.3). About $199-235; the ZS405 was only about 12% cheaper.
+    - **Evidence:** tinysa.org wiki specification and MenuTree pages (both verifiers). The tracking-generator claim and the ENR-menu claim were refuted.
+    - **Status:** verified
+    - **Conflicts or errors:** (1) The capabilities list says 'visible to 12 GHz', with no source. (2) Runtime: the wiki says the Ultra+ runs at least 3 h, while summary #155 (Selteq) says up to 2 h. (3) The eBay $210.99 offer is from an unknown seller, with clone risk.
+    - **Needed action:** Buy only from the official seller list. Source the 12 GHz claim or delete it. Treat output above 800 MHz as unknown level and pad it by 30 dB or more.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Specification
+      - /home/user/lizbeth307/sat-receiver-audit/summaries.md
+  3.
+    - **Subsystem:** Lab instruments
+    - **Topic:** DIY noise source (ZFL-500 class, N8DMT design) and the calibrated-head upgrade
+    - **Current decision:** Core: a DIY uncalibrated source behind a 6-10 dB pad, switched from AUX 12 V. NF results from it are relative only. Extended: a calibrated 346-class head (unpriced) with a 28 V boost, bought only if absolute NF is needed.
+    - **Key numbers:** N8DMT measured ENR at 12 V with pads: 20.5 dB at 28-52 MHz, 21.0 at 146 MHz, 20.1 at 440 MHz, 17.0 at 902 MHz, 16.1 at 1296 MHz and 8.4 dB at 2400 MHz. ENR derived on the tinySA is good to ±2-3 dB, so NF is relative. A 0.05 dB scatter target needs B·τ of about 7.5e3. Cost $20-40.
+    - **Evidence:** The N8DMT article as quoted in the radio_lab sweep. The Y-factor maths was confirmed by the technical verifier against Keysight 5952-3706. The sweep's ±1-2 dB ENR claim was refuted.
+    - **Status:** unverified
+    - **Conflicts or errors:** (1) Current at 12 V is unknown. (2) ENR depends on the supply voltage. On a 3S pack with no regulated 12 V rail, as small_antenna_stack proposes, AUX would be raw 9-12.6 V and the ENR table would drift with state of charge. (3) Mini-Circuits rates ZFL-500-class amplifiers at +15 V; that is from memory and needs checking.
+    - **Needed action:** Feed it from a regulated rail and take the ENR table at that exact voltage. Measure its current. Keep it conducted only.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - https://www.keysight.com/us/en/assets/7018-06829/application-notes/5952-3706.pdf
+  4.
+    - **Subsystem:** Lab instruments
+    - **Topic:** Near-field probes under the no-loop decision
+    - **Current decision:** REQUIREMENTS.md, under the delegation: E-field probes only. H-field (small shielded loop) probes are excluded by default. The core kit has DIY semi-rigid E-field stubs.
+    - **Key numbers:** DIY $0-10. Com-Power PS-500 $109 (9 kHz-5 GHz, mostly H loops), from a search snippet. The fallback 'generic set about EUR 47' is a ManoMano listing of a magnetic-field ('champ magnétique') probe set.
+    - **Evidence:** user_requirements.md decision 1. radio_lab lab_bom items 3 and 40 and its totals. The ManoMano URL in the value verifier's sources.
+    - **Status:** violates_requirements
+    - **Conflicts or errors:** The BOM wording 'only if the user confirms' is fine. But the EXTENDED total still budgets 'PS-500 $109 (only if H-loop probes are allowed), otherwise a generic set about $50', and that generic set is H-field loops too. So either branch buys loop probes. radio_lab open questions 1-2 (H-probes, AS3935) were already closed by the delegation decision.
+    - **Needed action:** Remove the $50-109 line from extended, which saves $50-109, and keep the DIY E-field probes. Re-add H-probes only if the user lifts the ban. Note the cost: E-field probes are less selective for locating buck-converter current loops.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - https://theemcshop.com/test-equipment/near-field-probes-e-h/emc-probes/kits/
+  5.
+    - **Subsystem:** Lab instruments
+    - **Topic:** Frequency reference: GNSS methods in core, Bodnar Mini GPSDO in extended
+    - **Current decision:** Core gets GNSS-traceable ppm without a GPSDO: a PPS sample-count fit (chrony plus out-of-tree pps-gpio) and GNSS-SDR user_clk_drift_ppm with a separate active L1 patch. The Bodnar Mini moves to extended, for a GPS-locked conducted tone (behind 80 dB of pads plus a DC block) and the experimental Lime J4 reference.
+    - **Key numbers:** Bodnar Mini: GBP 132, in stock. 400 Hz-810 MHz, 3.3 V CMOS into 50 ohm. +6.4/+9.0/+9.9/+10.3 dBm at 8/16/24/32 mA drive. 5 V at 250 mA or less. Settings kept when off. Generic L1 patch $10-15 (unverified); RTL-SDR Blog L-band patch $59.95 (verified). LBE-1420 EUR 155 net; LBE-1421 EUR 225 net.
+    - **Evidence:** leobodnar.com (both verifiers), hamarituc/lbgpsdo and simontheu/lbe-1420.
+    - **Status:** verified
+    - **Conflicts or errors:** (1) The user's wish list names a GPSDO; moving it to extended is a delegated value decision, and the evidence supports it. (2) Leo Bodnar now recommends the LBE-1420 for new purchases, so the Mini may be phased out. Flash save and drive level on the LBE-1420 Linux tool are unverified. (3) Exact 30.72 MHz synthesis on the Mini is unconfirmed. (4) The integration said to reuse the Mini's antenna for GNSS-SDR, but with the Mini in extended, core needs its own L1 patch (the BOM already has one).
+    - **Needed action:** Keep the core GNSS methods. Buy the Mini, or an LBE-1420, only for the J4 or tone work. Confirm 30.72 MHz synthesis before relying on it.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - https://www.leobodnar.com/shop/index.php?main_page=product_info&products_id=301
+      - https://github.com/hamarituc/lbgpsdo
+      - https://github.com/simontheu/lbe-1420
+  6.
+    - **Subsystem:** Lab instruments
+    - **Topic:** Power meter (user wish) versus dropping the AD8318
+    - **Current decision:** The AD8318 module is dropped. The tinySA level readout (±2 dB) is the lab's absolute power reference. There is no dedicated power meter in core.
+    - **Key numbers:** AD8318 module: 1 MHz-8 GHz, rated -65 to +5 dBm, about 60 dB of accurate range, slope -24.3 mV/dB, needs 7.5 V or more, $25-60. tinySA: ±2 dB.
+    - **Evidence:** Value verifier: the AD8318 is calibrated against the tinySA, so it cannot be more accurate in absolute terms. Its only unique use, a live overload alarm, needs a coupler that was never specified.
+    - **Status:** conflict
+    - **Conflicts or errors:** Wish against evidence: user_requirements.md lists a 'power meter' among the instruments. The physics supports dropping a log detector that is only as good as its calibration source. lab_ui_hf still lists a 'power meter' on the instrument port.
+    - **Needed action:** STACK.md should say that the power-meter function is the tinySA (±2 dB). Offer the AD8318 plus a named directional coupler as an optional live overload alarm. Say plainly that real absolute-power gains need a calibrated sensor, which is well above this budget (price unverified). Remove 'power meter' from the lab_ui_hf device list.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - https://tinysa.org/wiki/pmwiki.php?n=TinySA4.Specification
+  7.
+    - **Subsystem:** Bench tools
+    - **Topic:** Core bench electronics and soldering
+    - **Current decision:** Core: AN8008 DMM, FNIRSI FNB58 Std (no radio), Hantek 6022BL scope/LA plus a generic fx2lafw LA, Raspberry Pi Debug Probe, Pinecil V2 with IronOS Bluetooth Off, iFixit ESD mat, Mako kit, a spares kit and the notebook. Extended: FNIRSI DPS-150. Optional: TC001 / P2 Pro / MLX90640.
+    - **Key numbers:** FNB58 $58.99. Hantek GBP 110 ex VAT (20 MHz, 8-bit, 30 MS/s). LA $10. Debug Probe $12. Pinecil $25.99, drawing 30-43 W from 4S (13.6²/6.2 to 16.4²/6.2 W) or about 64 W from 20 V PD. Mat $34.95. Mako $39.95. DPS-150 EUR 64.95. Bench subtotal $480-630; it sums correctly to $478-632.
+    - **Evidence:** Vendor pages. IronOS settings page (Bluetooth Off/+/R; 4S at 3.4 V/cell is valid). sigrok Fx2lafw page (6022BL scope mode works through hantek-6xxx). OpenHantek6022 3.4.1-rc2 has an arm64 .deb.
+    - **Status:** verified
+    - **Conflicts or errors:** (1) The Pinecil wattage and its IronOS '4S, 3.4 V/cell' setting assume a 4S pack. On the 3S pack proposed by small_antenna_stack it would get only about 13-26 W (9-12.6 V into 6.2 ohm), with a 3S setting. (2) No lab instrument can verify the 30.72 MHz waveform at Lime J4, because the Hantek tops out at 20 MHz. (3) The AN8008 and tool prices are unverified.
+    - **Needed action:** Settle the pack voltage, then fix the Pinecil settings and the power-lead fuse. Keep the rest.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - https://ralim.github.io/IronOS/Settings/
+      - https://sigrok.org/wiki/Fx2lafw
+      - https://github.com/OpenHantek/OpenHantek6022/releases
+  8.
+    - **Subsystem:** RF accessories
+    - **Topic:** Pads, DC blocks, loads, OSL, jumpers, torque wrench, adapters
+    - **Current decision:** Core RF bench set: Nooelec pad kit, 2 generic 30 dB pads, 2x BLK-89-S+, 3x ANNE-50+ (which double as the VNA LOAD), a female OSL plus F-F thru, 2x 086-6SM+, a 0.9 N·m torque wrench, adapters and a spare LNA V2. Dropped: the Chelegance kit, the duplicate OSL, the VAT-20W2+ pair and the ZFBT. CBL-1FT cables are optional.
+    - **Key numbers:** Nooelec kit $47.95 (1/2/3/6/10/20 dB, 2 W, 6 GHz). BLK-89-S+ $20.26 each. ANNE-50+ $14.84 each (1 W at 50 °C, return loss at least 30 dB from DC to 4 GHz). 086-6SM+ $16.67 each. Torque wrench $35.89. The GPSDO stack is 30+30+20 = 80 dB. Set subtotal about $280-320; it sums to $277-317. 13/18 V LNB power into an ANNE-50+ is 3.4-6.5 W against its 1 W rating.
+    - **Evidence:** Mini-Circuits ANNE-50+ datasheet rev H and the Nooelec page (value verifier). My arithmetic check of the subtotal.
+    - **Status:** verified
+    - **Conflicts or errors:** The generic 30 dB pads, female OSL and adapters are unpriced estimates. Earlier integration text (Chelegance, VAT-20W2+ and a 20+20+20+20 dB stack) is superseded.
+    - **Needed action:** VNA-check every generic part on arrival and record the values in parts.yaml. Keep every sled port DC-free.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - https://www.minicircuits.com/pdfs/ANNE-50+.pdf
+      - https://www.nooelec.com/store/sdr/sdr-addons/attenuator-bundle.html
+  9.
+    - **Subsystem:** RF accessories
+    - **Topic:** External RF sled (switch, step attenuator, load default)
+    - **Current decision:** Extended. A generic HMC7992 SP4T board (RF1 chain A, RF2 chain B, RF3 BENCH, RF4 load as the power-on default), a PE4302 0-31.5 dB step attenuator, MCP23017 #2 at 0x21, a 5 V buck and TPS2553 bias switches, in an aluminium box on 1/4-20. The fallback is manual swaps at the SMA bulkheads. The ZSWA4-63DR+ is optional.
+    - **Key numbers:** HMC7992 board CA$20.49; expected isolation about 30-37 dB, not the seller's 45 dB. PE4302 $11.49 + $6.84 shipping, an obsolete chip that degrades above about 1.5 GHz. Sled total $110-160. ZSWA4 $307.32, 0 in stock, 58 dB COM isolation. Leakage rule: a source on RF3 at -40 dBm or less, with RF1/RF2 antenna feeds loaded.
+    - **Evidence:** Walmart.ca listing. Findchips distributor summaries; the ADI datasheet was unreachable (503).
+    - **Status:** unverified
+    - **Conflicts or errors:** (1) The sled COM is wired to 'the handheld RX-A bulkhead, internal 10 dB pad, Lime'. That is Lime-dependent, and the Lime's fate is undecided (small_antenna_stack removed it under the superseded size rule). (2) The integration's acceptance test (40 dB or more below 1 GHz) is looser in the final (30-37 dB is accepted with the leakage rule); one threshold is needed. (3) Board logic levels and SMA connectors are unverified.
+    - **Needed action:** After the Lime decision, retarget the COM port (to V4L-B if there is no Lime). Write one isolation acceptance threshold. Measure every path with P1/P13 before use.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - https://origin-www.findchips.com/detail/hmc7992lp3de/Analog-Devices-Inc
+  10.
+    - **Subsystem:** RF accessories
+    - **Topic:** LNA/filter bank and bias-feed limiting
+    - **Current decision:** Every LNA bias feed goes through a TPS2553 limited to 250-300 mA. Any PTC needs a hold current of 250 mA or more at the maximum internal temperature. The SAWbird+ GOES never goes on the V4L 180 mA tee. Extended: SAWbird+ H1. Optional: Ham Filter Bank, VBFZ-1400-S+, Uputronics 162/403 preamps, VLM-33-S+ limiter (always followed by a pad).
+    - **Key numbers:** SAWbird+ NOAA 170 mA. GOES 180 mA (Nooelec page; the datasheet says 140 mA). H1 120 mA, $49.95. LNA V2 $19.95. Ham Filter Bank $66.95. VBFZ $54.13. Uputronics EUR 47.64 each. VLM-33-S+ $69.60, leaking +11.5 dBm against the Lime's +10 dBm maximum.
+    - **Evidence:** Nooelec pages. The technical verifier refuted the 100-160 mA PTC.
+    - **Status:** conflict
+    - **Conflicts or errors:** rf_frontend still prescribes a 100-160 mA polyfuse per feed, and allows the GOES on the V4L tee after a soak. The Uputronics bias range is listed as both '5 V max' and '5-26 V'.
+    - **Needed action:** Make the TPS2553 250-300 mA rule the only one in STACK.md and delete the rf_frontend variants. Measure the GOES current and confirm the Uputronics bias range before using the 4.5 V tee.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/rf_frontend.json
+      - https://www.nooelec.com/store/sdr/sdr-addons/sawbird-plus-goes.html
+  11.
+    - **Subsystem:** RF accessories
+    - **Topic:** QO-100 LNB feed voltage and switching
+    - **Current decision:** radio_lab: a dedicated 13.0-13.4 V regulator (TPS65233-class, or a trimmed boost with an LC filter) with a 250-300 mA limit on the handheld's internal tee. The LNB is never on the sled or on AUX.
+    - **Key numbers:** The Bullseye needs about 11.5-14 V for vertical polarisation. 12 V through the ZFBT (4.5 ohm), the PTC and the P-FET leaves 10.6-11.4 V. NF 0.5 dB, ±30 kHz over -20 to 60 °C. The current is only budgeted, at 250 mA.
+    - **Evidence:** Bullseye product page and the ZFBT datasheet (technical verifier).
+    - **Status:** conflict
+    - **Conflicts or errors:** (1) power.json says 'the 12 V rail also suits an LNB'; that is refuted. (2) The lab_ui_hf arbiter lists an 'LNB 13.4/18.2 V' rail; small_antenna_stack removed the 18 V branch; foldable_antennas says '18 V or rotate'. (3) small_antenna_stack: the switch must be rated above 16 V and give a true output disconnect, which a TPS2553 cannot do. (4) A 250-300 mA limit can nuisance-trip if the LNB really draws about 250 mA.
+    - **Needed action:** Put one LNB spec in STACK.md: about 13.2 V, true output disconnect, current limit at least 1.5 times the measured draw, and a decision on whether 18 V is kept. Measure the Bullseye current.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/power.json
+      - https://www.rtl-sdr.com/product/qo-100-bullseye-tcxo-lnb/
+  12.
+    - **Subsystem:** USB/power/case
+    - **Topic:** USB port map for the lab
+    - **Current decision:** radio_lab: blue USB 3.1 for the T7 only. FE1.1s P1 V4L, P2 touch, P3 an internal Adafruit CH334F MTT hub (H1 display RP2040, H2 boom puck, H3 LAB USB-A, H4 HF+). Field mode allows one instrument on LAB USB; bench mode puts a bank-powered hub behind LAB USB.
+    - **Key numbers:** The Q6A has 4 host ports: 1 blue USB 3.1, plus 3 black ports on the FE1.1s USB 2.0 hub, shared with Wi-Fi. The base stack already had 5 USB devices. Streams: V4L 38 Mb/s, HF+ 25 Mb/s, TC001 39 Mb/s, LA up to 192 Mb/s, Hantek up to 240 Mb/s. Practical tree throughput 35-40 MB/s. At most 3 continuous streams. Hub depth is 3, within the USB limit. CH334F $4.95; its 12 MHz clock puts harmonics at 144.000, 432.000 and 1704.000 MHz.
+    - **Evidence:** Radxa schematic v1.21 as read in the integration, and the technical verifier's arithmetic.
+    - **Status:** conflict
+    - **Conflicts or errors:** lab_ui_hf has a different map: blue = T7, time-shared on the bench with the instrument hub; black = V4L, HF+, touch; HMI and IMU relay on UART7 (availability unverified), so no internal hub. small_antenna_stack has RTL-A on blue and RTL-B on a hub port, with no T7. narrowband_sdr has the V4L on blue. There are four maps in total (rf_receive reader item 50).
+    - **Needed action:** Write one map in STACK.md. I recommend radio_lab's CH334F plus capped LAB USB, because it works with or without the T7 or Lime. If the T7 is dropped, put V4L-A on blue. Run rtl_test on P1 with the fallback swap rule.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - /home/user/lizbeth307/sat-receiver-audit/extra-studies.md
+  13.
+    - **Subsystem:** USB/power/case
+    - **Topic:** LAB 5 V rail, LAB USB port, LAB BUS
+    - **Current decision:** A Pololu D36V28F5 after the #2813 master switch, with a 2 A fuse and pi-filter, takes the hub, puck, display RP2040, HF+ and LAB port off the Q6A's VCC_5V_PERI. The LAB USB-A is a TPS2553 at about 1 A, EN default off, with FAULT reporting. The 6-pin LAB BUS (AUX 12 V, GND x2, SDA, SCL, 3.3 V) uses a TCA9517 repeater, or a PCA9615 for 1 m, at 100 kHz; PCA9306 is rejected.
+    - **Key numbers:** VCC_5V_PERI is about 17 W. LAB 5 V budget: hub 0.05 A + puck 0.1 A + RP2040 0.05 A + HF+ 0.1-0.2 A (unpublished) + LAB port up to 1 A, about 1.3-1.4 A. Internal additions about 20 cm3, 50 g, 0.5 W or less. Pass mark: 1,000,000 I2C reads with zero errors.
+    - **Evidence:** Pololu and TI parts. Integration and technical verifier.
+    - **Status:** model_only
+    - **Conflicts or errors:** (1) lab_ui_hf powers the HF+ from the Q6A VBUS (WS4612 at about 2.1 A) with its own GPIO VBUS-cut, which contradicts H4 on LAB 5 V. (2) The internal-interface subtotal '$56-68' sums to about $56-73 from its own line items. (3) The D36V28F5 runs a light-load power-save mode, so spurs can wander.
+    - **Needed action:** Choose the HF+ power path. Run the terminated-floor A/B with the buck and hub on and off. Correct the subtotal.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  14.
+    - **Subsystem:** USB/power/case
+    - **Topic:** AUX 12 V switched branch and the pack-voltage dependency
+    - **Current decision:** A default-OFF AUX 12 V taken from the regulated 12 V rail. Switch: an AO3401A with its gate clamped to about -6 V by a 10k/10k divider, or a P-FET rated ±20 V. It has a 0.75 A-hold PTC and feeds the sled, the noise source and the 28 V boost.
+    - **Key numbers:** AO3401A V_GS absolute maximum is ±12 V (AOS rev 3.1). Loads: sled about 0.15-0.2 A, noise source unknown, 28 V boost about 0.07 A. The 0.5 A PTC was rejected because it would nuisance-trip.
+    - **Evidence:** The final cites the AOS datasheet. The technical verifier first said 'from memory'; the final calls it confirmed.
+    - **Status:** conflict
+    - **Conflicts or errors:** It needs a regulated 12 V rail, which power.json provides on 4S through the D36V50F12. small_antenna_stack moves to 3S and deletes that buck. Then 'AUX 12 V' becomes raw 9-12.6 V, and the 13.2 V LNB and 12.0 V Boni-Whip rails cannot be built as designed. The integration's fallback ('AUX from the LNB 12 V branch') is superseded.
+    - **Needed action:** Decide 3S or 4S before STACK.md. With 3S, add a low-noise boost plus post-LDO and test its spurs on HF. With 4S, keep this design and fix the small stack's SMBJ14A, which would conduct at 16.8 V.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/power.json
+  15.
+    - **Subsystem:** USB/power/case
+    - **Topic:** GPIO expanders, I2C2 bus sharing and the pin plan
+    - **Current decision:** MCP23017 #1 at 0x20 inside the handheld and #2 at 0x21 in the sled, both on I2C2 (pins 27/28). They are driven from user space with smbus2, because the kernel lacks pinctrl-mcp23s08. Alternative: a TCA9535 through the built-in pca953x driver; avoid PCA9555/TCA9555. Pin plan: PPS on pin 7 through out-of-tree pps-gpio, RTL VBUS-cut on MCP GPA2, fan PWM on pin 33 (pwm-gpio, with spi14 off), UART6 for GNSS on 16/18. The INA228 stays on I2C0. The optional RP2040 counter is an I2C target at 0x30.
+    - **Key numbers:** Kernel config 6.18.2-4-qcom: CONFIG_PINCTRL_MCP23S08 not set (also not set on 7.0.11). GPIO_PCA953X=y, I2C_CHARDEV=y, PWM_GPIO=m. CONFIG_PPS_CLIENT_GPIO not set on 6.18 (=m on 7.0.11).
+    - **Evidence:** The kernel config file read by the technical verifier.
+    - **Status:** conflict
+    - **Conflicts or errors:** (1) The radio_lab software list says 'libgpiod v2', but noble ships libgpiod 1.6.3 (v1), so v2 syntax fails (lab_ui_hf risk; extra-studies error list). (2) The P17 LA harness shows the BNO085 on I2C2, so that bus would carry a clock-stretching BNO085, both expanders, the RP2040 target and a 1 m external LAB BUS. lab_ui_hf instead relays the BNO085 through the HMI RP2040 over UART. (3) lab_ui_hf adds UART7 (pins 32/29) and SWD lines on a header the integration already called full.
+    - **Needed action:** Keep the BNO085 off the shared I2C2. Write one 40-pin table merging the radio_lab and lab_ui_hf assignments. Use the libgpiod 1.6 API, or build v2.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/dl/skeptic_sw/x6182/boot/config-6.18.2-4-qcom
+  16.
+    - **Subsystem:** USB/power/case
+    - **Topic:** Power scenarios and the bench bank
+    - **Current decision:** Scenario estimates on a 4S 72 Wh pack (about 62-65 Wh usable down to a 13.6 V cutoff). The PD bank (example Anker 737) powers the instruments, the Pinecil and the IP2368 charge port. The Q6A USB-C is never used.
+    - **Key numbers:** Field pass with the lab idle: 25.3-28.4 W, about 2.2-2.6 h. Field calibration with the Lime streaming: 23.5-26.5 W, about 2.3-2.8 h. Bench on the pack: 19-22 W, about 2.8-3.4 h. Bench on the bank: 35-42 W, about 1.8-2.1 h from the bank, then about 2.2-2.6 h from the pack, about 4-4.7 h in total. Added internal dissipation 0.5 W or less.
+    - **Evidence:** Integration arithmetic, confirmed by the technical verifier. These are estimates to be confirmed with INA228 logs.
+    - **Status:** model_only
+    - **Conflicts or errors:** (1) The baseline is the Lime-equipped stack at 25-28 W typical. small_antenna_stack without the Lime gives 11-17 W typical on 3S 54 Wh. (2) The 'Anker 737 88.8 Wh' figure is unchecked: Anker sells it as 24,000 mAh, about 86.4 Wh at 3.6 V. Either way it is under the 100 Wh cabin limit. (3) Radio_lab uses a 13.6 V cutoff; lab_ui_hf uses a 13.2 V shutdown threshold for the LDO dropout.
+    - **Needed action:** Recompute every scenario after the P2 stack decision (Lime/T7, 3S/4S). Use one pack cutoff value. Read the bank's Wh from its label.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+  17.
+    - **Subsystem:** Lime-dependent lab functions
+    - **Topic:** Lime external reference, VCTCXO DAC calibration, RP2040 counter, REF IN, Lime-specific accessories
+    - **Current decision:** P5: write the GNSS-measured error into the Lime VCTCXO DAC, then EEPROM XO_DAC. P7 (experimental): limeConfig --refclk=30720000 --refclk_source=external, after every power-up, and back to internal before the GPSDO goes away. Optional: a REF IN bulkhead to J4 with no LPF, and an RP2040 PPS-gated counter on J3. Other Lime-only items: the MHF4 tool, the TX 50-ohm load, the S-band cavity, the ZFRSC splitter comparison, and the P18 LMS7002M thermal pass mark.
+    - **Key numbers:** LimeSuiteNG limesdr-micro-staging 80ffad5 has the --refclk options (the audited pin 37cb183 is unchecked). lmfw 13628a9 accepts 10-52 MHz. There is no PPS loop and no loss-of-reference fallback. DAC step about 0.29 ppb per LSB. Counter about 0.5-1.5 ppb at 100 s (limited by PPS jitter). Lime RX is specified only for 0.3-2.6 GHz and 3.3-3.8 GHz. A 10 MHz reference adds about 9.7 dB of PLL in-band noise. The board ships 15 Dec 2026.
+    - **Evidence:** Local source clones of LimeSuiteNG and lmfw (technical verifier). The Lime clock page. This is code-verified and hardware-untested.
+    - **Status:** conflict
+    - **Conflicts or errors:** (1) This whole block depends on keeping the Lime, which small_antenna_stack removed under the superseded size rule and P2 must re-decide. (2) lab_ui_hf still says 'LimeSDR Micro (30 MHz floor)', and wideband_sdr says '30 MHz-3.8 GHz'; both are wrong. (3) M.2 SMBus host-freeze hazard: whether the riser connects those pins is unknown. (4) lab_ui_hf isolates CPU7 for lime:Rx0, while the wideband verifier pins it to CPU4-6.
+    - **Needed action:** Tag every Lime item as conditional in STACK.md. If the Lime is dropped, delete P7, REF IN, the RP2040 counter, the cavity, the MHF4 tool and the Lime parts of P4/P5/P14/P18. Sweeps then cover the V4L to 1.766 GHz plus the tinySA to 7.3 GHz. Fix the Lime frequency text.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - https://myriadrf.org/projects/limesdr-micro/user/M.2/clock.html
+  18.
+    - **Subsystem:** Extra receive: HF
+    - **Topic:** Airspy HF+ Discovery as the HF/LF/VLF receiver and second VHF receiver
+    - **Current decision:** Kept, because the user explicitly wants an HF receiver. It is counted in the HF-chain subtotal and goes in a bonded shielded can. Frequency correction is applied outside Soapy. Through an input selector it is the default AIS receiver and the 137/145.8 MHz backup.
+    - **Key numbers:** Checked on airspy.com on 18 Oct 2026: 0.5 kHz-31 MHz and 64-260 MHz. Above the FM band it uses a second Band-III tuner 'with reduced performance'. IIP3 +15 dBm on HF and +13 dBm on VHF at maximum gain. BDR 110 dB on HF, 95 dB on VHF. MDS -140.0 dBm in 500 Hz at 15 MHz. 45x60x10 mm. Current and weight are not published. $169 list, $135.20 in the 2026 sale, EUR 232 at WiMo. 768 ksps gives 660 kHz alias-free bandwidth and about 3.1 MB/s; cf32 recordings run at 6.1 MB/s.
+    - **Evidence:** airspy.com (WebFetch today), noble packages, SoapyAirspyHF source (lab_ui_hf).
+    - **Status:** verified
+    - **Conflicts or errors:** (1) The radio_lab BOM tags it 'core' but counts it in the HF chain; the value verifier wanted it optional, and was correctly overruled by the user's wish. (2) The radio_lab extra_receive sweep still calls the V4L the primary HF receiver (superseded). (3) Physics against the wish: with no loops allowed, local noise near the handheld will often set the HF floor, so the remote feed point is the mitigation. (4) The 'default AIS receiver' runs on the reduced-performance Band-III path.
+    - **Needed action:** Keep it. Measure its current. Fit the can and ferrites. Keep the V4L as the AIS alternative when HF is busy.
+    - **Sources:**
+      - https://airspy.com/airspy-hf-discovery/
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  19.
+    - **Subsystem:** Extra receive: HF
+    - **Topic:** HF+ input selector (HF / VHF / 50 ohm)
+    - **Current decision:** lab_ui_hf: a latching, DC-capable signal relay selects the HF antenna bulkhead, the VHF bus or a 50-ohm termination; the part is TBD. The HMC241 is rejected because its DC-blocking capacitors hurt LF/VLF. Without a selector, the profile shows a 'connect X' prompt.
+    - **Key numbers:** It needs good isolation at 162-260 MHz and DC-to-LF performance. Part and price unknown.
+    - **Evidence:** lab_ui_hf final setup and open questions.
+    - **Status:** unverified
+    - **Conflicts or errors:** It is missing from the radio_lab lab_bom and from every total, yet the AIS-on-HF+ default depends on it.
+    - **Needed action:** Choose the relay part. Add it, with the BNC-SMA lead ($5-10), to the HF-chain BOM.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  20.
+    - **Subsystem:** Extra receive: HF
+    - **Topic:** Primary HF antenna: wire plus 9:1 transformer (no loop)
+    - **Current decision:** A 7 m Tecsun AN-05 reel, or 10-15 m of wire on a winder of 20 cm or less, into a Nooelec Balun One Nine v2 9:1 with a 3-5 m counterpoise. The feed point sits 5-10 m away on thin coax with ferrites. The profile locks all bias off, because the transformer is a DC short.
+    - **Key numbers:** Reel $14.49, 9:1 $26.95, coax and ferrites $15-25; kit about $56-66. The balun is 38x25 mm. A forum post (unofficial) says the v2 uses a Coilcraft WB9-1. Coilcraft lists the WB9-1 at 0.125-125 MHz, 0.57 dB maximum insertion loss and 250 mA.
+    - **Evidence:** Vendor pages (lab_ui_hf). Today: an rtl-sdr.com comment naming the transformer, and the Coilcraft WB datasheet via search.
+    - **Status:** conflict
+    - **Conflicts or errors:** If the transformer really is a WB9-1, the wire path is out of spec below about 125 kHz, so LF time signals at 40-77.5 kHz, and VLF, really depend on the active E-field whip. lab_ui_hf lists LF time-signal decoding as an HF capability without saying so, and radio_lab says only 'LF time-signal carriers (bench)'. A strong nearby station may still be heard on the wire at reduced level; that is unverified.
+    - **Needed action:** State that LF/VLF needs the Boni-Whip or a miniwhip. Measure, conducted only, the balun's DC resistance and its S21 at 40-500 kHz on the LiteVNA.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - https://www.rtl-sdr.com/testing-version-two-of-the-nooelec-balun-one-nine/
+      - https://www.coilcraft.com/pdfs/wb.pdf
+      - https://www.nooelec.com/store/balun-one-nine-v2.html
+  21.
+    - **Subsystem:** Extra receive: HF
+    - **Topic:** Boni-Whip active E-field whip (LF/VLF and camp use) and its supply rail
+    - **Current decision:** lab_ui_hf: Boni-Whip at least 2 m up with a ground stake. It runs from a new 12.0 V rail: 4S pack, LC filter, low-noise LDO, polyfuse, then a labd load switch that is off by default. The budget option is a PA0RDT miniwhip clone at EUR 25.90.
+    - **Key numbers:** Checked on the WiMo page today: 9 kHz-300 MHz (the title says 10 kHz), about 14 cm, 189 g, EUR 159 incl. VAT, available 20 Nov 2026, bias tee included. The page gives no supply voltage and no current. Moonraker: US$123.95, from 20 kHz, about 17 cm. SWLing 2017 says 12-15 V. The '9-15 V' figure comes only from a Spanish-page snippet.
+    - **Evidence:** WiMo product page (WebFetch), Moonraker and SWLing via WebSearch, lab_ui_hf final.
+    - **Status:** conflict
+    - **Conflicts or errors:** (1) Error: radio_lab lab_bom item 49 and procedure P20 still use a '10.0 V LDO' / '10 V rail', which lab_ui_hf refuted. (2) 12.0 V sits at the bottom edge of the only sourced range (12-15 V). (3) An LDO can deliver 12.0 V only from 4S (dropout under 1.2 V at 13.2 V); it is impossible on 3S without a boost. (4) Tier mismatch: radio_lab calls it 'extended', lab_ui_hf puts it in the HF chain. (5) Its current is unpublished.
+    - **Needed action:** Get the Bonito manual. If the range is 12-15 V, aim for about 12.5-13 V with a low-dropout LDO on 4S, or a boost plus LDO on 3S. Fix item 49 and P20. Treat the whip as conditional until it is delivered and tested at the site.
+    - **Sources:**
+      - https://www.wimo.com/en/18067
+      - https://moonrakeronline.com/us/bonito-boni-whip-active-antenna
+      - https://swling.com/blog/tag/bonito/page/3/
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  22.
+    - **Subsystem:** Extra receive: LF/VLF
+    - **Topic:** LF time signals, sferics and SID logging after the no-loop rule
+    - **Current decision:** Excluded: the CANADUINO 60/77.5 kHz loopstick module, dcf77pi, the AS3935 ferrite-coil lightning sensor, the MLA-30+ and the YouLoop. LF time signals come from the HF+ plus the active whip in SDRangel Radio Clock: DCF77 77.5 kHz, MSF/WWVB 60 kHz, JJY 40/60 kHz, TDF 162 kHz. SID logs 'VLF/LF carrier amplitude only, never demodulated'.
+    - **Key numbers:** One HF+ window centred near 290 kHz covers the 60/77.5 kHz time signals and NAVTEX at 490/518 kHz. Performance below about 10 kHz (sferics) is unverified.
+    - **Evidence:** user_requirements.md (no loops of any kind). lab_ui_hf hf_capabilities and its sweep note ('Treat VLF stations only as amplitude beacons for SID logging').
+    - **Status:** conflict
+    - **Conflicts or errors:** (1) The usual VLF SID beacons in the 16-25 kHz band are naval submarine-communication transmitters. Logging their carriers is a receive chain aimed at military transmitters, which collides with the hard rule and with the Artemis 'stop at military/government entries, do not record or analyse' rule. Amplitude-only logging carries no message content, but the files never name the carriers or reconcile the two rules. (2) Which time station is relevant depends on the user's unknown region. (3) The radio_lab sweeps still contain CANADUINO, MLA-30+ and YouLoop rows (superseded; the final is clean).
+    - **Needed action:** Default SID to civil LF carriers only (time stations, LW broadcast). Allow naval VLF carriers only if the user explicitly approves amplitude-only logging. Pick the time station once the device knows its region.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+      - https://www.sigidwiki.com/wiki/Category:Military
+  23.
+    - **Subsystem:** Extra receive: aviation/maritime/sondes/broadcast
+    - **Topic:** ADS-B front end
+    - **Current decision:** Extended: a Uputronics 1090 MHz SAW preamp on the spare V4L, or a FlightAware Pro Stick Plus (19 dB LNA, 1075-1105 MHz SAW, 300 mA), whichever is cheaper locally. readsb plus tar1090 with pre-cached tiles. dump978-fa only in the US. Antenna: the dipole kit's short elements at 6.5 cm.
+    - **Key numbers:** Uputronics EUR 47.64 incl. VAT (Kubii). Pro Stick Plus GBP 52.50 incl. VAT (The Pi Hut, confirmed today) and AUD 98.75 (Core Electronics). The $20.95 figure is the dated launch price. No current US price was found. Quarter wave at 1090 MHz is 6.9 cm.
+    - **Evidence:** Pi Hut, Core Electronics and the rtl-sdr.com launch article (WebSearch today), plus the value verifier.
+    - **Status:** unverified
+    - **Conflicts or errors:** (1) minute-log 03:33 says the value check chose the 'Pro Stick Plus instead of V4L + preamp'. The final instead treats them as equal and says pick by local price, so the log misstates the decision. (2) The Uputronics bias input is listed as both 5 V maximum and 5-26 V. (3) The Pro Stick Plus needs its own USB port (LAB USB, 300 mA).
+    - **Needed action:** Correct the minute-log. Price by region. Confirm the Uputronics revision's bias range before using the V4L 4.5 V tee.
+    - **Sources:**
+      - https://thepihut.com/products/flightaware-pro-stick-plus-usb-sdr-ads-b-receiver/
+      - https://core-electronics.com.au/flightaware-pro-stick-plus-usb-sdr-ads-b-receiver.html.md
+      - https://www.rtl-sdr.com/flightaware-release-their-prostick-plus-ads-b-optimized-rtl-sdr-with-lna-and-filter-built-in/
+      - /home/user/lizbeth307/sat-receiver-audit/minute-log.md
+  24.
+    - **Subsystem:** Extra receive: aviation/maritime/sondes/broadcast
+    - **Topic:** AIS, radiosondes, FM-RDS/DAB+/HD Radio, NOAA SAME, and the second-receiver count
+    - **Current decision:** AIS on the HF+ in VHF mode or the spare V4L (AIS-catcher), with 44 cm dipole arms. Radiosondes with 17.7 cm arms and radiosonde_auto_rx built natively with uploaders off, plus chasemapper offline. FM-RDS (73 cm arms, redsea), DAB+ (33-34 cm, welle-cli), HD Radio with nrsc5 (US), and NOAA SAME through multimon-ng with the EAS decoder only. Uputronics 162/403 preamps are optional.
+    - **Key numbers:** Quarter waves: 46 cm at 162 MHz, 18.6 cm at 403 MHz, 34 cm at 220 MHz, 75 cm at 100 MHz. The arm lengths include shortening, so the arithmetic is consistent. The telescopic elements collapse to 23 cm (verified), within the 35 cm piece rule. Second V4L $37.95.
+    - **Evidence:** radio_lab P20, the auto_rx wiki (a quarter-wave is usually enough for sondes), foldable_antennas (dipole kit verified).
+    - **Status:** conflict
+    - **Conflicts or errors:** (1) radio_lab prices the second V4L at '$0 new (it is the spare)'. small_antenna_stack makes the second V4L an in-service RTL-B, and lab_ui_hf has one V4L, plus a second only on the HF budget path. If RTL-B is in service, there is no spare for continuous ADS-B/AIS/sonde monitoring, so a third V4L costs $37.95. (2) Summary #123's loop or loaded AIS antenna is superseded by the dipole.
+    - **Needed action:** Fix the V4L count in STACK.md and budget the monitor receiver honestly.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+      - /home/user/lizbeth307/sat-receiver-audit/summaries.md
+  25.
+    - **Subsystem:** Extra receive: radio astronomy
+    - **Topic:** 21 cm hydrogen line and Sun-noise checks (no dish)
+    - **Current decision:** Extended: reuse the fold-flat petal helicone with its L-band helix, plus a SAWbird+ H1, and run Virgo. Optional: a hinged flat-pack pyramidal horn whose panels are each 35 cm or less, carried in a backpack sleeve. Sun noise is measured with the helicone at 1.4/1.7 GHz and with the gore horn plus Bullseye LNB at 10.5 GHz.
+    - **Key numbers:** H1: $49.95, 65 MHz passband, at least 40 dB gain, NF about 0.8 dB, 120 mA. The L helix has C/λ = 0.92 at 1420 MHz (axial mode), estimated 13-14 dBic. The rigid reference horn is 75x60 cm, 18.5 dBi (arXiv 2512.19262); the flat pack is 35x35x3 cm and costs $15-30. Expected Sun rise: 0.5-1.2 dB at L-band and 0.3-0.7 dB at 10.5 GHz. My check: the 15.7 dBic helicone has an effective area of about 0.09 m² at 1.7 GHz. At about 120 sfu that gives about 40 K, roughly 1.2 dB at a 125 K Tsys, so the numbers are consistent.
+    - **Evidence:** Nooelec page. A detection with a 13 dBi helix plus H1 reported by rtl-sdr.com. The ΔT = S·Ae/2k calculation (technical verifier, plus my own).
+    - **Status:** model_only
+    - **Conflicts or errors:** (1) P20's fallback 'if the V4L PLL loses lock at 1420 MHz when warm, use the Lime' fails if the Lime is dropped. (2) The horn panels sit at the 35 cm maximum, and the flat pack does not fit the Pelican's 25.8 cm width. (3) The helix gain at 1420 MHz is scaled, not modelled.
+    - **Needed action:** Keep the helicone as the default. Give a no-Lime fallback for the PLL issue (a cooler V4L, or the second V4L). Build the horn only if helicone results demand it.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+      - https://arxiv.org/html/2512.19262v1
+      - https://github.com/0xCoto/Virgo
+  26.
+    - **Subsystem:** Extra receive: HF
+    - **Topic:** HF digital modes and maritime safety decoders
+    - **Current decision:** Decode-only: FT8/FT4/WSPR, CW/RTTY/PSK31 skimmers, WEFAX, NAVTEX and SITOR-B, DRM, and DSC showing only distress/urgency/safety categories. HFDL and ACARS are excluded. lab_ui_hf: WSJT-X jt9/wsprd binaries only, OpenWebRX+ installed with --no-install-recommends and exact-name pins.
+    - **Key numbers:** OpenWebRX+ 1.2.126, wsjtx 2.7.0~rc3 (noble's package is the full TX-capable GUI), fldigi 4.2.03.
+    - **Evidence:** lab_ui_hf refuted_claims (the noble wsjtx and OpenWebRX+ Recommends problem).
+    - **Status:** conflict
+    - **Conflicts or errors:** The radio_lab software list still says plain 'wsjtx 2.7.0~rc3', and P20 says 'WSJT-X FT8/WSPR', without the decoders-only restriction. The DSC and NAVTEX safety filters depend on labd's allow-list being correct.
+    - **Needed action:** Align radio_lab with lab_ui_hf: jt9/wsprd only (or dpkg-divert the wsjtx binary), and the pinned OpenWebRX+ install. Test the DSC and SafetyNET allow-lists with mixed recordings.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  27.
+    - **Subsystem:** Scope and policy
+    - **Topic:** Inmarsat-C EGC SafetyNET: in scope or excluded?
+    - **Current decision:** small_antenna_stack adds a SAWbird+ iO ($49.95) for EGC SafetyNET and excludes LES and addressed messages, FleetNET and Aero. lab_ui_hf shows 'Inmarsat: EGC SafetyNET only' through an allow-list.
+    - **Key numbers:** 1537-1545 MHz. The NCS satellite depends on region (Alphasat or I-6 F1).
+    - **Evidence:** small_antenna_stack excluded_by_law_or_ethics; lab_ui_hf design rules. The radio_lab value verifier's confirmed list.
+    - **Status:** conflict
+    - **Conflicts or errors:** The radio_lab value verifier writes 'Scope: Inmarsat/Iridium (SAWbird+ iO/IR) ... excluded', which contradicts the other two studies. Under the user rule only Inmarsat user traffic is banned; SafetyNET is public maritime safety broadcast. The decoder (stdcdec/Scytale-C or SDRangel inmarsatc) can also decode FleetNET, so the filter is load-bearing.
+    - **Needed action:** State in STACK.md: EGC SafetyNET is allowed through a tested allow-list, and all other Inmarsat content is excluded. Change the radio_lab wording to 'Inmarsat user traffic excluded'.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+  28.
+    - **Subsystem:** Lab software
+    - **Topic:** Two 'single owners': the rflab daemon and lab-sched versus the labd arbiter
+    - **Current decision:** radio_lab: the rflab daemon is the sole owner of MCP23017 #1/#2 (verbs rfsel, attn, aux, noise for BENCH only, labusb, quiet), with a systemd watchdog and ExecStopPost writing all outputs off. lab-sched schedules passes with a per-SDR flock on /run/lock/sdr-<serial>. lab_ui_hf: labd is 'the single owner of every shared resource' (leases.json, a separate labrx user with ACLs, bias rails, front-end paths, GPIO lines held with safe defaults, DC-sense interlocks).
+    - **Key numbers:** lab_ui_hf mentions neither rflab nor lab-sched nor flock.
+    - **Evidence:** radio_lab final software and stack_changes; lab_ui_hf ui_system.resource_arbitration.
+    - **Status:** conflict
+    - **Conflicts or errors:** Both claim exclusive ownership of the same bias, AUX, LAB-port and switch lines, and they use two different SDR-locking mechanisms. Two owners break the safety invariant (default-off sources, BENCH interlock).
+    - **Needed action:** Make rflab labd's hardware module, or make labd the only caller of rflab. Use one lock mechanism: labd leases, with labd holding any flock. Keep the BENCH-only rule for the noise source in labd.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  29.
+    - **Subsystem:** Lab software
+    - **Topic:** Instrument-control software install recipe
+    - **Current decision:** radio_lab: NanoVNA-Saver via pipx in its own venv; QtTinySA in its own venv (PySide6 6.12 aarch64 wheels exist); lbgpsdo with python hid and a udev rule; the fnirsi logger; OpenHantek6022 3.4.1-rc2 arm64 .deb; sigrok-cli, PulseView 0.4.2 and fx2lafw 0.1.7; picocom and OpenOCD. The lab venv pins numpy<2 for apt GNU Radio and SciPy.
+    - **Key numbers:** NanoVNA-Saver main pins numpy~=2.1 and scipy~=1.14. PySide6 6.12 has manylinux_2_39 aarch64 wheels, and noble has glibc 2.39. Runtime on the Q6A is untested.
+    - **Evidence:** Technical verifier (wheel availability, the sigrok page, OpenHantek releases).
+    - **Status:** conflict
+    - **Conflicts or errors:** lab_ui_hf uses apt 'nanovna-saver 0.6.3' and pins QtTinySA's PySide6-Essentials to '6.11.x or older'. radio_lab uses pipx main and PySide6 6.12. There must be one recipe.
+    - **Needed action:** Pick one recipe, preferably separate venvs with tested pins, and test each tool on the Q6A within the return window. Keep standalone microSD use as the fallback.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/lab_ui_hf.json
+  30.
+    - **Subsystem:** Lab software
+    - **Topic:** Survey, analysis and data tools (and a version error in the log)
+    - **Current decision:** rtl_power plus heatmap.py; soapy_power 1.6.1 (pip --no-deps) as an interim tool; our own lab-sweep (SoapySDR, RX-only, rtl_power CSV plus Parquet, GNSS-tagged). inspectrum 0.3.1. JupyterLab in a numpy<2 venv. Skyfield 1.55 and sgp4 2.27 from pip. DuckDB, PyArrow, sigmf 1.13.0. GNSS-SDR 0.0.19 apt, or 0.0.22 from source. SatDump 2.0-alpha from source. Optional: CyberEther 1.15.0, SatNOGS client 2.1.4 in Docker.
+    - **Key numbers:** Skyfield gained from_omm in 1.49; apt has 1.48. Storage rates: HF+ cf32 6.1 MB/s (22 GB/h); dual RTL at 2.56 Msps is 36.9 GB/h, not the 18.4 GB/h small_antenna_stack states.
+    - **Evidence:** PyPI and GitHub releases (technical verifier). extra-studies report:compute_software_ai.
+    - **Status:** conflict
+    - **Conflicts or errors:** (1) minute-log 02:15 says 'SatDump v1.15.0 (17.10.2026)'. That release is CyberEther; SatDump's latest numbered release is 1.2.2, and the stack builds 2.0-alpha. (2) If the T7 is dropped, the 128 GB UFS holds only about 2.5-3 h of dual-RTL raw IQ.
+    - **Needed action:** Correct the minute-log. Add version tests to the SatDump pass wrapper. Keep the 'record, then decode, keep decimated' policy if there is no T7.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /home/user/lizbeth307/sat-receiver-audit/minute-log.md
+      - /home/user/lizbeth307/sat-receiver-audit/extra-studies.md
+      - https://github.com/SatDump/SatDump/releases
+  31.
+    - **Subsystem:** Lab software
+    - **Topic:** Receive-only guard, QUIET/BENCH profiles, signal identification
+    - **Current decision:** An ExecStartPre guard rejects soapy/osmosdr/limesuiteng sink blocks and SOAPY_SDR_TX, bans limeTRX TX flags, and whitelists limeConfig to the refclk options. LimeSuiteNG is built with -DBUILD_PLUGINS_AMARISOFT=OFF, and the Lime TX port is terminated. QUIET: rfkill block wlan and bluetooth, LAB VBUS and AUX off, GPSDO disabled, no scope/LA capture above 4 MS/s. BENCH: sources only on RF3/RF4 with antenna feeds loaded. Pinecil Bluetooth Off, FNB58 Std. URH rejected. Artemis 4.2.0 (Flathub aarch64) for identification only, stopping at military/government entries. SigMF with sha512 in the catalogue, and restic backup.
+    - **Key numbers:** URH was archived on 29 Mar 2026 and advertises record-and-send and fuzzing. IronOS Bluetooth can be Off, + or R. Uploads to SondeHub, WSPRnet, PSK Reporter, ADS-B aggregators and SatNOGS are off by default.
+    - **Evidence:** github.com/jopohl/urh and the IronOS settings page (value verifier). user_requirements.md decisions 2-3.
+    - **Status:** verified
+    - **Conflicts or errors:** (1) The integration's 'nmcli radio wifi off' (which leaves Bluetooth on) is superseded. (2) The guard is written around the Lime and GNU Radio. If the optional ADALM-PLUTO is added (small_antenna_stack), the libiio/Pluto TX path is not covered. SDRangel relies on a build audit that fails on any TX .so (lab_ui_hf).
+    - **Needed action:** Keep it. Extend the guard to the Pluto if it is bought, and to the SDRangel plugin set.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+      - https://github.com/jopohl/urh
+      - https://ralim.github.io/IronOS/Settings/
+  32.
+    - **Subsystem:** Procedures
+    - **Topic:** Measurement procedures P0-P21
+    - **Current decision:** 21 written procedures: guard; VNA calibration and acceptance; filters; LNA gain and stability; terminated-floor EMI audit; GNSS ppm; GPSDO tone; Lime external reference; Y-factor NF; T_rx/Tsys and Sun; SDR dBFS-to-dBm and MDS; scalar sweep; overload and 3 dB pad test; sled bring-up; A/B comparison; GNSS C/N0 patterns; power/USB smoke tests; logic and console captures; thermal soak; soldering; extra-receive runbook; data ingest.
+    - **Key numbers:** LNA VNA test: 30-40 dB input pad, LNA input at -40 to -50 dBm. NF: F2 = (ENR - Y2(Tc/T0 - 1))/(Y2 - 1) and F1 = F_sys - (F2 - 1)/G1. MDS: NF = P_MDS + 174 - 10log10(ENBW). T_rx = (T_hot - Y·T_cold)/(Y - 1) and Tsys,cold = T_rx + T_cold. Known spur lines: 144.000, 432.000, 1704.000, 1700.000, 737.28, 1689.6 and 740.000 MHz.
+    - **Evidence:** The technical verifier confirmed the maths and refuted the Tsys formula, the LNA compression risk and the tracking-generator steps; the corrections are applied.
+    - **Status:** verified
+    - **Conflicts or errors:** (1) P4 (Lime sweeps, 'T7 idle vs writing'), P5 (Lime DAC), P7, P14 (RTL vs Lime) and P18 (LMS7002M at 75 °C or less, Lime stream) assume the Lime and T7 are kept. (2) P20 still says the Boni-Whip runs on a '10 V rail'. (3) P1 acceptance thresholds are the author's own, not standards.
+    - **Needed action:** Mark the Lime and T7 steps conditional. Fix P20 to the decided Boni-Whip voltage. Keep antenna checks receive-only (P9/P15).
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  33.
+    - **Subsystem:** USB/power/case
+    - **Topic:** Packing, carried weight and volume
+    - **Current decision:** Two tiers. Tier 1 is a field sling with the handheld, folded antennas (every piece 35 cm or less), the HF wire kit and a 2 L pouch (tinySA, DMM, FNB58, Debug Probe, pads, loads, jumpers). Tier 2 is a Pelican 1450 with padded dividers, or an Apache 3800 in the US. The 1420 MHz horn travels in a backpack sleeve. The Li-ion pack and bank go in cabin baggage.
+    - **Key numbers:** Pelican 1450 interior 37.1x25.8x15.2 cm, 14.5 L, 2.5-2.9 kg. Core 5.5 L plus extended 2.5 L plus HF 0.8 L. radio_lab gives the sling as 3.0-3.6 kg, with antennas at 0.6-1.0 kg and 2.5-3 L. Fully loaded about 10-11 kg. Pack 72 Wh and bank under 100 Wh.
+    - **Evidence:** Integration and final. foldable_antennas totals.
+    - **Status:** conflict
+    - **Conflicts or errors:** The antenna weight and volume come from the superseded small_antenna_stack tier. The governing foldable kit is about 6-6.5 L and 1.0-1.4 kg, or 1.3-1.8 kg with the LNB, SAWbird and jumpers. That puts the sling at about 3.7-4.4 kg and doubles the antenna volume. The crossed-Yagi boom halves (35 cm) do fit the case's 37.1 cm length.
+    - **Needed action:** Recompute the sling and case packing with the foldable kit. Check the case's packed weight against cabin limits.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+  34.
+    - **Subsystem:** USB/power/case
+    - **Topic:** Cost totals (world prices)
+    - **Current decision:** Core about $1,310-1,690. HF chain about $205-400. Extended about $630-965 plus an unpriced calibrated head. Optional about $1,500-1,700. Core plus HF about $1.5-2.1k; plus extended about $2.15-3.05k. Prices are world prices; the Selteq UAH figures appear only as references, which complies with the not-in-Ukraine rule.
+    - **Key numbers:** My recomputation. Core line items sum to $1,306-1,688 (correct). Extended line items sum to about $605-890, not $630-965. Without the H-probe line (see the near-field item) it is about $555-780. The internal interface sums to $56-73, not $56-68. The HF chain's $205 low end assumes no active antenna, and the total leaves out the input-selector relay and the BNC-SMA lead.
+    - **Evidence:** Arithmetic on the radio_lab totals and lab_bom line items.
+    - **Status:** conflict
+    - **Conflicts or errors:** The subtotals don't match their line items. Many accessory prices are unverified estimates. Lime-only items (cavity EUR 65.45, MHF4 tool, REF IN) are counted although the Lime is undecided.
+    - **Needed action:** Recompute the totals after removing the H-probe line and settling the Lime/T7, V4L count and pack questions. Feed the corrected BOM into phase 5 (cheaper analogs).
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+  35.
+    - **Subsystem:** Scope and policy
+    - **Topic:** Conducted-only sources and the private/military exclusions in the lab
+    - **Current decision:** Every signal source (VNA port 1, tinySA generator, GPSDO, noise sources) is conducted only, into cables, pads, filters, LNAs or loads. Pad rules: tinySA sine at -40 dBm or less into chains; 30 dB or more above 800 MHz; 80 dB plus a DC block for the GPSDO; -40 dBm or less at BENCH with antenna feeds loaded. No antenna S11 sweeps by default. Excluded: pagers, trunking, DMR/TETRA, ACARS/HFDL, rtl_433 (off by default), gr-gsm/kalibrate, GRAVES and 'interference generator' modules. Legal notes are generic, with no country.
+    - **Key numbers:** Switch isolation may be only 30-37 dB. tinySA input limits: +6 dBm and ±5 V DC. Lime ESD8472 diodes conduct above about 7 V.
+    - **Evidence:** user_requirements.md hard rules. Value-and-safety verifier, whose output I checked by hand.
+    - **Status:** verified
+    - **Conflicts or errors:** Outside radio_lab, several files still prescribe VNA S11 antenna tuning: antennas verify, foldable_antennas build steps 2-5, and small_antenna_stack first_tests. That violates the rule; it was also flagged by the rf_receive reader. SID and Inmarsat are handled in their own items.
+    - **Needed action:** Replace antenna-S11 tuning everywhere with receive-only methods (calculated lengths, sky/Sun noise, beacon C/N, GNSS C/N0). Ask the user whether brief indoor sweeps are acceptable.
+    - **Sources:**
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/radio_lab.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/foldable_antennas.json
+      - /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/small_antenna_stack.json
+- **Open questions:**
+  - Pack: 3S 54 Wh or 4S 72 Wh? This decides AUX 12 V, the 13.2 V LNB regulator topology, the Boni-Whip 12 V LDO (only possible from 4S), the noise-source ENR stability, the Pinecil wattage and settings, and every runtime scenario.
+  - Do the LimeSDR Micro and the Samsung T7 stay? About 15 radio-lab items depend on them: P5 Lime DAC, P7 external reference, the REF IN bulkhead, the RP2040 counter, the sled COM port, the cavity, the MHF4 tool, the P18 thermal pass and the USB 3.1 port use.
+  - Which USB map wins: radio_lab's CH334F MTT hub plus capped LAB USB, or lab_ui_hf's black-port V4L/HF+/touch with HMI and IMU over UART7? Is UART7 even available on the held 6.18.2 image?
+  - What supply range does the Bonito manual give for the Boni-Whip (9-15 V or 12-15 V), and what is its current at the chosen voltage?
+  - Is the Nooelec Balun One Nine v2 really built on a Coilcraft WB9-1 (0.125-125 MHz)? What are its measured S21 at 40-500 kHz and its DC resistance? This decides whether LF time signals need the active whip.
+  - SID logging: may naval VLF carriers be logged amplitude-only, or only civil LF carriers (time stations, LW broadcast)? The default proposed here is civil only.
+  - Is Inmarsat-C EGC SafetyNET in scope, with an allow-list filter? The radio_lab value verifier wrote that it was excluded.
+  - Which region or country is the user in? It decides the LF time station, UAT/HD Radio/NOAA SAME availability, QO-100 visibility, legal limits and landed prices.
+  - How many V4Ls: one primary plus a spare (radio_lab), or two in service (small stack)? If two are in service, a third ($37.95) is needed for continuous ADS-B/AIS/sonde monitoring.
+  - Does the user need absolute noise figure (a calibrated 346-class head with an ENR sheet), or a power meter better than the tinySA's ±2 dB, which needs a calibrated sensor at a cost far above the AD8318?
+  - Measurements still missing: HF+ Discovery current; Bullseye LNB current; ZFL-500 current at the AUX voltage; LiteVNA absolute source dBm at 0x01-0x03; HMC7992 board isolation and logic levels; whether the Bodnar Mini can make exactly 30.72 MHz.
+  - Bodnar Mini or LBE-1420 (now the vendor's recommended model)? Can the Linux tool save settings to flash and set drive level on the LBE-1420?
+  - Does noble's apt nanovna-saver 0.6.3 detect the LiteVNA 64, or is pipx main required? Do QtTinySA/PySide6 and OpenHantek6022 run correctly on the Q6A?
+  - Which latching relay serves as the HF+ HF/VHF/50-ohm input selector, and at what price?
+  - Does the HF+ shielded can (about 35-45 cm3) fit inside the case, or does it become a bolt-on module on LAB USB?
+  - May antennas be swept briefly with a VNA indoors, or must all antenna tuning stay receive-only?
+- **Notes:** The radio_lab final is internally sound on physics and safety. Its Y-factor, MDS and T_rx/Tsys maths, pad rules, conducted-only policy and kernel facts are verified. The core cost arithmetic checks out at $1,306-1,688.
+  
+  The main problems are cross-study. radio_lab assumes the Lime, the T7, a 4S pack with a regulated 12 V rail, and its own USB map and hardware daemon. small_antenna_stack removed the Lime, T7 and 12 V buck under a size rule that is now superseded. lab_ui_hf uses a different USB map, a different owner daemon (labd) and a different Boni-Whip voltage.
+  
+  Errors to fix in the files:
+  - radio_lab lab_bom item 49 and P20 still say the Boni-Whip runs at 10 V; lab_ui_hf corrected it to 12.0 V.
+  - The extended total still buys loop-type near-field probes on both branches, against the delegated no-H-probe decision.
+  - The extended subtotal is overstated (about $605-890, not $630-965), and the internal-interface subtotal is understated.
+  - radio_lab lists plain wsjtx rather than the decoders-only build.
+  - radio_lab says libgpiod v2; noble ships 1.6.3.
+  - minute-log 02:15 'SatDump v1.15.0' is actually CyberEther.
+  - minute-log 03:33 misstates the ADS-B decision; the final says pick by local price.
+  - The sling weight uses the superseded antenna tier.
+  
+  New policy gaps not covered in the files: SID logging of naval VLF carriers versus the military rule, and the contradictory Inmarsat-C SafetyNET status.
+  
+  Facts checked today:
+  - airspy.com: HF+ Discovery 0.5 kHz-31 MHz and 64-260 MHz (above FM with reduced performance), IIP3 +15 dBm HF / +13 dBm VHF, BDR 110/95 dB, current not listed.
+  - WiMo: Boni-Whip 9 kHz-300 MHz, about 14 cm, 189 g, EUR 159, available 20 Nov 2026, supply voltage not stated.
+  - SWLing: Boni-Whip 12-15 V.
+  - Coilcraft WB9-1: 0.125-125 MHz. That the Balun One Nine v2 uses this part is an unofficial claim.
+  - Pro Stick Plus: GBP 52.50 at The Pi Hut; no current US price found.
+  
+  Overlap: the P1b reader report:rf_receive (extra-studies.md, around line 14785) already flagged the four USB maps, 3S/4S, loop residue, VNA antenna tuning, the HF+/Boni-Whip conflicts and the Lime coverage errors. I reference rather than repeat them where possible.
+  
+  File status: all 18 named final/*.json files are present. foldable_partial.json is superseded by foldable_antennas.json. report_research.json (the P1b output) does not exist yet. 7 web lookups used.
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
