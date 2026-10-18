@@ -3883,6 +3883,189 @@
   
   Working files: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/covCD/ (C0-C2.txt and D0-D4.txt are dumps of every item; g.py and g8.py are grep helpers).
 
+## check:reaudit_AB (run `wf_0e6a03c6-4e4`)
+
+- **Lens:** COVERAGE re-audit A+B (reaudit_A_compute_software.json, reaudit_B_receivers_rf.json: every correction, new risk, corrected spec, bench test) plus the cross-section items flagged in v2_edit_notes.md
+- **Problems:**
+  1.
+    - **Where:** 1.1 C5 «rtl_eeprom -s LAB-RTLA / LAB-RTLB / LAB-RTLS, перепідключити, rtl_test -d LAB-RTLB»; 1.1 C21 «(LAB-RTLA / LAB-RTLB / LAB-RTLS; заводські не унікальні)»; 8.1 «V4L-4, серійні номери: запрограмувати LAB-RTLA / LAB-RTLB / LAB-RTLS»; 11.3 row 13 «-s LAB-RTLA / LAB-RTLB / LAB-RTLS, перепідключення»
+    - **Problem:** There are two serial-name schemes. BOM 2.2 adopts ^LAB[A-Z]{3}$ (LABRXA/LABRXB/LABRXC) and says «Назви LAB-RTLA / LAB-RTLB / LAB-RTLS цей шаблон не проходять». C5, C21, the 8.1 V4L-4 gate and 11.3 still program LAB-RTL*, and V4L-4 opens rtl_test -d LAB-RTLB. udev names, bias tokens and engine configs would not match.
+    - **Severity:** contradiction
+    - **Fix:** Use LABRXA = RTL-A, LABRXB = RTL-B, LABRXC = spare everywhere. Replace every LAB-RTLA/LAB-RTLB/LAB-RTLS in C5, C21, 8.1 V4L-4 and 11.3 row 13, and write rtl_test -d LABRXB. Note in 11.3 that re-audit A's stricter pattern is used; LABRX* also meets re-audit B's rule (non-numeric, not a prefix or suffix of another serial).
+    - **Evidence:** reaudit_A_compute_software.json results[1].corrections (claim 'labd selects SDRs by serial'), action: 'Serials must match ^LAB[A-Z]{3}$ (e.g. LABRXA, LABRXB, LABRXC)'. reaudit_B_receivers_rf.json results[0].corrections[6] uses LAB-RTLA/B/S. Both are P4, so precedence does not decide; STACK 2.2 already chose A. v2_edit_notes 02a b1: '01a and 08b still use LAB-RTL*, so the orchestrator should make the names match'.
+  2.
+    - **Where:** 8, row «librtlsdr +lab і ворота токена bias-tee»: «з /run/lab/bias/LABRXA з'являється близько 4.5 V»
+    - **Problem:** This row uses re-audit A's token path /run/lab/bias/. C9, C11, 5.2 and 5.4 all use /run/labd/bias/<serial>, which is the path labd writes and the patched librtlsdr checks. The bench step would test a file nothing creates.
+    - **Severity:** contradiction
+    - **Fix:** Change it to «з /run/labd/bias/LABRXA з'являється близько 4.5 V».
+    - **Evidence:** reaudit_B_receivers_rf.json results[0].corrections[12] action and corrected_spec DRIVER: 'root-owned /run/labd/bias/<serial>'. v2_edit_notes 05c b2: 'The token path follows B: /run/labd/bias/<serial>, not A's /run/lab/bias'.
+  3.
+    - **Where:** 1.2 #30 «тож апаратних і мережевих SDR-джерел немає (ні net_source, ні Soapy, ні LimeSuiteNG; SatDump декодує лише записані файли»; 5.4 «увімкнено лише PLUGIN_METEOR, NOAA_METOP, METOPSG, ELEKTRO_ARKTIKA, FY3, GK2A, XRIT, ANALOG, CUBESAT, RADIOSONDE і NET_SOURCE_SDR_SUPPORT»; 1.1 C7 «живий потік підтримується: net_source UDP cf32 від labrx»; 8 «labrx шле cf32 UDP на 127.0.0.1 у `satdump live meteor_m2-x_lrpt`»; 11.2 row 29 «(вхід лише net_source»; 11.2 row 58 «всі апаратні/мережеві SDR-джерела»
+    - **Problem:** SatDump input mode and plugin set contradict each other. 1.2 #30 turns NET_SOURCE off by name and makes SatDump file-only, while C7, 5.4, the section 8 live-path bench test and 11.2 keep the labrx net_source feed, so that test cannot pass on the 1.2 build. There are also two plugin allowlists: 1.2 lists METEOR, NOAA_METOP, AWS, ELEKTRO_ARKTIKA, XRIT, FY2 (Europe pipelines). 5.4 lists A's set, which lacks AWS (AWS.json is in the Europe pipeline allowlist) and adds METOPSG, FY3, GK2A, ANALOG, CUBESAT and RADIOSONDE, which have no Europe pipeline.
+    - **Severity:** contradiction
+    - **Fix:** Decide once and write it the same way in 1.1 C7, 1.2 #30, 5.4, 8 and 11.2 rows 28/29/58. Option 1, keep the live path (C7, 5.4, 8 and bench A1.b2 assume it): in 1.2 #30 take NET_SOURCE out of the OFF list and write that the only source is NET_SOURCE (UDP from labrx on 127.0.0.1 only, after the masks), with file decode as the default. In 11.2 row 58 write 'усі апаратні та мережеві SDR-джерела, крім NET_SOURCE'. Option 2, file-only: delete the live path from C7, 5.4, 8 and 11.2 rows 28/29. In both cases 5.4 uses the 1.2 #30 plugin list: METEOR, NOAA_METOP, AWS, FY2, ELEKTRO_ARKTIKA, XRIT.
+    - **Evidence:** reaudit_A_compute_software.json results[1].corrections[3] ('Keep NET_SOURCE_SDR_SUPPORT=ON') and [5] ('labrx converts cu8 to cf32 for the SatDump UDP feed ... Keep decode-from-file as the default'), bench_tests[2]. reaudit_C (all sdr_sources off, Europe pipelines Meteor-M/MetOp/AWS/FengYun-2/Elektro_Arktika). Both are P4. v2_edit_notes 05c b2: 'C ... turns off all sdr_sources plugins, NET_SOURCE included ... Batch 3 must settle it'; 01b b3 and 05c b3 settled it in opposite directions.
+  4.
+    - **Where:** 5.2 «Потрібен ще один вихід для EN ключа навантаження 3.3 V Lime M.2 (призначити на схемі)»; 5.1 row LIME3V3 «labd, EN на вільному виході MCP23017»; 2.8 GNSS і RTC «RESET (активний низький) — через 2N7002 з відкритим стоком від вільного виходу MCP23017 #1»; 11.5 row 28 (same text); 11.6 row 32 «EN — з вільного виходу MCP23017»
+    - **Problem:** The I/O budget does not close. 5.2 assigns all 16 lines of MCP23017 #1 (GPA0-GPA7, GPB0-GPB7) and all 16 of #3 (14 inputs plus GPA7/GPB7 outputs). So the 'free output' for the LIME3V3 load-switch EN and for the LC76G RESET does not exist: two more outputs are needed. Section 8 has no open item for this, although the editor asked for one.
+    - **Severity:** missing
+    - **Fix:** In 5.2 state that MCP #1 and #3 are 16/16 used and that LIME3V3 EN and LC76G RESET have no line yet. In 5.1, 2.8, 11.5 row 28 and 11.6 row 32, replace «від вільного виходу MCP23017 (#1)» with «лінію ще не призначено (5.2; розділ 8)». Add a section 8 row: 'Розподіл ліній I/O: EN LIME3V3 і RESET LC76G — вільних ліній на MCP #1/#3 немає; рішення до розводки силової плати'.
+    - **Evidence:** STACK 5.2 MCP23017 #1 and #3 pin lists. v2_edit_notes 05b b1: 'MCP23017 #3 would need 17 lines but has 16. The new output is marked призначити на схемі. This should become an open bench/schematic item in 08_open_bench.'
+  5.
+    - **Where:** 1.2 #31 «збірка +lab проти libairspyhf1 1.6.8-5~lab1»; 8 B12 «`apt-cache policy librtlsdr2 libairspyhf1 gr-satellites gpredict` показує кандидат +lab із пріоритетом 1001»; 6.2 «бекпорт libairspyhf1 1.6.8-5~lab1»; 2.2 КХ/ДХ row and 11.2 row 19 «libairspyhf експортує airspyhf_set_bias_tee і airspyhf_get_bias_tee_count»
+    - **Problem:** 1.1 C22 and 5.4 make noble libairspyhf1 1.6.8-4build1 the default and the 1.6.8-5~lab1 backport optional only. Several places still describe the backport as the build base or the replacement, and B12 expects a +lab libairspyhf1 at priority 1001, which does not exist under the default. The bias-tee API exists only in 1.8.1 code; noble 1.6.8 has no such symbols.
+    - **Severity:** contradiction
+    - **Fix:** 1.2 #31: «збірка +lab проти noble libairspyhf1 1.6.8-4build1 (бекпорт 1.6.8-5~lab1 — лише опція з перезбиранням усіх споживачів)». B12: drop libairspyhf1 from the +lab/1001 list (expect noble 1.6.8-4build1 from the 990 mirror, held). 6.2 reason: replaced by noble 1.6.8-4build1 (soname 1); backport optional. 2.2 and 11.2 row 19: «лише у збірці 1.8.1 (бекпорт 1.6.8-5) libairspyhf експортує …; у noble 1.6.8 цих символів немає».
+    - **Evidence:** reaudit_B_receivers_rf.json results[1].corrections[1] action 'Default: noble 1.6.8-4build1 ... backport ... If 1.8.1 features are needed'; corrections[20] 'Noble 1.6.8 has none of these symbols'; spec HOST SOFTWARE. v2_edit_notes 01a b2 and 05c b3 (B won over A).
+  6.
+    - **Where:** 1.1 C22 «Декодери WSJT-X — пакет wsjtx-decoders+lab (make jt9 wsprd)» (also C22 pin list, 3.5 P20, 4.2, 6.2, 7 item 23, 11.3 row 43) vs 1.2 #10 «з локального пакета lab-wsjt-decoders» (also 1.2 #29, 5.4, 11.2 row 22)
+    - **Problem:** The same decode-only WSJT-X package has two names, so the pin list, CI checks and build recipes name different packages.
+    - **Severity:** contradiction
+    - **Fix:** Use one name everywhere, for example lab-wsjt-decoders (the name 1.2 and 5.4 use), and replace every wsjtx-decoders+lab, or the other way round.
+    - **Evidence:** reaudit_A_compute_software.json results[1].corrections[12] 'Build lab-wsjt-decoders'; reaudit_B_receivers_rf.json results[1].corrections[8] 'wsjtx-decoders+lab'. v2_edit_notes 01b b2 and 05c b2: 'I used A's name everywhere for consistency' (not carried into 1.1, 3.5, 4.2, 6.2, 7, 11.3).
+  7.
+    - **Where:** 1.2 #7 «SHM 0 refid NMEA noselect + PPS lock NMEA prefer»; 11.2 row 15 «refclock PPS /dev/pps0 lock NMEA refid PPS prefer» and «різняться — узгоджується при зведенні»; 11.5 row 47 «KERNELS==998000.serial → /dev/gnss0»
+    - **Problem:** 1.1 C13 and 5.4 use re-audit D's gated PPS (refclock PPS /dev/pps-gnss … noselect plus selectopts on acceptance), GPSD_OPTIONS -n -b and /dev/lab/gnss. 1.2 #7 still has 'prefer'. 11.2 row 15 calls the gpsd options unresolved and keeps /dev/pps0 prefer. 11.5 row 47 names /dev/gnss0, which re-audit A rejects because the kernel GNSS class can claim it.
+    - **Severity:** contradiction
+    - **Fix:** 1.2 #7: «PPS /dev/pps-gnss lock NMEA noselect; ворота selectopts при прийнятті (5.4)». 11.2 row 15: say -n -b was chosen (5.4) and the PPS line was replaced by re-audit D's gate. 11.5 row 47: «→ /dev/lab/gnss».
+    - **Evidence:** reaudit_A_compute_software.json results[1].corrections[16] ('/dev/lab/gnss ... /dev/gnss0 can be claimed by the kernel GNSS class'). v2_edit_notes 05c b2 (idx 45: '-n -b' chosen) and 05c b3 (100: 'D won over A ... /dev/pps-gnss with noselect and a selectopts gate, replacing prefer').
+  8.
+    - **Where:** 9.2 step 1 «/dev/watchdog (якщо немає — сторожовий таймер Pico); лічильник завантажень embloader і тест відкату A/B з примусовою помилкою»
+    - **Problem:** This contradicts re-audit A as applied in 1.2 #26, D3, 5.4 and 8 B3. The Pico heartbeat is the primary watchdog (the APSS node is reserved for Gunyah, so QCOM_WDT cannot bind). embloader has no boot counting in any tag; rollback uses Route A systemd-boot with tries=3.
+    - **Severity:** contradiction
+    - **Fix:** «сторожовий таймер — heartbeat Pico (основний); /dev/watchdog1 лише якщо пройде опційний B8 lab-gunyah-wdt; тест відкату маршруту A (systemd-boot, tries=3, systemd-bless-boot — B3), при провалі — маршрут B (embloader 0.4, write-back)».
+    - **Evidence:** reaudit_A_compute_software.json results[0].corrections[4] (Pico primary, optional gunyah), corrections[10] ('embloader (all tags, and HEAD) has no boot counting'), corrected_spec 'Watchdog and recovery: No QCOM_WDT (the node is reserved)'.
+  9.
+    - **Where:** 1.2 #91 «Lime RX на ≥6 Msps ci16»; 4.1 Metop-B/C AHRPT «далі Lime ≥6 Msps ci16»; 4.1 AWS «Lime ≥6 Msps ci16»; 5.3 «також для Metop/AWS на ≥6 Msps ci16»; 9.1 step 13 «без втрат на ≥6 Msps»; 11.4 row 26
+    - **Problem:** Lime rates below 7 Msps are hard-blocked in labrx, SatDump profiles and the Tune UI, because of the firmware system-clock floor and the VSPA-DMA hang risk. A '≥6 Msps' figure suggests 6 Msps is usable, and the Airspy Mini purchase gate in 9.1 is written against it.
+    - **Severity:** wrong_number
+    - **Fix:** Replace every «≥6 Msps» Lime rate with «≥7 Msps (нижче 7 Msps заблоковано)», including the 15-min capture gate in 9.1 step 13.
+    - **Evidence:** reaudit_B_receivers_rf.json results[2].corrections[0] action 'Hard-block Lime rates below 7 Msps'; corrected_spec 'Block anything below 7 Msps'. v2_edit_notes 08 b2 (1): '7 Msps won'.
+  10.
+    - **Where:** 3.1 «Flamingo+ #2 → LNA V2 → ch4 → RTL-A T3»; 8 «Крок фону L-band патча на RTL-B T1»
+    - **Problem:** Old T1-T4 throw labels remain after the HMC7992 remap (RF1 = 50 Ohm park). WIDE/2 m is RTL-A RF4 and L-band is RTL-B RF2.
+    - **Severity:** contradiction
+    - **Fix:** «→ ch4 → RTL-A RF4» and «Крок фону L-band патча на RTL-B RF2».
+    - **Evidence:** reaudit_B_receivers_rf.json results[3].corrections[1]: 'RTL-A: RF1 50 Ohm, RF2 VHF-137, RF3 UHF, RF4 WIDE/2 m. RTL-B: RF1 50 Ohm, RF2 L-band, RF3 LNB IF, RF4 BENCH/sled'. STACK 5.3 ports table (P8 → RTL-A RF4).
+  11.
+    - **Where:** 1.2 #102 «Перевірити проникнення DVB-T (734-742 MHz) і LTE B28 у тракт поблизу ПЧ LNB»; 8 LNB row «проникнення DVB-T (734-742 MHz) і LTE B28 поблизу ПЧ»; 11.6 row 39 «Перевірка проникнення на ПЧ від DVB-T (734-742 MHz) і LTE B28»
+    - **Problem:** These rows keep the refuted target. In the EU the 700 MHz band no longer carries DVB-T; the B28 uplink is 703-733 MHz; the 739.5 MHz IF sits in the 733-758 MHz SDL/PMSE/PPDR gap. 1.1 C23, 5.3 and the 8.1 test already use 733-758 MHz.
+    - **Severity:** contradiction
+    - **Fix:** Keep the user-required DVB-T/LTE B28 check, but replace «DVB-T (734-742 MHz) і LTE B28» with «DVB-T/LTE B28 (вимога користувача; у ЄС — скан 733-758 MHz SDL/PMSE/PPDR плюс край B28 uplink 703-733 MHz; DVB-T у смузі 700 MHz більше немає), LNB вимкнено, потім увімкнено».
+    - **Evidence:** reaudit_B_receivers_rf.json results[3].corrections[9] and refuted_findings[11]; bench_tests[10] 'Ingress scan 733-758 MHz with the LNB unpowered, then powered'.
+  12.
+    - **Where:** 1.2 #102 «RG6 з компресійними F-роз'ємами»; 9.1 step 11 «деталі F/75 Ohm, RG6 з компресійними F, LC»; 11.4 row 20 «(RG6 з компресійними F-роз'ємами)»
+    - **Problem:** The chosen LNB lead is the Goobay 58814 (75 Ohm, moulded F on both ends, class A+, 5.4 mm) in 2.10, 5.3 and the 9.1 Reichelt order. These rows still specify an RG6 lead with compression F connectors, a different and thicker part.
+    - **Severity:** contradiction
+    - **Fix:** Replace «RG6 з компресійними F-роз'ємами» with «Goobay 58814 (75 Ohm, F-F, клас A+, 1 м; 2.10)» in 1.2 #102, 9.1 step 11 and 11.4 row 20.
+    - **Evidence:** analogs_G1_receivers_rf.json cable-set decision (Goobay 58814 picked; the RG6-class 'Good Connections' candidate rejected). reaudit_B_receivers_rf.json results[3].corrections[9]: 'Keep double-shielded 75 Ohm coax and tight F connectors' (no RG6). v2_edit_notes 05b b2: 'RG6 with compression F part only: not applied'.
+  13.
+    - **Where:** 1.1 C24 «(Lime залишено, QO-100 куплено)»; 5.3 «QO-100 NB (Європа, кут місця 12-46°; LNB куплено)»; 6.2 «надбудову QO-100 куплено»; 8 «Додаток QO-100 (куплено) і Lime уже входять у збірку»; 11 intro «QO-100 куплено»; 11.4 row 18; 11.6 row 39
+    - **Problem:** BOM 2.4 and 2.11.2 say «Європа: купується», and 9.1 step 11 still schedules the purchase (2× Bullseye BE01 from Passion Radio). Other sections say the add-on is already bought.
+    - **Severity:** contradiction
+    - **Fix:** Use «купується (входить у збірку)» in all listed places. Or, if it really has been bought, drop it from 9.1 step 11 and mark the BOM rows as bought. The files support «купується».
+    - **Evidence:** final/user_requirements.md line 49: 'the QO-100 add-on ... is bought' (a consequence of region Europe). STACK 9.1 step 11. v2_edit_notes 04 b2 (kept «купується») vs 05b b2 («куплено»).
+  14.
+    - **Where:** 8 «Відкриті рішення щодо живлення (P5 G3)» item (b): «а також і 12.5 V, і 13.8 V — v2 має вибрати одне»
+    - **Problem:** The choice is already made in 5.1, 1.1 C17 and 2.7: BONI13V8 at 13.8 V, eFuse TPS259630DDAR RILM 7.87 kOhm, no PTC, MF-MSMF030-2 deleted. The open item still asks for it.
+    - **Severity:** contradiction
+    - **Fix:** Mark (b) closed: «закрито: BONI13V8 13.8 V, eFuse TPS259630DDAR (RILM 7.87 kOhm), без PTC; MF-MSMF030-2 видалено (5.1, 2.7)». Keep (a) open.
+    - **Evidence:** reaudit_B_receivers_rf.json results[1].corrections[9] (rename to BONI13V8 at 13.8 V) and results[3].corrections[2] ('Drop the PTCs'). STACK 5.1 row «BONI13V8 (було BONI12V5)».
+  15.
+    - **Where:** 8, row «librtlsdr +lab і ворота токена bias-tee»: «на прибутті кожен V4L показує тюнер R828S»
+    - **Problem:** The driver does not print R828S. The expected log is 'Found Rafael Micro R820T tuner' followed by 'RTL-SDR Blog V4 Lite Detected', as 9.1 and 9.2 already state. An arrival check that looks for R828S would fail on genuine units.
+    - **Severity:** contradiction
+    - **Fix:** «на прибутті кожен V4L у лозі показує «Found Rafael Micro R820T tuner», потім «RTL-SDR Blog V4 Lite Detected», USB-продукт 'Blog V4L'».
+    - **Evidence:** reaudit_B_receivers_rf.json results[0].corrected_spec DRIVER: 'W1-2 log must show Found Rafael Micro R820T tuner followed by RTL-SDR Blog V4 Lite Detected'.
+  16.
+    - **Where:** 1.1 C9 «IOS 262-342 mA (265/299/339 mA мін./ном./макс.» and «канал на 300 mA (262-342 mA) його не захищає»; 11.3 row 23 «Канал 300 mA (262-342 mA)»
+    - **Problem:** Two trip windows are given for the same RILIM 88.7 kOhm channel. BOM 2.7, 5.1 and 8.1 RF-2 use 265-339 mA (analogs G3 #11, which outranks re-audit B).
+    - **Severity:** wrong_number
+    - **Fix:** C9: «IOS 265/299/339 mA (мін./ном./макс., G3 #11; re-audit B давав 262-342 mA)» and «канал на 300 mA (265-339 mA)». Same change in 11.3 row 23.
+    - **Evidence:** analogs_G3 decision 11 (265/299/339 mA). reaudit_B_receivers_rf.json results[3].corrections[4] (262-342). v2_edit_notes 02c b1, 07 b1, 08 b2 (3): 'G3 won'.
+  17.
+    - **Where:** 5.4 inferd-htp «Environment=ADSP_LIBRARY_PATH=/opt/lab/npu/2.42/dsp;/usr/lib/dsp/cdsp» vs 8 B7 «qnn-net-run на HTP з ADSP_LIBRARY_PATH='/usr/lib/aarch64-linux-gnu;/usr/lib/dsp/cdsp;/usr/lib/rfsa/adsp'»
+    - **Problem:** The Phase-0 QNN gate B7 runs with a different DSP library path than the production inferd-htp unit, so passing B7 does not validate the unit's skel/libc++ lookup.
+    - **Severity:** contradiction
+    - **Fix:** Run B7 with the inferd-htp unit's ADSP_LIBRARY_PATH, or define one value and use it in both 5.4 and B7. The skel lives in /usr/lib/aarch64-linux-gnu or in the golden copy, and the path must reach libc++.so.1/libc++abi.so.1.
+    - **Evidence:** reaudit_A_compute_software.json results[0].corrections[8] (system path) vs results[3].corrections[11] (unit path /opt/lab/npu/2.42/dsp;/usr/lib/dsp/cdsp) and results[3].new_risks[4].
+  18.
+    - **Where:** 11.2 row 37 «NanoVNA-Saver v0.7.3 через pipx … QtTinySA v2.0.1 з PySide6 6.12.0»; 11.5 row 35 «Аудит A дає інші піни (PySide6 6.12.0, NanoVNA-Saver v0.7.3) — розбіжність закрити на першому складанні lab-venv»
+    - **Problem:** 1.1 C22, 1.2 #34 and 5.4 already settled this: re-audit D replaces A (NanoVNA-Saver git @3445a0a with constraints PySide6==6.11.2; QtTinySA with pyside6==6.11.0). The change log still presents A's pins as applied (11.2) and the question as open (11.5).
+    - **Severity:** contradiction
+    - **Fix:** 11.2 row 37: add «замінено повторним аудитом D: @3445a0a + PySide6==6.11.2, QtTinySA pyside6==6.11.0 (1.2 #34)». 11.5 row 35: replace «розбіжність закрити на першому складанні lab-venv» with «закрито в 1.2 #34 на користь re-audit D».
+    - **Evidence:** reaudit_A_compute_software.json results[1].corrected_spec PYTHON (v0.7.3, PySide6 6.12.0). v2_edit_notes 01b b4 (154: 'Re-audit D ... replaced NanoVNA-Saver v0.7.3 / QtTinySA with PySide6 6.12.0') and 05c b3 (110: 're-audit D won').
+  19.
+    - **Where:** 1.1 C24 «близько 1.72-1.94 kg» and «близько 6.8-8.2 kg без КХ і щогли»; 2.12 «плюс 0.15 kg за Lime = 1.72-1.94 kg» and «близько 6.8-8.2 kg … або 7.7-9.4 kg повністю»; D14 and 11.1 row 46 «6.8-8.2 / 7.7-9.4 kg»
+    - **Problem:** 5.8 recomputes the device as 1.73-1.96 kg with Lime (parts 1.58-1.81 kg) and the backpack on the back as 6.85-8.26 / 7.75-9.51 kg. C24, D14, 2.12 and 11.1 still give the older device mass and G4's backpack figures, which assume a 1.67-1.87 kg device.
+    - **Severity:** wrong_number
+    - **Fix:** C24 and 2.12: device «1.73-1.96 kg з Lime (сума частин 1.58-1.81 kg), без Lime 1.58-1.81 kg»; backpack «6.85-8.26 kg без КХ і щогли, 7.75-9.51 kg повністю (модель, 5.8)». In D14 and 11.1 row 46, mark the 6.8-8.2/7.7-9.4 kg figures as G4's (device 1.67-1.87 kg).
+    - **Evidence:** STACK 5.8 rows «пристрій» and «Польовий рюкзак Deuter Futura 27». v2_edit_notes 05d b3 (85: 1.73-1.96 kg; 114: backpack recomputed) and 05d b2.
+  20.
+    - **Where:** 7, item 23 «підсумок extended — близько $605-890 (близько $555-780 без H-зондів)»
+    - **Problem:** The text implies the extended lab includes H-field probes. The hard rules ban H-field loop probes. The figures also contradict 3.6 (extended ≈570-630).
+    - **Severity:** rule_violation
+    - **Fix:** «підсумок extended — ≈$570-630 (3.6); H-field зонди не входять (заборонено правилом, лише E-field)».
+    - **Evidence:** v2_brief hard rules ('no loop antennas of any kind and no H-field loop probes'). STACK 3.6 extended 570.25-629.73. v2_edit_notes 07 b1: 'item 23 still says ... без H-зондів ... clashes with the hard rule against H-field loop probes'.
+  21.
+    - **Where:** 8, row «eFuse TPS259470A»: «правило збирання узгодити у v2»; 11.1 row 77 «а в правилах збірки — без reflow»
+    - **Problem:** The assembly rule is left unresolved in the final v2 text. 2.7 (PCB set), 5.1 and the section 8 HMC7992 row plan «оплавлення або гаряча плита + фен з пастою» for the VQFN parts (HMC7992LP3DE, INA3221, TPS7A4701, TPS25947). 11.1 and section 8 cite a 'no reflow' rule.
+    - **Severity:** contradiction
+    - **Fix:** State one rule in 2.7/5.1: reflow, or hot plate plus hot air with a stencil and paste on the EPAD (or PCBA), for all VQFN parts. Delete «без reflow» in 11.1 row 77 and «узгодити у v2» in section 8. If the owner must decide, move it to section 8 «Питання до вас».
+    - **Evidence:** analogs_G1_receivers_rf.json HMC7992 decision, condition (9) 'Assembly. Reflow, or hotplate plus hot-air, with stencil or paste on the EPAD'. analogs_G6/G3 mention a 'no reflow' build requirement. v2_edit_notes 08 b3/b4 ('Batch 4 needs to reconcile the two'; 'noted «узгодити у v2»').
+  22.
+    - **Where:** 4.1 row S-band, decoder cell «SatDump лише з цивільними й аматорськими конвеєрами з алоу-листа»
+    - **Problem:** The Europe SatDump pipeline allowlist (1.2 #30, 5.4) has only Meteor-M, MetOp, AWS, FengYun-2 and Elektro_Arktika JSONs, none of them S-band. So no SatDump decoder exists for Black Kite or PHASMA.
+    - **Severity:** contradiction
+    - **Fix:** Decoder cell: «SatDump — S-band конвеєра в європейському алоу-листі немає / gr-satellites (розбір кадрів не перевірено)».
+    - **Evidence:** STACK 1.2 #30 and 5.4 pipeline allowlist. v2_edit_notes 04 b2: 'That leaves no SatDump pipeline for the S-band Black Kite/PHASMA rows'.
+  23.
+    - **Where:** 4.1 row «GNSS L1 + regional SBAS»
+    - **Problem:** Region Europe sets SBAS = EGNOS, and 11.6 row 43 says «regional SBAS» was replaced by «EGNOS», but the 4.1 target name still says regional SBAS.
+    - **Severity:** contradiction
+    - **Fix:** Rename the row to «GNSS L1 + SBAS (EGNOS)».
+    - **Evidence:** final/user_requirements.md line 49 'SBAS = EGNOS'. STACK 11.6 row 43. v2_edit_notes 04 b1: 'The GNSS target cell still says regional SBAS'.
+  24.
+    - **Where:** 8, row «Ціни: переоцінити кожен неперевірений рядок (P5)»: «ціни й наявність TPS259470A (у P5 G3 не перевірено)»
+    - **Problem:** BOM 2.7 (protection set) already lists «3× TI TPS259470ARPWR (DigiKey, франчайзі, 78,910 шт.», taken from G3, so the open item contradicts the BOM.
+    - **Severity:** contradiction
+    - **Fix:** Remove TPS259470A from the unverified-price list, or reword it as «TPS259470A — DigiKey 78,910 шт. (G3 #13); ціну підтвердити при оплаті».
+    - **Evidence:** STACK 2.7 protection-set row. v2_edit_notes 08 b4: 'G3 decision 13 lists DigiKey stock (78,910) and 6.18 for 3 pcs'.
+  25.
+    - **Where:** 10 «Вхідні файли цього документа:»
+    - **Problem:** The input-file list names only analogs_G4 among the P4/P5 files. It omits the re-audits that v2 applies (final/reaudit_A_compute_software.json, reaudit_B_receivers_rf.json, reaudit_C, reaudit_D), analogs_G1/G2/G3/G5/G6 and final/operator_notes.md.
+    - **Severity:** missing
+    - **Fix:** Add final/reaudit_A_compute_software.json, final/reaudit_B_receivers_rf.json, final/reaudit_C_antennas_targets.json, final/reaudit_D_power_mech_display_lab.json, final/analogs_G1…G6 and final/operator_notes.md, each with its role (P4 technical corrections, P5 part/seller/price, operator rules).
+    - **Evidence:** v2_brief.md data dir and precedence list. v2_edit_notes 10_sources b2: 'analogs_G1/G2/G3/G5/G6 and reaudit_A-D are still not listed'.
+  26.
+    - **Where:** 8.1 HF-15 «DCF77, MSF і TDF (не у вівторок 08-12)»
+    - **Problem:** The test exclusion window does not match the TDF mask used elsewhere (1.2 #3, 4.2, 5.4: Tuesday 06:00-12:00 UTC, the union of both readings, time zone of the 08:00-12:00 source unknown).
+    - **Severity:** contradiction
+    - **Fix:** «TDF (не у вівторок 06:00-12:00 UTC)».
+    - **Evidence:** reaudit_B_receivers_rf.json results[1].bench_tests[15] and corrections[7] (08:00-12:00, secondary source). STACK 1.2 #3 and 4.2 mask. v2_edit_notes 01b b2/b3 and 04 b2.
+  27.
+    - **Where:** 8, row «Килимок iFixit»: «складання разом з ремінцем і шнуром у Pelican 1450»
+    - **Problem:** The bench case is now the B&W outdoor.case 4000 RPD, with Peli 1450 only as the fallback (5.8, 3.2), but the mat fold test still names only the Pelican.
+    - **Severity:** style
+    - **Fix:** «складання … у кейсі стенда (B&W 4000 RPD або запасний Peli 1450)».
+    - **Evidence:** v2_edit_notes 03a b3: '60 vs 74 (G5 vs G6): ... G6 won. The text now reads в кейсі стенду (B&W 4000 RPD або запасний Peli 1450)'.
+  28.
+    - **Where:** 11.6 row 14 «у 8 — довша послідовність re-audit B на прибутті кожного V4L: 7 → 137.1 → 145.8 → 437.55 → 1090 → 7 MHz»
+    - **Problem:** Wrong attribution. That sequence is re-audit A's (A1 bench b0). Re-audit B's CI sequence is 137.9 → 1700 → 7 → 437 → 1707 MHz (8.1 V4L-2).
+    - **Severity:** style
+    - **Fix:** «у 8 — послідовність re-audit A … (а 8.1 V4L-2 — послідовність re-audit B 137.9 → 1700 → 7 → 437 → 1707 MHz)».
+    - **Evidence:** reaudit_A_compute_software.json results[1].bench_tests[0]. reaudit_B_receivers_rf.json results[0].corrections[0] and bench_tests[2].
+- **Notes:** Method: I dumped all 8 re-audit subsystems (A0-A3, B0-B3: 153 corrections, 89 new risks, 8 corrected specs, 110 bench tests) and grepped STACK.md for each one. Most items are reflected correctly, including:
+  - GPIO0-only gate with GPIO5 ungated, 2.0.3 as .so.2, zerocopy OFF, d80421b port, EEPROM byte-7 check, rtl_tcp ban, SDRangel -DENABLE_EXTERNAL_LIBRARIES=OFF, usbfs_memory_mb=0, FM band-stop for the spare V4L;
+  - HF+: firmware R4.0.7/R5.0.1 with the -152 ppb note, 256000 rejected, no DAB, LOppmTenths, 330 kHz LF window with the |f| mask, damped VBUS LC, Boni-Whip at Bonito $167.49, BONI13V8 with eFuse, 30-150 mA current window, 1 uF film/C0G DC block;
+  - Lime: 7 Msps floor, 0x0020 TXEN readback, limeConfig whitelist, firmware reload after power-off, spur families at 2240/2688/1966.08 MHz, Gen2 cap, ADF4002 question, 90609-0001 tool;
+  - RF: HMC7992 RF1 park, eFuse chain with INA3221, TCBT on 162k, Uputronics EU price basis, 733-758 MHz ingress in C23/5.3, RTL-A gain 5-10 dB, PE4312, P5 BNC;
+  - re-audit A items: SPI dump, holds/pins 1001/990/-1, FastRPC golden set, cmdline hold, thermal ladder, MemTotal 10.9 GiB, SDR++/SDRangel/OWRX+ allowlists, greetd wrapper, renderD128, Artemis DB-only, Pico ADC LM4040, NPU env split, vtcm_mb=2, T2b at home base only, TorchSig and raw-IQ allowlists.
+  
+  Problems found are listed above. Several are cross-section leftovers that the editors flagged and that are still open: serial names, token path, SatDump input and plugin list, MCP pin budget, libairspyhf default, WSJT package name, LNB purchase status, TDF window, chrony/gpsd, NanoVNA pins, reflow rule, S-band SatDump, device mass.
+  
+  STACK.md was being edited by other agents while I checked it (its mtime changed during the run). The 3.3 HF-chain total and 11.3 row 2 were fixed during this check (now 524.71-576.74), so they are not reported. Line numbers shifted, so every finding is located by section and exact quote. I did not edit any file. Scratch extracts are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/cov_ab/.
+
 ## edit:00_header_toc:b1 (run `wf_11421893-197`)
 
 - **Section:** 00_header_toc
