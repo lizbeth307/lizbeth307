@@ -5331,6 +5331,625 @@
   
   Downloads are kept in separate untrusted folders: dl_sn, dl_ok1dx and dl_rigexpert, under /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/rfverify/. Searches used: 4 WebSearch, plus WebFetch and curl on primary pages (rtl-sdr.com, ARISS, EA4GPZ, metislair, VK5BR, OK1DX, RigExpert, SatNOGS API).
 
+## small:final (run `wf_41027870-8e7`)
+
+- **Verdict:** Once every dish and every antenna larger than about 20 cm deployed is removed, the receiver still works, but for fewer things.
+  
+  RELIABLE (with evidence or a large margin):
+  - ISS on 70 cm (receive only): SSTV pictures on 437.55 MHz (Series 34 runs 22-25 Oct 2026), the APRS digipeater on 437.825 MHz and the FM repeater on 437.800 MHz. These work even with a 12 cm whip.
+  - Inmarsat-C EGC SafetyNET maritime safety text on 1537-1545 MHz, with a 12 cm L-band helix.
+  - GNSS and EGNOS time and position.
+  - QO-100 narrowband beacons, CW and FT8 on the bare LNB. With an 11 cm clamp-on cone the BPSK beacon frames and weaker CW also become reliable.
+  
+  MARGINAL (model only; validate before relying on it):
+  - Meteor-M N2-4 LRPT weather images on a 20 cm antenna, decoding from about 17-24 deg elevation.
+  - Meteor-M N2-3/N2-4 HRPT on the 20 cm helix, passes above about 25-30 deg only.
+  - 1 W UHF CubeSat telemetry, passes above about 30 deg, and only if the whip is held broadside to the satellite.
+  - AO-73/JO-97 BPSK telemetry, and the AO-7/RS-44/FO-29 CW beacons.
+  
+  OPPORTUNISTIC: Meteor N2-3 LRPT, SO-50, AO-91, VHF APRS digipeaters, linear-transponder SSB, QO-100 SSB from beacon-level stations, and FY-2H carriers.
+  
+  LOST:
+  - Metop AHRPT, AWS, Elektro-L LRIT.
+  - All S-band (unless the optional Pluto module is added).
+  - QO-100 readable SSB, the multimedia beacon and DATV.
+  - Most FM-voice and SSB listening, low passes, and 0.5 W or 19k2+ CubeSats.
+  
+  STACK: the LimeSDR Micro, its riser and cooling, the T7 SSD and the 12 GB board tier are removed. Two RTL-SDR Blog V4Ls cover everything that is still reachable.
+  - Avoided spend: about $650-665.
+  - Peak power: from about 45-52 W down to 24-32 W.
+  - Antenna kit: nothing over about 20 cm, about 0.6-0.9 kg.
+  
+  VERIFIER FIXES APPLIED:
+  - Whips have a zenith null, so they must be tilted broadside using the IMU.
+  - Monopole whips must sit on the case. On a remote choked lead they have no counterpoise and lose 10-13 dB.
+  - The 20 cm loop has only 0.84 MHz bandwidth and 2.2 pF of tuning capacitance, so it needs a stepper or peaking before every pass.
+  - HRPT is downgraded to marginal (20 cm helix) and opportunistic (12 cm helix).
+  - Iridium is carrier and Doppler only.
+  - The 13 V LNB rail needs a switch rated above 16 V; neither a TPS2553 nor the enable pin of a plain boost converter can do it.
+  - My own check: AO-73 is in transponder mode with low-power telemetry (30 mW design level), so its margin is about 10 dB lower than the 0.3 W the band study assumed.
+  
+  CONFLICT TO RESOLVE: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md was created at 02:18 today, after this run started. It says the user banned all loop antennas, allows foldables that are larger when deployed, and is not in Ukraine. I therefore made a loop-free 137 MHz antenna the default (a 20 cm helical whip on the case, about 2 dB worse than the loop in rural noise and about 4.5 dB worse at a quiet site). The loop is listed as optional.
+- **Size rule used:** HOW I READ THE RULE (18 Oct 2026, "remove what needs dishes or antennas tens of cm in size")
+  - STRICT tier: largest deployed dimension about 12 cm or less. Covers patches, chip antennas, the bare LNB with its own feed, stubby or helical-loaded whips, a 12 cm loop, and the 2-turn helix on a 12 cm disc.
+  - SMALL tier: about 20 cm or less deployed. Covers 17-19 cm whips, a 20 cm helical whip, the 20 cm loop, the 4-turn helix on a 20 cm disc, and the LNB plus cone at 20 cm or less overall.
+  - EXCLUDED: every dish, and anything about 20-25 cm or more when deployed, even if it folds. That rules out the 92 cm V-dipole, the WB2HOL and N2SPI Yagis, the Moxon, the 47 cm helix, the 44 cm helicone, the 23 dBi horn, the 30 cm lens and the 2x2 array. These appear only as labelled borderline notes.
+  - The 21 cm NA-701 is treated as rule-edge. Coax leads are not counted as antenna size.
+  
+  PHYSICS (calculations)
+  - A quarter wave is 54.3 cm at 137.9 MHz, 51.4 cm at 145.9 MHz and 17.2 cm at 437 MHz. So every 137-146 MHz antenna here is electrically short, while a 17 cm 70 cm whip is full size.
+  - 137.9 MHz antennas:
+    - 20 cm tuned loop: radiation resistance 1.36-1.57 ohm, copper loss 0.06 ohm, capacitor ESR 0.22-0.34 ohm. NEC2 gives about +1.1 dBi in the loop plane and about -1.4 dB efficiency.
+    - 12 cm loop: radiation resistance 0.18 ohm, about -1.1 dBi (NEC).
+    - 20 cm normal-mode helical whip: radiation resistance 3.3 ohm on an ideal ground; Q 60-150 coil loss 2.4-6 ohm, so efficiency -2.7 to -4.7 dB and about -4 dBi realised on the case.
+    - 12 cm helical whip: radiation resistance 1.2 ohm, efficiency -6.6 to -9.7 dB.
+    - 20 cm loaded short dipole (balanced): radiation resistance 1.7 ohm, reactance about -1455 ohm; coil loss at Q 150-300 gives -8.3 to -5.9 dB.
+    - An unloaded short whip has a reactance of 400-1200 ohm and loses 24-45 dB to mismatch, so loading is mandatory.
+  - External noise usually sets the VHF limit. ITU-R P.372 (as recalled) gives about 2350 K rural, 6600 K residential and 450-600 K quiet at 137.9 MHz, against about 100 K for an LNA at the feed. So the SNR cost compared with the 92 cm V-dipole is:
+    - 20 cm loop: about +0.3 / +0.4 / -0.4 dB (rural / residential / quiet).
+    - 20 cm helical whip: -1.9 / -0.9 / -4.9 dB.
+    - 12 cm helical whip: -4.4 / -2.2 / -9.1 dB.
+  - At 437 MHz the sky is only about 110-420 K. The 11 dB gap to the 6-element Yagi there is lost directivity, which external noise cannot hide.
+  - At L-band and 10.5 GHz, 12-20 cm is 0.7 wavelength or more. Efficiency stays above 90%, and only aperture limits gain:
+    - 12x12 cm: 6.8 / 7.6 dBi at 1.54 / 1.70 GHz.
+    - 20x20 cm: 11.2 / 12.1 dBi.
+    - At 10.49 GHz a 12 cm horn is 4.2 wavelengths across; an 11 cm cone gives about 18.8 dBi.
+- **Reachable:**
+  1.
+    - **Satellite:** ISS (RS0ISS) SSTV, Series 34 on 22-25 Oct 2026 (times TBD)
+    - **Band:** 437.550 MHz FM (moved from 145.800 in 2026)
+    - **Capability:** SSTV pictures, Robot 36, 36 s on / 2 min off
+    - **Antenna:** SMALL: DIY 17 cm quarter-wave, Diamond SRH-701 (19 cm) or Baofeng A-V85 (16.8 cm) on the case SMA. STRICT: DIY 12 cm loaded whip.
+    - **Tier:** strict
+    - **Margin:** Calculation: with a vertical whip on the case (NEC), CNR is 18.8 / 22.0 / 21.4 / 18.8 dB in 15 kHz at 10 / 30 / 45 / 60 deg, against 10-12 dB needed. Assumes 10 W EIRP (ARISS states 10 W only for Series 31). A 12 cm whip is about 0.8 dB worse.
+    - **Reliability:** reliable. Field evidence: SatNOGS users decoded 12 of 12 images in Apr 2026, one at about 3 deg elevation.
+    - **Receiver:** RTL-A, with the LNA V2 directly behind the case bulkhead. FM with Doppler correction of about +/-10 kHz; SSTV decoder (arm64 package not verified).
+    - **Legal:** Amateur broadcast, receive only. Images may go to the ARISS gallery without location metadata.
+  2.
+    - **Satellite:** ISS: RS0ISS APRS digipeater and NA1SS FM cross-band repeater (ARISS status, 7 Oct 2026)
+    - **Band:** APRS 437.825 MHz (1200 AFSK); repeater downlink 437.800 MHz FM
+    - **Capability:** APRS packets; listening to amateur voice
+    - **Antenna:** Same as SSTV (17-19 cm whip on the case; 12 cm STRICT)
+    - **Tier:** strict
+    - **Margin:** Calculation with an ASSUMED 5 W EIRP: +2.5 / +5.7 / +8.2 / +12.3 dB over 12 dB CNR at 10 / 20 / 30 / 60 deg (12 cm STRICT). Held vertical, the whip loses 2-9 dB at 30-60 deg but stays positive. Tilting it broadside restores the full margin.
+    - **Reliability:** reliable (APRS is still being troubleshot on Zvezda)
+    - **Receiver:** RTL-A + LNA V2; Direwolf with no iGate; FM demodulator for the repeater
+    - **Legal:** Receive only, never uplink. Do not iGate, publish or forward heard positions (Criminal Code Art. 114-2 under martial law). Keep logs offline.
+  3.
+    - **Satellite:** Meteor-M N2-4 (NORAD 59051)
+    - **Band:** 137.900 MHz LRPT, 72 ksym/s QPSK (137.100 MHz alternate)
+    - **Capability:** Weather images (MSU-MR, 3 channels, about 1 km)
+    - **Antenna:** Loop-free default: 20 cm normal-mode helical whip retuned to 137.9 MHz on the case, tilted so the satellite is broadside (SMALL). Optional, if loops are allowed: 20 cm tuned loop on a remote choked lead with a stepper-driven trimmer (SMALL), or a 12 cm loop (STRICT). Loop-free remote-lead option: 20 cm loaded short dipole.
+    - **Tier:** small
+    - **Margin:** Calculation, rural site, LNA at the feed; EIRP calibrated to the V-dipole, +/-2-3 dB.
+  - Helical whip: decodes from about 24 deg, about +6 dB at zenith. SNR vs the 92 cm V-dipole is -1.9 dB rural, -0.9 dB residential, -4.9 dB quiet.
+  - 20 cm loop: decodes from about 17 deg and is within about 0.4 dB of the V-dipole. Its 0.84 MHz bandwidth means a 0.4 / 0.8 MHz detune costs 2.8 / 6.7 dB, so a switch to 137.1 MHz needs retuning.
+  - 12 cm loop: from about 20 deg. 12 cm helical whip: from about 38 deg (opportunistic). 5 cm stubby: not reachable.
+    - **Reliability:** marginal (model only). No published decode with an antenna under 20 cm was found. Omni discones do decode N2-4 (SatNOGS obs 15225852, 17 Oct 2026).
+    - **Receiver:** RTL-A at 1.024 Msps, SatDump 'METEOR M2-x LRPT 72k'. SAWbird+ NOAA at the feed (behind the case bulkhead for the whip, at the antenna for the loop or dipole), powered at 5 V through an injector.
+    - **Legal:** Public weather broadcast. Do not publish geotagged images or imagery that reveals infrastructure.
+  4.
+    - **Satellite:** Meteor-M N2-3 (NORAD 57166)
+    - **Band:** 137.900 MHz LRPT
+    - **Capability:** Weather images
+    - **Antenna:** As for N2-4
+    - **Tier:** small
+    - **Margin:** N2-4 budget minus an unquantified 3-6 dB loss, because its VHF antenna is partly undeployed (SatDump). Expect decodes only above about 40-60 deg.
+    - **Reliability:** opportunistic
+    - **Receiver:** RTL-A + SAWbird+ NOAA, SatDump
+    - **Legal:** Public weather broadcast
+  5.
+    - **Satellite:** AO-73 (FUNcube-1) and JO-97 (JY1Sat)
+    - **Band:** AO-73 145.935 MHz BPSK 1k2; JO-97 145.840 MHz BPSK 1k2
+    - **Capability:** FEC BPSK telemetry frames
+    - **Antenna:** SRH-701 or A-V85 on the case, tilted broadside. If loops are allowed, the 20 cm loop retuned to 145.9 MHz (NEC +1.1 dBi, about 4-5 dB better than the whip on the case).
+    - **Tier:** small
+    - **Margin:** The band study gave +5 / +10 / +15 dB at 10 / 30 / 90 deg, assuming 0.3 W. AMSAT-UK (Dec 2023) says AO-73 is in transponder mode with 'low power BPSK telemetry', whose design level is 30 mW (my inference for the current mode). That makes it about -5 / 0 / +5 dB on the whip and about 0 / +5 / +10 dB on the loop. The JO-97 EIRP is unverified.
+    - **Reliability:** marginal. A SatNOGS turnstile decoded 30 frames per pass on 23-30 deg passes, 13-14 Oct 2026.
+    - **Receiver:** RTL-A + Flamingo+ + LNA V2 at the bulkhead; gr-satellites FUNcube decoder
+    - **Legal:** Amateur and educational telemetry
+  6.
+    - **Satellite:** AO-7 mode B beacon; RS-44 and FO-29 CW beacons
+    - **Band:** AO-7 145.9775 MHz (sunlight only); RS-44 435.605 MHz; FO-29 435.795 MHz
+    - **Capability:** CW telemetry beacons; SSB/CW QSO listening on the linear transponders
+    - **Antenna:** 2 m whip (AO-7); 17 cm whip (RS-44, FO-29). Both on the case and tilted broadside.
+    - **Tier:** small
+    - **Margin:** Calculation with ASSUMED EIRPs (AO-7 0.2 W; beacons 0.1 W). AO-7: +7 to +15 dB; RS-44: +3 to +11 dB; FO-29: +5 to +13 dB over aural CW at 27 dB-Hz, from 10 to 90 deg. These margins need the broadside tilt; a vertical whip has a zenith null. SSB stations: -13 to -21 dB.
+    - **Reliability:** Beacons: marginal. SSB traffic: opportunistic.
+    - **Receiver:** RTL-A; USB/CW with Doppler correction
+    - **Legal:** Amateur, receive only
+  7.
+    - **Satellite:** 1 W-class UHF CubeSats seen active 30 Sep-18 Oct 2026 (TEVEL2-1..9 436.400 BPSK 9k6, Geoscan-1 435.970, UmKA-1 437.625, SONATE-2 437.025, SCION-X 437.500, AO-123 435.400)
+    - **Band:** 435-438 MHz
+    - **Capability:** Telemetry and beacon frames
+    - **Antenna:** 17 cm whip on the case, tilted broadside (SMALL); 12 cm loaded whip (STRICT, about 0.8 dB worse)
+    - **Tier:** small
+    - **Margin:** Calculation, NEC with the whip tilted broadside; EIRP 27 dBm, 4.5 dB losses, Tsys 340 K, 51.8 dB-Hz needed. Margins: -5.3 / +0.1 / +2.5 / +4.1 / +5.0 / +5.3 dB at 10 / 30 / 45 / 60 / 75 / 90 deg. Held vertical, the whip is never positive.
+    - **Reliability:** marginal on passes above about 30 deg. 0.5 W satellites and 19k2+ links: not reachable.
+    - **Receiver:** RTL-A (or RTL-B), IQ recording, gr-satellites/SatDump offline; 70 cm band-pass filter recommended
+    - **Legal:** Amateur and scientific telemetry
+  8.
+    - **Satellite:** SO-50; AO-91; VHF APRS digipeaters (SONATE-2, CO-128 and others on 145.825)
+    - **Band:** 436.795 MHz FM; 145.960 MHz FM; 145.825 MHz AFSK
+    - **Capability:** Listening to amateur FM voice; APRS packets
+    - **Antenna:** Whips on the case, tilted (the 20 cm loop is about 1-4 dB better at 2 m)
+    - **Tier:** small
+    - **Margin:** Calculation with ASSUMED EIRPs:
+  - SO-50 (0.25 W): clean FM is -5 dB even at zenith; noisy copy only above about 60 deg.
+  - AO-91 (0.5 W, and the satellite is intermittent): about +1 dB at zenith only.
+  - VHF digipeaters (1 W): -6.5 / +1.2 / +3.9 dB at 10 / 45 / 90 deg.
+    - **Reliability:** opportunistic
+    - **Receiver:** RTL-A + LNA; FM demodulator, Direwolf (no iGate)
+    - **Legal:** Amateur, receive only; do not publish heard positions
+  9.
+    - **Satellite:** Orbcomm OG2 (14 objects with 17 Oct 2026 elements)
+    - **Band:** 137.2-137.8 MHz
+    - **Capability:** Carrier and Doppler observation only
+    - **Antenna:** 137 MHz helical whip or loop
+    - **Tier:** small
+    - **Margin:** No EIRP published; RTL-SDR.com calls the signals 'fairly strong'
+    - **Reliability:** opportunistic (carrier detection)
+    - **Receiver:** RTL-A + SAWbird+ NOAA, narrow FFT
+    - **Legal:** Carrier and Doppler only. No frame or message decoding; user messages are private.
+  10.
+    - **Satellite:** Inmarsat-C network control station: Alphasat (about 25 deg E, about 32 deg elevation, az about 187 deg from Kyiv) or Inmarsat-6 F1 (about 83 deg E, about 14 deg elevation). Which one serves EMEA is unverified.
+    - **Band:** 1537.0-1544.2 MHz, 1200 sym/s BPSK (sigidwiki lists the IOR NCS on 1537.10 MHz; scan the band)
+    - **Capability:** EGC SafetyNET maritime safety text (NAVAREA/METAREA III warnings, SAR and met broadcasts) and bulletin-board packets
+    - **Antenna:** STRICT: DIY 2-turn RHCP helix on a 12 cm disc + SAWbird+ iO. SMALL: 4-turn helix on a 20 cm disc.
+    - **Tier:** strict
+    - **Margin:** Calculation of G/T against the ship-terminal -23 dB/K (from general knowledge): +7.5 dB for the 2-turn helix, +10 dB for the 4-turn helix. A modified GPS puck is about -3 dB, 'on the edge'.
+    - **Reliability:** reliable. rtl-sdr.com reports decodes with a patch, a modified GPS antenna and a helix.
+    - **Receiver:** RTL-B, about 4 kHz USB; stdcdec or Scytale-C filtered to SafetyNET and bulletin-board packets
+    - **Legal:** Public GMDSS safety broadcast. FleetNET, LES and addressed messages, and Aero are excluded. Do not republish Black Sea warnings tied to your location.
+  11.
+    - **Satellite:** GNSS: GPS, Galileo (28 usable), GLONASS, BeiDou; EGNOS SBAS PRN 121/123/136
+    - **Band:** L1/E1/B1/G1 1559-1610 MHz
+    - **Capability:** Precise time, PPS and position; SBAS correction messages
+    - **Antenna:** LC76G active ceramic patch (a few cm)
+    - **Tier:** strict
+    - **Margin:** Not antenna-limited; jamming and spoofing are the limit
+    - **Reliability:** reliable signal, but treat the fix as untrusted
+    - **Receiver:** LC76G on UART6, with the RTC/IMU plausibility gate; optional raw L1 capture on RTL-B
+    - **Legal:** Open navigation signals. Never publish position or timing logs, or analyses of interference sources.
+  12.
+    - **Satellite:** Meteor-M N2-4 / N2-3 HRPT
+    - **Band:** 1700 MHz RHCP, 665.4 ksym/s
+    - **Capability:** Full-resolution 6-channel weather images
+    - **Antenna:** SMALL: DIY 4-turn RHCP helix (6.2 cm diameter, 17.6 cm tall) on a 20 cm disc, SAWbird+ GOES bolted to the feed, on a mini tripod. STRICT: 2-turn helix on a 12 cm disc.
+    - **Tier:** small
+    - **Margin:** Verifier's redo, a calculation from a soft anchor: the 4-turn helix averages about +1.5 to +3 dB and decodes above about 25-30 deg. The 2-turn helix or a 12 cm patch is about -0.5 to +1 dB, near zenith only. The Meteor EIRP is unverified.
+    - **Reliability:** marginal (SMALL); opportunistic (STRICT). No small-helix HRPT decode is documented.
+    - **Receiver:** RTL-B at 2.4-2.56 Msps (marginal against the 2.7 MHz main lobe), SatDump meteor_hrpt
+    - **Legal:** Public weather broadcast. Do not publish imagery of Ukrainian territory that reveals infrastructure.
+  13.
+    - **Satellite:** FengYun-2H (79 deg E, about 17 deg elevation from Kyiv)
+    - **Band:** 1690.5 MHz LRIT test carrier (every 3 h from 00:48 UTC); 1702.5 MHz telemetry carrier; linear polarisation
+    - **Capability:** Carrier detection only: a fixed geostationary reference for antenna A/B tests
+    - **Antenna:** 4-turn helix on a tripod
+    - **Tier:** small
+    - **Margin:** No EIRP published; linear polarisation costs 3 dB on a CP antenna
+    - **Reliability:** opportunistic
+    - **Receiver:** RTL-B, long FFT
+    - **Legal:** Public weather satellite
+  14.
+    - **Satellite:** Iridium NEXT (80 objects, 17 Oct 2026)
+    - **Band:** 1616-1626.5 MHz
+    - **Capability:** Carrier and burst-Doppler observation only, with no frame demodulation
+    - **Antenna:** 2-turn or 4-turn helix. Needs a SAWbird+ IR ($49.95, not in the BOM) or a wideband LNA, because the iO and GOES SAWs block 1620 MHz.
+    - **Tier:** strict
+    - **Margin:** System designed for 0 dBi handsets; a 7-9 dBic helix sees bursts easily (qualitative)
+    - **Reliability:** reliable (carrier only, optional LNA)
+    - **Receiver:** RTL-B, waterfall only
+    - **Legal:** EXCLUDED: IRA/IBC and all other frame decoding, because ring alerts carry TMSI paging identities. Carrier and Doppler only.
+  15.
+    - **Satellite:** QO-100 (Es'hail-2, 25.9 deg E; Kyiv az 186 deg, el 32 deg)
+    - **Band:** 10489.500 MHz CW beacon; 10489.750 MHz 400 bit/s BPSK beacon; vertical, 13 V, IF 739.5-740 MHz
+    - **Capability:** Finding the satellite, LNB drift correction (beacon lock), CW beacon copy, beacon telemetry frames
+    - **Antenna:** STRICT: bare Bullseye TCXO LNB. SMALL: LNB + DIY 11 x 8.3 cm clamp-on cone (about 18.8 dBi; measure that the total is 20 cm or less).
+    - **Tier:** strict
+    - **Margin:** Calculation; model C/N0 = G + 14.6 dB-Hz, +/-2.5 dB, anchored on EA4GPZ.
+  - Bare LNB: CW beacon about +6 dB in 50 Hz and more than +15 dB in a narrow FFT; BPSK frames about -1.4 dB.
+  - With the cone: CW about +15 dB; BPSK about +7.4 dB nominal (+/-2 dB for the feed mating).
+    - **Reliability:** CW beacon and beacon lock: reliable on the bare LNB (OK1DX copied it with no dish). BPSK frames: opportunistic on the bare LNB, reliable with the cone (calculation only).
+    - **Receiver:** RTL-B through a 13 V injector, DC block and 10-20 dB pad; GNU Radio beacon tracker with about +/-800 kHz initial acquisition
+    - **Legal:** Amateur downlink. Do not post geotagged screenshots. Operate outdoors, because glass blocks 10 GHz.
+  16.
+    - **Satellite:** QO-100 narrowband user traffic
+    - **Band:** 10489.505-10489.650 MHz (CW and digital segments)
+    - **Capability:** Decoding FT8/FT4; copying CW stations
+    - **Antenna:** Bare LNB (STRICT) or LNB + 11 cm cone (SMALL)
+    - **Tier:** strict
+    - **Margin:** Calculation. Bare LNB: a beacon-level FT8 signal is about -9 dB SNR against a -20 dB limit (about +10 dB margin); CW at beacon level is about +6 dB in 50 Hz. Cone: FT8 +18 to +22 dB; CW copyable down to about 10 dB below the beacon.
+    - **Reliability:** FT8/FT4: reliable with beacon lock (RigExpert TBR-AN-1 decoded with an LNB alone, GPSDO-locked). CW: marginal on the bare LNB, reliable with the cone.
+    - **Receiver:** RTL-B, WSJT-X, 50-100 Hz CW filter
+    - **Legal:** Amateur traffic. Do not publish logs tied to your location.
+  17.
+    - **Satellite:** QO-100 narrowband SSB
+    - **Band:** 10489.650-10489.850 MHz
+    - **Capability:** Listening only to the strongest (beacon-level) SSB stations
+    - **Antenna:** LNB + 11 cm cone (18.8 dBi)
+    - **Tier:** small
+    - **Margin:** Calculation: about -1 dB in 2.7 kHz at beacon level (+/-2.5 dB). Readable copy needs +6 dB, which takes about 26 dBi. Not reachable on the bare LNB (about -10 dB).
+    - **Reliability:** opportunistic
+    - **Receiver:** RTL-B, 1.8-2.4 kHz filter, DSP noise reduction
+    - **Legal:** Amateur
+  18.
+    - **Satellite:** Geostationary Ku broadcast carriers (e.g. Hot Bird 13F/13G at 13 deg E)
+    - **Band:** 10.7-11.516 GHz (low-band LO; IF up to the V4L's 1.766 GHz limit)
+    - **Capability:** Carrier humps for pointing, Clarke-belt survey and horn calibration; sun noise of about 0.2-0.5 dB with the cone
+    - **Antenna:** Bare LNB (STRICT) or LNB + cone (SMALL)
+    - **Tier:** strict
+    - **Margin:** Calculation with an ASSUMED 48-53 dBW EIRP: bare LNB gives humps of 0.1-0.4 dB in 27.5 MHz; the cone gives 1.5-5 dB. Decoding is 5-12 dB short.
+    - **Reliability:** Bare: opportunistic. Cone: reliable (humps only).
+    - **Receiver:** RTL-B, averaged spectrum or rtl_power; rotate the LNB 90 deg for horizontal
+    - **Legal:** Measure RF power only. Never decrypt pay-TV or demodulate operator telemetry.
+  19.
+    - **Satellite:** OPTIONAL MODULE ONLY (not in the revised BOM): Black Kite-1 / Black Kite-2
+    - **Band:** S-band 2288.0 / 2286.0 MHz, GMSK 38.4 kbps
+    - **Capability:** Housekeeping telemetry frames
+    - **Antenna:** 2-turn S-band helix on a 12 cm disc + S-band LNA + Sysmocom cf2235-kt30 cavity
+    - **Tier:** strict
+    - **Margin:** A SatNOGS discone decoded frames on an 18 deg pass (obs 15185665). An 8-9 dBic helix is about 9-11 dB better (relative estimate).
+    - **Reliability:** reliable, but only with the optional ADALM-PLUTO module ($253.32 DigiKey; about $350-400 in total)
+    - **Receiver:** ADALM-PLUTO on USB, with TX never configured and terminated; gr-satnogs
+    - **Legal:** Commercial telemetry: housekeeping frames only, no user payload. The Pluto reintroduces a transmit-capable device; see the legal notes.
+- **Lost:**
+  1.
+    - **Target:** Meteor-M N2-4/N2-3 LRPT on low passes
+    - **Capability lost:** Decodes below about 17-24 deg, and the optional 137 MHz tape Yagi's +6 dB. N2-3 drops from usable to opportunistic.
+    - **Needed:** Es/N0 of 4 dB (52.6 dB-Hz) for lock; about 6 dB for clean images
+    - **What would bring it back:** Within the rule, the 20 cm tuned loop (if loops are allowed) recovers about 2 dB rural and about 4.5 dB quiet over the helical whip, to within about 0.4 dB of the V-dipole. Borderline: the 92 cm V-dipole or the 111 cm 137 MHz tape Yagi.
+  2.
+    - **Target:** Meteor-M HRPT (1700 MHz)
+    - **Capability lost:** Decodes from about 5 deg elevation (the foldable helicone had about +9.4 dB average). Now marginal above about 25-30 deg (20 cm helix) or near zenith only (12 cm helix).
+    - **Needed:** 0.5 dB SNR in SatDump; about 12.75 dBic for +6.5 dB average
+    - **What would bring it back:** Borderline: the 47 cm 11-turn helix or the 44 cm fold-flat helicone (+5-8 dB)
+  3.
+    - **Target:** Metop-B/C AHRPT (1701.3 MHz, 2.33 Msym/s)
+    - **Capability lost:** Full AVHRR/IASI direct broadcast, which the helicone gave as degraded but possible on high passes. Now 3.1-8.3 dB short (SMALL) or 5.4-10.6 dB short (STRICT), and above the V4L's 2.56 Msps. Status also conflicts: OSPO says Metop-C AHRPT 'No' (3 Sep 2026).
+    - **Needed:** Es/N0 of 4 dB or more; about 16-19 dBic; an SDR above 2.56 Msps
+    - **What would bring it back:** Borderline: the 56-60 cm 2x2 spring-helix array plus a Lime or Pluto; or the EUMETSAT archive instead of live reception
+  4.
+    - **Target:** Arctic Weather Satellite (1707 MHz, 1.785 Msym/s)
+    - **Capability lost:** Microwave sounder direct broadcast (was opportunistic). It needs at least 3.6 Msps, which the V4L cannot do once the Lime is removed.
+    - **Needed:** About 3-4 dB SNR (assumed; EIRP unpublished) and at least 3.6 Msps
+    - **What would bring it back:** Optional Pluto or Lime plus the 20 cm helix (opportunistic), or the borderline helicone
+  5.
+    - **Target:** Elektro-L N3/N5 LRIT (1691 MHz)
+    - **Capability lost:** Geostationary weather imagery, and its use as the fixed antenna test source. Now 1.3-2.6 dB short (SMALL) or 3.7-4.8 dB short (STRICT). The transmitter is also paused or commissioning (SatDump, Jul 2026).
+    - **Needed:** About +1 dB; at least 12.5 dBic
+    - **What would bring it back:** Borderline 11-turn helix or helicone, once L5 or L3 resumes. Until then, use the Inmarsat NCS or FY-2H carrier as the fixed reference.
+  6.
+    - **Target:** S-band telemetry (Black Kite-1/2, PHASMA, PROBA-2/Hinode/JPSS dumps, HamTV carrier)
+    - **Capability lost:** Everything at 2.2-2.45 GHz, because the Lime is removed and the V4L stops at 1.766 GHz
+    - **Needed:** An SDR covering 2.2-2.4 GHz; 8-9 dBic for Black Kite, 62-68 dB-Hz or more for the dumps
+    - **What would bring it back:** Optional ADALM-PLUTO module with a 12 cm S helix, LNA and cavity, which restores Black Kite. A borderline 33 cm S-band cone would be needed for PHASMA and the dumps.
+  7.
+    - **Target:** QO-100 readable SSB, multimedia beacon and wideband DATV
+    - **Capability lost:** Readable SSB from typical stations (5-15 dB below the beacon), the 8APSK multimedia beacon and DATV. The 18 V horizontal branch is removed because DATV is lost in every tier.
+    - **Needed:** SSB readable at about 26 dBi; multimedia beacon about 27 dBi; DATV beacon about 31-32 dBi (a dish of 45 cm or more); DATV stations a dish of 90 cm or more
+    - **What would bring it back:** Borderline: the 23 dBi horn (17.8 x 28 cm) gives barely-copyable beacon-level SSB; the 30 cm W1GHZ lens (about 65 cm deployed) gives readable copy. DATV needs a dish (excluded).
+  8.
+    - **Target:** Ku high band 11.7-12.75 GHz
+    - **Capability lost:** Carrier humps above 11.516 GHz, because the IF exceeds 1.766 GHz once the Lime is removed
+    - **Needed:** An SDR covering 950-2150 MHz IF, plus a 22 kHz tone
+    - **What would bring it back:** Optional Pluto or Lime
+  9.
+    - **Target:** 1 W 9k6 UHF CubeSats on low passes; 0.5 W and 19k2+ satellites
+    - **Capability lost:** The 6-element Yagi gave +5.7 dB at 10 deg. Now only passes above about 30 deg, and only with the whip tilted broadside. Lower-power and faster links are lost. Polarisation diversity is lost.
+    - **Needed:** 51.8 dB-Hz (Eb/N0 12 dB at 9600 bps)
+    - **What would bring it back:** Borderline: the 70 cm wire Moxon (25 x 10 cm, +5.4 dB, passes from about 15-20 deg) or the 4-element Yagi (29 x 34 cm, within 1.5 dB of the 6-element)
+  10.
+    - **Target:** VHF FM voice, APRS and SSB (AO-91, VHF digipeaters, JO-97/AO-7 SSB)
+    - **Capability lost:** Was usable with the WB2HOL 7.9 dBi; now 9-11 dB less gain, high passes only
+    - **Needed:** FM/AFSK about 53.8 dB-Hz; SSB about 44 dB-Hz
+    - **What would bring it back:** Borderline WB2HOL tape Yagi (105 x 51 cm). Within the rule, the 20 cm loop at 145.9 MHz (if allowed) is about 4-5 dB better than a whip on the case.
+  11.
+    - **Target:** UHF FM voice (SO-50) and linear-transponder SSB (RS-44, FO-29)
+    - **Capability lost:** Were reliable to marginal on the Yagi; now opportunistic (overhead passes, strongest stations only)
+    - **Needed:** FM 48.8-53.8 dB-Hz; SSB about 44 dB-Hz
+    - **What would bring it back:** Borderline 70 cm Moxon or 4-element Yagi
+  12.
+    - **Target:** Remote-mounted whips
+    - **Capability lost:** Monopole whips can no longer sit on a remote choked lead away from the host. NEC shows a 21 cm whip on a 5x3 cm LNA box at 8.2-j341 ohm and -22 dBi, which is -10 to -13 dB of SNR. So whips sit on the case, close to the Q6A, HDMI and DC-DC noise.
+    - **Needed:** A counterpoise or a balanced antenna
+    - **What would bring it back:** Balanced antennas on the lead: the 20 cm loop (if allowed), a 20 cm loaded dipole at 137/145 MHz (about -6 to -8 dB efficiency), or a 17 cm loaded dipole at 70 cm (about -1 dB, calculation)
+- **Excluded by law or ethics:**
+  - Iridium voice, SMS/SBD, pager traffic, and ALL frame decoding including IRA ring alerts (iridium-toolkit FORMAT.md shows TMSI paging entries) and IBC. Carrier and Doppler only.
+  - Inmarsat: STD-C LES and addressed messages, FleetNET, Aero/ACARS, C-channel voice, Classic Aero, BGAN/GX. Only EGC SafetyNET and bulletin-board packets are in scope.
+  - Orbcomm subscriber and user message content. Carrier and Doppler only.
+  - Starlink, OneWeb, Kuiper and other broadband user data. Starlink is a front-line military system in Ukraine: do not record, track, characterise or publish it.
+  - Thuraya and other MSS voice and data in 1525-1559 / 1626-1660 MHz; Globalstar 2483.5-2500 MHz downlinks.
+  - Military UHF SATCOM at 240-320 MHz (UFO/FLTSATCOM, Skynet, Sicral, Syracuse) and MUOS at about 360-380 MHz.
+  - Military payloads: Yunhai-1 01-04 (1704 MHz, encrypted), DMSP F17/F18, Coriolis, EWS-G2, OPS 5644, EMISAT, military Kosmos and Russian relay systems.
+  - CARTOSAT-3 carrier logging, dropped as a target: a civil ISRO Earth-observation satellite also used for defence (dual-use).
+  - Encrypted GNSS codes (GPS P(Y)/M, Galileo PRS, GLONASS P). Also any mapping or publishing of GNSS jamming or spoofing sources.
+  - ISS non-amateur channels: Soyuz/Progress VHF voice (143.625 / 130.167 MHz), EVA suit radios, Dragon/Kvant/TORU links.
+  - Cospas-Sarsat 1544.5 MHz relay downlinks and 406 MHz beacons (distress identities and positions).
+  - ARGOS/A-DCS (465.9875 MHz) and DCP user-platform data from Elektro, GOES and FengYun.
+  - Pay-TV decryption, demodulation of Ku operator telemetry or tracking beacons, and contribution feeds.
+  - Terrestrial military, drone/FPV video or telemetry and police links heard while scanning: do not record, decode or share.
+- **Borderline options:**
+  - BORDERLINE, NOT IN THE STACK: 21 cm Nagoya NA-701 (genuine, 950 UAH on Prom.ua). It is at the 20 cm edge and gives no gain over the SRH-701 or A-V85; W9MDB measured the 16.8 cm A-V85 1.5 dB better at 146 MHz. Clone risk: one unit measured -10.3 dB.
+  - BORDERLINE: a 48-52 cm telescopic quarter-wave whip for 2 m. G4ILO measured about +3 dB over a stock HT whip. It roughly recovers the whip-vs-loop difference at 145.9 MHz, but it must stay on the case.
+  - BORDERLINE (and named in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md as the user's Meteor antenna): the 92 cm RTL-SDR Blog dipole kit as a 137 MHz V-dipole ($17.95). It adds about +1.9 dB (rural) to +4.9 dB (quiet) over the 20 cm helical whip, but only 0 to 0.4 dB over a well-tuned 20 cm loop.
+  - BORDERLINE: 70 cm wire Moxon (25 x 10 cm, 31 g, 5.4 dBi modelled). It adds about +5.4 dB over the 17 cm whip: 1 W 9k6 CubeSats from about 15-20 deg, and SO-50 and SSB 5 dB better. This is the single most useful borderline item.
+  - BORDERLINE: 4-element 70 cm Yagi (29 x 34 cm deployed, packs into 17 cm pieces, 9.5 dBi). It comes within 1.5 dB of the old 6-element Yagi.
+  - BORDERLINE: WB2HOL 2 m tape Yagi (105 x 51 cm, 7.9 dBi). The only option that brings back VHF FM, APRS and SSB, plus about +6 dB at 137 MHz.
+  - BORDERLINE: 44 cm fold-flat helicone (15.7 dBic modelled; packs to about 19 x 19 x 4 cm) or the 47 cm 11-turn helix. Adds +5-8 dB at 1.7 GHz: Meteor HRPT from about 5 deg, Elektro LRIT back at threshold when it transmits, Metop and AWS possible on high passes.
+  - BORDERLINE: 33 cm S-band fold cone (15.5 dBic). Adds +4-6.5 dB for PHASMA-class 400 kbps CubeSats and science dumps (needs the optional Pluto as well).
+  - BORDERLINE: 15 x 18.4 cm cone (21.5 dBi; about 29-32 cm overall with the LNB). Adds about +2.7 dB over the 11 cm cone, making beacon-level QO-100 SSB about +1.7 dB (barely copyable).
+  - BORDERLINE: 23 dBi horn (17.8 cm mouth, about 28 cm long) gives beacon-level SSB at about +3 dB. The 30 cm W1GHZ lens with a 17.5 dBi feed (about 65 cm deployed) gives about +7.5 dB, readable copy. Neither reaches DATV.
+  - BORDERLINE: 56-60 cm 2x2 spring-helix array (17-18 dBic). The only non-dish route to Metop AHRPT; it also needs an SDR above 2.56 Msps.
+- **Revised stack:**
+  1.
+    - **Item:** LimeSDR Micro M.2 2280 Basic pre-order + 2x MHF4-SMA cables
+    - **Status:** remove
+    - **Price:** Saves about $309-314 landed ($249 + $18 shipping + about $30-35 duty/VAT + $12)
+    - **Note:** With antennas of 20 cm or less it would add only S-band, AWS and the Ku high band. Ships 15 Dec 2026. Crowd Supply refunds stock and pre-orders in full before shipping; campaign orders may not be refundable, so check the order type.
+  2.
+    - **Item:** Lime-only hardware: ADT-Link R44SF riser and clamp, windowed board, pedestal, gap pad, Lime plate fins, I-PEX MHF4 tool, J21 desoldering
+    - **Status:** remove
+    - **Price:** Saves about $42-47
+    - **Note:** The M.2 slot stays empty and covered. The 10 W conduction path is gone.
+  3.
+    - **Item:** Samsung T7 1 TB USB SSD
+    - **Status:** remove
+    - **Price:** Saves about $207
+    - **Note:** The largest stream left is 2x 2.56 Msps 8-bit (about 10 MB/s, 18.4 GB/h), which the 128 GB UFS holds. Keep it as a spare if already bought.
+  4.
+    - **Item:** Radxa Dragon Q6A, downgraded from 12 GB to 8 GB
+    - **Status:** keep
+    - **Price:** EUR 121 incl. NL VAT (TinyTronics, 20+ in stock 18 Oct 2026), against $189.99 for the 12 GB board
+    - **Note:** Load is about 4-6 W. Keep the kernel 6.18.2-4 hold, BIOS 260120 and active cooling. The NPU stays optional.
+  5.
+    - **Item:** Q6A copper cooler + fan; Radxa UFS 3.1 128 GB
+    - **Status:** keep
+    - **Price:** $17-30; $65.90
+    - **Note:** Unchanged
+  6.
+    - **Item:** RTL-SDR Blog V4L x2 (RTL-A: VHF/UHF on the blue USB 3.1 port; RTL-B: L-band and QO-100 IF on a hub port)
+    - **Status:** keep
+    - **Price:** $75.90 ($37.95 each; one added)
+    - **Note:** The R828S is end-of-life, so buy both now. Patched librtlsdr2, unique serials. LRPT and HRPT in the same pass needs the helix on a tripod.
+  7.
+    - **Item:** Nooelec SAWbird+ NOAA
+    - **Status:** keep
+    - **Price:** $49.95
+    - **Note:** Mandatory: at the 137 MHz feed (behind the case bulkhead for the whip, or at the loop or dipole). 5 V through an injector, not the V4L tee (170-180 mA draw against a 180 mA limit).
+  8.
+    - **Item:** Nooelec SAWbird+ GOES
+    - **Status:** keep
+    - **Price:** $49.95 (the $44.95 in the inputs is the Barebones price)
+    - **Note:** Bolted to the helix for 1700 MHz HRPT
+  9.
+    - **Item:** Nooelec SAWbird+ iO (1542 MHz)
+    - **Status:** add
+    - **Price:** $49.95
+    - **Note:** Swapped onto the helix for Inmarsat-C SafetyNET. The GOES passband blocks 1537-1545 MHz.
+  10.
+    - **Item:** Nooelec Flamingo+ FM + RTL-SDR Blog Wideband LNA V2 (one)
+    - **Status:** keep
+    - **Price:** $24.95 (not re-checked) + $19.95
+    - **Note:** Behind the 2 m/70 cm case bulkhead. Run the 3 dB-pad overload test near DVB-T2 and LTE 800.
+  11.
+    - **Item:** 70 cm band-pass filter (430-440 MHz) ahead of the LNA V2
+    - **Status:** add
+    - **Price:** About $15-40 (part and price not verified)
+    - **Note:** The filtered Uputronics 435 preamp is out of stock (Kubii). With the Lime gone, 8-bit RTL overload is the main technical risk.
+  12.
+    - **Item:** Loop-free 137.9 MHz antenna: 20 cm normal-mode helical whip retuned with extra turns or ferrite, on a dedicated case SMA
+    - **Status:** add
+    - **Price:** Under $10 plus NanoVNA time
+    - **Note:** Default because the requirements file says loops are banned. Calculated -2.7 to -4.7 dB efficiency, about -4 dBi realised, LRPT from about 24 deg. Tilt it broadside. Tune it on the case with a hand in place. STRICT version: 12 cm, LRPT from about 38 deg.
+  13.
+    - **Item:** DIY 20 cm tuned copper loop for 137.9/145.9 MHz with a C0G capacitor plus a 1-10 pF air trimmer turned by a small stepper; insulating mast on 0.5-1 m choked coax
+    - **Status:** optional
+    - **Price:** $15-30 materials + about $5-10 stepper and driver (estimate)
+    - **Note:** Only if loops are allowed. Best small 137 MHz antenna (NEC +1.07 dBi, within 0.4 dB of the V-dipole), and it avoids host noise on a remote lead. But it tunes at 2.2 pF with 0.84 MHz bandwidth, so peak it on sky noise before every pass and keep hands more than 2 diameters away. STRICT version: 12 cm loop (0.41 MHz bandwidth).
+  14.
+    - **Item:** DIY 20 cm loaded short dipole for 137.9 MHz on a remote choked lead (balanced, loop-free) with an L-match to 50 ohm
+    - **Status:** optional
+    - **Price:** About $10-20 (estimate)
+    - **Note:** Calculated: radiation resistance 1.7 ohm, reactance about -1455 ohm, efficiency -5.9 to -8.3 dB at coil Q 300-150, bandwidth 0.6-1.1 MHz. SNR vs the V-dipole -1.9 to -3.1 dB rural, -5 to -7.2 dB quiet. Use it only if host noise makes the on-case whip unusable.
+  15.
+    - **Item:** 2 m/70 cm whip clearly under 20 cm: Diamond SRH-701 (19 cm) or Baofeng A-V85 (16.8 cm, SMA-female, needs an adapter), on the case SMA
+    - **Status:** add
+    - **Price:** SRH-701 EUR 16.90 + EUR 14.20 shipping (WiMo); A-V85 a few dollars (not verified)
+    - **Note:** Replaces the 21 cm NA-701 the draft stack proposed. Must sit on the case, because a remote lead loses 10-13 dB. Check it with the VNA.
+  16.
+    - **Item:** DIY 17 cm quarter-wave 70 cm whip (SMA-male plug + 16.5-17 cm rod); STRICT: 12 cm loaded whip
+    - **Status:** add
+    - **Price:** Under $5
+    - **Note:** Full size at 70 cm, NEC +0.5 dBi at 10 deg on the case. Tilt it broadside for high passes.
+  17.
+    - **Item:** DIY 4-turn RHCP L-band helix on a 20 cm aluminium disc (6.2 cm diameter, 43 mm pitch, 17.6 cm tall) with a matching strip from 140-160 ohm; STRICT: 2-turn on a 12 cm disc
+    - **Status:** add
+    - **Price:** $5-12 (estimate)
+    - **Note:** Covers 1525-1710 MHz. Mini tripod. Inmarsat-C +10 dB; HRPT marginal above 25-30 deg.
+  18.
+    - **Item:** Othernet Bullseye TCXO LNB, bare (STRICT) + DIY 11 x 8.3 cm clamp-on cone (SMALL)
+    - **Status:** keep
+    - **Price:** $29.95 + $3-10
+    - **Note:** Measure the LNB length. If LNB plus cone exceeds 20 cm, use the 10 x 6.3 cm cone (about 18 dBi). Cap the red F port.
+  19.
+    - **Item:** Fixed 13 V LNB supply: MT3608/XL6009-class boost from 3S, switched by a part rated 20 V or more (e.g. a second Pololu #2813 or an eFuse) or a boost with true output disconnect; injector, DC block, 10-20 dB pad, F-SMA
+    - **Status:** add
+    - **Price:** About $20-45 (unverified)
+    - **Note:** Corrects the draft: a TPS2553 (2.5-6.5 V) cannot switch it, and a plain boost's EN pin leaves about 8.5-12 V on the F port. Check 0 V when off. The 18 V branch is removed.
+  20.
+    - **Item:** 5 V SMA bias-tee injectors with TPS2553 switches and polyfuses (LNA rails only)
+    - **Status:** keep
+    - **Price:** $15-30 (unverified)
+    - **Note:** For the SAWbird+ NOAA, GOES or iO and the LNA V2 only
+  21.
+    - **Item:** 18 V horizontal LNB branch
+    - **Status:** remove
+    - **Price:** A few dollars
+    - **Note:** Needed only for DATV, which is lost. Horizontal Ku humps can still be seen by rotating the LNB.
+  22.
+    - **Item:** RTL-SDR Blog dipole kit (92 cm V-dipole), WB2HOL and N2SPI Yagis, 11-turn helix, helicone, 2x2 array, 20-23 dBi horns, 30 cm lens
+    - **Status:** remove
+    - **Price:** Saves about $70-130 in materials, plus about $180-200 of array LNAs never bought
+    - **Note:** Excluded by size; see the borderline notes
+  23.
+    - **Item:** Lime-only RF parts: Lime port pads, SMA DC-block 2-pack, S-band LNA, Sysmocom cf2235-kt30, second LNA V2; long LMR-240 jumpers and MHF4 pigtails
+    - **Status:** remove
+    - **Price:** Saves about $65 (+ EUR 65.45 if the cavity was planned)
+    - **Note:** Whips connect straight to the case; only the loop or dipole, helix and LNB use leads
+  24.
+    - **Item:** 2-3 thin 0.5-1 m RG316/RG174 leads with ferrite chokes + adapters
+    - **Status:** add
+    - **Price:** $15-30 (estimate)
+    - **Note:** For the helix (LNA at the feed), LNB, and the loop or dipole if used. Not for monopole whips.
+  25.
+    - **Item:** Wisecoco 7in 2000+ nit HDMI kit + USB touch, RP2040/VEML7700 dimmer, shielded HDMI + ferrites
+    - **Status:** keep
+    - **Price:** $152-167
+    - **Note:** Avoid the 1080p60 CVT-RB timing (138.5 MHz, 0.6 MHz from 137.9) and CEA 1080p60 (148.5 MHz; 5th harmonic at 742.5 MHz). The 1080p52 128.7 MHz timing puts its 12th harmonic at 1544.4 MHz, 2.9 MHz above the 1541.45 NCS channel; check it in the spur sweep. Confirm the board input voltage for 3S.
+  26.
+    - **Item:** Power 3S1P: 3x Molicel P50B, Daly 3S BMS, IP2368 (3S strap, 4.10 V/cell), Pololu #2813, INA228, LT3045, fuse/SMBJ14A/220 uF straight into J21; fourth cell and D36V50F12 buck removed
+    - **Status:** keep
+    - **Price:** $79-100 (saves about $45-49 against 4S)
+    - **Note:** Optional: keep 4S1P (+$45, +75 g, about 3.7-5.3 h). In that case also keep the D36V50F12 and replace the SMBJ14A, which would conduct at 16.8 V.
+  27.
+    - **Item:** Quectel LC76G + BNO085 in an RP2040-Zero puck + CR2032
+    - **Status:** keep
+    - **Price:** $50-55
+    - **Note:** The IMU now drives the 'keep the whip broadside' and 'satellite in the loop plane' pointing cues
+  28.
+    - **Item:** Mechanical: ASA shell, 2 mm Al mid-plate, display blower, FR4 shield bay for 2 RTLs + injectors, SMA/F bulkheads, 1/4-20 nut
+    - **Status:** keep
+    - **Price:** $49-87
+    - **Note:** Two whip bulkheads on the case top edge (137 and 2 m/70 cm), each with its LNA directly behind it. RTL-B SMA and the F port for the LNB.
+  29.
+    - **Item:** Software: SatDump (RTL only, two instances), SDR++, GNU Radio 3.10.9.2, gr-satellites 5.5.0, Gpredict, WSJT-X, Direwolf (no iGate), SSTV decoder, stdcdec/Scytale-C (SafetyNET filter), QO-100 beacon tracker
+    - **Status:** keep
+    - **Price:** $0
+    - **Note:** The Lime stack is removed: no LimeSuiteNG, la9310 DKMS, PCI quirk or RT tuning
+  30.
+    - **Item:** NanoVNA covering at least 3 GHz (tool, not in the totals)
+    - **Status:** add
+    - **Price:** $60-130 (unverified)
+    - **Note:** Now essential for tuning the helical whip, loop or dipole and the helix match, and for catching clone whips. Sweep briefly indoors.
+  31.
+    - **Item:** SAWbird+ IR (1620 MHz)
+    - **Status:** optional
+    - **Price:** $49.95
+    - **Note:** Only for Iridium carrier and Doppler observation
+  32.
+    - **Item:** ADALM-PLUTO S-band module + 2-turn S helix + S-band LNA + cf2235-kt30
+    - **Status:** optional
+    - **Price:** About $350-400 ($253.32 DigiKey + EUR 65.45 + LNA)
+    - **Note:** The only way back to Black Kite-1/2 and AWS. It reintroduces a transmit-capable device; keep TX unconfigured and terminated.
+- **Cost size power delta:** COST
+  - Before: about $1,602-1,849 (de-duplicated audited picks; reproduced by the verifier with bom2.py).
+  - After: about $950-1,185 with the 3S pack, or about $995-1,245 if the 4S pack is kept.
+  - That is the stack scripts' $930-1,134, plus about $20-50 net for the 70 cm band-pass filter, a properly rated LNB switch, and the SRH-701 instead of the NA-701, minus the cheaper loop-free whip and fewer leads.
+  - Avoided spend: about $650-665. It counts only for parts not yet bought.
+  - Largest savings: LimeSDR landed (about $309-314), T7 (about $207), 12 GB to 8 GB Q6A ($50-74), fourth cell plus 12 V buck ($45-49), riser and tool (about $42-47), excluded antenna materials (about $70-130).
+  - Additions: second V4L $37.95, SAWbird+ iO $49.95, small antennas about $25-60, 70 cm BPF about $15-40.
+  - The optional loop adds about $20-40; the optional Pluto module about $350-400.
+  - Caveat: the EUR 150 duty-free parcel limit in Ukraine may be abolished in autumn 2026 (bill pending), which would add 20% VAT to every parcel.
+  
+  SIZE AND WEIGHT (estimates)
+  - Box: from about 205-215 x 130-140 x 50-55 mm and 1.2-1.4 kg (plus about 70 g of T7), to about 200-215 x 120-140 x 45-55 mm and 1.05-1.25 kg. The 7in display and the plate/cooler stack still set the footprint and thickness.
+  - Antenna kit: from about 1.4-2.0 kg (largest pieces 92-105 cm deployed), to about 0.6-0.9 kg with nothing over about 20 cm. Breakdown: whips 15-30 g each, 4-turn helix with LNA about 210 g, LNB plus cone 200-250 g, optional loop with LNA 200-280 g, leads about 75 g.
+  
+  POWER (calculation, pwr.py plus the verifier's per-mode correction)
+  - Before: typical about 25-28 W, peak about 45-52 W, internal heat about 25-35 W.
+  - After:
+    - Single RTL on VHF/UHF or L-band: about 11-17 W.
+    - QO-100 (LNB 1.4-3.6 W) or dual RTL: about 13-21 W.
+    - Peak: about 24-32 W.
+  - The display is now 30-45% of typical draw, so auto-dimming is the main lever.
+  
+  RUNTIME (85% of capacity usable)
+  - 3S1P 54 Wh: about 2.8-4.0 h single-RTL, 2.2-3.5 h QO-100 or dual-RTL, 1.4-1.9 h at peak.
+  - 4S1P 72 Wh: about 3.7-5.3 h typical.
+- **Refuted claims:**
+  1.
+    - **Claim:** Small-whip budgets: '1 W 9k6 CubeSats +2.0/+3.6/+4.8 dB at 45/60/90 deg'; RS-44/FO-29 beacons up to +11/+13 dB; AO-73/JO-97 +15/+19 dB at zenith (small_ant/lb.py, sats.py)
+    - **Why:** The scripts give whips a flat 1.8-2.0 dBi at every elevation, but a vertical monopole has a zenith null. NEC for a 17 cm whip on the case: +0.5 / -2.0 / -5.1 / -9.3 / -16 dBi at 10 / 30 / 45 / 60 / 75 deg and a null at 90. Held vertical, the CubeSat margins are never positive. The numbers hold only if the whip is tilted broadside (NEC: -5.3 / +0.1 / +2.5 / +4.1 / +5.0 / +5.3 dB at 10 / 30 / 45 / 60 / 75 / 90 deg).
+  2.
+    - **Claim:** Whips (NA-701, 17 cm, 12 cm) mounted on thin remote choked leads with the LNA at the feed, still 'reliable' for AO-73/JO-97
+    - **Why:** A monopole needs a counterpoise. NEC gives 8.2-j341 ohm and -22.2 dBi for a 21 cm whip on a 5x3 cm LNA box, which is -10 to -13 dB of SNR after the noise effect. Real ferrites turn the coax shield into the counterpoise, which is the host-noise path. Fix: whips on the case, balanced antennas (loop or loaded dipole) on remote leads.
+  3.
+    - **Claim:** The 20 cm loop has about 1.4 MHz bandwidth and 3.5 pF tuning, so one fixed tuning covers both Meteors and Orbcomm with no motor
+    - **Why:** Converged NEC2 gives about 514 ohm reactance, 2.2 pF tuning, Q about 330, 0.84 MHz at 3 dB and an SWR under 1.5 over only about 170 kHz. A 0.05 pF hand change moves resonance about 1.6 MHz, and a 0.8 MHz detune (137.9 to 137.1 MHz) costs about 6.7 dB. It needs a stepper or peaking before every pass. Gain was actually better than claimed: +1.07 dBi vs +0.3 dBi.
+  4.
+    - **Claim:** Meteor HRPT 'reliable from about 13-18 deg' on the 20 cm 4-turn helix; 'marginal above 22-28 deg' on the 12 cm 2-turn
+    - **Why:** There is no field precedent. The 12.75 dBic anchor is an assumption, so the -1.2 dB NEC correction is circular. The metislair setup had an extra VLNA, and a wide beam adds 30-60 K of ground noise. Redone: 4-turn +1.5 to +3 dB, above about 25-30 deg (marginal); 2-turn -0.5 to +1 dB, near zenith only (opportunistic).
+  5.
+    - **Claim:** AO-73 telemetry at an assumed 0.3 W, so 'reliable' (+5/+10/+15 dB)
+    - **Why:** AMSAT-UK (13 Dec 2023, latest AO-73 post) says AO-73 runs in transponder mode with 'low power BPSK telemetry'. AMSAT's spec lists 30 mW (eclipse) or 300 mW (illuminated, educational mode). If it is 30 mW (my inference), the margins drop by about 10 dB, to about -5 / 0 / +5. It is rated marginal; SatNOGS turnstile decodes on 23-30 deg passes support that. Sources: https://amsat-uk.org/tag/ao-73/ and https://www.amsat.org/two-way-satellites/ao-73-funcube-1/
+  6.
+    - **Claim:** 13 V LNB rail switched by a TPS2553, from a 'GPIO-switched MT3608/XL6009-class boost'
+    - **Why:** The TPS2553 is rated 2.5-6.5 V, so it cannot take 9-13 V. A non-synchronous boost with EN low still passes about the pack voltage minus a diode drop (8.5-12 V), which keeps the LNB on and leaves DC on the F port. Use a part rated 20 V or more, or a boost with output disconnect, and verify 0 V.
+  7.
+    - **Claim:** Iridium IRA/IBC system frames are 'reliable' at STRICT tier as long as TMSI fields are stripped
+    - **Why:** IRA frames carry subscriber paging (TMSI) entries and IBC frames carry channel assignments. Demodulating them already intercepts private-communications metadata (Constitution Art. 31, Criminal Code Art. 163), and Iridium is used by the military in Ukraine. Carrier and Doppler only.
+  8.
+    - **Claim:** The MEAS Inmarsat-4 satellite near 64 deg E is at about 24 deg elevation from Ukraine
+    - **Why:** Celestrak elements of 16-17 Oct 2026 put I-4 F2 at about 142.5 deg E and I-4 F1 at about 177 deg E. The only Inmarsat near 62 deg E is 5-F1, Ka-band only. EGC for Ukraine comes from Alphasat (about 25 deg E) or I-6 F1 (about 83 deg E).
+  9.
+    - **Claim:** The 21 cm NA-701 is within the SMALL tier and is the best default 2 m/70 cm whip
+    - **Why:** 21 cm is over about 20 cm. W9MDB measured the 16.8 cm A-V85 at -0.8 dB vs the NA-771 at 146 MHz, against -2.3 dB for the NA-701, and found a clone 8 dB worse. Default to the SRH-701 or A-V85 instead.
+  10.
+    - **Claim:** Typical power 11-17 W and runtime 2.8-4.0 h
+    - **Why:** That covers only one RTL, one LNA and no LNB. QO-100 or dual-RTL sessions run at about 13-21 W, about 2.2-3.5 h on 3S1P.
+  11.
+    - **Claim:** dish_replacement.json: QO-100 beacon C/N0 is about 28 + G dB-Hz (bare LNB 3-6 dB in 2.7 kHz; horn 14-17 dB)
+    - **Why:** About 14 dB too optimistic. EA4GPZ measured about 45 dB-Hz on a dish of about 34 dBi, so C/N0 is about G + 14.6 dB-Hz. The bare LNB is therefore CW/FT8 grade, and SSB is about -10 dB.
+  12.
+    - **Claim:** Input files and the status agent: ISS SSTV on 145.800 MHz; ISS APRS on 145.825 MHz; 'no ISS SSTV event after May 2026'
+    - **Why:** ARISS lists Series 33 (2-6 Oct) and Series 34 (22-25 Oct 2026) on 437.55 MHz, Robot 36. APRS is active on 437.825 MHz (ARISS, 7 Oct 2026). Note that 10 W is stated only for Series 31.
+  13.
+    - **Claim:** Validate the helix on Elektro-L5 LRIT at 76 deg E
+    - **Why:** SatDump (2 Jul 2026): L3 is paused and L5's LRIT/HRIT is off for commissioning. Use the Inmarsat NCS or FY-2H carriers as the fixed reference instead.
+  14.
+    - **Claim:** The RTL-SDR Blog active L-band patch is a STRICT-tier antenna usable for HRPT
+    - **Why:** The vendor gives 175 x 175 mm, which is SMALL tier, and its SAW passband is 1525-1660 MHz, which excludes 1700 MHz.
+  15.
+    - **Claim:** SAWbird+ NOAA/GOES at $44.95
+    - **Why:** Nooelec lists $49.95. $44.95 is the Barebones and non-plus price.
+  16.
+    - **Claim:** GreenCube IO-117 and IO-86 as UHF targets
+    - **Why:** IO-117: no good SatNOGS data since 25 Jul 2025. IO-86: its near-equatorial orbit never rises above the horizon from about 45-52 deg N.
+- **First tests:**
+  - Bench, before buying antennas: put 50-ohm terminators on both V4Ls and run spur and noise sweeps at 137.1, 137.9, 145.9, 437, 739.5, 1537-1545, 1575.4 and 1700 MHz, switching each host source on and off: HDMI modes (avoid 138.5 and 148.5 MHz; check 128.7 MHz x12 = 1544.4 MHz), display boost, IP2368, USB, Wi-Fi. Repeat with the whips on the case to see whether host noise or sky noise sets the floor.
+  - Power: check that the LNB F port reads 0 V when switched off and 13 V when on. Check that the 5 V injectors current-limit. Soak the SAWbird+ GOES for 2 h in the closed case.
+  - NanoVNA, briefly and indoors: tune the 20 cm helical whip to 137.9 MHz on the case with a hand in place. Check the SRH-701/A-V85 at 145.9 and 437 MHz (catches clones). Trim the 17 cm whip. Match the helix's 140-160 ohm feed to better than -10 dB S11. If the loop is built, check its resonance and how far a hand moves it.
+  - 22-25 Oct 2026: ISS SSTV Series 34 on 437.55 MHz with the 17 cm whip on the case. Do an A/B of vertical vs tilted broadside on high passes, using SatDump/SDR++ SNR. This is the easy first validation.
+  - Inmarsat-C: point the 2-turn or 4-turn helix + SAWbird+ iO at Alphasat (about 187 deg az, 32 deg el from Kyiv), scan 1537-1545 MHz for the NCS, and decode SafetyNET only. This is the always-on fixed A/B reference for the L-band antennas and LNAs.
+  - QO-100: outdoors (glass blocks it), bare Bullseye at 186 deg / 32 deg, IF 739.5 MHz, wide-acquisition tracker. Then fit the 11 cm cone and A/B the beacon (expect +6 to +11 dB), and try WSJT-X FT8.
+  - 70 cm overload: run the 3 dB-pad test near DVB-T2 and LTE 800, with and without the 70 cm band-pass filter.
+  - AO-73 (145.935 MHz BPSK) on a pass above 30 deg, with the whip tilted broadside, and with the loop if allowed.
+  - Meteor-M N2-4 LRPT on 2-3 passes above 40 deg with the helical whip tilted broadside (and an A/B with the loop if allowed). Promote it from marginal only after decodes.
+  - Meteor HRPT on a pass above 40 deg with the 4-turn helix on a tripod at 2.4-2.56 Msps. Then 1 W 9k6 CubeSats (TEVEL2, Geoscan-1) on passes above 45 deg.
+- **Legal notes:**
+  - Receive only, never transmit or uplink: no SO-50 or ISS repeater access. Dropping the Lime removes the only transmit-capable device, so the kit becomes physically receive-only, which is the easiest position to defend. The optional ADALM-PLUTO would reintroduce one: keep its TX unconfigured and terminated, and document that.
+  - Ukraine: no licence or registration requirement was found for receive-only equipment. NKEK Resolution 361 (3 Jul 2024) lists broadcast receivers under general authorisation (code ZD-7). That this also covers SDRs is an inference, so confirm in writing with UARL and NKEK. Imported radio equipment needs an EU-style declaration of conformity (Law 1089-IX Art. 64).
+  - Martial law (Law 389-VIII Art. 8) allows authorities to ban personal transceiver stations and to seize communications equipment from violators. It is in force to 31 Oct 2026 (Decree 596/2026), and an extension is expected. Carry a Ukrainian-language note explaining the device is a receive-only hobby receiver, and re-check the status after 31 Oct.
+  - Secrecy of communications: Constitution Art. 31 and Criminal Code Art. 163 (fine, or up to 3 years; 3-7 years for repeat offences or special means). This is why Iridium is carrier-only, Orbcomm is carrier-only and Inmarsat is filtered to SafetyNET. Art. 359 covers special technical means for covert information gathering: keep the device configured and described as a general receiver for public broadcasts.
+  - Criminal Code Art. 114-2: no live streams or geotagged images. Do not publish station coordinates (SatNOGS publishes lat/lon; AMSAT reports include grid squares). Do not iGate APRS. Do not post imagery or recordings that locate infrastructure, strike damage, or military or drone signals.
+  - GNSS spoofing and jamming are widespread. Keep the RTC/IMU plausibility gate and fall back to a saved or manually entered locator for pass prediction. Never publish GNSS-derived positions or interference analyses.
+  - Field safety: set up only on known-safe ground (your own property, paved areas, or SES-cleared land). Stay away from fields, forest edges, former combat areas, checkpoints and infrastructure. Do not touch suspicious objects; call 101 (DSNS).
+  - A NanoVNA sweep radiates microwatts across the 137 MHz, 435 MHz and L1 bands. Sweep indoors, briefly, and away from sensitive sites.
+  - If you are not in Ukraine (the requirements file says so), the martial-law items do not apply, but most countries have equivalent secrecy-of-communications rules. Keep the same private and military exclusions everywhere.
+- **Open questions:**
+  - RULE CONFLICT: /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/final/user_requirements.md was created at 02:18 today, after this run's band studies. It says: no loop antennas of any kind; foldable antennas are allowed if every piece is about 20-23 cm (at most about 35 cm) even when larger deployed; Meteor LRPT uses the foldable V-dipole; the user is not in Ukraine. The relayed request asks to remove antennas 'tens of cm in size'. Does deployed size or packed piece size govern, and are loops banned? If packed size governs, the borderline Yagis, V-dipole, Moxon and helicone come back.
+  - Real EIRPs, all assumed here: AO-73's current telemetry power (30 vs 300 mW), JO-97, the ISS APRS radio (5 W assumed), SO-50, AO-91, the RS-44/FO-29 beacons, and Meteor LRPT/HRPT. Also ISS SSTV power for Series 34 (10 W is stated only for Series 31).
+  - Which satellite carries the EMEA Inmarsat-C NCS (Alphasat at about 25 deg E or I-6 F1 at about 83 deg E), and on which frequency? Scan 1537-1545 MHz to find out.
+  - Real Q6A, HDMI and DC-DC self-noise at 137-146 MHz and 437 MHz with whips mounted on the case. This now likely sets the VHF/UHF floor. Does the Q6A accept a custom EDID that avoids the 138.5/148.5 MHz clocks?
+  - Bullseye LNB length: is LNB plus the 11 x 8.3 cm cone really 20 cm or less? How well does a clamp-on cone mate to its scalar feed (+/-2 dB)?
+  - Which parts are already bought (12 GB Q6A, T7, fourth cell, D36V50F12, Lime)? Is the Crowd Supply order a refundable pre-order or a campaign order?
+  - A specific 430-440 MHz band-pass filter, its price and stock; also the Diamond SRH-701 / Baofeng A-V85 shipping to the user's country.
+  - Wisecoco driver board input voltage on a 9-12.6 V 3S pack, and the long-term behaviour of feeding J21 directly from 3S.
+  - Whether an arm64 SSTV decoder package works on Radxa OS r2, and whether Scytale-C or stdcdec can be restricted to SafetyNET only.
+  - Whether the 20 cm helical whip's modelled -2.7 to -4.7 dB efficiency holds on this case geometry (no NEC run on the actual case at 137.9 MHz).
+- **Confidence:** medium
+
 ## fold:vhf_uhf (run `wf_4a343103-e9e`)
 
 - **Band group:** VHF/UHF: 137 MHz Meteor-M LRPT, 145.8 MHz ISS SSTV, 435-438 MHz CubeSats (RTL-SDR V4L for 137/145.8 MHz, LimeSDR Micro for 435 MHz). Targets unchanged. Packing targets unchanged: recommended tier has no piece longer than about 35 cm; ultra-compact tier no piece longer than about 20 cm.
