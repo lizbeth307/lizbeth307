@@ -481,5 +481,590 @@ _Run `wf_2f1a700c-867`_
 
 ## Форуми та досвід спільноти (`forums`)
 
+_Run `wf_0e70c405-a03`_
+
+- **Component:** Display: very bright (ideally 1000 nits or more), ideally above Full HD, capacitive touch, for a Radxa Dragon Q6A (QCS6490) handheld used in direct sun. Candidates: Wisecoco 7in 1080p 2000-2500 nit HDMI kit (recommended), Midas 7in 1200x1920 2500 nit DSI panel (upgrade), Waveshare 5DP-CAPLCD 800 nit (budget), field monitors (FEELWORLD LUT7/LUT5/F6 PLUSX), Waveshare/Wisecoco 2560x1600 kits, Lilliput 719/T.
+- **Experiences:**
+  1.
+    - **Product:** Radxa Dragon Q6A HDMI + Samsung G80SD 4K monitor
+    - **Source url:** https://forum.radxa.com/t/samsung-g80sd-can-not-negotiate-resolution-refresh-rate/31118
+    - **Community:** Radxa forum
+    - **What they built:** Q6A desktop on Radxa OS with a 4K HDMI monitor (3 Jul 2026)
+    - **Problems:**
+      - Mode negotiation failed and the output fell back to 1024x768@60
+    - **Fixes:**
+      - The poster forced 4K 'by messing with commands' but did not post the commands or the refresh rate
+    - **Outcome:** Unresolved. No replies and no staff answer. This is the only above-FHD report on Q6A HDMI besides the 2.5K one below.
+  2.
+    - **Product:** Radxa Dragon Q6A HDMI on a 2.5K screen (T4 image)
+    - **Source url:** https://forum.radxa.com/t/upcoming-radxa-dragon-q6a/26723/51
+    - **Community:** Radxa forum
+    - **What they built:** Willy Tarreau ran the Q6A desktop on a screen he describes as 2.5K and tested YouTube in Firefox (25 Oct 2025)
+    - **Problems:**
+      - Video playback was jerky (software decode)
+      - The SoC reached about 77 C on a thermal camera
+    - **Fixes:**
+      - A small aluminium heatsink helped
+      - Mecid suggested Chromium from amazingfate's PPA for hardware decode and forcing H.264, because of a Venus VP9 bug
+    - **Outcome:** An above-FHD desktop worked (implied by 'matches my screen resolution'). Heat matters even with no SDR load.
+  3.
+    - **Product:** Radxa Dragon Q6A HDMI after the kernel 7.0.11 upgrade
+    - **Source url:** https://forum.radxa.com/t/linux-7-0-hdmi-not-working/31304
+    - **Community:** Radxa forum
+    - **What they built:** Ubuntu 24.04 Q6A desktops
+    - **Problems:**
+      - After apt full-upgrade from 6.18.2 to 7.0.11, HDMI went black once Linux started and the connector read 'disconnected'
+      - Logs showed a DP AUX IRQ error and 'Cannot find any crtc or sizes'; hotplug then stayed dead
+      - Unbinding and rebinding msm_dpu crashed the board
+    - **Fixes:**
+      - Roll back the complete 6.18.2 kernel, initramfs and DTB (the 6.18 DTB alone with 7.0.11 did not help)
+      - Oleksii_Bezuhlyi: update the SPI firmware, then use a LONG press of the power button after poweroff (a short press or reboot stayed black)
+      - Use a serial console (1.8 V UART) for recovery
+    - **Outcome:** On 9 Sep 2026 Mr Dragon reported 'HDMI works now after the latest kernel updates' (version not given). Radxa never blocked the bad package.
+  4.
+    - **Product:** Radxa Dragon Q6A HDMI on Linux 7.0 via rsetup
+    - **Source url:** https://forum.radxa.com/t/latest-q6a-update-to-linux-7-0-no-hdmi/31288
+    - **Community:** Radxa forum
+    - **What they built:** Ubuntu desktop on Q6A
+    - **Problems:**
+      - No HDMI after the first boot on 7.0.11-4-qcom
+      - 6.18.2-4-qcom had HDMI but no sound card
+    - **Fixes:**
+      - Radxa staff (chenchongbiao, 1 Sep 2026): the 7.0 kernel switches off clocks left on by EDK2, which causes DP AUX interrupt storms. Fix: sudo sed -i 's/kasan=off/kasan=off clk_ignore_unused/' /etc/kernel/cmdline; sudo kernel-install add $(uname -r) /boot/vmlinuz-$(uname -r); reboot
+    - **Outcome:** The workaround was posted, but the OP never confirmed it. The sed only matches if the cmdline already contains kasan=off.
+  5.
+    - **Product:** Community Ubuntu 26.04.1 image for Q6A (kernel 7.2.9, Armbian edge)
+    - **Source url:** https://forum.radxa.com/t/ubuntu-26-04-1-lts-images-for-the-radxa-dragon-q6a-now-on-linux-7-2-9-hdmi-works-wi-fi-bt-audio-npu-apt-upgrade-safe/31574
+    - **Community:** Radxa forum
+    - **What they built:** rafaelwms' v1.3.0 desktop and server images (7 Oct 2026)
+    - **Problems:**
+      - HDMI broke on 7.0 and 7.2.3 kernels
+    - **Fixes:**
+      - Kernel 7.2.9 with the DisplayPort/DPU patches Armbian carries for QCS6490 makes HDMI work; KERNEL_BRANCH=current is the fallback
+    - **Outcome:** HDMI works on one board, tested by one person. No reports on specific monitors or touchscreens.
+  6.
+    - **Product:** Radxa Dragon Q6A + Acer Nitro XV272U (a 2560x1440-class monitor)
+    - **Source url:** https://forum.radxa.com/t/dragon-q6a-no-video-output/29681
+    - **Community:** Radxa forum
+    - **What they built:** Q6A desktop on the T4 image
+    - **Problems:**
+      - No video signal at all, while the board booted
+    - **Fixes:**
+      - Mecid: test a plain 1080p60 monitor; newer images fix this by enabling DPU 'virtual planes' (freedesktop msm issue #86)
+    - **Outcome:** Not confirmed by the OP. My own check: in mainline the sc7280/QCS6490 DPU catalog has .max_linewidth = 2400, so any mode wider than 2400 px (2560x1440, 2560x1600 landscape) needs virtual planes (two SSPPs per plane). Current mainline sets dpu_use_virtual_planes = true by default.
+  7.
+    - **Product:** Radxa Display 8 HD (official DSI panel) on Q6A
+    - **Source url:** https://forum.radxa.com/t/only-backlight-on-8hd/30822
+    - **Community:** Radxa forum
+    - **What they built:** Q6A with the official 8in DSI touch panel
+    - **Problems:**
+      - Only the backlight lit, with no image; HDMI also stopped after running rsetup
+      - In related threads (30422, 30454) the panel stayed black on Ubuntu 24.04. The image has no panel module and no Qualcomm overlay in /boot/dtbo. In one case DRM reported DSI-1 connected and the Goodix touch worked, but vblank ran at exactly half the mode rate
+    - **Fixes:**
+      - liliiii (29 Jul 2026): the panel flex is revision AD001, but rsetup loads the AD002 overlay. Check the flex marking and use a matching overlay or driver
+    - **Outcome:** The fix is user-found. Radxa staff asked for the image version and never posted a fix. Thread 30454 (Sep 2026) is still unresolved.
+  8.
+    - **Product:** Q6A HDMI + Waveshare 3.5in SPI LCD (dual display)
+    - **Source url:** https://forum.radxa.com/t/dragon-q6a-spi-display-overlay-disables-hdmi-output-in-gnu-mode/30490
+    - **Community:** Radxa forum
+    - **What they built:** HDMI main screen plus a small SPI status screen
+    - **Problems:**
+      - With the SPI overlay enabled, both screens went blank; hot-plugging HDMI blanked both
+    - **Fixes:**
+      - None. Under Xorg, HDMI works and the SPI panel stays in standby
+    - **Outcome:** Accepted staff answer (24 Mar 2026): 'no current plans to support dual-display (HDMI + SPI)'. A secondary SPI status display is not an option.
+  9.
+    - **Product:** Q6A DSI connector J10 with a third-party 7in DSI touch screen
+    - **Source url:** https://forum.radxa.com/t/radxa-q6a-connection-to-7-inch-dsi-touch-screen/31373
+    - **Community:** Radxa forum
+    - **What they built:** Attempt to connect a 7in DSI panel
+    - **Problems:**
+      - The J10 pin count, pitch and pinout are not documented; no Pi-style 0.3 mm to 1.0 mm adapter is known
+    - **Fixes:** []
+    - **Outcome:** Unanswered (27 Aug 2026).
+  10.
+    - **Product:** QCS6490 mainline DP: RA620 bridge link-training patch
+    - **Source url:** https://lore.gitlab.freedesktop.org/drm-ai-reviews/20260522060645.4399-4-graham.oconnor@gmail.com/
+    - **Community:** Linux kernel lists (drm, via lore)
+    - **What they built:** Graham O'Connor's mainline enablement series for the Q6A
+    - **Problems:**
+      - The RA620 'does not acknowledge DP link training at voltage swing level 3', so HDMI fails on mainline
+    - **Fixes:**
+      - Set DP_TRAIN_LEVEL_MAX to 2 in drivers/gpu/drm/msm/dp/dp_link.h, matching the vendor kernel
+    - **Outcome:** Patch posted 22 May 2026 and under review. The series' patch 5/6 also disables DSI as 'not present', which conflicts with the Q6A's real DSI connector, so mainline DSI support is behind.
+  11.
+    - **Product:** Wisecoco 5.5in HDMI-to-MIPI kit (1080x1920 portrait EDID)
+    - **Source url:** https://forums.raspberrypi.com/viewtopic.php?t=373978
+    - **Community:** Raspberry Pi forums
+    - **What they built:** CM4 with a Wisecoco 5.5in panel
+    - **Problems:**
+      - The image filled only part of the screen, with flicker lines, a green tint and wrong scaling, while the panel worked on Windows
+      - The EDID holds a single portrait timing: 1080x1920, 134.49 MHz, HFP48/HS6/HBP25, VFP8/VS2/VBP4
+    - **Fixes:**
+      - 6by9 (Raspberry Pi engineer): don't hand-edit timings; use KMS and let the EDID drive the mode
+      - sanore1 (1 Nov 2024) posted a working config: hdmi_force_hotplug=1, hdmi_force_mode=1, hdmi_group=2, hdmi_mode=87, hdmi_timings=1080 1 8 2 4 1920 1 48 6 25 0 0 0 60 0 134490000 3, dtoverlay=vc4-fkms-v3d
+    - **Outcome:** Worked for one user with exact EDID-matched timings. The board is portrait-native and needs rotation.
+  12.
+    - **Product:** Wisecoco 8.9in 2560x1600 HDMI kit
+    - **Source url:** https://forums.raspberrypi.com/viewtopic.php?t=384136
+    - **Community:** Raspberry Pi forums
+    - **What they built:** Pi Zero 2W handheld with a 2.5K panel
+    - **Problems:**
+      - Console worked but X failed, because the vendor config disabled vc4-kms-v3d
+      - The board's 225.18 MHz pixel clock exceeds the 162 MHz Pi0-3 limit
+    - **Fixes:**
+      - 6by9: patch the kernel limit to about 226 MHz, or move to a CM4/CM5 carrier
+    - **Outcome:** Unresolved. Useful data point: this 2560x1600 board uses a tight 225 MHz timing, which is about 5.4 Gbps at 24 bpp and well within the Q6A's 2-lane DP budget (my calculation).
+  13.
+    - **Product:** Wisecoco 7in HDMI touchscreen on Pi 5
+    - **Source url:** https://forums.raspberrypi.com/viewtopic.php?t=368455
+    - **Community:** Raspberry Pi forums
+    - **What they built:** Pi 5 kiosk
+    - **Problems:**
+      - Touch stopped working after an OS update; a few days later the display also failed on a Pi 3
+    - **Fixes:**
+      - Diagnosis only: the touch enumerated as a CH57x USB HID device handled by hid-multitouch, with no dmesg errors
+    - **Outcome:** Judged a display or cable hardware fault; the user moved to another display. It also shows that Wisecoco touch boards present standard USB HID (CH57x MCU).
+  14.
+    - **Product:** LT6911-based HDMI-to-DSI board (720x720) replaced by Wisecoco boards
+    - **Source url:** https://forums.raspberrypi.com/viewtopic.php?t=393606
+    - **Community:** Raspberry Pi forums
+    - **What they built:** Pi 5 with a round panel via an HDMI-to-DSI bridge
+    - **Problems:**
+      - Wrong colours after every boot, fixed by re-plugging the cable; 6by9 suspected the bridge's initialisation
+    - **Fixes:**
+      - video=HDMI-A-1:720x720M@60D; workaround xrandr --output HDMI-1 --off && xrandr --output HDMI-1 --auto after login
+      - Final fix: swap to Wisecoco interface boards
+    - **Outcome:** Resolved by changing the board (Nov 2025). Cheap bridge boards vary in quality.
+  15.
+    - **Product:** Wisecoco 2K (2560x1600) and 2880x1440 HDMI kits on Pi 4
+    - **Source url:** https://forums.raspberrypi.com/viewtopic.php?t=368182
+    - **Community:** Raspberry Pi forums
+    - **What they built:** Pi 4 with high-resolution Wisecoco panels
+    - **Problems:**
+      - 2560x1600: the image was duplicated twice on the right side (t=368182)
+      - 2880x1440 (t=366160): the desktop boots in portrait and rotating it bounces back
+    - **Fixes:**
+      - 2880x1440: a 'resolution swap fixed the issue perfectly' (not detailed)
+    - **Outcome:** 2560x1600: unresolved. 2880x1440: fixed. High-resolution kits often need a manual mode or EDID work.
+  16.
+    - **Product:** Waveshare 9in 2560x1600 HDMI monitor (USB touch)
+    - **Source url:** https://www.waveshare.com/wiki/9inch_2560x1600_Monitor
+    - **Community:** Waveshare wiki FAQ (vendor support notes)
+    - **What they built:** Pi and PC secondary display
+    - **Problems:**
+      - 'You must set the resolution manually' on the Pi (hdmi_mode=87 plus custom hdmi_timings)
+      - Flicker from an undersupplied USB power cable
+      - Screen goes black on DPMS idle
+    - **Fixes:**
+      - External 5 V/2 A on the Power port
+      - xserver-command=X -s 0 -dpms
+      - Reboot the host if HDMI hot-plug is not detected
+    - **Outcome:** Works with manual setup. Brightness is not even listed (about 350 nits per earlier research), so it is unsuitable in sun.
+  17.
+    - **Product:** Waveshare 5DP-CAPLCD 5in 1024x600 800 nit (budget pick)
+    - **Source url:** https://www.waveshare.com/wiki/5DP-CAPLCD
+    - **Community:** Waveshare wiki FAQ
+    - **What they built:** HDMI plus USB-touch display for Pi and PC
+    - **Problems:**
+      - Typical draw is 4.2 W, and 'the input current must be >=850mA, otherwise it will cause startup failure or abnormal display'
+      - The resolution must be set manually (the EDID does not drive 1024x600)
+      - Brightness is adjustable only via the OSD
+    - **Fixes:**
+      - Pi: hdmi_cvt 1024 600 60 6 0 0 0. Q6A equivalent: video=HDMI-A-1:1024x600@60 (Radxa FAQ)
+      - Power it from a dedicated 5 V/1-2 A rail
+    - **Outcome:** Known-good. Power is about 4.2 W, not the 2-3 W estimated earlier.
+  18.
+    - **Product:** Waveshare 7in 1024x600 HDMI LCD on Pi 3 (KlipperScreen)
+    - **Source url:** https://forum.core-electronics.com.au/t/problems-with-waveshare-7-lcd-screen/15007
+    - **Community:** Core Electronics forum
+    - **What they built:** 3D-printer touchscreen
+    - **Problems:**
+      - Interlace-like flicker and corruption
+      - Ghost images, a purple edge line, then a white inverted screen
+    - **Fixes:**
+      - hdmi_drive=2 removed the flicker
+      - The ghosting followed the panel to a Windows PC, so it was a hardware fault
+    - **Outcome:** Warranty replacement (Sep 2022). Cheap HDMI kits have unit-to-unit quality variance.
+  19.
+    - **Product:** FEELWORLD LUT7 (7in 1920x1200, 2200 nit field monitor)
+    - **Source url:** https://kounio.gr/katastima/video-2/monitors/feelworld-lut7-7-3d-lut-4k-hdmi-monitor/
+    - **Community:** Retailer spec sheet + Adorama user review (https://www.adorama.com/felut7.html)
+    - **What they built:** Camera field monitor considered as an SBC screen
+    - **Problems:**
+      - The HDMI input list contains only broadcast formats: 4K24/30, 1080p up to 60, 1080i, 720p, SD. No 1920x1200 or other PC modes
+      - 20 W rated draw at 7-24 V/2 A
+      - An Adorama reviewer (William R., Jul 2021) says it 'gets very warm to the touch during use'
+    - **Fixes:**
+      - Feed 1080p60 from the Q6A (video=HDMI-A-1:1920x1080@60) and accept the scaling to the 1920x1200 panel
+    - **Outcome:** Its above-FHD panel cannot be used at native resolution from a PC source. Combined with no host touch and 20 W, this rules field monitors out of the primary role.
+  20.
+    - **Product:** FEELWORLD LUT5 (5.5in 3000 nit) / Osee T7
+    - **Source url:** https://forum.blackmagicdesign.com/viewtopic.php?p=1039971
+    - **Community:** Blackmagic Design forum (seen via search snippet; the page returned 403)
+    - **What they built:** Outdoor camera rig
+    - **Problems:**
+      - A user reported the 3000-nit Osee T7 got very hot in direct sun
+      - The vendor states the LUT5 runs about 2.5 h on an F970 7.4 V 6600 mAh battery, which is about 19.5 W average (my calculation)
+    - **Fixes:**
+      - The user moved to the smaller LUT5 with a cage and a sun hood for lower power
+    - **Outcome:** Expect 15-20 W and significant heat at full brightness.
+  21.
+    - **Product:** SDR++ with a touchscreen on Linux Wayland
+    - **Source url:** https://github.com/AlexandreRouma/SDRPlusPlus/issues/1569
+    - **Community:** GitHub issues (SDR++, also #1631; GLFW #2791)
+    - **What they built:** SDR++ on touch laptops (Arch, Ubuntu, Fedora)
+    - **Problems:**
+      - Touch is ignored in Wayland sessions but works on X11 and Windows, because GLFW has no wl_touch support (GLFW #2791; tracking issue #42 open since 2013)
+    - **Fixes:**
+      - The maintainer says the fix belongs upstream in GLFW and won't patch SDR++
+      - My own fix from GLFW 3.4 platform.c: GLFW follows XDG_SESSION_TYPE, so launching with XDG_SESSION_TYPE=x11 sdrpp (or satdump) uses XWayland, where touch gets pointer emulation. Alternatives: log into a GNOME/KDE X11 session, or link against the X11-only libglfw3 build
+    - **Outcome:** Unfixed upstream. The workaround is to run under XWayland or X11. SatDump also uses GLFW/ImGui, so the same applies.
+  22.
+    - **Product:** USB touchscreen to monitor mapping under GNOME/mutter
+    - **Source url:** https://discourse.gnome.org/t/external-touch-screen-is-mapped-to-wrong-display/26089
+    - **Community:** GNOME Discourse + Peter Hutterer's blog
+    - **What they built:** Laptop with an external HDMI/USB touch monitor
+    - **Problems:**
+      - Touch landed on the wrong display; the device enumerated as a 'tablet', and the gsettings tablet output key and a libwacom entry did not help
+    - **Fixes:**
+      - Hutterer (https://who-t.blogspot.com/2024/03/enforcing-touchscreen-mapping-in-gnome.html): read vendor/product/serial from ~/.config/monitors.xml, then gsettings set org.gnome.desktop.peripherals.touchscreen:/org/gnome/desktop/peripherals/touchscreens/<vid>:<pid>/ output "['VEN','Product','Serial']"
+    - **Outcome:** The Discourse case stayed unresolved for a tablet-class device. The blog method works for normal touchscreens. On a single-display handheld, mapping is simpler, but rotation must follow the mapped output.
+  23.
+    - **Product:** SDRIAK (formerly SDR++ iak) touch-oriented fork
+    - **Source url:** https://github.com/bubnikv/sdriak/releases
+    - **Community:** GitHub releases
+    - **What they built:** Touch and Android-friendly SDR++ fork
+    - **Problems:**
+      - Release notes do not say whether Linux builds are aarch64
+      - Wayland touch handling is not mentioned
+    - **Fixes:**
+      - v1.4.0-alpha/beta/beta2 (Jul-Sep): touch overlay, drag-scroll with fling, a frequency keypad (hold a digit 0.5 s), drag-to-tune inside the VFO, 125/175% scale presets, native-DPI handling
+    - **Outcome:** The best UI candidate for a 7in touch screen, but it likely needs a source build on ARM64 and the X11/XWayland trick above.
+  24.
+    - **Product:** LimeSDR Mini + Raspberry Pi with a 5in TFT vs an HDMI display
+    - **Source url:** https://discourse.myriadrf.org/t/80mhz-bandwidth-spectrogram-on-limesdr-mini/3356?page=2
+    - **Community:** MyriadRF / Lime discourse
+    - **What they built:** 80 MHz FPGA spectrogram on a LimeSDR Mini with Pi 3 + GQRX
+    - **Problems:**
+      - '5' TFT-Display created some noise in the spectrogram. This was not a problem with HDMI display' (gasparka, 6 Feb 2019)
+      - Higher HDMI resolution with a large waterfall maxed the CPU
+    - **Fixes:**
+      - Switch to an HDMI display; keep the waterfall window size moderate
+    - **Outcome:** An HDMI display was quieter than an SPI/TFT one near the SDR. Waterfall rendering cost scales with resolution.
+  25.
+    - **Product:** Raspberry Pi + RTL-SDR SatNOGS station (137 MHz)
+    - **Source url:** https://community.libre.space/t/observation-1617402-noaa-18-28654-terrestrial-interference-on-its-frequency/5424
+    - **Community:** SatNOGS community (libre.space)
+    - **What they built:** NOAA/137 MHz ground station
+    - **Problems:**
+      - S9-level interference at 137.912 MHz (plus near 137.0) that swamped NOAA-18; traced to the Pi itself
+    - **Fixes:**
+      - vk2byf: ground the RTL-SDR and metal Pi cases, replace switch-mode supplies with linear ones, add ferrites on leads
+      - Others proposed disabling Pi HDMI (also topic 3151) as a mitigation
+    - **Outcome:** Noise eliminated for one user. This is directly relevant to Meteor LRPT at 137 MHz with an SBC, display and backlight converter inside a palm-sized case.
+  26.
+    - **Product:** Particle Tachyon (QCM6490, same SoC family) with third-party DSI panels
+    - **Source url:** https://community.particle.io/t/confirmed-working-dsi-display/70237
+    - **Community:** Particle community
+    - **What they built:** Tachyon with Raspberry Pi Touch Display 2 and Waveshare DSI panels
+    - **Problems:**
+      - Waveshare 4.3in/5in DSI: detected but blank
+      - RPi Touch Display 2: green pulsing pattern, 'dsi PLL unlock error: 0x140'
+      - Particle CTO: each DSI panel needs kernel driver enablement, board detection and a DTS loaded by the bootloader
+    - **Fixes:**
+      - A display overlay from the Ubuntu 24.04 beta image made the RPi panel and touch work (Feb 2026)
+      - Bjorn Andersson pointed to WIP LKML Waveshare panel-driver patches for v6.18+ (topic 70037)
+    - **Outcome:** Third-party DSI on QCM/QCS6490 is per-panel kernel work even for the vendor. This is a strong warning for a Midas DSI build on the Q6A.
+  27.
+    - **Product:** Chinese Realtek-based HDMI driver board, DDC/CI brightness control
+    - **Source url:** https://github.com/rockowitz/ddcutil/issues/134
+    - **Community:** GitHub issues (ddcutil)
+    - **What they built:** Surface Pro 3 panel on a generic driver board with a Raspberry Pi
+    - **Problems:**
+      - The OSD offers DDC/CI, but nothing answers at I2C 0x37 (only the EDID at 0x50), so ddcutil can't set brightness
+    - **Fixes:** []
+    - **Outcome:** Closed without a fix. Software auto-dimming over DDC on cheap boards is unreliable. Waveshare documents a hardware PWM mod instead (remove a 22 ohm resistor and drive the pad from GPIO PWM: https://www.waveshare.com/wiki/7inch_HDMI_LCD_(H)_(with_case)).
+  28.
+    - **Product:** Lilliput / Xenarc small HDMI touch monitors on Linux (CNC)
+    - **Source url:** https://forum.linuxcnc.org/18-computer/36241-lilliput-monitors-resolution
+    - **Community:** LinuxCNC forum
+    - **What they built:** CNC control screens
+    - **Problems:**
+      - Low native resolution panels upscaling 1024x768 looked 'a disaster'
+    - **Fixes:**
+      - Match the output to the panel's native mode; touch appeared as a USB mouse and worked in Linux Mint with no configuration (rodw)
+    - **Outcome:** USB touch on Lilliput-type monitors works driver-free. Always run native resolution (1280x800 for the 719/T).
+  29.
+    - **Product:** Outdoor Pi touchscreens (10in Chalkboard HDMI; 5-7in options)
+    - **Source url:** https://forums.raspberrypi.com/viewtopic.php?t=144176
+    - **Community:** Raspberry Pi forums (also t=216464)
+    - **What they built:** Outdoor and marine Pi displays
+    - **Problems:**
+      - A 10in Chalkboard HDMI capacitive screen was 'almost impossible to read in daylight'
+      - t=216464 quotes guidance of about 400 nits for shade and 700 nits for direct sun; high-brightness screens drain batteries faster than the Pi
+    - **Fixes:**
+      - Suggested: commercial sunlight-readable TFTs, e-ink or transflective panels, a 1300-nit 5in MakerPlane HAT
+    - **Outcome:** No successful outdoor build was documented. It confirms that sub-500-nit panels fail outdoors.
+  30.
+    - **Product:** uConsole / DevTerm handhelds used outdoors
+    - **Source url:** https://forum.clockworkpi.com/t/higher-res-display/14069
+    - **Community:** ClockworkPi forum (also topics 9444, 10051)
+    - **What they built:** Handheld Linux terminals (also used for SatDump via DragonOS)
+    - **Problems:**
+      - The stock IPS is glossy and hard to read in sun
+      - A proposed 1200x1920 MIPI swap needs a pinout adapter and a kernel driver (HX8399C)
+    - **Fixes:**
+      - Collapsible sun shroud / 'HAMVISOR' visor accessories to shade the screen
+    - **Outcome:** The resolution upgrade was never completed. Shading hoods are the practical community fix.
+  31.
+    - **Product:** Outdoor LCD enclosures (solar clearing and heat)
+    - **Source url:** https://community.element14.com/challenges-projects/design-challenges/experimenting-with-extreme-environments/b/blog/posts/exploring-hidden-extremes-of-sheltered-environment---extra-blog-4--greenhouse-in-the-box
+    - **Community:** element14 community (+ Elo support KB https://elosupport.elotouch.com/hc/en-us/articles/31648421556247)
+    - **What they built:** Pi CM4 in a sealed outdoor box
+    - **Problems:**
+      - Black and transparent-lid enclosures overheat in sun; the CPU throttles at about 80 C
+      - Elo: an air gap under touch glass creates a greenhouse effect, and the LCD reaches its clearing point (goes black until it cools)
+    - **Fixes:**
+      - Light-coloured enclosure, no clear window over hot parts, shading, orientation, solar-rejection film
+    - **Outcome:** Recoverable, but repeated clearing shortens LCD life.
+- **Common problems:**
+  1.
+    - **Problem:** Q6A HDMI goes black after kernel or firmware updates: 7.0.x regression, DP AUX interrupt storm, dead hotplug
+    - **Affected products:** Radxa Dragon Q6A (all HDMI displays)
+    - **Frequency:** common
+    - **Known fix:** - Add clk_ignore_unused to /etc/kernel/cmdline, then run kernel-install add (Radxa staff).
+  - Or stay on the full 6.18.2 kernel + initramfs + DTB, or move to newer kernels (fixed for one user by Sep 2026) or the community 7.2.9 image.
+  - After poweroff, use a long press of the power button.
+  - Once the display works, hold the kernel packages (apt-mark hold) so a field update cannot kill the screen (my recommendation).
+    - **Fix sources:**
+      - https://forum.radxa.com/t/latest-q6a-update-to-linux-7-0-no-hdmi/31288
+      - https://forum.radxa.com/t/linux-7-0-hdmi-not-working/31304
+      - https://forum.radxa.com/t/ubuntu-26-04-1-lts-images-for-the-radxa-dragon-q6a-now-on-linux-7-2-9-hdmi-works-wi-fi-bt-audio-npu-apt-upgrade-safe/31574
+  2.
+    - **Problem:** Wrong default mode on small or odd panels: the Q6A defaults to 1080p, so the image garbles or a 4K monitor falls back to 1024x768
+    - **Affected products:** Q6A with 1024x600 kits (Waveshare 5DP-CAPLCD, Orient 7in), Samsung G80SD; any panel with a sparse EDID
+    - **Frequency:** common
+    - **Known fix:** - Check the modes: sudo edid-decode /sys/class/drm/card1-HDMI-A-1/edid.
+  - Append video=HDMI-A-1:WxH@60 (add 'e' to force the output on) to /etc/kernel/cmdline, run kernel-install add, then reboot and re-plug HDMI (Radxa FAQ).
+    - **Fix sources:**
+      - https://docs.radxa.com/en/dragon/q6a/faq
+      - https://forum.radxa.com/t/samsung-g80sd-can-not-negotiate-resolution-refresh-rate/31118
+  3.
+    - **Problem:** Cheap HDMI-to-MIPI bridge boards have portrait-only or minimal EDIDs, tight non-standard timings, and init races (wrong colours or no image until re-plug)
+    - **Affected products:** Wisecoco 5.5in/7in/8.9in/2K kits, LT6911-based boards, Waveshare 9in 2.5K
+    - **Frequency:** common
+    - **Known fix:** - Drive the mode from the EDID under KMS.
+  - Otherwise force the exact EDID timing (video= or a custom modeline matching the EDID porches).
+  - Workaround for an init race: xrandr --output HDMI-1 --off && xrandr --output HDMI-1 --auto.
+  - Fix a bad EDID with drm.edid_firmware=HDMI-A-1:edid/x.bin; Pi users patched a Wisecoco EDID for audio.
+  - Swapping to a better board fixed it in one case.
+    - **Fix sources:**
+      - https://forums.raspberrypi.com/viewtopic.php?t=373978
+      - https://forums.raspberrypi.com/viewtopic.php?t=393606
+      - https://forums.raspberrypi.com/viewtopic.php?t=366160
+      - https://www.waveshare.com/wiki/9inch_2560x1600_Monitor
+  4.
+    - **Problem:** Modes wider than 2400 px fail or give no output on QCS6490 unless DPU virtual planes are enabled (SSPP max_linewidth = 2400)
+    - **Affected products:** Q6A with 2560x1440/2560x1600 landscape displays (Waveshare 9in, Wisecoco 2.5K, Wisecoco 8.4in via a bridge)
+    - **Frequency:** occasional
+    - **Known fix:** Community: newer Radxa images enable virtual planes.
+  
+  My own fix, from the kernel source:
+  - Use a kernel where dpu_use_virtual_planes defaults to true (current mainline), or add msm.dpu_use_virtual_planes=1 to the cmdline.
+  - Alternatively, drive portrait-native panels in their native portrait mode (1200x1920, 1600x2560: width at most 2400) and rotate in the compositor.
+    - **Fix sources:**
+      - https://forum.radxa.com/t/dragon-q6a-no-video-output/29681
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_2_sc7280.h
+      - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+  5.
+    - **Problem:** Touch does nothing in SDR++/SatDump (GLFW apps) under Wayland
+    - **Affected products:** Any USB-touch display with SDR++, SDRIAK or SatDump on a GNOME/KDE Wayland session
+    - **Frequency:** common
+    - **Known fix:** - Run under X11 or XWayland: XDG_SESSION_TYPE=x11 sdrpp (GLFW 3.4 honours this; my fix from the GLFW source), or use an Xorg session or the X11-only libglfw3.
+  - XWayland and X11 emulate a pointer from touch.
+    - **Fix sources:**
+      - https://github.com/AlexandreRouma/SDRPlusPlus/issues/1569
+      - https://github.com/AlexandreRouma/SDRPlusPlus/issues/1631
+      - https://github.com/glfw/glfw/issues/2791
+      - https://raw.githubusercontent.com/glfw/glfw/3.4/src/platform.c
+  6.
+    - **Problem:** Touch mapped to the wrong output, or it does not follow rotation (portrait-native boards rotated to landscape)
+    - **Affected products:** Wisecoco and Waveshare portrait-native kits, any HDMI+USB touch under GNOME/mutter
+    - **Frequency:** occasional
+    - **Known fix:** - GNOME: gsettings set org.gnome.desktop.peripherals.touchscreen:/org/gnome/desktop/peripherals/touchscreens/<vid>:<pid>/ output "['VEN','Product','Serial']" (from monitors.xml).
+  - Under X11: xinput map-to-output, or a libinput calibration-matrix udev rule.
+    - **Fix sources:**
+      - https://who-t.blogspot.com/2024/03/enforcing-touchscreen-mapping-in-gnome.html
+      - https://discourse.gnome.org/t/external-touch-screen-is-mapped-to-wrong-display/26089
+  7.
+    - **Problem:** Field monitors do not act as a host touchscreen and accept only broadcast video formats, so their 1920x1200 panels show scaled 1080p. They draw about 20 W and run hot
+    - **Affected products:** FEELWORLD LUT7/LUT5/F6 PLUSX, Osee T7, Desview, Portkeys, NEEWER, Lilliput H7s
+    - **Frequency:** common
+    - **Known fix:** - Feed 1080p60.
+  - Add a separate input (encoder, buttons, or a small USB touch overlay).
+  - Use the built-in light sensor or auto-dimming, a sun hood or cage, and budget 15-20 W.
+    - **Fix sources:**
+      - https://kounio.gr/katastima/video-2/monitors/feelworld-lut7-7-3d-lut-4k-hdmi-monitor/
+      - https://www.adorama.com/felut7.html
+      - https://forum.blackmagicdesign.com/viewtopic.php?p=1039971
+  8.
+    - **Problem:** Undersupplied display boards flicker, fail to start or show abnormal output
+    - **Affected products:** Waveshare 5DP-CAPLCD (needs at least 850 mA, 4.2 W typ), Waveshare 9in 2.5K (5 V/2 A), any HDMI kit fed from SBC USB
+    - **Frequency:** common
+    - **Known fix:** - Power the display from its own rail (5 V/2 A, or a 12 V buck for 2000-nit kits), not from the SBC's USB.
+  - Power it before or with the SBC so the EDID is readable at boot.
+    - **Fix sources:**
+      - https://www.waveshare.com/wiki/5DP-CAPLCD
+      - https://www.waveshare.com/wiki/9inch_2560x1600_Monitor
+      - https://forum.radxa.com/t/poe-hat-for-radxa-dragon-q6a/29237
+  9.
+    - **Problem:** RF noise from the SBC, HDMI and display electronics lands in VHF satellite bands
+    - **Affected products:** Any SBC + display + RTL-SDR/LimeSDR in one box; 137 MHz is especially exposed
+    - **Frequency:** occasional
+    - **Known fix:** - Ground the SDR and SBC cases.
+  - Use linear or well-filtered supplies and ferrites on leads.
+  - Disable or shorten HDMI, and use a shielded HDMI cable with a ferrite.
+  - HDMI displays were quieter than an SPI TFT in one Lime report.
+    - **Fix sources:**
+      - https://community.libre.space/t/observation-1617402-noaa-18-28654-terrestrial-interference-on-its-frequency/5424
+      - https://discourse.myriadrf.org/t/80mhz-bandwidth-spectrogram-on-limesdr-mini/3356?page=2
+      - https://www.amateurradio.com/rfi-is-either-giving-or-receiving/
+  10.
+    - **Problem:** DSI panels on the Q6A/QCS6490 stay black: missing overlays and drivers, panel revision mismatch, per-panel kernel work
+    - **Affected products:** Radxa Display 8HD/10FHD, any third-party DSI panel including the Midas MDT0700F1IHHC
+    - **Frequency:** common
+    - **Known fix:** - Official 8HD: match the overlay to the flex revision (AD001 vs AD002).
+  - Third-party panels: write your own panel driver and device tree (Tachyon experience); no Q6A J10 pinout has been published on the forum.
+    - **Fix sources:**
+      - https://forum.radxa.com/t/only-backlight-on-8hd/30822
+      - https://forum.radxa.com/t/radxa-display-8-hd-black-screen-on-dragon-q6a/30454
+      - https://community.particle.io/t/dsi-display-issue/70037
+  11.
+    - **Problem:** Displays under about 500 nits are unreadable in daylight; glossy air-gap glass and the greenhouse effect make it worse (solar clearing)
+    - **Affected products:** Waveshare 2.5K/AMOLED/FHD 7in, Pi 7in, uConsole and similar
+    - **Frequency:** common
+    - **Known fix:** - Use at least 1000-2000 nits with optical bonding.
+  - Add a sun hood or visor, a light-coloured case and a vented gap behind the backlight; avoid an air gap under the glass.
+    - **Fix sources:**
+      - https://forums.raspberrypi.com/viewtopic.php?t=144176
+      - https://forum.clockworkpi.com/t/higher-res-display/14069
+      - https://elosupport.elotouch.com/hc/en-us/articles/31648421556247
+  12.
+    - **Problem:** Brightness can't be controlled in software (OSD only; DDC/CI does not respond on cheap boards), so there is no auto-dimming
+    - **Affected products:** Waveshare HDMI kits, Realtek-scaler and HDMI-to-MIPI boards
+    - **Frequency:** occasional
+    - **Known fix:** Hardware PWM mod: Waveshare's documented removal of a 22 ohm resistor so a GPIO PWM drives the backlight. Or a DSI-direct panel under the Linux backlight class.
+    - **Fix sources:**
+      - https://www.waveshare.com/wiki/7inch_HDMI_LCD_(H)_(with_case)
+      - https://github.com/rockowitz/ddcutil/issues/134
+  13.
+    - **Problem:** Polarized sunglasses black out the LCD at some orientations
+    - **Affected products:** All LCDs (IPS/LTPS); not AMOLED with circular polarizers to the same degree
+    - **Frequency:** occasional
+    - **Known fix:** Rotate the screen 90 degrees. Test with your sunglasses before fixing the panel orientation in the case.
+    - **Fix sources:**
+      - https://www.allaboutvision.com/eyewear/sunglasses/lenses/polarized-lenses-and-lcd-screens/
+      - https://www.r3owners.net/threads/fuelbot-enhancement.34043
+- **Unresolved problems:**
+  1.
+    - **Problem:** Nobody has documented a stable above-FHD (2560x1600/1440) HDMI touch panel on the Q6A
+    - **Evidence:** - Only two data points exist. Willy Tarreau's implied 2.5K screen worked (Oct 2025).
+  - The Samsung G80SD fell back to 1024x768 and the thread is unresolved.
+  - An XV272U-class monitor got no signal until 'virtual planes' were enabled.
+  - The SC7280 DPU caps SSPP width at 2400 px; the 2-lane DP and RA620 limit is 4K30.
+    - **Why it matters for us:** Buying a 2.5K kit is a gamble on mode negotiation, virtual planes, EDID and link training at swing level 2. A portrait-native 1200x1920/1600x2560 mode avoids the 2400-px limit but still needs real testing.
+  2.
+    - **Problem:** The Wisecoco 7in 1920x1080 2000-2500 nit HDMI kit has no community build or review
+    - **Evidence:** - The product page says 'There are no reviews yet'.
+  - The spec lists the touch interface as I2C and the brightness inconsistently (2000+ typ vs 2500 in the title).
+  - No board chip, input voltage or power figure is given.
+  - Searches of the Raspberry Pi forums found only other Wisecoco models. Those show EDID and timing quirks, but also that Wisecoco touch boards enumerate as CH57x USB HID.
+    - **Why it matters for us:** It is the recommended part. You must get written confirmation of USB-HID touch, board input voltage, EDID mode list (landscape 1920x1080 vs portrait) and lamination before paying, and expect to force the mode with video= or an EDID override.
+  3.
+    - **Problem:** No community experience exists for the Midas MDT0700F1IHHC 2500-nit 1200x1920 DSI panel, and none for any third-party DSI panel on the Q6A
+    - **Evidence:** - No Midas threads were found on the Pi forums.
+  - The Q6A J10 pinout question went unanswered (Aug 2026).
+  - The official 8HD fails on Ubuntu images.
+  - Mainline Q6A patches disable DSI as 'not present'.
+  - The FT7250 touch controller has no confirmed mainline driver.
+  - Tachyon (QCM6490) shows that each panel needs kernel driver and DT work, plus a DSI PLL unlock error.
+    - **Why it matters for us:** The above-FHD 'upgrade path' is an unbounded kernel-bring-up project. Treat it as experimental and do not plan the enclosure around it.
+  4.
+    - **Problem:** Recurring Q6A kernel regressions in the display path have no root-cause fix from Radxa
+    - **Evidence:** - 7.0.x broke HDMI for several users.
+  - Radxa offered only the clk_ignore_unused workaround.
+  - A 'latest kernel updates' fix arrived for one user without a version.
+  - A community image relies on unlisted Armbian DP/DPU patches.
+    - **Why it matters for us:** A field device whose screen dies after apt upgrade is bricked for practical purposes. You need a kernel hold, a serial console and a known-good image backup.
+  5.
+    - **Problem:** Software brightness control over HDMI (DDC/CI through the msm DP to RA620 path) is undocumented
+    - **Evidence:** - No Q6A or RA620 DDC/CI report was found.
+  - Cheap Realtek boards claim DDC/CI but do not answer at 0x37 (ddcutil #134).
+  - The Waveshare boards documented here dim via OSD only.
+    - **Why it matters for us:** Auto-dimming from a lux sensor is the main battery saver (about 3-5 W at 2000 nits). Without DDC you need a PWM hardware mod on the driver board or a DSI-direct panel.
+  6.
+    - **Problem:** No measurements exist of RF emissions from a 2000-nit backlight boost converter or HDMI-to-MIPI board next to 137/435 MHz and 1.7 GHz receivers
+    - **Evidence:** The only community data are general: a Pi at 137.912 MHz (SatNOGS), an SPI TFT noisier than HDMI (Lime), and HDMI cables as an RF path. Nothing was found about bright LED drivers.
+    - **Why it matters for us:** In a palm-sized case the LED boost (16-19 V at 0.4-0.5 A, PWM-dimmed) sits a few cm from the LNAs. Plan shielding, LC filtering of the display rail, and an A/B noise test with the backlight at full and at minimum.
+  7.
+    - **Problem:** Heat and solar clearing behaviour of a 6-8 W, 2000-nit panel inside a closed 3D-printed handheld in summer sun is unknown
+    - **Evidence:** - Field-monitor users report 'very warm' units and very hot 3000-nit monitors in sun.
+  - Elo and element14 document the greenhouse effect and clearing.
+  - No handheld-scale data exist.
+    - **Why it matters for us:** In Ukrainian summer sun, PLA/PETG cases soften around 55-60 C, and the LCD may black out. Use ASA/PETG, a light colour, a vented gap behind the backlight, and a hood.
+  8.
+    - **Problem:** Native Wayland touch support for GLFW apps (SDR++, SatDump)
+    - **Evidence:** GLFW issue #42 has been open since 2013; #2791 was closed as a support query; the SDR++ maintainer refuses an app-side fix.
+    - **Why it matters for us:** The UI must run under X11 or XWayland, which may break if future Ubuntu images drop the Xorg session. The XWayland env-var trick remains, but needs verification on the Q6A image.
+- **Communities checked:**
+  - Radxa forum (forum.radxa.com): reached via Discourse search JSON; about 15 Q6A display/HDMI threads read
+  - Raspberry Pi forums (forums.raspberrypi.com): reached; Wisecoco, HDMI-to-MIPI, sunlight-readable, Lilliput and Midas searches
+  - GitHub issues/releases: SDR++ (#1569, #1631), SatDump (touch search), GLFW (#2791, platform.c), ddcutil (#134), SDRIAK releases; read via web pages because the gh API is restricted to the session's repos
+  - Linux kernel source (torvalds/linux msm DPU catalog and dpu_kms.c) and the drm mailing-list mirror (lore.gitlab.freedesktop.org drm-ai-reviews)
+  - MyriadRF / Lime discourse (discourse.myriadrf.org): reached
+  - SatNOGS community (community.libre.space): reached
+  - ClockworkPi forum (uConsole/DevTerm): reached
+  - Particle community (Tachyon, QCM6490): reached
+  - Armbian forum (Q6A subforum): reached, but no HDMI/display threads beyond audio and gaming
+  - GNOME Discourse + Peter Hutterer's blog: reached
+  - Core Electronics forum: reached
+  - LinuxCNC forum: reached
+  - element14 community: reached
+  - Waveshare wiki FAQs (9in 2.5K, 5DP-CAPLCD, 7in HDMI LCD H): reached
+  - Radxa docs (FAQ, HDMI page): reached
+  - Adorama reviews: reached; retailer spec pages (kounio.gr, wisecocodisplay.com): reached
+  - Reddit (r/cyberDeck, r/RTLSDR etc.): NOT reachable (blocked for both WebFetch and WebSearch)
+  - Sudomod forum: NOT reachable (HTTP 503)
+  - BATC forum: NOT reachable (HTTP 503)
+  - EEVblog forum: search not fetchable; site-filtered web search returned no EEVblog hits
+  - freedesktop GitLab (drm/msm issue #86) and Arch Wiki: NOT reachable (Anubis bot wall)
+  - Blackmagic Design forum, B&H reviews, eBay: NOT reachable (HTTP 403); one Blackmagic post seen only as a search snippet
+  - Hackaday.io: login wall; AliExpress: login required
+- **Recommendation impact:** 1. Brightness-first holds. No community report changes the core pick: a roughly 7in 1920x1080 panel at 2000 nits or more on HDMI with USB touch. But the Wisecoco kit has zero community reports or reviews, so it stays "recommended but unvalidated."
+  - Before buying, demand: a USB-HID touch board (Wisecoco touch boards seen on the Pi forums enumerate as CH57x USB HID), the board's input voltage, an EDID dump (landscape vs portrait) and a lamination photo.
+  - Budget time for video= or EDID-override work. HDMI-to-MIPI boards commonly need it.
+  
+  2. Field monitors are downgraded further. Their HDMI inputs accept only broadcast formats (1080p60 maximum below 4K30), so the LUT7's 1920x1200 panel would show scaled 1080p from the Q6A. They also draw about 20 W (the LUT5 empties about 49 Wh in about 2.5 h) and run hot, with no host touch. Use them only as a stopgap with a separate input device.
+  
+  3. Going above FHD now has a concrete technical gate on the QCS6490: the DPU's SSPP line width is limited to 2400 px.
+  - Any landscape 2560-wide mode needs DPU virtual planes: a recent kernel, or msm.dpu_use_virtual_planes=1.
+  - It also needs the swing-level-2 link training patch and a cooperative EDID.
+  - If you do go above FHD, prefer a portrait-native panel (1200x1920 or 1600x2560) driven natively and rotated in the compositor.
+  - Keep the Midas DSI route experimental only. Radxa's own DSI panels fail, third-party DSI on QCM6490 is per-panel kernel work, and no J10 pinout has been answered.
+  
+  4. Software plan changes:
+  - Run SDR++/SDRIAK/SatDump under X11 or XWayland (XDG_SESSION_TYPE=x11). Under native Wayland, touch is dead because GLFW lacks wl_touch.
+  - Map the touchscreen with Hutterer's gsettings method.
+  - Hold the kernel and keep clk_ignore_unused once HDMI works. Keep a 1.8 V UART cable and an image backup, because Q6A kernel updates have repeatedly killed HDMI.
+  
+  5. Power and RF budgets:
+  - The budget Waveshare 5DP-CAPLCD draws 4.2 W typical and needs at least 850 mA, not the 2-3 W estimated earlier. Give every display its own supply rail.
+  - Add RF hygiene from day one: a short shielded HDMI cable with a ferrite, LC filtering on the display and backlight rail, grounded metal shielding around the SBC and display board, and an A/B noise test at 137 MHz with the backlight at maximum and minimum. Community evidence shows SBC and display noise right at 137 MHz.
+  
+  6. Mechanical: build in a sun hood or visor, a light-coloured ASA/PETG case and a vented gap behind the backlight, and test the polarizer orientation with sunglasses. These are the community-proven fixes for outdoor readability and solar clearing.
+
+## Власні виправлення (`fixes`)
+
 _Агент цього етапу ще працює (run `wf_0e70c405-a03`)._
 
