@@ -39973,6 +39973,139 @@ I wrote `/home/user/lizbeth307/sat-receiver-audit/STACK.md` in Ukrainian: about 
   
   Working files are in /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/fnb_a/: coll.json (FNIRSI prices and specs) and img/ (FNB48P label, FNB-C2 ports).
 
+## searchB:fnirsi_fnb58_std_no_radio (run `wf_e5582d4c-0a2`)
+
+- **Part:** FNIRSI FNB58 Std (no Bluetooth), USB / USB-C PD tester and logger. Bench tier, Bench electronics group, qty 1.
+- **Current price usd:** 53.99 at fnirsi.com, SKU FNB58 'FNB58 Std.' (compare-at 88.99), read from the fnirsi.com product JSON on 18 Oct 2026. The FNB58-BT variant is 58.99. An EU buyer pays VAT and possibly the new EU flat duty on top. fnirsi.com has an ES/EU warehouse, and its shipping page says 'FNIRSI provides duty payment services for orders under $150' in the listed EU countries. Whether the shown price includes EU VAT is not verified.
+- **Critical specs:**
+  - No radio of any kind (no Bluetooth or Wi-Fi). This is a hard rule for QUIET/field mode (user_requirements line 32), and it removes every BT variant.
+  - Voltage range at least 4-28 V (FNB58: 4-28 V). Needed to qualify PD sources at 20 V and to see a 28 V EPR offer (the Pinecil check is 'FNB58 on the 737 shows 20 V and <=3 A, never 28 V').
+  - Reads down to 0 V for the backfeed checks (0 V on Q6A VBUS and HDMI +5 V). Elektor says the FNB58 reads below 4 V only when it is powered through its PC (micro-USB) port.
+  - Current range at least 5 A continuous through the C-C path (FNB58: 0-7 A, 140 W per fnirsi.com/Berrybase; Elektor lists 120 W). Covers the 5 A cable, the 3 A IP2368 input and the INA228 calibration points at 0.5, 2 and 4 A.
+  - Accuracy and resolution good enough to serve as the reference for INA228 SHUNT_CAL. FNB58: external 16-bit ADC, 10 uV/10 uA resolution. FNIRSI publishes no accuracy figure on the product page, and no independent accuracy measurement was found.
+  - Shows which side sources on USB-C, for the DRP charging matrix and the zero-reverse-current checks.
+  - USB-PD 2.0/3.0 detection and trigger, PDO readout, PD monitoring, e-marker read and cable resistance (Berrybase spec list), plus QC/FCP/SCP/AFC/VOOC detection.
+  - Ripple and waveform capture up to 4 MS/s; slow curve logging at 2-100 sps.
+  - Linux logging on Ubuntu 24.04 arm64. USB HID VID:PID 2E3C:5558 is supported by baryluk/fnirsi-usb-power-data-logger (pure Python plus pyusb, fixed 100 sps, udev rule). V0.68 firmware needs the refresh=0.003 patch, and firmware updates need Windows.
+  - Portable, with USB-A, USB-C and micro-USB ports. Operating range -5 to 40 C. Fits the field pouch.
+  - A genuine unit from an accountable seller with returns: VID:PID and model string check, firmware recorded on arrival.
+- **Candidates:**
+  1.
+    - **Name:** FNIRSI FNB58 Std (same part) from Berrybase DE, article FNI-FNB58, EAN 5905156102200
+    - **Kind:** current_part
+    - **Price usd:** 56.15 incl. 19% DE VAT (EUR 49.90), or 47.19 ex VAT (EUR 41.93), at 1 EUR = 1.1253 USD. Shipping extra, amount not verified. OUT OF STOCK on 18 Oct 2026 ('Artikel aktuell nicht lieferbar').
+    - **Spec comparison:** Identical SKU. Listed as 4-28 V, 0-7 A, 0-140 W, D+/D- 0-3.3 V, external 16-bit ADC, 4 MS/s ripple, 2-100 sps curves, PD2.0/3.0 detect/trigger/monitoring, e-marker, cable resistance, USB-A/C/micro, no Bluetooth listed. Equal on every critical spec.
+    - **Worse in:** Nothing technical. Only availability: out of stock at the time of checking.
+    - **Compatibility:** Identical to the current pick: same HID ID 2E3C:5558, same logger and udev rule, same firmware caveats. EU seller with an EU warranty and returns, and no import duty.
+    - **Risks:** Stock may not return. Check the firmware version on arrival (V0.68 needs the logger patch).
+    - **Seller url:** https://www.berrybase.de/fnirsi-fnb58-usb-tester-4-28-v-0-7a-140w-schwarz
+    - **Sources:**
+      - https://www.berrybase.de/fnirsi-fnb58-usb-tester-4-28-v-0-7a-140w-schwarz
+      - https://www.berrybase.de/search?search=fnb58
+      - https://www.fnirsi.com/products/fnb58.json
+  2.
+    - **Name:** FNIRSI FNB58 (same part) via AliExpress listing 3256804478930060 (1,000+ sold, 4.9 stars); similar listings 3256809536773368 (38.72) and 3256808540726692 (40.14)
+    - **Kind:** current_part
+    - **Price usd:** 37.00 shown in the AliExpress search grid (US-region price, read 18 Oct 2026). Unverified: the store name, whether 37.00 is the Std (no-BT) variant, and the EU-region price. An EU buyer adds VAT (19-21%, via IOSS) and possibly the flat duty since 1 Jul 2026 (amount unverified). Model landed cost is about 44-48.
+    - **Spec comparison:** Equal if the unit is a genuine FNB58 Std: same 4-28 V / 0-7 A / 16-bit ADC / PD functions.
+    - **Worse in:** No spec loss if genuine Std. Seller accountability and the evidence are weaker: the item page did not render, so the store (official or reseller) and the variant could not be confirmed.
+    - **Compatibility:** Same as the current part if genuine: the HID ID 2E3C:5558 must enumerate, and the menu must have no Bluetooth item.
+    - **Risks:** Could be a BT unit, a returned/refurbished unit, or a clone. Harder returns from the EU. Accept only from the FNIRSI Official Store with the 'Std' variant explicitly selected. On arrival check lsusb shows 2E3C:5558, there is no BT menu, and the firmware version; compare readings with the AN8008 and DPS-150 at 0.5, 2 and 4 A.
+    - **Seller url:** https://www.aliexpress.us/item/3256804478930060.html
+    - **Sources:**
+      - https://de.aliexpress.com/w/wholesale-fnirsi-fnb58.html
+      - https://www.aliexpress.com/w/wholesale-fnirsi-fnb58.html
+  3.
+    - **Name:** Used FNIRSI FNB58 Std (eBay.de, Kleinanzeigen, eBay.com)
+    - **Kind:** used
+    - **Price usd:** Not verified. eBay.de, eBay.com and Kleinanzeigen all returned HTTP 403 to the fetcher, so no live listing or price is known.
+    - **Spec comparison:** Same model, so the same published specs. The condition of an individual unit (shunt, ADC calibration, connector wear) is unknown, and no measurement of the specific unit exists.
+    - **Worse in:** No warranty. Calibration state unknown. Possibly worn USB-C receptacles (contact resistance affects cable-resistance and current readings).
+    - **Compatibility:** Same as the current part.
+    - **Risks:** Worth it only with a verified live listing whose landed price is below the Berrybase EUR 49.90, and it must not be a BT unit (check the photo or model label). Acceptance tests on arrival: firmware version, 2E3C:5558 enumeration, readings against the AN8008 and DPS-150 at 0 V (PC-powered), 5/12/20 V and 0.5/2/4 A, and an 8 h logging run. Not recommended over a new unit at roughly 37-47.
+    - **Seller url:** 
+    - **Sources:**
+      - https://www.ebay.de/sch/i.html?_nkw=fnirsi+fnb58&LH_ItemCondition=3000
+  4.
+    - **Name:** FNIRSI FNB58 BT (Elektor EUR 49.95 incl. VAT; Berrybase EUR 54.90 incl. VAT)
+    - **Kind:** cheaper_sku_same_vendor
+    - **Price usd:** 56.21 incl. VAT at Elektor (EUR 49.95), about 46.45 ex NL VAT. 58.99 at fnirsi.com.
+    - **Spec comparison:** Same measurement hardware: 4-28 V, 0-7 A, 16-bit ADC.
+    - **Worse in:** It has a Bluetooth radio, which breaks the no-radio/QUIET rule (the user chose the FNB58 Std specifically). REJECTED.
+    - **Compatibility:** Same USB logger, but the radio cannot be allowed in QUIET mode.
+    - **Risks:** Rule violation.
+    - **Seller url:** https://www.elektor.com/products/fnirsi-fnb58-usb-tester-with-bluetooth
+    - **Sources:**
+      - https://www.elektor.com/catalogsearch/result/?q=fnb58
+      - https://www.elektor.com/products/fnirsi-fnb58-usb-tester-with-bluetooth
+      - https://www.berrybase.de/search?search=fnb58
+  5.
+    - **Name:** AliExpress listing titled 'FNIRSI FNB58 USB C Power Tester PD QC ... 240W ... Bluetooth APP' (item 3256812513972820)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 24.01 shown in the search grid (6 sold, no rating).
+    - **Spec comparison:** The title claims 240 W and Bluetooth. A genuine FNB58 is 140 W and the Std has no BT, so the listing does not match the FNB58. 240 W/50 V belongs to the newer FNB-C2 class. There are no measurements.
+    - **Worse in:** Has Bluetooth (rule fails). Product identity unclear, possibly mislabeled or a clone. No measured evidence. REJECTED.
+    - **Compatibility:** Unknown.
+    - **Risks:** Possible counterfeit or misdescription.
+    - **Seller url:** https://www.aliexpress.us/item/3256812513972820.html
+    - **Sources:**
+      - https://de.aliexpress.com/w/wholesale-fnirsi-fnb58.html
+  6.
+    - **Name:** Multi-model AliExpress listings 'FNIRSI USB Tester FNB58 FNB-C2 FNB48P FNB38 FNAC-28' and similar (items 3256812856395697, 3256812345643358, 3256812662378990, 3256812170099985)
+    - **Kind:** generic_or_clone
+    - **Price usd:** 19.69-27.69 headline prices (read 18 Oct 2026).
+    - **Spec comparison:** The headline price almost certainly belongs to the cheapest model in the listing (FNB38/FNAC-28 class). This is my inference and is not verified. It is not an FNB58 at that price.
+    - **Worse in:** No FNB58 at that price. The cheap models in these listings lack the FNB58's 28 V/7 A range, PD functions or logging. REJECTED.
+    - **Compatibility:** N/A
+    - **Risks:** Bait pricing.
+    - **Seller url:** https://www.aliexpress.us/item/3256812856395697.html
+    - **Sources:**
+      - https://de.aliexpress.com/w/wholesale-fnirsi-fnb58.html
+      - https://www.aliexpress.com/w/wholesale-fnirsi-fnb58.html
+  7.
+    - **Name:** RD Tech (Riden) TC66C USB-C meter (generic with independent measurements)
+    - **Kind:** other_brand
+    - **Price usd:** Not verified.
+    - **Spec comparison:** Lygte-info (HKJ) measured it within 0.001 V over 0-30 V and within 0.005 A over 0-5 A. Official spec: 0-30 V, 0-5 A, accuracy +/-(0.5%+20) V and +/-(1%+30) I. PD2.0/PPS trigger, PC link over micro-USB. Against the FNB58: wider V range, but 5 A max instead of 7 A, no PD detection on screen (the PD trigger needs re-plugging and simulates only a 3 A cable), no e-marker read or 4 MS/s ripple, and no Linux logger verified in this pass.
+    - **Worse in:** Has Bluetooth (rule fails). 5 A max. No PD detection/listening or e-marker. Weaker PD trigger. REJECTED.
+    - **Compatibility:** Not verified on Ubuntu arm64.
+    - **Risks:** Rule violation (radio).
+    - **Seller url:** 
+    - **Sources:**
+      - https://lygte-info.dk/review/USBmeter%20RD%20Tech%20USB%20Meter%20TC66C%20UK.html
+  8.
+    - **Name:** DIY USB-C power/PD logger: RP2040/Pico + INA228 breakout + USB-C pass-through + PD sink/sniffer controller
+    - **Kind:** diy
+    - **Price usd:** Not priced (no verified BOM for this role).
+    - **Spec comparison:** An INA228 can match or beat the resolution, but the build has no published or independent measurements as a finished instrument. It has no PD listener, PDO screen, e-marker read, 4 MS/s ripple capture or display unless much more is built. Low insertion resistance and isolation of the pass-through are unproven.
+    - **Worse in:** No measured evidence (angle B rejects it on that alone). Missing PD-analysis features. Calibration would be circular, because the stack uses the FNB58 as the reference to calibrate its own INA228. Lower build reliability. REJECTED.
+    - **Compatibility:** Would work on Ubuntu arm64 (CDC), but only after firmware has been written.
+    - **Risks:** Unvalidated measurement chain; development time.
+    - **Seller url:** 
+    - **Sources:** []
+- **Notes:** Verdict (angle B: generic modules, clones, DIY, used): I found no generic module, clone or DIY build with independent measurements showing it equal to the FNB58 Std. The only cheaper not-worse options are the same FNB58 Std from cheaper sellers.
+  - **Best:** Berrybase DE, EUR 49.90 incl. VAT ($56.15; $47.19 ex VAT). It is an EU seller with returns and no import duty, but it was out of stock on 18 Oct 2026.
+  - **Second:** AliExpress at about $37 shown. Landed cost (model) is about $44-48 with VAT and the flat duty. Use it only if the item page confirms the FNIRSI Official Store and the 'Std' variant.
+  - **If neither works:** keep the current pick, fnirsi.com $53.99, which has an EU warehouse and duty handling below $150.
+  
+  Rejected, because each breaks the no-radio rule or has no measured evidence:
+  - every BT variant (Elektor EUR 49.95, Berrybase EUR 54.90, fnirsi.com $58.99);
+  - the AliExpress '240W Bluetooth APP' listing at $24, whose title contradicts the FNB58 specs;
+  - the multi-model bait listings at $19-28;
+  - the TC66C, which is measured but has BT, 5 A max and no PD detection;
+  - DIY builds.
+  
+  Points for the stack:
+  1. FNIRSI publishes no accuracy figure on the FNB58 pages I read (fnirsi.com JSON, Berrybase, Elektor). Elektor's review measured no accuracy either and warns that resolution is not accuracy. Lygte-info has no FNB58 review. So 'FNB58 as the INA228 calibration reference' rests on resolution only. Cross-check the FNB58 at 0.5, 2 and 4 A against the AN8008 or a known shunt before setting SHUNT_CAL.
+  2. Elektor reports the meter reads below 4 V only when it is powered through its PC port, and that it shut down under 1 A on a weak charger unless PC-powered. For the 0 V backfeed checks, power the FNB58 from its micro-USB/PC port.
+  3. The logger samples at a fixed 100 sps on every model (code `sps = 100`). PD-type detection does not work in it. It recognizes the FNB58 as 2E3C:5558 and uses refresh 1.0 s for FNB58/FNB48S, so the stack's refresh=0.003 patch for V0.68 is a change to the code.
+  
+  Unverified: the AliExpress store, variant and EU price; the EU flat-duty amount; Berrybase shipping cost; any used listing (eBay and Kleinanzeigen returned 403); the TC66C price.
+  
+  Limits of this pass: the session-wide WebSearch budget was already used up, so my one search returned nothing. fnirsi.com product HTML returned HTTP 429, so specs come from the fnirsi.com product JSON, Berrybase and Elektor. I also read FNIRSI page and shipping-policy copies saved by another agent under /tmp/claude-0/-home-user-lizbeth307/f89a86b4-fa51-5ce8-96da-e73d5f771cf3/scratchpad/fnb_a/.
+  
+  FX: 1 EUR = 1.1253 USD (ECB, 16 Oct 2026, as used in analogs_G2).
+
 ## labui:hf_receiver (run `wf_fceb75d0-87e`)
 
 - **Area:** HF receiver (about 100 kHz-30 MHz, plus LF/VLF where possible) for the Radxa Dragon Q6A handheld receive-only lab, with a small folding or collapsing NON-LOOP antenna. Per the user's latest request, no loop antennas, loop amplifiers, loop frames or loop-specific chokes are included.
