@@ -47,6 +47,7 @@
 | [Isdt 608pd balance charger](components/isdt_608pd_balance_charger.md) | · research · forums · fixes ✅ verify | `—` |
 | [Lab instruments](components/lab_instruments.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Lab ui](components/lab_ui.md) | ✅ research · forums · fixes ✅ verify | `—` |
+| [Leo bodnar lbe 1420 gpsdo](components/leo_bodnar_lbe_1420_gpsdo.md) | · research · forums · fixes ✅ verify | `—` |
 | [Litevna 64](components/litevna_64.md) | · research · forums · fixes ✅ verify | `—` |
 | [Mech thermal storage](components/mech_thermal_storage.md) | ✅ research · forums · fixes ✅ verify | `—` |
 | [Mechanical thermal](components/mechanical_thermal.md) | ✅ research ✅ forums ✅ fixes ✅ verify | `wf_e6b8e5e2-124` |
@@ -87,6 +88,7 @@
 | [Ti tps7a4701 ldo lnb 13 2 v boni 12 5 v](components/ti_tps7a4701_ldo_lnb_13_2_v_boni_12_5_v.md) | · research · forums · fixes ✅ verify | `—` |
 | [Tinplate hf can lc mix 31 on vbus](components/tinplate_hf_can_lc_mix_31_on_vbus.md) | · research · forums · fixes ✅ verify | `—` |
 | [Tinysa ultra zs407](components/tinysa_ultra_zs407.md) | · research · forums · fixes ✅ verify | `—` |
+| [Tools spares notebook build tools calipe](components/tools_spares_notebook_build_tools_calipe.md) | · research · forums · fixes ✅ verify | `—` |
 | [Travel tripod 35 cm folded 1 2 m or more](components/travel_tripod_35_cm_folded_1_2_m_or_more.md) | · research · forums · fixes ✅ verify | `—` |
 | [Two stage coax cm choke ft 240 77 ft 240](components/two_stage_coax_cm_choke_ft_240_77_ft_240.md) | · research · forums · fixes ✅ verify | `—` |
 | [Uputronics 440 mhz cubesat filtered prea](components/uputronics_440_mhz_cubesat_filtered_prea.md) | · research · forums · fixes ✅ verify | `—` |
