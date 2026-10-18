@@ -222,7 +222,7 @@
 <text x="441" y="964" font-size="12" font-weight="normal" text-anchor="start" fill="#111">EN ← MCP #1 GPA0; FAULT → MCP #3 → H3 LAB USB-A</text>
 <rect x="435" y="983" width="400" height="55" rx="4" ry="4" fill="#e3f1ff" stroke="#333" stroke-width="1.2"/>
 <text x="441" y="1001" font-size="12" font-weight="bold" text-anchor="start" fill="#111">K_HF TPS2553DBVR-1: ≥0.75 A на пуску, далі 1.5-2×</text>
-<text x="441" y="1016" font-size="12" font-weight="normal" text-anchor="start" fill="#111">виміряного I (RILIM — TBD); EN ← MCP #1 GPA4</text>
+<text x="441" y="1016" font-size="12" font-weight="normal" text-anchor="start" fill="#111">виміряного I (RILIM — TBD); EN ← GPA4; FAULT → MCP #4 GPB1</text>
 <text x="441" y="1031" font-size="12" font-weight="normal" text-anchor="start" fill="#111">запас: TPS2553DBVR (LCSC C55266) лише тут</text>
 <line x1="635" y1="1038" x2="635" y2="1048" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
 <rect x="435" y="1050" width="400" height="40" rx="4" ry="4" fill="#e3f1ff" stroke="#333" stroke-width="1.2"/>
@@ -230,7 +230,7 @@
 <text x="441" y="1083" font-size="12" font-weight="normal" text-anchor="start" fill="#111">+ демпфер 1 Ω/220 мкФ + 2× Fair-Rite 2631480002 (#31)</text>
 <rect x="435" y="1102" width="400" height="40" rx="4" ry="4" fill="#e3f1ff" stroke="#333" stroke-width="1.2"/>
 <text x="441" y="1120" font-size="12" font-weight="bold" text-anchor="start" fill="#111">K_RTLA TPS2553DBVR-1, RILIM TBD; EN ← MCP #1 GPA2</text>
-<text x="441" y="1135" font-size="12" font-weight="normal" text-anchor="start" fill="#111">→ CH334F H2 → RTL-A (пад 1 хаба не з'єднано)</text>
+<text x="441" y="1135" font-size="12" font-weight="normal" text-anchor="start" fill="#111">→ CH334F H2 → RTL-A (пад 1 н/з); FAULT → MCP #4 GPB2</text>
 <rect x="435" y="1154" width="400" height="55" rx="4" ry="4" fill="#e3f1ff" stroke="#333" stroke-width="1.2"/>
 <text x="441" y="1172" font-size="12" font-weight="bold" text-anchor="start" fill="#111">K_RTLB TPS2553DBVR-1 (D13), EN ← MCP #1 GPA3</text>
 <text x="441" y="1187" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RILIM 1.5-2× виміряного I (TBD); FAULT → MCP #4 GPB0</text>
